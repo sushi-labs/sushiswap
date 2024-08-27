@@ -3,7 +3,7 @@ import { chainName } from '../../chain/index.js'
 import {
   SUSHISWAP_V2_FACTORY_ADDRESS,
   isSushiSwapV2ChainId,
-} from '../../config/sushiswap-v2.js'
+} from '../../config/features/sushiswap-v2.js'
 import { Amount, Price, Token } from '../../currency/index.js'
 import {
   InsufficientInputAmountError,

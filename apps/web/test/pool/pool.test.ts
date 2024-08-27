@@ -149,9 +149,6 @@ test.describe('V2', () => {
     const poolPage = new PoolPage(page, chainId)
 
     const url = BASE_URL.concat(`/${chainId.toString()}/pool/v2/add`)
-    await poolPage.goTo(url)
-    await poolPage.connect()
-    await poolPage.switchNetwork(chainId)
 
     await poolPage.mockPoolApi(
       next,
@@ -161,6 +158,9 @@ test.describe('V2', () => {
       'SUSHISWAP_V2',
     )
 
+    await poolPage.goTo(url)
+    await poolPage.connect()
+    await poolPage.switchNetwork(chainId)
     await poolPage.createV2Pool({
       token0: NATIVE_TOKEN,
       token1: FAKE_TOKEN,

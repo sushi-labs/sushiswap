@@ -1,7 +1,8 @@
+import { SmartPoolChainId } from '@sushiswap/graph-client/data-api'
 import { useAllPrices } from '@sushiswap/react-query'
 import { useMemo } from 'react'
 import { useSmartPools } from 'src/lib/hooks/api/userSmartPools'
-import { ChainId, ID } from 'sushi'
+import { ID } from 'sushi'
 import { Amount, Token } from 'sushi/currency'
 import { Address } from 'viem'
 import { useSteerAccountPositions } from './useSteerAccountPosition'
@@ -9,7 +10,7 @@ import { useSteerAccountPositions } from './useSteerAccountPosition'
 interface UseSteerAccountPositionsExtended {
   account: Address | undefined
   enabled?: boolean
-  chainId: ChainId
+  chainId: SmartPoolChainId
 }
 
 export type SteerAccountPositionExtended = NonNullable<
@@ -56,8 +57,8 @@ export const useSteerAccountPositionsExtended = ({
       const token0 = new Token(vault.token0)
       const token1 = new Token(vault.token1)
 
-      const token0Price = prices?.[String(vault.chainId)]?.[token0.address] || 0
-      const token1Price = prices?.[String(vault.chainId)]?.[token1.address] || 0
+      const token0Price = prices?.get(vault.chainId)?.get(token0.address) || 0
+      const token1Price = prices?.get(vault.chainId)?.get(token1.address) || 0
 
       const token0Amount = Amount.fromRawAmount(token0, position.token0Balance)
       const token1Amount = Amount.fromRawAmount(token1, position.token1Balance)

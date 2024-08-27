@@ -9,7 +9,7 @@ import { SUSHI_REQUEST_HEADERS } from '../../request-headers'
 
 export const SmartPoolsQuery = graphql(
   `
-  query SmartPools($chainId: Int!) {
+  query SmartPools($chainId: SmartPoolChainId!) {
     smartPools(chainId: $chainId) {
       id
       address
@@ -64,34 +64,38 @@ export async function getSmartPools(
   const url = `https://${SUSHI_DATA_API_HOST}`
 
   const result = await request(
-    { url, document: SmartPoolsQuery, variables, requestHeaders: SUSHI_REQUEST_HEADERS },
+    {
+      url,
+      document: SmartPoolsQuery,
+      variables,
+      requestHeaders: SUSHI_REQUEST_HEADERS,
+    },
     options,
   )
 
   if (result) {
-    return result.smartPools
-      .map((pool) => ({
-        ...pool,
-        chainId: pool.chainId as ChainId,
-        id: pool.id as `${string}:0x${string}`,
-        strategy: pool.strategy,
-        token0: {
-          id: pool.token0.id as `${string}:0x${string}`,
-          address: pool.token0.address as Address,
-          chainId: pool.token0.chainId as ChainId,
-          decimals: pool.token0.decimals,
-          name: pool.token0.name,
-          symbol: pool.token0.symbol,
-        },
-        token1: {
-          id: pool.token1.id as `${string}:0x${string}`,
-          address: pool.token1.address as Address,
-          chainId: pool.token1.chainId as ChainId,
-          decimals: pool.token1.decimals,
-          name: pool.token1.name,
-          symbol: pool.token1.symbol,
-        },
-      }))
+    return result.smartPools.map((pool) => ({
+      ...pool,
+      chainId: pool.chainId as ChainId,
+      id: pool.id as `${string}:0x${string}`,
+      strategy: pool.strategy,
+      token0: {
+        id: pool.token0.id as `${string}:0x${string}`,
+        address: pool.token0.address as Address,
+        chainId: pool.token0.chainId as ChainId,
+        decimals: pool.token0.decimals,
+        name: pool.token0.name,
+        symbol: pool.token0.symbol,
+      },
+      token1: {
+        id: pool.token1.id as `${string}:0x${string}`,
+        address: pool.token1.address as Address,
+        chainId: pool.token1.chainId as ChainId,
+        decimals: pool.token1.decimals,
+        name: pool.token1.name,
+        symbol: pool.token1.symbol,
+      },
+    }))
   }
 
   throw new Error('No smart pools found')

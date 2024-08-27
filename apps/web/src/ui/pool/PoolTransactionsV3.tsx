@@ -22,6 +22,7 @@ import {
 } from '@sushiswap/graph-client/data-api'
 
 import { V3Pool } from '@sushiswap/graph-client/data-api'
+import type { Address } from 'viem'
 import {
   TX_AMOUNT_IN_V3_COLUMN,
   TX_AMOUNT_OUT_V3_COLUMN,
@@ -44,7 +45,7 @@ interface UseTransactionsV3Opts {
   skip?: number
 }
 
-const fetchMints = async (address: string, chainId: SushiSwapV3ChainId) => {
+const fetchMints = async (address: Address, chainId: SushiSwapV3ChainId) => {
   const mints = await getSushiV3Mints({
     address,
     chainId,
@@ -59,7 +60,7 @@ const fetchMints = async (address: string, chainId: SushiSwapV3ChainId) => {
   }))
 }
 
-const fetchBurns = async (address: string, chainId: SushiSwapV3ChainId) => {
+const fetchBurns = async (address: Address, chainId: SushiSwapV3ChainId) => {
   const burns = await getSushiV3Burns({
     chainId,
     address,
@@ -74,7 +75,7 @@ const fetchBurns = async (address: string, chainId: SushiSwapV3ChainId) => {
   }))
 }
 
-const fetchSwaps = async (address: string, chainId: SushiSwapV3ChainId) => {
+const fetchSwaps = async (address: Address, chainId: SushiSwapV3ChainId) => {
   const swaps = await getSushiV3Swaps({
     chainId,
     address,
@@ -89,7 +90,7 @@ const fetchSwaps = async (address: string, chainId: SushiSwapV3ChainId) => {
   }))
 }
 
-const fetchCollects = async (address: string, chainId: SushiSwapV3ChainId) => {
+const fetchCollects = async (address: Address, chainId: SushiSwapV3ChainId) => {
   const collects = await getSushiV3Collects({
     chainId,
     address,
@@ -108,11 +109,11 @@ const fetchCollects = async (address: string, chainId: SushiSwapV3ChainId) => {
 // The fact that there are different subtransactions aggregated under one transaction makes paging a bit difficult
 function useTransactionsV3(
   pool: V3Pool | undefined | null,
-  poolId: string,
+  poolAddress: Address,
   opts: UseTransactionsV3Opts,
 ) {
   return useQuery({
-    queryKey: ['poolTransactionsV3', poolId, opts],
+    queryKey: ['poolTransactionsV3', poolAddress, opts],
     queryFn: async () => {
       const chainId = pool?.chainId as ChainId
 
@@ -122,19 +123,19 @@ function useTransactionsV3(
 
       switch (opts.type) {
         case TransactionTypeV3.Mint:
-          transactions = await fetchMints(poolId, chainId)
+          transactions = await fetchMints(poolAddress, chainId)
           break
         case TransactionTypeV3.Burn:
-          transactions = await fetchBurns(poolId, chainId)
+          transactions = await fetchBurns(poolAddress, chainId)
           break
         case TransactionTypeV3.Swap:
-          transactions = await fetchSwaps(poolId, chainId)
+          transactions = await fetchSwaps(poolAddress, chainId)
           break
         case TransactionTypeV3.Collect:
-          transactions = await fetchCollects(poolId, chainId)
+          transactions = await fetchCollects(poolAddress, chainId)
           break
         default:
-          transactions = await fetchSwaps(poolId, chainId)
+          transactions = await fetchSwaps(poolAddress, chainId)
       }
 
       if (!transactions.length) return []
@@ -204,10 +205,13 @@ type TransactionV3 = NonNullable<
 
 interface PoolTransactionsV3Props {
   pool: V3Pool | undefined | null
-  poolId: string
+  poolAddress: Address
 }
 
-const PoolTransactionsV3: FC<PoolTransactionsV3Props> = ({ pool, poolId }) => {
+const PoolTransactionsV3: FC<PoolTransactionsV3Props> = ({
+  pool,
+  poolAddress,
+}) => {
   const [type, setType] = useState<
     Parameters<typeof useTransactionsV3>['2']['type']
   >(TransactionTypeV3.Swap)
@@ -237,7 +241,7 @@ const PoolTransactionsV3: FC<PoolTransactionsV3Props> = ({ pool, poolId }) => {
     [paginationState.pageIndex, paginationState.pageSize, type],
   )
 
-  const { data, isLoading } = useTransactionsV3(pool, poolId, opts)
+  const { data, isLoading } = useTransactionsV3(pool, poolAddress, opts)
 
   const _data = useMemo(() => {
     return data ?? []

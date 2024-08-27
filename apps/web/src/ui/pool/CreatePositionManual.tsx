@@ -11,14 +11,14 @@ import {
 } from '@sushiswap/ui'
 import React, { FC, useMemo, useState } from 'react'
 import { ConcentratedLiquidityWidget } from 'src/ui/pool/ConcentratedLiquidityWidget'
-import { ChainKey } from 'sushi'
+import { Address, ChainKey } from 'sushi'
 import { SushiSwapV3ChainId } from 'sushi/config'
 import { unwrapToken } from 'sushi/currency'
 import { useAccount } from 'wagmi'
 import { SelectPricesWidget } from './SelectPricesWidget'
 
 interface ManualProps {
-  address: string
+  address: Address
   chainId: SushiSwapV3ChainId
 }
 
