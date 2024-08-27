@@ -408,6 +408,7 @@ const COLUMNS = [
           </DropdownMenuContent>
         </DropdownMenu>
       ),
+    size: 80,
     meta: {
       disableLink: true,
       skeleton: <SkeletonText fontSize="lg" />,
