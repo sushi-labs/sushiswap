@@ -1,3 +1,4 @@
+import { nativeToken } from 'sushi'
 import { erc20Abi, erc20Abi_bytes32 } from 'sushi/abi'
 import { ChainId } from 'sushi/chain'
 import { Token } from 'sushi/currency'
@@ -39,9 +40,14 @@ export class TokenManager {
   tokenPermanentCache: PermanentCache<TokenCacheRecord>
   cacheTokensAddingPromise?: Promise<void>
 
-  constructor(client: MultiCallAggregator, ...paths: string[]) {
+  constructor(
+    client: MultiCallAggregator,
+    cacheReadOnly: boolean,
+    ...paths: string[]
+  ) {
     this.client = client
-    this.tokenPermanentCache = new PermanentCache(...paths)
+    this.tokenPermanentCache = new PermanentCache(cacheReadOnly, ...paths)
+    this.addToken(nativeToken(client.chainId), false)
   }
 
   async addCachedTokens() {

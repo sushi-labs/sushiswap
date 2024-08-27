@@ -1,6 +1,5 @@
 'use client'
 
-import { Pool } from '@sushiswap/client'
 import {
   Card,
   CardContent,
@@ -17,6 +16,8 @@ import {
 import Link from 'next/link'
 import { FC } from 'react'
 
+import { V2Pool } from '@sushiswap/graph-client/data-api'
+import { ChainKey } from 'sushi/chain'
 import { AddSectionLegacy } from './AddSectionLegacy'
 import { AddSectionStake } from './AddSectionStake'
 import { PoolPositionProvider } from './PoolPositionProvider'
@@ -26,7 +27,7 @@ import { RemoveSectionLegacy } from './RemoveSectionLegacy'
 import { RemoveSectionUnstake } from './RemoveSectionUnstake'
 
 interface ManageV2LiquidityCardProps {
-  pool: Pool
+  pool: V2Pool
   tab?: 'stake' | 'unstake' | 'add' | 'remove'
 }
 
@@ -50,7 +51,10 @@ export const ManageV2LiquidityCard: FC<ManageV2LiquidityCardProps> = ({
       >
         <CardContent>
           <TabsList className="!flex">
-            <Link href={`/pool/${pool.id}/add`} className="flex flex-1">
+            <Link
+              href={`/${ChainKey[pool.chainId]}/pool/v2/${pool.address}/add`}
+              className="flex flex-1"
+            >
               <TabsTrigger
                 testdata-id="add-tab"
                 value="add"
@@ -59,7 +63,10 @@ export const ManageV2LiquidityCard: FC<ManageV2LiquidityCardProps> = ({
                 Add
               </TabsTrigger>
             </Link>
-            <Link href={`/pool/${pool.id}/remove`} className="flex flex-1">
+            <Link
+              href={`/${ChainKey[pool.chainId]}/pool/v2/${pool.address}/remove`}
+              className="flex flex-1"
+            >
               <TabsTrigger
                 testdata-id="remove-tab"
                 value="remove"
@@ -69,7 +76,12 @@ export const ManageV2LiquidityCard: FC<ManageV2LiquidityCardProps> = ({
               </TabsTrigger>
             </Link>
             {isFarm ? (
-              <Link href={`/pool/${pool.id}/stake`} className="flex flex-1">
+              <Link
+                href={`/${ChainKey[pool.chainId]}/pool/v2/${
+                  pool.address
+                }/stake`}
+                className="flex flex-1"
+              >
                 <TabsTrigger
                   testdata-id="stake-tab"
                   value="stake"
@@ -89,7 +101,12 @@ export const ManageV2LiquidityCard: FC<ManageV2LiquidityCardProps> = ({
               </TabsTrigger>
             )}
             {isFarm ? (
-              <Link href={`/pool/${pool.id}/unstake`} className="flex flex-1">
+              <Link
+                href={`/${ChainKey[pool.chainId]}/pool/v2/${
+                  pool.address
+                }/unstake`}
+                className="flex flex-1"
+              >
                 <TabsTrigger
                   testdata-id="unstake-tab"
                   value="unstake"
@@ -129,7 +146,7 @@ export const ManageV2LiquidityCard: FC<ManageV2LiquidityCardProps> = ({
               <TabsContent value="stake">
                 <CardContent>
                   {isFarm ? (
-                    <AddSectionStake poolId={pool.id} />
+                    <AddSectionStake pool={pool} />
                   ) : (
                     <Message
                       variant="warning"
@@ -144,7 +161,7 @@ export const ManageV2LiquidityCard: FC<ManageV2LiquidityCardProps> = ({
               <TabsContent value="unstake">
                 <CardContent>
                   {isFarm ? (
-                    <RemoveSectionUnstake poolId={pool.id} />
+                    <RemoveSectionUnstake pool={pool} />
                   ) : (
                     <Message
                       variant="warning"

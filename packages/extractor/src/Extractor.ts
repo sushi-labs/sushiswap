@@ -4,7 +4,6 @@ import { Token } from 'sushi/currency'
 import { PoolCode } from 'sushi/router'
 import { Address, PublicClient } from 'viem'
 import { AlgebraExtractor, FactoryAlgebra } from './AlgebraExtractor.js'
-import { AlgebraPoolWatcher } from './AlgebraPoolWatcher.js'
 import {
   CurveWhitelistConfig,
   CurveWhitelistExtractor,
@@ -15,7 +14,8 @@ import { MultiCallAggregator } from './MulticallAggregator.js'
 import { TokenManager } from './TokenManager.js'
 import { FactoryV2, UniV2Extractor } from './UniV2Extractor.js'
 import { FactoryV3, UniV3Extractor } from './UniV3Extractor.js'
-import { UniV3PoolWatcher } from './UniV3PoolWatcher.js'
+import { UniV4Config, UniV4Extractor } from './UniV4Extractor.js'
+import { allFulfilled } from './Utils.js'
 
 const DEFAULT_RPC_MAX_CALLS_IN_ONE_BATCH = 1000
 
@@ -27,9 +27,12 @@ export type ExtractorConfig = {
   factoriesV3?: FactoryV3[]
   factoriesAlgebra?: FactoryAlgebra[]
   curveConfig?: CurveWhitelistConfig
+  uinV4?: UniV4Config[]
   tickHelperContractV3: Address
   tickHelperContractAlgebra: Address
+  tickHelperContractV4?: Address
   cacheDir: string
+  cacheReadOnly?: boolean
   logType?: LogFilterType
   logDepth: number
   logging?: boolean
@@ -72,6 +75,7 @@ export class Extractor {
   /// @param logDepth the depth of logs to keep in memory for reorgs
   /// @param logging to write logs in console or not
   constructor(args: ExtractorConfig) {
+    const cacheReadOnly = args.cacheReadOnly ?? false
     this.config = args
     this.cacheDir = args.cacheDir
     this.logging = Boolean(args.logging)
@@ -85,6 +89,7 @@ export class Extractor {
     )
     this.tokenManager = new TokenManager(
       this.multiCallAggregator,
+      cacheReadOnly,
       args.cacheDir,
       `tokens-${this.multiCallAggregator.chainId}`,
     )
@@ -105,6 +110,7 @@ export class Extractor {
           args.logging !== undefined ? args.logging : false,
           this.multiCallAggregator,
           this.tokenManager,
+          cacheReadOnly,
         ),
       )
     if (args.factoriesV3 && args.factoriesV3.length > 0)
@@ -118,6 +124,7 @@ export class Extractor {
           args.logging !== undefined ? args.logging : false,
           this.multiCallAggregator,
           this.tokenManager,
+          cacheReadOnly,
         ),
       )
     if (args.factoriesAlgebra && args.factoriesAlgebra.length > 0)
@@ -131,6 +138,7 @@ export class Extractor {
           args.logging !== undefined ? args.logging : false,
           this.multiCallAggregator,
           this.tokenManager,
+          cacheReadOnly,
         ),
       )
     if (args.curveConfig)
@@ -143,6 +151,18 @@ export class Extractor {
           args.logging !== undefined ? args.logging : false,
           this.multiCallAggregator,
         ),
+      )
+    if (args.uniV4 && args.tickHelperContractV4)
+      this.projectExtractors.push(
+        new UniV4Extractor({
+          config: args.uniV4,
+          multiCallAggregator: this.multiCallAggregator,
+          tokenManager: this.tokenManager,
+          logFilter: this.logFilter,
+          cacheDir: args.cacheDir,
+          tickHelperContract: args.tickHelperContractV4,
+          cacheReadOnly,
+        }),
       )
   }
 
@@ -281,13 +301,13 @@ export class Extractor {
       const addUnique = Array.from(addMap.values())
 
       const fetching = [
-        ...this.projectExtractors.flatMap(
+        ...this.projectExtractors.map(
           (e) => e.getPoolsForTokens(baseUnique).fetching,
         ),
-        ...this.projectExtractors.flatMap(
+        ...this.projectExtractors.map(
           (e) => e.getPoolsBetweenTokenSets(baseUnique, addUnique).fetching,
         ),
-      ]
+      ].flat()
       // console.log(
       //   'EXTR DEBUG: prefetch start ',
       //   tokensBaseSet.length,
@@ -333,7 +353,8 @@ export class Extractor {
       const tokens2Unique = Array.from(map2.values())
 
       let prefetchedAll: (PoolCode | undefined)[] = []
-      let fetchingAll: Promise<unknown>[] = []
+      let fetchingAll: (Promise<PoolCode | undefined> | Promise<PoolCode[]>)[] =
+        []
 
       this.projectExtractors.forEach((e) => {
         const { prefetched, fetching } = e.getPoolsBetweenTokenSets(
@@ -352,20 +373,11 @@ export class Extractor {
       //   fetchingAll.length,
       // )
 
-      const fetchedAll = await Promise.allSettled(fetchingAll)
+      const fetchedAll = await allFulfilled<PoolCode | undefined | PoolCode[]>(
+        fetchingAll,
+      )
       const res = prefetchedAll
-        .concat(
-          fetchedAll.map((p) => {
-            if (p.status === 'fulfilled') {
-              const value = p.value
-              if (value === undefined) return undefined
-              if (value instanceof PoolCode) return value
-              if (value instanceof UniV3PoolWatcher) return value.getPoolCode()
-              if (value instanceof AlgebraPoolWatcher)
-                return value.getPoolCode()
-            }
-          }),
-        )
+        .concat(fetchedAll.flat())
         .filter((p) => p !== undefined) as PoolCode[]
       // console.log(
       //   'EXTR DEBUG: getPoolCodesBetweenTokenSets finished ',
@@ -402,7 +414,9 @@ export class Extractor {
       this.projectExtractors.forEach((e) => {
         const pools = e.getPoolsForTokens(tokensUnique)
         prefetched = prefetched.concat(pools.prefetched)
-        fetchingNumber += pools.fetching.length
+        fetchingNumber += Array.isArray(pools.fetching)
+          ? pools.fetching.length
+          : 1
       })
 
       // console.log(
@@ -446,12 +460,20 @@ export class Extractor {
       this.projectExtractors.forEach((e) => {
         const { prefetched, fetching } = e.getPoolsForTokens(tokensUnique)
         pools = pools.concat(prefetched)
-        promises = promises.concat(
-          fetching.map(async (p) => {
-            const pc = await p
-            if (pc !== undefined) pools.push(pc)
-          }),
-        )
+        if (Array.isArray(fetching)) {
+          promises = promises.concat(
+            fetching.map(async (p) => {
+              const pc = await p
+              if (pc !== undefined) pools.push(pc)
+            }),
+          )
+        } else {
+          promises.push(
+            fetching.then((ps) => {
+              pools = pools.concat(ps)
+            }),
+          )
+        }
       })
 
       // console.log(

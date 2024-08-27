@@ -1,0 +1,71 @@
+{{- range .Values.chains }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: extractor-{{ .id }}
+spec:
+  # replicas: 1
+  selector:
+    matchLabels:
+      app: extractor-{{ .id }}
+  template:
+    metadata:
+      labels:
+        app: extractor-{{ .id }}
+    spec:
+      volumes:
+        - name: extractor-pv
+          persistentVolumeClaim:
+            claimName: extractor-pvc
+      containers:
+        - name: extractor
+          image: extractor
+          ports:
+            - containerPort: 80
+          volumeMounts:
+            - mountPath: "/app/cache/{{ .id }}"
+              name: extractor-pv
+          resources:
+            requests:
+              cpu: 1250m
+              memory: 8Gi
+          startupProbe:
+            failureThreshold: 120 # 120 * 10s = 20 minutes to start
+            httpGet:
+              path: /health
+              port: 80
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 3
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: 80
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 3
+          env:
+            - name: CHAIN_ID
+              value: "{{ .id }}"
+            - name: DRPC_ID
+              valueFrom:
+                secretKeyRef:
+                  name: sushi-api
+                  key: DRPC_ID
+            - name: RSK_ID
+              valueFrom:
+                secretKeyRef:
+                  name: sushi-api
+                  key: RSK_ID
+            - name: SENTRY_DSN
+              valueFrom:
+                secretKeyRef:
+                  name: sushi-api
+                  key: SENTRY_DSN
+            - name: SENTRY_ENVIRONMENT
+              valueFrom:
+                secretKeyRef:
+                  name: sushi-api
+                  key: SENTRY_ENVIRONMENT
+{{- end }}

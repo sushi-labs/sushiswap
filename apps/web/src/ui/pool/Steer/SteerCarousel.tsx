@@ -1,17 +1,13 @@
 'use client'
 
+import { V3Pool, VaultV1 } from '@sushiswap/graph-client/data-api'
 import { Carousel, SkeletonBox } from '@sushiswap/ui'
 import { FC, useCallback, useMemo } from 'react'
-
-import { SteerVault } from '@sushiswap/steer-sdk'
-import type { PoolWithFeeAprs, PoolWithIncentives } from 'sushi/types'
 import { SteerPoolCard } from './SteerPoolCard'
 
-type RequiredPool = PoolWithIncentives<PoolWithFeeAprs>
-
 interface SteerCarousel {
-  pool: RequiredPool
-  vaults: SteerVault[]
+  pool: V3Pool
+  vaults: VaultV1[]
 }
 
 export const SteerCarousel: FC<SteerCarousel> = ({ pool, vaults }) => {
@@ -19,9 +15,8 @@ export const SteerCarousel: FC<SteerCarousel> = ({ pool, vaults }) => {
     () => vaults.filter((vault) => vault.isEnabled),
     [vaults],
   )
-
   const render = useCallback(
-    (vault: SteerVault) => {
+    (vault: VaultV1) => {
       return (
         <div className="w-[400px]">
           <SteerPoolCard key={vault.id} pool={pool} vault={vault} />
@@ -41,7 +36,7 @@ export const SteerCarousel: FC<SteerCarousel> = ({ pool, vaults }) => {
           className="px-2 mt-0 pt-0"
         />
       ) : (
-        <>No smart pools found.</>
+        <div className="text-center">No smart pools found.</div>
       )}
     </div>
   )

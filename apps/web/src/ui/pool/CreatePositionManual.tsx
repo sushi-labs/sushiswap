@@ -11,6 +11,7 @@ import {
 } from '@sushiswap/ui'
 import React, { FC, useMemo, useState } from 'react'
 import { ConcentratedLiquidityWidget } from 'src/ui/pool/ConcentratedLiquidityWidget'
+import { ChainKey } from 'sushi'
 import { SushiSwapV3ChainId } from 'sushi/config'
 import { unwrapToken } from 'sushi/currency'
 import { useAccount } from 'wagmi'
@@ -69,7 +70,7 @@ export const CreatePositionManual: FC<ManualProps> = ({ address, chainId }) => {
           tokensLoading={false}
           existingPosition={undefined}
           tokenId={undefined}
-          successLink={`/pools/${chainId}:${address}?activeTab=myPositions`}
+          successLink={`/${ChainKey[chainId]}/pool/v3/${address}/positions`}
         />
       </CardContent>
     </Card>

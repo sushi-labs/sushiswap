@@ -29,6 +29,35 @@ export default [
     shortName: 'eth',
   },
   {
+    chainId: 5, // Goerli
+    explorers: [
+      {
+        name: 'etherscan',
+        url: 'https://etherscan.io',
+        standard: 'EIP3091',
+      },
+      {
+        name: 'blockscout',
+        url: 'https://eth.blockscout.com',
+        icon: 'blockscout',
+        standard: 'EIP3091',
+      },
+      {
+        name: 'dexguru',
+        url: 'https://ethereum.dex.guru',
+        icon: 'dexguru',
+        standard: 'EIP3091',
+      },
+    ],
+    nativeCurrency: {
+      name: 'Ether',
+      symbol: 'ETH',
+      decimals: 18,
+    },
+    name: 'Goerli',
+    shortName: 'eth',
+  },
+  {
     chainId: 10,
     explorers: [
       {

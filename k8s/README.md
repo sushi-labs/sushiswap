@@ -109,9 +109,19 @@ kubectl exec --stdin --tty extractor-56-0 -- /bin/bash
 
 ### Copy
 
+Remote to local:
+
 ```bash
 kubectl cp -n default extractor-56-0:/app/cache ./cache
 ```
+Local to remote:
+
+copies the cache folder to the extractor-56-0 app folder, replacing current cache folder (careful...)
+
+```bash
+kubectl cp  -n default ./cache extractor-56-0:/app
+```
+
 
 ### Port Forward
 
@@ -124,6 +134,10 @@ kubectl port-forward statefulset/extractor-8453 3000:80
 ```
 
 http://localhost:3000/pool-codes-bin/8453
+
+### Debug
+
+kubectl run -it --rm --restart=Never curl --image=curlimages/curl:latest sh
 
 ### Restart Router
 

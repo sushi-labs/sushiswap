@@ -1,11 +1,16 @@
 import { type NextRequest, NextResponse } from 'next/server'
-import { chainShortNameToChainId } from 'sushi/chain'
+import { getChainInfo } from 'sushi/chain'
 
 export const config = {
-  matcher: ['/swap/:path*', '/pool/:path*', '/pools/:path*'],
+  matcher: [
+    '/swap/:path*',
+    '/:chainId/explore/:path*',
+    '/:chainId/pool/:path*',
+    '/:chainId/positions/:path*',
+    '/:chainId/migrate',
+    '/:chainId/rewards',
+  ],
 }
-
-const shortNameIdRegexp = new RegExp(/(\w+):0x.*?(?=(?:\/|$))/)
 
 export async function middleware(req: NextRequest) {
   const { pathname, searchParams, search } = req.nextUrl
@@ -43,33 +48,16 @@ export async function middleware(req: NextRequest) {
     }
   }
 
-  if (pathname.startsWith('/pool')) {
-    if (pathname === '/pool/add' && search === '') {
-      const url = req.nextUrl.clone()
-      url.search = '?fromCurrency=NATIVE'
-      return NextResponse.redirect(url)
-    }
+  const networkNameMatch = pathname.match(
+    /([\w-]+)(?=\/explore|\/pool|\/positions|\/rewards|\/migrate)/,
+  )
+  if (networkNameMatch?.length) {
+    const { chainId, networkName } = getChainInfo(networkNameMatch[0])
+    if (!chainId) return NextResponse.next()
 
-    if (pathname === '/pool/add/v2' && search === '') {
-      const url = req.nextUrl.clone()
-      url.pathname = '/add/v2/1'
-      return NextResponse.redirect(url)
-    }
+    const url = req.nextUrl.clone()
+    url.pathname = pathname.replace(networkName, chainId.toString())
 
-    // Matches paths that include /arb1:0x1234abcd/, starts and ends after '/'
-    const match = pathname.match(shortNameIdRegexp)
-    if (match?.length) {
-      const pairId = pathname.match(shortNameIdRegexp)?.[0] as string
-      const [chainShortName, address] = pairId.split(':')
-      const chainId = String(chainShortNameToChainId[chainShortName])
-
-      // Already rewritten / invalid chainShortName
-      if (chainId === 'undefined') return NextResponse.next()
-
-      const url = req.nextUrl.clone()
-      url.pathname = pathname.replace(pairId, `${chainId}:${address}`)
-
-      return NextResponse.redirect(url)
-    }
+    return NextResponse.rewrite(url)
   }
 }

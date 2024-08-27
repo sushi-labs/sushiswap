@@ -14,31 +14,30 @@ import {
 import { FC } from 'react'
 import { formatPercent, formatUSD } from 'sushi/format'
 
-import { SteerVault } from '@sushiswap/steer-sdk'
+import { VaultV1 } from '@sushiswap/graph-client/data-api'
 import type { PoolWithFeeAprs, PoolWithIncentives } from 'sushi/types'
 import { APRHoverCard } from '../APRHoverCard'
 import { SteerAPRChart } from './SteerAPRChart'
 import { SteerLiquidityDistributionWidget } from './SteerLiquidityDistributionWidget/SteerLiquidityDistributionWidget'
-import { SteerStrategyConfig } from './constants'
 
 interface SteerPoolCardProps {
   pool: PoolWithIncentives<PoolWithFeeAprs>
-  vault: SteerVault
+  vault: VaultV1
 }
 
 export const SteerPoolCard: FC<SteerPoolCardProps> = ({ pool, vault }) => {
   return (
-    <LinkInternal href={`/pool/${pool.id}/smart/${vault.id}`}>
+    <LinkInternal
+      href={`/${vault.chainId}/pool/v3/${vault.poolAddress}/smart/${vault.address}`}
+    >
       <Card
         className={classNames(
           'max-w-[400px] hover:border-blue-300 hover:shadow-md',
         )}
       >
         <CardHeader>
-          <CardTitle>{SteerStrategyConfig[vault.strategy].name}</CardTitle>
-          <CardDescription>
-            {SteerStrategyConfig[vault.strategy].description}
-          </CardDescription>
+          <CardTitle>{vault.strategy}</CardTitle>
+          <CardDescription>{vault.description}</CardDescription>
         </CardHeader>
         <Separator />
         <CardContent className="pt-6">

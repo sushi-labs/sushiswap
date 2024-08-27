@@ -26,7 +26,8 @@
     "dev": "tsc -w",
     "load-test": "npx tsx ./test/load.ts",
     "price-test": "npx tsx ./test/pricesCompare.ts",
-    "start": "node dist/index.js"
+    "start": "node dist/index.js",
+    "start-debug": "node --inspect dist/index.js"
   },
   "dependencies": {
     "@sentry/node": "7.110.0",

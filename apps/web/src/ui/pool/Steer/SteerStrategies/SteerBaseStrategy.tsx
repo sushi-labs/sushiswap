@@ -31,9 +31,9 @@ import {
   SteerPositionRemove,
 } from '../SteerLiquidityManagement'
 import { SteerStrategyLiquidityDistribution } from '../SteerStrategyLiquidityChart'
-import { SteerStrategyConfig } from '../constants'
 
 export const SteerBaseStrategy: SteerStrategyComponent = ({
+  pool,
   vault,
   generic: { priceExtremes, tokenRatios, adjustment, positions },
 }) => {
@@ -110,10 +110,8 @@ export const SteerBaseStrategy: SteerStrategyComponent = ({
       <div>
         <Card>
           <CardHeader>
-            <CardTitle>{SteerStrategyConfig[vault.strategy].name}</CardTitle>
-            <CardDescription>
-              {SteerStrategyConfig[vault.strategy].description}
-            </CardDescription>
+            <CardTitle>{vault.strategy}</CardTitle>
+            <CardDescription>{vault.description}</CardDescription>
           </CardHeader>
           <Separator />
           <div className="h-[200px] rounded-xl flex flex-col p-6">
@@ -127,9 +125,9 @@ export const SteerBaseStrategy: SteerStrategyComponent = ({
             <Stat className="px-6 py-3">
               <StatLabel size="sm">Total APR (24h)</StatLabel>
               <StatValue size="sm">
-                <APRHoverCard pool={vault.pool} smartPoolAPR={vault.apr1d}>
+                <APRHoverCard pool={pool} smartPoolAPR={vault.apr1d}>
                   <span className="underline decoration-dotted underline-offset-2">
-                    {formatPercent(vault.apr1d + vault.pool.incentiveApr)}
+                    {formatPercent(vault.apr1d + pool.incentiveApr)}
                   </span>
                 </APRHoverCard>
               </StatValue>
@@ -168,9 +166,7 @@ export const SteerBaseStrategy: SteerStrategyComponent = ({
             </Stat>
             <Stat className="px-6 py-3">
               <StatLabel size="sm">Liquidity pool fee</StatLabel>
-              <StatValue size="sm">
-                {formatPercent(vault.pool.swapFee)}
-              </StatValue>
+              <StatValue size="sm">{formatPercent(pool.swapFee)}</StatValue>
             </Stat>
             {/* <Stat className="px-6 py-3">
               <StatLabel size="sm">Time frame</StatLabel>
@@ -204,7 +200,7 @@ export const SteerBaseStrategy: SteerStrategyComponent = ({
           </CardHeader>
           <div className="px-6 h-[200px] w-full">
             <SteerStrategyLiquidityDistribution
-              pool={vault.pool}
+              pool={pool}
               positions={positions}
             />
           </div>

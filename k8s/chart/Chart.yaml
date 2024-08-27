@@ -1,5 +1,0 @@
-
-apiVersion: v2
-name: api
-description: A Helm chart for the sushi api
-version: 0.1.0

@@ -15,7 +15,7 @@ import {
   getTokenType,
 } from './tines-to-route-processor-2.js'
 
-class TinesToRouteProcessor4 extends TinesToRouteProcessor2 {
+export class TinesToRouteProcessor4 extends TinesToRouteProcessor2 {
   // constructor(
   //   routeProcessorAddress: string,
   //   chainId: ChainId,
