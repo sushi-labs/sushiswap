@@ -36,6 +36,7 @@ export type ExtractorConfig = {
   tickHelperContractV3: Address
   tickHelperContractAlgebra: Address
   tickHelperContractV4?: Address
+  tickHelperContractAerodromeSlipstream?: Address
   cacheDir: string
   cacheReadOnly?: boolean
   logType?: LogFilterType
@@ -153,7 +154,7 @@ export class Extractor {
       this.projectExtractors.push(
         new AerodromeSlipstreamV3Extractor(
           this.client,
-          args.tickHelperContractAlgebra,
+          args.tickHelperContractAerodromeSlipstream as Address,
           args.factoriesAerodromeSlipstream,
           args.cacheDir,
           this.logFilter,
