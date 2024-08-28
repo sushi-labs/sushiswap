@@ -1,3 +1,4 @@
+import { defaultAbiCoder } from '@ethersproject/abi'
 import IUniswapV3Factory from '@uniswap/v3-core/artifacts/contracts/UniswapV3Factory.sol/UniswapV3Factory.json' assert {
   type: 'json',
 }
@@ -5,7 +6,6 @@ import IUniswapV3Pool from '@uniswap/v3-core/artifacts/contracts/UniswapV3Pool.s
   type: 'json',
 }
 import { Abi } from 'abitype'
-import { computeSushiSwapV3PoolAddress } from 'sushi'
 import { Token } from 'sushi/currency'
 import { LiquidityProviders, PoolCode } from 'sushi/router'
 import {
@@ -13,6 +13,9 @@ import {
   type Hex,
   type Log,
   type PublicClient,
+  getAddress,
+  keccak256,
+  parseAbi,
   parseAbiItem,
 } from 'viem'
 import { Counter } from './Counter.js'
@@ -38,27 +41,24 @@ import { delay } from './Utils.js'
 const TickSpacingEnabledEventABI = parseAbiItem(
   'event TickSpacingEnabled(int24 indexed tickSpacing, uint24 indexed fee)',
 )
-// const AerodromeSlipstreamABI = parseAbi([
-//   'function tickSpacingToFee(int24) view returns (uint24)',
-//   'event TickSpacingEnabled(int24 indexed tickSpacing, uint24 indexed fee)',
-// ])
-// const AerodromeSlipstreamABI = parseAbi([
-//   'function tickSpacingToFee(int24) view returns (uint24)',
-//   'event TickSpacingEnabled(int24 indexed tickSpacing, uint24 indexed fee)',
-// ])
+const AerodromeSlipstreamABI = parseAbi([
+  'function tickSpacingToFee(int24) view returns (uint24)',
+  'function poolImplementation() view returns (address)',
+])
 
 export interface AerodromeSlipstreamFactoryV3 {
   address: Address
   provider: LiquidityProviders
-  initCodeHash: Hex
   feeSpacingMap?: FeeSpacingMap // created dinamically
+  poolImplementation?: Address // fetched inExtractor
 }
 
 interface PoolInfo {
   address: Address
   token0: Token
   token1: Token
-  fee: number
+  //fee: number
+  tickSpacing: number
   factory: AerodromeSlipstreamFactoryV3
 }
 
@@ -72,7 +72,7 @@ interface PoolCacheRecord {
   address: Address
   token0: Address
   token1: Address
-  fee: number
+  tickSpacing: number
   factory: Address
 }
 
@@ -228,12 +228,12 @@ export class AerodromeSlipstreamV3Extractor extends IExtractor {
         const token0 = this.tokenManager.getKnownToken(r.token0)
         const token1 = this.tokenManager.getKnownToken(r.token1)
         const factory = this.factoryMap.get(r.factory.toLowerCase())
-        if (token0 && token1 && factory && r.address && r.fee)
+        if (token0 && token1 && factory && r.address && r.tickSpacing)
           cachedPools.set(r.address.toLowerCase(), {
             address: r.address,
             token0,
             token1,
-            fee: r.fee,
+            tickSpacing: r.tickSpacing,
             factory,
           })
       })
@@ -309,8 +309,8 @@ export class AerodromeSlipstreamV3Extractor extends IExtractor {
       },
     )
 
-    await Promise.allSettled(
-      this.factories.map(async (f) => {
+    await Promise.allSettled([
+      ...this.factories.map(async (f) => {
         try {
           const logs = await client.getLogs({
             address: f.address,
@@ -341,7 +341,22 @@ export class AerodromeSlipstreamV3Extractor extends IExtractor {
           )
         }
       }),
-    )
+      ...this.factories.map(async (f) => {
+        try {
+          f.poolImplementation = await this.multiCallAggregator.callValue(
+            f.address,
+            AerodromeSlipstreamABI,
+            'poolImplementation',
+          )
+        } catch (e) {
+          Logger.error(
+            this.multiCallAggregator.chainId,
+            `Provider ${f.provider}(${f.address}) poolImplementation fetching failed`,
+            e,
+          )
+        }
+      }),
+    ])
   }
 
   processLog(l: Log): string {
@@ -383,17 +398,15 @@ export class AerodromeSlipstreamV3Extractor extends IExtractor {
       : [p.token1, p.token0]
 
     startTime = startTime || performance.now()
-    const expectedPoolAddress = this.computeV3Address(p.factory, t0, t1, p.fee)
+    const expectedPoolAddress = this.computeV3Address(
+      p.factory,
+      t0,
+      t1,
+      p.tickSpacing,
+    )
+    if (expectedPoolAddress === undefined) return
     if (addrL !== expectedPoolAddress.toLowerCase()) {
       this.consoleLog(`FakePool: ${p.address}`)
-      this.otherFactoryPoolSet.add(addrL)
-      return
-    }
-    const spacing = p.factory.feeSpacingMap?.[p.fee]
-    if (spacing === undefined) {
-      this.consoleLog(
-        `Unknown spacing for pool ${p.address} with fee = ${p.fee}. Pool is ignored`,
-      )
       this.otherFactoryPoolSet.add(addrL)
       return
     }
@@ -403,8 +416,8 @@ export class AerodromeSlipstreamV3Extractor extends IExtractor {
       this.tickHelperContract,
       t0,
       t1,
-      p.fee,
-      spacing,
+      0, //p.fee, TODO !!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      p.tickSpacing,
       this.multiCallAggregator,
       this.taskCounter,
     )
@@ -416,7 +429,7 @@ export class AerodromeSlipstreamV3Extractor extends IExtractor {
         address: expectedPoolAddress,
         token0: t0.address as Address,
         token1: t1.address as Address,
-        fee: p.fee,
+        tickSpacing: p.tickSpacing,
         factory: p.factory.address,
       })
     watcher.once('isUpdated', () => {
@@ -450,11 +463,13 @@ export class AerodromeSlipstreamV3Extractor extends IExtractor {
         const t1 = tokensUnique[j]
         this.factories.forEach((factory) => {
           const feeSpacingMap = factory.feeSpacingMap ?? {}
-          const fees = Object.keys(feeSpacingMap).map((f) => Number(f))
-          fees.forEach((fee) => {
+          const tickSpacings = Object.values(feeSpacingMap).map((f) =>
+            Number(f),
+          )
+          tickSpacings.forEach((tickSpacing) => {
             const res = this.getWatchersForTokenPair(
               factory,
-              fee,
+              tickSpacing,
               t0,
               t1,
               startTime,
@@ -508,11 +523,13 @@ export class AerodromeSlipstreamV3Extractor extends IExtractor {
         const t1 = tokensUnique2[j]
         this.factories.forEach((factory) => {
           const feeSpacingMap = factory.feeSpacingMap ?? {}
-          const fees = Object.keys(feeSpacingMap).map((f) => Number(f))
-          fees.forEach((fee) => {
+          const tickSpacings = Object.values(feeSpacingMap).map((f) =>
+            Number(f),
+          )
+          tickSpacings.forEach((tickSpacing) => {
             const res = this.getWatchersForTokenPair(
               factory,
-              fee,
+              tickSpacing,
               t0,
               t1,
               startTime,
@@ -557,12 +574,13 @@ export class AerodromeSlipstreamV3Extractor extends IExtractor {
 
   getWatchersForTokenPair(
     factory: AerodromeSlipstreamFactoryV3,
-    fee: number,
+    tickSpacing: number,
     t0: Token,
     t1: Token,
     startTime: number,
   ): undefined | UniV3PoolWatcher | Promise<UniV3PoolWatcher | undefined> {
-    const addr = this.computeV3Address(factory, t0, t1, fee)
+    const addr = this.computeV3Address(factory, t0, t1, tickSpacing)
+    if (addr === undefined) return
     const addrL = addr.toLowerCase() as Address
     const pool = this.poolMap.get(addrL)
     if (pool) return pool
@@ -571,7 +589,7 @@ export class AerodromeSlipstreamV3Extractor extends IExtractor {
       .callValue(factory.address, IUniswapV3Factory.abi as Abi, 'getPool', [
         t0.address,
         t1.address,
-        fee,
+        tickSpacing,
       ])
       .then(
         (checkedAddress) => {
@@ -580,7 +598,7 @@ export class AerodromeSlipstreamV3Extractor extends IExtractor {
             return
           }
           const watcher = this.addPoolWatching(
-            { address: addr, token0: t0, token1: t1, fee, factory },
+            { address: addr, token0: t0, token1: t1, tickSpacing, factory },
             'request',
             true,
             startTime,
@@ -596,6 +614,7 @@ export class AerodromeSlipstreamV3Extractor extends IExtractor {
     if (this.otherFactoryPoolSet.has(address.toLowerCase() as Address)) return
     if (this.multiCallAggregator.chainId === undefined) return
     this.taskCounter.inc()
+    debugger
     try {
       this.emptyAddressSet.delete(address)
       const startTime = performance.now()
@@ -608,7 +627,7 @@ export class AerodromeSlipstreamV3Extractor extends IExtractor {
         (factoryAddress as Address).toLowerCase(),
       )
       if (factory !== undefined) {
-        const [token0Address, token1Address, fee] = await Promise.all([
+        const [token0Address, token1Address, tickSpacing] = await Promise.all([
           this.multiCallAggregator.callValue(
             address,
             IUniswapV3Pool.abi as Abi,
@@ -622,7 +641,7 @@ export class AerodromeSlipstreamV3Extractor extends IExtractor {
           this.multiCallAggregator.callValue(
             address,
             IUniswapV3Pool.abi as Abi,
-            'fee',
+            'tickSpacing',
           ),
         ])
         const [token0, token1] = await Promise.all([
@@ -631,7 +650,13 @@ export class AerodromeSlipstreamV3Extractor extends IExtractor {
         ])
         if (token0 && token1) {
           this.addPoolWatching(
-            { address, token0, token1, fee: fee as number, factory },
+            {
+              address,
+              token0,
+              token1,
+              tickSpacing: tickSpacing as number,
+              factory,
+            },
             'logs',
             true,
             startTime,
@@ -646,9 +671,10 @@ export class AerodromeSlipstreamV3Extractor extends IExtractor {
     }
     this.taskCounter.dec()
     this.otherFactoryPoolSet.add(address.toLowerCase() as Address)
-    this.consoleLog(
-      `other factory pool ${address}, such pools known: ${this.otherFactoryPoolSet.size}`,
-    )
+    // Lets don't log it as most of such pools are UniV3
+    // this.consoleLog(
+    //   `other factory pool ${address}, such pools known: ${this.otherFactoryPoolSet.size}`,
+    // )
   }
 
   override getCurrentPoolCodes(): PoolCode[] {
@@ -689,19 +715,40 @@ export class AerodromeSlipstreamV3Extractor extends IExtractor {
     factory: AerodromeSlipstreamFactoryV3,
     tokenA: Token,
     tokenB: Token,
-    fee: number,
-  ): Address {
-    const key = `${tokenA.address}${tokenB.address}${fee}${factory.address}`
+    tickSpacing: number,
+  ): Address | undefined {
+    if (!factory.poolImplementation) return
+
+    const key = `${tokenA.address}${tokenB.address}${tickSpacing}${factory.address}`
     const cached = this.addressCache.get(key)
     if (cached) return cached
-    const poolCreator = factory.address
-    const addr = computeSushiSwapV3PoolAddress({
-      factoryAddress: poolCreator,
-      tokenA,
-      tokenB,
-      fee,
-      initCodeHashManualOverride: factory.initCodeHash,
-    }) as Address
+
+    const [token0, token1] = tokenA.sortsBefore(tokenB)
+      ? [tokenA, tokenB]
+      : [tokenB, tokenA]
+    const constructorArgumentsEncoded = defaultAbiCoder.encode(
+      ['address', 'address', 'int24'],
+      [token0.address, token1.address, tickSpacing],
+    ) as Hex
+    const initCode =
+      `0x3d602d80600a3d3981f3363d3d373d3d3d363d73${factory.poolImplementation.replace(
+        '0x',
+        '',
+      )}5af43d82803e903d91602b57fd5bf3` as Hex
+    const initCodeHash = keccak256(initCode)
+
+    const create2Inputs = [
+      '0xff',
+      factory.address,
+      // salt
+      keccak256(constructorArgumentsEncoded),
+      // init code hash
+      initCodeHash,
+    ]
+    const sanitizedInputs = `0x${create2Inputs
+      .map((i) => i.slice(2))
+      .join('')}` as Hex
+    const addr = getAddress(`0x${keccak256(sanitizedInputs).slice(-40)}`)
     this.addressCache.set(key, addr)
     return addr
   }
