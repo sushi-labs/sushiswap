@@ -691,6 +691,17 @@ export const EXTRACTOR_CONFIG: Record<
     factoriesV3: [
       sushiswapV3Factory(ChainId.SCROLL),
       uniswapV3Factory(ChainId.SCROLL),
+      {
+        address: '0x96a7F53f7636c93735bf85dE416A4Ace94B56Bd9' as Address,
+        provider: LiquidityProviders.ZebraV2,
+        initCodeHash:
+          '0xcf0b3414328c2bd327a4f093539d0d7d82fb94f893a2965c75cb470289cb5ac7',
+        feeSpacingMap: {
+          500: 10,
+          3000: 60,
+          10_000: 200,
+        },
+      },
     ],
     tickHelperContractV3: SUSHISWAP_V3_TICK_LENS[ChainId.SCROLL],
     tickHelperContractAlgebra:
