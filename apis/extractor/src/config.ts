@@ -166,6 +166,13 @@ export const EXTRACTOR_CONFIG: Record<
         initCodeHash:
           '0x0bbca9af0511ad1a1da383135cf3a8d2ac620e549ef9f6ae3a4c33c2fed0af91',
       },
+      {
+        address: '0xefa94DE7a4656D787667C749f7E1223D71E9FD88' as Address,
+        provider: LiquidityProviders.Pangolin,
+        fee: 0.003,
+        initCodeHash:
+          '0x40231f6b438bce0797c9ada29b718a87ea0a5cea3fe9a771abdd76bd41a3e545',
+      },
     ],
     factoriesV3: [
       sushiswapV3Factory(ChainId.AVALANCHE),

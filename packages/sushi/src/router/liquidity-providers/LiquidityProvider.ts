@@ -54,6 +54,7 @@ export enum LiquidityProviders {
   Horizon = 'Horizon',
   Scribe = 'Scribe',
   COREx = 'COREx',
+  Pangolin = 'Pangolin',
 }
 
 export abstract class LiquidityProvider {
