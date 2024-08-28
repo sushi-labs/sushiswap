@@ -147,7 +147,7 @@ export const SimpleSwapTokenNotFoundDialog = () => {
                     </span>
                   }
                 >
-                  {token0.name}
+                  {token0.symbol}
                 </List.KeyValue>
                 <List.KeyValue
                   title={
