@@ -32,6 +32,7 @@
     "test-cache": "npx tsx ./test/cacheTest.ts"
   },
   "dependencies": {
+    "@ethersproject/abi": "5.7.0",
     "@cryptoalgebra/integral-core": "0.2.0",
     "@cryptoalgebra/integral-periphery": "0.2.0",
     "@sentry/node": "7.110.0",
