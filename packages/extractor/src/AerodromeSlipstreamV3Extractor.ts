@@ -35,9 +35,11 @@ import { FeeSpacingMap } from './UniV3Extractor.js'
 import { UniV3EventsAbi, UniV3PoolWatcherStatus } from './UniV3PoolWatcher.js'
 import { delay } from './Utils.js'
 
-const TickSpacingEnabledEventABI = parseAbiItem(
-  'event TickSpacingEnabled(int24 indexed tickSpacing, uint24 indexed fee)',
-)
+const TickSpacingEnabledEventABI = [
+  parseAbiItem(
+    'event TickSpacingEnabled(int24 indexed tickSpacing, uint24 indexed fee)',
+  ),
+]
 const AerodromeSlipstreamABI = parseAbi([
   'function tickSpacingToFee(int24) view returns (uint24)',
   'function poolImplementation() view returns (address)',
@@ -82,6 +84,8 @@ interface PoolCacheRecord {
 //    });
 // 3) Pool fee can be changed (not during swap). But tickSpacing - never
 // 4) Different slot0 struct (no fee)
+// 5) SugarHelper ('0x0AD09A66af0154a84e86F761313d02d0abB6edd5') instead of Tickens.
+//    getPopulatedTicks function (takes startTick, not a word index) instead of getPopulatedTicksInWord
 export class AerodromeSlipstreamV3Extractor extends IExtractor {
   factories: AerodromeSlipstreamFactoryV3[]
   factoryMap: Map<string, AerodromeSlipstreamFactoryV3> = new Map()
@@ -185,7 +189,9 @@ export class AerodromeSlipstreamV3Extractor extends IExtractor {
             ? Number(logs[logs.length - 1].blockNumber || 0)
             : '<undefined>'
         try {
-          const logNames = logs.map((l) => this.processLog(l))
+          const logNames = logs
+            .map((l) => this.processLog(l))
+            .filter((n) => n !== 'UnknPool') // because most of such events are from UniV3
           this.consoleLog(
             `Block ${blockNumber} ${logNames.length} logs: [${logNames}], jobs: ${this.taskCounter.counter}`,
           )
@@ -234,6 +240,16 @@ export class AerodromeSlipstreamV3Extractor extends IExtractor {
             factory,
           })
       })
+
+      this.consoleLog(`${cachedPools.size} pools were taken from cache`)
+      this.consoleLog(
+        `ExtractorAerodromeSlipstreamV3 is started (${Math.round(
+          performance.now() - startTime,
+        )}ms)`,
+      )
+
+      await this.fetchFeeSpacingMap()
+
       const promises = Array.from(cachedPools.values())
         .map((p) => this.addPoolWatching(p, 'cache', false))
         .filter((w) => w !== undefined)
@@ -256,15 +272,6 @@ export class AerodromeSlipstreamV3Extractor extends IExtractor {
           )
         }
       })
-
-      await this.fetchFeeSpacingMap()
-
-      this.consoleLog(`${cachedPools.size} pools were taken from cache`)
-      this.consoleLog(
-        `ExtractorAerodromeSlipstreamV3 is started (${Math.round(
-          performance.now() - startTime,
-        )}ms)`,
-      )
     }
   }
 
@@ -272,7 +279,7 @@ export class AerodromeSlipstreamV3Extractor extends IExtractor {
     const client = this.multiCallAggregator.client
 
     // checks once per our changes in feeSpacingMap
-    client.createEventFilter({ event: TickSpacingEnabledEventABI }).then(
+    client.createEventFilter({ events: TickSpacingEnabledEventABI }).then(
       async (filter) => {
         for (;;) {
           await delay(3600 * 1000)
@@ -311,7 +318,7 @@ export class AerodromeSlipstreamV3Extractor extends IExtractor {
         try {
           const logs = await client.getLogs({
             address: f.address,
-            event: TickSpacingEnabledEventABI,
+            events: TickSpacingEnabledEventABI,
           })
           const feeSpacingMap: FeeSpacingMap = {}
           logs.forEach((l) => {

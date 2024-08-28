@@ -5,6 +5,7 @@ import { Token } from 'sushi/currency'
 import { LiquidityProviders, PoolCode, UniV3PoolCode } from 'sushi/router'
 import { CLTick, RToken, UniV3Pool } from 'sushi/tines'
 import { Abi, Log, decodeEventLog } from 'viem'
+import { AerodromeSlipstreamWordLoadManager } from './AerodromeSlipstreamWordLoadManager.js'
 import { Counter } from './Counter.js'
 import { Logger } from './Logger.js'
 import { MultiCallAggregator } from './MulticallAggregator.js'
@@ -13,7 +14,6 @@ import {
   UniV3PoolWatcherStatus,
   liquidityAbi,
 } from './UniV3PoolWatcher.js'
-import { WordLoadManager } from './WordLoadManager.js'
 
 const feeAbi: Abi = [
   {
@@ -125,7 +125,7 @@ export class AerodromeSlipstreamV3PoolWatcher extends EventEmitter {
 
   provider: LiquidityProviders
   client: MultiCallAggregator
-  wordLoadManager: WordLoadManager
+  wordLoadManager: AerodromeSlipstreamWordLoadManager
   state?: AerodromeSlipstreamV3PoolSelfState
   updatePoolStateGuard = false
   busyCounter?: Counter
@@ -152,7 +152,7 @@ export class AerodromeSlipstreamV3PoolWatcher extends EventEmitter {
     this.spacing = spacing
 
     this.client = client
-    this.wordLoadManager = new WordLoadManager(
+    this.wordLoadManager = new AerodromeSlipstreamWordLoadManager(
       address,
       this.spacing,
       tickHelperContract,
