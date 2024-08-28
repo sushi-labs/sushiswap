@@ -537,6 +537,13 @@ export const EXTRACTOR_CONFIG: Record<
         initCodeHash:
           '0xcdf2deca40a0bd56de8e3ce5c7df6727e5b1bf2ac96f283fa9c4b3e6b42ea9d2',
       },
+      {
+        address: '0xC831A5cBfb4aC2Da5ed5B194385DFD9bF5bFcBa7' as Address,
+        provider: LiquidityProviders.Wigoswap,
+        fee: 0.0019,
+        initCodeHash:
+          '0x55c39e9406ff3c89a193882b4752879e73c8a0ce1222fe1de34c5e8f6482d9b6',
+      },
     ],
     factoriesV3: [
       sushiswapV3Factory(ChainId.FANTOM),

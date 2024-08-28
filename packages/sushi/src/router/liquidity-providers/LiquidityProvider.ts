@@ -57,6 +57,7 @@ export enum LiquidityProviders {
   COREx = 'COREx',
   Pangolin = 'Pangolin',
   ZebraV2 = 'ZebraV2',
+  Wigoswap = 'Wigoswap',
 }
 
 export abstract class LiquidityProvider {
