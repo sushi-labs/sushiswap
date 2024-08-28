@@ -391,6 +391,9 @@ importers:
       '@sushiswap/nextjs-config':
         specifier: workspace:*
         version: link:../../config/nextjs
+      '@sushiswap/notifications':
+        specifier: workspace:*
+        version: link:../../packages/notifications
       '@sushiswap/react-query':
         specifier: workspace:*
         version: link:../../packages/react-query

@@ -1,6 +1,6 @@
-"use client";
-import { SwapProvider } from "./swap-provider";
+'use client'
+import { SwapProvider } from './swap-provider'
 
 export async function Providers({ children }: { children: React.ReactNode }) {
-	return <SwapProvider>{children}</SwapProvider>;
+  return <SwapProvider>{children}</SwapProvider>
 }

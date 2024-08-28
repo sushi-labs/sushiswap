@@ -7,8 +7,8 @@ import { WalletError } from '@tronweb3/tronwallet-abstract-adapter'
 import { WalletProvider } from '@tronweb3/tronwallet-adapter-react-hooks'
 import { WalletModalProvider } from '@tronweb3/tronwallet-adapter-react-ui'
 import { useCallback } from 'react'
-import { useWalletAdapters } from 'src/hooks/useWalletAdapters'
-import { QueryClientProvider } from '../providers/query-client-provider'
+import { useWalletAdapters } from '~tron/_common/lib/hooks/useWalletAdapters'
+import { QueryClientProvider } from './_common/providers/query-client-provider'
 
 export function Providers({ children }: { children: React.ReactNode }) {
   const { adapters } = useWalletAdapters()

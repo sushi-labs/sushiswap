@@ -3,6 +3,9 @@
 		"baseUrl": ".",
 		"target": "ESNext",
 		"lib": ["DOM", "DOM.Iterable", "ESNext"],
+		"paths": {
+			"~tron/*": ["src/app/*"],
+		},
 		"allowJs": true,
 		"skipLibCheck": true,
 		"strict": true,

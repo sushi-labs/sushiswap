@@ -7,7 +7,7 @@ import {
 } from '@sushiswap/ui'
 import React, { FC } from 'react'
 
-import { WalletConnector } from 'src/components/WalletConnector/WalletConnector'
+import { WalletConnector } from '~tron/_common/ui/WalletConnector/WalletConnector'
 
 const nagivationElements: NavigationElement[] = [
   {

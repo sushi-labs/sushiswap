@@ -1,10 +1,12 @@
-import { Metadata } from "next";
-import { PoolProvider } from "./pool-provider";
+import { Metadata } from 'next'
+import { PoolProvider } from './pool-provider'
 
 export const metadata: Metadata = {
-	title: "Pool",
-};
+  title: 'Pool',
+}
 
-export default function PoolLayout({ children }: { children: React.ReactNode }) {
-	return <PoolProvider>{children}</PoolProvider>;
+export default function PoolLayout({
+  children,
+}: { children: React.ReactNode }) {
+  return <PoolProvider>{children}</PoolProvider>
 }
