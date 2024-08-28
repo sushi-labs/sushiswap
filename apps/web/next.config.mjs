@@ -12,7 +12,7 @@ const nextConfig = bundleAnalyzer({
   ...defaultNextConfig,
   experimental: {
     ...defaultNextConfig.experimental,
-    testProxy: true,
+    testProxy: process.env.NEXT_PUBLIC_APP_ENV === 'test',
   },
   async redirects() {
     return [
