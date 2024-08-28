@@ -72,13 +72,15 @@ export const WagmiConfig: FC<{
 
   return (
     <WagmiProvider config={wagmiConfig} initialState={initialState}>
-      <RainbowKitProvider
-        modalSize="compact"
-        theme={rainbowKitTheme}
-        appInfo={{ disclaimer: Disclaimer }}
-      >
-        {children}
-      </RainbowKitProvider>
+      <div className="h-full w-full [&>div]:h-full">
+        <RainbowKitProvider
+          modalSize="compact"
+          theme={rainbowKitTheme}
+          appInfo={{ disclaimer: Disclaimer }}
+        >
+          {children}
+        </RainbowKitProvider>
+      </div>
     </WagmiProvider>
   )
 }
