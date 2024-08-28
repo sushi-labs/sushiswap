@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import { ethers } from 'ethers'
+import { decodeAbiParameters } from 'viem/utils'
 import { TRON_MULTICALL_ABI } from '~tron/_common/constants/abis/tron-multicall'
 import {
   FACTORY_CONTRACT,
@@ -86,11 +86,15 @@ export const useRoutes = ({
 
       const _pairs: string[] = []
       for (let i = 0; i < returnData.length; i++) {
-        const pairAddress = ethers.utils.defaultAbiCoder.decode(
-          ['address'],
+        const pairAddress = decodeAbiParameters(
+          [
+            {
+              type: 'address',
+            },
+          ],
           returnData[i],
         )
-        _pairs.push(getBase58Address(pairAddress?.[0] as string))
+        _pairs.push(getBase58Address(pairAddress?.[0]))
       }
 
       //using multicall, check if there is a direct pair (index 0), if not check if there is a pair with intermediate token (index 1 or 2)

@@ -24,6 +24,9 @@ patchedDependencies:
   '@walletconnect/logger@2.1.2':
     hash: rvv5xppc7nrkuugnnppsvoyepa
     path: patches/@walletconnect__logger@2.1.2.patch
+  swarm-js@0.1.42:
+    hash: 2sabagotzgj5qrte5szyhjypv4
+    path: patches/swarm-js@0.1.42.patch
 
 importers:
 
@@ -426,7 +429,7 @@ importers:
         version: 1.1.8(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       '@tronweb3/tronwallet-adapters':
         specifier: ^1.2.1
-        version: 1.2.2(@types/react@18.2.14)(bufferutil@4.0.8)(encoding@0.1.13)(immer@9.0.21)(react@18.2.0)(typescript@5.5.4)(utf-8-validate@5.0.10)(zod@3.23.8)
+        version: 1.2.2(@types/react@18.2.14)(@upstash/redis@1.22.1)(bufferutil@4.0.8)(encoding@0.1.13)(immer@9.0.21)(react@18.2.0)(typescript@5.5.4)(utf-8-validate@5.0.10)(zod@3.23.8)
       '@vercel/analytics':
         specifier: 1.3.1
         version: 1.3.1(next@14.2.3(@babel/core@7.24.4)(@opentelemetry/api@1.9.0)(@playwright/test@1.45.0)(babel-plugin-macros@3.1.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(react@18.2.0)
@@ -647,6 +650,18 @@ importers:
       '@tanstack/react-table':
         specifier: 8.9.1
         version: 8.9.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+      '@tronweb3/tronwallet-abstract-adapter':
+        specifier: ^1.1.6
+        version: 1.1.6
+      '@tronweb3/tronwallet-adapter-react-hooks':
+        specifier: ^1.1.7
+        version: 1.1.7(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+      '@tronweb3/tronwallet-adapter-react-ui':
+        specifier: ^1.1.8
+        version: 1.1.8(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+      '@tronweb3/tronwallet-adapters':
+        specifier: ^1.2.1
+        version: 1.2.2(@types/react@18.2.14)(@upstash/redis@1.22.1)(bufferutil@4.0.8)(encoding@0.1.13)(immer@9.0.21)(react@18.2.0)(typescript@5.5.4)(utf-8-validate@5.0.10)(zod@3.23.8)
       '@tryghost/content-api':
         specifier: 1.11.17
         version: 1.11.17
@@ -776,6 +791,9 @@ importers:
       tiny-invariant:
         specifier: 1.3.1
         version: 1.3.1
+      tronweb:
+        specifier: ^5.3.2
+        version: 5.3.2(bufferutil@4.0.8)(utf-8-validate@5.0.10)
       viem:
         specifier: 2.21.4
         version: 2.21.4(bufferutil@4.0.8)(typescript@5.5.4)(utf-8-validate@5.0.10)(zod@3.23.8)
@@ -33669,11 +33687,11 @@ snapshots:
     dependencies:
       '@tronweb3/tronwallet-abstract-adapter': 1.1.6
 
-  '@tronweb3/tronwallet-adapter-walletconnect@2.0.0(@types/react@18.2.14)(bufferutil@4.0.8)(encoding@0.1.13)(immer@9.0.21)(react@18.2.0)(typescript@5.5.4)(utf-8-validate@5.0.10)(zod@3.23.8)':
+  '@tronweb3/tronwallet-adapter-walletconnect@2.0.0(@types/react@18.2.14)(@upstash/redis@1.22.1)(bufferutil@4.0.8)(encoding@0.1.13)(immer@9.0.21)(react@18.2.0)(typescript@5.5.4)(utf-8-validate@5.0.10)(zod@3.23.8)':
     dependencies:
       '@tronweb3/tronwallet-abstract-adapter': 1.1.6
-      '@tronweb3/walletconnect-tron': 3.0.0(@types/react@18.2.14)(bufferutil@4.0.8)(react@18.2.0)(utf-8-validate@5.0.10)
-      '@wagmi/core': 1.4.13(@types/react@18.2.14)(bufferutil@4.0.8)(encoding@0.1.13)(immer@9.0.21)(react@18.2.0)(typescript@5.5.4)(utf-8-validate@5.0.10)(viem@0.3.50(bufferutil@4.0.8)(typescript@5.5.4)(utf-8-validate@5.0.10)(zod@3.23.8))(zod@3.23.8)
+      '@tronweb3/walletconnect-tron': 3.0.0(@types/react@18.2.14)(@upstash/redis@1.22.1)(bufferutil@4.0.8)(react@18.2.0)(utf-8-validate@5.0.10)
+      '@wagmi/core': 1.4.13(@types/react@18.2.14)(@upstash/redis@1.22.1)(bufferutil@4.0.8)(encoding@0.1.13)(immer@9.0.21)(react@18.2.0)(typescript@5.5.4)(utf-8-validate@5.0.10)(viem@0.3.50(bufferutil@4.0.8)(typescript@5.5.4)(utf-8-validate@5.0.10)(zod@3.23.8))(zod@3.23.8)
       '@walletconnect/sign-client': 2.16.1(@upstash/redis@1.22.1)(bufferutil@4.0.8)(utf-8-validate@5.0.10)
       '@walletconnect/types': 2.14.0(@upstash/redis@1.22.1)
       viem: 0.3.50(bufferutil@4.0.8)(typescript@5.5.4)(utf-8-validate@5.0.10)(zod@3.23.8)
@@ -33700,14 +33718,14 @@ snapshots:
       - utf-8-validate
       - zod
 
-  '@tronweb3/tronwallet-adapters@1.2.2(@types/react@18.2.14)(bufferutil@4.0.8)(encoding@0.1.13)(immer@9.0.21)(react@18.2.0)(typescript@5.5.4)(utf-8-validate@5.0.10)(zod@3.23.8)':
+  '@tronweb3/tronwallet-adapters@1.2.2(@types/react@18.2.14)(@upstash/redis@1.22.1)(bufferutil@4.0.8)(encoding@0.1.13)(immer@9.0.21)(react@18.2.0)(typescript@5.5.4)(utf-8-validate@5.0.10)(zod@3.23.8)':
     dependencies:
       '@tronweb3/tronwallet-adapter-bitkeep': 1.1.1(bufferutil@4.0.8)(encoding@0.1.13)(utf-8-validate@5.0.10)
       '@tronweb3/tronwallet-adapter-ledger': 1.1.8
       '@tronweb3/tronwallet-adapter-okxwallet': 1.0.3
       '@tronweb3/tronwallet-adapter-tokenpocket': 1.0.3
       '@tronweb3/tronwallet-adapter-tronlink': 1.1.9
-      '@tronweb3/tronwallet-adapter-walletconnect': 2.0.0(@types/react@18.2.14)(bufferutil@4.0.8)(encoding@0.1.13)(immer@9.0.21)(react@18.2.0)(typescript@5.5.4)(utf-8-validate@5.0.10)(zod@3.23.8)
+      '@tronweb3/tronwallet-adapter-walletconnect': 2.0.0(@types/react@18.2.14)(@upstash/redis@1.22.1)(bufferutil@4.0.8)(encoding@0.1.13)(immer@9.0.21)(react@18.2.0)(typescript@5.5.4)(utf-8-validate@5.0.10)(zod@3.23.8)
     transitivePeerDependencies:
       - '@azure/app-configuration'
       - '@azure/cosmos'
@@ -33731,7 +33749,7 @@ snapshots:
       - utf-8-validate
       - zod
 
-  '@tronweb3/walletconnect-tron@3.0.0(@types/react@18.2.14)(bufferutil@4.0.8)(react@18.2.0)(utf-8-validate@5.0.10)':
+  '@tronweb3/walletconnect-tron@3.0.0(@types/react@18.2.14)(@upstash/redis@1.22.1)(bufferutil@4.0.8)(react@18.2.0)(utf-8-validate@5.0.10)':
     dependencies:
       '@walletconnect/modal': 2.6.2(@types/react@18.2.14)(react@18.2.0)
       '@walletconnect/sign-client': 2.16.1(@upstash/redis@1.22.1)(bufferutil@4.0.8)(utf-8-validate@5.0.10)
@@ -35165,15 +35183,15 @@ snapshots:
     optionalDependencies:
       typescript: 5.5.4
 
-  '@wagmi/connectors@3.1.11(@types/react@18.2.14)(bufferutil@4.0.8)(encoding@0.1.13)(react@18.2.0)(typescript@5.5.4)(utf-8-validate@5.0.10)(viem@0.3.50(bufferutil@4.0.8)(typescript@5.5.4)(utf-8-validate@5.0.10)(zod@3.23.8))(zod@3.23.8)':
+  '@wagmi/connectors@3.1.11(@types/react@18.2.14)(@upstash/redis@1.22.1)(bufferutil@4.0.8)(encoding@0.1.13)(react@18.2.0)(typescript@5.5.4)(utf-8-validate@5.0.10)(viem@0.3.50(bufferutil@4.0.8)(typescript@5.5.4)(utf-8-validate@5.0.10)(zod@3.23.8))(zod@3.23.8)':
     dependencies:
       '@coinbase/wallet-sdk': 3.9.3
       '@safe-global/safe-apps-provider': 0.18.3(bufferutil@4.0.8)(encoding@0.1.13)(typescript@5.5.4)(utf-8-validate@5.0.10)(zod@3.23.8)
       '@safe-global/safe-apps-sdk': 8.1.0(bufferutil@4.0.8)(encoding@0.1.13)(typescript@5.5.4)(utf-8-validate@5.0.10)(zod@3.23.8)
-      '@walletconnect/ethereum-provider': 2.11.0(@types/react@18.2.14)(bufferutil@4.0.8)(encoding@0.1.13)(react@18.2.0)(utf-8-validate@5.0.10)
+      '@walletconnect/ethereum-provider': 2.11.0(@types/react@18.2.14)(@upstash/redis@1.22.1)(bufferutil@4.0.8)(encoding@0.1.13)(react@18.2.0)(utf-8-validate@5.0.10)
       '@walletconnect/legacy-provider': 2.0.0(encoding@0.1.13)
       '@walletconnect/modal': 2.6.2(@types/react@18.2.14)(react@18.2.0)
-      '@walletconnect/utils': 2.11.0
+      '@walletconnect/utils': 2.11.0(@upstash/redis@1.22.1)
       abitype: 0.8.7(typescript@5.5.4)(zod@3.23.8)
       eventemitter3: 4.0.7
       viem: 0.3.50(bufferutil@4.0.8)(typescript@5.5.4)(utf-8-validate@5.0.10)(zod@3.23.8)
@@ -35348,9 +35366,9 @@ snapshots:
       - utf-8-validate
       - zod
 
-  '@wagmi/core@1.4.13(@types/react@18.2.14)(bufferutil@4.0.8)(encoding@0.1.13)(immer@9.0.21)(react@18.2.0)(typescript@5.5.4)(utf-8-validate@5.0.10)(viem@0.3.50(bufferutil@4.0.8)(typescript@5.5.4)(utf-8-validate@5.0.10)(zod@3.23.8))(zod@3.23.8)':
+  '@wagmi/core@1.4.13(@types/react@18.2.14)(@upstash/redis@1.22.1)(bufferutil@4.0.8)(encoding@0.1.13)(immer@9.0.21)(react@18.2.0)(typescript@5.5.4)(utf-8-validate@5.0.10)(viem@0.3.50(bufferutil@4.0.8)(typescript@5.5.4)(utf-8-validate@5.0.10)(zod@3.23.8))(zod@3.23.8)':
     dependencies:
-      '@wagmi/connectors': 3.1.11(@types/react@18.2.14)(bufferutil@4.0.8)(encoding@0.1.13)(react@18.2.0)(typescript@5.5.4)(utf-8-validate@5.0.10)(viem@0.3.50(bufferutil@4.0.8)(typescript@5.5.4)(utf-8-validate@5.0.10)(zod@3.23.8))(zod@3.23.8)
+      '@wagmi/connectors': 3.1.11(@types/react@18.2.14)(@upstash/redis@1.22.1)(bufferutil@4.0.8)(encoding@0.1.13)(react@18.2.0)(typescript@5.5.4)(utf-8-validate@5.0.10)(viem@0.3.50(bufferutil@4.0.8)(typescript@5.5.4)(utf-8-validate@5.0.10)(zod@3.23.8))(zod@3.23.8)
       abitype: 0.8.7(typescript@5.5.4)(zod@3.23.8)
       eventemitter3: 4.0.7
       viem: 0.3.50(bufferutil@4.0.8)(typescript@5.5.4)(utf-8-validate@5.0.10)(zod@3.23.8)
@@ -35428,7 +35446,7 @@ snapshots:
     dependencies:
       '@wallet-standard/base': 1.0.1
 
-  '@walletconnect/core@2.11.0(bufferutil@4.0.8)(encoding@0.1.13)(utf-8-validate@5.0.10)':
+  '@walletconnect/core@2.11.0(@upstash/redis@1.22.1)(bufferutil@4.0.8)(encoding@0.1.13)(utf-8-validate@5.0.10)':
     dependencies:
       '@walletconnect/heartbeat': 1.2.1
       '@walletconnect/jsonrpc-provider': 1.0.13
@@ -35437,12 +35455,12 @@ snapshots:
       '@walletconnect/jsonrpc-ws-connection': 1.0.14(bufferutil@4.0.8)(utf-8-validate@5.0.10)
       '@walletconnect/keyvaluestorage': 1.1.1(@upstash/redis@1.22.1)
       '@walletconnect/logger': 2.1.2(patch_hash=rvv5xppc7nrkuugnnppsvoyepa)
-      '@walletconnect/relay-api': 1.0.10
+      '@walletconnect/relay-api': 1.0.11
       '@walletconnect/relay-auth': 1.0.4
       '@walletconnect/safe-json': 1.0.2
       '@walletconnect/time': 1.0.2
-      '@walletconnect/types': 2.11.0
-      '@walletconnect/utils': 2.11.0
+      '@walletconnect/types': 2.11.0(@upstash/redis@1.22.1)
+      '@walletconnect/utils': 2.11.0(@upstash/redis@1.22.1)
       events: 3.3.0
       isomorphic-unfetch: 3.1.0(encoding@0.1.13)
       lodash.isequal: 4.5.0
@@ -35556,17 +35574,17 @@ snapshots:
     dependencies:
       tslib: 1.14.1
 
-  '@walletconnect/ethereum-provider@2.11.0(@types/react@18.2.14)(bufferutil@4.0.8)(encoding@0.1.13)(react@18.2.0)(utf-8-validate@5.0.10)':
+  '@walletconnect/ethereum-provider@2.11.0(@types/react@18.2.14)(@upstash/redis@1.22.1)(bufferutil@4.0.8)(encoding@0.1.13)(react@18.2.0)(utf-8-validate@5.0.10)':
     dependencies:
       '@walletconnect/jsonrpc-http-connection': 1.0.8(encoding@0.1.13)
       '@walletconnect/jsonrpc-provider': 1.0.14
       '@walletconnect/jsonrpc-types': 1.0.4
       '@walletconnect/jsonrpc-utils': 1.0.8
       '@walletconnect/modal': 2.6.2(@types/react@18.2.14)(react@18.2.0)
-      '@walletconnect/sign-client': 2.11.0(bufferutil@4.0.8)(encoding@0.1.13)(utf-8-validate@5.0.10)
-      '@walletconnect/types': 2.11.0
-      '@walletconnect/universal-provider': 2.11.0(bufferutil@4.0.8)(encoding@0.1.13)(utf-8-validate@5.0.10)
-      '@walletconnect/utils': 2.11.0
+      '@walletconnect/sign-client': 2.11.0(@upstash/redis@1.22.1)(bufferutil@4.0.8)(encoding@0.1.13)(utf-8-validate@5.0.10)
+      '@walletconnect/types': 2.11.0(@upstash/redis@1.22.1)
+      '@walletconnect/universal-provider': 2.11.0(@upstash/redis@1.22.1)(bufferutil@4.0.8)(encoding@0.1.13)(utf-8-validate@5.0.10)
+      '@walletconnect/utils': 2.11.0(@upstash/redis@1.22.1)
       events: 3.3.0
     transitivePeerDependencies:
       - '@azure/app-configuration'
@@ -35840,16 +35858,16 @@ snapshots:
     dependencies:
       tslib: 1.14.1
 
-  '@walletconnect/sign-client@2.11.0(bufferutil@4.0.8)(encoding@0.1.13)(utf-8-validate@5.0.10)':
+  '@walletconnect/sign-client@2.11.0(@upstash/redis@1.22.1)(bufferutil@4.0.8)(encoding@0.1.13)(utf-8-validate@5.0.10)':
     dependencies:
-      '@walletconnect/core': 2.11.0(bufferutil@4.0.8)(encoding@0.1.13)(utf-8-validate@5.0.10)
+      '@walletconnect/core': 2.11.0(@upstash/redis@1.22.1)(bufferutil@4.0.8)(encoding@0.1.13)(utf-8-validate@5.0.10)
       '@walletconnect/events': 1.0.1
       '@walletconnect/heartbeat': 1.2.1
       '@walletconnect/jsonrpc-utils': 1.0.8
       '@walletconnect/logger': 2.1.2(patch_hash=rvv5xppc7nrkuugnnppsvoyepa)
       '@walletconnect/time': 1.0.2
-      '@walletconnect/types': 2.11.0
-      '@walletconnect/utils': 2.11.0
+      '@walletconnect/types': 2.11.0(@upstash/redis@1.22.1)
+      '@walletconnect/utils': 2.11.0(@upstash/redis@1.22.1)
       events: 3.3.0
     transitivePeerDependencies:
       - '@azure/app-configuration'
@@ -35930,7 +35948,7 @@ snapshots:
     dependencies:
       tslib: 1.14.1
 
-  '@walletconnect/types@2.11.0':
+  '@walletconnect/types@2.11.0(@upstash/redis@1.22.1)':
     dependencies:
       '@walletconnect/events': 1.0.1
       '@walletconnect/heartbeat': 1.2.1
@@ -35999,16 +36017,16 @@ snapshots:
       - '@vercel/kv'
       - supports-color
 
-  '@walletconnect/universal-provider@2.11.0(bufferutil@4.0.8)(encoding@0.1.13)(utf-8-validate@5.0.10)':
+  '@walletconnect/universal-provider@2.11.0(@upstash/redis@1.22.1)(bufferutil@4.0.8)(encoding@0.1.13)(utf-8-validate@5.0.10)':
     dependencies:
       '@walletconnect/jsonrpc-http-connection': 1.0.8(encoding@0.1.13)
       '@walletconnect/jsonrpc-provider': 1.0.13
       '@walletconnect/jsonrpc-types': 1.0.4
       '@walletconnect/jsonrpc-utils': 1.0.8
       '@walletconnect/logger': 2.1.2(patch_hash=rvv5xppc7nrkuugnnppsvoyepa)
-      '@walletconnect/sign-client': 2.11.0(bufferutil@4.0.8)(encoding@0.1.13)(utf-8-validate@5.0.10)
-      '@walletconnect/types': 2.11.0
-      '@walletconnect/utils': 2.11.0
+      '@walletconnect/sign-client': 2.11.0(@upstash/redis@1.22.1)(bufferutil@4.0.8)(encoding@0.1.13)(utf-8-validate@5.0.10)
+      '@walletconnect/types': 2.11.0(@upstash/redis@1.22.1)
+      '@walletconnect/utils': 2.11.0(@upstash/redis@1.22.1)
       events: 3.3.0
     transitivePeerDependencies:
       - '@azure/app-configuration'
@@ -36086,17 +36104,17 @@ snapshots:
       - supports-color
       - utf-8-validate
 
-  '@walletconnect/utils@2.11.0':
+  '@walletconnect/utils@2.11.0(@upstash/redis@1.22.1)':
     dependencies:
       '@stablelib/chacha20poly1305': 1.0.1
       '@stablelib/hkdf': 1.0.1
       '@stablelib/random': 1.0.2
       '@stablelib/sha256': 1.0.1
       '@stablelib/x25519': 1.0.3
-      '@walletconnect/relay-api': 1.0.10
+      '@walletconnect/relay-api': 1.0.11
       '@walletconnect/safe-json': 1.0.2
       '@walletconnect/time': 1.0.2
-      '@walletconnect/types': 2.11.0
+      '@walletconnect/types': 2.11.0(@upstash/redis@1.22.1)
       '@walletconnect/window-getters': 1.0.1
       '@walletconnect/window-metadata': 1.0.1
       detect-browser: 5.3.0
@@ -51216,7 +51234,7 @@ snapshots:
       picocolors: 1.0.0
       stable: 0.1.8
 
-  swarm-js@0.1.42(bufferutil@4.0.8)(utf-8-validate@5.0.10):
+  swarm-js@0.1.42(patch_hash=2sabagotzgj5qrte5szyhjypv4)(bufferutil@4.0.8)(utf-8-validate@5.0.10):
     dependencies:
       bluebird: 3.7.2
       buffer: 5.7.1
@@ -53031,7 +53049,7 @@ snapshots:
     dependencies:
       '@types/node': 12.20.55
       got: 12.1.0
-      swarm-js: 0.1.42(bufferutil@4.0.8)(utf-8-validate@5.0.10)
+      swarm-js: 0.1.42(patch_hash=2sabagotzgj5qrte5szyhjypv4)(bufferutil@4.0.8)(utf-8-validate@5.0.10)
     transitivePeerDependencies:
       - bufferutil
       - supports-color
@@ -53041,7 +53059,7 @@ snapshots:
     dependencies:
       '@types/node': 12.20.55
       got: 9.6.0
-      swarm-js: 0.1.42(bufferutil@4.0.8)(utf-8-validate@5.0.10)
+      swarm-js: 0.1.42(patch_hash=2sabagotzgj5qrte5szyhjypv4)(bufferutil@4.0.8)(utf-8-validate@5.0.10)
       underscore: 1.9.1
     transitivePeerDependencies:
       - bufferutil
