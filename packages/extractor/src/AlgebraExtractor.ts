@@ -224,10 +224,7 @@ export class AlgebraExtractor extends IExtractor {
     if (this.logProcessingStatus === LogsProcessing.NotStarted) {
       this.logProcessingStatus = LogsProcessing.Started
       const startTime = performance.now()
-
-      if (this.tokenManager.tokens.size === 0)
-        await this.tokenManager.addCachedTokens()
-
+      await this.tokenManager.addCachedTokens()
       this.factoriesFull = await Promise.all(
         this.factories.map(async (f): Promise<FactoryAlgebraFull> => {
           const [deployer, initCodeHash] = await Promise.all([

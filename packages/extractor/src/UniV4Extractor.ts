@@ -229,8 +229,7 @@ export class UniV4Extractor extends IExtractor {
     this.startStatus = StartStatus.Starting
     const startTime = performance.now()
 
-    if (this.tokenManager.tokens.size === 0)
-      await this.tokenManager.addCachedTokens()
+    await this.tokenManager.addCachedTokens()
 
     // deduplication
     const cachedPoolsInfo: PoolInfo[] = uniqueArray(

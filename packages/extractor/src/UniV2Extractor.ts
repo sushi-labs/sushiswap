@@ -218,8 +218,7 @@ export class UniV2Extractor extends IExtractor {
 
   override async start() {
     const startTime = performance.now()
-    if (this.tokenManager.tokens.size === 0)
-      await this.tokenManager.addCachedTokens()
+    await this.tokenManager.addCachedTokens()
 
     // Add cached pools to watching
     const cachedPools: Set<string> = new Set()
