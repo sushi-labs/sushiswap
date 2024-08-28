@@ -932,7 +932,21 @@ export const EXTRACTOR_CONFIG: Record<
           '0xa77ee1cc0f39570ddde947459e293d7ebc2c30ff4e8fc45860afdcb2c2d3dc17',
       },
     ],
-    factoriesV3: [],
+    factoriesV3: [
+      {
+        address: '0x40aB11c64E9fF5368F09343Ac860dAfA34e14C35' as Address,
+        provider: LiquidityProviders.VVSFlawless,
+        deployer: '0x6757E8E1B694e60285D733D8684eF2F60b2407ff',
+        initCodeHash:
+          '0x3ea5f55d6524ce396b6eb0054ae36a854425f2ed4c48b04b78e228656dc0b7de',
+        feeSpacingMap: {
+          100: 1,
+          500: 10,
+          3000: 60,
+          10_000: 200,
+        },
+      },
+    ],
     tickHelperContractV3:
       '0x0000000000000000000000000000000000000000' as Address,
     tickHelperContractAlgebra:

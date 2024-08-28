@@ -32,6 +32,7 @@ export enum LiquidityProviders {
   Solarbeam = 'Solarbeam',
   Swapsicle = 'Swapsicle',
   VVSStandard = 'VVSStandard',
+  VVSFlawless = 'VVSFlawless',
   Fraxswap = 'Fraxswap',
   SwapBlast = 'SwapBlast',
   BlastDEX = 'BlastDEX',
