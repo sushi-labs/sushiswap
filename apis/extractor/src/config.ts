@@ -955,7 +955,7 @@ export const EXTRACTOR_CONFIG: Record<
       },
     ],
     tickHelperContractV3:
-      '0x0000000000000000000000000000000000000000' as Address,
+      '0xFe2b370F14Efe064Ae6ef17f44EB3F72594F2939' as Address,
     tickHelperContractAlgebra:
       '0x0000000000000000000000000000000000000000' as Address,
     cacheDir: `./cache/${ChainId.CRONOS}`,
