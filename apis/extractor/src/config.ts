@@ -195,7 +195,7 @@ export const EXTRACTOR_CONFIG: Record<
     tickHelperContractAlgebra:
       '0x0000000000000000000000000000000000000000' as Address,
     tickHelperContractAerodromeSlipstream:
-      '0x0AD09A66af0154a84e86F761313d02d0abB6edd5' as Address,
+      '0x3e1116ea5034f5d73a7b530071709d54a4109f5f' as Address, // our own
     cacheDir: './cache',
     logDepth: 50,
     logging: true,

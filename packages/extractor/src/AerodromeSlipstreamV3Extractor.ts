@@ -87,6 +87,9 @@ interface PoolCacheRecord {
 // 4) Different slot0 struct (no fee)
 // 5) SugarHelper ('0x0AD09A66af0154a84e86F761313d02d0abB6edd5') instead of Tickens.
 //    getPopulatedTicks function (takes startTick, not a word index) instead of getPopulatedTicksInWord
+//    returns ALL ticks for the word AND upper (unlike TickLens)
+//    Created and deployed our own TickLens for Slipstream 0x3e1116ea5034f5d73a7b530071709d54a4109f5f
+//      Diff from original: PopulatedTick doesn't contain price (as in standard TickLens)
 export class AerodromeSlipstreamV3Extractor extends IExtractor {
   factories: AerodromeSlipstreamFactoryV3[]
   factoryMap: Map<string, AerodromeSlipstreamFactoryV3> = new Map()
