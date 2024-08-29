@@ -13,7 +13,7 @@ chains:
     router:
       resources:
         requests:
-          cpu: 200m
+          cpu: 500m
           memory: 1Gi
   - name: "optimism"
     id: "10"
@@ -54,8 +54,8 @@ chains:
     router:
       resources:
         requests:
-          cpu: 200m
-          memory: 512Mi
+          cpu: 500m
+          memory: 1Gi
   - name: "bttc"
     id: "199"
   - name: "fantom"
@@ -88,7 +88,7 @@ chains:
     router:
       resources:
         requests:
-          cpu: 200m
+          cpu: 1000m
           memory: 2Gi
   - name: "haqq"
     id: "11235"
