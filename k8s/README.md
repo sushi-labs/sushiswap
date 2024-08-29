@@ -156,3 +156,7 @@ kubectl rollout restart deployment/router-1
 ### Restart Extractor
 
 kubectl rollout restart statefulset/extractor-1
+
+### Restart EVERYTHING
+
+kubectl rollout restart deployment -n default
