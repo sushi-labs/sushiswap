@@ -820,14 +820,14 @@ export const EXTRACTOR_CONFIG: Record<
   [ChainId.KAVA]: {
     client: createPublicClient(extractorClientConfig(ChainId.KAVA)),
     factoriesV2: [
-      sushiswapV2Factory(ChainId.KAVA)
+      sushiswapV2Factory(ChainId.KAVA),
       {
         address: '0xE8E917BC80A26CDacc9aA42C0F4965d2E1Fa52da',
         provider: LiquidityProviders.KinetixV2,
         initCodeHash:
-        '0x4b61b80b5bcfca0f9202f2aba1955b0cfda155e379cb36e0ab38598337c4c79a',
+          '0x4b61b80b5bcfca0f9202f2aba1955b0cfda155e379cb36e0ab38598337c4c79a',
         fee: 0.003,
-      }
+      },
     ],
     factoriesV3: [
       sushiswapV3Factory(ChainId.KAVA),
