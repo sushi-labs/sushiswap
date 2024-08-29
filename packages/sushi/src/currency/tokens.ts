@@ -31,6 +31,7 @@ import {
   MAI_ADDRESS,
   MANA_ADDRESS,
   MATIC_ADDRESS,
+  METH_ADDRESS,
   MIM_ADDRESS,
   MKR_ADDRESS,
   NFTX_ADDRESS,
@@ -1231,3 +1232,12 @@ export const SolvBTC = addressMapToTokenMap(
   },
   SolvBTC_ADDRESS,
 ) as Record<keyof typeof SolvBTC_ADDRESS, Token>
+
+export const METH = addressMapToTokenMap(
+  {
+    decimals: 18,
+    symbol: 'mETH',
+    name: 'Mantle Staked Ether',
+  },
+  METH_ADDRESS,
+) as Record<keyof typeof METH_ADDRESS, Token>
