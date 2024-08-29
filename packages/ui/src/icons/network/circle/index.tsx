@@ -38,6 +38,7 @@ import { ScrollCircle } from './ScrollCircle'
 import { SkaleCircle } from './SkaleCircle'
 import { TelosCircle } from './TelosCircle'
 import { ThunderCoreCircle } from './ThunderCoreCircle'
+import { ZKSyncCircle } from './ZKSyncCircle'
 import { ZetaChainCircle } from './ZetaChainCircle'
 
 export * from './AptosCircle'
@@ -78,6 +79,7 @@ export * from './ScrollCircle'
 export * from './SkaleCircle'
 export * from './TelosCircle'
 export * from './ThunderCoreCircle'
+export * from './ZKSyncCircle'
 export * from './ZetaChainCircle'
 
 export const NETWORK_CIRCLE_ICON: Partial<Record<ChainId, IconComponent>> = {
@@ -109,7 +111,7 @@ export const NETWORK_CIRCLE_ICON: Partial<Record<ChainId, IconComponent>> = {
   [ChainId.THUNDERCORE]: ThunderCoreCircle,
   [ChainId.HAQQ]: HaqqCircle,
   [ChainId.CORE]: CoreCircle,
-  [ChainId.ZKSYNC_ERA]: EthereumCircle,
+  [ChainId.ZKSYNC_ERA]: ZKSyncCircle,
   [ChainId.LINEA]: LineaCircle,
   [ChainId.BASE]: BaseCircle,
   [ChainId.SCROLL]: ScrollCircle,

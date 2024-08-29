@@ -1055,6 +1055,21 @@ export const EXTRACTOR_CONFIG: Record<
     logDepth: 50,
     logging: true,
   },
+  [ChainId.ZKSYNC_ERA]: {
+    client: createPublicClient(extractorClientConfig(ChainId.ZKSYNC_ERA)),
+    factoriesV2: [pancakeswapV2Factory(ChainId.ZKSYNC_ERA)],
+    factoriesV3: [
+      uniswapV3Factory(ChainId.ZKSYNC_ERA),
+      pancakeswapV3Factory(ChainId.ZKSYNC_ERA),
+    ],
+    tickHelperContractV3:
+      '0xe10FF11b809f8EE07b056B452c3B2caa7FE24f89' as Address,
+    tickHelperContractAlgebra:
+      '0x0000000000000000000000000000000000000000' as Address,
+    cacheDir: '/cache',
+    logDepth: 50,
+    logging: true,
+  },
   // [ChainId.RONIN]: {
   //   client: createPublicClient(extractorClientConfig(ChainId.RONIN]),
   //   factoriesV2: [],

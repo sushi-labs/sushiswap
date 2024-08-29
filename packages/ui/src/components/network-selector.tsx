@@ -53,9 +53,9 @@ export interface NetworkSelectorProps<T extends number = ChainId> {
 }
 
 const NEW_CHAINS: number[] = [
+  ChainId.ZKSYNC_ERA,
   ChainId.MANTLE,
   ChainId.CRONOS,
-  ChainId.ROOTSTOCK,
 ] satisfies ChainId[]
 
 const NetworkSelector = <T extends number>({

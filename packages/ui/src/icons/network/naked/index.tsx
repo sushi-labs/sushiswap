@@ -38,6 +38,7 @@ import { ScrollNaked } from './ScrollNaked'
 import { SkaleNaked } from './SkaleNaked'
 import { TelosNaked } from './TelosNaked'
 import { ThunderCoreNaked } from './ThunderCoreNaked'
+import { ZKSyncNaked } from './ZKSyncNaked'
 import { ZetaChainNaked } from './ZetaChainNaked'
 
 export * from './ArbitrumNaked'
@@ -76,6 +77,7 @@ export * from './RootstockNaked'
 export * from './ScrollNaked'
 export * from './SkaleNaked'
 export * from './TelosNaked'
+export * from './ZKSyncNaked'
 export * from './ZetaChainNaked'
 
 export const NETWORK_NAKED_ICON: Partial<Record<ChainId, IconComponent>> = {
@@ -107,7 +109,7 @@ export const NETWORK_NAKED_ICON: Partial<Record<ChainId, IconComponent>> = {
   [ChainId.THUNDERCORE]: ThunderCoreNaked,
   [ChainId.HAQQ]: HaqqNaked,
   [ChainId.CORE]: CoreNaked,
-  [ChainId.ZKSYNC_ERA]: EthereumNaked,
+  [ChainId.ZKSYNC_ERA]: ZKSyncNaked,
   [ChainId.LINEA]: LineaNaked,
   [ChainId.BASE]: BaseNaked,
   [ChainId.SCROLL]: ScrollNaked,
