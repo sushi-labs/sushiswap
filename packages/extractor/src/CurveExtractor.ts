@@ -228,8 +228,7 @@ export class CurveExtractor {
   }
 
   async start() {
-    if (this.tokenManager.tokens.size === 0)
-      await this.tokenManager.addCachedTokens()
+    await this.tokenManager.addCachedTokens()
     const pools = await this.gatherCurvePools()
     const balancesType = await Promise.all(
       pools.map((p) => this.detectPoolInterface(p.address)),

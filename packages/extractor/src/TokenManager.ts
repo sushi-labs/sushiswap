@@ -47,7 +47,7 @@ export class TokenManager {
   ) {
     this.client = client
     this.tokenPermanentCache = new PermanentCache(cacheReadOnly, ...paths)
-    // this.addToken(nativeToken(client.chainId), false)
+    this.addToken(nativeToken(client.chainId), false)
   }
 
   async addCachedTokens() {

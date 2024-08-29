@@ -200,8 +200,7 @@ export class UniV3Extractor extends IExtractor {
       this.logProcessingStatus = LogsProcessing.Started
       const startTime = performance.now()
 
-      if (this.tokenManager.tokens.size === 0)
-        await this.tokenManager.addCachedTokens()
+      await this.tokenManager.addCachedTokens()
 
       // Add cached pools to watching
       const cachedPools: Map<string, PoolInfo> = new Map() // map instead of array to avoid duplicates
