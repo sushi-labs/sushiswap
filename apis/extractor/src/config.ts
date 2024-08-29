@@ -1066,7 +1066,7 @@ export const EXTRACTOR_CONFIG: Record<
       '0xe10FF11b809f8EE07b056B452c3B2caa7FE24f89' as Address,
     tickHelperContractAlgebra:
       '0x0000000000000000000000000000000000000000' as Address,
-    cacheDir: '/cache',
+    cacheDir: './cache',
     logDepth: 50,
     logging: true,
   },
