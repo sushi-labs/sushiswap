@@ -24,6 +24,7 @@ import { HarmonyNaked } from './HarmonyNaked'
 import { HecoNaked } from './HecoNaked'
 import { KavaNaked } from './KavaNaked'
 import { LineaNaked } from './LineaNaked'
+import { MantleNaked } from './MantleNaked'
 import { MetisNaked } from './MetisNaked'
 import { MoonbeamNaked } from './MoonbeamNaked'
 import { MoonriverNaked } from './MoonriverNaked'
@@ -62,6 +63,7 @@ export * from './HarmonyNaked'
 export * from './HecoNaked'
 export * from './KavaNaked'
 export * from './LineaNaked'
+export * from './MantleNaked'
 export * from './MetisNaked'
 export * from './MoonbeamNaked'
 export * from './MoonriverNaked'
@@ -115,4 +117,5 @@ export const NETWORK_NAKED_ICON: Partial<Record<ChainId, IconComponent>> = {
   [ChainId.SKALE_EUROPA]: SkaleNaked,
   [ChainId.ROOTSTOCK]: RootstockNaked,
   [ChainId.CRONOS]: CronosNaked,
+  [ChainId.MANTLE]: MantleNaked,
 }
