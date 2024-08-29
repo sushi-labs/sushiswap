@@ -109,7 +109,6 @@ export const ConcentratedLiquidityURLStateProvider: FC<
       address: toCurrency,
     })
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   const state = useMemo(() => {
     const token0 = getTokenFromUrl(
       _chainId,
