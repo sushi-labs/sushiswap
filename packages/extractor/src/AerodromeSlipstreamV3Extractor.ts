@@ -43,6 +43,7 @@ const TickSpacingEnabledEventABI = [
 const AerodromeSlipstreamABI = parseAbi([
   'function tickSpacingToFee(int24) view returns (uint24)',
   'function poolImplementation() view returns (address)',
+  'function tickSpacings() view returns (int24[])',
 ])
 
 export interface AerodromeSlipstreamFactoryV3 {
@@ -278,11 +279,11 @@ export class AerodromeSlipstreamV3Extractor extends IExtractor {
   async fetchFeeSpacingMap() {
     const client = this.multiCallAggregator.client
 
-    // checks once per our changes in feeSpacingMap
+    // checks changes in feeSpacingMap
     client.createEventFilter({ events: TickSpacingEnabledEventABI }).then(
       async (filter) => {
         for (;;) {
-          await delay(3600 * 1000)
+          await delay(600 * 1000)
           try {
             const logs = await client.getFilterChanges({
               filter,
@@ -313,20 +314,27 @@ export class AerodromeSlipstreamV3Extractor extends IExtractor {
       },
     )
 
-    await Promise.allSettled([
-      ...this.factories.map(async (f) => {
+    await Promise.allSettled(
+      this.factories.map(async (f) => {
         try {
-          const logs = await client.getLogs({
-            address: f.address,
-            events: TickSpacingEnabledEventABI,
-          })
           const feeSpacingMap: FeeSpacingMap = {}
-          logs.forEach((l) => {
-            const { fee, tickSpacing } = l.args
-            if (fee !== undefined && tickSpacing !== undefined)
-              feeSpacingMap[fee] = tickSpacing
-          })
+          const CLFactory = this.multiCallAggregator.getContract(
+            f.address,
+            AerodromeSlipstreamABI,
+          )
+          const [tickSpacings, poolImplementation] = await Promise.all([
+            CLFactory.call<number[]>('tickSpacings'),
+            CLFactory.call<Address>('poolImplementation'),
+          ])
+          await Promise.all(
+            tickSpacings.map(async (ts) => {
+              const fee = await CLFactory.call<number>('tickSpacingToFee', ts)
+              feeSpacingMap[fee] = ts
+            }),
+          )
           f.feeSpacingMap = feeSpacingMap
+          f.poolImplementation = poolImplementation
+
           this.consoleLog(
             `Provider ${f.provider}(${
               f.address
@@ -345,22 +353,7 @@ export class AerodromeSlipstreamV3Extractor extends IExtractor {
           )
         }
       }),
-      ...this.factories.map(async (f) => {
-        try {
-          f.poolImplementation = await this.multiCallAggregator.callValue(
-            f.address,
-            AerodromeSlipstreamABI,
-            'poolImplementation',
-          )
-        } catch (e) {
-          Logger.error(
-            this.multiCallAggregator.chainId,
-            `Provider ${f.provider}(${f.address}) poolImplementation fetching failed`,
-            e,
-          )
-        }
-      }),
-    ])
+    )
   }
 
   processLog(l: Log): string {
@@ -440,9 +433,7 @@ export class AerodromeSlipstreamV3Extractor extends IExtractor {
       if (source !== 'cache') {
         const delay = Math.round(performance.now() - startTime)
         this.consoleLog(
-          `add pool ${expectedPoolAddress} (${delay}ms, ${source}), watched pools total: ${
-            this.watchedPools
-          }/${this.poolMap.size + this.emptyAddressSet.size}`,
+          `add pool ${expectedPoolAddress} (${delay}ms, ${source}), watched pools total: ${this.watchedPools}`,
         )
       }
     })

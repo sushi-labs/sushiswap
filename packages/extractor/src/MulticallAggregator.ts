@@ -269,4 +269,12 @@ export class MultiCallAggregator {
     }
     return _readContract
   }
+
+  getContract(addr: Address, abi: Abi) {
+    return {
+      call: async <R>(func: string, ...args: any[]) => {
+        return this.callValue(addr, abi, func, args) as R
+      },
+    }
+  }
 }
