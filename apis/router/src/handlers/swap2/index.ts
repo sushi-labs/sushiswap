@@ -222,7 +222,6 @@ function handler(
         swapRequestStatistics.requestWasProcessed(statistics, tokensAreKnown)
         return res.json(body)
       } catch (e) {
-
         swapRequestStatistics.requestRejected(
           ResponseRejectReason.UNKNOWN_EXCEPTION,
         )
