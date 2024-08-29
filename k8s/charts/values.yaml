@@ -112,3 +112,5 @@ chains:
     id: "1666600000"
   - name: "skale-europa"
     id: "2046399126"
+  - name: "mantle"
+    id: "5000"
