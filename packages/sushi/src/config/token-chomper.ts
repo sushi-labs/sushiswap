@@ -34,6 +34,8 @@ export const TOKEN_CHOMPER_CHAIN_IDS = [
   ChainId.BLAST,
   ChainId.SKALE_EUROPA,
   ChainId.ROOTSTOCK,
+  ChainId.MANTLE,
+  ChainId.ZKSYNC_ERA,
 ] as const
 
 export type TokenChomperChainId = (typeof TOKEN_CHOMPER_CHAIN_IDS)[number]
@@ -73,6 +75,8 @@ export const TOKEN_CHOMPER_ADDRESS: Record<TokenChomperChainId, `0x${string}`> =
     [ChainId.BLAST]: '0xca226bd9c754F1283123d32B2a7cF62a722f8ADa',
     [ChainId.SKALE_EUROPA]: '0x34D94b354cfeEF8CEe18489184A23d4c475b6903',
     [ChainId.ROOTSTOCK]: '0xca226bd9c754F1283123d32B2a7cF62a722f8ADa',
+    [ChainId.MANTLE]: '0xca226bd9c754F1283123d32B2a7cF62a722f8ADa',
+    [ChainId.ZKSYNC_ERA]: '0xCd4eE95b182139969b041DdDc49c5449C21702E1',
   } as const
 
 export const isTokenChomperChainId = (
