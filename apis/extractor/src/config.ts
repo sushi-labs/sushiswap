@@ -1037,8 +1037,9 @@ export const EXTRACTOR_CONFIG: Record<
       {
         address: '0x8f140Fc3e9211b8DC2fC1D7eE3292F6817C5dD5D',
         provider: LiquidityProviders.MethLab,
-        initCodeHash: '0xacd26fbb15704ae5e5fe7342ea8ebace020e4fa5ad4a03122ce1678278cf382b'
-      }
+        initCodeHash:
+          '0xacd26fbb15704ae5e5fe7342ea8ebace020e4fa5ad4a03122ce1678278cf382b',
+      },
     ],
     factoriesAlgebra: [
       {
