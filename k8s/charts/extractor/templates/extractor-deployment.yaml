@@ -13,6 +13,9 @@ spec:
       labels:
         app: extractor-{{ .id }}
     spec:
+      nodeSelector:
+        cloud.google.com/compute-class: Performance
+        cloud.google.com/machine-family: c3
       volumes:
         - name: extractor-pv
           persistentVolumeClaim:
@@ -23,27 +26,31 @@ spec:
           ports:
             - containerPort: 80
           volumeMounts:
-            - mountPath: "/app/cache/{{ .id }}"
+            - mountPath: "/app/cache"
+              subPath: "{{ .id }}"
               name: extractor-pv
           resources:
             requests:
-              cpu: 1250m
-              memory: 8Gi
+              cpu: {{ dig "extractor" "resources" "requests" "cpu" "50m" . }}
+              memory: {{ dig "extractor" "resources" "requests" "memory" "512Mi" . }}
+            limits:
+              cpu: {{ dig "extractor" "resources" "limits" "cpu" "1000m" . }}
+              memory: {{ dig "extractor" "resources" "limits" "memory" "8Gi" . }}
           startupProbe:
-            failureThreshold: 120 # 120 * 10s = 20 minutes to start
             httpGet:
               path: /health
               port: 80
             periodSeconds: 10
             successThreshold: 1
-            timeoutSeconds: 3
+            failureThreshold: 150 # 150 * 10s = 25 minutes to start
+            timeoutSeconds: 10
           livenessProbe:
-            failureThreshold: 3
             httpGet:
               path: /health
               port: 80
             periodSeconds: 10
             successThreshold: 1
+            failureThreshold: 3
             timeoutSeconds: 3
           env:
             - name: CHAIN_ID

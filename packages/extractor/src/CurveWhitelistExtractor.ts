@@ -191,8 +191,7 @@ export class CurveWhitelistExtractor extends IExtractor {
 
   override async start() {
     const startTime = performance.now()
-    if (this.tokenManager.tokens.size === 0)
-      await this.tokenManager.addCachedTokens()
+    await this.tokenManager.addCachedTokens()
     await Promise.all(
       CurvePoolWhiteList.map((p) => {
         this.poolTypeMap.set(p.pool, p.poolType as CurvePoolType)

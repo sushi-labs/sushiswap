@@ -13,6 +13,9 @@ spec:
       labels:
         app: router-{{ .id }}
     spec:
+      nodeSelector:
+        cloud.google.com/compute-class: Performance
+        cloud.google.com/machine-family: c3d
       containers:
         - name: router
           image: router
@@ -20,8 +23,14 @@ spec:
             - containerPort: 80
           resources:
             requests:
-              cpu: 1250m
-              memory: 2Gi
+              cpu: {{ dig "router" "resources" "requests" "cpu" "50m" . }}
+              memory: {{ dig "router" "resources" "requests" "memory" "256Mi" . }}
+            limits:
+              cpu: {{ dig "router" "resources" "limits" "cpu" "1000m" . }}
+              memory: {{ dig "router" "resources" "limits" "memory" "2Gi" . }}
+            # requests:
+            #   cpu: 1250m
+            #   memory: 2Gi
           startupProbe:
             httpGet:
               path: /health

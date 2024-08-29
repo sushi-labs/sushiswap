@@ -104,7 +104,7 @@ kubectl scale --replicas=0 deployment --all && kubectl scale --replicas=0 statef
 ### Shell
 
 ```bash
-kubectl exec --stdin --tty extractor-56-0 -- /bin/bash
+kubectl exec --stdin --tty deployments/extractor-56 -- /bin/bash
 ```
 
 ### Copy
@@ -112,14 +112,14 @@ kubectl exec --stdin --tty extractor-56-0 -- /bin/bash
 Remote to local:
 
 ```bash
-kubectl cp -n default extractor-56-0:/app/cache ./cache
+kubectl cp -n default deployments/extractor-56:/app/cache ./cache/56
 ```
 Local to remote:
 
 copies the cache folder to the extractor-56-0 app folder, replacing current cache folder (careful...)
 
 ```bash
-kubectl cp  -n default ./cache extractor-56-0:/app
+kubectl cp  -n default ./cache/56 deployments/extractor-56:/app/cache
 ```
 
 
@@ -130,7 +130,7 @@ https://kubernetes.io/docs/tasks/access-application-cluster/port-forward-access-
 Example for downloading binary pool codes from the internal extractor API on base:
 
 ```bash
-kubectl port-forward statefulset/extractor-8453 3000:80
+kubectl port-forward deployments/extractor-56 3000:80
 ```
 
 http://localhost:3000/pool-codes-bin/8453
@@ -139,6 +139,16 @@ http://localhost:3000/pool-codes-bin/8453
 
 kubectl run -it --rm --restart=Never curl --image=curlimages/curl:latest sh
 
+### Cache Inspector
+
+kubectl apply -f k8s/cache-inspector.yaml
+
+kubectl exec -it cache-inspector -- sh
+
+ls /cache
+
+kubectl delete pod cache-inspector
+
 ### Restart Router
 
 kubectl rollout restart deployment/router-1
@@ -146,3 +156,7 @@ kubectl rollout restart deployment/router-1
 ### Restart Extractor
 
 kubectl rollout restart statefulset/extractor-1
+
+### Restart EVERYTHING
+
+kubectl rollout restart deployment -n default
