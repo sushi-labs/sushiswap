@@ -42,6 +42,7 @@ export enum LiquidityProviders {
   ThrusterV3 = 'ThrusterV3',
   DyorV2 = 'DyorV2',
   HyperBlast = 'HyperBlast',
+  KinetixV2 = 'KinetixV2',
   KinetixV3 = 'KinetixV3',
   AlienBaseV2 = 'AlienBaseV2',
   AlienBaseV3 = 'AlienBaseV3',

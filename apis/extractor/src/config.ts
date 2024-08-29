@@ -552,6 +552,12 @@ export const EXTRACTOR_CONFIG: Record<
         provider: LiquidityProviders.Wagmi,
         initCodeHash:
           '0x30146866f3a846fe3c636beb2756dbd24cf321bc52c9113c837c21f47470dfeb',
+        feeSpacingMap: {
+          500: 10,
+          1500: 30,
+          3000: 60,
+          10_000: 200,
+        },
       },
     ],
     tickHelperContractV3: SUSHISWAP_V3_TICK_LENS[ChainId.FANTOM],
@@ -813,7 +819,16 @@ export const EXTRACTOR_CONFIG: Record<
   },
   [ChainId.KAVA]: {
     client: createPublicClient(extractorClientConfig(ChainId.KAVA)),
-    factoriesV2: [sushiswapV2Factory(ChainId.KAVA)],
+    factoriesV2: [
+      sushiswapV2Factory(ChainId.KAVA)
+      {
+        address: '0xE8E917BC80A26CDacc9aA42C0F4965d2E1Fa52da',
+        provider: LiquidityProviders.KinetixV2,
+        initCodeHash:
+        '0x4b61b80b5bcfca0f9202f2aba1955b0cfda155e379cb36e0ab38598337c4c79a',
+        fee: 0.003,
+      }
+    ],
     factoriesV3: [
       sushiswapV3Factory(ChainId.KAVA),
       {
