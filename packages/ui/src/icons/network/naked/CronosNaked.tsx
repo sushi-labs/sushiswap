@@ -10,6 +10,7 @@ export const CronosNaked: NakedNetworkIconComponent = (props) => {
       xmlns="http://www.w3.org/2000/svg"
       {...props}
     >
+      {props.circle}
       <path
         d="M117.341 94.496 64 125.312 10.66 94.496V33.504L64 2.688l53.341 30.816z"
         fill="#fff"
