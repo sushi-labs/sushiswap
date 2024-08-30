@@ -22,8 +22,9 @@ export const SwapApi: FC = () => {
               className: 'text-sm',
             })}
           >
-            Switch to the client for trade discovery by deactivating the Swap
-            API.
+            {forceClient
+              ? 'Route your swap using the SushiSwap Client which calculates the route directly through your local client service.'
+              : 'Route your swap using the SushiSwap API to access all our supported third-party liquidity sources for the best swap rate.'}
           </span>
         </div>
         <Switch
