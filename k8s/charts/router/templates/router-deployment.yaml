@@ -19,10 +19,9 @@ spec:
         value: "routers"
         effect: NoSchedule
       nodeSelector:
-        group: "routers"
-      nodeSelector:
         cloud.google.com/compute-class: Performance
         cloud.google.com/machine-family: c3d
+        group: "routers"
       containers:
         - name: router
           image: router

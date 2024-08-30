@@ -16,13 +16,12 @@ spec:
       tolerations:
       - key: group
         operator: Equal
-        value: "extractors"
+        value: "routers"
         effect: NoSchedule
-      nodeSelector:
-        group: "extractors"
       nodeSelector:
         cloud.google.com/compute-class: Performance
         cloud.google.com/machine-family: c3
+        group: "extractors"
       volumes:
         - name: extractor-pv
           persistentVolumeClaim:
