@@ -74,14 +74,9 @@ const nextConfig = bundleAnalyzer({
         destination: 'https://medium.com/sushiswap-org',
       },
       {
-        source: '/earn/:path*',
-        permanent: true,
-        destination: '/pool/:path*',
-      },
-      {
         source: '/pools/:path*',
         permanent: true,
-        destination: '/pool/:path*',
+        destination: '/explore/pools/:path*',
       },
       {
         source: '/pool/:path*/positions',
