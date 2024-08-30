@@ -54,8 +54,8 @@ chains:
     router:
       resources:
         requests:
-          cpu: 500m
-          memory: 1Gi
+          cpu: 1000m
+          memory: 2Gi
   - name: "bttc"
     id: "199"
   - name: "fantom"
@@ -94,6 +94,11 @@ chains:
     id: "11235"
   - name: "arbitrum"
     id: "42161"
+    router:
+      resources:
+        requests:
+          cpu: 500m
+          memory: 1Gi
   - name: "arbitrum-nova"
     id: "42170"
   - name: "celo"
