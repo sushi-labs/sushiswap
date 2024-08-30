@@ -7,6 +7,7 @@ steps:
 
 # Push the container image
 - name: 'gcr.io/cloud-builders/docker'
+  id: extractor-push
   args: ['push', 'us-east4-docker.pkg.dev/${PROJECT_ID}/docker/extractor:${COMMIT_SHA}']
   waitFor: ['extractor-build']
 
@@ -17,11 +18,13 @@ steps:
   waitFor: ['-']
 # Push the container image
 - name: 'gcr.io/cloud-builders/docker'
+  id: router-push
   args: ['push', 'us-east4-docker.pkg.dev/${PROJECT_ID}/docker/router:${COMMIT_SHA}']
   waitFor: ['router-build']
 
 # Create release in Google Cloud Deploy
 - name: gcr.io/google.com/cloudsdktool/cloud-sdk
+  id: release
   entrypoint: gcloud
   args:
     [
@@ -29,7 +32,7 @@ steps:
       "--delivery-pipeline", "sushi-api",
       "--region", "us-east4",
       "--annotations", "commitId=${REVISION_ID}",
-      "--images", "extractor=us-east4-docker.pkg.dev/$PROJECT_ID/docker/router:${COMMIT_SHA},router=us-east4-docker.pkg.dev/$PROJECT_ID/docker/router:${COMMIT_SHA}"
+      "--images", "extractor=us-east4-docker.pkg.dev/$PROJECT_ID/docker/extractor:${COMMIT_SHA},router=us-east4-docker.pkg.dev/$PROJECT_ID/docker/router:${COMMIT_SHA}"
     ]
 
 options:
