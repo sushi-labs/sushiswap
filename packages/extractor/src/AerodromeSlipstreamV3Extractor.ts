@@ -290,7 +290,7 @@ export class AerodromeSlipstreamV3Extractor extends IExtractor {
     client.createEventFilter({ events: TickSpacingEnabledEventABI }).then(
       async (filter) => {
         for (;;) {
-          await delay(600 * 1000)
+          await delay(600 * 1000) // check each 10 min
           try {
             const logs = await client.getFilterChanges({
               filter,
