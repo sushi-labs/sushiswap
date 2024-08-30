@@ -186,38 +186,6 @@ export class AerodromeSlipstreamV3Extractor extends IExtractor {
     )
 
     this.logFilter = logFilter
-    logFilter.addFilter(UniV3EventsAbi, (logs?: Log[]) => {
-      if (logs) {
-        const blockNumber =
-          logs.length > 0
-            ? Number(logs[logs.length - 1].blockNumber || 0)
-            : '<undefined>'
-        try {
-          const logNames = logs
-            .map((l) => this.processLog(l))
-            .filter((n) => n !== 'UnknPool') // because most of such events are from UniV3
-          this.consoleLog(
-            `Block ${blockNumber} ${logNames.length} logs: [${logNames}], jobs: ${this.taskCounter.counter}`,
-          )
-          if (logs.length > 0)
-            this.lastProcessdBlock = Number(
-              logs[logs.length - 1].blockNumber || 0,
-            )
-        } catch (e) {
-          Logger.error(
-            this.multiCallAggregator.chainId,
-            `Block ${blockNumber} log process error`,
-            e,
-          )
-        }
-      } else {
-        Logger.error(
-          this.multiCallAggregator.chainId,
-          'Log collecting failed. Pools refetching',
-        )
-        Array.from(this.poolMap.values()).forEach((p) => p.updatePoolState())
-      }
-    })
   }
 
   // TODO: stop ?
@@ -263,6 +231,42 @@ export class AerodromeSlipstreamV3Extractor extends IExtractor {
         promises.forEach((p) => {
           if (p.status === 'rejected') ++failed
         })
+
+        this.logFilter.addFilter(UniV3EventsAbi, (logs?: Log[]) => {
+          if (logs) {
+            const blockNumber =
+              logs.length > 0
+                ? Number(logs[logs.length - 1].blockNumber || 0)
+                : '<undefined>'
+            try {
+              const logNames = logs
+                .map((l) => this.processLog(l))
+                .filter((n) => n !== 'UnknPool') // because most of such events are from UniV3
+              this.consoleLog(
+                `Block ${blockNumber} ${logNames.length} logs: [${logNames}], jobs: ${this.taskCounter.counter}`,
+              )
+              if (logs.length > 0)
+                this.lastProcessdBlock = Number(
+                  logs[logs.length - 1].blockNumber || 0,
+                )
+            } catch (e) {
+              Logger.error(
+                this.multiCallAggregator.chainId,
+                `Block ${blockNumber} log process error`,
+                e,
+              )
+            }
+          } else {
+            Logger.error(
+              this.multiCallAggregator.chainId,
+              'Log collecting failed. Pools refetching',
+            )
+            Array.from(this.poolMap.values()).forEach((p) =>
+              p.updatePoolState(),
+            )
+          }
+        })
+
         this.started = true
         this.consoleLog(
           `ExtractorAerodromeSlipstreamV3 is ready, ${failed}/${
