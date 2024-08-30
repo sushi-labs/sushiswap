@@ -309,6 +309,10 @@ export class AerodromeSlipstreamV3Extractor extends IExtractor {
               `TickSpacingEnabledEvent ${filter.id} error`,
               e,
             )
+            // update filter
+            filter = await client.createEventFilter({
+              events: TickSpacingEnabledEventABI,
+            })
           }
         }
       },
