@@ -79,11 +79,6 @@ const nextConfig = bundleAnalyzer({
         destination: '/pool/:path*',
       },
       {
-        source: '/pools/:path*',
-        permanent: true,
-        destination: '/pool/:path*',
-      },
-      {
         source: '/pool/:path*/positions',
         permanent: true,
         destination: '/pool/:path*',
