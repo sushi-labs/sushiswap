@@ -3,6 +3,8 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: extractor-{{ .id }}
+  annotations:
+    gke-gcsfuse/volumes: "true"
 spec:
   # replicas: 1
   selector:
@@ -16,19 +18,40 @@ spec:
       nodeSelector:
         cloud.google.com/compute-class: Performance
         cloud.google.com/machine-family: c3
+      # volumes:
+      # - name: extractor-pv
+      #   csi:
+      #     driver: gcsfuse.csi.storage.gke.io
+      #     readOnly: false
+      #     volumeAttributes:
+      #       bucketName: extractor-cache
+      #       mountOptions: "implicit-dirs"
+      #       gcsfuseLoggingSeverity: warning
+
       volumes:
-        - name: extractor-pv
-          persistentVolumeClaim:
-            claimName: extractor-pvc
+      - name: gcs-fuse-csi-static
+        persistentVolumeClaim:
+          claimName: gcs-fuse-csi-static-pvc
+          readOnly: false
+
+      # volumes:
+      #   - name: extractor-pv
+      #     persistentVolumeClaim:
+      #       claimName: extractor-pvc
       containers:
         - name: extractor
           image: extractor
           ports:
             - containerPort: 80
           volumeMounts:
-            - mountPath: "/app/cache"
-              subPath: "{{ .id }}"
-              name: extractor-pv
+          - name: gcs-fuse-csi-static
+            mountPath: /app/cache
+            subPath: "{{ .id }}"
+            readOnly: false
+          # volumeMounts:
+          #   - mountPath: "/app/cache"
+          #     subPath: "{{ .id }}"
+          #     name: extractor-pv
           resources:
             requests:
               cpu: {{ dig "extractor" "resources" "requests" "cpu" "50m" . }}
