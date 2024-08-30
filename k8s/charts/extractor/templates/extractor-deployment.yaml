@@ -13,6 +13,13 @@ spec:
       labels:
         app: extractor-{{ .id }}
     spec:
+      tolerations:
+      - key: group
+        operator: Equal
+        value: "extractors"
+        effect: NoSchedule
+      nodeSelector:
+        group: "extractors"
       nodeSelector:
         cloud.google.com/compute-class: Performance
         cloud.google.com/machine-family: c3

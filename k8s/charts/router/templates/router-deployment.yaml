@@ -13,6 +13,13 @@ spec:
       labels:
         app: router-{{ .id }}
     spec:
+      tolerations:
+      - key: group
+        operator: Equal
+        value: "routers"
+        effect: NoSchedule
+      nodeSelector:
+        group: "routers"
       nodeSelector:
         cloud.google.com/compute-class: Performance
         cloud.google.com/machine-family: c3d
@@ -23,7 +30,7 @@ spec:
             - containerPort: 80
           resources:
             requests:
-              cpu: {{ dig "router" "resources" "requests" "cpu" "50m" . }}
+              cpu: {{ dig "router" "resources" "requests" "cpu" "100m" . }}
               memory: {{ dig "router" "resources" "requests" "memory" "256Mi" . }}
             limits:
               cpu: {{ dig "router" "resources" "limits" "cpu" "1000m" . }}
