@@ -61,11 +61,18 @@ export const PoolPositionRewardsProvider: FC<PoolPositionStakedProviderProps> =
         </Context.Provider>
       )
 
+      const incentive = pool.incentives 
+      .sort((a, b) => {
+        if (a.chefType === b.chefType) {
+          return a.rewardPerDay > b.rewardPerDay ? -1 : 1
+        }
+        return a.chefType === "MasterChefV2" ? -1 : 1
+      })[0]
     return (
       <_PoolPositionRewardsProvider
         pool={pool}
-        farmId={Number(pool?.incentives?.[0]?.pid)}
-        chefType={pool?.incentives?.[0]?.chefType}
+        farmId={Number(incentive.pid)}
+        chefType={incentive.chefType}
         incentives={pool?.incentives}
       >
         {children}
@@ -83,7 +90,7 @@ export const _PoolPositionRewardsProvider: FC<
     return incentives.reduce<[Token[], string[], RewarderType[]]>(
       (acc, incentive) => {
         acc[0].push(incentiveRewardToToken(pool.chainId as ChainId, incentive))
-        acc[1].push(incentive.id.split(':')[1])
+        acc[1].push(incentive.rewarderAddress)
         acc[2].push(
           incentive.rewarderType === 'Primary'
             ? RewarderType.Primary
