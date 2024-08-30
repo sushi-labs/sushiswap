@@ -5,10 +5,20 @@ metadata:
 description: sushi pipeline
 serialPipeline:
   stages:
+  # - targetId: development
+  #   profiles: [development]
   - targetId: staging
     profiles: [staging]
   - targetId: production
     profiles: [production]
+# ---
+# apiVersion: deploy.cloud.google.com/v1
+# kind: Target
+# metadata:
+#   name: development
+# description: development cluster
+# gke:
+#   cluster: projects/sushi-api-414412/locations/us-east4/clusters/development
 ---
 apiVersion: deploy.cloud.google.com/v1
 kind: Target
