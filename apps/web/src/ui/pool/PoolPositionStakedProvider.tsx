@@ -53,14 +53,13 @@ export const PoolPositionStakedProvider: FC<PoolPositionStakedProviderProps> =
         </Context.Provider>
       )
 
-      // Educated guess, this is getting deprecated when we move to merkle v2, only have 3rd party rewarders running
-      const incentive = pool.incentives 
-      .sort((a, b) => {
-        if (a.chefType === b.chefType) {
-          return a.rewardPerDay > b.rewardPerDay ? -1 : 1
-        }
-        return a.chefType === ChefType.MasterChefV2 ? -1 : 1
-      })[0]
+    // Educated guess, this is getting deprecated when we move to merkle v2, only have 3rd party rewarders running
+    const incentive = pool.incentives.sort((a, b) => {
+      if (a.chefType === b.chefType) {
+        return a.rewardPerDay > b.rewardPerDay ? -1 : 1
+      }
+      return a.chefType === ChefType.MasterChefV2 ? -1 : 1
+    })[0]
 
     return (
       <_PoolPositionStakedProvider

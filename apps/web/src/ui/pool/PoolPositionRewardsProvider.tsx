@@ -61,13 +61,12 @@ export const PoolPositionRewardsProvider: FC<PoolPositionStakedProviderProps> =
         </Context.Provider>
       )
 
-      const incentive = pool.incentives 
-      .sort((a, b) => {
-        if (a.chefType === b.chefType) {
-          return a.rewardPerDay > b.rewardPerDay ? -1 : 1
-        }
-        return a.chefType === "MasterChefV2" ? -1 : 1
-      })[0]
+    const incentive = pool.incentives.sort((a, b) => {
+      if (a.chefType === b.chefType) {
+        return a.rewardPerDay > b.rewardPerDay ? -1 : 1
+      }
+      return a.chefType === 'MasterChefV2' ? -1 : 1
+    })[0]
     return (
       <_PoolPositionRewardsProvider
         pool={pool}
