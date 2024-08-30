@@ -25,6 +25,7 @@ export const Chart: FC<LiquidityChartRangeInputProps> = ({
   getNewRangeWhenBrushing,
   zoomLevels,
   hideBrushes,
+  tokenToggle,
 }) => {
   const zoomRef = useRef<SVGRectElement | null>(null)
 
@@ -81,27 +82,30 @@ export const Chart: FC<LiquidityChartRangeInputProps> = ({
 
   return (
     <div className="relative flex flex-col">
-      <Zoom
-        svg={zoomRef.current}
-        xScale={xScale}
-        setZoom={setZoom}
-        width={innerWidth}
-        height={
-          // allow zooming inside the x-axis
-          height
-        }
-        resetBrush={() => {
-          onBrushDomainChange(
-            [
-              current * zoomLevels.initialMin,
-              current * zoomLevels.initialMax,
-            ] as [number, number],
-            'reset',
-          )
-        }}
-        showResetButton={priceRange !== undefined}
-        zoomLevels={zoomLevels}
-      />
+      <div className="flex flex-row-reverse justify-between">
+        <Zoom
+          svg={zoomRef.current}
+          xScale={xScale}
+          setZoom={setZoom}
+          width={innerWidth}
+          height={
+            // allow zooming inside the x-axis
+            height
+          }
+          resetBrush={() => {
+            onBrushDomainChange(
+              [
+                current * zoomLevels.initialMin,
+                current * zoomLevels.initialMax,
+              ] as [number, number],
+              'reset',
+            )
+          }}
+          showResetButton={priceRange !== undefined}
+          zoomLevels={zoomLevels}
+        />
+        {tokenToggle}
+      </div>
       <svg
         width="100%"
         height="100%"

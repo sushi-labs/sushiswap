@@ -74,16 +74,6 @@ const nextConfig = bundleAnalyzer({
         destination: 'https://medium.com/sushiswap-org',
       },
       {
-        source: '/earn/:path*',
-        permanent: true,
-        destination: '/pool/:path*',
-      },
-      {
-        source: '/pool/:path*/positions',
-        permanent: true,
-        destination: '/pool/:path*',
-      },
-      {
         source: '/skale/swap',
         permanent: true,
         destination: '/swap?chainId=2046399126',
