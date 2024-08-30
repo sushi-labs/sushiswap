@@ -287,43 +287,49 @@ export class AerodromeSlipstreamV3Extractor extends IExtractor {
     const client = this.multiCallAggregator.client
 
     // checks changes in feeSpacingMap
-    client.createEventFilter({ events: TickSpacingEnabledEventABI }).then(
-      async (filter) => {
-        for (;;) {
-          await delay(600 * 1000) // check each 10 min
-          try {
-            const logs = await client.getFilterChanges({
-              filter,
-            })
-            logs.forEach(({ address, args }) => {
-              const f = this.factoryMap.get(address.toLowerCase())
-              if (!f) return
-              f.feeSpacingMap = f.feeSpacingMap ?? {}
-              const { fee, tickSpacing } = args
-              if (fee !== undefined && tickSpacing !== undefined)
-                f.feeSpacingMap[fee] = tickSpacing
-            })
-          } catch (e) {
-            Logger.error(
-              client.chain?.id,
-              `TickSpacingEnabledEvent ${filter.id} error`,
-              e,
-            )
-            // update filter
-            filter = await client.createEventFilter({
-              events: TickSpacingEnabledEventABI,
-            })
+    client
+      .createEventFilter({
+        address: this.factories.map((f) => f.address),
+        events: TickSpacingEnabledEventABI,
+      })
+      .then(
+        async (filter) => {
+          for (;;) {
+            await delay(600 * 1000) // check each 10 min
+            try {
+              const logs = await client.getFilterChanges({
+                filter,
+              })
+              logs.forEach(({ address, args }) => {
+                const f = this.factoryMap.get(address.toLowerCase())
+                if (!f) return
+                f.feeSpacingMap = f.feeSpacingMap ?? {}
+                const { fee, tickSpacing } = args
+                if (fee !== undefined && tickSpacing !== undefined)
+                  f.feeSpacingMap[fee] = tickSpacing
+              })
+            } catch (e) {
+              Logger.error(
+                client.chain?.id,
+                `TickSpacingEnabledEvent ${filter.id} error`,
+                e,
+              )
+              // update filter
+              filter = await client.createEventFilter({
+                address: this.factories.map((f) => f.address),
+                events: TickSpacingEnabledEventABI,
+              })
+            }
           }
-        }
-      },
-      (e) => {
-        Logger.error(
-          client.chain?.id,
-          `TickSpacingEnabledEvent creation error`,
-          e,
-        )
-      },
-    )
+        },
+        (e) => {
+          Logger.error(
+            client.chain?.id,
+            `TickSpacingEnabledEvent creation error`,
+            e,
+          )
+        },
+      )
 
     await Promise.allSettled(
       this.factories.map(async (f) => {
