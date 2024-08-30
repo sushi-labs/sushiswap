@@ -1,9 +1,13 @@
-import { type NextRequest, NextResponse } from 'next/server'
-import { getChainInfo } from 'sushi/chain'
+import { NextRequest, NextResponse } from 'next/server'
+import { ChainKey, getChainInfo } from 'sushi/chain'
+import { isSushiSwapChainId } from 'sushi/config'
 
 export const config = {
   matcher: [
     '/swap/:path*',
+    '/pool',
+    '/pools',
+    '/explore',
     '/:chainId/explore/:path*',
     '/:chainId/pool/:path*',
     '/:chainId/positions/:path*',
@@ -46,6 +50,27 @@ export async function middleware(req: NextRequest) {
         return NextResponse.redirect(url)
       }
     }
+  }
+
+  if (
+    pathname === '/explore' ||
+    pathname === '/pools' ||
+    pathname === '/pool'
+  ) {
+    const path = pathname === '/pool' ? 'pool' : 'explore/pools'
+
+    const cookie = req.cookies.get('wagmi.store')
+    if (cookie) {
+      const wagmiState = JSON.parse(cookie.value)
+      const chainId = wagmiState?.state?.chainId
+      if (isSushiSwapChainId(chainId)) {
+        return NextResponse.redirect(
+          new URL(`/${ChainKey[chainId]}/${path}`, req.url),
+        )
+      }
+    }
+
+    return NextResponse.redirect(new URL(`/ethereum/${path}`, req.url))
   }
 
   const networkNameMatch = pathname.match(
