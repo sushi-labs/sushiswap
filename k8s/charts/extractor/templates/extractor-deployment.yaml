@@ -3,8 +3,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: extractor-{{ .id }}
-  annotations:
-    gke-gcsfuse/volumes: "true"
 spec:
   # replicas: 1
   selector:
@@ -14,6 +12,8 @@ spec:
     metadata:
       labels:
         app: extractor-{{ .id }}
+      annotations:
+        gke-gcsfuse/volumes: "true"
     spec:
       nodeSelector:
         cloud.google.com/compute-class: Performance
@@ -38,6 +38,7 @@ spec:
       #   - name: extractor-pv
       #     persistentVolumeClaim:
       #       claimName: extractor-pvc
+      serviceAccountName: extractor
       containers:
         - name: extractor
           image: extractor

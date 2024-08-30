@@ -8,8 +8,15 @@ spec:
   capacity:
     storage: 5Gi
   storageClassName: premium-rwx
+  persistentVolumeReclaimPolicy: Retain
+  claimRef:
+    name: gcs-fuse-csi-static-pvc
   mountOptions:
-    - implicit-dirs
+    - uid=1001
+    - gid=3003
+    - debug_fuse    
+    # - implicit-dirs
+  #   - only-dir=
   csi:
     driver: gcsfuse.csi.storage.gke.io
     volumeHandle: extractor-cache
