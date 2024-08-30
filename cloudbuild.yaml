@@ -1,17 +1,24 @@
 steps:
 # Build and tag using commit sha
 - name: 'gcr.io/cloud-builders/docker'
+  id: extractor-build
   args: ['build', '-t', 'us-east4-docker.pkg.dev/${PROJECT_ID}/docker/extractor:${COMMIT_SHA}', '-f', 'Dockerfile.extractor', '.']
+  waitFor: ['-']
+
 # Push the container image
 - name: 'gcr.io/cloud-builders/docker'
   args: ['push', 'us-east4-docker.pkg.dev/${PROJECT_ID}/docker/extractor:${COMMIT_SHA}']
+  waitFor: ['extractor-build']
 
 # Build and tag using commit sha
 - name: 'gcr.io/cloud-builders/docker'
+  id: router-build
   args: ['build', '-t', 'us-east4-docker.pkg.dev/${PROJECT_ID}/docker/router:${COMMIT_SHA}', '-f', 'Dockerfile.router', '.']
+  waitFor: ['-']
 # Push the container image
 - name: 'gcr.io/cloud-builders/docker'
   args: ['push', 'us-east4-docker.pkg.dev/${PROJECT_ID}/docker/router:${COMMIT_SHA}']
+  waitFor: ['router-build']
 
 # Create release in Google Cloud Deploy
 - name: gcr.io/google.com/cloudsdktool/cloud-sdk
