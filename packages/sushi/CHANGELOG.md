@@ -1,5 +1,11 @@
 # sushi
 
+## 3.1.2
+
+### Patch Changes
+
+- [#1623](https://github.com/sushiswap/sushiswap/pull/1623) [`aa43a534c`](https://github.com/sushiswap/sushiswap/commit/aa43a534c4baa9b92db1630f5af80a8e18e54558) Thanks [@LufyCZ](https://github.com/LufyCZ)! - Additional Feature Configs
+
 ## 3.1.0
 
 ### Minor Changes
