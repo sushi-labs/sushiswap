@@ -1,11 +1,11 @@
 import { V2Position } from '@sushiswap/graph-client/data-api'
 import React, { FC, ReactNode } from 'react'
 import { useSushiV2UserPositions } from 'src/lib/hooks'
-import { ChainId } from 'sushi/chain'
+import { SushiSwapV2ChainId } from 'sushi/config'
 import { useAccount } from 'wagmi'
 
 interface PositionCardList {
-  chainId: ChainId
+  chainId: SushiSwapV2ChainId
   children({
     positions,
     isLoading,

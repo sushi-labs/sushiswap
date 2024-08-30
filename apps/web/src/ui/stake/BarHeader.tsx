@@ -79,16 +79,11 @@ export const BarHeader = () => {
         </div>
       </div>
       <div>
-        <Button icon={ArrowTopRightOnSquareIcon} variant="secondary">
-          <a
-            target="_blank"
-            rel="noreferrer noopener noreferer"
-            href="https://www.sushi.com/blog/sushi-bar-faq"
-            className="!text-base"
-          >
+        <LinkExternal href="https://www.sushi.com/blog/sushi-bar-faq">
+          <Button asChild icon={ArrowTopRightOnSquareIcon}>
             Learn More
-          </a>
-        </Button>
+          </Button>
+        </LinkExternal>
       </div>
     </div>
   )

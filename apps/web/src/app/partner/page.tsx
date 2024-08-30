@@ -85,10 +85,14 @@ export default async function PartnerPage() {
 
             <div className="flex items-center gap-6 pt-4 pb-10">
               <LinkExternal href="https://rbieu62gj0f.typeform.com/to/c4dIghED">
-                <Button className="!px-10">Apply Now</Button>
+                <Button className="!px-10" asChild>
+                  Apply Now
+                </Button>
               </LinkExternal>
               <LinkInternal href="/pool">
-                <Button variant="link">Don{`'`}t have a pool yet?</Button>
+                <Button variant="link" asChild>
+                  Don{`'`}t have a pool yet?
+                </Button>
               </LinkInternal>
             </div>
           </div>
@@ -154,7 +158,9 @@ export default async function PartnerPage() {
             address.
           </p>
           <LinkInternal href="/tokenlist-request">
-            <Button className="!px-10 mt-4">Apply Now</Button>{' '}
+            <Button className="!px-10 mt-4" asChild>
+              Apply Now
+            </Button>{' '}
           </LinkInternal>
         </div>
         <div className="py-12">
@@ -200,7 +206,9 @@ export default async function PartnerPage() {
 
             <div className="flex items-center gap-6 pt-4 pb-10">
               <LinkExternal href="https://rbieu62gj0f.typeform.com/to/KkrPkOFe">
-                <Button className="!px-10 mt-4 mb-6">Let{`'`}s Talk!</Button>
+                <Button className="!px-10 mt-4 mb-6" asChild>
+                  Let{`'`}s Talk!
+                </Button>
               </LinkExternal>
             </div>
           </div>

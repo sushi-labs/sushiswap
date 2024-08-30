@@ -27,7 +27,7 @@ export const simulate = async ({
 
     if (!active) return prev
     const yearlyRewards =
-      (+prices[curr.token.address].toSignificant(6) *
+      (+prices.get(curr.token.address)!.toSignificant(6) *
         curr.amount *
         (365 * 24 * 3600)) /
       (curr.endTimestamp - curr.startTimestamp)
@@ -42,9 +42,9 @@ export const simulate = async ({
           (curr.propFees * liquidity) /
             (poolData?.poolTotalLiquidity + liquidity))) /
         (+amount0.toExact() *
-          +prices[amount0.currency.address].toSignificant(6) +
+          +prices.get(amount0.currency.address)!.toSignificant(6) +
           +amount1.toExact() *
-            +prices[amount1.currency.address].toSignificant(6))
+            +prices.get(amount1.currency.address)!.toSignificant(6))
     )
   }, 0)
 }

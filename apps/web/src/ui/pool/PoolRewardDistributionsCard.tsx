@@ -15,12 +15,12 @@ import {
   TabsTrigger,
 } from '@sushiswap/ui'
 import { FC } from 'react'
-import { ChainId } from 'sushi/chain'
+import { ChainId, ChainKey } from 'sushi/chain'
 import { Native } from 'sushi/currency'
 import { getAddress } from 'viem'
 
 import { V3Pool } from '@sushiswap/graph-client/data-api'
-import { isAngleEnabledChainId } from 'sushi/config'
+import { isMerklChainId } from 'sushi/config'
 import { DistributionDataTable } from './DistributionDataTable'
 
 interface PoolRewardDistributionsCardParams {
@@ -35,7 +35,7 @@ export const PoolRewardDistributionsCard: FC<
   })
 
   if (!pool) return null
-  if (!isAngleEnabledChainId(pool.chainId)) return null
+  if (!isMerklChainId(pool.chainId)) return null
 
   const currentAngleRewardsPool = rewardsData?.pools[getAddress(pool.address)]
 
@@ -47,7 +47,9 @@ export const PoolRewardDistributionsCard: FC<
           Anyone can add distributions to this pool.{' '}
           {pool.token0 && pool.token1 ? (
             <LinkInternal
-              href={`/pool/incentivize?chainId=${pool.chainId}&fromCurrency=${
+              href={`/${ChainKey[pool.chainId]}/pool/incentivize?chainId=${
+                pool.chainId
+              }&fromCurrency=${
                 pool.token0.address ===
                 Native.onChain(pool.chainId).wrapped.address
                   ? 'NATIVE'

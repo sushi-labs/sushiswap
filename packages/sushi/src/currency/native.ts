@@ -1,5 +1,6 @@
 import invariant from 'tiny-invariant'
 import { natives } from '../chain/index.js'
+import type { ID } from '../types/id.js'
 import { Currency } from './currency.js'
 import { Token } from './token.js'
 import { WNATIVE } from './tokens.js'
@@ -7,7 +8,7 @@ import { type Type } from './type.js'
 import { type SerializedNative, nativeSchema } from './zod.js'
 
 export class Native extends Currency {
-  public readonly id: string
+  public readonly id: ID
   // public readonly address = '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE'
   public readonly isNative = true as const
   public readonly isToken = false as const
@@ -19,8 +20,8 @@ export class Native extends Currency {
     symbol: string
     name: string
   }) {
-    super(native)
-    this.id = `${native.chainId}:NATIVE`
+    super({ ...native, approved: true })
+    this.id = `${native.chainId}:NATIVE` as ID
     this.symbol = native.symbol
     this.name = native.name
   }

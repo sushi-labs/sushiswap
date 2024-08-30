@@ -17,7 +17,7 @@ export default function PoolLayout({
     <>
       <Providers>
         <Header />
-        <div className="flex flex-col flex-1">{children}</div>
+        <div className="flex flex-col h-full flex-1">{children}</div>
       </Providers>
       <HotJar />
     </>

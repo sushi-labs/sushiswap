@@ -6,10 +6,7 @@ import { BarChartGraph } from './BarChartGraph'
 import { BarChartPeriod, BarChartPeriods } from './BarChartPeriods'
 import { BarChartType, BarChartTypes } from './BarChartTypes'
 
-const charts = [
-  BarChartType.TotalSupply,
-  // BarChartType.APR
-] as const
+const charts = [BarChartType.APR, BarChartType.TotalSupply] as const
 const periods = [
   BarChartPeriod.Day,
   BarChartPeriod.Week,

@@ -1,4 +1,4 @@
-import defaultTheme from 'tailwindcss/defaultTheme'
+import defaultTheme from 'tailwindcss/defaultTheme.js'
 
 import { useMediaQuery } from './useMediaQuery' // Your tailwind config
 

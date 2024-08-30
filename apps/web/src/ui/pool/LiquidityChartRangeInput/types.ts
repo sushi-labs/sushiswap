@@ -1,3 +1,5 @@
+import { ReactNode } from 'react'
+
 export interface ChartEntry {
   activeLiquidity: number
   price0: number
@@ -66,6 +68,8 @@ export interface LiquidityChartRangeInputProps {
 
   zoomLevels: ZoomLevels
   hideBrushes?: boolean
+
+  tokenToggle?: ReactNode
 }
 
 export enum HandleType {
