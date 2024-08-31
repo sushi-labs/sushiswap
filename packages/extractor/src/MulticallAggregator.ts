@@ -24,6 +24,10 @@ const getBlockNumberAbi: Abi = [
   },
 ]
 
+export type MultiCallContract = {
+  call: <R>(func: string, ...args: any[]) => Promise<R>
+}
+
 // aggregates several calls in one multicall
 export class MultiCallAggregator {
   client: PublicClient
@@ -270,7 +274,7 @@ export class MultiCallAggregator {
     return _readContract
   }
 
-  getContract(addr: Address, abi: Abi) {
+  getContract(addr: Address, abi: Abi): MultiCallContract {
     return {
       call: async <R>(func: string, ...args: any[]) => {
         return this.callValue(addr, abi, func, args) as R

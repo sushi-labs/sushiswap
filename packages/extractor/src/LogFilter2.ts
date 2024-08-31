@@ -133,6 +133,22 @@ export class LogFilter2 {
     this.filters.push({ topics, onNewLogs })
   }
 
+  // for low used events
+  addAddressFilter(
+    addr: Address,
+    events: AbiEvent[],
+    onNewLogs: (arg?: Log[]) => void,
+  ) {
+    const addrL = addr.toLowerCase()
+    this.addFilter(events, (logs?: Log[]) => {
+      if (logs === undefined) onNewLogs()
+      else {
+        const myLogs = logs.filter((l) => l.address.toLowerCase() === addrL)
+        onNewLogs(myLogs)
+      }
+    })
+  }
+
   start() {
     if (this.unWatchBlocks) return // have been started
     if (this.logType === LogFilterType.Native) {
