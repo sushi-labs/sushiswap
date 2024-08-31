@@ -3,7 +3,7 @@ kind: CronJob
 metadata:
   name: push-cache
 spec:
-  shedule: "*/5 * * * *" # run every 5 minutes to test
+  schedule: "*/5 * * * *" # run every 5 minutes to test
   # schedule: "0 0 * * *" # run every day at midnight
   jobTemplate:
     spec:
@@ -14,7 +14,6 @@ spec:
           - name: push-cache
             image: google/cloud-sdk
             imagePullPolicy: IfNotPresent
-            # run gcloud storage commands to copy contents of /cache to a storage bucket
             command:
             - gsutil -m cp -r cache/* gs://extractor-cache
           volumeMounts:
