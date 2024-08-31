@@ -88,7 +88,7 @@ export class LogFilter2 {
   readonly depth: number
   readonly logType: LogFilterType
   eventsAll: AbiEvent[] = []
-  topicsAll: string[] = []
+  topicsAll: Set<string> = new Set()
   filters: FilterMy[] = []
   blockProcessing = false
   filter: Filter | undefined
@@ -119,10 +119,17 @@ export class LogFilter2 {
     this.debug = debug === true
   }
 
+  // Calls onNewLogs for each event from events, in spite of event address
   addFilter(events: AbiEvent[], onNewLogs: (arg?: Log[]) => void) {
-    this.eventsAll = this.eventsAll.concat(events)
+    //this.eventsAll = this.eventsAll.concat(events)
+    //this.topicsAll = this.topicsAll.concat(topics)
     const topics = events.map((e) => encodeEventTopics({ abi: [e] })[0])
-    this.topicsAll = this.topicsAll.concat(topics)
+    topics.forEach((t, i) => {
+      if (!this.topicsAll.has(t)) {
+        this.topicsAll.add(t)
+        this.eventsAll.push(events[i])
+      }
+    })
     this.filters.push({ topics, onNewLogs })
   }
 
@@ -254,7 +261,12 @@ export class LogFilter2 {
             try {
               const logs = await this.client.transport.request({
                 method: 'eth_getLogs',
-                params: [{ blockHash: block.hash, topics: [this.topicsAll] }],
+                params: [
+                  {
+                    blockHash: block.hash,
+                    topics: [Array.from(this.topicsAll.values())],
+                  },
+                ],
               })
               this.sortAndProcessLogs(block.hash, logs as Log[])
             } catch (e) {
@@ -283,7 +295,7 @@ export class LogFilter2 {
           (logs) =>
             this.sortAndProcessLogs(
               block.hash,
-              logs.filter((l) => this.topicsAll.includes(l.topics[0] ?? '')),
+              logs.filter((l) => this.topicsAll.has(l.topics[0] ?? '')),
             ),
           backupPlan,
         )
