@@ -160,3 +160,9 @@ kubectl rollout restart statefulset/extractor-1
 ### Restart EVERYTHING
 
 kubectl rollout restart deployment -n default
+
+### Setting up service account for extractor
+
+kubectl create serviceaccount extractor --namespace default
+
+gcloud storage buckets add-iam-policy-binding gs://extractor-cache --member "principal://iam.googleapis.com/projects/104609065325/locations/global/workloadIdentityPools/sushi-api-414412.svc.id.goog/subject/ns/default/sa/extractor" --role "roles/storage.admin"

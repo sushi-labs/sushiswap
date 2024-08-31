@@ -42,7 +42,6 @@ profiles:
       projectId: "sushi-api-414412"
   manifests:
     rawYaml:
-      - k8s/push-cache.yaml
       - k8s/ingress-staging.yaml
       - k8s/staging-managed-certificate.yaml
 - name: production
