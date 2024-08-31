@@ -8,9 +8,11 @@ serialPipeline:
   # - targetId: development
   #   profiles: [development]
   - targetId: staging
-    profiles: [staging]
+    profiles:
+      - staging
   - targetId: production
-    profiles: [production]
+    profiles:
+      - production
 # ---
 # apiVersion: deploy.cloud.google.com/v1
 # kind: Target
