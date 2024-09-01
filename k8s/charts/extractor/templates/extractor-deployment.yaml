@@ -1,3 +1,4 @@
+ {{- $pruning := .Values.pruning -}}
 {{- range .Values.chains }}
 apiVersion: apps/v1
 kind: Deployment
@@ -21,7 +22,7 @@ spec:
             claimName: extractor-pvc
       serviceAccountName: extractor
       containers:
-        {{ if eq (dig "Values" "pruning" "false" $) "true" }}
+        {{ if eq $pruning true }}
         - name: "extractor-init"
           image: "extractor-init"
           volumeMounts:
