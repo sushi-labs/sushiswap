@@ -1,11 +1,7 @@
 import { V2Pool, getV2Pool } from '@sushiswap/graph-client/data-api'
 import { unstable_cache } from 'next/cache'
 import { notFound } from 'next/navigation'
-import {
-  PoolPositionProvider,
-  PoolPositionRewardsProvider,
-  PoolPositionStakedProvider,
-} from 'src/ui/pool'
+import { PoolPositionProvider } from 'src/ui/pool'
 import { ConcentratedLiquidityProvider } from 'src/ui/pool/ConcentratedLiquidityProvider'
 import { MigrateTab } from 'src/ui/pool/MigrateTab'
 import { ChainId } from 'sushi/chain'
@@ -38,13 +34,9 @@ export default async function MigrateV2PoolPage({
   return (
     <div className="flex flex-col gap-6">
       <PoolPositionProvider pool={pool}>
-        <PoolPositionStakedProvider pool={pool}>
-          <PoolPositionRewardsProvider pool={pool}>
-            <ConcentratedLiquidityProvider>
-              <MigrateTab pool={pool} />
-            </ConcentratedLiquidityProvider>
-          </PoolPositionRewardsProvider>
-        </PoolPositionStakedProvider>
+        <ConcentratedLiquidityProvider>
+          <MigrateTab pool={pool} />
+        </ConcentratedLiquidityProvider>
       </PoolPositionProvider>
     </div>
   )

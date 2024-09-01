@@ -6,7 +6,6 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-  Message,
   Separator,
   Tabs,
   TabsContent,
@@ -19,24 +18,18 @@ import { FC } from 'react'
 import { V2Pool } from '@sushiswap/graph-client/data-api'
 import { ChainKey } from 'sushi/chain'
 import { AddSectionLegacy } from './AddSectionLegacy'
-import { AddSectionStake } from './AddSectionStake'
 import { PoolPositionProvider } from './PoolPositionProvider'
-import { PoolPositionRewardsProvider } from './PoolPositionRewardsProvider'
-import { PoolPositionStakedProvider } from './PoolPositionStakedProvider'
 import { RemoveSectionLegacy } from './RemoveSectionLegacy'
-import { RemoveSectionUnstake } from './RemoveSectionUnstake'
 
 interface ManageV2LiquidityCardProps {
   pool: V2Pool
-  tab?: 'stake' | 'unstake' | 'add' | 'remove'
+  tab?: 'add' | 'remove'
 }
 
 export const ManageV2LiquidityCard: FC<ManageV2LiquidityCardProps> = ({
   pool,
   tab = 'add',
 }) => {
-  const isFarm = pool.wasIncentivized || pool.isIncentivized
-
   return (
     <Card>
       <CardHeader>
@@ -75,106 +68,22 @@ export const ManageV2LiquidityCard: FC<ManageV2LiquidityCardProps> = ({
                 Remove
               </TabsTrigger>
             </Link>
-            {isFarm ? (
-              <Link
-                href={`/${ChainKey[pool.chainId]}/pool/v2/${
-                  pool.address
-                }/stake`}
-                className="flex flex-1"
-              >
-                <TabsTrigger
-                  testdata-id="stake-tab"
-                  value="stake"
-                  className="flex flex-1"
-                >
-                  Stake
-                </TabsTrigger>
-              </Link>
-            ) : (
-              <TabsTrigger
-                testdata-id="stake-tab"
-                disabled
-                value="stake"
-                className="flex flex-1"
-              >
-                Stake
-              </TabsTrigger>
-            )}
-            {isFarm ? (
-              <Link
-                href={`/${ChainKey[pool.chainId]}/pool/v2/${
-                  pool.address
-                }/unstake`}
-                className="flex flex-1"
-              >
-                <TabsTrigger
-                  testdata-id="unstake-tab"
-                  value="unstake"
-                  className="flex flex-1"
-                >
-                  Unstake
-                </TabsTrigger>
-              </Link>
-            ) : (
-              <TabsTrigger
-                testdata-id="unstake-tab"
-                disabled
-                value="unstake"
-                className="flex flex-1"
-              >
-                Unstake
-              </TabsTrigger>
-            )}
           </TabsList>
         </CardContent>
         <div className="px-6 pb-4">
           <Separator />
         </div>
         <PoolPositionProvider pool={pool}>
-          <PoolPositionStakedProvider pool={pool}>
-            <PoolPositionRewardsProvider pool={pool}>
-              <TabsContent value="add">
-                <CardContent>
-                  <AddSectionLegacy pool={pool} />
-                </CardContent>
-              </TabsContent>
-              <TabsContent value="remove">
-                <CardContent>
-                  <RemoveSectionLegacy pool={pool} />
-                </CardContent>
-              </TabsContent>
-              <TabsContent value="stake">
-                <CardContent>
-                  {isFarm ? (
-                    <AddSectionStake pool={pool} />
-                  ) : (
-                    <Message
-                      variant="warning"
-                      size="sm"
-                      className="text-center"
-                    >
-                      No farms available for this pool
-                    </Message>
-                  )}
-                </CardContent>
-              </TabsContent>
-              <TabsContent value="unstake">
-                <CardContent>
-                  {isFarm ? (
-                    <RemoveSectionUnstake pool={pool} />
-                  ) : (
-                    <Message
-                      variant="warning"
-                      size="sm"
-                      className="text-center"
-                    >
-                      No farms available for this pool
-                    </Message>
-                  )}
-                </CardContent>
-              </TabsContent>
-            </PoolPositionRewardsProvider>
-          </PoolPositionStakedProvider>
+          <TabsContent value="add">
+            <CardContent>
+              <AddSectionLegacy pool={pool} />
+            </CardContent>
+          </TabsContent>
+          <TabsContent value="remove">
+            <CardContent>
+              <RemoveSectionLegacy pool={pool} />
+            </CardContent>
+          </TabsContent>
         </PoolPositionProvider>
       </Tabs>
     </Card>

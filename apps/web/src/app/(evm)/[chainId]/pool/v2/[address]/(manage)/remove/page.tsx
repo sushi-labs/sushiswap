@@ -1,13 +1,8 @@
 import { V2Pool, getV2Pool } from '@sushiswap/graph-client/data-api'
 import { unstable_cache } from 'next/cache'
 import { notFound } from 'next/navigation'
-import {
-  PoolPositionProvider,
-  PoolPositionRewardsProvider,
-  PoolPositionStakedProvider,
-} from 'src/ui/pool'
+import { PoolPositionProvider } from 'src/ui/pool'
 import { ManageV2LiquidityCard } from 'src/ui/pool/ManageV2LiquidityCard'
-import { PoolMyRewards } from 'src/ui/pool/PoolMyRewards'
 import { PoolPosition } from 'src/ui/pool/PoolPosition'
 import { ChainId } from 'sushi/chain'
 import { isSushiSwapV2ChainId } from 'sushi/config'
@@ -43,12 +38,7 @@ export default async function ManageV2PoolPage({
       </div>
       <div className="flex flex-col gap-6">
         <PoolPositionProvider pool={pool}>
-          <PoolPositionStakedProvider pool={pool}>
-            <PoolPositionRewardsProvider pool={pool}>
-              <PoolPosition pool={pool} />
-              <PoolMyRewards pool={pool} />
-            </PoolPositionRewardsProvider>
-          </PoolPositionStakedProvider>
+          <PoolPosition pool={pool} />
         </PoolPositionProvider>
       </div>
     </div>
