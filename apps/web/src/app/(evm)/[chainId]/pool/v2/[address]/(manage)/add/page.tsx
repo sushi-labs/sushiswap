@@ -1,4 +1,5 @@
 import { V2Pool, getV2Pool } from '@sushiswap/graph-client/data-api'
+import { LinkExternal, Message } from '@sushiswap/ui'
 import { unstable_cache } from 'next/cache'
 import { notFound } from 'next/navigation'
 import { PoolPositionProvider } from 'src/ui/pool'
@@ -6,7 +7,6 @@ import { ManageV2LiquidityCard } from 'src/ui/pool/ManageV2LiquidityCard'
 import { PoolPosition } from 'src/ui/pool/PoolPosition'
 import { ChainId } from 'sushi/chain'
 import { isSushiSwapV2ChainId } from 'sushi/config'
-import { Message, LinkExternal } from '@sushiswap/ui'
 import { isAddress } from 'viem'
 
 export default async function ManageV2PoolPage({
