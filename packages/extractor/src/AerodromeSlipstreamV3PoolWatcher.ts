@@ -113,6 +113,13 @@ export class AerodromeSlipstreamV3PoolWatcher extends EventEmitter {
     this.busyCounter = busyCounter
   }
 
+  setFee(newFee: number) {
+    if (this.state) {
+      this.state.fee = newFee
+      this._poolWasChanged()
+    }
+  }
+
   async updatePoolState() {
     if (!this.updatePoolStateGuard) {
       this.updatePoolStateGuard = true

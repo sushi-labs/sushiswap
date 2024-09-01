@@ -120,9 +120,8 @@ export class LogFilter2 {
   }
 
   // Calls onNewLogs for each event from events, in spite of event address
-  addFilter(events: AbiEvent[], onNewLogs: (arg?: Log[]) => void) {
-    //this.eventsAll = this.eventsAll.concat(events)
-    //this.topicsAll = this.topicsAll.concat(topics)
+  addFilter(events: AbiEvent[] | AbiEvent, onNewLogs: (arg?: Log[]) => void) {
+    events = Array.isArray(events) ? events : [events]
     const topics = events.map((e) => encodeEventTopics({ abi: [e] })[0])
     topics.forEach((t, i) => {
       if (!this.topicsAll.has(t)) {
@@ -136,7 +135,7 @@ export class LogFilter2 {
   // for low used events
   addAddressFilter(
     addr: Address,
-    events: AbiEvent[],
+    events: AbiEvent[] | AbiEvent,
     onNewLogs: (arg?: Log[]) => void,
   ) {
     const addrL = addr.toLowerCase()
@@ -144,6 +143,21 @@ export class LogFilter2 {
       if (logs === undefined) onNewLogs()
       else {
         const myLogs = logs.filter((l) => l.address.toLowerCase() === addrL)
+        onNewLogs(myLogs)
+      }
+    })
+  }
+
+  addAddressesFilter(
+    addrs: Address[],
+    events: AbiEvent[] | AbiEvent,
+    onNewLogs: (arg?: Log[]) => void,
+  ) {
+    const addrSet = new Set(addrs.map((addr) => addr.toLowerCase()))
+    this.addFilter(events, (logs?: Log[]) => {
+      if (logs === undefined) onNewLogs()
+      else {
+        const myLogs = logs.filter((l) => addrSet.has(l.address.toLowerCase()))
         onNewLogs(myLogs)
       }
     })
