@@ -184,8 +184,7 @@ export class AerodromeSlipstreamV3Extractor extends IExtractor {
           arg.status !== AerodromeSlipstreamPoolSyncState.Match &&
           arg.status !== AerodromeSlipstreamPoolSyncState.ReservesMismatch
         )
-          Logger.error(
-            this.multiCallAggregator.chainId,
+          this.errorLog(
             `Pool ${arg.ethalonPool.address} quality check: ${arg.status} ` +
               `${arg.correctPool ? 'pool was updated ' : ''}` +
               `(${this.qualityChecker.totalMatchCounter}/${this.qualityChecker.totalCheckCounter})`,
@@ -277,17 +276,10 @@ export class AerodromeSlipstreamV3Extractor extends IExtractor {
                   logs[logs.length - 1].blockNumber || 0,
                 )
             } catch (e) {
-              Logger.error(
-                this.multiCallAggregator.chainId,
-                `Block ${blockNumber} log process error`,
-                e,
-              )
+              this.errorLog(`Block ${blockNumber} log process error`, e)
             }
           } else {
-            Logger.error(
-              this.multiCallAggregator.chainId,
-              'Log collecting failed. Pools refetching',
-            )
+            this.errorLog('Log collecting failed. Pools refetching')
             Array.from(this.poolMap.values()).forEach((p) =>
               p.updatePoolState(),
             )
@@ -369,8 +361,7 @@ export class AerodromeSlipstreamV3Extractor extends IExtractor {
           } pools failed (${Math.round(performance.now() - startTime)}ms)`,
         )
         if (failed > 0) {
-          Logger.error(
-            this.multiCallAggregator.chainId,
+          this.errorLog(
             `${failed}/${promises.length} pools load failed during ExtractorAerodromeSlipstreamV3 starting`,
           )
         }
@@ -410,13 +401,11 @@ export class AerodromeSlipstreamV3Extractor extends IExtractor {
             }) fees-tickSpacing map: ${JSON.stringify(feeSpacingMap)}`,
           )
           if (Object.keys(feeSpacingMap).length === 0)
-            Logger.error(
-              this.multiCallAggregator.chainId,
+            this.errorLog(
               `Provider ${f.provider}(${f.address}) fees-tickSpacing map is empty`,
             )
         } catch (e) {
-          Logger.error(
-            this.multiCallAggregator.chainId,
+          this.errorLog(
             `Provider ${f.provider}(${f.address}) data fetching failed`,
             e,
           )
@@ -444,8 +433,7 @@ export class AerodromeSlipstreamV3Extractor extends IExtractor {
       } else this.addPoolByAddress(l.address)
       return 'UnknPool'
     } catch (e) {
-      Logger.error(
-        this.multiCallAggregator.chainId,
+      this.errorLog(
         `Log processing for pool ${l.address} throwed an exception`,
         e,
       )
@@ -836,8 +824,8 @@ export class AerodromeSlipstreamV3Extractor extends IExtractor {
       console.log(`ASV3-${this.multiCallAggregator.chainId}: ${log}`)
   }
 
-  errorLog(msg: string, err?: unknown) {
-    Logger.error(this.multiCallAggregator.chainId, msg, err)
+  errorLog(msg: string, err?: unknown, trim?: boolean) {
+    Logger.error(this.multiCallAggregator.chainId, msg, err, trim)
   }
 
   override isStarted() {
