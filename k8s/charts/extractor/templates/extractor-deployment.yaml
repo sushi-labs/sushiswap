@@ -21,8 +21,8 @@ spec:
           persistentVolumeClaim:
             claimName: extractor-pvc
       serviceAccountName: extractor
-      containers:
-        {{ if eq $pruning true }}
+      {{ if eq $pruning true }}
+      initContainers:
         - name: "extractor-init"
           image: "extractor-init"
           volumeMounts:
@@ -34,7 +34,8 @@ spec:
               value: "{{ .id }}"
             - name: CACHE_DIR
               value: "/app/cache"
-        {{ end }}
+      {{ end }}
+      containers:
         - name: extractor
           image: extractor
           ports:
