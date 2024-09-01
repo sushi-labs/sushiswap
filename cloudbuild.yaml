@@ -1,4 +1,17 @@
 steps:
+
+# Build and tag using commit sha
+- name: 'gcr.io/cloud-builders/docker'
+  id: extractor-init-build
+  args: ['build', '-t', 'us-east4-docker.pkg.dev/${PROJECT_ID}/docker/extractor-init:${COMMIT_SHA}', '-f', 'Dockerfile.extractor-init', '.']
+  waitFor: ['-']
+
+# Push the container image
+- name: 'gcr.io/cloud-builders/docker'
+  id: extractor-init-push
+  args: ['push', 'us-east4-docker.pkg.dev/${PROJECT_ID}/docker/extractor-init:${COMMIT_SHA}']
+  waitFor: ['extractor-init-build']
+
 # Build and tag using commit sha
 - name: 'gcr.io/cloud-builders/docker'
   id: extractor-build
