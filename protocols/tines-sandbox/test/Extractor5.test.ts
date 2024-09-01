@@ -8,6 +8,7 @@ import {
   LogFilterType,
   TokenManager,
 } from '@sushiswap/extractor'
+import { AerodromeSlipstreamFactoryV3 } from '@sushiswap/extractor/dist/AerodromeSlipstreamV3Extractor'
 import { routeProcessor5Abi } from 'sushi/abi'
 import { ChainId } from 'sushi/chain'
 import {
@@ -138,8 +139,10 @@ async function startInfinitTest(args: {
   factoriesV2: FactoryV2[]
   factoriesV3: FactoryV3[]
   curveConfig?: CurveWhitelistConfig
+  factoriesAerodromeSlipstream?: AerodromeSlipstreamFactoryV3[]
   tickHelperContractV3: Address
   tickHelperContractAlgebra: Address
+  tickHelperContractAerodromeSlipstream?: Address
   cacheDir: string
   logDepth: number
   logType?: LogFilterType
@@ -164,6 +167,7 @@ async function startInfinitTest(args: {
     extractor.multiCallAggregator,
     false,
     __dirname,
+    '../cache',
     `tokens-${client.chain?.id}`,
   )
   await tokenManager.addCachedTokens()
@@ -501,8 +505,16 @@ it.skip('Extractor Base infinite work test', async () => {
       sushiswapV3Factory(ChainId.BASE),
       uniswapV3Factory(ChainId.BASE),
     ],
+    factoriesAerodromeSlipstream: [
+      {
+        address: '0x5e7BB104d84c7CB9B682AaC2F3d509f5F406809A',
+        provider: LiquidityProviders.AerodromeSlipstream,
+      },
+    ],
     tickHelperContractV3: TickLensContract[ChainId.BASE],
     tickHelperContractAlgebra: '' as Address,
+    tickHelperContractAerodromeSlipstream:
+      '0x3e1116ea5034f5d73a7b530071709d54a4109f5f' as Address, // our own
     cacheDir: './cache',
     logDepth: 50,
     logging: true,
