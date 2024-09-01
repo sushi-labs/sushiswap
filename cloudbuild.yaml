@@ -45,7 +45,7 @@ steps:
       "--delivery-pipeline", "sushi-api",
       "--region", "us-east4",
       "--annotations", "commitId=${REVISION_ID}",
-      "--images", "extractor=us-east4-docker.pkg.dev/$PROJECT_ID/docker/extractor:${COMMIT_SHA},router=us-east4-docker.pkg.dev/$PROJECT_ID/docker/router:${COMMIT_SHA}"
+      "--images", "extractor-init=us-east4-docker.pkg.dev/$PROJECT_ID/docker/extractor-init:${COMMIT_SHA},extractor=us-east4-docker.pkg.dev/$PROJECT_ID/docker/extractor:${COMMIT_SHA},router=us-east4-docker.pkg.dev/$PROJECT_ID/docker/router:${COMMIT_SHA}"
     ]
 
 options:
