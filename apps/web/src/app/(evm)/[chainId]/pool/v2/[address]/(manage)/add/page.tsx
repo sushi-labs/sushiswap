@@ -1,13 +1,12 @@
 import { V2Pool, getV2Pool } from '@sushiswap/graph-client/data-api'
 import { unstable_cache } from 'next/cache'
 import { notFound } from 'next/navigation'
-import {
-  PoolPositionProvider,
-} from 'src/ui/pool'
+import { PoolPositionProvider } from 'src/ui/pool'
 import { ManageV2LiquidityCard } from 'src/ui/pool/ManageV2LiquidityCard'
 import { PoolPosition } from 'src/ui/pool/PoolPosition'
 import { ChainId } from 'sushi/chain'
 import { isSushiSwapV2ChainId } from 'sushi/config'
+import { Message, LinkExternal } from '@sushiswap/ui'
 import { isAddress } from 'viem'
 
 export default async function ManageV2PoolPage({
@@ -34,15 +33,28 @@ export default async function ManageV2PoolPage({
   )()) as V2Pool
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-[auto_400px] gap-6">
-      <div>
-        <ManageV2LiquidityCard pool={pool} tab="add" />
+    <>
+      <Message size="sm" variant="info">
+        <h1 className="py-1 text-lg text-slate-200">
+          Not seeing your position?
+        </h1>
+        We’re beginning to phase out the staking contracts used for V2 pools to
+        make way for new and improved technology. If you have any staked
+        positions and wish to unstake and claim your rewards, please visit{' '}
+        <LinkExternal href="https://deprecated.sushi.com">
+          <span className="text-slate-300">https://deprecated.sushi.com</span>
+        </LinkExternal>
+      </Message>
+      <div className="grid grid-cols-1 md:grid-cols-[auto_400px] gap-6">
+        <div>
+          <ManageV2LiquidityCard pool={pool} tab="add" />
+        </div>
+        <div className="flex flex-col gap-6">
+          <PoolPositionProvider pool={pool}>
+            <PoolPosition pool={pool} />
+          </PoolPositionProvider>
+        </div>
       </div>
-      <div className="flex flex-col gap-6">
-        <PoolPositionProvider pool={pool}>
-              <PoolPosition pool={pool} />
-        </PoolPositionProvider>
-      </div>
-    </div>
+    </>
   )
 }
