@@ -12,13 +12,13 @@ import { WalletConnector } from '~tron/_common/ui/WalletConnector/WalletConnecto
 const nagivationElements: NavigationElement[] = [
   {
     title: 'Swap',
-    href: '/aptos/swap',
+    href: '/tron/swap',
     show: 'everywhere',
     type: NavigationElementType.Single,
   },
   {
     title: 'Pool',
-    href: '/aptos/pool',
+    href: '/tron/pool',
     show: 'everywhere',
     type: NavigationElementType.Single,
   },

@@ -13,6 +13,7 @@ export const Icon = ({ currency, height = 40, width = 40 }: IconProps) => {
     <>
       {currency?.logoURI ? (
         <Image
+          loader={({ src }) => src}
           src={currency?.logoURI}
           alt=""
           className="rounded-full"
