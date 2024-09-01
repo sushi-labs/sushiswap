@@ -1,8 +1,16 @@
 import { FileHandle, open } from 'fs/promises'
 
-const chainId = process.env.CHAIN_ID || '10'
+const chainId = process.env.CHAIN_ID
 
-const cacheDir = process.env.CACHE_DIR || `./cache/${chainId}`
+if (!chainId) {
+  throw Error('CHAIN_ID not set')
+}
+
+const cacheDir = process.env.CACHE_DIR
+
+if (!cacheDir) {
+  throw Error('CACHE_DIR not set')
+}
 
 let prices: string[]
 

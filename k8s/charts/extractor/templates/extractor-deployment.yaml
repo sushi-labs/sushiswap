@@ -1,4 +1,4 @@
- {{- $pruning := .Values.pruning -}}
+{{- $pruning := .Values.pruning -}}
 {{- range .Values.chains }}
 apiVersion: apps/v1
 kind: Deployment
@@ -23,8 +23,8 @@ spec:
       serviceAccountName: extractor
       {{ if eq $pruning true }}
       initContainers:
-        - name: "extractor-init"
-          image: "extractor-init"
+        - name: extractor-init
+          image: extractor-init
           volumeMounts:
             - mountPath: "/app/cache"
               subPath: "{{ .id }}"
