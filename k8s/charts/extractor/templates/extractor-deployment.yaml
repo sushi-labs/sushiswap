@@ -21,7 +21,7 @@ spec:
             claimName: extractor-pvc
       serviceAccountName: extractor
       containers:
-        {{ if eq (dig "Values" "pruning" "false" .) "true" }}
+        {{ if eq (dig "pruning" false .Values) true }}
         - name: "extractor-init"
           image: "extractor-init"
           volumeMounts:
