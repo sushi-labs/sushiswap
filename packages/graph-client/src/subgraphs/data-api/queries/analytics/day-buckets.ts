@@ -35,7 +35,7 @@ export async function getAnalyticsDayBuckets(
   variables: GetAnalyticsDayBuckets,
   options?: RequestOptions,
 ) {
-  const url = `https://${SUSHI_DATA_API_HOST}`
+  const url = `https://${SUSHI_DATA_API_HOST}/graphql`
   try {
     const result = await request(
       {
