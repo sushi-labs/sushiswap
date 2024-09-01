@@ -48,8 +48,8 @@ const lightTheme: Theme = {
 const Disclaimer: DisclaimerComponent = ({ Text, Link }) => (
   <Text>
     By connecting your wallet, you agree to Sushi Labs{"' "}
-    <Link href="/terms-of-service">Terms of Service</Link> and{' '}
-    <Link href="/privacy-policy">Privacy Policy</Link>
+    <Link href="/legal/terms-of-service">Terms of Service</Link> and{' '}
+    <Link href="/legal/privacy-policy">Privacy Policy</Link>
   </Text>
 )
 

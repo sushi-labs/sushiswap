@@ -85,7 +85,7 @@ export default async function Page({ params }: Props) {
     })
 
     article = (await articleP).articles[0]
-    body = await getGhostBody(article.ghostSlug)
+    body = await getGhostBody(article.ghostSlug).then(({ html }) => html)
     moreArticles = (await moreArticlesP).articles
   } catch {
     return notFound()

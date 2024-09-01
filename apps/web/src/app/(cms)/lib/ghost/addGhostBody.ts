@@ -8,7 +8,7 @@ export async function addGhostBody<T extends Record<string, unknown>>(
   data: T,
   ghostSlug: string,
 ) {
-  const ghostBody = await getGhostBody(ghostSlug)
+  const { html: ghostBody } = await getGhostBody(ghostSlug)
 
   return {
     ...data,
