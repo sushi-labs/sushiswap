@@ -2,7 +2,7 @@ import { ITronInUSDTResponse } from '~tron/_common/types/pricing-types'
 
 export const getTronPrice = async () => {
   try {
-    const res = await fetch(`/api/pricing`, { method: 'GET' })
+    const res = await fetch(`/tron/api/pricing`, { method: 'GET' })
     if (!res.ok) {
       throw new Error('Failed to fetch data from Tron API')
     }

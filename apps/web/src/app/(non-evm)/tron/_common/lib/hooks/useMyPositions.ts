@@ -48,7 +48,7 @@ const getPairContributions = async ({
 }) => {
   try {
     const res = await fetch(
-      `/api/pools/my-positions?pairAddresses=${pairAddresses}&walletAddress=${walletAddress}`,
+      `/tron/api/pools/my-positions?pairAddresses=${pairAddresses}&walletAddress=${walletAddress}`,
       { method: 'GET' },
     )
     if (!res.ok) {
@@ -163,7 +163,7 @@ const injectReserves = async (pools: _IPools) => {
     for (const chunk of chunkedPools) {
       const pairAddresses = chunk.map((pool) => pool.pairAddress)
       const res = await fetch(
-        `/api/pools/get-reserves?pairAddresses=${pairAddresses}`,
+        `/tron/api/pools/get-reserves?pairAddresses=${pairAddresses}`,
         { method: 'GET' },
       )
       if (!res.ok) {

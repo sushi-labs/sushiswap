@@ -19,9 +19,12 @@ const getPoolsByEvent = async ({
   factoryAddress,
 }: { factoryAddress: string }): Promise<_IPools> => {
   try {
-    const res = await fetch(`/api/pools?factoryAddress=${factoryAddress}`, {
-      method: 'GET',
-    })
+    const res = await fetch(
+      `/tron/api/pools?factoryAddress=${factoryAddress}`,
+      {
+        method: 'GET',
+      },
+    )
     if (!res.ok) {
       throw new Error('Failed to fetch data from Tron API')
     }
@@ -60,7 +63,7 @@ const injectReserves = async (pools: _IPools) => {
     for (const chunk of chunkedPools) {
       const pairAddresses = chunk.map((pool) => pool.pairAddress)
       const res = await fetch(
-        `/api/pools/get-reserves?pairAddresses=${pairAddresses}`,
+        `/tron/api/pools/get-reserves?pairAddresses=${pairAddresses}`,
         { method: 'GET' },
       )
       if (!res.ok) {

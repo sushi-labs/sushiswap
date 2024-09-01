@@ -3,9 +3,12 @@ import { IPoolDataResponse } from '~tron/_common/types/get-pools-type'
 
 export const getAllPairAddresses = async () => {
   try {
-    const res = await fetch(`/api/pools?factoryAddress=${FACTORY_CONTRACT}`, {
-      method: 'GET',
-    })
+    const res = await fetch(
+      `/tron/api/pools?factoryAddress=${FACTORY_CONTRACT}`,
+      {
+        method: 'GET',
+      },
+    )
     if (!res.ok) {
       throw new Error('Failed to fetch data from Tron API')
     }

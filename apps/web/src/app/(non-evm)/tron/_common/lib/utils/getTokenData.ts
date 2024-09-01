@@ -5,7 +5,7 @@ export const getTokenData = async ({
 }: { contractAddress: string }) => {
   try {
     const res = await fetch(
-      `/api/token-info?contractAddress=${contractAddress}`,
+      `/tron/api/token-info?contractAddress=${contractAddress}`,
       { method: 'GET' },
     )
     if (!res.ok) {

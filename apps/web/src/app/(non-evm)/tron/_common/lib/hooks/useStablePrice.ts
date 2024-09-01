@@ -182,7 +182,7 @@ const getPairsIfItExists = async (token: IToken) => {
 const getReserves = async (pairAddress: string) => {
   try {
     const res = await fetch(
-      `/api/pools/get-reserves?pairAddresses=${[pairAddress]}`,
+      `/tron/api/pools/get-reserves?pairAddresses=${[pairAddress]}`,
       { method: 'GET' },
     )
     if (!res.ok) {
