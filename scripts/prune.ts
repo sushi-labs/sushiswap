@@ -3,13 +3,13 @@ import { FileHandle, open } from 'fs/promises'
 const chainId = process.env.CHAIN_ID
 
 if (!chainId) {
-  throw Error('CHAIN_ID not set')
+  throw Error('CHAIN_ID environment variable not set')
 }
 
 const cacheDir = process.env.CACHE_DIR
 
 if (!cacheDir) {
-  throw Error('CACHE_DIR not set')
+  throw Error('CACHE_DIR environment variable not set')
 }
 
 let prices: string[]
@@ -61,24 +61,23 @@ async function prune(
           token0: string
           token1: string
         } = JSON.parse(line)
+        valid++
         if (set.has(record.address)) {
           duplicate++
           // console.log(`Duplicate record: ${record.address}`)
           continue
         }
         set.add(record.address)
-        if (typeof accessors === 'string') {
-          if (!prices.includes(record[accessors])) {
-            removed++
-          }
-        } else if (
-          accessors.some((accessor) => !prices.includes(record[accessor]))
+        if (
+          (typeof accessors === 'string' &&
+            !prices.includes(record[accessors])) ||
+          (typeof accessors !== 'string' &&
+            accessors.some((accessor) => !prices.includes(record[accessor])))
         ) {
           removed++
-        } else {
-          records.push(record)
-          valid++
+          continue
         }
+        records.push(record)
       } catch {
         invalid++
       }
