@@ -6,7 +6,6 @@ import { ChainId } from 'sushi/chain'
 import { formatPercent } from 'sushi/format'
 
 import { V2Pool } from '@sushiswap/graph-client/data-api'
-import { AddSectionMyPositionStaked } from './AddSectionMyPositionStaked'
 import { AddSectionMyPositionUnstaked } from './AddSectionMyPositionUnstaked'
 
 export const AddSectionMyPosition: FC<{ pool: V2Pool }> = ({ pool }) => {
@@ -65,7 +64,6 @@ export const AddSectionMyPosition: FC<{ pool: V2Pool }> = ({ pool }) => {
       </div>
       <div className="p-5 space-y-5">
         <AddSectionMyPositionUnstaked />
-        {pool.incentives && <AddSectionMyPositionStaked />}
       </div>
     </div>
   )

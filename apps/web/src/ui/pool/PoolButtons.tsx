@@ -8,7 +8,6 @@ import { getAddress } from 'viem'
 import { V2Pool } from '@sushiswap/graph-client/data-api'
 import { ChainKey } from 'sushi/chain'
 import { usePoolPosition } from './PoolPositionProvider'
-import { usePoolPositionStaked } from './PoolPositionStakedProvider'
 
 interface PoolButtonsProps {
   pool: V2Pool
