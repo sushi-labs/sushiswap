@@ -6,6 +6,7 @@ import { BaseProviders, OnramperProvider } from '@sushiswap/ui'
 import { WagmiStoreVersionCheck } from 'src/lib/wagmi/components/wagmi-store-version-check'
 import { QueryClientProvider } from '../../providers/query-client-provider'
 import { WagmiConfig } from '../../providers/wagmi-provider'
+import { PriceProvider } from './_common/ui/price-provider/price-provider'
 
 export function Providers({
   children,
@@ -16,7 +17,9 @@ export function Providers({
       <OnramperProvider>
         <QueryClientProvider>
           <WagmiConfig cookie={cookie}>
-            <WagmiStoreVersionCheck>{children}</WagmiStoreVersionCheck>
+            <WagmiStoreVersionCheck>
+              <PriceProvider>{children}</PriceProvider>
+            </WagmiStoreVersionCheck>
           </WagmiConfig>
         </QueryClientProvider>
       </OnramperProvider>
