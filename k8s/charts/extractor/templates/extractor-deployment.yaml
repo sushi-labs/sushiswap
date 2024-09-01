@@ -21,6 +21,19 @@ spec:
             claimName: extractor-pvc
       serviceAccountName: extractor
       containers:
+        {{ if eq .Values.pruning "true" }}
+        - name: "extractor-init"
+          image: "extractor-init"
+          volumeMounts:
+            - mountPath: "/app/cache"
+              subPath: "{{ .id }}"
+              name: extractor-pv
+          env:
+            - name: CHAIN_ID
+              value: "{{ .id }}"
+            - name: CACHE_DIR
+              value: "/app/cache"
+        {{ end }}
         - name: extractor
           image: extractor
           ports:
