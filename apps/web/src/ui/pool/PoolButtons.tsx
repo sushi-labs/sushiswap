@@ -21,9 +21,7 @@ export const PoolButtons: FC<PoolButtonsProps> = ({ pool }) => {
       <div className="flex gap-2">
         <Button
           asChild
-          disabled={Boolean(
-            balance?.equalTo(ZERO),
-          )}
+          disabled={Boolean(balance?.equalTo(ZERO))}
           size="lg"
           variant="secondary"
           fullWidth
