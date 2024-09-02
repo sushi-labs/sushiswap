@@ -41,8 +41,8 @@ export default async function ManageV2PoolPage({
         We’re beginning to phase out the staking contracts used for V2 pools to
         make way for new and improved technology. If you have any staked
         positions and wish to unstake and claim your rewards, please visit{' '}
-        <LinkExternal href="https://deprecated.sushi.com">
-          <span className="text-slate-300">https://deprecated.sushi.com</span>
+        <LinkExternal href="https://deprecated.sushi.com/farms">
+          <span className="text-slate-300">https://deprecated.sushi.com/farms</span>
         </LinkExternal>
       </Message>
       <div className="grid grid-cols-1 md:grid-cols-[auto_400px] gap-6">
