@@ -627,7 +627,7 @@ export class UniV2Extractor extends IExtractor {
       ),
     }
     this.setPoolState(args.address.toLowerCase(), poolState)
-    if (args.addToCache)
+    if (args.addToCache && this.isStarted())
       this.poolPermanentCache.add({
         address: args.address,
         token0: t0.address as Address,

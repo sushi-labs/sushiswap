@@ -557,7 +557,7 @@ export class UniV4Extractor extends IExtractor {
 
     this.tokenPairPool.push(t0, t1, watcher)
 
-    if (addToCache)
+    if (addToCache && this.isStarted())
       this.poolPermanentCache.add({
         address: p.address,
         id: p.id,
