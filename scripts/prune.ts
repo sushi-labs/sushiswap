@@ -22,7 +22,7 @@ function percentage(x: number, y: number, fixed = 2) {
 async function prune(
   path: string,
   accessors: 'address' | ('token0' | 'token1')[],
-  minLines = 0,
+  minLines = 1000,
 ): Promise<[number, number, number, number]> {
   let valid = 0
   let invalid = 0
@@ -112,7 +112,7 @@ async function prune(
     console.log(`Analyzing cache for chain ${chainId}...`)
 
     const [validTokens, invalidTokens, duplicateTokens, removedTokens] =
-      await prune(`${cacheDir}/tokens-${chainId}`, 'address', 200)
+      await prune(`${cacheDir}/tokens-${chainId}`, 'address')
     console.log(
       `Tokens, Valid: ${validTokens} Invalid: ${invalidTokens} Duplicate: ${duplicateTokens} Removed: ${removedTokens} (${percentage(
         removedTokens,
