@@ -119,3 +119,5 @@ chains:
     id: "2046399126"
   - name: "mantle"
     id: "5000"
+  - name: "zksync-era"
+    id: "324"

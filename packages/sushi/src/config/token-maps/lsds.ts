@@ -1,5 +1,6 @@
 import { ChainId } from '../../chain/index.js'
 import { Token } from '../../currency/token.js'
+import { METH } from '../../currency/tokens.js'
 
 export const LSDS = {
   [ChainId.ARBITRUM]: [
@@ -144,6 +145,7 @@ export const LSDS = {
   [ChainId.BTTC]: [],
   [ChainId.CELO]: [],
   [ChainId.ETHEREUM]: [
+    METH[ChainId.ETHEREUM],
     new Token({
       chainId: ChainId.ETHEREUM,
       address: '0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84',
@@ -213,13 +215,6 @@ export const LSDS = {
       decimals: 18,
       symbol: 'ETHx',
       name: 'Stader ETHx',
-    }),
-    new Token({
-      chainId: ChainId.ETHEREUM,
-      address: '0xd5F7838F5C461fefF7FE49ea5ebaF7728bB0ADfa',
-      decimals: 18,
-      symbol: 'mETH',
-      name: 'Mantle Staked Ether',
     }),
     new Token({
       chainId: ChainId.ETHEREUM,
@@ -395,7 +390,7 @@ export const LSDS = {
   [ChainId.ROOTSTOCK]: [],
   [ChainId.PALM]: [],
   [ChainId.ZKSYNC_ERA]: [],
-  [ChainId.MANTLE]: [],
+  [ChainId.MANTLE]: [METH[ChainId.MANTLE]],
   // TESTNETS
   [ChainId.POLYGON_TESTNET]: [],
   [ChainId.FANTOM_TESTNET]: [],
