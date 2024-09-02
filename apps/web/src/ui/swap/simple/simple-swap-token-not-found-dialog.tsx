@@ -257,7 +257,7 @@ export const SimpleSwapTokenNotFoundDialog = () => {
                 Close
               </Button>
               <Message variant="destructive" size="sm">
-                Sushi does not support honetpot tokens. This token contract
+                Sushi does not support honeypot tokens. This token contract
                 cannot be imported!
               </Message>
             </div>
