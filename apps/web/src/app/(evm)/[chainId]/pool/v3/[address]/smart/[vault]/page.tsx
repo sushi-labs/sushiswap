@@ -3,18 +3,21 @@ import {
   VaultV1,
   getV3Pool,
   getVault,
+  isSmartPoolChainId,
 } from '@sushiswap/graph-client/data-api'
 import { getTokenRatios, getVaultPositions } from '@sushiswap/steer-sdk'
 import formatDistanceStrict from 'date-fns/formatDistanceStrict'
 import formatDistanceToNow from 'date-fns/formatDistanceToNow'
 import { unstable_cache } from 'next/cache'
+import { notFound } from 'next/navigation'
 import { SteerStrategyGeneric } from 'src/ui/pool/Steer/SteerStrategies'
 import { SteerBaseStrategy } from 'src/ui/pool/Steer/SteerStrategies/SteerBaseStrategy'
-import { publicClientConfig } from 'sushi/config'
+import type { ChainId } from 'sushi'
+import { isSushiSwapV3ChainId, publicClientConfig } from 'sushi/config'
 import { Token } from 'sushi/currency'
 import { formatNumber } from 'sushi/format'
 import { tickToPrice } from 'sushi/pool/sushiswap-v3'
-import { PublicClient, createPublicClient } from 'viem'
+import { PublicClient, createPublicClient, isAddress } from 'viem'
 
 function getPriceExtremes(
   vault: VaultV1,
@@ -75,11 +78,24 @@ async function getGenerics(vault: VaultV1): Promise<SteerStrategyGeneric> {
 export default async function SteerVaultPage({
   params,
 }: { params: { chainId: string; vault: string; address: string } }) {
+  const chainId = Number(params.chainId) as ChainId
+  const vaultAddress = params.vault
+  const poolAddress = params.address
+
+  if (
+    !isSushiSwapV3ChainId(chainId) ||
+    !isSmartPoolChainId(chainId) ||
+    !isAddress(poolAddress, { strict: false }) ||
+    !isAddress(vaultAddress, { strict: false })
+  ) {
+    return notFound()
+  }
+
   const pool = (await unstable_cache(
     async () =>
       await getV3Pool({
-        chainId: Number(params.chainId),
-        address: params.address,
+        chainId,
+        address: poolAddress,
       }),
     ['pool', `${params.chainId}:${params.address}`],
     { revalidate: 60 * 15 },
@@ -88,8 +104,8 @@ export default async function SteerVaultPage({
   const vault = (await unstable_cache(
     async () =>
       await getVault({
-        chainId: Number(params.chainId),
-        vaultAddress: params.vault,
+        chainId,
+        vaultAddress,
       }),
     ['vault', `${params.chainId}:${params.vault}`],
     { revalidate: 60 * 15 },

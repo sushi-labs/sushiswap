@@ -1,7 +1,7 @@
 import { V3Pool } from '@sushiswap/graph-client/data-api'
 import { Card } from '@sushiswap/ui'
 import React, { FC, useMemo, useState } from 'react'
-import { SushiSwapProtocol } from 'sushi'
+import { Address, SushiSwapProtocol } from 'sushi'
 import { SushiSwapV3ChainId } from 'sushi/config'
 import { LiquidityDepthWidget } from './LiquidityDepthWidget'
 import { PoolChartGraph } from './PoolChartGraph'
@@ -16,7 +16,7 @@ const statisticsChart = [
 ]
 
 interface Charts {
-  address: string
+  address: Address
   chainId: SushiSwapV3ChainId
   pool: V3Pool
 }

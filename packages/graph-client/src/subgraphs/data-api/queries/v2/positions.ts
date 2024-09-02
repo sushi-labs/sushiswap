@@ -8,7 +8,7 @@ import { graphql } from '../../graphql'
 
 export const V2PositionsQuery = graphql(
   `
-query V2PositionsQuery($user: String!, $chainId: Int!) {
+query V2PositionsQuery($user: Bytes!, $chainId: SushiSwapV2ChainId!) {
   v2LiquidityPositions(user: $user, chainId: $chainId) {
     user
     stakedBalance
@@ -80,7 +80,7 @@ export async function getV2Positions(
   if (!isSushiSwapV2ChainId(chainId)) {
     throw new Error('Invalid chainId')
   }
-  const user = getAddress(variables.user).toLowerCase()
+  const user = getAddress(variables.user).toLowerCase() as Address
 
   const result = await request(
     { url, document: V2PositionsQuery, variables: { chainId, user } },

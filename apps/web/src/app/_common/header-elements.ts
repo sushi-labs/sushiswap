@@ -21,7 +21,7 @@ export const EXPLORE_NAVIGATION_LINKS = (
     description: 'Explore top pools.',
   },
   {
-    title: 'Pools',
+    title: 'Pool',
     href: `/${
       isChainId(Number(chainId)) ? ChainKey[chainId as ChainId] : 'ethereum'
     }/pool`,
@@ -76,7 +76,7 @@ export const headerElements = (chainId?: ChainId): NavigationElement[] => [
     type: NavigationElementType.Single,
   },
   {
-    title: 'Pools',
+    title: 'Pool',
     href: `/${
       isChainId(Number(chainId)) ? ChainKey[chainId as ChainId] : 'ethereum'
     }/pool`,

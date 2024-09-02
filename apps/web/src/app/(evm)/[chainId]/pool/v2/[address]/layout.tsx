@@ -1,6 +1,8 @@
 import { getV2Pool } from '@sushiswap/graph-client/data-api'
 import { unstable_cache } from 'next/cache'
 import { ChainId } from 'sushi'
+import { isSushiSwapV2ChainId } from 'sushi/config'
+import { isAddress } from 'viem'
 import notFound from '../../../not-found'
 
 export const metadata = {
@@ -16,6 +18,13 @@ export default async function Layout({
 }) {
   const { chainId: _chainId, address } = params
   const chainId = +_chainId as ChainId
+
+  if (
+    !isSushiSwapV2ChainId(chainId) ||
+    !isAddress(address, { strict: false })
+  ) {
+    return notFound()
+  }
 
   const pool = await unstable_cache(
     async () => getV2Pool({ chainId, address }),

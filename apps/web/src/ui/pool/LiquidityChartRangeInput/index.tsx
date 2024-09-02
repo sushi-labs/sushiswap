@@ -77,6 +77,7 @@ export default function LiquidityChartRangeInput({
   onRightRangeInput,
   interactive,
   hideBrushes = false,
+  tokenToggle,
 }: {
   chainId: SushiSwapV3ChainId
   currencyA: Type | undefined
@@ -92,6 +93,7 @@ export default function LiquidityChartRangeInput({
   onRightRangeInput: (typedValue: string) => void
   interactive: boolean
   hideBrushes?: boolean
+  tokenToggle?: ReactNode
 }) {
   const isSorted =
     currencyA && currencyB && currencyA?.wrapped.sortsBefore(currencyB?.wrapped)
@@ -204,40 +206,52 @@ export default function LiquidityChartRangeInput({
   return (
     <div className="grid auto-rows-auto gap-3 min-h-[300px] overflow-hidden">
       {isUninitialized ? (
-        <InfoBox
-          message="Your position will appear here."
-          icon={
-            <InboxIcon
-              width={16}
-              stroke="currentColor"
-              className="text-slate-200"
-            />
-          }
-        />
+        <div className="flex flex-col gap-2">
+          {tokenToggle}
+          <InfoBox
+            message="Your position will appear here."
+            icon={
+              <InboxIcon
+                width={16}
+                stroke="currentColor"
+                className="text-slate-200"
+              />
+            }
+          />
+        </div>
       ) : isLoading ? (
-        <InfoBox icon={<SkeletonBox className="w-full h-full" />} />
+        <div className="flex flex-col gap-2">
+          {tokenToggle}
+          <InfoBox icon={<SkeletonBox className="w-full h-full" />} />
+        </div>
       ) : error ? (
-        <InfoBox
-          message="Liquidity data not available."
-          icon={
-            <StopIcon
-              width={16}
-              stroke="currentColor"
-              className="dark:text-slate-400 text-slate-600"
-            />
-          }
-        />
+        <div className="flex flex-col gap-2">
+          {tokenToggle}
+          <InfoBox
+            message="Liquidity data not available."
+            icon={
+              <StopIcon
+                width={16}
+                stroke="currentColor"
+                className="dark:text-slate-400 text-slate-600"
+              />
+            }
+          />
+        </div>
       ) : !data || data.length === 0 || !price ? (
-        <InfoBox
-          message="There is no liquidity data."
-          icon={
-            <ChartBarIcon
-              width={16}
-              stroke="currentColor"
-              className="dark:text-slate-400 text-slate-600"
-            />
-          }
-        />
+        <div className="flex flex-col gap-2">
+          {tokenToggle}
+          <InfoBox
+            message="There is no liquidity data."
+            icon={
+              <ChartBarIcon
+                width={16}
+                stroke="currentColor"
+                className="dark:text-slate-400 text-slate-600"
+              />
+            }
+          />
+        </div>
       ) : (
         <div className="relative items-center justify-center">
           <Chart
@@ -263,6 +277,7 @@ export default function LiquidityChartRangeInput({
             zoomLevels={ZOOM_LEVELS[feeAmount ?? SushiSwapV3FeeAmount.MEDIUM]}
             priceRange={priceRange}
             hideBrushes={hideBrushes}
+            tokenToggle={tokenToggle}
           />
         </div>
       )}

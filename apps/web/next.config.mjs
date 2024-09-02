@@ -12,7 +12,7 @@ const nextConfig = bundleAnalyzer({
   ...defaultNextConfig,
   experimental: {
     ...defaultNextConfig.experimental,
-    testProxy: true,
+    testProxy: process.env.NEXT_PUBLIC_APP_ENV === 'test',
   },
   async redirects() {
     return [
@@ -72,21 +72,6 @@ const nextConfig = bundleAnalyzer({
         source: '/medium{/}?',
         permanent: true,
         destination: 'https://medium.com/sushiswap-org',
-      },
-      {
-        source: '/earn/:path*',
-        permanent: true,
-        destination: '/pool/:path*',
-      },
-      {
-        source: '/pools/:path*',
-        permanent: true,
-        destination: '/pool/:path*',
-      },
-      {
-        source: '/pool/:path*/positions',
-        permanent: true,
-        destination: '/pool/:path*',
       },
       {
         source: '/skale/swap',

@@ -1,5 +1,6 @@
 'use client'
 
+import { useIsMounted } from '@sushiswap/hooks'
 import { InterfaceEventName, sendAnalyticsEvent } from '@sushiswap/telemetry'
 import { cloudinaryFetchLoader } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui'
@@ -25,6 +26,7 @@ export const UserProfile: FC<ProfileProps> = () => {
   const [view, setView] = useState<ProfileView>(ProfileView.Default)
   const chainId = useChainId()
   const { address, isConnected } = useAccount()
+  const isMounted = useIsMounted()
 
   const { data: name } = useEnsName({
     chainId: ChainId.ETHEREUM,
@@ -36,7 +38,10 @@ export const UserProfile: FC<ProfileProps> = () => {
     chainId: ChainId.ETHEREUM,
   })
 
-  if (!address) return <ConnectButton variant="secondary" />
+  console.log(address)
+
+  if (!address || (!address && !isMounted))
+    return <ConnectButton variant="secondary" />
 
   return (
     <Popover>

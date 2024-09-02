@@ -76,6 +76,7 @@ export const VotingPowerCard = () => {
           <div className="flex gap-6">
             <LinkExternal href="https://snapshot.org/#/delegate/sushigov.eth">
               <Button
+                asChild
                 variant="link"
                 size="sm"
                 className="!font-medium !text-secondary-foreground"

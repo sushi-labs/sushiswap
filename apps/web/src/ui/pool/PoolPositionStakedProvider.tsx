@@ -8,7 +8,7 @@ import {
   useUnderlyingTokenBalanceFromPool,
 } from 'src/lib/hooks'
 import { useMasterChef } from 'src/lib/wagmi/hooks/master-chef/use-master-chef'
-import type { ChefType } from 'sushi'
+import { ChefType } from 'sushi'
 import { ChainId } from 'sushi/chain'
 import { Amount, Currency, Token } from 'sushi/currency'
 
@@ -53,12 +53,20 @@ export const PoolPositionStakedProvider: FC<PoolPositionStakedProviderProps> =
         </Context.Provider>
       )
 
+    // Educated guess, this is getting deprecated when we move to merkle v2, only have 3rd party rewarders running
+    const incentive = pool.incentives.sort((a, b) => {
+      if (a.chefType === b.chefType) {
+        return a.rewardPerDay > b.rewardPerDay ? -1 : 1
+      }
+      return a.chefType === ChefType.MasterChefV2 ? -1 : 1
+    })[0]
+
     return (
       <_PoolPositionStakedProvider
         watch={watch}
         pool={pool}
-        farmId={Number(pool.incentives[0].pid)}
-        chefType={pool.incentives[0].chefType}
+        farmId={Number(incentive.pid)}
+        chefType={incentive.chefType}
       >
         {children}
       </_PoolPositionStakedProvider>

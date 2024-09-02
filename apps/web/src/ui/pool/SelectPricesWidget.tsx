@@ -56,6 +56,7 @@ import { LockClosedIcon, LockOpenIcon } from '@heroicons/react/24/solid'
 import { ExclamationTriangleIcon } from '@heroicons/react/24/solid'
 import { useConcentratedLiquidityPoolStats } from '@sushiswap/react-query'
 import { useConcentratedLiquidityPositionsFromTokenId } from 'src/lib/wagmi/hooks/positions/hooks/useConcentratedPositionsFromTokenId'
+import { Address } from 'sushi'
 import { formatPercent } from 'sushi/format'
 import { Fraction } from 'sushi/math'
 import { useAccount } from 'wagmi'
@@ -101,7 +102,7 @@ interface SelectPricesWidget {
   chainId: SushiSwapV3ChainId
   token0: Type | undefined
   token1: Type | undefined
-  poolAddress: string | undefined
+  poolAddress: Address | undefined
   feeAmount: SushiSwapV3FeeAmount | undefined
   switchTokens?(): void
   tokenId: string | undefined
@@ -451,6 +452,32 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
   if (token1) poolFish.searchParams.append('token1', token1.wrapped.address)
   if (feeAmount) poolFish.searchParams.append('feeTier', `${feeAmount}`)
 
+  const tokenToggle = useMemo(
+    () =>
+      switchTokens ? (
+        <div className="flex gap-1">
+          <Toggle
+            variant="outline"
+            onPressedChange={handleSwitchTokens}
+            pressed={isSorted}
+            size="sm"
+          >
+            {isSorted ? token0?.symbol : token1?.symbol}
+          </Toggle>
+          <Toggle
+            variant="outline"
+            onPressedChange={handleSwitchTokens}
+            pressed={!isSorted}
+            size="sm"
+          >
+            {isSorted ? token1?.symbol : token0?.symbol}
+          </Toggle>
+        </div>
+      ) : // <div />
+      undefined,
+    [switchTokens, handleSwitchTokens, isSorted, token0, token1],
+  )
+
   return (
     <FormSection
       title="Range"
@@ -476,14 +503,17 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
         )}
       >
         {noLiquidity ? (
-          <Message size="sm" variant="muted" className="text-center">
-            This pool must be initialized before you can add liquidity.{' '}
-            {showStartPrice
-              ? 'To initialize, select a starting price for the pool. Then, enter your liquidity price range and deposit amount. '
-              : ''}
-            Gas fees will be higher than usual due to the initialization
-            transaction.
-          </Message>
+          <div className="flex flex-col gap-2">
+            {tokenToggle}
+            <Message size="sm" variant="muted" className="text-center">
+              This pool must be initialized before you can add liquidity.{' '}
+              {showStartPrice
+                ? 'To initialize, select a starting price for the pool. Then, enter your liquidity price range and deposit amount. '
+                : ''}
+              Gas fees will be higher than usual due to the initialization
+              transaction.
+            </Message>
+          </div>
         ) : null}
         {children ? children : null}
         <div className="rounded-xl flex flex-col gap-8">
@@ -537,6 +567,7 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
                       onRightRangeInput(input)
                     }}
                     interactive={!hasExistingPosition}
+                    tokenToggle={tokenToggle}
                   />
                 </>
               )}
@@ -594,33 +625,11 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
                   </RadioGroup.Option>
                 ))}
               </RadioGroup>
-              {switchTokens ? (
-                <div className="flex justify-end gap-1">
-                  <Toggle
-                    variant="outline"
-                    onPressedChange={handleSwitchTokens}
-                    pressed={isSorted}
-                    size="sm"
-                  >
-                    {isSorted ? token0?.symbol : token1?.symbol}
-                  </Toggle>
-                  <Toggle
-                    variant="outline"
-                    onPressedChange={handleSwitchTokens}
-                    pressed={!isSorted}
-                    size="sm"
-                  >
-                    {isSorted ? token1?.symbol : token0?.symbol}
-                  </Toggle>
-                </div>
-              ) : (
-                <div />
-              )}
             </div>
             <Card>
               <CardHeader>
                 <CardDescription className="flex flex-col gap-3 !text-accent-foreground">
-                  <div className="flex flex-wrap items-center justify-between gap-1">
+                  <div className="flex flex-wrap items-start justify-between gap-1 flex-col sm:flex-row sm:items-center">
                     <span>
                       <span className="mr-1">{`Token Ratio (${token0?.symbol} : ${token1?.symbol})`}</span>
                       <Explainer iconProps={{ className: 'inline mb-0.5' }}>
@@ -684,7 +693,7 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
                       </TooltipProvider>
                     </div>
                   </div>
-                  <div className="flex flex-wrap items-center justify-between gap-1">
+                  <div className="flex flex-wrap items-start justify-between gap-1 flex-col sm:flex-row sm:items-center">
                     <span>
                       <span className="mr-1">Capital Efficiency</span>
                       <Explainer iconProps={{ className: 'inline mb-0.5' }}>
@@ -707,7 +716,7 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
                       )}
                     </div>
                   </div>
-                  <div className="flex flex-wrap items-center justify-between gap-1">
+                  <div className="flex flex-wrap items-start justify-between gap-1 flex-col  sm:flex-row sm:items-center">
                     <span>
                       <TooltipProvider>
                         <Tooltip delayDuration={0}>
@@ -773,7 +782,7 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
               </CardHeader>
             </Card>
           </div>
-          <div className="flex gap-2">
+          <div className="flex flex-col gap-2 sm:flex-row">
             <PriceBlock
               id={'min-price'}
               token0={token0}
@@ -839,7 +848,7 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
             </CardHeader>
             <CardFooter>
               <LinkExternal href={poolFish.toString()}>
-                <Button variant="link" size="sm">
+                <Button variant="link" size="sm" asChild>
                   View position on Poolfish.xyz
                 </Button>
               </LinkExternal>
