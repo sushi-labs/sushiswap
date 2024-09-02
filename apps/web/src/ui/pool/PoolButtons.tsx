@@ -15,7 +15,6 @@ interface PoolButtonsProps {
 
 export const PoolButtons: FC<PoolButtonsProps> = ({ pool }) => {
   const { balance } = usePoolPosition()
-  const { balance: stakedBalance } = usePoolPositionStaked()
 
   return (
     <div className="flex flex-col w-full gap-2">
@@ -23,7 +22,7 @@ export const PoolButtons: FC<PoolButtonsProps> = ({ pool }) => {
         <Button
           asChild
           disabled={Boolean(
-            balance?.equalTo(ZERO) && stakedBalance?.equalTo(ZERO),
+            balance?.equalTo(ZERO),
           )}
           size="lg"
           variant="secondary"
