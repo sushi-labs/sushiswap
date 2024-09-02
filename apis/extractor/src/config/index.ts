@@ -438,7 +438,6 @@ export const EXTRACTOR_CONFIG: Record<
       },
     ],
     tickHelperContractV3: SUSHISWAP_V3_TICK_LENS[ChainId.BASE],
-
     factoriesAlgebra: [
       {
         address: '0x2F0d41f94d5D1550b79A83D2fe85C82d68c5a3ca' as Address,
@@ -455,7 +454,6 @@ export const EXTRACTOR_CONFIG: Record<
     ],
     tickHelperContractAerodromeSlipstream:
       '0x3e1116ea5034f5d73a7b530071709d54a4109f5f' as Address, // our own
-
     cacheDir: './cache',
     logDepth: 50,
     logging: true,
