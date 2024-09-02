@@ -1,6 +1,7 @@
 import invariant from 'tiny-invariant'
 import type { Address, Hex } from 'viem'
-import { encodePacked, getCreate2Address, keccak256 } from 'viem/utils'
+import { encodePacked, keccak256 } from 'viem/utils'
+import { getCreate2Address } from '../../address/getCreate2Address.js'
 import {
   SUSHISWAP_V2_INIT_CODE_HASH,
   type SushiSwapV2ChainId,
@@ -43,5 +44,6 @@ export const computeSushiSwapV2PoolAddress = ({
     bytecodeHash:
       initCodeHashManualOverride ??
       SUSHISWAP_V2_INIT_CODE_HASH[token0.chainId as SushiSwapV2ChainId],
+    chainId: token0.chainId,
   })
 }

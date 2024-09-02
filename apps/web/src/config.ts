@@ -46,9 +46,13 @@ const SUSHI_CHAIN_IDS = Array.from(
   new Set([...TridentChainIds, ...SushiSwapV2ChainIds, ...SushiSwapV3ChainIds]),
 )
 
-export const SWAP_ONLY_CHAIN_IDS = [ChainId.CRONOS, ChainId.MANTLE] as const
+export const SWAP_ONLY_CHAIN_IDS = [
+  ChainId.CRONOS,
+  ChainId.MANTLE,
+  ChainId.ZKSYNC_ERA,
+] as const
 
-export const CHAIN_IDS = [...SUSHI_CHAIN_IDS, ChainId.CRONOS] as const
+export const CHAIN_IDS = [...SUSHI_CHAIN_IDS, ...SWAP_ONLY_CHAIN_IDS] as const
 
 export const AMM_SUPPORTED_CHAIN_IDS = SUSHI_CHAIN_IDS.filter(
   (

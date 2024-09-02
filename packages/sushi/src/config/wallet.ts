@@ -31,6 +31,8 @@ export const MULTISIG_CHAIN_IDS = [
   ChainId.SKALE_EUROPA,
   ChainId.TELOS,
   ChainId.ZETACHAIN,
+  ChainId.MANTLE,
+  ChainId.ZKSYNC_ERA,
 ] as const
 
 export type MultisigChainId = (typeof MULTISIG_CHAIN_IDS)[number]
@@ -66,6 +68,8 @@ export const MULTISIG_ADDRESS: Record<MultisigChainId, `0x${string}`> = {
   [ChainId.SKALE_EUROPA]: '0xa88a0398C8D8B34Ab3f19CbBAbc2C4F33149Dfa6',
   [ChainId.TELOS]: '0x72840af61A60B585064c16Ee402B3823366823Cb',
   [ChainId.ZETACHAIN]: '0xb8f2faca5b2EBcd6Be7B5D9E164962dE9CCc3B76',
+  [ChainId.MANTLE]: '0xb8f2faca5b2EBcd6Be7B5D9E164962dE9CCc3B76',
+  [ChainId.ZKSYNC_ERA]: '0x935A22280ddEa69c42aDA2448d110c095f5059b7',
 } as const
 
 export const isMultisigChainId = (
