@@ -32,7 +32,7 @@
     "eslint": "8.43.0",
     "eslint-config-turbo": "2.0.5",
     "jest": "29.7.0",
-    "just-pnpm": "^1.0.2",
+    "just-pnpm": "1.0.2",
     "sort-package-json": "2.6.0",
     "ts-jest": "29.1.1",
     "tsx": "4.19.0",
