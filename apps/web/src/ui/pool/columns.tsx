@@ -380,24 +380,7 @@ export const TRANSACTIONS_1D_COLUMN: ColumnDef<Pool, unknown> = {
   accessorFn: (row) => row.txCount1d,
   sortingFn: ({ original: rowA }, { original: rowB }) =>
     rowA.txCount1d - rowB.txCount1d,
-  cell: (props) => (
-    <div className="flex flex-col">
-      <span>{props.row.original.txCount1d}</span>
-      <span
-        className={classNames(
-          'text-xs',
-          props.row.original.txCountChange1d > 0
-            ? 'text-green'
-            : props.row.original.txCountChange1d < 0
-              ? 'text-red'
-              : 'text-muted-foreground',
-        )}
-      >
-        {props.row.original.txCountChange1d > 0 ? '+' : ''}
-        {formatPercent(props.row.original.txCountChange1d)}
-      </span>
-    </div>
-  ),
+  cell: (props) => props.row.original.txCount1d,
   meta: {
     skeleton: <SkeletonText fontSize="lg" />,
   },
