@@ -93,11 +93,11 @@
     "viem": "2.21.4",
     "wagmi": "2.12.10",
     "zod": "3.23.8",
-    "tronweb": "^5.3.2",
-    "@tronweb3/tronwallet-abstract-adapter": "^1.1.6",
-    "@tronweb3/tronwallet-adapter-react-hooks": "^1.1.7",
-    "@tronweb3/tronwallet-adapter-react-ui": "^1.1.8",
-    "@tronweb3/tronwallet-adapters": "^1.2.1"
+    "@tronweb3/tronwallet-abstract-adapter": "1.1.6",
+    "@tronweb3/tronwallet-adapter-react-hooks": "1.1.7",
+    "@tronweb3/tronwallet-adapter-react-ui": "1.1.8",
+    "@tronweb3/tronwallet-adapters": "1.2.1",
+    "tronweb": "5.3.2"
   },
   "devDependencies": {
     "@0xsquid/squid-types": "0.1.78",
