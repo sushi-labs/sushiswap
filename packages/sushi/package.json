@@ -1,6 +1,6 @@
 {
   "name": "sushi",
-  "version": "3.1.0",
+  "version": "3.1.2",
   "description": "Sushi",
   "keywords": [
     "sushi"
@@ -71,6 +71,11 @@
       "types": "./dist/_types/currency/index.d.ts",
       "import": "./dist/_esm/currency/index.js",
       "default": "./dist/_cjs/currency/index.js"
+    },
+    "./data": {
+      "types": "./dist/_types/data/index.d.ts",
+      "import": "./dist/_esm/data/index.js",
+      "default": "./dist/_cjs/data/index.js"
     },
     "./dex": {
       "types": "./dist/_types/dex/index.d.ts",
@@ -175,6 +180,9 @@
       ],
       "currency": [
         "./dist/_types/currency/index.d.ts"
+      ],
+      "data": [
+        "./dist/_types/data/index.d.ts"
       ],
       "dex": [
         "./dist/_types/dex/index.d.ts"

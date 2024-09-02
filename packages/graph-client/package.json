@@ -60,6 +60,7 @@
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
     "dev": "tsc --watch",
     "prepublishOnly": "pnpm build",
+    "update-data-api-types": "tsx scripts/update-data-api-types.ts",
     "update-schemas": "tsx scripts/update-schemas.ts"
   },
   "dependencies": {

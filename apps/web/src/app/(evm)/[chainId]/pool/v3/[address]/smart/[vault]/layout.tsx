@@ -1,9 +1,10 @@
-import { getVault } from '@sushiswap/graph-client/data-api'
+import { getVault, isSmartPoolChainId } from '@sushiswap/graph-client/data-api'
 import { Container, LinkInternal } from '@sushiswap/ui'
 import { unstable_cache } from 'next/cache'
 import { notFound } from 'next/navigation'
 import React from 'react'
 import { ChainId, ChainKey } from 'sushi/chain'
+import { isAddress } from 'viem'
 
 export default async function Layout({
   children,
@@ -14,6 +15,13 @@ export default async function Layout({
 }) {
   const { chainId: _chainId, address, vault: vaultAddress } = params
   const chainId = +_chainId as ChainId
+
+  if (
+    !isSmartPoolChainId(chainId) ||
+    !isAddress(vaultAddress, { strict: false })
+  ) {
+    return notFound()
+  }
 
   const vault = await unstable_cache(
     async () =>

@@ -104,7 +104,7 @@ const Pool: FC<{ pool: V3Pool }> = ({ pool }) => {
               <CardContent>
                 <div className="grid grid-cols-1 gap-3">
                   <div>
-                    <CardLabel>Volume</CardLabel>
+                    <CardLabel>Volume (24h)</CardLabel>
                     {poolStats ? (
                       <div className="text-xl font-semibold">
                         {formatUSD(poolStats.volumeUSD1d ?? 0)}{' '}
@@ -125,7 +125,7 @@ const Pool: FC<{ pool: V3Pool }> = ({ pool }) => {
                     )}
                   </div>
                   <div>
-                    <CardLabel>Fees</CardLabel>
+                    <CardLabel>Fees (24h)</CardLabel>
                     {poolStats ? (
                       <div className="text-xl font-semibold">
                         {formatUSD(poolStats.feesUSD1d ?? 0)}{' '}
@@ -154,7 +154,7 @@ const Pool: FC<{ pool: V3Pool }> = ({ pool }) => {
           <Separator />
         </div>
         <PoolRewardDistributionsCard pool={pool} />
-        <PoolTransactionsV3 pool={pool} poolId={address} />
+        <PoolTransactionsV3 pool={pool} poolAddress={address} />
       </div>
     </Container>
   )

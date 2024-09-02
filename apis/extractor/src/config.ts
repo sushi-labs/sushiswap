@@ -239,14 +239,24 @@ export const EXTRACTOR_CONFIG: Record<
       },
     ],
     tickHelperContractV3: SUSHISWAP_V3_TICK_LENS[ChainId.BASE],
-    tickHelperContractAlgebra:
-      '0x44a6d9741cDF9C955eE89C14C739FB1aeaD82d6B' as Address,
+
     factoriesAlgebra: [
       {
         address: '0x2F0d41f94d5D1550b79A83D2fe85C82d68c5a3ca' as Address,
         provider: LiquidityProviders.KimV4,
       },
     ],
+    tickHelperContractAlgebra:
+      '0x44a6d9741cDF9C955eE89C14C739FB1aeaD82d6B' as Address,
+    factoriesAerodromeSlipstream: [
+      {
+        address: '0x5e7BB104d84c7CB9B682AaC2F3d509f5F406809A',
+        provider: LiquidityProviders.AerodromeSlipstream,
+      },
+    ],
+    tickHelperContractAerodromeSlipstream:
+      '0x3e1116ea5034f5d73a7b530071709d54a4109f5f' as Address, // our own
+
     cacheDir: './cache',
     logDepth: 50,
     logging: true,

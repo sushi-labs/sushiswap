@@ -41,7 +41,7 @@ import { useTokenWithCache } from 'src/lib/wagmi/hooks/tokens/useTokenWithCache'
 import { getDefaultTTL } from 'src/lib/wagmi/hooks/utils/hooks/useTransactionDeadline'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
 import { Chain, ChainKey } from 'sushi/chain'
-import { SushiSwapV3ChainId, isAngleEnabledChainId } from 'sushi/config'
+import { SushiSwapV3ChainId, isMerklChainId } from 'sushi/config'
 import { Amount, unwrapToken } from 'sushi/currency'
 import { formatPercent, formatUSD } from 'sushi/format'
 import { getAddress } from 'viem'
@@ -211,7 +211,7 @@ const Component: FC<{ chainId: string; address: string; position: string }> = ({
                     >
                       Fees
                     </TabsTrigger>
-                    {isAngleEnabledChainId(chainId) ? (
+                    {isMerklChainId(chainId) ? (
                       <TabsTrigger
                         testdata-id="rewards-tab"
                         value="rewards"
@@ -346,7 +346,7 @@ const Component: FC<{ chainId: string; address: string; position: string }> = ({
                     </ConcentratedLiquidityCollectButton>
                   </CardFooter>
                 </TabsContent>
-                {isAngleEnabledChainId(chainId) ? (
+                {isMerklChainId(chainId) ? (
                   <TabsContent value="rewards">
                     <CardHeader>
                       <CardTitle>Unclaimed rewards</CardTitle>
@@ -611,7 +611,7 @@ const Component: FC<{ chainId: string; address: string; position: string }> = ({
                               {unwrapToken(currencyQuote)?.symbol}{' '}
                               <HoverCard closeDelay={0} openDelay={0}>
                                 <HoverCardTrigger asChild>
-                                  <span className="text-sm underline decoration-dotted underline-offset-2 underline-offset-2 text-muted-foreground font-normal">
+                                  <span className="text-sm underline decoration-dotted underline-offset-2 text-muted-foreground font-normal">
                                     (
                                     {formatPercent(
                                       priceUpper
@@ -675,7 +675,7 @@ const Component: FC<{ chainId: string; address: string; position: string }> = ({
             </Card>
           </div>
         </div>
-        {isAngleEnabledChainId(chainId) ? (
+        {isMerklChainId(chainId) ? (
           <>
             <div className="py-4">
               <Separator />
@@ -687,7 +687,7 @@ const Component: FC<{ chainId: string; address: string; position: string }> = ({
                   Anyone can add distributions to this pool.{' '}
                   {_token0 && _token1 ? (
                     <LinkInternal
-                      href={`${
+                      href={`/${
                         ChainKey[chainId]
                       }/pool/incentivize?fromCurrency=${
                         _token0.isNative ? 'NATIVE' : _token0.address

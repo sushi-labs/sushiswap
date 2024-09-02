@@ -10,7 +10,7 @@ import { SUSHI_REQUEST_HEADERS } from '../../request-headers'
 
 export const V3PoolsQuery = graphql(
   `
-    query V3Pools($chainId: Int!) {
+    query V3Pools($chainId: SushiSwapV3ChainId!) {
     v3Pools(chainId: $chainId) {
       id
       address
@@ -131,5 +131,6 @@ export async function getV3BasePools(
   return []
 }
 
-
-export type V3BasePool = NonNullable<Awaited<ReturnType<typeof getV3BasePools>>>[0]
+export type V3BasePool = NonNullable<
+  Awaited<ReturnType<typeof getV3BasePools>>
+>[0]

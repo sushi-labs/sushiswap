@@ -42,14 +42,14 @@ export const useConcentratedLiquidityPositions = ({
   const {
     data: allPrices,
     isError: isAllPricesError,
-    isInitialLoading: isAllPricesInitialLoading,
+    isLoading: isAllPricesInitialLoading,
   } = useAllPrices({
     enabled: chainIds.length > 1,
   })
   const {
     data: chainPrices,
     isError: isChainPricesError,
-    isInitialLoading: isChainPricesInitialLoading,
+    isLoading: isChainPricesInitialLoading,
   } = usePrices({
     chainId: chainIds.length ? chainIds[0] : undefined,
     enabled: chainIds.length === 1,
@@ -61,9 +61,7 @@ export const useConcentratedLiquidityPositions = ({
     }
 
     if (chainIds.length === 1 && chainPrices) {
-      return {
-        [chainIds[0]]: chainPrices,
-      }
+      return new Map([[chainIds[0], chainPrices]])
     }
   }, [allPrices, chainPrices, chainIds])
   const isPriceInitialLoading =
@@ -75,7 +73,7 @@ export const useConcentratedLiquidityPositions = ({
   const {
     data: positions,
     isError: isPositionsError,
-    isInitialLoading: isPositionsInitialLoading,
+    isLoading: isPositionsInitialLoading,
   } = useQuery({
     queryKey: [
       'useConcentratedLiquidityPositions',
@@ -135,18 +133,13 @@ export const useConcentratedLiquidityPositions = ({
             })
 
             const amountToUsd = (amount: Amount<Token>) => {
-              if (
-                !amount?.greaterThan(0n) ||
-                !prices?.[el.chainId]?.[amount.currency.wrapped.address]
-              )
-                return 0
+              const _price = prices
+                ?.get(el.chainId)
+                ?.get(amount.currency.address)
+
+              if (!amount?.greaterThan(0n) || !_price) return 0
               const price = Number(
-                Number(amount.toExact()) *
-                  Number(
-                    prices[el.chainId][amount.currency.wrapped.address].toFixed(
-                      10,
-                    ),
-                  ),
+                Number(amount.toExact()) * Number(_price.toFixed(10)),
               )
               if (Number.isNaN(price) || price < 0.000001) {
                 return 0

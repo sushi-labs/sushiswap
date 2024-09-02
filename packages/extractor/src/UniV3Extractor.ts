@@ -316,7 +316,7 @@ export class UniV3Extractor extends IExtractor {
     watcher.updatePoolState()
     this.poolMap.set(addrL, watcher) // lowercase because incoming events have lowcase addresses ((
     this.poolMapUpdated.set(addrL, watcher)
-    if (addToCache)
+    if (addToCache && this.isStarted())
       this.poolPermanentCache.add({
         address: expectedPoolAddress,
         token0: t0.address as Address,

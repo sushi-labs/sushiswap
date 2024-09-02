@@ -8,9 +8,16 @@ import { V2Pool, getV2Pool } from '@sushiswap/graph-client/data-api'
 import { useQuery } from '@tanstack/react-query'
 import { PoolId } from 'sushi'
 import { stringify } from 'sushi/bigint-serializer'
+import { isSushiSwapV2ChainId } from 'sushi/config'
 import { getTokensFromPool } from '../useTokensFromPool'
 
 export const useV2Pool = (poolId: PoolId) => {
+  const { chainId } = poolId
+
+  if (!isSushiSwapV2ChainId(chainId)) {
+    throw new Error('Invalid chain id')
+  }
+
   const {
     data: pool,
     isLoading,
@@ -19,7 +26,7 @@ export const useV2Pool = (poolId: PoolId) => {
     queryKey: ['v2-pool', poolId],
     queryFn: async () => {
       const result = await getV2Pool({
-        chainId: poolId.chainId,
+        chainId: chainId,
         address: poolId.address,
       })
       return result

@@ -1,5 +1,6 @@
 export * from './useCrossChainTrade'
 export * from './usePoolGraphData'
+export * from './usePoolsInfinite'
 export * from './userSmartPools'
 export * from './useSkaleEuropaFaucet'
 export * from './useSushiV2UserPositions'

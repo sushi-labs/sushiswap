@@ -8,6 +8,10 @@ build:
   tagPolicy:
     sha256: {}
   artifacts:
+    - image: extractor-init
+      context: .
+      docker:
+        dockerfile: Dockerfile.extractor-init
     - image: extractor
       context: .
       docker:
@@ -19,27 +23,39 @@ build:
         # buildArgs:
         #   TURBO_TEAM: "teamsushi"
         #   TURBO_TOKEN:{{ .TURBO_TOKEN }}
-deploy:
-  helm:
-    releases:
-      - name: sushi-extractor
-        chartPath: k8s/charts/extractor
-        valuesFiles: [k8s/charts/values.yaml]
-      - name: sushi-router
-        chartPath: k8s/charts/router
-        valuesFiles: [k8s/charts/values.yaml]
-      - name: sushi-nginx
-        chartPath: k8s/charts/nginx
-        valuesFiles: [k8s/charts/values.yaml]
-manifests:
-  rawYaml:
-    - k8s/ingress-local.yaml
 profiles:
 - name: local
+  deploy:
+    helm:
+      releases:
+        - name: sushi-extractor
+          chartPath: k8s/charts/extractor
+          valuesFiles: [k8s/charts/values.yaml]
+        - name: sushi-router
+          chartPath: k8s/charts/router
+          valuesFiles: [k8s/charts/values.yaml]
+        - name: sushi-nginx
+          chartPath: k8s/charts/nginx
+          valuesFiles: [k8s/charts/values.yaml]
+  manifests:
+    rawYaml:
+      - k8s/ingress-local.yaml
 - name: staging
   build:
     googleCloudBuild:
       projectId: "sushi-api-414412"
+  deploy:
+    helm:
+      releases:
+        - name: sushi-extractor
+          chartPath: k8s/charts/extractor
+          valuesFiles: [k8s/charts/values.yaml, k8s/charts/staging-values.yaml]
+        - name: sushi-router
+          chartPath: k8s/charts/router
+          valuesFiles: [k8s/charts/values.yaml]
+        - name: sushi-nginx
+          chartPath: k8s/charts/nginx
+          valuesFiles: [k8s/charts/values.yaml]
   manifests:
     rawYaml:
       - k8s/ingress-staging.yaml
@@ -48,6 +64,18 @@ profiles:
   build:
     googleCloudBuild:
       projectId: "sushi-api-414412"
+  deploy:
+    helm:
+      releases:
+        - name: sushi-extractor
+          chartPath: k8s/charts/extractor
+          valuesFiles: [k8s/charts/values.yaml, k8s/charts/production-values.yaml]
+        - name: sushi-router
+          chartPath: k8s/charts/router
+          valuesFiles: [k8s/charts/values.yaml]
+        - name: sushi-nginx
+          chartPath: k8s/charts/nginx
+          valuesFiles: [k8s/charts/values.yaml]
   manifests:
     rawYaml:
       - k8s/ingress-production.yaml
