@@ -292,9 +292,9 @@ export const TVL_COLUMN: ColumnDef<Pool, unknown> = {
         className={classNames(
           'text-xs',
           props.row.original.liquidityUSDChange1d > 0
-            ? 'text-green'
+            ? 'text-[#139B6D]'
             : props.row.original.liquidityUSDChange1d < 0
-              ? 'text-red'
+              ? 'text-[#B4303C]'
               : 'text-muted-foreground',
         )}
       >
@@ -325,9 +325,9 @@ export const VOLUME_1D_COLUMN: ColumnDef<Pool, unknown> = {
         className={classNames(
           'text-xs',
           props.row.original.volumeUSDChange1d > 0
-            ? 'text-green'
+            ? 'text-[#139B6D]'
             : props.row.original.volumeUSDChange1d < 0
-              ? 'text-red'
+              ? 'text-[#B4303C]'
               : 'text-muted-foreground',
         )}
       >
@@ -358,9 +358,9 @@ export const VOLUME_1W_COLUMN: ColumnDef<Pool, unknown> = {
         className={classNames(
           'text-xs',
           props.row.original.volumeUSDChange1w > 0
-            ? 'text-green'
+            ? 'text-[#139B6D]'
             : props.row.original.volumeUSDChange1w < 0
-              ? 'text-red'
+              ? 'text-[#B4303C]'
               : 'text-muted-foreground',
         )}
       >
