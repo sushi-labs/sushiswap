@@ -1,12 +1,14 @@
 import path from 'path'
 import { fileURLToPath } from 'url'
 import {
+  CurveWhitelistConfig,
   Extractor,
   FactoryV2,
   FactoryV3,
   LogFilterType,
   TokenManager,
 } from '@sushiswap/extractor'
+import { AerodromeSlipstreamFactoryV3 } from '@sushiswap/extractor/dist/AerodromeSlipstreamV3Extractor'
 import { routeProcessor5Abi } from 'sushi/abi'
 import { ChainId } from 'sushi/chain'
 import {
@@ -16,6 +18,7 @@ import {
   PANCAKESWAP_V3_FEE_SPACING_MAP,
   PANCAKESWAP_V3_INIT_CODE_HASH,
   PancakeSwapV3ChainId,
+  ROUTE_PROCESSOR_5_ADDRESS,
   SUSHISWAP_V2_FACTORY_ADDRESS,
   SUSHISWAP_V2_INIT_CODE_HASH,
   SUSHISWAP_V3_FACTORY_ADDRESS,
@@ -47,9 +50,10 @@ import {
   polygonZkEvm,
 } from 'viem/chains'
 
-const RPAddress = {
-  [ChainId.ETHEREUM]: '0x3e1116ea5034f5d73a7b530071709d54a4109f5f' as Address, // test RP5 deployment
-}
+// const RPAddress = {
+//   [ChainId.ETHEREUM]: '0x3e1116ea5034f5d73a7b530071709d54a4109f5f' as Address, // test RP5 deployment
+// }
+const RPAddress = ROUTE_PROCESSOR_5_ADDRESS
 
 export const TickLensContract = {
   [ChainId.ETHEREUM]: '0xbfd8137f7d1516d3ea5ca83523914859ec47f573' as Address,
@@ -135,8 +139,10 @@ async function startInfinitTest(args: {
   factoriesV2: FactoryV2[]
   factoriesV3: FactoryV3[]
   curveConfig?: CurveWhitelistConfig
+  factoriesAerodromeSlipstream?: AerodromeSlipstreamFactoryV3[]
   tickHelperContractV3: Address
   tickHelperContractAlgebra: Address
+  tickHelperContractAerodromeSlipstream?: Address
   cacheDir: string
   logDepth: number
   logType?: LogFilterType
@@ -159,7 +165,9 @@ async function startInfinitTest(args: {
   const nativeProvider = new NativeWrapProvider(chainId, client)
   const tokenManager = new TokenManager(
     extractor.multiCallAggregator,
+    false,
     __dirname,
+    '../cache',
     `tokens-${client.chain?.id}`,
   )
   await tokenManager.addCachedTokens()
@@ -497,8 +505,16 @@ it.skip('Extractor Base infinite work test', async () => {
       sushiswapV3Factory(ChainId.BASE),
       uniswapV3Factory(ChainId.BASE),
     ],
+    factoriesAerodromeSlipstream: [
+      {
+        address: '0x5e7BB104d84c7CB9B682AaC2F3d509f5F406809A',
+        provider: LiquidityProviders.AerodromeSlipstream,
+      },
+    ],
     tickHelperContractV3: TickLensContract[ChainId.BASE],
     tickHelperContractAlgebra: '' as Address,
+    tickHelperContractAerodromeSlipstream:
+      '0x3e1116ea5034f5d73a7b530071709d54a4109f5f' as Address, // our own
     cacheDir: './cache',
     logDepth: 50,
     logging: true,
@@ -593,7 +609,7 @@ it.skip('Extractor Harmony infinite work test', async () => {
   })
 })
 
-it.only('Extractor Goerli infinite work test (UniV4 only)', async () => {
+it.skip('Extractor Goerli infinite work test (UniV4 only)', async () => {
   await startInfinitTest({
     providerURL: `https://eth-goerli.api.onfinality.io/public`,
     chain: goerli,
@@ -607,8 +623,8 @@ it.only('Extractor Goerli infinite work test (UniV4 only)', async () => {
     logDepth: 300,
     logging: true,
     RPAddress: RPAddress[ChainId.HARMONY],
-    uniV4: {
-      address: '0x3A9D48AB9751398BbFa63ad67599Bb04e4BdF98b' as Address,
-    },
+    // uniV4: {
+    //   address: '0x3A9D48AB9751398BbFa63ad67599Bb04e4BdF98b' as Address,
+    // },
   })
 })

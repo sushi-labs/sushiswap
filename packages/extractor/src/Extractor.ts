@@ -3,6 +3,10 @@ import path from 'node:path'
 import { Token } from 'sushi/currency'
 import { PoolCode } from 'sushi/router'
 import { Address, PublicClient } from 'viem'
+import {
+  AerodromeSlipstreamFactoryV3,
+  AerodromeSlipstreamV3Extractor,
+} from './AerodromeSlipstreamV3Extractor.js'
 import { AlgebraExtractor, FactoryAlgebra } from './AlgebraExtractor.js'
 import {
   CurveWhitelistConfig,
@@ -27,10 +31,12 @@ export type ExtractorConfig = {
   factoriesV3?: FactoryV3[]
   factoriesAlgebra?: FactoryAlgebra[]
   curveConfig?: CurveWhitelistConfig
+  factoriesAerodromeSlipstream?: AerodromeSlipstreamFactoryV3[]
   uinV4?: UniV4Config[]
   tickHelperContractV3: Address
   tickHelperContractAlgebra: Address
   tickHelperContractV4?: Address
+  tickHelperContractAerodromeSlipstream?: Address
   cacheDir: string
   cacheReadOnly?: boolean
   logType?: LogFilterType
@@ -133,6 +139,23 @@ export class Extractor {
           this.client,
           args.tickHelperContractAlgebra,
           args.factoriesAlgebra,
+          args.cacheDir,
+          this.logFilter,
+          args.logging !== undefined ? args.logging : false,
+          this.multiCallAggregator,
+          this.tokenManager,
+          cacheReadOnly,
+        ),
+      )
+    if (
+      args.factoriesAerodromeSlipstream &&
+      args.factoriesAerodromeSlipstream.length > 0
+    )
+      this.projectExtractors.push(
+        new AerodromeSlipstreamV3Extractor(
+          this.client,
+          args.tickHelperContractAerodromeSlipstream as Address,
+          args.factoriesAerodromeSlipstream,
           args.cacheDir,
           this.logFilter,
           args.logging !== undefined ? args.logging : false,

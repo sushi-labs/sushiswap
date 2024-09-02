@@ -1,22 +1,38 @@
 import { EventEmitter } from 'node:events'
-import { Abi, Address, parseAbiItem } from 'abitype'
+import { Address } from 'abitype'
 import { erc20Abi } from 'sushi/abi'
 import { Token } from 'sushi/currency'
 import { LiquidityProviders, PoolCode, UniV3PoolCode } from 'sushi/router'
 import { CLTick, RToken, UniV3Pool } from 'sushi/tines'
-import { Log, decodeEventLog } from 'viem'
+import { Abi, Log, decodeEventLog } from 'viem'
 import { Counter } from './Counter.js'
 import { Logger } from './Logger.js'
 import { MultiCallAggregator } from './MulticallAggregator.js'
+import {
+  UniV3EventsAbi,
+  UniV3PoolWatcherStatus,
+  liquidityAbi,
+} from './UniV3PoolWatcher.js'
 import { WordLoadManager } from './WordLoadManager.js'
 
-interface UniV3PoolSelfState {
+const feeAbi: Abi = [
+  {
+    inputs: [],
+    name: 'fee',
+    outputs: [{ internalType: 'uint24', name: '', type: 'uint24' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
+]
+
+interface AerodromeSlipstreamV3PoolSelfState {
   blockNumber: number
   reserve0: bigint
   reserve1: bigint
   tick: number
   liquidity: bigint
   sqrtPriceX96: bigint
+  fee: number
 }
 
 const slot0Abi: Abi = [
@@ -37,7 +53,6 @@ const slot0Abi: Abi = [
         name: 'observationCardinalityNext',
         type: 'uint16',
       },
-      { internalType: 'uint8', name: 'feeProtocol', type: 'uint8' },
       { internalType: 'bool', name: 'unlocked', type: 'bool' },
     ],
     stateMutability: 'view',
@@ -45,74 +60,21 @@ const slot0Abi: Abi = [
   },
 ]
 
-export const liquidityAbi: Abi = [
-  {
-    inputs: [],
-    name: 'liquidity',
-    outputs: [{ internalType: 'uint128', name: '', type: 'uint128' }],
-    stateMutability: 'view',
-    type: 'function',
-  },
-]
-
-export const tickSpacingAbi: Abi = [
-  {
-    inputs: [],
-    name: 'tickSpacing',
-    outputs: [{ internalType: 'int24', name: '', type: 'int24' }],
-    stateMutability: 'view',
-    type: 'function',
-  },
-]
-
-export const UniV3EventsAbi = [
-  parseAbiItem(
-    'event Mint(address sender, address indexed owner, int24 indexed tickLower, int24 indexed tickUpper, uint128 amount, uint256 amount0, uint256 amount1)',
-  ),
-  parseAbiItem(
-    'event Collect(address indexed owner, address recipient, int24 indexed tickLower, int24 indexed tickUpper, uint128 amount0, uint128 amount1)',
-  ),
-  parseAbiItem(
-    'event Burn(address indexed owner, int24 indexed tickLower, int24 indexed tickUpper, uint128 amount, uint256 amount0, uint256 amount1)',
-  ),
-  parseAbiItem(
-    'event Swap(address indexed sender, address indexed recipient, int256 amount0, int256 amount1, uint160 sqrtPriceX96, uint128 liquidity, int24 tick)',
-  ),
-  parseAbiItem(
-    // For Pancake
-    'event Swap(address indexed sender, address indexed recipient, int256 amount0, int256 amount1, uint160 sqrtPriceX96, uint128 liquidity, int24 tick, uint128 protocolFeesToken0, uint128 protocolFeesToken1)',
-  ),
-  parseAbiItem(
-    'event Flash(address indexed sender, address indexed recipient, uint256 amount0, uint256 amount1, uint256 paid0, uint256 paid1)',
-  ),
-  parseAbiItem(
-    'event CollectProtocol(address indexed sender, address indexed recipient, uint128 amount0, uint128 amount1)',
-  ),
-]
-
-export enum UniV3PoolWatcherStatus {
-  Failed = 'Failed',
-  Nothing = 'Nothing',
-  Something = 'Something',
-  All = 'All',
-}
-
 // TODO: more ticks and priority depending on resources
 // TODO: gather statistics how often (blockNumber < this.latestEventBlockNumber)
 // event PoolCodeWasChanged is emitted each time getPoolCode() returns another pool (lastPoolCode changed)
-export class UniV3PoolWatcher extends EventEmitter {
+export class AerodromeSlipstreamV3PoolWatcher extends EventEmitter {
   address: Address
   tickHelperContract: Address
   token0: Token
   token1: Token
-  fee: number
   spacing: number
   latestEventBlockNumber = 0
 
   provider: LiquidityProviders
   client: MultiCallAggregator
   wordLoadManager: WordLoadManager
-  state?: UniV3PoolSelfState
+  state?: AerodromeSlipstreamV3PoolSelfState
   updatePoolStateGuard = false
   busyCounter?: Counter
   private lastPoolCode?: PoolCode
@@ -124,7 +86,7 @@ export class UniV3PoolWatcher extends EventEmitter {
     tickHelperContract: Address,
     token0: Token,
     token1: Token,
-    fee: number,
+    //fee: number,
     spacing: number,
     client: MultiCallAggregator,
     busyCounter?: Counter,
@@ -135,7 +97,6 @@ export class UniV3PoolWatcher extends EventEmitter {
     this.tickHelperContract = tickHelperContract
     this.token0 = token0
     this.token1 = token1
-    this.fee = fee
     this.spacing = spacing
 
     this.client = client
@@ -152,6 +113,13 @@ export class UniV3PoolWatcher extends EventEmitter {
     this.busyCounter = busyCounter
   }
 
+  setFee(newFee: number) {
+    if (this.state) {
+      this.state.fee = newFee
+      this._poolWasChanged()
+    }
+  }
+
   async updatePoolState() {
     if (!this.updatePoolStateGuard) {
       this.updatePoolStateGuard = true
@@ -160,13 +128,13 @@ export class UniV3PoolWatcher extends EventEmitter {
         for (;;) {
           const {
             blockNumber,
-            returnValues: [slot0, tickSpacing, liquidity, balance0, balance1],
+            returnValues: [slot0, fee, liquidity, balance0, balance1],
           } = await this.client.callSameBlock([
             { address: this.address, abi: slot0Abi, functionName: 'slot0' },
             {
               address: this.address,
-              abi: tickSpacingAbi,
-              functionName: 'tickSpacing',
+              abi: feeAbi,
+              functionName: 'fee',
             },
             {
               address: this.address,
@@ -188,12 +156,6 @@ export class UniV3PoolWatcher extends EventEmitter {
           ])
           if (blockNumber < this.latestEventBlockNumber) continue // later events already have came
 
-          if (tickSpacing !== this.spacing)
-            Logger.error(
-              this.client.chainId,
-              `Wrong spacing. Expected: ${this.spacing}, real: ${tickSpacing}, pool: ${this.address}`,
-            )
-
           const [sqrtPriceX96, tick] = slot0 as [bigint, number]
           this.state = {
             blockNumber,
@@ -202,6 +164,7 @@ export class UniV3PoolWatcher extends EventEmitter {
             tick: Math.floor(tick / this.spacing) * this.spacing,
             liquidity: liquidity as bigint,
             sqrtPriceX96: sqrtPriceX96 as bigint,
+            fee: fee as number,
           }
           this._poolWasChanged()
 
@@ -222,7 +185,7 @@ export class UniV3PoolWatcher extends EventEmitter {
       } catch (e) {
         Logger.error(
           this.client.chainId,
-          `V3 Pool ${this.address} update failed`,
+          `AerodromeSlipstreamV3 Pool ${this.address} update failed`,
           e,
         )
         this.setStatus(UniV3PoolWatcherStatus.Failed)
@@ -358,7 +321,7 @@ export class UniV3PoolWatcher extends EventEmitter {
       this.address,
       this.token0 as RToken,
       this.token1 as RToken,
-      this.fee / 1_000_000,
+      this.state.fee / 1_000_000,
       this.state.reserve0,
       this.state.reserve1,
       this.state.tick,
@@ -431,7 +394,7 @@ export class UniV3PoolWatcher extends EventEmitter {
       address: this.address,
       token0: `${this.token0.symbol} (${this.token0.address})`,
       token1: `${this.token1.symbol} (${this.token1.address})`,
-      fee: this.fee,
+      fee: this.state?.fee,
       spacing: this.spacing,
 
       blockNumber: this.state?.blockNumber,

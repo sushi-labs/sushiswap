@@ -1,3 +1,4 @@
+import { defaultAbiCoder } from '@ethersproject/abi'
 import IUniswapV3Factory from '@uniswap/v3-core/artifacts/contracts/UniswapV3Factory.sol/UniswapV3Factory.json' assert {
   type: 'json',
 }
@@ -5,51 +6,80 @@ import IUniswapV3Pool from '@uniswap/v3-core/artifacts/contracts/UniswapV3Pool.s
   type: 'json',
 }
 import { Abi } from 'abitype'
-import { computeSushiSwapV3PoolAddress } from 'sushi'
 import { Token } from 'sushi/currency'
 import { LiquidityProviders, PoolCode } from 'sushi/router'
-import type { Address, Hex, Log, PublicClient } from 'viem'
+import {
+  type Address,
+  type Hex,
+  type Log,
+  type PublicClient,
+  decodeEventLog,
+  getAddress,
+  keccak256,
+  parseAbi,
+  parseAbiItem,
+} from 'viem'
+import {
+  AerodromeSlipstreamPoolSyncState,
+  AerodromeSlipstreamQualityChecker,
+  AerodromeSlipstreamQualityCheckerCallBackArg,
+} from './AerodromeSlipstreamQualityChecker.js'
+import { AerodromeSlipstreamV3PoolWatcher } from './AerodromeSlipstreamV3PoolWatcher.js'
 import { Counter } from './Counter.js'
 import { IExtractor } from './IExtractor.js'
 import { LogFilter2 } from './LogFilter2.js'
 import { Logger, safeSerialize } from './Logger.js'
-import { MultiCallAggregator } from './MulticallAggregator.js'
+import {
+  MultiCallAggregator,
+  MultiCallContract,
+} from './MulticallAggregator.js'
 import { PermanentCache } from './PermanentCache.js'
-import {
-  PoolSyncState,
-  QualityChecker,
-  QualityCheckerCallBackArg,
-} from './QualityChecker.js'
 import { TokenManager } from './TokenManager.js'
-import {
-  UniV3EventsAbi,
-  UniV3PoolWatcher,
-  UniV3PoolWatcherStatus,
-} from './UniV3PoolWatcher.js'
+import { FeeSpacingMap } from './UniV3Extractor.js'
+import { UniV3EventsAbi, UniV3PoolWatcherStatus } from './UniV3PoolWatcher.js'
 
-export type FeeSpacingMap = Record<number, number>
+// Currently we support only factories with this swapFeeModule !!!
+const KnownSwapFeeModule = '0xF4171B0953b52Fa55462E4d76ecA1845Db69af00'
 
-export const uniswapFeeSpaceMap: FeeSpacingMap = {
-  100: 1,
-  500: 10,
-  3000: 60,
-  10_000: 200,
+const Events = {
+  TickSpacingEnabled: parseAbiItem(
+    'event TickSpacingEnabled(int24 indexed tickSpacing, uint24 indexed fee)',
+  ),
+  SetCustomFee: parseAbiItem(
+    'event SetCustomFee(address indexed pool, uint24 indexed fee)',
+  ),
+  SwapFeeModuleChanged: parseAbiItem(
+    'event SwapFeeModuleChanged(address indexed oldFeeModule, address indexed newFeeModule)',
+  ),
 }
 
-export interface FactoryV3 {
+const AerodromeSlipstreamABI = parseAbi([
+  'function tickSpacingToFee(int24) view returns (uint24)',
+  'function poolImplementation() view returns (address)',
+  'function tickSpacings() view returns (int24[])',
+  'function swapFeeModule() view returns (address)',
+])
+
+export interface AerodromeSlipstreamFactoryV3 {
   address: Address
   provider: LiquidityProviders
-  initCodeHash: Hex
-  deployer?: Address
-  feeSpacingMap?: FeeSpacingMap
+  feeSpacingMap?: FeeSpacingMap // created dinamically
+  poolImplementation?: Address // fetched inExtractor
+  contract?: MultiCallContract
+  swapFeeModule?: Address
+}
+
+function factoryIsSupported(f: AerodromeSlipstreamFactoryV3) {
+  return f.swapFeeModule === KnownSwapFeeModule
 }
 
 interface PoolInfo {
   address: Address
   token0: Token
   token1: Token
-  fee: number
-  factory: FactoryV3
+  //fee: number
+  tickSpacing: number
+  factory: AerodromeSlipstreamFactoryV3
 }
 
 enum LogsProcessing {
@@ -62,18 +92,32 @@ interface PoolCacheRecord {
   address: Address
   token0: Address
   token1: Address
-  fee: number
+  tickSpacing: number
   factory: Address
 }
 
-export class UniV3Extractor extends IExtractor {
-  factories: FactoryV3[]
-  factoryMap: Map<string, FactoryV3> = new Map()
+// Difference from UniV3:
+// 1) Fee-TickSpacing map is dynamic. Set by PoolFactory.enableTickSpacing()
+// 2) Pools are proxies:
+//    pool = Clones.cloneDeterministic({
+//        master: poolImplementation,
+//        salt: keccak256(abi.encode(token0, token1, tickSpacing))
+//    });
+// 3) Pool fee can be changed (not during swap). But tickSpacing - never
+// 4) Different slot0 struct (no fee)
+// 5) SugarHelper ('0x0AD09A66af0154a84e86F761313d02d0abB6edd5') instead of Tickens.
+//    getPopulatedTicks function (takes startTick, not a word index) instead of getPopulatedTicksInWord
+//    returns ALL ticks for the word AND upper (unlike TickLens)
+//    Created and deployed our own TickLens for Slipstream 0x3e1116ea5034f5d73a7b530071709d54a4109f5f
+//      Diff from original: PopulatedTick doesn't contain price (as in standard TickLens)
+export class AerodromeSlipstreamV3Extractor extends IExtractor {
+  factories: AerodromeSlipstreamFactoryV3[]
+  factoryMap: Map<string, AerodromeSlipstreamFactoryV3> = new Map()
   tickHelperContract: Address
   multiCallAggregator: MultiCallAggregator
   tokenManager: TokenManager
-  poolMap: Map<Address, UniV3PoolWatcher> = new Map()
-  poolMapUpdated: Map<string, UniV3PoolWatcher> = new Map()
+  poolMap: Map<Address, AerodromeSlipstreamV3PoolWatcher> = new Map()
+  poolMapUpdated: Map<string, AerodromeSlipstreamV3PoolWatcher> = new Map()
   emptyAddressSet: Set<Address> = new Set()
   poolPermanentCache: PermanentCache<PoolCacheRecord>
   otherFactoryPoolSet: Set<Address> = new Set()
@@ -81,15 +125,14 @@ export class UniV3Extractor extends IExtractor {
   logProcessingStatus = LogsProcessing.NotStarted
   logging: boolean
   taskCounter: Counter
-  qualityChecker: QualityChecker
+  qualityChecker: AerodromeSlipstreamQualityChecker
   lastProcessdBlock = -1
   watchedPools = 0
-  started = false
 
   constructor(
     client: PublicClient,
     tickHelperContract: Address,
-    factories: FactoryV3[],
+    factories: AerodromeSlipstreamFactoryV3[],
     cacheDir: string,
     logFilter: LogFilter2,
     logging = true,
@@ -106,7 +149,7 @@ export class UniV3Extractor extends IExtractor {
         this.multiCallAggregator,
         cacheReadOnly,
         cacheDir,
-        `uniV3Tokens-${this.multiCallAggregator.chainId}`,
+        `aerodromeSlipstreamV3Tokens-${this.multiCallAggregator.chainId}`,
       )
     this.tickHelperContract = tickHelperContract
     this.factories = factories
@@ -114,16 +157,16 @@ export class UniV3Extractor extends IExtractor {
     this.poolPermanentCache = new PermanentCache(
       cacheReadOnly,
       cacheDir,
-      `uniV3Pools-${this.multiCallAggregator.chainId}`,
+      `aerodromeSlipstreamV3Pools-${this.multiCallAggregator.chainId}`,
     )
     this.logging = logging
     this.consoleLog(`CacheReadOnly = ${cacheReadOnly}`)
     this.taskCounter = new Counter(() => {
       //if (count == 0) this.consoleLog(`All pools were updated`)
     })
-    this.qualityChecker = new QualityChecker(
+    this.qualityChecker = new AerodromeSlipstreamQualityChecker(
       200,
-      (arg: QualityCheckerCallBackArg) => {
+      (arg: AerodromeSlipstreamQualityCheckerCallBackArg) => {
         const addr = arg.ethalonPool.address.toLowerCase() as Address
         if (arg.ethalonPool !== this.poolMap.get(addr)) return false // checked pool was replaced during checking
         if (arg.correctPool) {
@@ -131,17 +174,16 @@ export class UniV3Extractor extends IExtractor {
           this.poolMapUpdated.set(addr, arg.correctPool)
           arg.correctPool.on('PoolCodeWasChanged', (w) => {
             this.poolMapUpdated.set(
-              (w as UniV3PoolWatcher).address.toLowerCase(),
+              (w as AerodromeSlipstreamV3PoolWatcher).address.toLowerCase(),
               w,
             )
           })
         }
         if (
-          arg.status !== PoolSyncState.Match &&
-          arg.status !== PoolSyncState.ReservesMismatch
+          arg.status !== AerodromeSlipstreamPoolSyncState.Match &&
+          arg.status !== AerodromeSlipstreamPoolSyncState.ReservesMismatch
         )
-          Logger.error(
-            this.multiCallAggregator.chainId,
+          this.errorLog(
             `Pool ${arg.ethalonPool.address} quality check: ${arg.status} ` +
               `${arg.correctPool ? 'pool was updated ' : ''}` +
               `(${this.qualityChecker.totalMatchCounter}/${this.qualityChecker.totalCheckCounter})`,
@@ -162,14 +204,20 @@ export class UniV3Extractor extends IExtractor {
     )
 
     this.logFilter = logFilter
-    logFilter.addFilter(UniV3EventsAbi, (logs?: Log[]) => {
+  }
+
+  startBlockChainEventsListening() {
+    // pool event filtering
+    this.logFilter.addFilter(UniV3EventsAbi, (logs?: Log[]) => {
       if (logs) {
         const blockNumber =
           logs.length > 0
             ? Number(logs[logs.length - 1].blockNumber || 0)
             : '<undefined>'
         try {
-          const logNames = logs.map((l) => this.processLog(l))
+          const logNames = logs
+            .map((l) => this.processLog(l))
+            .filter((n) => n !== 'UnknPool') // because most of such events are from UniV3
           this.consoleLog(
             `Block ${blockNumber} ${logNames.length} logs: [${logNames}], jobs: ${this.taskCounter.counter}`,
           )
@@ -178,28 +226,93 @@ export class UniV3Extractor extends IExtractor {
               logs[logs.length - 1].blockNumber || 0,
             )
         } catch (e) {
-          Logger.error(
-            this.multiCallAggregator.chainId,
-            `Block ${blockNumber} log process error`,
-            e,
-          )
+          this.errorLog(`Block ${blockNumber} log process error`, e)
         }
       } else {
-        Logger.error(
-          this.multiCallAggregator.chainId,
-          'Log collecting failed. Pools refetching',
-        )
+        this.errorLog('Log collecting failed. Pools refetching')
         Array.from(this.poolMap.values()).forEach((p) => p.updatePoolState())
       }
     })
+    // pool fee update
+    this.logFilter.addAddressFilter(
+      KnownSwapFeeModule,
+      Events.SetCustomFee,
+      (logs: Log[] | undefined) => {
+        logs?.forEach((l) => {
+          const {
+            args: { pool, fee },
+          } = decodeEventLog({
+            abi: [Events.SetCustomFee],
+            data: l.data,
+            topics: l.topics,
+          })
+          this.poolMap.get(pool.toLowerCase() as Address)?.setFee(fee)
+        })
+      },
+    )
+    // factory TickSpacingEnabled event
+    this.logFilter.addAddressesFilter(
+      this.factories.map((f) => f.address),
+      Events.TickSpacingEnabled,
+      (logs: Log[] | undefined) => {
+        logs?.forEach((l) => {
+          const {
+            args: { tickSpacing, fee },
+          } = decodeEventLog({
+            abi: [Events.TickSpacingEnabled],
+            data: l.data,
+            topics: l.topics,
+          })
+          const factory = this.factoryMap.get(l.address.toLowerCase())
+          if (!factory) return
+          factory.feeSpacingMap = factory.feeSpacingMap ?? {}
+          factory.feeSpacingMap[fee] = tickSpacing
+        })
+      },
+    )
+    // factory SwapFeeModuleChanged event. RN we can't process it correctly
+    // Please restart the extractor ASAP in this case. Factory's pools can have wrong fee
+    // TGood: this event should be rare
+    this.logFilter.addAddressesFilter(
+      this.factories.map((f) => f.address),
+      Events.SwapFeeModuleChanged,
+      (logs: Log[] | undefined) => {
+        logs?.forEach((l) => {
+          const {
+            args: { newFeeModule },
+          } = decodeEventLog({
+            abi: [Events.SwapFeeModuleChanged],
+            data: l.data,
+            topics: l.topics,
+          })
+          const factory = this.factoryMap.get(l.address.toLowerCase())
+          if (!factory) return
+          if (newFeeModule.toLowerCase() !== KnownSwapFeeModule.toLowerCase()) {
+            // TODO: update all fees
+            // Log much errors
+            setInterval(() => {
+              this.errorLog(
+                `Slipstream provider ${factory.provider}(${factory.address}) new SwapFeeModule ${newFeeModule} is not supported. Prease RESTART ASAP `,
+              )
+            }, 60_000)
+          }
+        })
+      },
+    )
   }
 
   // TODO: stop ?
   override async start() {
     if (this.logProcessingStatus === LogsProcessing.NotStarted) {
-      this.logProcessingStatus = LogsProcessing.Started
+      this.logProcessingStatus = LogsProcessing.Starting
       const startTime = performance.now()
+      this.consoleLog('Starting')
+      // events listening should be started before pools creation from the cache in order to not miss
+      // update events during starting
+      this.startBlockChainEventsListening()
+      this.consoleLog('Blockchain events listening was strated')
 
+      await this.fetchFactoryData()
       await this.tokenManager.addCachedTokens()
 
       // Add cached pools to watching
@@ -209,44 +322,103 @@ export class UniV3Extractor extends IExtractor {
         const token0 = this.tokenManager.getKnownToken(r.token0)
         const token1 = this.tokenManager.getKnownToken(r.token1)
         const factory = this.factoryMap.get(r.factory.toLowerCase())
-        if (token0 && token1 && factory && r.address && r.fee)
+        if (
+          token0 &&
+          token1 &&
+          factory &&
+          r.address &&
+          r.tickSpacing &&
+          factoryIsSupported(factory)
+        )
           cachedPools.set(r.address.toLowerCase(), {
             address: r.address,
             token0,
             token1,
-            fee: r.fee,
+            tickSpacing: r.tickSpacing,
             factory,
           })
       })
+
+      this.consoleLog(`${cachedPools.size} pools were taken from cache`)
+
       const promises = Array.from(cachedPools.values())
         .map((p) => this.addPoolWatching(p, 'cache', false))
         .filter((w) => w !== undefined)
-        .map((w) => (w as UniV3PoolWatcher).downloadFinished())
+        .map((w) => (w as AerodromeSlipstreamV3PoolWatcher).downloadFinished())
       Promise.allSettled(promises).then((promises) => {
         let failed = 0
         promises.forEach((p) => {
           if (p.status === 'rejected') ++failed
         })
-        this.started = true
+
         this.consoleLog(
-          `ExtractorV3 is ready, ${failed}/${
+          `Started and ready, ${failed}/${
             promises.length
           } pools failed (${Math.round(performance.now() - startTime)}ms)`,
         )
         if (failed > 0) {
-          Logger.error(
-            this.multiCallAggregator.chainId,
-            `${failed}/${promises.length} pools load failed during ExtractorV3 starting`,
+          this.errorLog(
+            `${failed}/${promises.length} pools load failed during ExtractorAerodromeSlipstreamV3 starting`,
           )
         }
+        this.logProcessingStatus = LogsProcessing.Started
       })
-      this.consoleLog(`${cachedPools.size} pools were taken from cache`)
-      this.consoleLog(
-        `ExtractorV3 is started (${Math.round(
-          performance.now() - startTime,
-        )}ms)`,
-      )
     }
+  }
+
+  async fetchFactoryData() {
+    await Promise.allSettled(
+      this.factories.map(async (f) => {
+        try {
+          const feeSpacingMap: FeeSpacingMap = {}
+          const CLFactory = this.multiCallAggregator.getContract(
+            f.address,
+            AerodromeSlipstreamABI,
+          )
+          const [tickSpacings, poolImplementation, swapFeeModule] =
+            await Promise.all([
+              CLFactory.call<number[]>('tickSpacings'),
+              CLFactory.call<Address>('poolImplementation'),
+              CLFactory.call<Address>('swapFeeModule'),
+            ])
+          await Promise.all(
+            tickSpacings.map(async (ts) => {
+              const fee = await CLFactory.call<number>('tickSpacingToFee', ts)
+              feeSpacingMap[fee] = ts
+            }),
+          )
+          f.contract = CLFactory
+          f.feeSpacingMap = feeSpacingMap
+          f.poolImplementation = poolImplementation
+          f.swapFeeModule = swapFeeModule
+
+          this.consoleLog(
+            `Provider ${f.provider}(${
+              f.address
+            }) fees-tickSpacing map: ${JSON.stringify(feeSpacingMap)}`,
+          )
+          if (Object.keys(feeSpacingMap).length === 0)
+            this.errorLog(
+              `Provider ${f.provider}(${f.address}) fees-tickSpacing map is empty`,
+            )
+        } catch (e) {
+          this.errorLog(
+            `Provider ${f.provider}(${f.address}) data fetching failed`,
+            e,
+          )
+        }
+      }),
+    )
+
+    // filter out unsupported factories !!!
+    this.factories.forEach((f) => {
+      if (factoryIsSupported(f)) return
+      this.factoryMap.delete(f.address.toLowerCase())
+      this.errorLog(
+        `Provider ${f.provider}(${f.address}) is not supported !!!!!`,
+      )
+    })
+    this.factories = this.factories.filter(factoryIsSupported)
   }
 
   processLog(l: Log): string {
@@ -258,8 +430,7 @@ export class UniV3Extractor extends IExtractor {
       } else this.addPoolByAddress(l.address)
       return 'UnknPool'
     } catch (e) {
-      Logger.error(
-        this.multiCallAggregator.chainId,
+      this.errorLog(
         `Log processing for pool ${l.address} throwed an exception`,
         e,
       )
@@ -273,11 +444,6 @@ export class UniV3Extractor extends IExtractor {
     addToCache = true,
     startTime = 0,
   ) {
-    if (this.logProcessingStatus !== LogsProcessing.Started) {
-      throw new Error(
-        'Pools can be added only after Log processing have been started',
-      )
-    }
     const addrL = p.address.toLowerCase() as Address
     const watcherExisted = this.poolMap.get(addrL)
     if (watcherExisted) return watcherExisted
@@ -288,28 +454,25 @@ export class UniV3Extractor extends IExtractor {
       : [p.token1, p.token0]
 
     startTime = startTime || performance.now()
-    const expectedPoolAddress = this.computeV3Address(p.factory, t0, t1, p.fee)
+    const expectedPoolAddress = this.computeV3Address(
+      p.factory,
+      t0,
+      t1,
+      p.tickSpacing,
+    )
+    if (expectedPoolAddress === undefined) return
     if (addrL !== expectedPoolAddress.toLowerCase()) {
       this.consoleLog(`FakePool: ${p.address}`)
       this.otherFactoryPoolSet.add(addrL)
       return
     }
-    const spacing = (p.factory.feeSpacingMap ?? uniswapFeeSpaceMap)[p.fee]
-    if (spacing === undefined) {
-      this.consoleLog(
-        `Unknown spacing for pool ${p.address} with fee = ${p.fee}. Pool is ignored`,
-      )
-      this.otherFactoryPoolSet.add(addrL)
-      return
-    }
-    const watcher = new UniV3PoolWatcher(
+    const watcher = new AerodromeSlipstreamV3PoolWatcher(
       p.factory.provider,
       expectedPoolAddress,
       this.tickHelperContract,
       t0,
       t1,
-      p.fee,
-      spacing,
+      p.tickSpacing,
       this.multiCallAggregator,
       this.taskCounter,
     )
@@ -321,7 +484,7 @@ export class UniV3Extractor extends IExtractor {
         address: expectedPoolAddress,
         token0: t0.address as Address,
         token1: t1.address as Address,
-        fee: p.fee,
+        tickSpacing: p.tickSpacing,
         factory: p.factory.address,
       })
     watcher.once('isUpdated', () => {
@@ -329,37 +492,40 @@ export class UniV3Extractor extends IExtractor {
       if (source !== 'cache') {
         const delay = Math.round(performance.now() - startTime)
         this.consoleLog(
-          `add pool ${expectedPoolAddress} (${delay}ms, ${source}), watched pools total: ${
-            this.watchedPools
-          }/${this.poolMap.size + this.emptyAddressSet.size}`,
+          `add pool ${expectedPoolAddress} (${delay}ms, ${source}), watched pools total: ${this.watchedPools}`,
         )
       }
     })
     watcher.on('PoolCodeWasChanged', (w) => {
-      this.poolMapUpdated.set((w as UniV3PoolWatcher).address.toLowerCase(), w)
+      this.poolMapUpdated.set(
+        (w as AerodromeSlipstreamV3PoolWatcher).address.toLowerCase(),
+        w,
+      )
     })
     return watcher
   }
 
   getWatchersForTokens(tokensUnique: Token[]): {
-    prefetched: UniV3PoolWatcher[]
-    fetching: Promise<UniV3PoolWatcher | undefined>[]
+    prefetched: AerodromeSlipstreamV3PoolWatcher[]
+    fetching: Promise<AerodromeSlipstreamV3PoolWatcher | undefined>[]
   } {
     const startTime = performance.now()
-    const prefetched: UniV3PoolWatcher[] = []
-    const fetching: Promise<UniV3PoolWatcher | undefined>[] = []
+    const prefetched: AerodromeSlipstreamV3PoolWatcher[] = []
+    const fetching: Promise<AerodromeSlipstreamV3PoolWatcher | undefined>[] = []
     for (let i = 0; i < tokensUnique.length; ++i) {
       const t0 = tokensUnique[i]
       this.tokenManager.findToken(t0.address as Address) // to let save it in the cache
       for (let j = i + 1; j < tokensUnique.length; ++j) {
         const t1 = tokensUnique[j]
         this.factories.forEach((factory) => {
-          const feeSpacingMap = factory.feeSpacingMap ?? uniswapFeeSpaceMap
-          const fees = Object.keys(feeSpacingMap).map((f) => Number(f))
-          fees.forEach((fee) => {
+          const feeSpacingMap = factory.feeSpacingMap ?? {}
+          const tickSpacings = Object.values(feeSpacingMap).map((f) =>
+            Number(f),
+          )
+          tickSpacings.forEach((tickSpacing) => {
             const res = this.getWatchersForTokenPair(
               factory,
-              fee,
+              tickSpacing,
               t0,
               t1,
               startTime,
@@ -400,24 +566,26 @@ export class UniV3Extractor extends IExtractor {
     tokensUnique1: Token[],
     tokensUnique2: Token[],
   ): {
-    prefetched: UniV3PoolWatcher[]
-    fetching: Promise<UniV3PoolWatcher | undefined>[]
+    prefetched: AerodromeSlipstreamV3PoolWatcher[]
+    fetching: Promise<AerodromeSlipstreamV3PoolWatcher | undefined>[]
   } {
     const startTime = performance.now()
-    const prefetched: UniV3PoolWatcher[] = []
-    const fetching: Promise<UniV3PoolWatcher | undefined>[] = []
+    const prefetched: AerodromeSlipstreamV3PoolWatcher[] = []
+    const fetching: Promise<AerodromeSlipstreamV3PoolWatcher | undefined>[] = []
     for (let i = 0; i < tokensUnique1.length; ++i) {
       const t0 = tokensUnique1[i]
       this.tokenManager.findToken(t0.address as Address) // to let save it in the cache
       for (let j = 0; j < tokensUnique2.length; ++j) {
         const t1 = tokensUnique2[j]
         this.factories.forEach((factory) => {
-          const feeSpacingMap = factory.feeSpacingMap ?? uniswapFeeSpaceMap
-          const fees = Object.keys(feeSpacingMap).map((f) => Number(f))
-          fees.forEach((fee) => {
+          const feeSpacingMap = factory.feeSpacingMap ?? {}
+          const tickSpacings = Object.values(feeSpacingMap).map((f) =>
+            Number(f),
+          )
+          tickSpacings.forEach((tickSpacing) => {
             const res = this.getWatchersForTokenPair(
               factory,
-              fee,
+              tickSpacing,
               t0,
               t1,
               startTime,
@@ -461,13 +629,17 @@ export class UniV3Extractor extends IExtractor {
   }
 
   getWatchersForTokenPair(
-    factory: FactoryV3,
-    fee: number,
+    factory: AerodromeSlipstreamFactoryV3,
+    tickSpacing: number,
     t0: Token,
     t1: Token,
     startTime: number,
-  ): undefined | UniV3PoolWatcher | Promise<UniV3PoolWatcher | undefined> {
-    const addr = this.computeV3Address(factory, t0, t1, fee)
+  ):
+    | undefined
+    | AerodromeSlipstreamV3PoolWatcher
+    | Promise<AerodromeSlipstreamV3PoolWatcher | undefined> {
+    const addr = this.computeV3Address(factory, t0, t1, tickSpacing)
+    if (addr === undefined) return
     const addrL = addr.toLowerCase() as Address
     const pool = this.poolMap.get(addrL)
     if (pool) return pool
@@ -476,7 +648,7 @@ export class UniV3Extractor extends IExtractor {
       .callValue(factory.address, IUniswapV3Factory.abi as Abi, 'getPool', [
         t0.address,
         t1.address,
-        fee,
+        tickSpacing,
       ])
       .then(
         (checkedAddress) => {
@@ -485,7 +657,7 @@ export class UniV3Extractor extends IExtractor {
             return
           }
           const watcher = this.addPoolWatching(
-            { address: addr, token0: t0, token1: t1, fee, factory },
+            { address: addr, token0: t0, token1: t1, tickSpacing, factory },
             'request',
             true,
             startTime,
@@ -498,6 +670,7 @@ export class UniV3Extractor extends IExtractor {
   }
 
   async addPoolByAddress(address: Address) {
+    if (this.logProcessingStatus !== LogsProcessing.Started) return // don't create pools by logs before started
     if (this.otherFactoryPoolSet.has(address.toLowerCase() as Address)) return
     if (this.multiCallAggregator.chainId === undefined) return
     this.taskCounter.inc()
@@ -513,7 +686,7 @@ export class UniV3Extractor extends IExtractor {
         (factoryAddress as Address).toLowerCase(),
       )
       if (factory !== undefined) {
-        const [token0Address, token1Address, fee] = await Promise.all([
+        const [token0Address, token1Address, tickSpacing] = await Promise.all([
           this.multiCallAggregator.callValue(
             address,
             IUniswapV3Pool.abi as Abi,
@@ -527,7 +700,7 @@ export class UniV3Extractor extends IExtractor {
           this.multiCallAggregator.callValue(
             address,
             IUniswapV3Pool.abi as Abi,
-            'fee',
+            'tickSpacing',
           ),
         ])
         const [token0, token1] = await Promise.all([
@@ -536,7 +709,13 @@ export class UniV3Extractor extends IExtractor {
         ])
         if (token0 && token1) {
           this.addPoolWatching(
-            { address, token0, token1, fee: fee as number, factory },
+            {
+              address,
+              token0,
+              token1,
+              tickSpacing: tickSpacing as number,
+              factory,
+            },
             'logs',
             true,
             startTime,
@@ -551,9 +730,10 @@ export class UniV3Extractor extends IExtractor {
     }
     this.taskCounter.dec()
     this.otherFactoryPoolSet.add(address.toLowerCase() as Address)
-    this.consoleLog(
-      `other factory pool ${address}, such pools known: ${this.otherFactoryPoolSet.size}`,
-    )
+    // Lets don't log it as most of such pools are UniV3
+    // this.consoleLog(
+    //   `other factory pool ${address}, such pools known: ${this.otherFactoryPoolSet.size}`,
+    // )
   }
 
   override getCurrentPoolCodes(): PoolCode[] {
@@ -591,32 +771,57 @@ export class UniV3Extractor extends IExtractor {
 
   readonly addressCache: Map<string, Address> = new Map()
   computeV3Address(
-    factory: FactoryV3,
+    factory: AerodromeSlipstreamFactoryV3,
     tokenA: Token,
     tokenB: Token,
-    fee: number,
-  ): Address {
-    const key = `${tokenA.address}${tokenB.address}${fee}${factory.address}`
+    tickSpacing: number,
+  ): Address | undefined {
+    if (!factory.poolImplementation) return
+
+    const key = `${tokenA.address}${tokenB.address}${tickSpacing}${factory.address}`
     const cached = this.addressCache.get(key)
     if (cached) return cached
-    const poolCreator = factory.deployer ?? factory.address
-    const addr = computeSushiSwapV3PoolAddress({
-      factoryAddress: poolCreator,
-      tokenA,
-      tokenB,
-      fee,
-      initCodeHashManualOverride: factory.initCodeHash,
-    }) as Address
+
+    const [token0, token1] = tokenA.sortsBefore(tokenB)
+      ? [tokenA, tokenB]
+      : [tokenB, tokenA]
+    const constructorArgumentsEncoded = defaultAbiCoder.encode(
+      ['address', 'address', 'int24'],
+      [token0.address, token1.address, tickSpacing],
+    ) as Hex
+    const initCode =
+      `0x3d602d80600a3d3981f3363d3d373d3d3d363d73${factory.poolImplementation.replace(
+        '0x',
+        '',
+      )}5af43d82803e903d91602b57fd5bf3` as Hex
+    const initCodeHash = keccak256(initCode)
+
+    const create2Inputs = [
+      '0xff',
+      factory.address,
+      // salt
+      keccak256(constructorArgumentsEncoded),
+      // init code hash
+      initCodeHash,
+    ]
+    const sanitizedInputs = `0x${create2Inputs
+      .map((i) => i.slice(2))
+      .join('')}` as Hex
+    const addr = getAddress(`0x${keccak256(sanitizedInputs).slice(-40)}`)
     this.addressCache.set(key, addr)
     return addr
   }
 
   consoleLog(log: string) {
     if (this.logging)
-      console.log(`V3-${this.multiCallAggregator.chainId}: ${log}`)
+      console.log(`ASV3-${this.multiCallAggregator.chainId}: ${log}`)
+  }
+
+  errorLog(msg: string, err?: unknown, trim?: boolean) {
+    Logger.error(this.multiCallAggregator.chainId, msg, err, trim)
   }
 
   override isStarted() {
-    return this.started
+    return this.logProcessingStatus === LogsProcessing.Started
   }
 }
