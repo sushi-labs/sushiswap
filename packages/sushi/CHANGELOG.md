@@ -1,5 +1,11 @@
 # sushi
 
+## 3.2.0
+
+### Minor Changes
+
+- [#1655](https://github.com/sushiswap/sushiswap/pull/1655) [`4c05462d2`](https://github.com/sushiswap/sushiswap/commit/4c05462d23eaf8ad06b80c73d6f5f428ce22ebfa) Thanks [@0xMasayoshi](https://github.com/0xMasayoshi)! - update RouteProcessor5 config to include zkSync and Mantle.
+
 ## 3.1.2
 
 ### Patch Changes
