@@ -19,6 +19,8 @@ module.exports = {
     './src/common/**/*.{js,ts,jsx,tsx,mdx}',
     './src/components/**/*.{js,ts,jsx,tsx,mdx}',
     './src/pages/**/*.{js,ts,jsx,tsx,mdx}',
+    './src/providers/**/*.{js,ts,jsx,tsx,mdx}',
+    './src/lib/**/*.{js,ts,jsx,tsx,mdx}',
     './src/ui/**/*.{js,ts,jsx,tsx,mdx}',
     '../../packages/wagmi/src/**/*.{ts,tsx,mdx}',
     '../../packages/ui/src/**/*.{ts,tsx,mdx}',
