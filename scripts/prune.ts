@@ -193,4 +193,29 @@ async function prune(
   } catch (_e) {
     // console.error(e)
   }
+
+  try {
+    const [
+      validSlipstreamPools,
+      invalidSlipstreamPool,
+      duplicateSlipstreamPool,
+      removedSlipstreamPool,
+    ] = await prune(`${cacheDir}/aerodromeSlipstreamV3Pools-${chainId}`, [
+      'token0',
+      'token1',
+    ])
+    console.log(
+      `Slipstream, Valid: ${validSlipstreamPools} Invalid: ${invalidSlipstreamPool} Duplicate: ${duplicateSlipstreamPool} Removed: ${removedSlipstreamPool} (${percentage(
+        removedSlipstreamPool,
+        validSlipstreamPools,
+      )}%) Remaining: ${
+        validSlipstreamPools - removedSlipstreamPool
+      } (${percentage(
+        validSlipstreamPools - removedSlipstreamPool,
+        validSlipstreamPools,
+      )}%)`,
+    )
+  } catch (_e) {
+    // console.error(e)
+  }
 })()
