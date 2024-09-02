@@ -6,7 +6,7 @@ export const MantleNaked: NakedNetworkIconComponent = (props) => {
   return (
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" {...props}>
       {props.circle}
-      <g clip-path="url(#circle)">
+      <g clipPath="url(#circle)">
         <path fill="#000" fillOpacity="1" stroke="none" d="M0 0h128v128H0z" />
         <path
           stroke="none"
