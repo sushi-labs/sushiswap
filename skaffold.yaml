@@ -69,7 +69,7 @@ profiles:
       releases:
         - name: sushi-extractor
           chartPath: k8s/charts/extractor
-          valuesFiles: [k8s/charts/values.yaml]
+          valuesFiles: [k8s/charts/values.yaml, k8s/charts/production-values.yaml]
         - name: sushi-router
           chartPath: k8s/charts/router
           valuesFiles: [k8s/charts/values.yaml]
