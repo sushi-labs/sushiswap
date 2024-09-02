@@ -75,8 +75,6 @@ import { usePoolPosition } from './PoolPositionProvider'
 import { SelectFeeConcentratedWidget } from './SelectFeeConcentratedWidget'
 import { SelectPricesWidget } from './SelectPricesWidget'
 
-export const MODAL_MIGRATE_ID = 'migrate-modal'
-
 export const MigrateTab: FC<{ pool: V2Pool }> = withCheckerRoot(({ pool }) => {
   const { address } = useAccount()
   const [feeAmount, setFeeAmount] = useState<SushiSwapV3FeeAmount>(
@@ -394,7 +392,7 @@ export const MigrateTab: FC<{ pool: V2Pool }> = withCheckerRoot(({ pool }) => {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="flex flex-col md:flex-row gap-6">
+          <div className="flex flex-col gap-6 md:flex-row">
             <CardGroup>
               <CardLabel>V2 Price</CardLabel>
               {token0 && token1 && pool ? (
@@ -504,7 +502,7 @@ export const MigrateTab: FC<{ pool: V2Pool }> = withCheckerRoot(({ pool }) => {
         <CardContent className="pt-0">
           <div className="grid grid-cols-3 gap-x-10 lg:gap-x-[56px]">
             <div className="col-span-3 md:col-span-1" />
-            <div className="col-span-3 md:col-span-2 space-y-6">
+            <div className="col-span-3 space-y-6 md:col-span-2">
               <Separator />
               <Card className="bg-transparent shadow-none">
                 <CardHeader>
@@ -735,7 +733,7 @@ export const MigrateTab: FC<{ pool: V2Pool }> = withCheckerRoot(({ pool }) => {
                                                     ).symbol
                                                   }
                                                 </div>
-                                                <span className="text-gray-600 dark:text-slate-400 text-xs font-normal">
+                                                <span className="text-xs font-normal text-gray-600 dark:text-slate-400">
                                                   {formatUSD(v3FiatValue0)}
                                                 </span>
                                               </div>
@@ -765,7 +763,7 @@ export const MigrateTab: FC<{ pool: V2Pool }> = withCheckerRoot(({ pool }) => {
                                                     ).symbol
                                                   }
                                                 </div>
-                                                <span className="text-gray-600 dark:text-slate-400 text-xs font-normal">
+                                                <span className="text-xs font-normal text-gray-600 dark:text-slate-400">
                                                   {formatUSD(v3FiatValue1)}
                                                 </span>
                                               </div>
@@ -798,7 +796,7 @@ export const MigrateTab: FC<{ pool: V2Pool }> = withCheckerRoot(({ pool }) => {
                                                     ).symbol
                                                   }
                                                 </div>
-                                                <span className="text-gray-600 dark:text-slate-400 text-xs font-normal">
+                                                <span className="text-xs font-normal text-gray-600 dark:text-slate-400">
                                                   {formatUSD(refund0FiatValue)}
                                                 </span>
                                               </div>
@@ -827,7 +825,7 @@ export const MigrateTab: FC<{ pool: V2Pool }> = withCheckerRoot(({ pool }) => {
                                                     ).symbol
                                                   }
                                                 </div>
-                                                <span className="text-gray-600 dark:text-slate-400 text-xs font-normal">
+                                                <span className="text-xs font-normal text-gray-600 dark:text-slate-400">
                                                   {formatUSD(refund1FiatValue)}
                                                 </span>
                                               </div>

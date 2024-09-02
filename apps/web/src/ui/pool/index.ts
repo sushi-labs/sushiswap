@@ -1,4 +1,3 @@
-export * from './FarmRewardsAvailableTooltip'
 export * from '../pathname-button'
 export * from './PoolPositionProvider'
 export * from './PoolsFiltersProvider'
