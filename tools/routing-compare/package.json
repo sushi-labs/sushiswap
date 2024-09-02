@@ -1,0 +1,23 @@
+{
+  "name": "routing-compare",
+  "version": "0.0.0",
+  "private": true,
+  "license": "MIT",
+  "author": "Ilya Lyalin",
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
+    "go": "tsc && node dist/index.js",
+    "go-debug": "tsc && node --inspect-brk dist/index.js"
+  },
+  "dependencies": {
+    "sushi": "workspace:*"
+  },
+  "devDependencies": {
+    "@tsconfig/node20": "20.1.4",
+    "@tsconfig/strictest": "2.0.2",
+    "ts-node": "10.9.2",
+    "typescript": "5.4.5"
+  }
+}

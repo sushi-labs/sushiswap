@@ -6,3 +6,4 @@ packages:
   - 'protocols/*'
   - 'jobs/*'
   - 'sandboxes/*'
+  - 'tools/*'
