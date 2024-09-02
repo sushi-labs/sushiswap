@@ -121,6 +121,7 @@ export const getConcentratedLiquidityPositions = async ({
       fee: el.fee,
       initCodeHashManualOverride:
         SUSHISWAP_V3_INIT_CODE_HASH[el.chainId as SushiSwapV3ChainId],
+      chainId: el.chainId,
     }),
     fees: fees ? fees[i] : undefined,
   })) as ConcentratedLiquidityPosition[]
