@@ -519,6 +519,13 @@ export const EXTRACTOR_CONFIG: Record<
           '0xbc919ae6f6f95dca1e223fc957286afa1da81529418e9f187db8a0b2d2e963bc',
         fee: 0.003,
       },
+      {
+        address: '0x115934131916C8b277DD010Ee02de363c09d037c',
+        provider: LiquidityProviders.ShibaSwap,
+        initCodeHash:
+          '0x65d1a3b1e46c6e4f1be1ad5f99ef14dc488ae0549dc97db9b30afe2241ce1c7a',
+        fee: 0.003,
+      },
     ],
     factoriesV3: [
       uniswapV3Factory(ChainId.ETHEREUM),
