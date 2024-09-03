@@ -252,6 +252,7 @@ export const EXTRACTOR_CONFIG: Record<
       {
         address: '0x5e7BB104d84c7CB9B682AaC2F3d509f5F406809A',
         provider: LiquidityProviders.AerodromeSlipstream,
+        checkedSwapFeeModules: ['0xF4171B0953b52Fa55462E4d76ecA1845Db69af00'],
       },
     ],
     tickHelperContractAerodromeSlipstream:
@@ -623,9 +624,19 @@ export const EXTRACTOR_CONFIG: Record<
       uniswapV3Factory(ChainId.OPTIMISM),
       sushiswapV3Factory(ChainId.OPTIMISM),
     ],
+    factoriesAerodromeSlipstream: [
+      {
+        address: '0xCc0bDDB707055e04e497aB22a59c2aF4391cd12F',
+        provider: LiquidityProviders.VelodromeSlipstream,
+        // only swapFeeModules like BASE:0xF4171B0953b52Fa55462E4d76ecA1845Db69af00 are supported
+        checkedSwapFeeModules: ['0x7361E9079920fb75496E9764A2665d8ee5049D5f'],
+      },
+    ],
     tickHelperContractV3: SUSHISWAP_V3_TICK_LENS[ChainId.OPTIMISM],
     tickHelperContractAlgebra:
       '0x0000000000000000000000000000000000000000' as Address,
+    tickHelperContractAerodromeSlipstream:
+      '0x49C6FDCb3D5b2CecD8baff66c8e94b9B261ad925' as Address, // our own
     cacheDir: './cache',
     logDepth: 50,
     logging: true,

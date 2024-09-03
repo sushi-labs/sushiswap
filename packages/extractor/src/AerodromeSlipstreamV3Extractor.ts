@@ -38,9 +38,6 @@ import { TokenManager } from './TokenManager.js'
 import { FeeSpacingMap } from './UniV3Extractor.js'
 import { UniV3EventsAbi, UniV3PoolWatcherStatus } from './UniV3PoolWatcher.js'
 
-// Currently we support only factories with this swapFeeModule !!!
-const KnownSwapFeeModule = '0xF4171B0953b52Fa55462E4d76ecA1845Db69af00'
-
 const Events = {
   TickSpacingEnabled: parseAbiItem(
     'event TickSpacingEnabled(int24 indexed tickSpacing, uint24 indexed fee)',
@@ -63,14 +60,20 @@ const AerodromeSlipstreamABI = parseAbi([
 export interface AerodromeSlipstreamFactoryV3 {
   address: Address
   provider: LiquidityProviders
+  checkedSwapFeeModules: Address[]
   feeSpacingMap?: FeeSpacingMap // created dinamically
   poolImplementation?: Address // fetched inExtractor
   contract?: MultiCallContract
   swapFeeModule?: Address
 }
 
-function factoryIsSupported(f: AerodromeSlipstreamFactoryV3) {
-  return f.swapFeeModule === KnownSwapFeeModule
+function factoryIsSupported(
+  f: AerodromeSlipstreamFactoryV3,
+  newFeeModule?: Address,
+) {
+  return f.checkedSwapFeeModules.includes(
+    newFeeModule ?? (f.swapFeeModule as Address),
+  )
 }
 
 interface PoolInfo {
@@ -234,22 +237,24 @@ export class AerodromeSlipstreamV3Extractor extends IExtractor {
       }
     })
     // pool fee update
-    this.logFilter.addAddressFilter(
-      KnownSwapFeeModule,
-      Events.SetCustomFee,
-      (logs: Log[] | undefined) => {
-        logs?.forEach((l) => {
-          const {
-            args: { pool, fee },
-          } = decodeEventLog({
-            abi: [Events.SetCustomFee],
-            data: l.data,
-            topics: l.topics,
-          })
-          this.poolMap.get(pool.toLowerCase() as Address)?.setFee(fee)
+    this.logFilter.addFilter(Events.SetCustomFee, (logs: Log[] | undefined) => {
+      logs?.forEach((l) => {
+        const {
+          args: { pool, fee },
+        } = decodeEventLog({
+          abi: [Events.SetCustomFee],
+          data: l.data,
+          topics: l.topics,
         })
-      },
-    )
+        const watcher = this.poolMap.get(pool.toLowerCase() as Address)
+        if (watcher === undefined) return
+        if (
+          watcher.factory.swapFeeModule?.toLowerCase() ===
+          l.address.toLowerCase()
+        )
+          watcher.setFee(fee)
+      })
+    })
     // factory TickSpacingEnabled event
     this.logFilter.addAddressesFilter(
       this.factories.map((f) => f.address),
@@ -287,7 +292,9 @@ export class AerodromeSlipstreamV3Extractor extends IExtractor {
           })
           const factory = this.factoryMap.get(l.address.toLowerCase())
           if (!factory) return
-          if (newFeeModule.toLowerCase() !== KnownSwapFeeModule.toLowerCase()) {
+          if (factoryIsSupported(factory, newFeeModule))
+            factory.swapFeeModule = newFeeModule
+          else {
             // TODO: update all fees
             // Log much errors
             setInterval(() => {
@@ -418,7 +425,7 @@ export class AerodromeSlipstreamV3Extractor extends IExtractor {
         `Provider ${f.provider}(${f.address}) is not supported !!!!!`,
       )
     })
-    this.factories = this.factories.filter(factoryIsSupported)
+    this.factories = this.factories.filter((f) => factoryIsSupported(f))
   }
 
   processLog(l: Log): string {
