@@ -50,7 +50,7 @@ const Events = {
   ),
 }
 
-const AerodromeSlipstreamABI = parseAbi([
+const SlipstreamABI = parseAbi([
   'function tickSpacingToFee(int24) view returns (uint24)',
   'function poolImplementation() view returns (address)',
   'function tickSpacings() view returns (int24[])',
@@ -362,7 +362,7 @@ export class SlipstreamV3Extractor extends IExtractor {
         )
         if (failed > 0) {
           this.errorLog(
-            `${failed}/${promises.length} pools load failed during ExtractorAerodromeSlipstreamV3 starting`,
+            `${failed}/${promises.length} pools load failed during ExtractorSlipstreamV3 starting`,
           )
         }
         this.logProcessingStatus = LogsProcessing.Started
@@ -377,7 +377,7 @@ export class SlipstreamV3Extractor extends IExtractor {
           const feeSpacingMap: FeeSpacingMap = {}
           const CLFactory = this.multiCallAggregator.getContract(
             f.address,
-            AerodromeSlipstreamABI,
+            SlipstreamABI,
           )
           const [tickSpacings, poolImplementation, swapFeeModule] =
             await Promise.all([

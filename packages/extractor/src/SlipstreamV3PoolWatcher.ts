@@ -28,7 +28,7 @@ const feeAbi: Abi = [
   },
 ]
 
-interface AerodromeSlipstreamV3PoolSelfState {
+interface SlipstreamV3PoolSelfState {
   blockNumber: number
   reserve0: bigint
   reserve1: bigint
@@ -77,7 +77,7 @@ export class SlipstreamV3PoolWatcher extends EventEmitter {
   factory: SlipstreamFactoryV3
   client: MultiCallAggregator
   wordLoadManager: WordLoadManager
-  state?: AerodromeSlipstreamV3PoolSelfState
+  state?: SlipstreamV3PoolSelfState
   updatePoolStateGuard = false
   busyCounter?: Counter
   private lastPoolCode?: PoolCode
@@ -127,7 +127,7 @@ export class SlipstreamV3PoolWatcher extends EventEmitter {
         if (entry === undefined) {
           Logger.error(
             this.client.chainId,
-            `AerodromeSlipstreamV3 Pool ${this.address} unknown spacing ${
+            `SlipstreamV3 Pool ${this.address} unknown spacing ${
               this.spacing
             } in ${JSON.stringify(this.factory.feeSpacingMap)}`,
           )
@@ -204,7 +204,7 @@ export class SlipstreamV3PoolWatcher extends EventEmitter {
       } catch (e) {
         Logger.error(
           this.client.chainId,
-          `AerodromeSlipstreamV3 Pool ${this.address} update failed`,
+          `SlipstreamV3 Pool ${this.address} update failed`,
           e,
         )
         this.setStatus(UniV3PoolWatcherStatus.Failed)
