@@ -502,6 +502,37 @@ export const blast = {
   },
 } as const
 
+export const matchain = {
+  id: ChainId.MATCHAIN,
+  name: 'MatChain',
+  network: 'matchain',
+  nativeCurrency: { name: 'BNB', symbol: 'BNB', decimals: 18 },
+  rpcUrls: {
+    default: {
+      http: ['https://rpc.matchain.io'],
+    },
+    public: {
+      http: ['https://rpc.matchain.io'],
+    },
+  },
+  blockExplorers: {
+    etherscan: {
+      name: 'Matchain Explorer',
+      url: 'https://matchscan.io',
+    },
+    default: {
+      name: 'Matchain Explorer',
+      url: 'https://matchscan.io',
+    },
+  },
+  contracts: {
+    multicall3: {
+      address: '0xcA11bde05977b3631167028862bE2a173976CA11' as Address,
+      blockCreated: 0,
+    },
+  },
+} as const
+
 export const publicTransports = {
   [ChainId.ARBITRUM_NOVA]: http(arbitrumNova.rpcUrls.default.http[0]),
   [ChainId.ARBITRUM]: http(arbitrum.rpcUrls.default.http[0]),
@@ -547,6 +578,7 @@ export const publicTransports = {
   [ChainId.FANTOM_TESTNET]: http(fantomTestnet.rpcUrls.default.http[0]),
   [ChainId.POLYGON_TESTNET]: http(polygonMumbai.rpcUrls.default.http[0]),
   [ChainId.SEPOLIA]: http(sepolia.rpcUrls.default.http[0]),
+  [ChainId.MATCHAIN]: http(matchain.rpcUrls.default.http[0]),
 } as const satisfies Record<ChainId, Transport>
 
 export const publicChains = [
@@ -587,6 +619,7 @@ export const publicChains = [
   filecoin,
   zetachain,
   flare,
+  matchain,
 
   /* Testnets */
   arbitrumSepolia,
@@ -746,6 +779,11 @@ export const publicClientConfig = {
     chain: flare,
     transport: publicTransports[ChainId.FLARE],
   },
+  [ChainId.MATCHAIN]: {
+    chain: matchain,
+    transport: publicTransports[ChainId.MATCHAIN],
+  },
+
   /* Testnets */
   [ChainId.ARBITRUM_TESTNET]: {
     chain: arbitrumSepolia,

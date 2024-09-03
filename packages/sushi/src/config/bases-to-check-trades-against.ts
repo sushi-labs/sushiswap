@@ -497,4 +497,10 @@ export const BASES_TO_CHECK_TRADES_AGAINST: {
     ENOSYS_HLN,
     ENOSYS_APS,
   ],
+  [ChainId.MATCHAIN]: [
+    WNATIVE[ChainId.MATCHAIN],
+    WETH9[ChainId.MATCHAIN],
+    USDT[ChainId.MATCHAIN],
+    USDC[ChainId.MATCHAIN],
+  ],
 }

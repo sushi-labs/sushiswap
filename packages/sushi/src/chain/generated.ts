@@ -980,4 +980,21 @@ export default [
     name: 'Palm',
     shortName: 'palm',
   },
+  {
+    chainId: 698,
+    explorers: [
+      {
+        name: 'matchain',
+        url: 'https://matchscan.io',
+        standard: 'none',
+      },
+    ],
+    nativeCurrency: {
+      name: 'BNB',
+      symbol: 'BNB',
+      decimals: 18,
+    },
+    name: 'MatChain Mainnet',
+    shortName: 'matchain',
+  },
 ] as const
