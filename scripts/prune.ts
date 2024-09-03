@@ -200,7 +200,7 @@ async function prune(
       invalidSlipstreamPool,
       duplicateSlipstreamPool,
       removedSlipstreamPool,
-    ] = await prune(`${cacheDir}/aerodromeSlipstreamV3Pools-${chainId}`, [
+    ] = await prune(`${cacheDir}/slipstreamV3Pools-${chainId}`, [
       'token0',
       'token1',
     ])
