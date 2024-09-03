@@ -3,6 +3,8 @@ import { Token, USDC, USDT } from 'sushi/currency'
 
 const MAX_PRICE_IMPACT = 0.1 // 10%
 
+const delay = async (ms: number) => new Promise((res) => setTimeout(res, ms))
+
 async function SushiRP5RouteUnBiased(
   chainId: ChainId,
   from: Token,
@@ -33,7 +35,7 @@ export async function SushiRoute(
   return SushiRP5RouteUnBiased(chainId, from, to, amountIn, gasPrice)
 }
 
-async function OneInchRoute(
+export async function OneInchBrowserRoute(
   chainId: ChainId,
   from: Token,
   to: Token,
@@ -77,6 +79,60 @@ async function OneInchRoute(
   }
   if (route?.bestResult?.toTokenAmount === undefined) return
   return BigInt(route?.bestResult?.toTokenAmount)
+}
+
+const oneInchApiKeys = (process.env['ONE_INCH_API_KEYS'] || '')
+  .replaceAll(/ +/g, '')
+  .split(',')
+let next1inchKeyIndex = 0
+async function OneInchAPIRoute(
+  chainId: ChainId,
+  from: Token,
+  to: Token,
+  amountIn: bigint,
+  gasPrice: bigint,
+): Promise<bigint | undefined> {
+  if (oneInchApiKeys.length === 0) return
+  const apiKey = oneInchApiKeys[next1inchKeyIndex++]
+  if (next1inchKeyIndex >= oneInchApiKeys.length) next1inchKeyIndex = 0
+
+  const url =
+    `https://api.1inch.dev/swap/v6.0/${chainId}/quote?` +
+    `fromTokenAddress=${from.address}&toTokenAddress=${to.address}&amount=${amountIn}` +
+    `&gasPrice=${gasPrice}&preset=maxReturnResult&isTableEnabled=true`
+  for (let n = 0; n < 10; ++n) {
+    const resp = await fetch(url, {
+      headers: {
+        authorization: `Bearer ${apiKey}`,
+      },
+    })
+    if (resp.status === 429) {
+      // The limit of requests per second has been exceeded
+      console.log(429)
+      delay(300)
+      continue
+    }
+    if (resp.status !== 200) {
+      console.log(resp.status, apiKey, await resp.text())
+      return
+    }
+    const route = (await resp.json()) as {
+      dstAmount: number
+    }
+    if (route?.dstAmount === undefined) return
+    return BigInt(route?.dstAmount)
+  }
+  return undefined
+}
+
+async function OneInchRoute(
+  chainId: ChainId,
+  from: Token,
+  to: Token,
+  amountIn: bigint,
+  gasPrice: bigint,
+): Promise<bigint | undefined> {
+  return OneInchAPIRoute(chainId, from, to, amountIn, gasPrice)
 }
 
 console.log(
