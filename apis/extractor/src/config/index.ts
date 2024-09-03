@@ -512,6 +512,13 @@ export const EXTRACTOR_CONFIG: Record<
       pancakeswapV2Factory(ChainId.ETHEREUM),
       elkV2Factory(ChainId.ETHEREUM),
       apeswapV2Factory(ChainId.ETHEREUM),
+      {
+        address: '0xdD9EFCbDf9f422e2fc159eFe77aDD3730d48056d',
+        provider: LiquidityProviders.Kwikswap,
+        initCodeHash:
+          '0xbc919ae6f6f95dca1e223fc957286afa1da81529418e9f187db8a0b2d2e963bc',
+        fee: 0.003,
+      },
     ],
     factoriesV3: [
       uniswapV3Factory(ChainId.ETHEREUM),
