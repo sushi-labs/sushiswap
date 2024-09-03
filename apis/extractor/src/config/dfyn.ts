@@ -27,7 +27,7 @@ const DFYN_V2_INIT_CODE_HASH: Record<DfynV2ChainId, Hex> = {
 export function dfynV2Factory(chainId: DfynV2ChainId) {
   return {
     address: DFYN_V2_FACTORY_ADDRESS[chainId],
-    provider: LiquidityProviders.ApeSwap,
+    provider: LiquidityProviders.Dfyn,
     initCodeHash: DFYN_V2_INIT_CODE_HASH[chainId],
     fee: 0.003,
   } as const

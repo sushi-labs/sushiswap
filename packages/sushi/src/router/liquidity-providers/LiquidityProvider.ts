@@ -64,6 +64,8 @@ export enum LiquidityProviders {
   FusionXV2 = 'FusionXV2',
   FusionXV3 = 'FusionXV3',
   MethLab = 'MethLab',
+  DackieSwapV2 = 'DackieSwapV2',
+  DackieSwapV3 = 'DackieSwapV3',
 }
 
 export abstract class LiquidityProvider {
