@@ -34,11 +34,11 @@ import {
   type PublicClientConfig,
   createPublicClient,
 } from 'viem'
-import { apeswapV2Factory } from './apeswap'
-import { dackieSwapV2Factory, dackieSwapV3Factory } from './dackieswap'
-import { dfynV2Factory } from './dfyn'
-import { elkV2Factory } from './elk'
-import { wagmiV3Factory } from './wagmi'
+import { apeswapV2Factory } from './apeswap.js'
+import { dackieSwapV2Factory, dackieSwapV3Factory } from './dackieswap.js'
+import { dfynV2Factory } from './dfyn.js'
+import { elkV2Factory } from './elk.js'
+import { wagmiV3Factory } from './wagmi.js'
 
 function sushiswapV2Factory(chainId: SushiSwapV2ChainId) {
   return {
