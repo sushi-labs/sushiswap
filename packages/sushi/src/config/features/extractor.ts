@@ -35,7 +35,7 @@ export const EXTRACTOR_SUPPORTED_CHAIN_IDS = [
   ChainId.SKALE_EUROPA,
   ChainId.ROOTSTOCK,
   ChainId.MANTLE,
-  // ChainId.ZKSYNC_ERA,
+  ChainId.ZKSYNC_ERA,
 ] as const
 
 export type ExtractorSupportedChainId =

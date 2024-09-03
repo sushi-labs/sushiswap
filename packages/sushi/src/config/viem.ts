@@ -584,7 +584,9 @@ export const publicTransports = {
   [ChainId.PALM]: http(palm.rpcUrls.default.http[0]),
   [ChainId.OKEX]: http(okc.rpcUrls.default.http[0]),
   [ChainId.HECO]: http(heco.rpcUrls.default.http[0]),
-  [ChainId.ZKSYNC_ERA]: http(zkSync.rpcUrls.default.http[0]),
+  [ChainId.ZKSYNC_ERA]: http(
+    `https://lb.drpc.org/ogrpc?network=zksync&dkey=${drpcId}`,
+  ),
   [ChainId.LINEA]: http(
     `https://lb.drpc.org/ogrpc?network=linea&dkey=${drpcId}`,
   ),
