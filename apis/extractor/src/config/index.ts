@@ -35,6 +35,7 @@ import {
   createPublicClient,
 } from 'viem'
 import { apeswapV2Factory } from './apeswap'
+import { dfynV2Factory } from './dfyn'
 import { elkV2Factory } from './elk'
 import { wagmiV3Factory } from './wagmi'
 function sushiswapV2Factory(chainId: SushiSwapV2ChainId) {
@@ -130,13 +131,7 @@ export const EXTRACTOR_CONFIG: Record<
       pancakeswapV2Factory(ChainId.ARBITRUM),
       elkV2Factory(ChainId.ARBITRUM),
       apeswapV2Factory(ChainId.ARBITRUM),
-      {
-        address: '0xA102072A4C07F06EC3B4900FDC4C7B80b6c57429' as Address,
-        provider: LiquidityProviders.Dfyn,
-        fee: 0.003,
-        initCodeHash:
-          '0xd49917af2b31d70ba7bea89230a93b55d3b6a99aacd03a72c288dfe524ec2f36',
-      },
+      dfynV2Factory(ChainId.ARBITRUM),
     ],
     factoriesV3: [
       uniswapV3Factory(ChainId.ARBITRUM),
@@ -532,13 +527,7 @@ export const EXTRACTOR_CONFIG: Record<
     factoriesV2: [
       sushiswapV2Factory(ChainId.FANTOM),
       elkV2Factory(ChainId.FANTOM),
-      {
-        address: '0xd9820a17053d6314B20642E465a84Bf01a3D64f5' as Address,
-        provider: LiquidityProviders.Dfyn,
-        fee: 0.003,
-        initCodeHash:
-          '0xd3ab2c392f54feb4b3b2a677f449b133c188ad2f1015eff3e94ea9315282c5f5',
-      },
+      dfynV2Factory(ChainId.FANTOM),
       {
         address: '0x152eE697f2E276fA89E96742e9bB9aB1F2E61bE3' as Address,
         provider: LiquidityProviders.SpookySwap,
@@ -624,19 +613,13 @@ export const EXTRACTOR_CONFIG: Record<
       sushiswapV2Factory(ChainId.POLYGON),
       elkV2Factory(ChainId.POLYGON),
       apeswapV2Factory(ChainId.POLYGON),
+      dfynV2Factory(ChainId.POLYGON),
       {
         address: '0x5757371414417b8C6CAad45bAeF941aBc7d3Ab32' as Address,
         provider: LiquidityProviders.QuickSwap,
         fee: 0.003,
         initCodeHash:
           '0x96e8ac4277198ff8b6f785478aa9a39f403cb768dd02cbee326c3e7da348845f',
-      },
-      {
-        address: '0xE7Fb3e833eFE5F9c441105EB65Ef8b261266423B' as Address,
-        provider: LiquidityProviders.Dfyn,
-        fee: 0.003,
-        initCodeHash:
-          '0xf187ed688403aa4f7acfada758d8d53698753b998a3071b06f1b777f4330eaf3',
       },
       {
         address: '0x668ad0ed2622C62E24f0d5ab6B6Ac1b9D2cD4AC7' as Address,
