@@ -1,0 +1,76 @@
+import { ChainId, LiquidityProviders } from 'sushi'
+import { Address, Hex } from 'viem'
+
+export const WAGMI_V3_SUPPORTED_CHAIN_IDS = [
+  ChainId.FANTOM,
+  ChainId.ZKSYNC_ERA,
+  ChainId.KAVA,
+  ChainId.ETHEREUM,
+  ChainId.OPTIMISM,
+  ChainId.BSC,
+  ChainId.POLYGON,
+  ChainId.AVALANCHE,
+  ChainId.ARBITRUM,
+  ChainId.METIS,
+  // ChainId.BLAST,
+  ChainId.BASE,
+  // ChainId.METIS_SEPOLIA,
+  // ChainId.ZKLINK,
+  // ChainId.IOTA,
+] as const
+
+export type WagmiV3ChainId = (typeof WAGMI_V3_SUPPORTED_CHAIN_IDS)[number]
+
+const WAGMI_V3_FACTORY_ADDRESS: Record<WagmiV3ChainId, Address> = {
+  [ChainId.FANTOM]: '0xaf20f5f19698f1D19351028cd7103B63D30DE7d7',
+  [ChainId.ZKSYNC_ERA]: '0x31be61CE896e8770B21e7A1CAFA28402Dd701995',
+  [ChainId.KAVA]: '0x0e0Ce4D450c705F8a0B6Dd9d5123e3df2787D16B',
+  [ChainId.ETHEREUM]: '0xB9a14EE1cd3417f3AcC988F61650895151abde24',
+  [ChainId.OPTIMISM]: '0xC49c177736107fD8351ed6564136B9ADbE5B1eC3',
+  [ChainId.BSC]: '0xE3Dc1A5a7aB81F1cC1895FA55034725c24a5BD0e',
+  [ChainId.POLYGON]: '0x8bb1Be7acD806BF6C9766486dC4c21284a472BaC',
+  [ChainId.AVALANCHE]: '0x08d6E1aE0f91423dDBD16f083ca39ccDd1D79cE8',
+  [ChainId.ARBITRUM]: '0x7301350CC76D669ea384e77aF38a70C61661CA48',
+  [ChainId.METIS]: '0x8112E18a34b63964388a3B2984037d6a2EFE5B8A',
+  // [ChainId.BLAST]: '',
+  [ChainId.BASE]: '0x576A1301B42942537d38FB147895fE83fB418fD4',
+  // [ChainId.METIS_SEPOLIA]: '0x92CC36D66e9d739D50673d1f27929a371FB83a67',
+  // [ChainId.ZKLINK]: '0x6175b648473F1d4c1549aAC3c2d007e7720585e6',
+  // [ChainId.IOTA]: '0x01Bd510B2eA106917e711f9a05a42fC162bee2Ac'
+} as const
+
+const WAGMI_V3_DEFAULT_INIT_CODE_HASH: Hex =
+  '0x30146866f3a846fe3c636beb2756dbd24cf321bc52c9113c837c21f47470dfeb'
+
+export const WAGMI_V3_INIT_CODE_HASH: Record<WagmiV3ChainId, Hex> = {
+  [ChainId.FANTOM]: WAGMI_V3_DEFAULT_INIT_CODE_HASH,
+  [ChainId.ZKSYNC_ERA]:
+    '0x0100133fbbcc76118ded62eff4d449702d57ec281d23a1ca9d40cf3b0de80644',
+  [ChainId.KAVA]: WAGMI_V3_DEFAULT_INIT_CODE_HASH,
+  [ChainId.ETHEREUM]: WAGMI_V3_DEFAULT_INIT_CODE_HASH,
+  [ChainId.OPTIMISM]: WAGMI_V3_DEFAULT_INIT_CODE_HASH,
+  [ChainId.BSC]: WAGMI_V3_DEFAULT_INIT_CODE_HASH,
+  [ChainId.POLYGON]: WAGMI_V3_DEFAULT_INIT_CODE_HASH,
+  [ChainId.AVALANCHE]: WAGMI_V3_DEFAULT_INIT_CODE_HASH,
+  [ChainId.ARBITRUM]: WAGMI_V3_DEFAULT_INIT_CODE_HASH,
+  [ChainId.METIS]: WAGMI_V3_DEFAULT_INIT_CODE_HASH,
+  // [ChainId.BLAST]: '',
+  [ChainId.BASE]: WAGMI_V3_DEFAULT_INIT_CODE_HASH,
+  // [ChainId.METIS_SEPOLIA]: '',
+  // [ChainId.ZKLINK]: '',
+  // [ChainId.IOTA]: ''
+} as const
+
+export function wagmiV3Factory(chainId: WagmiV3ChainId) {
+  return {
+    address: WAGMI_V3_FACTORY_ADDRESS[chainId],
+    provider: LiquidityProviders.Wagmi,
+    initCodeHash: WAGMI_V3_INIT_CODE_HASH[chainId],
+    feeSpacingMap: {
+      500: 10,
+      1500: 30,
+      3000: 60,
+      10_000: 200,
+    },
+  } as const
+}

@@ -30,11 +30,12 @@ import {
   http,
   type Address,
   Chain,
-  Hex,
   PublicClient,
   type PublicClientConfig,
   createPublicClient,
 } from 'viem'
+import { elkV2Factory } from './elk'
+import { wagmiV3Factory } from './wagmi'
 
 function sushiswapV2Factory(chainId: SushiSwapV2ChainId) {
   return {
@@ -86,192 +87,6 @@ export function pancakeswapV2Factory(chainId: PancakeSwapV2ChainId) {
     provider: LiquidityProviders.PancakeSwap,
     initCodeHash: PANCAKESWAP_V2_INIT_CODE_HASH[chainId],
     fee: 0.0025,
-  } as const
-}
-
-const ELK_V2_SUPPORTED_CHAIN_IDS = [
-  ChainId.AVALANCHE,
-  ChainId.POLYGON,
-  ChainId.FANTOM,
-  // ChainId.HECO,
-  ChainId.GNOSIS,
-  ChainId.BSC,
-  // ChainId.KCC,
-  ChainId.HARMONY,
-  // ChainId.OKEX,
-  // ChainId.ELASTOS,
-  ChainId.MOONRIVER,
-  ChainId.TELOS,
-  ChainId.CRONOS,
-  ChainId.FUSE,
-  // ChainId.IOTEX,
-  ChainId.ETHEREUM,
-  ChainId.ARBITRUM,
-  ChainId.OPTIMISM,
-  ChainId.KAVA,
-  ChainId.BTTC,
-  // ChainId.BITGERT,
-  ChainId.METIS,
-  // ChainId.WANCHAIN,
-  // ChainId.NEON,
-  // ChainId.ASTAR,
-  ChainId.BASE,
-  ChainId.LINEA,
-  // ChainId.VELAS,
-  // ChainId.QBLOCKCHAIN,
-  // ChainId.ARTHERA,
-  ChainId.ROOTSTOCK,
-] as const
-type ElkV2ChainId = (typeof ELK_V2_SUPPORTED_CHAIN_IDS)[number]
-const ELK_V2_FACTORY_ADDRESS: Record<ElkV2ChainId, Address> = {
-  [ChainId.AVALANCHE]: '0x091d35d7F63487909C863001ddCA481c6De47091',
-  [ChainId.POLYGON]: '0xE3BD06c7ac7E1CeB17BdD2E5BA83E40D1515AF2a',
-  [ChainId.FANTOM]: '0x7Ba73c99e6f01a37f3e33854c8F544BbbadD3420',
-  // [ChaainId.HECO]: '0x997fCE9164D630CC58eE366d4D275B9D773d54A4',
-  [ChainId.GNOSIS]: '0xCB018587dA9590A18f49fFE2b85314c33aF3Ad3B',
-  [ChainId.BSC]: '0x31aFfd875e9f68cd6Cd12Cee8943566c9A4bBA13',
-  // [ChainId.KCC]: '0x1f9aa39001ed0630dA6854859D7B3eD255648599',
-  [ChainId.HARMONY]: '0xCdde1AbfF5Ae3Cbfbdb55c1e866Ac56380e18720',
-  // [ChainId.OKEX]: '',
-  // [ChainId.ELASTOS]: '',
-  [ChainId.MOONRIVER]: '0xd45145f10fD4071dfC9fC3b1aefCd9c83A685e77',
-  [ChainId.TELOS]: '0x47c3163e691966f8c1b93B308A236DDB3C1C592d',
-  [ChainId.CRONOS]: '0xEEa0e2830D09D8786Cb9F484cA20898b61819ef1',
-  [ChainId.FUSE]: '0x779407e40Dad9D70Ba5ADc30E45cC3494ec71ad2',
-  // [ChainId.IOTEX]: '',
-  [ChainId.ETHEREUM]: '0x6511eBA915fC1b94b2364289CCa2b27AE5898d80',
-  [ChainId.ARBITRUM]: '0xA59B2044EAFD15ee4deF138D410d764c9023E1F0',
-  [ChainId.OPTIMISM]: '0xedfad3a0F42A8920B011bb0332aDe632e552d846',
-  [ChainId.KAVA]: '0xC012C4b3d253A8F22d5e4ADA67ea2236FF9778fc',
-  [ChainId.BTTC]: '0xc06348AEE3f3E92eE452816E0D3F25C919F6fB04',
-  // [ChainId.BITGERT]: '0xfbb4E52FEcc90924c79F980eb24a9794ae4aFFA4',
-  [ChainId.METIS]: '0xfbb4E52FEcc90924c79F980eb24a9794ae4aFFA4',
-  // [ChainId.WANACHAIN]: '0xfbb4E52FEcc90924c79F980eb24a9794ae4aFFA4',
-  // [ChainId.NEON]: '0xfbb4E52FEcc90924c79F980eb24a9794ae4aFFA4',
-  // [ChainId.ASTAR]: '0xfbb4E52FEcc90924c79F980eb24a9794ae4aFFA4',
-  [ChainId.BASE]: '0xfbb4E52FEcc90924c79F980eb24a9794ae4aFFA4',
-  [ChainId.LINEA]: '0xfbb4E52FEcc90924c79F980eb24a9794ae4aFFA4',
-  // [ChainId.VELAS]: '0xfbb4E52FEcc90924c79F980eb24a9794ae4aFFA4',
-  // [ChainId.QBLOCKCHAIN]: '0xfbb4E52FEcc90924c79F980eb24a9794ae4aFFA4',
-  // [ChainId.ARTHERA]: '0x69D10bc18cD588A4b70F836a471D4e9C2FD86092',
-  [ChainId.ROOTSTOCK]: '0x69D10bc18cD588A4b70F836a471D4e9C2FD86092',
-} as const
-const ELK_V2_DEFAULT_INIT_CODE_HASH: Hex =
-  '0x84845e7ccb283dec564acfcd3d9287a491dec6d675705545a2ab8be22ad78f31'
-const ELK_V2_INIT_CODE_HASH: Record<ElkV2ChainId, Hex> = {
-  [ChainId.AVALANCHE]: ELK_V2_DEFAULT_INIT_CODE_HASH,
-  [ChainId.POLYGON]: ELK_V2_DEFAULT_INIT_CODE_HASH,
-  [ChainId.FANTOM]: ELK_V2_DEFAULT_INIT_CODE_HASH,
-  // [ChainId.HECO]: ELK_V2_DEFAULT_INIT_CODE_HASH,
-  [ChainId.GNOSIS]: ELK_V2_DEFAULT_INIT_CODE_HASH,
-  [ChainId.BSC]: ELK_V2_DEFAULT_INIT_CODE_HASH,
-  // [ChainId.KCC]: ELK_V2_DEFAULT_INIT_CODE_HASH,
-  [ChainId.HARMONY]: ELK_V2_DEFAULT_INIT_CODE_HASH,
-  // [ChainId.OKEX]: '',
-  // [ChainId.ELASTOS]: '',
-  [ChainId.MOONRIVER]: ELK_V2_DEFAULT_INIT_CODE_HASH,
-  [ChainId.TELOS]: ELK_V2_DEFAULT_INIT_CODE_HASH,
-  [ChainId.CRONOS]: ELK_V2_DEFAULT_INIT_CODE_HASH,
-  [ChainId.FUSE]: ELK_V2_DEFAULT_INIT_CODE_HASH,
-  // [ChainId.IOTEX]: '',
-  [ChainId.ETHEREUM]: ELK_V2_DEFAULT_INIT_CODE_HASH,
-  [ChainId.ARBITRUM]: ELK_V2_DEFAULT_INIT_CODE_HASH,
-  [ChainId.OPTIMISM]: ELK_V2_DEFAULT_INIT_CODE_HASH,
-  [ChainId.KAVA]: ELK_V2_DEFAULT_INIT_CODE_HASH,
-  [ChainId.BTTC]: ELK_V2_DEFAULT_INIT_CODE_HASH,
-  // [ChainId.BITGERT]: 'ELK_V2_DEFAULT_INIT_CODE_HASH,
-  [ChainId.METIS]: ELK_V2_DEFAULT_INIT_CODE_HASH,
-  // [ChainId.WANACHAIN]: ELK_V2_DEFAULT_INIT_CODE_HASH,
-  // [ChainId.NEON]: ELK_V2_DEFAULT_INIT_CODE_HASH,
-  // [ChainId.ASTAR]: ELK_V2_DEFAULT_INIT_CODE_HASH,
-  [ChainId.BASE]: ELK_V2_DEFAULT_INIT_CODE_HASH,
-  [ChainId.LINEA]: ELK_V2_DEFAULT_INIT_CODE_HASH,
-  // [ChainId.VELAS]: ELK_V2_DEFAULT_INIT_CODE_HASH,
-  // [ChainId.QBLOCKCHAIN]: ELK_V2_DEFAULT_INIT_CODE_HASH,
-  // [ChainId.ARTHERA]: ELK_V2_DEFAULT_INIT_CODE_HASH,
-  [ChainId.ROOTSTOCK]: ELK_V2_DEFAULT_INIT_CODE_HASH,
-} as const
-
-export function elkV2Factory(chainId: ElkV2ChainId) {
-  return {
-    address: ELK_V2_FACTORY_ADDRESS[chainId],
-    provider: LiquidityProviders.Elk,
-    initCodeHash: ELK_V2_INIT_CODE_HASH[chainId],
-    fee: 0.003,
-  } as const
-}
-
-export const WAGMI_V3_SUPPORTED_CHAIN_IDS = [
-  ChainId.FANTOM,
-  ChainId.ZKSYNC_ERA,
-  ChainId.KAVA,
-  ChainId.ETHEREUM,
-  ChainId.OPTIMISM,
-  ChainId.BSC,
-  ChainId.POLYGON,
-  ChainId.AVALANCHE,
-  ChainId.ARBITRUM,
-  ChainId.METIS,
-  // ChainId.BLAST,
-  ChainId.BASE,
-  // ChainId.METIS_SEPOLIA,
-  // ChainId.ZKLINK,
-  // ChainId.IOTA,
-] as const
-
-export type WagmiV3ChainId = (typeof WAGMI_V3_SUPPORTED_CHAIN_IDS)[number]
-
-const WAGMI_V3_FACTORY_ADDRESS: Record<WagmiV3ChainId, Address> = {
-  [ChainId.FANTOM]: '0xaf20f5f19698f1D19351028cd7103B63D30DE7d7',
-  [ChainId.ZKSYNC_ERA]: '0x31be61CE896e8770B21e7A1CAFA28402Dd701995',
-  [ChainId.KAVA]: '0x0e0Ce4D450c705F8a0B6Dd9d5123e3df2787D16B',
-  [ChainId.ETHEREUM]: '0xB9a14EE1cd3417f3AcC988F61650895151abde24',
-  [ChainId.OPTIMISM]: '0xC49c177736107fD8351ed6564136B9ADbE5B1eC3',
-  [ChainId.BSC]: '0xE3Dc1A5a7aB81F1cC1895FA55034725c24a5BD0e',
-  [ChainId.POLYGON]: '0x8bb1Be7acD806BF6C9766486dC4c21284a472BaC',
-  [ChainId.AVALANCHE]: '0x08d6E1aE0f91423dDBD16f083ca39ccDd1D79cE8',
-  [ChainId.ARBITRUM]: '0x7301350CC76D669ea384e77aF38a70C61661CA48',
-  [ChainId.METIS]: '0x8112E18a34b63964388a3B2984037d6a2EFE5B8A',
-  // [ChainId.BLAST]: '',
-  [ChainId.BASE]: '0x576A1301B42942537d38FB147895fE83fB418fD4',
-  // [ChainId.METIS_SEPOLIA]: '0x92CC36D66e9d739D50673d1f27929a371FB83a67',
-  // [ChainId.ZKLINK]: '0x6175b648473F1d4c1549aAC3c2d007e7720585e6',
-  // [ChainId.IOTA]: '0x01Bd510B2eA106917e711f9a05a42fC162bee2Ac'
-} as const
-
-const WAGMI_V3_DEFAULT_INIT_CODE_HASH: Hex =
-  '0x30146866f3a846fe3c636beb2756dbd24cf321bc52c9113c837c21f47470dfeb'
-
-export const WAGMI_V3_INIT_CODE_HASH: Record<WagmiV3ChainId, Hex> = {
-  [ChainId.FANTOM]: WAGMI_V3_DEFAULT_INIT_CODE_HASH,
-  [ChainId.ZKSYNC_ERA]:
-    '0x0100133fbbcc76118ded62eff4d449702d57ec281d23a1ca9d40cf3b0de80644',
-  [ChainId.KAVA]: WAGMI_V3_DEFAULT_INIT_CODE_HASH,
-  [ChainId.ETHEREUM]: WAGMI_V3_DEFAULT_INIT_CODE_HASH,
-  [ChainId.OPTIMISM]: WAGMI_V3_DEFAULT_INIT_CODE_HASH,
-  [ChainId.BSC]: WAGMI_V3_DEFAULT_INIT_CODE_HASH,
-  [ChainId.POLYGON]: WAGMI_V3_DEFAULT_INIT_CODE_HASH,
-  [ChainId.AVALANCHE]: WAGMI_V3_DEFAULT_INIT_CODE_HASH,
-  [ChainId.ARBITRUM]: WAGMI_V3_DEFAULT_INIT_CODE_HASH,
-  [ChainId.METIS]: WAGMI_V3_DEFAULT_INIT_CODE_HASH,
-  // [ChainId.BLAST]: '',
-  [ChainId.BASE]: WAGMI_V3_DEFAULT_INIT_CODE_HASH,
-  // [ChainId.METIS_SEPOLIA]: '',
-  // [ChainId.ZKLINK]: '',
-  // [ChainId.IOTA]: ''
-} as const
-
-export function wagmiV3Factory(chainId: WagmiV3ChainId) {
-  return {
-    address: WAGMI_V3_FACTORY_ADDRESS[chainId],
-    provider: LiquidityProviders.Wagmi,
-    initCodeHash: WAGMI_V3_INIT_CODE_HASH[chainId],
-    feeSpacingMap: {
-      500: 10,
-      1500: 30,
-      3000: 60,
-      10_000: 200,
-    },
   } as const
 }
 
@@ -1072,7 +887,7 @@ export const EXTRACTOR_CONFIG: Record<
   [ChainId.TELOS]: {
     client: createPublicClient(extractorClientConfig(ChainId.TELOS)),
     factoriesV2: [
-      sushiswapV2Factory(ChainId.TELOS),
+      // sushiswapV2Factory(ChainId.TELOS),
       elkV2Factory(ChainId.TELOS),
     ],
     factoriesV3: [],
