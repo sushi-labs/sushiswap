@@ -81,7 +81,7 @@ export const defaultQuoteCurrency = {
   [ChainId.CORE]: USDC[ChainId.CORE],
   [ChainId.ZKSYNC_ERA]: USDC[ChainId.ZKSYNC_ERA],
   [ChainId.LINEA]: axlUSDC[ChainId.LINEA],
-  [ChainId.BASE]: axlUSDC[ChainId.BASE],
+  [ChainId.BASE]: USDC[ChainId.BASE],
   [ChainId.SCROLL]: USDC[ChainId.SCROLL],
   [ChainId.FILECOIN]: axlUSDC[ChainId.FILECOIN],
   [ChainId.ZETACHAIN]: WETH9[ChainId.ZETACHAIN],

@@ -1,3 +1,4 @@
+export * from './aggregator.js'
 export * from './bentobox.js'
 export * from './extractor.js'
 export * from './furo.js'

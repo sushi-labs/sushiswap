@@ -263,13 +263,14 @@ export const EXTRACTOR_CONFIG: Record<
     ],
     tickHelperContractAlgebra:
       '0x44a6d9741cDF9C955eE89C14C739FB1aeaD82d6B' as Address,
-    factoriesAerodromeSlipstream: [
+    factoriesSlipstream: [
       {
         address: '0x5e7BB104d84c7CB9B682AaC2F3d509f5F406809A',
         provider: LiquidityProviders.AerodromeSlipstream,
+        checkedSwapFeeModules: ['0xF4171B0953b52Fa55462E4d76ecA1845Db69af00'],
       },
     ],
-    tickHelperContractAerodromeSlipstream:
+    tickHelperContractSlipstream:
       '0x3e1116ea5034f5d73a7b530071709d54a4109f5f' as Address, // our own
     cacheDir: './cache',
     logDepth: 50,
@@ -631,9 +632,19 @@ export const EXTRACTOR_CONFIG: Record<
       wagmiV3Factory(ChainId.OPTIMISM),
       dackieSwapV3Factory(ChainId.OPTIMISM),
     ],
+    factoriesSlipstream: [
+      {
+        address: '0xCc0bDDB707055e04e497aB22a59c2aF4391cd12F',
+        provider: LiquidityProviders.VelodromeSlipstream,
+        // only swapFeeModules like BASE:0xF4171B0953b52Fa55462E4d76ecA1845Db69af00 are supported
+        checkedSwapFeeModules: ['0x7361E9079920fb75496E9764A2665d8ee5049D5f'],
+      },
+    ],
     tickHelperContractV3: SUSHISWAP_V3_TICK_LENS[ChainId.OPTIMISM],
     tickHelperContractAlgebra:
       '0x0000000000000000000000000000000000000000' as Address,
+    tickHelperContractSlipstream:
+      '0x49C6FDCb3D5b2CecD8baff66c8e94b9B261ad925' as Address, // our own
     cacheDir: './cache',
     logDepth: 50,
     logging: true,
