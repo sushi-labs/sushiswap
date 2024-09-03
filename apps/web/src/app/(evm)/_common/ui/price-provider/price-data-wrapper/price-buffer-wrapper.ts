@@ -1,5 +1,15 @@
 import type { Address } from 'viem'
 
+const ADDRESS_SIZE = 20
+const PRICE_SIZE = 4
+const ENTRY_SIZE = ADDRESS_SIZE + PRICE_SIZE
+
+export const PriceStructSizes = {
+  ADDRESS_SIZE,
+  PRICE_SIZE,
+  ENTRY_SIZE,
+}
+
 export class ReadOnlyPriceBufferWrapper {
   protected priceBuffer: Buffer
   protected priceCount: number
@@ -10,13 +20,17 @@ export class ReadOnlyPriceBufferWrapper {
   }: { priceBuffer: Buffer; priceCount?: number }) {
     this.priceBuffer = priceBuffer
     this.priceCount = priceCount
+
+    if (priceBuffer.length < this.bufferSize) {
+      throw new Error('The buffer is too small for the given price count')
+    }
   }
 
   /**
    * @brief The used buffer size
    */
   public get bufferSize() {
-    return this.priceCount * 24
+    return this.priceCount * ENTRY_SIZE
   }
 
   /**
@@ -26,13 +40,16 @@ export class ReadOnlyPriceBufferWrapper {
     return this.priceCount
   }
 
+  /**
+   * @warning Only throws if the offset is out of bounds of the Buffer, not the used buffer size
+   */
   public addressAt<T extends 'bigint' | 'hex'>(
     type: T,
-    i: number,
+    offset: number,
   ): T extends 'bigint' ? bigint : Address {
-    const part1 = this.priceBuffer.readBigUInt64BE(i + 0) // Read first 8 bytes as BigInt
-    const part2 = this.priceBuffer.readBigUInt64BE(i + 8) // Read next 8 bytes as BigInt
-    const part3 = BigInt(this.priceBuffer.readUInt32BE(i + 16)) // Read the last 4 bytes as a BigInt
+    const part1 = this.priceBuffer.readBigUInt64BE(offset + 0) // Read first 8 bytes as BigInt
+    const part2 = this.priceBuffer.readBigUInt64BE(offset + 8) // Read next 8 bytes as BigInt
+    const part3 = BigInt(this.priceBuffer.readUInt32BE(offset + 16)) // Read the last 4 bytes as a BigInt
 
     // Combine them into a single BigInt
     const address = (part1 << 96n) | (part2 << 32n) | part3
@@ -48,9 +65,9 @@ export class ReadOnlyPriceBufferWrapper {
 
   /**
    * @param _address
-   * @returns Either the index of the address or the index where the address should be inserted
+   * @returns Either the offset of the address or the offset where the address should be inserted
    */
-  public potentialIndexOf(_address: bigint | Address) {
+  public potentialOffsetOf(_address: bigint | Address) {
     const address = BigInt(_address)
 
     let leftBorder = 0
@@ -58,7 +75,7 @@ export class ReadOnlyPriceBufferWrapper {
 
     while (leftBorder < rightBorder) {
       const i = Math.floor((leftBorder + rightBorder) / 2)
-      const currentAddress = this.addressAt('bigint', i * 24)
+      const currentAddress = this.addressAt('bigint', i * ENTRY_SIZE)
 
       if (currentAddress < address) {
         leftBorder = i + 1
@@ -67,13 +84,13 @@ export class ReadOnlyPriceBufferWrapper {
       }
     }
 
-    return leftBorder * 24
+    return leftBorder * ENTRY_SIZE
   }
 
-  public indexOf(_address: bigint | Address) {
+  public offsetOf(_address: bigint | Address) {
     const address = BigInt(_address)
 
-    const leftBorder = this.potentialIndexOf(address)
+    const leftBorder = this.potentialOffsetOf(address)
 
     if (leftBorder === this.bufferSize) {
       return -1
@@ -89,23 +106,23 @@ export class ReadOnlyPriceBufferWrapper {
   public hasAddress(_address: bigint | Address) {
     const address = BigInt(_address)
 
-    return this.indexOf(address) !== -1
+    return this.offsetOf(address) !== -1
   }
 
-  public priceAt(i: number) {
-    return this.priceBuffer.readFloatBE(i + 20)
+  public priceAtOffset(i: number) {
+    return this.priceBuffer.readFloatBE(i + ADDRESS_SIZE)
   }
 
   public priceOf(_address: bigint | Address) {
     const address = BigInt(_address)
 
-    const i = this.indexOf(address)
+    const i = this.offsetOf(address)
 
     if (i === -1) {
       return undefined
     }
 
-    return this.priceAt(i)
+    return this.priceAtOffset(i)
   }
 
   public toJSON() {
@@ -117,7 +134,7 @@ export class ReadOnlyPriceBufferWrapper {
 
     for (let i = 0; i < this.bufferSize; i += 24) {
       const address = this.addressAt('hex', i)
-      const price = this.priceAt(i)
+      const price = this.priceAtOffset(i)
 
       prices[address] = price
     }
@@ -152,26 +169,26 @@ export class PriceBufferWrapper extends ReadOnlyPriceBufferWrapper {
   public set(_address: bigint | Address, value: number) {
     const address = BigInt(_address)
 
-    const existingIndex = this.indexOf(address)
+    const existingOffset = this.offsetOf(address)
 
     // Exists
-    if (existingIndex !== -1) {
+    if (existingOffset !== -1) {
       // Update
-      this.priceBuffer.writeFloatBE(value, existingIndex + 20)
+      this.priceBuffer.writeFloatBE(value, existingOffset + ADDRESS_SIZE)
     } else {
       // Resize if necessary
-      if (this.bufferSize + 24 > this.priceBuffer.length) {
+      if (this.bufferSize + ENTRY_SIZE > this.priceBuffer.length) {
         this.resize()
       }
-      // Get the index where the address should be inserted
-      const index = this.potentialIndexOf(address)
+      // Get the offset where the address should be inserted
+      const offset = this.potentialOffsetOf(address)
       // Move the data to the right
-      this.priceBuffer.copyWithin(index + 24, index)
+      this.priceBuffer.copyWithin(offset + ENTRY_SIZE, offset)
       // Write the address
       const hex = address.toString(16).padStart(40, '0')
-      this.priceBuffer.write(hex, index, 20, 'hex')
+      this.priceBuffer.write(hex, offset, ADDRESS_SIZE, 'hex')
       // Write the price
-      this.priceBuffer.writeFloatBE(value, index + 20)
+      this.priceBuffer.writeFloatBE(value, offset + ADDRESS_SIZE)
 
       this.priceCount++
     }
@@ -180,13 +197,13 @@ export class PriceBufferWrapper extends ReadOnlyPriceBufferWrapper {
   public delete(_address: bigint | Address) {
     const address = BigInt(_address)
 
-    const existingIndex = this.indexOf(address)
+    const existingOffset = this.offsetOf(address)
 
-    if (existingIndex === -1) {
+    if (existingOffset === -1) {
       return false
     }
 
-    this.priceBuffer.copyWithin(existingIndex, existingIndex + 24)
+    this.priceBuffer.copyWithin(existingOffset, existingOffset + ENTRY_SIZE)
     this.priceCount--
 
     return true
@@ -201,7 +218,7 @@ export class PriceBufferWrapper extends ReadOnlyPriceBufferWrapper {
 
     // Create a new buffer with double the size
     const newPriceArrayBuffer = PriceBufferWrapper.createArrayBuffer(
-      Math.max(oldPriceArrayBuffer.byteLength * 2, 24),
+      Math.max(oldPriceArrayBuffer.byteLength * 2, ENTRY_SIZE),
       !(oldPriceArrayBuffer instanceof ArrayBuffer),
     )
 

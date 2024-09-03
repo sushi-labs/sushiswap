@@ -1,6 +1,6 @@
 import { createContext, useEffect, useReducer, useState } from 'react'
 import { useChainId } from 'wagmi'
-import { ReadOnlyPriceBufferWrapper } from './price-data-wrapper'
+import { ReadOnlyPriceBufferWrapper } from './price-data-wrapper/price-buffer-wrapper'
 import {
   PriceWorker,
   PriceWorkerPostMessageType,

@@ -1,5 +1,5 @@
 import type { ChainId } from 'sushi'
-import { ReadOnlyPriceBufferWrapper } from './price-data-wrapper'
+import { ReadOnlyPriceBufferWrapper } from './price-data-wrapper/price-buffer-wrapper'
 
 export interface ProviderChainState {
   chainId: ChainId

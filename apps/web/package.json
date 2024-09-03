@@ -12,7 +12,8 @@
     "lint": "TIMING=1 next lint",
     "lint:fix": "TIMING=1 next lint --fix",
     "start": "next start",
-    "test": "npx playwright test -c test/playwright.config.ts"
+    "test": "npx playwright test -c test/playwright.config.ts",
+    "test:unit": "vitest --watch=false src"
   },
   "dependencies": {
     "@aptos-labs/wallet-adapter-ant-design": "2.2.0",
@@ -106,7 +107,6 @@
     "@0xsquid/squid-types": "0.1.78",
     "@next/eslint-plugin-next": "14.2.3",
     "@playwright/test": "1.45.0",
-    "@sushiswap/jest-config": "workspace:*",
     "@sushiswap/typescript-config": "workspace:*",
     "@tsconfig/next": "2.0.1",
     "@types/cors": "2.8.13",
@@ -134,6 +134,7 @@
     "tailwindcss": "3.3.2",
     "tsx": "^4.16.5",
     "typescript": "5.4.5",
-    "unimported": "1.30.0"
+    "unimported": "1.30.0",
+    "vitest": "2.0.5"
   }
 }

@@ -1,7 +1,7 @@
 import { ChainId } from 'sushi'
 import { SUSHI_DATA_API_HOST } from 'sushi/config/subgraph'
 import { UPDATE_INTERVAL } from '../config'
-import { PriceBufferWrapper } from '../price-data-wrapper'
+import { PriceBufferWrapper } from '../price-data-wrapper/price-buffer-wrapper'
 import {
   PriceWorkerPostMessage,
   PriceWorkerPostMessageType,

@@ -1,5 +1,5 @@
 import type { ChainId } from 'sushi'
-import { PriceBufferWrapper } from '../price-data-wrapper'
+import { PriceBufferWrapper } from '../price-data-wrapper/price-buffer-wrapper'
 
 export enum PriceWorkerPostMessageType {
   Initialize = 'Initialize',
