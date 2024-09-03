@@ -1,6 +1,6 @@
 import { Log } from 'viem'
 import { Logger } from './Logger.js'
-import { AerodromeSlipstreamV3PoolWatcher } from './SlipstreamV3PoolWatcher.js'
+import { SlipstreamV3PoolWatcher } from './SlipstreamV3PoolWatcher.js'
 import { delay } from './Utils.js'
 
 export enum AerodromeSlipstreamPoolSyncState {
@@ -17,8 +17,8 @@ export enum AerodromeSlipstreamPoolSyncState {
 }
 
 export type AerodromeSlipstreamQualityCheckerCallBackArg = {
-  ethalonPool: AerodromeSlipstreamV3PoolWatcher
-  correctPool?: AerodromeSlipstreamV3PoolWatcher
+  ethalonPool: SlipstreamV3PoolWatcher
+  correctPool?: SlipstreamV3PoolWatcher
   status: AerodromeSlipstreamPoolSyncState
 }
 
@@ -29,7 +29,7 @@ export type AerodromeSlipstreamQualityCheckerCallBack = (
 export class AerodromeSlipstreamQualityChecker {
   readonly checkAfterLogsNumber: number
   readonly callBack
-  checkingPools: Map<string, AerodromeSlipstreamV3PoolWatcher> = new Map()
+  checkingPools: Map<string, SlipstreamV3PoolWatcher> = new Map()
   poolsLogCounter: Map<string, number> = new Map()
   totalCheckCounter = 0
   totalMatchCounter = 0
@@ -43,11 +43,11 @@ export class AerodromeSlipstreamQualityChecker {
   }
 
   async check(
-    pool: AerodromeSlipstreamV3PoolWatcher,
-    newPool: AerodromeSlipstreamV3PoolWatcher,
+    pool: SlipstreamV3PoolWatcher,
+    newPool: SlipstreamV3PoolWatcher,
   ): Promise<
     [
-      AerodromeSlipstreamV3PoolWatcher | undefined,
+      SlipstreamV3PoolWatcher | undefined,
       AerodromeSlipstreamPoolSyncState,
       number,
       number,
@@ -153,7 +153,7 @@ export class AerodromeSlipstreamQualityChecker {
     return [undefined, AerodromeSlipstreamPoolSyncState.CheckFailed, 0, 0]
   }
 
-  processLog(l: Log, pool: AerodromeSlipstreamV3PoolWatcher) {
+  processLog(l: Log, pool: SlipstreamV3PoolWatcher) {
     const addr = l.address.toLowerCase()
     const checkingPool = this.checkingPools.get(addr)
     if (checkingPool) checkingPool.processLog(l)
@@ -162,7 +162,7 @@ export class AerodromeSlipstreamQualityChecker {
       if (counter < this.checkAfterLogsNumber)
         this.poolsLogCounter.set(addr, counter + 1)
       else {
-        const newPool = new AerodromeSlipstreamV3PoolWatcher(
+        const newPool = new SlipstreamV3PoolWatcher(
           pool.factory,
           pool.address,
           pool.tickHelperContract,

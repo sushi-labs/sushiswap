@@ -66,7 +66,7 @@ const slot0Abi: Abi = [
 // TODO: more ticks and priority depending on resources
 // TODO: gather statistics how often (blockNumber < this.latestEventBlockNumber)
 // event PoolCodeWasChanged is emitted each time getPoolCode() returns another pool (lastPoolCode changed)
-export class AerodromeSlipstreamV3PoolWatcher extends EventEmitter {
+export class SlipstreamV3PoolWatcher extends EventEmitter {
   address: Address
   tickHelperContract: Address
   token0: Token

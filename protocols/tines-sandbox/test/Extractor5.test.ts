@@ -8,7 +8,7 @@ import {
   LogFilterType,
   TokenManager,
 } from '@sushiswap/extractor'
-import { SlipstreamFactoryV3 } from '@sushiswap/extractor/dist/AerodromeSlipstreamV3Extractor'
+import { SlipstreamFactoryV3 } from '@sushiswap/extractor/dist/SlipstreamV3Extractor'
 import { routeProcessor5Abi } from 'sushi/abi'
 import { ChainId } from 'sushi/chain'
 import {

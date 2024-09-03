@@ -33,7 +33,7 @@ import {
   AerodromeSlipstreamQualityChecker,
   AerodromeSlipstreamQualityCheckerCallBackArg,
 } from './SlipstreamQualityChecker.js'
-import { AerodromeSlipstreamV3PoolWatcher } from './SlipstreamV3PoolWatcher.js'
+import { SlipstreamV3PoolWatcher } from './SlipstreamV3PoolWatcher.js'
 import { TokenManager } from './TokenManager.js'
 import { FeeSpacingMap } from './UniV3Extractor.js'
 import { UniV3EventsAbi, UniV3PoolWatcherStatus } from './UniV3PoolWatcher.js'
@@ -110,14 +110,14 @@ interface PoolCacheRecord {
 //    returns ALL ticks for the word AND upper (unlike TickLens)
 //    Created and deployed our own TickLens for Slipstream 0x3e1116ea5034f5d73a7b530071709d54a4109f5f
 //      Diff from original: PopulatedTick doesn't contain price (as in standard TickLens)
-export class AerodromeSlipstreamV3Extractor extends IExtractor {
+export class SlipstreamV3Extractor extends IExtractor {
   factories: SlipstreamFactoryV3[]
   factoryMap: Map<string, SlipstreamFactoryV3> = new Map()
   tickHelperContract: Address
   multiCallAggregator: MultiCallAggregator
   tokenManager: TokenManager
-  poolMap: Map<Address, AerodromeSlipstreamV3PoolWatcher> = new Map()
-  poolMapUpdated: Map<string, AerodromeSlipstreamV3PoolWatcher> = new Map()
+  poolMap: Map<Address, SlipstreamV3PoolWatcher> = new Map()
+  poolMapUpdated: Map<string, SlipstreamV3PoolWatcher> = new Map()
   emptyAddressSet: Set<Address> = new Set()
   poolPermanentCache: PermanentCache<PoolCacheRecord>
   otherFactoryPoolSet: Set<Address> = new Set()
@@ -174,7 +174,7 @@ export class AerodromeSlipstreamV3Extractor extends IExtractor {
           this.poolMapUpdated.set(addr, arg.correctPool)
           arg.correctPool.on('PoolCodeWasChanged', (w) => {
             this.poolMapUpdated.set(
-              (w as AerodromeSlipstreamV3PoolWatcher).address.toLowerCase(),
+              (w as SlipstreamV3PoolWatcher).address.toLowerCase(),
               w,
             )
           })
@@ -348,7 +348,7 @@ export class AerodromeSlipstreamV3Extractor extends IExtractor {
       const promises = Array.from(cachedPools.values())
         .map((p) => this.addPoolWatching(p, 'cache', false))
         .filter((w) => w !== undefined)
-        .map((w) => (w as AerodromeSlipstreamV3PoolWatcher).downloadFinished())
+        .map((w) => (w as SlipstreamV3PoolWatcher).downloadFinished())
       Promise.allSettled(promises).then((promises) => {
         let failed = 0
         promises.forEach((p) => {
@@ -470,7 +470,7 @@ export class AerodromeSlipstreamV3Extractor extends IExtractor {
       this.otherFactoryPoolSet.add(addrL)
       return
     }
-    const watcher = new AerodromeSlipstreamV3PoolWatcher(
+    const watcher = new SlipstreamV3PoolWatcher(
       p.factory,
       expectedPoolAddress,
       this.tickHelperContract,
@@ -502,7 +502,7 @@ export class AerodromeSlipstreamV3Extractor extends IExtractor {
     })
     watcher.on('PoolCodeWasChanged', (w) => {
       this.poolMapUpdated.set(
-        (w as AerodromeSlipstreamV3PoolWatcher).address.toLowerCase(),
+        (w as SlipstreamV3PoolWatcher).address.toLowerCase(),
         w,
       )
     })
@@ -510,12 +510,12 @@ export class AerodromeSlipstreamV3Extractor extends IExtractor {
   }
 
   getWatchersForTokens(tokensUnique: Token[]): {
-    prefetched: AerodromeSlipstreamV3PoolWatcher[]
-    fetching: Promise<AerodromeSlipstreamV3PoolWatcher | undefined>[]
+    prefetched: SlipstreamV3PoolWatcher[]
+    fetching: Promise<SlipstreamV3PoolWatcher | undefined>[]
   } {
     const startTime = performance.now()
-    const prefetched: AerodromeSlipstreamV3PoolWatcher[] = []
-    const fetching: Promise<AerodromeSlipstreamV3PoolWatcher | undefined>[] = []
+    const prefetched: SlipstreamV3PoolWatcher[] = []
+    const fetching: Promise<SlipstreamV3PoolWatcher | undefined>[] = []
     for (let i = 0; i < tokensUnique.length; ++i) {
       const t0 = tokensUnique[i]
       this.tokenManager.findToken(t0.address as Address) // to let save it in the cache
@@ -570,12 +570,12 @@ export class AerodromeSlipstreamV3Extractor extends IExtractor {
     tokensUnique1: Token[],
     tokensUnique2: Token[],
   ): {
-    prefetched: AerodromeSlipstreamV3PoolWatcher[]
-    fetching: Promise<AerodromeSlipstreamV3PoolWatcher | undefined>[]
+    prefetched: SlipstreamV3PoolWatcher[]
+    fetching: Promise<SlipstreamV3PoolWatcher | undefined>[]
   } {
     const startTime = performance.now()
-    const prefetched: AerodromeSlipstreamV3PoolWatcher[] = []
-    const fetching: Promise<AerodromeSlipstreamV3PoolWatcher | undefined>[] = []
+    const prefetched: SlipstreamV3PoolWatcher[] = []
+    const fetching: Promise<SlipstreamV3PoolWatcher | undefined>[] = []
     for (let i = 0; i < tokensUnique1.length; ++i) {
       const t0 = tokensUnique1[i]
       this.tokenManager.findToken(t0.address as Address) // to let save it in the cache
@@ -640,8 +640,8 @@ export class AerodromeSlipstreamV3Extractor extends IExtractor {
     startTime: number,
   ):
     | undefined
-    | AerodromeSlipstreamV3PoolWatcher
-    | Promise<AerodromeSlipstreamV3PoolWatcher | undefined> {
+    | SlipstreamV3PoolWatcher
+    | Promise<SlipstreamV3PoolWatcher | undefined> {
     const addr = this.computeV3Address(factory, t0, t1, tickSpacing)
     if (addr === undefined) return
     const addrL = addr.toLowerCase() as Address

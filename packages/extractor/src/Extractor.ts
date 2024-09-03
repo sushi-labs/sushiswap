@@ -12,8 +12,8 @@ import { IExtractor } from './IExtractor.js'
 import { LogFilter2, LogFilterType } from './LogFilter2.js'
 import { MultiCallAggregator } from './MulticallAggregator.js'
 import {
-  AerodromeSlipstreamV3Extractor,
   SlipstreamFactoryV3,
+  SlipstreamV3Extractor,
 } from './SlipstreamV3Extractor.js'
 import { TokenManager } from './TokenManager.js'
 import { FactoryV2, UniV2Extractor } from './UniV2Extractor.js'
@@ -149,7 +149,7 @@ export class Extractor {
       )
     if (args.factoriesSlipstream && args.factoriesSlipstream.length > 0)
       this.projectExtractors.push(
-        new AerodromeSlipstreamV3Extractor(
+        new SlipstreamV3Extractor(
           this.client,
           args.tickHelperContractSlipstream as Address,
           args.factoriesSlipstream,
