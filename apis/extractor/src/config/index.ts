@@ -526,7 +526,15 @@ export const EXTRACTOR_CONFIG: Record<
           '0x65d1a3b1e46c6e4f1be1ad5f99ef14dc488ae0549dc97db9b30afe2241ce1c7a',
         fee: 0.003,
       },
+      {
+        address: '0x9DEB29c9a4c7A88a3C0257393b7f3335338D9A9D',
+        provider: LiquidityProviders.CroDefiSwap,
+        initCodeHash:
+          '0x69d637e77615df9f235f642acebbdad8963ef35c5523142078c9b8f9d0ceba7e',
+        fee: 0.003,
+      },
     ],
+
     factoriesV3: [
       uniswapV3Factory(ChainId.ETHEREUM),
       sushiswapV3Factory(ChainId.ETHEREUM),
