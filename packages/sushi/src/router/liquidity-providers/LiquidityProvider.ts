@@ -70,6 +70,7 @@ export enum LiquidityProviders {
   Kwikswap = 'Kwikswap',
   ShibaSwap = 'ShibaSwap',
   CroDefiSwap = 'CroDefiSwap',
+  EtherVista = 'EtherVista',
 }
 
 export abstract class LiquidityProvider {

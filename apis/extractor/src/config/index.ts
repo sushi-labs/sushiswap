@@ -534,6 +534,13 @@ export const EXTRACTOR_CONFIG: Record<
           '0x69d637e77615df9f235f642acebbdad8963ef35c5523142078c9b8f9d0ceba7e',
         fee: 0.003,
       },
+      {
+        address: '0x9a27cb5ae0B2cEe0bb71f9A85C0D60f3920757B4',
+        provider: LiquidityProviders.EtherVista,
+        initCodeHash:
+          '0xe260b72768e8ec6814aa811c576f346d208ba00840f835949d65c6424ac80a8d',
+        fee: 0,
+      },
     ],
 
     factoriesV3: [
