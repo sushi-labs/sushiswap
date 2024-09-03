@@ -163,7 +163,7 @@ export class AerodromeSlipstreamQualityChecker {
         this.poolsLogCounter.set(addr, counter + 1)
       else {
         const newPool = new AerodromeSlipstreamV3PoolWatcher(
-          pool.provider,
+          pool.factory,
           pool.address,
           pool.tickHelperContract,
           pool.token0,
