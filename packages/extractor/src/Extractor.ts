@@ -31,12 +31,12 @@ export type ExtractorConfig = {
   factoriesV3?: FactoryV3[]
   factoriesAlgebra?: FactoryAlgebra[]
   curveConfig?: CurveWhitelistConfig
-  factoriesAerodromeSlipstream?: AerodromeSlipstreamFactoryV3[]
+  factoriesSlipstream?: AerodromeSlipstreamFactoryV3[]
   uinV4?: UniV4Config[]
   tickHelperContractV3: Address
   tickHelperContractAlgebra: Address
   tickHelperContractV4?: Address
-  tickHelperContractAerodromeSlipstream?: Address
+  tickHelperContractSlipstream?: Address
   cacheDir: string
   cacheReadOnly?: boolean
   logType?: LogFilterType
@@ -147,15 +147,12 @@ export class Extractor {
           cacheReadOnly,
         ),
       )
-    if (
-      args.factoriesAerodromeSlipstream &&
-      args.factoriesAerodromeSlipstream.length > 0
-    )
+    if (args.factoriesSlipstream && args.factoriesSlipstream.length > 0)
       this.projectExtractors.push(
         new AerodromeSlipstreamV3Extractor(
           this.client,
-          args.tickHelperContractAerodromeSlipstream as Address,
-          args.factoriesAerodromeSlipstream,
+          args.tickHelperContractSlipstream as Address,
+          args.factoriesSlipstream,
           args.cacheDir,
           this.logFilter,
           args.logging !== undefined ? args.logging : false,

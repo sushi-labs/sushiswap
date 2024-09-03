@@ -152,7 +152,7 @@ export class AerodromeSlipstreamV3Extractor extends IExtractor {
         this.multiCallAggregator,
         cacheReadOnly,
         cacheDir,
-        `aerodromeSlipstreamV3Tokens-${this.multiCallAggregator.chainId}`,
+        `slipstreamV3Tokens-${this.multiCallAggregator.chainId}`,
       )
     this.tickHelperContract = tickHelperContract
     this.factories = factories
@@ -160,7 +160,7 @@ export class AerodromeSlipstreamV3Extractor extends IExtractor {
     this.poolPermanentCache = new PermanentCache(
       cacheReadOnly,
       cacheDir,
-      `aerodromeSlipstreamV3Pools-${this.multiCallAggregator.chainId}`,
+      `slipstreamV3Pools-${this.multiCallAggregator.chainId}`,
     )
     this.logging = logging
     this.consoleLog(`CacheReadOnly = ${cacheReadOnly}`)
