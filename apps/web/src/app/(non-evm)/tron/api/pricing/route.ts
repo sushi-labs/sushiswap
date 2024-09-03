@@ -4,6 +4,8 @@ import { getOptions } from '~tron/_common/lib/bitquery/bitquery-options'
 import { getTronInUSDT } from '~tron/_common/lib/bitquery/queries/getTronInUSDT'
 
 // revalidate every 2 minutes
+
+export const dynamic = 'force-dynamic'
 export const revalidate = 120
 
 export async function GET(): Promise<NextResponse> {
