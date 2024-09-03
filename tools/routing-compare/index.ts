@@ -100,6 +100,7 @@ async function OneInchAPIRoute(
     `https://api.1inch.dev/swap/v6.0/${chainId}/quote?` +
     `fromTokenAddress=${from.address}&toTokenAddress=${to.address}&amount=${amountIn}` +
     `&gasPrice=${gasPrice}&preset=maxReturnResult&isTableEnabled=true`
+
   for (let n = 0; n < 10; ++n) {
     const resp = await fetch(url, {
       headers: {
@@ -108,7 +109,6 @@ async function OneInchAPIRoute(
     })
     if (resp.status === 429) {
       // The limit of requests per second has been exceeded
-      console.log(429)
       delay(300)
       continue
     }
@@ -122,6 +122,7 @@ async function OneInchAPIRoute(
     if (route?.dstAmount === undefined) return
     return BigInt(route?.dstAmount)
   }
+
   return undefined
 }
 
@@ -133,6 +134,48 @@ async function OneInchRoute(
   gasPrice: bigint,
 ): Promise<bigint | undefined> {
   return OneInchAPIRoute(chainId, from, to, amountIn, gasPrice)
+}
+
+async function OdosRoute(
+  chainId: ChainId,
+  from: Token,
+  to: Token,
+  amountIn: bigint,
+  gasPrice: bigint,
+): Promise<bigint | undefined> {
+  const resp = await fetch('https://api.odos.xyz/sor/quote/v2', {
+    method: 'POST',
+    headers: {
+      accept: 'application/json',
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      chainId: chainId,
+      gasPrice: gasPrice.toString(),
+      inputTokens: [
+        {
+          amount: amountIn.toString(),
+          tokenAddress: from.address,
+        },
+      ],
+      outputTokens: [
+        {
+          proportion: 1,
+          tokenAddress: to.address,
+        },
+      ],
+      slippageLimitPercent: MAX_PRICE_IMPACT * 100,
+    }),
+  })
+  if (resp.status !== 200) {
+    //console.log(resp.status, await resp.text())
+    return
+  }
+  const route = (await resp.json()) as {
+    outAmounts: number
+  }
+  if (route?.outAmounts === undefined) return
+  return BigInt(route?.outAmounts)
 }
 
 console.log(
@@ -148,6 +191,16 @@ console.log(
 console.log(
   '1inch',
   await OneInchRoute(
+    ChainId.ETHEREUM,
+    USDC[ChainId.ETHEREUM],
+    USDT[ChainId.ETHEREUM],
+    100_000_000n,
+    10_000_000_000n,
+  ),
+)
+console.log(
+  'Odos ',
+  await OdosRoute(
     ChainId.ETHEREUM,
     USDC[ChainId.ETHEREUM],
     USDT[ChainId.ETHEREUM],
