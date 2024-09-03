@@ -40,6 +40,7 @@ export enum LiquidityProviders {
   BlastDEX = 'BlastDEX',
   MonoswapV2 = 'MonoswapV2',
   MonoswapV3 = 'MonoswapV3',
+  MSwap = 'MSwap',
   ThrusterV2 = 'ThrusterV2',
   ThrusterV3 = 'ThrusterV3',
   DyorV2 = 'DyorV2',
@@ -162,6 +163,7 @@ export const UniV2LiquidityProviders: LiquidityProviders[] = [
   LiquidityProviders.BlazeSwap,
   LiquidityProviders.LynexV1,
   LiquidityProviders.SparkDexV2,
+  LiquidityProviders.MSwap,
 ]
 
 export const UniV3LiquidityProviders: LiquidityProviders[] = [

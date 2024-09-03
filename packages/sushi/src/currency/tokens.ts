@@ -691,6 +691,13 @@ export const WNATIVE = {
     symbol: 'WFLR',
     name: 'Wrapped FLR',
   }),
+  [ChainId.MATCHAIN]: new Token({
+    chainId: ChainId.MATCHAIN,
+    address: WNATIVE_ADDRESS[ChainId.MATCHAIN],
+    decimals: 18,
+    symbol: 'WBNB',
+    name: 'Wrapped BNB',
+  }),
 } as const
 
 export const SUSHI = addressMapToTokenMap(

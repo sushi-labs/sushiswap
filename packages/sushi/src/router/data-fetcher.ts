@@ -26,6 +26,7 @@ import {
 } from './liquidity-providers/LiquidityProvider.js'
 import { LynexV1Provider } from './liquidity-providers/LynexV1.js'
 import { LynexV2Provider } from './liquidity-providers/LynexV2.js'
+import { MSwapProvider } from './liquidity-providers/MSwap.js'
 import { MonoswapV2Provider } from './liquidity-providers/MonoSwapV2.js'
 import { MonoswapV3Provider } from './liquidity-providers/MonoSwapV3.js'
 import { NativeWrapProvider } from './liquidity-providers/NativeWrapProvider.js'
@@ -174,6 +175,7 @@ export class DataFetcher {
       LynexV2Provider,
       MonoswapV2Provider,
       MonoswapV3Provider,
+      MSwapProvider,
       NetSwapProvider,
       PancakeSwapV2Provider,
       PancakeSwapV3Provider,
