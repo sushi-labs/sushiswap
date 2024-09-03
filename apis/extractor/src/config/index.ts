@@ -34,9 +34,9 @@ import {
   type PublicClientConfig,
   createPublicClient,
 } from 'viem'
+import { apeswapV2Factory } from './apeswap'
 import { elkV2Factory } from './elk'
 import { wagmiV3Factory } from './wagmi'
-
 function sushiswapV2Factory(chainId: SushiSwapV2ChainId) {
   return {
     address: SUSHISWAP_V2_FACTORY_ADDRESS[chainId],
@@ -129,6 +129,7 @@ export const EXTRACTOR_CONFIG: Record<
       sushiswapV2Factory(ChainId.ARBITRUM),
       pancakeswapV2Factory(ChainId.ARBITRUM),
       elkV2Factory(ChainId.ARBITRUM),
+      apeswapV2Factory(ChainId.ARBITRUM),
       {
         address: '0xA102072A4C07F06EC3B4900FDC4C7B80b6c57429' as Address,
         provider: LiquidityProviders.Dfyn,
@@ -410,6 +411,7 @@ export const EXTRACTOR_CONFIG: Record<
       sushiswapV2Factory(ChainId.BSC),
       pancakeswapV2Factory(ChainId.BSC),
       elkV2Factory(ChainId.BSC),
+      apeswapV2Factory(ChainId.BSC),
       {
         address: '0x858E3312ed3A876947EA49d572A7C42DE08af7EE' as Address,
         provider: LiquidityProviders.Biswap,
@@ -506,13 +508,7 @@ export const EXTRACTOR_CONFIG: Record<
       sushiswapV2Factory(ChainId.ETHEREUM),
       pancakeswapV2Factory(ChainId.ETHEREUM),
       elkV2Factory(ChainId.ETHEREUM),
-      {
-        address: '0xBAe5dc9B19004883d0377419FeF3c2C8832d7d7B' as Address,
-        provider: LiquidityProviders.ApeSwap,
-        fee: 0.003,
-        initCodeHash:
-          '0xe2200989b6f9506f3beca7e9c844741b3ad1a88ad978b6b0973e96d3ca4707aa',
-      },
+      apeswapV2Factory(ChainId.ETHEREUM),
     ],
     factoriesV3: [
       uniswapV3Factory(ChainId.ETHEREUM),
@@ -627,19 +623,13 @@ export const EXTRACTOR_CONFIG: Record<
       uniswapV2Factory(ChainId.POLYGON),
       sushiswapV2Factory(ChainId.POLYGON),
       elkV2Factory(ChainId.POLYGON),
+      apeswapV2Factory(ChainId.POLYGON),
       {
         address: '0x5757371414417b8C6CAad45bAeF941aBc7d3Ab32' as Address,
         provider: LiquidityProviders.QuickSwap,
         fee: 0.003,
         initCodeHash:
           '0x96e8ac4277198ff8b6f785478aa9a39f403cb768dd02cbee326c3e7da348845f',
-      },
-      {
-        address: '0xCf083Be4164828f00cAE704EC15a36D711491284' as Address,
-        provider: LiquidityProviders.ApeSwap,
-        fee: 0.003,
-        initCodeHash:
-          '0x511f0f358fe530cda0859ec20becf391718fdf5a329be02f4c95361f3d6a42d8',
       },
       {
         address: '0xE7Fb3e833eFE5F9c441105EB65Ef8b261266423B' as Address,
@@ -889,6 +879,7 @@ export const EXTRACTOR_CONFIG: Record<
     factoriesV2: [
       // sushiswapV2Factory(ChainId.TELOS),
       elkV2Factory(ChainId.TELOS),
+      apeswapV2Factory(ChainId.TELOS),
     ],
     factoriesV3: [],
     factoriesAlgebra: [
