@@ -29,9 +29,9 @@ import {
 } from './MulticallAggregator.js'
 import { PermanentCache } from './PermanentCache.js'
 import {
-  AerodromeSlipstreamPoolSyncState,
-  AerodromeSlipstreamQualityChecker,
-  AerodromeSlipstreamQualityCheckerCallBackArg,
+  SlipstreamPoolSyncState,
+  SlipstreamQualityChecker,
+  SlipstreamQualityCheckerCallBackArg,
 } from './SlipstreamQualityChecker.js'
 import { SlipstreamV3PoolWatcher } from './SlipstreamV3PoolWatcher.js'
 import { TokenManager } from './TokenManager.js'
@@ -125,7 +125,7 @@ export class SlipstreamV3Extractor extends IExtractor {
   logProcessingStatus = LogsProcessing.NotStarted
   logging: boolean
   taskCounter: Counter
-  qualityChecker: AerodromeSlipstreamQualityChecker
+  qualityChecker: SlipstreamQualityChecker
   lastProcessdBlock = -1
   watchedPools = 0
 
@@ -164,9 +164,9 @@ export class SlipstreamV3Extractor extends IExtractor {
     this.taskCounter = new Counter(() => {
       //if (count == 0) this.consoleLog(`All pools were updated`)
     })
-    this.qualityChecker = new AerodromeSlipstreamQualityChecker(
+    this.qualityChecker = new SlipstreamQualityChecker(
       200,
-      (arg: AerodromeSlipstreamQualityCheckerCallBackArg) => {
+      (arg: SlipstreamQualityCheckerCallBackArg) => {
         const addr = arg.ethalonPool.address.toLowerCase() as Address
         if (arg.ethalonPool !== this.poolMap.get(addr)) return false // checked pool was replaced during checking
         if (arg.correctPool) {
@@ -180,8 +180,8 @@ export class SlipstreamV3Extractor extends IExtractor {
           })
         }
         if (
-          arg.status !== AerodromeSlipstreamPoolSyncState.Match &&
-          arg.status !== AerodromeSlipstreamPoolSyncState.ReservesMismatch
+          arg.status !== SlipstreamPoolSyncState.Match &&
+          arg.status !== SlipstreamPoolSyncState.ReservesMismatch
         )
           this.errorLog(
             `Pool ${arg.ethalonPool.address} quality check: ${arg.status} ` +
