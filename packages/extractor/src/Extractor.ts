@@ -12,8 +12,8 @@ import { IExtractor } from './IExtractor.js'
 import { LogFilter2, LogFilterType } from './LogFilter2.js'
 import { MultiCallAggregator } from './MulticallAggregator.js'
 import {
-  AerodromeSlipstreamFactoryV3,
   AerodromeSlipstreamV3Extractor,
+  SlipstreamFactoryV3,
 } from './SlipstreamV3Extractor.js'
 import { TokenManager } from './TokenManager.js'
 import { FactoryV2, UniV2Extractor } from './UniV2Extractor.js'
@@ -31,7 +31,7 @@ export type ExtractorConfig = {
   factoriesV3?: FactoryV3[]
   factoriesAlgebra?: FactoryAlgebra[]
   curveConfig?: CurveWhitelistConfig
-  factoriesSlipstream?: AerodromeSlipstreamFactoryV3[]
+  factoriesSlipstream?: SlipstreamFactoryV3[]
   uinV4?: UniV4Config[]
   tickHelperContractV3: Address
   tickHelperContractAlgebra: Address

@@ -8,7 +8,7 @@ import {
   LogFilterType,
   TokenManager,
 } from '@sushiswap/extractor'
-import { AerodromeSlipstreamFactoryV3 } from '@sushiswap/extractor/dist/AerodromeSlipstreamV3Extractor'
+import { SlipstreamFactoryV3 } from '@sushiswap/extractor/dist/AerodromeSlipstreamV3Extractor'
 import { routeProcessor5Abi } from 'sushi/abi'
 import { ChainId } from 'sushi/chain'
 import {
@@ -139,7 +139,7 @@ async function startInfinitTest(args: {
   factoriesV2: FactoryV2[]
   factoriesV3: FactoryV3[]
   curveConfig?: CurveWhitelistConfig
-  factoriesSlipstream?: AerodromeSlipstreamFactoryV3[]
+  factoriesSlipstream?: SlipstreamFactoryV3[]
   tickHelperContractV3: Address
   tickHelperContractAlgebra: Address
   tickHelperContractSlipstream?: Address
