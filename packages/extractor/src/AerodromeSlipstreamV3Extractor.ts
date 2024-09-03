@@ -467,7 +467,7 @@ export class AerodromeSlipstreamV3Extractor extends IExtractor {
       return
     }
     const watcher = new AerodromeSlipstreamV3PoolWatcher(
-      p.factory.provider,
+      p.factory,
       expectedPoolAddress,
       this.tickHelperContract,
       t0,
