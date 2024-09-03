@@ -3,10 +3,6 @@ import path from 'node:path'
 import { Token } from 'sushi/currency'
 import { PoolCode } from 'sushi/router'
 import { Address, PublicClient } from 'viem'
-import {
-  AerodromeSlipstreamFactoryV3,
-  AerodromeSlipstreamV3Extractor,
-} from './AerodromeSlipstreamV3Extractor.js'
 import { AlgebraExtractor, FactoryAlgebra } from './AlgebraExtractor.js'
 import {
   CurveWhitelistConfig,
@@ -15,6 +11,10 @@ import {
 import { IExtractor } from './IExtractor.js'
 import { LogFilter2, LogFilterType } from './LogFilter2.js'
 import { MultiCallAggregator } from './MulticallAggregator.js'
+import {
+  AerodromeSlipstreamFactoryV3,
+  AerodromeSlipstreamV3Extractor,
+} from './SlipstreamV3Extractor.js'
 import { TokenManager } from './TokenManager.js'
 import { FactoryV2, UniV2Extractor } from './UniV2Extractor.js'
 import { FactoryV3, UniV3Extractor } from './UniV3Extractor.js'
