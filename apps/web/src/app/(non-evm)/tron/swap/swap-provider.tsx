@@ -106,14 +106,14 @@ const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
         dispatch({ type: 'setPriceImpactPercentage', value }),
       setRoute: (value: string[]) => dispatch({ type: 'setRoute', value }),
     }),
-    [dispatch],
+    [],
   )
 
   return (
     <SwapContext.Provider
       value={useMemo(() => {
         return { state, dispatch: dispatchWithAction }
-      }, [state])}
+      }, [state, dispatchWithAction])}
     >
       {children}
     </SwapContext.Provider>

@@ -4,22 +4,14 @@ import {
   CardDescription,
   CardGroup,
   CardHeader,
-  CardItem,
   CardLabel,
   CardTitle,
-  List,
-  SkeletonCircle,
-  SkeletonText,
 } from '@sushiswap/ui'
-import { formatNumber, formatUSD } from 'sushi/format'
+import { formatUSD } from 'sushi/format'
 import { useReserves } from '~tron/_common/lib/hooks/useReserves'
 import { useStablePrice } from '~tron/_common/lib/hooks/useStablePrice'
-import {
-  formatUnits,
-  formatUnitsForInput,
-} from '~tron/_common/lib/utils/formatters'
+import { formatUnitsForInput } from '~tron/_common/lib/utils/formatters'
 import { IToken } from '~tron/_common/types/token-type'
-import { Icon } from '~tron/_common/ui/General/Icon'
 import { LiquidityItem } from './LiquidityItem'
 
 export const PoolLiquidity = ({

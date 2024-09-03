@@ -1,11 +1,12 @@
-import { ArrowLeftIcon } from '@heroicons/react/20/solid'
-import { List } from '@sushiswap/ui'
-import React, { FC, Fragment } from 'react'
-import { IconButton } from '@sushiswap/ui'
 import { RadioGroup } from '@headlessui/react'
-import { classNames } from '@sushiswap/ui'
+import { ArrowLeftIcon } from '@heroicons/react/20/solid'
 import { MoonIcon, SunIcon } from '@heroicons/react/24/outline'
+import { List } from '@sushiswap/ui'
+import { IconButton } from '@sushiswap/ui'
+import { classNames } from '@sushiswap/ui'
 import { useTheme } from 'next-themes'
+import React, { FC, Fragment } from 'react'
+// import { type } from '../../../../../../../../../packages/graph-client/src/subgraphs/strapi/index'
 import { IProfileView } from './WalletConnector'
 
 type SettingsViewProps = {
@@ -44,6 +45,7 @@ export const SettingsView: FC<SettingsViewProps> = ({ setView }) => {
                   <RadioGroup.Option as={Fragment} key={i} value={k}>
                     {({ checked }) => (
                       <button
+                        type="button"
                         className={classNames(
                           checked
                             ? 'text-gray-900 dark:text-slate-50 bg-white dark:bg-white/[0.08]'

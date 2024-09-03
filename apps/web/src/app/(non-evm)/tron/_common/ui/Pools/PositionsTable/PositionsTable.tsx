@@ -61,7 +61,7 @@ export const PositionsTable = ({
     if (filteredData && !isLoading) {
       handleMyPositionsOnView(filteredData.length)
     }
-  }, [filteredData, isLoading])
+  }, [filteredData, isLoading, handleMyPositionsOnView])
 
   return (
     <DataTable

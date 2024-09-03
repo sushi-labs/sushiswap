@@ -31,14 +31,14 @@ export const AmountIn = () => {
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [amountsOut, token1?.decimals])
+  }, [amountsOut, token1?.decimals, setAmountOut])
 
   useEffect(() => {
     if (Number(amountIn) === 0) {
       setAmountOut('')
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [amountIn])
+  }, [amountIn, setAmountOut])
 
   return (
     <TokenInput

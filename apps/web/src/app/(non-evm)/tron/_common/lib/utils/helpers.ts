@@ -143,8 +143,8 @@ export const getTransactionInfo = async (
   for (let i = 0; i < maxTries; i++) {
     transactionInfo =
       await tronWebInstance.trx.getUnconfirmedTransactionInfo(txId)
-    console.log({ transactionInfo })
-    if (transactionInfo && transactionInfo.receipt) {
+    // console.log({ transactionInfo });
+    if (transactionInfo?.receipt) {
       return transactionInfo
     }
     await timer(waitIntervalMs)
@@ -412,7 +412,7 @@ export const getArgsForAddLiquidity = (
         ],
         to,
       ]
-    case 'addLiquidityETH(address,uint256,uint256,uint256,address,uint256)':
+    case 'addLiquidityETH(address,uint256,uint256,uint256,address,uint256)': {
       const tokenAddress =
         token0Address === 'TRON' ? token1Address : token0Address
       const tokenAmount =
@@ -435,6 +435,7 @@ export const getArgsForAddLiquidity = (
         ],
         to,
       ]
+    }
 
     default:
       throw new Error('Invalid function selector')
@@ -483,7 +484,7 @@ export const getArgsForRemoveLiquidity = (
         ],
         to,
       ]
-    case 'removeLiquidityETH(address,uint256,uint256,uint256,address,uint256)':
+    case 'removeLiquidityETH(address,uint256,uint256,uint256,address,uint256)': {
       const tokenAddress =
         token0Address === 'TRON' ? token1Address : token0Address
       const tokenMinAmount =
@@ -504,7 +505,8 @@ export const getArgsForRemoveLiquidity = (
         ],
         to,
       ]
-    case 'removeLiquidityETHSupportingFeeOnTransferTokens(address,uint256,uint256,uint256,address,uint256)':
+    }
+    case 'removeLiquidityETHSupportingFeeOnTransferTokens(address,uint256,uint256,uint256,address,uint256)': {
       const _tokenAddress =
         token0Address === 'TRON' ? token1Address : token0Address
       const _tokenMinAmount =
@@ -525,6 +527,7 @@ export const getArgsForRemoveLiquidity = (
         ],
         to,
       ]
+    }
   }
 }
 

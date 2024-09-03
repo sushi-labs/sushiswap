@@ -23,7 +23,7 @@ export const useAmountsOut = ({ amountIn }: { amountIn: string }) => {
       if (!route) return []
 
       const cleanedAddressRoute = route?.map((i) => getValidTokenAddress(i))
-      if (!amountIn || isNaN(Number(amountIn))) return []
+      if (!amountIn || Number.isNaN(Number(amountIn))) return []
       try {
         tronWeb.setAddress(ROUTER_CONTRACT)
         const routerContract = await tronWeb.contract(

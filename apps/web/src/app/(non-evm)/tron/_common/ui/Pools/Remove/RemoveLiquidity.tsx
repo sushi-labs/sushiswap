@@ -1,7 +1,7 @@
 'use client'
-import { RemoveInput } from './RemoveInput'
 import { MinimumReceive } from './MinimumReceive'
 import { RemoveButton } from './RemoveButton'
+import { RemoveInput } from './RemoveInput'
 
 export const RemoveLiquidity = () => {
   return (

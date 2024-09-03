@@ -21,7 +21,7 @@ export const SelectTokensForm = () => {
     } else {
       setPairAddress(undefined)
     }
-  }, [isContract, _pairAddress])
+  }, [isContract, _pairAddress, setPairAddress])
 
   return (
     <FormSection

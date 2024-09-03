@@ -1,8 +1,8 @@
 'use client'
 import { FormSection } from '@sushiswap/ui'
 import { AmountInToken0 } from './AmountInToken0'
-import { Plus } from './Plus'
 import { AmountInToken1 } from './AmountIntToken1'
+import { Plus } from './Plus'
 import { ReviewAddDialog } from './ReviewAddDialog'
 
 export const DepositForm = () => {

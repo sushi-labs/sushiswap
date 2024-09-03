@@ -55,9 +55,9 @@ export const AmountInToken0 = () => {
     amountInToken0,
     pairExists,
     rateOfToken1,
-    rateOfToken1,
     token1,
     inputField,
+    setAmountInToken1,
   ])
 
   const setAmount = (amount: string) => {

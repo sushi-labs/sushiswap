@@ -39,6 +39,7 @@ export const DefaultView = ({ setView }: DefaultViewProps) => {
           <ClipboardController>
             {({ setCopied }) => (
               <span
+                onKeyDown={() => setCopied(address ?? '')}
                 className="cursor-pointer"
                 onClick={() => setCopied(address ?? '')}
               >

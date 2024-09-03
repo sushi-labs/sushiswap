@@ -84,64 +84,60 @@ const getPairContributions = async ({
     )
     if (!groupedData) return []
 
-    const groupedDataArray = Object.entries(groupedData).map(
-      ([txHash, data]) => {
-        const [token0, token1] = sortTokenAddresses(
-          data?.[0]?.currency?.address ?? getValidTokenAddress(TRON.address),
-          data?.[1]?.currency?.address ?? getValidTokenAddress(TRON.address),
-        )
-        const pairAddress = data?.[0]?.receiver as string
+    const groupedDataArray = Object.entries(groupedData).map(([_, data]) => {
+      const [token0, token1] = sortTokenAddresses(
+        data?.[0]?.currency?.address ?? getValidTokenAddress(TRON.address),
+        data?.[1]?.currency?.address ?? getValidTokenAddress(TRON.address),
+      )
+      const pairAddress = data?.[0]?.receiver as string
 
-        //if token0 or token1 is equal to pairAddress, skip this pair
-        if (token0 === pairAddress || token1 === pairAddress) {
-          return
-        }
+      //if token0 or token1 is equal to pairAddress, skip this pair
+      if (token0 === pairAddress || token1 === pairAddress) {
+        return
+      }
 
-        const _token0: IToken = {
-          address: token0,
-          decimals:
-            data.find((i) => i?.currency?.address === token0)?.currency
-              ?.decimals ?? TRON.decimals,
-          name:
-            data.find((i) => i.currency.address === token0)?.currency.name ??
-            TRON.name,
-          symbol:
-            data.find((i) => i.currency.address === token0)?.currency.symbol ??
-            TRON.symbol,
-          logoURI:
-            DEFAULT_TOKEN_LIST.find(
-              (i) =>
-                getValidTokenAddress(i.address) ===
-                getValidTokenAddress(token0),
-            )?.logoURI ?? undefined,
-        }
-        const _token1: IToken = {
-          address: token1,
-          decimals:
-            data.find((i) => i.currency.address === token1)?.currency
-              .decimals ?? TRON.decimals,
-          name:
-            data.find((i) => i.currency.address === token1)?.currency.name ??
-            TRON.name,
-          symbol:
-            data.find((i) => i.currency.address === token1)?.currency.symbol ??
-            TRON.symbol,
-          logoURI:
-            DEFAULT_TOKEN_LIST.find(
-              (i) =>
-                getValidTokenAddress(i.address) ===
-                getValidTokenAddress(token1),
-            )?.logoURI ?? undefined,
-        }
-        return {
-          token0: _token0,
-          token1: _token1,
-          pairAddress: pairAddress,
-          reserve0: '0',
-          reserve1: '0',
-        }
-      },
-    )
+      const _token0: IToken = {
+        address: token0,
+        decimals:
+          data.find((i) => i?.currency?.address === token0)?.currency
+            ?.decimals ?? TRON.decimals,
+        name:
+          data.find((i) => i.currency.address === token0)?.currency.name ??
+          TRON.name,
+        symbol:
+          data.find((i) => i.currency.address === token0)?.currency.symbol ??
+          TRON.symbol,
+        logoURI:
+          DEFAULT_TOKEN_LIST.find(
+            (i) =>
+              getValidTokenAddress(i.address) === getValidTokenAddress(token0),
+          )?.logoURI ?? undefined,
+      }
+      const _token1: IToken = {
+        address: token1,
+        decimals:
+          data.find((i) => i.currency.address === token1)?.currency.decimals ??
+          TRON.decimals,
+        name:
+          data.find((i) => i.currency.address === token1)?.currency.name ??
+          TRON.name,
+        symbol:
+          data.find((i) => i.currency.address === token1)?.currency.symbol ??
+          TRON.symbol,
+        logoURI:
+          DEFAULT_TOKEN_LIST.find(
+            (i) =>
+              getValidTokenAddress(i.address) === getValidTokenAddress(token1),
+          )?.logoURI ?? undefined,
+      }
+      return {
+        token0: _token0,
+        token1: _token1,
+        pairAddress: pairAddress,
+        reserve0: '0',
+        reserve1: '0',
+      }
+    })
     // //filter out all objects that have duplicate pair addresses or are undefined
     const filteredDataArray = groupedDataArray.filter(
       (v, i, a) =>
@@ -164,7 +160,9 @@ const injectReserves = async (pools: _IPools) => {
       const pairAddresses = chunk.map((pool) => pool.pairAddress)
       const res = await fetch(
         `/tron/api/pools/get-reserves?pairAddresses=${pairAddresses}`,
-        { method: 'GET' },
+        {
+          method: 'GET',
+        },
       )
       if (!res.ok) {
         throw new Error('Failed to fetch data from Tron API')
@@ -209,7 +207,7 @@ export const useMyPositions = () => {
   const { address } = useWallet()
   return useQuery({
     queryKey: ['useMyPositions', { address: address }],
-    queryFn: async (data) => {
+    queryFn: async () => {
       if (!address) return []
       if (!isAddress(address)) return []
       const allPairs = await getAllPairAddresses()

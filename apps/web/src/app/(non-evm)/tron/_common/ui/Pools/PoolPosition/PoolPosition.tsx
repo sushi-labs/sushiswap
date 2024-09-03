@@ -63,13 +63,13 @@ export const PoolPosition = ({
     if (lpBalance && !isLoadingLPBalance) {
       setLPBalance(lpBalance)
     }
-  }, [lpBalance, isLoadingLPBalance])
+  }, [lpBalance, isLoadingLPBalance, setLPBalance])
 
   useEffect(() => {
     if (totalSupply && !isLoadingTotalSupply) {
       setTotalSupplyLP(totalSupply)
     }
-  }, [totalSupply, isLoadingTotalSupply])
+  }, [totalSupply, isLoadingTotalSupply, setTotalSupplyLP])
 
   const _amountToken0PerLP = useMemo(() => {
     if (!totalSupply || !reserve0) return ''
@@ -87,7 +87,7 @@ export const PoolPosition = ({
     if (_amountToken0PerLP) {
       setAmountToken0PerLP(_amountToken0PerLP)
     }
-  }, [_amountToken0PerLP])
+  }, [_amountToken0PerLP, setAmountToken0PerLP])
 
   const _amountToken1PerLP = useMemo(() => {
     if (!totalSupply || !reserve1) return ''
@@ -105,7 +105,7 @@ export const PoolPosition = ({
     if (_amountToken1PerLP) {
       setAmountToken1PerLP(_amountToken1PerLP)
     }
-  }, [_amountToken1PerLP])
+  }, [_amountToken1PerLP, setAmountToken1PerLP])
 
   const amountToken0 = useMemo(() => {
     if (!lpBalance || !_amountToken0PerLP) return '0'

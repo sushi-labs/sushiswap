@@ -51,7 +51,14 @@ export const AmountInToken1 = () => {
         setAmountInToken0('')
       }
     }
-  }, [amountInToken1, pairExists, rateOfToken0, token0, inputField])
+  }, [
+    amountInToken1,
+    pairExists,
+    rateOfToken0,
+    token0,
+    inputField,
+    setAmountInToken0,
+  ])
 
   const setAmount = (amount: string) => {
     setInputField('token1')

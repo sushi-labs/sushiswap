@@ -54,7 +54,7 @@ export const MinimumReceive = () => {
     if (lpTokenAmountBeingRemoved) {
       setLPToRemove(lpTokenAmountBeingRemoved)
     }
-  }, [lpTokenAmountBeingRemoved])
+  }, [lpTokenAmountBeingRemoved, setLPToRemove])
 
   const amountToken0 = useMemo(() => {
     if (!lpTokenAmountBeingRemoved || !amountToken0PerLP) return '0'
@@ -82,7 +82,7 @@ export const MinimumReceive = () => {
     if (!amountToken0) return ''
     const output = Number(amountToken0) * (1 - slippage)
     return output.toString()
-  }, [slippageTolerance, amountToken0, slippage])
+  }, [amountToken0, slippage])
 
   useEffect(() => {
     if (minAmountToken0) {
@@ -90,7 +90,7 @@ export const MinimumReceive = () => {
 
       setMinAmountToken0(parsedAmount)
     }
-  }, [minAmountToken0])
+  }, [minAmountToken0, setMinAmountToken0, token0?.decimals])
 
   const minAmountToken1 = useMemo(() => {
     if (!amountToken1) return ''
@@ -104,7 +104,7 @@ export const MinimumReceive = () => {
 
       setMinAmountToken1(parsedAmount)
     }
-  }, [minAmountToken1])
+  }, [minAmountToken1, setMinAmountToken1, token1?.decimals])
 
   const isLoading =
     !totalSupplyLP || isLoadingToken0Price || isLoadingToken1Price

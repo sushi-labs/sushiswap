@@ -139,14 +139,14 @@ const PoolProvider: FC<PoolProviderProps> = ({ children }) => {
       setInputField: (value: InputFieldType) =>
         dispatch({ type: 'setInputField', value }),
     }),
-    [dispatch],
+    [],
   )
 
   return (
     <PoolContext.Provider
       value={useMemo(() => {
         return { state, dispatch: dispatchWithAction }
-      }, [state])}
+      }, [state, dispatchWithAction])}
     >
       <ReserveHelper />
       {children}

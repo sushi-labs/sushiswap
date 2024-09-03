@@ -21,6 +21,7 @@ export default function PoolByIdPage({
   const { data: token0Data, isLoading: isLoadingToken0 } = useTokenInfo({
     tokenAddress: token0,
   })
+
   const { data: token1Data, isLoading: isLoadingToken1 } = useTokenInfo({
     tokenAddress: token1,
   })
@@ -31,7 +32,7 @@ export default function PoolByIdPage({
     if (pairAddress && isAddress(pairAddress)) {
       setPairAddress(pairAddress)
     }
-  }, [pairAddress])
+  }, [pairAddress, setPairAddress])
 
   useEffect(() => {
     if (token0Data) {
@@ -40,7 +41,7 @@ export default function PoolByIdPage({
     if (token1Data) {
       setToken1(token1Data)
     }
-  }, [token0Data, token1Data])
+  }, [token0Data, token1Data, setToken0, setToken1])
 
   return (
     <>

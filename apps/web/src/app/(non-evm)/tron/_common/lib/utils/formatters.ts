@@ -17,12 +17,9 @@ export const hashStringToColor = (str: string) => {
   const r = (hash & 0xff0000) >> 16
   const g = (hash & 0x00ff00) >> 8
   const b = hash & 0x0000ff
-  return (
-    '#' +
-    ('0' + r.toString(16)).substr(-2) +
-    ('0' + g.toString(16)).substr(-2) +
-    ('0' + b.toString(16)).substr(-2)
-  )
+  return `#${r.toString(16).padStart(2, '0')}${g
+    .toString(16)
+    .padStart(2, '0')}${b.toString(16).padStart(2, '0')}`
 }
 
 const _djb2 = (str: string) => {
@@ -57,7 +54,7 @@ export const formatUnits = (
   decimals: number,
   maxDecimals?: number,
 ): string => {
-  if (isNaN(Number(amount))) {
+  if (Number.isNaN(Number(amount))) {
     return '0'
   }
   const val = TronWeb.toBigNumber(amount).div(10 ** decimals)
@@ -76,14 +73,14 @@ export const formatUnitsForInput = (
   amount: string | number,
   decimals: number,
 ): string => {
-  if (isNaN(Number(amount))) {
+  if (Number.isNaN(Number(amount))) {
     return '0'
   }
 
   const _decimals = toBigNumber(10).pow(decimals)
 
   const val = TronWeb.toBigNumber(amount).div(_decimals)
-  if (isNaN(val)) {
+  if (Number.isNaN(val)) {
     return '0'
   }
 
@@ -94,7 +91,7 @@ export const parseUnits = (
   amount: string | number,
   decimals: number,
 ): string => {
-  if (isNaN(Number(amount))) {
+  if (Number.isNaN(Number(amount))) {
     return '0'
   }
 

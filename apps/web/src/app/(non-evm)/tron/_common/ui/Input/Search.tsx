@@ -1,4 +1,6 @@
+import { MagnifyingGlassIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import { classNames } from '@sushiswap/ui'
+import { Loader } from '@sushiswap/ui'
 import React, {
   FC,
   KeyboardEvent,
@@ -8,8 +10,6 @@ import React, {
   useEffect,
   useState,
 } from 'react'
-import { MagnifyingGlassIcon, XMarkIcon } from '@heroicons/react/24/outline'
-import { Loader } from '@sushiswap/ui'
 
 interface Search {
   className?: string
@@ -123,6 +123,7 @@ export const Search: FC<Search> = forwardRef<HTMLInputElement, Search>(
               .filter((el) => el !== ' ' && el !== '')
               .map((el, i) => (
                 <div
+                  onKeyDown={() => remove(el)}
                   onClick={() => remove(el)}
                   key={i}
                   className="font-semibold text-gray-600 dark:text-slate-300 flex items-center text-sm rounded-full p-1 pl-2.5 bg-black/[0.08] dark:bg-white/[0.16] gap-1"
@@ -165,6 +166,12 @@ export const Search: FC<Search> = forwardRef<HTMLInputElement, Search>(
                 </div>
               ) : value ? (
                 <div
+                  onKeyDown={() =>
+                    setValues({
+                      all: [],
+                      typed: '',
+                    })
+                  }
                   onClick={() =>
                     setValues({
                       all: [],
@@ -243,7 +250,7 @@ export const Search: FC<Search> = forwardRef<HTMLInputElement, Search>(
                 />
               </div>
             ) : value ? (
-              <div onClick={() => onChange('')}>
+              <div onKeyDown={() => onChange('')} onClick={() => onChange('')}>
                 <XMarkIcon
                   width={24}
                   height={24}

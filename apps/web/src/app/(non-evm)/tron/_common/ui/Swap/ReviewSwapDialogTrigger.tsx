@@ -32,13 +32,13 @@ export const ReviewSwapDialogTrigger = () => {
     token1,
   })
   //these reserves are always going to be defined if a pair exists
-  const { data: reserves, isLoading: isReservesLoading } = useReserves({
+  const { data: reserves } = useReserves({
     pairAddress: routeData?.pairs?.[0],
     token0,
     token1,
   })
   //these reserves are for is the swap needs an intermediate pair
-  const { data: reserves1, isLoading: isReserves1Loading } = useReserves({
+  const { data: reserves1 } = useReserves({
     pairAddress: routeData?.pairs?.[1],
     token0,
     token1,
@@ -68,7 +68,7 @@ export const ReviewSwapDialogTrigger = () => {
     if (routeData && routeData.route.length > 0 && !isLoadingRoutes) {
       setRoute(routeData.route)
     }
-  }, [routeData, isLoadingRoutes])
+  }, [routeData, isLoadingRoutes, setRoute])
 
   const swapType = useMemo(() => {
     return getIfWrapOrUnwrap(token0, token1)
@@ -76,7 +76,7 @@ export const ReviewSwapDialogTrigger = () => {
 
   useEffect(() => {
     setPriceImpactPercentage(priceImpactTotal ?? 0)
-  }, [priceImpactTotal])
+  }, [priceImpactTotal, setPriceImpactPercentage])
 
   const refreshAllowance = async () => {
     await refetch()
@@ -180,6 +180,7 @@ export const ReviewSwapDialogTrigger = () => {
       {userConfirmationNeeded && !isChecked ? (
         <div
           onClick={() => setIsChecked(!isChecked)}
+          onKeyDown={() => setIsChecked(!isChecked)}
           className="flex items-start px-4 py-3 mt-4 rounded-xl bg-red/20 dark:bg-red/40 cursor-pointer"
         >
           <Checkbox color="red" id="expert-checkbox" checked={isChecked} />

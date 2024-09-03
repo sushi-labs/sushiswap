@@ -147,8 +147,8 @@ const TokenButton = ({
     () => DEFAULT_TOKEN_LIST.some((t) => t.address === token.address),
     [token],
   )
-  const isNew = hasToken && !hasToken(token)
-  const isCustomAdded = hasToken && hasToken(token)
+  const isNew = !hasToken?.(token)
+  const isCustomAdded = hasToken?.(token)
 
   return (
     <div className="flex w-full justify-between items-center gap-2 pr-2">
@@ -190,7 +190,7 @@ const TokenButton = ({
       {isNew && !isOnDefaultList ? (
         <Button
           onClick={() => {
-            addOrRemoveToken && addOrRemoveToken('add', [token])
+            addOrRemoveToken?.('add', [token])
           }}
           className="z-[1]"
           size="xs"
@@ -202,7 +202,7 @@ const TokenButton = ({
         <Button
           className="z-[1]"
           onClick={() => {
-            addOrRemoveToken && addOrRemoveToken('remove', [token])
+            addOrRemoveToken?.('remove', [token])
           }}
           variant="destructive"
           size="xs"

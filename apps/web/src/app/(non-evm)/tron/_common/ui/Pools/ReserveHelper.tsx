@@ -39,7 +39,7 @@ export const ReserveHelper = () => {
       setReserve0(reserve0?.reserve ?? '')
       setReserve1(reserve1?.reserve ?? '')
     }
-  }, [data, isLoading, pairAddress, token0, token1])
+  }, [data, isLoading, pairAddress, token0, token1, setReserve0, setReserve1])
 
   return null
 }

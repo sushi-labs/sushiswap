@@ -132,6 +132,9 @@ export const ApproveToken = ({
                   onClick={async () => {
                     await approveToken('one-time')
                   }}
+                  onKeyDown={async () => {
+                    await approveToken('one-time')
+                  }}
                   className="flex flex-col"
                 >
                   <p className="font-bold">Approve one-time only</p>
@@ -145,6 +148,9 @@ export const ApproveToken = ({
               <CommandItem className="cursor-pointer">
                 <div
                   onClick={async () => {
+                    await approveToken('unlimited')
+                  }}
+                  onKeyDown={async () => {
                     await approveToken('unlimited')
                   }}
                   className="flex flex-col"

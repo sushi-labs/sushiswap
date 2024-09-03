@@ -109,14 +109,14 @@ const RemoveProvider: FC<RemoveProviderProps> = ({ children }) => {
       setMinAmountToken1: (value: string) =>
         dispatch({ type: 'setMinAmountToken1', value }),
     }),
-    [dispatch],
+    [],
   )
 
   return (
     <RemoveContext.Provider
       value={useMemo(() => {
         return { state, dispatch: dispatchWithAction }
-      }, [state])}
+      }, [state, dispatchWithAction])}
     >
       {children}
     </RemoveContext.Provider>

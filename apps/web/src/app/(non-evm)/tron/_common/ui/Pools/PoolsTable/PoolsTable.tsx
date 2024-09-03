@@ -45,14 +45,14 @@ export const PoolsTable = ({ query, handlePoolsOnView }: PoolsTableProps) => {
     if (filteredData && !isLoading) {
       handlePoolsOnView(filteredData.length)
     }
-  }, [filteredData, isLoading])
+  }, [filteredData, isLoading, handlePoolsOnView])
 
   return (
     <DataTable
       loading={isLoading}
       data={
         filteredData?.map((pool) => ({
-          name: pool.token0Address + '/' + pool.token1Address,
+          name: `${pool.token0Address}/${pool.token1Address}`,
           pairAddress: pool.pairAddress,
           token0Address: pool.token0Address,
           token1Address: pool.token1Address,
