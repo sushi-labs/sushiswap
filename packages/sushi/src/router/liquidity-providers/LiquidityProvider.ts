@@ -30,6 +30,7 @@ export enum LiquidityProviders {
   BaseSwapV3 = 'BaseSwapV3',
   AlgebraIntegral = 'AlgebraIntegral',
   AerodromeSlipstream = 'AerodromeSlipstream',
+  VelodromeSlipstream = 'VelodromeSlipstream',
   Solarbeam = 'Solarbeam',
   Swapsicle = 'Swapsicle',
   VVSStandard = 'VVSStandard',

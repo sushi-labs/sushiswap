@@ -2,18 +2,21 @@ import { EventEmitter } from 'node:events'
 import { Address } from 'abitype'
 import { erc20Abi } from 'sushi/abi'
 import { Token } from 'sushi/currency'
-import { LiquidityProviders, PoolCode, UniV3PoolCode } from 'sushi/router'
+import { PoolCode, UniV3PoolCode } from 'sushi/router'
 import { CLTick, RToken, UniV3Pool } from 'sushi/tines'
 import { Abi, Log, decodeEventLog } from 'viem'
 import { Counter } from './Counter.js'
 import { Logger } from './Logger.js'
 import { MultiCallAggregator } from './MulticallAggregator.js'
+import { SlipstreamFactoryV3 } from './SlipstreamV3Extractor.js'
 import {
   UniV3EventsAbi,
   UniV3PoolWatcherStatus,
   liquidityAbi,
 } from './UniV3PoolWatcher.js'
 import { WordLoadManager } from './WordLoadManager.js'
+
+const ZERO_FEE_INDICATOR = 420
 
 const feeAbi: Abi = [
   {
@@ -25,7 +28,7 @@ const feeAbi: Abi = [
   },
 ]
 
-interface AerodromeSlipstreamV3PoolSelfState {
+interface SlipstreamV3PoolSelfState {
   blockNumber: number
   reserve0: bigint
   reserve1: bigint
@@ -63,7 +66,7 @@ const slot0Abi: Abi = [
 // TODO: more ticks and priority depending on resources
 // TODO: gather statistics how often (blockNumber < this.latestEventBlockNumber)
 // event PoolCodeWasChanged is emitted each time getPoolCode() returns another pool (lastPoolCode changed)
-export class AerodromeSlipstreamV3PoolWatcher extends EventEmitter {
+export class SlipstreamV3PoolWatcher extends EventEmitter {
   address: Address
   tickHelperContract: Address
   token0: Token
@@ -71,17 +74,17 @@ export class AerodromeSlipstreamV3PoolWatcher extends EventEmitter {
   spacing: number
   latestEventBlockNumber = 0
 
-  provider: LiquidityProviders
+  factory: SlipstreamFactoryV3
   client: MultiCallAggregator
   wordLoadManager: WordLoadManager
-  state?: AerodromeSlipstreamV3PoolSelfState
+  state?: SlipstreamV3PoolSelfState
   updatePoolStateGuard = false
   busyCounter?: Counter
   private lastPoolCode?: PoolCode
   status: UniV3PoolWatcherStatus = UniV3PoolWatcherStatus.Nothing
 
   constructor(
-    provider: LiquidityProviders,
+    factory: SlipstreamFactoryV3,
     address: Address,
     tickHelperContract: Address,
     token0: Token,
@@ -92,7 +95,7 @@ export class AerodromeSlipstreamV3PoolWatcher extends EventEmitter {
     busyCounter?: Counter,
   ) {
     super()
-    this.provider = provider
+    this.factory = factory
     this.address = address
     this.tickHelperContract = tickHelperContract
     this.token0 = token0
@@ -115,7 +118,23 @@ export class AerodromeSlipstreamV3PoolWatcher extends EventEmitter {
 
   setFee(newFee: number) {
     if (this.state) {
-      this.state.fee = newFee
+      if (newFee === ZERO_FEE_INDICATOR) this.state.fee = 0
+      else if (newFee !== 0) this.state.fee = newFee
+      else {
+        const entry = Object.entries(this.factory.feeSpacingMap ?? {}).find(
+          ([_, t]) => t === this.spacing,
+        )
+        if (entry === undefined) {
+          Logger.error(
+            this.client.chainId,
+            `SlipstreamV3 Pool ${this.address} unknown spacing ${
+              this.spacing
+            } in ${JSON.stringify(this.factory.feeSpacingMap)}`,
+          )
+          return
+        }
+        this.state.fee = parseInt(entry[0])
+      }
       this._poolWasChanged()
     }
   }
@@ -185,7 +204,7 @@ export class AerodromeSlipstreamV3PoolWatcher extends EventEmitter {
       } catch (e) {
         Logger.error(
           this.client.chainId,
-          `AerodromeSlipstreamV3 Pool ${this.address} update failed`,
+          `SlipstreamV3 Pool ${this.address} update failed`,
           e,
         )
         this.setStatus(UniV3PoolWatcherStatus.Failed)
@@ -329,7 +348,11 @@ export class AerodromeSlipstreamV3PoolWatcher extends EventEmitter {
       this.state.sqrtPriceX96,
       ticks,
     )
-    const pc = new UniV3PoolCode(v3Pool, this.provider, this.provider)
+    const pc = new UniV3PoolCode(
+      v3Pool,
+      this.factory.provider,
+      this.factory.provider,
+    )
     this.lastPoolCode = pc
     return pc
   }

@@ -1,9 +1,9 @@
 import { Log } from 'viem'
-import { AerodromeSlipstreamV3PoolWatcher } from './AerodromeSlipstreamV3PoolWatcher.js'
 import { Logger } from './Logger.js'
+import { SlipstreamV3PoolWatcher } from './SlipstreamV3PoolWatcher.js'
 import { delay } from './Utils.js'
 
-export enum AerodromeSlipstreamPoolSyncState {
+export enum SlipstreamPoolSyncState {
   LiquidityMismatch = 'liquidity mismatch',
   PriceMismatch = 'price mismatch',
   CurrentTickMicmatch = 'tick mismatch',
@@ -16,39 +16,39 @@ export enum AerodromeSlipstreamPoolSyncState {
   CheckFailed = 'check failed',
 }
 
-export type AerodromeSlipstreamQualityCheckerCallBackArg = {
-  ethalonPool: AerodromeSlipstreamV3PoolWatcher
-  correctPool?: AerodromeSlipstreamV3PoolWatcher
-  status: AerodromeSlipstreamPoolSyncState
+export type SlipstreamQualityCheckerCallBackArg = {
+  ethalonPool: SlipstreamV3PoolWatcher
+  correctPool?: SlipstreamV3PoolWatcher
+  status: SlipstreamPoolSyncState
 }
 
-export type AerodromeSlipstreamQualityCheckerCallBack = (
-  arg: AerodromeSlipstreamQualityCheckerCallBackArg,
+export type SlipstreamQualityCheckerCallBack = (
+  arg: SlipstreamQualityCheckerCallBackArg,
 ) => boolean
 
-export class AerodromeSlipstreamQualityChecker {
+export class SlipstreamQualityChecker {
   readonly checkAfterLogsNumber: number
   readonly callBack
-  checkingPools: Map<string, AerodromeSlipstreamV3PoolWatcher> = new Map()
+  checkingPools: Map<string, SlipstreamV3PoolWatcher> = new Map()
   poolsLogCounter: Map<string, number> = new Map()
   totalCheckCounter = 0
   totalMatchCounter = 0
 
   constructor(
     checkAfterLogsNumber: number,
-    callBack: AerodromeSlipstreamQualityCheckerCallBack,
+    callBack: SlipstreamQualityCheckerCallBack,
   ) {
     this.checkAfterLogsNumber = checkAfterLogsNumber
     this.callBack = callBack
   }
 
   async check(
-    pool: AerodromeSlipstreamV3PoolWatcher,
-    newPool: AerodromeSlipstreamV3PoolWatcher,
+    pool: SlipstreamV3PoolWatcher,
+    newPool: SlipstreamV3PoolWatcher,
   ): Promise<
     [
-      AerodromeSlipstreamV3PoolWatcher | undefined,
-      AerodromeSlipstreamPoolSyncState,
+      SlipstreamV3PoolWatcher | undefined,
+      SlipstreamPoolSyncState,
       number,
       number,
     ]
@@ -68,28 +68,13 @@ export class AerodromeSlipstreamQualityChecker {
         ) {
           //this.totalCheckCounter++
           if (pool.state.liquidity !== newPool.state.liquidity)
-            return [
-              newPool,
-              AerodromeSlipstreamPoolSyncState.LiquidityMismatch,
-              1,
-              0,
-            ]
+            return [newPool, SlipstreamPoolSyncState.LiquidityMismatch, 1, 0]
           if (pool.state.sqrtPriceX96 !== newPool.state.sqrtPriceX96)
-            return [
-              newPool,
-              AerodromeSlipstreamPoolSyncState.PriceMismatch,
-              1,
-              0,
-            ]
+            return [newPool, SlipstreamPoolSyncState.PriceMismatch, 1, 0]
           if (pool.state.tick !== newPool.state.tick)
-            return [
-              newPool,
-              AerodromeSlipstreamPoolSyncState.CurrentTickMicmatch,
-              1,
-              0,
-            ]
+            return [newPool, SlipstreamPoolSyncState.CurrentTickMicmatch, 1, 0]
           if (pool.state.fee !== newPool.state.fee)
-            return [newPool, AerodromeSlipstreamPoolSyncState.FeeMismatch, 1, 0]
+            return [newPool, SlipstreamPoolSyncState.FeeMismatch, 1, 0]
           const ticks0 = pool.getTicks()
           ticks0.shift()
           ticks0.pop()
@@ -99,16 +84,11 @@ export class AerodromeSlipstreamQualityChecker {
           if (ticks1.length > 0) {
             const start = ticks0.findIndex((t) => t.index === ticks1[0].index)
             if (start === -1)
-              return [
-                newPool,
-                AerodromeSlipstreamPoolSyncState.TicksStartMismatch,
-                1,
-                0,
-              ]
+              return [newPool, SlipstreamPoolSyncState.TicksStartMismatch, 1, 0]
             if (ticks0.length < start + ticks1.length)
               return [
                 newPool,
-                AerodromeSlipstreamPoolSyncState.TicksFinishMismatch,
+                SlipstreamPoolSyncState.TicksFinishMismatch,
                 1,
                 0,
               ]
@@ -117,12 +97,7 @@ export class AerodromeSlipstreamQualityChecker {
                 ticks0[i + start].index !== ticks1[i].index ||
                 ticks0[i + start].DLiquidity !== ticks1[i].DLiquidity
               )
-                return [
-                  newPool,
-                  AerodromeSlipstreamPoolSyncState.TicksMismatch,
-                  1,
-                  0,
-                ]
+                return [newPool, SlipstreamPoolSyncState.TicksMismatch, 1, 0]
             }
           }
           //this.totalMatchCounter++
@@ -130,13 +105,8 @@ export class AerodromeSlipstreamQualityChecker {
             pool.state.reserve0 !== newPool.state.reserve0 ||
             pool.state.reserve1 !== newPool.state.reserve1
           )
-            return [
-              newPool,
-              AerodromeSlipstreamPoolSyncState.ReservesMismatch,
-              1,
-              1,
-            ]
-          return [undefined, AerodromeSlipstreamPoolSyncState.Match, 1, 1]
+            return [newPool, SlipstreamPoolSyncState.ReservesMismatch, 1, 1]
+          return [undefined, SlipstreamPoolSyncState.Match, 1, 1]
         }
       }
       Logger.error(
@@ -150,10 +120,10 @@ export class AerodromeSlipstreamQualityChecker {
         e,
       )
     }
-    return [undefined, AerodromeSlipstreamPoolSyncState.CheckFailed, 0, 0]
+    return [undefined, SlipstreamPoolSyncState.CheckFailed, 0, 0]
   }
 
-  processLog(l: Log, pool: AerodromeSlipstreamV3PoolWatcher) {
+  processLog(l: Log, pool: SlipstreamV3PoolWatcher) {
     const addr = l.address.toLowerCase()
     const checkingPool = this.checkingPools.get(addr)
     if (checkingPool) checkingPool.processLog(l)
@@ -162,8 +132,8 @@ export class AerodromeSlipstreamQualityChecker {
       if (counter < this.checkAfterLogsNumber)
         this.poolsLogCounter.set(addr, counter + 1)
       else {
-        const newPool = new AerodromeSlipstreamV3PoolWatcher(
-          pool.provider,
+        const newPool = new SlipstreamV3PoolWatcher(
+          pool.factory,
           pool.address,
           pool.tickHelperContract,
           pool.token0,

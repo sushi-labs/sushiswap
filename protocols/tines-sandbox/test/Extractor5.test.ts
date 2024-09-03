@@ -8,7 +8,7 @@ import {
   LogFilterType,
   TokenManager,
 } from '@sushiswap/extractor'
-import { AerodromeSlipstreamFactoryV3 } from '@sushiswap/extractor/dist/AerodromeSlipstreamV3Extractor'
+import { SlipstreamFactoryV3 } from '@sushiswap/extractor/dist/SlipstreamV3Extractor'
 import { routeProcessor5Abi } from 'sushi/abi'
 import { ChainId } from 'sushi/chain'
 import {
@@ -139,10 +139,10 @@ async function startInfinitTest(args: {
   factoriesV2: FactoryV2[]
   factoriesV3: FactoryV3[]
   curveConfig?: CurveWhitelistConfig
-  factoriesAerodromeSlipstream?: AerodromeSlipstreamFactoryV3[]
+  factoriesSlipstream?: SlipstreamFactoryV3[]
   tickHelperContractV3: Address
   tickHelperContractAlgebra: Address
-  tickHelperContractAerodromeSlipstream?: Address
+  tickHelperContractSlipstream?: Address
   cacheDir: string
   logDepth: number
   logType?: LogFilterType
@@ -413,8 +413,17 @@ it.skip('Extractor Optimism infinite work test', async () => {
     chain: optimism,
     factoriesV2: [],
     factoriesV3: [uniswapV3Factory(ChainId.OPTIMISM)],
+    factoriesSlipstream: [
+      {
+        address: '0xCc0bDDB707055e04e497aB22a59c2aF4391cd12F',
+        provider: LiquidityProviders.VelodromeSlipstream,
+        checkedSwapFeeModules: ['0x7361E9079920fb75496E9764A2665d8ee5049D5f'],
+      },
+    ],
     tickHelperContractV3: TickLensContract[ChainId.OPTIMISM],
     tickHelperContractAlgebra: '' as Address,
+    tickHelperContractSlipstream:
+      '0x49C6FDCb3D5b2CecD8baff66c8e94b9B261ad925' as Address,
     cacheDir: './cache',
     logDepth: 50,
     logging: true,
@@ -505,15 +514,16 @@ it.skip('Extractor Base infinite work test', async () => {
       sushiswapV3Factory(ChainId.BASE),
       uniswapV3Factory(ChainId.BASE),
     ],
-    factoriesAerodromeSlipstream: [
+    factoriesSlipstream: [
       {
         address: '0x5e7BB104d84c7CB9B682AaC2F3d509f5F406809A',
         provider: LiquidityProviders.AerodromeSlipstream,
+        checkedSwapFeeModules: ['0xF4171B0953b52Fa55462E4d76ecA1845Db69af00'],
       },
     ],
     tickHelperContractV3: TickLensContract[ChainId.BASE],
     tickHelperContractAlgebra: '' as Address,
-    tickHelperContractAerodromeSlipstream:
+    tickHelperContractSlipstream:
       '0x3e1116ea5034f5d73a7b530071709d54a4109f5f' as Address, // our own
     cacheDir: './cache',
     logDepth: 50,
