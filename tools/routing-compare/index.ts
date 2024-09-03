@@ -1,5 +1,13 @@
+import { Address } from 'sushi'
 import { ChainId } from 'sushi/chain'
+import {
+  ADDITIONAL_BASES,
+  BASES_TO_CHECK_TRADES_AGAINST,
+  STABLES,
+  publicClientConfig,
+} from 'sushi/config'
 import { Token, USDC, USDT } from 'sushi/currency'
+import { createPublicClient } from 'viem'
 
 const MAX_PRICE_IMPACT = 0.1 // 10%
 
@@ -168,7 +176,7 @@ async function OdosRoute(
     }),
   })
   if (resp.status !== 200) {
-    //console.log(resp.status, await resp.text())
+    console.log(resp.status, await resp.text())
     return
   }
   const route = (await resp.json()) as {
@@ -178,6 +186,35 @@ async function OdosRoute(
   return BigInt(route?.outAmounts)
 }
 
+async function getTestTokens(chainId: ChainId): Promise<[Token, number][]> {
+  const tokensMap = new Map<Address, Token>(
+    [
+      ...(BASES_TO_CHECK_TRADES_AGAINST[chainId] ?? []),
+      ...Object.values(ADDITIONAL_BASES[chainId] ?? {}).flat(),
+      ...(STABLES[chainId] ?? []),
+    ].map((t) => [t.address, t]),
+  )
+  const tokens = Array.from(tokensMap.values())
+  const pricesResp = await fetch(`http://api.sushi.com/price/v1/${chainId}`)
+  if (pricesResp.status !== 200) {
+    console.log(`No prices for ${chainId} net`)
+    return []
+  }
+  const prices = (await pricesResp.json()) as Record<string, number>
+  const pricedTokens = tokens
+    .map((t) => [t, prices[t.address]])
+    .filter(([_, price]) => price !== undefined) as [Token, number][]
+  return pricedTokens
+}
+
+async function getGasPrice(chainId: ChainId): Promise<bigint> {
+  const client = createPublicClient(publicClientConfig[chainId])
+  const gasPrice = await client.getGasPrice()
+  return gasPrice
+}
+
+console.log(await getGasPrice(ChainId.ETHEREUM))
+console.log(await getTestTokens(ChainId.ETHEREUM))
 console.log(
   'Sushi',
   await SushiRoute(

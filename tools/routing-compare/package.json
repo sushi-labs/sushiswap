@@ -12,7 +12,8 @@
     "go-debug": "tsc && node --inspect-brk dist/index.js"
   },
   "dependencies": {
-    "sushi": "workspace:*"
+    "sushi": "workspace:*",
+    "viem": "2.18.6"
   },
   "devDependencies": {
     "@tsconfig/node20": "20.1.4",
