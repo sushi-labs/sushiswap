@@ -15,7 +15,6 @@ import { useNetwork } from '~aptos/(common)/lib/common/use-network'
 import { CurrencyIcon } from '~aptos/(common)/ui/currency/currency-icon'
 import { CurrencyIconList } from '~aptos/(common)/ui/currency/currency-icon-list'
 import { usePool } from '~aptos/pool/lib/use-pool'
-
 import { useTokensFromPool } from '~aptos/pool/lib/use-tokens-from-pool'
 
 interface PoolHeader {

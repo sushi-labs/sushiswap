@@ -8,7 +8,6 @@ import { PoolExtended } from '~aptos/pool/lib/use-pools-extended'
 import { Row } from '../../types'
 
 export const PositionNameCell: FC<Row<PoolExtended>> = ({ row }) => {
-  console.log(row)
   const { token0, token1 } = row
   const poolAddress = row?.id
 
