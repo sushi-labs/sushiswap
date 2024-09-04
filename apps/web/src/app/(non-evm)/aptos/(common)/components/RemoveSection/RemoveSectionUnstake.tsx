@@ -15,16 +15,18 @@ import {
   WidgetHeader,
   WidgetTitle,
 } from '@sushiswap/ui'
-import { useParams } from 'next/navigation'
 import { FC, useState } from 'react'
+import { Pool } from '~aptos/pool/lib/convert-pool-to-sushi-pool'
 
 interface AddSectionStakeProps {
+  pool: Pool
   balance: number
   decimals: number
   lpTokenName: string | undefined
 }
 
 export const RemoveSectionUnstake: FC<AddSectionStakeProps> = ({
+  pool,
   balance,
   decimals,
   lpTokenName,
@@ -33,6 +35,7 @@ export const RemoveSectionUnstake: FC<AddSectionStakeProps> = ({
   if (!isMounted) return <></>
   return (
     <_RemoveSectionUnstake
+      pool={pool}
       balance={balance}
       decimals={decimals}
       lpTokenName={lpTokenName}
@@ -41,6 +44,7 @@ export const RemoveSectionUnstake: FC<AddSectionStakeProps> = ({
 }
 
 export const _RemoveSectionUnstake: FC<AddSectionStakeProps> = ({
+  pool,
   balance,
   decimals,
   lpTokenName,
@@ -53,8 +57,6 @@ export const _RemoveSectionUnstake: FC<AddSectionStakeProps> = ({
     contracts: { swap: swapContract, masterchef: masterchefContract },
   } = useNetwork()
 
-  const router = useParams()
-  const tokenAddress = decodeURIComponent(router?.id as string)
   const { signAndSubmitTransaction } = useWallet()
   const [isTransactionPending, setTransactionPending] = useState<boolean>(false)
   const withdrawLiquidity = async () => {
@@ -66,7 +68,7 @@ export const _RemoveSectionUnstake: FC<AddSectionStakeProps> = ({
     try {
       const response = await signAndSubmitTransaction({
         data: {
-          typeArguments: [`${swapContract}::swap::LPToken<${tokenAddress}>`],
+          typeArguments: [`${swapContract}::swap::LPToken<${pool.id}>`],
           functionArguments: [parseInt(String(Number(value) * 10 ** decimals))],
           function: `${masterchefContract}::masterchef::withdraw`,
         },

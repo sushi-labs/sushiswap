@@ -2,10 +2,9 @@
 
 import { Container, LinkInternal } from '@sushiswap/ui'
 import { useSearchParams } from 'next/navigation'
-
 import { PathnameButton } from '~aptos/(common)/components/PathnameButton'
-import { PoolsFiltersProvider } from '~aptos/pool/ui/pools/filters/pool-filters-provider'
-import { Hero } from '../hero'
+import { Hero } from './hero'
+import { Providers } from './providers'
 
 export default function TabsLayout({
   children,
@@ -14,7 +13,7 @@ export default function TabsLayout({
 
   return (
     <>
-      <Container maxWidth="7xl" className="px-4 pt-20 pb-10">
+      <Container maxWidth="7xl" className="px-4 py-16">
         <Hero />
       </Container>
       <Container maxWidth="7xl" className="px-4">
@@ -25,22 +24,8 @@ export default function TabsLayout({
             href={`/aptos/pool?${searchParams.toString()}`}
           >
             <PathnameButton
-              id="all-pools"
-              pathname={'/aptos/pool'}
-              asChild
-              size="sm"
-            >
-              All Pools
-            </PathnameButton>
-          </LinkInternal>
-          <LinkInternal
-            shallow={true}
-            scroll={false}
-            href={`/aptos/pool/my-positions?${searchParams.toString()}`}
-          >
-            <PathnameButton
               id="my-positions"
-              pathname={'/aptos/pool/my-positions'}
+              pathname={'/aptos/pool'}
               asChild
               size="sm"
             >
@@ -65,7 +50,7 @@ export default function TabsLayout({
       </Container>
       <section className="flex flex-col flex-1">
         <div className="bg-gray-50 dark:bg-white/[0.02] border-t border-accent pt-4 pb-20 h-full">
-          <PoolsFiltersProvider>{children}</PoolsFiltersProvider>
+          <Providers>{children}</Providers>
         </div>
       </section>
     </>

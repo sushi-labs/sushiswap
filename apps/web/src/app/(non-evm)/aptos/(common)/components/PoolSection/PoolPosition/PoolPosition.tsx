@@ -19,7 +19,7 @@ import { PoolPositionDesktop } from './PoolPositionDesktop'
 import { PoolPositionStakedDesktop } from './PoolPositionStakedDesktop'
 
 interface PoolPositionProps {
-  row: Pool
+  row?: Pool
   isLoading: boolean
   stakeAmount: number
 }
@@ -74,16 +74,16 @@ export const PoolPosition: FC<PoolPositionProps> = ({
   const token1Price = useStablePrice({ currency: token1 })
 
   const token0UnstakedInUsd = token0Price
-    ? token0Price * Number(underlying0)
+    ? token0Price * Number(underlying0 ?? 0)
     : 0
   const token1UnstakedInUsd = token1Price
-    ? token1Price * Number(underlying1)
+    ? token1Price * Number(underlying1 ?? 0)
     : 0
   const token0StakedInUsd = token0Price
-    ? token0Price * Number(stakedUnderlying0)
+    ? token0Price * Number(stakedUnderlying0 ?? 0)
     : 0
   const token1StakedInUsd = token1Price
-    ? token1Price * Number(stakedUnderlying1)
+    ? token1Price * Number(stakedUnderlying1 ?? 0)
     : 0
 
   return (

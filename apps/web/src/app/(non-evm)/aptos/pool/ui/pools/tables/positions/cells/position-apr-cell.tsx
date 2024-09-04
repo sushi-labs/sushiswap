@@ -1,7 +1,7 @@
 import { FC } from 'react'
 import { formatPercent } from 'sushi/format'
 import { Pool } from '~aptos/pool/lib/convert-pool-to-sushi-pool'
-import { Row } from '../../shared-cells/types'
+import { Row } from '../../types'
 
 export const PoolMyPositionAprCell: FC<
   Row<{ totalApr1d: number; incentives: Pool }>
