@@ -32,7 +32,7 @@ export const querySchema5 = z.object({
       (val) => ({ message: `Incorrect address for 'to': ${val}` }),
     ),
   ),
-  preferSushi: z.optional(z.coerce.boolean()).default(true),
+  preferSushi: z.coerce.string().transform((val) => val !== 'false'), // default is true
   maxPriceImpact: z.optional(
     z.coerce
       .number()
@@ -44,11 +44,13 @@ export const querySchema5 = z.object({
     .lt(1, 'maxSlippage should be lesser than 1')
     .positive()
     .default(0.005),
-  includeRouteProcessorParams: z.optional(z.coerce.boolean()).default(false),
-  includeTransaction: z.optional(z.coerce.boolean()).default(false),
-  includeTokens: z.optional(z.coerce.boolean()).default(false),
-  includeRoute: z.optional(z.coerce.boolean()).default(false),
-  enableFee: z.optional(z.coerce.boolean()),
+  includeRouteProcessorParams: z.coerce
+    .string()
+    .transform((val) => val !== 'true'), // default is false
+  includeTransaction: z.coerce.string().transform((val) => val !== 'true'), // default is false
+  includeTokens: z.coerce.string().transform((val) => val !== 'true'), // default is false
+  includeRoute: z.coerce.string().transform((val) => val !== 'true'), // default is false
+  enableFee: z.coerce.string().transform((val) => val !== 'true'), // default is false
   fee: z
     .optional(
       z.coerce
@@ -64,7 +66,7 @@ export const querySchema5 = z.object({
     ),
   ),
   feeBy: z.optional(z.nativeEnum(TransferValue)).default(TransferValue.Output),
-  debug: z.optional(z.coerce.boolean()).default(false),
+  debug: z.coerce.string().transform((val) => val !== 'true'), // default is false
 })
 
 export type querySchema5 = z.infer<typeof querySchema5>
