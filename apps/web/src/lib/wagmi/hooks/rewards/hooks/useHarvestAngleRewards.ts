@@ -99,8 +99,8 @@ export const useHarvestAngleRewards = ({
         } catch {}
       }
     },
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-      [writeContractAsync, simulation?.request] as const,
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [writeContractAsync, simulation?.request] as const,
   )
 
   return {
