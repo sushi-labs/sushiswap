@@ -21,6 +21,9 @@ patchedDependencies:
   '@rainbow-me/rainbowkit@2.1.3':
     hash: kb2qto7toymzcybuekyapbgkh4
     path: patches/@rainbow-me__rainbowkit@2.1.3.patch
+  '@walletconnect/logger@2.1.2':
+    hash: rvv5xppc7nrkuugnnppsvoyepa
+    path: patches/@walletconnect__logger@2.1.2.patch
 
 importers:
 
@@ -34746,7 +34749,7 @@ snapshots:
       '@walletconnect/jsonrpc-utils': 1.0.8
       '@walletconnect/jsonrpc-ws-connection': 1.0.14(bufferutil@4.0.8)(utf-8-validate@5.0.10)
       '@walletconnect/keyvaluestorage': 1.1.1(@upstash/redis@1.22.1)
-      '@walletconnect/logger': 2.1.2
+      '@walletconnect/logger': 2.1.2(patch_hash=rvv5xppc7nrkuugnnppsvoyepa)
       '@walletconnect/relay-api': 1.0.10
       '@walletconnect/relay-auth': 1.0.4
       '@walletconnect/safe-json': 1.0.2
@@ -34783,7 +34786,7 @@ snapshots:
       '@walletconnect/jsonrpc-utils': 1.0.8
       '@walletconnect/jsonrpc-ws-connection': 1.0.14(bufferutil@4.0.8)(utf-8-validate@5.0.10)
       '@walletconnect/keyvaluestorage': 1.1.1(@upstash/redis@1.22.1)
-      '@walletconnect/logger': 2.1.2
+      '@walletconnect/logger': 2.1.2(patch_hash=rvv5xppc7nrkuugnnppsvoyepa)
       '@walletconnect/relay-api': 1.0.10
       '@walletconnect/relay-auth': 1.0.4
       '@walletconnect/safe-json': 1.0.2
@@ -34820,7 +34823,7 @@ snapshots:
       '@walletconnect/jsonrpc-utils': 1.0.8
       '@walletconnect/jsonrpc-ws-connection': 1.0.14(bufferutil@4.0.8)(utf-8-validate@6.0.3)
       '@walletconnect/keyvaluestorage': 1.1.1(@upstash/redis@1.22.1)
-      '@walletconnect/logger': 2.1.2
+      '@walletconnect/logger': 2.1.2(patch_hash=rvv5xppc7nrkuugnnppsvoyepa)
       '@walletconnect/relay-api': 1.0.10
       '@walletconnect/relay-auth': 1.0.4
       '@walletconnect/safe-json': 1.0.2
@@ -35089,7 +35092,7 @@ snapshots:
       - '@vercel/kv'
       - supports-color
 
-  '@walletconnect/logger@2.1.2':
+  '@walletconnect/logger@2.1.2(patch_hash=rvv5xppc7nrkuugnnppsvoyepa)':
     dependencies:
       '@walletconnect/safe-json': 1.0.2
       pino: 7.11.0
@@ -35142,7 +35145,7 @@ snapshots:
       '@walletconnect/events': 1.0.1
       '@walletconnect/heartbeat': 1.2.2
       '@walletconnect/jsonrpc-utils': 1.0.8
-      '@walletconnect/logger': 2.1.2
+      '@walletconnect/logger': 2.1.2(patch_hash=rvv5xppc7nrkuugnnppsvoyepa)
       '@walletconnect/time': 1.0.2
       '@walletconnect/types': 2.14.0(@upstash/redis@1.22.1)
       '@walletconnect/utils': 2.14.0(@upstash/redis@1.22.1)
@@ -35171,7 +35174,7 @@ snapshots:
       '@walletconnect/events': 1.0.1
       '@walletconnect/heartbeat': 1.2.2
       '@walletconnect/jsonrpc-utils': 1.0.8
-      '@walletconnect/logger': 2.1.2
+      '@walletconnect/logger': 2.1.2(patch_hash=rvv5xppc7nrkuugnnppsvoyepa)
       '@walletconnect/time': 1.0.2
       '@walletconnect/types': 2.14.0(@upstash/redis@1.22.1)
       '@walletconnect/utils': 2.14.0(@upstash/redis@1.22.1)
@@ -35200,7 +35203,7 @@ snapshots:
       '@walletconnect/events': 1.0.1
       '@walletconnect/heartbeat': 1.2.2
       '@walletconnect/jsonrpc-utils': 1.0.8
-      '@walletconnect/logger': 2.1.2
+      '@walletconnect/logger': 2.1.2(patch_hash=rvv5xppc7nrkuugnnppsvoyepa)
       '@walletconnect/time': 1.0.2
       '@walletconnect/types': 2.14.0(@upstash/redis@1.22.1)
       '@walletconnect/utils': 2.14.0(@upstash/redis@1.22.1)
@@ -35233,7 +35236,7 @@ snapshots:
       '@walletconnect/heartbeat': 1.2.2
       '@walletconnect/jsonrpc-types': 1.0.4
       '@walletconnect/keyvaluestorage': 1.1.1(@upstash/redis@1.22.1)
-      '@walletconnect/logger': 2.1.2
+      '@walletconnect/logger': 2.1.2(patch_hash=rvv5xppc7nrkuugnnppsvoyepa)
       events: 3.3.0
     transitivePeerDependencies:
       - '@azure/app-configuration'
@@ -35256,7 +35259,7 @@ snapshots:
       '@walletconnect/jsonrpc-provider': 1.0.14
       '@walletconnect/jsonrpc-types': 1.0.4
       '@walletconnect/jsonrpc-utils': 1.0.8
-      '@walletconnect/logger': 2.1.2
+      '@walletconnect/logger': 2.1.2(patch_hash=rvv5xppc7nrkuugnnppsvoyepa)
       '@walletconnect/sign-client': 2.14.0(@upstash/redis@1.22.1)(bufferutil@4.0.8)(encoding@0.1.13)(utf-8-validate@5.0.10)
       '@walletconnect/types': 2.14.0(@upstash/redis@1.22.1)
       '@walletconnect/utils': 2.14.0(@upstash/redis@1.22.1)
@@ -35285,7 +35288,7 @@ snapshots:
       '@walletconnect/jsonrpc-provider': 1.0.14
       '@walletconnect/jsonrpc-types': 1.0.4
       '@walletconnect/jsonrpc-utils': 1.0.8
-      '@walletconnect/logger': 2.1.2
+      '@walletconnect/logger': 2.1.2(patch_hash=rvv5xppc7nrkuugnnppsvoyepa)
       '@walletconnect/sign-client': 2.14.0(bufferutil@4.0.8)(encoding@0.1.13)(utf-8-validate@5.0.10)
       '@walletconnect/types': 2.14.0(@upstash/redis@1.22.1)
       '@walletconnect/utils': 2.14.0(@upstash/redis@1.22.1)
@@ -35314,7 +35317,7 @@ snapshots:
       '@walletconnect/jsonrpc-provider': 1.0.14
       '@walletconnect/jsonrpc-types': 1.0.4
       '@walletconnect/jsonrpc-utils': 1.0.8
-      '@walletconnect/logger': 2.1.2
+      '@walletconnect/logger': 2.1.2(patch_hash=rvv5xppc7nrkuugnnppsvoyepa)
       '@walletconnect/sign-client': 2.14.0(bufferutil@4.0.8)(encoding@0.1.13)(utf-8-validate@6.0.3)
       '@walletconnect/types': 2.14.0(@upstash/redis@1.22.1)
       '@walletconnect/utils': 2.14.0(@upstash/redis@1.22.1)
