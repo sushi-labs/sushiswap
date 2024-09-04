@@ -147,11 +147,16 @@ export const useTokenApproval = ({
     },
   })
 
-  const write = useMemo(() => {
-    if (!execute.writeContract || !simulation?.request) return
+  // biome-ignore lint/correctness/useExhaustiveDependencies: Typecheck speedup
+  const write = useMemo(
+    () => {
+      if (!execute.writeContract || !simulation?.request) return
 
-    return () => execute.writeContract(simulation.request)
-  }, [execute.writeContract, simulation?.request])
+      return () => execute.writeContract(simulation.request as any)
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    },
+    [execute.writeContract, simulation?.request] as const,
+  )
 
   return useMemo<[ApprovalState, { write: undefined | (() => void) }]>(() => {
     let state = ApprovalState.UNKNOWN

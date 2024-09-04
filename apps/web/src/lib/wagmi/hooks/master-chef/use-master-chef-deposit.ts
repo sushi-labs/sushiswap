@@ -113,15 +113,20 @@ export const useMasterChefDeposit = ({
     },
   })
 
-  const write = useMemo(() => {
-    if (!simulation) return undefined
+  // biome-ignore lint/correctness/useExhaustiveDependencies: Typecheck speedup
+  const write = useMemo(
+    () => {
+      if (!simulation) return undefined
 
-    return async () => {
-      try {
-        await writeContractAsync(simulation.request)
-      } catch {}
-    }
-  }, [simulation, writeContractAsync])
+      return async () => {
+        try {
+          await writeContractAsync(simulation.request as any)
+        } catch {}
+      }
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    },
+    [simulation?.request, writeContractAsync] as const,
+  )
 
   return {
     ...rest,

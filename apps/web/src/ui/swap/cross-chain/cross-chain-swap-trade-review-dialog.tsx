@@ -315,8 +315,11 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
     },
   })
 
+  // Speeds up typechecking in the useMemo below
+  const _simulation: { request: any } | undefined = simulation
+
   const write = useMemo(() => {
-    if (!simulation) return undefined
+    if (!_simulation?.request) return undefined
 
     return async (confirm: () => void) => {
       setStepStates({
@@ -327,10 +330,10 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
 
       confirm()
       try {
-        await writeContractAsync(simulation.request)
+        await writeContractAsync(_simulation.request)
       } catch {}
     }
-  }, [writeContractAsync, simulation])
+  }, [writeContractAsync, _simulation?.request])
 
   const { data: lzData } = useLayerZeroScanLink({
     tradeId,

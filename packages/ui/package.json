@@ -121,7 +121,7 @@
     "react-dom": "18.2.0",
     "sushi": "workspace:*",
     "tailwindcss": "3.3.2",
-    "typescript": "5.4.5",
+    "typescript": "5.5.4",
     "wagmi": "2.12.2"
   },
   "peerDependencies": {
