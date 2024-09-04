@@ -13,13 +13,11 @@ import {
 import { Slot } from '@radix-ui/react-slot'
 import { GetPools, PoolChainId, Pools } from '@sushiswap/graph-client/data-api'
 import {
-  Badge,
   Button,
   Card,
   CardHeader,
   CardTitle,
   Chip,
-  Currency,
   DataTable,
   DropdownMenu,
   DropdownMenuContent,
@@ -36,7 +34,6 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@sushiswap/ui'
-import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import { ColumnDef, Row, SortingState, TableState } from '@tanstack/react-table'
 import Link from 'next/link'
 import React, { FC, ReactNode, useCallback, useMemo, useState } from 'react'
@@ -44,159 +41,25 @@ import InfiniteScroll from 'react-infinite-scroll-component'
 import { usePoolsInfinite } from 'src/lib/hooks'
 import { ChainKey } from 'sushi/chain'
 import { isMerklChainId } from 'sushi/config'
-import { Native, Token } from 'sushi/currency'
-import { formatNumber, formatUSD } from 'sushi/format'
+import { Native } from 'sushi/currency'
 import { SushiSwapProtocol } from 'sushi/types'
-import { ProtocolBadge } from './PoolNameCell'
 import { usePoolFilters } from './PoolsFiltersProvider'
-import { APR_COLUMN, TVL_COLUMN, VOLUME_1D_COLUMN } from './columns'
-
-const COLUMNS = [
-  {
-    id: 'name',
-    header: 'Name',
-
-    cell: (props) => {
-      const [token0, token1] = useMemo(
-        () => [
-          new Token({
-            chainId: props.row.original.chainId,
-            address: props.row.original.token0Address,
-            decimals: 0,
-          }),
-          new Token({
-            chainId: props.row.original.chainId,
-            address: props.row.original.token1Address,
-            decimals: 0,
-          }),
-        ],
-        [props.row.original],
-      )
-
-      return (
-        <div className="flex items-center gap-5">
-          <div className="flex min-w-[54px]">
-            {token0 && token1 ? (
-              <Badge
-                className="border-2 border-slate-900 rounded-full z-[11]"
-                position="bottom-right"
-                badgeContent={
-                  <NetworkIcon
-                    chainId={props.row.original.chainId}
-                    width={14}
-                    height={14}
-                  />
-                }
-              >
-                <Currency.IconList iconWidth={26} iconHeight={26}>
-                  <Currency.Icon disableLink currency={token0} />
-                  <Currency.Icon disableLink currency={token1} />
-                </Currency.IconList>
-              </Badge>
-            ) : null}
-          </div>
-          <div className="flex flex-col gap-0.5">
-            <span className="flex items-center gap-1 text-sm font-medium text-gray-900 dark:text-slate-50">
-              {props.row.original.name}
-              <div
-                className={
-                  'text-[10px] bg-gray-200 dark:bg-slate-700 rounded-lg px-1 ml-1'
-                }
-              />
-            </span>
-            <div className="flex gap-1">
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    {
-                      ProtocolBadge[
-                        props.row.original.protocol as SushiSwapProtocol
-                      ]
-                    }
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>Protocol version</p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <div className="bg-gray-200 text-gray-700 dark:bg-slate-800 dark:text-slate-300 text-[10px] px-2 rounded-full">
-                      {formatNumber(props.row.original.swapFee * 100)}%
-                    </div>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>Swap fee</p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-              {props.row.original.isIncentivized && (
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <div className="whitespace-nowrap bg-green/20 text-green text-[10px] px-2 rounded-full">
-                        🧑‍🌾{' '}
-                      </div>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>Farm rewards available</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-              )}
-              {props.row.original.isSmartPool && (
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <div className="bg-[#F2E9D6] dark:bg-yellow/60 text-[10px] px-2 rounded-full">
-                        💡
-                      </div>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>Smart Pool available</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-              )}
-            </div>
-          </div>
-        </div>
-      )
-    },
-    size: 300,
-    meta: {
-      skeleton: <SkeletonText fontSize="lg" />,
-    },
-  },
+import {
+  APR_WITH_REWARDS_COLUMN,
+  EXPLORE_NAME_COLUMN_POOL,
+  TRANSACTIONS_1D_COLUMN,
   TVL_COLUMN,
   VOLUME_1D_COLUMN,
-  {
-    id: 'feeUSD1d',
-    header: 'Fees (24h)',
-    accessorFn: (row) => row.feeUSD1d,
-    sortingFn: ({ original: rowA }, { original: rowB }) =>
-      rowA.feeUSD1d - rowB.feeUSD1d,
-    cell: (props) =>
-      formatUSD(props.row.original.feeUSD1d).includes('NaN')
-        ? '$0.00'
-        : formatUSD(props.row.original.feeUSD1d),
-    meta: {
-      skeleton: <SkeletonText fontSize="lg" />,
-    },
-  },
-  {
-    id: 'txCount1d',
-    header: 'Transaction Count (24h)',
-    accessorFn: (row) => row.txCount1d,
-    sortingFn: ({ original: rowA }, { original: rowB }) =>
-      rowA.txCount1d - rowB.txCount1d,
-    cell: (props) => props.row.original.txCount1d,
-    meta: {
-      skeleton: <SkeletonText fontSize="lg" />,
-    },
-  },
-  APR_COLUMN,
+  VOLUME_1W_COLUMN,
+} from './columns'
+
+const COLUMNS = [
+  EXPLORE_NAME_COLUMN_POOL,
+  TVL_COLUMN,
+  VOLUME_1D_COLUMN,
+  VOLUME_1W_COLUMN,
+  TRANSACTIONS_1D_COLUMN,
+  APR_WITH_REWARDS_COLUMN,
   {
     id: 'actions',
     cell: ({ row }) =>
