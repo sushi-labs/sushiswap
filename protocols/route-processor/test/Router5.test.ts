@@ -12,6 +12,7 @@ import { signERC2612Permit } from 'eth-permit'
 import hre from 'hardhat'
 import seedrandom from 'seedrandom'
 import {
+  erc20Abi_approve,
   routeProcessor5Abi_processRoute,
   routeProcessor5Abi_processRouteWithTransferValueInput,
   routeProcessor5Abi_processRouteWithTransferValueOutput,
@@ -66,7 +67,6 @@ import {
   StableSwapRPool,
   getBigInt,
 } from 'sushi/tines'
-import { type Contract } from 'sushi/types'
 import {
   Address,
   Client,
@@ -299,7 +299,7 @@ async function getTestEnvironment() {
   } satisfies {
     chainId: ChainId
     client: Client
-    rp: Contract<typeof routeProcessor5Abi>
+    rp: { address: Address }
     user: HDAccount
     user2: HDAccount
     dataFetcher: DataFetcher
@@ -350,7 +350,7 @@ async function makeSwap(
   if (fromToken instanceof Token && permits.length === 0) {
     await env.client.writeContract({
       chain: null,
-      abi: erc20Abi,
+      abi: erc20Abi_approve,
       address: fromToken.address as Address,
       account: env.user.address,
       functionName: 'approve',
