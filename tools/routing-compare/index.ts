@@ -1,4 +1,4 @@
-import { Address } from 'sushi'
+import { Address, nativeToken } from 'sushi'
 import { ChainId, ChainKey } from 'sushi/chain'
 import {
   //ADDITIONAL_BASES,
@@ -6,7 +6,7 @@ import {
   STABLES,
   publicClientConfig,
 } from 'sushi/config'
-import { Token } from 'sushi/currency'
+import { Token, WNATIVE } from 'sushi/currency'
 import { createPublicClient } from 'viem'
 
 const MAX_PRICE_IMPACT = 0.1 // 10%
@@ -24,7 +24,7 @@ async function SushiRP5RouteUnBiased(
 ): Promise<bigint | undefined> {
   const url =
     `https://api.sushi.com/swap/v5/${chainId}?tokenIn=${from.address}&tokenOut=${to.address}` +
-    `&amount=${amountIn}&maxPriceImpact=${MAX_PRICE_IMPACT}&gasPrice=${gasPrice}&preferSushi=false`
+    `&amount=${amountIn}&maxPriceImpact=${MAX_PRICE_IMPACT}&gasPrice=${gasPrice}`
   const resp = await fetch(url)
   if (resp.status !== 200) return
   const route = (await resp.json()) as {
@@ -95,6 +95,7 @@ const oneInchApiKeys = (process.env['ONE_INCH_API_KEYS'] || '')
   .replaceAll(/ +/g, '')
   .split(',')
 let next1inchKeyIndex = 0
+// unfortunately it is impossible to obtain price impact
 async function OneInchAPIRoute(
   chainId: ChainId,
   from: Token,
@@ -108,7 +109,7 @@ async function OneInchAPIRoute(
 
   const url =
     `https://api.1inch.dev/swap/v6.0/${chainId}/quote?` +
-    `fromTokenAddress=${from.address}&toTokenAddress=${to.address}&amount=${amountIn}` +
+    `src=${from.address}&dst=${to.address}&amount=${amountIn}` +
     `&gasPrice=${gasPrice}&preset=maxReturnResult&isTableEnabled=true`
 
   for (let n = 0; n < 10; ++n) {
@@ -123,7 +124,7 @@ async function OneInchAPIRoute(
       continue
     }
     if (resp.status !== 200) {
-      console.log(resp.status, apiKey, await resp.text())
+      //console.log(resp.status, apiKey, await resp.text())
       return
     }
     const route = (await resp.json()) as {
@@ -211,11 +212,18 @@ async function route(
   return { sushi: proc[0], oneInch: proc[1], odos: proc[2] }
 }
 
+function tokAddrForPrice(tok: Token): Address {
+  if (tok.address === '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE')
+    return WNATIVE[tok.chainId].address
+  return tok.address
+}
+
 export async function getTestTokens(
   chainId: ChainId,
 ): Promise<[Token, number][]> {
   const tokensMap = new Map<Address, Token>(
     [
+      nativeToken(chainId),
       ...(BASES_TO_CHECK_TRADES_AGAINST[chainId] ?? []),
       //...Object.values(ADDITIONAL_BASES[chainId] ?? {}).flat(),
       ...(STABLES[chainId] ?? []),
@@ -229,7 +237,7 @@ export async function getTestTokens(
   }
   const prices = (await pricesResp.json()) as Record<string, number>
   const pricedTokens = tokens
-    .map((t) => [t, prices[t.address]])
+    .map((t) => [t, prices[tokAddrForPrice(t)]])
     .filter(([_, price]) => price !== undefined) as [Token, number][]
   return pricedTokens
 }
@@ -248,6 +256,35 @@ function getTokenAmountWei(
   return BigInt(Math.round((amount$ / price$) * 10 ** tok.decimals))
 }
 
+function analyzeResults(results: Record<string, number | undefined>[]) {
+  const projects: Set<string> = new Set()
+  results.forEach((r) =>
+    Object.entries(r).forEach(([project, res]) => {
+      if (res !== undefined) projects.add(project)
+    }),
+  )
+  const sum: Map<string, number> = new Map()
+  let pairs = 0
+  results.forEach((r) => {
+    const l = Object.entries(r).filter(([project]) => projects.has(project))
+    if (l.every(([_, res]) => res !== undefined)) {
+      l.forEach(([project, res]) => {
+        sum.set(project, (sum.get(project) || 0) + (res as number))
+      })
+      ++pairs
+    }
+  })
+  const max = Array.from(sum.entries()).reduce(
+    (a, [_, sum]) => Math.max(a, sum / pairs),
+    0,
+  )
+  const score = new Map<string, number>()
+  Array.from(sum.entries()).forEach(([project, sum]) =>
+    score.set(project, sum / pairs / max),
+  )
+  return { score, pairs }
+}
+
 export async function checkRoute(chainId: ChainId) {
   const [gasPrice, tokens] = await Promise.all([
     getGasPrice(chainId),
@@ -260,12 +297,12 @@ export async function checkRoute(chainId: ChainId) {
   )
   for (let l = 0; l < CHECK_LEVELS_$.length; ++l) {
     const level = CHECK_LEVELS_$[l] as number
-    console.log(`${level}$`)
     const pairsNum = tokens.length * (tokens.length - 1)
     const pairsToCheckNum = Math.min(pairsNum, MAX_PAIRS_FOR_CHECK)
     const step = pairsNum / pairsToCheckNum
     let currentPairNum = 0
     let nextCheckPairNum = 0
+    const results: Record<string, number | undefined>[] = []
     for (let i = 0; i < tokens.length; ++i) {
       for (let j = 0; j < tokens.length; ++j) {
         if (j === i) continue
@@ -274,59 +311,20 @@ export async function checkRoute(chainId: ChainId) {
           const [tok0, price0] = tokens[i] as [Token, number]
           const [tok1, _price1] = tokens[j] as [Token, number]
           const amountIn = getTokenAmountWei(tok0, price0, level)
-          console.log(
-            tok0.symbol,
-            tok0.decimals,
-            amountIn,
-            tok1.symbol,
-            await route(chainId, tok0, tok1, amountIn, gasPrice),
-          )
+          const res = await route(chainId, tok0, tok1, amountIn, gasPrice)
+          results.push(res)
+          console.log(tok0.symbol, tok0.decimals, amountIn, tok1.symbol, res)
         }
         currentPairNum++
       }
     }
+    const { score, pairs } = analyzeResults(results)
+    console.log(
+      `Swap ${level}$ (${pairs} pairs): ${Array.from(score.entries())
+        .map((e) => `${e[0]}=${e[1]}`)
+        .join(', ')}`,
+    )
   }
 }
 
 checkRoute(1)
-
-/*console.log(
-  'Sushi',
-  await SushiRoute(
-    ChainId.ETHEREUM,
-    USDC[ChainId.ETHEREUM],
-    USDT[ChainId.ETHEREUM],
-    100_000_000n,
-    700_000_000n,
-  ),
-)
-console.log(
-  '1inch',
-  await OneInchRoute(
-    ChainId.ETHEREUM,
-    USDC[ChainId.ETHEREUM],
-    USDT[ChainId.ETHEREUM],
-    100_000_000n,
-    700_000_000n,
-  ),
-)
-console.log(
-  'Odos ',
-  await OdosRoute(
-    ChainId.ETHEREUM,
-    USDC[ChainId.ETHEREUM],
-    USDT[ChainId.ETHEREUM],
-    100_000_000n,
-    700_000_000n,
-  ),
-)
-
-console.log(
-  await route(
-    ChainId.ETHEREUM,
-    USDC[ChainId.ETHEREUM],
-    USDT[ChainId.ETHEREUM],
-    100_000_000n,
-    700_000_000n,
-  ),
-)*/
