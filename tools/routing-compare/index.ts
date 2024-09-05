@@ -12,6 +12,7 @@ import { createPublicClient } from 'viem'
 const MAX_PRICE_IMPACT = 0.1 // 10%
 const MAX_PAIRS_FOR_CHECK = 23
 const CHECK_LEVELS_$ = [100, 1000, 30_000, 1_000_000, 10_000_000]
+const EXCLUDE_NETWORKS = [5, 80001, 4002, 97, 421614, 43113]
 
 const delay = async (ms: number) => new Promise((res) => setTimeout(res, ms))
 
@@ -184,7 +185,10 @@ export async function OdosRoute(
   }
   const route = (await resp.json()) as {
     outAmounts: number
+    priceImpact: number | undefined
   }
+  if (route?.priceImpact === undefined) return
+  if (route?.priceImpact < -MAX_PRICE_IMPACT * 100) return // too high price impact
   if (route?.outAmounts === undefined) return
   return BigInt(route?.outAmounts)
 }
@@ -327,4 +331,12 @@ export async function checkRoute(chainId: ChainId) {
   }
 }
 
-checkRoute(1)
+async function checkRouteAllNetworks() {
+  const chains = Object.values(ChainId)
+  for (let i = 0; i < chains.length; ++i) {
+    if (!EXCLUDE_NETWORKS.includes(chains[i] as number))
+      await checkRoute(chains[i] as ChainId)
+  }
+}
+
+checkRouteAllNetworks()
