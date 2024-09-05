@@ -37,6 +37,9 @@ test.beforeAll(async () => {
       },
       error,
     )
+
+    // Test won't pass anyway
+    throw error
   }
 })
 
