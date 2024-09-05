@@ -38,7 +38,7 @@ export const querySchema5 = z.object({
       (val) => ({ message: `Incorrect address for 'to': ${val}` }),
     ),
   ),
-  preferSushi: z.optional(booleanSchema).default(true),
+  preferSushi: z.optional(booleanSchema).default(false),
   maxPriceImpact: z.optional(
     z.coerce
       .number()
