@@ -11,6 +11,7 @@ import seedrandom from 'seedrandom'
 import {
   erc20Abi_approve,
   routeProcessor3_1Abi_processRoute,
+  routeProcessor3_1Abi_transferValueAndprocessRoute,
   weth9Abi_balanceOf,
 } from 'sushi/abi'
 import { ChainId, chainName } from 'sushi/chain'
@@ -51,7 +52,6 @@ import {
   StableSwapRPool,
   getBigInt,
 } from 'sushi/tines'
-import { type Contract } from 'sushi/types'
 import {
   Address,
   Client,
@@ -510,6 +510,7 @@ async function checkTransferAndRoute(
   const tx = await env.client.writeContract({
     ...env.rp,
     chain: null,
+    abi: routeProcessor3_1Abi_transferValueAndprocessRoute,
     functionName: 'transferValueAndprocessRoute',
     args: [
       env.user2.address,

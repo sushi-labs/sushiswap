@@ -9,7 +9,6 @@ import { ChainId, chainName } from 'sushi/chain'
 import { Native, Token } from 'sushi/currency'
 import { DataFetcher, LiquidityProviders, RPParams, Router } from 'sushi/router'
 import { MultiRoute, RouteStatus } from 'sushi/tines'
-import { type Contract } from 'sushi/types'
 import {
   Address,
   Client,
@@ -147,7 +146,7 @@ async function testTaxTokenBuy(
   rpParams: RPParams,
   account: Address,
 ): Promise<bigint> {
-  const amountOutReal = await env.client.readContract({
+  const amountOutReal = await env.client.simulateContract({
     address: env.rp.address,
     abi: routeProcessor3Abi_processRoute,
     // @ts-ignore
@@ -181,7 +180,7 @@ async function testTaxTokenBuy(
     account,
   })
 
-  return amountOutReal
+  return amountOutReal.result
 }
 
 async function testTaxTokenSell(
@@ -193,15 +192,13 @@ async function testTaxTokenSell(
   await env.client.writeContract({
     address: route.fromToken.address as Address,
     abi: erc20Abi_approve,
-    // @ts-ignore
     functionName: 'approve',
     args: [env.rp.address, route.amountInBI],
     account,
   })
-  const amountOutReal = await env.client.readContract({
+  const amountOutReal = await env.client.simulateContract({
     address: env.rp.address,
     abi: routeProcessor3Abi_processRoute,
-    // @ts-ignore
     functionName: 'processRoute',
     args: [
       rpParams.tokenIn as Address,
@@ -214,7 +211,7 @@ async function testTaxTokenSell(
     value: rpParams.value,
     account,
   })
-  return amountOutReal
+  return amountOutReal.result
 }
 
 async function testTaxToken(args: {

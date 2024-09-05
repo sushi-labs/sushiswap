@@ -9,7 +9,8 @@ import hre from 'hardhat'
 import seedrandom from 'seedrandom'
 import {
   erc20Abi_approve,
-  routeProcessor4Abi,
+  routeProcessor4Abi_processRoute,
+  routeProcessor4Abi_transferValueAndprocessRoute,
   weth9Abi_balanceOf,
 } from 'sushi/abi'
 import { ChainId, chainName } from 'sushi/chain'
@@ -59,7 +60,6 @@ import {
   StableSwapRPool,
   getBigInt,
 } from 'sushi/tines'
-import { type Contract } from 'sushi/types'
 import {
   Address,
   Client,
@@ -152,7 +152,7 @@ async function getTestEnvironment() {
 
   const RouteProcessorTx = await client.deployContract({
     chain: null,
-    abi: routeProcessor4Abi,
+    abi: RouteProcessor4.abi,
     bytecode: RouteProcessor4.bytecode as Hex,
     account: user.address,
     args: [BENTOBOX_ADDRESS[chainId as BentoBoxChainId], []],
@@ -164,7 +164,6 @@ async function getTestEnvironment() {
     throw new Error('RouteProcessorAddress is undefined')
   const RouteProcessor = {
     address: RouteProcessorAddress,
-    abi: routeProcessor4Abi,
   }
 
   // saturate router balance with wei of tokens
@@ -231,7 +230,7 @@ async function getTestEnvironment() {
   } satisfies {
     chainId: ChainId
     client: Client
-    rp: Contract<typeof routeProcessor4Abi>
+    rp: { address: Address }
     user: HDAccount
     user2: HDAccount
     dataFetcher: DataFetcher
@@ -385,6 +384,7 @@ async function makeSwap(
   const tx = await env.client.writeContract({
     chain: null,
     ...env.rp,
+    abi: routeProcessor4Abi_processRoute,
     functionName: 'processRoute',
     args: [
       rpParams.tokenIn as Address,
@@ -558,6 +558,7 @@ async function checkTransferAndRoute(
   const tx = await env.client.writeContract({
     ...env.rp,
     chain: null,
+    abi: routeProcessor4Abi_transferValueAndprocessRoute,
     functionName: 'transferValueAndprocessRoute',
     args: [
       env.user2.address,
