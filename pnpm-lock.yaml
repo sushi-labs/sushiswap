@@ -1123,9 +1123,6 @@ importers:
       '@cryptoalgebra/integral-periphery':
         specifier: 0.2.0
         version: 0.2.0
-      '@ethersproject/abi':
-        specifier: 5.7.0
-        version: 5.7.0
       '@sentry/node':
         specifier: 7.110.0
         version: 7.110.0
@@ -1439,9 +1436,6 @@ importers:
 
   packages/sushi:
     dependencies:
-      '@ethersproject/abi':
-        specifier: 5.7.0
-        version: 5.7.0
       '@uniswap/token-lists':
         specifier: 1.0.0-beta.33
         version: 1.0.0-beta.33
@@ -1494,6 +1488,10 @@ importers:
       zod:
         specifier: 3.23.8
         version: 3.23.8
+
+  packages/sushi/dist/_cjs: {}
+
+  packages/sushi/dist/_esm: {}
 
   packages/telemetry:
     devDependencies:
@@ -1732,9 +1730,6 @@ importers:
 
   protocols/route-processor:
     devDependencies:
-      '@ethersproject/abi':
-        specifier: 5.7.0
-        version: 5.7.0
       '@ethersproject/providers':
         specifier: 5.7.2
         version: 5.7.2(bufferutil@4.0.8)(utf-8-validate@5.0.10)
@@ -1864,9 +1859,6 @@ importers:
       '@cryptoalgebra/integral-periphery':
         specifier: 0.2.0
         version: 0.2.0
-      '@ethersproject/abi':
-        specifier: 5.7.0
-        version: 5.7.0
       '@ethersproject/bytes':
         specifier: ^5.0.0
         version: 5.7.0

@@ -244,7 +244,6 @@
     "test:watch": "vitest dev -c ./test/vitest.config.ts"
   },
   "dependencies": {
-    "@ethersproject/abi": "5.7.0",
     "@uniswap/token-lists": "1.0.0-beta.33",
     "big.js": "6.1.1",
     "date-fns": "3.3.1",

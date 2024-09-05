@@ -27,7 +27,6 @@
     "test_render": "cross-env TS_NODE_TRANSPILE_ONLY=1 mocha ./test/Rendering.test.ts"
   },
   "devDependencies": {
-    "@ethersproject/abi": "5.7.0",
     "@ethersproject/providers": "5.7.2",
     "@ethersproject/solidity": "5.7.0",
     "@nomicfoundation/hardhat-network-helpers": "1.0.8",

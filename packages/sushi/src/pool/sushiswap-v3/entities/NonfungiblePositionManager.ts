@@ -183,7 +183,7 @@ export abstract class NonfungiblePositionManager {
    */
   private constructor() {}
 
-  private static encodeCreate(pool: SushiSwapV3Pool): string {
+  private static encodeCreate(pool: SushiSwapV3Pool): Hex {
     return encodeFunctionData({
       abi: nonfungiblePositionManagerAbi_createAndInitializePoolIfNecessary,
       functionName: 'createAndInitializePoolIfNecessary',
@@ -209,7 +209,7 @@ export abstract class NonfungiblePositionManager {
   ): MethodParameters {
     invariant(position.liquidity > 0n, 'ZERO_LIQUIDITY')
 
-    const calldatas: string[] = []
+    const calldatas: Hex[] = []
 
     // get amounts
     const { amount0: amount0Desired, amount1: amount1Desired } =
@@ -314,8 +314,8 @@ export abstract class NonfungiblePositionManager {
     }
   }
 
-  private static encodeCollect(options: CollectOptions): string[] {
-    const calldatas: string[] = []
+  private static encodeCollect(options: CollectOptions): Hex[] {
+    const calldatas: Hex[] = []
 
     const tokenId = BigInt(options.tokenId)
 
@@ -362,8 +362,7 @@ export abstract class NonfungiblePositionManager {
   public static collectCallParameters(
     options: CollectOptions,
   ): MethodParameters {
-    const calldatas: string[] =
-      NonfungiblePositionManager.encodeCollect(options)
+    const calldatas: Hex[] = NonfungiblePositionManager.encodeCollect(options)
 
     return {
       calldata: Multicall.encodeMulticall(calldatas),
@@ -381,7 +380,7 @@ export abstract class NonfungiblePositionManager {
     position: Position,
     options: RemoveLiquidityOptions,
   ): MethodParameters {
-    const calldatas: string[] = []
+    const calldatas: Hex[] = []
 
     const deadline = BigInt(options.deadline)
     const tokenId = BigInt(options.tokenId)

@@ -33,7 +33,6 @@
   "devDependencies": {
     "@cryptoalgebra/integral-core": "0.2.0",
     "@cryptoalgebra/integral-periphery": "0.2.0",
-    "@ethersproject/abi": "5.7.0",
     "@ethersproject/bytes": "^5.0.0",
     "@ethersproject/providers": "5.7.2",
     "@ethersproject/solidity": "5.7.0",
