@@ -501,12 +501,6 @@ export class Router {
         ],
       })
     } else {
-      if (
-        processFunction !== ProcessFunction.ProcessRouteWithTransferValueInput
-      ) {
-        throw new Error(`Invalid processFunction, shouldn't happen`)
-      }
-
       if (transferValueTo === undefined || amountValueTransfer === undefined) {
         throw new Error('Missing transferValueTo or feeAmount')
       }
@@ -520,20 +514,44 @@ export class Router {
         permits,
         source,
       ) as Hex
-      data = encodeFunctionData({
-        ...RP5processRouteEncodeData[processFunction],
-        args: [
-          transferValueTo,
-          amountValueTransfer,
-          tokenIn,
-          route.amountInBI,
-          tokenOut,
-          amountOutMin,
-          to,
-          routeCode,
-        ],
-      })
+
+      if (
+        processFunction === ProcessFunction.ProcessRouteWithTransferValueInput
+      ) {
+        data = encodeFunctionData({
+          ...RP5processRouteEncodeData[
+            ProcessFunction.ProcessRouteWithTransferValueInput
+          ],
+          args: [
+            transferValueTo,
+            amountValueTransfer,
+            tokenIn,
+            route.amountInBI,
+            tokenOut,
+            amountOutMin,
+            to,
+            routeCode,
+          ],
+        })
+      } else {
+        data = encodeFunctionData({
+          ...RP5processRouteEncodeData[
+            ProcessFunction.ProcessRouteWithTransferValueOutput
+          ],
+          args: [
+            transferValueTo,
+            amountValueTransfer,
+            tokenIn,
+            route.amountInBI,
+            tokenOut,
+            amountOutMin,
+            to,
+            routeCode,
+          ],
+        })
+      }
     }
+
     return {
       tokenIn,
       amountIn: route.amountInBI,

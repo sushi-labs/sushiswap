@@ -23,6 +23,7 @@ import { loadPoolSnapshot } from './utils/poolSnapshot.js'
 const { ethers, network } = hre
 
 const POLLING_INTERVAL = process.env.ALCHEMY_ID ? 1_000 : 10_000
+
 async function getDataFetcherData(
   pool: UniV3PoolInfo,
   existedPools: Set<string>,
