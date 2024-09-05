@@ -73,12 +73,18 @@ import {
 import { mnemonicToAccount } from 'viem/accounts'
 import { hardhat } from 'viem/chains'
 
+import path from 'path'
+import { fileURLToPath } from 'url'
 import RouteProcessor4 from '../artifacts/contracts/RouteProcessor4.sol/RouteProcessor4.json' assert {
   type: 'json',
 }
 import { getAllPoolCodes } from './utils/getAllPoolCodes.js'
 
 const { config, network } = hre
+
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
+const snapshotDir = path.resolve(__dirname, './pool-snapshots/')
 
 // Updating  pools' state allows to test DF updating ability, but makes tests very-very slow (
 const UPDATE_POOL_STATES = false
@@ -146,6 +152,7 @@ async function getTestEnvironment() {
       chainId,
       (network.config as { forking: { blockNumber?: number } }).forking
         ?.blockNumber,
+      snapshotDir,
     )
     poolList.forEach((p) => poolCodes.set(p.pool.uniqueID(), p))
   }
