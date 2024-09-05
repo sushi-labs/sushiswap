@@ -5,8 +5,6 @@ import {
 import { expect } from 'chai'
 import hre from 'hardhat'
 import { createProvider } from 'hardhat/internal/core/providers/construction.js'
-import { routeProcessor3Abi } from 'sushi/abi'
-import { erc20Abi } from 'sushi/abi'
 import { ChainId, chainName } from 'sushi/chain'
 import { Native, Token } from 'sushi/currency'
 import { DataFetcher, LiquidityProviders, RPParams, Router } from 'sushi/router'

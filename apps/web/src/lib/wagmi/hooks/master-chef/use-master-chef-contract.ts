@@ -2,7 +2,6 @@
 
 import { ChefType } from '@sushiswap/client'
 import { useMemo } from 'react'
-import { masterChefV1Abi, masterChefV2Abi, miniChefAbi } from 'sushi/abi'
 import { ChainId } from 'sushi/chain'
 import {
   MASTERCHEF_ADDRESS,
@@ -17,7 +16,6 @@ export const _getMasterChefContractConfig = (
   ({
     chainId,
     address: MASTERCHEF_ADDRESS[chainId] as Address,
-    abi: masterChefV1Abi,
   }) as const
 
 export const getMasterChefContractV2Config = (
@@ -26,7 +24,6 @@ export const getMasterChefContractV2Config = (
   ({
     chainId,
     address: MASTERCHEF_V2_ADDRESS[chainId] as Address,
-    abi: masterChefV2Abi,
   }) as const
 
 export const getMiniChefContractConfig = (
@@ -35,7 +32,6 @@ export const getMiniChefContractConfig = (
   return {
     chainId,
     address: MINICHEF_ADDRESS[chainId] as Address,
-    abi: miniChefAbi,
   } as const
 }
 

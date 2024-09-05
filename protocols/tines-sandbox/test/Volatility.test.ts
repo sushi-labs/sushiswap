@@ -1,8 +1,8 @@
-import { routeProcessor2Abi } from 'sushi/abi'
 import { ChainId } from 'sushi/chain'
 import { http, Address, createPublicClient } from 'viem'
 import { Chain, mainnet } from 'viem/chains'
 
+import { routeProcessor2Abi_processRoute } from 'sushi/abi'
 import { RP3Address } from './Extractor.test.js'
 
 const delay = async (ms: number) => new Promise((res) => setTimeout(res, ms))
@@ -44,7 +44,7 @@ async function volatilityCheck(args: {
             const amountOut = await client
               .simulateContract({
                 address: args.RP3Address,
-                abi: routeProcessor2Abi,
+                abi: routeProcessor2Abi_processRoute,
                 functionName: 'processRoute',
                 args: [
                   '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE',

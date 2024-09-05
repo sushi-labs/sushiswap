@@ -7,7 +7,11 @@ import { expect } from 'chai'
 import { signERC2612Permit } from 'eth-permit'
 import hre from 'hardhat'
 import seedrandom from 'seedrandom'
-import { erc20Abi, routeProcessor4Abi, weth9Abi } from 'sushi/abi'
+import {
+  erc20Abi_approve,
+  routeProcessor4Abi,
+  weth9Abi_balanceOf,
+} from 'sushi/abi'
 import { ChainId, chainName } from 'sushi/chain'
 import { BENTOBOX_ADDRESS, BentoBoxChainId } from 'sushi/config'
 import {
@@ -277,7 +281,7 @@ async function makeSwap(
   if (fromToken instanceof Token && permits.length === 0) {
     await env.client.writeContract({
       chain: null,
-      abi: erc20Abi,
+      abi: erc20Abi_approve,
       address: fromToken.address as Address,
       account: env.user.address,
       functionName: 'approve',
@@ -365,15 +369,10 @@ async function makeSwap(
   // console.log('Call route processor (may take long time for the first launch)...')
 
   let balanceOutBIBefore: bigint
-  let toTokenContract: Contract<typeof weth9Abi> | undefined = undefined
   if (toToken instanceof Token) {
-    toTokenContract = {
-      abi: weth9Abi,
-      address: toToken.address as Address,
-    }
-
     balanceOutBIBefore = await env.client.readContract({
-      ...(toTokenContract as NonNullable<typeof toTokenContract>),
+      abi: weth9Abi_balanceOf,
+      address: toToken.address,
       account: env.user.address,
       functionName: 'balanceOf',
       args: [env.user.address],
@@ -412,10 +411,11 @@ async function makeSwap(
   // const trace = await network.provider.send('debug_traceTransaction', [receipt.transactionHash])
   // console.log("Fetching user's output balance ...")
   let balanceOutBI: bigint
-  if (toTokenContract) {
+  if (toToken instanceof Token) {
     balanceOutBI =
       (await env.client.readContract({
-        ...toTokenContract,
+        abi: weth9Abi_balanceOf,
+        address: toToken.address,
         functionName: 'balanceOf',
         args: [env.user.address],
       })) - balanceOutBIBefore
@@ -497,7 +497,7 @@ async function checkTransferAndRoute(
   if (fromToken instanceof Token) {
     await env.client.writeContract({
       chain: null,
-      abi: erc20Abi,
+      abi: erc20Abi_approve,
       address: fromToken.address as Address,
       account: env.user.address,
       functionName: 'approve',
@@ -542,15 +542,10 @@ async function checkTransferAndRoute(
   })
 
   let balanceOutBIBefore: bigint
-  let toTokenContract: Contract<typeof weth9Abi> | undefined = undefined
   if (toToken instanceof Token) {
-    toTokenContract = {
-      abi: weth9Abi,
-      address: toToken.address as Address,
-    }
-
     balanceOutBIBefore = await env.client.readContract({
-      ...(toTokenContract as NonNullable<typeof toTokenContract>),
+      abi: weth9Abi_balanceOf,
+      address: toToken.address,
       account: env.user.address,
       functionName: 'balanceOf',
       args: [env.user.address],
@@ -588,10 +583,11 @@ async function checkTransferAndRoute(
   }
 
   let balanceOutBI: bigint
-  if (toTokenContract) {
+  if (toToken instanceof Token) {
     balanceOutBI =
       (await env.client.readContract({
-        ...(toTokenContract as NonNullable<typeof toTokenContract>),
+        abi: weth9Abi_balanceOf,
+        address: toToken.address,
         account: env.user.address,
         functionName: 'balanceOf',
         args: [env.user.address],

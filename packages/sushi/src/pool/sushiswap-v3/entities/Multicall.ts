@@ -1,8 +1,8 @@
 import { Interface } from '@ethersproject/abi'
-import { multicallAbi } from '../../../abi/multicallAbi.js'
+import { multicallAbi_multicall } from '../../../abi/multicallAbi/multicallAbi_multicall.js'
 
 export abstract class Multicall {
-  public static INTERFACE: Interface = new Interface(multicallAbi)
+  public static INTERFACE: Interface = new Interface(multicallAbi_multicall)
 
   /**
    * Cannot be constructed.

@@ -1,21 +1,23 @@
-import { Interface } from '@ethersproject/abi'
-import { selfPermitAbi } from '../../../abi/selfPermitAbi.js'
-import { toHex } from '../../../convert/index.js'
+import { type Hex, encodeFunctionData } from 'viem'
+import {
+  selfPermitAbi_selfPermit,
+  selfPermitAbi_selfPermitAllowed,
+} from '../../../abi/selfPermitAbi/index.js'
 import { Token } from '../../../currency/index.js'
 import type { BigintIsh } from '../../../math/index.js'
 
 export interface StandardPermitArguments {
   v: 0 | 1 | 27 | 28
-  r: string
-  s: string
+  r: Hex
+  s: Hex
   amount: BigintIsh
   deadline: BigintIsh
 }
 
 export interface AllowedPermitArguments {
   v: 0 | 1 | 27 | 28
-  r: string
-  s: string
+  r: Hex
+  s: Hex
   nonce: BigintIsh
   expiry: BigintIsh
 }
@@ -29,30 +31,38 @@ function isAllowedPermit(
 }
 
 export abstract class SelfPermit {
-  public static INTERFACE: Interface = new Interface(selfPermitAbi)
-
   /**
    * Cannot be constructed.
    */
   private constructor() {}
 
   public static encodePermit(token: Token, options: PermitOptions) {
-    return isAllowedPermit(options)
-      ? SelfPermit.INTERFACE.encodeFunctionData('selfPermitAllowed', [
+    if (isAllowedPermit(options)) {
+      return encodeFunctionData({
+        abi: selfPermitAbi_selfPermitAllowed,
+        functionName: 'selfPermitAllowed',
+        args: [
           token.address,
-          toHex(options.nonce),
-          toHex(options.expiry),
+          BigInt(options.nonce),
+          BigInt(options.expiry),
           options.v,
           options.r,
           options.s,
-        ])
-      : SelfPermit.INTERFACE.encodeFunctionData('selfPermit', [
-          token.address,
-          toHex(options.amount),
-          toHex(options.deadline),
-          options.v,
-          options.r,
-          options.s,
-        ])
+        ],
+      })
+    }
+
+    return encodeFunctionData({
+      abi: selfPermitAbi_selfPermit,
+      functionName: 'selfPermit',
+      args: [
+        token.address,
+        BigInt(options.amount),
+        BigInt(options.deadline),
+        options.v,
+        options.r,
+        options.s,
+      ],
+    })
   }
 }

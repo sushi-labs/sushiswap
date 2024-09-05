@@ -1,4 +1,4 @@
-import { erc20Abi } from '../abi/erc20Abi.js'
+import { erc20Abi } from 'viem'
 
 export const erc20Contract = {
   abi: erc20Abi,

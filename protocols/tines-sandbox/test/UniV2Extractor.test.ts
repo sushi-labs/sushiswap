@@ -5,7 +5,6 @@ import {
   TokenManager,
   UniV2Extractor,
 } from '@sushiswap/extractor'
-import { routeProcessor2Abi } from 'sushi/abi'
 import { ChainId } from 'sushi/chain'
 import { BASES_TO_CHECK_TRADES_AGAINST } from 'sushi/config'
 import { Native } from 'sushi/currency'
@@ -19,6 +18,7 @@ import { RouteStatus } from 'sushi/tines'
 import { http, Address, createPublicClient } from 'viem'
 import { Chain, mainnet } from 'viem/chains'
 import { RP3Address } from './UniV3Extractor.test.js'
+import { routeProcessor2Abi_processRoute } from 'sushi/abi'
 
 const delay = async (ms: number) => new Promise((res) => setTimeout(res, ms))
 
@@ -109,7 +109,7 @@ async function startInfinitTest(args: {
         const amountOutReal = await client
           .simulateContract({
             address: args.RP3Address,
-            abi: routeProcessor2Abi,
+            abi: routeProcessor2Abi_processRoute,
             functionName: 'processRoute',
             args: [
               rpParams.tokenIn as Address,

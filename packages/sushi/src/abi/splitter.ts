@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import { exec } from 'node:child_process'
 import { mkdirSync, readdirSync, rmSync, writeFileSync } from 'node:fs'
 import type { Abi } from 'viem'

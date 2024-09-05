@@ -1,5 +1,6 @@
 import type { Address, Hex, PublicClient } from 'viem'
-import { erc20Abi, tickLensAbi } from '../../abi/index.js'
+import { erc20Abi_balanceOf } from '../../abi/erc20Abi/index.js'
+import { tickLensAbi_getPopulatedTicksInWord } from '../../abi/tickLensAbi/index.js'
 import { ChainId } from '../../chain/index.js'
 import { SushiSwapV3FeeAmount, TICK_SPACINGS } from '../../config/index.js'
 import { type Currency, Token, type Type } from '../../currency/index.js'
@@ -195,7 +196,7 @@ export abstract class UniswapV3BaseProvider extends LiquidityProvider {
             chainId: this.chainId,
             address: pool.token0.wrapped.address as Address,
             args: [pool.address as Address],
-            abi: erc20Abi,
+            abi: erc20Abi_balanceOf,
             functionName: 'balanceOf',
           }) as const,
       ),
@@ -211,7 +212,7 @@ export abstract class UniswapV3BaseProvider extends LiquidityProvider {
             chainId: this.chainId,
             address: pool.token1.wrapped.address as Address,
             args: [pool.address as Address],
-            abi: erc20Abi,
+            abi: erc20Abi_balanceOf,
             functionName: 'balanceOf',
           }) as const,
       ),
@@ -243,7 +244,7 @@ export abstract class UniswapV3BaseProvider extends LiquidityProvider {
           this.chainId as keyof typeof this.tickLens
         ] as Address,
         args: [pool.address, j] as const,
-        abi: tickLensAbi,
+        abi: tickLensAbi_getPopulatedTicksInWord,
         functionName: 'getPopulatedTicksInWord' as const,
         index: i,
       }))

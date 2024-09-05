@@ -1,6 +1,9 @@
 import { readContracts } from '@wagmi/core/actions'
-import { erc20Abi } from 'sushi/abi'
-import { uniswapV3PoolAbi } from 'sushi/abi'
+import {
+  erc20Abi_balanceOf,
+  uniswapV3PoolAbi_liquidity,
+  uniswapV3PoolAbi_slot0,
+} from 'sushi/abi'
 import { ChainId } from 'sushi/chain'
 import {
   SUSHISWAP_V3_FACTORY_ADDRESS,
@@ -133,7 +136,7 @@ export const getV3Pools = async (
           tokenB: currencyB.wrapped,
           fee,
         }),
-        abi: uniswapV3PoolAbi,
+        abi: uniswapV3PoolAbi_slot0,
         functionName: 'slot0',
       }) as const,
   )
@@ -171,7 +174,7 @@ export const getV3Pools = async (
       ({
         chainId,
         address: poolData.address as Address,
-        abi: uniswapV3PoolAbi,
+        abi: uniswapV3PoolAbi_liquidity,
         functionName: 'liquidity',
       }) as const,
   )
@@ -182,7 +185,7 @@ export const getV3Pools = async (
         chainId,
         address: poolData.token0.wrapped.address as Address,
         args: [poolData.address as Address],
-        abi: erc20Abi,
+        abi: erc20Abi_balanceOf,
         functionName: 'balanceOf',
       }) as const,
   )
@@ -193,7 +196,7 @@ export const getV3Pools = async (
         chainId,
         address: poolData.token1.wrapped.address as Address,
         args: [poolData.address as Address],
-        abi: erc20Abi,
+        abi: erc20Abi_balanceOf,
         functionName: 'balanceOf',
       }) as const,
   )
