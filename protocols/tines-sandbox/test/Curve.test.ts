@@ -13,7 +13,6 @@ import {
   gatherPoolsFromCurveAPI,
   getPoolRatio,
 } from 'sushi'
-import { erc20Abi } from 'sushi/abi'
 import {
   CurveMultitokenPool,
   CurvePool,
@@ -28,6 +27,13 @@ import { readContract, simulateContract } from 'viem/actions'
 
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
+import {
+  erc20Abi_approve,
+  erc20Abi_balanceOf,
+  erc20Abi_decimals,
+  erc20Abi_name,
+  erc20Abi_symbol,
+} from 'sushi/abi'
 import { PoolReporter } from '../src/PoolReporter.js'
 import { TestConfig, getTestConfig } from '../src/getTestConfig.js'
 import { setTokenBalance } from '../src/setTokenBalance.js'
@@ -133,7 +139,7 @@ function expectCloseValues(
 interface PoolInfo {
   poolType: CurvePoolType
   poolContract: Contract<any>
-  tokenContracts: (Contract<typeof erc20Abi> | undefined)[]
+  tokenContracts: Array<{ address: Address } | undefined>
   poolTines: (CurvePool | CurveMultitokenPool | undefined)[][]
   currentFlow: number[][][]
   user: Address
@@ -151,7 +157,7 @@ async function createCurvePoolInfo(
     abi: curvePoolABI[poolType],
   }
 
-  const tokenContracts: Array<Contract<typeof erc20Abi> | undefined> = []
+  const tokenContracts: Array<{ address: Address } | undefined> = []
   const tokenTines: RToken[] = []
   for (let i = 0n; i < 100n; ++i) {
     let token: Address
@@ -177,7 +183,6 @@ async function createCurvePoolInfo(
     } else {
       const tokenContract = {
         address: token,
-        abi: erc20Abi,
       }
 
       if (initialBalance !== undefined) {
@@ -191,7 +196,8 @@ async function createCurvePoolInfo(
 
         try {
           await (config.client as WalletClient).writeContract({
-            ...tokenContract,
+            address: token,
+            abi: erc20Abi_approve,
             account: config.user.address,
             functionName: 'approve',
             args: [poolAddress, initialBalance],
@@ -206,15 +212,18 @@ async function createCurvePoolInfo(
       tokenContracts.push(tokenContract)
 
       const decimals = await readContract(config.client, {
-        ...tokenContract,
+        address: token,
+        abi: erc20Abi_decimals,
         functionName: 'decimals',
       })
       const symbol = await readContract(config.client, {
-        ...tokenContract,
+        address: token,
+        abi: erc20Abi_symbol,
         functionName: 'symbol',
       })
       const name = await readContract(config.client, {
-        ...tokenContract,
+        address: token,
+        abi: erc20Abi_name,
         functionName: 'name',
       })
       tokenTines.push({
@@ -271,6 +280,7 @@ async function createCurvePoolInfo(
   console.assert(n === pools.length)
 
   const snapshot = await takeSnapshot()
+
   return {
     poolType,
     poolContract,
@@ -308,7 +318,7 @@ async function prepareTokens(
     try {
       await (config.client as WalletClient).writeContract({
         address: token,
-        abi: erc20Abi,
+        abi: erc20Abi_approve,
         account: config.user.address,
         functionName: 'approve',
         args: [poolAddress, initialBalance],
@@ -361,6 +371,7 @@ async function checkSwap(
     if (tokenContractTo !== undefined) {
       balanceBefore = await readContract(config.client, {
         ...tokenContractTo,
+        abi: erc20Abi_balanceOf,
         functionName: 'balanceOf',
         args: [poolInfo.user],
       })
@@ -379,6 +390,7 @@ async function checkSwap(
     if (tokenContractTo !== undefined) {
       balanceAfter = await readContract(config.client, {
         ...tokenContractTo,
+        abi: erc20Abi_balanceOf,
         functionName: 'balanceOf',
         args: [poolInfo.user],
       })
@@ -403,6 +415,7 @@ async function makeSwap(
   if (tokenContractTo !== undefined) {
     balanceBefore = await readContract(config.client, {
       ...tokenContractTo,
+      abi: erc20Abi_balanceOf,
       functionName: 'balanceOf',
       args: [poolInfo.user],
     })
@@ -421,6 +434,7 @@ async function makeSwap(
   if (tokenContractTo !== undefined) {
     balanceAfter = await readContract(config.client, {
       ...tokenContractTo,
+      abi: erc20Abi_balanceOf,
       functionName: 'balanceOf',
       args: [poolInfo.user],
     })

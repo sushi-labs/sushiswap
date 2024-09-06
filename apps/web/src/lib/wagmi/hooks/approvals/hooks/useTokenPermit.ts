@@ -4,7 +4,7 @@ import { TTLStorageKey } from '@sushiswap/hooks'
 import { createErrorToast } from '@sushiswap/notifications'
 // import * as Sentry from '@sentry/nextjs'
 import { useCallback, useMemo, useState } from 'react'
-import { eip2612Abi } from 'sushi/abi'
+import { eip2612Abi_nonces } from 'sushi/abi'
 import { ChainId } from 'sushi/chain'
 import { Amount, Type } from 'sushi/currency'
 import { Address, UserRejectedRequestError, hexToSignature } from 'viem'
@@ -92,9 +92,9 @@ export const useTokenPermit = ({
 
   const { data: nonce, isLoading: isNonceLoading } = useReadContract({
     address: amount?.currency.wrapped.address,
-    abi: eip2612Abi,
+    abi: eip2612Abi_nonces,
     functionName: 'nonces',
-    args: [address],
+    args: address ? [address] : undefined,
     query: {
       enabled: Boolean(enabled && amount && address),
     },

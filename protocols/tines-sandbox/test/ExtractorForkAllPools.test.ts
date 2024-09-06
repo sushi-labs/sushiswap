@@ -17,7 +17,7 @@ import {
 import { expect } from 'chai'
 import { EthereumProvider } from 'hardhat/types'
 import seedrandom from 'seedrandom'
-import { erc20Abi } from 'sushi/abi'
+import { erc20Abi_approve, erc20Abi_balanceOf } from 'sushi/abi'
 import { ChainId } from 'sushi/chain'
 import { BASES_TO_CHECK_TRADES_AGAINST } from 'sushi/config'
 import { Token } from 'sushi/currency'
@@ -96,7 +96,7 @@ async function prepareToken(
   if (isNative(token.address)) return initBalance
 
   const res = await setTokenBalance(
-    token.address,
+    token.address as Address,
     user,
     initBalance,
     client,
@@ -110,7 +110,7 @@ async function prepareToken(
   try {
     await client.writeContract({
       address: token.address as Address,
-      abi: erc20Abi,
+      abi: erc20Abi_approve,
       account: user,
       functionName: 'approve',
       args: [approveTo, initBalance],
@@ -136,7 +136,7 @@ async function getBalance(
 ): Promise<bigint> {
   if (isNative(token)) return await client.getBalance({ address: user })
   return await client.readContract({
-    abi: erc20Abi,
+    abi: erc20Abi_balanceOf,
     address: token,
     functionName: 'balanceOf',
     args: [user],

@@ -9,7 +9,7 @@ import {
   TokenManager,
 } from '@sushiswap/extractor'
 import { SlipstreamFactoryV3 } from '@sushiswap/extractor/dist/SlipstreamV3Extractor'
-import { routeProcessor5Abi } from 'sushi/abi'
+import { routeProcessor5Abi_processRoute } from 'sushi/abi'
 import { ChainId } from 'sushi/chain'
 import {
   BASES_TO_CHECK_TRADES_AGAINST,
@@ -256,7 +256,7 @@ async function startInfinitTest(args: {
       try {
         const { result: amountOutReal } = (await client.simulateContract({
           address: args.RPAddress,
-          abi: routeProcessor5Abi,
+          abi: routeProcessor5Abi_processRoute,
           functionName: 'processRoute',
           args: [
             rpParams.tokenIn as Address,
@@ -298,7 +298,7 @@ async function startInfinitTest(args: {
   }
 }
 
-it.skip('Extractor Ethereum infinite work test (Curve)', async () => {
+it('Extractor Ethereum infinite work test (Curve)', async () => {
   await startInfinitTest({
     providerURL: `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_ID}`,
     chain: mainnet,

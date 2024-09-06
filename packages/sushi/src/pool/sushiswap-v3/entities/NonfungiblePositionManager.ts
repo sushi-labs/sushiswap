@@ -1,7 +1,15 @@
-import { Interface } from '@ethersproject/abi'
 import invariant from 'tiny-invariant'
-import { zeroAddress } from 'viem'
-import { nonfungiblePositionManagerAbi } from '../../../abi/nonfungiblePositionManagerAbi.js'
+import { type Hex, encodeFunctionData, maxUint128, zeroAddress } from 'viem'
+import {
+  nonfungiblePositionManagerAbi_burn,
+  nonfungiblePositionManagerAbi_collect,
+  nonfungiblePositionManagerAbi_createAndInitializePoolIfNecessary,
+  nonfungiblePositionManagerAbi_decreaseLiquidity,
+  nonfungiblePositionManagerAbi_increaseLiquidity,
+  nonfungiblePositionManagerAbi_mint,
+  nonfungiblePositionManagerAbi_permit,
+  nonfungiblePositionManagerAbi_safeTransferFrom,
+} from '../../../abi/nonfungiblePositionManagerAbi/index.js'
 import { toHex } from '../../../convert/index.js'
 import {
   Amount as CurrencyAmount,
@@ -17,8 +25,6 @@ import { Payments } from './Payments.js'
 import { Position } from './Position.js'
 import { type PermitOptions, SelfPermit } from './SelfPermit.js'
 import { SushiSwapV3Pool } from './SushiSwapV3Pool.js'
-
-const MaxUint128 = toHex(2n ** 128n - 1n)
 
 export interface MintSpecificOptions {
   /**
@@ -93,7 +99,7 @@ export interface SafeTransferOptions {
   /**
    * The optional parameter that passes data to the `onERC721Received` call for the staker
    */
-  data?: string
+  data?: Hex
 }
 
 // type guard
@@ -125,8 +131,8 @@ export interface CollectOptions {
 
 export interface NFTPermitOptions {
   v: 0 | 1 | 27 | 28
-  r: string
-  s: string
+  r: Hex
+  s: Hex
   deadline: BigintIsh
   spender: string
 }
@@ -172,25 +178,22 @@ export interface RemoveLiquidityOptions {
 }
 
 export abstract class NonfungiblePositionManager {
-  public static INTERFACE: Interface = new Interface(
-    nonfungiblePositionManagerAbi,
-  )
-
   /**
    * Cannot be constructed.
    */
   private constructor() {}
 
-  private static encodeCreate(pool: SushiSwapV3Pool): string {
-    return NonfungiblePositionManager.INTERFACE.encodeFunctionData(
-      'createAndInitializePoolIfNecessary',
-      [
+  private static encodeCreate(pool: SushiSwapV3Pool): Hex {
+    return encodeFunctionData({
+      abi: nonfungiblePositionManagerAbi_createAndInitializePoolIfNecessary,
+      functionName: 'createAndInitializePoolIfNecessary',
+      args: [
         pool.token0.address,
         pool.token1.address,
         pool.fee,
-        toHex(pool.sqrtRatioX96),
+        pool.sqrtRatioX96,
       ],
-    )
+    })
   }
 
   public static createCallParameters(pool: SushiSwapV3Pool): MethodParameters {
@@ -206,7 +209,7 @@ export abstract class NonfungiblePositionManager {
   ): MethodParameters {
     invariant(position.liquidity > 0n, 'ZERO_LIQUIDITY')
 
-    const calldatas: string[] = []
+    const calldatas: Hex[] = []
 
     // get amounts
     const { amount0: amount0Desired, amount1: amount1Desired } =
@@ -216,10 +219,10 @@ export abstract class NonfungiblePositionManager {
     const minimumAmounts = position.mintAmountsWithSlippage(
       options.slippageTolerance,
     )
-    const amount0Min = toHex(minimumAmounts.amount0)
-    const amount1Min = toHex(minimumAmounts.amount1)
+    const amount0Min = minimumAmounts.amount0
+    const amount1Min = minimumAmounts.amount1
 
-    const deadline = toHex(options.deadline)
+    const deadline = BigInt(options.deadline)
 
     // create pool if needed
     if (isMint(options) && options.createPool) {
@@ -240,41 +243,46 @@ export abstract class NonfungiblePositionManager {
 
     // mint
     if (isMint(options)) {
-      const recipient: string = validateAndParseAddress(options.recipient)
+      const recipient = validateAndParseAddress(options.recipient)
 
       calldatas.push(
-        NonfungiblePositionManager.INTERFACE.encodeFunctionData('mint', [
-          {
-            token0: position.pool.token0.address,
-            token1: position.pool.token1.address,
-            fee: position.pool.fee,
-            tickLower: position.tickLower,
-            tickUpper: position.tickUpper,
-            amount0Desired: toHex(amount0Desired),
-            amount1Desired: toHex(amount1Desired),
-            amount0Min,
-            amount1Min,
-            recipient,
-            deadline,
-          },
-        ]),
+        encodeFunctionData({
+          abi: nonfungiblePositionManagerAbi_mint,
+          functionName: 'mint',
+          args: [
+            {
+              token0: position.pool.token0.address,
+              token1: position.pool.token1.address,
+              fee: position.pool.fee,
+              tickLower: position.tickLower,
+              tickUpper: position.tickUpper,
+              amount0Desired: amount0Desired,
+              amount1Desired: amount1Desired,
+              amount0Min,
+              amount1Min,
+              recipient,
+              deadline,
+            },
+          ],
+        }),
       )
     } else {
       // increase
       calldatas.push(
-        NonfungiblePositionManager.INTERFACE.encodeFunctionData(
-          'increaseLiquidity',
-          [
+        encodeFunctionData({
+          abi: nonfungiblePositionManagerAbi_increaseLiquidity,
+          functionName: 'increaseLiquidity',
+          args: [
             {
-              tokenId: toHex(options.tokenId),
-              amount0Desired: toHex(amount0Desired),
-              amount1Desired: toHex(amount1Desired),
+              tokenId: BigInt(options.tokenId),
+              amount0Desired: amount0Desired,
+              amount1Desired: amount1Desired,
               amount0Min,
               amount1Min,
               deadline,
             },
           ],
-        ),
+        }),
       )
     }
 
@@ -306,10 +314,10 @@ export abstract class NonfungiblePositionManager {
     }
   }
 
-  private static encodeCollect(options: CollectOptions): string[] {
-    const calldatas: string[] = []
+  private static encodeCollect(options: CollectOptions): Hex[] {
+    const calldatas: Hex[] = []
 
-    const tokenId = toHex(options.tokenId)
+    const tokenId = BigInt(options.tokenId)
 
     const involvesETH =
       options.expectedCurrencyOwed0.currency.isNative ||
@@ -319,14 +327,18 @@ export abstract class NonfungiblePositionManager {
 
     // collect
     calldatas.push(
-      NonfungiblePositionManager.INTERFACE.encodeFunctionData('collect', [
-        {
-          tokenId,
-          recipient: involvesETH ? zeroAddress : recipient,
-          amount0Max: MaxUint128,
-          amount1Max: MaxUint128,
-        },
-      ]),
+      encodeFunctionData({
+        abi: nonfungiblePositionManagerAbi_collect,
+        functionName: 'collect',
+        args: [
+          {
+            tokenId,
+            recipient: involvesETH ? zeroAddress : recipient,
+            amount0Max: maxUint128,
+            amount1Max: maxUint128,
+          },
+        ],
+      }),
     )
 
     if (involvesETH) {
@@ -350,8 +362,7 @@ export abstract class NonfungiblePositionManager {
   public static collectCallParameters(
     options: CollectOptions,
   ): MethodParameters {
-    const calldatas: string[] =
-      NonfungiblePositionManager.encodeCollect(options)
+    const calldatas: Hex[] = NonfungiblePositionManager.encodeCollect(options)
 
     return {
       calldata: Multicall.encodeMulticall(calldatas),
@@ -369,10 +380,10 @@ export abstract class NonfungiblePositionManager {
     position: Position,
     options: RemoveLiquidityOptions,
   ): MethodParameters {
-    const calldatas: string[] = []
+    const calldatas: Hex[] = []
 
-    const deadline = toHex(options.deadline)
-    const tokenId = toHex(options.tokenId)
+    const deadline = BigInt(options.deadline)
+    const tokenId = BigInt(options.tokenId)
 
     // construct a partial position with a percentage of liquidity
     const partialPosition = new Position({
@@ -390,31 +401,36 @@ export abstract class NonfungiblePositionManager {
 
     if (options.permit) {
       calldatas.push(
-        NonfungiblePositionManager.INTERFACE.encodeFunctionData('permit', [
-          validateAndParseAddress(options.permit.spender),
-          tokenId,
-          toHex(options.permit.deadline),
-          options.permit.v,
-          options.permit.r,
-          options.permit.s,
-        ]),
+        encodeFunctionData({
+          abi: nonfungiblePositionManagerAbi_permit,
+          functionName: 'permit',
+          args: [
+            validateAndParseAddress(options.permit.spender),
+            tokenId,
+            deadline,
+            options.permit.v,
+            options.permit.r,
+            options.permit.s,
+          ],
+        }),
       )
     }
 
     // remove liquidity
     calldatas.push(
-      NonfungiblePositionManager.INTERFACE.encodeFunctionData(
-        'decreaseLiquidity',
-        [
+      encodeFunctionData({
+        abi: nonfungiblePositionManagerAbi_decreaseLiquidity,
+        functionName: 'decreaseLiquidity',
+        args: [
           {
             tokenId,
-            liquidity: toHex(partialPosition.liquidity),
-            amount0Min: toHex(amount0Min),
-            amount1Min: toHex(amount1Min),
+            liquidity: partialPosition.liquidity,
+            amount0Min,
+            amount1Min,
             deadline,
           },
         ],
-      ),
+      }),
     )
 
     const { expectedCurrencyOwed0, expectedCurrencyOwed1, ...rest } =
@@ -442,9 +458,11 @@ export abstract class NonfungiblePositionManager {
     if (options.liquidityPercentage.equalTo(1n)) {
       if (options.burnToken) {
         calldatas.push(
-          NonfungiblePositionManager.INTERFACE.encodeFunctionData('burn', [
-            tokenId,
-          ]),
+          encodeFunctionData({
+            abi: nonfungiblePositionManagerAbi_burn,
+            functionName: 'burn',
+            args: [tokenId],
+          }),
         )
       }
     } else {
@@ -465,15 +483,17 @@ export abstract class NonfungiblePositionManager {
 
     let calldata: string
     if (options.data) {
-      calldata = NonfungiblePositionManager.INTERFACE.encodeFunctionData(
-        'safeTransferFrom(address,address,uint256,bytes)',
-        [sender, recipient, toHex(options.tokenId), options.data],
-      )
+      calldata = encodeFunctionData({
+        abi: nonfungiblePositionManagerAbi_safeTransferFrom,
+        functionName: 'safeTransferFrom',
+        args: [sender, recipient, BigInt(options.tokenId), options.data],
+      })
     } else {
-      calldata = NonfungiblePositionManager.INTERFACE.encodeFunctionData(
-        'safeTransferFrom(address,address,uint256)',
-        [sender, recipient, toHex(options.tokenId)],
-      )
+      calldata = encodeFunctionData({
+        abi: nonfungiblePositionManagerAbi_safeTransferFrom,
+        functionName: 'safeTransferFrom',
+        args: [sender, recipient, BigInt(options.tokenId)],
+      })
     }
     return {
       calldata: calldata,

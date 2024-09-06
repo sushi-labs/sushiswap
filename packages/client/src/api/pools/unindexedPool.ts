@@ -1,8 +1,19 @@
 import { Protocol } from '@sushiswap/database'
-import { erc20Abi, uniswapV2PairAbi, v3baseAbi } from 'sushi/abi'
 import { publicClientConfig } from 'sushi/config'
 import { type Address, type PublicClient, createPublicClient } from 'viem'
 
+import {
+  erc20Abi_decimals,
+  erc20Abi_name,
+  erc20Abi_symbol,
+  uniswapV2PairAbi_token0,
+  uniswapV2PairAbi_token1,
+  uniswapV2PairAbi_totalSupply,
+  v3baseAbi_fee,
+  v3baseAbi_liquidity,
+  v3baseAbi_token0,
+  v3baseAbi_token1,
+} from 'sushi/abi'
 import { getChainIdAddressFromId } from 'sushi/format'
 import { type ID, SushiSwapProtocol } from 'sushi/types'
 import type { getPoolFromDB } from './pool'
@@ -27,23 +38,18 @@ async function getTokenInfo({ client, address }: GetPoolArgs) {
     contracts: [
       {
         address: address,
-        abi: erc20Abi,
+        abi: erc20Abi_name,
         functionName: 'name',
       },
       {
         address: address,
-        abi: erc20Abi,
+        abi: erc20Abi_symbol,
         functionName: 'symbol',
       },
       {
         address: address,
-        abi: erc20Abi,
+        abi: erc20Abi_decimals,
         functionName: 'decimals',
-      },
-      {
-        address: address,
-        abi: erc20Abi,
-        functionName: 'name',
       },
     ],
   })
@@ -57,17 +63,17 @@ async function getV2Pool({ client, address }: GetPoolArgs): Promise<Pool> {
     contracts: [
       {
         address: address,
-        abi: uniswapV2PairAbi,
+        abi: uniswapV2PairAbi_token0,
         functionName: 'token0',
       },
       {
         address: address,
-        abi: uniswapV2PairAbi,
+        abi: uniswapV2PairAbi_token1,
         functionName: 'token1',
       },
       {
         address: address,
-        abi: uniswapV2PairAbi,
+        abi: uniswapV2PairAbi_totalSupply,
         functionName: 'totalSupply',
       },
     ],
@@ -88,22 +94,22 @@ async function getV3Pool({ client, address }: GetPoolArgs): Promise<Pool> {
     contracts: [
       {
         address: address,
-        abi: v3baseAbi,
+        abi: v3baseAbi_token0,
         functionName: 'token0',
       },
       {
         address: address,
-        abi: v3baseAbi,
+        abi: v3baseAbi_token1,
         functionName: 'token1',
       },
       {
         address: address,
-        abi: v3baseAbi,
+        abi: v3baseAbi_liquidity,
         functionName: 'liquidity',
       },
       {
         address: address,
-        abi: v3baseAbi,
+        abi: v3baseAbi_fee,
         functionName: 'fee',
       },
     ],

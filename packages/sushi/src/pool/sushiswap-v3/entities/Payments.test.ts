@@ -8,7 +8,7 @@ const amount = 123n
 
 const feeOptions = {
   fee: new Percent(1, 1000),
-  recipient: '0x0000000000000000000000000000000000000009',
+  recipient: '0x0000000000000000000000000000000000000009' as const,
 }
 
 const token = new Token({

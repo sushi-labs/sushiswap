@@ -1,6 +1,5 @@
-import { defaultAbiCoder } from '@ethersproject/abi'
-import type { Address, Hex } from 'viem'
-import { keccak256 } from 'viem/utils'
+import type { Address } from 'viem'
+import { encodeAbiParameters, keccak256, parseAbiParameters } from 'viem/utils'
 import { getCreate2Address } from '../../../address/getCreate2Address.js'
 import type { ChainId } from '../../../chain/constants.js'
 import {
@@ -20,8 +19,8 @@ type ComputeSushiSwapV3PoolAddressParams = {
       tokenB: Token
     }
   | {
-      tokenA: string
-      tokenB: string
+      tokenA: Address
+      tokenB: Address
       chainId: ChainId
     }
 )
@@ -57,10 +56,11 @@ export function computeSushiSwapV3PoolAddress(
     return getCreate2Address({
       from: factoryAddress,
       salt: keccak256(
-        defaultAbiCoder.encode(
-          ['address', 'address', 'uint24'],
-          [token0.address, token1.address, fee],
-        ) as Hex,
+        encodeAbiParameters(parseAbiParameters('address, address, uint24'), [
+          token0.address,
+          token1.address,
+          fee,
+        ]),
       ),
       bytecodeHash:
         initCodeHashManualOverride ??
@@ -82,10 +82,11 @@ export function computeSushiSwapV3PoolAddress(
   return getCreate2Address({
     from: factoryAddress,
     salt: keccak256(
-      defaultAbiCoder.encode(
-        ['address', 'address', 'uint24'],
-        [tokenA, tokenB, fee],
-      ) as Hex,
+      encodeAbiParameters(parseAbiParameters('address, address, uint24'), [
+        tokenA,
+        tokenB,
+        fee,
+      ]),
     ),
     bytecodeHash:
       initCodeHashManualOverride ??

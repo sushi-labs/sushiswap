@@ -4,10 +4,15 @@ import {
   encodeFunctionData,
   prepareEncodeFunctionData,
 } from 'viem'
-import { routeProcessor2Abi } from '../abi/routeProcessor2Abi.js'
-import { routeProcessor4Abi } from '../abi/routeProcessor4Abi.js'
-import { routeProcessor5Abi } from '../abi/routeProcessor5Abi.js'
-import { routeProcessorAbi } from '../abi/routeProcessorAbi.js'
+import { routeProcessor2Abi_processRoute } from '../abi/routeProcessor2Abi/index.js'
+import { routeProcessor4Abi_processRoute } from '../abi/routeProcessor4Abi/index.js'
+import {
+  routeProcessor5Abi_processRoute,
+  routeProcessor5Abi_processRouteWithTransferValueInput,
+  routeProcessor5Abi_processRouteWithTransferValueOutput,
+  routeProcessor5Abi_transferValueAndprocessRoute,
+} from '../abi/routeProcessor5Abi/index.js'
+import { routeProcessorAbi_processRoute } from '../abi/routeProcessorAbi/index.js'
 import { ChainId } from '../chain/index.js'
 import { LSDS } from '../config/token-maps/lsds.js'
 import { STABLES } from '../config/token-maps/stables.js'
@@ -62,35 +67,35 @@ function TokenToRToken(t: Type): RToken {
 }
 
 const RPprocessRouteEncodeData = prepareEncodeFunctionData({
-  abi: routeProcessorAbi,
+  abi: routeProcessorAbi_processRoute,
   functionName: 'processRoute',
 })
 const RP2processRouteEncodeData = prepareEncodeFunctionData({
-  abi: routeProcessor2Abi,
+  abi: routeProcessor2Abi_processRoute,
   functionName: 'processRoute',
 })
 const RP4processRouteEncodeData = prepareEncodeFunctionData({
-  abi: routeProcessor4Abi,
+  abi: routeProcessor4Abi_processRoute,
   functionName: 'processRoute',
 })
 const RP5processRouteEncodeData = [
   prepareEncodeFunctionData({
-    abi: routeProcessor5Abi,
+    abi: routeProcessor5Abi_processRoute,
     functionName: 'processRoute',
   }),
   prepareEncodeFunctionData({
-    abi: routeProcessor5Abi,
+    abi: routeProcessor5Abi_transferValueAndprocessRoute,
     functionName: 'transferValueAndprocessRoute',
   }),
   prepareEncodeFunctionData({
-    abi: routeProcessor5Abi,
+    abi: routeProcessor5Abi_processRouteWithTransferValueInput,
     functionName: 'processRouteWithTransferValueInput',
   }),
   prepareEncodeFunctionData({
-    abi: routeProcessor5Abi,
+    abi: routeProcessor5Abi_processRouteWithTransferValueOutput,
     functionName: 'processRouteWithTransferValueOutput',
   }),
-]
+] as const
 
 export const isWrap = ({
   fromToken,
@@ -509,20 +514,44 @@ export class Router {
         permits,
         source,
       ) as Hex
-      data = encodeFunctionData({
-        ...RP5processRouteEncodeData[processFunction],
-        args: [
-          transferValueTo,
-          amountValueTransfer,
-          tokenIn,
-          route.amountInBI,
-          tokenOut,
-          amountOutMin,
-          to,
-          routeCode,
-        ],
-      })
+
+      if (
+        processFunction === ProcessFunction.ProcessRouteWithTransferValueInput
+      ) {
+        data = encodeFunctionData({
+          ...RP5processRouteEncodeData[
+            ProcessFunction.ProcessRouteWithTransferValueInput
+          ],
+          args: [
+            transferValueTo,
+            amountValueTransfer,
+            tokenIn,
+            route.amountInBI,
+            tokenOut,
+            amountOutMin,
+            to,
+            routeCode,
+          ],
+        })
+      } else {
+        data = encodeFunctionData({
+          ...RP5processRouteEncodeData[
+            ProcessFunction.ProcessRouteWithTransferValueOutput
+          ],
+          args: [
+            transferValueTo,
+            amountValueTransfer,
+            tokenIn,
+            route.amountInBI,
+            tokenOut,
+            amountOutMin,
+            to,
+            routeCode,
+          ],
+        })
+      }
     }
+
     return {
       tokenIn,
       amountIn: route.amountInBI,

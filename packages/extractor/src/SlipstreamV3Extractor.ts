@@ -1,4 +1,3 @@
-import { defaultAbiCoder } from '@ethersproject/abi'
 import IUniswapV3Factory from '@uniswap/v3-core/artifacts/contracts/UniswapV3Factory.sol/UniswapV3Factory.json' assert {
   type: 'json',
 }
@@ -14,10 +13,12 @@ import {
   type Log,
   type PublicClient,
   decodeEventLog,
+  encodeAbiParameters,
   getAddress,
   keccak256,
   parseAbi,
   parseAbiItem,
+  parseAbiParameters,
 } from 'viem'
 import { Counter } from './Counter.js'
 import { IExtractor } from './IExtractor.js'
@@ -789,10 +790,10 @@ export class SlipstreamV3Extractor extends IExtractor {
     const [token0, token1] = tokenA.sortsBefore(tokenB)
       ? [tokenA, tokenB]
       : [tokenB, tokenA]
-    const constructorArgumentsEncoded = defaultAbiCoder.encode(
-      ['address', 'address', 'int24'],
+    const constructorArgumentsEncoded = encodeAbiParameters(
+      parseAbiParameters('address, address, int24'),
       [token0.address, token1.address, tickSpacing],
-    ) as Hex
+    )
     const initCode =
       `0x3d602d80600a3d3981f3363d3d373d3d3d363d73${factory.poolImplementation.replace(
         '0x',

@@ -6,7 +6,7 @@ import {
   LogFilterType,
   getAlgebraPoolAddress,
 } from '@sushiswap/extractor'
-import { routeProcessor2Abi } from 'sushi/abi'
+import { routeProcessor2Abi_processRoute } from 'sushi/abi'
 import { Token } from 'sushi/currency'
 import {
   ConstantProductPoolCode,
@@ -138,7 +138,7 @@ async function startInfinitTest(args: {
         try {
           const { result: amountOutReal } = await client.simulateContract({
             address: args.RP4Address,
-            abi: routeProcessor2Abi,
+            abi: routeProcessor2Abi_processRoute,
             // @ ts-ignore
             functionName: 'processRoute',
             args: [

@@ -2,7 +2,6 @@
 
 import { createErrorToast, createToast } from '@sushiswap/notifications'
 import { useCallback, useMemo } from 'react'
-import { masterChefV1Abi, masterChefV2Abi } from 'sushi/abi'
 import { Amount, Token } from 'sushi/currency'
 import { UserRejectedRequestError } from 'viem'
 import {
@@ -15,6 +14,7 @@ import {
 import { SendTransactionReturnType } from 'wagmi/actions'
 
 import { ChainId, ChefType } from 'sushi'
+import { masterChefV1Abi_deposit, masterChefV2Abi_deposit } from 'sushi/abi'
 import { useMasterChefContract } from './use-master-chef-contract'
 
 interface UseMasterChefDepositParams {
@@ -77,13 +77,13 @@ export const useMasterChefDeposit = ({
     let data
     if (chef === ChefType.MasterChefV1) {
       data = {
-        abi: masterChefV1Abi,
+        abi: masterChefV1Abi_deposit,
         functionName: 'deposit',
         args: [BigInt(pid), BigInt(amount.quotient.toString())],
       }
     } else {
       data = {
-        abi: masterChefV2Abi,
+        abi: masterChefV2Abi_deposit,
         functionName: 'deposit',
         args: [BigInt(pid), BigInt(amount.quotient.toString()), address],
       }
@@ -113,15 +113,20 @@ export const useMasterChefDeposit = ({
     },
   })
 
-  const write = useMemo(() => {
-    if (!simulation) return undefined
+  // biome-ignore lint/correctness/useExhaustiveDependencies: Typecheck speedup
+  const write = useMemo(
+    () => {
+      if (!simulation) return undefined
 
-    return async () => {
-      try {
-        await writeContractAsync(simulation.request)
-      } catch {}
-    }
-  }, [simulation, writeContractAsync])
+      return async () => {
+        try {
+          await writeContractAsync(simulation.request as any)
+        } catch {}
+      }
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    },
+    [simulation?.request, writeContractAsync] as const,
+  )
 
   return {
     ...rest,
