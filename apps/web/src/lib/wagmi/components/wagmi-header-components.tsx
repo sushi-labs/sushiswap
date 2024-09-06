@@ -11,7 +11,6 @@ import {
 import { Suspense, useEffect } from 'react'
 import { useAccount } from 'wagmi'
 import { HeaderNetworkSelector } from './header-network-selector'
-import { UserPortfolio } from './user-portfolio'
 
 interface WagmiHeaderComponentsProps {
   chainIds: ChainId[]
@@ -42,7 +41,6 @@ export const WagmiHeaderComponents: React.FC<WagmiHeaderComponentsProps> = ({
   return (
     <Suspense>
       <HeaderNetworkSelector networks={chainIds} onChange={onChange} />
-      <UserPortfolio />
     </Suspense>
   )
 }

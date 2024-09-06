@@ -1,6 +1,7 @@
 import '@sushiswap/ui/index.css'
 
 import { ToastContainer } from '@sushiswap/notifications'
+// import { Sidebar } from '@sushiswap/ui'
 import type { Metadata } from 'next'
 import { Inter, Roboto_Mono } from 'next/font/google'
 import React from 'react'
@@ -56,7 +57,7 @@ export default function RootLayout({
       <link rel="manifest" href="/site.webmanifest?v=1" />
       <link rel="mask-icon" href="/safari-pinned-tab.svg?v=1" color="#fa52a0" />
       <link rel="shortcut icon" href="/favicon.ico?v=1" />
-      <body className="h-screen">
+      <body className="h-screen min-h-fit">
         <ToastContainer />
         {children}
         <Trackers />
