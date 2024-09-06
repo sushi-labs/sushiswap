@@ -71,7 +71,7 @@ export const useClientTrade = (
     chainId,
     currencyA: fromToken,
     currencyB: toToken,
-    enabled: true,
+    enabled,
     withBentoPools: true,
   })
 
