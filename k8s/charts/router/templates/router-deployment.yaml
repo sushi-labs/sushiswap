@@ -13,9 +13,6 @@ spec:
       labels:
         app: router-{{ .id }}
     spec:
-      nodeSelector:
-        cloud.google.com/compute-class: Performance
-        cloud.google.com/machine-family: c3d
       containers:
         - name: router
           image: router

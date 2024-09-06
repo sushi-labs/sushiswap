@@ -13,9 +13,6 @@ spec:
       labels:
         app: extractor-{{ .id }}
     spec:
-      nodeSelector:
-        cloud.google.com/compute-class: Performance
-        cloud.google.com/machine-family: c3
       volumes:
         - name: extractor-pv
           persistentVolumeClaim:
