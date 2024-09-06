@@ -1,5 +1,5 @@
 import { V2Pool, getV2Pool } from '@sushiswap/graph-client/data-api'
-import { Container, SidebarAwareContainer } from '@sushiswap/ui'
+import { Container } from '@sushiswap/ui'
 import { unstable_cache } from 'next/cache'
 import { headers } from 'next/headers'
 import { notFound } from 'next/navigation'
@@ -42,24 +42,20 @@ export default async function Layout({
   const referer = headersList.get('referer')
   return (
     <>
-      <SidebarAwareContainer>
-        <Container maxWidth="5xl" className="pt-10 px-4">
-          <PoolHeader
-            backUrl={
-              referer?.includes('/pool?')
-                ? referer?.toString()
-                : `/${ChainKey[chainId]}/explore/pools`
-            }
-            address={pool.address}
-            pool={pool}
-            apy={{ rewards: pool?.incentiveApr, fees: pool?.feeApr1d }}
-          />
-        </Container>
-      </SidebarAwareContainer>
-      <section className="flex flex-col flex-1 mt-4">
-        <div className="bg-gray-50 dark:bg-white/[0.02] border-t border-accent pt-10 pb-20 h-full">
-          <SidebarAwareContainer>{children}</SidebarAwareContainer>
-        </div>
+      <Container maxWidth="5xl" className="pt-10 px-4">
+        <PoolHeader
+          backUrl={
+            referer?.includes('/pool?')
+              ? referer?.toString()
+              : `/${ChainKey[chainId]}/explore/pools`
+          }
+          address={pool.address}
+          pool={pool}
+          apy={{ rewards: pool?.incentiveApr, fees: pool?.feeApr1d }}
+        />
+      </Container>
+      <section className="flex flex-col flex-1 h-full pb-10">
+        {children}
       </section>
     </>
   )

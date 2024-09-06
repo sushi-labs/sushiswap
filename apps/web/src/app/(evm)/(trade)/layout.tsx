@@ -1,4 +1,4 @@
-import { HotJar, Sidebar, SidebarProvider } from '@sushiswap/ui'
+import { HotJar, SidebarContainer, SidebarProvider } from '@sushiswap/ui'
 import { Header } from '../header'
 import { Providers } from './providers'
 
@@ -8,12 +8,11 @@ export default function TradeLayout({
   return (
     <>
       <Providers>
-        <SidebarProvider>
+        <SidebarProvider defaultOpen>
           <Header />
-          <div className="relative top-20">
-            <Sidebar />
-            <div className="lg:p-4 mt-16 mb-[86px]">{children}</div>
-          </div>
+          <SidebarContainer>
+            <main className="lg:p-4 mt-16 mb-[86px]">{children}</main>
+          </SidebarContainer>
         </SidebarProvider>
       </Providers>
       <HotJar />

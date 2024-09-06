@@ -1,4 +1,4 @@
-import { HotJar, Sidebar, SidebarProvider } from '@sushiswap/ui'
+import { HotJar, SidebarContainer, SidebarProvider } from '@sushiswap/ui'
 
 import { isSupportedChainId } from 'src/config'
 import { Header } from '../header'
@@ -18,10 +18,9 @@ export default function PoolLayout({
       <Providers>
         <SidebarProvider defaultOpen>
           <Header />
-          <div className="relative top-20">
-            <Sidebar />
-            <div className="flex flex-col h-full flex-1">{children}</div>
-          </div>
+          <SidebarContainer shiftContent>
+            <main className="flex flex-col h-full flex-1">{children}</main>
+          </SidebarContainer>
         </SidebarProvider>
       </Providers>
       <HotJar />

@@ -63,10 +63,8 @@ export default function TabsLayout({
           {/*</LinkInternal>*/}
         </div>
       </Container>
-      <section className="flex flex-col flex-1">
-        <div className="bg-gray-50 dark:bg-white/[0.02] border-t border-accent pt-4 pb-20 h-full">
-          <PoolsFiltersProvider>{children}</PoolsFiltersProvider>
-        </div>
+      <section className="flex flex-col flex-1 pb-10 h-full">
+        <PoolsFiltersProvider>{children}</PoolsFiltersProvider>
       </section>
     </>
   )

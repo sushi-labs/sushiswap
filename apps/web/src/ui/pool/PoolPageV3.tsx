@@ -7,6 +7,7 @@ import {
   CardContent,
   CardCurrencyAmountItem,
   CardDescription,
+  CardGroup,
   CardHeader,
   CardLabel,
   CardTitle,
@@ -52,7 +53,7 @@ const Pool: FC<{ pool: V3Pool }> = ({ pool }) => {
 
   return (
     <Container maxWidth="5xl" className="px-2 sm:px-4">
-      <div className="flex flex-col gap-6">
+      <div className="flex flex-col gap-4">
         {pool.hasEnabledSteerVault && (
           <Message variant="info" size="sm" className="mb-4">
             {`This pool has been activated to leverage our smart pool feature. Smart pools are designed to optimize the
@@ -81,16 +82,19 @@ const Pool: FC<{ pool: V3Pool }> = ({ pool }) => {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <CardCurrencyAmountItem
-                  isLoading={isReservesLoading}
-                  amount={reserves?.[0]}
-                  fiatValue={formatUSD(fiatValues[0])}
-                />
-                <CardCurrencyAmountItem
-                  isLoading={isReservesLoading}
-                  amount={reserves?.[1]}
-                  fiatValue={formatUSD(fiatValues[1])}
-                />
+                <CardGroup>
+                  <CardLabel>Tokens</CardLabel>
+                  <CardCurrencyAmountItem
+                    isLoading={isReservesLoading}
+                    amount={reserves?.[0]}
+                    fiatValue={formatUSD(fiatValues[0])}
+                  />
+                  <CardCurrencyAmountItem
+                    isLoading={isReservesLoading}
+                    amount={reserves?.[1]}
+                    fiatValue={formatUSD(fiatValues[1])}
+                  />
+                </CardGroup>
               </CardContent>
             </Card>
             <Card>
