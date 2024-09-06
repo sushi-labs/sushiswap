@@ -2,6 +2,7 @@ import { randomBytes } from 'crypto'
 import type { Address } from 'viem'
 import { describe, expect, it } from 'vitest'
 import {
+  PriceBufferWrapper,
   PriceStructSizes,
   ReadOnlyPriceBufferWrapper,
 } from './price-buffer-wrapper'
@@ -217,5 +218,93 @@ describe('ReadOnlyPriceBufferWrapper', { concurrent: true }, () => {
 })
 
 describe('PriceBufferWrapper', { concurrent: true }, () => {
-  // it('should', () => {})
+  it('should sort the inserted addresses', () => {
+    const buffer = new PriceBufferWrapper({ useSharedMemory: false })
+
+    buffer.set(5n, 5)
+    buffer.set(1n, 1)
+    buffer.set(16n, 16)
+    buffer.set(3n, 3)
+
+    expect(buffer.addressAt('bigint', 0 * PriceStructSizes.ENTRY_SIZE)).toBe(1n)
+    expect(buffer.addressAt('bigint', 1 * PriceStructSizes.ENTRY_SIZE)).toBe(3n)
+    expect(buffer.addressAt('bigint', 2 * PriceStructSizes.ENTRY_SIZE)).toBe(5n)
+    expect(buffer.addressAt('bigint', 3 * PriceStructSizes.ENTRY_SIZE)).toBe(
+      16n,
+    )
+  })
+
+  it('should insert a new address and update an existing address', () => {
+    const buffer = new PriceBufferWrapper({ useSharedMemory: false })
+
+    buffer.set(5n, 5)
+    buffer.set(1n, 1)
+    buffer.set(16n, 16)
+    buffer.set(3n, 3)
+
+    expect(buffer.priceOf(5n)).to.be.approximately(5, 0.0001)
+    expect(buffer.priceOf(1n)).to.be.approximately(1, 0.0001)
+
+    buffer.set(5n, 10)
+    buffer.set(1n, 2)
+
+    expect(buffer.priceOf(5n)).to.be.approximately(10, 0.0001)
+    expect(buffer.priceOf(1n)).to.be.approximately(2, 0.0001)
+  })
+
+  it('should increase the price count only when inserting a new address', () => {
+    const buffer = new PriceBufferWrapper({ useSharedMemory: false })
+
+    buffer.set(5n, 5)
+    buffer.set(1n, 1)
+    buffer.set(16n, 16)
+    buffer.set(3n, 3)
+
+    expect(buffer['priceCount']).toBe(4)
+
+    buffer.set(5n, 10)
+    buffer.set(1n, 2)
+
+    expect(buffer['priceCount']).toBe(4)
+
+    buffer.set(2n, 2)
+
+    expect(buffer['priceCount']).toBe(5)
+  })
+
+  it('should decrease the price count only when deleting an existing address', () => {
+    const buffer = new PriceBufferWrapper({ useSharedMemory: false })
+
+    buffer.set(5n, 5)
+    buffer.set(1n, 1)
+    buffer.set(16n, 16)
+    buffer.set(3n, 3)
+
+    expect(buffer['priceCount']).toBe(4)
+
+    buffer.delete(5n)
+    buffer.delete(1n)
+
+    expect(buffer['priceCount']).toBe(2)
+
+    buffer.delete(2n)
+
+    expect(buffer['priceCount']).toBe(2)
+  })
+
+  it('should keep the type of the array buffer', () => {
+    const sharedArrayBuffer = new PriceBufferWrapper({ useSharedMemory: true })
+    expect(sharedArrayBuffer['priceArrayBuffer']).toBeInstanceOf(
+      SharedArrayBuffer,
+    )
+    sharedArrayBuffer['resize']()
+    expect(sharedArrayBuffer['priceArrayBuffer']).toBeInstanceOf(
+      SharedArrayBuffer,
+    )
+
+    const arrayBuffer = new PriceBufferWrapper({ useSharedMemory: false })
+    expect(arrayBuffer['priceArrayBuffer']).toBeInstanceOf(ArrayBuffer)
+    arrayBuffer['resize']()
+    expect(arrayBuffer['priceArrayBuffer']).toBeInstanceOf(ArrayBuffer)
+  })
 })
