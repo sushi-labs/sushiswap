@@ -108,7 +108,7 @@ export async function simulateRoute(
     },
   ]
 
-  await aggregate3({
+  const res = await aggregate3({
     chainId,
     account: from,
     calls,
@@ -130,5 +130,5 @@ export async function simulateRoute(
     ],
   })
 
-  return amountOut
+  return res ?? amountOut
 }

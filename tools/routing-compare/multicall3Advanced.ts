@@ -107,16 +107,20 @@ export async function aggregate3({
     }
     const cd = calls[i] as CallData
     if (!success) {
+      const abi = cd.target instanceof Token ? cd.abi ?? erc20Abi : cd.abi
       const err =
-        cd.abi !== undefined
+        abi !== undefined
           ? decodeErrorResult({
-              abi: cd.abi,
+              abi,
               data: returnData,
             })
           : returnData
-      return `'${cd.action}' call error: ${err}`
+      return `'${cd.action}' call error: ${JSON.stringify(err)}`
     }
-    if (cd.validate) cd.validate(BigInt(returnData), returnData)
+    if (cd.validate) {
+      const err = cd.validate(BigInt(returnData), returnData)
+      if (err) return err
+    }
   }
   return undefined
 }
