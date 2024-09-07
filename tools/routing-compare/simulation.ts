@@ -1,34 +1,15 @@
 import { ChainId } from 'sushi'
-import { erc20Abi, multicall3Abi, routeProcessor5Abi } from 'sushi/abi'
-import { ROUTE_PROCESSOR_5_ADDRESS, publicClientConfig } from 'sushi/config'
+import { routeProcessor5Abi } from 'sushi/abi'
+import { ROUTE_PROCESSOR_5_ADDRESS } from 'sushi/config'
 import { Token } from 'sushi/currency'
+import { Abi, Address, Hex } from 'viem'
 import {
-  http,
-  Abi,
-  Address,
-  Hex,
-  createPublicClient,
-  decodeErrorResult,
-  decodeFunctionResult,
-  encodeFunctionData,
-} from 'viem'
+  CallData,
+  MULTICALL3_ADDRESS,
+  aggregate3,
+  ifNetworkSupported,
+} from './multicall3Advanced.js'
 import { tokenAllowedSlot, tokenBalanceSlot } from './tokenBalanceSlot.js'
-
-const MULTICALL3_ADDRESS = '0xcA11bde05977b3631167028862bE2a173976CA11'
-
-const ALCHEMY_ENTRY_POINTS: Record<number, string> = {
-  [ChainId.ETHEREUM]: 'https://eth-mainnet.g.alchemy.com/v2/',
-  [ChainId.POLYGON]: 'https://polygon-mainnet.g.alchemy.com/v2/',
-  [ChainId.POLYGON_ZKEVM]: 'https://polygonzkevm-mainnet.g.alchemy.com/v2',
-  [ChainId.ARBITRUM]: 'https://arb-mainnet.g.alchemy.com/v2/',
-  [ChainId.OPTIMISM]: 'https://opt-mainnet.g.alchemy.com/v2/',
-  [ChainId.BASE]: 'https://base-mainnet.g.alchemy.com/v2/',
-}
-//`https://base-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_ID}`
-
-export function ifNetworkSupported(chainId: ChainId) {
-  return ALCHEMY_ENTRY_POINTS[chainId] !== undefined
-}
 
 function knownRoutersAbi(chainId: ChainId, router: Address): Abi | undefined {
   if (
@@ -37,19 +18,6 @@ function knownRoutersAbi(chainId: ChainId, router: Address): Abi | undefined {
   )
     return routeProcessor5Abi as Abi
   return
-}
-
-interface CallData {
-  action: string // Human-readable comment
-  target: Address | Token // contract to call
-  callData?: Hex // calldata
-  abi?: Abi | undefined
-  functionName?: string
-  args?: any[]
-  validate?: (
-    returnDataAsBigInt: bigint,
-    returnDataRaw: Hex,
-  ) => string | undefined // string in case of an error
 }
 
 export async function simulateRoute(
@@ -73,12 +41,6 @@ export async function simulateRoute(
   )
   if (slotAllow === undefined)
     return `simulateRoute: Unknown allowance slot for token ${tokenFrom.symbol}(${tokenFrom.address})`
-  const client = createPublicClient({
-    chain: publicClientConfig[chainId].chain,
-    transport: http(
-      `${ALCHEMY_ENTRY_POINTS[chainId]}${process.env['ALCHEMY_ID']}`,
-    ),
-  })
 
   let initialOutputBalance = 0n
   let amountOut = 0n
@@ -145,37 +107,11 @@ export async function simulateRoute(
       },
     },
   ]
-  const multicall3Data = encodeFunctionData({
-    abi: multicall3Abi,
-    functionName: 'aggregate3',
-    args: [
-      calls.map((call, i) => {
-        if (call.callData !== undefined)
-          return {
-            target:
-              call.target instanceof Token ? call.target.address : call.target,
-            callData: call.callData,
-            allowFailure: true,
-          }
-        else if (call.functionName)
-          return {
-            target:
-              call.target instanceof Token ? call.target.address : call.target,
-            callData: encodeFunctionData({
-              abi: call.abi ?? erc20Abi,
-              functionName: call.functionName,
-              args: call.args ?? [],
-            }),
-            allowFailure: true,
-          }
-        else throw new Error(`Incorrect call data: ${i}`)
-      }),
-    ],
-  })
-  const { data: returnData } = await client.call({
+
+  await aggregate3({
+    chainId,
     account: from,
-    to: MULTICALL3_ADDRESS,
-    data: multicall3Data,
+    calls,
     stateOverride: [
       {
         address: tokenFrom.address,
@@ -193,31 +129,6 @@ export async function simulateRoute(
       },
     ],
   })
-  if (returnData === undefined) return `simulateRoute: Multicall error`
-
-  const res = decodeFunctionResult({
-    abi: multicall3Abi,
-    functionName: 'aggregate3',
-    data: returnData,
-  })
-  for (let i = 0; i < res.length; ++i) {
-    const { success, returnData } = res[i] as {
-      success: boolean
-      returnData: `0x${string}`
-    }
-    const cd = calls[i] as CallData
-    if (!success) {
-      const err =
-        cd.abi !== undefined
-          ? decodeErrorResult({
-              abi: cd.abi,
-              data: returnData,
-            })
-          : returnData
-      return `'${cd.action}' call error: ${err}`
-    }
-    if (cd.validate) cd.validate(BigInt(returnData), returnData)
-  }
 
   return amountOut
 }
