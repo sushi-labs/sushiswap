@@ -6,8 +6,9 @@ import {
   STABLES,
   publicClientConfig,
 } from 'sushi/config'
-import { Token, WNATIVE } from 'sushi/currency'
+import { Token, USDC, USDT, WNATIVE } from 'sushi/currency'
 import { createPublicClient } from 'viem'
+import { simulateRoute } from './simulation.js'
 
 const MAX_PRICE_IMPACT = 0.1 // 10%
 const MAX_PAIRS_FOR_CHECK = 23
@@ -331,7 +332,7 @@ export async function checkRoute(chainId: ChainId) {
   }
 }
 
-async function checkRouteAllNetworks() {
+export async function checkRouteAllNetworks() {
   const chains = Object.values(ChainId)
   for (let i = 0; i < chains.length; ++i) {
     if (!EXCLUDE_NETWORKS.includes(chains[i] as number))
@@ -339,4 +340,15 @@ async function checkRouteAllNetworks() {
   }
 }
 
-checkRouteAllNetworks()
+//checkRouteAllNetworks()
+
+console.log(
+  await simulateRoute(
+    '0x0102030405060708091001020304050607080910',
+    USDC[ChainId.ETHEREUM],
+    12345n,
+    USDT[ChainId.ETHEREUM],
+    '0xf2614A233c7C3e7f08b1F887Ba133a13f1eb2c55',
+    '0x2646478b000000000000000000000000a0b86991c6218b36c1d19d4a2e9eb0ce3606eb480000000000000000000000000000000000000000000000000000000000003039000000000000000000000000dac17f958d2ee523a2206206994597c13d831ec70000000000000000000000000000000000000000000000000000000000002ffc000000000000000000000000010203040506070809100102030405060708091000000000000000000000000000000000000000000000000000000000000000c0000000000000000000000000000000000000000000000000000000000000004502A0b86991c6218b36c1d19D4a2e9Eb0cE3606eB4801ffff003041CbD36888bECc7bbCBc0045E3B1f144466f5f010102030405060708091001020304050607080910000bb8000000000000000000000000000000000000000000000000000000',
+  ),
+)
