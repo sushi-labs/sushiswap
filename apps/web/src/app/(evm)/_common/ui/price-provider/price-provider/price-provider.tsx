@@ -22,35 +22,45 @@ function reducer(state: ProviderState, action: ProviderActions): ProviderState {
     case 'UPDATE_CHAIN_STATE': {
       const currentChain = state.chains.get(action.payload.chainId)
 
-      if (currentChain) {
-        state.chains.set(action.payload.chainId, {
-          ...action.payload,
-          priceData: currentChain.priceData,
+      let priceData
+      if (action.payload.prices) {
+        let priceBuffer
+        if (action.payload.prices.priceData instanceof Buffer) {
+          priceBuffer = action.payload.prices.priceData
+        } else {
+          priceBuffer = Buffer.from(action.payload.prices.priceData)
+        }
+
+        priceData = new ReadOnlyPriceBufferWrapper({
+          priceBuffer,
+          priceCount: action.payload.prices.priceCount,
         })
-      } else {
-        state.chains.set(action.payload.chainId, action.payload)
       }
 
-      return {
-        ...state,
-      }
-    }
-    case 'UPDATE_CHAIN_PRICE_DATA': {
-      const currentChain = state.chains.get(action.payload.chainId)
-
       if (currentChain) {
-        const buffer =
-          action.payload.priceBuffer instanceof Buffer
-            ? action.payload.priceBuffer
-            : Buffer.from(action.payload.priceBuffer)
-
-        const priceData = new ReadOnlyPriceBufferWrapper({
-          priceBuffer: buffer,
-          priceCount: action.payload.priceCount,
-        })
-
         state.chains.set(action.payload.chainId, {
           ...currentChain,
+          ...action.payload,
+          priceData,
+        })
+      } else {
+        const { isError, isLoading, isUpdating, lastModified } = action.payload
+
+        if (
+          isError === undefined ||
+          isLoading === undefined ||
+          isUpdating === undefined ||
+          lastModified === undefined
+        ) {
+          throw new Error('Invalid initial chain state')
+        }
+
+        state.chains.set(action.payload.chainId, {
+          chainId: action.payload.chainId,
+          isError,
+          isLoading,
+          isUpdating,
+          lastModified,
           priceData,
         })
       }
@@ -99,13 +109,7 @@ export function PriceProvider({ children }: PriceProviderContextProps) {
         case PriceWorkerReceiveMessageType.ChainState:
           dispatch({
             type: 'UPDATE_CHAIN_STATE',
-            payload: event.data.chainState,
-          })
-          break
-        case PriceWorkerReceiveMessageType.ChainPriceData:
-          dispatch({
-            type: 'UPDATE_CHAIN_PRICE_DATA',
-            payload: event.data,
+            payload: event.data.payload,
           })
           break
       }

@@ -21,20 +21,6 @@ import {
     self.postMessage(message)
   }
 
-  function sendChainStateMessage(chainState: WorkerChainState) {
-    sendMessage({
-      type: PriceWorkerReceiveMessageType.ChainState,
-      chainState: {
-        chainId: chainState.chainId,
-        listenerCount: chainState.listenerCount,
-        lastModified: chainState.lastModified,
-        isLoading: chainState.isLoading,
-        isUpdating: chainState.isUpdating,
-        isError: chainState.isError,
-      },
-    })
-  }
-
   self.onmessage = async ({
     data: _data,
   }: MessageEvent<PriceWorkerPostMessage | PriceWorkerPostMessage[]>) => {
@@ -59,7 +45,7 @@ import {
         }
         case PriceWorkerPostMessageType.DecrementChainId: {
           const { chainId } = message
-          if (decrementChainid(chainId)) {
+          if (decrementChainId(chainId)) {
             shouldUpdateIntervals = true
           }
           break
@@ -84,7 +70,6 @@ import {
     const chainState = state.chains.get(chainId)
     if (chainState) {
       chainState.listenerCount++
-      sendChainStateMessage(chainState)
       return chainState.listenerCount === 1
     }
 
@@ -100,16 +85,24 @@ import {
       isError: false,
     })
 
-    sendChainStateMessage(state.chains.get(chainId)!)
+    sendMessage({
+      type: PriceWorkerReceiveMessageType.ChainState,
+      payload: {
+        chainId,
+        lastModified: 0,
+        isLoading: true,
+        isUpdating: false,
+        isError: false,
+      },
+    })
 
     return true
   }
 
-  function decrementChainid(chainId: ChainId) {
+  function decrementChainId(chainId: ChainId) {
     const chainState = state.chains.get(chainId)
     if (chainState && chainState.listenerCount > 0) {
       chainState.listenerCount--
-      sendChainStateMessage(chainState)
       return chainState.listenerCount === 0
     }
 
@@ -142,15 +135,24 @@ import {
 
     chainState.isUpdating = true
 
-    sendChainStateMessage(chainState)
+    sendMessage({
+      type: PriceWorkerReceiveMessageType.ChainState,
+      payload: {
+        chainId,
+        isUpdating: chainState.isUpdating,
+      },
+    })
+
+    let sendPrices = false
 
     try {
       const { data: newPriceMap, lastModified } =
         await fetchPriceData(chainState)
       updatePriceData(chainState.priceData, newPriceMap)
       chainState.lastModified = lastModified
-
       chainState.isError = false
+
+      sendPrices = true
     } catch (error: unknown) {
       console.error('Failed to fetch priceMap', chainId, error)
       chainState.isError = true
@@ -159,16 +161,21 @@ import {
       chainState.isLoading = false
     }
 
-    sendChainStateMessage(chainState)
-
     sendMessage({
-      type: PriceWorkerReceiveMessageType.ChainPriceData,
-      chainId,
-      priceBuffer:
-        chainState.priceData!.arrayBuffer instanceof ArrayBuffer
-          ? Buffer.from(chainState.priceData!.arrayBuffer)
-          : chainState.priceData!.arrayBuffer,
-      priceCount: chainState.priceData!.size,
+      type: PriceWorkerReceiveMessageType.ChainState,
+      payload: {
+        chainId,
+        lastModified: chainState.lastModified,
+        isLoading: chainState.isLoading,
+        isUpdating: chainState.isUpdating,
+        isError: chainState.isError,
+        prices: sendPrices
+          ? {
+              priceData: getSendablePriceData(chainState.priceData),
+              priceCount: chainState.priceData.size,
+            }
+          : undefined,
+      },
     })
   }
 
@@ -216,6 +223,12 @@ import {
     for (const [address, price] of newPriceMap) {
       oldPriceData.set(address, price)
     }
+  }
+
+  function getSendablePriceData(priceData: PriceBufferWrapper) {
+    return priceData.arrayBuffer instanceof ArrayBuffer
+      ? Buffer.from(priceData!.arrayBuffer)
+      : priceData.arrayBuffer
   }
 
   function isActive(chain: WorkerChainState) {

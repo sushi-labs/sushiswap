@@ -1,9 +1,9 @@
 import type { ChainId } from 'sushi'
 import { ReadOnlyPriceBufferWrapper } from '../price-data-wrapper/price-buffer-wrapper'
+import { PriceWorkerReceiveMessageChainState } from '../price-worker/types'
 
 export interface ProviderChainState {
   chainId: ChainId
-  listenerCount: number
 
   priceData?: ReadOnlyPriceBufferWrapper
 
@@ -32,15 +32,7 @@ export interface Provider {
 export type ProviderActions =
   | {
       type: 'UPDATE_CHAIN_STATE'
-      payload: Omit<ProviderChainState, 'priceData'>
-    }
-  | {
-      type: 'UPDATE_CHAIN_PRICE_DATA'
-      payload: {
-        chainId: ChainId
-        priceBuffer: ArrayBuffer | SharedArrayBuffer
-        priceCount: number
-      }
+      payload: PriceWorkerReceiveMessageChainState['payload']
     }
   | {
       type: 'SET_READY'

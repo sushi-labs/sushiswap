@@ -39,19 +39,19 @@ export enum PriceWorkerReceiveMessageType {
   ChainPriceData = 'ChainPriceData',
 }
 
-type ChainState = {
+export type PriceWorkerReceiveMessageChainState = {
   type: PriceWorkerReceiveMessageType.ChainState
-  chainState: Omit<WorkerChainState, 'priceData' | 'wasFetched'>
+  payload: Partial<Omit<WorkerChainState, 'priceData' | 'listenerCount'>> & {
+    chainId: ChainId
+  } & {
+    prices?: {
+      priceData: SharedArrayBuffer | Buffer
+      priceCount: number
+    }
+  }
 }
 
-type ChainPriceData = {
-  type: PriceWorkerReceiveMessageType.ChainPriceData
-  chainId: ChainId
-  priceBuffer: ArrayBuffer | SharedArrayBuffer
-  priceCount: number
-}
-
-export type PriceWorkerReceiveMessage = ChainState | ChainPriceData
+export type PriceWorkerReceiveMessage = PriceWorkerReceiveMessageChainState
 
 export type PriceWorker = (typeof Worker)['prototype'] & {
   postMessage(message: PriceWorkerPostMessage | PriceWorkerPostMessage[]): void
