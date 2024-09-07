@@ -1,11 +1,11 @@
 import { Address, Hex, keccak256 } from 'viem'
 
-type SlotInfo =
+type RawSlotInfo =
   | [Address]
   | [Address, number, number]
   | [Address, Address, number, number]
 
-export const balanceSlotInfo: SlotInfo[] = [
+const balanceSlotInfo: RawSlotInfo[] = [
   ['0x6B175474E89094C44Da98b954EedeAC495271d0F', 2, 0],
   ['0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48', 9, 0],
   ['0xdAC17F958D2ee523a2206206994597C13D831ec7', 2, 0],
@@ -426,32 +426,48 @@ export const balanceSlotInfo: SlotInfo[] = [
   ['0x0E573Ce2736Dd9637A0b21058352e1667925C7a8'],
 ]
 
+const allowanceSlotInfo: RawSlotInfo[] = [
+  ['0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48', 10, 0],
+]
+
 export enum MappingStyle {
   Solidity = 0,
   Vyper = 1,
 }
 
-export interface BalanceSlotInfo {
+export interface SlotInfo {
   contract: Address
-  balanceSlot: number
+  slot: number
   mappingStyle: MappingStyle
 }
 
-const balanceSlotMap = new Map<Address, BalanceSlotInfo>()
+function slotInfoFromRaw(slot: RawSlotInfo): SlotInfo | undefined {
+  if (slot.length === 1) return
+  if (slot.length === 3)
+    return {
+      contract: slot[0],
+      slot: slot[1],
+      mappingStyle: slot[2],
+    }
+  else if (slot.length === 4)
+    return {
+      contract: slot[1],
+      slot: slot[2],
+      mappingStyle: slot[3],
+    }
+  return
+}
+
+const balanceSlotMap = new Map<Address, SlotInfo>()
 balanceSlotInfo.forEach((b) => {
-  if (b.length === 1) return
-  if (b.length === 3)
-    balanceSlotMap.set(b[0], {
-      contract: b[0],
-      balanceSlot: b[1],
-      mappingStyle: b[2],
-    })
-  else if (b.length === 4)
-    balanceSlotMap.set(b[0], {
-      contract: b[1],
-      balanceSlot: b[2],
-      mappingStyle: b[3],
-    })
+  const slot = slotInfoFromRaw(b)
+  if (slot) balanceSlotMap.set(b[0], slot)
+})
+
+const allowanceSlotMap = new Map<Address, SlotInfo>()
+allowanceSlotInfo.forEach((b) => {
+  const slot = slotInfoFromRaw(b)
+  if (slot) allowanceSlotMap.set(b[0], slot)
 })
 
 function getMapSlotNumber(
@@ -477,7 +493,7 @@ export function tokenBalanceSlot(
 ): Hex | undefined {
   const slotInfo = balanceSlotMap.get(token)
   if (slotInfo === undefined) return undefined
-  return getMapSlotNumber(user, slotInfo.balanceSlot, slotInfo.mappingStyle)
+  return getMapSlotNumber(user, slotInfo.slot, slotInfo.mappingStyle)
 }
 
 export function tokenAllowedSlot(
@@ -485,12 +501,8 @@ export function tokenAllowedSlot(
   user: Address,
   spender: Address,
 ): Hex | undefined {
-  const slotInfo = balanceSlotMap.get(token)
+  const slotInfo = allowanceSlotMap.get(token)
   if (slotInfo === undefined) return undefined
-  const tmp = getMapSlotNumber(
-    user,
-    slotInfo.balanceSlot + 1,
-    slotInfo.mappingStyle,
-  )
+  const tmp = getMapSlotNumber(user, slotInfo.slot, slotInfo.mappingStyle)
   return getMapSlotNumber(spender, tmp, slotInfo.mappingStyle)
 }
