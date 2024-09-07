@@ -21,6 +21,20 @@ import {
     self.postMessage(message)
   }
 
+  function sendChainStateMessage(chainState: WorkerChainState) {
+    sendMessage({
+      type: PriceWorkerReceiveMessageType.ChainState,
+      chainState: {
+        chainId: chainState.chainId,
+        listenerCount: chainState.listenerCount,
+        lastModified: chainState.lastModified,
+        isLoading: chainState.isLoading,
+        isUpdating: chainState.isUpdating,
+        isError: chainState.isError,
+      },
+    })
+  }
+
   self.onmessage = async ({
     data: _data,
   }: MessageEvent<PriceWorkerPostMessage | PriceWorkerPostMessage[]>) => {
@@ -35,16 +49,17 @@ import {
           state.canUseSharedArrayBuffer = canUseSharedArrayBuffer
           break
         }
-        case PriceWorkerPostMessageType.EnableChainId: {
+        case PriceWorkerPostMessageType.IncrementChainId: {
           const { chainId } = message
-          if (enableChainId(chainId)) {
+          if (incrementChainId(chainId)) {
             shouldUpdateIntervals = true
+            updateChainId(chainId)
           }
           break
         }
-        case PriceWorkerPostMessageType.DisableChainId: {
+        case PriceWorkerPostMessageType.DecrementChainId: {
           const { chainId } = message
-          if (disableChainid(chainId)) {
+          if (decrementChainid(chainId)) {
             shouldUpdateIntervals = true
           }
           break
@@ -65,39 +80,37 @@ import {
     }
   }
 
-  function enableChainId(chainId: ChainId) {
+  function incrementChainId(chainId: ChainId) {
     const chainState = state.chains.get(chainId)
     if (chainState) {
-      if (chainState.active) {
-        return false
-      }
-      chainState.active = true
-      return true
+      chainState.listenerCount++
+      sendChainStateMessage(chainState)
+      return chainState.listenerCount === 1
     }
 
     state.chains.set(chainId, {
       chainId,
-      active: true,
+      listenerCount: 1,
       priceData: new PriceBufferWrapper({
         useSharedMemory: state.canUseSharedArrayBuffer,
       }),
-      wasFetched: false,
       lastModified: 0,
-      isLoading: false,
+      isLoading: true,
       isUpdating: false,
       isError: false,
     })
 
-    updateChainId(chainId)
+    sendChainStateMessage(state.chains.get(chainId)!)
 
     return true
   }
 
-  function disableChainid(chainId: ChainId) {
+  function decrementChainid(chainId: ChainId) {
     const chainState = state.chains.get(chainId)
-    if (chainState) {
-      chainState.active = false
-      return true
+    if (chainState && chainState.listenerCount > 0) {
+      chainState.listenerCount--
+      sendChainStateMessage(chainState)
+      return chainState.listenerCount === 0
     }
 
     return false
@@ -107,14 +120,14 @@ import {
     state.chains.forEach((chainState) => {
       const currentInterval = state.intervals.get(chainState.chainId)
 
-      if (chainState.active && !currentInterval) {
+      if (isActive(chainState) && !currentInterval) {
         state.intervals.set(
           chainState.chainId,
           setInterval(() => {
             updateChainId(chainState.chainId)
           }, UPDATE_INTERVAL),
         )
-      } else if (!chainState.active && currentInterval) {
+      } else if (!isActive(chainState) && currentInterval) {
         clearInterval(currentInterval)
         state.intervals.delete(chainState.chainId)
       }
@@ -128,21 +141,8 @@ import {
     }
 
     chainState.isUpdating = true
-    if (!chainState.wasFetched) {
-      chainState.isLoading = true
-    }
 
-    sendMessage({
-      type: PriceWorkerReceiveMessageType.ChainState,
-      chainState: {
-        chainId,
-        active: chainState.active,
-        lastModified: chainState.lastModified,
-        isLoading: chainState.isLoading,
-        isUpdating: chainState.isUpdating,
-        isError: chainState.isError,
-      },
-    })
+    sendChainStateMessage(chainState)
 
     try {
       const { data: newPriceMap, lastModified } =
@@ -151,7 +151,6 @@ import {
       chainState.lastModified = lastModified
 
       chainState.isError = false
-      chainState.wasFetched = true
     } catch (error: unknown) {
       console.error('Failed to fetch priceMap', chainId, error)
       chainState.isError = true
@@ -160,17 +159,7 @@ import {
       chainState.isLoading = false
     }
 
-    sendMessage({
-      type: PriceWorkerReceiveMessageType.ChainState,
-      chainState: {
-        chainId,
-        active: chainState.active,
-        lastModified: chainState.lastModified,
-        isLoading: chainState.isLoading,
-        isUpdating: chainState.isUpdating,
-        isError: chainState.isError,
-      },
-    })
+    sendChainStateMessage(chainState)
 
     sendMessage({
       type: PriceWorkerReceiveMessageType.ChainPriceData,
@@ -227,5 +216,9 @@ import {
     for (const [address, price] of newPriceMap) {
       oldPriceData.set(address, price)
     }
+  }
+
+  function isActive(chain: WorkerChainState) {
+    return chain.listenerCount > 0
   }
 }

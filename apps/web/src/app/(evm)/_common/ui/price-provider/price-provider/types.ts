@@ -1,9 +1,9 @@
 import type { ChainId } from 'sushi'
-import { ReadOnlyPriceBufferWrapper } from './price-data-wrapper/price-buffer-wrapper'
+import { ReadOnlyPriceBufferWrapper } from '../price-data-wrapper/price-buffer-wrapper'
 
 export interface ProviderChainState {
   chainId: ChainId
-  active: boolean
+  listenerCount: number
 
   priceData?: ReadOnlyPriceBufferWrapper
 
@@ -16,6 +16,17 @@ export interface ProviderChainState {
 
 export interface ProviderState {
   chains: Map<ChainId, ProviderChainState>
+  ready: boolean
+}
+
+export interface ProviderMutations {
+  incrementChainId: (chainId: ChainId) => void
+  decrementChainId: (chainId: ChainId) => void
+}
+
+export interface Provider {
+  state: ProviderState
+  mutate: ProviderMutations
 }
 
 export type ProviderActions =
@@ -29,5 +40,11 @@ export type ProviderActions =
         chainId: ChainId
         priceBuffer: ArrayBuffer | SharedArrayBuffer
         priceCount: number
+      }
+    }
+  | {
+      type: 'SET_READY'
+      payload: {
+        ready: boolean
       }
     }

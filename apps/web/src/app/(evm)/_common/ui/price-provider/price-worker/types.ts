@@ -3,8 +3,8 @@ import { PriceBufferWrapper } from '../price-data-wrapper/price-buffer-wrapper'
 
 export enum PriceWorkerPostMessageType {
   Initialize = 'Initialize',
-  EnableChainId = 'EnableChainId',
-  DisableChainId = 'DisableChainId',
+  IncrementChainId = 'IncrementChainId',
+  DecrementChainId = 'DecrementChainId',
   RefetchChainId = 'RefetchChainId',
 }
 
@@ -13,14 +13,14 @@ type Initialize = {
   canUseSharedArrayBuffer: boolean
 }
 
-type EnableChainId = {
+type IncrementChainId = {
   chainId: ChainId
-  type: PriceWorkerPostMessageType.EnableChainId
+  type: PriceWorkerPostMessageType.IncrementChainId
 }
 
-type DisableChainId = {
+type DecrementChainId = {
   chainId: ChainId
-  type: PriceWorkerPostMessageType.DisableChainId
+  type: PriceWorkerPostMessageType.DecrementChainId
 }
 
 type RefetchChainId = {
@@ -30,8 +30,8 @@ type RefetchChainId = {
 
 export type PriceWorkerPostMessage =
   | Initialize
-  | EnableChainId
-  | DisableChainId
+  | IncrementChainId
+  | DecrementChainId
   | RefetchChainId
 
 export enum PriceWorkerReceiveMessageType {
@@ -59,11 +59,10 @@ export type PriceWorker = (typeof Worker)['prototype'] & {
 
 export interface WorkerChainState {
   chainId: ChainId
-  active: boolean
+  listenerCount: number
 
   priceData: PriceBufferWrapper
 
-  wasFetched: boolean
   lastModified: number
 
   isLoading: boolean

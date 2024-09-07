@@ -1,13 +1,21 @@
-import { createContext, useEffect, useReducer, useState } from 'react'
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useReducer,
+  useState,
+} from 'react'
+import { ChainId } from 'sushi'
 import { useChainId } from 'wagmi'
-import { ReadOnlyPriceBufferWrapper } from './price-data-wrapper/price-buffer-wrapper'
+import { ReadOnlyPriceBufferWrapper } from '../price-data-wrapper/price-buffer-wrapper'
 import {
   PriceWorker,
   PriceWorkerPostMessageType,
   PriceWorkerReceiveMessage,
   PriceWorkerReceiveMessageType,
-} from './price-worker/types'
-import { ProviderActions, ProviderState } from './types'
+} from '../price-worker/types'
+import { Provider, ProviderActions, ProviderState } from './types'
 
 function reducer(state: ProviderState, action: ProviderActions): ProviderState {
   switch (action.type) {
@@ -51,12 +59,17 @@ function reducer(state: ProviderState, action: ProviderActions): ProviderState {
         ...state,
       }
     }
+    case 'SET_READY':
+      return {
+        ...state,
+        ready: action.payload.ready,
+      }
     default:
       return state
   }
 }
 
-const PriceProviderContext = createContext<ProviderState>({} as ProviderState)
+const PriceProviderContext = createContext<Provider>({} as Provider)
 
 interface PriceProviderContextProps {
   children: React.ReactNode
@@ -64,13 +77,16 @@ interface PriceProviderContextProps {
 
 export function PriceProvider({ children }: PriceProviderContextProps) {
   const [worker, setWorker] = useState<PriceWorker>()
-  const [state, dispatch] = useReducer(reducer, { chains: new Map() })
+  const [state, dispatch] = useReducer(reducer, {
+    chains: new Map(),
+    ready: false,
+  })
 
   const chainId = useChainId()
 
   useEffect(() => {
     const worker = new Worker(
-      new URL('./price-worker/price-worker.ts', import.meta.url),
+      new URL('../price-worker/price-worker.ts', import.meta.url),
     )
 
     worker.postMessage({
@@ -102,18 +118,59 @@ export function PriceProvider({ children }: PriceProviderContextProps) {
     }
   }, [])
 
+  const incrementChainId = useCallback(
+    (chainId: ChainId) => {
+      if (worker) {
+        worker.postMessage({
+          type: PriceWorkerPostMessageType.IncrementChainId,
+          chainId,
+        })
+      }
+    },
+    [worker],
+  )
+
+  const decrementChainId = useCallback(
+    (chainId: ChainId) => {
+      if (worker) {
+        worker.postMessage({
+          type: PriceWorkerPostMessageType.DecrementChainId,
+          chainId,
+        })
+      }
+    },
+    [worker],
+  )
+
   useEffect(() => {
-    if (worker) {
-      worker.postMessage({
-        type: PriceWorkerPostMessageType.EnableChainId,
-        chainId,
-      })
+    incrementChainId(chainId)
+
+    return () => {
+      decrementChainId(chainId)
     }
-  }, [chainId, worker])
+  }, [chainId, decrementChainId, incrementChainId])
 
   return (
-    <PriceProviderContext.Provider value={state}>
+    <PriceProviderContext.Provider
+      value={{
+        state,
+        mutate: {
+          incrementChainId,
+          decrementChainId,
+        },
+      }}
+    >
       {children}
     </PriceProviderContext.Provider>
   )
+}
+
+export function usePriceProvider() {
+  const context = useContext(PriceProviderContext)
+
+  if (!context) {
+    throw new Error('usePriceProvider must be used within a PriceProvider')
+  }
+
+  return context
 }
