@@ -4,9 +4,9 @@ import {
   getChainIdAuctioneerMarketFromMarketId,
 } from '@sushiswap/bonds-sdk'
 import { useMemo } from 'react'
+import { usePrices } from 'src/app/(evm)/_common/ui/price-provider/price-provider/use-prices'
 import { Address } from 'viem'
 import { useBondMarketPrices } from './use-bond-market-price'
-import { usePrices } from 'src/app/(evm)/_common/ui/price-provider/price-provider/use-prices'
 
 interface UseBondsDiscount {
   marketId: MarketId
