@@ -1,7 +1,6 @@
 import { ChainId } from 'sushi'
 import { SUSHI_DATA_API_HOST } from 'sushi/config/subgraph'
 import { UPDATE_INTERVAL } from '../config'
-import { PriceBufferWrapper } from '../price-data-wrapper/price-buffer-wrapper'
 import {
   PriceWorkerPostMessage,
   PriceWorkerPostMessageType,
@@ -76,9 +75,7 @@ import {
     state.chains.set(chainId, {
       chainId,
       listenerCount: 1,
-      priceData: new PriceBufferWrapper({
-        useSharedMemory: state.canUseSharedArrayBuffer,
-      }),
+      priceMap: new Map(),
       lastModified: 0,
       isLoading: true,
       isUpdating: false,
@@ -148,7 +145,7 @@ import {
     try {
       const { data: newPriceMap, lastModified } =
         await fetchPriceData(chainState)
-      updatePriceData(chainState.priceData, newPriceMap)
+      updatePriceData(chainState.priceMap, newPriceMap)
       chainState.lastModified = lastModified
       chainState.isError = false
 
@@ -169,18 +166,13 @@ import {
         isLoading: chainState.isLoading,
         isUpdating: chainState.isUpdating,
         isError: chainState.isError,
-        prices: sendPrices
-          ? {
-              priceData: getSendablePriceData(chainState.priceData),
-              priceCount: chainState.priceData.size,
-            }
-          : undefined,
+        priceMap: sendPrices ? chainState.priceMap : undefined,
       },
     })
   }
 
   async function fetchPriceData({ chainId, lastModified }: WorkerChainState) {
-    let url = `https://${SUSHI_DATA_API_HOST}/price/v1/${chainId}`
+    let url = `${SUSHI_DATA_API_HOST}/price/v1/${chainId}`
     if (lastModified) {
       url += `?onlyPricesUpdateSince=${lastModified}`
     }
@@ -217,18 +209,12 @@ import {
   }
 
   function updatePriceData(
-    oldPriceData: PriceBufferWrapper,
+    oldPriceData: Map<bigint, number>,
     newPriceMap: Map<bigint, number>,
   ) {
     for (const [address, price] of newPriceMap) {
       oldPriceData.set(address, price)
     }
-  }
-
-  function getSendablePriceData(priceData: PriceBufferWrapper) {
-    return priceData.arrayBuffer instanceof ArrayBuffer
-      ? Buffer.from(priceData!.arrayBuffer)
-      : priceData.arrayBuffer
   }
 
   function isActive(chain: WorkerChainState) {

@@ -3,10 +3,10 @@ import {
   getBondDiscount,
   getChainIdAuctioneerMarketFromMarketId,
 } from '@sushiswap/bonds-sdk'
-import { usePrices } from '@sushiswap/react-query'
 import { useMemo } from 'react'
 import { Address } from 'viem'
 import { useBondMarketPrices } from './use-bond-market-price'
+import { usePrices } from 'src/app/(evm)/_common/ui/price-provider/price-provider/use-prices'
 
 interface UseBondsDiscount {
   marketId: MarketId
@@ -31,7 +31,7 @@ export const useBondDiscount = ({
 }: UseBondsDiscount) => {
   const { chainId } = getChainIdAuctioneerMarketFromMarketId(marketId)
 
-  const { data: prices, isInitialLoading: isPricesLoading } = usePrices({
+  const { data: prices, isLoading: isPricesLoading } = usePrices({
     chainId: enabled ? chainId : undefined,
   })
   const { data: marketPrice, isLoading: isMarketPriceLoading } =

@@ -1,14 +1,16 @@
+'use client'
+
 import {
   createContext,
   useCallback,
   useContext,
   useEffect,
+  useMemo,
   useReducer,
   useState,
 } from 'react'
 import { ChainId } from 'sushi'
 import { useChainId } from 'wagmi'
-import { ReadOnlyPriceBufferWrapper } from '../price-data-wrapper/price-buffer-wrapper'
 import {
   PriceWorker,
   PriceWorkerPostMessageType,
@@ -22,26 +24,11 @@ function reducer(state: ProviderState, action: ProviderActions): ProviderState {
     case 'UPDATE_CHAIN_STATE': {
       const currentChain = state.chains.get(action.payload.chainId)
 
-      let priceData
-      if (action.payload.prices) {
-        let priceBuffer
-        if (action.payload.prices.priceData instanceof Buffer) {
-          priceBuffer = action.payload.prices.priceData
-        } else {
-          priceBuffer = Buffer.from(action.payload.prices.priceData)
-        }
-
-        priceData = new ReadOnlyPriceBufferWrapper({
-          priceBuffer,
-          priceCount: action.payload.prices.priceCount,
-        })
-      }
-
       if (currentChain) {
         state.chains.set(action.payload.chainId, {
           ...currentChain,
           ...action.payload,
-          priceData,
+          priceMap: action.payload.priceMap || currentChain.priceMap,
         })
       } else {
         const { isError, isLoading, isUpdating, lastModified } = action.payload
@@ -61,7 +48,7 @@ function reducer(state: ProviderState, action: ProviderActions): ProviderState {
           isLoading,
           isUpdating,
           lastModified,
-          priceData,
+          priceMap: action.payload.priceMap || undefined,
         })
       }
 
@@ -69,11 +56,6 @@ function reducer(state: ProviderState, action: ProviderActions): ProviderState {
         ...state,
       }
     }
-    case 'SET_READY':
-      return {
-        ...state,
-        ready: action.payload.ready,
-      }
     default:
       return state
   }
@@ -147,21 +129,28 @@ export function PriceProvider({ children }: PriceProviderContextProps) {
   )
 
   useEffect(() => {
-    incrementChainId(chainId)
+    if (worker) {
+      incrementChainId(chainId)
+    }
 
     return () => {
-      decrementChainId(chainId)
+      if (worker) {
+        decrementChainId(chainId)
+      }
     }
-  }, [chainId, decrementChainId, incrementChainId])
+  }, [worker, chainId, decrementChainId, incrementChainId])
 
   return (
     <PriceProviderContext.Provider
       value={{
-        state,
-        mutate: {
-          incrementChainId,
-          decrementChainId,
-        },
+        state: useMemo(() => ({ ...state, ready: !!worker }), [state, worker]),
+        mutate: useMemo(
+          () => ({
+            incrementChainId,
+            decrementChainId,
+          }),
+          [incrementChainId, decrementChainId],
+        ),
       }}
     >
       {children}

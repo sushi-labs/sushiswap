@@ -4,7 +4,8 @@
     "target": "ESNext",
     "lib": ["DOM", "DOM.Iterable", "ESNext"],
     "paths": {
-      "~aptos/*": ["src/app/(non-evm)/aptos/*"]
+      "~aptos/*": ["src/app/(non-evm)/aptos/*"],
+      "~evm/*": ["src/app/(evm)/*"],
     },
     "allowJs": true,
     "skipLibCheck": true,

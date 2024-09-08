@@ -25,7 +25,7 @@ import { Currency } from '@sushiswap/ui'
 import React, { CSSProperties, FC, memo, useCallback } from 'react'
 import { Chain } from 'sushi/chain'
 import { Amount, Type } from 'sushi/currency'
-import { Fraction, ZERO } from 'sushi/math'
+import { ZERO } from 'sushi/math'
 import { zeroAddress } from 'viem'
 
 export interface TokenSelectorRow {
@@ -36,7 +36,7 @@ export interface TokenSelectorRow {
   onSelect(currency: Type): void
   balance?: Amount<Type> | undefined
   showWarning: boolean
-  price?: Fraction
+  price?: number
   pin?: {
     isPinned: boolean
     onPin(): void

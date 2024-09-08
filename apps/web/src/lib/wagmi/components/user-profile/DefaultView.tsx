@@ -6,7 +6,6 @@ import {
   InboxArrowDownIcon,
   LinkIcon,
 } from '@heroicons/react/24/outline'
-import { usePrice } from '@sushiswap/react-query'
 import {
   BrowserEvent,
   InterfaceElementName,
@@ -27,6 +26,7 @@ import { Amount, Native } from 'sushi/currency'
 import { Fraction } from 'sushi/math'
 import { zeroAddress } from 'viem'
 import { useBalance, useDisconnect } from 'wagmi'
+import { usePrice } from '~evm/_common/ui/price-provider/price-provider/use-price'
 import { ProfileView } from './ProfileView'
 
 interface DefaultProps {

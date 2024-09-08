@@ -1,7 +1,7 @@
 import { ArrowTrendingUpIcon } from '@heroicons/react/20/solid'
-import { usePrices } from '@sushiswap/react-query'
 import { Button, SkeletonText } from '@sushiswap/ui'
 import { useMemo, useState } from 'react'
+import { usePrices } from 'src/app/(evm)/_common/ui/price-provider/price-provider/use-prices'
 import { useTokenAmountDollarValues } from 'src/lib/hooks'
 import { ChainId } from 'sushi/chain'
 import {

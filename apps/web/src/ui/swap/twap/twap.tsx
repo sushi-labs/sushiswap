@@ -7,11 +7,7 @@ import {
 } from '@orbs-network/twap-ui-sushiswap'
 import { useConnectModal } from '@rainbow-me/rainbowkit'
 import { useCustomTokens } from '@sushiswap/hooks'
-import {
-  useOtherTokenListsQuery,
-  usePrice,
-  useTokens,
-} from '@sushiswap/react-query'
+import { useOtherTokenListsQuery, useTokens } from '@sushiswap/react-query'
 import {
   Button,
   Dialog,
@@ -34,6 +30,7 @@ import { useAccount, useChainId, useSwitchChain } from 'wagmi'
 import { TokenSelector } from 'src/lib/wagmi/components/token-selector/token-selector'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
 import { Address } from 'viem'
+import { usePrice } from '~evm/_common/ui/price-provider/price-provider/use-price'
 import {
   useDerivedStateSimpleSwap,
   useSimpleSwapTrade,
@@ -116,11 +113,10 @@ const usePriceUSD = (address?: Address) => {
 
   const { data: price } = usePrice({
     chainId,
-    enabled: true,
     address,
   })
 
-  return price?.toSignificant(6)
+  return String(price)
 }
 
 const getTokenLogo = (currency: Currency) => {

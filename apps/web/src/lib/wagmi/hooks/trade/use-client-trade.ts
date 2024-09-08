@@ -1,8 +1,4 @@
-import {
-  type UseTradeParams,
-  UseTradeReturn,
-  usePrice,
-} from '@sushiswap/react-query'
+import { type UseTradeParams, UseTradeReturn } from '@sushiswap/react-query'
 import { UseQueryResult, useQuery } from '@tanstack/react-query'
 import { useEffect, useMemo, useState } from 'react'
 import { getBigInt } from 'sushi'
@@ -26,6 +22,7 @@ import {
 } from 'sushi/router'
 import { stringify, zeroAddress } from 'viem'
 import { useGasPrice } from 'wagmi'
+import { usePrice } from '~evm/_common/ui/price-provider/price-provider/use-price'
 import { usePoolsCodeMap } from '../pools/hooks/usePoolsCodeMap'
 
 export const useClientTrade = (
@@ -206,7 +203,7 @@ export const useClientTrade = (
           gasSpent: gasSpent?.toSignificant(4),
           gasSpentUsd:
             price && gasSpent
-              ? gasSpent.multiply(price.asFraction).toSignificant(4)
+              ? gasSpent.multiply(price).toSignificant(4)
               : undefined,
           fee:
             !isWrapOrUnwrap({ fromToken, toToken }) &&
@@ -214,7 +211,7 @@ export const useClientTrade = (
             !isLsd({ fromToken, toToken })
               ? `${tokenOutPrice ? '$' : ''}${minAmountOut
                   .multiply(new Percent(25, 10000))
-                  .multiply(tokenOutPrice ? tokenOutPrice.asFraction : 1)
+                  .multiply(tokenOutPrice ? tokenOutPrice : 1)
                   .toSignificant(4)} ${!tokenOutPrice ? toToken.symbol : ''}`
               : '$0',
           route,

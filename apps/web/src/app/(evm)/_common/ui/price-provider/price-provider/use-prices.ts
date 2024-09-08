@@ -1,28 +1,52 @@
+'use client'
+
 import { useEffect, useMemo } from 'react'
-import { type Address, type ChainId } from 'sushi'
+import { type Address, type ChainId, Fraction } from 'sushi'
+import { parseUnits } from 'viem'
 import { usePriceProvider } from './price-provider'
 
-export function usePrices(chainId: ChainId) {
-  const {
-    state: { chains, ready },
-    mutate,
-  } = usePriceProvider()
+export type PriceMap = {
+  has: (address: Address) => boolean
+  get: (address: Address) => number | undefined
+  getFraction: (address: Address) => Fraction | undefined
+}
 
-  const chain = useMemo(() => chains.get(chainId), [chains, chainId])
+export function usePrices({
+  chainId,
+  enabled = true,
+}: { chainId: ChainId | undefined; enabled?: boolean }) {
+  // Important to use state, not state.chains directly, as the reference to state.chains won't be changing and the component won't re-render
+  // It's not best practice, but it's controlled here in the hook and not exposed
+  const { state, mutate } = usePriceProvider()
 
   useEffect(() => {
-    if (ready) {
+    if (state.ready && chainId && enabled) {
       mutate.incrementChainId(chainId)
     }
 
     return () => {
-      if (ready) {
+      if (state.ready && chainId && enabled) {
         mutate.decrementChainId(chainId)
       }
     }
-  }, [chainId, mutate, ready])
+  }, [chainId, enabled, mutate, state.ready])
+
+  const chain = useMemo(
+    () => (chainId ? state.chains.get(chainId) : undefined),
+    [state, chainId],
+  )
 
   return useMemo(() => {
+    if (!chainId) {
+      return {
+        data: undefined,
+        lastModified: 0,
+        isLoading: false,
+        isUpdating: false,
+        isError: false,
+      }
+    }
+
     if (!chain)
       return {
         data: undefined,
@@ -32,7 +56,7 @@ export function usePrices(chainId: ChainId) {
         isError: false,
       }
 
-    if (!chain.priceData)
+    if (!chain.priceMap)
       return {
         data: undefined,
         lastModified: chain.lastModified,
@@ -41,20 +65,29 @@ export function usePrices(chainId: ChainId) {
         isError: chain.isError,
       }
 
-    const data = {
+    const data: PriceMap = {
       has: (_address: Address) => {
-        const address = _address.toLowerCase()
-        return chain.priceData!.hasAddress(address)
+        const address = BigInt(_address)
+
+        return chain.priceMap!.has(address)
       },
-      get: (address: Address) => {
-        const price = chain.priceData!.priceOf(address)
-        // if (price) {
-        //   return new Fraction(
-        //     parseUnits(String(price), 18).toString(),
-        //     parseUnits('1', 18).toString(),
-        //   )
-        // }
+      get: (_address: Address) => {
+        const address = BigInt(_address)
+
+        const price = chain.priceMap!.get(address)
         return price
+      },
+      getFraction: (_address: Address) => {
+        const address = BigInt(_address)
+
+        const price = chain.priceMap!.get(address)
+        if (price) {
+          return new Fraction(
+            parseUnits(String(price), 18).toString(),
+            parseUnits('1', 18).toString(),
+          )
+        }
+        return undefined
       },
     }
 
@@ -65,5 +98,5 @@ export function usePrices(chainId: ChainId) {
       isUpdating: chain.isUpdating,
       isError: chain.isError,
     }
-  }, [chain])
+  }, [chainId, chain])
 }

@@ -18,11 +18,12 @@ import { Amount, Token, Type, tryParseAmount } from 'sushi/currency'
 import { formatUSD } from 'sushi/format'
 
 import { useTotalSupply } from 'src/lib/wagmi/hooks/tokens/useTotalSupply'
+import type { ChainId } from 'sushi/chain'
 import { usePoolPosition } from './PoolPositionProvider'
 
 interface AddSectionStakeWidgetProps {
   title?: string
-  chainId: number
+  chainId: ChainId
   value: string
   setValue(value: string): void
   reserve0: Amount<Type> | null

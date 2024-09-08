@@ -7,7 +7,6 @@ import {
   getRemainingCapacitiesContracts,
 } from '@sushiswap/bonds-sdk'
 import { Bond } from '@sushiswap/client'
-import { usePrices } from '@sushiswap/react-query'
 import {
   getTotalSuppliesContracts,
   getVaultsReservesContracts,
@@ -15,11 +14,14 @@ import {
 import { useQueryClient } from '@tanstack/react-query'
 import { useEffect, useMemo } from 'react'
 import {
+  PriceMap,
+  usePrices,
+} from 'src/app/(evm)/_common/ui/price-provider/price-provider/use-prices'
+import {
   uniswapV2PairAbi_getReserves,
   uniswapV2PairAbi_totalSupply,
 } from 'sushi/abi'
 import { Amount, Token } from 'sushi/currency'
-import { Fraction } from 'sushi/math'
 import { Address } from 'viem'
 import { useBlockNumber, useReadContracts } from 'wagmi'
 
@@ -28,7 +30,7 @@ interface UseBondMarketDetails {
   enabled?: boolean
 }
 
-function getTokenPrice(prices: Map<Address, Fraction>, token: Address) {
+function getTokenPrice(prices: PriceMap, token: Address) {
   const tokenPriceFraction = prices.get(token)
   if (!tokenPriceFraction) return undefined
   return Number(tokenPriceFraction.toFixed(10))

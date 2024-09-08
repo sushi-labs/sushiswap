@@ -1,5 +1,4 @@
 import type { ChainId } from 'sushi'
-import { PriceBufferWrapper } from '../price-data-wrapper/price-buffer-wrapper'
 
 export enum PriceWorkerPostMessageType {
   Initialize = 'Initialize',
@@ -41,13 +40,8 @@ export enum PriceWorkerReceiveMessageType {
 
 export type PriceWorkerReceiveMessageChainState = {
   type: PriceWorkerReceiveMessageType.ChainState
-  payload: Partial<Omit<WorkerChainState, 'priceData' | 'listenerCount'>> & {
+  payload: Partial<Omit<WorkerChainState, 'priceObject' | 'listenerCount'>> & {
     chainId: ChainId
-  } & {
-    prices?: {
-      priceData: SharedArrayBuffer | Buffer
-      priceCount: number
-    }
   }
 }
 
@@ -61,7 +55,7 @@ export interface WorkerChainState {
   chainId: ChainId
   listenerCount: number
 
-  priceData: PriceBufferWrapper
+  priceMap: Map<bigint, number>
 
   lastModified: number
 

@@ -1,12 +1,13 @@
 'use client'
 
-import { usePrices } from '@sushiswap/react-query'
 import { useMemo } from 'react'
+import { usePrices } from 'src/app/(evm)/_common/ui/price-provider/price-provider/use-prices'
+import type { ChainId } from 'sushi'
 import { Amount, Type } from 'sushi/currency'
 import { ZERO } from 'sushi/math'
 
 interface Params {
-  chainId: number
+  chainId: ChainId
   amounts: (Amount<Type> | undefined)[] | null | undefined
 }
 

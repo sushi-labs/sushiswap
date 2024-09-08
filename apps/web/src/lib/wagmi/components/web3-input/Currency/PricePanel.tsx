@@ -6,7 +6,7 @@ import {
   warningSeverityClassName,
 } from 'src/lib/swap/warningSeverity'
 import { tryParseAmount } from 'sushi/currency'
-import { Fraction, ZERO } from 'sushi/math'
+import { ZERO } from 'sushi/math'
 import { CurrencyInputProps } from './CurrencyInput'
 
 type PricePanel = Pick<
@@ -14,7 +14,7 @@ type PricePanel = Pick<
   'loading' | 'currency' | 'value' | 'priceImpact'
 > & {
   error?: string
-  price: Fraction | undefined
+  price: number | undefined
 }
 
 export const PricePanel: FC<PricePanel> = ({
@@ -31,10 +31,10 @@ export const PricePanel: FC<PricePanel> = ({
   )
   const [big, portion] = (
     parsedValue && price
-      ? `${price.asFraction
-          .multiply(parsedValue)
-          .divide(10 ** parsedValue.currency.decimals)
-          .toFixed(2)}`
+      ? `${(
+          (price * Number(parsedValue.quotient)) /
+          10 ** parsedValue.currency.decimals
+        ).toFixed(2)}`
       : '0.00'
   ).split('.')
 
@@ -53,14 +53,14 @@ export const PricePanel: FC<PricePanel> = ({
 
   return (
     <p className="font-medium text-lg flex items-baseline select-none text-gray-500 dark:text-slate-400">
-      {!loading && price?.equalTo(ZERO) ? (
+      {!loading && price === 0 ? (
         <span className="text-sm flex items-center">Price not available</span>
       ) : (
         <>
           $ {big}.<span className="text-sm font-semibold">{portion}</span>
         </>
       )}
-      {!(!loading && price?.equalTo(ZERO)) && priceImpact && (
+      {!(!loading && price === 0) && priceImpact && (
         <span
           className={classNames(
             'text-sm pl-1',
