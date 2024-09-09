@@ -1,4 +1,4 @@
-import { sushiXSwap2Abi } from 'sushi/abi'
+import { sushiXSwap2Abi_bridge, sushiXSwap2Abi_swapAndBridge } from 'sushi/abi'
 import {
   Address,
   Hex,
@@ -25,15 +25,19 @@ export enum SushiXSwapFunctionName {
   SwapAndBridge = 'swapAndBridge',
 }
 
+export type SushiXSwapWriteArgsBridge = WriteContractParameters<
+  typeof sushiXSwap2Abi_bridge,
+  SushiXSwapFunctionName.Bridge
+>['args']
+
+export type SushiXSwapWriteArgsSwapAndBridge = WriteContractParameters<
+  typeof sushiXSwap2Abi_swapAndBridge,
+  SushiXSwapFunctionName.SwapAndBridge
+>['args']
+
 export type SushiXSwapWriteArgs =
-  | WriteContractParameters<
-      typeof sushiXSwap2Abi,
-      SushiXSwapFunctionName.Bridge
-    >['args']
-  | WriteContractParameters<
-      typeof sushiXSwap2Abi,
-      SushiXSwapFunctionName.SwapAndBridge
-    >['args']
+  | SushiXSwapWriteArgsBridge
+  | SushiXSwapWriteArgsSwapAndBridge
 
 export const encodePayloadData = ({
   target,

@@ -9,7 +9,7 @@ import { PermanentCache } from '@sushiswap/extractor'
 import { Contract } from 'ethers'
 import hre from 'hardhat'
 import { EthereumProvider } from 'hardhat/types'
-import { erc20Abi } from 'sushi/abi'
+import { erc20Abi_balanceOf } from 'sushi/abi'
 import { Address, PublicClient, parseAbi } from 'viem'
 
 const { ethers } = hre
@@ -110,13 +110,17 @@ async function getBalance(
 ): Promise<bigint> {
   if (client) {
     return await client.readContract({
-      abi: erc20Abi,
+      abi: erc20Abi_balanceOf,
       address: token as Address,
       functionName: 'balanceOf',
       args: [user],
     })
   } else {
-    const tokenContract = new Contract(token, erc20Abi, ethers.provider)
+    const tokenContract = new Contract(
+      token,
+      erc20Abi_balanceOf,
+      ethers.provider,
+    )
     return BigInt((await tokenContract.balanceOf(user)).toString())
   }
 }

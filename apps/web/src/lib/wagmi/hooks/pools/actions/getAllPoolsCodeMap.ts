@@ -1,7 +1,7 @@
 import { isRouteProcessor4ChainId } from 'sushi/config'
 import { DataFetcher, LiquidityProviders, PoolCode } from 'sushi/router'
 
-import { UsePoolsParams } from '../types'
+import type { UsePoolsParams } from '../types'
 
 const isTest = process.env.NEXT_PUBLIC_APP_ENV === 'test'
 

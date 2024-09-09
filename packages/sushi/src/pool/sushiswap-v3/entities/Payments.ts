@@ -1,6 +1,11 @@
-import { Interface } from '@ethersproject/abi'
-import { peripheryPaymentsWithFeeAbi } from '../../../abi/peripheryPaymentsWithFeeAbi.js'
-import { toHex } from '../../../convert/index.js'
+import { type Address, encodeFunctionData } from 'viem'
+import {
+  peripheryPaymentsWithFeeAbi_refundETH,
+  peripheryPaymentsWithFeeAbi_sweepToken,
+  peripheryPaymentsWithFeeAbi_sweepTokenWithFee,
+  peripheryPaymentsWithFeeAbi_unwrapWETH9,
+  peripheryPaymentsWithFeeAbi_unwrapWETH9WithFee,
+} from '../../../abi/peripheryPaymentsWithFeeAbi/index.js'
 import { Token } from '../../../currency/index.js'
 import { Percent } from '../../../math/index.js'
 import { validateAndParseAddress } from '../utils/index.js'
@@ -14,77 +19,74 @@ export interface FeeOptions {
   /**
    * The recipient of the fee.
    */
-  recipient: string
+  recipient: Address
 }
 
 export abstract class Payments {
-  public static INTERFACE: Interface = new Interface(
-    peripheryPaymentsWithFeeAbi,
-  )
-
   /**
    * Cannot be constructed.
    */
   private constructor() {}
 
-  private static encodeFeeBips(fee: Percent): string {
-    return toHex(fee.multiply(10_000).quotient)
+  private static encodeFeeBips(fee: Percent): bigint {
+    return fee.multiply(10_000).quotient
   }
 
   public static encodeUnwrapWETH9(
     amountMinimum: bigint,
-    recipient: string,
+    recipient: Address,
     feeOptions?: FeeOptions,
-  ): string {
+  ) {
     recipient = validateAndParseAddress(recipient)
 
     if (feeOptions) {
       const feeBips = this.encodeFeeBips(feeOptions.fee)
-      const feeRecipient: string = validateAndParseAddress(feeOptions.recipient)
+      const feeRecipient = validateAndParseAddress(feeOptions.recipient)
 
-      return Payments.INTERFACE.encodeFunctionData('unwrapWETH9WithFee', [
-        toHex(amountMinimum),
-        recipient,
-        feeBips,
-        feeRecipient,
-      ])
+      return encodeFunctionData({
+        abi: peripheryPaymentsWithFeeAbi_unwrapWETH9WithFee,
+        functionName: 'unwrapWETH9WithFee',
+        args: [amountMinimum, recipient, feeBips, feeRecipient],
+      })
     } else {
-      return Payments.INTERFACE.encodeFunctionData('unwrapWETH9', [
-        toHex(amountMinimum),
-        recipient,
-      ])
+      return encodeFunctionData({
+        abi: peripheryPaymentsWithFeeAbi_unwrapWETH9,
+        functionName: 'unwrapWETH9',
+        args: [amountMinimum, recipient],
+      })
     }
   }
 
   public static encodeSweepToken(
     token: Token,
     amountMinimum: bigint,
-    recipient: string,
+    recipient: Address,
     feeOptions?: FeeOptions,
-  ): string {
+  ) {
     recipient = validateAndParseAddress(recipient)
 
     if (feeOptions) {
       const feeBips = this.encodeFeeBips(feeOptions.fee)
-      const feeRecipient: string = validateAndParseAddress(feeOptions.recipient)
+      const feeRecipient = validateAndParseAddress(feeOptions.recipient)
 
-      return Payments.INTERFACE.encodeFunctionData('sweepTokenWithFee', [
-        token.address,
-        toHex(amountMinimum),
-        recipient,
-        feeBips,
-        feeRecipient,
-      ])
+      return encodeFunctionData({
+        abi: peripheryPaymentsWithFeeAbi_sweepTokenWithFee,
+        functionName: 'sweepTokenWithFee',
+        args: [token.address, amountMinimum, recipient, feeBips, feeRecipient],
+      })
     } else {
-      return Payments.INTERFACE.encodeFunctionData('sweepToken', [
-        token.address,
-        toHex(amountMinimum),
-        recipient,
-      ])
+      return encodeFunctionData({
+        abi: peripheryPaymentsWithFeeAbi_sweepToken,
+        functionName: 'sweepToken',
+        args: [token.address, amountMinimum, recipient],
+      })
     }
   }
 
-  public static encodeRefundETH(): string {
-    return Payments.INTERFACE.encodeFunctionData('refundETH')
+  public static encodeRefundETH() {
+    return encodeFunctionData({
+      abi: peripheryPaymentsWithFeeAbi_refundETH,
+      functionName: 'refundETH',
+    })
   }
 }

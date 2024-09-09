@@ -1,21 +1,25 @@
-import { Interface } from '@ethersproject/abi'
-import { multicallAbi } from '../../../abi/multicallAbi.js'
+import { type Hex, encodeFunctionData } from 'viem'
+import { multicallAbi_multicall } from '../../../abi/multicallAbi/multicallAbi_multicall.js'
 
 export abstract class Multicall {
-  public static INTERFACE: Interface = new Interface(multicallAbi)
-
   /**
    * Cannot be constructed.
    */
   private constructor() {}
 
-  public static encodeMulticall(calldatas: string | string[]): string {
+  public static encodeMulticall(calldatas: Hex | Hex[]): string {
     if (!Array.isArray(calldatas)) {
       calldatas = [calldatas]
     }
 
-    return calldatas.length === 1
-      ? calldatas[0]!
-      : Multicall.INTERFACE.encodeFunctionData('multicall', [calldatas])
+    if (calldatas.length === 1) {
+      return calldatas[0]!
+    }
+
+    return encodeFunctionData({
+      abi: multicallAbi_multicall,
+      functionName: 'multicall',
+      args: [calldatas],
+    })
   }
 }
