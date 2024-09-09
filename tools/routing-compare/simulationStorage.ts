@@ -11,7 +11,10 @@ import {
 } from './multicall3Advanced.js'
 import { tokenAllowedSlot, tokenBalanceSlot } from './tokenBalanceSlot.js'
 
-function knownRoutersAbi(chainId: ChainId, router: Address): Abi | undefined {
+export function knownRoutersAbi(
+  chainId: ChainId,
+  router: Address,
+): Abi | undefined {
   if (
     router ===
     ROUTE_PROCESSOR_5_ADDRESS[chainId as keyof typeof ROUTE_PROCESSOR_5_ADDRESS]

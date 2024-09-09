@@ -6,16 +6,14 @@ import {
   STABLES,
   publicClientConfig,
 } from 'sushi/config'
-import { Token, USDC, USDT, WNATIVE } from 'sushi/currency'
+import { Token, USDC, WNATIVE } from 'sushi/currency'
 import { createPublicClient } from 'viem'
-import { simulateRoute } from './simulation.js'
+import { OneInchAPIRouteSimulate, OneInchRoute } from './route1inch.js'
 
 const MAX_PRICE_IMPACT = 0.1 // 10%
 const MAX_PAIRS_FOR_CHECK = 23
 const CHECK_LEVELS_$ = [100, 1000, 30_000, 1_000_000, 10_000_000]
 const EXCLUDE_NETWORKS = [5, 80001, 4002, 97, 421614, 43113]
-
-const delay = async (ms: number) => new Promise((res) => setTimeout(res, ms))
 
 async function SushiRP5RouteUnBiased(
   chainId: ChainId,
@@ -45,108 +43,6 @@ export async function SushiRoute(
   gasPrice: bigint,
 ): Promise<bigint | undefined> {
   return SushiRP5RouteUnBiased(chainId, from, to, amountIn, gasPrice)
-}
-
-export async function OneInchBrowserRoute(
-  chainId: ChainId,
-  from: Token,
-  to: Token,
-  amountIn: bigint,
-  gasPrice: bigint,
-): Promise<bigint | undefined> {
-  // pretending a browser
-  const url =
-    `https://proxy-app.1inch.io/v2.0/v1.5/chain/${chainId}/router/v6/quotes?` +
-    `fromTokenAddress=${from.address}&toTokenAddress=${to.address}&amount=${amountIn}` +
-    `&gasPrice=${gasPrice}&preset=maxReturnResult&isTableEnabled=true`
-  const resp = await fetch(url, {
-    headers: {
-      accept: 'application/json, text/plain, */*',
-      'accept-language': 'en',
-      authorization:
-        'Bearer eyJhbGciOiJFUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbiI6IjljMjlkNzdjLTU5MWItNGM1Yy1hM2EwLWNlMGMxMWU2Nzk1NiIsImV4cCI6MTcyNTI5Mjg0MSwiZGV2aWNlIjoiYnJvd3NlciIsImlhdCI6MTcyNTI4OTI0MX0.0hRJ5EEt9alBdwWAPp_C15UXUONSMbDhhpQhcRyriU_Vzimzu3NT3JAk4b5BU5hRGBcjVLzqmtBaXxD9ohzqMQ',
-      'cache-control': 'no-cache',
-      pragma: 'no-cache',
-      priority: 'u=1, i',
-      'sec-ch-ua':
-        '"Not)A;Brand";v="99", "Google Chrome";v="127", "Chromium";v="127"',
-      'sec-ch-ua-mobile': '?0',
-      'sec-ch-ua-platform': '"Windows"',
-      'sec-fetch-dest': 'empty',
-      'sec-fetch-mode': 'cors',
-      'sec-fetch-site': 'same-site',
-      'x-session-id': 'c76482d0-923b-4fec-9353-e779fbc33896',
-      'x-user-id': 'b9abfb7b-8cca-4479-97f4-630a441748ed',
-    },
-    referrer: 'https://app.1inch.io/',
-    referrerPolicy: 'strict-origin-when-cross-origin',
-    body: null,
-    method: 'GET',
-    mode: 'cors',
-    credentials: 'include',
-  })
-  if (resp.status !== 200) return
-  const route = (await resp.json()) as {
-    bestResult: { toTokenAmount: string }
-  }
-  if (route?.bestResult?.toTokenAmount === undefined) return
-  return BigInt(route?.bestResult?.toTokenAmount)
-}
-
-const oneInchApiKeys = (process.env['ONE_INCH_API_KEYS'] || '')
-  .replaceAll(/ +/g, '')
-  .split(',')
-let next1inchKeyIndex = 0
-// unfortunately it is impossible to obtain price impact
-async function OneInchAPIRoute(
-  chainId: ChainId,
-  from: Token,
-  to: Token,
-  amountIn: bigint,
-  gasPrice: bigint,
-): Promise<bigint | undefined> {
-  if (oneInchApiKeys.length === 0) return
-  const apiKey = oneInchApiKeys[next1inchKeyIndex++]
-  if (next1inchKeyIndex >= oneInchApiKeys.length) next1inchKeyIndex = 0
-
-  const url =
-    `https://api.1inch.dev/swap/v6.0/${chainId}/quote?` +
-    `src=${from.address}&dst=${to.address}&amount=${amountIn}` +
-    `&gasPrice=${gasPrice}&preset=maxReturnResult&isTableEnabled=true`
-
-  for (let n = 0; n < 10; ++n) {
-    const resp = await fetch(url, {
-      headers: {
-        authorization: `Bearer ${apiKey}`,
-      },
-    })
-    if (resp.status === 429) {
-      // The limit of requests per second has been exceeded
-      delay(300)
-      continue
-    }
-    if (resp.status !== 200) {
-      //console.log(resp.status, apiKey, await resp.text())
-      return
-    }
-    const route = (await resp.json()) as {
-      dstAmount: number
-    }
-    if (route?.dstAmount === undefined) return
-    return BigInt(route?.dstAmount)
-  }
-
-  return undefined
-}
-
-export async function OneInchRoute(
-  chainId: ChainId,
-  from: Token,
-  to: Token,
-  amountIn: bigint,
-  gasPrice: bigint,
-): Promise<bigint | undefined> {
-  return OneInchAPIRoute(chainId, from, to, amountIn, gasPrice)
 }
 
 export async function OdosRoute(
@@ -342,13 +238,21 @@ export async function checkRouteAllNetworks() {
 
 //checkRouteAllNetworks()
 
-console.log(
-  await simulateRoute(
-    '0x0102030405060708091001020304050607080910',
-    USDC[ChainId.ETHEREUM],
-    12345n,
-    USDT[ChainId.ETHEREUM],
-    '0xf2614A233c7C3e7f08b1F887Ba133a13f1eb2c55',
-    '0x2646478b000000000000000000000000a0b86991c6218b36c1d19d4a2e9eb0ce3606eb480000000000000000000000000000000000000000000000000000000000003039000000000000000000000000dac17f958d2ee523a2206206994597c13d831ec70000000000000000000000000000000000000000000000000000000000002ffc000000000000000000000000010203040506070809100102030405060708091000000000000000000000000000000000000000000000000000000000000000c0000000000000000000000000000000000000000000000000000000000000004502A0b86991c6218b36c1d19D4a2e9Eb0cE3606eB4801ffff003041CbD36888bECc7bbCBc0045E3B1f144466f5f010102030405060708091001020304050607080910000bb8000000000000000000000000000000000000000000000000000000',
-  ),
+// console.log(
+//   await simulateRoute(
+//     '0x0102030405060708091001020304050607080910',
+//     USDC[ChainId.ETHEREUM],
+//     12345n,
+//     USDT[ChainId.ETHEREUM],
+//     '0xf2614A233c7C3e7f08b1F887Ba133a13f1eb2c55',
+//     '0x2646478b000000000000000000000000a0b86991c6218b36c1d19d4a2e9eb0ce3606eb480000000000000000000000000000000000000000000000000000000000003039000000000000000000000000dac17f958d2ee523a2206206994597c13d831ec70000000000000000000000000000000000000000000000000000000000002ffc000000000000000000000000010203040506070809100102030405060708091000000000000000000000000000000000000000000000000000000000000000c0000000000000000000000000000000000000000000000000000000000000004502A0b86991c6218b36c1d19D4a2e9Eb0cE3606eB4801ffff003041CbD36888bECc7bbCBc0045E3B1f144466f5f010102030405060708091001020304050607080910000bb8000000000000000000000000000000000000000000000000000000',
+//   ),
+// )
+
+OneInchAPIRouteSimulate(
+  ChainId.ETHEREUM,
+  nativeToken(ChainId.ETHEREUM),
+  USDC[ChainId.ETHEREUM],
+  10n ** 18n,
+  1_000_000_000n,
 )

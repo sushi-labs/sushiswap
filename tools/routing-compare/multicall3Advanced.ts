@@ -1,4 +1,5 @@
 import { ChainId } from 'sushi'
+import { multicall3Abi } from 'sushi/abi'
 import { publicClientConfig } from 'sushi/config'
 import { Token } from 'sushi/currency'
 import {
@@ -12,7 +13,6 @@ import {
   decodeFunctionResult,
   encodeFunctionData,
   erc20Abi,
-  multicall3Abi,
 } from 'viem'
 
 export const MULTICALL3_ADDRESS = '0xcA11bde05977b3631167028862bE2a173976CA11'
@@ -30,6 +30,15 @@ export function ifNetworkSupported(chainId: ChainId) {
   return ALCHEMY_ENTRY_POINTS[chainId] !== undefined
 }
 
+export function createClient(chainId: ChainId) {
+  return createPublicClient({
+    chain: publicClientConfig[chainId].chain,
+    transport: http(
+      `${ALCHEMY_ENTRY_POINTS[chainId]}${process.env['ALCHEMY_ID']}`,
+    ),
+  })
+}
+
 export interface CallData {
   action: string // Human-readable comment
   target: Address | Token // contract to call
@@ -37,6 +46,7 @@ export interface CallData {
   abi?: Abi | undefined
   functionName?: string
   args?: any[]
+  value?: bigint | undefined
   validate?: (
     returnDataAsBigInt: bigint,
     returnDataRaw: Hex,
@@ -48,21 +58,18 @@ export async function aggregate3({
   account,
   calls,
   stateOverride,
+  blockNumber,
 }: {
   chainId: ChainId
   account: Address
   calls: CallData[]
   stateOverride?: StateOverride | undefined
+  blockNumber?: bigint | undefined
 }): Promise<string | undefined> {
-  const client = createPublicClient({
-    chain: publicClientConfig[chainId].chain,
-    transport: http(
-      `${ALCHEMY_ENTRY_POINTS[chainId]}${process.env['ALCHEMY_ID']}`,
-    ),
-  })
+  const client = createClient(chainId)
   const multicall3Data = encodeFunctionData({
     abi: multicall3Abi,
-    functionName: 'aggregate3',
+    functionName: 'aggregate3Value',
     args: [
       calls.map((call, i) => {
         if (call.callData !== undefined)
@@ -70,6 +77,7 @@ export async function aggregate3({
             target:
               call.target instanceof Token ? call.target.address : call.target,
             callData: call.callData,
+            value: call.value ?? 0n,
             allowFailure: true,
           }
         else if (call.functionName)
@@ -81,6 +89,7 @@ export async function aggregate3({
               functionName: call.functionName,
               args: call.args ?? [],
             }),
+            value: call.value ?? 0n,
             allowFailure: true,
           }
         else throw new Error(`Incorrect call data: ${i}`)
@@ -92,12 +101,13 @@ export async function aggregate3({
     to: MULTICALL3_ADDRESS,
     data: multicall3Data,
     stateOverride,
+    blockNumber,
   })
   if (returnData === undefined) return `simulateRoute: Multicall error`
 
   const res = decodeFunctionResult({
     abi: multicall3Abi,
-    functionName: 'aggregate3',
+    functionName: 'aggregate3Value',
     data: returnData,
   })
   for (let i = 0; i < res.length; ++i) {
