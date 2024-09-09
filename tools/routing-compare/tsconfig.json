@@ -1,10 +1,10 @@
 {
   "extends": ["@tsconfig/strictest/tsconfig", "@tsconfig/node20/tsconfig"],
-  "include": ["./"],
+  "include": ["./src"],
   "exclude": ["node_modules", "dist"],
   "compilerOptions": {
     "outDir": "./dist",
-    "rootDir": "./",
+    "rootDir": "./src",
     "lib": ["ESNext"],
     "module": "ESNext",
     "moduleResolution": "Bundler",
