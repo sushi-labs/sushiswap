@@ -7,8 +7,7 @@ import z from 'zod'
 
 import { isMerklChainId } from 'sushi/config'
 
-import { usePrices } from '../prices'
-
+import { usePrices } from '~evm/_common/ui/price-provider/price-provider/use-prices'
 import { angleRewardsPoolsValidator, angleRewardsValidator } from './validator'
 
 type TransformedRewardsPerToken = Record<

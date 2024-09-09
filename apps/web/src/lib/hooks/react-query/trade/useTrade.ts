@@ -17,7 +17,7 @@ import { Amount, Native, Price, type Type } from 'sushi/currency'
 import { Fraction, Percent, ZERO } from 'sushi/math'
 import { isLsd, isStable, isWrapOrUnwrap } from 'sushi/router'
 import { Address, stringify, zeroAddress } from 'viem'
-import { usePrice } from '../prices'
+import { usePrices } from '~evm/_common/ui/price-provider/price-provider/use-prices'
 import { apiAdapter02To01 } from './apiAdapter'
 import type { UseTradeParams, UseTradeQuerySelect } from './types'
 import { tradeValidator02 } from './validator02'
@@ -127,27 +127,28 @@ export const useTrade = (variables: UseTradeParams) => {
     gasPrice,
     tokenTax,
   } = variables
-  const { data: _price } = usePrice({
+  const { data: prices } = usePrices({
     chainId,
-    address: Native.onChain(chainId).wrapped.address,
-    enabled: isWNativeSupported(chainId),
   })
 
-  const price = useMemo(() => {
-    return Native.onChain(chainId).wrapped.address === zeroAddress
-      ? new Fraction(0)
-      : _price
-  }, [_price, chainId])
+  const [nativePrice, tokenOutPrice] = useMemo(() => {
+    const result = [new Fraction(0), undefined]
 
-  // const { data: tokenInPrice } = usePrice({
-  //   chainId,
-  //   address: fromToken?.wrapped.address,
-  // })
+    if (prices) {
+      if (
+        isWNativeSupported(chainId) &&
+        Native.onChain(chainId).wrapped.address !== zeroAddress
+      ) {
+        result[0] = prices.getFraction(Native.onChain(chainId).wrapped.address)
+      }
 
-  const { data: tokenOutPrice } = usePrice({
-    chainId,
-    address: toToken?.wrapped.address,
-  })
+      if (toToken) {
+        result[1] = prices.getFraction(toToken.wrapped.address)
+      }
+    }
+
+    return result
+  }, [chainId, prices, toToken])
 
   const select: UseTradeQuerySelect = useCallback(
     (data) => {
@@ -214,8 +215,8 @@ export const useTrade = (variables: UseTradeParams) => {
           minAmountOut,
           gasSpent: gasSpent?.toSignificant(4),
           gasSpentUsd:
-            price && gasSpent
-              ? gasSpent.multiply(price.asFraction).toSignificant(4)
+            nativePrice && gasSpent
+              ? gasSpent.multiply(nativePrice.asFraction).toSignificant(4)
               : undefined,
           fee:
             !isWrapOrUnwrap({ fromToken, toToken }) &&
@@ -258,7 +259,7 @@ export const useTrade = (variables: UseTradeParams) => {
       amount,
       chainId,
       fromToken,
-      price,
+      nativePrice,
       tokenOutPrice,
       slippagePercentage,
       toToken,
