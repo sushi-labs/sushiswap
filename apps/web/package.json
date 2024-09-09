@@ -47,7 +47,6 @@
     "@sushiswap/hooks": "workspace:*",
     "@sushiswap/nextjs-config": "workspace:*",
     "@sushiswap/notifications": "workspace:*",
-    "@sushiswap/react-query": "workspace:*",
     "@sushiswap/steer-sdk": "workspace:*",
     "@sushiswap/tailwindcss-config": "workspace:*",
     "@sushiswap/telemetry": "workspace:*",

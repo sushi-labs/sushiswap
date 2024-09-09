@@ -1,6 +1,5 @@
 'use client'
 
-import { TradeLegType, UseTradeReturn } from '@sushiswap/react-query'
 import {
   InterfaceElementName,
   SwapEventName,
@@ -20,6 +19,7 @@ import {
   ScrollArea,
 } from '@sushiswap/ui'
 import React, { FC, ReactNode, useEffect, useRef, useState } from 'react'
+import { TradeLegType, UseTradeReturn } from 'src/lib/hooks/react-query'
 import { ChainId } from 'sushi/chain'
 import { Native, Token, Type, WETH9 } from 'sushi/currency'
 

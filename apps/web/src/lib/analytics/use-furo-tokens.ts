@@ -1,8 +1,8 @@
 'use client'
 
 import { GetApiInputFromOutput, parseArgs } from '@sushiswap/client'
-import { useAllPrices } from '@sushiswap/react-query'
 import { useMemo } from 'react'
+import { useAllPrices } from 'src/lib/hooks/react-query'
 import { Amount, Token } from 'sushi/currency'
 import useSWR from 'swr'
 

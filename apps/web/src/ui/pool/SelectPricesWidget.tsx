@@ -54,7 +54,7 @@ import {
 import { RadioGroup } from '@headlessui/react'
 import { LockClosedIcon, LockOpenIcon } from '@heroicons/react/24/solid'
 import { ExclamationTriangleIcon } from '@heroicons/react/24/solid'
-import { useConcentratedLiquidityPoolStats } from '@sushiswap/react-query'
+import { useConcentratedLiquidityPoolStats } from 'src/lib/hooks/react-query'
 import { useConcentratedLiquidityPositionsFromTokenId } from 'src/lib/wagmi/hooks/positions/hooks/useConcentratedPositionsFromTokenId'
 import { Address } from 'sushi'
 import { formatPercent } from 'sushi/format'

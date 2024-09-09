@@ -1,4 +1,3 @@
-import { useTokenSecurity } from '@sushiswap/react-query'
 import {
   BrowserEvent,
   InterfaceElementName,
@@ -19,6 +18,7 @@ import { Button } from '@sushiswap/ui'
 import { Currency } from '@sushiswap/ui'
 import { List } from '@sushiswap/ui'
 import { FC, useCallback, useState } from 'react'
+import { useTokenSecurity } from 'src/lib/hooks/react-query'
 import { Chain } from 'sushi/chain'
 import { Token } from 'sushi/currency'
 import { shortenAddress } from 'sushi/format'

@@ -1,5 +1,4 @@
 import { CheckIcon } from '@heroicons/react/20/solid'
-import { AngleRewardsPool } from '@sushiswap/react-query'
 import {
   Currency,
   DataTable,
@@ -13,6 +12,7 @@ import {
 import { ColumnDef } from '@tanstack/react-table'
 import format from 'date-fns/format'
 import { FC, useMemo } from 'react'
+import { AngleRewardsPool } from 'src/lib/hooks/react-query'
 
 import { rewardPerDay } from '../../lib/functions'
 

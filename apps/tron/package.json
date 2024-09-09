@@ -17,7 +17,6 @@
     "@sentry/nextjs": "7.101.1",
     "@sushiswap/hooks": "workspace:*",
     "@sushiswap/nextjs-config": "workspace:*",
-    "@sushiswap/react-query": "workspace:*",
     "@sushiswap/tailwindcss-config": "workspace:*",
     "@sushiswap/ui": "workspace:*",
     "@tanstack/react-query": "5.51.16",

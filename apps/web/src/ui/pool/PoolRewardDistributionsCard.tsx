@@ -1,6 +1,5 @@
 'use client'
 
-import { useAngleRewards } from '@sushiswap/react-query'
 import {
   Button,
   Card,
@@ -15,6 +14,7 @@ import {
   TabsTrigger,
 } from '@sushiswap/ui'
 import { FC } from 'react'
+import { useAngleRewards } from 'src/lib/hooks/react-query'
 import { ChainId, ChainKey } from 'sushi/chain'
 import { Native } from 'sushi/currency'
 import { getAddress } from 'viem'

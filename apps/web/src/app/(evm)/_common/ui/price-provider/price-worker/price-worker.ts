@@ -213,7 +213,11 @@ import {
     newPriceMap: Map<bigint, number>,
   ) {
     for (const [address, price] of newPriceMap) {
-      oldPriceData.set(address, price)
+      if (price === 0) {
+        oldPriceData.delete(address)
+      } else {
+        oldPriceData.set(address, price)
+      }
     }
   }
 

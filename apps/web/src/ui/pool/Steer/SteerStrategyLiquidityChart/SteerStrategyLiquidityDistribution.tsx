@@ -1,8 +1,8 @@
 'use client'
 
-import { useConcentratedLiquidityPoolStats } from '@sushiswap/react-query'
 import { SkeletonBox } from '@sushiswap/ui'
 import React, { FC, useMemo } from 'react'
+import { useConcentratedLiquidityPoolStats } from 'src/lib/hooks/react-query'
 import { SushiSwapV3ChainId } from 'sushi/config'
 import { TickMath, tickToPrice } from 'sushi/pool/sushiswap-v3'
 import type { PoolId } from 'sushi/types'

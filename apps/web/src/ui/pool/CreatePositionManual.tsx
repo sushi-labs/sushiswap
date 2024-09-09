@@ -1,6 +1,5 @@
 'use client'
 
-import { useConcentratedLiquidityPoolStats } from '@sushiswap/react-query'
 import {
   Card,
   CardContent,
@@ -10,6 +9,7 @@ import {
   Separator,
 } from '@sushiswap/ui'
 import React, { FC, useMemo, useState } from 'react'
+import { useConcentratedLiquidityPoolStats } from 'src/lib/hooks/react-query'
 import { ConcentratedLiquidityWidget } from 'src/ui/pool/ConcentratedLiquidityWidget'
 import { Address, ChainKey } from 'sushi'
 import { SushiSwapV3ChainId } from 'sushi/config'

@@ -1,7 +1,6 @@
 'use client'
 
 import { createErrorToast, createToast } from '@sushiswap/notifications'
-import { UseTradeReturn } from '@sushiswap/react-query'
 import {
   BrowserEvent,
   InterfaceElementName,
@@ -36,6 +35,7 @@ import React, {
   useMemo,
   useRef,
 } from 'react'
+import { UseTradeReturn } from 'src/lib/hooks/react-query'
 import { useSimulateTrade } from 'src/lib/hooks/useSimulateTrade'
 import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
 import { useBalanceWeb3Refetch } from 'src/lib/wagmi/hooks/balances/useBalanceWeb3Refetch'

@@ -1,6 +1,6 @@
-import { type UseTradeParams, UseTradeReturn } from '@sushiswap/react-query'
 import { UseQueryResult, useQuery } from '@tanstack/react-query'
 import { useEffect, useMemo, useState } from 'react'
+import { type UseTradeParams, UseTradeReturn } from 'src/lib/hooks/react-query'
 import { getBigInt } from 'sushi'
 import { calculateFee } from 'sushi/calculate'
 import {

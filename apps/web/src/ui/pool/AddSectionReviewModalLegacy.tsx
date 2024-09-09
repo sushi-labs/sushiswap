@@ -1,7 +1,6 @@
 import { CogIcon } from '@heroicons/react-v1/outline'
 import { SlippageToleranceStorageKey, TTLStorageKey } from '@sushiswap/hooks'
 import { createErrorToast, createToast } from '@sushiswap/notifications'
-import { NativeAddress } from '@sushiswap/react-query'
 import {
   LiquidityEventName,
   LiquiditySource,
@@ -26,6 +25,7 @@ import { Button } from '@sushiswap/ui'
 import { Dots } from '@sushiswap/ui'
 import { FC, ReactNode, useCallback, useMemo } from 'react'
 import { APPROVE_TAG_ADD_LEGACY } from 'src/lib/constants'
+import { NativeAddress } from 'src/lib/hooks/react-query'
 import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
 import { getSushiSwapRouterContractConfig } from 'src/lib/wagmi/hooks/contracts/useSushiSwapRouter'
 import { SushiSwapV2PoolState } from 'src/lib/wagmi/hooks/pools/hooks/useSushiSwapV2Pools'

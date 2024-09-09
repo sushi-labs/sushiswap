@@ -1,6 +1,5 @@
 import { XMarkIcon } from '@heroicons/react/20/solid'
 import { usePinnedTokens } from '@sushiswap/hooks'
-import { NativeAddress } from '@sushiswap/react-query'
 import {
   BrowserEvent,
   InterfaceElementName,
@@ -8,6 +7,7 @@ import {
   TraceEvent,
 } from '@sushiswap/telemetry'
 import { Button, Currency, IconButton, buttonIconVariants } from '@sushiswap/ui'
+import { NativeAddress } from 'src/lib/hooks/react-query'
 import type { ChainId } from 'sushi/chain'
 import { Type } from 'sushi/currency'
 import { useChipTokens } from '../hooks/use-chip-tokens'

@@ -1,7 +1,6 @@
 'use client'
 
 import { V3Pool } from '@sushiswap/graph-client/data-api'
-import { useConcentratedLiquidityPoolStats } from '@sushiswap/react-query'
 import {
   Card,
   CardContent,
@@ -19,6 +18,7 @@ import {
 } from '@sushiswap/ui'
 import { FC } from 'react'
 import { useTokenAmountDollarValues } from 'src/lib/hooks'
+import { useConcentratedLiquidityPoolStats } from 'src/lib/hooks/react-query'
 import { useConcentratedLiquidityPoolReserves } from 'src/lib/wagmi/hooks/pools/hooks/useConcentratedLiquidityPoolReserves'
 import { ChainKey } from 'sushi'
 import { formatUSD } from 'sushi/format'

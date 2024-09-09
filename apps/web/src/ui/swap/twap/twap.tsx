@@ -7,7 +7,6 @@ import {
 } from '@orbs-network/twap-ui-sushiswap'
 import { useConnectModal } from '@rainbow-me/rainbowkit'
 import { useCustomTokens } from '@sushiswap/hooks'
-import { useOtherTokenListsQuery, useTokens } from '@sushiswap/react-query'
 import {
   Button,
   Dialog,
@@ -22,6 +21,7 @@ import {
 } from '@sushiswap/ui'
 import { useTheme } from 'next-themes'
 import { ReactNode, useCallback, useEffect, useMemo } from 'react'
+import { useOtherTokenListsQuery, useTokens } from 'src/lib/hooks/react-query'
 import { useSortedTokenList } from 'src/lib/wagmi/components/token-selector/hooks/use-sorted-token-list'
 import { ChainId } from 'sushi/chain'
 import { Currency } from 'sushi/currency'

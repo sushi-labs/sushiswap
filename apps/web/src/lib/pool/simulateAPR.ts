@@ -1,5 +1,5 @@
-import { AngleRewardsPool } from '@sushiswap/react-query'
 import type { PriceMap } from 'src/app/(evm)/_common/ui/price-provider/price-provider/use-prices'
+import { AngleRewardsPool } from 'src/lib/hooks/react-query'
 import { Amount, Token } from 'sushi/currency'
 
 interface SimulateParams {

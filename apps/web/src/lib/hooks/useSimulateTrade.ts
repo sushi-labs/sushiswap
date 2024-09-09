@@ -1,6 +1,6 @@
-import { UseTradeReturn } from '@sushiswap/react-query'
 import { EstimateGasErrorType, EstimateGasReturnType } from '@wagmi/core'
 import { useEffect, useMemo, useRef } from 'react'
+import { UseTradeReturn } from 'src/lib/hooks/react-query'
 import { useDerivedStateSimpleSwap } from 'src/ui/swap/simple/derivedstate-simple-swap-provider'
 import { isRouteProcessor5ChainId } from 'sushi/config'
 import { Hex, RawContractError } from 'viem'

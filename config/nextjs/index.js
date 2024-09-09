@@ -16,7 +16,6 @@ const defaultNextConfig = {
       '@sushiswap/database',
       '@sushiswap/graph-client',
       '@sushiswap/hooks',
-      '@sushiswap/react-query',
       '@sushiswap/router',
       '@sushiswap/tines',
       '@sushiswap/ui',

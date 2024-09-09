@@ -1,5 +1,5 @@
 import { Token as SquidToken } from '@0xsquid/squid-types'
-import { tradeValidator02 } from '@sushiswap/react-query'
+import { tradeValidator02 } from 'src/lib/hooks/react-query'
 import { squidRouterAbi } from 'sushi/abi'
 import { ChainId } from 'sushi/chain'
 import { SquidAdapterChainId } from 'sushi/config'

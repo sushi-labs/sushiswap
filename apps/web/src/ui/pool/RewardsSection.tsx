@@ -1,10 +1,6 @@
 'use client'
 
 import {
-  AngleRewardsPool,
-  useAngleRewardsMultipleChains,
-} from '@sushiswap/react-query'
-import {
   Card,
   CardHeader,
   CardTitle,
@@ -14,6 +10,10 @@ import {
 import { Carousel } from '@sushiswap/ui'
 import { ColumnDef, PaginationState } from '@tanstack/react-table'
 import React, { FC, useCallback, useMemo, useState } from 'react'
+import {
+  AngleRewardsPool,
+  useAngleRewardsMultipleChains,
+} from 'src/lib/hooks/react-query'
 import { MERKL_SUPPORTED_CHAIN_IDS } from 'sushi/config'
 
 import { useAccount } from 'wagmi'

@@ -38,7 +38,6 @@
     "@sushiswap/graph-client",
     "@sushiswap/hooks",
     "@sushiswap/notifications",
-    "@sushiswap/react-query",
     "@sushiswap/steer-sdk",
     "@sushiswap/telemetry",
     "@sushiswap/ui",
