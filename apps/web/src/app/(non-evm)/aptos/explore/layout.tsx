@@ -11,7 +11,7 @@ export default function PoolLayout({
         <Hero />
       </Container>
       <section className="flex flex-col min-h-screen">
-        <div className="bg-gray-50 dark:bg-white/[0.02] border-t border-accent pt-4 pb-20 h-full">
+        <div className="flex-1 bg-gray-50 dark:bg-white/[0.02] border-t border-accent pt-4 pb-20">
           <Providers>{children}</Providers>
         </div>
       </section>
