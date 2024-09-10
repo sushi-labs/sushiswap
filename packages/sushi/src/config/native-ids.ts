@@ -7,7 +7,7 @@ export const nativeCurrencyIds = {
   // [ChainId.RINKEBY]: 'ETH',
   // [ChainId.GÖRLI]: 'ETH',
   // [ChainId.KOVAN]: 'ETH',
-  [ChainId.POLYGON]: 'MATIC',
+  [ChainId.POLYGON]: 'POL',
   [ChainId.POLYGON_TESTNET]: 'MATIC',
   [ChainId.FANTOM]: 'FTM',
   [ChainId.FANTOM_TESTNET]: 'FTM',

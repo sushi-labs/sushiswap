@@ -186,8 +186,8 @@ const CHAIN_ID_SHORT_CURRENCY_NAME_TO_CURRENCY = {
   [ChainId.POLYGON]: {
     // NATIVE: Native.onChain(ChainId.POLYGON),
     // WNATIVE: WNATIVE[ChainId.POLYGON],
-    MATIC: Native.onChain(ChainId.POLYGON),
-    WMATIC: WNATIVE[ChainId.POLYGON],
+    POL: Native.onChain(ChainId.POLYGON),
+    WPOL: WNATIVE[ChainId.POLYGON],
     ETH: WETH9[ChainId.POLYGON],
     WETH: WETH9[ChainId.POLYGON],
     WBTC: WBTC[ChainId.POLYGON],

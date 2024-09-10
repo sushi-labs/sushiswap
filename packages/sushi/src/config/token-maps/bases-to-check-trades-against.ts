@@ -1,5 +1,13 @@
 import { ChainId } from '../../chain/index.js'
-import { METH, MUSD, SKL, Token, USDB, USDP } from '../../currency/index.js'
+import {
+  METH,
+  MUSD,
+  POL,
+  SKL,
+  Token,
+  USDB,
+  USDP,
+} from '../../currency/index.js'
 import {
   AAVE,
   BUSD,
@@ -396,6 +404,7 @@ export const BASES_TO_CHECK_TRADES_AGAINST: {
   [ChainId.POLYGON_ZKEVM]: [
     WNATIVE[ChainId.POLYGON_ZKEVM],
     MATIC[ChainId.POLYGON_ZKEVM],
+    POL[ChainId.POLYGON_ZKEVM],
     USDC[ChainId.POLYGON_ZKEVM],
     USDT[ChainId.POLYGON_ZKEVM],
     DAI[ChainId.POLYGON_ZKEVM],

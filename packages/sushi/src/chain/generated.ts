@@ -29,33 +29,27 @@ export default [
     shortName: 'eth',
   },
   {
-    chainId: 5, // Goerli
+    chainId: 5,
     explorers: [
       {
-        name: 'etherscan',
-        url: 'https://etherscan.io',
+        name: 'etherscan-goerli',
+        url: 'https://goerli.etherscan.io',
         standard: 'EIP3091',
       },
       {
-        name: 'blockscout',
-        url: 'https://eth.blockscout.com',
+        name: 'blockscout-goerli',
+        url: 'https://eth-goerli.blockscout.com',
         icon: 'blockscout',
-        standard: 'EIP3091',
-      },
-      {
-        name: 'dexguru',
-        url: 'https://ethereum.dex.guru',
-        icon: 'dexguru',
         standard: 'EIP3091',
       },
     ],
     nativeCurrency: {
-      name: 'Ether',
+      name: 'Goerli Ether',
       symbol: 'ETH',
       decimals: 18,
     },
     name: 'Goerli',
-    shortName: 'eth',
+    shortName: 'gor',
   },
   {
     chainId: 10,
@@ -297,12 +291,12 @@ export default [
       },
     ],
     nativeCurrency: {
-      name: 'MATIC',
-      symbol: 'MATIC',
+      name: 'POL',
+      symbol: 'POL',
       decimals: 18,
     },
     name: 'Polygon Mainnet',
-    shortName: 'matic',
+    shortName: 'pol',
   },
   {
     chainId: 199,

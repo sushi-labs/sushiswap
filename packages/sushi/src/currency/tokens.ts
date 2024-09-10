@@ -39,6 +39,7 @@ import {
   OHM_ADDRESS,
   OPTICS_USDC_ADDRESS,
   OP_ADDRESS,
+  POL_ADDRESS,
   PRIMATE_ADDRESS,
   QUICK_ADDRESS,
   RNDR_ADDRESS,
@@ -206,6 +207,15 @@ export const MATIC = addressMapToTokenMap(
   },
   MATIC_ADDRESS,
 ) as Record<keyof typeof MATIC_ADDRESS, Token>
+
+export const POL = addressMapToTokenMap(
+  {
+    decimals: 18,
+    symbol: 'POL',
+    name: 'Polygon Ecosystem Token',
+  },
+  POL_ADDRESS,
+) as Record<keyof typeof POL_ADDRESS, Token>
 
 export const GNO = addressMapToTokenMap(
   {
@@ -491,8 +501,8 @@ export const WNATIVE = {
     chainId: ChainId.POLYGON,
     address: WNATIVE_ADDRESS[ChainId.POLYGON],
     decimals: 18,
-    symbol: 'WMATIC',
-    name: 'Wrapped Matic',
+    symbol: 'WPOL',
+    name: 'Wrapped POL',
   }),
   [ChainId.POLYGON_TESTNET]: new Token({
     chainId: ChainId.POLYGON_TESTNET,

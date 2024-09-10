@@ -12,7 +12,7 @@ const EthereumLogo = 'ethereum.svg'
 const FtmLogo = 'ftm.svg'
 const OneLogo = 'one.svg'
 const HtLogo = 'ht.svg'
-const MaticLogo = 'matic.svg'
+const PolygonLogo = 'matic.svg'
 const GlmrLogo = 'glmr.svg'
 const OktLogo = 'okt.svg'
 const xDaiLogo = 'xdai.svg'
@@ -43,8 +43,8 @@ const LOGO: Record<number, string> = {
   // [ChainId.GÖRLI]: EthereumLogo,
   [ChainId.FANTOM]: FtmLogo,
   [ChainId.FANTOM_TESTNET]: FtmLogo,
-  [ChainId.POLYGON]: MaticLogo,
-  [ChainId.POLYGON_TESTNET]: MaticLogo,
+  [ChainId.POLYGON]: PolygonLogo,
+  [ChainId.POLYGON_TESTNET]: PolygonLogo,
   [ChainId.GNOSIS]: xDaiLogo,
   [ChainId.BSC]: BnbLogo,
   [ChainId.BSC_TESTNET]: BnbLogo,
