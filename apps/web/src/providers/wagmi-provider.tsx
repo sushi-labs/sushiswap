@@ -10,7 +10,7 @@ import {
 import { useIsMounted } from '@sushiswap/hooks'
 import { useTheme } from 'next-themes'
 import { type FC, type ReactNode, useMemo } from 'react'
-import { getWagmiInitialState, wagmiConfig } from 'src/lib/wagmi/config'
+import { getWagmiConfig, getWagmiInitialState } from 'src/lib/wagmi/config'
 import { WagmiProvider } from 'wagmi'
 
 const darkTheme: Theme = {
@@ -71,7 +71,7 @@ export const WagmiConfig: FC<{
   }, [resolvedTheme, isMounted])
 
   return (
-    <WagmiProvider config={wagmiConfig} initialState={initialState}>
+    <WagmiProvider config={getWagmiConfig()} initialState={initialState}>
       <div className="h-full w-full [&>div]:h-full">
         <RainbowKitProvider
           modalSize="compact"

@@ -40,9 +40,9 @@ export const WagmiHeaderComponents: React.FC<WagmiHeaderComponentsProps> = ({
   }, [address, chainId, connector, previousConnectedChainId])
 
   return (
-    <Suspense>
+    <>
       <HeaderNetworkSelector networks={chainIds} onChange={onChange} />
       <UserPortfolio />
-    </Suspense>
+    </>
   )
 }
