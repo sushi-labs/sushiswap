@@ -1,7 +1,7 @@
 import { ChainId } from 'sushi'
 import { Token, WETH9_ADDRESS } from 'sushi/currency'
 import { Address, Hex } from 'viem'
-import { simulateRouteFromNative } from './simulationStorageNative.js'
+import { simulateRouteFromNative } from './simulationStorageFromNative.js'
 import { isNative } from './utils.js'
 
 const delay = async (ms: number) => new Promise((res) => setTimeout(res, ms))

@@ -8,87 +8,14 @@ import {
 } from 'sushi/config'
 import { Token, USDC, WNATIVE } from 'sushi/currency'
 import { createPublicClient } from 'viem'
-import { OneInchAPIRouteSimulate, OneInchRoute } from './route1inch.js'
+import { OneInchRoute } from './route1inch.js'
+import { OdosRoute, OdosRouteSimulate } from './routeOdos.js'
+import { SushiRoute } from './routeSushi.js'
 
-const MAX_PRICE_IMPACT = 0.1 // 10%
+export const MAX_PRICE_IMPACT = 0.1 // 10%
 const MAX_PAIRS_FOR_CHECK = 23
 const CHECK_LEVELS_$ = [100, 1000, 30_000, 1_000_000, 10_000_000]
 const EXCLUDE_NETWORKS = [5, 80001, 4002, 97, 421614, 43113]
-
-async function SushiRP5RouteUnBiased(
-  chainId: ChainId,
-  from: Token,
-  to: Token,
-  amountIn: bigint,
-  gasPrice: bigint,
-): Promise<bigint | undefined> {
-  const url =
-    `https://api.sushi.com/swap/v5/${chainId}?tokenIn=${from.address}&tokenOut=${to.address}` +
-    `&amount=${amountIn}&maxPriceImpact=${MAX_PRICE_IMPACT}&gasPrice=${gasPrice}`
-  const resp = await fetch(url)
-  if (resp.status !== 200) return
-  const route = (await resp.json()) as {
-    status: string
-    assumedAmountOut: string
-  }
-  if (route === undefined || route?.status !== 'Success') return
-  return BigInt(route.assumedAmountOut)
-}
-
-export async function SushiRoute(
-  chainId: ChainId,
-  from: Token,
-  to: Token,
-  amountIn: bigint,
-  gasPrice: bigint,
-): Promise<bigint | undefined> {
-  return SushiRP5RouteUnBiased(chainId, from, to, amountIn, gasPrice)
-}
-
-export async function OdosRoute(
-  chainId: ChainId,
-  from: Token,
-  to: Token,
-  amountIn: bigint,
-  gasPrice: bigint,
-): Promise<bigint | undefined> {
-  const resp = await fetch('https://api.odos.xyz/sor/quote/v2', {
-    method: 'POST',
-    headers: {
-      accept: 'application/json',
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      chainId: chainId,
-      gasPrice: gasPrice.toString(),
-      inputTokens: [
-        {
-          amount: amountIn.toString(),
-          tokenAddress: from.address,
-        },
-      ],
-      outputTokens: [
-        {
-          proportion: 1,
-          tokenAddress: to.address,
-        },
-      ],
-      slippageLimitPercent: MAX_PRICE_IMPACT * 100,
-    }),
-  })
-  if (resp.status !== 200) {
-    //console.log(resp.status, await resp.text())
-    return
-  }
-  const route = (await resp.json()) as {
-    outAmounts: number
-    priceImpact: number | undefined
-  }
-  if (route?.priceImpact === undefined) return
-  if (route?.priceImpact < -MAX_PRICE_IMPACT * 100) return // too high price impact
-  if (route?.outAmounts === undefined) return
-  return BigInt(route?.outAmounts)
-}
 
 async function route(
   chainId: ChainId,
@@ -249,11 +176,21 @@ export async function checkRouteAllNetworks() {
 //   ),
 // )
 
+// console.log(
+//   await OneInchAPIRouteSimulate(
+//     ChainId.ETHEREUM,
+//     nativeToken(ChainId.ETHEREUM),
+//     USDC[ChainId.ETHEREUM],
+//     10n ** 18n,
+//     1_000_000_000n,
+//   ),
+// )
+// debugger
 console.log(
-  await OneInchAPIRouteSimulate(
+  await OdosRouteSimulate(
     ChainId.ETHEREUM,
-    nativeToken(ChainId.ETHEREUM),
     USDC[ChainId.ETHEREUM],
+    nativeToken(ChainId.ETHEREUM),
     10n ** 18n,
     1_000_000_000n,
   ),

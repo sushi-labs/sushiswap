@@ -39,7 +39,7 @@ export async function simulateRouteFromNative(
       action: 'Check initial user output balance',
       target: tokenTo,
       functionName: 'balanceOf',
-      args: [MULTICALL3_ADDRESS],
+      args: [from],
       validate(value: bigint) {
         initialOutputBalance = value
         return undefined
@@ -56,7 +56,7 @@ export async function simulateRouteFromNative(
       action: 'Check final user output balance',
       target: tokenTo,
       functionName: 'balanceOf',
-      args: [MULTICALL3_ADDRESS],
+      args: [from],
       validate(value: bigint) {
         amountOut = value - initialOutputBalance
         return undefined

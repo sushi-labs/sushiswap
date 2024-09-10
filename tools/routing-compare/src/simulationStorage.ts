@@ -4,10 +4,13 @@ import {
   CallData,
   MULTICALL3_ADDRESS,
   aggregate3,
+  balanceOfCallData,
   ifNetworkSupported,
 } from './multicall3Advanced.js'
 import { knownRoutersAbi } from './routerABI/routerAbi.js'
+import { simulateRouteFromNative } from './simulationStorageFromNative.js'
 import { tokenAllowedSlot, tokenBalanceSlot } from './tokenBalanceSlot.js'
+import { isNative } from './utils.js'
 
 export async function simulateRoute(
   from: Address,
@@ -17,6 +20,14 @@ export async function simulateRoute(
   routerContract: Address,
   routeData: Hex,
 ): Promise<bigint | string> {
+  if (isNative(tokenFrom))
+    return simulateRouteFromNative(
+      from,
+      amountIn,
+      tokenTo,
+      routerContract,
+      routeData,
+    )
   const chainId = tokenFrom.chainId
   if (!ifNetworkSupported(chainId))
     return `simulateRoute: Network ${chainId} is not supported`
@@ -70,10 +81,8 @@ export async function simulateRoute(
       args: [routerContract, amountIn],
     },
     {
+      ...balanceOfCallData(tokenTo, from),
       action: 'Check initial user output balance',
-      target: tokenTo,
-      functionName: 'balanceOf',
-      args: [from],
       validate(value: bigint) {
         initialOutputBalance = value
         return undefined
@@ -86,10 +95,8 @@ export async function simulateRoute(
       callData: routeData,
     },
     {
+      ...balanceOfCallData(tokenTo, from),
       action: 'Check final user output balance',
-      target: tokenTo,
-      functionName: 'balanceOf',
-      args: [from],
       validate(value: bigint) {
         amountOut = value - initialOutputBalance
         return undefined

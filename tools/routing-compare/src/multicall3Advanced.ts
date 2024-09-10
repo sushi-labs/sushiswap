@@ -14,6 +14,7 @@ import {
   encodeFunctionData,
   erc20Abi,
 } from 'viem'
+import { isNative } from './utils.js'
 
 export const MULTICALL3_ADDRESS = '0xcA11bde05977b3631167028862bE2a173976CA11'
 
@@ -51,6 +52,23 @@ export interface CallData {
     returnDataAsBigInt: bigint,
     returnDataRaw: Hex,
   ) => string | undefined // string in case of an error
+}
+
+export function balanceOfCallData(token: Token, user: Address): CallData {
+  if (isNative(token))
+    return {
+      action: `Balance of ${user}`,
+      target: MULTICALL3_ADDRESS,
+      abi: multicall3Abi,
+      functionName: 'getEthBalance',
+      args: [user],
+    }
+  return {
+    action: `Token ${token.symbol}(${token.address}) balanceOf ${user}`,
+    target: token.address,
+    functionName: 'balanceOf',
+    args: [user],
+  }
 }
 
 export async function aggregate3({
