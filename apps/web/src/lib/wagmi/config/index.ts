@@ -8,27 +8,27 @@ import { createTestConfig } from './test'
 export { createProductionConfig }
 export { createTestConfig }
 
-const createWagmiConfig = ({useCookies}: {useCookies: boolean}) => {
+const createWagmiConfig = ({ useCookies }: { useCookies: boolean }) => {
   const isTest = process.env.NEXT_PUBLIC_APP_ENV === 'test'
 
   const config = (() => {
     if (isTest) {
       return createTestConfig() as unknown as PublicWagmiConfig
     }
-    return createProductionConfig({useCookies})
+    return createProductionConfig({ useCookies })
   })()
 
   return config
 }
 
 let wagmiConfigSingleton: PublicWagmiConfig | undefined = undefined
-export const getWagmiConfig = ({useCookies}: {useCookies: boolean}) => {
+export const getWagmiConfig = ({ useCookies }: { useCookies: boolean }) => {
   if (typeof window === 'undefined') {
-    return createWagmiConfig({useCookies})
+    return createWagmiConfig({ useCookies })
   }
 
   if (!wagmiConfigSingleton) {
-    wagmiConfigSingleton = createWagmiConfig({useCookies})
+    wagmiConfigSingleton = createWagmiConfig({ useCookies })
   }
 
   return wagmiConfigSingleton
@@ -37,6 +37,9 @@ export const getWagmiConfig = ({useCookies}: {useCookies: boolean}) => {
 export const getWagmiInitialState = (
   cookieHeaders: string | null | undefined,
 ) => {
-  const initialState = cookieToInitialState(getWagmiConfig({useCookies: true}), cookieHeaders)
+  const initialState = cookieToInitialState(
+    getWagmiConfig({ useCookies: true }),
+    cookieHeaders,
+  )
   return initialState
 }

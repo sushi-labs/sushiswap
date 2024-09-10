@@ -8,7 +8,7 @@ import {
   WalletConnectionResult,
   sendAnalyticsEvent,
 } from '@sushiswap/telemetry'
-import { Suspense, useEffect } from 'react'
+import { useEffect } from 'react'
 import { useAccount } from 'wagmi'
 import { HeaderNetworkSelector } from './header-network-selector'
 import { UserPortfolio } from './user-portfolio'
