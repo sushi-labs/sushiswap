@@ -434,6 +434,13 @@ export const EXTRACTOR_CONFIG = {
         initCodeHash:
           '0x3125d0a15fa7af49ce234ba1cf5f931bad0504242e0e1ee9fcd7d1d7aa88c651',
       },
+      {
+        address: '0x01bF7C66c6BD861915CdaaE475042d3c4BaE16A7' as Address,
+        provider: LiquidityProviders.BakerySwap,
+        fee: 0.003,
+        initCodeHash:
+          '0xe2e87433120e32c4738a7d8f3271f3d872cbe16241d67537139158d90bac61d3',
+      },
     ],
     factoriesV3: [
       uniswapV3Factory(ChainId.BSC),
