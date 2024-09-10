@@ -37,4 +37,4 @@ export const DECENTRALIZED_HOST_BY_DEPLOYMENT_ID = `gateway-arbitrum.network.the
 export const SUSHI_DATA_API_HOST =
   process.env['SUSHI_DATA_API_HOST'] ||
   process.env['NEXT_PUBLIC_SUSHI_DATA_API_HOST'] ||
-  'data.sushi.com'
+  'https://data.sushi.com'
