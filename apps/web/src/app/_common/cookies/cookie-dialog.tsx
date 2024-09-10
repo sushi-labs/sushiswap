@@ -53,7 +53,7 @@ function BaseCookieDialog({
 
 const cookieTypes = ['essential', 'functional', 'performance'] as const
 
-type CookieType = (typeof cookieTypes)[number]
+export type CookieType = (typeof cookieTypes)[number]
 
 type ManageAction =
   | {

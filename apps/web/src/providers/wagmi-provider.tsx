@@ -10,6 +10,7 @@ import {
 import { useIsMounted } from '@sushiswap/hooks'
 import { useTheme } from 'next-themes'
 import { type FC, type ReactNode, useMemo } from 'react'
+import { useEnabledCookies } from 'src/app/_common/cookies/use-enabled-cookies'
 import { getWagmiConfig, getWagmiInitialState } from 'src/lib/wagmi/config'
 import { WagmiProvider } from 'wagmi'
 
@@ -59,6 +60,7 @@ export const WagmiConfig: FC<{
 }> = ({ children, cookie }) => {
   const initialState = getWagmiInitialState(cookie)
   const isMounted = useIsMounted()
+  const enabledCookies = useEnabledCookies()
 
   const { resolvedTheme } = useTheme()
 
@@ -71,7 +73,12 @@ export const WagmiConfig: FC<{
   }, [resolvedTheme, isMounted])
 
   return (
-    <WagmiProvider config={getWagmiConfig()} initialState={initialState}>
+    <WagmiProvider
+      config={getWagmiConfig({
+        useCookies: !!enabledCookies?.has('functional'),
+      })}
+      initialState={initialState}
+    >
       <div className="h-full w-full [&>div]:h-full">
         <RainbowKitProvider
           modalSize="compact"

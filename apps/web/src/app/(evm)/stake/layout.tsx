@@ -1,5 +1,4 @@
 import { Container } from '@sushiswap/ui'
-import { HotJar } from '@sushiswap/ui'
 import { BarHeader } from 'src/ui/stake'
 import { Header } from './header'
 import { Providers } from './providers'
@@ -25,7 +24,6 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           </section>
         </div>
       </Providers>
-      <HotJar />
     </>
   )
 }

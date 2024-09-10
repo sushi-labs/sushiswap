@@ -2,7 +2,9 @@
 
 import Script from 'next/script'
 
-export const GoogleAnalytics = () => {
+export const GoogleAnalytics = ({ enabled }: { enabled: boolean }) => {
+  if (!enabled) return null
+
   return (
     <>
       <Script
@@ -28,7 +30,9 @@ export const GoogleAnalytics = () => {
   )
 }
 
-export const HotJar = () => {
+export const HotJar = ({ enabled }: { enabled: boolean }) => {
+  if (!enabled) return null
+
   return (
     <Script
       id="hotjar-init"
