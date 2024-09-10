@@ -554,7 +554,7 @@ export const EXTRACTOR_CONFIG = {
         fee: 0.003,
       },
       {
-        factory: '0xcBAE5C3f8259181EB7E2309BC4c72fDF02dD56D8',
+        address: '0xcBAE5C3f8259181EB7E2309BC4c72fDF02dD56D8',
         provider: LiquidityProviders.NineInch,
         fee: 0.0029,
         initCodeHash:
