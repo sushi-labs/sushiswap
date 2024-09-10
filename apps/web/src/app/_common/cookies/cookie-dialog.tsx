@@ -1,5 +1,6 @@
 'use client'
 
+import { useIsMounted } from '@sushiswap/hooks'
 import {
   Button,
   Dialog,
@@ -121,8 +122,10 @@ function ManageCookieDialog({
 }
 
 export function CookieDialog({ open: _open }: { open: boolean }) {
-  const [open, setOpen] = useState(true)
+  const [open, setOpen] = useState(_open)
   const [page, setPage] = useState<'base' | 'manage'>('base')
+
+  const isMounted = useIsMounted()
 
   const [enabledCookieSet, setEnabledCookieSet] = useState<Set<CookieType>>(
     new Set(cookieTypes),
@@ -178,7 +181,7 @@ export function CookieDialog({ open: _open }: { open: boolean }) {
   )
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open && isMounted} onOpenChange={setOpen}>
       {page === 'base' ? (
         <BaseCookieDialog onAction={onBaseAction} />
       ) : (
