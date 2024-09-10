@@ -74,6 +74,7 @@ export enum LiquidityProviders {
   BakerySwap = 'BakerySwap',
   SquadSwapV2 = 'SquadSwapV2',
   BSCSwap = 'BSCSwap',
+  MMFinance = 'MMFinance',
 }
 
 export abstract class LiquidityProvider {

@@ -991,6 +991,13 @@ export const EXTRACTOR_CONFIG = {
         initCodeHash:
           '0xa77ee1cc0f39570ddde947459e293d7ebc2c30ff4e8fc45860afdcb2c2d3dc17',
       },
+      {
+        address: '0xd590cC180601AEcD6eeADD9B7f2B7611519544f4' as Address,
+        provider: LiquidityProviders.MMFinance,
+        fee: 0.0017,
+        initCodeHash:
+          '0x7ae6954210575e79ea2402d23bc6a59c4146a6e6296118aa8b99c747afec8acf',
+      },
       elkV2Factory(ChainId.CRONOS),
     ],
     factoriesV3: [
