@@ -43,21 +43,22 @@ export const PortfolioClaimables = () => {
     [data],
   )
 
+  // TODO: Add error state
   return (
     <div className="flex flex-col gap-y-5 h-full overflow-hidden">
       <div className="px-5">
         <div className="flex flex-col gap-y-3 bg-secondary rounded-xl px-5 py-3">
           <span className="text-sm text-muted-foreground">Total Balance</span>
-          {isLoading ? (
+          {isLoading || !data ? (
             <SkeletonText fontSize="lg" className="!w-1/3" />
           ) : (
             <div className="text-2xl font-bold">
-              {formatUSD(data!.totalUSD)}
+              {formatUSD(data.totalUSD || 0)}
             </div>
           )}
         </div>
       </div>
-      {isLoading ? (
+      {isLoading || !data ? (
         <div>
           <div className="py-4 px-5">
             <SkeletonText />
@@ -90,7 +91,7 @@ export const PortfolioClaimables = () => {
           {farmClaimables.length ? (
             <PortfolioFarmClaimables claimables={farmClaimables} />
           ) : null}
-          {data?.furoClaimables.length ? (
+          {data.furoClaimables.length ? (
             <PortfolioFuroClaimables claimables={data.furoClaimables} />
           ) : null}
         </Accordion>
