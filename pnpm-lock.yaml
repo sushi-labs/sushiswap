@@ -555,8 +555,8 @@ importers:
         specifier: 4.0.7
         version: 4.0.7(encoding@0.1.13)
       '@orbs-network/twap-ui-sushiswap':
-        specifier: 1.1.47
-        version: 1.1.47(bufferutil@4.0.8)(encoding@0.1.13)(react-dom@18.2.0(react@18.2.0))(react-native@0.73.7(@babel/core@7.24.4)(@babel/preset-env@7.24.4(@babel/core@7.24.4))(bufferutil@4.0.8)(encoding@0.1.13)(react@18.2.0)(utf-8-validate@5.0.10))(react@18.2.0)(utf-8-validate@5.0.10)
+        specifier: 1.1.55
+        version: 1.1.55(bufferutil@4.0.8)(encoding@0.1.13)(react-dom@18.2.0(react@18.2.0))(react-native@0.73.7(@babel/core@7.24.4)(@babel/preset-env@7.24.4(@babel/core@7.24.4))(bufferutil@4.0.8)(encoding@0.1.13)(react@18.2.0)(utf-8-validate@5.0.10))(react@18.2.0)(utf-8-validate@5.0.10)
       '@pontem/wallet-adapter-plugin':
         specifier: ^0.2.1
         version: 0.2.1
@@ -6224,14 +6224,14 @@ packages:
   '@openzeppelin/contracts@4.9.3':
     resolution: {integrity: sha512-He3LieZ1pP2TNt5JbkPA4PNT9WC3gOTOlDcFGJW4Le4QKqwmiNJCRt44APfxMxvq7OugU/cqYuPcSBzOw38DAg==}
 
-  '@orbs-network/twap-ui-sushiswap@1.1.47':
-    resolution: {integrity: sha512-w8Uko0EEfS24Wuz05qy4lO8Kz7b4Cj2GRt7uzeLUXeMFXL/8zwywi1QEXb9ExnRxUhm/4a733B5Zhe/nPay0uA==}
+  '@orbs-network/twap-ui-sushiswap@1.1.55':
+    resolution: {integrity: sha512-/CRS3Sum+/ewBHtHWVR5Ibk1tg4/f5ZoVdD6+0g1OHE3NsuGh6Ms4vXC5cOhVmxzR41OHvBgEOQTCamCi+iG9w==}
     peerDependencies:
       react: '*'
       react-dom: '*'
 
-  '@orbs-network/twap-ui@1.1.47':
-    resolution: {integrity: sha512-LxJrn7SqM1mKuv2nVICYXfKCyoWpP1K9obGNeBmLPMBy+8t3cp7bi9DOa1zRIcPeSMRwrWwjuIkgHnyt/dANEg==}
+  '@orbs-network/twap-ui@1.1.55':
+    resolution: {integrity: sha512-Y0NhOda4asSAhQdV7D7D4kq9wCCUgmItHkvydTIMV+QN40iug/iW4GhEH8KhA5IAcYETI0BEzZIOjz/4fQiJMg==}
     peerDependencies:
       react: '*'
       react-dom: '*'
@@ -19365,8 +19365,8 @@ packages:
     peerDependencies:
       react: 18.2.0
 
-  react-number-format@5.4.1:
-    resolution: {integrity: sha512-NICOjo/70dcAiwVmH6zMWoZrTQDlBrEXV/f7S0t/ewlpzp4z00pasg5G1yBX6NHLafwOF3QZ+VvK/XApwSKxdA==}
+  react-number-format@5.4.2:
+    resolution: {integrity: sha512-cg//jVdS49PYDgmcYoBnMMHl4XNTMuV723ZnHD2aXYtWWWqbVF3hjQ8iB+UZEuXapLbeA8P8H+1o6ZB1lcw3vg==}
     peerDependencies:
       react: ^0.14 || ^15.0.0 || ^16.0.0 || ^17.0.0 || ^18.0.0
       react-dom: ^0.14 || ^15.0.0 || ^16.0.0 || ^17.0.0 || ^18.0.0
@@ -29360,10 +29360,10 @@ snapshots:
 
   '@openzeppelin/contracts@4.9.3': {}
 
-  '@orbs-network/twap-ui-sushiswap@1.1.47(bufferutil@4.0.8)(encoding@0.1.13)(react-dom@18.2.0(react@18.2.0))(react-native@0.73.7(@babel/core@7.24.4)(@babel/preset-env@7.24.4(@babel/core@7.24.4))(bufferutil@4.0.8)(encoding@0.1.13)(react@18.2.0)(utf-8-validate@5.0.10))(react@18.2.0)(utf-8-validate@5.0.10)':
+  '@orbs-network/twap-ui-sushiswap@1.1.55(bufferutil@4.0.8)(encoding@0.1.13)(react-dom@18.2.0(react@18.2.0))(react-native@0.73.7(@babel/core@7.24.4)(@babel/preset-env@7.24.4(@babel/core@7.24.4))(bufferutil@4.0.8)(encoding@0.1.13)(react@18.2.0)(utf-8-validate@5.0.10))(react@18.2.0)(utf-8-validate@5.0.10)':
     dependencies:
       '@orbs-network/twap': 2.2.4
-      '@orbs-network/twap-ui': 1.1.47(bufferutil@4.0.8)(encoding@0.1.13)(react-dom@18.2.0(react@18.2.0))(react-native@0.73.7(@babel/core@7.24.4)(@babel/preset-env@7.24.4(@babel/core@7.24.4))(bufferutil@4.0.8)(encoding@0.1.13)(react@18.2.0)(utf-8-validate@5.0.10))(react@18.2.0)(utf-8-validate@5.0.10)
+      '@orbs-network/twap-ui': 1.1.55(bufferutil@4.0.8)(encoding@0.1.13)(react-dom@18.2.0(react@18.2.0))(react-native@0.73.7(@babel/core@7.24.4)(@babel/preset-env@7.24.4(@babel/core@7.24.4))(bufferutil@4.0.8)(encoding@0.1.13)(react@18.2.0)(utf-8-validate@5.0.10))(react@18.2.0)(utf-8-validate@5.0.10)
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
       web3: 1.10.3(bufferutil@4.0.8)(encoding@0.1.13)(utf-8-validate@5.0.10)
@@ -29374,7 +29374,7 @@ snapshots:
       - supports-color
       - utf-8-validate
 
-  '@orbs-network/twap-ui@1.1.47(bufferutil@4.0.8)(encoding@0.1.13)(react-dom@18.2.0(react@18.2.0))(react-native@0.73.7(@babel/core@7.24.4)(@babel/preset-env@7.24.4(@babel/core@7.24.4))(bufferutil@4.0.8)(encoding@0.1.13)(react@18.2.0)(utf-8-validate@5.0.10))(react@18.2.0)(utf-8-validate@5.0.10)':
+  '@orbs-network/twap-ui@1.1.55(bufferutil@4.0.8)(encoding@0.1.13)(react-dom@18.2.0(react@18.2.0))(react-native@0.73.7(@babel/core@7.24.4)(@babel/preset-env@7.24.4(@babel/core@7.24.4))(bufferutil@4.0.8)(encoding@0.1.13)(react@18.2.0)(utf-8-validate@5.0.10))(react@18.2.0)(utf-8-validate@5.0.10)':
     dependencies:
       '@defi.org/web3-candies': 5.0.0(bufferutil@4.0.8)(encoding@0.1.13)(utf-8-validate@5.0.10)
       '@orbs-network/twap': 2.2.4
@@ -29386,7 +29386,7 @@ snapshots:
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
       react-error-boundary: 4.0.13(react@18.2.0)
-      react-number-format: 5.4.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+      react-number-format: 5.4.2(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       react-virtualized-auto-sizer: 1.0.24(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       react-window: 1.8.10(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       styled-components: 6.1.13(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
@@ -33242,7 +33242,7 @@ snapshots:
 
   '@types/concat-stream@1.6.1':
     dependencies:
-      '@types/node': 20.14.14
+      '@types/node': 22.1.0
 
   '@types/concat-stream@2.0.0':
     dependencies:
@@ -33461,7 +33461,7 @@ snapshots:
 
   '@types/form-data@0.0.33':
     dependencies:
-      '@types/node': 20.14.14
+      '@types/node': 22.1.0
 
   '@types/geojson@7946.0.10': {}
 
@@ -48241,7 +48241,7 @@ snapshots:
       - supports-color
       - utf-8-validate
 
-  react-number-format@5.4.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0):
+  react-number-format@5.4.2(react-dom@18.2.0(react@18.2.0))(react@18.2.0):
     dependencies:
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
