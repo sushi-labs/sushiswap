@@ -814,6 +814,13 @@ export const EXTRACTOR_CONFIG = {
     factoriesV2: [
       sushiswapV2Factory(ChainId.METIS),
       elkV2Factory(ChainId.METIS),
+      {
+        address: '0x70f51d68D16e8f9e418441280342BD43AC9Dff9f' as Address,
+        provider: LiquidityProviders.NetSwap,
+        fee: 0.003,
+        initCodeHash:
+          '0x966d65068a6a30f10fd1fa814258637a34e059081d79daa94f3e2b6cec48e810',
+      },
     ],
     factoriesV3: [
       sushiswapV3Factory(ChainId.METIS),
