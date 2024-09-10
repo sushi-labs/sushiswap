@@ -261,16 +261,20 @@ const DerivedstateCrossChainSwapProvider: FC<
   // Derive token0
   const { data: token0, isInitialLoading: token0Loading } = useTokenWithCache({
     chainId: chainId0,
-    address: defaultedParams.get('token0') as string,
-    enabled: isAddress(defaultedParams.get('token0') as string),
+    address: defaultedParams.get('token0') as Address,
+    enabled: isAddress(defaultedParams.get('token0') as string, {
+      strict: false,
+    }),
     keepPreviousData: false,
   })
 
   // Derive token1
   const { data: token1, isInitialLoading: token1Loading } = useTokenWithCache({
     chainId: chainId1,
-    address: defaultedParams.get('token1') as string,
-    enabled: isAddress(defaultedParams.get('token1') as string),
+    address: defaultedParams.get('token1') as Address,
+    enabled: isAddress(defaultedParams.get('token1') as string, {
+      strict: false,
+    }),
     keepPreviousData: false,
   })
 

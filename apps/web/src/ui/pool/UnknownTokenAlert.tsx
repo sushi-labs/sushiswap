@@ -23,33 +23,21 @@ export const UnknownTokenAlert: FC<UnknownTokenAlert> = ({ pool }) => {
   const { data: tokenFrom } = useTokenWithCache({
     chainId: pool.chainId as ChainId,
     address: token0.address,
-    withStatus: true,
   })
 
   const { data: tokenTo } = useTokenWithCache({
     chainId: pool.chainId as ChainId,
     address: token1.address,
-    withStatus: true,
   })
 
   const token0NotInList = useMemo(
-    () =>
-      Boolean(
-        tokenFrom?.status !== 'APPROVED' &&
-          tokenFrom?.token &&
-          !hasToken(tokenFrom?.token),
-      ),
-    [hasToken, tokenFrom?.status, tokenFrom?.token],
+    () => Boolean(tokenFrom && !tokenFrom.approved && !hasToken(tokenFrom)),
+    [hasToken, tokenFrom],
   )
 
   const token1NotInList = useMemo(
-    () =>
-      Boolean(
-        tokenTo?.status !== 'APPROVED' &&
-          tokenTo?.token &&
-          !hasToken(tokenTo?.token),
-      ),
-    [hasToken, tokenTo?.status, tokenTo?.token],
+    () => Boolean(tokenTo && !tokenTo.approved && hasToken(tokenTo)),
+    [hasToken, tokenTo],
   )
 
   if (!(token0NotInList || token1NotInList)) return <></>
