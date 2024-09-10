@@ -72,6 +72,7 @@ export enum LiquidityProviders {
   CroDefiSwap = 'CroDefiSwap',
   NineInch = 'NineInch',
   BakerySwap = 'BakerySwap',
+  SquadSwapV2 = 'SquadSwapV2'
 }
 
 export abstract class LiquidityProvider {
