@@ -121,10 +121,7 @@ function extractorClientConfig(chainId: ChainId): PublicClientConfig {
 }
 
 // ! TODO: Fix casts when viem is updated
-export const EXTRACTOR_CONFIG: Record<
-  ExtractorSupportedChainId,
-  ExtractorConfig
-> = {
+export const EXTRACTOR_CONFIG = {
   [ChainId.ARBITRUM]: {
     client: createPublicClient(extractorClientConfig(ChainId.ARBITRUM)),
     factoriesV2: [
@@ -1087,7 +1084,7 @@ export const EXTRACTOR_CONFIG: Record<
   //   logDepth: 50,
   //   logging: true,
   // },
-}
+} as const satisfies Record<ExtractorSupportedChainId, ExtractorConfig>
 
 export const PORT = process.env['PORT'] || 80
 
