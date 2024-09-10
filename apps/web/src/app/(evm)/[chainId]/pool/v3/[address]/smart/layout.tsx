@@ -1,13 +1,12 @@
-import { V2Pool, getV2Pool } from '@sushiswap/graph-client/data-api'
+import { V3Pool, getV3Pool } from '@sushiswap/graph-client/data-api'
 import { Container } from '@sushiswap/ui'
 import { unstable_cache } from 'next/cache'
 import { headers } from 'next/headers'
-import React from 'react'
+import { notFound } from 'next/navigation'
 import { PoolHeader } from 'src/ui/pool/PoolHeader'
 import { ChainId, ChainKey } from 'sushi/chain'
-import { isSushiSwapV2ChainId } from 'sushi/config'
+import { isSushiSwapV3ChainId } from 'sushi/config'
 import { isAddress } from 'viem'
-import notFound from '../../../../not-found'
 
 export default async function Layout({
   children,
@@ -20,19 +19,19 @@ export default async function Layout({
   const chainId = +_chainId as ChainId
 
   if (
-    !isSushiSwapV2ChainId(chainId) ||
+    !isSushiSwapV3ChainId(chainId) ||
     !isAddress(address, { strict: false })
   ) {
     return notFound()
   }
 
   const pool = (await unstable_cache(
-    async () => getV2Pool({ chainId, address }),
+    async () => getV3Pool({ chainId, address }),
     ['pool', `${chainId}:${address}`],
     {
       revalidate: 60 * 15,
     },
-  )()) as V2Pool
+  )()) as V3Pool
 
   const headersList = headers()
   const referer = headersList.get('referer')
@@ -44,9 +43,9 @@ export default async function Layout({
             ? referer?.toString()
             : `/${ChainKey[chainId]}/explore/pools`
         }
-        address={pool.address}
+        address={address}
         pool={pool}
-        apy={{ rewards: pool?.incentiveApr, fees: pool?.feeApr1d }}
+        apy={{ rewards: pool.incentiveApr, fees: pool.feeApr1d }}
       />
       <section className="flex flex-col flex-1 h-full pb-10">
         {children}

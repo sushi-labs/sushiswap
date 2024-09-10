@@ -1,10 +1,9 @@
 import { V3Pool, getV3Pool } from '@sushiswap/graph-client/data-api'
-import { LinkInternal } from '@sushiswap/ui'
 import { unstable_cache } from 'next/cache'
 import { notFound } from 'next/navigation'
 import { PoolsFiltersProvider } from 'src/ui/pool'
 import { ConcentratedPositionsTable } from 'src/ui/pool/ConcentratedPositionsTable'
-import { ChainId, ChainKey } from 'sushi/chain'
+import { ChainId } from 'sushi/chain'
 import { isSushiSwapV3ChainId } from 'sushi/config'
 import { isAddress } from 'viem'
 
@@ -32,20 +31,12 @@ export default async function ManageV3PoolPage({
   )()) as V3Pool
 
   return (
-    <div className="flex flex-col gap-4">
-      <LinkInternal
-        href={`/${ChainKey[chainId]}/pool/v3/${address}`}
-        className="text-blue hover:underline text-sm"
-      >
-        ← Pool
-      </LinkInternal>
-      <PoolsFiltersProvider>
-        <ConcentratedPositionsTable
-          chainId={pool.chainId}
-          poolAddress={pool.address}
-          hideNewSmartPositionButton={!pool.hasEnabledSteerVault}
-        />
-      </PoolsFiltersProvider>
-    </div>
+    <PoolsFiltersProvider>
+      <ConcentratedPositionsTable
+        chainId={pool.chainId}
+        poolAddress={pool.address}
+        hideNewSmartPositionButton={!pool.hasEnabledSteerVault}
+      />
+    </PoolsFiltersProvider>
   )
 }

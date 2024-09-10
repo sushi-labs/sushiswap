@@ -9,7 +9,6 @@ import { getTokenRatios, getVaultPositions } from '@sushiswap/steer-sdk'
 import formatDistanceStrict from 'date-fns/formatDistanceStrict'
 import formatDistanceToNow from 'date-fns/formatDistanceToNow'
 import { unstable_cache } from 'next/cache'
-import { notFound } from 'next/navigation'
 import { SteerStrategyGeneric } from 'src/ui/pool/Steer/SteerStrategies'
 import { SteerBaseStrategy } from 'src/ui/pool/Steer/SteerStrategies/SteerBaseStrategy'
 import type { ChainId } from 'sushi'
@@ -18,6 +17,7 @@ import { Token } from 'sushi/currency'
 import { formatNumber } from 'sushi/format'
 import { tickToPrice } from 'sushi/pool/sushiswap-v3'
 import { PublicClient, createPublicClient, isAddress } from 'viem'
+import notFound from '../../../../../not-found'
 
 function getPriceExtremes(
   vault: VaultV1,
@@ -121,5 +121,17 @@ export default async function SteerVaultPage({
 
   const Component = SteerBaseStrategy
 
-  return <Component pool={pool} vault={vault} generic={generics} />
+  return (
+    <>
+      {vault.isDeprecated && (
+        <div className="text-center text-red dark:text-red-600 w-full pb-8">
+          <div className=" font-medium">This vault is deprecated.</div>
+          <div className="text-sm">
+            {"It will not accrue any fees and won't be readjusted."}
+          </div>
+        </div>
+      )}
+      <Component pool={pool} vault={vault} generic={generics} />
+    </>
+  )
 }
