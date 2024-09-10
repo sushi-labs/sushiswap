@@ -448,6 +448,13 @@ export const EXTRACTOR_CONFIG = {
         initCodeHash:
           '0xd424455c1204e4f46a4a380651928652376a351698d3d97e2da05d3041c15fbe',
       },
+      {
+        address: '0xCe8fd65646F2a2a897755A1188C04aCe94D2B8D0' as Address,
+        provider: LiquidityProviders.BSCSwap,
+        fee: 0.003,
+        initCodeHash:
+          '0xacc1c81cc3e9fb496da555f6bd67c3a095e579b26c1b580070cc6afa8f0a94fa',
+      },
     ],
 
     factoriesV3: [
