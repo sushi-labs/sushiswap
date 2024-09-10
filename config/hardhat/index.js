@@ -250,6 +250,14 @@ module.exports.defaultConfig = {
           browserURL: 'https://taikoscan.io',
         },
       },
+      {
+        network: 'zklink-nova',
+        chainId: 810180,
+        urls: {
+          apiURL: 'https://explorer.zklink.io/contract_verification',
+          browserURL: 'https://explorer.zklink.io',
+        },
+      },
     ],
     apiKey: {
       mainnet: process.env.ETHERSCAN_API_KEY || '',
@@ -314,6 +322,7 @@ module.exports.defaultConfig = {
       'manta-pacific': 'api-key',
       mode: 'api-key',
       taiko: process.env.TAIKO_API_KEY || '',
+      'zklink-nova': 'api-key',
     },
   },
   tenderly: {
@@ -329,7 +338,7 @@ module.exports.defaultConfig = {
     // externalArtifacts?: string[];
   },
   zksolc: {
-    version: '1.3.1',
+    version: '1.5.2',
     compilerSource: 'binary',
     settings: {},
   },
@@ -791,6 +800,14 @@ module.exports.defaultConfig = {
       chainId: 167000,
       live: true,
       saveDeployments: true,
+    },
+    'zklink-nova': {
+      url: 'https://rpc.zklink.io',
+      accounts,
+      chainId: 810180,
+      live: true,
+      saveDeployments: true,
+      zksync: true,
     },
   },
   namedAccounts: {
