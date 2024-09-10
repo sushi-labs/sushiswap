@@ -12,7 +12,7 @@ import {
   Separator,
   Switch,
 } from '@sushiswap/ui'
-import { useCallback, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 
 type BaseAction = 'accept' | 'reject' | 'manage'
 
@@ -179,6 +179,12 @@ export function CookieDialog({ open: _open }: { open: boolean }) {
     },
     [enabledCookieSet, onConfirm],
   )
+
+  useEffect(() => {
+    if (process.env.NODE_ENV !== 'production') {
+      onConfirm(new Set<CookieType>(cookieTypes))
+    }
+  }, [onConfirm])
 
   return (
     <Dialog open={open && isMounted} onOpenChange={setOpen}>

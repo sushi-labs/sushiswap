@@ -92,7 +92,7 @@ export const createProductionConfig = ({
     storage = createStorage({
       storage: cookieStorage,
     })
-  } else if (typeof !window === 'undefined') {
+  } else if (typeof window !== 'undefined') {
     storage = createStorage({ storage: window.localStorage })
   }
 
