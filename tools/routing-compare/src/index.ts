@@ -249,10 +249,12 @@ export async function checkRouteAllNetworks() {
 //   ),
 // )
 
-OneInchAPIRouteSimulate(
-  ChainId.ETHEREUM,
-  nativeToken(ChainId.ETHEREUM),
-  USDC[ChainId.ETHEREUM],
-  10n ** 18n,
-  1_000_000_000n,
+console.log(
+  await OneInchAPIRouteSimulate(
+    ChainId.ETHEREUM,
+    nativeToken(ChainId.ETHEREUM),
+    USDC[ChainId.ETHEREUM],
+    10n ** 18n,
+    1_000_000_000n,
+  ),
 )

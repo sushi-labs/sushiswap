@@ -59,12 +59,14 @@ export async function aggregate3({
   calls,
   stateOverride,
   blockNumber,
+  value,
 }: {
   chainId: ChainId
   account: Address
   calls: CallData[]
   stateOverride?: StateOverride | undefined
   blockNumber?: bigint | undefined
+  value?: bigint | undefined
 }): Promise<string | undefined> {
   const client = createClient(chainId)
   const multicall3Data = encodeFunctionData({
@@ -102,6 +104,7 @@ export async function aggregate3({
     data: multicall3Data,
     stateOverride,
     blockNumber,
+    value,
   })
   if (returnData === undefined) return `simulateRoute: Multicall error`
 

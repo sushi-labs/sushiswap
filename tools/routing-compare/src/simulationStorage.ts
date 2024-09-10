@@ -1,27 +1,13 @@
-import { ChainId } from 'sushi'
-import { routeProcessor5Abi } from 'sushi/abi'
-import { ROUTE_PROCESSOR_5_ADDRESS } from 'sushi/config'
 import { Token } from 'sushi/currency'
-import { Abi, Address, Hex } from 'viem'
+import { Address, Hex } from 'viem'
 import {
   CallData,
   MULTICALL3_ADDRESS,
   aggregate3,
   ifNetworkSupported,
 } from './multicall3Advanced.js'
+import { knownRoutersAbi } from './routerABI/routerAbi.js'
 import { tokenAllowedSlot, tokenBalanceSlot } from './tokenBalanceSlot.js'
-
-export function knownRoutersAbi(
-  chainId: ChainId,
-  router: Address,
-): Abi | undefined {
-  if (
-    router ===
-    ROUTE_PROCESSOR_5_ADDRESS[chainId as keyof typeof ROUTE_PROCESSOR_5_ADDRESS]
-  )
-    return routeProcessor5Abi as Abi
-  return
-}
 
 export async function simulateRoute(
   from: Address,
