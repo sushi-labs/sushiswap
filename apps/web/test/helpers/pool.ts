@@ -437,7 +437,7 @@ export class PoolPage extends BaseActions {
                 v2Pool: {
                   id: `${this.chainId}:${address}`.toLowerCase(),
                   chainId: this.chainId,
-                  name: 'WMATIC / FT',
+                  name: 'WPOL / FT',
                   address,
                   createdAt: '1630455405',
                   protocol,
@@ -489,7 +489,7 @@ export class PoolPage extends BaseActions {
                 v3Pool: {
                   id: `${this.chainId}:${address}`.toLowerCase(),
                   chainId: this.chainId,
-                  name: 'WMATIC / FT',
+                  name: 'WPOL / FT',
                   address,
                   createdAt: '1630455405',
                   protocol,
