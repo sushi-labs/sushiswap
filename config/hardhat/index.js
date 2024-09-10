@@ -217,6 +217,39 @@ module.exports.defaultConfig = {
           browserURL: 'https://elated-tan-skat.explorer.mainnet.skalenodes.com',
         },
       },
+      {
+        network: 'mantle',
+        chainId: 5000,
+        urls: {
+          apiURL: 'https://explorer.mantle.xyz/api',
+          browserURL: 'https://explorer.mantle.xyz',
+        },
+      },
+      {
+        network: 'manta-pacific',
+        chainId: 169,
+        urls: {
+          apiURL: 'https://pacific-explorer.manta.network/api',
+          browserURL: 'https://pacific-explorer.manta.network',
+        },
+      },
+      {
+        network: 'mode',
+        chainId: 34443,
+        urls: {
+          apiURL:
+            'https://api.routescan.io/v2/network/mainnet/evm/34443/etherscan',
+          browserURL: 'https://modescan.io',
+        },
+      },
+      {
+        network: 'taiko',
+        chainId: 167000,
+        urls: {
+          apiURL: 'https://api.taikoscan.io/api',
+          browserURL: 'https://taikoscan.io',
+        },
+      },
     ],
     apiKey: {
       mainnet: process.env.ETHERSCAN_API_KEY || '',
@@ -277,6 +310,10 @@ module.exports.defaultConfig = {
       'boba-bnb': 'api-key',
       rootstock: 'api-key',
       'skale-europa': 'api-key',
+      mantle: 'api-key',
+      'manta-pacific': 'api-key',
+      mode: 'api-key',
+      taiko: process.env.TAIKO_API_KEY || '',
     },
   },
   tenderly: {
@@ -724,6 +761,34 @@ module.exports.defaultConfig = {
       url: 'https://mainnet.skalenodes.com/v1/elated-tan-skat',
       accounts,
       chainId: 2046399126,
+      live: true,
+      saveDeployments: true,
+    },
+    mantle: {
+      url: 'https://mantle.drpc.org',
+      accounts,
+      chainId: 5000,
+      live: true,
+      saveDeployments: true,
+    },
+    'manta-pacific': {
+      url: 'https://manta-pacific.drpc.org',
+      accounts,
+      chainId: 169,
+      live: true,
+      saveDeployments: true,
+    },
+    mode: {
+      url: 'https://mode.drpc.org',
+      accounts,
+      chainId: 34443,
+      live: true,
+      saveDeployments: true,
+    },
+    taiko: {
+      url: 'https://rpc.taiko.tools',
+      accounts,
+      chainId: 167000,
       live: true,
       saveDeployments: true,
     },
