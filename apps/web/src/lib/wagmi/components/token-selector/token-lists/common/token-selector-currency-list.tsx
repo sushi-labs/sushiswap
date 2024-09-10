@@ -50,7 +50,7 @@ export const TokenSelectorCurrencyList: FC<TokenSelectorCurrencyListProps> =
         balance: balancesMap?.get(
           currency.isNative ? NativeAddress : currency.address,
         ),
-        price: pricesMap?.get(
+        price: pricesMap?.getFraction(
           currency.isNative
             ? Native.onChain(currency.chainId).wrapped.address
             : currency.address,

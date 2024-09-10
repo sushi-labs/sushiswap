@@ -25,7 +25,7 @@ import React, { CSSProperties, FC, memo, useCallback } from 'react'
 import { NativeAddress } from 'src/lib/hooks/react-query'
 import { Chain } from 'sushi/chain'
 import { Amount, Type } from 'sushi/currency'
-import { ZERO } from 'sushi/math'
+import { Fraction, ZERO } from 'sushi/math'
 import { zeroAddress } from 'viem'
 
 export interface TokenSelectorRow {
@@ -36,7 +36,7 @@ export interface TokenSelectorRow {
   onSelect(currency: Type): void
   balance?: Amount<Type> | undefined
   showWarning: boolean
-  price?: number
+  price?: Fraction
   pin?: {
     isPinned: boolean
     onPin(): void

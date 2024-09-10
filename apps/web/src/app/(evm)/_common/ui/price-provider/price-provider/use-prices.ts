@@ -1,7 +1,12 @@
 'use client'
 
 import { useEffect, useMemo } from 'react'
-import { type Address, type ChainId, Fraction } from 'sushi'
+import {
+  type Address,
+  type ChainId,
+  Fraction,
+  withoutScientificNotation,
+} from 'sushi'
 import { parseUnits } from 'viem'
 import { usePriceProvider } from './price-provider'
 
@@ -83,7 +88,10 @@ export function usePrices({
         const price = chain.priceMap!.get(address)
         if (price) {
           return new Fraction(
-            parseUnits(String(price), 18).toString(),
+            parseUnits(
+              withoutScientificNotation(String(price)) || '0',
+              18,
+            ).toString(),
             parseUnits('1', 18).toString(),
           )
         }
