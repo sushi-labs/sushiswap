@@ -1,6 +1,7 @@
-import { HotJar, SidebarContainer, SidebarProvider } from '@sushiswap/ui'
+import { HotJar } from '@sushiswap/ui'
 
 import { isSupportedChainId } from 'src/config'
+import { SidebarContainer, SidebarProvider } from 'src/ui/sidebar'
 import { Header } from '../header'
 import notFound from './not-found'
 import { Providers } from './providers'

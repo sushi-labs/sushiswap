@@ -3,9 +3,7 @@ import Link from 'next/link'
 import * as React from 'react'
 
 import classNames from 'classnames'
-// import { ChevronDown } from 'lucide-react'
 import { SushiIcon } from '../icons/SushiIcon'
-// import { SushiWithTextIcon } from '../icons/SushiWithTextIcon'
 import { LinkInternal } from './link'
 import { navigationMenuTriggerStyle } from './navigation-menu'
 import {
@@ -16,7 +14,6 @@ import {
   NavigationMenuList,
   NavigationMenuTrigger,
 } from './navigation-menu'
-// import { SidebarToggle } from './sidebar'
 
 const COMPANY_NAVIGATION_LINKS: NavigationElementDropdown['items'] = [
   {
@@ -64,13 +61,11 @@ const SUPPORT_NAVIGATION_LINKS: NavigationElementDropdown['items'] = [
 
 const navigationContainerVariants = cva(
   'px-4 sticky flex items-center flex-grow gap-4 top-0 z-50 min-h-[56px] max-h-[56px] h-[56px]',
-  // 'px-4 ml-2 mr-12 sticky flex items-center flex-grow gap-4 top-6 z-50 min-h-[56px] max-h-[56px] h-[56px]',
   {
     variants: {
       variant: {
         default:
           'bg-gray-100 dark:bg-slate-900 border-b border-gray-200 dark:border-slate-800',
-        // 'bg-gray-100 dark:bg-slate-900 border border-gray-200 dark:border-slate-800 rounded-xl',
         transparent: '',
       },
     },
@@ -85,25 +80,6 @@ interface NavContainerProps
   children: React.ReactNode
   className?: string
 }
-
-// const NavigationContainer: React.FC<NavContainerProps> = ({
-//   children,
-//   variant,
-// }) => {
-//   return (
-//     <div className="ml-2 mr-12 fixed top-6 left-6 right-6 flex items-center flex-grow gap-3 z-50 min-h-[56px] max-h-[56px] h-[56px]">
-//       <div className="px-3 flex justify-between items-center w-56 flex-shrink-0 bg-gray-100 dark:bg-slate-900 border border-gray-200 dark:border-slate-800 rounded-xl h-full">
-//         <SushiWithTextIcon width={90} />
-//         <SidebarToggle variant="ghost" asChild>
-//           <ChevronDown className="w-3 h-3" />
-//         </SidebarToggle>
-//       </div>
-//       <div className="px-2 flex items-center justify-between flex-grow gap-4 bg-gray-100 dark:bg-slate-900 border border-gray-200 dark:border-slate-800 rounded-xl h-full">
-//         {children}
-//       </div>
-//     </div>
-//   )
-// }
 
 const NavigationContainer: React.FC<NavContainerProps> = ({
   children,

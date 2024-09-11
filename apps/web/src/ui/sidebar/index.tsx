@@ -1,6 +1,17 @@
 'use client'
 
-import classNames from 'classnames'
+import {
+  Button,
+  ButtonProps,
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  classNames,
+} from '@sushiswap/ui'
+import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
+import { AptosCircle } from '@sushiswap/ui/icons/network/circle/AptosCircle'
 import Link from 'next/link'
 import {
   Dispatch,
@@ -13,24 +24,12 @@ import {
 } from 'react'
 import { Chain } from 'sushi'
 import { ROUTE_PROCESSOR_5_SUPPORTED_CHAIN_IDS } from 'sushi/config'
-import { NetworkIcon } from '../icons/NetworkIcon'
-import { AptosCircle } from '../icons/network'
-import { useBreakpoint } from '../lib'
-import { Button, ButtonProps } from './button'
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-} from './command'
 
 interface SidebarContextType {
   isOpen: boolean
   setIsOpen: Dispatch<SetStateAction<boolean>> | null
 }
 
-// Create the context
 const SidebarContext = createContext<SidebarContextType>({
   isOpen: false,
   setIsOpen: null,
@@ -88,38 +87,7 @@ export const SidebarContainer: FC<SidebarContainerProps> = ({
       </div>
     </div>
   )
-
-  // return (
-  //   <>
-  //     <Sidebar />
-  //     <section
-  //       className={classNames(
-  //         'transition-[margin-left] ease-in-out duration-300',
-  //         shiftContent && isOpen ? 'lg:ml-64' : null,
-  //       )}
-  //     >
-  //       {children}
-  //     </section>
-  //   </>
-  // )
 }
-
-// export const SidebarAwareContainer: FC<{ children: ReactNode }> = ({
-//   children,
-// }) => {
-//   const { isOpen } = useSidebar()
-
-//   return (
-//     <div
-//       className={classNames(
-//         'transition-[margin-left] ease-in-out duration-300',
-//         isOpen ? 'lg:ml-64' : null,
-//       )}
-//     >
-//       {children}
-//     </div>
-//   )
-// }
 
 export const Sidebar = () => {
   const { isOpen } = useSidebar()

@@ -1,17 +1,12 @@
 'use client'
 
 import { ChevronDownIcon } from '@heroicons/react-v1/solid'
-import {
-  Badge,
-  Navigation,
-  SidebarToggle,
-  classNames,
-  useSidebar,
-} from '@sushiswap/ui'
+import { Badge, Navigation, classNames } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import { SushiWithTextIcon } from '@sushiswap/ui/icons/SushiWithTextIcon'
 import React, { FC } from 'react'
 import { UserPortfolio } from 'src/lib/wagmi/components/user-portfolio'
+import { SidebarToggle, useSidebar } from 'src/ui/sidebar'
 import { useAccount, useChainId } from 'wagmi'
 import { headerElements } from './_common/header-elements'
 

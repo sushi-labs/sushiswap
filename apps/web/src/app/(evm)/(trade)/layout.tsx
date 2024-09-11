@@ -1,4 +1,5 @@
-import { HotJar, SidebarContainer, SidebarProvider } from '@sushiswap/ui'
+import { HotJar } from '@sushiswap/ui'
+import { SidebarContainer, SidebarProvider } from 'src/ui/sidebar'
 import { Header } from '../header'
 import { Providers } from './providers'
 
