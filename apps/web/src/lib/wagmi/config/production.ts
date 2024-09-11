@@ -89,6 +89,7 @@ export const createProductionConfig = ({
 
   let storage: Storage | undefined = undefined
   if (useCookies) {
+    console.log('WHY COOKIES TORAGE')
     storage = createStorage({
       storage: cookieStorage,
     })

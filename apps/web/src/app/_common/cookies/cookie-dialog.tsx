@@ -23,7 +23,8 @@ function BaseCookieDialog({
   return (
     <DialogContent
       hideClose
-      className="lg:min-w-[750px] md:min-w-[600px] !left-[unset] !top-[unset] !bottom-0 !right-0 !translate-x-[-50px] !translate-y-[-50px]"
+      className="lg:min-w-[750px] md:min-w-[600px] !left-[unset] !top-[unset] !bottom-0 md:!right-0 !translate-x-[0%] md:!translate-x-[-50px] md:!translate-y-[-50px]"
+      onOpenAutoFocus={(e) => e.preventDefault()}
     >
       <div>
         Sushi Labs and our third-party service providers may use cookies as set
@@ -39,7 +40,7 @@ function BaseCookieDialog({
         communications by third parties.
       </div>
       <Separator />
-      <div className="space-x-3">
+      <div className="flex flex-col w-full gap-3">
         <Button onClick={() => onAction('accept')}>Accept all cookies</Button>
         <Button variant="secondary" onClick={() => onAction('manage')}>
           Manage cookie preferences
@@ -77,10 +78,10 @@ function ManageCookieDialog({
     <>
       <DialogContent
         hideClose
-        className="!left-[unset] !top-[unset] !bottom-0 !right-0 !translate-x-[-50px] !translate-y-[-50px] space-y-4"
+        className="!left-[unset] !top-[unset] !bottom-0 md:!right-0 !translate-x-[0%] md:!translate-x-[-50px] md:!translate-y-[-50px] space-y-4"
       >
         <DialogHeader>
-          <DialogTitle>Manage cookie preferences</DialogTitle>
+          <DialogTitle className="!mr-0">Manage cookie preferences</DialogTitle>
         </DialogHeader>
         <div className="[&>*]:flex [&>*]:justify-between [&>*]:items-center space-y-3">
           <div>
@@ -108,7 +109,7 @@ function ManageCookieDialog({
             />
           </div>
         </div>
-        <DialogFooter className="!justify-start">
+        <DialogFooter className="!justify-start flex flex-wrap gap-3">
           <Button onClick={() => onAction({ type: 'confirm' })}>Confirm</Button>
           <Button
             variant="secondary"

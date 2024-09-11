@@ -36,9 +36,10 @@ export const getWagmiConfig = ({ useCookies }: { useCookies: boolean }) => {
 
 export const getWagmiInitialState = (
   cookieHeaders: string | null | undefined,
+  functionalCookiesEnabled: boolean,
 ) => {
   const initialState = cookieToInitialState(
-    getWagmiConfig({ useCookies: !!cookieHeaders }),
+    getWagmiConfig({ useCookies: functionalCookiesEnabled }),
     cookieHeaders,
   )
   return initialState

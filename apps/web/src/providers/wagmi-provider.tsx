@@ -58,9 +58,12 @@ export const WagmiConfig: FC<{
   children: ReactNode
   cookie?: string | null
 }> = ({ children, cookie }) => {
-  const initialState = getWagmiInitialState(cookie)
-  const isMounted = useIsMounted()
   const enabledCookies = useEnabledCookies()
+
+  const functionalCookiesEnabled = !!enabledCookies?.has('functional')
+
+  const initialState = getWagmiInitialState(cookie, functionalCookiesEnabled)
+  const isMounted = useIsMounted()
 
   const { resolvedTheme } = useTheme()
 
@@ -75,7 +78,7 @@ export const WagmiConfig: FC<{
   return (
     <WagmiProvider
       config={getWagmiConfig({
-        useCookies: !!enabledCookies?.has('functional'),
+        useCookies: functionalCookiesEnabled,
       })}
       initialState={initialState}
     >
