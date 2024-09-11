@@ -13,6 +13,7 @@ import {
   Switch,
 } from '@sushiswap/ui'
 import { useCallback, useEffect, useState } from 'react'
+import { announceCookieChange } from './announce-cookie-change'
 
 type BaseAction = 'accept' | 'reject' | 'manage'
 
@@ -134,6 +135,7 @@ export function CookieDialog({ open: _open }: { open: boolean }) {
   const onConfirm = useCallback((cookieSet: Set<CookieType>) => {
     const cookieString = Array.from(cookieSet).join(',')
     document.cookie = `accepted-cookies=${cookieString}; max-age=31536000; path=/`
+    announceCookieChange()
 
     setOpen(false)
   }, [])
@@ -181,6 +183,7 @@ export function CookieDialog({ open: _open }: { open: boolean }) {
   )
 
   useEffect(() => {
+    // Auto-accept in development and test environments
     if (process.env.NODE_ENV !== 'production') {
       onConfirm(new Set<CookieType>(cookieTypes))
     }
