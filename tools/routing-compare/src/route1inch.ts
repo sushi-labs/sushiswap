@@ -109,7 +109,7 @@ export async function OneInchRoute(
 }
 
 const whales: Record<number, Address> = {
-  [ChainId.ETHEREUM]: '0xBE0eB53F46cd790Cd13851d5EFf43D12404d33E8', // Binance 7
+  [ChainId.ETHEREUM]: '0x00000000219ab540356cBB839Cbe05303d7705Fa', // Beacon deposit
 }
 
 export async function OneInchAPIRouteSimulate(
@@ -173,8 +173,7 @@ export async function OneInchAPIRouteSimulate(
       route.tx.to,
       route.tx.data,
     )
-    if (typeof simulationRes === 'string')
-      throw new Error(`1inch simulation error: ${simulationRes}`)
+    if (typeof simulationRes === 'string') return undefined //throw new Error(`1inch simulation error: ${simulationRes}`)
     return { quote, swap: route.dstAmount, real: simulationRes }
   }
 

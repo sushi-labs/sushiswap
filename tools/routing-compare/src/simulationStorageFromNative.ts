@@ -1,6 +1,7 @@
 import { multicall3Abi } from 'sushi/abi'
+import { publicClientConfig } from 'sushi/config'
 import { Token } from 'sushi/currency'
-import { Address, Hex } from 'viem'
+import { Address, Hex, createPublicClient } from 'viem'
 import {
   CallData,
   MULTICALL3_ADDRESS,
@@ -20,8 +21,10 @@ export async function simulateRouteFromNative(
   if (!ifNetworkSupported(chainId))
     return `simulateRoute: Network ${chainId} is not supported`
 
-  let initialOutputBalance = 0n
-  let amountOut = 0n
+  let initialOutputBalanceFrom = 0n
+  let amountOutFrom = 0n
+  let initialOutputBalanceMC = 0n
+  let amountOutMC = 0n
   const calls: CallData[] = [
     {
       action: 'Check initial user input balance',
@@ -41,7 +44,17 @@ export async function simulateRouteFromNative(
       functionName: 'balanceOf',
       args: [from],
       validate(value: bigint) {
-        initialOutputBalance = value
+        initialOutputBalanceFrom = value
+        return undefined
+      },
+    },
+    {
+      action: 'Check initial user output balance',
+      target: tokenTo,
+      functionName: 'balanceOf',
+      args: [MULTICALL3_ADDRESS],
+      validate(value: bigint) {
+        initialOutputBalanceMC = value
         return undefined
       },
     },
@@ -58,7 +71,17 @@ export async function simulateRouteFromNative(
       functionName: 'balanceOf',
       args: [from],
       validate(value: bigint) {
-        amountOut = value - initialOutputBalance
+        amountOutFrom = value - initialOutputBalanceFrom
+        return undefined
+      },
+    },
+    {
+      action: 'Check final user output balance',
+      target: tokenTo,
+      functionName: 'balanceOf',
+      args: [MULTICALL3_ADDRESS],
+      validate(value: bigint) {
+        amountOutMC = value - initialOutputBalanceMC
         return undefined
       },
     },
@@ -69,7 +92,8 @@ export async function simulateRouteFromNative(
     account: from,
     calls,
     value: amountIn,
+    client: createPublicClient(publicClientConfig[chainId]), // DRPC
   })
 
-  return res ?? amountOut
+  return res ?? amountOutFrom + amountOutMC
 }

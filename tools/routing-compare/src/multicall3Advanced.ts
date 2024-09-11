@@ -31,7 +31,7 @@ export function ifNetworkSupported(chainId: ChainId) {
   return ALCHEMY_ENTRY_POINTS[chainId] !== undefined
 }
 
-export function createClient(chainId: ChainId) {
+export function createClientAlchemy(chainId: ChainId) {
   return createPublicClient({
     chain: publicClientConfig[chainId].chain,
     transport: http(
@@ -78,6 +78,7 @@ export async function aggregate3({
   stateOverride,
   blockNumber,
   value,
+  client,
 }: {
   chainId: ChainId
   account: Address
@@ -85,8 +86,9 @@ export async function aggregate3({
   stateOverride?: StateOverride | undefined
   blockNumber?: bigint | undefined
   value?: bigint | undefined
+  client?: ReturnType<typeof createClientAlchemy> | undefined
 }): Promise<string | undefined> {
-  const client = createClient(chainId)
+  client = client ?? createClientAlchemy(chainId)
   const multicall3Data = encodeFunctionData({
     abi: multicall3Abi,
     functionName: 'aggregate3Value',
@@ -138,15 +140,19 @@ export async function aggregate3({
     }
     const cd = calls[i] as CallData
     if (!success) {
-      const abi = cd.target instanceof Token ? cd.abi ?? erc20Abi : cd.abi
-      const err =
-        abi !== undefined
-          ? decodeErrorResult({
-              abi,
-              data: returnData,
-            })
-          : returnData
-      return `'${cd.action}' call error: ${JSON.stringify(err)}`
+      try {
+        const abi = cd.target instanceof Token ? cd.abi ?? erc20Abi : cd.abi
+        const err =
+          abi !== undefined
+            ? decodeErrorResult({
+                abi,
+                data: returnData,
+              })
+            : returnData
+        return `'${cd.action}' call error: ${JSON.stringify(err)}`
+      } catch (e) {
+        return e instanceof Error ? e.message : 'decodeErrorResult error'
+      }
     }
     if (cd.validate) {
       const err = cd.validate(BigInt(returnData), returnData)
