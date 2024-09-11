@@ -93,17 +93,19 @@ export const Sidebar = () => {
   const { isOpen } = useSidebar()
 
   return !isOpen ? null : (
-    <nav className="hidden lg:block bg-gray-100 dark:bg-slate-900 w-56 h-full border-r border-gray-200 dark:border-slate-800 overflow-y-auto">
-      <div className="h-full flex flex-col px-3 pt-4 overflow-y-auto">
-        <span className="text-muted-foreground text-xs px-3">
-          Browse Network
-        </span>
+    <nav className="hidden lg:block bg-gray-100 dark:bg-slate-900 w-56 h-full border-r border-gray-200 dark:border-slate-800">
+      <div className="h-full flex flex-col pt-3">
         <Command>
-          <CommandInput
-            testdata-id="network-selector-input"
-            placeholder="Search..."
-          />
-          <CommandEmpty>No network found.</CommandEmpty>
+          <div className="px-1">
+            <span className="text-muted-foreground text-xs px-3">
+              Browse Network
+            </span>
+            <CommandInput
+              testdata-id="network-selector-input"
+              placeholder="Search..."
+            />
+            <CommandEmpty>No network found.</CommandEmpty>
+          </div>
           <CommandGroup className="overflow-y-auto">
             <Link
               href="https://aptos.sushi.com"
