@@ -79,6 +79,8 @@ export function useTokenWithCache({
     enabled: Boolean(enabled && address),
     refetchOnWindowFocus: false,
     placeholderData: (prevData) => (keepPreviousData ? prevData : undefined),
+    staleTime: 1000 * 60 * 60 * 24,
+    gcTime: 1000 * 60 * 60 * 24,
     retry: false,
   })
 }
