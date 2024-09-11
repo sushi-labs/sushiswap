@@ -13,7 +13,7 @@ import {
   isWNativeSupported,
 } from 'sushi/config'
 import { Native, Token, Type } from 'sushi/currency'
-import { isAddress } from 'viem'
+import { type Address, isAddress } from 'viem'
 import { z } from 'zod'
 
 export const queryParamsSchema = z.object({
@@ -100,13 +100,15 @@ export const ConcentratedLiquidityURLStateProvider: FC<
   const { data: tokenFrom, isInitialLoading: isTokenFromLoading } =
     useTokenWithCache({
       chainId: _chainId,
-      address: fromCurrency,
+      address: fromCurrency as Address,
+      enabled: isAddress(fromCurrency, { strict: false }),
     })
 
   const { data: tokenTo, isInitialLoading: isTokenToLoading } =
     useTokenWithCache({
       chainId: _chainId,
-      address: toCurrency,
+      address: toCurrency as Address,
+      enabled: isAddress(toCurrency, { strict: false }),
     })
 
   const state = useMemo(() => {
