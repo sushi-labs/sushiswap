@@ -4,7 +4,9 @@ import { useEffect, useMemo, useState } from 'react'
 import { parseEnabledCookieTypes } from './get-enabled-cookies'
 
 export function useEnabledCookies() {
-  const [cookieString, setCookieString] = useState('')
+  const [cookieString, setCookieString] = useState(
+    typeof document === 'undefined' ? '' : document.cookie,
+  )
 
   useEffect(() => {
     if (typeof document === 'undefined') return

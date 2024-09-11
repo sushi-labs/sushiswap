@@ -40,7 +40,7 @@ function BaseCookieDialog({
         communications by third parties.
       </div>
       <Separator />
-      <div className="flex flex-col w-full gap-3">
+      <div className="flex md:flex-row flex-col w-full gap-3">
         <Button onClick={() => onAction('accept')}>Accept all cookies</Button>
         <Button variant="secondary" onClick={() => onAction('manage')}>
           Manage cookie preferences
