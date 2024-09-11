@@ -8,8 +8,10 @@
   "scripts": {
     "build": "tsc",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
-    "go": "tsc && node dist/index.js",
-    "go-debug": "tsc && node --inspect-brk dist/index.js"
+    "compare": "tsc && node dist/compareRouteAllNetworks.js",
+    "compare-debug": "tsc && node --inspect-brk dist/compareRouteAllNetworks.js",
+    "testRealOutput": "tsc && node dist/testRealOutput.js",
+    "testRealOutput-debug": "tsc && node --inspect-brk dist/testRealOutput.js"
   },
   "dependencies": {
     "sushi": "workspace:*",

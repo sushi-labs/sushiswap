@@ -108,6 +108,10 @@ export async function OneInchRoute(
   return OneInchAPIRoute(chainId, from, to, amountIn, gasPrice)
 }
 
+const whales: Record<number, Address> = {
+  [ChainId.ETHEREUM]: '0xBE0eB53F46cd790Cd13851d5EFf43D12404d33E8', // Binance 7
+}
+
 export async function OneInchAPIRouteSimulate(
   chainId: ChainId,
   from: Token,
@@ -116,8 +120,11 @@ export async function OneInchAPIRouteSimulate(
   gasPrice: bigint,
 ) /*: Promise<bigint | undefined>*/ {
   if (!isNative(from)) return undefined // 1inch doesn't make routes without a user with liquidity and approve to 1inch router
-  const whale = WETH9_ADDRESS[chainId as keyof typeof WETH9_ADDRESS]
+  const whale =
+    whales[chainId] ?? WETH9_ADDRESS[chainId as keyof typeof WETH9_ADDRESS]
   if (whale === undefined) return undefined
+
+  const quote = await OneInchRoute(chainId, from, to, amountIn, gasPrice)
 
   if (oneInchApiKeys.length === 0) return
   const apiKey = oneInchApiKeys[next1inchKeyIndex++]
@@ -126,7 +133,7 @@ export async function OneInchAPIRouteSimulate(
   const url =
     `https://api.1inch.dev/swap/v6.0/${chainId}/swap?` +
     `src=${from.address}&dst=${to.address}&amount=${amountIn}&from=${whale}&origin=${whale}` +
-    `&gasPrice=${gasPrice}&preset=maxReturnResult&isTableEnabled=true&slippage=50`
+    `&gasPrice=${gasPrice}&slippage=50`
 
   for (let n = 0; n < 10; ++n) {
     const resp = await fetch(url, {
@@ -140,7 +147,7 @@ export async function OneInchAPIRouteSimulate(
       continue
     }
     if (resp.status !== 200) {
-      console.log(resp.status, await resp.text())
+      //console.log(resp.status, await resp.text(), url)
       return
     }
     const route = (await resp.json()) as {
@@ -168,7 +175,7 @@ export async function OneInchAPIRouteSimulate(
     )
     if (typeof simulationRes === 'string')
       throw new Error(`1inch simulation error: ${simulationRes}`)
-    return { expected: route.dstAmount, actual: simulationRes }
+    return { quote, swap: route.dstAmount, real: simulationRes }
   }
 
   return undefined

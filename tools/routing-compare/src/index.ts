@@ -6,11 +6,12 @@ import {
   STABLES,
   publicClientConfig,
 } from 'sushi/config'
-import { Token, USDC, WNATIVE } from 'sushi/currency'
+import { Token, WETH9_ADDRESS, WNATIVE } from 'sushi/currency'
 import { createPublicClient } from 'viem'
-import { OneInchRoute } from './route1inch.js'
-import { OdosRoute, OdosRouteSimulate } from './routeOdos.js'
+import { OneInchAPIRouteSimulate, OneInchRoute } from './route1inch.js'
+import { OdosRoute } from './routeOdos.js'
 import { SushiRoute } from './routeSushi.js'
+import { isNative } from './utils.js'
 
 export const MAX_PRICE_IMPACT = 0.1 // 10%
 const MAX_PAIRS_FOR_CHECK = 23
@@ -155,7 +156,7 @@ export async function checkRoute(chainId: ChainId) {
   }
 }
 
-export async function checkRouteAllNetworks() {
+export async function compareRouteAllNetworks() {
   const chains = Object.values(ChainId)
   for (let i = 0; i < chains.length; ++i) {
     if (!EXCLUDE_NETWORKS.includes(chains[i] as number))
@@ -163,35 +164,55 @@ export async function checkRouteAllNetworks() {
   }
 }
 
-//checkRouteAllNetworks()
-
-// console.log(
-//   await simulateRoute(
-//     '0x0102030405060708091001020304050607080910',
-//     USDC[ChainId.ETHEREUM],
-//     12345n,
-//     USDT[ChainId.ETHEREUM],
-//     '0xf2614A233c7C3e7f08b1F887Ba133a13f1eb2c55',
-//     '0x2646478b000000000000000000000000a0b86991c6218b36c1d19d4a2e9eb0ce3606eb480000000000000000000000000000000000000000000000000000000000003039000000000000000000000000dac17f958d2ee523a2206206994597c13d831ec70000000000000000000000000000000000000000000000000000000000002ffc000000000000000000000000010203040506070809100102030405060708091000000000000000000000000000000000000000000000000000000000000000c0000000000000000000000000000000000000000000000000000000000000004502A0b86991c6218b36c1d19D4a2e9Eb0cE3606eB4801ffff003041CbD36888bECc7bbCBc0045E3B1f144466f5f010102030405060708091001020304050607080910000bb8000000000000000000000000000000000000000000000000000000',
-//   ),
-// )
-
-// console.log(
-//   await OneInchAPIRouteSimulate(
-//     ChainId.ETHEREUM,
-//     nativeToken(ChainId.ETHEREUM),
-//     USDC[ChainId.ETHEREUM],
-//     10n ** 18n,
-//     1_000_000_000n,
-//   ),
-// )
-// debugger
-console.log(
-  await OdosRouteSimulate(
-    ChainId.ETHEREUM,
-    USDC[ChainId.ETHEREUM],
-    nativeToken(ChainId.ETHEREUM),
-    10n ** 18n,
-    1_000_000_000n,
-  ),
-)
+// tests correspondence between quote and real output
+// only for routes from native to all other base tokens (1inch can be tested only so)
+export async function testAPIRealOutputFromNative(
+  simulation: typeof OneInchAPIRouteSimulate,
+) {
+  const chains = Object.values(ChainId)
+  for (let i = 0; i < chains.length; ++i) {
+    if (EXCLUDE_NETWORKS.includes(chains[i] as number)) continue
+    const chainId = chains[i] as ChainId
+    const [gasPrice, _tokens] = await Promise.all([
+      getGasPrice(chainId),
+      getTestTokens(chainId),
+    ])
+    const tokens = _tokens
+      .map(([token]) => token)
+      .filter(
+        (token) =>
+          !isNative(token) &&
+          token.address !==
+            WETH9_ADDRESS[chainId as keyof typeof WETH9_ADDRESS],
+      )
+    const nativeInfo = _tokens.find(([tok]) => isNative(tok))
+    if (nativeInfo === undefined)
+      throw new Error('Unexpected: no native token price')
+    const [nativeToken, nativeTokenPrice] = nativeInfo
+    console.log(
+      `${ChainKey[chainId]} gasPrice=${gasPrice} tokens: ${tokens
+        .map((t) => t.symbol)
+        .join(', ')}`,
+    )
+    for (let l = 0; l < CHECK_LEVELS_$.length; ++l) {
+      const level = CHECK_LEVELS_$[l] as number
+      const amountIn = getTokenAmountWei(nativeToken, nativeTokenPrice, level)
+      for (let i = 0; i < tokens.length; ++i) {
+        const res = await simulation(
+          chainId,
+          nativeToken,
+          tokens[i] as Token,
+          amountIn,
+          gasPrice,
+        )
+        console.log(
+          `Swap ${level}$ ${nativeToken.symbol}=>${
+            tokens[i]?.symbol
+          }: ${JSON.stringify(res, (_, value) =>
+            typeof value === 'bigint' ? value.toString() : value,
+          )}`,
+        )
+      }
+    }
+  }
+}
