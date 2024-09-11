@@ -17,7 +17,7 @@ export default function EvmLayout({ children }: { children: React.ReactNode }) {
   const cookie = headers().get('cookie')
   return (
     <Providers cookie={cookie}>
-      <div className="flex flex-col h-full">
+      <div className="fixed flex flex-col h-full w-full">
         <SanctionedAddressDialog />
         {children}
       </div>

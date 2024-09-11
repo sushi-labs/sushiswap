@@ -14,8 +14,8 @@ export const Header: FC = () => {
   const { address } = useAccount()
 
   return (
-    <div className="flex justify-between gap-4 fixed top-6 left-6 right-6 z-20">
-      <div className="px-3 flex justify-between items-center w-56 h-14 flex-shrink-0 bg-gray-100 dark:bg-slate-900 border border-gray-200 dark:border-slate-800 rounded-xl">
+    <div className="flex justify-between z-20">
+      <div className="px-3 flex justify-between items-center w-56 h-14 flex-shrink-0 bg-gray-100 dark:bg-slate-900 border-r border-b border-gray-200 dark:border-slate-800">
         <SushiWithTextIcon width={90} />
         <SidebarToggle variant="ghost" asChild>
           <Badge
@@ -34,8 +34,6 @@ export const Header: FC = () => {
         </SidebarToggle>
       </div>
       <Navigation
-        className="static bg-gray-100 dark:bg-slate-900 border border-gray-200 dark:border-slate-800 rounded-xl"
-        variant="transparent"
         leftElements={headerElements(chainId)}
         rightElement={<UserPortfolio />}
       />

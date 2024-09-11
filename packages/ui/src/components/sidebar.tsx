@@ -15,6 +15,7 @@ import { Chain } from 'sushi'
 import { ROUTE_PROCESSOR_5_SUPPORTED_CHAIN_IDS } from 'sushi/config'
 import { NetworkIcon } from '../icons/NetworkIcon'
 import { AptosCircle } from '../icons/network'
+import { useBreakpoint } from '../lib'
 import { Button, ButtonProps } from './button'
 import {
   Command,
@@ -75,12 +76,12 @@ export const SidebarContainer: FC<SidebarContainerProps> = ({
   const { isOpen } = useSidebar()
 
   return (
-    <div className="relative top-20">
+    <div className="flex h-full min-h-0">
       <Sidebar />
       <div
         className={classNames(
-          'transition-[margin-left] ease-in-out duration-300',
-          shiftContent && isOpen ? 'lg:ml-64' : null,
+          'flex-1 h-full overflow-y-auto',
+          !shiftContent && isOpen ? 'lg:-ml-56' : null,
         )}
       >
         {children}
@@ -122,14 +123,10 @@ export const SidebarContainer: FC<SidebarContainerProps> = ({
 
 export const Sidebar = () => {
   const { isOpen } = useSidebar()
+
   return !isOpen ? null : (
-    <nav
-      className={classNames(
-        'hidden lg:block bg-gray-100 dark:bg-slate-900 rounded-xl w-56 h-[calc(100vh_-_120px)] border border-gray-200 dark:border-slate-800',
-        'fixed top-24 left-6 z-20 -translate-x-full lg:translate-x-0 transition-[width] ease-in-out duration-300 overflow-y-auto',
-      )}
-    >
-      <div className="relative h-full flex flex-col px-3 py-4 overflow-y-auto">
+    <nav className="hidden lg:block bg-gray-100 dark:bg-slate-900 w-56 h-full border-r border-gray-200 dark:border-slate-800 overflow-y-auto">
+      <div className="h-full flex flex-col px-3 pt-4 overflow-y-auto">
         <span className="text-muted-foreground text-xs px-3">
           Browse Network
         </span>
