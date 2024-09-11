@@ -1,5 +1,5 @@
 import { ChainId } from 'sushi'
-import { Token, WETH9 } from 'sushi/currency'
+import { Token, WNATIVE } from 'sushi/currency'
 import { Address, Hex } from 'viem'
 import { MAX_PRICE_IMPACT } from './index.js'
 import { simulateRoute } from './simulationStorage.js'
@@ -12,7 +12,7 @@ interface OdosQoute {
 }
 
 function wrap(token: Token): Token {
-  if (isNative(token)) return WETH9[token.chainId as keyof typeof WETH9]
+  if (isNative(token)) return WNATIVE[token.chainId as keyof typeof WNATIVE]
   return token
 }
 

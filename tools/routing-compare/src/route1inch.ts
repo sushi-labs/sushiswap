@@ -1,5 +1,5 @@
 import { ChainId } from 'sushi'
-import { Token, WETH9_ADDRESS } from 'sushi/currency'
+import { Token, WNATIVE_ADDRESS } from 'sushi/currency'
 import { Address, Hex } from 'viem'
 import { simulateRouteFromNative } from './simulationStorageFromNative.js'
 import { isNative } from './utils.js'
@@ -121,7 +121,7 @@ export async function OneInchAPIRouteSimulate(
 ) /*: Promise<bigint | undefined>*/ {
   if (!isNative(from)) return undefined // 1inch doesn't make routes without a user with liquidity and approve to 1inch router
   const whale =
-    whales[chainId] ?? WETH9_ADDRESS[chainId as keyof typeof WETH9_ADDRESS]
+    whales[chainId] ?? WNATIVE_ADDRESS[chainId as keyof typeof WNATIVE_ADDRESS]
   if (whale === undefined) return undefined
 
   const quote = await OneInchRoute(chainId, from, to, amountIn, gasPrice)
