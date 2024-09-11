@@ -29,11 +29,11 @@
     "@sushiswap/default-token-list": "^43.1.0",
     "@upstash/redis": "1.22.1",
     "@vercel/node": "3.0.9",
-    "@wagmi/core": "2.13.1",
+    "@wagmi/core": "2.13.5",
     "drizzle-orm": "^0.29.5",
     "postgres": "^3.4.3",
     "sushi": "workspace:*",
-    "viem": "2.18.6",
+    "viem": "2.21.4",
     "zod": "3.23.8"
   },
   "devDependencies": {

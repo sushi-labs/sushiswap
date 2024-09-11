@@ -11,7 +11,6 @@ import {
   useSimulateContract,
   useWriteContract,
 } from 'wagmi'
-import { DistributionCreator } from '../abis'
 
 export enum AngleConditionsState {
   LOADING = 'LOADING',
@@ -33,7 +32,15 @@ export const useAcceptAngleConditions = (
     refetch,
   } = useReadContract({
     address: '0x8BB4C975Ff3c250e0ceEA271728547f3802B36Fd',
-    abi: DistributionCreator,
+    abi: [
+      {
+        inputs: [{ internalType: 'address', name: '', type: 'address' }],
+        name: 'userSignatureWhitelist',
+        outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
+        stateMutability: 'view',
+        type: 'function',
+      },
+    ] as const,
     functionName: 'userSignatureWhitelist',
     chainId: chainId as ChainId,
     args: [address!],
@@ -44,7 +51,15 @@ export const useAcceptAngleConditions = (
 
   const { data: simulation } = useSimulateContract({
     address: '0x8BB4C975Ff3c250e0ceEA271728547f3802B36Fd',
-    abi: DistributionCreator,
+    abi: [
+      {
+        inputs: [],
+        name: 'acceptConditions',
+        outputs: [],
+        stateMutability: 'nonpayable',
+        type: 'function',
+      },
+    ] as const,
     functionName: 'acceptConditions',
     query: {
       enabled: Boolean(

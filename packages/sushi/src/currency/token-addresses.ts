@@ -377,6 +377,7 @@ export const WNATIVE_ADDRESS = {
   [ChainId.SKALE_EUROPA]: zeroAddress,
   [ChainId.ROOTSTOCK]: WBTC_ADDRESS[ChainId.ROOTSTOCK],
   [ChainId.MANTLE]: '0x78c1b0C915c4FAA5FffA6CAbf0219DA63d7f4cb8',
+  [ChainId.CURTIS]: '0x543F85968B514F46b921988BD07577642d8aaE7F',
 } as const
 
 export const SUSHI_ADDRESS = {

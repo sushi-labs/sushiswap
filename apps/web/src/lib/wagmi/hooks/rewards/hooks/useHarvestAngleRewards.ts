@@ -10,8 +10,6 @@ import {
 } from 'wagmi'
 import { SendTransactionReturnType } from 'wagmi/actions'
 
-import { ERC1967Proxy } from '../abis'
-
 interface UseHarvestAngleRewards {
   account: Address | undefined
   chainId: ChainId
@@ -35,7 +33,20 @@ export const useHarvestAngleRewards = ({
   const { chain } = useAccount()
   const { data: simulation } = useSimulateContract({
     chainId,
-    abi: ERC1967Proxy,
+    abi: [
+      {
+        inputs: [
+          { internalType: 'address[]', name: 'users', type: 'address[]' },
+          { internalType: 'address[]', name: 'tokens', type: 'address[]' },
+          { internalType: 'uint256[]', name: 'amounts', type: 'uint256[]' },
+          { internalType: 'bytes32[][]', name: 'proofs', type: 'bytes32[][]' },
+        ],
+        name: 'claim',
+        outputs: [],
+        stateMutability: 'nonpayable',
+        type: 'function',
+      },
+    ] as const,
     address: '0x3Ef3D8bA38EBe18DB133cEc108f4D14CE00Dd9Ae',
     functionName: 'claim',
     args: args
@@ -43,7 +54,7 @@ export const useHarvestAngleRewards = ({
       : undefined,
     query: {
       enabled: Boolean(enabled && args && chainId === chain?.id),
-    },
+    } as any, // shrug #2,
   })
 
   const client = usePublicClient()
