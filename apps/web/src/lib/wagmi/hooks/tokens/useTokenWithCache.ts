@@ -5,6 +5,7 @@ import {
 import { useCustomTokens } from '@sushiswap/hooks'
 import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import { getToken as getTokenWeb3 } from '@wagmi/core/actions'
+import ms from 'ms'
 import { useCallback } from 'react'
 import type { ID } from 'sushi'
 import { ChainId } from 'sushi/chain'
@@ -152,7 +153,7 @@ export const useTokenWithCache = ({
     placeholderData: isKeepPreviousData ? keepPreviousData : undefined,
     refetchOnWindowFocus: false,
     retry: false,
-    staleTime: 900000, // 15 mins
-    gcTime: 86400000, // 24hs
+    staleTime: ms('6 hours'),
+    gcTime: ms('24 hours'),
   })
 }
