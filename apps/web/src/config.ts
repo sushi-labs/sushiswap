@@ -79,3 +79,10 @@ export const isSupportedChainId = (
   chainId: number,
 ): chainId is SupportedChainId =>
   SUPPORTED_CHAIN_IDS.includes(chainId as SupportedChainId)
+
+export const NON_EVM_NETWORKS = ['aptos'] as const
+
+export const SUPPORTED_NETWORKS = [
+  ...SUPPORTED_CHAIN_IDS,
+  ...NON_EVM_NETWORKS,
+] as const

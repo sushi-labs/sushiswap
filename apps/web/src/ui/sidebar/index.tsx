@@ -1,6 +1,7 @@
 'use client'
 
 import {
+  Badge,
   Button,
   ButtonProps,
   Command,
@@ -8,22 +9,25 @@ import {
   CommandGroup,
   CommandInput,
   CommandItem,
+  IconComponent,
   classNames,
 } from '@sushiswap/ui'
-import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import { AptosCircle } from '@sushiswap/ui/icons/network/circle/AptosCircle'
-import Link from 'next/link'
+import { NETWORK_CIRCLE_ICON } from '@sushiswap/ui/icons/network/circle/index'
+import { usePathname, useRouter } from 'next/navigation'
 import {
   Dispatch,
   FC,
   ReactNode,
   SetStateAction,
   createContext,
+  useCallback,
   useContext,
   useState,
 } from 'react'
-import { Chain } from 'sushi'
-import { ROUTE_PROCESSOR_5_SUPPORTED_CHAIN_IDS } from 'sushi/config'
+import { NON_EVM_NETWORKS, SUPPORTED_NETWORKS } from 'src/config'
+import { Chain, ChainId, ChainKey, isChainId } from 'sushi'
+import { useAccount } from 'wagmi'
 
 interface SidebarContextType {
   isOpen: boolean
@@ -65,18 +69,20 @@ export const SidebarToggle: FC<Omit<ButtonProps, 'onClick'>> = (props) => {
 
 interface SidebarContainerProps {
   children: ReactNode
+  nonEVMNetwork?: string
   shiftContent?: boolean
 }
 
 export const SidebarContainer: FC<SidebarContainerProps> = ({
   children,
+  nonEVMNetwork,
   shiftContent = false,
 }) => {
   const { isOpen } = useSidebar()
 
   return (
     <div className="flex h-full min-h-0">
-      <Sidebar />
+      <Sidebar nonEVMNetwork={nonEVMNetwork} />
       <div
         className={classNames(
           'flex-1 h-full overflow-y-auto',
@@ -89,8 +95,42 @@ export const SidebarContainer: FC<SidebarContainerProps> = ({
   )
 }
 
-export const Sidebar = () => {
+const NonEvmNetwork: Record<
+  (typeof NON_EVM_NETWORKS)[number],
+  { name: string; icon: IconComponent }
+> = {
+  aptos: {
+    name: 'Aptos',
+    icon: AptosCircle,
+  },
+}
+
+interface SidebarProps {
+  nonEVMNetwork?: string
+}
+
+const Sidebar: FC<SidebarProps> = ({ nonEVMNetwork }) => {
   const { isOpen } = useSidebar()
+
+  const { chainId } = useAccount()
+
+  const connectedNetwork = nonEVMNetwork ?? chainId
+
+  const router = useRouter()
+  const pathname = usePathname()
+
+  const onSelect = useCallback(
+    (value: string) => {
+      const network = value.split('__')[1]
+      const pathSegments = pathname.split('/')
+      pathSegments[1] = isChainId(+network)
+        ? ChainKey[+network as ChainId]
+        : network
+
+      router.push(pathSegments.join('/'), { scroll: false })
+    },
+    [pathname, router],
+  )
 
   return !isOpen ? null : (
     <nav className="hidden lg:block bg-gray-100 dark:bg-slate-900 w-56 h-full border-r border-gray-200 dark:border-slate-800">
@@ -107,31 +147,44 @@ export const Sidebar = () => {
             <CommandEmpty>No network found.</CommandEmpty>
           </div>
           <CommandGroup className="overflow-y-auto">
-            <Link
-              href="https://aptos.sushi.com"
-              rel="noopener noreferrer"
-              target="_blank"
-            >
-              <CommandItem className="cursor-pointer aria-selected:bg-[unset] hover:bg-muted">
-                <div className="flex items-center gap-2">
-                  <AptosCircle width={22} height={22} />
-                  Aptos
+            {SUPPORTED_NETWORKS.map((network) => {
+              const [name, icon] =
+                typeof network === 'string'
+                  ? [NonEvmNetwork[network].name, NonEvmNetwork[network].icon]
+                  : [
+                      Chain.from(+network)?.name,
+                      NETWORK_CIRCLE_ICON[+network as ChainId]!,
+                    ]
+              return (
+                <div
+                  key={network}
+                  className="hover:bg-muted hover:text-accent-foreground rounded-lg"
+                >
+                  <CommandItem
+                    className="cursor-pointer aria-selected:!bg-[unset] aria-selected:!text-[unset]"
+                    testdata-id={`network-selector-${network}`}
+                    value={`${name}__${network}`}
+                    onSelect={onSelect}
+                  >
+                    <div className="flex items-center gap-2">
+                      <Badge
+                        position="bottom-right"
+                        badgeContent={
+                          connectedNetwork === network ? (
+                            <div className="bg-green rounded-full w-2 h-2 mr-0.5 mb-0.5" />
+                          ) : (
+                            <div />
+                          )
+                        }
+                      >
+                        <span>{icon({ width: 22, height: 22 })}</span>
+                      </Badge>
+                      {name}
+                    </div>
+                  </CommandItem>
                 </div>
-              </CommandItem>
-            </Link>
-            {ROUTE_PROCESSOR_5_SUPPORTED_CHAIN_IDS.map((el) => (
-              <CommandItem
-                className="cursor-pointer aria-selected:bg-[unset] hover:bg-muted"
-                testdata-id={`network-selector-${el}`}
-                value={`${Chain.from(el)?.name}__${el}`}
-                key={el}
-              >
-                <div className="flex items-center gap-2">
-                  <NetworkIcon chainId={el} width={22} height={22} />
-                  {Chain.from(el)?.name}
-                </div>
-              </CommandItem>
-            ))}
+              )
+            })}
           </CommandGroup>
         </Command>
       </div>
