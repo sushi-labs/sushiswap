@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import React from 'react'
+import { Header } from './header'
 import { Providers } from './providers'
 
 export const metadata: Metadata = {
@@ -16,7 +17,10 @@ export default function AptosLayout({
 }: { children: React.ReactNode }) {
   return (
     <Providers>
-      <div className="flex flex-col h-full">{children}</div>
+      <div className="flex flex-col h-full">
+        <Header />
+        {children}
+      </div>
     </Providers>
   )
 }
