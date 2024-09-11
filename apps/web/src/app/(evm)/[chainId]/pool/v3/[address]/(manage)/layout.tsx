@@ -49,9 +49,7 @@ export default async function Layout({
         pool={pool}
         apy={{ rewards: pool.incentiveApr, fees: pool.feeApr1d }}
       />
-      <section className="flex flex-col flex-1 h-full pb-10">
-        {children}
-      </section>
+      <section>{children}</section>
     </Container>
   )
 }

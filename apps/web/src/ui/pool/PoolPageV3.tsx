@@ -70,7 +70,7 @@ const Pool: FC<{ pool: V3Pool }> = ({ pool }) => {
           </LinkInternal>
         </Message>
       )}
-      <div className="grid grid-cols-1 md:grid-cols-[auto_400px] gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <StatisticsChartsV3 address={address} chainId={chainId} pool={pool} />
         <div className="flex flex-col gap-6">
           <Card>

@@ -36,7 +36,7 @@ export default async function Layout({
   const headersList = headers()
   const referer = headersList.get('referer')
   return (
-    <Container maxWidth="5xl" className="pt-10 px-4">
+    <Container maxWidth="5xl" className="py-10 px-4">
       <PoolHeader
         backUrl={
           referer?.includes('/pool')
@@ -47,9 +47,7 @@ export default async function Layout({
         pool={pool}
         apy={{ rewards: pool.incentiveApr, fees: pool.feeApr1d }}
       />
-      <section className="flex flex-col flex-1 h-full pb-10">
-        {children}
-      </section>
+      <section>{children}</section>
     </Container>
   )
 }

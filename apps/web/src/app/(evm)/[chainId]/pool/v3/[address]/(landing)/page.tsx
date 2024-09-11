@@ -23,7 +23,7 @@ export default async function PoolPage({
   }
 
   const pool = (await unstable_cache(
-    async () => await getV3Pool({ chainId: chainId, address }),
+    async () => await getV3Pool({ chainId, address }),
     ['pool', `${chainId}:${address}`],
     {
       revalidate: 60 * 15,

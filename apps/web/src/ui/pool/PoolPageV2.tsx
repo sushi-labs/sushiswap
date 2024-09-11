@@ -17,7 +17,7 @@ export const PoolPageV2: FC<PoolPageV2> = ({ pool }) => {
   return (
     <Container maxWidth="5xl" className="flex flex-col gap-4">
       {/* <UnknownTokenAlert pool={pool} /> */}
-      <div className="grid grid-cols-1 md:grid-cols-[auto_400px] gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div>
           <PoolChartV2 pool={pool} />
         </div>
