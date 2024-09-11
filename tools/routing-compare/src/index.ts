@@ -6,12 +6,12 @@ import {
   STABLES,
   publicClientConfig,
 } from 'sushi/config'
-import { Token, WETH9_ADDRESS, WNATIVE } from 'sushi/currency'
+import { Token, WNATIVE } from 'sushi/currency'
 import { createPublicClient } from 'viem'
 import { OneInchAPIRouteSimulate, OneInchRoute } from './route1inch.js'
 import { OdosRoute } from './routeOdos.js'
 import { SushiRoute } from './routeSushi.js'
-import { isNative } from './utils.js'
+import { Average, delay, isNative } from './utils.js'
 
 export const MAX_PRICE_IMPACT = 0.1 // 10%
 const MAX_PAIRS_FOR_CHECK = 23
@@ -168,22 +168,33 @@ export async function compareRouteAllNetworks() {
 // only for routes from native to all other base tokens (1inch can be tested only so)
 export async function testAPIRealOutputFromNative(
   simulation: typeof OneInchAPIRouteSimulate,
+  delayBetweenSimulations = 0,
 ) {
   const chains = Object.values(ChainId)
+  const swapTotal = new Average()
+  const realTotal = new Average()
   for (let i = 0; i < chains.length; ++i) {
     if (EXCLUDE_NETWORKS.includes(chains[i] as number)) continue
     const chainId = chains[i] as ChainId
-    const [gasPrice, _tokens] = await Promise.all([
-      getGasPrice(chainId),
-      getTestTokens(chainId),
-    ])
+    let gasPrice
+    let _tokens
+    try {
+      const res = await Promise.all([
+        getGasPrice(chainId),
+        getTestTokens(chainId),
+      ])
+      gasPrice = res[0]
+      _tokens = res[1]
+    } catch (_e) {
+      console.log(`${ChainKey[chainId]} Error at getGasPrice or getPices`)
+      continue
+    }
     const tokens = _tokens
       .map(([token]) => token)
       .filter(
         (token) =>
           !isNative(token) &&
-          token.address !==
-            WETH9_ADDRESS[chainId as keyof typeof WETH9_ADDRESS],
+          token.address !== WNATIVE[chainId as keyof typeof WNATIVE]?.address,
       )
     const nativeInfo = _tokens.find(([tok]) => isNative(tok))
     if (nativeInfo === undefined)
@@ -194,10 +205,13 @@ export async function testAPIRealOutputFromNative(
         .map((t) => t.symbol)
         .join(', ')}`,
     )
+    const swapNet = new Average()
+    const realNet = new Average()
     for (let l = 0; l < CHECK_LEVELS_$.length; ++l) {
       const level = CHECK_LEVELS_$[l] as number
       const amountIn = getTokenAmountWei(nativeToken, nativeTokenPrice, level)
       for (let i = 0; i < tokens.length; ++i) {
+        await delay(delayBetweenSimulations)
         const res = await simulation(
           chainId,
           nativeToken,
@@ -212,7 +226,21 @@ export async function testAPIRealOutputFromNative(
             typeof value === 'bigint' ? value.toString() : value,
           )}`,
         )
+        if (res?.quote && res?.swap && res?.real) {
+          swapNet.add(Number(res.swap) / Number(res.quote))
+          realNet.add(Number(res.real) / Number(res.quote))
+          swapTotal.add(Number(res.swap) / Number(res.quote))
+          realTotal.add(Number(res.real) / Number(res.quote))
+        }
       }
+      console.log(
+        `${
+          ChainKey[chainId]
+        } swap_avg=${swapNet.avg()}, real_avg=${realNet.avg()}`,
+      )
     }
+    console.log(
+      `Total swap_avg=${swapTotal.avg()}, real_avg=${realTotal.avg()}`,
+    )
   }
 }

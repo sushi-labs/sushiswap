@@ -110,6 +110,7 @@ export async function OneInchRoute(
 
 const whales: Record<number, Address> = {
   [ChainId.ETHEREUM]: '0x00000000219ab540356cBB839Cbe05303d7705Fa', // Beacon deposit
+  [ChainId.FANTOM]: '0xFC00FACE00000000000000000000000000000000',
 }
 
 export async function OneInchAPIRouteSimulate(
@@ -147,7 +148,7 @@ export async function OneInchAPIRouteSimulate(
       continue
     }
     if (resp.status !== 200) {
-      //console.log(resp.status, await resp.text(), url)
+      console.log(resp.status, await resp.text(), url)
       return
     }
     const route = (await resp.json()) as {

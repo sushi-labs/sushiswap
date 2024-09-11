@@ -6,7 +6,6 @@ import {
   CallData,
   MULTICALL3_ADDRESS,
   aggregate3,
-  ifNetworkSupported,
 } from './multicall3Advanced.js'
 import { knownRoutersAbi } from './routerABI/routerAbi.js'
 
@@ -18,8 +17,6 @@ export async function simulateRouteFromNative(
   routeData: Hex,
 ): Promise<bigint | string> {
   const chainId = tokenTo.chainId
-  if (!ifNetworkSupported(chainId))
-    return `simulateRoute: Network ${chainId} is not supported`
 
   let initialOutputBalanceFrom = 0n
   let amountOutFrom = 0n
