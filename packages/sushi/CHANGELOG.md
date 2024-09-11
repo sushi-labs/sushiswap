@@ -1,5 +1,11 @@
 # sushi
 
+## 3.2.1
+
+### Patch Changes
+
+- [#1676](https://github.com/sushiswap/sushiswap/pull/1676) [`abf14549f`](https://github.com/sushiswap/sushiswap/commit/abf14549f70e1d850c5e9171706604c1f5f28358) Thanks [@LufyCZ](https://github.com/LufyCZ)! - Add Curtis
+
 ## 3.2.0
 
 ### Minor Changes
