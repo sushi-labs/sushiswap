@@ -1,3 +1,5 @@
+import { captureRequestError } from '@sentry/nextjs'
+
 export async function register() {
   await import('sushi/bigint-serializer')
 
@@ -10,8 +12,4 @@ export async function register() {
   }
 }
 
-export const onRequestError = (...args) => {
-  Sentry.captureRequestError(...args)
-
-  // ... additional logic here
-}
+export const onRequestError = captureRequestError
