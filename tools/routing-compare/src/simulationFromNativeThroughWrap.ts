@@ -75,7 +75,6 @@ export async function simulateRouteFromNativeThroughWrap(
       target: routerContract,
       abi: knownRoutersAbi(chainId, routerContract),
       callData: routeData,
-      value: amountIn,
     },
     {
       action: 'Check final user output balance',
