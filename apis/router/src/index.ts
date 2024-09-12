@@ -64,8 +64,18 @@ async function start() {
     // Performance Monitoring
     enableTracing: true,
     tracesSampleRate: 1,
+    //debug: process.env['SENTRY_ENVIRONMENT'] !== 'production',
+    // Called for message and error events
+    beforeSend(event) {
+      // Modify or drop the event here
+      if (event.user) {
+        // Don't send user's email address for example
+        // delete event.user.email
+      }
+      return event
+    },
   })
-
+  Sentry.setTag('chainId', CHAIN_ID)
   Logger.setLogsExternalHandler(
     (
       msg: string,
