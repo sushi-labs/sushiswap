@@ -1,6 +1,7 @@
 import { Container } from '@sushiswap/ui'
 import { HotJar } from '@sushiswap/ui'
 import { BarHeader } from 'src/ui/stake'
+import { Header } from './header'
 import { Providers } from './providers'
 
 export const metadata = {
@@ -25,6 +26,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             </main>
           </SidebarContainer>
         </SidebarProvider> */}
+        <Header />
         <main className="flex flex-col flex-1">
           <Container maxWidth="5xl" className="px-4 pt-16 pb-8">
             <BarHeader />
