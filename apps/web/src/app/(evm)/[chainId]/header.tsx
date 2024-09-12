@@ -30,7 +30,7 @@ export const Header: FC = () => {
           !isOpen && 'border-b',
         )}
       >
-        <SushiNavigationDropdown className="!pl-2 !pr-2">
+        <SushiNavigationDropdown className="!px-2">
           <SushiWithTextIcon width={90} />
         </SushiNavigationDropdown>
         <SidebarToggle variant="ghost" className="!px-2" asChild>
