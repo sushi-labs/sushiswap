@@ -63,6 +63,10 @@ test.beforeEach(async ({ page, next }) => {
   })
 })
 
+test.afterEach(async ({ page }) => {
+  await page.unrouteAll({ behavior: 'ignoreErrors' })
+})
+
 test('Wrap and unwrap', async ({ page }) => {
   test.slow()
   const swapPage = new SwapPage(page, chainId)
