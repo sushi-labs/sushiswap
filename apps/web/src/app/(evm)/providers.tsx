@@ -3,6 +3,7 @@
 import '@rainbow-me/rainbowkit/styles.css'
 
 import { BaseProviders, OnramperProvider } from '@sushiswap/ui'
+import { WagmiSentry } from 'src/lib/wagmi/components/wagmi-sentry'
 import { WagmiStoreVersionCheck } from 'src/lib/wagmi/components/wagmi-store-version-check'
 import { QueryClientProvider } from '../../providers/query-client-provider'
 import { WagmiConfig } from '../../providers/wagmi-provider'
@@ -16,7 +17,9 @@ export function Providers({
       <OnramperProvider>
         <QueryClientProvider>
           <WagmiConfig cookie={cookie}>
-            <WagmiStoreVersionCheck>{children}</WagmiStoreVersionCheck>
+            <WagmiSentry>
+              <WagmiStoreVersionCheck>{children}</WagmiStoreVersionCheck>
+            </WagmiSentry>
           </WagmiConfig>
         </QueryClientProvider>
       </OnramperProvider>
