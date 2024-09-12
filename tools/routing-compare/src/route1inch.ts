@@ -1,8 +1,10 @@
 import { ChainId } from 'sushi'
-import { Token, WNATIVE_ADDRESS } from 'sushi/currency'
+import { Token } from 'sushi/currency'
 import { Address, Hex } from 'viem'
-import { simulateRouteFromNative } from './simulationStorageFromNative.js'
+import { SimulationResult } from './routeOdos.js'
+import { simulateRouteFromNative } from './simulationFromNative.js'
 import { isNative } from './utils.js'
+import { getNativeWhale } from './wales.js'
 
 const delay = async (ms: number) => new Promise((res) => setTimeout(res, ms))
 
@@ -108,21 +110,15 @@ export async function OneInchRoute(
   return OneInchAPIRoute(chainId, from, to, amountIn, gasPrice)
 }
 
-const whales: Record<number, Address> = {
-  [ChainId.ETHEREUM]: '0x00000000219ab540356cBB839Cbe05303d7705Fa', // Beacon deposit
-  [ChainId.FANTOM]: '0xFC00FACE00000000000000000000000000000000',
-}
-
 export async function OneInchAPIRouteSimulate(
   chainId: ChainId,
   from: Token,
   to: Token,
   amountIn: bigint,
   gasPrice: bigint,
-) /*: Promise<bigint | undefined>*/ {
+): Promise<SimulationResult | undefined> {
   if (!isNative(from)) return undefined // 1inch doesn't make routes without a user with liquidity and approve to 1inch router
-  const whale =
-    whales[chainId] ?? WNATIVE_ADDRESS[chainId as keyof typeof WNATIVE_ADDRESS]
+  const whale = getNativeWhale(chainId)
   if (whale === undefined) return undefined
 
   const quote = await OneInchRoute(chainId, from, to, amountIn, gasPrice)
@@ -175,7 +171,7 @@ export async function OneInchAPIRouteSimulate(
       route.tx.data,
     )
     if (typeof simulationRes === 'string') return undefined //throw new Error(`1inch simulation error: ${simulationRes}`)
-    return { quote, swap: route.dstAmount, real: simulationRes }
+    return { quote, swap: BigInt(route.dstAmount), real: simulationRes }
   }
 
   return undefined

@@ -2,8 +2,9 @@ import { ChainId } from 'sushi'
 import { Token, WNATIVE } from 'sushi/currency'
 import { Address, Hex } from 'viem'
 import { MAX_PRICE_IMPACT } from './index.js'
-import { simulateRoute } from './simulationStorage.js'
+import { simulateRouteFromNativeThroughWrap } from './simulationFromNativeThroughWrap.js'
 import { isNative } from './utils.js'
+import { getNativeWhale } from './wales.js'
 
 interface OdosQoute {
   outAmounts: number[]
@@ -53,7 +54,7 @@ async function OdosGetQuote(
     body: JSON.stringify(params),
   })
   if (resp.status !== 200) {
-    //console.log(resp.status, await resp.text())
+    console.log(resp.status, await resp.text())
     return
   }
   const quote = (await resp.json()) as OdosQoute
@@ -75,29 +76,30 @@ export async function OdosRoute(
   return BigInt(quote?.outAmounts[0])
 }
 
-const TEST_USER = '0x0102030405060708091001020304050607080910'
+export interface SimulationResult {
+  quote: bigint | undefined
+  swap: bigint | undefined
+  real: bigint | undefined
+}
+
 export async function OdosRouteSimulate(
   chainId: ChainId,
   from: Token,
   to: Token,
   amountIn: bigint,
   gasPrice: bigint,
-) {
-  const quote = await OdosGetQuote(
-    chainId,
-    from,
-    to,
-    amountIn,
-    gasPrice,
-    TEST_USER,
-  )
+): Promise<SimulationResult | undefined> {
+  const whale = getNativeWhale(chainId)
+  if (whale === undefined) return undefined
+
+  const quote = await OdosGetQuote(chainId, from, to, amountIn, gasPrice, whale)
   if (!quote) return
 
   const resp = await fetch('https://api.odos.xyz/sor/assemble', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      userAddr: TEST_USER,
+      userAddr: whale,
       pathId: quote.pathId,
       simulate: false, // this can be set to true if the user isn't doing their own estimate gas call for the transaction
     }),
@@ -116,9 +118,8 @@ export async function OdosRouteSimulate(
   if (res.transaction?.data === undefined || res.transaction?.to === undefined)
     return
 
-  const simulationRes = await simulateRoute(
-    TEST_USER,
-    from,
+  const simulationRes = await simulateRouteFromNativeThroughWrap(
+    whale,
     amountIn,
     to,
     res.transaction?.to,
@@ -128,9 +129,15 @@ export async function OdosRouteSimulate(
     console.log('Odos simulation error:', simulationRes)
   else
     return {
-      quote: quote.outAmounts[0],
-      assemble: res.outputTokens[0]?.amount,
-      simulation: simulationRes as bigint,
+      quote:
+        quote.outAmounts[0] === undefined
+          ? undefined
+          : BigInt(quote.outAmounts[0]),
+      swap:
+        res.outputTokens[0]?.amount === undefined
+          ? undefined
+          : BigInt(res.outputTokens[0]?.amount),
+      real: simulationRes,
     }
   return
 }

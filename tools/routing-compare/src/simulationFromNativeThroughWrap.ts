@@ -1,6 +1,6 @@
-import { multicall3Abi } from 'sushi/abi'
+import { multicall3Abi, weth9Abi } from 'sushi/abi'
 import { publicClientConfig } from 'sushi/config'
-import { Token } from 'sushi/currency'
+import { Token, WNATIVE_ADDRESS } from 'sushi/currency'
 import { Address, Hex, createPublicClient } from 'viem'
 import {
   CallData,
@@ -9,7 +9,7 @@ import {
 } from './multicall3Advanced.js'
 import { knownRoutersAbi } from './routerABI/routerAbi.js'
 
-export async function simulateRouteFromNative(
+export async function simulateRouteFromNativeThroughWrap(
   from: Address,
   amountIn: bigint,
   tokenTo: Token,
@@ -17,6 +17,7 @@ export async function simulateRouteFromNative(
   routeData: Hex,
 ): Promise<bigint | string> {
   const chainId = tokenTo.chainId
+  const wnative = WNATIVE_ADDRESS[chainId as keyof typeof WNATIVE_ADDRESS]
 
   let initialOutputBalanceFrom = 0n
   let amountOutFrom = 0n
@@ -36,6 +37,20 @@ export async function simulateRouteFromNative(
       },
     },
     {
+      action: 'Wrap natives',
+      target: wnative,
+      abi: weth9Abi,
+      functionName: 'deposit',
+      value: amountIn,
+    },
+    {
+      action:
+        'Approve input tokens from Multicall3 contract to router contract',
+      target: wnative,
+      functionName: 'approve',
+      args: [routerContract, amountIn],
+    },
+    {
       action: 'Check initial user output balance',
       target: tokenTo,
       functionName: 'balanceOf',
@@ -46,7 +61,7 @@ export async function simulateRouteFromNative(
       },
     },
     {
-      action: 'Check initial user output balance',
+      action: 'Check initial multicall contract output balance',
       target: tokenTo,
       functionName: 'balanceOf',
       args: [MULTICALL3_ADDRESS],
@@ -73,7 +88,7 @@ export async function simulateRouteFromNative(
       },
     },
     {
-      action: 'Check final user output balance',
+      action: 'Check final multicall contract output balance',
       target: tokenTo,
       functionName: 'balanceOf',
       args: [MULTICALL3_ADDRESS],

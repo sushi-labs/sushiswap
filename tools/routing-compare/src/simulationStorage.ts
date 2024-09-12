@@ -8,7 +8,7 @@ import {
   ifNetworkSupported,
 } from './multicall3Advanced.js'
 import { knownRoutersAbi } from './routerABI/routerAbi.js'
-import { simulateRouteFromNative } from './simulationStorageFromNative.js'
+import { simulateRouteFromNative } from './simulationFromNative.js'
 import { tokenAllowedSlot, tokenBalanceSlot } from './tokenBalanceSlot.js'
 import { isNative } from './utils.js'
 
