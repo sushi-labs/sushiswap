@@ -972,7 +972,16 @@ export const EXTRACTOR_CONFIG = {
   },
   [ChainId.ZETACHAIN]: {
     client: createPublicClient(extractorClientConfig(ChainId.ZETACHAIN)),
-    factoriesV2: [sushiswapV2Factory(ChainId.ZETACHAIN)],
+    factoriesV2: [
+      sushiswapV2Factory(ChainId.ZETACHAIN),
+      {
+        address: '0x9fd96203f7b22bCF72d9DCb40ff98302376cE09c' as Address,
+        provider: LiquidityProviders.EddyFinance,
+        fee: 0.003,
+        initCodeHash:
+          '0x96e8ac4277198ff8b6f785478aa9a39f403cb768dd02cbee326c3e7da348845f',
+      },
+    ],
     factoriesV3: [sushiswapV3Factory(ChainId.ZETACHAIN)],
     tickHelperContractV3: SUSHISWAP_V3_TICK_LENS[ChainId.ZETACHAIN],
     tickHelperContractAlgebra:
