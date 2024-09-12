@@ -1,8 +1,14 @@
 'use client'
 
 import { ChevronDownIcon } from '@heroicons/react-v1/solid'
-import { Badge, Navigation, classNames } from '@sushiswap/ui'
+import {
+  Badge,
+  Navigation,
+  SushiNavigationDropdown,
+  classNames,
+} from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
+import { SushiIcon } from '@sushiswap/ui/icons/SushiIcon'
 import { SushiWithTextIcon } from '@sushiswap/ui/icons/SushiWithTextIcon'
 import React, { FC } from 'react'
 import { UserPortfolio } from 'src/lib/wagmi/components/user-portfolio'
@@ -17,15 +23,17 @@ export const Header: FC = () => {
   const { isOpen } = useSidebar()
 
   return (
-    <div className="flex justify-between z-20">
+    <div className="flex z-20">
       <div
         className={classNames(
-          'hidden lg:flex justify-between items-center px-3 w-56 h-14 flex-shrink-0 bg-gray-100 dark:bg-slate-900 border-r border-gray-200 dark:border-slate-800',
+          'hidden lg:flex justify-between items-center px-1 w-56 h-14 flex-shrink-0 bg-gray-100 dark:bg-slate-900 border-r border-gray-200 dark:border-slate-800',
           !isOpen && 'border-b',
         )}
       >
-        <SushiWithTextIcon width={90} />
-        <SidebarToggle variant="ghost" asChild>
+        <SushiNavigationDropdown className="!pl-2 !pr-2">
+          <SushiWithTextIcon width={90} />
+        </SushiNavigationDropdown>
+        <SidebarToggle variant="ghost" className="!px-2" asChild>
           <Badge
             position="bottom-right"
             badgeContent={
@@ -41,7 +49,14 @@ export const Header: FC = () => {
           <ChevronDownIcon className="w-3 h-3" />
         </SidebarToggle>
       </div>
+      <div className="flex lg:hidden justify-between items-center pl-4 bg-gray-100 dark:bg-slate-900 border-b border-gray-200 dark:border-slate-800">
+        <SushiNavigationDropdown>
+          <SushiIcon width={24} height={24} />
+        </SushiNavigationDropdown>
+      </div>
       <Navigation
+        className="!pl-0 lg:!pl-4"
+        hideSushiDropdown
         leftElements={headerElements(chainId)}
         rightElement={<UserPortfolio />}
       />
