@@ -8,7 +8,7 @@ import React, { FC } from 'react'
 import { UserPortfolio } from 'src/lib/wagmi/components/user-portfolio'
 import { SidebarToggle, useSidebar } from 'src/ui/sidebar'
 import { useAccount, useChainId } from 'wagmi'
-import { headerElements } from './_common/header-elements'
+import { headerElements } from '../_common/header-elements'
 
 export const Header: FC = () => {
   const chainId = useChainId()

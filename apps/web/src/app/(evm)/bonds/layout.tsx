@@ -1,6 +1,6 @@
 import { HotJar } from '@sushiswap/ui'
 
-import { Header } from '../header'
+import { Header } from './header'
 import { Providers } from './providers'
 
 export const metadata = {
