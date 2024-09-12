@@ -55,6 +55,5 @@ export function useTopPools(
       })) as TopPool[]
     },
     enabled: Boolean(enabled),
-    staleTime: Infinity,
   })
 }
