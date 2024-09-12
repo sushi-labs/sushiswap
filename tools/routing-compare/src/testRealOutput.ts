@@ -1,10 +1,12 @@
 import { testAPIRealOutputFromNative } from './index.js'
 import { OneInchAPIRouteSimulate } from './route1inch.js'
 import { OdosRouteSimulate } from './routeOdos.js'
+import { SushiRouteSimulate } from './routeSushi.js'
 
 const routeProjects: Record<string, typeof OneInchAPIRouteSimulate> = {
   '1inch': OneInchAPIRouteSimulate,
   odos: OdosRouteSimulate,
+  sushi: SushiRouteSimulate,
 }
 
 if (process.argv.length < 3) {

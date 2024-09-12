@@ -186,7 +186,7 @@ export async function testAPIRealOutputFromNative(
       gasPrice = res[0]
       _tokens = res[1]
     } catch (_e) {
-      console.log(`${ChainKey[chainId]} Error at getGasPrice or getPices`)
+      console.log(`${ChainKey[chainId]} Error at getGasPrice or getPrices`)
       continue
     }
     const tokens = _tokens
