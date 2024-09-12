@@ -5,6 +5,7 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
+  SkeletonText,
 } from '@sushiswap/ui'
 import { FC, useMemo } from 'react'
 import { formatUSD } from 'sushi/format'
@@ -91,14 +92,20 @@ export const PoolPosition: FC<PoolPositionProps> = ({
       <CardHeader>
         <CardTitle>My Position</CardTitle>
         <CardDescription>
-          <span className="text-sm text-right dark:text-slate-50 text-gray-900">
-            {formatUSD(
-              token0StakedInUsd +
-                token1StakedInUsd +
-                token0UnstakedInUsd +
-                token1UnstakedInUsd,
-            )}
-          </span>
+          {isLoading ? (
+            <div className="w-28">
+              <SkeletonText fontSize="sm" />
+            </div>
+          ) : (
+            <span className="text-sm text-right dark:text-slate-50 text-gray-900">
+              {formatUSD(
+                token0StakedInUsd +
+                  token1StakedInUsd +
+                  token0UnstakedInUsd +
+                  token1UnstakedInUsd,
+              )}
+            </span>
+          )}
         </CardDescription>
       </CardHeader>
       <CardContent>
