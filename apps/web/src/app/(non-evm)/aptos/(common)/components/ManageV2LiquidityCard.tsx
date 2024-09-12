@@ -13,7 +13,6 @@ import {
   TabsList,
   TabsTrigger,
 } from '@sushiswap/ui'
-import { useParams } from 'next/navigation'
 import { FC, useMemo, useState } from 'react'
 import { useNetwork } from '~aptos/(common)/lib/common/use-network'
 import { useFarms, useIsFarm } from '~aptos/pool/lib/farm/use-farms'
@@ -32,10 +31,8 @@ import { AddSectionWidget } from './AddSection/AddSectionWidget'
 import { RemoveSectionLegacy } from './RemoveSection/RemoveSectionLegacy'
 import { RemoveSectionUnstake } from './RemoveSection/RemoveSectionUnstake'
 
-export const ManageV2LiquidityCard: FC = () => {
+export const ManageV2LiquidityCard: FC<{ address: string }> = ({ address }) => {
   const [tab, setTab] = useState<string>('add')
-  const router = useParams()
-  const tokenAddress = decodeURIComponent(router?.id as string)
 
   const {
     contracts: { swap: swapContract },
@@ -44,12 +41,12 @@ export const ManageV2LiquidityCard: FC = () => {
   const { account } = useWallet()
   const { data: LPBalance } = useTokenBalance({
     account: account?.address as string,
-    currency: `${swapContract}::swap::LPToken<${tokenAddress}>`,
+    currency: `${swapContract}::swap::LPToken<${address}>`,
     enabled: true,
     refetchInterval: 2000,
   })
 
-  const { data: pool } = usePool(tokenAddress)
+  const { data: pool } = usePool(address)
 
   const [reserve0, reserve1] = useMemo(() => {
     return [pool?.reserve0, pool?.reserve1]
@@ -57,7 +54,7 @@ export const ManageV2LiquidityCard: FC = () => {
 
   const { token0, token1 } = useTokensFromPool(pool)
 
-  const { data: coinInfo } = useTotalSupply(tokenAddress)
+  const { data: coinInfo } = useTotalSupply(address)
 
   const balance =
     coinInfo && LPBalance
@@ -75,7 +72,7 @@ export const ManageV2LiquidityCard: FC = () => {
   })
 
   const { data: farms } = useFarms()
-  const farmIndex = useIsFarm({ poolAddress: tokenAddress, farms })
+  const farmIndex = useIsFarm({ poolAddress: address, farms })
   const { data: userHandle } = useUserPool(account?.address)
   const { data: stakes } = useUserHandle({
     userHandle,
@@ -126,7 +123,7 @@ export const ManageV2LiquidityCard: FC = () => {
             >
               Remove
             </TabsTrigger>
-            {useIsFarm({ poolAddress: tokenAddress, farms }) ? (
+            {useIsFarm({ poolAddress: address, farms }) ? (
               <TabsTrigger
                 testdata-id="stake-tab"
                 value="stake"
@@ -144,7 +141,7 @@ export const ManageV2LiquidityCard: FC = () => {
                 Stake
               </TabsTrigger>
             )}
-            {useIsFarm({ poolAddress: tokenAddress, farms }) ? (
+            {useIsFarm({ poolAddress: address, farms }) ? (
               <TabsTrigger
                 testdata-id="unstake-tab"
                 value="unstake"
@@ -170,7 +167,7 @@ export const ManageV2LiquidityCard: FC = () => {
 
         <TabsContent value="add">
           <CardContent>
-            <AddSectionWidget />
+            <AddSectionWidget pool={pool} />
           </CardContent>
         </TabsContent>
         <TabsContent value="remove">
@@ -192,8 +189,9 @@ export const ManageV2LiquidityCard: FC = () => {
         </TabsContent>
         <TabsContent value="stake">
           <CardContent>
-            {token0 && token1 ? (
+            {pool && token0 && token1 ? (
               <AddSectionStake
+                pool={pool}
                 balance={balance}
                 decimals={coinInfo?.data?.decimals}
                 lpTokenName={coinInfo?.data?.name}
@@ -206,11 +204,14 @@ export const ManageV2LiquidityCard: FC = () => {
         </TabsContent>
         <TabsContent value="unstake">
           <CardContent>
-            <RemoveSectionUnstake
-              balance={farmBalance}
-              decimals={coinInfo?.data?.decimals ?? 8}
-              lpTokenName={coinInfo?.data?.name}
-            />
+            {pool ? (
+              <RemoveSectionUnstake
+                pool={pool}
+                balance={farmBalance}
+                decimals={coinInfo?.data?.decimals ?? 8}
+                lpTokenName={coinInfo?.data?.name}
+              />
+            ) : null}
           </CardContent>
         </TabsContent>
       </Tabs>

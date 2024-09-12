@@ -8,7 +8,7 @@ import { useTokenBalance } from '~aptos/(common)/lib/common/use-token-balances'
 import { useTotalSupply } from '~aptos/(common)/lib/common/use-total-supply'
 import { PoolExtended } from '~aptos/pool/lib/use-pools-extended'
 import { useTokensFromPool } from '~aptos/pool/lib/use-tokens-from-pool'
-import { Row } from '../../shared-cells/types'
+import { Row } from '../../types'
 
 export const PoolMyPositionTVLCell: FC<Row<PoolExtended>> = ({ row }) => {
   const {

@@ -3,7 +3,6 @@ import { Button, CardFooter, CardTitle, Dots } from '@sushiswap/ui'
 import { Card, CardDescription, CardHeader } from '@sushiswap/ui'
 import { CardContent, CardGroup, CardItem, CardLabel } from '@sushiswap/ui'
 import { Provider } from 'aptos'
-import { useParams } from 'next/navigation'
 import { FC, useState } from 'react'
 import { formatUSD } from 'sushi/format'
 import { networkNameToNetwork } from '~aptos/(common)/config/chains'
@@ -13,15 +12,20 @@ import { useNetwork } from '~aptos/(common)/lib/common/use-network'
 import { useStablePrice } from '~aptos/(common)/lib/common/use-stable-price'
 import { createToast } from '~aptos/(common)/ui/toast'
 import { UserProfile } from '~aptos/(common)/ui/user-profile/user-profile'
+import { Pool } from '~aptos/pool/lib/convert-pool-to-sushi-pool'
 
 interface PoolMyRewards {
+  pool: Pool
   reward: number
   decimals: number | undefined
   isLoading: boolean
 }
 
-export const PoolMyRewards: FC<PoolMyRewards> = ({ reward, decimals }) => {
-  const router = useParams<{ id: string }>()
+export const PoolMyRewards: FC<PoolMyRewards> = ({
+  pool,
+  reward,
+  decimals,
+}) => {
   const { connected, signAndSubmitTransaction } = useWallet()
 
   const {
@@ -34,7 +38,6 @@ export const PoolMyRewards: FC<PoolMyRewards> = ({ reward, decimals }) => {
     ? aptosPrice *
       parseFloat(formatNumberWithDecimals(reward, decimals as number))
     : 0
-  const tokenAddress = decodeURIComponent(router?.id)
   const [isTransactionPending, setTransactionPending] = useState<boolean>(false)
 
   const harvest = async () => {
@@ -45,7 +48,7 @@ export const PoolMyRewards: FC<PoolMyRewards> = ({ reward, decimals }) => {
     try {
       const response = await signAndSubmitTransaction({
         data: {
-          typeArguments: [`${swapContract}::swap::LPToken<${tokenAddress}>`],
+          typeArguments: [`${swapContract}::swap::LPToken<${pool.id}>`],
           functionArguments: [0],
           function: `${masterchefContract}::masterchef::deposit`,
         },
