@@ -6,6 +6,7 @@ import {
   CardHeader,
   CardLabel,
   CardTitle,
+  SkeletonText,
 } from '@sushiswap/ui'
 import { FC } from 'react'
 import { formatUSD } from 'sushi/format'
@@ -42,7 +43,13 @@ export const PoolComposition: FC<PoolCompositionProps> = ({ row }) => {
     <Card>
       <CardHeader>
         <CardTitle>Pool Liquidity</CardTitle>
-        <CardDescription>{formatUSD(totalPoolPrice)}</CardDescription>
+        {!token0 || !token1 ? (
+          <div className="w-28">
+            <SkeletonText fontSize="sm" />
+          </div>
+        ) : (
+          <CardDescription>{formatUSD(totalPoolPrice)}</CardDescription>
+        )}
       </CardHeader>
       <CardContent>
         <CardGroup>
