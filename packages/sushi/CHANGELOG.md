@@ -1,5 +1,17 @@
 # sushi
 
+## 3.2.2
+
+### Patch Changes
+
+- [#1680](https://github.com/sushiswap/sushiswap/pull/1680) [`78dedbd95`](https://github.com/sushiswap/sushiswap/commit/78dedbd9519c3e0ce0add983e3212b37b6f50497) Thanks [@matthewlilley](https://github.com/matthewlilley)! - add base tokens for curtis
+
+## 3.2.1
+
+### Patch Changes
+
+- [#1676](https://github.com/sushiswap/sushiswap/pull/1676) [`abf14549f`](https://github.com/sushiswap/sushiswap/commit/abf14549f70e1d850c5e9171706604c1f5f28358) Thanks [@LufyCZ](https://github.com/LufyCZ)! - Add Curtis
+
 ## 3.2.0
 
 ### Minor Changes

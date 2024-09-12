@@ -670,6 +670,23 @@ export default [
     shortName: 'ISLM',
   },
   {
+    chainId: 33111,
+    explorers: [
+      {
+        name: 'Curtis Explorer',
+        url: 'https://explorer.curtis.apechain.com',
+        standard: 'EIP3091',
+      },
+    ],
+    nativeCurrency: {
+      name: 'ApeCoin',
+      symbol: 'APE',
+      decimals: 18,
+    },
+    name: 'Curtis',
+    shortName: 'curtis',
+  },
+  {
     chainId: 42161,
     explorers: [
       {
