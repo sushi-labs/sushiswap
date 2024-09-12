@@ -1,7 +1,7 @@
-import { Aptos, AptosConfig, Network } from '@aptos-labs/ts-sdk'
 import { useQuery } from '@tanstack/react-query'
 import { isPromiseFulfilled } from 'sushi'
-import { SupportedNetwork, chains } from '~aptos/(common)/config/chains'
+import { SupportedNetwork } from '~aptos/(common)/config/chains'
+import { AptosSDK } from './aptos-sdk'
 import { useNetwork } from './use-network'
 
 interface TokenBalanceQueryFn {
@@ -15,14 +15,7 @@ export const tokenBalanceQueryFn = async ({
   currency,
   network,
 }: TokenBalanceQueryFn) => {
-  const aptos = new Aptos(
-    new AptosConfig({
-      network:
-        chains[network].network === 'mainnet'
-          ? Network.MAINNET
-          : Network.TESTNET,
-    }),
-  )
+  const aptos = AptosSDK.onNetwork(network)
 
   try {
     const fungibleAssetBalances = await aptos.getCurrentFungibleAssetBalances({
