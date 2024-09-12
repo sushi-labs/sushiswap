@@ -12,10 +12,9 @@ import {
   WidgetHeader,
   WidgetTitle,
 } from '@sushiswap/ui'
-import { useParams } from 'next/navigation'
 import React, { FC, useEffect } from 'react'
 import { DEFAULT_SLIPPAGE } from 'sushi/config'
-import { usePool } from '~aptos/pool/lib/use-pool'
+import { Pool } from '~aptos/pool/lib/convert-pool-to-sushi-pool'
 import { useTokensFromPool } from '~aptos/pool/lib/use-tokens-from-pool'
 import { PoolAddCurrencyInput } from '~aptos/pool/ui/pool/add/pool-add-currency-input'
 import { PoolAddDepositButton } from '~aptos/pool/ui/pool/add/pool-add-deposit-button'
@@ -31,12 +30,8 @@ const buttonProps: ButtonProps = {
   variant: 'outline',
 }
 
-export const AddSectionWidget: FC = () => {
+export const AddSectionWidget: FC<{ pool?: Pool }> = ({ pool }) => {
   usePoolPairs()
-
-  const router = useParams()
-  const tokenAddress = decodeURIComponent(router?.id as string)
-  const { data: pool } = usePool(tokenAddress)
 
   const { token0, token1 } = useTokensFromPool(pool)
 
