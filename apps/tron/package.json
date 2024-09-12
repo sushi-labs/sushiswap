@@ -14,7 +14,7 @@
   "dependencies": {
     "@heroicons/react": "2.0.13",
     "@radix-ui/react-slot": "1.0.2",
-    "@sentry/nextjs": "7.101.1",
+    "@sentry/nextjs": "8.30.0",
     "@sushiswap/hooks": "workspace:*",
     "@sushiswap/nextjs-config": "workspace:*",
     "@sushiswap/react-query": "workspace:*",

@@ -84,7 +84,8 @@
         "STRAPI_API_URL",
         "VERCEL_ENV",
         "SENTRY_DSN",
-        "SENTRY_ENVIRONMENT"
+        "SENTRY_ENVIRONMENT",
+        "SENTRY_AUTH_TOKEN"
       ],
       "cache": false,
       "persistent": true

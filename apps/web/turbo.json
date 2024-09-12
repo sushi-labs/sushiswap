@@ -14,7 +14,10 @@
       ],
       "outputs": [".next/**", "!.next/cache/**"],
       "dependsOn": ["^build"],
-      "env": ["NEXT_PUBLIC_APP_ENV", "EDGE_CONFIG"]
+      "env": [
+        "NEXT_PUBLIC_APP_ENV",
+        "EDGE_CONFIG"
+      ]
     },
     "check": {
       "dependsOn": ["^build"],
