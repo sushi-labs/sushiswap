@@ -35,7 +35,9 @@ export async function middleware(req: NextRequest) {
     pathname === '/dca' ||
     pathname === '/cross-chain-swap'
   ) {
-    const path = pathname === '/pool' ? 'pool' : 'explore/pools'
+    const path = ['/explore', '/pools'].includes(pathname)
+      ? 'explore/pools'
+      : pathname.slice(1)
 
     const cookie = req.cookies.get('wagmi.store')
     if (cookie) {
