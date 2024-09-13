@@ -1,4 +1,5 @@
 import { keepPreviousData, useQuery } from '@tanstack/react-query'
+import ms from 'ms'
 import { FACTORY_CONTRACT } from '~tron/_common/constants/contracts'
 import { chunk } from '~tron/_common/lib/utils/helpers'
 import {
@@ -6,7 +7,6 @@ import {
   IReserveDataResponse,
 } from '~tron/_common/types/get-pools-type'
 import { useTronWeb } from './useTronWeb'
-import ms from 'ms'
 
 type _IPools = {
   token0Address: string
