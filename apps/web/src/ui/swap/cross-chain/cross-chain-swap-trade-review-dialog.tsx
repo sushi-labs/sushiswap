@@ -47,13 +47,16 @@ import { UseCrossChainTradeReturn } from 'src/lib/hooks'
 import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
 import {
   SushiXSwap2Adapter,
+  SushiXSwapFunctionName,
+  SushiXSwapWriteArgsBridge,
+  SushiXSwapWriteArgsSwapAndBridge,
   useAxelarScanLink,
   useLayerZeroScanLink,
 } from 'src/lib/swap/cross-chain'
 import { warningSeverity } from 'src/lib/swap/warningSeverity'
 import { useBalanceWeb3Refetch } from 'src/lib/wagmi/hooks/balances/useBalanceWeb3Refetch'
 import { useApproved } from 'src/lib/wagmi/systems/Checker/Provider'
-import { sushiXSwap2Abi } from 'sushi/abi'
+import { sushiXSwap2Abi_swap, sushiXSwap2Abi_swapAndBridge } from 'sushi/abi'
 import { Chain, chainName } from 'sushi/chain'
 import {
   SUSHIXSWAP_2_ADDRESS,
@@ -88,6 +91,28 @@ import {
   useCrossChainSwapTrade,
   useDerivedStateCrossChainSwap,
 } from './derivedstate-cross-chain-swap-provider'
+
+function getConfig(trade: UseCrossChainTradeReturn | undefined) {
+  if (!trade) return {}
+
+  if (trade.functionName === SushiXSwapFunctionName.Bridge) {
+    return {
+      abi: sushiXSwap2Abi_swap,
+      functionName: 'swap',
+      args: trade.writeArgs as NonNullable<SushiXSwapWriteArgsBridge>,
+      value: BigInt(trade.value ?? 0) as any,
+    } as const
+  }
+
+  if (trade.functionName === SushiXSwapFunctionName.SwapAndBridge) {
+    return {
+      abi: sushiXSwap2Abi_swapAndBridge,
+      functionName: 'swapAndBridge',
+      args: trade.writeArgs as NonNullable<SushiXSwapWriteArgsSwapAndBridge>,
+      value: BigInt(trade.value ?? 0) as any,
+    } as const
+  }
+}
 
 export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
   children,
@@ -133,10 +158,7 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
     error,
   } = useSimulateContract({
     address: SUSHIXSWAP_2_ADDRESS[chainId0 as SushiXSwap2ChainId],
-    abi: sushiXSwap2Abi,
-    functionName: trade?.functionName,
-    args: trade?.writeArgs,
-    value: BigInt(trade?.value ?? 0),
+    ...getConfig(trade),
     query: {
       enabled: Boolean(
         isSushiXSwap2ChainId(chainId0) &&
@@ -315,8 +337,11 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
     },
   })
 
+  // Speeds up typechecking in the useMemo below
+  const _simulation: { request: any } | undefined = simulation
+
   const write = useMemo(() => {
-    if (!simulation) return undefined
+    if (!_simulation?.request) return undefined
 
     return async (confirm: () => void) => {
       setStepStates({
@@ -327,10 +352,10 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
 
       confirm()
       try {
-        await writeContractAsync(simulation.request)
+        await writeContractAsync(_simulation.request)
       } catch {}
     }
-  }, [writeContractAsync, simulation])
+  }, [writeContractAsync, _simulation?.request])
 
   const { data: lzData } = useLayerZeroScanLink({
     tradeId,

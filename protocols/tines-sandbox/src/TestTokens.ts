@@ -1,4 +1,4 @@
-import { erc20Abi } from 'sushi/abi'
+import { erc20Abi_approve, erc20Abi_balanceOf } from 'sushi/abi'
 import { ChainId } from 'sushi/chain'
 import { Token } from 'sushi/currency'
 import { Address, Hex, PublicClient, WalletClient } from 'viem'
@@ -68,7 +68,7 @@ export async function approve(
 ) {
   return await client.writeContract({
     chain: null,
-    abi: erc20Abi,
+    abi: erc20Abi_approve,
     address: token.address as Address,
     account: user,
     functionName: 'approve',
@@ -82,7 +82,7 @@ export async function balanceOf(
   owner: Address,
 ) {
   return await client.readContract({
-    abi: erc20Abi,
+    abi: erc20Abi_balanceOf,
     address: token.address as Address,
     account: owner,
     functionName: 'balanceOf',

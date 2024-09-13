@@ -4,7 +4,7 @@ import {
   usePrice,
 } from '@sushiswap/react-query'
 import { UseQueryResult, useQuery } from '@tanstack/react-query'
-import { useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { getBigInt } from 'sushi'
 import { calculateFee } from 'sushi/calculate'
 import {
@@ -18,7 +18,7 @@ import { Amount, Native, Price } from 'sushi/currency'
 import { Fraction, Percent } from 'sushi/math'
 import {
   ProcessFunction,
-  Router,
+  type Router,
   RouterLiquiditySource,
   isLsd,
   isStable,
@@ -43,7 +43,12 @@ export const useClientTrade = (
     tokenTax,
   } = variables
 
-  const { data: gasPrice } = useGasPrice({ chainId, query: { enabled } })
+  const [router, setRouter] = useState<typeof Router | undefined>()
+
+  const { data: gasPrice } = useGasPrice({
+    chainId,
+    query: { enabled },
+  })
 
   const { data: _price } = usePrice({
     chainId,
@@ -70,6 +75,19 @@ export const useClientTrade = (
     withBentoPools: true,
   })
 
+  useEffect(() => {
+    if (enabled && !router) {
+      const fetchRouter = async () => {
+        const Router = (
+          await import(/* webpackExports: "Router" */ 'sushi/router')
+        ).Router
+        setRouter(() => Router)
+      }
+
+      fetchRouter()
+    }
+  }, [router, enabled])
+
   return useQuery({
     queryKey: [
       'useClientTrade',
@@ -84,6 +102,7 @@ export const useClientTrade = (
         source,
         poolsCodeMap,
         tokenTax,
+        router: !!router,
       },
     ],
     queryFn: async () => {
@@ -93,9 +112,10 @@ export const useClientTrade = (
         fromToken &&
         amount &&
         toToken &&
-        gasPrice
+        gasPrice &&
+        router
       ) {
-        const route = Router.findSpecialRoute(
+        const route = router.findSpecialRoute(
           poolsCodeMap,
           chainId,
           fromToken,
@@ -119,7 +139,7 @@ export const useClientTrade = (
         )
 
         const args = recipient
-          ? Router.routeProcessor5Params(
+          ? router.routeProcessor5Params(
               poolsCodeMap,
               route,
               fromToken,

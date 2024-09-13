@@ -32,13 +32,13 @@
   "dependencies": {
     "@sentry/node": "7.110.0",
     "@sushiswap/extractor": "workspace:*",
-    "@wagmi/core": "2.13.1",
+    "@wagmi/core": "2.13.5",
     "cors": "2.8.5",
     "dotenv": "16.3.1",
     "express": "4.18.2",
     "sushi": "workspace:*",
-    "viem": "2.18.6",
-    "wagmi": "2.12.2",
+    "viem": "2.21.4",
+    "wagmi": "2.12.10",
     "zod": "3.23.8"
   },
   "devDependencies": {
@@ -50,6 +50,6 @@
     "artillery": "2.0.5",
     "autocannon": "7.14.0",
     "ts-node": "10.9.2",
-    "typescript": "5.4.5"
+    "typescript": "5.5.4"
   }
 }

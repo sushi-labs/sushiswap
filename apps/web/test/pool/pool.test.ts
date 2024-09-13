@@ -37,6 +37,9 @@ test.beforeAll(async () => {
       },
       error,
     )
+
+    // Test won't pass anyway
+    throw error
   }
 })
 
@@ -94,6 +97,10 @@ test.beforeEach(async ({ page, next }) => {
     return 'continue'
   })
 })
+
+// test.afterEach(async ({ page }) => {
+//   await page.unrouteAll({ behavior: 'ignoreErrors' })
+// })
 
 // Tests will only work for polygon atm
 test.describe('V3', () => {

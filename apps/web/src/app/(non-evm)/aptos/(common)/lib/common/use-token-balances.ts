@@ -1,6 +1,10 @@
 import { useQuery } from '@tanstack/react-query'
 import { isPromiseFulfilled } from 'sushi'
-import { SupportedNetwork, chains } from '~aptos/(common)/config/chains'
+import {
+  SupportedNetwork,
+  networkNameToNetwork,
+} from '~aptos/(common)/config/chains'
+import { AptosSDK } from './aptos-sdk'
 import { useNetwork } from './use-network'
 
 interface TokenBalanceQueryFn {
@@ -14,21 +18,26 @@ export const tokenBalanceQueryFn = async ({
   currency,
   network,
 }: TokenBalanceQueryFn) => {
-  const response = await fetch(
-    `${chains[network].api.fetchUrlPrefix}/v1/accounts/${account}/resource/0x1::coin::CoinStore<${currency}>`,
-  )
+  const aptos = AptosSDK.onNetwork(networkNameToNetwork(network))
 
-  if (response.status === 200) {
-    const data = await response.json()
-    return { currency, balance: Number(data.data.coin.value) }
-  }
+  try {
+    const fungibleAssetBalances = await aptos.getCurrentFungibleAssetBalances({
+      options: {
+        where: {
+          owner_address: {
+            _eq: account,
+          },
+          asset_type: {
+            _eq: currency,
+          },
+        },
+      },
+    })
 
-  // Apparently, on Aptos, if the balance is 0, the API returns a 404
-  if (response.status === 404) {
+    return { currency, balance: fungibleAssetBalances?.[0].amount || 0 }
+  } catch {
     return { currency, balance: 0 }
   }
-
-  throw new Error('Failed to fetch balance')
 }
 
 interface UseTokenBalance {

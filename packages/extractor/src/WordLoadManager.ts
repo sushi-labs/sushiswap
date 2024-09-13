@@ -1,6 +1,6 @@
 import { EventEmitter } from 'node:events'
 import { Address } from 'abitype'
-import { tickLensAbi } from 'sushi/abi'
+import { tickLensAbi_getPopulatedTicksInWord } from 'sushi/abi'
 import { NUMBER_OF_SURROUNDING_TICKS } from 'sushi/router'
 import { CLTick } from 'sushi/tines'
 import { Counter } from './Counter.js'
@@ -63,10 +63,12 @@ export class WordLoadManager extends EventEmitter {
           const wordIndex = this.downloadQueue[this.downloadQueue.length - 1]
           const { blockNumber, returnValue: ticks } = await this.client.call<
             { tick: bigint; liquidityNet: bigint }[]
-          >(this.tickHelperContract, tickLensAbi, 'getPopulatedTicksInWord', [
-            this.poolAddress,
-            wordIndex,
-          ])
+          >(
+            this.tickHelperContract,
+            tickLensAbi_getPopulatedTicksInWord,
+            'getPopulatedTicksInWord',
+            [this.poolAddress, wordIndex],
+          )
           const wordIndexNew = this.downloadQueue[this.downloadQueue.length - 1]
           if (wordIndexNew === wordIndex) {
             // Queue still has the same index at the end

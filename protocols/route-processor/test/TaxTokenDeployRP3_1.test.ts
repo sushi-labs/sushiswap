@@ -5,13 +5,10 @@ import {
 import { expect } from 'chai'
 import hre from 'hardhat'
 import { createProvider } from 'hardhat/internal/core/providers/construction.js'
-import { routeProcessor3Abi } from 'sushi/abi'
-import { erc20Abi } from 'sushi/abi'
 import { ChainId, chainName } from 'sushi/chain'
 import { Native, Token } from 'sushi/currency'
 import { DataFetcher, LiquidityProviders, RPParams, Router } from 'sushi/router'
 import { MultiRoute, RouteStatus } from 'sushi/tines'
-import { type Contract } from 'sushi/types'
 import {
   Address,
   Client,
@@ -22,6 +19,11 @@ import {
 } from 'viem'
 import { hardhat } from 'viem/chains'
 
+import {
+  erc20Abi_approve,
+  erc20Abi_transfer,
+  routeProcessor3Abi_processRoute,
+} from 'sushi/abi'
 import RouteProcessor3_1 from '../artifacts/contracts/RouteProcessor3_1.sol/RouteProcessor3_1.json' assert {
   type: 'json',
 }
@@ -83,7 +85,7 @@ async function getTestEnvironment(
   ])
 
   const RouteProcessorTx = await client.deployContract({
-    abi: routeProcessor3Abi,
+    abi: RouteProcessor3_1.abi,
     bytecode: RouteProcessor3_1.bytecode as Hex,
     account: userAddress,
     args: ['0x0000000000000000000000000000000000000000', []],
@@ -95,7 +97,6 @@ async function getTestEnvironment(
     throw new Error('RouteProcessorAddress is undefined')
   const RouteProcessor = {
     address: RouteProcessorAddress,
-    abi: routeProcessor3Abi,
   }
 
   console.log(
@@ -114,7 +115,7 @@ async function getTestEnvironment(
   } satisfies {
     chainId: ChainId
     client: Client
-    rp: Contract<typeof routeProcessor3Abi>
+    rp: { address: Address }
     userAddress: Address
     dataFetcher: DataFetcher
     snapshot: SnapshotRestorer
@@ -130,7 +131,7 @@ export async function checkTaxTokenTransfer(
   if (route.legs.length >= 2) {
     return await env.client.readContract({
       address: route.toToken.address as Address,
-      abi: erc20Abi,
+      abi: erc20Abi_transfer,
       // @ts-ignore
       functionName: 'transfer',
       args: [env.rp.address, route.amountOutBI],
@@ -145,25 +146,9 @@ async function testTaxTokenBuy(
   rpParams: RPParams,
   account: Address,
 ): Promise<bigint> {
-  const amountOutReal = await env.client.readContract({
+  const amountOutReal = await env.client.simulateContract({
     address: env.rp.address,
-    abi: routeProcessor3Abi,
-    // @ts-ignore
-    functionName: 'processRoute',
-    args: [
-      rpParams.tokenIn as Address,
-      rpParams.amountIn,
-      rpParams.tokenOut as Address,
-      0n,
-      rpParams.to as Address,
-      rpParams.routeCode as Address, // !!!!
-    ],
-    value: rpParams.value,
-    account,
-  })
-  await env.client.writeContract({
-    address: env.rp.address,
-    abi: routeProcessor3Abi,
+    abi: routeProcessor3Abi_processRoute,
     // @ts-ignore
     functionName: 'processRoute',
     args: [
@@ -177,7 +162,25 @@ async function testTaxTokenBuy(
     value: rpParams.value ?? 0n,
     account,
   })
-  return amountOutReal
+
+  await env.client.writeContract({
+    address: env.rp.address,
+    abi: routeProcessor3Abi_processRoute,
+    // @ts-ignore
+    functionName: 'processRoute',
+    args: [
+      rpParams.tokenIn as Address,
+      rpParams.amountIn,
+      rpParams.tokenOut as Address,
+      0n,
+      rpParams.to as Address,
+      rpParams.routeCode as Address, // !!!!
+    ],
+    value: rpParams.value ?? 0n,
+    account,
+  })
+
+  return amountOutReal.result
 }
 
 async function testTaxTokenSell(
@@ -188,16 +191,14 @@ async function testTaxTokenSell(
 ): Promise<bigint> {
   await env.client.writeContract({
     address: route.fromToken.address as Address,
-    abi: erc20Abi,
-    // @ts-ignore
+    abi: erc20Abi_approve,
     functionName: 'approve',
     args: [env.rp.address, route.amountInBI],
     account,
   })
-  const amountOutReal = await env.client.readContract({
+  const amountOutReal = await env.client.simulateContract({
     address: env.rp.address,
-    abi: routeProcessor3Abi,
-    // @ts-ignore
+    abi: routeProcessor3Abi_processRoute,
     functionName: 'processRoute',
     args: [
       rpParams.tokenIn as Address,
@@ -210,7 +211,7 @@ async function testTaxTokenSell(
     value: rpParams.value,
     account,
   })
-  return amountOutReal
+  return amountOutReal.result
 }
 
 async function testTaxToken(args: {

@@ -1,6 +1,6 @@
 {
   "name": "sushi",
-  "version": "3.2.0",
+  "version": "3.2.2",
   "description": "Sushi",
   "keywords": [
     "sushi"
@@ -244,7 +244,6 @@
     "test:watch": "vitest dev -c ./test/vitest.config.ts"
   },
   "dependencies": {
-    "@ethersproject/abi": "5.7.0",
     "@uniswap/token-lists": "1.0.0-beta.33",
     "big.js": "6.1.1",
     "date-fns": "3.3.1",
@@ -260,8 +259,8 @@
     "@types/big.js": "6.2.0",
     "@types/seedrandom": "3.0.1",
     "tsc-alias": "^1.8.10",
-    "typescript": "5.4.5",
-    "viem": "2.18.6",
+    "typescript": "5.5.4",
+    "viem": "2.21.4",
     "vitest": "0.34.6",
     "zod": "3.23.8"
   },

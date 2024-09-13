@@ -1,6 +1,10 @@
-import { defaultAbiCoder } from '@ethersproject/abi'
 import type { Address, Hex } from 'viem'
-import { getCreate2Address, keccak256 } from 'viem/utils'
+import {
+  encodeAbiParameters,
+  getCreate2Address,
+  keccak256,
+  parseAbiParameters,
+} from 'viem/utils'
 import type { Token } from '../../currency/index.js'
 import type { Fee } from '../../dex/index.js'
 
@@ -14,16 +18,16 @@ export const computeTridentStablePoolAddress = ({
   tokenA: Token
   tokenB: Token
   fee: Fee
-}): string => {
+}): Hex => {
   // does safety checks
   const [token0, token1] = tokenA.sortsBefore(tokenB)
     ? [tokenA, tokenB]
     : [tokenB, tokenA]
 
-  const deployData = defaultAbiCoder.encode(
-    ['address', 'address', 'uint256'],
-    [token0.address, token1.address, fee],
-  ) as Hex
+  const deployData = encodeAbiParameters(
+    parseAbiParameters('address, address, uint256'),
+    [token0.address, token1.address, BigInt(fee)],
+  )
 
   const STABLE_POOL_INIT_CODE_HASH =
     '0xf12c5d0bd466e168fefdf789d5c48040e038cb71f6b1bcc741e9ae57205f3906'

@@ -11,7 +11,14 @@ import { expect } from 'chai'
 import { signERC2612Permit } from 'eth-permit'
 import hre from 'hardhat'
 import seedrandom from 'seedrandom'
-import { erc20Abi, routeProcessor5Abi, weth9Abi } from 'sushi/abi'
+import {
+  erc20Abi_approve,
+  routeProcessor5Abi_processRoute,
+  routeProcessor5Abi_processRouteWithTransferValueInput,
+  routeProcessor5Abi_processRouteWithTransferValueOutput,
+  routeProcessor5Abi_transferValueAndprocessRoute,
+  weth9Abi_balanceOf,
+} from 'sushi/abi'
 import { ChainId, chainName } from 'sushi/chain'
 import { BENTOBOX_ADDRESS, BentoBoxChainId } from 'sushi/config'
 import {
@@ -60,7 +67,6 @@ import {
   StableSwapRPool,
   getBigInt,
 } from 'sushi/tines'
-import { type Contract } from 'sushi/types'
 import {
   Address,
   Client,
@@ -215,7 +221,7 @@ async function getTestEnvironment() {
 
   const RouteProcessorTx = await client.deployContract({
     chain: null,
-    abi: routeProcessor5Abi,
+    abi: RouteProcessor5.abi,
     bytecode: RouteProcessor5.bytecode as Hex,
     account: user.address,
     args: [BENTOBOX_ADDRESS[chainId as BentoBoxChainId], []],
@@ -227,7 +233,6 @@ async function getTestEnvironment() {
     throw new Error('RouteProcessorAddress is undefined')
   const RouteProcessor = {
     address: RouteProcessorAddress,
-    abi: routeProcessor5Abi,
   }
 
   // saturate router balance with wei of tokens
@@ -294,7 +299,7 @@ async function getTestEnvironment() {
   } satisfies {
     chainId: ChainId
     client: Client
-    rp: Contract<typeof routeProcessor5Abi>
+    rp: { address: Address }
     user: HDAccount
     user2: HDAccount
     dataFetcher: DataFetcher
@@ -345,7 +350,7 @@ async function makeSwap(
   if (fromToken instanceof Token && permits.length === 0) {
     await env.client.writeContract({
       chain: null,
-      abi: erc20Abi,
+      abi: erc20Abi_approve,
       address: fromToken.address as Address,
       account: env.user.address,
       functionName: 'approve',
@@ -396,15 +401,10 @@ async function makeSwap(
   // console.log('Call route processor (may take long time for the first launch)...')
 
   let balanceOutBIBefore: bigint
-  let toTokenContract: Contract<typeof weth9Abi> | undefined = undefined
   if (toToken instanceof Token) {
-    toTokenContract = {
-      abi: weth9Abi,
-      address: toToken.address as Address,
-    }
-
     balanceOutBIBefore = await env.client.readContract({
-      ...(toTokenContract as NonNullable<typeof toTokenContract>),
+      abi: weth9Abi_balanceOf,
+      address: toToken.address,
       account: env.user.address,
       functionName: 'balanceOf',
       args: [env.user.address],
@@ -420,6 +420,7 @@ async function makeSwap(
     tx = await env.client.writeContract({
       chain: null,
       ...env.rp,
+      abi: routeProcessor5Abi_processRoute,
       functionName: 'processRoute',
       args: [
         rpParams.tokenIn as Address,
@@ -458,10 +459,11 @@ async function makeSwap(
   // const trace = await network.provider.send('debug_traceTransaction', [receipt.transactionHash])
   // console.log("Fetching user's output balance ...")
   let balanceOutBI: bigint
-  if (toTokenContract) {
+  if (toToken instanceof Token) {
     balanceOutBI =
       (await env.client.readContract({
-        ...toTokenContract,
+        abi: weth9Abi_balanceOf,
+        address: toToken.address,
         functionName: 'balanceOf',
         args: [env.user.address],
       })) - balanceOutBIBefore
@@ -606,6 +608,7 @@ async function checkTransferAndRoute(
   )
   const tx = await env.client.writeContract({
     ...env.rp,
+    abi: routeProcessor5Abi_transferValueAndprocessRoute,
     chain: null,
     functionName: 'transferValueAndprocessRoute',
     args: [
@@ -716,6 +719,7 @@ async function checkTransferValueInput(
   const tx = await env.client.writeContract({
     ...env.rp,
     chain: null,
+    abi: routeProcessor5Abi_processRouteWithTransferValueInput,
     functionName: 'processRouteWithTransferValueInput',
     args: [
       env.user2.address,
@@ -826,6 +830,7 @@ async function checkTransferValueOutput(
   const tx = await env.client.writeContract({
     ...env.rp,
     chain: null,
+    abi: routeProcessor5Abi_processRouteWithTransferValueOutput,
     functionName: 'processRouteWithTransferValueOutput',
     args: [
       env.user2.address,

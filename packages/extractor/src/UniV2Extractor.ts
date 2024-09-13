@@ -1,5 +1,11 @@
 import { computeSushiSwapV2PoolAddress } from 'sushi'
-import { getReservesAbi, tridentConstantPoolAbi } from 'sushi/abi'
+import {
+  tridentConstantPoolAbi_factory,
+  tridentConstantPoolAbi_getReserves,
+  tridentConstantPoolAbi_token0,
+  tridentConstantPoolAbi_token1,
+  uniswapV2PairAbi_getReserves,
+} from 'sushi/abi'
 import { Token } from 'sushi/currency'
 import { ConstantProductPoolCode, LiquidityProviders } from 'sushi/router'
 import { ConstantProductRPool, RToken } from 'sushi/tines'
@@ -235,7 +241,7 @@ export class UniV2Extractor extends IExtractor {
         try {
           const reserves = await this.multiCallAggregator.callValue(
             r.address,
-            getReservesAbi,
+            uniswapV2PairAbi_getReserves,
             'getReserves',
           )
           const [reserve0, reserve1] = reserves as [bigint, bigint]
@@ -298,7 +304,7 @@ export class UniV2Extractor extends IExtractor {
       const pool = poolState.poolCode.pool
       const reserves = await this.multiCallAggregator.callValue(
         pool.address as Address,
-        tridentConstantPoolAbi,
+        tridentConstantPoolAbi_getReserves,
         'getReserves',
       )
       if (poolState.status !== PoolStatus.UpdatingPool) {
@@ -386,7 +392,7 @@ export class UniV2Extractor extends IExtractor {
     const startTime = performance.now()
     this.taskCounter.inc()
     const promise = this.multiCallAggregator
-      .callValue(addr, getReservesAbi, 'getReserves')
+      .callValue(addr, uniswapV2PairAbi_getReserves, 'getReserves')
       .then(
         (reserves) => {
           this.taskCounter.dec()
@@ -460,7 +466,7 @@ export class UniV2Extractor extends IExtractor {
                 return
             const reserves = await this.multiCallAggregator.callValue(
               addr as Address,
-              tridentConstantPoolAbi,
+              tridentConstantPoolAbi_getReserves,
               'getReserves',
             )
             const [res0, res1] = reserves as [bigint, bigint]
@@ -509,7 +515,7 @@ export class UniV2Extractor extends IExtractor {
           factoryAddr = await repeat(2, () =>
             this.multiCallAggregator.callValue(
               addr,
-              tridentConstantPoolAbi,
+              tridentConstantPoolAbi_factory,
               'factory',
             ),
           )
@@ -531,12 +537,12 @@ export class UniV2Extractor extends IExtractor {
         return Promise.all([
           this.multiCallAggregator.callValue(
             addr,
-            tridentConstantPoolAbi,
+            tridentConstantPoolAbi_token0,
             'token0',
           ),
           this.multiCallAggregator.callValue(
             addr,
-            tridentConstantPoolAbi,
+            tridentConstantPoolAbi_token1,
             'token1',
           ),
         ])

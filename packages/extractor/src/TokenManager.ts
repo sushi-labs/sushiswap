@@ -1,8 +1,8 @@
 import { nativeToken } from 'sushi'
-import { erc20Abi, erc20Abi_bytes32 } from 'sushi/abi'
+import { erc20Abi_decimals, erc20Abi_name, erc20Abi_symbol } from 'sushi/abi'
 import { ChainId } from 'sushi/chain'
 import { Token } from 'sushi/currency'
-import { Address, Hex, hexToString, trim } from 'viem'
+import { Address, Hex, erc20Abi_bytes32, hexToString, trim } from 'viem'
 import { Logger } from './Logger.js'
 import { MultiCallAggregator } from './MulticallAggregator.js'
 import { PermanentCache } from './PermanentCache.js'
@@ -111,9 +111,9 @@ export class TokenManager {
 
     try {
       const [decimalsR, symbolR, nameR] = await Promise.allSettled([
-        this.client.callValue(address, erc20Abi, 'decimals'),
-        this.client.callValue(address, erc20Abi, 'symbol'),
-        this.client.callValue(address, erc20Abi, 'name'),
+        this.client.callValue(address, erc20Abi_decimals, 'decimals'),
+        this.client.callValue(address, erc20Abi_symbol, 'symbol'),
+        this.client.callValue(address, erc20Abi_name, 'name'),
       ])
       if (decimalsR.status === 'rejected') {
         // most probable there is no token at this address

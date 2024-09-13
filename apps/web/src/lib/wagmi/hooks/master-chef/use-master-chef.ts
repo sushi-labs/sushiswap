@@ -4,7 +4,14 @@ import { createErrorToast, createToast } from '@sushiswap/notifications'
 import { keepPreviousData, useQueryClient } from '@tanstack/react-query'
 import { useCallback, useEffect, useMemo } from 'react'
 import { ChefType } from 'sushi'
-import { erc20Abi, masterChefV2Abi, miniChefV2Abi } from 'sushi/abi'
+import {
+  erc20Abi_balanceOf,
+  masterChefV1Abi_deposit,
+  masterChefV2Abi_batch,
+  masterChefV2Abi_harvest,
+  masterChefV2Abi_harvestFromMasterChef,
+  miniChefV2Abi_harvest,
+} from 'sushi/abi'
 import { ChainId } from 'sushi/chain'
 import {
   MASTERCHEF_ADDRESS,
@@ -65,7 +72,7 @@ export const useMasterChef: UseMasterChef = ({
         {
           chainId: ChainId.ETHEREUM as ChainId,
           address: SUSHI_ADDRESS[chainId] as Address,
-          abi: erc20Abi,
+          abi: erc20Abi_balanceOf,
           functionName: 'balanceOf',
           args: [
             (chef === ChefType.MasterChefV1
@@ -156,7 +163,7 @@ export const useMasterChef: UseMasterChef = ({
           address: SUSHI_ADDRESS[
             chainId as keyof typeof SUSHI_ADDRESS
           ] as Address,
-          abi: erc20Abi,
+          abi: erc20Abi_balanceOf,
           functionName: 'balanceOf',
           args: [
             MINICHEF_ADDRESS[
@@ -272,7 +279,7 @@ export const useMasterChef: UseMasterChef = ({
           account: address,
           to: contract.address,
           data: encodeFunctionData({
-            abi: contract.abi,
+            abi: masterChefV1Abi_deposit,
             functionName: 'deposit',
             args: [BigInt(pid), 0n],
           }),
@@ -287,16 +294,16 @@ export const useMasterChef: UseMasterChef = ({
             account: address,
             to: contract.address,
             data: encodeFunctionData({
-              abi: masterChefV2Abi,
+              abi: masterChefV2Abi_batch,
               functionName: 'batch',
               args: [
                 [
                   encodeFunctionData({
-                    abi: masterChefV2Abi,
+                    abi: masterChefV2Abi_harvestFromMasterChef,
                     functionName: 'harvestFromMasterChef',
                   }),
                   encodeFunctionData({
-                    abi: masterChefV2Abi,
+                    abi: masterChefV2Abi_harvest,
                     functionName: 'harvest',
                     args: [BigInt(pid), address],
                   }),
@@ -310,7 +317,7 @@ export const useMasterChef: UseMasterChef = ({
             account: address,
             to: contract.address,
             data: encodeFunctionData({
-              abi: masterChefV2Abi,
+              abi: masterChefV2Abi_harvest,
               functionName: 'harvest',
               args: [BigInt(pid), address],
             }),
@@ -322,7 +329,7 @@ export const useMasterChef: UseMasterChef = ({
           account: address,
           to: contract.address,
           data: encodeFunctionData({
-            abi: miniChefV2Abi,
+            abi: miniChefV2Abi_harvest,
             functionName: 'harvest',
             args: [BigInt(pid), address],
           }),

@@ -33,7 +33,6 @@
   "devDependencies": {
     "@cryptoalgebra/integral-core": "0.2.0",
     "@cryptoalgebra/integral-periphery": "0.2.0",
-    "@ethersproject/abi": "5.7.0",
     "@ethersproject/bytes": "^5.0.0",
     "@ethersproject/providers": "5.7.2",
     "@ethersproject/solidity": "5.7.0",
@@ -75,7 +74,7 @@
     "ts-generator": "0.1.1",
     "ts-node": "10.9.1",
     "tsup": "7.2.0",
-    "typescript": "5.4.5",
-    "viem": "2.18.6"
+    "typescript": "5.5.4",
+    "viem": "2.21.4"
   }
 }

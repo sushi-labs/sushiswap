@@ -6,12 +6,6 @@ import WETH9 from 'canonical-weth/build/contracts/WETH9.json' assert {
 }
 import { expect } from 'chai'
 import seedrandom from 'seedrandom'
-import {
-  erc20Abi,
-  nonfungiblePositionManagerAbi,
-  sushiV3FactoryAbi,
-  sushiV3PoolAbi,
-} from 'sushi/abi'
 import { ChainId } from 'sushi/chain'
 import { Token } from 'sushi/currency'
 import {
@@ -22,9 +16,17 @@ import {
   UniV3Pool,
 } from 'sushi/tines'
 import { type Contract } from 'sushi/types'
-import { Address, DeployContractParameters, Hex, WalletClient } from 'viem'
+import { Abi, Address, DeployContractParameters, Hex, WalletClient } from 'viem'
 import { readContract, waitForTransactionReceipt } from 'viem/actions'
 
+import {
+  erc20Abi_balanceOf,
+  nonfungiblePositionManagerAbi_createAndInitializePoolIfNecessary,
+  nonfungiblePositionManagerAbi_mint,
+  sushiV3FactoryAbi_getPool,
+  sushiV3PoolAbi_liquidity,
+  sushiV3PoolAbi_slot0,
+} from 'sushi/abi'
 import ERC20Mock from '../artifacts/contracts/ERC20Mock.sol/ERC20Mock.json' assert {
   type: 'json',
 }
@@ -71,7 +73,7 @@ export async function createUniV3EnvZero(
 
   const tokenFactory = {
     chain: null,
-    abi: erc20Abi,
+    abi: ERC20Mock.abi as Abi,
     bytecode: ERC20Mock.bytecode as Hex,
     account: user,
   } satisfies DeployContractParameters
@@ -80,13 +82,12 @@ export async function createUniV3EnvZero(
     walletClient,
     walletClient.deployContract({
       chain: null,
-      abi: sushiV3FactoryAbi,
+      abi: UniswapV3Factory.abi,
       bytecode: UniswapV3Factory.bytecode as Hex,
       account: user,
     }),
   )
   const SushiV3Factory = {
-    abi: sushiV3FactoryAbi,
     address: SushiV3FactoryAddress,
   }
 
@@ -104,7 +105,7 @@ export async function createUniV3EnvZero(
     walletClient,
     walletClient.deployContract({
       chain: null,
-      abi: nonfungiblePositionManagerAbi,
+      abi: NonfungiblePositionManager.abi,
       bytecode: NonfungiblePositionManager.bytecode as Hex,
       account: user,
       args: [
@@ -115,7 +116,6 @@ export async function createUniV3EnvZero(
     }),
   )
   const PositionManager = {
-    abi: nonfungiblePositionManagerAbi,
     address: NonfungiblePositionManagerAddress,
   }
 
@@ -159,12 +159,9 @@ export async function createUniV3EnvZero(
     },
   } satisfies {
     user: Address
-    tokenFactory: Omit<
-      DeployContractParameters<typeof erc20Abi>,
-      'args' | 'type'
-    >
-    SushiV3Factory: Contract<typeof sushiV3FactoryAbi>
-    PositionManager: Contract<typeof nonfungiblePositionManagerAbi>
+    tokenFactory: Omit<DeployContractParameters<Abi>, 'args' | 'type'>
+    SushiV3Factory: { address: Address }
+    PositionManager: { address: Address }
     swapper: Contract<typeof testRouterAbi>
     minter: Contract<typeof testRouterAbi>
     mint: (
@@ -200,18 +197,16 @@ export async function createUniV3EnvReal(
 
   const tokenFactory = {
     chain: null,
-    abi: erc20Abi,
+    abi: ERC20Mock.abi as Abi,
     bytecode: ERC20Mock.bytecode as Hex,
     account: user,
   } satisfies DeployContractParameters
 
   const SushiV3Factory = {
-    abi: sushiV3FactoryAbi,
     address: UniswapV3FactoryAddress[chainId] as Address,
   }
 
   const PositionManager = {
-    abi: nonfungiblePositionManagerAbi,
     address: PositionManagerAddress[chainId] as Address,
   }
 
@@ -248,6 +243,7 @@ export async function createUniV3EnvReal(
       try {
         res = await pool.env.walletClient.writeContract({
           ...pool.env.PositionManager,
+          abi: nonfungiblePositionManagerAbi_mint,
           functionName: 'mint',
           args: [
             {
@@ -266,7 +262,7 @@ export async function createUniV3EnvReal(
           ],
           account: pool.env.user,
           chain: null,
-          value: 0n,
+          // value: 0n,
         })
       } catch {
         return ZERO
@@ -297,11 +293,11 @@ export interface UniV3Position {
 
 export interface UniV3PoolInfo {
   env: UniV3Environment
-  contract: Contract<typeof sushiV3PoolAbi>
+  contract: { address: Address }
   fee: number
   tinesPool: UniV3Pool
-  token0Contract: Contract<typeof erc20Abi>
-  token1Contract: Contract<typeof erc20Abi>
+  token0Contract: { address: Address }
+  token1Contract: { address: Address }
   token0: Token
   token1: Token
 }
@@ -392,31 +388,30 @@ export async function createUniV3Pool(
 
   await env.walletClient.writeContract({
     ...env.PositionManager,
+    abi: nonfungiblePositionManagerAbi_createAndInitializePoolIfNecessary,
     functionName: 'createAndInitializePoolIfNecessary',
     args: [token0Address, token1Address, fee, sqrtPriceX96],
     account: env.user,
     chain: null,
-    value: 0n,
+    // value: 0n,
   })
 
   const poolAddress = await readContract(env.walletClient, {
     ...env.SushiV3Factory,
+    abi: sushiV3FactoryAbi_getPool,
     functionName: 'getPool',
     args: [token0Address, token1Address, fee],
     account: env.user,
   })
 
   const SushiV3Pool = {
-    abi: sushiV3PoolAbi,
     address: poolAddress,
   }
 
   const token0Contract = {
-    abi: erc20Abi,
     address: token0Address,
   }
   const token1Contract = {
-    abi: erc20Abi,
     address: token1Address,
   }
 
@@ -457,19 +452,23 @@ export async function createUniV3Pool(
 
   const slot = await readContract(env.walletClient, {
     ...SushiV3Pool,
+    abi: sushiV3PoolAbi_slot0,
     functionName: 'slot0',
   })
   const liquidity = await readContract(env.walletClient, {
     ...SushiV3Pool,
+    abi: sushiV3PoolAbi_liquidity,
     functionName: 'liquidity',
   })
   const token0Balance = await readContract(env.walletClient, {
     ...token0Contract,
+    abi: erc20Abi_balanceOf,
     functionName: 'balanceOf',
     args: [poolAddress],
   })
   const token1Balance = await readContract(env.walletClient, {
     ...token1Contract,
+    abi: erc20Abi_balanceOf,
     functionName: 'balanceOf',
     args: [poolAddress],
   })

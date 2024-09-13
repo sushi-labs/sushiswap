@@ -11,5 +11,5 @@ export function toHex(bigintIsh: BigintIsh) {
   if (hex.length % 2 !== 0) {
     hex = `0${hex}`
   }
-  return `0x${hex}`
+  return `0x${hex}` as const
 }

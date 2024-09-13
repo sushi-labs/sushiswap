@@ -1,57 +1,52 @@
+import {
+  getTokenList,
+  isTokenListChainId,
+} from '@sushiswap/graph-client/data-api'
 import { useCustomTokens } from '@sushiswap/hooks'
 import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import { getToken as getTokenWeb3 } from '@wagmi/core/actions'
 import { useCallback } from 'react'
+import type { ID } from 'sushi'
 import { ChainId } from 'sushi/chain'
 import { Token } from 'sushi/currency'
-import { Address, isAddress } from 'viem'
+import { Address, getAddress, isAddress } from 'viem'
 import { useConfig } from 'wagmi'
 import { PublicWagmiConfig } from '../../config/public'
 
-interface UseTokenParams<T extends boolean> {
+interface UseTokenParams {
   chainId: ChainId | undefined
-  address: string | undefined | null
-  withStatus?: T
+  address: Address | undefined
   enabled?: boolean
   keepPreviousData?: boolean
 }
 
-type UseTokenReturn<T> = T extends true
-  ? { token: Token; status: 'UNKNOWN' | 'APPROVED' | 'DISAPPROVED' }
-  : Token
+type UseTokenReturn = Token
 
 type Data = {
-  id: string
-  address: string
+  id: ID
+  address: Address
   name: string
   symbol: string
   decimals: number
-  status: 'UNKNOWN' | 'APPROVED' | 'DISAPPROVED'
+  approved: boolean
 }
 
-export const getTokenWithQueryCacheHydrate = <T extends boolean>(
+export const getTokenWithQueryCacheHydrate = (
   chainId: ChainId | undefined,
   data: Data,
-  withStatus: T | undefined,
-): UseTokenReturn<T> | undefined => {
+): UseTokenReturn | undefined => {
   if (data && chainId) {
-    const { address, name, symbol, decimals } = data
+    const { address, name, symbol, decimals, approved } = data
     const token = new Token({
       chainId,
       name,
       decimals,
       symbol,
       address,
+      approved,
     })
 
-    if (withStatus) {
-      return {
-        token,
-        status: data.status,
-      } as UseTokenReturn<T>
-    }
-
-    return token as UseTokenReturn<T>
+    return token
   }
 
   return undefined
@@ -59,7 +54,7 @@ export const getTokenWithQueryCacheHydrate = <T extends boolean>(
 
 interface GetTokenWithQueryCacheFn {
   chainId: ChainId | undefined
-  address: string | undefined | null
+  address: Address | undefined | null
   customTokens: Record<string, Token>
   hasToken: (cur: string | Token) => boolean
   config: PublicWagmiConfig
@@ -72,36 +67,43 @@ export const getTokenWithCacheQueryFn = async ({
   hasToken,
   config,
 }: GetTokenWithQueryCacheFn) => {
+  if (!chainId) {
+    throw Error('chainId is required')
+  }
+
+  if (!address) {
+    throw Error('address is required')
+  }
+
   // Try fetching from localStorage
-  if (chainId && hasToken(`${chainId}:${address}`)) {
+  if (hasToken(`${chainId}:${address}`)) {
+    console.log(customTokens)
     const {
       address: tokenAddress,
       name,
       symbol,
       decimals,
       id,
-    } = customTokens[`${chainId}:${address}`]
+      approved,
+    } = customTokens[`${chainId}:${getAddress(address)}`]
     return {
       address: tokenAddress,
       name,
       symbol,
       decimals,
-      status: 'UNKNOWN',
+      approved,
       id,
     } as Data
   }
 
-  // Try fetching from API
-  // const resp = await fetch(`https://tokens.sushi.com/v0/${chainId}/${address}`)
-  // if (resp.status === 200) {
-  //   const { address, name, symbol, decimals, status, id }: Data =
-  //     await resp.json()
+  if (isTokenListChainId(chainId)) {
+    try {
+      const [token] = await getTokenList({ chainId, search: address })
+      if (token) return token
+    } catch {}
+  }
 
-  //   return { address, name, symbol, decimals, status, id }
-
-  //   // Try fetching from wagmi
-  // } else
-  if (chainId) {
+  try {
     const resp = await getTokenWeb3(config, {
       address: address as Address,
       chainId,
@@ -113,25 +115,24 @@ export const getTokenWithCacheQueryFn = async ({
       name,
       symbol,
       decimals,
-      status: 'UNKNOWN',
+      approved: false,
       id: `${chainId}:${tokenAddress}`,
     } as Data
-  } else {
+  } catch {
     throw Error('Could not fetch token')
   }
 }
 
-export const useTokenWithCache = <T extends boolean = false>({
+export const useTokenWithCache = ({
   chainId,
   address,
-  withStatus,
   enabled = true,
   keepPreviousData: isKeepPreviousData = true,
-}: UseTokenParams<T>) => {
+}: UseTokenParams) => {
   const { data: customTokens, hasToken } = useCustomTokens()
   const select = useCallback(
-    (data: Data) => getTokenWithQueryCacheHydrate<T>(chainId, data, withStatus),
-    [chainId, withStatus],
+    (data: Data) => getTokenWithQueryCacheHydrate(chainId, data),
+    [chainId],
   )
 
   const config = useConfig()

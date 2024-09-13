@@ -19,7 +19,7 @@ import { ColumnDef, SortingState, TableState } from '@tanstack/react-table'
 import { FC, MouseEventHandler, useCallback, useMemo, useState } from 'react'
 import { ProtocolBadge } from 'src/ui/pool/PoolNameCell'
 import { Address, Chain, ChainId } from 'sushi'
-import { uniswapV3PoolAbi } from 'sushi/abi'
+import { uniswapV3PoolAbi_setFeeProtocol } from 'sushi/abi'
 import { Token } from 'sushi/currency'
 import { formatNumber, formatUSD } from 'sushi/format'
 import {
@@ -159,7 +159,7 @@ const EnableProtocolFeeButton: FC<{ pool: Address; chainId: ChainId }> = ({
       switchChainAsync({ chainId }).then(() =>
         writeContract({
           address: pool,
-          abi: uniswapV3PoolAbi,
+          abi: uniswapV3PoolAbi_setFeeProtocol,
           functionName: 'setFeeProtocol',
           args: [4, 4],
           chainId,

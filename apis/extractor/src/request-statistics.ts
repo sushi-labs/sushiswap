@@ -150,7 +150,7 @@ export class RequestStatistics {
 
   requestRejected(reason: ResponseRejectReason) {
     ++this.rejected
-    ++this.rejects[reason]
+    this.rejects[reason] = (this.rejects[reason] || 0) + 1
   }
 
   requestWasProcessed(startTime: number, knownTokens: boolean) {

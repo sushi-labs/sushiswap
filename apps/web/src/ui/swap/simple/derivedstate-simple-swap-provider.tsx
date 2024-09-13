@@ -269,8 +269,9 @@ const DerivedstateSimpleSwapProvider: FC<DerivedStateSimpleSwapProviderProps> =
     const { data: token0FromCache, isInitialLoading: token0Loading } =
       useTokenWithCache({
         chainId,
-        address: token0Param,
-        enabled: isAddress(token0Param) && !token0FromLocalCache,
+        address: token0Param as Address,
+        enabled:
+          isAddress(token0Param, { strict: false }) && !token0FromLocalCache,
         keepPreviousData: false,
       })
 
@@ -278,8 +279,9 @@ const DerivedstateSimpleSwapProvider: FC<DerivedStateSimpleSwapProviderProps> =
     const { data: token1FromCache, isInitialLoading: token1Loading } =
       useTokenWithCache({
         chainId,
-        address: token1Param,
-        enabled: isAddress(token1Param) && !token1FromLocalCache,
+        address: token1Param as Address,
+        enabled:
+          isAddress(token1Param, { strict: false }) && !token1FromLocalCache,
         keepPreviousData: false,
       })
 

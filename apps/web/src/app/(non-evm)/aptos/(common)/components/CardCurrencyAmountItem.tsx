@@ -6,7 +6,7 @@ import { CurrencyIcon } from '~aptos/(common)/ui/currency/currency-icon'
 interface CardCurrencyAmountItemProps
   extends React.HTMLAttributes<HTMLDivElement> {
   isLoading?: boolean
-  currency: Token
+  currency?: Token
   amount?: number
   fiatValue?: string
 }
@@ -24,7 +24,7 @@ const CardCurrencyAmountItem = React.forwardRef<
       title={
         <div className="font-medium flex items-center gap-2 text-muted-foreground">
           <CurrencyIcon currency={currency} width={18} height={18} />
-          {currency.symbol}
+          {currency?.symbol}
         </div>
       }
       ref={ref}
