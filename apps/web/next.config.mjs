@@ -90,7 +90,7 @@ const nextConfig = bundleAnalyzer({
   },
 })
 
-export default withSentryConfig(withAxiom(nextConfig), {
+export default withAxiom(withSentryConfig(nextConfig), {
   // For all available options, see:
   // https://github.com/getsentry/sentry-webpack-plugin#options
 
