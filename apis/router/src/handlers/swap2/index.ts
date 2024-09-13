@@ -190,6 +190,10 @@ function handler(
             (minAmountOut * getBigInt(fee * 1_000_000)) / 1_000_000n
         }
 
+        if (chargeFee && amountValueTransfer === 0n) {
+          processFunction = ProcessFunction.ProcessRoute
+        }
+
         const body = createSwapBody(
           route,
           to && route.status !== RouteStatus.NoWay
@@ -215,15 +219,12 @@ function handler(
           debug,
         )
 
-        // return swapResponse()
-
         swapRequestStatistics.requestWasProcessed(statistics, tokensAreKnown)
         return res.json(body)
       } catch (e) {
         swapRequestStatistics.requestRejected(
           ResponseRejectReason.UNKNOWN_EXCEPTION,
         )
-
         const data: {
           error: string | string[] | undefined
           params: z.infer<typeof querySchema5> | undefined

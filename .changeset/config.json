@@ -8,7 +8,7 @@
   "fixed": [],
   "linked": [],
   "access": "public",
-  "baseBranch": "master",
+  "baseBranch": "origin/master",
   "updateInternalDependencies": "patch",
   "privatePackages": {
     "tag": false,
@@ -30,8 +30,6 @@
     "@sushiswap/nextjs-config",
     "@sushiswap/tailwindcss-config",
     "@sushiswap/typescript-config",
-
-    "@sushiswap/pool-job",
 
     "@sushiswap/bonds-sdk",
     "@sushiswap/client",

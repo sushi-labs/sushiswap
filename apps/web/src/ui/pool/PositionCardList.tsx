@@ -1,29 +1,33 @@
+import { V2Position } from '@sushiswap/graph-client/data-api'
 import React, { FC, ReactNode } from 'react'
-import type { UserWithPool } from 'src/app/(evm)/pool/api/user-with-pools/route'
 import { useSushiV2UserPositions } from 'src/lib/hooks'
-import { SUSHISWAP_V2_SUPPORTED_CHAIN_IDS } from 'sushi/config'
+import { SushiSwapV2ChainId } from 'sushi/config'
 import { useAccount } from 'wagmi'
 
 interface PositionCardList {
+  chainId: SushiSwapV2ChainId
   children({
     positions,
     isLoading,
   }: {
-    positions: UserWithPool[]
+    positions: V2Position[]
     isLoading: boolean
   }): ReactNode
 }
 
-const value = (position: UserWithPool) =>
+const value = (position: V2Position) =>
   (Number(position.unstakedBalance + position.stakedBalance) /
     Number(position.pool.liquidity)) *
   Number(position.pool.liquidityUSD)
 
-export const PositionCardList: FC<PositionCardList> = ({ children }) => {
+export const PositionCardList: FC<PositionCardList> = ({
+  children,
+  chainId,
+}) => {
   const { address } = useAccount()
   const { data: userPositions, isLoading } = useSushiV2UserPositions({
-    id: address!,
-    chainIds: SUSHISWAP_V2_SUPPORTED_CHAIN_IDS,
+    user: address,
+    chainId,
   })
 
   return (

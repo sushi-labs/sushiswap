@@ -45,7 +45,7 @@ const slot0Abi: Abi = [
   },
 ]
 
-const liquidityAbi: Abi = [
+export const liquidityAbi: Abi = [
   {
     inputs: [],
     name: 'liquidity',
@@ -55,7 +55,7 @@ const liquidityAbi: Abi = [
   },
 ]
 
-const tickSpacingAbi: Abi = [
+export const tickSpacingAbi: Abi = [
   {
     inputs: [],
     name: 'tickSpacing',

@@ -6,9 +6,9 @@ import {
   FactoryV2,
   FactoryV3,
   LogFilterType,
-  MultiCallAggregator,
   TokenManager,
 } from '@sushiswap/extractor'
+import { SlipstreamFactoryV3 } from '@sushiswap/extractor/dist/SlipstreamV3Extractor'
 import { routeProcessor5Abi } from 'sushi/abi'
 import { ChainId } from 'sushi/chain'
 import {
@@ -18,6 +18,7 @@ import {
   PANCAKESWAP_V3_FEE_SPACING_MAP,
   PANCAKESWAP_V3_INIT_CODE_HASH,
   PancakeSwapV3ChainId,
+  ROUTE_PROCESSOR_5_ADDRESS,
   SUSHISWAP_V2_FACTORY_ADDRESS,
   SUSHISWAP_V2_INIT_CODE_HASH,
   SUSHISWAP_V3_FACTORY_ADDRESS,
@@ -42,15 +43,17 @@ import {
   arbitrum,
   arbitrumNova,
   celo,
+  goerli,
   mainnet,
   optimism,
   polygon,
   polygonZkEvm,
 } from 'viem/chains'
 
-const RPAddress = {
-  [ChainId.ETHEREUM]: '0x3e1116ea5034f5d73a7b530071709d54a4109f5f' as Address, // test RP5 deployment
-}
+// const RPAddress = {
+//   [ChainId.ETHEREUM]: '0x3e1116ea5034f5d73a7b530071709d54a4109f5f' as Address, // test RP5 deployment
+// }
+const RPAddress = ROUTE_PROCESSOR_5_ADDRESS
 
 export const TickLensContract = {
   [ChainId.ETHEREUM]: '0xbfd8137f7d1516d3ea5ca83523914859ec47f573' as Address,
@@ -136,8 +139,10 @@ async function startInfinitTest(args: {
   factoriesV2: FactoryV2[]
   factoriesV3: FactoryV3[]
   curveConfig?: CurveWhitelistConfig
+  factoriesSlipstream?: SlipstreamFactoryV3[]
   tickHelperContractV3: Address
   tickHelperContractAlgebra: Address
+  tickHelperContractSlipstream?: Address
   cacheDir: string
   logDepth: number
   logType?: LogFilterType
@@ -159,9 +164,10 @@ async function startInfinitTest(args: {
 
   const nativeProvider = new NativeWrapProvider(chainId, client)
   const tokenManager = new TokenManager(
-    extractor.extractorV2?.multiCallAggregator ||
-      (extractor.extractorV3?.multiCallAggregator as MultiCallAggregator),
+    extractor.multiCallAggregator,
+    false,
     __dirname,
+    '../cache',
     `tokens-${client.chain?.id}`,
   )
   await tokenManager.addCachedTokens()
@@ -292,7 +298,7 @@ async function startInfinitTest(args: {
   }
 }
 
-it.only('Extractor Ethereum infinite work test (Curve)', async () => {
+it.skip('Extractor Ethereum infinite work test (Curve)', async () => {
   await startInfinitTest({
     providerURL: `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_ID}`,
     chain: mainnet,
@@ -407,8 +413,17 @@ it.skip('Extractor Optimism infinite work test', async () => {
     chain: optimism,
     factoriesV2: [],
     factoriesV3: [uniswapV3Factory(ChainId.OPTIMISM)],
+    factoriesSlipstream: [
+      {
+        address: '0xCc0bDDB707055e04e497aB22a59c2aF4391cd12F',
+        provider: LiquidityProviders.VelodromeSlipstream,
+        checkedSwapFeeModules: ['0x7361E9079920fb75496E9764A2665d8ee5049D5f'],
+      },
+    ],
     tickHelperContractV3: TickLensContract[ChainId.OPTIMISM],
     tickHelperContractAlgebra: '' as Address,
+    tickHelperContractSlipstream:
+      '0x49C6FDCb3D5b2CecD8baff66c8e94b9B261ad925' as Address,
     cacheDir: './cache',
     logDepth: 50,
     logging: true,
@@ -499,8 +514,17 @@ it.skip('Extractor Base infinite work test', async () => {
       sushiswapV3Factory(ChainId.BASE),
       uniswapV3Factory(ChainId.BASE),
     ],
+    factoriesSlipstream: [
+      {
+        address: '0x5e7BB104d84c7CB9B682AaC2F3d509f5F406809A',
+        provider: LiquidityProviders.AerodromeSlipstream,
+        checkedSwapFeeModules: ['0xF4171B0953b52Fa55462E4d76ecA1845Db69af00'],
+      },
+    ],
     tickHelperContractV3: TickLensContract[ChainId.BASE],
     tickHelperContractAlgebra: '' as Address,
+    tickHelperContractSlipstream:
+      '0x3e1116ea5034f5d73a7b530071709d54a4109f5f' as Address, // our own
     cacheDir: './cache',
     logDepth: 50,
     logging: true,
@@ -592,5 +616,25 @@ it.skip('Extractor Harmony infinite work test', async () => {
     logDepth: 300,
     logging: true,
     RPAddress: RPAddress[ChainId.HARMONY],
+  })
+})
+
+it.skip('Extractor Goerli infinite work test (UniV4 only)', async () => {
+  await startInfinitTest({
+    providerURL: `https://eth-goerli.api.onfinality.io/public`,
+    chain: goerli,
+    factoriesV2: [],
+    factoriesV3: [],
+    tickHelperContractV3:
+      '0x0000000000000000000000000000000000000000' as Address,
+    tickHelperContractAlgebra:
+      '0x0000000000000000000000000000000000000000' as Address,
+    cacheDir: './cache',
+    logDepth: 300,
+    logging: true,
+    RPAddress: RPAddress[ChainId.HARMONY],
+    // uniV4: {
+    //   address: '0x3A9D48AB9751398BbFa63ad67599Bb04e4BdF98b' as Address,
+    // },
   })
 })

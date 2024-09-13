@@ -1,7 +1,7 @@
 'use client'
 
 import { ArrowTopRightOnSquareIcon } from '@heroicons/react/20/solid'
-import { Pool as PoolV2 } from '@sushiswap/client'
+import { V2Pool, V3Pool } from '@sushiswap/graph-client/data-api'
 import {
   Button,
   Currency,
@@ -10,24 +10,16 @@ import {
   classNames,
   typographyVariants,
 } from '@sushiswap/ui'
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '@sushiswap/ui'
 import React, { FC, useMemo } from 'react'
-import { Chain } from 'sushi/chain'
+import { Chain, ChainKey } from 'sushi/chain'
 import { Token, unwrapToken } from 'sushi/currency'
 import { formatPercent, shortenAddress } from 'sushi/format'
-import { SushiSwapV3Pool } from 'sushi/pool/sushiswap-v3'
-
 import { APRHoverCard } from './APRHoverCard'
 
 type PoolHeader = {
   backUrl: string
   address: string
-  pool: SushiSwapV3Pool | null | undefined | PoolV2
+  pool: V2Pool | V3Pool
   apy?: {
     fees: number | undefined
     rewards: number | undefined
@@ -46,10 +38,6 @@ export const PoolHeader: FC<PoolHeader> = ({
 }) => {
   const [token0, token1] = useMemo(() => {
     if (!pool) return [undefined, undefined]
-
-    if (pool instanceof SushiSwapV3Pool) {
-      return [unwrapToken(pool.token0), unwrapToken(pool.token1)]
-    }
 
     return [
       unwrapToken(
@@ -81,27 +69,27 @@ export const PoolHeader: FC<PoolHeader> = ({
           >
             ← Pools
           </LinkInternal>
-          <div className="relative flex items-center gap-3 max-w-[100vh]">
-            <Currency.IconList iconWidth={36} iconHeight={36}>
-              <Currency.Icon currency={token0} />
-              <Currency.Icon currency={token1} />
-            </Currency.IconList>
-            <Button
-              asChild
-              variant="link"
-              className={typographyVariants({
-                variant: 'h1',
-                className:
-                  'sm:!text2-xl sm:!text-4xl !font-bold text-gray-900 dark:text-slate-50 truncate overflow-x-auto',
-              })}
-            >
-              <LinkExternal
-                href={Chain.from(pool.chainId)?.getAccountUrl(address)}
+          <div className="flex justify-between flex-wrap gap-6">
+            <div className="relative flex items-center gap-3 max-w-[100vh]">
+              <Currency.IconList iconWidth={36} iconHeight={36}>
+                <Currency.Icon currency={token0} />
+                <Currency.Icon currency={token1} />
+              </Currency.IconList>
+              <Button
+                asChild
+                variant="link"
+                className={typographyVariants({
+                  variant: 'h1',
+                  className:
+                    'sm:!text2-xl sm:!text-4xl !font-bold text-gray-900 dark:text-slate-50 truncate overflow-x-auto',
+                })}
               >
-                {token0.symbol}/{token1.symbol}
-              </LinkExternal>
-            </Button>
-            {pool instanceof SushiSwapV3Pool ? null : (
+                <LinkExternal
+                  href={Chain.from(pool.chainId)?.getAccountUrl(address)}
+                >
+                  {token0.symbol}/{token1.symbol}
+                </LinkExternal>
+              </Button>
               <div
                 className={classNames(
                   pool.protocol === 'SUSHISWAP_V3'
@@ -116,40 +104,39 @@ export const PoolHeader: FC<PoolHeader> = ({
                   ? 'V3'
                   : pool.protocol === 'SUSHISWAP_V2'
                     ? 'V2'
-                    : pool.protocol === 'BENTOBOX_CLASSIC'
-                      ? 'Classic'
-                      : 'Stable'}
+                    : 'UNKNOWN'}
               </div>
-            )}
+            </div>
+            <Button asChild>
+              <LinkInternal
+                href={
+                  pool.protocol === 'SUSHISWAP_V2'
+                    ? `/${ChainKey[pool.chainId]}/pool/v2/${pool.address}/add`
+                    : pool.protocol === 'SUSHISWAP_V3'
+                      ? `/${ChainKey[pool.chainId]}/pool/v3/${
+                          pool.address
+                        }/create`
+                      : ''
+                }
+              >
+                Add Liquidity
+              </LinkInternal>
+            </Button>
           </div>
         </div>
         <div className="flex flex-wrap items-center gap-y-5 gap-x-[32px] text-secondary-foreground mb-8 mt-1.5">
           {apy ? (
             <div className="flex items-center gap-1.5">
               <span className="tracking-tighter font-semibold">APR</span>
-              {pool instanceof SushiSwapV3Pool ? (
-                <TooltipProvider>
-                  <Tooltip delayDuration={0}>
-                    <TooltipTrigger asChild>
-                      <span className="underline decoration-dotted underline-offset-2">
-                        {formatPercent((apy.fees || 0) + (apy.rewards || 0))}
-                      </span>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      The APR displayed is algorithmic and subject to change.
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-              ) : (
-                <APRHoverCard pool={pool} smartPoolAPR={apy.vault}>
-                  <span className="underline decoration-dotted underline-offset-2">
-                    {formatPercent(
-                      ((typeof apy.vault === 'number' ? apy.vault : apy.fees) ||
-                        0) + (apy.rewards || 0),
-                    )}
-                  </span>
-                </APRHoverCard>
-              )}
+
+              <APRHoverCard pool={pool} smartPoolAPR={apy.vault}>
+                <span className="underline decoration-dotted underline-offset-2">
+                  {formatPercent(
+                    ((typeof apy.vault === 'number' ? apy.vault : apy.fees) ||
+                      0) + (apy.rewards || 0),
+                  )}
+                </span>
+              </APRHoverCard>
             </div>
           ) : null}
           {priceRange ? (
@@ -162,10 +149,7 @@ export const PoolHeader: FC<PoolHeader> = ({
           ) : null}
           <div className="flex items-center gap-1.5">
             <span className="tracking-tighter font-semibold">Fee</span>
-            {pool instanceof SushiSwapV3Pool
-              ? pool.fee / 10000
-              : pool.swapFee * 100}
-            %
+            {pool.swapFee * 100}%
           </div>
           <div className="flex items-center gap-1.5">
             <span className="tracking-tighter font-semibold">Network</span>

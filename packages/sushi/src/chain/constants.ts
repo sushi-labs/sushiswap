@@ -2,7 +2,7 @@ export const ChainId = {
   ETHEREUM: 1,
   // ROPSTEN: 3,
   // RINKEBY: 4,
-  // GÖRLI: 5,
+  GÖRLI: 5,
   // KOVAN: 42,
   POLYGON: 137,
   POLYGON_TESTNET: 80001,
@@ -53,6 +53,7 @@ export const ChainId = {
   BLAST: 81457,
   SKALE_EUROPA: 2046399126,
   ROOTSTOCK: 30,
+  MANTLE: 5000,
   // RONIN: 2020,
 } as const
 export type ChainId = (typeof ChainId)[keyof typeof ChainId]
@@ -90,7 +91,7 @@ export const ChainKey = {
   [ChainId.FANTOM]: 'fantom',
   [ChainId.FANTOM_TESTNET]: 'fantom-testnet',
   [ChainId.FUSE]: 'fuse',
-  // [ChainId.GÖRLI]: 'goerli',
+  [ChainId.GÖRLI]: 'goerli',
   [ChainId.HARMONY]: 'harmony',
   // [ChainId.HARMONY_TESTNET]: 'harmony-testnet',
   [ChainId.HECO]: 'heco',
@@ -134,5 +135,13 @@ export const ChainKey = {
   [ChainId.BLAST]: 'blast',
   [ChainId.SKALE_EUROPA]: 'skale-europa',
   [ChainId.ROOTSTOCK]: 'rootstock',
+  [ChainId.MANTLE]: 'mantle',
 } as const
 export type ChainKey = (typeof ChainKey)[keyof typeof ChainKey]
+
+export const NetworkNameKey = Object.fromEntries(
+  Object.entries(ChainKey).map(([key, value]) => [value, Number(key)]),
+) as { [key in ChainKey]: ChainId }
+
+export const isNetworkNameKey = (key: string): key is ChainKey =>
+  Object.keys(NetworkNameKey).includes(key)

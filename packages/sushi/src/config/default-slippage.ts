@@ -1,1 +1,1 @@
-export const DEFAULT_SLIPPAGE = '0.1'
+export const DEFAULT_SLIPPAGE = '0.5'

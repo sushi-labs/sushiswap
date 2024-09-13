@@ -64,7 +64,25 @@ export class CurveMultitokenPool extends RPool {
     if (direction) {
       console.assert(
         amountIn - this.flow0 >= 0,
-        'CurveMultitokenPool.calcOutByIn Unexpected input value 0',
+        `CurveMultitokenPool.calcOutByIn Unexpected input value 0 ${JSON.stringify(
+          {
+            pool: this.core.address,
+            index0: this.index0,
+            index1: this.index1,
+            flow0: this.flow0,
+            flow1: this.flow1,
+            direction,
+            amountIn,
+            out:
+              -this.flow1 -
+              this.core.calcOutDiff(
+                amountIn - this.flow0,
+                this.index0,
+                this.index1,
+              ),
+            currentFlow: this.core.currentFlow,
+          },
+        )}`,
       )
       const out =
         -this.flow1 -

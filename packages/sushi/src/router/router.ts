@@ -9,10 +9,8 @@ import { routeProcessor4Abi } from '../abi/routeProcessor4Abi.js'
 import { routeProcessor5Abi } from '../abi/routeProcessor5Abi.js'
 import { routeProcessorAbi } from '../abi/routeProcessorAbi.js'
 import { ChainId } from '../chain/index.js'
-import { ADDITIONAL_BASES } from '../config/additional-bases.js'
-import { BASES_TO_CHECK_TRADES_AGAINST } from '../config/bases-to-check-trades-against.js'
-import { LSDS } from '../config/lsds.js'
-import { STABLES } from '../config/stables.js'
+import { LSDS } from '../config/token-maps/lsds.js'
+import { STABLES } from '../config/token-maps/stables.js'
 import { Native, WNATIVE, WNATIVE_ADDRESS } from '../currency/index.js'
 import { Token, type Type } from '../currency/index.js'
 import {
@@ -29,12 +27,14 @@ import {
 } from '../tines/index.js'
 import { LiquidityProviders } from './liquidity-providers/index.js'
 import { PoolCode } from './pool-codes/index.js'
+import { baseAgainstAllTokens } from './routingBases.js'
 import {
   type PermitData,
   RouterLiquiditySource,
   getRouteProcessor2Code,
 } from './tines-to-route-processor-2.js'
 import { getRouteProcessor4Code } from './tines-to-route-processor-4.js'
+import { getRouteProcessor6Code } from './tines-to-route-processor-6.js'
 import { getRouteProcessorCode } from './tines-to-route-processor.js'
 
 export enum TransferValue {
@@ -261,11 +261,6 @@ export class Router {
 
     if (poolFilter) pools = pools.filter(poolFilter)
 
-    const baseTrusted = BASES_TO_CHECK_TRADES_AGAINST[chainId] ?? []
-    const additionalTrusted = Object.values(
-      ADDITIONAL_BASES[chainId] ?? [],
-    ).flat()
-
     const route = findMultiRouteExactIn(
       TokenToRToken(fromToken),
       TokenToRToken(toToken),
@@ -274,7 +269,7 @@ export class Router {
       networks,
       gasPrice,
       undefined,
-      baseTrusted.concat(additionalTrusted) as RToken[],
+      baseAgainstAllTokens(chainId, true) as RToken[],
     )
 
     return {
@@ -460,6 +455,7 @@ export class Router {
     processFunction = ProcessFunction.ProcessRoute,
     transferValueTo?: Address,
     amountValueTransfer?: bigint,
+    rpCodeCompiler = getRouteProcessor4Code,
   ): RPParams {
     const tokenIn =
       fromToken instanceof Token
@@ -480,7 +476,7 @@ export class Router {
 
     let data: Hex
     if (processFunction === ProcessFunction.ProcessRoute) {
-      routeCode = getRouteProcessor4Code(
+      routeCode = rpCodeCompiler(
         route,
         RPAddr,
         to,
@@ -500,10 +496,10 @@ export class Router {
         ],
       })
     } else {
-      if (!transferValueTo || !amountValueTransfer) {
+      if (transferValueTo === undefined || amountValueTransfer === undefined) {
         throw new Error('Missing transferValueTo or feeAmount')
       }
-      routeCode = getRouteProcessor4Code(
+      routeCode = rpCodeCompiler(
         route,
         RPAddr,
         processFunction === ProcessFunction.ProcessRouteWithTransferValueInput
@@ -537,6 +533,39 @@ export class Router {
       data,
       value: fromToken instanceof Token ? undefined : route.amountInBI,
     }
+  }
+
+  // the same as routeProcessor5Params, but rpCodeCompiler = getRouteProcessor6Code
+  static routeProcessor6Params(
+    poolCodesMap: Map<string, PoolCode>,
+    route: MultiRoute,
+    fromToken: Type,
+    toToken: Type,
+    to: Address,
+    RPAddr: Address,
+    permits: PermitData[] = [],
+    maxSlippage = 0.005,
+    source = RouterLiquiditySource.Sender,
+    processFunction = ProcessFunction.ProcessRoute,
+    transferValueTo?: Address,
+    amountValueTransfer?: bigint,
+    rpCodeCompiler = getRouteProcessor6Code,
+  ): RPParams {
+    return Router.routeProcessor5Params(
+      poolCodesMap,
+      route,
+      fromToken,
+      toToken,
+      to,
+      RPAddr,
+      permits,
+      maxSlippage,
+      source,
+      processFunction,
+      transferValueTo,
+      amountValueTransfer,
+      rpCodeCompiler,
+    )
   }
 
   // Human-readable route printing

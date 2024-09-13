@@ -104,6 +104,7 @@ export class UniV2Extractor extends IExtractor {
     logging = true,
     multiCallAggregator?: MultiCallAggregator,
     tokenManager?: TokenManager,
+    cacheReadOnly = false,
   ) {
     super()
     this.multiCallAggregator =
@@ -114,14 +115,17 @@ export class UniV2Extractor extends IExtractor {
       tokenManager ||
       new TokenManager(
         this.multiCallAggregator,
+        cacheReadOnly,
         cacheDir,
         `uniV2Tokens-${this.multiCallAggregator.chainId}`,
       )
     this.logging = logging
+    this.consoleLog(`CacheReadOnly = ${cacheReadOnly}`)
     this.taskCounter = new Counter(() => {
       // do nothing
     })
     this.poolPermanentCache = new PermanentCache(
+      cacheReadOnly,
       cacheDir,
       `uniV2Pools-${this.multiCallAggregator.chainId}`,
     )
@@ -214,8 +218,7 @@ export class UniV2Extractor extends IExtractor {
 
   override async start() {
     const startTime = performance.now()
-    if (this.tokenManager.tokens.size === 0)
-      await this.tokenManager.addCachedTokens()
+    await this.tokenManager.addCachedTokens()
 
     // Add cached pools to watching
     const cachedPools: Set<string> = new Set()
@@ -623,7 +626,7 @@ export class UniV2Extractor extends IExtractor {
       ),
     }
     this.setPoolState(args.address.toLowerCase(), poolState)
-    if (args.addToCache)
+    if (args.addToCache && this.isStarted())
       this.poolPermanentCache.add({
         address: args.address,
         token0: t0.address as Address,

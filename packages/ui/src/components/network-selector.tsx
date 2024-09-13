@@ -45,6 +45,7 @@ const PREFERRED_CHAINID_ORDER: ChainId[] = [
 
 export interface NetworkSelectorProps<T extends number = ChainId> {
   showAptos?: boolean
+  hideNetworkName?: boolean
   networks: readonly T[]
   selected: T
   onSelect: NetworkSelectorOnSelectCallback<T>
@@ -52,9 +53,9 @@ export interface NetworkSelectorProps<T extends number = ChainId> {
 }
 
 const NEW_CHAINS: number[] = [
+  ChainId.ZKSYNC_ERA,
+  ChainId.MANTLE,
   ChainId.CRONOS,
-  ChainId.SKALE_EUROPA,
-  ChainId.ROOTSTOCK,
 ] satisfies ChainId[]
 
 const NetworkSelector = <T extends number>({

@@ -29,6 +29,35 @@ export default [
     shortName: 'eth',
   },
   {
+    chainId: 5, // Goerli
+    explorers: [
+      {
+        name: 'etherscan',
+        url: 'https://etherscan.io',
+        standard: 'EIP3091',
+      },
+      {
+        name: 'blockscout',
+        url: 'https://eth.blockscout.com',
+        icon: 'blockscout',
+        standard: 'EIP3091',
+      },
+      {
+        name: 'dexguru',
+        url: 'https://ethereum.dex.guru',
+        icon: 'dexguru',
+        standard: 'EIP3091',
+      },
+    ],
+    nativeCurrency: {
+      name: 'Ether',
+      symbol: 'ETH',
+      decimals: 18,
+    },
+    name: 'Goerli',
+    shortName: 'eth',
+  },
+  {
     chainId: 10,
     explorers: [
       {
@@ -553,11 +582,42 @@ export default [
     shortName: 'tftm',
   },
   {
+    chainId: 5000,
+    explorers: [
+      {
+        name: 'mantlescan',
+        url: 'https://mantlescan.xyz',
+        standard: 'EIP3091',
+      },
+      {
+        name: 'Mantle Explorer',
+        url: 'https://explorer.mantle.xyz',
+        standard: 'EIP3091',
+      },
+    ],
+    nativeCurrency: {
+      name: 'Mantle',
+      symbol: 'MNT',
+      decimals: 18,
+    },
+    name: 'Mantle',
+    shortName: 'mantle',
+    parent: {
+      type: 'L2',
+      chain: 'eip155-1',
+      bridges: [
+        {
+          url: 'https://bridge.mantle.xyz',
+        },
+      ],
+    },
+  },
+  {
     chainId: 7000,
     explorers: [
       {
         name: 'ZetaChain Mainnet Explorer',
-        url: 'https://explorer.mainnet.zetachain.com',
+        url: 'https://explorer.zetachain.com',
         standard: 'none',
       },
     ],

@@ -95,6 +95,7 @@ export class UniV3Extractor extends IExtractor {
     logging = true,
     multiCallAggregator?: MultiCallAggregator,
     tokenManager?: TokenManager,
+    cacheReadOnly = false,
   ) {
     super()
     this.multiCallAggregator =
@@ -103,6 +104,7 @@ export class UniV3Extractor extends IExtractor {
       tokenManager ||
       new TokenManager(
         this.multiCallAggregator,
+        cacheReadOnly,
         cacheDir,
         `uniV3Tokens-${this.multiCallAggregator.chainId}`,
       )
@@ -110,10 +112,12 @@ export class UniV3Extractor extends IExtractor {
     this.factories = factories
     factories.forEach((f) => this.factoryMap.set(f.address.toLowerCase(), f))
     this.poolPermanentCache = new PermanentCache(
+      cacheReadOnly,
       cacheDir,
       `uniV3Pools-${this.multiCallAggregator.chainId}`,
     )
     this.logging = logging
+    this.consoleLog(`CacheReadOnly = ${cacheReadOnly}`)
     this.taskCounter = new Counter(() => {
       //if (count == 0) this.consoleLog(`All pools were updated`)
     })
@@ -196,8 +200,7 @@ export class UniV3Extractor extends IExtractor {
       this.logProcessingStatus = LogsProcessing.Started
       const startTime = performance.now()
 
-      if (this.tokenManager.tokens.size === 0)
-        await this.tokenManager.addCachedTokens()
+      await this.tokenManager.addCachedTokens()
 
       // Add cached pools to watching
       const cachedPools: Map<string, PoolInfo> = new Map() // map instead of array to avoid duplicates
@@ -313,7 +316,7 @@ export class UniV3Extractor extends IExtractor {
     watcher.updatePoolState()
     this.poolMap.set(addrL, watcher) // lowercase because incoming events have lowcase addresses ((
     this.poolMapUpdated.set(addrL, watcher)
-    if (addToCache)
+    if (addToCache && this.isStarted())
       this.poolPermanentCache.add({
         address: expectedPoolAddress,
         token0: t0.address as Address,

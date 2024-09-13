@@ -109,3 +109,8 @@ test/snapshots/
 
 # Sentry Config File
 .env.sentry-build-plugin
+
+# npm lock file (we use pnpm)
+package-lock.json
+# yarn lock file (we use pnpm)
+yarn.lock

@@ -35,6 +35,7 @@ import {
 } from 'src/lib/wagmi/hooks/utils/hooks/useTransactionDeadline'
 import { useApproved } from 'src/lib/wagmi/systems/Checker/Provider'
 import { gasMargin, slippageAmount } from 'sushi/calculate'
+import { ChainKey } from 'sushi/chain'
 import { SushiSwapV2ChainId } from 'sushi/config'
 import { BentoBoxChainId } from 'sushi/config'
 import { Amount, Type } from 'sushi/currency'
@@ -496,7 +497,7 @@ export const AddSectionReviewModalLegacy: FC<AddSectionReviewModalLegacyProps> =
           testId="incentivize-confirmation-modal"
           successMessage="Successfully added liquidity"
           buttonText="Go to pool"
-          buttonLink={`/pools/${chainId}:${poolAddress}`}
+          buttonLink={`/${ChainKey[chainId]}/pools/v2/${poolAddress}`}
           txHash={data}
         />
       </DialogProvider>

@@ -47,6 +47,7 @@ import {
   linea,
   localhost,
   mainnet,
+  mantle,
   metis,
   // metisGoerli,
   moonbeam,
@@ -583,7 +584,9 @@ export const publicTransports = {
   [ChainId.PALM]: http(palm.rpcUrls.default.http[0]),
   [ChainId.OKEX]: http(okc.rpcUrls.default.http[0]),
   [ChainId.HECO]: http(heco.rpcUrls.default.http[0]),
-  [ChainId.ZKSYNC_ERA]: http(zkSync.rpcUrls.default.http[0]),
+  [ChainId.ZKSYNC_ERA]: http(
+    `https://lb.drpc.org/ogrpc?network=zksync&dkey=${drpcId}`,
+  ),
   [ChainId.LINEA]: http(
     `https://lb.drpc.org/ogrpc?network=linea&dkey=${drpcId}`,
   ),
@@ -612,6 +615,9 @@ export const publicTransports = {
       ? `https://rpc.mainnet.rootstock.io/${rskId}`
       : 'https://public-node.rsk.co',
   ),
+  [ChainId.MANTLE]: http(
+    `https://lb.drpc.org/ogrpc?network=mantle&dkey=${drpcId}`,
+  ),
   /* Testnets */ // TODO: add testnet transports
   [ChainId.ARBITRUM_TESTNET]: http('https://sepolia-rollup.arbitrum.io/rpc'),
   [ChainId.AVALANCHE_TESTNET]: http(
@@ -621,6 +627,7 @@ export const publicTransports = {
   [ChainId.FANTOM_TESTNET]: http('https://rpc.testnet.fantom.network'),
   [ChainId.POLYGON_TESTNET]: http('https://rpc.ankr.com/polygon_mumbai'),
   [ChainId.SEPOLIA]: http('https://sepolia.drpc.org'),
+  [ChainId.GÖRLI]: http('https://eth-goerli.api.onfinality.io/public'),
 } as const satisfies Record<ChainId, Transport>
 
 export const publicChains = [
@@ -662,12 +669,14 @@ export const publicChains = [
   skaleEuropa,
   filecoin,
   zetachain,
+  mantle,
 
   /* Testnets */
   arbitrumSepolia,
   avalancheFuji,
   bscTestnet,
   fantomTestnet,
+  goerli,
   polygonMumbai,
   sepolia,
 ] as const satisfies Readonly<Chain[]>
@@ -825,6 +834,10 @@ export const publicClientConfig = {
     chain: rootstock,
     transport: publicTransports[ChainId.ROOTSTOCK],
   },
+  [ChainId.MANTLE]: {
+    chain: mantle,
+    transport: publicTransports[ChainId.MANTLE],
+  },
 
   /* Testnets */
   [ChainId.ARBITRUM_TESTNET]: {
@@ -842,6 +855,10 @@ export const publicClientConfig = {
   [ChainId.FANTOM_TESTNET]: {
     chain: fantomTestnet,
     transport: publicTransports[ChainId.FANTOM_TESTNET],
+  },
+  [ChainId.GÖRLI]: {
+    chain: goerli,
+    transport: publicTransports[ChainId.GÖRLI],
   },
   [ChainId.POLYGON_TESTNET]: {
     chain: polygonMumbai,

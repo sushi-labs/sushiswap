@@ -10,7 +10,6 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { FewchaWallet } from 'fewcha-plugin-wallet-adapter'
 import { PetraWallet } from 'petra-plugin-wallet-adapter'
 import { Modal } from '~aptos/(common)/components/Modal/Modal'
-import { chains } from '~aptos/(common)/config/chains'
 
 const wallets = [
   new PetraWallet(),
@@ -18,9 +17,7 @@ const wallets = [
   new FewchaWallet(),
   new MartianWallet(),
   new RiseWallet(),
-  new MSafeWalletAdapter(
-    Object.values(chains).map((chain) => chain.other.MSafeOrigin),
-  ),
+  new MSafeWalletAdapter(),
 ]
 
 export function Providers({ children }: { children: React.ReactNode }) {

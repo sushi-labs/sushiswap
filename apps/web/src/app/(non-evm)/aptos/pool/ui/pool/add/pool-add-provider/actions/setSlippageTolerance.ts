@@ -1,3 +1,4 @@
+import { DEFAULT_SLIPPAGE } from 'sushi/config'
 import { Actions, State } from '../types'
 import { setSlippageAmount0 } from './setSlippageAmount0'
 import { setSlippageAmount1 } from './setSlippageAmount1'
@@ -28,6 +29,6 @@ export function setSlippageTolerance(state: State, action: Actions): State {
   }
 }
 
-export function parseSlippageTolerance(value: string, auto = '0.5') {
+export function parseSlippageTolerance(value: string, auto = DEFAULT_SLIPPAGE) {
   return parseFloat(value === 'AUTO' ? auto : value) / 100
 }

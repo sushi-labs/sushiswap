@@ -127,6 +127,7 @@ export class AlgebraExtractor extends IExtractor {
     logging = true,
     multiCallAggregator?: MultiCallAggregator,
     tokenManager?: TokenManager,
+    cacheReadOnly = false,
   ) {
     super()
     this.multiCallAggregator =
@@ -135,16 +136,19 @@ export class AlgebraExtractor extends IExtractor {
       tokenManager ||
       new TokenManager(
         this.multiCallAggregator,
+        cacheReadOnly,
         cacheDir,
         `AlgebraTokens-${this.multiCallAggregator.chainId}`,
       )
     this.tickHelperContract = tickHelperContract
     this.factories = factories
     this.poolPermanentCache = new PermanentCache(
+      cacheReadOnly,
       cacheDir,
       `AlgebraPools-${this.multiCallAggregator.chainId}`,
     )
     this.logging = logging
+    this.consoleLog(`CacheReadOnly = ${cacheReadOnly}`)
     this.taskCounter = new Counter(() => {
       //if (count == 0) this.consoleLog(`All pools were updated`)
     })
@@ -220,10 +224,7 @@ export class AlgebraExtractor extends IExtractor {
     if (this.logProcessingStatus === LogsProcessing.NotStarted) {
       this.logProcessingStatus = LogsProcessing.Started
       const startTime = performance.now()
-
-      if (this.tokenManager.tokens.size === 0)
-        await this.tokenManager.addCachedTokens()
-
+      await this.tokenManager.addCachedTokens()
       this.factoriesFull = await Promise.all(
         this.factories.map(async (f): Promise<FactoryAlgebraFull> => {
           const [deployer, initCodeHash] = await Promise.all([
@@ -348,7 +349,7 @@ export class AlgebraExtractor extends IExtractor {
     watcher.updatePoolState()
     this.poolMap.set(addrL, watcher) // lowercase because incoming events have lowcase addresses ((
     this.poolMapUpdated.set(addrL, watcher)
-    if (addToCache)
+    if (addToCache && this.isStarted())
       this.poolPermanentCache.add({
         address: expectedPoolAddress,
         token0: t0.address as Address,

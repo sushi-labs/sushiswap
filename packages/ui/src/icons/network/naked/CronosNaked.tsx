@@ -10,6 +10,7 @@ export const CronosNaked: NakedNetworkIconComponent = (props) => {
       xmlns="http://www.w3.org/2000/svg"
       {...props}
     >
+      {props.circle}
       <path
         d="M117.341 94.496 64 125.312 10.66 94.496V33.504L64 2.688l53.341 30.816z"
         fill="#fff"
@@ -41,8 +42,8 @@ export const CronosNaked: NakedNetworkIconComponent = (props) => {
           y2="64"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#002D74" />
-          <stop offset="1" stop-color="#002D74" stop-opacity="0" />
+          <stop stopColor="#002D74" />
+          <stop offset="1" stopColor="#002D74" stopOpacity="0" />
         </linearGradient>
         <linearGradient
           id="b"
@@ -52,8 +53,8 @@ export const CronosNaked: NakedNetworkIconComponent = (props) => {
           y2="64"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#002D74" />
-          <stop offset="1" stop-color="#002D74" stop-opacity="0" />
+          <stop stopColor="#002D74" />
+          <stop offset="1" stopColor="#002D74" stopOpacity="0" />
         </linearGradient>
       </defs>
     </svg>

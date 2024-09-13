@@ -2,8 +2,8 @@
 
 import { UploadIcon } from '@heroicons/react-v1/outline'
 import { DownloadIcon } from '@heroicons/react-v1/solid'
-import { ArrowDownRightIcon } from '@heroicons/react/20/solid'
 import {
+  ArrowDownRightIcon,
   EllipsisHorizontalIcon,
   GiftIcon,
   LightBulbIcon,
@@ -11,13 +11,15 @@ import {
   PlusIcon,
 } from '@heroicons/react/24/outline'
 import { Slot } from '@radix-ui/react-slot'
-import { GetPoolsArgs } from '@sushiswap/client'
+import { GetPools, PoolChainId, Pools } from '@sushiswap/graph-client/data-api'
 import {
+  Badge,
   Button,
   Card,
   CardHeader,
   CardTitle,
   Chip,
+  Currency,
   DataTable,
   DropdownMenu,
   DropdownMenuContent,
@@ -34,44 +36,166 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@sushiswap/ui'
+import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import { ColumnDef, Row, SortingState, TableState } from '@tanstack/react-table'
 import Link from 'next/link'
 import React, { FC, ReactNode, useCallback, useMemo, useState } from 'react'
 import InfiniteScroll from 'react-infinite-scroll-component'
-import { Native } from 'sushi/currency'
-import { useSWRConfig } from 'swr'
-
-import { usePoolCount, usePoolsInfinite } from '@sushiswap/client/hooks'
-import { PoolHasSteerVaults } from '@sushiswap/steer-sdk'
-import { isAngleEnabledChainId } from 'sushi/config'
-import {
-  PoolBase,
-  PoolHistory,
-  PoolIfIncentivized,
-  unnestPool,
-} from 'sushi/types'
+import { usePoolsInfinite } from 'src/lib/hooks'
+import { ChainKey } from 'sushi/chain'
+import { isMerklChainId } from 'sushi/config'
+import { Native, Token } from 'sushi/currency'
+import { formatNumber, formatUSD } from 'sushi/format'
+import { SushiSwapProtocol } from 'sushi/types'
+import { ProtocolBadge } from './PoolNameCell'
 import { usePoolFilters } from './PoolsFiltersProvider'
-import {
-  APR_COLUMN,
-  FEES_COLUMN,
-  NAME_COLUMN_POOL,
-  TVL_COLUMN,
-  VOLUME_1D_COLUMN,
-  VOLUME_1M_COLUMN,
-  VOLUME_1W_COLUMN,
-} from './columns'
-
-type RequiredPool = PoolHasSteerVaults<
-  PoolIfIncentivized<PoolHistory<PoolBase>>
->
+import { APR_COLUMN, TVL_COLUMN, VOLUME_1D_COLUMN } from './columns'
 
 const COLUMNS = [
-  NAME_COLUMN_POOL,
+  {
+    id: 'name',
+    header: 'Name',
+
+    cell: (props) => {
+      const [token0, token1] = useMemo(
+        () => [
+          new Token({
+            chainId: props.row.original.chainId,
+            address: props.row.original.token0Address,
+            decimals: 0,
+          }),
+          new Token({
+            chainId: props.row.original.chainId,
+            address: props.row.original.token1Address,
+            decimals: 0,
+          }),
+        ],
+        [props.row.original],
+      )
+
+      return (
+        <div className="flex items-center gap-5">
+          <div className="flex min-w-[54px]">
+            {token0 && token1 ? (
+              <Badge
+                className="border-2 border-slate-900 rounded-full z-[11]"
+                position="bottom-right"
+                badgeContent={
+                  <NetworkIcon
+                    chainId={props.row.original.chainId}
+                    width={14}
+                    height={14}
+                  />
+                }
+              >
+                <Currency.IconList iconWidth={26} iconHeight={26}>
+                  <Currency.Icon disableLink currency={token0} />
+                  <Currency.Icon disableLink currency={token1} />
+                </Currency.IconList>
+              </Badge>
+            ) : null}
+          </div>
+          <div className="flex flex-col gap-0.5">
+            <span className="flex items-center gap-1 text-sm font-medium text-gray-900 dark:text-slate-50">
+              {props.row.original.name}
+              <div
+                className={
+                  'text-[10px] bg-gray-200 dark:bg-slate-700 rounded-lg px-1 ml-1'
+                }
+              />
+            </span>
+            <div className="flex gap-1">
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    {
+                      ProtocolBadge[
+                        props.row.original.protocol as SushiSwapProtocol
+                      ]
+                    }
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Protocol version</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <div className="bg-gray-200 text-gray-700 dark:bg-slate-800 dark:text-slate-300 text-[10px] px-2 rounded-full">
+                      {formatNumber(props.row.original.swapFee * 100)}%
+                    </div>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Swap fee</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+              {props.row.original.isIncentivized && (
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <div className="whitespace-nowrap bg-green/20 text-green text-[10px] px-2 rounded-full">
+                        🧑‍🌾{' '}
+                      </div>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Farm rewards available</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              )}
+              {props.row.original.isSmartPool && (
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <div className="bg-[#F2E9D6] dark:bg-yellow/60 text-[10px] px-2 rounded-full">
+                        💡
+                      </div>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Smart Pool available</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              )}
+            </div>
+          </div>
+        </div>
+      )
+    },
+    size: 300,
+    meta: {
+      skeleton: <SkeletonText fontSize="lg" />,
+    },
+  },
   TVL_COLUMN,
   VOLUME_1D_COLUMN,
-  VOLUME_1W_COLUMN,
-  VOLUME_1M_COLUMN,
-  FEES_COLUMN,
+  {
+    id: 'feeUSD1d',
+    header: 'Fees (24h)',
+    accessorFn: (row) => row.feeUSD1d,
+    sortingFn: ({ original: rowA }, { original: rowB }) =>
+      rowA.feeUSD1d - rowB.feeUSD1d,
+    cell: (props) =>
+      formatUSD(props.row.original.feeUSD1d).includes('NaN')
+        ? '$0.00'
+        : formatUSD(props.row.original.feeUSD1d),
+    meta: {
+      skeleton: <SkeletonText fontSize="lg" />,
+    },
+  },
+  {
+    id: 'txCount1d',
+    header: 'Transaction Count (24h)',
+    accessorFn: (row) => row.txCount1d,
+    sortingFn: ({ original: rowA }, { original: rowB }) =>
+      rowA.txCount1d - rowB.txCount1d,
+    cell: (props) => props.row.original.txCount1d,
+    meta: {
+      skeleton: <SkeletonText fontSize="lg" />,
+    },
+  },
   APR_COLUMN,
   {
     id: 'actions',
@@ -85,7 +209,7 @@ const COLUMNS = [
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-fit">
             <DropdownMenuLabel>
-              {row.original.token0.symbol} / {row.original.token1.symbol}
+              {row.original.name}
               <Chip variant="blue" className="ml-2">
                 SushiSwap V3
               </Chip>
@@ -97,7 +221,7 @@ const COLUMNS = [
                   onClick={(e) => e.stopPropagation()}
                   shallow={true}
                   className="flex items-center"
-                  href={`/pool/${row.original.id}`}
+                  href={`/${row.original.chainId}/pool/v3/${row.original.address}`}
                 >
                   <ArrowDownRightIcon width={16} height={16} className="mr-2" />
                   Pool details
@@ -108,7 +232,7 @@ const COLUMNS = [
                   onClick={(e) => e.stopPropagation()}
                   shallow={true}
                   className="flex items-center"
-                  href={`/pool/${row.original.id}/positions/create`}
+                  href={`/${row.original.chainId}/pool/v3/${row.original.address}/create`}
                 >
                   <PlusIcon width={16} height={16} className="mr-2" />
                   Create position
@@ -116,16 +240,16 @@ const COLUMNS = [
               </DropdownMenuItem>
               <TooltipProvider>
                 <Tooltip delayDuration={0}>
-                  <TooltipTrigger asChild={row.original.hasEnabledSteerVault}>
+                  <TooltipTrigger asChild={row.original.isSmartPool}>
                     <DropdownMenuItem
                       asChild
-                      disabled={!row.original.hasEnabledSteerVault}
+                      disabled={!row.original.isSmartPool}
                     >
                       <Link
                         onClick={(e) => e.stopPropagation()}
                         shallow={true}
                         className="flex items-center"
-                        href={`/pool/${row.original.id}/smart`}
+                        href={`/${row.original.chainId}/pool/v3/${row.original.address}/smart`}
                       >
                         <span className="relative">
                           <LightBulbIcon
@@ -143,7 +267,7 @@ const COLUMNS = [
                   </TooltipTrigger>
                   <TooltipContent side="left" className="max-w-[240px]">
                     <p>
-                      {!row.original.hasEnabledSteerVault
+                      {!row.original.isSmartPool
                         ? 'No Steer vaults available for this pool'
                         : `Smart pools optimize liquidity allocation within custom price ranges, enhancing trading efficiency by
           providing deeper liquidity around the current price, increasing Liquidity Providers (LP) fee earnings.`}
@@ -157,28 +281,28 @@ const COLUMNS = [
               <TooltipProvider>
                 <Tooltip delayDuration={0}>
                   <TooltipTrigger
-                    asChild={isAngleEnabledChainId(row.original.chainId)}
+                    asChild={isMerklChainId(row.original.chainId)}
                   >
                     <DropdownMenuItem
                       asChild
-                      disabled={!isAngleEnabledChainId(row.original.chainId)}
+                      disabled={!isMerklChainId(row.original.chainId)}
                     >
                       <Link
                         onClick={(e) => e.stopPropagation()}
                         shallow={true}
                         className="flex items-center"
-                        href={`/pool/incentivize?chainId=${
+                        href={`/${
                           row.original.chainId
-                        }&fromCurrency=${
-                          row.original.token0.address ===
+                        }/pool/incentivize?fromCurrency=${
+                          row.original.token0Address ===
                           Native.onChain(row.original.chainId).wrapped.address
                             ? 'NATIVE'
-                            : row.original.token0.address
+                            : row.original.token0Address
                         }&toCurrency=${
-                          row.original.token1.address ===
+                          row.original.token1Address ===
                           Native.onChain(row.original.chainId).wrapped.address
                             ? 'NATIVE'
-                            : row.original.token1.address
+                            : row.original.token1Address
                         }&feeAmount=${row.original.swapFee * 10_000 * 100}`}
                       >
                         <GiftIcon width={16} height={16} className="mr-2" />
@@ -188,7 +312,7 @@ const COLUMNS = [
                   </TooltipTrigger>
                   <TooltipContent side="left" className="max-w-[240px]">
                     <p>
-                      {!isAngleEnabledChainId(row.original.chainId)
+                      {!isMerklChainId(row.original.chainId)
                         ? 'Not available on this network'
                         : 'Add rewards to a pool to incentivize liquidity providers joining in.'}
                     </p>
@@ -207,7 +331,7 @@ const COLUMNS = [
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-fit">
             <DropdownMenuLabel>
-              {row.original.token0.symbol} / {row.original.token1.symbol}
+              {row.original.name}
               {row.original.protocol === 'SUSHISWAP_V2' && (
                 <Chip variant="pink" className="ml-2">
                   SushiSwap V2
@@ -221,7 +345,7 @@ const COLUMNS = [
                   onClick={(e) => e.stopPropagation()}
                   shallow={true}
                   className="flex items-center"
-                  href={`/pool/${row.original.id}/add`}
+                  href={`/${row.original.chainId}/pool/v2/${row.original.address}/add`}
                 >
                   <PlusIcon width={16} height={16} className="mr-2" />
                   Add liquidity
@@ -232,7 +356,7 @@ const COLUMNS = [
                   onClick={(e) => e.stopPropagation()}
                   shallow={true}
                   className="flex items-center"
-                  href={`/pool/${row.original.id}/remove`}
+                  href={`/${row.original.chainId}/pool/v2/${row.original.address}/remove`}
                 >
                   <MinusIcon width={16} height={16} className="mr-2" />
                   Remove liquidity
@@ -253,7 +377,7 @@ const COLUMNS = [
                         onClick={(e) => e.stopPropagation()}
                         shallow={true}
                         className="flex items-center"
-                        href={`/pool/${row.original.id}/stake`}
+                        href={`/${row.original.chainId}/pool/v2/${row.original.address}/stake`}
                       >
                         <DownloadIcon width={16} height={16} className="mr-2" />
                         Stake
@@ -274,7 +398,7 @@ const COLUMNS = [
                   onClick={(e) => e.stopPropagation()}
                   shallow={true}
                   className="flex items-center"
-                  href={`/pool/${row.original.id}/unstake`}
+                  href={`/${row.original.chainId}/pool/v2/${row.original.address}/unstake`}
                 >
                   <UploadIcon width={16} height={16} className="mr-2" />
                   Unstake
@@ -284,71 +408,48 @@ const COLUMNS = [
           </DropdownMenuContent>
         </DropdownMenu>
       ),
+    size: 80,
     meta: {
       disableLink: true,
       skeleton: <SkeletonText fontSize="lg" />,
     },
-  } satisfies ColumnDef<RequiredPool, unknown>,
-] as ColumnDef<RequiredPool, unknown>[]
+  } satisfies ColumnDef<Pools[number], unknown>,
+] as ColumnDef<Pools[number], unknown>[]
 
-interface PositionsTableProps {
-  onRowClick?(row: RequiredPool): void
+interface PoolsTableProps {
+  chainId: PoolChainId
+  onRowClick?(row: Pools[number]): void
 }
 
-export const PoolsTable: FC<PositionsTableProps> = ({ onRowClick }) => {
-  const { chainIds, tokenSymbols, protocols, farmsOnly, smartPoolsOnly } =
+export const PoolsTable: FC<PoolsTableProps> = ({ chainId, onRowClick }) => {
+  const { tokenSymbols, protocols, farmsOnly, smartPoolsOnly } =
     usePoolFilters()
+
   const [sorting, setSorting] = useState<SortingState>([
     { id: 'liquidityUSD', desc: true },
   ])
 
-  const sortingId = useMemo(() => {
-    switch (sorting[0]?.id) {
-      case 'volumeUSD1d':
-        return 'volume1d'
-      case 'volumeUSD1w':
-        return 'volume1w'
-      case 'volumeUSD1m':
-        return 'volume1m'
-      default:
-        return sorting[0]?.id
-    }
-  }, [sorting])
-
-  const args = useMemo<GetPoolsArgs>(() => {
+  const args = useMemo<Omit<GetPools, 'page'>>(() => {
     return {
-      chainIds: chainIds,
-      tokenSymbols,
-      isIncentivized: farmsOnly || undefined, // will filter farms out if set to false, undefined will be filtered out by the parser
-      hasEnabledSteerVault: smartPoolsOnly || undefined, // will filter smart pools out if set to false, undefined will be filtered out by the parser
-      isWhitelisted: true, // can be added to filters later, need to put it here so fallback works
-      orderBy: sortingId,
-      orderDir: sorting[0] ? (sorting[0].desc ? 'desc' : 'asc') : 'desc',
+      chainId,
+      search: tokenSymbols,
+      onlyIncentivized: farmsOnly,
+      onlySmartPools: smartPoolsOnly,
       protocols,
+      orderBy: sorting[0]?.id as GetPools['orderBy'],
+      orderDirection: sorting[0] ? (sorting[0].desc ? 'desc' : 'asc') : 'desc',
     }
-  }, [
-    chainIds,
-    tokenSymbols,
-    farmsOnly,
-    smartPoolsOnly,
-    sorting,
-    sortingId,
-    protocols,
-  ])
+  }, [chainId, tokenSymbols, farmsOnly, smartPoolsOnly, sorting, protocols])
 
-  const {
-    data: pools,
-    isValidating,
-    setSize,
-  } = usePoolsInfinite({ args, shouldFetch: true, swrConfig: useSWRConfig() })
+  const { data: pools, isLoading, fetchNextPage } = usePoolsInfinite(args)
 
-  const { data: poolCount } = usePoolCount({
-    args,
-    shouldFetch: true,
-    swrConfig: useSWRConfig(),
-  })
-
-  const data = useMemo(() => pools?.flat() || [], [pools])
+  const [data, count] = useMemo(
+    () => [
+      pools?.pages?.flatMap(({ data }) => data) ?? [],
+      pools?.pages?.[0]?.count,
+    ],
+    [pools],
+  )
 
   const state: Partial<TableState> = useMemo(() => {
     return {
@@ -361,7 +462,7 @@ export const PoolsTable: FC<PositionsTableProps> = ({ onRowClick }) => {
   }, [data?.length, sorting])
 
   const rowRenderer = useCallback(
-    (row: Row<RequiredPool>, rowNode: ReactNode) => {
+    (row: Row<Pools[number]>, rowNode: ReactNode) => {
       if (onRowClick)
         return (
           <Slot
@@ -379,8 +480,8 @@ export const PoolsTable: FC<PositionsTableProps> = ({ onRowClick }) => {
   return (
     <InfiniteScroll
       dataLength={data.length}
-      next={() => setSize((prev) => prev + 1)}
-      hasMore={data.length < (poolCount?.count || 0)}
+      next={fetchNextPage}
+      hasMore={data.length < (count ?? 0)}
       loader={
         <div className="flex justify-center w-full py-4">
           <Loader size={16} />
@@ -390,20 +491,28 @@ export const PoolsTable: FC<PositionsTableProps> = ({ onRowClick }) => {
       <Card>
         <CardHeader>
           <CardTitle>
-            Pools{' '}
-            {poolCount?.count ? (
-              <span className="text-gray-400 dark:text-slate-500">
-                ({poolCount.count})
+            {isLoading ? (
+              <div className="!w-28 !h-[18px]">
+                <SkeletonText />
+              </div>
+            ) : (
+              <span>
+                Pools{' '}
+                <span className="text-gray-400 dark:text-slate-500">
+                  ({count ?? 0})
+                </span>
               </span>
-            ) : null}
+            )}
           </CardTitle>
         </CardHeader>
         <DataTable
           state={state}
           onSortingChange={setSorting}
-          loading={!pools && isValidating}
+          loading={isLoading}
           linkFormatter={(row) =>
-            `/pool/${unnestPool(row).chainId}%3A${unnestPool(row).address}`
+            `/${ChainKey[row.chainId]}/pool/${
+              row.protocol === SushiSwapProtocol.SUSHISWAP_V2 ? 'v2' : 'v3'
+            }/${row.address}`
           }
           rowRenderer={rowRenderer}
           columns={COLUMNS}

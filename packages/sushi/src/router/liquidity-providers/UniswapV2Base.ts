@@ -1,15 +1,13 @@
 import type { Address, Hex, PublicClient } from 'viem'
-import { encodePacked, getCreate2Address, keccak256 } from 'viem/utils'
+import { encodePacked, keccak256 } from 'viem/utils'
 import { getReservesAbi } from '../../abi/index.js'
+import { getCreate2Address } from '../../address/getCreate2Address.js'
 import { ChainId } from '../../chain/index.js'
-import {
-  ADDITIONAL_BASES,
-  BASES_TO_CHECK_TRADES_AGAINST,
-} from '../../config/index.js'
 import { Token } from '../../currency/index.js'
 import { ConstantProductRPool, type RToken } from '../../tines/index.js'
 import { getCurrencyCombinations } from '../get-currency-combinations.js'
 import { ConstantProductPoolCode, type PoolCode } from '../pool-codes/index.js'
+import { baseAgainstTokensForPair } from '../routingBases.js'
 import { LiquidityProvider } from './LiquidityProvider.js'
 
 interface StaticPool {
@@ -57,18 +55,12 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
       ),
       bytecodeHash:
         this.initCodeHash[this.chainId as keyof typeof this.initCodeHash]!,
+      chainId: this.chainId,
     })
   }
 
   _getProspectiveTokens(t0: Token, t1: Token) {
-    const set = new Set<Token>([
-      t0,
-      t1,
-      ...(BASES_TO_CHECK_TRADES_AGAINST?.[this.chainId] ?? []),
-      ...(ADDITIONAL_BASES?.[this.chainId]?.[t0.address] ?? []),
-      ...(ADDITIONAL_BASES?.[this.chainId]?.[t1.address] ?? []),
-    ])
-    return Array.from(set)
+    return [...baseAgainstTokensForPair(t0, t1, false), t0, t1]
   }
 
   getStaticPools(t1: Token, t2: Token): StaticPool[] {

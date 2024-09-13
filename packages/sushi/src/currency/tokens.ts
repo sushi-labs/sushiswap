@@ -31,6 +31,7 @@ import {
   MAI_ADDRESS,
   MANA_ADDRESS,
   MATIC_ADDRESS,
+  METH_ADDRESS,
   MIM_ADDRESS,
   MKR_ADDRESS,
   NFTX_ADDRESS,
@@ -469,7 +470,7 @@ export const WNATIVE = {
   [ChainId.SEPOLIA]: WETH9[ChainId.SEPOLIA],
   // [ChainId.ROPSTEN]: WETH9[ChainId.ROPSTEN],
   // [ChainId.RINKEBY]: WETH9[ChainId.RINKEBY],
-  // [ChainId.GÖRLI]: WETH9[ChainId.GÖRLI],
+  [ChainId.GÖRLI]: WETH9[ChainId.GÖRLI],
   // [ChainId.KOVAN]: WETH9[ChainId.KOVAN],
   [ChainId.OPTIMISM]: WETH9[ChainId.OPTIMISM],
   [ChainId.FANTOM]: new Token({
@@ -716,6 +717,13 @@ export const WNATIVE = {
     decimals: 0,
   }),
   [ChainId.ROOTSTOCK]: WBTC[ChainId.ROOTSTOCK],
+  [ChainId.MANTLE]: new Token({
+    chainId: ChainId.MANTLE,
+    address: WNATIVE_ADDRESS[ChainId.MANTLE],
+    decimals: 18,
+    symbol: 'WMNT',
+    name: 'Wrapped MNT',
+  }),
 } as const
 
 export const SUSHI = addressMapToTokenMap(
@@ -1224,3 +1232,12 @@ export const SolvBTC = addressMapToTokenMap(
   },
   SolvBTC_ADDRESS,
 ) as Record<keyof typeof SolvBTC_ADDRESS, Token>
+
+export const METH = addressMapToTokenMap(
+  {
+    decimals: 18,
+    symbol: 'mETH',
+    name: 'Mantle Staked Ether',
+  },
+  METH_ADDRESS,
+) as Record<keyof typeof METH_ADDRESS, Token>

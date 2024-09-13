@@ -2,24 +2,24 @@
 
 import {
   CardContent,
+  CardDescription,
   CardHeader,
+  CardTitle,
+  SkeletonBox,
   SkeletonText,
   classNames,
 } from '@sushiswap/ui'
-import { CardDescription, CardTitle } from '@sushiswap/ui'
-import { SkeletonBox } from '@sushiswap/ui'
 import format from 'date-fns/format'
 import { FC, useCallback, useMemo } from 'react'
-import { usePoolGraphData } from 'src/lib/hooks'
 
 import { formatUSD } from 'sushi/format'
 import tailwindConfig from 'tailwind.config.js'
 import resolveConfig from 'tailwindcss/resolveConfig'
 
-import { SushiSwapV2ChainId } from 'sushi/config'
 import { PoolChartPeriod, chartPeriods } from './PoolChartPeriods'
 import { PoolChartType } from './PoolChartTypes'
 
+import { V2Pool, V3Pool } from '@sushiswap/graph-client/data-api'
 import ReactEchartsCore from 'echarts-for-react/lib/core'
 import { EChartsOption } from 'echarts-for-react/lib/types'
 import 'echarts/lib/chart/bar'
@@ -28,12 +28,14 @@ import 'echarts/lib/component/tooltip'
 import 'echarts/lib/component/visualMap'
 import echarts from 'echarts/lib/echarts'
 import 'echarts/lib/visual/seriesColor'
+import { usePoolGraphData } from 'src/lib/hooks'
+import { SushiSwapProtocol } from 'sushi'
 
 interface PoolChartProps {
   chart: PoolChartType.Volume | PoolChartType.Fees | PoolChartType.TVL
   period: PoolChartPeriod
-  address: string
-  chainId: SushiSwapV2ChainId
+  pool: V2Pool | V3Pool
+  protocol: SushiSwapProtocol
 }
 
 const tailwind = resolveConfig(tailwindConfig)
@@ -41,25 +43,24 @@ const tailwind = resolveConfig(tailwindConfig)
 export const PoolChartGraph: FC<PoolChartProps> = ({
   chart,
   period,
-  address,
-  chainId,
+  pool,
+  protocol,
 }) => {
   const {
-    data: graphPair,
+    data: buckets,
     isInitialLoading: isLoading,
     isError,
   } = usePoolGraphData({
-    poolAddress: address,
-    chainId,
+    poolAddress: pool.address,
+    chainId: pool.chainId,
+    protocol,
   })
-
-  const swapFee = graphPair ? graphPair?.swapFee : 0
 
   const [xData, yData]: [number[], number[]] = useMemo(() => {
     const data =
       (chartPeriods[period] < chartPeriods[PoolChartPeriod.Week]
-        ? graphPair?.hourSnapshots
-        : graphPair?.daySnapshots) || []
+        ? buckets?.hourBuckets
+        : buckets?.dayBuckets) || []
 
     const currentDate = Math.round(Date.now())
     const [x, y] = data.reduce<[number[], number[]]>(
@@ -67,7 +68,7 @@ export const PoolChartGraph: FC<PoolChartProps> = ({
         if (cur?.date * 1000 >= currentDate - chartPeriods[period]) {
           acc[0].push(cur?.date)
           if (chart === PoolChartType.Fees) {
-            acc[1].push(Number(cur?.volumeUSD * Number(swapFee)))
+            acc[1].push(Number(cur?.feesUSD))
           } else if (chart === PoolChartType.Volume) {
             acc[1].push(Number(cur?.volumeUSD))
           } else if (chart === PoolChartType.TVL) {
@@ -80,14 +81,7 @@ export const PoolChartGraph: FC<PoolChartProps> = ({
     )
 
     return [x.reverse(), y.reverse()]
-  }, [
-    chart,
-    graphPair?.hourSnapshots,
-    graphPair?.daySnapshots,
-    period,
-    swapFee,
-  ])
-
+  }, [chart, period, buckets])
   // Transient update for performance
   const onMouseOver = useCallback(
     ({ name, value }: { name: number; value: number }) => {
@@ -100,7 +94,7 @@ export const PoolChartGraph: FC<PoolChartProps> = ({
 
       if (valueNodes[1]) {
         if (chart === PoolChartType.Volume) {
-          valueNodes[1].innerHTML = formatUSD(value * Number(swapFee))
+          valueNodes[1].innerHTML = formatUSD(value * Number(pool.swapFee))
         }
       }
 
@@ -115,7 +109,7 @@ export const PoolChartGraph: FC<PoolChartProps> = ({
         )
       }
     },
-    [period, chart, swapFee],
+    [period, chart, pool?.swapFee],
   )
 
   const DEFAULT_OPTION: EChartsOption = useMemo(
@@ -231,7 +225,7 @@ export const PoolChartGraph: FC<PoolChartProps> = ({
             <span className="text-sm font-medium text-gray-600 dark:text-slate-300">
               <span className="text-xs top-[-2px] relative">•</span>{' '}
               <span className="hoveredItemValue">
-                {formatUSD(defaultValue * Number(swapFee))}
+                {formatUSD(defaultValue * Number(pool?.swapFee))}
               </span>{' '}
               earned
             </span>

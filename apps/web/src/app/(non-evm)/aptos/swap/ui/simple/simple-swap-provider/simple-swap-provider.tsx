@@ -10,6 +10,7 @@ import {
   useMemo,
   useReducer,
 } from 'react'
+import { DEFAULT_SLIPPAGE } from 'sushi/config'
 import { getBaseTokensWithoutKey } from '~aptos/(common)/lib/common/use-base-tokens'
 import { useNetwork } from '~aptos/(common)/lib/common/use-network'
 import { Token } from '~aptos/(common)/lib/types/token'
@@ -89,9 +90,9 @@ export const SimpleSwapProvider: FC<SimpleSwapProvider> = ({ children }) => {
               parseFloat(
                 slippageTolerance
                   ? slippageTolerance === 'AUTO'
-                    ? '0.5'
+                    ? DEFAULT_SLIPPAGE
                     : slippageTolerance
-                  : '0.5',
+                  : DEFAULT_SLIPPAGE,
               )) /
               100,
         }

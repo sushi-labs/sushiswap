@@ -191,8 +191,7 @@ export class CurveWhitelistExtractor extends IExtractor {
 
   override async start() {
     const startTime = performance.now()
-    if (this.tokenManager.tokens.size === 0)
-      await this.tokenManager.addCachedTokens()
+    await this.tokenManager.addCachedTokens()
     await Promise.all(
       CurvePoolWhiteList.map((p) => {
         this.poolTypeMap.set(p.pool, p.poolType as CurvePoolType)
@@ -224,14 +223,20 @@ export class CurveWhitelistExtractor extends IExtractor {
     poolType: CurvePoolType,
   ) {
     try {
-      const tokens =
-        typeof tokenAddress[0] === 'string'
-          ? ((await Promise.all(
-              tokenAddress.map((a) =>
-                this.tokenManager.findToken(a as Address),
-              ),
-            )) as RToken[])
-          : (tokenAddress as RToken[])
+      let tokens: RToken[] = []
+      if (typeof tokenAddress[0] === 'string') {
+        tokens = (await Promise.all(
+          tokenAddress.map((a) => this.tokenManager.findToken(a as Address)),
+        )) as RToken[]
+      } else {
+        tokens = tokenAddress as RToken[]
+        tokens.forEach((t) =>
+          this.tokenManager.addToken(
+            new Token({ ...t, chainId: t.chainId as number }),
+            true,
+          ),
+        ) // make tokenManager know about these tokens
+      }
       const balancesCalls = tokenAddress.map((_, i) => ({
         address: poolAddress,
         abi: curvePoolABI[poolType],

@@ -31,6 +31,14 @@ module.exports.defaultConfig = {
   etherscan: {
     customChains: [
       {
+        network: 'mantle',
+        chainId: 5000,
+        urls: {
+          apiURL: 'https://explorer.mantle.xyz/api',
+          browserURL: 'https://explorer.mantle.xyz',
+        },
+      },
+      {
         network: 'kava',
         chainId: 2222,
         urls: {

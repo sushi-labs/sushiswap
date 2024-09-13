@@ -16,8 +16,6 @@ import { Currency } from '@sushiswap/ui'
 import { List } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import React, { useCallback, useMemo } from 'react'
-import { TokenSecurityView } from 'src/lib/wagmi/components/token-security-view'
-import { useTokenWithCache } from 'src/lib/wagmi/hooks/tokens/useTokenWithCache'
 import { Chain } from 'sushi/chain'
 import {
   defaultCurrency,
@@ -35,50 +33,26 @@ export const CrossChainSwapTokenNotFoundDialog = () => {
   } = useDerivedStateCrossChainSwap()
 
   const { mutate: customTokensMutate, hasToken } = useCustomTokens()
-  const { data: tokenFrom, isInitialLoading: tokenFromLoading } =
-    useTokenWithCache({
-      chainId: chainId0,
-      address: token0?.wrapped.address,
-      withStatus: true,
-    })
-
-  const { data: tokenTo, isInitialLoading: tokenToLoading } = useTokenWithCache(
-    {
-      chainId: chainId1,
-      address: token1?.wrapped.address,
-      withStatus: true,
-    },
-  )
 
   const token0NotInList = Boolean(
-    tokenFrom?.status !== 'APPROVED' &&
-      tokenFrom?.token &&
-      !hasToken(tokenFrom?.token),
+    token0?.approved === false && token0.isToken && !hasToken(token0),
   )
   const token1NotInList = Boolean(
-    tokenTo?.status !== 'APPROVED' &&
-      tokenTo?.token &&
-      !hasToken(tokenTo?.token),
+    token1?.approved === false && token1.isToken && !hasToken(token1),
   )
 
   const onImport = useCallback(
     ([token0, token1]: (Token | undefined)[]) => {
       const _tokens: Token[] = []
-      if (tokenFrom?.status !== 'APPROVED' && token0) _tokens.push(token0)
-      if (tokenTo?.status !== 'APPROVED' && token1) _tokens.push(token1)
+      if (token0?.approved === false && token0) _tokens.push(token0)
+      if (token1?.approved === false && token1) _tokens.push(token1)
 
       customTokensMutate('add', _tokens)
 
       if (token0) setToken0(token0)
       if (token1) setToken1(token1)
     },
-    [
-      customTokensMutate,
-      setToken0,
-      setToken1,
-      tokenFrom?.status,
-      tokenTo?.status,
-    ],
+    [customTokensMutate, setToken0, setToken1],
   )
 
   const reset = useCallback(() => {
@@ -94,23 +68,18 @@ export const CrossChainSwapTokenNotFoundDialog = () => {
   } = useTokenSecurity({
     currencies: useMemo(
       () => [
-        ...(token0NotInList && tokenFrom?.token ? [tokenFrom.token] : []),
-        ...(token1NotInList && tokenTo?.token ? [tokenTo.token] : []),
+        ...(token0NotInList && token0?.isToken ? [token0] : []),
+        ...(token1NotInList && token1?.isToken ? [token1] : []),
       ],
-      [token0NotInList, token1NotInList, tokenFrom, tokenTo],
+      [token0NotInList, token1NotInList, token0, token1],
     ),
-    enabled: Boolean(
-      !tokenFromLoading &&
-        !tokenToLoading &&
-        (token0NotInList || token1NotInList),
-    ),
+    enabled: Boolean(token0NotInList || token1NotInList),
   })
 
   const honeypot = Boolean(
-    (tokenFrom?.token &&
-      tokenSecurityResponse?.[tokenFrom?.token?.address]?.is_honeypot) ||
-      (tokenTo?.token &&
-        tokenSecurityResponse?.[tokenTo?.token?.address]?.is_honeypot),
+    (token0?.isToken &&
+      tokenSecurityResponse?.[token0?.address]?.is_honeypot) ||
+      (token1?.isToken && tokenSecurityResponse?.[token1.address]?.is_honeypot),
   )
 
   if (
@@ -121,11 +90,7 @@ export const CrossChainSwapTokenNotFoundDialog = () => {
 
   return (
     <Dialog
-      open={Boolean(
-        !tokenFromLoading &&
-          !tokenToLoading &&
-          (token0NotInList || token1NotInList),
-      )}
+      open={Boolean(token0NotInList || token1NotInList)}
       onOpenChange={(open) => !open && reset()}
     >
       <DialogContent className="!max-h-screen overflow-y-auto">
@@ -157,8 +122,8 @@ export const CrossChainSwapTokenNotFoundDialog = () => {
             </div>
             <span>
               Unknown token
-              {(token0NotInList || !tokenFrom?.token) &&
-              (token1NotInList || !tokenTo?.token)
+              {(token0NotInList || !token0?.isToken) &&
+              (token1NotInList || !token1?.isToken)
                 ? 's'
                 : ''}
             </span>
@@ -170,9 +135,9 @@ export const CrossChainSwapTokenNotFoundDialog = () => {
           </DialogDescription>
         </DialogHeader>
         <div className="flex flex-col gap-4">
-          {token0 && token0NotInList && !tokenFrom?.token && (
+          {token0 && token0NotInList && !token0?.isToken && (
             <List>
-              {token1NotInList || !tokenTo?.token ? (
+              {token1NotInList || !token1?.isToken ? (
                 <List.Label>Token 1</List.Label>
               ) : null}
               <List.Control>
@@ -193,9 +158,9 @@ export const CrossChainSwapTokenNotFoundDialog = () => {
               </List.Control>
             </List>
           )}
-          {token0NotInList && tokenFrom?.token && (
+          {token0NotInList && token0?.isToken && (
             <List>
-              {token1NotInList || !tokenTo?.token ? (
+              {token1NotInList || !token1?.isToken ? (
                 <List.Label>Token 1</List.Label>
               ) : null}
               <List.Control>
@@ -206,7 +171,7 @@ export const CrossChainSwapTokenNotFoundDialog = () => {
                     </span>
                   }
                 >
-                  {tokenFrom.token.name}
+                  {token0.name}
                 </List.KeyValue>
                 <List.KeyValue
                   title={
@@ -215,7 +180,7 @@ export const CrossChainSwapTokenNotFoundDialog = () => {
                     </span>
                   }
                 >
-                  {tokenFrom.token.symbol}
+                  {token0.symbol}
                 </List.KeyValue>
                 <List.KeyValue
                   title={
@@ -226,29 +191,19 @@ export const CrossChainSwapTokenNotFoundDialog = () => {
                 >
                   <a
                     target="_blank"
-                    href={Chain.from(chainId0)?.getTokenUrl(
-                      tokenFrom.token.address,
-                    )}
+                    href={Chain.from(chainId0)?.getTokenUrl(token0.address)}
                     className="text-blue"
                     rel="noreferrer"
                   >
-                    {shortenAddress(tokenFrom.token.address)}
+                    {shortenAddress(token0.address)}
                   </a>
                 </List.KeyValue>
               </List.Control>
             </List>
           )}
-          {token0NotInList &&
-          tokenFrom?.token &&
-          isTokenSecurityChainId(tokenFrom.token.chainId) ? (
-            <TokenSecurityView
-              tokenSecurityResponse={tokenSecurityResponse}
-              token={tokenFrom.token}
-            />
-          ) : null}
-          {token1 && token1NotInList && !tokenTo?.token && (
+          {token1 && token1NotInList && !token1.isToken && (
             <List>
-              {token0NotInList || !tokenFrom?.token ? (
+              {token0NotInList || !token0?.isToken ? (
                 <List.Label>Token 2</List.Label>
               ) : null}
               <List.Control>
@@ -269,9 +224,9 @@ export const CrossChainSwapTokenNotFoundDialog = () => {
               </List.Control>
             </List>
           )}
-          {token1NotInList && tokenTo?.token && (
+          {token1NotInList && token1?.isToken && (
             <List>
-              {token0NotInList || !tokenFrom?.token ? (
+              {token0NotInList || !token0?.isToken ? (
                 <List.Label>Token 2</List.Label>
               ) : null}
               <List.Control>
@@ -282,7 +237,7 @@ export const CrossChainSwapTokenNotFoundDialog = () => {
                     </span>
                   }
                 >
-                  {tokenTo.token.name}
+                  {token1.name}
                 </List.KeyValue>
                 <List.KeyValue
                   title={
@@ -291,7 +246,7 @@ export const CrossChainSwapTokenNotFoundDialog = () => {
                     </span>
                   }
                 >
-                  {tokenTo.token.symbol}
+                  {token1.symbol}
                 </List.KeyValue>
                 <List.KeyValue
                   title={
@@ -302,35 +257,30 @@ export const CrossChainSwapTokenNotFoundDialog = () => {
                 >
                   <a
                     target="_blank"
-                    href={Chain.from(chainId1)?.getTokenUrl(
-                      tokenTo.token.address,
-                    )}
+                    href={Chain.from(chainId1)?.getTokenUrl(token1.address)}
                     className="text-blue"
                     rel="noreferrer"
                   >
-                    {shortenAddress(tokenTo.token.address)}
+                    {shortenAddress(token1.address)}
                   </a>
                 </List.KeyValue>
               </List.Control>
             </List>
           )}
-          {token1NotInList &&
-          tokenTo?.token &&
-          isTokenSecurityChainId(tokenTo.token.chainId) ? (
-            <TokenSecurityView
-              tokenSecurityResponse={tokenSecurityResponse}
-              token={tokenTo.token}
-            />
-          ) : null}
         </div>
         <DialogFooter>
           {!honeypot &&
-          ((token0NotInList && tokenFrom?.token) ||
-            (token1NotInList && tokenTo?.token)) ? (
+          ((token0NotInList && token0?.isToken) ||
+            (token1NotInList && token1?.isToken)) ? (
             <Button
               fullWidth
               size="xl"
-              onClick={() => onImport([tokenFrom?.token, tokenTo?.token])}
+              onClick={() =>
+                onImport([
+                  token0?.isToken ? token0 : undefined,
+                  token1?.isToken ? token1 : undefined,
+                ])
+              }
             >
               I understand
             </Button>
@@ -340,7 +290,7 @@ export const CrossChainSwapTokenNotFoundDialog = () => {
                 Close
               </Button>
               <Message variant="destructive" size="sm">
-                Sushi does not support honetpot tokens. This token contract
+                Sushi does not support honeypot tokens. This token contract
                 cannot be imported!
               </Message>
             </div>

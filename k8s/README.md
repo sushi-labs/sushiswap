@@ -1,10 +1,18 @@
 # Kubernetes
 
-### Install Cloud Code
+## Install Docker Desktop
+
+https://www.docker.com/products/docker-desktop/
+
+## Install and turn on Kubernetes
+
+https://docs.docker.com/desktop/kubernetes/#install-and-turn-on-kubernetes
+
+## Install Cloud Code
 
 https://cloud.google.com/code/docs/vscode/install
 
-### Install Helm
+## Install Helm
 
 ```bash
 curl https://baltocdn.com/helm/signing.asc | gpg --dearmor | sudo tee /usr/share/keyrings/helm.gpg > /dev/null
@@ -16,15 +24,18 @@ sudo apt-get install helm
 
 ## LOCAL
 
-### Start Minikube
+In Cloud Code extension, click on the Kubernetes icon on the left sidebar and click on the plus icon to add a new cluster. Select Docker Desktop and click on the add button.
+
+
+<!-- ### Start Minikube
 
 Until fixed, use the following command to start minikube
 
 ```bash
 minikube start --base-image gcr.io/k8s-minikube/kicbase:v0.0.40
-```
+``` -->
 
-## Google Cloud
+## Google Cloud Staging & Production
 
 ### Set Project
 
@@ -93,14 +104,24 @@ kubectl scale --replicas=0 deployment --all && kubectl scale --replicas=0 statef
 ### Shell
 
 ```bash
-kubectl exec --stdin --tty extractor-56-0 -- /bin/bash
+kubectl exec --stdin --tty deployments/extractor-56 -- /bin/bash
 ```
 
 ### Copy
 
+Remote to local:
+
 ```bash
-kubectl cp -n default extractor-56-0:/app/cache ./cache
+kubectl cp -n default deployments/extractor-56:/app/cache ./cache/56
 ```
+Local to remote:
+
+copies the cache folder to the extractor-56-0 app folder, replacing current cache folder (careful...)
+
+```bash
+kubectl cp  -n default ./cache/56 deployments/extractor-56:/app/cache
+```
+
 
 ### Port Forward
 
@@ -109,10 +130,24 @@ https://kubernetes.io/docs/tasks/access-application-cluster/port-forward-access-
 Example for downloading binary pool codes from the internal extractor API on base:
 
 ```bash
-kubectl port-forward statefulset/extractor-8453 3000:80
+kubectl port-forward deployments/extractor-56 3000:80
 ```
 
 http://localhost:3000/pool-codes-bin/8453
+
+### Debug
+
+kubectl run -it --rm --restart=Never curl --image=curlimages/curl:latest sh
+
+### Cache Inspector
+
+kubectl apply -f k8s/cache-inspector.yaml
+
+kubectl exec -it cache-inspector -- sh
+
+ls /cache
+
+kubectl delete pod cache-inspector
 
 ### Restart Router
 
@@ -121,3 +156,13 @@ kubectl rollout restart deployment/router-1
 ### Restart Extractor
 
 kubectl rollout restart statefulset/extractor-1
+
+### Restart EVERYTHING
+
+kubectl rollout restart deployment -n default
+
+### Setting up service account for extractor
+
+kubectl create serviceaccount extractor --namespace default
+
+gcloud storage buckets add-iam-policy-binding gs://extractor-cache --member "principal://iam.googleapis.com/projects/104609065325/locations/global/workloadIdentityPools/sushi-api-414412.svc.id.goog/subject/ns/default/sa/extractor" --role "roles/storage.admin"

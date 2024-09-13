@@ -1,5 +1,5 @@
 import { ChainId } from '../../../chain/index.js'
-import type { SushiSwapV3ChainId } from '../../sushiswap-v3.js'
+import type { SushiSwapV3ChainId } from '../../features/sushiswap-v3.js'
 import {
   CORE_HOST,
   DECENTRALIZED_HOST_BY_DEPLOYMENT_ID,
@@ -13,7 +13,7 @@ import {
 } from '../hosts.js'
 
 export const SUSHISWAP_V3_SUBGRAPH_URL: Record<SushiSwapV3ChainId, string> = {
-  [ChainId.ARBITRUM]: `${DECENTRALIZED_HOST_BY_DEPLOYMENT_ID}/QmevuQAmgiou1UX7Z2BQf6RKdX1WunQjH8VtawhkzSLj4V`,
+  [ChainId.ARBITRUM]: `${DECENTRALIZED_HOST_BY_DEPLOYMENT_ID}/QmS9GKBA49mDpWchU2Us1PJ7kmu4S7tWa4gAmRvE3HK42w`,
   [ChainId.AVALANCHE]: `${DECENTRALIZED_HOST_BY_DEPLOYMENT_ID}/Qmcdd4SGVwG9VY4itrXBnBPWBVsQvsxfzaib9bVny9C8jT`,
   [ChainId.BSC]: `${DECENTRALIZED_HOST_BY_DEPLOYMENT_ID}/QmXsPN4TD4PUhT1ZWd5d1mdQPePFNMdJwUr6guSh1z9ZzA`,
   [ChainId.BOBA]: `${DECENTRALIZED_HOST_BY_DEPLOYMENT_ID}/QmVbYM6wz7XnH32QzQLNBwyzx7r1HNsFP6jfUi22NRvvJu`,
