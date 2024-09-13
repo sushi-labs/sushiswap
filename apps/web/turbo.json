@@ -17,8 +17,12 @@
       "env": [
         "NEXT_PUBLIC_APP_ENV",
         "NEXT_PUBLIC_API_BASE_URL",
+        "NEXT_PUBLIC_SENTRY_DNS",
         "NEXT_PUBLIC_SUSHI_DATA_API_HOST",
-        "EDGE_CONFIG"
+        "EDGE_CONFIG",
+        "SENTRY_AUTH_TOKEN",
+        "SENTRY_PROJECT",
+        "SENTRY_ORG"
       ]
     },
     "check": {
