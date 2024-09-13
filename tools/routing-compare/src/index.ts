@@ -67,6 +67,10 @@ export async function getTestTokens(
   const prices = (await pricesResp.json()) as Record<string, number>
   const pricedTokens = tokens
     .map((t) => [t, prices[tokAddrForPrice(t)]])
+    // .filter(
+    //   ([tok]) =>
+    //     (tok as Token).address !== MIM[chainId as keyof typeof MIM].address,
+    // )
     .filter(([_, price]) => price !== undefined) as [Token, number][]
   return pricedTokens
 }
@@ -124,6 +128,7 @@ export async function checkRoute(chainId: ChainId) {
       .map((t) => t[0].symbol)
       .join(', ')}`,
   )
+  const results: Record<string, number | undefined>[] = []
   for (let l = 0; l < CHECK_LEVELS_$.length; ++l) {
     const level = CHECK_LEVELS_$[l] as number
     const pairsNum = tokens.length * (tokens.length - 1)
@@ -131,7 +136,7 @@ export async function checkRoute(chainId: ChainId) {
     const step = pairsNum / pairsToCheckNum
     let currentPairNum = 0
     let nextCheckPairNum = 0
-    const results: Record<string, number | undefined>[] = []
+    const resultsLevel: Record<string, number | undefined>[] = []
     for (let i = 0; i < tokens.length; ++i) {
       for (let j = 0; j < tokens.length; ++j) {
         if (j === i) continue
@@ -142,18 +147,25 @@ export async function checkRoute(chainId: ChainId) {
           const amountIn = getTokenAmountWei(tok0, price0, level)
           const res = await route(chainId, tok0, tok1, amountIn, gasPrice)
           results.push(res)
-          console.log(tok0.symbol, tok0.decimals, amountIn, tok1.symbol, res)
+          resultsLevel.push(res)
+          //console.log(tok0.symbol, tok0.decimals, amountIn, tok1.symbol, res)
         }
         currentPairNum++
       }
     }
-    const { score, pairs } = analyzeResults(results)
+    const { score, pairs } = analyzeResults(resultsLevel)
     console.log(
       `Swap ${level}$ (${pairs} pairs): ${Array.from(score.entries())
         .map((e) => `${e[0]}=${e[1]}`)
         .join(', ')}`,
     )
   }
+  const { score, pairs } = analyzeResults(results)
+  console.log(
+    `Total: (${pairs} pairs): ${Array.from(score.entries())
+      .map((e) => `${e[0]}=${e[1]}`)
+      .join(', ')}`,
+  )
 }
 
 export async function compareRouteAllNetworks() {

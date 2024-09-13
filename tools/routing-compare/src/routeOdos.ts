@@ -54,7 +54,7 @@ async function OdosGetQuote(
     body: JSON.stringify(params),
   })
   if (resp.status !== 200) {
-    console.log(resp.status, await resp.text())
+    //console.log(resp.status, await resp.text())
     return
   }
   const quote = (await resp.json()) as OdosQoute
@@ -105,7 +105,7 @@ export async function OdosRouteSimulate(
     }),
   })
   if (resp.status !== 200) {
-    console.log(resp.status, await resp.text())
+    //console.log(resp.status, await resp.text())
     return
   }
   const res = (await resp.json()) as {
@@ -125,9 +125,9 @@ export async function OdosRouteSimulate(
     res.transaction?.to,
     res.transaction?.data,
   )
-  if (typeof simulationRes === 'string')
-    console.log('Odos simulation error:', simulationRes)
-  else
+  if (typeof simulationRes === 'string') {
+    //console.log('Odos simulation error:', simulationRes)
+  } else
     return {
       quote:
         quote.outAmounts[0] === undefined

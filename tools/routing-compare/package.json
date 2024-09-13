@@ -8,8 +8,8 @@
   "scripts": {
     "build": "tsc",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
-    "compare": "tsc && node dist/compareRouteAllNetworks.js",
-    "compare-debug": "tsc && node --inspect-brk dist/compareRouteAllNetworks.js",
+    "compare": "tsc && node dist/compareRouting.js",
+    "compare-debug": "tsc && node --inspect-brk dist/compareRouting.js",
     "testRealOutput": "tsc && node dist/testRealOutput.js",
     "testRealOutput-debug": "tsc && node --inspect-brk dist/testRealOutput.js"
   },

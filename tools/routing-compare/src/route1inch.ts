@@ -144,7 +144,7 @@ export async function OneInchAPIRouteSimulate(
       continue
     }
     if (resp.status !== 200) {
-      console.log(resp.status, await resp.text(), url)
+      //console.log(resp.status, await resp.text(), url)
       return
     }
     const route = (await resp.json()) as {
