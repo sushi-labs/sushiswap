@@ -122,6 +122,26 @@ function extractorClientConfig(chainId: ChainId): PublicClientConfig {
 
 // ! TODO: Fix casts when viem is updated
 export const EXTRACTOR_CONFIG = {
+  [ChainId.CURTIS]: {
+    client: createPublicClient(extractorClientConfig(ChainId.CURTIS)),
+    factoriesV2: [
+      {
+        address: '0x424703f978bfaa96F8Aad4f3C9B2C91B8bd513CB',
+        provider: LiquidityProviders.Saru,
+        fee: 0.003,
+        initCodeHash:
+          '0xe18a34eb0e04b04f7a0ac29a6e80748dca96319b42c54d679cb821dca90c6303',
+      },
+    ],
+    factoriesV3: [],
+    tickHelperContractV3:
+      '0x0000000000000000000000000000000000000000' as Address,
+    tickHelperContractAlgebra:
+      '0x0000000000000000000000000000000000000000' as Address,
+    cacheDir: './cache',
+    logDepth: 50,
+    logging: true,
+  },
   [ChainId.ARBITRUM]: {
     client: createPublicClient(extractorClientConfig(ChainId.ARBITRUM)),
     factoriesV2: [

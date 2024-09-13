@@ -1,1 +1,4 @@
 pruning: false
+chains:
+  - name: "curtis"
+    id: "33111"

@@ -76,6 +76,7 @@ export enum LiquidityProviders {
   BSCSwap = 'BSCSwap',
   MMFinance = 'MMFinance',
   EddyFinance = 'EddyFinance',
+  Saru = 'Saru',
 }
 
 export abstract class LiquidityProvider {
