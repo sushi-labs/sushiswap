@@ -176,6 +176,95 @@ export async function compareRouteAllNetworks() {
   }
 }
 
+interface SwapInfo {
+  token0: Token
+  token1: Token
+  amountIn: bigint
+  amountsOut: Record<string, number | undefined>
+}
+function worstSwap(
+  label: string,
+  swap1: SwapInfo | undefined,
+  swap2: SwapInfo | undefined,
+): SwapInfo | undefined {
+  if (swap1 === undefined) return swap2
+  if (swap2 === undefined) return swap1
+  const out1 = swap1.amountsOut[label]
+  const out2 = swap2.amountsOut[label]
+  if (out1 === undefined) return swap2
+  if (out2 === undefined) return swap1
+  return out1 < out2 ? swap1 : swap2
+}
+function swapInfoToString(swap: SwapInfo | undefined): string {
+  if (!swap) return 'undefined'
+  return (
+    `${swap.token0.symbol}(${swap?.token0.address}) => ${swap.token1.symbol}(${swap?.token1.address}) ` +
+    `${swap.amountIn} ${JSON.stringify(swap.amountsOut)}`
+  )
+}
+
+export async function findWorstSushiRoute(chainId: ChainId) {
+  const [gasPrice, tokens] = await Promise.all([
+    getGasPrice(chainId),
+    getTestTokens(chainId),
+  ])
+  console.log(
+    `${ChainKey[chainId]} gasPrice=${gasPrice} tokens: ${tokens
+      .map((t) => t[0].symbol)
+      .join(', ')}`,
+  )
+  const results: Record<string, number | undefined>[] = []
+  let worseRoute: SwapInfo | undefined = undefined
+  for (let l = 0; l < CHECK_LEVELS_$.length; ++l) {
+    const level = CHECK_LEVELS_$[l] as number
+    const pairsNum = tokens.length * (tokens.length - 1)
+    const pairsToCheckNum = pairsNum //Math.min(pairsNum, MAX_PAIRS_FOR_CHECK)
+    const step = pairsNum / pairsToCheckNum
+    let currentPairNum = 0
+    let nextCheckPairNum = 0
+    const resultsLevel: Record<string, number | undefined>[] = []
+    let worseRouteLevel: SwapInfo | undefined = undefined
+    for (let i = 0; i < tokens.length; ++i) {
+      for (let j = 0; j < tokens.length; ++j) {
+        if (j === i) continue
+        if (currentPairNum === Math.round(nextCheckPairNum)) {
+          nextCheckPairNum += step
+          const [tok0, price0] = tokens[i] as [Token, number]
+          const [tok1, _price1] = tokens[j] as [Token, number]
+          const amountIn = getTokenAmountWei(tok0, price0, level)
+          const res = await route(chainId, tok0, tok1, amountIn, gasPrice)
+          results.push(res)
+          resultsLevel.push(res)
+          console.log(
+            `${currentPairNum + 1}/${pairsToCheckNum}`,
+            tok0.symbol,
+            amountIn,
+            tok1.symbol,
+            res,
+          )
+          worseRouteLevel = worstSwap('sushi', worseRouteLevel, {
+            token0: tok0,
+            token1: tok1,
+            amountIn,
+            amountsOut: res,
+          })
+          worseRoute = worstSwap('sushi', worseRoute, {
+            token0: tok0,
+            token1: tok1,
+            amountIn,
+            amountsOut: res,
+          })
+        }
+        currentPairNum++
+      }
+    }
+    console.log(
+      `The worst ${level}$ swap: ${swapInfoToString(worseRouteLevel)}`,
+    )
+  }
+  console.log(`The worst swap total: ${swapInfoToString(worseRoute)}`)
+}
+
 // tests correspondence between quote and real output
 // only for routes from native to all other base tokens (1inch can be tested only so)
 export async function testAPIRealOutputFromNative(

@@ -75,26 +75,30 @@ async function OneInchAPIRoute(
     `src=${from.address}&dst=${to.address}&amount=${amountIn}` +
     `&gasPrice=${gasPrice}&preset=maxReturnResult&isTableEnabled=true`
 
-  for (let n = 0; n < 10; ++n) {
-    const resp = await fetch(url, {
-      headers: {
-        authorization: `Bearer ${apiKey}`,
-      },
-    })
-    if (resp.status === 429) {
-      // The limit of requests per second has been exceeded
-      delay(300)
-      continue
+  try {
+    for (let n = 0; n < 10; ++n) {
+      const resp = await fetch(url, {
+        headers: {
+          authorization: `Bearer ${apiKey}`,
+        },
+      })
+      if (resp.status === 429) {
+        // The limit of requests per second has been exceeded
+        delay(300)
+        continue
+      }
+      if (resp.status !== 200) {
+        //console.log(resp.status, apiKey, await resp.text())
+        return
+      }
+      const route = (await resp.json()) as {
+        dstAmount: number
+      }
+      if (route?.dstAmount === undefined) return
+      return BigInt(route?.dstAmount)
     }
-    if (resp.status !== 200) {
-      //console.log(resp.status, apiKey, await resp.text())
-      return
-    }
-    const route = (await resp.json()) as {
-      dstAmount: number
-    }
-    if (route?.dstAmount === undefined) return
-    return BigInt(route?.dstAmount)
+  } catch (_e) {
+    return undefined
   }
 
   return undefined
