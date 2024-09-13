@@ -11,13 +11,16 @@ export default async function globalSetup(_config: FullConfig) {
   const forkUrl = String(process.env.ANVIL_FORK_URL)
   const forkBlockNumber = Number(process.env.ANVIL_BLOCK_NUMBER)
 
-  // return await createServer({
+  // const server = createServer({
   //   instance: anvil({
   //     forkUrl,
-  //     forkBlockNumber
+  //     forkBlockNumber,
   //   }),
-  //   port,
-  // }).start()
+  //   // port,
+  // })
+
+  // await server.start()
+  // process.on('SIGTERM', server.stop)
 
   const shutdown = await startProxy({
     options: {

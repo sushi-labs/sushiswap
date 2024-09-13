@@ -24,7 +24,7 @@ const config: PlaywrightTestConfig = {
   // quiet: !!process.env.CI,
   quiet: true,
   testMatch: [
-    // 'pool.test.ts',
+    'pool.test.ts',
     'simple.test.ts',
     // 'smart.test.ts',
     // 'cross-chain.test.ts',
