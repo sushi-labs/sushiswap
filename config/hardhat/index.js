@@ -225,6 +225,47 @@ module.exports.defaultConfig = {
           browserURL: 'https://elated-tan-skat.explorer.mainnet.skalenodes.com',
         },
       },
+      {
+        network: 'mantle',
+        chainId: 5000,
+        urls: {
+          apiURL: 'https://explorer.mantle.xyz/api',
+          browserURL: 'https://explorer.mantle.xyz',
+        },
+      },
+      {
+        network: 'manta-pacific',
+        chainId: 169,
+        urls: {
+          apiURL: 'https://pacific-explorer.manta.network/api',
+          browserURL: 'https://pacific-explorer.manta.network',
+        },
+      },
+      {
+        network: 'mode',
+        chainId: 34443,
+        urls: {
+          apiURL:
+            'https://api.routescan.io/v2/network/mainnet/evm/34443/etherscan',
+          browserURL: 'https://modescan.io',
+        },
+      },
+      {
+        network: 'taiko',
+        chainId: 167000,
+        urls: {
+          apiURL: 'https://api.taikoscan.io/api',
+          browserURL: 'https://taikoscan.io',
+        },
+      },
+      {
+        network: 'zklink-nova',
+        chainId: 810180,
+        urls: {
+          apiURL: 'https://explorer.zklink.io/contract_verification',
+          browserURL: 'https://explorer.zklink.io',
+        },
+      },
     ],
     apiKey: {
       mainnet: process.env.ETHERSCAN_API_KEY || '',
@@ -286,6 +327,10 @@ module.exports.defaultConfig = {
       rootstock: 'api-key',
       'skale-europa': 'api-key',
       mantle: 'api-key',
+      'manta-pacific': 'api-key',
+      mode: 'api-key',
+      taiko: process.env.TAIKO_API_KEY || '',
+      'zklink-nova': 'api-key',
     },
   },
   tenderly: {
@@ -301,7 +346,7 @@ module.exports.defaultConfig = {
     // externalArtifacts?: string[];
   },
   zksolc: {
-    version: '1.3.1',
+    version: '1.5.2',
     compilerSource: 'binary',
     settings: {},
   },
@@ -742,6 +787,35 @@ module.exports.defaultConfig = {
       chainId: 5000,
       live: true,
       saveDeployments: true,
+    },
+    'manta-pacific': {
+      url: 'https://manta-pacific.drpc.org',
+      accounts,
+      chainId: 169,
+      live: true,
+      saveDeployments: true,
+    },
+    mode: {
+      url: 'https://mode.drpc.org',
+      accounts,
+      chainId: 34443,
+      live: true,
+      saveDeployments: true,
+    },
+    taiko: {
+      url: 'https://rpc.taiko.tools',
+      accounts,
+      chainId: 167000,
+      live: true,
+      saveDeployments: true,
+    },
+    'zklink-nova': {
+      url: 'https://rpc.zklink.io',
+      accounts,
+      chainId: 810180,
+      live: true,
+      saveDeployments: true,
+      zksync: true,
     },
   },
   namedAccounts: {
