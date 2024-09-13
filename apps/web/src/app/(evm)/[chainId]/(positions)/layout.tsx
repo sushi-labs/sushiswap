@@ -4,7 +4,9 @@ import { Container, LinkInternal } from '@sushiswap/ui'
 import { useSearchParams } from 'next/navigation'
 import { PathnameButton } from 'src/ui/pathname-button'
 import { PoolsFiltersProvider } from 'src/ui/pool'
+import { SidebarContainer, SidebarProvider } from 'src/ui/sidebar'
 import { ChainId, ChainKey, isChainId } from 'sushi/chain'
+import { Header } from '../header'
 import { Hero } from './hero'
 
 export default function TabsLayout({
@@ -22,62 +24,71 @@ export default function TabsLayout({
   }
 
   return (
-    <>
-      <Container maxWidth="7xl" className="px-4 py-16">
-        <Hero chainId={chainId} />
-      </Container>
-      <Container
-        maxWidth="7xl"
-        className="px-4 flex justify-between flex-wrap-reverse gap-4 pb-4"
-      >
-        <div className="flex flex-wrap items-center gap-2">
-          <LinkInternal
-            shallow={true}
-            scroll={false}
-            href={`/${ChainKey[chainId]}/pool?${searchParams.toString()}`}
+    <SidebarProvider defaultOpen>
+      <Header />
+      <SidebarContainer shiftContent>
+        <main className="flex flex-col h-full flex-1">
+          <Container maxWidth="7xl" className="px-4 py-16">
+            <Hero chainId={chainId} />
+          </Container>
+          <Container
+            maxWidth="7xl"
+            className="px-4 flex justify-between flex-wrap-reverse gap-4 pb-4"
           >
-            <PathnameButton
-              id="my-positions"
-              pathname={`/${ChainKey[chainId]}/pool`}
-              asChild
-              size="sm"
-            >
-              My Positions
-            </PathnameButton>
-          </LinkInternal>
-          <LinkInternal
-            shallow={true}
-            scroll={false}
-            href={`/${ChainKey[chainId]}/rewards?${searchParams.toString()}`}
-          >
-            <PathnameButton
-              id="my-rewards"
-              pathname={`/${ChainKey[chainId]}/rewards`}
-              asChild
-              size="sm"
-            >
-              My Rewards
-            </PathnameButton>
-          </LinkInternal>
-          <LinkInternal
-            shallow={true}
-            scroll={false}
-            href={`/${ChainKey[chainId]}/migrate?${searchParams.toString()}`}
-          >
-            <PathnameButton
-              id="migrate"
-              pathname={`/${ChainKey[chainId]}/migrate`}
-              asChild
-              size="sm"
-            >
-              Migrate
-            </PathnameButton>
-          </LinkInternal>
-        </div>
-      </Container>
-      <section className="flex flex-col flex-1 h-full pb-10">
-        <PoolsFiltersProvider>{children}</PoolsFiltersProvider>
-      </section>
-    </>
+            <div className="flex flex-wrap items-center gap-2">
+              <LinkInternal
+                shallow={true}
+                scroll={false}
+                href={`/${ChainKey[chainId]}/pool?${searchParams.toString()}`}
+              >
+                <PathnameButton
+                  id="my-positions"
+                  pathname={`/${ChainKey[chainId]}/pool`}
+                  asChild
+                  size="sm"
+                >
+                  My Positions
+                </PathnameButton>
+              </LinkInternal>
+              <LinkInternal
+                shallow={true}
+                scroll={false}
+                href={`/${
+                  ChainKey[chainId]
+                }/rewards?${searchParams.toString()}`}
+              >
+                <PathnameButton
+                  id="my-rewards"
+                  pathname={`/${ChainKey[chainId]}/rewards`}
+                  asChild
+                  size="sm"
+                >
+                  My Rewards
+                </PathnameButton>
+              </LinkInternal>
+              <LinkInternal
+                shallow={true}
+                scroll={false}
+                href={`/${
+                  ChainKey[chainId]
+                }/migrate?${searchParams.toString()}`}
+              >
+                <PathnameButton
+                  id="migrate"
+                  pathname={`/${ChainKey[chainId]}/migrate`}
+                  asChild
+                  size="sm"
+                >
+                  Migrate
+                </PathnameButton>
+              </LinkInternal>
+            </div>
+          </Container>
+          <section className="flex flex-col flex-1 h-full pb-10">
+            <PoolsFiltersProvider>{children}</PoolsFiltersProvider>
+          </section>
+        </main>
+      </SidebarContainer>
+    </SidebarProvider>
   )
 }

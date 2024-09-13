@@ -9,7 +9,7 @@ export const metadata = {
 export default function SwapSimplePage() {
   return (
     <Providers>
-      <Container maxWidth="lg" className="px-4">
+      <Container maxWidth="lg" className="px-4 relative">
         <SimpleSwapWidget />
       </Container>
     </Providers>

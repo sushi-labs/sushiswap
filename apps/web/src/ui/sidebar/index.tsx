@@ -133,7 +133,7 @@ const Sidebar: FC<SidebarProps> = ({ nonEVMNetwork }) => {
   )
 
   return !isOpen ? null : (
-    <nav className="hidden lg:block bg-gray-100 dark:bg-slate-900 w-56 h-full border-r border-gray-200 dark:border-slate-800">
+    <nav className="hidden lg:block z-10 bg-gray-100 dark:bg-slate-900 w-56 h-full border-r border-gray-200 dark:border-slate-800">
       <div className="h-full flex flex-col pt-3">
         <Command>
           <div className="px-1">
@@ -156,33 +156,29 @@ const Sidebar: FC<SidebarProps> = ({ nonEVMNetwork }) => {
                       NETWORK_CIRCLE_ICON[+network as ChainId]!,
                     ]
               return (
-                <div
+                <CommandItem
                   key={network}
-                  className="hover:bg-muted hover:text-accent-foreground rounded-lg"
+                  className="cursor-pointer aria-selected:!bg-[unset] aria-selected:!text-[unset] !p-0"
+                  testdata-id={`network-selector-${network}`}
+                  value={`${name}__${network}`}
+                  onSelect={onSelect}
                 >
-                  <CommandItem
-                    className="cursor-pointer aria-selected:!bg-[unset] aria-selected:!text-[unset]"
-                    testdata-id={`network-selector-${network}`}
-                    value={`${name}__${network}`}
-                    onSelect={onSelect}
-                  >
-                    <div className="flex items-center gap-2">
-                      <Badge
-                        position="bottom-right"
-                        badgeContent={
-                          connectedNetwork === network ? (
-                            <div className="bg-green rounded-full w-2 h-2 mr-0.5 mb-0.5" />
-                          ) : (
-                            <div />
-                          )
-                        }
-                      >
-                        <span>{icon({ width: 22, height: 22 })}</span>
-                      </Badge>
-                      {name}
-                    </div>
-                  </CommandItem>
-                </div>
+                  <div className="flex items-center gap-2 hover:bg-muted hover:text-accent-foreground p-2 w-full rounded-lg">
+                    <Badge
+                      position="bottom-right"
+                      badgeContent={
+                        connectedNetwork === network ? (
+                          <div className="bg-green rounded-full w-2 h-2 mr-0.5 mb-0.5" />
+                        ) : (
+                          <div />
+                        )
+                      }
+                    >
+                      <span>{icon({ width: 22, height: 22 })}</span>
+                    </Badge>
+                    {name}
+                  </div>
+                </CommandItem>
               )
             })}
           </CommandGroup>
