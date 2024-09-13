@@ -6,6 +6,7 @@ import {
   IReserveDataResponse,
 } from '~tron/_common/types/get-pools-type'
 import { useTronWeb } from './useTronWeb'
+import ms from 'ms'
 
 type _IPools = {
   token0Address: string
@@ -110,7 +111,6 @@ export const usePools = () => {
   const { tronWeb } = useTronWeb()
   return useQuery({
     queryKey: ['usePools'],
-    staleTime: Infinity, //TODO: remove after testing
     queryFn: async () => {
       if (!tronWeb) return []
       const pools = await getPoolsByEvent({ factoryAddress: FACTORY_CONTRACT })
@@ -123,6 +123,7 @@ export const usePools = () => {
     refetchOnMount: false,
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,
+    staleTime: ms('15 minutes'),
   })
 }
 

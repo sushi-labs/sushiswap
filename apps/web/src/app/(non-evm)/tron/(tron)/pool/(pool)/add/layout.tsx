@@ -1,6 +1,7 @@
 import { Container, typographyVariants } from '@sushiswap/ui'
 import { Metadata } from 'next'
-import { BackButton } from '~tron/_common/ui/Pools/BackButton'
+import { BackButton } from 'src/ui/pool/BackButton'
+import { PoolProvider } from '~tron/(tron)/explore/pools/pool-provider'
 
 export const metadata: Metadata = {
   title: 'Pool 💦',
@@ -32,7 +33,7 @@ export default function CreatePositionLayout({
       <section className="flex flex-col flex-1">
         <div className="bg-gray-50 dark:bg-white/[0.02] border-t border-accent pt-4 pb-20 h-full">
           <Container maxWidth="5xl" className="px-4">
-            {children}
+            <PoolProvider>{children}</PoolProvider>
           </Container>
         </div>
       </section>

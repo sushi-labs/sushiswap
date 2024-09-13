@@ -6,8 +6,8 @@ import {
 import { useQueryClient } from '@tanstack/react-query'
 import { useWallet } from '@tronweb3/tronwallet-adapter-react-hooks'
 import { useMemo } from 'react'
+import { useSwapDispatch, useSwapState } from '~tron/(trade)/swap/swap-provider'
 import { WTRX } from '~tron/_common/constants/token-list'
-import { useSwapDispatch, useSwapState } from '~tron/swap/swap-provider'
 
 import { Button, Dots } from '@sushiswap/ui'
 import { useTronWeb } from '~tron/_common/lib/hooks/useTronWeb'

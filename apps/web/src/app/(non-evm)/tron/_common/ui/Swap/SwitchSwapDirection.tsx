@@ -1,6 +1,6 @@
 import { ArrowsUpDownIcon } from '@heroicons/react/24/outline'
 import React from 'react'
-import { useSwapDispatch } from '~tron/swap/swap-provider'
+import { useSwapDispatch } from '~tron/(trade)/swap/swap-provider'
 
 export const SwitchSwapDirection = () => {
   const { swapTokens } = useSwapDispatch()

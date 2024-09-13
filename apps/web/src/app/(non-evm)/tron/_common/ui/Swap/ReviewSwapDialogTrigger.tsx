@@ -1,6 +1,7 @@
 import { Button, Checkbox, DialogTrigger } from '@sushiswap/ui'
 import { useWallet } from '@tronweb3/tronwallet-adapter-react-hooks'
 import { useEffect, useMemo, useState } from 'react'
+import { useSwapDispatch, useSwapState } from '~tron/(trade)/swap/swap-provider'
 import { ROUTER_CONTRACT } from '~tron/_common/constants/contracts'
 import { useAllowance } from '~tron/_common/lib/hooks/useAllowance'
 import { usePriceImpact } from '~tron/_common/lib/hooks/usePriceImpact'
@@ -10,7 +11,6 @@ import { useTokenBalance } from '~tron/_common/lib/hooks/useTokenBalance'
 import { formatUnitsForInput } from '~tron/_common/lib/utils/formatters'
 import { getIfWrapOrUnwrap } from '~tron/_common/lib/utils/helpers'
 import { warningSeverity } from '~tron/_common/lib/utils/warning-severity'
-import { useSwapDispatch, useSwapState } from '~tron/swap/swap-provider'
 import { ApproveToken } from '../Shared/ApproveToken'
 
 export const ReviewSwapDialogTrigger = () => {

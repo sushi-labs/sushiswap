@@ -1,4 +1,4 @@
-import { useSwapDispatch, useSwapState } from '~tron/swap/swap-provider'
+import { useSwapDispatch, useSwapState } from '~tron/(trade)/swap/swap-provider'
 import { TokenInput } from '../Input/TokenInput'
 
 export const AmountOut = () => {

@@ -1,14 +1,14 @@
 import { useEffect, useMemo } from 'react'
 import {
+  usePoolDispatch,
+  usePoolState,
+} from '~tron/(tron)/explore/pools/pool-provider'
+import {
   formatUnitsForInput,
   parseUnits,
 } from '~tron/_common/lib/utils/formatters'
 import { getToken1AmountForLiquidity } from '~tron/_common/lib/utils/helpers'
 import { TokenInput } from '~tron/_common/ui/Input/TokenInput'
-import {
-  usePoolDispatch,
-  usePoolState,
-} from '~tron/explore/pools/pool-provider'
 
 export const AmountInToken0 = () => {
   const {

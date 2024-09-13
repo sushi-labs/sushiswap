@@ -1,13 +1,13 @@
 'use client'
 import { FormSection } from '@sushiswap/ui'
 import { useEffect } from 'react'
-import { useIsContract } from '~tron/_common/lib/hooks/useIsContract'
-import { usePairContract } from '~tron/_common/lib/hooks/usePairContract'
-import { TokenListSelect } from '~tron/_common/ui/General/TokenListSelect'
 import {
   usePoolDispatch,
   usePoolState,
-} from '~tron/explore/pools/pool-provider'
+} from '~tron/(tron)/explore/pools/pool-provider'
+import { useIsContract } from '~tron/_common/lib/hooks/useIsContract'
+import { usePairContract } from '~tron/_common/lib/hooks/usePairContract'
+import { TokenListSelect } from '~tron/_common/ui/General/TokenListSelect'
 
 export const SelectTokensForm = () => {
   const { token0, token1 } = usePoolState()

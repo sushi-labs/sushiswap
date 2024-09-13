@@ -34,7 +34,7 @@ const nagivationElements: NavigationElement[] = [
       },
     ],
     type: NavigationElementType.Dropdown,
-    show: 'everywhere',
+    show: 'mobile',
   },
   {
     show: 'desktop',

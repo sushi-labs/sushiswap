@@ -1,12 +1,12 @@
 import { useQuery } from '@tanstack/react-query'
 import TronWeb from 'tronweb'
+import { useSwapState } from '~tron/(trade)/swap/swap-provider'
 import { ROUTER_ABI } from '~tron/_common/constants/abis/router-abi'
 import { ROUTER_CONTRACT } from '~tron/_common/constants/contracts'
 import {
   getIfWrapOrUnwrap,
   getValidTokenAddress,
 } from '~tron/_common/lib/utils/helpers'
-import { useSwapState } from '~tron/swap/swap-provider'
 import { useTronWeb } from './useTronWeb'
 
 export const useAmountsOut = ({ amountIn }: { amountIn: string }) => {

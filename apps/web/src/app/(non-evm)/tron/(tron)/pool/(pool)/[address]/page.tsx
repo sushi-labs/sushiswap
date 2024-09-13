@@ -8,7 +8,7 @@ import { PoolHeader } from '~tron/_common/ui/Pools/PoolDetails/PoolHeader'
 import { PoolLiquidity } from '~tron/_common/ui/Pools/PoolDetails/PoolLiquidity'
 import { PoolPosition } from '~tron/_common/ui/Pools/PoolPosition/PoolPosition'
 import { PoolRewards } from '~tron/_common/ui/Pools/PoolRewards/PoolRewards'
-import { usePoolDispatch } from '../pool-provider'
+import { usePoolDispatch } from '../../../explore/pools/pool-provider'
 
 export default function PoolByIdPage({
   params,

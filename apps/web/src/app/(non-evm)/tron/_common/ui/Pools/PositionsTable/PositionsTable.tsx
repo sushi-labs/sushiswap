@@ -1,7 +1,17 @@
-import { useDebounce } from '@sushiswap/hooks'
-import { DataTable } from '@sushiswap/ui'
+'use client'
+
+import { PlusIcon } from '@heroicons/react/20/solid'
+import {
+  Button,
+  Card,
+  CardHeader,
+  CardTitle,
+  DataTable,
+  LinkInternal,
+} from '@sushiswap/ui'
 import { PaginationState } from '@tanstack/react-table'
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
+import { usePoolFilters } from 'src/ui/pool'
 import { useMyPositions } from '~tron/_common/lib/hooks/useMyPositions'
 import { IMyPositionData } from '~tron/_common/types/get-pools-type'
 import { IToken } from '~tron/_common/types/token-type'
@@ -12,8 +22,7 @@ import {
 } from './PositionColumns'
 
 type PositionsTableProps = {
-  query: string
-  handleMyPositionsOnView: (positions: number) => void
+  hideNewPositionButton?: boolean
 }
 
 export type IPositionRowData = {
@@ -25,20 +34,21 @@ export type IPositionRowData = {
 }
 
 export const PositionsTable = ({
-  query,
-  handleMyPositionsOnView,
+  hideNewPositionButton,
 }: PositionsTableProps) => {
   const [paginationState, setPaginationState] = useState<PaginationState>({
     pageIndex: 0,
     pageSize: 10,
   })
-  const debouncedQuery = useDebounce(query, 250)
+  const { tokenSymbols } = usePoolFilters()
   const { data, isLoading } = useMyPositions()
 
   const filteredData = useMemo(() => {
     if (!data) return []
-    if (!debouncedQuery) return data
-    const lowercasedQuery = debouncedQuery.toLowerCase()?.replaceAll(' ', '')
+    if (!tokenSymbols.length) return data
+    const queries = tokenSymbols.map((symbol) =>
+      symbol.toLowerCase()?.replaceAll(' ', ''),
+    )
 
     return data.filter((pool) => {
       const poolValues = [
@@ -52,41 +62,58 @@ export const PositionsTable = ({
       ]
 
       return poolValues.some((value) =>
-        value?.toLowerCase().includes(lowercasedQuery),
+        queries.some((query) => value?.toLowerCase().includes(query)),
       )
     })
-  }, [data, debouncedQuery])
-
-  useEffect(() => {
-    if (filteredData && !isLoading) {
-      handleMyPositionsOnView(filteredData.length)
-    }
-  }, [filteredData, isLoading, handleMyPositionsOnView])
+  }, [data, tokenSymbols])
 
   return (
-    <DataTable
-      loading={isLoading}
-      data={
-        filteredData?.map((pool) => ({
-          token0: pool?.token0,
-          token1: pool?.token1,
-          pairAddress: pool?.pairAddress,
-          reserve0: pool?.reserve0,
-          reserve1: pool?.reserve1,
-        })) ?? []
-      }
-      columns={[POSITION_NAME_COLUMN, TVL_COLUMN, SIZE_COLUMN]}
-      linkFormatter={(data: IMyPositionData) => {
-        const token0 = data?.token0?.address
-        const token1 = data?.token1?.address
-        return `/pool/${token0}:${token1}:${data?.pairAddress}`
-      }}
-      externalLink={false}
-      pagination={true}
-      state={{
-        pagination: paginationState,
-      }}
-      onPaginationChange={setPaginationState}
-    />
+    <Card>
+      <CardHeader>
+        <CardTitle>
+          <div className="flex items-center justify-between gap-4 flex-wrap">
+            <span>
+              My Positions{' '}
+              <span className="text-gray-400 dark:text-slate-500">
+                ({filteredData.length})
+              </span>
+            </span>
+            <div className="flex gap-4">
+              {!hideNewPositionButton ? (
+                <LinkInternal shallow={true} href={`/tron/pool/add`}>
+                  <Button icon={PlusIcon} asChild size="sm">
+                    Create position
+                  </Button>
+                </LinkInternal>
+              ) : null}
+            </div>
+          </div>
+        </CardTitle>
+      </CardHeader>
+      <DataTable
+        loading={isLoading}
+        data={
+          filteredData?.map((pool) => ({
+            token0: pool?.token0,
+            token1: pool?.token1,
+            pairAddress: pool?.pairAddress,
+            reserve0: pool?.reserve0,
+            reserve1: pool?.reserve1,
+          })) ?? []
+        }
+        columns={[POSITION_NAME_COLUMN, TVL_COLUMN, SIZE_COLUMN]}
+        linkFormatter={(data: IMyPositionData) => {
+          const token0 = data?.token0?.address
+          const token1 = data?.token1?.address
+          return `/pool/${token0}:${token1}:${data?.pairAddress}`
+        }}
+        externalLink={false}
+        pagination={true}
+        state={{
+          pagination: paginationState,
+        }}
+        onPaginationChange={setPaginationState}
+      />
+    </Card>
   )
 }

@@ -1,12 +1,12 @@
 import { Button, SkeletonBox } from '@sushiswap/ui'
 import { useMemo, useState } from 'react'
 import { formatUSD } from 'sushi/format'
+import { usePoolState } from '~tron/(tron)/explore/pools/pool-provider'
 import { formatUnits, parseUnits } from '~tron/_common/lib/utils/formatters'
 import {
   getToken0AmountForLiquidity,
   getToken1AmountForLiquidity,
 } from '~tron/_common/lib/utils/helpers'
-import { usePoolState } from '~tron/explore/pools/pool-provider'
 
 export const Rate = ({
   token0Price,

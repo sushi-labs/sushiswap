@@ -10,6 +10,8 @@ import {
 import { useWallet } from '@tronweb3/tronwallet-adapter-react-hooks'
 import { useEffect, useMemo } from 'react'
 import { formatUSD } from 'sushi/format'
+import { usePoolState } from '~tron/(tron)/explore/pools/pool-provider'
+import { useRemoveLiqDispatch } from '~tron/(tron)/pool/(pool)/[address]/remove-provider'
 import { PAIR_DECIMALS } from '~tron/_common/constants/pair-decimals'
 import { useStablePrice } from '~tron/_common/lib/hooks/useStablePrice'
 import { useTokenBalance } from '~tron/_common/lib/hooks/useTokenBalance'
@@ -20,8 +22,6 @@ import {
   toBigNumber,
 } from '~tron/_common/lib/utils/formatters'
 import { IToken } from '~tron/_common/types/token-type'
-import { useRemoveLiqDispatch } from '~tron/explore/pools/[poolId]/remove-provider'
-import { usePoolState } from '~tron/explore/pools/pool-provider'
 import { LiquidityItem } from '../PoolDetails/LiquidityItem'
 
 export const PoolPosition = ({

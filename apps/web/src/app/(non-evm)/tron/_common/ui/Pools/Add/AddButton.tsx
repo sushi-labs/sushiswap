@@ -11,6 +11,10 @@ import { Button } from '@sushiswap/ui'
 import { useQueryClient } from '@tanstack/react-query'
 import { useWallet } from '@tronweb3/tronwallet-adapter-react-hooks'
 import { useMemo } from 'react'
+import {
+  usePoolDispatch,
+  usePoolState,
+} from '~tron/(tron)/explore/pools/pool-provider'
 import { useTronWeb } from '~tron/_common/lib/hooks/useTronWeb'
 import { parseUnits } from '~tron/_common/lib/utils/formatters'
 import {
@@ -23,10 +27,6 @@ import {
   safeGasEstimates,
 } from '~tron/_common/lib/utils/helpers'
 import { getTronscanTxnLink } from '~tron/_common/lib/utils/tronscan-helpers'
-import {
-  usePoolDispatch,
-  usePoolState,
-} from '~tron/explore/pools/pool-provider'
 
 export const AddButton = ({ closeModal }: { closeModal: () => void }) => {
   const queryClient = useQueryClient()

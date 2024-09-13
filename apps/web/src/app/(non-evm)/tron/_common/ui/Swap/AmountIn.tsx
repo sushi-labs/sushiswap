@@ -1,11 +1,11 @@
 import { useDebounce } from '@sushiswap/hooks'
 import { useEffect } from 'react'
+import { useSwapDispatch, useSwapState } from '~tron/(trade)/swap/swap-provider'
 import { useAmountsOut } from '~tron/_common/lib/hooks/useAmountsOut'
 import {
   formatUnitsForInput,
   parseUnits,
 } from '~tron/_common/lib/utils/formatters'
-import { useSwapDispatch, useSwapState } from '~tron/swap/swap-provider'
 import { TokenInput } from '../Input/TokenInput'
 
 export const AmountIn = () => {
