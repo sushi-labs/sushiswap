@@ -22,25 +22,33 @@ export type NetworkSelectorOnSelectCallback<T extends number = ChainId> = (
 
 const PREFERRED_CHAINID_ORDER: ChainId[] = [
   ChainId.ETHEREUM,
+  ChainId.BSC,
   ChainId.ARBITRUM,
+  ChainId.ARBITRUM_NOVA,
   ChainId.BASE,
+  ChainId.AVALANCHE,
   ChainId.POLYGON,
-  ChainId.POLYGON_ZKEVM,
+  ChainId.BLAST,
   ChainId.SCROLL,
   ChainId.OPTIMISM,
   ChainId.LINEA,
-  ChainId.ROOTSTOCK,
-  ChainId.BLAST,
-  ChainId.ZETACHAIN,
+  ChainId.MANTLE,
+  // ChainId.MODE,
+  // APTOS?
+  ChainId.CRONOS,
+  // ChainId.ZKLINK,
   ChainId.CORE,
-  ChainId.FILECOIN,
-  ChainId.BSC,
-  ChainId.THUNDERCORE,
   ChainId.GNOSIS,
-  ChainId.AVALANCHE,
+  ChainId.ROOTSTOCK,
+  ChainId.KAVA,
+  ChainId.CELO,
   ChainId.FANTOM,
-  ChainId.ARBITRUM_NOVA,
-  ChainId.HARMONY,
+  ChainId.ZKSYNC_ERA,
+  ChainId.FILECOIN,
+  ChainId.METIS,
+  ChainId.TELOS,
+  ChainId.POLYGON_ZKEVM,
+  ChainId.ZETACHAIN,
 ]
 
 export interface NetworkSelectorProps<T extends number = ChainId> {
@@ -53,9 +61,8 @@ export interface NetworkSelectorProps<T extends number = ChainId> {
 }
 
 const NEW_CHAINS: number[] = [
-  ChainId.CRONOS,
-  ChainId.SKALE_EUROPA,
-  ChainId.ROOTSTOCK,
+  ChainId.ZKSYNC_ERA,
+  ChainId.MANTLE,
 ] satisfies ChainId[]
 
 const NetworkSelector = <T extends number>({

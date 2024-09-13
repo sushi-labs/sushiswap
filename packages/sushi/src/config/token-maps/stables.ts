@@ -217,7 +217,7 @@ export const STABLES = {
   [ChainId.ROOTSTOCK]: [USDT[ChainId.ROOTSTOCK], DAI[ChainId.ROOTSTOCK]],
   [ChainId.MANTLE]: [USDC[ChainId.MANTLE]],
   [ChainId.PALM]: [],
-  [ChainId.ZKSYNC_ERA]: [],
+  [ChainId.ZKSYNC_ERA]: [USDC[ChainId.ZKSYNC_ERA]],
   // TESTNETS
   // [ChainId.RINKEBY]: [USDC[ChainId.RINKEBY]],
   // [ChainId.ROPSTEN]: [
@@ -237,4 +237,5 @@ export const STABLES = {
   [ChainId.AVALANCHE_TESTNET]: [],
   [ChainId.SEPOLIA]: [],
   [ChainId.GÖRLI]: [],
+  [ChainId.CURTIS]: [],
 } as const satisfies Record<ChainId, Token[]>

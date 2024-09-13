@@ -7,7 +7,12 @@ import { expect } from 'chai'
 import { signERC2612Permit } from 'eth-permit'
 import hre from 'hardhat'
 import seedrandom from 'seedrandom'
-import { erc20Abi, routeProcessor4Abi, weth9Abi } from 'sushi/abi'
+import {
+  erc20Abi_approve,
+  routeProcessor4Abi_processRoute,
+  routeProcessor4Abi_transferValueAndprocessRoute,
+  weth9Abi_balanceOf,
+} from 'sushi/abi'
 import { ChainId, chainName } from 'sushi/chain'
 import { BENTOBOX_ADDRESS, BentoBoxChainId } from 'sushi/config'
 import {
@@ -55,7 +60,6 @@ import {
   StableSwapRPool,
   getBigInt,
 } from 'sushi/tines'
-import { type Contract } from 'sushi/types'
 import {
   Address,
   Client,
@@ -69,12 +73,18 @@ import {
 import { mnemonicToAccount } from 'viem/accounts'
 import { hardhat } from 'viem/chains'
 
+import path from 'path'
+import { fileURLToPath } from 'url'
 import RouteProcessor4 from '../artifacts/contracts/RouteProcessor4.sol/RouteProcessor4.json' assert {
   type: 'json',
 }
 import { getAllPoolCodes } from './utils/getAllPoolCodes.js'
 
 const { config, network } = hre
+
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
+const snapshotDir = path.resolve(__dirname, './pool-snapshots/')
 
 // Updating  pools' state allows to test DF updating ability, but makes tests very-very slow (
 const UPDATE_POOL_STATES = false
@@ -142,13 +152,14 @@ async function getTestEnvironment() {
       chainId,
       (network.config as { forking: { blockNumber?: number } }).forking
         ?.blockNumber,
+      snapshotDir,
     )
     poolList.forEach((p) => poolCodes.set(p.pool.uniqueID(), p))
   }
 
   const RouteProcessorTx = await client.deployContract({
     chain: null,
-    abi: routeProcessor4Abi,
+    abi: RouteProcessor4.abi,
     bytecode: RouteProcessor4.bytecode as Hex,
     account: user.address,
     args: [BENTOBOX_ADDRESS[chainId as BentoBoxChainId], []],
@@ -160,7 +171,6 @@ async function getTestEnvironment() {
     throw new Error('RouteProcessorAddress is undefined')
   const RouteProcessor = {
     address: RouteProcessorAddress,
-    abi: routeProcessor4Abi,
   }
 
   // saturate router balance with wei of tokens
@@ -227,7 +237,7 @@ async function getTestEnvironment() {
   } satisfies {
     chainId: ChainId
     client: Client
-    rp: Contract<typeof routeProcessor4Abi>
+    rp: { address: Address }
     user: HDAccount
     user2: HDAccount
     dataFetcher: DataFetcher
@@ -277,7 +287,7 @@ async function makeSwap(
   if (fromToken instanceof Token && permits.length === 0) {
     await env.client.writeContract({
       chain: null,
-      abi: erc20Abi,
+      abi: erc20Abi_approve,
       address: fromToken.address as Address,
       account: env.user.address,
       functionName: 'approve',
@@ -365,15 +375,10 @@ async function makeSwap(
   // console.log('Call route processor (may take long time for the first launch)...')
 
   let balanceOutBIBefore: bigint
-  let toTokenContract: Contract<typeof weth9Abi> | undefined = undefined
   if (toToken instanceof Token) {
-    toTokenContract = {
-      abi: weth9Abi,
-      address: toToken.address as Address,
-    }
-
     balanceOutBIBefore = await env.client.readContract({
-      ...(toTokenContract as NonNullable<typeof toTokenContract>),
+      abi: weth9Abi_balanceOf,
+      address: toToken.address,
       account: env.user.address,
       functionName: 'balanceOf',
       args: [env.user.address],
@@ -386,6 +391,7 @@ async function makeSwap(
   const tx = await env.client.writeContract({
     chain: null,
     ...env.rp,
+    abi: routeProcessor4Abi_processRoute,
     functionName: 'processRoute',
     args: [
       rpParams.tokenIn as Address,
@@ -412,10 +418,11 @@ async function makeSwap(
   // const trace = await network.provider.send('debug_traceTransaction', [receipt.transactionHash])
   // console.log("Fetching user's output balance ...")
   let balanceOutBI: bigint
-  if (toTokenContract) {
+  if (toToken instanceof Token) {
     balanceOutBI =
       (await env.client.readContract({
-        ...toTokenContract,
+        abi: weth9Abi_balanceOf,
+        address: toToken.address,
         functionName: 'balanceOf',
         args: [env.user.address],
       })) - balanceOutBIBefore
@@ -497,7 +504,7 @@ async function checkTransferAndRoute(
   if (fromToken instanceof Token) {
     await env.client.writeContract({
       chain: null,
-      abi: erc20Abi,
+      abi: erc20Abi_approve,
       address: fromToken.address as Address,
       account: env.user.address,
       functionName: 'approve',
@@ -542,15 +549,10 @@ async function checkTransferAndRoute(
   })
 
   let balanceOutBIBefore: bigint
-  let toTokenContract: Contract<typeof weth9Abi> | undefined = undefined
   if (toToken instanceof Token) {
-    toTokenContract = {
-      abi: weth9Abi,
-      address: toToken.address as Address,
-    }
-
     balanceOutBIBefore = await env.client.readContract({
-      ...(toTokenContract as NonNullable<typeof toTokenContract>),
+      abi: weth9Abi_balanceOf,
+      address: toToken.address,
       account: env.user.address,
       functionName: 'balanceOf',
       args: [env.user.address],
@@ -563,6 +565,7 @@ async function checkTransferAndRoute(
   const tx = await env.client.writeContract({
     ...env.rp,
     chain: null,
+    abi: routeProcessor4Abi_transferValueAndprocessRoute,
     functionName: 'transferValueAndprocessRoute',
     args: [
       env.user2.address,
@@ -588,10 +591,11 @@ async function checkTransferAndRoute(
   }
 
   let balanceOutBI: bigint
-  if (toTokenContract) {
+  if (toToken instanceof Token) {
     balanceOutBI =
       (await env.client.readContract({
-        ...(toTokenContract as NonNullable<typeof toTokenContract>),
+        abi: weth9Abi_balanceOf,
+        address: toToken.address,
         account: env.user.address,
         functionName: 'balanceOf',
         args: [env.user.address],

@@ -1,6 +1,7 @@
 import type { Address, Hex, PublicClient } from 'viem'
-import { encodePacked, getCreate2Address, keccak256 } from 'viem/utils'
-import { getReservesAbi } from '../../abi/index.js'
+import { encodePacked, keccak256 } from 'viem/utils'
+import { uniswapV2PairAbi_getReserves } from '../../abi/uniswapV2PairAbi/uniswapV2PairAbi_getReserves.js'
+import { getCreate2Address } from '../../address/getCreate2Address.js'
 import { ChainId } from '../../chain/index.js'
 import { Token } from '../../currency/index.js'
 import { ConstantProductRPool, type RToken } from '../../tines/index.js'
@@ -54,6 +55,7 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
       ),
       bytecodeHash:
         this.initCodeHash[this.chainId as keyof typeof this.initCodeHash]!,
+      chainId: this.chainId,
     })
   }
 
@@ -139,7 +141,7 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
             ({
               address: poolCode.pool.address as Address,
               chainId: this.chainId,
-              abi: getReservesAbi,
+              abi: uniswapV2PairAbi_getReserves,
               functionName: 'getReserves',
             }) as const,
         ),

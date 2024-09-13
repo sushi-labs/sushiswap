@@ -1,8 +1,13 @@
 import { expect } from 'chai'
 import seedrandom from 'seedrandom'
-import { sushiV3PoolAbi } from 'sushi/abi'
+import {
+  erc20Abi_balanceOf,
+  sushiV3PoolAbi_liquidity,
+  sushiV3PoolAbi_slot0,
+  sushiV3PoolAbi_tickSpacing,
+} from 'sushi/abi'
 import { CL_MAX_TICK, CL_MIN_TICK, UniV3Pool } from 'sushi/tines'
-import { type Contract } from 'sushi/types'
+import { Address } from 'sushi/types'
 import { WalletClient } from 'viem'
 import { readContract } from 'viem/actions'
 import { getTestConfig } from '../src/getTestConfig.js'
@@ -50,19 +55,23 @@ function expectCloseValues(
 
 export async function getPoolState(
   env: UniV3Environment,
-  pool: Contract<typeof sushiV3PoolAbi>,
+  pool: { address: Address },
 ) {
   const slot = await readContract(env.walletClient, {
     ...pool,
+    abi: sushiV3PoolAbi_slot0,
     functionName: 'slot0',
   })
+
   const PoolState = {
     liquidity: await readContract(env.walletClient, {
       ...pool,
+      abi: sushiV3PoolAbi_liquidity,
       functionName: 'liquidity',
     }),
     tickSpacing: await readContract(env.walletClient, {
       ...pool,
+      abi: sushiV3PoolAbi_tickSpacing,
       functionName: 'tickSpacing',
     }),
     sqrtPriceX96: slot[0],
@@ -150,6 +159,7 @@ async function checkSwap(
 ) {
   const slotBefore = await readContract(env.walletClient, {
     ...pool.contract,
+    abi: sushiV3PoolAbi_slot0,
     functionName: 'slot0',
   })
 
@@ -158,17 +168,20 @@ async function checkSwap(
     pool.tinesPool.updateState(
       await readContract(env.walletClient, {
         ...pool.token0Contract,
+        abi: erc20Abi_balanceOf,
         functionName: 'balanceOf',
         args: [pool.contract.address],
       }),
       await readContract(env.walletClient, {
         ...pool.token1Contract,
+        abi: erc20Abi_balanceOf,
         functionName: 'balanceOf',
         args: [pool.contract.address],
       }),
       slotBefore[1], // tick
       await readContract(env.walletClient, {
         ...pool.contract,
+        abi: sushiV3PoolAbi_liquidity,
         functionName: 'liquidity',
       }),
       slotBefore[0], // price
@@ -184,11 +197,13 @@ async function checkSwap(
     : [pool.token1Contract, pool.token0Contract]
   const inBalanceBefore = await readContract(env.walletClient, {
     ...inToken,
+    abi: erc20Abi_balanceOf,
     functionName: 'balanceOf',
     args: [env.user],
   })
   const outBalanceBefore = await readContract(env.walletClient, {
     ...outToken,
+    abi: erc20Abi_balanceOf,
     functionName: 'balanceOf',
     args: [env.user],
   })
@@ -202,16 +217,19 @@ async function checkSwap(
   })
   const slotAfter = await readContract(env.walletClient, {
     ...pool.contract,
+    abi: sushiV3PoolAbi_slot0,
     functionName: 'slot0',
   })
   const tickAfter = slotAfter[1]
   const inBalanceAfter = await readContract(env.walletClient, {
     ...inToken,
+    abi: erc20Abi_balanceOf,
     functionName: 'balanceOf',
     args: [env.user],
   })
   const outBalanceAfter = await readContract(env.walletClient, {
     ...outToken,
+    abi: erc20Abi_balanceOf,
     functionName: 'balanceOf',
     args: [env.user],
   })
@@ -252,6 +270,7 @@ async function getRandomSwapParams(
 ): Promise<[number, boolean]> {
   const slot = await readContract(env.walletClient, {
     ...pool.contract,
+    abi: sushiV3PoolAbi_slot0,
     functionName: 'slot0',
   })
   const sqrtPrice = parseInt(slot[0].toString()) / 2 ** 96
@@ -264,12 +283,14 @@ async function getRandomSwapParams(
 
   const res0BI = await readContract(env.walletClient, {
     ...pool.token0Contract,
+    abi: erc20Abi_balanceOf,
     functionName: 'balanceOf',
     args: [pool.contract.address],
   })
   const res0 = Number(res0BI)
   const res1BI = await readContract(env.walletClient, {
     ...pool.token0Contract,
+    abi: erc20Abi_balanceOf,
     functionName: 'balanceOf',
     args: [pool.contract.address],
   })

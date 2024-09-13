@@ -26,6 +26,8 @@ import {
   celo,
   // ronin,
   cronos,
+  // zkSyncTestnet,
+  curtis as _curtis,
   // celoAlfajores,
   // crossbell,
   // evmos,
@@ -67,7 +69,6 @@ import {
   // taraxaTestnet,
   telos,
   zkSync,
-  // zkSyncTestnet,
 } from 'viem/chains'
 import { ChainId } from '../chain/index.js'
 
@@ -524,6 +525,16 @@ export const skaleEuropa = {
   },
 } as const
 
+export const curtis = {
+  ..._curtis,
+  contracts: {
+    multicall3: {
+      address: '0xc454132B017b55b427f45078E335549A7124f5f7',
+      blockCreated: 6661339,
+    },
+  },
+}
+
 // const alchemyId =
 //   process.env['ALCHEMY_ID'] || process.env['NEXT_PUBLIC_ALCHEMY_ID']
 const drpcId = process.env['DRPC_ID'] || process.env['NEXT_PUBLIC_DRPC_ID']
@@ -584,7 +595,9 @@ export const publicTransports = {
   [ChainId.PALM]: http(palm.rpcUrls.default.http[0]),
   [ChainId.OKEX]: http(okc.rpcUrls.default.http[0]),
   [ChainId.HECO]: http(heco.rpcUrls.default.http[0]),
-  [ChainId.ZKSYNC_ERA]: http(zkSync.rpcUrls.default.http[0]),
+  [ChainId.ZKSYNC_ERA]: http(
+    `https://lb.drpc.org/ogrpc?network=zksync&dkey=${drpcId}`,
+  ),
   [ChainId.LINEA]: http(
     `https://lb.drpc.org/ogrpc?network=linea&dkey=${drpcId}`,
   ),
@@ -626,6 +639,7 @@ export const publicTransports = {
   [ChainId.POLYGON_TESTNET]: http('https://rpc.ankr.com/polygon_mumbai'),
   [ChainId.SEPOLIA]: http('https://sepolia.drpc.org'),
   [ChainId.GÖRLI]: http('https://eth-goerli.api.onfinality.io/public'),
+  [ChainId.CURTIS]: http('https://curtis.rpc.caldera.xyz/http'),
 } as const satisfies Record<ChainId, Transport>
 
 export const publicChains = [
@@ -677,6 +691,7 @@ export const publicChains = [
   goerli,
   polygonMumbai,
   sepolia,
+  curtis as unknown as Omit<typeof mainnet, 'id'> & { id: 33111 },
 ] as const satisfies Readonly<Chain[]>
 
 export const publicClientConfig = {
@@ -865,6 +880,10 @@ export const publicClientConfig = {
   [ChainId.SEPOLIA]: {
     chain: sepolia,
     transport: publicTransports[ChainId.SEPOLIA],
+  },
+  [ChainId.CURTIS]: {
+    chain: curtis as unknown as typeof mainnet & { id: 33111 },
+    transport: publicTransports[ChainId.CURTIS],
   },
 } as const satisfies Record<
   ChainId,

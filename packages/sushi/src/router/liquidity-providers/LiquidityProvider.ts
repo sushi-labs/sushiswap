@@ -30,6 +30,7 @@ export enum LiquidityProviders {
   BaseSwapV3 = 'BaseSwapV3',
   AlgebraIntegral = 'AlgebraIntegral',
   AerodromeSlipstream = 'AerodromeSlipstream',
+  VelodromeSlipstream = 'VelodromeSlipstream',
   Solarbeam = 'Solarbeam',
   Swapsicle = 'Swapsicle',
   VVSStandard = 'VVSStandard',
@@ -63,6 +64,7 @@ export enum LiquidityProviders {
   Agni = 'Agni',
   FusionXV2 = 'FusionXV2',
   FusionXV3 = 'FusionXV3',
+  MethLab = 'MethLab',
 }
 
 export abstract class LiquidityProvider {

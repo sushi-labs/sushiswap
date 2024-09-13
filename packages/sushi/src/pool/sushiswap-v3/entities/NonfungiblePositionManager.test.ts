@@ -52,8 +52,8 @@ describe('NonfungiblePositionManager', () => {
     [],
   )
 
-  const recipient = '0x0000000000000000000000000000000000000003'
-  const sender = '0x0000000000000000000000000000000000000004'
+  const recipient = '0x0000000000000000000000000000000000000003' as const
+  const sender = '0x0000000000000000000000000000000000000004' as const
   const tokenId = 1
   const slippageTolerance = new Percent(1, 100)
   const deadline = 123
@@ -429,7 +429,7 @@ describe('NonfungiblePositionManager', () => {
       expect(value).toEqual('0x00')
     })
     it('succeeds data param', () => {
-      const data = '0x0000000000000000000000000000000000009004'
+      const data = '0x0000000000000000000000000000000000009004' as const
       const options = {
         sender,
         recipient,

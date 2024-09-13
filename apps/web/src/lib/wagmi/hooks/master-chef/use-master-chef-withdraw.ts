@@ -3,7 +3,11 @@
 import { createErrorToast, createToast } from '@sushiswap/notifications'
 import { useCallback, useMemo } from 'react'
 import { ChainId, ChefType } from 'sushi'
-import { masterChefV1Abi, masterChefV2Abi, miniChefV2Abi } from 'sushi/abi'
+import {
+  masterChefV1Abi_withdraw,
+  masterChefV2Abi_withdraw,
+  miniChefV2Abi_withdrawAndHarvest,
+} from 'sushi/abi'
 import { Amount, Token } from 'sushi/currency'
 import { UserRejectedRequestError } from 'viem'
 import {
@@ -75,21 +79,21 @@ export const useMasterChefWithdraw = ({
       switch (chef) {
         case ChefType.MasterChefV1:
           data = {
-            abi: masterChefV1Abi,
+            abi: masterChefV1Abi_withdraw,
             functionName: 'withdraw',
             args: [BigInt(pid), BigInt(amount.quotient.toString())],
           }
           break
         case ChefType.MasterChefV2:
           data = {
-            abi: masterChefV2Abi,
+            abi: masterChefV2Abi_withdraw,
             functionName: 'withdraw',
             args: [BigInt(pid), BigInt(amount.quotient.toString()), address],
           }
           break
         case ChefType.MiniChef:
           data = {
-            abi: miniChefV2Abi,
+            abi: miniChefV2Abi_withdrawAndHarvest,
             functionName: 'withdrawAndHarvest',
             args: [BigInt(pid), BigInt(amount.quotient.toString()), address],
           }
@@ -120,17 +124,22 @@ export const useMasterChefWithdraw = ({
     },
   })
 
-  const write = useMemo(() => {
-    if (!simulation) return
+  // biome-ignore lint/correctness/useExhaustiveDependencies: Typecheck speedup
+  const write = useMemo(
+    () => {
+      if (!simulation?.request) return
 
-    return async (confirm?: () => void) => {
-      try {
-        await writeContractAsync(simulation.request)
+      return async (confirm?: () => void) => {
+        try {
+          await writeContractAsync(simulation.request as any)
 
-        confirm?.()
-      } catch {}
-    }
-  }, [simulation, writeContractAsync])
+          confirm?.()
+        } catch {}
+      }
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [simulation?.request, writeContractAsync] as const,
+  )
 
   return {
     ...rest,

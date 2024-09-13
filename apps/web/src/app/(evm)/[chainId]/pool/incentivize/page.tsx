@@ -676,16 +676,20 @@ const Incentivize = withCheckerRoot(() => {
                                             isIncentivizeLoading && !isError
                                           }
                                           onClick={async () => {
+                                            // Typecheck speedup
+                                            const _simulationData: any =
+                                              simulationData
+
                                             if (
                                               !writeContractAsync ||
-                                              !simulationData
+                                              !_simulationData
                                             ) {
                                               return
                                             }
 
                                             try {
                                               await writeContractAsync(
-                                                simulationData.request,
+                                                _simulationData.request,
                                               )
                                               confirm()
                                             } catch {}

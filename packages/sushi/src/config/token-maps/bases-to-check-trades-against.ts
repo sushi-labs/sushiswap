@@ -1,5 +1,5 @@
 import { ChainId } from '../../chain/index.js'
-import { MUSD, SKL, Token, USDB, USDP } from '../../currency/index.js'
+import { METH, MUSD, SKL, Token, USDB, USDP } from '../../currency/index.js'
 import {
   AAVE,
   BUSD,
@@ -497,5 +497,11 @@ export const BASES_TO_CHECK_TRADES_AGAINST: {
     WNATIVE[ChainId.MANTLE],
     WETH9[ChainId.MANTLE],
     USDC[ChainId.MANTLE],
+    METH[ChainId.MANTLE],
+  ],
+  [ChainId.CURTIS]: [
+    WNATIVE[ChainId.CURTIS],
+    USDT[ChainId.CURTIS],
+    DAI[ChainId.CURTIS],
   ],
 }

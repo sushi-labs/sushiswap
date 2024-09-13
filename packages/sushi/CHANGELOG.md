@@ -1,5 +1,23 @@
 # sushi
 
+## 3.2.2
+
+### Patch Changes
+
+- [#1680](https://github.com/sushiswap/sushiswap/pull/1680) [`78dedbd95`](https://github.com/sushiswap/sushiswap/commit/78dedbd9519c3e0ce0add983e3212b37b6f50497) Thanks [@matthewlilley](https://github.com/matthewlilley)! - add base tokens for curtis
+
+## 3.2.1
+
+### Patch Changes
+
+- [#1676](https://github.com/sushiswap/sushiswap/pull/1676) [`abf14549f`](https://github.com/sushiswap/sushiswap/commit/abf14549f70e1d850c5e9171706604c1f5f28358) Thanks [@LufyCZ](https://github.com/LufyCZ)! - Add Curtis
+
+## 3.2.0
+
+### Minor Changes
+
+- [#1655](https://github.com/sushiswap/sushiswap/pull/1655) [`4c05462d2`](https://github.com/sushiswap/sushiswap/commit/4c05462d23eaf8ad06b80c73d6f5f428ce22ebfa) Thanks [@0xMasayoshi](https://github.com/0xMasayoshi)! - update RouteProcessor5 config to include zkSync and Mantle.
+
 ## 3.1.2
 
 ### Patch Changes

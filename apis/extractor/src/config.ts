@@ -248,13 +248,14 @@ export const EXTRACTOR_CONFIG: Record<
     ],
     tickHelperContractAlgebra:
       '0x44a6d9741cDF9C955eE89C14C739FB1aeaD82d6B' as Address,
-    factoriesAerodromeSlipstream: [
+    factoriesSlipstream: [
       {
         address: '0x5e7BB104d84c7CB9B682AaC2F3d509f5F406809A',
         provider: LiquidityProviders.AerodromeSlipstream,
+        checkedSwapFeeModules: ['0xF4171B0953b52Fa55462E4d76ecA1845Db69af00'],
       },
     ],
-    tickHelperContractAerodromeSlipstream:
+    tickHelperContractSlipstream:
       '0x3e1116ea5034f5d73a7b530071709d54a4109f5f' as Address, // our own
 
     cacheDir: './cache',
@@ -623,9 +624,19 @@ export const EXTRACTOR_CONFIG: Record<
       uniswapV3Factory(ChainId.OPTIMISM),
       sushiswapV3Factory(ChainId.OPTIMISM),
     ],
+    factoriesSlipstream: [
+      {
+        address: '0xCc0bDDB707055e04e497aB22a59c2aF4391cd12F',
+        provider: LiquidityProviders.VelodromeSlipstream,
+        // only swapFeeModules like BASE:0xF4171B0953b52Fa55462E4d76ecA1845Db69af00 are supported
+        checkedSwapFeeModules: ['0x7361E9079920fb75496E9764A2665d8ee5049D5f'],
+      },
+    ],
     tickHelperContractV3: SUSHISWAP_V3_TICK_LENS[ChainId.OPTIMISM],
     tickHelperContractAlgebra:
       '0x0000000000000000000000000000000000000000' as Address,
+    tickHelperContractSlipstream:
+      '0x49C6FDCb3D5b2CecD8baff66c8e94b9B261ad925' as Address, // our own
     cacheDir: './cache',
     logDepth: 50,
     logging: true,
@@ -1044,6 +1055,12 @@ export const EXTRACTOR_CONFIG: Record<
         initCodeHash:
           '0x1bce652aaa6528355d7a339037433a20cd28410e3967635ba8d2ddb037440dbf',
       },
+      {
+        address: '0x8f140Fc3e9211b8DC2fC1D7eE3292F6817C5dD5D',
+        provider: LiquidityProviders.MethLab,
+        initCodeHash:
+          '0xacd26fbb15704ae5e5fe7342ea8ebace020e4fa5ad4a03122ce1678278cf382b',
+      },
     ],
     factoriesAlgebra: [
       {
@@ -1055,6 +1072,21 @@ export const EXTRACTOR_CONFIG: Record<
       '0x38EB9e62ABe4d3F70C0e161971F29593b8aE29FF' as Address,
     tickHelperContractAlgebra:
       '0x92B858beD547A3F94d6E674D176C4a12F3A82326' as Address,
+    cacheDir: './cache',
+    logDepth: 50,
+    logging: true,
+  },
+  [ChainId.ZKSYNC_ERA]: {
+    client: createPublicClient(extractorClientConfig(ChainId.ZKSYNC_ERA)),
+    factoriesV2: [pancakeswapV2Factory(ChainId.ZKSYNC_ERA)],
+    factoriesV3: [
+      uniswapV3Factory(ChainId.ZKSYNC_ERA),
+      pancakeswapV3Factory(ChainId.ZKSYNC_ERA),
+    ],
+    tickHelperContractV3:
+      '0xe10FF11b809f8EE07b056B452c3B2caa7FE24f89' as Address,
+    tickHelperContractAlgebra:
+      '0x0000000000000000000000000000000000000000' as Address,
     cacheDir: './cache',
     logDepth: 50,
     logging: true,
