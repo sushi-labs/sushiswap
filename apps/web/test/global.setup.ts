@@ -15,10 +15,9 @@ export default async function globalSetup(_config: FullConfig) {
   //   instance: anvil({
   //     forkUrl,
   //     forkBlockNumber,
+  //     timeout: 120_000,
   //   }),
-  //   // port,
   // })
-
   // await server.start()
   // process.on('SIGTERM', server.stop)
 
@@ -27,13 +26,8 @@ export default async function globalSetup(_config: FullConfig) {
       forkUrl,
       forkBlockNumber,
       startTimeout: 120_000,
+      // noMining: true,
     },
   })
   process.on('SIGTERM', shutdown)
-
-  // const server = createServer({
-  //   instance: anvil(),
-  // })
-  // server.start()
-  // process.on('SIGTERM', server.stop)
 }

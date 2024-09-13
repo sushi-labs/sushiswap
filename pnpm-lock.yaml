@@ -837,6 +837,9 @@ importers:
       autoprefixer:
         specifier: 10.4.14
         version: 10.4.14(postcss@8.4.23)
+      core-js:
+        specifier: 3.38.1
+        version: 3.38.1
       eslint-config-next:
         specifier: 14.2.11
         version: 14.2.11(eslint@8.57.0)(typescript@5.5.4)
@@ -11752,8 +11755,8 @@ packages:
     resolution: {integrity: sha512-Kb2wC0fvsWfQrgk8HU5lW6U/Lcs8+9aaYcy4ZFc6DDlo4nZ7n70dEgE5rtR0oG6ufKDUnrwfWL1mXR5ljDatrQ==}
     deprecated: core-js@<3.23.3 is no longer maintained and not recommended for usage due to the number of issues. Because of the V8 engine whims, feature detection in old core-js versions could cause a slowdown up to 100x even if nothing is polyfilled. Some versions have web compatibility issues. Please, upgrade your dependencies to the actual version of core-js.
 
-  core-js@3.38.0:
-    resolution: {integrity: sha512-XPpwqEodRljce9KswjZShh95qJ1URisBeKCjUdq27YdenkslVe7OO0ZJhlYXAChW7OhXaRLl8AAba7IBfoIHug==}
+  core-js@3.38.1:
+    resolution: {integrity: sha512-OP35aUorbU3Zvlx7pjsFdu1rGNnD4pgw/CWoYzRY3t2EzoVT7shKHY1dlAy3f41cGIO7ZDPQimhGFTlEYkG/Hw==}
 
   core-util-is@1.0.2:
     resolution: {integrity: sha512-3lqz5YjWTYnW6dlDa5TLaTCcShfar1e40rmcJVwCBJC6mWlFuj0eCHIElmG1g5kyuJ/GD+8Wn4FFCcz4gJPfaQ==}
@@ -37704,7 +37707,7 @@ snapshots:
 
   core-js@2.6.12: {}
 
-  core-js@3.38.0: {}
+  core-js@3.38.1: {}
 
   core-util-is@1.0.2: {}
 
@@ -47692,7 +47695,7 @@ snapshots:
 
   react-app-polyfill@3.0.0:
     dependencies:
-      core-js: 3.38.0
+      core-js: 3.38.1
       object-assign: 4.1.1
       promise: 8.3.0
       raf: 3.4.1
