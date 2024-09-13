@@ -4,5 +4,4 @@ packages:
   - 'config/*'
   - 'packages/**'
   - 'protocols/*'
-  - 'jobs/*'
   - 'sandboxes/*'
