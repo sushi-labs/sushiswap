@@ -1,5 +1,3 @@
-import { HotJar } from '@sushiswap/ui'
-
 import { isSupportedChainId } from 'src/config'
 import notFound from './not-found'
 import { Providers } from './providers'
@@ -12,10 +10,5 @@ export default function PoolLayout({
     return notFound()
   }
 
-  return (
-    <>
-      <Providers>{children}</Providers>
-      <HotJar />
-    </>
-  )
+  return <Providers>{children}</Providers>
 }

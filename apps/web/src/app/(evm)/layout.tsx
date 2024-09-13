@@ -1,3 +1,4 @@
+import { HotJar } from '@sushiswap/ui'
 import type { Metadata } from 'next'
 import { headers } from 'next/headers'
 import React from 'react'
@@ -16,11 +17,14 @@ export const metadata: Metadata = {
 export default function EvmLayout({ children }: { children: React.ReactNode }) {
   const cookie = headers().get('cookie')
   return (
-    <Providers cookie={cookie}>
-      <div className="fixed flex flex-col h-full w-full">
-        <SanctionedAddressDialog />
-        {children}
-      </div>
-    </Providers>
+    <>
+      <Providers cookie={cookie}>
+        <div className="fixed flex flex-col h-full w-full">
+          <SanctionedAddressDialog />
+          {children}
+        </div>
+      </Providers>
+      <HotJar />
+    </>
   )
 }
