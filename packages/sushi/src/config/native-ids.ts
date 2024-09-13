@@ -57,4 +57,5 @@ export const nativeCurrencyIds = {
   [ChainId.SKALE_EUROPA]: 'sFUEL',
   [ChainId.ROOTSTOCK]: 'RBTC',
   [ChainId.MANTLE]: 'MNT',
+  [ChainId.CURTIS]: 'APE',
 } as const
