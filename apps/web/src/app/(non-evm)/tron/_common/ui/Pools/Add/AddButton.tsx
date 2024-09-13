@@ -23,7 +23,10 @@ import {
   safeGasEstimates,
 } from '~tron/_common/lib/utils/helpers'
 import { getTronscanTxnLink } from '~tron/_common/lib/utils/tronscan-helpers'
-import { usePoolDispatch, usePoolState } from '~tron/pool/pool-provider'
+import {
+  usePoolDispatch,
+  usePoolState,
+} from '~tron/explore/pools/pool-provider'
 
 export const AddButton = ({ closeModal }: { closeModal: () => void }) => {
   const queryClient = useQueryClient()

@@ -42,11 +42,13 @@ export const AmountIn = () => {
 
   return (
     <TokenInput
+      className="border border-accent p-3 bg-white dark:bg-slate-800 rounded-xl"
       type="input"
       amount={amountIn}
       setAmount={setAmountIn}
-      token={token0}
+      currency={token0}
       setToken={setToken0}
+      label="Sell"
     />
   )
 }

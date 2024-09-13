@@ -4,7 +4,6 @@ import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-  SelectIcon,
 } from '@sushiswap/ui'
 import { JazzIcon } from '@sushiswap/ui/icons/JazzIcon'
 import { useWallet } from '@tronweb3/tronwallet-adapter-react-hooks'
@@ -20,12 +19,11 @@ export type IProfileView = 'default' | 'settings'
 type WalletConnectorProps = {
   hideChevron?: boolean
   fullWidth?: boolean
-  size?: 'default' | 'lg'
+  size?: Parameters<typeof Button>[0]['size']
   variant?: 'secondary' | 'default'
 }
 
 export const WalletConnector = ({
-  hideChevron,
   fullWidth,
   size = 'default',
   variant = 'secondary',
@@ -36,14 +34,14 @@ export const WalletConnector = ({
 
   return (
     <Popover>
-      <PopoverTrigger className="relative">
+      <PopoverTrigger className="relative w-full">
         <Button
-          className={`${fullWidth ? 'w-full' : ''}`}
           loading={connecting}
           disabled={connecting}
           asChild
           size={size}
           variant={variant}
+          fullWidth={fullWidth}
         >
           {isConnected ? (
             <>
@@ -53,10 +51,7 @@ export const WalletConnector = ({
               {truncateText(address)}
             </>
           ) : (
-            <>
-              {connecting ? 'Connecting' : 'Connect'}{' '}
-              {hideChevron ? null : <SelectIcon />}
-            </>
+            <>{connecting ? 'Connecting' : 'Connect Wallet'} </>
           )}
         </Button>
         {IS_TESTNET && isConnected ? (

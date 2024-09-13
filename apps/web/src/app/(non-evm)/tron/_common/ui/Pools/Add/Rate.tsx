@@ -6,7 +6,7 @@ import {
   getToken0AmountForLiquidity,
   getToken1AmountForLiquidity,
 } from '~tron/_common/lib/utils/helpers'
-import { usePoolState } from '~tron/pool/pool-provider'
+import { usePoolState } from '~tron/explore/pools/pool-provider'
 
 export const Rate = ({
   token0Price,

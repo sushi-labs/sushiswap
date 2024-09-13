@@ -6,7 +6,7 @@ import { useAllowance } from '~tron/_common/lib/hooks/useAllowance'
 import { useTokenBalance } from '~tron/_common/lib/hooks/useTokenBalance'
 import { formatUnitsForInput } from '~tron/_common/lib/utils/formatters'
 import { ApproveToken } from '~tron/_common/ui/Shared/ApproveToken'
-import { usePoolState } from '~tron/pool/pool-provider'
+import { usePoolState } from '~tron/explore/pools/pool-provider'
 
 export const ReviewAddDialogTrigger = () => {
   const { token0, token1, isTxnPending, amountInToken0, amountInToken1 } =

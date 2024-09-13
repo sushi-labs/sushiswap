@@ -5,7 +5,10 @@ import {
 } from '~tron/_common/lib/utils/formatters'
 import { getToken0AmountForLiquidity } from '~tron/_common/lib/utils/helpers'
 import { TokenInput } from '~tron/_common/ui/Input/TokenInput'
-import { usePoolDispatch, usePoolState } from '~tron/pool/pool-provider'
+import {
+  usePoolDispatch,
+  usePoolState,
+} from '~tron/explore/pools/pool-provider'
 
 export const AmountInToken1 = () => {
   const {
@@ -70,9 +73,8 @@ export const AmountInToken1 = () => {
       type="input"
       amount={amountInToken1}
       setAmount={setAmount}
-      token={token1}
+      currency={token1}
       setToken={setToken1}
-      hasTokenListSelect={false}
     />
   )
 }

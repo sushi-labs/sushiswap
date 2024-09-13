@@ -4,7 +4,10 @@ import { useEffect } from 'react'
 import { useIsContract } from '~tron/_common/lib/hooks/useIsContract'
 import { usePairContract } from '~tron/_common/lib/hooks/usePairContract'
 import { TokenListSelect } from '~tron/_common/ui/General/TokenListSelect'
-import { usePoolDispatch, usePoolState } from '~tron/pool/pool-provider'
+import {
+  usePoolDispatch,
+  usePoolState,
+} from '~tron/explore/pools/pool-provider'
 
 export const SelectTokensForm = () => {
   const { token0, token1 } = usePoolState()

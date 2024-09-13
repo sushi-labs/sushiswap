@@ -2,7 +2,7 @@ import { Button, Card, Message } from '@sushiswap/ui'
 import {
   useRemoveLiqDispatch,
   useRemoveLiqState,
-} from '~tron/pool/[poolId]/remove-provider'
+} from '~tron/explore/pools/[poolId]/remove-provider'
 
 const PercentageOptions = [25, 50, 75, 100]
 

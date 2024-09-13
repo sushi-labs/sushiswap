@@ -27,8 +27,8 @@ import { WalletConnector } from '~tron/_common/ui/WalletConnector/WalletConnecto
 import {
   useRemoveLiqDispatch,
   useRemoveLiqState,
-} from '~tron/pool/[poolId]/remove-provider'
-import { usePoolState } from '~tron/pool/pool-provider'
+} from '~tron/explore/pools/[poolId]/remove-provider'
+import { usePoolState } from '~tron/explore/pools/pool-provider'
 
 export const RemoveButton = () => {
   const queryClient = useQueryClient()

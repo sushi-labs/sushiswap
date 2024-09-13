@@ -11,24 +11,30 @@ import { SwitchSwapType } from '~tron/_common/ui/Swap/SwitchSwapType'
 
 export default function SwapSimplePage() {
   return (
-    <Container className="p-4 mx-auto mt-16 mb-[86px] flex flex-col gap-4 max-w-[520px]">
-      <Title className="!font-bold">Trade</Title>
-      <section className="flex items-center justify-between">
-        <SwitchSwapType />
-        <SettingsOverlay
-          options={{
-            slippageTolerance: { storageKey: SlippageToleranceStorageKey.Swap },
-          }} //use this key to get slippage from localStorage
-          modules={[SettingsModule.SlippageTolerance]}
-        />
-      </section>
-      <section className="flex flex-col gap-2 relative">
+    <Container maxWidth="lg" className="px-4">
+      <div className="flex flex-col gap-4">
+        <div className="flex flex-col items-start gap-2 mb-4 sm:mt-10 mt-2">
+          <Title className="!font-bold">Trade</Title>
+        </div>
+        <div className="flex items-center justify-between">
+          <SwitchSwapType />
+          <SettingsOverlay
+            options={{
+              slippageTolerance: {
+                storageKey: SlippageToleranceStorageKey.Swap,
+              },
+            }} //use this key to get slippage from localStorage
+            modules={[SettingsModule.SlippageTolerance]}
+          />
+        </div>
         <AmountIn />
         <SwitchSwapDirection />
-        <AmountOut />
-      </section>
-      <ReviewSwapDialog />
-      <SwapStats />
+        <div className="flex flex-col">
+          <AmountOut />
+          <ReviewSwapDialog />
+        </div>
+        <SwapStats />
+      </div>
     </Container>
   )
 }

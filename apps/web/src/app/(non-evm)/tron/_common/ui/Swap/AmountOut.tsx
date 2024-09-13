@@ -7,11 +7,13 @@ export const AmountOut = () => {
 
   return (
     <TokenInput
+      className="border border-accent p-3 bg-white dark:bg-slate-800 rounded-xl"
       amount={amountOut}
       setAmount={setAmountOut}
       type="output"
-      token={token1}
+      currency={token1}
       setToken={setToken1}
+      label="Buy"
     />
   )
 }

@@ -61,12 +61,9 @@ export const ReviewSwapDialog = () => {
       {isConnected ? (
         <ReviewSwapDialogTrigger />
       ) : (
-        <WalletConnector
-          variant="default"
-          hideChevron={true}
-          fullWidth={true}
-          size="lg"
-        />
+        <div className="mt-4 w-full">
+          <WalletConnector variant="default" fullWidth size="xl" />
+        </div>
       )}
       <DialogContent>
         <DialogClose ref={closeBtnRef} />
@@ -156,10 +153,8 @@ export const ReviewSwapDialog = () => {
               )}
             </List>
           </div>
-          <div className="pt-4">
-            <div className="space-y-4">
-              <SwapButton closeModal={closeModal} minOutput={minOutput} />
-            </div>
+          <div className="pt-4 space-y-4">
+            <SwapButton closeModal={closeModal} minOutput={minOutput} />
           </div>
         </div>
       </DialogContent>
