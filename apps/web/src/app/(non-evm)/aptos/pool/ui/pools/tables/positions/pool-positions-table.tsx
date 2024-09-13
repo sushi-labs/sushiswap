@@ -6,8 +6,7 @@ import React, { useCallback, useMemo, useState } from 'react'
 import { PoolExtended } from '~aptos/pool/lib/use-pools-extended'
 import { useUserPositionPools } from '~aptos/pool/lib/use-user-position-pools'
 import { usePoolFilters } from '../../filters/pool-filters-provider'
-import { NAME_COLUMN, TVL_COLUMN } from '../pools/columns'
-import { MYPOSITION_TVL_COLUMN } from './columns'
+import { MYPOSITION_TVL_COLUMN, NAME_COLUMN, TVL_COLUMN } from './columns'
 
 const COLUMNS = [
   NAME_COLUMN,
