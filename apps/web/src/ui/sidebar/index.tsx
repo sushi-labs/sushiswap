@@ -1,5 +1,6 @@
 'use client'
 
+import { useWallet as useAptosWallet } from '@aptos-labs/wallet-adapter-react'
 import {
   Badge,
   Button,
@@ -69,20 +70,20 @@ export const SidebarToggle: FC<Omit<ButtonProps, 'onClick'>> = (props) => {
 
 interface SidebarContainerProps {
   children: ReactNode
-  nonEVMNetwork?: string
+  connectedNetwork?: number | string
   shiftContent?: boolean
 }
 
-export const SidebarContainer: FC<SidebarContainerProps> = ({
+const BaseSidebarContainer: FC<SidebarContainerProps> = ({
   children,
-  nonEVMNetwork,
+  connectedNetwork,
   shiftContent = false,
 }) => {
   const { isOpen } = useSidebar()
 
   return (
     <div className="flex h-full min-h-0">
-      <Sidebar nonEVMNetwork={nonEVMNetwork} />
+      <Sidebar connectedNetwork={connectedNetwork} />
       <div
         className={classNames(
           'flex-1 h-full overflow-y-auto',
@@ -92,6 +93,27 @@ export const SidebarContainer: FC<SidebarContainerProps> = ({
         {children}
       </div>
     </div>
+  )
+}
+
+export const SidebarContainer: FC<
+  Omit<SidebarContainerProps, 'connectedNetwork'>
+> = (props) => {
+  const { chainId } = useAccount()
+
+  return <BaseSidebarContainer {...props} connectedNetwork={chainId} />
+}
+
+export const AptosSidebarContainer: FC<
+  Omit<SidebarContainerProps, 'connectedNetwork'>
+> = (props) => {
+  const { network } = useAptosWallet()
+
+  return (
+    <BaseSidebarContainer
+      {...props}
+      connectedNetwork={network?.name === 'mainnet' ? 'aptos' : undefined}
+    />
   )
 }
 
@@ -106,15 +128,11 @@ const NonEvmNetwork: Record<
 }
 
 interface SidebarProps {
-  nonEVMNetwork?: string
+  connectedNetwork?: number | string
 }
 
-const Sidebar: FC<SidebarProps> = ({ nonEVMNetwork }) => {
+const Sidebar: FC<SidebarProps> = ({ connectedNetwork }) => {
   const { isOpen } = useSidebar()
-
-  const { chainId } = useAccount()
-
-  const connectedNetwork = nonEVMNetwork ?? chainId
 
   const router = useRouter()
   const pathname = usePathname()

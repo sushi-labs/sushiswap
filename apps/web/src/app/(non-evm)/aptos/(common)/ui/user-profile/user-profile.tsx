@@ -36,10 +36,10 @@ export function UserProfile() {
       <PopoverTrigger asChild>
         <Button variant="secondary">
           <JazzIcon diameter={20} address={account?.address} />
-          <span className="hidden sm:block">{`${account?.address?.substring(
+          <span className="hidden sm:block">{`${account?.address?.slice(
             0,
-            5,
-          )}...${account?.address?.substring(66 - 3)}`}</span>
+            6,
+          )}...${account?.address?.slice(-4)}`}</span>
         </Button>
       </PopoverTrigger>
       <PopoverContent

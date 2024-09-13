@@ -56,9 +56,9 @@ export default function PoolPage({ params }: { params: { address: string } }) {
   }, [network, disconnect])
 
   return (
-    <Container maxWidth="5xl" className="px-2 sm:px-4">
+    <Container maxWidth="5xl">
       <div className="flex flex-col gap-6">
-        <div className="grid grid-cols-1 md:grid-cols-[auto_400px] gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="flex flex-col gap-6">
             <ManageV2LiquidityCard address={address} />
             <PoolComposition row={pool} />

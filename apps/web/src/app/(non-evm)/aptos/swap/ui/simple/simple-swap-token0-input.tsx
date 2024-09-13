@@ -1,4 +1,3 @@
-import { useIsMounted } from '@sushiswap/hooks'
 import React, { useEffect, useTransition } from 'react'
 import { CurrencyInput } from '~aptos/(common)/ui/currency/currency-input/currency-input'
 import { useSwap } from '~aptos/swap/lib/use-swap'
@@ -10,7 +9,6 @@ import {
 export const SimpleSwapToken0Input = () => {
   const [, startTransition] = useTransition()
 
-  const isMounted = useIsMounted()
   const { amount, token0 } = useSimpleSwapState()
 
   const {
@@ -55,8 +53,6 @@ export const SimpleSwapToken0Input = () => {
     setOutputAmount,
     setPriceFetching,
   ])
-
-  if (!isMounted) return <></>
 
   return (
     <CurrencyInput

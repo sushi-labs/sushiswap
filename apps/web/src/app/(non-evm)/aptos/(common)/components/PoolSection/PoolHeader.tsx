@@ -39,7 +39,7 @@ export const PoolHeader: FC<PoolHeader> = ({ backUrl, address }) => {
           href={backUrl}
           className="text-blue hover:underline text-sm"
         >
-          ← Pools
+          ← Back
         </LinkInternal>
         {isLoading ? (
           <div className="flex items-center w-full gap-3">
