@@ -3,13 +3,11 @@ import {
   createUniV3EnvZero,
 } from '@sushiswap/tines-sandbox'
 import hre from 'hardhat'
-import { routeProcessor3Abi } from 'sushi/abi'
 import { ChainId } from 'sushi/chain'
 import { BENTOBOX_ADDRESS, BentoBoxChainId } from 'sushi/config'
 import { Token } from 'sushi/currency'
 import { PoolCode } from 'sushi/router'
 import { LiquidityProviders, Router, UniV3PoolCode } from 'sushi/router'
-import { type Contract } from 'sushi/types'
 import {
   Address,
   Client,
@@ -22,6 +20,11 @@ import {
 import { HDAccount, mnemonicToAccount } from 'viem/accounts'
 import { hardhat } from 'viem/chains'
 
+import {
+  erc20Abi_approve,
+  erc20Abi_balanceOf,
+  routeProcessor3Abi_processRoute,
+} from 'sushi/abi'
 import RouteProcessor3 from '../artifacts/contracts/RouteProcessor3.sol/RouteProcessor3.json' assert {
   type: 'json',
 }
@@ -88,7 +91,7 @@ async function getTestEnvironment() {
 
   const RouteProcessorTx = await client.deployContract({
     chain: null,
-    abi: routeProcessor3Abi,
+    abi: RouteProcessor3.abi,
     bytecode: RouteProcessor3.bytecode as Hex,
     account: user.address,
     args: [BENTOBOX_ADDRESS[chainId as BentoBoxChainId], []],
@@ -100,7 +103,6 @@ async function getTestEnvironment() {
     throw new Error('RouteProcessorAddress is undefined')
   const RouteProcessor = {
     address: RouteProcessorAddress,
-    abi: routeProcessor3Abi,
   }
 
   return {
@@ -111,7 +113,7 @@ async function getTestEnvironment() {
   } satisfies {
     chainId: ChainId
     client: Client
-    rp: Contract<typeof routeProcessor3Abi>
+    rp: { address: Address }
     user: HDAccount
   }
 }
@@ -162,7 +164,8 @@ it('UniV3 Solo', async () => {
   )
 
   await testEnv.client.writeContract({
-    ...pool.token0Contract,
+    address: pool.token0Contract.address,
+    abi: erc20Abi_approve,
     chain: null,
     account: testEnv.user.address,
     functionName: 'approve',
@@ -170,13 +173,15 @@ it('UniV3 Solo', async () => {
   })
 
   const balanceOutBIBefore = await testEnv.client.readContract({
-    ...pool.token1Contract,
+    address: pool.token1Contract.address,
+    abi: erc20Abi_balanceOf,
     functionName: 'balanceOf',
     args: [testEnv.user.address],
   })
   const tx = await env.walletClient.writeContract({
     chain: null,
     ...testEnv.rp,
+    abi: routeProcessor3Abi_processRoute,
     functionName: 'processRoute',
     args: [
       rpParams.tokenIn as Address,
@@ -192,7 +197,8 @@ it('UniV3 Solo', async () => {
 
   await testEnv.client.waitForTransactionReceipt({ hash: tx })
   const balanceOutBIAfter = await testEnv.client.readContract({
-    ...pool.token1Contract,
+    address: pool.token1Contract.address,
+    abi: erc20Abi_balanceOf,
     functionName: 'balanceOf',
     args: [testEnv.user.address],
   })

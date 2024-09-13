@@ -90,9 +90,9 @@ type ProtocolFeeAnalysis {
 
 enum PoolsOrderBy {
   liquidityUSD
-  txCount1d
-  feeUSD1d
   volumeUSD1d
+  volumeUSD1w
+  txCount1d
   totalApr1d
 }
 
@@ -125,7 +125,7 @@ type V2Pool {
   protocol: String!
   token0: Token!
   token1: Token!
-  source: String!
+  source: DataSource!
   reserve0: String!
   reserve1: String!
   liquidity: String!
@@ -158,7 +158,7 @@ type V3Pool {
   protocol: String!
   token0: Token!
   token1: Token!
-  source: String!
+  source: DataSource!
   reserve0: String!
   reserve1: String!
   liquidity: String!
@@ -279,15 +279,21 @@ type Pool {
   token0Address: String!
   token1Address: String!
   liquidityUSD: Float!
-  txCount1d: Int!
-  feeUSD1d: Float!
+  liquidityUSDChange1d: Float!
   volumeUSD1d: Float!
+  volumeUSD1w: Float!
+  volumeUSDChange1d: Float!
+  volumeUSDChange1w: Float!
+  txCount1d: Int!
+  txCountChange1d: Float!
+  feeUSD1d: Float!
   feeApr1d: Float!
   totalApr1d: Float!
   incentiveApr: Float!
   isSmartPool: Boolean!
   isIncentivized: Boolean!
   wasIncentivized: Boolean!
+  incentives: [Incentive!]!
   source: String!
 }
 
@@ -535,6 +541,14 @@ enum ChainIdFeature {
   SmartPoolChainId
   TokenListChainId
   TrendingTokensChainId
+}
+
+enum DataSource {
+  SUBGRAPH
+  CACHE
+  STALE_CACHE
+  WEB3
+  COINGECKO
 }
 
 type BasicSmartPool {

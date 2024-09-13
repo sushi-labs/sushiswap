@@ -90,12 +90,15 @@ const nextConfig = bundleAnalyzer({
   },
 })
 
-export default withSentryConfig(withAxiom(nextConfig), {
+export default withAxiom(withSentryConfig(nextConfig), {
   // For all available options, see:
   // https://github.com/getsentry/sentry-webpack-plugin#options
 
-  org: 'sushi-j9',
-  project: 'evm',
+  org: process.env.SENTRY_ORG,
+  project: process.env.SENTRY_PROJECT,
+
+  // An auth token is required for uploading source maps.
+  authToken: process.env.SENTRY_AUTH_TOKEN,
 
   // Only print logs for uploading source maps in CI
   silent: !process.env.CI,
@@ -116,11 +119,15 @@ export default withSentryConfig(withAxiom(nextConfig), {
   hideSourceMaps: true,
 
   // Automatically tree-shake Sentry logger statements to reduce bundle size
-  disableLogger: true,
+  disableLogger: process.NODE_ENV === 'production',
 
   // Enables automatic instrumentation of Vercel Cron Monitors. (Does not yet work with App Router route handlers.)
   // See the following for more information:
   // https://docs.sentry.io/product/crons/
   // https://vercel.com/docs/cron-jobs
   automaticVercelMonitors: true,
+
+  unstable_sentryWebpackPluginOptions: {
+    applicationKey: 'web',
+  },
 })

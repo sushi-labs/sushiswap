@@ -9,7 +9,7 @@ import {
   MultiCallAggregator,
   TokenManager,
 } from '@sushiswap/extractor'
-import { routeProcessor2Abi } from 'sushi/abi'
+import { routeProcessor2Abi_processRoute } from 'sushi/abi'
 import { ChainId } from 'sushi/chain'
 import {
   BASES_TO_CHECK_TRADES_AGAINST,
@@ -251,7 +251,7 @@ async function startInfinitTest(args: {
       try {
         const { result: amountOutReal } = (await client.simulateContract({
           address: args.RP3Address,
-          abi: routeProcessor2Abi,
+          abi: routeProcessor2Abi_processRoute,
           functionName: 'processRoute',
           args: [
             rpParams.tokenIn as Address,

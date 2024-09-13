@@ -2,7 +2,6 @@
 
 import { createErrorToast, createToast } from '@sushiswap/notifications'
 import { useCallback, useMemo } from 'react'
-import { xsushiAbi } from 'sushi/abi'
 import { Amount, Token, XSUSHI_ADDRESS } from 'sushi/currency'
 import { UserRejectedRequestError } from 'viem'
 import {
@@ -13,6 +12,7 @@ import {
 } from 'wagmi'
 import { SendTransactionReturnType } from 'wagmi/actions'
 
+import { xsushiAbi_enter } from 'sushi/abi'
 import { ChainId } from 'sushi/chain'
 
 interface UseBarDepositParams {
@@ -55,10 +55,10 @@ export function useBarDeposit({ amount, enabled = true }: UseBarDepositParams) {
 
   const { data: simulation } = useSimulateContract({
     address: XSUSHI_ADDRESS[ChainId.ETHEREUM],
-    abi: xsushiAbi,
+    abi: xsushiAbi_enter,
     functionName: 'enter',
     chainId: ChainId.ETHEREUM,
-    args: [amount?.quotient],
+    args: amount ? [amount.quotient] : undefined,
     query: { enabled },
   })
 

@@ -14,7 +14,10 @@ import {
 } from '@sushiswap/steer-sdk'
 import { useQueryClient } from '@tanstack/react-query'
 import { useEffect, useMemo } from 'react'
-import { uniswapV2PairAbi } from 'sushi/abi'
+import {
+  uniswapV2PairAbi_getReserves,
+  uniswapV2PairAbi_totalSupply,
+} from 'sushi/abi'
 import { Amount, Token } from 'sushi/currency'
 import { Fraction } from 'sushi/math'
 import { Address } from 'viem'
@@ -40,13 +43,13 @@ function useQuoteTokenPriceUSD(bond: Bond, enabled = true) {
     allowFailure: false,
     contracts: [
       {
-        abi: uniswapV2PairAbi,
+        abi: uniswapV2PairAbi_getReserves,
         functionName: 'getReserves',
         chainId: bond.chainId,
         address: bond.quoteToken.address,
       },
       {
-        abi: uniswapV2PairAbi,
+        abi: uniswapV2PairAbi_totalSupply,
         functionName: 'totalSupply',
         chainId: bond.chainId,
         address: bond.quoteToken.address,

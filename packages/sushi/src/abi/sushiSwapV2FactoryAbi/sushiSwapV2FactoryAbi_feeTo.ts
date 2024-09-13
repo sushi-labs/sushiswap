@@ -1,0 +1,9 @@
+export const sushiSwapV2FactoryAbi_feeTo = [
+  {
+    inputs: [],
+    name: 'feeTo',
+    outputs: [{ internalType: 'address', name: '', type: 'address' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
+] as const

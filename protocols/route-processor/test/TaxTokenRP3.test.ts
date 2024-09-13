@@ -1,4 +1,4 @@
-import { erc20Abi, routeProcessor2Abi } from 'sushi/abi'
+import { erc20Abi_transfer, routeProcessor2Abi_processRoute } from 'sushi/abi'
 import { ChainId } from 'sushi/chain'
 import { Native, Token } from 'sushi/currency'
 import { DataFetcher, RPParams, Router } from 'sushi/router'
@@ -47,7 +47,7 @@ async function checkTaxTokenTransfer(
     const chainId = client.chain?.id as ChainId
     return await client.readContract({
       address: route.toToken.address as Address, //'0x8b2060CC6E55Fa68204B3Bc8B226FC61B3512C1f', //bpsTest
-      abi: erc20Abi,
+      abi: erc20Abi_transfer,
       // @ts-ignore
       functionName: 'transfer',
       args: [ROUTE_PROCESSOR_3_ADDRESS[chainId], route.amountOutBI],
@@ -63,10 +63,9 @@ async function testTaxTokenBuy(
   account?: Address,
 ): Promise<number> {
   const chainId = client.chain?.id as ChainId
-  const amountOutReal = await client.readContract({
+  const amountOutReal = await client.simulateContract({
     address: ROUTE_PROCESSOR_3_ADDRESS[chainId],
-    abi: routeProcessor2Abi,
-    // @ts-ignore
+    abi: routeProcessor2Abi_processRoute,
     functionName: 'processRoute',
     args: [
       rpParams.tokenIn as Address,
@@ -79,9 +78,10 @@ async function testTaxTokenBuy(
     value: rpParams.value,
     account,
   })
+
   return route.amountOutBI === 0n
     ? -1
-    : Number(amountOutReal - route.amountOutBI) / route.amountOut
+    : Number(amountOutReal.result - route.amountOutBI) / route.amountOut
 }
 
 async function testTaxToken(args: {

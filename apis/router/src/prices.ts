@@ -241,7 +241,7 @@ export function comparePrices(
         totalR += r
         maxR = Math.max(r, maxR)
         levels.forEach((l, i) => {
-          if (r > l) levelsEx[i] += 1
+          if (r > l) levelsEx[i] = (levelsEx[i] || 0) + 1
         })
       }
     }

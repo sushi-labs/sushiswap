@@ -55,6 +55,8 @@ export const ChainId = {
   ROOTSTOCK: 30,
   MANTLE: 5000,
   // RONIN: 2020,
+  CURTIS: 33111,
+  // APTOS: 'aptos',
 } as const
 export type ChainId = (typeof ChainId)[keyof typeof ChainId]
 
@@ -72,6 +74,7 @@ export const TESTNET_CHAIN_IDS = [
   // ChainId.RINKEBY,
   // ChainId.GÖRLI,
   // ChainId.KOVAN,
+  ChainId.CURTIS,
 ] as const
 export type TestnetChainId = (typeof TESTNET_CHAIN_IDS)[number]
 
@@ -136,6 +139,7 @@ export const ChainKey = {
   [ChainId.SKALE_EUROPA]: 'skale-europa',
   [ChainId.ROOTSTOCK]: 'rootstock',
   [ChainId.MANTLE]: 'mantle',
+  [ChainId.CURTIS]: 'curtis',
 } as const
 export type ChainKey = (typeof ChainKey)[keyof typeof ChainKey]
 

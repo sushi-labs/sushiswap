@@ -1,6 +1,6 @@
 import { readContracts } from '@wagmi/core'
 import { Rebase } from 'sushi'
-import { bentoBoxV1TotalsAbi } from 'sushi/abi'
+import { bentoBoxV1Abi_totals } from 'sushi/abi'
 import { BENTOBOX_ADDRESS, BentoBoxChainId } from 'sushi/config'
 import { Type as Currency } from 'sushi/currency'
 import { Address } from 'viem'
@@ -22,7 +22,7 @@ export const getBentoboxTotalsMap = async (
       ({
         chainId,
         address: BENTOBOX_ADDRESS[chainId] as Address,
-        abi: bentoBoxV1TotalsAbi,
+        abi: bentoBoxV1Abi_totals,
         functionName: 'totals',
         args: [address as Address],
       }) as const,
@@ -58,7 +58,7 @@ export const getBentoboxTotals = async (
       ({
         chainId,
         address: BENTOBOX_ADDRESS[chainId] as Address,
-        abi: bentoBoxV1TotalsAbi,
+        abi: bentoBoxV1Abi_totals,
         functionName: 'totals',
         args: [address as Address],
       }) as const,

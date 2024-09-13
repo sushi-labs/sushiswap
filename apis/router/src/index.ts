@@ -51,6 +51,18 @@ async function start() {
     dsn: SENTRY_DSN,
     environment: SENTRY_ENVIRONMENT,
     integrations: [
+      // Sentry.thirdPartyErrorFilterIntegration({
+      //   // Specify the application keys that you specified in the Sentry bundler plugin
+      //   filterKeys: ['router'],
+
+      //   // Defines how to handle errors that contain third party stack frames.
+      //   // Possible values are:
+      //   // - 'drop-error-if-contains-third-party-frames'
+      //   // - 'drop-error-if-exclusively-contains-third-party-frames'
+      //   // - 'apply-tag-if-contains-third-party-frames'
+      //   // - 'apply-tag-if-exclusively-contains-third-party-frames'
+      //   behaviour: 'apply-tag-if-contains-third-party-frames',
+      // }),
       // enable HTTP calls tracing
       new Sentry.Integrations.Http({
         breadcrumbs: true,
@@ -64,8 +76,18 @@ async function start() {
     // Performance Monitoring
     enableTracing: true,
     tracesSampleRate: 1,
+    //debug: process.env['SENTRY_ENVIRONMENT'] !== 'production',
+    // Called for message and error events
+    beforeSend(event) {
+      // Modify or drop the event here
+      if (event.user) {
+        // Don't send user's email address for example
+        // delete event.user.email
+      }
+      return event
+    },
   })
-
+  Sentry.setTag('chainId', CHAIN_ID)
   Logger.setLogsExternalHandler(
     (
       msg: string,

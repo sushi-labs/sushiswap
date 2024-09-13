@@ -1,6 +1,6 @@
 import { EventEmitter } from 'node:events'
 import { Abi, Address, parseAbiItem } from 'abitype'
-import { erc20Abi } from 'sushi/abi'
+import { erc20Abi_balanceOf } from 'sushi/abi'
 import { Token } from 'sushi/currency'
 import { LiquidityProviders, PoolCode, UniV3PoolCode } from 'sushi/router'
 import { CLTick, RToken, UniV3Pool } from 'sushi/tines'
@@ -162,13 +162,13 @@ export class AlgebraPoolWatcher extends EventEmitter {
             { address: this.address, abi: feeAbi, functionName: 'fee' },
             {
               address: this.token0.address as Address,
-              abi: erc20Abi,
+              abi: erc20Abi_balanceOf,
               functionName: 'balanceOf',
               args: [this.address],
             },
             {
               address: this.token1.address as Address,
-              abi: erc20Abi,
+              abi: erc20Abi_balanceOf,
               functionName: 'balanceOf',
               args: [this.address],
             },

@@ -14,7 +14,7 @@ import ISwapRouter from '@uniswap/v3-periphery/artifacts/contracts/SwapRouter.so
 import { expect } from 'chai'
 import hre from 'hardhat'
 import { HardhatNetworkAccountUserConfig } from 'hardhat/types'
-import { erc20Abi, routeProcessor2Abi } from 'sushi/abi'
+import { erc20Abi_approve, routeProcessor2Abi_processRoute } from 'sushi/abi'
 import { ChainId } from 'sushi/chain'
 import { BASES_TO_CHECK_TRADES_AGAINST } from 'sushi/config'
 import { DAI, Native, USDC, WBTC, WETH9, WNATIVE } from 'sushi/currency'
@@ -162,13 +162,13 @@ async function prepareEnvironment(): Promise<TestEnvironment> {
       await setTokenBalance(addr, user, amount)
       await client.writeContract({
         address: addr as Address,
-        abi: erc20Abi,
+        abi: erc20Abi_approve,
         functionName: 'approve',
         args: [PositionManagerAddress[ChainId.ETHEREUM], amount],
       })
       await client.writeContract({
         address: addr as Address,
-        abi: erc20Abi,
+        abi: erc20Abi_approve,
         functionName: 'approve',
         args: [SwapRouterAddress, amount],
       })
@@ -660,7 +660,7 @@ async function startInfinitTest(args: {
         const amountOutReal = await client
           .simulateContract({
             address: args.RP3Address,
-            abi: routeProcessor2Abi,
+            abi: routeProcessor2Abi_processRoute,
             functionName: 'processRoute',
             args: [
               rpParams.tokenIn as Address,

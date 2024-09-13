@@ -1,5 +1,4 @@
 import { createForkWithRP } from '@sushiswap/tines-sandbox'
-import { routeProcessor4Abi, routeProcessor5Abi } from 'sushi/abi'
 import { http, Abi, Address, Hex, PublicClient, createPublicClient } from 'viem'
 import { mainnet } from 'viem/chains'
 
@@ -18,13 +17,13 @@ interface RP {
 }
 
 const RP5_TEST_INSTANCE = {
-  abi: routeProcessor5Abi as Abi,
+  abi: RouteProcessor5.abi as Abi,
   address: '0x3e1116ea5034f5d73a7b530071709d54a4109f5f' as Address,
 }
 
 function RP4_OFFICIAL_INSTANCE(chainId: ChainId): RP {
   return {
-    abi: routeProcessor4Abi as Abi,
+    abi: RouteProcessor4.abi as Abi,
     address: ROUTE_PROCESSOR_4_ADDRESS[
       chainId as keyof typeof ROUTE_PROCESSOR_4_ADDRESS
     ] as Address,
@@ -111,14 +110,14 @@ it.skip('Ethereum case 1 RP4 Fork', async () => {
     `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_ID}`,
     20161000n,
     1,
-    routeProcessor4Abi as Abi,
+    RouteProcessor4.abi as Abi,
     RouteProcessor4.bytecode as Hex,
   )
   await testRoute({
     client: fork.client,
     RPInRoute: '0x3e1116ea5034f5d73a7b530071709d54a4109f5f',
     RPInstance: {
-      abi: routeProcessor4Abi as Abi,
+      abi: RouteProcessor4.abi as Abi,
       address: fork.RouteProcessorAddress as Address,
     },
     tokenIn: '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE',
@@ -159,14 +158,14 @@ it.skip('Ethereum case 1 RP5 fork', async () => {
     `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_ID}`,
     20161000n,
     1,
-    routeProcessor5Abi as Abi,
+    RouteProcessor5.abi as Abi,
     RouteProcessor5.bytecode as Hex,
   )
   await testRoute({
     client: fork.client,
     RPInRoute: '0x3e1116ea5034f5d73a7b530071709d54a4109f5f',
     RPInstance: {
-      abi: routeProcessor5Abi as Abi,
+      abi: RouteProcessor5.abi as Abi,
       address: fork.RouteProcessorAddress as Address,
     },
     tokenIn: '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE',

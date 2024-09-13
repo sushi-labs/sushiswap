@@ -506,4 +506,9 @@ export const BASES_TO_CHECK_TRADES_AGAINST: {
     USDC[ChainId.MANTLE],
     METH[ChainId.MANTLE],
   ],
+  [ChainId.CURTIS]: [
+    WNATIVE[ChainId.CURTIS],
+    USDT[ChainId.CURTIS],
+    DAI[ChainId.CURTIS],
+  ],
 }
