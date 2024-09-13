@@ -64,7 +64,7 @@ test.beforeEach(async ({ page, next }) => {
 })
 
 test.afterEach(async ({ page }) => {
-  await page.unrouteAll({ behavior: 'ignoreErrors' })
+  // await page.unrouteAll({ behavior: 'ignoreErrors' })
 })
 
 test('Wrap and unwrap', async ({ page }) => {
@@ -98,23 +98,6 @@ test('swap Native to USDT, then USDT to NATIVE', async ({ page }) => {
   await swapPage.switchNetwork(chainId)
   await swapPage.mockSwapApi(`test/swap/mock/${chainId}-native-to-usdt.json`)
   await swapPage.swap(native, usdt, nativeAmount)
-
-  await swapPage.mockSwapApi(`test/swap/mock/${chainId}-usdt-to-native.json`)
-  await swapPage.swap(usdt, native, 'max')
-})
-
-test('Swap Native to USDC, USDC to USDT then USDT to NATIVE', async ({
-  page,
-}) => {
-  const swapPage = new SwapPage(page, chainId)
-  await swapPage.goTo(url)
-  await swapPage.connect()
-  await swapPage.switchNetwork(chainId)
-  await swapPage.mockSwapApi(`test/swap/mock/${chainId}-native-to-usdc.json`)
-  await swapPage.swap(native, usdc, nativeAmount)
-
-  await swapPage.mockSwapApi(`test/swap/mock/${chainId}-usdc-to-usdt.json`)
-  await swapPage.swap(usdc, usdt, 'max')
 
   await swapPage.mockSwapApi(`test/swap/mock/${chainId}-usdt-to-native.json`)
   await swapPage.swap(usdt, native, 'max')

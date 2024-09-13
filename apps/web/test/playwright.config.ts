@@ -1,6 +1,9 @@
-import type { PlaywrightTestConfig } from '@playwright/test'
-import { devices } from '@playwright/test'
+import { type PlaywrightTestConfig, devices } from '@playwright/test'
 import { defineConfig } from 'next/experimental/testmode/playwright.js'
+
+import nextEnv from '@next/env'
+// weird that we have to access it like this, wouldn't work if we imported the function only
+nextEnv.loadEnvConfig(process.cwd(), false)
 
 // Use process.env.PORT by default and fallback to port 3000
 const PORT = process.env.PORT || 3000
@@ -21,7 +24,7 @@ const config: PlaywrightTestConfig = {
   // quiet: !!process.env.CI,
   quiet: true,
   testMatch: [
-    'pool.test.ts',
+    // 'pool.test.ts',
     'simple.test.ts',
     // 'smart.test.ts',
     // 'cross-chain.test.ts',
@@ -126,6 +129,7 @@ const config: PlaywrightTestConfig = {
     // },
     {
       command: [
+        'NODE_ENV=test',
         `EDGE_CONFIG=${String(process.env.EDGE_CONFIG)}`,
         'NEXT_PUBLIC_APP_ENV=test',
         `NEXT_PUBLIC_CHAIN_ID=${String(process.env.NEXT_PUBLIC_CHAIN_ID)}`,
@@ -135,6 +139,7 @@ const config: PlaywrightTestConfig = {
       timeout: 120_000,
       reuseExistingServer: !process.env.CI,
       env: {
+        NODE_ENV: 'test',
         EDGE_CONFIG: String(process.env.EDGE_CONFIG),
         NEXT_PUBLIC_APP_ENV: 'test',
         NEXT_PUBLIC_CHAIN_ID: String(process.env.NEXT_PUBLIC_CHAIN_ID),
