@@ -82,6 +82,7 @@ export const TokenListSelect = ({
         </DialogHeader>
         <div className="">
           <Search
+            placeholder="Search by token or address"
             id={'token-search'}
             value={query}
             loading={false}

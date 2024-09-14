@@ -232,7 +232,7 @@ export const Search: FC<Search> = forwardRef<HTMLInputElement, Search>(
             value={value}
             onChange={(e) => onChange(e.target.value)}
             className={classNames(
-              'truncate font-semibold w-full bg-transparent !p-0 placeholder:font-medium placeholder:text-gray-400 placeholder:dark:text-slate-500 text-gray-900 dark:text-slate-200',
+              'truncate outline-none font-semibold w-full bg-transparent !p-0 placeholder:font-medium placeholder:text-gray-400 placeholder:dark:text-slate-500 text-gray-900 dark:text-slate-200',
             )}
             autoCorrect="off"
             autoCapitalize="off"
