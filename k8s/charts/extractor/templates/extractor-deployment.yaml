@@ -13,9 +13,6 @@ spec:
       labels:
         app: extractor-{{ .id }}
     spec:
-      nodeSelector:
-        cloud.google.com/compute-class: Performance
-        cloud.google.com/machine-family: c3
       volumes:
         - name: extractor-pv
           persistentVolumeClaim:
@@ -47,7 +44,7 @@ spec:
           resources:
             requests:
               cpu: {{ dig "extractor" "resources" "requests" "cpu" "50m" . }}
-              memory: {{ dig "extractor" "resources" "requests" "memory" "512Mi" . }}
+              memory: {{ dig "extractor" "resources" "requests" "memory" "325Mi" . }}
             limits:
               cpu: {{ dig "extractor" "resources" "limits" "cpu" "1000m" . }}
               memory: {{ dig "extractor" "resources" "limits" "memory" "8Gi" . }}

@@ -2,7 +2,7 @@ import { Request, Response } from 'express'
 import {
   CHAIN_ID,
   REQUESTED_PAIRS_SERIALIZATION_INTERVAL,
-} from '../../config.js'
+} from '../../config/index.js'
 import extractor from '../../extractor.js'
 
 let lastPairs: object = {}

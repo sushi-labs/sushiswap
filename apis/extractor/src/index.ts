@@ -3,7 +3,12 @@ import 'dotenv/config'
 import * as Sentry from '@sentry/node'
 import { Logger, LogsMessageLevel } from '@sushiswap/extractor'
 import express, { type Express, type Response } from 'express'
-import { CHAIN_ID, PORT, SENTRY_DSN, SENTRY_ENVIRONMENT } from './config.js'
+import {
+  CHAIN_ID,
+  PORT,
+  SENTRY_DSN,
+  SENTRY_ENVIRONMENT,
+} from './config/index.js'
 import { CPUUsageStatistics } from './cpu-usage-statistics.js'
 import extractor from './extractor.js'
 import poolCodesBetween from './handlers/pool-codes-between/index.js'
