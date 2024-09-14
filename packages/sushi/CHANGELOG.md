@@ -1,5 +1,11 @@
 # sushi
 
+## 3.2.4
+
+### Patch Changes
+
+- [`91fbf2861`](https://github.com/sushiswap/sushiswap/commit/91fbf2861dbebb5ca6e580124d5208a444846c4d) Thanks [@matthewlilley](https://github.com/matthewlilley)! - config
+
 ## 3.2.3
 
 ### Patch Changes
