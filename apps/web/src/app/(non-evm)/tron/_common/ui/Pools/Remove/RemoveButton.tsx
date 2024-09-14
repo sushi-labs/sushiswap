@@ -7,11 +7,6 @@ import { Button } from '@sushiswap/ui'
 import { useQueryClient } from '@tanstack/react-query'
 import { useWallet } from '@tronweb3/tronwallet-adapter-react-hooks'
 import { useMemo } from 'react'
-import { usePoolState } from '~tron/(tron)/explore/pools/pool-provider'
-import {
-  useRemoveLiqDispatch,
-  useRemoveLiqState,
-} from '~tron/(tron)/pool/(pool)/[address]/remove-provider'
 import { ROUTER_CONTRACT } from '~tron/_common/constants/contracts'
 import { PAIR_DECIMALS } from '~tron/_common/constants/pair-decimals'
 import { useAllowance } from '~tron/_common/lib/hooks/useAllowance'
@@ -29,6 +24,8 @@ import {
 import { getTronscanTxnLink } from '~tron/_common/lib/utils/tronscan-helpers'
 import { ApproveToken } from '~tron/_common/ui/Shared/ApproveToken'
 import { WalletConnector } from '~tron/_common/ui/WalletConnector/WalletConnector'
+import { usePoolState } from '../pool-provider'
+import { useRemoveLiqDispatch, useRemoveLiqState } from './pool-remove-provider'
 
 export const RemoveButton = () => {
   const queryClient = useQueryClient()

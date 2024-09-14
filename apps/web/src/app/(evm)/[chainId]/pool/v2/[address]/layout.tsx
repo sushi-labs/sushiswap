@@ -3,7 +3,6 @@ import { unstable_cache } from 'next/cache'
 import { ChainId } from 'sushi'
 import { isSushiSwapV2ChainId } from 'sushi/config'
 import { isAddress } from 'viem'
-import { PoolProvider } from '~tron/(tron)/explore/pools/pool-provider'
 import notFound from '../../../not-found'
 
 export const metadata = {
@@ -40,5 +39,5 @@ export default async function Layout({
     return notFound()
   }
 
-  return <PoolProvider>{children}</PoolProvider>
+  return <>{children}</>
 }

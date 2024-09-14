@@ -6,12 +6,11 @@ import {
   CardHeader,
   CardLabel,
   CardTitle,
+  SkeletonText,
 } from '@sushiswap/ui'
 import { useWallet } from '@tronweb3/tronwallet-adapter-react-hooks'
 import { useEffect, useMemo } from 'react'
 import { formatUSD } from 'sushi/format'
-import { usePoolState } from '~tron/(tron)/explore/pools/pool-provider'
-import { useRemoveLiqDispatch } from '~tron/(tron)/pool/(pool)/[address]/remove-provider'
 import { PAIR_DECIMALS } from '~tron/_common/constants/pair-decimals'
 import { useStablePrice } from '~tron/_common/lib/hooks/useStablePrice'
 import { useTokenBalance } from '~tron/_common/lib/hooks/useTokenBalance'
@@ -23,6 +22,8 @@ import {
 } from '~tron/_common/lib/utils/formatters'
 import { IToken } from '~tron/_common/types/token-type'
 import { LiquidityItem } from '../PoolDetails/LiquidityItem'
+import { useRemoveLiqDispatch } from '../Remove/pool-remove-provider'
+import { usePoolState } from '../pool-provider'
 
 export const PoolPosition = ({
   token0,
@@ -134,11 +135,17 @@ export const PoolPosition = ({
         <CardTitle>My Position</CardTitle>
         <CardDescription>
           <span className="text-sm text-right dark:text-slate-50 text-gray-900">
-            {formatUSD(
-              token0StakedInUsd +
-                token1StakedInUsd +
-                token0UnstakedInUsd +
-                token1UnstakedInUsd,
+            {loading ? (
+              <div className="w-28">
+                <SkeletonText fontSize="sm" />
+              </div>
+            ) : (
+              formatUSD(
+                token0StakedInUsd +
+                  token1StakedInUsd +
+                  token0UnstakedInUsd +
+                  token1UnstakedInUsd,
+              )
             )}
           </span>
         </CardDescription>

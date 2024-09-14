@@ -15,6 +15,11 @@ import { Icon } from '../General/Icon'
 import { DollarAmountDisplay } from '../Shared/DollarAmountDisplay'
 import { TokenBalanceDisplay } from '../Shared/TokenBalanceDisplay'
 
+const themes = {
+  default: 'bg-white dark:bg-slate-800',
+  outline: 'border border-accent',
+} as const
+
 type TokenInputProps = {
   id?: string
   type: 'input' | 'output'
@@ -25,6 +30,7 @@ type TokenInputProps = {
   className?: string
   hideIcon?: boolean
   label?: string
+  theme?: keyof typeof themes
 }
 
 export const TokenInput = ({
@@ -37,6 +43,7 @@ export const TokenInput = ({
   className,
   hideIcon,
   label,
+  theme = 'default',
 }: TokenInputProps) => {
   const { address } = useWallet()
   const { data: tokenBalance, isInitialLoading: isInitialLoadingTokenBalance } =
@@ -93,7 +100,8 @@ export const TokenInput = ({
     <div
       className={classNames(
         _error ? '!bg-red-500/20 !dark:bg-red-900/30' : '',
-        'relative space-y-2 overflow-hidden pb-2',
+        'relative space-y-2 overflow-hidden pb-2 p-3 rounded-xl',
+        themes[theme],
         className,
       )}
     >

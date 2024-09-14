@@ -1,5 +1,5 @@
 import { CardItem } from '@sushiswap/ui'
-import { formatNumber, formatUSD } from 'sushi/format'
+import { formatUSD } from 'sushi/format'
 import { formatUnits } from '~tron/_common/lib/utils/formatters'
 import { IToken } from '~tron/_common/types/token-type'
 import { Icon } from '~tron/_common/ui/General/Icon'
@@ -28,7 +28,7 @@ export const LiquidityItem = ({
       }
     >
       <span className="flex gap-1 font-semibold">
-        {formatNumber(formatUnits(amount ?? '', token?.decimals ?? 0, 4))}{' '}
+        {+amount > 0 ? formatUnits(amount, token.decimals, 4) : 0}{' '}
         <span className="font-normal text-gray-400 dark:text-slate-600">
           {formatUSD(usdAmount)}
         </span>

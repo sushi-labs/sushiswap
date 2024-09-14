@@ -4,11 +4,6 @@ import {
 } from '@sushiswap/hooks'
 import { Card, CardGroup, CardLabel } from '@sushiswap/ui'
 import { useEffect, useMemo } from 'react'
-import { usePoolState } from '~tron/(tron)/explore/pools/pool-provider'
-import {
-  useRemoveLiqDispatch,
-  useRemoveLiqState,
-} from '~tron/(tron)/pool/(pool)/[address]/remove-provider'
 import { PAIR_DECIMALS } from '~tron/_common/constants/pair-decimals'
 import { useStablePrice } from '~tron/_common/lib/hooks/useStablePrice'
 import {
@@ -18,6 +13,8 @@ import {
   toBigNumber,
 } from '~tron/_common/lib/utils/formatters'
 import { LiquidityItem } from '../PoolDetails/LiquidityItem'
+import { usePoolState } from '../pool-provider'
+import { useRemoveLiqDispatch, useRemoveLiqState } from './pool-remove-provider'
 
 export const MinimumReceive = () => {
   const {

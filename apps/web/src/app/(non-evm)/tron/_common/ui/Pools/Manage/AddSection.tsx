@@ -41,10 +41,10 @@ export const AddSection = () => {
           </SettingsOverlay>
         </WidgetAction>
       </WidgetHeader>
-      <section className="flex flex-col gap-3 relative w-full">
-        <AmountInToken0 />
-        <Plus />
-        <AmountInToken1 />
+      <section className="flex flex-col gap-4 relative w-full">
+        <AmountInToken0 theme="outline" />
+        <Plus theme="outline" />
+        <AmountInToken1 theme="outline" />
       </section>
       <div className="mt-3 w-full flex flex-col">
         <ReviewAddDialog />

@@ -1,10 +1,7 @@
 import { useEffect } from 'react'
-import {
-  usePoolDispatch,
-  usePoolState,
-} from '~tron/(tron)/explore/pools/pool-provider'
 import { useReserves } from '~tron/_common/lib/hooks/useReserves'
 import { getValidTokenAddress } from '~tron/_common/lib/utils/helpers'
+import { usePoolDispatch, usePoolState } from './pool-provider'
 
 export const ReserveHelper = () => {
   const { token0, token1, pairAddress } = usePoolState()

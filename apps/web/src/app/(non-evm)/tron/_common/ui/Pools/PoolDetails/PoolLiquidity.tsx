@@ -6,6 +6,7 @@ import {
   CardHeader,
   CardLabel,
   CardTitle,
+  SkeletonText,
 } from '@sushiswap/ui'
 import { formatUSD } from 'sushi/format'
 import { useReserves } from '~tron/_common/lib/hooks/useReserves'
@@ -53,9 +54,15 @@ export const PoolLiquidity = ({
     <Card>
       <CardHeader>
         <CardTitle>Pool Liquidity</CardTitle>
-        <CardDescription>
-          {formatUSD(Number(token0PoolPrice) + Number(token1PoolPrice))}
-        </CardDescription>
+        {!token0Price || !token1Price ? (
+          <div className="w-28">
+            <SkeletonText fontSize="sm" />
+          </div>
+        ) : (
+          <CardDescription>
+            {formatUSD(Number(token0PoolPrice) + Number(token1PoolPrice))}
+          </CardDescription>
+        )}
       </CardHeader>
       <CardContent>
         <CardGroup>

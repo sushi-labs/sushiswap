@@ -1,16 +1,15 @@
-import { useEffect, useMemo } from 'react'
-import {
-  usePoolDispatch,
-  usePoolState,
-} from '~tron/(tron)/explore/pools/pool-provider'
+import { ComponentProps, useEffect, useMemo } from 'react'
 import {
   formatUnitsForInput,
   parseUnits,
 } from '~tron/_common/lib/utils/formatters'
 import { getToken1AmountForLiquidity } from '~tron/_common/lib/utils/helpers'
 import { TokenInput } from '~tron/_common/ui/Input/TokenInput'
+import { usePoolDispatch, usePoolState } from '../pool-provider'
 
-export const AmountInToken0 = () => {
+export const AmountInToken0 = ({
+  theme,
+}: { theme?: ComponentProps<typeof TokenInput>['theme'] }) => {
   const {
     token0,
     token1,
@@ -70,7 +69,7 @@ export const AmountInToken0 = () => {
 
   return (
     <TokenInput
-      className="p-3 rounded-xl bg-white dark:bg-slate-800"
+      theme={theme}
       type="input"
       amount={amountInToken0}
       setAmount={setAmount}
