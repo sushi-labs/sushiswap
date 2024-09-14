@@ -52,10 +52,10 @@ profiles:
           valuesFiles: [k8s/charts/values.yaml, k8s/charts/staging-values.yaml]
         - name: sushi-router
           chartPath: k8s/charts/router
-          valuesFiles: [k8s/charts/values.yaml]
+          valuesFiles: [k8s/charts/values.yaml, k8s/charts/staging-values.yaml]
         - name: sushi-nginx
           chartPath: k8s/charts/nginx
-          valuesFiles: [k8s/charts/values.yaml]
+          valuesFiles: [k8s/charts/values.yaml, k8s/charts/staging-values.yaml]
   manifests:
     rawYaml:
       - k8s/ingress-staging.yaml
@@ -72,10 +72,10 @@ profiles:
           valuesFiles: [k8s/charts/values.yaml, k8s/charts/production-values.yaml]
         - name: sushi-router
           chartPath: k8s/charts/router
-          valuesFiles: [k8s/charts/values.yaml]
+          valuesFiles: [k8s/charts/values.yaml, k8s/charts/production-values.yaml]
         - name: sushi-nginx
           chartPath: k8s/charts/nginx
-          valuesFiles: [k8s/charts/values.yaml]
+          valuesFiles: [k8s/charts/values.yaml, k8s/charts/production-values.yaml]
   manifests:
     rawYaml:
       - k8s/ingress-production.yaml

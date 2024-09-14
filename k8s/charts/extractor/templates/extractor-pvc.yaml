@@ -3,7 +3,7 @@ kind: PersistentVolumeClaim
 metadata:
   name: extractor-pvc
 spec:
-  storageClassName: premium-rwx
+  storageClassName: standard-rwx
   accessModes:
     - ReadWriteMany
   resources:
