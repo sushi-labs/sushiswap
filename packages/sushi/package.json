@@ -32,6 +32,11 @@
       "import": "./dist/_esm/abi/index.js",
       "default": "./dist/_cjs/abi/index.js"
     },
+    "./address": {
+      "types": "./dist/_types/address/index.d.ts",
+      "import": "./dist/_esm/address/index.js",
+      "default": "./dist/_cjs/address/index.js"
+    },
     "./bigint-serializer": {
       "types": "./dist/_types/bigint-serializer/index.d.ts",
       "import": "./dist/_esm/bigint-serializer/index.js",
@@ -156,6 +161,9 @@
     "*": {
       "abi": [
         "./dist/_types/abi/index.d.ts"
+      ],
+      "address": [
+        "./dist/_types/address/index.d.ts"
       ],
       "bigint-serializer": [
         "./_types/bigint-serializer/index.d.ts"
