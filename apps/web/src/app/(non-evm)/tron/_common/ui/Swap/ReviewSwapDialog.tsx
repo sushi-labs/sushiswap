@@ -11,13 +11,13 @@ import { useWallet } from '@tronweb3/tronwallet-adapter-react-hooks'
 import Link from 'next/link'
 import { useMemo, useRef } from 'react'
 import { formatPercent } from 'sushi/format'
-import { useSwapState } from '~tron/(trade)/swap/swap-provider'
 import { truncateText } from '~tron/_common/lib/utils/formatters'
 import { getTronscanAddressLink } from '~tron/_common/lib/utils/tronscan-helpers'
 import {
   warningSeverity,
   warningSeverityClassName,
 } from '~tron/_common/lib/utils/warning-severity'
+import { useSwapState } from '~tron/swap/swap-provider'
 import { Icon } from '../General/Icon'
 import { WalletConnector } from '../WalletConnector/WalletConnector'
 import { ReviewSwapDialogTrigger } from './ReviewSwapDialogTrigger'

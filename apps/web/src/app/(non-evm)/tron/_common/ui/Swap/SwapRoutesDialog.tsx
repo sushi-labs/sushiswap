@@ -7,8 +7,8 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@sushiswap/ui'
-import { useSwapState } from '~tron/(trade)/swap/swap-provider'
 import { useTokenInfo } from '~tron/_common/lib/hooks/useTokenInfo'
+import { useSwapState } from '~tron/swap/swap-provider'
 import { Icon } from '../General/Icon'
 
 export const SwapRoutesDialog = () => {

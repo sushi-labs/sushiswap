@@ -2,8 +2,8 @@
 
 import { Container, LinkInternal } from '@sushiswap/ui'
 import { useSearchParams } from 'next/navigation'
-import { PathnameButton } from 'src/ui/pathname-button'
-import { PoolsFiltersProvider } from 'src/ui/pool'
+import React from 'react'
+import { PathnameButton, PoolsFiltersProvider } from 'src/ui/pool'
 import { Hero } from './hero'
 
 export default function Layout({
