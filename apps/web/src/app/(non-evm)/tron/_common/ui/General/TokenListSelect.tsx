@@ -60,13 +60,10 @@ export const TokenListSelect = ({
       <DialogTrigger asChild>
         <Button
           icon={() =>
-            token ? <Icon currency={token} width={26} height={26} /> : <></>
+            token ? <Icon currency={token} width={16} height={16} /> : <></>
           }
-          size="sm"
           variant="secondary"
-          className={`!rounded-full flex items-center !p-5 !text-xl ${
-            className ?? ''
-          }`}
+          className={className}
         >
           <span>{token?.symbol ?? 'Select Token'}</span>
           <div>

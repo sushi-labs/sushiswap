@@ -44,7 +44,7 @@ export const ReviewAddDialog = () => {
           variant="default"
           hideChevron={true}
           fullWidth={true}
-          size="lg"
+          size="xl"
         />
       )}
       <DialogContent>

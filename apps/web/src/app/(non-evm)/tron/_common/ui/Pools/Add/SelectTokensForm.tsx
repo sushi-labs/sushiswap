@@ -32,16 +32,8 @@ export const SelectTokensForm = () => {
       description="Which token pair would you like to add liquidity to."
     >
       <div className="flex gap-3">
-        <TokenListSelect
-          className="!text-sm !px-3 !rounded-xl"
-          token={token0}
-          setToken={setToken0}
-        />
-        <TokenListSelect
-          className="!text-sm !px-3 !rounded-xl"
-          token={token1}
-          setToken={setToken1}
-        />
+        <TokenListSelect token={token0} setToken={setToken0} />
+        <TokenListSelect token={token1} setToken={setToken1} />
       </div>
     </FormSection>
   )

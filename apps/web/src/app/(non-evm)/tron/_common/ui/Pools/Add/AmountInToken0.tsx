@@ -70,6 +70,7 @@ export const AmountInToken0 = () => {
 
   return (
     <TokenInput
+      className="p-3 rounded-xl bg-white dark:bg-slate-800"
       type="input"
       amount={amountInToken0}
       setAmount={setAmount}

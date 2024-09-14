@@ -11,7 +11,7 @@ export const DepositForm = () => {
       title="Deposit"
       description="Select the amount of tokens you want to deposit"
     >
-      <section className="flex flex-col gap-3 relative w-full">
+      <section className="flex flex-col gap-4 relative w-full">
         <AmountInToken0 />
         <Plus />
         <AmountInToken1 />

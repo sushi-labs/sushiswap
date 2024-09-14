@@ -158,7 +158,7 @@ export const ReviewAddDialogTrigger = () => {
       }
       asChild
     >
-      <Button size="lg" className="!w-full" loading={isTxnPending}>
+      <Button size="xl" className="!w-full" loading={isTxnPending}>
         {buttonText}
       </Button>
     </DialogTrigger>
