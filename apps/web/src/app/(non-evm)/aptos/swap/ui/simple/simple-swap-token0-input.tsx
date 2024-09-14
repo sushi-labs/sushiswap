@@ -1,5 +1,5 @@
 import React, { useEffect, useTransition } from 'react'
-import { CurrencyInput } from '~aptos/(common)/ui/currency/currency-input/currency-input'
+import { CurrencyInput } from '~aptos/_common/ui/currency/currency-input/currency-input'
 import { useSwap } from '~aptos/swap/lib/use-swap'
 import {
   useSimpleSwapActions,

@@ -1,5 +1,5 @@
-import { SupportedNetwork, chains } from '~aptos/(common)/config/chains'
-import { Token } from '~aptos/(common)/lib/types/token'
+import { SupportedNetwork, chains } from '~aptos/_common/config/chains'
+import { Token } from '~aptos/_common/lib/types/token'
 import { Pool } from '~aptos/pool/lib/convert-pool-to-sushi-pool'
 import { PoolReserve } from '~aptos/pool/lib/use-pools-reserves'
 import { baseTokens } from '../swap-base-tokens'

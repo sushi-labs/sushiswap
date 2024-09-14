@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
-import { useBaseTokens } from '~aptos/(common)/lib/common/use-base-tokens'
-import { useStablePrices } from '~aptos/(common)/lib/common/use-stable-prices'
+import { useBaseTokens } from '~aptos/_common/lib/common/use-base-tokens'
+import { useStablePrices } from '~aptos/_common/lib/common/use-stable-prices'
 import { usePools } from './use-pools'
 
 export type PoolExtended = NonNullable<

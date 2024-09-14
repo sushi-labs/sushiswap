@@ -1,7 +1,7 @@
 import { useWallet } from '@aptos-labs/wallet-adapter-react'
 import { useSlippageTolerance } from '@sushiswap/hooks'
 import { useQuery } from '@tanstack/react-query'
-import { useNetwork } from '~aptos/(common)/lib/common/use-network'
+import { useNetwork } from '~aptos/_common/lib/common/use-network'
 import { usePools } from '~aptos/pool/lib/use-pools'
 import { getSwapRoute } from '~aptos/swap/lib/swap-get-route'
 import { useSimpleSwapState } from '~aptos/swap/ui/simple/simple-swap-provider/simple-swap-provider'

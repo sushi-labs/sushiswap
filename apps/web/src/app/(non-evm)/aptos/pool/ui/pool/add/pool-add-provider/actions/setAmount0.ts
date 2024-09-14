@@ -1,4 +1,4 @@
-import { isValidNumberInput } from '~aptos/(common)/lib/common/is-valid-number-input'
+import { isValidNumberInput } from '~aptos/_common/lib/common/is-valid-number-input'
 import { Actions, State } from '../types'
 
 export function setAmount0(state: State, action: Actions): State {

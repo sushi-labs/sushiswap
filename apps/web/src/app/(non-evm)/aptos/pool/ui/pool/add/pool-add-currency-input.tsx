@@ -3,7 +3,7 @@
 import { PlusIcon } from '@heroicons/react-v1/solid'
 import { classNames } from '@sushiswap/ui'
 import { FC, useCallback } from 'react'
-import { CurrencyInput } from '~aptos/(common)/ui/currency/currency-input/currency-input'
+import { CurrencyInput } from '~aptos/_common/ui/currency/currency-input/currency-input'
 import {
   usePoolActions,
   usePoolState,

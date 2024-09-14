@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import { formatNumberWithDecimals } from '~aptos/(common)/lib/common/format-number-with-decimals'
+import { formatNumberWithDecimals } from '~aptos/_common/lib/common/format-number-with-decimals'
 import { FarmLP } from './use-farms'
 
 const SECONDS_PER_DAY = 86400

@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { useMemo } from 'react'
-import { SupportedNetwork, chains } from '~aptos/(common)/config/chains'
-import { useNetwork } from '~aptos/(common)/lib/common/use-network'
+import { SupportedNetwork, chains } from '~aptos/_common/config/chains'
+import { useNetwork } from '~aptos/_common/lib/common/use-network'
 
 type PoolInfo = {
   acc_sushi_per_share: string

@@ -1,4 +1,4 @@
-import { Token } from '~aptos/(common)/lib/types/token'
+import { Token } from '~aptos/_common/lib/types/token'
 import { PoolReserve } from '~aptos/pool/lib/use-pools-reserves'
 
 export type State = {

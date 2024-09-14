@@ -7,9 +7,9 @@ import {
   useMemo,
   useReducer,
 } from 'react'
-import { getBaseTokensWithoutKey } from '~aptos/(common)/lib/common/use-base-tokens'
-import { useNetwork } from '~aptos/(common)/lib/common/use-network'
-import { Token } from '~aptos/(common)/lib/types/token'
+import { getBaseTokensWithoutKey } from '~aptos/_common/lib/common/use-base-tokens'
+import { useNetwork } from '~aptos/_common/lib/common/use-network'
+import { Token } from '~aptos/_common/lib/types/token'
 import { PoolReserve } from '~aptos/pool/lib/use-pools-reserves'
 import { setAmount0 } from './actions/setAmount0'
 import { setAmount1 } from './actions/setAmount1'

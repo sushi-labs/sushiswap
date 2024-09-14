@@ -1,6 +1,7 @@
 'use client'
 
 import { Container } from '@sushiswap/ui'
+import { Suspense } from 'react'
 
 // import { PoolFiltersFarmsOnly } from '~aptos/pool/ui/pools/filters/pool-filters-farms-only'
 import { PoolFiltersSearchToken } from '~aptos/pool/ui/pools/filters/pool-filters-search-token'
@@ -13,7 +14,9 @@ export default function MyPositionsPage() {
         <PoolFiltersSearchToken />
         {/* <PoolFiltersFarmsOnly /> */}
       </div>
-      <PositionsTable />
+      <Suspense>
+        <PositionsTable />
+      </Suspense>
     </Container>
   )
 }

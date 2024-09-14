@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import { UserStakes } from '~aptos/(common)/lib/common/use-user-handle'
+import { UserStakes } from '~aptos/_common/lib/common/use-user-handle'
 import farmGetTokenPerShare from './get-token-per-share'
 import { FarmLP } from './use-farms'
 

@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
-import { SupportedNetwork, chains } from '~aptos/(common)/config/chains'
-import { useNetwork } from '~aptos/(common)/lib/common/use-network'
-import type { Token } from '~aptos/(common)/lib/types/token'
+import { SupportedNetwork, chains } from '~aptos/_common/config/chains'
+import { useNetwork } from '~aptos/_common/lib/common/use-network'
+import type { Token } from '~aptos/_common/lib/types/token'
 import { usePoolsReserves } from './use-pools-reserves'
 
 export enum PairState {

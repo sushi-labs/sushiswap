@@ -1,4 +1,4 @@
-import { Token } from '~aptos/(common)/lib/types/token'
+import { Token } from '~aptos/_common/lib/types/token'
 import { computeExactOutput } from '../compute-exact-output'
 import { computePriceImpact } from '../compute-price-impact'
 import { Route, Vertex } from '../types'

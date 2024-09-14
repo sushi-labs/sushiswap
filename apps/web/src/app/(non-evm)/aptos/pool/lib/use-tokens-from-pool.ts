@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
-import { useBaseTokens } from '~aptos/(common)/lib/common/use-base-tokens'
-import { Token } from '~aptos/(common)/lib/types/token'
+import { useBaseTokens } from '~aptos/_common/lib/common/use-base-tokens'
+import { Token } from '~aptos/_common/lib/types/token'
 import { Pool } from './convert-pool-to-sushi-pool'
 
 export function useTokensFromPool(row: Pool): { token0: Token; token1: Token }

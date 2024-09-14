@@ -11,9 +11,9 @@ import {
   useReducer,
 } from 'react'
 import { DEFAULT_SLIPPAGE } from 'sushi/config'
-import { getBaseTokensWithoutKey } from '~aptos/(common)/lib/common/use-base-tokens'
-import { useNetwork } from '~aptos/(common)/lib/common/use-network'
-import { Token } from '~aptos/(common)/lib/types/token'
+import { getBaseTokensWithoutKey } from '~aptos/_common/lib/common/use-base-tokens'
+import { useNetwork } from '~aptos/_common/lib/common/use-network'
+import { Token } from '~aptos/_common/lib/types/token'
 
 interface SimpleSwapProvider {
   children: ReactNode

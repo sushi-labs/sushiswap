@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
-import { SupportedNetwork, chains } from '~aptos/(common)/config/chains'
-import { useNetwork } from '~aptos/(common)/lib/common/use-network'
+import { SupportedNetwork, chains } from '~aptos/_common/config/chains'
+import { useNetwork } from '~aptos/_common/lib/common/use-network'
 import { PoolExtended, usePoolsExtended } from './use-pools-extended'
 
 export type CoinStore = {

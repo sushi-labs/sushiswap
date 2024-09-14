@@ -2,8 +2,9 @@
 
 import { Container, LinkInternal } from '@sushiswap/ui'
 import { useSearchParams } from 'next/navigation'
+import { Suspense } from 'react'
+import { PathnameButton } from 'src/ui/pool'
 import { AptosSidebarContainer, SidebarProvider } from 'src/ui/sidebar'
-import { PathnameButton } from '~aptos/(common)/components/PathnameButton'
 import { PoolsFiltersProvider } from '~aptos/pool/ui/pools/filters/pool-filters-provider'
 import { Header } from '../header'
 import { Hero } from './hero'
@@ -11,6 +12,14 @@ import { Hero } from './hero'
 export default function TabsLayout({
   children,
 }: { children: React.ReactNode }) {
+  return (
+    <Suspense>
+      <Layout>{children}</Layout>
+    </Suspense>
+  )
+}
+
+function Layout({ children }: { children: React.ReactNode }) {
   const searchParams = useSearchParams()
 
   return (

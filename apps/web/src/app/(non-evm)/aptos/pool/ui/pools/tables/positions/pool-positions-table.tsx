@@ -74,7 +74,7 @@ export const PositionsTable = () => {
     <Card>
       <CardHeader>
         <CardTitle>
-          Pools{' '}
+          My Positions{' '}
           {filtered.length ? (
             <span className="text-gray-400 dark:text-slate-500">
               ({filtered.length})

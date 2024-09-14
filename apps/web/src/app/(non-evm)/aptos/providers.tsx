@@ -9,7 +9,7 @@ import { BaseProviders, OnramperProvider } from '@sushiswap/ui'
 import { FewchaWallet } from 'fewcha-plugin-wallet-adapter'
 import { PetraWallet } from 'petra-plugin-wallet-adapter'
 import { QueryClientProvider } from 'src/providers/query-client-provider'
-import { Modal } from '~aptos/(common)/components/Modal/Modal'
+import { Modal } from '~aptos/_common/components/Modal/Modal'
 
 const wallets = [
   new PetraWallet(),

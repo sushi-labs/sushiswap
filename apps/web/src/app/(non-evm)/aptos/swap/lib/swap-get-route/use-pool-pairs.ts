@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { useEffect } from 'react'
-import { useNetwork } from '~aptos/(common)/lib/common/use-network'
+import { useNetwork } from '~aptos/_common/lib/common/use-network'
 import { PoolReserve } from '~aptos/pool/lib/use-pools-reserves'
 import {
   usePoolActions,

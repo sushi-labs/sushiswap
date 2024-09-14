@@ -1,9 +1,9 @@
 import React, { useMemo } from 'react'
-import { Modal } from '~aptos/(common)//components/Modal/Modal'
-import { ModalType } from '~aptos/(common)//components/Modal/ModalProvider'
-import { useBaseTokens } from '~aptos/(common)/lib/common/use-base-tokens'
-import { useTokenWithCache } from '~aptos/(common)/lib/common/use-token-with-cache'
-import { CurrencyIcon } from '~aptos/(common)/ui/currency/currency-icon'
+import { Modal } from '~aptos/_common//components/Modal/Modal'
+import { ModalType } from '~aptos/_common//components/Modal/ModalProvider'
+import { useBaseTokens } from '~aptos/_common/lib/common/use-base-tokens'
+import { useTokenWithCache } from '~aptos/_common/lib/common/use-token-with-cache'
+import { CurrencyIcon } from '~aptos/_common/ui/currency/currency-icon'
 
 interface SwapRoute {
   trade: string[]

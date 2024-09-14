@@ -4,8 +4,8 @@ import {
 } from '@sushiswap/graph-client/data-api'
 import { useQuery } from '@tanstack/react-query'
 import { useMemo } from 'react'
-import { tokenlists } from '~aptos/(common)/config/tokenlists'
-import { Token } from '~aptos/(common)/lib/types/token'
+import { tokenlists } from '~aptos/_common/config/tokenlists'
+import { Token } from '~aptos/_common/lib/types/token'
 
 interface UseTopPools {
   enabled?: boolean

@@ -9,8 +9,8 @@ import { SushiWithTextIcon } from '@sushiswap/ui/icons/SushiWithTextIcon'
 import { AptosCircle } from '@sushiswap/ui/icons/network/circle/AptosCircle'
 import React, { FC } from 'react'
 import { SidebarToggle, useSidebar } from 'src/ui/sidebar'
-import { headerElements } from './(common)/header-elements'
-import { UserProfile } from './(common)/ui/user-profile/user-profile'
+import { headerElements } from './_common/header-elements'
+import { UserProfile } from './_common/ui/user-profile/user-profile'
 
 export const Header: FC = () => {
   const { connected } = useWallet()

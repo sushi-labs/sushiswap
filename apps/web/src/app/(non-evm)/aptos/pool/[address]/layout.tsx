@@ -1,6 +1,6 @@
 import { Container } from '@sushiswap/ui'
 import { headers } from 'next/headers'
-import { PoolHeader } from '~aptos/(common)/components/PoolSection/PoolHeader'
+import { PoolHeader } from '~aptos/_common/components/PoolSection/PoolHeader'
 
 export default function Layout({
   children,

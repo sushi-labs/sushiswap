@@ -10,9 +10,9 @@ import {
   useContext,
   useMemo,
 } from 'react'
+import { useTypedSearchParams } from 'src/lib/hooks'
 import { z } from 'zod'
-import { parseArgs } from '~aptos/(common)/lib/common/parse-args'
-import { useTypedSearchParams } from '~aptos/(common)/lib/common/use-typed-search-params'
+import { parseArgs } from '~aptos/_common/lib/common/parse-args'
 type FilterContext = z.TypeOf<typeof poolFiltersSchema>
 
 const FilterContext = createContext<FilterContext | undefined>(undefined)

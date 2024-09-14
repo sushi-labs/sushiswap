@@ -1,6 +1,6 @@
 import React from 'react'
-import { formatNumberWithDecimals } from '~aptos/(common)/lib/common/format-number-with-decimals'
-import { CurrencyInput } from '~aptos/(common)/ui/currency/currency-input/currency-input'
+import { formatNumberWithDecimals } from '~aptos/_common/lib/common/format-number-with-decimals'
+import { CurrencyInput } from '~aptos/_common/ui/currency/currency-input/currency-input'
 import {
   useSimpleSwapActions,
   useSimpleSwapState,

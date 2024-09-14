@@ -3,18 +3,18 @@
 import { useWallet } from '@aptos-labs/wallet-adapter-react'
 import { Container } from '@sushiswap/ui'
 import { useEffect, useMemo } from 'react'
-import { ManageV2LiquidityCard } from '~aptos/(common)/components/ManageV2LiquidityCard'
-import { PoolComposition } from '~aptos/(common)/components/PoolSection/PoolComposition'
-import { PoolMyRewards } from '~aptos/(common)/components/PoolSection/PoolMyRewards'
-import { PoolPosition } from '~aptos/(common)/components/PoolSection/PoolPosition/PoolPosition'
-import { PoolRewards } from '~aptos/(common)/components/PoolSection/PoolRewards'
-import requiredNetworkAlert from '~aptos/(common)/lib/common/required-network-alert'
-import { useTotalSupply } from '~aptos/(common)/lib/common/use-total-supply'
+import { ManageV2LiquidityCard } from '~aptos/_common/components/ManageV2LiquidityCard'
+import { PoolComposition } from '~aptos/_common/components/PoolSection/PoolComposition'
+import { PoolMyRewards } from '~aptos/_common/components/PoolSection/PoolMyRewards'
+import { PoolPosition } from '~aptos/_common/components/PoolSection/PoolPosition/PoolPosition'
+import { PoolRewards } from '~aptos/_common/components/PoolSection/PoolRewards'
+import requiredNetworkAlert from '~aptos/_common/lib/common/required-network-alert'
+import { useTotalSupply } from '~aptos/_common/lib/common/use-total-supply'
 import {
   getPIdIndex,
   useUserHandle,
   useUserPool,
-} from '~aptos/(common)/lib/common/use-user-handle'
+} from '~aptos/_common/lib/common/use-user-handle'
 import { useFarms, useIsFarm } from '~aptos/pool/lib/farm/use-farms'
 import { useRewardsPerDay } from '~aptos/pool/lib/farm/use-rewards-per-day'
 import { useUserRewards } from '~aptos/pool/lib/farm/use-user-rewards'
