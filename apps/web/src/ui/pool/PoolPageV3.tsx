@@ -52,7 +52,7 @@ const Pool: FC<{ pool: V3Pool }> = ({ pool }) => {
   const fiatValues = useTokenAmountDollarValues({ chainId, amounts: reserves })
 
   return (
-    <Container maxWidth="5xl" className="flex flex-col gap-4">
+    <Container maxWidth="5xl" className="flex flex-col gap-4 px-4">
       {pool.hasEnabledSteerVault && (
         <Message variant="info" size="sm" className="mb-4">
           {`This pool has been activated to leverage our smart pool feature. Smart pools are designed to optimize the

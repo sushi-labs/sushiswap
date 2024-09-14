@@ -56,7 +56,7 @@ export default function PoolPage({ params }: { params: { address: string } }) {
   }, [network, disconnect])
 
   return (
-    <Container maxWidth="5xl">
+    <Container maxWidth="5xl" className="px-4">
       <div className="flex flex-col gap-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="flex flex-col gap-6">

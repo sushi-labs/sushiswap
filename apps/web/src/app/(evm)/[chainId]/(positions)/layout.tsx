@@ -84,8 +84,10 @@ export default function TabsLayout({
               </LinkInternal>
             </div>
           </Container>
-          <section className="flex flex-col flex-1 h-full pb-10">
-            <PoolsFiltersProvider>{children}</PoolsFiltersProvider>
+          <section className="flex flex-col flex-1">
+            <div className="bg-gray-50 dark:bg-white/[0.02] border-t border-accent pt-4 pb-10 min-h-screen">
+              <PoolsFiltersProvider>{children}</PoolsFiltersProvider>
+            </div>
           </section>
         </main>
       </SidebarContainer>
