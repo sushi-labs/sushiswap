@@ -1,17 +1,16 @@
 import { Currency, SkeletonText, classNames } from '@sushiswap/ui'
 import { useTokenInfo } from '~tron/_common/lib/hooks/useTokenInfo'
-import { getBase58Address } from '~tron/_common/lib/utils/helpers'
 import { Icon } from '../../General/Icon'
 import { IRowData } from './PoolsTable'
 
 export const PoolNameCell = ({ data }: { data: IRowData }) => {
   const { token0Address, token1Address } = data
   const { data: token0Data, isLoading: isLoadingToken0 } = useTokenInfo({
-    tokenAddress: getBase58Address(token0Address),
+    tokenAddress: token0Address,
   })
 
   const { data: token1Data, isLoading: isLoadingToken1 } = useTokenInfo({
-    tokenAddress: getBase58Address(token1Address),
+    tokenAddress: token1Address,
   })
 
   return (
