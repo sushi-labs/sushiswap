@@ -1,5 +1,11 @@
 # sushi
 
+## 3.2.3
+
+### Patch Changes
+
+- [#1688](https://github.com/sushiswap/sushiswap/pull/1688) [`3d9164f0d`](https://github.com/sushiswap/sushiswap/commit/3d9164f0d5fc6f832b3e2625857b64a35fb352e5) Thanks [@matthewlilley](https://github.com/matthewlilley)! - expose address module
+
 ## 3.2.2
 
 ### Patch Changes
