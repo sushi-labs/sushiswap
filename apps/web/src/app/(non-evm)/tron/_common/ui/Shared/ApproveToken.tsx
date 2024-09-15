@@ -5,6 +5,7 @@ import {
 } from '@sushiswap/notifications'
 import {
   Button,
+  ButtonProps,
   Command,
   CommandGroup,
   CommandItem,
@@ -29,11 +30,13 @@ export const ApproveToken = ({
   amount,
   spenderAddress,
   onSuccess,
+  buttonProps,
 }: {
   tokenToApprove: IToken
   amount: string
   spenderAddress: string
   onSuccess: () => Promise<void>
+  buttonProps?: ButtonProps
 }) => {
   const [isApproving, setIsApproving] = useState<boolean>(false)
   const { address, signTransaction } = useWallet()
@@ -119,8 +122,7 @@ export const ApproveToken = ({
           disabled={isApproving}
           loading={isApproving}
           role="combobox"
-          size="lg"
-          className="w-full"
+          {...buttonProps}
         >
           {isApproving ? 'Approving' : 'Approve'}
         </Button>

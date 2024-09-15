@@ -1,4 +1,4 @@
-import { List, SkeletonBox } from '@sushiswap/ui'
+import { ButtonProps, List, SkeletonBox } from '@sushiswap/ui'
 import {
   Dialog,
   DialogClose,
@@ -16,10 +16,9 @@ import { Icon } from '../../General/Icon'
 import { WalletConnector } from '../../WalletConnector/WalletConnector'
 import { usePoolState } from '../pool-provider'
 import { AddButton } from './AddButton'
-import { Rate } from './Rate'
 import { ReviewAddDialogTrigger } from './ReviewAddDialogTrigger'
 
-export const ReviewAddDialog = () => {
+export const ReviewAddDialog = (props: ButtonProps) => {
   const { token0, token1, amountInToken0, amountInToken1 } = usePoolState()
   const closeBtnRef = useRef<HTMLButtonElement>(null)
   const { address, connected } = useWallet()
@@ -38,14 +37,9 @@ export const ReviewAddDialog = () => {
   return (
     <Dialog>
       {isConnected ? (
-        <ReviewAddDialogTrigger />
+        <ReviewAddDialogTrigger {...props} />
       ) : (
-        <WalletConnector
-          variant="default"
-          hideChevron={true}
-          fullWidth={true}
-          size="xl"
-        />
+        <WalletConnector {...props} />
       )}
       <DialogContent>
         <DialogClose ref={closeBtnRef} />
@@ -97,16 +91,9 @@ export const ReviewAddDialog = () => {
                     )}
                   </div>
                 </List.KeyValue>
-                <List.KeyValue title="Rate">
-                  <Rate
-                    token0Price={token0Price}
-                    token1Price={token1Price}
-                    isLoading={isLoadingToken0Price || isLoadingToken1Price}
-                  />
-                </List.KeyValue>
               </List.Control>
             </List>
-            <AddButton closeModal={closeModal} />
+            <AddButton closeModal={closeModal} {...props} />
           </div>
         </div>
       </DialogContent>

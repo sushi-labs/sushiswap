@@ -3,7 +3,7 @@ import {
   createInfoToast,
   createSuccessToast,
 } from '@sushiswap/notifications'
-import { Button } from '@sushiswap/ui'
+import { Button, ButtonProps } from '@sushiswap/ui'
 import { useQueryClient } from '@tanstack/react-query'
 import { useWallet } from '@tronweb3/tronwallet-adapter-react-hooks'
 import { useMemo } from 'react'
@@ -27,7 +27,7 @@ import { WalletConnector } from '~tron/_common/ui/WalletConnector/WalletConnecto
 import { usePoolState } from '../pool-provider'
 import { useRemoveLiqDispatch, useRemoveLiqState } from './pool-remove-provider'
 
-export const RemoveButton = () => {
+export const RemoveButton = (props: ButtonProps) => {
   const queryClient = useQueryClient()
   const { address, connected, signTransaction } = useWallet()
   const isConnected = address && connected
@@ -190,14 +190,7 @@ export const RemoveButton = () => {
   ])
 
   if (!isConnected) {
-    return (
-      <WalletConnector
-        variant="default"
-        hideChevron={true}
-        fullWidth={true}
-        size="lg"
-      />
-    )
+    return <WalletConnector {...props} />
   }
 
   if (buttonText === 'Approve') {
@@ -214,6 +207,7 @@ export const RemoveButton = () => {
         onSuccess={async () => {
           await refetch()
         }}
+        buttonProps={props}
       />
     )
   }
@@ -221,10 +215,8 @@ export const RemoveButton = () => {
   return (
     <Button
       onClick={removeLiquidity}
-      size="lg"
-      variant="default"
-      className="w-full"
       disabled={percentage === 0 || isTxnPending}
+      {...props}
     >
       {buttonText}
     </Button>

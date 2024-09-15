@@ -4,16 +4,14 @@ import {
   Badge,
   Button,
   Dialog,
-  DialogClose,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
   List,
-  SelectIcon,
 } from '@sushiswap/ui'
-import { useMemo, useRef, useState } from 'react'
+import { ReactNode, useCallback, useMemo, useState } from 'react'
 import {
   DEFAULT_TOKEN_LIST,
   DEFAULT_TOKEN_LIST_WITH_KEY,
@@ -25,54 +23,39 @@ import { IToken } from '~tron/_common/types/token-type'
 import { Search } from '../Input/Search'
 import { Icon } from './Icon'
 
-export const TokenListSelect = ({
-  token,
-  setToken,
-  className,
+export const TokenSelector = ({
+  selected,
+  onSelect,
+  children,
 }: {
-  token: IToken | undefined
-  setToken: (token: IToken) => void
-  className?: string
+  selected: IToken | undefined
+  onSelect: (token: IToken) => void
+  children: ReactNode
 }) => {
-  const [query, setQuery] = useState<string>('')
+  const [open, setOpen] = useState(false)
+  const [query, setQuery] = useState('')
   const debouncedQuery = useDebounce(query, 500)
-  const closeBtnRef = useRef<HTMLButtonElement>(null)
-  const { data: newToken } = useTokenInfo({ tokenAddress: debouncedQuery })
   const { customTokens, addOrRemoveToken, hasToken } = useCustomTokens()
+  const { data: queryToken } = useTokenInfo({ tokenAddress: debouncedQuery })
+
   const { data: sortedTokenList } = useSortedTokenList({
     query: debouncedQuery,
-    tokenMap: DEFAULT_TOKEN_LIST_WITH_KEY(),
+    tokenMap: DEFAULT_TOKEN_LIST_WITH_KEY,
     customTokenMap: customTokens,
   })
 
-  const closeModal = () => {
-    closeBtnRef?.current?.click()
-    setQuery('')
-  }
-
-  const selectToken = (token: IToken) => {
-    setToken(token)
-    closeModal()
-  }
+  const _onSelect = useCallback(
+    (token: IToken) => {
+      onSelect(token)
+      setOpen(false)
+    },
+    [onSelect],
+  )
 
   return (
-    <Dialog>
-      <DialogTrigger asChild>
-        <Button
-          icon={() =>
-            token ? <Icon currency={token} width={16} height={16} /> : <></>
-          }
-          variant="secondary"
-          className={className}
-        >
-          <span>{token?.symbol ?? 'Select Token'}</span>
-          <div>
-            <SelectIcon />
-          </div>
-        </Button>
-      </DialogTrigger>
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent>
-        <DialogClose ref={closeBtnRef} />
         <DialogHeader>
           <DialogTitle>Select a token</DialogTitle>
           <DialogDescription>
@@ -93,17 +76,15 @@ export const TokenListSelect = ({
         <div className="flex flex-col gap-4">
           <List className="!pt-0">
             <List.Control className="flex flex-col gap-2 p-1 min-h-[250px] max-h-[400px] overflow-y-auto overflow-x-hidden">
-              {newToken ? (
-                [newToken].map((_token) => (
-                  <TokenButton
-                    token={_token}
-                    selectToken={selectToken}
-                    key={_token.address}
-                    hasToken={hasToken}
-                    addOrRemoveToken={addOrRemoveToken}
-                    isSelected={_token.symbol === token?.symbol}
-                  />
-                ))
+              {queryToken ? (
+                <TokenButton
+                  token={queryToken}
+                  selectToken={_onSelect}
+                  key={queryToken.address}
+                  hasToken={hasToken}
+                  addOrRemoveToken={addOrRemoveToken}
+                  isSelected={queryToken.address === selected?.address}
+                />
               ) : sortedTokenList?.length === 0 ? (
                 <p className="text-gray-400 dark:text-slate-500 text-center pt-2">
                   No tokens found
@@ -112,11 +93,11 @@ export const TokenListSelect = ({
                 sortedTokenList?.map((_token) => (
                   <TokenButton
                     token={_token}
-                    selectToken={selectToken}
+                    selectToken={_onSelect}
                     key={_token.address}
                     hasToken={hasToken}
                     addOrRemoveToken={addOrRemoveToken}
-                    isSelected={_token.symbol === token?.symbol}
+                    isSelected={_token.symbol === selected?.symbol}
                   />
                 ))
               )}

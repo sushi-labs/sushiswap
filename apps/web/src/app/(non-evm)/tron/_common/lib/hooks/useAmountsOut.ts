@@ -39,7 +39,7 @@ export const useAmountsOut = ({ amountIn }: { amountIn: string }) => {
         ) as string[]
       } catch (error) {
         console.log('useAmountsOut error', error)
-        return [amountIn, '']
+        return [amountIn, '0']
       }
     },
     enabled: !!amountIn && !!tronWeb,

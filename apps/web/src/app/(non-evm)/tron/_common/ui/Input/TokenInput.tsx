@@ -12,6 +12,7 @@ import { useTokenBalance } from '~tron/_common/lib/hooks/useTokenBalance'
 import { formatUnitsForInput } from '~tron/_common/lib/utils/formatters'
 import { IToken } from '~tron/_common/types/token-type'
 import { Icon } from '../General/Icon'
+import { TokenSelector } from '../General/TokenSelector'
 import { DollarAmountDisplay } from '../Shared/DollarAmountDisplay'
 import { TokenBalanceDisplay } from '../Shared/TokenBalanceDisplay'
 
@@ -70,29 +71,31 @@ export const TokenInput = ({
     if (!setToken) return null
 
     return (
-      <Button
-        data-state={currencyLoading ? 'inactive' : 'active'}
-        size="lg"
-        variant={currency ? 'secondary' : 'default'}
-        id={id}
-        type="button"
-        className={classNames(
-          currency ? 'pl-2 pr-3 text-xl' : '',
-          '!rounded-full data-[state=inactive]:hidden data-[state=active]:flex',
-        )}
-      >
-        {currency ? (
-          <>
-            <div className="w-[28px] h-[28px] mr-0.5">
-              <Icon currency={currency} width={28} height={28} />
-            </div>
-            {currency.symbol}
-            <SelectIcon />
-          </>
-        ) : (
-          'Select Token'
-        )}
-      </Button>
+      <TokenSelector selected={currency} onSelect={setToken}>
+        <Button
+          data-state={currencyLoading ? 'inactive' : 'active'}
+          size="lg"
+          variant={currency ? 'secondary' : 'default'}
+          id={id}
+          type="button"
+          className={classNames(
+            currency ? 'pl-2 pr-3 text-xl' : '',
+            '!rounded-full data-[state=inactive]:hidden data-[state=active]:flex',
+          )}
+        >
+          {currency ? (
+            <>
+              <div className="w-[28px] h-[28px] mr-0.5">
+                <Icon currency={currency} width={28} height={28} />
+              </div>
+              {currency.symbol}
+              <SelectIcon />
+            </>
+          ) : (
+            'Select Token'
+          )}
+        </Button>
+      </TokenSelector>
     )
   }, [currency, currencyLoading, id, setToken])
 
@@ -160,20 +163,7 @@ export const TokenInput = ({
                 {!hideIcon && (
                   <>
                     <div className="w-[28px] h-[28px] mr-0.5">
-                      <Button
-                        icon={() =>
-                          currency ? (
-                            <Icon currency={currency} width={26} height={26} />
-                          ) : (
-                            <></>
-                          )
-                        }
-                        size="sm"
-                        variant="ghost"
-                        className={`!rounded-full flex items-center !p-5 !text-xl focus:bg-transparent hover:bg-transparent !cursor-default`}
-                      >
-                        <span>{currency?.symbol ?? 'Select Token'}</span>
-                      </Button>
+                      <Icon currency={currency} width={28} height={28} />
                     </div>
                   </>
                 )}

@@ -71,7 +71,7 @@ export const Header: FC = () => {
   return (
     <Navigation
       leftElements={nagivationElements}
-      rightElement={<WalletConnector />}
+      rightElement={<WalletConnector variant="secondary" />}
     />
   )
 }

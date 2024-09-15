@@ -1,5 +1,6 @@
 import {
   Button,
+  ButtonProps,
   Chip,
   Popover,
   PopoverContent,
@@ -16,18 +17,7 @@ import { WalletListView } from './WalletListView'
 
 export type IProfileView = 'default' | 'settings'
 
-type WalletConnectorProps = {
-  hideChevron?: boolean
-  fullWidth?: boolean
-  size?: Parameters<typeof Button>[0]['size']
-  variant?: 'secondary' | 'default'
-}
-
-export const WalletConnector = ({
-  fullWidth,
-  size = 'default',
-  variant = 'secondary',
-}: WalletConnectorProps) => {
+export const WalletConnector = (props: ButtonProps) => {
   const [view, setView] = useState<IProfileView>('default')
   const { connected, connecting, address } = useWallet()
   const isConnected = address && connected
@@ -35,14 +25,7 @@ export const WalletConnector = ({
   return (
     <Popover>
       <PopoverTrigger className="relative w-full">
-        <Button
-          loading={connecting}
-          disabled={connecting}
-          asChild
-          size={size}
-          variant={variant}
-          fullWidth={fullWidth}
-        >
+        <Button loading={connecting} disabled={connecting} asChild {...props}>
           {isConnected ? (
             <>
               <div className="hidden md:flex">

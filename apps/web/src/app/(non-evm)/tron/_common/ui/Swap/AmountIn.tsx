@@ -42,7 +42,7 @@ export const AmountIn = () => {
 
   return (
     <TokenInput
-      className="border border-accent p-3 bg-white dark:bg-slate-800 rounded-xl"
+      className="border border-accent"
       type="input"
       amount={amountIn}
       setAmount={setAmountIn}

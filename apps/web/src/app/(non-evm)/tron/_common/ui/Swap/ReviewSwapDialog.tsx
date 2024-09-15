@@ -58,13 +58,13 @@ export const ReviewSwapDialog = () => {
 
   return (
     <Dialog>
-      {isConnected ? (
-        <ReviewSwapDialogTrigger />
-      ) : (
-        <div className="mt-4 w-full">
+      <div className="pt-4">
+        {isConnected ? (
+          <ReviewSwapDialogTrigger />
+        ) : (
           <WalletConnector variant="default" fullWidth size="xl" />
-        </div>
-      )}
+        )}
+      </div>
       <DialogContent>
         <DialogClose ref={closeBtnRef} />
         <div className="max-w-[504px] mx-auto mt-6">

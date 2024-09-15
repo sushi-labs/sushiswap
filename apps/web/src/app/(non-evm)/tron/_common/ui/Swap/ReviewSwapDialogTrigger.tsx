@@ -174,7 +174,9 @@ export const ReviewSwapDialogTrigger = () => {
           }
           asChild
         >
-          <Button size="lg">{buttonText}</Button>
+          <Button size="xl" fullWidth>
+            {buttonText}
+          </Button>
         </DialogTrigger>
       )}
       {userConfirmationNeeded && !isChecked ? (

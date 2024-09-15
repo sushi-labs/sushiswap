@@ -8,8 +8,12 @@ import { TokenInput } from '~tron/_common/ui/Input/TokenInput'
 import { usePoolDispatch, usePoolState } from '../pool-provider'
 
 export const AmountInToken0 = ({
-  theme,
-}: { theme?: ComponentProps<typeof TokenInput>['theme'] }) => {
+  theme = 'default',
+  disabled = false,
+}: {
+  theme?: ComponentProps<typeof TokenInput>['theme']
+  disabled?: boolean
+}) => {
   const {
     token0,
     token1,
@@ -74,7 +78,7 @@ export const AmountInToken0 = ({
       amount={amountInToken0}
       setAmount={setAmount}
       currency={token0}
-      setToken={setToken0}
+      setToken={disabled ? undefined : setToken0}
     />
   )
 }

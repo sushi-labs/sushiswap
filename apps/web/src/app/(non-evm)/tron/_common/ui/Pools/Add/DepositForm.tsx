@@ -17,7 +17,7 @@ export const DepositForm = () => {
         <AmountInToken1 />
       </section>
       <div className="flex w-full flex-col">
-        <ReviewAddDialog />
+        <ReviewAddDialog size="xl" fullWidth />
       </div>
     </FormSection>
   )

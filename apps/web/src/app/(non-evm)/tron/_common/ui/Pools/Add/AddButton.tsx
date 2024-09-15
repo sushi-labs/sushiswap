@@ -7,7 +7,7 @@ import {
   createInfoToast,
   createSuccessToast,
 } from '@sushiswap/notifications'
-import { Button } from '@sushiswap/ui'
+import { Button, ButtonProps } from '@sushiswap/ui'
 import { useQueryClient } from '@tanstack/react-query'
 import { useWallet } from '@tronweb3/tronwallet-adapter-react-hooks'
 import { useMemo } from 'react'
@@ -25,7 +25,10 @@ import {
 import { getTronscanTxnLink } from '~tron/_common/lib/utils/tronscan-helpers'
 import { usePoolDispatch, usePoolState } from '../pool-provider'
 
-export const AddButton = ({ closeModal }: { closeModal: () => void }) => {
+export const AddButton = ({
+  closeModal,
+  buttonProps,
+}: { closeModal: () => void; buttonProps?: ButtonProps }) => {
   const queryClient = useQueryClient()
 
   const {
@@ -180,10 +183,8 @@ export const AddButton = ({ closeModal }: { closeModal: () => void }) => {
     <Button
       disabled={isTxnPending}
       loading={isTxnPending}
-      color="blue"
-      fullWidth
-      size="xl"
       onClick={addLiquidity}
+      {...buttonProps}
     >
       {isTxnPending ? 'Adding Liquidity' : 'Add Liquidity'}
     </Button>

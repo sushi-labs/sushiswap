@@ -92,21 +92,18 @@ const TESTNET_TOKENS: IToken[] = [
 
 export const DEFAULT_TOKEN_LIST = IS_TESTNET ? TESTNET_TOKENS : MAINNET_TOKENS
 
-export const DEFAULT_TOKEN_LIST_WITH_KEY = () => {
-  return DEFAULT_TOKEN_LIST.reduce<Record<string, IToken>>(
-    (acc, { address, decimals, name, symbol, logoURI }) => {
-      acc[address] = {
-        name,
-        decimals,
-        symbol,
-        address,
-        logoURI,
-      }
-      return acc
-    },
-    {},
-  )
-}
+export const DEFAULT_TOKEN_LIST_WITH_KEY = DEFAULT_TOKEN_LIST.reduce<
+  Record<string, IToken>
+>((acc, { address, decimals, name, symbol, logoURI }) => {
+  acc[address] = {
+    name,
+    decimals,
+    symbol,
+    address,
+    logoURI,
+  }
+  return acc
+}, {})
 
 export const STABLE_TOKENS = DEFAULT_TOKEN_LIST.filter(
   (token) =>

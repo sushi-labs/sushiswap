@@ -42,12 +42,12 @@ export const AddSection = () => {
         </WidgetAction>
       </WidgetHeader>
       <section className="flex flex-col gap-4 relative w-full">
-        <AmountInToken0 theme="outline" />
+        <AmountInToken0 theme="outline" disabled />
         <Plus theme="outline" />
-        <AmountInToken1 theme="outline" />
+        <AmountInToken1 theme="outline" disabled />
       </section>
-      <div className="mt-3 w-full flex flex-col">
-        <ReviewAddDialog />
+      <div className="mt-4 w-full flex flex-col">
+        <ReviewAddDialog variant="outline" fullWidth />
       </div>
     </Widget>
   )

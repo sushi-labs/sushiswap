@@ -1,4 +1,3 @@
-'use client'
 import { SwapProvider } from './swap-provider'
 
 export async function Providers({ children }: { children: React.ReactNode }) {
