@@ -1,5 +1,11 @@
 # sushi
 
+## 4.0.1
+
+### Patch Changes
+
+- [#1694](https://github.com/sushiswap/sushiswap/pull/1694) [`19273ff18`](https://github.com/sushiswap/sushiswap/commit/19273ff186612861f5bd7aa1362c46893747cc43) Thanks [@matthewlilley](https://github.com/matthewlilley)! - fix compute v3 pool address
+
 ## 4.0.0
 
 ### Major Changes
