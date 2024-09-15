@@ -1,5 +1,11 @@
 # sushi
 
+## 4.0.0
+
+### Major Changes
+
+- [#1692](https://github.com/sushiswap/sushiswap/pull/1692) [`0887bf428`](https://github.com/sushiswap/sushiswap/commit/0887bf428445f178b6365c027a824fc068ae4a63) Thanks [@matthewlilley](https://github.com/matthewlilley)! - v4
+
 ## 3.2.4
 
 ### Patch Changes
