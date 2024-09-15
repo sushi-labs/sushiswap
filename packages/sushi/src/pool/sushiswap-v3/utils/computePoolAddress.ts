@@ -25,15 +25,6 @@ type ComputeSushiSwapV3PoolAddressParams = {
     }
 )
 
-function hasTokenInstances(
-  params: ComputeSushiSwapV3PoolAddressParams,
-): params is ComputeSushiSwapV3PoolAddressParams & {
-  tokenA: Token
-  tokenB: Token
-} {
-  return params.tokenA instanceof Token && params.tokenB instanceof Token
-}
-
 /**
  * Computes a pool address
  * @param factoryAddress The Uniswap V3 factory address
@@ -46,51 +37,51 @@ function hasTokenInstances(
 export function computeSushiSwapV3PoolAddress(
   params: ComputeSushiSwapV3PoolAddressParams,
 ): Address {
-  if (hasTokenInstances(params)) {
-    const { factoryAddress, tokenA, tokenB, fee, initCodeHashManualOverride } =
-      params
-    const [token0, token1] = tokenA.sortsBefore(tokenB)
-      ? [tokenA, tokenB]
-      : [tokenB, tokenA] // does safety checks
+  if (typeof params.tokenA === 'string' && typeof params.tokenB === 'string') {
+    // FIXME: We shouldn't even allow sending strings into here
+    const {
+      factoryAddress,
+      tokenA,
+      tokenB,
+      fee,
+      initCodeHashManualOverride,
+      chainId,
+    } = params
 
     return getCreate2Address({
       from: factoryAddress,
       salt: keccak256(
         encodeAbiParameters(parseAbiParameters('address, address, uint24'), [
-          token0.address,
-          token1.address,
+          tokenA,
+          tokenB,
           fee,
         ]),
       ),
       bytecodeHash:
         initCodeHashManualOverride ??
-        SUSHISWAP_V3_INIT_CODE_HASH[token0.chainId as SushiSwapV3ChainId],
-      chainId: token0.chainId,
+        SUSHISWAP_V3_INIT_CODE_HASH[chainId as SushiSwapV3ChainId],
+      chainId,
     })
   }
 
-  // FIXME: We shouldn't even allow sending strings into here
-  const {
-    factoryAddress,
-    tokenA,
-    tokenB,
-    fee,
-    initCodeHashManualOverride,
-    chainId,
-  } = params
+  const { factoryAddress, tokenA, tokenB, fee, initCodeHashManualOverride } =
+    params
+  const [token0, token1] = tokenA.sortsBefore(tokenB)
+    ? [tokenA, tokenB]
+    : [tokenB, tokenA] // does safety checks
 
   return getCreate2Address({
     from: factoryAddress,
     salt: keccak256(
       encodeAbiParameters(parseAbiParameters('address, address, uint24'), [
-        tokenA,
-        tokenB,
+        token0.address,
+        token1.address,
         fee,
       ]),
     ),
     bytecodeHash:
       initCodeHashManualOverride ??
-      SUSHISWAP_V3_INIT_CODE_HASH[chainId as SushiSwapV3ChainId],
-    chainId,
+      SUSHISWAP_V3_INIT_CODE_HASH[token0.chainId as SushiSwapV3ChainId],
+    chainId: token0.chainId,
   })
 }
