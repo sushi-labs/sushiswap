@@ -105,7 +105,7 @@ export const PositionsTable = ({
         linkFormatter={(data: IMyPositionData) => {
           const token0 = data?.token0?.address
           const token1 = data?.token1?.address
-          return `/pool/${token0}:${token1}:${data?.pairAddress}`
+          return `/tron/pool/${token0}:${token1}:${data?.pairAddress}`
         }}
         externalLink={false}
         pagination={true}
