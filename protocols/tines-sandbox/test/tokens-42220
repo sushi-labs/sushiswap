@@ -1,9 +1,0 @@
-{"address":"0x90Ca507a5D4458a4C6C6249d186b6dCb02a5BCCd","name":"Dai Stablecoin","symbol":"DAI","decimals":18}
-{"address":"0xD8763CBa276a3738E6DE85b4b3bF5FDed6D6cA73","name":"Celo Euro","symbol":"cEUR","decimals":18}
-{"address":"0x765DE816845861e75A25fCA122bb6898B8B1282a","name":"Celo Dollar","symbol":"cUSD","decimals":18}
-{"address":"0x66803FB87aBd4aaC3cbB3fAd7C3aa01f6F3FB207","name":"Wrapped Ether","symbol":"WETH","decimals":18}
-{"address":"0x37f750B7cC259A2f741AF45294f6a16572CF5cAd","name":"USD Coin","symbol":"USDC","decimals":6}
-{"address":"0x02De4766C272abc10Bc88c220D214A26960a7e92","name":"Toucan Protocol: Nature Carbon Tonne","symbol":"NCT","decimals":18}
-{"address":"0x1d18d0386F51ab03E7E84E71BdA1681EbA865F1f","name":"JumpToken","symbol":"JMPT","decimals":18}
-{"address":"0x833fD14F0FD4eaA47433A07428a46d1Ac60fA591","name":"KnoxDAO Reserve","symbol":"KNOX","decimals":18}
-{"address":"0xC16B81Af351BA9e64C1a069E3Ab18c244A1E3049","name":"agEUR","symbol":"agEUR","decimals":18}

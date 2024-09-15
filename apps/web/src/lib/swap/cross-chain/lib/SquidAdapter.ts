@@ -4,7 +4,7 @@ import { squidRouterAbi } from 'sushi/abi'
 import { ChainId } from 'sushi/chain'
 import { SquidAdapterChainId } from 'sushi/config'
 import { Token } from 'sushi/currency'
-import { PoolType, RouteStatus } from 'sushi/tines'
+import { PoolType, RouteStatus } from 'sushi/router'
 import {
   Hex,
   decodeFunctionData,

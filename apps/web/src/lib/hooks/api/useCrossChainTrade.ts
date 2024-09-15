@@ -10,7 +10,7 @@ import {
 } from 'src/lib/swap/cross-chain'
 import { Amount, Native, Token, Type } from 'sushi/currency'
 import { Percent } from 'sushi/math'
-import { RouteStatus } from 'sushi/tines'
+import { RouteStatus } from 'sushi/router'
 import { stringify } from 'viem'
 
 export interface UseCrossChainTradeReturn {
