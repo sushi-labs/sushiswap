@@ -38,8 +38,12 @@ export const PoolLiquidity = ({
   const reserve1 = data?.[1]?.reserve ?? '0'
   const reserve1Formatted = formatUnitsForInput(reserve1, token1?.decimals ?? 0)
 
-  const { data: token0Price } = useStablePrice({ token: token0 })
-  const { data: token1Price } = useStablePrice({ token: token1 })
+  const { data: token0Price, isLoading: isToken0PriceLoading } = useStablePrice(
+    { token: token0 },
+  )
+  const { data: token1Price, isLoading: isToken1PriceLoading } = useStablePrice(
+    { token: token1 },
+  )
 
   const token0PoolPrice = (
     Number(token0Price) * Number(reserve0Formatted)
@@ -48,7 +52,11 @@ export const PoolLiquidity = ({
     Number(token1Price) * Number(reserve1Formatted)
   ).toString(10)
 
-  const isLoadingData = isLoading || isLoadingReserves
+  const isLoadingData =
+    isLoading ||
+    isLoadingReserves ||
+    isToken0PriceLoading ||
+    isToken1PriceLoading
 
   return (
     <Card>

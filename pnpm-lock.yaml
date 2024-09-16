@@ -1356,6 +1356,10 @@ importers:
         specifier: 3.23.8
         version: 3.23.8
 
+  packages/sushi/dist/_cjs: {}
+
+  packages/sushi/dist/_esm: {}
+
   packages/telemetry:
     devDependencies:
       '@tsconfig/esm':
@@ -23829,7 +23833,7 @@ snapshots:
       '@cosmjs/socket': 0.31.3(bufferutil@4.0.8)(utf-8-validate@5.0.10)
       '@cosmjs/stream': 0.31.3
       '@cosmjs/utils': 0.31.3
-      axios: 0.21.4(debug@4.3.4)
+      axios: 0.21.4(debug@4.3.7)
       readonly-date: 1.0.0
       xstream: 11.14.0
     transitivePeerDependencies:
@@ -25096,7 +25100,7 @@ snapshots:
   '@json-rpc-tools/provider@1.7.6(bufferutil@4.0.8)(utf-8-validate@5.0.10)':
     dependencies:
       '@json-rpc-tools/utils': 1.7.6
-      axios: 0.21.4(debug@4.3.4)
+      axios: 0.21.4(debug@4.3.7)
       safe-json-utils: 1.1.1
       ws: 7.5.10(bufferutil@4.0.8)(utf-8-validate@5.0.10)
     transitivePeerDependencies:
@@ -30091,7 +30095,7 @@ snapshots:
     dependencies:
       '@ethersproject/bignumber': 5.7.0
       '@nomiclabs/hardhat-ethers': hardhat-deploy-ethers@0.3.0-beta.13(ethers@5.7.2(bufferutil@4.0.8)(utf-8-validate@5.0.10))(hardhat@2.20.1(bufferutil@4.0.8)(ts-node@10.9.2(@types/node@20.14.14)(typescript@5.5.4))(typescript@5.5.4)(utf-8-validate@5.0.10))
-      axios: 0.27.2(debug@4.3.4)
+      axios: 0.27.2
       ethers: 5.7.2(bufferutil@4.0.8)(utf-8-validate@5.0.10)
       fs-extra: 10.1.0
       hardhat: 2.20.1(bufferutil@4.0.8)(ts-node@10.9.2(@types/node@20.14.14)(typescript@5.5.4))(typescript@5.5.4)(utf-8-validate@5.0.10)
@@ -33389,6 +33393,19 @@ snapshots:
     transitivePeerDependencies:
       - debug
 
+  axios@0.21.4(debug@4.3.7):
+    dependencies:
+      follow-redirects: 1.15.6(debug@4.3.7)
+    transitivePeerDependencies:
+      - debug
+
+  axios@0.27.2:
+    dependencies:
+      follow-redirects: 1.15.6(debug@4.3.7)
+      form-data: 4.0.0
+    transitivePeerDependencies:
+      - debug
+
   axios@0.27.2(debug@4.3.4):
     dependencies:
       follow-redirects: 1.15.6(debug@4.3.4)
@@ -33398,7 +33415,7 @@ snapshots:
 
   axios@1.6.2:
     dependencies:
-      follow-redirects: 1.15.6(debug@4.3.4)
+      follow-redirects: 1.15.6(debug@4.3.7)
       form-data: 4.0.0
       proxy-from-env: 1.1.0
     transitivePeerDependencies:
@@ -33406,7 +33423,7 @@ snapshots:
 
   axios@1.6.8:
     dependencies:
-      follow-redirects: 1.15.6(debug@4.3.4)
+      follow-redirects: 1.15.6(debug@4.3.7)
       form-data: 4.0.0
       proxy-from-env: 1.1.0
     transitivePeerDependencies:
@@ -37981,6 +37998,10 @@ snapshots:
     optionalDependencies:
       debug: 4.3.4(supports-color@8.1.1)
 
+  follow-redirects@1.15.6(debug@4.3.7):
+    optionalDependencies:
+      debug: 4.3.7
+
   for-each@0.3.3:
     dependencies:
       is-callable: 1.2.7
@@ -38670,10 +38691,10 @@ snapshots:
       '@ethersproject/transactions': 5.7.0
       '@ethersproject/wallet': 5.7.0
       '@types/qs': 6.9.15
-      axios: 0.21.4(debug@4.3.4)
+      axios: 0.21.4(debug@4.3.7)
       chalk: 4.1.2
       chokidar: 3.5.3
-      debug: 4.3.4(supports-color@8.1.1)
+      debug: 4.3.7
       enquirer: 2.4.1
       ethers: 5.7.2(bufferutil@4.0.8)(utf-8-validate@5.0.10)
       form-data: 4.0.0
@@ -39054,7 +39075,7 @@ snapshots:
   http-proxy@1.18.1:
     dependencies:
       eventemitter3: 4.0.7
-      follow-redirects: 1.15.6(debug@4.3.4)
+      follow-redirects: 1.15.6(debug@4.3.7)
       requires-port: 1.0.0
     transitivePeerDependencies:
       - debug
@@ -44996,7 +45017,7 @@ snapshots:
     dependencies:
       '@types/js-cookie': 3.0.6
       '@types/qs': 6.9.15
-      axios: 0.27.2(debug@4.3.4)
+      axios: 0.27.2
       defu: 5.0.1
       js-cookie: 3.0.5
       qs: 6.12.1
@@ -45588,7 +45609,7 @@ snapshots:
 
   tenderly@0.0.3(ts-node@10.9.2(@types/node@20.14.14)(typescript@5.5.4))(typescript@5.5.4):
     dependencies:
-      axios: 0.27.2(debug@4.3.4)
+      axios: 0.27.2
       cli-table3: 0.6.4
       commander: 9.5.0
       express: 4.18.2

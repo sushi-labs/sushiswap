@@ -22,7 +22,7 @@ export default function PoolLayout({
           backUrl={
             referer?.includes('/pool?')
               ? referer?.toString()
-              : `/aptos/explore/pools`
+              : `/tron/explore/pools`
           }
           token0={token0}
           token1={token1}
