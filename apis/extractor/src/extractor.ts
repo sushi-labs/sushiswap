@@ -2,7 +2,7 @@ import { Extractor } from '@sushiswap/extractor'
 import { baseTokens } from 'sushi'
 // import { Token } from 'sushi/currency'
 // import { TokenList } from 'sushi/token-list'
-import { CHAIN_ID, EXTRACTOR_CONFIG } from './config.js'
+import { CHAIN_ID, EXTRACTOR_CONFIG } from './config/index.js'
 
 export const cacheReadOnly = process.env['CACHE_READ_ONLY'] === 'true'
 

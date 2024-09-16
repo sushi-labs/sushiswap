@@ -1,3 +1,4 @@
+export * from './address/index.js'
 // export * from './bigint-serializer/index.js'
 export * from './calculate/index.js'
 export * from './chain/index.js'

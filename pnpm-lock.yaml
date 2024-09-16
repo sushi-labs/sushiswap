@@ -784,8 +784,8 @@ importers:
         specifier: 16.3.1
         version: 16.3.1
       hardhat-deploy:
-        specifier: 0.11.22
-        version: 0.11.22(bufferutil@4.0.8)(utf-8-validate@5.0.10)
+        specifier: 0.12.4
+        version: 0.12.4(bufferutil@4.0.8)(utf-8-validate@5.0.10)
       hardhat-deploy-ethers:
         specifier: 0.3.0-beta.13
         version: 0.3.0-beta.13(ethers@5.7.2(bufferutil@4.0.8)(utf-8-validate@5.0.10))(hardhat@2.20.1(bufferutil@4.0.8)(ts-node@10.9.2(@types/node@20.14.14)(typescript@5.5.4))(typescript@5.5.4)(utf-8-validate@5.0.10))
@@ -1356,10 +1356,6 @@ importers:
         specifier: 3.23.8
         version: 3.23.8
 
-  packages/sushi/dist/_cjs: {}
-
-  packages/sushi/dist/_esm: {}
-
   packages/telemetry:
     devDependencies:
       '@tsconfig/esm':
@@ -1667,8 +1663,8 @@ importers:
         specifier: 2.10.0
         version: 2.10.0(hardhat@2.20.1(bufferutil@4.0.8)(ts-node@10.9.1(@swc/core@1.4.2)(@types/node@20.14.14)(typescript@5.5.4))(typescript@5.5.4)(utf-8-validate@5.0.10))
       hardhat-deploy:
-        specifier: 0.11.22
-        version: 0.11.22(bufferutil@4.0.8)(utf-8-validate@5.0.10)
+        specifier: 0.12.4
+        version: 0.12.4(bufferutil@4.0.8)(utf-8-validate@5.0.10)
       hardhat-gas-reporter:
         specifier: 1.0.9
         version: 1.0.9(hardhat@2.20.1(bufferutil@4.0.8)(ts-node@10.9.1(@swc/core@1.4.2)(@types/node@20.14.14)(typescript@5.5.4))(typescript@5.5.4)(utf-8-validate@5.0.10))
@@ -1805,8 +1801,8 @@ importers:
         specifier: 2.6.1
         version: 2.6.1(hardhat@2.20.1(bufferutil@4.0.8)(ts-node@10.9.1(@swc/core@1.4.2)(@types/node@20.14.14)(typescript@5.5.4))(typescript@5.5.4)(utf-8-validate@5.0.10))
       hardhat-deploy:
-        specifier: 0.11.22
-        version: 0.11.22(bufferutil@4.0.8)(utf-8-validate@5.0.10)
+        specifier: 0.12.4
+        version: 0.12.4(bufferutil@4.0.8)(utf-8-validate@5.0.10)
       hardhat-gas-reporter:
         specifier: 1.0.9
         version: 1.0.9(hardhat@2.20.1(bufferutil@4.0.8)(ts-node@10.9.1(@swc/core@1.4.2)(@types/node@20.14.14)(typescript@5.5.4))(typescript@5.5.4)(utf-8-validate@5.0.10))
@@ -13745,6 +13741,9 @@ packages:
   hardhat-deploy@0.11.22:
     resolution: {integrity: sha512-ZhHVNB7Jo2l8Is+KIAk9F8Q3d7pptyiX+nsNbIFXztCz81kaP+6kxNODRBqRCy7SOD3It4+iKCL6tWsPAA/jVQ==}
 
+  hardhat-deploy@0.12.4:
+    resolution: {integrity: sha512-bYO8DIyeGxZWlhnMoCBon9HNZb6ji0jQn7ngP1t5UmGhC8rQYhji7B73qETMOFhzt5ECZPr+U52duj3nubsqdQ==}
+
   hardhat-gas-reporter@1.0.9:
     resolution: {integrity: sha512-INN26G3EW43adGKBNzYWOlI3+rlLnasXTwW79YNnUhXPDa+yHESgt639dJEs37gCjhkbNKcRRJnomXEuMFBXJg==}
     peerDependencies:
@@ -20959,6 +20958,12 @@ packages:
   zip-stream@4.1.0:
     resolution: {integrity: sha512-zshzwQW7gG7hjpBlgeQP9RuyPGNxvJdzR8SUM3QhxCnLjWN2E7j3dOvpeDcQoETfHx0urRS7EtmVToql7YpU4A==}
     engines: {node: '>= 10'}
+
+  zksync-ethers@5.9.2:
+    resolution: {integrity: sha512-Y2Mx6ovvxO6UdC2dePLguVzvNToOY8iLWeq5ne+jgGSJxAi/f4He/NF6FNsf6x1aWX0o8dy4Df8RcOQXAkj5qw==}
+    engines: {node: '>=16.0.0'}
+    peerDependencies:
+      ethers: ~5.7.0
 
   zksync-web3@0.13.4:
     resolution: {integrity: sha512-AjCKhn9TRqsk2T9VLKxlod22rnVWOWGOjq+QXppFe2yTxZx9dVaai325OJ0aa7a3m5wx+9yhPqBu23jG2xPo5Q==}
@@ -33380,7 +33385,7 @@ snapshots:
 
   axios@0.21.4(debug@4.3.4):
     dependencies:
-      follow-redirects: 1.15.2(debug@4.3.4)
+      follow-redirects: 1.15.6(debug@4.3.4)
     transitivePeerDependencies:
       - debug
 
@@ -38646,6 +38651,37 @@ snapshots:
       murmur-128: 0.2.1
       qs: 6.11.2
       zksync-web3: 0.8.1(ethers@5.7.2(bufferutil@4.0.8)(utf-8-validate@5.0.10))
+    transitivePeerDependencies:
+      - bufferutil
+      - supports-color
+      - utf-8-validate
+
+  hardhat-deploy@0.12.4(bufferutil@4.0.8)(utf-8-validate@5.0.10):
+    dependencies:
+      '@ethersproject/abi': 5.7.0
+      '@ethersproject/abstract-signer': 5.7.0
+      '@ethersproject/address': 5.7.0
+      '@ethersproject/bignumber': 5.7.0
+      '@ethersproject/bytes': 5.7.0
+      '@ethersproject/constants': 5.7.0
+      '@ethersproject/contracts': 5.7.0
+      '@ethersproject/providers': 5.7.2(bufferutil@4.0.8)(utf-8-validate@5.0.10)
+      '@ethersproject/solidity': 5.7.0
+      '@ethersproject/transactions': 5.7.0
+      '@ethersproject/wallet': 5.7.0
+      '@types/qs': 6.9.15
+      axios: 0.21.4(debug@4.3.4)
+      chalk: 4.1.2
+      chokidar: 3.5.3
+      debug: 4.3.4(supports-color@8.1.1)
+      enquirer: 2.4.1
+      ethers: 5.7.2(bufferutil@4.0.8)(utf-8-validate@5.0.10)
+      form-data: 4.0.0
+      fs-extra: 10.1.0
+      match-all: 1.2.6
+      murmur-128: 0.2.1
+      qs: 6.12.1
+      zksync-ethers: 5.9.2(ethers@5.7.2(bufferutil@4.0.8)(utf-8-validate@5.0.10))
     transitivePeerDependencies:
       - bufferutil
       - supports-color
@@ -48033,6 +48069,10 @@ snapshots:
       archiver-utils: 2.1.0
       compress-commons: 4.1.1
       readable-stream: 3.6.2
+
+  zksync-ethers@5.9.2(ethers@5.7.2(bufferutil@4.0.8)(utf-8-validate@5.0.10)):
+    dependencies:
+      ethers: 5.7.2(bufferutil@4.0.8)(utf-8-validate@5.0.10)
 
   zksync-web3@0.13.4(ethers@5.7.2(bufferutil@4.0.8)(utf-8-validate@5.0.10)):
     dependencies:

@@ -59,7 +59,7 @@
     "ethers": "5.7.2",
     "hardhat": "2.20.1",
     "hardhat-contract-sizer": "2.6.1",
-    "hardhat-deploy": "0.11.22",
+    "hardhat-deploy": "0.12.4",
     "hardhat-gas-reporter": "1.0.9",
     "hardhat-log-remover": "2.0.2",
     "hardhat-preprocessor": "0.1.5",

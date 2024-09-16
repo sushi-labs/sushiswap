@@ -2,6 +2,12 @@ import { RouterLiquiditySource } from 'sushi/router'
 import { Address } from 'viem'
 import z from 'zod'
 
+const booleanSchema = z.preprocess((value) => {
+  if (value === 'true') return true
+  if (value === 'false') return false
+  return value
+}, z.boolean())
+
 export const querySchema3_2 = z.object({
   tokenIn: z.string(),
   tokenOut: z.string(),
@@ -16,7 +22,7 @@ export const querySchema3_2 = z.object({
   to: z
     .optional(z.string())
     .transform((to) => (to ? (to as Address) : undefined)),
-  preferSushi: z.optional(z.coerce.boolean()),
+  preferSushi: z.optional(booleanSchema).default(false),
   maxPriceImpact: z.optional(
     z.coerce
       .number()

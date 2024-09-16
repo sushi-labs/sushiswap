@@ -4,7 +4,7 @@ import { ADDITIONAL_BASES } from 'sushi/config'
 import { Token } from 'sushi/currency'
 //import { serializePoolCodesJSON } from 'sushi/serializer'
 import { Address } from 'viem'
-import { CHAIN_ID } from '../../config.js'
+import { CHAIN_ID } from '../../config/index.js'
 import extractor from '../../extractor.js'
 
 async function handler(req: Request, res: Response) {

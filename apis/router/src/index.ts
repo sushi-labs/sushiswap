@@ -20,7 +20,7 @@ import {
 } from './config.js'
 import { CPUUsageStatistics } from './cpu-usage-statistics.js'
 import { priceByAddressHandler, pricesHandler } from './handlers/price/index.js'
-import { swapV3_2, swapV4 } from './handlers/swap/index.js'
+import { swapV4 } from './handlers/swap/index.js'
 import { swapV5 } from './handlers/swap2/index.js'
 import tokenHandler from './handlers/token/index.js'
 import { updatePrices } from './prices.js'
@@ -134,9 +134,6 @@ async function start() {
     return res.status(client.ready ? 200 : 503).send()
   })
 
-  app.get(`/swap/v3.2/${CHAIN_ID}`, (req, res) => {
-    return swapV3_2(client)(req, res)
-  })
   app.get(`/swap/v4/${CHAIN_ID}`, (req, res) => {
     return swapV4(client)(req, res)
   })

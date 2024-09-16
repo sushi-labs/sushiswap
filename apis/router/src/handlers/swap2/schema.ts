@@ -7,6 +7,12 @@ import z from 'zod'
 // maxPriceImpact - max current price impact (during route planning). Default - no control
 // maxSlippage - max slippage (during route processing). Default - 0.5%
 
+const booleanSchema = z.preprocess((value) => {
+  if (value === 'true') return true
+  if (value === 'false') return false
+  return value
+}, z.boolean())
+
 export const querySchema5 = z.object({
   tokenIn: z.custom<Address>(
     (val) => isAddressFast(val),
@@ -32,7 +38,7 @@ export const querySchema5 = z.object({
       (val) => ({ message: `Incorrect address for 'to': ${val}` }),
     ),
   ),
-  preferSushi: z.optional(z.coerce.boolean()).default(true),
+  preferSushi: z.optional(booleanSchema).default(false),
   maxPriceImpact: z.optional(
     z.coerce
       .number()
@@ -44,11 +50,11 @@ export const querySchema5 = z.object({
     .lt(1, 'maxSlippage should be lesser than 1')
     .positive()
     .default(0.005),
-  includeRouteProcessorParams: z.optional(z.coerce.boolean()).default(false),
-  includeTransaction: z.optional(z.coerce.boolean()).default(false),
-  includeTokens: z.optional(z.coerce.boolean()).default(false),
-  includeRoute: z.optional(z.coerce.boolean()).default(false),
-  enableFee: z.optional(z.coerce.boolean()),
+  includeRouteProcessorParams: z.optional(booleanSchema).default(false),
+  includeTransaction: z.optional(booleanSchema).default(false),
+  includeTokens: z.optional(booleanSchema).default(false),
+  includeRoute: z.optional(booleanSchema).default(false),
+  enableFee: z.optional(booleanSchema),
   fee: z
     .optional(
       z.coerce
@@ -64,7 +70,7 @@ export const querySchema5 = z.object({
     ),
   ),
   feeBy: z.optional(z.nativeEnum(TransferValue)).default(TransferValue.Output),
-  debug: z.optional(z.coerce.boolean()).default(false),
+  debug: z.optional(booleanSchema).default(false),
 })
 
 export type querySchema5 = z.infer<typeof querySchema5>
