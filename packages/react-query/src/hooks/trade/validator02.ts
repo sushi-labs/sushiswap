@@ -1,5 +1,5 @@
-import { isAddressFast } from 'sushi/serializer'
-import { PoolType } from 'sushi/tines'
+import { PoolType } from 'sushi/router'
+import { isAddressFast } from 'sushi/validate'
 import { Address } from 'viem'
 import z from 'zod'
 

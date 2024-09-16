@@ -7,8 +7,7 @@ import {
   isStargateAdapterChainId,
   publicClientConfig,
 } from 'sushi/config'
-import { RouterLiquiditySource } from 'sushi/router'
-import { RouteStatus } from 'sushi/tines'
+import { RouteStatus, RouterLiquiditySource } from 'sushi/router'
 import {
   createPublicClient,
   encodeAbiParameters,

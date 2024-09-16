@@ -17,7 +17,6 @@ import {
 import { TradeRoutePathView } from '../trade-route-path-view'
 import {
   useDerivedStateSimpleSwap,
-  useFallback,
   useSimpleSwapTrade,
 } from './derivedstate-simple-swap-provider'
 
@@ -25,10 +24,9 @@ export const SimpleSwapTradeStats: FC = () => {
   const { address } = useAccount()
   const isMounted = useIsMounted()
   const {
-    state: { chainId, swapAmountString, recipient, forceClient },
+    state: { chainId, swapAmountString, recipient },
   } = useDerivedStateSimpleSwap()
   const { isLoading, data: trade } = useSimpleSwapTrade()
-  const { isFallback } = useFallback(chainId)
   const loading = Boolean(isLoading && !trade)
 
   return (
@@ -127,10 +125,8 @@ export const SimpleSwapTradeStats: FC = () => {
           <span className="text-sm font-semibold text-gray-700 text-right dark:text-slate-400">
             {loading || !trade ? (
               <SkeletonBox className="h-4 py-0.5 w-[120px]" />
-            ) : !isFallback && !forceClient ? (
-              'SushiSwap API'
             ) : (
-              'SushiSwap Client'
+              'SushiSwap API'
             )}
           </span>
         </div>

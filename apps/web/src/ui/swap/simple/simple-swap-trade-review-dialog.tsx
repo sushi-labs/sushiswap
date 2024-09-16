@@ -44,7 +44,6 @@ import { Chain, ChainId } from 'sushi/chain'
 import { Native } from 'sushi/currency'
 import { shortenAddress } from 'sushi/format'
 import { ZERO } from 'sushi/math'
-import { LiquidityProviders } from 'sushi/router'
 import {
   SendTransactionReturnType,
   UserRejectedRequestError,
@@ -195,66 +194,6 @@ export const SimpleSwapTradeReviewDialog: FC<{
               route: stringify(trade?.route),
               tx: stringify(trade?.tx),
             })
-            if (
-              trade?.route?.legs?.every(
-                (leg) =>
-                  leg.poolName.startsWith('Wrap') ||
-                  leg.poolName.startsWith(LiquidityProviders.SushiSwapV2) ||
-                  leg.poolName.startsWith(LiquidityProviders.SushiSwapV3),
-              )
-            ) {
-              log.info('internal route', {
-                chainId: chainId,
-                txHash: hash,
-                exporerLink: Chain.txUrl(chainId, hash),
-                route: stringify(trade?.route),
-                tx: stringify(trade?.tx),
-              })
-            } else if (
-              trade?.route?.legs?.some(
-                (leg) =>
-                  !leg.poolName.startsWith('Wrap') &&
-                  (leg.poolName.startsWith(LiquidityProviders.SushiSwapV2) ||
-                    leg.poolName.startsWith(LiquidityProviders.SushiSwapV3)),
-              ) &&
-              trade?.route?.legs?.some(
-                (leg) =>
-                  !leg.poolName.startsWith('Wrap') &&
-                  (!leg.poolName.startsWith(LiquidityProviders.SushiSwapV2) ||
-                    !leg.poolName.startsWith(LiquidityProviders.SushiSwapV3)),
-              )
-            ) {
-              log.info('mix route', {
-                chainId: chainId,
-                txHash: hash,
-                exporerLink: Chain.txUrl(chainId, hash),
-                route: stringify(trade?.route),
-                tx: stringify(trade?.tx),
-              })
-            } else if (
-              trade?.route?.legs?.every(
-                (leg) =>
-                  leg.poolName.startsWith('Wrap') ||
-                  (!leg.poolName.startsWith(LiquidityProviders.SushiSwapV2) &&
-                    !leg.poolName.startsWith(LiquidityProviders.SushiSwapV3)),
-              )
-            ) {
-              log.info('external route', {
-                chainId: chainId,
-                txHash: hash,
-                exporerLink: Chain.txUrl(chainId, hash),
-                route: stringify(trade?.route),
-                tx: stringify(trade?.tx),
-              })
-            } else {
-              log.info('unknown', {
-                chainId: chainId,
-                txHash: hash,
-                exporerLink: Chain.txUrl(chainId, hash),
-                route: stringify(trade?.route),
-                tx: stringify(trade?.tx),
-              })
-            }
           } else {
             sendAnalyticsEvent(SwapEventName.SWAP_TRANSACTION_FAILED, {
               txHash: hash,
@@ -263,62 +202,6 @@ export const SimpleSwapTradeReviewDialog: FC<{
               route: stringify(trade?.route),
               tx: stringify(trade?.tx),
             })
-            if (
-              trade?.route?.legs?.every(
-                (leg) =>
-                  leg.poolName.startsWith('Wrap') ||
-                  leg.poolName.startsWith(LiquidityProviders.SushiSwapV2) ||
-                  leg.poolName.startsWith(LiquidityProviders.SushiSwapV3),
-              )
-            ) {
-              log.error('internal route', {
-                chainId: chainId,
-                txHash: hash,
-                route: stringify(trade?.route),
-                tx: stringify(trade?.tx),
-              })
-            } else if (
-              trade?.route?.legs?.some(
-                (leg) =>
-                  !leg.poolName.startsWith('Wrap') &&
-                  (leg.poolName.startsWith(LiquidityProviders.SushiSwapV2) ||
-                    leg.poolName.startsWith(LiquidityProviders.SushiSwapV3)),
-              ) &&
-              trade?.route?.legs?.some(
-                (leg) =>
-                  !leg.poolName.startsWith('Wrap') &&
-                  (!leg.poolName.startsWith(LiquidityProviders.SushiSwapV2) ||
-                    !leg.poolName.startsWith(LiquidityProviders.SushiSwapV3)),
-              )
-            ) {
-              log.error('mix route', {
-                chainId: chainId,
-                txHash: hash,
-                route: stringify(trade?.route),
-                tx: stringify(trade?.tx),
-              })
-            } else if (
-              trade?.route?.legs?.every(
-                (leg) =>
-                  leg.poolName.startsWith('Wrap') ||
-                  (!leg.poolName.startsWith(LiquidityProviders.SushiSwapV2) &&
-                    !leg.poolName.startsWith(LiquidityProviders.SushiSwapV3)),
-              )
-            ) {
-              log.error('external route', {
-                chainId: chainId,
-                txHash: hash,
-                route: stringify(trade?.route),
-                tx: stringify(trade?.tx),
-              })
-            } else {
-              log.error('unknown', {
-                chainId: chainId,
-                txHash: hash,
-                route: stringify(trade?.route),
-                tx: stringify(trade?.tx),
-              })
-            }
           }
         }
       } finally {

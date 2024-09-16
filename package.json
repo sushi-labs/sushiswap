@@ -7,7 +7,7 @@
     "changeset": "changeset",
     "changeset:publish": "changeset publish",
     "changeset:version": "changeset version && pnpm install --lockfile-only",
-    "check": "turbo run check --no-cache --filter=!@sushiswap/tines-sandbox --filter=!@sushiswap/route-processor",
+    "check": "turbo run check --no-cache",
     "clean": "turbo run clean && rm -rf node_modules",
     "dev": "dotenv -- turbo run dev --no-cache --parallel --continue",
     "disable-remote-caching": "turbo unlink && rm -rf ./node_modules/.cache/turbo",

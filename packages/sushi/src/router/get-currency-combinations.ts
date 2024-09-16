@@ -1,10 +1,10 @@
-import { ChainId } from '../chain/index.js'
+import type { ChainId } from '../chain/index.js'
 import {
   ADDITIONAL_BASES,
   BASES_TO_CHECK_TRADES_AGAINST,
   CUSTOM_BASES,
 } from '../config/index.js'
-import { Token, type Type } from '../currency/index.js'
+import type { Token, Type } from '../currency/index.js'
 
 export function getCurrencyCombinations(
   chainId: ChainId,

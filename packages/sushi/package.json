@@ -1,6 +1,6 @@
 {
   "name": "sushi",
-  "version": "3.2.4",
+  "version": "4.0.1",
   "description": "Sushi",
   "keywords": [
     "sushi"
@@ -112,30 +112,15 @@
       "import": "./dist/_esm/pool/*/index.js",
       "default": "./dist/_cjs/pool/*/index.js"
     },
-    "./pricing": {
-      "types": "./dist/_types/pricing/index.d.ts",
-      "import": "./dist/_esm/pricing/index.js",
-      "default": "./dist/_cjs/pricing/index.js"
-    },
     "./router": {
       "types": "./dist/_types/router/index.d.ts",
       "import": "./dist/_esm/router/index.js",
       "default": "./dist/_cjs/router/index.js"
     },
-    "./serializer": {
-      "types": "./dist/_types/serializer/index.d.ts",
-      "import": "./dist/_esm/serializer/index.js",
-      "default": "./dist/_cjs/serializer/index.js"
-    },
     "./sort": {
       "types": "./dist/_types/sort/index.d.ts",
       "import": "./dist/_esm/sort/index.js",
       "default": "./dist/_cjs/sort/index.js"
-    },
-    "./tines": {
-      "types": "./dist/_types/tines/index.d.ts",
-      "import": "./dist/_esm/tines/index.js",
-      "default": "./dist/_cjs/tines/index.js"
     },
     "./token-list": {
       "types": "./dist/_types/token-list/index.d.ts",
@@ -207,20 +192,11 @@
       "pool": [
         "./dist/_types/pool/index.d.ts"
       ],
-      "pricing": [
-        "./dist/_types/pricing/index.d.ts"
-      ],
       "router": [
         "./dist/_types/router/index.d.ts"
       ],
-      "serializer": [
-        "./dist/_types/serializer/index.d.ts"
-      ],
       "sort": [
         "./dist/_types/sort/index.d.ts"
-      ],
-      "tines": [
-        "./dist/_types/tines/index.d.ts"
       ],
       "token-list": [
         "./dist/_types/token-list/index.d.ts"
