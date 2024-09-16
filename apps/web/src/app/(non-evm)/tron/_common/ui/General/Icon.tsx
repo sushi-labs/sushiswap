@@ -12,14 +12,19 @@ export const Icon = ({ currency, height = 40, width = 40 }: IconProps) => {
   return (
     <>
       {currency?.logoURI ? (
-        <Image
-          loader={({ src }) => src}
-          src={currency?.logoURI}
-          alt=""
-          className="rounded-full"
-          height={height}
-          width={width}
-        />
+        <div
+          style={{ width, height }}
+          className="relative flex shrink-0 overflow-hidden rounded-full"
+        >
+          <Image
+            loader={({ src }) => src}
+            src={currency.logoURI}
+            alt={currency.symbol}
+            height={height}
+            width={width}
+            className="aspect-square h-full w-full"
+          />
+        </div>
       ) : (
         <div
           className="text-xs text-white font-bold rounded-full flex items-center justify-center bg-gradient-to-b from-gray-300 to-gray-200 dark:from-blue-700 dark:to-blue-900"
