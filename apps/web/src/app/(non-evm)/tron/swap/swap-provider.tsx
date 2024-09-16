@@ -1,7 +1,7 @@
 'use client'
 
 import { FC, createContext, useContext, useMemo, useReducer } from 'react'
-import { DEFAULT_TOKEN_LIST } from '~tron/_common/constants/token-list'
+import { STABLE_TOKENS, TRON } from '~tron/_common/constants/token-list'
 import { IToken } from '~tron/_common/types/token-type'
 
 type Action =
@@ -83,8 +83,8 @@ function swapReducer(_state: State, action: Action) {
 
 const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
   const [state, dispatch] = useReducer(swapReducer, {
-    token0: DEFAULT_TOKEN_LIST[0],
-    token1: DEFAULT_TOKEN_LIST[1],
+    token0: TRON,
+    token1: STABLE_TOKENS[0],
     isTxnPending: false,
     amountIn: '',
     amountOut: '',

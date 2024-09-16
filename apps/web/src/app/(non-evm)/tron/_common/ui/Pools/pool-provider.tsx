@@ -1,7 +1,11 @@
 'use client'
 
 import { FC, createContext, useContext, useMemo, useReducer } from 'react'
-import { DEFAULT_TOKEN_LIST } from '~tron/_common/constants/token-list'
+import {
+  DEFAULT_TOKEN_LIST,
+  STABLE_TOKENS,
+  TRON,
+} from '~tron/_common/constants/token-list'
 import { IToken } from '~tron/_common/types/token-type'
 import { ReserveHelper } from '~tron/_common/ui/Pools/ReserveHelper'
 
@@ -111,8 +115,8 @@ function poolReducer(_state: State, action: Action) {
 
 const PoolProvider: FC<PoolProviderProps> = ({ children }) => {
   const [state, dispatch] = useReducer(poolReducer, {
-    token0: DEFAULT_TOKEN_LIST[0],
-    token1: DEFAULT_TOKEN_LIST[2],
+    token0: TRON,
+    token1: STABLE_TOKENS[0],
     isTxnPending: false,
     amountInToken0: '',
     amountInToken1: '',
