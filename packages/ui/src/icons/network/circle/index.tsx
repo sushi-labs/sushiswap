@@ -1,6 +1,7 @@
-import { ChainId } from 'sushi/chain'
+import { ChainId, NonStandardChainId } from 'sushi/chain'
 
 import { IconComponent } from '../../../types'
+import { AptosCircle } from './AptosCircle'
 import { ArbitrumCircle } from './ArbitrumCircle'
 import { ArbitrumNovaCircle } from './ArbitrumNovaCircle'
 import { AvalancheCircle } from './AvalancheCircle'
@@ -82,7 +83,9 @@ export * from './ThunderCoreCircle'
 export * from './ZKSyncCircle'
 export * from './ZetaChainCircle'
 
-export const NETWORK_CIRCLE_ICON: Partial<Record<ChainId, IconComponent>> = {
+export const NETWORK_CIRCLE_ICON: Partial<
+  Record<ChainId | NonStandardChainId, IconComponent>
+> = {
   [ChainId.ETHEREUM]: EthereumCircle,
   [ChainId.FANTOM]: FantomCircle,
   [ChainId.POLYGON]: PolygonCircle,
@@ -122,4 +125,5 @@ export const NETWORK_CIRCLE_ICON: Partial<Record<ChainId, IconComponent>> = {
   [ChainId.ROOTSTOCK]: RootstockCircle,
   [ChainId.CRONOS]: CronosCircle,
   [ChainId.MANTLE]: MantleCircle,
+  [NonStandardChainId.APTOS]: AptosCircle,
 }

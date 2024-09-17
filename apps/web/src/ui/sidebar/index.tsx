@@ -10,11 +10,9 @@ import {
   CommandGroup,
   CommandInput,
   CommandItem,
-  IconComponent,
   classNames,
 } from '@sushiswap/ui'
-import { AptosCircle } from '@sushiswap/ui/icons/network/circle/AptosCircle'
-import { NETWORK_CIRCLE_ICON } from '@sushiswap/ui/icons/network/circle/index'
+import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import { usePathname, useRouter } from 'next/navigation'
 import {
   Dispatch,
@@ -26,8 +24,15 @@ import {
   useContext,
   useState,
 } from 'react'
-import { NON_EVM_NETWORKS, SUPPORTED_NETWORKS } from 'src/config'
-import { Chain, ChainId, ChainKey, isChainId } from 'sushi'
+import { SUPPORTED_NETWORKS } from 'src/config'
+import {
+  Chain,
+  ChainId,
+  ChainKey,
+  NonStandardChainId,
+  NonStandardChains,
+  isChainId,
+} from 'sushi'
 import { useAccount } from 'wagmi'
 
 interface SidebarContextType {
@@ -112,22 +117,15 @@ export const AptosSidebarContainer: FC<
   return (
     <BaseSidebarContainer
       {...props}
-      connectedNetwork={network?.name === 'mainnet' ? 'aptos' : undefined}
+      connectedNetwork={
+        network?.name === 'mainnet' ? NonStandardChainId.APTOS : undefined
+      }
     />
   )
 }
 
-const NonEvmNetwork: Record<
-  (typeof NON_EVM_NETWORKS)[number],
-  { name: string; icon: IconComponent }
-> = {
-  aptos: {
-    name: 'Aptos',
-    icon: AptosCircle,
-  },
-}
-
 interface SidebarProps {
+  supportedNetworks?: (ChainId | NonStandardChainId)[]
   connectedNetwork?: number | string
 }
 
@@ -166,13 +164,11 @@ const Sidebar: FC<SidebarProps> = ({ connectedNetwork }) => {
           </div>
           <CommandGroup className="overflow-y-auto">
             {SUPPORTED_NETWORKS.map((network) => {
-              const [name, icon] =
-                typeof network === 'string'
-                  ? [NonEvmNetwork[network].name, NonEvmNetwork[network].icon]
-                  : [
-                      Chain.from(+network)?.name,
-                      NETWORK_CIRCLE_ICON[+network as ChainId]!,
-                    ]
+              const name =
+                typeof network === 'number'
+                  ? Chain.from(network)?.name
+                  : NonStandardChains[network].name
+
               return (
                 <CommandItem
                   key={network}
@@ -192,7 +188,7 @@ const Sidebar: FC<SidebarProps> = ({ connectedNetwork }) => {
                         )
                       }
                     >
-                      <span>{icon({ width: 22, height: 22 })}</span>
+                      <NetworkIcon chainId={network} width={22} height={22} />
                     </Badge>
                     {name}
                   </div>

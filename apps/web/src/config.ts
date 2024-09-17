@@ -1,4 +1,4 @@
-import { ChainId, TESTNET_CHAIN_IDS } from 'sushi/chain'
+import { ChainId, NonStandardChainId, TESTNET_CHAIN_IDS } from 'sushi/chain'
 import {
   AGGREGATOR_ONLY_CHAIN_IDS,
   EXTRACTOR_SUPPORTED_CHAIN_IDS,
@@ -80,9 +80,11 @@ export const isSupportedChainId = (
 ): chainId is SupportedChainId =>
   SUPPORTED_CHAIN_IDS.includes(chainId as SupportedChainId)
 
-export const NON_EVM_NETWORKS = ['aptos'] as const
+export const SUPPORTED_NON_STANDARD_NETWORKS = [
+  NonStandardChainId.APTOS,
+] as const
 
 export const SUPPORTED_NETWORKS = [
   ...SUPPORTED_CHAIN_IDS,
-  ...NON_EVM_NETWORKS,
+  ...SUPPORTED_NON_STANDARD_NETWORKS,
 ] as const

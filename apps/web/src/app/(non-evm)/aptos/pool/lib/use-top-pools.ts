@@ -4,6 +4,7 @@ import {
 } from '@sushiswap/graph-client/data-api'
 import { useQuery } from '@tanstack/react-query'
 import { useMemo } from 'react'
+import { NonStandardChainId } from 'sushi/chain'
 import { tokenlists } from '~aptos/_common/config/tokenlists'
 import { Token } from '~aptos/_common/lib/types/token'
 
@@ -44,9 +45,11 @@ export function useTopPools(
   )
 
   return useQuery({
-    queryKey: ['pools', { chainId: 'aptos' }],
+    queryKey: ['pools', { chainId: NonStandardChainId.APTOS }],
     queryFn: async () => {
-      const pools = await getTopNonEvmPools({ chainId: 'aptos' })
+      const pools = await getTopNonEvmPools({
+        chainId: NonStandardChainId.APTOS,
+      })
 
       return pools.map((pool) => ({
         ...pool,

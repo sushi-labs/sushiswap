@@ -2,6 +2,7 @@ import {
   ChainId,
   ChainKey,
   NetworkNameKey,
+  NonStandardChainId,
   isChainId,
   isNetworkNameKey,
 } from './constants.js'
@@ -265,6 +266,24 @@ export const getChainInfo = (
 
   return { chainId: undefined, networkName: undefined }
 }
+
+interface NonStandardChain extends Omit<Chain, 'chainId'> {
+  chainId: string
+}
+
+export const NonStandardChains = {
+  [NonStandardChainId.APTOS]: {
+    name: 'Aptos',
+    nativeCurrency: {
+      name: 'Aptos',
+      symbol: 'APT',
+      decimals: 8,
+    },
+
+    shortName: 'aptos',
+    chainId: 'aptos',
+  },
+} as Record<NonStandardChainId, NonStandardChain>
 
 export * from './constants.js'
 

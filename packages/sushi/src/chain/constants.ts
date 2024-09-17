@@ -56,7 +56,6 @@ export const ChainId = {
   MANTLE: 5000,
   // RONIN: 2020,
   CURTIS: 33111,
-  // APTOS: 'aptos',
 } as const
 export type ChainId = (typeof ChainId)[keyof typeof ChainId]
 
@@ -149,3 +148,17 @@ export const NetworkNameKey = Object.fromEntries(
 
 export const isNetworkNameKey = (key: string): key is ChainKey =>
   Object.keys(NetworkNameKey).includes(key)
+
+export const NonStandardChainId = {
+  APTOS: 'aptos',
+} as const
+
+export type NonStandardChainId =
+  (typeof NonStandardChainId)[keyof typeof NonStandardChainId]
+
+export const isNonStandardChainId = (
+  nonStandardChainId: string,
+): nonStandardChainId is NonStandardChainId =>
+  Object.values(NonStandardChainId).includes(
+    nonStandardChainId as NonStandardChainId,
+  )
