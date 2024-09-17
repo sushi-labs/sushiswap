@@ -7,7 +7,7 @@ export default function SwapLayout({
 }: { children: React.ReactNode }) {
   return (
     <Providers>
-      <SidebarProvider defaultOpen>
+      <SidebarProvider>
         <Header />
         <AptosSidebarContainer>
           <main className="lg:p-4 mt-16 mb-[86px]">{children}</main>

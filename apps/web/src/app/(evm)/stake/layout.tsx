@@ -12,7 +12,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <>
       <Providers>
-        {/* <SidebarProvider defaultOpen>
+        {/* <SidebarProvider>
           <Header />
           <SidebarContainer shiftContent>
             <main className="flex flex-col flex-1">

@@ -1,16 +1,24 @@
+import { PoolChainIds } from '@sushiswap/graph-client/data-api'
 import { Container } from '@sushiswap/ui'
 import { AptosSidebarContainer, SidebarProvider } from 'src/ui/sidebar'
+import { NonStandardChainId } from 'sushi/chain'
 import { Header } from '../header'
 import { Hero } from './hero'
 import { Providers } from './providers'
+
+const sidebarNetworks = [...PoolChainIds, NonStandardChainId.APTOS] as const
 
 export default function PoolLayout({
   children,
 }: { children: React.ReactNode }) {
   return (
-    <SidebarProvider defaultOpen>
+    <SidebarProvider>
       <Header />
-      <AptosSidebarContainer shiftContent>
+      <AptosSidebarContainer
+        shiftContent
+        supportedNetworks={sidebarNetworks}
+        unsupportedNetworkHref={'/ethereum/explore/pools'}
+      >
         <main className="flex flex-col h-full flex-1">
           <Container maxWidth="7xl" className="px-4 py-[9.5rem]">
             <Hero />

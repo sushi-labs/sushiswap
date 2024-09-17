@@ -56,7 +56,7 @@ interface SidebarProviderProps {
 
 export const SidebarProvider: FC<SidebarProviderProps> = ({
   children,
-  defaultOpen = false,
+  defaultOpen = true,
 }) => {
   const [isOpen, setIsOpen] = useState(defaultOpen)
 
@@ -75,20 +75,28 @@ export const SidebarToggle: FC<Omit<ButtonProps, 'onClick'>> = (props) => {
 
 interface SidebarContainerProps {
   children: ReactNode
-  connectedNetwork?: number | string
   shiftContent?: boolean
+  connectedNetwork?: number | string
+  supportedNetworks?: readonly (ChainId | NonStandardChainId)[]
+  unsupportedNetworkHref?: string
 }
 
 const BaseSidebarContainer: FC<SidebarContainerProps> = ({
   children,
-  connectedNetwork,
   shiftContent = false,
+  connectedNetwork,
+  supportedNetworks,
+  unsupportedNetworkHref,
 }) => {
   const { isOpen } = useSidebar()
 
   return (
     <div className="flex h-full min-h-0">
-      <Sidebar connectedNetwork={connectedNetwork} />
+      <Sidebar
+        connectedNetwork={connectedNetwork}
+        supportedNetworks={supportedNetworks}
+        unsupportedNetworkHref={unsupportedNetworkHref}
+      />
       <div
         className={classNames(
           'flex-1 h-full overflow-y-auto',
@@ -101,7 +109,7 @@ const BaseSidebarContainer: FC<SidebarContainerProps> = ({
   )
 }
 
-export const SidebarContainer: FC<
+export const EVMSidebarContainer: FC<
   Omit<SidebarContainerProps, 'connectedNetwork'>
 > = (props) => {
   const { chainId } = useAccount()
@@ -124,16 +132,29 @@ export const AptosSidebarContainer: FC<
   )
 }
 
+export const SidebarContainer = EVMSidebarContainer
+
 interface SidebarProps {
-  supportedNetworks?: (ChainId | NonStandardChainId)[]
   connectedNetwork?: number | string
+  supportedNetworks?: readonly (ChainId | NonStandardChainId)[]
+  unsupportedNetworkHref?: string
 }
 
-const Sidebar: FC<SidebarProps> = ({ connectedNetwork }) => {
+const Sidebar: FC<SidebarProps> = ({
+  connectedNetwork,
+  supportedNetworks = SUPPORTED_NETWORKS,
+  unsupportedNetworkHref,
+}) => {
   const { isOpen } = useSidebar()
 
-  const router = useRouter()
+  const { push } = useRouter()
   const pathname = usePathname()
+
+  const isSupportedNetwork = useCallback(
+    (network: ChainId | NonStandardChainId) =>
+      supportedNetworks.includes(network),
+    [supportedNetworks],
+  )
 
   const onSelect = useCallback(
     (value: string) => {
@@ -143,9 +164,9 @@ const Sidebar: FC<SidebarProps> = ({ connectedNetwork }) => {
         ? ChainKey[+network as ChainId]
         : network
 
-      router.push(pathSegments.join('/'), { scroll: false })
+      push(pathSegments.join('/'), { scroll: false })
     },
-    [pathname, router],
+    [pathname, push],
   )
 
   return !isOpen ? null : (
@@ -169,15 +190,28 @@ const Sidebar: FC<SidebarProps> = ({ connectedNetwork }) => {
                   ? Chain.from(network)?.name
                   : NonStandardChains[network].name
 
+              const isSupported = isSupportedNetwork(network)
+
               return (
                 <CommandItem
                   key={network}
                   className="cursor-pointer aria-selected:!bg-[unset] aria-selected:!text-[unset] !p-0"
                   testdata-id={`network-selector-${network}`}
                   value={`${name}__${network}`}
-                  onSelect={onSelect}
+                  onSelect={
+                    isSupported
+                      ? onSelect
+                      : unsupportedNetworkHref
+                        ? () => push(unsupportedNetworkHref)
+                        : undefined
+                  }
                 >
-                  <div className="flex items-center gap-2 hover:bg-muted hover:text-accent-foreground p-2 w-full rounded-lg">
+                  <div
+                    className={classNames(
+                      'flex items-center gap-2 hover:bg-muted hover:text-accent-foreground p-2 w-full rounded-lg',
+                      !isSupported ? 'opacity-30' : null,
+                    )}
+                  >
                     <Badge
                       position="bottom-right"
                       badgeContent={

@@ -1,15 +1,19 @@
 'use client'
 
+import { PoolChainIds, isPoolChainId } from '@sushiswap/graph-client/data-api'
 import { Container, LinkInternal } from '@sushiswap/ui'
 import { useSearchParams } from 'next/navigation'
 import { PathnameButton } from 'src/ui/pathname-button'
 import { PoolsFiltersProvider } from 'src/ui/pool'
 import { SidebarContainer, SidebarProvider } from 'src/ui/sidebar'
-import { ChainId, ChainKey, isChainId } from 'sushi/chain'
+import { ChainId, ChainKey, NonStandardChainId } from 'sushi/chain'
 import { Header } from '../header'
+import notFound from '../not-found'
 import { Hero } from './hero'
 
-export default function TabsLayout({
+const sidebarNetworks = [...PoolChainIds, NonStandardChainId.APTOS] as const
+
+export default function PositionsLayout({
   children,
   params,
 }: {
@@ -19,14 +23,18 @@ export default function TabsLayout({
   const chainId = +params.chainId as ChainId
   const searchParams = useSearchParams()
 
-  if (!isChainId(chainId)) {
-    throw new Error('Must be a valid chain id')
+  if (!isPoolChainId(chainId)) {
+    return notFound()
   }
 
   return (
-    <SidebarProvider defaultOpen>
+    <SidebarProvider>
       <Header />
-      <SidebarContainer shiftContent>
+      <SidebarContainer
+        shiftContent
+        supportedNetworks={sidebarNetworks}
+        unsupportedNetworkHref={'/ethereum/pool'}
+      >
         <main className="flex flex-col h-full flex-1">
           <Container maxWidth="7xl" className="px-4 py-16">
             <Hero chainId={chainId} />

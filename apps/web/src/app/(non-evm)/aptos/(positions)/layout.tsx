@@ -1,13 +1,17 @@
 'use client'
 
+import { PoolChainIds } from '@sushiswap/graph-client/data-api'
 import { Container, LinkInternal } from '@sushiswap/ui'
 import { useSearchParams } from 'next/navigation'
 import { Suspense } from 'react'
 import { PathnameButton } from 'src/ui/pool'
 import { AptosSidebarContainer, SidebarProvider } from 'src/ui/sidebar'
+import { NonStandardChainId } from 'sushi/chain'
 import { PoolsFiltersProvider } from '~aptos/pool/ui/pools/filters/pool-filters-provider'
 import { Header } from '../header'
 import { Hero } from './hero'
+
+const sidebarNetworks = [...PoolChainIds, NonStandardChainId.APTOS] as const
 
 export default function TabsLayout({
   children,
@@ -23,9 +27,13 @@ function Layout({ children }: { children: React.ReactNode }) {
   const searchParams = useSearchParams()
 
   return (
-    <SidebarProvider defaultOpen>
+    <SidebarProvider>
       <Header />
-      <AptosSidebarContainer shiftContent>
+      <AptosSidebarContainer
+        shiftContent
+        supportedNetworks={sidebarNetworks}
+        unsupportedNetworkHref={'/ethereum/pool'}
+      >
         <main className="flex flex-col h-full flex-1">
           <Container maxWidth="7xl" className="px-4 py-16">
             <Hero />
