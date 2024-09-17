@@ -1,5 +1,11 @@
 # sushi
 
+## 4.0.2
+
+### Patch Changes
+
+- [#1696](https://github.com/sushiswap/sushiswap/pull/1696) [`cb62bcaa1`](https://github.com/sushiswap/sushiswap/commit/cb62bcaa197af2be9dd7c05f600bd69e1f52ff1f) Thanks [@matthewlilley](https://github.com/matthewlilley)! - esmoduleinterop cjs build
+
 ## 4.0.1
 
 ### Patch Changes
