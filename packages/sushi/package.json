@@ -1,6 +1,6 @@
 {
   "name": "sushi",
-  "version": "3.2.0",
+  "version": "4.0.2",
   "description": "Sushi",
   "keywords": [
     "sushi"
@@ -31,6 +31,11 @@
       "types": "./dist/_types/abi/index.d.ts",
       "import": "./dist/_esm/abi/index.js",
       "default": "./dist/_cjs/abi/index.js"
+    },
+    "./address": {
+      "types": "./dist/_types/address/index.d.ts",
+      "import": "./dist/_esm/address/index.js",
+      "default": "./dist/_cjs/address/index.js"
     },
     "./bigint-serializer": {
       "types": "./dist/_types/bigint-serializer/index.d.ts",
@@ -107,30 +112,15 @@
       "import": "./dist/_esm/pool/*/index.js",
       "default": "./dist/_cjs/pool/*/index.js"
     },
-    "./pricing": {
-      "types": "./dist/_types/pricing/index.d.ts",
-      "import": "./dist/_esm/pricing/index.js",
-      "default": "./dist/_cjs/pricing/index.js"
-    },
     "./router": {
       "types": "./dist/_types/router/index.d.ts",
       "import": "./dist/_esm/router/index.js",
       "default": "./dist/_cjs/router/index.js"
     },
-    "./serializer": {
-      "types": "./dist/_types/serializer/index.d.ts",
-      "import": "./dist/_esm/serializer/index.js",
-      "default": "./dist/_cjs/serializer/index.js"
-    },
     "./sort": {
       "types": "./dist/_types/sort/index.d.ts",
       "import": "./dist/_esm/sort/index.js",
       "default": "./dist/_cjs/sort/index.js"
-    },
-    "./tines": {
-      "types": "./dist/_types/tines/index.d.ts",
-      "import": "./dist/_esm/tines/index.js",
-      "default": "./dist/_cjs/tines/index.js"
     },
     "./token-list": {
       "types": "./dist/_types/token-list/index.d.ts",
@@ -156,6 +146,9 @@
     "*": {
       "abi": [
         "./dist/_types/abi/index.d.ts"
+      ],
+      "address": [
+        "./dist/_types/address/index.d.ts"
       ],
       "bigint-serializer": [
         "./_types/bigint-serializer/index.d.ts"
@@ -199,20 +192,11 @@
       "pool": [
         "./dist/_types/pool/index.d.ts"
       ],
-      "pricing": [
-        "./dist/_types/pricing/index.d.ts"
-      ],
       "router": [
         "./dist/_types/router/index.d.ts"
       ],
-      "serializer": [
-        "./dist/_types/serializer/index.d.ts"
-      ],
       "sort": [
         "./dist/_types/sort/index.d.ts"
-      ],
-      "tines": [
-        "./dist/_types/tines/index.d.ts"
       ],
       "token-list": [
         "./dist/_types/token-list/index.d.ts"
@@ -231,7 +215,7 @@
   ],
   "scripts": {
     "build": "pnpm build:cjs && pnpm build:esm && pnpm build:types",
-    "build:cjs": "tsc --project ./tsconfig.build.json --module commonjs --outDir ./dist/_cjs --removeComments --verbatimModuleSyntax false && printf '{\"type\":\"commonjs\"}' > ./dist/_cjs/package.json",
+    "build:cjs": "tsc --project ./tsconfig.build.json --module commonjs --outDir ./dist/_cjs --removeComments --verbatimModuleSyntax false --esModuleInterop true && printf '{\"type\":\"commonjs\"}' > ./dist/_cjs/package.json",
     "build:esm": "tsc --project ./tsconfig.build.json --module es2020 --outDir ./dist/_esm && printf '{\"type\": \"module\",\"sideEffects\": \"true\"}' > ./dist/_esm/package.json",
     "build:types": "tsc --project ./tsconfig.build.json --module esnext --declarationDir ./dist/_types --emitDeclarationOnly --declaration --declarationMap",
     "check": "tsc --pretty --noEmit",
@@ -260,7 +244,7 @@
     "@types/seedrandom": "3.0.1",
     "tsc-alias": "^1.8.10",
     "typescript": "5.5.4",
-    "viem": "2.18.6",
+    "viem": "2.21.4",
     "vitest": "0.34.6",
     "zod": "3.23.8"
   },

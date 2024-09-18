@@ -237,4 +237,5 @@ export const STABLES = {
   [ChainId.AVALANCHE_TESTNET]: [],
   [ChainId.SEPOLIA]: [],
   [ChainId.GÖRLI]: [],
+  [ChainId.CURTIS]: [USDT[ChainId.CURTIS], DAI[ChainId.CURTIS]],
 } as const satisfies Record<ChainId, Token[]>

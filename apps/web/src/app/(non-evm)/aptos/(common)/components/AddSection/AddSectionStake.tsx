@@ -2,15 +2,16 @@ import { useWallet } from '@aptos-labs/wallet-adapter-react'
 import { Transition } from '@headlessui/react'
 import { Button, Dots } from '@sushiswap/ui'
 import { Provider } from 'aptos'
-import { useParams } from 'next/navigation'
 import { FC, Fragment, useState } from 'react'
 import { networkNameToNetwork } from '~aptos/(common)/config/chains'
 import { useNetwork } from '~aptos/(common)/lib/common/use-network'
 import { Token } from '~aptos/(common)/lib/types/token'
 import { createToast } from '~aptos/(common)/ui/toast'
+import { Pool } from '~aptos/pool/lib/convert-pool-to-sushi-pool'
 import { AddSectionStakeWidget } from './AddSectionStakeWidget'
 
 interface AddSectionStakeProps {
+  pool: Pool
   title?: string
   token0: Token
   token1: Token
@@ -28,7 +29,17 @@ export const AddSectionStake: FC<{
   decimals: number | undefined
   lpTokenName: string | undefined
   price: number
-}> = ({ title, token0, token1, balance, decimals, lpTokenName, price }) => {
+  pool: Pool
+}> = ({
+  title,
+  token0,
+  token1,
+  balance,
+  decimals,
+  lpTokenName,
+  price,
+  pool,
+}) => {
   return (
     <Transition
       appear
@@ -41,6 +52,7 @@ export const AddSectionStake: FC<{
       leaveTo="transform opacity-0"
     >
       <_AddSectionStake
+        pool={pool}
         title={title}
         token0={token0}
         token1={token1}
@@ -61,10 +73,9 @@ const _AddSectionStake: FC<AddSectionStakeProps> = ({
   decimals,
   lpTokenName,
   price,
+  pool,
 }) => {
   const [hover, setHover] = useState(false)
-  const router = useParams()
-  const tokenAddress = decodeURIComponent(router?.id as string)
   const [value, setValue] = useState('')
   const { signAndSubmitTransaction } = useWallet()
 
@@ -84,7 +95,7 @@ const _AddSectionStake: FC<AddSectionStakeProps> = ({
     try {
       const response = await signAndSubmitTransaction({
         data: {
-          typeArguments: [`${swapContract}::swap::LPToken<${tokenAddress}>`],
+          typeArguments: [`${swapContract}::swap::LPToken<${pool.id}>`],
           functionArguments: [parseInt(String(Number(value) * 10 ** decimals))],
           function: `${masterchefContract}::masterchef::deposit`,
         },

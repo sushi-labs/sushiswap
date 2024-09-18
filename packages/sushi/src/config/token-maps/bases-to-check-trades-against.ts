@@ -50,6 +50,13 @@ export const BASES_TO_CHECK_TRADES_AGAINST: {
     OHM[ChainId.ETHEREUM],
     LINK[ChainId.ETHEREUM],
     SUSHI[ChainId.ETHEREUM],
+    new Token({
+      chainId: ChainId.ETHEREUM,
+      address: '0xA0b73E1Ff0B80914AB6fe0444E65848C4C34450b',
+      symbol: 'CRO',
+      name: 'CRO',
+      decimals: 8,
+    }),
   ],
   [ChainId.GÖRLI]: [WNATIVE[ChainId.GÖRLI]],
   // [ChainId.RINKEBY]: [WNATIVE[ChainId.RINKEBY], USDC[ChainId.RINKEBY]],
@@ -498,5 +505,10 @@ export const BASES_TO_CHECK_TRADES_AGAINST: {
     WETH9[ChainId.MANTLE],
     USDC[ChainId.MANTLE],
     METH[ChainId.MANTLE],
+  ],
+  [ChainId.CURTIS]: [
+    WNATIVE[ChainId.CURTIS],
+    USDT[ChainId.CURTIS],
+    DAI[ChainId.CURTIS],
   ],
 }

@@ -1,6 +1,6 @@
 import { tradeValidator02 } from 'src/lib/hooks/react-query'
 import { SushiXSwap2ChainId } from 'sushi/config'
-import { RouteStatus } from 'sushi/tines'
+import { RouteStatus } from 'sushi/router'
 import { Address } from 'viem'
 import { z } from 'zod'
 import {

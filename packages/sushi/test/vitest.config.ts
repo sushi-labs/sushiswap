@@ -24,8 +24,8 @@ export default defineConfig({
     },
     environment: 'node',
     include: ['src/**/*.test.ts', 'test/**/*.test.ts'],
-    setupFiles: [join(__dirname, './setupFiles.ts')],
-    globalSetup: [join(__dirname, './globalSetup.ts')],
+    setupFiles: [join(__dirname, './setup-files.ts')],
+    globalSetup: [join(__dirname, './global-setup.ts')],
     testTimeout: 10_000,
   },
 })

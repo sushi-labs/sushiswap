@@ -491,15 +491,15 @@ export const WNATIVE = {
     chainId: ChainId.POLYGON,
     address: WNATIVE_ADDRESS[ChainId.POLYGON],
     decimals: 18,
-    symbol: 'WMATIC',
-    name: 'Wrapped Matic',
+    symbol: 'WPOL',
+    name: 'Wrapped POL',
   }),
   [ChainId.POLYGON_TESTNET]: new Token({
     chainId: ChainId.POLYGON_TESTNET,
     address: WNATIVE_ADDRESS[ChainId.POLYGON_TESTNET],
     decimals: 18,
-    symbol: 'WMATIC',
-    name: 'Wrapped Matic',
+    symbol: 'WPOL',
+    name: 'Wrapped POL',
   }),
   [ChainId.GNOSIS]: new Token({
     chainId: ChainId.GNOSIS,
@@ -723,6 +723,13 @@ export const WNATIVE = {
     decimals: 18,
     symbol: 'WMNT',
     name: 'Wrapped MNT',
+  }),
+  [ChainId.CURTIS]: new Token({
+    chainId: ChainId.CURTIS,
+    address: WNATIVE_ADDRESS[ChainId.CURTIS],
+    decimals: 18,
+    symbol: 'WAPE',
+    name: 'Wrapped APE',
   }),
 } as const
 

@@ -92,7 +92,7 @@ const TokenSelectModal = ({
       hidePinnedTokens={false}
       hideSearch={false}
     >
-      {children}
+      <div>{children}</div>
     </TokenSelector>
   )
 }

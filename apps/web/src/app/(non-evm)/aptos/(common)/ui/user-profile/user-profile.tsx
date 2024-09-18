@@ -29,21 +29,17 @@ export function UserProfile() {
   })
 
   if (!connected || !account?.address)
-    return <ConnectButton variant="outline" />
+    return <ConnectButton variant="secondary" />
 
   return (
     <Popover>
       <PopoverTrigger asChild>
         <Button variant="secondary">
-          <>
-            <div className="hidden md:flex">
-              <JazzIcon diameter={20} address={account?.address} />
-            </div>
-            {`${account?.address?.substring(
-              0,
-              5,
-            )}...${account?.address?.substring(66 - 3)}`}
-          </>
+          <JazzIcon diameter={20} address={account?.address} />
+          <span className="hidden sm:block">{`${account?.address?.substring(
+            0,
+            5,
+          )}...${account?.address?.substring(66 - 3)}`}</span>
         </Button>
       </PopoverTrigger>
       <PopoverContent
