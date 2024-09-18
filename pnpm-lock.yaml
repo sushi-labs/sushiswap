@@ -1290,6 +1290,10 @@ importers:
         specifier: 3.23.8
         version: 3.23.8
 
+  packages/sushi/dist/_cjs: {}
+
+  packages/sushi/dist/_esm: {}
+
   packages/telemetry:
     devDependencies:
       '@tsconfig/esm':
