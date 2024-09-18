@@ -3,12 +3,12 @@ import { Button } from '@sushiswap/ui'
 import { NetworkSelector, NetworkSelectorOnSelectCallback } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import React, { FC, Suspense, useCallback } from 'react'
-import { Chain, ChainId } from 'sushi/chain'
+import { Chain, ChainId, NonStandardChainId } from 'sushi/chain'
 import { ProviderRpcError, UserRejectedRequestError } from 'viem'
 import { useChainId, useSwitchChain } from 'wagmi'
 
 export const HeaderNetworkSelector: FC<{
-  networks: ChainId[]
+  networks: readonly (ChainId | NonStandardChainId)[]
   selectedNetwork?: ChainId
   onChange?(chainId: ChainId): void
   hideNetworkName?: boolean
@@ -42,7 +42,6 @@ export const HeaderNetworkSelector: FC<{
 
   return (
     <NetworkSelector
-      showAptos
       selected={chainId}
       onSelect={onSwitchNetwork}
       networks={networks}

@@ -1,11 +1,18 @@
 'use client'
 
-import React, { ReactNode, useMemo, useState } from 'react'
-import { Chain, ChainId } from 'sushi/chain'
+import React, { ReactNode, useCallback, useState } from 'react'
+import {
+  Chain,
+  ChainId,
+  NonStandardChainId,
+  NonStandardChains,
+  isChainId,
+  isNetworkNameKey,
+  isNonStandardChainId,
+} from 'sushi/chain'
 
-import Link from 'next/link'
+import { usePathname, useRouter } from 'next/navigation'
 import { NetworkIcon } from '../icons/NetworkIcon'
-import { AptosCircle } from '../icons/network/circle/AptosCircle'
 import {
   Command,
   CommandEmpty,
@@ -20,65 +27,42 @@ export type NetworkSelectorOnSelectCallback<T extends number = ChainId> = (
   close: () => void,
 ) => void
 
-const PREFERRED_CHAINID_ORDER: ChainId[] = [
-  ChainId.ETHEREUM,
-  ChainId.BSC,
-  ChainId.ARBITRUM,
-  ChainId.ARBITRUM_NOVA,
-  ChainId.BASE,
-  ChainId.AVALANCHE,
-  ChainId.POLYGON,
-  ChainId.BLAST,
-  ChainId.SCROLL,
-  ChainId.OPTIMISM,
-  ChainId.LINEA,
-  ChainId.MANTLE,
-  // ChainId.MODE,
-  // APTOS?
-  ChainId.CRONOS,
-  // ChainId.ZKLINK,
-  ChainId.CORE,
-  ChainId.GNOSIS,
-  ChainId.ROOTSTOCK,
-  ChainId.KAVA,
-  ChainId.CELO,
-  ChainId.FANTOM,
-  ChainId.ZKSYNC_ERA,
-  ChainId.FILECOIN,
-  ChainId.METIS,
-  ChainId.TELOS,
-  ChainId.POLYGON_ZKEVM,
-  ChainId.ZETACHAIN,
-]
-
-export interface NetworkSelectorProps<T extends number = ChainId> {
-  showAptos?: boolean
-  hideNetworkName?: boolean
+export interface NetworkSelectorProps<
+  T extends number | string = ChainId | NonStandardChainId,
+> {
   networks: readonly T[]
   selected: T
-  onSelect: NetworkSelectorOnSelectCallback<T>
+  onSelect: NetworkSelectorOnSelectCallback<Extract<T, number>>
   children: ReactNode
 }
 
-const NEW_CHAINS: number[] = [
-  ChainId.ZKSYNC_ERA,
-  ChainId.MANTLE,
-] satisfies ChainId[]
-
-const NetworkSelector = <T extends number>({
-  showAptos = false,
+const NetworkSelector = <T extends number | string>({
   onSelect,
   networks = [],
   children,
 }: Omit<NetworkSelectorProps<T>, 'variant'>) => {
   const [open, setOpen] = useState(false)
+  const { push } = useRouter()
+  const pathname = usePathname()
 
-  const _networks = useMemo(() => {
-    const INCLUDED_PREFERRED_CHAIN_IDS = PREFERRED_CHAINID_ORDER.filter((el) =>
-      networks.includes(el as T),
-    )
-    return Array.from(new Set([...INCLUDED_PREFERRED_CHAIN_IDS, ...networks]))
-  }, [networks])
+  const onSelectNonStandardChainId = useCallback(
+    (network: NonStandardChainId) => {
+      const pathSegments = pathname.split('/')
+      if (
+        isNetworkNameKey(pathSegments[1]) ||
+        isChainId(+pathSegments[1]) ||
+        isNonStandardChainId(pathSegments[1])
+      ) {
+        pathSegments[1] = network
+        push(pathSegments.join('/'), { scroll: false })
+      } else {
+        push(`/${network}/swap`, { scroll: false })
+      }
+
+      setOpen(false)
+    },
+    [push, pathname],
+  )
 
   return (
     <Popover modal={true} open={open} onOpenChange={setOpen}>
@@ -91,47 +75,44 @@ const NetworkSelector = <T extends number>({
           />
           <CommandEmpty>No network found.</CommandEmpty>
           <CommandGroup>
-            {showAptos ? (
-              <Link
-                href="https://aptos.sushi.com"
-                rel="noopener noreferrer"
-                target="_blank"
-              >
-                <CommandItem className="cursor-pointer">
-                  <div className="flex items-center gap-2">
-                    <AptosCircle width={22} height={22} />
-                    Aptos
-                  </div>
-                </CommandItem>
-              </Link>
-            ) : null}
-            {_networks
-              .sort((a) => (NEW_CHAINS.includes(a) ? -1 : 0))
-              .map((el) => (
+            {networks.map((network) => {
+              const name =
+                typeof network === 'number'
+                  ? Chain.from(network)?.name
+                  : NonStandardChains[network as NonStandardChainId].name
+
+              return (
                 <CommandItem
                   className="cursor-pointer"
-                  testdata-id={`network-selector-${el}`}
-                  value={`${Chain.from(el)?.name}__${el}`}
-                  key={el}
-                  onSelect={(value) =>
-                    onSelect(+value.split('__')[1] as T, () => setOpen(false))
-                  }
+                  testdata-id={`network-selector-${network}`}
+                  value={`${name}__${network}`}
+                  key={network}
+                  onSelect={(value) => {
+                    const network = value.split('__')[1]
+                    if (isNonStandardChainId(network)) {
+                      onSelectNonStandardChainId(network)
+                    } else {
+                      onSelect(+network as Extract<T, number>, () =>
+                        setOpen(false),
+                      )
+                    }
+                  }}
                 >
                   <div className="flex items-center gap-2">
-                    <NetworkIcon chainId={el} width={22} height={22} />
-                    {NEW_CHAINS.includes(el) ? (
-                      <>
-                        {Chain.from(el)?.name}
-                        <div className="text-[10px] italic rounded-full px-[6px] bg-gradient-to-r from-blue to-pink text-white font-bold">
-                          NEW
-                        </div>
-                      </>
-                    ) : (
-                      Chain.from(el)?.name
-                    )}
+                    <NetworkIcon chainId={network} width={22} height={22} />
+                    {/* NEW_CHAINS.includes(el) ? (
+                       <>
+                         {Chain.from(el)?.name}
+                         <div className="text-[10px] italic rounded-full px-[6px] bg-gradient-to-r from-blue to-pink text-white font-bold">
+                           NEW
+                         </div>
+                       </>
+                     )  */}
+                    {name}
                   </div>
                 </CommandItem>
-              ))}
+              )
+            })}
           </CommandGroup>
         </Command>
       </PopoverContent>
