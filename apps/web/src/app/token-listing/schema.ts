@@ -15,7 +15,7 @@ export const ApplyForTokenListTokenSchema = z.object({
     .transform((chainId) => chainId as ChainId)
     .default(ChainId.ETHEREUM),
   logoUrl: z.string().url(),
-  tweetUrl: z.string().url(),
+  tweetUrl: z.string().url().startsWith('https://x.com/').optional(),
 })
 
 export type ApplyForTokenListTokenSchemaType = z.infer<

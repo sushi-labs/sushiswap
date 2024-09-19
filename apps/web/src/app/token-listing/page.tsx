@@ -41,8 +41,10 @@ import {
 } from './schema'
 
 const Metrics = ({
+  isValid,
   analysis,
 }: {
+  isValid: boolean
   analysis: TokenAnalysis | undefined
 }) => {
   return (
@@ -189,26 +191,53 @@ const Metrics = ({
           </div>
         </div>
       </Card>
+      <Card className="p-4 space-y-4">
+        <div className="flex flex-row gap-1">
+          <h3>Token Status</h3>
+          {analysis ? (
+            isValid ? (
+              <CheckCircleIcon
+                width={24}
+                height={24}
+                className="text-[#139B6D]"
+              />
+            ) : (
+              <ExclamationCircleIcon
+                width={24}
+                height={24}
+                className="text-[#B4303C]"
+              />
+            )
+          ) : (
+            <></>
+          )}
+        </div>
+        <Separator />
+        <ul className="pl-4 list-disc text-muted-foreground">
+          {analysis?.reasoning.map((reason, i) => (
+            <li key={`reason-${i}`}>{reason}</li>
+          ))}
+        </ul>
+      </Card>
+      <Separator />
     </>
   )
 }
 
 export default function TokenListing() {
   const methods = useForm<ApplyForTokenListTokenSchemaType>({
-    mode: 'all',
+    // mode: 'all',
     resolver: zodResolver(ApplyForTokenListTokenSchema),
     defaultValues: {
       chainId: ChainId.ETHEREUM,
-      logoUrl: '',
-      tweetUrl: 'https://x.com/SushiSwap/status/1836208540035486031',
+      logoUrl: undefined,
       address: undefined,
     },
   })
-  const [chainId, address, logoUrl, tweetUrl] = methods.watch([
+  const [chainId, address, logoUrl] = methods.watch([
     'chainId',
     'address',
     'logoUrl',
-    'tweetUrl',
   ])
 
   const {
@@ -220,13 +249,10 @@ export default function TokenListing() {
     chainId,
   })
 
-  const [isValid, reasoning] = useMemo(() => {
-    if (!analysis) return [false, []]
-    if (analysis.isExisting) return [false, ['Token is already approved.']]
-    return [
-      !analysis.isExisting && analysis.isPassingRequirements,
-      analysis?.reasoning,
-    ]
+  const isValid = useMemo(() => {
+    if (!analysis) return false
+    if (analysis.isExisting) return false
+    return !analysis.isExisting && analysis.isPassingRequirements
   }, [analysis])
 
   useEffect(() => {
@@ -263,7 +289,7 @@ export default function TokenListing() {
       // TODO: error toast?
     }
   }
-
+  
   return (
     <>
       <div className="max-w-5xl px-4 py-16 mx-auto">
@@ -342,37 +368,38 @@ export default function TokenListing() {
                     )
                   }}
                 />
-                <Metrics analysis={analysis} />
+                <Metrics analysis={analysis} isValid={isValid} />
 
-                <Card className="p-4 space-y-4">
-                  <div className="flex flex-row gap-1">
-                    <h3>Token Status</h3>
-                    {analysis ? (
-                      isValid ? (
-                        <CheckCircleIcon
-                          width={24}
-                          height={24}
-                          className="text-[#139B6D]"
-                        />
-                      ) : (
-                        <ExclamationCircleIcon
-                          width={24}
-                          height={24}
-                          className="text-[#B4303C]"
-                        />
-                      )
-                    ) : (
-                      <></>
-                    )}
-                  </div>
-                  <Separator />
-                  <ul className="pl-4 list-disc text-muted-foreground">
-                    {reasoning.map((reason, i) => (
-                      <li key={`reason-${i}`}>{reason}</li>
-                    ))}
-                  </ul>
-                </Card>
-                <Separator />
+                <FormField
+                  control={methods.control}
+                  name="tweetUrl"
+                  render={({ field: { onChange, value, onBlur, name } }) => {
+                    return (
+                      <FormItem className="flex-1">
+                        <div>
+                          <Label>Twitter Attestation</Label>
+
+                          <FormControl>
+                            <TextField
+                              type="text"
+                              placeholder="https://x.com/username/status/123456789"
+                              onValueChange={onChange}
+                              value={value}
+                              name={name}
+                              onBlur={onBlur}
+                              testdata-id="tweetUrl"
+                              required={false}
+                            />
+                          </FormControl>
+                          <FormMessage>
+                            Give us a tweet from the project&apos;s official Twitter account including the token address. 
+                            This is not required, but it increases the chances of getting approved by verifying ownership of the token.
+                          </FormMessage>
+                        </div>
+                      </FormItem>
+                    )
+                  }}
+                />
 
                 <FormField
                   control={methods.control}
