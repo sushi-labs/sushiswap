@@ -22,8 +22,7 @@ import {
   typographyVariants,
 } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
-import { useCallback, useEffect, useMemo } from 'react'
-import { DropzoneOptions, useDropzone } from 'react-dropzone'
+import { useEffect, useMemo } from 'react'
 import { useForm } from 'react-hook-form'
 // import { type Address, isAddress } from 'viem'
 import { useTokenAnalysis } from 'src/lib/hooks/api/useTokenAnalysis'
@@ -40,6 +39,7 @@ import {
   ApplyForTokenListTokenSchema,
   ApplyForTokenListTokenSchemaType,
 } from './schema'
+import { createSuccessToast, createToast } from '@sushiswap/notifications'
 
 const Metrics = ({
   analysis,
@@ -200,14 +200,16 @@ export default function Partner() {
     resolver: zodResolver(ApplyForTokenListTokenSchema),
     defaultValues: {
       chainId: ChainId.ETHEREUM,
-      logoFile: '',
-      tokenAddress: undefined,
+      logoUrl: '',
+      tweetUrl: 'https://x.com/SushiSwap/status/1836208540035486031',
+      address: undefined,
     },
   })
-  const [chainId, tokenAddress, logoFile] = methods.watch([
+  const [chainId, address, logoUrl, tweetUrl] = methods.watch([
     'chainId',
-    'tokenAddress',
-    'logoFile',
+    'address',
+    'logoUrl',
+    'tweetUrl',
   ])
 
   const {
@@ -215,7 +217,7 @@ export default function Partner() {
     isLoading,
     isError: isTokenError,
   } = useTokenAnalysis({
-    address: tokenAddress,
+    address,
     chainId,
   })
 
@@ -230,55 +232,36 @@ export default function Partner() {
 
   useEffect(() => {
     if (isTokenError)
-      methods.setError('tokenAddress', {
+      methods.setError('address', {
         type: 'custom',
         message: 'Token not found',
       })
-    else methods.clearErrors('tokenAddress')
+    else methods.clearErrors('address')
   }, [methods, isTokenError])
 
-  const onDrop = useCallback<NonNullable<DropzoneOptions['onDrop']>>(
-    (acceptedFiles) => {
-      acceptedFiles.forEach((file) => {
-        const reader = new FileReader()
-        reader.readAsDataURL(file)
-        reader.addEventListener('load', () => {
-          if (reader.result) {
-            const imageAsBase64 = reader.result.toString()
-            const image = document.createElement('img')
-            image.src = imageAsBase64
-            image.onload = () => {
-              const canvas = document.createElement('canvas')
-              canvas.width = 128
-              canvas.height = 128
-              const context = canvas.getContext('2d', { alpha: false })
-              if (context) {
-                context.drawImage(image, 0, 0, canvas.width, canvas.height)
-                const resizedImageAsBase64 = canvas.toDataURL('image/jpeg')
-                methods.setValue('logoFile', resizedImageAsBase64)
-              }
-            }
-          }
-        })
-      })
-    },
-    [methods],
-  )
-
-  const { getRootProps, getInputProps } = useDropzone({
-    onDrop,
-    accept: { 'image/jpeg': ['.jpeg', '.jpg'] },
-    maxFiles: 1,
-  })
-
-  const onSubmit = (values: ApplyForTokenListTokenSchemaType) => {
-    if (analysis?.token.symbol) {
-      // mutate({
-      //   ...values,
-      //   tokenName: analysis.token.name,
-      //   tokenDecimals: analysis.token.decimals,
-      //   tokenSymbol: analysis.token.symbol,
-      // })
+  const onSubmit = async (values: ApplyForTokenListTokenSchemaType) => {
+    try {
+      const response = await fetch(
+        'https://data.sushi.com/token-list/submit-token/v1',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(values),
+        },
+      )
+      console.log({ values, response })
+      if (!response.ok) {
+        throw new Error(`${response.statusText}`)
+      }
+      const data = await response.json()
+      console.log('Response data:', data)
+      methods.reset()
+      // TODO: success toast?
+    } catch (error: any) {
+      console.error('Error:', error.message)
+      // TODO: error toast?
     }
   }
 
@@ -308,35 +291,35 @@ export default function Partner() {
                   control={methods.control}
                   name="chainId"
                   render={({ field: { onChange, value } }) => (
-                    <FormItem className='flex flex-row items-center gap-2'>
+                    <FormItem className="flex flex-row items-center gap-2">
                       <Label>Select Network</Label>
                       <FormControl>
-                          <NetworkSelector
-                            networks={SUPPORTED_CHAIN_IDS}
-                            selected={value}
-                            onSelect={onChange}
+                        <NetworkSelector
+                          networks={SUPPORTED_CHAIN_IDS}
+                          selected={value}
+                          onSelect={onChange}
+                        >
+                          <Button
+                            type="button"
+                            variant="secondary"
+                            className="!font-medium"
                           >
-                            <Button
-                              type="button"
-                              variant="secondary"
-                              className="!font-medium"
-                            >
-                              <NetworkIcon
-                                chainId={value}
-                                width={16}
-                                height={16}
-                              />
-                              {Chain.from(value)?.name}
-                              <SelectIcon />
-                            </Button>
-                          </NetworkSelector>
+                            <NetworkIcon
+                              chainId={value}
+                              width={16}
+                              height={16}
+                            />
+                            {Chain.from(value)?.name}
+                            <SelectIcon />
+                          </Button>
+                        </NetworkSelector>
                       </FormControl>
                     </FormItem>
                   )}
                 />
                 <FormField
                   control={methods.control}
-                  name="tokenAddress"
+                  name="address"
                   render={({ field: { onChange, value, onBlur, name } }) => {
                     return (
                       <FormItem className="flex-1 w-1/2">
@@ -349,7 +332,7 @@ export default function Partner() {
                             value={value}
                             name={name}
                             onBlur={onBlur}
-                            testdata-id="tokenAddress"
+                            testdata-id="address"
                             unit={analysis?.token.symbol}
                           />
                         </FormControl>
@@ -363,25 +346,25 @@ export default function Partner() {
                 <Metrics analysis={analysis} />
 
                 <Card className="p-4 space-y-4">
-                  <div className='flex flex-row gap-1'>
-                  <h3>Token Status</h3>
-                  {analysis ? (
-                    isValid ? (
-                      <CheckCircleIcon
-                        width={24}
-                        height={24}
-                        className="text-[#139B6D]"
-                      />
+                  <div className="flex flex-row gap-1">
+                    <h3>Token Status</h3>
+                    {analysis ? (
+                      isValid ? (
+                        <CheckCircleIcon
+                          width={24}
+                          height={24}
+                          className="text-[#139B6D]"
+                        />
+                      ) : (
+                        <ExclamationCircleIcon
+                          width={24}
+                          height={24}
+                          className="text-[#B4303C]"
+                        />
+                      )
                     ) : (
-                      <ExclamationCircleIcon
-                        width={24}
-                        height={24}
-                        className="text-[#B4303C]"
-                      />
-                    )
-                  ) : (
-                    <></>
-                  )}
+                      <></>
+                    )}
                   </div>
                   <Separator />
                   <ul className="pl-4 list-disc text-muted-foreground">
@@ -391,35 +374,47 @@ export default function Partner() {
                   </ul>
                 </Card>
                 <Separator />
-                <FormItem>
-                  <Label>Upload Icon</Label>
-                  <FormControl>
-                    <div>
-                      <div
-                        {...getRootProps()}
-                        className="relative w-20 h-20 overflow-hidden rounded-full cursor-pointer bg-secondary hover:bg-accent transition-background"
-                      >
-                        <input {...getInputProps()} />
-                        <div className="absolute inset-0 flex items-center justify-center">
-                          <CameraIcon className="w-6 h-6 text-muted-foreground" />
+
+                <FormField
+                  control={methods.control}
+                  name="logoUrl"
+                  render={({ field: { onChange, value, onBlur, name } }) => {
+                    return (
+                      <FormItem className="flex-1">
+                        <div>
+                          <Label>Logo</Label>
+
+                          <FormControl>
+                            <TextField
+                              type="text"
+                              placeholder="https://assets.coingecko.com/coins/images/279/standard/ethereum.png"
+                              onValueChange={onChange}
+                              value={value}
+                              name={name}
+                              onBlur={onBlur}
+                              testdata-id="logoUrl"
+                            />
+                          </FormControl>
+                          <FormMessage>Logo URL of your token.</FormMessage>
                         </div>
-                        {logoFile ? (
-                          <img
-                            className="!m-0"
-                            alt="icon"
-                            src={logoFile}
-                            width={80}
-                            height={80}
-                          />
-                        ) : null}
-                      </div>
-                    </div>
-                  </FormControl>
-                  <FormMessage>
-                    Allowed formats: .jpeg, .jpg <br />
-                    Minimum dimensions are 128x128.
-                  </FormMessage>
-                </FormItem>
+                        <div>
+                          <Label>Preview</Label>
+
+                          {logoUrl ? (
+                            <img
+                              alt="logo"
+                              src={logoUrl}
+                              width={128}
+                              height={128}
+                            />
+                          ) : (
+                            <CameraIcon className="w-[128px] h-[128px] text-muted-foreground" />
+                          )}
+                        </div>
+                      </FormItem>
+                    )
+                  }}
+                />
                 {status === 'error' ? (
                   <Message size="sm" variant="destructive">
                     Oops! Something went wrong when trying to execute your
