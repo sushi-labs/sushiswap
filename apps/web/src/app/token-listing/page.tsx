@@ -39,7 +39,6 @@ import {
   ApplyForTokenListTokenSchema,
   ApplyForTokenListTokenSchemaType,
 } from './schema'
-import { createSuccessToast, createToast } from '@sushiswap/notifications'
 
 const Metrics = ({
   analysis,
@@ -194,7 +193,7 @@ const Metrics = ({
   )
 }
 
-export default function Partner() {
+export default function TokenListing() {
   const methods = useForm<ApplyForTokenListTokenSchemaType>({
     mode: 'all',
     resolver: zodResolver(ApplyForTokenListTokenSchema),
