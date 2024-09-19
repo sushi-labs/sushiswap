@@ -20,7 +20,6 @@ type SushiDayBuckets {
 
 type Query {
   sushiDayBuckets(chainId: SushiSwapChainId!): SushiDayBuckets!
-  protocolFeeAnalysis: ProtocolFeeAnalysis!
   pools(chainId: PoolChainId!, page: Int = 1, search: [String], protocols: [Protocol], onlyIncentivized: Boolean = false, onlySmartPools: Boolean = false, orderBy: PoolsOrderBy = liquidityUSD, orderDirection: OrderDirection = desc): Pools!
   topPools(chainId: String!): [TopPool!]!
   v2Pool(address: Bytes!, chainId: SushiSwapV2ChainId!): V2Pool!
@@ -42,9 +41,9 @@ type Query {
   sushiBarHistory: SushiBarHistory!
   tokenList(chainId: TokenListChainId!, first: Int = 50, skip: Int, search: String, customTokens: [Bytes!]): [TokenListEntry!]!
   tokenListBalances(chainId: TokenListChainId!, account: Bytes!, includeNative: Boolean = true, customTokens: [Bytes!]): [TokenListEntryWithBalance!]!
-  approvedCommunityTokens: [TokenListEntry!]!
   tokenAnalysis(chainId: Int!, address: Bytes!): TokenAnalysis!
   pendingTokens: [PendingToken!]!
+  approvedCommunityTokens: [ApprovedToken!]!
   trendingTokens(chainId: TrendingTokensChainId!): [TrendingToken!]!
   v2LiquidityPositions(user: Bytes!, chainId: SushiSwapV2ChainId!): [V2LiquidityPosition!]!
   v2Swaps(address: Bytes!, chainId: SushiSwapV2ChainId!): [V2Swap!]!
@@ -56,36 +55,6 @@ type Query {
   v3Mints(address: Bytes!, chainId: SushiSwapV3ChainId!): [V3Mint!]!
   v3Collects(address: Bytes!, chainId: SushiSwapV3ChainId!): [V3Collect!]!
   v3Transactions(address: Bytes!, chainId: SushiSwapV3ChainId!): [V3Transaction!]!
-}
-
-type NoFeePool {
-  address: String!
-  fee: Float!
-  name: String!
-  chainId: Int!
-  token0Address: String!
-  token1Address: String!
-  createdAtTimestamp: Int!
-  volumeUSD1d: Float!
-  liquidityUSD: Float!
-}
-
-type FeeReport {
-  totalVolumeUSD1d: Float!
-  totalLiquidityUSD: Float!
-  missedRevenueUSD24h: Float!
-  estimatedAnnualRevenueUSD: Float!
-}
-
-type ProtocolReportByChain {
-  chainId: Int!
-  pools: [NoFeePool!]!
-  report: FeeReport!
-}
-
-type ProtocolFeeAnalysis {
-  chains: [ProtocolReportByChain!]!
-  report: FeeReport!
 }
 
 enum PoolsOrderBy {
@@ -730,6 +699,16 @@ type TokenSecurity {
   isFakeToken: Boolean
   isSellLimit: Boolean
   holderCount: Float!
+}
+
+type ApprovedToken {
+  address: Bytes!
+  chainId: ChainId!
+  symbol: String!
+  name: String!
+  decimals: Int!
+  approved: Boolean!
+  logoUrl: String
 }
 
 type TrendingToken {
