@@ -108,7 +108,6 @@
     "@next/env": "14.2.11",
     "@next/eslint-plugin-next": "14.2.11",
     "@playwright/test": "1.45.0",
-    "@sushiswap/jest-config": "workspace:*",
     "@sushiswap/typescript-config": "workspace:*",
     "@tsconfig/next": "2.0.1",
     "@types/cors": "2.8.13",

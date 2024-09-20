@@ -37,7 +37,6 @@
     "zod": "3.23.8"
   },
   "devDependencies": {
-    "@sushiswap/jest-config": "workspace:*",
     "@tsconfig/esm": "1.0.4",
     "@tsconfig/strictest": "2.0.2",
     "@types/node": "20",
