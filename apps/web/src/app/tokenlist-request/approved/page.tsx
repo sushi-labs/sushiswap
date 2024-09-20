@@ -7,6 +7,7 @@ import {
   Button,
   Container,
   LinkExternal,
+  LinkInternal,
   typographyVariants,
 } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
@@ -23,8 +24,16 @@ export default async function ApprovedTokensPage() {
   )()) as ApprovedCommunityTokens
   return (
     <>
-      <div className="max-w-5xl px-4 py-16 mx-auto">
-        <div className="flex flex-col">
+      <div className="max-w-6xl px-4 py-16 mx-auto">
+        <div className="pb-3">
+          <LinkInternal
+            href={'/tokenlist-request'}
+            className="text-sm text-blue hover:under line"
+          >
+            ← Token Listing
+          </LinkInternal>
+        </div>
+        <div>
           <h1 className={typographyVariants({ variant: 'h1' })}>
             Approved List
           </h1>
@@ -40,7 +49,10 @@ export default async function ApprovedTokensPage() {
       </div>
 
       <div className="bg-gray-50 dark:bg-white/[0.02] border-t border-accent pt-4 pb-20 h-full">
-        <Container maxWidth="5xl" className="px-4 py-10">
+        <Container maxWidth="6xl" className="px-4 py-10">
+          <div className="pb-3">
+            <h1>Last 25 Approved Tokens</h1>
+          </div>
           <div className="px-4 border rounded-lg bg-slate-900 border-white/10">
             {/* Header Row */}
             <div

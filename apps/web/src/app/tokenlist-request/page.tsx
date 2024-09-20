@@ -289,7 +289,7 @@ export default function TokenListing() {
       // TODO: error toast?
     }
   }
-  
+
   return (
     <>
       <div className="max-w-5xl px-4 py-16 mx-auto">
@@ -392,8 +392,10 @@ export default function TokenListing() {
                             />
                           </FormControl>
                           <FormMessage>
-                            Give us a tweet including the token address from the project&apos;s official Twitter account. 
-                            This is not required, but it increases the chances of getting approved by verifying ownership of the token.
+                            Give us a tweet including the token address from the
+                            project&apos;s official Twitter account. This is not
+                            required, but it increases the chances of getting
+                            approved by verifying ownership of the token.
                           </FormMessage>
                         </div>
                       </FormItem>
@@ -472,6 +474,21 @@ export default function TokenListing() {
               </div>
             </form>
           </Form>
+          <div className="py-7">
+            <p className="text-sm text-muted-foreground">
+              * You can submit your token once it meets the required threshold
+              values. These values may be different depending on the network you have selected. While there is an age requirement based on the
+              token&apos;s first tradable date (not the creation date) to help
+              reduce noise and maintain quality, exceptions may be made for
+              well-known tokens within the community.
+            </p>
+            <p className="pt-2 text-sm text-muted-foreground">
+              If your coin is listed on CoinGecko, it automatically bypasses all
+              other requirements and can be submitted regardless. For notable
+              pre-launch tokens, feel free to reach out in the token-list
+              channel on Discord with your token address!
+            </p>
+          </div>
         </Container>
       </div>
     </>
