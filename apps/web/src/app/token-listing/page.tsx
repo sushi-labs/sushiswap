@@ -303,11 +303,11 @@ export default function TokenListing() {
               className: 'max-w-[800px]',
             })}
           >
-            Get your token verified by Sushi&apos;s Community.
+            Get your token verified to Sushi&apos;s Community List.
           </p>
         </div>
       </div>
-      <div className="bg-gray-50 dark:bg-white/[0.02] border-t border-accent pt-4 pb-20 h-full">
+      <div className="bg-gray-50 dark:bg-white/[0.02] border-t border-accent pt-4 pb-20">
         <Container maxWidth="5xl" className="px-4 py-10">
           <Form {...methods}>
             <form onSubmit={methods.handleSubmit(onSubmit)}>
@@ -392,7 +392,7 @@ export default function TokenListing() {
                             />
                           </FormControl>
                           <FormMessage>
-                            Give us a tweet from the project&apos;s official Twitter account including the token address. 
+                            Give us a tweet including the token address from the project&apos;s official Twitter account. 
                             This is not required, but it increases the chances of getting approved by verifying ownership of the token.
                           </FormMessage>
                         </div>

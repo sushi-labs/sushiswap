@@ -1,10 +1,12 @@
+import { ArrowTopRightOnSquareIcon } from '@heroicons/react/24/outline'
 import {
   PendingTokens,
   getPendingTokens,
 } from '@sushiswap/graph-client/data-api/queries/token-list-submission'
-import { Container, typographyVariants } from '@sushiswap/ui'
+import { Button, Container, LinkExternal, typographyVariants } from '@sushiswap/ui'
+import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import { unstable_cache } from 'next/cache'
-import { formatUSD } from 'sushi'
+import { Chain, formatUSD, shortenAddress } from 'sushi'
 
 export const XIcon = () => (
   <svg
@@ -52,10 +54,15 @@ export default async function PendingTokenListingPage() {
         </div>
       </div>
       <div className="bg-gray-50 dark:bg-white/[0.02] border-t border-accent pt-4 pb-20 h-full">
-        <Container maxWidth="5xl" className="px-4 py-10">
+        <Container maxWidth="6xl" className="px-4 py-10">
           <div className="border rounded-lg bg-slate-900 border-white/10">
             {/* Header Row */}
-            <div className="grid grid-cols-6 border-b border-white/5">
+            <div className="grid grid-cols-7 border-b border-white/5">
+            <div className="px-4 pt-2 text-left" key={'Logo'}>
+                  <span className="text-xs font-medium text-slate-400">
+                    Logo
+                  </span>
+                </div>
               {[
                 'Token',
                 'Tweet',
@@ -73,51 +80,82 @@ export default async function PendingTokenListingPage() {
             </div>
 
             {/* Data Rows */}
-            {pendingTokens.length ? pendingTokens.map((item, index) => (
+            {pendingTokens.length ? pendingTokens.map((pending, index) => (
               <div
-                className="grid items-center grid-cols-6 border-b border-white/5"
+                className="grid items-center grid-cols-7 border-b border-white/5"
                 key={index}
               >
                 <div className="flex p-4 text-left">
-                  <img
-                    className="w-8 h-8 mx-auto rounded-full"
-                    src={item.logoUrl}
-                    alt="Token Logo"
-                  />
-                  <div>
-                    <span className="block text-sm">{item.token.symbol}</span>
-                    <span className="block text-sm text-slate-400">
-                      {item.token.name}
-                    </span>
+                <div className="flex items-center py-4">
+                    <div className="relative">
+                      <img
+                        className="w-8 h-8 rounded-full"
+                        src={pending.logoUrl}
+                        alt={pending.token.address}
+                      />
+                      <div
+                        className="absolute bottom-0 right-0"
+                        style={{ width: '10px', height: '10px' }}
+                      >
+                        <NetworkIcon
+                          chainId={pending.token.chainId}
+                          width={14}
+                          height={14}
+                        />
+                      </div>
+                    </div>
                   </div>
+                  
                 </div>
                 <div className="p-4 text-center">
-                  <XIcon />
+                    <span className="text-sm">{pending.token.name} </span>
+                    <span className="text-sm text-slate-400">
+                      ({pending.token.symbol})
+                    </span>
+                    <LinkExternal
+                        target="_blank"
+                        href={Chain.from(pending.token.chainId)?.getTokenUrl(
+                          pending.token.address,
+                        )}
+                      >
+                        <Button
+                          asChild
+                          variant="link"
+                          size="sm"
+                          className="!font-medium !text-secondary-foreground"
+                        >
+                          {shortenAddress(pending.token.address, 4)}
+                          <ArrowTopRightOnSquareIcon className="w-3 h-3" />
+                        </Button>
+                      </LinkExternal>
+                  </div>
+                <div className="p-4 text-center">
                   <span className="text-sm">
-                    {/* {item.tweetUrl ? 'Yes' : 'No'} */}
+                    {pending.tweetUrl ? 
+                  <LinkExternal href={pending.tweetUrl}><XIcon /></LinkExternal>  : ''}
                   </span>
                 </div>
                 <div className="p-4 text-center">
                   <span className="text-sm">
-                    {formatUSD(item.metrics.marketcapUSD)}
+                    {formatUSD(pending.metrics.marketcapUSD)}
                   </span>
                 </div>
                 <div className="p-4 text-center">
                   <span className="text-sm">
-                    {formatUSD(item.metrics.volumeUSD24h)}
+                    {formatUSD(pending.metrics.volumeUSD24h)}
                   </span>
                 </div>
                 <div className="p-4 text-center">
                   <span className="text-sm">
                     {Math.floor(
-                      (new Date().getTime() - new Date(item.createdAt * 1000).getTime())  /
+                      (new Date().getTime() - new Date(pending.createdAt * 1000).getTime())  /
                         (1000 * 60 * 60 * 24),
                     )}{' '}
                     Days
                   </span>
                 </div>
                 <div className="p-4 text-center">
-                  <span className="text-sm">{item.metrics.holders}</span>
+                  <span className="text-sm">{pending.metrics.holders}</span>
                 </div>
               </div>
             )): (
