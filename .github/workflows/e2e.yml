@@ -1,4 +1,4 @@
-name: Sushi - apps / web
+name: E2E
 
 on:
   pull_request:
@@ -7,11 +7,8 @@ on:
       - ".github/workflows/apps-web-e2e.yml"
       - "apps/web/**"
       - "config/nextjs/**"
-      - "config/router/**"
       - "config/tailwindcss/**"
       - "config/typescript/**"
-      - "config/viem/**"
-      - "config/wagmi/**"
       - "packages/**"
   workflow_dispatch:
 
@@ -25,38 +22,22 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 jobs:
-  e2e:
-    runs-on: buildjet-4vcpu-ubuntu-2204
+  test:
+    runs-on: ubuntu-latest
+    # runs-on: buildjet-4vcpu-ubuntu-2204
     timeout-minutes: 15
     strategy:
       matrix:
         block-number: [61755107]
         chain-id: [137]
-        node-version: [20]
-        pnpm-version: [9.4.0]
     steps:
       - name: Clone repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 2
-          submodules: true
-
-      # Has to be before setup node for caching to work
-      - uses: pnpm/action-setup@v4
-        with:
-          version: ${{ matrix.pnpm-version }}
-
-      - name: Setup Node.js
-        uses: buildjet/setup-node@v3
-        with:
-          cache: 'pnpm'
-          node-version: ${{ matrix.node-version }}
-
-      - name: Install Foundry
-        uses: foundry-rs/foundry-toolchain@v1
+          submodules: 'recursive'
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile --prefer-offline
+        uses: ./.github/actions/install
         
       - name: Install Playwright Browsers
         run: pnpm playwright install --with-deps chromium

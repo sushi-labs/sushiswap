@@ -49,8 +49,7 @@
     "build": "tsc",
     "check": "tsc --pretty --noEmit",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
-    "dev": "tsc --watch",
-    "test": "jest --passWithNoTests"
+    "dev": "tsc --watch"
   },
   "dependencies": {
     "@fontsource-variable/inter": "5.0.1",
@@ -106,7 +105,6 @@
     "use-resize-observer": "9.1.0"
   },
   "devDependencies": {
-    "@sushiswap/jest-config": "workspace:*",
     "@sushiswap/typescript-config": "workspace:*",
     "@types/gtag.js": "0.0.19",
     "@types/react": "18.2.14",

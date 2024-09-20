@@ -40,8 +40,7 @@
     "build": "tsc",
     "check": "tsc --pretty --noEmit",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
-    "dev": "tsc --watch",
-    "test": "jest --passWithNoTests"
+    "dev": "tsc --watch"
   },
   "dependencies": {
     "@heroicons/react": "2.0.13",
