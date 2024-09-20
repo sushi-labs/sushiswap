@@ -56,7 +56,7 @@
     "preset": "@sushiswap/jest-config"
   },
   "dependencies": {
-    "sushi": "workspace:*"
+    "sushi": "4.0.2"
   },
   "devDependencies": {
     "@sushiswap/jest-config": "workspace:*",

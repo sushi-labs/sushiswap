@@ -67,7 +67,7 @@
     "next": "14.2.11",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "sushi": "workspace:*",
+    "sushi": "4.0.2",
     "typescript": "5.5.4",
     "viem": "2.21.4",
     "wagmi": "2.12.10"

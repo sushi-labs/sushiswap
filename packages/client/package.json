@@ -67,7 +67,7 @@
     "@sushiswap/steer-sdk": "workspace:*",
     "@whatwg-node/fetch": "0.8.4",
     "deepmerge-ts": "^4.3.0",
-    "sushi": "workspace:*",
+    "sushi": "4.0.2",
     "tslib": "latest",
     "viem": "2.21.4",
     "zod": "3.23.8"
