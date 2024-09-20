@@ -2,7 +2,7 @@
 
 import { useQueryClient } from '@tanstack/react-query'
 import { useEffect, useMemo } from 'react'
-import { uniswapV2PairAbi } from 'sushi/abi'
+import { uniswapV2PairAbi_getReserves } from 'sushi/abi'
 import {
   SUSHISWAP_V2_FACTORY_ADDRESS,
   SushiSwapV2ChainId,
@@ -64,7 +64,7 @@ function getSushiSwapV2Pools(
       tokenA: currencyA.wrapped,
       tokenB: currencyB.wrapped,
     }) as Address,
-    abi: uniswapV2PairAbi,
+    abi: uniswapV2PairAbi_getReserves,
     functionName: 'getReserves' as const,
   }))
 

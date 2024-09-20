@@ -1,4 +1,4 @@
-import { erc20Abi } from 'sushi/abi'
+import { erc20Abi_totalSupply } from 'sushi/abi'
 import { getChainIdAddressFromId } from 'sushi/format'
 import { type PublicClient, zeroAddress } from 'viem'
 
@@ -13,7 +13,7 @@ export function getTotalSuppliesContracts({
     const { chainId, address } = getChainIdAddressFromId(id)
 
     return {
-      abi: erc20Abi,
+      abi: erc20Abi_totalSupply,
       chainId,
       address,
       account: zeroAddress,

@@ -61,8 +61,6 @@ These need to be run from their own folder at the moment in development.
 
 `git checkout -b feature/example-app`
 
-<!-- `pnpm exec @sushiswap/cli create-app example-app` -->
-
 ## Config
 
 ...
@@ -78,22 +76,6 @@ These need to be run from their own folder at the moment in development.
 ### Creating a new package
 
 `git checkout -b feature/example-package`
-
-## Protocols
-
-...
-
-### Creating a new protocol
-
-`git checkout -b feature/example-protocol`
-
-## Subgraphs
-
-...
-
-### Creating a new subgraph
-
-`git checkout -b feature/example-subgraph`
 
 ## Disclaimer
 

@@ -1,9 +1,11 @@
+import { isPoolChainId } from '@sushiswap/graph-client/data-api'
 import {
   type NavigationElement,
   type NavigationElementDropdown,
   NavigationElementType,
 } from '@sushiswap/ui'
 import { ChainId, ChainKey, isChainId } from 'sushi'
+import { isAggregatorOnlyChainId } from 'sushi/config'
 
 export const EXPLORE_NAVIGATION_LINKS = (
   chainId?: ChainId,
@@ -13,20 +15,24 @@ export const EXPLORE_NAVIGATION_LINKS = (
     href: '/swap',
     description: 'The easiest way to trade.',
   },
-  {
-    title: 'Explore',
-    href: `/${
-      isChainId(Number(chainId)) ? ChainKey[chainId as ChainId] : 'ethereum'
-    }/explore/pools`,
-    description: 'Explore top pools.',
-  },
-  {
-    title: 'Pool',
-    href: `/${
-      isChainId(Number(chainId)) ? ChainKey[chainId as ChainId] : 'ethereum'
-    }/pool`,
-    description: 'Earn fees by providing liquidity.',
-  },
+  ...(!chainId || isPoolChainId(chainId)
+    ? ([
+        {
+          title: 'Explore',
+          href: `/${chainId ? ChainKey[chainId] : 'ethereum'}/explore/pools`,
+          description: 'Explore top pools.',
+        },
+      ] as const)
+    : []),
+  ...(!chainId || !isAggregatorOnlyChainId(chainId)
+    ? ([
+        {
+          title: 'Pool',
+          href: `/${chainId ? ChainKey[chainId] : 'ethereum'}/pool`,
+          description: 'Earn fees by providing liquidity.',
+        },
+      ] as const)
+    : []),
   //  {
   //    title: 'Bonds',
   //    href: '/bonds',

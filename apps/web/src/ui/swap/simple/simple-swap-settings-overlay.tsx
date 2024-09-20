@@ -1,7 +1,6 @@
 'use client'
 
 import { SettingsModule, SettingsOverlay } from '@sushiswap/ui'
-import { SwapApi } from './swap-api-setting'
 
 export const SimpleSwapSettingsOverlay = () => {
   return (
@@ -12,7 +11,6 @@ export const SimpleSwapSettingsOverlay = () => {
         // SettingsModule.TransactionDeadline,
         // SettingsModule.CarbonOffset
       ]}
-      externalModules={[SwapApi]}
     />
   )
 }

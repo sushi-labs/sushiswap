@@ -106,16 +106,8 @@ export const useConcentratedLiquidityPositions = ({
               }),
             ])
 
-            const token0 = getTokenWithQueryCacheHydrate(
-              el.chainId,
-              token0Data,
-              false,
-            )
-            const token1 = getTokenWithQueryCacheHydrate(
-              el.chainId,
-              token1Data,
-              false,
-            )
+            const token0 = getTokenWithQueryCacheHydrate(el.chainId, token0Data)
+            const token1 = getTokenWithQueryCacheHydrate(el.chainId, token1Data)
 
             const pool = (await getConcentratedLiquidityPool({
               chainId: el.chainId,

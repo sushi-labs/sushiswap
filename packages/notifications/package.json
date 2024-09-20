@@ -55,8 +55,8 @@
     "@tsconfig/strictest": "2.0.2",
     "@types/react": "18.2.14",
     "@types/react-dom": "18.2.6",
-    "sushi": "workspace:*",
-    "typescript": "5.4.5"
+    "sushi": "4.0.2",
+    "typescript": "5.5.4"
   },
   "peerDependencies": {
     "react": "18.2.0",

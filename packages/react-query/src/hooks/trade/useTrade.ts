@@ -74,7 +74,6 @@ export const useTradeQuery = (
       params.searchParams.set('maxSlippage', `${+slippagePercentage / 100}`)
       params.searchParams.set('gasPrice', `${gasPrice}`)
       recipient && params.searchParams.set('to', `${recipient}`)
-      params.searchParams.set('preferSushi', 'true')
       params.searchParams.set('enableFee', 'true')
       params.searchParams.set(
         'feeReceiver',

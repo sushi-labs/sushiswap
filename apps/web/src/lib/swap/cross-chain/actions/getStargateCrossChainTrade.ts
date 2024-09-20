@@ -1,5 +1,5 @@
 import { NativeAddress } from '@sushiswap/react-query'
-import { stargateAdapterAbi } from 'sushi/abi'
+import { stargateAdapterAbi_getFee } from 'sushi/abi'
 import {
   STARGATE_ADAPTER_ADDRESS,
   STARGATE_CHAIN_ID,
@@ -7,8 +7,7 @@ import {
   isStargateAdapterChainId,
   publicClientConfig,
 } from 'sushi/config'
-import { RouterLiquiditySource } from 'sushi/router'
-import { RouteStatus } from 'sushi/tines'
+import { RouteStatus, RouterLiquiditySource } from 'sushi/router'
 import {
   createPublicClient,
   encodeAbiParameters,
@@ -346,7 +345,7 @@ export const getStargateCrossChainTrade = async ({
 
     let [lzFee] = await client.readContract({
       address: STARGATE_ADAPTER_ADDRESS[srcChainId as StargateAdapterChainId],
-      abi: stargateAdapterAbi,
+      abi: stargateAdapterAbi_getFee,
       functionName: 'getFee',
       args: [
         STARGATE_CHAIN_ID[dstChainId as StargateAdapterChainId], // dstChain

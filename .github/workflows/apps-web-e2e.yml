@@ -30,7 +30,7 @@ jobs:
     timeout-minutes: 15
     strategy:
       matrix:
-        block-number: [60306923]
+        block-number: [61755107]
         chain-id: [137]
         node-version: [20]
         pnpm-version: [9.4.0]

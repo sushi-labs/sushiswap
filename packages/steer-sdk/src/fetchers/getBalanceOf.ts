@@ -1,4 +1,4 @@
-import { erc20Abi } from 'sushi/abi'
+import { erc20Abi_balanceOf } from 'sushi/abi'
 import { getChainIdAddressFromId } from 'sushi/format'
 import { type Address, type PublicClient, zeroAddress } from 'viem'
 
@@ -15,7 +15,7 @@ export function getBalanceOfsContracts({
     const { chainId, address } = getChainIdAddressFromId(id)
 
     return {
-      abi: erc20Abi,
+      abi: erc20Abi_balanceOf,
       chainId,
       address,
       account: zeroAddress,

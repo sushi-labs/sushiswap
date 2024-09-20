@@ -3,6 +3,7 @@ import { type RequestOptions, request } from 'src/lib/request'
 import { SUSHI_DATA_API_HOST } from 'sushi/config/subgraph'
 import { graphql } from '../../graphql'
 import { SUSHI_REQUEST_HEADERS } from '../../request-headers'
+import { Token } from 'sushi/currency'
 
 export const PoolsQuery = graphql(
   `
@@ -19,15 +20,39 @@ export const PoolsQuery = graphql(
         token0Address
         token1Address
         liquidityUSD
-        txCount1d
-        feeUSD1d
+        liquidityUSDChange1d
         volumeUSD1d
+        volumeUSD1w
+        volumeUSDChange1d
+        volumeUSDChange1w
+        txCount1d
+        txCountChange1d
+        feeUSD1d
         feeApr1d
         totalApr1d
         incentiveApr
         isSmartPool
         isIncentivized
         wasIncentivized
+        incentives {
+          id
+          chainId
+          chefType
+          apr
+          rewardToken {
+            id
+            chainId
+            address
+            name
+            symbol
+            decimals
+          }
+          rewardPerDay
+          poolAddress
+          pid
+          rewarderAddress
+          rewarderType
+        }
         source
       }
     }
@@ -55,6 +80,10 @@ export async function getPools(variables: GetPools, options?: RequestOptions) {
         data: result.pools.data.map((pool) => ({
           ...pool,
           chainId: variables.chainId,
+          incentives: pool.incentives.map((incentive) => ({
+            ...incentive,
+            rewardToken: new Token(incentive.rewardToken),
+          })),
         })),
       }
     }
@@ -69,3 +98,4 @@ export async function getPools(variables: GetPools, options?: RequestOptions) {
 
 export type PoolsResponse = Awaited<ReturnType<typeof getPools>>
 export type Pools = PoolsResponse['data']
+export type Pool = Pools[number]

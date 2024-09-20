@@ -1,4 +1,9 @@
-import { stargateFeeLibraryV03Abi, stargatePoolAbi } from 'sushi/abi'
+import {
+  stargateFeeLibraryV03Abi_getFees,
+  stargatePoolAbi_feeLibrary,
+  stargatePoolAbi_getChainPath,
+  stargatePoolAbi_sharedDecimals,
+} from 'sushi/abi'
 import {
   STARGATE_ADAPTER_ADDRESS,
   STARGATE_CHAIN_ID,
@@ -72,7 +77,7 @@ export const getStargateFees = async ({
       ] as Address,
       BigInt(adjusted?.quotient ?? 0),
     ],
-    abi: stargateFeeLibraryV03Abi,
+    abi: stargateFeeLibraryV03Abi_getFees,
   })
 
   if (
@@ -146,7 +151,7 @@ const getStargatePool = async ({
             ] ?? 0,
           ),
         ],
-        abi: stargatePoolAbi,
+        abi: stargatePoolAbi_getChainPath,
       },
       {
         address: STARGATE_POOL_ADDRESS[srcBridgeToken.chainId][
@@ -157,7 +162,7 @@ const getStargatePool = async ({
             : srcBridgeToken.address
         ] as Address,
         functionName: 'feeLibrary',
-        abi: stargatePoolAbi,
+        abi: stargatePoolAbi_feeLibrary,
       },
       {
         address: STARGATE_POOL_ADDRESS[srcBridgeToken.chainId][
@@ -168,7 +173,7 @@ const getStargatePool = async ({
             : srcBridgeToken.address
         ] as Address,
         functionName: 'sharedDecimals',
-        abi: stargatePoolAbi,
+        abi: stargatePoolAbi_sharedDecimals,
       },
     ] as const,
   })

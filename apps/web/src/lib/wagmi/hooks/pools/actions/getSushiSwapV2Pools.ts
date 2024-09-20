@@ -1,5 +1,5 @@
 import { readContracts } from '@wagmi/core/actions'
-import { uniswapV2PairAbi } from 'sushi/abi'
+import { uniswapV2PairAbi_getReserves } from 'sushi/abi'
 import {
   SUSHISWAP_V2_FACTORY_ADDRESS,
   SushiSwapV2ChainId,
@@ -55,7 +55,7 @@ export const getSushiSwapV2Pools = async (
       tokenA: currencyA.wrapped,
       tokenB: currencyB.wrapped,
     }),
-    abi: uniswapV2PairAbi,
+    abi: uniswapV2PairAbi_getReserves,
     functionName: 'getReserves' as const,
   }))
 

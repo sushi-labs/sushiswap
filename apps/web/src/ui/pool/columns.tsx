@@ -1,9 +1,12 @@
-import { V2Position } from '@sushiswap/graph-client/data-api'
+import { Pool } from '@sushiswap/graph-client/data-api'
 import { AngleRewardsPool } from '@sushiswap/react-query'
 import { PoolHasSteerVaults } from '@sushiswap/steer-sdk'
 import {
+  Badge,
+  Currency,
   FormattedNumber,
   Tooltip,
+  TooltipContent,
   TooltipPrimitive,
   TooltipProvider,
   TooltipTrigger,
@@ -13,20 +16,19 @@ import { SkeletonCircle, SkeletonText } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import { ColumnDef } from '@tanstack/react-table'
 import formatDistance from 'date-fns/formatDistance'
-import React from 'react'
+import React, { useMemo } from 'react'
 import { ConcentratedLiquidityPositionWithV3Pool } from 'src/lib/wagmi/hooks/positions/types'
 import type {
   MaybeNestedPool,
   PoolBase,
-  PoolHistory1D,
-  PoolHistory1M,
-  PoolHistory1W,
   PoolIfIncentivized,
   PoolWithAprs,
   PoolWithIncentives,
   SushiPositionStaked,
   SushiPositionWithPool,
+  SushiSwapProtocol,
 } from 'sushi'
+import { Token } from 'sushi/currency'
 import {
   formatNumber,
   formatPercent,
@@ -35,8 +37,9 @@ import {
 } from 'sushi/format'
 import { unnestPool } from 'sushi/types'
 import { APRHoverCard } from './APRHoverCard'
+import { APRWithRewardsHoverCard } from './APRWithRewardsHoverCard'
 import { ConcentratedLiquidityPositionAPRCell } from './ConcentratedLiquidityPositionAPRCell'
-import { PoolNameCell } from './PoolNameCell'
+import { PoolNameCell, ProtocolBadge } from './PoolNameCell'
 import { PoolNameCellV3 } from './PoolNameCellV3'
 import {
   Transaction,
@@ -126,22 +129,6 @@ export const REWARDS_V3_CLAIMABLE_COLUMN: ColumnDef<AngleRewardsPool, unknown> =
     },
   }
 
-export const NETWORK_COLUMN_POOL: ColumnDef<PoolBase, unknown> = {
-  id: 'network',
-  header: 'Network',
-  cell: (props) => (
-    <NetworkIcon
-      type="naked"
-      chainId={props.row.original.chainId}
-      width={26}
-      height={26}
-    />
-  ),
-  meta: {
-    skeleton: <SkeletonCircle radius={26} />,
-  },
-}
-
 export const NAME_COLUMN_POOL: ColumnDef<
   MaybeNestedPool<PoolHasSteerVaults<PoolIfIncentivized<PoolBase, true>, true>>,
   unknown
@@ -166,94 +153,268 @@ export const NAME_COLUMN_POOL: ColumnDef<
   size: 300,
 }
 
-export const TVL_COLUMN: ColumnDef<PoolBase, unknown> = {
+export const EXPLORE_NAME_COLUMN_POOL: ColumnDef<Pool, unknown> = {
+  id: 'name',
+  header: 'Name',
+  cell: (props) => {
+    const [token0, token1] = useMemo(
+      () => [
+        new Token({
+          chainId: props.row.original.chainId,
+          address: props.row.original.token0Address,
+          decimals: 0,
+        }),
+        new Token({
+          chainId: props.row.original.chainId,
+          address: props.row.original.token1Address,
+          decimals: 0,
+        }),
+      ],
+      [props.row.original],
+    )
+
+    return (
+      <div className="flex items-center gap-5">
+        <div className="flex min-w-[54px]">
+          {token0 && token1 ? (
+            <Badge
+              className="border-2 border-slate-900 rounded-full z-[11]"
+              position="bottom-right"
+              badgeContent={
+                <NetworkIcon
+                  chainId={props.row.original.chainId}
+                  width={14}
+                  height={14}
+                />
+              }
+            >
+              <Currency.IconList iconWidth={26} iconHeight={26}>
+                <Currency.Icon disableLink currency={token0} />
+                <Currency.Icon disableLink currency={token1} />
+              </Currency.IconList>
+            </Badge>
+          ) : null}
+        </div>
+        <div className="flex flex-col gap-0.5">
+          <span className="flex items-center gap-1 text-sm font-medium text-gray-900 dark:text-slate-50 whitespace-nowrap pr-2">
+            {props.row.original.name}
+          </span>
+          <div className="flex gap-1">
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  {
+                    ProtocolBadge[
+                      props.row.original.protocol as SushiSwapProtocol
+                    ]
+                  }
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Protocol version</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <div className="bg-gray-200 text-gray-700 dark:bg-slate-800 dark:text-slate-300 text-[10px] px-2 rounded-full">
+                    {formatNumber(props.row.original.swapFee * 100)}%
+                  </div>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Swap fee</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+            {props.row.original.isIncentivized && (
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <div className="whitespace-nowrap bg-green/20 text-green text-[10px] px-2 rounded-full">
+                      🧑‍🌾{' '}
+                    </div>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Farm rewards available</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            )}
+            {props.row.original.isSmartPool && (
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <div className="bg-[#F2E9D6] dark:bg-yellow/60 text-[10px] px-2 rounded-full">
+                      💡
+                    </div>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Smart Pool available</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            )}
+          </div>
+        </div>
+      </div>
+    )
+  },
+  size: 300,
+  meta: {
+    skeleton: (
+      <div className="flex items-center w-full gap-2">
+        <div className="flex items-center">
+          <SkeletonCircle radius={30} />
+          <SkeletonCircle radius={30} className="-ml-[10px]" />
+        </div>
+        <div className="flex flex-col w-full min-w-[120px]">
+          <SkeletonText fontSize="lg" />
+        </div>
+      </div>
+    ),
+  },
+}
+
+export const TVL_COLUMN: ColumnDef<Pool, unknown> = {
   id: 'liquidityUSD',
   header: 'TVL',
   accessorFn: (row) => row.liquidityUSD,
   sortingFn: ({ original: rowA }, { original: rowB }) =>
     rowA.liquidityUSD - rowB.liquidityUSD,
-  cell: (props) =>
-    formatUSD(props.row.original.liquidityUSD).includes('NaN')
-      ? '$0.00'
-      : formatUSD(props.row.original.liquidityUSD),
+  cell: (props) => (
+    <div className="flex flex-col">
+      <span>
+        {formatUSD(props.row.original.liquidityUSD).includes('NaN')
+          ? '$0.00'
+          : formatUSD(props.row.original.liquidityUSD)}
+      </span>
+      <span
+        className={classNames(
+          'text-xs',
+          props.row.original.liquidityUSDChange1d > 0
+            ? 'text-[#139B6D]'
+            : props.row.original.liquidityUSDChange1d < 0
+              ? 'text-[#B4303C]'
+              : 'text-muted-foreground',
+        )}
+      >
+        {props.row.original.liquidityUSDChange1d > 0 ? '+' : ''}
+        {formatPercent(props.row.original.liquidityUSDChange1d)}
+      </span>
+    </div>
+  ),
   meta: {
     skeleton: <SkeletonText fontSize="lg" />,
   },
 }
 
-export const VOLUME_1D_COLUMN: ColumnDef<PoolHistory1D, unknown> = {
+export const VOLUME_1D_COLUMN: ColumnDef<Pool, unknown> = {
   id: 'volumeUSD1d',
   header: 'Volume (24h)',
   accessorFn: (row) => row.volumeUSD1d,
   sortingFn: ({ original: rowA }, { original: rowB }) =>
     rowA.volumeUSD1d - rowB.volumeUSD1d,
-  cell: (props) =>
-    formatUSD(props.row.original.volumeUSD1d).includes('NaN')
-      ? '$0.00'
-      : formatUSD(props.row.original.volumeUSD1d),
+  cell: (props) => (
+    <div className="flex flex-col">
+      <span>
+        {formatUSD(props.row.original.volumeUSD1d).includes('NaN')
+          ? '$0.00'
+          : formatUSD(props.row.original.volumeUSD1d)}
+      </span>
+      <span
+        className={classNames(
+          'text-xs',
+          props.row.original.volumeUSDChange1d > 0
+            ? 'text-[#139B6D]'
+            : props.row.original.volumeUSDChange1d < 0
+              ? 'text-[#B4303C]'
+              : 'text-muted-foreground',
+        )}
+      >
+        {props.row.original.volumeUSDChange1d > 0 ? '+' : ''}
+        {formatPercent(props.row.original.volumeUSDChange1d)}
+      </span>
+    </div>
+  ),
   meta: {
     skeleton: <SkeletonText fontSize="lg" />,
   },
 }
 
-export const VOLUME_1W_COLUMN: ColumnDef<PoolHistory1W, unknown> = {
+export const VOLUME_1W_COLUMN: ColumnDef<Pool, unknown> = {
   id: 'volumeUSD1w',
   header: 'Volume (1w)',
   accessorFn: (row) => row.volumeUSD1w,
   sortingFn: ({ original: rowA }, { original: rowB }) =>
     Number(rowA.volumeUSD1w) - Number(rowB.volumeUSD1w),
-  cell: (props) =>
-    formatUSD(props.row.original.volumeUSD1w).includes('NaN')
-      ? '$0.00'
-      : formatUSD(props.row.original.volumeUSD1w),
-  meta: {
-    skeleton: <SkeletonText fontSize="lg" />,
-  },
-}
-
-export const VOLUME_1M_COLUMN: ColumnDef<PoolHistory1M, unknown> = {
-  id: 'volumeUSD1m',
-  header: 'Volume (1m)',
-  accessorFn: (row) => row.volumeUSD1m,
-  sortingFn: ({ original: rowA }, { original: rowB }) =>
-    Number(rowA.volumeUSD1m) - Number(rowB.volumeUSD1m),
-  cell: (props) =>
-    formatUSD(props.row.original.volumeUSD1m).includes('NaN')
-      ? '$0.00'
-      : formatUSD(props.row.original.volumeUSD1m),
-  meta: {
-    skeleton: <SkeletonText fontSize="lg" />,
-  },
-}
-
-export const FEES_COLUMN = {
-  id: 'fees1d',
-  header: 'Fees (24h)',
-  accessorFn: (row) => row.feesUSD1d,
-  cell: (props) =>
-    formatUSD(props.row.original.feesUSD1d).includes('NaN')
-      ? '$0.00'
-      : formatUSD(props.row.original.feesUSD1d),
-  meta: {
-    skeleton: <SkeletonText fontSize="lg" />,
-  },
-} as const satisfies ColumnDef<PoolHistory1D, unknown>
-
-export const NETWORK_COLUMN = {
-  id: 'network',
-  header: 'Network',
   cell: (props) => (
-    <NetworkIcon
-      type="naked"
-      chainId={props.row.original.pool.chainId}
-      width={26}
-      height={26}
-    />
+    <div className="flex flex-col">
+      <span>
+        {formatUSD(props.row.original.volumeUSD1w).includes('NaN')
+          ? '$0.00'
+          : formatUSD(props.row.original.volumeUSD1w)}
+      </span>
+      <span
+        className={classNames(
+          'text-xs',
+          props.row.original.volumeUSDChange1w > 0
+            ? 'text-[#139B6D]'
+            : props.row.original.volumeUSDChange1w < 0
+              ? 'text-[#B4303C]'
+              : 'text-muted-foreground',
+        )}
+      >
+        {props.row.original.volumeUSDChange1w > 0 ? '+' : ''}
+        {formatPercent(props.row.original.volumeUSDChange1w)}
+      </span>
+    </div>
   ),
   meta: {
-    skeleton: <SkeletonCircle radius={26} />,
+    skeleton: <SkeletonText fontSize="lg" />,
   },
-} as const satisfies ColumnDef<V2Position, unknown>
+}
+
+export const TRANSACTIONS_1D_COLUMN: ColumnDef<Pool, unknown> = {
+  id: 'txCount1d',
+  header: 'Transactions (24h)',
+  accessorFn: (row) => row.txCount1d,
+  sortingFn: ({ original: rowA }, { original: rowB }) =>
+    rowA.txCount1d - rowB.txCount1d,
+  cell: (props) => props.row.original.txCount1d,
+  meta: {
+    skeleton: <SkeletonText fontSize="lg" />,
+  },
+}
+
+export const APR_WITH_REWARDS_COLUMN: ColumnDef<Pool, unknown> = {
+  id: 'totalApr1d',
+  header: 'APR',
+  accessorFn: (row) => row.totalApr1d,
+  cell: (props) => (
+    <APRWithRewardsHoverCard pool={props.row.original}>
+      <div className="flex gap-1 items-center">
+        <span
+          className={classNames(
+            'underline decoration-dotted underline-offset-2',
+          )}
+        >
+          {formatPercent(props.row.original.totalApr1d)}
+        </span>
+        {props.row.original.incentives.map((incentive) => (
+          <Currency.Icon
+            key={incentive.id}
+            width={16}
+            height={16}
+            currency={incentive.rewardToken}
+          />
+        ))}
+      </div>
+    </APRWithRewardsHoverCard>
+  ),
+  meta: {
+    skeleton: <SkeletonText fontSize="lg" />,
+  },
+}
 
 export const APR_COLUMN = {
   id: 'totalApr1d',

@@ -5,10 +5,7 @@ import sharedConfig from '@sushiswap/tailwindcss-config'
 const tailwindConfig = {
   darkMode: 'class',
   presets: [sharedConfig],
-  content: [
-    ...sharedConfig.content,
-    './src/lib/wagmi/**/*.{js,ts,jsx,tsx,mdx}',
-  ],
+  content: [...sharedConfig.content],
   theme: {
     extend: {
       display: ['group-hover'],

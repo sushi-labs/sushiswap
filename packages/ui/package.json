@@ -115,22 +115,22 @@
     "@types/react-virtualized-auto-sizer": "1.0.1",
     "@types/react-window": "1.8.5",
     "autoprefixer": "10.4.14",
-    "next": "14.2.3",
+    "next": "14.2.11",
     "postcss": "8.4.23",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "sushi": "workspace:*",
+    "sushi": "4.0.2",
     "tailwindcss": "3.3.2",
-    "typescript": "5.4.5",
-    "wagmi": "2.12.2"
+    "typescript": "5.5.4",
+    "wagmi": "2.12.10"
   },
   "peerDependencies": {
-    "next": "14.2.3",
+    "next": "14.2.11",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "sushi": "*",
     "tailwindcss": "3.3.2",
-    "wagmi": "2.12.2"
+    "wagmi": "2.12.10"
   },
   "peerDependenciesMeta": {
     "next": {

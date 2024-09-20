@@ -23,6 +23,10 @@ const isTokenSecurityIssue = {
   owner_change_balance: (value: TokenSecurity['owner_change_balance']) =>
     value === true,
   gas_abuse: (value: TokenSecurity['gas_abuse']) => value === true,
+  hidden_owner: (value: TokenSecurity['hidden_owner']) => value === true,
+  selfdestruct: (value: TokenSecurity['selfdestruct']) => value === true,
+  external_call: (value: TokenSecurity['external_call']) => value === true,
+  trust_list: (value: TokenSecurity['trust_list']) => value === true,
   // Trading security
   buy_tax: (value: TokenSecurity['buy_tax']) => value === true,
   sell_tax: (value: TokenSecurity['sell_tax']) => value === true,
@@ -42,7 +46,7 @@ const isTokenSecurityIssue = {
   is_fake_token: (value: TokenSecurity['is_fake_token']) => value === true,
   is_airdrop_scam: (value: TokenSecurity['is_airdrop_scam']) => value === true,
 } as Record<
-  keyof TokenSecurity,
+  NonNullable<keyof TokenSecurity>,
   (value: TokenSecurity[keyof TokenSecurity]) => boolean
 >
 

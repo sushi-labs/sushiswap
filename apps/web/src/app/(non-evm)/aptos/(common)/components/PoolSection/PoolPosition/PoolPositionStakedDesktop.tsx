@@ -6,7 +6,7 @@ import { useTokensFromPool } from '~aptos/pool/lib/use-tokens-from-pool'
 import { CardCurrencyAmountItem } from '../../CardCurrencyAmountItem'
 
 interface PoolPositionStakedDesktopProps {
-  row: Pool
+  row?: Pool
   isLoading: boolean
   underlying0: string | undefined
   underlying1: string | undefined

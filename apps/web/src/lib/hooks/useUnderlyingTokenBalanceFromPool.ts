@@ -1,7 +1,7 @@
 'use client'
 
 import { useMemo } from 'react'
-import { uniswapV2PairAbi } from 'sushi/abi'
+import { sushiSwapV2FactoryAbi_feeTo, uniswapV2PairAbi_kLast } from 'sushi/abi'
 import { SUSHISWAP_V2_FACTORY_ADDRESS, SushiSwapV2ChainId } from 'sushi/config'
 import { Amount, Token, Type } from 'sushi/currency'
 import { ZERO } from 'sushi/math'
@@ -30,27 +30,13 @@ export const useUnderlyingTokenBalanceFromPool: UseUnderlyingTokenBalanceFromPai
                 totalSupply.currency.chainId as SushiSwapV2ChainId
               ]
             : undefined,
-          abi: [
-            {
-              inputs: [],
-              name: 'feeTo',
-              outputs: [
-                {
-                  internalType: 'address',
-                  name: '',
-                  type: 'address',
-                },
-              ],
-              stateMutability: 'view',
-              type: 'function',
-            },
-          ],
+          abi: sushiSwapV2FactoryAbi_feeTo,
           functionName: 'feeTo',
           chainId: totalSupply?.currency?.chainId,
         },
         {
           address: totalSupply?.currency.address,
-          abi: uniswapV2PairAbi,
+          abi: uniswapV2PairAbi_kLast,
           functionName: 'kLast',
           chainId: totalSupply?.currency?.chainId,
         },

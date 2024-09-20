@@ -32,6 +32,7 @@ const FilecoinLogo = 'filecoin.svg'
 const ZetaLogo = 'zeta.svg'
 const CroLogo = 'cronos.svg'
 const BitcoinLogo = 'bitcoin.svg'
+const MntLogo = 'mntl.svg'
 
 const LOGO: Record<number, string> = {
   [ChainId.ETHEREUM]: EthereumLogo,
@@ -84,6 +85,7 @@ const LOGO: Record<number, string> = {
   [ChainId.CRONOS]: CroLogo,
   [ChainId.BLAST]: EthereumLogo,
   [ChainId.ROOTSTOCK]: BitcoinLogo,
+  [ChainId.MANTLE]: MntLogo,
 }
 
 // function djb2(str: string) {

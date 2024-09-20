@@ -1,11 +1,13 @@
-import { routeProcessor2Abi } from 'sushi/abi'
+import {
+  routeProcessor2Abi_processRoute,
+  routeProcessor2Abi_transferValueAndprocessRoute,
+} from 'sushi/abi'
 import { ChainId } from 'sushi/chain'
 import { Amount, Price, type Type } from 'sushi/currency'
 import { Percent } from 'sushi/math'
 import { RouterLiquiditySource } from 'sushi/router'
 import type { Address, WriteContractParameters } from 'viem'
 import z from 'zod'
-
 import { legValidator, tradeValidator01 } from './validator01'
 import { tradeValidator02 } from './validator02'
 
@@ -26,10 +28,13 @@ export interface UseTradeParams {
 
 export type UseTradeReturnWriteArgs =
   | WriteContractParameters<
-      typeof routeProcessor2Abi,
+      typeof routeProcessor2Abi_transferValueAndprocessRoute,
       'transferValueAndprocessRoute'
     >['args']
-  | WriteContractParameters<typeof routeProcessor2Abi, 'processRoute'>['args']
+  | WriteContractParameters<
+      typeof routeProcessor2Abi_processRoute,
+      'processRoute'
+    >['args']
   | undefined
 
 export interface UseTradeReturn {

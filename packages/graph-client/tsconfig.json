@@ -5,17 +5,17 @@
     "baseUrl": ".",
     "outDir": "./dist",
     "rootDir": "src",
+    "sourceMap": true,
     "declaration": true,
+    "declarationMap": true,
     "resolveJsonModule": true,
     "target": "ES2020",
-    "paths":{
-      "src":[
-         "./src/*"
-      ]
+    "paths": {
+      "src": ["./src/*"]
     },
-    "plugins": [ 
-      { 
-        "name": "@0no-co/graphqlsp", 
+    "plugins": [
+      {
+        "name": "@0no-co/graphqlsp",
         "schemas": [
           {
             "name": "bentobox",
@@ -42,7 +42,7 @@
             "tadaTurboLocation": "./src/subgraphs/data-api/data-api-cache.d.ts"
           }
         ]
-      } 
-    ] 
+      }
+    ]
   }
 }

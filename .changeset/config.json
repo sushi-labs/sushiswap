@@ -15,8 +15,6 @@
     "version": false
   },
   "ignore": [
-    "@sushiswap/extractor-api",
-    "@sushiswap/router-api",
     "@sushiswap/token-list-api",
     "@sushiswap/tokens-api",
 
@@ -25,7 +23,6 @@
     "web",
 
     "eslint-config-sushi",
-    "@sushiswap/hardhat-config",
     "@sushiswap/jest-config",
     "@sushiswap/nextjs-config",
     "@sushiswap/tailwindcss-config",
@@ -33,16 +30,12 @@
 
     "@sushiswap/client",
     "@sushiswap/database",
-    "@sushiswap/extractor",
     "@sushiswap/graph-client",
     "@sushiswap/hooks",
     "@sushiswap/notifications",
     "@sushiswap/react-query",
     "@sushiswap/steer-sdk",
     "@sushiswap/telemetry",
-    "@sushiswap/ui",
-
-    "@sushiswap/route-processor",
-    "@sushiswap/tines-sandbox"
+    "@sushiswap/ui"
   ]
 }

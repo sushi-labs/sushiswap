@@ -3,7 +3,11 @@
 import { useQuery } from '@tanstack/react-query'
 import { FC, ReactNode, createContext, useContext, useMemo } from 'react'
 import { useBalancesWeb3 } from 'src/lib/wagmi/hooks/balances/useBalancesWeb3'
-import { erc20Abi, masterChefV1Abi } from 'sushi/abi'
+import {
+  erc20Abi_balanceOf,
+  erc20Abi_totalSupply,
+  masterChefV1Abi_userInfo,
+} from 'sushi/abi'
 import { ChainId } from 'sushi/chain'
 import { MASTERCHEF_ADDRESS } from 'sushi/config'
 import {
@@ -124,7 +128,7 @@ export const VotingPowerProvider: FC<{
           // sushi.balanceOf(SUSHI-ETH LP)
           {
             chainId: ChainId.ETHEREUM,
-            abi: erc20Abi,
+            abi: erc20Abi_balanceOf,
             address: SUSHI_ADDRESS[ChainId.ETHEREUM],
             functionName: 'balanceOf',
             args: [SUSHI_ETH_SLP_ADDRESS],
@@ -132,7 +136,7 @@ export const VotingPowerProvider: FC<{
           // sushi.balanceOf(XSUSHI)
           {
             chainId: ChainId.ETHEREUM,
-            abi: erc20Abi,
+            abi: erc20Abi_balanceOf,
             address: SUSHI_ADDRESS[ChainId.ETHEREUM],
             functionName: 'balanceOf',
             args: [XSUSHI_ADDRESS[ChainId.ETHEREUM]],
@@ -140,14 +144,14 @@ export const VotingPowerProvider: FC<{
           // SUSHI-ETH-LP.totalSupply()
           {
             chainId: ChainId.ETHEREUM,
-            abi: erc20Abi,
+            abi: erc20Abi_totalSupply,
             address: SUSHI_ETH_SLP_ADDRESS,
             functionName: 'totalSupply',
           },
           // xsushi.totalSupply()
           {
             chainId: ChainId.ETHEREUM,
-            abi: erc20Abi,
+            abi: erc20Abi_totalSupply,
             address: XSUSHI_ADDRESS[ChainId.ETHEREUM],
             functionName: 'totalSupply',
           },
@@ -166,7 +170,7 @@ export const VotingPowerProvider: FC<{
     isError: isUserStakedSLPError,
   } = useReadContract({
     chainId: ChainId.ETHEREUM,
-    abi: masterChefV1Abi,
+    abi: masterChefV1Abi_userInfo,
     address: MASTERCHEF_ADDRESS[ChainId.ETHEREUM],
     functionName: 'userInfo',
     args: [12n, address!],

@@ -131,6 +131,7 @@ export const getPosition = async ({
       tokenA: token0,
       tokenB: token1,
       fee: fee,
+      chainId,
     }),
     chainId,
     owner,

@@ -15,7 +15,7 @@
     "@sushiswap/jest-config": "workspace:*",
     "@tsconfig/esm": "1.0.4",
     "@tsconfig/strictest": "2.0.2",
-    "typescript": "5.4.5",
+    "typescript": "5.5.4",
     "vercel": "35.2.1"
   }
 }

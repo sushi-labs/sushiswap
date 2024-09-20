@@ -1,3 +1,4 @@
+import { isPoolChainId } from '@sushiswap/graph-client/data-api'
 import {
   type NavigationElement,
   NavigationElementType,
@@ -11,7 +12,8 @@ import {
   EXPLORE_NAVIGATION_LINKS,
   // MORE_NAVIGATION_LINKS,
 } from 'src/app/_common/header-elements'
-import { ChainId, ChainKey, isChainId } from 'sushi'
+import { ChainId, ChainKey } from 'sushi/chain'
+import { isAggregatorOnlyChainId } from 'sushi/config'
 
 export const headerElements = (chainId?: ChainId): NavigationElement[] => [
   {
@@ -42,22 +44,26 @@ export const headerElements = (chainId?: ChainId): NavigationElement[] => [
       </NavigationMenuItem>
     ),
   },
-  {
-    title: 'Explore',
-    href: `/${
-      isChainId(Number(chainId)) ? ChainKey[chainId as ChainId] : 'ethereum'
-    }/explore/pools`,
-    show: 'desktop',
-    type: NavigationElementType.Single,
-  },
-  {
-    title: 'Pool',
-    href: `/${
-      isChainId(Number(chainId)) ? ChainKey[chainId as ChainId] : 'ethereum'
-    }/pool`,
-    show: 'desktop',
-    type: NavigationElementType.Single,
-  },
+  ...(!chainId || isPoolChainId(chainId)
+    ? ([
+        {
+          title: 'Explore',
+          href: `/${chainId ? ChainKey[chainId] : 'ethereum'}/explore/pools`,
+          show: 'desktop',
+          type: NavigationElementType.Single,
+        },
+      ] as const)
+    : []),
+  ...(!chainId || !isAggregatorOnlyChainId(chainId)
+    ? ([
+        {
+          title: 'Pool',
+          href: `/${chainId ? ChainKey[chainId] : 'ethereum'}/pool`,
+          show: 'desktop',
+          type: NavigationElementType.Single,
+        },
+      ] as const)
+    : []),
   {
     title: 'Stake',
     href: '/stake',

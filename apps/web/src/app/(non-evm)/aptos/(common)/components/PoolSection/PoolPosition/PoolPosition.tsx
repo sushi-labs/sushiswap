@@ -5,6 +5,7 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
+  SkeletonText,
 } from '@sushiswap/ui'
 import { FC, useMemo } from 'react'
 import { formatUSD } from 'sushi/format'
@@ -18,7 +19,7 @@ import { useUnderlyingTokenBalanceFromPool } from '~aptos/pool/lib/use-underlyin
 import { PoolPositionDesktop } from './PoolPositionDesktop'
 
 interface PoolPositionProps {
-  row: Pool
+  row?: Pool
   isLoading: boolean
   stakeAmount: number
 }
@@ -73,16 +74,16 @@ export const PoolPosition: FC<PoolPositionProps> = ({
   const token1Price = useStablePrice({ currency: token1 })
 
   const token0UnstakedInUsd = token0Price
-    ? token0Price * Number(underlying0)
+    ? token0Price * Number(underlying0 ?? 0)
     : 0
   const token1UnstakedInUsd = token1Price
-    ? token1Price * Number(underlying1)
+    ? token1Price * Number(underlying1 ?? 0)
     : 0
   const token0StakedInUsd = token0Price
-    ? token0Price * Number(stakedUnderlying0)
+    ? token0Price * Number(stakedUnderlying0 ?? 0)
     : 0
   const token1StakedInUsd = token1Price
-    ? token1Price * Number(stakedUnderlying1)
+    ? token1Price * Number(stakedUnderlying1 ?? 0)
     : 0
 
   return (
@@ -90,14 +91,20 @@ export const PoolPosition: FC<PoolPositionProps> = ({
       <CardHeader>
         <CardTitle>My Position</CardTitle>
         <CardDescription>
-          <span className="text-sm text-right dark:text-slate-50 text-gray-900">
-            {formatUSD(
-              token0StakedInUsd +
-                token1StakedInUsd +
-                token0UnstakedInUsd +
-                token1UnstakedInUsd,
-            )}
-          </span>
+          {isLoading ? (
+            <div className="w-28">
+              <SkeletonText fontSize="sm" />
+            </div>
+          ) : (
+            <span className="text-sm text-right dark:text-slate-50 text-gray-900">
+              {formatUSD(
+                token0StakedInUsd +
+                  token1StakedInUsd +
+                  token0UnstakedInUsd +
+                  token1UnstakedInUsd,
+              )}
+            </span>
+          )}
         </CardDescription>
       </CardHeader>
       <CardContent>

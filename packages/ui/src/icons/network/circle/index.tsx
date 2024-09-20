@@ -24,6 +24,7 @@ import { HarmonyCircle } from './HarmonyCircle'
 import { HecoCircle } from './HecoCircle'
 import { KavaCircle } from './KavaCircle'
 import { LineaCircle } from './LineaCircle'
+import { MantleCircle } from './MantleCircle'
 import { MetisCircle } from './MetisCircle'
 import { MoonbeamCircle } from './MoonbeamCircle'
 import { MoonriverCircle } from './MoonriverCircle'
@@ -37,6 +38,7 @@ import { ScrollCircle } from './ScrollCircle'
 import { SkaleCircle } from './SkaleCircle'
 import { TelosCircle } from './TelosCircle'
 import { ThunderCoreCircle } from './ThunderCoreCircle'
+import { ZKSyncCircle } from './ZKSyncCircle'
 import { ZetaChainCircle } from './ZetaChainCircle'
 
 export * from './AptosCircle'
@@ -63,6 +65,7 @@ export * from './HarmonyCircle'
 export * from './HecoCircle'
 export * from './KavaCircle'
 export * from './LineaCircle'
+export * from './MantleCircle'
 export * from './MetisCircle'
 export * from './MoonbeamCircle'
 export * from './MoonriverCircle'
@@ -76,6 +79,7 @@ export * from './ScrollCircle'
 export * from './SkaleCircle'
 export * from './TelosCircle'
 export * from './ThunderCoreCircle'
+export * from './ZKSyncCircle'
 export * from './ZetaChainCircle'
 
 export const NETWORK_CIRCLE_ICON: Partial<Record<ChainId, IconComponent>> = {
@@ -107,7 +111,7 @@ export const NETWORK_CIRCLE_ICON: Partial<Record<ChainId, IconComponent>> = {
   [ChainId.THUNDERCORE]: ThunderCoreCircle,
   [ChainId.HAQQ]: HaqqCircle,
   [ChainId.CORE]: CoreCircle,
-  [ChainId.ZKSYNC_ERA]: EthereumCircle,
+  [ChainId.ZKSYNC_ERA]: ZKSyncCircle,
   [ChainId.LINEA]: LineaCircle,
   [ChainId.BASE]: BaseCircle,
   [ChainId.SCROLL]: ScrollCircle,
@@ -117,4 +121,5 @@ export const NETWORK_CIRCLE_ICON: Partial<Record<ChainId, IconComponent>> = {
   [ChainId.SKALE_EUROPA]: SkaleCircle,
   [ChainId.ROOTSTOCK]: RootstockCircle,
   [ChainId.CRONOS]: CronosCircle,
+  [ChainId.MANTLE]: MantleCircle,
 }

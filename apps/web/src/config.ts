@@ -1,11 +1,9 @@
 import { ChainId, TESTNET_CHAIN_IDS } from 'sushi/chain'
 import {
+  AGGREGATOR_ONLY_CHAIN_IDS,
   EXTRACTOR_SUPPORTED_CHAIN_IDS,
-  SushiSwapV2ChainIds,
-  SushiSwapV3ChainIds,
-  TridentChainIds,
+  SUSHISWAP_SUPPORTED_CHAIN_IDS,
 } from 'sushi/config'
-import { Currency } from 'sushi/currency'
 
 export const SWAP_API_SUPPORTED_CHAIN_IDS = EXTRACTOR_SUPPORTED_CHAIN_IDS
 
@@ -42,19 +40,16 @@ const PREFERRED_CHAINID_ORDER = [
   ChainId.HARMONY,
 ] as const
 
-const SUSHI_CHAIN_IDS = Array.from(
-  new Set([...TridentChainIds, ...SushiSwapV2ChainIds, ...SushiSwapV3ChainIds]),
-)
+export const CHAIN_IDS = [
+  ...SUSHISWAP_SUPPORTED_CHAIN_IDS,
+  ...AGGREGATOR_ONLY_CHAIN_IDS,
+] as const
 
-export const SWAP_ONLY_CHAIN_IDS = [ChainId.CRONOS] as const
-
-export const CHAIN_IDS = [...SUSHI_CHAIN_IDS, ChainId.CRONOS] as const
-
-export const AMM_SUPPORTED_CHAIN_IDS = SUSHI_CHAIN_IDS.filter(
+export const AMM_SUPPORTED_CHAIN_IDS = SUSHISWAP_SUPPORTED_CHAIN_IDS.filter(
   (
     c,
   ): c is Exclude<
-    (typeof SUSHI_CHAIN_IDS)[number],
+    (typeof SUSHISWAP_SUPPORTED_CHAIN_IDS)[number],
     (typeof TESTNET_CHAIN_IDS)[number] | (typeof DISABLED_CHAIN_IDS)[number]
   > =>
     !TESTNET_CHAIN_IDS.includes(c as (typeof TESTNET_CHAIN_IDS)[number]) &&
@@ -79,34 +74,8 @@ export const SUPPORTED_CHAIN_IDS = Array.from(
     !DISABLED_CHAIN_IDS.includes(c as (typeof DISABLED_CHAIN_IDS)[number]),
 )
 
-export const DISABLED_ANALYTICS_CHAIN_IDS = [
-  ChainId.BOBA_AVAX,
-  ChainId.KAVA,
-  ChainId.MOONRIVER,
-]
-
-export const ANALYTICS_CHAIN_IDS = [
-  ...SUPPORTED_CHAIN_IDS.filter(
-    (el) =>
-      !DISABLED_ANALYTICS_CHAIN_IDS.includes(
-        el as (typeof DISABLED_ANALYTICS_CHAIN_IDS)[number],
-      ),
-  ),
-]
-
 export type SupportedChainId = (typeof SUPPORTED_CHAIN_IDS)[number]
 export const isSupportedChainId = (
   chainId: number,
 ): chainId is SupportedChainId =>
   SUPPORTED_CHAIN_IDS.includes(chainId as SupportedChainId)
-
-export type Config = {
-  [_chainId in SupportedChainId]: {
-    stables: Currency[]
-    lsds: Currency[]
-  }
-}
-
-export const config = {
-  [ChainId.ETHEREUM]: {},
-}

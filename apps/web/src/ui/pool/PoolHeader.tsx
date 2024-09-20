@@ -160,6 +160,7 @@ export const PoolHeader: FC<PoolHeader> = ({
               {token0.symbol}
             </span>
             <LinkExternal
+              target="_blank"
               href={Chain.from(pool.chainId)?.getTokenUrl(
                 token0.wrapped.address,
               )}

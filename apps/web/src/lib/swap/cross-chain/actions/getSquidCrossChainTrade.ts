@@ -6,7 +6,7 @@ import {
   SquidCallType,
 } from '@0xsquid/squid-types'
 import { NativeAddress } from '@sushiswap/react-query'
-import { routeProcessor4Abi, squidRouterAbi } from 'sushi/abi'
+import { routeProcessor4Abi_processRoute, squidRouterAbi } from 'sushi/abi'
 import {
   ROUTE_PROCESSOR_4_ADDRESS,
   SQUID_ADAPTER_ADDRESS,
@@ -14,16 +14,8 @@ import {
   isSquidAdapterChainId,
 } from 'sushi/config'
 import { axlUSDC } from 'sushi/currency'
-import { RouterLiquiditySource } from 'sushi/router'
-import { RouteStatus } from 'sushi/tines'
-import {
-  Address,
-  Hex,
-  WriteContractParameters,
-  encodeFunctionData,
-  erc20Abi,
-  zeroAddress,
-} from 'viem'
+import { RouteStatus, RouterLiquiditySource } from 'sushi/router'
+import { Address, Hex, encodeFunctionData, erc20Abi, zeroAddress } from 'viem'
 import {
   SushiXSwap2Adapter,
   SushiXSwapFunctionName,
@@ -182,19 +174,16 @@ export const getSquidCrossChainTrade = async ({
             callType: SquidCallType.DEFAULT,
             target: rpAddress,
             callData: encodeFunctionData({
-              abi: routeProcessor4Abi,
+              abi: routeProcessor4Abi_processRoute,
               functionName: 'processRoute',
               args: [
                 dstRPTrade.routeProcessorArgs.tokenIn as Address,
                 BigInt(dstRPTrade.routeProcessorArgs.amountIn),
                 dstRPTrade.routeProcessorArgs.tokenOut as Address,
                 BigInt(dstRPTrade.routeProcessorArgs.amountOutMin),
-                dstRPTrade.routeProcessorArgs.to,
+                dstRPTrade.routeProcessorArgs.to as Address,
                 dstRPTrade.routeProcessorArgs.routeCode as Hex,
-              ] as WriteContractParameters<
-                typeof routeProcessor4Abi,
-                'processRoute'
-              >['args'],
+              ],
             }),
             value: '0',
             payload: {

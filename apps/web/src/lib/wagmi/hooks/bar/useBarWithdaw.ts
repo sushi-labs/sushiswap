@@ -2,7 +2,7 @@
 
 import { createErrorToast, createToast } from '@sushiswap/notifications'
 import { useCallback, useMemo } from 'react'
-import { xsushiAbi } from 'sushi/abi'
+import { xsushiAbi_leave } from 'sushi/abi'
 import { Amount, Token, XSUSHI_ADDRESS } from 'sushi/currency'
 import { UserRejectedRequestError } from 'viem'
 import {
@@ -58,10 +58,10 @@ export function useBarWithdraw({
 
   const { data: simulation } = useSimulateContract({
     address: XSUSHI_ADDRESS[ChainId.ETHEREUM],
-    abi: xsushiAbi,
+    abi: xsushiAbi_leave,
     functionName: 'leave',
     chainId: ChainId.ETHEREUM,
-    args: [amount?.quotient],
+    args: amount ? [amount.quotient] : undefined,
     query: { enabled },
   })
 

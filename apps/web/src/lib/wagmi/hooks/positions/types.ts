@@ -1,5 +1,6 @@
 import { SushiSwapV3ChainId } from 'sushi/config'
 
+import type { Address } from 'viem'
 import { useConcentratedLiquidityPositions } from './hooks/useConcentratedLiquidityPositions'
 
 export interface ConcentratedLiquidityPosition {
@@ -9,8 +10,8 @@ export interface ConcentratedLiquidityPosition {
   nonce: bigint
   tokenId: bigint
   operator: string
-  token0: string
-  token1: string
+  token0: Address
+  token1: Address
   fee: number
   fees: bigint[] | undefined
   tickLower: number

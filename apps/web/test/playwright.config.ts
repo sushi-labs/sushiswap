@@ -1,6 +1,9 @@
-import type { PlaywrightTestConfig } from '@playwright/test'
-import { devices } from '@playwright/test'
+import { type PlaywrightTestConfig, devices } from '@playwright/test'
 import { defineConfig } from 'next/experimental/testmode/playwright.js'
+
+import nextEnv from '@next/env'
+// weird that we have to access it like this, wouldn't work if we imported the function only
+nextEnv.loadEnvConfig(process.cwd(), false)
 
 // Use process.env.PORT by default and fallback to port 3000
 const PORT = process.env.PORT || 3000
@@ -102,30 +105,9 @@ const config: PlaywrightTestConfig = {
   // Run your local dev server before starting the tests:
   // https://playwright.dev/docs/test-advanced#launching-a-development-web-server-during-the-tests
   webServer: [
-    // {
-    //   command: [
-    //     'anvil',
-    //     `--fork-block-number=${process.env.ANVIL_BLOCK_NUMBER}`,
-    //     `--fork-url=${process.env.ANVIL_FORK_URL}`,
-    //     `--port=${Number(process.env.ANVIL_PORT || 8545)}`,
-    //     // '--host=127.0.0.1',
-    //     // '--no-mining',
-    //     '--silent',
-    //     // '--block-time 15',
-    //   ].join(' '),
-    //   port: Number(process.env.ANVIL_PORT || 8545),
-    //   timeout: 120_000,
-    //   // reuseExistingServer: !process.env.CI,
-    //   env: {
-    //     ANVIL_BLOCK_NUMBER: String(process.env.ANVIL_BLOCK_NUMBER),
-    //     ANVIL_FORK_URL: String(process.env.ANVIL_FORK_URL),
-    //     ANVIL_PORT: String(process.env.ANVIL_PORT || 8545),
-    //   },
-    //   // stderr: 'pipe',
-    //   // stdout: 'pipe',
-    // },
     {
       command: [
+        'NODE_ENV=test',
         `EDGE_CONFIG=${String(process.env.EDGE_CONFIG)}`,
         'NEXT_PUBLIC_APP_ENV=test',
         `NEXT_PUBLIC_CHAIN_ID=${String(process.env.NEXT_PUBLIC_CHAIN_ID)}`,
@@ -135,6 +117,7 @@ const config: PlaywrightTestConfig = {
       timeout: 120_000,
       reuseExistingServer: !process.env.CI,
       env: {
+        NODE_ENV: 'test',
         EDGE_CONFIG: String(process.env.EDGE_CONFIG),
         NEXT_PUBLIC_APP_ENV: 'test',
         NEXT_PUBLIC_CHAIN_ID: String(process.env.NEXT_PUBLIC_CHAIN_ID),

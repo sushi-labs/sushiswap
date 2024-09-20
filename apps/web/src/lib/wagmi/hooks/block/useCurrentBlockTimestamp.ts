@@ -2,7 +2,7 @@
 
 import { useQueryClient } from '@tanstack/react-query'
 import { useEffect } from 'react'
-import { multicall3Abi } from 'sushi/abi'
+import { multicall3Abi_getCurrentBlockTimestamp } from 'sushi/abi'
 import { useBlockNumber, useReadContract } from 'wagmi'
 import { MULTICALL_3_ADDRESS, Multicall3ChainId } from '../contracts/multicall3'
 
@@ -14,7 +14,7 @@ export const useCurrentBlockTimestamp = (
   const queryClient = useQueryClient()
   const query = useReadContract({
     address: MULTICALL_3_ADDRESS[chainId],
-    abi: multicall3Abi,
+    abi: multicall3Abi_getCurrentBlockTimestamp,
     functionName: 'getCurrentBlockTimestamp',
     query: {
       enabled,

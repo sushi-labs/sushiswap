@@ -55,25 +55,25 @@
   "dependencies": {
     "@steerprotocol/contracts": "2.1.0-beta.14",
     "@sushiswap/database": "workspace:*",
-    "sushi": "workspace:*",
+    "sushi": "4.0.2",
     "tslib": "latest",
-    "viem": "2.18.6"
+    "viem": "2.21.4"
   },
   "devDependencies": {
     "@tsconfig/esm": "1.0.4",
     "@tsconfig/strictest": "2.0.2",
     "@types/node": "20",
-    "@wagmi/core": "2.13.1",
-    "next": "14.2.3",
+    "@wagmi/core": "2.13.5",
+    "next": "14.2.11",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "typescript": "5.4.5"
+    "typescript": "5.5.4"
   },
   "peerDependencies": {
-    "@wagmi/core": "2.13.1",
+    "@wagmi/core": "2.13.5",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "wagmi": "2.12.2"
+    "wagmi": "2.12.10"
   },
   "peerDependenciesMeta": {
     "react": {
@@ -84,6 +84,6 @@
     }
   },
   "optionalDependencies": {
-    "next": "14.2.3"
+    "next": "14.2.11"
   }
 }

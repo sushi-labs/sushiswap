@@ -82,7 +82,7 @@ const getSwapApiResult = async ({
   params.searchParams.set('maxSlippage', `${+slippagePercentage / 100}`)
   params.searchParams.set('gasPrice', `${gasPrice}`)
   params.searchParams.set('to', `${RECIPIENT}`)
-  params.searchParams.set('preferSushi', 'true')
+  params.searchParams.set('preferSushi', 'false')
   // params.searchParams.set('enableFee', 'true')
   // params.searchParams.set(
   //   'feeReceiver',

@@ -1,8 +1,7 @@
 import { ChainId } from 'sushi/chain'
 import { Type } from 'sushi/currency'
 import { TradeType } from 'sushi/dex'
-import { SushiSwapV2Pool } from 'sushi/pool'
-import { UniV3Pool } from 'sushi/tines'
+import { SushiSwapV2Pool, SushiSwapV3Pool } from 'sushi/pool'
 import { PublicWagmiConfig } from '../../../config/public'
 
 export enum PoolType {
@@ -22,5 +21,5 @@ export interface UsePoolsParams {
 
 export type UsePoolsReturn = {
   sushiSwapV2Pools: SushiSwapV2Pool[] | undefined
-  sushiSwapV3Pools: UniV3Pool[] | undefined
+  sushiSwapV3Pools: SushiSwapV3Pool[] | undefined
 }
