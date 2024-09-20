@@ -17,7 +17,7 @@ function DifficultyCard({ difficulty }: { difficulty: Difficulty }) {
 
   return (
     <a
-      href={isTechnicalCard ? DOCS_URL : `/academy/articles?difficulty=${slug}`}
+      href={isTechnicalCard ? DOCS_URL : `/academy/explore?difficulty=${slug}`}
       target={isTechnicalCard ? '_blank' : '_self'}
       rel="noreferrer"
       className="md:h-[405px] py-8 md:py-[50px] px-[30px] bg-slate-800 rounded-[30px] flex flex-col justify-between border border-transparent hover:border-slate-600 group space-y-4"
