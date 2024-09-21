@@ -1,22 +1,25 @@
 import { Button, Checkbox, DialogTrigger } from '@sushiswap/ui'
 import { useWallet } from '@tronweb3/tronwallet-adapter-react-hooks'
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { ROUTER_CONTRACT } from '~tron/_common/constants/contracts'
 import { useAllowance } from '~tron/_common/lib/hooks/useAllowance'
-import { usePriceImpact } from '~tron/_common/lib/hooks/usePriceImpact'
-import { useReserves } from '~tron/_common/lib/hooks/useReserves'
-import { useRoutes } from '~tron/_common/lib/hooks/useRoutes'
 import { useTokenBalance } from '~tron/_common/lib/hooks/useTokenBalance'
 import { formatUnitsForInput } from '~tron/_common/lib/utils/formatters'
 import { getIfWrapOrUnwrap } from '~tron/_common/lib/utils/helpers'
 import { warningSeverity } from '~tron/_common/lib/utils/warning-severity'
-import { useSwapDispatch, useSwapState } from '~tron/swap/swap-provider'
+import { useSwapState } from '~tron/swap/swap-provider'
 import { ApproveToken } from '../Shared/ApproveToken'
 
 export const ReviewSwapDialogTrigger = () => {
   const [isChecked, setIsChecked] = useState<boolean>(false)
-  const { token0, token1, amountIn, amountOut, isTxnPending } = useSwapState()
-  const { setPriceImpactPercentage, setRoute } = useSwapDispatch()
+  const {
+    token0,
+    token1,
+    amountIn,
+    isTxnPending,
+    priceImpactPercentage,
+    route,
+  } = useSwapState()
   const { address } = useWallet()
   const { data: allowanceAmount, refetch } = useAllowance({
     tokenAddress: token0?.address as string,
@@ -27,56 +30,6 @@ export const ReviewSwapDialogTrigger = () => {
     accountAddress: address,
     tokenAddress: token0.address,
   })
-  const { data: routeData, isLoading: isLoadingRoutes } = useRoutes({
-    token0,
-    token1,
-  })
-  //these reserves are always going to be defined if a pair exists
-  const { data: reserves } = useReserves({
-    pairAddress: routeData?.pairs?.[0],
-    token0,
-    token1,
-  })
-  //these reserves are for is the swap needs an intermediate pair
-  const { data: reserves1 } = useReserves({
-    pairAddress: routeData?.pairs?.[1],
-    token0,
-    token1,
-  })
-
-  //this number is always going to be defined if the reserves exists
-  const { data: priceImpactPercentage } = usePriceImpact({
-    amount: amountIn,
-    token: token0,
-    reserves,
-  })
-
-  //this number is for the price impact of the second pair in a hop is needed
-  const { data: priceImpactPercentage1 } = usePriceImpact({
-    amount: amountOut,
-    token: token1,
-    reserves: reserves1,
-  })
-
-  const priceImpactTotal =
-    (priceImpactPercentage ?? 0) + (priceImpactPercentage1 ?? 0)
-
-  useEffect(() => {
-    if (isLoadingRoutes) {
-      setRoute([])
-    }
-    if (routeData && routeData.route.length > 0 && !isLoadingRoutes) {
-      setRoute(routeData.route)
-    }
-  }, [routeData, isLoadingRoutes, setRoute])
-
-  const swapType = useMemo(() => {
-    return getIfWrapOrUnwrap(token0, token1)
-  }, [token0, token1])
-
-  useEffect(() => {
-    setPriceImpactPercentage(priceImpactTotal ?? 0)
-  }, [priceImpactTotal, setPriceImpactPercentage])
 
   const refreshAllowance = async () => {
     await refetch()
@@ -90,18 +43,18 @@ export const ReviewSwapDialogTrigger = () => {
     )
   }, [tokenBalance, token0, amountIn, isLoading])
 
-  const noRoutes =
-    swapType === 'swap' &&
-    !isLoadingRoutes &&
-    routeData &&
-    routeData.route?.length === 0
+  const swapType = useMemo(() => {
+    return getIfWrapOrUnwrap(token0, token1)
+  }, [token0, token1])
+
+  const noRoutes = swapType === 'swap' && route?.length === 0
 
   const allowanceFormatted = formatUnitsForInput(
     allowanceAmount ?? '0',
     token0?.decimals,
   )
 
-  const insufficientLiquidity = priceImpactTotal && priceImpactTotal >= 100
+  const insufficientLiquidity = priceImpactPercentage >= 100
 
   const buttonText = useMemo(() => {
     if (isTxnPending) {

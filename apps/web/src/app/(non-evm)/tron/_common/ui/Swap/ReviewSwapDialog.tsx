@@ -9,23 +9,26 @@ import { SkeletonCircle } from '@sushiswap/ui'
 import { Dialog, DialogClose, DialogContent, classNames } from '@sushiswap/ui'
 import { useWallet } from '@tronweb3/tronwallet-adapter-react-hooks'
 import Link from 'next/link'
-import { useMemo, useRef } from 'react'
+import { useEffect, useMemo, useRef } from 'react'
 import { formatPercent } from 'sushi/format'
+import { usePriceImpact } from '~tron/_common/lib/hooks/usePriceImpact'
+import { useReserves } from '~tron/_common/lib/hooks/useReserves'
+import { useRoutes } from '~tron/_common/lib/hooks/useRoutes'
 import { truncateText } from '~tron/_common/lib/utils/formatters'
 import { getTronscanAddressLink } from '~tron/_common/lib/utils/tronscan-helpers'
 import {
   warningSeverity,
   warningSeverityClassName,
 } from '~tron/_common/lib/utils/warning-severity'
-import { useSwapState } from '~tron/swap/swap-provider'
+import { useSwapDispatch, useSwapState } from '~tron/swap/swap-provider'
 import { Icon } from '../General/Icon'
 import { WalletConnector } from '../WalletConnector/WalletConnector'
 import { ReviewSwapDialogTrigger } from './ReviewSwapDialogTrigger'
 import { SwapButton } from './SwapButton'
 
 export const ReviewSwapDialog = () => {
-  const { token0, token1, amountIn, amountOut, priceImpactPercentage } =
-    useSwapState()
+  const { token0, token1, amountIn, amountOut } = useSwapState()
+  const { setRoute, setPriceImpactPercentage } = useSwapDispatch()
   const closeBtnRef = useRef<HTMLButtonElement>(null)
   const { address, connected } = useWallet()
   const isConnected = address && connected
@@ -51,6 +54,53 @@ export const ReviewSwapDialog = () => {
     const output = Number(amountOut) * (1 - slippage)
     return String(output)
   }, [amountOut, slippage, token0, token1, amountIn])
+
+  const { data: routeData, isLoading: isLoadingRoutes } = useRoutes({
+    token0,
+    token1,
+  })
+  //these reserves are always going to be defined if a pair exists
+  const { data: reserves } = useReserves({
+    pairAddress: routeData?.pairs?.[0],
+    token0,
+    token1,
+  })
+  //these reserves are for is the swap needs an intermediate pair
+  const { data: reserves1 } = useReserves({
+    pairAddress: routeData?.pairs?.[1],
+    token0,
+    token1,
+  })
+
+  //this number is always going to be defined if the reserves exists
+  const { data: priceImpactPercentage0 } = usePriceImpact({
+    amount: amountIn,
+    token: token0,
+    reserves,
+  })
+
+  //this number is for the price impact of the second pair in a hop is needed
+  const { data: priceImpactPercentage1 } = usePriceImpact({
+    amount: amountOut,
+    token: token1,
+    reserves: reserves1,
+  })
+
+  const priceImpactPercentage =
+    (priceImpactPercentage0 ?? 0) + (priceImpactPercentage1 ?? 0)
+
+  useEffect(() => {
+    if (isLoadingRoutes) {
+      setRoute([])
+    }
+    if (routeData && routeData.route.length > 0 && !isLoadingRoutes) {
+      setRoute(routeData.route)
+    }
+  }, [routeData, isLoadingRoutes, setRoute])
+
+  useEffect(() => {
+    setPriceImpactPercentage(priceImpactPercentage ?? 0)
+  }, [priceImpactPercentage, setPriceImpactPercentage])
 
   const severityClass = useMemo(() => {
     return warningSeverityClassName(warningSeverity(priceImpactPercentage))
