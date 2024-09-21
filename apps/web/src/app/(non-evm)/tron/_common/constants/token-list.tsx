@@ -123,6 +123,14 @@ const MAINNET_TOKENS: IToken[] = [
     logoURI: 'https://static.tronscan.org/profile_images/JKtJTydD_400x400.jpg',
   },
   {
+    symbol: 'TUSD',
+    address: 'TUpMhErZL2fhh4sVNULAbNKLokS4GjC1F4',
+    decimals: 18,
+    name: 'TrueUSD',
+    logoURI:
+      'https://static.tronscan.org/production/logo/TUpMhErZL2fhh4sVNULAbNKLokS4GjC1F4.png',
+  },
+  {
     symbol: 'USDT',
     address: 'TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t',
     decimals: 6,
@@ -135,14 +143,6 @@ const MAINNET_TOKENS: IToken[] = [
     decimals: 18,
     name: 'JUST Stablecoin v1.0',
     logoURI: 'https://static.tronscan.org/production/logo/usdj.png',
-  },
-  {
-    symbol: 'TUSD',
-    address: 'TUpMhErZL2fhh4sVNULAbNKLokS4GjC1F4',
-    decimals: 18,
-    name: 'TrueUSD',
-    logoURI:
-      'https://static.tronscan.org/production/logo/TUpMhErZL2fhh4sVNULAbNKLokS4GjC1F4.png',
   },
   {
     symbol: 'LTC',

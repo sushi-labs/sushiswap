@@ -10,7 +10,10 @@ import {
   isAddress,
 } from '~tron/_common/lib/utils/helpers'
 
-export const useTokenInfo = ({ tokenAddress }: { tokenAddress: string }) => {
+export const useTokenInfo = ({
+  tokenAddress,
+  enabled = true,
+}: { tokenAddress: string; enabled?: boolean }) => {
   return useQuery({
     queryKey: ['useTokenInfo2', { tokenAddress }],
     staleTime: Infinity,
@@ -45,6 +48,6 @@ export const useTokenInfo = ({ tokenAddress }: { tokenAddress: string }) => {
           )?.logoURI ?? undefined,
       }
     },
-    enabled: !!tokenAddress,
+    enabled: Boolean(enabled && tokenAddress),
   })
 }
