@@ -1,5 +1,4 @@
 import { CheckCircleIcon } from '@heroicons/react/20/solid'
-import { useDebounce } from '@sushiswap/hooks'
 import {
   Badge,
   Button,
@@ -34,12 +33,11 @@ export const TokenSelector = ({
 }) => {
   const [open, setOpen] = useState(false)
   const [query, setQuery] = useState('')
-  const debouncedQuery = useDebounce(query, 500)
   const { customTokens, addOrRemoveToken, hasToken } = useCustomTokens()
-  const { data: queryToken } = useTokenInfo({ tokenAddress: debouncedQuery })
+  const { data: queryToken } = useTokenInfo({ tokenAddress: query })
 
   const { data: sortedTokenList } = useSortedTokenList({
-    query: debouncedQuery,
+    query,
     tokenMap: DEFAULT_TOKEN_LIST_WITH_KEY,
     customTokenMap: customTokens,
   })
@@ -83,7 +81,7 @@ export const TokenSelector = ({
                   key={queryToken.address}
                   hasToken={hasToken}
                   addOrRemoveToken={addOrRemoveToken}
-                  isSelected={queryToken.address === selected?.address}
+                  isSelected={queryToken.symbol === selected?.symbol}
                 />
               ) : sortedTokenList?.length === 0 ? (
                 <p className="text-gray-400 dark:text-slate-500 text-center pt-2">

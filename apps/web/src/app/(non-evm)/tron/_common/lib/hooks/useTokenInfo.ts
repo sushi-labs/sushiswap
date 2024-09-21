@@ -5,7 +5,10 @@ import {
   WTRX,
 } from '~tron/_common/constants/token-list'
 import { getTokenData } from '~tron/_common/lib/utils/getTokenData'
-import { getValidTokenAddress } from '~tron/_common/lib/utils/helpers'
+import {
+  getValidTokenAddress,
+  isAddress,
+} from '~tron/_common/lib/utils/helpers'
 
 export const useTokenInfo = ({ tokenAddress }: { tokenAddress: string }) => {
   return useQuery({
@@ -19,6 +22,7 @@ export const useTokenInfo = ({ tokenAddress }: { tokenAddress: string }) => {
         return WTRX
       }
 
+      if (!isAddress(tokenAddress)) return null
       const foundInTokenList = DEFAULT_TOKEN_LIST.find(
         (i) =>
           getValidTokenAddress(i.address).toLowerCase() ===
