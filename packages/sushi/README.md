@@ -1,3 +1,0 @@
-# Sushi
-
-Sushi library
