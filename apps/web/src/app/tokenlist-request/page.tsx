@@ -13,7 +13,6 @@ import {
   Label,
   LinkExternal,
   Message,
-  NetworkSelector,
   SelectIcon,
   Separator,
   TextField,
@@ -27,6 +26,7 @@ import { useForm } from 'react-hook-form'
 import { Chain, ChainId } from 'sushi/chain'
 import { type Address, isAddress } from 'viem'
 
+import { NetworkSelector } from 'src/lib/wagmi/components/network-selector'
 import { useTokenWithCache } from 'src/lib/wagmi/hooks/tokens/useTokenWithCache'
 import { SUPPORTED_CHAIN_IDS } from '../../config'
 import {

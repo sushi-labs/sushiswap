@@ -1,7 +1,0 @@
-apiVersion: networking.gke.io/v1
-kind: ManagedCertificate
-metadata:
-  name: sushi-api-production-managed-certificate
-spec:
-  domains:
-    - api.sushi.com

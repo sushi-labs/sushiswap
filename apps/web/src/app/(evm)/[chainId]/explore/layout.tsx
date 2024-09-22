@@ -4,11 +4,12 @@ import { Container, LinkInternal } from '@sushiswap/ui'
 import { notFound } from 'next/navigation'
 
 import React from 'react'
+import { NonStandardChainId } from 'src/config'
 import { GlobalStatsCharts } from 'src/ui/explore/global-stats-charts'
 import { PathnameButton } from 'src/ui/pathname-button'
 import { PoolsFiltersProvider } from 'src/ui/pool'
 import { SidebarContainer, SidebarProvider } from 'src/ui/sidebar'
-import { ChainId, ChainKey, NonStandardChainId } from 'sushi/chain'
+import { ChainId, ChainKey } from 'sushi/chain'
 import { Header } from '../header'
 
 export const metadata = {

@@ -1,6 +1,6 @@
 import { PoolChainIds } from '@sushiswap/graph-client/data-api'
+import { NonStandardChainId } from 'src/config'
 import { AptosSidebarContainer, SidebarProvider } from 'src/ui/sidebar'
-import { NonStandardChainId } from 'sushi/chain'
 import { Header } from '../header'
 import { Providers } from './providers'
 

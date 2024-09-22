@@ -1,4 +1,4 @@
-import { ChainId, NonStandardChainId } from 'sushi/chain'
+import { ChainId } from 'sushi/chain'
 
 import { IconComponent } from '../../../types'
 import { AptosNaked } from './AptosNaked'
@@ -83,7 +83,7 @@ export * from './ZKSyncNaked'
 export * from './ZetaChainNaked'
 
 export const NETWORK_NAKED_ICON: Partial<
-  Record<ChainId | NonStandardChainId, IconComponent>
+  Record<ChainId | string, IconComponent>
 > = {
   [ChainId.ETHEREUM]: EthereumNaked,
   [ChainId.FANTOM]: FantomNaked,
@@ -124,5 +124,5 @@ export const NETWORK_NAKED_ICON: Partial<
   [ChainId.ROOTSTOCK]: RootstockNaked,
   [ChainId.CRONOS]: CronosNaked,
   [ChainId.MANTLE]: MantleNaked,
-  [NonStandardChainId.APTOS]: AptosNaked,
+  aptos: AptosNaked,
 }

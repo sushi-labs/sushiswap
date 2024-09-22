@@ -1,4 +1,4 @@
-import { ChainId, NonStandardChainId } from 'sushi/chain'
+import { ChainId } from 'sushi/chain'
 
 import { IconComponent } from '../../../types'
 import { AptosCircle } from './AptosCircle'
@@ -84,7 +84,7 @@ export * from './ZKSyncCircle'
 export * from './ZetaChainCircle'
 
 export const NETWORK_CIRCLE_ICON: Partial<
-  Record<ChainId | NonStandardChainId, IconComponent>
+  Record<ChainId | string, IconComponent>
 > = {
   [ChainId.ETHEREUM]: EthereumCircle,
   [ChainId.FANTOM]: FantomCircle,
@@ -125,5 +125,5 @@ export const NETWORK_CIRCLE_ICON: Partial<
   [ChainId.ROOTSTOCK]: RootstockCircle,
   [ChainId.CRONOS]: CronosCircle,
   [ChainId.MANTLE]: MantleCircle,
-  [NonStandardChainId.APTOS]: AptosCircle,
+  aptos: AptosCircle,
 }

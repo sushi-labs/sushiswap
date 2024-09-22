@@ -18,7 +18,6 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  NetworkSelector,
   Tooltip as SushiTooltip,
   TooltipContent,
   TooltipProvider,
@@ -31,6 +30,7 @@ import { ChainId } from 'sushi/chain'
 import { Currency } from 'sushi/currency'
 import { useAccount, useChainId, useSwitchChain } from 'wagmi'
 
+import { NetworkSelector } from 'src/lib/wagmi/components/network-selector'
 import { TokenSelector } from 'src/lib/wagmi/components/token-selector/token-selector'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
 import { Address } from 'viem'

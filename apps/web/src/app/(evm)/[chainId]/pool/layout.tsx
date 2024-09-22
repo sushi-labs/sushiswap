@@ -1,6 +1,7 @@
 import { PoolChainIds, isPoolChainId } from '@sushiswap/graph-client/data-api'
+import { NonStandardChainId } from 'src/config'
 import { SidebarContainer, SidebarProvider } from 'src/ui/sidebar'
-import { ChainId, NonStandardChainId } from 'sushi/chain'
+import { ChainId } from 'sushi/chain'
 import { Header } from '../header'
 import notFound from '../not-found'
 

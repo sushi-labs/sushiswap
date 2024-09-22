@@ -18,7 +18,7 @@
     "react/index.js"
   ],
   "dependencies": {
-    "@vercel/style-guide": "5.0.1",
+    "@vercel/style-guide": "6.0.0",
     "eslint-config-turbo": "2.0.5",
     "eslint-plugin-mdx": "2.2.0",
     "eslint-plugin-only-warn": "1.1.0",

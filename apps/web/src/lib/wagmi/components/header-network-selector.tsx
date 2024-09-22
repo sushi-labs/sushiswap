@@ -1,11 +1,15 @@
 import { createErrorToast } from '@sushiswap/notifications'
 import { Button } from '@sushiswap/ui'
-import { NetworkSelector, NetworkSelectorOnSelectCallback } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import React, { FC, Suspense, useCallback } from 'react'
-import { Chain, ChainId, NonStandardChainId } from 'sushi/chain'
+import { NonStandardChainId } from 'src/config'
+import { Chain, ChainId } from 'sushi/chain'
 import { ProviderRpcError, UserRejectedRequestError } from 'viem'
 import { useChainId, useSwitchChain } from 'wagmi'
+import {
+  NetworkSelector,
+  NetworkSelectorOnSelectCallback,
+} from './network-selector'
 
 export const HeaderNetworkSelector: FC<{
   networks: readonly (ChainId | NonStandardChainId)[]

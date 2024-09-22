@@ -24,15 +24,12 @@ import {
   useContext,
   useState,
 } from 'react'
-import { SUPPORTED_NETWORKS } from 'src/config'
 import {
-  Chain,
-  ChainId,
-  ChainKey,
   NonStandardChainId,
   NonStandardChains,
-  isChainId,
-} from 'sushi'
+  SUPPORTED_NETWORKS,
+} from 'src/config'
+import { Chain, ChainId, ChainKey, isChainId } from 'sushi/chain'
 import { useAccount } from 'wagmi'
 
 interface SidebarContextType {

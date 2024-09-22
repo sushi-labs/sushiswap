@@ -1,4 +1,4 @@
-import { ChainId, NonStandardChainId, TESTNET_CHAIN_IDS } from 'sushi/chain'
+import { Chain, ChainId, TESTNET_CHAIN_IDS } from 'sushi/chain'
 import {
   AGGREGATOR_ONLY_CHAIN_IDS,
   EXTRACTOR_SUPPORTED_CHAIN_IDS,
@@ -79,6 +79,38 @@ export const isSupportedChainId = (
   chainId: number,
 ): chainId is SupportedChainId =>
   SUPPORTED_CHAIN_IDS.includes(chainId as SupportedChainId)
+
+export const NonStandardChainId = {
+  APTOS: 'aptos',
+} as const
+
+export type NonStandardChainId =
+  (typeof NonStandardChainId)[keyof typeof NonStandardChainId]
+
+export const isNonStandardChainId = (
+  nonStandardChainId: string,
+): nonStandardChainId is NonStandardChainId =>
+  Object.values(NonStandardChainId).includes(
+    nonStandardChainId as NonStandardChainId,
+  )
+
+interface NonStandardChain extends Omit<Chain, 'chainId'> {
+  chainId: string
+}
+
+export const NonStandardChains = {
+  [NonStandardChainId.APTOS]: {
+    name: 'Aptos',
+    nativeCurrency: {
+      name: 'Aptos',
+      symbol: 'APT',
+      decimals: 8,
+    },
+
+    shortName: 'aptos',
+    chainId: 'aptos',
+  },
+} as Record<NonStandardChainId, NonStandardChain>
 
 export const SUPPORTED_NON_STANDARD_NETWORKS = [
   NonStandardChainId.APTOS,
