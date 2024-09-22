@@ -1,4 +1,3 @@
-import { useDebounce } from '@sushiswap/hooks'
 import { useEffect } from 'react'
 import { useAmountsOut } from '~tron/_common/lib/hooks/useAmountsOut'
 import {
@@ -12,10 +11,8 @@ export const AmountIn = () => {
   const { token0, amountIn, token1 } = useSwapState()
   const { setToken0, setAmountIn, setAmountOut } = useSwapDispatch()
 
-  const debouncedAmountIn = useDebounce(amountIn, 500)
-
   const { data: amountsOut } = useAmountsOut({
-    amountIn: parseUnits(debouncedAmountIn, token0.decimals),
+    amountIn: parseUnits(amountIn, token0.decimals),
   })
 
   useEffect(() => {

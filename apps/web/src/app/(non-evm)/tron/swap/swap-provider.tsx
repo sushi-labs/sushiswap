@@ -46,19 +46,37 @@ function swapReducer(_state: State, action: Action) {
     case 'setToken0': {
       if (_state.token1.address === action.value.address) {
         //if token1 is the same as the new token0, swap them
-        return { ..._state, token1: _state.token0, token0: action.value }
+        return {
+          ..._state,
+          token1: _state.token0,
+          token0: action.value,
+          amountIn: '',
+          amountOut: '',
+        }
       }
-      return { ..._state, token0: action.value }
+      return { ..._state, token0: action.value, amountIn: '', amountOut: '' }
     }
     case 'setToken1': {
       if (_state.token0.address === action.value.address) {
         //if token0 is the same as the new token1, swap them
-        return { ..._state, token0: _state.token1, token1: action.value }
+        return {
+          ..._state,
+          token0: _state.token1,
+          token1: action.value,
+          amountIn: '',
+          amountOut: '',
+        }
       }
       return { ..._state, token1: action.value }
     }
     case 'swapTokens': {
-      return { ..._state, token0: _state.token1, token1: _state.token0 }
+      return {
+        ..._state,
+        token0: _state.token1,
+        token1: _state.token0,
+        amountIn: '',
+        amountOut: '',
+      }
     }
     case 'setIsTxnPending': {
       return { ..._state, isTxnPending: action.value }
