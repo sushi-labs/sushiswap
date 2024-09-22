@@ -25,7 +25,7 @@ export const useTokenInfo = ({
         return WTRX
       }
 
-      if (!isAddress(tokenAddress)) return null
+      if (!isAddress(tokenAddress)) throw new Error('invalid address')
       const foundInTokenList = DEFAULT_TOKEN_LIST.find(
         (i) =>
           getValidTokenAddress(i.address).toLowerCase() ===
