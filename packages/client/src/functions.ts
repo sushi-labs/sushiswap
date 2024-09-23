@@ -14,6 +14,15 @@ export function parseArgs<T>(args?: Partial<T>) {
     }, '?')
 }
 
+function jsonParse<T>(text: string): T {
+  return JSON.parse(text, (_key: string, value: any) => {
+    if (value && typeof value === 'object' && value.__type === 'bigint') {
+      value = BigInt(value.value)
+    }
+    return value
+  })
+}
+
 export async function get<T>(url: string): Promise<T> {
   const res = await fetch(url)
 
@@ -21,7 +30,7 @@ export async function get<T>(url: string): Promise<T> {
     throw new Error(`Failed to fetch ${url}: ${res.status} ${res.statusText}`)
   }
 
-  await import('sushi/bigint-serializer')
+  const text = await res.text()
 
-  return res.json() as T
+  return jsonParse<T>(text)
 }
