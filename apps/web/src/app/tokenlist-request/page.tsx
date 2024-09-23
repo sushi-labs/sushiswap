@@ -2,7 +2,6 @@
 
 import { CameraIcon } from '@heroicons/react/24/outline'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useApplyForTokenList } from '@sushiswap/react-query'
 import {
   Container,
   Form,
@@ -24,6 +23,7 @@ import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import React, { useCallback, useEffect } from 'react'
 import { DropzoneOptions, useDropzone } from 'react-dropzone'
 import { useForm } from 'react-hook-form'
+import { useApplyForTokenList } from 'src/lib/hooks/react-query'
 import { Chain, ChainId } from 'sushi/chain'
 import { type Address, isAddress } from 'viem'
 

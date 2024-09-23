@@ -1,7 +1,6 @@
 'use client'
 
 import { ArrowTrendingUpIcon } from '@heroicons/react/20/solid'
-import { usePrices } from '@sushiswap/react-query'
 import {
   Button,
   FormattedNumber,
@@ -11,6 +10,7 @@ import {
 import React, { useMemo, useState } from 'react'
 import { Price, tryParseAmount } from 'sushi/currency'
 import { formatUSD } from 'sushi/format'
+import { usePrices } from '~evm/_common/ui/price-provider/price-provider/use-prices'
 import { useTokenAmountDollarValues } from '../../../lib/hooks'
 import { useDerivedStateSimpleSwap } from './derivedstate-simple-swap-provider'
 
@@ -35,15 +35,14 @@ export const SimpleSwapHeader = () => {
   const price = useMemo(() => {
     if (!token0 || !token1) return '0.00'
 
-    const token0Price = prices?.has(token0.wrapped.address)
-      ? tryParseAmount('1', token0)?.multiply(
-          prices.get(token0.wrapped.address)!,
-        )
+    const token0PriceFraction = prices?.getFraction(token0.wrapped.address)
+    const token0Price = token0PriceFraction
+      ? tryParseAmount('1', token0)?.multiply(token0PriceFraction)
       : undefined
-    const token1Price = prices?.has(token1.wrapped.address)
-      ? tryParseAmount('1', token1)?.multiply(
-          prices.get(token1.wrapped.address)!,
-        )
+
+    const token1PriceFraction = prices?.getFraction(token1.wrapped.address)
+    const token1Price = token1PriceFraction
+      ? tryParseAmount('1', token1)?.multiply(token1PriceFraction)
       : undefined
 
     let price

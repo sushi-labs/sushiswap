@@ -68,7 +68,7 @@ export const VaultQuery = graphql(
 export type GetVault = VariablesOf<typeof VaultQuery>
 
 export async function getVault(variables: GetVault, options?: RequestOptions) {
-  const url = `https://${SUSHI_DATA_API_HOST}`
+  const url = `${SUSHI_DATA_API_HOST}/graphql`
   try {
     const result = await request(
       {

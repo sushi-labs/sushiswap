@@ -1,6 +1,5 @@
 'use client'
 
-import { useTrade as useApiTrade } from '@sushiswap/react-query'
 import { watchChainId } from '@wagmi/core'
 import { useLogger } from 'next-axiom'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
@@ -13,6 +12,7 @@ import {
   useMemo,
   useState,
 } from 'react'
+import { useTrade as useApiTrade } from 'src/lib/hooks/react-query'
 import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
 import { useTokenWithCache } from 'src/lib/wagmi/hooks/tokens/useTokenWithCache'
 import { ChainId, TestnetChainId } from 'sushi/chain'

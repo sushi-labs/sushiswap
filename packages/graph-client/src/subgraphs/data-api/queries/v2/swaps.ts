@@ -31,7 +31,7 @@ export async function getSushiV2Swaps(
   { ...variables }: GetSushiV2Swaps,
   options?: RequestOptions,
 ) {
-  const url = `https://${SUSHI_DATA_API_HOST}`
+  const url = `${SUSHI_DATA_API_HOST}/graphql`
 
   const result = await request(
     { url, document: SushiV2SwapsQuery, variables },

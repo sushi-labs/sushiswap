@@ -1,4 +1,5 @@
-import { AngleRewardsPool, usePrices } from '@sushiswap/react-query'
+import type { PriceMap } from 'src/app/(evm)/_common/ui/price-provider/price-provider/use-prices'
+import { AngleRewardsPool } from 'src/lib/hooks/react-query'
 import { Amount, Token } from 'sushi/currency'
 
 interface SimulateParams {
@@ -6,7 +7,7 @@ interface SimulateParams {
   amount1: Amount<Token>
   liquidity: number
   poolData: AngleRewardsPool
-  prices: ReturnType<typeof usePrices>['data']
+  prices: PriceMap
 }
 
 export const simulate = async ({
@@ -27,7 +28,7 @@ export const simulate = async ({
 
     if (!active) return prev
     const yearlyRewards =
-      (+prices.get(curr.token.address)!.toSignificant(6) *
+      ((prices.get(curr.token.address) || 0) *
         curr.amount *
         (365 * 24 * 3600)) /
       (curr.endTimestamp - curr.startTimestamp)
@@ -41,10 +42,8 @@ export const simulate = async ({
             (poolData?.poolBalanceToken1 + +amount1.toExact()) +
           (curr.propFees * liquidity) /
             (poolData?.poolTotalLiquidity + liquidity))) /
-        (+amount0.toExact() *
-          +prices.get(amount0.currency.address)!.toSignificant(6) +
-          +amount1.toExact() *
-            +prices.get(amount1.currency.address)!.toSignificant(6))
+        (+amount0.toExact() * (prices.get(amount0.currency.address) || 0) +
+          +amount1.toExact() * (prices.get(amount1.currency.address) || 0))
     )
   }, 0)
 }

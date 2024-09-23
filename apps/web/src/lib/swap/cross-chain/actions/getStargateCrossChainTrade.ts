@@ -1,4 +1,4 @@
-import { NativeAddress } from '@sushiswap/react-query'
+import { NativeAddress } from 'src/lib/hooks/react-query'
 import { stargateAdapterAbi_getFee } from 'sushi/abi'
 import {
   STARGATE_ADAPTER_ADDRESS,

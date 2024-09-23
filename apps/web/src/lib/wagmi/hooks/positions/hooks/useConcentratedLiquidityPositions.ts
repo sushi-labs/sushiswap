@@ -1,11 +1,12 @@
 import { useCustomTokens } from '@sushiswap/hooks'
-import { useAllPrices, usePrices } from '@sushiswap/react-query'
 import { useQuery } from '@tanstack/react-query'
+import { useAllPrices } from 'src/lib/hooks/react-query'
 import { SushiSwapV3ChainId } from 'sushi/config'
 import { Amount, Token } from 'sushi/currency'
 import { Position, SushiSwapV3Pool } from 'sushi/pool/sushiswap-v3'
 
 import { useMemo } from 'react'
+import { usePrices } from 'src/app/(evm)/_common/ui/price-provider/price-provider/use-prices'
 import { Address } from 'viem'
 import { useConfig } from 'wagmi'
 import { getConcentratedLiquidityPool } from '../../pools/actions/getConcentratedLiquidityPool'
@@ -51,8 +52,7 @@ export const useConcentratedLiquidityPositions = ({
     isError: isChainPricesError,
     isLoading: isChainPricesInitialLoading,
   } = usePrices({
-    chainId: chainIds.length ? chainIds[0] : undefined,
-    enabled: chainIds.length === 1,
+    chainId: chainIds?.length === 1 ? chainIds[0] : undefined,
   })
 
   const prices = useMemo(() => {

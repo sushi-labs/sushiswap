@@ -47,7 +47,7 @@ export async function getTopPools(
   variables: GetTopPools,
   options?: RequestOptions,
 ) {
-  const url = `https://${SUSHI_DATA_API_HOST}`
+  const url = `${SUSHI_DATA_API_HOST}/graphql`
   try {
     if (!isChainId(parseInt(variables.chainId))) {
       throw new Error(
