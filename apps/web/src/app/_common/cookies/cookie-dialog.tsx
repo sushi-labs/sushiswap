@@ -185,7 +185,10 @@ export function CookieDialog({ open: _open }: { open: boolean }) {
 
   useEffect(() => {
     // Auto-accept in development and test environments
-    if (process.env.NODE_ENV !== 'production') {
+    if (
+      process.env.NODE_ENV !== 'production' ||
+      process.env.NEXT_PUBLIC_APP_ENV === 'test'
+    ) {
       onConfirm(new Set<CookieType>(cookieTypes))
     }
   }, [onConfirm])
