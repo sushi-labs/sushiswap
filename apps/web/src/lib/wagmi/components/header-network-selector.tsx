@@ -3,7 +3,8 @@ import { Button } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import React, { FC, Suspense, useCallback } from 'react'
 import { NonStandardChainId } from 'src/config'
-import { Chain, ChainId } from 'sushi/chain'
+import { getNetworkName } from 'src/lib/network'
+import { ChainId } from 'sushi/chain'
 import { ProviderRpcError, UserRejectedRequestError } from 'viem'
 import { useChainId, useSwitchChain } from 'wagmi'
 import {
@@ -13,10 +14,17 @@ import {
 
 export const HeaderNetworkSelector: FC<{
   networks: readonly (ChainId | NonStandardChainId)[]
-  selectedNetwork?: ChainId
+  selectedNetwork?: ChainId | NonStandardChainId
   onChange?(chainId: ChainId): void
   hideNetworkName?: boolean
-}> = ({ networks, selectedNetwork, onChange, hideNetworkName = false }) => {
+  className?: string
+}> = ({
+  networks,
+  selectedNetwork,
+  onChange,
+  className,
+  hideNetworkName = false,
+}) => {
   const { switchChainAsync } = useSwitchChain()
   const chainId = useChainId()
 
@@ -46,15 +54,25 @@ export const HeaderNetworkSelector: FC<{
 
   return (
     <NetworkSelector
-      selected={chainId}
+      selected={selectedNetwork ?? chainId}
       onSelect={onSwitchNetwork}
       networks={networks}
     >
-      <Button variant="secondary" testId="network-selector">
+      <Button
+        variant="secondary"
+        testId="network-selector"
+        className={className}
+      >
         <Suspense fallback={null}>
-          <NetworkIcon chainId={chainId} width={20} height={20} />
+          <NetworkIcon
+            chainId={selectedNetwork ?? chainId}
+            width={20}
+            height={20}
+          />
           {hideNetworkName ? null : (
-            <div className="hidden xl:block">{Chain.from(chainId)?.name}</div>
+            <div className="hidden xl:block">
+              {getNetworkName(selectedNetwork ?? chainId)}
+            </div>
           )}
         </Suspense>
       </Button>

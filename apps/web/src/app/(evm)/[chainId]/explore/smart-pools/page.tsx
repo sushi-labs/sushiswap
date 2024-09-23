@@ -50,8 +50,10 @@ export default async function SmartPoolsPage({
         <TableFiltersSearchToken />
         <TableFiltersPoolType />
         <TableFiltersNetwork
-          chainId={chainId}
-          chainIds={STEER_SUPPORTED_CHAIN_IDS}
+          network={chainId}
+          supportedNetworks={STEER_SUPPORTED_CHAIN_IDS}
+          unsupportedNetworkHref="/ethereum/explore/pools"
+          className="lg:hidden block"
         />
         <TableFiltersFarmsOnly />
         <TableFiltersResetButton />

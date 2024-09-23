@@ -1,6 +1,7 @@
 import { isPoolChainId } from '@sushiswap/graph-client/data-api'
 import { Container } from '@sushiswap/ui'
 import React from 'react'
+import { POOL_SUPPORTED_NETWORKS } from 'src/config'
 import { PoolsTable } from 'src/ui/pool/PoolsTable'
 import { TableFiltersSmartPoolsOnly } from 'src/ui/pool/TableFilterSmartPoolsOnly'
 import { TableFiltersFarmsOnly } from 'src/ui/pool/TableFiltersFarmsOnly'
@@ -24,7 +25,12 @@ export default async function PoolsPage({
       <div className="flex flex-wrap gap-3 mb-4">
         <TableFiltersSearchToken />
         <TableFiltersPoolType />
-        <TableFiltersNetwork chainId={chainId} />
+        <TableFiltersNetwork
+          network={chainId}
+          supportedNetworks={POOL_SUPPORTED_NETWORKS}
+          unsupportedNetworkHref="/ethereum/explore/pools"
+          className="lg:hidden block"
+        />
         <TableFiltersFarmsOnly />
         <TableFiltersSmartPoolsOnly />
         <TableFiltersResetButton />

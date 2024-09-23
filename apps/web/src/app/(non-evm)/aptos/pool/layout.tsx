@@ -1,5 +1,4 @@
-import { PoolChainIds } from '@sushiswap/graph-client/data-api'
-import { NonStandardChainId } from 'src/config'
+import { POOL_SUPPORTED_NETWORKS } from 'src/config'
 import { AptosSidebarContainer, SidebarProvider } from 'src/ui/sidebar'
 import { Header } from '../header'
 import { Providers } from './providers'
@@ -7,8 +6,6 @@ import { Providers } from './providers'
 export const metadata = {
   title: 'Pool',
 }
-
-const sidebarNetworks = [...PoolChainIds, NonStandardChainId.APTOS] as const
 
 export default function PoolLayout({
   children,
@@ -19,7 +16,7 @@ export default function PoolLayout({
         <Header />
         <AptosSidebarContainer
           shiftContent
-          supportedNetworks={sidebarNetworks}
+          supportedNetworks={POOL_SUPPORTED_NETWORKS}
           unsupportedNetworkHref={'/ethereum/explore/pools'}
         >
           <main className="flex flex-col h-full flex-1">{children}</main>

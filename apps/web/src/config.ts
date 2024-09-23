@@ -1,9 +1,42 @@
+import { PoolChainIds } from '@sushiswap/graph-client/data-api'
 import { Chain, ChainId, TESTNET_CHAIN_IDS } from 'sushi/chain'
 import {
   AGGREGATOR_ONLY_CHAIN_IDS,
   EXTRACTOR_SUPPORTED_CHAIN_IDS,
   SUSHISWAP_SUPPORTED_CHAIN_IDS,
 } from 'sushi/config'
+
+export const NonStandardChainId = {
+  APTOS: 'aptos',
+} as const
+
+export type NonStandardChainId =
+  (typeof NonStandardChainId)[keyof typeof NonStandardChainId]
+
+export const isNonStandardChainId = (
+  nonStandardChainId: string,
+): nonStandardChainId is NonStandardChainId =>
+  Object.values(NonStandardChainId).includes(
+    nonStandardChainId as NonStandardChainId,
+  )
+
+interface NonStandardChain extends Omit<Chain, 'chainId'> {
+  chainId: string
+}
+
+export const NonStandardChain = {
+  [NonStandardChainId.APTOS]: {
+    name: 'Aptos',
+    nativeCurrency: {
+      name: 'Aptos',
+      symbol: 'APT',
+      decimals: 8,
+    },
+
+    shortName: 'aptos',
+    chainId: 'aptos',
+  },
+} as Record<NonStandardChainId, NonStandardChain>
 
 export const SWAP_API_SUPPORTED_CHAIN_IDS = EXTRACTOR_SUPPORTED_CHAIN_IDS
 
@@ -21,23 +54,40 @@ export const DISABLED_CHAIN_IDS = [
   ChainId.OKEX,
 ] as const
 
+export const NEW_CHAIN_IDS = [ChainId.MANTLE, ChainId.ZKSYNC_ERA] as const
+
 const PREFERRED_CHAINID_ORDER = [
+  ...NEW_CHAIN_IDS,
   ChainId.ETHEREUM,
+  ChainId.BSC,
   ChainId.ARBITRUM,
   ChainId.BASE,
-  ChainId.POLYGON,
-  ChainId.ROOTSTOCK,
-  ChainId.BLAST,
-  ChainId.ZETACHAIN,
-  ChainId.SKALE_EUROPA,
-  ChainId.OPTIMISM,
-  ChainId.BSC,
-  ChainId.THUNDERCORE,
-  ChainId.GNOSIS,
   ChainId.AVALANCHE,
+  ChainId.POLYGON,
+  ChainId.BLAST,
+  ChainId.SCROLL,
+  ChainId.OPTIMISM,
+  NonStandardChainId.APTOS,
+  ChainId.LINEA,
+  ChainId.CORE,
+  ChainId.CRONOS,
+  ChainId.GNOSIS,
+  ChainId.ROOTSTOCK,
   ChainId.FANTOM,
-  ChainId.ARBITRUM_NOVA,
+  ChainId.CELO,
+  ChainId.FILECOIN,
+  ChainId.TELOS,
+  ChainId.METIS,
+  ChainId.MOONBEAM,
+  ChainId.ZETACHAIN,
+  ChainId.BOBA,
   ChainId.HARMONY,
+  ChainId.ARBITRUM_NOVA,
+  ChainId.HAQQ,
+  ChainId.FUSE,
+  ChainId.THUNDERCORE,
+  ChainId.SKALE_EUROPA,
+  ChainId.BOBA_BNB,
 ] as const
 
 export const CHAIN_IDS = [
@@ -80,43 +130,38 @@ export const isSupportedChainId = (
 ): chainId is SupportedChainId =>
   SUPPORTED_CHAIN_IDS.includes(chainId as SupportedChainId)
 
-export const NonStandardChainId = {
-  APTOS: 'aptos',
-} as const
-
-export type NonStandardChainId =
-  (typeof NonStandardChainId)[keyof typeof NonStandardChainId]
-
-export const isNonStandardChainId = (
-  nonStandardChainId: string,
-): nonStandardChainId is NonStandardChainId =>
-  Object.values(NonStandardChainId).includes(
-    nonStandardChainId as NonStandardChainId,
-  )
-
-interface NonStandardChain extends Omit<Chain, 'chainId'> {
-  chainId: string
-}
-
-export const NonStandardChains = {
-  [NonStandardChainId.APTOS]: {
-    name: 'Aptos',
-    nativeCurrency: {
-      name: 'Aptos',
-      symbol: 'APT',
-      decimals: 8,
-    },
-
-    shortName: 'aptos',
-    chainId: 'aptos',
-  },
-} as Record<NonStandardChainId, NonStandardChain>
-
 export const SUPPORTED_NON_STANDARD_NETWORKS = [
   NonStandardChainId.APTOS,
 ] as const
 
-export const SUPPORTED_NETWORKS = [
+const UNSORTED_SUPPORTED_NETWORKS = [
   ...SUPPORTED_CHAIN_IDS,
   ...SUPPORTED_NON_STANDARD_NETWORKS,
-] as const
+]
+
+export const SUPPORTED_NETWORKS = Array.from(
+  new Set([
+    ...PREFERRED_CHAINID_ORDER.filter((el) =>
+      UNSORTED_SUPPORTED_NETWORKS.includes(
+        el as (typeof UNSORTED_SUPPORTED_NETWORKS)[number],
+      ),
+    ),
+    ...UNSORTED_SUPPORTED_NETWORKS,
+  ]),
+)
+
+const UNSORTED_POOL_SUPPORTED_NETWORKS = [
+  ...PoolChainIds,
+  NonStandardChainId.APTOS,
+]
+
+export const POOL_SUPPORTED_NETWORKS = Array.from(
+  new Set([
+    ...PREFERRED_CHAINID_ORDER.filter((el) =>
+      UNSORTED_POOL_SUPPORTED_NETWORKS.includes(
+        el as (typeof UNSORTED_POOL_SUPPORTED_NETWORKS)[number],
+      ),
+    ),
+    ...UNSORTED_POOL_SUPPORTED_NETWORKS,
+  ]),
+)

@@ -25,11 +25,12 @@ import {
   useState,
 } from 'react'
 import {
+  NEW_CHAIN_IDS,
   NonStandardChainId,
-  NonStandardChains,
   SUPPORTED_NETWORKS,
 } from 'src/config'
-import { Chain, ChainId, ChainKey, isChainId } from 'sushi/chain'
+import { getNetworkName } from 'src/lib/network'
+import { ChainId, ChainKey, isChainId } from 'sushi/chain'
 import { useAccount } from 'wagmi'
 
 interface SidebarContextType {
@@ -182,11 +183,7 @@ const Sidebar: FC<SidebarProps> = ({
           </div>
           <CommandGroup className="overflow-y-auto">
             {SUPPORTED_NETWORKS.map((network) => {
-              const name =
-                typeof network === 'number'
-                  ? Chain.from(network)?.name
-                  : NonStandardChains[network].name
-
+              const name = getNetworkName(network)
               const isSupported = isSupportedNetwork(network)
 
               return (
@@ -222,6 +219,13 @@ const Sidebar: FC<SidebarProps> = ({
                       <NetworkIcon chainId={network} width={22} height={22} />
                     </Badge>
                     {name}
+                    {NEW_CHAIN_IDS.includes(
+                      network as (typeof NEW_CHAIN_IDS)[number],
+                    ) ? (
+                      <div className="text-[10px] italic rounded-full px-[6px] bg-gradient-to-r from-blue to-pink text-white font-bold">
+                        NEW
+                      </div>
+                    ) : null}
                   </div>
                 </CommandItem>
               )

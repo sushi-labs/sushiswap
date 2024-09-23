@@ -1,9 +1,9 @@
 'use client'
 
-import { PoolChainIds, isPoolChainId } from '@sushiswap/graph-client/data-api'
+import { isPoolChainId } from '@sushiswap/graph-client/data-api'
 import { Container, LinkInternal } from '@sushiswap/ui'
 import { useSearchParams } from 'next/navigation'
-import { NonStandardChainId } from 'src/config'
+import { POOL_SUPPORTED_NETWORKS } from 'src/config'
 import { PathnameButton } from 'src/ui/pathname-button'
 import { PoolsFiltersProvider } from 'src/ui/pool'
 import { SidebarContainer, SidebarProvider } from 'src/ui/sidebar'
@@ -11,8 +11,6 @@ import { ChainId, ChainKey } from 'sushi/chain'
 import { Header } from '../header'
 import notFound from '../not-found'
 import { Hero } from './hero'
-
-const sidebarNetworks = [...PoolChainIds, NonStandardChainId.APTOS] as const
 
 export default function PositionsLayout({
   children,
@@ -33,7 +31,7 @@ export default function PositionsLayout({
       <Header />
       <SidebarContainer
         shiftContent
-        supportedNetworks={sidebarNetworks}
+        supportedNetworks={POOL_SUPPORTED_NETWORKS}
         unsupportedNetworkHref={'/ethereum/pool'}
       >
         <main className="flex flex-col h-full flex-1">

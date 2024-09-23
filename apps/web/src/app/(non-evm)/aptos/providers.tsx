@@ -9,6 +9,7 @@ import { BaseProviders, OnramperProvider } from '@sushiswap/ui'
 import { FewchaWallet } from 'fewcha-plugin-wallet-adapter'
 import { PetraWallet } from 'petra-plugin-wallet-adapter'
 import { QueryClientProvider } from 'src/providers/query-client-provider'
+import { WagmiProvider } from 'src/providers/wagmi-provider'
 import { Modal } from '~aptos/_common/components/Modal/Modal'
 
 const wallets = [
@@ -24,11 +25,13 @@ export function Providers({ children }: { children: React.ReactNode }) {
   return (
     <OnramperProvider>
       <QueryClientProvider>
-        <AptosWalletAdapterProvider plugins={wallets} autoConnect={true}>
-          <BaseProviders>
-            <Modal.Provider>{children}</Modal.Provider>
-          </BaseProviders>
-        </AptosWalletAdapterProvider>
+        <WagmiProvider>
+          <AptosWalletAdapterProvider plugins={wallets} autoConnect={true}>
+            <BaseProviders>
+              <Modal.Provider>{children}</Modal.Provider>
+            </BaseProviders>
+          </AptosWalletAdapterProvider>
+        </WagmiProvider>
       </QueryClientProvider>
     </OnramperProvider>
   )

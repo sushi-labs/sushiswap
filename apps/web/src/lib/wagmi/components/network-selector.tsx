@@ -1,8 +1,5 @@
 'use client'
 
-import React, { ReactNode, useCallback, useState } from 'react'
-import { Chain, ChainId, isChainId, isNetworkNameKey } from 'sushi/chain'
-
 import {
   Command,
   CommandEmpty,
@@ -15,11 +12,14 @@ import {
 } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import { usePathname, useRouter } from 'next/navigation'
+import React, { ReactNode, useCallback, useState } from 'react'
 import {
+  NEW_CHAIN_IDS,
   NonStandardChainId,
-  NonStandardChains,
   isNonStandardChainId,
 } from 'src/config'
+import { getNetworkName } from 'src/lib/network'
+import { ChainId, isChainId, isNetworkNameKey } from 'sushi/chain'
 
 export type NetworkSelectorOnSelectCallback<T extends number = ChainId> = (
   chainId: T,
@@ -75,10 +75,9 @@ const NetworkSelector = <T extends number | string>({
           <CommandEmpty>No network found.</CommandEmpty>
           <CommandGroup>
             {networks.map((network) => {
-              const name =
-                typeof network === 'number'
-                  ? Chain.from(network)?.name
-                  : NonStandardChains[network as NonStandardChainId].name
+              const name = getNetworkName(
+                network as ChainId | NonStandardChainId,
+              )
 
               return (
                 <CommandItem
@@ -99,15 +98,14 @@ const NetworkSelector = <T extends number | string>({
                 >
                   <div className="flex items-center gap-2">
                     <NetworkIcon chainId={network} width={22} height={22} />
-                    {/* NEW_CHAINS.includes(el) ? (
-                       <>
-                         {Chain.from(el)?.name}
-                         <div className="text-[10px] italic rounded-full px-[6px] bg-gradient-to-r from-blue to-pink text-white font-bold">
-                           NEW
-                         </div>
-                       </>
-                     )  */}
                     {name}
+                    {NEW_CHAIN_IDS.includes(
+                      network as (typeof NEW_CHAIN_IDS)[number],
+                    ) ? (
+                      <div className="text-[10px] italic rounded-full px-[6px] bg-gradient-to-r from-blue to-pink text-white font-bold">
+                        NEW
+                      </div>
+                    ) : null}
                   </div>
                 </CommandItem>
               )

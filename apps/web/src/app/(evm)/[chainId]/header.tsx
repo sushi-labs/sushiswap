@@ -11,7 +11,8 @@ import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import { SushiIcon } from '@sushiswap/ui/icons/SushiIcon'
 import { SushiWithTextIcon } from '@sushiswap/ui/icons/SushiWithTextIcon'
 import React, { FC } from 'react'
-import { UserPortfolio } from 'src/lib/wagmi/components/user-portfolio'
+import { SUPPORTED_NETWORKS } from 'src/config'
+import { WagmiHeaderComponents } from 'src/lib/wagmi/components/wagmi-header-components'
 import { SidebarToggle, useSidebar } from 'src/ui/sidebar'
 import { useAccount, useChainId } from 'wagmi'
 import { headerElements } from '../_common/header-elements'
@@ -58,7 +59,7 @@ export const Header: FC = () => {
         className="!pl-0 lg:!pl-4"
         hideSushiDropdown
         leftElements={headerElements(chainId)}
-        rightElement={<UserPortfolio />}
+        rightElement={<WagmiHeaderComponents networks={SUPPORTED_NETWORKS} />}
       />
     </div>
   )

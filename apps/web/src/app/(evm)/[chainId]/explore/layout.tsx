@@ -1,10 +1,9 @@
-import { PoolChainIds, isPoolChainId } from '@sushiswap/graph-client/data-api'
+import { isPoolChainId } from '@sushiswap/graph-client/data-api'
 import { isSteerChainId } from '@sushiswap/steer-sdk'
 import { Container, LinkInternal } from '@sushiswap/ui'
 import { notFound } from 'next/navigation'
-
 import React from 'react'
-import { NonStandardChainId } from 'src/config'
+import { POOL_SUPPORTED_NETWORKS } from 'src/config'
 import { GlobalStatsCharts } from 'src/ui/explore/global-stats-charts'
 import { PathnameButton } from 'src/ui/pathname-button'
 import { PoolsFiltersProvider } from 'src/ui/pool'
@@ -15,8 +14,6 @@ import { Header } from '../header'
 export const metadata = {
   title: 'Pools 💦',
 }
-
-const sidebarNetworks = [...PoolChainIds, NonStandardChainId.APTOS] as const
 
 export default async function ExploreLayout({
   children,
@@ -33,7 +30,7 @@ export default async function ExploreLayout({
       <Header />
       <SidebarContainer
         shiftContent
-        supportedNetworks={sidebarNetworks}
+        supportedNetworks={POOL_SUPPORTED_NETWORKS}
         unsupportedNetworkHref={'/ethereum/explore/pools'}
       >
         <main className="flex flex-col h-full flex-1">

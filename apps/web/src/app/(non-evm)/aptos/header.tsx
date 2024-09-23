@@ -2,13 +2,22 @@
 
 import { useWallet } from '@aptos-labs/wallet-adapter-react'
 import { ChevronDownIcon } from '@heroicons/react-v1/solid'
-import { Navigation } from '@sushiswap/ui'
-import { Badge, SushiNavigationDropdown, classNames } from '@sushiswap/ui'
+import {
+  Badge,
+  Navigation,
+  SushiNavigationDropdown,
+  classNames,
+} from '@sushiswap/ui'
 import { SushiIcon } from '@sushiswap/ui/icons/SushiIcon'
 import { SushiWithTextIcon } from '@sushiswap/ui/icons/SushiWithTextIcon'
 import { AptosCircle } from '@sushiswap/ui/icons/network/circle/AptosCircle'
-import React, { FC } from 'react'
+import { usePathname, useRouter } from 'next/navigation'
+import React, { FC, Suspense, useCallback } from 'react'
+import { NonStandardChainId, SUPPORTED_NETWORKS } from 'src/config'
+import { replaceNetworkSlug } from 'src/lib/network'
+import { HeaderNetworkSelector } from 'src/lib/wagmi/components/header-network-selector'
 import { SidebarToggle, useSidebar } from 'src/ui/sidebar'
+import { ChainId } from 'sushi/chain'
 import { headerElements } from './_common/header-elements'
 import { UserProfile } from './_common/ui/user-profile/user-profile'
 
@@ -16,6 +25,16 @@ export const Header: FC = () => {
   const { connected } = useWallet()
 
   const { isOpen } = useSidebar()
+
+  const { push } = useRouter()
+  const pathname = usePathname()
+
+  const onSwitchNetwork = useCallback(
+    (chainId: ChainId) => {
+      push(replaceNetworkSlug(pathname, chainId), { scroll: false })
+    },
+    [pathname, push],
+  )
 
   return (
     <div className="flex z-20">
@@ -53,7 +72,17 @@ export const Header: FC = () => {
         className="!pl-0 lg:!pl-4"
         hideSushiDropdown
         leftElements={headerElements}
-        rightElement={<UserProfile />}
+        rightElement={
+          <Suspense>
+            <HeaderNetworkSelector
+              onChange={onSwitchNetwork}
+              networks={SUPPORTED_NETWORKS}
+              selectedNetwork={NonStandardChainId.APTOS}
+              className="flex lg:hidden"
+            />
+            <UserProfile />
+          </Suspense>
+        }
       />
     </div>
   )

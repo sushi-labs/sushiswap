@@ -1,11 +1,9 @@
-import { PoolChainIds, isPoolChainId } from '@sushiswap/graph-client/data-api'
-import { NonStandardChainId } from 'src/config'
+import { isPoolChainId } from '@sushiswap/graph-client/data-api'
+import { POOL_SUPPORTED_NETWORKS } from 'src/config'
 import { SidebarContainer, SidebarProvider } from 'src/ui/sidebar'
 import { ChainId } from 'sushi/chain'
 import { Header } from '../header'
 import notFound from '../not-found'
-
-const sidebarNetworks = [...PoolChainIds, NonStandardChainId.APTOS] as const
 
 export default function PoolLayout({
   children,
@@ -21,7 +19,7 @@ export default function PoolLayout({
       <Header />
       <SidebarContainer
         shiftContent
-        supportedNetworks={sidebarNetworks}
+        supportedNetworks={POOL_SUPPORTED_NETWORKS}
         unsupportedNetworkHref={'/ethereum/explore/pools'}
       >
         <main className="flex flex-col h-full flex-1">{children}</main>
