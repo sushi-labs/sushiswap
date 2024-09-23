@@ -248,7 +248,7 @@ export const V3FeesTable: FC<{ pools: V3BasePool[]; chainId: ChainId }> = ({
       loading={!pools}
       columns={COLUMNS}
       data={data}
-      linkFormatter={(row) => Chain.from(chainId).getAccountUrl(row.address)}
+      linkFormatter={(row) => Chain.from(chainId)!.getAccountUrl(row.address)}
     />
   )
 }

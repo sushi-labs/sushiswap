@@ -35,6 +35,10 @@ test.beforeEach(async ({ page }) => {
   await switchNetwork(page, srcChainId)
 })
 
+// test.afterEach(async ({ page }) => {
+//   await page.unrouteAll({ behavior: 'ignoreErrors' })
+// })
+
 test('Bridge Native to Native', async ({ page }) => {
   test.slow()
   await xswap(

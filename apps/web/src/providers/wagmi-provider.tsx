@@ -11,8 +11,10 @@ import { useIsMounted } from '@sushiswap/hooks'
 import { useTheme } from 'next-themes'
 import { type FC, type ReactNode, useMemo } from 'react'
 import { useEnabledCookies } from 'src/app/_common/cookies/use-enabled-cookies'
+import { WagmiSentry } from 'src/lib/wagmi/components/wagmi-sentry'
+import { WagmiStoreVersionCheck } from 'src/lib/wagmi/components/wagmi-store-version-check'
 import { getWagmiConfig, getWagmiInitialState } from 'src/lib/wagmi/config'
-import { WagmiProvider } from 'wagmi'
+import { WagmiProvider as _WagmiProvider } from 'wagmi'
 
 const darkTheme: Theme = {
   ...rainbowDarkTheme({
@@ -54,7 +56,7 @@ const Disclaimer: DisclaimerComponent = ({ Text, Link }) => (
   </Text>
 )
 
-export const WagmiConfig: FC<{
+export const WagmiProvider: FC<{
   children: ReactNode
   cookie?: string | null
 }> = ({ children, cookie }) => {
@@ -76,7 +78,7 @@ export const WagmiConfig: FC<{
   }, [resolvedTheme, isMounted])
 
   return (
-    <WagmiProvider
+    <_WagmiProvider
       config={getWagmiConfig({
         useCookies: functionalCookiesEnabled,
       })}
@@ -88,9 +90,11 @@ export const WagmiConfig: FC<{
           theme={rainbowKitTheme}
           appInfo={{ disclaimer: Disclaimer }}
         >
-          {children}
+          <WagmiSentry>
+            <WagmiStoreVersionCheck>{children}</WagmiStoreVersionCheck>
+          </WagmiSentry>
         </RainbowKitProvider>
       </div>
-    </WagmiProvider>
+    </_WagmiProvider>
   )
 }

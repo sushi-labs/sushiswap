@@ -3,9 +3,9 @@
 import '@rainbow-me/rainbowkit/styles.css'
 
 import { BaseProviders, OnramperProvider } from '@sushiswap/ui'
-import { WagmiStoreVersionCheck } from 'src/lib/wagmi/components/wagmi-store-version-check'
+
 import { QueryClientProvider } from '../../providers/query-client-provider'
-import { WagmiConfig } from '../../providers/wagmi-provider'
+import { WagmiProvider } from '../../providers/wagmi-provider'
 import { PriceProvider } from './_common/ui/price-provider/price-provider/price-provider'
 
 export function Providers({
@@ -16,11 +16,9 @@ export function Providers({
     <BaseProviders>
       <OnramperProvider>
         <QueryClientProvider>
-          <WagmiConfig cookie={cookie}>
-            <WagmiStoreVersionCheck>
-              <PriceProvider>{children}</PriceProvider>
-            </WagmiStoreVersionCheck>
-          </WagmiConfig>
+          <WagmiProvider cookie={cookie}>
+            <PriceProvider>{children}</PriceProvider>
+          </WagmiProvider>
         </QueryClientProvider>
       </OnramperProvider>
     </BaseProviders>

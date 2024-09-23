@@ -19,7 +19,7 @@ export const CurrencyIconList: FC<CurrencyIconList> = ({
           if (isValidElement(child)) {
             return (
               <div
-                className="rounded-full inline-flex z-10"
+                className="rounded-full inline-flex z-10 border-2 ring-gray-50 dark:ring-slate-950"
                 style={{ marginLeft: index > 0 ? -iconWidth / 3 : 0 }}
               >
                 {cloneElement(child, {

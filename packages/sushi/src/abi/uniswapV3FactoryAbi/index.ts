@@ -1,7 +1,0 @@
-export * from './uniswapV3FactoryAbi_createPool.js'
-export * from './uniswapV3FactoryAbi_enableFeeAmount.js'
-export * from './uniswapV3FactoryAbi_feeAmountTickSpacing.js'
-export * from './uniswapV3FactoryAbi_getPool.js'
-export * from './uniswapV3FactoryAbi_owner.js'
-export * from './uniswapV3FactoryAbi_parameters.js'
-export * from './uniswapV3FactoryAbi_setOwner.js'

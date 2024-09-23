@@ -98,6 +98,10 @@ test.beforeEach(async ({ page, next }) => {
   })
 })
 
+// test.afterEach(async ({ page }) => {
+//   await page.unrouteAll({ behavior: 'ignoreErrors' })
+// })
+
 // Tests will only work for polygon atm
 test.describe('V3', () => {
   test.skip(!isSushiSwapV3ChainId(chainId))

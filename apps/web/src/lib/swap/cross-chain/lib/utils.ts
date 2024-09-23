@@ -1,5 +1,4 @@
-import { BigintIsh } from 'sushi/math'
-import { getBigInt } from 'sushi/tines'
+import { BigintIsh, getBigInt } from 'sushi/math'
 
 export const applySlippage = (
   amount: BigintIsh,

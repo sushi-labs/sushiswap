@@ -25,6 +25,7 @@ import { DropzoneOptions, useDropzone } from 'react-dropzone'
 import { useForm } from 'react-hook-form'
 import { useApplyForTokenList } from 'src/lib/hooks/react-query'
 import { Chain, ChainId } from 'sushi/chain'
+import { type Address, isAddress } from 'viem'
 
 import { useTokenWithCache } from 'src/lib/wagmi/hooks/tokens/useTokenWithCache'
 import { SUPPORTED_CHAIN_IDS } from '../../config'
@@ -53,8 +54,9 @@ export default function Partner() {
   ])
 
   const { data: token, isError: isTokenError } = useTokenWithCache({
-    address: tokenAddress,
+    address: tokenAddress as Address,
     chainId,
+    enabled: isAddress(tokenAddress, { strict: false }),
   })
   const { mutate, isPending, data, status } = useApplyForTokenList()
 

@@ -1,7 +1,7 @@
 {
   "$schema": "https://turbo.build/schema.json",
-  "globalEnv": [],
-  "globalPassThroughEnv": [],
+  "globalEnv": ["NODE_ENV"],
+  "globalPassThroughEnv": ["DISPLAY", "NODE_OPTIONS"],
   "globalDependencies": [".npmrc", ".nvmrc", "tsconfig.json"],
   "ui": "stream",
   "tasks": {
@@ -84,7 +84,8 @@
         "STRAPI_API_URL",
         "VERCEL_ENV",
         "SENTRY_DSN",
-        "SENTRY_ENVIRONMENT"
+        "SENTRY_ENVIRONMENT",
+        "SENTRY_AUTH_TOKEN"
       ],
       "cache": false,
       "persistent": true

@@ -19,7 +19,7 @@
     "class-variance-authority": "0.7.0",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "sushi": "workspace:*"
+    "sushi": "4.0.2"
   },
   "devDependencies": {
     "@storybook/addon-a11y": "7.4.6",

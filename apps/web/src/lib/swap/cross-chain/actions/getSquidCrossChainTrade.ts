@@ -14,8 +14,7 @@ import {
   isSquidAdapterChainId,
 } from 'sushi/config'
 import { axlUSDC } from 'sushi/currency'
-import { RouterLiquiditySource } from 'sushi/router'
-import { RouteStatus } from 'sushi/tines'
+import { RouteStatus, RouterLiquiditySource } from 'sushi/router'
 import { Address, Hex, encodeFunctionData, erc20Abi, zeroAddress } from 'viem'
 import {
   SushiXSwap2Adapter,
