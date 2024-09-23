@@ -24,11 +24,24 @@ const queryClientConfig = {
   }),
 }
 
-export const client = new QueryClient(queryClientConfig)
+let clientQueryClientSingleton: QueryClient | undefined = undefined
+const getQueryClient = () => {
+  if (typeof window === 'undefined') {
+    return new QueryClient(queryClientConfig)
+  }
+
+  if (!clientQueryClientSingleton) {
+    clientQueryClientSingleton = new QueryClient(queryClientConfig)
+  }
+
+  return clientQueryClientSingleton
+}
 
 export const QueryClientProvider: FC<{ children: ReactNode }> = ({
   children,
 }) => {
+  const client = getQueryClient()
+
   return (
     <_QueryClientProvider client={client}>
       {children}

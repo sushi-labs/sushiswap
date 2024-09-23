@@ -1,4 +1,4 @@
-import { HotJar, classNames } from '@sushiswap/ui'
+import { classNames } from '@sushiswap/ui'
 import React from 'react'
 import { QueryClientProvider } from 'src/providers/query-client-provider'
 import { WagmiProvider } from 'src/providers/wagmi-provider'
@@ -17,7 +17,6 @@ export default function LandingLayout({
             <Header />
             <div className="flex flex-col flex-1">{children}</div>
           </div>
-          <HotJar />
         </PriceProvider>
       </WagmiProvider>
     </QueryClientProvider>

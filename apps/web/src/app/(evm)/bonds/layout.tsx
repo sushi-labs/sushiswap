@@ -1,5 +1,3 @@
-import { HotJar } from '@sushiswap/ui'
-
 import { Header } from './header'
 import { Providers } from './providers'
 
@@ -16,7 +14,6 @@ export default function BondsLayout({
         <Header />
         <div className="flex flex-col flex-1">{children}</div>
       </Providers>
-      <HotJar />
     </>
   )
 }

@@ -1,5 +1,3 @@
-import { HotJar } from '@sushiswap/ui'
-
 import { Providers } from './providers'
 
 export const metadata = {
@@ -16,7 +14,6 @@ export default function SwapLayout({
       <Providers>
         <div className="lg:p-4 mt-16 mb-[86px]">{children}</div>
       </Providers>
-      <HotJar />
     </>
   )
 }
