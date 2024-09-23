@@ -144,6 +144,7 @@ export function TokenSelectorStates({
             chainId={chainId}
             onSelect={onSelect}
             selected={selected}
+            includeNative={includeNative}
           />
         ) : null}
 
