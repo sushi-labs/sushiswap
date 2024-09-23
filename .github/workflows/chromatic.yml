@@ -1,4 +1,4 @@
-name: 'Chromatic'
+name: Chromatic
 
 on:
   pull_request:
@@ -14,9 +14,9 @@ jobs:
   publish:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
-          submodules: true
+          submodules: 'recursive'
           fetch-depth: 0
       - name: Install dependencies
         uses: ./.github/actions/install

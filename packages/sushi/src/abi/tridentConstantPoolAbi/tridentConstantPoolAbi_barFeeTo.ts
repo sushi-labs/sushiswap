@@ -1,9 +1,0 @@
-export const tridentConstantPoolAbi_barFeeTo = [
-  {
-    inputs: [],
-    name: 'barFeeTo',
-    outputs: [{ internalType: 'address', name: '', type: 'address' }],
-    stateMutability: 'view',
-    type: 'function',
-  },
-] as const

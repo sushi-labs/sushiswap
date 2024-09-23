@@ -32,12 +32,11 @@
     "@wagmi/core": "2.13.5",
     "drizzle-orm": "^0.29.5",
     "postgres": "^3.4.3",
-    "sushi": "workspace:*",
+    "sushi": "4.0.2",
     "viem": "2.21.4",
     "zod": "3.23.8"
   },
   "devDependencies": {
-    "@sushiswap/jest-config": "workspace:*",
     "@tsconfig/esm": "1.0.4",
     "@tsconfig/strictest": "2.0.2",
     "@types/node": "20",

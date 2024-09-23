@@ -1,7 +1,0 @@
-export * from './sushiV3FactoryAbi_createPool.js'
-export * from './sushiV3FactoryAbi_enableFeeAmount.js'
-export * from './sushiV3FactoryAbi_feeAmountTickSpacing.js'
-export * from './sushiV3FactoryAbi_getPool.js'
-export * from './sushiV3FactoryAbi_owner.js'
-export * from './sushiV3FactoryAbi_parameters.js'
-export * from './sushiV3FactoryAbi_setOwner.js'
