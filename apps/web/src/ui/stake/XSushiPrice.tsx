@@ -45,7 +45,7 @@ export const XSushiPrice = ({
   })
 
   const price = useMemo(() => {
-    const _sushiPrice = prices?.get(SUSHI_ADDRESS[ChainId.ETHEREUM])
+    const _sushiPrice = prices?.getFraction(SUSHI_ADDRESS[ChainId.ETHEREUM])
 
     const sushiPrice =
       _sushiPrice !== undefined
