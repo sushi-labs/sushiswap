@@ -3,7 +3,7 @@ import { NonStandardChain, NonStandardChainId } from '../config'
 
 export const getNetworkName = (network: ChainId | NonStandardChainId) => {
   return typeof network === 'number'
-    ? Chain.from(network).name
+    ? Chain.from(network)?.name
     : NonStandardChain[network].name
 }
 
