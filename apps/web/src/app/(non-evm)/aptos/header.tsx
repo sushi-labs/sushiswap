@@ -11,13 +11,10 @@ import {
 import { SushiIcon } from '@sushiswap/ui/icons/SushiIcon'
 import { SushiWithTextIcon } from '@sushiswap/ui/icons/SushiWithTextIcon'
 import { AptosCircle } from '@sushiswap/ui/icons/network/circle/AptosCircle'
-import { usePathname, useRouter } from 'next/navigation'
-import React, { FC, Suspense, useCallback } from 'react'
+import React, { FC, Suspense } from 'react'
 import { NonStandardChainId, SUPPORTED_NETWORKS } from 'src/config'
-import { replaceNetworkSlug } from 'src/lib/network'
 import { HeaderNetworkSelector } from 'src/lib/wagmi/components/header-network-selector'
 import { SidebarToggle, useSidebar } from 'src/ui/sidebar'
-import { ChainId } from 'sushi/chain'
 import { headerElements } from './_common/header-elements'
 import { UserProfile } from './_common/ui/user-profile/user-profile'
 
@@ -25,16 +22,6 @@ export const Header: FC = () => {
   const { connected } = useWallet()
 
   const { isOpen } = useSidebar()
-
-  const { push } = useRouter()
-  const pathname = usePathname()
-
-  const onSwitchNetwork = useCallback(
-    (chainId: ChainId) => {
-      push(replaceNetworkSlug(pathname, chainId), { scroll: false })
-    },
-    [pathname, push],
-  )
 
   return (
     <div className="flex z-20">
@@ -75,7 +62,6 @@ export const Header: FC = () => {
         rightElement={
           <Suspense>
             <HeaderNetworkSelector
-              onChange={onSwitchNetwork}
               networks={SUPPORTED_NETWORKS}
               selectedNetwork={NonStandardChainId.APTOS}
               className="flex lg:hidden"

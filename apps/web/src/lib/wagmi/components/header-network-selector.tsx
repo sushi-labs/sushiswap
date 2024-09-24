@@ -15,7 +15,7 @@ import {
 export const HeaderNetworkSelector: FC<{
   networks: readonly (ChainId | NonStandardChainId)[]
   selectedNetwork?: ChainId | NonStandardChainId
-  onChange?(chainId: ChainId): void
+  onChange?(network: ChainId | NonStandardChainId): void
   hideNetworkName?: boolean
   className?: string
 }> = ({
@@ -32,7 +32,7 @@ export const HeaderNetworkSelector: FC<{
     async (el, close) => {
       console.debug('onSwitchNetwork', el)
       try {
-        if (switchChainAsync && chainId !== el) {
+        if (typeof el === 'number' && switchChainAsync && chainId !== el) {
           await switchChainAsync({ chainId: el })
         }
 

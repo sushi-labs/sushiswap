@@ -18,20 +18,19 @@ import {
   NonStandardChainId,
   isNonStandardChainId,
 } from 'src/config'
-import { getNetworkName } from 'src/lib/network'
+import { getNetworkName, replaceNetworkSlug } from 'src/lib/network'
 import { ChainId, isChainId, isNetworkNameKey } from 'sushi/chain'
 
-export type NetworkSelectorOnSelectCallback<T extends number = ChainId> = (
-  chainId: T,
-  close: () => void,
-) => void
+export type NetworkSelectorOnSelectCallback<
+  T extends number | string = ChainId | NonStandardChainId,
+> = (chainId: T, close: () => void) => void
 
 export interface NetworkSelectorProps<
   T extends number | string = ChainId | NonStandardChainId,
 > {
   networks: readonly T[]
   selected: T
-  onSelect: NetworkSelectorOnSelectCallback<Extract<T, number>>
+  onSelect: NetworkSelectorOnSelectCallback<T>
   children: ReactNode
 }
 
@@ -44,23 +43,26 @@ const NetworkSelector = <T extends number | string>({
   const { push } = useRouter()
   const pathname = usePathname()
 
-  const onSelectNonStandardChainId = useCallback(
-    (network: NonStandardChainId) => {
+  const _onSelect = useCallback(
+    (_network: string, close: () => void) => {
+      const network = (isChainId(+_network) ? +_network : _network) as T
       const pathSegments = pathname.split('/')
       if (
         isNetworkNameKey(pathSegments[1]) ||
         isChainId(+pathSegments[1]) ||
         isNonStandardChainId(pathSegments[1])
       ) {
-        pathSegments[1] = network
-        push(pathSegments.join('/'), { scroll: false })
-      } else {
+        push(
+          replaceNetworkSlug(pathname, network as ChainId | NonStandardChainId),
+          { scroll: false },
+        )
+      } else if (isNonStandardChainId(network.toString())) {
         push(`/${network}/swap`, { scroll: false })
       }
 
-      setOpen(false)
+      onSelect(network, close)
     },
-    [push, pathname],
+    [push, pathname, onSelect],
   )
 
   return (
@@ -87,13 +89,7 @@ const NetworkSelector = <T extends number | string>({
                   key={network}
                   onSelect={(value) => {
                     const network = value.split('__')[1]
-                    if (isNonStandardChainId(network)) {
-                      onSelectNonStandardChainId(network)
-                    } else {
-                      onSelect(+network as Extract<T, number>, () =>
-                        setOpen(false),
-                      )
-                    }
+                    _onSelect(network, () => setOpen(false))
                   }}
                 >
                   <div className="flex items-center gap-2">
