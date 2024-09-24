@@ -61,7 +61,7 @@ export async function getV3BasePoolsByToken(
   variables: GetV3BasePoolsByTokens,
   options?: RequestOptions,
 ): Promise<PoolV3<PoolBase>[]> {
-  const url = `https://${SUSHI_DATA_API_HOST}`
+  const url = `${SUSHI_DATA_API_HOST}/graphql`
   const chainId = variables.chainId as ChainId
 
   if (!isSushiSwapV3ChainId(chainId)) {

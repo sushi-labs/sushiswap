@@ -204,7 +204,7 @@ export async function getPortfolioClaimables(
   variables: GetPortfolioClaimables,
   options?: RequestOptions,
 ) {
-  const url = `https://${SUSHI_DATA_API_HOST}`
+  const url = `${SUSHI_DATA_API_HOST}/graphql`
 
   const result = await request(
     { url, document: PortfolioClaimablesQuery, variables },

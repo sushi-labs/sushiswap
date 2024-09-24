@@ -58,7 +58,7 @@ export const Header: FC = () => {
       <Navigation
         className="!pl-0 lg:!pl-4"
         hideSushiDropdown
-        leftElements={headerElements(chainId)}
+        leftElements={headerElements({ chainId })}
         rightElement={<WagmiHeaderComponents networks={SUPPORTED_NETWORKS} />}
       />
     </div>

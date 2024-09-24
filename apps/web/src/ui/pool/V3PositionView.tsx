@@ -2,7 +2,6 @@
 
 import { CogIcon } from '@heroicons/react-v1/outline'
 import { SlippageToleranceStorageKey, TTLStorageKey } from '@sushiswap/hooks'
-import { useAngleRewards } from '@sushiswap/react-query'
 import {
   Card,
   CardContent,
@@ -34,6 +33,7 @@ import { Button } from '@sushiswap/ui'
 import { FormattedNumber } from '@sushiswap/ui'
 import { SkeletonText } from '@sushiswap/ui'
 import { FC, useMemo, useState } from 'react'
+import { useAngleRewards } from 'src/lib/hooks/react-query'
 import { useConcentratedPositionInfo } from 'src/lib/wagmi/hooks/positions/hooks/useConcentratedPositionInfo'
 import { useConcentratedPositionOwner } from 'src/lib/wagmi/hooks/positions/hooks/useConcentratedPositionOwner'
 import { useConcentratedLiquidityPositionsFromTokenId } from 'src/lib/wagmi/hooks/positions/hooks/useConcentratedPositionsFromTokenId'

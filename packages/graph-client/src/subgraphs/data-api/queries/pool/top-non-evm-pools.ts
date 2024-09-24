@@ -46,7 +46,7 @@ export async function getTopNonEvmPools(
   variables: GetTopNonEvmPools,
   options?: RequestOptions,
 ) {
-  const url = `https://${SUSHI_DATA_API_HOST}`
+  const url = `${SUSHI_DATA_API_HOST}/graphql`
   try {
     const result = await request(
       {

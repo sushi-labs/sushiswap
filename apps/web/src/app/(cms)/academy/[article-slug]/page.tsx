@@ -72,7 +72,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function Page({ params }: Props) {
   let article
   let moreArticles
-  let body
+  let body: string
 
   try {
     const articleP = getAcademyArticles({
@@ -86,7 +86,7 @@ export default async function Page({ params }: Props) {
     })
 
     article = (await articleP).articles[0]
-    body = await getGhostBody(article.ghostSlug)
+    body = await getGhostBody(article.ghostSlug).then(({ html }) => html)
     moreArticles = (await moreArticlesP).articles
   } catch {
     return notFound()

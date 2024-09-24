@@ -1,5 +1,8 @@
 import fs from 'fs'
-import { type UseTradeParams, tradeValidator02 } from '@sushiswap/react-query'
+import {
+  type UseTradeParams,
+  tradeValidator02,
+} from 'src/lib/hooks/react-query'
 import { ChainId } from 'sushi/chain'
 import {
   API_BASE_URL,

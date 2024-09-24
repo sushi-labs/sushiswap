@@ -1,6 +1,5 @@
 'use client'
 
-import { useTrade as useApiTrade } from '@sushiswap/react-query'
 import { useLogger } from 'next-axiom'
 import {
   useParams,
@@ -17,6 +16,7 @@ import {
   useMemo,
   useState,
 } from 'react'
+import { useTrade as useApiTrade } from 'src/lib/hooks/react-query'
 import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
 import { useTokenWithCache } from 'src/lib/wagmi/hooks/tokens/useTokenWithCache'
 import { ChainId } from 'sushi/chain'

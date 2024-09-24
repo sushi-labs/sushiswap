@@ -1,6 +1,6 @@
 import { Page, expect } from '@playwright/test'
-import { NativeAddress } from '@sushiswap/react-query'
 import { NextFixture } from 'next/experimental/testmode/playwright'
+import { NativeAddress } from 'src/lib/hooks/react-query'
 import {
   SUSHISWAP_V2_FACTORY_ADDRESS,
   SUSHISWAP_V3_FACTORY_ADDRESS,

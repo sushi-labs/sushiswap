@@ -48,8 +48,10 @@ export default function TabsLayout({
           </LinkInternal>
         </div>
       </Container>
-      <section className="flex flex-col flex-1 pb-10 h-full">
-        {children}
+      <section className="flex flex-col flex-1">
+        <div className="bg-gray-50 dark:bg-white/[0.02] border-t border-accent pt-4 pb-10 h-full">
+          {children}
+        </div>
       </section>
     </>
   )

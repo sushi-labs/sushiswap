@@ -46,17 +46,9 @@ function processVideos(html: string) {
 export async function getGhostBody(slug: string) {
   const ghostClient = getGhostClient()
 
-  let html
+  const { html, ...rest } = await ghostClient.posts.read({
+    slug,
+  })
 
-  try {
-    ;({ html } = await ghostClient.posts.read({
-      slug,
-    }))
-  } catch {}
-
-  if (!html) {
-    return ''
-  }
-
-  return processVideos(html)
+  return { html: html ? processVideos(html) : '', ...rest }
 }

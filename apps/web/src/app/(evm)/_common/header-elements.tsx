@@ -15,7 +15,15 @@ import {
 import { ChainId, ChainKey } from 'sushi/chain'
 import { isAggregatorOnlyChainId } from 'sushi/config'
 
-export const headerElements = (chainId?: ChainId): NavigationElement[] => [
+interface HeaderElements {
+  chainId?: ChainId
+  includeOnramper?: boolean
+}
+
+export const headerElements = ({
+  chainId,
+  includeOnramper = true,
+}: HeaderElements): NavigationElement[] => [
   {
     title: 'Explore',
     items: EXPLORE_NAVIGATION_LINKS(chainId),
@@ -34,11 +42,13 @@ export const headerElements = (chainId?: ChainId): NavigationElement[] => [
             <NavigationListItem title={'Swap'} href={'/swap'}>
               The easiest way to trade.
             </NavigationListItem>
-            <OnramperButton>
-              <NavigationListItem title={'Buy Crypto'}>
-                Onramp with fiat.
-              </NavigationListItem>
-            </OnramperButton>
+            {includeOnramper ? (
+              <OnramperButton>
+                <NavigationListItem title={'Buy Crypto'}>
+                  Onramp with fiat.
+                </NavigationListItem>
+              </OnramperButton>
+            ) : null}
           </ul>
         </NavigationMenuContent>
       </NavigationMenuItem>

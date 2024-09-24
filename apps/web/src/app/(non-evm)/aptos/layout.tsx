@@ -1,4 +1,3 @@
-import { HotJar } from '@sushiswap/ui'
 import type { Metadata } from 'next'
 import React from 'react'
 import { Providers } from './providers'
@@ -16,11 +15,8 @@ export default function AptosLayout({
   children,
 }: { children: React.ReactNode }) {
   return (
-    <>
-      <Providers>
-        <div className="fixed flex flex-col h-full w-full">{children}</div>
-      </Providers>
-      <HotJar />
-    </>
+    <Providers>
+      <div className="fixed flex flex-col h-full w-full">{children}</div>
+    </Providers>
   )
 }

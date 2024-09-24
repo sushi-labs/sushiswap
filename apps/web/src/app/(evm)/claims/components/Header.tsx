@@ -11,7 +11,7 @@ export const Header: FC = () => {
   const chainId = useChainId()
   return (
     <Navigation
-      leftElements={headerElements(chainId)}
+      leftElements={headerElements({ chainId })}
       rightElement={<WagmiHeaderComponents networks={SUPPORTED_NETWORKS} />}
     />
   )

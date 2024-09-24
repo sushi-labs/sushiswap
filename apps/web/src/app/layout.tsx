@@ -4,6 +4,7 @@ import { ToastContainer } from '@sushiswap/notifications'
 import type { Metadata } from 'next'
 import { Inter, Roboto_Mono } from 'next/font/google'
 import React from 'react'
+import { CookieDialogContainer } from './_common/cookies/cookie-dialog-container'
 import { Trackers } from './trackers'
 
 const inter = Inter({
@@ -58,6 +59,7 @@ export default function RootLayout({
       <link rel="shortcut icon" href="/favicon.ico?v=1" />
       <body className="h-screen">
         <ToastContainer />
+        <CookieDialogContainer />
         {children}
         <Trackers />
       </body>

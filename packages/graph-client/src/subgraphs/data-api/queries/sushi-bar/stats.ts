@@ -30,10 +30,15 @@ export async function getSushiBarStats(
   variables: GetSushiBarStats,
   options?: RequestOptions,
 ) {
-  const url = `https://${SUSHI_DATA_API_HOST}`
+  const url = `${SUSHI_DATA_API_HOST}/graphql`
 
   const result = await request(
-    { url, document: SushiBarStats, variables, requestHeaders: SUSHI_REQUEST_HEADERS },
+    {
+      url,
+      document: SushiBarStats,
+      variables,
+      requestHeaders: SUSHI_REQUEST_HEADERS,
+    },
     options,
   )
   if (result) {

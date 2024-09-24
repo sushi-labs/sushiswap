@@ -1,5 +1,4 @@
 import { Pool } from '@sushiswap/graph-client/data-api'
-import { AngleRewardsPool } from '@sushiswap/react-query'
 import { PoolHasSteerVaults } from '@sushiswap/steer-sdk'
 import {
   Badge,
@@ -17,6 +16,7 @@ import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import { ColumnDef } from '@tanstack/react-table'
 import formatDistance from 'date-fns/formatDistance'
 import React, { useMemo } from 'react'
+import { AngleRewardsPool } from 'src/lib/hooks/react-query'
 import { ConcentratedLiquidityPositionWithV3Pool } from 'src/lib/wagmi/hooks/positions/types'
 import type {
   MaybeNestedPool,

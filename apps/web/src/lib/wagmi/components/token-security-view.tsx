@@ -2,15 +2,15 @@ import {
   ExclamationTriangleIcon,
   HandThumbUpIcon,
 } from '@heroicons/react/24/solid'
+import { Button, Explainer, List, SelectIcon, classNames } from '@sushiswap/ui'
+import { GoPlusLabsIcon } from '@sushiswap/ui/icons/GoPlusLabsIcon'
+import { useMemo, useState } from 'react'
 import {
   TokenSecurity,
   TokenSecurityLabel,
   TokenSecurityMessage,
   TokenSecurityResponse,
-} from '@sushiswap/react-query'
-import { Button, Explainer, List, SelectIcon, classNames } from '@sushiswap/ui'
-import { GoPlusLabsIcon } from '@sushiswap/ui/icons/GoPlusLabsIcon'
-import { useMemo, useState } from 'react'
+} from 'src/lib/hooks/react-query'
 import { Token } from 'sushi/currency'
 
 const isTokenSecurityIssue = {
