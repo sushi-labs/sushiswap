@@ -181,6 +181,7 @@ import {
       headers: {
         Accept: 'application/octet-stream',
       },
+      cache: 'no-store',
     })
 
     if (!response.ok) {
@@ -204,7 +205,7 @@ import {
 
     return {
       data: priceMap,
-      lastModified: Number(response.headers.get('Last-Modified')!),
+      lastModified: Number(response.headers.get('Last-Updated')!),
     }
   }
 
