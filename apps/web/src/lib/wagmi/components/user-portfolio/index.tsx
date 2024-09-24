@@ -82,7 +82,7 @@ export const UserPortfolio = () => {
   return (
     <ResponsivePortfolioWrapper
       trigger={
-        <Button variant="secondary" className="overflow-hidden">
+        <Button variant="secondary">
           {avatar ? (
             <Image
               alt="ens-avatar"
@@ -95,9 +95,7 @@ export const UserPortfolio = () => {
           ) : (
             <JazzIcon diameter={20} address={address} />
           )}
-          <span className="hidden sm:block overflow-x-auto">
-            {shortenAddress(address)}
-          </span>
+          <span className="hidden sm:block">{shortenAddress(address)}</span>
         </Button>
       }
       content={content}
