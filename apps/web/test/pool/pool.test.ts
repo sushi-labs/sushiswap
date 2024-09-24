@@ -123,7 +123,7 @@ test.describe('V3', () => {
 
     await poolPage.goTo(url)
     await poolPage.connect()
-    await poolPage.switchNetwork(chainId)
+    await poolPage.selectNetwork(chainId)
 
     await poolPage.createV3Pool({
       token0: NATIVE_TOKEN,
@@ -167,7 +167,7 @@ test.describe('V2', () => {
 
     await poolPage.goTo(url)
     await poolPage.connect()
-    await poolPage.switchNetwork(chainId)
+    await poolPage.selectNetwork(chainId)
     await poolPage.createV2Pool({
       token0: NATIVE_TOKEN,
       token1: FAKE_TOKEN,
