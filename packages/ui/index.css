@@ -150,3 +150,26 @@ html[class='dark'] *.scroll::-webkit-scrollbar-thumb {
     @apply appearance-none w-6 h-6 bg-blue rounded-full
   }
 }
+
+.link {
+  fill: none;
+  stroke: #000;
+  stroke-opacity: 0.2;
+}
+.node rect {
+  fill: #000;
+  stroke: #fff;
+}
+.node text {
+  fill: #fff;
+  font: 10px sans-serif;
+}
+
+.sankey-link {
+  stroke-opacity: 0.9;
+  transition: stroke-opacity 0.2s ease;
+}
+
+.sankey-link:hover {
+  stroke-opacity: 0.6;
+}

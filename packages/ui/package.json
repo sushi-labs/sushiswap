@@ -87,6 +87,8 @@
     "class-variance-authority": "0.7.0",
     "classnames": "2.3.2",
     "cmdk": "0.2.0",
+    "d3": "7.8.4",
+    "d3-sankey": "^0.12.3",
     "date-fns": "2.30.0",
     "lucide-react": "0.258.0",
     "nanoid": "4.0.0",
@@ -105,6 +107,7 @@
   },
   "devDependencies": {
     "@sushiswap/typescript-config": "workspace:*",
+    "@types/d3-sankey": "^0.12.4",
     "@types/gtag.js": "0.0.19",
     "@types/react": "18.2.14",
     "@types/react-datepicker": "4.8.0",
