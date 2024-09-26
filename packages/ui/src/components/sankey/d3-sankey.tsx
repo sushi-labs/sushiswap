@@ -6,6 +6,8 @@ import { Currency, Token, Native } from "sushi/currency";
 import { ChainId } from "sushi/chain";
 import { CustomLink, CustomNode, Link, Node } from './sankey-diagram'
 import { Icon } from "../currency/Icon";
+import { SankeyLinkTooltip, ToolTipCoordinates, LinkTooltipContent } from "./link-tooltip";
+import { DotGridPatternDefs } from "./dot-grid";
 
 interface D3SankeyProps {
   chainId: ChainId;
@@ -21,24 +23,14 @@ interface D3SankeyProps {
   };
 }
 
-interface TooltipContent {
-  provider: string;
-  target: string;
-  source: string;
-  share: string;
-}
 
-interface ToolTipCoordinates {
-  x: number;
-  y: number;
-}
 
 const MARGIN_X = 50;
 const MARGIN_Y = 50;
 
 export const D3Sankey = ({ chainId, data }: D3SankeyProps) => {
   const [isTooltipVisible, setIsTooltipVisible] = useState<boolean>(false);
-  const [tooltipContent, setTooltipContent] = useState<TooltipContent>({
+  const [tooltipContent, setTooltipContent] = useState<LinkTooltipContent>({
     provider: "",
     target: "",
     source: "",
@@ -208,58 +200,11 @@ export const D3Sankey = ({ chainId, data }: D3SankeyProps) => {
     }
   }, [isTooltipVisible, toolTipCoordinates]);
 
-  const DotGridPatternDefs = memo(() => {
-    return (
-      <defs>
-        <pattern
-          id='bgDotPattern'
-          patternUnits='userSpaceOnUse'
-          width='8'
-          height='8'
-        >
-          <circle
-            cx='4'
-            cy='4'
-            r='1'
-            fill='rgba(0,0,0,0.08)'
-          />
-        </pattern>
-      </defs>
-    );
-  });
-  DotGridPatternDefs.displayName = "DotGridPatternDefs";
+
 
   return (
     <div className='relative flex items-center justify-center w-full'>
-      {isTooltipVisible && (
-        <div
-          ref={tooltipRef}
-          role='tooltip'
-          className='fixed font-semibold flex flex-col gap-y-2 w-48 sm:w-56 bg-white border border-gray-300 p-2 rounded-lg shadow-lg text-[.625rem] sm:text-sm z-50 text-[#616161]'
-          style={{ left: `${adjustedPosition.x}px`, top: `${adjustedPosition.y}px` }}
-        >
-          <section className='flex items-center justify-between'>
-            <div className='flex items-center gap-x-2'>
-              <Image
-                src={getImageForSource(tooltipContent.provider)}
-                alt={`${tooltipContent.provider}-icon`}
-                className='overflow-hidden rounded-sm '
-                width={21}
-                height={21}
-              />
-
-              {tooltipContent.provider}
-            </div>
-            <span>{tooltipContent.share}%</span>
-          </section>
-          <section className='flex items-center justify-between text-[#919191]'>
-            <p>Trading pair</p>
-            <span>
-              {tooltipContent.source}/{tooltipContent.target}
-            </span>
-          </section>
-        </div>
-      )}
+      <SankeyLinkTooltip ref={tooltipRef} isVisible={isTooltipVisible} tooltipContent={tooltipContent} position={adjustedPosition} />
       <svg
         width={"100%"}
         height={"100%"}
