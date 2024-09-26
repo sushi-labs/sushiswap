@@ -2,12 +2,10 @@
 
 import { useEffect, useState } from "react";
 import { D3Sankey } from "./d3-sankey";
-import { getColorForSource } from "./utils";
 import { roundToNearestHalf } from "./utils";
 import { SankeyLink, SankeyNode } from "d3-sankey";
 import { ChainId } from "sushi/chain";
 import { Legend } from "./legend";
-import { useTheme } from "next-themes";
 
 interface Token {
   address: string;

@@ -1,6 +1,5 @@
 import { forwardRef } from 'react';
 import Image from 'next/image';
-import React from 'react';
 import { getImageForSource } from './utils'
 
 export interface LinkTooltipContent {

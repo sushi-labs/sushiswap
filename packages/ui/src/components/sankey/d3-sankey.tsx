@@ -1,7 +1,6 @@
 import { sankey, sankeyCenter, SankeyLinkMinimal, SankeyNode, SankeyNodeMinimal } from "d3-sankey";
-import { memo, useEffect, useMemo, useRef, useState } from "react";
-import Image from "next/image";
-import { getColorForSource, getImageForSource, roundToNearestHalf } from './utils'
+import { useEffect, useMemo, useRef, useState } from "react";
+import { getColorForSource, roundToNearestHalf } from './utils'
 import { Currency, Token, Native } from "sushi/currency";
 import { ChainId } from "sushi/chain";
 import { CustomLink, CustomNode, Link, Node } from './sankey-diagram'
