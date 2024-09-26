@@ -12,7 +12,7 @@ export const Legend = ({ liquidityProviders }: { liquidityProviders: string[] })
             className='w-3 h-3 md:w-5 md:h-5 md:rounded-md rounded-[.25rem]'
             style={{ backgroundColor: getColorForSource(lp) }}
           ></div>
-          <span className='ml-2 text-[.625rem] md:text-sm text-gray-700'>{lp}</span>
+          <span className='ml-2 text-[.625rem] md:text-sm text-muted-foreground'>{lp}</span>
         </div>
       ))}
     </div>

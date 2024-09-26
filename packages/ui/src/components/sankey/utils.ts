@@ -6,7 +6,6 @@ export interface LiquiditySourceGradientValueType {
   end: string;
 }
 
-// TODO: sushi team will provide a system for colors
 const color1 = "#DB40E9";
 const color2 = "#9A4EFC";
 const color3 = "#53CADA";
@@ -21,6 +20,7 @@ const color11 = "#514B78";
 const color12 = "#5E666F";
 const color13 = "#c2c2c2";
 
+// default liquidity provider color pool
 const colorPool = [
   color1,
   color2,
@@ -36,9 +36,9 @@ const colorPool = [
   color12,
 ];
 
-const sourceGradients: Map<string, string> = new Map();
+const sourceColor: Map<string, string> = new Map();
 
-// TODO: sushi team will provide a system for images
+// TODO: sushi team will provide a system for liquidity provider images
 export const RouteSourceToImageName: Record<string, string> = {
   "0x_RFQ": "0x",
   AerodromeV2: "aerodrome",
@@ -91,7 +91,7 @@ export const RouteSourceToImageName: Record<string, string> = {
   WOOFiV2: "woofi",
 };
 
-// TODO: sushi team will provide a system for colors
+// TODO: sushi team will update liquidity provider colors if needed
 export const SourceColors: Record<string, string> = {
   "0x_RFQ": color11,
   AerodromeV2: color2,
@@ -145,22 +145,24 @@ export const SourceColors: Record<string, string> = {
   Wrap: color13,
 };
 
-// TODO: sushi team will provide a system for colors
+// attempts to get a color for a liquidity provider from default pool
 export function getColorForSource(liquiditySource: string): string {
   if (liquiditySource in SourceColors) {
     return SourceColors[liquiditySource];
   }
-  if (sourceGradients.has(liquiditySource)) {
-    return sourceGradients.get(liquiditySource)!;
+  if (sourceColor.has(liquiditySource)) {
+    return sourceColor.get(liquiditySource)!;
   }
+
+  // if not found in default pool, it generates a new color and sets it in the map
   const index = Array.from(nanoid(2)).reduce((acc, char) => acc + char.charCodeAt(0), 0) % colorPool.length;
-  const newGradient = colorPool[index];
-  sourceGradients.set(liquiditySource, newGradient);
+  const newColor = colorPool[index];
+  sourceColor.set(liquiditySource, newColor);
   
-  return newGradient;
+  return newColor;
 }
 
-// TODO: sushi team will provide a system for images
+// TODO: sushi team will provide a system for liquidity provider images
 export function getImageForSource(liquiditySource: string): string {
   const imageName = RouteSourceToImageName[liquiditySource] ?? "default";
 

@@ -107,12 +107,10 @@ export const D3Sankey = ({ chainId, data }: D3SankeyProps) => {
             y={(node.y0 ?? 0) - padding}
             height={nodeHeight + 2 * padding}
             width={nodeWidth + 9.9 * padding}
-            fill='white'
-            stroke='#ccc'
             fillOpacity={1}
             rx={cornerRadius}
             ry={cornerRadius}
-            className='z-50 drop-shadow-lg'
+            className='z-50 drop-shadow-lg fill-white dark:fill-slate-800 stroke-accent'
           />
           <rect
             fill='transparent'
@@ -134,7 +132,7 @@ export const D3Sankey = ({ chainId, data }: D3SankeyProps) => {
                 height={15}
                 className='rounded-full '
               />
-              <span className='text-xs text-center text-black break-words'>{name}</span>
+              <span className='text-xs text-center break-words text-primary dark:text-white'>{name}</span>
             </div>
           </foreignObject>
         </g>
@@ -156,7 +154,7 @@ export const D3Sankey = ({ chainId, data }: D3SankeyProps) => {
             stroke={color}
             fill='none'
             strokeWidth={link.width}
-            className='cursor-pointer sankey-link'
+            className='cursor-pointer [stroke-opacity:0.9] [transition:stroke-opacity_0.2s_ease] hover:[stroke-opacity:0.6]'
             data-link-index={idx}
             onMouseEnter={() => {
               const roundedSharePercentage = roundToNearestHalf(link.value * 100).toString();

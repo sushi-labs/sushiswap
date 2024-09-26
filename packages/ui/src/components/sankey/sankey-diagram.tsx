@@ -128,7 +128,7 @@ export const SankeyDiagram = ({ swap, chainId }: SankeyDiagramProps) => {
 
   return (
     <div className='flex-col flex justify-center w-[95%]'>
-      <div className='rounded-lg border-2 border-[#E5E5E5] overflow-hidden md:p-3 p-2 w-full'>
+      <div className='w-full p-2 overflow-hidden border-2 rounded-lg border-accent md:p-3'>
         {preparedNodes.length > 0 && preparedLinks.length > 0 && (
           <D3Sankey
             data={{
