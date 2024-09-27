@@ -165,3 +165,15 @@ export const POOL_SUPPORTED_NETWORKS = Array.from(
     ...UNSORTED_POOL_SUPPORTED_NETWORKS,
   ]),
 )
+
+export const TWAP_SUPPORTED_NETWORKS = [
+  ChainId.ARBITRUM,
+  ChainId.BASE,
+  ChainId.ETHEREUM,
+] as const
+
+export type TwapSupportedNetwork = (typeof TWAP_SUPPORTED_NETWORKS)[number]
+export const isTwapSupportedNetwork = (
+  chainId: number,
+): chainId is TwapSupportedNetwork =>
+  TWAP_SUPPORTED_NETWORKS.includes(chainId as TwapSupportedNetwork)
