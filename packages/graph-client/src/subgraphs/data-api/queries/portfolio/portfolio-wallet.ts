@@ -41,7 +41,7 @@ export async function getPortfolioWallet(
   variables: GetPortfolioWallet,
   options?: RequestOptions,
 ) {
-  const url = `https://${SUSHI_DATA_API_HOST}`
+  const url = `${SUSHI_DATA_API_HOST}/graphql`
 
   const result = await request(
     { url, document: PortfolioWalletQuery, variables },

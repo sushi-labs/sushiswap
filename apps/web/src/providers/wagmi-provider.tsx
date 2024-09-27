@@ -10,10 +10,12 @@ import {
 import { useIsMounted } from '@sushiswap/hooks'
 import { useTheme } from 'next-themes'
 import { type FC, type ReactNode, useMemo } from 'react'
+import { useEnabledCookies } from 'src/app/_common/cookies/use-enabled-cookies'
 import { WagmiSentry } from 'src/lib/wagmi/components/wagmi-sentry'
 import { WagmiStoreVersionCheck } from 'src/lib/wagmi/components/wagmi-store-version-check'
-import { getWagmiInitialState, wagmiConfig } from 'src/lib/wagmi/config'
+import { getWagmiConfig, getWagmiInitialState } from 'src/lib/wagmi/config'
 import { WagmiProvider as _WagmiProvider } from 'wagmi'
+
 const darkTheme: Theme = {
   ...rainbowDarkTheme({
     borderRadius: 'medium',
@@ -49,8 +51,8 @@ const lightTheme: Theme = {
 const Disclaimer: DisclaimerComponent = ({ Text, Link }) => (
   <Text>
     By connecting your wallet, you agree to Sushi Labs{"' "}
-    <Link href="/terms-of-service">Terms of Service</Link> and{' '}
-    <Link href="/privacy-policy">Privacy Policy</Link>
+    <Link href="/legal/terms-of-service">Terms of Service</Link> and{' '}
+    <Link href="/legal/privacy-policy">Privacy Policy</Link>
   </Text>
 )
 
@@ -58,7 +60,11 @@ export const WagmiProvider: FC<{
   children: ReactNode
   cookie?: string | null
 }> = ({ children, cookie }) => {
-  const initialState = getWagmiInitialState(cookie)
+  const enabledCookies = useEnabledCookies()
+
+  const functionalCookiesEnabled = !!enabledCookies?.has('functional')
+
+  const initialState = getWagmiInitialState(cookie, functionalCookiesEnabled)
   const isMounted = useIsMounted()
 
   const { resolvedTheme } = useTheme()
@@ -72,7 +78,12 @@ export const WagmiProvider: FC<{
   }, [resolvedTheme, isMounted])
 
   return (
-    <_WagmiProvider config={wagmiConfig} initialState={initialState}>
+    <_WagmiProvider
+      config={getWagmiConfig({
+        useCookies: functionalCookiesEnabled,
+      })}
+      initialState={initialState}
+    >
       <div className="h-full w-full [&>div]:h-full">
         <RainbowKitProvider
           modalSize="compact"

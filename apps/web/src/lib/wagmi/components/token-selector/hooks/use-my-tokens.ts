@@ -3,9 +3,9 @@ import {
   getTokenListBalances,
 } from '@sushiswap/graph-client/data-api'
 import { useCustomTokens } from '@sushiswap/hooks'
-import { NativeAddress } from '@sushiswap/react-query'
 import { useQuery } from '@tanstack/react-query'
 import { useMemo } from 'react'
+import { NativeAddress } from 'src/lib/hooks/react-query'
 import { Amount, Native, Token, Type } from 'sushi/currency'
 import type { Address } from 'viem'
 

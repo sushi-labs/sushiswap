@@ -1,7 +1,6 @@
 'use client'
 
 import { useCustomTokens } from '@sushiswap/hooks'
-import { useTokenSecurity } from '@sushiswap/react-query'
 import {
   Dialog,
   DialogContent,
@@ -16,6 +15,7 @@ import { Currency } from '@sushiswap/ui'
 import { List } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import React, { useCallback, useMemo } from 'react'
+import { useTokenSecurity } from 'src/lib/hooks/react-query'
 import { Chain } from 'sushi/chain'
 import {
   defaultCurrency,

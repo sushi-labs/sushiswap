@@ -92,7 +92,7 @@ export async function getV2Pool(
   variables: GetV2Pool,
   options?: RequestOptions,
 ) {
-  const url = `https://${SUSHI_DATA_API_HOST}`
+  const url = `${SUSHI_DATA_API_HOST}/graphql`
   const chainId = Number(variables.chainId) as ChainId
 
   if (!isSushiSwapV2ChainId(chainId)) {

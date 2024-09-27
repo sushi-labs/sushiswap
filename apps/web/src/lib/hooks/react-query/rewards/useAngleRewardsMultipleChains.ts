@@ -30,10 +30,18 @@ export const useAngleRewardsMultipleChains = ({
         return res
           .map((el, i) => {
             if (isPromiseRejected(el)) return null
+
+            const chainPrices = prices.get(chainIds[i])!
+
             const data = angleRewardsSelect({
               chainId: chainIds[i]!,
               data: el.value[chainIds[i]!],
-              prices: prices.get(chainIds[i]!),
+              prices: {
+                get: (address: Address) =>
+                  +(chainPrices.get(address) || 0)?.toFixed(18),
+                getFraction: (address: Address) => chainPrices.get(address),
+                has: (address: Address) => chainPrices.has(address),
+              },
             })
 
             return data

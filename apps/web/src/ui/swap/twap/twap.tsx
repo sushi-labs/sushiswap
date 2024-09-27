@@ -8,11 +8,6 @@ import {
 import { useConnectModal } from '@rainbow-me/rainbowkit'
 import { useCustomTokens } from '@sushiswap/hooks'
 import {
-  useOtherTokenListsQuery,
-  usePrice,
-  useTokens,
-} from '@sushiswap/react-query'
-import {
   Button,
   Dialog,
   DialogContent,
@@ -26,6 +21,7 @@ import {
 } from '@sushiswap/ui'
 import { useTheme } from 'next-themes'
 import { ReactNode, useCallback, useEffect, useMemo } from 'react'
+import { useOtherTokenListsQuery, useTokens } from 'src/lib/hooks/react-query'
 import { useSortedTokenList } from 'src/lib/wagmi/components/token-selector/hooks/use-sorted-token-list'
 import { ChainId } from 'sushi/chain'
 import { Currency } from 'sushi/currency'
@@ -34,6 +30,7 @@ import { useAccount, useChainId, useSwitchChain } from 'wagmi'
 import { TokenSelector } from 'src/lib/wagmi/components/token-selector/token-selector'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
 import { Address } from 'viem'
+import { usePrice } from '~evm/_common/ui/price-provider/price-provider/use-price'
 import {
   useDerivedStateSimpleSwap,
   useSimpleSwapTrade,
@@ -116,11 +113,10 @@ const usePriceUSD = (address?: Address) => {
 
   const { data: price } = usePrice({
     chainId,
-    enabled: true,
     address,
   })
 
-  return price?.toSignificant(6)
+  return String(price)
 }
 
 const getTokenLogo = (currency: Currency) => {

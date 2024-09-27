@@ -1,4 +1,3 @@
-import { useConcentratedLiquidityPoolStats } from '@sushiswap/react-query'
 import {
   CardContent,
   CardDescription,
@@ -8,6 +7,7 @@ import {
 } from '@sushiswap/ui'
 import { useTheme } from 'next-themes'
 import React, { FC, useCallback, useMemo, useState } from 'react'
+import { useConcentratedLiquidityPoolStats } from 'src/lib/hooks/react-query'
 import { formatUSD } from 'sushi/format'
 import colors from 'tailwindcss/colors'
 

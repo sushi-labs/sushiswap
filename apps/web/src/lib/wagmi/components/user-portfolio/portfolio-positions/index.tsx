@@ -29,23 +29,24 @@ export const PortfolioPositions = () => {
   const id = useAccount()
   const { data, isLoading } = usePortfolioPositions(id.address)
 
+  // TODO: Add error state
   return (
     <div className="flex flex-col gap-y-5 h-full overflow-hidden">
       <div className="px-5">
         <div className="flex flex-col gap-y-3 bg-secondary rounded-xl px-5 py-3">
           <span className="text-sm text-muted-foreground">Total Balance</span>
           <div className="">
-            {isLoading ? (
+            {isLoading || !data ? (
               <SkeletonText fontSize="lg" className="!w-1/3" />
             ) : (
               <div className="text-2xl font-bold">
-                {formatUSD(data!.totalUSD)}
+                {formatUSD(data.totalUSD)}
               </div>
             )}
           </div>
         </div>
       </div>
-      {isLoading ? (
+      {isLoading || !data ? (
         <div>
           <div className="py-4 px-5">
             <SkeletonText />
@@ -78,13 +79,13 @@ export const PortfolioPositions = () => {
           className="overflow-y-auto h-full"
           defaultValue={['v2', 'v3', 'alm']}
         >
-          {data?.v2Positions.length ? (
+          {data.v2Positions.length ? (
             <PortfolioV2Positions positions={data.v2Positions} />
           ) : null}
-          {data?.v3Positions.length ? (
+          {data.v3Positions.length ? (
             <PortfolioV3Positions positions={data.v3Positions} />
           ) : null}
-          {data?.smartPositions.length ? (
+          {data.smartPositions.length ? (
             <PortfolioALMPositions positions={data.smartPositions} />
           ) : null}
         </Accordion>

@@ -1,7 +1,6 @@
 'use client'
 
 import { useIsMounted } from '@sushiswap/hooks'
-import { usePrice } from '@sushiswap/react-query'
 import { Button, SelectIcon, TextField, classNames } from '@sushiswap/ui'
 import { Currency } from '@sushiswap/ui'
 import { SkeletonBox } from '@sushiswap/ui'
@@ -18,6 +17,7 @@ import { ChainId } from 'sushi/chain'
 import { Token, Type, tryParseAmount } from 'sushi/currency'
 import { Percent } from 'sushi/math'
 import { useAccount } from 'wagmi'
+import { usePrice } from '~evm/_common/ui/price-provider/price-provider/use-price'
 import { TokenSelector } from '../../token-selector/token-selector'
 import { BalancePanel } from './BalancePanel'
 import { PricePanel } from './PricePanel'
@@ -85,7 +85,7 @@ const CurrencyInput: FC<CurrencyInputProps> = ({
     currency,
   })
 
-  const { data: price, isInitialLoading: isPriceLoading } = usePrice({
+  const { data: price, isLoading: isPriceLoading } = usePrice({
     chainId: currency?.chainId,
     address: currency?.wrapped?.address,
     enabled: !hidePricing,
