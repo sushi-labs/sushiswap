@@ -15,9 +15,9 @@ export default function PoolLayout({
       <SidebarProvider>
         <Header />
         <AptosSidebarContainer
-          shiftContent
           supportedNetworks={POOL_SUPPORTED_NETWORKS}
           unsupportedNetworkHref={'/ethereum/explore/pools'}
+          shiftContent
         >
           <main className="flex flex-col h-full flex-1">{children}</main>
         </AptosSidebarContainer>

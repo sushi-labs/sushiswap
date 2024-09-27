@@ -74,6 +74,7 @@ export const SidebarToggle: FC<Omit<ButtonProps, 'onClick'>> = (props) => {
 interface SidebarContainerProps {
   children: ReactNode
   shiftContent?: boolean
+  selectedNetwork?: number | string
   connectedNetwork?: number | string
   supportedNetworks?: readonly (ChainId | NonStandardChainId)[]
   unsupportedNetworkHref?: string
@@ -82,6 +83,7 @@ interface SidebarContainerProps {
 const BaseSidebarContainer: FC<SidebarContainerProps> = ({
   children,
   shiftContent = false,
+  selectedNetwork,
   connectedNetwork,
   supportedNetworks,
   unsupportedNetworkHref,
@@ -91,6 +93,7 @@ const BaseSidebarContainer: FC<SidebarContainerProps> = ({
   return (
     <div className="flex h-full min-h-0">
       <Sidebar
+        selectedNetwork={selectedNetwork}
         connectedNetwork={connectedNetwork}
         supportedNetworks={supportedNetworks}
         unsupportedNetworkHref={unsupportedNetworkHref}
@@ -116,13 +119,14 @@ export const EVMSidebarContainer: FC<
 }
 
 export const AptosSidebarContainer: FC<
-  Omit<SidebarContainerProps, 'connectedNetwork'>
+  Omit<SidebarContainerProps, 'connectedNetwork' | 'selectedNetwork'>
 > = (props) => {
   const { network } = useAptosWallet()
 
   return (
     <BaseSidebarContainer
       {...props}
+      selectedNetwork={'aptos'}
       connectedNetwork={
         network?.name === 'mainnet' ? NonStandardChainId.APTOS : undefined
       }
@@ -133,12 +137,14 @@ export const AptosSidebarContainer: FC<
 export const SidebarContainer = EVMSidebarContainer
 
 interface SidebarProps {
+  selectedNetwork?: number | string
   connectedNetwork?: number | string
   supportedNetworks?: readonly (ChainId | NonStandardChainId)[]
   unsupportedNetworkHref?: string
 }
 
 const Sidebar: FC<SidebarProps> = ({
+  selectedNetwork,
   connectedNetwork,
   supportedNetworks = SUPPORTED_NETWORKS,
   unsupportedNetworkHref,
@@ -189,7 +195,7 @@ const Sidebar: FC<SidebarProps> = ({
               return (
                 <CommandItem
                   key={network}
-                  className="cursor-pointer aria-selected:!bg-[unset] aria-selected:!text-[unset] !p-0"
+                  className="cursor-pointer aria-selected:!bg-[unset] aria-selected:!text-[unset] !p-0 my-0.5"
                   testdata-id={`network-selector-${network}`}
                   value={`${name}__${network}`}
                   onSelect={
@@ -204,6 +210,7 @@ const Sidebar: FC<SidebarProps> = ({
                     className={classNames(
                       'flex items-center gap-2 hover:bg-muted hover:text-accent-foreground p-2 w-full rounded-lg',
                       !isSupported ? 'opacity-30' : null,
+                      selectedNetwork === network ? 'bg-muted' : null,
                     )}
                   >
                     <Badge

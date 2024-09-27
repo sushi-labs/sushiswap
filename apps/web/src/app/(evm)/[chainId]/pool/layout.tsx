@@ -18,9 +18,10 @@ export default function PoolLayout({
     <SidebarProvider>
       <Header />
       <SidebarContainer
-        shiftContent
+        selectedNetwork={chainId}
         supportedNetworks={POOL_SUPPORTED_NETWORKS}
         unsupportedNetworkHref={'/ethereum/explore/pools'}
+        shiftContent
       >
         <main className="flex flex-col h-full flex-1">{children}</main>
       </SidebarContainer>

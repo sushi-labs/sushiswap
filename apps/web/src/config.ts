@@ -166,14 +166,14 @@ export const POOL_SUPPORTED_NETWORKS = Array.from(
   ]),
 )
 
-export const TWAP_SUPPORTED_NETWORKS = [
+export const TWAP_SUPPORTED_CHAIN_IDS = [
   ChainId.ARBITRUM,
   ChainId.BASE,
   ChainId.ETHEREUM,
 ] as const
 
-export type TwapSupportedNetwork = (typeof TWAP_SUPPORTED_NETWORKS)[number]
-export const isTwapSupportedNetwork = (
+export type TwapSupportedChainId = (typeof TWAP_SUPPORTED_CHAIN_IDS)[number]
+export const isTwapSupportedChainId = (
   chainId: number,
-): chainId is TwapSupportedNetwork =>
-  TWAP_SUPPORTED_NETWORKS.includes(chainId as TwapSupportedNetwork)
+): chainId is TwapSupportedChainId =>
+  TWAP_SUPPORTED_CHAIN_IDS.includes(chainId as TwapSupportedChainId)

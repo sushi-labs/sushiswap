@@ -29,9 +29,10 @@ export default async function ExploreLayout({
     <SidebarProvider>
       <Header />
       <SidebarContainer
-        shiftContent
+        selectedNetwork={chainId}
         supportedNetworks={POOL_SUPPORTED_NETWORKS}
         unsupportedNetworkHref={'/ethereum/explore/pools'}
+        shiftContent
       >
         <main className="flex flex-col h-full flex-1">
           <Container maxWidth="7xl" className="px-4 py-4">

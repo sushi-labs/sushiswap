@@ -27,9 +27,9 @@ function Layout({ children }: { children: React.ReactNode }) {
     <SidebarProvider>
       <Header />
       <AptosSidebarContainer
-        shiftContent
         supportedNetworks={POOL_SUPPORTED_NETWORKS}
         unsupportedNetworkHref={'/ethereum/pool'}
+        shiftContent
       >
         <main className="flex flex-col h-full flex-1">
           <Container maxWidth="7xl" className="px-4 py-16">

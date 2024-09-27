@@ -31,6 +31,7 @@ export default function PositionsLayout({
       <Header />
       <SidebarContainer
         shiftContent
+        selectedNetwork={chainId}
         supportedNetworks={POOL_SUPPORTED_NETWORKS}
         unsupportedNetworkHref={'/ethereum/pool'}
       >
