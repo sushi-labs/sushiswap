@@ -33,13 +33,16 @@ export const headerElements = ({
   {
     show: 'desktop',
     type: NavigationElementType.Custom,
-    href: '/swap',
+    href: `/${ChainKey[chainId ?? ChainId.ETHEREUM]}/swap`,
     item: (
       <NavigationMenuItem className={NavigationElementType.Custom}>
         <NavigationMenuTrigger>Trade</NavigationMenuTrigger>
         <NavigationMenuContent>
           <ul className="w-[400px] gap-3 p-4">
-            <NavigationListItem title={'Swap'} href={'/swap'}>
+            <NavigationListItem
+              title={'Swap'}
+              href={`/${ChainKey[chainId ?? ChainId.ETHEREUM]}/swap`}
+            >
               The easiest way to trade.
             </NavigationListItem>
             {includeOnramper ? (
