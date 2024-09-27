@@ -1,14 +1,18 @@
 import { SidebarProvider } from 'src/ui/sidebar'
+import { ChainId } from 'sushi/chain'
 import { Header } from '../header'
 import { Providers } from './providers'
 
 export default function TradeLayout({
   children,
-}: { children: React.ReactNode }) {
+  params,
+}: { children: React.ReactNode; params: { chainId: string } }) {
+  const chainId = +params.chainId as ChainId
+
   return (
     <Providers>
       <SidebarProvider>
-        <Header />
+        <Header chainId={chainId} />
         {children}
       </SidebarProvider>
     </Providers>

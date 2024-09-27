@@ -28,7 +28,7 @@ export default function PositionsLayout({
 
   return (
     <SidebarProvider>
-      <Header />
+      <Header chainId={chainId} />
       <SidebarContainer
         shiftContent
         selectedNetwork={chainId}

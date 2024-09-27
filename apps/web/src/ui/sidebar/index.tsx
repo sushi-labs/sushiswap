@@ -206,12 +206,13 @@ const Sidebar: FC<SidebarProps> = ({
                         : undefined
                   }
                 >
-                  <div
-                    className={classNames(
-                      'flex items-center gap-2 hover:bg-muted hover:text-accent-foreground p-2 w-full rounded-lg',
-                      !isSupported ? 'opacity-30' : null,
-                      selectedNetwork === network ? 'bg-muted' : null,
-                    )}
+                  <Button
+                    className={'flex items-center !justify-normal gap-2'}
+                    fullWidth
+                    variant={
+                      selectedNetwork === network ? 'secondary' : 'ghost'
+                    }
+                    disabled={!isSupported}
                   >
                     <Badge
                       position="bottom-right"
@@ -233,7 +234,7 @@ const Sidebar: FC<SidebarProps> = ({
                         NEW
                       </div>
                     ) : null}
-                  </div>
+                  </Button>
                 </CommandItem>
               )
             })}

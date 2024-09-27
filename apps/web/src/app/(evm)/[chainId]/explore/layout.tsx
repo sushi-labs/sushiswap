@@ -27,7 +27,7 @@ export default async function ExploreLayout({
 
   return (
     <SidebarProvider>
-      <Header />
+      <Header chainId={chainId} />
       <SidebarContainer
         selectedNetwork={chainId}
         supportedNetworks={POOL_SUPPORTED_NETWORKS}
