@@ -214,7 +214,7 @@ import {
     newPriceMap: Map<bigint, number>,
   ) {
     for (const [address, price] of newPriceMap) {
-      if (price === 0) {
+      if (price === 0 || !Number.isFinite(price)) {
         oldPriceData.delete(address)
       } else {
         oldPriceData.set(address, price)
