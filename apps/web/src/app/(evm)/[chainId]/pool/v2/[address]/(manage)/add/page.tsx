@@ -35,14 +35,14 @@ export default async function ManageV2PoolPage({
   return (
     <>
       <Message size="sm" variant="info">
-        <h1 className="py-1 text-lg text-slate-200">
+        <h1 className="py-1 text-lg text-accent-foreground">
           Not seeing your position?
         </h1>
         We’re beginning to phase out the staking contracts used for V2 pools to
         make way for new and improved technology. If you have any staked
         positions and wish to unstake and claim your rewards, please visit{' '}
         <LinkExternal href="https://deprecated.sushi.com/farms">
-          <span className="text-slate-300">
+          <span className="text-muted-foreground">
             https://deprecated.sushi.com/farms
           </span>
         </LinkExternal>
