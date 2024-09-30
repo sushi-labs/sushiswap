@@ -74,9 +74,9 @@ export const PoolHeader = ({
                 {token0?.symbol}/{token1?.symbol}
               </LinkExternal>
             </Button>
-            <div className="bg-pink/20 text-pink text-sm px-2 py-1 font-semibold rounded-full mt-0.5">
+            {/* <div className="bg-pink/20 text-pink text-sm px-2 py-1 font-semibold rounded-full mt-0.5">
               V2
-            </div>
+            </div> */}
           </div>
         )}
       </div>

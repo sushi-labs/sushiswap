@@ -85,7 +85,7 @@ export const ReviewSwapDialogTrigger = () => {
     ) {
       return 'Approve'
     }
-    return 'Review Swap'
+    return 'Swap'
   }, [
     amountIn,
     allowanceAmount,
@@ -100,7 +100,7 @@ export const ReviewSwapDialogTrigger = () => {
   const userConfirmationNeeded = useMemo(() => {
     if (
       warningSeverity(priceImpactPercentage ?? 0) > 3 &&
-      (buttonText === 'Review Swap' || buttonText === 'Approve')
+      (buttonText === 'Swap' || buttonText === 'Approve')
     ) {
       return true
     }

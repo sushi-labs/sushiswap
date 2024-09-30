@@ -29,7 +29,7 @@ export const PoolNameCell: FC<Row<TopPool>> = ({ row }) => {
           {row.name}
         </span>
         <div className="flex gap-1">
-          <TooltipProvider>
+          {/* <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
                 {ProtocolBadge[row.protocol as SushiSwapProtocol]}
@@ -38,7 +38,7 @@ export const PoolNameCell: FC<Row<TopPool>> = ({ row }) => {
                 <p>Protocol version</p>
               </TooltipContent>
             </Tooltip>
-          </TooltipProvider>
+          </TooltipProvider> */}
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
