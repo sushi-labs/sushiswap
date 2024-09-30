@@ -12,9 +12,10 @@ import {
 } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import { unstable_cache } from 'next/cache'
+import React from 'react'
 import { Chain, formatUSD, shortenAddress } from 'sushi'
 
-export const XIcon = () => (
+const XIcon = () => (
   <svg
     width="20"
     height="20"
@@ -34,6 +35,7 @@ export const XIcon = () => (
     </g>
   </svg>
 )
+
 export default async function PendingTokenListingPage() {
   const pendingTokens = (await unstable_cache(
     async () => await getPendingTokens(),

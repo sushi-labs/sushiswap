@@ -1,7 +1,6 @@
 'use client'
 
 import { ArrowTrendingUpIcon } from '@heroicons/react/20/solid'
-import { usePrices } from '@sushiswap/react-query'
 import { Button, typographyVariants } from '@sushiswap/ui'
 import { SkeletonText } from '@sushiswap/ui'
 import React, { useMemo, useState } from 'react'
@@ -9,6 +8,7 @@ import { useTokenAmountDollarValues } from 'src/lib/hooks'
 import { Amount, Price, Token, tryParseAmount } from 'sushi/currency'
 import { formatUSD } from 'sushi/format'
 
+import { usePrices } from 'src/app/(evm)/_common/ui/price-provider/price-provider/use-prices'
 import { useDerivedStateCrossChainSwap } from './derivedstate-cross-chain-swap-provider'
 
 export const CrossChainSwapHeader = () => {
@@ -49,12 +49,12 @@ export const CrossChainSwapHeader = () => {
       decimals: token1.decimals,
     })
 
-    const _token0Price = prices0?.get(token0.wrapped.address)
+    const _token0Price = prices0?.getFraction(token0.wrapped.address)
     const token0Price = _token0Price
       ? tryParseAmount('1', token0)?.multiply(_token0Price)
       : undefined
 
-    const _token1Price = prices1?.get(token1.wrapped.address)
+    const _token1Price = prices1?.getFraction(token1.wrapped.address)
     const token1Price = _token1Price
       ? tryParseAmount('1', token1)?.multiply(_token1Price)
       : undefined

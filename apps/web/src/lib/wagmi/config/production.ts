@@ -13,7 +13,13 @@ import {
 import { gtagEvent } from '@sushiswap/ui'
 import { ChainId } from 'sushi/chain'
 import { publicTransports } from 'sushi/config'
-import { http, cookieStorage, createConfig, createStorage } from 'wagmi'
+import {
+  http,
+  type Storage,
+  cookieStorage,
+  createConfig,
+  createStorage,
+} from 'wagmi'
 import { Writeable } from 'zod'
 import { publicWagmiConfig } from './public'
 
@@ -52,7 +58,9 @@ const connectors = connectorsForWallets(
   },
 )
 
-export const createProductionConfig = () => {
+export const createProductionConfig = ({
+  useCookies,
+}: { useCookies: boolean }) => {
   const transports = Object.entries(publicTransports).reduce(
     (acc, [chainId, transport]) => {
       const transportUrl = transport({ chain: undefined }).value?.url!
@@ -73,16 +81,21 @@ export const createProductionConfig = () => {
     {} as Writeable<typeof publicTransports>,
   )
 
+  let storage: Storage | undefined = undefined
+  if (useCookies) {
+    storage = createStorage({
+      storage: cookieStorage,
+    })
+  } else if (typeof window !== 'undefined') {
+    storage = createStorage({ storage: window.localStorage })
+  }
+
   return createConfig({
     ...publicWagmiConfig,
     transports,
     pollingInterval,
     connectors,
-    storage: createStorage({
-      storage: cookieStorage,
-    }),
+    storage,
     ssr: true,
   })
 }
-
-export const config = createProductionConfig()

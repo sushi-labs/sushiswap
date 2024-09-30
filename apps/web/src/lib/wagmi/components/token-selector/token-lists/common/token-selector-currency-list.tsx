@@ -1,10 +1,10 @@
-import { NativeAddress } from '@sushiswap/react-query'
 import React, { FC, memo, useMemo } from 'react'
+import { NativeAddress } from 'src/lib/hooks/react-query'
 import { ChainId } from 'sushi/chain'
 import { Amount, Native, Type } from 'sushi/currency'
-import { Fraction } from 'sushi/math'
 import { useAccount } from 'wagmi'
 
+import type { PriceMap } from 'src/app/(evm)/_common/ui/price-provider/price-provider/use-prices'
 import type { Token } from 'sushi/currency'
 import { Address } from 'viem'
 import { TokenSelectorImportRow } from './token-selector-import-row'
@@ -21,7 +21,7 @@ interface TokenSelectorCurrencyListProps {
   }
   selected: Type | undefined
   balancesMap: Map<string, Amount<Type>> | undefined
-  pricesMap: Map<string, Fraction> | undefined
+  pricesMap: PriceMap | undefined
   isBalanceLoading: boolean
   importConfig?: {
     onImport: (currency: Token) => void
@@ -50,7 +50,7 @@ export const TokenSelectorCurrencyList: FC<TokenSelectorCurrencyListProps> =
         balance: balancesMap?.get(
           currency.isNative ? NativeAddress : currency.address,
         ),
-        price: pricesMap?.get(
+        price: pricesMap?.getFraction(
           currency.isNative
             ? Native.onChain(currency.chainId).wrapped.address
             : currency.address,

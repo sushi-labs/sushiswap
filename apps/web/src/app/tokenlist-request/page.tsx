@@ -24,7 +24,6 @@ import {
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import { useEffect, useMemo } from 'react'
 import { useForm } from 'react-hook-form'
-// import { type Address, isAddress } from 'viem'
 import { useTokenAnalysis } from 'src/lib/hooks/api/useTokenAnalysis'
 import { Chain, ChainId } from 'sushi/chain'
 
@@ -33,7 +32,7 @@ import {
   ExclamationCircleIcon,
 } from '@heroicons/react/20/solid'
 import { TokenAnalysis } from '@sushiswap/graph-client/data-api/queries/token-list-submission'
-import { formatNumber, formatUSD } from 'sushi'
+import { formatNumber, formatUSD } from 'sushi/format'
 import { SUPPORTED_CHAIN_IDS } from '../../config'
 import {
   ApplyForTokenListTokenSchema,
@@ -443,7 +442,7 @@ export default function TokenListing() {
                     )
                   }}
                 />
-                {status === 'error' ? (
+                {/* {status === 'error' ? (
                   <Message size="sm" variant="destructive">
                     Oops! Something went wrong when trying to execute your
                     request.
@@ -460,7 +459,7 @@ export default function TokenListing() {
                       here
                     </LinkExternal>
                   </Message>
-                ) : null}
+                ) : null} */}
                 <div>
                   <Button
                     disabled={!methods.formState.isValid || !isValid}
@@ -477,7 +476,8 @@ export default function TokenListing() {
           <div className="py-7">
             <p className="text-sm text-muted-foreground">
               * You can submit your token once it meets the required threshold
-              values. These values may be different depending on the network you have selected. While there is an age requirement based on the
+              values. These values may be different depending on the network you
+              have selected. While there is an age requirement based on the
               token&apos;s first tradable date (not the creation date) to help
               reduce noise and maintain quality, exceptions may be made for
               well-known tokens within the community.

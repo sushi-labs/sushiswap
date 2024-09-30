@@ -74,15 +74,15 @@ export type GetTokenAnalysis = VariablesOf<typeof TokenAnalysisQuery> &
 
 /**
  * NOTE: This is not intended to be used anywhere else other than the token listing page, do not replace this with goplusapi requests.
- * @param variables 
- * @param options 
- * @returns 
+ * @param variables
+ * @param options
+ * @returns
  */
 export async function getTokenAnalysis(
   variables: GetTokenAnalysis,
   options?: RequestOptions,
 ) {
-  const url = `https://${SUSHI_DATA_API_HOST}`
+  const url = `${SUSHI_DATA_API_HOST}/graphql`
 
   const result = await request(
     {

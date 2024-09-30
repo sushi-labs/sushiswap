@@ -6,6 +6,7 @@ import { BaseProviders, OnramperProvider } from '@sushiswap/ui'
 
 import { QueryClientProvider } from '../../providers/query-client-provider'
 import { WagmiProvider } from '../../providers/wagmi-provider'
+import { PriceProvider } from './_common/ui/price-provider/price-provider/price-provider'
 
 export function Providers({
   children,
@@ -15,7 +16,9 @@ export function Providers({
     <BaseProviders>
       <OnramperProvider>
         <QueryClientProvider>
-          <WagmiProvider cookie={cookie}>{children}</WagmiProvider>
+          <WagmiProvider cookie={cookie}>
+            <PriceProvider>{children}</PriceProvider>
+          </WagmiProvider>
         </QueryClientProvider>
       </OnramperProvider>
     </BaseProviders>

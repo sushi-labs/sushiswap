@@ -1,7 +1,6 @@
 import { CogIcon } from '@heroicons/react-v1/outline'
 import { SlippageToleranceStorageKey, TTLStorageKey } from '@sushiswap/hooks'
 import { createErrorToast, createToast } from '@sushiswap/notifications'
-import { NativeAddress } from '@sushiswap/react-query'
 import {
   LiquidityEventName,
   LiquiditySource,
@@ -28,6 +27,7 @@ import {
 import React, { FC, ReactNode, useCallback, useMemo } from 'react'
 import { Bound } from 'src/lib/constants'
 import { useTokenAmountDollarValues } from 'src/lib/hooks'
+import { NativeAddress } from 'src/lib/hooks/react-query'
 import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
 import {
   getDefaultTTL,

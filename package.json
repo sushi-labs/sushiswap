@@ -4,9 +4,6 @@
   "private": true,
   "scripts": {
     "build": "dotenv -- turbo run build",
-    "changeset": "changeset",
-    "changeset:publish": "changeset publish",
-    "changeset:version": "changeset version && pnpm install --lockfile-only",
     "check": "turbo run check --no-cache",
     "clean": "turbo run clean && rm -rf node_modules",
     "dev": "dotenv -- turbo run dev --no-cache --parallel --continue",
@@ -24,17 +21,12 @@
   },
   "devDependencies": {
     "@biomejs/biome": "1.5.2",
-    "@changesets/changelog-github": "0.4.8",
-    "@changesets/cli": "2.26.2",
-    "@types/jest": "29.5.5",
     "@types/node": "20",
     "dotenv-cli": "6.0.0",
     "eslint": "8.43.0",
     "eslint-config-turbo": "2.0.5",
-    "jest": "29.7.0",
     "just-pnpm": "1.0.2",
     "sort-package-json": "2.6.0",
-    "ts-jest": "29.1.1",
     "tsx": "4.19.0",
     "turbo": "2.0.5"
   },

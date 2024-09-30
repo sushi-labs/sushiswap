@@ -60,7 +60,7 @@ export const PendingTokensQuery = graphql(
 )
 
 export async function getPendingTokens() {
-  const url = `https://${SUSHI_DATA_API_HOST}`
+  const url = `${SUSHI_DATA_API_HOST}/graphql`
 
   const result = await request({
     url,

@@ -1,10 +1,10 @@
 'use client'
 
-import { usePrices } from '@sushiswap/react-query'
 import { SteerVault, getTokenRatios } from '@sushiswap/steer-sdk'
 import { useQuery } from '@tanstack/react-query'
 import React from 'react'
-import { stringify } from 'sushi/bigint-serializer'
+import { usePrices } from 'src/app/(evm)/_common/ui/price-provider/price-provider/use-prices'
+import { stringify } from 'src/instrumentation'
 
 interface SteerTokenDistributionBarProps {
   vault: SteerVault
@@ -19,16 +19,8 @@ export function SteerTokenDistributionBar({
     queryFn: async () => {
       if (!prices) return
 
-      const numPrices = Object.entries(prices).reduce<Record<string, number>>(
-        (acc, [key, value]) => {
-          acc[key] = Number(value.toFixed(18))
-          return acc
-        },
-        {},
-      )
-
       try {
-        return getTokenRatios({ vault, prices: numPrices })
+        return getTokenRatios({ vault, prices })
       } catch (e) {
         console.error(e)
       }

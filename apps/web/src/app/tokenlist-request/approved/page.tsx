@@ -12,6 +12,7 @@ import {
 } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import { unstable_cache } from 'next/cache'
+import React from 'react'
 import { Chain } from 'sushi'
 
 export default async function ApprovedTokensPage() {

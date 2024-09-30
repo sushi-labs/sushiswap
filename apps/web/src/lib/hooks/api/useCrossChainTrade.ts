@@ -1,5 +1,5 @@
-import { NativeAddress, apiAdapter02To01 } from '@sushiswap/react-query'
 import { UseQueryOptions, useQuery } from '@tanstack/react-query'
+import { NativeAddress, apiAdapter02To01 } from 'src/lib/hooks/react-query'
 import {
   CrossChainTradeSchema,
   GetCrossChainTradeParams,

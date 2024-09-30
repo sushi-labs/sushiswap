@@ -1,0 +1,64 @@
+name: E2E
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+    paths:
+      - ".github/workflows/apps-web-e2e.yml"
+      - "apps/web/**"
+      - "config/nextjs/**"
+      - "config/tailwindcss/**"
+      - "config/typescript/**"
+      - "packages/**"
+  workflow_dispatch:
+
+env:
+  CI: true
+  NODE_OPTIONS: --max-old-space-size=8192
+  TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+  TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
+  TURBO_FORCE: false
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    # runs-on: buildjet-4vcpu-ubuntu-2204
+    timeout-minutes: 15
+    strategy:
+      matrix:
+        block-number: [61755107]
+        chain-id: [137]
+    steps:
+      - name: Clone repository
+        uses: actions/checkout@v4
+        with:
+          submodules: 'recursive'
+
+      - name: Install dependencies
+        uses: ./.github/actions/install
+        
+      - name: Install Playwright Browsers
+        run: pnpm playwright install --with-deps chromium
+        working-directory: ./apps/web
+
+      - name: Test
+        run: pnpm exec turbo run test --filter web
+        env:
+          ANVIL_FORK_URL: ${{ secrets.ANVIL_FORK_URL }}
+          ANVIL_BLOCK_NUMBER: ${{ matrix.block-number }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          REDIS_URL: ${{ secrets.REDIS_URL }}
+          EDGE_CONFIG: ${{ secrets.EDGE_CONFIG }}
+          NEXT_PUBLIC_APP_ENV: 'test'
+          NEXT_PUBLIC_CHAIN_ID: ${{ matrix.chain-id }}
+          NEXT_TELEMETRY_DISABLED: 1
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: playwright-report
+          path: ./apps/web/test-results/
+          retention-days: 30

@@ -20,7 +20,7 @@ export const ApprovedCommunityTokensQuery = graphql(
 )
 
 export async function getApprovedCommunityTokens() {
-  const url = `https://${SUSHI_DATA_API_HOST}`
+  const url = `${SUSHI_DATA_API_HOST}/graphql`
 
   const result = await request({
     url,
