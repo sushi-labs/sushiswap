@@ -5,7 +5,7 @@ import { Chain, ChainId } from 'sushi/chain'
 
 import Link from 'next/link'
 import { NetworkIcon } from '../icons/NetworkIcon'
-import { TronCircle } from '../icons/network'
+// import { TronCircle } from '../icons/network/circle/TronCircle'
 import { AptosCircle } from '../icons/network/circle/AptosCircle'
 import {
   Command,
@@ -79,18 +79,18 @@ function Aptos() {
   )
 }
 
-function Tron() {
-  return (
-    <Link href="/tron/swap" rel="noopener noreferrer">
-      <CommandItem className="cursor-pointer">
-        <div className="flex items-center gap-2">
-          <TronCircle width={22} height={22} />
-          Tron
-        </div>
-      </CommandItem>
-    </Link>
-  )
-}
+// function Tron() {
+//   return (
+//     <Link href="/tron/swap" rel="noopener noreferrer">
+//       <CommandItem className="cursor-pointer">
+//         <div className="flex items-center gap-2">
+//           <TronCircle width={22} height={22} />
+//           Tron
+//         </div>
+//       </CommandItem>
+//     </Link>
+//   )
+// }
 
 const NetworkSelector = <T extends number>({
   showNonEvm = false,
