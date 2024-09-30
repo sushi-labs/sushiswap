@@ -24,7 +24,7 @@ import { ReactNode, useCallback, useEffect, useMemo } from 'react'
 import { useOtherTokenListsQuery, useTokens } from 'src/lib/hooks/react-query'
 import { useSortedTokenList } from 'src/lib/wagmi/components/token-selector/hooks/use-sorted-token-list'
 import { ChainId } from 'sushi/chain'
-import { Currency } from 'sushi/currency'
+import { Currency, Native } from 'sushi/currency'
 import { useAccount, useChainId, useSwitchChain } from 'wagmi'
 
 import { TokenSelector } from 'src/lib/wagmi/components/token-selector/token-selector'
@@ -43,6 +43,10 @@ import { DCAMaintenanceMessage } from './dca-maintenance-message'
 import { LimitMaintenanceMessage } from './limit-maintenance-message'
 import { useIsDCAMaintenance } from './use-is-dca-maintenance'
 import { useIsLimitMaintenance } from './use-is-limit-maintenance'
+import { useSearchTokens } from 'src/lib/wagmi/components/token-selector/hooks/use-search-tokens'
+
+const zeroAddress = '0x0000000000000000000000000000000000000000'
+
 
 const Modal = ({
   open,
@@ -241,12 +245,25 @@ const DCAButton = ({
   )
 }
 
+
+const useToken = (address?: string) => {
+  const { state: { chainId } } = useDerivedStateSimpleSwap()
+  const isNative = address === zeroAddress
+  const isEnabled = Boolean(address && !isNative )
+  const result = useSearchTokens({chainId: isEnabled ? chainId : undefined, search: address})
+
+ if(address === zeroAddress && chainId) {
+  return  Native.onChain(chainId)
+ }
+
+  return result.data?.[0]
+}
+
 function Provider({ isLimit }: { isLimit?: boolean }) {
   const { openConnectModal } = useConnectModal()
   const { connector } = useAccount()
   const { state, mutate } = useDerivedStateSimpleSwap()
   const { resolvedTheme } = useTheme()
-  const tokens = useTokenList()
   const connectedChainId = useChainId()
 
   useEffect(() => {
@@ -273,7 +290,6 @@ function Provider({ isLimit }: { isLimit?: boolean }) {
         limit={isLimit}
         useTrade={useTrade}
         connector={connector}
-        dappTokens={tokens}
         srcToken={state.token0}
         dstToken={state.token1}
         getTokenLogo={getTokenLogo}
@@ -287,6 +303,7 @@ function Provider({ isLimit }: { isLimit?: boolean }) {
         Tooltip={Tooltip}
         NetworkSelector={TwapNetworkSelector}
         Button={isLimit ? LimitButton : DCAButton}
+        useToken={useToken}
       />
     </div>
   )
