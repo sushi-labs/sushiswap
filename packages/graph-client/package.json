@@ -74,7 +74,6 @@
   },
   "devDependencies": {
     "@0no-co/graphqlsp": "^1.12.3",
-    "@sushiswap/database": "workspace:*",
     "@tsconfig/esm": "1.0.4",
     "@tsconfig/strictest": "2.0.2",
     "@types/json-bigint": "^1.0.4",

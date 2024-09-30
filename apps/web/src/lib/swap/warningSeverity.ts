@@ -3,13 +3,10 @@ import { Percent } from 'sushi/math'
 const BIPS_BASE = 10000n
 
 // used for warning states
-export const ALLOWED_PRICE_IMPACT_LOW: Percent = new Percent(100, BIPS_BASE) // 1%
-export const ALLOWED_PRICE_IMPACT_MEDIUM: Percent = new Percent(300, BIPS_BASE) // 3%
-export const ALLOWED_PRICE_IMPACT_HIGH: Percent = new Percent(500, BIPS_BASE) // 5%
-export const BLOCKED_PRICE_IMPACT_NON_EXPERT: Percent = new Percent(
-  1500,
-  BIPS_BASE,
-) // 15%
+const ALLOWED_PRICE_IMPACT_LOW: Percent = new Percent(100, BIPS_BASE) // 1%
+const ALLOWED_PRICE_IMPACT_MEDIUM: Percent = new Percent(300, BIPS_BASE) // 3%
+const ALLOWED_PRICE_IMPACT_HIGH: Percent = new Percent(500, BIPS_BASE) // 5%
+const BLOCKED_PRICE_IMPACT_NON_EXPERT: Percent = new Percent(1500, BIPS_BASE) // 15%
 
 const IMPACT_TIERS = [
   BLOCKED_PRICE_IMPACT_NON_EXPERT,

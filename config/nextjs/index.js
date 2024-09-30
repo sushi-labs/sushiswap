@@ -12,8 +12,6 @@ const defaultNextConfig = {
     optimizePackageImports: [
       '@heroicons/react-v1/solid',
       '@heroicons/react-v1/outline',
-      '@sushiswap/client',
-      '@sushiswap/database',
       '@sushiswap/graph-client',
       '@sushiswap/hooks',
       '@sushiswap/router',

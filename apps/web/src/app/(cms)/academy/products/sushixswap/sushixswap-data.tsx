@@ -1,10 +1,10 @@
-import { ArbitrumCircle } from '@sushiswap/ui/icons/network/circle/ArbitrumCircle'
-import { AvalancheCircle } from '@sushiswap/ui/icons/network/circle/AvalancheCircle'
-import { BinanceCircle } from '@sushiswap/ui/icons/network/circle/BinanceCircle'
-import { EthereumCircle } from '@sushiswap/ui/icons/network/circle/EthereumCircle'
-import { FantomCircle } from '@sushiswap/ui/icons/network/circle/FantomCircle'
-import { OptimismCircle } from '@sushiswap/ui/icons/network/circle/OptimismCircle'
-import { PolygonCircle } from '@sushiswap/ui/icons/network/circle/PolygonCircle'
+// import { ArbitrumCircle } from '@sushiswap/ui/icons/network/circle/ArbitrumCircle'
+// import { AvalancheCircle } from '@sushiswap/ui/icons/network/circle/AvalancheCircle'
+// import { BinanceCircle } from '@sushiswap/ui/icons/network/circle/BinanceCircle'
+// import { EthereumCircle } from '@sushiswap/ui/icons/network/circle/EthereumCircle'
+// import { FantomCircle } from '@sushiswap/ui/icons/network/circle/FantomCircle'
+// import { OptimismCircle } from '@sushiswap/ui/icons/network/circle/OptimismCircle'
+// import { PolygonCircle } from '@sushiswap/ui/icons/network/circle/PolygonCircle'
 
 import {
   AcademyIcon,
@@ -63,33 +63,33 @@ const cards = [
     subtitle: 'Modular bridge API.',
   },
 ]
-const chains = [
-  {
-    Icon: EthereumCircle,
-    name: 'Ethereum',
-  },
-  { Icon: OptimismCircle, name: 'Optimism', url: '' },
-  {
-    Icon: ArbitrumCircle,
-    name: 'Arbitrum',
-  },
-  {
-    Icon: FantomCircle,
-    name: 'Fantom',
-  },
-  {
-    Icon: BinanceCircle,
-    name: 'Binance',
-  },
-  {
-    Icon: AvalancheCircle,
-    name: 'Avalanche',
-  },
-  {
-    Icon: PolygonCircle,
-    name: 'Polygon',
-  },
-]
+// const chains = [
+//   {
+//     Icon: EthereumCircle,
+//     name: 'Ethereum',
+//   },
+//   { Icon: OptimismCircle, name: 'Optimism', url: '' },
+//   {
+//     Icon: ArbitrumCircle,
+//     name: 'Arbitrum',
+//   },
+//   {
+//     Icon: FantomCircle,
+//     name: 'Fantom',
+//   },
+//   {
+//     Icon: BinanceCircle,
+//     name: 'Binance',
+//   },
+//   {
+//     Icon: AvalancheCircle,
+//     name: 'Avalanche',
+//   },
+//   {
+//     Icon: PolygonCircle,
+//     name: 'Polygon',
+//   },
+// ]
 const faq = [
   {
     question: 'How does SushiXSwap provide best prices and minimal slippage?',
@@ -124,4 +124,4 @@ const faq = [
 ]
 const slug = 'sushixswap'
 
-export { color, chains, accentColor, cards, faq, slug }
+export { color, cards, faq, slug }

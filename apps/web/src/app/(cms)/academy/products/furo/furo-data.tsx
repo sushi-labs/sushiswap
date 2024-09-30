@@ -87,4 +87,4 @@ const faq = [
 
 const slug = 'furo'
 
-export { color, accentColor, buttonText, productStats, cards, faq, slug }
+export { color, buttonText, productStats, cards, faq, slug }

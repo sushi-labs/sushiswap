@@ -22,7 +22,7 @@ import {
 import { Badge } from '@sushiswap/ui'
 import { Currency } from '@sushiswap/ui'
 import React, { CSSProperties, FC, memo, useCallback } from 'react'
-import { NativeAddress } from 'src/lib/hooks/react-query'
+import { NativeAddress } from 'src/lib/constants'
 import { Chain } from 'sushi/chain'
 import { Amount, Type } from 'sushi/currency'
 import { Fraction, ZERO } from 'sushi/math'

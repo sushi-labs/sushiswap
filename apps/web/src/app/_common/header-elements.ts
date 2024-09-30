@@ -33,11 +33,6 @@ export const EXPLORE_NAVIGATION_LINKS = (
         },
       ] as const)
     : []),
-  //  {
-  //    title: 'Bonds',
-  //    href: '/bonds',
-  //    description: 'Earn interest by locking up your assets.',
-  //  },
   {
     title: 'Stake',
     href: '/stake',

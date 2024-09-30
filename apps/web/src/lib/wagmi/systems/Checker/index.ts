@@ -2,7 +2,6 @@ import { ButtonProps } from '@sushiswap/ui'
 import { ComponentType, FC } from 'react'
 
 import { Amounts, AmountsProps } from './Amounts'
-import { ApproveBentobox, ApproveBentoboxProps } from './ApproveBentobox'
 import { ApproveERC20, ApproveERC20Props } from './ApproveERC20'
 import {
   ApproveERC20Multiple,
@@ -28,7 +27,6 @@ export type CheckerProps = {
   ApproveERC20Multiple: ComponentType<ApproveERC20MultipleProps>
   ApproveERC20WithPermit: ComponentType<ApproveERC20WithPermitProps>
   Connect: ComponentType<ButtonProps>
-  ApproveBentobox: ComponentType<ApproveBentoboxProps>
   Success: FC<SuccessProps>
   Root: FC<ProviderProps>
 }
@@ -42,7 +40,6 @@ export const Checker: CheckerProps = {
   ApproveERC20,
   ApproveERC20Multiple,
   ApproveERC20WithPermit,
-  ApproveBentobox,
   Success,
   Root,
 }
