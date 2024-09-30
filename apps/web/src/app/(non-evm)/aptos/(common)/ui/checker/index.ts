@@ -5,7 +5,7 @@ import { Amounts, AmountsProps } from './amounts'
 import { Connect } from './connect'
 import { Guard, GuardProps } from './guard'
 
-export type CheckerProps = {
+type CheckerProps = {
   Amounts: ComponentType<AmountsProps>
   Guard: FC<GuardProps>
   Connect: ComponentType<ButtonProps>

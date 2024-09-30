@@ -9,7 +9,7 @@ interface CustomGhostContentAPIOptions extends GhostContentAPIOptions {
   }) => Promise<any>
 }
 
-export function getGhostClient() {
+function getGhostClient() {
   return new GhostContentAPI({
     url: 'https://ghost.sushi.com',
     key: '9a481331206651cecc033ae05f', // can be exposed, only access to public data

@@ -82,4 +82,4 @@ const faq = [
 
 const slug = 'bentobox'
 
-export { color, accentColor, buttonText, cards, faq, slug }
+export { color, buttonText, cards, faq, slug }

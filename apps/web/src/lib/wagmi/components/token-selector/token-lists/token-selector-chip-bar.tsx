@@ -7,7 +7,7 @@ import {
   TraceEvent,
 } from '@sushiswap/telemetry'
 import { Button, Currency, IconButton, buttonIconVariants } from '@sushiswap/ui'
-import { NativeAddress } from 'src/lib/hooks/react-query'
+import { NativeAddress } from 'src/lib/constants'
 import type { ChainId } from 'sushi/chain'
 import { Type } from 'sushi/currency'
 import { useChipTokens } from '../hooks/use-chip-tokens'

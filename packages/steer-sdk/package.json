@@ -54,7 +54,6 @@
   },
   "dependencies": {
     "@steerprotocol/contracts": "2.1.0-beta.14",
-    "@sushiswap/database": "workspace:*",
     "sushi": "4.0.5",
     "tslib": "latest",
     "viem": "2.21.4"

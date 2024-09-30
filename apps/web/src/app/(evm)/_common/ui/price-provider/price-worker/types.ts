@@ -35,7 +35,6 @@ export type PriceWorkerPostMessage =
 
 export enum PriceWorkerReceiveMessageType {
   ChainState = 'ChainState',
-  ChainPriceData = 'ChainPriceData',
 }
 
 export type PriceWorkerReceiveMessageChainState = {
