@@ -196,11 +196,16 @@ const TokenButton = ({
   isSelected: boolean
   addOrRemoveToken?: (type: 'add' | 'remove', currency: IToken[]) => void
 }) => {
+  const isOnDefaultList = useMemo(() => {
+    if (!token) {
+      return true
+    }
+
+    return DEFAULT_TOKEN_LIST.some((t) => t.address === token.address)
+  }, [token])
+
   if (!token) return null
-  const isOnDefaultList = useMemo(
-    () => DEFAULT_TOKEN_LIST.some((t) => t.address === token.address),
-    [token],
-  )
+
   const isNew = !hasToken?.(token)
   const isCustomAdded = hasToken?.(token)
 

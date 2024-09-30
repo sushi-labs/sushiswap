@@ -1,3 +1,4 @@
+import { cloudinaryLogoFetchLoader } from '@sushiswap/ui'
 import Image from 'next/image'
 import { hashStringToColor } from '~tron/_common/lib/utils/formatters'
 import { IToken } from '~tron/_common/types/token-type'
@@ -17,7 +18,7 @@ export const Icon = ({ currency, height = 40, width = 40 }: IconProps) => {
           className="relative flex shrink-0 overflow-hidden rounded-full"
         >
           <Image
-            loader={({ src }) => src}
+            loader={cloudinaryLogoFetchLoader}
             src={currency.logoURI}
             alt={currency.symbol}
             height={height}
