@@ -29,9 +29,7 @@ export function warningSeverity(
 }
 
 export const warningSeverityClassName = (severity: WarningSeverity) => {
-  if (severity === 0) return ''
-  if (severity < 1) return '!text-green'
-  if (severity < 2) return '!text-yellow'
-  if (severity < 3) return '!text-yellow-700'
+  if (severity === 0 || severity === 1) return ''
+  if (severity <= 3) return '!text-yellow'
   return '!text-red'
 }
