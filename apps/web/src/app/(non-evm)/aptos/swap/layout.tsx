@@ -1,7 +1,7 @@
 import { Providers } from './providers'
 
 export const metadata = {
-  title: 'SushiSwap',
+  title: 'SushiSwap on Aptos',
   description:
     'SushiSwap is a community-driven decentralized exchange (DEX) for traders and liquidity providers.',
 }
