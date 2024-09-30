@@ -116,9 +116,8 @@ export const ApproveToken = ({
 
   return (
     <Popover>
-      <PopoverTrigger disabled={isApproving}>
+      <PopoverTrigger asChild disabled={isApproving}>
         <Button
-          asChild
           disabled={isApproving}
           loading={isApproving}
           role="combobox"
@@ -126,48 +125,48 @@ export const ApproveToken = ({
         >
           {isApproving ? 'Approving' : 'Approve'}
         </Button>
-        <PopoverContent className="!p-0 !overflow-x-hidden !overflow-y-scroll scroll">
-          <Command>
-            <CommandGroup>
-              <CommandItem className="cursor-pointer">
-                <div
-                  onClick={async () => {
-                    await approveToken('one-time')
-                  }}
-                  onKeyDown={async () => {
-                    await approveToken('one-time')
-                  }}
-                  className="flex flex-col"
-                >
-                  <p className="font-bold">Approve one-time only</p>
-                  <p>
-                    You&apos;ll give your approval to spend{' '}
-                    {toBigNumber(amount).toString(10)} {tokenToApprove.symbol}{' '}
-                    on your behalf
-                  </p>
-                </div>
-              </CommandItem>
-              <CommandItem className="cursor-pointer">
-                <div
-                  onClick={async () => {
-                    await approveToken('unlimited')
-                  }}
-                  onKeyDown={async () => {
-                    await approveToken('unlimited')
-                  }}
-                  className="flex flex-col"
-                >
-                  <p className="font-bold">Approve unlimited amount</p>
-                  <p>
-                    You won&apos;t need to approve again next time you want to
-                    spend {tokenToApprove.symbol}.
-                  </p>
-                </div>
-              </CommandItem>
-            </CommandGroup>
-          </Command>
-        </PopoverContent>
       </PopoverTrigger>
+      <PopoverContent className="!p-0 !overflow-x-hidden !overflow-y-scroll scroll">
+        <Command>
+          <CommandGroup>
+            <CommandItem className="cursor-pointer">
+              <div
+                onClick={async () => {
+                  await approveToken('one-time')
+                }}
+                onKeyDown={async () => {
+                  await approveToken('one-time')
+                }}
+                className="flex flex-col"
+              >
+                <p className="font-bold">Approve one-time only</p>
+                <p>
+                  You&apos;ll give your approval to spend{' '}
+                  {toBigNumber(amount).toString(10)} {tokenToApprove.symbol} on
+                  your behalf
+                </p>
+              </div>
+            </CommandItem>
+            <CommandItem className="cursor-pointer">
+              <div
+                onClick={async () => {
+                  await approveToken('unlimited')
+                }}
+                onKeyDown={async () => {
+                  await approveToken('unlimited')
+                }}
+                className="flex flex-col"
+              >
+                <p className="font-bold">Approve unlimited amount</p>
+                <p>
+                  You won&apos;t need to approve again next time you want to
+                  spend {tokenToApprove.symbol}.
+                </p>
+              </div>
+            </CommandItem>
+          </CommandGroup>
+        </Command>
+      </PopoverContent>
     </Popover>
   )
 }

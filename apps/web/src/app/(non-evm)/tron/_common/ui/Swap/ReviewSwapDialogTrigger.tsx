@@ -115,6 +115,7 @@ export const ReviewSwapDialogTrigger = () => {
           amount={amountIn}
           spenderAddress={ROUTER_CONTRACT}
           onSuccess={refreshAllowance}
+          buttonProps={{ size: 'xl', fullWidth: true }}
         />
       ) : (
         <DialogTrigger
