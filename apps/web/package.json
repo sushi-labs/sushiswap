@@ -41,7 +41,6 @@
     "@rise-wallet/wallet-adapter": "^0.1.2",
     "@sentry/nextjs": "8.30.0",
     "@snapshot-labs/snapshot.js": "^0.9.8",
-    "@sushiswap/bonds-sdk": "workspace:*",
     "@sushiswap/client": "workspace:*",
     "@sushiswap/database": "workspace:*",
     "@sushiswap/graph-client": "workspace:*",
