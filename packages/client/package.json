@@ -61,7 +61,6 @@
     "prepublishOnly": "pnpm build"
   },
   "dependencies": {
-    "@sushiswap/bonds-sdk": "workspace:*",
     "@sushiswap/database": "workspace:*",
     "@sushiswap/graph-client": "workspace:*",
     "@sushiswap/steer-sdk": "workspace:*",
