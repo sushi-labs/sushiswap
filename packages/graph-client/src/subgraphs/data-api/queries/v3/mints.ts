@@ -31,7 +31,7 @@ export async function getSushiV3Mints(
   { ...variables }: GetSushiV3Mints,
   options?: RequestOptions,
 ) {
-  const url = `https://${SUSHI_DATA_API_HOST}`
+  const url = `${SUSHI_DATA_API_HOST}/graphql`
 
   const result = await request(
     { url, document: SushiV3MintsQuery, variables },

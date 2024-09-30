@@ -2,7 +2,7 @@ import {
   UseTradeParams,
   // getTradeQueryApiVersion,
   tradeValidator02,
-} from '@sushiswap/react-query'
+} from 'src/lib/hooks/react-query'
 import { API_BASE_URL } from 'sushi/config'
 import { RouteStatus } from 'sushi/router'
 import { Address } from 'viem'

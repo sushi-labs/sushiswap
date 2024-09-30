@@ -63,7 +63,7 @@ export const PoolsQuery = graphql(
 export type GetPools = VariablesOf<typeof PoolsQuery>
 
 export async function getPools(variables: GetPools, options?: RequestOptions) {
-  const url = `https://${SUSHI_DATA_API_HOST}`
+  const url = `${SUSHI_DATA_API_HOST}/graphql`
   try {
     const result = await request(
       {

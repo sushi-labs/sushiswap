@@ -1,4 +1,4 @@
-import { getAddress } from 'viem'
+import { type Address } from 'viem'
 import type { SteerVault } from '../types/steer-vault'
 
 interface GetTokenRatiosProps {
@@ -6,12 +6,12 @@ interface GetTokenRatiosProps {
     SteerVault,
     'chainId' | 'token0' | 'token1' | 'reserve0' | 'reserve1'
   >
-  prices: Record<string, number>
+  prices: Pick<Map<Address, number>, 'get' | 'has'>
 }
 
 async function getTokenRatios({ vault, prices }: GetTokenRatiosProps) {
-  const token0PriceUSD = prices[getAddress(vault.token0.address)] || 0
-  const token1PriceUSD = prices[getAddress(vault.token1.address)] || 0
+  const token0PriceUSD = prices.get(vault.token0.address) || 0
+  const token1PriceUSD = prices.get(vault.token1.address) || 0
 
   const reserve0 = Number(vault.reserve0) / 10 ** vault.token0.decimals
   const reserve1 = Number(vault.reserve1) / 10 ** vault.token1.decimals

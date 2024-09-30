@@ -1,13 +1,12 @@
 'use client'
 
 import { useMemo } from 'react'
-import 'sushi/bigint-serializer'
 import { Amount } from 'sushi/currency'
 
 import { V2Pool, getV2Pool } from '@sushiswap/graph-client/data-api'
 import { useQuery } from '@tanstack/react-query'
+import { stringify } from 'src/instrumentation'
 import { PoolId } from 'sushi'
-import { stringify } from 'sushi/bigint-serializer'
 import { isSushiSwapV2ChainId } from 'sushi/config'
 import { getTokensFromPool } from '../useTokensFromPool'
 

@@ -1,7 +1,6 @@
 'use client'
 
 import { InformationCircleIcon } from '@heroicons/react/20/solid'
-import { useAngleRewardsMultipleChains } from '@sushiswap/react-query'
 import {
   Card,
   CardContent,
@@ -20,6 +19,7 @@ import { Button } from '@sushiswap/ui'
 import { Currency } from '@sushiswap/ui'
 import { List } from '@sushiswap/ui'
 import React, { FC, ReactNode, useMemo } from 'react'
+import { useAngleRewardsMultipleChains } from 'src/lib/hooks/react-query'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
 import { Chain } from 'sushi/chain'
 import { formatNumber } from 'sushi/format'

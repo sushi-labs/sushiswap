@@ -33,11 +33,7 @@
     "build": "tsc",
     "check": "tsc --pretty --noEmit",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
-    "dev": "tsc -w",
-    "test": "jest --passWithNoTests"
-  },
-  "jest": {
-    "preset": "@sushiswap/jest-config"
+    "dev": "tsc -w"
   },
   "dependencies": {
     "copy-to-clipboard": "3.3.3",
@@ -45,16 +41,13 @@
     "viem": "2.21.4"
   },
   "devDependencies": {
-    "@sushiswap/jest-config": "workspace:*",
     "@tsconfig/node20": "20.1.4",
     "@tsconfig/strictest": "2.0.2",
-    "@types/jest": "29.5.5",
     "@types/react": "18.2.14",
     "@types/react-dom": "18.2.6",
-    "jest": "29.7.0",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "sushi": "4.0.2",
+    "sushi": "4.0.5",
     "tailwindcss": "3.3.2",
     "typescript": "5.5.4"
   },

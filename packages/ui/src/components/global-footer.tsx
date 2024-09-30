@@ -220,7 +220,7 @@ const Component = ({ children, maxWidth = '5xl', ...props }: FooterProps) => {
           </span>
           <div className="flex divide-x dark:divide-slate-200/20 gap-">
             <a
-              href="https://www.sushi.com/terms-of-use"
+              href="https://www.sushi.com/legal/terms-of-use"
               className="text-xs font-medium px-3 text-gray-600 dark:text-slate-300"
             >
               Terms of Use

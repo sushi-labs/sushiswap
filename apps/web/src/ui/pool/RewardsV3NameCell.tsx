@@ -1,7 +1,6 @@
 'use client'
 
 import { InformationCircleIcon } from '@heroicons/react/24/outline'
-import { AngleRewardsPool } from '@sushiswap/react-query'
 import {
   Chip,
   HoverCard,
@@ -14,6 +13,7 @@ import { Currency } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import { Row } from '@tanstack/react-table'
 import React, { FC } from 'react'
+import { AngleRewardsPool } from 'src/lib/hooks/react-query'
 import { unwrapToken } from 'sushi/currency'
 
 import { DistributionDataTable } from './DistributionDataTable'

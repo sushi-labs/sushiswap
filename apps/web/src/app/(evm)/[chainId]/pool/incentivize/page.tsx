@@ -1,6 +1,5 @@
 'use client'
 
-import { useAngleRewardTokens } from '@sushiswap/react-query'
 import {
   Button,
   ChipInput,
@@ -30,6 +29,7 @@ import {
 import format from 'date-fns/format'
 import { useRouter } from 'next/navigation'
 import { useMemo, useState } from 'react'
+import { useAngleRewardTokens } from 'src/lib/hooks/react-query'
 import { Web3Input } from 'src/lib/wagmi/components/web3-input'
 import { useConcentratedLiquidityPool } from 'src/lib/wagmi/hooks/pools/hooks/useConcentratedLiquidityPool'
 import {

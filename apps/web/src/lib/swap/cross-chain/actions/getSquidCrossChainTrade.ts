@@ -5,7 +5,7 @@ import {
   RouteRequest,
   SquidCallType,
 } from '@0xsquid/squid-types'
-import { NativeAddress } from '@sushiswap/react-query'
+import { NativeAddress } from 'src/lib/hooks/react-query'
 import { routeProcessor4Abi_processRoute, squidRouterAbi } from 'sushi/abi'
 import {
   ROUTE_PROCESSOR_4_ADDRESS,

@@ -2,25 +2,33 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "LOCAL: Minikube",
-      "profile": "local",
-      "type": "cloudcode.kubernetes",
+      "name": "Next.js: debug server-side",
+      "type": "node-terminal",
       "request": "launch",
-      "skaffoldConfig": "${workspaceFolder}/skaffold.yaml",
-      "watch": false,
-      "cleanUp": true,
-      "portForward": true
+      "cwd": "${workspaceFolder}/apps/web",
+      "command": "npm run dev"
     },
     {
-      "name": "STAGING: GKE",
-      "profile": "staging",
-      "type": "cloudcode.kubernetes",
+      "name": "Next.js: debug client-side",
+      "type": "chrome",
       "request": "launch",
-      "skaffoldConfig": "${workspaceFolder}/skaffold.yaml",
-      "watch": false,
-      "cleanUp": false,
-      "portForward": true,
-      "imageRegistry": "gcr.io/sushi-api-414412"
+      "url": "http://localhost:3000"
+    },
+    {
+      "name": "Next.js: debug full stack",
+      "type": "node",
+      "request": "launch",
+      "cwd": "${workspaceFolder}/apps/web",
+      "program": "${workspaceFolder}/node_modules/.bin/next",
+      "runtimeArgs": ["--inspect"],
+      "skipFiles": ["<node_internals>/**"],
+      "serverReadyAction": {
+        "action": "debugWithEdge",
+        "killOnServerStop": true,
+        "pattern": "- Local:.+(https?://.+)",
+        "uriFormat": "%s",
+        "webRoot": "${workspaceFolder}"
+      }
     }
   ]
 }

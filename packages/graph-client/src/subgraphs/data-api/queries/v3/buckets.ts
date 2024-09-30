@@ -37,7 +37,7 @@ export async function getV3PoolBuckets(
   variables: GetV3PoolBuckets,
   options?: RequestOptions,
 ) {
-  const url = `https://${SUSHI_DATA_API_HOST}`
+  const url = `${SUSHI_DATA_API_HOST}/graphql`
   const chainId = Number(variables.chainId) as ChainId
 
   if (!isSushiSwapV3ChainId(chainId)) {
