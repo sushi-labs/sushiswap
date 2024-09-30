@@ -121,7 +121,7 @@ const NetworkSelector = <T extends number>({
             {showNonEvm ? (
               <>
                 <Aptos />
-                <Tron />
+                {/* <Tron /> */}
               </>
             ) : null}
             {_networks
