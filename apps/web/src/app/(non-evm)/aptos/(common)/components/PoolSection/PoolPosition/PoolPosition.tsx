@@ -17,7 +17,6 @@ import { Pool } from '~aptos/pool/lib/convert-pool-to-sushi-pool'
 import { useTokensFromPool } from '~aptos/pool/lib/use-tokens-from-pool'
 import { useUnderlyingTokenBalanceFromPool } from '~aptos/pool/lib/use-underlying-token-balance-from-pool'
 import { PoolPositionDesktop } from './PoolPositionDesktop'
-import { PoolPositionStakedDesktop } from './PoolPositionStakedDesktop'
 
 interface PoolPositionProps {
   row?: Pool
@@ -116,14 +115,6 @@ export const PoolPosition: FC<PoolPositionProps> = ({
           underlying1={underlying1}
           value0={token0UnstakedInUsd}
           value1={token1UnstakedInUsd}
-        />
-        <PoolPositionStakedDesktop
-          row={row}
-          isLoading={isLoading || isBalanceLoading || isLoadingSupply}
-          underlying0={stakedUnderlying0}
-          underlying1={stakedUnderlying1}
-          value0={token0StakedInUsd}
-          value1={token1StakedInUsd}
         />
       </CardContent>
     </Card>
