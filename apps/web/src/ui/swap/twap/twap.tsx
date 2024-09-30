@@ -6,7 +6,6 @@ import {
   supportedChains,
 } from '@orbs-network/twap-ui-sushiswap'
 import { useConnectModal } from '@rainbow-me/rainbowkit'
-import { useCustomTokens } from '@sushiswap/hooks'
 import {
   Button,
   Dialog,
@@ -20,16 +19,19 @@ import {
   TooltipTrigger,
 } from '@sushiswap/ui'
 import { useTheme } from 'next-themes'
-import { ReactNode, useCallback, useEffect, useMemo } from 'react'
-import { useOtherTokenListsQuery, useTokens } from 'src/lib/hooks/react-query'
-import { useSortedTokenList } from 'src/lib/wagmi/components/token-selector/hooks/use-sorted-token-list'
+import { ReactNode, useCallback, useEffect } from 'react'
 import { ChainId } from 'sushi/chain'
 import { Currency, Native } from 'sushi/currency'
 import { useAccount, useChainId, useSwitchChain } from 'wagmi'
 
+import {
+  TokenListChainId,
+  isTokenListChainId,
+} from '@sushiswap/graph-client/data-api'
+import { useSearchTokens } from 'src/lib/wagmi/components/token-selector/hooks/use-search-tokens'
 import { TokenSelector } from 'src/lib/wagmi/components/token-selector/token-selector'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
-import { Address } from 'viem'
+import { Address, zeroAddress } from 'viem'
 import { usePrice } from '~evm/_common/ui/price-provider/price-provider/use-price'
 import {
   useDerivedStateSimpleSwap,
@@ -43,10 +45,6 @@ import { DCAMaintenanceMessage } from './dca-maintenance-message'
 import { LimitMaintenanceMessage } from './limit-maintenance-message'
 import { useIsDCAMaintenance } from './use-is-dca-maintenance'
 import { useIsLimitMaintenance } from './use-is-limit-maintenance'
-import { useSearchTokens } from 'src/lib/wagmi/components/token-selector/hooks/use-search-tokens'
-
-const zeroAddress = '0x0000000000000000000000000000000000000000'
-
 
 const Modal = ({
   open,
@@ -137,38 +135,6 @@ const getTokenLogo = (currency: Currency) => {
   }
 }
 
-const useTokenList = () => {
-  const { data: customTokenMap } = useCustomTokens()
-  const {
-    state: { chainId },
-  } = useDerivedStateSimpleSwap()
-
-  const { data: otherTokenMap } = useOtherTokenListsQuery({
-    chainId,
-    query: undefined,
-  })
-  const { data: defaultTokenMap } = useTokens({
-    chainId,
-  })
-
-  const tokenMap = useMemo(() => {
-    return {
-      ...defaultTokenMap,
-      ...otherTokenMap,
-    }
-  }, [defaultTokenMap, otherTokenMap])
-
-  const { data: sortedTokenList } = useSortedTokenList({
-    query: '',
-    customTokenMap,
-    tokenMap,
-    chainId,
-    includeNative: true,
-  })
-
-  return sortedTokenList
-}
-
 const Tooltip = ({ tooltipText }: any) => {
   return (
     <TooltipProvider>
@@ -245,16 +211,20 @@ const DCAButton = ({
   )
 }
 
-
 const useToken = (address?: string) => {
-  const { state: { chainId } } = useDerivedStateSimpleSwap()
+  const {
+    state: { chainId },
+  } = useDerivedStateSimpleSwap()
   const isNative = address === zeroAddress
-  const isEnabled = Boolean(address && !isNative )
-  const result = useSearchTokens({chainId: isEnabled ? chainId : undefined, search: address})
+  const isEnabled = Boolean(address && !isNative && isTokenListChainId(chainId))
+  const result = useSearchTokens({
+    chainId: isEnabled ? (chainId as TokenListChainId) : undefined,
+    search: address,
+  })
 
- if(address === zeroAddress && chainId) {
-  return  Native.onChain(chainId)
- }
+  if (address === zeroAddress && chainId) {
+    return Native.onChain(chainId)
+  }
 
   return result.data?.[0]
 }
