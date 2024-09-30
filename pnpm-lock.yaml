@@ -234,7 +234,7 @@ importers:
   apps/web:
     dependencies:
       '@aptos-labs/ts-sdk':
-        specifier: ^1.22.1
+        specifier: 1.27.0
         version: 1.27.0
       '@aptos-labs/wallet-adapter-core':
         specifier: 3.10.0
@@ -264,10 +264,10 @@ importers:
         specifier: 0.0.6
         version: 0.0.6(axios@1.6.8)
       '@martianwallet/aptos-wallet-adapter':
-        specifier: ^0.0.5
+        specifier: 0.0.5
         version: 0.0.5
       '@msafe/aptos-wallet-adapter':
-        specifier: ^1.1.3
+        specifier: 1.1.3
         version: 1.1.3(patch_hash=ztcfam72g3tcfvfy23kjubyhqa)(@aptos-labs/ts-sdk@1.27.0)(@mizuwallet-sdk/core@1.3.0(@aptos-labs/ts-sdk@1.27.0)(graphql-request@7.0.1(graphql@16.6.0)))(@mizuwallet-sdk/protocol@0.0.1)(@wallet-standard/core@1.0.3)(bufferutil@4.0.8)(utf-8-validate@5.0.10)
       '@next/bundle-analyzer':
         specifier: 14.2.11
@@ -279,7 +279,7 @@ importers:
         specifier: 1.1.57
         version: 1.1.57(bufferutil@4.0.8)(encoding@0.1.13)(react-dom@18.2.0(react@18.2.0))(react-native@0.73.7(@babel/core@7.24.4)(@babel/preset-env@7.24.4(@babel/core@7.24.4))(bufferutil@4.0.8)(encoding@0.1.13)(react@18.2.0)(utf-8-validate@5.0.10))(react@18.2.0)(utf-8-validate@5.0.10)
       '@pontem/wallet-adapter-plugin':
-        specifier: ^0.2.1
+        specifier: 0.2.1
         version: 0.2.1
       '@radix-ui/react-slot':
         specifier: 1.0.2
@@ -288,13 +288,13 @@ importers:
         specifier: 2.1.6
         version: 2.1.6(@tanstack/react-query@5.51.16(react@18.2.0))(@types/react@18.2.14)(babel-plugin-macros@3.1.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(viem@2.21.4(bufferutil@4.0.8)(typescript@5.5.4)(utf-8-validate@5.0.10)(zod@3.23.8))(wagmi@2.12.10(@tanstack/query-core@5.51.16)(@tanstack/react-query@5.51.16(react@18.2.0))(@types/react@18.2.14)(@upstash/redis@1.22.1)(bufferutil@4.0.8)(encoding@0.1.13)(immer@9.0.21)(react-dom@18.2.0(react@18.2.0))(react-native@0.73.7(@babel/core@7.24.4)(@babel/preset-env@7.24.4(@babel/core@7.24.4))(bufferutil@4.0.8)(encoding@0.1.13)(react@18.2.0)(utf-8-validate@5.0.10))(react@18.2.0)(rollup@3.29.4)(typescript@5.5.4)(utf-8-validate@5.0.10)(viem@2.21.4(bufferutil@4.0.8)(typescript@5.5.4)(utf-8-validate@5.0.10)(zod@3.23.8))(zod@3.23.8))
       '@rise-wallet/wallet-adapter':
-        specifier: ^0.1.2
+        specifier: 0.1.2
         version: 0.1.2
       '@sentry/nextjs':
         specifier: 8.30.0
         version: 8.30.0(@opentelemetry/api@1.9.0)(@opentelemetry/core@1.25.1(@opentelemetry/api@1.9.0))(@opentelemetry/instrumentation@0.53.0(@opentelemetry/api@1.9.0))(@opentelemetry/sdk-trace-base@1.26.0(@opentelemetry/api@1.9.0))(encoding@0.1.13)(next@14.2.11(@babel/core@7.24.4)(@opentelemetry/api@1.9.0)(@playwright/test@1.45.0)(babel-plugin-macros@3.1.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(react@18.2.0)(webpack@5.91.0)
       '@snapshot-labs/snapshot.js':
-        specifier: ^0.9.8
+        specifier: 0.9.9
         version: 0.9.9(bufferutil@4.0.8)(encoding@0.1.13)(utf-8-validate@5.0.10)
       '@sushiswap/bonds-sdk':
         specifier: workspace:*
@@ -375,7 +375,7 @@ importers:
         specifier: 2.13.5
         version: 2.13.5(@tanstack/query-core@5.51.16)(@types/react@18.2.14)(immer@9.0.21)(react@18.2.0)(typescript@5.5.4)(viem@2.21.4(bufferutil@4.0.8)(typescript@5.5.4)(utf-8-validate@5.0.10)(zod@3.23.8))
       aptos:
-        specifier: ^1.11.0
+        specifier: 1.21.0
         version: 1.21.0
       cors:
         specifier: 2.8.5
@@ -393,22 +393,22 @@ importers:
         specifier: 3.0.2
         version: 3.0.2(echarts@4.9.0)(react@18.2.0)
       fewcha-plugin-wallet-adapter:
-        specifier: ^0.1.3
+        specifier: 0.1.3
         version: 0.1.3(bufferutil@4.0.8)(encoding@0.1.13)(utf-8-validate@5.0.10)
       framer-motion:
         specifier: 7.10.3
         version: 7.10.3(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       lodash.frompairs:
-        specifier: ^4.0.1
+        specifier: 4.0.1
         version: 4.0.1
       lodash.maxby:
-        specifier: ^4.6.0
+        specifier: 4.6.0
         version: 4.6.0
       lodash.once:
         specifier: 4.1.1
         version: 4.1.1
       lodash.uniqby:
-        specifier: ^4.7.0
+        specifier: 4.7.0
         version: 4.7.0
       lodash.zip:
         specifier: 4.2.0
@@ -432,7 +432,7 @@ importers:
         specifier: 2.1.0
         version: 2.1.0(encoding@0.1.13)
       petra-plugin-wallet-adapter:
-        specifier: ^0.4.5
+        specifier: 0.4.5
         version: 0.4.5(@aptos-labs/ts-sdk@1.27.0)(aptos@1.21.0)
       react:
         specifier: 18.2.0
@@ -508,19 +508,19 @@ importers:
         specifier: 7.4.0
         version: 7.4.0
       '@types/echarts':
-        specifier: ^4.9.22
+        specifier: 4.9.22
         version: 4.9.22
       '@types/lodash.frompairs':
-        specifier: ^4.0.9
+        specifier: 4.0.9
         version: 4.0.9
       '@types/lodash.maxby':
-        specifier: ^4.6.9
+        specifier: 4.6.9
         version: 4.6.9
       '@types/lodash.once':
         specifier: 4.1.9
         version: 4.1.9
       '@types/lodash.uniqby':
-        specifier: ^4.7.9
+        specifier: 4.7.9
         version: 4.7.9
       '@types/lodash.zip':
         specifier: 4.2.9
@@ -568,14 +568,14 @@ importers:
         specifier: 0.0.16
         version: 0.0.16
       schema-dts:
-        specifier: ^1.1.2
+        specifier: 1.1.2
         version: 1.1.2(typescript@5.5.4)
       tailwindcss:
         specifier: 3.3.2
         version: 3.3.2(ts-node@10.9.2(@types/node@22.1.0)(typescript@5.5.4))
       tsx:
-        specifier: ^4.16.5
-        version: 4.16.5
+        specifier: 4.19.0
+        version: 4.19.0
       typescript:
         specifier: 5.5.4
         version: 5.5.4
@@ -4148,6 +4148,7 @@ packages:
   '@mysten/sui.js@0.13.0':
     resolution: {integrity: sha512-8s4IYN6GH95Begjuy0Xr45vQyyVZZHx83g5hJOpT9o98kQgdjaO218UdqQRVoFt/TODpNsTaI5OlymlKCgFVTQ==}
     engines: {node: '>=16'}
+    deprecated: This package has been renamed to @mysten/sui, please update to use the renamed package.
 
   '@ndelangen/get-tarball@3.0.9':
     resolution: {integrity: sha512-9JKTEik4vq+yGosHYhZ1tiH/3WpUS0Nh0kej4Agndhox8pAdWhEx5knFVRcb/ya9knCRCs1rPxNrSXTDdfVqpA==}
@@ -5966,9 +5967,6 @@ packages:
 
   '@scure/bip39@1.2.1':
     resolution: {integrity: sha512-Z3/Fsz1yr904dduJD0NpiyRHhRYHdcnyh73FZWiV+/qhWi83wNJ3NWolYqCEN+ZWsUz2TWwajJggcRE9r1zUYg==}
-
-  '@scure/bip39@1.3.0':
-    resolution: {integrity: sha512-disdg7gHuTDZtY+ZdkmLpPCk7fxZSu3gBiEGuoC1XYxv9cGx3Z6cpTggCgW6odSOOIXCiDjuGejW+aJKCY/pIQ==}
 
   '@scure/bip39@1.4.0':
     resolution: {integrity: sha512-BEEm6p8IueV/ZTfQLp/0vhw4NPnT9oWf5+28nvmeUICjP99f4vr2d+qc7AVGDDtwRep6ifR43Yed9ERVmiITzw==}
@@ -14822,6 +14820,7 @@ packages:
 
   rpc-websockets@7.11.0:
     resolution: {integrity: sha512-IkLYjayPv6Io8C/TdCL5gwgzd1hFz2vmBZrjMw/SPEXo51ETOhnzgS4Qy5GWi2JQN7HKHa66J3+2mv0fgNh/7w==}
+    deprecated: deprecate 7.11.0
 
   rpc-websockets@9.0.4:
     resolution: {integrity: sha512-yWZWN0M+bivtoNLnaDbtny4XchdAIF5Q4g/ZsC5UC61Ckbp0QczwO8fg44rV3uYmY4WHd+EZQbn90W1d8ojzqQ==}
@@ -15861,11 +15860,6 @@ packages:
     engines: {node: '>= 6'}
     peerDependencies:
       typescript: 5.5.4
-
-  tsx@4.16.5:
-    resolution: {integrity: sha512-ArsiAQHEW2iGaqZ8fTA1nX0a+lN5mNTyuGRRO6OW3H/Yno1y9/t1f9YOI1Cfoqz63VAthn++ZYcbDP7jPflc+A==}
-    engines: {node: '>=18.0.0'}
-    hasBin: true
 
   tsx@4.19.0:
     resolution: {integrity: sha512-bV30kM7bsLZKZIOCHeMNVMJ32/LuJzLVajkQI/qf92J2Qr08ueLQvW00PUZGiuLPP760UINwupgUj8qrSCPUKg==}
@@ -17125,10 +17119,10 @@ snapshots:
     dependencies:
       '@aptos-labs/aptos-cli': 0.2.0
       '@aptos-labs/aptos-client': 0.1.0(patch_hash=t5ob2d47ycxvxflm53kwwzv4kq)
-      '@noble/curves': 1.4.0
+      '@noble/curves': 1.6.0
       '@noble/hashes': 1.5.0
       '@scure/bip32': 1.4.0
-      '@scure/bip39': 1.3.0
+      '@scure/bip39': 1.4.0
       eventemitter3: 5.0.1
       form-data: 4.0.0
       js-base64: 3.7.7
@@ -20291,7 +20285,7 @@ snapshots:
       '@json-rpc-tools/utils': 1.7.6
       axios: 0.21.4
       safe-json-utils: 1.1.1
-      ws: 7.5.9(bufferutil@4.0.8)(utf-8-validate@5.0.10)
+      ws: 7.5.10(bufferutil@4.0.8)(utf-8-validate@5.0.10)
     transitivePeerDependencies:
       - bufferutil
       - debug
@@ -20791,10 +20785,10 @@ snapshots:
   '@mysten/sui.js@0.13.0(bufferutil@4.0.8)(encoding@0.1.13)(utf-8-validate@5.0.10)':
     dependencies:
       '@mysten/bcs': 0.3.0
-      '@noble/hashes': 1.4.0
+      '@noble/hashes': 1.5.0
       '@noble/secp256k1': 1.7.1
       '@scure/bip32': 1.4.0
-      '@scure/bip39': 1.3.0
+      '@scure/bip39': 1.4.0
       bn.js: 5.2.1
       buffer: 6.0.3
       cross-fetch: 3.1.8(encoding@0.1.13)
@@ -23121,11 +23115,6 @@ snapshots:
   '@scure/bip39@1.2.1':
     dependencies:
       '@noble/hashes': 1.3.3
-      '@scure/base': 1.1.6
-
-  '@scure/bip39@1.3.0':
-    dependencies:
-      '@noble/hashes': 1.4.0
       '@scure/base': 1.1.8
 
   '@scure/bip39@1.4.0':
@@ -32015,7 +32004,7 @@ snapshots:
 
   jayson@3.7.0(bufferutil@4.0.8)(utf-8-validate@5.0.10):
     dependencies:
-      '@types/connect': 3.4.35
+      '@types/connect': 3.4.36
       '@types/node': 12.20.55
       '@types/ws': 7.4.7
       JSONStream: 1.3.5
@@ -32023,11 +32012,11 @@ snapshots:
       delay: 5.0.0
       es6-promisify: 5.0.0
       eyes: 0.1.8
-      isomorphic-ws: 4.0.1(ws@7.5.9(bufferutil@4.0.8)(utf-8-validate@5.0.10))
+      isomorphic-ws: 4.0.1(ws@7.5.10(bufferutil@4.0.8)(utf-8-validate@5.0.10))
       json-stringify-safe: 5.0.1
       lodash: 4.17.21
       uuid: 8.3.2
-      ws: 7.5.9(bufferutil@4.0.8)(utf-8-validate@5.0.10)
+      ws: 7.5.10(bufferutil@4.0.8)(utf-8-validate@5.0.10)
     transitivePeerDependencies:
       - bufferutil
       - utf-8-validate
@@ -36969,13 +36958,6 @@ snapshots:
     dependencies:
       tslib: 1.14.1
       typescript: 5.5.4
-
-  tsx@4.16.5:
-    dependencies:
-      esbuild: 0.21.5
-      get-tsconfig: 4.7.6
-    optionalDependencies:
-      fsevents: 2.3.3
 
   tsx@4.19.0:
     dependencies:
