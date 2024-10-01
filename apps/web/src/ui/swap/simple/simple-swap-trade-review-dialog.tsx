@@ -1,5 +1,6 @@
 'use client'
 
+import * as Sentry from '@sentry/nextjs'
 import { createErrorToast, createToast } from '@sushiswap/notifications'
 import {
   BrowserEvent,
@@ -42,7 +43,7 @@ import { useApproved } from 'src/lib/wagmi/systems/Checker/Provider'
 import { Chain, ChainId } from 'sushi/chain'
 import { Native } from 'sushi/currency'
 import { shortenAddress } from 'sushi/format'
-import { ZERO } from 'sushi/math'
+import { Percent, ZERO } from 'sushi/math'
 import {
   SendTransactionReturnType,
   UserRejectedRequestError,
@@ -84,6 +85,23 @@ export const SimpleSwapTradeReviewDialog: FC<{
   const client = usePublicClient()
 
   const refetchBalances = useBalanceWeb3Refetch()
+
+  useEffect(() => {
+    if (!trade) return
+    Sentry.setContext('swap-context', {
+      chainId,
+      amountIn: trade?.amountIn?.toSignificant(6),
+      amountOut: trade?.amountOut?.toSignificant(6),
+      minAmountOut: trade?.minAmountOut?.toSignificant(6),
+      fromToken: trade?.route?.fromToken,
+      toToken: trade?.route?.toToken,
+      priceImpact: trade?.priceImpact?.toPercentageString(),
+      tokenTax:
+        trade?.tokenTax instanceof Percent
+          ? trade.tokenTax.toPercentageString()
+          : trade?.tokenTax,
+    })
+  }, [trade, chainId])
 
   const isWrap =
     token0?.isNative &&
@@ -133,7 +151,10 @@ export const SimpleSwapTradeReviewDialog: FC<{
 
       try {
         const ts = new Date().getTime()
-        const receiptPromise = client.waitForTransactionReceipt({ hash })
+        const receiptPromise = client.waitForTransactionReceipt({
+          hash,
+          retryCount: 30,
+        })
 
         sendAnalyticsEvent(SwapEventName.SWAP_SIGNED, {
           ...trace,
@@ -253,15 +274,35 @@ export const SimpleSwapTradeReviewDialog: FC<{
 
     return async (confirm: () => void) => {
       try {
+        Sentry.addBreadcrumb({
+          category: 'swap',
+          message: 'Swap execution in progress',
+          level: 'info',
+        })
         await sendTransactionAsync(simulation)
+        // Add breadcrumb for successful swap
+        Sentry.addBreadcrumb({
+          category: 'swap',
+          message: 'Swap completed successfully',
+          level: 'info',
+        })
         confirm()
-      } catch {}
+      } catch (e) {
+        Sentry.addBreadcrumb({
+          category: 'swap',
+          message: 'Swap failed',
+          level: 'error',
+        })
+        Sentry.captureException(e)
+        throw e
+      }
     }
   }, [simulation, sendTransactionAsync])
 
   const { status } = useWaitForTransactionReceipt({
     chainId: chainId,
     hash: data,
+    retryCount: 30,
   })
 
   return (
