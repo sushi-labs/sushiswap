@@ -1,139 +1,142 @@
-import { ArrowTopRightOnSquareIcon } from '@heroicons/react/20/solid'
+'use client'
+
+import { ExternalLinkIcon } from '@heroicons/react-v1/solid'
+import { ApprovedCommunityTokens } from '@sushiswap/graph-client/data-api/queries/token-list-submission'
 import {
-  ApprovedCommunityTokens,
-  getApprovedCommunityTokens,
-} from '@sushiswap/graph-client/data-api/queries/token-list-submission'
-import {
-  Button,
+  Badge,
+  Card,
+  CardHeader,
+  CardTitle,
   Container,
+  DataTable,
   LinkExternal,
-  LinkInternal,
-  typographyVariants,
+  SkeletonCircle,
+  SkeletonText,
 } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
-import { unstable_cache } from 'next/cache'
-import React from 'react'
-import { Chain } from 'sushi'
+import { ColumnDef, SortingState, TableState } from '@tanstack/react-table'
+import React, { useMemo, useState } from 'react'
+import { useApprovedCommunityTokens } from 'src/lib/hooks'
+import { Chain } from 'sushi/chain'
+import { shortenAddress } from 'sushi/format'
+import { NavigationItems } from '../navigation-items'
 
-export default async function ApprovedTokensPage() {
-  const approvedTokens = (await unstable_cache(
-    async () => await getApprovedCommunityTokens(),
-    ['approved-community-tokens'],
-    {
-      revalidate: 60,
+const COLUMNS: ColumnDef<ApprovedCommunityTokens[number], unknown>[] = [
+  {
+    id: 'logo',
+    header: 'Logo',
+    cell: (props) => (
+      <Badge
+        className="border-2 border-slate-900 rounded-full z-[11]"
+        position="bottom-right"
+        badgeContent={
+          <NetworkIcon
+            chainId={props.row.original.chainId}
+            width={12}
+            height={12}
+          />
+        }
+      >
+        <div className="h-8 w-8 rounded-full overflow-hidden border-2 ring-gray-50 dark:ring-slate-950">
+          <img
+            src={props.row.original.logoUrl}
+            width={32}
+            height={32}
+            alt={props.row.original.symbol}
+          />
+        </div>
+      </Badge>
+    ),
+    meta: {
+      skeleton: <SkeletonCircle radius={32} />,
     },
-  )()) as ApprovedCommunityTokens
+  },
+  {
+    id: 'name',
+    header: 'Name',
+    accessorFn: (row) => row.name,
+    cell: (props) => props.row.original.name,
+    meta: {
+      skeleton: <SkeletonText fontSize="lg" />,
+    },
+  },
+  {
+    id: 'symbol',
+    header: 'Symbol',
+    accessorFn: (row) => row.symbol,
+    cell: (props) => props.row.original.symbol,
+    meta: {
+      skeleton: <SkeletonText fontSize="lg" />,
+    },
+  },
+  {
+    id: 'address',
+    header: 'Address',
+    cell: (props) => (
+      <div className="flex flex-nowrap gap-1">
+        <span className="block sm:hidden">
+          {shortenAddress(props.row.original.address)}
+        </span>
+        <span className="hidden sm:block">{props.row.original.address}</span>
+        <LinkExternal
+          target="_blank"
+          href={Chain.from(props.row.original.chainId)?.getTokenUrl(
+            props.row.original.address,
+          )}
+        >
+          <ExternalLinkIcon className="w-4 h-4" />
+        </LinkExternal>
+      </div>
+    ),
+    meta: {
+      skeleton: <SkeletonText fontSize="lg" />,
+    },
+  },
+]
+
+export default function ApprovedTokensPage() {
+  const { data, isLoading } = useApprovedCommunityTokens()
+
+  const [sorting, setSorting] = useState<SortingState>([
+    { id: 'createdAt', desc: true },
+  ])
+
+  const state: Partial<TableState> = useMemo(() => {
+    return {
+      sorting,
+      pagination: {
+        pageIndex: 0,
+        pageSize: data?.length ?? 0,
+      },
+    }
+  }, [data?.length, sorting])
+
   return (
     <>
-      <div className="max-w-6xl px-4 py-16 mx-auto">
-        <div className="pb-3">
-          <LinkInternal
-            href={'/tokenlist-request'}
-            className="text-sm text-blue hover:under line"
-          >
-            ← Token Listing
-          </LinkInternal>
-        </div>
-        <div>
-          <h1 className={typographyVariants({ variant: 'h1' })}>
-            Approved List
-          </h1>
-          <p
-            className={typographyVariants({
-              variant: 'lead',
-              className: 'max-w-[800px]',
-            })}
-          >
-            Approved community tokens.
-          </p>
-        </div>
-      </div>
-
-      <div className="bg-gray-50 dark:bg-white/[0.02] border-t border-accent pt-4 pb-20 h-full">
-        <Container maxWidth="6xl" className="px-4 py-10">
-          <div className="pb-3">
-            <h1>Last 25 Approved Tokens</h1>
-          </div>
-          <div className="px-4 border rounded-lg bg-slate-900 border-white/10">
-            {/* Header Row */}
-            <div
-              className="grid grid-cols-4 border-b border-white/5"
-              style={{ gridTemplateColumns: '0.5fr 1fr 1fr 3fr' }} // Adjusted to ensure alignment with data rows
-            >
-              {['', 'Token', 'Symbol', 'Address'].map((label) => (
-                <div className="py-2 text-left" key={label}>
-                  {' '}
-                  {/* Left-aligned text */}
-                  <span className="text-xs font-medium text-slate-400">
-                    {label}
-                  </span>
-                </div>
-              ))}
-            </div>
-
-            {/* Data Rows */}
-            {approvedTokens.length ? (
-              approvedTokens.map((token, index) => (
-                <div
-                  className="grid items-center grid-cols-4 border-b border-white/5"
-                  style={{ gridTemplateColumns: '0.5fr 1fr 1fr 3fr' }} // Matching header layout
-                  key={index}
-                >
-                  <div className="flex items-center py-4">
-                    <div className="relative">
-                      <img
-                        className="w-8 h-8 rounded-full"
-                        src={token.logoUrl}
-                        alt={token.address}
-                      />
-                      <div
-                        className="absolute bottom-0 right-0"
-                        style={{ width: '10px', height: '10px' }}
-                      >
-                        <NetworkIcon
-                          chainId={token.chainId}
-                          width={14}
-                          height={14}
-                        />
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="flex justify-start py-4">
-                    <span>{token.name}</span>
-                  </div>
-
-                  <div className="flex justify-start py-4">
-                    <span>{token.symbol}</span>
-                  </div>
-
-                  <div className="flex justify-start py-4">
-                    <span>
-                      <LinkExternal
-                        target="_blank"
-                        href={Chain.from(token.chainId)?.getTokenUrl(
-                          token.address,
-                        )}
-                      >
-                        <Button
-                          asChild
-                          variant="link"
-                          size="sm"
-                          className="!font-medium !text-secondary-foreground"
-                        >
-                          {/* {shortenAddress(token.address, 4)}  // TODO: Shorten on mobile?*/}
-                          {token.address}
-                          <ArrowTopRightOnSquareIcon className="w-3 h-3" />
-                        </Button>
-                      </LinkExternal>
-                    </span>
-                  </div>
-                </div>
-              ))
-            ) : (
-              <div className="py-4 text-center">No approved tokens</div>
-            )}
-          </div>
+      <Container
+        maxWidth="7xl"
+        className="px-4 h-[200px] shrink-0 flex flex-col justify-center gap-2"
+      >
+        <h1 className="text-4xl font-bold">Approved List</h1>
+        <p className="text-sm text-muted-foreground">
+          Approved community tokens.
+        </p>
+      </Container>
+      <NavigationItems />
+      <div className="bg-gray-50 dark:bg-white/[0.02] border-t border-accent h-full">
+        <Container maxWidth="7xl" className="px-4 py-10">
+          <Card>
+            <CardHeader>
+              <CardTitle>Last 25 Approved Tokens</CardTitle>
+            </CardHeader>
+            <DataTable
+              state={state}
+              onSortingChange={setSorting}
+              loading={isLoading}
+              columns={COLUMNS}
+              data={data ?? []}
+            />
+          </Card>
         </Container>
       </div>
     </>

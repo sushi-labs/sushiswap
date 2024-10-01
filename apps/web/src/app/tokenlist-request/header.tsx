@@ -1,37 +1,18 @@
-import {
-  Navigation,
-  NavigationElement,
-  NavigationElementType,
-} from '@sushiswap/ui'
-interface HeaderLink {
-  name: string
-  href: string
-  isExternal?: boolean
-}
+'use client'
 
-export interface HeaderSection {
-  title: string
-  href?: string
-  links?: HeaderLink[]
-  isExternal?: boolean
-  className?: string
-}
+import { Navigation } from '@sushiswap/ui'
+import React, { FC } from 'react'
+import { SUPPORTED_CHAIN_IDS } from 'src/config'
+import { WagmiHeaderComponents } from 'src/lib/wagmi/components/wagmi-header-components'
+import { useChainId } from 'wagmi'
+import { headerElements } from '~evm/_common/header-elements'
 
-export async function Header() {
-  const navData: NavigationElement[] = [
-    {
-      title: 'Pending',
-      href: '/tokenlist-request/pending',
-      show: 'everywhere',
-      type: NavigationElementType.Single,
-    },
-    {
-      title: 'Approved',
-      href: '/tokenlist-request/approved',
-      show: 'everywhere',
-      type: NavigationElementType.Single,
-    },
-  ]
-
-  return <Navigation leftElements={navData} />
+export const Header: FC = () => {
+  const chainId = useChainId()
+  return (
+    <Navigation
+      leftElements={headerElements({ chainId })}
+      rightElement={<WagmiHeaderComponents chainIds={SUPPORTED_CHAIN_IDS} />}
+    />
+  )
 }
