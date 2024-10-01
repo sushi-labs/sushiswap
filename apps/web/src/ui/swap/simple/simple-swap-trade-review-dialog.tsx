@@ -100,6 +100,7 @@ export const SimpleSwapTradeReviewDialog: FC<{
         trade?.tokenTax instanceof Percent
           ? trade.tokenTax.toPercentageString()
           : trade?.tokenTax,
+      tx: trade.tx,
     })
   }, [trade, chainId])
 
@@ -151,9 +152,8 @@ export const SimpleSwapTradeReviewDialog: FC<{
 
       try {
         const ts = new Date().getTime()
-        const receiptPromise = client.waitForTransactionReceipt({
+        const promise = client.waitForTransactionReceipt({
           hash,
-          retryCount: 30,
         })
 
         sendAnalyticsEvent(SwapEventName.SWAP_SIGNED, {
@@ -167,7 +167,7 @@ export const SimpleSwapTradeReviewDialog: FC<{
           type: 'swap',
           chainId: chainId,
           txHash: hash,
-          promise: receiptPromise,
+          promise,
           summary: {
             pending: `${
               isWrap ? 'Wrapping' : isUnwrap ? 'Unwrapping' : 'Swapping'
@@ -197,7 +197,7 @@ export const SimpleSwapTradeReviewDialog: FC<{
           groupTimestamp: ts,
         })
 
-        const receipt = await receiptPromise
+        const receipt = await promise
         {
           const trade = tradeRef.current
           if (receipt.status === 'success') {
@@ -274,25 +274,9 @@ export const SimpleSwapTradeReviewDialog: FC<{
 
     return async (confirm: () => void) => {
       try {
-        Sentry.addBreadcrumb({
-          category: 'swap',
-          message: 'Swap execution in progress',
-          level: 'info',
-        })
         await sendTransactionAsync(simulation)
-        // Add breadcrumb for successful swap
-        Sentry.addBreadcrumb({
-          category: 'swap',
-          message: 'Swap completed successfully',
-          level: 'info',
-        })
         confirm()
       } catch (e) {
-        Sentry.addBreadcrumb({
-          category: 'swap',
-          message: 'Swap failed',
-          level: 'error',
-        })
         Sentry.captureException(e)
         throw e
       }
@@ -302,7 +286,6 @@ export const SimpleSwapTradeReviewDialog: FC<{
   const { status } = useWaitForTransactionReceipt({
     chainId: chainId,
     hash: data,
-    retryCount: 30,
   })
 
   return (
