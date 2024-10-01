@@ -15,7 +15,7 @@ const supportedNetworks = [ChainId.ETHEREUM]
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <Providers>
-      <SidebarProvider>
+      <SidebarProvider defaultOpen={false}>
         <Header chainId={ChainId.ETHEREUM} />
         <SidebarContainer
           selectedNetwork={ChainId.ETHEREUM}
