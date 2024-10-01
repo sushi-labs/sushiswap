@@ -411,7 +411,7 @@ const useSimpleSwapTrade = () => {
     [slippagePercent, tokenTax],
   )
 
-  const apiTrade = useApiTrade({
+  const trade = useApiTrade({
     chainId,
     fromToken: token0,
     toToken: token1,
@@ -430,7 +430,7 @@ const useSimpleSwapTrade = () => {
     setTokenTax(undefined)
   }, [token0, token1, setTokenTax])
 
-  return apiTrade
+  return trade
 }
 
 export {
