@@ -60,7 +60,6 @@ export default function PoolByIdPage({
             token1={token1Data}
             isLoading={isLoadingTokens}
           />
-          <PoolRewards />
         </div>
       </div>
     </Container>
