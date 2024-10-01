@@ -1,6 +1,6 @@
+import { getTokenList } from '@sushiswap/graph-client/data-api'
 import { Ratelimit } from '@upstash/ratelimit'
 import { NextRequest, NextResponse } from 'next/server'
-import { getToken } from 'src/lib/db'
 import { rateLimit } from 'src/lib/rate-limit'
 import { Position, formatPercent } from 'sushi'
 import { ChainId } from 'sushi/chain'
@@ -70,16 +70,16 @@ export async function GET(request: NextRequest) {
       tokenId: args.positionId,
     })
 
-    const [token0, token1] = await Promise.all([
-      getToken(args.chainId, position.token0),
-      getToken(args.chainId, position.token1),
+    const [[token0], [token1]] = await Promise.all([
+      getTokenList({ chainId: args.chainId, search: position.token0 }),
+      getTokenList({ chainId: args.chainId, search: position.token1 }),
     ])
 
     const [{ pool, poolAddress }, prices] = await Promise.all([
       getPool({
         chainId: args.chainId,
-        token0: new Token({ chainId: args.chainId, ...token0 }),
-        token1: new Token({ chainId: args.chainId, ...token1 }),
+        token0: new Token(token0),
+        token1: new Token(token1),
         feeAmount: position.fee as SushiSwapV3FeeAmount,
       }),
       getPrices({ chainId: args.chainId }),

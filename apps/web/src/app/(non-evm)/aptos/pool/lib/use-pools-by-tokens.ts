@@ -72,7 +72,7 @@ export function usePoolsByTokens({ tokens, ledgerVersion }: UsePoolsByTokens) {
   return { data, ...rest }
 }
 
-export const getReservesAddress = (
+const getReservesAddress = (
   tokenA: Token,
   tokenB: Token,
   network: SupportedNetwork,
@@ -81,11 +81,11 @@ export const getReservesAddress = (
   return `${chains[network].contracts.swap}::swap::TokenPairReserve<${token0.address}, ${token1.address}>`
 }
 
-export const sortsBefore = (tokenA: Token, tokenB: Token) => {
+const sortsBefore = (tokenA: Token, tokenB: Token) => {
   return tokenA?.address?.toLowerCase() < tokenB?.address?.toLowerCase()
 }
 
-export const sortToken = (tokenA: Token, tokenB: Token) => {
+const sortToken = (tokenA: Token, tokenB: Token) => {
   const [token0, token1] = sortsBefore(tokenA, tokenB)
     ? [tokenA, tokenB]
     : [tokenB, tokenA]

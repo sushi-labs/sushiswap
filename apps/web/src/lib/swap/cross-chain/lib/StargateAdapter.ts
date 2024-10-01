@@ -1,4 +1,4 @@
-import { NativeAddress } from 'src/lib/hooks/react-query'
+import { NativeAddress } from 'src/lib/constants'
 import {
   STARGATE_CHAIN_ID,
   STARGATE_CHAIN_PATHS,

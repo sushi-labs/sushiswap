@@ -2,8 +2,8 @@ import { Badge, TooltipContent } from '@sushiswap/ui'
 import { Tooltip, TooltipProvider, TooltipTrigger } from '@sushiswap/ui'
 import { AptosCircle } from '@sushiswap/ui/icons/network/circle/AptosCircle'
 import React, { FC } from 'react'
-import { ProtocolBadge } from 'src/ui/pool/PoolNameCell'
-import { SushiSwapProtocol, formatNumber } from 'sushi'
+// import { ProtocolBadge } from 'src/ui/pool/PoolNameCell'
+import { formatNumber } from 'sushi'
 import { CurrencyIcon } from '~aptos/_common/ui/currency/currency-icon'
 import { CurrencyIconList } from '~aptos/_common/ui/currency/currency-icon-list'
 import { TopPool } from '~aptos/pool/lib/use-top-pools'
@@ -29,7 +29,7 @@ export const PoolNameCell: FC<Row<TopPool>> = ({ row }) => {
           {row.name}
         </span>
         <div className="flex gap-1">
-          <TooltipProvider>
+          {/* <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
                 {ProtocolBadge[row.protocol as SushiSwapProtocol]}
@@ -38,7 +38,7 @@ export const PoolNameCell: FC<Row<TopPool>> = ({ row }) => {
                 <p>Protocol version</p>
               </TooltipContent>
             </Tooltip>
-          </TooltipProvider>
+          </TooltipProvider> */}
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>

@@ -1,4 +1,4 @@
-import { captureRequestError } from '@sentry/nextjs'
+import * as Sentry from '@sentry/nextjs'
 
 function bigintSeriliazer() {
   const originalStringify = JSON.stringify
@@ -67,4 +67,4 @@ export async function register() {
   }
 }
 
-export const onRequestError = captureRequestError
+export const onRequestError = Sentry.captureRequestError

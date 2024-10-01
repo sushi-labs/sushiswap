@@ -53,25 +53,6 @@ test.beforeEach(async ({ page, next }) => {
   }
 
   try {
-    await page.route('https://tokens.sushi.com/v0', async (route) => {
-      // const response = await route.fetch()
-      // const json = await response.json()
-      await route.fulfill({
-        json: [FAKE_TOKEN].map((token) => ({
-          id: token.id,
-          chainId: token.chainId,
-          address: token.address.toLowerCase(),
-          name: token.name,
-          symbol: token.symbol,
-          decimals: token.decimals,
-        })),
-      })
-    })
-  } catch (error) {
-    console.error('error mockking token api', error)
-  }
-
-  try {
     await page.route(`**/price/v1/${chainId}`, async (route) => {
       // const response = await route.fetch()
       // const json = await response.json()

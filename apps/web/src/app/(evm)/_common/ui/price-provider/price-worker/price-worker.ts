@@ -181,6 +181,7 @@ import {
       headers: {
         Accept: 'application/octet-stream',
       },
+      cache: 'no-store',
     })
 
     if (!response.ok) {
@@ -204,7 +205,7 @@ import {
 
     return {
       data: priceMap,
-      lastModified: Number(response.headers.get('Last-Modified')!),
+      lastModified: Number(response.headers.get('Last-Updated')!),
     }
   }
 
@@ -213,7 +214,7 @@ import {
     newPriceMap: Map<bigint, number>,
   ) {
     for (const [address, price] of newPriceMap) {
-      if (price === 0) {
+      if (price === 0 || !Number.isFinite(price)) {
         oldPriceData.delete(address)
       } else {
         oldPriceData.set(address, price)

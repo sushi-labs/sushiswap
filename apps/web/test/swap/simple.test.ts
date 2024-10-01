@@ -32,26 +32,6 @@ test.beforeEach(async ({ page, next }) => {
     await route.fulfill({ json: { maintenance: false } })
   })
 
-  // await page.route(
-  //   'http://localhost:3000/api/balance/v0/**/*',
-  //   async (route) => {
-  //     await route.fulfill({ json: {} })
-  //   },
-  // )
-
-  // await page.route('http://tokens.sushi.com/v0', async (route) => {
-  //   await route.fulfill({
-  //     json: [wnative, usdc, usdt, wbtc].map((token) => ({
-  //       id: token.id,
-  //       chainId: token.chainId,
-  //       address: token.address.toLowerCase(),
-  //       name: token.name,
-  //       symbol: token.symbol,
-  //       decimals: token.decimals,
-  //     })),
-  //   })
-  // })
-
   try {
     await interceptAnvil(page, next)
   } catch (_e) {

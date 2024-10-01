@@ -64,7 +64,6 @@
     "update-schemas": "tsx scripts/update-schemas.ts"
   },
   "dependencies": {
-    "@sushiswap/bonds-sdk": "workspace:*",
     "@sushiswap/steer-sdk": "workspace:*",
     "gql.tada": "^1.7.5",
     "graphql": "16.6.0",
@@ -75,7 +74,6 @@
   },
   "devDependencies": {
     "@0no-co/graphqlsp": "^1.12.3",
-    "@sushiswap/database": "workspace:*",
     "@tsconfig/esm": "1.0.4",
     "@tsconfig/strictest": "2.0.2",
     "@types/json-bigint": "^1.0.4",

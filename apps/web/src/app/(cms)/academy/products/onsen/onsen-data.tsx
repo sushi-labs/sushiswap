@@ -144,4 +144,4 @@ const faq = [
 
 const slug = 'onsen'
 
-export { color, accentColor, buttonText, productStats, cards, faq, slug }
+export { color, buttonText, productStats, cards, faq, slug }

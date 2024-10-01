@@ -1,4 +1,5 @@
 import { Container, Separator } from '@sushiswap/ui'
+import { unstable_cache } from 'next/cache'
 import React from 'react'
 import { getGhostBody } from 'src/app/(cms)/lib/ghost/ghost'
 
@@ -31,7 +32,15 @@ export async function generateMetadata({ params }: Props) {
 export default async function Page({ params }: Props) {
   const page = pages[params.slug]
 
-  const { title, html: body, updated_at } = await getGhostBody(params.slug)
+  const {
+    title,
+    html: body,
+    updated_at,
+  } = await unstable_cache(
+    (slug: string) => getGhostBody(slug),
+    [params.slug],
+    { revalidate: 86400 },
+  )(params.slug)
 
   if (!title) {
     throw new Error(`${page.title}: title missing`)

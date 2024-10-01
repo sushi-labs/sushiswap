@@ -26,8 +26,8 @@ import {
 } from '@sushiswap/ui'
 import React, { FC, ReactNode, useCallback, useMemo } from 'react'
 import { Bound } from 'src/lib/constants'
+import { NativeAddress } from 'src/lib/constants'
 import { useTokenAmountDollarValues } from 'src/lib/hooks'
-import { NativeAddress } from 'src/lib/hooks/react-query'
 import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
 import {
   getDefaultTTL,

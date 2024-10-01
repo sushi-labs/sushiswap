@@ -13,7 +13,6 @@ import {
   CardGroup,
   CardHeader,
   CardLabel,
-  CardOverlay,
   CardTitle,
   Currency,
   DialogConfirm,
@@ -35,16 +34,9 @@ import {
 } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui'
 import React, { FC, useMemo, useState } from 'react'
-import {
-  APPROVE_TAG_MIGRATE,
-  APPROVE_TAG_UNSTAKE,
-  Bound,
-  Field,
-} from 'src/lib/constants'
+import { APPROVE_TAG_MIGRATE, Bound, Field } from 'src/lib/constants'
 import { useTokenAmountDollarValues, useV2Pool } from 'src/lib/hooks'
 import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
-import { getMasterChefContractConfig } from 'src/lib/wagmi/hooks/master-chef/use-master-chef-contract'
-import { useMasterChefWithdraw } from 'src/lib/wagmi/hooks/master-chef/use-master-chef-withdraw'
 import {
   V3MigrateContractConfig,
   useV3Migrate,
@@ -80,120 +72,8 @@ import { Address } from 'viem'
 import { useAccount, useWaitForTransactionReceipt } from 'wagmi'
 import { useConcentratedDerivedMintInfo } from './ConcentratedLiquidityProvider'
 import { usePoolPosition } from './PoolPositionProvider'
-import { usePoolPositionStaked } from './PoolPositionStakedProvider'
 import { SelectFeeConcentratedWidget } from './SelectFeeConcentratedWidget'
 import { SelectPricesWidget } from './SelectPricesWidget'
-
-function MigrateUnstakeCard({ pool }: { pool: V2Pool }) {
-  const {
-    value0: stakedValue0,
-    value1: stakedValue1,
-    balance: stakedBalance,
-    underlying0: stakedUnderlying0,
-    underlying1: stakedUnderlying1,
-    isLoading: isStakedLoading,
-  } = usePoolPositionStaked()
-
-  const { approved } = useApproved(APPROVE_TAG_UNSTAKE)
-
-  const { write: writeWithdraw, isPending: isWritePending } =
-    useMasterChefWithdraw({
-      chainId: pool.chainId as ChainId,
-      amount: stakedBalance,
-      pid: pool.incentives?.[0]?.pid,
-      chef: pool.incentives?.[0]?.chefType,
-      enabled: Boolean(
-        approved &&
-          stakedBalance?.greaterThan(ZERO) &&
-          pool.incentives?.[0]?.pid &&
-          pool.incentives?.[0]?.chefType,
-      ),
-    })
-
-  const masterChefContract = useMemo(() => {
-    if (!pool.incentives.length) return undefined
-    if (pool.incentives[0].chefType === 'Merkl') return undefined
-
-    return getMasterChefContractConfig(
-      pool.chainId as ChainId,
-      pool.incentives[0]?.chefType,
-    )
-  }, [pool.chainId, pool.incentives])
-
-  if (!pool.wasIncentivized) return <></>
-
-  return (
-    <Card>
-      <CardOverlay show={Boolean(stakedBalance?.equalTo(ZERO))}>
-        Already unstaked. You{`'`}re all set! ✅
-      </CardOverlay>
-      <CardHeader>
-        <CardTitle>Unstake & Claim Rewards</CardTitle>
-        <CardDescription>
-          Please unstake & claim your rewards first before migrating.
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <CardGroup className="max-w-[500px]">
-          <CardLabel>Staked position</CardLabel>
-          <CardCurrencyAmountItem
-            isLoading={isStakedLoading}
-            amount={stakedUnderlying0}
-            fiatValue={formatUSD(stakedValue0)}
-          />
-          <CardCurrencyAmountItem
-            isLoading={isStakedLoading}
-            amount={stakedUnderlying1}
-            fiatValue={formatUSD(stakedValue1)}
-          />
-        </CardGroup>
-      </CardContent>
-      <CardFooter>
-        <Checker.Guard
-          fullWidth={false}
-          size="default"
-          guardText="No staked balance found"
-          guardWhen={Boolean(stakedBalance?.equalTo(ZERO))}
-        >
-          <Checker.Connect fullWidth={false} size="default">
-            <Checker.Network
-              fullWidth={false}
-              size="default"
-              chainId={pool.chainId as ChainId}
-            >
-              <Checker.ApproveERC20
-                fullWidth={false}
-                size="default"
-                id="approve-token0"
-                amount={stakedBalance}
-                contract={masterChefContract?.address}
-                enabled={Boolean(masterChefContract?.address)}
-              >
-                <Checker.Success tag={APPROVE_TAG_UNSTAKE}>
-                  <Button
-                    fullWidth={false}
-                    size="default"
-                    onClick={() => writeWithdraw?.()}
-                    disabled={!approved || isWritePending}
-                    testId="unstake-liquidity"
-                  >
-                    {isWritePending ? (
-                      <Dots>Confirm transaction</Dots>
-                    ) : (
-                      'Unstake & Claim Rewards'
-                    )}
-                  </Button>
-                </Checker.Success>
-              </Checker.ApproveERC20>
-            </Checker.Network>
-          </Checker.Connect>
-        </Checker.Guard>
-      </CardFooter>
-    </Card>
-  )
-}
-
-export const MODAL_MIGRATE_ID = 'migrate-modal'
 
 export const MigrateTab: FC<{ pool: V2Pool }> = withCheckerRoot(({ pool }) => {
   const { address } = useAccount()
@@ -241,9 +121,6 @@ export const MigrateTab: FC<{ pool: V2Pool }> = withCheckerRoot(({ pool }) => {
     token1,
   )
   const totalSupply = useTotalSupply(liquidityToken)
-
-  // Harvest & Withdraw
-  const { balance: stakedBalance } = usePoolPositionStaked()
 
   // this is just getLiquidityValue with the fee off, but for the passed pair
   const token0Value = useMemo(
@@ -506,11 +383,7 @@ export const MigrateTab: FC<{ pool: V2Pool }> = withCheckerRoot(({ pool }) => {
 
   return (
     <DialogProvider>
-      <MigrateUnstakeCard pool={pool} />
       <Card>
-        <CardOverlay show={Boolean(stakedBalance?.greaterThan(ZERO))}>
-          Please unstake first before migrating!
-        </CardOverlay>
         <CardHeader>
           <CardTitle>Migrate position</CardTitle>
           <CardDescription>
@@ -519,7 +392,7 @@ export const MigrateTab: FC<{ pool: V2Pool }> = withCheckerRoot(({ pool }) => {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="flex flex-col md:flex-row gap-6">
+          <div className="flex flex-col gap-6 md:flex-row">
             <CardGroup>
               <CardLabel>V2 Price</CardLabel>
               {token0 && token1 && pool ? (
@@ -629,7 +502,7 @@ export const MigrateTab: FC<{ pool: V2Pool }> = withCheckerRoot(({ pool }) => {
         <CardContent className="pt-0">
           <div className="grid grid-cols-3 gap-x-10 lg:gap-x-[56px]">
             <div className="col-span-3 md:col-span-1" />
-            <div className="col-span-3 md:col-span-2 space-y-6">
+            <div className="col-span-3 space-y-6 md:col-span-2">
               <Separator />
               <Card className="bg-transparent shadow-none">
                 <CardHeader>
@@ -860,7 +733,7 @@ export const MigrateTab: FC<{ pool: V2Pool }> = withCheckerRoot(({ pool }) => {
                                                     ).symbol
                                                   }
                                                 </div>
-                                                <span className="text-gray-600 dark:text-slate-400 text-xs font-normal">
+                                                <span className="text-xs font-normal text-gray-600 dark:text-slate-400">
                                                   {formatUSD(v3FiatValue0)}
                                                 </span>
                                               </div>
@@ -890,7 +763,7 @@ export const MigrateTab: FC<{ pool: V2Pool }> = withCheckerRoot(({ pool }) => {
                                                     ).symbol
                                                   }
                                                 </div>
-                                                <span className="text-gray-600 dark:text-slate-400 text-xs font-normal">
+                                                <span className="text-xs font-normal text-gray-600 dark:text-slate-400">
                                                   {formatUSD(v3FiatValue1)}
                                                 </span>
                                               </div>
@@ -923,7 +796,7 @@ export const MigrateTab: FC<{ pool: V2Pool }> = withCheckerRoot(({ pool }) => {
                                                     ).symbol
                                                   }
                                                 </div>
-                                                <span className="text-gray-600 dark:text-slate-400 text-xs font-normal">
+                                                <span className="text-xs font-normal text-gray-600 dark:text-slate-400">
                                                   {formatUSD(refund0FiatValue)}
                                                 </span>
                                               </div>
@@ -952,7 +825,7 @@ export const MigrateTab: FC<{ pool: V2Pool }> = withCheckerRoot(({ pool }) => {
                                                     ).symbol
                                                   }
                                                 </div>
-                                                <span className="text-gray-600 dark:text-slate-400 text-xs font-normal">
+                                                <span className="text-xs font-normal text-gray-600 dark:text-slate-400">
                                                   {formatUSD(refund1FiatValue)}
                                                 </span>
                                               </div>

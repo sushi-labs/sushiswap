@@ -10,7 +10,7 @@ import { DefaultView } from './default-view'
 import { SettingsView } from './settings-view'
 
 export enum ProfileView {
-  Disconnected = 0,
+  // Disconnected = 0,
   Default = 1,
   Transactions = 2,
   Settings = 3,

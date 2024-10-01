@@ -7,25 +7,16 @@ import {
   classNames,
   typographyVariants,
 } from '@sushiswap/ui'
-
-import { useLogger } from 'next-axiom'
 import { useEffect } from 'react'
 
 export default function SwapError({
   error,
   reset,
 }: { error: Error & { digest?: string }; reset: () => void }) {
-  const log = useLogger()
-
   useEffect(() => {
     // Capture the error and send it to Sentry
     Sentry.captureException(error)
   }, [error])
-
-  useEffect(() => {
-    // Log the error to an error reporting service
-    log.error('swap page error', error)
-  }, [log, error])
   return (
     <>
       <h1

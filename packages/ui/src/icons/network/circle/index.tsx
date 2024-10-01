@@ -80,6 +80,7 @@ export * from './ScrollCircle'
 export * from './SkaleCircle'
 export * from './TelosCircle'
 export * from './ThunderCoreCircle'
+export * from './TronCircle'
 export * from './ZKSyncCircle'
 export * from './ZetaChainCircle'
 

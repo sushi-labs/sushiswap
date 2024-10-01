@@ -79,6 +79,7 @@ export * from './RootstockNaked'
 export * from './ScrollNaked'
 export * from './SkaleNaked'
 export * from './TelosNaked'
+export * from './TronNaked'
 export * from './ZKSyncNaked'
 export * from './ZetaChainNaked'
 

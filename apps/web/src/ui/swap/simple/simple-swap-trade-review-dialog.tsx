@@ -1,5 +1,6 @@
 'use client'
 
+import * as Sentry from '@sentry/nextjs'
 import { createErrorToast, createToast } from '@sushiswap/notifications'
 import {
   BrowserEvent,
@@ -26,7 +27,6 @@ import {
   SkeletonText,
   classNames,
 } from '@sushiswap/ui'
-import { log } from 'next-axiom'
 import React, {
   FC,
   ReactNode,
@@ -43,7 +43,7 @@ import { useApproved } from 'src/lib/wagmi/systems/Checker/Provider'
 import { Chain, ChainId } from 'sushi/chain'
 import { Native } from 'sushi/currency'
 import { shortenAddress } from 'sushi/format'
-import { ZERO } from 'sushi/math'
+import { Percent, ZERO } from 'sushi/math'
 import {
   SendTransactionReturnType,
   UserRejectedRequestError,
@@ -86,6 +86,24 @@ export const SimpleSwapTradeReviewDialog: FC<{
 
   const refetchBalances = useBalanceWeb3Refetch()
 
+  useEffect(() => {
+    if (!trade) return
+    Sentry.setContext('swap-context', {
+      chainId,
+      amountIn: trade?.amountIn?.toSignificant(6),
+      amountOut: trade?.amountOut?.toSignificant(6),
+      minAmountOut: trade?.minAmountOut?.toSignificant(6),
+      fromToken: trade?.route?.fromToken,
+      toToken: trade?.route?.toToken,
+      priceImpact: trade?.priceImpact?.toPercentageString(),
+      tokenTax:
+        trade?.tokenTax instanceof Percent
+          ? trade.tokenTax.toPercentageString()
+          : trade?.tokenTax,
+      tx: trade.tx,
+    })
+  }, [trade, chainId])
+
   const isWrap =
     token0?.isNative &&
     token1?.wrapped.address === Native.onChain(chainId).wrapped.address
@@ -124,12 +142,6 @@ export const SimpleSwapTradeReviewDialog: FC<{
       slippageTolerance: slippagePercent.toPercentageString(),
       error: error.message,
     })
-
-    log.error('swap prepare error', {
-      route: stringify(trade?.route),
-      slippageTolerance: slippagePercent.toPercentageString(),
-      error: stringify(error),
-    })
   }, [error, slippagePercent, trade?.route])
 
   const trace = useTrace()
@@ -140,7 +152,9 @@ export const SimpleSwapTradeReviewDialog: FC<{
 
       try {
         const ts = new Date().getTime()
-        const receiptPromise = client.waitForTransactionReceipt({ hash })
+        const promise = client.waitForTransactionReceipt({
+          hash,
+        })
 
         sendAnalyticsEvent(SwapEventName.SWAP_SIGNED, {
           ...trace,
@@ -153,7 +167,7 @@ export const SimpleSwapTradeReviewDialog: FC<{
           type: 'swap',
           chainId: chainId,
           txHash: hash,
-          promise: receiptPromise,
+          promise,
           summary: {
             pending: `${
               isWrap ? 'Wrapping' : isUnwrap ? 'Unwrapping' : 'Swapping'
@@ -183,7 +197,7 @@ export const SimpleSwapTradeReviewDialog: FC<{
           groupTimestamp: ts,
         })
 
-        const receipt = await receiptPromise
+        const receipt = await promise
         {
           const trade = tradeRef.current
           if (receipt.status === 'success') {
@@ -233,12 +247,6 @@ export const SimpleSwapTradeReviewDialog: FC<{
         tx: stringify(trade?.tx),
         error: e instanceof Error ? e.message : undefined,
       })
-
-      log.error('swap error', {
-        route: stringify(trade?.route),
-        tx: stringify(trade?.tx),
-        error: stringify(e),
-      })
       createErrorToast(e.message, false)
     },
     [trade?.route, trade?.tx],
@@ -268,7 +276,10 @@ export const SimpleSwapTradeReviewDialog: FC<{
       try {
         await sendTransactionAsync(simulation)
         confirm()
-      } catch {}
+      } catch (e) {
+        Sentry.captureException(e)
+        throw e
+      }
     }
   }, [simulation, sendTransactionAsync])
 

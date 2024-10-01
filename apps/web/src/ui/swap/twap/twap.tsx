@@ -6,7 +6,10 @@ import {
   supportedChains,
 } from '@orbs-network/twap-ui-sushiswap'
 import { useConnectModal } from '@rainbow-me/rainbowkit'
-import { useCustomTokens } from '@sushiswap/hooks'
+import {
+  TokenListChainId,
+  isTokenListChainId,
+} from '@sushiswap/graph-client/data-api'
 import {
   Button,
   Dialog,
@@ -19,17 +22,15 @@ import {
   TooltipTrigger,
 } from '@sushiswap/ui'
 import { useTheme } from 'next-themes'
-import { ReactNode, useCallback, useEffect, useMemo } from 'react'
-import { useOtherTokenListsQuery, useTokens } from 'src/lib/hooks/react-query'
-import { useSortedTokenList } from 'src/lib/wagmi/components/token-selector/hooks/use-sorted-token-list'
-import { ChainId } from 'sushi/chain'
-import { Currency } from 'sushi/currency'
-import { useAccount, useChainId, useSwitchChain } from 'wagmi'
-
+import { ReactNode, useCallback, useEffect } from 'react'
 import { NetworkSelector } from 'src/lib/wagmi/components/network-selector'
+import { useSearchTokens } from 'src/lib/wagmi/components/token-selector/hooks/use-search-tokens'
 import { TokenSelector } from 'src/lib/wagmi/components/token-selector/token-selector'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
-import { Address } from 'viem'
+import { ChainId } from 'sushi/chain'
+import { Currency, Native } from 'sushi/currency'
+import { Address, zeroAddress } from 'viem'
+import { useAccount, useChainId, useSwitchChain } from 'wagmi'
 import { usePrice } from '~evm/_common/ui/price-provider/price-provider/use-price'
 import {
   useDerivedStateSimpleSwap,
@@ -133,38 +134,6 @@ const getTokenLogo = (currency: Currency) => {
   }
 }
 
-const useTokenList = () => {
-  const { data: customTokenMap } = useCustomTokens()
-  const {
-    state: { chainId },
-  } = useDerivedStateSimpleSwap()
-
-  const { data: otherTokenMap } = useOtherTokenListsQuery({
-    chainId,
-    query: undefined,
-  })
-  const { data: defaultTokenMap } = useTokens({
-    chainId,
-  })
-
-  const tokenMap = useMemo(() => {
-    return {
-      ...defaultTokenMap,
-      ...otherTokenMap,
-    }
-  }, [defaultTokenMap, otherTokenMap])
-
-  const { data: sortedTokenList } = useSortedTokenList({
-    query: '',
-    customTokenMap,
-    tokenMap,
-    chainId,
-    includeNative: true,
-  })
-
-  return sortedTokenList
-}
-
 const Tooltip = ({ tooltipText }: any) => {
   return (
     <TooltipProvider>
@@ -241,12 +210,29 @@ const DCAButton = ({
   )
 }
 
+const useToken = (address?: string) => {
+  const {
+    state: { chainId },
+  } = useDerivedStateSimpleSwap()
+  const isNative = address === zeroAddress
+  const isEnabled = Boolean(address && !isNative && isTokenListChainId(chainId))
+  const result = useSearchTokens({
+    chainId: isEnabled ? (chainId as TokenListChainId) : undefined,
+    search: address,
+  })
+
+  if (address === zeroAddress && chainId) {
+    return Native.onChain(chainId)
+  }
+
+  return result.data?.[0]
+}
+
 function Provider({ isLimit }: { isLimit?: boolean }) {
   const { openConnectModal } = useConnectModal()
   const { connector } = useAccount()
   const { state, mutate } = useDerivedStateSimpleSwap()
   const { resolvedTheme } = useTheme()
-  const tokens = useTokenList()
   const connectedChainId = useChainId()
 
   useEffect(() => {
@@ -273,7 +259,6 @@ function Provider({ isLimit }: { isLimit?: boolean }) {
         limit={isLimit}
         useTrade={useTrade}
         connector={connector}
-        dappTokens={tokens}
         srcToken={state.token0}
         dstToken={state.token1}
         getTokenLogo={getTokenLogo}
@@ -287,6 +272,7 @@ function Provider({ isLimit }: { isLimit?: boolean }) {
         Tooltip={Tooltip}
         NetworkSelector={TwapNetworkSelector}
         Button={isLimit ? LimitButton : DCAButton}
+        useToken={useToken}
       />
     </div>
   )
