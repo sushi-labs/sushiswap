@@ -132,4 +132,7 @@ export default withSentryConfig(nextConfig, {
   // https://docs.sentry.io/product/crons/
   // https://vercel.com/docs/cron-jobs
   automaticVercelMonitors: true,
+
+  // Disables Sentry's telemetry features
+  telemetry: false,
 })
