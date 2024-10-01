@@ -134,7 +134,7 @@ export const PoolPosition = ({
       <CardHeader>
         <CardTitle>My Position</CardTitle>
         <CardDescription>
-          <span className="text-sm text-right dark:text-slate-50 text-gray-900">
+          <span className="text-sm text-right text-gray-900 dark:text-slate-50">
             {loading ? (
               <div className="w-28">
                 <SkeletonText fontSize="sm" />
@@ -150,38 +150,7 @@ export const PoolPosition = ({
           </span>
         </CardDescription>
       </CardHeader>
-      <CardContent>
-        <CardGroup>
-          <CardLabel>Unstaked</CardLabel>
-          <LiquidityItem
-            isLoading={loading}
-            token={token0}
-            amount={String(parseUnits(amountToken0, token0?.decimals ?? 18))}
-            usdAmount={String(token0UnstakedInUsd)}
-          />
-          <LiquidityItem
-            isLoading={loading}
-            token={token1}
-            amount={String(parseUnits(amountToken1, token1?.decimals ?? 18))}
-            usdAmount={String(token1UnstakedInUsd)}
-          />
-        </CardGroup>
-        <CardGroup>
-          <CardLabel>Staked</CardLabel>
-          <LiquidityItem
-            isLoading={isLoading}
-            token={token0}
-            amount={'0'}
-            usdAmount={'0'}
-          />
-          <LiquidityItem
-            isLoading={isLoading}
-            token={token1}
-            amount={'0'}
-            usdAmount={'0'}
-          />
-        </CardGroup>
-      </CardContent>
+
     </Card>
   )
 }
