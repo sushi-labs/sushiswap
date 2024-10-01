@@ -738,6 +738,10 @@ importers:
         specifier: 5.5.4
         version: 5.5.4
 
+  packages/sushi/dist/_cjs: {}
+
+  packages/sushi/dist/_esm: {}
+
   packages/telemetry:
     devDependencies:
       '@tsconfig/esm':
