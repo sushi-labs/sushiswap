@@ -1,7 +1,6 @@
 import withBundleAnalyzer from '@next/bundle-analyzer'
 import { withSentryConfig } from '@sentry/nextjs'
 import defaultNextConfig from '@sushiswap/nextjs-config'
-import { withAxiom } from 'next-axiom'
 
 const bundleAnalyzer = withBundleAnalyzer({
   enabled: false && process.env.NODE_ENV !== 'development',
@@ -95,16 +94,12 @@ const nextConfig = bundleAnalyzer({
   },
 })
 
-/** @type {import('@sentry/nextjs').SentryBuildOptions} */
-const sentryConfig = {
+export default withSentryConfig(nextConfig, {
   // For all available options, see:
   // https://github.com/getsentry/sentry-webpack-plugin#options
 
-  org: process.env.SENTRY_ORG,
-  project: process.env.SENTRY_PROJECT,
-
-  // An auth token is required for uploading source maps.
-  authToken: process.env.SENTRY_AUTH_TOKEN,
+  org: 'sushi-j9',
+  project: 'web',
 
   // Only print logs for uploading source maps in CI
   silent: !process.env.CI,
@@ -114,6 +109,11 @@ const sentryConfig = {
 
   // Upload a larger set of source maps for prettier stack traces (increases build time)
   widenClientFileUpload: true,
+
+  // Automatically annotate React components to show their full name in breadcrumbs and session replay
+  reactComponentAnnotation: {
+    enabled: true,
+  },
 
   // Route browser requests to Sentry through a Next.js rewrite to circumvent ad-blockers.
   // This can increase your server load as well as your hosting bill.
@@ -125,17 +125,11 @@ const sentryConfig = {
   hideSourceMaps: true,
 
   // Automatically tree-shake Sentry logger statements to reduce bundle size
-  disableLogger: process.NODE_ENV === 'production',
+  disableLogger: true,
 
   // Enables automatic instrumentation of Vercel Cron Monitors. (Does not yet work with App Router route handlers.)
   // See the following for more information:
   // https://docs.sentry.io/product/crons/
   // https://vercel.com/docs/cron-jobs
-  automaticVercelMonitors: false,
-
-  // unstable_sentryWebpackPluginOptions: {
-  //   applicationKey: 'web'
-  // },
-}
-
-export default withAxiom(withSentryConfig(nextConfig), sentryConfig)
+  automaticVercelMonitors: true,
+})

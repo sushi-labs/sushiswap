@@ -26,7 +26,6 @@ import {
   SkeletonText,
   classNames,
 } from '@sushiswap/ui'
-import { log } from 'next-axiom'
 import React, {
   FC,
   ReactNode,
@@ -123,12 +122,6 @@ export const SimpleSwapTradeReviewDialog: FC<{
       route: stringify(trade?.route),
       slippageTolerance: slippagePercent.toPercentageString(),
       error: error.message,
-    })
-
-    log.error('swap prepare error', {
-      route: stringify(trade?.route),
-      slippageTolerance: slippagePercent.toPercentageString(),
-      error: stringify(error),
     })
   }, [error, slippagePercent, trade?.route])
 
@@ -232,12 +225,6 @@ export const SimpleSwapTradeReviewDialog: FC<{
         route: stringify(trade?.route),
         tx: stringify(trade?.tx),
         error: e instanceof Error ? e.message : undefined,
-      })
-
-      log.error('swap error', {
-        route: stringify(trade?.route),
-        tx: stringify(trade?.tx),
-        error: stringify(e),
       })
       createErrorToast(e.message, false)
     },
