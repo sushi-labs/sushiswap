@@ -1,8 +1,8 @@
+import withBundleAnalyzer from '@next/bundle-analyzer'
 import { withSentryConfig } from '@sentry/nextjs'
 import defaultNextConfig from '@sushiswap/nextjs-config'
 import { withAxiom } from 'next-axiom'
 
-import withBundleAnalyzer from '@next/bundle-analyzer'
 const bundleAnalyzer = withBundleAnalyzer({
   enabled: false && process.env.NODE_ENV !== 'development',
 })
@@ -95,7 +95,8 @@ const nextConfig = bundleAnalyzer({
   },
 })
 
-export default withAxiom(withSentryConfig(nextConfig), {
+/** @type {import('@sentry/nextjs').SentryBuildOptions} */
+const sentryConfig = {
   // For all available options, see:
   // https://github.com/getsentry/sentry-webpack-plugin#options
 
@@ -130,9 +131,11 @@ export default withAxiom(withSentryConfig(nextConfig), {
   // See the following for more information:
   // https://docs.sentry.io/product/crons/
   // https://vercel.com/docs/cron-jobs
-  automaticVercelMonitors: true,
+  automaticVercelMonitors: false,
 
-  unstable_sentryWebpackPluginOptions: {
-    applicationKey: 'web',
-  },
-})
+  // unstable_sentryWebpackPluginOptions: {
+  //   applicationKey: 'web'
+  // },
+}
+
+export default withAxiom(withSentryConfig(nextConfig), sentryConfig)

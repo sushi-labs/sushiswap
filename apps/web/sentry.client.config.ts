@@ -7,7 +7,8 @@ import * as Sentry from '@sentry/nextjs'
 Sentry.init({
   dsn: 'https://28c197e66594eea8cf3014697e6fc0d3@o960777.ingest.us.sentry.io/4507941516410880',
 
-  enabled: process.env.NEXT_PUBLIC_APP_ENV !== 'test',
+  enabled:
+    process.env.CI !== 'true' || process.env.NEXT_PUBLIC_APP_ENV !== 'test',
 
   // Adjust this value in production, or use tracesSampler for greater control
   tracesSampleRate: 1,
@@ -23,18 +24,18 @@ Sentry.init({
 
   // You can remove this option if you're not planning to use the Sentry Session Replay feature:
   integrations: [
-    Sentry.thirdPartyErrorFilterIntegration({
-      // Specify the application keys that you specified in the Sentry bundler plugin
-      filterKeys: ['web'],
+    // Sentry.thirdPartyErrorFilterIntegration({
+    //   // Specify the application keys that you specified in the Sentry bundler plugin
+    //   filterKeys: ['web'],
 
-      // Defines how to handle errors that contain third party stack frames.
-      // Possible values are:
-      // - 'drop-error-if-contains-third-party-frames'
-      // - 'drop-error-if-exclusively-contains-third-party-frames'
-      // - 'apply-tag-if-contains-third-party-frames'
-      // - 'apply-tag-if-exclusively-contains-third-party-frames'
-      behaviour: 'apply-tag-if-contains-third-party-frames',
-    }),
+    //   // Defines how to handle errors that contain third party stack frames.
+    //   // Possible values are:
+    //   // - 'drop-error-if-contains-third-party-frames'
+    //   // - 'drop-error-if-exclusively-contains-third-party-frames'
+    //   // - 'apply-tag-if-contains-third-party-frames'
+    //   // - 'apply-tag-if-exclusively-contains-third-party-frames'
+    //   behaviour: 'apply-tag-if-contains-third-party-frames',
+    // }),
     Sentry.replayIntegration({
       // Additional Replay configuration goes in here, for example:
       maskAllText: false,

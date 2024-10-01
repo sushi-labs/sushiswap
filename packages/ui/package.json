@@ -11,6 +11,11 @@
   ],
   "license": "MIT",
   "author": "Matthew Lilley <hello@matthewLilley.com>",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sushi-labs/sushiswap.git",
+    "directory": "packages/ui"
+  },
   "sideEffects": [
     "**/*.css"
   ],
