@@ -1,6 +1,6 @@
 import { PlusIcon } from "@heroicons/react/24/outline";
 import { SlippageToleranceStorageKey, useSlippageTolerance } from "@sushiswap/hooks";
-import { Badge } from "@sushiswap/ui";
+import { Badge, DialogHeader, DialogTitle } from "@sushiswap/ui";
 import { List } from "@sushiswap/ui";
 import { SkeletonCircle } from "@sushiswap/ui";
 import { Dialog, DialogClose, DialogContent, classNames } from "@sushiswap/ui";
@@ -15,11 +15,9 @@ import { formatUnits, parseUnits, toBigNumber, truncateText } from "~tron/_commo
 import { getTronscanAddressLink } from "~tron/_common/lib/utils/tronscan-helpers";
 import { warningSeverity, warningSeverityClassName } from "~tron/_common/lib/utils/warning-severity";
 import { useSwapDispatch, useSwapState } from "~tron/swap/swap-provider";
-import { Icon } from "../General/Icon";
 import { WalletConnector } from "../WalletConnector/WalletConnector";
 import { ReviewSwapDialogTrigger } from "./ReviewSwapDialogTrigger";
 import { SwapButton } from "./SwapButton";
-import { useStablePrice } from "~tron/_common/lib/hooks/useStablePrice";
 import { FEE_PERCENTAGE } from "~tron/_common/constants/fee-percentage";
 
 export const ReviewSwapDialog = () => {
@@ -30,7 +28,6 @@ export const ReviewSwapDialog = () => {
 	const isConnected = address && connected;
 	const [slippageTolerance] = useSlippageTolerance(SlippageToleranceStorageKey.Swap);
 	const slippage = slippageTolerance === "AUTO" ? 0.005 : Number(slippageTolerance) / 100;
-	const { data: token0Price } = useStablePrice({ token: token0 });
 
 	const closeModal = () => {
 		closeBtnRef?.current?.click();
@@ -84,10 +81,8 @@ export const ReviewSwapDialog = () => {
 	const networkFee = useMemo(() => {
 		const amountInWei = parseUnits(amountIn, token0?.decimals);
 		const feeInWei = toBigNumber(amountInWei).multipliedBy(FEE_PERCENTAGE);
-		const fee = toBigNumber(amountIn).multipliedBy(FEE_PERCENTAGE);
-		const feeInUsd = fee.multipliedBy(token0Price).toString();
-		return { feeInUsd, feeInToken: feeInWei.toString() };
-	}, [amountIn, token0Price, token0]);
+		return { feeInToken: feeInWei.toString() };
+	}, [amountIn, token0]);
 
 	const _priceImpactPercentage = (priceImpactPercentage0 ?? 0) + (priceImpactPercentage1 ?? 0);
 	const priceImpactPercentage = _priceImpactPercentage > 100 ? 100 : _priceImpactPercentage;
@@ -119,40 +114,22 @@ export const ReviewSwapDialog = () => {
 				)}
 			</div>
 			<DialogContent>
-				<DialogClose ref={closeBtnRef} />
-				<div className="max-w-[504px] mx-auto mt-6">
-					<div className="flex items-start justify-between gap-4 py-2">
-						<div className="flex flex-col flex-grow gap-1">
-							<h1 className="text-3xl font-semibold dark:text-slate-50">
-								Buy {amountOut} {token1?.symbol}
-							</h1>
-							<h1 className="text-lg font-medium text-gray-900 dark:text-slate-300">
-								Sell {amountIn} {token0?.symbol}
-							</h1>
-						</div>
-						<div className="min-w-[56px] min-h-[56px]">
-							<div className="pr-1">
-								<Badge
-									position="bottom-right"
-									badgeContent={
-										<div className="bg-gray-100 border-2 border-gray-100 rounded-full">
-											<PlusIcon
-												strokeWidth={2}
-												width={24}
-												height={24}
-												className="bg-blue text-white rounded-full p-0.5"
-											/>
-										</div>
-									}>
-									{token1 ? (
-										<Icon currency={token1} width={56} height={56} />
-									) : (
-										<SkeletonCircle radius={56} className="bg-gray-100 dark:bg-slate-800" />
-									)}
-								</Badge>
+				<div className="max-w-[504px] mx-auto">
+					<DialogHeader>
+						<DialogTitle>
+							<div className="flex justify-between gap-4">
+								<div className="flex flex-col flex-grow">
+									<h1 className="text-lg font-semibold dark:text-slate-50">
+										Buy {amountOut} {token1?.symbol}
+									</h1>
+									<h1 className="text-gray-500 text-sm font-medium dark:text-slate-300">
+										Sell {amountIn} {token0?.symbol}
+									</h1>
+								</div>
 							</div>
-						</div>
-					</div>
+						</DialogTitle>
+						<DialogClose ref={closeBtnRef} />
+					</DialogHeader>
 					<div className="flex flex-col gap-3">
 						<List>
 							<List.Control>
@@ -175,8 +152,7 @@ export const ReviewSwapDialog = () => {
 								</List.KeyValue>
 
 								<List.KeyValue title="Network fee">
-									{formatUnits(networkFee?.feeInToken, token0?.decimals, 6)} {token0?.symbol} (~
-									{formatUSD(networkFee?.feeInUsd)})
+									{formatUnits(networkFee?.feeInToken, token0?.decimals, 6)} {token0?.symbol}
 								</List.KeyValue>
 							</List.Control>
 
