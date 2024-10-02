@@ -5,6 +5,7 @@ import { useNativeBalance } from "./useNativeBalance";
 import { MULTICALL_CONTRACT } from "~tron/_common/constants/contracts";
 import { TRON_MULTICALL_ABI } from "~tron/_common/constants/abis/tron-multicall";
 import { decodeAbiParameters } from "viem";
+import { useEffect } from "react";
 
 const abi = {
 	outputs: [{ type: "uint256" }],
@@ -65,7 +66,11 @@ export const useTokenBalances = ({
 	const { tronWeb } = useTronWeb();
 	const { data: _nativeBalance } = useNativeBalance();
 	const nativeBalance = _nativeBalance?.balance as string;
-
+	useEffect(() => {
+		if (currencies && currencies.length > 100) {
+			throw new Error("useTokenBalances: currencies length > 100, this will hurt performance");
+		}
+	}, [currencies]);
 	return useQuery({
 		queryKey: ["useTokenBalances", currencies, nativeBalance, address],
 		queryFn: async () => {
