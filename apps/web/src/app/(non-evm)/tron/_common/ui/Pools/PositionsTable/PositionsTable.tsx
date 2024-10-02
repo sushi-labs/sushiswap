@@ -41,7 +41,7 @@ export const PositionsTable = ({
     pageSize: 10,
   })
   const { tokenSymbols } = usePoolFilters()
-  const { data, isLoading } = useMyPositions()
+  const { data, isLoading, isPending } = useMyPositions()
 
   const filteredData = useMemo(() => {
     if (!data) return []
@@ -71,7 +71,7 @@ export const PositionsTable = ({
     <Card>
       <CardHeader>
         <CardTitle>
-          <div className="flex items-center justify-between gap-4 flex-wrap">
+          <div className="flex flex-wrap items-center justify-between gap-4">
             <span>
               My Positions{' '}
               <span className="text-gray-400 dark:text-slate-500">
@@ -91,7 +91,7 @@ export const PositionsTable = ({
         </CardTitle>
       </CardHeader>
       <DataTable
-        loading={isLoading}
+        loading={isLoading || isPending}
         data={
           filteredData?.map((pool) => ({
             token0: pool?.token0,

@@ -17,7 +17,7 @@ const COLUMNS = [
 export const PositionsTable = () => {
   const { tokenSymbols } = usePoolFilters()
   const { account } = useWallet()
-  const { data: pools, isLoading } = useUserPositionPools(
+  const { data: pools, isLoading,isPending} = useUserPositionPools(
     account?.address as string,
     true,
   )
@@ -86,7 +86,7 @@ export const PositionsTable = () => {
         state={state}
         onSortingChange={setSorting}
         onPaginationChange={setPagination}
-        loading={isLoading}
+        loading={isLoading || isPending}
         linkFormatter={rowLink}
         columns={COLUMNS}
         data={filtered}
