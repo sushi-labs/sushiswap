@@ -1,77 +1,84 @@
 'use client'
 
+import { ChevronDownIcon } from '@heroicons/react-v1/solid'
 import {
+  Badge,
   Navigation,
-  NavigationElement,
-  NavigationElementType,
-  NavigationListItem,
-  NavigationMenuContent,
-  NavigationMenuItem,
-  NavigationMenuTrigger,
+  SushiNavigationDropdown,
+  classNames,
 } from '@sushiswap/ui'
-import React, { FC } from 'react'
-
-import { WalletConnector } from '~tron/_common/ui/WalletConnector/WalletConnector'
-
-const nagivationElements: NavigationElement[] = [
-  {
-    title: 'Explore',
-    items: [
-      {
-        title: 'Swap',
-        href: '/swap',
-        description: 'The easiest way to trade.',
-      },
-      {
-        title: 'Explore',
-        href: `/tron/explore/pools`,
-        description: 'Explore top pools.',
-      },
-      {
-        title: 'Pool',
-        href: `/tron/pool`,
-        description: 'Earn fees by providing liquidity.',
-      },
-    ],
-    type: NavigationElementType.Dropdown,
-    show: 'mobile',
-  },
-  {
-    show: 'desktop',
-    type: NavigationElementType.Custom,
-    href: '/tron/swap',
-    item: (
-      <NavigationMenuItem className={NavigationElementType.Custom}>
-        <NavigationMenuTrigger>Trade</NavigationMenuTrigger>
-        <NavigationMenuContent>
-          <ul className="w-[400px] gap-3 p-4">
-            <NavigationListItem title={'Swap'} href={'/tron/swap'}>
-              The easiest way to trade.
-            </NavigationListItem>
-          </ul>
-        </NavigationMenuContent>
-      </NavigationMenuItem>
-    ),
-  },
-  {
-    title: 'Explore',
-    href: `/tron/explore/pools`,
-    show: 'desktop',
-    type: NavigationElementType.Single,
-  },
-  {
-    title: 'Pool',
-    href: `/tron/pool`,
-    show: 'desktop',
-    type: NavigationElementType.Single,
-  },
-]
+import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
+import { SushiIcon } from '@sushiswap/ui/icons/SushiIcon'
+import { SushiWithTextIcon } from '@sushiswap/ui/icons/SushiWithTextIcon'
+import { useWallet } from '@tronweb3/tronwallet-adapter-react-hooks'
+import React, { FC, Suspense } from 'react'
+import { NonStandardChainId, SUPPORTED_NETWORKS } from 'src/config'
+import { HeaderNetworkSelector } from 'src/lib/wagmi/components/header-network-selector'
+import { SidebarToggle, useSidebar } from 'src/ui/sidebar'
+import { useAccount, useChainId } from 'wagmi'
+import { headerElements } from './_common/header-elements'
+import { WalletConnector } from './_common/ui/WalletConnector/WalletConnector'
 
 export const Header: FC = () => {
+  const { connected } = useWallet()
+
+  const evmChainId = useChainId()
+
+  const { isConnected: isEVMConnected } = useAccount()
+
+  const { isOpen } = useSidebar()
+
   return (
-    <Navigation
-      leftElements={nagivationElements}
-      rightElement={<WalletConnector variant="secondary" />}
-    />
+    <div className="flex z-20">
+      <div
+        className={classNames(
+          'hidden lg:flex justify-between items-center px-1 w-56 h-14 flex-shrink-0 bg-gray-100 dark:bg-slate-900 border-r border-gray-200 dark:border-slate-800 border-b',
+          isOpen && 'border-b-gray-100 dark:border-b-slate-900',
+        )}
+      >
+        <SushiNavigationDropdown className="!px-2">
+          <SushiWithTextIcon width={90} />
+        </SushiNavigationDropdown>
+        <SidebarToggle variant="ghost" className="!px-2" asChild>
+          <Badge
+            position="bottom-right"
+            badgeContent={
+              connected || isEVMConnected ? (
+                <div className="bg-green rounded-full w-2 h-2 mr-0.5 mb-0.5" />
+              ) : (
+                <div />
+              )
+            }
+          >
+            <NetworkIcon
+              chainId={connected ? NonStandardChainId.TRON : evmChainId}
+              width={22}
+              height={22}
+            />
+          </Badge>
+          <ChevronDownIcon className="w-3 h-3" />
+        </SidebarToggle>
+      </div>
+      <div className="flex lg:hidden justify-between items-center pl-4 bg-gray-100 dark:bg-slate-900 border-b border-gray-200 dark:border-slate-800">
+        <SushiNavigationDropdown>
+          <SushiIcon width={24} height={24} />
+        </SushiNavigationDropdown>
+      </div>
+      <Navigation
+        className="!pl-0 lg:!pl-4"
+        hideSushiDropdown
+        leftElements={headerElements}
+        rightElement={
+          <Suspense>
+            <HeaderNetworkSelector
+              networks={SUPPORTED_NETWORKS}
+              selectedNetwork={NonStandardChainId.TRON}
+              className="flex lg:hidden"
+            />
+            <WalletConnector variant="secondary" />
+          </Suspense>
+        }
+      />
+    </div>
   )
 }

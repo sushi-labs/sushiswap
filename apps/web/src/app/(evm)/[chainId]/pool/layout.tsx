@@ -5,6 +5,10 @@ import { ChainId } from 'sushi/chain'
 import { Header } from '../header'
 import notFound from '../not-found'
 
+export const metadata = {
+  title: 'Pool 💦',
+}
+
 export default function PoolLayout({
   children,
   params,

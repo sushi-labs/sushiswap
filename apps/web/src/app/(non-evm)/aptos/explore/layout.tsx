@@ -5,6 +5,10 @@ import { Header } from '../header'
 import { Hero } from './hero'
 import { Providers } from './providers'
 
+export const metadata = {
+  title: 'Pools 💦',
+}
+
 export default function PoolLayout({
   children,
 }: { children: React.ReactNode }) {

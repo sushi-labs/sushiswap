@@ -29,8 +29,8 @@ export const Header: FC<{ chainId: ChainId }> = ({ chainId }) => {
     <div className="flex z-20">
       <div
         className={classNames(
-          'hidden lg:flex justify-between items-center px-1 w-56 h-14 flex-shrink-0 bg-gray-100 dark:bg-slate-900 border-r border-gray-200 dark:border-slate-800',
-          !isOpen && 'border-b',
+          'hidden lg:flex justify-between items-center px-1 w-56 h-14 flex-shrink-0 bg-gray-100 dark:bg-slate-900 border-r border-gray-200 dark:border-slate-800 border-b',
+          isOpen && 'border-b-gray-100 dark:border-b-slate-900',
         )}
       >
         <SushiNavigationDropdown className="!px-2">

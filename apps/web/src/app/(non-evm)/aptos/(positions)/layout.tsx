@@ -4,13 +4,12 @@ import { Container, LinkInternal } from '@sushiswap/ui'
 import { useSearchParams } from 'next/navigation'
 import { Suspense } from 'react'
 import { POOL_SUPPORTED_NETWORKS } from 'src/config'
-import { PathnameButton } from 'src/ui/pool'
+import { PathnameButton, PoolsFiltersProvider } from 'src/ui/pool'
 import { AptosSidebarContainer, SidebarProvider } from 'src/ui/sidebar'
-import { PoolsFiltersProvider } from '~aptos/pool/ui/pools/filters/pool-filters-provider'
 import { Header } from '../header'
 import { Hero } from './hero'
 
-export default function TabsLayout({
+export default function PositionsLayout({
   children,
 }: { children: React.ReactNode }) {
   return (

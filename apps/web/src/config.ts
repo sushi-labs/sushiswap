@@ -8,6 +8,7 @@ import {
 
 export const NonStandardChainId = {
   APTOS: 'aptos',
+  TRON: 'tron',
 } as const
 
 export type NonStandardChainId =
@@ -32,9 +33,18 @@ export const NonStandardChain = {
       symbol: 'APT',
       decimals: 8,
     },
-
     shortName: 'aptos',
     chainId: 'aptos',
+  },
+  [NonStandardChainId.TRON]: {
+    name: 'Tron',
+    nativeCurrency: {
+      name: 'Tron',
+      symbol: 'TRX',
+      decimals: 6,
+    },
+    shortName: 'tron',
+    chainId: 'tron',
   },
 } as Record<NonStandardChainId, NonStandardChain>
 
@@ -52,6 +62,7 @@ export const DISABLED_CHAIN_IDS = [
   ChainId.PALM,
   ChainId.HECO,
   ChainId.OKEX,
+  // NonStandardChainId.TRON,
 ] as const
 
 export const NEW_CHAIN_IDS = [ChainId.MANTLE, ChainId.ZKSYNC_ERA] as const
@@ -59,6 +70,7 @@ export const NEW_CHAIN_IDS = [ChainId.MANTLE, ChainId.ZKSYNC_ERA] as const
 const PREFERRED_CHAINID_ORDER = [
   ...NEW_CHAIN_IDS,
   ChainId.ETHEREUM,
+  NonStandardChainId.TRON,
   ChainId.BSC,
   ChainId.ARBITRUM,
   ChainId.BASE,
@@ -130,14 +142,13 @@ export const isSupportedChainId = (
 ): chainId is SupportedChainId =>
   SUPPORTED_CHAIN_IDS.includes(chainId as SupportedChainId)
 
-export const SUPPORTED_NON_STANDARD_NETWORKS = [
-  NonStandardChainId.APTOS,
-] as const
-
 const UNSORTED_SUPPORTED_NETWORKS = [
   ...SUPPORTED_CHAIN_IDS,
-  ...SUPPORTED_NON_STANDARD_NETWORKS,
-]
+  NonStandardChainId.APTOS,
+  NonStandardChainId.TRON,
+].filter(
+  (c) => !DISABLED_CHAIN_IDS.includes(c as (typeof DISABLED_CHAIN_IDS)[number]),
+)
 
 export const SUPPORTED_NETWORKS = Array.from(
   new Set([
@@ -153,7 +164,10 @@ export const SUPPORTED_NETWORKS = Array.from(
 const UNSORTED_POOL_SUPPORTED_NETWORKS = [
   ...PoolChainIds,
   NonStandardChainId.APTOS,
-]
+  NonStandardChainId.TRON,
+].filter(
+  (c) => !DISABLED_CHAIN_IDS.includes(c as (typeof DISABLED_CHAIN_IDS)[number]),
+)
 
 export const POOL_SUPPORTED_NETWORKS = Array.from(
   new Set([

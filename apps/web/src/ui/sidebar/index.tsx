@@ -13,6 +13,7 @@ import {
   classNames,
 } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
+import { useWallet as useTronWallet } from '@tronweb3/tronwallet-adapter-react-hooks'
 import { usePathname, useRouter } from 'next/navigation'
 import {
   Dispatch,
@@ -29,8 +30,8 @@ import {
   NonStandardChainId,
   SUPPORTED_NETWORKS,
 } from 'src/config'
-import { getNetworkName } from 'src/lib/network'
-import { ChainId, ChainKey, isChainId } from 'sushi/chain'
+import { getNetworkName, replaceNetworkSlug } from 'src/lib/network'
+import { ChainId, isChainId } from 'sushi/chain'
 import { useAccount } from 'wagmi'
 
 interface SidebarContextType {
@@ -118,6 +119,8 @@ export const EVMSidebarContainer: FC<
   return <BaseSidebarContainer {...props} connectedNetwork={chainId} />
 }
 
+export const SidebarContainer = EVMSidebarContainer
+
 export const AptosSidebarContainer: FC<
   Omit<SidebarContainerProps, 'connectedNetwork' | 'selectedNetwork'>
 > = (props) => {
@@ -126,7 +129,7 @@ export const AptosSidebarContainer: FC<
   return (
     <BaseSidebarContainer
       {...props}
-      selectedNetwork={'aptos'}
+      selectedNetwork={NonStandardChainId.APTOS}
       connectedNetwork={
         network?.name === 'mainnet' ? NonStandardChainId.APTOS : undefined
       }
@@ -134,7 +137,19 @@ export const AptosSidebarContainer: FC<
   )
 }
 
-export const SidebarContainer = EVMSidebarContainer
+export const TronSidebarContainer: FC<
+  Omit<SidebarContainerProps, 'connectedNetwork' | 'selectedNetwork'>
+> = (props) => {
+  const { connected } = useTronWallet()
+
+  return (
+    <BaseSidebarContainer
+      {...props}
+      selectedNetwork={NonStandardChainId.TRON}
+      connectedNetwork={connected ? NonStandardChainId.TRON : undefined}
+    />
+  )
+}
 
 interface SidebarProps {
   selectedNetwork?: number | string
@@ -163,12 +178,16 @@ const Sidebar: FC<SidebarProps> = ({
   const onSelect = useCallback(
     (value: string) => {
       const network = value.split('__')[1]
-      const pathSegments = pathname.split('/')
-      pathSegments[1] = isChainId(+network)
-        ? ChainKey[+network as ChainId]
-        : network
 
-      push(pathSegments.join('/'), { scroll: false })
+      push(
+        replaceNetworkSlug(
+          isChainId(+network)
+            ? (+network as ChainId)
+            : (network as NonStandardChainId),
+          pathname,
+        ),
+        { scroll: false },
+      )
     },
     [pathname, push],
   )
@@ -217,11 +236,12 @@ const Sidebar: FC<SidebarProps> = ({
                     <Badge
                       position="bottom-right"
                       badgeContent={
-                        connectedNetwork === network ? (
-                          <div className="bg-green rounded-full w-2 h-2 mr-0.5 mb-0.5" />
-                        ) : (
-                          <div />
-                        )
+                        <div
+                          className={classNames(
+                            'rounded-full w-2 h-2 mr-0.5 mb-0.5',
+                            connectedNetwork === network && 'bg-green',
+                          )}
+                        />
                       }
                     >
                       <NetworkIcon chainId={network} width={22} height={22} />

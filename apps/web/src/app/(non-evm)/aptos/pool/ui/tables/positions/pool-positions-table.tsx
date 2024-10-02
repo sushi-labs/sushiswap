@@ -3,9 +3,9 @@ import { Card, CardHeader, CardTitle, DataTable } from '@sushiswap/ui'
 import { PaginationState } from '@tanstack/react-table'
 import { ColumnDef, SortingState, TableState } from '@tanstack/react-table'
 import React, { useCallback, useMemo, useState } from 'react'
+import { usePoolFilters } from 'src/ui/pool'
 import { PoolExtended } from '~aptos/pool/lib/use-pools-extended'
 import { useUserPositionPools } from '~aptos/pool/lib/use-user-position-pools'
-import { usePoolFilters } from '../../filters/pool-filters-provider'
 import { MYPOSITION_TVL_COLUMN, NAME_COLUMN, TVL_COLUMN } from './columns'
 
 const COLUMNS = [
@@ -60,7 +60,7 @@ export const PositionsTable = () => {
   }, [pools, tokenSymbols])
 
   const rowLink = useCallback((row: PoolExtended) => {
-    return `/aptos/pool/${row.id}`
+    return `/aptos/pool/v2/${row.id}`
   }, [])
 
   const state: Partial<TableState> = useMemo(() => {

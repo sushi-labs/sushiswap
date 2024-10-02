@@ -45,10 +45,10 @@ export const TableFiltersNetwork: FC<{
       const network = value.split('__')[1]
       push(
         replaceNetworkSlug(
-          pathname,
           isChainId(+network)
             ? (+network as ChainId)
             : (network as NonStandardChainId),
+          pathname,
         ),
         { scroll: false },
       )

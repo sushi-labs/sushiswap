@@ -39,6 +39,7 @@ import { ScrollNaked } from './ScrollNaked'
 import { SkaleNaked } from './SkaleNaked'
 import { TelosNaked } from './TelosNaked'
 import { ThunderCoreNaked } from './ThunderCoreNaked'
+import { TronNaked } from './TronNaked'
 import { ZKSyncNaked } from './ZKSyncNaked'
 import { ZetaChainNaked } from './ZetaChainNaked'
 
@@ -126,4 +127,5 @@ export const NETWORK_NAKED_ICON: Partial<
   [ChainId.CRONOS]: CronosNaked,
   [ChainId.MANTLE]: MantleNaked,
   aptos: AptosNaked,
+  tron: TronNaked,
 }

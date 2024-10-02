@@ -39,6 +39,7 @@ import { ScrollCircle } from './ScrollCircle'
 import { SkaleCircle } from './SkaleCircle'
 import { TelosCircle } from './TelosCircle'
 import { ThunderCoreCircle } from './ThunderCoreCircle'
+import { TronCircle } from './TronCircle'
 import { ZKSyncCircle } from './ZKSyncCircle'
 import { ZetaChainCircle } from './ZetaChainCircle'
 
@@ -127,4 +128,5 @@ export const NETWORK_CIRCLE_ICON: Partial<
   [ChainId.CRONOS]: CronosCircle,
   [ChainId.MANTLE]: MantleCircle,
   aptos: AptosCircle,
+  tron: TronCircle,
 }

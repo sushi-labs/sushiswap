@@ -53,7 +53,7 @@ const NetworkSelector = <T extends number | string>({
         isNonStandardChainId(pathSegments[1])
       ) {
         push(
-          replaceNetworkSlug(pathname, network as ChainId | NonStandardChainId),
+          replaceNetworkSlug(network as ChainId | NonStandardChainId, pathname),
           { scroll: false },
         )
       } else if (isNonStandardChainId(network.toString())) {

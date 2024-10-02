@@ -9,8 +9,8 @@ import {
 } from '@sushiswap/ui'
 import { ColumnDef, SortingState, TableState } from '@tanstack/react-table'
 import React, { useCallback, useMemo, useState } from 'react'
+import { usePoolFilters } from 'src/ui/pool'
 import { TopPool, useTopPools } from '~aptos/pool/lib/use-top-pools'
-import { usePoolFilters } from '~aptos/pool/ui/pools/filters/pool-filters-provider'
 import {
   APR_COLUMN,
   FEES_1D_COLUMN,
@@ -39,7 +39,7 @@ export const PoolsTable = () => {
   const { data: pools, isLoading } = useTopPools()
 
   const rowLink = useCallback((row: TopPool) => {
-    return `/aptos/pool/${row.token0Address}, ${row.token1Address}`
+    return `/aptos/pool/v2/${row.token0Address}, ${row.token1Address}`
   }, [])
 
   const filtered = useMemo(() => {
