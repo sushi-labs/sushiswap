@@ -1,3 +1,4 @@
+import { ChevronDownIcon } from "@heroicons/react/20/solid";
 import { createFailedToast, createInfoToast, createSuccessToast } from "@sushiswap/notifications";
 import {
 	Button,
@@ -103,17 +104,33 @@ export const ApproveToken = ({
 	};
 
 	return (
-		<Popover>
-			<PopoverTrigger className="w-full" disabled={isApproving}>
-				<Button
+		<Button
+			asChild
+			disabled={isApproving}
+			loading={isApproving}
+			role="combobox"
+			className="w-full relative"
+			onClick={async (e) => {
+				e.stopPropagation();
+				await approveToken("one-time");
+			}}
+			onKeyDown={async (e) => {
+				e.stopPropagation();
+				await approveToken("one-time");
+			}}
+			{...buttonProps}>
+			<span>{isApproving ? "Approving" : "Approve"}</span>
+			<Popover>
+				<PopoverTrigger
 					asChild
+					className="w-fit absolute top-0 bottom-1 right-0"
 					disabled={isApproving}
-					loading={isApproving}
-					role="combobox"
-					className="w-full"
-					{...buttonProps}>
-					{isApproving ? "Approving" : "Approve"}
-				</Button>
+					onClick={(e) => e.stopPropagation()}
+					onKeyDown={(e) => e.stopPropagation()}>
+					<Button asChild size="xs" variant="ghost" name="Select" className="h-full">
+						<ChevronDownIcon className="h-4 w-4" />
+					</Button>
+				</PopoverTrigger>
 				<PopoverContent className="!p-0 !overflow-x-hidden !overflow-y-scroll scroll">
 					<Command>
 						<CommandGroup>
@@ -151,7 +168,7 @@ export const ApproveToken = ({
 						</CommandGroup>
 					</Command>
 				</PopoverContent>
-			</PopoverTrigger>
-		</Popover>
+			</Popover>
+		</Button>
 	);
 };
