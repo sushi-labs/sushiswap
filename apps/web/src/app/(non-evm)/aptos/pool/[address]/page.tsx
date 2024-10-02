@@ -77,10 +77,6 @@ export default function PoolPage({ params }: { params: { address: string } }) {
                 isLoading={isPoolLoading || isStakeLoading}
               />
             ) : null}
-            <PoolRewards
-              isFarm={farmIndex !== -1}
-              rewardsPerDay={rewardsPerDay}
-            />
           </div>
         </div>
       </div>
