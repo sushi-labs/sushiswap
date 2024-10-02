@@ -97,7 +97,7 @@ export const PoolPosition: FC<PoolPositionProps> = ({
               <SkeletonText fontSize="sm" />
             </div>
           ) : (
-            <span className="text-sm text-right dark:text-slate-50 text-gray-900">
+            <span className="text-sm text-right text-gray-900 dark:text-slate-50">
               {formatUSD(
                 token0StakedInUsd +
                   token1StakedInUsd +
@@ -108,24 +108,7 @@ export const PoolPosition: FC<PoolPositionProps> = ({
           )}
         </CardDescription>
       </CardHeader>
-      <CardContent>
-        <PoolPositionDesktop
-          row={row}
-          isLoading={isLoading || isBalanceLoading || isLoadingSupply}
-          underlying0={underlying0}
-          underlying1={underlying1}
-          value0={token0UnstakedInUsd}
-          value1={token1UnstakedInUsd}
-        />
-        <PoolPositionStakedDesktop
-          row={row}
-          isLoading={isLoading || isBalanceLoading || isLoadingSupply}
-          underlying0={stakedUnderlying0}
-          underlying1={stakedUnderlying1}
-          value0={token0StakedInUsd}
-          value1={token1StakedInUsd}
-        />
-      </CardContent>
+
     </Card>
   )
 }
