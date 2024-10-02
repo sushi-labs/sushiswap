@@ -11,7 +11,7 @@ import { formatPercent, formatUSD } from "sushi/format";
 import { usePriceImpact } from "~tron/_common/lib/hooks/usePriceImpact";
 import { useReserves } from "~tron/_common/lib/hooks/useReserves";
 import { useRoutes } from "~tron/_common/lib/hooks/useRoutes";
-import { toBigNumber, truncateText } from "~tron/_common/lib/utils/formatters";
+import { formatUnits, parseUnits, toBigNumber, truncateText } from "~tron/_common/lib/utils/formatters";
 import { getTronscanAddressLink } from "~tron/_common/lib/utils/tronscan-helpers";
 import { warningSeverity, warningSeverityClassName } from "~tron/_common/lib/utils/warning-severity";
 import { useSwapDispatch, useSwapState } from "~tron/swap/swap-provider";
@@ -20,6 +20,7 @@ import { WalletConnector } from "../WalletConnector/WalletConnector";
 import { ReviewSwapDialogTrigger } from "./ReviewSwapDialogTrigger";
 import { SwapButton } from "./SwapButton";
 import { useStablePrice } from "~tron/_common/lib/hooks/useStablePrice";
+import { FEE_PERCENTAGE } from "~tron/_common/constants/fee-percentage";
 
 export const ReviewSwapDialog = () => {
 	const { token0, token1, amountIn, amountOut } = useSwapState();
@@ -81,13 +82,15 @@ export const ReviewSwapDialog = () => {
 	});
 
 	const networkFee = useMemo(() => {
-		const FEE_PERCENTAGE = toBigNumber(0.003);
+		const amountInWei = parseUnits(amountIn, token0?.decimals);
+		const feeInWei = toBigNumber(amountInWei).multipliedBy(FEE_PERCENTAGE);
 		const fee = toBigNumber(amountIn).multipliedBy(FEE_PERCENTAGE);
 		const feeInUsd = fee.multipliedBy(token0Price).toString();
-		return { feeInUsd, feeInToken: fee.toString() };
-	}, [amountIn, token0Price]);
+		return { feeInUsd, feeInToken: feeInWei.toString() };
+	}, [amountIn, token0Price, token0]);
 
-	const priceImpactPercentage = (priceImpactPercentage0 ?? 0) + (priceImpactPercentage1 ?? 0);
+	const _priceImpactPercentage = (priceImpactPercentage0 ?? 0) + (priceImpactPercentage1 ?? 0);
+	const priceImpactPercentage = _priceImpactPercentage > 100 ? 100 : _priceImpactPercentage;
 
 	useEffect(() => {
 		if (isLoadingRoutes) {
@@ -172,7 +175,8 @@ export const ReviewSwapDialog = () => {
 								</List.KeyValue>
 
 								<List.KeyValue title="Network fee">
-									{networkFee?.feeInToken} {token0?.symbol} (~{formatUSD(networkFee?.feeInUsd)})
+									{formatUnits(networkFee?.feeInToken, token0?.decimals, 6)} {token0?.symbol} (~
+									{formatUSD(networkFee?.feeInUsd)})
 								</List.KeyValue>
 							</List.Control>
 
