@@ -1,3 +1,4 @@
+import { Cog6ToothIcon } from '@heroicons/react/24/outline'
 import { SlippageToleranceStorageKey } from '@sushiswap/hooks'
 import {
   IconButton,
@@ -13,7 +14,6 @@ import { AmountInToken0 } from '../Add/AmountInToken0'
 import { AmountInToken1 } from '../Add/AmountIntToken1'
 import { Plus } from '../Add/Plus'
 import { ReviewAddDialog } from '../Add/ReviewAddDialog'
-import { Cog6ToothIcon } from '@heroicons/react/24/outline'
 
 export const AddSection = () => {
   return (

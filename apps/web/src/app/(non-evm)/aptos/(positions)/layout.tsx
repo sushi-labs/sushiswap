@@ -37,7 +37,7 @@ export default function TabsLayout({
           {/*  scroll={false}*/}
           {/*  href={`/pool/my-rewards?${searchParams.toString()}`}*/}
           {/*>*/}
-      
+
           {/*</LinkInternal>*/}
         </div>
       </Container>

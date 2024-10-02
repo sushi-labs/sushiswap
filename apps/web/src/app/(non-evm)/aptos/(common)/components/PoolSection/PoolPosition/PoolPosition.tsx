@@ -1,7 +1,6 @@
 import { useWallet } from '@aptos-labs/wallet-adapter-react'
 import {
   Card,
-  CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
@@ -16,8 +15,8 @@ import { useTotalSupply } from '~aptos/(common)/lib/common/use-total-supply'
 import { Pool } from '~aptos/pool/lib/convert-pool-to-sushi-pool'
 import { useTokensFromPool } from '~aptos/pool/lib/use-tokens-from-pool'
 import { useUnderlyingTokenBalanceFromPool } from '~aptos/pool/lib/use-underlying-token-balance-from-pool'
-import { PoolPositionDesktop } from './PoolPositionDesktop'
-import { PoolPositionStakedDesktop } from './PoolPositionStakedDesktop'
+// import { PoolPositionDesktop } from './PoolPositionDesktop'
+// import { PoolPositionStakedDesktop } from './PoolPositionStakedDesktop'
 
 interface PoolPositionProps {
   row?: Pool
@@ -41,15 +40,14 @@ export const PoolPosition: FC<PoolPositionProps> = ({
     contracts: { swap: swapContract },
   } = useNetwork()
 
-  const { data: LPBalance, isLoading: isBalanceLoading } = useTokenBalance({
+  const { data: LPBalance } = useTokenBalance({
     account: account?.address as string,
     currency: `${swapContract}::swap::LPToken<${tokenAddress}>`,
     enabled: Boolean(swapContract && account?.address && tokenAddress),
     refetchInterval: 2000,
   })
 
-  const { data: coinInfo, isLoading: isLoadingSupply } =
-    useTotalSupply(tokenAddress)
+  const { data: coinInfo } = useTotalSupply(tokenAddress)
   const totalSupply = coinInfo?.data?.supply?.vec?.[0]?.integer?.vec?.[0]?.value
 
   const [underlying0, underlying1] = useUnderlyingTokenBalanceFromPool({
@@ -108,7 +106,6 @@ export const PoolPosition: FC<PoolPositionProps> = ({
           )}
         </CardDescription>
       </CardHeader>
-
     </Card>
   )
 }

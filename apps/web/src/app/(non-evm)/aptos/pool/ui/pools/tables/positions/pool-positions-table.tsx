@@ -17,10 +17,11 @@ const COLUMNS = [
 export const PositionsTable = () => {
   const { tokenSymbols } = usePoolFilters()
   const { account } = useWallet()
-  const { data: pools, isLoading,isPending} = useUserPositionPools(
-    account?.address as string,
-    true,
-  )
+  const {
+    data: pools,
+    isLoading,
+    isPending,
+  } = useUserPositionPools(account?.address as string, true)
 
   const [sorting, setSorting] = useState<SortingState>([
     { id: 'reserveUSD', desc: true },

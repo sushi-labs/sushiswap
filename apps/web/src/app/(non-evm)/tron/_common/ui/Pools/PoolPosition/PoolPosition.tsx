@@ -1,10 +1,7 @@
 import {
   Card,
-  CardContent,
   CardDescription,
-  CardGroup,
   CardHeader,
-  CardLabel,
   CardTitle,
   SkeletonText,
 } from '@sushiswap/ui'
@@ -17,11 +14,10 @@ import { useTokenBalance } from '~tron/_common/lib/hooks/useTokenBalance'
 import { useTotalSupply } from '~tron/_common/lib/hooks/useTotalSupply'
 import {
   formatUnitsForInput,
-  parseUnits,
   toBigNumber,
 } from '~tron/_common/lib/utils/formatters'
 import { IToken } from '~tron/_common/types/token-type'
-import { LiquidityItem } from '../PoolDetails/LiquidityItem'
+// import { LiquidityItem } from '../PoolDetails/LiquidityItem'
 import { useRemoveLiqDispatch } from '../Remove/pool-remove-provider'
 import { usePoolState } from '../pool-provider'
 
