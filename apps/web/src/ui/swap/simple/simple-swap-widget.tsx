@@ -1,3 +1,4 @@
+import { StrapiBanner } from '../strapi-banner/strapi-banner'
 import { SwapModeButtons } from '../swap-mode-buttons'
 import { SimpleSwapBridgeBanner } from './simple-swap-bridge-banner'
 import { SimpleSwapHeader } from './simple-swap-header'
@@ -27,6 +28,7 @@ export const SimpleSwapWidget = () => {
         <SimpleSwapTradeButton />
       </div>
       <SimpleSwapTradeStats />
+      <StrapiBanner />
       <SimpleSwapTokenNotFoundDialog />
     </div>
   )
