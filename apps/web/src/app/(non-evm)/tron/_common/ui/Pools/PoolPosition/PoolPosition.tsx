@@ -150,7 +150,6 @@ export const PoolPosition = ({
           </span>
         </CardDescription>
       </CardHeader>
-
     </Card>
   )
 }
