@@ -23,29 +23,38 @@ import { NavigationItems } from '../navigation-items'
 
 const COLUMNS: ColumnDef<ApprovedCommunityTokens[number], unknown>[] = [
   {
+    id: 'chain',
+    header: 'Network',
+    accessorFn: (row) => row.chainId,
+    cell: (props) => Chain.from(props.row.original.chainId)?.name,
+    meta: { skeleton: <SkeletonText fontSize="lg" /> },
+  },
+  {
     id: 'logo',
     header: 'Logo',
     cell: (props) => (
-      <Badge
-        className="border-2 border-slate-900 rounded-full z-[11]"
-        position="bottom-right"
-        badgeContent={
-          <NetworkIcon
-            chainId={props.row.original.chainId}
-            width={12}
-            height={12}
-          />
-        }
-      >
-        <div className="h-8 w-8 rounded-full overflow-hidden border-2 ring-gray-50 dark:ring-slate-950">
-          <img
-            src={props.row.original.logoUrl}
-            width={32}
-            height={32}
-            alt={props.row.original.symbol}
-          />
-        </div>
-      </Badge>
+      <div className="flex">
+        <Badge
+          className="border-2 border-slate-900 rounded-full z-[11]"
+          position="bottom-right"
+          badgeContent={
+            <NetworkIcon
+              chainId={props.row.original.chainId}
+              width={12}
+              height={12}
+            />
+          }
+        >
+          <div className="h-8 w-8 rounded-full overflow-hidden border-2 ring-gray-50 dark:ring-slate-950">
+            <img
+              src={props.row.original.logoUrl}
+              width={32}
+              height={32}
+              alt={props.row.original.symbol}
+            />
+          </div>
+        </Badge>
+      </div>
     ),
     meta: {
       skeleton: <SkeletonCircle radius={32} />,
