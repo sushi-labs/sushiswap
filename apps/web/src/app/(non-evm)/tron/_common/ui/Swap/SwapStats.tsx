@@ -68,8 +68,8 @@ export const SwapStats = () => {
       leaveFrom="transform translate-y-0 opacity-100"
       leaveTo="transform translate-y-[16px] opacity-0"
     >
-      <div className="w-full px-2 flex flex-col gap-1 pb-8">
-        <div className="flex justify-between items-center gap-2">
+      <div className="flex flex-col w-full gap-1 px-2 pb-8">
+        <div className="flex items-center justify-between gap-2">
           <span className="text-sm text-gray-700 dark:text-slate-400">
             Price impact
           </span>
@@ -89,11 +89,11 @@ export const SwapStats = () => {
             )}
           </span>
         </div>
-        <div className="flex justify-between items-center gap-2">
+        <div className="flex items-center justify-between gap-2">
           <span className="text-sm text-gray-700 dark:text-slate-400">
             Est. received
           </span>
-          <span className="text-sm font-semibold text-gray-700 text-right dark:text-slate-400">
+          <span className="text-sm font-semibold text-right text-gray-700 dark:text-slate-400">
             {isLoading ? (
               <SkeletonBox className="h-4 py-0.5 w-[120px] rounded-md" />
             ) : (
@@ -101,11 +101,11 @@ export const SwapStats = () => {
             )}
           </span>
         </div>
-        <div className="flex justify-between items-center gap-2">
+        <div className="flex items-center justify-between gap-2">
           <span className="text-sm text-gray-700 dark:text-slate-400">
             Min. received
           </span>
-          <span className="text-sm font-semibold text-gray-700 text-right dark:text-slate-400">
+          <span className="text-sm font-semibold text-right text-gray-700 dark:text-slate-400">
             {isLoading ? (
               <SkeletonBox className="h-4 py-0.5 w-[120px] rounded-md" />
             ) : (
@@ -113,11 +113,11 @@ export const SwapStats = () => {
             )}
           </span>
         </div>
-        <div className="flex justify-between items-center">
+        <div className="flex items-center justify-between">
           <span className="text-sm text-gray-700 dark:text-slate-400">
             Route
           </span>
-          <span className="text-sm font-semibold text-gray-700 text-right dark:text-slate-400">
+          <span className="text-sm font-semibold text-right text-gray-700 dark:text-slate-400">
             {isLoading ? (
               <SkeletonBox className="h-4 py-0.5 w-[120px] rounded-md" />
             ) : (
@@ -126,16 +126,16 @@ export const SwapStats = () => {
           </span>
         </div>
         {address && (
-          <div className="flex justify-between items-center border-t border-gray-200 dark:border-slate-200/5 mt-2 pt-2">
-            <span className="font-medium text-sm text-gray-700 dark:text-slate-300">
+          <div className="flex items-center justify-between pt-2 mt-2 border-t border-gray-200 dark:border-slate-200/5">
+            <span className="text-sm font-medium text-gray-700 dark:text-slate-300">
               Recipient
             </span>
-            <span className="font-semibold text-gray-700 text-right dark:text-slate-400">
+            <span className="font-semibold text-right text-gray-700 dark:text-slate-400">
               <Link
                 target="_blank"
                 href={getTronscanAddressLink(address)}
                 className={classNames(
-                  'flex items-center gap-2 cursor-pointer text-blue',
+                  'flex items-center gap-2 cursor-pointer',
                 )}
                 rel="noreferrer"
               >
