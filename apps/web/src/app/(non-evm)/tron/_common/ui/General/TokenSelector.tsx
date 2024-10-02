@@ -23,11 +23,14 @@ import {
 	DEFAULT_TOKEN_LIST_WITH_KEY,
 } from "~tron/_common/constants/token-list";
 import { useCustomTokens } from "~tron/_common/lib/hooks/useCustomTokens";
-import { useSortedTokenList } from "~tron/_common/lib/hooks/useSortedTokenList";
+import { TokenWithBalance, useSortedTokenList } from "~tron/_common/lib/hooks/useSortedTokenList";
 import { useTokenInfo } from "~tron/_common/lib/hooks/useTokenInfo";
 import { isAddress } from "~tron/_common/lib/utils/helpers";
 import { IToken } from "~tron/_common/types/token-type";
 import { Icon } from "./Icon";
+import { useWallet } from "@tronweb3/tronwallet-adapter-react-hooks";
+import { useTokenBalances } from "~tron/_common/lib/hooks/useTokenBalances";
+import { formatUnitsForInput } from "~tron/_common/lib/utils/formatters";
 
 export const TokenSelector = ({
 	selected,
@@ -40,16 +43,27 @@ export const TokenSelector = ({
 }) => {
 	const [open, setOpen] = useState(false);
 	const [query, setQuery] = useState("");
+	const { address } = useWallet();
 	const { customTokens, addOrRemoveToken, hasToken } = useCustomTokens();
 	const { data: queryToken, isLoading: isQueryTokenLoading } = useTokenInfo({
 		tokenAddress: query,
 		enabled: isAddress(query),
 	});
 
+	const { data: tokenBalances } = useTokenBalances({
+		currencies:
+			Object.values(DEFAULT_TOKEN_LIST_WITH_KEY ?? {})
+				.concat(Object.values(customTokens ?? {}))
+				.concat(queryToken ?? []) ?? [],
+		address: address,
+		enabled: !!customTokens && !!DEFAULT_TOKEN_LIST_WITH_KEY,
+	});
+
 	const { data: sortedTokenList } = useSortedTokenList({
 		query,
 		tokenMap: DEFAULT_TOKEN_LIST_WITH_KEY,
 		customTokenMap: customTokens,
+		balanceMap: tokenBalances ?? {},
 	});
 
 	const _onSelect = useCallback(
@@ -187,7 +201,7 @@ const TokenButton = ({
 	isSelected,
 }: {
 	style?: CSSProperties;
-	token?: IToken;
+	token?: IToken | TokenWithBalance;
 	selectToken: (_token: IToken) => void;
 	hasToken?: (currency: IToken) => boolean;
 	isSelected: boolean;
@@ -227,6 +241,7 @@ const TokenButton = ({
 						<p className="text-xs text-gray-400 dark:text-slate-500">{token.name}</p>
 					</div>
 				</div>
+				<span>{formatUnitsForInput((token as TokenWithBalance)?.balance, token?.decimals) ?? "0"}</span>
 			</Button>
 			{isNew && !isOnDefaultList ? (
 				<Button
