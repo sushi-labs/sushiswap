@@ -28,10 +28,8 @@ export const WalletConnector = (props: ButtonProps) => {
         <Button loading={connecting} disabled={connecting} asChild {...props}>
           {isConnected ? (
             <>
-              <div className="hidden md:flex">
-                <JazzIcon diameter={20} address={address} />
-              </div>
-              {truncateText(address)}
+              <JazzIcon diameter={20} address={address} />
+              <span className="hidden sm:block">{truncateText(address)}</span>
             </>
           ) : (
             <>{connecting ? 'Connecting' : 'Connect Wallet'} </>
