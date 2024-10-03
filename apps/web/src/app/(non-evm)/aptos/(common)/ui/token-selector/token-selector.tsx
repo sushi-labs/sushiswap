@@ -15,6 +15,8 @@ import { TokenSelectorImportRow } from "./token-selector-import-row";
 import { TokenListItem } from "./token-selector-list-item";
 import { useCommonTokens } from "~aptos/(common)/lib/common/use-common-tokens";
 import { CurrencyIcon } from "../currency/currency-icon";
+import { useTokenBalances } from "~aptos/(common)/lib/common/use-token-balances";
+import { useWallet } from "@aptos-labs/wallet-adapter-react";
 
 type RowCallback = (row: { index: number; style: CSSProperties }) => ReactElement;
 
@@ -27,6 +29,7 @@ interface PropType {
 
 export default function TokenSelector({ id, selected, children, onSelect }: PropType) {
 	const [open, setOpen] = useState(false);
+	const { account } = useWallet();
 	const [query, setQuery] = useState("");
 	const { data: tokens } = useBaseTokens();
 	const { data: commonTokens } = useCommonTokens();
@@ -37,10 +40,19 @@ export default function TokenSelector({ id, selected, children, onSelect }: Prop
 		keepPreviousData: false,
 	});
 
+	const { data: tokenBalances } = useTokenBalances({
+		account: account?.address,
+		currencies: Object.values(tokens ?? {})
+			.map((_token) => _token.address)
+			.concat(Object.values(customTokens ?? {}).map((_token) => _token.address)),
+		enabled: !!tokens && !!account?.address,
+	});
+
 	const { data: sortedTokenList } = useSortedTokenList({
 		query,
 		tokenMap: tokens,
 		customTokenMap: customTokens,
+		balanceMap: tokenBalances ?? {},
 	});
 
 	const handleImport = useCallback(
