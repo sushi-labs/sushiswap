@@ -52,7 +52,7 @@ export const SimpleSwapTradeReviewDialog: FC = () => {
 	const { data: routes } = useSwap();
 
 	const networkFee = useMemo(() => {
-		return Number(amount ?? 0) * 0.0003;
+		return Number(amount ?? 0) * 0.0025;
 	}, [amount]);
 
 	const minOutput = slippageAmount
