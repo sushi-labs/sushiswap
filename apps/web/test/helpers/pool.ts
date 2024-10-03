@@ -286,7 +286,6 @@ export class PoolPage extends BaseActions {
     await expect(removeLiquidityTabSelector).toBeVisible()
     await removeLiquidityTabSelector.click()
 
-    await this.selectNetwork(this.chainId)
     await this.switchNetwork(this.chainId)
 
     await this.page.locator('[testdata-id=liquidity-max-button]').click()
@@ -321,7 +320,6 @@ export class PoolPage extends BaseActions {
     )
     await this.page.goto(url)
     await this.connect()
-    await this.selectNetwork(this.chainId)
 
     // const removeLiquidityTabSelector = page.locator('[testdata-id=remove-tab]')
     // await expect(removeLiquidityTabSelector).toBeVisible()
