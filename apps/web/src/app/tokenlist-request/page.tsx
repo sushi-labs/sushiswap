@@ -203,7 +203,7 @@ const Metrics = ({
         </div>
       </Card>
       <Card>
-        <div className="p-4 flex flex-row items-center gap-2">
+        <div className="flex flex-row items-center gap-2 p-4">
           {isLoading ? (
             <Loader className="w-4 h-4 text-muted-foreground" />
           ) : isValid ? (
@@ -513,7 +513,7 @@ export default function TokenListing() {
             <p className="pt-2 text-sm text-muted-foreground">
               If your coin is listed on CoinGecko, it automatically bypasses all
               other requirements and can be submitted regardless. For notable
-              pre-launch tokens, feel free to reach out in the token-list
+              pre-launch tokens, feel free to reach out in the #token-listings
               channel on Discord with your token address!
             </p>
           </div>
