@@ -67,10 +67,10 @@ module.exports = {
           DEFAULT: '#ec4899',
         },
         green: {
-          DEFAULT: 'var(--green)',
+          DEFAULT: 'rgb(var(--green))',
         },
         red: {
-          DEFAULT: 'var(--red)',
+          DEFAULT: 'rgb(var(--red))',
         },
         yellow: {
           DEFAULT: '#eab308',
