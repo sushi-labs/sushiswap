@@ -17,7 +17,8 @@ import {
 	classNames,
 } from "@sushiswap/ui";
 import { Provider } from "aptos";
-import React, { FC } from "react";
+import React, { FC, useMemo } from "react";
+import { formatNumber } from "sushi";
 import { DEFAULT_SLIPPAGE } from "sushi/config";
 import { ModalType } from "~aptos/(common)//components/Modal/ModalProvider";
 import { Modal } from "~aptos/(common)/components/Modal/Modal";
@@ -49,6 +50,10 @@ export const SimpleSwapTradeReviewDialog: FC = () => {
 	const { setisTransactionPending, setAmount } = useSimpleSwapActions();
 
 	const { data: routes } = useSwap();
+
+	const networkFee = useMemo(() => {
+		return Number(amount ?? 0) * 0.0003;
+	}, [amount]);
 
 	const minOutput = slippageAmount
 		? formatNumberWithDecimals(slippageAmount, token1 ? token1.decimals : 8)
@@ -158,7 +163,7 @@ export const SimpleSwapTradeReviewDialog: FC = () => {
 										{isPriceFetching ? (
 											<SkeletonText align="right" fontSize="sm" className="w-1/3" />
 										) : (
-											"~$0.00"
+											`${formatNumber(networkFee, 6)} ${token0?.symbol}`
 										)}
 									</List.KeyValue>
 								</List.Control>
