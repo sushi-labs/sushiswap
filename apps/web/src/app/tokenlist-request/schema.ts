@@ -7,9 +7,7 @@ const ZpdAddress = z
   .refine((val) => (val ? isAddress(val) : false), 'Invalid address')
 
 export const ApplyForTokenListTokenSchema = z.object({
-  address: ZpdAddress.transform(
-    (address) => getAddress(address),
-  ),
+  address: ZpdAddress.transform((address) => getAddress(address)),
   chainId: z.coerce
     .number()
     .transform((chainId) => chainId as ChainId)
