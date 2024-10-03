@@ -65,7 +65,7 @@ export const DISABLED_CHAIN_IDS = [
   // NonStandardChainId.TRON,
 ] as const
 
-export const NEW_CHAIN_IDS = [ChainId.MANTLE, ChainId.ZKSYNC_ERA] as const
+export const NEW_CHAIN_IDS = [] as const
 
 const PREFERRED_CHAINID_ORDER = [
   ...NEW_CHAIN_IDS,
@@ -76,20 +76,24 @@ const PREFERRED_CHAINID_ORDER = [
   ChainId.BASE,
   ChainId.AVALANCHE,
   ChainId.POLYGON,
-  ChainId.BLAST,
   ChainId.SCROLL,
+  ChainId.BLAST,
   ChainId.OPTIMISM,
   NonStandardChainId.APTOS,
   ChainId.LINEA,
+  ChainId.MANTLE,
   ChainId.CORE,
   ChainId.CRONOS,
   ChainId.GNOSIS,
   ChainId.ROOTSTOCK,
+  ChainId.KAVA,
+  ChainId.ZKSYNC_ERA,
   ChainId.FANTOM,
   ChainId.CELO,
   ChainId.FILECOIN,
   ChainId.TELOS,
   ChainId.METIS,
+  ChainId.POLYGON_ZKEVM,
   ChainId.MOONBEAM,
   ChainId.ZETACHAIN,
   ChainId.BOBA,
