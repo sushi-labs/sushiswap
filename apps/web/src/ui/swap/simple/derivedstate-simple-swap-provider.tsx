@@ -1,7 +1,6 @@
 'use client'
 
 import { watchChainId } from '@wagmi/core'
-import { useLogger } from 'next-axiom'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import {
   FC,
@@ -398,7 +397,6 @@ const useDerivedStateSimpleSwap = () => {
 }
 
 const useSimpleSwapTrade = () => {
-  const log = useLogger()
   const {
     state: { token0, chainId, swapAmount, token1, recipient, tokenTax },
     mutate: { setTokenTax },
@@ -413,7 +411,7 @@ const useSimpleSwapTrade = () => {
     [slippagePercent, tokenTax],
   )
 
-  const apiTrade = useApiTrade({
+  const trade = useApiTrade({
     chainId,
     fromToken: token0,
     toToken: token1,
@@ -423,9 +421,6 @@ const useSimpleSwapTrade = () => {
     recipient: recipient as Address,
     enabled: Boolean(swapAmount?.greaterThan(ZERO)),
     carbonOffset,
-    onError: () => {
-      log.error('api trade error')
-    },
     tokenTax,
   })
 
@@ -435,7 +430,7 @@ const useSimpleSwapTrade = () => {
     setTokenTax(undefined)
   }, [token0, token1, setTokenTax])
 
-  return apiTrade
+  return trade
 }
 
 export {
