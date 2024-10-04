@@ -5,11 +5,6 @@
   "globalDependencies": [".npmrc", ".nvmrc", "tsconfig.json"],
   "ui": "stream",
   "tasks": {
-    "anvil": {
-      "cache": false,
-      "env": ["ANVIL_BLOCK_NUMBER", "ANVIL_FORK_URL", "ANVIL_PORT"],
-      "persistent": true
-    },
     "build": {
       "dependsOn": ["^build", "generate"],
       "inputs": [
@@ -51,12 +46,7 @@
       ]
     },
     "generate": {
-      "outputs": [
-        ".mesh/**/*",
-        ".graphclient/**/*",
-        "src/generated.ts",
-        "typechain"
-      ],
+      "outputs": ["src/generated.ts"],
       "cache": false
     },
     "lint": {
@@ -72,16 +62,11 @@
     "start": {
       "dependsOn": ["^build", "generate"],
       "env": [
-        "ALCHEMY_ID",
         "API_BASE_URL",
         "APP_ENV",
-        "DATABASE_URL",
         "DRPC_ID",
         "EDGE_CONFIG",
         "RSK_ID",
-        "REDIS_URL",
-        "TOKENS_API_V0_BASE_URL",
-        "STRAPI_API_URL",
         "VERCEL_ENV",
         "SENTRY_DSN",
         "SENTRY_ENVIRONMENT",
