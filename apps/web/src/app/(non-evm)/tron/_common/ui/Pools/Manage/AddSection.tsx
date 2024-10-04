@@ -1,4 +1,4 @@
-import { CogIcon } from '@heroicons/react/24/outline'
+import { Cog6ToothIcon } from '@heroicons/react/24/outline'
 import { SlippageToleranceStorageKey } from '@sushiswap/hooks'
 import {
   IconButton,
@@ -35,18 +35,18 @@ export const AddSection = () => {
             <IconButton
               size="sm"
               name="Settings"
-              icon={CogIcon}
+              icon={Cog6ToothIcon}
               variant="secondary"
             />
           </SettingsOverlay>
         </WidgetAction>
       </WidgetHeader>
-      <section className="flex flex-col gap-4 relative w-full">
+      <section className="relative flex flex-col w-full gap-4">
         <AmountInToken0 theme="outline" disabled />
         <Plus theme="outline" />
         <AmountInToken1 theme="outline" disabled />
       </section>
-      <div className="mt-4 w-full flex flex-col">
+      <div className="flex flex-col w-full mt-4">
         <ReviewAddDialog variant="outline" fullWidth />
       </div>
     </Widget>

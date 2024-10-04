@@ -16,9 +16,10 @@ import { useMyPositions } from '~tron/_common/lib/hooks/useMyPositions'
 import { IMyPositionData } from '~tron/_common/types/get-pools-type'
 import { IToken } from '~tron/_common/types/token-type'
 import {
+  APR_COLUMN,
   POSITION_NAME_COLUMN,
   SIZE_COLUMN,
-  TVL_COLUMN,
+  VALUE_COLUMN,
 } from './PositionColumns'
 
 type PositionsTableProps = {
@@ -71,7 +72,7 @@ export const PositionsTable = ({
     <Card>
       <CardHeader>
         <CardTitle>
-          <div className="flex items-center justify-between gap-4 flex-wrap">
+          <div className="flex flex-wrap items-center justify-between gap-4">
             <span>
               My Positions{' '}
               <span className="text-gray-400 dark:text-slate-500">
@@ -101,7 +102,7 @@ export const PositionsTable = ({
             reserve1: pool?.reserve1,
           })) ?? []
         }
-        columns={[POSITION_NAME_COLUMN, TVL_COLUMN, SIZE_COLUMN]}
+        columns={[POSITION_NAME_COLUMN, VALUE_COLUMN, SIZE_COLUMN, APR_COLUMN]}
         linkFormatter={(data: IMyPositionData) => {
           const token0 = data?.token0?.address
           const token1 = data?.token1?.address

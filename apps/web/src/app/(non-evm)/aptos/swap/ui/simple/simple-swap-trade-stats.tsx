@@ -1,7 +1,8 @@
 import { useWallet } from '@aptos-labs/wallet-adapter-react'
 import { Transition } from '@headlessui/react'
 import { SkeletonBox, classNames } from '@sushiswap/ui'
-import React from 'react'
+import React, { useMemo } from 'react'
+import { formatNumber } from 'sushi/format'
 import { Modal } from '~aptos/(common)/components/Modal/Modal'
 import { networkNameToNetwork } from '~aptos/(common)/config/chains'
 import { formatNumberWithDecimals } from '~aptos/(common)/lib/common/format-number-with-decimals'
@@ -18,6 +19,7 @@ export const SimpleSwapTradeStats = () => {
   const { account } = useWallet()
   const {
     token1,
+    token0,
     amount,
     bestRoutes,
     isLoadingPrice,
@@ -43,6 +45,10 @@ export const SimpleSwapTradeStats = () => {
     : 0
 
   const { data: routes } = useSwap()
+
+  const networkFee = useMemo(() => {
+    return Number(amount ?? 0) * 0.0025
+  }, [amount])
 
   return (
     <Transition
@@ -93,6 +99,18 @@ export const SimpleSwapTradeStats = () => {
               <SkeletonBox className="h-4 py-0.5 w-[120px] rounded-md" />
             ) : (
               `${minOutput} ${token1.symbol}`
+            )}
+          </span>
+        </div>
+        <div className="flex justify-between items-center gap-2">
+          <span className="text-sm text-gray-700 dark:text-slate-400">
+            Network fee
+          </span>
+          <span className="text-sm font-semibold text-gray-700 text-right dark:text-slate-400">
+            {loading || !minOutput ? (
+              <SkeletonBox className="h-4 py-0.5 w-[120px] rounded-md" />
+            ) : (
+              `${formatNumber(networkFee, 6)} ${token0?.symbol}`
             )}
           </span>
         </div>

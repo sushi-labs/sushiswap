@@ -40,7 +40,7 @@ export const SettingsView: FC<SettingsViewProps> = ({ setView }) => {
         <List.Control className="bg-gray-100 dark:bg-slate-800">
           <List.KeyValue flex title="Theme">
             <RadioGroup value={theme} onChange={setTheme}>
-              <div className="items-center relative bg-black/[0.04] dark:bg-white/[0.02] ring-4 ring-black/[0.04] dark:ring-white/[0.02] overflow-hidden flex gap-1">
+              <div className="items-center relative bg-black/[0.04] dark:bg-white/[0.02] ring-4 ring-black/[0.04] dark:ring-white/[0.02] rounded-lg overflow-hidden flex gap-1">
                 {Object.entries(options).map(([k, v], i) => (
                   <RadioGroup.Option as={Fragment} key={i} value={k}>
                     {({ checked }) => (

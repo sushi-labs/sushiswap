@@ -1,3 +1,4 @@
+import { ChevronDownIcon } from '@heroicons/react/20/solid'
 import {
   createFailedToast,
   createInfoToast,
@@ -115,58 +116,83 @@ export const ApproveToken = ({
   }
 
   return (
-    <Popover>
-      <PopoverTrigger asChild disabled={isApproving}>
-        <Button
+    <Button
+      asChild
+      disabled={isApproving}
+      loading={isApproving}
+      role="combobox"
+      className="w-full relative"
+      onClick={async (e) => {
+        e.stopPropagation()
+        await approveToken('one-time')
+      }}
+      onKeyDown={async (e) => {
+        e.stopPropagation()
+        await approveToken('one-time')
+      }}
+      {...buttonProps}
+    >
+      <span>{isApproving ? 'Approving' : 'Approve'}</span>
+      <Popover>
+        <PopoverTrigger
+          asChild
+          className="w-fit absolute top-0 bottom-1 right-0"
           disabled={isApproving}
-          loading={isApproving}
-          role="combobox"
-          {...buttonProps}
+          onClick={(e) => e.stopPropagation()}
+          onKeyDown={(e) => e.stopPropagation()}
         >
-          {isApproving ? 'Approving' : 'Approve'}
-        </Button>
-      </PopoverTrigger>
-      <PopoverContent className="!p-0 !overflow-x-hidden !overflow-y-scroll scroll">
-        <Command>
-          <CommandGroup>
-            <CommandItem className="cursor-pointer">
-              <div
-                onClick={async () => {
-                  await approveToken('one-time')
-                }}
-                onKeyDown={async () => {
-                  await approveToken('one-time')
-                }}
-                className="flex flex-col"
-              >
-                <p className="font-bold">Approve one-time only</p>
-                <p>
-                  You&apos;ll give your approval to spend{' '}
-                  {toBigNumber(amount).toString(10)} {tokenToApprove.symbol} on
-                  your behalf
-                </p>
-              </div>
-            </CommandItem>
-            <CommandItem className="cursor-pointer">
-              <div
-                onClick={async () => {
-                  await approveToken('unlimited')
-                }}
-                onKeyDown={async () => {
-                  await approveToken('unlimited')
-                }}
-                className="flex flex-col"
-              >
-                <p className="font-bold">Approve unlimited amount</p>
-                <p>
-                  You won&apos;t need to approve again next time you want to
-                  spend {tokenToApprove.symbol}.
-                </p>
-              </div>
-            </CommandItem>
-          </CommandGroup>
-        </Command>
-      </PopoverContent>
-    </Popover>
+          <Button
+            asChild
+            size="xs"
+            variant="ghost"
+            name="Select"
+            className="h-full"
+          >
+            <ChevronDownIcon className="h-4 w-4" />
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent className="!p-0 !overflow-x-hidden !overflow-y-scroll scroll">
+          <Command>
+            <CommandGroup>
+              <CommandItem className="cursor-pointer">
+                <div
+                  onClick={async () => {
+                    await approveToken('one-time')
+                  }}
+                  onKeyDown={async () => {
+                    await approveToken('one-time')
+                  }}
+                  className="flex flex-col"
+                >
+                  <p className="font-bold">Approve one-time only</p>
+                  <p>
+                    You&apos;ll give your approval to spend{' '}
+                    {toBigNumber(amount).toString(10)} {tokenToApprove.symbol}{' '}
+                    on your behalf
+                  </p>
+                </div>
+              </CommandItem>
+              <CommandItem className="cursor-pointer">
+                <div
+                  onClick={async () => {
+                    await approveToken('unlimited')
+                  }}
+                  onKeyDown={async () => {
+                    await approveToken('unlimited')
+                  }}
+                  className="flex flex-col"
+                >
+                  <p className="font-bold">Approve unlimited amount</p>
+                  <p>
+                    You won&apos;t need to approve again next time you want to
+                    spend {tokenToApprove.symbol}.
+                  </p>
+                </div>
+              </CommandItem>
+            </CommandGroup>
+          </Command>
+        </PopoverContent>
+      </Popover>
+    </Button>
   )
 }

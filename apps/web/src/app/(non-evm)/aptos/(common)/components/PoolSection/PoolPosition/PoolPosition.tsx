@@ -1,7 +1,6 @@
 import { useWallet } from '@aptos-labs/wallet-adapter-react'
 import {
   Card,
-  CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
@@ -16,8 +15,8 @@ import { useTotalSupply } from '~aptos/(common)/lib/common/use-total-supply'
 import { Pool } from '~aptos/pool/lib/convert-pool-to-sushi-pool'
 import { useTokensFromPool } from '~aptos/pool/lib/use-tokens-from-pool'
 import { useUnderlyingTokenBalanceFromPool } from '~aptos/pool/lib/use-underlying-token-balance-from-pool'
-import { PoolPositionDesktop } from './PoolPositionDesktop'
-import { PoolPositionStakedDesktop } from './PoolPositionStakedDesktop'
+// import { PoolPositionDesktop } from './PoolPositionDesktop'
+// import { PoolPositionStakedDesktop } from './PoolPositionStakedDesktop'
 
 interface PoolPositionProps {
   row?: Pool
@@ -41,15 +40,14 @@ export const PoolPosition: FC<PoolPositionProps> = ({
     contracts: { swap: swapContract },
   } = useNetwork()
 
-  const { data: LPBalance, isLoading: isBalanceLoading } = useTokenBalance({
+  const { data: LPBalance } = useTokenBalance({
     account: account?.address as string,
     currency: `${swapContract}::swap::LPToken<${tokenAddress}>`,
     enabled: Boolean(swapContract && account?.address && tokenAddress),
     refetchInterval: 2000,
   })
 
-  const { data: coinInfo, isLoading: isLoadingSupply } =
-    useTotalSupply(tokenAddress)
+  const { data: coinInfo } = useTotalSupply(tokenAddress)
   const totalSupply = coinInfo?.data?.supply?.vec?.[0]?.integer?.vec?.[0]?.value
 
   const [underlying0, underlying1] = useUnderlyingTokenBalanceFromPool({
@@ -97,7 +95,7 @@ export const PoolPosition: FC<PoolPositionProps> = ({
               <SkeletonText fontSize="sm" />
             </div>
           ) : (
-            <span className="text-sm text-right dark:text-slate-50 text-gray-900">
+            <span className="text-sm text-right text-gray-900 dark:text-slate-50">
               {formatUSD(
                 token0StakedInUsd +
                   token1StakedInUsd +
@@ -108,24 +106,6 @@ export const PoolPosition: FC<PoolPositionProps> = ({
           )}
         </CardDescription>
       </CardHeader>
-      <CardContent>
-        <PoolPositionDesktop
-          row={row}
-          isLoading={isLoading || isBalanceLoading || isLoadingSupply}
-          underlying0={underlying0}
-          underlying1={underlying1}
-          value0={token0UnstakedInUsd}
-          value1={token1UnstakedInUsd}
-        />
-        <PoolPositionStakedDesktop
-          row={row}
-          isLoading={isLoading || isBalanceLoading || isLoadingSupply}
-          underlying0={stakedUnderlying0}
-          underlying1={stakedUnderlying1}
-          value0={token0StakedInUsd}
-          value1={token1StakedInUsd}
-        />
-      </CardContent>
     </Card>
   )
 }

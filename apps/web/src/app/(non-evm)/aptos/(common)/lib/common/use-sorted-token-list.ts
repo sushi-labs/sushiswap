@@ -11,13 +11,17 @@ interface Params {
   query: string
   tokenMap: Record<string, Token> | undefined
   customTokenMap: Record<string, Token> | undefined
+  balanceMap: Record<string, number> | undefined
   chainId?: number
 }
+
+export type TokenWithBalance = Token & { balance: number }
 
 export const useSortedTokenList = ({
   query,
   tokenMap,
   customTokenMap,
+  balanceMap,
 }: Params) => {
   const debouncedQuery = useDebounce(query, 250)
   return useQuery({
@@ -44,7 +48,12 @@ export const useSortedTokenList = ({
         sortedTokens,
         debouncedQuery,
       )
-      return filteredSortedTokens
+      if (balanceMap) {
+        filteredSortedTokens.forEach((token) => {
+          ;(token as TokenWithBalance).balance = balanceMap[token.address] || 0
+        })
+      }
+      return filteredSortedTokens as TokenWithBalance[] | Token[]
     },
   })
 }

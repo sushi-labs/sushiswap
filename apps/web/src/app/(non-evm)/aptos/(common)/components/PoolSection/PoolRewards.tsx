@@ -27,7 +27,7 @@ export const PoolRewards: FC<{
           <CardLabel>Tokens (per day)</CardLabel>
           <CardItem
             title={
-              <div className="font-medium flex items-center gap-2 text-muted-foreground">
+              <div className="flex items-center gap-2 font-medium text-muted-foreground">
                 <img
                   src="https://cryptototem.com/wp-content/uploads/2022/08/aptos-logo.jpg"
                   className="rounded-full"

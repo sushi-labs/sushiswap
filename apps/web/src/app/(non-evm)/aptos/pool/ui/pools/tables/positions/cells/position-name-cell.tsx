@@ -4,10 +4,12 @@ import React, { FC } from 'react'
 import { CurrencyIcon } from '~aptos/(common)/ui/currency/currency-icon'
 import { CurrencyIconList } from '~aptos/(common)/ui/currency/currency-icon-list'
 import { useFarms, useIsFarm } from '~aptos/pool/lib/farm/use-farms'
-import { PoolExtended } from '~aptos/pool/lib/use-pools-extended'
+import { PoolExtendedWithAprVolume } from '~aptos/pool/lib/use-user-position-pools'
 import { Row } from '../../types'
 
-export const PositionNameCell: FC<Row<PoolExtended>> = ({ row }) => {
+export const PositionNameCell: FC<Row<PoolExtendedWithAprVolume>> = ({
+  row,
+}) => {
   const { token0, token1 } = row
   const poolAddress = row?.id
 

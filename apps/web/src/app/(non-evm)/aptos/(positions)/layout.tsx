@@ -37,14 +37,7 @@ export default function TabsLayout({
           {/*  scroll={false}*/}
           {/*  href={`/pool/my-rewards?${searchParams.toString()}`}*/}
           {/*>*/}
-          <PathnameButton
-            disabled
-            id="my-rewards"
-            pathname={'/aptos/pool/my-rewards'}
-            size="sm"
-          >
-            My Rewards
-          </PathnameButton>
+
           {/*</LinkInternal>*/}
         </div>
       </Container>

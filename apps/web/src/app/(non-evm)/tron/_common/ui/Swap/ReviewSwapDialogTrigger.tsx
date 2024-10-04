@@ -1,4 +1,4 @@
-import { Button, Checkbox, DialogTrigger } from '@sushiswap/ui'
+import { Button, DialogTrigger } from '@sushiswap/ui'
 import { useWallet } from '@tronweb3/tronwallet-adapter-react-hooks'
 import { useMemo, useState } from 'react'
 import { ROUTER_CONTRACT } from '~tron/_common/constants/contracts'
@@ -134,15 +134,17 @@ export const ReviewSwapDialogTrigger = () => {
         </DialogTrigger>
       )}
       {userConfirmationNeeded && !isChecked ? (
-        <div
-          onClick={() => setIsChecked(!isChecked)}
-          onKeyDown={() => setIsChecked(!isChecked)}
-          className="flex items-start px-4 py-3 mt-4 rounded-xl bg-red/20 dark:bg-red/40 cursor-pointer"
-        >
-          <Checkbox color="red" id="expert-checkbox" checked={isChecked} />
+        <div className="flex items-start px-4 py-3 mt-4 rounded-xl bg-red/20">
+          <input
+            id="expert-checkbox"
+            type="checkbox"
+            checked={isChecked}
+            onChange={(e) => setIsChecked(e.target.checked)}
+            className="cursor-pointer mr-1 w-5 h-5 mt-0.5 text-red-600 !ring-red-600 bg-white border-red rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2"
+          />
           <label
             htmlFor="expert-checkbox"
-            className="ml-2 font-medium text-red-600 dark:text-red-300"
+            className="ml-2 font-medium text-red-600"
           >
             Price impact is too high. You will lose a big portion of your funds
             in this trade. Please tick the box if you would like to continue.

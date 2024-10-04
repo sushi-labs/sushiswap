@@ -1,31 +1,29 @@
 'use client'
 
 import { useWallet } from '@aptos-labs/wallet-adapter-react'
-import { ArrowLeftIcon } from '@heroicons/react/20/solid'
-import { PlusIcon } from '@heroicons/react/24/outline'
+import { XIcon } from '@heroicons/react-v1/solid'
 import {
   SlippageToleranceStorageKey,
   useSlippageTolerance,
 } from '@sushiswap/hooks'
 import {
-  Badge,
   Button,
   Dots,
+  IconButton,
   List,
   SkeletonBox,
-  SkeletonCircle,
   SkeletonText,
   classNames,
 } from '@sushiswap/ui'
 import { Provider } from 'aptos'
-import React, { FC } from 'react'
+import React, { FC, useMemo } from 'react'
+import { formatNumber } from 'sushi'
 import { DEFAULT_SLIPPAGE } from 'sushi/config'
 import { ModalType } from '~aptos/(common)//components/Modal/ModalProvider'
 import { Modal } from '~aptos/(common)/components/Modal/Modal'
 import { networkNameToNetwork } from '~aptos/(common)/config/chains'
 import { formatNumberWithDecimals } from '~aptos/(common)/lib/common/format-number-with-decimals'
 import { useNetwork } from '~aptos/(common)/lib/common/use-network'
-import { CurrencyIcon } from '~aptos/(common)/ui/currency/currency-icon'
 import { createToast } from '~aptos/(common)/ui/toast'
 import { getSwapPayload } from '~aptos/swap/lib/get-swap-payload'
 import { useSwap } from '~aptos/swap/lib/use-swap'
@@ -53,6 +51,10 @@ export const SimpleSwapTradeReviewDialog: FC = () => {
   const { setisTransactionPending, setAmount } = useSimpleSwapActions()
 
   const { data: routes } = useSwap()
+
+  const networkFee = useMemo(() => {
+    return Number(amount ?? 0) * 0.0025
+  }, [amount])
 
   const minOutput = slippageAmount
     ? formatNumberWithDecimals(slippageAmount, token1 ? token1.decimals : 8)
@@ -108,20 +110,17 @@ export const SimpleSwapTradeReviewDialog: FC = () => {
     <>
       <Modal.Review
         modalType={ModalType.Regular}
-        variant="opaque"
+        variant="transparent"
         tag="review-modal"
       >
         {({ close }) => (
           <div className="max-w-[504px] mx-auto">
-            <button type="button" onClick={close} className="p-3 pl-0">
-              <ArrowLeftIcon strokeWidth={3} width={24} height={24} />
-            </button>
-            <div className="flex items-start justify-between gap-4 py-2">
-              <div className="flex flex-col flex-grow gap-1">
+            <div className="flex justify-between gap-4">
+              <div className="flex flex-col flex-grow">
                 {!outputAmount || isPriceFetching ? (
                   <SkeletonText fontSize="3xl" className="w-2/3" />
                 ) : (
-                  <h1 className="text-3xl font-semibold dark:text-slate-50">
+                  <h1 className="text-lg font-semibold dark:text-slate-50">
                     Buy{' '}
                     {formatNumberWithDecimals(
                       Number(outputAmount),
@@ -130,42 +129,22 @@ export const SimpleSwapTradeReviewDialog: FC = () => {
                     {token1?.symbol}
                   </h1>
                 )}
-                <h1 className="text-lg font-medium text-gray-900 dark:text-slate-300">
+                <h1 className="text-gray-500 text-sm font-medium dark:text-slate-300">
                   Sell {amount} {token0?.symbol}
                 </h1>
               </div>
-              <div className="min-w-[56px] min-h-[56px]">
-                <div className="pr-1">
-                  <Badge
-                    position="bottom-right"
-                    badgeContent={
-                      <div className="bg-gray-100 border-2 border-gray-100 rounded-full">
-                        <PlusIcon
-                          strokeWidth={2}
-                          width={24}
-                          height={24}
-                          className="bg-blue text-white rounded-full p-0.5"
-                        />
-                      </div>
-                    }
-                  >
-                    {token1 ? (
-                      <CurrencyIcon currency={token1} width={56} height={56} />
-                    ) : (
-                      // <img src={token1.logoURI} className="rounded-full" width={56} height={56} />
-                      <SkeletonCircle
-                        radius={56}
-                        className="bg-gray-100 dark:bg-slate-800"
-                      />
-                    )}
-                  </Badge>
-                </div>
-              </div>
+              <IconButton
+                variant="secondary"
+                name="close"
+                icon={() => <XIcon strokeWidth={1} height={16} width={16} />}
+                onClick={close}
+                className="w-10 h-10 !rounded-full"
+              />
             </div>
             <div className="flex flex-col gap-3">
               <List>
                 <List.Control>
-                  <List.KeyValue title="Network">APTOS</List.KeyValue>
+                  <List.KeyValue title="Network">Aptos</List.KeyValue>
                   <List.KeyValue
                     title="Price Impact"
                     subtitle="The impact your trade has on the market price of this pool."
@@ -219,7 +198,7 @@ export const SimpleSwapTradeReviewDialog: FC = () => {
                         className="w-1/3"
                       />
                     ) : (
-                      '~$0.00'
+                      `${formatNumber(networkFee, 6)} ${token0?.symbol}`
                     )}
                   </List.KeyValue>
                 </List.Control>

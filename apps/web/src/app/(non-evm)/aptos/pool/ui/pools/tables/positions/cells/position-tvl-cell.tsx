@@ -6,11 +6,13 @@ import { useNetwork } from '~aptos/(common)/lib/common/use-network'
 import { useStablePrice } from '~aptos/(common)/lib/common/use-stable-price'
 import { useTokenBalance } from '~aptos/(common)/lib/common/use-token-balances'
 import { useTotalSupply } from '~aptos/(common)/lib/common/use-total-supply'
-import { PoolExtended } from '~aptos/pool/lib/use-pools-extended'
 import { useTokensFromPool } from '~aptos/pool/lib/use-tokens-from-pool'
+import { PoolExtendedWithAprVolume } from '~aptos/pool/lib/use-user-position-pools'
 import { Row } from '../../types'
 
-export const PoolMyPositionTVLCell: FC<Row<PoolExtended>> = ({ row }) => {
+export const PoolMyPositionTVLCell: FC<
+  Row<PoolExtendedWithAprVolume> & { isSize: boolean }
+> = ({ row, isSize }) => {
   const {
     contracts: { swap: swapContract },
   } = useNetwork()
@@ -23,7 +25,7 @@ export const PoolMyPositionTVLCell: FC<Row<PoolExtended>> = ({ row }) => {
     account: account?.address as string,
     currency: `${swapContract}::swap::LPToken<${tokenAddress}>`,
     enabled: Boolean(swapContract && account?.address && tokenAddress),
-    refetchInterval: 2000,
+    refetchInterval: 20000,
   })
 
   const { data: coinInfo } = useTotalSupply(
@@ -77,9 +79,11 @@ export const PoolMyPositionTVLCell: FC<Row<PoolExtended>> = ({ row }) => {
     <div className="flex items-center gap-1">
       <div className="flex flex-col gap-0.5">
         <span className="flex items-center gap-1 text-sm font-medium text-gray-900 dark:text-slate-50">
-          {currencyABalance && currencyBBalance
-            ? formatUSD(userPositionTvl)
-            : formatUSD(0)}
+          {isSize
+            ? formatNumberWithDecimals(liquidityBalance, 8)
+            : currencyABalance && currencyBBalance
+              ? formatUSD(userPositionTvl)
+              : formatUSD(0)}
         </span>
       </div>
     </div>

@@ -39,7 +39,7 @@ export const SimpleSwapToken0Input = () => {
         if (route?.route) {
           setBestRoutes(route?.route)
           setNoRouteFound('')
-        } else {
+        } else if (!isPriceFetching) {
           setBestRoutes([])
           setNoRouteFound('No trade found')
         }
@@ -66,7 +66,7 @@ export const SimpleSwapToken0Input = () => {
       token={token0}
       value={String(amount)}
       onChange={setAmount}
-      className="border border-accent p-3 bg-white dark:bg-slate-800 rounded-xl"
+      className="p-3 bg-white border border-accent dark:bg-slate-800 rounded-xl"
       label="Sell"
     />
   )
