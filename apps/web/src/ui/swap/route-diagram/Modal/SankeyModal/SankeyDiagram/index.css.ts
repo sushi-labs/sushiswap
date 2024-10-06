@@ -1,0 +1,16 @@
+export const diagramContainerClass = 'rounded-xl bg-[#FCFCFD] border border-solid border-[rgba(15,36,56,0.08)]';
+export const edgeClass = '_19oif030';
+export const headerContainerClass = 'pl-6 pr-6 pt-3 pb-3 flex items-center justify-between';
+export const hiddenNodeClass = '_19oif037';
+export const imageContainerClass = 'flex justify-between items-center';
+export const liquiditySourceImageClass = 'rounded-md shadow-sm w-5 h-5 mr-2';
+export const modalTitleClass = 'font-sans font-semibold text-lg leading-6 text-[#22262A] mb-4';
+export const nodeClass = '_19oif036';
+export const nodeTextClass = 'font-sans font-normal text-sm leading-6 text-[#22262A] ml-1';
+export const sankeyLegendGradientContainerClass = 'font-sans font-normal text-base leading-6 text-[#22262A] bg-white';
+export const sankeyLegendSourceTextClass = 'font-sans font-normal text-base leading-6 text-[#22262A] flex justify-between';
+export const sankeySvgContainerClass = '_19oif035';
+export const tooltipContainerClass = '_19oif031';
+export const tooltipContentClass = 'font-sans font-medium text-xs leading-4 text-[#22262A] bg-white';
+export const tooltipContentLine2Class = 'font-sans font-normal text-base leading-6 text-[#22262A] flex justify-between';
+export const tooltipTradingPairLine = 'flex justify-between items-center bg-white/10 mt-2';

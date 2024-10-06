@@ -14,7 +14,8 @@ import {
   warningSeverity,
   warningSeverityClassName,
 } from '../../../lib/swap/warningSeverity'
-import { TradeRoutePathView } from '../trade-route-path-view'
+// import { TradeRoutePathView } from '../trade-route-path-view'
+import { RouteDiagram } from '../route-diagram'
 import {
   useDerivedStateSimpleSwap,
   useSimpleSwapTrade,
@@ -33,8 +34,8 @@ export const SimpleSwapTradeStats: FC = () => {
     <Collapsible
       open={+swapAmountString > 0 && trade?.route?.status !== 'NoWay'}
     >
-      <div className="w-full px-2 flex flex-col gap-1">
-        <div className="flex justify-between items-center gap-2">
+      <div className="flex flex-col w-full gap-1 px-2">
+        <div className="flex items-center justify-between gap-2">
           <span className="text-sm text-gray-700 dark:text-slate-400">
             Price impact
           </span>
@@ -58,11 +59,11 @@ export const SimpleSwapTradeStats: FC = () => {
           </span>
         </div>
 
-        <div className="flex justify-between items-center gap-2">
+        <div className="flex items-center justify-between gap-2">
           <span className="text-sm text-gray-700 dark:text-slate-400">
             Est. received
           </span>
-          <span className="text-sm font-semibold text-gray-700 text-right dark:text-slate-400">
+          <span className="text-sm font-semibold text-right text-gray-700 dark:text-slate-400">
             {loading || !trade?.amountOut ? (
               <SkeletonBox className="h-4 py-0.5 w-[120px]" />
             ) : (
@@ -73,11 +74,11 @@ export const SimpleSwapTradeStats: FC = () => {
           </span>
         </div>
 
-        <div className="flex justify-between items-center gap-2">
+        <div className="flex items-center justify-between gap-2">
           <span className="text-sm text-gray-700 dark:text-slate-400">
             Min. received
           </span>
-          <span className="text-sm font-semibold text-gray-700 text-right dark:text-slate-400">
+          <span className="text-sm font-semibold text-right text-gray-700 dark:text-slate-400">
             {loading || !trade?.minAmountOut ? (
               <SkeletonBox className="h-4 py-0.5 w-[100px]" />
             ) : (
@@ -88,11 +89,11 @@ export const SimpleSwapTradeStats: FC = () => {
           </span>
         </div>
 
-        <div className="flex justify-between items-center gap-2">
+        <div className="flex items-center justify-between gap-2">
           <span className="text-sm text-gray-700 dark:text-slate-400">
             Fee (0.25%)
           </span>
-          <span className="text-sm font-semibold text-gray-700 text-right dark:text-slate-400">
+          <span className="text-sm font-semibold text-right text-gray-700 dark:text-slate-400">
             {loading || !trade?.fee ? (
               <SkeletonBox className="h-4 py-0.5 w-[100px]" />
             ) : (
@@ -101,11 +102,11 @@ export const SimpleSwapTradeStats: FC = () => {
           </span>
         </div>
 
-        <div className="flex justify-between items-center">
+        <div className="flex items-center justify-between">
           <span className="text-sm text-gray-700 dark:text-slate-400">
             Network fee
           </span>
-          <span className="text-sm font-semibold text-gray-700 text-right dark:text-slate-400">
+          <span className="text-sm font-semibold text-right text-gray-700 dark:text-slate-400">
             {chainId === ChainId.SKALE_EUROPA ? (
               'FREE'
             ) : loading || !trade?.gasSpent || trade.gasSpent === '0' ? (
@@ -118,11 +119,11 @@ export const SimpleSwapTradeStats: FC = () => {
           </span>
         </div>
 
-        <div className="flex justify-between items-center">
+        <div className="flex items-center justify-between">
           <span className="text-sm text-gray-700 dark:text-slate-400">
             Routing source
           </span>
-          <span className="text-sm font-semibold text-gray-700 text-right dark:text-slate-400">
+          <span className="text-sm font-semibold text-right text-gray-700 dark:text-slate-400">
             {loading || !trade ? (
               <SkeletonBox className="h-4 py-0.5 w-[120px]" />
             ) : (
@@ -131,32 +132,33 @@ export const SimpleSwapTradeStats: FC = () => {
           </span>
         </div>
 
-        <div className="flex justify-between items-center">
+        <div className="flex items-center justify-between">
           <span className="text-sm text-gray-700 dark:text-slate-400">
             Route
           </span>
-          <span className="text-sm font-semibold text-gray-700 text-right dark:text-slate-400">
+          <span className="text-sm font-semibold text-right text-gray-700 dark:text-slate-400">
             {loading || !trade ? (
               <SkeletonBox className="h-4 py-0.5 w-[40px]" />
             ) : (
-              <TradeRoutePathView trade={trade}>
-                <button
-                  type="button"
-                  className="text-sm text-blue font-semibold"
-                >
-                  View
-                </button>
-              </TradeRoutePathView>
+              // <TradeRoutePathView trade={trade}>
+              //   <button
+              //     type="button"
+              //     className="text-sm font-semibold text-blue"
+              //   >
+              //     View
+              //   </button>
+              // </TradeRoutePathView>
+              <RouteDiagram trade={trade}/>
             )}
           </span>
         </div>
 
         {recipient && isAddress(recipient) && isMounted && (
-          <div className="flex justify-between items-center border-t border-gray-200 dark:border-slate-200/5 mt-2 pt-2">
-            <span className="font-medium text-sm text-gray-700 dark:text-slate-300">
+          <div className="flex items-center justify-between pt-2 mt-2 border-t border-gray-200 dark:border-slate-200/5">
+            <span className="text-sm font-medium text-gray-700 dark:text-slate-300">
               Recipient
             </span>
-            <span className="font-semibold text-gray-700 text-right dark:text-slate-400">
+            <span className="font-semibold text-right text-gray-700 dark:text-slate-400">
               <a
                 target="_blank"
                 href={Chain.from(chainId)?.getAccountUrl(recipient)}
