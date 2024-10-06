@@ -68,6 +68,7 @@ export const useTradeQuoteQuery = (
       params.searchParams.set('maxSlippage', `${+slippagePercentage / 100}`)
       params.searchParams.set('fee', '0.0025')
       params.searchParams.set('feeBy', 'output')
+      params.searchParams.set('vizualize', 'true')
 
       const res = await fetch(params.toString())
       const json = await res.json()
@@ -129,6 +130,7 @@ export const useTradeQuote = (variables: UseTradeParams) => {
 
   const select: UseTradeQuerySelect = useCallback(
     (data) => {
+      console.log({ data })
       if (
         isRouteProcessor6ChainId(chainId) &&
         data &&
@@ -207,6 +209,7 @@ export const useTradeQuote = (variables: UseTradeParams) => {
           route: data.route,
           tx: undefined,
           tokenTax,
+          vizualization: data.vizualization,
         }
       }
 

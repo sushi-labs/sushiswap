@@ -1,23 +1,13 @@
-import { PoolType } from 'sushi/router'
 import { isAddressFast } from 'sushi/validate'
 import type { Address } from 'viem'
 import z from 'zod'
+import { visualizationValidator } from './validator01'
 
 export const tokenValidator = z.object({
   address: z.string(), // 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE if native
   symbol: z.string(),
   name: z.string(),
   decimals: z.number(),
-})
-
-export const legValidator = z.object({
-  poolType: z.nativeEnum(PoolType),
-  poolName: z.string(),
-  tokenFrom: z.number(), // index in tokens array
-  tokenTo: z.number(), // index in tokens array
-  share: z.number(),
-  assumedAmountIn: z.string(),
-  assumedAmountOut: z.string(),
 })
 
 const routeExistValidator = z.object({
@@ -63,6 +53,8 @@ const routeExistValidator = z.object({
       value: z.coerce.bigint().optional(),
     }),
   ),
+
+  vizualization: visualizationValidator,
 })
 
 const routeDontExistValidator = z.object({

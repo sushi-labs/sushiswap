@@ -8,7 +8,7 @@ import type { Percent } from 'sushi/math'
 import type { RouterLiquiditySource } from 'sushi/router'
 import type { Address, Hex, WriteContractParameters } from 'viem'
 import type z from 'zod'
-import type { legValidator, tradeValidator01 } from './validator01'
+import type { tradeValidator01 } from './validator01'
 import type { tradeValidator02 } from './validator02'
 
 export interface UseTradeParams {
@@ -58,9 +58,9 @@ export interface UseTradeReturn {
     | undefined
   tokenTax: Percent | false | undefined
   fee: string | undefined
+  vizualization?: TradeType1['vizualization']
 }
 
 export type UseTradeQuerySelect = (data: TradeType1) => UseTradeReturn
 export type TradeType1 = z.infer<typeof tradeValidator01>
 export type TradeType2 = z.infer<typeof tradeValidator02>
-export type TradeLegType = z.infer<typeof legValidator>

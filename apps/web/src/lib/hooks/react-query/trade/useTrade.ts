@@ -242,6 +242,7 @@ export const useTrade = (variables: UseTradeParams) => {
               }
             : undefined,
           tokenTax,
+          vizualization: data.vizualization,
         }
       }
 

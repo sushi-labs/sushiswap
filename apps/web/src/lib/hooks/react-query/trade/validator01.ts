@@ -13,15 +13,26 @@ export const tokenValidator = z.object({
   tokenId: z.string().optional(),
 })
 
-export const legValidator = z.object({
-  poolType: z.enum(['Classic', 'Stable', 'Unknown']),
-  tokenFrom: tokenValidator,
-  tokenTo: tokenValidator,
-  assumedAmountIn: z.number(),
-  assumedAmountOut: z.number(),
-  swapPortion: z.number(),
-  absolutePortion: z.number(),
-  poolName: z.string(),
+const linkValidator = z.object({
+  source: z.number(),
+  target: z.number(),
+  liquidityProvider: z.number(),
+  amountIn: z.string(),
+  amountOut: z.string(),
+  value: z.number(),
+})
+
+const nodeValidator = z.object({
+  address: z.string(), // 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE if native
+  symbol: z.string(),
+  name: z.string(),
+  decimals: z.number(),
+})
+
+export const visualizationValidator = z.object({
+  liquidityProviders: z.array(z.string()),
+  nodes: z.array(nodeValidator),
+  links: z.array(linkValidator),
 })
 
 export const tradeValidator01 = z.object({
@@ -68,4 +79,6 @@ export const tradeValidator01 = z.object({
       value: z.coerce.bigint().optional(),
     }),
   ),
+
+  vizualization: z.optional(visualizationValidator),
 })

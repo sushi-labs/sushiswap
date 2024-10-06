@@ -94,17 +94,8 @@ export function apiAdapter02To01(
 
     return {
       route,
-      args: res.routeProcessorArgs
-        ? {
-            amountIn: BigInt(res.routeProcessorArgs.amountIn),
-            amountOutMin: BigInt(res.routeProcessorArgs.amountOutMin),
-            to: res.routeProcessorArgs.to,
-            tokenIn: res.routeProcessorArgs.tokenIn,
-            tokenOut: res.routeProcessorArgs.tokenOut,
-            routeCode: res.routeProcessorArgs.routeCode,
-          }
-        : undefined,
       tx: res.tx ? res.tx : undefined,
+      vizualization: res.vizualization,
     }
   }
 }

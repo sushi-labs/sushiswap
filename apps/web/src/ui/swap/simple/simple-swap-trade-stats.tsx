@@ -14,6 +14,7 @@ import {
   warningSeverity,
   warningSeverityClassName,
 } from '../../../lib/swap/warningSeverity'
+import { RouteDiagram } from '../route-diagram'
 import {
   useDerivedStateSimpleSwap,
   useSimpleSwapTradeQuote,
@@ -32,8 +33,8 @@ export const SimpleSwapTradeStats: FC = () => {
     <Collapsible
       open={+swapAmountString > 0 && quote?.route?.status !== 'NoWay'}
     >
-      <div className="w-full px-2 flex flex-col gap-1">
-        <div className="flex justify-between items-center gap-2">
+      <div className="flex flex-col w-full gap-1 px-2">
+        <div className="flex items-center justify-between gap-2">
           <span className="text-sm text-gray-700 dark:text-slate-400">
             Price impact
           </span>
@@ -57,7 +58,7 @@ export const SimpleSwapTradeStats: FC = () => {
           </span>
         </div>
 
-        <div className="flex justify-between items-center gap-2">
+        <div className="flex items-center justify-between gap-2">
           <span className="text-sm text-gray-700 dark:text-slate-400">
             Max. received
           </span>
@@ -72,7 +73,7 @@ export const SimpleSwapTradeStats: FC = () => {
           </span>
         </div>
 
-        <div className="flex justify-between items-center gap-2">
+        <div className="flex items-center justify-between gap-2">
           <span className="text-sm text-gray-700 dark:text-slate-400">
             Min. received
           </span>
@@ -87,7 +88,7 @@ export const SimpleSwapTradeStats: FC = () => {
           </span>
         </div>
 
-        <div className="flex justify-between items-center gap-2">
+        <div className="flex items-center justify-between gap-2">
           <span className="text-sm text-gray-700 dark:text-slate-400">
             Fee (0.25%)
           </span>
@@ -100,11 +101,11 @@ export const SimpleSwapTradeStats: FC = () => {
           </span>
         </div>
 
-        <div className="flex justify-between items-center">
+        <div className="flex items-center justify-between">
           <span className="text-sm text-gray-700 dark:text-slate-400">
             Network fee
           </span>
-          <span className="text-sm font-semibold text-gray-700 text-right dark:text-slate-400">
+          <span className="text-sm font-semibold text-right text-gray-700 dark:text-slate-400">
             {chainId === ChainId.SKALE_EUROPA ? (
               'FREE'
             ) : loading || !quote?.gasSpent || quote.gasSpent === '0' ? (
@@ -117,7 +118,7 @@ export const SimpleSwapTradeStats: FC = () => {
           </span>
         </div>
 
-        <div className="flex justify-between items-center">
+        <div className="flex items-center justify-between">
           <span className="text-sm text-gray-700 dark:text-slate-400">
             Routing source
           </span>
@@ -130,12 +131,25 @@ export const SimpleSwapTradeStats: FC = () => {
           </span>
         </div>
 
+        <div className="flex items-center justify-between">
+          <span className="text-sm text-gray-700 dark:text-slate-400">
+            Route
+          </span>
+          <span className="text-sm font-semibold text-right text-gray-700 dark:text-slate-400">
+            {loading || !quote ? (
+              <SkeletonBox className="h-4 py-0.5 w-[40px]" />
+            ) : (
+              <RouteDiagram trade={quote} />
+            )}
+          </span>
+        </div>
+
         {recipient && isAddress(recipient) && isMounted && (
-          <div className="flex justify-between items-center border-t border-gray-200 dark:border-slate-200/5 mt-2 pt-2">
-            <span className="font-medium text-sm text-gray-700 dark:text-slate-300">
+          <div className="flex items-center justify-between pt-2 mt-2 border-t border-gray-200 dark:border-slate-200/5">
+            <span className="text-sm font-medium text-gray-700 dark:text-slate-300">
               Recipient
             </span>
-            <span className="font-semibold text-gray-700 text-right dark:text-slate-400">
+            <span className="font-semibold text-right text-gray-700 dark:text-slate-400">
               <a
                 target="_blank"
                 href={EvmChain.from(chainId)?.getAccountUrl(recipient)}
