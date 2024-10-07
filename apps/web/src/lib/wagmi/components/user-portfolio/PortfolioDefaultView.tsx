@@ -119,7 +119,7 @@ export const PortfolioDefaultView: FC<PortfolioDefaultProps> = ({
               )}
             </ClipboardController>
             <LinkExternal
-              href={chains[chainId as ChainId].getAccountUrl(address!)}
+              href={chains[chainId as ChainId]?.getAccountUrl(address!)}
             >
               <IconButton
                 size="xs"
