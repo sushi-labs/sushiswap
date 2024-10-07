@@ -579,7 +579,7 @@ importers:
         specifier: 7.1.0
         version: 7.1.0(@dprint/formatter@0.3.0)(graphql@16.6.0)
       json-bigint:
-        specifier: ^1.0.0
+        specifier: 1.0.0
         version: 1.0.0
       sushi:
         specifier: 4.1.3
