@@ -7,8 +7,8 @@ import { POOL_SUPPORTED_NETWORKS } from 'src/config'
 import { GlobalStatsCharts } from 'src/ui/explore/global-stats-charts'
 import { PathnameButton } from 'src/ui/pathname-button'
 import { PoolsFiltersProvider } from 'src/ui/pool'
-import { SidebarContainer, SidebarProvider } from 'src/ui/sidebar'
 import { ChainId, ChainKey } from 'sushi/chain'
+import { SidebarContainer, SidebarProvider } from '~evm/_common/ui/sidebar'
 import { Header } from '../header'
 
 export const metadata = {

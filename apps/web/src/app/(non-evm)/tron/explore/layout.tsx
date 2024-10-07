@@ -1,6 +1,6 @@
 import { Container } from '@sushiswap/ui'
 import { POOL_SUPPORTED_NETWORKS } from 'src/config'
-import { SidebarProvider, TronSidebarContainer } from 'src/ui/sidebar'
+import { SidebarContainer, SidebarProvider } from '~tron/_common/ui/sidebar'
 import { Header } from '~tron/header'
 import { Hero } from './hero'
 import { Providers } from './providers'
@@ -15,7 +15,7 @@ export default function ExploreLayout({
   return (
     <SidebarProvider>
       <Header />
-      <TronSidebarContainer
+      <SidebarContainer
         supportedNetworks={POOL_SUPPORTED_NETWORKS}
         unsupportedNetworkHref={'/ethereum/explore/pools'}
         shiftContent
@@ -30,7 +30,7 @@ export default function ExploreLayout({
             </div>
           </section>
         </main>
-      </TronSidebarContainer>
+      </SidebarContainer>
     </SidebarProvider>
   )
 }

@@ -1,4 +1,4 @@
-import { SidebarProvider, TronSidebarContainer } from 'src/ui/sidebar'
+import { SidebarContainer, SidebarProvider } from '~tron/_common/ui/sidebar'
 import { Header } from '~tron/header'
 import { Providers } from './providers'
 
@@ -15,9 +15,9 @@ export default function SwapLayout({
     <Providers>
       <SidebarProvider>
         <Header />
-        <TronSidebarContainer>
+        <SidebarContainer>
           <main className="lg:p-4 mt-16 mb-[86px]">{children}</main>
-        </TronSidebarContainer>
+        </SidebarContainer>
       </SidebarProvider>
     </Providers>
   )

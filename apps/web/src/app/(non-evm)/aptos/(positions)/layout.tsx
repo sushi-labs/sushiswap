@@ -5,7 +5,7 @@ import { useSearchParams } from 'next/navigation'
 import { Suspense } from 'react'
 import { POOL_SUPPORTED_NETWORKS } from 'src/config'
 import { PathnameButton, PoolsFiltersProvider } from 'src/ui/pool'
-import { AptosSidebarContainer, SidebarProvider } from 'src/ui/sidebar'
+import { SidebarContainer, SidebarProvider } from '~aptos/_common/ui/sidebar'
 import { Header } from '../header'
 import { Hero } from './hero'
 
@@ -25,7 +25,7 @@ function Layout({ children }: { children: React.ReactNode }) {
   return (
     <SidebarProvider>
       <Header />
-      <AptosSidebarContainer
+      <SidebarContainer
         supportedNetworks={POOL_SUPPORTED_NETWORKS}
         unsupportedNetworkHref={'/ethereum/pool'}
         shiftContent
@@ -72,7 +72,7 @@ function Layout({ children }: { children: React.ReactNode }) {
             </div>
           </section>
         </main>
-      </AptosSidebarContainer>
+      </SidebarContainer>
     </SidebarProvider>
   )
 }

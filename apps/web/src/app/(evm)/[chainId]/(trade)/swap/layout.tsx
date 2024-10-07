@@ -1,7 +1,7 @@
 import { SUPPORTED_NETWORKS, isSupportedChainId } from 'src/config'
-import { SidebarContainer } from 'src/ui/sidebar'
 import { ChainId } from 'sushi/chain'
 import NotFound from '~evm/[chainId]/not-found'
+import { SidebarContainer } from '~evm/_common/ui/sidebar'
 import { Providers } from './providers'
 
 export default function SwapLayout({

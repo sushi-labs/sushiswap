@@ -1,5 +1,5 @@
 import { POOL_SUPPORTED_NETWORKS } from 'src/config'
-import { AptosSidebarContainer, SidebarProvider } from 'src/ui/sidebar'
+import { SidebarContainer, SidebarProvider } from '~aptos/_common/ui/sidebar'
 import { Header } from '../header'
 import { Providers } from './providers'
 
@@ -14,13 +14,13 @@ export default function PoolLayout({
     <Providers>
       <SidebarProvider>
         <Header />
-        <AptosSidebarContainer
+        <SidebarContainer
           supportedNetworks={POOL_SUPPORTED_NETWORKS}
           unsupportedNetworkHref={'/ethereum/explore/pools'}
           shiftContent
         >
           <main className="flex flex-col h-full flex-1">{children}</main>
-        </AptosSidebarContainer>
+        </SidebarContainer>
       </SidebarProvider>
     </Providers>
   )

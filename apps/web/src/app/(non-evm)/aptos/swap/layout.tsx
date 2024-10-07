@@ -1,4 +1,4 @@
-import { AptosSidebarContainer, SidebarProvider } from 'src/ui/sidebar'
+import { SidebarContainer, SidebarProvider } from '~aptos/_common/ui/sidebar'
 import { Header } from '../header'
 import { Providers } from './providers'
 
@@ -15,9 +15,9 @@ export default function SwapLayout({
     <Providers>
       <SidebarProvider>
         <Header />
-        <AptosSidebarContainer>
+        <SidebarContainer>
           <main className="lg:p-4 mt-16 mb-[86px]">{children}</main>
-        </AptosSidebarContainer>
+        </SidebarContainer>
       </SidebarProvider>
     </Providers>
   )

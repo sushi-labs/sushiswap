@@ -5,7 +5,7 @@ import { useSearchParams } from 'next/navigation'
 import React, { Suspense } from 'react'
 import { POOL_SUPPORTED_NETWORKS } from 'src/config'
 import { PathnameButton, PoolsFiltersProvider } from 'src/ui/pool'
-import { SidebarProvider, TronSidebarContainer } from 'src/ui/sidebar'
+import { SidebarContainer, SidebarProvider } from '~tron/_common/ui/sidebar'
 import { Header } from '~tron/header'
 import { Hero } from './hero'
 
@@ -29,7 +29,7 @@ function Layout({
   return (
     <SidebarProvider>
       <Header />
-      <TronSidebarContainer
+      <SidebarContainer
         supportedNetworks={POOL_SUPPORTED_NETWORKS}
         unsupportedNetworkHref={'/ethereum/pool'}
         shiftContent
@@ -79,7 +79,7 @@ function Layout({
             </div>
           </section>
         </main>
-      </TronSidebarContainer>
+      </SidebarContainer>
     </SidebarProvider>
   )
 }

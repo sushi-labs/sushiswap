@@ -1,6 +1,6 @@
 import { Container } from '@sushiswap/ui'
 import { POOL_SUPPORTED_NETWORKS } from 'src/config'
-import { AptosSidebarContainer, SidebarProvider } from 'src/ui/sidebar'
+import { SidebarContainer, SidebarProvider } from '~aptos/_common/ui/sidebar'
 import { Header } from '../header'
 import { Hero } from './hero'
 import { Providers } from './providers'
@@ -15,7 +15,7 @@ export default function PoolLayout({
   return (
     <SidebarProvider>
       <Header />
-      <AptosSidebarContainer
+      <SidebarContainer
         supportedNetworks={POOL_SUPPORTED_NETWORKS}
         unsupportedNetworkHref={'/ethereum/explore/pools'}
         shiftContent
@@ -30,7 +30,7 @@ export default function PoolLayout({
             </div>
           </section>
         </main>
-      </AptosSidebarContainer>
+      </SidebarContainer>
     </SidebarProvider>
   )
 }

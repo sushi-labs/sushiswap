@@ -1,10 +1,10 @@
-import { SidebarContainer } from 'src/ui/sidebar'
 import { ChainId } from 'sushi/chain'
 import {
   SUSHIXSWAP_2_SUPPORTED_CHAIN_IDS,
   isSushiXSwap2ChainId,
 } from 'sushi/config'
 import NotFound from '~evm/[chainId]/not-found'
+import { SidebarContainer } from '~evm/_common/ui/sidebar'
 import { Providers } from './providers'
 
 export default function CrossChainSwapLayout({

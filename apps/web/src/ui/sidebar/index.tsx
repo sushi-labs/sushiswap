@@ -1,6 +1,5 @@
 'use client'
 
-import { useWallet as useAptosWallet } from '@aptos-labs/wallet-adapter-react'
 import {
   Badge,
   Button,
@@ -13,7 +12,6 @@ import {
   classNames,
 } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
-import { useWallet as useTronWallet } from '@tronweb3/tronwallet-adapter-react-hooks'
 import { usePathname, useRouter } from 'next/navigation'
 import {
   Dispatch,
@@ -32,7 +30,6 @@ import {
 } from 'src/config'
 import { getNetworkName, replaceNetworkSlug } from 'src/lib/network'
 import { ChainId, isChainId } from 'sushi/chain'
-import { useAccount } from 'wagmi'
 
 interface SidebarContextType {
   isOpen: boolean
@@ -72,7 +69,7 @@ export const SidebarToggle: FC<Omit<ButtonProps, 'onClick'>> = (props) => {
   return <Button onClick={() => setIsOpen?.(!isOpen)} {...props} />
 }
 
-interface SidebarContainerProps {
+export interface SidebarContainerProps {
   children: ReactNode
   shiftContent?: boolean
   selectedNetwork?: number | string
@@ -81,7 +78,7 @@ interface SidebarContainerProps {
   unsupportedNetworkHref?: string
 }
 
-const BaseSidebarContainer: FC<SidebarContainerProps> = ({
+export const SidebarContainer: FC<SidebarContainerProps> = ({
   children,
   shiftContent = false,
   selectedNetwork,
@@ -111,54 +108,7 @@ const BaseSidebarContainer: FC<SidebarContainerProps> = ({
   )
 }
 
-export const EVMSidebarContainer: FC<
-  Omit<SidebarContainerProps, 'connectedNetwork'>
-> = (props) => {
-  const { chainId } = useAccount()
-
-  return <BaseSidebarContainer {...props} connectedNetwork={chainId} />
-}
-
-export const SidebarContainer = EVMSidebarContainer
-
-export const AptosSidebarContainer: FC<
-  Omit<SidebarContainerProps, 'connectedNetwork' | 'selectedNetwork'>
-> = (props) => {
-  const { network } = useAptosWallet()
-
-  return (
-    <BaseSidebarContainer
-      {...props}
-      selectedNetwork={NonStandardChainId.APTOS}
-      connectedNetwork={
-        network?.name === 'mainnet' ? NonStandardChainId.APTOS : undefined
-      }
-    />
-  )
-}
-
-export const TronSidebarContainer: FC<
-  Omit<SidebarContainerProps, 'connectedNetwork' | 'selectedNetwork'>
-> = (props) => {
-  const { connected } = useTronWallet()
-
-  return (
-    <BaseSidebarContainer
-      {...props}
-      selectedNetwork={NonStandardChainId.TRON}
-      connectedNetwork={connected ? NonStandardChainId.TRON : undefined}
-    />
-  )
-}
-
-interface SidebarProps {
-  selectedNetwork?: number | string
-  connectedNetwork?: number | string
-  supportedNetworks?: readonly (ChainId | NonStandardChainId)[]
-  unsupportedNetworkHref?: string
-}
-
-const Sidebar: FC<SidebarProps> = ({
+const Sidebar: FC<Omit<SidebarContainerProps, 'children' | 'shiftContent'>> = ({
   selectedNetwork,
   connectedNetwork,
   supportedNetworks = SUPPORTED_NETWORKS,

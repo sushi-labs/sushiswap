@@ -1,7 +1,7 @@
 import { isPoolChainId } from '@sushiswap/graph-client/data-api'
 import { POOL_SUPPORTED_NETWORKS } from 'src/config'
-import { SidebarContainer, SidebarProvider } from 'src/ui/sidebar'
 import { ChainId } from 'sushi/chain'
+import { SidebarContainer, SidebarProvider } from '~evm/_common/ui/sidebar'
 import { Header } from '../header'
 import notFound from '../not-found'
 

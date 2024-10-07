@@ -1,6 +1,6 @@
 import React from 'react'
 import { POOL_SUPPORTED_NETWORKS } from 'src/config'
-import { SidebarProvider, TronSidebarContainer } from 'src/ui/sidebar'
+import { SidebarContainer, SidebarProvider } from '~tron/_common/ui/sidebar'
 import { Header } from '../header'
 
 export const metadata = {
@@ -13,13 +13,13 @@ export default function PoolLayout({
   return (
     <SidebarProvider>
       <Header />
-      <TronSidebarContainer
+      <SidebarContainer
         supportedNetworks={POOL_SUPPORTED_NETWORKS}
         unsupportedNetworkHref={'/ethereum/explore/pools'}
         shiftContent
       >
         <main className="flex flex-col h-full flex-1">{children}</main>
-      </TronSidebarContainer>
+      </SidebarContainer>
     </SidebarProvider>
   )
 }
