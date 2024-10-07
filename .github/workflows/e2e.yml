@@ -13,11 +13,10 @@ on:
   workflow_dispatch:
 
 env:
-  CI: true
   NODE_OPTIONS: --max-old-space-size=8192
   TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
   TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
-  TURBO_FORCE: false
+
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
@@ -48,8 +47,6 @@ jobs:
         env:
           ANVIL_FORK_URL: ${{ secrets.ANVIL_FORK_URL }}
           ANVIL_BLOCK_NUMBER: ${{ matrix.block-number }}
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
-          REDIS_URL: ${{ secrets.REDIS_URL }}
           EDGE_CONFIG: ${{ secrets.EDGE_CONFIG }}
           NEXT_PUBLIC_APP_ENV: 'test'
           NEXT_PUBLIC_CHAIN_ID: ${{ matrix.chain-id }}

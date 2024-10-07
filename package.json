@@ -1,6 +1,5 @@
 {
   "name": "sushi",
-  "version": "0.0.0",
   "private": true,
   "scripts": {
     "build": "dotenv -- turbo run build",
@@ -13,8 +12,8 @@
     "generate": "dotenv -- turbo run generate --no-cache --parallel --continue",
     "lint": "biome check .",
     "lint:fix": "biome check . --apply",
-    "sort": "sort-package-json 'package.json' 'apis/*/package.json' 'apps/*/package.json' 'config/*/package.json' 'packages/*/package.json' 'protocols/*/package.json'",
-    "sort-check": "sort-package-json 'package.json' 'apis/*/package.json' 'apps/*/package.json' 'config/*/package.json' 'packages/*/package.json' 'protocols/*/package.json' --check",
+    "sort": "sort-package-json 'package.json' 'apis/*/package.json' 'apps/*/package.json' 'config/*/package.json' 'packages/*/package.json'",
+    "sort-check": "sort-package-json 'package.json' 'apis/*/package.json' 'apps/*/package.json' 'config/*/package.json' 'packages/*/package.json' --check",
     "test": "dotenv -- turbo run test --parallel",
     "test-web-app": "dotenv -- turbo run test --filter=web",
     "web": "pnpm exec turbo run dev --filter web"
@@ -37,7 +36,6 @@
   },
   "pnpm": {
     "overrides": {
-      "@nomiclabs/hardhat-ethers": "npm:hardhat-deploy-ethers@^0.3.0-beta.13",
       "graphql": "16.6.0",
       "typescript": "5.5.4",
       "@types/react": "18.2.14",

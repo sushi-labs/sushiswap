@@ -45,7 +45,7 @@
   "dependencies": {
     "@heroicons/react": "2.0.13",
     "@sushiswap/ui": "workspace:*",
-    "idb": "^8.0.0",
+    "idb": "8.0.0",
     "nanoid": "4.0.0",
     "react-toastify": "9.1.3"
   },

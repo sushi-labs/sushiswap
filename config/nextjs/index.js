@@ -14,8 +14,6 @@ const defaultNextConfig = {
       '@heroicons/react-v1/outline',
       '@sushiswap/graph-client',
       '@sushiswap/hooks',
-      '@sushiswap/router',
-      '@sushiswap/tines',
       '@sushiswap/ui',
       'sushi',
       'date-fns',
