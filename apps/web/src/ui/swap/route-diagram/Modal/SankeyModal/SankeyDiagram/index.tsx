@@ -72,7 +72,7 @@ export const SankeyDiagram: React.FC<SankeyChartProps> = ({
       .join('svg')
       .attr('width', width)
       .attr('height', height + (isPreview ? 0 : logoWithMarginHeight))
-      .attr('aria-label', '0x sankey diagram of the current trade route')
+      .attr('aria-label', 'Current trade route')
       .attr('viewBox', [0, 0, width, height])
       .attr('class', sankeySvgContainerClass);
 

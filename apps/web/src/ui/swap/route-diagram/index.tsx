@@ -67,13 +67,13 @@ function convertSushiResponseToRoute(trade: UseTradeReturn): Route | null {
       return {
         from: leg.tokenFrom.isNative ? NativeAddress : leg.tokenFrom.address!,
         to: leg.tokenTo.address!,
-        source: leg.poolName,
+        source: leg.liquidityProvider,
         proportionBps: Math.floor(Number((lastDepthShares[leg.poolAddress] ?? addedShare) * 10_000)),
       } satisfies Fill;
     }),
     tokens: Array.from(tokensMap.values())
   } satisfies Route;
-
+  console.log({transformed})
   return transformed
 }
 

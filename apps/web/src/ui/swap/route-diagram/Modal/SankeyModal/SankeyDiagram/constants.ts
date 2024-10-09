@@ -5,32 +5,91 @@ export interface LiquiditySourceGradientValueType {
   end: string;
 }
 
-const gradient1 = { start: '#DB40E9', end: '#9A4EFC' };
-const gradient2 = { start: '#53CADA', end: '#38B159' };
-const gradient3 = { start: '#00B3B2', end: '#009DE6' };
-const gradient4 = { start: '#53CADA', end: '#38B17E' };
-const gradient5 = { start: '#FE8A49', end: '#EF4B4B' };
-const gradient6 = { start: '#6FCFF8', end: '#4B8DEF' };
-const gradient7 = { start: '#E9409B', end: '#E34EFC' };
-const gradient8 = { start: '#F3E779', end: '#EFAD4B' };
-const gradient9 = { start: '#FF6489', end: '#FD6D5A' };
-const gradient10 = { start: '#202AD0', end: '#1565C2' };
-const gradient11 = { start: '#514B78', end: '#5E666F' };
-const gradient12 = { start: '#676767', end: '#7C7C7C' };
+const defaultGradient = { start: '#999999', end: '#8f8f8f' };
+const elkGradient = { start: '#1e8f5a', end: '#1b804f' };
+const vVSGradient = { start: '#2f3e56', end: '#2a384e' };
+const shibaSwapGradient = { start: '#f19812', end: '#d98910' };
+const uniswapGradient = { start: '#f40cb4', end: '#dc0b9f' };
+const apeSwapGradient = { start: '#986454', end: '#8a594b' };
+const baseSwapGradient = { start: '#203bc4', end: '#1c34b0' };
+const methLabGradient = { start: '#0b0b0b', end: '#090909' };
+const fusionXGradient = { start: '#c4c4c4', end: '#b2b2b2' };
+const alienBaseGradient = { start: '#68adfa', end: '#5e9de1' };
+const thrusterGradient = { start: '#d56058', end: '#c0544e' };
+const solarbeamGradient = { start: '#ed8c90', end: '#d97e82' };
+const pancakeSwapGradient = { start: '#53DEE9', end: '#4bc8d2' };
+const kwikswapGradient = { start: '#1f8dcc', end: '#1c7fb6' };
+const dackieSwapGradient = { start: '#dce3fb', end: '#cfd6e2' };
+const sushiSwapGradient = { start: '#AF74B9', end: '#9e68a6' };
+const jetSwapGradient = { start: '#e3e3e3', end: '#cccccc' };
+const wagmiGradient = { start: '#232827', end: '#202422' };
+const dfynGradient = { start: '#fbfbfb', end: '#e2e2e2' };
+const wigoswapGradient = { start: '#e5e7fc', end: '#d0d2e3' };
+const swapsicleGradient = { start: '#0c1425', end: '#0a111f' };
+const spookySwapGradient = { start: '#6262d5', end: '#5858c1' };
+const quickSwapGradient = { start: '#e3eaf2', end: '#cdd3da' };
+const glyphV4Gradient = { start: '#848484', end: '#787878' };
+const cORExGradient = { start: '#dd6f20', end: '#c5621c' };
+const dovishGradient = { start: '#040404', end: '#030303' };
+const kinetixGradient = { start: '#fb5f1f', end: '#e0541b' };
+const horizonGradient = { start: '#666bc1', end: '#5d61ae' };
+const hyperBlastGradient = { start: '#f8f00c', end: '#dfd00b' };
+const monoswapGradient = { start: '#67f4cc', end: '#5ddbb8' };
+const zebraGradient = { start: '#eeeeee', end: '#d5d5d5' };
+const kimGradient = { start: '#f94504', end: '#e03e04' };
+const pangolinGradient = { start: '#e6b404', end: '#cf9f03' };
+const traderJoeGradient = { start: '#ede9eb', end: '#d4d0d1' };
+const dyorGradient = { start: '#2294ec', end: '#1f85d4' };
+const scribeGradient = { start: '#232424', end: '#1f2020' };
+const fenixGradient = { start: '#f7f7f7', end: '#dedede' };
+const etherVistaGradient = { start: '#040405', end: '#030304' };
+const biswapGradient = { start: '#1d80ee', end: '#1a73d5' };
+const bladeSwapGradient = { start: '#b2a48d', end: '#a39580' };
+const agniGradient = { start: '#f9bfb0', end: '#dea99b' };
+
 
 const gradientPool = [
-  gradient1,
-  gradient2,
-  gradient3,
-  gradient4,
-  gradient5,
-  gradient6,
-  gradient7,
-  gradient8,
-  gradient9,
-  gradient10,
-  gradient11,
-  gradient12,
+  defaultGradient,
+  elkGradient,
+  vVSGradient,
+  shibaSwapGradient,
+  uniswapGradient,
+  apeSwapGradient,
+  baseSwapGradient,
+  methLabGradient,
+  fusionXGradient,
+  alienBaseGradient,
+  thrusterGradient,
+  solarbeamGradient,
+  pancakeSwapGradient,
+  kwikswapGradient,
+  dackieSwapGradient,
+  sushiSwapGradient,
+  jetSwapGradient,
+  wagmiGradient,
+  dfynGradient,
+  wigoswapGradient,
+  swapsicleGradient,
+  spookySwapGradient,
+  quickSwapGradient,
+  glyphV4Gradient,
+  cORExGradient,
+  dovishGradient,
+  kinetixGradient,
+  horizonGradient,
+  hyperBlastGradient,
+  monoswapGradient,
+  zebraGradient,
+  kimGradient,
+  pangolinGradient,
+  traderJoeGradient,
+  dyorGradient,
+  scribeGradient,
+  fenixGradient,
+  etherVistaGradient,
+  biswapGradient,
+  bladeSwapGradient,
+  agniGradient,
 ];
 const sourceGradients: Map<string, LiquiditySourceGradientValueType> = new Map();
 
@@ -55,110 +114,67 @@ export function getGradientForSource(liquiditySource: string): LiquiditySourceGr
 /**
  * Mapping of source to image name for the Sankey diagram tooltips.
  */
-export const RouteSourceToImageName: Record<string, string> = {
-  '0x_RFQ': '0x',
-  'Aerodrome_V2': 'aerodrome',
-  'Aerodrome_V3': 'aerodrome',
-  'AlienBase_Stable': 'alienbase',
-  'AlienBase_V2': 'alienbase',
-  'AlienBase_V3': 'alienbase',
-  'Ambient': 'ambient',
-  'Balancer_V1': 'balancer',
-  'Balancer_V2': 'balancer',
-  'Bancor_V3': 'bancor',
-  'BaseSwap': 'baseswap',
-  'BaseX': 'basex',
-  'Camelot_V2': 'camelot',
-  'Camelot_V3': 'camelot',
-  'Curve': 'curve',
-  'DODO_V1': 'dodo',
-  'DODO_V2': 'dodo',
-  'Fraxswap_V2': 'fraxswap',
-  'GMX_V1': 'gmx',
-  'Infusion': 'infusion',
-  'Integral': 'integral',
-  'Lido': 'lido',
-  'Maker_PSM': 'maker',
-  'Maverick': 'maverick',
-  'Morphex': 'morphex',
-  'Origin': 'origin',
-  'Overnight': 'overnight',
-  'PancakeSwap_V2': 'pancakeswap',
-  'PancakeSwap_V3': 'pancakeswap',
-  'Pangolin': 'pangolin',
-  'Pharaoh_CL': 'pharaoh',
-  'QuickSwap_V2': 'quickswap',
-  'QuickSwap_V3': 'quickswap',
-  'Ramses_V2': 'ramses',
-  'Retro': 'retro',
-  'RocketPool': 'rocketpool',
-  'ShibaSwap': 'shibaswap',
-  'Solidly_V3': 'solidly',
-  'SushiSwap': 'sushiswap',
-  'SushiSwap_V3': 'sushiswap',
-  'Synapse': 'synapse',
-  'Thena': 'thena',
-  'TraderJoe_V1': 'traderjoe',
-  'TraderJoe_V2.1': 'traderjoe',
-  'Uniswap_V2': 'uniswap',
-  'Uniswap_V3': 'uniswapv3',
-  'Velodrome_V2': 'velodrome',
-  'Velodrome_V3': 'velodrome',
-  'WOOFi_V2': 'woofi',
-};
+
 
 /**
  * Mapping of source to gradient color for the Sankey diagram links & legend.
  * */
 export const SourceGradients: Record<string, LiquiditySourceGradientValueType> = {
-  '0x_RFQ': gradient11,
-  'Aerodrome_V2': gradient2,
-  'Aerodrome_V3': gradient2,
-  'AlienBase_Stable': gradient2,
-  'AlienBase_V2': gradient2,
-  'AlienBase_V3': gradient2,
-  'Ambient': gradient11,
-  'Balancer_V1': gradient11,
-  'Balancer_V2': gradient11,
-  'Bancor_V3': gradient11,
-  'BaseSwap': gradient10,
-  'BaseX': gradient10,
-  'Camelot_V2': gradient11,
-  'Camelot_V3': gradient11,
-  'Curve': gradient10,
-  'DODO_V1': gradient8,
-  'DODO_V2': gradient8,
-  'Fraxswap_V2': gradient11,
-  'GMX_V1': gradient6,
-  'Infusion': gradient11,
-  'Integral': gradient1,
-  'Lido': gradient5,
-  'Maker_PSM': gradient4,
-  'Maverick': gradient4,
-  'Morphex': gradient2,
-  'Origin': gradient4,
-  'Overnight': gradient3,
-  'PancakeSwap_V2': gradient3,
-  'PancakeSwap_V3': gradient3,
-  'Pangolin': gradient1,
-  'Pharaoh_CL': gradient8,
-  'QuickSwap_V2': gradient2,
-  'QuickSwap_V3': gradient2,
-  'Ramses_V2': gradient11,
-  'Retro': gradient9,
-  'RocketPool': gradient2,
-  'ShibaSwap': gradient6,
-  'Solidly_V3': gradient11,
-  'SushiSwap': gradient2,
-  'SushiSwap_V3': gradient7,
-  'Synapse': gradient1,
-  'Thena': gradient7,
-  'TraderJoe_V1': gradient5,
-  'TraderJoe_V2.1': gradient2,
-  'Uniswap_V2': gradient1,
-  'Uniswap_V3': gradient1,
-  'Velodrome_V2': gradient11,
-  'Velodrome_V3': gradient11,
-  'WOOFi_V2': gradient6,
-  '__default__': gradient12,
+  'PancakeSwapV2': pancakeSwapGradient,
+  'PancakeSwapV3': pancakeSwapGradient,
+  'Biswap': biswapGradient,
+  'CroDefiSwap': defaultGradient,
+  'Swapsicle': swapsicleGradient,
+  'BlastDEX': defaultGradient,
+  'FusionXV2': fusionXGradient,
+  'BaseSwap': baseSwapGradient,
+  'SushiSwapV3': sushiSwapGradient,
+  'Solarbeam': solarbeamGradient,
+  'MonoswapV3': monoswapGradient,
+  'Fenix': fenixGradient,
+  'DackieSwapV2': dackieSwapGradient,
+  'GlyphV4': glyphV4Gradient,
+  'UniswapV2': uniswapGradient,
+  'SushiSwapV2': sushiSwapGradient,
+  'Wagmi': wagmiGradient,
+  'ZebraV2': zebraGradient,
+  'FusionXV3': fusionXGradient,
+  'Kwikswap': kwikswapGradient,
+  'SpookySwap': spookySwapGradient,
+  'Pangolin': pangolinGradient,
+  'HyperBlast': hyperBlastGradient,
+  'KimV4': kimGradient,
+  'TraderJoe': traderJoeGradient,
+  'SilverSwap': defaultGradient,
+  'Dfyn': dfynGradient,
+  'AlienBaseV2': alienBaseGradient,
+  'Scribe': scribeGradient,
+  'RingExchangeV2': defaultGradient,
+  'VVSStandard': vVSGradient,
+  'VVSFlawless': vVSGradient,
+  'KinetixV2': kinetixGradient,
+  'ThrusterV3': thrusterGradient,
+  'EtherVista': etherVistaGradient,
+  'UniswapV3': uniswapGradient,
+  'RingExchangeV3': defaultGradient,
+  'COREx': cORExGradient,
+  'MonoswapV2': monoswapGradient,
+  'Elk': elkGradient,
+  'ThrusterV2': thrusterGradient,
+  'KinetixV3': kinetixGradient,
+  'Wigoswap': wigoswapGradient,
+  'MethLab': methLabGradient,
+  'JetSwap': jetSwapGradient,
+  'ShibaSwap': shibaSwapGradient,
+  'QuickSwap': quickSwapGradient,
+  'DovishV3': dovishGradient,
+  'SwapBlast': defaultGradient,
+  'DackieSwapV3': dackieSwapGradient,
+  'Horizon': horizonGradient,
+  'Agni': agniGradient,
+  'BladeSwap': bladeSwapGradient,
+  'AlienBaseV3': alienBaseGradient,
+  'BaseSwapV3': baseSwapGradient,
+  'ApeSwap': apeSwapGradient,
+  'DyorV2': dyorGradient,
 };

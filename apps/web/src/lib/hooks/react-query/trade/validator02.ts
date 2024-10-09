@@ -20,6 +20,7 @@ export const legValidator = z.object({
   share: z.number(),
   assumedAmountIn: z.string(),
   assumedAmountOut: z.string(),
+  liquidityProvider: z.string(),
 })
 
 const routeExistValidator = z.object({

@@ -1,7 +1,7 @@
 import Image from 'next/image';
 import React, { useMemo } from 'react';
 
-import { RouteSourceToImageName } from '../constants';
+import { SourceGradients } from '../constants';
 import { SubRoute } from '../../../../types';
 import {
   liquiditySourceImageClass,
@@ -13,7 +13,7 @@ import {
 const SankeyTooltip: React.FC<SubRoute> = React.memo(({ liquiditySource, value, sourceLink }) => {
   const tooltipContent = useMemo(() => {
     const formattedLiquiditySource = liquiditySource.replaceAll('_', ' ');
-    const imageSrc = `/images/liquidity-providers/${RouteSourceToImageName[liquiditySource] ?? 'default'}.png`;
+    const imageSrc = `https://cdn.sushi.com/lp/${SourceGradients[liquiditySource] ? liquiditySource : 'default'}.png`;
 
     return {
       formattedLiquiditySource,

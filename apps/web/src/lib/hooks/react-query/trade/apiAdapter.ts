@@ -80,6 +80,7 @@ function getApi1Leg(leg: leg2, tokens: token2[], chainId: number): leg1 {
     swapPortion: 0,
     absolutePortion: leg.share,
     poolName: leg.poolName,
+    liquidityProvider: leg.liquidityProvider,
   }
 }
 

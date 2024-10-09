@@ -24,6 +24,7 @@ export const legValidator = z.object({
   swapPortion: z.number(),
   absolutePortion: z.number(),
   poolName: z.string(),
+  liquidityProvider: z.string(),
 })
 
 export const tradeValidator01 = z.object({

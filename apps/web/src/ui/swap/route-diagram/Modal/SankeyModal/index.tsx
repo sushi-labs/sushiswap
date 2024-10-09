@@ -27,7 +27,6 @@ interface SankeyModalProps {
 }
 
 const svgHeight = 1000;
-// const svgHeight = 400;
 const svgWidth = svgHeight * 1.91;
 
 export const SankeyModal = ({ route, chainId }: SankeyModalProps) => {
