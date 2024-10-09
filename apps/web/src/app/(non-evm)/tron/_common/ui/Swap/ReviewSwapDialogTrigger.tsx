@@ -1,12 +1,11 @@
 import { Button, DialogTrigger } from "@sushiswap/ui";
 import { useWallet } from "@tronweb3/tronwallet-adapter-react-hooks";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { ROUTER_CONTRACT } from "~tron/_common/constants/contracts";
 import { useAllowance } from "~tron/_common/lib/hooks/useAllowance";
 import { useTokenBalance } from "~tron/_common/lib/hooks/useTokenBalance";
 import { formatUnitsForInput } from "~tron/_common/lib/utils/formatters";
 import { getIfWrapOrUnwrap } from "~tron/_common/lib/utils/helpers";
-import { warningSeverity } from "~tron/_common/lib/utils/warning-severity";
 import { useSwapState } from "~tron/swap/swap-provider";
 import { ApproveToken } from "../Shared/ApproveToken";
 
@@ -81,14 +80,15 @@ export const ReviewSwapDialogTrigger = () => {
 	]);
 
 	const userConfirmationNeeded = useMemo(() => {
-		if (
-			warningSeverity(priceImpactPercentage ?? 0) > 3 &&
-			(buttonText === "Review Swap" || buttonText === "Approve")
-		) {
+		if (priceImpactPercentage >= 15 && (buttonText === "Review Swap" || buttonText === "Approve")) {
 			return true;
 		}
 		return false;
 	}, [priceImpactPercentage, buttonText]);
+
+	useEffect(() => {
+		setIsChecked(false);
+	}, [priceImpactPercentage]);
 
 	return (
 		<>
