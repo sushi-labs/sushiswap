@@ -120,9 +120,9 @@ export const TokenInput = ({
 						type="number"
 						variant="naked"
 						disabled={type === "output"}
-						onChange={(e) => {
+						onValueChange={(e) => {
 							if (type === "output") return;
-							const value = e.target.value;
+							const value = e;
 
 							setAmount(value);
 						}}
