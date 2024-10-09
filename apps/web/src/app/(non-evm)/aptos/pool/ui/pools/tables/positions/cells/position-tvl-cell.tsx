@@ -1,6 +1,6 @@
 import { useWallet } from "@aptos-labs/wallet-adapter-react";
 import { FC, useMemo } from "react";
-import { formatUSD } from "sushi/format";
+import { formatPercent, formatUSD } from "sushi/format";
 import { formatNumberWithDecimals } from "~aptos/(common)/lib/common/format-number-with-decimals";
 import { useNetwork } from "~aptos/(common)/lib/common/use-network";
 import { useStablePrice } from "~aptos/(common)/lib/common/use-stable-price";
@@ -62,7 +62,10 @@ export const PoolMyPositionTVLCell: FC<Row<PoolExtendedWithAprVolume> & { isSize
 			  token1Price * Number(formatNumberWithDecimals(Number(currencyBBalance), token1.decimals))
 			: 0;
 
-	const _liquidityBalance = Number.isNaN(liquidityBalance) ? 0 : liquidityBalance;
+	// const _liquidityBalance = Number.isNaN(liquidityBalance) ? 0 : liquidityBalance;
+
+	const ownedPercentage = liquidityBalance && totalSupply ? liquidityBalance / Number(totalSupply) : 0;
+	const _ownedPercentage = Number.isNaN(ownedPercentage) ? 0 : ownedPercentage;
 
 	const _userPositionTvl = Number.isNaN(userPositionTvl) ? 0 : userPositionTvl;
 
@@ -71,7 +74,7 @@ export const PoolMyPositionTVLCell: FC<Row<PoolExtendedWithAprVolume> & { isSize
 			<div className="flex flex-col gap-0.5">
 				<span className="flex items-center gap-1 text-sm font-medium text-gray-900 dark:text-slate-50">
 					{isSize
-						? formatNumberWithDecimals(_liquidityBalance, 8)
+						? formatPercent(_ownedPercentage)
 						: currencyABalance && currencyBBalance
 						? formatUSD(_userPositionTvl)
 						: formatUSD(0)}
