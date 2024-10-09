@@ -236,7 +236,9 @@ const TokenButton = ({
 						<p className="text-xs text-gray-400 dark:text-slate-500">{token.name}</p>
 					</div>
 				</div>
-				<span>{formatUnitsForInput((token as TokenWithBalance)?.balance, token?.decimals) ?? "0"}</span>
+				{(token as TokenWithBalance)?.balance === "0" ? null : (
+					<span>{formatUnitsForInput((token as TokenWithBalance)?.balance, token?.decimals) ?? "0"}</span>
+				)}
 			</Button>
 			{isNew && !isOnDefaultList ? (
 				<Button
