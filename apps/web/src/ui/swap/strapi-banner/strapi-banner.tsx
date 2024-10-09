@@ -4,6 +4,10 @@ import { unstable_cache } from 'next/cache'
 import { cookies } from 'next/headers'
 import { StrapiBannerContent } from './strapi-banner-content'
 
+export const revalidate = 3600
+
+export const fetchCache = 'default-no-store'
+
 export async function StrapiBanner() {
   let banners
 
