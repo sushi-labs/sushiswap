@@ -48,7 +48,7 @@ export function StrapiBannerContent({
       <LinkExternal href={banner.link}>
         {/* biome-ignore lint/a11y/useKeyWithClickEvents: stupid */}
         <div className="absolute z-10 right-0 top-0 p-2" onClick={onHide}>
-          <XMarkIcon width={32} height={32} className="text-white" />
+          <XMarkIcon width={20} height={20} className="text-white" />
         </div>
         <Image
           src={getOptimizedMedia({
