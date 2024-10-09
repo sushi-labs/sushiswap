@@ -1,37 +1,32 @@
-import { SkeletonText } from '@sushiswap/ui'
-import React, { FC } from 'react'
+import { SkeletonText } from "@sushiswap/ui";
+import React, { FC } from "react";
 
 interface CurrencyInputPricePanel {
-  isLoading: boolean
-  error?: string
-  value: string
+	isLoading: boolean;
+	error?: string;
+	value: string;
 }
 
-export const CurrencyInputPricePanel: FC<CurrencyInputPricePanel> = ({
-  isLoading,
-  error,
-  value,
-}) => {
-  const [big, portion] = (value ? `${Number(value).toFixed(2)}` : '0.00').split(
-    '.',
-  )
-  if (isLoading) {
-    return (
-      <div className="w-[90px] flex items-center">
-        <SkeletonText fontSize="lg" className="w-full" />
-      </div>
-    )
-  }
+export const CurrencyInputPricePanel: FC<CurrencyInputPricePanel> = ({ isLoading, error, value }) => {
+	const [big, portion] = (
+		value && !Number.isNaN(Number(value)) ? `${Number(value).toFixed(2)}` : "0.00"
+	)?.split(".");
 
-  if (error) {
-    return (
-      <p className="font-medium text-lg py-1 select-none text-red">{error}</p>
-    )
-  }
+	if (isLoading) {
+		return (
+			<div className="w-[90px] flex items-center">
+				<SkeletonText fontSize="lg" className="w-full" />
+			</div>
+		);
+	}
 
-  return (
-    <p className="font-medium text-lg flex items-baseline select-none text-gray-500 dark:text-slate-400">
-      $ {big}.<span className="text-sm font-semibold">{portion}</span>
-    </p>
-  )
-}
+	if (error) {
+		return <p className="font-medium text-lg py-1 select-none text-red">{error}</p>;
+	}
+
+	return (
+		<p className="font-medium text-lg flex items-baseline select-none text-gray-500 dark:text-slate-400">
+			$ {big}.<span className="text-sm font-semibold">{portion}</span>
+		</p>
+	);
+};
