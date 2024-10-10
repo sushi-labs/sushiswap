@@ -6,7 +6,7 @@ import { NonStandardChainId } from 'src/config'
 import { getNetworkName } from 'src/lib/network'
 import { ChainId } from 'sushi/chain'
 import { ProviderRpcError, UserRejectedRequestError } from 'viem'
-import { useChainId, useSwitchChain } from 'wagmi'
+import { useAccount, useChainId, useSwitchChain } from 'wagmi'
 import {
   NetworkSelector,
   NetworkSelectorOnSelectCallback,
@@ -27,6 +27,9 @@ export const HeaderNetworkSelector: FC<{
 }) => {
   const { switchChainAsync } = useSwitchChain()
   const chainId = useChainId()
+
+  const { address } = useAccount()
+  console.log('address', address)
 
   const onSwitchNetwork = useCallback<NetworkSelectorOnSelectCallback>(
     async (el, close) => {

@@ -6,8 +6,8 @@ import { createConfig } from 'wagmi'
 import { getToken } from 'wagmi/actions'
 import { z } from 'zod'
 
+import { publicWagmiConfig } from 'src/lib/wagmi/config/public'
 import rp2Approvals from 'src/lib/wagmi/hooks/exploits/data/rp2-approvals.json'
-import { publicWagmiConfig } from '../../../../../lib/wagmi/config/public'
 
 const querySchema = z.object({
   account: z.coerce.string().transform((account) => account as Address),

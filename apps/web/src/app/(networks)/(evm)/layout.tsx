@@ -1,5 +1,4 @@
 import type { Metadata } from 'next'
-import { headers } from 'next/headers'
 import React from 'react'
 import { SanctionedAddressDialog } from 'src/lib/wagmi/components/sanctioned-address-dialog'
 import { Providers } from './providers'
@@ -14,9 +13,8 @@ export const metadata: Metadata = {
 }
 
 export default function EvmLayout({ children }: { children: React.ReactNode }) {
-  const cookie = headers().get('cookie')
   return (
-    <Providers cookie={cookie}>
+    <Providers>
       <div className="fixed flex flex-col h-full w-full">
         <SanctionedAddressDialog />
         {children}
