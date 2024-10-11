@@ -1,9 +1,9 @@
 import {
   SmartPoolChainId,
+  SmartPoolChainIds,
   getSmartPools,
   isSmartPoolChainId,
 } from '@sushiswap/graph-client/data-api'
-import { STEER_SUPPORTED_CHAIN_IDS } from '@sushiswap/steer-sdk'
 import { Container } from '@sushiswap/ui'
 import { unstable_cache } from 'next/cache'
 import { notFound } from 'next/navigation'
@@ -51,8 +51,8 @@ export default async function SmartPoolsPage({
         <TableFiltersPoolType />
         <TableFiltersNetwork
           network={chainId}
-          supportedNetworks={STEER_SUPPORTED_CHAIN_IDS}
-          unsupportedNetworkHref="/ethereum/explore/pools"
+          supportedNetworks={SmartPoolChainIds}
+          unsupportedNetworkHref={'/arbitrum/explore/smart-pools'}
           className="lg:hidden block"
         />
         <TableFiltersFarmsOnly />

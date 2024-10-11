@@ -18,7 +18,10 @@ export default async function PoolsPage({
   params: { chainId: string }
 }) {
   const chainId = +params.chainId as ChainId
-  if (!isPoolChainId(chainId)) return notFound()
+
+  if (!isPoolChainId(chainId)) {
+    return notFound()
+  }
 
   return (
     <Container maxWidth="7xl" className="px-4">
