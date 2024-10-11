@@ -6,7 +6,6 @@ import {
   isSmartPoolChainId,
 } from '@sushiswap/graph-client/data-api'
 import { getTokenRatios, getVaultPositions } from '@sushiswap/steer-sdk'
-import { Container } from '@sushiswap/ui'
 import formatDistanceStrict from 'date-fns/formatDistanceStrict'
 import formatDistanceToNow from 'date-fns/formatDistanceToNow'
 import { unstable_cache } from 'next/cache'
@@ -122,17 +121,5 @@ export default async function SteerVaultPage({
 
   const Component = SteerBaseStrategy
 
-  return (
-    <Container maxWidth="5xl" className="px-4">
-      {vault.isDeprecated && (
-        <div className="text-center text-red dark:text-red-600 w-full pb-8">
-          <div className=" font-medium">This vault is deprecated.</div>
-          <div className="text-sm">
-            {"It will not accrue any fees and won't be readjusted."}
-          </div>
-        </div>
-      )}
-      <Component pool={pool} vault={vault} generic={generics} />
-    </Container>
-  )
+  return <Component pool={pool} vault={vault} generic={generics} />
 }

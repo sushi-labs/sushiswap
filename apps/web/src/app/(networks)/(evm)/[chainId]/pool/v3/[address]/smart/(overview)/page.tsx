@@ -3,12 +3,6 @@ import {
   getVaults,
   isSmartPoolChainId,
 } from '@sushiswap/graph-client/data-api'
-import {
-  CardDescription,
-  CardHeader,
-  CardTitle,
-  Container,
-} from '@sushiswap/ui'
 import { unstable_cache } from 'next/cache'
 import { notFound } from 'next/navigation'
 import { SteerCarousel } from 'src/ui/pool/Steer/SteerCarousel'
@@ -52,15 +46,5 @@ export default async function VaultOverviewPage({
     return notFound()
   }
 
-  return (
-    <Container maxWidth="5xl" className="px-4">
-      <CardHeader className="!p-0">
-        <CardTitle>Available Strategies</CardTitle>
-        <CardDescription>
-          Choose one of the following strategies:
-        </CardDescription>
-      </CardHeader>
-      <SteerCarousel pool={pool} vaults={vaults} />
-    </Container>
-  )
+  return <SteerCarousel pool={pool} vaults={vaults} />
 }
