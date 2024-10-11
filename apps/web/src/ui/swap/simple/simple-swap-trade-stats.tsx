@@ -2,7 +2,7 @@
 
 import { useIsMounted } from '@sushiswap/hooks'
 import { Collapsible, Explainer, SkeletonBox, classNames } from '@sushiswap/ui'
-import React, { FC } from 'react'
+import { FC } from 'react'
 import { AddressToEnsResolver } from 'src/lib/wagmi/components/account/AddressToEnsResolver'
 import { Chain, ChainId } from 'sushi/chain'
 import { Native } from 'sushi/currency'
@@ -14,8 +14,7 @@ import {
   warningSeverity,
   warningSeverityClassName,
 } from '../../../lib/swap/warningSeverity'
-// import { TradeRoutePathView } from '../trade-route-path-view'
-import { RouteDiagram } from '../route-diagram'
+import { TradeRoutePathView } from '../trade-route-path-view'
 import {
   useDerivedStateSimpleSwap,
   useSimpleSwapTrade,
@@ -140,15 +139,14 @@ export const SimpleSwapTradeStats: FC = () => {
             {loading || !trade ? (
               <SkeletonBox className="h-4 py-0.5 w-[40px]" />
             ) : (
-              // <TradeRoutePathView trade={trade}>
-              //   <button
-              //     type="button"
-              //     className="text-sm font-semibold text-blue"
-              //   >
-              //     View
-              //   </button>
-              // </TradeRoutePathView>
-              <RouteDiagram trade={trade}/>
+              <TradeRoutePathView trade={trade}>
+                <button
+                  type="button"
+                  className="text-sm font-semibold text-blue"
+                >
+                  View
+                </button>
+              </TradeRoutePathView>
             )}
           </span>
         </div>
