@@ -2,12 +2,12 @@ import { V2Pool, getV2Pool } from '@sushiswap/graph-client/data-api'
 import { Container } from '@sushiswap/ui'
 import { unstable_cache } from 'next/cache'
 import { headers } from 'next/headers'
+import { notFound } from 'next/navigation'
 import React from 'react'
 import { PoolHeader } from 'src/ui/pool/PoolHeader'
 import { ChainId, ChainKey } from 'sushi/chain'
 import { isSushiSwapV2ChainId } from 'sushi/config'
 import { isAddress } from 'viem'
-import notFound from '../../../../not-found'
 
 export default async function Layout({
   children,

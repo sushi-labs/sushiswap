@@ -1,11 +1,11 @@
 import { isPoolChainId } from '@sushiswap/graph-client/data-api'
 import { Container } from '@sushiswap/ui'
+import { notFound } from 'next/navigation'
 import { POOL_SUPPORTED_NETWORKS } from 'src/config'
 import { PoolsFiltersProvider } from 'src/ui/pool'
 import { ChainId } from 'sushi/chain'
 import { SidebarContainer, SidebarProvider } from '~evm/_common/ui/sidebar'
 import { Header } from '../header'
-import notFound from '../not-found'
 import { Hero } from './hero'
 import { NavigationItems } from './navigation-items'
 

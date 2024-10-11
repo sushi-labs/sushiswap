@@ -1,9 +1,9 @@
 import { getV2Pool } from '@sushiswap/graph-client/data-api'
 import { unstable_cache } from 'next/cache'
+import { notFound } from 'next/navigation'
 import { ChainId } from 'sushi'
 import { isSushiSwapV2ChainId } from 'sushi/config'
 import { isAddress } from 'viem'
-import notFound from '../../../not-found'
 
 export const metadata = {
   title: 'Pool 💦',

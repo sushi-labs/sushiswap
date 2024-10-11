@@ -3,7 +3,7 @@ import {
   SUSHIXSWAP_2_SUPPORTED_CHAIN_IDS,
   isSushiXSwap2ChainId,
 } from 'sushi/config'
-import NotFound from '~evm/[chainId]/not-found'
+import { notFound } from 'next/navigation'
 import { SidebarContainer } from '~evm/_common/ui/sidebar'
 import { Providers } from './providers'
 
@@ -14,7 +14,7 @@ export default function CrossChainSwapLayout({
   const chainId = +params.chainId as ChainId
 
   if (!isSushiXSwap2ChainId(chainId)) {
-    return NotFound()
+    return notFound()
   }
 
   return (

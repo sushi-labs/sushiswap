@@ -1,6 +1,6 @@
+import { notFound } from 'next/navigation'
 import { TWAP_SUPPORTED_CHAIN_IDS, isTwapSupportedChainId } from 'src/config'
 import { ChainId } from 'sushi/chain'
-import NotFound from '~evm/[chainId]/not-found'
 import { SidebarContainer } from '~evm/_common/ui/sidebar'
 import { Providers } from './providers'
 
@@ -11,7 +11,7 @@ export default function SwapLimitLayout({
   const chainId = +params.chainId as ChainId
 
   if (!isTwapSupportedChainId(chainId)) {
-    return NotFound()
+    return notFound()
   }
 
   return (

@@ -32,6 +32,7 @@ import { ZERO } from 'sushi/math'
 import { SushiSwapV2Pool } from 'sushi/pool/sushiswap-v2'
 import { SWRConfig } from 'swr'
 
+import { notFound } from 'next/navigation'
 import { Web3Input } from 'src/lib/wagmi/components/web3-input'
 import { SushiSwapV2PoolState } from 'src/lib/wagmi/hooks/pools/hooks/useSushiSwapV2Pools'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
@@ -41,12 +42,11 @@ import { AddSectionPoolShareCardV2 } from 'src/ui/pool/AddSectionPoolShareCardV2
 import { AddSectionReviewModalLegacy } from 'src/ui/pool/AddSectionReviewModalLegacy'
 import { SelectNetworkWidget } from 'src/ui/pool/SelectNetworkWidget'
 import { SelectTokensWidget } from 'src/ui/pool/SelectTokensWidget'
-import notFound from '../../../not-found'
 
 export default function Page({ params }: { params: { chainId: string } }) {
   const chainId = +params.chainId as ChainId
   if (!isSushiSwapV2ChainId(chainId)) {
-    return notFound(chainId)
+    return notFound()
   }
 
   const router = useRouter()

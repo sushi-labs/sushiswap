@@ -1,9 +1,9 @@
 import { getV3Pool } from '@sushiswap/graph-client/data-api'
 import { unstable_cache } from 'next/cache'
+import { notFound } from 'next/navigation'
 import { ChainId } from 'sushi/chain'
 import { isSushiSwapV3ChainId } from 'sushi/config'
 import { isAddress } from 'viem'
-import notFound from '../../../not-found'
 
 export const metadata = {
   title: 'Pool 💦',
@@ -35,7 +35,7 @@ export default async function Layout({
   )()
 
   if (!pool) {
-    return notFound(chainId)
+    return notFound()
   }
 
   return <>{children}</>

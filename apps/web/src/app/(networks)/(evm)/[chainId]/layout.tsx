@@ -1,5 +1,5 @@
+import { notFound } from 'next/navigation'
 import { isSupportedChainId } from 'src/config'
-import notFound from './not-found'
 import { Providers } from './providers'
 
 export default function PoolLayout({

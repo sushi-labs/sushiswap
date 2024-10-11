@@ -1,8 +1,8 @@
 import { Container, typographyVariants } from '@sushiswap/ui'
+import { notFound } from 'next/navigation'
 import { BackButton } from 'src/ui/pool/BackButton'
 import { ChainId } from 'sushi/chain'
 import { isMerklChainId } from 'sushi/config'
-import notFound from '~evm/[chainId]/not-found'
 
 export default function Layout({
   children,
@@ -10,7 +10,7 @@ export default function Layout({
 }: { children: React.ReactNode; params: { chainId: string } }) {
   const chainId = +params.chainId as ChainId
   if (!isMerklChainId(chainId)) {
-    return notFound(chainId)
+    return notFound()
   }
 
   return (

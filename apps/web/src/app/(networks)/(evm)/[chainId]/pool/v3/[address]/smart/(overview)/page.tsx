@@ -10,11 +10,11 @@ import {
   Container,
 } from '@sushiswap/ui'
 import { unstable_cache } from 'next/cache'
+import { notFound } from 'next/navigation'
 import { SteerCarousel } from 'src/ui/pool/Steer/SteerCarousel'
 import { ChainId } from 'sushi/chain'
 import { isSushiSwapV3ChainId } from 'sushi/config'
 import { isAddress } from 'viem'
-import notFound from '../../../../../not-found'
 
 export default async function VaultOverviewPage({
   params,
@@ -49,7 +49,7 @@ export default async function VaultOverviewPage({
   )()
 
   if (!pool || !vaults) {
-    return notFound(chainId)
+    return notFound()
   }
 
   return (

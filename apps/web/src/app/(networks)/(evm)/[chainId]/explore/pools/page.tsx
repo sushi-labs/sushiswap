@@ -1,5 +1,6 @@
 import { isPoolChainId } from '@sushiswap/graph-client/data-api'
 import { Container } from '@sushiswap/ui'
+import { notFound } from 'next/navigation'
 import React from 'react'
 import { POOL_SUPPORTED_NETWORKS } from 'src/config'
 import { PoolsTable } from 'src/ui/pool/PoolsTable'
@@ -10,7 +11,6 @@ import { TableFiltersPoolType } from 'src/ui/pool/TableFiltersPoolType'
 import { TableFiltersResetButton } from 'src/ui/pool/TableFiltersResetButton'
 import { TableFiltersSearchToken } from 'src/ui/pool/TableFiltersSearchToken'
 import { ChainId } from 'sushi/chain'
-import notFound from '../../not-found'
 
 export default async function PoolsPage({
   params,

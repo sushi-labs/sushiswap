@@ -1,6 +1,6 @@
+import { notFound } from 'next/navigation'
 import { SUPPORTED_NETWORKS, isSupportedChainId } from 'src/config'
 import { ChainId } from 'sushi/chain'
-import NotFound from '~evm/[chainId]/not-found'
 import { SidebarContainer } from '~evm/_common/ui/sidebar'
 import { Providers } from './providers'
 
@@ -11,7 +11,7 @@ export default function SwapLayout({
   const chainId = +params.chainId as ChainId
 
   if (!isSupportedChainId) {
-    return NotFound()
+    return notFound()
   }
 
   return (

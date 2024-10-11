@@ -1,9 +1,7 @@
 import { ChevronRightIcon } from '@heroicons/react/20/solid'
 import { Button, LinkInternal, typographyVariants } from '@sushiswap/ui'
-import { ChainKey } from 'sushi'
-import { ChainId } from 'sushi/chain'
 
-export default function NotFound(chainId: ChainId = ChainId.ETHEREUM) {
+export default function NotFound() {
   return (
     <div className="flex justify-center items-center pt-20 px-4">
       <div className="flex flex-col gap-8 text-center">
@@ -32,7 +30,7 @@ export default function NotFound(chainId: ChainId = ChainId.ETHEREUM) {
             icon={ChevronRightIcon}
             iconPosition="end"
           >
-            <LinkInternal href={`/${ChainKey[chainId]}/explore/pools`}>
+            <LinkInternal href={`/explore`}>
               See a list of our pools
             </LinkInternal>
           </Button>
