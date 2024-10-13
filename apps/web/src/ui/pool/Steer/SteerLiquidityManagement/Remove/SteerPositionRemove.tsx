@@ -1,6 +1,6 @@
 'use client'
 
-import { CogIcon } from '@heroicons/react-v1/solid'
+import { Cog6ToothIcon } from '@heroicons/react/24/outline'
 import { SlippageToleranceStorageKey, useDebounce } from '@sushiswap/hooks'
 import { createErrorToast, createToast } from '@sushiswap/notifications'
 import { SteerVault, isSteerChainId } from '@sushiswap/steer-sdk'
@@ -250,7 +250,7 @@ export const SteerPositionRemove: FC<SteerPositionRemoveProps> = ({
               <IconButton
                 size="sm"
                 name="Settings"
-                icon={CogIcon}
+                icon={Cog6ToothIcon}
                 variant="secondary"
                 className="!rounded-xl"
               />

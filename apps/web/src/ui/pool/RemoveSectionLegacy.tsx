@@ -441,10 +441,9 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> =
           token1Minimum={minAmount1}
           setPercentage={setPercentage}
         >
-          <Checker.Connect size="default" variant="outline" fullWidth>
+          <Checker.Connect fullWidth>
             <Checker.Guard
-              size="default"
-              variant="outline"
+              fullWidth
               guardWhen={
                 isMounted &&
                 [
@@ -454,21 +453,13 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> =
               }
               guardText="Pool not found"
             >
-              <Checker.Network
-                size="default"
-                variant="outline"
-                fullWidth
-                chainId={_pool.chainId as ChainId}
-              >
+              <Checker.Network fullWidth chainId={_pool.chainId as ChainId}>
                 <Checker.Guard
-                  size="default"
-                  variant="outline"
+                  fullWidth
                   guardWhen={+percentage <= 0}
                   guardText="Enter amount"
                 >
                   <Checker.ApproveERC20WithPermit
-                    size="default"
-                    variant="outline"
                     fullWidth
                     id="approve-remove-liquidity-slp"
                     chainId={_pool.chainId}
@@ -484,9 +475,8 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> =
                   >
                     <Checker.Success tag={APPROVE_TAG_REMOVE_LEGACY}>
                       <Button
-                        size="default"
-                        onClick={() => send?.()}
                         fullWidth
+                        onClick={() => send?.()}
                         disabled={!approved || isWritePending || !send}
                         testId="remove-liquidity"
                       >

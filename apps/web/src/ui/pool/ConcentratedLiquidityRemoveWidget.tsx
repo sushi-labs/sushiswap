@@ -1,6 +1,6 @@
 'use client'
 
-import { CogIcon } from '@heroicons/react/24/outline'
+import { Cog6ToothIcon } from '@heroicons/react/24/outline'
 import {
   SlippageToleranceStorageKey,
   TTLStorageKey,
@@ -393,7 +393,7 @@ export const ConcentratedLiquidityRemoveWidget: FC<
                           <IconButton
                             size="sm"
                             name="Settings"
-                            icon={CogIcon}
+                            icon={Cog6ToothIcon}
                             variant="secondary"
                             className="!rounded-xl"
                           />
@@ -438,13 +438,8 @@ export const ConcentratedLiquidityRemoveWidget: FC<
                   guardWhen={positionClosed}
                   guardText="Position already closed"
                 >
-                  <Checker.Connect fullWidth variant="outline" size="xl">
-                    <Checker.Network
-                      fullWidth
-                      variant="outline"
-                      size="xl"
-                      chainId={chainId}
-                    >
+                  <Checker.Connect fullWidth>
+                    <Checker.Network fullWidth chainId={chainId}>
                       <DialogTrigger asChild>
                         <Button
                           fullWidth
@@ -486,7 +481,7 @@ export const ConcentratedLiquidityRemoveWidget: FC<
                 >
                   <IconButton
                     name="Settings"
-                    icon={CogIcon}
+                    icon={Cog6ToothIcon}
                     variant="secondary"
                     className="mr-12"
                   />
@@ -574,7 +569,6 @@ export const ConcentratedLiquidityRemoveWidget: FC<
               </div>
               <DialogFooter>
                 <Button
-                  size="xl"
                   fullWidth
                   loading={!send || isWritePending}
                   onClick={() => send?.(confirm)}

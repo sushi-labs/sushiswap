@@ -1,6 +1,6 @@
 'use client'
 
-import { CogIcon } from '@heroicons/react-v1/outline'
+import { Cog6ToothIcon } from '@heroicons/react/24/outline'
 import { SlippageToleranceStorageKey, TTLStorageKey } from '@sushiswap/hooks'
 import {
   Card,
@@ -254,7 +254,7 @@ const Component: FC<{ chainId: string; address: string; position: string }> = ({
                           <IconButton
                             size="sm"
                             name="Settings"
-                            icon={CogIcon}
+                            icon={Cog6ToothIcon}
                             variant="secondary"
                           />
                         </SettingsOverlay>
@@ -321,22 +321,13 @@ const Component: FC<{ chainId: string; address: string; position: string }> = ({
                       chainId={chainId}
                     >
                       {({ send, isPending }) => (
-                        <Checker.Connect
-                          variant="outline"
-                          fullWidth
-                          size="default"
-                        >
-                          <Checker.Network
-                            variant="outline"
-                            fullWidth
-                            size="default"
-                            chainId={chainId}
-                          >
+                        <Checker.Connect fullWidth>
+                          <Checker.Network fullWidth chainId={chainId}>
                             <Button
                               fullWidth
+                              size="xl"
                               disabled={isPending}
                               onClick={send}
-                              size="default"
                             >
                               Collect
                             </Button>
@@ -389,22 +380,13 @@ const Component: FC<{ chainId: string; address: string; position: string }> = ({
                         chainId={chainId}
                       >
                         {({ write, isPending }) => (
-                          <Checker.Connect
-                            fullWidth
-                            variant="outline"
-                            size="default"
-                          >
-                            <Checker.Network
-                              fullWidth
-                              variant="outline"
-                              size="default"
-                              chainId={chainId}
-                            >
+                          <Checker.Connect fullWidth>
+                            <Checker.Network fullWidth chainId={chainId}>
                               <Button
                                 fullWidth
+                                size="xl"
                                 disabled={isPending}
                                 onClick={() => write?.()}
-                                size="default"
                               >
                                 Harvest
                               </Button>
