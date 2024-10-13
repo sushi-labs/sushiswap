@@ -36,7 +36,7 @@ export default function PositionsLayout({
             <Hero chainId={chainId} />
           </Container>
           <Container maxWidth="7xl" className="px-4 flex gap-2 pb-4">
-            <NavigationItems />
+            <NavigationItems chainId={chainId} />
           </Container>
           <section className="flex flex-col flex-1">
             <div className="bg-gray-50 dark:bg-white/[0.02] border-t border-accent pt-4 pb-10 min-h-screen">
