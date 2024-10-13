@@ -54,7 +54,7 @@ import {
 } from 'src/lib/swap/cross-chain'
 import { warningSeverity } from 'src/lib/swap/warningSeverity'
 import { useApproved } from 'src/lib/wagmi/systems/Checker/Provider'
-import { sushiXSwap2Abi_swap, sushiXSwap2Abi_swapAndBridge } from 'sushi/abi'
+import { sushiXSwap2Abi_bridge, sushiXSwap2Abi_swapAndBridge } from 'sushi/abi'
 import { Chain, chainName } from 'sushi/chain'
 import {
   SUSHIXSWAP_2_ADDRESS,
@@ -96,8 +96,8 @@ function getConfig(trade: UseCrossChainTradeReturn | undefined) {
 
   if (trade.functionName === SushiXSwapFunctionName.Bridge) {
     return {
-      abi: sushiXSwap2Abi_swap,
-      functionName: 'swap',
+      abi: sushiXSwap2Abi_bridge,
+      functionName: 'bridge',
       args: trade.writeArgs as NonNullable<SushiXSwapWriteArgsBridge>,
       value: BigInt(trade.value ?? 0) as any,
     } as const
