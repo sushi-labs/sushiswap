@@ -731,7 +731,7 @@ const Incentivize = withCheckerRoot(() => {
           testId="incentivize-confirmation-modal"
           successMessage={`Successfully incentivized the ${token0.symbol}/${token1.symbol} V3 pool`}
           buttonText="Go to pool"
-          buttonLink={`/${pool.chainId}/pool/v3/${v3Address}`}
+          buttonLink={`/${ChainKey[pool.chainId]}/pool/v3/${v3Address}`}
           txHash={data}
         />
       ) : null}

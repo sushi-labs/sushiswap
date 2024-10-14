@@ -1,7 +1,5 @@
 'use client'
 
-import { UploadIcon } from '@heroicons/react-v1/outline'
-import { DownloadIcon } from '@heroicons/react-v1/solid'
 import { ArrowDownRightIcon } from '@heroicons/react/20/solid'
 import {
   EllipsisHorizontalIcon,
@@ -24,7 +22,6 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuGroup,
-  DropdownMenuGroupLabel,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
@@ -47,6 +44,7 @@ import {
 } from '@tanstack/react-table'
 import Link from 'next/link'
 import React, { FC, useMemo, useState } from 'react'
+import { ChainKey } from 'sushi/chain'
 import { isMerklChainId } from 'sushi/config'
 import { Native, Token, unwrapToken } from 'sushi/currency'
 import { formatPercent, formatUSD } from 'sushi/format'
@@ -311,7 +309,9 @@ const COLUMNS = [
                   onClick={(e) => e.stopPropagation()}
                   shallow={true}
                   className="flex items-center"
-                  href={`/${row.original.chainId}/pool/v3/${row.original.poolAddress}`}
+                  href={`/${ChainKey[row.original.chainId]}/pool/v3/${
+                    row.original.poolAddress
+                  }`}
                 >
                   <ArrowDownRightIcon width={16} height={16} className="mr-2" />
                   Pool details
@@ -322,7 +322,9 @@ const COLUMNS = [
                   onClick={(e) => e.stopPropagation()}
                   shallow={true}
                   className="flex items-center"
-                  href={`/${row.original.chainId}/pool/v3/${row.original.poolAddress}/create`}
+                  href={`/${ChainKey[row.original.chainId]}/pool/v3/${
+                    row.original.poolAddress
+                  }/create`}
                 >
                   <PlusIcon width={16} height={16} className="mr-2" />
                   Create position
@@ -336,7 +338,9 @@ const COLUMNS = [
                         onClick={(e) => e.stopPropagation()}
                         shallow={true}
                         className="flex items-center"
-                        href={`/${row.original.chainId}/pool/v3/${row.original.poolAddress}/smart/${row.original.address}`}
+                        href={`/${ChainKey[row.original.chainId]}/pool/v3/${
+                          row.original.poolAddress
+                        }/smart/${row.original.address}`}
                       >
                         <span className="relative">
                           <LightBulbIcon
@@ -372,14 +376,13 @@ const COLUMNS = [
                       asChild
                       disabled={!isMerklChainId(row.original.chainId)}
                     >
-                      {/* FIX */}
                       <Link
                         onClick={(e) => e.stopPropagation()}
                         shallow={true}
                         className="flex items-center"
-                        href={`/pool/incentivize?chainId=${
-                          row.original.chainId
-                        }&fromCurrency=${
+                        href={`/${
+                          ChainKey[row.original.chainId]
+                        }/pool/incentivize?fromCurrency=${
                           row.original.token0.address ===
                           Native.onChain(row.original.chainId).wrapped.address
                             ? 'NATIVE'
@@ -431,7 +434,9 @@ const COLUMNS = [
                   onClick={(e) => e.stopPropagation()}
                   shallow={true}
                   className="flex items-center"
-                  href={`/pool/${row.original.id}/add`}
+                  href={`/${ChainKey[row.original.chainId]}/pool/v2/${
+                    row.original.address
+                  }/add`}
                 >
                   <PlusIcon width={16} height={16} className="mr-2" />
                   Add liquidity
@@ -442,52 +447,12 @@ const COLUMNS = [
                   onClick={(e) => e.stopPropagation()}
                   shallow={true}
                   className="flex items-center"
-                  href={`/pool/${row.original.id}/remove`}
+                  href={`/${ChainKey[row.original.chainId]}/pool/v2/${
+                    row.original.address
+                  }/remove`}
                 >
                   <MinusIcon width={16} height={16} className="mr-2" />
                   Remove liquidity
-                </Link>
-              </DropdownMenuItem>
-            </DropdownMenuGroup>
-            <DropdownMenuSeparator />
-            <DropdownMenuGroup>
-              <DropdownMenuGroupLabel>Farm rewards</DropdownMenuGroupLabel>
-              <TooltipProvider>
-                <Tooltip delayDuration={0}>
-                  <TooltipTrigger asChild={row.original.isIncentivized}>
-                    <DropdownMenuItem
-                      asChild
-                      disabled={!row.original.isIncentivized}
-                    >
-                      <Link
-                        onClick={(e) => e.stopPropagation()}
-                        shallow={true}
-                        className="flex items-center"
-                        href={`/pool/${row.original.id}/stake`}
-                      >
-                        <DownloadIcon width={16} height={16} className="mr-2" />
-                        Stake
-                      </Link>
-                    </DropdownMenuItem>
-                  </TooltipTrigger>
-                  <TooltipContent side="left" className="max-w-[240px]">
-                    <p>
-                      {!row.original.isIncentivized
-                        ? 'No rewards available on this pool'
-                        : 'After adding liquidity, stake your liquidity tokens to benefit from extra rewards'}
-                    </p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-              <DropdownMenuItem asChild disabled={!row.original.isIncentivized}>
-                <Link
-                  onClick={(e) => e.stopPropagation()}
-                  shallow={true}
-                  className="flex items-center"
-                  href={`/pool/${row.original.id}/unstake`}
-                >
-                  <UploadIcon width={16} height={16} className="mr-2" />
-                  Unstake
                 </Link>
               </DropdownMenuItem>
             </DropdownMenuGroup>
@@ -584,7 +549,9 @@ export const SmartPoolsTable: FC<SmartPoolsTableProps> = ({
         pagination={true}
         state={state}
         linkFormatter={(row) =>
-          `/${row.chainId}/pool/v3/${row.poolAddress}/smart/${row.address}`
+          `/${ChainKey[row.chainId]}/pool/v3/${row.poolAddress}/smart/${
+            row.address
+          }`
         }
         onSortingChange={setSorting}
         loading={isLoading}

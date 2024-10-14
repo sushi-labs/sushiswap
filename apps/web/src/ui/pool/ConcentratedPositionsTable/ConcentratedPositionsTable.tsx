@@ -167,7 +167,7 @@ export const ConcentratedPositionsTable: FC<ConcentratedPositionsTableProps> =
           testId="concentrated-positions"
           loading={isInitialLoading}
           linkFormatter={(row) =>
-            `/${row.chainId}/pool/v3/${row.address}/${row.tokenId.toString()}`
+            `/${ChainKey[row.chainId]}/pool/v3/${row.address}/${row.tokenId}`
           }
           rowRenderer={rowRenderer}
           columns={COLUMNS}
