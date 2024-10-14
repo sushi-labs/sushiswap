@@ -9,12 +9,13 @@ import { formatPercent, formatUSD } from "sushi/format";
 import { WTRX } from "~tron/_common/constants/token-list";
 import { useStablePrice } from "~tron/_common/lib/hooks/useStablePrice";
 import { useSwapNetworkFee } from "~tron/_common/lib/hooks/useSwapNetworkFee";
-import { toBigNumber, truncateText } from "~tron/_common/lib/utils/formatters";
+import { formatUnitsForInput, toBigNumber, truncateText } from "~tron/_common/lib/utils/formatters";
 import { getIfWrapOrUnwrap } from "~tron/_common/lib/utils/helpers";
 import { getTronscanAddressLink } from "~tron/_common/lib/utils/tronscan-helpers";
 import { warningSeverity, warningSeverityClassName } from "~tron/_common/lib/utils/warning-severity";
 import { useSwapState } from "~tron/swap/swap-provider";
 import { SwapRoutesDialog } from "./SwapRoutesDialog";
+import { useTokenBalance } from "~tron/_common/lib/hooks/useTokenBalance";
 
 export const SwapStats = () => {
 	const { token0, token1, amountOut, amountIn, priceImpactPercentage, route } = useSwapState();
@@ -22,7 +23,16 @@ export const SwapStats = () => {
 	const { data: trxPrice, isLoading: isPriceLoading } = useStablePrice({
 		token: WTRX,
 	});
+	const { data: tokenBalance, isLoading: isLoadingBalance } = useTokenBalance({
+		accountAddress: address,
+		tokenAddress: token0?.address,
+	});
 	const [slippageTolerance] = useSlippageTolerance(SlippageToleranceStorageKey.Swap);
+
+	const hasInsufficientBalance = useMemo(() => {
+		if (isLoadingBalance) return true;
+		return Number(formatUnitsForInput(tokenBalance ?? "0", token0.decimals)) < Number(amountIn);
+	}, [tokenBalance, token0, amountIn, isLoadingBalance]);
 
 	const swapType = useMemo(() => {
 		return getIfWrapOrUnwrap(token0, token1);
@@ -43,7 +53,7 @@ export const SwapStats = () => {
 		return output;
 	}, [amountOut, slippage, token0, token1, amountIn]);
 
-	const { data: networkFeeInTrx } = useSwapNetworkFee({
+	const { data: networkFeeInTrx, isLoading: isNetworkFeeLoading } = useSwapNetworkFee({
 		swapType: swapType,
 		address,
 		minOutput: minOutput?.toString() ?? "",
@@ -54,7 +64,8 @@ export const SwapStats = () => {
 		(priceImpactPercentage === 0 && swapType === "swap") ||
 		amountOut === "" ||
 		amountOut === "" ||
-		isPriceLoading;
+		isPriceLoading ||
+		isNetworkFeeLoading;
 
 	const severityColor = useMemo(() => {
 		return warningSeverityClassName(warningSeverity(priceImpactPercentage));
@@ -68,7 +79,7 @@ export const SwapStats = () => {
 
 	return (
 		<Transition
-			show={amountIn !== "" && amountOut !== "" && route && route.length > 0}
+			show={amountIn !== "" && amountOut !== "" && route && route.length > 0 && !hasInsufficientBalance}
 			enter="transition duration-300 ease-out"
 			enterFrom="transform translate-y-[16px] opacity-0"
 			enterTo="transform translate-y-0 opacity-100"
