@@ -81,11 +81,11 @@ export const ReviewSwapDialogTrigger = () => {
 	]);
 
 	const userConfirmationNeeded = useMemo(() => {
-		if (priceImpactPercentage >= 15 && (buttonText === "Review Swap" || buttonText === "Approve")) {
+		if (priceImpactPercentage >= 15) {
 			return true;
 		}
 		return false;
-	}, [priceImpactPercentage, buttonText]);
+	}, [priceImpactPercentage]);
 
 	// biome-ignore lint/correctness/useExhaustiveDependencies: Typecheck speedup
 	useEffect(() => {
