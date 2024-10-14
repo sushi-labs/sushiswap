@@ -1,4 +1,4 @@
-import { CogIcon } from '@heroicons/react-v1/outline'
+import { Cog6ToothIcon } from '@heroicons/react/24/outline'
 import { SlippageToleranceStorageKey, TTLStorageKey } from '@sushiswap/hooks'
 import { createErrorToast, createToast } from '@sushiswap/notifications'
 import {
@@ -473,7 +473,7 @@ export const AddSectionReviewModalLegacy: FC<AddSectionReviewModalLegacyProps> =
                   >
                     <IconButton
                       name="Settings"
-                      icon={CogIcon}
+                      icon={Cog6ToothIcon}
                       variant="secondary"
                       className="mr-12"
                     />
