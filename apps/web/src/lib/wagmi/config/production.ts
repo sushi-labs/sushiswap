@@ -13,13 +13,7 @@ import {
 import { gtagEvent } from '@sushiswap/ui'
 import { ChainId } from 'sushi/chain'
 import { publicTransports } from 'sushi/config'
-import {
-  http,
-  type Storage,
-  cookieStorage,
-  createConfig,
-  createStorage,
-} from 'wagmi'
+import { http, cookieStorage, createConfig, createStorage } from 'wagmi'
 import { Writeable } from 'zod'
 import { publicWagmiConfig } from './public'
 
@@ -58,9 +52,7 @@ const connectors = connectorsForWallets(
   },
 )
 
-export const createProductionConfig = ({
-  useCookies,
-}: { useCookies: boolean }) => {
+export const createProductionConfig = () => {
   const transports = Object.entries(publicTransports).reduce(
     (acc, [chainId, transport]) => {
       const transportUrl = transport({ chain: undefined }).value?.url!
@@ -81,7 +73,6 @@ export const createProductionConfig = ({
           }
         },
         onFetchResponse(_res) {
-          console.log(_res)
           if (typeof window !== 'undefined' && transportUrl.includes('drpc')) {
             gtagEvent('drpc-response', {
               pathname: window.location.pathname,
@@ -96,14 +87,9 @@ export const createProductionConfig = ({
     {} as Writeable<typeof publicTransports>,
   )
 
-  let storage: Storage | undefined = undefined
-  if (useCookies) {
-    storage = createStorage({
-      storage: cookieStorage,
-    })
-  } else if (typeof window !== 'undefined') {
-    storage = createStorage({ storage: window.localStorage })
-  }
+  const storage = createStorage({
+    storage: cookieStorage,
+  })
 
   return createConfig({
     ...publicWagmiConfig,
