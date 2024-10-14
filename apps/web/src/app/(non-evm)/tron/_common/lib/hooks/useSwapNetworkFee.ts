@@ -89,7 +89,9 @@ export const useSwapNetworkFee = ({
           )
           args.push(_args)
         }
+
         const estimates = await safeGasEstimates(tronWeb, args)
+
         const safeGasEstimate = estimates.findIndex(
           (predicate) => predicate !== undefined,
         )
