@@ -1,4 +1,4 @@
-import { CogIcon } from '@heroicons/react/24/outline'
+import { Cog6ToothIcon } from '@heroicons/react/24/outline'
 import { SlippageToleranceStorageKey } from '@sushiswap/hooks'
 import {
   Button,
@@ -17,8 +17,8 @@ import {
   WidgetTitle,
 } from '@sushiswap/ui'
 import { FC, ReactNode } from 'react'
-import { formatUSD } from 'sushi'
 import { DEFAULT_SLIPPAGE } from 'sushi/config'
+import { formatUSD } from 'sushi/format'
 import { CardCurrencyAmountItem } from '~aptos/_common/components/CardCurrencyAmountItem'
 import { useStablePrice } from '~aptos/_common/lib/common/use-stable-price'
 import { Token as TokenType } from '~aptos/_common/lib/types/token'
@@ -83,7 +83,7 @@ export const RemoveSectionWidget: FC<RemoveSectionWidgetProps> = ({
             <IconButton
               size="sm"
               name="Settings"
-              icon={CogIcon}
+              icon={Cog6ToothIcon}
               variant="secondary"
             />
           </SettingsOverlay>

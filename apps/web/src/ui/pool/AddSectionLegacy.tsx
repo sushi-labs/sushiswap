@@ -93,10 +93,9 @@ export const AddSectionLegacy: FC<{ pool: V2Pool }> = ({ pool: _pool }) => {
         onInput0={onChangeToken0TypedAmount}
         onInput1={onChangeToken1TypedAmount}
       >
-        <Checker.Connect size="default" variant="outline" fullWidth>
+        <Checker.Connect fullWidth>
           <Checker.Guard
-            size="default"
-            variant="outline"
+            fullWidth
             guardWhen={
               isMounted &&
               [
@@ -106,34 +105,23 @@ export const AddSectionLegacy: FC<{ pool: V2Pool }> = ({ pool: _pool }) => {
             }
             guardText="Pool not found"
           >
-            <Checker.Network
-              size="default"
-              variant="outline"
-              fullWidth
-              chainId={_pool.chainId as ChainId}
-            >
+            <Checker.Network fullWidth chainId={_pool.chainId as ChainId}>
               <Checker.Amounts
-                size="default"
-                variant="outline"
                 fullWidth
                 chainId={_pool.chainId as ChainId}
                 amounts={amounts}
               >
                 <Checker.ApproveERC20
-                  size="default"
-                  variant="outline"
+                  fullWidth
                   id="approve-token-0"
                   className="whitespace-nowrap"
-                  fullWidth
                   amount={parsedInput0}
                   contract={getSushiSwapRouterContractConfig(chainId).address}
                 >
                   <Checker.ApproveERC20
-                    size="default"
-                    variant="outline"
+                    fullWidth
                     id="approve-token-1"
                     className="whitespace-nowrap"
-                    fullWidth
                     amount={parsedInput1}
                     contract={getSushiSwapRouterContractConfig(chainId).address}
                   >
@@ -150,9 +138,7 @@ export const AddSectionLegacy: FC<{ pool: V2Pool }> = ({ pool: _pool }) => {
                           setTypedAmounts({ input0: '', input1: '' })
                         }}
                       >
-                        <Button size="default" fullWidth>
-                          Add Liquidity
-                        </Button>
+                        <Button fullWidth>Add Liquidity</Button>
                       </AddSectionReviewModalLegacy>
                     </Checker.Success>
                   </Checker.ApproveERC20>
