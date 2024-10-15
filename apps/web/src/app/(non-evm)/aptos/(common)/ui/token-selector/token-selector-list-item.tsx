@@ -66,14 +66,21 @@ export function TokenListItem({
               </span>
             </div>
           </div>
-          {(token as TokenWithBalance)?.balance === 0 ? null : (
-            <span>
-              {formatNumberWithDecimals(
-                (token as TokenWithBalance)?.balance,
-                token?.decimals,
-              ) ?? '0'}
-            </span>
-          )}
+          {(token as TokenWithBalance)?.balance > 0 ? (
+            <div className="flex flex-col max-w-[140px]">
+              <span
+                className={classNames(
+                  selected ? 'font-semibold' : 'font-medium',
+                  'text-right text-gray-900 dark:text-slate-50 truncate',
+                )}
+              >
+                {formatNumberWithDecimals(
+                  (token as TokenWithBalance)?.balance,
+                  token?.decimals,
+                ) ?? '0'}
+              </span>
+            </div>
+          ) : null}
         </div>
       </button>
     </div>

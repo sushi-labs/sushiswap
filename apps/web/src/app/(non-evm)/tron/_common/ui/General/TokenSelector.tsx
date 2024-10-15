@@ -268,14 +268,21 @@ const TokenButton = ({
             </p>
           </div>
         </div>
-        {(token as TokenWithBalance)?.balance === '0' ? null : (
-          <span>
-            {formatUnitsForInput(
-              (token as TokenWithBalance)?.balance,
-              token?.decimals,
-            ) ?? '0'}
-          </span>
-        )}
+        {+(token as TokenWithBalance)?.balance > 0 ? (
+          <div className="flex flex-col max-w-[140px]">
+            <span
+              className={classNames(
+                isSelected ? 'font-semibold' : 'font-medium',
+                'text-right text-gray-900 dark:text-slate-50 truncate',
+              )}
+            >
+              {formatUnitsForInput(
+                (token as TokenWithBalance)?.balance,
+                token?.decimals,
+              ) ?? '0'}
+            </span>
+          </div>
+        ) : null}
       </Button>
       {isNew && !isOnDefaultList ? (
         <Button
