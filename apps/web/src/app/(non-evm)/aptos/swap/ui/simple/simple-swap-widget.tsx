@@ -5,7 +5,6 @@ import { SimpleSwapSwitchTokensButton } from './simple-swap-switch-tokens-button
 import { SimpleSwapToken0Input } from './simple-swap-token0-input'
 import { SimpleSwapToken1Input } from './simple-swap-token1-input'
 import { SimpleSwapTradeButton } from './simple-swap-trade-button'
-import { SimpleSwapTradeReviewDialog } from './simple-swap-trade-review-dialog'
 import { SimpleSwapTradeStats } from './simple-swap-trade-stats'
 
 export const SimpleSwapWidget = () => {
@@ -23,7 +22,6 @@ export const SimpleSwapWidget = () => {
         <SimpleSwapTradeButton />
       </div>
       <SimpleSwapTradeStats />
-      <SimpleSwapTradeReviewDialog />
     </div>
   )
 }

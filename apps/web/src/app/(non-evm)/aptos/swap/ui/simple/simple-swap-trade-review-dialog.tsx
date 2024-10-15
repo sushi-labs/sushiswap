@@ -1,17 +1,26 @@
 'use client'
 
 import { useWallet } from '@aptos-labs/wallet-adapter-react'
-import { XIcon } from '@heroicons/react-v1/solid'
 import {
   SlippageToleranceStorageKey,
   useSlippageTolerance,
 } from '@sushiswap/hooks'
-import { Button, Dots, IconButton, List, classNames } from '@sushiswap/ui'
+import {
+  Button,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogProvider,
+  DialogReview,
+  DialogTitle,
+  Dots,
+  List,
+  classNames,
+} from '@sushiswap/ui'
 import { Provider } from 'aptos'
-import React, { FC } from 'react'
+import React, { FC, ReactNode } from 'react'
 import { DEFAULT_SLIPPAGE } from 'sushi/config'
-import { ModalType } from '~aptos/(common)//components/Modal/ModalProvider'
-import { Modal } from '~aptos/(common)/components/Modal/Modal'
 import { networkNameToNetwork } from '~aptos/(common)/config/chains'
 import { formatNumberWithDecimals } from '~aptos/(common)/lib/common/format-number-with-decimals'
 import { useNetwork } from '~aptos/(common)/lib/common/use-network'
@@ -28,7 +37,9 @@ import {
   useSimpleSwapState,
 } from '~aptos/swap/ui/simple/simple-swap-provider/simple-swap-provider'
 
-export const SimpleSwapTradeReviewDialog: FC = () => {
+export const SimpleSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
+  children,
+}) => {
   const {
     bestRoutes,
     token0,
@@ -53,7 +64,7 @@ export const SimpleSwapTradeReviewDialog: FC = () => {
     contracts: { swap: swapContract },
   } = useNetwork()
 
-  const swapToken = async (close: () => void) => {
+  const swapToken = async (confirm: () => void) => {
     const provider = new Provider(networkNameToNetwork(network))
     const payload = getSwapPayload(
       swapContract,
@@ -82,7 +93,7 @@ export const SimpleSwapTradeReviewDialog: FC = () => {
         )} ${token1.symbol}`,
         toastId: toastId,
       })
-      close()
+      confirm()
       setAmount('')
     } catch (_e) {
       const toastId = `failed:${Math.random()}`
@@ -96,78 +107,68 @@ export const SimpleSwapTradeReviewDialog: FC = () => {
   )
 
   return (
-    <>
-      <Modal.Review
-        modalType={ModalType.Regular}
-        variant="transparent"
-        tag="review-modal"
-      >
-        {({ close }) => (
-          <div className="max-w-[504px] !w-full mx-auto p-2">
-            <div className="flex justify-between gap-4">
-              <div className="flex flex-col flex-grow">
-                <h1 className="text-lg font-semibold dark:text-slate-50">
+    <DialogProvider>
+      <DialogReview>
+        {({ confirm }) => (
+          <>
+            <div className="mt-4">{children}</div>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>
                   Buy{' '}
                   {formatNumberWithDecimals(
                     Number(outputAmount),
                     token1.decimals,
                   )}{' '}
                   {token1?.symbol}
-                </h1>
-                <h1 className="text-gray-500 text-sm font-medium dark:text-slate-300">
+                </DialogTitle>
+                <DialogDescription>
+                  {/* {isWrap ? 'Wrap' : isUnwrap ? 'Unwrap' : 'Sell'}{' '} */}
                   Sell {amount} {token0?.symbol}
-                </h1>
-              </div>
-              <IconButton
-                variant="secondary"
-                name="close"
-                icon={() => <XIcon strokeWidth={1} height={16} width={16} />}
-                onClick={close}
-                className="w-10 h-10 !rounded-full"
-              />
-            </div>
-            <div className="flex flex-col gap-3">
-              <List>
-                <List.Control>
-                  <List.KeyValue title="Network">Aptos</List.KeyValue>
-                  <List.KeyValue
-                    title="Price Impact"
-                    subtitle="The impact your trade has on the market price of this pool."
-                  >
-                    <span
-                      className={classNames(
-                        warningSeverityClassName(
-                          warningSeverity(routes?.priceImpact),
-                        ),
-                        'text-gray-700 text-right dark:text-slate-400 ',
-                      )}
+                </DialogDescription>
+              </DialogHeader>
+              <div className="flex flex-col gap-4">
+                <List className="!pt-0">
+                  <List.Control>
+                    <List.KeyValue title="Network">Aptos</List.KeyValue>
+                    <List.KeyValue
+                      title="Price impact"
+                      subtitle="The impact your trade has on the market price of this pool."
+                    >
+                      <span
+                        className={classNames(
+                          warningSeverityClassName(
+                            warningSeverity(routes?.priceImpact),
+                          ),
+                          'text-gray-700 text-right dark:text-slate-400 ',
+                        )}
+                      >
+                        <>
+                          {routes?.priceImpact
+                            ? (-routes?.priceImpact).toFixed(2)
+                            : 0}
+                          %
+                        </>
+                      </span>
+                    </List.KeyValue>
+                    <List.KeyValue
+                      title={`Min. received after slippage (${
+                        slippageTolerance === 'AUTO'
+                          ? DEFAULT_SLIPPAGE
+                          : slippageTolerance
+                      }%)`}
+                      subtitle="The minimum amount you are guaranteed to receive."
                     >
                       <>
-                        {routes?.priceImpact
-                          ? (-routes?.priceImpact).toFixed(2)
-                          : 0}
-                        %
+                        {minOutput} {token1?.symbol}
                       </>
-                    </span>
-                  </List.KeyValue>
-                  <List.KeyValue
-                    title={`Min. received after slippage (${
-                      slippageTolerance === 'AUTO'
-                        ? DEFAULT_SLIPPAGE
-                        : slippageTolerance
-                    }%)`}
-                    subtitle="The minimum amount you are guaranteed to receive."
-                  >
-                    <>
-                      {minOutput} {token1?.symbol}
-                    </>
-                  </List.KeyValue>
+                    </List.KeyValue>
 
-                  <List.KeyValue title="Network fee">{`${networkFee} APT`}</List.KeyValue>
-                </List.Control>
-
+                    <List.KeyValue title="Network fee">{`${networkFee} APT`}</List.KeyValue>
+                  </List.Control>
+                </List>
                 {account?.address && (
-                  <List className="!pt-2">
+                  <List className="!pt-0">
                     <List.Control>
                       <List.KeyValue title="Recipient">
                         <a
@@ -189,17 +190,15 @@ export const SimpleSwapTradeReviewDialog: FC = () => {
                     </List.Control>
                   </List>
                 )}
-              </List>
-            </div>
-            <div className="pt-4">
-              <div className="space-y-4">
+              </div>
+              <DialogFooter>
                 <Button
                   disabled={isTransactionPending || isPriceFetching}
                   color="blue"
                   fullWidth
                   size="xl"
                   onClick={() => {
-                    swapToken(close)
+                    swapToken(confirm)
                   }}
                 >
                   {isTransactionPending ? (
@@ -210,11 +209,11 @@ export const SimpleSwapTradeReviewDialog: FC = () => {
                     </>
                   )}
                 </Button>
-              </div>
-            </div>
-          </div>
+              </DialogFooter>
+            </DialogContent>
+          </>
         )}
-      </Modal.Review>
-    </>
+      </DialogReview>
+    </DialogProvider>
   )
 }

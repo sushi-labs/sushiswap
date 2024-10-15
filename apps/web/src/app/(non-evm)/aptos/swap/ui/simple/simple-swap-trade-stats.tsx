@@ -3,7 +3,6 @@ import { Transition } from '@headlessui/react'
 import { SkeletonBox, classNames } from '@sushiswap/ui'
 import React, { useMemo } from 'react'
 import { formatUnits } from 'viem'
-import { Modal } from '~aptos/(common)/components/Modal/Modal'
 import { networkNameToNetwork } from '~aptos/(common)/config/chains'
 import { formatNumberWithDecimals } from '~aptos/(common)/lib/common/format-number-with-decimals'
 import { useNetwork } from '~aptos/(common)/lib/common/use-network'
@@ -15,7 +14,7 @@ import {
   warningSeverityClassName,
 } from '~aptos/swap/lib/warning-severity'
 import { useSimpleSwapState } from '~aptos/swap/ui/simple/simple-swap-provider/simple-swap-provider'
-import { SwapRoute } from '../swap-route'
+import { TradeRoutePathView } from '../trade-route-path-view'
 
 export const SimpleSwapTradeStats = () => {
   const { account } = useWallet()
@@ -139,19 +138,15 @@ export const SimpleSwapTradeStats = () => {
             {loading ? (
               <SkeletonBox className="h-4 py-0.5 w-[40px] rounded-md" />
             ) : (
-              <Modal.Trigger tag={'trade-state-routes'}>
-                {({ open }) => (
-                  <button
-                    type="button"
-                    onClick={open}
-                    className="text-sm text-blue font-semibold"
-                  >
-                    View
-                  </button>
-                )}
-              </Modal.Trigger>
+              <TradeRoutePathView trade={bestRoutes}>
+                <button
+                  type="button"
+                  className="text-sm text-blue font-semibold"
+                >
+                  View
+                </button>
+              </TradeRoutePathView>
             )}
-            <SwapRoute trade={bestRoutes} />
           </span>
         </div>
         {account?.address && (

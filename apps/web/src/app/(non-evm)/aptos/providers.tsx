@@ -9,7 +9,6 @@ import { BaseProviders, OnramperProvider } from '@sushiswap/ui'
 import { FewchaWallet } from 'fewcha-plugin-wallet-adapter'
 import { PetraWallet } from 'petra-plugin-wallet-adapter'
 import { QueryClientProvider } from 'src/providers/query-client-provider'
-import { Modal } from '~aptos/(common)/components/Modal/Modal'
 
 const wallets = [
   new PetraWallet(),
@@ -25,9 +24,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
     <OnramperProvider>
       <QueryClientProvider>
         <AptosWalletAdapterProvider plugins={wallets} autoConnect={true}>
-          <BaseProviders>
-            <Modal.Provider>{children}</Modal.Provider>
-          </BaseProviders>
+          <BaseProviders>{children}</BaseProviders>
         </AptosWalletAdapterProvider>
       </QueryClientProvider>
     </OnramperProvider>
