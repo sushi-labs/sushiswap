@@ -1,5 +1,4 @@
 import { useQuery } from '@tanstack/react-query'
-import { isPromiseFulfilled } from 'sushi'
 import {
   SupportedNetwork,
   networkNameToNetwork,
@@ -9,34 +8,48 @@ import { useNetwork } from './use-network'
 
 interface TokenBalanceQueryFn {
   account: string
-  currency: string
+  currencies: string[]
   network: SupportedNetwork
 }
 
-export const tokenBalanceQueryFn = async ({
+export const tokenBalancesQueryFn = async ({
   account,
-  currency,
+  currencies,
   network,
 }: TokenBalanceQueryFn) => {
   const aptos = AptosSDK.onNetwork(networkNameToNetwork(network))
 
   try {
-    const fungibleAssetBalances = await aptos.getCurrentFungibleAssetBalances({
+    const balancesResponse = await aptos.getCurrentFungibleAssetBalances({
       options: {
         where: {
           owner_address: {
             _eq: account,
           },
           asset_type: {
-            _eq: currency,
+            _in: currencies,
           },
         },
       },
     })
 
-    return { currency, balance: fungibleAssetBalances?.[0].amount || 0 }
+    const balancesMap = balancesResponse.reduce<Record<string, number>>(
+      (acc, cur) => {
+        if (cur.asset_type) acc[cur.asset_type] = cur.amount
+        return acc
+      },
+      {},
+    )
+
+    return currencies.reduce<Record<string, number>>((acc, cur) => {
+      acc[cur] = balancesMap[cur] ?? 0
+      return acc
+    }, {})
   } catch {
-    return { currency, balance: 0 }
+    return currencies.reduce<Record<string, number>>((acc, cur) => {
+      acc[cur] = 0
+      return acc
+    }, {})
   }
 }
 
@@ -62,9 +75,14 @@ export function useTokenBalance({
         throw new Error('Account and currency is required')
       }
 
-      return tokenBalanceQueryFn({ account, currency, network })
+      const balances = await tokenBalancesQueryFn({
+        account,
+        currencies: [currency],
+        network,
+      })
+
+      return balances[currency]
     },
-    select: (data) => data?.balance,
     refetchInterval,
     enabled: Boolean(account && currency && enabled),
   })
@@ -92,27 +110,7 @@ export function useTokenBalances({
         throw new Error('Account is required')
       }
 
-      const promises = currencies.map((currency) =>
-        tokenBalanceQueryFn({ account, currency, network }),
-      )
-
-      const balances = await Promise.allSettled(promises)
-
-      return balances
-        .map((balance, i) => {
-          if (isPromiseFulfilled(balance)) {
-            return balance.value
-          }
-
-          return {
-            currency: currencies[i],
-            balance: 0,
-          }
-        })
-        .reduce<Record<string, number>>((acc, cur) => {
-          acc[cur.currency] = cur.balance
-          return acc
-        }, {})
+      return await tokenBalancesQueryFn({ account, currencies, network })
     },
     refetchInterval: refetchInterval,
     enabled: Boolean(account && enabled),
