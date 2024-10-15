@@ -41,7 +41,10 @@ export const SimpleSwapTradeStats = () => {
 
   const hasInsufficientBalance = useMemo(() => {
     if (isBalanceLoading) return true
-    return Number(formatUnits(balance ?? '0', token0.decimals)) < Number(amount)
+    return (
+      Number(formatUnits(BigInt(balance ?? 0), token0.decimals)) <
+      Number(amount)
+    )
   }, [balance, token0, amount, isBalanceLoading])
 
   const loading =

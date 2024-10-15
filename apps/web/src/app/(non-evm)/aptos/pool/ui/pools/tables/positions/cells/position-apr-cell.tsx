@@ -26,7 +26,7 @@ export const PoolMyPositionAprCell: FC<Row<PoolExtendedWithAprVolume>> = ({
     refetchInterval: 20000,
   })
   const liquidityBalanceFormatted = Number(
-    formatNumberWithDecimals(liquidityBalance, 8),
+    formatNumberWithDecimals(liquidityBalance ?? 0, 8),
   )
 
   const apr = useMemo(() => {
