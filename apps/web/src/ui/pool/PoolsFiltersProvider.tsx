@@ -1,6 +1,5 @@
 'use client'
 
-import { parseArgs } from '@sushiswap/client'
 import { useRouter } from 'next/navigation'
 import {
   Dispatch,
@@ -14,6 +13,7 @@ import {
 import { SushiSwapProtocol } from 'sushi'
 import { z } from 'zod'
 
+import { parseArgs } from 'src/lib/functions'
 import { useTypedSearchParams } from '../../lib/hooks'
 import { POOL_TYPES } from './TableFiltersPoolType'
 

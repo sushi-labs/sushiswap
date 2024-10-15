@@ -221,7 +221,6 @@ const TokenButton = ({
   addOrRemoveToken?: (type: 'add' | 'remove', currency: IToken[]) => void
 }) => {
   if (!token) return null
-  // eslint-disable-next-line react-hooks/rules-of-hooks
   const isOnDefaultList = useMemo(
     () => DEFAULT_TOKEN_LIST.some((t) => t.address === token.address),
     [token],

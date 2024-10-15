@@ -5,7 +5,7 @@ import {
 import { useCustomTokens } from '@sushiswap/hooks'
 import { useQuery } from '@tanstack/react-query'
 import { useMemo } from 'react'
-import { NativeAddress } from 'src/lib/hooks/react-query'
+import { NativeAddress } from 'src/lib/constants'
 import { Amount, Native, Token, Type } from 'sushi/currency'
 import type { Address } from 'viem'
 

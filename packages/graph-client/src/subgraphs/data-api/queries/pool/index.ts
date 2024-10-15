@@ -1,3 +1,4 @@
+export * from './pool-addresses'
 export * from './pools'
 export * from './top-evm-pools'
 export * from './top-non-evm-pools'

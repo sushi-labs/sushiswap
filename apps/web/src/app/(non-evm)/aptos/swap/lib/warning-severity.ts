@@ -4,13 +4,10 @@ import { Percent } from 'sushi'
 const BIPS_BASE = 10000n
 
 // used for warning states
-export const ALLOWED_PRICE_IMPACT_LOW: Percent = new Percent(100, BIPS_BASE) // 1%
-export const ALLOWED_PRICE_IMPACT_MEDIUM: Percent = new Percent(300, BIPS_BASE) // 3%
-export const ALLOWED_PRICE_IMPACT_HIGH: Percent = new Percent(500, BIPS_BASE) // 5%
-export const BLOCKED_PRICE_IMPACT_NON_EXPERT: Percent = new Percent(
-  1500,
-  BIPS_BASE,
-) // 15%
+const ALLOWED_PRICE_IMPACT_LOW: Percent = new Percent(100, BIPS_BASE) // 1%
+const ALLOWED_PRICE_IMPACT_MEDIUM: Percent = new Percent(300, BIPS_BASE) // 3%
+const ALLOWED_PRICE_IMPACT_HIGH: Percent = new Percent(500, BIPS_BASE) // 5%
+const BLOCKED_PRICE_IMPACT_NON_EXPERT: Percent = new Percent(1500, BIPS_BASE) // 15%
 
 const IMPACT_TIERS = [
   BLOCKED_PRICE_IMPACT_NON_EXPERT,
@@ -33,9 +30,7 @@ export function warningSeverity(
 }
 
 export const warningSeverityClassName = (severity: WarningSeverity) => {
-  if (severity === 0) return ''
-  if (severity < 1) return '!text-green'
-  if (severity < 2) return '!text-yellow'
-  if (severity < 3) return '!text-yellow-700'
+  if (severity === 0 || severity === 1) return ''
+  if (severity <= 3) return '!text-yellow'
   return '!text-red'
 }

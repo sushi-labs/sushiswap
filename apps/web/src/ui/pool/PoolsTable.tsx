@@ -1,7 +1,5 @@
 'use client'
 
-import { UploadIcon } from '@heroicons/react-v1/outline'
-import { DownloadIcon } from '@heroicons/react-v1/solid'
 import {
   ArrowDownRightIcon,
   EllipsisHorizontalIcon,
@@ -22,7 +20,6 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuGroup,
-  DropdownMenuGroupLabel,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
@@ -223,48 +220,6 @@ const COLUMNS = [
                 >
                   <MinusIcon width={16} height={16} className="mr-2" />
                   Remove liquidity
-                </Link>
-              </DropdownMenuItem>
-            </DropdownMenuGroup>
-            <DropdownMenuSeparator />
-            <DropdownMenuGroup>
-              <DropdownMenuGroupLabel>Farm rewards</DropdownMenuGroupLabel>
-              <TooltipProvider>
-                <Tooltip delayDuration={0}>
-                  <TooltipTrigger asChild={row.original.isIncentivized}>
-                    <DropdownMenuItem
-                      asChild
-                      disabled={!row.original.isIncentivized}
-                    >
-                      <Link
-                        onClick={(e) => e.stopPropagation()}
-                        shallow={true}
-                        className="flex items-center"
-                        href={`/${row.original.chainId}/pool/v2/${row.original.address}/stake`}
-                      >
-                        <DownloadIcon width={16} height={16} className="mr-2" />
-                        Stake
-                      </Link>
-                    </DropdownMenuItem>
-                  </TooltipTrigger>
-                  <TooltipContent side="left" className="max-w-[240px]">
-                    <p>
-                      {!row.original.isIncentivized
-                        ? 'No rewards available on this pool'
-                        : 'After adding liquidity, stake your liquidity tokens to benefit from extra rewards'}
-                    </p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-              <DropdownMenuItem asChild disabled={!row.original.isIncentivized}>
-                <Link
-                  onClick={(e) => e.stopPropagation()}
-                  shallow={true}
-                  className="flex items-center"
-                  href={`/${row.original.chainId}/pool/v2/${row.original.address}/unstake`}
-                >
-                  <UploadIcon width={16} height={16} className="mr-2" />
-                  Unstake
                 </Link>
               </DropdownMenuItem>
             </DropdownMenuGroup>

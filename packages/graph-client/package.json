@@ -64,24 +64,22 @@
     "update-schemas": "tsx scripts/update-schemas.ts"
   },
   "dependencies": {
-    "@sushiswap/bonds-sdk": "workspace:*",
     "@sushiswap/steer-sdk": "workspace:*",
-    "gql.tada": "^1.7.5",
+    "gql.tada": "1.7.5",
     "graphql": "16.6.0",
-    "graphql-request": "^7.0.1",
-    "json-bigint": "^1.0.0",
+    "graphql-request": "7.1.0",
+    "json-bigint": "1.0.0",
     "sushi": "4.0.5",
     "viem": "2.21.4"
   },
   "devDependencies": {
-    "@0no-co/graphqlsp": "^1.12.3",
-    "@sushiswap/database": "workspace:*",
+    "@0no-co/graphqlsp": "1.12.3",
     "@tsconfig/esm": "1.0.4",
     "@tsconfig/strictest": "2.0.2",
-    "@types/json-bigint": "^1.0.4",
+    "@types/json-bigint": "1.0.4",
     "@types/node": "20",
-    "tsc-alias": "^1.8.10",
-    "tsx": "^4.7.1",
+    "tsc-alias": "1.8.10",
+    "tsx": "4.19.0",
     "typescript": "5.5.4"
   }
 }

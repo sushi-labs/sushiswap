@@ -1,6 +1,6 @@
 'use client'
 
-import { CogIcon } from '@heroicons/react/24/outline'
+import { Cog6ToothIcon } from '@heroicons/react/24/outline'
 import {
   SlippageToleranceStorageKey,
   TTLStorageKey,
@@ -63,6 +63,7 @@ import {
 } from 'wagmi'
 import { useAccount } from 'wagmi'
 import { usePublicClient } from 'wagmi'
+import { useRefetchBalances } from '~evm/_common/ui/balance-provider/use-refetch-balances'
 import { useTokenAmountDollarValues } from '../../lib/hooks'
 
 interface ConcentratedLiquidityRemoveWidget {
@@ -110,6 +111,8 @@ export const ConcentratedLiquidityRemoveWidget: FC<
 
   const trace = useTrace()
 
+  const { refetchChain: refetchBalances } = useRefetchBalances()
+
   const onSuccess = useCallback(
     (hash: SendTransactionReturnType) => {
       setValue('0')
@@ -128,13 +131,18 @@ export const ConcentratedLiquidityRemoveWidget: FC<
         ...trace,
       })
 
+      const receipt = client.waitForTransactionReceipt({ hash })
+      receipt.then(() => {
+        refetchBalances(chainId)
+      })
+
       const ts = new Date().getTime()
       void createToast({
         account,
         type: 'burn',
         chainId,
         txHash: hash,
-        promise: client.waitForTransactionReceipt({ hash }),
+        promise: receipt,
         summary: {
           pending: `Removing liquidity from the ${position.amount0.currency.symbol}/${position.amount1.currency.symbol} pair`,
           completed: `Successfully removed liquidity from the ${position.amount0.currency.symbol}/${position.amount1.currency.symbol} pair`,
@@ -144,7 +152,7 @@ export const ConcentratedLiquidityRemoveWidget: FC<
         groupTimestamp: ts,
       })
     },
-    [client, position, account, chainId, trace],
+    [refetchBalances, client, position, account, chainId, trace],
   )
 
   const onError = useCallback((e: Error) => {
@@ -385,7 +393,7 @@ export const ConcentratedLiquidityRemoveWidget: FC<
                           <IconButton
                             size="sm"
                             name="Settings"
-                            icon={CogIcon}
+                            icon={Cog6ToothIcon}
                             variant="secondary"
                             className="!rounded-xl"
                           />
@@ -430,13 +438,8 @@ export const ConcentratedLiquidityRemoveWidget: FC<
                   guardWhen={positionClosed}
                   guardText="Position already closed"
                 >
-                  <Checker.Connect fullWidth variant="outline" size="xl">
-                    <Checker.Network
-                      fullWidth
-                      variant="outline"
-                      size="xl"
-                      chainId={chainId}
-                    >
+                  <Checker.Connect fullWidth>
+                    <Checker.Network fullWidth chainId={chainId}>
                       <DialogTrigger asChild>
                         <Button
                           fullWidth
@@ -478,7 +481,7 @@ export const ConcentratedLiquidityRemoveWidget: FC<
                 >
                   <IconButton
                     name="Settings"
-                    icon={CogIcon}
+                    icon={Cog6ToothIcon}
                     variant="secondary"
                     className="mr-12"
                   />
@@ -566,7 +569,6 @@ export const ConcentratedLiquidityRemoveWidget: FC<
               </div>
               <DialogFooter>
                 <Button
-                  size="xl"
                   fullWidth
                   loading={!send || isWritePending}
                   onClick={() => send?.(confirm)}

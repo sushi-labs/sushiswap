@@ -29,9 +29,7 @@ export function warningSeverity(
 }
 
 export const warningSeverityClassName = (severity: WarningSeverity): string => {
-  if (severity === 0) return ''
-  if (severity <= 1) return sharedConfig.theme.extend.colors.green.DEFAULT
-  if (severity <= 2) return 'rgb(250 204 21)' //text-yellow-400
-  if (severity <= 3) return sharedConfig.theme.extend.colors.yellow.DEFAULT
+  if (severity === 0 || severity === 1) return ''
+  if (severity <= 2) return sharedConfig.theme.extend.colors.yellow.DEFAULT
   return sharedConfig.theme.extend.colors.red.DEFAULT
 }

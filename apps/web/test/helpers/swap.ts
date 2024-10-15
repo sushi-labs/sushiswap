@@ -1,5 +1,5 @@
 import { Page, expect } from '@playwright/test'
-import { NativeAddress } from 'src/lib/hooks/react-query'
+import { NativeAddress } from 'src/lib/constants'
 import { API_BASE_URL } from 'sushi/config'
 import { Amount, Native, Type } from 'sushi/currency'
 import { BaseActions } from './base' // Adjust the import path as necessary

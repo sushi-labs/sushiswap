@@ -1,6 +1,5 @@
 'use client'
 
-import { parseArgs } from '@sushiswap/client'
 import { useRouter } from 'next/navigation'
 import {
   Dispatch,
@@ -13,6 +12,7 @@ import {
 } from 'react'
 import { z } from 'zod'
 
+import { parseArgs } from 'src/lib/functions'
 import { useTypedSearchParams } from 'src/lib/hooks'
 
 type FilterContext = z.TypeOf<typeof blogSearchSchema>

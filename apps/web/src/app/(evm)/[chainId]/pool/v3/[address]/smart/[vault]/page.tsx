@@ -17,7 +17,7 @@ import { isSushiSwapV3ChainId, publicClientConfig } from 'sushi/config'
 import { Token } from 'sushi/currency'
 import { formatNumber } from 'sushi/format'
 import { tickToPrice } from 'sushi/pool/sushiswap-v3'
-import { PublicClient, createPublicClient, isAddress } from 'viem'
+import { Address, PublicClient, createPublicClient, isAddress } from 'viem'
 
 function getPriceExtremes(
   vault: VaultV1,
@@ -56,9 +56,9 @@ async function getGenerics(vault: VaultV1): Promise<SteerStrategyGeneric> {
     publicClientConfig[vault.chainId],
   ) as PublicClient
 
-  const prices = await fetch(
-    `https://api.sushi.com/price/v1/${vault.chainId}`,
-  ).then((data) => data.json())
+  const prices = await fetch(`https://api.sushi.com/price/v1/${vault.chainId}`)
+    .then((data) => data.json())
+    .then((data) => new Map(Object.entries(data) as [Address, number][]))
 
   const priceExtremes = getPriceExtremes(vault)
   const tokenRatios = await getTokenRatios({

@@ -1,8 +1,8 @@
 import { Badge, Currency, TooltipContent } from '@sushiswap/ui'
 import { Tooltip, TooltipProvider, TooltipTrigger } from '@sushiswap/ui'
 import React from 'react'
-import { ProtocolBadge } from 'src/ui/pool/PoolNameCell'
-import { SushiSwapProtocol, formatNumber } from 'sushi'
+// import { ProtocolBadge } from 'src/ui/pool/PoolNameCell'
+import { formatNumber } from 'sushi'
 import { WTRX } from '~tron/_common/constants/token-list'
 import { useTokenInfo } from '~tron/_common/lib/hooks/useTokenInfo'
 import { TopPool } from '~tron/_common/lib/hooks/useTopPools'
@@ -36,7 +36,7 @@ export const PoolNameCell = ({ data }: { data: TopPool }) => {
           {data.name}
         </span>
         <div className="flex gap-1">
-          <TooltipProvider>
+          {/* <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
                 {ProtocolBadge[data.protocol as SushiSwapProtocol]}
@@ -45,7 +45,7 @@ export const PoolNameCell = ({ data }: { data: TopPool }) => {
                 <p>Protocol version</p>
               </TooltipContent>
             </Tooltip>
-          </TooltipProvider>
+          </TooltipProvider> */}
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>

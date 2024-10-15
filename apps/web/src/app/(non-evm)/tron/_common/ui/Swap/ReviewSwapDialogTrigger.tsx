@@ -85,7 +85,7 @@ export const ReviewSwapDialogTrigger = () => {
     ) {
       return 'Approve'
     }
-    return 'Review Swap'
+    return 'Swap'
   }, [
     amountIn,
     allowanceAmount,

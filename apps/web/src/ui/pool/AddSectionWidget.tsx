@@ -1,5 +1,5 @@
-import { CogIcon } from '@heroicons/react-v1/outline'
-import { PlusIcon } from '@heroicons/react-v1/solid'
+import { Cog6ToothIcon } from '@heroicons/react/24/outline'
+import { PlusIcon } from '@heroicons/react/24/solid'
 import { SlippageToleranceStorageKey, TTLStorageKey } from '@sushiswap/hooks'
 import {
   WidgetAction,
@@ -70,7 +70,7 @@ export const AddSectionWidget: FC<AddSectionWidgetProps> = ({
             <IconButton
               size="sm"
               name="Settings"
-              icon={CogIcon}
+              icon={Cog6ToothIcon}
               variant="secondary"
             />
           </SettingsOverlay>

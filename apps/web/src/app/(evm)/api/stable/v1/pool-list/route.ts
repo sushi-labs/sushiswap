@@ -1,38 +1,39 @@
-import { Protocol } from '@sushiswap/client'
-import { createClient } from '@sushiswap/database'
+import {
+  PoolChainId,
+  getPoolAddresses,
+  isPoolChainId,
+} from '@sushiswap/graph-client/data-api'
 import { Ratelimit } from '@upstash/ratelimit'
 import { NextRequest, NextResponse } from 'next/server'
 import { rateLimit } from 'src/lib/rate-limit'
+import { SushiSwapProtocol } from 'sushi'
 import { ChainId } from 'sushi/chain'
-import { isBentoBoxChainId } from 'sushi/config'
-import { isSushiSwapV2ChainId, isSushiSwapV3ChainId } from 'sushi/config'
 import { z } from 'zod'
 import { CORS } from '../../cors'
 
 const schema = z.object({
   chainId: z.coerce
     .number()
-    .refine(
-      (chainId) =>
-        isSushiSwapV2ChainId(chainId as ChainId) ||
-        isSushiSwapV3ChainId(chainId as ChainId) ||
-        isBentoBoxChainId(chainId as ChainId),
-      { message: 'Invalid chainId' },
-    )
+    .refine((chainId) => isPoolChainId(chainId as ChainId), {
+      message: 'Invalid chainId',
+    })
     .transform((chainId) => {
-      return chainId as ChainId
+      return chainId as PoolChainId
     }),
   protocol: z
     .string()
     .refine(
-      (protocol) => Object.values(Protocol).includes(protocol as Protocol),
+      (protocol) =>
+        Object.values(SushiSwapProtocol).includes(
+          protocol as SushiSwapProtocol,
+        ),
       {
         message: `Invalid protocol, valid values are: ${Object.values(
-          Protocol,
+          SushiSwapProtocol,
         ).join(', ')}`,
       },
     )
-    .transform((protocol) => protocol as Protocol),
+    .transform((protocol) => protocol as SushiSwapProtocol),
   isApproved: z.coerce
     .string()
     .default('true')
@@ -44,7 +45,7 @@ const schema = z.object({
 })
 
 export const revalidate = 300
-export const maxDuration = 10
+export const maxDuration = 30
 
 export async function GET(request: NextRequest) {
   const ratelimit = rateLimit(Ratelimit.slidingWindow(200, '1 h'))
@@ -64,27 +65,10 @@ export async function GET(request: NextRequest) {
 
   const args = result.data
 
-  const approval = args.isApproved
-    ? ({
-        token0: { status: 'APPROVED' },
-        token1: { status: 'APPROVED' },
-      } as const)
-    : {}
-
-  const client = await createClient()
-  const data = await client.sushiPool
-    .findMany({
-      select: {
-        address: true,
-      },
-      where: {
-        chainId: args.chainId,
-        protocol: args.protocol,
-        ...approval,
-      },
-    })
-    .then((pools) => pools.map((pool) => pool.address))
-  await client.$disconnect()
+  const data = await getPoolAddresses({
+    chainId: args.chainId,
+    protocols: [args.protocol],
+  })
 
   return NextResponse.json(data, { headers: CORS })
 }
