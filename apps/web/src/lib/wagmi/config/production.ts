@@ -52,12 +52,24 @@ const connectors = connectorsForWallets(
   },
 )
 
+const drpcJwt = process.env['NEXT_PUBLIC_DRPC_JWT']
+
 export const createProductionConfig = () => {
   const transports = Object.entries(publicTransports).reduce(
     (acc, [chainId, transport]) => {
       const transportUrl = transport({ chain: undefined }).value?.url!
 
+      let fetchOptions = {}
+      if (drpcJwt) {
+        fetchOptions = {
+          headers: {
+            Authorization: drpcJwt,
+          },
+        }
+      }
+
       acc[Number(chainId) as ChainId] = http(transportUrl, {
+        fetchOptions,
         onFetchRequest(_req) {
           if (typeof window !== 'undefined' && transportUrl.includes('drpc')) {
             try {
