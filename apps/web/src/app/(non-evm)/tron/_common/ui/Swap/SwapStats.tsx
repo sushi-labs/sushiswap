@@ -179,7 +179,14 @@ export const SwapStats = () => {
             {isLoading ? (
               <SkeletonBox className="h-4 py-0.5 w-[120px] rounded-md" />
             ) : (
-              <SwapRoutesDialog />
+              <SwapRoutesDialog>
+                <button
+                  type="button"
+                  className="text-sm text-blue font-semibold"
+                >
+                  View
+                </button>
+              </SwapRoutesDialog>
             )}
           </span>
         </div>
