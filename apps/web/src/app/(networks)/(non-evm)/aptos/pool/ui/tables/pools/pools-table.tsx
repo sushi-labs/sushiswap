@@ -39,7 +39,7 @@ export const PoolsTable = () => {
   const { data: pools, isLoading } = useTopPools()
 
   const rowLink = useCallback((row: TopPool) => {
-    return `/aptos/pool/v2/${row.token0Address}, ${row.token1Address}`
+    return `/aptos/pool/${row.token0Address}, ${row.token1Address}`
   }, [])
 
   const filtered = useMemo(() => {
