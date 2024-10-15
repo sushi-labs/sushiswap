@@ -2,12 +2,19 @@ import {
   SlippageToleranceStorageKey,
   useSlippageTolerance,
 } from '@sushiswap/hooks'
-import { DialogHeader, DialogTitle } from '@sushiswap/ui'
+import {
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogProvider,
+  DialogReview,
+  DialogTitle,
+} from '@sushiswap/ui'
 import { List } from '@sushiswap/ui'
-import { Dialog, DialogClose, DialogContent, classNames } from '@sushiswap/ui'
+import { DialogContent, classNames } from '@sushiswap/ui'
 import { useWallet } from '@tronweb3/tronwallet-adapter-react-hooks'
 import Link from 'next/link'
-import { useEffect, useMemo, useRef } from 'react'
+import { useEffect, useMemo } from 'react'
 import { formatPercent } from 'sushi/format'
 import { usePriceImpact } from '~tron/_common/lib/hooks/usePriceImpact'
 import { useReserves } from '~tron/_common/lib/hooks/useReserves'
@@ -28,7 +35,6 @@ import { SwapButton } from './SwapButton'
 export const ReviewSwapDialog = () => {
   const { token0, token1, amountIn, amountOut } = useSwapState()
   const { setRoute, setPriceImpactPercentage } = useSwapDispatch()
-  const closeBtnRef = useRef<HTMLButtonElement>(null)
   const { address, connected } = useWallet()
   const isConnected = address && connected
   const [slippageTolerance] = useSlippageTolerance(
@@ -36,10 +42,6 @@ export const ReviewSwapDialog = () => {
   )
   const slippage =
     slippageTolerance === 'AUTO' ? 0.005 : Number(slippageTolerance) / 100
-
-  const closeModal = () => {
-    closeBtnRef?.current?.click()
-  }
 
   const minOutput = useMemo(() => {
     if (!amountOut) return ''
@@ -119,87 +121,88 @@ export const ReviewSwapDialog = () => {
   }, [priceImpactPercentage])
 
   return (
-    <Dialog>
-      <div className="pt-4">
-        {isConnected ? (
-          <ReviewSwapDialogTrigger />
-        ) : (
-          <WalletConnector variant="default" fullWidth size="xl" />
-        )}
-      </div>
-      <DialogContent>
-        <div className="max-w-[504px] mx-auto">
-          <DialogHeader>
-            <DialogTitle>
-              <div className="flex justify-between gap-4">
-                <div className="flex flex-col flex-grow">
-                  <h1 className="text-lg font-semibold dark:text-slate-50">
-                    Buy {amountOut} {token1?.symbol}
-                  </h1>
-                  <h1 className="text-gray-500 text-sm font-medium dark:text-slate-300">
-                    Sell {amountIn} {token0?.symbol}
-                  </h1>
-                </div>
-              </div>
-            </DialogTitle>
-            <DialogClose ref={closeBtnRef} />
-          </DialogHeader>
-          <div className="flex flex-col gap-3">
-            <List>
-              <List.Control>
-                <List.KeyValue title="Network">Tron</List.KeyValue>
-                <List.KeyValue
-                  title="Price Impact"
-                  subtitle="The impact your trade has on the market price of this pool."
-                >
-                  <span
-                    style={{ color: severityClass }}
-                    className={classNames(
-                      'text-gray-700 text-right dark:text-slate-400',
-                    )}
-                  >
-                    -{formatPercent(priceImpactPercentage / 100)}
-                  </span>
-                </List.KeyValue>
-                <List.KeyValue
-                  title={`Min. received after slippage (${
-                    slippageTolerance === 'AUTO' ? '0.5' : slippageTolerance
-                  }%)`}
-                  subtitle="The minimum amount you are guaranteed to receive."
-                >
-                  {minOutput} {token1?.symbol}
-                </List.KeyValue>
-
-                <List.KeyValue title="Network fee">
-                  <>{networkFeeInTrx ?? '0'} TRX</>
-                </List.KeyValue>
-              </List.Control>
-
-              {address && (
-                <List className="!pt-2">
+    <DialogProvider>
+      <DialogReview>
+        {({ confirm }) => (
+          <>
+            <div className="mt-4">
+              {isConnected ? (
+                <ReviewSwapDialogTrigger />
+              ) : (
+                <WalletConnector variant="default" fullWidth size="xl" />
+              )}
+            </div>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>
+                  Buy {amountOut} {token1?.symbol}
+                </DialogTitle>
+                <DialogDescription>
+                  {swapType === 'wrap'
+                    ? 'Wrap'
+                    : swapType === 'unwrap'
+                      ? 'Unwrap'
+                      : 'Sell'}{' '}
+                  {amountIn} {token0?.symbol}
+                </DialogDescription>
+              </DialogHeader>
+              <div className="flex flex-col gap-4">
+                <List className="!pt-0">
                   <List.Control>
-                    <List.KeyValue title="Recipient">
-                      <Link
-                        target="_blank"
-                        href={getTronscanAddressLink(address)}
+                    <List.KeyValue title="Network">Tron</List.KeyValue>
+                    <List.KeyValue
+                      title="Price Impact"
+                      subtitle="The impact your trade has on the market price of this pool."
+                    >
+                      <span
+                        style={{ color: severityClass }}
                         className={classNames(
-                          'flex items-center gap-2 cursor-pointer text-blue hover:underline hover:text-blue-700',
+                          'text-gray-700 text-right dark:text-slate-400',
                         )}
-                        rel="noreferrer"
                       >
-                        {truncateText(address)}
-                      </Link>
+                        -{formatPercent(priceImpactPercentage / 100)}
+                      </span>
+                    </List.KeyValue>
+                    <List.KeyValue
+                      title={`Min. received after slippage (${
+                        slippageTolerance === 'AUTO' ? '0.5' : slippageTolerance
+                      }%)`}
+                      subtitle="The minimum amount you are guaranteed to receive."
+                    >
+                      {minOutput} {token1?.symbol}
+                    </List.KeyValue>
+
+                    <List.KeyValue title="Network fee">
+                      <>{networkFeeInTrx ?? '0'} TRX</>
                     </List.KeyValue>
                   </List.Control>
                 </List>
-              )}
-            </List>
-          </div>
-          <div className="pt-4 space-y-4">
-            <SwapButton closeModal={closeModal} minOutput={minOutput} />
-          </div>
-        </div>
-      </DialogContent>
-    </Dialog>
+                {address && (
+                  <List className="!pt-0">
+                    <List.Control>
+                      <List.KeyValue title="Recipient">
+                        <Link
+                          target="_blank"
+                          href={getTronscanAddressLink(address)}
+                          className={classNames(
+                            'flex items-center gap-2 cursor-pointer text-blue hover:underline hover:text-blue-700',
+                          )}
+                          rel="noreferrer"
+                        >
+                          {truncateText(address)}
+                        </Link>
+                      </List.KeyValue>
+                    </List.Control>
+                  </List>
+                )}
+              </div>
+              <DialogFooter>
+                <SwapButton closeModal={confirm} minOutput={minOutput} />
+              </DialogFooter>
+            </DialogContent>
+          </>
+        )}
+      </DialogReview>
+    </DialogProvider>
   )
 }
