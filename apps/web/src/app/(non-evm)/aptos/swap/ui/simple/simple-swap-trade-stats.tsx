@@ -1,12 +1,10 @@
 import { useWallet } from '@aptos-labs/wallet-adapter-react'
 import { Transition } from '@headlessui/react'
 import { SkeletonBox, classNames } from '@sushiswap/ui'
-import React, { useMemo } from 'react'
-import { formatUnits } from 'viem'
+import React from 'react'
 import { networkNameToNetwork } from '~aptos/(common)/config/chains'
 import { formatNumberWithDecimals } from '~aptos/(common)/lib/common/format-number-with-decimals'
 import { useNetwork } from '~aptos/(common)/lib/common/use-network'
-import { useTokenBalance } from '~aptos/(common)/lib/common/use-token-balances'
 import { useSwap } from '~aptos/swap/lib/use-swap'
 import { useSwapNetworkFee } from '~aptos/swap/lib/use-swap-network-fee'
 import {
@@ -19,7 +17,6 @@ import { TradeRoutePathView } from '../trade-route-path-view'
 export const SimpleSwapTradeStats = () => {
   const { account } = useWallet()
   const {
-    token0,
     token1,
     amount,
     bestRoutes,
@@ -30,22 +27,6 @@ export const SimpleSwapTradeStats = () => {
   } = useSimpleSwapState()
   const { data: networkFee, isLoading: isLoadingNetworkFee } =
     useSwapNetworkFee()
-
-  const { data: balance, isInitialLoading: isBalanceLoading } = useTokenBalance(
-    {
-      account: account?.address,
-      currency: token0.address,
-      refetchInterval: 2000,
-    },
-  )
-
-  const hasInsufficientBalance = useMemo(() => {
-    if (isBalanceLoading) return true
-    return (
-      Number(formatUnits(BigInt(balance ?? 0), token0.decimals)) <
-      Number(amount)
-    )
-  }, [balance, token0, amount, isBalanceLoading])
 
   const loading =
     Boolean(isLoadingPrice && Number(amount) > 0) ||
@@ -69,9 +50,7 @@ export const SimpleSwapTradeStats = () => {
 
   return (
     <Transition
-      show={
-        Number(amount) > 0 && bestRoutes.length > 0 && !hasInsufficientBalance
-      }
+      show={Number(amount) > 0 && bestRoutes.length > 0}
       enter="transition duration-300 ease-out"
       enterFrom="transform translate-y-[16px] opacity-0"
       enterTo="transform translate-y-0 opacity-100"
@@ -126,7 +105,7 @@ export const SimpleSwapTradeStats = () => {
             Network fee
           </span>
           <span className="text-sm font-semibold text-gray-700 text-right dark:text-slate-400">
-            {loading || !minOutput ? (
+            {loading || !minOutput || !networkFee ? (
               <SkeletonBox className="h-4 py-0.5 w-[120px] rounded-md" />
             ) : (
               `${networkFee} APT`

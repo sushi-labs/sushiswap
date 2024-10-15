@@ -12,12 +12,7 @@ import { formatPercent, formatUSD } from 'sushi/format'
 import { WTRX } from '~tron/_common/constants/token-list'
 import { useStablePrice } from '~tron/_common/lib/hooks/useStablePrice'
 import { useSwapNetworkFee } from '~tron/_common/lib/hooks/useSwapNetworkFee'
-import { useTokenBalance } from '~tron/_common/lib/hooks/useTokenBalance'
-import {
-  formatUnitsForInput,
-  toBigNumber,
-  truncateText,
-} from '~tron/_common/lib/utils/formatters'
+import { toBigNumber, truncateText } from '~tron/_common/lib/utils/formatters'
 import { getIfWrapOrUnwrap } from '~tron/_common/lib/utils/helpers'
 import { getTronscanAddressLink } from '~tron/_common/lib/utils/tronscan-helpers'
 import {
@@ -34,21 +29,9 @@ export const SwapStats = () => {
   const { data: trxPrice, isLoading: isPriceLoading } = useStablePrice({
     token: WTRX,
   })
-  const { data: tokenBalance, isLoading: isLoadingBalance } = useTokenBalance({
-    accountAddress: address,
-    tokenAddress: token0?.address,
-  })
   const [slippageTolerance] = useSlippageTolerance(
     SlippageToleranceStorageKey.Swap,
   )
-
-  const hasInsufficientBalance = useMemo(() => {
-    if (isLoadingBalance) return true
-    return (
-      Number(formatUnitsForInput(tokenBalance ?? '0', token0.decimals)) <
-      Number(amountIn)
-    )
-  }, [tokenBalance, token0, amountIn, isLoadingBalance])
 
   const swapType = useMemo(() => {
     return getIfWrapOrUnwrap(token0, token1)
@@ -97,13 +80,7 @@ export const SwapStats = () => {
 
   return (
     <Transition
-      show={
-        amountIn !== '' &&
-        amountOut !== '' &&
-        route &&
-        route.length > 0 &&
-        !hasInsufficientBalance
-      }
+      show={amountIn !== '' && amountOut !== '' && route && route.length > 0}
       enter="transition duration-300 ease-out"
       enterFrom="transform translate-y-[16px] opacity-0"
       enterTo="transform translate-y-0 opacity-100"
@@ -161,7 +138,7 @@ export const SwapStats = () => {
             Network fee
           </span>
           <span className="text-sm font-semibold text-right text-gray-700 dark:text-slate-400">
-            {isLoading ? (
+            {isLoading || !networkFee.feeInToken ? (
               <SkeletonBox className="h-4 py-0.5 w-[120px] rounded-md" />
             ) : (
               <>
