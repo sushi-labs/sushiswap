@@ -1,3 +1,4 @@
+import { VaultV1 } from '@sushiswap/graph-client/data-api'
 import {
   Card,
   CardContent,
@@ -12,9 +13,8 @@ import {
   classNames,
 } from '@sushiswap/ui'
 import { FC } from 'react'
+import { ChainKey } from 'sushi/chain'
 import { formatPercent, formatUSD } from 'sushi/format'
-
-import { VaultV1 } from '@sushiswap/graph-client/data-api'
 import type { PoolWithFeeAprs, PoolWithIncentives } from 'sushi/types'
 import { APRHoverCard } from '../APRHoverCard'
 import { SteerAPRChart } from './SteerAPRChart'
@@ -28,7 +28,9 @@ interface SteerPoolCardProps {
 export const SteerPoolCard: FC<SteerPoolCardProps> = ({ pool, vault }) => {
   return (
     <LinkInternal
-      href={`/${vault.chainId}/pool/v3/${vault.poolAddress}/smart/${vault.address}`}
+      href={`/${ChainKey[vault.chainId]}/pool/v3/${vault.poolAddress}/smart/${
+        vault.address
+      }`}
     >
       <Card
         className={classNames(
