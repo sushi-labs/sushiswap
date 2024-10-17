@@ -1,6 +1,7 @@
 import { ChainId } from 'sushi/chain'
 
 import { IconComponent } from '../../../types'
+import { AptosNaked } from './AptosNaked'
 import { ArbitrumNaked } from './ArbitrumNaked'
 import { ArbitrumNovaNaked } from './ArbitrumNovaNaked'
 import { AvalancheNaked } from './AvalancheNaked'
@@ -41,10 +42,12 @@ import { SkaleNaked } from './SkaleNaked'
 import { TaikoNaked } from './TaikoNaked'
 import { TelosNaked } from './TelosNaked'
 import { ThunderCoreNaked } from './ThunderCoreNaked'
+import { TronNaked } from './TronNaked'
 import { ZKLinkNaked } from './ZKLinkNaked'
 import { ZKSyncNaked } from './ZKSyncNaked'
 import { ZetaChainNaked } from './ZetaChainNaked'
 
+export * from './AptosNaked'
 export * from './ArbitrumNaked'
 export * from './ArbitrumNovaNaked'
 export * from './AvalancheNaked'
@@ -89,7 +92,9 @@ export * from './ZKLinkNaked'
 export * from './ZKSyncNaked'
 export * from './ZetaChainNaked'
 
-export const NETWORK_NAKED_ICON: Partial<Record<ChainId, IconComponent>> = {
+export const NETWORK_NAKED_ICON: Partial<
+  Record<ChainId | string, IconComponent>
+> = {
   [ChainId.ETHEREUM]: EthereumNaked,
   [ChainId.FANTOM]: FantomNaked,
   [ChainId.POLYGON]: PolygonNaked,
@@ -133,4 +138,6 @@ export const NETWORK_NAKED_ICON: Partial<Record<ChainId, IconComponent>> = {
   [ChainId.MODE]: ModeNaked,
   [ChainId.TAIKO]: TaikoNaked,
   [ChainId.ZKLINK]: ZKLinkNaked,
+  aptos: AptosNaked,
+  tron: TronNaked,
 }

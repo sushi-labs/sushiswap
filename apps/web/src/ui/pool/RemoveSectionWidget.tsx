@@ -1,6 +1,6 @@
 'use client'
 
-import { CogIcon } from '@heroicons/react-v1/outline'
+import { Cog6ToothIcon } from '@heroicons/react/24/outline'
 import {
   Card,
   CardCurrencyAmountItem,
@@ -73,7 +73,7 @@ export const RemoveSectionWidget: FC<RemoveSectionWidgetProps> = ({
             <IconButton
               size="sm"
               name="Settings"
-              icon={CogIcon}
+              icon={Cog6ToothIcon}
               variant="secondary"
             />
           </SettingsOverlay>

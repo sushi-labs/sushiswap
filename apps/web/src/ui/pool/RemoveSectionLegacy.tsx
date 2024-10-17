@@ -56,6 +56,7 @@ import {
   usePublicClient,
   useSendTransaction,
 } from 'wagmi'
+import { useRefetchBalances } from '~evm/_common/ui/balance-provider/use-refetch-balances'
 import { usePoolPosition } from './PoolPositionProvider'
 import { RemoveSectionWidget } from './RemoveSectionWidget'
 
@@ -176,6 +177,8 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> =
 
     const trace = useTrace()
 
+    const { refetchChain: refetchBalances } = useRefetchBalances()
+
     const onSuccess = useCallback(
       (hash: SendTransactionReturnType) => {
         setPercentage('0')
@@ -190,13 +193,18 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> =
           ...trace,
         })
 
+        const receipt = client.waitForTransactionReceipt({ hash })
+        receipt.then(() => {
+          refetchBalances(chain.id)
+        })
+
         const ts = new Date().getTime()
         void createToast({
           account: address,
           type: 'burn',
           chainId: chain.id,
           txHash: hash,
-          promise: client.waitForTransactionReceipt({ hash }),
+          promise: receipt,
           summary: {
             pending: `Removing liquidity from the ${token0.symbol}/${token1.symbol} pair`,
             completed: `Successfully removed liquidity from the ${token0.symbol}/${token1.symbol} pair`,
@@ -206,7 +214,15 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> =
           groupTimestamp: ts,
         })
       },
-      [client, chain, token0.symbol, token1.symbol, address, trace],
+      [
+        refetchBalances,
+        client,
+        chain,
+        token0.symbol,
+        token1.symbol,
+        address,
+        trace,
+      ],
     )
 
     const [prepare, setPrepare] = useState<UseCallParameters | undefined>(
@@ -425,10 +441,9 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> =
           token1Minimum={minAmount1}
           setPercentage={setPercentage}
         >
-          <Checker.Connect size="default" variant="outline" fullWidth>
+          <Checker.Connect fullWidth>
             <Checker.Guard
-              size="default"
-              variant="outline"
+              fullWidth
               guardWhen={
                 isMounted &&
                 [
@@ -438,21 +453,13 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> =
               }
               guardText="Pool not found"
             >
-              <Checker.Network
-                size="default"
-                variant="outline"
-                fullWidth
-                chainId={_pool.chainId as ChainId}
-              >
+              <Checker.Network fullWidth chainId={_pool.chainId as ChainId}>
                 <Checker.Guard
-                  size="default"
-                  variant="outline"
+                  fullWidth
                   guardWhen={+percentage <= 0}
                   guardText="Enter amount"
                 >
                   <Checker.ApproveERC20WithPermit
-                    size="default"
-                    variant="outline"
                     fullWidth
                     id="approve-remove-liquidity-slp"
                     chainId={_pool.chainId}
@@ -468,9 +475,8 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> =
                   >
                     <Checker.Success tag={APPROVE_TAG_REMOVE_LEGACY}>
                       <Button
-                        size="default"
-                        onClick={() => send?.()}
                         fullWidth
+                        onClick={() => send?.()}
                         disabled={!approved || isWritePending || !send}
                         testId="remove-liquidity"
                       >
