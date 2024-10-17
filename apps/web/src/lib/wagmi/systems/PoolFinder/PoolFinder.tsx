@@ -24,7 +24,7 @@ interface Props {
   children({ pool }: { pool: PoolStateUnion }): ReactNode
 }
 
-export interface PoolFinderState {
+interface PoolFinderState {
   pool: PoolStateUnion
 }
 

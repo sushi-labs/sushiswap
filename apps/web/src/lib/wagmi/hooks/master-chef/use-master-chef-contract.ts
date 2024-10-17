@@ -1,7 +1,7 @@
 'use client'
 
-import { ChefType } from '@sushiswap/client'
 import { useMemo } from 'react'
+import { ChefType } from 'sushi'
 import { ChainId } from 'sushi/chain'
 import {
   MASTERCHEF_ADDRESS,

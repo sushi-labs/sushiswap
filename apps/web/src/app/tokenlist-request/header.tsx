@@ -12,7 +12,7 @@ export const Header: FC = () => {
   return (
     <Navigation
       leftElements={headerElements({ chainId })}
-      rightElement={<WagmiHeaderComponents chainIds={SUPPORTED_CHAIN_IDS} />}
+      rightElement={<WagmiHeaderComponents networks={SUPPORTED_CHAIN_IDS} />}
     />
   )
 }

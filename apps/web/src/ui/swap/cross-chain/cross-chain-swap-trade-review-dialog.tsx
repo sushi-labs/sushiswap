@@ -32,7 +32,6 @@ import { Dots } from '@sushiswap/ui'
 import { List } from '@sushiswap/ui'
 import { SkeletonText } from '@sushiswap/ui'
 import { nanoid } from 'nanoid'
-import { log } from 'next-axiom'
 import React, {
   FC,
   ReactNode,
@@ -54,9 +53,8 @@ import {
   useLayerZeroScanLink,
 } from 'src/lib/swap/cross-chain'
 import { warningSeverity } from 'src/lib/swap/warningSeverity'
-import { useBalanceWeb3Refetch } from 'src/lib/wagmi/hooks/balances/useBalanceWeb3Refetch'
 import { useApproved } from 'src/lib/wagmi/systems/Checker/Provider'
-import { sushiXSwap2Abi_swap, sushiXSwap2Abi_swapAndBridge } from 'sushi/abi'
+import { sushiXSwap2Abi_bridge, sushiXSwap2Abi_swapAndBridge } from 'sushi/abi'
 import { Chain, chainName } from 'sushi/chain'
 import {
   SUSHIXSWAP_2_ADDRESS,
@@ -78,6 +76,7 @@ import {
   useTransaction,
   useWriteContract,
 } from 'wagmi'
+import { useRefetchBalances } from '~evm/_common/ui/balance-provider/use-refetch-balances'
 import {
   ConfirmationDialogContent,
   Divider,
@@ -97,8 +96,8 @@ function getConfig(trade: UseCrossChainTradeReturn | undefined) {
 
   if (trade.functionName === SushiXSwapFunctionName.Bridge) {
     return {
-      abi: sushiXSwap2Abi_swap,
-      functionName: 'swap',
+      abi: sushiXSwap2Abi_bridge,
+      functionName: 'bridge',
       args: trade.writeArgs as NonNullable<SushiXSwapWriteArgsBridge>,
       value: BigInt(trade.value ?? 0) as any,
     } as const
@@ -138,7 +137,7 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
   const { data: trade, isFetching } = useCrossChainSwapTrade()
   const { approved } = useApproved(APPROVE_TAG_XSWAP)
   const groupTs = useRef<number>()
-  const refetchBalances = useBalanceWeb3Refetch()
+  const { refetchChain: refetchBalances } = useRefetchBalances()
 
   const [stepStates, setStepStates] = useState<{
     source: StepState
@@ -181,13 +180,8 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
       sendAnalyticsEvent(SwapEventName.XSWAP_ESTIMATE_GAS_CALL_FAILED, {
         error: error.message,
       })
-
-      log.error('cross chain swap prepare error', {
-        trade: stringify(trade),
-        error: stringify(error),
-      })
     }
-  }, [error, trade])
+  }, [error])
 
   const trace = useTrace()
 
@@ -241,9 +235,6 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
             dst_chain_id: trade?.amountOut?.currency?.chainId,
             transaction_type: trade?.transactionType,
           })
-          log.info('cross chain swap success (source)', {
-            trade: stringify(trade),
-          })
         } else {
           sendAnalyticsEvent(SwapEventName.XSWAP_SRC_TRANSACTION_FAILED, {
             txHash: hash,
@@ -251,9 +242,6 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
             src_chain_id: trade?.amountIn?.currency?.chainId,
             dst_chain_id: trade?.amountOut?.currency?.chainId,
             transaction_type: trade?.transactionType,
-          })
-          log.error('cross chain swap failed (source)', {
-            trade: stringify(trade),
           })
 
           setStepStates({
@@ -269,16 +257,13 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
           dest: StepState.NotStarted,
         })
       } catch {
-        log.error('cross chain swap error (source)', {
-          trade: stringify(trade),
-        })
         setStepStates({
           source: StepState.Failed,
           bridge: StepState.NotStarted,
           dest: StepState.NotStarted,
         })
       } finally {
-        await refetchBalances()
+        refetchBalances(chainId0)
         setTradeId(nanoid())
       }
     },
@@ -288,37 +273,28 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
       chainId0,
       client0,
       address,
-      trade,
       refetchBalances,
       setTradeId,
     ],
   )
 
-  const onWriteError = useCallback(
-    (e: Error) => {
-      setStepStates({
-        source: StepState.Failed,
-        bridge: StepState.NotStarted,
-        dest: StepState.NotStarted,
-      })
+  const onWriteError = useCallback((e: Error) => {
+    setStepStates({
+      source: StepState.Failed,
+      bridge: StepState.NotStarted,
+      dest: StepState.NotStarted,
+    })
 
-      if (e.cause instanceof UserRejectedRequestError) {
-        return
-      }
+    if (e.cause instanceof UserRejectedRequestError) {
+      return
+    }
 
-      createErrorToast(e.message, false)
+    createErrorToast(e.message, false)
 
-      sendAnalyticsEvent(SwapEventName.XSWAP_ERROR, {
-        error: e instanceof Error ? e.message : undefined,
-      })
-
-      log.error('cross chain swap error', {
-        trade: stringify(trade),
-        error: stringify(e),
-      })
-    },
-    [trade],
-  )
+    sendAnalyticsEvent(SwapEventName.XSWAP_ERROR, {
+      error: e instanceof Error ? e.message : undefined,
+    })
+  }, [])
 
   const {
     writeContractAsync,
@@ -487,6 +463,7 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
               chain_id: chainId1,
               txHash: axelarScanData?.dstTxHash,
             })
+            refetchBalances(chainId1)
           })
           .then(reset),
         summary: {

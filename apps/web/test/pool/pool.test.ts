@@ -53,25 +53,6 @@ test.beforeEach(async ({ page, next }) => {
   }
 
   try {
-    await page.route('https://tokens.sushi.com/v0', async (route) => {
-      // const response = await route.fetch()
-      // const json = await response.json()
-      await route.fulfill({
-        json: [FAKE_TOKEN].map((token) => ({
-          id: token.id,
-          chainId: token.chainId,
-          address: token.address.toLowerCase(),
-          name: token.name,
-          symbol: token.symbol,
-          decimals: token.decimals,
-        })),
-      })
-    })
-  } catch (error) {
-    console.error('error mockking token api', error)
-  }
-
-  try {
     await page.route(`**/price/v1/${chainId}`, async (route) => {
       // const response = await route.fetch()
       // const json = await response.json()
@@ -123,7 +104,6 @@ test.describe('V3', () => {
 
     await poolPage.goTo(url)
     await poolPage.connect()
-    await poolPage.switchNetwork(chainId)
 
     await poolPage.createV3Pool({
       token0: NATIVE_TOKEN,
@@ -167,7 +147,7 @@ test.describe('V2', () => {
 
     await poolPage.goTo(url)
     await poolPage.connect()
-    await poolPage.switchNetwork(chainId)
+
     await poolPage.createV2Pool({
       token0: NATIVE_TOKEN,
       token1: FAKE_TOKEN,

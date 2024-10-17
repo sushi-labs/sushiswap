@@ -1,8 +1,7 @@
+import withBundleAnalyzer from '@next/bundle-analyzer'
 import { withSentryConfig } from '@sentry/nextjs'
 import defaultNextConfig from '@sushiswap/nextjs-config'
-import { withAxiom } from 'next-axiom'
 
-import withBundleAnalyzer from '@next/bundle-analyzer'
 const bundleAnalyzer = withBundleAnalyzer({
   enabled: false && process.env.NODE_ENV !== 'development',
 })
@@ -44,6 +43,11 @@ const nextConfig = bundleAnalyzer({
         destination: '/aptos/swap',
       },
       {
+        source: '/tron',
+        permanent: true,
+        destination: '/tron/swap',
+      },
+      {
         source: '/',
         permanent: true,
         destination: '/swap',
@@ -74,11 +78,6 @@ const nextConfig = bundleAnalyzer({
         destination: 'https://medium.com/sushiswap-org',
       },
       {
-        source: '/skale/swap',
-        permanent: true,
-        destination: '/swap?chainId=2046399126',
-      },
-      {
         source: '/swap/cross-chain:path*',
         permanent: true,
         destination: '/cross-chain-swap:path*',
@@ -90,15 +89,12 @@ const nextConfig = bundleAnalyzer({
   },
 })
 
-export default withAxiom(withSentryConfig(nextConfig), {
+export default withSentryConfig(nextConfig, {
   // For all available options, see:
   // https://github.com/getsentry/sentry-webpack-plugin#options
 
-  org: process.env.SENTRY_ORG,
-  project: process.env.SENTRY_PROJECT,
-
-  // An auth token is required for uploading source maps.
-  authToken: process.env.SENTRY_AUTH_TOKEN,
+  org: 'sushi-j9',
+  project: 'web',
 
   // Only print logs for uploading source maps in CI
   silent: !process.env.CI,
@@ -108,6 +104,11 @@ export default withAxiom(withSentryConfig(nextConfig), {
 
   // Upload a larger set of source maps for prettier stack traces (increases build time)
   widenClientFileUpload: true,
+
+  // Automatically annotate React components to show their full name in breadcrumbs and session replay
+  reactComponentAnnotation: {
+    enabled: true,
+  },
 
   // Route browser requests to Sentry through a Next.js rewrite to circumvent ad-blockers.
   // This can increase your server load as well as your hosting bill.
@@ -119,7 +120,7 @@ export default withAxiom(withSentryConfig(nextConfig), {
   hideSourceMaps: true,
 
   // Automatically tree-shake Sentry logger statements to reduce bundle size
-  disableLogger: process.NODE_ENV === 'production',
+  disableLogger: true,
 
   // Enables automatic instrumentation of Vercel Cron Monitors. (Does not yet work with App Router route handlers.)
   // See the following for more information:
@@ -127,7 +128,6 @@ export default withAxiom(withSentryConfig(nextConfig), {
   // https://vercel.com/docs/cron-jobs
   automaticVercelMonitors: true,
 
-  unstable_sentryWebpackPluginOptions: {
-    applicationKey: 'web',
-  },
+  // Disables Sentry's telemetry features
+  telemetry: false,
 })

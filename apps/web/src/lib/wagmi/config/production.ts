@@ -13,13 +13,7 @@ import {
 import { gtagEvent } from '@sushiswap/ui'
 import { ChainId } from 'sushi/chain'
 import { publicTransports } from 'sushi/config'
-import {
-  http,
-  type Storage,
-  cookieStorage,
-  createConfig,
-  createStorage,
-} from 'wagmi'
+import { http, cookieStorage, createConfig, createStorage } from 'wagmi'
 import { Writeable } from 'zod'
 import { publicWagmiConfig } from './public'
 
@@ -58,14 +52,38 @@ const connectors = connectorsForWallets(
   },
 )
 
-export const createProductionConfig = ({
-  useCookies,
-}: { useCookies: boolean }) => {
+const drpcJwt = process.env['NEXT_PUBLIC_DRPC_JWT']
+
+export const createProductionConfig = () => {
   const transports = Object.entries(publicTransports).reduce(
     (acc, [chainId, transport]) => {
       const transportUrl = transport({ chain: undefined }).value?.url!
 
+      let fetchOptions = {}
+      if (transportUrl.startsWith('https://lb.drpc.org/') && drpcJwt) {
+        fetchOptions = {
+          headers: {
+            Authorization: drpcJwt,
+          },
+        }
+      }
+
       acc[Number(chainId) as ChainId] = http(transportUrl, {
+        fetchOptions,
+        onFetchRequest(_req) {
+          if (typeof window !== 'undefined' && transportUrl.includes('drpc')) {
+            try {
+              _req.json().then((json) => {
+                gtagEvent('drpc-request', {
+                  pathname: window.location.pathname,
+                  href: window.location.href,
+                  method: json.method,
+                  chainId,
+                })
+              })
+            } catch {}
+          }
+        },
         onFetchResponse(_res) {
           if (typeof window !== 'undefined' && transportUrl.includes('drpc')) {
             gtagEvent('drpc-response', {
@@ -81,14 +99,9 @@ export const createProductionConfig = ({
     {} as Writeable<typeof publicTransports>,
   )
 
-  let storage: Storage | undefined = undefined
-  if (useCookies) {
-    storage = createStorage({
-      storage: cookieStorage,
-    })
-  } else if (typeof window !== 'undefined') {
-    storage = createStorage({ storage: window.localStorage })
-  }
+  const storage = createStorage({
+    storage: cookieStorage,
+  })
 
   return createConfig({
     ...publicWagmiConfig,

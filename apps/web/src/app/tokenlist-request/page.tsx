@@ -21,7 +21,6 @@ import {
   LinkExternal,
   Loader,
   Message,
-  NetworkSelector,
   SelectIcon,
   Separator,
   TextField,
@@ -32,6 +31,7 @@ import { useMutation } from '@tanstack/react-query'
 import { useEffect, useMemo } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import { useTokenAnalysis } from 'src/lib/hooks/api/useTokenAnalysis'
+import { NetworkSelector } from 'src/lib/wagmi/components/network-selector'
 import { Chain, ChainId } from 'sushi/chain'
 import { SUSHI_DATA_API_HOST } from 'sushi/config/subgraph'
 import { formatNumber, formatUSD } from 'sushi/format'

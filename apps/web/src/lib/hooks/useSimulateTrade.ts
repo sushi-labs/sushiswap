@@ -42,8 +42,9 @@ export function useSimulateTrade({
           trade &&
           typeof trade.tokenTax === 'undefined' &&
           isMinOutError(error)
-        )
+        ) {
           return false
+        }
         return i < 3
       },
       enabled:

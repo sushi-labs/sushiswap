@@ -12,12 +12,8 @@ const defaultNextConfig = {
     optimizePackageImports: [
       '@heroicons/react-v1/solid',
       '@heroicons/react-v1/outline',
-      '@sushiswap/client',
-      '@sushiswap/database',
       '@sushiswap/graph-client',
       '@sushiswap/hooks',
-      '@sushiswap/router',
-      '@sushiswap/tines',
       '@sushiswap/ui',
       'sushi',
       'date-fns',
@@ -26,7 +22,7 @@ const defaultNextConfig = {
   images: {
     loader: 'cloudinary',
     path: 'https://res.cloudinary.com/sushi-cdn/image/fetch/',
-    domains: ['cdn.sushi.com'],
+    domains: ['cdn.sushi.com', 'static.tronscan.org'],
   },
   eslint: {
     dirs: [

@@ -1,6 +1,6 @@
 'use client'
 
-import { PlusIcon } from '@heroicons/react-v1/solid'
+import { PlusIcon } from '@heroicons/react/24/solid'
 import { STEER_PERIPHERY_ADDRESS, SteerChainId } from '@sushiswap/steer-sdk'
 import { Button, DialogTrigger, classNames } from '@sushiswap/ui'
 import React, { FC, useMemo } from 'react'

@@ -1,7 +1,7 @@
 'use client'
 
-import { XIcon } from '@heroicons/react-v1/solid'
-import { ArrowUpRightIcon } from '@heroicons/react/20/solid'
+import { XMarkIcon } from '@heroicons/react/24/solid'
+import { ArrowUpRightIcon } from '@heroicons/react/24/solid'
 import { useLocalStorage } from '@sushiswap/hooks'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import { FC } from 'react'
@@ -39,7 +39,7 @@ export const SimpleSwapBridgeBanner: FC = () => {
     >
       <div className="block xl:fixed xl:right-8 xl:bottom-8 rounded-xl relative p-6 bg-blue/10 min-w-[360px] overflow-hidden">
         {BridgeInfo[chainId as keyof typeof BridgeInfo].background}
-        <XIcon
+        <XMarkIcon
           width={20}
           height={20}
           className={'absolute top-[10px] right-[10px] cursor-pointer'}
@@ -64,5 +64,7 @@ export const SimpleSwapBridgeBanner: FC = () => {
         </div>
       </div>
     </a>
-  ) : null
+  ) : (
+    <div />
+  )
 }

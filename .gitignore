@@ -28,6 +28,9 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
+# env
+.env
+
 # local env files
 .env.local
 .env.development.local
@@ -43,49 +46,8 @@ yarn-error.log*
 # vercel
 .vercel
 
-# env
-.env
-skaffold.env
-
-# mesh
-.mesh
-
-# graphql
-.graphclient
-
-# typechain
-typechain
-
-# exports
-exports
-
-# cache
-cache
-
 # generated
 generated
-
-# artifacts
-artifacts
-
-# artifacts zk
-artifacts-zk
-
-# cache zk
-cache-zk
-
-# workers
-**/public/sw.js
-**/public/workbox-*.js
-**/public/worker-*.js
-**/public/sw.js.map
-**/public/workbox-*.js.map
-**/public/worker-*.js.map
-
-# prisma
-
-# screenshots
-screenshots
 
 # playwright
 playwright-report
@@ -94,9 +56,6 @@ test-results
 # Sentry
 .sentryclirc
 
-test-results/
-results/
-
 # typescript
 *.tsbuildinfo
 next-env.d.ts
@@ -104,13 +63,11 @@ next-env.d.ts
 # storybook
 storybook-static
 
-# tines snapshots
-test/snapshots/
-
 # Sentry Config File
 .env.sentry-build-plugin
 
 # npm lock file (we use pnpm)
 package-lock.json
+
 # yarn lock file (we use pnpm)
 yarn.lock

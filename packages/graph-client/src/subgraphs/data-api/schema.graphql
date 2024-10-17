@@ -21,6 +21,7 @@ type SushiDayBuckets {
 type Query {
   sushiDayBuckets(chainId: SushiSwapChainId!): SushiDayBuckets!
   pools(chainId: PoolChainId!, page: Int = 1, search: [String], protocols: [Protocol], onlyIncentivized: Boolean = false, onlySmartPools: Boolean = false, orderBy: PoolsOrderBy = liquidityUSD, orderDirection: OrderDirection = desc): Pools!
+  poolAddresses(chainId: PoolChainId!, protocols: [Protocol]): [Bytes!]!
   topPools(chainId: String!): [TopPool!]!
   v2Pool(address: Bytes!, chainId: SushiSwapV2ChainId!): V2Pool!
   v3Pool(address: Bytes!, chainId: SushiSwapV3ChainId!): V3Pool!
@@ -663,8 +664,8 @@ type TokenAnalysis {
 
 type PendingToken {
   token: Token!
-  tweetUrl: String!
   logoUrl: String!
+  tweetUrl: String
   reasoning: [String!]!
   createdAt: Int!
   metrics: TokenValidationMetrics!

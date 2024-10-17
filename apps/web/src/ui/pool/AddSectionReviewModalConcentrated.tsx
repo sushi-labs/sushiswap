@@ -1,4 +1,4 @@
-import { CogIcon } from '@heroicons/react-v1/outline'
+import { Cog6ToothIcon } from '@heroicons/react/24/outline'
 import { SlippageToleranceStorageKey, TTLStorageKey } from '@sushiswap/hooks'
 import { createErrorToast, createToast } from '@sushiswap/notifications'
 import {
@@ -26,8 +26,8 @@ import {
 } from '@sushiswap/ui'
 import React, { FC, ReactNode, useCallback, useMemo } from 'react'
 import { Bound } from 'src/lib/constants'
+import { NativeAddress } from 'src/lib/constants'
 import { useTokenAmountDollarValues } from 'src/lib/hooks'
-import { NativeAddress } from 'src/lib/hooks/react-query'
 import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
 import {
   getDefaultTTL,
@@ -50,6 +50,7 @@ import {
   useSendTransaction,
   useWaitForTransactionReceipt,
 } from 'wagmi'
+import { useRefetchBalances } from '~evm/_common/ui/balance-provider/use-refetch-balances'
 import { useConcentratedDerivedMintInfo } from './ConcentratedLiquidityProvider'
 
 interface AddSectionReviewModalConcentratedProps
@@ -140,6 +141,8 @@ export const AddSectionReviewModalConcentrated: FC<
     amounts: fiatAmounts,
   })
 
+  const { refetchChain: refetchBalances } = useRefetchBalances()
+
   const hasExistingPosition = !!existingPosition
 
   const onSuccess = useCallback(
@@ -162,13 +165,18 @@ export const AddSectionReviewModalConcentrated: FC<
         ...trace,
       })
 
+      const receipt = client.waitForTransactionReceipt({ hash })
+      receipt.then(() => {
+        refetchBalances(chainId)
+      })
+
       const ts = new Date().getTime()
       void createToast({
         account: address,
         type: 'mint',
         chainId,
         txHash: hash,
-        promise: client.waitForTransactionReceipt({ hash }),
+        promise: receipt,
         summary: {
           pending: noLiquidity
             ? `Creating the ${token0.symbol}/${token1.symbol} liquidity pool`
@@ -185,6 +193,7 @@ export const AddSectionReviewModalConcentrated: FC<
       })
     },
     [
+      refetchBalances,
       _onSuccess,
       token0,
       token1,
@@ -322,7 +331,7 @@ export const AddSectionReviewModalConcentrated: FC<
                 >
                   <IconButton
                     name="Settings"
-                    icon={CogIcon}
+                    icon={Cog6ToothIcon}
                     variant="secondary"
                     className="mr-12"
                   />
