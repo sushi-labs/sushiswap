@@ -81,7 +81,9 @@ const COLUMNS = [
                   onClick={(e) => e.stopPropagation()}
                   shallow={true}
                   className="flex items-center"
-                  href={`/${row.original.chainId}/pool/v3/${row.original.address}`}
+                  href={`/${ChainKey[row.original.chainId]}/pool/v3/${
+                    row.original.address
+                  }`}
                 >
                   <ArrowDownRightIcon width={16} height={16} className="mr-2" />
                   Pool details
@@ -92,7 +94,9 @@ const COLUMNS = [
                   onClick={(e) => e.stopPropagation()}
                   shallow={true}
                   className="flex items-center"
-                  href={`/${row.original.chainId}/pool/v3/${row.original.address}/create`}
+                  href={`/${ChainKey[row.original.chainId]}/pool/v3/${
+                    row.original.address
+                  }/create`}
                 >
                   <PlusIcon width={16} height={16} className="mr-2" />
                   Create position
@@ -109,7 +113,9 @@ const COLUMNS = [
                         onClick={(e) => e.stopPropagation()}
                         shallow={true}
                         className="flex items-center"
-                        href={`/${row.original.chainId}/pool/v3/${row.original.address}/smart`}
+                        href={`/${ChainKey[row.original.chainId]}/pool/v3/${
+                          row.original.address
+                        }/smart`}
                       >
                         <span className="relative">
                           <LightBulbIcon
@@ -152,7 +158,7 @@ const COLUMNS = [
                         shallow={true}
                         className="flex items-center"
                         href={`/${
-                          row.original.chainId
+                          ChainKey[row.original.chainId]
                         }/pool/incentivize?fromCurrency=${
                           row.original.token0Address ===
                           Native.onChain(row.original.chainId).wrapped.address
@@ -205,7 +211,9 @@ const COLUMNS = [
                   onClick={(e) => e.stopPropagation()}
                   shallow={true}
                   className="flex items-center"
-                  href={`/${row.original.chainId}/pool/v2/${row.original.address}/add`}
+                  href={`/${ChainKey[row.original.chainId]}/pool/v2/${
+                    row.original.address
+                  }/add`}
                 >
                   <PlusIcon width={16} height={16} className="mr-2" />
                   Add liquidity
@@ -216,7 +224,9 @@ const COLUMNS = [
                   onClick={(e) => e.stopPropagation()}
                   shallow={true}
                   className="flex items-center"
-                  href={`/${row.original.chainId}/pool/v2/${row.original.address}/remove`}
+                  href={`/${ChainKey[row.original.chainId]}/pool/v2/${
+                    row.original.address
+                  }/remove`}
                 >
                   <MinusIcon width={16} height={16} className="mr-2" />
                   Remove liquidity
