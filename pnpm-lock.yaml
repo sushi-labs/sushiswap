@@ -700,7 +700,7 @@ importers:
     dependencies:
       '@steerprotocol/contracts':
         specifier: 2.1.0-beta.14
-        version: 2.1.0-beta.14(bufferutil@4.0.8)(squirrelly@8.0.8)(ts-node@10.9.2(@types/node@20.14.14)(typescript@5.5.4))(typescript@5.5.4)(utf-8-validate@5.0.10)
+        version: 2.1.0-beta.14(bufferutil@4.0.8)(encoding@0.1.13)(squirrelly@8.0.8)(ts-node@10.9.2(@types/node@20.14.14)(typescript@5.5.4))(typescript@5.5.4)(utf-8-validate@5.0.10)
       sushi:
         specifier: 4.0.5
         version: 4.0.5(typescript@5.5.4)(viem@2.21.4(bufferutil@4.0.8)(typescript@5.5.4)(utf-8-validate@5.0.10)(zod@3.23.8))(zod@3.23.8)
@@ -22753,7 +22753,7 @@ snapshots:
       '@stablelib/random': 1.0.2
       '@stablelib/wipe': 1.0.1
 
-  '@steerprotocol/contracts@2.1.0-beta.14(bufferutil@4.0.8)(squirrelly@8.0.8)(ts-node@10.9.2(@types/node@20.14.14)(typescript@5.5.4))(typescript@5.5.4)(utf-8-validate@5.0.10)':
+  '@steerprotocol/contracts@2.1.0-beta.14(bufferutil@4.0.8)(encoding@0.1.13)(squirrelly@8.0.8)(ts-node@10.9.2(@types/node@20.14.14)(typescript@5.5.4))(typescript@5.5.4)(utf-8-validate@5.0.10)':
     dependencies:
       '@atixlabs/hardhat-time-n-mine': 0.0.5(hardhat@2.20.1(bufferutil@4.0.8)(ts-node@10.9.2(@types/node@20.14.14)(typescript@5.5.4))(typescript@5.5.4)(utf-8-validate@5.0.10))
       '@pancakeswap/v3-core': 1.0.2
