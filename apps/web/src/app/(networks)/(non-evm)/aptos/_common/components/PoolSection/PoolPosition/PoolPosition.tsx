@@ -40,15 +40,14 @@ export const PoolPosition: FC<PoolPositionProps> = ({
     contracts: { swap: swapContract },
   } = useNetwork()
 
-  const { data: LPBalance, isLoading: isBalanceLoading } = useTokenBalance({
+  const { data: LPBalance } = useTokenBalance({
     account: account?.address as string,
     currency: `${swapContract}::swap::LPToken<${tokenAddress}>`,
     enabled: Boolean(swapContract && account?.address && tokenAddress),
     refetchInterval: 2000,
   })
 
-  const { data: coinInfo, isLoading: isLoadingSupply } =
-    useTotalSupply(tokenAddress)
+  const { data: coinInfo } = useTotalSupply(tokenAddress)
   const totalSupply = coinInfo?.data?.supply?.vec?.[0]?.integer?.vec?.[0]?.value
 
   const [underlying0, underlying1] = useUnderlyingTokenBalanceFromPool({
@@ -96,7 +95,7 @@ export const PoolPosition: FC<PoolPositionProps> = ({
               <SkeletonText fontSize="sm" />
             </div>
           ) : (
-            <span className="text-sm text-right dark:text-slate-50 text-gray-900">
+            <span className="text-sm text-right text-gray-900 dark:text-slate-50">
               {formatUSD(
                 token0StakedInUsd +
                   token1StakedInUsd +
@@ -110,7 +109,7 @@ export const PoolPosition: FC<PoolPositionProps> = ({
       <CardContent>
         <PoolPositionDesktop
           row={row}
-          isLoading={isLoading || isBalanceLoading || isLoadingSupply}
+          isLoading={isLoading}
           underlying0={underlying0}
           underlying1={underlying1}
           value0={token0UnstakedInUsd}

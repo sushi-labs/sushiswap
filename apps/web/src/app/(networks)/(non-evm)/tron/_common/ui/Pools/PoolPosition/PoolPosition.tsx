@@ -4,7 +4,6 @@ import {
   CardDescription,
   CardGroup,
   CardHeader,
-  CardLabel,
   CardTitle,
   SkeletonText,
 } from '@sushiswap/ui'
@@ -22,6 +21,7 @@ import {
 } from '~tron/_common/lib/utils/formatters'
 import { IToken } from '~tron/_common/types/token-type'
 import { LiquidityItem } from '../PoolDetails/LiquidityItem'
+// import { LiquidityItem } from '../PoolDetails/LiquidityItem'
 import { useRemoveLiqDispatch } from '../Remove/pool-remove-provider'
 import { usePoolState } from '../pool-provider'
 
@@ -134,7 +134,7 @@ export const PoolPosition = ({
       <CardHeader>
         <CardTitle>My Position</CardTitle>
         <CardDescription>
-          <span className="text-sm text-right dark:text-slate-50 text-gray-900">
+          <span className="text-sm text-right text-gray-900 dark:text-slate-50">
             {loading ? (
               <div className="w-28">
                 <SkeletonText fontSize="sm" />
@@ -152,7 +152,7 @@ export const PoolPosition = ({
       </CardHeader>
       <CardContent>
         <CardGroup>
-          <CardLabel>Unstaked</CardLabel>
+          {/* <CardLabel>Unstaked</CardLabel> */}
           <LiquidityItem
             isLoading={loading}
             token={token0}
@@ -164,21 +164,6 @@ export const PoolPosition = ({
             token={token1}
             amount={String(parseUnits(amountToken1, token1?.decimals ?? 18))}
             usdAmount={String(token1UnstakedInUsd)}
-          />
-        </CardGroup>
-        <CardGroup>
-          <CardLabel>Staked</CardLabel>
-          <LiquidityItem
-            isLoading={isLoading}
-            token={token0}
-            amount={'0'}
-            usdAmount={'0'}
-          />
-          <LiquidityItem
-            isLoading={isLoading}
-            token={token1}
-            amount={'0'}
-            usdAmount={'0'}
           />
         </CardGroup>
       </CardContent>

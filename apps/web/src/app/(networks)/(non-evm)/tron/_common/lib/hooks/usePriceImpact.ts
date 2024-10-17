@@ -21,7 +21,7 @@ const calculatePriceImpact = ({
   const newReserveY = k.div(newReserveX) // Updated reserve of token Y using constant product formula
   const receivedTokenY = initialReserve1.minus(newReserveY) // Amount of token Y received
   const priceImpact = receivedTokenY.div(newReserveY).times(toBigNumber(100)) // Price impact percentage
-  return Number(priceImpact)
+  return Number(priceImpact) > 100 ? 100 : Number(priceImpact)
 }
 export const usePriceImpact = ({
   amount,

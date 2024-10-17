@@ -68,3 +68,19 @@ export type IReserveDataResponse = {
     }
   }
 }
+
+export type IGetTradeAmountsForDayResponse = {
+  data: {
+    tron: {
+      dexTrades: {
+        baseCurrency: {
+          symbol: string
+        }
+        quoteCurrency: {
+          symbol: string
+        }
+        tradeAmount: number
+      }[]
+    }
+  }
+}

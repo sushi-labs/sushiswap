@@ -7,7 +7,7 @@ import { ManageV2LiquidityCard } from '~aptos/_common/components/ManageV2Liquidi
 import { PoolComposition } from '~aptos/_common/components/PoolSection/PoolComposition'
 import { PoolMyRewards } from '~aptos/_common/components/PoolSection/PoolMyRewards'
 import { PoolPosition } from '~aptos/_common/components/PoolSection/PoolPosition/PoolPosition'
-import { PoolRewards } from '~aptos/_common/components/PoolSection/PoolRewards'
+// import { PoolRewards } from '~aptos/_common/components/PoolSection/PoolRewards'
 import requiredNetworkAlert from '~aptos/_common/lib/common/required-network-alert'
 import { useTotalSupply } from '~aptos/_common/lib/common/use-total-supply'
 import {
@@ -16,7 +16,7 @@ import {
   useUserPool,
 } from '~aptos/_common/lib/common/use-user-handle'
 import { useFarms, useIsFarm } from '~aptos/pool/lib/farm/use-farms'
-import { useRewardsPerDay } from '~aptos/pool/lib/farm/use-rewards-per-day'
+// import { useRewardsPerDay } from '~aptos/pool/lib/farm/use-rewards-per-day'
 import { useUserRewards } from '~aptos/pool/lib/farm/use-user-rewards'
 import { usePool } from '~aptos/pool/lib/use-pool'
 
@@ -45,11 +45,11 @@ export default function PoolPage({ params }: { params: { address: string } }) {
   }, [stakes, pIdIndex])
 
   const rewards = useUserRewards(farms, stakes, pIdIndex, farmIndex)
-  const rewardsPerDay = useRewardsPerDay(
-    farms,
-    farmIndex,
-    coinInfo?.data?.decimals,
-  )
+  // const rewardsPerDay = useRewardsPerDay(
+  //   farms,
+  //   farmIndex,
+  //   coinInfo?.data?.decimals,
+  // )
 
   useEffect(() => {
     requiredNetworkAlert(network, disconnect)
@@ -77,10 +77,6 @@ export default function PoolPage({ params }: { params: { address: string } }) {
                 isLoading={isPoolLoading || isStakeLoading}
               />
             ) : null}
-            <PoolRewards
-              isFarm={farmIndex !== -1}
-              rewardsPerDay={rewardsPerDay}
-            />
           </div>
         </div>
       </div>
