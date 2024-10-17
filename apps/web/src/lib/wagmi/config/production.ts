@@ -60,7 +60,7 @@ export const createProductionConfig = () => {
       const transportUrl = transport({ chain: undefined }).value?.url!
 
       let fetchOptions = {}
-      if (drpcJwt) {
+      if (transportUrl.startsWith('https://lb.drpc.org/') && drpcJwt) {
         fetchOptions = {
           headers: {
             Authorization: drpcJwt,
