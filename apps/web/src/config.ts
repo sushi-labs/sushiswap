@@ -195,3 +195,20 @@ export const isTwapSupportedChainId = (
   chainId: number,
 ): chainId is TwapSupportedChainId =>
   TWAP_SUPPORTED_CHAIN_IDS.includes(chainId as TwapSupportedChainId)
+
+export const ENSO_SUPPORTED_CHAIN_IDS = [
+  ChainId.ETHEREUM,
+  ChainId.OPTIMISM,
+  ChainId.BSC,
+  ChainId.GNOSIS,
+  ChainId.POLYGON,
+  ChainId.BASE,
+  ChainId.ARBITRUM,
+  ChainId.AVALANCHE,
+] as const
+
+export type EnsoSupportedChainId = (typeof ENSO_SUPPORTED_CHAIN_IDS)[number]
+export const isEnsoSupportedChainId = (
+  chainId: number,
+): chainId is EnsoSupportedChainId =>
+  ENSO_SUPPORTED_CHAIN_IDS.includes(chainId as EnsoSupportedChainId)

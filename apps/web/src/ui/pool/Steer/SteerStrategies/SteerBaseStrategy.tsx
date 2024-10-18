@@ -25,10 +25,11 @@ import { APRHoverCard } from '../../APRHoverCard'
 import { SteerAPRChart } from '../SteerAPRChart'
 import { SteerLiquidityInRangeChip } from '../SteerLiquidityDistributionWidget/SteerLiquidityInRangeChip'
 import {
-  SteerPositionAdd,
-  SteerPositionAddProvider,
+  // SteerPositionAdd,
+  // SteerPositionAddProvider,
   SteerPositionDetails,
   SteerPositionRemove,
+  SteerPositionZap,
 } from '../SteerLiquidityManagement'
 import { SteerStrategyLiquidityDistribution } from '../SteerStrategyLiquidityChart'
 
@@ -85,9 +86,10 @@ export const SteerBaseStrategy: SteerStrategyComponent = ({
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <SteerPositionAddProvider>
+                {/* <SteerPositionAddProvider>
                   <SteerPositionAdd vault={vault} />
-                </SteerPositionAddProvider>
+                </SteerPositionAddProvider> */}
+                <SteerPositionZap vault={vault} />
               </CardContent>
             </TabsContent>
             <TabsContent value="remove">
