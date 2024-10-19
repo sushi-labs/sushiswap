@@ -54,6 +54,7 @@ export enum LiquidityProviders {
   LynexV2 = 'LynexV2',
   SparkDexV2 = 'SparkDexV2',
   SparkDexV3 = 'SparkDexV3',
+  SparkDexV3_1 = 'SparkDexV3_1',
 }
 
 export abstract class LiquidityProvider {
@@ -179,4 +180,5 @@ export const UniV3LiquidityProviders: LiquidityProviders[] = [
   LiquidityProviders.Wagmi,
   LiquidityProviders.LynexV2,
   LiquidityProviders.SparkDexV3,
+  LiquidityProviders.SparkDexV3_1,
 ]

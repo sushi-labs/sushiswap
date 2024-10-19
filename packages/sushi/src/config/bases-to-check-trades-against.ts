@@ -1,7 +1,6 @@
 import { ChainId } from '../chain/index.js'
 import {
-  ENOSYS_APS,
-  ENOSYS_HLN,
+  ENOSYS_EETH,
   ENOSYS_USDT,
   ENOSYS_WETH,
   MUSD,
@@ -492,10 +491,9 @@ export const BASES_TO_CHECK_TRADES_AGAINST: {
     WETH9[ChainId.FLARE],
     USDT[ChainId.FLARE],
     USDC[ChainId.FLARE],
-    ENOSYS_WETH,
     ENOSYS_USDT,
-    ENOSYS_HLN,
-    ENOSYS_APS,
+    ENOSYS_EETH,
+    ENOSYS_WETH,
   ],
   [ChainId.MATCHAIN]: [
     WNATIVE[ChainId.MATCHAIN],

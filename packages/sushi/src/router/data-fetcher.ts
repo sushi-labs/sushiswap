@@ -38,6 +38,7 @@ import { QuickSwapV3Provider } from './liquidity-providers/QuickswapV3.js'
 import { SolarbeamProvider } from './liquidity-providers/Solarbeam.js'
 import { SparkDexV2Provider } from './liquidity-providers/SparkDexV2.js'
 import { SparkDexV3Provider } from './liquidity-providers/SparkDexV3.js'
+import { SparkDexV3_1Provider } from './liquidity-providers/SparkDexV3_1.js'
 import { SpookySwapV2Provider } from './liquidity-providers/SpookySwapV2.js'
 import { SpookySwapV3Provider } from './liquidity-providers/SpookySwapV3.js'
 import { SushiSwapV2Provider } from './liquidity-providers/SushiSwapV2.js'
@@ -184,6 +185,7 @@ export class DataFetcher {
       SolarbeamProvider,
       SparkDexV2Provider,
       SparkDexV3Provider,
+      SparkDexV3_1Provider,
       SpookySwapV2Provider,
       SpookySwapV3Provider,
       SushiSwapV2Provider,
