@@ -65,7 +65,7 @@ export const DISABLED_CHAIN_IDS = [
   NonStandardChainId.TRON,
 ] as const
 
-export const NEW_CHAIN_IDS = [] as const
+export const NEW_CHAIN_IDS = [ChainId.APE] as const
 
 const PREFERRED_CHAINID_ORDER = [
   ...NEW_CHAIN_IDS,
