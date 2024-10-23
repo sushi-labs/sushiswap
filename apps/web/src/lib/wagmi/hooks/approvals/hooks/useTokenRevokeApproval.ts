@@ -2,8 +2,9 @@
 
 import { createErrorToast, createToast } from '@sushiswap/notifications'
 import { useCallback, useMemo, useState } from 'react'
+import { erc20Abi_approve } from 'sushi/abi'
 import { Token } from 'sushi/currency'
-import { Address, UserRejectedRequestError, erc20Abi } from 'viem'
+import { Address, UserRejectedRequestError } from 'viem'
 import { usePublicClient, useSimulateContract, useWriteContract } from 'wagmi'
 import { SendTransactionReturnType } from 'wagmi/actions'
 
@@ -22,7 +23,7 @@ export const useTokenRevokeApproval = ({
   const client = usePublicClient()
   const { data: simulation } = useSimulateContract({
     address: token?.wrapped.address as Address,
-    abi: erc20Abi,
+    abi: erc20Abi_approve,
     chainId: token?.chainId,
     functionName: 'approve',
     args: [spender, 0n],

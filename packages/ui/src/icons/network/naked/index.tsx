@@ -1,6 +1,7 @@
 import { ChainId } from 'sushi/chain'
 
 import { IconComponent } from '../../../types'
+import { ApeNaked } from './ApeNaked'
 import { AptosNaked } from './AptosNaked'
 import { ArbitrumNaked } from './ArbitrumNaked'
 import { ArbitrumNovaNaked } from './ArbitrumNovaNaked'
@@ -43,6 +44,7 @@ import { TronNaked } from './TronNaked'
 import { ZKSyncNaked } from './ZKSyncNaked'
 import { ZetaChainNaked } from './ZetaChainNaked'
 
+export * from './ApeNaked'
 export * from './AptosNaked'
 export * from './ArbitrumNaked'
 export * from './ArbitrumNovaNaked'
@@ -126,6 +128,7 @@ export const NETWORK_NAKED_ICON: Partial<
   [ChainId.ROOTSTOCK]: RootstockNaked,
   [ChainId.CRONOS]: CronosNaked,
   [ChainId.MANTLE]: MantleNaked,
+  [ChainId.APE]: ApeNaked,
   aptos: AptosNaked,
   tron: TronNaked,
 }
