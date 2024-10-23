@@ -14,16 +14,23 @@ import {
   TextField,
   classNames,
 } from '@sushiswap/ui'
+import { useWallet } from '@tronweb3/tronwallet-adapter-react-hooks'
 import { CSSProperties, ReactNode, useCallback, useMemo, useState } from 'react'
 import AutoSizer from 'react-virtualized-auto-sizer'
 import { FixedSizeList } from 'react-window'
 import {
+  COMMON_TOKENS,
   DEFAULT_TOKEN_LIST,
   DEFAULT_TOKEN_LIST_WITH_KEY,
 } from '~tron/_common/constants/token-list'
 import { useCustomTokens } from '~tron/_common/lib/hooks/useCustomTokens'
-import { useSortedTokenList } from '~tron/_common/lib/hooks/useSortedTokenList'
+import {
+  TokenWithBalance,
+  useSortedTokenList,
+} from '~tron/_common/lib/hooks/useSortedTokenList'
+import { useTokenBalances } from '~tron/_common/lib/hooks/useTokenBalances'
 import { useTokenInfo } from '~tron/_common/lib/hooks/useTokenInfo'
+import { formatUnitsForInput } from '~tron/_common/lib/utils/formatters'
 import { isAddress } from '~tron/_common/lib/utils/helpers'
 import { IToken } from '~tron/_common/types/token-type'
 import { Icon } from './Icon'
@@ -39,16 +46,27 @@ export const TokenSelector = ({
 }) => {
   const [open, setOpen] = useState(false)
   const [query, setQuery] = useState('')
+  const { address } = useWallet()
   const { customTokens, addOrRemoveToken, hasToken } = useCustomTokens()
   const { data: queryToken, isLoading: isQueryTokenLoading } = useTokenInfo({
     tokenAddress: query,
     enabled: isAddress(query),
   })
 
+  const { data: tokenBalances } = useTokenBalances({
+    currencies:
+      Object.values(DEFAULT_TOKEN_LIST_WITH_KEY ?? {})
+        .concat(Object.values(customTokens ?? {}))
+        .concat(queryToken ?? []) ?? [],
+    address: address,
+    enabled: !!customTokens && !!DEFAULT_TOKEN_LIST_WITH_KEY,
+  })
+
   const { data: sortedTokenList } = useSortedTokenList({
     query,
     tokenMap: DEFAULT_TOKEN_LIST_WITH_KEY,
     customTokenMap: customTokens,
+    balanceMap: tokenBalances ?? {},
   })
 
   const _onSelect = useCallback(
@@ -60,13 +78,7 @@ export const TokenSelector = ({
   )
 
   const Row = useCallback(
-    ({
-      index,
-      style,
-    }: {
-      index: number
-      style: CSSProperties
-    }) => {
+    ({ index, style }: { index: number; style: CSSProperties }) => {
       return (
         <TokenButton
           style={style}
@@ -102,6 +114,15 @@ export const TokenSelector = ({
             onValueChange={setQuery}
           />
         </div>
+        <div className="flex flex-wrap gap-2">
+          {COMMON_TOKENS.map((token, idx) => (
+            <CommonTokenButton
+              key={idx}
+              token={token}
+              selectToken={_onSelect}
+            />
+          ))}
+        </div>
         <List.Control className="relative flex flex-1 flex-col flex-grow gap-3 px-1 py-0.5 min-h-[128px]">
           <div
             data-state={isQueryTokenLoading ? 'active' : 'inactive'}
@@ -115,8 +136,11 @@ export const TokenSelector = ({
                 <div className="flex flex-row items-center flex-grow gap-4">
                   <SkeletonCircle radius={40} />
                   <div className="flex flex-col items-start">
-                    <SkeletonText className="w-full w-[100px]" />
-                    <SkeletonText fontSize="sm" className="w-full w-[60px]" />
+                    <SkeletonText className="w-full min-w-[100px]" />
+                    <SkeletonText
+                      fontSize="sm"
+                      className="w-full min-w-[60px]"
+                    />
                   </div>
                 </div>
 
@@ -190,22 +214,17 @@ const TokenButton = ({
   isSelected,
 }: {
   style?: CSSProperties
-  token?: IToken
+  token?: IToken | TokenWithBalance
   selectToken: (_token: IToken) => void
   hasToken?: (currency: IToken) => boolean
   isSelected: boolean
   addOrRemoveToken?: (type: 'add' | 'remove', currency: IToken[]) => void
 }) => {
-  const isOnDefaultList = useMemo(() => {
-    if (!token) {
-      return true
-    }
-
-    return DEFAULT_TOKEN_LIST.some((t) => t.address === token.address)
-  }, [token])
-
   if (!token) return null
-
+  const isOnDefaultList = useMemo(
+    () => DEFAULT_TOKEN_LIST.some((t) => t.address === token.address),
+    [token],
+  )
   const isNew = !hasToken?.(token)
   const isCustomAdded = hasToken?.(token)
 
@@ -221,7 +240,7 @@ const TokenButton = ({
         className="flex items-center justify-between w-full"
         variant="ghost"
       >
-        <div className="flex items-center gap-2 w-full ">
+        <div className="flex items-center gap-3 w-full ">
           {isSelected ? (
             <Badge
               position="bottom-right"
@@ -235,10 +254,10 @@ const TokenButton = ({
                 </div>
               }
             >
-              <Icon currency={token} height={40} width={40} />
+              <Icon currency={token} height={35} width={35} />
             </Badge>
           ) : (
-            <Icon currency={token} height={40} width={40} />
+            <Icon currency={token} height={35} width={35} />
           )}
 
           <div className="flex flex-col items-start">
@@ -248,6 +267,21 @@ const TokenButton = ({
             </p>
           </div>
         </div>
+        {+(token as TokenWithBalance)?.balance > 0 ? (
+          <div className="flex flex-col max-w-[140px]">
+            <span
+              className={classNames(
+                isSelected ? 'font-semibold' : 'font-medium',
+                'text-right text-gray-900 dark:text-slate-50 truncate',
+              )}
+            >
+              {formatUnitsForInput(
+                (token as TokenWithBalance)?.balance,
+                token?.decimals,
+              ) ?? '0'}
+            </span>
+          </div>
+        ) : null}
       </Button>
       {isNew && !isOnDefaultList ? (
         <Button
@@ -273,5 +307,29 @@ const TokenButton = ({
         </Button>
       ) : null}
     </div>
+  )
+}
+
+const CommonTokenButton = ({
+  token,
+  selectToken,
+}: {
+  token: IToken
+  selectToken: (_token: IToken) => void
+}) => {
+  return (
+    <Button
+      onClick={() => selectToken(token)}
+      key={token.address}
+      size="sm"
+      className="flex items-center justify-between w-fit"
+      variant="secondary"
+    >
+      <div className="flex items-center gap-2 w-full ">
+        <Icon currency={token} height={18} width={18} />
+
+        <p>{token.symbol}</p>
+      </div>
+    </Button>
   )
 }

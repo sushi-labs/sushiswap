@@ -1,10 +1,15 @@
+import { SkeletonText } from '@sushiswap/ui'
 import { formatPercent } from 'sushi/format'
 import { usePoolOwnership } from '~tron/_common/lib/hooks/usePoolOwnership'
-import { IMyPositionData } from '~tron/_common/types/get-pools-type'
+import { IPositionRowData } from './PositionsTable'
 
-export const PositionSizeCell = ({ data }: { data: IMyPositionData }) => {
+export const PositionSizeCell = ({ data }: { data: IPositionRowData }) => {
   const { pairAddress } = data
-  const { data: ownership } = usePoolOwnership({ pairAddress })
+  const { data: ownership, isLoading } = usePoolOwnership({ pairAddress })
+
+  if (isLoading || ownership === undefined) {
+    return <SkeletonText fontSize="lg" />
+  }
 
   return (
     <div className="flex items-center gap-1">

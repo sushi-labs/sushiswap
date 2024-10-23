@@ -7,7 +7,6 @@ import { PontemWallet } from '@pontem/wallet-adapter-plugin'
 import { RiseWallet } from '@rise-wallet/wallet-adapter'
 import { FewchaWallet } from 'fewcha-plugin-wallet-adapter'
 import { PetraWallet } from 'petra-plugin-wallet-adapter'
-import { Modal } from '~aptos/_common/components/Modal/Modal'
 
 const wallets = [
   new PetraWallet(),
@@ -21,7 +20,7 @@ const wallets = [
 export function Providers({ children }: { children: React.ReactNode }) {
   return (
     <AptosWalletAdapterProvider plugins={wallets} autoConnect={true}>
-      <Modal.Provider>{children}</Modal.Provider>
+      {children}
     </AptosWalletAdapterProvider>
   )
 }

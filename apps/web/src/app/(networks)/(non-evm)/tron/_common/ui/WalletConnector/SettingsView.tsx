@@ -37,10 +37,10 @@ export const SettingsView: FC<SettingsViewProps> = ({ setView }) => {
       </div>
       <List>
         <List.Label>Preferences</List.Label>
-        <List.Control className="bg-gray-100 dark:bg-slate-800">
+        <List.Control className="">
           <List.KeyValue flex title="Theme">
             <RadioGroup value={theme} onChange={setTheme}>
-              <div className="items-center relative bg-black/[0.04] dark:bg-white/[0.02] ring-4 ring-black/[0.04] dark:ring-white/[0.02] overflow-hidden flex gap-1">
+              <div className="items-center !rounded-lg relative bg-black/[0.04] dark:bg-white/[0.02] px-1 overflow-hidden flex gap-1">
                 {Object.entries(options).map(([k, v], i) => (
                   <RadioGroup.Option as={Fragment} key={i} value={k}>
                     {({ checked }) => (
@@ -48,9 +48,9 @@ export const SettingsView: FC<SettingsViewProps> = ({ setView }) => {
                         type="button"
                         className={classNames(
                           checked
-                            ? 'text-gray-900 dark:text-slate-50 bg-white dark:bg-white/[0.08]'
+                            ? 'text-gray-900 dark:text-slate-50 bg-white  dark:bg-white/[0.08]'
                             : 'text-gray-500 dark:text-slate-500 hover:bg-gray-100 hover:dark:bg-white/[0.04]',
-                          'min-w-[60px] z-[1] relative rounded-lg text-sm h-8 font-medium flex flex-grow items-center justify-center',
+                          'min-w-[60px] z-[1] relative text-sm h-8 font-medium rounded-lg flex flex-grow items-center justify-center',
                         )}
                       >
                         {v}

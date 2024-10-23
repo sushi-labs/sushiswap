@@ -2,17 +2,17 @@ import { useWallet } from '@aptos-labs/wallet-adapter-react'
 import { Transition } from '@headlessui/react'
 import { SkeletonBox, classNames } from '@sushiswap/ui'
 import React from 'react'
-import { Modal } from '~aptos/_common/components/Modal/Modal'
 import { networkNameToNetwork } from '~aptos/_common/config/chains'
 import { formatNumberWithDecimals } from '~aptos/_common/lib/common/format-number-with-decimals'
 import { useNetwork } from '~aptos/_common/lib/common/use-network'
 import { useSwap } from '~aptos/swap/lib/use-swap'
+import { useSwapNetworkFee } from '~aptos/swap/lib/use-swap-network-fee'
 import {
   warningSeverity,
   warningSeverityClassName,
 } from '~aptos/swap/lib/warning-severity'
 import { useSimpleSwapState } from '~aptos/swap/ui/simple/simple-swap-provider/simple-swap-provider'
-import { SwapRoute } from '../swap-route'
+import { TradeRoutePathView } from '../trade-route-path-view'
 
 export const SimpleSwapTradeStats = () => {
   const { account } = useWallet()
@@ -25,9 +25,13 @@ export const SimpleSwapTradeStats = () => {
     outputAmount,
     slippageAmount,
   } = useSimpleSwapState()
+  const { data: networkFee, isLoading: isLoadingNetworkFee } =
+    useSwapNetworkFee()
 
   const loading =
-    Boolean(isLoadingPrice && Number(amount) > 0) || isPriceFetching
+    Boolean(isLoadingPrice && Number(amount) > 0) ||
+    isPriceFetching ||
+    isLoadingNetworkFee
 
   const outputSwapTokenAmount = outputAmount
     ? formatNumberWithDecimals(
@@ -96,6 +100,18 @@ export const SimpleSwapTradeStats = () => {
             )}
           </span>
         </div>
+        <div className="flex justify-between items-center gap-2">
+          <span className="text-sm text-gray-700 dark:text-slate-400">
+            Network fee
+          </span>
+          <span className="text-sm font-semibold text-gray-700 text-right dark:text-slate-400">
+            {loading || !minOutput || !networkFee ? (
+              <SkeletonBox className="h-4 py-0.5 w-[120px] rounded-md" />
+            ) : (
+              `${networkFee} APT`
+            )}
+          </span>
+        </div>
         <div className="flex justify-between items-center">
           <span className="text-sm text-gray-700 dark:text-slate-400">
             Route
@@ -104,19 +120,15 @@ export const SimpleSwapTradeStats = () => {
             {loading ? (
               <SkeletonBox className="h-4 py-0.5 w-[40px] rounded-md" />
             ) : (
-              <Modal.Trigger tag={'trade-state-routes'}>
-                {({ open }) => (
-                  <button
-                    type="button"
-                    onClick={open}
-                    className="text-sm text-blue font-semibold"
-                  >
-                    View
-                  </button>
-                )}
-              </Modal.Trigger>
+              <TradeRoutePathView trade={bestRoutes}>
+                <button
+                  type="button"
+                  className="text-sm text-blue font-semibold"
+                >
+                  View
+                </button>
+              </TradeRoutePathView>
             )}
-            <SwapRoute trade={bestRoutes} />
           </span>
         </div>
         {account?.address && (

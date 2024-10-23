@@ -8,8 +8,11 @@ import { SkeletonBox } from '@sushiswap/ui'
 import { useWallet } from '@tronweb3/tronwallet-adapter-react-hooks'
 import Link from 'next/link'
 import { useMemo } from 'react'
-import { formatPercent } from 'sushi/format'
-import { truncateText } from '~tron/_common/lib/utils/formatters'
+import { formatPercent, formatUSD } from 'sushi/format'
+import { WTRX } from '~tron/_common/constants/token-list'
+import { useStablePrice } from '~tron/_common/lib/hooks/useStablePrice'
+import { useSwapNetworkFee } from '~tron/_common/lib/hooks/useSwapNetworkFee'
+import { toBigNumber, truncateText } from '~tron/_common/lib/utils/formatters'
 import { getIfWrapOrUnwrap } from '~tron/_common/lib/utils/helpers'
 import { getTronscanAddressLink } from '~tron/_common/lib/utils/tronscan-helpers'
 import {
@@ -23,20 +26,16 @@ export const SwapStats = () => {
   const { token0, token1, amountOut, amountIn, priceImpactPercentage, route } =
     useSwapState()
   const { address } = useWallet()
+  const { data: trxPrice, isLoading: isPriceLoading } = useStablePrice({
+    token: WTRX,
+  })
+  const [slippageTolerance] = useSlippageTolerance(
+    SlippageToleranceStorageKey.Swap,
+  )
 
   const swapType = useMemo(() => {
     return getIfWrapOrUnwrap(token0, token1)
   }, [token0, token1])
-
-  const isLoading =
-    priceImpactPercentage === undefined ||
-    (priceImpactPercentage === 0 && swapType === 'swap') ||
-    amountOut === '' ||
-    amountOut === ''
-
-  const [slippageTolerance] = useSlippageTolerance(
-    SlippageToleranceStorageKey.Swap,
-  )
 
   const slippage =
     slippageTolerance === 'AUTO' ? 0.005 : Number(slippageTolerance) / 100
@@ -54,9 +53,30 @@ export const SwapStats = () => {
     return output
   }, [amountOut, slippage, token0, token1, amountIn])
 
+  const { data: networkFeeInTrx, isLoading: isNetworkFeeLoading } =
+    useSwapNetworkFee({
+      swapType: swapType,
+      address,
+      minOutput: minOutput?.toString() ?? '',
+    })
+
+  const isLoading =
+    priceImpactPercentage === undefined ||
+    (priceImpactPercentage === 0 && swapType === 'swap') ||
+    amountOut === '' ||
+    amountOut === '' ||
+    isPriceLoading ||
+    isNetworkFeeLoading
+
   const severityColor = useMemo(() => {
     return warningSeverityClassName(warningSeverity(priceImpactPercentage))
   }, [priceImpactPercentage])
+
+  const networkFee = useMemo(() => {
+    const fee = toBigNumber(networkFeeInTrx ?? '0')
+    const feeInUsd = fee.multipliedBy(trxPrice).toString()
+    return { feeInUsd, feeInToken: networkFeeInTrx }
+  }, [trxPrice, networkFeeInTrx])
 
   return (
     <Transition
@@ -68,8 +88,8 @@ export const SwapStats = () => {
       leaveFrom="transform translate-y-0 opacity-100"
       leaveTo="transform translate-y-[16px] opacity-0"
     >
-      <div className="w-full px-2 flex flex-col gap-1 pb-8">
-        <div className="flex justify-between items-center gap-2">
+      <div className="flex flex-col w-full gap-1 px-2 pb-8">
+        <div className="flex items-center justify-between gap-2">
           <span className="text-sm text-gray-700 dark:text-slate-400">
             Price impact
           </span>
@@ -89,11 +109,11 @@ export const SwapStats = () => {
             )}
           </span>
         </div>
-        <div className="flex justify-between items-center gap-2">
+        <div className="flex items-center justify-between gap-2">
           <span className="text-sm text-gray-700 dark:text-slate-400">
             Est. received
           </span>
-          <span className="text-sm font-semibold text-gray-700 text-right dark:text-slate-400">
+          <span className="text-sm font-semibold text-right text-gray-700 dark:text-slate-400">
             {isLoading ? (
               <SkeletonBox className="h-4 py-0.5 w-[120px] rounded-md" />
             ) : (
@@ -101,11 +121,11 @@ export const SwapStats = () => {
             )}
           </span>
         </div>
-        <div className="flex justify-between items-center gap-2">
+        <div className="flex items-center justify-between gap-2">
           <span className="text-sm text-gray-700 dark:text-slate-400">
             Min. received
           </span>
-          <span className="text-sm font-semibold text-gray-700 text-right dark:text-slate-400">
+          <span className="text-sm font-semibold text-right text-gray-700 dark:text-slate-400">
             {isLoading ? (
               <SkeletonBox className="h-4 py-0.5 w-[120px] rounded-md" />
             ) : (
@@ -113,29 +133,51 @@ export const SwapStats = () => {
             )}
           </span>
         </div>
-        <div className="flex justify-between items-center">
+        <div className="flex items-center justify-between gap-2">
+          <span className="text-sm text-gray-700 dark:text-slate-400">
+            Network fee
+          </span>
+          <span className="text-sm font-semibold text-right text-gray-700 dark:text-slate-400">
+            {isLoading || !networkFee.feeInToken ? (
+              <SkeletonBox className="h-4 py-0.5 w-[120px] rounded-md" />
+            ) : (
+              <>
+                {networkFee.feeInToken} TRX (~
+                {formatUSD(networkFee?.feeInUsd)})
+              </>
+            )}
+          </span>
+        </div>
+        <div className="flex items-center justify-between">
           <span className="text-sm text-gray-700 dark:text-slate-400">
             Route
           </span>
-          <span className="text-sm font-semibold text-gray-700 text-right dark:text-slate-400">
+          <span className="text-sm font-semibold text-right text-gray-700 dark:text-slate-400">
             {isLoading ? (
               <SkeletonBox className="h-4 py-0.5 w-[120px] rounded-md" />
             ) : (
-              <SwapRoutesDialog />
+              <SwapRoutesDialog>
+                <button
+                  type="button"
+                  className="text-sm text-blue font-semibold"
+                >
+                  View
+                </button>
+              </SwapRoutesDialog>
             )}
           </span>
         </div>
         {address && (
-          <div className="flex justify-between items-center border-t border-gray-200 dark:border-slate-200/5 mt-2 pt-2">
-            <span className="font-medium text-sm text-gray-700 dark:text-slate-300">
+          <div className="flex items-center justify-between pt-2 mt-2 border-t border-gray-200 dark:border-slate-200/5">
+            <span className="text-sm font-medium text-gray-700 dark:text-slate-300">
               Recipient
             </span>
-            <span className="font-semibold text-gray-700 text-right dark:text-slate-400">
+            <span className="font-semibold text-right ">
               <Link
                 target="_blank"
                 href={getTronscanAddressLink(address)}
                 className={classNames(
-                  'flex items-center gap-2 cursor-pointer text-blue',
+                  'flex items-center gap-2 cursor-pointer text-gray-700 dark:text-slate-300',
                 )}
                 rel="noreferrer"
               >
