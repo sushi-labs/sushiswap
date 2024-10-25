@@ -46,6 +46,9 @@ interface CurrencyInputProps {
   hidePricing?: boolean
   hideIcon?: boolean
   label?: string
+  networks?: readonly ChainId[]
+  selectedNetwork?: ChainId
+  onNetworkChange?: (network: number) => void
 }
 
 const CurrencyInput: FC<CurrencyInputProps> = ({
@@ -72,6 +75,9 @@ const CurrencyInput: FC<CurrencyInputProps> = ({
   hidePricing = false,
   hideIcon = false,
   label,
+  networks,
+  selectedNetwork,
+  onNetworkChange,
 }) => {
   const isMounted = useIsMounted()
 
@@ -147,6 +153,9 @@ const CurrencyInput: FC<CurrencyInputProps> = ({
         includeNative={allowNative}
         hidePinnedTokens={hidePinnedTokens}
         hideSearch={hideSearch}
+        networks={networks}
+        selectedNetwork={selectedNetwork}
+        onNetworkSelect={onNetworkChange}
       >
         <Button
           data-state={currencyLoading ? 'inactive' : 'active'}
@@ -188,6 +197,9 @@ const CurrencyInput: FC<CurrencyInputProps> = ({
     allowNative,
     hidePinnedTokens,
     hideSearch,
+    networks,
+    selectedNetwork,
+    onNetworkChange,
   ])
 
   return (

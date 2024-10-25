@@ -43,6 +43,7 @@ export function TokenSelectorStates({
   useMyTokens({
     chainId: isTokenListChainId(chainId) ? chainId : undefined,
     account,
+    includeNative,
   })
 
   // Ensure that the trending tokens are loaded
@@ -68,6 +69,7 @@ export function TokenSelectorStates({
         onSelect={onSelect}
         selected={selected}
         search={search}
+        includeNative={includeNative}
       />
     )
   }
@@ -165,6 +167,7 @@ export function TokenSelectorStates({
       onSelect={onSelect}
       selected={selected}
       search={search}
+      includeNative={includeNative}
     />
   )
 }

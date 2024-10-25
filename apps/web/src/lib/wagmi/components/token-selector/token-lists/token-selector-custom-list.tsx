@@ -15,6 +15,7 @@ interface TokenSelectorCustomList {
   selected: Type | undefined
   onSelect(currency: Type): void
   search?: string
+  includeNative?: boolean
 }
 
 export function TokenSelectorCustomList({
@@ -24,6 +25,7 @@ export function TokenSelectorCustomList({
   selected,
   onSelect,
   search,
+  includeNative,
 }: TokenSelectorCustomList) {
   const {
     data: { balanceMap },
@@ -31,6 +33,7 @@ export function TokenSelectorCustomList({
   } = useMyTokens({
     chainId: isTokenListChainId(chainId) ? chainId : undefined,
     account,
+    includeNative,
   })
 
   const { data: pricesMap } = usePrices({

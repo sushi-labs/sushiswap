@@ -1,7 +1,7 @@
 'use client'
 
 import { MagnifyingGlassIcon } from '@heroicons/react/24/solid'
-import { useDebounce } from '@sushiswap/hooks'
+import { useBreakpoint, useDebounce } from '@sushiswap/hooks'
 import {
   InterfaceEventName,
   InterfaceModalName,
@@ -28,6 +28,8 @@ import React, {
 import { ChainId } from 'sushi/chain'
 import { Token, Type } from 'sushi/currency'
 import { useAccount } from 'wagmi'
+import { DesktopNetworkSelector } from './desktop-network-selector'
+import { MobileNetworkSelector } from './mobile-network-selector'
 import { TokenSelectorStates } from './token-selector-states'
 
 interface TokenSelectorProps {
@@ -39,6 +41,9 @@ interface TokenSelectorProps {
   includeNative?: boolean
   hidePinnedTokens?: boolean
   hideSearch?: boolean
+  networks?: readonly ChainId[]
+  selectedNetwork?: ChainId
+  onNetworkSelect?: (network: number) => void
 }
 
 export const TokenSelector: FC<TokenSelectorProps> = ({
@@ -50,6 +55,9 @@ export const TokenSelector: FC<TokenSelectorProps> = ({
   currencies: _currencies,
   hidePinnedTokens,
   hideSearch,
+  networks,
+  selectedNetwork,
+  onNetworkSelect,
 }) => {
   const { address } = useAccount()
 
@@ -86,49 +94,66 @@ export const TokenSelector: FC<TokenSelectorProps> = ({
     [onSelect],
   )
 
+  const { isMd } = useBreakpoint('md')
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>{children}</DialogTrigger>
-      <DialogContent className="!flex flex-col justify-start h-[80vh] md:min-w-[600px]">
+      <DialogContent className="h-[80vh] !flex !flex-col md:!flex-row md:min-w-[720px] w-fit">
         <Trace
           name={InterfaceEventName.TOKEN_SELECTOR_OPENED}
           modal={InterfaceModalName.TOKEN_SELECTOR}
           shouldLogImpression
         >
-          <DialogHeader>
-            <DialogTitle>Select a token</DialogTitle>
-            <DialogDescription>
-              Select a token from our default list or search for a token by
-              symbol or address.
-            </DialogDescription>
-          </DialogHeader>
-          {!hideSearch ? (
-            <div className="flex gap-2">
-              <TextField
-                placeholder="Search by token or address"
-                icon={MagnifyingGlassIcon}
-                type="text"
-                testdata-id={`token-selector-address-input`}
-                value={query}
-                onValueChange={setQuery}
+          {networks && selectedNetwork && onNetworkSelect && isMd ? (
+            <DesktopNetworkSelector
+              networks={networks}
+              selectedNetwork={selectedNetwork}
+              onSelect={onNetworkSelect}
+            />
+          ) : null}
+          <div className="flex flex-col gap-4 overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle>Select a token</DialogTitle>
+              <DialogDescription>
+                Select a token from our default list or search for a token by
+                symbol or address.
+              </DialogDescription>
+            </DialogHeader>
+            {networks && selectedNetwork && onNetworkSelect && !isMd ? (
+              <MobileNetworkSelector
+                networks={networks}
+                selectedNetwork={selectedNetwork}
+                onSelect={onNetworkSelect}
+              />
+            ) : null}
+            {!hideSearch ? (
+              <div className="flex gap-2">
+                <TextField
+                  placeholder="Search by token or address"
+                  icon={MagnifyingGlassIcon}
+                  type="text"
+                  testdata-id={`token-selector-address-input`}
+                  value={query}
+                  onValueChange={setQuery}
+                />
+              </div>
+            ) : null}
+            <div
+              id="token-list-container"
+              className="space-y-2 relative flex flex-1 flex-col flex-grow gap-3 px-1 py-0.5 overflow-y-scroll md:pr-4 pr-2"
+            >
+              <TokenSelectorStates
+                selected={selected}
+                chainId={chainId}
+                account={address}
+                onSelect={_onSelect}
+                currencies={currencies}
+                includeNative={includeNative}
+                hidePinnedTokens={hidePinnedTokens}
+                search={query}
               />
             </div>
-          ) : null}
-
-          <div
-            id="token-list-container"
-            className="space-y-2 relative flex flex-1 flex-col flex-grow gap-3 px-1 py-0.5 overflow-y-scroll md:pr-4 pr-2"
-          >
-            <TokenSelectorStates
-              selected={selected}
-              chainId={chainId}
-              account={address}
-              onSelect={_onSelect}
-              currencies={currencies}
-              includeNative={includeNative}
-              hidePinnedTokens={hidePinnedTokens}
-              search={query}
-            />
           </div>
         </Trace>
       </DialogContent>
