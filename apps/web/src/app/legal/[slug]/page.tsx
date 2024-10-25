@@ -2,27 +2,22 @@ import { Container, Separator } from '@sushiswap/ui'
 import { unstable_cache } from 'next/cache'
 import React from 'react'
 import { getGhostBody } from 'src/app/(cms)/lib/ghost/ghost'
+import { legalPages } from '../_config'
 
 export const revalidate = 86400
 
 export const dynamicParams = false
 
-const pages = {
-  ['privacy-policy']: { title: 'Privacy Policy' },
-  ['terms-of-service']: { title: 'Terms of Service' },
-  ['cookie-policy']: { title: 'Cookie Policy' },
-}
-
 export async function generateStaticParams() {
-  return Object.keys(pages).map((slug) => ({ slug: slug }))
+  return Object.keys(legalPages).map((slug) => ({ slug: slug }))
 }
 
 type Props = {
-  params: { slug: keyof typeof pages }
+  params: { slug: keyof typeof legalPages }
 }
 
 export async function generateMetadata({ params }: Props) {
-  const page = pages[params.slug]
+  const page = legalPages[params.slug]
 
   return {
     title: page.title,
@@ -30,7 +25,7 @@ export async function generateMetadata({ params }: Props) {
 }
 
 export default async function Page({ params }: Props) {
-  const page = pages[params.slug]
+  const page = legalPages[params.slug]
 
   const {
     title,
