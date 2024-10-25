@@ -6,7 +6,7 @@ const networkKeys = [...CHAIN_IDS.map(getNetworkKey), 'aptos', 'tron']
 const sitemapFiles = [
   '/academy/sitemap.xml',
   '/blog/sitemap.xml',
-  ...networkKeys.map((key) => `/sitemap.xml/${key}`),
+  ...networkKeys.map((key) => `/sitemap/${key}.xml`),
   '/legal/sitemap.xml',
 ]
 
