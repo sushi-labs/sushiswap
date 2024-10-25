@@ -133,12 +133,14 @@ export async function getAcademyArticles(
       id: topic.id,
       name: topic.attributes.name,
     })),
-    difficulty: {
-      id: article.attributes.difficulty!.data!.id,
-      name: article.attributes.difficulty!.data!.attributes.name,
-      label: article.attributes.difficulty!.data!.attributes.label,
-      slug: article.attributes.difficulty!.data!.attributes.slug,
-    },
+    difficulty: article.attributes.difficulty.data
+      ? {
+          id: article.attributes.difficulty.data.id,
+          name: article.attributes.difficulty.data.attributes.name,
+          label: article.attributes.difficulty.data.attributes.label,
+          slug: article.attributes.difficulty.data.attributes.slug,
+        }
+      : null,
     cover: transformImage(article.attributes.cover.data!),
     authors: article.attributes.authors!.data.map((author) => ({
       name: author.attributes.name,
