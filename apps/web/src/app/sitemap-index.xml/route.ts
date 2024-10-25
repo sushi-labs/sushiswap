@@ -1,12 +1,12 @@
 import { CHAIN_IDS } from 'src/config'
 import { getNetworkKey } from 'src/lib/network'
 
-const networkKeys = [...CHAIN_IDS.map(getNetworkKey), 'aptos', 'tron']
-
 const sitemapFiles = [
   '/academy/sitemap.xml',
   '/blog/sitemap.xml',
-  ...networkKeys.map((key) => `/sitemap/${key}.xml`),
+  ...CHAIN_IDS.map(getNetworkKey).map((key) => `/sitemap/${key}.xml`),
+  '/aptos/sitemap.xml',
+  '/tron/sitemap.xml',
   '/legal/sitemap.xml',
 ]
 
