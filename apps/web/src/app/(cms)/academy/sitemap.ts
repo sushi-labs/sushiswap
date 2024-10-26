@@ -1,6 +1,8 @@
 import { getAcademyArticles } from '@sushiswap/graph-client/strapi'
 import type { MetadataRoute } from 'next'
 
+export const revalidate = 0
+
 const products = ['bentobox', 'furo', 'onsen', 'sushixswap']
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
