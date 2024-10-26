@@ -6,11 +6,6 @@ const TWAPPanel = dynamic(
   { ssr: false },
 )
 
-export const metadata = {
-  title: 'Dollar-Cost Averaging (DCA)',
-  description: 'SushiSwap Dollar-Cost Averaging (DCA)',
-}
-
 export default function SwapDCAPage() {
   return (
     <Container maxWidth="lg" className="px-4">

@@ -1,6 +1,8 @@
 import { getBlogArticles } from '@sushiswap/graph-client/strapi'
 import type { MetadataRoute } from 'next'
 
+export const revalidate = 0
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   try {
     const { articles } = await getBlogArticles({

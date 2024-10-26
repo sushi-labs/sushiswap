@@ -1,8 +1,15 @@
 import { Container, typographyVariants } from '@sushiswap/ui'
+import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { BackButton } from 'src/ui/pool/BackButton'
 import { ChainId } from 'sushi/chain'
 import { isMerklChainId } from 'sushi/config'
+
+export const metadata: Metadata = {
+  title: 'Incentivize',
+  description:
+    'Add rewards to a pool to incentivize liquidity providers joining in.',
+}
 
 export default function Layout({
   children,
