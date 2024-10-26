@@ -1,5 +1,6 @@
 import { isPoolChainId } from '@sushiswap/graph-client/data-api'
 import { Container } from '@sushiswap/ui'
+import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import React from 'react'
 import { POOL_SUPPORTED_NETWORKS } from 'src/config'
@@ -8,6 +9,11 @@ import { PoolsFiltersProvider } from 'src/ui/pool'
 import { ChainId } from 'sushi/chain'
 import { SidebarContainer } from '~evm/_common/ui/sidebar'
 import { NavigationItems } from '../navigation-items'
+
+export const metadata: Metadata = {
+  title: 'Pools',
+  description: 'Explore SushiSwap pools.',
+}
 
 export default async function ExploreLayout({
   children,
