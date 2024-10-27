@@ -71,8 +71,8 @@
     "lodash.zip": "4.2.0",
     "sushi": "workspace:*",
     "tsx": "^4.7.1",
-    "viem": "2.8.14",
-    "zod": "3.21.4"
+    "viem": "2.21.35",
+    "zod": "3.22.0"
   },
   "devDependencies": {
     "@sushiswap/jest-config": "workspace:*",

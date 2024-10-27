@@ -4,6 +4,7 @@ import { AlgebraV1BaseProvider } from './AlgebraV1Base.js'
 import { LiquidityProviders } from './LiquidityProvider.js'
 
 export class LynexV2Provider extends AlgebraV1BaseProvider {
+  override DEFAULT_TICK_SPACING = 1
   constructor(chainId: ChainId, web3Client: PublicClient) {
     const factory = {
       [ChainId.LINEA]: '0x622b2c98123D303ae067DB4925CD6282B3A08D0F',

@@ -159,6 +159,46 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
     return new Map()
   }
 
+  async getReserves(
+    poolCodesToCreate: PoolCode[],
+    options?: DataFetcherOptions,
+  ): Promise<any> {
+    const multicallMemoize = await memoizer.fn(this.client.multicall)
+
+    const multicallData = {
+      multicallAddress: this.client.chain?.contracts?.multicall3
+        ?.address as Address,
+      allowFailure: true,
+      blockNumber: options?.blockNumber,
+      contracts: poolCodesToCreate.map(
+        (poolCode) =>
+          ({
+            address: poolCode.pool.address as Address,
+            chainId: this.chainId,
+            abi: this.getReservesAbi,
+            functionName: 'getReserves',
+          }) as const,
+      ),
+    }
+    return options?.memoize
+      ? await (multicallMemoize(multicallData) as Promise<any>).catch((e) => {
+          console.warn(
+            `${this.getLogPrefix()} - UPDATE: on-demand pools multicall failed, message: ${
+              e.message
+            }`,
+          )
+          return undefined
+        })
+      : await this.client.multicall(multicallData).catch((e) => {
+          console.warn(
+            `${this.getLogPrefix()} - UPDATE: on-demand pools multicall failed, message: ${
+              e.message
+            }`,
+          )
+          return undefined
+        })
+  }
+
   async getOnDemandPools(
     t0: Token,
     t1: Token,
@@ -223,40 +263,7 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
       }
     })
 
-    const multicallMemoize = await memoizer.fn(this.client.multicall)
-
-    const multicallData = {
-      multicallAddress: this.client.chain?.contracts?.multicall3
-        ?.address as Address,
-      allowFailure: true,
-      blockNumber: options?.blockNumber,
-      contracts: poolCodesToCreate.map(
-        (poolCode) =>
-          ({
-            address: poolCode.pool.address as Address,
-            chainId: this.chainId,
-            abi: this.getReservesAbi,
-            functionName: 'getReserves',
-          }) as const,
-      ),
-    }
-    const reserves = options?.memoize
-      ? await (multicallMemoize(multicallData) as Promise<any>).catch((e) => {
-          console.warn(
-            `${this.getLogPrefix()} - UPDATE: on-demand pools multicall failed, message: ${
-              e.message
-            }`,
-          )
-          return undefined
-        })
-      : await this.client.multicall(multicallData).catch((e) => {
-          console.warn(
-            `${this.getLogPrefix()} - UPDATE: on-demand pools multicall failed, message: ${
-              e.message
-            }`,
-          )
-          return undefined
-        })
+    const reserves = await this.getReserves(poolCodesToCreate, options)
 
     poolCodesToCreate.forEach((poolCode, i) => {
       const pool = poolCode.pool

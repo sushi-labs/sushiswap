@@ -221,9 +221,9 @@
     "@wagmi/core": "2.6.17",
     "ts-node": "10.9.2",
     "typescript": "5.2.2",
-    "viem": "2.8.14",
+    "viem": "2.21.35",
     "vitest": "0.34.6",
-    "zod": "3.21.4"
+    "zod": "3.22.0"
   },
   "peerDependencies": {
     "viem": "*",
