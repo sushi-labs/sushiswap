@@ -16,6 +16,7 @@ interface TokenSelectorCustomList {
   onSelect(currency: Type): void
   search?: string
   includeNative?: boolean
+  onShowInfo(currency: Type | false): void
 }
 
 export function TokenSelectorCustomList({
@@ -26,6 +27,7 @@ export function TokenSelectorCustomList({
   onSelect,
   search,
   includeNative,
+  onShowInfo,
 }: TokenSelectorCustomList) {
   const {
     data: { balanceMap },
@@ -68,6 +70,7 @@ export function TokenSelectorCustomList({
             balancesMap={balanceMap}
             pricesMap={pricesMap}
             isBalanceLoading={isLoading}
+            onShowInfo={onShowInfo}
           />
         </div>
       </List.Control>

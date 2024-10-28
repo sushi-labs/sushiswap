@@ -26,8 +26,9 @@ import React, {
   useState,
 } from 'react'
 import { ChainId } from 'sushi/chain'
-import { Token, Type } from 'sushi/currency'
+import { Currency, Token, Type } from 'sushi/currency'
 import { useAccount } from 'wagmi'
+import { CurrencyInfo } from './currency-info'
 import { DesktopNetworkSelector } from './desktop-network-selector'
 import { MobileNetworkSelector } from './mobile-network-selector'
 import { TokenSelectorStates } from './token-selector-states'
@@ -63,6 +64,7 @@ export const TokenSelector: FC<TokenSelectorProps> = ({
 
   const [query, setQuery] = useState('')
   const [open, setOpen] = useState(false)
+  const [currencyInfo, showCurrencyInfo] = useState<Currency | false>(false)
 
   const debouncedQuery = useDebounce(query, 250)
 
@@ -94,12 +96,25 @@ export const TokenSelector: FC<TokenSelectorProps> = ({
     [onSelect],
   )
 
+  const _onNetworkSelect = useCallback(
+    (network: number) => {
+      if (currencyInfo) {
+        showCurrencyInfo(false)
+      }
+
+      if (onNetworkSelect) {
+        onNetworkSelect(network)
+      }
+    },
+    [onNetworkSelect, currencyInfo],
+  )
+
   const { isMd } = useBreakpoint('md')
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>{children}</DialogTrigger>
-      <DialogContent className="h-[80vh] !flex !flex-col md:!flex-row md:min-w-[720px] w-fit">
+      <DialogContent className="h-[80vh] !flex !flex-col md:!flex-row md:min-w-[720px] w-fit !p-0">
         <Trace
           name={InterfaceEventName.TOKEN_SELECTOR_OPENED}
           modal={InterfaceModalName.TOKEN_SELECTOR}
@@ -109,10 +124,16 @@ export const TokenSelector: FC<TokenSelectorProps> = ({
             <DesktopNetworkSelector
               networks={networks}
               selectedNetwork={selectedNetwork}
-              onSelect={onNetworkSelect}
+              onSelect={_onNetworkSelect}
             />
           ) : null}
-          <div className="flex flex-col gap-4 overflow-y-auto">
+          <div className="flex flex-col gap-4 overflow-y-auto relative p-6">
+            {currencyInfo ? (
+              <CurrencyInfo
+                currency={currencyInfo}
+                onBack={() => showCurrencyInfo(false)}
+              />
+            ) : null}
             <DialogHeader>
               <DialogTitle>Select a token</DialogTitle>
               <DialogDescription>
@@ -124,7 +145,7 @@ export const TokenSelector: FC<TokenSelectorProps> = ({
               <MobileNetworkSelector
                 networks={networks}
                 selectedNetwork={selectedNetwork}
-                onSelect={onNetworkSelect}
+                onSelect={_onNetworkSelect}
               />
             ) : null}
             {!hideSearch ? (
@@ -141,7 +162,7 @@ export const TokenSelector: FC<TokenSelectorProps> = ({
             ) : null}
             <div
               id="token-list-container"
-              className="space-y-2 relative flex flex-1 flex-col flex-grow gap-3 px-1 py-0.5 overflow-y-scroll md:pr-4 pr-2"
+              className="space-y-2 flex flex-1 flex-col flex-grow gap-3 px-1 py-0.5 overflow-y-scroll md:pr-4 pr-2"
             >
               <TokenSelectorStates
                 selected={selected}
@@ -152,6 +173,7 @@ export const TokenSelector: FC<TokenSelectorProps> = ({
                 includeNative={includeNative}
                 hidePinnedTokens={hidePinnedTokens}
                 search={query}
+                onShowInfo={showCurrencyInfo}
               />
             </div>
           </div>

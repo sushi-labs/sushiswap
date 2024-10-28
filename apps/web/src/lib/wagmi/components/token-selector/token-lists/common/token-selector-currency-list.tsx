@@ -27,6 +27,7 @@ interface TokenSelectorCurrencyListProps {
     onImport: (currency: Token) => void
     importableSet: Set<Address>
   }
+  onShowInfo(currency: Type | false): void
 }
 
 export const TokenSelectorCurrencyList: FC<TokenSelectorCurrencyListProps> =
@@ -39,6 +40,7 @@ export const TokenSelectorCurrencyList: FC<TokenSelectorCurrencyListProps> =
     balancesMap,
     isBalanceLoading,
     importConfig,
+    onShowInfo,
   }) {
     const { address } = useAccount()
     const rowData = useMemo<TokenSelectorRow[]>(() => {
@@ -70,6 +72,7 @@ export const TokenSelectorCurrencyList: FC<TokenSelectorCurrencyListProps> =
               currency.wrapped.address === selected.wrapped.address)
           : false,
         isBalanceLoading,
+        onShowInfo: () => onShowInfo(currency),
       }))
     }, [
       isBalanceLoading,
@@ -80,6 +83,7 @@ export const TokenSelectorCurrencyList: FC<TokenSelectorCurrencyListProps> =
       pricesMap,
       selected,
       pin,
+      onShowInfo,
     ])
 
     if (!importConfig) {

@@ -16,6 +16,7 @@ interface TokenSelectorSearch {
   chainId: TokenListChainId
   search: string
   onSelect(currency: Type): void
+  onShowInfo(currency: Type | false): void
   selected: Type | undefined
 }
 
@@ -37,6 +38,7 @@ export function TokenSelectorSearch({
   search,
   selected,
   onSelect,
+  onShowInfo,
 }: TokenSelectorSearch) {
   const { data, isError, isLoading, fetchNextPage, hasMore } = useSearchTokens({
     chainId,
@@ -115,6 +117,7 @@ export function TokenSelectorSearch({
             id="trending"
             selected={selected}
             onSelect={onSelect}
+            onShowInfo={onShowInfo}
             // pin={{}}
             currencies={data}
             chainId={chainId}

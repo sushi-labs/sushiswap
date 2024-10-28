@@ -11,6 +11,7 @@ import {
 interface TokenSelectorTrendingTokens {
   chainId: TrendingTokensChainId
   onSelect(currency: Type): void
+  onShowInfo(currency: Type | false): void
   selected: Type | undefined
 }
 
@@ -30,6 +31,7 @@ const emptyMap = new Map()
 export function TokenSelectorTrendingTokens({
   chainId,
   onSelect,
+  onShowInfo,
   selected,
 }: TokenSelectorTrendingTokens) {
   const { data, isError, isLoading } = useTrendingTokens({ chainId })
@@ -65,6 +67,7 @@ export function TokenSelectorTrendingTokens({
         id="trending"
         selected={selected}
         onSelect={onSelect}
+        onShowInfo={onShowInfo}
         // pin={{}}
         currencies={data}
         chainId={chainId}
