@@ -72,6 +72,7 @@ export const createProductionConfig = () => {
         fetchOptions,
         onFetchRequest(_req) {
           if (typeof window !== 'undefined' && transportUrl.includes('drpc')) {
+            drpcJwt && _req.headers.set('Authorization', drpcJwt)
             try {
               _req.json().then((json) => {
                 gtagEvent('drpc-request', {
