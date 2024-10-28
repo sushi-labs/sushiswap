@@ -179,7 +179,8 @@ export abstract class AlgebraV1BaseProvider extends UniswapV3BaseProvider {
     const existingPools: V3Pool[] = []
 
     for (let i = 0; i < staticPools.length; i++) {
-      const pool = staticPools[i]!
+      if (globalState === undefined || !globalState[i]) continue
+      const pool = staticPools[i]! 
       let thisTickSpacing = this.DEFAULT_TICK_SPACING
       if (tickSpacings !== undefined && Array.isArray(tickSpacings)) {
         if (tickSpacings[i] !== undefined) {
@@ -193,7 +194,6 @@ export abstract class AlgebraV1BaseProvider extends UniswapV3BaseProvider {
           }
         }
       }
-      if (globalState === undefined || !globalState[i]) continue
       const sqrtPriceX96 = globalState[i]!.result?.[0] // price
       const tick = globalState[i]!.result?.[1] // tick
       if (!sqrtPriceX96 || sqrtPriceX96 === 0n || typeof tick !== 'number')
