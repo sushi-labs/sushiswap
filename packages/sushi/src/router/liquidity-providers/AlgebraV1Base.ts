@@ -180,7 +180,7 @@ export abstract class AlgebraV1BaseProvider extends UniswapV3BaseProvider {
 
     for (let i = 0; i < staticPools.length; i++) {
       if (globalState === undefined || !globalState[i]) continue
-      const pool = staticPools[i]! 
+      const pool = staticPools[i]!
       let thisTickSpacing = this.DEFAULT_TICK_SPACING
       if (tickSpacings !== undefined && Array.isArray(tickSpacings)) {
         if (tickSpacings[i] !== undefined) {
