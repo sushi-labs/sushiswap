@@ -1,9 +1,9 @@
-import { XMarkIcon } from '@heroicons/react/20/solid'
 import {
   ArrowLeftIcon,
   ChartBarSquareIcon,
   DocumentDuplicateIcon,
 } from '@heroicons/react/24/outline'
+import { XMarkIcon } from '@heroicons/react/24/solid'
 import {
   ExclamationTriangleIcon,
   HandThumbUpIcon,
@@ -75,29 +75,29 @@ export const CurrencyInfo: FC<CurrencyInfoProps> = ({ currency, onBack }) => {
   }, [tokenSecurityInfo, currency.wrapped])
 
   return (
-    <div className="absolute inset-0 z-20 bg-gray-100 dark:bg-slate-800 flex flex-col gap-4 py-6 rounded-2xl md:rounded-r-2xl">
-      <DialogHeader className="px-6 flex !flex-row justify-between items-center">
-        <DialogTitle className="flex gap-2 items-center">
-          <IconButton
-            size="sm"
-            onClick={onBack}
-            icon={ArrowLeftIcon}
-            name="Back"
-            variant="ghost"
-          />
-          <div className="flex gap-1 items-center">
-            <span className="text-xl font-medium">{currency.symbol}</span>
-            <span className="text-muted-foreground text-base font-normal">
-              {Chain.from(currency.chainId)?.name}
-            </span>
-          </div>
-        </DialogTitle>
-        <DialogPrimitive.Close asChild>
-          <IconButton icon={XMarkIcon} name="Close" />
-        </DialogPrimitive.Close>
-      </DialogHeader>
-      <div className="px-6 overflow-y-auto">
-        <div>
+    <div className="absolute inset-0 z-20 py-6 bg-gray-100 dark:bg-slate-800 rounded-2xl">
+      <DialogPrimitive.Close asChild className="absolute top-6 right-6">
+        <IconButton icon={XMarkIcon} name="Close" />
+      </DialogPrimitive.Close>
+      <div className="flex flex-col gap-4 h-full">
+        <DialogHeader className="px-6">
+          <DialogTitle className="flex gap-2 items-center">
+            <IconButton
+              size="sm"
+              onClick={onBack}
+              icon={ArrowLeftIcon}
+              name="Back"
+              variant="ghost"
+            />
+            <div className="flex gap-1 items-center">
+              <span className="text-xl font-medium">{currency.symbol}</span>
+              <span className="text-muted-foreground text-base font-normal">
+                {Chain.from(currency.chainId)?.name}
+              </span>
+            </div>
+          </DialogTitle>
+        </DialogHeader>
+        <div className="px-6 overflow-y-auto">
           <div className="flex gap-1 items-center py-2">
             <ChartBarSquareIcon className="h-4 w-4" />
             <span className="font-medium">Market Info</span>
@@ -252,106 +252,109 @@ export const CurrencyInfo: FC<CurrencyInfoProps> = ({ currency, onBack }) => {
               </span>
             </div>
           </div>
-        </div>
-        <Separator className="my-6" />
-        <div className="flex flex-col gap-6">
-          <div className="flex justify-between items-center">
-            <div className="flex flex-col gap-1">
-              <span className="font-medium text-sm">Token Security</span>
-              <div className="flex items-center text-xs">
-                powered by GoPlus
-                <GoPlusLabsIcon width={16} height={20} />
+          <Separator className="my-6" />
+
+          <div className="flex flex-col gap-6">
+            <div className="flex justify-between items-center">
+              <div className="flex flex-col gap-1">
+                <span className="font-medium text-sm">Token Security</span>
+                <div className="flex items-center text-xs">
+                  powered by GoPlus
+                  <GoPlusLabsIcon width={16} height={20} />
+                </div>
+              </div>
+              <div>
+                <div
+                  className={classNames(
+                    'rounded-full flex items-center px-2 py-1.5 gap-1',
+                    isTokenSecurityInfoLoading
+                      ? 'bg-muted'
+                      : Number(issues?.length) > 0
+                        ? 'bg-yellow/20 text-yellow'
+                        : 'bg-green/20 text-green',
+                  )}
+                >
+                  {isTokenSecurityInfoLoading ? (
+                    <Loader width={16} height={16} />
+                  ) : Number(issues?.length) > 0 ? (
+                    <ExclamationTriangleIcon width={16} height={16} />
+                  ) : (
+                    <HandThumbUpIcon width={16} height={16} />
+                  )}
+                  {isTokenSecurityInfoLoading ? (
+                    <span className="text-sm">Pending</span>
+                  ) : (
+                    <span className="text-sm">{`${Number(
+                      issues?.length,
+                    )} issue${
+                      Number(issues?.length) !== 1 ? 's' : ''
+                    } found`}</span>
+                  )}
+                </div>
               </div>
             </div>
-            <div>
-              <div
-                className={classNames(
-                  'rounded-full flex items-center px-2 py-1.5 gap-1',
-                  isTokenSecurityInfoLoading
-                    ? 'bg-muted'
-                    : Number(issues?.length) > 0
-                      ? 'bg-yellow/20 text-yellow'
-                      : 'bg-green/20 text-green',
-                )}
+            <div className="flex flex-col gap-3">
+              {isTokenSecurityInfoLoading ? <SkeletonText /> : null}
+              {issues.map((key) => (
+                <div key={key} className="flex justify-between">
+                  <div className="flex gap-1 text-muted-foreground">
+                    {TokenSecurityLabel[key]}
+                    <Explainer>{TokenSecurityMessage[key]}</Explainer>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <div>
+                      {tokenSecurity?.[key] === undefined
+                        ? 'Unknown'
+                        : tokenSecurity[key]
+                          ? 'Yes'
+                          : 'No'}
+                    </div>
+                    <ExclamationTriangleIcon
+                      width={14}
+                      height={14}
+                      className="fill-yellow"
+                    />
+                  </div>
+                </div>
+              ))}
+              {showMore
+                ? nonIssues.map((key) => (
+                    <div
+                      key={key}
+                      className="flex justify-between text-muted-foreground"
+                    >
+                      <div className="flex gap-1 text-muted-foreground">
+                        {TokenSecurityLabel[key]}
+                        <Explainer>{TokenSecurityMessage[key]}</Explainer>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <span>{tokenSecurity?.[key] ? 'Yes' : 'No'}</span>
+                        <HandThumbUpIcon
+                          width={14}
+                          height={14}
+                          className="fill-green"
+                        />
+                      </div>
+                    </div>
+                  ))
+                : null}
+              <Button
+                size="xs"
+                fullWidth
+                onClick={() => setShowMore(!showMore)}
+                variant="secondary"
               >
-                {isTokenSecurityInfoLoading ? (
-                  <Loader width={16} height={16} />
-                ) : Number(issues?.length) > 0 ? (
-                  <ExclamationTriangleIcon width={16} height={16} />
+                {showMore ? (
+                  <>
+                    <SelectIcon className="rotate-180" />
+                  </>
                 ) : (
-                  <HandThumbUpIcon width={16} height={16} />
+                  <>
+                    <SelectIcon />
+                  </>
                 )}
-                {isTokenSecurityInfoLoading ? (
-                  <span className="text-sm">Pending</span>
-                ) : (
-                  <span className="text-sm">{`${Number(issues?.length)} issue${
-                    Number(issues?.length) !== 1 ? 's' : ''
-                  } found`}</span>
-                )}
-              </div>
+              </Button>
             </div>
-          </div>
-          <div className="flex flex-col gap-3">
-            {isTokenSecurityInfoLoading ? <SkeletonText /> : null}
-            {issues.map((key) => (
-              <div key={key} className="flex justify-between">
-                <div className="flex gap-1 text-muted-foreground">
-                  {TokenSecurityLabel[key]}
-                  <Explainer>{TokenSecurityMessage[key]}</Explainer>
-                </div>
-                <div className="flex items-center gap-1">
-                  <div>
-                    {tokenSecurity?.[key] === undefined
-                      ? 'Unknown'
-                      : tokenSecurity[key]
-                        ? 'Yes'
-                        : 'No'}
-                  </div>
-                  <ExclamationTriangleIcon
-                    width={14}
-                    height={14}
-                    className="fill-yellow"
-                  />
-                </div>
-              </div>
-            ))}
-            {showMore
-              ? nonIssues.map((key) => (
-                  <div
-                    key={key}
-                    className="flex justify-between text-muted-foreground"
-                  >
-                    <div className="flex gap-1 text-muted-foreground">
-                      {TokenSecurityLabel[key]}
-                      <Explainer>{TokenSecurityMessage[key]}</Explainer>
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <span>{tokenSecurity?.[key] ? 'Yes' : 'No'}</span>
-                      <HandThumbUpIcon
-                        width={14}
-                        height={14}
-                        className="fill-green"
-                      />
-                    </div>
-                  </div>
-                ))
-              : null}
-            <Button
-              size="xs"
-              fullWidth
-              onClick={() => setShowMore(!showMore)}
-              variant="secondary"
-            >
-              {showMore ? (
-                <>
-                  <SelectIcon className="rotate-180" />
-                </>
-              ) : (
-                <>
-                  <SelectIcon />
-                </>
-              )}
-            </Button>
           </div>
         </div>
       </div>
