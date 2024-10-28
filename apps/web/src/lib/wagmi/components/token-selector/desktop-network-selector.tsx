@@ -35,13 +35,15 @@ export const DesktopNetworkSelector: FC<DesktopNetworkSelector> = ({
   )
 
   return (
-    <Command className="!w-56 flex-none">
-      <CommandInput
-        testdata-id="network-selector-input"
-        placeholder="Search network"
-      />
-      <CommandEmpty>No network found.</CommandEmpty>
-      <CommandGroup className="overflow-y-auto">
+    <Command className="!w-56 flex-none pt-3 bg-white dark:!bg-secondary rounded-r-none rounded-l-2xl">
+      <div className="mx-3 bg-secondary rounded-lg">
+        <CommandInput
+          testdata-id="network-selector-input"
+          placeholder="Search network"
+        />
+      </div>
+      <CommandEmpty className="px-1">No network found.</CommandEmpty>
+      <CommandGroup className="overflow-y-auto px-1 pb-1">
         {networks.map((network) => {
           const name = getNetworkName(network)
 

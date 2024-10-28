@@ -70,7 +70,7 @@ export const MobileNetworkSelector: FC<MobileNetworkSelector> = ({
         </Button>
       </div>
       {open ? (
-        <div className="absolute inset-0 z-20 p-6 rounded-2xl bg-gray-100 dark:bg-slate-800">
+        <div className="absolute inset-0 z-20 p-5 bg-gray-100 dark:bg-slate-800 rounded-t-2xl">
           <div className="flex flex-col gap-4 h-full">
             <DialogHeader>
               <DialogTitle className="flex gap-2 items-center">
