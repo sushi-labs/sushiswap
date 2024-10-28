@@ -72,7 +72,7 @@ export const MobileNetworkSelector: FC<MobileNetworkSelector> = ({
       {open ? (
         <div className="absolute inset-0 z-20 p-5 bg-gray-100 dark:bg-slate-800 rounded-t-2xl">
           <div className="flex flex-col gap-4 h-full">
-            <DialogHeader>
+            <DialogHeader className="flex !flex-row justify-between items-center">
               <DialogTitle className="flex gap-2 items-center">
                 <IconButton
                   size="sm"
@@ -82,13 +82,10 @@ export const MobileNetworkSelector: FC<MobileNetworkSelector> = ({
                   variant="ghost"
                 />
                 <span className="text-xl">Select a chain</span>
-                <DialogPrimitive.Close
-                  asChild
-                  className="absolute top-6 right-6"
-                >
-                  <IconButton icon={XMarkIcon} name="Close" />
-                </DialogPrimitive.Close>
               </DialogTitle>
+              <DialogPrimitive.Close asChild>
+                <IconButton icon={XMarkIcon} name="Close" />
+              </DialogPrimitive.Close>
             </DialogHeader>
             <div className="overflow-y-auto h-full">
               {networks.map((network) => (

@@ -1,3 +1,4 @@
+import { XMarkIcon } from '@heroicons/react/20/solid'
 import {
   ArrowLeftIcon,
   ChartBarSquareIcon,
@@ -11,6 +12,7 @@ import {
   Button,
   ClipboardController,
   DialogHeader,
+  DialogPrimitive,
   DialogTitle,
   Explainer,
   IconButton,
@@ -73,11 +75,11 @@ export const CurrencyInfo: FC<CurrencyInfoProps> = ({ currency, onBack }) => {
   }, [tokenSecurityInfo, currency.wrapped])
 
   return (
-    <div className="absolute inset-0 z-20 bg-gray-100 dark:bg-slate-800 flex flex-col gap-4 p-6 rounded-2xl md:rounded-r-2xl overflow-y-auto">
-      <DialogHeader>
+    <div className="absolute inset-0 z-20 bg-gray-100 dark:bg-slate-800 flex flex-col gap-4 py-6 rounded-2xl md:rounded-r-2xl">
+      <DialogHeader className="px-6 flex !flex-row justify-between items-center">
         <DialogTitle className="flex gap-2 items-center">
           <IconButton
-            size="xs"
+            size="sm"
             onClick={onBack}
             icon={ArrowLeftIcon}
             name="Back"
@@ -90,256 +92,267 @@ export const CurrencyInfo: FC<CurrencyInfoProps> = ({ currency, onBack }) => {
             </span>
           </div>
         </DialogTitle>
+        <DialogPrimitive.Close asChild>
+          <IconButton icon={XMarkIcon} name="Close" />
+        </DialogPrimitive.Close>
       </DialogHeader>
-      <div>
-        <div className="flex gap-1 items-center py-2">
-          <ChartBarSquareIcon className="h-4 w-4" />
-          <span className="font-medium">Market Info</span>
+      <div className="px-6 overflow-y-auto">
+        <div>
+          <div className="flex gap-1 items-center py-2">
+            <ChartBarSquareIcon className="h-4 w-4" />
+            <span className="font-medium">Market Info</span>
+          </div>
+          <div className="flex flex-col gap-2">
+            <div className="flex justify-between">
+              <span className="text-muted-foreground text-sm">Price</span>
+              {isCoinGeckoInfoLoading ? (
+                <span className="w-12">
+                  <SkeletonText fontSize="sm" />
+                </span>
+              ) : (
+                <span className="text-sm">
+                  {coinGeckoInfo?.price ? formatUSD(coinGeckoInfo.price) : '-'}
+                </span>
+              )}
+            </div>
+            <div className="flex justify-between">
+              <span className="text-muted-foreground text-sm">
+                Market Cap Rank
+              </span>
+              {isCoinGeckoInfoLoading ? (
+                <span className="w-12">
+                  <SkeletonText fontSize="sm" />
+                </span>
+              ) : (
+                <span className="text-sm">
+                  {coinGeckoInfo?.rank ? `#${coinGeckoInfo.rank}` : '-'}
+                </span>
+              )}
+            </div>
+            <div className="flex justify-between">
+              <span className="text-muted-foreground text-sm">
+                Trading Volume (24H)
+              </span>
+              {isCoinGeckoInfoLoading ? (
+                <span className="w-12">
+                  <SkeletonText fontSize="sm" />
+                </span>
+              ) : (
+                <span className="text-sm">
+                  {coinGeckoInfo?.volume24h
+                    ? formatUSD(coinGeckoInfo.volume24h)
+                    : '-'}
+                </span>
+              )}
+            </div>
+            <div className="flex justify-between">
+              <span className="text-muted-foreground text-sm">Market Cap</span>
+              {isCoinGeckoInfoLoading ? (
+                <span className="w-12">
+                  <SkeletonText fontSize="sm" />
+                </span>
+              ) : (
+                <span className="text-sm">
+                  {coinGeckoInfo?.marketCap
+                    ? formatUSD(coinGeckoInfo.marketCap)
+                    : '-'}
+                </span>
+              )}
+            </div>
+            <div className="flex justify-between">
+              <span className="text-muted-foreground text-sm">
+                All-Time High
+              </span>
+              {isCoinGeckoInfoLoading ? (
+                <span className="w-12">
+                  <SkeletonText fontSize="sm" />
+                </span>
+              ) : (
+                <span className="text-sm">
+                  {coinGeckoInfo?.ath ? formatUSD(coinGeckoInfo.ath) : '-'}
+                </span>
+              )}
+            </div>
+            <div className="flex justify-between">
+              <span className="text-muted-foreground text-sm">
+                All-Time Low
+              </span>
+              {isCoinGeckoInfoLoading ? (
+                <span className="w-12">
+                  <SkeletonText fontSize="sm" />
+                </span>
+              ) : (
+                <span className="text-sm">
+                  {coinGeckoInfo?.atl ? formatUSD(coinGeckoInfo.atl) : '-'}
+                </span>
+              )}
+            </div>
+            <div className="flex justify-between">
+              <span className="text-muted-foreground text-sm">
+                Circulating Supply
+              </span>
+              {isCoinGeckoInfoLoading ? (
+                <span className="w-12">
+                  <SkeletonText fontSize="sm" />
+                </span>
+              ) : (
+                <span className="text-sm">
+                  {coinGeckoInfo?.circulatingSupply
+                    ? formatNumber(coinGeckoInfo.circulatingSupply)
+                    : '-'}
+                </span>
+              )}
+            </div>
+            <div className="flex justify-between">
+              <span className="text-muted-foreground text-sm">
+                Total Supply
+              </span>
+              {isCoinGeckoInfoLoading ? (
+                <span className="w-12">
+                  <SkeletonText fontSize="sm" />
+                </span>
+              ) : (
+                <span className="text-sm">
+                  {coinGeckoInfo?.totalSupply
+                    ? formatNumber(coinGeckoInfo.totalSupply)
+                    : '-'}
+                </span>
+              )}
+            </div>
+            <div className="flex justify-between">
+              <span className="text-muted-foreground text-sm">
+                Contract Address
+              </span>
+              <span className="flex gap-1 items-center">
+                <LinkExternal
+                  className="font-medium"
+                  href={Chain.from(currency.chainId)?.getTokenUrl(
+                    currency.wrapped.address,
+                  )}
+                >
+                  {shortenAddress(currency.wrapped.address)}
+                </LinkExternal>
+                <ClipboardController hideTooltip>
+                  {({ setCopied }) => (
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <DocumentDuplicateIcon
+                            className="h-4 w-4 cursor-pointer"
+                            onClick={() => setCopied(currency.wrapped.address)}
+                          />
+                        </TooltipTrigger>
+                        <TooltipContent side="bottom">
+                          <p>Copy address</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  )}
+                </ClipboardController>
+              </span>
+            </div>
+          </div>
         </div>
-        <div className="flex flex-col gap-2">
-          <div className="flex justify-between">
-            <span className="text-muted-foreground text-sm">Price</span>
-            {isCoinGeckoInfoLoading ? (
-              <span className="w-12">
-                <SkeletonText fontSize="sm" />
-              </span>
-            ) : (
-              <span className="text-sm">
-                {coinGeckoInfo?.price ? formatUSD(coinGeckoInfo.price) : '-'}
-              </span>
-            )}
-          </div>
-          <div className="flex justify-between">
-            <span className="text-muted-foreground text-sm">
-              Market Cap Rank
-            </span>
-            {isCoinGeckoInfoLoading ? (
-              <span className="w-12">
-                <SkeletonText fontSize="sm" />
-              </span>
-            ) : (
-              <span className="text-sm">
-                {coinGeckoInfo?.rank ? `#${coinGeckoInfo.rank}` : '-'}
-              </span>
-            )}
-          </div>
-          <div className="flex justify-between">
-            <span className="text-muted-foreground text-sm">
-              Trading Volume (24H)
-            </span>
-            {isCoinGeckoInfoLoading ? (
-              <span className="w-12">
-                <SkeletonText fontSize="sm" />
-              </span>
-            ) : (
-              <span className="text-sm">
-                {coinGeckoInfo?.volume24h
-                  ? formatUSD(coinGeckoInfo.volume24h)
-                  : '-'}
-              </span>
-            )}
-          </div>
-          <div className="flex justify-between">
-            <span className="text-muted-foreground text-sm">Market Cap</span>
-            {isCoinGeckoInfoLoading ? (
-              <span className="w-12">
-                <SkeletonText fontSize="sm" />
-              </span>
-            ) : (
-              <span className="text-sm">
-                {coinGeckoInfo?.marketCap
-                  ? formatUSD(coinGeckoInfo.marketCap)
-                  : '-'}
-              </span>
-            )}
-          </div>
-          <div className="flex justify-between">
-            <span className="text-muted-foreground text-sm">All-Time High</span>
-            {isCoinGeckoInfoLoading ? (
-              <span className="w-12">
-                <SkeletonText fontSize="sm" />
-              </span>
-            ) : (
-              <span className="text-sm">
-                {coinGeckoInfo?.ath ? formatUSD(coinGeckoInfo.ath) : '-'}
-              </span>
-            )}
-          </div>
-          <div className="flex justify-between">
-            <span className="text-muted-foreground text-sm">All-Time Low</span>
-            {isCoinGeckoInfoLoading ? (
-              <span className="w-12">
-                <SkeletonText fontSize="sm" />
-              </span>
-            ) : (
-              <span className="text-sm">
-                {coinGeckoInfo?.atl ? formatUSD(coinGeckoInfo.atl) : '-'}
-              </span>
-            )}
-          </div>
-          <div className="flex justify-between">
-            <span className="text-muted-foreground text-sm">
-              Circulating Supply
-            </span>
-            {isCoinGeckoInfoLoading ? (
-              <span className="w-12">
-                <SkeletonText fontSize="sm" />
-              </span>
-            ) : (
-              <span className="text-sm">
-                {coinGeckoInfo?.circulatingSupply
-                  ? formatNumber(coinGeckoInfo.circulatingSupply)
-                  : '-'}
-              </span>
-            )}
-          </div>
-          <div className="flex justify-between">
-            <span className="text-muted-foreground text-sm">Total Supply</span>
-            {isCoinGeckoInfoLoading ? (
-              <span className="w-12">
-                <SkeletonText fontSize="sm" />
-              </span>
-            ) : (
-              <span className="text-sm">
-                {coinGeckoInfo?.totalSupply
-                  ? formatNumber(coinGeckoInfo.totalSupply)
-                  : '-'}
-              </span>
-            )}
-          </div>
-          <div className="flex justify-between">
-            <span className="text-muted-foreground text-sm">
-              Contract Address
-            </span>
-            <span className="flex gap-1 items-center">
-              <LinkExternal
-                className="font-medium"
-                href={Chain.from(currency.chainId)?.getTokenUrl(
-                  currency.wrapped.address,
+        <Separator className="my-6" />
+        <div className="flex flex-col gap-6">
+          <div className="flex justify-between items-center">
+            <div className="flex flex-col gap-1">
+              <span className="font-medium text-sm">Token Security</span>
+              <div className="flex items-center text-xs">
+                powered by GoPlus
+                <GoPlusLabsIcon width={16} height={20} />
+              </div>
+            </div>
+            <div>
+              <div
+                className={classNames(
+                  'rounded-full flex items-center px-2 py-1.5 gap-1',
+                  isTokenSecurityInfoLoading
+                    ? 'bg-muted'
+                    : Number(issues?.length) > 0
+                      ? 'bg-yellow/20 text-yellow'
+                      : 'bg-green/20 text-green',
                 )}
               >
-                {shortenAddress(currency.wrapped.address)}
-              </LinkExternal>
-              <ClipboardController hideTooltip>
-                {({ setCopied }) => (
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <DocumentDuplicateIcon
-                          className="h-4 w-4 cursor-pointer"
-                          onClick={() => setCopied(currency.wrapped.address)}
-                        />
-                      </TooltipTrigger>
-                      <TooltipContent side="bottom">
-                        <p>Copy address</p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
+                {isTokenSecurityInfoLoading ? (
+                  <Loader width={16} height={16} />
+                ) : Number(issues?.length) > 0 ? (
+                  <ExclamationTriangleIcon width={16} height={16} />
+                ) : (
+                  <HandThumbUpIcon width={16} height={16} />
                 )}
-              </ClipboardController>
-            </span>
-          </div>
-        </div>
-      </div>
-      <Separator />
-      <div className="flex flex-col gap-6">
-        <div className="flex justify-between items-center">
-          <div className="flex flex-col gap-1">
-            <span className="font-medium text-sm">Token Security</span>
-            <div className="flex items-center text-xs">
-              powered by GoPlus
-              <GoPlusLabsIcon width={16} height={20} />
+                {isTokenSecurityInfoLoading ? (
+                  <span className="text-sm">Pending</span>
+                ) : (
+                  <span className="text-sm">{`${Number(issues?.length)} issue${
+                    Number(issues?.length) !== 1 ? 's' : ''
+                  } found`}</span>
+                )}
+              </div>
             </div>
           </div>
-          <div>
-            <div
-              className={classNames(
-                'rounded-full flex items-center px-2 py-1.5 gap-1',
-                isTokenSecurityInfoLoading
-                  ? 'bg-muted'
-                  : Number(issues?.length) > 0
-                    ? 'bg-yellow/20 text-yellow'
-                    : 'bg-green/20 text-green',
-              )}
+          <div className="flex flex-col gap-3">
+            {isTokenSecurityInfoLoading ? <SkeletonText /> : null}
+            {issues.map((key) => (
+              <div key={key} className="flex justify-between">
+                <div className="flex gap-1 text-muted-foreground">
+                  {TokenSecurityLabel[key]}
+                  <Explainer>{TokenSecurityMessage[key]}</Explainer>
+                </div>
+                <div className="flex items-center gap-1">
+                  <div>
+                    {tokenSecurity?.[key] === undefined
+                      ? 'Unknown'
+                      : tokenSecurity[key]
+                        ? 'Yes'
+                        : 'No'}
+                  </div>
+                  <ExclamationTriangleIcon
+                    width={14}
+                    height={14}
+                    className="fill-yellow"
+                  />
+                </div>
+              </div>
+            ))}
+            {showMore
+              ? nonIssues.map((key) => (
+                  <div
+                    key={key}
+                    className="flex justify-between text-muted-foreground"
+                  >
+                    <div className="flex gap-1 text-muted-foreground">
+                      {TokenSecurityLabel[key]}
+                      <Explainer>{TokenSecurityMessage[key]}</Explainer>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <span>{tokenSecurity?.[key] ? 'Yes' : 'No'}</span>
+                      <HandThumbUpIcon
+                        width={14}
+                        height={14}
+                        className="fill-green"
+                      />
+                    </div>
+                  </div>
+                ))
+              : null}
+            <Button
+              size="xs"
+              fullWidth
+              onClick={() => setShowMore(!showMore)}
+              variant="secondary"
             >
-              {isTokenSecurityInfoLoading ? (
-                <Loader width={16} height={16} />
-              ) : Number(issues?.length) > 0 ? (
-                <ExclamationTriangleIcon width={16} height={16} />
+              {showMore ? (
+                <>
+                  <SelectIcon className="rotate-180" />
+                </>
               ) : (
-                <HandThumbUpIcon width={16} height={16} />
+                <>
+                  <SelectIcon />
+                </>
               )}
-              {isTokenSecurityInfoLoading ? (
-                <span className="text-sm">Pending</span>
-              ) : (
-                <span className="text-sm">{`${Number(issues?.length)} issue${
-                  Number(issues?.length) !== 1 ? 's' : ''
-                } found`}</span>
-              )}
-            </div>
+            </Button>
           </div>
-        </div>
-        <div className="flex flex-col gap-3">
-          {isTokenSecurityInfoLoading ? <SkeletonText /> : null}
-          {issues.map((key) => (
-            <div key={key} className="flex justify-between">
-              <div className="flex gap-1 text-muted-foreground">
-                {TokenSecurityLabel[key]}
-                <Explainer>{TokenSecurityMessage[key]}</Explainer>
-              </div>
-              <div className="flex items-center gap-1">
-                <div>
-                  {tokenSecurity?.[key] === undefined
-                    ? 'Unknown'
-                    : tokenSecurity[key]
-                      ? 'Yes'
-                      : 'No'}
-                </div>
-                <ExclamationTriangleIcon
-                  width={14}
-                  height={14}
-                  className="fill-yellow"
-                />
-              </div>
-            </div>
-          ))}
-          {showMore
-            ? nonIssues.map((key) => (
-                <div
-                  key={key}
-                  className="flex justify-between text-muted-foreground"
-                >
-                  <div className="flex gap-1 text-muted-foreground">
-                    {TokenSecurityLabel[key]}
-                    <Explainer>{TokenSecurityMessage[key]}</Explainer>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <span>{tokenSecurity?.[key] ? 'Yes' : 'No'}</span>
-                    <HandThumbUpIcon
-                      width={14}
-                      height={14}
-                      className="fill-green"
-                    />
-                  </div>
-                </div>
-              ))
-            : null}
-          <Button
-            size="xs"
-            fullWidth
-            onClick={() => setShowMore(!showMore)}
-            variant="secondary"
-          >
-            {showMore ? (
-              <>
-                <SelectIcon className="rotate-180" />
-              </>
-            ) : (
-              <>
-                <SelectIcon />
-              </>
-            )}
-          </Button>
         </div>
       </div>
     </div>

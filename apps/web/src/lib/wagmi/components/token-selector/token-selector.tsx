@@ -15,6 +15,7 @@ import {
   DialogTitle,
   DialogTrigger,
   TextField,
+  classNames,
   gtagEvent,
 } from '@sushiswap/ui'
 import React, {
@@ -114,7 +115,12 @@ export const TokenSelector: FC<TokenSelectorProps> = ({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>{children}</DialogTrigger>
-      <DialogContent className="h-[80vh] !flex !flex-col md:!flex-row md:min-w-[720px] w-fit !p-0">
+      <DialogContent
+        className={classNames(
+          'h-[80vh] !flex !flex-col md:!flex-row w-fit !p-0',
+          networks ? 'md:min-w-[720px]' : 'md:min-w-[600px]',
+        )}
+      >
         <Trace
           name={InterfaceEventName.TOKEN_SELECTOR_OPENED}
           modal={InterfaceModalName.TOKEN_SELECTOR}
