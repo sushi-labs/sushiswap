@@ -94,7 +94,7 @@ export const isTokenSecurityIssue = {
   hidden_owner: (value: TokenSecurity['hidden_owner']) => value === true,
   selfdestruct: (value: TokenSecurity['selfdestruct']) => value === true,
   external_call: (value: TokenSecurity['external_call']) => value === true,
-  trust_list: (value: TokenSecurity['trust_list']) => value === true,
+  trust_list: (value: TokenSecurity['trust_list']) => value === false,
   // Trading security
   buy_tax: (value: TokenSecurity['buy_tax']) => value === true,
   sell_tax: (value: TokenSecurity['sell_tax']) => value === true,
