@@ -12,14 +12,16 @@ import { DataFetcherOptions } from '../data-fetcher.js'
 import { getCurrencyCombinations } from '../get-currency-combinations.js'
 import { memoizer } from '../memoizer.js'
 import {
+  NUMBER_OF_SURROUNDING_TICKS,
   PoolFilter,
   StaticPoolUniV3,
   UniswapV3BaseProvider,
   V3Pool,
+  bitmapIndex,
 } from './UniswapV3Base.js'
 
 export abstract class AlgebraV1BaseProvider extends UniswapV3BaseProvider {
-  override TICK_SPACINGS: Record<number, number> = {}
+  override TICK_SPACINGS: Record<string, number> = {}
 
   readonly BASE_FEE = 100
   DEFAULT_TICK_SPACING = 1
@@ -116,7 +118,7 @@ export abstract class AlgebraV1BaseProvider extends UniswapV3BaseProvider {
           return undefined
         })
 
-    let tickSpacings:
+    let poolsTickSpacing:
       | (
           | number
           | {
@@ -155,7 +157,7 @@ export abstract class AlgebraV1BaseProvider extends UniswapV3BaseProvider {
             }) as const,
         ),
       }
-      tickSpacings = options?.memoize
+      poolsTickSpacing = options?.memoize
         ? await (multicallMemoize(tickSpacingsData) as Promise<any>).catch(
             (e) => {
               console.warn(
@@ -181,15 +183,15 @@ export abstract class AlgebraV1BaseProvider extends UniswapV3BaseProvider {
     for (let i = 0; i < staticPools.length; i++) {
       if (globalState === undefined || !globalState[i]) continue
       const pool = staticPools[i]!
-      let thisTickSpacing = this.DEFAULT_TICK_SPACING
-      if (tickSpacings !== undefined && Array.isArray(tickSpacings)) {
-        if (tickSpacings[i] !== undefined) {
-          const ts = tickSpacings[i]
+      let thisPoolTickSpacing = this.DEFAULT_TICK_SPACING
+      if (poolsTickSpacing !== undefined && Array.isArray(poolsTickSpacing)) {
+        if (poolsTickSpacing[i] !== undefined) {
+          const ts = poolsTickSpacing[i]
           if (typeof ts === 'number') {
-            thisTickSpacing = ts
+            thisPoolTickSpacing = ts
           } else {
             if (ts?.status === 'success') {
-              thisTickSpacing = ts.result
+              thisPoolTickSpacing = ts.result
             }
           }
         }
@@ -200,9 +202,9 @@ export abstract class AlgebraV1BaseProvider extends UniswapV3BaseProvider {
         continue
       const fee = globalState[i]!.result?.[2] // fee
       if (!fee) continue
-      const activeTick = Math.floor(tick / thisTickSpacing) * thisTickSpacing
+      const activeTick = Math.floor(tick / thisPoolTickSpacing) * thisPoolTickSpacing
       if (typeof activeTick !== 'number') continue
-      this.TICK_SPACINGS[fee] = this.DEFAULT_TICK_SPACING
+      this.TICK_SPACINGS[pool.address.toLowerCase()] = thisPoolTickSpacing
       existingPools.push({
         ...pool,
         fee,
@@ -212,6 +214,55 @@ export abstract class AlgebraV1BaseProvider extends UniswapV3BaseProvider {
     }
 
     return existingPools
+  }
+
+  override getIndexes(existingPools: V3Pool[]): [number[], number[]] {
+    const minIndexes = existingPools.map((pool) =>
+      bitmapIndex(
+        pool.activeTick - NUMBER_OF_SURROUNDING_TICKS,
+        this.TICK_SPACINGS[pool.address.toLowerCase()]!,
+      ),
+    )
+    const maxIndexes = existingPools.map((pool) =>
+      bitmapIndex(
+        pool.activeTick + NUMBER_OF_SURROUNDING_TICKS,
+        this.TICK_SPACINGS[pool.address.toLowerCase()]!,
+      ),
+    )
+    return [minIndexes, maxIndexes]
+  }
+
+  override handleTickBoundries(
+    i: number,
+    pool: V3Pool,
+    poolTicks: {
+      index: number
+      DLiquidity: bigint
+    }[],
+    minIndexes: number[],
+    maxIndexes: number[],
+  ) {
+    const lowerUnknownTick =
+      minIndexes[i]! * this.TICK_SPACINGS[pool.address.toLowerCase()]! * 256 -
+      this.TICK_SPACINGS[pool.address.toLowerCase()]!
+    console.assert(
+      poolTicks.length === 0 || lowerUnknownTick < poolTicks[0]!.index,
+      'Error 236: unexpected min tick index',
+    )
+    poolTicks.unshift({
+      index: lowerUnknownTick,
+      DLiquidity: 0n,
+    })
+    const upperUnknownTick =
+      (maxIndexes[i]! + 1) * this.TICK_SPACINGS[pool.address.toLowerCase()]! * 256
+    console.assert(
+      poolTicks[poolTicks.length - 1]!.index < upperUnknownTick,
+      'Error 244: unexpected max tick index',
+    )
+    poolTicks.push({
+      index: upperUnknownTick,
+      DLiquidity: 0n,
+    })
   }
 
   override getStaticPools(t1: Token, t2: Token): StaticPoolUniV3[] {

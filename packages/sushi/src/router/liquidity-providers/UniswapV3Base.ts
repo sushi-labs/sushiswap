@@ -193,6 +193,55 @@ export abstract class UniswapV3BaseProvider extends LiquidityProvider {
     return existingPools
   }
 
+  getIndexes(existingPools: V3Pool[]): [number[], number[]] {
+    const minIndexes = existingPools.map((pool) =>
+      bitmapIndex(
+        pool.activeTick - NUMBER_OF_SURROUNDING_TICKS,
+        this.TICK_SPACINGS[pool.fee]!,
+      ),
+    )
+    const maxIndexes = existingPools.map((pool) =>
+      bitmapIndex(
+        pool.activeTick + NUMBER_OF_SURROUNDING_TICKS,
+        this.TICK_SPACINGS[pool.fee]!,
+      ),
+    )
+    return [minIndexes, maxIndexes]
+  }
+
+  handleTickBoundries(
+    i: number,
+    pool: V3Pool,
+    poolTicks: {
+      index: number
+      DLiquidity: bigint
+    }[],
+    minIndexes: number[],
+    maxIndexes: number[],
+  ) {
+    const lowerUnknownTick =
+      minIndexes[i]! * this.TICK_SPACINGS[pool.fee]! * 256 -
+      this.TICK_SPACINGS[pool.fee]!
+    console.assert(
+      poolTicks.length === 0 || lowerUnknownTick < poolTicks[0]!.index,
+      'Error 236: unexpected min tick index',
+    )
+    poolTicks.unshift({
+      index: lowerUnknownTick,
+      DLiquidity: 0n,
+    })
+    const upperUnknownTick =
+      (maxIndexes[i]! + 1) * this.TICK_SPACINGS[pool.fee]! * 256
+    console.assert(
+      poolTicks[poolTicks.length - 1]!.index < upperUnknownTick,
+      'Error 244: unexpected max tick index',
+    )
+    poolTicks.push({
+      index: upperUnknownTick,
+      DLiquidity: 0n,
+    })
+  }
+
   async fetchPoolsForToken(
     t0: Token,
     t1: Token,
@@ -317,18 +366,7 @@ export abstract class UniswapV3BaseProvider extends LiquidityProvider {
       ? (multicallMemoize(token1ContractsData) as Promise<any>)
       : this.client.multicall(token1ContractsData)
 
-    const minIndexes = existingPools.map((pool) =>
-      bitmapIndex(
-        pool.activeTick - NUMBER_OF_SURROUNDING_TICKS,
-        this.TICK_SPACINGS[pool.fee]!,
-      ),
-    )
-    const maxIndexes = existingPools.map((pool) =>
-      bitmapIndex(
-        pool.activeTick + NUMBER_OF_SURROUNDING_TICKS,
-        this.TICK_SPACINGS[pool.fee]!,
-      ),
-    )
+    const [minIndexes, maxIndexes] = this.getIndexes(existingPools)
 
     const wordList = existingPools.flatMap((pool, i) => {
       const minIndex = minIndexes[i]!
@@ -415,27 +453,7 @@ export abstract class UniswapV3BaseProvider extends LiquidityProvider {
         DLiquidity: tick.liquidityNet,
       })).sort((a, b) => a.index - b.index)
 
-      const lowerUnknownTick =
-        minIndexes[i]! * this.TICK_SPACINGS[pool.fee]! * 256 -
-        this.TICK_SPACINGS[pool.fee]!
-      console.assert(
-        poolTicks.length === 0 || lowerUnknownTick < poolTicks[0]!.index,
-        'Error 236: unexpected min tick index',
-      )
-      poolTicks.unshift({
-        index: lowerUnknownTick,
-        DLiquidity: 0n,
-      })
-      const upperUnknownTick =
-        (maxIndexes[i]! + 1) * this.TICK_SPACINGS[pool.fee]! * 256
-      console.assert(
-        poolTicks[poolTicks.length - 1]!.index < upperUnknownTick,
-        'Error 244: unexpected max tick index',
-      )
-      poolTicks.push({
-        index: upperUnknownTick,
-        DLiquidity: 0n,
-      })
+      this.handleTickBoundries(i, pool, poolTicks, minIndexes, maxIndexes)
       //console.log(pool.fee, TICK_SPACINGS[pool.fee], pool.activeTick, minIndexes[i], maxIndexes[i], poolTicks)
 
       const v3Pool = new UniV3Pool(
