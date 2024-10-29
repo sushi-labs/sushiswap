@@ -202,7 +202,8 @@ export abstract class AlgebraV1BaseProvider extends UniswapV3BaseProvider {
         continue
       const fee = globalState[i]!.result?.[2] // fee
       if (!fee) continue
-      const activeTick = Math.floor(tick / thisPoolTickSpacing) * thisPoolTickSpacing
+      const activeTick =
+        Math.floor(tick / thisPoolTickSpacing) * thisPoolTickSpacing
       if (typeof activeTick !== 'number') continue
       this.TICK_SPACINGS[pool.address.toLowerCase()] = thisPoolTickSpacing
       existingPools.push({
@@ -254,7 +255,9 @@ export abstract class AlgebraV1BaseProvider extends UniswapV3BaseProvider {
       DLiquidity: 0n,
     })
     const upperUnknownTick =
-      (maxIndexes[i]! + 1) * this.TICK_SPACINGS[pool.address.toLowerCase()]! * 256
+      (maxIndexes[i]! + 1) *
+      this.TICK_SPACINGS[pool.address.toLowerCase()]! *
+      256
     console.assert(
       poolTicks[poolTicks.length - 1]!.index < upperUnknownTick,
       'Error 244: unexpected max tick index',
