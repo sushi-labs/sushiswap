@@ -53,7 +53,7 @@ export const useTradeQuery = (
     ],
     queryFn: async () => {
       const params = new URL(`${API_BASE_URL}/swap/v5/${chainId}`)
-      // params.searchParams.set('chainId', `${chainId}`)
+      params.searchParams.set('referrer', 'sushi')
       params.searchParams.set(
         'tokenIn',
         `${
