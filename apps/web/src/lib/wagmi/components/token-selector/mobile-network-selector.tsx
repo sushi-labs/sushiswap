@@ -34,14 +34,14 @@ export const MobileNetworkSelector: FC<MobileNetworkSelector> = ({
   return (
     <>
       <div className="flex flex-wrap gap-3">
-        {networks.slice(6).map((network) => (
+        {networks.slice(0, 10).map((network) => (
           <Button
             key={network}
             className={classNames(
               selectedNetwork === network
                 ? 'border-blue'
                 : 'border-transparent',
-              'border flex-grow-0 !px-2',
+              'border !w-12 !h-12',
             )}
             variant="secondary"
             onClick={() => onSelect(network)}
@@ -62,11 +62,11 @@ export const MobileNetworkSelector: FC<MobileNetworkSelector> = ({
           </Button>
         ))}
         <Button
-          className="w-12 h-12"
+          className="!w-12 !h-12"
           variant="secondary"
           onClick={() => setOpen(true)}
         >
-          +{networks.length - 6}
+          +{networks.length - 10}
         </Button>
       </div>
       {open ? (
