@@ -1,27 +1,33 @@
-import { PlusIcon } from '@heroicons/react/24/outline'
 import {
   SlippageToleranceStorageKey,
   useSlippageTolerance,
 } from '@sushiswap/hooks'
-import { Badge } from '@sushiswap/ui'
+import {
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogProvider,
+  DialogReview,
+  DialogTitle,
+} from '@sushiswap/ui'
 import { List } from '@sushiswap/ui'
-import { SkeletonCircle } from '@sushiswap/ui'
-import { Dialog, DialogClose, DialogContent, classNames } from '@sushiswap/ui'
+import { DialogContent, classNames } from '@sushiswap/ui'
 import { useWallet } from '@tronweb3/tronwallet-adapter-react-hooks'
 import Link from 'next/link'
-import { useEffect, useMemo, useRef } from 'react'
+import { useEffect, useMemo } from 'react'
 import { formatPercent } from 'sushi/format'
 import { usePriceImpact } from '~tron/_common/lib/hooks/usePriceImpact'
 import { useReserves } from '~tron/_common/lib/hooks/useReserves'
 import { useRoutes } from '~tron/_common/lib/hooks/useRoutes'
+import { useSwapNetworkFee } from '~tron/_common/lib/hooks/useSwapNetworkFee'
 import { truncateText } from '~tron/_common/lib/utils/formatters'
+import { getIfWrapOrUnwrap } from '~tron/_common/lib/utils/helpers'
 import { getTronscanAddressLink } from '~tron/_common/lib/utils/tronscan-helpers'
 import {
   warningSeverity,
   warningSeverityClassName,
 } from '~tron/_common/lib/utils/warning-severity'
 import { useSwapDispatch, useSwapState } from '~tron/swap/swap-provider'
-import { Icon } from '../General/Icon'
 import { WalletConnector } from '../WalletConnector/WalletConnector'
 import { ReviewSwapDialogTrigger } from './ReviewSwapDialogTrigger'
 import { SwapButton } from './SwapButton'
@@ -29,7 +35,6 @@ import { SwapButton } from './SwapButton'
 export const ReviewSwapDialog = () => {
   const { token0, token1, amountIn, amountOut } = useSwapState()
   const { setRoute, setPriceImpactPercentage } = useSwapDispatch()
-  const closeBtnRef = useRef<HTMLButtonElement>(null)
   const { address, connected } = useWallet()
   const isConnected = address && connected
   const [slippageTolerance] = useSlippageTolerance(
@@ -37,10 +42,6 @@ export const ReviewSwapDialog = () => {
   )
   const slippage =
     slippageTolerance === 'AUTO' ? 0.005 : Number(slippageTolerance) / 100
-
-  const closeModal = () => {
-    closeBtnRef?.current?.click()
-  }
 
   const minOutput = useMemo(() => {
     if (!amountOut) return ''
@@ -55,6 +56,16 @@ export const ReviewSwapDialog = () => {
     return String(output)
   }, [amountOut, slippage, token0, token1, amountIn])
 
+  const swapType = useMemo(() => {
+    return getIfWrapOrUnwrap(token0, token1)
+  }, [token0, token1])
+
+  const { data: networkFeeInTrx } = useSwapNetworkFee({
+    swapType: swapType,
+    address,
+    minOutput: minOutput?.toString() ?? '',
+  })
+
   const { data: routeData, isLoading: isLoadingRoutes } = useRoutes({
     token0,
     token1,
@@ -65,6 +76,7 @@ export const ReviewSwapDialog = () => {
     token0,
     token1,
   })
+
   //these reserves are for is the swap needs an intermediate pair
   const { data: reserves1 } = useReserves({
     pairAddress: routeData?.pairs?.[1],
@@ -86,8 +98,10 @@ export const ReviewSwapDialog = () => {
     reserves: reserves1,
   })
 
-  const priceImpactPercentage =
+  const _priceImpactPercentage =
     (priceImpactPercentage0 ?? 0) + (priceImpactPercentage1 ?? 0)
+  const priceImpactPercentage =
+    _priceImpactPercentage > 100 ? 100 : _priceImpactPercentage
 
   useEffect(() => {
     if (isLoadingRoutes) {
@@ -107,107 +121,88 @@ export const ReviewSwapDialog = () => {
   }, [priceImpactPercentage])
 
   return (
-    <Dialog>
-      <div className="pt-4">
-        {isConnected ? (
-          <ReviewSwapDialogTrigger />
-        ) : (
-          <WalletConnector variant="default" fullWidth size="xl" />
-        )}
-      </div>
-      <DialogContent>
-        <DialogClose ref={closeBtnRef} />
-        <div className="max-w-[504px] mx-auto mt-6">
-          <div className="flex items-start justify-between gap-4 py-2">
-            <div className="flex flex-col flex-grow gap-1">
-              <h1 className="text-3xl font-semibold dark:text-slate-50">
-                Buy {amountOut} {token1?.symbol}
-              </h1>
-              <h1 className="text-lg font-medium text-gray-900 dark:text-slate-300">
-                Sell {amountIn} {token0?.symbol}
-              </h1>
+    <DialogProvider>
+      <DialogReview>
+        {({ confirm }) => (
+          <>
+            <div className="mt-4">
+              {isConnected ? (
+                <ReviewSwapDialogTrigger />
+              ) : (
+                <WalletConnector variant="default" fullWidth size="xl" />
+              )}
             </div>
-            <div className="min-w-[56px] min-h-[56px]">
-              <div className="pr-1">
-                <Badge
-                  position="bottom-right"
-                  badgeContent={
-                    <div className="bg-gray-100 border-2 border-gray-100 rounded-full">
-                      <PlusIcon
-                        strokeWidth={2}
-                        width={24}
-                        height={24}
-                        className="bg-blue text-white rounded-full p-0.5"
-                      />
-                    </div>
-                  }
-                >
-                  {token1 ? (
-                    <Icon currency={token1} width={56} height={56} />
-                  ) : (
-                    <SkeletonCircle
-                      radius={56}
-                      className="bg-gray-100 dark:bg-slate-800"
-                    />
-                  )}
-                </Badge>
-              </div>
-            </div>
-          </div>
-          <div className="flex flex-col gap-3">
-            <List>
-              <List.Control>
-                <List.KeyValue title="Network">TRON</List.KeyValue>
-                <List.KeyValue
-                  title="Price Impact"
-                  subtitle="The impact your trade has on the market price of this pool."
-                >
-                  <span
-                    style={{ color: severityClass }}
-                    className={classNames(
-                      'text-gray-700 text-right dark:text-slate-400',
-                    )}
-                  >
-                    -{formatPercent(priceImpactPercentage / 100)}
-                  </span>
-                </List.KeyValue>
-                <List.KeyValue
-                  title={`Min. received after slippage (${
-                    slippageTolerance === 'AUTO' ? '0.5' : slippageTolerance
-                  }%)`}
-                  subtitle="The minimum amount you are guaranteed to receive."
-                >
-                  {minOutput} {token1?.symbol}
-                </List.KeyValue>
-
-                <List.KeyValue title="Network fee">~$0.00</List.KeyValue>
-              </List.Control>
-
-              {address && (
-                <List className="!pt-2">
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>
+                  Buy {amountOut} {token1?.symbol}
+                </DialogTitle>
+                <DialogDescription>
+                  {swapType === 'wrap'
+                    ? 'Wrap'
+                    : swapType === 'unwrap'
+                      ? 'Unwrap'
+                      : 'Sell'}{' '}
+                  {amountIn} {token0?.symbol}
+                </DialogDescription>
+              </DialogHeader>
+              <div className="flex flex-col gap-4">
+                <List className="!pt-0">
                   <List.Control>
-                    <List.KeyValue title="Recipient">
-                      <Link
-                        target="_blank"
-                        href={getTronscanAddressLink(address)}
+                    <List.KeyValue title="Network">Tron</List.KeyValue>
+                    <List.KeyValue
+                      title="Price Impact"
+                      subtitle="The impact your trade has on the market price of this pool."
+                    >
+                      <span
+                        style={{ color: severityClass }}
                         className={classNames(
-                          'flex items-center gap-2 cursor-pointer text-blue',
+                          'text-gray-700 text-right dark:text-slate-400',
                         )}
-                        rel="noreferrer"
                       >
-                        {truncateText(address)}
-                      </Link>
+                        -{formatPercent(priceImpactPercentage / 100)}
+                      </span>
+                    </List.KeyValue>
+                    <List.KeyValue
+                      title={`Min. received after slippage (${
+                        slippageTolerance === 'AUTO' ? '0.5' : slippageTolerance
+                      }%)`}
+                      subtitle="The minimum amount you are guaranteed to receive."
+                    >
+                      {minOutput} {token1?.symbol}
+                    </List.KeyValue>
+
+                    <List.KeyValue title="Network fee">
+                      <>{networkFeeInTrx ?? '0'} TRX</>
                     </List.KeyValue>
                   </List.Control>
                 </List>
-              )}
-            </List>
-          </div>
-          <div className="pt-4 space-y-4">
-            <SwapButton closeModal={closeModal} minOutput={minOutput} />
-          </div>
-        </div>
-      </DialogContent>
-    </Dialog>
+                {address && (
+                  <List className="!pt-0">
+                    <List.Control>
+                      <List.KeyValue title="Recipient">
+                        <Link
+                          target="_blank"
+                          href={getTronscanAddressLink(address)}
+                          className={classNames(
+                            'flex items-center gap-2 cursor-pointer text-blue hover:underline hover:text-blue-700',
+                          )}
+                          rel="noreferrer"
+                        >
+                          {truncateText(address)}
+                        </Link>
+                      </List.KeyValue>
+                    </List.Control>
+                  </List>
+                )}
+              </div>
+              <DialogFooter>
+                <SwapButton closeModal={confirm} minOutput={minOutput} />
+              </DialogFooter>
+            </DialogContent>
+          </>
+        )}
+      </DialogReview>
+    </DialogProvider>
   )
 }

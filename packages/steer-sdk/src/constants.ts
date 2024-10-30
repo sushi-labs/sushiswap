@@ -18,6 +18,7 @@ export const STEER_SUPPORTED_CHAIN_IDS = [
   ChainId.FANTOM,
   ChainId.BLAST,
   ChainId.ROOTSTOCK,
+  ChainId.FILECOIN,
 ]
 
 export const SteerChainIds = STEER_SUPPORTED_CHAIN_IDS
@@ -44,6 +45,7 @@ export const STEER_PERIPHERY_ADDRESS: Record<SteerChainId, `0x${string}`> = {
   [ChainId.FANTOM]: '0xcb77e4C30D92c8b959811E99213625C7b9490b96',
   [ChainId.BLAST]: '0xdca3251Ebe8f85458E8d95813bCb816460e4bef1',
   [ChainId.ROOTSTOCK]: '0x37cff062d52dd6e9e39df619ccd30c037a36bb83',
+  [ChainId.FILECOIN]: '0xab36D30C1A1C683037Bd7AAC67f29B2e3ECC6576',
 }
 
 export const STEER_SUBGRAPH_URL: Record<SteerChainId, string> = {
@@ -74,4 +76,6 @@ export const STEER_SUBGRAPH_URL: Record<SteerChainId, string> = {
   // [ChainId.MANTA]: 'subgraph.steer.finance/manta/subgraphs/name/steerprotocol/steer-manta'
   [ChainId.ROOTSTOCK]:
     'api.goldsky.com/api/public/project_clohj3ta78ok12nzs5m8yag0b/subgraphs/steer-protocol-rootstock/1.1.1/gn',
+  [ChainId.FILECOIN]:
+    'fil.subgraph.laconic.com/v1/steer-protocol/iRoheeEh2g6CdZ9OnunLwNCFHG8a7TAdtIYNNxboRSKVxgZfjq',
 }

@@ -11,14 +11,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
     return [
       {
-        url: 'https://sushi.com/blog',
+        url: 'https://www.sushi.com/blog',
         lastModified: new Date(),
         changeFrequency: 'yearly',
       },
       ...articles.map(
         (article) =>
           ({
-            url: `https://sushi.com/blog/${article.slug}`,
+            url: `https://www.sushi.com/blog/${article.slug}`,
             lastModified: new Date(article.updatedAt),
             changeFrequency: 'weekly',
           }) as const,

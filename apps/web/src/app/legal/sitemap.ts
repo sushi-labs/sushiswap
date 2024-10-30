@@ -5,7 +5,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   return Object.keys(legalPages).map(
     (page) =>
       ({
-        url: `https://sushi.com/legal/${page}`,
+        url: `https://www.sushi.com/legal/${page}`,
         lastModified: new Date(),
         changeFrequency: 'weekly',
       }) as const,

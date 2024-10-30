@@ -1,3 +1,4 @@
+import { useDebounce } from '@sushiswap/hooks'
 import { useEffect } from 'react'
 import { useAmountsOut } from '~tron/_common/lib/hooks/useAmountsOut'
 import {
@@ -10,11 +11,13 @@ import { TokenInput } from '../Input/TokenInput'
 export const AmountIn = () => {
   const { token0, amountIn, token1 } = useSwapState()
   const { setToken0, setAmountIn, setAmountOut } = useSwapDispatch()
+  const debouncedAmountIn = useDebounce(amountIn, 500)
 
   const { data: amountsOut } = useAmountsOut({
-    amountIn: parseUnits(amountIn, token0.decimals),
+    amountIn: parseUnits(debouncedAmountIn, token0.decimals),
   })
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: Typecheck speedup
   useEffect(() => {
     if (amountsOut && amountsOut?.length !== 0) {
       const _amountOut = formatUnitsForInput(
@@ -24,18 +27,20 @@ export const AmountIn = () => {
       if (_amountOut === '0') {
         setAmountOut('')
       } else {
+        if (amountIn === '0' || amountIn === '') return
         setAmountOut(_amountOut)
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [amountsOut, token1?.decimals, setAmountOut])
+  }, [amountsOut, token1?.decimals, amountIn])
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: Typecheck speedup
   useEffect(() => {
     if (Number(amountIn) === 0) {
       setAmountOut('')
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [amountIn, setAmountOut])
+  }, [amountIn])
 
   return (
     <TokenInput

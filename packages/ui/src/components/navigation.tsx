@@ -45,7 +45,7 @@ const PARTNER_NAVIGATION_LINKS: NavigationElementDropdown['items'] = [
     description: 'Incentivize your token with Sushi rewards.',
   },
   {
-    title: 'List enquiry',
+    title: 'Token Listing',
     href: '/tokenlist-request',
     description: 'Get your token on our default token list.',
   },

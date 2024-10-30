@@ -6,7 +6,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   return aptosChainPaths.map(
     (path) =>
       ({
-        url: `https://sushi.com/aptos/${path}`,
+        url: `https://www.sushi.com/aptos/${path}`,
         lastModified: new Date(),
         changeFrequency: 'weekly',
       }) as const,
