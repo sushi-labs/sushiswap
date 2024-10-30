@@ -58,13 +58,22 @@ async function getGenerics(vault: VaultV1): Promise<SteerStrategyGeneric> {
 
   const prices = await fetch(`https://api.sushi.com/price/v1/${vault.chainId}`)
     .then((data) => data.json())
-    .then((data) => new Map(Object.entries(data) as [Address, number][]))
+    .then(
+      (data) =>
+        new Map(
+          Object.entries(data).map(
+            ([key, value]) => [key.toLowerCase(), value] as [Address, number],
+          ),
+        ),
+    )
 
   const priceExtremes = getPriceExtremes(vault)
   const tokenRatios = await getTokenRatios({
     vault,
     prices,
   })
+  // console.log('vault', vault)
+  // console.log('tokenRatios', tokenRatios)
   const adjustment = getAdjustment(vault)
   const positions =
     (await getVaultPositions({
@@ -111,13 +120,17 @@ export default async function SteerVaultPage({
     { revalidate: 60 * 15 },
   )()) as NonNullable<VaultV1>
 
-  const generics = await unstable_cache(
-    async () => await getGenerics(vault),
-    ['steer-vault-generics', `${params.chainId}:${params.vault}`],
-    {
-      revalidate: 60 * 15,
-    },
-  )()
+  // const generics = await unstable_cache(
+  //   async () => await getGenerics(vault),
+  //   ['steer-vault-generics', `${params.chainId}:${params.vault}`],
+  //   {
+  //     // revalidate: 60 * 15,
+  //   },
+  // )()
+
+  const generics = await getGenerics(vault)
+
+  console.log('generics', generics)
 
   const Component = SteerBaseStrategy
 
