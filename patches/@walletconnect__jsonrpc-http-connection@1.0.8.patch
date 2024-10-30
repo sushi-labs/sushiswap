@@ -1,0 +1,173 @@
+diff --git a/dist/index.es.js b/dist/index.es.js
+index 1644655c1f36b2e22e93701d8d1f67dbd058a6dc..3e2708e1bc19c90dfdaa6d3f3f896c611a6da479 100644
+--- a/dist/index.es.js
++++ b/dist/index.es.js
+@@ -1,2 +1,167 @@
+-import{EventEmitter as m}from"events";import o from"cross-fetch";import{safeJsonStringify as a,safeJsonParse as y}from"@walletconnect/safe-json";import{isHttpUrl as h,formatJsonRpcError as b,parseConnectionError as u}from"@walletconnect/jsonrpc-utils";var P=Object.defineProperty,w=Object.defineProperties,E=Object.getOwnPropertyDescriptors,c=Object.getOwnPropertySymbols,L=Object.prototype.hasOwnProperty,O=Object.prototype.propertyIsEnumerable,l=(r,t,e)=>t in r?P(r,t,{enumerable:!0,configurable:!0,writable:!0,value:e}):r[t]=e,p=(r,t)=>{for(var e in t||(t={}))L.call(t,e)&&l(r,e,t[e]);if(c)for(var e of c(t))O.call(t,e)&&l(r,e,t[e]);return r},v=(r,t)=>w(r,E(t));const j={Accept:"application/json","Content-Type":"application/json"},T="POST",d={headers:j,method:T},g=10;class f{constructor(t,e=!1){if(this.url=t,this.disableProviderPing=e,this.events=new m,this.isAvailable=!1,this.registering=!1,!h(t))throw new Error(`Provided URL is not compatible with HTTP connection: ${t}`);this.url=t,this.disableProviderPing=e}get connected(){return this.isAvailable}get connecting(){return this.registering}on(t,e){this.events.on(t,e)}once(t,e){this.events.once(t,e)}off(t,e){this.events.off(t,e)}removeListener(t,e){this.events.removeListener(t,e)}async open(t=this.url){await this.register(t)}async close(){if(!this.isAvailable)throw new Error("Connection already closed");this.onClose()}async send(t){this.isAvailable||await this.register();try{const e=a(t),s=await(await o(this.url,v(p({},d),{body:e}))).json();this.onPayload({data:s})}catch(e){this.onError(t.id,e)}}async register(t=this.url){if(!h(t))throw new Error(`Provided URL is not compatible with HTTP connection: ${t}`);if(this.registering){const e=this.events.getMaxListeners();return(this.events.listenerCount("register_error")>=e||this.events.listenerCount("open")>=e)&&this.events.setMaxListeners(e+1),new Promise((s,i)=>{this.events.once("register_error",n=>{this.resetMaxListeners(),i(n)}),this.events.once("open",()=>{if(this.resetMaxListeners(),typeof this.isAvailable>"u")return i(new Error("HTTP connection is missing or invalid"));s()})})}this.url=t,this.registering=!0;try{if(!this.disableProviderPing){const e=a({id:1,jsonrpc:"2.0",method:"test",params:[]});await o(t,v(p({},d),{body:e}))}this.onOpen()}catch(e){const s=this.parseError(e);throw this.events.emit("register_error",s),this.onClose(),s}}onOpen(){this.isAvailable=!0,this.registering=!1,this.events.emit("open")}onClose(){this.isAvailable=!1,this.registering=!1,this.events.emit("close")}onPayload(t){if(typeof t.data>"u")return;const e=typeof t.data=="string"?y(t.data):t.data;this.events.emit("payload",e)}onError(t,e){const s=this.parseError(e),i=s.message||s.toString(),n=b(t,i);this.events.emit("payload",n)}parseError(t,e=this.url){return u(t,e,"HTTP")}resetMaxListeners(){this.events.getMaxListeners()>g&&this.events.setMaxListeners(g)}}export{f as HttpConnection,f as default};
++import { EventEmitter as m } from 'events'
++import o from 'cross-fetch'
++import {
++  safeJsonStringify as a,
++  safeJsonParse as y,
++} from '@walletconnect/safe-json'
++import {
++  isHttpUrl as h,
++  formatJsonRpcError as b,
++  parseConnectionError as u,
++} from '@walletconnect/jsonrpc-utils'
++var P = Object.defineProperty,
++  w = Object.defineProperties,
++  E = Object.getOwnPropertyDescriptors,
++  c = Object.getOwnPropertySymbols,
++  L = Object.prototype.hasOwnProperty,
++  O = Object.prototype.propertyIsEnumerable,
++  l = (r, t, e) =>
++    t in r
++      ? P(r, t, { enumerable: !0, configurable: !0, writable: !0, value: e })
++      : (r[t] = e),
++  p = (r, t) => {
++    for (var e in t || (t = {})) L.call(t, e) && l(r, e, t[e])
++    if (c) for (var e of c(t)) O.call(t, e) && l(r, e, t[e])
++    return r
++  },
++  v = (r, t) => w(r, E(t))
++const j = { Accept: 'application/json', 'Content-Type': 'application/json' },
++  T = 'POST',
++  d = { headers: j, method: T },
++  g = 10
++class f {
++  constructor(t, e = !1) {
++    if (
++      ((this.url = t),
++      (this.disableProviderPing = e),
++      (this.events = new m()),
++      (this.isAvailable = !1),
++      (this.registering = !1),
++      !h(t))
++    )
++      throw new Error(
++        `Provided URL is not compatible with HTTP connection: ${t}`,
++      )
++    ;(this.url = t), (this.disableProviderPing = e)
++  }
++  get connected() {
++    return this.isAvailable
++  }
++  get connecting() {
++    return this.registering
++  }
++  on(t, e) {
++    this.events.on(t, e)
++  }
++  once(t, e) {
++    this.events.once(t, e)
++  }
++  off(t, e) {
++    this.events.off(t, e)
++  }
++  removeListener(t, e) {
++    this.events.removeListener(t, e)
++  }
++  async open(t = this.url) {
++    await this.register(t)
++  }
++  async close() {
++    if (!this.isAvailable) throw new Error('Connection already closed')
++    this.onClose()
++  }
++  async send(t) {
++    this.isAvailable || (await this.register())
++    try {
++      let extraHeaders = {}
++
++      if (this.url.includes('drpc') && process.env['NEXT_PUBLIC_DRPC_JWT']) {
++        extraHeaders = {
++          Authorization: process.env['NEXT_PUBLIC_DRPC_JWT'],
++        }
++      }
++
++      const e = a(t),
++        s = await (
++          await o(
++            this.url,
++            v(
++              p(
++                {},
++                {
++                  ...d,
++                  headers: {
++                    ...d.headers,
++                    ...extraHeaders,
++                  },
++                },
++              ),
++              { body: e },
++            ),
++          )
++        ).json()
++      this.onPayload({ data: s })
++    } catch (e) {
++      this.onError(t.id, e)
++    }
++  }
++  async register(t = this.url) {
++    if (!h(t))
++      throw new Error(
++        `Provided URL is not compatible with HTTP connection: ${t}`,
++      )
++    if (this.registering) {
++      const e = this.events.getMaxListeners()
++      return (
++        (this.events.listenerCount('register_error') >= e ||
++          this.events.listenerCount('open') >= e) &&
++          this.events.setMaxListeners(e + 1),
++        new Promise((s, i) => {
++          this.events.once('register_error', (n) => {
++            this.resetMaxListeners(), i(n)
++          }),
++            this.events.once('open', () => {
++              if ((this.resetMaxListeners(), typeof this.isAvailable > 'u'))
++                return i(new Error('HTTP connection is missing or invalid'))
++              s()
++            })
++        })
++      )
++    }
++    ;(this.url = t), (this.registering = !0)
++    try {
++      if (!this.disableProviderPing) {
++        const e = a({ id: 1, jsonrpc: '2.0', method: 'test', params: [] })
++        await o(t, v(p({}, d), { body: e }))
++      }
++      this.onOpen()
++    } catch (e) {
++      const s = this.parseError(e)
++      throw (this.events.emit('register_error', s), this.onClose(), s)
++    }
++  }
++  onOpen() {
++    ;(this.isAvailable = !0), (this.registering = !1), this.events.emit('open')
++  }
++  onClose() {
++    ;(this.isAvailable = !1), (this.registering = !1), this.events.emit('close')
++  }
++  onPayload(t) {
++    if (typeof t.data > 'u') return
++    const e = typeof t.data == 'string' ? y(t.data) : t.data
++    this.events.emit('payload', e)
++  }
++  onError(t, e) {
++    const s = this.parseError(e),
++      i = s.message || s.toString(),
++      n = b(t, i)
++    this.events.emit('payload', n)
++  }
++  parseError(t, e = this.url) {
++    return u(t, e, 'HTTP')
++  }
++  resetMaxListeners() {
++    this.events.getMaxListeners() > g && this.events.setMaxListeners(g)
++  }
++}
++export { f as HttpConnection, f as default }
+ //# sourceMappingURL=index.es.js.map
