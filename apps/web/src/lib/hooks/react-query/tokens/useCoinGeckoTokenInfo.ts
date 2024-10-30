@@ -39,11 +39,11 @@ const COINGECKO_CHAIN_ID_BY_NAME = {
   [ChainId.ROOTSTOCK]: 'rootstock',
   [ChainId.SKALE_EUROPA]: 'skale-europa',
   [ChainId.MANTLE]: 'mantle',
-  // [ChainId.MANTA]: 'manta-pacific',
-  // [ChainId.MODE]: 'mode',
-  // [ChainId.TAIKO]: 'taiko',
-  // [ChainId.ZKLINK]: 'zklink-nova',
-  // [ChainId.APECHAIN]: 'apechain',
+  [ChainId.MANTA]: 'manta-pacific',
+  [ChainId.MODE]: 'mode',
+  [ChainId.TAIKO]: 'taiko',
+  [ChainId.ZKLINK]: 'zklink-nova',
+  [ChainId.APECHAIN]: 'apechain',
 } as const
 
 type CoinGeckoChainId = keyof typeof COINGECKO_CHAIN_ID_BY_NAME
