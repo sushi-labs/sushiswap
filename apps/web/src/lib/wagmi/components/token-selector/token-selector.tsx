@@ -140,7 +140,7 @@ export const TokenSelector: FC<TokenSelectorProps> = ({
                 onBack={() => showCurrencyInfo(false)}
               />
             ) : null}
-            <DialogHeader>
+            <DialogHeader className="!text-left">
               <DialogTitle>Select a token</DialogTitle>
               <DialogDescription>
                 Select a token from our default list or search for a token by
