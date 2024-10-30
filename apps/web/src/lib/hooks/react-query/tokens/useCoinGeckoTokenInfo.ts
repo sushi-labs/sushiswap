@@ -43,7 +43,7 @@ const COINGECKO_CHAIN_ID_BY_NAME = {
   [ChainId.MODE]: 'mode',
   [ChainId.TAIKO]: 'taiko',
   [ChainId.ZKLINK]: 'zklink-nova',
-  [ChainId.APECHAIN]: 'apechain',
+  [ChainId.APE]: 'apechain',
 } as const
 
 type CoinGeckoChainId = keyof typeof COINGECKO_CHAIN_ID_BY_NAME
