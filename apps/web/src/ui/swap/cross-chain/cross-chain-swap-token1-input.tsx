@@ -1,6 +1,9 @@
 'use client'
 
+import { useMemo } from 'react'
+import { PREFERRED_CHAINID_ORDER } from 'src/config'
 import { Web3Input } from 'src/lib/wagmi/components/web3-input'
+import { ChainId } from 'sushi/chain'
 import {
   SUSHIXSWAP_2_SUPPORTED_CHAIN_IDS,
   isWNativeSupported,
@@ -23,6 +26,21 @@ export const CrossChainSwapToken1Input = () => {
     data: trade,
   } = useCrossChainSwapTrade()
 
+  const networks = useMemo(
+    () =>
+      Array.from(
+        new Set([
+          ...(PREFERRED_CHAINID_ORDER.filter((el) =>
+            SUSHIXSWAP_2_SUPPORTED_CHAIN_IDS.includes(
+              el as (typeof SUSHIXSWAP_2_SUPPORTED_CHAIN_IDS)[number],
+            ),
+          ) as ChainId[]),
+          ...SUSHIXSWAP_2_SUPPORTED_CHAIN_IDS,
+        ]),
+      ),
+    [],
+  )
+
   return (
     <Web3Input.Currency
       id="swap-to"
@@ -39,7 +57,7 @@ export const CrossChainSwapToken1Input = () => {
       currencyLoading={tokenLoading}
       allowNative={isWNativeSupported(chainId1)}
       label="Buy"
-      networks={SUSHIXSWAP_2_SUPPORTED_CHAIN_IDS}
+      networks={networks}
       selectedNetwork={chainId1}
       onNetworkChange={setChainId1}
     />
