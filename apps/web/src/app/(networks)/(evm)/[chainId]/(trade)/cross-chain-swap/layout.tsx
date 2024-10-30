@@ -1,3 +1,4 @@
+import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { ChainId } from 'sushi/chain'
 import {
@@ -6,6 +7,12 @@ import {
 } from 'sushi/config'
 import { SidebarContainer } from '~evm/_common/ui/sidebar'
 import { Providers } from './providers'
+
+export const metadata: Metadata = {
+  title: 'Cross-Chain Swap',
+  description:
+    'Swap assets across multiple blockchains with ease using Cross-Chain Swap. Enjoy secure, seamless cross-chain swaps for a streamlined DeFi experience on Sushi.com.',
+}
 
 export default function CrossChainSwapLayout({
   children,

@@ -15,7 +15,6 @@ out/
 build
 dist
 robots.txt
-sitemap*.xml
 analyze/
 
 # misc
