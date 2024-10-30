@@ -1,6 +1,7 @@
 'use client'
 
 import { AnalyticsDayBuckets } from '@sushiswap/graph-client/data-api'
+import { useIsMounted } from '@sushiswap/hooks'
 import format from 'date-fns/format'
 import ReactEcharts from 'echarts-for-react'
 import { EChartsOption } from 'echarts-for-react/lib/types'
@@ -16,6 +17,8 @@ interface TVLChart {
 }
 
 export const TVLChart: FC<TVLChart> = ({ data, chainId }) => {
+  const isMounted = useIsMounted()
+
   const { resolvedTheme } = useTheme()
 
   const [v2, v3, combinedTVL, currentDate] = useMemo(() => {
@@ -195,7 +198,9 @@ export const TVLChart: FC<TVLChart> = ({ data, chainId }) => {
                 id="hoveredTVLDate"
                 className="text-sm text-gray-500 dark:text-slate-500"
               >
-                {format(new Date(currentDate), 'MMM dd yyyy HH:mm aa')}
+                {isMounted
+                  ? format(new Date(currentDate), 'MMM dd yyyy HH:mm aa')
+                  : ''}
               </div>
             </div>
           </div>

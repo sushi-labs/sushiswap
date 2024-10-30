@@ -3,6 +3,7 @@ import {
   isSmartPoolChainId,
 } from '@sushiswap/graph-client/data-api'
 import { Container } from '@sushiswap/ui'
+import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import React from 'react'
 import { GlobalStatsCharts } from 'src/ui/explore/global-stats-charts'
@@ -10,6 +11,12 @@ import { PoolsFiltersProvider } from 'src/ui/pool'
 import { ChainId } from 'sushi/chain'
 import { SidebarContainer } from '~evm/_common/ui/sidebar'
 import { NavigationItems } from '../navigation-items'
+
+export const metadata: Metadata = {
+  title: 'Smart Pools',
+  description:
+    'Smart pools optimize liquidity allocation within custom price ranges, enhancing trading efficiency by providing deeper liquidity around the current price, increasing Liquidity Providers fee earnings.',
+}
 
 export default async function ExploreLayout({
   children,

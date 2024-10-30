@@ -1,10 +1,11 @@
 import { SkeletonCircle, SkeletonText } from '@sushiswap/ui'
 import { ColumnDef } from '@tanstack/react-table'
-import { PoolExtended } from '~aptos/pool/lib/use-pools-extended'
+import { PoolExtendedWithAprVolume } from '~aptos/pool/lib/use-user-position-pools'
+import { PoolMyPositionAprCell } from './cells/position-apr-cell'
 import { PositionNameCell } from './cells/position-name-cell'
 import { PoolMyPositionTVLCell } from './cells/position-tvl-cell'
 
-export const NAME_COLUMN: ColumnDef<PoolExtended, unknown> = {
+export const NAME_COLUMN: ColumnDef<PoolExtendedWithAprVolume, unknown> = {
   id: 'name',
   header: 'Name',
   cell: (props) => <PositionNameCell row={props.row.original} />,
@@ -23,11 +24,13 @@ export const NAME_COLUMN: ColumnDef<PoolExtended, unknown> = {
   },
 }
 
-export const TVL_COLUMN: ColumnDef<PoolExtended, unknown> = {
+export const TVL_COLUMN: ColumnDef<PoolExtendedWithAprVolume, unknown> = {
   id: 'reserveUSD',
-  header: 'TVL',
+  header: 'Value',
   accessorFn: (row) => row.reserveUSD,
-  cell: (props) => <PoolMyPositionTVLCell row={props.row.original} />,
+  cell: (props) => (
+    <PoolMyPositionTVLCell isSize={false} row={props.row.original} />
+  ),
   meta: {
     skeleton: (
       <div className="flex items-center w-full gap-2">
@@ -39,10 +42,15 @@ export const TVL_COLUMN: ColumnDef<PoolExtended, unknown> = {
   },
 }
 
-export const MYPOSITION_TVL_COLUMN: ColumnDef<PoolExtended, unknown> = {
+export const MYPOSITION_TVL_COLUMN: ColumnDef<
+  PoolExtendedWithAprVolume,
+  unknown
+> = {
   id: 'Size',
   header: 'Size',
-  cell: (props) => <PoolMyPositionTVLCell row={props.row.original} />,
+  cell: (props) => (
+    <PoolMyPositionTVLCell isSize={true} row={props.row.original} />
+  ),
   meta: {
     skeleton: (
       <div className="flex items-center w-full gap-2">
@@ -54,17 +62,20 @@ export const MYPOSITION_TVL_COLUMN: ColumnDef<PoolExtended, unknown> = {
   },
 }
 
-// export const MYPOSITION_APR_COLUMN: ColumnDef<Pool, unknown> = {
-//   id: 'APR',
-//   header: 'APR',
-//   cell: (props) => <PoolMyPositionAprCell row={props.row.original} />,
-//   meta: {
-//     skeleton: (
-//       <div className="flex items-center w-full gap-2">
-//         <div className="flex flex-col w-full">
-//           <SkeletonText fontSize="lg" />
-//         </div>
-//       </div>
-//     ),
-//   },
-// }
+export const MYPOSITION_APR_COLUMN: ColumnDef<
+  PoolExtendedWithAprVolume,
+  unknown
+> = {
+  id: 'APR',
+  header: 'APR',
+  cell: (props) => <PoolMyPositionAprCell row={props.row.original} />,
+  meta: {
+    skeleton: (
+      <div className="flex items-center w-full gap-2">
+        <div className="flex flex-col w-full">
+          <SkeletonText fontSize="lg" />
+        </div>
+      </div>
+    ),
+  },
+}

@@ -1,8 +1,8 @@
 import { Currency, classNames } from '@sushiswap/ui'
-import { IMyPositionData } from '~tron/_common/types/get-pools-type'
 import { Icon } from '../../General/Icon'
+import { IPositionRowData } from './PositionsTable'
 
-export const PositionNameCell = ({ data }: { data: IMyPositionData }) => {
+export const PositionNameCell = ({ data }: { data: IPositionRowData }) => {
   const { token0, token1 } = data
 
   return (

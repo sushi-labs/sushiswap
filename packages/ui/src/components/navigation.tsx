@@ -45,7 +45,7 @@ const PARTNER_NAVIGATION_LINKS: NavigationElementDropdown['items'] = [
     description: 'Incentivize your token with Sushi rewards.',
   },
   {
-    title: 'List enquiry',
+    title: 'Token Listing',
     href: '/tokenlist-request',
     description: 'Get your token on our default token list.',
   },
@@ -179,7 +179,7 @@ const Navigation: React.FC<NavProps> = ({
         >
           <NavigationMenuTrigger>{entry.title}</NavigationMenuTrigger>
           <NavigationMenuContent>
-            <ul className="w-[300px] sm:w-[400px] gap-3 p-4">
+            <ul className="w-[250px] sm:w-[400px] gap-3 p-4">
               {entry.items.map((component) => (
                 <NavigationListItem
                   key={component.title}

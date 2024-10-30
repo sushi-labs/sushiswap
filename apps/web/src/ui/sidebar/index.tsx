@@ -164,7 +164,7 @@ const Sidebar: FC<Omit<SidebarContainerProps, 'children' | 'shiftContent'>> = ({
               return (
                 <CommandItem
                   key={network}
-                  className="cursor-pointer aria-selected:!bg-[unset] aria-selected:!text-[unset] !p-0 my-0.5"
+                  className="aria-selected:!bg-[unset] aria-selected:!text-[unset] !p-0 my-0.5"
                   testdata-id={`network-selector-${network}`}
                   value={`${name}__${network}`}
                   onSelect={
@@ -176,7 +176,7 @@ const Sidebar: FC<Omit<SidebarContainerProps, 'children' | 'shiftContent'>> = ({
                   }
                 >
                   <Button
-                    className={'flex items-center !justify-normal gap-2'}
+                    className="flex items-center !justify-normal gap-2"
                     fullWidth
                     variant={
                       selectedNetwork === network ? 'secondary' : 'ghost'

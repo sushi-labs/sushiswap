@@ -1,34 +1,33 @@
 'use client'
 
 import { useWallet } from '@aptos-labs/wallet-adapter-react'
-import { ArrowLeftIcon } from '@heroicons/react/20/solid'
-import { PlusIcon } from '@heroicons/react/24/outline'
 import {
   SlippageToleranceStorageKey,
   useSlippageTolerance,
 } from '@sushiswap/hooks'
 import {
-  Badge,
   Button,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogProvider,
+  DialogReview,
+  DialogTitle,
   Dots,
   List,
-  SkeletonBox,
-  SkeletonCircle,
-  SkeletonText,
   classNames,
 } from '@sushiswap/ui'
 import { Provider } from 'aptos'
-import React, { FC } from 'react'
+import React, { FC, ReactNode } from 'react'
 import { DEFAULT_SLIPPAGE } from 'sushi/config'
-import { ModalType } from '~aptos/_common//components/Modal/ModalProvider'
-import { Modal } from '~aptos/_common/components/Modal/Modal'
 import { networkNameToNetwork } from '~aptos/_common/config/chains'
 import { formatNumberWithDecimals } from '~aptos/_common/lib/common/format-number-with-decimals'
 import { useNetwork } from '~aptos/_common/lib/common/use-network'
-import { CurrencyIcon } from '~aptos/_common/ui/currency/currency-icon'
 import { createToast } from '~aptos/_common/ui/toast'
 import { getSwapPayload } from '~aptos/swap/lib/get-swap-payload'
 import { useSwap } from '~aptos/swap/lib/use-swap'
+import { useSwapNetworkFee } from '~aptos/swap/lib/use-swap-network-fee'
 import {
   warningSeverity,
   warningSeverityClassName,
@@ -38,7 +37,9 @@ import {
   useSimpleSwapState,
 } from '~aptos/swap/ui/simple/simple-swap-provider/simple-swap-provider'
 
-export const SimpleSwapTradeReviewDialog: FC = () => {
+export const SimpleSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
+  children,
+}) => {
   const {
     bestRoutes,
     token0,
@@ -51,7 +52,7 @@ export const SimpleSwapTradeReviewDialog: FC = () => {
   } = useSimpleSwapState()
   const { account, signAndSubmitTransaction } = useWallet()
   const { setisTransactionPending, setAmount } = useSimpleSwapActions()
-
+  const { data: networkFee } = useSwapNetworkFee()
   const { data: routes } = useSwap()
 
   const minOutput = slippageAmount
@@ -63,7 +64,7 @@ export const SimpleSwapTradeReviewDialog: FC = () => {
     contracts: { swap: swapContract },
   } = useNetwork()
 
-  const swapToken = async (close: () => void) => {
+  const swapToken = async (confirm: () => void) => {
     const provider = new Provider(networkNameToNetwork(network))
     const payload = getSwapPayload(
       swapContract,
@@ -74,6 +75,7 @@ export const SimpleSwapTradeReviewDialog: FC = () => {
       bestRoutes,
       parseInt(String(slippageAmount)),
     )
+
     if (!account?.address) return []
     setisTransactionPending(true)
     try {
@@ -91,7 +93,7 @@ export const SimpleSwapTradeReviewDialog: FC = () => {
         )} ${token1.symbol}`,
         toastId: toastId,
       })
-      close()
+      confirm()
       setAmount('')
     } catch (_e) {
       const toastId = `failed:${Math.random()}`
@@ -105,127 +107,68 @@ export const SimpleSwapTradeReviewDialog: FC = () => {
   )
 
   return (
-    <>
-      <Modal.Review
-        modalType={ModalType.Regular}
-        variant="opaque"
-        tag="review-modal"
-      >
-        {({ close }) => (
-          <div className="max-w-[504px] mx-auto">
-            <button type="button" onClick={close} className="p-3 pl-0">
-              <ArrowLeftIcon strokeWidth={3} width={24} height={24} />
-            </button>
-            <div className="flex items-start justify-between gap-4 py-2">
-              <div className="flex flex-col flex-grow gap-1">
-                {!outputAmount || isPriceFetching ? (
-                  <SkeletonText fontSize="3xl" className="w-2/3" />
-                ) : (
-                  <h1 className="text-3xl font-semibold dark:text-slate-50">
-                    Buy{' '}
-                    {formatNumberWithDecimals(
-                      Number(outputAmount),
-                      token1.decimals,
-                    )}{' '}
-                    {token1?.symbol}
-                  </h1>
-                )}
-                <h1 className="text-lg font-medium text-gray-900 dark:text-slate-300">
+    <DialogProvider>
+      <DialogReview>
+        {({ confirm }) => (
+          <>
+            <div className="mt-4">{children}</div>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>
+                  Buy{' '}
+                  {formatNumberWithDecimals(
+                    Number(outputAmount),
+                    token1.decimals,
+                  )}{' '}
+                  {token1?.symbol}
+                </DialogTitle>
+                <DialogDescription>
+                  {/* {isWrap ? 'Wrap' : isUnwrap ? 'Unwrap' : 'Sell'}{' '} */}
                   Sell {amount} {token0?.symbol}
-                </h1>
-              </div>
-              <div className="min-w-[56px] min-h-[56px]">
-                <div className="pr-1">
-                  <Badge
-                    position="bottom-right"
-                    badgeContent={
-                      <div className="bg-gray-100 border-2 border-gray-100 rounded-full">
-                        <PlusIcon
-                          strokeWidth={2}
-                          width={24}
-                          height={24}
-                          className="bg-blue text-white rounded-full p-0.5"
-                        />
-                      </div>
-                    }
-                  >
-                    {token1 ? (
-                      <CurrencyIcon currency={token1} width={56} height={56} />
-                    ) : (
-                      // <img src={token1.logoURI} className="rounded-full" width={56} height={56} />
-                      <SkeletonCircle
-                        radius={56}
-                        className="bg-gray-100 dark:bg-slate-800"
-                      />
-                    )}
-                  </Badge>
-                </div>
-              </div>
-            </div>
-            <div className="flex flex-col gap-3">
-              <List>
-                <List.Control>
-                  <List.KeyValue title="Network">APTOS</List.KeyValue>
-                  <List.KeyValue
-                    title="Price Impact"
-                    subtitle="The impact your trade has on the market price of this pool."
-                  >
-                    <span
-                      className={classNames(
-                        warningSeverityClassName(
-                          warningSeverity(routes?.priceImpact),
-                        ),
-                        'text-gray-700 text-right dark:text-slate-400 ',
-                      )}
+                </DialogDescription>
+              </DialogHeader>
+              <div className="flex flex-col gap-4">
+                <List className="!pt-0">
+                  <List.Control>
+                    <List.KeyValue title="Network">Aptos</List.KeyValue>
+                    <List.KeyValue
+                      title="Price impact"
+                      subtitle="The impact your trade has on the market price of this pool."
                     >
-                      {isPriceFetching ? (
-                        <SkeletonBox className="h-4 py-0.5 w-[60px] rounded-md" />
-                      ) : (
+                      <span
+                        className={classNames(
+                          warningSeverityClassName(
+                            warningSeverity(routes?.priceImpact),
+                          ),
+                          'text-gray-700 text-right dark:text-slate-400 ',
+                        )}
+                      >
                         <>
                           {routes?.priceImpact
-                            ? (-routes?.priceImpact).toFixed(4)
+                            ? (-routes?.priceImpact).toFixed(2)
                             : 0}
                           %
                         </>
-                      )}
-                    </span>
-                  </List.KeyValue>
-                  <List.KeyValue
-                    title={`Min. received after slippage (${
-                      slippageTolerance === 'AUTO'
-                        ? DEFAULT_SLIPPAGE
-                        : slippageTolerance
-                    }%)`}
-                    subtitle="The minimum amount you are guaranteed to receive."
-                  >
-                    {!outputAmount || isPriceFetching ? (
-                      <SkeletonText
-                        align="right"
-                        fontSize="sm"
-                        className="w-1/2"
-                      />
-                    ) : (
+                      </span>
+                    </List.KeyValue>
+                    <List.KeyValue
+                      title={`Min. received after slippage (${
+                        slippageTolerance === 'AUTO'
+                          ? DEFAULT_SLIPPAGE
+                          : slippageTolerance
+                      }%)`}
+                      subtitle="The minimum amount you are guaranteed to receive."
+                    >
                       <>
                         {minOutput} {token1?.symbol}
                       </>
-                    )}
-                  </List.KeyValue>
+                    </List.KeyValue>
 
-                  <List.KeyValue title="Network fee">
-                    {isPriceFetching ? (
-                      <SkeletonText
-                        align="right"
-                        fontSize="sm"
-                        className="w-1/3"
-                      />
-                    ) : (
-                      '~$0.00'
-                    )}
-                  </List.KeyValue>
-                </List.Control>
-
+                    <List.KeyValue title="Network fee">{`${networkFee} APT`}</List.KeyValue>
+                  </List.Control>
+                </List>
                 {account?.address && (
-                  <List className="!pt-2">
+                  <List className="!pt-0">
                     <List.Control>
                       <List.KeyValue title="Recipient">
                         <a
@@ -247,17 +190,15 @@ export const SimpleSwapTradeReviewDialog: FC = () => {
                     </List.Control>
                   </List>
                 )}
-              </List>
-            </div>
-            <div className="pt-4">
-              <div className="space-y-4">
+              </div>
+              <DialogFooter>
                 <Button
                   disabled={isTransactionPending || isPriceFetching}
                   color="blue"
                   fullWidth
                   size="xl"
                   onClick={() => {
-                    swapToken(close)
+                    swapToken(confirm)
                   }}
                 >
                   {isTransactionPending ? (
@@ -268,11 +209,11 @@ export const SimpleSwapTradeReviewDialog: FC = () => {
                     </>
                   )}
                 </Button>
-              </div>
-            </div>
-          </div>
+              </DialogFooter>
+            </DialogContent>
+          </>
         )}
-      </Modal.Review>
-    </>
+      </DialogReview>
+    </DialogProvider>
   )
 }

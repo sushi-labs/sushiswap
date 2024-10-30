@@ -10,9 +10,11 @@ export const DollarAmountDisplay = ({
   error,
   value,
 }: DollarAmountDisplayProps) => {
-  const [big, portion] = (value ? `${Number(value).toFixed(2)}` : '0.00').split(
-    '.',
-  )
+  const [big, portion] = (
+    value && !Number.isNaN(Number(value))
+      ? `${Number(value).toFixed(2)}`
+      : '0.00'
+  ).split('.')
 
   if (isLoading) {
     return (

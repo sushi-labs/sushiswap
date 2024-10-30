@@ -5,22 +5,32 @@ import { ColumnDef, SortingState, TableState } from '@tanstack/react-table'
 import React, { useCallback, useMemo, useState } from 'react'
 import { usePoolFilters } from 'src/ui/pool'
 import { PoolExtended } from '~aptos/pool/lib/use-pools-extended'
-import { useUserPositionPools } from '~aptos/pool/lib/use-user-position-pools'
-import { MYPOSITION_TVL_COLUMN, NAME_COLUMN, TVL_COLUMN } from './columns'
+import {
+  PoolExtendedWithAprVolume,
+  useUserPositionPools,
+} from '~aptos/pool/lib/use-user-position-pools'
+import {
+  MYPOSITION_APR_COLUMN,
+  MYPOSITION_TVL_COLUMN,
+  NAME_COLUMN,
+  TVL_COLUMN,
+} from './columns'
 
 const COLUMNS = [
   NAME_COLUMN,
   TVL_COLUMN,
   MYPOSITION_TVL_COLUMN,
-] satisfies ColumnDef<PoolExtended, unknown>[]
+  MYPOSITION_APR_COLUMN,
+] satisfies ColumnDef<PoolExtendedWithAprVolume, unknown>[]
 
 export const PositionsTable = () => {
   const { tokenSymbols } = usePoolFilters()
   const { account } = useWallet()
-  const { data: pools, isLoading } = useUserPositionPools(
-    account?.address as string,
-    true,
-  )
+  const {
+    data: pools,
+    isLoading,
+    isPending,
+  } = useUserPositionPools(account?.address as string, true)
 
   const [sorting, setSorting] = useState<SortingState>([
     { id: 'reserveUSD', desc: true },
@@ -86,7 +96,7 @@ export const PositionsTable = () => {
         state={state}
         onSortingChange={setSorting}
         onPaginationChange={setPagination}
-        loading={isLoading}
+        loading={isLoading || isPending}
         linkFormatter={rowLink}
         columns={COLUMNS}
         data={filtered}

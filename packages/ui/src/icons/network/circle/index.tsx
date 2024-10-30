@@ -1,6 +1,7 @@
 import { ChainId } from 'sushi/chain'
 
 import { IconComponent } from '../../../types'
+import { ApeCircle } from './ApeCircle'
 import { AptosCircle } from './AptosCircle'
 import { ArbitrumCircle } from './ArbitrumCircle'
 import { ArbitrumNovaCircle } from './ArbitrumNovaCircle'
@@ -47,6 +48,7 @@ import { ZKLinkCircle } from './ZKLinkCircle'
 import { ZKSyncCircle } from './ZKSyncCircle'
 import { ZetaChainCircle } from './ZetaChainCircle'
 
+export * from './ApeCircle'
 export * from './AptosCircle'
 export * from './ArbitrumCircle'
 export * from './ArbitrumNovaCircle'
@@ -139,6 +141,7 @@ export const NETWORK_CIRCLE_ICON: Partial<
   [ChainId.MODE]: ModeCircle,
   [ChainId.TAIKO]: TaikoCircle,
   [ChainId.ZKLINK]: ZKLinkCircle,
+  [ChainId.APE]: ApeCircle,
   aptos: AptosCircle,
   tron: TronCircle,
 }
