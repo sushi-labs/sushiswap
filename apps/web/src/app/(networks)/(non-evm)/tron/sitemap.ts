@@ -6,7 +6,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   return tronChainPaths.map(
     (path) =>
       ({
-        url: `https://sushi.com/tron/${path}`,
+        url: `https://www.sushi.com/tron/${path}`,
         lastModified: new Date(),
         changeFrequency: 'weekly',
       }) as const,

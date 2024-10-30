@@ -28,7 +28,7 @@ export default function sitemap({ id }: { id: string }): MetadataRoute.Sitemap {
   return evmChainPaths.map(
     (path) =>
       ({
-        url: `https://sushi.com/${id}${path}`,
+        url: `https://www.sushi.com/${id}${path}`,
         lastModified: new Date(),
         changeFrequency: 'weekly',
       }) as const,

@@ -13,19 +13,19 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
     return [
       {
-        url: 'https://sushi.com/academy',
+        url: 'https://www.sushi.com/academy',
         lastModified: new Date(),
         changeFrequency: 'yearly',
       },
       {
-        url: 'https://sushi.com/academy/explore',
+        url: 'https://www.sushi.com/academy/explore',
         lastModified: new Date(),
         changeFrequency: 'yearly',
       },
       ...products.map(
         (product) =>
           ({
-            url: `https://sushi.com/academy/products/${product}`,
+            url: `https://www.sushi.com/academy/products/${product}`,
             lastModified: new Date(),
             changeFrequency: 'yearly',
           }) as const,
@@ -33,7 +33,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       ...articles.map(
         (article) =>
           ({
-            url: `https://sushi.com/academy/${article.slug}`,
+            url: `https://www.sushi.com/academy/${article.slug}`,
             lastModified: new Date(article.updatedAt),
             changeFrequency: 'weekly',
           }) as const,

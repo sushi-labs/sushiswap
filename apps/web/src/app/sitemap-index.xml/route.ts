@@ -11,7 +11,7 @@ const sitemapFiles = [
 ]
 
 const generateSitemapLink = (url: string) =>
-  `<sitemap><loc>https://sushi.com${url}</loc></sitemap>`
+  `<sitemap><loc>https://www.sushi.com${url}</loc></sitemap>`
 
 export async function GET() {
   const sitemapIndexXML = `<?xml version="1.0" encoding="UTF-8"?>

@@ -6,6 +6,6 @@ export default function robots(): MetadataRoute.Robots {
       userAgent: '*',
       allow: ['/'],
     },
-    sitemap: 'https://sushi.com/sitemap-index.xml',
+    sitemap: 'https://www.sushi.com/sitemap-index.xml',
   }
 }
