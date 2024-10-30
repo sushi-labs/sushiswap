@@ -1,4 +1,3 @@
-import { Button } from '@sushiswap/ui'
 import {
   Dialog,
   DialogContent,
@@ -6,34 +5,36 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  ScrollArea,
 } from '@sushiswap/ui'
+import { FC, ReactNode } from 'react'
 import { useTokenInfo } from '~tron/_common/lib/hooks/useTokenInfo'
 import { useSwapState } from '~tron/swap/swap-provider'
 import { Icon } from '../General/Icon'
 
-export const SwapRoutesDialog = () => {
+export const SwapRoutesDialog: FC<{ children: ReactNode }> = ({ children }) => {
   const { route } = useSwapState()
 
   return (
     <Dialog>
-      <DialogTrigger asChild>
-        <Button variant="link">View</Button>
-      </DialogTrigger>
-
+      <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Trade Route</DialogTitle>
+          <DialogTitle>Route</DialogTitle>
           <DialogDescription>
-            Optimized route to get the best price
+            Our routing system automatically splits your trade across various
+            pools to get you the best price.
           </DialogDescription>
         </DialogHeader>
-        <div className="flex flex-col gap-2 min-h-[100px] items-center justify-center w-full">
-          <div className="flex items-center w-full gap-2 justify-between border dark:border-slate-600 bg-white dark:bg-slate-700 rounded-full px-2 py-1">
-            {route?.map((tokenAddress, idx) => (
-              <SwapItem tokenAddress={tokenAddress} key={idx} />
-            ))}
+        <ScrollArea className="bg-secondary border border-accent rounded-xl">
+          <div className="flex flex-col max-h-[300px] divide-y divide-accent">
+            <div className="flex items-center w-full gap-3 justify-between bg-secondary p-3">
+              {route?.map((tokenAddress, idx) => (
+                <SwapItem tokenAddress={tokenAddress} key={idx} />
+              ))}
+            </div>
           </div>
-        </div>
+        </ScrollArea>
       </DialogContent>
     </Dialog>
   )
