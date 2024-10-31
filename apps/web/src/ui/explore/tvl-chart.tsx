@@ -21,6 +21,7 @@ export const TVLChart: FC<TVLChart> = ({ data, chainId }) => {
 
   const { resolvedTheme } = useTheme()
 
+  const [v2, v3, combinedTVL, currentDate] = useMemo(() => {
   const xData = (data.v2.length > 0 || data.v3.length > 0) 
     ? (data.v2.length > data.v3.length ? data.v2 : data.v3).map((data) => data.date * 1000) 
     : [];
