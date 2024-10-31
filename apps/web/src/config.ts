@@ -71,6 +71,7 @@ export const NEW_CHAIN_IDS = [
   ChainId.MODE,
   ChainId.TAIKO,
   ChainId.ZKLINK,
+  NonStandardChainId.TRON,
 ] as const
 
 const PREFERRED_CHAINID_ORDER = [
