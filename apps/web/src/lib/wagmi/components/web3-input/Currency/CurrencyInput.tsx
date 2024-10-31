@@ -1,9 +1,10 @@
 'use client'
 
 import { useIsMounted } from '@sushiswap/hooks'
-import { Button, SelectIcon, TextField, classNames } from '@sushiswap/ui'
+import { Badge, Button, SelectIcon, TextField, classNames } from '@sushiswap/ui'
 import { Currency } from '@sushiswap/ui'
 import { SkeletonBox } from '@sushiswap/ui'
+import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import {
   FC,
   useCallback,
@@ -171,12 +172,28 @@ const CurrencyInput: FC<CurrencyInputProps> = ({
           {currency ? (
             <>
               <div className="w-[28px] h-[28px] mr-0.5">
-                <Currency.Icon
-                  disableLink
-                  currency={currency}
-                  width={28}
-                  height={28}
-                />
+                {networks ? (
+                  <Badge
+                    className="border border-slate-900 rounded-full z-[11]"
+                    position="bottom-right"
+                    badgeContent={
+                      <NetworkIcon
+                        chainId={currency.chainId}
+                        width={16}
+                        height={16}
+                      />
+                    }
+                  >
+                    <Currency.Icon currency={currency} width={28} height={28} />
+                  </Badge>
+                ) : (
+                  <Currency.Icon
+                    disableLink
+                    currency={currency}
+                    width={28}
+                    height={28}
+                  />
+                )}
               </div>
               {currency.symbol}
               <SelectIcon />
