@@ -88,6 +88,7 @@ export function findMultiRouteExactIn(
   baseTokenOrNetworks: RToken | NetworkInfo[],
   gasPrice?: number,
   flows?: number | number[],
+  pickRoute?: 'single' | 'multi',
 ): MultiRoute {
   try {
     pools = deduplicatePools(pools)
@@ -112,7 +113,12 @@ export function findMultiRouteExactIn(
     if (bestFlowNumber === 1) return outSingle
 
     const outMulti = g.findBestRouteExactIn(from, to, amountIn, bestFlowNumber)
-    return getBetterRouteExactIn(outSingle, outMulti)
+    if (pickRoute) {
+      if (pickRoute === 'single') return outSingle
+      else return outMulti
+    } else {
+      return getBetterRouteExactIn(outSingle, outMulti)
+    }
   } catch (_e) {
     return NoWayMultiRoute(from, to)
   }

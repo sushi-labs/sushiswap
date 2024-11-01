@@ -159,6 +159,46 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
     return new Map()
   }
 
+  async getReserves(
+    poolCodesToCreate: PoolCode[],
+    options?: DataFetcherOptions,
+  ): Promise<any> {
+    const multicallMemoize = await memoizer.fn(this.client.multicall)
+
+    const multicallData = {
+      multicallAddress: this.client.chain?.contracts?.multicall3
+        ?.address as Address,
+      allowFailure: true,
+      blockNumber: options?.blockNumber,
+      contracts: poolCodesToCreate.map(
+        (poolCode) =>
+          ({
+            address: poolCode.pool.address as Address,
+            chainId: this.chainId,
+            abi: this.getReservesAbi,
+            functionName: 'getReserves',
+          }) as const,
+      ),
+    }
+    return options?.memoize
+      ? await (multicallMemoize(multicallData) as Promise<any>).catch((e) => {
+          console.warn(
+            `${this.getLogPrefix()} - UPDATE: on-demand pools multicall failed, message: ${
+              e.message
+            }`,
+          )
+          return undefined
+        })
+      : await this.client.multicall(multicallData).catch((e) => {
+          console.warn(
+            `${this.getLogPrefix()} - UPDATE: on-demand pools multicall failed, message: ${
+              e.message
+            }`,
+          )
+          return undefined
+        })
+  }
+
   async getOnDemandPools(
     t0: Token,
     t1: Token,
@@ -223,41 +263,18 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
       }
     })
 
-    const multicallMemoize = await memoizer.fn(this.client.multicall)
+    const reserves = await this.getReserves(poolCodesToCreate, options)
+    this.handleCreatePoolCode(poolCodesToCreate, reserves, validUntilTimestamp)
+    // console.debug(
+    //   `${this.getLogPrefix()} - ON DEMAND: Created and fetched reserves for ${created} pools, extended 'lifetime' for ${updated} pools`
+    // )
+  }
 
-    const multicallData = {
-      multicallAddress: this.client.chain?.contracts?.multicall3
-        ?.address as Address,
-      allowFailure: true,
-      blockNumber: options?.blockNumber,
-      contracts: poolCodesToCreate.map(
-        (poolCode) =>
-          ({
-            address: poolCode.pool.address as Address,
-            chainId: this.chainId,
-            abi: this.getReservesAbi,
-            functionName: 'getReserves',
-          }) as const,
-      ),
-    }
-    const reserves = options?.memoize
-      ? await (multicallMemoize(multicallData) as Promise<any>).catch((e) => {
-          console.warn(
-            `${this.getLogPrefix()} - UPDATE: on-demand pools multicall failed, message: ${
-              e.message
-            }`,
-          )
-          return undefined
-        })
-      : await this.client.multicall(multicallData).catch((e) => {
-          console.warn(
-            `${this.getLogPrefix()} - UPDATE: on-demand pools multicall failed, message: ${
-              e.message
-            }`,
-          )
-          return undefined
-        })
-
+  handleCreatePoolCode(
+    poolCodesToCreate: PoolCode[],
+    reserves: any[],
+    validUntilTimestamp: number,
+  ) {
     poolCodesToCreate.forEach((poolCode, i) => {
       const pool = poolCode.pool
       const res0 = reserves?.[i]?.result?.[0]
@@ -275,10 +292,6 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
         // console.error(`${this.getLogPrefix()} - ERROR FETCHING RESERVES, initialize on demand pool: ${pool.address}`)
       }
     })
-
-    // console.debug(
-    //   `${this.getLogPrefix()} - ON DEMAND: Created and fetched reserves for ${created} pools, extended 'lifetime' for ${updated} pools`
-    // )
   }
 
   async updatePools() {

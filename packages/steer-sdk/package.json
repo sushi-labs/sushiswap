@@ -62,7 +62,7 @@
     "@whatwg-node/fetch": "0.8.4",
     "sushi": "workspace:*",
     "tslib": "latest",
-    "viem": "2.8.14"
+    "viem": "2.21.35"
   },
   "devDependencies": {
     "@sushiswap/jest-config": "workspace:*",
