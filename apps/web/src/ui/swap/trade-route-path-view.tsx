@@ -72,7 +72,7 @@ export const TradeRoutePathView: FC<{
         </DialogHeader>
         <ScrollArea className="bg-secondary border border-accent rounded-xl">
           <div className="flex flex-col max-h-[300px] divide-y divide-accent">
-            {trade?.route?.legs?.map((directPath, i) => (
+            {/* {trade?.route?.legs?.map((directPath, i) => (
               <ComplexRoutePath
                 key={i}
                 fromToken={tokenFromRToken(directPath.tokenFrom)}
@@ -82,7 +82,7 @@ export const TradeRoutePathView: FC<{
                 portion={directPath.absolutePortion}
                 title={`${directPath.poolName}`}
               />
-            ))}
+            ))} */}
           </div>
         </ScrollArea>
         <DialogFooter>

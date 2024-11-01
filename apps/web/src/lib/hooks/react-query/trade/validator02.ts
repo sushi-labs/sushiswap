@@ -36,8 +36,6 @@ const routeExistValidator = z.object({
   assumedAmountOut: z.string(),
   gasSpent: z.number(),
 
-  route: z.array(legValidator),
-
   routeProcessorAddr: z.string().optional(),
   routeProcessorArgs: z
     .object({
