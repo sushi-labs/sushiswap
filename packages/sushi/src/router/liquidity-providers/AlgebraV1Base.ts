@@ -180,9 +180,8 @@ export abstract class AlgebraV1BaseProvider extends UniswapV3BaseProvider {
 
     const existingPools: V3Pool[] = []
 
-    for (let i = 0; i < staticPools.length; i++) {
-      if (globalState === undefined || !globalState[i]) continue
-      const pool = staticPools[i]!
+    staticPools.forEach((pool, i) => {
+      if (globalState === undefined || !globalState[i]) return
       let thisPoolTickSpacing = this.DEFAULT_TICK_SPACING
       if (poolsTickSpacing !== undefined && Array.isArray(poolsTickSpacing)) {
         if (poolsTickSpacing[i] !== undefined) {
@@ -199,12 +198,12 @@ export abstract class AlgebraV1BaseProvider extends UniswapV3BaseProvider {
       const sqrtPriceX96 = globalState[i]!.result?.[0] // price
       const tick = globalState[i]!.result?.[1] // tick
       if (!sqrtPriceX96 || sqrtPriceX96 === 0n || typeof tick !== 'number')
-        continue
+        return
       const fee = globalState[i]!.result?.[2] // fee
-      if (!fee) continue
+      if (!fee) return
       const activeTick =
         Math.floor(tick / thisPoolTickSpacing) * thisPoolTickSpacing
-      if (typeof activeTick !== 'number') continue
+      if (typeof activeTick !== 'number') return
       this.TICK_SPACINGS[pool.address.toLowerCase()] = thisPoolTickSpacing
       existingPools.push({
         ...pool,
@@ -212,7 +211,7 @@ export abstract class AlgebraV1BaseProvider extends UniswapV3BaseProvider {
         sqrtPriceX96,
         activeTick,
       })
-    }
+    })
 
     return existingPools
   }

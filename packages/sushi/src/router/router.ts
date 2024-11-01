@@ -154,6 +154,8 @@ export class Router {
     gasPrice: number,
     providers?: LiquidityProviders[], // all providers if undefined
     poolFilter?: PoolFilter,
+    flows?: number | number[],
+    pickRoute?: 'single' | 'multi',
   ): MultiRoute {
     const networks: NetworkInfo[] = [
       {
@@ -195,6 +197,8 @@ export class Router {
       pools,
       networks,
       gasPrice,
+      flows,
+      pickRoute,
     )
 
     return {

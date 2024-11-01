@@ -264,7 +264,17 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
     })
 
     const reserves = await this.getReserves(poolCodesToCreate, options)
+    this.handleCreatePoolCode(poolCodesToCreate, reserves, validUntilTimestamp)
+    // console.debug(
+    //   `${this.getLogPrefix()} - ON DEMAND: Created and fetched reserves for ${created} pools, extended 'lifetime' for ${updated} pools`
+    // )
+  }
 
+  handleCreatePoolCode(
+    poolCodesToCreate: PoolCode[],
+    reserves: any[],
+    validUntilTimestamp: number,
+  ) {
     poolCodesToCreate.forEach((poolCode, i) => {
       const pool = poolCode.pool
       const res0 = reserves?.[i]?.result?.[0]
@@ -282,10 +292,6 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
         // console.error(`${this.getLogPrefix()} - ERROR FETCHING RESERVES, initialize on demand pool: ${pool.address}`)
       }
     })
-
-    // console.debug(
-    //   `${this.getLogPrefix()} - ON DEMAND: Created and fetched reserves for ${created} pools, extended 'lifetime' for ${updated} pools`
-    // )
   }
 
   async updatePools() {
