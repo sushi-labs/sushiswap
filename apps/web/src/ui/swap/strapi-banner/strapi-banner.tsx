@@ -1,10 +1,9 @@
 import { getBanners } from '@sushiswap/graph-client/strapi'
-import ms from 'ms'
 import { unstable_cache } from 'next/cache'
 import { cookies } from 'next/headers'
 import { StrapiBannerContent } from './strapi-banner-content'
 
-export const revalidate = 3600
+export const revalidate = 10
 
 export const fetchCache = 'default-no-store'
 
@@ -12,9 +11,16 @@ export async function StrapiBanner() {
   let banners
 
   try {
-    banners = await unstable_cache(() => getBanners(), ['banners'], {
-      revalidate: ms('1h'),
-    })()
+    banners = await unstable_cache(
+      () => {
+        console.log('fetchin banners')
+        return getBanners()
+      },
+      ['banners'],
+      {
+        revalidate: 10,
+      },
+    )()
   } catch {}
 
   if (!banners) return <></>
