@@ -55,6 +55,7 @@ import { AddSectionPoolShareCardV2 } from 'src/ui/pool/AddSectionPoolShareCardV2
 import { AddSectionReviewModalLegacy } from 'src/ui/pool/AddSectionReviewModalLegacy'
 import { SelectNetworkWidget } from 'src/ui/pool/SelectNetworkWidget'
 import { SelectTokensWidget } from 'src/ui/pool/SelectTokensWidget'
+import { ToggleZapCard } from 'src/ui/pool/ToggleZapCard'
 import { useAccount, useEstimateGas, useSendTransaction } from 'wagmi'
 
 export default function Page({ params }: { params: { chainId: string } }) {
@@ -161,8 +162,7 @@ interface AddProps {
   token1: Type | undefined
   setToken0: Dispatch<SetStateAction<Type | undefined>>
   setToken1: Dispatch<SetStateAction<Type | undefined>>
-  zap?: boolean
-  setZap?: Dispatch<SetStateAction<boolean>>
+  setZap: Dispatch<SetStateAction<boolean>>
 }
 
 const _Zap: FC<AddProps> = ({
@@ -270,22 +270,7 @@ const _Zap: FC<AddProps> = ({
         title="Deposit"
         description="Select the amount of tokens you want to deposit"
       >
-        <Card className="bg-gradient-to-r from-blue/20 to-pink/20">
-          <CardHeader>
-            <CardTitle className="flex items-center justify-between">
-              <span className="text-base tracking-tighter saturate-200 flex items-center gap-2 bg-gradient-to-r from-blue to-pink bg-clip-text text-transparent">
-                Zap Mode
-              </span>
-              <Switch checked onCheckedChange={setZap} />
-            </CardTitle>
-            <CardDescription>
-              Swap tokens natively across 15 chains including Ethereum,
-              Arbitrum, Optimism, Polygon, Base and more! Deposit with any token
-              of your choice. Let zap mode handle the swap and token ratio
-              split.
-            </CardDescription>
-          </CardHeader>
-        </Card>
+        <ToggleZapCard checked={true} onCheckedChange={setZap} />
         <Web3Input.Currency
           id="add-liquidity-token0"
           type="INPUT"
