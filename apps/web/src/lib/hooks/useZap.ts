@@ -1,32 +1,46 @@
 import { UseQueryOptions, useQuery } from '@tanstack/react-query'
-import { isEnsoSupportedChainId } from 'src/config'
+import { isZapSupportedChainId } from 'src/config'
 import { ChainId } from 'sushi/chain'
 import { Address, Hex } from 'viem'
+import { z } from 'zod'
 
-export interface ZapResponse {
-  gas: string
-  amountOut: string
-  priceImpact: number
-  createdAt: number
-  tx: Tx
-  route?: RouteDetailsProps[]
-}
+const txSchema = z.object({
+  data: z.string().transform((data) => data as Hex),
+  to: z.string().transform((to) => to as Address),
+  from: z.string().transform((from) => from as Address),
+  value: z.string().transform((value) => BigInt(value)),
+})
 
-export interface Tx {
-  data: Hex
-  to: Address
-  from: Address
-  value: string
-}
-
-type RouteDetailsProps = {
+type Route = {
   action: string
   protocol: string
   tokenIn: Address[]
   tokenOut: Address[]
-  primary?: boolean
-  internalRoutes?: RouteDetailsProps[]
+  primary?: Address
+  internalRoutes?: Route[][]
 }
+
+const routeSchema: z.ZodType<Route> = z.lazy(() =>
+  z.object({
+    action: z.string(),
+    protocol: z.string(),
+    tokenIn: z.array(z.custom<Address>()),
+    tokenOut: z.array(z.custom<Address>()),
+    primary: z.custom<Address>().optional(),
+    internalRoutes: z.array(z.array(routeSchema)).optional(),
+  }),
+)
+
+const zapResponseSchema = z.object({
+  gas: z.string().transform((gas) => BigInt(gas)),
+  amountOut: z.string().transform((amount) => BigInt(amount)),
+  priceImpact: z.number(),
+  createdAt: z.number(),
+  tx: txSchema,
+  route: z.array(routeSchema).optional(),
+})
+
+export type ZapResponse = z.infer<typeof zapResponseSchema>
 
 type UseZapParams = {
   chainId: ChainId
@@ -43,13 +57,13 @@ type UseZapParams = {
   disableRFQs?: boolean
   ignoreAggregators?: string | string[]
   ignoreStandards?: string | string[]
-  tokenIn: Address[]
-  tokenOut: Address[]
+  tokenIn: Address | Address[]
+  tokenOut?: Address | Address[]
   query?: Omit<UseQueryOptions<ZapResponse>, 'queryKey' | 'queryFn'>
 }
 
 export const useZap = ({ query, ...params }: UseZapParams) => {
-  return useQuery({
+  return useQuery<ZapResponse>({
     queryKey: ['zap', params],
     queryFn: async () => {
       const url = new URL('/api/zap', window.location.origin)
@@ -75,17 +89,18 @@ export const useZap = ({ query, ...params }: UseZapParams) => {
         throw new Error(`Error: ${response.statusText}`)
       }
 
-      return (await response.json()) as ZapResponse
+      return zapResponseSchema.parse(await response.json())
     },
     staleTime: query?.staleTime ?? 1000 * 60 * 1, // 1 minutes
     enabled:
       query?.enabled !== false &&
       Boolean(
-        isEnsoSupportedChainId(params.chainId) &&
-          params.fromAddress &&
-          Array.isArray(params.amountIn)
-          ? params.amountIn.every((amount) => +amount > 0)
-          : +params.amountIn > 0,
+        isZapSupportedChainId(params.chainId) &&
+          typeof params.fromAddress !== 'undefined' &&
+          typeof params.tokenOut !== 'undefined' &&
+          (Array.isArray(params.amountIn)
+            ? params.amountIn.every((amount) => +amount > 0)
+            : +params.amountIn > 0),
       ),
     ...query,
   })

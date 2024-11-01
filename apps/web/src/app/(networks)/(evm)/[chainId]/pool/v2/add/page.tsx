@@ -1,7 +1,15 @@
 'use client'
 
 import { PlusIcon } from '@heroicons/react-v1/solid'
-import { FormSection } from '@sushiswap/ui'
+import {
+  Card,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+  Dots,
+  FormSection,
+  Switch,
+} from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui'
 import { Loader } from '@sushiswap/ui'
 import { useRouter } from 'next/navigation'
@@ -15,8 +23,12 @@ import React, {
   useMemo,
   useState,
 } from 'react'
-import { DISABLED_CHAIN_IDS } from 'src/config'
-import { APPROVE_TAG_ADD_LEGACY } from 'src/lib/constants'
+import { DISABLED_CHAIN_IDS, isZapSupportedChainId } from 'src/config'
+import {
+  APPROVE_TAG_ADD_LEGACY,
+  APPROVE_TAG_ZAP_LEGACY,
+  NativeAddress,
+} from 'src/lib/constants'
 import { isSushiSwapV2Pool } from 'src/lib/functions'
 import { ChainId, ChainKey, TESTNET_CHAIN_IDS } from 'sushi/chain'
 import {
@@ -33,6 +45,7 @@ import { SushiSwapV2Pool } from 'sushi/pool/sushiswap-v2'
 import { SWRConfig } from 'swr'
 
 import { notFound } from 'next/navigation'
+import { useZap } from 'src/lib/hooks'
 import { Web3Input } from 'src/lib/wagmi/components/web3-input'
 import { SushiSwapV2PoolState } from 'src/lib/wagmi/hooks/pools/hooks/useSushiSwapV2Pools'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
@@ -42,12 +55,15 @@ import { AddSectionPoolShareCardV2 } from 'src/ui/pool/AddSectionPoolShareCardV2
 import { AddSectionReviewModalLegacy } from 'src/ui/pool/AddSectionReviewModalLegacy'
 import { SelectNetworkWidget } from 'src/ui/pool/SelectNetworkWidget'
 import { SelectTokensWidget } from 'src/ui/pool/SelectTokensWidget'
+import { useAccount, useEstimateGas, useSendTransaction } from 'wagmi'
 
 export default function Page({ params }: { params: { chainId: string } }) {
   const chainId = +params.chainId as ChainId
   if (!isSushiSwapV2ChainId(chainId)) {
     return notFound()
   }
+
+  const [zap, setZap] = useState(isZapSupportedChainId(chainId))
 
   const router = useRouter()
   const [token0, setToken0] = useState<Type | undefined>(
@@ -96,7 +112,23 @@ export default function Page({ params }: { params: { chainId: string } }) {
               'Create Pool'
             )
 
-          return (
+          return zap ? (
+            <_Zap
+              chainId={chainId}
+              setChainId={(chainId) => {
+                if (!isSushiSwapV2ChainId(chainId)) return
+                router.push(`/${ChainKey[chainId]}/pool/v2/add`)
+              }}
+              pool={pool as SushiSwapV2Pool | null}
+              poolState={poolState as SushiSwapV2PoolState}
+              title={title}
+              token0={token0}
+              token1={token1}
+              setToken0={setToken0}
+              setToken1={setToken1}
+              setZap={setZap}
+            />
+          ) : (
             <_Add
               chainId={chainId}
               setChainId={(chainId) => {
@@ -110,6 +142,7 @@ export default function Page({ params }: { params: { chainId: string } }) {
               token1={token1}
               setToken0={setToken0}
               setToken1={setToken1}
+              setZap={setZap}
             />
           )
         }}
@@ -128,6 +161,195 @@ interface AddProps {
   token1: Type | undefined
   setToken0: Dispatch<SetStateAction<Type | undefined>>
   setToken1: Dispatch<SetStateAction<Type | undefined>>
+  zap?: boolean
+  setZap?: Dispatch<SetStateAction<boolean>>
+}
+
+const _Zap: FC<AddProps> = ({
+  chainId,
+  setChainId,
+  pool,
+  poolState,
+  title,
+  token0,
+  token1,
+  setToken0,
+  setToken1,
+  setZap,
+}) => {
+  const { address } = useAccount()
+
+  const [inputAmount, setInputAmount] = useState('')
+  const [inputCurrency, setInputCurrency] = useState<Type>(
+    defaultCurrency[chainId as keyof typeof defaultCurrency],
+  )
+  const parsedInputAmount = useMemo(
+    () =>
+      tryParseAmount(inputAmount, inputCurrency) ||
+      Amount.fromRawAmount(inputCurrency, 0),
+    [inputAmount, inputCurrency],
+  )
+
+  const { data: zapResponse, isError: isZapError } = useZap({
+    chainId,
+    fromAddress: address,
+    tokenIn: [inputCurrency.isNative ? NativeAddress : inputCurrency.address],
+    amountIn: parsedInputAmount?.quotient?.toString(),
+    tokenOut: pool?.liquidityToken.address,
+  })
+
+  const {
+    data: estGas,
+    isError: isEstimateGasError,
+    isLoading: isEstimateGasLoading,
+  } = useEstimateGas({
+    chainId,
+    account: address,
+    to: zapResponse?.tx.to,
+    data: zapResponse?.tx.data,
+    value: zapResponse?.tx.value,
+    query: {
+      enabled: Boolean(address && zapResponse?.tx),
+    },
+  })
+
+  const preparedTx = useMemo(() => {
+    return zapResponse && estGas
+      ? { ...zapResponse.tx, gas: estGas }
+      : undefined
+  }, [zapResponse, estGas])
+
+  const { sendTransaction, isPending: isWritePending } = useSendTransaction()
+
+  const networks = useMemo(
+    () =>
+      SUSHISWAP_V2_SUPPORTED_CHAIN_IDS.filter(
+        (chainId) =>
+          !TESTNET_CHAIN_IDS.includes(
+            chainId as (typeof TESTNET_CHAIN_IDS)[number],
+          ) &&
+          !DISABLED_CHAIN_IDS.includes(
+            chainId as (typeof DISABLED_CHAIN_IDS)[number],
+          ),
+      ),
+    [],
+  )
+
+  const _setToken0 = useCallback(
+    (token: Type | undefined) => {
+      if (token?.id === token1?.id) return
+      setToken0(token)
+    },
+    [setToken0, token1],
+  )
+
+  const _setToken1 = useCallback(
+    (token: Type | undefined) => {
+      if (token?.id === token0?.id) return
+      setToken1(token)
+    },
+    [setToken1, token0],
+  )
+
+  return (
+    <>
+      <SelectNetworkWidget
+        networks={networks}
+        selectedNetwork={chainId}
+        onSelect={setChainId}
+      />
+      <SelectTokensWidget
+        chainId={chainId}
+        token0={token0}
+        token1={token1}
+        setToken0={_setToken0}
+        setToken1={_setToken1}
+        includeNative={isWNativeSupported(chainId)}
+      />
+      <FormSection
+        title="Deposit"
+        description="Select the amount of tokens you want to deposit"
+      >
+        <Card className="bg-gradient-to-r from-blue/20 to-pink/20">
+          <CardHeader>
+            <CardTitle className="flex items-center justify-between">
+              <span className="text-base tracking-tighter saturate-200 flex items-center gap-2 bg-gradient-to-r from-blue to-pink bg-clip-text text-transparent">
+                Zap Mode
+              </span>
+              <Switch checked onCheckedChange={setZap} />
+            </CardTitle>
+            <CardDescription>
+              Swap tokens natively across 15 chains including Ethereum,
+              Arbitrum, Optimism, Polygon, Base and more! Deposit with any token
+              of your choice. Let zap mode handle the swap and token ratio
+              split.
+            </CardDescription>
+          </CardHeader>
+        </Card>
+        <Web3Input.Currency
+          id="add-liquidity-token0"
+          type="INPUT"
+          className="p-3 bg-white dark:bg-slate-800 rounded-xl"
+          chainId={chainId}
+          value={inputAmount}
+          onChange={setInputAmount}
+          onSelect={setInputCurrency}
+          currency={inputCurrency}
+          disabled={
+            poolState === SushiSwapV2PoolState.LOADING ||
+            poolState === SushiSwapV2PoolState.INVALID
+          }
+          loading={poolState === SushiSwapV2PoolState.LOADING}
+          allowNative={isWNativeSupported(chainId)}
+        />
+        <CheckerProvider>
+          <Checker.Connect fullWidth>
+            <Checker.Network fullWidth chainId={chainId}>
+              <Checker.Amounts
+                fullWidth
+                chainId={chainId}
+                amount={parsedInputAmount}
+              >
+                {(!pool || isSushiSwapV2Pool(pool)) &&
+                  isSushiSwapV2ChainId(chainId) && (
+                    <>
+                      <Checker.ApproveERC20
+                        id="approve-token"
+                        className="whitespace-nowrap"
+                        fullWidth
+                        amount={parsedInputAmount}
+                        contract={zapResponse?.tx.to}
+                      >
+                        <Checker.Success tag={APPROVE_TAG_ZAP_LEGACY}>
+                          <Button
+                            size="xl"
+                            fullWidth
+                            testId="zap-liquidity"
+                            onClick={() =>
+                              preparedTx && sendTransaction(preparedTx)
+                            }
+                            loading={isEstimateGasLoading}
+                            disabled={isZapError || isEstimateGasError}
+                          >
+                            {isZapError || isEstimateGasError ? (
+                              'Shoot! Something went wrong :('
+                            ) : isWritePending ? (
+                              <Dots>{title}</Dots>
+                            ) : (
+                              title
+                            )}
+                          </Button>
+                        </Checker.Success>
+                      </Checker.ApproveERC20>
+                    </>
+                  )}
+              </Checker.Amounts>
+            </Checker.Network>
+          </Checker.Connect>
+        </CheckerProvider>
+      </FormSection>
+    </>
+  )
 }
 
 const _Add: FC<AddProps> = ({
@@ -140,6 +362,7 @@ const _Add: FC<AddProps> = ({
   token1,
   setToken0,
   setToken1,
+  setZap,
 }) => {
   const [independendField, setIndependendField] = useState(0)
 
@@ -280,6 +503,24 @@ const _Add: FC<AddProps> = ({
         title="Deposit"
         description="Select the amount of tokens you want to deposit"
       >
+        {isZapSupportedChainId(chainId) ? (
+          <Card className="bg-gradient-to-r from-blue/20 to-pink/20">
+            <CardHeader>
+              <CardTitle className="flex items-center justify-between">
+                <span className="text-base tracking-tighter saturate-200 flex items-center gap-2 bg-gradient-to-r from-blue to-pink bg-clip-text text-transparent">
+                  Zap Mode
+                </span>
+                <Switch checked={false} onCheckedChange={setZap} />
+              </CardTitle>
+              <CardDescription>
+                Swap tokens natively across 15 chains including Ethereum,
+                Arbitrum, Optimism, Polygon, Base and more! Deposit with any
+                token of your choice. Let zap mode handle the swap and token
+                ratio split.
+              </CardDescription>
+            </CardHeader>
+          </Card>
+        ) : null}
         <div className="flex flex-col gap-4">
           <Web3Input.Currency
             id="add-liquidity-token0"

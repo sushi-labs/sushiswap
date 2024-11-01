@@ -1,15 +1,15 @@
 import { NextRequest } from 'next/server'
-import { EnsoSupportedChainId, isEnsoSupportedChainId } from 'src/config'
+import { ZapSupportedChainId, isZapSupportedChainId } from 'src/config'
 import { getAddress } from 'viem/utils'
 import { z } from 'zod'
 
 const schema = z.object({
   chainId: z.coerce
     .number()
-    .refine((chainId) => isEnsoSupportedChainId(chainId), {
+    .refine((chainId) => isZapSupportedChainId(chainId), {
       message: 'chainId must exist in EnsoSupportedChainId',
     })
-    .transform((chainId) => chainId as EnsoSupportedChainId),
+    .transform((chainId) => chainId as ZapSupportedChainId),
   fromAddress: z.string().transform((from) => getAddress(from)),
   routingStrategy: z
     .enum(['ensowallet', 'router', 'delegate'])
