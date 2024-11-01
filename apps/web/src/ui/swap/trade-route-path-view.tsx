@@ -19,34 +19,34 @@ import {
   ScrollArea,
 } from '@sushiswap/ui'
 import React, { FC, ReactNode, useEffect, useRef, useState } from 'react'
-import { TradeLegType, UseTradeReturn } from 'src/lib/hooks/react-query'
+import { UseTradeReturn } from 'src/lib/hooks/react-query'
 import { ChainId } from 'sushi/chain'
-import { Native, Token, Type, WETH9 } from 'sushi/currency'
+import { Type, WETH9 } from 'sushi/currency'
 
-const tokenFromRToken = (token: TradeLegType['tokenFrom']) => {
-  if (
-    token.address === '' ||
-    token.address === '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE' ||
-    !token.address
-  )
-    return Native.onChain(Number(token.chainId))
-  // TODO: move this to api, it should return a number?
-  const chainId = token.chainId.toString().startsWith('Bento ')
-    ? Number(token.chainId.toString().split(' ')[1])
-    : Number(token.chainId)
-  return new Token({
-    address: token.address,
-    symbol: token.symbol,
-    chainId,
-    decimals: 18,
-  })
-}
+// const tokenFromRToken = (token: TradeLegType['tokenFrom']) => {
+//   if (
+//     token.address === '' ||
+//     token.address === '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE' ||
+//     !token.address
+//   )
+//     return Native.onChain(Number(token.chainId))
+//   // TODO: move this to api, it should return a number?
+//   const chainId = token.chainId.toString().startsWith('Bento ')
+//     ? Number(token.chainId.toString().split(' ')[1])
+//     : Number(token.chainId)
+//   return new Token({
+//     address: token.address,
+//     symbol: token.symbol,
+//     chainId,
+//     decimals: 18,
+//   })
+// }
 
 // Can render a tines multi route
 export const TradeRoutePathView: FC<{
   trade: Partial<Pick<UseTradeReturn, 'route'>>
   children: ReactNode
-}> = ({ children, trade }) => {
+}> = ({ children }) => {
   return (
     <Dialog>
       <DialogTrigger
