@@ -11,17 +11,24 @@ interface Params {
   query: string
   tokenMap: Record<string, Token> | undefined
   customTokenMap: Record<string, Token> | undefined
+  balanceMap: Record<string, number> | undefined
   chainId?: number
 }
+
+export type TokenWithBalance = Token & { balance: number }
 
 export const useSortedTokenList = ({
   query,
   tokenMap,
   customTokenMap,
+  balanceMap,
 }: Params) => {
   const debouncedQuery = useDebounce(query, 250)
   return useQuery({
-    queryKey: ['sortedTokenList', { debouncedQuery, tokenMap, customTokenMap }],
+    queryKey: [
+      'sortedTokenList',
+      { debouncedQuery, tokenMap, balanceMap, customTokenMap },
+    ],
     queryFn: async () => {
       const tokenMapValues = tokenMap ? Object.values(tokenMap) : []
       const customTokenMapValues = customTokenMap
@@ -44,7 +51,20 @@ export const useSortedTokenList = ({
         sortedTokens,
         debouncedQuery,
       )
-      return filteredSortedTokens
+      if (balanceMap) {
+        filteredSortedTokens.forEach((token) => {
+          ;(token as TokenWithBalance).balance = balanceMap[token.address] || 0
+        })
+        filteredSortedTokens.sort((a, b) => {
+          const aBalance = (a as TokenWithBalance).balance
+          const bBalance = (b as TokenWithBalance).balance
+          if (aBalance === bBalance) {
+            return 0
+          }
+          return aBalance > bBalance ? -1 : 1
+        })
+      }
+      return filteredSortedTokens as TokenWithBalance[] | Token[]
     },
   })
 }

@@ -14,5 +14,9 @@ function _CookieDialogContainer() {
   const cookiez = cookies()
   const cookiesConfirmed = cookiez.has('accepted-cookies')
 
-  return <CookieDialog open={!cookiesConfirmed} />
+  if (cookiesConfirmed) {
+    return null
+  }
+
+  return <CookieDialog open={true} />
 }

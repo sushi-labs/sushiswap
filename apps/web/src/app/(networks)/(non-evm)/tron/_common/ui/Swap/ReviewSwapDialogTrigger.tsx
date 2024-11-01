@@ -1,12 +1,11 @@
-import { Button, Checkbox, DialogTrigger } from '@sushiswap/ui'
+import { Button, DialogTrigger } from '@sushiswap/ui'
 import { useWallet } from '@tronweb3/tronwallet-adapter-react-hooks'
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { ROUTER_CONTRACT } from '~tron/_common/constants/contracts'
 import { useAllowance } from '~tron/_common/lib/hooks/useAllowance'
 import { useTokenBalance } from '~tron/_common/lib/hooks/useTokenBalance'
 import { formatUnitsForInput } from '~tron/_common/lib/utils/formatters'
 import { getIfWrapOrUnwrap } from '~tron/_common/lib/utils/helpers'
-import { warningSeverity } from '~tron/_common/lib/utils/warning-severity'
 import { useSwapState } from '~tron/swap/swap-provider'
 import { ApproveToken } from '../Shared/ApproveToken'
 
@@ -19,6 +18,7 @@ export const ReviewSwapDialogTrigger = () => {
     isTxnPending,
     priceImpactPercentage,
     route,
+    amountOut,
   } = useSwapState()
   const { address } = useWallet()
   const { data: allowanceAmount, refetch } = useAllowance({
@@ -60,7 +60,7 @@ export const ReviewSwapDialogTrigger = () => {
     if (isTxnPending) {
       return 'Swapping'
     }
-    if (!amountIn || amountIn === '0') {
+    if (!amountIn || amountIn === '0' || !amountOut || amountOut === '0') {
       return 'Enter Amount'
     }
     if (hasInsufficientBalance) {
@@ -95,17 +95,20 @@ export const ReviewSwapDialogTrigger = () => {
     swapType,
     insufficientLiquidity,
     isTxnPending,
+    amountOut,
   ])
 
   const userConfirmationNeeded = useMemo(() => {
-    if (
-      warningSeverity(priceImpactPercentage ?? 0) > 3 &&
-      (buttonText === 'Swap' || buttonText === 'Approve')
-    ) {
+    if (priceImpactPercentage >= 15) {
       return true
     }
     return false
-  }, [priceImpactPercentage, buttonText])
+  }, [priceImpactPercentage])
+
+  // biome-ignore lint/correctness/useExhaustiveDependencies: Typecheck speedup
+  useEffect(() => {
+    setIsChecked(false)
+  }, [priceImpactPercentage])
 
   return (
     <>
@@ -115,6 +118,7 @@ export const ReviewSwapDialogTrigger = () => {
           amount={amountIn}
           spenderAddress={ROUTER_CONTRACT}
           onSuccess={refreshAllowance}
+          buttonProps={{ size: 'xl', fullWidth: true }}
         />
       ) : (
         <DialogTrigger
@@ -133,15 +137,17 @@ export const ReviewSwapDialogTrigger = () => {
         </DialogTrigger>
       )}
       {userConfirmationNeeded && !isChecked ? (
-        <div
-          onClick={() => setIsChecked(!isChecked)}
-          onKeyDown={() => setIsChecked(!isChecked)}
-          className="flex items-start px-4 py-3 mt-4 rounded-xl bg-red/20 dark:bg-red/40 cursor-pointer"
-        >
-          <Checkbox color="red" id="expert-checkbox" checked={isChecked} />
+        <div className="flex items-start px-4 py-3 mt-4 rounded-xl bg-red/20">
+          <input
+            id="expert-checkbox"
+            type="checkbox"
+            checked={isChecked}
+            onChange={(e) => setIsChecked(e.target.checked)}
+            className="cursor-pointer mr-1 w-5 h-5 mt-0.5 text-red-600 !ring-red-600 bg-white border-red rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2"
+          />
           <label
             htmlFor="expert-checkbox"
-            className="ml-2 font-medium text-red-600 dark:text-red-300"
+            className="ml-2 font-medium text-red-600"
           >
             Price impact is too high. You will lose a big portion of your funds
             in this trade. Please tick the box if you would like to continue.

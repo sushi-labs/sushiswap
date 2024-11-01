@@ -5,11 +5,6 @@ const LimitPanel = dynamic(
   { ssr: false },
 )
 
-export const metadata = {
-  title: 'Limit Order',
-  description: 'SushiSwap Limit Order',
-}
-
 export default function SwapLimitPage() {
   return (
     <Container maxWidth="lg" className="px-4">

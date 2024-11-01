@@ -1,4 +1,4 @@
-import { CardGroup, CardLabel } from '@sushiswap/ui'
+import { CardGroup } from '@sushiswap/ui'
 import { FC } from 'react'
 import { formatUSD } from 'sushi/format'
 import { Pool } from '~aptos/pool/lib/convert-pool-to-sushi-pool'
@@ -26,7 +26,7 @@ export const PoolPositionDesktop: FC<PoolPositionProps> = ({
 
   return (
     <CardGroup>
-      <CardLabel>Unstaked</CardLabel>
+      {/* <CardLabel>Unstaked</CardLabel> */}
       <CardCurrencyAmountItem
         currency={token0}
         isLoading={isLoading}

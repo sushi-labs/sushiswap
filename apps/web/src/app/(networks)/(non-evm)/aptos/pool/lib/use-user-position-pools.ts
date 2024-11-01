@@ -1,3 +1,4 @@
+import { getTopNonEvmPools } from '@sushiswap/graph-client/data-api'
 import { useQuery } from '@tanstack/react-query'
 import { SupportedNetwork, chains } from '~aptos/_common/config/chains'
 import { useNetwork } from '~aptos/_common/lib/common/use-network'
@@ -29,6 +30,11 @@ export type CoinStore = {
       }
     }
   }
+}
+
+export type PoolExtendedWithAprVolume = PoolExtended & {
+  totalApr1d: number
+  volumeUSD1d: number
 }
 
 interface UserPositionPoolsQueryFn {
@@ -68,14 +74,36 @@ const userPositionPoolsQueryFn = async ({
           return tokenAddress === poolAddress
         })
       })
+      const pools = await getTopNonEvmPools({ chainId: 'aptos' })
+      const userPositionsWithApr = userPositions.map((pool) => {
+        const foundPool = pools?.find(
+          (_pool) =>
+            _pool?.token0Address === pool?.token0?.address &&
+            _pool?.token1Address === pool?.token1?.address,
+        )
+        console.log(foundPool)
+        if (foundPool) {
+          return {
+            totalApr1d: foundPool?.totalApr1d,
+            volumeUSD1d: foundPool?.volumeUSD1d,
+            ...pool,
+          }
+        }
+        return {
+          totalApr1d: 0,
+          volumeUSD1d: 0,
 
-      return userPositions
+          ...pool,
+        }
+      })
+
+      return userPositionsWithApr
     } else {
-      return [] as PoolExtended[]
+      return [] as PoolExtendedWithAprVolume[]
     }
   }
 
-  return [] as PoolExtended[]
+  return [] as PoolExtendedWithAprVolume[]
 }
 
 export function useUserPositionPools(address: string, enabled = true) {

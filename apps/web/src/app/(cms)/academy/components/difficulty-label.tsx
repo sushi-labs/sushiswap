@@ -10,6 +10,8 @@ interface DifficultyLabel {
 export function DifficultyLabel({ article, isCard }: DifficultyLabel) {
   const difficulty = article.difficulty
 
+  if (!difficulty) return <></>
+
   const slug = difficulty.slug as keyof typeof DIFFICULTY_ELEMENTS
   if (!slug) return <></>
 

@@ -28,14 +28,14 @@ export function NavigationItems() {
       {/*  scroll={false}*/}
       {/*  href={`/pool/my-rewards?${searchParams.toString()}`}*/}
       {/*>*/}
-      <PathnameButton
+      {/* <PathnameButton
         disabled
         id="my-rewards"
         pathname={'/aptos/pool/my-rewards'}
         size="sm"
       >
         My Rewards
-      </PathnameButton>
+      </PathnameButton> */}
       {/*</LinkInternal>*/}
     </>
   )

@@ -3,10 +3,6 @@ import { ChainId } from 'sushi/chain'
 import { SidebarProvider } from '~evm/_common/ui/sidebar'
 import { Header } from '../header'
 
-export const metadata = {
-  title: 'Pools 💦',
-}
-
 export default async function ExploreLayout({
   children,
   params,
