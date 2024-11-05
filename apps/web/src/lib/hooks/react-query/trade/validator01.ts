@@ -14,9 +14,7 @@ export const tokenValidator = z.object({
 })
 
 export const legValidator = z.object({
-  poolAddress: z.string(),
   poolType: z.enum(['Classic', 'Stable', 'Unknown']),
-  poolFee: z.number(),
   tokenFrom: tokenValidator,
   tokenTo: tokenValidator,
   assumedAmountIn: z.number(),

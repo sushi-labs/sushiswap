@@ -33,46 +33,12 @@ function getApi1Token(token: Token | Native): token1 {
       tokenId: token.id,
     }
 }
-// function getApi1TokenFromToken2(token: token2, chainId: number): token1 {
-//   const isNative =
-//     token.address.toLowerCase() === '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'
-//   return {
-//     chainId,
-//     decimals: token.decimals,
-//     symbol: token.symbol,
-//     name: token.name,
-//     isNative,
-//     isToken: !isNative,
-//     address: token.address,
-//     tokenId: `${token.address}_${chainId}`,
-//   }
-// }
 
 function getApi1TokenAddr(token: Token | Native): string {
   return token instanceof Token
     ? token.address
     : '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE'
 }
-
-// function getApi1PoolType(pt: PoolType) {
-//   if (pt === PoolType.Classic || pt === PoolType.Stable) return pt
-//   return 'Unknown'
-// }
-
-// function getApi1Leg(leg: leg2, tokens: token2[], chainId: number): leg1 {
-//   return {
-//     poolAddress: leg.poolAddress,
-//     poolType: getApi1PoolType(leg.poolType),
-//     poolFee: leg.poolFee,
-//     tokenFrom: getApi1TokenFromToken2(tokens[leg.tokenFrom] as token2, chainId),
-//     tokenTo: getApi1TokenFromToken2(tokens[leg.tokenTo] as token2, chainId),
-//     assumedAmountIn: Number(leg.assumedAmountIn),
-//     assumedAmountOut: Number(leg.assumedAmountOut),
-//     swapPortion: 0,
-//     absolutePortion: leg.share,
-//     poolName: leg.poolName,
-//   }
-// }
 
 // converts API 2 to API 1 response
 export function apiAdapter02To01(
