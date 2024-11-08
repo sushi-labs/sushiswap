@@ -1,8 +1,12 @@
 'use client'
 
+import {
+  SmartPoolChainId,
+  isSmartPoolChainId,
+} from '@sushiswap/graph-client/data-api'
 import { useRouter } from 'next/navigation'
-import React, { FC, useMemo, useState } from 'react'
-import { useTokenAmountDollarValues } from 'src/lib/hooks'
+import React, { FC, useEffect, useMemo, useState } from 'react'
+import { useVaults } from 'src/lib/hooks'
 import { useConcentratedPositionInfo } from 'src/lib/wagmi/hooks/positions/hooks/useConcentratedPositionInfo'
 import { ConcentratedLiquidityProvider } from 'src/ui/pool/ConcentratedLiquidityProvider'
 import {
@@ -13,7 +17,13 @@ import { ConcentratedLiquidityWidget } from 'src/ui/pool/ConcentratedLiquidityWi
 import { SelectFeeConcentratedWidget } from 'src/ui/pool/SelectFeeConcentratedWidget'
 import { SelectNetworkWidget } from 'src/ui/pool/SelectNetworkWidget'
 import { SelectPricesWidget } from 'src/ui/pool/SelectPricesWidget'
+import { SelectSmartPoolStrategyWidget } from 'src/ui/pool/SelectSmartPoolStrategyWidget'
 import { SelectTokensWidget } from 'src/ui/pool/SelectTokensWidget'
+import {
+  PoolType,
+  SelectV3PoolTypeWidget,
+} from 'src/ui/pool/SelectV3PoolTypeWidget'
+import { SmartPoolLiquidityWidget } from 'src/ui/pool/SmartPoolLiquidityWidget'
 import { ChainKey, computeSushiSwapV3PoolAddress } from 'sushi'
 import {
   SUSHISWAP_V3_FACTORY_ADDRESS,
@@ -21,8 +31,8 @@ import {
   SushiSwapV3ChainId,
   isWNativeSupported,
 } from 'sushi/config'
-import { tryParseAmount } from 'sushi/currency'
 import { SWRConfig } from 'swr'
+import { Address } from 'viem'
 import { useAccount } from 'wagmi'
 
 export default function Page({ params }: { params: { chainId: string } }) {
@@ -77,14 +87,30 @@ const _Add: FC = () => {
     [chainId, feeAmount, token0, token1],
   )
 
-  const fiatAmounts = useMemo(
-    () => [tryParseAmount('1', token0), tryParseAmount('1', token1)],
-    [token0, token1],
+  const { data: _vaults } = useVaults(
+    { chainId: chainId as SmartPoolChainId, poolAddress },
+    Boolean(isSmartPoolChainId(chainId) && poolAddress),
   )
-  const _fiatAmountsAsNumber = useTokenAmountDollarValues({
-    chainId,
-    amounts: fiatAmounts,
-  })
+
+  const vaults = useMemo(
+    () =>
+      _vaults
+        ?.filter((vault) => vault.isEnabled)
+        .sort((a, b) => b.apr1d - a.apr1d),
+    [_vaults],
+  )
+
+  const [vaultIndex, setVaultIndex] = useState(0)
+
+  const [poolType, setPoolType] = useState<PoolType>(PoolType.MANUAL)
+
+  useEffect(() => {
+    if (vaults && vaults.length > 0) {
+      setPoolType(PoolType.SMART)
+    } else {
+      setPoolType(PoolType.MANUAL)
+    }
+  }, [vaults])
 
   return (
     <>
@@ -107,28 +133,48 @@ const _Add: FC = () => {
         token1={token1}
         token0={token0}
       />
-      <SelectPricesWidget
-        chainId={chainId}
-        token0={token0}
-        token1={token1}
-        poolAddress={poolAddress}
-        tokenId={tokenId}
-        feeAmount={feeAmount}
-        switchTokens={switchTokens}
+      <SelectV3PoolTypeWidget
+        poolType={poolType}
+        setPoolType={setPoolType}
+        isSmartPoolSupported={Boolean(vaults?.length)}
       />
-      <ConcentratedLiquidityWidget
-        chainId={chainId}
-        account={address}
-        token0={token0}
-        token1={token1}
-        setToken0={setToken0}
-        setToken1={setToken1}
-        feeAmount={feeAmount}
-        tokensLoading={tokensLoading}
-        existingPosition={position ?? undefined}
-        tokenId={tokenId}
-        successLink={`/${ChainKey[chainId]}/pools/v3/${poolAddress}/${tokenId}`}
-      />
+      {poolType === PoolType.MANUAL ? (
+        <>
+          <SelectPricesWidget
+            chainId={chainId}
+            token0={token0}
+            token1={token1}
+            poolAddress={poolAddress}
+            tokenId={tokenId}
+            feeAmount={feeAmount}
+            switchTokens={switchTokens}
+          />
+          <ConcentratedLiquidityWidget
+            chainId={chainId}
+            account={address}
+            token0={token0}
+            token1={token1}
+            setToken0={setToken0}
+            setToken1={setToken1}
+            feeAmount={feeAmount}
+            tokensLoading={tokensLoading}
+            existingPosition={position ?? undefined}
+            tokenId={tokenId}
+            successLink={`/${ChainKey[chainId]}/pools/v3/${poolAddress}/${tokenId}`}
+          />
+        </>
+      ) : poolType === PoolType.SMART && vaults ? (
+        <>
+          <SelectSmartPoolStrategyWidget
+            chainId={chainId as SmartPoolChainId}
+            poolAddress={poolAddress as Address}
+            vaults={vaults}
+            vaultIndex={vaultIndex}
+            setVaultIndex={setVaultIndex}
+          />
+          <SmartPoolLiquidityWidget vault={vaults[vaultIndex]} />
+        </>
+      ) : null}
     </>
   )
 }

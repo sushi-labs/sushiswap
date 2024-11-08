@@ -23,5 +23,6 @@ export const APPROVE_TAG_XSWAP = 'APPROVE_TAG_XSWAP'
 export const APPROVE_TAG_SWAP = 'APPROVE_TAG_SWAP'
 export const APPROVE_TAG_STEER = 'APPROVE_TAG_STEER'
 export const APPROVE_TAG_ZAP_LEGACY = 'APPROVE_TAG_ZAP_LEGACY'
+export const APPROVE_TAG_ZAP_STEER = 'APPROVE_TAG_ZAP_STEER'
 
 export const NativeAddress = '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'
