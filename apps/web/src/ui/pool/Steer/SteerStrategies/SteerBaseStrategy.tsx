@@ -20,13 +20,16 @@ import {
 import { formatPercent, formatUSD } from 'sushi/format'
 
 import { FormattedNumber } from '@sushiswap/ui'
+import { useState } from 'react'
+import { isZapSupportedChainId } from 'src/config'
 import { SteerStrategyComponent } from '.'
 import { APRHoverCard } from '../../APRHoverCard'
+import { ToggleZapCard } from '../../ToggleZapCard'
 import { SteerAPRChart } from '../SteerAPRChart'
 import { SteerLiquidityInRangeChip } from '../SteerLiquidityDistributionWidget/SteerLiquidityInRangeChip'
 import {
-  // SteerPositionAdd,
-  // SteerPositionAddProvider,
+  SteerPositionAdd,
+  SteerPositionAddProvider,
   SteerPositionDetails,
   SteerPositionRemove,
   SteerPositionZap,
@@ -38,6 +41,8 @@ export const SteerBaseStrategy: SteerStrategyComponent = ({
   vault,
   generic: { priceExtremes, tokenRatios, adjustment, positions },
 }) => {
+  const [useZap, setUseZap] = useState(isZapSupportedChainId(vault.chainId))
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
       <div>
@@ -86,10 +91,16 @@ export const SteerBaseStrategy: SteerStrategyComponent = ({
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                {/* <SteerPositionAddProvider>
-                  <SteerPositionAdd vault={vault} />
-                </SteerPositionAddProvider> */}
-                <SteerPositionZap vault={vault} />
+                {isZapSupportedChainId(vault.chainId) ? (
+                  <ToggleZapCard checked={useZap} onCheckedChange={setUseZap} />
+                ) : null}
+                {useZap ? (
+                  <SteerPositionZap vault={vault} />
+                ) : (
+                  <SteerPositionAddProvider>
+                    <SteerPositionAdd vault={vault} />
+                  </SteerPositionAddProvider>
+                )}
               </CardContent>
             </TabsContent>
             <TabsContent value="remove">

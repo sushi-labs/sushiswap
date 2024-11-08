@@ -26,9 +26,8 @@ export const ToggleZapCard: FC<ToggleZapCardProps> = ({
           <Switch checked={checked} onCheckedChange={onCheckedChange} />
         </CardTitle>
         <CardDescription>
-          Swap tokens natively across 15 chains including Ethereum, Arbitrum,
-          Optimism, Polygon, Base and more! Deposit with any token of your
-          choice. Let zap mode handle the swap and token ratio split.
+          Deposit with any token of your choice. Let zap mode handle the swap
+          and token ratio split.
         </CardDescription>
       </CardHeader>
     </Card>
