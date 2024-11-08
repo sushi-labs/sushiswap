@@ -1,5 +1,5 @@
 import { V2Pool, getV2Pool } from '@sushiswap/graph-client/data-api'
-import { Container } from '@sushiswap/ui'
+import { Container, LinkExternal, Message } from '@sushiswap/ui'
 import { unstable_cache } from 'next/cache'
 import { headers } from 'next/headers'
 import { notFound } from 'next/navigation'
@@ -53,6 +53,20 @@ export default async function Layout({
       <section className="flex flex-col flex-1 mt-4">
         <div className="bg-gray-50 dark:bg-white/[0.02] border-t border-accent py-10 h-full">
           <Container maxWidth="5xl" className="px-4">
+            <Message size="sm" variant="info" className="mb-6">
+              <h1 className="py-1 text-lg text-slate-200">
+                Not seeing your position?
+              </h1>
+              We’re beginning to phase out the staking contracts used for V2
+              pools to make way for new and improved technology. If you have any
+              staked positions and wish to unstake and claim your rewards,
+              please visit{' '}
+              <LinkExternal href="https://deprecated.sushi.com/farms">
+                <span className="text-slate-300">
+                  https://deprecated.sushi.com/farms
+                </span>
+              </LinkExternal>
+            </Message>
             {children}
           </Container>
         </div>
