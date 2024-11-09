@@ -30,7 +30,11 @@ export const SteerPositionZap: FC<SteerPositionAddProps> = ({ vault }) => {
     [inputAmount, inputCurrency],
   )
 
-  const { data: zapResponse, isError: isZapError } = useZap({
+  const {
+    data: zapResponse,
+    isError: isZapError,
+    isLoading: isZapLoading,
+  } = useZap({
     chainId: vault.chainId,
     fromAddress: address,
     tokenIn: [inputCurrency.isNative ? NativeAddress : inputCurrency.address],
@@ -40,8 +44,8 @@ export const SteerPositionZap: FC<SteerPositionAddProps> = ({ vault }) => {
 
   const {
     data: estGas,
-    isError: isEstimateGasError,
-    isLoading: isEstimateGasLoading,
+    isError: isEstGasError,
+    isLoading: isEstGasLoading,
   } = useEstimateGas({
     chainId: vault.chainId,
     account: address,
@@ -103,10 +107,12 @@ export const SteerPositionZap: FC<SteerPositionAddProps> = ({ vault }) => {
                       fullWidth
                       testId="zap-liquidity"
                       onClick={() => preparedTx && sendTransaction(preparedTx)}
-                      loading={isEstimateGasLoading || isWritePending}
-                      disabled={isZapError || isEstimateGasError}
+                      loading={
+                        isZapLoading || isEstGasLoading || isWritePending
+                      }
+                      disabled={isZapError || isEstGasError}
                     >
-                      {isZapError || isEstimateGasError ? (
+                      {isZapError || isEstGasError ? (
                         'Shoot! Something went wrong :('
                       ) : isWritePending ? (
                         <Dots>Add Liquidity</Dots>

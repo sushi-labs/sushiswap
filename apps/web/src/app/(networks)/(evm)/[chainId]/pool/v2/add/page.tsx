@@ -222,7 +222,11 @@ const ZapWidget: FC<ZapWidgetProps> = ({ chainId, pool, poolState, title }) => {
     [inputAmount, inputCurrency],
   )
 
-  const { data: zapResponse, isError: isZapError } = useZap({
+  const {
+    data: zapResponse,
+    isError: isZapError,
+    isLoading: isZapLoading,
+  } = useZap({
     chainId,
     fromAddress: address,
     tokenIn: [inputCurrency.isNative ? NativeAddress : inputCurrency.address],
@@ -232,8 +236,8 @@ const ZapWidget: FC<ZapWidgetProps> = ({ chainId, pool, poolState, title }) => {
 
   const {
     data: estGas,
-    isError: isEstimateGasError,
-    isLoading: isEstimateGasLoading,
+    isError: isEstGasError,
+    isLoading: isEstGasLoading,
   } = useEstimateGas({
     chainId,
     account: address,
@@ -292,10 +296,10 @@ const ZapWidget: FC<ZapWidgetProps> = ({ chainId, pool, poolState, title }) => {
                     fullWidth
                     testId="zap-liquidity"
                     onClick={() => preparedTx && sendTransaction(preparedTx)}
-                    loading={isEstimateGasLoading || isWritePending}
-                    disabled={isZapError || isEstimateGasError}
+                    loading={isZapLoading || isEstGasLoading || isWritePending}
+                    disabled={isZapError || isEstGasError}
                   >
-                    {isZapError || isEstimateGasError ? (
+                    {isZapError || isEstGasError ? (
                       'Shoot! Something went wrong :('
                     ) : isWritePending ? (
                       <Dots>{title}</Dots>

@@ -63,7 +63,11 @@ export const ZapSectionLegacy: FC<ZapSectionLegacyProps> = ({
     [inputAmount, inputCurrency],
   )
 
-  const { data: zapResponse, isError: isZapError } = useZap({
+  const {
+    data: zapResponse,
+    isError: isZapError,
+    isLoading: isZapLoading,
+  } = useZap({
     chainId: _pool.chainId,
     fromAddress: address,
     tokenIn: [inputCurrency.isNative ? NativeAddress : inputCurrency.address],
@@ -73,8 +77,8 @@ export const ZapSectionLegacy: FC<ZapSectionLegacyProps> = ({
 
   const {
     data: estGas,
-    isError: isEstimateGasError,
-    isLoading: isEstimateGasLoading,
+    isError: isEstGasError,
+    isLoading: isEstGasLoading,
   } = useEstimateGas({
     chainId: _pool.chainId,
     account: address,
@@ -166,10 +170,12 @@ export const ZapSectionLegacy: FC<ZapSectionLegacyProps> = ({
                       fullWidth
                       testId="zap-liquidity"
                       onClick={() => preparedTx && sendTransaction(preparedTx)}
-                      loading={isEstimateGasLoading || isWritePending}
-                      disabled={isZapError || isEstimateGasError}
+                      loading={
+                        isZapLoading || isEstGasLoading || isWritePending
+                      }
+                      disabled={isZapError || isEstGasError}
                     >
-                      {isZapError || isEstimateGasError ? (
+                      {isZapError || isEstGasError ? (
                         'Shoot! Something went wrong :('
                       ) : isWritePending ? (
                         <Dots>Add Liquidity</Dots>
