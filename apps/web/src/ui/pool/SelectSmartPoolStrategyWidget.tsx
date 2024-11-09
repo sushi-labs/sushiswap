@@ -12,6 +12,7 @@ import {
   Currency,
   FormSection,
   LinkExternal,
+  SkeletonText,
   Toggle,
 } from '@sushiswap/ui'
 import { Dispatch, SetStateAction } from 'react'
@@ -20,6 +21,7 @@ import { Address } from 'sushi'
 import { ChainKey } from 'sushi/chain'
 import { Token } from 'sushi/currency'
 import { formatPercent, formatUSD } from 'sushi/format'
+import { APRHoverCard } from './APRHoverCard'
 
 interface SelectSmartPoolStrategyWidgetProps {
   chainId: SmartPoolChainId
@@ -101,8 +103,16 @@ export const SelectSmartPoolStrategyWidget = ({
                       <CardItem title="TVL:" flex>
                         <span>{formatUSD(vault.reserveUSD)}</span>
                       </CardItem>
-                      <CardItem title="APR(1w):" flex>
-                        {formatPercent(vault.apr1w)}
+                      <CardItem title="APR(1d):" flex>
+                        {pool ? (
+                          <APRHoverCard pool={pool} smartPoolAPR={vault.apr1d}>
+                            <span className="underline decoration-dotted underline-offset-2">
+                              {formatPercent(vault.apr1d + pool.incentiveApr)}
+                            </span>
+                          </APRHoverCard>
+                        ) : (
+                          <SkeletonText />
+                        )}
                       </CardItem>
                     </CardContent>
                   </div>
