@@ -95,7 +95,7 @@ export const SteerBaseStrategy: SteerStrategyComponent = ({
                   <ToggleZapCard checked={useZap} onCheckedChange={setUseZap} />
                 ) : null}
                 {useZap ? (
-                  <SteerPositionZap vault={vault} />
+                  <SteerPositionZap vault={vault} tokenRatios={tokenRatios} />
                 ) : (
                   <SteerPositionAddProvider>
                     <SteerPositionAdd vault={vault} />

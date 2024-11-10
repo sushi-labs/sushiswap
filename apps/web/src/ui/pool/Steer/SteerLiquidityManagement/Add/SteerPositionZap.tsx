@@ -8,15 +8,20 @@ import { useZap } from 'src/lib/hooks'
 import { Web3Input } from 'src/lib/wagmi/components/web3-input'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
 import { CheckerProvider } from 'src/lib/wagmi/systems/Checker/Provider'
+import { ZapInfoCard } from 'src/ui/pool/ZapInfoCard'
 import { defaultCurrency, isWNativeSupported } from 'sushi/config'
 import { Amount, Type, tryParseAmount } from 'sushi/currency'
 import { useAccount, useEstimateGas, useSendTransaction } from 'wagmi'
 
 interface SteerPositionAddProps {
   vault: VaultV1
+  tokenRatios?: { token0: number; token1: number }
 }
 
-export const SteerPositionZap: FC<SteerPositionAddProps> = ({ vault }) => {
+export const SteerPositionZap: FC<SteerPositionAddProps> = ({
+  vault,
+  tokenRatios,
+}) => {
   const { address } = useAccount()
 
   const [inputAmount, setInputAmount] = useState('')
@@ -117,6 +122,12 @@ export const SteerPositionZap: FC<SteerPositionAddProps> = ({ vault }) => {
           </Checker.Connect>
         </Checker.Guard>
       </CheckerProvider>
+      <ZapInfoCard
+        zapResponse={zapResponse}
+        inputCurrency={inputCurrency}
+        pool={vault}
+        tokenRatios={tokenRatios}
+      />
     </div>
   )
 }

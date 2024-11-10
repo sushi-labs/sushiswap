@@ -32,6 +32,7 @@ import { AddSectionReviewModalLegacy } from 'src/ui/pool/AddSectionReviewModalLe
 import { SelectNetworkWidget } from 'src/ui/pool/SelectNetworkWidget'
 import { SelectTokensWidget } from 'src/ui/pool/SelectTokensWidget'
 import { ToggleZapCard } from 'src/ui/pool/ToggleZapCard'
+import { ZapInfoCard } from 'src/ui/pool/ZapInfoCard'
 import { ChainId, ChainKey, TESTNET_CHAIN_IDS } from 'sushi/chain'
 import {
   SUSHISWAP_V2_ROUTER_ADDRESS,
@@ -317,6 +318,11 @@ const ZapWidget: FC<ZapWidgetProps> = ({ chainId, pool, poolState, title }) => {
           </Checker.Network>
         </Checker.Connect>
       </CheckerProvider>
+      <ZapInfoCard
+        zapResponse={zapResponse}
+        inputCurrency={inputCurrency}
+        pool={pool}
+      />
     </>
   )
 }

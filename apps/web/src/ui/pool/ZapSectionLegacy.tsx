@@ -31,6 +31,7 @@ import { SushiSwapV2Pool } from 'sushi/pool'
 import { useAccount, useEstimateGas, useSendTransaction } from 'wagmi'
 import { useZap } from '../../lib/hooks'
 import { ToggleZapCard } from './ToggleZapCard'
+import { ZapInfoCard } from './ZapInfoCard'
 
 interface ZapSectionLegacyProps {
   chainId: SushiSwapV2ChainId
@@ -134,44 +135,53 @@ export const ZapSectionLegacy: FC<ZapSectionLegacyProps> = ({
         allowNative={isWNativeSupported(chainId)}
       />
       <WidgetFooter>
-        <CheckerProvider>
-          <Checker.Connect fullWidth>
-            <Checker.Network fullWidth chainId={chainId}>
-              <Checker.Amounts
-                fullWidth
-                chainId={chainId}
-                amount={parsedInputAmount}
-              >
-                <Checker.ApproveERC20
-                  id="approve-token"
-                  className="whitespace-nowrap"
+        <div className="flex flex-col gap-4 w-full">
+          <CheckerProvider>
+            <Checker.Connect fullWidth>
+              <Checker.Network fullWidth chainId={chainId}>
+                <Checker.Amounts
                   fullWidth
+                  chainId={chainId}
                   amount={parsedInputAmount}
-                  contract={zapResponse?.tx.to}
                 >
-                  <Checker.Success tag={APPROVE_TAG_ZAP_LEGACY}>
-                    <Button
-                      size="xl"
-                      fullWidth
-                      testId="zap-liquidity"
-                      onClick={() => preparedTx && sendTransaction(preparedTx)}
-                      loading={!preparedTx || isWritePending}
-                      disabled={isZapError || isEstGasError}
-                    >
-                      {isZapError || isEstGasError ? (
-                        'Shoot! Something went wrong :('
-                      ) : isWritePending ? (
-                        <Dots>Add Liquidity</Dots>
-                      ) : (
-                        'Add Liquidity'
-                      )}
-                    </Button>
-                  </Checker.Success>
-                </Checker.ApproveERC20>
-              </Checker.Amounts>
-            </Checker.Network>
-          </Checker.Connect>
-        </CheckerProvider>
+                  <Checker.ApproveERC20
+                    id="approve-token"
+                    className="whitespace-nowrap"
+                    fullWidth
+                    amount={parsedInputAmount}
+                    contract={zapResponse?.tx.to}
+                  >
+                    <Checker.Success tag={APPROVE_TAG_ZAP_LEGACY}>
+                      <Button
+                        size="xl"
+                        fullWidth
+                        testId="zap-liquidity"
+                        onClick={() =>
+                          preparedTx && sendTransaction(preparedTx)
+                        }
+                        loading={!preparedTx || isWritePending}
+                        disabled={isZapError || isEstGasError}
+                      >
+                        {isZapError || isEstGasError ? (
+                          'Shoot! Something went wrong :('
+                        ) : isWritePending ? (
+                          <Dots>Add Liquidity</Dots>
+                        ) : (
+                          'Add Liquidity'
+                        )}
+                      </Button>
+                    </Checker.Success>
+                  </Checker.ApproveERC20>
+                </Checker.Amounts>
+              </Checker.Network>
+            </Checker.Connect>
+          </CheckerProvider>
+          <ZapInfoCard
+            zapResponse={zapResponse}
+            inputCurrency={inputCurrency}
+            pool={pool}
+          />
+        </div>
       </WidgetFooter>
     </Widget>
   )
