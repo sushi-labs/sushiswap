@@ -9,14 +9,14 @@ import {
 } from '@sushiswap/ui'
 import { FC } from 'react'
 
-export enum PoolType {
+export enum V3PoolType {
   MANUAL = 'manual',
   SMART = 'smart',
 }
 
 interface SelectV3PoolTypeWidgetProps {
-  poolType: PoolType
-  setPoolType: (poolType: PoolType) => void
+  poolType: V3PoolType
+  setPoolType: (poolType: V3PoolType) => void
   isSmartPoolSupported: boolean
 }
 
@@ -45,7 +45,7 @@ export const SelectV3PoolTypeWidget: FC<SelectV3PoolTypeWidgetProps> = ({
         className="grid grid-cols-2 gap-4"
       >
         <RadioGroup.Option
-          value={PoolType.SMART}
+          value={V3PoolType.SMART}
           disabled={!isSmartPoolSupported}
         >
           {({ checked }) => (
@@ -63,7 +63,7 @@ export const SelectV3PoolTypeWidget: FC<SelectV3PoolTypeWidgetProps> = ({
             </Toggle>
           )}
         </RadioGroup.Option>
-        <RadioGroup.Option value={PoolType.MANUAL}>
+        <RadioGroup.Option value={V3PoolType.MANUAL}>
           {({ checked }) => (
             <Toggle
               pressed={checked}

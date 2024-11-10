@@ -20,8 +20,8 @@ import { SelectPricesWidget } from 'src/ui/pool/SelectPricesWidget'
 import { SelectSmartPoolStrategyWidget } from 'src/ui/pool/SelectSmartPoolStrategyWidget'
 import { SelectTokensWidget } from 'src/ui/pool/SelectTokensWidget'
 import {
-  PoolType,
   SelectV3PoolTypeWidget,
+  V3PoolType,
 } from 'src/ui/pool/SelectV3PoolTypeWidget'
 import { SmartPoolLiquidityWidget } from 'src/ui/pool/SmartPoolLiquidityWidget'
 import { ChainKey, computeSushiSwapV3PoolAddress } from 'sushi'
@@ -102,13 +102,13 @@ const _Add: FC = () => {
 
   const [vaultIndex, setVaultIndex] = useState(0)
 
-  const [poolType, setPoolType] = useState<PoolType>(PoolType.MANUAL)
+  const [poolType, setPoolType] = useState<V3PoolType>(V3PoolType.MANUAL)
 
   useEffect(() => {
     if (vaults && vaults.length > 0) {
-      setPoolType(PoolType.SMART)
+      setPoolType(V3PoolType.SMART)
     } else {
-      setPoolType(PoolType.MANUAL)
+      setPoolType(V3PoolType.MANUAL)
     }
   }, [vaults])
 
@@ -138,7 +138,7 @@ const _Add: FC = () => {
         setPoolType={setPoolType}
         isSmartPoolSupported={Boolean(vaults?.length)}
       />
-      {poolType === PoolType.MANUAL ? (
+      {poolType === V3PoolType.MANUAL ? (
         <>
           <SelectPricesWidget
             chainId={chainId}
@@ -163,7 +163,7 @@ const _Add: FC = () => {
             successLink={`/${ChainKey[chainId]}/pool/v3/${poolAddress}/${tokenId}`}
           />
         </>
-      ) : poolType === PoolType.SMART && vaults ? (
+      ) : poolType === V3PoolType.SMART && vaults ? (
         <>
           <SelectSmartPoolStrategyWidget
             chainId={chainId as SmartPoolChainId}

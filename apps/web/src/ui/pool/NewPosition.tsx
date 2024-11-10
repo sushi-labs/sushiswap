@@ -22,7 +22,7 @@ import { useAccount } from 'wagmi'
 import { ConcentratedLiquidityWidget } from './ConcentratedLiquidityWidget'
 import { SelectPricesWidget } from './SelectPricesWidget'
 import { SelectSmartPoolStrategyWidget } from './SelectSmartPoolStrategyWidget'
-import { PoolType, SelectV3PoolTypeWidget } from './SelectV3PoolTypeWidget'
+import { SelectV3PoolTypeWidget, V3PoolType } from './SelectV3PoolTypeWidget'
 import { SmartPoolLiquidityWidget } from './SmartPoolLiquidityWidget'
 
 interface NewPositionProps {
@@ -63,13 +63,13 @@ export const NewPosition: FC<NewPositionProps> = ({ address, chainId }) => {
 
   const [vaultIndex, setVaultIndex] = useState(0)
 
-  const [poolType, setPoolType] = useState<PoolType>(PoolType.MANUAL)
+  const [poolType, setPoolType] = useState<V3PoolType>(V3PoolType.MANUAL)
 
   useEffect(() => {
     if (vaults && vaults.length > 0) {
-      setPoolType(PoolType.SMART)
+      setPoolType(V3PoolType.SMART)
     } else {
-      setPoolType(PoolType.MANUAL)
+      setPoolType(V3PoolType.MANUAL)
     }
   }, [vaults])
 
@@ -90,7 +90,7 @@ export const NewPosition: FC<NewPositionProps> = ({ address, chainId }) => {
           setPoolType={setPoolType}
           isSmartPoolSupported={Boolean(vaults?.length)}
         />
-        {poolType === PoolType.MANUAL ? (
+        {poolType === V3PoolType.MANUAL ? (
           <>
             <SelectPricesWidget
               chainId={chainId}
@@ -113,7 +113,7 @@ export const NewPosition: FC<NewPositionProps> = ({ address, chainId }) => {
               successLink={`/${ChainKey[chainId]}/pool/v3/${address}/positions`}
             />
           </>
-        ) : poolType === PoolType.SMART && vaults ? (
+        ) : poolType === V3PoolType.SMART && vaults ? (
           <>
             <SelectSmartPoolStrategyWidget
               chainId={chainId as SmartPoolChainId}
