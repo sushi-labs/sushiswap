@@ -160,7 +160,7 @@ const _Add: FC = () => {
             tokensLoading={tokensLoading}
             existingPosition={position ?? undefined}
             tokenId={tokenId}
-            successLink={`/${ChainKey[chainId]}/pools/v3/${poolAddress}/${tokenId}`}
+            successLink={`/${ChainKey[chainId]}/pool/v3/${poolAddress}/${tokenId}`}
           />
         </>
       ) : poolType === PoolType.SMART && vaults ? (
