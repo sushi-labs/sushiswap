@@ -1,7 +1,6 @@
 'use client'
 
 import { Cog6ToothIcon } from '@heroicons/react/24/outline'
-import { V2Pool } from '@sushiswap/graph-client/data-api'
 import { SlippageToleranceStorageKey } from '@sushiswap/hooks'
 import {
   Button,
@@ -17,13 +16,9 @@ import {
   WidgetTitle,
 } from '@sushiswap/ui'
 import { FC, useMemo, useState } from 'react'
-import { isZapSupportedChainId } from 'src/config'
 import { APPROVE_TAG_ZAP_LEGACY, NativeAddress } from 'src/lib/constants'
 import { Web3Input } from 'src/lib/wagmi/components/web3-input'
-import {
-  SushiSwapV2PoolState,
-  useSushiSwapV2Pool,
-} from 'src/lib/wagmi/hooks/pools/hooks/useSushiSwapV2Pools'
+import { SushiSwapV2PoolState } from 'src/lib/wagmi/hooks/pools/hooks/useSushiSwapV2Pools'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
 import { CheckerProvider } from 'src/lib/wagmi/systems/Checker/Provider'
 import {
@@ -32,29 +27,29 @@ import {
   isWNativeSupported,
 } from 'sushi/config'
 import { Amount, Type, tryParseAmount } from 'sushi/currency'
+import { SushiSwapV2Pool } from 'sushi/pool'
 import { useAccount, useEstimateGas, useSendTransaction } from 'wagmi'
-import { useTokensFromPool, useZap } from '../../lib/hooks'
+import { useZap } from '../../lib/hooks'
 import { ToggleZapCard } from './ToggleZapCard'
 
 interface ZapSectionLegacyProps {
-  pool: V2Pool
+  chainId: SushiSwapV2ChainId
+  pool: SushiSwapV2Pool | null
+  poolState: SushiSwapV2PoolState
   setUseZap(value: boolean): void
 }
 
 export const ZapSectionLegacy: FC<ZapSectionLegacyProps> = ({
-  pool: _pool,
+  chainId,
+  pool,
+  poolState,
   setUseZap,
 }) => {
   const { address } = useAccount()
 
-  const { token0, token1 } = useTokensFromPool(_pool)
-  const {
-    data: [poolState, pool],
-  } = useSushiSwapV2Pool(_pool.chainId as SushiSwapV2ChainId, token0, token1)
-
   const [inputAmount, setInputAmount] = useState('')
   const [inputCurrency, setInputCurrency] = useState<Type>(
-    defaultCurrency[_pool.chainId as keyof typeof defaultCurrency],
+    defaultCurrency[chainId as keyof typeof defaultCurrency],
   )
   const parsedInputAmount = useMemo(
     () =>
@@ -63,24 +58,16 @@ export const ZapSectionLegacy: FC<ZapSectionLegacyProps> = ({
     [inputAmount, inputCurrency],
   )
 
-  const {
-    data: zapResponse,
-    isError: isZapError,
-    isLoading: isZapLoading,
-  } = useZap({
-    chainId: _pool.chainId,
+  const { data: zapResponse, isError: isZapError } = useZap({
+    chainId,
     fromAddress: address,
-    tokenIn: [inputCurrency.isNative ? NativeAddress : inputCurrency.address],
+    tokenIn: inputCurrency.isNative ? NativeAddress : inputCurrency.address,
     amountIn: parsedInputAmount?.quotient?.toString(),
     tokenOut: pool?.liquidityToken.address,
   })
 
-  const {
-    data: estGas,
-    isError: isEstGasError,
-    isLoading: isEstGasLoading,
-  } = useEstimateGas({
-    chainId: _pool.chainId,
+  const { data: estGas, isError: isEstGasError } = useEstimateGas({
+    chainId,
     account: address,
     to: zapResponse?.tx.to,
     data: zapResponse?.tx.data,
@@ -127,16 +114,14 @@ export const ZapSectionLegacy: FC<ZapSectionLegacyProps> = ({
           </SettingsOverlay>
         </WidgetAction>
       </WidgetHeader>
-      {isZapSupportedChainId(_pool.chainId) ? (
-        <div className="mb-4">
-          <ToggleZapCard onCheckedChange={setUseZap} checked={true} />
-        </div>
-      ) : null}
+      <div className="mb-4">
+        <ToggleZapCard onCheckedChange={setUseZap} checked={true} />
+      </div>
       <Web3Input.Currency
         id="zap-liquidity-token"
         type="INPUT"
         className="border border-accent px-3 py-1.5 !rounded-xl"
-        chainId={_pool.chainId}
+        chainId={chainId}
         value={inputAmount}
         onChange={setInputAmount}
         onSelect={setInputCurrency}
@@ -146,15 +131,15 @@ export const ZapSectionLegacy: FC<ZapSectionLegacyProps> = ({
           poolState === SushiSwapV2PoolState.INVALID
         }
         loading={poolState === SushiSwapV2PoolState.LOADING}
-        allowNative={isWNativeSupported(_pool.chainId)}
+        allowNative={isWNativeSupported(chainId)}
       />
       <WidgetFooter>
         <CheckerProvider>
           <Checker.Connect fullWidth>
-            <Checker.Network fullWidth chainId={_pool.chainId}>
+            <Checker.Network fullWidth chainId={chainId}>
               <Checker.Amounts
                 fullWidth
-                chainId={_pool.chainId}
+                chainId={chainId}
                 amount={parsedInputAmount}
               >
                 <Checker.ApproveERC20
@@ -170,9 +155,7 @@ export const ZapSectionLegacy: FC<ZapSectionLegacyProps> = ({
                       fullWidth
                       testId="zap-liquidity"
                       onClick={() => preparedTx && sendTransaction(preparedTx)}
-                      loading={
-                        isZapLoading || isEstGasLoading || isWritePending
-                      }
+                      loading={!preparedTx || isWritePending}
                       disabled={isZapError || isEstGasError}
                     >
                       {isZapError || isEstGasError ? (

@@ -30,23 +30,15 @@ export const SteerPositionZap: FC<SteerPositionAddProps> = ({ vault }) => {
     [inputAmount, inputCurrency],
   )
 
-  const {
-    data: zapResponse,
-    isError: isZapError,
-    isLoading: isZapLoading,
-  } = useZap({
+  const { data: zapResponse, isError: isZapError } = useZap({
     chainId: vault.chainId,
     fromAddress: address,
-    tokenIn: [inputCurrency.isNative ? NativeAddress : inputCurrency.address],
+    tokenIn: inputCurrency.isNative ? NativeAddress : inputCurrency.address,
     amountIn: parsedInputAmount?.quotient?.toString(),
     tokenOut: vault.address,
   })
 
-  const {
-    data: estGas,
-    isError: isEstGasError,
-    isLoading: isEstGasLoading,
-  } = useEstimateGas({
+  const { data: estGas, isError: isEstGasError } = useEstimateGas({
     chainId: vault.chainId,
     account: address,
     to: zapResponse?.tx.to,
@@ -107,9 +99,7 @@ export const SteerPositionZap: FC<SteerPositionAddProps> = ({ vault }) => {
                       fullWidth
                       testId="zap-liquidity"
                       onClick={() => preparedTx && sendTransaction(preparedTx)}
-                      loading={
-                        isZapLoading || isEstGasLoading || isWritePending
-                      }
+                      loading={!preparedTx || isWritePending}
                       disabled={isZapError || isEstGasError}
                     >
                       {isZapError || isEstGasError ? (

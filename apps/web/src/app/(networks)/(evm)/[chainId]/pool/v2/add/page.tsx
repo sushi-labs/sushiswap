@@ -53,7 +53,7 @@ export default function Page({ params }: { params: { chainId: string } }) {
     return notFound()
   }
 
-  const [useZap, setUseZap] = useState(isZapSupportedChainId(chainId))
+  const [useZap, setUseZap] = useState(false)
 
   const router = useRouter()
   const [token0, setToken0] = useState<Type | undefined>(
@@ -126,6 +126,17 @@ export default function Page({ params }: { params: { chainId: string } }) {
         }
       >
         {({ pool: [poolState, pool] }) => {
+          useEffect(() => {
+            if (
+              isZapSupportedChainId(chainId) &&
+              poolState === SushiSwapV2PoolState.EXISTS
+            ) {
+              setUseZap(true)
+            } else {
+              setUseZap(false)
+            }
+          }, [poolState])
+
           const title =
             !token0 || !token1 ? (
               'Select Tokens'
@@ -165,21 +176,22 @@ export default function Page({ params }: { params: { chainId: string } }) {
                 title="Deposit"
                 description="Select the amount of tokens you want to deposit"
               >
-                {isZapSupportedChainId(chainId) ? (
+                {isZapSupportedChainId(chainId) &&
+                poolState === SushiSwapV2PoolState.EXISTS ? (
                   <ToggleZapCard checked={useZap} onCheckedChange={setUseZap} />
                 ) : null}
                 {useZap ? (
                   <ZapWidget
                     chainId={chainId}
-                    pool={pool as SushiSwapV2Pool | null}
-                    poolState={poolState as SushiSwapV2PoolState}
+                    pool={pool}
+                    poolState={poolState}
                     title={title}
                   />
                 ) : (
                   <AddLiquidityWidget
                     chainId={chainId}
-                    pool={pool as SushiSwapV2Pool | null}
-                    poolState={poolState as SushiSwapV2PoolState}
+                    pool={pool}
+                    poolState={poolState}
                     title={title}
                     token0={token0}
                     token1={token1}
@@ -222,23 +234,15 @@ const ZapWidget: FC<ZapWidgetProps> = ({ chainId, pool, poolState, title }) => {
     [inputAmount, inputCurrency],
   )
 
-  const {
-    data: zapResponse,
-    isError: isZapError,
-    isLoading: isZapLoading,
-  } = useZap({
+  const { data: zapResponse, isError: isZapError } = useZap({
     chainId,
     fromAddress: address,
-    tokenIn: [inputCurrency.isNative ? NativeAddress : inputCurrency.address],
+    tokenIn: inputCurrency.isNative ? NativeAddress : inputCurrency.address,
     amountIn: parsedInputAmount?.quotient?.toString(),
     tokenOut: pool?.liquidityToken.address,
   })
 
-  const {
-    data: estGas,
-    isError: isEstGasError,
-    isLoading: isEstGasLoading,
-  } = useEstimateGas({
+  const { data: estGas, isError: isEstGasError } = useEstimateGas({
     chainId,
     account: address,
     to: zapResponse?.tx.to,
@@ -296,7 +300,7 @@ const ZapWidget: FC<ZapWidgetProps> = ({ chainId, pool, poolState, title }) => {
                     fullWidth
                     testId="zap-liquidity"
                     onClick={() => preparedTx && sendTransaction(preparedTx)}
-                    loading={isZapLoading || isEstGasLoading || isWritePending}
+                    loading={!preparedTx || isWritePending}
                     disabled={isZapError || isEstGasError}
                   >
                     {isZapError || isEstGasError ? (
