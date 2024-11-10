@@ -23,7 +23,11 @@ export const ToggleZapCard: FC<ToggleZapCardProps> = ({
           <span className="text-base tracking-tighter saturate-200 flex items-center gap-2 bg-gradient-to-r from-blue to-pink bg-clip-text text-transparent">
             Zap Mode
           </span>
-          <Switch checked={checked} onCheckedChange={onCheckedChange} />
+          <Switch
+            testdata-id="toggle-zap-enabled"
+            checked={checked}
+            onCheckedChange={onCheckedChange}
+          />
         </CardTitle>
         <CardDescription>
           Deposit with any token of your choice. Let zap mode handle the swap

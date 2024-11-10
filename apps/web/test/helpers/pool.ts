@@ -1,5 +1,6 @@
 import { Page, expect } from '@playwright/test'
 import { NextFixture } from 'next/experimental/testmode/playwright'
+import { isZapSupportedChainId } from 'src/config'
 import { NativeAddress } from 'src/lib/constants'
 import {
   SUSHISWAP_V2_FACTORY_ADDRESS,
@@ -163,6 +164,15 @@ export class PoolPage extends BaseActions {
   async addLiquidityV2(args: AddV2LiquidityArgs) {
     await this.handleToken(args.token0, 'FIRST')
     await this.handleToken(args.token1, 'SECOND')
+
+    if (isZapSupportedChainId(this.chainId)) {
+      const toggleZapLocator = this.page.locator(
+        '[testdata-id=toggle-zap-enabled]',
+      )
+      await expect(toggleZapLocator).toBeVisible()
+      await expect(toggleZapLocator).toBeEnabled()
+      await toggleZapLocator.click()
+    }
 
     // Only fill in the token that is not native if we are adding liquidity to an existing pool.
     const input = this.page.locator(
