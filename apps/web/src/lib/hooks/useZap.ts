@@ -34,7 +34,7 @@ const routeSchema: z.ZodType<Route> = z.lazy(() =>
 const zapResponseSchema = z.object({
   gas: z.string().transform((gas) => BigInt(gas)),
   amountOut: z.string().transform((amount) => BigInt(amount)),
-  priceImpact: z.number(),
+  priceImpact: z.number().nullable(),
   createdAt: z.number(),
   tx: txSchema,
   route: z.array(routeSchema).optional(),
