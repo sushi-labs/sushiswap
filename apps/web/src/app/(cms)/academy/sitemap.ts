@@ -15,19 +15,19 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       {
         url: 'https://www.sushi.com/academy',
         lastModified: new Date(),
-        changeFrequency: 'yearly',
+        changeFrequency: 'weekly',
       },
       {
         url: 'https://www.sushi.com/academy/explore',
         lastModified: new Date(),
-        changeFrequency: 'yearly',
+        changeFrequency: 'weekly',
       },
       ...products.map(
         (product) =>
           ({
             url: `https://www.sushi.com/academy/products/${product}`,
             lastModified: new Date(),
-            changeFrequency: 'yearly',
+            changeFrequency: 'monthly',
           }) as const,
       ),
       ...articles.map(

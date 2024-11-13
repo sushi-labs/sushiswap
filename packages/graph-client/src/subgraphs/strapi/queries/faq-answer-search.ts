@@ -5,8 +5,8 @@ import { graphql } from '../graphql'
 import { STRAPI_GRAPHQL_URL } from 'src/subgraphs/strapi/constants'
 
 export const StrapiFaqAnswerSearchQuery = graphql(
-  `query FaqAnswerSearch($search: String!) {
-    faqAnswers(filters: { name: { containsi: $search } }) {
+  `query FaqAnswerSearch($search: String!, $pagination: PaginationArg = {}) {
+    faqAnswers(filters: { name: { containsi: $search } }, pagination: $pagination) {
       data {
         attributes {
           name
@@ -29,7 +29,7 @@ export const StrapiFaqAnswerSearchQuery = graphql(
       }
     }
 
-    faqAnswerGroups(filters: { name: { containsi: $search } }) {
+    faqAnswerGroups(filters: { name: { containsi: $search } }, pagination: $pagination) {
       data {
         attributes {
           name
