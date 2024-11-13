@@ -26,18 +26,18 @@ export const metadata: Metadata = {
   },
   description:
     'A Decentralised Finance (DeFi) app with features such as swap, cross chain swap, streaming, vesting, and permissionless market making for liquidity providers.',
-  // openGraph: {
-  //   type: 'website',
-  //   locale: 'en_US',
-  //   images: [
-  //     {
-  //       url: 'https://sushi.com/sushi-square.jpg',
-  //       width: 1200,
-  //       height: 1200,
-  //       alt: 'Sushi 🍣',
-  //     },
-  //   ],
-  // },
+  openGraph: {
+    type: 'website',
+    locale: 'en_US',
+    images: [
+      {
+        url: 'https://cdn.sushi.com/image/upload/v1731498183/sushi-assets/embed-web-visuals/default.jpg',
+        width: 1920,
+        height: 1080,
+        alt: 'Sushi 🍣',
+      },
+    ],
+  },
 }
 
 export default function RootLayout({
