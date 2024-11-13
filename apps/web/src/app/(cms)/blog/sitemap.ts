@@ -13,7 +13,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       {
         url: 'https://www.sushi.com/blog',
         lastModified: new Date(),
-        changeFrequency: 'yearly',
+        changeFrequency: 'daily',
       },
       ...articles.map(
         (article) =>

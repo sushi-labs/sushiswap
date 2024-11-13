@@ -4,6 +4,7 @@ import { getNetworkKey } from 'src/lib/network'
 const sitemapFiles = [
   '/academy/sitemap.xml',
   '/blog/sitemap.xml',
+  '/faq/sitemap.xml',
   ...CHAIN_IDS.map(getNetworkKey).map((key) => `/sitemap/${key}.xml`),
   '/aptos/sitemap.xml',
   '/tron/sitemap.xml',
