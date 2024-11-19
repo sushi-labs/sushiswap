@@ -241,7 +241,7 @@ export const SteerPositionRemove: FC<SteerPositionRemoveProps> = ({
             <SettingsOverlay
               options={{
                 slippageTolerance: {
-                  storageKey: SlippageToleranceStorageKey.RemoveLiquidity,
+                  storageKey: SlippageToleranceStorageKey.RemoveSteerLiquidity,
                   title: 'Remove Liquidity Slippage',
                 },
               }}

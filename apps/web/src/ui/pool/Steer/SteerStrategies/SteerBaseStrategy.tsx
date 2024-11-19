@@ -7,8 +7,11 @@ import {
   CardHeader,
   CardTitle,
   Explainer,
+  IconButton,
   LinkExternal,
   Separator,
+  SettingsModule,
+  SettingsOverlay,
   Stat,
   StatLabel,
   StatValue,
@@ -16,9 +19,12 @@ import {
   TabsContent,
   TabsList,
   TabsTrigger,
+  WidgetAction,
 } from '@sushiswap/ui'
 import { formatPercent, formatUSD } from 'sushi/format'
 
+import { Cog6ToothIcon } from '@heroicons/react/24/outline'
+import { SlippageToleranceStorageKey } from '@sushiswap/hooks'
 import { FormattedNumber } from '@sushiswap/ui'
 import { useState } from 'react'
 import { isZapSupportedChainId } from 'src/config'
@@ -86,11 +92,30 @@ export const SteerBaseStrategy: SteerStrategyComponent = ({
               <Separator />
             </div>
             <TabsContent value="add">
-              <CardHeader>
+              <CardHeader className="relative">
                 <CardTitle>Add liquidity</CardTitle>
                 <CardDescription>
                   Provide liquidity to earn fees & rewards.
                 </CardDescription>
+                <WidgetAction>
+                  <SettingsOverlay
+                    options={{
+                      slippageTolerance: {
+                        storageKey:
+                          SlippageToleranceStorageKey.AddSteerLiquidity,
+                        title: 'Add Liquidity Slippage',
+                      },
+                    }}
+                    modules={[SettingsModule.SlippageTolerance]}
+                  >
+                    <IconButton
+                      size="sm"
+                      name="Settings"
+                      icon={Cog6ToothIcon}
+                      variant="secondary"
+                    />
+                  </SettingsOverlay>
+                </WidgetAction>
               </CardHeader>
               <CardContent>
                 {isZapSupportedChainId(vault.chainId) ? (
