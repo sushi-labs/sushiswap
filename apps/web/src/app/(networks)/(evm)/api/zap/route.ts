@@ -14,23 +14,26 @@ const schema = z.object({
   routingStrategy: z
     .enum(['ensowallet', 'router', 'delegate'])
     .default('router'),
-  // toEoa: z.boolean(), // DEPRECATED
-  receiver: z.optional(
-    z.string().transform((receiver) => getAddress(receiver)),
-  ),
-  spender: z.optional(z.string().transform((spender) => getAddress(spender))),
+  receiver: z
+    .string()
+    .transform((receiver) => getAddress(receiver))
+    .optional(),
+  spender: z
+    .string()
+    .transform((spender) => getAddress(spender))
+    .optional(),
   amountIn: z.union([z.string(), z.array(z.string())]),
-  amountOut: z.optional(z.union([z.string(), z.array(z.string())])),
-  minAmountOut: z.optional(z.union([z.string(), z.array(z.string())])),
-  slippage: z.optional(z.string()),
-  fee: z.optional(z.union([z.string(), z.array(z.string())])),
-  feeReceiver: z.optional(z.string()),
-  disableAggregators: z.optional(z.string()),
-  ignoreAggregators: z.optional(z.string()),
-  ignoreStandards: z.optional(z.string()),
-  tokenIn: z.optional(z.union([z.string(), z.array(z.string())])),
-  tokenOut: z.optional(z.union([z.string(), z.array(z.string())])),
-  quote: z.optional(z.boolean()),
+  amountOut: z.union([z.string(), z.array(z.string())]).optional(),
+  minAmountOut: z.union([z.string(), z.array(z.string())]).optional(),
+  slippage: z.string().optional(), // BIPS
+  fee: z.union([z.string(), z.array(z.string())]).optional(), // BIPS
+  feeReceiver: z.string().optional(),
+  disableAggregators: z.string().optional(),
+  ignoreAggregators: z.string().optional(),
+  ignoreStandards: z.string().optional(),
+  tokenIn: z.union([z.string(), z.array(z.string())]).optional(),
+  tokenOut: z.union([z.string(), z.array(z.string())]).optional(),
+  quote: z.boolean().optional(),
 })
 
 export const revalidate = 600
@@ -41,7 +44,7 @@ export async function GET(request: NextRequest) {
   const { quote, ...parsedParams } = schema.parse(params)
 
   const queryParams = new URLSearchParams(
-    Object.entries(params).reduce(
+    Object.entries(parsedParams).reduce(
       (accum: [string, string][], [key, value]) => {
         if (value !== undefined && value !== null) {
           if (Array.isArray(value)) {
@@ -68,7 +71,7 @@ export async function GET(request: NextRequest) {
     },
   )
 
-  return new Response(response.body, {
+  return new Response(await response.text(), {
     status: response.status,
     headers: {
       'Cache-Control': 'max-age=60, stale-while-revalidate=600',

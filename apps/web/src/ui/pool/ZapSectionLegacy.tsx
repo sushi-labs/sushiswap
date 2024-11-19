@@ -2,6 +2,7 @@
 
 import { Cog6ToothIcon } from '@heroicons/react/24/outline'
 import { SlippageToleranceStorageKey } from '@sushiswap/hooks'
+import { createToast } from '@sushiswap/notifications'
 import {
   Button,
   Dots,
@@ -15,12 +16,16 @@ import {
   WidgetHeader,
   WidgetTitle,
 } from '@sushiswap/ui'
-import { FC, useMemo, useState } from 'react'
+import { FC, useCallback, useMemo, useState } from 'react'
 import { APPROVE_TAG_ZAP_LEGACY, NativeAddress } from 'src/lib/constants'
+import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
 import { Web3Input } from 'src/lib/wagmi/components/web3-input'
 import { SushiSwapV2PoolState } from 'src/lib/wagmi/hooks/pools/hooks/useSushiSwapV2Pools'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
-import { CheckerProvider } from 'src/lib/wagmi/systems/Checker/Provider'
+import {
+  CheckerProvider,
+  useApproved,
+} from 'src/lib/wagmi/systems/Checker/Provider'
 import {
   SushiSwapV2ChainId,
   defaultCurrency,
@@ -28,7 +33,14 @@ import {
 } from 'sushi/config'
 import { Amount, Type, tryParseAmount } from 'sushi/currency'
 import { SushiSwapV2Pool } from 'sushi/pool'
-import { useAccount, useEstimateGas, useSendTransaction } from 'wagmi'
+import { SendTransactionReturnType } from 'viem'
+import {
+  useAccount,
+  useEstimateGas,
+  usePublicClient,
+  useSendTransaction,
+} from 'wagmi'
+import { useRefetchBalances } from '~evm/_common/ui/balance-provider/use-refetch-balances'
 import { useZap } from '../../lib/hooks'
 import { ToggleZapCard } from './ToggleZapCard'
 import { ZapInfoCard } from './ZapInfoCard'
@@ -37,21 +49,40 @@ interface ZapSectionLegacyProps {
   chainId: SushiSwapV2ChainId
   pool: SushiSwapV2Pool | null
   poolState: SushiSwapV2PoolState
-  setUseZap(value: boolean): void
+  toggleZapMode(value: boolean): void
 }
 
-export const ZapSectionLegacy: FC<ZapSectionLegacyProps> = ({
+export const ZapSectionLegacy: FC<ZapSectionLegacyProps> = (props) => {
+  return (
+    <CheckerProvider>
+      <_ZapSectionLegacy {...props} />
+    </CheckerProvider>
+  )
+}
+
+const _ZapSectionLegacy: FC<ZapSectionLegacyProps> = ({
   chainId,
   pool,
   poolState,
-  setUseZap,
+  toggleZapMode,
 }) => {
-  const { address } = useAccount()
+  const client = usePublicClient()
+
+  const { address, chain } = useAccount()
+
+  const [slippageTolerance] = useSlippageTolerance(
+    SlippageToleranceStorageKey.AddLiquidity,
+  )
 
   const [inputAmount, setInputAmount] = useState('')
-  const [inputCurrency, setInputCurrency] = useState<Type>(
+  const [inputCurrency, _setInputCurrency] = useState<Type>(
     defaultCurrency[chainId as keyof typeof defaultCurrency],
   )
+  const setInputCurrency = useCallback((currency: Type) => {
+    _setInputCurrency(currency)
+    setInputAmount('')
+  }, [])
+
   const parsedInputAmount = useMemo(
     () =>
       tryParseAmount(inputAmount, inputCurrency) ||
@@ -65,7 +96,10 @@ export const ZapSectionLegacy: FC<ZapSectionLegacyProps> = ({
     tokenIn: inputCurrency.isNative ? NativeAddress : inputCurrency.address,
     amountIn: parsedInputAmount?.quotient?.toString(),
     tokenOut: pool?.liquidityToken.address,
+    slippage: slippageTolerance,
   })
+
+  const { approved } = useApproved(APPROVE_TAG_ZAP_LEGACY)
 
   const { data: estGas, isError: isEstGasError } = useEstimateGas({
     chainId,
@@ -74,7 +108,7 @@ export const ZapSectionLegacy: FC<ZapSectionLegacyProps> = ({
     data: zapResponse?.tx.data,
     value: zapResponse?.tx.value,
     query: {
-      enabled: Boolean(address && zapResponse?.tx),
+      enabled: Boolean(approved && address && zapResponse?.tx),
     },
   })
 
@@ -84,7 +118,41 @@ export const ZapSectionLegacy: FC<ZapSectionLegacyProps> = ({
       : undefined
   }, [zapResponse, estGas])
 
-  const { sendTransaction, isPending: isWritePending } = useSendTransaction()
+  const { refetchChain: refetchBalances } = useRefetchBalances()
+
+  const onSuccess = useCallback(
+    (hash: SendTransactionReturnType) => {
+      if (!chain || !pool) return
+
+      setInputAmount('')
+
+      const receipt = client.waitForTransactionReceipt({ hash })
+      receipt.then(() => {
+        refetchBalances(chain.id)
+      })
+
+      const ts = new Date().getTime()
+      void createToast({
+        account: address,
+        type: 'mint',
+        chainId: chain.id,
+        txHash: hash,
+        promise: receipt,
+        summary: {
+          pending: `Zapping into the ${pool.token0.symbol}/${pool.token1.symbol} pair`,
+          completed: `Successfully zapped into the ${pool.token0.symbol}/${pool.token1.symbol} pair`,
+          failed: `Something went wrong when zapping into the ${pool.token0.symbol}/${pool.token1.symbol} pair`,
+        },
+        timestamp: ts,
+        groupTimestamp: ts,
+      })
+    },
+    [refetchBalances, client, chain, address, pool],
+  )
+
+  const { sendTransaction, isPending: isWritePending } = useSendTransaction({
+    mutation: { onSuccess },
+  })
 
   return (
     <Widget id="zapLiquidity" variant="empty">
@@ -116,7 +184,7 @@ export const ZapSectionLegacy: FC<ZapSectionLegacyProps> = ({
         </WidgetAction>
       </WidgetHeader>
       <div className="mb-4">
-        <ToggleZapCard onCheckedChange={setUseZap} checked={true} />
+        <ToggleZapCard onCheckedChange={toggleZapMode} checked={true} />
       </div>
       <Web3Input.Currency
         id="zap-liquidity-token"
@@ -136,46 +204,42 @@ export const ZapSectionLegacy: FC<ZapSectionLegacyProps> = ({
       />
       <WidgetFooter>
         <div className="flex flex-col gap-4 w-full">
-          <CheckerProvider>
-            <Checker.Connect fullWidth>
-              <Checker.Network fullWidth chainId={chainId}>
-                <Checker.Amounts
+          <Checker.Connect fullWidth>
+            <Checker.Network fullWidth chainId={chainId}>
+              <Checker.Amounts
+                fullWidth
+                chainId={chainId}
+                amount={parsedInputAmount}
+              >
+                <Checker.ApproveERC20
+                  id="approve-token"
+                  className="whitespace-nowrap"
                   fullWidth
-                  chainId={chainId}
                   amount={parsedInputAmount}
+                  contract={zapResponse?.tx.to}
                 >
-                  <Checker.ApproveERC20
-                    id="approve-token"
-                    className="whitespace-nowrap"
-                    fullWidth
-                    amount={parsedInputAmount}
-                    contract={zapResponse?.tx.to}
-                  >
-                    <Checker.Success tag={APPROVE_TAG_ZAP_LEGACY}>
-                      <Button
-                        size="xl"
-                        fullWidth
-                        testId="zap-liquidity"
-                        onClick={() =>
-                          preparedTx && sendTransaction(preparedTx)
-                        }
-                        loading={!preparedTx || isWritePending}
-                        disabled={isZapError || isEstGasError}
-                      >
-                        {isZapError || isEstGasError ? (
-                          'Shoot! Something went wrong :('
-                        ) : isWritePending ? (
-                          <Dots>Add Liquidity</Dots>
-                        ) : (
-                          'Add Liquidity'
-                        )}
-                      </Button>
-                    </Checker.Success>
-                  </Checker.ApproveERC20>
-                </Checker.Amounts>
-              </Checker.Network>
-            </Checker.Connect>
-          </CheckerProvider>
+                  <Checker.Success tag={APPROVE_TAG_ZAP_LEGACY}>
+                    <Button
+                      size="xl"
+                      fullWidth
+                      testId="zap-liquidity"
+                      onClick={() => preparedTx && sendTransaction(preparedTx)}
+                      loading={!preparedTx || isWritePending}
+                      disabled={isZapError || isEstGasError}
+                    >
+                      {isZapError || isEstGasError ? (
+                        'Shoot! Something went wrong :('
+                      ) : isWritePending ? (
+                        <Dots>Confirm Transaction</Dots>
+                      ) : (
+                        'Add Liquidity'
+                      )}
+                    </Button>
+                  </Checker.Success>
+                </Checker.ApproveERC20>
+              </Checker.Amounts>
+            </Checker.Network>
+          </Checker.Connect>
           <ZapInfoCard
             zapResponse={zapResponse}
             inputCurrency={inputCurrency}

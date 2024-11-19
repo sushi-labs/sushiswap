@@ -19,7 +19,9 @@ interface SmartPoolLiquidityWidgetProps {
 export const SmartPoolLiquidityWidget: FC<SmartPoolLiquidityWidgetProps> = ({
   vault,
 }) => {
-  const [useZap, setUseZap] = useState(isZapSupportedChainId(vault.chainId))
+  const [isZapModeEnabled, setIsZapModeEnabled] = useState(
+    isZapSupportedChainId(vault.chainId),
+  )
 
   const { data: prices } = usePrices({ chainId: vault.chainId })
 
@@ -57,9 +59,12 @@ export const SmartPoolLiquidityWidget: FC<SmartPoolLiquidityWidgetProps> = ({
       }
     >
       {isZapSupportedChainId(vault.chainId) ? (
-        <ToggleZapCard checked={useZap} onCheckedChange={setUseZap} />
+        <ToggleZapCard
+          checked={isZapModeEnabled}
+          onCheckedChange={setIsZapModeEnabled}
+        />
       ) : null}
-      {useZap ? (
+      {isZapModeEnabled ? (
         <SteerPositionZap vault={vault} tokenRatios={tokenRatios} />
       ) : (
         <SteerPositionAddProvider>

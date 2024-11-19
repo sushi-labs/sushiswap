@@ -29,7 +29,7 @@ interface AddSectionWidgetProps {
   onSelectToken1?(currency: Type): void
   onInput0(value: string): void
   onInput1(value: string): void
-  setUseZap(value: boolean): void
+  toggleZapMode(value: boolean): void
   children: ReactNode
 }
 
@@ -43,7 +43,7 @@ export const AddSectionWidget: FC<AddSectionWidgetProps> = ({
   onSelectToken1,
   onInput0,
   onInput1,
-  setUseZap,
+  toggleZapMode,
   children,
 }) => {
   return (
@@ -82,7 +82,7 @@ export const AddSectionWidget: FC<AddSectionWidgetProps> = ({
       </WidgetHeader>
       {isZapSupportedChainId(chainId) ? (
         <div className="mb-4">
-          <ToggleZapCard onCheckedChange={setUseZap} checked={false} />
+          <ToggleZapCard onCheckedChange={toggleZapMode} checked={false} />
         </div>
       ) : null}
       <div className="flex flex-col gap-4">

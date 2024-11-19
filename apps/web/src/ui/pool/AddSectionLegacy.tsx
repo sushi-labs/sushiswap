@@ -3,7 +3,7 @@
 import { V2Pool } from '@sushiswap/graph-client/data-api'
 import { useIsMounted } from '@sushiswap/hooks'
 import { Button } from '@sushiswap/ui'
-import { FC, useCallback, useEffect, useMemo, useState } from 'react'
+import { FC, useCallback, useMemo, useState } from 'react'
 import { isZapSupportedChainId } from 'src/config'
 import { APPROVE_TAG_ADD_LEGACY } from 'src/lib/constants'
 import { getSushiSwapRouterContractConfig } from 'src/lib/wagmi/hooks/contracts/useSushiSwapRouter'
@@ -22,7 +22,9 @@ import { AddSectionWidget } from './AddSectionWidget'
 import { ZapSectionLegacy } from './ZapSectionLegacy'
 
 export const AddSectionLegacy: FC<{ pool: V2Pool }> = ({ pool }) => {
-  const [useZap, setUseZap] = useState(false)
+  const [isZapModeEnabled, setIsZapModeEnabled] = useState(
+    isZapSupportedChainId(pool.chainId),
+  )
 
   const { token0, token1 } = useTokensFromPool(pool)
 
@@ -30,23 +32,12 @@ export const AddSectionLegacy: FC<{ pool: V2Pool }> = ({ pool }) => {
     data: [poolState, _pool],
   } = useSushiSwapV2Pool(pool.chainId as SushiSwapV2ChainId, token0, token1)
 
-  useEffect(() => {
-    if (
-      isZapSupportedChainId(pool.chainId) &&
-      poolState === SushiSwapV2PoolState.EXISTS
-    ) {
-      setUseZap(true)
-    } else {
-      setUseZap(false)
-    }
-  }, [pool.chainId, poolState])
-
-  return useZap ? (
+  return isZapModeEnabled ? (
     <ZapSectionLegacy
       chainId={pool.chainId}
       pool={_pool}
       poolState={poolState}
-      setUseZap={setUseZap}
+      toggleZapMode={setIsZapModeEnabled}
     />
   ) : (
     <_AddSectionLegacy
@@ -56,7 +47,7 @@ export const AddSectionLegacy: FC<{ pool: V2Pool }> = ({ pool }) => {
       token0={token0}
       token1={token1}
       isFarm={!!pool.incentives && pool.incentives.length > 0}
-      setUseZap={setUseZap}
+      toggleZapMode={setIsZapModeEnabled}
     />
   )
 }
@@ -68,7 +59,7 @@ interface AddSectionLegacyProps {
   token1: Type
   poolState: SushiSwapV2PoolState
   isFarm: boolean
-  setUseZap(value: boolean): void
+  toggleZapMode(value: boolean): void
 }
 
 const _AddSectionLegacy: FC<AddSectionLegacyProps> = ({
@@ -78,7 +69,7 @@ const _AddSectionLegacy: FC<AddSectionLegacyProps> = ({
   token1,
   poolState,
   isFarm,
-  setUseZap,
+  toggleZapMode,
 }) => {
   const isMounted = useIsMounted()
 
@@ -147,7 +138,7 @@ const _AddSectionLegacy: FC<AddSectionLegacyProps> = ({
         token1={token1}
         onInput0={onChangeToken0TypedAmount}
         onInput1={onChangeToken1TypedAmount}
-        setUseZap={setUseZap}
+        toggleZapMode={toggleZapMode}
       >
         <Checker.Connect fullWidth>
           <Checker.Guard
