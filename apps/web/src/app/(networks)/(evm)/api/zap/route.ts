@@ -43,33 +43,28 @@ export async function GET(request: NextRequest) {
 
   const { quote, ...parsedParams } = schema.parse(params)
 
-  const queryParams = new URLSearchParams(
-    Object.entries(parsedParams).reduce(
-      (accum: [string, string][], [key, value]) => {
-        if (value !== undefined && value !== null) {
-          if (Array.isArray(value)) {
-            value.forEach((val) => accum.push([key, val.toString()]))
-          } else {
-            accum.push([key, value.toString()])
-          }
-        }
-        return accum
-      },
-      [] as [string, string][],
-    ),
-  )
-
-  const response = await fetch(
+  const url = new URL(
     `https://api.enso.finance/api/v1/shortcuts/${
       quote === true ? 'quote' : 'route'
-    }?${queryParams.toString()}`,
-    {
-      headers: {
-        'x-wagmi-address': parsedParams.fromAddress,
-        Authorization: `Bearer ${process.env.ENSO_API_KEY}`,
-      },
-    },
+    }`,
   )
+
+  Object.entries(parsedParams).forEach(([key, value]) => {
+    if (value !== undefined && value !== null) {
+      if (Array.isArray(value)) {
+        value.forEach((val) => url.searchParams.append(key, val.toString()))
+      } else {
+        url.searchParams.append(key, value.toString())
+      }
+    }
+  })
+
+  const response = await fetch(url, {
+    headers: {
+      'x-wagmi-address': parsedParams.fromAddress,
+      Authorization: `Bearer ${process.env.ENSO_API_KEY}`,
+    },
+  })
 
   return new Response(await response.text(), {
     status: response.status,
