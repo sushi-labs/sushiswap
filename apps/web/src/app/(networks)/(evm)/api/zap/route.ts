@@ -26,8 +26,8 @@ const schema = z.object({
   amountOut: z.union([z.string(), z.array(z.string())]).optional(),
   minAmountOut: z.union([z.string(), z.array(z.string())]).optional(),
   slippage: z.string().optional(), // BIPS
-  fee: z.union([z.string(), z.array(z.string())]).optional(), // BIPS
-  feeReceiver: z.string().optional(),
+  // fee: z.union([z.string(), z.array(z.string())]).optional(), // BIPS
+  // feeReceiver: z.string().optional(),
   disableAggregators: z.string().optional(),
   ignoreAggregators: z.string().optional(),
   ignoreStandards: z.string().optional(),
