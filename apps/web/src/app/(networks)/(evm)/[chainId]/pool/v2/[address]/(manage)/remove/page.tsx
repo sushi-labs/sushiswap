@@ -32,7 +32,7 @@ export default async function ManageV2PoolPage({
   )()) as V2Pool
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-[auto_400px] gap-6">
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
       <div>
         <ManageV2LiquidityCard pool={pool} tab="remove" />
       </div>
