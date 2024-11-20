@@ -75,7 +75,6 @@ export const NEW_CHAIN_IDS = [
 ] as const
 
 const PREFERRED_CHAINID_ORDER = [
-  ...NEW_CHAIN_IDS,
   ChainId.ETHEREUM,
   NonStandardChainId.TRON,
   ChainId.BSC,
@@ -103,6 +102,7 @@ const PREFERRED_CHAINID_ORDER = [
   ChainId.METIS,
   ChainId.MANTA,
   ChainId.ZKLINK,
+  ChainId.APE,
   ChainId.POLYGON_ZKEVM,
   ChainId.MOONBEAM,
   ChainId.ZETACHAIN,
