@@ -18,10 +18,10 @@ import {
   List,
   classNames,
 } from '@sushiswap/ui'
-import { Provider } from 'aptos'
 import React, { FC, ReactNode } from 'react'
 import { DEFAULT_SLIPPAGE } from 'sushi/config'
 import { networkNameToNetwork } from '~aptos/_common/config/chains'
+import { AptosSDK } from '~aptos/_common/lib/common/aptos-sdk'
 import { formatNumberWithDecimals } from '~aptos/_common/lib/common/format-number-with-decimals'
 import { useNetwork } from '~aptos/_common/lib/common/use-network'
 import { createToast } from '~aptos/_common/ui/toast'
@@ -65,7 +65,7 @@ export const SimpleSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
   } = useNetwork()
 
   const swapToken = async (confirm: () => void) => {
-    const provider = new Provider(networkNameToNetwork(network))
+    const aptos = AptosSDK.onNetwork(networkNameToNetwork(network))
     const payload = getSwapPayload(
       swapContract,
       parseInt(
@@ -82,7 +82,7 @@ export const SimpleSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
       // sign and submit transaction to chain
       const response = await signAndSubmitTransaction(payload)
       // wait for transaction
-      await provider.waitForTransaction(response?.hash)
+      await aptos.waitForTransaction({ transactionHash: response.hash })
 
       //return from here if response is failed
       if (!response?.output.success) return

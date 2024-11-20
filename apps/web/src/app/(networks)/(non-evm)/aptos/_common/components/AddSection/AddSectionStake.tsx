@@ -1,9 +1,9 @@
 import { useWallet } from '@aptos-labs/wallet-adapter-react'
 import { Transition } from '@headlessui/react'
 import { Button, Dots } from '@sushiswap/ui'
-import { Provider } from 'aptos'
 import { FC, Fragment, useState } from 'react'
 import { networkNameToNetwork } from '~aptos/_common/config/chains'
+import { AptosSDK } from '~aptos/_common/lib/common/aptos-sdk'
 import { useNetwork } from '~aptos/_common/lib/common/use-network'
 import { Token } from '~aptos/_common/lib/types/token'
 import { createToast } from '~aptos/_common/ui/toast'
@@ -89,7 +89,7 @@ const _AddSectionStake: FC<AddSectionStakeProps> = ({
   const depositeLiquidity = async () => {
     if (!masterchefContract || decimals === undefined) return
 
-    const provider = new Provider(networkNameToNetwork(network))
+    const aptos = AptosSDK.onNetwork(networkNameToNetwork(network))
     setTransactionPending(true)
 
     try {
@@ -100,7 +100,7 @@ const _AddSectionStake: FC<AddSectionStakeProps> = ({
           function: `${masterchefContract}::masterchef::deposit`,
         },
       })
-      await provider.waitForTransaction(response?.hash)
+      await aptos.waitForTransaction({ transactionHash: response.hash })
       //return from here if response is failed
       if (!response?.output.success) return
       const toastId = `completed:${response?.hash}`

@@ -12,10 +12,10 @@ import {
   DialogTrigger,
   List,
 } from '@sushiswap/ui'
-import { Provider } from 'aptos'
 import { FC, ReactNode, useCallback } from 'react'
 import { formatUSD } from 'sushi/format'
 import { networkNameToNetwork } from '~aptos/_common/config/chains'
+import { AptosSDK } from '~aptos/_common/lib/common/aptos-sdk'
 import { useNetwork } from '~aptos/_common/lib/common/use-network'
 import { useStablePrice } from '~aptos/_common/lib/common/use-stable-price'
 import { CurrencyIcon } from '~aptos/_common/ui/currency/currency-icon'
@@ -53,7 +53,7 @@ export const AddSectionReviewModal: FC<Props> = ({ children }) => {
 
   const addLiquidity = useCallback(
     async (close: () => void) => {
-      const provider = new Provider(networkNameToNetwork(network))
+      const aptos = AptosSDK.onNetwork(networkNameToNetwork(network))
 
       const payload = getAddLiquidityPayload(
         swapContract,
@@ -68,7 +68,7 @@ export const AddSectionReviewModal: FC<Props> = ({ children }) => {
       setisTransactionPending(true)
       try {
         const response = await signAndSubmitTransaction(payload)
-        await provider.waitForTransaction(response?.hash)
+        await aptos.waitForTransaction({ transactionHash: response.hash })
         if (!response?.output.success) return
         const toastId = `completed:${response?.hash}`
         const summery = poolReserves

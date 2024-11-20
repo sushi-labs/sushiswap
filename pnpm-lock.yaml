@@ -312,9 +312,6 @@ importers:
       '@wagmi/core':
         specifier: 2.13.5
         version: 2.13.5(@tanstack/query-core@5.51.16)(@types/react@18.2.14)(immer@9.0.21)(react@18.2.0)(typescript@5.5.4)(viem@2.21.4(bufferutil@4.0.8)(typescript@5.5.4)(utf-8-validate@5.0.10)(zod@3.23.8))
-      aptos:
-        specifier: 1.21.0
-        version: 1.21.0
       cors:
         specifier: 2.8.5
         version: 2.8.5
