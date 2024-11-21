@@ -11,9 +11,29 @@ interface FuulReferralProviderProps {
   children: React.ReactNode
 }
 
-Fuul.init({ apiKey: process.env.NEXT_PUBLIC_FUUL_API_KEY })
+const isProduction =
+  process.env.NODE_ENV === 'production' &&
+  process.env.NEXT_PUBLIC_APP_ENV !== 'test'
+
+if (isProduction) {
+  if (!process.env.NEXT_PUBLIC_FUUL_API_KEY) {
+    throw new Error('NEXT_PUBLIC_FUUL_API_KEY is not set')
+  } else {
+    Fuul.init({ apiKey: process.env.NEXT_PUBLIC_FUUL_API_KEY as string })
+  }
+}
 
 export const FuulReferralProvider: FC<FuulReferralProviderProps> = ({
+  children,
+}) => {
+  return isProduction ? (
+    <_FuulReferralProvider>{children}</_FuulReferralProvider>
+  ) : (
+    <>{children}</>
+  )
+}
+
+export const _FuulReferralProvider: FC<FuulReferralProviderProps> = ({
   children,
 }) => {
   const searchParams = useSearchParams()
