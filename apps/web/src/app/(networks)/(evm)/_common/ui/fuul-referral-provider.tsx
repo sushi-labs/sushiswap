@@ -53,6 +53,7 @@ export const _FuulReferralProvider: FC<FuulReferralProviderProps> = ({
     return watchAccount(config, {
       onChange(data, prevData) {
         if (
+          isReferralURL &&
           data.status === 'connected' &&
           (prevData.address !== data.address || prevData.status !== 'connected')
         ) {
@@ -70,7 +71,7 @@ export const _FuulReferralProvider: FC<FuulReferralProviderProps> = ({
         }
       },
     })
-  }, [signMessageAsync, config])
+  }, [isReferralURL, signMessageAsync, config])
 
   return <>{children}</>
 }
