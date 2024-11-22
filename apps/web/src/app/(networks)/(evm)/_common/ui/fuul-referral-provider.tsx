@@ -26,25 +26,24 @@ if (isProduction) {
 export const FuulReferralProvider: FC<FuulReferralProviderProps> = ({
   children,
 }) => {
-  return isProduction ? (
+  const searchParams = useSearchParams()
+  const isReferralURL = searchParams.has('referrer')
+
+  return isReferralURL && isProduction ? (
     <_FuulReferralProvider>{children}</_FuulReferralProvider>
   ) : (
     <>{children}</>
   )
 }
 
-export const _FuulReferralProvider: FC<FuulReferralProviderProps> = ({
-  children,
-}) => {
-  const searchParams = useSearchParams()
-  const isReferralURL = searchParams.has('ref')
+const _FuulReferralProvider: FC<FuulReferralProviderProps> = ({ children }) => {
   const isMounted = useIsMounted()
 
   useEffect(() => {
-    if (isMounted && isReferralURL) {
+    if (isMounted) {
       Fuul.sendPageview()
     }
-  }, [isMounted, isReferralURL])
+  }, [isMounted])
 
   const { signMessageAsync } = useSignMessage()
   const config = useConfig()
@@ -53,7 +52,6 @@ export const _FuulReferralProvider: FC<FuulReferralProviderProps> = ({
     return watchAccount(config, {
       onChange(data, prevData) {
         if (
-          isReferralURL &&
           data.status === 'connected' &&
           (prevData.address !== data.address || prevData.status !== 'connected')
         ) {
@@ -71,7 +69,7 @@ export const _FuulReferralProvider: FC<FuulReferralProviderProps> = ({
         }
       },
     })
-  }, [isReferralURL, signMessageAsync, config])
+  }, [signMessageAsync, config])
 
   return <>{children}</>
 }
