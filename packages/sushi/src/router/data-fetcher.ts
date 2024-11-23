@@ -14,6 +14,7 @@ import { DovishV3Provider } from './liquidity-providers/DovishV3.js'
 import { DyorV2Provider } from './liquidity-providers/DyorV2.js'
 import { ElkProvider } from './liquidity-providers/Elk.js'
 import { EnosysProvider } from './liquidity-providers/Enosys.js'
+import { GravityFinanceProvider } from './liquidity-providers/GravityFinance.js'
 import { HoneySwapProvider } from './liquidity-providers/HoneySwap.js'
 import { HyperBlastProvider } from './liquidity-providers/HyperBlast.js'
 import { JetSwapProvider } from './liquidity-providers/JetSwap.js'
@@ -166,6 +167,7 @@ export class DataFetcher {
       DyorV2Provider,
       ElkProvider,
       EnosysProvider,
+      GravityFinanceProvider,
       HoneySwapProvider,
       HyperBlastProvider,
       JetSwapProvider,
