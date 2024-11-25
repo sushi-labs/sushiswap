@@ -66,7 +66,6 @@
         "APP_ENV",
         "DRPC_ID",
         "EDGE_CONFIG",
-        "RSK_ID",
         "VERCEL_ENV",
         "SENTRY_DSN",
         "SENTRY_ENVIRONMENT",
