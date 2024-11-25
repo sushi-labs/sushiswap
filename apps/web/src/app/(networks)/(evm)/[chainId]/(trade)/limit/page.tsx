@@ -7,7 +7,7 @@ const LimitPanel = dynamic(
 
 export default function SwapLimitPage() {
   return (
-    <Container maxWidth="lg" className="px-4">
+    <Container maxWidth="lg" className="px-4 relative">
       <LimitPanel />
     </Container>
   )
