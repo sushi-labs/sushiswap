@@ -23,6 +23,8 @@ if (isProduction) {
   }
 }
 
+const message = 'Confirm to track your referrals and earn rewards'
+
 export const FuulReferralProvider: FC<FuulReferralProviderProps> = ({
   children,
 }) => {
@@ -55,8 +57,6 @@ const _FuulReferralProvider: FC<FuulReferralProviderProps> = ({ children }) => {
           data.status === 'connected' &&
           (prevData.address !== data.address || prevData.status !== 'connected')
         ) {
-          const message = `Accept affiliate on ${new Date().toString()}`
-
           signMessageAsync({
             message,
           }).then((signature) => {
