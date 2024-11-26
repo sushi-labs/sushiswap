@@ -26,6 +26,18 @@ export const metadata: Metadata = {
   },
   description:
     'A Decentralised Finance (DeFi) app with features such as swap, cross chain swap, streaming, vesting, and permissionless market making for liquidity providers.',
+  openGraph: {
+    type: 'website',
+    locale: 'en_US',
+    images: [
+      {
+        url: 'https://cdn.sushi.com/image/upload/v1731498183/sushi-assets/embed-web-visuals/default.jpg',
+        width: 1920,
+        height: 1080,
+        alt: 'Sushi 🍣',
+      },
+    ],
+  },
 }
 
 export default function RootLayout({
@@ -57,7 +69,7 @@ export default function RootLayout({
       <link rel="manifest" href="/site.webmanifest?v=1" />
       <link rel="mask-icon" href="/safari-pinned-tab.svg?v=1" color="#fa52a0" />
       <link rel="shortcut icon" href="/favicon.ico?v=1" />
-      <body className="h-screen">
+      <body className="min-h-screen flex flex-col">
         <ToastContainer />
         <CookieDialogContainer />
         {children}

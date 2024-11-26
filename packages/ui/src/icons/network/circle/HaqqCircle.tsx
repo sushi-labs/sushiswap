@@ -8,7 +8,16 @@ export const HaqqCircle: IconComponent = (props) => {
   return (
     <HaqqNaked
       {...props}
-      circle={<rect width="128" height="128" x="0.265" fill="#000" rx="64" />}
+      circle={
+        <rect
+          width="128"
+          height="128"
+          x="0.265"
+          fill="currentColor"
+          className="fill-black dark:fill-white"
+          rx="64"
+        />
+      }
     />
   )
 }

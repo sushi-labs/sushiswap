@@ -53,9 +53,8 @@ import {
   useLayerZeroScanLink,
 } from 'src/lib/swap/cross-chain'
 import { warningSeverity } from 'src/lib/swap/warningSeverity'
-import { useBalanceWeb3Refetch } from 'src/lib/wagmi/hooks/balances/useBalanceWeb3Refetch'
 import { useApproved } from 'src/lib/wagmi/systems/Checker/Provider'
-import { sushiXSwap2Abi_swap, sushiXSwap2Abi_swapAndBridge } from 'sushi/abi'
+import { sushiXSwap2Abi_bridge, sushiXSwap2Abi_swapAndBridge } from 'sushi/abi'
 import { Chain, chainName } from 'sushi/chain'
 import {
   SUSHIXSWAP_2_ADDRESS,
@@ -77,6 +76,7 @@ import {
   useTransaction,
   useWriteContract,
 } from 'wagmi'
+import { useRefetchBalances } from '~evm/_common/ui/balance-provider/use-refetch-balances'
 import {
   ConfirmationDialogContent,
   Divider,
@@ -96,8 +96,8 @@ function getConfig(trade: UseCrossChainTradeReturn | undefined) {
 
   if (trade.functionName === SushiXSwapFunctionName.Bridge) {
     return {
-      abi: sushiXSwap2Abi_swap,
-      functionName: 'swap',
+      abi: sushiXSwap2Abi_bridge,
+      functionName: 'bridge',
       args: trade.writeArgs as NonNullable<SushiXSwapWriteArgsBridge>,
       value: BigInt(trade.value ?? 0) as any,
     } as const
@@ -137,7 +137,7 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
   const { data: trade, isFetching } = useCrossChainSwapTrade()
   const { approved } = useApproved(APPROVE_TAG_XSWAP)
   const groupTs = useRef<number>()
-  const refetchBalances = useBalanceWeb3Refetch()
+  const { refetchChain: refetchBalances } = useRefetchBalances()
 
   const [stepStates, setStepStates] = useState<{
     source: StepState
@@ -263,7 +263,7 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
           dest: StepState.NotStarted,
         })
       } finally {
-        await refetchBalances()
+        refetchBalances(chainId0)
         setTradeId(nanoid())
       }
     },
@@ -463,6 +463,7 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
               chain_id: chainId1,
               txHash: axelarScanData?.dstTxHash,
             })
+            refetchBalances(chainId1)
           })
           .then(reset),
         summary: {

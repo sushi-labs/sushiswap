@@ -1,6 +1,7 @@
 'use client'
 
 import { AnalyticsDayBuckets } from '@sushiswap/graph-client/data-api'
+import { useIsMounted } from '@sushiswap/hooks'
 import format from 'date-fns/format'
 import ReactEcharts from 'echarts-for-react'
 import { EChartsOption } from 'echarts-for-react/lib/types'
@@ -16,6 +17,8 @@ interface TVLChart {
 }
 
 export const TVLChart: FC<TVLChart> = ({ data, chainId }) => {
+  const isMounted = useIsMounted()
+
   const { resolvedTheme } = useTheme()
 
   const [v2, v3, combinedTVL, currentDate] = useMemo(() => {
@@ -63,11 +66,11 @@ export const TVLChart: FC<TVLChart> = ({ data, chainId }) => {
     if (v2TVLNode)
       v2TVLNode.innerHTML = params[0].data[1]
         ? formatUSD(params[0].data[1])
-        : 'v2'
+        : ''
     if (v3TVLNode)
       v3TVLNode.innerHTML = params[1].data[1]
         ? formatUSD(params[1].data[1])
-        : 'v3'
+        : ''
   }, [])
 
   const onMouseLeave = useCallback(() => {
@@ -79,8 +82,8 @@ export const TVLChart: FC<TVLChart> = ({ data, chainId }) => {
     if (tvlNode) tvlNode.innerHTML = formatUSD(combinedTVL)
     if (dateNode)
       dateNode.innerHTML = format(new Date(currentDate), 'dd MMM yyyy HH:mm aa')
-    if (v2TVLNode) v2TVLNode.innerHTML = 'v2'
-    if (v3TVLNode) v3TVLNode.innerHTML = 'v3'
+    if (v2TVLNode) v2TVLNode.innerHTML = ''
+    if (v3TVLNode) v3TVLNode.innerHTML = ''
   }, [combinedTVL, currentDate])
 
   const DEFAULT_OPTION: EChartsOption = useMemo(
@@ -195,22 +198,26 @@ export const TVLChart: FC<TVLChart> = ({ data, chainId }) => {
                 id="hoveredTVLDate"
                 className="text-sm text-gray-500 dark:text-slate-500"
               >
-                {format(new Date(currentDate), 'MMM dd yyyy HH:mm aa')}
+                {isMounted
+                  ? format(new Date(currentDate), 'MMM dd yyyy HH:mm aa')
+                  : ''}
               </div>
             </div>
           </div>
           <div className="flex flex-col">
-            <div className="flex justify-end items-center gap-1">
-              <span id="hoveredV2TVL" className="text-sm">
-                v2
+            <div className="flex justify-between items-center gap-2 text-sm">
+              <span id="hoveredV2TVL" />
+              <span className="flex gap-1 items-center">
+                <span className="font-medium">v2</span>
+                <span className="bg-[#3B7EF6] rounded-[4px] w-3 h-3" />
               </span>
-              <span className="bg-[#3B7EF6] rounded-[4px] w-3 h-3" />
             </div>
-            <div className="flex justify-end items-center gap-1">
-              <span id="hoveredV3TVL" className="text-sm">
-                v3
+            <div className="flex justify-between items-center gap-2 text-sm">
+              <span id="hoveredV3TVL" />
+              <span className="flex gap-1 items-center">
+                <span className="font-medium">v3</span>
+                <span className="bg-[#A755DD] rounded-[4px] w-3 h-3" />
               </span>
-              <span className="bg-[#A755DD] rounded-[4px] w-3 h-3" />
             </div>
           </div>
         </div>

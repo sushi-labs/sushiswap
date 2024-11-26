@@ -1,7 +1,7 @@
 'use client'
 
-import { CogIcon } from '@heroicons/react-v1/outline'
 import { SwitchHorizontalIcon } from '@heroicons/react-v1/solid'
+import { Cog6ToothIcon } from '@heroicons/react/24/outline'
 import { V2Pool } from '@sushiswap/graph-client/data-api'
 import { SlippageToleranceStorageKey, TTLStorageKey } from '@sushiswap/hooks'
 import {
@@ -626,7 +626,7 @@ export const MigrateTab: FC<{ pool: V2Pool }> = withCheckerRoot(({ pool }) => {
                                         >
                                           <IconButton
                                             name="Settings"
-                                            icon={CogIcon}
+                                            icon={Cog6ToothIcon}
                                             variant="secondary"
                                             className="mr-12"
                                           />

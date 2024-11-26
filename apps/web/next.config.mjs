@@ -78,14 +78,14 @@ const nextConfig = bundleAnalyzer({
         destination: 'https://medium.com/sushiswap-org',
       },
       {
-        source: '/skale/swap',
-        permanent: true,
-        destination: '/swap?chainId=2046399126',
-      },
-      {
         source: '/swap/cross-chain:path*',
         permanent: true,
         destination: '/cross-chain-swap:path*',
+      },
+      {
+        source: '/skale',
+        permanent: true,
+        destination: '/skale-europa/explore/pools',
       },
     ]
   },

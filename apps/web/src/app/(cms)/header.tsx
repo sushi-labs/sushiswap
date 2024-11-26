@@ -1,4 +1,4 @@
-import { getDifficulties, getProducts } from '@sushiswap/graph-client/strapi'
+import { getDifficulties } from '@sushiswap/graph-client/strapi'
 import {
   Navigation,
   NavigationElement,
@@ -22,20 +22,8 @@ export interface HeaderSection {
   className?: string
 }
 
-const PRODUCTS_ORDER = ['furo', 'sushixswap', 'onsen', 'bentobox']
-
 export async function Header() {
-  const [products, difficulties] = await Promise.all([
-    getProducts(),
-    getDifficulties(),
-  ])
-
-  const sortedProducts = products.sort((a, b) =>
-    PRODUCTS_ORDER.indexOf(a.slug as (typeof PRODUCTS_ORDER)[number]) >
-    PRODUCTS_ORDER.indexOf(b.slug as (typeof PRODUCTS_ORDER)[number])
-      ? 1
-      : -1,
-  )
+  const difficulties = await getDifficulties()
 
   const navData: NavigationElement[] = [
     {
@@ -57,14 +45,10 @@ export async function Header() {
       type: NavigationElementType.Single,
     },
     {
-      title: 'Products',
-      items: sortedProducts.map(({ longName, slug }) => ({
-        title: longName,
-        href: `/academy/products/${slug}`,
-        description: '',
-      })),
-      show: 'desktop',
-      type: NavigationElementType.Dropdown,
+      title: 'FAQ',
+      href: '/faq',
+      show: 'everywhere',
+      type: NavigationElementType.Single,
     },
     {
       title: 'Learn',

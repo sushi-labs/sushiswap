@@ -4,13 +4,12 @@ import { squidRouterAbi } from 'sushi/abi'
 import { ChainId } from 'sushi/chain'
 import { SquidAdapterChainId } from 'sushi/config'
 import { Token } from 'sushi/currency'
-import { PoolType, RouteStatus } from 'sushi/router'
+import { RouteStatus } from 'sushi/router'
 import {
   Hex,
   decodeFunctionData,
   encodeAbiParameters,
   parseAbiParameters,
-  zeroAddress,
 } from 'viem'
 import { z } from 'zod'
 
@@ -87,18 +86,5 @@ export const getSquidTrade = (
     amountIn: '',
     assumedAmountOut: '',
     gasSpent: 0,
-    route: [
-      {
-        poolAddress: zeroAddress,
-        poolType: PoolType.Unknown,
-        poolName: 'Squid',
-        poolFee: 0,
-        tokenFrom: 0,
-        tokenTo: 1,
-        share: 1,
-        assumedAmountIn: '',
-        assumedAmountOut: '',
-      },
-    ],
   }
 }

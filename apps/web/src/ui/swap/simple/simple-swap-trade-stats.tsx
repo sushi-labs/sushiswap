@@ -14,7 +14,6 @@ import {
   warningSeverity,
   warningSeverityClassName,
 } from '../../../lib/swap/warningSeverity'
-import { TradeRoutePathView } from '../trade-route-path-view'
 import {
   useDerivedStateSimpleSwap,
   useSimpleSwapTrade,
@@ -131,7 +130,7 @@ export const SimpleSwapTradeStats: FC = () => {
           </span>
         </div>
 
-        <div className="flex items-center justify-between">
+        {/* <div className="flex items-center justify-between">
           <span className="text-sm text-gray-700 dark:text-slate-400">
             Route
           </span>
@@ -149,7 +148,7 @@ export const SimpleSwapTradeStats: FC = () => {
               </TradeRoutePathView>
             )}
           </span>
-        </div>
+        </div> */}
 
         {recipient && isAddress(recipient) && isMounted && (
           <div className="flex items-center justify-between pt-2 mt-2 border-t border-gray-200 dark:border-slate-200/5">

@@ -2,6 +2,4 @@ packages:
   - 'apis/*'
   - 'apps/*'
   - 'config/*'
-  - 'packages/**'
-  - 'protocols/*'
-  - 'sandboxes/*'
+  - 'packages/*'
