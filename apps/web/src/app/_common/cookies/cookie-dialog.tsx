@@ -23,7 +23,7 @@ function BaseCookieDialog({
   return (
     <DialogContent
       hideClose
-      className="lg:min-w-[750px] md:min-w-[600px] !left-[unset] !top-[unset] !bottom-0 md:!right-0 !translate-x-[0%] md:!translate-x-[-50px] md:!translate-y-[-50px]"
+      className="md:min-w-[720px] !left-[unset] !top-[unset] !bottom-0 md:!right-0 !translate-x-[0%] md:!translate-x-[-50px] md:!translate-y-[-50px]"
       onOpenAutoFocus={(e) => e.preventDefault()}
     >
       <div>
