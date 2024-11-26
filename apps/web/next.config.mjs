@@ -82,6 +82,11 @@ const nextConfig = bundleAnalyzer({
         permanent: true,
         destination: '/cross-chain-swap:path*',
       },
+      {
+        source: '/skale',
+        permanent: true,
+        destination: '/skale-europa/explore/pools',
+      },
     ]
   },
   async rewrites() {

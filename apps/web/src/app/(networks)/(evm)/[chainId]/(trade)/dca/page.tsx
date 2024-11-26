@@ -8,7 +8,7 @@ const TWAPPanel = dynamic(
 
 export default function SwapDCAPage() {
   return (
-    <Container maxWidth="lg" className="px-4">
+    <Container maxWidth="lg" className="px-4 relative">
       <TWAPPanel />
     </Container>
   )

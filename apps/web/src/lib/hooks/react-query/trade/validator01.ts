@@ -14,9 +14,7 @@ export const tokenValidator = z.object({
 })
 
 export const legValidator = z.object({
-  poolAddress: z.string(),
   poolType: z.enum(['Classic', 'Stable', 'Unknown']),
-  poolFee: z.number(),
   tokenFrom: tokenValidator,
   tokenTo: tokenValidator,
   assumedAmountIn: z.number(),
@@ -39,7 +37,6 @@ export const tradeValidator01 = z.object({
       amountInBI: z.bigint(),
       amountOut: z.number(),
       amountOutBI: z.bigint(),
-      legs: z.array(legValidator).optional(),
       gasSpent: z.number(),
       totalAmountOut: z.number(),
       totalAmountOutBI: z.bigint(),

@@ -11,10 +11,8 @@ export const tokenValidator = z.object({
 })
 
 export const legValidator = z.object({
-  poolAddress: z.string(),
   poolType: z.nativeEnum(PoolType),
   poolName: z.string(),
-  poolFee: z.number(),
   tokenFrom: z.number(), // index in tokens array
   tokenTo: z.number(), // index in tokens array
   share: z.number(),
@@ -35,8 +33,6 @@ const routeExistValidator = z.object({
   amountIn: z.string(),
   assumedAmountOut: z.string(),
   gasSpent: z.number(),
-
-  route: z.array(legValidator),
 
   routeProcessorAddr: z.string().optional(),
   routeProcessorArgs: z

@@ -57,6 +57,11 @@ const SUPPORT_NAVIGATION_LINKS: NavigationElementDropdown['items'] = [
     href: '/academy',
     description: 'Everything you need to get up to speed with DeFi.',
   },
+  {
+    title: 'FAQ',
+    href: '/faq',
+    description: 'Answers to the most common questions about Sushi.',
+  },
 ]
 
 const navigationContainerVariants = cva(

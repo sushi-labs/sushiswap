@@ -108,8 +108,8 @@ importers:
         specifier: 18.2.0
         version: 18.2.0(react@18.2.0)
       sushi:
-        specifier: 4.1.9
-        version: 4.1.9(typescript@5.5.4)(viem@2.21.17(bufferutil@4.0.8)(typescript@5.5.4)(utf-8-validate@5.0.10)(zod@3.23.8))(zod@3.23.8)
+        specifier: 4.1.12
+        version: 4.1.12(typescript@5.5.4)(viem@2.21.17(bufferutil@4.0.8)(typescript@5.5.4)(utf-8-validate@5.0.10)(zod@3.23.8))(zod@3.23.8)
     devDependencies:
       '@storybook/addon-a11y':
         specifier: 7.4.6
@@ -195,6 +195,9 @@ importers:
       '@cloudinary/url-gen':
         specifier: 1.11.2
         version: 1.11.2
+      '@fuul/sdk':
+        specifier: ^4.11.1
+        version: 4.11.1
       '@headlessui/react':
         specifier: 1.7.7
         version: 1.7.7(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
@@ -209,7 +212,7 @@ importers:
         version: 3.3.1(react-hook-form@7.41.2(react@18.2.0))
       '@layerzerolabs/scan-client':
         specifier: 0.0.6
-        version: 0.0.6(axios@1.6.8)
+        version: 0.0.6(axios@1.7.7)
       '@martianwallet/aptos-wallet-adapter':
         specifier: 0.0.5
         version: 0.0.5
@@ -397,8 +400,8 @@ importers:
         specifier: 2.3.3
         version: 2.3.3
       sushi:
-        specifier: 4.1.9
-        version: 4.1.9(typescript@5.5.4)(viem@2.21.4(bufferutil@4.0.8)(typescript@5.5.4)(utf-8-validate@5.0.10)(zod@3.23.8))(zod@3.23.8)
+        specifier: 4.1.12
+        version: 4.1.12(typescript@5.5.4)(viem@2.21.4(bufferutil@4.0.8)(typescript@5.5.4)(utf-8-validate@5.0.10)(zod@3.23.8))(zod@3.23.8)
       swr:
         specifier: 2.1.5
         version: 2.1.5(react@18.2.0)
@@ -585,8 +588,8 @@ importers:
         specifier: 1.0.0
         version: 1.0.0
       sushi:
-        specifier: 4.1.9
-        version: 4.1.9(typescript@5.5.4)(viem@2.21.4(bufferutil@4.0.8)(typescript@5.5.4)(utf-8-validate@6.0.3)(zod@3.23.8))(zod@3.23.8)
+        specifier: 4.1.12
+        version: 4.1.12(typescript@5.5.4)(viem@2.21.4(bufferutil@4.0.8)(typescript@5.5.4)(utf-8-validate@6.0.3)(zod@3.23.8))(zod@3.23.8)
       viem:
         specifier: 2.21.4
         version: 2.21.4(bufferutil@4.0.8)(typescript@5.5.4)(utf-8-validate@6.0.3)(zod@3.23.8)
@@ -647,8 +650,8 @@ importers:
         specifier: 18.2.0
         version: 18.2.0(react@18.2.0)
       sushi:
-        specifier: 4.1.9
-        version: 4.1.9(typescript@5.5.4)(viem@2.21.4(bufferutil@4.0.8)(typescript@5.5.4)(utf-8-validate@6.0.3)(zod@3.23.8))(zod@3.23.8)
+        specifier: 4.1.12
+        version: 4.1.12(typescript@5.5.4)(viem@2.21.4(bufferutil@4.0.8)(typescript@5.5.4)(utf-8-validate@6.0.3)(zod@3.23.8))(zod@3.23.8)
       tailwindcss:
         specifier: 3.3.2
         version: 3.3.2(ts-node@10.9.2(@types/node@20.14.14)(typescript@5.5.4))
@@ -693,8 +696,8 @@ importers:
         specifier: 18.2.6
         version: 18.2.6
       sushi:
-        specifier: 4.1.9
-        version: 4.1.9(typescript@5.5.4)(viem@2.21.17(typescript@5.5.4)(zod@3.23.8))(zod@3.23.8)
+        specifier: 4.1.12
+        version: 4.1.12(typescript@5.5.4)(viem@2.21.17(typescript@5.5.4)(zod@3.23.8))(zod@3.23.8)
       typescript:
         specifier: 5.5.4
         version: 5.5.4
@@ -705,8 +708,8 @@ importers:
         specifier: 2.1.0-beta.14
         version: 2.1.0-beta.14(bufferutil@4.0.8)(encoding@0.1.13)(squirrelly@8.0.8)(ts-node@10.9.2(@types/node@20.14.14)(typescript@5.5.4))(typescript@5.5.4)(utf-8-validate@5.0.10)
       sushi:
-        specifier: 4.1.9
-        version: 4.1.9(typescript@5.5.4)(viem@2.21.4(bufferutil@4.0.8)(typescript@5.5.4)(utf-8-validate@5.0.10)(zod@3.23.8))(zod@3.23.8)
+        specifier: 4.1.12
+        version: 4.1.12(typescript@5.5.4)(viem@2.21.4(bufferutil@4.0.8)(typescript@5.5.4)(utf-8-validate@5.0.10)(zod@3.23.8))(zod@3.23.8)
       viem:
         specifier: 2.21.4
         version: 2.21.4(bufferutil@4.0.8)(typescript@5.5.4)(utf-8-validate@5.0.10)(zod@3.23.8)
@@ -949,8 +952,8 @@ importers:
         specifier: 18.2.0
         version: 18.2.0(react@18.2.0)
       sushi:
-        specifier: 4.1.9
-        version: 4.1.9(typescript@5.5.4)(viem@2.21.17(bufferutil@4.0.8)(typescript@5.5.4)(utf-8-validate@5.0.10)(zod@3.23.8))(zod@3.23.8)
+        specifier: 4.1.12
+        version: 4.1.12(typescript@5.5.4)(viem@2.21.17(bufferutil@4.0.8)(typescript@5.5.4)(utf-8-validate@5.0.10)(zod@3.23.8))(zod@3.23.8)
       tailwindcss:
         specifier: 3.3.2
         version: 3.3.2(ts-node@10.9.2(@types/node@20.14.14)(typescript@5.5.4))
@@ -3261,6 +3264,9 @@ packages:
 
   '@fontsource-variable/inter@5.0.1':
     resolution: {integrity: sha512-cqBEayOWZqERrWnwDUTyUsClZpN1Pv3w/1+NRxwKV4sRdy3RyyRL9DRIgauq8ySxNtJ5ZkNimxsZzCdoiR2Fcw==}
+
+  '@fuul/sdk@4.11.1':
+    resolution: {integrity: sha512-4YbzplgbOHyihllTNqzhv5XCYuA17Wutz498KSa7c59bKNoJ0Ia2r+or1DFhpjnxQMEyTBhmZjFcion11nM31Q==}
 
   '@gql.tada/cli-utils@1.3.9':
     resolution: {integrity: sha512-oRb7SG/+csx9CiypSJTI21KaLfulOUnhX1vxg4FXi2snub9XShkGR2XnnlJVTAOZXY9Vcxti1NutAElxdDkycA==}
@@ -7722,6 +7728,7 @@ packages:
 
   acorn-import-assertions@1.9.0:
     resolution: {integrity: sha512-cmMwop9x+8KFhxvKrKfPYmN6/pKTYYHBqLa0DfvVZcKMJWNyWLnaqND7dx/qn66R7ewM1UX5XMaDVP5wlVTaVA==}
+    deprecated: package has been renamed to acorn-import-attributes
     peerDependencies:
       acorn: ^8
 
@@ -8098,6 +8105,9 @@ packages:
 
   axios@1.6.8:
     resolution: {integrity: sha512-v/ZHtJDU39mDpyBoFVkETcd/uNdxrWRrg3bKpOKzXFA6Bvqopts6ALSMU3y6ijYxbw2B+wPrIv46egTzJXCLGQ==}
+
+  axios@1.7.7:
+    resolution: {integrity: sha512-S4kL7XrjgBmvdGut0sN3yJxqYzrDOnivkBiN0OFs6hLiUam3UPvswUo0kqGyhqUZGEOytHyumEdXsAkgCOUf3Q==}
 
   axobject-query@4.1.0:
     resolution: {integrity: sha512-qIj0G9wZbMGNLjLmg1PT6v2mE9AH2zlnADJD/2tC6E00hgmhUOfEB6greHPAfLRSufHqROIUTkw6E+M3lH0PTQ==}
@@ -10369,15 +10379,6 @@ packages:
   flow-parser@0.214.0:
     resolution: {integrity: sha512-RW1Dh6BuT14DA7+gtNRKzgzvG3GTPdrceHCi4ddZ9VFGQ9HtO5L8wzxMGsor7XtInIrbWZZCSak0oxnBF7tApw==}
     engines: {node: '>=0.4.0'}
-
-  follow-redirects@1.15.2:
-    resolution: {integrity: sha512-VQLG33o04KaQ8uYi2tVNbdrWp1QWxNNea+nmIB4EVM28v0hmP17z7aG1+wAkNzVq4KeXTq3221ye5qTJP91JwA==}
-    engines: {node: '>=4.0'}
-    peerDependencies:
-      debug: '*'
-    peerDependenciesMeta:
-      debug:
-        optional: true
 
   follow-redirects@1.15.6:
     resolution: {integrity: sha512-wWN62YITEaOpSK584EZXJafH1AGpO8RVgElfkuXbTOrPX4fIfOyEpW/CsiNd8JdYrAoOvafRTOEnvsO++qCqFA==}
@@ -14814,8 +14815,8 @@ packages:
     resolution: {integrity: sha512-ot0WnXS9fgdkgIcePe6RHNk1WA8+muPa6cSjeR3V8K27q9BB1rTE3R1p7Hv0z1ZyAc8s6Vvv8DIyWf681MAt0w==}
     engines: {node: '>= 0.4'}
 
-  sushi@4.1.9:
-    resolution: {integrity: sha512-JJA5JD8U4FIu1FMX+6RLhH+jwsSxAHfA1+2BO+29mE2PchJg5wDthyJVtrK8YTi24Zzx/ip4Uxu8yjdD+8CNNQ==}
+  sushi@4.1.12:
+    resolution: {integrity: sha512-3ahbhq6q7JcncIaPC9P9gDE+7RJiUT2/L2WMZd9o7/qs/ZPAY0nGbphY7qyob8sjPcgQFKEL7iL6OBIBgWTuMQ==}
     peerDependencies:
       typescript: 5.5.4
       viem: '*'
@@ -19104,6 +19105,13 @@ snapshots:
 
   '@fontsource-variable/inter@5.0.1': {}
 
+  '@fuul/sdk@4.11.1':
+    dependencies:
+      axios: 1.7.7
+      nanoid: 4.0.0
+    transitivePeerDependencies:
+      - debug
+
   '@gql.tada/cli-utils@1.3.9(graphql@16.6.0)(svelte@4.2.17)(typescript@5.5.4)':
     dependencies:
       '@0no-co/graphqlsp': 1.12.3(graphql@16.6.0)(typescript@5.5.4)
@@ -19554,9 +19562,9 @@ snapshots:
 
   '@juggle/resize-observer@3.4.0': {}
 
-  '@layerzerolabs/scan-client@0.0.6(axios@1.6.8)':
+  '@layerzerolabs/scan-client@0.0.6(axios@1.7.7)':
     dependencies:
-      axios: 1.6.8
+      axios: 1.7.7
 
   '@ledgerhq/devices@6.27.1':
     dependencies:
@@ -26677,20 +26685,20 @@ snapshots:
 
   axios@0.21.4:
     dependencies:
-      follow-redirects: 1.15.6
+      follow-redirects: 1.15.6(debug@4.3.4)
     transitivePeerDependencies:
       - debug
 
   axios@0.27.2:
     dependencies:
-      follow-redirects: 1.15.6
+      follow-redirects: 1.15.6(debug@4.3.4)
       form-data: 4.0.0
     transitivePeerDependencies:
       - debug
 
   axios@1.6.2:
     dependencies:
-      follow-redirects: 1.15.6
+      follow-redirects: 1.15.6(debug@4.3.4)
       form-data: 4.0.0
       proxy-from-env: 1.1.0
     transitivePeerDependencies:
@@ -26698,7 +26706,15 @@ snapshots:
 
   axios@1.6.8:
     dependencies:
-      follow-redirects: 1.15.6
+      follow-redirects: 1.15.6(debug@4.3.4)
+      form-data: 4.0.0
+      proxy-from-env: 1.1.0
+    transitivePeerDependencies:
+      - debug
+
+  axios@1.7.7:
+    dependencies:
+      follow-redirects: 1.15.6(debug@4.3.4)
       form-data: 4.0.0
       proxy-from-env: 1.1.0
     transitivePeerDependencies:
@@ -29636,11 +29652,9 @@ snapshots:
 
   flow-parser@0.214.0: {}
 
-  follow-redirects@1.15.2(debug@4.3.4):
+  follow-redirects@1.15.6(debug@4.3.4):
     optionalDependencies:
       debug: 4.3.4(supports-color@8.1.1)
-
-  follow-redirects@1.15.6: {}
 
   for-each@0.3.3:
     dependencies:
@@ -30295,7 +30309,7 @@ snapshots:
   http-proxy@1.18.1:
     dependencies:
       eventemitter3: 4.0.7
-      follow-redirects: 1.15.6
+      follow-redirects: 1.15.6(debug@4.3.4)
       requires-port: 1.0.0
     transitivePeerDependencies:
       - debug
@@ -34787,7 +34801,7 @@ snapshots:
     dependencies:
       command-exists: 1.2.9
       commander: 3.0.2
-      follow-redirects: 1.15.2(debug@4.3.4)
+      follow-redirects: 1.15.6(debug@4.3.4)
       fs-extra: 0.30.0
       js-sha3: 0.8.0
       memorystream: 0.3.1
@@ -35155,7 +35169,7 @@ snapshots:
 
   supports-preserve-symlinks-flag@1.0.0: {}
 
-  sushi@4.1.9(typescript@5.5.4)(viem@2.21.17(bufferutil@4.0.8)(typescript@5.5.4)(utf-8-validate@5.0.10)(zod@3.23.8))(zod@3.23.8):
+  sushi@4.1.12(typescript@5.5.4)(viem@2.21.17(bufferutil@4.0.8)(typescript@5.5.4)(utf-8-validate@5.0.10)(zod@3.23.8))(zod@3.23.8):
     dependencies:
       '@uniswap/token-lists': 1.0.0-beta.33
       big.js: 6.1.1
@@ -35169,7 +35183,7 @@ snapshots:
       viem: 2.21.17(bufferutil@4.0.8)(typescript@5.5.4)(utf-8-validate@5.0.10)(zod@3.23.8)
       zod: 3.23.8
 
-  sushi@4.1.9(typescript@5.5.4)(viem@2.21.17(typescript@5.5.4)(zod@3.23.8))(zod@3.23.8):
+  sushi@4.1.12(typescript@5.5.4)(viem@2.21.17(typescript@5.5.4)(zod@3.23.8))(zod@3.23.8):
     dependencies:
       '@uniswap/token-lists': 1.0.0-beta.33
       big.js: 6.1.1
@@ -35183,7 +35197,7 @@ snapshots:
       viem: 2.21.17(typescript@5.5.4)(zod@3.23.8)
       zod: 3.23.8
 
-  sushi@4.1.9(typescript@5.5.4)(viem@2.21.4(bufferutil@4.0.8)(typescript@5.5.4)(utf-8-validate@5.0.10)(zod@3.23.8))(zod@3.23.8):
+  sushi@4.1.12(typescript@5.5.4)(viem@2.21.4(bufferutil@4.0.8)(typescript@5.5.4)(utf-8-validate@5.0.10)(zod@3.23.8))(zod@3.23.8):
     dependencies:
       '@uniswap/token-lists': 1.0.0-beta.33
       big.js: 6.1.1
@@ -35197,7 +35211,7 @@ snapshots:
       viem: 2.21.4(bufferutil@4.0.8)(typescript@5.5.4)(utf-8-validate@5.0.10)(zod@3.23.8)
       zod: 3.23.8
 
-  sushi@4.1.9(typescript@5.5.4)(viem@2.21.4(bufferutil@4.0.8)(typescript@5.5.4)(utf-8-validate@6.0.3)(zod@3.23.8))(zod@3.23.8):
+  sushi@4.1.12(typescript@5.5.4)(viem@2.21.4(bufferutil@4.0.8)(typescript@5.5.4)(utf-8-validate@6.0.3)(zod@3.23.8))(zod@3.23.8):
     dependencies:
       '@uniswap/token-lists': 1.0.0-beta.33
       big.js: 6.1.1

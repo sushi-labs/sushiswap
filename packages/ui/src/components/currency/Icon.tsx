@@ -87,6 +87,10 @@ const LOGO: Record<number, string> = {
   [ChainId.BLAST]: EthereumLogo,
   [ChainId.ROOTSTOCK]: BitcoinLogo,
   [ChainId.MANTLE]: MntLogo,
+  [ChainId.MANTA]: EthereumLogo,
+  [ChainId.MODE]: EthereumLogo,
+  [ChainId.TAIKO]: EthereumLogo,
+  [ChainId.ZKLINK]: EthereumLogo,
   [ChainId.APE]: ApeLogo,
 }
 

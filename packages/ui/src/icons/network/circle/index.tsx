@@ -26,8 +26,10 @@ import { HarmonyCircle } from './HarmonyCircle'
 import { HecoCircle } from './HecoCircle'
 import { KavaCircle } from './KavaCircle'
 import { LineaCircle } from './LineaCircle'
+import { MantaCircle } from './MantaCircle'
 import { MantleCircle } from './MantleCircle'
 import { MetisCircle } from './MetisCircle'
+import { ModeCircle } from './ModeCircle'
 import { MoonbeamCircle } from './MoonbeamCircle'
 import { MoonriverCircle } from './MoonriverCircle'
 import { OkexCircle } from './OkexCircle'
@@ -38,9 +40,11 @@ import { PolygonZKCircle } from './PolygonZKCircle'
 import { RootstockCircle } from './RootstockCircle'
 import { ScrollCircle } from './ScrollCircle'
 import { SkaleCircle } from './SkaleCircle'
+import { TaikoCircle } from './TaikoCircle'
 import { TelosCircle } from './TelosCircle'
 import { ThunderCoreCircle } from './ThunderCoreCircle'
 import { TronCircle } from './TronCircle'
+import { ZKLinkCircle } from './ZKLinkCircle'
 import { ZKSyncCircle } from './ZKSyncCircle'
 import { ZetaChainCircle } from './ZetaChainCircle'
 
@@ -69,8 +73,10 @@ export * from './HarmonyCircle'
 export * from './HecoCircle'
 export * from './KavaCircle'
 export * from './LineaCircle'
+export * from './MantaCircle'
 export * from './MantleCircle'
 export * from './MetisCircle'
+export * from './ModeCircle'
 export * from './MoonbeamCircle'
 export * from './MoonriverCircle'
 export * from './OkexCircle'
@@ -81,9 +87,11 @@ export * from './PolygonZKCircle'
 export * from './RootstockCircle'
 export * from './ScrollCircle'
 export * from './SkaleCircle'
+export * from './TaikoCircle'
 export * from './TelosCircle'
 export * from './ThunderCoreCircle'
 export * from './TronCircle'
+export * from './ZKLinkCircle'
 export * from './ZKSyncCircle'
 export * from './ZetaChainCircle'
 
@@ -129,6 +137,10 @@ export const NETWORK_CIRCLE_ICON: Partial<
   [ChainId.ROOTSTOCK]: RootstockCircle,
   [ChainId.CRONOS]: CronosCircle,
   [ChainId.MANTLE]: MantleCircle,
+  [ChainId.MANTA]: MantaCircle,
+  [ChainId.MODE]: ModeCircle,
+  [ChainId.TAIKO]: TaikoCircle,
+  [ChainId.ZKLINK]: ZKLinkCircle,
   [ChainId.APE]: ApeCircle,
   aptos: AptosCircle,
   tron: TronCircle,

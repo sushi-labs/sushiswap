@@ -55,7 +55,7 @@ import {
   useWaitForTransactionReceipt,
 } from 'wagmi'
 import { useRefetchBalances } from '~evm/_common/ui/balance-provider/use-refetch-balances'
-import { APPROVE_TAG_SWAP } from '../../../lib/constants'
+import { APPROVE_TAG_SWAP, NativeAddress } from '../../../lib/constants'
 import {
   warningSeverity,
   warningSeverityClassName,
@@ -93,8 +93,12 @@ export const SimpleSwapTradeReviewDialog: FC<{
       amountIn: trade?.amountIn?.toSignificant(6),
       amountOut: trade?.amountOut?.toSignificant(6),
       minAmountOut: trade?.minAmountOut?.toSignificant(6),
-      fromToken: trade?.route?.fromToken,
-      toToken: trade?.route?.toToken,
+      fromToken: trade?.amountIn?.currency.isToken
+        ? trade?.amountIn?.currency.address
+        : NativeAddress,
+      toToken: trade?.amountOut?.currency.isToken
+        ? trade?.amountOut?.currency.address
+        : NativeAddress,
       priceImpact: trade?.priceImpact?.toPercentageString(),
       tokenTax:
         trade?.tokenTax instanceof Percent
@@ -138,11 +142,10 @@ export const SimpleSwapTradeReviewDialog: FC<{
     }
 
     sendAnalyticsEvent(SwapEventName.SWAP_ESTIMATE_GAS_CALL_FAILED, {
-      route: stringify(trade?.route),
       slippageTolerance: slippagePercent.toPercentageString(),
       error: error.message,
     })
-  }, [error, slippagePercent, trade?.route])
+  }, [error, slippagePercent])
 
   const trace = useTrace()
 
@@ -158,7 +161,6 @@ export const SimpleSwapTradeReviewDialog: FC<{
 
         sendAnalyticsEvent(SwapEventName.SWAP_SIGNED, {
           ...trace,
-          route: stringify(trade?.route),
           txHash: hash,
         })
 
@@ -205,7 +207,6 @@ export const SimpleSwapTradeReviewDialog: FC<{
               txHash: hash,
               from: receipt.from,
               chain_id: chainId,
-              route: stringify(trade?.route),
               tx: stringify(trade?.tx),
             })
           } else {
@@ -213,7 +214,12 @@ export const SimpleSwapTradeReviewDialog: FC<{
               txHash: hash,
               from: receipt.from,
               chain_id: chainId,
-              route: stringify(trade?.route),
+              token_from: trade?.amountIn?.currency.isToken
+                ? trade?.amountIn?.currency.address
+                : NativeAddress,
+              token_to: trade?.amountOut?.currency.isToken
+                ? trade?.amountOut?.currency.address
+                : NativeAddress,
               tx: stringify(trade?.tx),
             })
           }
@@ -243,13 +249,18 @@ export const SimpleSwapTradeReviewDialog: FC<{
       }
 
       sendAnalyticsEvent(SwapEventName.SWAP_ERROR, {
-        route: stringify(trade?.route),
+        token_from: trade?.amountIn?.currency.isToken
+          ? trade?.amountIn?.currency.address
+          : NativeAddress,
+        token_to: trade?.amountOut?.currency.isToken
+          ? trade?.amountOut?.currency.address
+          : NativeAddress,
         tx: stringify(trade?.tx),
         error: e instanceof Error ? e.message : undefined,
       })
       createErrorToast(e.message, false)
     },
-    [trade?.route, trade?.tx],
+    [trade?.amountIn?.currency, trade?.amountOut?.currency, trade?.tx],
   )
 
   const {
@@ -432,7 +443,12 @@ export const SimpleSwapTradeReviewDialog: FC<{
                       element={InterfaceElementName.CONFIRM_SWAP_BUTTON}
                       name={SwapEventName.SWAP_SUBMITTED_BUTTON_CLICKED}
                       properties={{
-                        route: stringify(trade?.route),
+                        token_from: trade?.amountIn?.currency.isToken
+                          ? trade?.amountIn?.currency.address
+                          : NativeAddress,
+                        token_to: trade?.amountOut?.currency.isToken
+                          ? trade?.amountOut?.currency.address
+                          : NativeAddress,
                         ...trace,
                       }}
                     >

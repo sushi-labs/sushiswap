@@ -14,7 +14,6 @@ import {
   warningSeverity,
   warningSeverityClassName,
 } from '../../../lib/swap/warningSeverity'
-import { TradeRoutePathView } from '../trade-route-path-view'
 import {
   useDerivedStateSimpleSwap,
   useSimpleSwapTrade,
@@ -127,26 +126,6 @@ export const SimpleSwapTradeStats: FC = () => {
               <SkeletonBox className="h-4 py-0.5 w-[120px]" />
             ) : (
               'SushiSwap API'
-            )}
-          </span>
-        </div>
-
-        <div className="flex justify-between items-center">
-          <span className="text-sm text-gray-700 dark:text-slate-400">
-            Route
-          </span>
-          <span className="text-sm font-semibold text-gray-700 text-right dark:text-slate-400">
-            {loading || !trade ? (
-              <SkeletonBox className="h-4 py-0.5 w-[40px]" />
-            ) : (
-              <TradeRoutePathView trade={trade}>
-                <button
-                  type="button"
-                  className="text-sm text-blue font-semibold"
-                >
-                  View
-                </button>
-              </TradeRoutePathView>
             )}
           </span>
         </div>
