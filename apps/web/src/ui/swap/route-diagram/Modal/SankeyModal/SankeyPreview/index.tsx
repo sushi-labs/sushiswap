@@ -168,69 +168,7 @@ function convertSushiResponseToRoute(
   trade: UseTradeReturn | undefined,
 ): Route | null {
   console.log({ trade })
-  console.log('test')
 
-  // if (trade === undefined || trade.route === undefined) {
-  //   console.log('trade or trade.route is undefined')
-  //   return null
-  // }
-  // if (trade.route.legs === undefined) {
-  //   console.log('trade.route.legs is undefined')
-  //   return null
-  // }
-  // // if (trade === undefined || trade.route === undefined || trade.route.legs === undefined) return null;
-  // if (!trade?.route?.fromToken.address && !trade.route.fromToken.isNative) return null;
-
-  // if (!trade?.route?.toToken.address && !trade.route.fromToken.isNative) return null;
-
-  // const lastDepthPools = trade.route.legs.filter((l) => l.tokenTo.address === trade.route?.toToken.address)
-  // const totalAmountOut = lastDepthPools.reduce((acc: number, r) => acc + Number(r.assumedAmountOut), 0);
-  // const lastDepthShares: Record<string, number> = {};
-  // lastDepthPools.forEach((r) => {
-  //   lastDepthShares[r.poolAddress] = Number(r.assumedAmountOut) / totalAmountOut;
-  // })
-
-  // const cumulativeShares = new Map<string, number>();
-  // const firstTokenAddress = trade.route.fromToken.isNative ? NativeAddress : trade.route.fromToken.address!;
-  // cumulativeShares.set(firstTokenAddress, 1);
-
-  // const tokensMap = new Map<string, Token>();
-  // trade.route.legs.forEach((leg) => {
-  //   const tokenFrom = leg.tokenFrom.isNative ? NativeAddress : leg.tokenFrom.address!
-  //   const tokenTo = leg.tokenTo.isNative ? NativeAddress : leg.tokenTo.address!
-  //   if (!tokensMap.has(tokenFrom)) {
-  //     tokensMap.set(tokenFrom, {
-  //       address: tokenFrom,
-  //       symbol: leg.tokenFrom.symbol!
-  //     } as Token)
-  //   }
-  //   if (!tokensMap.has(tokenTo)) {
-  //     tokensMap.set(tokenTo, {
-  //       address: tokenTo,
-  //       symbol: leg.tokenTo.symbol!
-  //     } as Token)
-  //   }
-  // })
-
-  // const transformed = {
-  //   fills: trade.route.legs.map((leg) => {
-  //     const tokenFrom = leg.tokenFrom.isNative ? NativeAddress : leg.tokenFrom.address!
-  //     const tokenTo = leg.tokenTo.isNative ? NativeAddress : leg.tokenTo.address!
-  //     const sourceCumulativeShare = cumulativeShares.get(tokenFrom) || 0;
-  //     const addedShare = sourceCumulativeShare * leg.absolutePortion;
-  //     const newCumulativeShare =
-  //       (cumulativeShares.get(tokenTo) || 0) + addedShare;
-  //     cumulativeShares.set(tokenTo, newCumulativeShare);
-  //     return {
-  //       from: leg.tokenFrom.isNative ? NativeAddress : leg.tokenFrom.address!,
-  //       to: leg.tokenTo.address!,
-  //       source: leg.liquidityProvider,
-  //       proportionBps: Math.floor(Number((lastDepthShares[leg.poolAddress] ?? addedShare) * 10_000)),
-  //     } satisfies Fill;
-  //   }),
-  //   tokens: Array.from(tokensMap.values())
-  // } satisfies Route;
-  // console.log({transformed})
   const data3 = {
     liquidityProviders: [
       'NativeWrap',

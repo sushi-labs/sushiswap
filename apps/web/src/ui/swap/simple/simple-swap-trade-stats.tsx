@@ -18,6 +18,7 @@ import {
   useDerivedStateSimpleSwap,
   useSimpleSwapTrade,
 } from './derivedstate-simple-swap-provider'
+import { RouteDiagram } from '../route-diagram'
 
 export const SimpleSwapTradeStats: FC = () => {
   const { address } = useAccount()
@@ -130,7 +131,7 @@ export const SimpleSwapTradeStats: FC = () => {
           </span>
         </div>
 
-        {/* <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between">
           <span className="text-sm text-gray-700 dark:text-slate-400">
             Route
           </span>
@@ -138,17 +139,10 @@ export const SimpleSwapTradeStats: FC = () => {
             {loading || !trade ? (
               <SkeletonBox className="h-4 py-0.5 w-[40px]" />
             ) : (
-              <TradeRoutePathView trade={trade}>
-                <button
-                  type="button"
-                  className="text-sm font-semibold text-blue"
-                >
-                  View
-                </button>
-              </TradeRoutePathView>
+              <RouteDiagram trade={trade}/>
             )}
           </span>
-        </div> */}
+        </div>
 
         {recipient && isAddress(recipient) && isMounted && (
           <div className="flex items-center justify-between pt-2 mt-2 border-t border-gray-200 dark:border-slate-200/5">
