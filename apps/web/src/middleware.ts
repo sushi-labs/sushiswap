@@ -61,9 +61,10 @@ export async function middleware(req: NextRequest) {
     if (!chainId) return NextResponse.next()
 
     const url = req.nextUrl.clone()
-    url.pathname = pathname.replace(networkName, chainId.toString())
 
-    if (pathname.includes('cross-chain-swap')) {
+    const page = pathname.split('/')[2]
+
+    if (page === 'swap') {
       if (
         search !== '' &&
         searchParams.has('token0') &&
@@ -82,18 +83,12 @@ export async function middleware(req: NextRequest) {
       }
     }
 
-    if (pathname.includes('swap')) {
-      if (
-        search !== '' &&
-        searchParams.has('chainId0') &&
-        searchParams.has('chainId1')
-      ) {
-        const chainId0 = searchParams.get('chainId0')?.toLowerCase()
+    if (page === 'cross-chain-swap') {
+      if (search !== '' && searchParams.has('chainId1')) {
         const chainId1 = searchParams.get('chainId1')?.toLowerCase()
 
         // ChainIds cant be the same
-        if (chainId0 === chainId1) {
-          searchParams.delete('chainId0')
+        if (chainId.toString() === chainId1) {
           searchParams.delete('chainId1')
           searchParams.delete('token0')
           searchParams.delete('token1')
@@ -102,6 +97,8 @@ export async function middleware(req: NextRequest) {
         }
       }
     }
+
+    url.pathname = pathname.replace(networkName, chainId.toString())
 
     return NextResponse.rewrite(url)
   }
