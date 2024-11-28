@@ -42,8 +42,8 @@ export const DesktopNetworkSelector: FC<DesktopNetworkSelector> = ({
           placeholder="Search network"
         />
       </div>
-      <CommandEmpty className="px-1">No network found.</CommandEmpty>
-      <CommandGroup className="overflow-y-auto px-1 pb-1">
+      <CommandEmpty className="p-2 mx-auto">No network found.</CommandEmpty>
+      <CommandGroup className="overflow-y-auto px-3 pb-3">
         {networks.map((network) => {
           const name = getNetworkName(network)
 
