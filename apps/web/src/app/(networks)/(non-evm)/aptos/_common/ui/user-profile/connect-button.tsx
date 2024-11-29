@@ -9,7 +9,6 @@ import {
   DropdownMenuTrigger,
 } from '@sushiswap/ui'
 import React from 'react'
-import { WalletIcons } from './connect-view/connect-view'
 
 export function ConnectButton(props: ButtonProps) {
   const { wallets, connect } = useWallet()
@@ -29,13 +28,16 @@ export function ConnectButton(props: ButtonProps) {
       <DropdownMenuContent className="w-56">
         <DropdownMenuGroup>
           {wallets?.map((wallet) => {
-            const Icon = WalletIcons[wallet.name]
             return (
               <DropdownMenuItem
                 onClick={() => onSelect(wallet.name)}
                 key={wallet.name}
               >
-                <Icon className="w-4 h-4 mr-2" />
+                <img
+                  src={wallet.icon}
+                  alt={wallet.name}
+                  className="w-4 h-4 mr-2"
+                />
                 {wallet.name}
               </DropdownMenuItem>
             )
