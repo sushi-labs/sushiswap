@@ -1,14 +1,13 @@
 import { Wallet } from '@aptos-labs/wallet-adapter-core'
 import { LinkExternal } from '@sushiswap/ui'
-import React, { SVGProps } from 'react'
+import React from 'react'
 import { useNetwork } from '~aptos/_common/lib/common/use-network'
 
 interface NotFoundWalletList {
-  Icons: Record<string, (props: SVGProps<SVGSVGElement>) => JSX.Element | null>
   wallet: Wallet
 }
 
-export const NotFoundWalletList = ({ Icons, wallet }: NotFoundWalletList) => {
+export const NotFoundWalletList = ({ wallet }: NotFoundWalletList) => {
   const {
     other: { MSafeOrigin },
   } = useNetwork()
@@ -26,12 +25,11 @@ export const NotFoundWalletList = ({ Icons, wallet }: NotFoundWalletList) => {
       rel="noreferrer"
     >
       <span className="h-[18px] w-[18px]">
-        {React.createElement(Icons[wallet.name], {
-          width: 18,
-          height: 18,
-          strokeWidth: 2,
-          className: 'text-blue-500',
-        })}
+        <img
+          src={wallet.icon}
+          alt={wallet.name}
+          className="w-[18px] h-[18px] text-blue-500 stroke-2"
+        />
       </span>
       <span className="text-sm font-medium text-gray-900 dark:text-slate-200">
         {wallet.name}

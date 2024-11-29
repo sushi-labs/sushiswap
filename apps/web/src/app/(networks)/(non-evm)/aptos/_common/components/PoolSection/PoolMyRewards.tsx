@@ -2,11 +2,11 @@ import { useWallet } from '@aptos-labs/wallet-adapter-react'
 import { Button, CardFooter, CardTitle, Dots } from '@sushiswap/ui'
 import { Card, CardDescription, CardHeader } from '@sushiswap/ui'
 import { CardContent, CardGroup, CardItem, CardLabel } from '@sushiswap/ui'
-import { Provider } from 'aptos'
 import { FC, useState } from 'react'
 import { formatUSD } from 'sushi/format'
 import { networkNameToNetwork } from '~aptos/_common/config/chains'
 import { Aptos } from '~aptos/_common/config/coins'
+import { AptosSDK } from '~aptos/_common/lib/common/aptos-sdk'
 import { formatNumberWithDecimals } from '~aptos/_common/lib/common/format-number-with-decimals'
 import { useNetwork } from '~aptos/_common/lib/common/use-network'
 import { useStablePrice } from '~aptos/_common/lib/common/use-stable-price'
@@ -43,7 +43,7 @@ export const PoolMyRewards: FC<PoolMyRewards> = ({
   const harvest = async () => {
     if (!masterchefContract) return
 
-    const provider = new Provider(networkNameToNetwork(network))
+    const aptos = AptosSDK.onNetwork(networkNameToNetwork(network))
     setTransactionPending(true)
     try {
       const response = await signAndSubmitTransaction({
@@ -54,7 +54,7 @@ export const PoolMyRewards: FC<PoolMyRewards> = ({
         },
       })
 
-      await provider.waitForTransaction(response?.hash)
+      await aptos.waitForTransaction({ transactionHash: response.hash })
 
       //return from here if response is failed
       if (!response?.success) return
