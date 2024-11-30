@@ -1,9 +1,10 @@
 'use client'
 
 import { useIsMounted } from '@sushiswap/hooks'
-import { Button, SelectIcon, TextField, classNames } from '@sushiswap/ui'
+import { Badge, Button, SelectIcon, TextField, classNames } from '@sushiswap/ui'
 import { Currency } from '@sushiswap/ui'
 import { SkeletonBox } from '@sushiswap/ui'
+import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import {
   FC,
   useCallback,
@@ -46,6 +47,9 @@ interface CurrencyInputProps {
   hidePricing?: boolean
   hideIcon?: boolean
   label?: string
+  networks?: readonly ChainId[]
+  selectedNetwork?: ChainId
+  onNetworkChange?: (network: number) => void
 }
 
 const CurrencyInput: FC<CurrencyInputProps> = ({
@@ -72,6 +76,9 @@ const CurrencyInput: FC<CurrencyInputProps> = ({
   hidePricing = false,
   hideIcon = false,
   label,
+  networks,
+  selectedNetwork,
+  onNetworkChange,
 }) => {
   const isMounted = useIsMounted()
 
@@ -147,6 +154,9 @@ const CurrencyInput: FC<CurrencyInputProps> = ({
         includeNative={allowNative}
         hidePinnedTokens={hidePinnedTokens}
         hideSearch={hideSearch}
+        networks={networks}
+        selectedNetwork={selectedNetwork}
+        onNetworkSelect={onNetworkChange}
       >
         <Button
           data-state={currencyLoading ? 'inactive' : 'active'}
@@ -162,12 +172,28 @@ const CurrencyInput: FC<CurrencyInputProps> = ({
           {currency ? (
             <>
               <div className="w-[28px] h-[28px] mr-0.5">
-                <Currency.Icon
-                  disableLink
-                  currency={currency}
-                  width={28}
-                  height={28}
-                />
+                {networks ? (
+                  <Badge
+                    className="border border-slate-900 rounded-full z-[11]"
+                    position="bottom-right"
+                    badgeContent={
+                      <NetworkIcon
+                        chainId={currency.chainId}
+                        width={16}
+                        height={16}
+                      />
+                    }
+                  >
+                    <Currency.Icon currency={currency} width={28} height={28} />
+                  </Badge>
+                ) : (
+                  <Currency.Icon
+                    disableLink
+                    currency={currency}
+                    width={28}
+                    height={28}
+                  />
+                )}
               </div>
               {currency.symbol}
               <SelectIcon />
@@ -188,6 +214,9 @@ const CurrencyInput: FC<CurrencyInputProps> = ({
     allowNative,
     hidePinnedTokens,
     hideSearch,
+    networks,
+    selectedNetwork,
+    onNetworkChange,
   ])
 
   return (

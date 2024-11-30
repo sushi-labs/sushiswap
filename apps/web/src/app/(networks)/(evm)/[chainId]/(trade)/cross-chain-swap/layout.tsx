@@ -25,7 +25,7 @@ export default function CrossChainSwapLayout({
   }
 
   return (
-    <Providers>
+    <Providers chainId={chainId}>
       <SidebarContainer
         selectedNetwork={chainId}
         supportedNetworks={SUSHIXSWAP_2_SUPPORTED_CHAIN_IDS}

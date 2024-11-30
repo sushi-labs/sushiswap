@@ -98,7 +98,7 @@ export const TokenSelector = ({
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent className="!flex flex-col justify-start min-h-[85vh]">
-        <DialogHeader>
+        <DialogHeader className="!text-left">
           <DialogTitle>Select a token</DialogTitle>
           <DialogDescription>
             Select a token from our default list or search for a token by symbol

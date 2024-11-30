@@ -74,7 +74,7 @@ export const NEW_CHAIN_IDS = [
   NonStandardChainId.TRON,
 ] as const
 
-const PREFERRED_CHAINID_ORDER = [
+export const PREFERRED_CHAINID_ORDER = [
   ChainId.ETHEREUM,
   NonStandardChainId.TRON,
   ChainId.BSC,

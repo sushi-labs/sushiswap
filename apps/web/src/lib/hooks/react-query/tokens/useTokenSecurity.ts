@@ -81,6 +81,43 @@ export const TokenSecurityLabel: Record<keyof TokenSecurity, string> = {
   trust_list: 'Trusted',
 }
 
+export const isTokenSecurityIssue = {
+  // Contract security
+  is_open_source: (value: TokenSecurity['is_open_source']) => value === false,
+  is_proxy: (value: TokenSecurity['is_proxy']) => value === true,
+  is_mintable: (value: TokenSecurity['is_mintable']) => value === true,
+  can_take_back_ownership: (value: TokenSecurity['can_take_back_ownership']) =>
+    value === true,
+  owner_change_balance: (value: TokenSecurity['owner_change_balance']) =>
+    value === true,
+  gas_abuse: (value: TokenSecurity['gas_abuse']) => value === true,
+  hidden_owner: (value: TokenSecurity['hidden_owner']) => value === true,
+  selfdestruct: (value: TokenSecurity['selfdestruct']) => value === true,
+  external_call: (value: TokenSecurity['external_call']) => value === true,
+  trust_list: (value: TokenSecurity['trust_list']) => value === false,
+  // Trading security
+  buy_tax: (value: TokenSecurity['buy_tax']) => value === true,
+  sell_tax: (value: TokenSecurity['sell_tax']) => value === true,
+  is_buyable: (value: TokenSecurity['is_buyable']) => value === false,
+  is_sell_limit: (value: TokenSecurity['is_sell_limit']) => value === true,
+  slippage_modifiable: (value: TokenSecurity['slippage_modifiable']) =>
+    value === true,
+  is_honeypot: (value: TokenSecurity['is_honeypot']) => value === true,
+  transfer_pausable: (value: TokenSecurity['transfer_pausable']) =>
+    value === true,
+  is_blacklisted: (value: TokenSecurity['is_blacklisted']) => value === true,
+  is_whitelisted: (value: TokenSecurity['is_whitelisted']) => value === true,
+  is_anti_whale: (value: TokenSecurity['is_anti_whale']) => value === true,
+  trading_cooldown: (value: TokenSecurity['trading_cooldown']) =>
+    value === true,
+  // Info security
+  is_fake_token: (value: TokenSecurity['is_fake_token']) => value === true,
+  is_airdrop_scam: (value: TokenSecurity['is_airdrop_scam']) => value === true,
+} as Record<
+  NonNullable<keyof TokenSecurity>,
+  (value: TokenSecurity[keyof TokenSecurity]) => boolean
+>
+
 export const TokenSecurityMessage: Record<keyof TokenSecurity, string> = {
   //Contract Security
   is_open_source:

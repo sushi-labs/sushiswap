@@ -15,6 +15,8 @@ interface TokenSelectorCustomList {
   selected: Type | undefined
   onSelect(currency: Type): void
   search?: string
+  includeNative?: boolean
+  onShowInfo(currency: Type | false): void
 }
 
 export function TokenSelectorCustomList({
@@ -24,6 +26,8 @@ export function TokenSelectorCustomList({
   selected,
   onSelect,
   search,
+  includeNative,
+  onShowInfo,
 }: TokenSelectorCustomList) {
   const {
     data: { balanceMap },
@@ -31,6 +35,7 @@ export function TokenSelectorCustomList({
   } = useMyTokens({
     chainId: isTokenListChainId(chainId) ? chainId : undefined,
     account,
+    includeNative,
   })
 
   const { data: pricesMap } = usePrices({
@@ -65,6 +70,7 @@ export function TokenSelectorCustomList({
             balancesMap={balanceMap}
             pricesMap={pricesMap}
             isBalanceLoading={isLoading}
+            onShowInfo={onShowInfo}
           />
         </div>
       </List.Control>

@@ -1,12 +1,7 @@
 'use client'
 
 import { nanoid } from 'nanoid'
-import {
-  useParams,
-  usePathname,
-  useRouter,
-  useSearchParams,
-} from 'next/navigation'
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import {
   Dispatch,
   FC,
@@ -19,6 +14,7 @@ import {
 } from 'react'
 import { useCrossChainTrade } from 'src/lib/hooks'
 import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
+import { replaceNetworkSlug } from 'src/lib/network'
 import { SushiXSwap2Adapter } from 'src/lib/swap/cross-chain'
 import { useTokenWithCache } from 'src/lib/wagmi/hooks/tokens/useTokenWithCache'
 import { ChainId, ChainKey } from 'sushi/chain'
@@ -80,6 +76,7 @@ const DerivedStateCrossChainSwapContext = createContext<State>({} as State)
 
 interface DerivedStateCrossChainSwapProviderProps {
   children: React.ReactNode
+  defaultChainId: ChainId
 }
 
 /* Parses the URL and provides the chainId, token0, and token1 globally.
@@ -90,16 +87,16 @@ interface DerivedStateCrossChainSwapProviderProps {
  */
 const DerivedstateCrossChainSwapProvider: FC<
   DerivedStateCrossChainSwapProviderProps
-> = ({ children }) => {
+> = ({ children, defaultChainId }) => {
   const { push } = useRouter()
-  const { chainId: _chainId } = useParams()
   const { address } = useAccount()
   const pathname = usePathname()
   const searchParams = useSearchParams()
   const [tradeId, setTradeId] = useState(nanoid())
+  const [chainId, setChainId] = useState<number>(defaultChainId)
 
-  const chainId0 = isSushiXSwap2ChainId(+_chainId as ChainId)
-    ? (+_chainId as SushiXSwap2ChainId)
+  const chainId0 = isSushiXSwap2ChainId(chainId as ChainId)
+    ? (chainId as SushiXSwap2ChainId)
     : ChainId.ETHEREUM
 
   // Get the searchParams and complete with defaults.
@@ -150,16 +147,22 @@ const DerivedstateCrossChainSwapProvider: FC<
     pathSegments[1] = ChainKey[Number(chainId1) as ChainId]
 
     // Can safely cast as defaultedParams are always defined
-    push(
-      `${pathSegments.join('/')}?${createQueryString([
+    history.pushState(
+      null,
+      '',
+      `${replaceNetworkSlug(
+        Number(chainId1) as ChainId,
+        pathname,
+      )}?${createQueryString([
         { name: 'swapAmount', value: null },
         { name: 'token0', value: token1 as string },
         { name: 'token1', value: token0 as string },
         { name: 'chainId1', value: chainId0.toString() },
       ])}`,
-      { scroll: false },
     )
-  }, [pathname, push, defaultedParams, chainId0, createQueryString])
+
+    setChainId(Number(chainId1))
+  }, [pathname, defaultedParams, chainId0, createQueryString])
 
   // Update the URL with new from chainId
   const setChainId0 = useCallback(
@@ -167,26 +170,22 @@ const DerivedstateCrossChainSwapProvider: FC<
       if (defaultedParams.get('chainId1') === chainId.toString()) {
         switchTokens()
       } else {
-        const pathSegments = pathname.split('/')
-        pathSegments[1] = ChainKey[chainId as ChainId]
-
-        push(
-          `${pathSegments.join('/')}?${createQueryString([
+        history.pushState(
+          null,
+          '',
+          `${replaceNetworkSlug(
+            chainId as ChainId,
+            pathname,
+          )}?${createQueryString([
             { name: 'swapAmount', value: null },
             { name: 'token0', value: getDefaultCurrency(chainId0) },
           ])}`,
-          { scroll: false },
         )
+
+        setChainId(chainId)
       }
     },
-    [
-      createQueryString,
-      defaultedParams,
-      pathname,
-      push,
-      switchTokens,
-      chainId0,
-    ],
+    [createQueryString, defaultedParams, pathname, switchTokens, chainId0],
   )
 
   // Update the URL with new to chainId
