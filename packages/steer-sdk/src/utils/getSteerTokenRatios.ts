@@ -9,7 +9,7 @@ interface GetTokenRatiosProps {
   prices: Pick<Map<Address, number>, 'get' | 'has'>
 }
 
-async function getTokenRatios({ vault, prices }: GetTokenRatiosProps) {
+function getTokenRatios({ vault, prices }: GetTokenRatiosProps) {
   const token0PriceUSD = prices.get(vault.token0.address) || 0
   const token1PriceUSD = prices.get(vault.token1.address) || 0
 

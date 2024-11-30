@@ -506,7 +506,7 @@ export const AddSectionReviewModalLegacy: FC<AddSectionReviewModalLegacyProps> =
           testId="incentivize-confirmation-modal"
           successMessage="Successfully added liquidity"
           buttonText="Go to pool"
-          buttonLink={`/${ChainKey[chainId]}/pools/v2/${poolAddress}`}
+          buttonLink={`/${ChainKey[chainId]}/pool/v2/${poolAddress}`}
           txHash={data}
         />
       </DialogProvider>

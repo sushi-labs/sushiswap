@@ -94,7 +94,10 @@ export const APRHoverCard: FC<APRHoverCardProps> = ({
       <div className="hidden sm:block">
         <HoverCard openDelay={300} closeDelay={0}>
           <HoverCardTrigger asChild>{children}</HoverCardTrigger>
-          <HoverCardContent side="right" className="!p-0 max-w-[320px]">
+          <HoverCardContent
+            side="right"
+            className="!p-0 max-w-[320px] whitespace-normal text-left"
+          >
             {card}
           </HoverCardContent>
         </HoverCard>
@@ -104,7 +107,10 @@ export const APRHoverCard: FC<APRHoverCardProps> = ({
           <PopoverTrigger onClick={(e) => e.stopPropagation()} asChild>
             {children}
           </PopoverTrigger>
-          <PopoverContent side="right" className="!p-0 max-w-[320px]">
+          <PopoverContent
+            side="right"
+            className="!p-0 max-w-[320px] whitespace-normal text-left"
+          >
             {card}
           </PopoverContent>
         </Popover>
