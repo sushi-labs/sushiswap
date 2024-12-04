@@ -3,8 +3,12 @@ import Link from 'next/link'
 import * as React from 'react'
 
 import classNames from 'classnames'
+import { DiscordIcon } from '../icons/DiscordIcon'
+import { GithubIcon } from '../icons/GithubIcon'
 import { SushiIcon } from '../icons/SushiIcon'
-import { LinkInternal } from './link'
+import { XIcon } from '../icons/XIcon'
+import { IconButton } from './iconbutton'
+import { LinkExternal, LinkInternal } from './link'
 import { navigationMenuTriggerStyle } from './navigation-menu'
 import {
   NavigationMenu,
@@ -300,8 +304,8 @@ const SushiNavigationDropdown: React.FC<{
             {children}
           </NavigationMenuTrigger>
           <NavigationMenuContent>
-            <ul className={'w-[216px] flex flex-col gap-6 p-4'}>
-              <div className="flex flex-col gap-1 pt-2">
+            <ul className={'w-[216px] flex flex-col gap-6 px-4 py-6'}>
+              <div className="flex flex-col gap-1">
                 <span className="font-semibold px-2">Company</span>
                 <div>
                   {COMPANY_NAVIGATION_LINKS.map((component) => (
@@ -388,6 +392,35 @@ const SushiNavigationDropdown: React.FC<{
                     </li>
                   ))}
                 </div>
+              </div>
+              <div className="flex gap-5 px-1 items-center">
+                <LinkExternal href={'https://sushi.com/twitter'}>
+                  <IconButton
+                    variant="ghost"
+                    size="xs"
+                    className="!p-0 text-muted-foreground"
+                    icon={XIcon}
+                    name="X"
+                  />
+                </LinkExternal>
+                <LinkExternal href={'https://sushi.com/github'}>
+                  <IconButton
+                    variant="ghost"
+                    size="xs"
+                    className="!p-0 text-muted-foreground"
+                    icon={GithubIcon}
+                    name="Github"
+                  />
+                </LinkExternal>
+                <LinkExternal href={'https://sushi.com/discord'}>
+                  <IconButton
+                    variant="ghost"
+                    size="xs"
+                    className="!p-0 text-muted-foreground"
+                    icon={DiscordIcon}
+                    name="Discord"
+                  />
+                </LinkExternal>
               </div>
             </ul>
           </NavigationMenuContent>
