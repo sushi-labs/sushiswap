@@ -253,7 +253,7 @@ export class SwapPage extends BaseActions {
 
   async mockSwapApi(jsonFile: string) {
     await this.page.route(
-      `${API_BASE_URL}/swap/v5/${this.chainId}*`,
+      `${API_BASE_URL}/swap/v5.1/${this.chainId}*`,
       (route) => {
         return route.fulfill({ path: jsonFile })
       },

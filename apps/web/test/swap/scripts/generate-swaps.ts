@@ -63,7 +63,7 @@ const getSwapApiResult = async ({
   slippagePercentage,
   source,
 }: TradeParams) => {
-  const params = new URL(`${API_BASE_URL}/swap/v5/${chainId}`)
+  const params = new URL(`${API_BASE_URL}/swap/v5.1/${chainId}`)
 
   params.searchParams.set(
     'tokenIn',

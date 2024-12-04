@@ -10,7 +10,7 @@ type token1 = z.infer<typeof tokenValidator01>
 export type swapApi1 = z.infer<typeof tradeValidator01>
 export type swapApi2 = z.infer<typeof tradeValidator02>
 
-function getApi1Token(token: Token | Native): token1 {
+export function getApi1Token(token: Token | Native): token1 {
   if (token instanceof Token)
     return {
       chainId: token.chainId,

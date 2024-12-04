@@ -1,8 +1,8 @@
-import {
-  SwapEventName,
-  sendAnalyticsEvent,
-  useTrace,
-} from '@sushiswap/telemetry'
+// import {
+//   SwapEventName,
+//   sendAnalyticsEvent,
+//   useTrace,
+// } from '@sushiswap/telemetry'
 import { useQuery } from '@tanstack/react-query'
 import { useCallback, useMemo } from 'react'
 import { slippageAmount } from 'sushi/calculate'
@@ -18,9 +18,9 @@ import { Fraction, Percent, ZERO } from 'sushi/math'
 import { isLsd, isStable, isWrapOrUnwrap } from 'sushi/router'
 import { Address, stringify, zeroAddress } from 'viem'
 import { usePrices } from '~evm/_common/ui/price-provider/price-provider/use-prices'
-import { apiAdapter02To01 } from './apiAdapter'
 import type { UseTradeParams, UseTradeQuerySelect } from './types'
-import { tradeValidator02 } from './validator02'
+import { tradeValidator03 } from './validator03'
+import { getApi1Token } from './apiAdapter'
 
 export const useTradeQuery = (
   {
@@ -36,7 +36,7 @@ export const useTradeQuery = (
   }: UseTradeParams,
   select: UseTradeQuerySelect,
 ) => {
-  const trace = useTrace()
+  // const trace = useTrace()
   return useQuery({
     queryKey: [
       'getTrade',
@@ -52,7 +52,7 @@ export const useTradeQuery = (
       },
     ],
     queryFn: async () => {
-      const params = new URL(`${API_BASE_URL}/swap/v5/${chainId}`)
+      const params = new URL(`${API_BASE_URL}/swap/v5.1/${chainId}`)
       params.searchParams.set('referrer', 'sushi')
       params.searchParams.set(
         'tokenIn',
@@ -89,19 +89,20 @@ export const useTradeQuery = (
 
       const res = await fetch(params.toString())
       const json = await res.json()
-      const resp2 = tradeValidator02.parse(json)
+      console.log({json})
+      const resp2 = tradeValidator03.parse(json)
 
-      const resp1 = apiAdapter02To01(
-        resp2,
-        fromToken as Type,
-        toToken as Type,
-        recipient,
-      )
-
-      sendAnalyticsEvent(SwapEventName.SWAP_QUOTE_RECEIVED, {
-        route: stringify(resp1.route),
-        ...trace,
-      })
+      console.log({resp2})
+      const resp1 = {
+        ...resp2,
+        tokenFrom: getApi1Token(fromToken as Type),
+        tokenTo: getApi1Token(toToken as Type),
+      }
+      console.log({resp1})
+      // sendAnalyticsEvent(SwapEventName.SWAP_QUOTE_RECEIVED, {
+      //   route: stringify(resp1.route),
+      //   ...trace,
+      // })
 
       return resp1
     },
@@ -156,23 +157,23 @@ export const useTrade = (variables: UseTradeParams) => {
         isRouteProcessor5ChainId(chainId) &&
         data &&
         amount &&
-        data.route &&
+        data.status !== 'NoWay' &&
         fromToken &&
         toToken
       ) {
-        const amountIn = Amount.fromRawAmount(fromToken, data.route.amountInBI)
+        const amountIn = Amount.fromRawAmount(fromToken, data.amountIn)
         const amountOut = Amount.fromRawAmount(
           toToken,
-          new Fraction(data.route.amountOutBI).multiply(
+          new Fraction(data.assumedAmountOut).multiply(
             tokenTax ? new Percent(1).subtract(tokenTax) : 1,
           ).quotient,
         )
-        const minAmountOut = data.args?.amountOutMin
-          ? Amount.fromRawAmount(toToken, data.args.amountOutMin)
+        const minAmountOut = data.assumedAmountOut
+          ? Amount.fromRawAmount(toToken, data.assumedAmountOut)
           : Amount.fromRawAmount(
               toToken,
               slippageAmount(
-                Amount.fromRawAmount(toToken, data.route.amountOutBI),
+                Amount.fromRawAmount(toToken, data.assumedAmountOut),
                 new Percent(Math.floor(+slippagePercentage * 100), 10_000),
               )[0],
             )
@@ -196,7 +197,7 @@ export const useTrade = (variables: UseTradeParams) => {
         const gasSpent = gasPrice
           ? Amount.fromRawAmount(
               Native.onChain(chainId),
-              gasPrice * BigInt(data.route.gasSpent * 1.2),
+              gasPrice * BigInt(data.gasSpent * 1.2),
             )
           : undefined
 
@@ -207,8 +208,8 @@ export const useTrade = (variables: UseTradeParams) => {
                 quoteAmount: amountOut,
               })
             : undefined,
-          priceImpact: data.route.priceImpact
-            ? new Percent(Math.round(data.route.priceImpact * 10000), 10000)
+          priceImpact: data.priceImpact
+            ? new Percent(Math.round(data.priceImpact * 10000), 10000)
             : new Percent(0),
           amountIn,
           amountOut,
