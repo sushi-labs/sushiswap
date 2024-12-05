@@ -1,5 +1,3 @@
-import * as Sentry from '@sentry/nextjs'
-
 function bigintSeriliazer() {
   const originalStringify = JSON.stringify
   const stringify = (value: any, replacer?: any, space?: string | number) => {
@@ -54,17 +52,3 @@ function bigintSeriliazer() {
 }
 
 export const { stringify, parse } = bigintSeriliazer()
-
-export async function register() {
-  bigintSeriliazer()
-
-  if (process.env.NEXT_RUNTIME === 'nodejs') {
-    await import('../sentry.server.config')
-  }
-
-  if (process.env.NEXT_RUNTIME === 'edge') {
-    await import('../sentry.edge.config')
-  }
-}
-
-export const onRequestError = Sentry.captureRequestError

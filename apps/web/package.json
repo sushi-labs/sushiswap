@@ -35,7 +35,6 @@
     "@radix-ui/react-slot": "1.0.2",
     "@rainbow-me/rainbowkit": "2.1.6",
     "@rise-wallet/wallet-adapter": "0.1.2",
-    "@sentry/nextjs": "8.30.0",
     "@snapshot-labs/snapshot.js": "0.9.9",
     "@sushiswap/graph-client": "workspace:*",
     "@sushiswap/hooks": "workspace:*",
