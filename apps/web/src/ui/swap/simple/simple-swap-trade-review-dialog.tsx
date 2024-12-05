@@ -41,7 +41,7 @@ import { useApproved } from 'src/lib/wagmi/systems/Checker/Provider'
 import { Chain, ChainId } from 'sushi/chain'
 import { Native } from 'sushi/currency'
 import { shortenAddress } from 'sushi/format'
-import { Percent, ZERO } from 'sushi/math'
+import { ZERO } from 'sushi/math'
 import {
   SendTransactionReturnType,
   UserRejectedRequestError,
