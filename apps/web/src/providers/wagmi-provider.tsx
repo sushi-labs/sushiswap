@@ -10,7 +10,6 @@ import {
 import { useIsMounted } from '@sushiswap/hooks'
 import { useTheme } from 'next-themes'
 import { type FC, type ReactNode, useMemo } from 'react'
-import { WagmiSentry } from 'src/lib/wagmi/components/wagmi-sentry'
 import { WagmiStoreVersionCheck } from 'src/lib/wagmi/components/wagmi-store-version-check'
 import { getWagmiConfig, getWagmiInitialState } from 'src/lib/wagmi/config'
 import { WagmiProvider as _WagmiProvider } from 'wagmi'
@@ -80,9 +79,7 @@ export const WagmiProvider: FC<{
           theme={rainbowKitTheme}
           appInfo={{ disclaimer: Disclaimer }}
         >
-          <WagmiSentry>
-            <WagmiStoreVersionCheck>{children}</WagmiStoreVersionCheck>
-          </WagmiSentry>
+          <WagmiStoreVersionCheck>{children}</WagmiStoreVersionCheck>
         </RainbowKitProvider>
       </div>
     </_WagmiProvider>

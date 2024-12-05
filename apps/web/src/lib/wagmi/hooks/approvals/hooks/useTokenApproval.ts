@@ -3,7 +3,6 @@
 import { createErrorToast, createToast } from '@sushiswap/notifications'
 import { InterfaceEventName, sendAnalyticsEvent } from '@sushiswap/telemetry'
 import { useCallback, useMemo, useState } from 'react'
-// import * as Sentry from '@sentry/nextjs'
 import { Amount, Type } from 'sushi/currency'
 import {
   Address,
@@ -88,7 +87,6 @@ export const useTokenApproval = ({
           !isAllowanceLoading,
       ),
     },
-    // onError: (error) => Sentry.captureException(`approve prepare error: ${error.message}`),
   })
 
   const onSuccess = useCallback(

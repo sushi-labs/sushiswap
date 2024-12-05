@@ -66,10 +66,7 @@
         "APP_ENV",
         "DRPC_ID",
         "EDGE_CONFIG",
-        "VERCEL_ENV",
-        "SENTRY_DSN",
-        "SENTRY_ENVIRONMENT",
-        "SENTRY_AUTH_TOKEN"
+        "VERCEL_ENV"
       ],
       "cache": false,
       "persistent": true

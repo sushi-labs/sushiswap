@@ -1,6 +1,5 @@
 'use client'
 
-import * as Sentry from '@sentry/nextjs'
 import { createErrorToast, createToast } from '@sushiswap/notifications'
 import {
   BrowserEvent,
@@ -85,28 +84,6 @@ export const SimpleSwapTradeReviewDialog: FC<{
   const client = usePublicClient()
 
   const { refetchChain: refetchBalances } = useRefetchBalances()
-
-  useEffect(() => {
-    if (!trade) return
-    Sentry.setContext('swap-context', {
-      chainId,
-      amountIn: trade?.amountIn?.toSignificant(6),
-      amountOut: trade?.amountOut?.toSignificant(6),
-      minAmountOut: trade?.minAmountOut?.toSignificant(6),
-      fromToken: trade?.amountIn?.currency.isToken
-        ? trade?.amountIn?.currency.address
-        : NativeAddress,
-      toToken: trade?.amountOut?.currency.isToken
-        ? trade?.amountOut?.currency.address
-        : NativeAddress,
-      priceImpact: trade?.priceImpact?.toPercentageString(),
-      tokenTax:
-        trade?.tokenTax instanceof Percent
-          ? trade.tokenTax.toPercentageString()
-          : trade?.tokenTax,
-      tx: trade.tx,
-    })
-  }, [trade, chainId])
 
   const isWrap =
     token0?.isNative &&
@@ -284,13 +261,8 @@ export const SimpleSwapTradeReviewDialog: FC<{
     if (!sendTransactionAsync || !simulation) return undefined
 
     return async (confirm: () => void) => {
-      try {
-        await sendTransactionAsync(simulation)
-        confirm()
-      } catch (e) {
-        Sentry.captureException(e)
-        throw e
-      }
+      await sendTransactionAsync(simulation)
+      confirm()
     }
   }, [simulation, sendTransactionAsync])
 
