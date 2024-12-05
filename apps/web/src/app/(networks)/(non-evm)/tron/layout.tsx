@@ -16,7 +16,7 @@ export default function RootLayout({
 }: { children: React.ReactNode }) {
   return (
     <Providers>
-      <div className="flex flex-col h-full">{children}</div>
+      <div className="fixed flex flex-col h-full w-full">{children}</div>
     </Providers>
   )
 }
