@@ -1,6 +1,5 @@
 'use client'
 
-import * as Sentry from '@sentry/nextjs'
 import {
   QueryCache,
   QueryClient,
@@ -14,14 +13,7 @@ const queryClientConfig = {
       gcTime: 1000 * 60 * 60 * 24, // 24 hours
     },
   },
-  queryCache: new QueryCache({
-    onError: (error, query) => {
-      if (error instanceof Error) {
-        if (error.name === 'ConnectorNotConnectedError') return
-      }
-      Sentry.captureException(error, { data: { query } })
-    },
-  }),
+  queryCache: new QueryCache(),
 }
 
 let clientQueryClientSingleton: QueryClient | undefined = undefined

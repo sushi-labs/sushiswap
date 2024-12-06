@@ -1,22 +1,15 @@
 'use client' // Error components must be Client Components
 
-import * as Sentry from '@sentry/nextjs'
 import {
   Button,
   Container,
   classNames,
   typographyVariants,
 } from '@sushiswap/ui'
-import { useEffect } from 'react'
 
 export default function SwapError({
-  error,
   reset,
 }: { error: Error & { digest?: string }; reset: () => void }) {
-  useEffect(() => {
-    // Capture the error and send it to Sentry
-    Sentry.captureException(error)
-  }, [error])
   return (
     <>
       <h1
