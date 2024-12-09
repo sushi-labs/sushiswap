@@ -10,7 +10,6 @@ import {
   useState,
 } from 'react'
 import { ChainId } from 'sushi'
-import { useChainId } from 'wagmi'
 import {
   PriceWorker,
   PriceWorkerPostMessageType,
@@ -74,8 +73,6 @@ export function PriceProvider({ children }: PriceProviderContextProps) {
     ready: false,
   })
 
-  const chainId = useChainId()
-
   useEffect(() => {
     const worker = new Worker(
       new URL('../price-worker/price-worker.ts', import.meta.url),
@@ -127,18 +124,6 @@ export function PriceProvider({ children }: PriceProviderContextProps) {
     },
     [worker],
   )
-
-  useEffect(() => {
-    if (worker) {
-      incrementChainId(chainId)
-    }
-
-    return () => {
-      if (worker) {
-        decrementChainId(chainId)
-      }
-    }
-  }, [worker, chainId, decrementChainId, incrementChainId])
 
   return (
     <PriceProviderContext.Provider
