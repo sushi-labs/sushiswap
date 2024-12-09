@@ -4,7 +4,6 @@ import {
   CardContent,
   Collapsible,
   SkeletonBox,
-  SkeletonText,
   classNames,
 } from '@sushiswap/ui'
 import { FC, useMemo } from 'react'
@@ -16,6 +15,7 @@ import {
 import { Type } from 'sushi/currency'
 import { Percent, ZERO } from 'sushi/math'
 import { SushiSwapV2Pool } from 'sushi/pool'
+import { usePrice } from '~evm/_common/ui/price-provider/price-provider/use-price'
 import { ZapRouteDialog } from './ZapRouteDialog'
 
 interface ZapInfoCardProps {
@@ -39,6 +39,11 @@ export const ZapInfoCard: FC<ZapInfoCardProps> = ({
     [zapResponse],
   )
 
+  const { data: price } = usePrice({
+    chainId: inputCurrency?.chainId,
+    address: inputCurrency?.wrapped?.address,
+  })
+
   return (
     <Collapsible open={Boolean(zapResponse)}>
       <Card variant="outline">
@@ -51,17 +56,19 @@ export const ZapInfoCard: FC<ZapInfoCardProps> = ({
                 'text-sm font-medium text-right',
               )}
             >
-              {!priceImpact ? (
-                <SkeletonBox className="h-4 py-0.5 w-[40px]" />
-              ) : priceImpact ? (
+              {priceImpact ? (
                 `${
-                  priceImpact?.lessThan(ZERO)
+                  priceImpact.lessThan(ZERO)
                     ? '+'
-                    : priceImpact?.greaterThan(ZERO)
+                    : priceImpact.greaterThan(ZERO)
                       ? '-'
                       : ''
-                }${Math.abs(Number(priceImpact?.toFixed(2)))}%`
-              ) : null}
+                }${Math.abs(Number(priceImpact.toFixed(2)))}%`
+              ) : !zapResponse ? (
+                <SkeletonBox className="h-4 py-0.5 w-[40px]" />
+              ) : (
+                '-'
+              )}
             </span>
           </div>
           <div className="flex justify-between items-center gap-2">
@@ -75,7 +82,19 @@ export const ZapInfoCard: FC<ZapInfoCardProps> = ({
                 <span className="underline font-medium">View Route</span>
               </ZapRouteDialog>
             ) : (
-              <SkeletonText />
+              <SkeletonBox className="h-4 py-0.5 w-[80px]" />
+            )}
+          </div>
+          <div className="flex justify-between items-center gap-2">
+            <span className="font-medium">Fee (0.25%)</span>
+            {typeof price !== 'undefined' &&
+            typeof zapResponse?.feeAmount?.[0] !== 'undefined' ? (
+              `$${(
+                (price * Number(zapResponse.feeAmount[0])) /
+                10 ** inputCurrency.decimals
+              ).toFixed(5)}`
+            ) : (
+              <SkeletonBox className="h-4 py-0.5 w-[80px]" />
             )}
           </div>
         </CardContent>
