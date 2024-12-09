@@ -1,6 +1,6 @@
 {
   "$schema": "https://turbo.build/schema.json",
-  "globalEnv": ["NODE_ENV"],
+  "globalEnv": [ "NODE_ENV"],
   "globalPassThroughEnv": ["DISPLAY", "NODE_OPTIONS", "CI", "COREPACK_HOME"],
   "globalDependencies": [".npmrc", ".nvmrc", "tsconfig.json"],
   "ui": "stream",
