@@ -31,7 +31,7 @@ export function usePrices({
     },
     enabled,
     refetchInterval: 15000,
-    refetchIntervalInBackground: false
+    refetchIntervalInBackground: false,
   })
 
   return {
