@@ -1,5 +1,6 @@
 'use client'
 
+import { useQuery } from '@tanstack/react-query'
 import { useEffect, useMemo } from 'react'
 import {
   type Address,
@@ -7,7 +8,7 @@ import {
   Fraction,
   withoutScientificNotation,
 } from 'sushi'
-import { parseUnits } from 'viem'
+import { getAddress, parseUnits } from 'viem'
 import { usePriceProvider } from './price-provider'
 
 export type PriceMap = {
@@ -17,6 +18,57 @@ export type PriceMap = {
 }
 
 export function usePrices({
+  chainId,
+  enabled = true,
+}: { chainId: ChainId | undefined; enabled?: boolean }): ReturnType<
+  typeof _usePrices
+> {
+  const { data, isLoading, isFetching, isError } = useQuery({
+    queryKey: ['usePrices', chainId],
+    queryFn: async () => {
+      const res = await fetch(`https://api.sushi.com/price/v1/${chainId}`)
+      return res.json() as Promise<Record<Address, number>>
+    },
+    enabled,
+    refetchInterval: 15000,
+    refetchIntervalInBackground: false
+  })
+
+  return {
+    data: {
+      get: (address: Address) => {
+        if (data) {
+          return data[getAddress(address)]
+        }
+      },
+      has: (address: Address) => {
+        if (data) {
+          return getAddress(address) in data
+        }
+        return false
+      },
+      getFraction: (address: Address) => {
+        const price = data?.[getAddress(address)]
+        if (price) {
+          return new Fraction(
+            parseUnits(
+              withoutScientificNotation(String(price)) || '0',
+              18,
+            ).toString(),
+            parseUnits('1', 18).toString(),
+          )
+        }
+        return undefined
+      },
+    },
+    lastModified: 0,
+    isLoading,
+    isUpdating: isFetching,
+    isError,
+  }
+}
+
+function _usePrices({
   chainId,
   enabled = true,
 }: { chainId: ChainId | undefined; enabled?: boolean }) {
