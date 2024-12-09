@@ -23,6 +23,7 @@ interface TokenSelectorStates {
   chainId: ChainId
   account?: Address
   onSelect(currency: Type): void
+  onShowInfo(currency: Type | false): void
   currencies?: Type[]
   includeNative?: boolean
   hidePinnedTokens?: boolean
@@ -34,6 +35,7 @@ export function TokenSelectorStates({
   chainId,
   account,
   onSelect,
+  onShowInfo,
   currencies,
   includeNative,
   hidePinnedTokens,
@@ -43,6 +45,7 @@ export function TokenSelectorStates({
   useMyTokens({
     chainId: isTokenListChainId(chainId) ? chainId : undefined,
     account,
+    includeNative,
   })
 
   // Ensure that the trending tokens are loaded
@@ -68,6 +71,8 @@ export function TokenSelectorStates({
         onSelect={onSelect}
         selected={selected}
         search={search}
+        includeNative={includeNative}
+        onShowInfo={onShowInfo}
       />
     )
   }
@@ -77,6 +82,7 @@ export function TokenSelectorStates({
       <TokenSelectorSearch
         chainId={chainId}
         onSelect={onSelect}
+        onShowInfo={onShowInfo}
         search={search}
         selected={selected}
       />
@@ -95,6 +101,7 @@ export function TokenSelectorStates({
         <TokenSelectorTrendingTokens
           chainId={chainId}
           onSelect={onSelect}
+          onShowInfo={onShowInfo}
           selected={selected}
         />
       </>
@@ -115,6 +122,7 @@ export function TokenSelectorStates({
           <TokenSelectorMyTokens
             chainId={chainId}
             onSelect={onSelect}
+            onShowInfo={onShowInfo}
             selected={selected}
           />
         ) : null}
@@ -122,6 +130,7 @@ export function TokenSelectorStates({
         <TokenSelectorSearch
           chainId={chainId}
           onSelect={onSelect}
+          onShowInfo={onShowInfo}
           selected={selected}
           search={''}
         />
@@ -143,6 +152,7 @@ export function TokenSelectorStates({
           <TokenSelectorMyTokens
             chainId={chainId}
             onSelect={onSelect}
+            onShowInfo={onShowInfo}
             selected={selected}
             includeNative={includeNative}
           />
@@ -151,6 +161,7 @@ export function TokenSelectorStates({
         <TokenSelectorTrendingTokens
           chainId={chainId}
           onSelect={onSelect}
+          onShowInfo={onShowInfo}
           selected={selected}
         />
       </>
@@ -165,6 +176,8 @@ export function TokenSelectorStates({
       onSelect={onSelect}
       selected={selected}
       search={search}
+      includeNative={includeNative}
+      onShowInfo={onShowInfo}
     />
   )
 }

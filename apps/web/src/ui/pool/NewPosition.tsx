@@ -1,10 +1,29 @@
 'use client'
 
-import React, { FC } from 'react'
+import {
+  SmartPoolChainId,
+  isSmartPoolChainId,
+} from '@sushiswap/graph-client/data-api'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+  Separator,
+} from '@sushiswap/ui'
+import React, { FC, useEffect, useMemo, useState } from 'react'
+import { useVaults } from 'src/lib/hooks'
+import { useConcentratedLiquidityPoolStats } from 'src/lib/hooks/react-query'
+import { Address, ChainKey } from 'sushi'
 import { SushiSwapV3ChainId } from 'sushi/config'
-
-import { Address } from 'sushi'
-import { CreatePositionManual } from './CreatePositionManual'
+import { unwrapToken } from 'sushi/currency'
+import { useAccount } from 'wagmi'
+import { ConcentratedLiquidityWidget } from './ConcentratedLiquidityWidget'
+import { SelectPricesWidget } from './SelectPricesWidget'
+import { SelectSmartPoolStrategyWidget } from './SelectSmartPoolStrategyWidget'
+import { SelectV3PoolTypeWidget, V3PoolType } from './SelectV3PoolTypeWidget'
+import { SmartPoolLiquidityWidget } from './SmartPoolLiquidityWidget'
 
 interface NewPositionProps {
   address: Address
@@ -12,57 +31,101 @@ interface NewPositionProps {
 }
 
 export const NewPosition: FC<NewPositionProps> = ({ address, chainId }) => {
-  return <CreatePositionManual address={address} chainId={chainId} />
+  const { address: account } = useAccount()
 
-  // const { data: poolStats, isLoading, isError } = useConcentratedLiquidityPoolStats({ chainId, address })
+  const [invertTokens, setInvertTokens] = useState(false)
 
-  // const [selectedStrategy, setStrategy] = useState<SteerStrategy | 'Manual'>('Manual')
+  const { data: poolStats } = useConcentratedLiquidityPoolStats({
+    chainId,
+    address,
+  })
+  const [_token0, _token1] = useMemo(() => {
+    const tokens = [
+      poolStats?.token0 ? unwrapToken(poolStats.token0) : undefined,
+      poolStats?.token1 ? unwrapToken(poolStats.token1) : undefined,
+    ]
 
-  // const strategyComponent = useMemo(() => {
-  //   if (selectedStrategy === 'Manual') return <Manual address={address} chainId={chainId} />
+    return invertTokens ? tokens.reverse() : tokens
+  }, [invertTokens, poolStats])
 
-  //   return SteerStrategies[selectedStrategy]
-  // }, [address, chainId, selectedStrategy])
+  const { data: _vaults } = useVaults(
+    { chainId: chainId as SmartPoolChainId, poolAddress: address },
+    Boolean(isSmartPoolChainId(chainId)),
+  )
 
-  // const strategies = useMemo(() => {
-  //   const manualStrategy = {
-  //     id: 'Manual',
-  //     strategy: 'Manual',
-  //     apr: undefined,
-  //   } as const
+  const vaults = useMemo(
+    () =>
+      _vaults
+        ?.filter((vault) => vault.isEnabled)
+        .sort((a, b) => b.apr1d - a.apr1d),
+    [_vaults],
+  )
 
-  //   if (!poolStats?.steerVaults) return [manualStrategy]
+  const [vaultIndex, setVaultIndex] = useState(0)
 
-  //   return [manualStrategy, ...poolStats.steerVaults]
-  // }, [poolStats?.steerVaults])
+  const [poolType, setPoolType] = useState<V3PoolType>(V3PoolType.MANUAL)
 
-  // if (isLoading) return <div>Loading...</div>
-  // if (isError || poolStats?.steerVaults.length === 0) return <Manual address={address} chainId={chainId} />
+  useEffect(() => {
+    if (vaults && vaults.length > 0) {
+      setPoolType(V3PoolType.SMART)
+    } else {
+      setPoolType(V3PoolType.MANUAL)
+    }
+  }, [vaults])
 
-  // Steer is WIP
-
-  // return (
-  //   <div>
-  //     <div className="grid grid-cols-2">
-  //       <div className="flex flex-col space-y-4">
-  //         {strategies.map((vault) => (
-  //           // Place a space before every capital letter
-  //           <Button
-  //             key={vault.id}
-  //             onClick={() => setStrategy(vault.strategy)}
-  //             variant="secondary"
-  //             className="justify-left"
-  //             size="xl"
-  //           >
-  //             <div className="inline-flex justify-between w-full">
-  //               <div>{vault.strategy.replace(/([A-Z])/g, ' $1').trim()}</div>
-  //               <div>{vault.apr ? formatPercent(vault.apr) : ''}</div>
-  //             </div>
-  //           </Button>
-  //         ))}
-  //       </div>
-  //     </div>
-  //     {strategyComponent}
-  //   </div>
-  // )
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>New position</CardTitle>
+        <CardDescription>
+          Create a new concentrated liquidity position
+        </CardDescription>
+      </CardHeader>
+      <div className="px-6">
+        <Separator />
+      </div>
+      <CardContent>
+        <SelectV3PoolTypeWidget
+          poolType={poolType}
+          setPoolType={setPoolType}
+          isSmartPoolSupported={Boolean(vaults?.length)}
+        />
+        {poolType === V3PoolType.MANUAL ? (
+          <>
+            <SelectPricesWidget
+              chainId={chainId}
+              token0={_token0}
+              token1={_token1}
+              poolAddress={address}
+              feeAmount={poolStats?.feeAmount}
+              tokenId={undefined}
+              switchTokens={() => setInvertTokens((prev) => !prev)}
+            />
+            <ConcentratedLiquidityWidget
+              chainId={chainId}
+              account={account}
+              token0={_token0}
+              token1={_token1}
+              feeAmount={poolStats?.feeAmount}
+              tokensLoading={false}
+              existingPosition={undefined}
+              tokenId={undefined}
+              successLink={`/${ChainKey[chainId]}/pool/v3/${address}/positions`}
+            />
+          </>
+        ) : poolType === V3PoolType.SMART && vaults ? (
+          <>
+            <SelectSmartPoolStrategyWidget
+              chainId={chainId as SmartPoolChainId}
+              poolAddress={address}
+              vaults={vaults}
+              vaultIndex={vaultIndex}
+              setVaultIndex={setVaultIndex}
+            />
+            <SmartPoolLiquidityWidget vault={vaults[vaultIndex]} />
+          </>
+        ) : null}
+      </CardContent>
+    </Card>
+  )
 }

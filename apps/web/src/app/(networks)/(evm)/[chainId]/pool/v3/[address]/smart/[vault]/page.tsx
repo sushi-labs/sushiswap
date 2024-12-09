@@ -130,8 +130,6 @@ export default async function SteerVaultPage({
 
   const generics = await getGenerics(vault)
 
-  console.log('generics', generics)
-
   const Component = SteerBaseStrategy
 
   return <Component pool={pool} vault={vault} generic={generics} />

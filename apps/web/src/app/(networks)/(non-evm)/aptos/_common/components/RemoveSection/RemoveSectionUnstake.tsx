@@ -1,5 +1,4 @@
 import { useWallet } from '@aptos-labs/wallet-adapter-react'
-import { Provider } from 'aptos'
 import { networkNameToNetwork } from '~aptos/_common/config/chains'
 import { useNetwork } from '~aptos/_common/lib/common/use-network'
 import { createToast } from '~aptos/_common/ui/toast'
@@ -16,6 +15,7 @@ import {
   WidgetTitle,
 } from '@sushiswap/ui'
 import { FC, useState } from 'react'
+import { AptosSDK } from '~aptos/_common/lib/common/aptos-sdk'
 import { Pool } from '~aptos/pool/lib/convert-pool-to-sushi-pool'
 
 interface AddSectionStakeProps {
@@ -62,7 +62,7 @@ export const _RemoveSectionUnstake: FC<AddSectionStakeProps> = ({
   const withdrawLiquidity = async () => {
     if (!masterchefContract || !decimals) return
 
-    const provider = new Provider(networkNameToNetwork(network))
+    const aptos = AptosSDK.onNetwork(networkNameToNetwork(network))
     setTransactionPending(true)
 
     try {
@@ -73,7 +73,7 @@ export const _RemoveSectionUnstake: FC<AddSectionStakeProps> = ({
           function: `${masterchefContract}::masterchef::withdraw`,
         },
       })
-      await provider.waitForTransaction(response?.hash)
+      await aptos.waitForTransaction({ transactionHash: response.hash })
       //return from here if response is failed
       if (!response?.output.success) return
       const toastId = `completed:${response?.hash}`

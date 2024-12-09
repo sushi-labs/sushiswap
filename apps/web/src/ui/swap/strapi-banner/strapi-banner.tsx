@@ -1,5 +1,4 @@
 import { getBanners } from '@sushiswap/graph-client/strapi'
-import ms from 'ms'
 import { unstable_cache } from 'next/cache'
 import { cookies } from 'next/headers'
 import { StrapiBannerContent } from './strapi-banner-content'
@@ -13,7 +12,7 @@ export async function StrapiBanner() {
 
   try {
     banners = await unstable_cache(() => getBanners(), ['banners'], {
-      revalidate: ms('1h'),
+      revalidate: 3600,
     })()
   } catch {}
 

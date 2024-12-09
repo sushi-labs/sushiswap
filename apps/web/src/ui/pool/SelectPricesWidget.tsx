@@ -806,7 +806,6 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
               incrementDisabled={
                 ticksAtLimit[isSorted ? Bound.LOWER : Bound.UPPER]
               }
-              focus={true}
             />
             <PriceBlock
               id={'max-price'}

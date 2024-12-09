@@ -11,10 +11,12 @@ import { IconButton } from '@sushiswap/ui'
 import { SettingsModule, SettingsOverlay } from '@sushiswap/ui'
 import { Widget, WidgetHeader } from '@sushiswap/ui'
 import React, { FC, ReactNode } from 'react'
+import { isZapSupportedChainId } from 'src/config'
 import { Web3Input } from 'src/lib/wagmi/components/web3-input'
 import { getDefaultTTL } from 'src/lib/wagmi/hooks/utils/hooks/useTransactionDeadline'
 import { ChainId } from 'sushi/chain'
 import { Type } from 'sushi/currency'
+import { ToggleZapCard } from './ToggleZapCard'
 
 interface AddSectionWidgetProps {
   isFarm: boolean
@@ -27,6 +29,7 @@ interface AddSectionWidgetProps {
   onSelectToken1?(currency: Type): void
   onInput0(value: string): void
   onInput1(value: string): void
+  toggleZapMode(value: boolean): void
   children: ReactNode
 }
 
@@ -40,6 +43,7 @@ export const AddSectionWidget: FC<AddSectionWidgetProps> = ({
   onSelectToken1,
   onInput0,
   onInput1,
+  toggleZapMode,
   children,
 }) => {
   return (
@@ -76,6 +80,11 @@ export const AddSectionWidget: FC<AddSectionWidgetProps> = ({
           </SettingsOverlay>
         </WidgetAction>
       </WidgetHeader>
+      {isZapSupportedChainId(chainId) ? (
+        <div className="mb-4">
+          <ToggleZapCard onCheckedChange={toggleZapMode} checked={false} />
+        </div>
+      ) : null}
       <div className="flex flex-col gap-4">
         <Web3Input.Currency
           type="INPUT"

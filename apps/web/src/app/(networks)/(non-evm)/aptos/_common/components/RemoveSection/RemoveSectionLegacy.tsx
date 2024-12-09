@@ -5,10 +5,10 @@ import {
 } from '@sushiswap/hooks'
 import { Button } from '@sushiswap/ui'
 import { Dots } from '@sushiswap/ui'
-import { Provider } from 'aptos'
 import React, { useMemo, useState } from 'react'
 import { DEFAULT_SLIPPAGE } from 'sushi/config'
 import { networkNameToNetwork } from '~aptos/_common/config/chains'
+import { AptosSDK } from '~aptos/_common/lib/common/aptos-sdk'
 import { formatNumberWithDecimals } from '~aptos/_common/lib/common/format-number-with-decimals'
 import { useNetwork } from '~aptos/_common/lib/common/use-network'
 import { Token } from '~aptos/_common/lib/types/token'
@@ -107,7 +107,7 @@ export const RemoveSectionLegacy = ({
   } = useNetwork()
 
   const removeLiquidityHandler = async () => {
-    const provider = new Provider(networkNameToNetwork(network))
+    const aptos = AptosSDK.onNetwork(networkNameToNetwork(network))
     if (!account?.address) return []
     setisTransactionPending(true)
     if (!liquidityBalance) return
@@ -123,7 +123,7 @@ export const RemoveSectionLegacy = ({
           function: `${swapContract}::router::remove_liquidity`,
         },
       })
-      await provider.waitForTransaction(response?.hash)
+      await aptos.waitForTransaction({ transactionHash: response.hash })
       if (!response?.output.success) return
       const toastId = `success:${response?.hash}`
       createToast({

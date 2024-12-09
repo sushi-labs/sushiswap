@@ -12,6 +12,7 @@ import {
 interface TokenSelectorMyTokens {
   chainId: TokenListChainId
   onSelect(currency: Type): void
+  onShowInfo(currency: Type | false): void
   selected: Type | undefined
   includeNative?: boolean
 }
@@ -30,6 +31,7 @@ function Shell({ children }: { children: React.ReactNode }) {
 export function TokenSelectorMyTokens({
   chainId,
   onSelect,
+  onShowInfo,
   selected,
   includeNative,
 }: TokenSelectorMyTokens) {
@@ -76,6 +78,7 @@ export function TokenSelectorMyTokens({
         id="trending"
         selected={selected}
         onSelect={onSelect}
+        onShowInfo={onShowInfo}
         // pin={{}}
         currencies={data.tokens}
         chainId={chainId}

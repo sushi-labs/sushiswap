@@ -23,7 +23,7 @@ export default async function Page({
         <TableFiltersNetwork
           network={chainId}
           supportedNetworks={SushiSwapV3ChainIds}
-          unsupportedNetworkHref={'/ethereum/pools/v3/fees'}
+          unsupportedNetworkHref={'/ethereum/pool/v3/fees'}
           className="lg:hidden block"
         />
       </div>

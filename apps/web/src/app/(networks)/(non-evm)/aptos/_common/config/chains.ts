@@ -1,5 +1,5 @@
+import { Network } from '@aptos-labs/ts-sdk'
 import { NetworkName } from '@aptos-labs/wallet-adapter-react'
-import { Network } from 'aptos'
 import { L0_USDC, USDC } from '~aptos/_common/config/coins'
 import { Token } from '~aptos/_common/lib/types/token'
 

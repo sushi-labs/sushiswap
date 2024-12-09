@@ -3,6 +3,7 @@ import {
   CheckCircleIcon,
   ExclamationCircleIcon,
 } from '@heroicons/react/20/solid'
+import { InformationCircleIcon } from '@heroicons/react/24/outline'
 import {
   BrowserEvent,
   InterfaceElementName,
@@ -43,6 +44,7 @@ export interface TokenSelectorRow {
   }
   selected: boolean
   isBalanceLoading: boolean
+  onShowInfo: () => void
 }
 
 export const TokenSelectorRow: FC<TokenSelectorRow> = memo(
@@ -57,6 +59,7 @@ export const TokenSelectorRow: FC<TokenSelectorRow> = memo(
     selected,
     isBalanceLoading,
     showWarning,
+    onShowInfo,
   }) {
     const onClick = useCallback(() => {
       onSelect(currency)
@@ -68,6 +71,14 @@ export const TokenSelectorRow: FC<TokenSelectorRow> = memo(
         pin?.onPin()
       },
       [pin],
+    )
+
+    const showInfo = useCallback(
+      (e: React.MouseEvent | React.KeyboardEvent) => {
+        e.stopPropagation()
+        onShowInfo()
+      },
+      [onShowInfo],
     )
 
     return (
@@ -222,6 +233,13 @@ export const TokenSelectorRow: FC<TokenSelectorRow> = memo(
                     )}
                   />
                 )}
+                <IconButton
+                  size="xs"
+                  icon={InformationCircleIcon}
+                  variant="ghost"
+                  name="info"
+                  onClick={showInfo}
+                />
               </div>
             </div>
           </div>

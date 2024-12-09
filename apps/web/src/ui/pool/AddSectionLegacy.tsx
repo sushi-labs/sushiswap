@@ -1,15 +1,11 @@
 'use client'
 
+import { V2Pool } from '@sushiswap/graph-client/data-api'
 import { useIsMounted } from '@sushiswap/hooks'
 import { Button } from '@sushiswap/ui'
 import { FC, useCallback, useMemo, useState } from 'react'
+import { isZapSupportedChainId } from 'src/config'
 import { APPROVE_TAG_ADD_LEGACY } from 'src/lib/constants'
-import { type ChainId } from 'sushi/chain'
-import { SushiSwapV2ChainId } from 'sushi/config'
-import { tryParseAmount } from 'sushi/currency'
-import { useTokensFromPool } from '../../lib/hooks'
-
-import { V2Pool } from '@sushiswap/graph-client/data-api'
 import { getSushiSwapRouterContractConfig } from 'src/lib/wagmi/hooks/contracts/useSushiSwapRouter'
 import {
   SushiSwapV2PoolState,
@@ -17,20 +13,70 @@ import {
 } from 'src/lib/wagmi/hooks/pools/hooks/useSushiSwapV2Pools'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
 import { CheckerProvider } from 'src/lib/wagmi/systems/Checker/Provider'
+import { SushiSwapV2ChainId } from 'sushi/config'
+import { Type, tryParseAmount } from 'sushi/currency'
+import { SushiSwapV2Pool } from 'sushi/pool'
+import { useTokensFromPool } from '../../lib/hooks'
 import { AddSectionReviewModalLegacy } from './AddSectionReviewModalLegacy'
 import { AddSectionWidget } from './AddSectionWidget'
+import { ZapSectionLegacy } from './ZapSectionLegacy'
 
-export const AddSectionLegacy: FC<{ pool: V2Pool }> = ({ pool: _pool }) => {
-  const chainId = _pool.chainId as SushiSwapV2ChainId
+export const AddSectionLegacy: FC<{ pool: V2Pool }> = ({ pool }) => {
+  const [isZapModeEnabled, setIsZapModeEnabled] = useState(
+    isZapSupportedChainId(pool.chainId),
+  )
+
+  const { token0, token1 } = useTokensFromPool(pool)
+
+  const {
+    data: [poolState, _pool],
+  } = useSushiSwapV2Pool(pool.chainId as SushiSwapV2ChainId, token0, token1)
+
+  return isZapModeEnabled ? (
+    <ZapSectionLegacy
+      chainId={pool.chainId}
+      pool={_pool}
+      poolState={poolState}
+      toggleZapMode={setIsZapModeEnabled}
+    />
+  ) : (
+    <_AddSectionLegacy
+      chainId={pool.chainId}
+      pool={_pool}
+      poolState={poolState}
+      token0={token0}
+      token1={token1}
+      isFarm={!!pool.incentives && pool.incentives.length > 0}
+      toggleZapMode={setIsZapModeEnabled}
+    />
+  )
+}
+
+interface AddSectionLegacyProps {
+  chainId: SushiSwapV2ChainId
+  pool: SushiSwapV2Pool | null
+  token0: Type
+  token1: Type
+  poolState: SushiSwapV2PoolState
+  isFarm: boolean
+  toggleZapMode(value: boolean): void
+}
+
+const _AddSectionLegacy: FC<AddSectionLegacyProps> = ({
+  chainId,
+  pool,
+  token0,
+  token1,
+  poolState,
+  isFarm,
+  toggleZapMode,
+}) => {
   const isMounted = useIsMounted()
-  const { token0, token1 } = useTokensFromPool(_pool)
+
   const [{ input0, input1 }, setTypedAmounts] = useState<{
     input0: string
     input1: string
   }>({ input0: '', input1: '' })
-  const {
-    data: [poolState, pool],
-  } = useSushiSwapV2Pool(_pool.chainId as SushiSwapV2ChainId, token0, token1)
 
   const [parsedInput0, parsedInput1] = useMemo(() => {
     return [tryParseAmount(input0, token0), tryParseAmount(input1, token1)]
@@ -84,14 +130,15 @@ export const AddSectionLegacy: FC<{ pool: V2Pool }> = ({ pool: _pool }) => {
   return (
     <CheckerProvider>
       <AddSectionWidget
-        isFarm={!!_pool.incentives && _pool.incentives.length > 0}
-        chainId={_pool.chainId as ChainId}
+        isFarm={isFarm}
+        chainId={chainId}
         input0={input0}
         input1={input1}
         token0={token0}
         token1={token1}
         onInput0={onChangeToken0TypedAmount}
         onInput1={onChangeToken1TypedAmount}
+        toggleZapMode={toggleZapMode}
       >
         <Checker.Connect fullWidth>
           <Checker.Guard
@@ -105,12 +152,8 @@ export const AddSectionLegacy: FC<{ pool: V2Pool }> = ({ pool: _pool }) => {
             }
             guardText="Pool not found"
           >
-            <Checker.Network fullWidth chainId={_pool.chainId as ChainId}>
-              <Checker.Amounts
-                fullWidth
-                chainId={_pool.chainId as ChainId}
-                amounts={amounts}
-              >
+            <Checker.Network fullWidth chainId={chainId}>
+              <Checker.Amounts fullWidth chainId={chainId} amounts={amounts}>
                 <Checker.ApproveERC20
                   fullWidth
                   id="approve-token-0"
@@ -129,7 +172,7 @@ export const AddSectionLegacy: FC<{ pool: V2Pool }> = ({ pool: _pool }) => {
                       <AddSectionReviewModalLegacy
                         poolAddress={pool?.liquidityToken.address}
                         poolState={poolState}
-                        chainId={_pool.chainId as SushiSwapV2ChainId}
+                        chainId={chainId}
                         token0={token0}
                         token1={token1}
                         input0={parsedInput0}

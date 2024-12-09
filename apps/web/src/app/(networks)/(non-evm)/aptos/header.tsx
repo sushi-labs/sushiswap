@@ -65,7 +65,7 @@ export const Header: FC = () => {
         </SushiNavigationDropdown>
       </div>
       <Navigation
-        className="!pl-0 lg:!pl-4"
+        className="!pl-0 lg:!pl-4 !z-[unset]"
         hideSushiDropdown
         leftElements={headerElements}
         rightElement={
