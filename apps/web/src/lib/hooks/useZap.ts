@@ -1,7 +1,6 @@
 import { UseQueryOptions, useQuery } from '@tanstack/react-query'
 import { isZapSupportedChainId } from 'src/config'
 import { ChainId } from 'sushi/chain'
-import { TOKEN_CHOMPER_ADDRESS, isTokenChomperChainId } from 'sushi/config'
 import { Percent } from 'sushi/math'
 import { Address, Hex } from 'viem'
 import { z } from 'zod'
@@ -36,6 +35,9 @@ const routeSchema: z.ZodType<Route> = z.lazy(() =>
 const zapResponseSchema = z.object({
   gas: z.string().transform((gas) => BigInt(gas)),
   amountOut: z.string().transform((amount) => BigInt(amount)),
+  feeAmount: z
+    .array(z.string().transform((amount) => BigInt(amount)))
+    .optional(),
   priceImpact: z.number().nullable(),
   createdAt: z.number(),
   tx: txSchema,
@@ -52,7 +54,6 @@ type UseZapParams = {
   tokenIn: Address | Address[]
   tokenOut?: Address | Address[]
   slippage?: Percent
-  enableFee?: boolean
   query?: Omit<UseQueryOptions<ZapResponse>, 'queryKey' | 'queryFn'>
 }
 
@@ -62,7 +63,7 @@ export const useZap = ({ query, ...params }: UseZapParams) => {
     queryFn: async () => {
       const url = new URL('/api/zap', window.location.origin)
 
-      const { enableFee = true, slippage, ..._params } = params
+      const { slippage, ..._params } = params
 
       Object.entries(_params).forEach(([key, value]) => {
         if (value !== undefined && value !== null) {
@@ -76,16 +77,6 @@ export const useZap = ({ query, ...params }: UseZapParams) => {
 
       if (slippage) {
         url.searchParams.set('slippage', slippage.multiply(100n).toFixed(0))
-      }
-
-      if (enableFee) {
-        url.searchParams.set('fee', '25') // 0.25%
-        url.searchParams.set(
-          'feeReceiver',
-          isTokenChomperChainId(params.chainId)
-            ? TOKEN_CHOMPER_ADDRESS[params.chainId]
-            : '0xFF64C2d5e23e9c48e8b42a23dc70055EEC9ea098',
-        )
       }
 
       const response = await fetch(url.toString(), {
