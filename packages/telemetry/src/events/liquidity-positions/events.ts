@@ -13,6 +13,7 @@ export enum LiquidityEventName {
  * Zap specific events.
  */
 export enum ZapEventName {
+  ZAP_TOGGLE = 'Zap Toggle',
   ZAP_ERROR = 'Zap Error',
   ZAP_QUOTE_RECEIVED = 'Zap Quote Received',
   ZAP_ESTIMATE_GAS_CALL_FAILED = 'Zap Estimate Gas Call Failed',
