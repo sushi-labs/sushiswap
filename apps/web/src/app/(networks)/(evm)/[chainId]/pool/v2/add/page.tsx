@@ -3,6 +3,7 @@
 import { PlusIcon } from '@heroicons/react-v1/solid'
 import { SlippageToleranceStorageKey } from '@sushiswap/hooks'
 import { createToast } from '@sushiswap/notifications'
+import { ZapEventName, sendAnalyticsEvent } from '@sushiswap/telemetry'
 import { Button, Dots, FormSection, Loader } from '@sushiswap/ui'
 import { useRouter } from 'next/navigation'
 import { notFound } from 'next/navigation'
@@ -275,7 +276,11 @@ const _ZapWidget: FC<ZapWidgetProps> = ({
     [inputAmount, inputCurrency],
   )
 
-  const { data: zapResponse, isError: isZapError } = useZap({
+  const {
+    data: zapResponse,
+    isError: isZapError,
+    error: zapError,
+  } = useZap({
     chainId,
     fromAddress: address,
     tokenIn: inputCurrency.isNative ? NativeAddress : inputCurrency.address,
@@ -284,9 +289,21 @@ const _ZapWidget: FC<ZapWidgetProps> = ({
     slippage: slippageTolerance,
   })
 
+  useEffect(() => {
+    if (!zapError) return
+
+    sendAnalyticsEvent(ZapEventName.ZAP_ERROR, {
+      error: zapError.message,
+    })
+  }, [zapError])
+
   const { approved } = useApproved(APPROVE_TAG_ZAP_LEGACY)
 
-  const { data: estGas, isError: isEstGasError } = useEstimateGas({
+  const {
+    data: estGas,
+    isError: isEstGasError,
+    error: estGasError,
+  } = useEstimateGas({
     chainId,
     account: address,
     to: zapResponse?.tx.to,
@@ -297,6 +314,14 @@ const _ZapWidget: FC<ZapWidgetProps> = ({
     },
   })
 
+  useEffect(() => {
+    if (!estGasError) return
+
+    sendAnalyticsEvent(ZapEventName.ZAP_ESTIMATE_GAS_CALL_FAILED, {
+      error: estGasError.message,
+    })
+  }, [estGasError])
+
   const preparedTx = useMemo(() => {
     return zapResponse && estGas
       ? { ...zapResponse.tx, gas: estGas }
@@ -306,14 +331,18 @@ const _ZapWidget: FC<ZapWidgetProps> = ({
   const { refetchChain: refetchBalances } = useRefetchBalances()
 
   const onSuccess = useCallback(
-    (hash: SendTransactionReturnType) => {
+    async (hash: SendTransactionReturnType) => {
       if (!chain || !pool) return
 
       setInputAmount('')
 
-      const receipt = client.waitForTransactionReceipt({ hash })
-      receipt.then(() => {
+      const promise = client.waitForTransactionReceipt({ hash })
+      promise.then(() => {
         refetchBalances(chain.id)
+      })
+
+      sendAnalyticsEvent(ZapEventName.ZAP_SIGNED, {
+        txHash: hash,
       })
 
       const ts = new Date().getTime()
@@ -322,7 +351,7 @@ const _ZapWidget: FC<ZapWidgetProps> = ({
         type: 'mint',
         chainId: chain.id,
         txHash: hash,
-        promise: receipt,
+        promise: promise,
         summary: {
           pending: `Zapping into the ${pool.token0.symbol}/${pool.token1.symbol} pair`,
           completed: `Successfully zapped into the ${pool.token0.symbol}/${pool.token1.symbol} pair`,
@@ -331,6 +360,23 @@ const _ZapWidget: FC<ZapWidgetProps> = ({
         timestamp: ts,
         groupTimestamp: ts,
       })
+
+      const receipt = await promise
+      {
+        if (receipt.status === 'success') {
+          sendAnalyticsEvent(ZapEventName.ZAP_TRANSACTION_COMPLETED, {
+            txHash: hash,
+            from: receipt.from,
+            chain_id: chainId,
+          })
+        } else {
+          sendAnalyticsEvent(ZapEventName.ZAP_TRANSACTION_FAILED, {
+            txHash: hash,
+            from: receipt.from,
+            chain_id: chainId,
+          })
+        }
+      }
     },
     [refetchBalances, client, chain, address, pool],
   )
