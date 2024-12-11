@@ -23,6 +23,19 @@ test.beforeAll(async () => {
 })
 
 test.beforeEach(async ({ page, next }) => {
+
+  try {
+    await page.route(`**/price/v1/${chainId}`, async (route) => {
+      // const response = await route.fetch()
+      // const json = await response.json()
+      await route.fulfill({
+        json: {},
+      })
+    })
+  } catch (error) {
+    console.error('error mocking token api', error)
+  }
+
   page.on('pageerror', (error) => {
     console.error(error)
   })
