@@ -29,7 +29,7 @@ export function usePrices({
       const res = await fetch(`https://api.sushi.com/price/v1/${chainId}`)
       return res.json() as Promise<Record<Address, number>>
     },
-    enabled,
+    enabled: chainId && enabled,
     refetchInterval: 15000,
     refetchIntervalInBackground: false,
   })
