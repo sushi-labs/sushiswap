@@ -28,6 +28,18 @@ test.beforeEach(async ({ page, next }) => {
   })
   // await loadSnapshot(chainId, snapshot)
 
+  try {
+    await page.route(`**/price/v1/${chainId}`, async (route) => {
+      // const response = await route.fetch()
+      // const json = await response.json()
+      await route.fulfill({
+        json: {},
+      })
+    })
+  } catch (error) {
+    console.error('error mocking token api', error)
+  }
+
   await page.route('http://localhost:3000/api/swap', async (route) => {
     await route.fulfill({ json: { maintenance: false } })
   })
