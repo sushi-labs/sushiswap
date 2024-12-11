@@ -125,6 +125,25 @@ export function PriceProvider({ children }: PriceProviderContextProps) {
     [worker],
   )
 
+  useEffect(() => {
+    function setEnabled(_event: Event) {
+      if (worker) {
+        worker.postMessage({
+          type: PriceWorkerPostMessageType.SetEnabled,
+          enabled: document.visibilityState === 'visible',
+        })
+      }
+    }
+
+    if (document) {
+      document.addEventListener('visibilitychange', setEnabled)
+    }
+
+    return () => {
+      document.removeEventListener('visibilitychange', setEnabled)
+    }
+  }, [worker])
+
   return (
     <PriceProviderContext.Provider
       value={{
