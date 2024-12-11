@@ -10,7 +10,6 @@ import {
   useState,
 } from 'react'
 import { ChainId } from 'sushi'
-import { useChainId } from 'wagmi'
 import {
   PriceWorker,
   PriceWorkerPostMessageType,
@@ -74,8 +73,6 @@ export function PriceProvider({ children }: PriceProviderContextProps) {
     ready: false,
   })
 
-  const chainId = useChainId()
-
   useEffect(() => {
     const worker = new Worker(
       new URL('../price-worker/price-worker.ts', import.meta.url),
@@ -129,16 +126,23 @@ export function PriceProvider({ children }: PriceProviderContextProps) {
   )
 
   useEffect(() => {
-    if (worker) {
-      incrementChainId(chainId)
+    function setEnabled(_event: Event) {
+      if (worker) {
+        worker.postMessage({
+          type: PriceWorkerPostMessageType.SetEnabled,
+          enabled: document.visibilityState === 'visible',
+        })
+      }
+    }
+
+    if (document) {
+      document.addEventListener('visibilitychange', setEnabled)
     }
 
     return () => {
-      if (worker) {
-        decrementChainId(chainId)
-      }
+      document.removeEventListener('visibilitychange', setEnabled)
     }
-  }, [worker, chainId, decrementChainId, incrementChainId])
+  }, [worker])
 
   return (
     <PriceProviderContext.Provider

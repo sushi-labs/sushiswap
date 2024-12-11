@@ -13,6 +13,7 @@ import {
   const state = {
     chains: new Map<ChainId, WorkerChainState>(),
     intervals: new Map<ChainId, NodeJS.Timeout>(),
+    enabled: true,
     canUseSharedArrayBuffer: false,
   }
 
@@ -54,6 +55,17 @@ import {
           const chainState = state.chains.get(chainId)
           if (chainState) {
             updateChainId(chainId)
+          }
+          break
+        }
+        case PriceWorkerPostMessageType.SetEnabled: {
+          const { enabled } = message
+          if (state.enabled !== enabled) {
+            shouldUpdateIntervals = true
+          }
+          state.enabled = enabled
+          if (enabled && shouldUpdateIntervals) {
+            updateEnabledChainIds()
           }
           break
         }
@@ -122,6 +134,14 @@ import {
         state.intervals.delete(chainState.chainId)
       }
     })
+  }
+
+  async function updateEnabledChainIds() {
+    for (const chainState of state.chains.values()) {
+      if (isActive(chainState)) {
+        updateChainId(chainState.chainId)
+      }
+    }
   }
 
   async function updateChainId(chainId: ChainId) {
@@ -223,6 +243,6 @@ import {
   }
 
   function isActive(chain: WorkerChainState) {
-    return chain.listenerCount > 0
+    return chain.listenerCount > 0 && state.enabled
   }
 }

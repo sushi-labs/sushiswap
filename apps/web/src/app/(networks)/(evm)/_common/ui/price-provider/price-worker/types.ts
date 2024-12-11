@@ -5,6 +5,7 @@ export enum PriceWorkerPostMessageType {
   IncrementChainId = 'IncrementChainId',
   DecrementChainId = 'DecrementChainId',
   RefetchChainId = 'RefetchChainId',
+  SetEnabled = 'SetEnabled',
 }
 
 type Initialize = {
@@ -27,11 +28,17 @@ type RefetchChainId = {
   type: PriceWorkerPostMessageType.RefetchChainId
 }
 
+type SetEnabled = {
+  enabled: boolean
+  type: PriceWorkerPostMessageType.SetEnabled
+}
+
 export type PriceWorkerPostMessage =
   | Initialize
   | IncrementChainId
   | DecrementChainId
   | RefetchChainId
+  | SetEnabled
 
 export enum PriceWorkerReceiveMessageType {
   ChainState = 'ChainState',
