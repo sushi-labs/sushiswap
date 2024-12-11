@@ -285,7 +285,7 @@ const PoolTransactionsV3: FC<PoolTransactionsV3Props> = ({
       <CardContent className="!px-0">
         <DataTable
           linkFormatter={(row) =>
-            Chain.from(row.pool.chainId)?.getTxUrl(row.id) ?? ''
+            Chain.from(row.pool.chainId)?.getTxUrl(row.transaction.id) ?? ''
           }
           loading={isLoading}
           columns={COLUMNS}
