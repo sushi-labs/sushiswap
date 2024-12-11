@@ -220,7 +220,7 @@ export class SwapPage extends BaseActions {
       )
       await expect(tokenToSelect).toBeVisible()
 
-      await tokenToSelect.click()
+      await tokenToSelect.click({ delay: 500 })
       await expect(tokenSelector).toContainText(currency.symbol as string)
     }
   }
