@@ -34,38 +34,41 @@ export function usePrices({
     refetchIntervalInBackground: false,
   })
 
-  return {
-    data: {
-      get: (address: Address) => {
-        if (data) {
-          return data[getAddress(address)]
-        }
+  return useMemo(
+    () => ({
+      data: {
+        get: (address: Address) => {
+          if (data) {
+            return data[getAddress(address)]
+          }
+        },
+        has: (address: Address) => {
+          if (data) {
+            return getAddress(address) in data
+          }
+          return false
+        },
+        getFraction: (address: Address) => {
+          const price = data?.[getAddress(address)]
+          if (price) {
+            return new Fraction(
+              parseUnits(
+                withoutScientificNotation(String(price)) || '0',
+                18,
+              ).toString(),
+              parseUnits('1', 18).toString(),
+            )
+          }
+          return undefined
+        },
       },
-      has: (address: Address) => {
-        if (data) {
-          return getAddress(address) in data
-        }
-        return false
-      },
-      getFraction: (address: Address) => {
-        const price = data?.[getAddress(address)]
-        if (price) {
-          return new Fraction(
-            parseUnits(
-              withoutScientificNotation(String(price)) || '0',
-              18,
-            ).toString(),
-            parseUnits('1', 18).toString(),
-          )
-        }
-        return undefined
-      },
-    },
-    lastModified: 0,
-    isLoading,
-    isUpdating: isFetching,
-    isError,
-  }
+      lastModified: 0,
+      isLoading,
+      isUpdating: isFetching,
+      isError,
+    }),
+    [data, isLoading, isFetching, isError],
+  )
 }
 
 function _usePrices({
