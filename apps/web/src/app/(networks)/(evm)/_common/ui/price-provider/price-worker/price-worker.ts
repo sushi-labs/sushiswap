@@ -172,9 +172,9 @@ import {
   }
 
   async function fetchPriceData({ chainId, lastModified }: WorkerChainState) {
-    let url = `${SUSHI_DATA_API_HOST}/price/v1/${chainId}`
+    let url = `${SUSHI_DATA_API_HOST}/price/v1/${chainId}?referer=sushi`
     if (lastModified) {
-      url += `?onlyPricesUpdateSince=${lastModified}`
+      url += `&onlyPricesUpdateSince=${lastModified}`
     }
 
     const response = await fetch(url, {
