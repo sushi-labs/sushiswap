@@ -12,9 +12,8 @@ import {
 import { ShuffleIcon } from '@sushiswap/ui/icons/ShuffleIcon'
 import Link from 'next/link'
 import { useParams } from 'next/navigation'
-import { isTwapSupportedChainId } from 'src/config'
+import { isTwapSupportedChainId, isXSwapSupportedChainId } from 'src/config'
 import { ChainId, ChainKey } from 'sushi/chain'
-import { isSushiXSwap2ChainId } from 'sushi/config'
 import { PathnameButton } from '../pathname-button'
 
 export const SwapModeButtons = () => {
@@ -49,7 +48,7 @@ export const SwapModeButtons = () => {
       <HoverCard>
         <Link
           href={`/${
-            isSushiXSwap2ChainId(chainId) ? ChainKey[chainId] : 'ethereum'
+            isXSwapSupportedChainId(chainId) ? ChainKey[chainId] : 'ethereum'
           }/cross-chain-swap`}
         >
           <PathnameButton

@@ -12,24 +12,19 @@ import {
   useMemo,
   useState,
 } from 'react'
-import { useCrossChainTrade } from 'src/lib/hooks'
+import { isXSwapSupportedChainId } from 'src/config'
+import { useCrossChainTradeRoutes as _useCrossChainTradeRoutes } from 'src/lib/hooks/react-query'
 import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
 import { replaceNetworkSlug } from 'src/lib/network'
-import { SushiXSwap2Adapter } from 'src/lib/swap/cross-chain'
+import { CrossChainRoute } from 'src/lib/swap/cross-chain'
 import { useTokenWithCache } from 'src/lib/wagmi/hooks/tokens/useTokenWithCache'
 import { ChainId, ChainKey } from 'sushi/chain'
-import {
-  SushiXSwap2ChainId,
-  defaultCurrency,
-  isSquidAdapterChainId,
-  isStargateAdapterChainId,
-  isSushiXSwap2ChainId,
-} from 'sushi/config'
+import { defaultCurrency } from 'sushi/config'
 import { defaultQuoteCurrency } from 'sushi/config'
-import { Amount, Native, Type, tryParseAmount } from 'sushi/currency'
-import { ZERO } from 'sushi/math'
-import { Address, isAddress } from 'viem'
-import { useAccount, useGasPrice } from 'wagmi'
+import { Amount, Native, Token, Type, tryParseAmount } from 'sushi/currency'
+import { Percent } from 'sushi/math'
+import { Address, isAddress, zeroAddress } from 'viem'
+import { useAccount } from 'wagmi'
 
 const getTokenAsString = (token: Type | string) =>
   typeof token === 'string'
@@ -51,10 +46,10 @@ interface State {
     setToken0(token0: Type | string): void
     setToken1(token1: Type | string): void
     setTokens(token0: Type | string, token1: Type | string): void
-
     setSwapAmount(swapAmount: string): void
     switchTokens(): void
     setTradeId: Dispatch<SetStateAction<string>>
+    setRouteIndex(route: number): void
   }
   state: {
     tradeId: string
@@ -64,8 +59,8 @@ interface State {
     chainId1: ChainId
     swapAmountString: string
     swapAmount: Amount<Type> | undefined
-    recipient: string | undefined
-    adapter: SushiXSwap2Adapter | undefined
+    recipient: Address | undefined
+    routeIndex: number
   }
   isLoading: boolean
   isToken0Loading: boolean
@@ -89,15 +84,13 @@ const DerivedstateCrossChainSwapProvider: FC<
   DerivedStateCrossChainSwapProviderProps
 > = ({ children, defaultChainId }) => {
   const { push } = useRouter()
-  const { address } = useAccount()
   const pathname = usePathname()
   const searchParams = useSearchParams()
   const [tradeId, setTradeId] = useState(nanoid())
   const [chainId, setChainId] = useState<number>(defaultChainId)
+  const [routeIndex, setRouteIndex] = useState(0)
 
-  const chainId0 = isSushiXSwap2ChainId(chainId as ChainId)
-    ? (chainId as SushiXSwap2ChainId)
-    : ChainId.ETHEREUM
+  const chainId0 = isXSwapSupportedChainId(chainId) ? chainId : ChainId.ETHEREUM
 
   // Get the searchParams and complete with defaults.
   // This handles the case where some params might not be provided by the user
@@ -208,8 +201,8 @@ const DerivedstateCrossChainSwapProvider: FC<
   )
 
   // Update the URL with a new token0
-  const setToken0 = useCallback<{ (_token0: string | Type): void }>(
-    (_token0) => {
+  const setToken0 = useCallback(
+    (_token0: string | Type) => {
       // If entity is provided, parse it to a string
       const token0 = getTokenAsString(_token0)
       push(
@@ -221,8 +214,8 @@ const DerivedstateCrossChainSwapProvider: FC<
   )
 
   // Update the URL with a new token1
-  const setToken1 = useCallback<{ (_token1: string | Type): void }>(
-    (_token1) => {
+  const setToken1 = useCallback(
+    (_token1: string | Type) => {
       // If entity is provided, parse it to a string
       const token1 = getTokenAsString(_token1)
       push(
@@ -234,10 +227,8 @@ const DerivedstateCrossChainSwapProvider: FC<
   )
 
   // Update the URL with both tokens
-  const setTokens = useCallback<{
-    (_token0: string | Type, _token1: string | Type): void
-  }>(
-    (_token0, _token1) => {
+  const setTokens = useCallback(
+    (_token0: string | Type, _token1: string | Type) => {
       // If entity is provided, parse it to a string
       const token0 = getTokenAsString(_token0)
       const token1 = getTokenAsString(_token1)
@@ -254,8 +245,8 @@ const DerivedstateCrossChainSwapProvider: FC<
   )
 
   // Update the URL with a new swapAmount
-  const setSwapAmount = useCallback<{ (swapAmount: string): void }>(
-    (swapAmount) => {
+  const setSwapAmount = useCallback(
+    (swapAmount: string) => {
       push(
         `${pathname}?${createQueryString([
           { name: 'swapAmount', value: swapAmount },
@@ -289,26 +280,28 @@ const DerivedstateCrossChainSwapProvider: FC<
     keepPreviousData: false,
   })
 
-  const adapter =
-    isStargateAdapterChainId(chainId0) && isStargateAdapterChainId(chainId1)
-      ? SushiXSwap2Adapter.Stargate
-      : isSquidAdapterChainId(chainId0) && isSquidAdapterChainId(chainId1)
-        ? SushiXSwap2Adapter.Squid
-        : undefined
+  const swapAmountString = defaultedParams.get('swapAmount') || ''
+
+  const [_token0, _token1] = useMemo(
+    () => [
+      defaultedParams.get('token0') === 'NATIVE'
+        ? Native.onChain(chainId0)
+        : token0,
+      defaultedParams.get('token1') === 'NATIVE'
+        ? Native.onChain(chainId1)
+        : token1,
+    ],
+    [defaultedParams, chainId0, chainId1, token0, token1],
+  )
+
+  const swapAmount = useMemo(
+    () => tryParseAmount(swapAmountString, _token0),
+    [_token0, swapAmountString],
+  )
 
   return (
     <DerivedStateCrossChainSwapContext.Provider
       value={useMemo(() => {
-        const swapAmountString = defaultedParams.get('swapAmount') || ''
-        const _token0 =
-          defaultedParams.get('token0') === 'NATIVE'
-            ? Native.onChain(chainId0)
-            : token0
-        const _token1 =
-          defaultedParams.get('token1') === 'NATIVE'
-            ? Native.onChain(chainId1)
-            : token1
-
         return {
           mutate: {
             setChainId0,
@@ -319,27 +312,26 @@ const DerivedstateCrossChainSwapProvider: FC<
             setTradeId,
             switchTokens,
             setSwapAmount,
+            setRouteIndex,
           },
           state: {
             tradeId,
-            recipient: address ?? '',
+            recipient: undefined,
             chainId0,
             chainId1,
             swapAmountString,
-            swapAmount: tryParseAmount(swapAmountString, _token0),
+            swapAmount,
             token0: _token0,
             token1: _token1,
-            adapter,
+            routeIndex,
           },
           isLoading: token0Loading || token1Loading,
           isToken0Loading: token0Loading,
           isToken1Loading: token1Loading,
         }
       }, [
-        address,
         chainId0,
         chainId1,
-        defaultedParams,
         setChainId0,
         setChainId1,
         setSwapAmount,
@@ -347,12 +339,14 @@ const DerivedstateCrossChainSwapProvider: FC<
         setToken1,
         setTokens,
         switchTokens,
-        token0,
+        swapAmount,
+        swapAmountString,
+        _token0,
         token0Loading,
-        token1,
+        _token1,
         token1Loading,
         tradeId,
-        adapter,
+        routeIndex,
       ])}
     >
       {children}
@@ -371,78 +365,113 @@ const useDerivedStateCrossChainSwap = () => {
   return context
 }
 
-const useCrossChainSwapTrade = () => {
+const useCrossChainTradeRoutes = () => {
   const {
-    state: {
-      token0,
-      chainId0,
-      chainId1,
-      swapAmount,
-      token1,
-      recipient,
-      adapter,
-    },
+    state: { token1, swapAmount },
   } = useDerivedStateCrossChainSwap()
-  const [slippagePercent] = useSlippageTolerance()
 
+  const [slippagePercent] = useSlippageTolerance()
   const { address } = useAccount()
 
-  const { data: srcGasPrice } = useGasPrice({
-    chainId: chainId0,
-    query: { enabled: swapAmount?.greaterThan(ZERO) },
+  return _useCrossChainTradeRoutes({
+    fromAmount: swapAmount,
+    toToken: token1,
+    slippage: slippagePercent,
+    fromAddress: address,
   })
-  const { data: dstGasPrice } = useGasPrice({
-    chainId: chainId1,
-    query: { enabled: swapAmount?.greaterThan(ZERO) },
-  })
+}
 
-  const stargateCrossChainTrade = useCrossChainTrade({
-    adapter: SushiXSwap2Adapter.Stargate,
-    srcChainId: chainId0 as SushiXSwap2ChainId,
-    dstChainId: chainId1 as SushiXSwap2ChainId,
-    srcGasPrice: srcGasPrice,
-    dstGasPrice: dstGasPrice,
-    tokenIn: token0,
-    tokenOut: token1,
-    amount: swapAmount,
-    slippagePercentage: slippagePercent.toFixed(2),
-    from: address,
-    recipient: recipient as Address,
-    query: {
-      refetchInterval: 15000,
-      enabled:
-        adapter === SushiXSwap2Adapter.Stargate &&
-        swapAmount?.greaterThan(ZERO),
-    },
-  })
+export interface UseCrossChainTradeRouteReturn extends CrossChainRoute {
+  tokenIn: Type
+  tokenOut: Type
+  amountIn?: Amount<Type>
+  amountOut?: Amount<Type>
+  amountOutMin?: Amount<Type>
+  priceImpact?: Percent
+}
 
-  const squidCrossChainTrade = useCrossChainTrade({
-    adapter: SushiXSwap2Adapter.Squid,
-    srcChainId: chainId0 as SushiXSwap2ChainId,
-    dstChainId: chainId1 as SushiXSwap2ChainId,
-    srcGasPrice: srcGasPrice,
-    dstGasPrice: dstGasPrice,
-    tokenIn: token0,
-    tokenOut: token1,
-    amount: swapAmount,
-    slippagePercentage: slippagePercent.toFixed(2),
-    from: address,
-    recipient: recipient as Address,
-    query: {
-      refetchInterval: 15000,
-      enabled:
-        adapter !== SushiXSwap2Adapter.Stargate &&
-        swapAmount?.greaterThan(ZERO),
-    },
-  })
+const useCrossChainSwapTrade = () => {
+  const routesQuery = useCrossChainTradeRoutes()
 
-  return adapter === SushiXSwap2Adapter.Stargate
-    ? stargateCrossChainTrade
-    : squidCrossChainTrade
+  const {
+    state: { routeIndex },
+  } = useDerivedStateCrossChainSwap()
+
+  const route: UseCrossChainTradeRouteReturn | undefined = useMemo(() => {
+    if (!routesQuery.data?.[routeIndex]) return undefined
+
+    const route = routesQuery.data[routeIndex]
+
+    const tokenIn =
+      route.fromToken.address === zeroAddress
+        ? Native.onChain(route.fromToken.chainId)
+        : new Token(route.fromToken)
+
+    const tokenOut =
+      route.toToken.address === zeroAddress
+        ? Native.onChain(route.toToken.chainId)
+        : new Token(route.toToken)
+
+    const amountIn = Amount.fromRawAmount(tokenIn, route.fromAmount)
+    const amountOut = Amount.fromRawAmount(
+      tokenOut,
+      routesQuery.data[routeIndex].toAmount,
+    )
+    const amountOutMin = Amount.fromRawAmount(
+      tokenOut,
+      routesQuery.data[routeIndex].toAmountMin,
+    )
+
+    const fromAmountUSD =
+      (Number(route.fromToken.priceUSD) * Number(amountIn.quotient)) /
+      10 ** tokenIn.decimals
+
+    const toAmountUSD =
+      (Number(route.toToken.priceUSD) * Number(amountOut.quotient)) /
+      10 ** tokenOut.decimals
+
+    const priceImpact = new Percent(
+      Math.floor((fromAmountUSD / toAmountUSD - 1) * 10_000),
+      10_000,
+    )
+
+    const gasSpent = Amount.fromRawAmount(
+      Native.onChain(route.fromChainId),
+      route.steps.reduce(
+        (total, step) =>
+          total +
+          step.estimate.gasCosts.reduce(
+            (total, gasCost) => total + gasCost.amount,
+            0n,
+          ),
+        0n,
+      ),
+    ).toFixed(6)
+
+    return {
+      ...route,
+      tokenIn,
+      tokenOut,
+      amountIn,
+      amountOut,
+      amountOutMin,
+      priceImpact,
+      gasSpent,
+    }
+  }, [routesQuery.data, routeIndex])
+
+  return useMemo(
+    () => ({
+      ...routesQuery,
+      data: route,
+    }),
+    [routesQuery, route],
+  )
 }
 
 export {
   DerivedstateCrossChainSwapProvider,
+  useCrossChainTradeRoutes,
   useCrossChainSwapTrade,
   useDerivedStateCrossChainSwap,
 }

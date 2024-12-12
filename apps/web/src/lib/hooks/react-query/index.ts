@@ -1,3 +1,4 @@
+export * from './cross-chain-trade'
 export * from './pools'
 export * from './prices'
 export * from './rewards'

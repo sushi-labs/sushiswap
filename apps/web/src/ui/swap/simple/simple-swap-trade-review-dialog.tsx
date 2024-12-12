@@ -335,7 +335,7 @@ export const SimpleSwapTradeReviewDialog: FC<{
                                     : ''
                               }${Math.abs(
                                 Number(trade?.priceImpact?.toFixed(2)),
-                              )}%` ?? '-'
+                              )}%`
                             )}
                           </span>
                         </List.KeyValue>

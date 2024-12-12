@@ -5,7 +5,6 @@ import { Button } from '@sushiswap/ui'
 import React, { FC, useEffect, useState } from 'react'
 import { APPROVE_TAG_XSWAP } from 'src/lib/constants'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
-import { SUSHIXSWAP_2_ADDRESS, SushiXSwap2ChainId } from 'sushi/config'
 import { ZERO } from 'sushi/math'
 import { warningSeverity } from '../../../lib/swap/warningSeverity'
 import { CrossChainSwapTradeReviewDialog } from './cross-chain-swap-trade-review-dialog'
@@ -20,7 +19,7 @@ export const CrossChainSwapTradeButton: FC = () => {
   const {
     state: { swapAmount, swapAmountString, chainId0 },
   } = useDerivedStateCrossChainSwap()
-  const { data: trade } = useCrossChainSwapTrade()
+  const { data: trade, isError } = useCrossChainSwapTrade()
   const [checked, setChecked] = useState(false)
 
   // Reset
@@ -44,16 +43,14 @@ export const CrossChainSwapTradeButton: FC = () => {
                   id="approve-erc20"
                   fullWidth
                   amount={swapAmount}
-                  contract={
-                    SUSHIXSWAP_2_ADDRESS[chainId0 as SushiXSwap2ChainId]
-                  }
+                  contract={trade?.steps?.[0]?.estimate?.approvalAddress}
                 >
                   <Checker.Success tag={APPROVE_TAG_XSWAP}>
                     <DialogTrigger asChild>
                       <Button
                         disabled={Boolean(
                           !trade?.amountOut?.greaterThan(ZERO) ||
-                            trade?.status === 'NoWay' ||
+                            isError ||
                             +swapAmountString === 0 ||
                             (!checked &&
                               warningSeverity(trade?.priceImpact) > 3),
@@ -69,7 +66,7 @@ export const CrossChainSwapTradeButton: FC = () => {
                       >
                         {!checked && warningSeverity(trade?.priceImpact) >= 3
                           ? 'Price impact too high'
-                          : trade?.status === 'NoWay'
+                          : isError
                             ? 'No trade found'
                             : 'Swap'}
                       </Button>
