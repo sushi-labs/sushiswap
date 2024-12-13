@@ -1,6 +1,7 @@
 import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { XSWAP_SUPPORTED_CHAIN_IDS, isXSwapSupportedChainId } from 'src/config'
+import { CrossChainRouteSelector } from 'src/ui/swap/cross-chain/cross-chain-route-selector'
 import { ChainId } from 'sushi/chain'
 import { SidebarContainer } from '~evm/_common/ui/sidebar'
 import { Providers } from './providers'
@@ -27,8 +28,18 @@ export default function CrossChainSwapLayout({
         selectedNetwork={chainId}
         supportedNetworks={XSWAP_SUPPORTED_CHAIN_IDS}
         unsupportedNetworkHref="/ethereum/cross-chain-swap"
+        shiftContent
       >
-        <main className="lg:p-4 mt-16 mb-[86px]">{children}</main>
+        <main className="lg:p-4 mt-16 mb-[86px]">
+          <div className="flex flex-wrap justify-center min-h-[692px]">
+            {children}
+            <div className="w-[480px]">
+              <div className="flex-1 h-full flex items-center">
+                <CrossChainRouteSelector />
+              </div>
+            </div>
+          </div>
+        </main>
       </SidebarContainer>
     </Providers>
   )

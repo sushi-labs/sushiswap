@@ -16,6 +16,18 @@ const tailwindConfig = {
             'stroke-dashoffset': '0',
           },
         },
+        carouselSlide: {
+          '0%': { transform: 'translateX(0%)' },
+          '28.57%': { transform: 'translateX(0%)' },
+          '33.33%': { transform: 'translateX(-50%)' },
+          '61.90%': { transform: 'translateX(-50%)' },
+          '66.66%': { transform: 'translateX(-100%)' },
+          '95.23%': { transform: 'translateX(-100%)' },
+          '100%': { transform: 'translateX(0%)' },
+        },
+      },
+      animation: {
+        carouselSlide: 'carouselSlide 10.5s ease-in-out infinite',
       },
     },
   },
