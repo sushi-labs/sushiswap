@@ -3,6 +3,7 @@
 import { Cog6ToothIcon } from '@heroicons/react/24/outline'
 import { SlippageToleranceStorageKey } from '@sushiswap/hooks'
 import { createToast } from '@sushiswap/notifications'
+import { ZapEventName, sendAnalyticsEvent } from '@sushiswap/telemetry'
 import {
   Button,
   Dots,
@@ -16,7 +17,7 @@ import {
   WidgetHeader,
   WidgetTitle,
 } from '@sushiswap/ui'
-import { FC, useCallback, useMemo, useState } from 'react'
+import { FC, useCallback, useEffect, useMemo, useState } from 'react'
 import { APPROVE_TAG_ZAP_LEGACY, NativeAddress } from 'src/lib/constants'
 import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
 import { Web3Input } from 'src/lib/wagmi/components/web3-input'
@@ -90,7 +91,11 @@ const _ZapSectionLegacy: FC<ZapSectionLegacyProps> = ({
     [inputAmount, inputCurrency],
   )
 
-  const { data: zapResponse, isError: isZapError } = useZap({
+  const {
+    data: zapResponse,
+    isError: isZapError,
+    error: zapError,
+  } = useZap({
     chainId,
     fromAddress: address,
     tokenIn: inputCurrency.isNative ? NativeAddress : inputCurrency.address,
@@ -99,9 +104,21 @@ const _ZapSectionLegacy: FC<ZapSectionLegacyProps> = ({
     slippage: slippageTolerance,
   })
 
+  useEffect(() => {
+    if (!zapError) return
+
+    sendAnalyticsEvent(ZapEventName.ZAP_ERROR, {
+      error: zapError.message,
+    })
+  }, [zapError])
+
   const { approved } = useApproved(APPROVE_TAG_ZAP_LEGACY)
 
-  const { data: estGas, isError: isEstGasError } = useEstimateGas({
+  const {
+    data: estGas,
+    isError: isEstGasError,
+    error: estGasError,
+  } = useEstimateGas({
     chainId,
     account: address,
     to: zapResponse?.tx.to,
@@ -112,6 +129,14 @@ const _ZapSectionLegacy: FC<ZapSectionLegacyProps> = ({
     },
   })
 
+  useEffect(() => {
+    if (!estGasError) return
+
+    sendAnalyticsEvent(ZapEventName.ZAP_ESTIMATE_GAS_CALL_FAILED, {
+      error: estGasError.message,
+    })
+  }, [estGasError])
+
   const preparedTx = useMemo(() => {
     return zapResponse && estGas
       ? { ...zapResponse.tx, gas: estGas }
@@ -121,14 +146,18 @@ const _ZapSectionLegacy: FC<ZapSectionLegacyProps> = ({
   const { refetchChain: refetchBalances } = useRefetchBalances()
 
   const onSuccess = useCallback(
-    (hash: SendTransactionReturnType) => {
+    async (hash: SendTransactionReturnType) => {
       if (!chain || !pool) return
 
       setInputAmount('')
 
-      const receipt = client.waitForTransactionReceipt({ hash })
-      receipt.then(() => {
+      const promise = client.waitForTransactionReceipt({ hash })
+      promise.then(() => {
         refetchBalances(chain.id)
+      })
+
+      sendAnalyticsEvent(ZapEventName.ZAP_SIGNED, {
+        txHash: hash,
       })
 
       const ts = new Date().getTime()
@@ -137,7 +166,7 @@ const _ZapSectionLegacy: FC<ZapSectionLegacyProps> = ({
         type: 'mint',
         chainId: chain.id,
         txHash: hash,
-        promise: receipt,
+        promise: promise,
         summary: {
           pending: `Zapping into the ${pool.token0.symbol}/${pool.token1.symbol} pair`,
           completed: `Successfully zapped into the ${pool.token0.symbol}/${pool.token1.symbol} pair`,
@@ -146,6 +175,23 @@ const _ZapSectionLegacy: FC<ZapSectionLegacyProps> = ({
         timestamp: ts,
         groupTimestamp: ts,
       })
+
+      const receipt = await promise
+      {
+        if (receipt.status === 'success') {
+          sendAnalyticsEvent(ZapEventName.ZAP_TRANSACTION_COMPLETED, {
+            txHash: hash,
+            from: receipt.from,
+            chain_id: chainId,
+          })
+        } else {
+          sendAnalyticsEvent(ZapEventName.ZAP_TRANSACTION_FAILED, {
+            txHash: hash,
+            from: receipt.from,
+            chain_id: chainId,
+          })
+        }
+      }
     },
     [refetchBalances, client, chain, address, pool],
   )

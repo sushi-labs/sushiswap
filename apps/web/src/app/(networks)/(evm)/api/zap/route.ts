@@ -1,5 +1,6 @@
 import { NextRequest } from 'next/server'
 import { ZapSupportedChainId, isZapSupportedChainId } from 'src/config'
+import { TOKEN_CHOMPER_ADDRESS, isTokenChomperChainId } from 'sushi/config'
 import { getAddress } from 'viem/utils'
 import { z } from 'zod'
 
@@ -26,11 +27,6 @@ const schema = z.object({
   amountOut: z.union([z.string(), z.array(z.string())]).optional(),
   minAmountOut: z.union([z.string(), z.array(z.string())]).optional(),
   slippage: z.string().optional(), // BIPS
-  // fee: z.union([z.string(), z.array(z.string())]).optional(), // BIPS
-  // feeReceiver: z.string().optional(),
-  disableAggregators: z.string().optional(),
-  ignoreAggregators: z.string().optional(),
-  ignoreStandards: z.string().optional(),
   tokenIn: z.union([z.string(), z.array(z.string())]).optional(),
   tokenOut: z.union([z.string(), z.array(z.string())]).optional(),
   quote: z.boolean().optional(),
@@ -57,6 +53,15 @@ export async function GET(request: NextRequest) {
         url.searchParams.append(key, value.toString())
       }
     }
+
+    url.searchParams.set('priceImpact', 'true')
+    url.searchParams.set('fee', '25') // 0.25%
+    url.searchParams.set(
+      'feeReceiver',
+      isTokenChomperChainId(parsedParams.chainId)
+        ? TOKEN_CHOMPER_ADDRESS[parsedParams.chainId]
+        : '0xFF64C2d5e23e9c48e8b42a23dc70055EEC9ea098',
+    )
   })
 
   const response = await fetch(url, {
