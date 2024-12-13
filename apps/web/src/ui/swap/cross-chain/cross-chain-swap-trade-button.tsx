@@ -5,13 +5,12 @@ import { Button } from '@sushiswap/ui'
 import React, { FC, useEffect, useState } from 'react'
 import { APPROVE_TAG_XSWAP } from 'src/lib/constants'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
-import { SUSHIXSWAP_2_ADDRESS, SushiXSwap2ChainId } from 'sushi/config'
 import { ZERO } from 'sushi/math'
 import { warningSeverity } from '../../../lib/swap/warningSeverity'
 import { CrossChainSwapTradeReviewDialog } from './cross-chain-swap-trade-review-dialog'
 import {
-  useCrossChainSwapTrade,
   useDerivedStateCrossChainSwap,
+  useSelectedCrossChainTradeRoute,
 } from './derivedstate-cross-chain-swap-provider'
 import { useIsCrossChainSwapMaintenance } from './use-is-cross-chain-swap-maintenance'
 
@@ -20,15 +19,15 @@ export const CrossChainSwapTradeButton: FC = () => {
   const {
     state: { swapAmount, swapAmountString, chainId0 },
   } = useDerivedStateCrossChainSwap()
-  const { data: trade } = useCrossChainSwapTrade()
+  const { data: route, isError } = useSelectedCrossChainTradeRoute()
   const [checked, setChecked] = useState(false)
 
   // Reset
   useEffect(() => {
-    if (warningSeverity(trade?.priceImpact) <= 3) {
+    if (warningSeverity(route?.priceImpact) <= 3) {
       setChecked(false)
     }
-  }, [trade])
+  }, [route])
 
   return (
     <CrossChainSwapTradeReviewDialog>
@@ -44,22 +43,20 @@ export const CrossChainSwapTradeButton: FC = () => {
                   id="approve-erc20"
                   fullWidth
                   amount={swapAmount}
-                  contract={
-                    SUSHIXSWAP_2_ADDRESS[chainId0 as SushiXSwap2ChainId]
-                  }
+                  contract={route?.steps?.[0]?.estimate?.approvalAddress}
                 >
                   <Checker.Success tag={APPROVE_TAG_XSWAP}>
                     <DialogTrigger asChild>
                       <Button
                         disabled={Boolean(
-                          !trade?.amountOut?.greaterThan(ZERO) ||
-                            trade?.status === 'NoWay' ||
+                          !route?.amountOut?.greaterThan(ZERO) ||
+                            isError ||
                             +swapAmountString === 0 ||
                             (!checked &&
-                              warningSeverity(trade?.priceImpact) > 3),
+                              warningSeverity(route?.priceImpact) > 3),
                         )}
                         color={
-                          warningSeverity(trade?.priceImpact) >= 3
+                          warningSeverity(route?.priceImpact) >= 3
                             ? 'red'
                             : 'blue'
                         }
@@ -67,9 +64,9 @@ export const CrossChainSwapTradeButton: FC = () => {
                         size="xl"
                         testId="swap"
                       >
-                        {!checked && warningSeverity(trade?.priceImpact) >= 3
+                        {!checked && warningSeverity(route?.priceImpact) >= 3
                           ? 'Price impact too high'
-                          : trade?.status === 'NoWay'
+                          : isError
                             ? 'No trade found'
                             : 'Swap'}
                       </Button>
@@ -81,7 +78,7 @@ export const CrossChainSwapTradeButton: FC = () => {
           </Checker.Connect>
         </Checker.Guard>
       </div>
-      {warningSeverity(trade?.priceImpact) > 3 && (
+      {warningSeverity(route?.priceImpact) > 3 && (
         <div className="flex items-start px-4 py-3 mt-4 rounded-xl bg-red/20">
           <input
             id="expert-checkbox"

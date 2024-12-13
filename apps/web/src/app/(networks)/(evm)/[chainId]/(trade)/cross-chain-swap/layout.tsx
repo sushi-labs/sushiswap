@@ -1,10 +1,8 @@
 import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
+import { XSWAP_SUPPORTED_CHAIN_IDS, isXSwapSupportedChainId } from 'src/config'
+import { CrossChainRouteSelector } from 'src/ui/swap/cross-chain/cross-chain-route-selector'
 import { ChainId } from 'sushi/chain'
-import {
-  SUSHIXSWAP_2_SUPPORTED_CHAIN_IDS,
-  isSushiXSwap2ChainId,
-} from 'sushi/config'
 import { SidebarContainer } from '~evm/_common/ui/sidebar'
 import { Providers } from './providers'
 
@@ -20,7 +18,7 @@ export default function CrossChainSwapLayout({
 }: { children: React.ReactNode; params: { chainId: string } }) {
   const chainId = +params.chainId as ChainId
 
-  if (!isSushiXSwap2ChainId(chainId)) {
+  if (!isXSwapSupportedChainId(chainId)) {
     return notFound()
   }
 
@@ -28,10 +26,20 @@ export default function CrossChainSwapLayout({
     <Providers chainId={chainId}>
       <SidebarContainer
         selectedNetwork={chainId}
-        supportedNetworks={SUSHIXSWAP_2_SUPPORTED_CHAIN_IDS}
+        supportedNetworks={XSWAP_SUPPORTED_CHAIN_IDS}
         unsupportedNetworkHref="/ethereum/cross-chain-swap"
+        shiftContent
       >
-        <main className="lg:p-4 mt-16 mb-[86px]">{children}</main>
+        <main className="lg:p-4 mt-16 mb-[86px]">
+          <div className="flex flex-wrap justify-center min-h-[692px]">
+            {children}
+            <div className="w-[480px]">
+              <div className="flex-1 h-full flex items-center">
+                <CrossChainRouteSelector />
+              </div>
+            </div>
+          </div>
+        </main>
       </SidebarContainer>
     </Providers>
   )

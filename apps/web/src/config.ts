@@ -117,6 +117,19 @@ export const PREFERRED_CHAINID_ORDER = [
   ChainId.BOBA_BNB,
 ] as const
 
+export const getSortedChainIds = <T extends ChainId>(
+  chainIds: readonly T[],
+) => {
+  return Array.from(
+    new Set([
+      ...(PREFERRED_CHAINID_ORDER.filter((el) =>
+        chainIds.includes(el as (typeof chainIds)[number]),
+      ) as T[]),
+      ...chainIds,
+    ]),
+  )
+}
+
 export const CHAIN_IDS = [
   ...SUSHISWAP_SUPPORTED_CHAIN_IDS,
   ...AGGREGATOR_ONLY_CHAIN_IDS,
@@ -223,3 +236,36 @@ export const isZapSupportedChainId = (
   chainId: number,
 ): chainId is ZapSupportedChainId =>
   ZAP_SUPPORTED_CHAIN_IDS.includes(chainId as ZapSupportedChainId)
+
+export const XSWAP_SUPPORTED_CHAIN_IDS = [
+  ChainId.ARBITRUM,
+  ChainId.AVALANCHE,
+  ChainId.BSC,
+  ChainId.BASE,
+  ChainId.BLAST,
+  ChainId.BOBA,
+  ChainId.CELO,
+  ChainId.ETHEREUM,
+  ChainId.FUSE,
+  ChainId.FANTOM,
+  ChainId.GNOSIS,
+  ChainId.LINEA,
+  ChainId.MANTLE,
+  ChainId.METIS,
+  ChainId.MODE,
+  ChainId.MOONBEAM,
+  ChainId.MOONRIVER,
+  ChainId.OPTIMISM,
+  ChainId.POLYGON,
+  ChainId.POLYGON_ZKEVM,
+  ChainId.ROOTSTOCK,
+  ChainId.SCROLL,
+  ChainId.TAIKO,
+  ChainId.ZKSYNC_ERA,
+] as const
+
+export type XSwapSupportedChainId = (typeof XSWAP_SUPPORTED_CHAIN_IDS)[number]
+export const isXSwapSupportedChainId = (
+  chainId: number,
+): chainId is XSwapSupportedChainId =>
+  XSWAP_SUPPORTED_CHAIN_IDS.includes(chainId as XSwapSupportedChainId)
