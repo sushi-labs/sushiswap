@@ -53,7 +53,7 @@ import { warningSeverity } from 'src/lib/swap/warningSeverity'
 import { useApproved } from 'src/lib/wagmi/systems/Checker/Provider'
 import { Chain, ChainKey, chainName } from 'sushi/chain'
 import { Native } from 'sushi/currency'
-import { formatUSD, shortenAddress } from 'sushi/format'
+import { formatNumber, formatUSD, shortenAddress } from 'sushi/format'
 import { ZERO } from 'sushi/math'
 import {
   SendTransactionReturnType,
@@ -586,125 +586,106 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
                         }`
                       )}
                     </List.KeyValue>
-                    <div
-                      className={
-                        'flex justify-between items-end gap-2 py-3 px-3 rounded-lg'
-                      }
-                    >
-                      <div className="flex flex-col gap-0.5">
-                        <span className="text-sm font-medium">Fees</span>
-                        <div className="text-xs text-muted-foreground text-right">
-                          {feeData ? (
-                            <div className="flex flex-col gap-1">
-                              {feeData.feesBreakdown.gas.size > 0 ? (
-                                <div className="flex flex-col">
-                                  <span>Network Fees</span>
-                                  {feeData.feesBreakdown.gas.get(chainId0) ? (
-                                    <span>Origin Chain</span>
-                                  ) : null}
-                                  {feeData.feesBreakdown.gas.get(chainId1) ? (
-                                    <span>Dest. Chain</span>
-                                  ) : null}
-                                </div>
-                              ) : null}
-                              {feeData.feesBreakdown.protocol.size > 0 ? (
-                                <div className="flex flex-col">
-                                  <span>Protocol Fees</span>
-                                  {feeData.feesBreakdown.protocol.get(
-                                    chainId0,
-                                  ) ? (
-                                    <span>Origin Chain</span>
-                                  ) : null}
-
-                                  {feeData.feesBreakdown.protocol.get(
-                                    chainId1,
-                                  ) ? (
-                                    <span>Dest. Chain</span>
-                                  ) : null}
-                                </div>
-                              ) : null}
-                            </div>
+                    {feeData && feeData.feesBreakdown.gas.size > 0 ? (
+                      <List.KeyValue title="Network fee">
+                        <div className="flex flex-col gap-1">
+                          {feeData.feesBreakdown.gas.get(chainId0) ? (
+                            <span>
+                              {formatNumber(
+                                feeData.feesBreakdown.gas
+                                  .get(chainId0)!
+                                  .amount.toExact(),
+                              )}{' '}
+                              {
+                                feeData.feesBreakdown.gas.get(chainId0)!.amount
+                                  .currency.symbol
+                              }{' '}
+                              <span className="text-muted-foreground">
+                                (
+                                {formatUSD(
+                                  feeData.feesBreakdown.gas.get(chainId0)!
+                                    .amountUSD,
+                                )}
+                                )
+                              </span>
+                            </span>
+                          ) : null}
+                          {feeData.feesBreakdown.gas.get(chainId1) ? (
+                            <span>
+                              {formatNumber(
+                                feeData.feesBreakdown.gas
+                                  .get(chainId1)!
+                                  .amount.toExact(),
+                              )}{' '}
+                              {
+                                feeData.feesBreakdown.gas.get(chainId1)!.amount
+                                  .currency.symbol
+                              }{' '}
+                              <span className="text-muted-foreground">
+                                (
+                                {formatUSD(
+                                  feeData.feesBreakdown.gas.get(chainId1)!
+                                    .amountUSD,
+                                )}
+                              </span>
+                              )
+                            </span>
                           ) : null}
                         </div>
-                      </div>
-                      <div className="flex-1 flex flex-col gap-0.5 text-right">
-                        <span className="text-sm font-medium">
-                          {feeData &&
-                          feeData.totalFeesUSD !== feeData.gasFeesUSD &&
-                          feeData.totalFeesUSD !== feeData.protocolFeesUSD
-                            ? formatUSD(feeData.totalFeesUSD)
-                            : ''}
-                        </span>
-                        <div className="text-xs text-muted-foreground">
-                          {feeData ? (
-                            <div className="flex flex-col gap-0.5">
-                              {feeData.feesBreakdown.gas.size > 0 ? (
-                                <div className="flex flex-col">
-                                  <span>{formatUSD(feeData.gasFeesUSD)}</span>
-                                  {feeData.feesBreakdown.gas.get(chainId0) ? (
-                                    <span>
-                                      {feeData.feesBreakdown.gas
-                                        .get(chainId0)!
-                                        .amount.toSignificant(4)}{' '}
-                                      {
-                                        feeData.feesBreakdown.gas.get(chainId0)!
-                                          .amount.currency.symbol
-                                      }
-                                    </span>
-                                  ) : null}
-                                  {feeData.feesBreakdown.gas.get(chainId1) ? (
-                                    <span>
-                                      {feeData.feesBreakdown.gas
-                                        .get(chainId1)!
-                                        .amount.toSignificant(4)}{' '}
-                                      {
-                                        feeData.feesBreakdown.gas.get(chainId1)!
-                                          .amount.currency.symbol
-                                      }
-                                    </span>
-                                  ) : null}
-                                </div>
-                              ) : null}
-                              {feeData.feesBreakdown.protocol.size > 0 ? (
-                                <div className="flex flex-col ">
-                                  <span>
-                                    {formatUSD(feeData.protocolFeesUSD)}
-                                  </span>
-                                  {feeData.feesBreakdown.protocol.get(
-                                    chainId0,
-                                  ) ? (
-                                    <span>
-                                      {feeData.feesBreakdown.protocol
-                                        .get(chainId0)!
-                                        .amount.toSignificant(4)}{' '}
-                                      {
-                                        feeData.feesBreakdown.protocol.get(
-                                          chainId0,
-                                        )!.amount.currency.symbol
-                                      }
-                                    </span>
-                                  ) : null}
-                                  {feeData.feesBreakdown.protocol.get(
-                                    chainId1,
-                                  ) ? (
-                                    <span>
-                                      {feeData.feesBreakdown.protocol
-                                        .get(chainId1)!
-                                        .amount.toSignificant(4)}{' '}
-                                      {
-                                        feeData.feesBreakdown.protocol.get(
-                                          chainId1,
-                                        )!.amount.currency.symbol
-                                      }
-                                    </span>
-                                  ) : null}
-                                </div>
-                              ) : null}
-                            </div>
-                          ) : null}
-                        </div>
-                      </div>
-                    </div>
+                      </List.KeyValue>
+                    ) : null}
+                    {feeData && feeData.feesBreakdown.protocol.size > 0 ? (
+                      <List.KeyValue title="Protocol fee">
+                        {feeData ? (
+                          <div className="flex flex-col gap-1">
+                            {feeData.feesBreakdown.protocol.get(chainId0) ? (
+                              <span>
+                                {formatNumber(
+                                  feeData.feesBreakdown.protocol
+                                    .get(chainId0)!
+                                    .amount.toExact(),
+                                )}{' '}
+                                {
+                                  feeData.feesBreakdown.protocol.get(chainId0)!
+                                    .amount.currency.symbol
+                                }{' '}
+                                <span className="text-muted-foreground">
+                                  (
+                                  {formatUSD(
+                                    feeData.feesBreakdown.protocol.get(
+                                      chainId0,
+                                    )!.amountUSD,
+                                  )}
+                                  )
+                                </span>
+                              </span>
+                            ) : null}
+                            {feeData.feesBreakdown.protocol.get(chainId1) ? (
+                              <span>
+                                {formatNumber(
+                                  feeData.feesBreakdown.protocol
+                                    .get(chainId1)!
+                                    .amount.toExact(),
+                                )}{' '}
+                                {
+                                  feeData.feesBreakdown.protocol.get(chainId1)!
+                                    .amount.currency.symbol
+                                }{' '}
+                                <span className="text-muted-foreground">
+                                  (
+                                  {formatUSD(
+                                    feeData.feesBreakdown.protocol.get(
+                                      chainId1,
+                                    )!.amountUSD,
+                                  )}
+                                  )
+                                </span>
+                              </span>
+                            ) : null}
+                          </div>
+                        ) : null}
+                      </List.KeyValue>
+                    ) : null}
                   </List.Control>
                 </List>
                 <List className="!pt-2">
