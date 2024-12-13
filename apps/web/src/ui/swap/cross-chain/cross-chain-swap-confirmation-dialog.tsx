@@ -6,9 +6,9 @@ import { FC, ReactNode } from 'react'
 import { Chain } from 'sushi/chain'
 import { shortenAddress } from 'sushi/format'
 import {
-  UseCrossChainTradeRouteReturn,
-  useCrossChainSwapTrade,
+  UseSelectedCrossChainTradeRouteReturn,
   useDerivedStateCrossChainSwap,
+  useSelectedCrossChainTradeRoute,
 } from './derivedstate-cross-chain-swap-provider'
 
 interface ConfirmationDialogContent {
@@ -16,7 +16,7 @@ interface ConfirmationDialogContent {
   dstTxHash?: string
   bridgeUrl?: string
   dialogState: { source: StepState; bridge: StepState; dest: StepState }
-  routeRef: React.MutableRefObject<UseCrossChainTradeRouteReturn | null>
+  routeRef: React.MutableRefObject<UseSelectedCrossChainTradeRouteReturn | null>
 }
 
 export const ConfirmationDialogContent: FC<ConfirmationDialogContent> = ({
@@ -29,7 +29,7 @@ export const ConfirmationDialogContent: FC<ConfirmationDialogContent> = ({
   const {
     state: { chainId0, chainId1, token0, token1, recipient },
   } = useDerivedStateCrossChainSwap()
-  const { data: trade } = useCrossChainSwapTrade()
+  const { data: trade } = useSelectedCrossChainTradeRoute()
 
   const swapOnDest =
     trade?.steps[0] &&

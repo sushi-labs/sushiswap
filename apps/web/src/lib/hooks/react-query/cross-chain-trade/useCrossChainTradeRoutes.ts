@@ -1,5 +1,4 @@
 import { UseQueryOptions, useQuery } from '@tanstack/react-query'
-import { useDerivedStateCrossChainSwap } from 'src/ui/swap/cross-chain/derivedstate-cross-chain-swap-provider'
 import { Amount, Type } from 'sushi/currency'
 import { Percent } from 'sushi/math'
 import { Address, zeroAddress } from 'viem'
@@ -17,6 +16,7 @@ export interface UseCrossChainTradeRoutesParms {
   fromAddress?: Address
   toAddress?: Address
   slippage: Percent
+  order?: 'CHEAPEST' | 'FASTEST'
   query?: Omit<UseQueryOptions<CrossChainRoute[]>, 'queryFn' | 'queryKey'>
 }
 
@@ -24,18 +24,12 @@ export const useCrossChainTradeRoutes = ({
   query,
   ...params
 }: UseCrossChainTradeRoutesParms) => {
-  const {
-    mutate: { setRouteIndex },
-  } = useDerivedStateCrossChainSwap()
-
   return useQuery<CrossChainRoute[]>({
     queryKey: ['cross-chain/routes', params],
     queryFn: async (): Promise<CrossChainRoute[]> => {
       const { fromAmount, toToken, slippage } = params
 
       if (!fromAmount || !toToken) throw new Error()
-
-      setRouteIndex(0)
 
       const url = new URL('/api/cross-chain/routes', window.location.origin)
 
@@ -64,6 +58,7 @@ export const useCrossChainTradeRoutes = ({
             'toAddress',
             params.toAddress || params.fromAddress,
           ))
+      params.order && url.searchParams.set('order', params.order)
 
       const response = await fetch(url)
 

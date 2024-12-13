@@ -4,15 +4,15 @@ import { classNames } from '@sushiswap/ui'
 import React from 'react'
 import { Chain } from 'sushi/chain'
 import {
-  useCrossChainSwapTrade,
   useDerivedStateCrossChainSwap,
+  useSelectedCrossChainTradeRoute,
 } from './derivedstate-cross-chain-swap-provider'
 
 export const CrossChainSwapTradeReviewRoute = () => {
   const {
     state: { chainId0 },
   } = useDerivedStateCrossChainSwap()
-  const { data: trade } = useCrossChainSwapTrade()
+  const { data: trade } = useSelectedCrossChainTradeRoute()
 
   return (
     <div

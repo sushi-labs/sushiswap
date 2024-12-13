@@ -149,5 +149,6 @@ export const crossChainRouteSchema = z.object({
   toToken: crossChainTokenSchema,
   gasCostUSD: z.string(),
   steps: z.array(crossChainStepSchema),
+  tags: z.array(z.string()).optional(),
   transactionRequest: crossChainTransactionRequestSchema.optional(),
 })

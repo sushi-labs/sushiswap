@@ -16,8 +16,8 @@ import {
 } from '../../../lib/swap/warningSeverity'
 import { CrossChainFeesHoverCard } from './cross-chain-fees-hover-card'
 import {
-  useCrossChainSwapTrade,
   useDerivedStateCrossChainSwap,
+  useSelectedCrossChainTradeRoute,
 } from './derivedstate-cross-chain-swap-provider'
 
 export const CrossChainSwapTradeStats: FC = () => {
@@ -25,7 +25,7 @@ export const CrossChainSwapTradeStats: FC = () => {
   const {
     state: { chainId0, chainId1, swapAmountString, recipient },
   } = useDerivedStateCrossChainSwap()
-  const { isLoading, data: trade, isError } = useCrossChainSwapTrade()
+  const { isLoading, data: trade, isError } = useSelectedCrossChainTradeRoute()
 
   const feeData = useMemo(
     () => (trade?.steps ? getCrossChainFeesBreakdown(trade.steps) : undefined),

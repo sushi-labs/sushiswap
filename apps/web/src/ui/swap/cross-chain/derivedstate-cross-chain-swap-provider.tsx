@@ -9,6 +9,7 @@ import {
   createContext,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
   useState,
 } from 'react'
@@ -16,7 +17,7 @@ import { isXSwapSupportedChainId } from 'src/config'
 import { useCrossChainTradeRoutes as _useCrossChainTradeRoutes } from 'src/lib/hooks/react-query'
 import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
 import { replaceNetworkSlug } from 'src/lib/network'
-import { CrossChainRoute } from 'src/lib/swap/cross-chain'
+import { CrossChainRoute, CrossChainRouteOrder } from 'src/lib/swap/cross-chain'
 import { useTokenWithCache } from 'src/lib/wagmi/hooks/tokens/useTokenWithCache'
 import { ChainId, ChainKey } from 'sushi/chain'
 import { defaultCurrency } from 'sushi/config'
@@ -49,7 +50,8 @@ interface State {
     setSwapAmount(swapAmount: string): void
     switchTokens(): void
     setTradeId: Dispatch<SetStateAction<string>>
-    setRouteIndex(route: number): void
+    setSelectedBridge(bridge: string | undefined): void
+    setRouteOrder(order: CrossChainRouteOrder): void
   }
   state: {
     tradeId: string
@@ -60,7 +62,8 @@ interface State {
     swapAmountString: string
     swapAmount: Amount<Type> | undefined
     recipient: Address | undefined
-    routeIndex: number
+    selectedBridge: string | undefined
+    routeOrder: CrossChainRouteOrder
   }
   isLoading: boolean
   isToken0Loading: boolean
@@ -88,7 +91,10 @@ const DerivedstateCrossChainSwapProvider: FC<
   const searchParams = useSearchParams()
   const [tradeId, setTradeId] = useState(nanoid())
   const [chainId, setChainId] = useState<number>(defaultChainId)
-  const [routeIndex, setRouteIndex] = useState(0)
+  const [selectedBridge, setSelectedBridge] = useState<string | undefined>(
+    undefined,
+  )
+  const [routeOrder, setRouteOrder] = useState<CrossChainRouteOrder>('CHEAPEST')
 
   const chainId0 = isXSwapSupportedChainId(chainId) ? chainId : ChainId.ETHEREUM
 
@@ -312,7 +318,8 @@ const DerivedstateCrossChainSwapProvider: FC<
             setTradeId,
             switchTokens,
             setSwapAmount,
-            setRouteIndex,
+            setSelectedBridge,
+            setRouteOrder,
           },
           state: {
             tradeId,
@@ -323,7 +330,8 @@ const DerivedstateCrossChainSwapProvider: FC<
             swapAmount,
             token0: _token0,
             token1: _token1,
-            routeIndex,
+            selectedBridge,
+            routeOrder,
           },
           isLoading: token0Loading || token1Loading,
           isToken0Loading: token0Loading,
@@ -346,7 +354,8 @@ const DerivedstateCrossChainSwapProvider: FC<
         _token1,
         token1Loading,
         tradeId,
-        routeIndex,
+        selectedBridge,
+        routeOrder,
       ])}
     >
       {children}
@@ -367,21 +376,35 @@ const useDerivedStateCrossChainSwap = () => {
 
 const useCrossChainTradeRoutes = () => {
   const {
-    state: { token1, swapAmount },
+    state: { token1, swapAmount, selectedBridge, routeOrder },
+    mutate: { setSelectedBridge },
   } = useDerivedStateCrossChainSwap()
 
   const [slippagePercent] = useSlippageTolerance()
   const { address } = useAccount()
 
-  return _useCrossChainTradeRoutes({
+  const query = _useCrossChainTradeRoutes({
     fromAmount: swapAmount,
     toToken: token1,
     slippage: slippagePercent,
     fromAddress: address,
+    order: routeOrder,
   })
+
+  useEffect(() => {
+    if (
+      query.data?.length &&
+      (typeof selectedBridge === 'undefined' ||
+        !query.data?.find((route) => route.steps[0].tool === selectedBridge))
+    ) {
+      setSelectedBridge(query.data[0].steps[0].tool)
+    }
+  }, [query.data, selectedBridge, setSelectedBridge])
+
+  return query
 }
 
-export interface UseCrossChainTradeRouteReturn extends CrossChainRoute {
+export interface UseSelectedCrossChainTradeRouteReturn extends CrossChainRoute {
   tokenIn: Type
   tokenOut: Type
   amountIn?: Amount<Type>
@@ -390,75 +413,72 @@ export interface UseCrossChainTradeRouteReturn extends CrossChainRoute {
   priceImpact?: Percent
 }
 
-const useCrossChainSwapTrade = () => {
+const useSelectedCrossChainTradeRoute = () => {
   const routesQuery = useCrossChainTradeRoutes()
 
   const {
-    state: { routeIndex },
+    state: { selectedBridge },
   } = useDerivedStateCrossChainSwap()
 
-  const route: UseCrossChainTradeRouteReturn | undefined = useMemo(() => {
-    if (!routesQuery.data?.[routeIndex]) return undefined
+  const route: UseSelectedCrossChainTradeRouteReturn | undefined =
+    useMemo(() => {
+      const route = routesQuery.data?.find(
+        (route) => route.steps[0].tool === selectedBridge,
+      )
 
-    const route = routesQuery.data[routeIndex]
+      if (!route) return undefined
 
-    const tokenIn =
-      route.fromToken.address === zeroAddress
-        ? Native.onChain(route.fromToken.chainId)
-        : new Token(route.fromToken)
+      const tokenIn =
+        route.fromToken.address === zeroAddress
+          ? Native.onChain(route.fromToken.chainId)
+          : new Token(route.fromToken)
 
-    const tokenOut =
-      route.toToken.address === zeroAddress
-        ? Native.onChain(route.toToken.chainId)
-        : new Token(route.toToken)
+      const tokenOut =
+        route.toToken.address === zeroAddress
+          ? Native.onChain(route.toToken.chainId)
+          : new Token(route.toToken)
 
-    const amountIn = Amount.fromRawAmount(tokenIn, route.fromAmount)
-    const amountOut = Amount.fromRawAmount(
-      tokenOut,
-      routesQuery.data[routeIndex].toAmount,
-    )
-    const amountOutMin = Amount.fromRawAmount(
-      tokenOut,
-      routesQuery.data[routeIndex].toAmountMin,
-    )
+      const amountIn = Amount.fromRawAmount(tokenIn, route.fromAmount)
+      const amountOut = Amount.fromRawAmount(tokenOut, route.toAmount)
+      const amountOutMin = Amount.fromRawAmount(tokenOut, route.toAmountMin)
 
-    const fromAmountUSD =
-      (Number(route.fromToken.priceUSD) * Number(amountIn.quotient)) /
-      10 ** tokenIn.decimals
+      const fromAmountUSD =
+        (Number(route.fromToken.priceUSD) * Number(amountIn.quotient)) /
+        10 ** tokenIn.decimals
 
-    const toAmountUSD =
-      (Number(route.toToken.priceUSD) * Number(amountOut.quotient)) /
-      10 ** tokenOut.decimals
+      const toAmountUSD =
+        (Number(route.toToken.priceUSD) * Number(amountOut.quotient)) /
+        10 ** tokenOut.decimals
 
-    const priceImpact = new Percent(
-      Math.floor((fromAmountUSD / toAmountUSD - 1) * 10_000),
-      10_000,
-    )
+      const priceImpact = new Percent(
+        Math.floor((fromAmountUSD / toAmountUSD - 1) * 10_000),
+        10_000,
+      )
 
-    const gasSpent = Amount.fromRawAmount(
-      Native.onChain(route.fromChainId),
-      route.steps.reduce(
-        (total, step) =>
-          total +
-          step.estimate.gasCosts.reduce(
-            (total, gasCost) => total + gasCost.amount,
-            0n,
-          ),
-        0n,
-      ),
-    ).toFixed(6)
+      // const gasSpent = Amount.fromRawAmount(
+      //   Native.onChain(route.fromChainId),
+      //   route.steps.reduce(
+      //     (total, step) =>
+      //       total +
+      //       step.estimate.gasCosts.reduce(
+      //         (total, gasCost) => total + gasCost.amount,
+      //         0n,
+      //       ),
+      //     0n,
+      //   ),
+      // ).toFixed(6)
 
-    return {
-      ...route,
-      tokenIn,
-      tokenOut,
-      amountIn,
-      amountOut,
-      amountOutMin,
-      priceImpact,
-      gasSpent,
-    }
-  }, [routesQuery.data, routeIndex])
+      return {
+        ...route,
+        tokenIn,
+        tokenOut,
+        amountIn,
+        amountOut,
+        amountOutMin,
+        priceImpact,
+        // gasSpent,
+      }
+    }, [routesQuery.data, selectedBridge])
 
   return useMemo(
     () => ({
@@ -472,6 +492,6 @@ const useCrossChainSwapTrade = () => {
 export {
   DerivedstateCrossChainSwapProvider,
   useCrossChainTradeRoutes,
-  useCrossChainSwapTrade,
+  useSelectedCrossChainTradeRoute,
   useDerivedStateCrossChainSwap,
 }

@@ -78,9 +78,9 @@ import {
 } from './cross-chain-swap-confirmation-dialog'
 import { CrossChainSwapTradeReviewRoute } from './cross-chain-swap-trade-review-route'
 import {
-  UseCrossChainTradeRouteReturn,
-  useCrossChainSwapTrade,
+  UseSelectedCrossChainTradeRouteReturn,
   useDerivedStateCrossChainSwap,
+  useSelectedCrossChainTradeRoute,
 } from './derivedstate-cross-chain-swap-provider'
 
 export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
@@ -104,13 +104,13 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
   const client0 = usePublicClient({ chainId: chainId0 })
   const client1 = usePublicClient({ chainId: chainId1 })
   const { approved } = useApproved(APPROVE_TAG_XSWAP)
-  const { data: trade } = useCrossChainSwapTrade()
+  const { data: selectedRoute } = useSelectedCrossChainTradeRoute()
   const {
     data: step,
     isFetching,
     isError: isStepQueryError,
   } = useCrossChainTradeStep({
-    step: trade?.steps?.[0],
+    step: selectedRoute?.steps?.[0],
     query: {
       enabled: Boolean(approved && address),
     },
@@ -129,7 +129,7 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
     dest: StepState.Success,
   })
 
-  const routeRef = useRef<UseCrossChainTradeRouteReturn | null>(null)
+  const routeRef = useRef<UseSelectedCrossChainTradeRouteReturn | null>(null)
 
   const {
     data: estGas,
@@ -317,8 +317,8 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
       onSuccess: onWriteSuccess,
       onError: onWriteError,
       onMutate: () => {
-        if (routeRef && trade) {
-          routeRef.current = trade
+        if (routeRef && selectedRoute) {
+          routeRef.current = selectedRoute
         }
       },
     },

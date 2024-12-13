@@ -19,10 +19,13 @@ type CrossChainTransactionRequest = z.infer<
   typeof crossChainTransactionRequestSchema
 >
 
+type CrossChainRouteOrder = 'CHEAPEST' | 'FASTEST'
+
 export type {
   CrossChainAction,
   CrossChainRoute,
   CrossChainStep,
   CrossChainToolDetails,
   CrossChainTransactionRequest,
+  CrossChainRouteOrder,
 }

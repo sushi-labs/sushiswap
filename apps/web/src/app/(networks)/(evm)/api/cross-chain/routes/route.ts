@@ -34,6 +34,7 @@ const schema = z.object({
     })
     .optional(),
   slippage: z.coerce.number(), // decimal
+  order: z.enum(['CHEAPEST', 'FASTEST']).optional(),
 })
 
 export const revalidate = 600
@@ -41,7 +42,7 @@ export const revalidate = 600
 export async function GET(request: NextRequest) {
   const params = Object.fromEntries(request.nextUrl.searchParams.entries())
 
-  const { slippage, ...parsedParams } = schema.parse(params)
+  const { slippage, order = 'CHEAPEST', ...parsedParams } = schema.parse(params)
 
   const url = new URL('https://li.quest/v1/advanced/routes')
 
@@ -58,11 +59,11 @@ export async function GET(request: NextRequest) {
       ...parsedParams,
       options: {
         slippage,
+        order,
         integrator: 'sushi',
         exchanges: { allow: ['sushiswap'] },
         allowSwitchChain: false,
         allowDestinationCall: true,
-        order: 'CHEAPEST',
         // fee: // TODO: must set up feeReceiver w/ lifi
       },
     }),
