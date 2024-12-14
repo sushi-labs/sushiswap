@@ -204,42 +204,49 @@ const _ZapSectionLegacy: FC<ZapSectionLegacyProps> = ({
       />
       <WidgetFooter>
         <div className="flex flex-col gap-4 w-full">
-          <Checker.Connect fullWidth>
-            <Checker.Network fullWidth chainId={chainId}>
-              <Checker.Amounts
-                fullWidth
-                chainId={chainId}
-                amount={parsedInputAmount}
-              >
-                <Checker.ApproveERC20
-                  id="approve-token"
-                  className="whitespace-nowrap"
+          <Checker.Guard
+            guardWhen={true}
+            guardText="Zaps are currently disabled"
+          >
+            <Checker.Connect fullWidth>
+              <Checker.Network fullWidth chainId={chainId}>
+                <Checker.Amounts
                   fullWidth
+                  chainId={chainId}
                   amount={parsedInputAmount}
-                  contract={zapResponse?.tx.to}
                 >
-                  <Checker.Success tag={APPROVE_TAG_ZAP_LEGACY}>
-                    <Button
-                      size="xl"
-                      fullWidth
-                      testId="zap-liquidity"
-                      onClick={() => preparedTx && sendTransaction(preparedTx)}
-                      loading={!preparedTx || isWritePending}
-                      disabled={isZapError || isEstGasError}
-                    >
-                      {isZapError || isEstGasError ? (
-                        'Shoot! Something went wrong :('
-                      ) : isWritePending ? (
-                        <Dots>Confirm Transaction</Dots>
-                      ) : (
-                        'Add Liquidity'
-                      )}
-                    </Button>
-                  </Checker.Success>
-                </Checker.ApproveERC20>
-              </Checker.Amounts>
-            </Checker.Network>
-          </Checker.Connect>
+                  <Checker.ApproveERC20
+                    id="approve-token"
+                    className="whitespace-nowrap"
+                    fullWidth
+                    amount={parsedInputAmount}
+                    contract={zapResponse?.tx.to}
+                  >
+                    <Checker.Success tag={APPROVE_TAG_ZAP_LEGACY}>
+                      <Button
+                        size="xl"
+                        fullWidth
+                        testId="zap-liquidity"
+                        onClick={() =>
+                          preparedTx && sendTransaction(preparedTx)
+                        }
+                        loading={!preparedTx || isWritePending}
+                        disabled={isZapError || isEstGasError}
+                      >
+                        {isZapError || isEstGasError ? (
+                          'Shoot! Something went wrong :('
+                        ) : isWritePending ? (
+                          <Dots>Confirm Transaction</Dots>
+                        ) : (
+                          'Add Liquidity'
+                        )}
+                      </Button>
+                    </Checker.Success>
+                  </Checker.ApproveERC20>
+                </Checker.Amounts>
+              </Checker.Network>
+            </Checker.Connect>
+          </Checker.Guard>
           <ZapInfoCard
             zapResponse={zapResponse}
             inputCurrency={inputCurrency}

@@ -146,50 +146,52 @@ const _SteerPositionZap: FC<SteerPositionZapProps> = ({
         currency={inputCurrency}
         allowNative={isWNativeSupported(vault.chainId)}
       />
-      <Checker.Guard
-        guardWhen={vault.isDeprecated}
-        guardText="Vault is deprecated"
-      >
-        <Checker.Connect testId="connect" fullWidth>
-          <Checker.Network
-            testId="switch-network"
-            fullWidth
-            chainId={vault.chainId}
-          >
-            <Checker.Amounts
-              testId="check-amounts"
+      <Checker.Guard guardWhen={true} guardText="Zaps are currently disabled.">
+        <Checker.Guard
+          guardWhen={vault.isDeprecated}
+          guardText="Vault is deprecated"
+        >
+          <Checker.Connect testId="connect" fullWidth>
+            <Checker.Network
+              testId="switch-network"
               fullWidth
               chainId={vault.chainId}
-              amount={parsedInputAmount}
             >
-              <Checker.ApproveERC20
+              <Checker.Amounts
+                testId="check-amounts"
                 fullWidth
-                id="approve-erc20-0"
+                chainId={vault.chainId}
                 amount={parsedInputAmount}
-                contract={zapResponse?.tx.to}
               >
-                <Checker.Success tag={APPROVE_TAG_ZAP_STEER}>
-                  <Button
-                    size="xl"
-                    fullWidth
-                    testId="zap-liquidity"
-                    onClick={() => preparedTx && sendTransaction(preparedTx)}
-                    loading={!preparedTx || isWritePending}
-                    disabled={isZapError || isEstGasError}
-                  >
-                    {isZapError || isEstGasError ? (
-                      'Shoot! Something went wrong :('
-                    ) : isWritePending ? (
-                      <Dots>Confirm Transaction</Dots>
-                    ) : (
-                      'Add Liquidity'
-                    )}
-                  </Button>
-                </Checker.Success>
-              </Checker.ApproveERC20>
-            </Checker.Amounts>
-          </Checker.Network>
-        </Checker.Connect>
+                <Checker.ApproveERC20
+                  fullWidth
+                  id="approve-erc20-0"
+                  amount={parsedInputAmount}
+                  contract={zapResponse?.tx.to}
+                >
+                  <Checker.Success tag={APPROVE_TAG_ZAP_STEER}>
+                    <Button
+                      size="xl"
+                      fullWidth
+                      testId="zap-liquidity"
+                      onClick={() => preparedTx && sendTransaction(preparedTx)}
+                      loading={!preparedTx || isWritePending}
+                      disabled={isZapError || isEstGasError}
+                    >
+                      {isZapError || isEstGasError ? (
+                        'Shoot! Something went wrong :('
+                      ) : isWritePending ? (
+                        <Dots>Confirm Transaction</Dots>
+                      ) : (
+                        'Add Liquidity'
+                      )}
+                    </Button>
+                  </Checker.Success>
+                </Checker.ApproveERC20>
+              </Checker.Amounts>
+            </Checker.Network>
+          </Checker.Connect>
+        </Checker.Guard>
       </Checker.Guard>
       <ZapInfoCard
         zapResponse={zapResponse}
