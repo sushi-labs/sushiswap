@@ -221,5 +221,5 @@ export const ZAP_SUPPORTED_CHAIN_IDS = [
 export type ZapSupportedChainId = (typeof ZAP_SUPPORTED_CHAIN_IDS)[number]
 export const isZapSupportedChainId = (
   chainId: number,
-): chainId is ZapSupportedChainId =>
-  ZAP_SUPPORTED_CHAIN_IDS.includes(chainId as ZapSupportedChainId)
+): chainId is ZapSupportedChainId => false
+// ZAP_SUPPORTED_CHAIN_IDS.includes(chainId as ZapSupportedChainId)
