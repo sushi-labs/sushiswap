@@ -82,7 +82,7 @@ export const CrossChainSwapHeader = () => {
 
   return (
     <div className="flex flex-col items-start gap-2 mb-4 sm:mt-10 mt-2">
-      <h1 className={typographyVariants({ variant: 'h1' })}>Trade</h1>
+      <h1 className={typographyVariants({ variant: 'h1' })}>Swap Anything</h1>
       {isLoading || !token0 || !token1 ? (
         <SkeletonText fontSize="sm" className="w-2/4" />
       ) : (

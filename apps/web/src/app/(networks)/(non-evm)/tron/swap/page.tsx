@@ -19,7 +19,9 @@ export default function SwapSimplePage() {
       <div className="flex flex-col gap-4">
         <div />
         <div className="flex flex-col items-start gap-2 mb-4 sm:mt-10 mt-2">
-          <h1 className={typographyVariants({ variant: 'h1' })}>Trade</h1>
+          <h1 className={typographyVariants({ variant: 'h1' })}>
+            Swap Anything
+          </h1>
           <div className="h-5" />
         </div>
         <div className="flex items-center justify-between">
