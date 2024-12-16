@@ -65,14 +65,7 @@ export const DISABLED_CHAIN_IDS = [
   // NonStandardChainId.TRON,
 ] as const
 
-export const NEW_CHAIN_IDS = [
-  ChainId.APE,
-  ChainId.MANTA,
-  ChainId.MODE,
-  ChainId.TAIKO,
-  ChainId.ZKLINK,
-  NonStandardChainId.TRON,
-] as const
+export const NEW_CHAIN_IDS = [ChainId.SONIC] as const
 
 export const PREFERRED_CHAINID_ORDER = [
   ChainId.ETHEREUM,
@@ -93,6 +86,7 @@ export const PREFERRED_CHAINID_ORDER = [
   ChainId.MODE,
   ChainId.GNOSIS,
   ChainId.ROOTSTOCK,
+  ChainId.SONIC,
   ChainId.KAVA,
   ChainId.ZKSYNC_ERA,
   ChainId.FANTOM,
