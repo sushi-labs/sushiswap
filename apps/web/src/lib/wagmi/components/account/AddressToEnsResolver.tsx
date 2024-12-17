@@ -7,7 +7,9 @@ export type Props = Parameters<typeof useEnsName<PublicWagmiConfig>>[0] & {
   children:
     | ReactNode
     | ReactNode[]
-    | ((payload: ReturnType<typeof useEnsName>) => JSX.Element)
+    | ((
+        payload: ReturnType<typeof useEnsName<PublicWagmiConfig>>,
+      ) => JSX.Element)
 }
 
 export const AddressToEnsResolver = ({

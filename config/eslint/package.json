@@ -27,6 +27,6 @@
   "devDependencies": {
     "@types/eslint": "8.44.4",
     "@types/node": "20",
-    "typescript": "5.5.4"
+    "typescript": "5.7.2"
   }
 }
