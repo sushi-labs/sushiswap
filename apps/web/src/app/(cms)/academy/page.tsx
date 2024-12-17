@@ -73,6 +73,10 @@ export default async function Page() {
           <ViewMoreButton />
         </div>
       </Container>
+
+      <a href="/academy/article-list" className="hidden">
+        Article List
+      </a>
     </div>
   )
 }
