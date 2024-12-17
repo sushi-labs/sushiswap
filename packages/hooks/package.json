@@ -38,7 +38,7 @@
   "dependencies": {
     "copy-to-clipboard": "3.3.3",
     "react-responsive": "9.0.0-beta.10",
-    "viem": "2.21.4"
+    "viem": "2.21.55"
   },
   "devDependencies": {
     "@tsconfig/node20": "20.1.4",
