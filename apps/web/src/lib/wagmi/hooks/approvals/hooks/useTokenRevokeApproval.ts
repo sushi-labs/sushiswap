@@ -11,7 +11,7 @@ import { SendTransactionReturnType } from 'wagmi/actions'
 interface UseTokenRevokeApproval {
   account: Address | undefined
   spender: Address
-  token: Token | undefined
+  token: Omit<Token, 'wrapped'> | undefined
 }
 
 export const useTokenRevokeApproval = ({
@@ -22,12 +22,12 @@ export const useTokenRevokeApproval = ({
   const [isPending, setPending] = useState(false)
   const client = usePublicClient()
   const { data: simulation } = useSimulateContract({
-    address: token?.wrapped.address as Address,
+    address: token?.address as Address,
     abi: erc20Abi_approve,
     chainId: token?.chainId,
     functionName: 'approve',
     args: [spender, 0n],
-    query: { enabled: !!token },
+    query: { enabled: Boolean(token) },
   })
 
   const onSuccess = useCallback(
