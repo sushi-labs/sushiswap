@@ -27,7 +27,7 @@ export const useTokenRevokeApproval = ({
     chainId: token?.chainId,
     functionName: 'approve',
     args: [spender, 0n],
-    query: { enabled: Boolean(token) },
+    query: { enabled: !!token },
   })
 
   const onSuccess = useCallback(
