@@ -55,7 +55,7 @@
     "@types/react": "18.2.14",
     "@types/react-dom": "18.2.6",
     "typescript": "5.7.2",
-    "sushi": "4.1.16"
+    "sushi": "4.1.19"
   },
   "peerDependencies": {
     "react": "18.2.0",
