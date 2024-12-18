@@ -68,6 +68,7 @@ export const DISABLED_CHAIN_IDS = [
 export const NEW_CHAIN_IDS = [ChainId.SONIC] as const
 
 export const PREFERRED_CHAINID_ORDER = [
+  ...NEW_CHAIN_IDS,
   ChainId.ETHEREUM,
   NonStandardChainId.TRON,
   ChainId.BSC,
