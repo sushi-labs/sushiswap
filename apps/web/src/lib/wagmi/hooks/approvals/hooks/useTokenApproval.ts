@@ -3,6 +3,7 @@
 import { createErrorToast, createToast } from '@sushiswap/notifications'
 import { InterfaceEventName, sendAnalyticsEvent } from '@sushiswap/telemetry'
 import { useCallback, useMemo, useState } from 'react'
+import { erc20Abi_approve } from 'sushi/abi'
 import { Amount, Type } from 'sushi/currency'
 import {
   Address,
@@ -17,6 +18,7 @@ import {
   useWriteContract,
 } from 'wagmi'
 
+import { ERC20ApproveABI, ERC20ApproveArgs } from './types'
 import { useTokenAllowance } from './useTokenAllowance'
 
 export enum ApprovalState {
@@ -55,22 +57,13 @@ export const useTokenApproval = ({
     enabled: Boolean(amount?.currency?.isToken && enabled),
   })
 
-  const { data: simulation } = useSimulateContract({
+  const { data: simulation } = useSimulateContract<
+    ERC20ApproveABI,
+    'approve',
+    ERC20ApproveArgs
+  >({
     chainId: amount?.currency.chainId,
-    abi: [
-      {
-        constant: false,
-        inputs: [
-          { name: 'spender', type: 'address' },
-          { name: 'amount', type: 'uint256' },
-        ],
-        name: 'approve',
-        outputs: [],
-        payable: false,
-        stateMutability: 'nonpayable',
-        type: 'function',
-      },
-    ] as const,
+    abi: erc20Abi_approve,
     address: amount?.currency?.wrapped?.address as Address,
     functionName: 'approve',
     args: [

@@ -7,11 +7,12 @@ import { Token } from 'sushi/currency'
 import { Address, UserRejectedRequestError } from 'viem'
 import { usePublicClient, useSimulateContract, useWriteContract } from 'wagmi'
 import { SendTransactionReturnType } from 'wagmi/actions'
+import { ERC20ApproveABI, ERC20ApproveArgs } from './types'
 
 interface UseTokenRevokeApproval {
   account: Address | undefined
   spender: Address
-  token: Token | undefined
+  token: Omit<Token, 'wrapped'> | undefined
 }
 
 export const useTokenRevokeApproval = ({
@@ -21,13 +22,17 @@ export const useTokenRevokeApproval = ({
 }: UseTokenRevokeApproval) => {
   const [isPending, setPending] = useState(false)
   const client = usePublicClient()
-  const { data: simulation } = useSimulateContract({
-    address: token?.wrapped.address as Address,
+  const { data: simulation } = useSimulateContract<
+    ERC20ApproveABI,
+    'approve',
+    ERC20ApproveArgs
+  >({
+    address: token?.address as Address,
     abi: erc20Abi_approve,
     chainId: token?.chainId,
     functionName: 'approve',
     args: [spender, 0n],
-    query: { enabled: Boolean(token) },
+    query: { enabled: Boolean(account && spender && token?.address) },
   })
 
   const onSuccess = useCallback(
