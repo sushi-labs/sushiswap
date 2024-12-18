@@ -33,7 +33,7 @@ export const Icon = ({ currency, height = 40, width = 40 }: IconProps) => {
             width: `${width}px`,
             height: `${height}px`,
             background: hashStringToColor(
-              `${currency?.symbol} ${currency?.name}` ?? '??',
+              currency ? `${currency.symbol} ${currency.name}` : '??',
             ),
           }}
         >

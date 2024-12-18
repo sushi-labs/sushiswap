@@ -55,7 +55,7 @@ export const CurrencyIcon = ({
             width: `${width}px`,
             height: `${height}px`,
             background: hashStringToColor(
-              `${currency?.symbol} ${currency?.name}` ?? '??',
+              currency ? `${currency.symbol} ${currency.name}` : '??',
             ),
           }}
         >

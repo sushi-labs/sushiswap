@@ -27,7 +27,8 @@
     "just-pnpm": "1.0.2",
     "sort-package-json": "2.6.0",
     "tsx": "4.19.0",
-    "turbo": "2.0.5"
+    "turbo": "2.0.5",
+    "typescript": "5.7.2"
   },
   "packageManager": "pnpm@9.4.0",
   "engines": {
@@ -37,7 +38,7 @@
   "pnpm": {
     "overrides": {
       "graphql": "16.6.0",
-      "typescript": "5.5.4",
+      "typescript": "5.7.2",
       "@types/react": "18.2.14",
       "@types/react-dom": "18.2.6"
     },
