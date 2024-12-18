@@ -587,7 +587,10 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
                       )}
                     </List.KeyValue>
                     {feeData && feeData.feesBreakdown.gas.size > 0 ? (
-                      <List.KeyValue title="Network fee">
+                      <List.KeyValue
+                        title="Network fee"
+                        subtitle="The transaction fee charged by the origin blockchain."
+                      >
                         <div className="flex flex-col gap-1">
                           {feeData.feesBreakdown.gas.get(chainId0) ? (
                             <span>
@@ -635,7 +638,10 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
                       </List.KeyValue>
                     ) : null}
                     {feeData && feeData.feesBreakdown.protocol.size > 0 ? (
-                      <List.KeyValue title="Protocol fee">
+                      <List.KeyValue
+                        title="Protocol fee"
+                        subtitle="The fee  charged by the bridge provider."
+                      >
                         {feeData ? (
                           <div className="flex flex-col gap-1">
                             {feeData.feesBreakdown.protocol.get(chainId0) ? (
