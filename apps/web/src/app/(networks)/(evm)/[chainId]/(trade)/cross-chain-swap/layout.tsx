@@ -30,13 +30,11 @@ export default function CrossChainSwapLayout({
         unsupportedNetworkHref="/ethereum/cross-chain-swap"
         shiftContent
       >
-        <main className="lg:p-4 mt-16 mb-[86px]">
-          <div className="flex flex-wrap justify-center min-h-[692px]">
-            {children}
-            <div className="w-[480px]">
-              <div className="flex-1 h-full flex items-center">
-                <CrossChainRouteSelector />
-              </div>
+        <main className="lg:p-4 mt-16 mb-[86px] flex flex-wrap justify-center min-h-[calc(100vh-206px)]">
+          {children}
+          <div className="w-[480px]">
+            <div className="flex-1 h-full flex items-center">
+              <CrossChainRouteSelector />
             </div>
           </div>
         </main>
