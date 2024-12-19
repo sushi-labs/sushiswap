@@ -37,7 +37,7 @@ export default meta
 type Story = StoryObj<typeof DialogConfirm>
 
 export const Pending = {
-  storyName: 'Pending',
+  name: 'Pending',
   args: {},
   render: () => {
     return (
@@ -80,7 +80,7 @@ export const Pending = {
         </DialogReview>
         <DialogConfirm
           chainId={1}
-          status="loading"
+          status="pending"
           testId="incentivize-confirmation-modal"
           successMessage={'Successfully incentivized V3 pool'}
           txHash="0x58c018d0f15df78c392e0850f5ee5e74e1e919213552646d979c9a37e6f5119a"
@@ -91,7 +91,7 @@ export const Pending = {
 } satisfies Story
 
 export const Success = {
-  storyName: 'Success',
+  name: 'Success',
   args: { chainId: 1, status: 'success' },
   render: () => {
     return (
@@ -146,7 +146,7 @@ export const Success = {
 
 // biome-ignore lint/suspicious/noShadowRestrictedNames: This is a storybook
 export const Error = {
-  storyName: 'Error',
+  name: 'Error',
   args: { chainId: 1, status: 'error' },
   render: () => {
     return (
