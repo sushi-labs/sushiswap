@@ -10,13 +10,14 @@ import { ChainId } from 'sushi/chain'
 import { isSushiSwapV3ChainId } from 'sushi/config'
 import { isAddress } from 'viem'
 
-export default async function Layout({
-  children,
-  params,
-}: {
+export default async function Layout(props: {
   children: React.ReactNode
-  params: { chainId: string; vault: string; address: string }
+  params: Promise<{ chainId: string; vault: string; address: string }>
 }) {
+  const params = await props.params
+
+  const { children } = props
+
   const chainId = Number(params.chainId) as ChainId
   const vaultAddress = params.vault
 

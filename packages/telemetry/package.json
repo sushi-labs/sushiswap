@@ -44,15 +44,15 @@
     "@tsconfig/esm": "1.0.4",
     "@tsconfig/strictest": "2.0.2",
     "@types/gtag.js": "0.0.19",
-    "@types/react": "18.2.14",
-    "@types/react-dom": "18.2.6",
-    "react": "18.2.0",
-    "react-dom": "18.2.0",
+    "@types/react": "19.0.1",
+    "@types/react-dom": "19.0.2",
+    "react": "19.0.0",
+    "react-dom": "19.0.0",
     "typescript": "5.7.2"
   },
   "peerDependencies": {
-    "react": "18.2.0",
-    "react-dom": "18.2.0"
+    "react": "19.0.0",
+    "react-dom": "19.0.0"
   },
   "peerDependenciesMeta": {
     "react": {

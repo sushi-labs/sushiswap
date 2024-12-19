@@ -11,10 +11,14 @@ export const metadata: Metadata = {
     'Add rewards to a pool to incentivize liquidity providers joining in.',
 }
 
-export default function Layout({
-  children,
-  params,
-}: { children: React.ReactNode; params: { chainId: string } }) {
+export default async function Layout(props: {
+  children: React.ReactNode
+  params: Promise<{ chainId: string }>
+}) {
+  const params = await props.params
+
+  const { children } = props
+
   const chainId = +params.chainId as ChainId
   if (!isMerklChainId(chainId)) {
     return notFound()

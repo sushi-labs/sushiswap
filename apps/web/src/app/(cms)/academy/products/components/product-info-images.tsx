@@ -3,6 +3,8 @@ import { RouterImg } from '../assets/router-img'
 import { TokensBoardImg } from '../assets/tokens-board-img'
 import { TokensPanelImg } from '../assets/tokens-panel-img'
 
+import type { JSX } from 'react'
+
 interface ProductInfoSection {
   title: string
   description: string

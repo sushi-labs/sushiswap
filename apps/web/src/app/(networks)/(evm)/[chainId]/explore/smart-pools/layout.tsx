@@ -18,10 +18,14 @@ export const metadata: Metadata = {
     'Smart pools optimize liquidity allocation within custom price ranges, enhancing trading efficiency by providing deeper liquidity around the current price, increasing Liquidity Providers fee earnings.',
 }
 
-export default async function ExploreLayout({
-  children,
-  params,
-}: { children: React.ReactNode; params: { chainId: string } }) {
+export default async function ExploreLayout(props: {
+  children: React.ReactNode
+  params: Promise<{ chainId: string }>
+}) {
+  const params = await props.params
+
+  const { children } = props
+
   const chainId = +params.chainId as ChainId
 
   if (!isSmartPoolChainId(chainId)) {
