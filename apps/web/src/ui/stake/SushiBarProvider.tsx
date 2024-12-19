@@ -2,8 +2,10 @@
 
 import { FC, ReactNode, createContext, useContext, useMemo } from 'react'
 import { useBarData } from 'src/lib/stake'
+import { useBalanceWeb3 } from 'src/lib/wagmi/hooks/balances/useBalanceWeb3'
+import { useTotalSupply } from 'src/lib/wagmi/hooks/tokens/useTotalSupply'
 import { ChainId } from 'sushi/chain'
-import { Amount, SUSHI, Type, XSUSHI, tryParseAmount } from 'sushi/currency'
+import { Amount, SUSHI, Type, XSUSHI, XSUSHI_ADDRESS } from 'sushi/currency'
 
 interface SushiBarContext {
   totalSupply: Amount<Type> | undefined
@@ -19,21 +21,40 @@ export const SushiBarProvider: FC<{
   children: ReactNode
   watch?: boolean
 }> = ({ children }) => {
-  const { data, isLoading, isError } = useBarData()
+  const {
+    data,
+    isLoading: isLoadingBarData,
+    isError: isErrorBarData,
+  } = useBarData()
+  const {
+    data: sushiBalanceData,
+    isLoading: isLoadingSushiBalanceData,
+    isError: isErrorSushiBalanceData,
+  } = useBalanceWeb3({
+    chainId: ChainId.ETHEREUM,
+    currency: SUSHI[ChainId.ETHEREUM],
+    account: XSUSHI_ADDRESS[ChainId.ETHEREUM],
+  })
+  const totalSupply = useTotalSupply(XSUSHI[ChainId.ETHEREUM])
 
-  const [sushiBalance, totalSupply, apy] = useMemo(
+  const [sushiBalance, apy, isLoading, isError] = useMemo(
     () => [
-      tryParseAmount(
-        (data?.sushiSupply ?? 0).toString(),
-        SUSHI[ChainId.ETHEREUM],
-      ),
-      tryParseAmount(
-        (data?.xSushiSupply ?? 0).toString(),
-        XSUSHI[ChainId.ETHEREUM],
-      ),
+      sushiBalanceData || undefined,
       data && data?.apr1m !== undefined ? Number(data.apr1m) * 12 : undefined,
+      isLoadingBarData ||
+        isLoadingSushiBalanceData ||
+        totalSupply === undefined,
+      isErrorBarData || isErrorSushiBalanceData,
     ],
-    [data],
+    [
+      sushiBalanceData,
+      data,
+      isLoadingBarData,
+      isLoadingSushiBalanceData,
+      isErrorBarData,
+      isErrorSushiBalanceData,
+      totalSupply,
+    ],
   )
 
   return (
