@@ -3,16 +3,20 @@ import { headers } from 'next/headers'
 import { PoolHeader } from '~tron/_common/ui/Pools/PoolDetails/PoolHeader'
 import Providers from './providers'
 
-export default function PoolLayout({
-  children,
-  params,
-}: { children: React.ReactNode; params: { address: string } }) {
+export default async function PoolLayout(props: {
+  children: React.ReactNode
+  params: Promise<{ address: string }>
+}) {
+  const params = await props.params
+
+  const { children } = props
+
   const decodedPoolId = decodeURIComponent(params.address).split(':')
   const token0 = decodedPoolId[0]
   const token1 = decodedPoolId[1]
   const pairAddress = decodedPoolId[2]
 
-  const headersList = headers()
+  const headersList = await headers()
   const referer = headersList.get('referer')
 
   return (

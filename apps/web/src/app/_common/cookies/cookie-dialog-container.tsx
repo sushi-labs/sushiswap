@@ -10,8 +10,8 @@ export function CookieDialogContainer() {
   )
 }
 
-function _CookieDialogContainer() {
-  const cookiez = cookies()
+async function _CookieDialogContainer() {
+  const cookiez = await cookies()
   const cookiesConfirmed = cookiez.has('accepted-cookies')
 
   if (cookiesConfirmed) {

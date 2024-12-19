@@ -1,9 +1,11 @@
 'use client'
 
+import { VisuallyHidden } from '@radix-ui/react-visually-hidden'
 import {
   Button,
   Dialog,
   DialogContent,
+  DialogTitle,
   DialogTrigger,
   Sheet,
   SheetContent,
@@ -65,14 +67,26 @@ export const UserPortfolio = () => {
   const content = useMemo(() => {
     switch (view) {
       case PortfolioView.Settings:
-        return <PortfolioSettingsView setView={setView} />
+        return (
+          <>
+            <VisuallyHidden>
+              <DialogTitle>Portfolio Settings</DialogTitle>
+            </VisuallyHidden>
+            <PortfolioSettingsView setView={setView} />
+          </>
+        )
       default:
         return (
-          <PortfolioDefaultView
-            setView={setView}
-            ensName={ensName}
-            isENSNameLoading={isENSNameLoading}
-          />
+          <>
+            <VisuallyHidden>
+              <DialogTitle>Portfolio Default View</DialogTitle>
+            </VisuallyHidden>
+            <PortfolioDefaultView
+              setView={setView}
+              ensName={ensName}
+              isENSNameLoading={isENSNameLoading}
+            />
+          </>
         )
     }
   }, [view, ensName, isENSNameLoading])

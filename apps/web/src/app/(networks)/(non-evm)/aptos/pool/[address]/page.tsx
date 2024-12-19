@@ -2,7 +2,7 @@
 
 import { useWallet } from '@aptos-labs/wallet-adapter-react'
 import { Container } from '@sushiswap/ui'
-import { useEffect, useMemo } from 'react'
+import { use, useEffect, useMemo } from 'react'
 import { ManageV2LiquidityCard } from '~aptos/_common/components/ManageV2LiquidityCard'
 import { PoolComposition } from '~aptos/_common/components/PoolSection/PoolComposition'
 import { PoolMyRewards } from '~aptos/_common/components/PoolSection/PoolMyRewards'
@@ -20,7 +20,10 @@ import { useFarms, useIsFarm } from '~aptos/pool/lib/farm/use-farms'
 import { useUserRewards } from '~aptos/pool/lib/farm/use-user-rewards'
 import { usePool } from '~aptos/pool/lib/use-pool'
 
-export default function PoolPage({ params }: { params: { address: string } }) {
+export default function PoolPage(props: {
+  params: Promise<{ address: string }>
+}) {
+  const params = use(props.params)
   const address = decodeURIComponent(params.address)
   const { account, network, disconnect } = useWallet()
   const { data: pool, isLoading: isPoolLoading } = usePool(address)

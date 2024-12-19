@@ -30,7 +30,7 @@ function findClaims(account: Address) {
 
 export type Claims = ReturnType<typeof findClaims>
 
-export const revalidate = Infinity
+export const revalidate = false
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url)
