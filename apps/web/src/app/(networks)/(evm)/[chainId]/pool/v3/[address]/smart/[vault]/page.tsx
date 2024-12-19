@@ -84,9 +84,10 @@ async function getGenerics(vault: VaultV1): Promise<SteerStrategyGeneric> {
   return { priceExtremes, tokenRatios, adjustment, positions }
 }
 
-export default async function SteerVaultPage({
-  params,
-}: { params: { chainId: string; vault: string; address: string } }) {
+export default async function SteerVaultPage(props: {
+  params: Promise<{ chainId: string; vault: string; address: string }>
+}) {
+  const params = await props.params
   const chainId = Number(params.chainId) as ChainId
   const vaultAddress = params.vault
   const poolAddress = params.address

@@ -6,9 +6,9 @@ import { ChainId } from 'sushi/chain'
 
 interface PortfolioInfoRow {
   chainId: ChainId
-  icon: ReactElement
-  leftContent: ReactElement
-  rightContent: ReactElement | null
+  icon: ReactElement<any>
+  leftContent: ReactElement<any>
+  rightContent: ReactElement<any> | null
   href?: string
   externalLink?: boolean
 }

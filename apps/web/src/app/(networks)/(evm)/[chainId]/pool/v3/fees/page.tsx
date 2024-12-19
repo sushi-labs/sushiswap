@@ -5,9 +5,10 @@ import { TableFiltersNetwork } from 'src/ui/pool/TableFiltersNetwork'
 import { V3FeesTable } from 'src/ui/pool/V3FeesTable'
 import { SushiSwapV3ChainId, SushiSwapV3ChainIds } from 'sushi/config'
 
-export default async function Page({
-  params,
-}: { params: { chainId: string } }) {
+export default async function Page(props: {
+  params: Promise<{ chainId: string }>
+}) {
+  const params = await props.params
   const chainId = +params.chainId as SushiSwapV3ChainId
   const pools = await unstable_cache(
     async () => getV3BasePools({ chainId }),

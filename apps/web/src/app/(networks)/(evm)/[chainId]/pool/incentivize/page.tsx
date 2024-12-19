@@ -28,7 +28,7 @@ import {
 } from '@sushiswap/ui'
 import format from 'date-fns/format'
 import { useRouter } from 'next/navigation'
-import { useMemo, useState } from 'react'
+import { use, useMemo, useState } from 'react'
 import { useAngleRewardTokens } from 'src/lib/hooks/react-query'
 import { Web3Input } from 'src/lib/wagmi/components/web3-input'
 import { useConcentratedLiquidityPool } from 'src/lib/wagmi/hooks/pools/hooks/useConcentratedLiquidityPool'
@@ -64,7 +64,8 @@ import { useAccount, useWaitForTransactionReceipt } from 'wagmi'
 
 const APPROVE_TAG = 'approve-incentivize'
 
-export default function Page({ params }: { params: { chainId: string } }) {
+export default function Page(props: { params: Promise<{ chainId: string }> }) {
+  const params = use(props.params)
   const chainId = +params.chainId as ChainId
   return (
     <ConcentratedLiquidityURLStateProvider

@@ -10,11 +10,10 @@ import { ChainId } from 'sushi/chain'
 import { isSushiSwapV3ChainId } from 'sushi/config'
 import { isAddress } from 'viem'
 
-export default async function VaultOverviewPage({
-  params,
-}: {
-  params: { chainId: string; address: string }
+export default async function VaultOverviewPage(props: {
+  params: Promise<{ chainId: string; address: string }>
 }) {
+  const params = await props.params
   const { chainId: _chainId, address } = params
   const chainId = +_chainId as ChainId
 
