@@ -6,13 +6,14 @@ import { AnswerGroupLayout } from './components/answer-group-layout'
 
 export const revalidate = 900
 
-export default async function Layout({
-  children,
-  params,
-}: {
+export default async function Layout(props: {
   children: React.ReactNode
-  params: { 'answer-group-slug': string }
+  params: Promise<{ 'answer-group-slug': string }>
 }) {
+  const params = await props.params
+
+  const { children } = props
+
   let answerGroup
 
   try {

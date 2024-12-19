@@ -31,11 +31,10 @@ function AnswerGroup({
   )
 }
 
-export default async function FaqCategoryPage({
-  params,
-}: {
-  params: { 'category-slug': string }
+export default async function FaqCategoryPage(props: {
+  params: Promise<{ 'category-slug': string }>
 }) {
+  const params = await props.params
   let category
 
   try {

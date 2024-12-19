@@ -15,10 +15,14 @@ export const metadata: Metadata = {
   description: 'Explore SushiSwap pools.',
 }
 
-export default async function ExploreLayout({
-  children,
-  params,
-}: { children: React.ReactNode; params: { chainId: string } }) {
+export default async function ExploreLayout(props: {
+  children: React.ReactNode
+  params: Promise<{ chainId: string }>
+}) {
+  const params = await props.params
+
+  const { children } = props
+
   const chainId = +params.chainId as ChainId
 
   if (!isPoolChainId(chainId)) {

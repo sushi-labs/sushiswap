@@ -56,7 +56,7 @@ export const Default = {
 } satisfies Story
 
 export const Trigger = {
-  storyName: 'Custom trigger',
+  name: 'Custom trigger',
   args: {
     children: 'Select',
   },
@@ -78,7 +78,7 @@ export const Trigger = {
 } satisfies Story
 
 export const Caption = {
-  storyName: 'Including a caption',
+  name: 'Including a caption',
   args: {
     children: 'Select',
   },
@@ -104,7 +104,7 @@ export const Caption = {
 
 // biome-ignore lint/suspicious/noShadowRestrictedNames: This is a storybook
 export const Error = {
-  storyName: 'Error caption',
+  name: 'Error caption',
   args: {
     children: 'Select',
   },

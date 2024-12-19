@@ -1,5 +1,13 @@
 import classNames from 'classnames'
-import { Children, FC, ReactNode, cloneElement, isValidElement } from 'react'
+import {
+  Children,
+  ComponentProps,
+  FC,
+  ReactNode,
+  cloneElement,
+  isValidElement,
+} from 'react'
+import { Icon } from './Icon'
 
 export interface IconListProps {
   children: ReactNode
@@ -16,7 +24,7 @@ export const IconList: FC<IconListProps> = ({
     <div className="flex items-center">
       <div className={classNames('inline-flex')}>
         {Children.map(children, (child, index) => {
-          if (isValidElement(child)) {
+          if (isValidElement<ComponentProps<typeof Icon>>(child)) {
             return (
               <div
                 className="rounded-full inline-flex z-10 border-2 ring-gray-50 dark:ring-slate-950"

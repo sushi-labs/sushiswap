@@ -30,8 +30,8 @@ export function SortByDropdown() {
 
   return (
     <Select value={sortByIndex} onValueChange={onSelect}>
-      <SelectTrigger placeholder="Sort by">
-        {SORTING_OPTIONS[+sortByIndex].name}
+      <SelectTrigger>
+        {sorting ? SORTING_OPTIONS[+sortByIndex].name : 'Sort By'}
       </SelectTrigger>
       <SelectContent>
         {SORTING_OPTIONS?.map((option, i) => (

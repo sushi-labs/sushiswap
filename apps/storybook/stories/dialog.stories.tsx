@@ -31,7 +31,7 @@ export default meta
 type Story = StoryObj<typeof Dialog>
 
 export const LosslessDialog = {
-  storyName: 'Simple dialog with no followup',
+  name: 'Simple dialog with no followup',
   args: {},
   render: () => {
     return (

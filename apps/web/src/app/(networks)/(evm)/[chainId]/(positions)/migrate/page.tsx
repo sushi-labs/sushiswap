@@ -11,9 +11,10 @@ export const metadata: Metadata = {
   description: 'A SushiSwap V2 to V3 migration tool.',
 }
 
-export default function MigratePage({
-  params,
-}: { params: { chainId: string } }) {
+export default async function MigratePage(props: {
+  params: Promise<{ chainId: string }>
+}) {
+  const params = await props.params
   const chainId = +params.chainId as ChainId
 
   if (!isSushiSwapV2ChainId(chainId)) {
