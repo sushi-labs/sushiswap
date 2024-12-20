@@ -2,10 +2,18 @@
 
 import { FC, ReactNode, createContext, useContext, useMemo } from 'react'
 import { useBarData } from 'src/lib/stake'
-import { useBalanceWeb3 } from 'src/lib/wagmi/hooks/balances/useBalanceWeb3'
-import { useTotalSupply } from 'src/lib/wagmi/hooks/tokens/useTotalSupply'
+import { useWatchByInterval } from 'src/lib/wagmi/hooks/watch/useWatchByInterval'
 import { ChainId } from 'sushi/chain'
-import { Amount, SUSHI, Type, XSUSHI, XSUSHI_ADDRESS } from 'sushi/currency'
+import {
+  Amount,
+  SUSHI,
+  SUSHI_ADDRESS,
+  Type,
+  XSUSHI,
+  XSUSHI_ADDRESS,
+} from 'sushi/currency'
+import { erc20Abi } from 'viem'
+import { useReadContracts } from 'wagmi'
 
 interface SushiBarContext {
   totalSupply: Amount<Type> | undefined
@@ -26,48 +34,63 @@ export const SushiBarProvider: FC<{
     isLoading: isLoadingBarData,
     isError: isErrorBarData,
   } = useBarData()
+
   const {
-    data: sushiBalanceData,
+    data: balanceAndSupplyData,
     isLoading: isLoadingSushiBalanceData,
     isError: isErrorSushiBalanceData,
-  } = useBalanceWeb3({
-    chainId: ChainId.ETHEREUM,
-    currency: SUSHI[ChainId.ETHEREUM],
-    account: XSUSHI_ADDRESS[ChainId.ETHEREUM],
+    queryKey: balanceAndSupplyQueryKey,
+  } = useReadContracts({
+    allowFailure: false,
+    contracts: [
+      {
+        address: SUSHI_ADDRESS[ChainId.ETHEREUM],
+        abi: erc20Abi,
+        functionName: 'balanceOf',
+        args: [XSUSHI_ADDRESS[ChainId.ETHEREUM]],
+        chainId: ChainId.ETHEREUM,
+      },
+      {
+        address: XSUSHI_ADDRESS[ChainId.ETHEREUM],
+        chainId: ChainId.ETHEREUM,
+        abi: erc20Abi,
+        functionName: 'totalSupply' as const,
+      },
+    ],
+    query: {
+      select(data) {
+        return [
+          Amount.fromRawAmount(SUSHI[ChainId.ETHEREUM], data[0]),
+          Amount.fromRawAmount(XSUSHI[ChainId.ETHEREUM], data[1]),
+        ] as const
+      },
+      staleTime: 30000,
+    },
   })
-  const totalSupply = useTotalSupply(XSUSHI[ChainId.ETHEREUM])
 
-  const [sushiBalance, apy, isLoading, isError] = useMemo(
-    () => [
-      sushiBalanceData || undefined,
-      data && data?.apr1m !== undefined ? Number(data.apr1m) * 12 : undefined,
-      isLoadingBarData ||
-        isLoadingSushiBalanceData ||
-        totalSupply === undefined,
-      isErrorBarData || isErrorSushiBalanceData,
-    ],
-    [
-      sushiBalanceData,
-      data,
-      isLoadingBarData,
-      isLoadingSushiBalanceData,
-      isErrorBarData,
-      isErrorSushiBalanceData,
-      totalSupply,
-    ],
-  )
+  useWatchByInterval({ key: balanceAndSupplyQueryKey, interval: 30000 })
 
   return (
     <Context.Provider
       value={useMemo(
         () => ({
-          totalSupply,
-          sushiBalance,
-          apy,
-          isLoading,
-          isError,
+          sushiBalance: balanceAndSupplyData?.[0],
+          totalSupply: balanceAndSupplyData?.[1],
+          apy:
+            data && data?.apr1m !== undefined
+              ? Number(data.apr1m) * 12
+              : undefined,
+          isLoading: isLoadingBarData || isLoadingSushiBalanceData,
+          isError: isErrorBarData || isErrorSushiBalanceData,
         }),
-        [sushiBalance, totalSupply, apy, isError, isLoading],
+        [
+          balanceAndSupplyData,
+          data,
+          isLoadingBarData,
+          isLoadingSushiBalanceData,
+          isErrorBarData,
+          isErrorSushiBalanceData,
+        ],
       )}
     >
       {children}
