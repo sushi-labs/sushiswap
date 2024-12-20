@@ -58,9 +58,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         }, []),
     },
     twitter: {
-      app: {
-        id: {},
-      },
       card: isMediaVideo(article.cover.provider_metadata)
         ? 'player'
         : 'summary_large_image',

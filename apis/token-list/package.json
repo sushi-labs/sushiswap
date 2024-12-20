@@ -14,7 +14,7 @@
   "devDependencies": {
     "@tsconfig/esm": "1.0.4",
     "@tsconfig/strictest": "2.0.2",
-    "typescript": "5.5.4",
+    "typescript": "5.7.2",
     "vercel": "35.2.1"
   }
 }

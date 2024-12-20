@@ -26,6 +26,9 @@ export default function Page() {
           </div>
           <ArticleList />
         </Container>
+        <a href="/blog/article-list" className="hidden">
+          Article List
+        </a>
       </BlogSearchProvider>
     </Suspense>
   )

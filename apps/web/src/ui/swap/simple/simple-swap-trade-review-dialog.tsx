@@ -139,6 +139,16 @@ export const SimpleSwapTradeReviewDialog: FC<{
         sendAnalyticsEvent(SwapEventName.SWAP_SIGNED, {
           ...trace,
           txHash: hash,
+          chainId: chainId,
+          token0: tradeRef?.current?.amountIn?.currency?.isToken
+            ? tradeRef?.current?.amountIn?.currency?.address
+            : NativeAddress,
+          token1: tradeRef?.current?.amountOut?.currency?.isToken
+            ? tradeRef?.current?.amountOut?.currency?.address
+            : NativeAddress,
+          amountIn: tradeRef?.current?.amountIn?.quotient,
+          amountOut: tradeRef?.current?.amountOut?.quotient,
+          amountOutMin: tradeRef?.current?.minAmountOut?.quotient,
         })
 
         void createToast({
@@ -326,16 +336,18 @@ export const SimpleSwapTradeReviewDialog: FC<{
                           >
                             {isFetching ? (
                               <SkeletonBox className="h-4 py-0.5 w-[60px] rounded-md" />
-                            ) : (
+                            ) : trade ? (
                               `${
-                                trade?.priceImpact?.lessThan(ZERO)
+                                trade.priceImpact?.lessThan(ZERO)
                                   ? '+'
-                                  : trade?.priceImpact?.greaterThan(ZERO)
+                                  : trade.priceImpact?.greaterThan(ZERO)
                                     ? '-'
                                     : ''
                               }${Math.abs(
-                                Number(trade?.priceImpact?.toFixed(2)),
+                                Number(trade.priceImpact?.toFixed(2)),
                               )}%`
+                            ) : (
+                              '-'
                             )}
                           </span>
                         </List.KeyValue>
