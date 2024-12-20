@@ -14,7 +14,7 @@ import {
   warningSeverity,
   warningSeverityClassName,
 } from '../../../lib/swap/warningSeverity'
-import { CrossChainFeesHoverCard } from './cross-chain-fees-hover-card'
+import { CrossChainSwapFeesHoverCard } from './cross-chain-swap-fees-hover-card'
 import {
   useDerivedStateCrossChainSwap,
   useSelectedCrossChainTradeRoute,
@@ -97,7 +97,7 @@ export const CrossChainSwapTradeStats: FC = () => {
             {isLoading || !feeData ? (
               <SkeletonBox className="h-4 py-0.5 w-[120px]" />
             ) : (
-              <CrossChainFeesHoverCard
+              <CrossChainSwapFeesHoverCard
                 feesBreakdown={feeData.feesBreakdown}
                 gasFeesUSD={feeData.gasFeesUSD}
                 protocolFeesUSD={feeData.protocolFeesUSD}
@@ -107,7 +107,7 @@ export const CrossChainSwapTradeStats: FC = () => {
                 <span className="underline decoration-dotted underline-offset-4 flex items-center justify-end gap-1 text-sm text-gray-900 dark:text-slate-50">
                   {formatUSD(feeData.totalFeesUSD)}
                 </span>
-              </CrossChainFeesHoverCard>
+              </CrossChainSwapFeesHoverCard>
             )}
           </span>
         </div>

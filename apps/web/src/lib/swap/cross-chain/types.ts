@@ -1,6 +1,7 @@
 import { z } from 'zod'
 import {
   crossChainActionSchema,
+  crossChainEstimateSchema,
   crossChainRouteSchema,
   crossChainStepSchema,
   crossChainToolDetailsSchema,
@@ -8,6 +9,8 @@ import {
 } from './schema'
 
 type CrossChainAction = z.infer<typeof crossChainActionSchema>
+
+type CrossChainEstimate = z.infer<typeof crossChainEstimateSchema>
 
 type CrossChainRoute = z.infer<typeof crossChainRouteSchema>
 
@@ -23,6 +26,7 @@ type CrossChainRouteOrder = 'CHEAPEST' | 'FASTEST'
 
 export type {
   CrossChainAction,
+  CrossChainEstimate,
   CrossChainRoute,
   CrossChainStep,
   CrossChainToolDetails,

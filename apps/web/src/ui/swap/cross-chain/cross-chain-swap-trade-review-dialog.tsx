@@ -25,6 +25,7 @@ import {
   DialogTitle,
   DialogType,
   Message,
+  SelectIcon,
 } from '@sushiswap/ui'
 import { Collapsible } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui'
@@ -51,8 +52,8 @@ import {
 } from 'src/lib/swap/cross-chain'
 import { warningSeverity } from 'src/lib/swap/warningSeverity'
 import { useApproved } from 'src/lib/wagmi/systems/Checker/Provider'
-import { Chain, ChainKey, chainName } from 'sushi/chain'
-import { Native } from 'sushi/currency'
+import { Chain, ChainKey } from 'sushi/chain'
+import { Amount, Native } from 'sushi/currency'
 import { formatNumber, formatUSD, shortenAddress } from 'sushi/format'
 import { ZERO } from 'sushi/math'
 import {
@@ -68,6 +69,7 @@ import {
   useTransaction,
 } from 'wagmi'
 import { useRefetchBalances } from '~evm/_common/ui/balance-provider/use-refetch-balances'
+import { usePrice } from '~evm/_common/ui/price-provider/price-provider/use-price'
 import {
   ConfirmationDialogContent,
   Divider,
@@ -76,7 +78,7 @@ import {
   failedState,
   finishedState,
 } from './cross-chain-swap-confirmation-dialog'
-import { CrossChainSwapTradeReviewRoute } from './cross-chain-swap-trade-review-route'
+import { CrossChainSwapRouteView } from './cross-chain-swap-route-view'
 import {
   UseSelectedCrossChainTradeRouteReturn,
   useDerivedStateCrossChainSwap,
@@ -86,6 +88,7 @@ import {
 export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
   children,
 }) => {
+  const [showMore, setShowMore] = useState<boolean>(false)
   const [slippagePercent] = useSlippageTolerance()
   const { address, chain } = useAccount()
   const {
@@ -105,11 +108,7 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
   const client1 = usePublicClient({ chainId: chainId1 })
   const { approved } = useApproved(APPROVE_TAG_XSWAP)
   const { data: selectedRoute } = useSelectedCrossChainTradeRoute()
-  const {
-    data: step,
-    isFetching,
-    isError: isStepQueryError,
-  } = useCrossChainTradeStep({
+  const { data: step, isError: isStepQueryError } = useCrossChainTradeStep({
     step: selectedRoute?.steps?.[0],
     query: {
       enabled: Boolean(approved && address),
@@ -468,9 +467,70 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
     }
   }, [receipt?.hash])
 
-  const feeData = useMemo(
-    () => (step ? getCrossChainFeesBreakdown([step]) : undefined),
-    [step],
+  const { executionDuration, feesBreakdown, totalFeesUSD, chainId0Fees } =
+    useMemo(() => {
+      if (!step)
+        return {
+          executionDuration: undefined,
+          feesBreakdown: undefined,
+          gasFeesUSD: undefined,
+          protocolFeesUSD: undefined,
+          totalFeesUSD: undefined,
+        }
+
+      const executionDurationSeconds = step.estimate.executionDuration
+      const executionDurationMinutes = Math.floor(executionDurationSeconds / 60)
+
+      const executionDuration =
+        executionDurationSeconds < 60
+          ? `${executionDurationSeconds} seconds`
+          : `${executionDurationMinutes} minutes`
+
+      const { feesBreakdown, totalFeesUSD } = getCrossChainFeesBreakdown([step])
+
+      const chainId0Fees = (
+        feesBreakdown.gas.get(step.tokenIn.chainId)?.amount ??
+        Amount.fromRawAmount(Native.onChain(step.tokenIn.chainId), 0)
+      )
+        .add(
+          feesBreakdown.protocol.get(step.tokenIn.chainId)?.amount ??
+            Amount.fromRawAmount(Native.onChain(step.tokenIn.chainId), 0),
+        )
+        .toExact()
+
+      return {
+        executionDuration,
+        feesBreakdown,
+        totalFeesUSD,
+        chainId0Fees,
+      }
+    }, [step])
+
+  const { data: price } = usePrice({
+    chainId: token1?.chainId,
+    address: token1?.wrapped.address,
+  })
+
+  const amountOutUSD = useMemo(
+    () =>
+      price && step?.amountOut
+        ? `${(
+            (price * Number(step.amountOut.quotient)) /
+            10 ** step.amountOut.currency.decimals
+          ).toFixed(2)}`
+        : undefined,
+    [step?.amountOut, price],
+  )
+
+  const amountOutMinUSD = useMemo(
+    () =>
+      price && step?.amountOutMin
+        ? `${(
+            (price * Number(step.amountOutMin.quotient)) /
+            10 ** step.amountOutMin.currency.decimals
+          ).toFixed(2)}`
+        : undefined,
+    [step?.amountOutMin, price],
   )
 
   return (
@@ -505,7 +565,7 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
             <DialogContent>
               <DialogHeader>
                 <DialogTitle>
-                  {isFetching ? (
+                  {!step?.amountOut ? (
                     <SkeletonText fontSize="xs" className="w-2/3" />
                   ) : (
                     `Receive ${step?.amountOut?.toSignificant(6)} ${
@@ -520,185 +580,284 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
               <div className="flex flex-col gap-4 overflow-x-hidden">
                 <List>
                   <List.Control>
-                    <List.KeyValue title="Network">
-                      <div className="justify-end w-full gap-1 truncate whitespace-nowrap">
-                        {chainName?.[chainId0]
-                          ?.replace('Mainnet Shard 0', '')
-                          ?.replace('Mainnet', '')
-                          ?.trim()}
-                        <br />
-                        <span className="text-gray-400 dark:text-slate-500">
-                          to
-                        </span>{' '}
-                        {chainName?.[chainId1]
-                          ?.replace('Mainnet Shard 0', '')
-                          ?.replace('Mainnet', '')
-                          ?.trim()}
-                      </div>
-                    </List.KeyValue>
-                    <List.KeyValue
-                      title="Price impact"
-                      subtitle="The impact your trade has on the market price of this pool."
-                    >
-                      {isFetching || !step?.priceImpact ? (
+                    <List.KeyValue title="Estimated arrival">
+                      {!executionDuration ? (
                         <SkeletonText
                           align="right"
                           fontSize="sm"
                           className="w-1/5"
                         />
                       ) : (
-                        `${
-                          step.priceImpact.lessThan(ZERO)
-                            ? '+'
-                            : step.priceImpact.greaterThan(ZERO)
-                              ? '-'
-                              : ''
-                        }${Math.abs(Number(step.priceImpact.toFixed(2)))}%`
+                        `${executionDuration}`
                       )}
                     </List.KeyValue>
-                    <List.KeyValue
-                      title="Est. received"
-                      subtitle="The estimated output amount."
-                    >
-                      {isFetching || !step?.amountOut ? (
-                        <SkeletonText
-                          align="right"
-                          fontSize="sm"
-                          className="w-1/2"
-                        />
-                      ) : (
-                        `${step.amountOut.toSignificant(6)} ${token1?.symbol}`
-                      )}
-                    </List.KeyValue>
-                    <List.KeyValue
-                      title={`Min. received after slippage (${slippagePercent.toPercentageString()})`}
-                      subtitle="The minimum amount you are guaranteed to receive."
-                    >
-                      {isFetching || !step?.amountOutMin ? (
-                        <SkeletonText
-                          align="right"
-                          fontSize="sm"
-                          className="w-1/2"
-                        />
-                      ) : (
-                        `${step.amountOutMin?.toSignificant(6)} ${
-                          token1?.symbol
-                        }`
-                      )}
-                    </List.KeyValue>
-                    {feeData && feeData.feesBreakdown.gas.size > 0 ? (
-                      <List.KeyValue
-                        title="Network fee"
-                        subtitle="The transaction fee charged by the origin blockchain."
-                      >
-                        <div className="flex flex-col gap-1">
-                          {feeData.feesBreakdown.gas.get(chainId0) ? (
-                            <span>
-                              {formatNumber(
-                                feeData.feesBreakdown.gas
-                                  .get(chainId0)!
-                                  .amount.toExact(),
-                              )}{' '}
-                              {
-                                feeData.feesBreakdown.gas.get(chainId0)!.amount
-                                  .currency.symbol
-                              }{' '}
-                              <span className="text-muted-foreground">
-                                (
-                                {formatUSD(
-                                  feeData.feesBreakdown.gas.get(chainId0)!
-                                    .amountUSD,
-                                )}
-                                )
-                              </span>
-                            </span>
-                          ) : null}
-                          {feeData.feesBreakdown.gas.get(chainId1) ? (
-                            <span>
-                              {formatNumber(
-                                feeData.feesBreakdown.gas
-                                  .get(chainId1)!
-                                  .amount.toExact(),
-                              )}{' '}
-                              {
-                                feeData.feesBreakdown.gas.get(chainId1)!.amount
-                                  .currency.symbol
-                              }{' '}
-                              <span className="text-muted-foreground">
-                                (
-                                {formatUSD(
-                                  feeData.feesBreakdown.gas.get(chainId1)!
-                                    .amountUSD,
-                                )}
-                              </span>
-                              )
-                            </span>
-                          ) : null}
-                        </div>
-                      </List.KeyValue>
-                    ) : null}
-                    {feeData && feeData.feesBreakdown.protocol.size > 0 ? (
-                      <List.KeyValue
-                        title="Protocol fee"
-                        subtitle="The fee  charged by the bridge provider."
-                      >
-                        {feeData ? (
-                          <div className="flex flex-col gap-1">
-                            {feeData.feesBreakdown.protocol.get(chainId0) ? (
-                              <span>
-                                {formatNumber(
-                                  feeData.feesBreakdown.protocol
-                                    .get(chainId0)!
-                                    .amount.toExact(),
-                                )}{' '}
-                                {
-                                  feeData.feesBreakdown.protocol.get(chainId0)!
-                                    .amount.currency.symbol
-                                }{' '}
-                                <span className="text-muted-foreground">
-                                  (
-                                  {formatUSD(
-                                    feeData.feesBreakdown.protocol.get(
-                                      chainId0,
-                                    )!.amountUSD,
-                                  )}
+                    {showMore ? (
+                      <>
+                        <List.KeyValue
+                          title="Price impact"
+                          subtitle="The impact your trade has on the market price of this pool."
+                        >
+                          {!step?.priceImpact ? (
+                            <SkeletonText
+                              align="right"
+                              fontSize="sm"
+                              className="w-1/5"
+                            />
+                          ) : (
+                            `${
+                              step.priceImpact.lessThan(ZERO)
+                                ? '+'
+                                : step.priceImpact.greaterThan(ZERO)
+                                  ? '-'
+                                  : ''
+                            }${Math.abs(Number(step.priceImpact.toFixed(2)))}%`
+                          )}
+                        </List.KeyValue>
+
+                        {feesBreakdown && feesBreakdown.gas.size > 0 ? (
+                          <List.KeyValue
+                            title="Network fee"
+                            subtitle="The transaction fee charged by the origin blockchain."
+                          >
+                            <div className="flex flex-col gap-1">
+                              {feesBreakdown.gas.get(chainId0) ? (
+                                <span>
+                                  {formatNumber(
+                                    feesBreakdown.gas
+                                      .get(chainId0)!
+                                      .amount.toExact(),
+                                  )}{' '}
+                                  {
+                                    feesBreakdown.gas.get(chainId0)!.amount
+                                      .currency.symbol
+                                  }{' '}
+                                  <span className="text-muted-foreground">
+                                    (
+                                    {formatUSD(
+                                      feesBreakdown.gas.get(chainId0)!
+                                        .amountUSD,
+                                    )}
+                                    )
+                                  </span>
+                                </span>
+                              ) : null}
+                              {feesBreakdown.gas.get(chainId1) ? (
+                                <span>
+                                  {formatNumber(
+                                    feesBreakdown.gas
+                                      .get(chainId1)!
+                                      .amount.toExact(),
+                                  )}{' '}
+                                  {
+                                    feesBreakdown.gas.get(chainId1)!.amount
+                                      .currency.symbol
+                                  }{' '}
+                                  <span className="text-muted-foreground">
+                                    (
+                                    {formatUSD(
+                                      feesBreakdown.gas.get(chainId1)!
+                                        .amountUSD,
+                                    )}
+                                  </span>
                                   )
                                 </span>
-                              </span>
-                            ) : null}
-                            {feeData.feesBreakdown.protocol.get(chainId1) ? (
-                              <span>
-                                {formatNumber(
-                                  feeData.feesBreakdown.protocol
-                                    .get(chainId1)!
-                                    .amount.toExact(),
-                                )}{' '}
-                                {
-                                  feeData.feesBreakdown.protocol.get(chainId1)!
-                                    .amount.currency.symbol
-                                }{' '}
-                                <span className="text-muted-foreground">
-                                  (
-                                  {formatUSD(
-                                    feeData.feesBreakdown.protocol.get(
-                                      chainId1,
-                                    )!.amountUSD,
-                                  )}
-                                  )
-                                </span>
-                              </span>
-                            ) : null}
-                          </div>
+                              ) : null}
+                            </div>
+                          </List.KeyValue>
                         ) : null}
-                      </List.KeyValue>
-                    ) : null}
+                        {feesBreakdown && feesBreakdown.protocol.size > 0 ? (
+                          <List.KeyValue
+                            title="Protocol fee"
+                            subtitle="The fee  charged by the bridge provider."
+                          >
+                            <div className="flex flex-col gap-1">
+                              {feesBreakdown.protocol.get(chainId0) ? (
+                                <span>
+                                  {formatNumber(
+                                    feesBreakdown.protocol
+                                      .get(chainId0)!
+                                      .amount.toExact(),
+                                  )}{' '}
+                                  {
+                                    feesBreakdown.protocol.get(chainId0)!.amount
+                                      .currency.symbol
+                                  }{' '}
+                                  <span className="text-muted-foreground">
+                                    (
+                                    {formatUSD(
+                                      feesBreakdown.protocol.get(chainId0)!
+                                        .amountUSD,
+                                    )}
+                                    )
+                                  </span>
+                                </span>
+                              ) : null}
+                              {feesBreakdown.protocol.get(chainId1) ? (
+                                <span>
+                                  {formatNumber(
+                                    feesBreakdown.protocol
+                                      .get(chainId1)!
+                                      .amount.toExact(),
+                                  )}{' '}
+                                  {
+                                    feesBreakdown.protocol.get(chainId1)!.amount
+                                      .currency.symbol
+                                  }{' '}
+                                  <span className="text-muted-foreground">
+                                    (
+                                    {formatUSD(
+                                      feesBreakdown.protocol.get(chainId1)!
+                                        .amountUSD,
+                                    )}
+                                    )
+                                  </span>
+                                </span>
+                              ) : null}
+                            </div>
+                          </List.KeyValue>
+                        ) : null}
+                        <List.KeyValue
+                          title="Est. received"
+                          subtitle="The estimated output amount."
+                        >
+                          <div className="flex flex-col gap-0.5">
+                            {!step?.amountOut ? (
+                              <SkeletonText
+                                align="right"
+                                fontSize="sm"
+                                className="w-1/2"
+                              />
+                            ) : (
+                              <span className="text-sm font-medium">{`${step.amountOut.toSignificant(
+                                6,
+                              )} ${token1?.symbol}`}</span>
+                            )}
+                            {!amountOutUSD ? (
+                              <SkeletonText
+                                align="right"
+                                fontSize="xs"
+                                className="w-1/4"
+                              />
+                            ) : (
+                              <span className="text-xs text-muted-foreground">
+                                {formatUSD(amountOutUSD)}
+                              </span>
+                            )}
+                          </div>
+                        </List.KeyValue>
+                        <List.KeyValue
+                          title={`Min. received after slippage (${slippagePercent.toPercentageString()})`}
+                          subtitle="The minimum amount you are guaranteed to receive."
+                        >
+                          <div className="flex flex-col gap-0.5">
+                            {!step?.amountOutMin ? (
+                              <SkeletonText
+                                align="right"
+                                fontSize="sm"
+                                className="w-1/2"
+                              />
+                            ) : (
+                              <span className="text-sm font-medium">{`${step.amountOutMin.toSignificant(
+                                6,
+                              )} ${token1?.symbol}`}</span>
+                            )}
+                            {!amountOutMinUSD ? (
+                              <SkeletonText
+                                align="right"
+                                fontSize="xs"
+                                className="w-1/4"
+                              />
+                            ) : (
+                              <span className="text-xs text-muted-foreground">
+                                {formatUSD(amountOutMinUSD)}
+                              </span>
+                            )}
+                          </div>
+                        </List.KeyValue>
+                      </>
+                    ) : (
+                      <>
+                        <List.KeyValue title="Total fee">
+                          {!totalFeesUSD ? (
+                            <SkeletonText
+                              align="right"
+                              fontSize="sm"
+                              className="w-1/5"
+                            />
+                          ) : (
+                            <div className="flex flex-col gap-1">
+                              <span>
+                                {formatNumber(chainId0Fees)}{' '}
+                                {
+                                  feesBreakdown.gas.get(chainId0)!.amount
+                                    .currency.symbol
+                                }{' '}
+                                <span className="text-muted-foreground">
+                                  ({formatUSD(totalFeesUSD)})
+                                </span>
+                              </span>
+                            </div>
+                          )}
+                        </List.KeyValue>
+                        <List.KeyValue
+                          title="Est. received"
+                          subtitle="The estimated output amount."
+                        >
+                          <div className="flex flex-col gap-0.5">
+                            {!step?.amountOut ? (
+                              <SkeletonText
+                                align="right"
+                                fontSize="sm"
+                                className="w-1/2"
+                              />
+                            ) : (
+                              <span className="text-sm font-medium">{`${step.amountOut.toSignificant(
+                                6,
+                              )} ${token1?.symbol}`}</span>
+                            )}
+                            {!amountOutUSD ? (
+                              <SkeletonText
+                                align="right"
+                                fontSize="xs"
+                                className="w-1/4"
+                              />
+                            ) : (
+                              <span className="text-xs text-muted-foreground">
+                                {formatUSD(amountOutUSD)}
+                              </span>
+                            )}
+                          </div>
+                        </List.KeyValue>
+                      </>
+                    )}
+
+                    <div className="p-3">
+                      <Button
+                        size="xs"
+                        fullWidth
+                        onClick={() => setShowMore(!showMore)}
+                        variant="ghost"
+                      >
+                        {showMore ? (
+                          <>
+                            <SelectIcon className="rotate-180" />
+                          </>
+                        ) : (
+                          <>
+                            <SelectIcon />
+                          </>
+                        )}
+                      </Button>
+                    </div>
                   </List.Control>
                 </List>
-                <List className="!pt-2">
-                  <List.Control>
-                    <CrossChainSwapTradeReviewRoute />
-                  </List.Control>
-                </List>
+                {step && (
+                  <List className="!pt-2">
+                    <List.Control className="!p-5">
+                      <CrossChainSwapRouteView step={step} />
+                    </List.Control>
+                  </List>
+                )}
                 {recipient && (
                   <List className="!pt-2">
                     <List.Control>

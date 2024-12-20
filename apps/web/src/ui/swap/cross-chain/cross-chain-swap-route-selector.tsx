@@ -14,13 +14,13 @@ import {
   cloudinaryFetchLoader,
 } from '@sushiswap/ui'
 import Image from 'next/image'
-import { CrossChainRouteCard } from './cross-chain-route-card'
+import { CrossChainSwapRouteCard } from './cross-chain-swap-route-card'
 import {
   useCrossChainTradeRoutes,
   useDerivedStateCrossChainSwap,
 } from './derivedstate-cross-chain-swap-provider'
 
-export const CrossChainRouteSelector = () => {
+export const CrossChainSwapRouteSelector = () => {
   const { data: routes, status } = useCrossChainTradeRoutes()
 
   const {
@@ -66,7 +66,7 @@ export const CrossChainRouteSelector = () => {
                 </>
               ) : routes?.length ? ( */}
             {routes.map((route) => (
-              <CrossChainRouteCard
+              <CrossChainSwapRouteCard
                 key={`route-${route.id}`}
                 route={route}
                 order={routeOrder}
