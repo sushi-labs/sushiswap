@@ -1,20 +1,31 @@
 'use client'
 
+import { ChevronRightIcon } from '@heroicons/react/24/outline'
+import { useBreakpoint, useIsMounted, useMediaQuery } from '@sushiswap/hooks'
 import {
   Card,
   CardContent,
   CardFooter,
   CardHeader,
   CardTitle,
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  ScrollArea,
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
+  SkeletonText,
   cloudinaryFetchLoader,
 } from '@sushiswap/ui'
 import Image from 'next/image'
+import { useSidebar } from 'src/ui/sidebar'
 import { CrossChainSwapRouteCard } from './cross-chain-swap-route-card'
+import { CrossChainSwapRouteMobileCard } from './cross-chain-swap-route-mobile-card'
 import {
   useCrossChainTradeRoutes,
   useDerivedStateCrossChainSwap,
@@ -22,16 +33,25 @@ import {
 
 export const CrossChainSwapRouteSelector = () => {
   const { data: routes, status } = useCrossChainTradeRoutes()
+  const { isOpen: isSidebarOpen } = useSidebar()
+  const isMounted = useIsMounted()
 
   const {
     state: { routeOrder, selectedBridge },
     mutate: { setRouteOrder, setSelectedBridge },
   } = useDerivedStateCrossChainSwap()
 
-  return (
+  const isLg = useMediaQuery({
+    query: `(min-width: 1056px)`,
+  })
+  const { isXl } = useBreakpoint('xl')
+
+  const showDesktopSelector = isSidebarOpen ? isXl : isLg
+
+  return !isMounted ? null : showDesktopSelector ? (
     <Card
       variant="outline"
-      className="bg-gray-50 dark:bg-slate-800 overflow-hidden flex flex-col max-h-[600px]"
+      className="bg-gray-50 dark:bg-slate-800 overflow-hidden flex flex-col max-h-[600px] sm:mt-10 mt-2"
     >
       {status === 'success' && routes?.length > 0 ? (
         <>
@@ -55,16 +75,6 @@ export const CrossChainSwapRouteSelector = () => {
           </CardHeader>
 
           <CardContent className="h-full overflow-y-auto">
-            {/* {status === 'loading' ? (
-                <>
-                  <CrossChainRouteCardLoading isSelected={true} />
-                  {Array.from({ length: 3 }).map((_, index) => (
-                    <CrossChainRouteCardLoading
-                      key={`loading-route-${index}`}
-                    />
-                  ))}
-                </>
-              ) : routes?.length ? ( */}
             {routes.map((route) => (
               <CrossChainSwapRouteCard
                 key={`route-${route.id}`}
@@ -74,7 +84,6 @@ export const CrossChainSwapRouteSelector = () => {
                 onSelect={() => setSelectedBridge(route.steps[0].tool)}
               />
             ))}
-            {/* ) : null} */}
           </CardContent>
         </>
       ) : status === 'error' || routes?.length === 0 ? (
@@ -111,6 +120,7 @@ export const CrossChainSwapRouteSelector = () => {
                   alt="sushi"
                   width={95}
                   height={80}
+                  quality={100}
                 />
                 <Image
                   loader={cloudinaryFetchLoader}
@@ -118,6 +128,7 @@ export const CrossChainSwapRouteSelector = () => {
                   alt="sushi"
                   width={95}
                   height={80}
+                  quality={100}
                 />
                 <Image
                   loader={cloudinaryFetchLoader}
@@ -125,6 +136,7 @@ export const CrossChainSwapRouteSelector = () => {
                   alt="sushi"
                   width={95}
                   height={80}
+                  quality={100}
                 />
                 <Image
                   loader={cloudinaryFetchLoader}
@@ -132,6 +144,7 @@ export const CrossChainSwapRouteSelector = () => {
                   alt="sushi"
                   width={95}
                   height={80}
+                  quality={100}
                 />
                 <Image
                   loader={cloudinaryFetchLoader}
@@ -139,6 +152,7 @@ export const CrossChainSwapRouteSelector = () => {
                   alt="sushi"
                   width={95}
                   height={80}
+                  quality={100}
                 />
                 <Image
                   loader={cloudinaryFetchLoader}
@@ -146,6 +160,7 @@ export const CrossChainSwapRouteSelector = () => {
                   alt="sushi"
                   width={95}
                   height={80}
+                  quality={100}
                 />
                 <Image
                   loader={cloudinaryFetchLoader}
@@ -153,6 +168,7 @@ export const CrossChainSwapRouteSelector = () => {
                   alt="sushi"
                   width={95}
                   height={80}
+                  quality={100}
                 />
               </div>
             </div>
@@ -160,5 +176,80 @@ export const CrossChainSwapRouteSelector = () => {
         </>
       )}
     </Card>
+  ) : (
+    <Dialog>
+      <DialogContent className="!gap-5 !pb-7" hideClose>
+        <DialogHeader className="!flex-row !space-y-[unset] justify-between">
+          <DialogTitle className="!text-xl py-1">Select A Route</DialogTitle>
+          <div className="shrink">
+            <Select value={routeOrder} onValueChange={setRouteOrder}>
+              <SelectTrigger className="!min-h-[36px] !h-[36px] !border border-black/[0.08] border-dashed">
+                <span className="text-sm">
+                  Sort By: <SelectValue />
+                </span>
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value={'CHEAPEST'}>Best Return</SelectItem>
+                <SelectItem value={'FASTEST'}>Fastest</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        </DialogHeader>
+
+        <ScrollArea>
+          <div className="flex flex-col gap-6 max-h-[calc(50vh)]">
+            {routes?.map((route) => (
+              <CrossChainSwapRouteCard
+                key={`route-${route.id}`}
+                route={route}
+                order={routeOrder}
+                isSelected={route.steps[0].tool === selectedBridge}
+                onSelect={() => setSelectedBridge(route.steps[0].tool)}
+              />
+            ))}
+          </div>
+        </ScrollArea>
+      </DialogContent>
+
+      <Card
+        variant="outline"
+        className="w-full bg-gray-50 dark:bg-slate-800 overflow-hidden flex flex-col"
+      >
+        <CardHeader className="!px-4 !py-3">
+          <div className="flex items-center justify-between">
+            <CardTitle className="!text-sm !leading-7 !font-medium">
+              Selected Route
+            </CardTitle>
+            {routes && routes.length > 0 ? (
+              <DialogTrigger>
+                <span className="flex items-center text-xs leading-7 font-semibold text-blue hover:text-blue-700">
+                  View All ({routes?.length})
+                  <ChevronRightIcon strokeWidth={2} width={14} height={14} />
+                </span>
+              </DialogTrigger>
+            ) : status === 'pending' ? (
+              <span className="w-22">
+                <SkeletonText fontSize="xs" />
+              </span>
+            ) : null}
+          </div>
+        </CardHeader>
+        <CardContent>
+          {status === 'error' || routes?.length === 0 ? (
+            <div className="flex items-center justify-center text-muted-foreground">
+              No Routes Found.
+            </div>
+          ) : (
+            <CrossChainSwapRouteMobileCard
+              route={routes?.find(
+                (route) => route.steps[0].tool === selectedBridge,
+              )}
+              order={routeOrder}
+              isSelected={true}
+            />
+          )}
+        </CardContent>
+      </Card>
+    </Dialog>
   )
 }

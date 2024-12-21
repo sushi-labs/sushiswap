@@ -1,3 +1,4 @@
+import { Container } from '@sushiswap/ui'
 import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { XSWAP_SUPPORTED_CHAIN_IDS, isXSwapSupportedChainId } from 'src/config'
@@ -30,13 +31,13 @@ export default function CrossChainSwapLayout({
         unsupportedNetworkHref="/ethereum/cross-chain-swap"
         shiftContent
       >
-        <main className="lg:p-4 mt-16 mb-[86px] flex gap-4 flex-wrap justify-center min-h-[calc(100vh-206px)]">
+        <main className="lg:p-4 mt-16 mb-[86px] flex gap-y-4 flex-wrap justify-center min-h-[calc(100vh-206px)]">
           {children}
-          <div className="w-[480px]">
+          <Container maxWidth="lg" className={'px-4 !mx-[unset]'}>
             <div className="flex-1 h-full flex items-center">
               <CrossChainSwapRouteSelector />
             </div>
-          </div>
+          </Container>
         </main>
       </SidebarContainer>
     </Providers>
