@@ -1,17 +1,14 @@
 'use client'
 
-import { useMemo } from 'react'
-import { PREFERRED_CHAINID_ORDER } from 'src/config'
+import { XSWAP_SUPPORTED_CHAIN_IDS, getSortedChainIds } from 'src/config'
 import { Web3Input } from 'src/lib/wagmi/components/web3-input'
-import { ChainId } from 'sushi/chain'
+import { isWNativeSupported } from 'sushi/config'
 import {
-  SUSHIXSWAP_2_SUPPORTED_CHAIN_IDS,
-  isWNativeSupported,
-} from 'sushi/config'
-import {
-  useCrossChainSwapTrade,
   useDerivedStateCrossChainSwap,
+  useSelectedCrossChainTradeRoute,
 } from './derivedstate-cross-chain-swap-provider'
+
+const networks = getSortedChainIds(XSWAP_SUPPORTED_CHAIN_IDS)
 
 export const CrossChainSwapToken1Input = () => {
   const {
@@ -21,25 +18,10 @@ export const CrossChainSwapToken1Input = () => {
   } = useDerivedStateCrossChainSwap()
 
   const {
-    isInitialLoading: isLoading,
+    isLoading,
     isFetching,
-    data: trade,
-  } = useCrossChainSwapTrade()
-
-  const networks = useMemo(
-    () =>
-      Array.from(
-        new Set([
-          ...(PREFERRED_CHAINID_ORDER.filter((el) =>
-            SUSHIXSWAP_2_SUPPORTED_CHAIN_IDS.includes(
-              el as (typeof SUSHIXSWAP_2_SUPPORTED_CHAIN_IDS)[number],
-            ),
-          ) as ChainId[]),
-          ...SUSHIXSWAP_2_SUPPORTED_CHAIN_IDS,
-        ]),
-      ),
-    [],
-  )
+    data: route,
+  } = useSelectedCrossChainTradeRoute()
 
   return (
     <Web3Input.Currency
@@ -47,7 +29,7 @@ export const CrossChainSwapToken1Input = () => {
       type="OUTPUT"
       disabled
       className="border border-accent p-3 bg-white dark:bg-slate-800 rounded-xl"
-      value={trade?.amountOut?.toSignificant() ?? ''}
+      value={route?.amountOut?.toSignificant() ?? ''}
       chainId={chainId1}
       onSelect={setToken1}
       currency={token1}
