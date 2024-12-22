@@ -2,7 +2,6 @@
 
 import { FC, ReactNode, createContext, useContext, useMemo } from 'react'
 import { useBarData } from 'src/lib/stake'
-import { useWatchByInterval } from 'src/lib/wagmi/hooks/watch/useWatchByInterval'
 import { ChainId } from 'sushi/chain'
 import {
   Amount,
@@ -64,11 +63,9 @@ export const SushiBarProvider: FC<{
           Amount.fromRawAmount(XSUSHI[ChainId.ETHEREUM], data[1]),
         ] as const
       },
-      staleTime: 30000,
+      refetchInterval: 30000,
     },
   })
-
-  useWatchByInterval({ key: balanceAndSupplyQueryKey, interval: 30000 })
 
   return (
     <Context.Provider
