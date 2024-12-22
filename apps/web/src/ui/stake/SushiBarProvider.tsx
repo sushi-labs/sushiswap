@@ -38,7 +38,6 @@ export const SushiBarProvider: FC<{
     data: balanceAndSupplyData,
     isLoading: isLoadingSushiBalanceData,
     isError: isErrorSushiBalanceData,
-    queryKey: balanceAndSupplyQueryKey,
   } = useReadContracts({
     allowFailure: false,
     contracts: [
