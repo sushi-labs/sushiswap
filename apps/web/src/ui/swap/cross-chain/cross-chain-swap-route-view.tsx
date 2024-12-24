@@ -162,8 +162,13 @@ const SwapAction: FC<{
         />{' '}
         <span className="font-semibold leading-[17px]">{chain}</span>
       </span>
-      <span className="text-sm leading-4 underline underline-offset-4 decoration-dotted">
-        {isWrap ? (
+      <span className="text-sm leading-4 decoration-dotted">
+        {label === 'To' ? (
+          <>
+            Receive {formatNumber(toAmount.toExact())}{' '}
+            {toAmount.currency.symbol}
+          </>
+        ) : isWrap ? (
           <>Wrap {toAmount.currency.symbol}</>
         ) : isUnwrap ? (
           <>Unwrap {fromAmount.currency.symbol}</>

@@ -121,7 +121,7 @@ export const CrossChainSwapRouteCard: FC<CrossChainSwapRouteCardProps> = ({
           <span>
             {route.tags?.includes(order) ? (
               <div className="flex justify-center items-center rounded-full px-2 bg-gradient-to-r from-blue/20 to-pink/20">
-                <span className="text-[10px] font-medium leading-5 saturate-200 bg-gradient-to-r from-blue to-pink bg-clip-text text-transparent">
+                <span className="text-[10px] font-medium leading-5 saturate-200 bg-gradient-to-r from-blue to-pink bg-clip-text text-transparent whitespace-nowrap">
                   {order === 'CHEAPEST' ? 'Best Return' : 'Fastest'}
                 </span>
               </div>
@@ -129,7 +129,7 @@ export const CrossChainSwapRouteCard: FC<CrossChainSwapRouteCardProps> = ({
                 order === 'FASTEST' ? 'CHEAPEST' : 'FASTEST',
               ) ? (
               <div className="flex justify-center items-center rounded-full px-2 bg-blue/20">
-                <span className="text-[10px] font-medium leading-5 text-blue">
+                <span className="text-[10px] font-medium leading-5 text-blue whitespace-nowrap">
                   {order === 'FASTEST' ? 'Best Return' : 'Fastest'}
                 </span>
               </div>

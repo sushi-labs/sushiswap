@@ -134,7 +134,7 @@ export const CrossChainSwapRouteMobileCard: FC<
             )}
             {route?.tags?.includes(order) ? (
               <div className="flex justify-center items-center rounded-full px-2 bg-gradient-to-r from-blue/20 to-pink/20">
-                <span className="text-[10px] font-medium leading-5 saturate-200 bg-gradient-to-r from-blue to-pink bg-clip-text text-transparent">
+                <span className="text-[10px] font-medium leading-5 saturate-200 bg-gradient-to-r from-blue to-pink bg-clip-text text-transparent whitespace-nowrap">
                   {order === 'CHEAPEST' ? 'Best Return' : 'Fastest'}
                 </span>
               </div>
@@ -142,7 +142,7 @@ export const CrossChainSwapRouteMobileCard: FC<
                 order === 'FASTEST' ? 'CHEAPEST' : 'FASTEST',
               ) ? (
               <div className="flex justify-center items-center rounded-full px-2 bg-blue/20">
-                <span className="text-[10px] font-medium leading-5 text-blue">
+                <span className="text-[10px] font-medium leading-5 text-blue whitespace-nowrap">
                   {order === 'FASTEST' ? 'Best Return' : 'Fastest'}
                 </span>
               </div>
@@ -180,82 +180,6 @@ export const CrossChainSwapRouteMobileCard: FC<
           </div>
         </div>
       </div>
-      {/* <CardHeader>
-        <div className="flex justify-between">
-          <div className="flex flex-col space-y-1.5">
-            <CardTitle>
-              {amountOut && token1 ? (
-                `${amountOut?.toSignificant(6)} ${token1?.symbol}`
-              ) : (
-                <div className="h-[18px] w-32">
-                  <SkeletonText />
-                </div>
-              )}
-            </CardTitle>
-            <CardDescription>{`≈ ${amountOutUSD} after fees`}</CardDescription>
-          </div>
-          <span>
-            {route.tags?.includes(order) ? (
-              <div className="flex justify-center items-center rounded-full px-2 bg-gradient-to-r from-blue/20 to-pink/20">
-                <span className="text-[10px] font-medium leading-5 saturate-200 bg-gradient-to-r from-blue to-pink bg-clip-text text-transparent">
-                  {order === 'CHEAPEST' ? 'Best Return' : 'Fastest'}
-                </span>
-              </div>
-            ) : route.tags?.includes(
-                order === 'FASTEST' ? 'CHEAPEST' : 'FASTEST',
-              ) ? (
-              <div className="flex justify-center items-center rounded-full px-2 bg-blue/20">
-                <span className="text-[10px] font-medium leading-5 text-blue">
-                  {order === 'FASTEST' ? 'Best Return' : 'Fastest'}
-                </span>
-              </div>
-            ) : null}
-          </span>
-        </div>
-      </CardHeader>
-      {isSelected && step.includedSteps.length > 1 ? (
-        <>
-          <Separator className="mb-5" />
-          <CardContent className="!p-5 !pt-0">
-            <CrossChainSwapRouteView step={step} />
-          </CardContent>
-          <Separator className="mb-5" />
-        </>
-      ) : null}
-      <CardFooter className="overflow-hidden">
-        <div className="flex justify-between items-center w-full text-sm font-semibold overflow-hidden gap-4">
-          <div className="flex-1 flex gap-4 text-muted-foreground">
-            <span className="inline-flex items-center gap-1.5 whitespace-nowrap">
-              <ClockIcon className="w-4 h-4" />
-              {executionDuration}
-            </span>
-            <CrossChainSwapFeesHoverCard
-              feesBreakdown={feesBreakdown}
-              gasFeesUSD={gasFeesUSD}
-              protocolFeesUSD={protocolFeesUSD}
-              chainId0={chainId0}
-              chainId1={chainId1}
-            >
-              <span className="inline-flex items-center gap-1.5 underline decoration-dotted underline-offset-4">
-                <GasIcon className="w-3.5 h-3.5" />
-                {formatUSD(totalFeesUSD)}
-              </span>
-            </CrossChainSwapFeesHoverCard>
-          </div>
-          <span className="inline-flex items-center gap-1.5">
-            <img
-              src={step.toolDetails.logoURI}
-              className="rounded-full"
-              width={20}
-              height={20}
-              alt={step.toolDetails.name}
-            />
-            <span className="text-ellipsis whitespace-nowrap">
-              {step.toolDetails.name}
-            </span>
-          </span>
-        </div>
-      </CardFooter> */}
     </Card>
   )
 }
