@@ -1,4 +1,4 @@
-import { ReactNode } from 'react'
+import { type JSX, ReactNode } from 'react'
 import { ChainId } from 'sushi/chain'
 import { useEnsName } from 'wagmi'
 import { PublicWagmiConfig } from '../../config/public'

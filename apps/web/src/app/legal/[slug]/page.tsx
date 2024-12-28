@@ -13,10 +13,11 @@ export async function generateStaticParams() {
 }
 
 type Props = {
-  params: { slug: keyof typeof legalPages }
+  params: Promise<{ slug: keyof typeof legalPages }>
 }
 
-export async function generateMetadata({ params }: Props) {
+export async function generateMetadata(props: Props) {
+  const params = await props.params
   const page = legalPages[params.slug]
 
   return {
@@ -24,7 +25,8 @@ export async function generateMetadata({ params }: Props) {
   }
 }
 
-export default async function Page({ params }: Props) {
+export default async function Page(props: Props) {
+  const params = await props.params
   const page = legalPages[params.slug]
 
   const {

@@ -46,7 +46,7 @@ export const Default = {
 } satisfies Story
 
 export const PopoverWithMenu = {
-  storyName: 'Popover example with command',
+  name: 'Popover example with command',
   args: {
     children: 'Popover',
   },

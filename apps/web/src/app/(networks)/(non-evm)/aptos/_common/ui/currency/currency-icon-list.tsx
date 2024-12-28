@@ -1,5 +1,13 @@
 import { classNames } from '@sushiswap/ui'
-import { Children, FC, ReactNode, cloneElement, isValidElement } from 'react'
+import {
+  Children,
+  ComponentProps,
+  FC,
+  ReactNode,
+  cloneElement,
+  isValidElement,
+} from 'react'
+import { CurrencyIcon } from './currency-icon'
 
 export interface CurrencyIconList {
   children: ReactNode
@@ -16,7 +24,7 @@ export const CurrencyIconList: FC<CurrencyIconList> = ({
     <div className="flex items-center">
       <div className={classNames('inline-flex')}>
         {Children.map(children, (child, index) => {
-          if (isValidElement(child)) {
+          if (isValidElement<ComponentProps<typeof CurrencyIcon>>(child)) {
             return (
               <div
                 className="rounded-full inline-flex z-10 border-2 ring-gray-50 dark:ring-slate-950"

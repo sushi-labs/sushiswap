@@ -37,7 +37,7 @@ interface ConcentratedLiquidityCollectButton {
       ReturnType<typeof useSendTransaction>,
       'sendTransaction' | 'sendTransactionAsync'
     > & { send: (() => Promise<void>) | undefined },
-  ): ReactElement
+  ): ReactElement<any>
 }
 
 export const ConcentratedLiquidityCollectButton: FC<

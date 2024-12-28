@@ -75,7 +75,7 @@ export function DifficultyFilterDropdownClient({
             {value || 'Select difficulty'}
           </span>
         </SelectTrigger>
-        <SelectContent placeholder="Select Difficulty">
+        <SelectContent>
           {difficulties.map((difficulty) => (
             <SelectItem
               key={difficulty.slug}

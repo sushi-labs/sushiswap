@@ -136,7 +136,7 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
   const client1 = usePublicClient({ chainId: chainId1 })
   const { data: trade, isFetching } = useCrossChainSwapTrade()
   const { approved } = useApproved(APPROVE_TAG_XSWAP)
-  const groupTs = useRef<number>()
+  const groupTs = useRef<number>(undefined)
   const { refetchChain: refetchBalances } = useRefetchBalances()
 
   const [stepStates, setStepStates] = useState<{

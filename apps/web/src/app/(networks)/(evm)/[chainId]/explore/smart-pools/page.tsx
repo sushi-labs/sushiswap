@@ -33,11 +33,10 @@ const _SmartPoolsTable: FC<{ chainId: SmartPoolChainId }> = async ({
   return <SmartPoolsTable smartPools={smartPools} />
 }
 
-export default async function SmartPoolsPage({
-  params,
-}: {
-  params: { chainId: string }
+export default async function SmartPoolsPage(props: {
+  params: Promise<{ chainId: string }>
 }) {
+  const params = await props.params
   const chainId = +params.chainId as ChainId
 
   if (!isSmartPoolChainId(chainId)) {

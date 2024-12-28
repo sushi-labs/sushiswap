@@ -6,13 +6,14 @@ import { CategoryLayout } from './components/category-layout'
 
 export const revalidate = 900
 
-export default async function Layout({
-  children,
-  params,
-}: {
+export default async function Layout(props: {
   children: React.ReactNode
-  params: { 'category-slug': string }
+  params: Promise<{ 'category-slug': string }>
 }) {
+  const params = await props.params
+
+  const { children } = props
+
   let category
 
   try {

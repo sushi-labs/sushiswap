@@ -34,7 +34,7 @@ import { TokenListItem } from './token-selector-list-item'
 type RowCallback = (row: {
   index: number
   style: CSSProperties
-}) => ReactElement
+}) => ReactElement<any>
 
 interface PropType {
   id: string

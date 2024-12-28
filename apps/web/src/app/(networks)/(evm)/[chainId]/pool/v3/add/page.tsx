@@ -5,7 +5,7 @@ import {
   isSmartPoolChainId,
 } from '@sushiswap/graph-client/data-api'
 import { useRouter } from 'next/navigation'
-import React, { FC, useEffect, useMemo, useState } from 'react'
+import React, { FC, useEffect, useMemo, useState, use } from 'react'
 import { useVaults } from 'src/lib/hooks'
 import { useConcentratedPositionInfo } from 'src/lib/wagmi/hooks/positions/hooks/useConcentratedPositionInfo'
 import { ConcentratedLiquidityProvider } from 'src/ui/pool/ConcentratedLiquidityProvider'
@@ -35,7 +35,8 @@ import { SWRConfig } from 'swr'
 import { Address } from 'viem'
 import { useAccount } from 'wagmi'
 
-export default function Page({ params }: { params: { chainId: string } }) {
+export default function Page(props: { params: Promise<{ chainId: string }> }) {
+  const params = use(props.params)
   return (
     <ConcentratedLiquidityURLStateProvider
       chainId={+params.chainId as SushiSwapV3ChainId}

@@ -12,14 +12,15 @@ import { ArticleFooter } from './components/article-footer'
 import { ArticleLinks } from './components/article-links/article-links'
 
 interface Props {
-  params: {
+  params: Promise<{
     'article-slug': string
-  }
+  }>
 }
 
 export const revalidate = 3600
 
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
+export async function generateMetadata(props: Props): Promise<Metadata> {
+  const params = await props.params
   const {
     articles: [article],
   } = await getBlogArticles({
@@ -65,7 +66,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 }
 
-export default async function Page({ params }: Props) {
+export default async function Page(props: Props) {
+  const params = await props.params
   let article
   let moreArticles
   let body

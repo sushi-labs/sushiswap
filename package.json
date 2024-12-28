@@ -39,8 +39,8 @@
     "overrides": {
       "graphql": "16.6.0",
       "typescript": "5.7.2",
-      "@types/react": "18.2.14",
-      "@types/react-dom": "18.2.6"
+      "@types/react": "19.0.1",
+      "@types/react-dom": "19.0.2"
     },
     "patchedDependencies": {
       "@aptos-labs/aptos-client@0.1.0": "patches/@aptos-labs__aptos-client@0.1.0.patch",

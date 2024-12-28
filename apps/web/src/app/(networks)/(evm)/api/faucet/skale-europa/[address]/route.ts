@@ -44,8 +44,9 @@ const trySendTransaction = async (
 
 export async function GET(
   _request: NextRequest,
-  { params }: { params: { address: string } },
+  props: { params: Promise<{ address: string }> },
 ) {
+  const params = await props.params
   try {
     const { address } = schema.parse(params)
 

@@ -36,7 +36,7 @@ export const Zoom: FC<ZoomProps> = ({
   showResetButton,
   zoomLevels,
 }) => {
-  const zoomBehavior = useRef<ZoomBehavior<Element, unknown>>()
+  const zoomBehavior = useRef<ZoomBehavior<Element, unknown>>(undefined)
 
   const [zoomIn, zoomOut, zoomInitial, zoomReset] = useMemo(
     () => [

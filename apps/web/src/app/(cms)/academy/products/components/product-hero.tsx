@@ -1,5 +1,5 @@
 import { Button, IconComponent, LinkInternal, classNames } from '@sushiswap/ui'
-import type { FC, ReactNode } from 'react'
+import type { FC, JSX, ReactNode } from 'react'
 import { ProductStat, ProductStats } from './product-stats'
 
 interface ProductHero {

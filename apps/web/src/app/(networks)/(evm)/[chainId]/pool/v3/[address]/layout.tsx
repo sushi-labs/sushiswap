@@ -9,13 +9,14 @@ export const metadata = {
   title: 'Pool 💦',
 }
 
-export default async function Layout({
-  children,
-  params,
-}: {
+export default async function Layout(props: {
   children: React.ReactNode
-  params: { chainId: string; address: string }
+  params: Promise<{ chainId: string; address: string }>
 }) {
+  const params = await props.params
+
+  const { children } = props
+
   const { chainId: _chainId, address } = params
   const chainId = +_chainId as ChainId
 
