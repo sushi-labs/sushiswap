@@ -4,6 +4,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
+  Switch,
   Tabs,
   TabsContent,
   TabsList,
@@ -59,7 +60,7 @@ export const PositionsTab: FC<{ chainId: SushiSwapChainId }> = ({
   chainId,
 }) => {
   const [tab, setTab] = useState('v3')
-
+  const [hideClosedPositions, setHideClosedPositions] = useState(true)
   return (
     <div className="flex flex-col gap-4">
       <Tabs value={tab} onValueChange={setTab} defaultValue="v3">
@@ -89,11 +90,23 @@ export const PositionsTab: FC<{ chainId: SushiSwapChainId }> = ({
               </TabsTrigger>
             ))}
           </TabsList>
+          {tab === 'v3' ? (
+            <div className="flex gap-3 items-center whitespace-nowrap">
+              <span className="text-sm font-medium text-gray-600 dark:text-slate-400">
+                Hide closed
+              </span>
+              <Switch
+                checked={hideClosedPositions}
+                onCheckedChange={() => setHideClosedPositions((prev) => !prev)}
+              />
+            </div>
+          ) : null}
         </div>
         <TabsContent value="v3">
           <ConcentratedPositionsTable
             chainId={chainId}
             hideNewPositionButton={true}
+            hideClosedPositions={hideClosedPositions}
           />
         </TabsContent>
         <TabsContent value="v2">
