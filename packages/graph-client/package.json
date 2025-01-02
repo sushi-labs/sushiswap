@@ -69,8 +69,8 @@
     "graphql": "16.6.0",
     "graphql-request": "7.1.0",
     "json-bigint": "1.0.0",
-    "sushi": "4.1.12",
-    "viem": "2.21.4"
+    "sushi": "4.1.23",
+    "viem": "2.21.55"
   },
   "devDependencies": {
     "@0no-co/graphqlsp": "1.12.3",
@@ -80,6 +80,6 @@
     "@types/node": "20",
     "tsc-alias": "1.8.10",
     "tsx": "4.19.0",
-    "typescript": "5.5.4"
+    "typescript": "5.7.2"
   }
 }

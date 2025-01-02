@@ -38,7 +38,7 @@
   "dependencies": {
     "copy-to-clipboard": "3.3.3",
     "react-responsive": "9.0.0-beta.10",
-    "viem": "2.21.4"
+    "viem": "2.21.55"
   },
   "devDependencies": {
     "@tsconfig/node20": "20.1.4",
@@ -47,9 +47,9 @@
     "@types/react-dom": "18.2.6",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "sushi": "4.1.12",
+    "sushi": "4.1.23",
     "tailwindcss": "3.3.2",
-    "typescript": "5.5.4"
+    "typescript": "5.7.2"
   },
   "peerDependencies": {
     "react": "*",

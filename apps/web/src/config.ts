@@ -65,16 +65,10 @@ export const DISABLED_CHAIN_IDS = [
   // NonStandardChainId.TRON,
 ] as const
 
-export const NEW_CHAIN_IDS = [
-  ChainId.APE,
-  ChainId.MANTA,
-  ChainId.MODE,
-  ChainId.TAIKO,
-  ChainId.ZKLINK,
-  NonStandardChainId.TRON,
-] as const
+export const NEW_CHAIN_IDS = [ChainId.SONIC] as const
 
 export const PREFERRED_CHAINID_ORDER = [
+  ...NEW_CHAIN_IDS,
   ChainId.ETHEREUM,
   NonStandardChainId.TRON,
   ChainId.BSC,
@@ -93,6 +87,7 @@ export const PREFERRED_CHAINID_ORDER = [
   ChainId.MODE,
   ChainId.GNOSIS,
   ChainId.ROOTSTOCK,
+  ChainId.SONIC,
   ChainId.KAVA,
   ChainId.ZKSYNC_ERA,
   ChainId.FANTOM,
@@ -221,5 +216,5 @@ export const ZAP_SUPPORTED_CHAIN_IDS = [
 export type ZapSupportedChainId = (typeof ZAP_SUPPORTED_CHAIN_IDS)[number]
 export const isZapSupportedChainId = (
   chainId: number,
-): chainId is ZapSupportedChainId =>
-  ZAP_SUPPORTED_CHAIN_IDS.includes(chainId as ZapSupportedChainId)
+): chainId is ZapSupportedChainId => false
+// ZAP_SUPPORTED_CHAIN_IDS.includes(chainId as ZapSupportedChainId)
