@@ -35,6 +35,7 @@ import {
   List,
   SettingsModule,
   SettingsOverlay,
+  Switch,
   classNames,
 } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui'
@@ -52,7 +53,7 @@ import {
   SushiSwapV3ChainId,
   isSushiSwapV3ChainId,
 } from 'sushi/config'
-import { Amount, Type, unwrapToken } from 'sushi/currency'
+import { Amount, Native, Type, unwrapToken } from 'sushi/currency'
 import { Percent, ZERO } from 'sushi/math'
 import { NonfungiblePositionManager, Position } from 'sushi/pool/sushiswap-v3'
 import { Hex, SendTransactionReturnType, UserRejectedRequestError } from 'viem'
@@ -90,6 +91,7 @@ export const ConcentratedLiquidityRemoveWidget: FC<
   const { chain } = useAccount()
   const client = usePublicClient()
   const [value, setValue] = useState<string>('0')
+  const [receiveWrapped, setReceiveWrapped] = useState(false)
   const [slippageTolerance] = useSlippageTolerance(
     SlippageToleranceStorageKey.RemoveLiquidity,
   )
@@ -163,18 +165,34 @@ export const ConcentratedLiquidityRemoveWidget: FC<
 
   const [feeValue0, feeValue1] = useMemo(() => {
     if (positionDetails && token0 && token1) {
+      const expectedToken0 =
+        !token0 || receiveWrapped ? token0?.wrapped : unwrapToken(token0)
+      const expectedToken1 =
+        !token1 || receiveWrapped ? token1?.wrapped : unwrapToken(token1)
       const feeValue0 = positionDetails.fees
-        ? Amount.fromRawAmount(token0, positionDetails.fees[0])
+        ? Amount.fromRawAmount(expectedToken0, positionDetails.fees[0])
         : undefined
       const feeValue1 = positionDetails.fees
-        ? Amount.fromRawAmount(token1, positionDetails.fees[1])
+        ? Amount.fromRawAmount(expectedToken1, positionDetails.fees[1])
         : undefined
 
       return [feeValue0, feeValue1]
     }
 
     return [undefined, undefined]
-  }, [positionDetails, token0, token1])
+  }, [positionDetails, token0, token1, receiveWrapped])
+
+  const nativeToken = useMemo(() => Native.onChain(chainId), [chainId])
+
+  const positionHasNativeToken = useMemo(() => {
+    if (!nativeToken || !token0 || !token1) return false
+    return (
+      token0.isNative ||
+      token1.isNative ||
+      token0.address === nativeToken?.wrapped?.address ||
+      token1.address === nativeToken?.wrapped?.address
+    )
+  }, [token0, token1, nativeToken])
 
   const prepare = useMemo(() => {
     const liquidityPercentage = new Percent(debouncedValue, 100)
@@ -185,18 +203,23 @@ export const ConcentratedLiquidityRemoveWidget: FC<
       ? liquidityPercentage.multiply(position.amount1.quotient).quotient
       : undefined
 
+    const expectedToken0 =
+      receiveWrapped && token0 ? unwrapToken(token0) : token0
+    const expectedToken1 =
+      receiveWrapped && token1 ? unwrapToken(token1) : token1
+
     const liquidityValue0 =
-      token0 && typeof discountedAmount0 === 'bigint'
-        ? Amount.fromRawAmount(unwrapToken(token0), discountedAmount0)
+      expectedToken0 && typeof discountedAmount0 === 'bigint'
+        ? Amount.fromRawAmount(expectedToken0, discountedAmount0)
         : undefined
     const liquidityValue1 =
-      token1 && typeof discountedAmount1 === 'bigint'
-        ? Amount.fromRawAmount(unwrapToken(token1), discountedAmount1)
+      expectedToken1 && typeof discountedAmount1 === 'bigint'
+        ? Amount.fromRawAmount(expectedToken1, discountedAmount1)
         : undefined
 
     if (
-      token0 &&
-      token1 &&
+      expectedToken0 &&
+      expectedToken1 &&
       position &&
       account &&
       positionDetails &&
@@ -253,6 +276,7 @@ export const ConcentratedLiquidityRemoveWidget: FC<
     token0,
     token1,
     debouncedValue,
+    receiveWrapped,
   ])
 
   const { isError: isSimulationError } = useCall({
@@ -566,6 +590,17 @@ export const ConcentratedLiquidityRemoveWidget: FC<
                     )}
                   </List.Control>
                 </List>
+                {positionHasNativeToken ? (
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-muted-foreground">
+                      {`Receive ${nativeToken.wrapped.symbol} as ${nativeToken.symbol}`}
+                    </span>
+                    <Switch
+                      checked={receiveWrapped}
+                      onCheckedChange={setReceiveWrapped}
+                    />
+                  </div>
+                ) : null}
               </div>
               <DialogFooter>
                 <Button
