@@ -441,7 +441,7 @@ const _ZapWidget: FC<ZapWidgetProps> = ({
       </Checker.Connect>
       <ZapInfoCard
         zapResponse={zapResponse}
-        inputCurrency={inputCurrency}
+        inputCurrencyAmount={parsedInputAmount}
         pool={pool}
       />
     </>

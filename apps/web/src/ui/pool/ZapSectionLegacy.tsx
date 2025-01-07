@@ -288,7 +288,7 @@ const _ZapSectionLegacy: FC<ZapSectionLegacyProps> = ({
           </Checker.Connect>
           <ZapInfoCard
             zapResponse={zapResponse}
-            inputCurrency={inputCurrency}
+            inputCurrencyAmount={parsedInputAmount}
             pool={pool}
           />
         </div>

@@ -239,7 +239,7 @@ const _SteerPositionZap: FC<SteerPositionZapProps> = ({
       </Checker.Guard>
       <ZapInfoCard
         zapResponse={zapResponse}
-        inputCurrency={inputCurrency}
+        inputCurrencyAmount={parsedInputAmount}
         pool={vault}
         tokenRatios={tokenRatios}
       />

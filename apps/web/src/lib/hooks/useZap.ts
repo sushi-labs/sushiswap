@@ -38,7 +38,7 @@ const zapResponseSchema = z.object({
   feeAmount: z
     .array(z.string().transform((amount) => BigInt(amount)))
     .optional(),
-  priceImpact: z.number().nullable(),
+  priceImpact: z.number().nullable(), // BIPS
   createdAt: z.number(),
   tx: txSchema,
   route: z.array(routeSchema).optional(),
