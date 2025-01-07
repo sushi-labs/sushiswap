@@ -111,8 +111,8 @@ importers:
         specifier: 18.2.0
         version: 18.2.0(react@18.2.0)
       sushi:
-        specifier: 4.1.23
-        version: 4.1.23(typescript@5.7.2)(viem@2.21.55(bufferutil@4.0.8)(typescript@5.7.2)(utf-8-validate@5.0.10)(zod@3.23.8))(zod@3.23.8)
+        specifier: 4.1.25
+        version: 4.1.25(typescript@5.7.2)(viem@2.21.55(bufferutil@4.0.8)(typescript@5.7.2)(utf-8-validate@5.0.10)(zod@3.23.8))(zod@3.23.8)
     devDependencies:
       '@storybook/addon-a11y':
         specifier: 7.4.6
@@ -397,8 +397,8 @@ importers:
         specifier: 2.3.3
         version: 2.3.3
       sushi:
-        specifier: 4.1.23
-        version: 4.1.23(typescript@5.7.2)(viem@2.21.55(bufferutil@4.0.8)(typescript@5.7.2)(utf-8-validate@5.0.10)(zod@3.23.8))(zod@3.23.8)
+        specifier: 4.1.25
+        version: 4.1.25(typescript@5.7.2)(viem@2.21.55(bufferutil@4.0.8)(typescript@5.7.2)(utf-8-validate@5.0.10)(zod@3.23.8))(zod@3.23.8)
       swr:
         specifier: 2.1.5
         version: 2.1.5(react@18.2.0)
@@ -585,8 +585,8 @@ importers:
         specifier: 1.0.0
         version: 1.0.0
       sushi:
-        specifier: 4.1.23
-        version: 4.1.23(typescript@5.7.2)(viem@2.21.55(typescript@5.7.2)(zod@3.23.8))(zod@3.23.8)
+        specifier: 4.1.25
+        version: 4.1.25(typescript@5.7.2)(viem@2.21.55(typescript@5.7.2)(zod@3.23.8))(zod@3.23.8)
       viem:
         specifier: 2.21.55
         version: 2.21.55(bufferutil@4.0.8)(typescript@5.7.2)(utf-8-validate@6.0.3)(zod@3.23.8)
@@ -647,8 +647,8 @@ importers:
         specifier: 18.2.0
         version: 18.2.0(react@18.2.0)
       sushi:
-        specifier: 4.1.23
-        version: 4.1.23(typescript@5.7.2)(viem@2.21.55(typescript@5.7.2)(zod@3.23.8))(zod@3.23.8)
+        specifier: 4.1.25
+        version: 4.1.25(typescript@5.7.2)(viem@2.21.55(typescript@5.7.2)(zod@3.23.8))(zod@3.23.8)
       tailwindcss:
         specifier: 3.3.2
         version: 3.3.2(ts-node@10.9.2(@types/node@20.14.14)(typescript@5.7.2))
@@ -693,8 +693,8 @@ importers:
         specifier: 18.2.6
         version: 18.2.6
       sushi:
-        specifier: 4.1.23
-        version: 4.1.23(typescript@5.7.2)(viem@2.21.55(typescript@5.7.2)(zod@3.23.8))(zod@3.23.8)
+        specifier: 4.1.25
+        version: 4.1.25(typescript@5.7.2)(viem@2.21.55(typescript@5.7.2)(zod@3.23.8))(zod@3.23.8)
       typescript:
         specifier: 5.7.2
         version: 5.7.2
@@ -705,8 +705,8 @@ importers:
         specifier: 2.1.0-beta.14
         version: 2.1.0-beta.14(bufferutil@4.0.8)(encoding@0.1.13)(squirrelly@8.0.8)(ts-node@10.9.2(@types/node@20.14.14)(typescript@5.7.2))(typescript@5.7.2)(utf-8-validate@5.0.10)
       sushi:
-        specifier: 4.1.23
-        version: 4.1.23(typescript@5.7.2)(viem@2.21.55(bufferutil@4.0.8)(typescript@5.7.2)(utf-8-validate@5.0.10)(zod@3.23.8))(zod@3.23.8)
+        specifier: 4.1.25
+        version: 4.1.25(typescript@5.7.2)(viem@2.21.55(bufferutil@4.0.8)(typescript@5.7.2)(utf-8-validate@5.0.10)(zod@3.23.8))(zod@3.23.8)
       viem:
         specifier: 2.21.55
         version: 2.21.55(bufferutil@4.0.8)(typescript@5.7.2)(utf-8-validate@5.0.10)(zod@3.23.8)
@@ -949,8 +949,8 @@ importers:
         specifier: 18.2.0
         version: 18.2.0(react@18.2.0)
       sushi:
-        specifier: 4.1.23
-        version: 4.1.23(typescript@5.7.2)(viem@2.21.55(bufferutil@4.0.8)(typescript@5.7.2)(utf-8-validate@5.0.10)(zod@3.23.8))(zod@3.23.8)
+        specifier: 4.1.25
+        version: 4.1.25(typescript@5.7.2)(viem@2.21.55(bufferutil@4.0.8)(typescript@5.7.2)(utf-8-validate@5.0.10)(zod@3.23.8))(zod@3.23.8)
       tailwindcss:
         specifier: 3.3.2
         version: 3.3.2(ts-node@10.9.2(@types/node@20.14.14)(typescript@5.7.2))
@@ -14413,8 +14413,8 @@ packages:
     resolution: {integrity: sha512-ot0WnXS9fgdkgIcePe6RHNk1WA8+muPa6cSjeR3V8K27q9BB1rTE3R1p7Hv0z1ZyAc8s6Vvv8DIyWf681MAt0w==}
     engines: {node: '>= 0.4'}
 
-  sushi@4.1.23:
-    resolution: {integrity: sha512-i0A05i/Tg7RVwokoPTsx7Cbwa5/NOzK0ipiMTSlSofg5t0jJl4C00Eah8PmMPNYrv+gkMLtC0lubE9mIbgd1Hw==}
+  sushi@4.1.25:
+    resolution: {integrity: sha512-XTimC5tWHPGvvmnlqUayCd+fT0RX5oEjWhBz+eqBDqAB5Z50c9rxLm/JhALKcOGpAWOnIdmJeSoAfvBfPuEPyg==}
     peerDependencies:
       typescript: 5.7.2
       viem: '*'
@@ -34126,7 +34126,7 @@ snapshots:
 
   supports-preserve-symlinks-flag@1.0.0: {}
 
-  sushi@4.1.23(typescript@5.7.2)(viem@2.21.55(bufferutil@4.0.8)(typescript@5.7.2)(utf-8-validate@5.0.10)(zod@3.23.8))(zod@3.23.8):
+  sushi@4.1.25(typescript@5.7.2)(viem@2.21.55(bufferutil@4.0.8)(typescript@5.7.2)(utf-8-validate@5.0.10)(zod@3.23.8))(zod@3.23.8):
     dependencies:
       '@uniswap/token-lists': 1.0.0-beta.33
       big.js: 6.1.1
@@ -34140,7 +34140,7 @@ snapshots:
       viem: 2.21.55(bufferutil@4.0.8)(typescript@5.7.2)(utf-8-validate@5.0.10)(zod@3.23.8)
       zod: 3.23.8
 
-  sushi@4.1.23(typescript@5.7.2)(viem@2.21.55(typescript@5.7.2)(zod@3.23.8))(zod@3.23.8):
+  sushi@4.1.25(typescript@5.7.2)(viem@2.21.55(typescript@5.7.2)(zod@3.23.8))(zod@3.23.8):
     dependencies:
       '@uniswap/token-lists': 1.0.0-beta.33
       big.js: 6.1.1
