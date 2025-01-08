@@ -3,7 +3,16 @@
 import { FC, ReactNode, createContext, useContext, useMemo } from 'react'
 import { useBarData } from 'src/lib/stake'
 import { ChainId } from 'sushi/chain'
-import { Amount, SUSHI, Type, XSUSHI, tryParseAmount } from 'sushi/currency'
+import {
+  Amount,
+  SUSHI,
+  SUSHI_ADDRESS,
+  Type,
+  XSUSHI,
+  XSUSHI_ADDRESS,
+} from 'sushi/currency'
+import { erc20Abi } from 'viem'
+import { useReadContracts } from 'wagmi'
 
 interface SushiBarContext {
   totalSupply: Amount<Type> | undefined
@@ -19,34 +28,65 @@ export const SushiBarProvider: FC<{
   children: ReactNode
   watch?: boolean
 }> = ({ children }) => {
-  const { data, isLoading, isError } = useBarData()
+  const {
+    data,
+    isLoading: isLoadingBarData,
+    isError: isErrorBarData,
+  } = useBarData()
 
-  const [sushiBalance, totalSupply, apy] = useMemo(
-    () => [
-      tryParseAmount(
-        (data?.sushiSupply ?? 0).toString(),
-        SUSHI[ChainId.ETHEREUM],
-      ),
-      tryParseAmount(
-        (data?.xSushiSupply ?? 0).toString(),
-        XSUSHI[ChainId.ETHEREUM],
-      ),
-      data && data?.apr1m !== undefined ? Number(data.apr1m) * 12 : undefined,
+  const {
+    data: balanceAndSupplyData,
+    isLoading: isLoadingSushiBalanceData,
+    isError: isErrorSushiBalanceData,
+  } = useReadContracts({
+    allowFailure: false,
+    contracts: [
+      {
+        address: SUSHI_ADDRESS[ChainId.ETHEREUM],
+        abi: erc20Abi,
+        functionName: 'balanceOf',
+        args: [XSUSHI_ADDRESS[ChainId.ETHEREUM]],
+        chainId: ChainId.ETHEREUM,
+      },
+      {
+        address: XSUSHI_ADDRESS[ChainId.ETHEREUM],
+        chainId: ChainId.ETHEREUM,
+        abi: erc20Abi,
+        functionName: 'totalSupply' as const,
+      },
     ],
-    [data],
-  )
+    query: {
+      select(data) {
+        return [
+          Amount.fromRawAmount(SUSHI[ChainId.ETHEREUM], data[0]),
+          Amount.fromRawAmount(XSUSHI[ChainId.ETHEREUM], data[1]),
+        ] as const
+      },
+      refetchInterval: 30000,
+    },
+  })
 
   return (
     <Context.Provider
       value={useMemo(
         () => ({
-          totalSupply,
-          sushiBalance,
-          apy,
-          isLoading,
-          isError,
+          sushiBalance: balanceAndSupplyData?.[0],
+          totalSupply: balanceAndSupplyData?.[1],
+          apy:
+            data && data?.apr1m !== undefined
+              ? Number(data.apr1m) * 12
+              : undefined,
+          isLoading: isLoadingBarData || isLoadingSushiBalanceData,
+          isError: isErrorBarData || isErrorSushiBalanceData,
         }),
-        [sushiBalance, totalSupply, apy, isError, isLoading],
+        [
+          balanceAndSupplyData,
+          data,
+          isLoadingBarData,
+          isLoadingSushiBalanceData,
+          isErrorBarData,
+          isErrorSushiBalanceData,
+        ],
       )}
     >
       {children}
