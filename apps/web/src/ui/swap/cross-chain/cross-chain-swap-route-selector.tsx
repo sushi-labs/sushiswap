@@ -1,7 +1,7 @@
 'use client'
 
 import { ChevronRightIcon } from '@heroicons/react/24/outline'
-import { useBreakpoint, useIsMounted, useMediaQuery } from '@sushiswap/hooks'
+import { useBreakpoint, useMediaQuery } from '@sushiswap/hooks'
 import {
   Card,
   CardContent,
@@ -36,7 +36,6 @@ import {
 export const CrossChainSwapRouteSelector = () => {
   const { data: routes, status } = useCrossChainTradeRoutes()
   const { isOpen: isSidebarOpen } = useSidebar()
-  const isMounted = useIsMounted()
 
   const {
     state: { routeOrder, selectedBridge },
@@ -50,7 +49,7 @@ export const CrossChainSwapRouteSelector = () => {
 
   const showDesktopSelector = isSidebarOpen ? isXl : isLg
 
-  return !isMounted ? null : showDesktopSelector ? (
+  return showDesktopSelector ? (
     <DesktopRouteSelector
       routeOrder={routeOrder}
       setRouteOrder={setRouteOrder}
@@ -91,7 +90,7 @@ const DesktopRouteSelector: FC<RouteSelectorProps> = ({
   return (
     <Card
       variant="outline"
-      className="bg-gray-50 dark:bg-slate-800 overflow-hidden flex flex-col max-h-[600px] sm:mt-10 mt-2"
+      className="bg-gray-50 dark:bg-slate-800 overflow-hidden flex flex-col max-h-[600px]"
     >
       {status === 'success' && routes && routes.length > 0 ? (
         <>
