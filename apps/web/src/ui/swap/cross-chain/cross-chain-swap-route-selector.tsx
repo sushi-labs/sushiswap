@@ -13,7 +13,6 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-  ScrollArea,
   Select,
   SelectContent,
   SelectItem,
@@ -90,7 +89,7 @@ const DesktopRouteSelector: FC<RouteSelectorProps> = ({
   return (
     <Card
       variant="outline"
-      className="bg-gray-50 dark:bg-slate-800 overflow-hidden flex flex-col max-h-[600px]"
+      className="bg-gray-50 dark:bg-slate-800 overflow-hidden flex flex-col max-h-[600px] w-full"
     >
       {status === 'success' && routes && routes.length > 0 ? (
         <>
@@ -188,19 +187,17 @@ const MobileRouteSelector: FC<RouteSelectorProps> = ({
           </div>
         </DialogHeader>
 
-        <ScrollArea>
-          <div className="flex flex-col gap-6 max-h-[calc(50vh)]">
-            {routes?.map((route) => (
-              <CrossChainSwapRouteCard
-                key={`route-${route.id}`}
-                route={route}
-                order={routeOrder}
-                isSelected={route.steps[0].tool === selectedBridge}
-                onSelect={() => setSelectedBridge(route.steps[0].tool)}
-              />
-            ))}
-          </div>
-        </ScrollArea>
+        <div className="flex flex-col gap-6 max-h-[calc(50vh)] overflow-y-auto -mx-6 px-6">
+          {routes?.map((route) => (
+            <CrossChainSwapRouteCard
+              key={`route-${route.id}`}
+              route={route}
+              order={routeOrder}
+              isSelected={route.steps[0].tool === selectedBridge}
+              onSelect={() => setSelectedBridge(route.steps[0].tool)}
+            />
+          ))}
+        </div>
       </DialogContent>
 
       <Card
