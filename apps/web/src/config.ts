@@ -240,6 +240,7 @@ export const XSWAP_SUPPORTED_CHAIN_IDS = [
   ChainId.BLAST,
   ChainId.BOBA,
   ChainId.CELO,
+  ChainId.CRONOS,
   ChainId.ETHEREUM,
   ChainId.FUSE,
   ChainId.FANTOM,
