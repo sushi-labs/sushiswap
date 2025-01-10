@@ -125,7 +125,7 @@ const _CrossChainSwapTradeReviewDialog: FC<{
   const { open: reviewDialogOpen } = useDialog(DialogType.Review)
 
   const { data: selectedRoute } = useSelectedCrossChainTradeRoute()
-  const { data: step, isError: isStepQueryError } = useCrossChainTradeStep({
+  const { data: _step, isError: isStepQueryError } = useCrossChainTradeStep({
     step: selectedRoute?.steps?.[0],
     query: {
       enabled: Boolean(
@@ -133,6 +133,22 @@ const _CrossChainSwapTradeReviewDialog: FC<{
       ),
     },
   })
+
+  const step = useMemo(
+    () =>
+      _step ??
+      (selectedRoute?.steps?.[0]
+        ? {
+            ...selectedRoute.steps[0],
+            tokenIn: selectedRoute?.tokenIn,
+            tokenOut: selectedRoute?.tokenOut,
+            amountIn: selectedRoute?.amountIn,
+            amountOut: selectedRoute?.amountOut,
+            amountOutMin: selectedRoute?.amountOutMin,
+          }
+        : undefined),
+    [_step, selectedRoute],
+  )
 
   const groupTs = useRef<number>()
   const { refetchChain: refetchBalances } = useRefetchBalances()
