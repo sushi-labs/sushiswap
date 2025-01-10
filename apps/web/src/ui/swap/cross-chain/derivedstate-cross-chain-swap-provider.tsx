@@ -305,6 +305,11 @@ const DerivedstateCrossChainSwapProvider: FC<
     [_token0, swapAmountString],
   )
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+  useEffect(() => {
+    setSelectedBridge(undefined)
+  }, [swapAmount, routeOrder])
+
   return (
     <DerivedStateCrossChainSwapContext.Provider
       value={useMemo(() => {
@@ -395,7 +400,7 @@ const useCrossChainTradeRoutes = () => {
     if (
       query.data?.length &&
       (typeof selectedBridge === 'undefined' ||
-        !query.data?.find((route) => route.steps[0].tool === selectedBridge))
+        !query.data.find((route) => route.steps[0].tool === selectedBridge))
     ) {
       setSelectedBridge(query.data[0].steps[0].tool)
     }
