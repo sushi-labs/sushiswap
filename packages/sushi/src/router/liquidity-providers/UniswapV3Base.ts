@@ -458,15 +458,6 @@ export abstract class UniswapV3BaseProvider extends LiquidityProvider {
       const index = wordList[i]!.index
       ticks[index] = (ticks[index] || []).concat(t.result || [])
     })
-    existingPools.forEach((pool, i) => {
-      pool.ticks.set(
-        i,
-        ticks[i]!.map((tick) => ({
-          index: tick.tick,
-          DLiquidity: tick.liquidityNet,
-        })).sort((a, b) => a.index - b.index),
-      )
-    })
 
     const transformedV3Pools: PoolCode[] = []
     existingPools.forEach((pool, i) => {
@@ -485,6 +476,14 @@ export abstract class UniswapV3BaseProvider extends LiquidityProvider {
         liquidity === undefined
       )
         return
+
+      pool.ticks.set(
+        i,
+        ticks[i]!.map((tick) => ({
+          index: tick.tick,
+          DLiquidity: tick.liquidityNet,
+        })).sort((a, b) => a.index - b.index),
+      )
 
       const poolTicks = this.handleTickBoundries(pool.activeTick, pool)
       //console.log(pool.fee, TICK_SPACINGS[pool.fee], pool.activeTick, minIndexes[i], maxIndexes[i], poolTicks)
