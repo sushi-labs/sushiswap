@@ -8,8 +8,8 @@ import type {
   CrossChainStep,
   CrossChainToolDetails,
 } from 'src/lib/swap/cross-chain/types'
-import { Chain, ChainId } from 'sushi/chain'
-import { Amount, Native, Token } from 'sushi/currency'
+import { Chain } from 'sushi/chain'
+import { Amount, Native, Token, Type } from 'sushi/currency'
 import { formatNumber } from 'sushi/format'
 import { zeroAddress } from 'viem'
 
@@ -20,47 +20,64 @@ interface CrossChainSwapRouteViewProps {
 export const CrossChainSwapRouteView: FC<CrossChainSwapRouteViewProps> = ({
   step,
 }) => {
-  return step.includedSteps.length === 1 ? (
-    <div className="flex justify-center items-center">
-      <div className="p-3 flex flex-col gap-2.5 items-center overflow-hidden">
-        <span className="inline-flex items-center gap-1 text-xs text-muted-foreground whitespace-nowrap">
-          Via{' '}
-          <img
-            src={step.toolDetails.logoURI}
-            className="rounded-full"
-            width={10}
-            height={10}
-            alt={step.toolDetails.name}
-          />{' '}
-          <span className="font-semibold">{step.toolDetails.name}</span>
-        </span>
-        <span className="text-xs font-medium overflow-hidden overflow-ellipsis whitespace-nowrap">
-          Bridge {step.action.fromToken.symbol}
-        </span>
-      </div>
-    </div>
-  ) : (
+  const { srcStep, bridgeStep, dstStep } = useMemo(() => {
+    const bridgeIndex = step.includedSteps.findIndex(
+      (_step) => _step.type === 'cross',
+    )
+    return {
+      srcStep: step.includedSteps[bridgeIndex - 1],
+      bridgeStep: step.includedSteps[bridgeIndex],
+      dstStep: step.includedSteps[bridgeIndex + 1],
+    }
+  }, [step])
+
+  return (
     <div className="flex gap-4">
-      <VerticalDivider
-        count={step.includedSteps.length - 1}
-        className="pt-1.5 pl-1"
-      />
+      <VerticalDivider count={2} className="pt-1.5 pl-1" />
       <div className="flex flex-col gap-8">
-        {step.includedSteps.map((_step) => {
-          return (
-            <React.Fragment key={`step-${_step.id}`}>
-              {_step.type === 'swap' ? (
-                <SwapAction
-                  chainId0={step.action.fromChainId}
-                  action={_step.action}
-                  estimate={_step.estimate}
-                />
-              ) : _step.type === 'cross' ? (
-                <BridgeAction toolDetails={_step.toolDetails} />
-              ) : null}
-            </React.Fragment>
-          )
-        })}
+        {srcStep ? (
+          <SwapAction
+            label="From"
+            action={srcStep?.action}
+            estimate={srcStep?.estimate}
+          />
+        ) : (
+          <SendAction
+            label="From"
+            amount={useMemo(
+              () =>
+                Amount.fromRawAmount(
+                  step.action.fromToken.address === zeroAddress
+                    ? Native.onChain(step.action.fromToken.chainId)
+                    : new Token(step.action.fromToken),
+                  step.action.fromAmount,
+                ),
+              [step],
+            )}
+          />
+        )}
+        <BridgeAction toolDetails={bridgeStep.toolDetails} />
+        {dstStep ? (
+          <SwapAction
+            label="To"
+            action={dstStep.action}
+            estimate={dstStep.estimate}
+          />
+        ) : (
+          <SendAction
+            label="To"
+            amount={useMemo(
+              () =>
+                Amount.fromRawAmount(
+                  step.action.toToken.address === zeroAddress
+                    ? Native.onChain(step.action.toToken.chainId)
+                    : new Token(step.action.toToken),
+                  step.estimate.toAmount,
+                ),
+              [step],
+            )}
+          />
+        )}
       </div>
     </div>
   )
@@ -107,49 +124,66 @@ const VerticalDivider: FC<{ className?: string; count: number }> = ({
   )
 }
 
+const SendAction: FC<{
+  label: 'From' | 'To'
+  amount: Amount<Type>
+}> = ({ label, amount }) => {
+  const chain = useMemo(
+    () => Chain.fromChainId(amount.currency.chainId)?.name?.toUpperCase(),
+    [amount],
+  )
+
+  return (
+    <div className="flex flex-col gap-3">
+      <span className="inline-flex items-center gap-1 text-sm leading-3 text-muted-foreground whitespace-nowrap">
+        {label}{' '}
+        <NetworkIcon chainId={amount.currency.chainId} width={10} height={10} />{' '}
+        <span className="font-semibold leading-[17px]">{chain}</span>
+      </span>
+      <span className="text-sm leading-4 decoration-dotted">
+        {`${label === 'From' ? 'Send' : 'Receive'} ${amount.toSignificant(6)} ${
+          amount.currency.symbol
+        }`}
+      </span>
+    </div>
+  )
+}
+
 const SwapAction: FC<{
+  label: 'From' | 'To'
   action: CrossChainAction
   estimate: CrossChainEstimate
-  chainId0: ChainId
-}> = ({ chainId0, action, estimate }) => {
-  const { fromAmount, toAmount, label, chain, isWrap, isUnwrap } =
-    useMemo(() => {
-      const [label, chain] =
-        chainId0 === action.fromToken.chainId
-          ? [
-              'From',
-              Chain.fromChainId(action.fromToken.chainId)?.name?.toUpperCase(),
-            ]
-          : [
-              'To',
-              Chain.fromChainId(action.toToken.chainId)?.name?.toUpperCase(),
-            ]
+}> = ({ label, action, estimate }) => {
+  const { fromAmount, toAmount, chain, isWrap, isUnwrap } = useMemo(() => {
+    const fromToken =
+      action.fromToken.address === zeroAddress
+        ? Native.onChain(action.fromToken.chainId)
+        : new Token(action.fromToken)
 
-      const fromToken =
-        action.fromToken.address === zeroAddress
-          ? Native.onChain(action.fromToken.chainId)
-          : new Token(action.fromToken)
+    const toToken =
+      action.toToken.address === zeroAddress
+        ? Native.onChain(action.toToken.chainId)
+        : new Token(action.toToken)
 
-      const toToken =
-        action.toToken.address === zeroAddress
-          ? Native.onChain(action.toToken.chainId)
-          : new Token(action.toToken)
+    const chain = Chain.fromChainId(
+      label === 'From' ? fromToken.chainId : toToken.chainId,
+    )?.name?.toUpperCase()
 
-      return {
-        fromAmount: Amount.fromRawAmount(fromToken, action.fromAmount),
-        toAmount: Amount.fromRawAmount(toToken, estimate.toAmount),
-        label,
-        chain,
-        isWrap: fromToken.isNative && fromToken.wrapped.equals(toToken),
-        isUnwrap: toToken.isNative && toToken.wrapped.equals(fromToken),
-      }
-    }, [
-      action.fromToken,
-      action.toToken,
-      action.fromAmount,
-      estimate.toAmount,
-      chainId0,
-    ])
+    return {
+      fromAmount: Amount.fromRawAmount(fromToken, action.fromAmount),
+      toAmount: Amount.fromRawAmount(toToken, estimate.toAmount),
+      label,
+      chain,
+      isWrap: fromToken.isNative && fromToken.wrapped.equals(toToken),
+      isUnwrap: toToken.isNative && toToken.wrapped.equals(fromToken),
+    }
+  }, [
+    action.fromToken,
+    action.toToken,
+    action.fromAmount,
+    estimate.toAmount,
+    label,
+  ])
 
   return (
     <div className="flex flex-col gap-3">
@@ -163,12 +197,7 @@ const SwapAction: FC<{
         <span className="font-semibold leading-[17px]">{chain}</span>
       </span>
       <span className="text-sm leading-4 decoration-dotted">
-        {label === 'To' ? (
-          <>
-            Receive {formatNumber(toAmount.toExact())}{' '}
-            {toAmount.currency.symbol}
-          </>
-        ) : isWrap ? (
+        {isWrap ? (
           <>Wrap {toAmount.currency.symbol}</>
         ) : isUnwrap ? (
           <>Unwrap {fromAmount.currency.symbol}</>
