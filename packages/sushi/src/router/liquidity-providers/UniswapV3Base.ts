@@ -181,38 +181,7 @@ export abstract class UniswapV3BaseProvider extends LiquidityProvider {
           return undefined
         })
 
-    const tickSpacingData = {
-      multicallAddress: this.client.chain?.contracts?.multicall3
-        ?.address as Address,
-      allowFailure: true,
-      blockNumber: options?.blockNumber,
-      contracts: staticPools.map(
-        (pool) =>
-          ({
-            address: pool.address as Address,
-            chainId: this.chainId,
-            abi: tickSpacingAbi,
-            functionName: 'tickSpacing',
-          }) as const,
-      ),
-    }
-    const tickSpacings = options?.memoize
-      ? await (multicallMemoize(tickSpacingData) as Promise<any>).catch((e) => {
-          console.warn(
-            `${this.getLogPrefix()} - INIT: multicall failed, message: ${
-              e.message
-            }`,
-          )
-          return undefined
-        })
-      : await this.client.multicall(tickSpacingData).catch((e) => {
-          console.warn(
-            `${this.getLogPrefix()} - INIT: multicall failed, message: ${
-              e.message
-            }`,
-          )
-          return undefined
-        })
+    const tickSpacings = await this.getTickSpacing(staticPools, options)
 
     const existingPools: V3Pool[] = []
 
@@ -264,6 +233,9 @@ export abstract class UniswapV3BaseProvider extends LiquidityProvider {
   }
 
   handleTickBoundries(tick: number, pool: V3Pool): CLTick[] {
+    // calculate ticks min/max range
+    // reason for this is to be able to calculate the ticks range
+    // independently instead of passing around the min/max range as args
     const currentTickIndex = bitmapIndex(tick, pool.tickSpacing)
     if (!pool.ticks.has(currentTickIndex)) return []
     let minIndex
@@ -486,6 +458,15 @@ export abstract class UniswapV3BaseProvider extends LiquidityProvider {
       const index = wordList[i]!.index
       ticks[index] = (ticks[index] || []).concat(t.result || [])
     })
+    existingPools.forEach((pool, i) => {
+      pool.ticks.set(
+        i,
+        ticks[i]!.map((tick) => ({
+          index: tick.tick,
+          DLiquidity: tick.liquidityNet,
+        })).sort((a, b) => a.index - b.index),
+      )
+    })
 
     const transformedV3Pools: PoolCode[] = []
     existingPools.forEach((pool, i) => {
@@ -653,5 +634,61 @@ export abstract class UniswapV3BaseProvider extends LiquidityProvider {
       (v, i) =>
         this.TICK_SPACINGS[feeList[i] as SushiSwapV3FeeAmount] === v || v === 0,
     )
+  }
+
+  // fetches pool tickSpacing, this will be used
+  // instead of hardcoded TICK_SPACINGS values
+  async getTickSpacing(
+    staticPools: StaticPoolUniV3[],
+    options?: DataFetcherOptions,
+  ): Promise<
+    | (
+        | number
+        | {
+            error?: undefined
+            result: number
+            status: 'success'
+          }
+        | {
+            error: Error
+            result?: undefined
+            status: 'failure'
+          }
+      )[]
+    | undefined
+  > {
+    const multicallMemoize = await memoizer.fn(this.client.multicall)
+    const tickSpacingData = {
+      multicallAddress: this.client.chain?.contracts?.multicall3
+        ?.address as Address,
+      allowFailure: true,
+      blockNumber: options?.blockNumber,
+      contracts: staticPools.map(
+        (pool) =>
+          ({
+            address: pool.address as Address,
+            chainId: this.chainId,
+            abi: tickSpacingAbi,
+            functionName: 'tickSpacing',
+          }) as const,
+      ),
+    }
+    return options?.memoize
+      ? await (multicallMemoize(tickSpacingData) as Promise<any>).catch((e) => {
+          console.warn(
+            `${this.getLogPrefix()} - INIT: multicall failed, message: ${
+              e.message
+            }`,
+          )
+          return undefined
+        })
+      : await this.client.multicall(tickSpacingData).catch((e) => {
+          console.warn(
+            `${this.getLogPrefix()} - INIT: multicall failed, message: ${
+              e.message
+            }`,
+          )
+          return undefined
+        })
   }
 }

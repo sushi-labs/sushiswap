@@ -116,73 +116,15 @@ export abstract class AlgebraV1BaseProvider extends UniswapV3BaseProvider {
           return undefined
         })
 
-    let poolsTickSpacing:
-      | (
-          | number
-          | {
-              error?: undefined
-              result: number
-              status: 'success'
-            }
-          | {
-              error: Error
-              result?: undefined
-              status: 'failure'
-            }
-        )[]
-      | undefined
-
-    try {
-      const tickSpacingsData = {
-        multicallAddress: this.client.chain?.contracts?.multicall3?.address!,
-        allowFailure: true,
-        blockNumber: options?.blockNumber,
-        contracts: staticPools.map(
-          (pool) =>
-            ({
-              address: pool.address,
-              chainId: this.chainId,
-              abi: [
-                {
-                  inputs: [],
-                  name: 'tickSpacing',
-                  outputs: [{ internalType: 'int24', name: '', type: 'int24' }],
-                  stateMutability: 'view',
-                  type: 'function',
-                },
-              ] as const,
-              functionName: 'tickSpacing',
-            }) as const,
-        ),
-      }
-      poolsTickSpacing = options?.memoize
-        ? await (multicallMemoize(tickSpacingsData) as Promise<any>).catch(
-            (e) => {
-              console.warn(
-                `${this.getLogPrefix()} - INIT: multicall failed, message: ${
-                  e.message
-                }`,
-              )
-              return undefined
-            },
-          )
-        : await this.client.multicall(tickSpacingsData).catch((e) => {
-            console.warn(
-              `${this.getLogPrefix()} - INIT: multicall failed, message: ${
-                e.message
-              }`,
-            )
-            return undefined
-          })
-    } catch (_error) {}
+    const tickSpacings = await this.getTickSpacing(staticPools, options)
 
     const existingPools: V3Pool[] = []
 
     staticPools.forEach((pool, i) => {
       if (globalState === undefined || !globalState[i]) return
       let tickSpacing = this.DEFAULT_TICK_SPACING
-      if (poolsTickSpacing?.[i] !== undefined) {
-        const ts = poolsTickSpacing[i]
+      if (tickSpacings?.[i] !== undefined) {
+        const ts = tickSpacings[i]
         if (typeof ts === 'number') {
           tickSpacing = ts
         } else {
