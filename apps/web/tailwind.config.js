@@ -27,7 +27,7 @@ const tailwindConfig = {
         },
       },
       animation: {
-        carouselSlide: 'carouselSlide 10.5s ease-in-out infinite',
+        carouselSlide: 'carouselSlide 6s ease-in-out infinite',
       },
     },
   },

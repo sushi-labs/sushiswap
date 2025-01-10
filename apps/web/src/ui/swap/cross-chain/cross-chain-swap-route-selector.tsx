@@ -5,6 +5,7 @@ import { useBreakpoint, useMediaQuery } from '@sushiswap/hooks'
 import {
   Card,
   CardContent,
+  CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
@@ -22,7 +23,7 @@ import {
 } from '@sushiswap/ui'
 import { QueryStatus } from '@tanstack/react-query'
 import Image from 'next/image'
-import { FC } from 'react'
+import { FC, useState } from 'react'
 import { CrossChainRoute, CrossChainRouteOrder } from 'src/lib/swap/cross-chain'
 import { useSidebar } from 'src/ui/sidebar'
 import { CrossChainSwapRouteCard } from './cross-chain-swap-route-card'
@@ -149,10 +150,20 @@ const DesktopRouteSelector: FC<RouteSelectorProps> = ({
             <CardTitle className="!text-2xl text-center">
               SushiXSwap Aggregator
             </CardTitle>
+            <CardDescription className="text-center">
+              Swap Anything On Any Chain
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <RouteSelectorCarousel />
           </CardContent>
+          <CardFooter className="flex-col gap-3 whitespace-nowrap text-sm text-muted-foreground">
+            <div className="flex gap-3">
+              <span>✨ Best Pricing</span>
+              <span>🍣 Fastest Response Time</span>
+            </div>
+            <span>‍‍👨‍🍳 Widest Network Coverage</span>
+          </CardFooter>
         </>
       )}
     </Card>
@@ -167,13 +178,21 @@ const MobileRouteSelector: FC<RouteSelectorProps> = ({
   setSelectedBridge,
   status,
 }) => {
+  const [dialogOpen, setDialogOpen] = useState(false)
+
   return (
-    <Dialog>
+    <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
       <DialogContent className="!gap-5 !pb-7" hideClose>
         <DialogHeader className="!flex-row !space-y-[unset] justify-between">
           <DialogTitle className="!text-xl py-1">Select A Route</DialogTitle>
           <div className="shrink">
-            <Select value={routeOrder} onValueChange={setRouteOrder}>
+            <Select
+              value={routeOrder}
+              onValueChange={(order: CrossChainRouteOrder) => {
+                setRouteOrder(order)
+                setDialogOpen(false)
+              }}
+            >
               <SelectTrigger className="!min-h-[36px] !h-[36px] !border border-black/[0.08] border-dashed">
                 <span className="text-sm">
                   Sort By: <SelectValue />
@@ -244,14 +263,24 @@ const MobileRouteSelector: FC<RouteSelectorProps> = ({
           </>
         ) : (
           <>
-            <CardHeader className="!px-4 !py-3">
-              <CardTitle className="!text-sm !leading-7 !font-medium">
+            <CardHeader>
+              <CardTitle className="!text-xl text-center">
                 SushiXSwap Aggregator
               </CardTitle>
+              <CardDescription className="text-center">
+                Swap Anything On Any Chain
+              </CardDescription>
             </CardHeader>
             <CardContent>
               <RouteSelectorCarousel />
             </CardContent>
+            <CardFooter className="flex-col gap-3 whitespace-nowrap text-sm text-muted-foreground">
+              <div className="flex gap-3">
+                <span>✨ Best Pricing</span>
+                <span>🍣 Fastest Response Time</span>
+              </div>
+              <span>‍‍👨‍🍳 Widest Network Coverage</span>
+            </CardFooter>
           </>
         )}
       </Card>
