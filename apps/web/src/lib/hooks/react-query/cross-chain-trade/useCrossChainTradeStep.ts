@@ -41,10 +41,7 @@ export const useCrossChainTradeStep = ({
         headers: {
           'Content-Type': 'application/json',
         },
-        body: stringify({
-          ...step,
-          // slippage: step.action.slippage // TODO: CHECK IF NEEDED HERE
-        }),
+        body: stringify(step),
       }
 
       const response = await fetch(url, options)

@@ -37,7 +37,7 @@ const schema = z.object({
   order: z.enum(['CHEAPEST', 'FASTEST']).optional(),
 })
 
-export const revalidate = 600
+export const revalidate = 20
 
 export async function GET(request: NextRequest) {
   const params = Object.fromEntries(request.nextUrl.searchParams.entries())
@@ -74,7 +74,7 @@ export async function GET(request: NextRequest) {
   return Response.json(await response.json(), {
     status: response.status,
     headers: {
-      'Cache-Control': 'max-age=60, stale-while-revalidate=600',
+      'Cache-Control': 's-maxage=15, stale-while-revalidate=20',
     },
   })
 }

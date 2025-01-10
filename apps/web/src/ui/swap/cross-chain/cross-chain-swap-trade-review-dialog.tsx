@@ -14,6 +14,8 @@ import {
   useTrace,
 } from '@sushiswap/telemetry'
 import {
+  Button,
+  Collapsible,
   DialogClose,
   DialogContent,
   DialogCustom,
@@ -24,14 +26,13 @@ import {
   DialogReview,
   DialogTitle,
   DialogType,
+  Dots,
+  List,
   Message,
   SelectIcon,
+  SkeletonText,
+  useDialog,
 } from '@sushiswap/ui'
-import { Collapsible } from '@sushiswap/ui'
-import { Button } from '@sushiswap/ui'
-import { Dots } from '@sushiswap/ui'
-import { List } from '@sushiswap/ui'
-import { SkeletonText } from '@sushiswap/ui'
 import { nanoid } from 'nanoid'
 import React, {
   FC,
@@ -88,6 +89,18 @@ import {
 export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
   children,
 }) => {
+  return (
+    <DialogProvider>
+      <_CrossChainSwapTradeReviewDialog>
+        {children}
+      </_CrossChainSwapTradeReviewDialog>
+    </DialogProvider>
+  )
+}
+
+const _CrossChainSwapTradeReviewDialog: FC<{
+  children: ReactNode
+}> = ({ children }) => {
   const [showMore, setShowMore] = useState<boolean>(false)
   const [slippagePercent] = useSlippageTolerance()
   const { address, chain } = useAccount()
@@ -107,11 +120,17 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
   const client0 = usePublicClient({ chainId: chainId0 })
   const client1 = usePublicClient({ chainId: chainId1 })
   const { approved } = useApproved(APPROVE_TAG_XSWAP)
+
+  const { open: confirmDialogOpen } = useDialog(DialogType.Confirm)
+  const { open: reviewDialogOpen } = useDialog(DialogType.Review)
+
   const { data: selectedRoute } = useSelectedCrossChainTradeRoute()
   const { data: step, isError: isStepQueryError } = useCrossChainTradeStep({
     step: selectedRoute?.steps?.[0],
     query: {
-      enabled: Boolean(approved && address),
+      enabled: Boolean(
+        approved && address && (confirmDialogOpen || reviewDialogOpen),
+      ),
     },
   })
 
@@ -534,7 +553,7 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
   )
 
   return (
-    <DialogProvider>
+    <>
       <DialogReview>
         {({ confirm }) => (
           <>
@@ -958,6 +977,6 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
           </DialogFooter>
         </DialogContent>
       </DialogCustom>
-    </DialogProvider>
+    </>
   )
 }

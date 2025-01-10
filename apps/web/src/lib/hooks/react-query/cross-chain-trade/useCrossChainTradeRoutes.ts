@@ -72,7 +72,7 @@ export const useCrossChainTradeRoutes = ({
 
       return routes
     },
-    staleTime: query?.staleTime ?? 1000 * 15, // 15s
+    refetchInterval: query?.refetchInterval ?? 1000 * 20, // 20s
     enabled:
       query?.enabled !== false &&
       Boolean(params.toToken && params.fromAmount?.greaterThan(0)),

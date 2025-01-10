@@ -44,7 +44,7 @@ export async function POST(request: NextRequest) {
   return Response.json(await response.json(), {
     status: response.status,
     headers: {
-      'Cache-Control': 'max-age=10, stale-while-revalidate=60',
+      'Cache-Control': 's-maxage=8, stale-while-revalidate=10',
     },
   })
 }
