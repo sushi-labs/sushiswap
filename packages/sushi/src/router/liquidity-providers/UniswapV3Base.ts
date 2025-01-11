@@ -637,32 +637,13 @@ export abstract class UniswapV3BaseProvider extends LiquidityProvider {
 
   // fetches pool tickSpacing, this will be used
   // instead of hardcoded TICK_SPACINGS values
-  async getTickSpacing(
-    staticPools: StaticPoolUniV3[],
-    options?: DataFetcherOptions,
-  ): Promise<
-    | (
-        | number
-        | {
-            error?: undefined
-            result: number
-            status: 'success'
-          }
-        | {
-            error: Error
-            result?: undefined
-            status: 'failure'
-          }
-      )[]
-    | undefined
-  > {
-    const multicallMemoize = await memoizer.fn(this.client.multicall)
-    const tickSpacingData = {
+  async getTickSpacing(pools: StaticPoolUniV3[], options?: DataFetcherOptions) {
+    const calldata = {
       multicallAddress: this.client.chain?.contracts?.multicall3
         ?.address as Address,
       allowFailure: true,
       blockNumber: options?.blockNumber,
-      contracts: staticPools.map(
+      contracts: pools.map(
         (pool) =>
           ({
             address: pool.address as Address,
@@ -672,22 +653,13 @@ export abstract class UniswapV3BaseProvider extends LiquidityProvider {
           }) as const,
       ),
     }
-    return options?.memoize
-      ? await (multicallMemoize(tickSpacingData) as Promise<any>).catch((e) => {
-          console.warn(
-            `${this.getLogPrefix()} - INIT: multicall failed, message: ${
-              e.message
-            }`,
-          )
-          return undefined
-        })
-      : await this.client.multicall(tickSpacingData).catch((e) => {
-          console.warn(
-            `${this.getLogPrefix()} - INIT: multicall failed, message: ${
-              e.message
-            }`,
-          )
-          return undefined
-        })
+    return await this.client.multicall(calldata).catch((e) => {
+      console.warn(
+        `${this.getLogPrefix()} - INIT: multicall failed, message: ${
+          e.message
+        }`,
+      )
+      return undefined
+    })
   }
 }
