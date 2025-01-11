@@ -128,7 +128,7 @@ export default async function ProductPage() {
       <ProductTechnicalDoc
         color={color}
         secondaryColor="#FEC464"
-        url="https://dev.sushi.com/docs/Products/Yield%20Farming/What%20Is%20The%20Onsen"
+        url="https://docs.sushi.com/docs/Products/Yield%20Farming/What%20Is%20The%20Onsen"
       />
       <ProductFaq faqSlug={slug} />
     </Container>

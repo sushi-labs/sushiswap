@@ -123,7 +123,7 @@ export default async function Page() {
       <ProductTechnicalDoc
         color={color}
         secondaryColor="#FEC464"
-        url="https://dev.sushi.com/docs/Developers/SushiXSwap/Overview"
+        url="https://docs.sushi.com/docs/Developers/SushiXSwap/Overview"
       />
       <ProductFaq faqSlug={slug} />
     </Container>
