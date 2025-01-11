@@ -95,7 +95,7 @@ export default async function Page() {
         <ProductTechnicalDoc
           color={color}
           secondaryColor="#FEC464"
-          url="https://dev.sushi.com/docs/Developers/Furo/Overview"
+          url="https://docs.sushi.com/docs/Developers/Furo/Overview"
         />
         <ProductFaq faqSlug={slug} />
       </Container>

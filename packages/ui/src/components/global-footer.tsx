@@ -70,7 +70,7 @@ const config: Record<
       rel: 'noopener noreferrer',
     },
     Development: {
-      href: 'https://dev.sushi.com',
+      href: 'https://docs.sushi.com',
       target: '_blank',
       rel: 'noopener noreferrer',
     },

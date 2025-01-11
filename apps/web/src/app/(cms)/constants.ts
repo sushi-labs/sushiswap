@@ -1,4 +1,4 @@
-export const DOCS_URL = 'https://dev.sushi.com/'
+export const DOCS_URL = 'https://docs.sushi.com/'
 export const DEFAULT_SIDE_PADDING = 'px-6 sm:px-4'
 export const APP_HEADER_HEIGHT = 54
 
