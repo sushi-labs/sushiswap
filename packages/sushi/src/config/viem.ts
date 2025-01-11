@@ -4,6 +4,7 @@ import {
   Chain,
   type PublicClientConfig,
   Transport,
+  fallback,
 } from 'viem'
 import {
   arbitrum,
@@ -673,7 +674,10 @@ export const publicClientConfig = {
   },
   [ChainId.FANTOM]: {
     chain: fantom as Chain,
-    transport: publicTransports[ChainId.FANTOM],
+    transport: fallback([
+      http('https://fantom.drpc.org'),
+      publicTransports[ChainId.FANTOM], // default that uses ankr rpc is now only available as paid account
+    ]),
   },
   [ChainId.FUSE]: {
     chain: fuse as Chain,
