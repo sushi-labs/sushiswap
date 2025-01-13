@@ -633,11 +633,9 @@ const _CrossChainSwapTradeReviewDialog: FC<{
                           subtitle="The impact your trade has on the market price of this pool."
                         >
                           {!step?.priceImpact ? (
-                            <SkeletonText
-                              align="right"
-                              fontSize="sm"
-                              className="w-1/5"
-                            />
+                            <span className="w-24">
+                              <SkeletonText align="right" fontSize="sm" />
+                            </span>
                           ) : (
                             `${
                               step.priceImpact.lessThan(ZERO)

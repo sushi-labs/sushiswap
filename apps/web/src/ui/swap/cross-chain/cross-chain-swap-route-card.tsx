@@ -116,7 +116,15 @@ export const CrossChainSwapRouteCard: FC<CrossChainSwapRouteCardProps> = ({
                 </div>
               )}
             </CardTitle>
-            <CardDescription>{`≈ ${amountOutUSD} after fees`}</CardDescription>
+            <CardDescription>
+              {amountOutUSD ? (
+                <span>{`≈ ${amountOutUSD} after fees`}</span>
+              ) : (
+                <span className="w-36">
+                  <SkeletonText fontSize="sm" />
+                </span>
+              )}
+            </CardDescription>
           </div>
           <span>
             {route.tags?.includes(order) ? (
