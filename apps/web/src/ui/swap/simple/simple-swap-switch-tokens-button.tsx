@@ -16,7 +16,7 @@ export const SimpleSwapSwitchTokensButton = () => {
   } = useDerivedStateSimpleSwap()
 
   return (
-    <div className="left-0 right-0 lg:mt-[-26px] lg:mb-[-26px] flex items-center justify-center">
+    <div className="left-0 right-0 mt-[-26px] mb-[-26px] flex items-center justify-center">
       <TraceEvent
         events={[BrowserEvent.onClick]}
         name={SwapEventName.SWAP_TOKENS_REVERSED}
@@ -28,10 +28,7 @@ export const SimpleSwapSwitchTokensButton = () => {
           className="hover:shadow-sm transition-border z-10 group bg-background p-2 border border-accent transition-all rounded-full cursor-pointer"
         >
           <div className="transition-transform rotate-0 group-hover:rotate-180">
-            <ArrowsUpDownIcon
-              strokeWidth={3}
-              className="w-4 h-4 lg:w-3 lg:h-3 text-blue"
-            />
+            <ArrowsUpDownIcon strokeWidth={3} className="w-3 h-3 text-blue" />
           </div>
         </button>
       </TraceEvent>
