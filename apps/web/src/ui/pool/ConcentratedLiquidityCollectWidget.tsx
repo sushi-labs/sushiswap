@@ -55,13 +55,19 @@ export const ConcentratedLiquidityCollectWidget: FC<
     )
   }, [token0, token1, nativeToken])
 
-  const expectedToken0 = useMemo(() => {
-    return !token0 || receiveWrapped ? token0?.wrapped : unwrapToken(token0)
-  }, [token0, receiveWrapped])
+  const expectedAmount0 = useMemo(() => {
+    const expectedToken0 =
+      !token0 || receiveWrapped ? token0?.wrapped : unwrapToken(token0)
+    if (amounts[0] === undefined || !expectedToken0) return undefined
+    return Amount.fromRawAmount(expectedToken0, amounts[0].quotient)
+  }, [token0, receiveWrapped, amounts])
 
-  const expectedToken1 = useMemo(() => {
-    return !token1 || receiveWrapped ? token1?.wrapped : unwrapToken(token1)
-  }, [token1, receiveWrapped])
+  const expectedAmount1 = useMemo(() => {
+    const expectedToken1 =
+      !token1 || receiveWrapped ? token1?.wrapped : unwrapToken(token1)
+    if (amounts[1] === undefined || !expectedToken1) return undefined
+    return Amount.fromRawAmount(expectedToken1, amounts[1].quotient)
+  }, [token1, receiveWrapped, amounts])
 
   return (
     <>
@@ -69,20 +75,22 @@ export const ConcentratedLiquidityCollectWidget: FC<
         <CardGroup>
           <CardLabel>Tokens</CardLabel>
           <CardCurrencyAmountItem
-            amount={amounts[0]}
+            amount={expectedAmount0}
             isLoading={isLoading}
             fiatValue={formatUSD(fiatValuesAmounts[0])}
+            unwrap={false}
           />
           <CardCurrencyAmountItem
-            amount={amounts[1]}
+            amount={expectedAmount1}
             isLoading={isLoading}
             fiatValue={formatUSD(fiatValuesAmounts[1])}
+            unwrap={false}
           />
         </CardGroup>
         {positionHasNativeToken ? (
           <div className="flex items-center justify-between">
             <span className="text-sm text-muted-foreground">
-              {`Receive ${nativeToken.wrapped.symbol} as ${nativeToken.symbol}`}
+              {`Receive ${nativeToken.wrapped.symbol} instead of ${nativeToken.symbol}`}
             </span>
             <Switch
               checked={receiveWrapped}
@@ -95,8 +103,8 @@ export const ConcentratedLiquidityCollectWidget: FC<
         <ConcentratedLiquidityCollectButton
           position={position ?? undefined}
           positionDetails={positionDetails}
-          token0={expectedToken0}
-          token1={expectedToken1}
+          token0={expectedAmount0?.currency}
+          token1={expectedAmount1?.currency}
           account={address}
           chainId={chainId}
         >

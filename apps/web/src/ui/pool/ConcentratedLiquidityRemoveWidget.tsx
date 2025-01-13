@@ -593,7 +593,7 @@ export const ConcentratedLiquidityRemoveWidget: FC<
                 {positionHasNativeToken ? (
                   <div className="flex items-center justify-between">
                     <span className="text-sm text-muted-foreground">
-                      {`Receive ${nativeToken.wrapped.symbol} as ${nativeToken.symbol}`}
+                      {`Receive ${nativeToken.wrapped.symbol} instead of ${nativeToken.symbol}`}
                     </span>
                     <Switch
                       checked={receiveWrapped}
