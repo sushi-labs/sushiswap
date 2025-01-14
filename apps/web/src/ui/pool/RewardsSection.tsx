@@ -81,7 +81,7 @@ export const RewardsSection: FC = () => {
   }, [tokenSymbols, data])
 
   const rowLink = useCallback((row: AngleRewardsPool) => {
-    return `/pool/${row.id}`
+    return `/${row.chainId}/pool/v3/${row.pool}`
   }, [])
 
   return (
