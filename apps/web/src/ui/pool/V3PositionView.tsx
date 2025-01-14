@@ -53,7 +53,7 @@ import {
 } from '../../lib/functions'
 import { usePriceInverter, useTokenAmountDollarValues } from '../../lib/hooks'
 import { useIsTickAtLimit } from '../../lib/pool/v3'
-import { ConcentratedLiquidityCollectButton } from './ConcentratedLiquidityCollectButton'
+import { ConcentratedLiquidityCollectWidget } from './ConcentratedLiquidityCollectWidget'
 import { ConcentratedLiquidityHarvestButton } from './ConcentratedLiquidityHarvestButton'
 import {
   ConcentratedLiquidityProvider,
@@ -296,46 +296,17 @@ const Component: FC<{ chainId: string; address: string; position: string }> = ({
                       {formatUSD(fiatValuesAmounts[0] + fiatValuesAmounts[1])}
                     </CardDescription>
                   </CardHeader>
-                  <CardContent>
-                    <CardGroup>
-                      <CardLabel>Tokens</CardLabel>
-                      <CardCurrencyAmountItem
-                        amount={amounts[0]}
-                        isLoading={isPositionLoading}
-                        fiatValue={formatUSD(fiatValuesAmounts[0])}
-                      />
-                      <CardCurrencyAmountItem
-                        amount={amounts[1]}
-                        isLoading={isPositionLoading}
-                        fiatValue={formatUSD(fiatValuesAmounts[1])}
-                      />
-                    </CardGroup>
-                  </CardContent>
-                  <CardFooter>
-                    <ConcentratedLiquidityCollectButton
-                      position={position ?? undefined}
-                      positionDetails={positionDetails}
-                      token0={token0}
-                      token1={token1}
-                      account={address}
-                      chainId={chainId}
-                    >
-                      {({ send, isPending }) => (
-                        <Checker.Connect fullWidth>
-                          <Checker.Network fullWidth chainId={chainId}>
-                            <Button
-                              fullWidth
-                              size="xl"
-                              disabled={isPending}
-                              onClick={send}
-                            >
-                              Collect
-                            </Button>
-                          </Checker.Network>
-                        </Checker.Connect>
-                      )}
-                    </ConcentratedLiquidityCollectButton>
-                  </CardFooter>
+                  <ConcentratedLiquidityCollectWidget
+                    position={position ?? undefined}
+                    positionDetails={positionDetails}
+                    token0={token0}
+                    token1={token1}
+                    chainId={chainId}
+                    isLoading={isPositionLoading}
+                    address={address}
+                    amounts={amounts}
+                    fiatValuesAmounts={fiatValuesAmounts}
+                  />
                 </TabsContent>
                 {isMerklChainId(chainId) ? (
                   <TabsContent value="rewards">
@@ -512,7 +483,7 @@ const Component: FC<{ chainId: string; address: string; position: string }> = ({
                               {unwrapToken(currencyQuote)?.symbol}{' '}
                               <HoverCard closeDelay={0} openDelay={0}>
                                 <HoverCardTrigger asChild>
-                                  <span className="text-sm underline decoration-dotted underline-offset-2 underline-offset-2 text-muted-foreground font-normal">
+                                  <span className="text-sm underline decoration-dotted underline-offset-2 text-muted-foreground font-normal">
                                     (
                                     {formatPercent(
                                       priceLower
