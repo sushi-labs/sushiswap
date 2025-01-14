@@ -1,7 +1,7 @@
 'use client'
 
 import { Container } from '@sushiswap/ui'
-import { useEffect } from 'react'
+import { use, useEffect } from 'react'
 import { useTokenInfo } from '~tron/_common/lib/hooks/useTokenInfo'
 import { isAddress } from '~tron/_common/lib/utils/helpers'
 import { Manage } from '~tron/_common/ui/Pools/Manage/Manage'
@@ -10,9 +10,10 @@ import { PoolPosition } from '~tron/_common/ui/Pools/PoolPosition/PoolPosition'
 // import { PoolRewards } from '~tron/_common/ui/Pools/PoolRewards/PoolRewards'
 import { usePoolDispatch } from '~tron/_common/ui/Pools/pool-provider'
 
-export default function PoolByIdPage({
-  params,
-}: { params: { address: string } }) {
+export default function PoolByIdPage(props: {
+  params: Promise<{ address: string }>
+}) {
+  const params = use(props.params)
   const decodedPoolId = decodeURIComponent(params.address).split(':')
   const token0 = decodedPoolId[0]
   const token1 = decodedPoolId[1]

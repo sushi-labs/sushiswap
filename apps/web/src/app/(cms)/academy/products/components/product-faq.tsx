@@ -49,7 +49,6 @@ export function ProductFaq({ faqSlug }: ProductFaq) {
 
                 <Transition
                   show={open}
-                  className="transition-[max-height] overflow-hidden"
                   enter="duration-300 ease-in-out"
                   enterFrom="transform max-h-0"
                   enterTo="transform max-h-max"
@@ -57,9 +56,11 @@ export function ProductFaq({ faqSlug }: ProductFaq) {
                   leaveFrom="transform max-h-max"
                   leaveTo="transform max-h-0"
                 >
-                  <Disclosure.Panel className="px-6 pb-6 text-slate-400 sm:px-9 sm:pb-9 sm:text-base">
-                    {answer}
-                  </Disclosure.Panel>
+                  <div className="transition-[max-height] overflow-hidden">
+                    <Disclosure.Panel className="px-6 pb-6 text-slate-400 sm:px-9 sm:pb-9 sm:text-base">
+                      {answer}
+                    </Disclosure.Panel>
+                  </div>
                 </Transition>
               </>
             )}

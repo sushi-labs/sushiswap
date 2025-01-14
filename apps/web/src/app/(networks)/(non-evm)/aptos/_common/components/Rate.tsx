@@ -12,7 +12,7 @@ import { usePoolState } from '~aptos/pool/ui/pool/add/pool-add-provider/pool-add
 interface RenderPayload {
   invert: boolean
   toggleInvert(): void
-  content: ReactElement
+  content: ReactElement<any>
 }
 
 interface Rate {
