@@ -1,11 +1,10 @@
 import { useQuery } from '@tanstack/react-query'
 import { ChainId } from 'sushi/chain'
-import { Amount, Token, tryParseAmount } from 'sushi/currency'
-import { ZERO } from 'sushi/math'
-import { parseUnits } from 'viem'
-import z from 'zod'
-
 import { isMerklChainId } from 'sushi/config'
+import { Amount, Token, tryParseAmount } from 'sushi/currency'
+import { withoutScientificNotation } from 'sushi/format'
+import { ZERO } from 'sushi/math'
+import z from 'zod'
 
 import { usePrices } from '~evm/_common/ui/price-provider/price-provider/use-prices'
 import { angleRewardsPoolsValidator, angleRewardsValidator } from './validator'
@@ -13,8 +12,6 @@ import { angleRewardsPoolsValidator, angleRewardsValidator } from './validator'
 type TransformedRewardsPerToken = Record<
   string,
   {
-    accumulatedSinceInception: Amount<Token>
-    breakdown: Record<string, Amount<Token>>
     symbol: string
     unclaimed: Amount<Token>
   }
@@ -51,9 +48,7 @@ export const angleRewardsQueryFn = async ({
 }: AngleRewardsQueryParams) => {
   const url = new URL('https://api.merkl.xyz/v2/merkl')
   url.searchParams.set('AMMs', 'sushiswapv3')
-  chainIds.forEach((chainId) =>
-    url.searchParams.append('chainIds', chainId.toString()),
-  )
+  url.searchParams.set('chainIds', `[${chainIds.join(',')}]`)
 
   if (account) {
     url.searchParams.set('user', account)
@@ -117,36 +112,24 @@ export const angleRewardsSelect = ({
           symbol: b.symbolToken1,
           decimals: b.decimalsToken1,
         }),
-        rewardsPerToken: Object.entries(
-          b.rewardsPerToken,
-        ).reduce<TransformedRewardsPerToken>((acc, [k, v]) => {
+        rewardsPerToken: Object.values(
+          b.distributionData,
+        ).reduce<TransformedRewardsPerToken>((acc, v) => {
           const token0 = new Token({
             chainId,
-            address: k,
-            decimals: v.decimals,
-            symbol: v.symbol,
+            address: v.rewardToken,
+            decimals: v.decimalsRewardToken,
+            symbol: v.symbolRewardToken,
           })
 
-          if (token0.symbol !== 'aglaMerkl') {
-            acc[k] = {
-              accumulatedSinceInception: Amount.fromRawAmount(
+          if (token0.symbol !== 'aglaMerkl' && v.unclaimed) {
+            acc[v.rewardToken] = {
+              symbol: v.symbolRewardToken,
+              unclaimed: Amount.fromRawAmount(
                 token0,
-                parseUnits(
-                  v.accumulatedSinceInception.toFixed(18),
-                  v.decimals,
-                ).toString(),
+                (acc[v.rewardToken]?.unclaimed?.quotient ?? 0n) +
+                  BigInt(v.unclaimed),
               ),
-              breakdown: Object.entries(v.breakdownOfUnclaimed).reduce<
-                Record<string, Amount<Token>>
-              >((acc, [i, j]) => {
-                acc[i] = Amount.fromRawAmount(
-                  token0,
-                  parseUnits(j.toFixed(18), v.decimals).toString(),
-                )
-                return acc
-              }, {}),
-              symbol: v.symbol,
-              unclaimed: Amount.fromRawAmount(token0, v.unclaimedUnformatted),
             }
           }
           return acc
@@ -204,7 +187,7 @@ export const angleRewardsSelect = ({
       })
       return {
         minimumAmountPerEpoch: tryParseAmount(
-          el.minimumAmountPerEpoch.toString(),
+          withoutScientificNotation(el.minimumAmountPerEpoch.toString()),
           token,
         ),
         token,

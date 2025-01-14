@@ -18,6 +18,7 @@ export const angleRewardsPoolsValidator = z.object({
       startTimestamp: z.number(),
       rewardToken: z.string(),
       symbolRewardToken: z.string(),
+      decimalsRewardToken: z.number(),
       unclaimed: z.number().optional(),
       whitelist: z.array(z.string()),
     }),
