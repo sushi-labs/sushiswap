@@ -163,12 +163,16 @@ export const ConcentratedLiquidityRemoveWidget: FC<
     }
   }, [])
 
+  const [expectedToken0, expectedToken1] = useMemo(() => {
+    const expectedToken0 =
+      !token0 || receiveWrapped ? token0?.wrapped : unwrapToken(token0)
+    const expectedToken1 =
+      !token1 || receiveWrapped ? token1?.wrapped : unwrapToken(token1)
+    return [expectedToken0, expectedToken1]
+  }, [token0, token1, receiveWrapped])
+
   const [feeValue0, feeValue1] = useMemo(() => {
-    if (positionDetails && token0 && token1) {
-      const expectedToken0 =
-        !token0 || receiveWrapped ? token0?.wrapped : unwrapToken(token0)
-      const expectedToken1 =
-        !token1 || receiveWrapped ? token1?.wrapped : unwrapToken(token1)
+    if (positionDetails && expectedToken0 && expectedToken1) {
       const feeValue0 = positionDetails.fees
         ? Amount.fromRawAmount(expectedToken0, positionDetails.fees[0])
         : undefined
@@ -180,7 +184,7 @@ export const ConcentratedLiquidityRemoveWidget: FC<
     }
 
     return [undefined, undefined]
-  }, [positionDetails, token0, token1, receiveWrapped])
+  }, [positionDetails, expectedToken0, expectedToken1])
 
   const nativeToken = useMemo(() => Native.onChain(chainId), [chainId])
 
@@ -202,11 +206,6 @@ export const ConcentratedLiquidityRemoveWidget: FC<
     const discountedAmount1 = position
       ? liquidityPercentage.multiply(position.amount1.quotient).quotient
       : undefined
-
-    const expectedToken0 =
-      receiveWrapped && token0 ? unwrapToken(token0) : token0
-    const expectedToken1 =
-      receiveWrapped && token1 ? unwrapToken(token1) : token1
 
     const liquidityValue0 =
       expectedToken0 && typeof discountedAmount0 === 'bigint'
@@ -273,10 +272,9 @@ export const ConcentratedLiquidityRemoveWidget: FC<
     position,
     positionDetails,
     slippageTolerance,
-    token0,
-    token1,
     debouncedValue,
-    receiveWrapped,
+    expectedToken0,
+    expectedToken1,
   ])
 
   const { isError: isSimulationError } = useCall({
@@ -525,10 +523,7 @@ export const ConcentratedLiquidityRemoveWidget: FC<
                 <List className="!pt-0">
                   <List.Control>
                     {position?.amount0 && (
-                      <List.KeyValue
-                        flex
-                        title={`${position?.amount0?.currency.symbol}`}
-                      >
+                      <List.KeyValue flex title={`${expectedToken0?.symbol}`}>
                         <div className="flex flex-col gap-1">
                           <div className="flex items-center gap-2">
                             <Currency.Icon
@@ -548,7 +543,7 @@ export const ConcentratedLiquidityRemoveWidget: FC<
                               .multiply(value)
                               .divide(100)
                               ?.toSignificant(6)}{' '}
-                            {position?.amount0?.currency.symbol}
+                            {expectedToken0?.symbol}
                           </div>
                           <span className="text-xs text-gray-500 dark:text-slate-400">
                             ${fiatAmountsAsNumber[0].toFixed(2)}
@@ -557,10 +552,7 @@ export const ConcentratedLiquidityRemoveWidget: FC<
                       </List.KeyValue>
                     )}
                     {position?.amount1 && (
-                      <List.KeyValue
-                        flex
-                        title={`${position?.amount1?.currency.symbol}`}
-                      >
+                      <List.KeyValue flex title={`${expectedToken1?.symbol}`}>
                         <div className="flex flex-col gap-1">
                           <div className="flex items-center gap-2">
                             <Currency.Icon
@@ -580,7 +572,7 @@ export const ConcentratedLiquidityRemoveWidget: FC<
                               .multiply(value)
                               .divide(100)
                               ?.toSignificant(6)}{' '}
-                            {position?.amount1?.currency.symbol}
+                            {expectedToken1?.symbol}
                           </div>
                           <span className="text-xs text-gray-500 dark:text-slate-400">
                             ${fiatAmountsAsNumber[1].toFixed(2)}
