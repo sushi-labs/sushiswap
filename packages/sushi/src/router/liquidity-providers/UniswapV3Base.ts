@@ -4,7 +4,7 @@ import { ChainId } from '../../chain/index.js'
 import { SushiSwapV3FeeAmount, TICK_SPACINGS } from '../../config/index.js'
 import { Currency, Token, Type } from '../../currency/index.js'
 import { computeSushiSwapV3PoolAddress } from '../../pool/index.js'
-import { CLTick, RToken, UniV3Pool } from '../../tines/index.js'
+import { RToken, UniV3Pool } from '../../tines/index.js'
 import { DataFetcherOptions } from '../data-fetcher.js'
 import { getCurrencyCombinations } from '../get-currency-combinations.js'
 import { memoizer } from '../memoizer.js'
@@ -36,19 +36,7 @@ export interface V3Pool {
   fee: UniV3FeeType[keyof UniV3FeeType]
   sqrtPriceX96: bigint
   activeTick: number
-  tickSpacing: number
-  ticks: Map<number, CLTick[]>
 }
-
-export const tickSpacingAbi = [
-  {
-    inputs: [],
-    name: 'tickSpacing',
-    outputs: [{ internalType: 'int24', name: '', type: 'int24' }],
-    stateMutability: 'view',
-    type: 'function',
-  },
-] as const
 
 export const NUMBER_OF_SURROUNDING_TICKS = 1000 // 10% price impact
 
@@ -62,7 +50,7 @@ export abstract class UniswapV3BaseProvider extends LiquidityProvider {
   TICK_SPACINGS: UniV3TickSpacingType = TICK_SPACINGS
   FEE: UniV3FeeType = SushiSwapV3FeeAmount
   poolsByTrade: Map<string, string[]> = new Map()
-  pools: Map<string, PoolCode> = new Map()
+  poolsCodes: Map<string, PoolCode> = new Map()
 
   blockListener?: (() => void) | undefined
   unwatchBlockNumber?: () => void
@@ -95,9 +83,13 @@ export abstract class UniswapV3BaseProvider extends LiquidityProvider {
     }
   }
 
-  getActiveTick = (tickCurrent: number, tickSpacing?: number) =>
-    typeof tickCurrent === 'number' && typeof tickSpacing === 'number'
-      ? Math.floor(tickCurrent / tickSpacing) * tickSpacing
+  getActiveTick = (
+    tickCurrent: number,
+    feeAmount: UniV3FeeType[keyof UniV3FeeType],
+  ) =>
+    typeof tickCurrent === 'number' && feeAmount
+      ? Math.floor(tickCurrent / this.TICK_SPACINGS[feeAmount]!) *
+        this.TICK_SPACINGS[feeAmount]!
       : undefined
 
   async fetchPoolData(
@@ -181,8 +173,6 @@ export abstract class UniswapV3BaseProvider extends LiquidityProvider {
           return undefined
         })
 
-    const tickSpacings = await this.getTickSpacing(staticPools, options)
-
     const existingPools: V3Pool[] = []
 
     staticPools.forEach((pool, i) => {
@@ -191,25 +181,12 @@ export abstract class UniswapV3BaseProvider extends LiquidityProvider {
       const tick = slot0[i]!.result?.[1]
       if (!sqrtPriceX96 || sqrtPriceX96 === 0n || typeof tick !== 'number')
         return
-      let tickSpacing = this.TICK_SPACINGS[pool.fee]!
-      if (typeof tickSpacings?.[i] !== 'undefined') {
-        const ts = tickSpacings[i]
-        if (typeof ts === 'number') {
-          tickSpacing = ts
-        } else {
-          if (ts?.status === 'success') {
-            tickSpacing = ts.result
-          }
-        }
-      }
-      const activeTick = this.getActiveTick(tick, tickSpacing)
+      const activeTick = this.getActiveTick(tick, pool.fee)
       if (typeof activeTick !== 'number') return
       existingPools.push({
         ...pool,
         sqrtPriceX96,
         activeTick,
-        tickSpacing,
-        ticks: new Map(),
       })
     })
 
@@ -220,36 +197,31 @@ export abstract class UniswapV3BaseProvider extends LiquidityProvider {
     const minIndexes = existingPools.map((pool) =>
       bitmapIndex(
         pool.activeTick - NUMBER_OF_SURROUNDING_TICKS,
-        pool.tickSpacing,
+        this.TICK_SPACINGS[pool.fee]!,
       ),
     )
     const maxIndexes = existingPools.map((pool) =>
       bitmapIndex(
         pool.activeTick + NUMBER_OF_SURROUNDING_TICKS,
-        pool.tickSpacing,
+        this.TICK_SPACINGS[pool.fee]!,
       ),
     )
     return [minIndexes, maxIndexes]
   }
 
-  handleTickBoundries(tick: number, pool: V3Pool): CLTick[] {
-    // calculate ticks min/max range
-    // reason for this is to be able to calculate the ticks range
-    // independently instead of passing around the min/max range as args
-    const currentTickIndex = bitmapIndex(tick, pool.tickSpacing)
-    if (!pool.ticks.has(currentTickIndex)) return []
-    let minIndex
-    let maxIndex
-    for (minIndex = currentTickIndex; pool.ticks.has(minIndex); --minIndex);
-    for (maxIndex = currentTickIndex + 1; pool.ticks.has(maxIndex); ++maxIndex);
-    if (maxIndex - minIndex <= 1) return []
-
-    let poolTicks: CLTick[] = []
-    for (let i = minIndex + 1; i < maxIndex; ++i)
-      poolTicks = poolTicks.concat(pool.ticks.get(i)!)
-
+  handleTickBoundries(
+    i: number,
+    pool: V3Pool,
+    poolTicks: {
+      index: number
+      DLiquidity: bigint
+    }[],
+    minIndexes: number[],
+    maxIndexes: number[],
+  ) {
     const lowerUnknownTick =
-      (minIndex + 1) * pool.tickSpacing * 256 - pool.tickSpacing
+      minIndexes[i]! * this.TICK_SPACINGS[pool.fee]! * 256 -
+      this.TICK_SPACINGS[pool.fee]!
     console.assert(
       poolTicks.length === 0 || lowerUnknownTick < poolTicks[0]!.index,
       'Error 236: unexpected min tick index',
@@ -258,7 +230,8 @@ export abstract class UniswapV3BaseProvider extends LiquidityProvider {
       index: lowerUnknownTick,
       DLiquidity: 0n,
     })
-    const upperUnknownTick = maxIndex * pool.tickSpacing * 256
+    const upperUnknownTick =
+      (maxIndexes[i]! + 1) * this.TICK_SPACINGS[pool.fee]! * 256
     console.assert(
       poolTicks[poolTicks.length - 1]!.index < upperUnknownTick,
       'Error 244: unexpected max tick index',
@@ -267,8 +240,6 @@ export abstract class UniswapV3BaseProvider extends LiquidityProvider {
       index: upperUnknownTick,
       DLiquidity: 0n,
     })
-
-    return poolTicks
   }
 
   async fetchPoolsForToken(
@@ -477,15 +448,12 @@ export abstract class UniswapV3BaseProvider extends LiquidityProvider {
       )
         return
 
-      pool.ticks.set(
-        i,
-        ticks[i]!.map((tick) => ({
-          index: tick.tick,
-          DLiquidity: tick.liquidityNet,
-        })).sort((a, b) => a.index - b.index),
-      )
+      const poolTicks = ticks[i]!.map((tick) => ({
+        index: tick.tick,
+        DLiquidity: tick.liquidityNet,
+      })).sort((a, b) => a.index - b.index)
 
-      const poolTicks = this.handleTickBoundries(pool.activeTick, pool)
+      this.handleTickBoundries(i, pool, poolTicks, minIndexes, maxIndexes)
       //console.log(pool.fee, TICK_SPACINGS[pool.fee], pool.activeTick, minIndexes[i], maxIndexes[i], poolTicks)
 
       const v3Pool = new UniV3Pool(
@@ -507,7 +475,7 @@ export abstract class UniswapV3BaseProvider extends LiquidityProvider {
         this.getPoolProviderName(),
       )
       transformedV3Pools.push(pc)
-      this.pools.set(pool.address.toLowerCase(), pc)
+      this.poolsCodes.set(pool.address.toLowerCase(), pc)
     })
 
     this.poolsByTrade.set(
@@ -588,7 +556,7 @@ export abstract class UniswapV3BaseProvider extends LiquidityProvider {
     // })
   }
 
-  getCurrentPoolList(): PoolCode[] {
+  getCurrentPoolList(_t0: Token, _t1: Token): PoolCode[] {
     // const tradeId = this.getTradeId(t0, t1)
     // const poolsByTrade = this.poolsByTrade.get(tradeId) ?? []
     // return poolsByTrade
@@ -596,7 +564,7 @@ export abstract class UniswapV3BaseProvider extends LiquidityProvider {
     //       .filter(([poolAddress]) => poolsByTrade.includes(poolAddress))
     //       .map(([, p]) => p)
     //   : []
-    return Array.from(this.pools.values())
+    return Array.from(this.poolsCodes.values())
   }
 
   stopFetchPoolsData() {
@@ -633,33 +601,5 @@ export abstract class UniswapV3BaseProvider extends LiquidityProvider {
       (v, i) =>
         this.TICK_SPACINGS[feeList[i] as SushiSwapV3FeeAmount] === v || v === 0,
     )
-  }
-
-  // fetches pool tickSpacing, this will be used
-  // instead of hardcoded TICK_SPACINGS values
-  async getTickSpacing(pools: StaticPoolUniV3[], options?: DataFetcherOptions) {
-    const calldata = {
-      multicallAddress: this.client.chain?.contracts?.multicall3
-        ?.address as Address,
-      allowFailure: true,
-      blockNumber: options?.blockNumber,
-      contracts: pools.map(
-        (pool) =>
-          ({
-            address: pool.address as Address,
-            chainId: this.chainId,
-            abi: tickSpacingAbi,
-            functionName: 'tickSpacing',
-          }) as const,
-      ),
-    }
-    return await this.client.multicall(calldata).catch((e) => {
-      console.warn(
-        `${this.getLogPrefix()} - INIT: multicall failed, message: ${
-          e.message
-        }`,
-      )
-      return undefined
-    })
   }
 }

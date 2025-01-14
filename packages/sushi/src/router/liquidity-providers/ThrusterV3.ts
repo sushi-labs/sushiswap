@@ -2,10 +2,10 @@ import { Address, PublicClient } from 'viem'
 import { uniswapV3FactoryAbi } from '../../abi/uniswapV3FactoryAbi.js'
 import { ChainId } from '../../chain/index.js'
 import { SushiSwapV3FeeAmount } from '../../config/sushiswap-v3.js'
+import { RainUniswapV3BaseProvider } from '../rain/RainUniswapV3Base.js'
 import { LiquidityProviders } from './LiquidityProvider.js'
-import { UniswapV3BaseProvider } from './UniswapV3Base.js'
 
-export class ThrusterV3Provider extends UniswapV3BaseProvider {
+export class ThrusterV3Provider extends RainUniswapV3BaseProvider {
   constructor(chainId: ChainId, web3Client: PublicClient) {
     const factory = {
       [ChainId.BLAST]: '0xa08ae3d3f4dA51C22d3c041E468bdF4C61405AaB',

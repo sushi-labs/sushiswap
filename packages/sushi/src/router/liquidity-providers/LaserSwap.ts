@@ -1,9 +1,9 @@
 import { Address, PublicClient } from 'viem'
 import { ChainId } from '../../chain/index.js'
+import { RainUniswapV2BaseProvider } from '../rain/RainUniswapV2Base.js'
 import { LiquidityProviders } from './LiquidityProvider.js'
-import { UniswapV2BaseProvider } from './UniswapV2Base.js'
 
-export class LaserSwapV2Provider extends UniswapV2BaseProvider {
+export class LaserSwapV2Provider extends RainUniswapV2BaseProvider {
   override fee = 0.0025
   constructor(chainId: ChainId, web3Client: PublicClient) {
     const factory = {

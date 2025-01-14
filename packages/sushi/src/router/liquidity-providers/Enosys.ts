@@ -1,17 +1,17 @@
 import { getCreate2Address } from '@ethersproject/address'
 import { Address, PublicClient, encodePacked, keccak256 } from 'viem'
 import { ChainId } from '../../chain/index.js'
-
 import { Token } from '../../currency/Token.js'
 import { getCurrencyCombinations } from '../get-currency-combinations.js'
+import { RainUniswapV2BaseProvider } from '../rain/RainUniswapV2Base.js'
 import { LiquidityProviders } from './LiquidityProvider.js'
-import { StaticPool, UniswapV2BaseProvider } from './UniswapV2Base.js'
+import { StaticPool } from './UniswapV2Base.js'
 
 // Enosys has multiple initCodeHashes, so it is required to override the pool address
 // calculations methods to use all the available initCodeHashes to generate multiple
 // pool addresses for a pair and then the wrong ones will be filtered out automatically
 // on multicall, just the same as any other non existant calculated pool addresses
-export class EnosysProvider extends UniswapV2BaseProvider {
+export class EnosysProvider extends RainUniswapV2BaseProvider {
   constructor(chainId: ChainId, web3Client: PublicClient) {
     const factory = {
       [ChainId.FLARE]: '0x28b70f6Ed97429E40FE9a9CD3EB8E86BCBA11dd4',
@@ -31,7 +31,7 @@ export class EnosysProvider extends UniswapV2BaseProvider {
     return 'Enosys'
   }
 
-  // same as _getPoolAddress() in UniswapV2BaseProvider, but instead of
+  // same as _getPoolAddress() in RainUniswapV2BaseProvider, but instead of
   // returning only 1 pool address, it returns array of calculated pool
   // addressses by using all available initCodeHashes
   _getPoolAddresses(t1: Token, t2: Token): Address[] {
@@ -51,7 +51,7 @@ export class EnosysProvider extends UniswapV2BaseProvider {
     )
   }
 
-  // same as original getStaticPools() in UniswapV2BaseProvider, but
+  // same as original getStaticPools() in RainUniswapV2BaseProvider, but
   // just overriden to do flatMap() to flatten array of pool addresses
   // per token pair, since there will be multiple calculated pool addresses
   // per token pair as a result of having multiple initCodeHashes

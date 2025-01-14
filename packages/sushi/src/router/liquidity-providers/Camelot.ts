@@ -3,8 +3,8 @@ import { ChainId } from '../../chain/index.js'
 import { DataFetcherOptions } from '../data-fetcher.js'
 import { memoizer } from '../memoizer.js'
 import { type PoolCode } from '../pool-codes/index.js'
+import { RainUniswapV2BaseProvider } from '../rain/RainUniswapV2Base.js'
 import { LiquidityProviders } from './LiquidityProvider.js'
-import { UniswapV2BaseProvider } from './UniswapV2Base.js'
 
 type IsStableSwap =
   | (
@@ -22,7 +22,7 @@ type IsStableSwap =
     )[]
   | undefined
 
-export class CamelotProvider extends UniswapV2BaseProvider {
+export class CamelotProvider extends RainUniswapV2BaseProvider {
   // Camelot has a slightly different getReserves() abi
   // so needs to be overriden
   override getReservesAbi = parseAbi([
@@ -48,7 +48,7 @@ export class CamelotProvider extends UniswapV2BaseProvider {
   }
 
   override async getReserves(
-    poolCodesToCreate: PoolCode[],
+    poolCodesToCreate: Address[],
     options?: DataFetcherOptions,
   ): Promise<any> {
     const multicallMemoize = await memoizer.fn(this.client.multicall)
@@ -90,9 +90,9 @@ export class CamelotProvider extends UniswapV2BaseProvider {
       allowFailure: true,
       blockNumber: options?.blockNumber,
       contracts: poolCodesToCreate.map(
-        (poolCode) =>
+        (address) =>
           ({
-            address: poolCode.pool.address as Address,
+            address,
             chainId: this.chainId,
             abi: this.getReservesAbi,
             functionName: 'getReserves',
@@ -123,9 +123,9 @@ export class CamelotProvider extends UniswapV2BaseProvider {
       allowFailure: true,
       blockNumber: options?.blockNumber,
       contracts: poolCodesToCreate.map(
-        (poolCode) =>
+        (address) =>
           ({
-            address: poolCode.pool.address as Address,
+            address,
             chainId: this.chainId,
             abi: [
               {

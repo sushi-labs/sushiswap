@@ -1,9 +1,9 @@
 import { PublicClient } from 'viem'
 import { ChainId } from '../../chain/index.js'
+import { RainUniswapV2BaseProvider } from '../rain/RainUniswapV2Base.js'
 import { LiquidityProviders } from './LiquidityProvider.js'
-import { UniswapV2BaseProvider } from './UniswapV2Base.js'
 
-export class UniswapV2Provider extends UniswapV2BaseProvider {
+export class UniswapV2Provider extends RainUniswapV2BaseProvider {
   constructor(chainId: ChainId, web3Client: PublicClient) {
     const factory = {
       [ChainId.ETHEREUM]: '0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f',

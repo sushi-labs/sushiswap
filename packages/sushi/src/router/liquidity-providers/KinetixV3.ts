@@ -1,9 +1,9 @@
 import { PublicClient } from 'viem'
 import { ChainId } from '../../chain/index.js'
+import { RainUniswapV3BaseProvider } from '../rain/RainUniswapV3Base.js'
 import { LiquidityProviders } from './LiquidityProvider.js'
-import { UniswapV3BaseProvider } from './UniswapV3Base.js'
 
-export class KinetixV3Provider extends UniswapV3BaseProvider {
+export class KinetixV3Provider extends RainUniswapV3BaseProvider {
   constructor(chainId: ChainId, web3Client: PublicClient) {
     const factory = {
       [ChainId.KAVA]: '0x2dBB6254231C5569B6A4313c6C1F5Fe1340b35C2',

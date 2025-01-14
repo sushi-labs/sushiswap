@@ -1,4 +1,4 @@
-import { PublicClient } from 'viem'
+import { Log, PublicClient } from 'viem'
 import { ChainId, chainShortName } from '../../chain/index.js'
 import type { Token } from '../../currency/index.js'
 import { DataFetcherOptions } from '../data-fetcher.js'
@@ -130,6 +130,10 @@ export abstract class LiquidityProvider {
     [t0.address.toLowerCase(), t1.address.toLowerCase()]
       .sort((first, second) => (first > second ? -1 : 1))
       .join(':')
+
+  // methods interface for event log handling
+  processLog(_log: Log) {}
+  async afterProcessLog(_untilBlock: bigint) {}
 }
 
 export const UniV2LiquidityProviders: LiquidityProviders[] = [

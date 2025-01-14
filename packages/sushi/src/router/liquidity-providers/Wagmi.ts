@@ -1,7 +1,7 @@
 import { PublicClient } from 'viem'
 import { ChainId } from '../../chain/index.js'
+import { RainUniswapV3BaseProvider } from '../rain/RainUniswapV3Base.js'
 import { LiquidityProviders } from './LiquidityProvider.js'
-import { UniswapV3BaseProvider } from './UniswapV3Base.js'
 
 enum WagmiFeeAmount {
   /** 0.01% */
@@ -21,7 +21,7 @@ const WagmiTickSpacing: Record<WagmiFeeAmount, number> = {
   [WagmiFeeAmount.HIGH]: 200,
 }
 
-export class WagmiProvider extends UniswapV3BaseProvider {
+export class WagmiProvider extends RainUniswapV3BaseProvider {
   override FEE = WagmiFeeAmount
   override TICK_SPACINGS = WagmiTickSpacing
   constructor(chainId: ChainId, web3Client: PublicClient) {
