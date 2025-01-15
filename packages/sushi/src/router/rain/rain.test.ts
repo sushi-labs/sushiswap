@@ -2,11 +2,11 @@ import { describe, expect, it } from 'vitest'
 import { ChainId } from '../../chain/constants.js'
 import { ROUTE_PROCESSOR_4_ADDRESS } from '../../config/route-processor.js'
 import { USDC, USDT } from '../../currency/tokens.js'
-import { RainDataFetcher } from './rain-data-fetcher.js'
 import { LiquidityProviders } from '../liquidity-providers/index.js'
 import { Router } from '../router.js'
+import { RainDataFetcher } from './rain-data-fetcher.js'
 
-describe('RainDataFetcher Indexer', async () => {
+describe('Rain fork tests', async () => {
   it('should correctly update pools data by logs', async () => {
     // 2000 blocks apart
     const currentBlockNumber = 64818756n
