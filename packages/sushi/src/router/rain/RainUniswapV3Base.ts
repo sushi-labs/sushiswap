@@ -644,12 +644,17 @@ export abstract class RainUniswapV3BaseProvider extends UniswapV3BaseProvider {
               }
               break
             }
-            default:
+            default: {
+              this.otherEventCases(log, event, pool)
+            }
           }
         } catch {}
       }
     }
   }
+
+  // for child classes if they have other events to handle such as AlgebraV1Base
+  otherEventCases(_log: Log, _event: Log, _pool: RainV3Pool) {}
 
   override async afterProcessLog(untilBlock: bigint) {
     const newTicksQueue = [...this.newTicksQueue.splice(0)]

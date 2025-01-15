@@ -7,7 +7,6 @@ import {
   getAddress,
   keccak256,
   parseAbiItem,
-  parseEventLogs,
 } from 'viem'
 import { ChainId } from '../../chain/index.js'
 import { Token } from '../../currency/index.js'
@@ -239,151 +238,36 @@ export abstract class AlgebraV1BaseProvider extends RainUniswapV3BaseProvider {
     return true
   }
 
-  override processLog(log: Log) {
-    const factory =
-      this.factory[this.chainId as keyof typeof this.factory]!.toLowerCase()
-    const logAddress = log.address.toLowerCase()
-    if (logAddress === factory) {
-      try {
-        const event = parseEventLogs({
-          logs: [log],
-          abi: this.eventsAbi as typeof AlgebraEventsAbi,
-          eventName: 'Pool',
-        })[0]!
-        this.nonExistentPools.delete(event.args.pool.toLowerCase())
-      } catch {}
-    } else {
-      const pool = this.pools.get(logAddress) as RainV3Pool | undefined
-      if (pool) {
-        try {
-          const event = parseEventLogs({
-            logs: [log],
-            abi: this.eventsAbi as typeof AlgebraEventsAbi,
-          })[0]!
-          switch (event.eventName) {
-            case 'Mint': {
-              const { amount, amount0, amount1 } = event.args
-              const { tickLower, tickUpper } = event.args
-              if (log.blockNumber! >= pool.blockNumber) {
-                pool.blockNumber = log.blockNumber!
-                if (
-                  tickLower !== undefined &&
-                  tickUpper !== undefined &&
-                  amount
-                ) {
-                  const tick = pool.activeTick
-                  if (tickLower <= tick && tick < tickUpper)
-                    pool.liquidity += amount
-                }
-                if (amount1 !== undefined && amount0 !== undefined) {
-                  pool.reserve0 += amount0
-                  pool.reserve1 += amount1
-                }
-                if (
-                  tickLower !== undefined &&
-                  tickUpper !== undefined &&
-                  amount
-                ) {
-                  this.addTick(tickLower, amount, pool)
-                  this.addTick(tickUpper, -amount, pool)
-                }
-              }
-              break
-            }
-            case 'Burn': {
-              const { amount } = event.args
-              const { tickLower, tickUpper } = event.args
-              if (log.blockNumber! >= pool.blockNumber) {
-                pool.blockNumber = log.blockNumber!
-                if (
-                  tickLower !== undefined &&
-                  tickUpper !== undefined &&
-                  amount
-                ) {
-                  const tick = pool.activeTick
-                  if (tickLower <= tick && tick < tickUpper)
-                    pool.liquidity -= amount
-                }
-                if (
-                  tickLower !== undefined &&
-                  tickUpper !== undefined &&
-                  amount
-                ) {
-                  this.addTick(tickLower, -amount, pool)
-                  this.addTick(tickUpper, amount, pool)
-                }
-              }
-              break
-            }
-            case 'Collect': {
-              if (log.blockNumber! >= pool.blockNumber) {
-                pool.blockNumber = log.blockNumber!
-                const { amount0, amount1 } = event.args
-                if (amount0 !== undefined && amount1 !== undefined) {
-                  pool.reserve0 -= amount0
-                  pool.reserve1 -= amount1
-                }
-              }
-              break
-            }
-            case 'Flash': {
-              if (log.blockNumber! >= pool.blockNumber) {
-                pool.blockNumber = log.blockNumber!
-                const { paid0, paid1 } = event.args
-                if (paid0 !== undefined && paid1 !== undefined) {
-                  pool.reserve0 += paid0
-                  pool.reserve1 += paid1
-                }
-              }
-              break
-            }
-            case 'Swap': {
-              if (log.blockNumber! >= pool.blockNumber) {
-                pool.blockNumber = log.blockNumber!
-                const { amount0, amount1, sqrtPriceX96, liquidity, tick } =
-                  event.args
-                if (amount0 !== undefined && amount1 !== undefined) {
-                  pool.reserve0 += amount0
-                  pool.reserve1 += amount1
-                }
-                if (sqrtPriceX96 !== undefined) pool.sqrtPriceX96 = sqrtPriceX96
-                if (liquidity !== undefined) pool.liquidity = liquidity
-                if (tick !== undefined) {
-                  pool.activeTick =
-                    Math.floor(tick / pool.tickSpacing) * pool.tickSpacing
-                  const newTicks = this.onPoolTickChange(pool.activeTick, pool)
-                  const queue = this.newTicksQueue.find(
-                    (v) => v[0].address === pool.address,
-                  )
-                  if (queue) {
-                    for (const tick of newTicks) {
-                      if (!queue[1].includes(tick)) queue[1].push(tick)
-                    }
-                  } else {
-                    this.newTicksQueue.push([pool, newTicks])
-                  }
-                }
-              }
-              break
-            }
-            case 'Fee': {
-              if (log.blockNumber! >= pool.blockNumber) {
-                pool.blockNumber = log.blockNumber!
-                pool.fee = event.args.fee
-              }
-              break
-            }
-            case 'TickSpacing': {
-              if (log.blockNumber! >= pool.blockNumber) {
-                pool.blockNumber = log.blockNumber!
-                pool.tickSpacing = event.args.newTickSpacing
-              }
-              break
-            }
-            default:
-          }
-        } catch {}
+  // handle extra events that Algebra has
+  override otherEventCases(
+    log: Log,
+    event: Log<
+      bigint,
+      number,
+      boolean,
+      (typeof AlgebraEventsAbi)[number],
+      true,
+      typeof AlgebraEventsAbi,
+      (typeof AlgebraEventsAbi)[number]['name']
+    >,
+    pool: RainV3Pool,
+  ): void {
+    switch (event.eventName) {
+      case 'Fee': {
+        if (log.blockNumber! >= pool.blockNumber) {
+          pool.blockNumber = log.blockNumber!
+          pool.fee = event.args.fee
+        }
+        break
       }
+      case 'TickSpacing': {
+        if (log.blockNumber! >= pool.blockNumber) {
+          pool.blockNumber = log.blockNumber!
+          pool.tickSpacing = event.args.newTickSpacing
+        }
+        break
+      }
+      default:
     }
   }
 }
