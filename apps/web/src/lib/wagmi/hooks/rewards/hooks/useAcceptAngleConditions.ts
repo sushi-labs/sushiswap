@@ -20,6 +20,26 @@ export enum AngleConditionsState {
   ACCEPTED = 'ACCEPTED',
 }
 
+const userSignatureWhitelistAbi = [
+  {
+    inputs: [{ internalType: 'address', name: '', type: 'address' }],
+    name: 'userSignatureWhitelist',
+    outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
+] as const
+
+const acceptConditionsAbi = [
+  {
+    inputs: [],
+    name: 'acceptConditions',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+] as const
+
 export const useAcceptAngleConditions = (
   { enabled = true }: { enabled?: boolean } = { enabled: true },
 ) => {
@@ -32,15 +52,7 @@ export const useAcceptAngleConditions = (
     refetch,
   } = useReadContract({
     address: '0x8BB4C975Ff3c250e0ceEA271728547f3802B36Fd',
-    abi: [
-      {
-        inputs: [{ internalType: 'address', name: '', type: 'address' }],
-        name: 'userSignatureWhitelist',
-        outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
-        stateMutability: 'view',
-        type: 'function',
-      },
-    ] as const,
+    abi: userSignatureWhitelistAbi,
     functionName: 'userSignatureWhitelist',
     chainId: chainId as ChainId,
     args: [address!],
@@ -51,15 +63,7 @@ export const useAcceptAngleConditions = (
 
   const { data: simulation } = useSimulateContract({
     address: '0x8BB4C975Ff3c250e0ceEA271728547f3802B36Fd',
-    abi: [
-      {
-        inputs: [],
-        name: 'acceptConditions',
-        outputs: [],
-        stateMutability: 'nonpayable',
-        type: 'function',
-      },
-    ] as const,
+    abi: acceptConditionsAbi,
     functionName: 'acceptConditions',
     query: {
       enabled: Boolean(
@@ -124,9 +128,8 @@ export const useAcceptAngleConditions = (
       if (!simulation?.request) return
 
       return () => execute.writeContract(simulation.request as any)
-      // eslint-disable-next-line react-hooks/exhaustive-deps
     },
-    [execute.writeContract, simulation?.request] as const,
+    [execute.writeContract, simulation] as const,
   )
 
   return useMemo<
