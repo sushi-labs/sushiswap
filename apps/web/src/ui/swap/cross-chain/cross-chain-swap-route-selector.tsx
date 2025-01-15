@@ -155,7 +155,7 @@ const DesktopRouteSelector: FC<RouteSelectorProps> = ({
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <RouteSelectorCarousel />
+            <RouteSelectorMarquee />
           </CardContent>
           <CardFooter className="flex-col gap-3 whitespace-nowrap text-sm text-muted-foreground">
             <div className="flex gap-3">
@@ -272,7 +272,7 @@ const MobileRouteSelector: FC<RouteSelectorProps> = ({
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <RouteSelectorCarousel />
+              <RouteSelectorMarquee />
             </CardContent>
             <CardFooter className="flex-col gap-3 whitespace-nowrap text-sm text-muted-foreground">
               <div className="flex gap-3">
@@ -288,66 +288,33 @@ const MobileRouteSelector: FC<RouteSelectorProps> = ({
   )
 }
 
-const RouteSelectorCarousel = () => {
+const SUSHI_IMGS = [
+  'https://cdn.sushi.com/image/upload/v1734107194/sushi-plate-0.png',
+  'https://cdn.sushi.com/image/upload/v1734107194/sushi-plate-1.png',
+  'https://cdn.sushi.com/image/upload/v1734107194/sushi-plate-2.png',
+  'https://cdn.sushi.com/image/upload/v1734107194/sushi-plate-3.png',
+  'https://cdn.sushi.com/image/upload/v1734107194/sushi-plate-4.png',
+  'https://cdn.sushi.com/image/upload/v1734107194/sushi-plate-5.png',
+  'https://cdn.sushi.com/image/upload/v1734107194/sushi-plate-6.png',
+]
+
+const DUP_SUSHI_IMAGES = [...SUSHI_IMGS, ...SUSHI_IMGS]
+
+const RouteSelectorMarquee = () => {
   return (
-    <div className="relative overflow-hidden px-4">
-      <div className="flex gap-6 animate-carouselSlide">
-        <Image
-          loader={cloudinaryFetchLoader}
-          src="https://cdn.sushi.com/image/upload/v1734107194/sushi-plate-0.png"
-          alt="sushi"
-          width={95}
-          height={80}
-          quality={100}
-        />
-        <Image
-          loader={cloudinaryFetchLoader}
-          src="https://cdn.sushi.com/image/upload/v1734107194/sushi-plate-1.png"
-          alt="sushi"
-          width={95}
-          height={80}
-          quality={100}
-        />
-        <Image
-          loader={cloudinaryFetchLoader}
-          src="https://cdn.sushi.com/image/upload/v1734107194/sushi-plate-2.png"
-          alt="sushi"
-          width={95}
-          height={80}
-          quality={100}
-        />
-        <Image
-          loader={cloudinaryFetchLoader}
-          src="https://cdn.sushi.com/image/upload/v1734107194/sushi-plate-3.png"
-          alt="sushi"
-          width={95}
-          height={80}
-          quality={100}
-        />
-        <Image
-          loader={cloudinaryFetchLoader}
-          src="https://cdn.sushi.com/image/upload/v1734107194/sushi-plate-4.png"
-          alt="sushi"
-          width={95}
-          height={80}
-          quality={100}
-        />
-        <Image
-          loader={cloudinaryFetchLoader}
-          src="https://cdn.sushi.com/image/upload/v1734107194/sushi-plate-5.png"
-          alt="sushi"
-          width={95}
-          height={80}
-          quality={100}
-        />
-        <Image
-          loader={cloudinaryFetchLoader}
-          src="https://cdn.sushi.com/image/upload/v1734107194/sushi-plate-6.png"
-          alt="sushi"
-          width={95}
-          height={80}
-          quality={100}
-        />
+    <div className="relative overflow-hidden">
+      <div className="flex gap-6 animate-marquee">
+        {DUP_SUSHI_IMAGES.map((img, i) => (
+          <Image
+            key={`sushi:${i}`}
+            loader={cloudinaryFetchLoader}
+            src={img}
+            alt="sushi"
+            width={95}
+            height={80}
+            quality={100}
+          />
+        ))}
       </div>
     </div>
   )
