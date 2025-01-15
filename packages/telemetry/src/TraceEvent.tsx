@@ -70,7 +70,7 @@ TraceEvent.displayName = 'TraceEvent'
  * object of the event handlers augmented with analytics logging.
  */
 function getEventHandlers(
-  child: React.ReactElement,
+  child: React.ReactElement<any>,
   traceContext: ITraceContext,
   events: string[],
   name: string,

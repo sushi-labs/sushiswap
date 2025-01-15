@@ -11,10 +11,14 @@ export const metadata: Metadata = {
     "Dollar-cost average into your favorite tokens with SushiSwap's DCA tool.",
 }
 
-export default function SwapDCALayout({
-  children,
-  params,
-}: { children: React.ReactNode; params: { chainId: string } }) {
+export default async function SwapDCALayout(props: {
+  children: React.ReactNode
+  params: Promise<{ chainId: string }>
+}) {
+  const params = await props.params
+
+  const { children } = props
+
   const chainId = +params.chainId as ChainId
 
   if (!isTwapSupportedChainId(chainId)) {

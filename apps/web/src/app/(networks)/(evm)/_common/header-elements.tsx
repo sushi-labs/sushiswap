@@ -33,7 +33,6 @@ export const headerElements = ({
   {
     show: 'desktop',
     type: NavigationElementType.Custom,
-    href: `/${ChainKey[chainId ?? ChainId.ETHEREUM]}/swap`,
     item: (
       <NavigationMenuItem className={NavigationElementType.Custom}>
         <NavigationMenuTrigger>Trade</NavigationMenuTrigger>

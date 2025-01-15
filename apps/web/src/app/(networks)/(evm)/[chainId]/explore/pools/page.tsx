@@ -12,11 +12,10 @@ import { TableFiltersResetButton } from 'src/ui/pool/TableFiltersResetButton'
 import { TableFiltersSearchToken } from 'src/ui/pool/TableFiltersSearchToken'
 import { ChainId } from 'sushi/chain'
 
-export default async function PoolsPage({
-  params,
-}: {
-  params: { chainId: string }
+export default async function PoolsPage(props: {
+  params: Promise<{ chainId: string }>
 }) {
+  const params = await props.params
   const chainId = +params.chainId as ChainId
 
   if (!isPoolChainId(chainId)) {

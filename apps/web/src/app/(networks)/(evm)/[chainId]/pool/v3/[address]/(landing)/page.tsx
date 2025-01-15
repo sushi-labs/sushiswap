@@ -7,11 +7,10 @@ import type { ChainId } from 'sushi'
 import { isSushiSwapV3ChainId } from 'sushi/config'
 import { isAddress } from 'viem'
 
-export default async function PoolPage({
-  params,
-}: {
-  params: { chainId: string; address: string }
+export default async function PoolPage(props: {
+  params: Promise<{ chainId: string; address: string }>
 }) {
+  const params = await props.params
   const { chainId: _chainId, address } = params
   const chainId = +_chainId as ChainId
 

@@ -2,13 +2,17 @@ import { Container } from '@sushiswap/ui'
 import { headers } from 'next/headers'
 import { PoolHeader } from '~aptos/_common/components/PoolSection/PoolHeader'
 
-export default function Layout({
-  children,
-  params,
-}: { children: React.ReactNode; params: { address: string } }) {
+export default async function Layout(props: {
+  children: React.ReactNode
+  params: Promise<{ address: string }>
+}) {
+  const params = await props.params
+
+  const { children } = props
+
   const address = decodeURIComponent(params.address)
 
-  const headersList = headers()
+  const headersList = await headers()
   const referer = headersList.get('referer')
 
   return (

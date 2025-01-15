@@ -58,8 +58,8 @@ export function useSimulateTrade({
     },
   })
 
-  const prevErrorRef = useRef<EstimateGasErrorType>()
-  const prevDataRef = useRef<EstimateGasReturnType>()
+  const prevErrorRef = useRef<EstimateGasErrorType>(undefined)
+  const prevDataRef = useRef<EstimateGasReturnType>(undefined)
 
   // onSuccess
   useEffect(() => {

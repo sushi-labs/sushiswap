@@ -10,7 +10,7 @@ import {
   DialogTrigger,
   ScrollArea,
 } from '@sushiswap/ui'
-import React, { FC, ReactNode, useMemo } from 'react'
+import React, { FC, ReactNode, useMemo, type JSX } from 'react'
 import { useBaseTokens } from '~aptos/_common/lib/common/use-base-tokens'
 import { useTokenWithCache } from '~aptos/_common/lib/common/use-token-with-cache'
 import { CurrencyIcon } from '~aptos/_common/ui/currency/currency-icon'
