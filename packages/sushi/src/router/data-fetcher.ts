@@ -7,7 +7,6 @@ import { BaseSwapProvider } from './liquidity-providers/BaseSwap.js'
 import { BiswapProvider } from './liquidity-providers/Biswap.js'
 import { BlastDEXProvider } from './liquidity-providers/BlastDEX.js'
 import { BlazeSwapProvider } from './liquidity-providers/BlazeSwap.js'
-import { CamelotProvider } from './liquidity-providers/Camelot.js'
 import { CurveProvider } from './liquidity-providers/CurveProvider.js'
 import { DfynProvider } from './liquidity-providers/Dfyn.js'
 import { DovishV3Provider } from './liquidity-providers/DovishV3.js'
@@ -160,7 +159,6 @@ export class DataFetcher {
       BiswapProvider,
       BlastDEXProvider,
       BlazeSwapProvider,
-      CamelotProvider,
       CurveProvider,
       DfynProvider,
       DovishV3Provider,
