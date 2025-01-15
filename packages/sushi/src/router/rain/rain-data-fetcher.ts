@@ -51,6 +51,8 @@ import { UniswapV2Provider } from '../liquidity-providers/UniswapV2.js'
 import { UniswapV3Provider } from '../liquidity-providers/UniswapV3.js'
 import { VVSStandardProvider } from '../liquidity-providers/VVSStandard.js'
 import { WagmiProvider } from '../liquidity-providers/Wagmi.js'
+import { RainUniswapV2BaseProvider } from './RainUniswapV2Base.js'
+import { RainUniswapV3BaseProvider } from './RainUniswapV3Base.js'
 
 export class RainDataFetcher extends DataFetcher {
   eventsAbi: ParseAbiItem<any>[] = []
@@ -131,15 +133,16 @@ export class RainDataFetcher extends DataFetcher {
     excludePools?: Set<string>,
     options?: DataFetcherOptions,
   ): Promise<void> {
-    if (!options) {
-      options = {
+    let opts = options
+    if (!opts) {
+      opts = {
         blockNumber: await this.web3Client.getBlockNumber(),
       }
     }
-    if (typeof options.blockNumber !== 'bigint') {
-      options.blockNumber = await this.web3Client.getBlockNumber()
+    if (typeof opts.blockNumber !== 'bigint') {
+      opts.blockNumber = await this.web3Client.getBlockNumber()
     }
-    await super.fetchPoolsForToken(currency0, currency1, excludePools, options)
+    await super.fetchPoolsForToken(currency0, currency1, excludePools, opts)
   }
 
   // updates the pool data of all dexes by enevts until the given block
@@ -152,7 +155,10 @@ export class RainDataFetcher extends DataFetcher {
 
     // gather all provider factory and pools addresses
     this.providers.forEach((provider: any) => {
-      if (provider.factory) {
+      if (
+        provider instanceof RainUniswapV2BaseProvider ||
+        provider instanceof RainUniswapV3BaseProvider
+      ) {
         const factory =
           provider.factory[
             this.chainId as keyof typeof provider.factory
@@ -160,9 +166,7 @@ export class RainDataFetcher extends DataFetcher {
         if (!addresses.includes(factory)) {
           addresses.push(factory)
         }
-      }
-      if (provider.pools) {
-        const pools = provider.pools as Map<string, { blockNumber: bigint }>
+        const pools = provider.pools
         pools.forEach((pool, address) => {
           if (!addresses.includes(address)) {
             addresses.push(address)
@@ -195,7 +199,7 @@ export class RainDataFetcher extends DataFetcher {
       }
     })
 
-    // process each log by each provider
+    // process each log for each provider
     logs.forEach((log) => {
       this.providers.forEach((p) => {
         p.processLog(log)
@@ -206,13 +210,13 @@ export class RainDataFetcher extends DataFetcher {
     )
     results.forEach((res, i) => {
       if (res.status === 'fulfilled') {
-        if ((this.providers[i] as any)?.pools) {
-          const pools = (this.providers[i] as any).pools as Map<
-            string,
-            { blockNumber: bigint }
-          >
-          pools.forEach((pool) => {
-            pool.blockNumber = untilBlock as bigint
+        const provider = this.providers[i]
+        if (
+          provider instanceof RainUniswapV2BaseProvider ||
+          provider instanceof RainUniswapV3BaseProvider
+        ) {
+          provider.pools.forEach((pool) => {
+            pool.blockNumber = untilBlock!
           })
         }
       }
