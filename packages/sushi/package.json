@@ -187,7 +187,7 @@
     "dev": "tsc -w",
     "generate": "tsx ./scripts/generate.ts",
     "prepublishOnly": "pnpm build",
-    "test": "vitest run -c ./test/vitest.config.ts",
+    "test": "vitest run -c ./test/vitest.config.ts --test-timeout 600000",
     "test:debug": "vitest --inspect-brk --no-threads run -c ./test/vitest.config.ts",
     "test:watch": "vitest dev -c ./test/vitest.config.ts"
   },

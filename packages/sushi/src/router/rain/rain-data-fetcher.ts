@@ -139,7 +139,7 @@ export class RainDataFetcher extends DataFetcher {
     if (typeof options.blockNumber !== 'bigint') {
       options.blockNumber = await this.web3Client.getBlockNumber()
     }
-    super.fetchPoolsForToken(currency0, currency1, excludePools, options)
+    await super.fetchPoolsForToken(currency0, currency1, excludePools, options)
   }
 
   // updates the pool data of all dexes by enevts until the given block
