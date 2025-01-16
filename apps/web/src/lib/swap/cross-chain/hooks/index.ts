@@ -1,2 +1,1 @@
-export * from './useAxelarScanLink'
-export * from './useLayerZeroScanLink'
+export * from './useLifiScanLink'
