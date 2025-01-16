@@ -54,7 +54,7 @@
     "@tsconfig/strictest": "2.0.2",
     "@types/react": "19.0.1",
     "@types/react-dom": "19.0.2",
-    "sushi": "4.1.23",
+    "sushi": "4.2.2",
     "typescript": "5.7.2"
   },
   "peerDependencies": {
