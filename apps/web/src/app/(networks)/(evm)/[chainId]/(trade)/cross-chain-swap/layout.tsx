@@ -14,10 +14,14 @@ export const metadata: Metadata = {
     'Swap assets across multiple blockchains with ease using Cross-Chain Swap. Enjoy secure, seamless cross-chain swaps for a streamlined DeFi experience on Sushi.com.',
 }
 
-export default function CrossChainSwapLayout({
-  children,
-  params,
-}: { children: React.ReactNode; params: { chainId: string } }) {
+export default async function CrossChainSwapLayout(props: {
+  children: React.ReactNode
+  params: Promise<{ chainId: string }>
+}) {
+  const params = await props.params
+
+  const { children } = props
+
   const chainId = +params.chainId as ChainId
 
   if (!isSushiXSwap2ChainId(chainId)) {

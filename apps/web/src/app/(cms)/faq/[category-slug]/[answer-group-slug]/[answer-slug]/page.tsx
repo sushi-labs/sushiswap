@@ -4,9 +4,10 @@ import { getGhostBody } from 'src/app/(cms)/lib/ghost/ghost'
 
 export const revalidate = 3600
 
-export default async function AnswerPage({
-  params,
-}: { params: { 'answer-slug': string } }) {
+export default async function AnswerPage(props: {
+  params: Promise<{ 'answer-slug': string }>
+}) {
+  const params = await props.params
   let answer
   let body
 

@@ -34,7 +34,7 @@ const DATA = [
         </p>
       </>
     ),
-    link: 'https://dev.sushi.com/docs/Products/Bentobox',
+    link: 'https://docs.sushi.com/docs/Products/Bentobox',
     linkText: 'Visit Docs',
   },
   {
@@ -63,7 +63,7 @@ const DATA = [
         </p>
       </>
     ),
-    link: 'https://dev.sushi.com/docs/Products/Trident%20AMM%20Framework',
+    link: 'https://docs.sushi.com/docs/Products/Trident%20AMM%20Framework',
     linkText: 'Visit Docs',
   },
 ]

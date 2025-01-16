@@ -91,9 +91,10 @@ const DerivedstateSimpleSwapProvider: FC<DerivedStateSimpleSwapProviderProps> =
       new Map(),
     )
 
-    const chainId = isSupportedChainId(+_chainId)
-      ? (+_chainId as SupportedChainId)
-      : ChainId.ETHEREUM
+    const chainId =
+      _chainId && isSupportedChainId(+_chainId)
+        ? (+_chainId as SupportedChainId)
+        : ChainId.ETHEREUM
 
     // Get the searchParams and complete with defaults.
     // This handles the case where some params might not be provided by the user

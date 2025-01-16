@@ -9,13 +9,14 @@ import { Header } from '../header'
 import { Hero } from './hero'
 import { NavigationItems } from './navigation-items'
 
-export default function PositionsLayout({
-  children,
-  params,
-}: {
+export default async function PositionsLayout(props: {
   children: React.ReactNode
-  params: { chainId: string }
+  params: Promise<{ chainId: string }>
 }) {
+  const params = await props.params
+
+  const { children } = props
+
   const chainId = +params.chainId as ChainId
 
   if (!isPoolChainId(chainId)) {

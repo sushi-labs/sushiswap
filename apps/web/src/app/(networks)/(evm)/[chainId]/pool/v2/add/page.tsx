@@ -15,6 +15,7 @@ import React, {
   useEffect,
   useMemo,
   useState,
+  use,
 } from 'react'
 import { DISABLED_CHAIN_IDS, isZapSupportedChainId } from 'src/config'
 import {
@@ -61,7 +62,8 @@ import {
 } from 'wagmi'
 import { useRefetchBalances } from '~evm/_common/ui/balance-provider/use-refetch-balances'
 
-export default function Page({ params }: { params: { chainId: string } }) {
+export default function Page(props: { params: Promise<{ chainId: string }> }) {
+  const params = use(props.params)
   const chainId = +params.chainId as ChainId
   if (!isSushiSwapV2ChainId(chainId)) {
     return notFound()

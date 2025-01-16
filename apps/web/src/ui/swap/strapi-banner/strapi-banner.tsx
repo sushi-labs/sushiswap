@@ -26,7 +26,7 @@ export async function StrapiBanner() {
   return (
     <StrapiBannerContent
       banner={activeBanner}
-      cookie={cookies().get('hidden-banner-ids')}
+      cookie={(await cookies()).get('hidden-banner-ids')}
     />
   )
 }
