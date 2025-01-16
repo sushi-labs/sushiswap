@@ -150,7 +150,7 @@ const _CrossChainSwapTradeReviewDialog: FC<{
     [_step, selectedRoute],
   )
 
-  const groupTs = useRef<number>()
+  const groupTs = useRef<number>(undefined)
   const { refetchChain: refetchBalances } = useRefetchBalances()
 
   const [stepStates, setStepStates] = useState<{

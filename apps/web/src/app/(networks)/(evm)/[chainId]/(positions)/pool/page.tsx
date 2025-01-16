@@ -2,7 +2,7 @@
 
 import { Container } from '@sushiswap/ui'
 import { notFound } from 'next/navigation'
-import React from 'react'
+import React, { use } from 'react'
 import { POOL_SUPPORTED_NETWORKS } from 'src/config'
 import { PositionsTab } from 'src/ui/pool/PositionsTab'
 import { TableFiltersNetwork } from 'src/ui/pool/TableFiltersNetwork'
@@ -11,11 +11,10 @@ import { TableFiltersSearchToken } from 'src/ui/pool/TableFiltersSearchToken'
 import { ChainId } from 'sushi/chain'
 import { isSushiSwapChainId } from 'sushi/config'
 
-export default function MyPositionsPage({
-  params,
-}: {
-  params: { chainId: string }
+export default function MyPositionsPage(props: {
+  params: Promise<{ chainId: string }>
 }) {
+  const params = use(props.params)
   const chainId = +params.chainId as ChainId
 
   if (!isSushiSwapChainId(chainId)) {

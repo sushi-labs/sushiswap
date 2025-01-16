@@ -54,20 +54,20 @@
   },
   "dependencies": {
     "@steerprotocol/contracts": "2.1.0-beta.14",
-    "sushi": "4.1.22",
+    "sushi": "4.1.23",
     "viem": "2.21.55"
   },
   "devDependencies": {
     "@tsconfig/esm": "1.0.4",
     "@tsconfig/strictest": "2.0.2",
     "@types/node": "20",
-    "react": "18.2.0",
-    "react-dom": "18.2.0",
+    "react": "19.0.0",
+    "react-dom": "19.0.0",
     "typescript": "5.7.2"
   },
   "peerDependencies": {
-    "react": "18.2.0",
-    "react-dom": "18.2.0"
+    "react": "19.0.0",
+    "react-dom": "19.0.0"
   },
   "peerDependenciesMeta": {
     "react": {

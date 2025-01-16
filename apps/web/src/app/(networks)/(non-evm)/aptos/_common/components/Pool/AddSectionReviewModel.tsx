@@ -9,6 +9,7 @@ import {
   DialogHeader,
   DialogProvider,
   DialogReview,
+  DialogTitle,
   DialogTrigger,
   List,
 } from '@sushiswap/ui'
@@ -117,7 +118,7 @@ export const AddSectionReviewModal: FC<Props> = ({ children }) => {
             <DialogTrigger asChild>{children}</DialogTrigger>
             <DialogContent>
               <DialogHeader>
-                <DialogHeader>Add Liquidity</DialogHeader>
+                <DialogTitle>Add Liquidity</DialogTitle>
                 <DialogDescription>
                   Please review your entered details.
                 </DialogDescription>

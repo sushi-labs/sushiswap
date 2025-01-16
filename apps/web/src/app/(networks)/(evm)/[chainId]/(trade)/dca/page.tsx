@@ -1,3 +1,5 @@
+'use client'
+
 import { Container } from '@sushiswap/ui'
 import dynamic from 'next/dynamic'
 

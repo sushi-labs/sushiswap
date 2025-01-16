@@ -18,7 +18,7 @@ import { PathnameButton } from '../pathname-button'
 
 export const SwapModeButtons = () => {
   const { chainId: _chainId } = useParams()
-  const chainId = +_chainId as ChainId
+  const chainId = +_chainId! as ChainId
 
   return (
     <div className="flex gap-2 flex-wrap">

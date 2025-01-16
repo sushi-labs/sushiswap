@@ -1,5 +1,6 @@
 'use client'
 
+import { VisuallyHidden } from '@radix-ui/react-visually-hidden'
 import { useIsMounted } from '@sushiswap/hooks'
 import {
   Button,
@@ -26,6 +27,9 @@ function BaseCookieDialog({
       className="md:min-w-[720px] !left-[unset] !top-[unset] !bottom-0 md:!right-0 !translate-x-[0%] md:!translate-x-[-50px] md:!translate-y-[-50px]"
       onOpenAutoFocus={(e) => e.preventDefault()}
     >
+      <VisuallyHidden>
+        <DialogTitle>Cookie Policy</DialogTitle>
+      </VisuallyHidden>
       <div>
         Sushi Labs and our third-party service providers may use cookies as set
         forth in our{' '}

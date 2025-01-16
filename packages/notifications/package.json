@@ -47,19 +47,19 @@
     "@sushiswap/ui": "workspace:*",
     "idb": "8.0.0",
     "nanoid": "4.0.0",
-    "react-toastify": "9.1.3"
+    "react-toastify": "11.0.1"
   },
   "devDependencies": {
     "@tsconfig/esm": "1.0.4",
     "@tsconfig/strictest": "2.0.2",
-    "@types/react": "18.2.14",
-    "@types/react-dom": "18.2.6",
-    "sushi": "4.1.22",
+    "@types/react": "19.0.1",
+    "@types/react-dom": "19.0.2",
+    "sushi": "4.1.23",
     "typescript": "5.7.2"
   },
   "peerDependencies": {
-    "react": "18.2.0",
-    "react-dom": "18.2.0"
+    "react": "19.0.0",
+    "react-dom": "19.0.0"
   },
   "peerDependenciesMeta": {
     "react": {

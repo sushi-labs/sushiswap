@@ -4,6 +4,7 @@ import {
   isPoolChainId,
 } from '@sushiswap/graph-client/data-api'
 import { Ratelimit } from '@upstash/ratelimit'
+import { ipAddress } from '@vercel/functions'
 import { NextRequest, NextResponse } from 'next/server'
 import { rateLimit } from 'src/lib/rate-limit'
 import { SushiSwapProtocol } from 'sushi'
@@ -50,7 +51,9 @@ export const maxDuration = 30
 export async function GET(request: NextRequest) {
   const ratelimit = rateLimit(Ratelimit.slidingWindow(200, '1 h'))
   if (ratelimit) {
-    const { remaining } = await ratelimit.limit(request.ip || '127.0.0.1')
+    const { remaining } = await ratelimit.limit(
+      ipAddress(request) || '127.0.0.1',
+    )
     if (!remaining) {
       return NextResponse.json({ error: 'Too many requests' }, { status: 429 })
     }
