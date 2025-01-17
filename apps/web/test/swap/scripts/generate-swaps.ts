@@ -3,9 +3,9 @@ import {
   type UseTradeParams,
   tradeValidator02,
 } from 'src/lib/hooks/react-query'
+import { API_BASE_URL } from 'src/lib/swap/api-base-url'
 import { ChainId } from 'sushi/chain'
 import {
-  API_BASE_URL,
   // TOKEN_CHOMPER_ADDRESS,
   // isTokenChomperChainId,
   publicClientConfig,

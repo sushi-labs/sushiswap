@@ -3,10 +3,10 @@ import {
   // getTradeQueryApiVersion,
   tradeValidator02,
 } from 'src/lib/hooks/react-query'
-import { API_BASE_URL } from 'sushi/config'
 import { RouteStatus } from 'sushi/router'
 import { Address } from 'viem'
 import { z } from 'zod'
+import { API_BASE_URL } from '../../api-base-url'
 
 export type GetTrade = Pick<
   UseTradeParams,
