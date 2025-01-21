@@ -5,6 +5,7 @@ import {
 } from '@sushiswap/telemetry'
 import { useQuery } from '@tanstack/react-query'
 import { useCallback, useMemo } from 'react'
+import { getFeeString } from 'src/lib/swap/fee'
 import { slippageAmount } from 'sushi/calculate'
 import {
   API_BASE_URL,
@@ -15,7 +16,6 @@ import {
 } from 'sushi/config'
 import { Amount, Native, Price, type Type } from 'sushi/currency'
 import { Fraction, Percent, ZERO } from 'sushi/math'
-import { isLsd, isStable, isWrapOrUnwrap } from 'sushi/router'
 import { Address, stringify, zeroAddress } from 'viem'
 import { usePrices } from '~evm/_common/ui/price-provider/price-provider/use-prices'
 import { apiAdapter02To01 } from './apiAdapter'
@@ -218,15 +218,12 @@ export const useTrade = (variables: UseTradeParams) => {
             nativePrice && gasSpent
               ? gasSpent.multiply(nativePrice.asFraction).toSignificant(4)
               : undefined,
-          fee:
-            !isWrapOrUnwrap({ fromToken, toToken }) &&
-            !isStable({ fromToken, toToken }) &&
-            !isLsd({ fromToken, toToken })
-              ? `${tokenOutPrice ? '$' : ''}${minAmountOut
-                  .multiply(new Percent(25, 10000))
-                  .multiply(tokenOutPrice ? tokenOutPrice.asFraction : 1)
-                  .toSignificant(4)} ${!tokenOutPrice ? toToken.symbol : ''}`
-              : '$0',
+          fee: getFeeString({
+            fromToken,
+            toToken,
+            tokenOutPrice,
+            minAmountOut,
+          }),
           route: data.route,
           tx: data?.tx
             ? {
