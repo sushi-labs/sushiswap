@@ -8,7 +8,6 @@ import {
   CardTitle,
   DataTable,
   LinkInternal,
-  Switch,
 } from '@sushiswap/ui'
 import { Slot } from '@sushiswap/ui'
 import { ColumnDef, PaginationState, Row } from '@tanstack/react-table'
@@ -41,6 +40,8 @@ interface ConcentratedPositionsTableProps {
   onRowClick?(row: ConcentratedLiquidityPositionWithV3Pool): void
   hideNewSmartPositionButton?: boolean
   hideNewPositionButton?: boolean
+  hideClosedPositions?: boolean
+  actions?: ReactNode
 }
 
 export const ConcentratedPositionsTable: FC<ConcentratedPositionsTableProps> =
@@ -50,10 +51,11 @@ export const ConcentratedPositionsTable: FC<ConcentratedPositionsTableProps> =
     poolAddress,
     hideNewSmartPositionButton = true,
     hideNewPositionButton = false,
+    hideClosedPositions = true,
+    actions,
   }) => {
     const { address } = useAccount()
     const { tokenSymbols } = usePoolFilters()
-    const [hide, setHide] = useState(true)
 
     const chainIds = useMemo(() => {
       return isSushiSwapV3ChainId(chainId) ? [chainId] : []
@@ -85,13 +87,13 @@ export const ConcentratedPositionsTable: FC<ConcentratedPositionsTableProps> =
         )
         .filter((el) => {
           return (
-            (hide ? el.liquidity !== 0n : true) &&
+            (hideClosedPositions ? el.liquidity !== 0n : true) &&
             (poolAddress
               ? el.address.toLowerCase() === poolAddress.toLowerCase()
               : true)
           )
         })
-    }, [tokenSymbols, positions, hide, poolAddress])
+    }, [tokenSymbols, positions, hideClosedPositions, poolAddress])
 
     const rowRenderer = useCallback(
       (
@@ -123,15 +125,7 @@ export const ConcentratedPositionsTable: FC<ConcentratedPositionsTableProps> =
                   ({_positions.length})
                 </span>
               </span>
-              <div className="flex gap-3 items-center whitespace-nowrap">
-                <span className="text-sm font-medium text-gray-600 dark:text-slate-400">
-                  Hide closed
-                </span>
-                <Switch
-                  checked={hide}
-                  onCheckedChange={() => setHide((prev) => !prev)}
-                />
-              </div>
+              {actions}
               {!hideNewSmartPositionButton ? (
                 <LinkInternal
                   shallow={true}

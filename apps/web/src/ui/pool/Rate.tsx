@@ -8,7 +8,7 @@ import { usePrices } from '~evm/_common/ui/price-provider/price-provider/use-pri
 interface RenderPayload {
   invert: boolean
   toggleInvert(): void
-  content: ReactElement
+  content: ReactElement<any>
   usdPrice?: string
 }
 

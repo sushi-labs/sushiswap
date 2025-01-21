@@ -60,7 +60,7 @@ export default async function ProductPage() {
       <ProductTechnicalDoc
         color={color}
         secondaryColor="#FFBCFE"
-        url="https://dev.sushi.com/docs/Developers/Bentobox/Overview"
+        url="https://docs.sushi.com/docs/Developers/Bentobox/Overview"
       />
       <ProductFaq faqSlug={slug} />
     </Container>

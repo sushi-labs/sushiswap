@@ -10,7 +10,7 @@ import {
   TooltipTrigger,
 } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
-import { FC } from 'react'
+import { FC, type JSX } from 'react'
 import { useTokensFromPool } from 'src/lib/hooks'
 import { formatNumber } from 'sushi/format'
 

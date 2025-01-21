@@ -10,7 +10,7 @@ interface ConcentratedLiquidityHarvestButton {
   account: Address | undefined
   enabled?: boolean
   chainId: ChainId
-  children(params: ReturnType<typeof useHarvestAngleRewards>): ReactElement
+  children(params: ReturnType<typeof useHarvestAngleRewards>): ReactElement<any>
 }
 
 export const ConcentratedLiquidityHarvestButton: FC<

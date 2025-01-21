@@ -1,5 +1,5 @@
 import React, { ComponentType } from 'react'
-import { FC } from 'react'
+import { FC, JSX } from 'react'
 
 export enum AppType {
   Root = 'Explore Apps',

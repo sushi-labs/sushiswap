@@ -11,6 +11,8 @@ interface Collapsible {
   afterChange?: () => void
 }
 
+const AnimatedDiv = animated.div as any
+
 export const Collapsible: FC<Collapsible> = ({
   className,
   open,
@@ -32,7 +34,7 @@ export const Collapsible: FC<Collapsible> = ({
   })
 
   return (
-    <animated.div
+    <AnimatedDiv
       style={{
         ...props,
         overflow: 'hidden',
@@ -43,6 +45,6 @@ export const Collapsible: FC<Collapsible> = ({
       <div ref={ref} className={className}>
         {children}
       </div>
-    </animated.div>
+    </AnimatedDiv>
   )
 }
