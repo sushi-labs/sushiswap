@@ -90,7 +90,11 @@ export const useZap = ({ query, ...params }: UseZapParams) => {
         throw new Error(`Error: ${response.statusText}`)
       }
 
-      return zapResponseSchema.parse(await response.json())
+      const parsed = zapResponseSchema.parse(await response.json())
+
+      if (parsed.priceImpact === null) throw new Error('priceImpact is NULL')
+
+      return parsed
     },
     staleTime: query?.staleTime ?? 1000 * 60 * 1, // 1 minutes
     enabled:
