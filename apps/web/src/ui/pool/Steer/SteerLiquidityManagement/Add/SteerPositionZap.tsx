@@ -9,6 +9,7 @@ import React, { FC, useCallback, useEffect, useMemo, useState } from 'react'
 import { APPROVE_TAG_ZAP_STEER, NativeAddress } from 'src/lib/constants'
 import { useZap } from 'src/lib/hooks'
 import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
+import { warningSeverity } from 'src/lib/swap/warningSeverity'
 import { Web3Input } from 'src/lib/wagmi/components/web3-input'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
 import {
@@ -18,6 +19,7 @@ import {
 import { ZapInfoCard } from 'src/ui/pool/ZapInfoCard'
 import { defaultCurrency, isWNativeSupported } from 'sushi/config'
 import { Amount, Type, tryParseAmount } from 'sushi/currency'
+import { Percent } from 'sushi/math'
 import { SendTransactionReturnType } from 'viem'
 import {
   useAccount,
@@ -179,6 +181,16 @@ const _SteerPositionZap: FC<SteerPositionZapProps> = ({
     },
   })
 
+  const [checked, setChecked] = useState(false)
+
+  const priceImpact = useMemo(
+    () =>
+      typeof zapResponse?.priceImpact === 'number'
+        ? new Percent(zapResponse.priceImpact, 10_000n)
+        : undefined,
+    [zapResponse?.priceImpact],
+  )
+
   return (
     <div className="flex flex-col gap-4">
       <Web3Input.Currency
@@ -208,34 +220,61 @@ const _SteerPositionZap: FC<SteerPositionZapProps> = ({
               chainId={vault.chainId}
               amount={parsedInputAmount}
             >
-              <Checker.ApproveERC20
+              <Checker.Guard
+                guardWhen={!checked && warningSeverity(priceImpact) > 3}
+                guardText="Price impact too high"
+                variant="destructive"
+                size="xl"
                 fullWidth
-                id="approve-erc20-0"
-                amount={parsedInputAmount}
-                contract={zapResponse?.tx.to}
               >
-                <Checker.Success tag={APPROVE_TAG_ZAP_STEER}>
-                  <Button
-                    size="xl"
-                    fullWidth
-                    testId="zap-liquidity"
-                    onClick={() => preparedTx && sendTransaction(preparedTx)}
-                    loading={!preparedTx || isWritePending}
-                    disabled={isZapError || isEstGasError}
-                  >
-                    {isZapError || isEstGasError ? (
-                      'Shoot! Something went wrong :('
-                    ) : isWritePending ? (
-                      <Dots>Confirm Transaction</Dots>
-                    ) : (
-                      'Add Liquidity'
-                    )}
-                  </Button>
-                </Checker.Success>
-              </Checker.ApproveERC20>
+                <Checker.ApproveERC20
+                  fullWidth
+                  id="approve-erc20-0"
+                  amount={parsedInputAmount}
+                  contract={zapResponse?.tx.to}
+                >
+                  <Checker.Success tag={APPROVE_TAG_ZAP_STEER}>
+                    <Button
+                      size="xl"
+                      fullWidth
+                      testId="zap-liquidity"
+                      onClick={() => preparedTx && sendTransaction(preparedTx)}
+                      loading={!preparedTx || isWritePending}
+                      disabled={isZapError || isEstGasError}
+                    >
+                      {isZapError || isEstGasError ? (
+                        'Shoot! Something went wrong :('
+                      ) : isWritePending ? (
+                        <Dots>Confirm Transaction</Dots>
+                      ) : (
+                        'Add Liquidity'
+                      )}
+                    </Button>
+                  </Checker.Success>
+                </Checker.ApproveERC20>
+              </Checker.Guard>
             </Checker.Amounts>
           </Checker.Network>
         </Checker.Connect>
+        {warningSeverity(priceImpact) > 3 && (
+          <div className="flex items-start px-4 py-3 mt-4 rounded-xl bg-red/20">
+            <input
+              id="expert-checkbox"
+              type="checkbox"
+              checked={checked}
+              onChange={(e) => setChecked(e.target.checked)}
+              className="cursor-pointer mr-1 w-5 h-5 mt-0.5 text-red-600 !ring-red-600 bg-white border-red rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2"
+            />
+            <label
+              htmlFor="expert-checkbox"
+              className="ml-2 font-medium text-red-600"
+            >
+              Price impact is too high. You will lose a big portion of your
+              funds in this trade. Please tick the box if you would like to
+              continue.
+            </label>
+          </div>
+        )}
       </Checker.Guard>
       <ZapInfoCard
         zapResponse={zapResponse}
