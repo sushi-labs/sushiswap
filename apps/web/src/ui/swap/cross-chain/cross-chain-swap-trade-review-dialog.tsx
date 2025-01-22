@@ -31,6 +31,7 @@ import {
   Message,
   SelectIcon,
   SkeletonText,
+  classNames,
   useDialog,
 } from '@sushiswap/ui'
 import { nanoid } from 'nanoid'
@@ -541,7 +542,7 @@ const _CrossChainSwapTradeReviewDialog: FC<{
       }
     }, [step])
 
-  const { data: price } = usePrice({
+  const { data: price, isLoading: isPriceLoading } = usePrice({
     chainId: token1?.chainId,
     address: token1?.wrapped.address,
   })
@@ -769,7 +770,10 @@ const _CrossChainSwapTradeReviewDialog: FC<{
                               <SkeletonText
                                 align="right"
                                 fontSize="xs"
-                                className="w-1/4"
+                                className={classNames(
+                                  'w-1/4',
+                                  !isPriceLoading ? 'invisible' : '',
+                                )}
                               />
                             ) : (
                               <span className="text-xs text-muted-foreground">
@@ -798,7 +802,10 @@ const _CrossChainSwapTradeReviewDialog: FC<{
                               <SkeletonText
                                 align="right"
                                 fontSize="xs"
-                                className="w-1/4"
+                                className={classNames(
+                                  'w-1/4',
+                                  !isPriceLoading ? 'invisible' : '',
+                                )}
                               />
                             ) : (
                               <span className="text-xs text-muted-foreground">
@@ -852,7 +859,10 @@ const _CrossChainSwapTradeReviewDialog: FC<{
                               <SkeletonText
                                 align="right"
                                 fontSize="xs"
-                                className="w-1/4"
+                                className={classNames(
+                                  'w-1/4',
+                                  !isPriceLoading ? 'invisible' : '',
+                                )}
                               />
                             ) : (
                               <span className="text-xs text-muted-foreground">

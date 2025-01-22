@@ -41,7 +41,7 @@ export const CrossChainSwapRouteCard: FC<CrossChainSwapRouteCardProps> = ({
     state: { token1, chainId0, chainId1 },
   } = useDerivedStateCrossChainSwap()
 
-  const { data: price } = usePrice({
+  const { data: price, isLoading: isPriceLoading } = usePrice({
     chainId: token1?.chainId,
     address: token1?.wrapped.address,
   })
@@ -57,7 +57,7 @@ export const CrossChainSwapRouteCard: FC<CrossChainSwapRouteCardProps> = ({
   const amountOutUSD = useMemo(
     () =>
       price && amountOut
-        ? `$${(
+        ? `${(
             (price * Number(amountOut.quotient)) /
             10 ** amountOut.currency.decimals
           ).toFixed(2)}`
@@ -118,9 +118,14 @@ export const CrossChainSwapRouteCard: FC<CrossChainSwapRouteCardProps> = ({
             </CardTitle>
             <CardDescription>
               {amountOutUSD ? (
-                <span>{`≈ ${amountOutUSD} after fees`}</span>
+                <span>≈ ${amountOutUSD} after fees</span>
               ) : (
-                <span className="w-36">
+                <span
+                  className={classNames(
+                    'w-36',
+                    !isPriceLoading ? 'invisible' : '',
+                  )}
+                >
                   <SkeletonText fontSize="sm" />
                 </span>
               )}
