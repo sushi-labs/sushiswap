@@ -57,7 +57,7 @@ export const CrossChainSwapRouteCard: FC<CrossChainSwapRouteCardProps> = ({
   const amountOutUSD = useMemo(
     () =>
       price && amountOut
-        ? `${(
+        ? `$${(
             (price * Number(amountOut.quotient)) /
             10 ** amountOut.currency.decimals
           ).toFixed(2)}`
