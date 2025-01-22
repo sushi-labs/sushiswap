@@ -569,6 +569,11 @@ const _CrossChainSwapTradeReviewDialog: FC<{
     [step?.amountOutMin, price],
   )
 
+  const showPriceImpactWarning = useMemo(() => {
+    const priceImpactSeverity = warningSeverity(step?.priceImpact)
+    return priceImpactSeverity > 3
+  }, [step?.priceImpact])
+
   return (
     <>
       <DialogReview>
@@ -939,11 +944,11 @@ const _CrossChainSwapTradeReviewDialog: FC<{
                       isStepQueryError
                     }
                     color={
-                      isEstGasError || isStepQueryError
+                      isEstGasError ||
+                      isStepQueryError ||
+                      showPriceImpactWarning
                         ? 'red'
-                        : warningSeverity(step?.priceImpact) >= 3
-                          ? 'red'
-                          : 'blue'
+                        : 'blue'
                     }
                     testId="confirm-swap"
                   >

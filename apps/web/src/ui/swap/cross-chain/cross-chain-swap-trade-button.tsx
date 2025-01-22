@@ -2,7 +2,7 @@
 
 import { DialogTrigger } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui'
-import React, { FC, useEffect, useState } from 'react'
+import React, { FC, useEffect, useMemo, useState } from 'react'
 import { APPROVE_TAG_XSWAP } from 'src/lib/constants'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
 import { ZERO } from 'sushi/math'
@@ -22,12 +22,17 @@ export const CrossChainSwapTradeButton: FC = () => {
   const { data: route, isError } = useSelectedCrossChainTradeRoute()
   const [checked, setChecked] = useState(false)
 
+  const showPriceImpactWarning = useMemo(() => {
+    const priceImpactSeverity = warningSeverity(route?.priceImpact)
+    return priceImpactSeverity > 3
+  }, [route?.priceImpact])
+
   // Reset
   useEffect(() => {
-    if (warningSeverity(route?.priceImpact) <= 3) {
+    if (checked && !showPriceImpactWarning) {
       setChecked(false)
     }
-  }, [route])
+  }, [showPriceImpactWarning, checked])
 
   return (
     <CrossChainSwapTradeReviewDialog>
@@ -52,19 +57,14 @@ export const CrossChainSwapTradeButton: FC = () => {
                           !route?.amountOut?.greaterThan(ZERO) ||
                             isError ||
                             +swapAmountString === 0 ||
-                            (!checked &&
-                              warningSeverity(route?.priceImpact) > 3),
+                            (!checked && showPriceImpactWarning),
                         )}
-                        color={
-                          warningSeverity(route?.priceImpact) >= 3
-                            ? 'red'
-                            : 'blue'
-                        }
+                        color={showPriceImpactWarning ? 'red' : 'blue'}
                         fullWidth
                         size="xl"
                         testId="swap"
                       >
-                        {!checked && warningSeverity(route?.priceImpact) >= 3
+                        {!checked && showPriceImpactWarning
                           ? 'Price impact too high'
                           : isError
                             ? 'No trade found'
@@ -78,7 +78,7 @@ export const CrossChainSwapTradeButton: FC = () => {
           </Checker.Connect>
         </Checker.Guard>
       </div>
-      {warningSeverity(route?.priceImpact) > 3 && (
+      {showPriceImpactWarning && (
         <div className="flex items-start px-4 py-3 mt-4 rounded-xl bg-red/20">
           <input
             id="expert-checkbox"
