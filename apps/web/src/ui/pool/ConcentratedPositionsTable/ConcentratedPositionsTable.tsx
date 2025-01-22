@@ -17,6 +17,7 @@ import { ConcentratedLiquidityPositionWithV3Pool } from 'src/lib/wagmi/hooks/pos
 import { ChainId, ChainKey } from 'sushi'
 import { isSushiSwapV3ChainId } from 'sushi/config'
 import { useAccount } from 'wagmi'
+import { ConcentratedLiquidityCollectAllWidget } from '../ConcentratedLiquidityCollectAllWidget'
 import { usePoolFilters } from '../PoolsFiltersProvider'
 import {
   NAME_COLUMN_V3,
@@ -41,6 +42,7 @@ interface ConcentratedPositionsTableProps {
   hideNewSmartPositionButton?: boolean
   hideNewPositionButton?: boolean
   hideClosedPositions?: boolean
+  hideCollectAllButton?: boolean
   actions?: ReactNode
 }
 
@@ -52,6 +54,7 @@ export const ConcentratedPositionsTable: FC<ConcentratedPositionsTableProps> =
     hideNewSmartPositionButton = true,
     hideNewPositionButton = false,
     hideClosedPositions = true,
+    hideCollectAllButton = false,
     actions,
   }) => {
     const { address } = useAccount()
@@ -126,6 +129,13 @@ export const ConcentratedPositionsTable: FC<ConcentratedPositionsTableProps> =
                 </span>
               </span>
               {actions}
+              {!hideCollectAllButton ? (
+                <ConcentratedLiquidityCollectAllWidget
+                  positions={positions || []}
+                  account={address}
+                  chainId={chainId}
+                />
+              ) : null}
               {!hideNewSmartPositionButton ? (
                 <LinkInternal
                   shallow={true}
