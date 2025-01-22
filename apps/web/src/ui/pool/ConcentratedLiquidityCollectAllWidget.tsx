@@ -225,21 +225,17 @@ export const ConcentratedLiquidityCollectAllWidget: FC<
         {({ confirm }) => (
           <>
             <div className="ml-auto">
-              <Checker.Connect
-                className="min-w-[160px]"
-                size="default"
-                fullWidth
-              >
+              <Checker.Connect className="min-w-[160px]" size="sm" fullWidth>
                 <Checker.Network
                   className="min-w-[160px]"
-                  size="default"
+                  size="sm"
                   fullWidth
                   chainId={chainId}
                 >
                   <DialogTrigger asChild>
                     <Button
                       className="min-w-[160px]"
-                      size="default"
+                      size="sm"
                       fullWidth
                       disabled={!aggregatedAmounts.length}
                       testId="claim-fees-all"

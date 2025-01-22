@@ -131,7 +131,7 @@ export const ConcentratedPositionsTable: FC<ConcentratedPositionsTableProps> =
               {actions}
               {!hideCollectAllButton ? (
                 <ConcentratedLiquidityCollectAllWidget
-                  positions={positions || []}
+                  positions={_positions}
                   account={address}
                   chainId={chainId}
                 />
