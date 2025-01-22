@@ -240,9 +240,7 @@ export const ConcentratedLiquidityCollectAllWidget: FC<
                       disabled={!aggregatedAmounts.length}
                       testId="claim-fees-all"
                     >
-                      {!aggregatedAmounts.length
-                        ? 'No fees to claim'
-                        : 'Claim Fees'}
+                      Claim Fees
                     </Button>
                   </DialogTrigger>
                 </Checker.Network>
