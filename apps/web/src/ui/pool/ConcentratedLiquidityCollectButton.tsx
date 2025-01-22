@@ -13,7 +13,7 @@ import {
   SUSHISWAP_V3_POSTIION_MANAGER,
   isSushiSwapV3ChainId,
 } from 'sushi/config'
-import { Amount, Type, unwrapToken } from 'sushi/currency'
+import { Amount, Type } from 'sushi/currency'
 import { NonfungiblePositionManager, Position } from 'sushi/pool/sushiswap-v3'
 import { Hex, SendTransactionReturnType, UserRejectedRequestError } from 'viem'
 import {
@@ -69,16 +69,14 @@ export const ConcentratedLiquidityCollectButton: FC<
         ? Amount.fromRawAmount(token0, positionDetails.fees[0])
         : undefined
       const feeValue1 = positionDetails.fees
-        ? Amount.fromRawAmount(token0, positionDetails.fees[1])
+        ? Amount.fromRawAmount(token1, positionDetails.fees[1])
         : undefined
 
       const { calldata, value } =
         NonfungiblePositionManager.collectCallParameters({
           tokenId: positionDetails.tokenId.toString(),
-          expectedCurrencyOwed0:
-            feeValue0 ?? Amount.fromRawAmount(unwrapToken(token0), 0),
-          expectedCurrencyOwed1:
-            feeValue1 ?? Amount.fromRawAmount(unwrapToken(token1), 0),
+          expectedCurrencyOwed0: feeValue0 ?? Amount.fromRawAmount(token0, 0),
+          expectedCurrencyOwed1: feeValue1 ?? Amount.fromRawAmount(token1, 0),
           recipient: account,
         })
 
