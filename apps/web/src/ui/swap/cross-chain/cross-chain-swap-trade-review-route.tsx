@@ -18,13 +18,13 @@ export const CrossChainSwapTradeReviewRoute = () => {
     <div
       className={classNames(
         'px-3 flex w-full',
-        trade?.steps[0].includedSteps.length === 1
+        trade?.step.includedStepsWithoutFees.length === 1
           ? 'justify-center'
           : 'justify-between',
       )}
     >
-      {trade?.steps?.[0]?.type === 'lifi' &&
-        trade.steps[0].includedSteps.map((step, i) => {
+      {trade?.step?.type === 'lifi' &&
+        trade.step.includedStepsWithoutFees.map((step, i) => {
           return (
             <React.Fragment key={`step:${i}`}>
               {i > 0 ? (

@@ -41,7 +41,7 @@ export const CrossChainSwapRouteCard: FC<CrossChainSwapRouteCardProps> = ({
     state: { token1, chainId0, chainId1 },
   } = useDerivedStateCrossChainSwap()
 
-  const { data: price } = usePrice({
+  const { data: price, isLoading: isPriceLoading } = usePrice({
     chainId: token1?.chainId,
     address: token1?.wrapped.address,
   })
@@ -73,7 +73,7 @@ export const CrossChainSwapRouteCard: FC<CrossChainSwapRouteCardProps> = ({
     protocolFeesUSD,
     totalFeesUSD,
   } = useMemo(() => {
-    const step = route.steps[0]
+    const step = route.step
     const executionDurationSeconds = step.estimate.executionDuration
     const executionDurationMinutes = Math.floor(executionDurationSeconds / 60)
 
@@ -83,7 +83,7 @@ export const CrossChainSwapRouteCard: FC<CrossChainSwapRouteCardProps> = ({
         : `${executionDurationMinutes} minutes`
 
     const { feesBreakdown, totalFeesUSD, gasFeesUSD, protocolFeesUSD } =
-      getCrossChainFeesBreakdown(route.steps)
+      getCrossChainFeesBreakdown(step)
 
     return {
       step,
@@ -93,7 +93,7 @@ export const CrossChainSwapRouteCard: FC<CrossChainSwapRouteCardProps> = ({
       gasFeesUSD,
       protocolFeesUSD,
     }
-  }, [route?.steps])
+  }, [route.step])
 
   return (
     <Card
@@ -118,9 +118,14 @@ export const CrossChainSwapRouteCard: FC<CrossChainSwapRouteCardProps> = ({
             </CardTitle>
             <CardDescription>
               {amountOutUSD ? (
-                <span>{`≈ ${amountOutUSD} after fees`}</span>
+                <span>≈ ${amountOutUSD} after fees</span>
               ) : (
-                <span className="w-36">
+                <span
+                  className={classNames(
+                    'w-36',
+                    !isPriceLoading ? 'invisible' : '',
+                  )}
+                >
                   <SkeletonText fontSize="sm" />
                 </span>
               )}
@@ -145,7 +150,7 @@ export const CrossChainSwapRouteCard: FC<CrossChainSwapRouteCardProps> = ({
           </span>
         </div>
       </CardHeader>
-      {isSelected && step.includedSteps.length > 1 ? (
+      {isSelected && step.includedStepsWithoutFees.length > 1 ? (
         <>
           <Separator className="mb-5" />
           <CardContent className="!p-5 !pt-0">

@@ -400,9 +400,9 @@ const useCrossChainTradeRoutes = () => {
     if (
       query.data?.length &&
       (typeof selectedBridge === 'undefined' ||
-        !query.data.find((route) => route.steps[0].tool === selectedBridge))
+        !query.data.find((route) => route.step.tool === selectedBridge))
     ) {
-      setSelectedBridge(query.data[0].steps[0].tool)
+      setSelectedBridge(query.data[0].step.tool)
     }
   }, [query.data, selectedBridge, setSelectedBridge])
 
@@ -428,7 +428,7 @@ const useSelectedCrossChainTradeRoute = () => {
   const route: UseSelectedCrossChainTradeRouteReturn | undefined =
     useMemo(() => {
       const route = routesQuery.data?.find(
-        (route) => route.steps[0].tool === selectedBridge,
+        (route) => route.step.tool === selectedBridge,
       )
 
       if (!route) return undefined
@@ -460,19 +460,6 @@ const useSelectedCrossChainTradeRoute = () => {
         10_000,
       )
 
-      // const gasSpent = Amount.fromRawAmount(
-      //   Native.onChain(route.fromChainId),
-      //   route.steps.reduce(
-      //     (total, step) =>
-      //       total +
-      //       step.estimate.gasCosts.reduce(
-      //         (total, gasCost) => total + gasCost.amount,
-      //         0n,
-      //       ),
-      //     0n,
-      //   ),
-      // ).toFixed(6)
-
       return {
         ...route,
         tokenIn,
@@ -481,7 +468,6 @@ const useSelectedCrossChainTradeRoute = () => {
         amountOut,
         amountOutMin,
         priceImpact,
-        // gasSpent,
       }
     }, [routesQuery.data, selectedBridge])
 
