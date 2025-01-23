@@ -59,7 +59,7 @@ export const CrossChainSwapRouteMobileCard: FC<
     protocolFeesUSD,
     totalFeesUSD,
   } = useMemo(() => {
-    const step = route?.steps[0]
+    const step = route?.step
     if (!step)
       return {
         step,
@@ -79,7 +79,7 @@ export const CrossChainSwapRouteMobileCard: FC<
         : `${executionDurationMinutes} minutes`
 
     const { feesBreakdown, totalFeesUSD, gasFeesUSD, protocolFeesUSD } =
-      getCrossChainFeesBreakdown(route.steps)
+      getCrossChainFeesBreakdown(step)
 
     return {
       step,
@@ -89,7 +89,7 @@ export const CrossChainSwapRouteMobileCard: FC<
       gasFeesUSD,
       protocolFeesUSD,
     }
-  }, [route?.steps])
+  }, [route?.step])
 
   return (
     <Card

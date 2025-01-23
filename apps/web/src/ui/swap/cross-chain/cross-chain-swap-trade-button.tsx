@@ -48,7 +48,7 @@ export const CrossChainSwapTradeButton: FC = () => {
                   id="approve-erc20"
                   fullWidth
                   amount={swapAmount}
-                  contract={route?.steps?.[0]?.estimate?.approvalAddress}
+                  contract={route?.step?.estimate?.approvalAddress}
                 >
                   <Checker.Success tag={APPROVE_TAG_XSWAP}>
                     <DialogTrigger asChild>

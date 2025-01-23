@@ -119,8 +119,8 @@ const DesktopRouteSelector: FC<RouteSelectorProps> = ({
                 key={`route-${route.id}`}
                 route={route}
                 order={routeOrder}
-                isSelected={route.steps[0].tool === selectedBridge}
-                onSelect={() => setSelectedBridge(route.steps[0].tool)}
+                isSelected={route.step.tool === selectedBridge}
+                onSelect={() => setSelectedBridge(route.step.tool)}
               />
             ))}
           </CardContent>
@@ -210,8 +210,8 @@ const MobileRouteSelector: FC<RouteSelectorProps> = ({
               key={`route-${route.id}`}
               route={route}
               order={routeOrder}
-              isSelected={route.steps[0].tool === selectedBridge}
-              onSelect={() => setSelectedBridge(route.steps[0].tool)}
+              isSelected={route.step.tool === selectedBridge}
+              onSelect={() => setSelectedBridge(route.step.tool)}
             />
           ))}
         </div>
@@ -239,7 +239,7 @@ const MobileRouteSelector: FC<RouteSelectorProps> = ({
             <CardContent>
               <CrossChainSwapRouteMobileCard
                 route={routes?.find(
-                  (route) => route.steps[0].tool === selectedBridge,
+                  (route) => route.step.tool === selectedBridge,
                 )}
                 order={routeOrder}
                 isSelected={true}

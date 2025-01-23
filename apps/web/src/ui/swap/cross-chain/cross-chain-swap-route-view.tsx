@@ -2,6 +2,7 @@ import { classNames } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import React, { useMemo } from 'react'
 import { FC } from 'react'
+import { getCrossChainStepBreakdown } from 'src/lib/swap/cross-chain'
 import type {
   CrossChainAction,
   CrossChainEstimate,
@@ -20,16 +21,10 @@ interface CrossChainSwapRouteViewProps {
 export const CrossChainSwapRouteView: FC<CrossChainSwapRouteViewProps> = ({
   step,
 }) => {
-  const { srcStep, bridgeStep, dstStep } = useMemo(() => {
-    const bridgeIndex = step.includedSteps.findIndex(
-      (_step) => _step.type === 'cross',
-    )
-    return {
-      srcStep: step.includedSteps[bridgeIndex - 1],
-      bridgeStep: step.includedSteps[bridgeIndex],
-      dstStep: step.includedSteps[bridgeIndex + 1],
-    }
-  }, [step])
+  const { srcStep, bridgeStep, dstStep } = useMemo(
+    () => getCrossChainStepBreakdown(step),
+    [step],
+  )
 
   return (
     <div className="flex gap-4">
