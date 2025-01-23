@@ -224,28 +224,30 @@ export const ConcentratedLiquidityCollectAllWidget: FC<
       <DialogReview>
         {({ confirm }) => (
           <>
-            <div className="ml-auto">
-              <Checker.Connect className="min-w-[160px]" size="sm" fullWidth>
-                <Checker.Network
-                  className="min-w-[160px]"
-                  size="sm"
-                  fullWidth
-                  chainId={chainId}
-                >
-                  <DialogTrigger asChild>
-                    <Button
-                      className="min-w-[160px]"
-                      size="sm"
-                      fullWidth
-                      disabled={!aggregatedAmounts.length}
-                      testId="claim-fees-all"
-                    >
-                      Claim Fees
-                    </Button>
-                  </DialogTrigger>
-                </Checker.Network>
-              </Checker.Connect>
-            </div>
+            {aggregatedAmounts.length > 0 ? (
+              <div className="ml-auto">
+                <Checker.Connect className="min-w-[160px]" size="sm" fullWidth>
+                  <Checker.Network
+                    className="min-w-[160px]"
+                    size="sm"
+                    fullWidth
+                    chainId={chainId}
+                  >
+                    <DialogTrigger asChild>
+                      <Button
+                        className="min-w-[160px]"
+                        size="sm"
+                        fullWidth
+                        disabled={!aggregatedAmounts.length}
+                        testId="claim-fees-all"
+                      >
+                        Claim Fees
+                      </Button>
+                    </DialogTrigger>
+                  </Checker.Network>
+                </Checker.Connect>
+              </div>
+            ) : null}
 
             <DialogContent>
               <DialogHeader>

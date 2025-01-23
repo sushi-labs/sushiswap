@@ -128,7 +128,6 @@ export const ConcentratedPositionsTable: FC<ConcentratedPositionsTableProps> =
                   ({_positions.length})
                 </span>
               </span>
-              {actions}
               {!hideCollectAllButton ? (
                 <ConcentratedLiquidityCollectAllWidget
                   positions={_positions}
@@ -164,6 +163,7 @@ export const ConcentratedPositionsTable: FC<ConcentratedPositionsTableProps> =
                   </Button>
                 </LinkInternal>
               ) : null}
+              {actions}
             </div>
           </CardTitle>
         </CardHeader>
