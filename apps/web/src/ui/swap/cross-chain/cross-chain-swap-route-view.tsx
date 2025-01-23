@@ -51,7 +51,7 @@ export const CrossChainSwapRouteView: FC<CrossChainSwapRouteViewProps> = ({
             )}
           />
         )}
-        <BridgeAction toolDetails={bridgeStep.toolDetails} />
+        <BridgeAction toolDetails={bridgeStep!.toolDetails} />
         {dstStep ? (
           <SwapAction
             label="To"
