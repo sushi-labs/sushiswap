@@ -761,8 +761,8 @@ const _CrossChainSwapTradeReviewDialog: FC<{
                         ) : null}
                         {feesBreakdown && feesBreakdown.ui.size > 0 ? (
                           <List.KeyValue
-                            title="UI fee"
-                            subtitle="The fee charged by the Sushi UI."
+                            title="Interface fee (0.25%)"
+                            subtitle="The fee charged by Sushi's interface."
                           >
                             <div className="flex flex-col gap-1">
                               {feesBreakdown.ui.get(chainId0) ? (
