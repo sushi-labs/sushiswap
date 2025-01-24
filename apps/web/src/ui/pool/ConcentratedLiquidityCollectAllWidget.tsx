@@ -257,14 +257,16 @@ export const ConcentratedLiquidityCollectAllWidget: FC<
                 </DialogDescription>
               </DialogHeader>
               <div className="flex flex-col gap-4">
-                <div className="flex items-center justify-between p-4 bg-white rounded-xl dark:bg-slate-800">
-                  <span className="font-semibold text-sm">Total Value</span>
-                  <span className="font-semibold text-sm">
+                <div className="flex items-center justify-between p-4 bg-white rounded-xl dark:bg-secondary border border-accent">
+                  <span className="font-semibold text-sm text-gray-900 dark:text-slate-50">
+                    Total Value
+                  </span>
+                  <span className="font-semibold text-sm text-gray-900 dark:text-slate-50">
                     ${totalFeeValue.toFixed(2)}
                   </span>
                 </div>
-                <div className="flex flex-col gap-3 p-4 bg-white rounded-xl dark:bg-slate-800">
-                  <span className="text-xs text-gray-400">
+                <div className="flex flex-col gap-3 p-4 bg-white rounded-xl dark:bg-secondary border border-accent">
+                  <span className="text-xs text-gray-400 dark:text-slate-400">
                     You'll receive collected fees:
                   </span>
                   <div className="flex flex-col gap-4">
@@ -279,15 +281,15 @@ export const ConcentratedLiquidityCollectAllWidget: FC<
                             width={18}
                             height={18}
                           />
-                          <span className="text-sm text-gray-500 font-medium">
+                          <span className="text-sm text-gray-500 dark:text-slate-400 font-medium">
                             {amount.currency.symbol}
                           </span>
                         </div>
                         <div className="flex items-center gap-2">
-                          <span className="text-sm text-gray-900 font-semibold">
+                          <span className="text-sm text-gray-900 dark:text-slate-50 font-semibold">
                             {amount.toSignificant(6)}
                           </span>
-                          <span className="text-sm text-gray-400">
+                          <span className="text-sm text-gray-400 dark:text-slate-400">
                             ${feeValues[i].toFixed(1)}
                           </span>
                         </div>
@@ -297,7 +299,7 @@ export const ConcentratedLiquidityCollectAllWidget: FC<
                 </div>
                 {hasNativeToken && (
                   <div className="flex items-center justify-between mb-1">
-                    <span className="text-gray-500 text-sm">
+                    <span className="text-gray-500 dark:text-slate-400 text-sm">
                       Receive {nativeToken?.wrapped.symbol} instead of{' '}
                       {nativeToken?.symbol}
                     </span>
