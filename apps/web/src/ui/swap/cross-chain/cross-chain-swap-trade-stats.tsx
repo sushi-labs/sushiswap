@@ -28,8 +28,8 @@ export const CrossChainSwapTradeStats: FC = () => {
   const { isLoading, data: trade, isError } = useSelectedCrossChainTradeRoute()
 
   const feeData = useMemo(
-    () => (trade?.steps ? getCrossChainFeesBreakdown(trade.steps) : undefined),
-    [trade?.steps],
+    () => (trade?.step ? getCrossChainFeesBreakdown(trade.step) : undefined),
+    [trade?.step],
   )
 
   return (
@@ -85,6 +85,19 @@ export const CrossChainSwapTradeStats: FC = () => {
               `${trade?.amountOutMin?.toSignificant(6) ?? '0.00'} ${
                 trade?.amountOut?.currency?.symbol ?? ''
               }`
+            )}
+          </span>
+        </div>
+
+        <div className="flex justify-between items-center gap-2">
+          <span className="text-sm text-gray-700 dark:text-slate-400">
+            Interface fee (0.25%)
+          </span>
+          <span className="text-sm font-semibold text-gray-700 text-right dark:text-slate-400">
+            {isLoading || !feeData ? (
+              <SkeletonBox className="h-4 py-0.5 w-[100px]" />
+            ) : (
+              `${formatUSD(feeData.uiFeesUSD)}`
             )}
           </span>
         </div>

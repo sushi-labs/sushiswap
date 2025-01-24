@@ -118,7 +118,7 @@ export const crossChainTransactionRequestSchema = z.object({
 
 const _crossChainStepSchema = z.object({
   id: z.string(),
-  type: z.enum(['swap', 'cross', 'lifi']),
+  type: z.enum(['swap', 'cross', 'lifi', 'protocol']),
   tool: z.string(),
   toolDetails: crossChainToolDetailsSchema,
   action: crossChainActionSchema,
@@ -130,25 +130,45 @@ export const crossChainStepSchema = _crossChainStepSchema.extend({
   includedSteps: z.array(_crossChainStepSchema),
 })
 
-export const crossChainRouteSchema = z.object({
-  id: z.string(),
-  fromChainId: z.coerce
-    .number()
-    .refine((chainId) => isXSwapSupportedChainId(chainId), {
-      message: `fromChainId must exist in XSwapChainId`,
-    }),
-  fromAmount: z.string().transform((amount) => BigInt(amount)),
-  fromToken: crossChainTokenSchema,
-  toChainId: z.coerce
-    .number()
-    .refine((chainId) => isXSwapSupportedChainId(chainId), {
-      message: `toChainId must exist in XSwapChainId`,
-    }),
-  toAmount: z.string().transform((amount) => BigInt(amount)),
-  toAmountMin: z.string().transform((amount) => BigInt(amount)),
-  toToken: crossChainTokenSchema,
-  gasCostUSD: z.string(),
-  steps: z.array(crossChainStepSchema),
-  tags: z.array(z.string()).optional(),
-  transactionRequest: crossChainTransactionRequestSchema.optional(),
-})
+export const crossChainRouteSchema = z
+  .object({
+    id: z.string(),
+    fromChainId: z.coerce
+      .number()
+      .refine((chainId) => isXSwapSupportedChainId(chainId), {
+        message: `fromChainId must exist in XSwapChainId`,
+      }),
+    fromAmount: z.string().transform((amount) => BigInt(amount)),
+    fromToken: crossChainTokenSchema,
+    toChainId: z.coerce
+      .number()
+      .refine((chainId) => isXSwapSupportedChainId(chainId), {
+        message: `toChainId must exist in XSwapChainId`,
+      }),
+    toAmount: z.string().transform((amount) => BigInt(amount)),
+    toAmountMin: z.string().transform((amount) => BigInt(amount)),
+    toToken: crossChainTokenSchema,
+    gasCostUSD: z.string(),
+    steps: z.array(
+      crossChainStepSchema.transform((data) => {
+        return {
+          ...data,
+          includedStepsWithoutFees: data.includedSteps.filter(
+            (step) => step.tool !== 'feeCollection',
+          ),
+        }
+      }),
+    ),
+    tags: z.array(z.string()).optional(),
+    transactionRequest: crossChainTransactionRequestSchema.optional(),
+  })
+  .refine((data) => data.steps.length === 1, {
+    message: 'multi-step routes are not supported',
+  })
+  .transform((data) => {
+    const { steps, ...rest } = data
+    return {
+      ...rest,
+      step: steps[0],
+    }
+  })

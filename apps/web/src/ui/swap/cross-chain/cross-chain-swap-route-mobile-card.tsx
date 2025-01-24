@@ -27,7 +27,7 @@ export const CrossChainSwapRouteMobileCard: FC<
     state: { token1, chainId0, chainId1 },
   } = useDerivedStateCrossChainSwap()
 
-  const { data: price } = usePrice({
+  const { data: price, isLoading: isPriceLoading } = usePrice({
     chainId: token1?.chainId,
     address: token1?.wrapped.address,
   })
@@ -59,7 +59,7 @@ export const CrossChainSwapRouteMobileCard: FC<
     protocolFeesUSD,
     totalFeesUSD,
   } = useMemo(() => {
-    const step = route?.steps[0]
+    const step = route?.step
     if (!step)
       return {
         step,
@@ -79,7 +79,7 @@ export const CrossChainSwapRouteMobileCard: FC<
         : `${executionDurationMinutes} minutes`
 
     const { feesBreakdown, totalFeesUSD, gasFeesUSD, protocolFeesUSD } =
-      getCrossChainFeesBreakdown(route.steps)
+      getCrossChainFeesBreakdown(step)
 
     return {
       step,
@@ -89,7 +89,7 @@ export const CrossChainSwapRouteMobileCard: FC<
       gasFeesUSD,
       protocolFeesUSD,
     }
-  }, [route?.steps])
+  }, [route?.step])
 
   return (
     <Card
@@ -119,18 +119,23 @@ export const CrossChainSwapRouteMobileCard: FC<
                 {amountOut?.toSignificant(6)} {token1?.symbol}
               </span>
             ) : (
-              <div className="w-28">
+              <span className="w-28">
                 <SkeletonText fontSize="sm" />
-              </div>
+              </span>
             )}
             {amountOutUSD ? (
               <span className="text-sm text-muted-foreground">
                 ≈ ${amountOutUSD} after fees
               </span>
             ) : (
-              <div className="w-36">
+              <span
+                className={classNames(
+                  'w-36',
+                  !isPriceLoading ? 'invisible' : '',
+                )}
+              >
                 <SkeletonText fontSize="sm" />
-              </div>
+              </span>
             )}
             {route?.tags?.includes(order) ? (
               <div className="flex justify-center items-center rounded-full px-2 bg-gradient-to-r from-blue/20 to-pink/20">

@@ -64,7 +64,7 @@ export async function GET(request: NextRequest) {
         exchanges: { allow: ['sushiswap'] },
         allowSwitchChain: false,
         allowDestinationCall: true,
-        // fee: // TODO: must set up feeReceiver w/ lifi
+        fee: 0.0025, // 0.25%
       },
     }),
   }
