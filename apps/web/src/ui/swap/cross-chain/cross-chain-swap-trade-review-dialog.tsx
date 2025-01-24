@@ -525,8 +525,7 @@ const _CrossChainSwapTradeReviewDialog: FC<{
           ? `${executionDurationSeconds} seconds`
           : `${executionDurationMinutes} minutes`
 
-      const { feesBreakdown, totalFeesUSD, uiFeesUSD } =
-        getCrossChainFeesBreakdown([step])
+      const { feesBreakdown, totalFeesUSD } = getCrossChainFeesBreakdown([step])
 
       const chainId0Fees = (
         feesBreakdown.gas.get(step.tokenIn.chainId)?.amount ??
@@ -541,7 +540,7 @@ const _CrossChainSwapTradeReviewDialog: FC<{
       return {
         executionDuration,
         feesBreakdown,
-        totalFeesUSD: totalFeesUSD + uiFeesUSD,
+        totalFeesUSD,
         chainId0Fees,
       }
     }, [step])
@@ -751,55 +750,6 @@ const _CrossChainSwapTradeReviewDialog: FC<{
                                     {formatUSD(
                                       feesBreakdown.protocol.get(chainId1)!
                                         .amountUSD,
-                                    )}
-                                    )
-                                  </span>
-                                </span>
-                              ) : null}
-                            </div>
-                          </List.KeyValue>
-                        ) : null}
-                        {feesBreakdown && feesBreakdown.ui.size > 0 ? (
-                          <List.KeyValue
-                            title="Interface fee (0.25%)"
-                            subtitle="The fee charged by Sushi's interface."
-                          >
-                            <div className="flex flex-col gap-1">
-                              {feesBreakdown.ui.get(chainId0) ? (
-                                <span>
-                                  {formatNumber(
-                                    feesBreakdown.ui
-                                      .get(chainId0)!
-                                      .amount.toExact(),
-                                  )}{' '}
-                                  {
-                                    feesBreakdown.ui.get(chainId0)!.amount
-                                      .currency.symbol
-                                  }{' '}
-                                  <span className="text-muted-foreground">
-                                    (
-                                    {formatUSD(
-                                      feesBreakdown.ui.get(chainId0)!.amountUSD,
-                                    )}
-                                    )
-                                  </span>
-                                </span>
-                              ) : null}
-                              {feesBreakdown.ui.get(chainId1) ? (
-                                <span>
-                                  {formatNumber(
-                                    feesBreakdown.ui
-                                      .get(chainId1)!
-                                      .amount.toExact(),
-                                  )}{' '}
-                                  {
-                                    feesBreakdown.ui.get(chainId1)!.amount
-                                      .currency.symbol
-                                  }{' '}
-                                  <span className="text-muted-foreground">
-                                    (
-                                    {formatUSD(
-                                      feesBreakdown.ui.get(chainId1)!.amountUSD,
                                     )}
                                     )
                                   </span>
