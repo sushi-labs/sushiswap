@@ -96,7 +96,6 @@
     "zod": "3.23.8"
   },
   "devDependencies": {
-    "eslint": "9.18.0",
     "@0xsquid/squid-types": "0.1.78",
     "@next/env": "15.1.4",
     "@next/eslint-plugin-next": "15.1.4",
@@ -118,6 +117,7 @@
     "@viem/anvil": "0.0.10",
     "autoprefixer": "10.4.14",
     "core-js": "3.38.1",
+    "eslint": "9.18.0",
     "eslint-config-next": "15.1.4",
     "knip": "5.30.6",
     "postcss": "8.4.23",
