@@ -3,3 +3,28 @@ packages:
   - 'apps/*'
   - 'config/*'
   - 'packages/*'
+
+catalog:
+  "typescript": 5.7.2
+
+catalogs:
+  web3:
+    "sushi": 5.0.4
+    "wagmi": 2.12.10
+    "@wagmi/core": 2.13.5
+    "viem": 2.21.55
+
+  react:
+    "next": 15.1.4
+    "react": 19.0.0
+    "@types/react": 19.0.1
+    "react-dom": 19.0.0
+    "@types/react-dom": 19.0.2
+  
+  ui:
+    "tailwindcss": 3.3.2
+
+  tsconfig:
+    "@tsconfig/next": 2.0.1
+    "@tsconfig/node20": 20.1.4
+    "@tsconfig/strictest": 2.0.2

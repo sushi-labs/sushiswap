@@ -22,9 +22,9 @@
     "index.js"
   ],
   "devDependencies": {
-    "next": "15.1.1"
+    "next": "catalog:react"
   },
   "peerDependencies": {
-    "next": "15.1.1"
+    "next": "catalog:react"
   }
 }

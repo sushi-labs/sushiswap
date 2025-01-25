@@ -1,5 +1,5 @@
-import type { FetchError } from '../lib/fetch-error'
-import type { RequestOptions } from '../lib/request'
+import type { FetchError } from '../lib/fetch-error.js'
+import type { RequestOptions } from '../lib/request.js'
 
 export type Variables<T extends { [key: string]: any }> = keyof Omit<
   T,

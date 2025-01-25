@@ -31,9 +31,9 @@
   },
   "devDependencies": {
     "@types/node": "20",
-    "tailwindcss": "3.3.2"
+    "tailwindcss": "catalog:ui"
   },
   "peerDependencies": {
-    "tailwindcss": "3.3.2"
+    "tailwindcss": "catalog:ui"
   }
 }

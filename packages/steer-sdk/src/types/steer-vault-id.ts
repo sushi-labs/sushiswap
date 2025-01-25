@@ -1,5 +1,5 @@
 import type { Address, ID } from 'sushi/types'
-import type { SteerChainId } from '../constants'
+import type { SteerChainId } from '../constants.js'
 
 export type SteerVaultId = {
   id: ID

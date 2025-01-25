@@ -1,1 +1,1 @@
-export * from './queries/rebases'
+export * from './queries/rebases.js'

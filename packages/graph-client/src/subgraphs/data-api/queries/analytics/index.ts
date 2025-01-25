@@ -1,2 +1,1 @@
-export * from './day-buckets'
-
+export * from './day-buckets.js'

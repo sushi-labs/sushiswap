@@ -38,18 +38,18 @@
   "dependencies": {
     "copy-to-clipboard": "3.3.3",
     "react-responsive": "9.0.0-beta.10",
-    "viem": "2.21.55"
+    "viem": "catalog:web3"
   },
   "devDependencies": {
-    "@tsconfig/node20": "20.1.4",
-    "@tsconfig/strictest": "2.0.2",
-    "@types/react": "19.0.1",
-    "@types/react-dom": "19.0.2",
-    "react": "19.0.0",
-    "react-dom": "19.0.0",
-    "sushi": "5.0.4",
-    "tailwindcss": "3.3.2",
-    "typescript": "5.7.2"
+    "@tsconfig/node20": "catalog:tsconfig",
+    "@tsconfig/strictest": "catalog:tsconfig",
+    "@types/react": "catalog:react",
+    "@types/react-dom": "catalog:react",
+    "react": "catalog:react",
+    "react-dom": "catalog:react",
+    "sushi": "catalog:web3",
+    "tailwindcss": "catalog:ui",
+    "typescript": "catalog:"
   },
   "peerDependencies": {
     "react": "*",

@@ -54,20 +54,20 @@
   },
   "dependencies": {
     "@steerprotocol/contracts": "2.1.0-beta.14",
-    "sushi": "5.0.4",
-    "viem": "2.21.55"
+    "sushi": "catalog:web3",
+    "viem": "catalog:web3"
   },
   "devDependencies": {
-    "@tsconfig/esm": "1.0.4",
-    "@tsconfig/strictest": "2.0.2",
+    "@tsconfig/node20": "catalog:tsconfig",
+    "@tsconfig/strictest": "catalog:tsconfig",
     "@types/node": "20",
-    "react": "19.0.0",
-    "react-dom": "19.0.0",
-    "typescript": "5.7.2"
+    "react": "catalog:react",
+    "react-dom": "catalog:react",
+    "typescript": "catalog:"
   },
   "peerDependencies": {
-    "react": "19.0.0",
-    "react-dom": "19.0.0"
+    "react": "catalog:react",
+    "react-dom": "catalog:react"
   },
   "peerDependenciesMeta": {
     "react": {

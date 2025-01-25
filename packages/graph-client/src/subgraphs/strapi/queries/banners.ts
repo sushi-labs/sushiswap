@@ -1,9 +1,9 @@
 import type { VariablesOf } from 'gql.tada'
 
-import { request, type RequestOptions } from 'src/lib/request'
-import { graphql } from '../graphql'
-import { STRAPI_GRAPHQL_URL } from 'src/subgraphs/strapi/constants'
-import { ImageFieldsFragment } from 'src/subgraphs/strapi/fragments/image-fields'
+import { request, type RequestOptions } from 'src/lib/request.js'
+import { graphql } from '../graphql.js'
+import { STRAPI_GRAPHQL_URL } from 'src/subgraphs/strapi/constants.js'
+import { ImageFieldsFragment } from 'src/subgraphs/strapi/fragments/image-fields.js'
 
 export const StrapiBannersQuery = graphql(
   `query Banners {

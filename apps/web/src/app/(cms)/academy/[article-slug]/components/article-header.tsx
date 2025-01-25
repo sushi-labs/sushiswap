@@ -44,7 +44,6 @@ export const ArticleHeader: FC<ArticleHeader> = ({ article }) => {
             className="flex items-center gap-2 whitespace-nowrap"
           >
             <div className="relative w-6 h-6 overflow-hidden rounded-full bg-slate-800">
-              {/* eslint-disable-next-line */}
               {author.avatar && <Media image={author.avatar} />}
             </div>
             <span className="text-slate-50">{author.name}</span>

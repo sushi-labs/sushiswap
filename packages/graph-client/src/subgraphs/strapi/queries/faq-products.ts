@@ -1,10 +1,10 @@
 import type { VariablesOf } from 'gql.tada'
 
-import { request, type RequestOptions } from 'src/lib/request'
-import { graphql } from '../graphql'
-import { STRAPI_GRAPHQL_URL } from 'src/subgraphs/strapi/constants'
-import { ImageFieldsFragment } from '../fragments/image-fields'
-import { transformImage } from '../transforms/transform-image'
+import { request, type RequestOptions } from 'src/lib/request.js'
+import { graphql } from '../graphql.js'
+import { STRAPI_GRAPHQL_URL } from 'src/subgraphs/strapi/constants.js'
+import { ImageFieldsFragment } from '../fragments/image-fields.js'
+import { transformImage } from '../transforms/transform-image.js'
 
 export const StrapiFaqProductsQuery = graphql(
   `query FaqProducts($filters: FaqProductFiltersInput, $pagination: PaginationArg, $publicationState: PublicationState = LIVE, $sort: [String] = ["publishedAt:desc"]) {

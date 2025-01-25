@@ -41,18 +41,18 @@
     "dev": "tsc --watch"
   },
   "devDependencies": {
-    "@tsconfig/esm": "1.0.4",
-    "@tsconfig/strictest": "2.0.2",
+    "@tsconfig/node20": "catalog:tsconfig",
+    "@tsconfig/strictest": "catalog:tsconfig",
     "@types/gtag.js": "0.0.19",
-    "@types/react": "19.0.1",
-    "@types/react-dom": "19.0.2",
-    "react": "19.0.0",
-    "react-dom": "19.0.0",
-    "typescript": "5.7.2"
+    "@types/react": "catalog:react",
+    "@types/react-dom": "catalog:react",
+    "react": "catalog:react",
+    "react-dom": "catalog:react",
+    "typescript": "catalog:"
   },
   "peerDependencies": {
-    "react": "19.0.0",
-    "react-dom": "19.0.0"
+    "react": "catalog:react",
+    "react-dom": "catalog:react"
   },
   "peerDependenciesMeta": {
     "react": {
