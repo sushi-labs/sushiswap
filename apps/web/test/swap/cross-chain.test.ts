@@ -1,5 +1,5 @@
 import { Page, expect, test } from '@playwright/test'
-import { ChainId, chainName } from 'sushi/chain'
+import { EvmChainId, evmChainName } from 'sushi/chain'
 import { Native, Type } from 'sushi/currency'
 import { zeroAddress } from 'viem'
 
@@ -151,7 +151,7 @@ async function approve(page: Page, currency: Type) {
   }
 }
 
-async function handleNetwork(page: Page, chainId: ChainId, type: InputType) {
+async function handleNetwork(page: Page, chainId: EvmChainId, type: InputType) {
   const selectorInfix = `${type === 'INPUT' ? 'from' : 'to'}`
 
   // Open network list
@@ -165,7 +165,7 @@ async function handleNetwork(page: Page, chainId: ChainId, type: InputType) {
   const networkSearch = page.locator('[testdata-id=network-selector-input]')
   await expect(networkSearch).toBeVisible()
   await expect(networkSearch).toBeEnabled()
-  await networkSearch.fill(chainName[chainId])
+  await networkSearch.fill(evmChainName[chainId])
 
   const networkToSelect = page.locator(
     `[testdata-id=network-selector-${chainId}]`,
@@ -173,7 +173,7 @@ async function handleNetwork(page: Page, chainId: ChainId, type: InputType) {
   await expect(networkToSelect).toBeVisible()
 
   await networkToSelect.click()
-  await expect(networkSelector).toContainText(chainName[chainId])
+  await expect(networkSelector).toContainText(evmChainName[chainId])
 }
 
 async function handleToken(page: Page, currency: Type, type: InputType) {
@@ -215,7 +215,7 @@ async function inputAmount(page: Page, amount: string) {
   await input0.fill(amount)
 }
 
-async function switchNetwork(page: Page, chainId: number) {
+async function switchNetwork(page: Page, chainId: EvmChainId) {
   const networkSelector = page.locator('[testdata-id=network-selector-button]')
   await expect(networkSelector).toBeVisible()
   await expect(networkSelector).toBeEnabled()

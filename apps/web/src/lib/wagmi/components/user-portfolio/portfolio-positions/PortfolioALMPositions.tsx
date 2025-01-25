@@ -6,7 +6,7 @@ import {
   Currency,
 } from '@sushiswap/ui'
 import React, { FC } from 'react'
-import { ChainId, ChainKey } from 'sushi/chain'
+import { ChainKey, EvmChainId } from 'sushi/chain'
 import { formatUSD } from 'sushi/format'
 import { PortfolioInfoRow } from '../PortfolioInfoRow'
 
@@ -26,8 +26,8 @@ export const PortfolioALMPositions: FC<PortfolioALMPositionsProps> = ({
       {positions.map((position) => (
         <PortfolioInfoRow
           key={`${position.chainId}:${position.id}`}
-          chainId={position.chainId as ChainId}
-          href={`/${ChainKey[position.chainId as ChainId]}/pool/v3/${
+          chainId={position.chainId as EvmChainId}
+          href={`/${ChainKey[position.chainId as EvmChainId]}/pool/v3/${
             position.address
           }/smart/${position.vaultAddress}`}
           icon={

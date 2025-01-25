@@ -50,7 +50,7 @@ import {
 import { SelectFeeConcentratedWidget } from 'src/ui/pool/SelectFeeConcentratedWidget'
 import { SelectNetworkWidget } from 'src/ui/pool/SelectNetworkWidget'
 import { SelectTokensWidget } from 'src/ui/pool/SelectTokensWidget'
-import { Chain, ChainId, ChainKey } from 'sushi/chain'
+import { ChainKey, EvmChain, EvmChainId } from 'sushi/chain'
 import {
   MERKL_SUPPORTED_CHAIN_IDS,
   SushiSwapV3ChainId,
@@ -66,10 +66,10 @@ const APPROVE_TAG = 'approve-incentivize'
 
 export default function Page(props: { params: Promise<{ chainId: string }> }) {
   const params = use(props.params)
-  const chainId = +params.chainId as ChainId
+  const chainId = +params.chainId as EvmChainId
   return (
     <ConcentratedLiquidityURLStateProvider
-      chainId={isMerklChainId(chainId) ? chainId : ChainId.ETHEREUM}
+      chainId={isMerklChainId(chainId) ? chainId : EvmChainId.ETHEREUM}
       supportedNetworks={MERKL_SUPPORTED_CHAIN_IDS}
     >
       <ConcentratedLiquidityProvider>
@@ -583,7 +583,10 @@ const Incentivize = withCheckerRoot(() => {
                                                 flex
                                                 title="Network"
                                               >
-                                                {Chain.from(pool.chainId)?.name}
+                                                {
+                                                  EvmChain.from(pool.chainId)
+                                                    ?.name
+                                                }
                                               </List.KeyValue>
                                             ) : null}
                                             {feeAmount && (

@@ -54,7 +54,7 @@ import {
 } from 'src/lib/swap/cross-chain'
 import { warningSeverity } from 'src/lib/swap/warningSeverity'
 import { useApproved } from 'src/lib/wagmi/systems/Checker/Provider'
-import { Chain, ChainKey } from 'sushi/chain'
+import { ChainKey, EvmChain } from 'sushi/chain'
 import { Amount, Native } from 'sushi/currency'
 import { formatNumber, formatUSD, shortenAddress } from 'sushi/format'
 import { ZERO } from 'sushi/math'
@@ -239,16 +239,18 @@ const _CrossChainSwapTradeReviewDialog: FC<{
                 pending: `Sending ${routeRef?.current?.amountIn?.toSignificant(
                   6,
                 )} ${routeRef?.current?.amountIn?.currency.symbol} to ${
-                  Chain.fromChainId(routeRef?.current?.toChainId)?.name
+                  EvmChain.fromChainId(routeRef?.current?.toChainId)?.name
                 }`,
                 completed: `Sent ${routeRef?.current?.amountIn?.toSignificant(
                   6,
                 )} ${routeRef?.current?.amountIn?.currency.symbol} to ${
-                  Chain.fromChainId(routeRef?.current?.toChainId)?.name
+                  EvmChain.fromChainId(routeRef?.current?.toChainId)?.name
                 }`,
                 failed: `Something went wrong when trying to send ${
                   routeRef?.current?.amountIn?.currency.symbol
-                } to ${Chain.fromChainId(routeRef?.current?.toChainId)?.name}`,
+                } to ${
+                  EvmChain.fromChainId(routeRef?.current?.toChainId)?.name
+                }`,
               }
             : {
                 pending: `Swapping ${routeRef.current?.amountIn?.toSignificant(
@@ -422,8 +424,8 @@ const _CrossChainSwapTradeReviewDialog: FC<{
         chainId: chainId0,
         href: lifiData.lifiExplorerLink,
         summary: `Bridging ${routeRef?.current?.fromToken?.symbol} from ${
-          Chain.from(chainId0)?.name
-        } to ${Chain.from(chainId1)?.name}`,
+          EvmChain.from(chainId0)?.name
+        } to ${EvmChain.from(chainId1)?.name}`,
         timestamp: new Date().getTime(),
         groupTimestamp: groupTs.current,
       })
@@ -487,17 +489,17 @@ const _CrossChainSwapTradeReviewDialog: FC<{
                 pending: `Receiving ${routeRef?.current?.amountOut?.toSignificant(
                   6,
                 )} ${routeRef?.current?.amountOut?.currency.symbol} on ${
-                  Chain.fromChainId(routeRef?.current?.toChainId!)?.name
+                  EvmChain.fromChainId(routeRef?.current?.toChainId!)?.name
                 }`,
                 completed: `Received ${routeRef?.current?.amountOut?.toSignificant(
                   6,
                 )} ${routeRef?.current?.amountOut?.currency.symbol} on ${
-                  Chain.fromChainId(routeRef?.current?.toChainId!)?.name
+                  EvmChain.fromChainId(routeRef?.current?.toChainId!)?.name
                 }`,
                 failed: `Something went wrong when trying to receive ${routeRef?.current?.amountOut?.toSignificant(
                   6,
                 )} ${routeRef?.current?.amountOut?.currency.symbol} on ${
-                  Chain.fromChainId(routeRef?.current?.toChainId!)?.name
+                  EvmChain.fromChainId(routeRef?.current?.toChainId!)?.name
                 }`,
               },
         timestamp: new Date().getTime(),
@@ -592,7 +594,7 @@ const _CrossChainSwapTradeReviewDialog: FC<{
                 <div className="pt-4">
                   <Message size="sm" variant="destructive">
                     Insufficient {Native.onChain(chainId0).symbol} balance on{' '}
-                    {Chain.fromChainId(chainId0)?.name} to cover the network
+                    {EvmChain.fromChainId(chainId0)?.name} to cover the network
                     fee. Please lower your input amount or{' '}
                     <a
                       href={`/${ChainKey[chainId0]}/swap?token1=NATIVE`}
@@ -659,7 +661,7 @@ const _CrossChainSwapTradeReviewDialog: FC<{
                         {feesBreakdown && feesBreakdown.gas.size > 0 ? (
                           <List.KeyValue
                             title="Network fee"
-                            subtitle="The transaction fee charged by the origin blockchain."
+                            subtitle="The transaction fee charged by the origin blockEvmChain."
                           >
                             <div className="flex flex-col gap-1">
                               {feesBreakdown.gas.get(chainId0) ? (
@@ -915,7 +917,7 @@ const _CrossChainSwapTradeReviewDialog: FC<{
                       <List.KeyValue title="Recipient">
                         <a
                           target="_blank"
-                          href={Chain.accountUrl(chainId0, recipient) ?? '#'}
+                          href={EvmChain.accountUrl(chainId0, recipient) ?? '#'}
                           className="flex items-center gap-2 cursor-pointer text-blue"
                           rel="noreferrer"
                         >

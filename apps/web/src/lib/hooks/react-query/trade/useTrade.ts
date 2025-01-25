@@ -5,9 +5,9 @@ import {
 } from '@sushiswap/telemetry'
 import { useQuery } from '@tanstack/react-query'
 import { useCallback, useMemo } from 'react'
+import { API_BASE_URL } from 'src/lib/swap/api-base-url'
 import { slippageAmount } from 'sushi/calculate'
 import {
-  API_BASE_URL,
   TOKEN_CHOMPER_ADDRESS,
   isRouteProcessor5ChainId,
   isTokenChomperChainId,

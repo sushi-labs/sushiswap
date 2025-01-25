@@ -1,18 +1,18 @@
 import { useMemo } from 'react'
-import type { ChainId } from 'sushi'
+import type { EvmChainId } from 'sushi'
 import { nativeAddress } from 'sushi/config'
 import { Amount, Type } from 'sushi/currency'
 import type { Address } from 'viem'
 import { useBalances } from './use-balances'
 
-type Args = [Type | undefined] | [ChainId | undefined, Address | undefined]
+type Args = [Type | undefined] | [EvmChainId | undefined, Address | undefined]
 type Return = Omit<ReturnType<typeof useBalances>, 'data'> & {
   data: bigint | undefined
 }
 
 export function useBalance(currency: Type | undefined): Return
 export function useBalance(
-  chainId: ChainId | undefined,
+  chainId: EvmChainId | undefined,
   tokenAddress: Address | undefined,
 ): Return
 

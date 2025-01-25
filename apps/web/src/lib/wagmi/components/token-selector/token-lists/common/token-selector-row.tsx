@@ -24,7 +24,7 @@ import { Badge } from '@sushiswap/ui'
 import { Currency } from '@sushiswap/ui'
 import React, { CSSProperties, FC, memo, useCallback } from 'react'
 import { NativeAddress } from 'src/lib/constants'
-import { Chain } from 'sushi/chain'
+import { EvmChain } from 'sushi/chain'
 import { Amount, Type } from 'sushi/currency'
 import { Fraction, ZERO } from 'sushi/math'
 import { zeroAddress } from 'viem'
@@ -177,7 +177,7 @@ export const TokenSelectorRow: FC<TokenSelectorRow> = memo(
                         <a
                           target="_blank"
                           rel="noopener noreferrer"
-                          href={Chain.from(currency.chainId)?.getTokenUrl(
+                          href={EvmChain.from(currency.chainId)?.getTokenUrl(
                             currency.wrapped.address,
                           )}
                           className="text-blue hover:underline flex gap-1"

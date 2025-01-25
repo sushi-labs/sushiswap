@@ -6,7 +6,7 @@ import {
 import { unstable_cache } from 'next/cache'
 import { notFound } from 'next/navigation'
 import { SteerCarousel } from 'src/ui/pool/Steer/SteerCarousel'
-import { ChainId } from 'sushi/chain'
+import { EvmChainId } from 'sushi/chain'
 import { isSushiSwapV3ChainId } from 'sushi/config'
 import { isAddress } from 'viem'
 
@@ -15,7 +15,7 @@ export default async function VaultOverviewPage(props: {
 }) {
   const params = await props.params
   const { chainId: _chainId, address } = params
-  const chainId = +_chainId as ChainId
+  const chainId = +_chainId as EvmChainId
 
   if (
     !isSushiSwapV3ChainId(chainId) ||

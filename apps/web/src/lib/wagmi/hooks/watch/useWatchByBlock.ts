@@ -1,6 +1,6 @@
 import { QueryKey, useQueryClient } from '@tanstack/react-query'
 import { useEffect, useMemo } from 'react'
-import { ChainId } from 'sushi/chain'
+import { EvmChainId } from 'sushi/chain'
 import { useBlockNumber } from 'wagmi'
 
 type UseWatchByBlockKey = {
@@ -14,7 +14,7 @@ type UseWatchByBlockKeys = {
 }
 
 type UseWatchByBlock = {
-  chainId: ChainId | undefined
+  chainId: EvmChainId | undefined
   // Refresh every modulo blocks
   modulo?: number
 } & (UseWatchByBlockKey | UseWatchByBlockKeys)

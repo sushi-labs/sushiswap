@@ -2,6 +2,7 @@ import { Page, expect } from '@playwright/test'
 import { NextFixture } from 'next/experimental/testmode/playwright'
 import { isZapSupportedChainId } from 'src/config'
 import { NativeAddress } from 'src/lib/constants'
+import { EvmChainId } from 'sushi'
 import {
   SUSHISWAP_V2_FACTORY_ADDRESS,
   SUSHISWAP_V3_FACTORY_ADDRESS,
@@ -50,9 +51,9 @@ interface AddV2LiquidityArgs {
 const BASE_URL = 'http://localhost:3000'
 
 export class PoolPage extends BaseActions {
-  readonly chainId: number
+  readonly chainId: EvmChainId
   readonly nativeToken: Native
-  constructor(page: Page, chainId: number) {
+  constructor(page: Page, chainId: EvmChainId) {
     super(page)
     this.chainId = chainId
     this.nativeToken = Native.onChain(chainId)

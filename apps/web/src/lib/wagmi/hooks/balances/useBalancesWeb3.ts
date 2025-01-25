@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { useEffect } from 'react'
-import { ChainId } from 'sushi/chain'
+import { EvmChainId } from 'sushi/chain'
 import { Amount, Native, Token, Type } from 'sushi/currency'
 import { Address, erc20Abi, isAddress, zeroAddress } from 'viem'
 
@@ -10,7 +10,7 @@ import { GetBalanceReturnType } from 'wagmi/actions'
 import { useWatchByInterval } from '../watch/useWatchByInterval'
 
 interface QueryBalanceParams {
-  chainId: ChainId | undefined
+  chainId: EvmChainId | undefined
   currencies: (Type | undefined)[]
   account: Address | undefined
   nativeBalance?: GetBalanceReturnType
@@ -81,7 +81,7 @@ export const queryFnUseBalances = async ({
 }
 
 interface UseBalanceParams {
-  chainId: ChainId | undefined
+  chainId: EvmChainId | undefined
   currencies: (Type | undefined)[]
   account: Address | undefined
   enabled?: boolean

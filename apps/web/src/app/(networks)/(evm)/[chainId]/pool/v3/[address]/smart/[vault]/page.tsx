@@ -10,10 +10,11 @@ import formatDistanceStrict from 'date-fns/formatDistanceStrict'
 import formatDistanceToNow from 'date-fns/formatDistanceToNow'
 import { unstable_cache } from 'next/cache'
 import { notFound } from 'next/navigation'
+import { publicClientConfig } from 'src/lib/wagmi/config/viem'
 import { SteerStrategyGeneric } from 'src/ui/pool/Steer/SteerStrategies'
 import { SteerBaseStrategy } from 'src/ui/pool/Steer/SteerStrategies/SteerBaseStrategy'
-import type { ChainId } from 'sushi'
-import { isSushiSwapV3ChainId, publicClientConfig } from 'sushi/config'
+import type { EvmChainId } from 'sushi'
+import { isSushiSwapV3ChainId } from 'sushi/config'
 import { Token } from 'sushi/currency'
 import { formatNumber } from 'sushi/format'
 import { tickToPrice } from 'sushi/pool/sushiswap-v3'
@@ -88,7 +89,7 @@ export default async function SteerVaultPage(props: {
   params: Promise<{ chainId: string; vault: string; address: string }>
 }) {
   const params = await props.params
-  const chainId = Number(params.chainId) as ChainId
+  const chainId = Number(params.chainId) as EvmChainId
   const vaultAddress = params.vault
   const poolAddress = params.address
 

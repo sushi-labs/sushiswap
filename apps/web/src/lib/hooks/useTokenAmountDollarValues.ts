@@ -1,13 +1,13 @@
 'use client'
 
 import { useMemo } from 'react'
-import type { ChainId } from 'sushi/chain'
+import type { EvmChainId } from 'sushi/chain'
 import { Amount, Type } from 'sushi/currency'
 import { ZERO } from 'sushi/math'
 import { usePrices } from '~evm/_common/ui/price-provider/price-provider/use-prices'
 
 interface Params {
-  chainId: ChainId
+  chainId: EvmChainId
   amounts: (Amount<Type> | undefined)[] | null | undefined
 }
 

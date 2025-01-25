@@ -2,7 +2,7 @@
 
 import { Collapsible, Explainer, SkeletonBox, classNames } from '@sushiswap/ui'
 import React, { FC, useMemo } from 'react'
-import { Chain } from 'sushi/chain'
+import { EvmChain } from 'sushi/chain'
 import { formatUSD, shortenAddress } from 'sushi/format'
 import { ZERO } from 'sushi/math'
 import { isAddress } from 'viem'
@@ -133,7 +133,7 @@ export const CrossChainSwapTradeStats: FC = () => {
             <span className="font-semibold text-gray-700 text-right dark:text-slate-400">
               <a
                 target="_blank"
-                href={Chain.from(chainId1)?.getAccountUrl(recipient)}
+                href={EvmChain.from(chainId1)?.getAccountUrl(recipient)}
                 className={classNames(
                   address !== recipient
                     ? 'text-yellow-600'

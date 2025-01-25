@@ -47,7 +47,7 @@ import {
   useTransactionDeadline,
 } from 'src/lib/wagmi/hooks/utils/hooks/useTransactionDeadline'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
-import { Chain } from 'sushi/chain'
+import { EvmChain } from 'sushi/chain'
 import {
   SUSHISWAP_V3_POSTIION_MANAGER,
   SushiSwapV3ChainId,
@@ -513,7 +513,7 @@ export const ConcentratedLiquidityRemoveWidget: FC<
                 <List className="!pt-0">
                   <List.Control>
                     <List.KeyValue flex title="Network">
-                      {Chain.from(chainId)?.name}
+                      {EvmChain.from(chainId)?.name}
                     </List.KeyValue>
                     <List.KeyValue flex title="Slippage">
                       {slippageTolerance?.toSignificant(2)}%

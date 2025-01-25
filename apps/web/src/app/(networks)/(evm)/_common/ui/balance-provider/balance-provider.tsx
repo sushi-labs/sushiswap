@@ -12,7 +12,7 @@ import {
 import ms from 'ms'
 import { NativeAddress } from 'src/lib/constants'
 import { publicWagmiConfig } from 'src/lib/wagmi/config/public'
-import { type ChainId, LowercaseMap } from 'sushi'
+import { type EvmChainId, LowercaseMap } from 'sushi'
 import { erc20Abi_balanceOf, multicall3Abi_getEthBalance } from 'sushi/abi'
 import { Address } from 'viem'
 import { multicall } from 'viem/actions'
@@ -27,7 +27,7 @@ import {
 } from './types'
 import { getTokenIds, isBalanceStale } from './utils'
 
-function getOrCreateChain(state: ProviderState, chainId: ChainId) {
+function getOrCreateChain(state: ProviderState, chainId: EvmChainId) {
   let chain = state.chains.get(chainId)
 
   if (!chain) {
@@ -143,7 +143,7 @@ export function BalanceProvider({ children }: BalanceProviderContextProps) {
   }, [])
 
   const refetchChain = useCallback(
-    async (chainId: ChainId) => {
+    async (chainId: EvmChainId) => {
       const chain = getOrCreateChain(state, chainId)
       if (chain.isFetching || !state.account) return
       chain.isFetching = true
@@ -242,7 +242,7 @@ export function BalanceProvider({ children }: BalanceProviderContextProps) {
   }, [updateAll])
 
   const updateIfStaleOrMissing = useCallback(
-    (chainId: ChainId) => {
+    (chainId: EvmChainId) => {
       const chain = state.chains.get(chainId)
 
       if (!chain) return

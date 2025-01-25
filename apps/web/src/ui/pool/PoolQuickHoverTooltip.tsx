@@ -8,7 +8,6 @@ import { List } from '@sushiswap/ui'
 import React, { FC } from 'react'
 import { incentiveRewardToToken } from 'src/lib/functions'
 import { SushiSwapProtocol } from 'sushi'
-import { ChainId } from 'sushi/chain'
 import { formatNumber, formatPercent } from 'sushi/format'
 
 interface PoolQuickHoverTooltipProps {
@@ -68,10 +67,7 @@ export const PoolQuickHoverTooltip: FC<PoolQuickHoverTooltipProps> = ({
                     key={incentive.id}
                     icon={Currency.Icon}
                     iconProps={{
-                      currency: incentiveRewardToToken(
-                        row.chainId as ChainId,
-                        incentive,
-                      ),
+                      currency: incentiveRewardToToken(row.chainId, incentive),
                     }}
                     title={`${formatNumber(incentive.rewardPerDay)} ${
                       incentive.rewardToken.symbol

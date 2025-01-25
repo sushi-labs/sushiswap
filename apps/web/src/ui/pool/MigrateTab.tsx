@@ -53,7 +53,7 @@ import {
   useApproved,
   withCheckerRoot,
 } from 'src/lib/wagmi/systems/Checker/Provider'
-import { Chain, ChainId } from 'sushi/chain'
+import { EvmChain } from 'sushi/chain'
 import {
   SushiSwapV2ChainId,
   SushiSwapV3ChainId,
@@ -345,7 +345,7 @@ export const MigrateTab: FC<{ pool: V2Pool }> = withCheckerRoot(({ pool }) => {
   const { approved: approvedMigrate } = useApproved(APPROVE_TAG_MIGRATE)
   const { data: deadline } = useTransactionDeadline({
     storageKey: TTLStorageKey.AddLiquidity,
-    chainId: pool.chainId as ChainId,
+    chainId: pool.chainId,
   })
 
   const {
@@ -553,7 +553,7 @@ export const MigrateTab: FC<{ pool: V2Pool }> = withCheckerRoot(({ pool }) => {
                   <Checker.Network
                     fullWidth
                     size="default"
-                    chainId={pool.chainId as ChainId}
+                    chainId={pool.chainId}
                   >
                     <Checker.Guard
                       size="default"
@@ -615,7 +615,7 @@ export const MigrateTab: FC<{ pool: V2Pool }> = withCheckerRoot(({ pool }) => {
                                               storageKey:
                                                 TTLStorageKey.AddLiquidity,
                                               defaultValue: getDefaultTTL(
-                                                pool.chainId as ChainId,
+                                                pool.chainId,
                                               ).toString(),
                                             },
                                           }}
@@ -641,7 +641,7 @@ export const MigrateTab: FC<{ pool: V2Pool }> = withCheckerRoot(({ pool }) => {
                                       <List className="!pt-0">
                                         <List.Control>
                                           <List.KeyValue flex title="Network">
-                                            {Chain.from(pool.chainId)?.name}
+                                            {EvmChain.from(pool.chainId)?.name}
                                           </List.KeyValue>
                                           {feeAmount && (
                                             <List.KeyValue title="Fee Tier">{`${

@@ -2,7 +2,7 @@
 
 import { createErrorToast, createToast } from '@sushiswap/notifications'
 import { useCallback, useMemo } from 'react'
-import { ChainId, ChefType } from 'sushi'
+import { ChefType, EvmChainId } from 'sushi'
 import {
   masterChefV1Abi_withdraw,
   masterChefV2Abi_withdraw,
@@ -21,7 +21,7 @@ import { SendTransactionReturnType } from 'wagmi/actions'
 import { getMasterChefContractConfig } from './use-master-chef-contract'
 
 interface UseMasterChefWithdrawParams {
-  chainId: ChainId
+  chainId: EvmChainId
   chef: ChefType
   pid: number
   amount?: Amount<Token>

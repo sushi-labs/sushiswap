@@ -1,11 +1,11 @@
 import { useQuery } from '@tanstack/react-query'
-import { ChainId } from 'sushi/chain'
+import { EvmChainId } from 'sushi/chain'
 import { Token, tryParseAmount } from 'sushi/currency'
 
 import { angleRewardTokensValidator } from './validator'
 
 interface UseAngleRewardTokensParams {
-  chainId: ChainId
+  chainId: EvmChainId
 }
 
 export const useAngleRewardTokens = ({

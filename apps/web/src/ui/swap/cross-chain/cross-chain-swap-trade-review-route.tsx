@@ -2,7 +2,7 @@
 
 import { classNames } from '@sushiswap/ui'
 import React from 'react'
-import { Chain } from 'sushi/chain'
+import { EvmChain } from 'sushi/chain'
 import {
   useDerivedStateCrossChainSwap,
   useSelectedCrossChainTradeRoute,
@@ -38,7 +38,7 @@ export const CrossChainSwapTradeReviewRoute = () => {
                 <div className="p-3 flex flex-col gap-2.5 overflow-hidden">
                   <span className="text-[10px] text-muted-foreground overflow-hidden overflow-ellipsis whitespace-nowrap">
                     {step.action.fromChainId === chainId0 ? 'From' : 'To'}:{' '}
-                    {Chain.fromChainId(
+                    {EvmChain.fromChainId(
                       step.action.fromChainId,
                     )?.name?.toUpperCase()}
                   </span>

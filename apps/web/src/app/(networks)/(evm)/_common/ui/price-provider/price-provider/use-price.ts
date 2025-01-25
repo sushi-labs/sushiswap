@@ -1,7 +1,7 @@
 'use client'
 
 import { useMemo } from 'react'
-import type { ChainId } from 'sushi/chain'
+import type { EvmChainId } from 'sushi/chain'
 import type { Address } from 'viem'
 import { usePrices } from './use-prices'
 
@@ -10,7 +10,7 @@ export function usePrice({
   address,
   enabled: _enabled = true,
 }: {
-  chainId: ChainId | undefined
+  chainId: EvmChainId | undefined
   address: Address | undefined
   enabled?: boolean
 }) {

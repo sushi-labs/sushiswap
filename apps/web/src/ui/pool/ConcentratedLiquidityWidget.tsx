@@ -5,7 +5,6 @@ import { LockClosedIcon, PlusIcon } from '@heroicons/react-v1/solid'
 import { DialogTrigger, FormSection, Message, classNames } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui'
 import { FC, Fragment, useCallback, useMemo } from 'react'
-import { ChainId } from 'sushi/chain'
 import {
   SUSHISWAP_V3_POSTIION_MANAGER,
   SushiSwapV3ChainId,
@@ -272,7 +271,7 @@ export const ConcentratedLiquidityWidget: FC<ConcentratedLiquidityWidget> = ({
                   enabled={!depositBDisabled}
                 >
                   <AddSectionReviewModalConcentrated
-                    chainId={Number(chainId) as ChainId}
+                    chainId={chainId}
                     feeAmount={feeAmount}
                     token0={token0}
                     token1={token1}

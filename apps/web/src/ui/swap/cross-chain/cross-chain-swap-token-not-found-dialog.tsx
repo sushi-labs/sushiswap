@@ -16,7 +16,7 @@ import { List } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import React, { useCallback, useMemo } from 'react'
 import { useTokenSecurity } from 'src/lib/hooks/react-query'
-import { Chain } from 'sushi/chain'
+import { EvmChain } from 'sushi/chain'
 import {
   defaultCurrency,
   defaultQuoteCurrency,
@@ -145,7 +145,7 @@ export const CrossChainSwapTokenNotFoundDialog = () => {
                   Could not retrieve token info for{' '}
                   <a
                     target="_blank"
-                    href={Chain.from(chainId0)?.getTokenUrl(
+                    href={EvmChain.from(chainId0)?.getTokenUrl(
                       token0.wrapped.address,
                     )}
                     className="text-blue font-medium"
@@ -153,7 +153,7 @@ export const CrossChainSwapTokenNotFoundDialog = () => {
                   >
                     {shortenAddress(token0.wrapped.address)}
                   </a>{' '}
-                  are you sure this token is on {Chain.from(chainId0)?.name}?
+                  are you sure this token is on {EvmChain.from(chainId0)?.name}?
                 </p>
               </List.Control>
             </List>
@@ -191,7 +191,7 @@ export const CrossChainSwapTokenNotFoundDialog = () => {
                 >
                   <a
                     target="_blank"
-                    href={Chain.from(chainId0)?.getTokenUrl(token0.address)}
+                    href={EvmChain.from(chainId0)?.getTokenUrl(token0.address)}
                     className="text-blue"
                     rel="noreferrer"
                   >
@@ -211,7 +211,7 @@ export const CrossChainSwapTokenNotFoundDialog = () => {
                   Could not retrieve token info for{' '}
                   <a
                     target="_blank"
-                    href={Chain.from(chainId1)?.getTokenUrl(
+                    href={EvmChain.from(chainId1)?.getTokenUrl(
                       token1.wrapped.address,
                     )}
                     className="text-blue font-medium"
@@ -219,7 +219,7 @@ export const CrossChainSwapTokenNotFoundDialog = () => {
                   >
                     {shortenAddress(token1.wrapped.address)}
                   </a>{' '}
-                  are you sure this token is on {Chain.from(chainId1)?.name}?
+                  are you sure this token is on {EvmChain.from(chainId1)?.name}?
                 </p>
               </List.Control>
             </List>
@@ -257,7 +257,7 @@ export const CrossChainSwapTokenNotFoundDialog = () => {
                 >
                   <a
                     target="_blank"
-                    href={Chain.from(chainId1)?.getTokenUrl(token1.address)}
+                    href={EvmChain.from(chainId1)?.getTokenUrl(token1.address)}
                     className="text-blue"
                     rel="noreferrer"
                   >

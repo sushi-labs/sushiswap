@@ -40,7 +40,7 @@ import { SelectNetworkWidget } from 'src/ui/pool/SelectNetworkWidget'
 import { SelectTokensWidget } from 'src/ui/pool/SelectTokensWidget'
 import { ToggleZapCard } from 'src/ui/pool/ToggleZapCard'
 import { ZapInfoCard } from 'src/ui/pool/ZapInfoCard'
-import { ChainId, ChainKey, TESTNET_CHAIN_IDS } from 'sushi/chain'
+import { EVM_TESTNET_CHAIN_IDS, EvmChainId, EvmChainKey } from 'sushi/chain'
 import {
   SUSHISWAP_V2_ROUTER_ADDRESS,
   SUSHISWAP_V2_SUPPORTED_CHAIN_IDS,
@@ -64,7 +64,7 @@ import { useRefetchBalances } from '~evm/_common/ui/balance-provider/use-refetch
 
 export default function Page(props: { params: Promise<{ chainId: string }> }) {
   const params = use(props.params)
-  const chainId = +params.chainId as ChainId
+  const chainId = +params.chainId as EvmChainId
   if (!isSushiSwapV2ChainId(chainId)) {
     return notFound()
   }
@@ -90,8 +90,8 @@ export default function Page(props: { params: Promise<{ chainId: string }> }) {
     () =>
       SUSHISWAP_V2_SUPPORTED_CHAIN_IDS.filter(
         (chainId) =>
-          !TESTNET_CHAIN_IDS.includes(
-            chainId as (typeof TESTNET_CHAIN_IDS)[number],
+          !EVM_TESTNET_CHAIN_IDS.includes(
+            chainId as (typeof EVM_TESTNET_CHAIN_IDS)[number],
           ) &&
           !DISABLED_CHAIN_IDS.includes(
             chainId as (typeof DISABLED_CHAIN_IDS)[number],
@@ -177,7 +177,7 @@ export default function Page(props: { params: Promise<{ chainId: string }> }) {
                 selectedNetwork={chainId}
                 onSelect={(chainId) => {
                   if (!isSushiSwapV2ChainId(chainId)) return
-                  router.push(`/${ChainKey[chainId]}/pool/v2/add`)
+                  router.push(`/${EvmChainKey[chainId]}/pool/v2/add`)
                 }}
               />
               <SelectTokensWidget
@@ -233,7 +233,7 @@ export default function Page(props: { params: Promise<{ chainId: string }> }) {
 }
 
 interface ZapWidgetProps {
-  chainId: ChainId
+  chainId: EvmChainId
   pool: SushiSwapV2Pool | null
   poolState: SushiSwapV2PoolState
   title: ReactNode
@@ -405,7 +405,7 @@ const _ZapWidget: FC<ZapWidgetProps> = ({
 }
 
 interface AddLiquidityWidgetProps {
-  chainId: ChainId
+  chainId: EvmChainId
   pool: SushiSwapV2Pool | null
   poolState: SushiSwapV2PoolState
   title: ReactNode

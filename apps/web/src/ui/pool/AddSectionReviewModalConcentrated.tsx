@@ -33,7 +33,7 @@ import {
   getDefaultTTL,
   useTransactionDeadline,
 } from 'src/lib/wagmi/hooks/utils/hooks/useTransactionDeadline'
-import { Chain, ChainId } from 'sushi/chain'
+import { EvmChain, EvmChainId } from 'sushi/chain'
 import {
   SUSHISWAP_V3_POSTIION_MANAGER,
   SushiSwapV3FeeAmount,
@@ -58,7 +58,7 @@ interface AddSectionReviewModalConcentratedProps
     ReturnType<typeof useConcentratedDerivedMintInfo>,
     'noLiquidity' | 'position' | 'price' | 'pricesAtTicks' | 'ticksAtLimit'
   > {
-  chainId: ChainId
+  chainId: EvmChainId
   feeAmount: SushiSwapV3FeeAmount | undefined
   token0: Type | undefined
   token1: Type | undefined
@@ -341,7 +341,7 @@ export const AddSectionReviewModalConcentrated: FC<
                 <List className="!pt-0">
                   <List.Control>
                     <List.KeyValue flex title="Network">
-                      {Chain.from(chainId)?.name}
+                      {EvmChain.from(chainId)?.name}
                     </List.KeyValue>
                     {feeAmount && (
                       <List.KeyValue title="Fee Tier">{`${

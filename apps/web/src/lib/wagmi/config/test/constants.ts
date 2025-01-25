@@ -1,5 +1,5 @@
-import { publicChains } from 'sushi/config'
 import { foundry } from 'viem/chains'
+import { publicChains } from '../viem'
 
 export const testChains = publicChains.map((chain) => ({
   ...chain,

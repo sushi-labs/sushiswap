@@ -1,4 +1,4 @@
-import type { ChainId, ID, LowercaseMap } from 'sushi'
+import type { EvmChainId, ID, LowercaseMap } from 'sushi'
 import { Address } from 'viem'
 
 export interface Balance {
@@ -9,7 +9,7 @@ export interface Balance {
 type ListenerCount = number
 
 export interface ProviderChainState {
-  chainId: ChainId
+  chainId: EvmChainId
 
   isFetching: boolean
 
@@ -19,16 +19,16 @@ export interface ProviderChainState {
 
 export interface ProviderState {
   account: Address | undefined
-  chains: Map<ChainId, ProviderChainState>
+  chains: Map<EvmChainId, ProviderChainState>
 }
 
-export type TokenId = ID | { address: Address; chainId: ChainId }
+export type TokenId = ID | { address: Address; chainId: EvmChainId }
 
 export interface ProviderMutations {
   incrementToken: (tokenId: TokenId | TokenId[]) => void
   decrementToken: (tokenId: TokenId | TokenId[]) => void
 
-  refetchChain: (chainId: ChainId) => void
+  refetchChain: (chainId: EvmChainId) => void
 }
 
 export interface Provider {
