@@ -390,13 +390,14 @@ const _ZapWidget: FC<ZapWidgetProps> = ({
 
   const [checked, setChecked] = useState(false)
 
-  const priceImpact = useMemo(
-    () =>
+  const showPriceImpactWarning = useMemo(() => {
+    const priceImpactSeverity = warningSeverity(
       typeof zapResponse?.priceImpact === 'number'
         ? new Percent(zapResponse.priceImpact, 10_000n)
         : undefined,
-    [zapResponse?.priceImpact],
-  )
+    )
+    return priceImpactSeverity > 3
+  }, [zapResponse?.priceImpact])
 
   return (
     <>
@@ -424,7 +425,7 @@ const _ZapWidget: FC<ZapWidgetProps> = ({
             amount={parsedInputAmount}
           >
             <Checker.Guard
-              guardWhen={!checked && warningSeverity(priceImpact) > 3}
+              guardWhen={!checked && showPriceImpactWarning}
               guardText="Price impact too high"
               variant="destructive"
               size="xl"
@@ -460,7 +461,7 @@ const _ZapWidget: FC<ZapWidgetProps> = ({
           </Checker.Amounts>
         </Checker.Network>
       </Checker.Connect>
-      {warningSeverity(priceImpact) > 3 && (
+      {showPriceImpactWarning && (
         <div className="flex items-start px-4 py-3 mt-4 rounded-xl bg-red/20">
           <input
             id="expert-checkbox"
