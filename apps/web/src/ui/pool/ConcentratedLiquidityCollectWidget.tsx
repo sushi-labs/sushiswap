@@ -12,7 +12,7 @@ import { Button } from '@sushiswap/ui'
 import { FC, useMemo, useState } from 'react'
 import { ConcentratedLiquidityPosition } from 'src/lib/wagmi/hooks/positions/types'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
-import { Address, ChainId, Position } from 'sushi'
+import { Address, EvmChainId, Position } from 'sushi'
 import { Amount, Native, Type, unwrapToken } from 'sushi/currency'
 import { formatUSD } from 'sushi/format'
 import { ConcentratedLiquidityCollectButton } from './ConcentratedLiquidityCollectButton'
@@ -22,7 +22,7 @@ interface ConcentratedLiquidityCollectWidget {
   positionDetails: ConcentratedLiquidityPosition | undefined
   token0: Type | undefined
   token1: Type | undefined
-  chainId: ChainId
+  chainId: EvmChainId
   isLoading: boolean
   address: Address | undefined
   amounts: undefined[] | Amount<Type>[]

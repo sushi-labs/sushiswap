@@ -4,10 +4,10 @@ import { useIsMounted } from '@sushiswap/hooks'
 import { Button } from '@sushiswap/ui'
 import { FC, useEffect, useState } from 'react'
 import ReactDOM from 'react-dom'
-import { Chain, ChainId, chainName } from 'sushi/chain'
+import { EvmChain, EvmChainId, evmChainName } from 'sushi/chain'
 import { useAccount, useSwitchChain } from 'wagmi'
 
-export const NetworkCheck: FC<{ chainId: ChainId }> = ({ chainId }) => {
+export const NetworkCheck: FC<{ chainId: EvmChainId }> = ({ chainId }) => {
   const [open, setOpen] = useState(false)
   const isMounted = useIsMounted()
   const { chain } = useAccount()
@@ -34,8 +34,8 @@ export const NetworkCheck: FC<{ chainId: ChainId }> = ({ chainId }) => {
   return ReactDOM.createPortal(
     <div className="flex flex-col sm:flex-row gap-4 items-center justify-center bg-gray-200 border-gray-300 dark:bg-slate-800 text-gray-900 dark:text-slate-400 w-full py-3 font-medium border-b dark:border-slate-200/10">
       <p className="px-4">
-        App network ({chainName?.[chainId]}) {"doesn't"} match network selected
-        in wallet ({chain?.id ? chainName[chain.id] : ''}).
+        App network ({evmChainName?.[chainId]}) {"doesn't"} match network
+        selected in wallet ({chain?.id ? evmChainName[chain.id] : ''}).
       </p>
       <div className="block flex justify-end px-3 w-full sm:w-[unset]">
         <Button
@@ -44,7 +44,7 @@ export const NetworkCheck: FC<{ chainId: ChainId }> = ({ chainId }) => {
           size="sm"
           className="whitespace-nowrap"
         >
-          Switch to {Chain.fromChainId(chainId)?.name}
+          Switch to {EvmChain.fromChainId(chainId)?.name}
         </Button>
       </div>
     </div>,

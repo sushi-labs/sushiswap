@@ -69,7 +69,7 @@
     "graphql": "16.6.0",
     "graphql-request": "7.1.0",
     "json-bigint": "1.0.0",
-    "sushi": "4.2.2",
+    "sushi": "5.0.4",
     "viem": "2.21.55"
   },
   "devDependencies": {

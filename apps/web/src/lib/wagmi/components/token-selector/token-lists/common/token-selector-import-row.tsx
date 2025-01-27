@@ -19,7 +19,7 @@ import { Currency } from '@sushiswap/ui'
 import { List } from '@sushiswap/ui'
 import { FC, useCallback, useState } from 'react'
 import { useTokenSecurity } from 'src/lib/hooks/react-query'
-import { Chain } from 'sushi/chain'
+import { EvmChain } from 'sushi/chain'
 import { Token } from 'sushi/currency'
 import { shortenAddress } from 'sushi/format'
 
@@ -125,7 +125,7 @@ export const TokenSelectorImportRow: FC<TokenSelectorImportRow> = ({
               >
                 <a
                   target="_blank"
-                  href={Chain.from(currency.chainId)?.getTokenUrl(
+                  href={EvmChain.from(currency.chainId)?.getTokenUrl(
                     currency.address,
                   )}
                   className="text-blue"

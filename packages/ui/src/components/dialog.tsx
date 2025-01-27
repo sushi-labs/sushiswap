@@ -15,7 +15,7 @@ import {
   useMemo,
   useState,
 } from 'react'
-import { Chain, ChainId } from 'sushi/chain'
+import { ChainId, EvmChain } from 'sushi/chain'
 
 import { CheckMarkIcon } from '../icons/CheckMarkIcon'
 import { FailedMarkIcon } from '../icons/FailedMarkIcon'
@@ -268,7 +268,7 @@ const DialogConfirm: FC<DialogConfirmProps> = ({
                 Waiting for your{' '}
                 <a
                   target="_blank"
-                  href={txHash ? Chain.from(chainId)?.getTxUrl(txHash) : ''}
+                  href={txHash ? EvmChain.from(chainId)?.getTxUrl(txHash) : ''}
                   className="cursor-pointer text-blue hover:underline"
                   rel="noreferrer"
                 >
@@ -279,7 +279,7 @@ const DialogConfirm: FC<DialogConfirmProps> = ({
             ) : status === 'success' ? (
               <a
                 target="_blank"
-                href={txHash ? Chain.from(chainId)?.getTxUrl(txHash) : ''}
+                href={txHash ? EvmChain.from(chainId)?.getTxUrl(txHash) : ''}
                 className="cursor-pointer text-blue hover:underline"
                 rel="noreferrer"
               >
@@ -288,7 +288,7 @@ const DialogConfirm: FC<DialogConfirmProps> = ({
             ) : (
               <a
                 target="_blank"
-                href={txHash ? Chain.from(chainId)?.getTxUrl(txHash) : ''}
+                href={txHash ? EvmChain.from(chainId)?.getTxUrl(txHash) : ''}
                 className="cursor-pointer text-blue hover:underline"
                 rel="noreferrer"
               >

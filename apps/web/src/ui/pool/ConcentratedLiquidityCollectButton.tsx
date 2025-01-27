@@ -8,7 +8,7 @@ import {
 } from '@sushiswap/telemetry'
 import { FC, ReactElement, useCallback, useMemo } from 'react'
 import { ConcentratedLiquidityPosition } from 'src/lib/wagmi/hooks/positions/types'
-import { ChainId } from 'sushi/chain'
+import { EvmChainId } from 'sushi/chain'
 import {
   SUSHISWAP_V3_POSTIION_MANAGER,
   isSushiSwapV3ChainId,
@@ -31,7 +31,7 @@ interface ConcentratedLiquidityCollectButton {
   token0: Type | undefined
   token1: Type | undefined
   account: `0x${string}` | undefined
-  chainId: ChainId
+  chainId: EvmChainId
   children(
     params: Omit<
       ReturnType<typeof useSendTransaction>,

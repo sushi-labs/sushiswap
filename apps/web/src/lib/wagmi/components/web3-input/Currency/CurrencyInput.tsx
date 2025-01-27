@@ -21,7 +21,7 @@ import {
   useState,
   useTransition,
 } from 'react'
-import { Chain, ChainId } from 'sushi/chain'
+import { EvmChain, EvmChainId } from 'sushi/chain'
 import { Token, Type, tryParseAmount } from 'sushi/currency'
 import { Percent } from 'sushi/math'
 import { useAccount } from 'wagmi'
@@ -38,7 +38,7 @@ interface CurrencyInputProps {
   onChange?(value: string): void
   currency: Type | undefined
   onSelect?(currency: Type): void
-  chainId: ChainId
+  chainId: EvmChainId
   className?: string
   loading?: boolean
   priceImpact?: Percent | undefined
@@ -55,8 +55,8 @@ interface CurrencyInputProps {
   hidePricing?: boolean
   hideIcon?: boolean
   label?: string
-  networks?: readonly ChainId[]
-  selectedNetwork?: ChainId
+  networks?: readonly EvmChainId[]
+  selectedNetwork?: EvmChainId
   onNetworkChange?: (network: number) => void
 }
 
@@ -204,7 +204,7 @@ const CurrencyInput: FC<CurrencyInputProps> = ({
                 <div className="flex flex-col items-start">
                   <span className="text-xl leading-5">{currency.symbol}</span>
                   <span className="text-xs leading-3 text-muted-foreground">
-                    {Chain.from(currency.chainId)?.name}
+                    {EvmChain.from(currency.chainId)?.name}
                   </span>
                 </div>
                 <SelectPrimitive.Icon asChild>

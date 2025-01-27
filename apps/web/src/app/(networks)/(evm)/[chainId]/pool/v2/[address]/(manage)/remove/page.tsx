@@ -4,7 +4,7 @@ import { notFound } from 'next/navigation'
 import { PoolPositionProvider } from 'src/ui/pool'
 import { ManageV2LiquidityCard } from 'src/ui/pool/ManageV2LiquidityCard'
 import { PoolPosition } from 'src/ui/pool/PoolPosition'
-import { ChainId } from 'sushi/chain'
+import { EvmChainId } from 'sushi/chain'
 import { isSushiSwapV2ChainId } from 'sushi/config'
 import { isAddress } from 'viem'
 
@@ -13,7 +13,7 @@ export default async function ManageV2PoolPage(props: {
 }) {
   const params = await props.params
   const { chainId: _chainId, address } = params
-  const chainId = +_chainId as ChainId
+  const chainId = +_chainId as EvmChainId
 
   if (
     !isSushiSwapV2ChainId(chainId) ||

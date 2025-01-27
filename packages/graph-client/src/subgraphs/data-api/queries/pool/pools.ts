@@ -1,9 +1,10 @@
 import type { VariablesOf } from 'gql.tada'
 import { type RequestOptions, request } from 'src/lib/request'
-import { SUSHI_DATA_API_HOST } from 'sushi/config/subgraph'
+import { SUSHI_DATA_API_HOST } from '../../data-api-host'
 import { graphql } from '../../graphql'
 import { SUSHI_REQUEST_HEADERS } from '../../request-headers'
 import { Token } from 'sushi/currency'
+import { isEvmChainId } from 'sushi'
 
 export const PoolsQuery = graphql(
   `
@@ -80,10 +81,20 @@ export async function getPools(variables: GetPools, options?: RequestOptions) {
         data: result.pools.data.map((pool) => ({
           ...pool,
           chainId: variables.chainId,
-          incentives: pool.incentives.map((incentive) => ({
-            ...incentive,
-            rewardToken: new Token(incentive.rewardToken),
-          })),
+          incentives: pool.incentives.map((incentive) => {
+            // Shouldn't happen, just to make typescript happy
+            if (!isEvmChainId(incentive.rewardToken.chainId)) {
+              throw new Error('Invalid chainId')
+            }
+
+            return {
+              ...incentive,
+              rewardToken: new Token({
+                ...incentive.rewardToken,
+                chainId: incentive.rewardToken.chainId,
+              }),
+            }
+          }),
         })),
       }
     }

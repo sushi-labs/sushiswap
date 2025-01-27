@@ -26,7 +26,7 @@ import React, {
   useMemo,
   useState,
 } from 'react'
-import { ChainId } from 'sushi/chain'
+import { EvmChainId } from 'sushi/chain'
 import { Currency, Token, Type } from 'sushi/currency'
 import { useAccount } from 'wagmi'
 import { CurrencyInfo } from './currency-info'
@@ -36,15 +36,15 @@ import { TokenSelectorStates } from './token-selector-states'
 
 interface TokenSelectorProps {
   selected: Type | undefined
-  chainId: ChainId
+  chainId: EvmChainId
   onSelect(currency: Type): void
   children: ReactNode
   currencies?: Record<string, Token>
   includeNative?: boolean
   hidePinnedTokens?: boolean
   hideSearch?: boolean
-  networks?: readonly ChainId[]
-  selectedNetwork?: ChainId
+  networks?: readonly EvmChainId[]
+  selectedNetwork?: EvmChainId
   onNetworkSelect?: (network: number) => void
 }
 

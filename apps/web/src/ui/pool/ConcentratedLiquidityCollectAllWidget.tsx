@@ -19,7 +19,7 @@ import { Currency } from '@sushiswap/ui'
 import React, { FC, useCallback, useMemo, useState } from 'react'
 import { ConcentratedLiquidityPositionWithV3Pool } from 'src/lib/wagmi/hooks/positions/types'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
-import { Chain, ChainId } from 'sushi/chain'
+import { EvmChain, EvmChainId } from 'sushi/chain'
 import {
   SUSHISWAP_V3_POSTIION_MANAGER,
   isSushiSwapV3ChainId,
@@ -39,7 +39,7 @@ import { useTokenAmountDollarValues } from '../../lib/hooks'
 
 interface ConcentratedLiquidityCollectAllWidget {
   positions: ConcentratedLiquidityPositionWithV3Pool[]
-  chainId: ChainId
+  chainId: EvmChainId
   account: `0x${string}` | undefined
 }
 
@@ -253,7 +253,7 @@ export const ConcentratedLiquidityCollectAllWidget: FC<
               <DialogHeader>
                 <DialogTitle>Claim V3 Fees</DialogTitle>
                 <DialogDescription>
-                  On {Chain.from(chainId)?.name}
+                  On {EvmChain.from(chainId)?.name}
                 </DialogDescription>
               </DialogHeader>
               <div className="flex flex-col gap-4">

@@ -14,7 +14,7 @@ import { ColumnDef, PaginationState, Row } from '@tanstack/react-table'
 import React, { FC, ReactNode, useCallback, useMemo, useState } from 'react'
 import { useConcentratedLiquidityPositions } from 'src/lib/wagmi/hooks/positions/hooks/useConcentratedLiquidityPositions'
 import { ConcentratedLiquidityPositionWithV3Pool } from 'src/lib/wagmi/hooks/positions/types'
-import { ChainId, ChainKey } from 'sushi'
+import { EvmChainId, EvmChainKey } from 'sushi'
 import { isSushiSwapV3ChainId } from 'sushi/config'
 import { useAccount } from 'wagmi'
 import { ConcentratedLiquidityCollectAllWidget } from '../ConcentratedLiquidityCollectAllWidget'
@@ -36,7 +36,7 @@ const COLUMNS = [
 const tableState = { sorting: [{ id: 'positionSize', desc: true }] }
 
 interface ConcentratedPositionsTableProps {
-  chainId: ChainId
+  chainId: EvmChainId
   poolAddress?: string
   onRowClick?(row: ConcentratedLiquidityPositionWithV3Pool): void
   hideNewSmartPositionButton?: boolean
@@ -138,7 +138,7 @@ export const ConcentratedPositionsTable: FC<ConcentratedPositionsTableProps> =
               {!hideNewSmartPositionButton ? (
                 <LinkInternal
                   shallow={true}
-                  href={`/${ChainKey[chainId]}/pool/v3/${poolAddress}/smart`}
+                  href={`/${EvmChainKey[chainId]}/pool/v3/${poolAddress}/smart`}
                   className="basis-full md:basis-[unset]"
                 >
                   <Button
@@ -155,7 +155,7 @@ export const ConcentratedPositionsTable: FC<ConcentratedPositionsTableProps> =
               {!hideNewPositionButton ? (
                 <LinkInternal
                   shallow={true}
-                  href={`/${ChainKey[chainId]}/pool/v3/${poolAddress}/create`}
+                  href={`/${EvmChainKey[chainId]}/pool/v3/${poolAddress}/create`}
                   className="basis-full md:basis-[unset]"
                 >
                   <Button icon={PlusIcon} asChild size="sm" className="w-full">
@@ -171,7 +171,7 @@ export const ConcentratedPositionsTable: FC<ConcentratedPositionsTableProps> =
           testId="concentrated-positions"
           loading={isInitialLoading}
           linkFormatter={(row) =>
-            `/${ChainKey[row.chainId]}/pool/v3/${row.address}/${row.tokenId}`
+            `/${EvmChainKey[row.chainId]}/pool/v3/${row.address}/${row.tokenId}`
           }
           rowRenderer={rowRenderer}
           columns={COLUMNS}

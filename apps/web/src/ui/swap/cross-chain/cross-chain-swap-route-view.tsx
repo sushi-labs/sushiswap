@@ -9,7 +9,7 @@ import type {
   CrossChainStep,
   CrossChainToolDetails,
 } from 'src/lib/swap/cross-chain/types'
-import { Chain } from 'sushi/chain'
+import { EvmChain } from 'sushi/chain'
 import { Amount, Native, Token, Type } from 'sushi/currency'
 import { formatNumber } from 'sushi/format'
 import { zeroAddress } from 'viem'
@@ -124,7 +124,7 @@ const SendAction: FC<{
   amount: Amount<Type>
 }> = ({ label, amount }) => {
   const chain = useMemo(
-    () => Chain.fromChainId(amount.currency.chainId)?.name?.toUpperCase(),
+    () => EvmChain.fromChainId(amount.currency.chainId)?.name?.toUpperCase(),
     [amount],
   )
 
@@ -160,7 +160,7 @@ const SwapAction: FC<{
         ? Native.onChain(action.toToken.chainId)
         : new Token(action.toToken)
 
-    const chain = Chain.fromChainId(
+    const chain = EvmChain.fromChainId(
       label === 'From' ? fromToken.chainId : toToken.chainId,
     )?.name?.toUpperCase()
 

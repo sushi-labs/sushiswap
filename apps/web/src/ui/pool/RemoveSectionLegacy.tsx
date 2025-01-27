@@ -22,7 +22,6 @@ import {
 } from 'src/lib/hooks'
 import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
 import { gasMargin, slippageAmount } from 'sushi/calculate'
-import { ChainId } from 'sushi/chain'
 import { SushiSwapV2ChainId } from 'sushi/config'
 import { Amount, Native } from 'sushi/currency'
 import { Percent } from 'sushi/math'
@@ -80,7 +79,7 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> =
     const { address, chain } = useAccount()
     const { data: deadline } = useTransactionDeadline({
       storageKey: TTLStorageKey.RemoveLiquidity,
-      chainId: _pool.chainId as ChainId,
+      chainId: _pool.chainId,
     })
     const contract = useSushiSwapRouterContract(
       _pool.chainId as SushiSwapV2ChainId,
@@ -433,7 +432,7 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> =
       <div>
         <RemoveSectionWidget
           isFarm={!!_pool.incentives && _pool.incentives.length > 0}
-          chainId={_pool.chainId as ChainId}
+          chainId={_pool.chainId}
           percentage={percentage}
           token0={token0}
           token1={token1}
@@ -453,7 +452,7 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> =
               }
               guardText="Pool not found"
             >
-              <Checker.Network fullWidth chainId={_pool.chainId as ChainId}>
+              <Checker.Network fullWidth chainId={_pool.chainId}>
                 <Checker.Guard
                   fullWidth
                   guardWhen={+percentage <= 0}

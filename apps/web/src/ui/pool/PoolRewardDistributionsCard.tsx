@@ -15,7 +15,7 @@ import {
 } from '@sushiswap/ui'
 import { FC } from 'react'
 import { useAngleRewards } from 'src/lib/hooks/react-query'
-import { ChainId, ChainKey } from 'sushi/chain'
+import { ChainKey } from 'sushi/chain'
 import { Native } from 'sushi/currency'
 import { getAddress } from 'viem'
 
@@ -31,7 +31,7 @@ export const PoolRewardDistributionsCard: FC<
   PoolRewardDistributionsCardParams
 > = ({ pool }) => {
   const { data: rewardsData, isLoading: rewardsLoading } = useAngleRewards({
-    chainId: pool.chainId as ChainId,
+    chainId: pool.chainId,
   })
 
   if (!pool) return null

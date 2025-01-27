@@ -13,12 +13,12 @@ import {
 } from 'wagmi'
 import { SendTransactionReturnType } from 'wagmi/actions'
 
-import { ChainId, ChefType } from 'sushi'
+import { ChefType, EvmChainId } from 'sushi'
 import { masterChefV1Abi_deposit, masterChefV2Abi_deposit } from 'sushi/abi'
 import { useMasterChefContract } from './use-master-chef-contract'
 
 interface UseMasterChefDepositParams {
-  chainId: ChainId | undefined
+  chainId: EvmChainId | undefined
   chef: ChefType
   pid: number
   amount?: Amount<Token>

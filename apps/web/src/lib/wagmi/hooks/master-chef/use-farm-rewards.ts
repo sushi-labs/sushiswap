@@ -3,7 +3,7 @@
 import { UseQueryOptions, useQuery } from '@tanstack/react-query'
 import { useMemo } from 'react'
 import { ChefType, RewarderType } from 'sushi'
-import { chainShortName } from 'sushi/chain'
+import { evmChainShortName, isEvmChainId } from 'sushi/chain'
 import { Token } from 'sushi/currency'
 import { PoolType } from '../pools/types'
 
@@ -77,27 +77,29 @@ export const useFarmRewards = ({
           ? Object.entries(farmsMap).reduce<Record<number, FarmMap<Token>>>(
               (acc, [_chainId, j]) => {
                 const chainId = Number(_chainId)
+                if (!isEvmChainId(chainId)) return acc
                 acc[chainId] = {
                   ...j,
                   farms: Object.entries(farmsMap[chainId].farms).reduce<
                     Record<string, Farm<Token>>
                   >((acc, [farm, v]) => {
-                    acc[`${chainShortName[chainId]}:${farm.toLowerCase()}`] = {
-                      ...v,
-                      incentives: farmsMap[chainId].farms[farm].incentives
-                        .filter((el) => el.rewardToken.address !== '')
-                        .map((el) => {
-                          return {
-                            ...el,
-                            rewardToken: new Token({
-                              chainId,
-                              address: el.rewardToken.address,
-                              symbol: el.rewardToken.symbol,
-                              decimals: 18,
-                            }),
-                          }
-                        }),
-                    }
+                    acc[`${evmChainShortName[chainId]}:${farm.toLowerCase()}`] =
+                      {
+                        ...v,
+                        incentives: farmsMap[chainId].farms[farm].incentives
+                          .filter((el) => el.rewardToken.address !== '')
+                          .map((el) => {
+                            return {
+                              ...el,
+                              rewardToken: new Token({
+                                chainId,
+                                address: el.rewardToken.address,
+                                symbol: el.rewardToken.symbol,
+                                decimals: 18,
+                              }),
+                            }
+                          }),
+                      }
                     return acc
                   }, {}),
                 }

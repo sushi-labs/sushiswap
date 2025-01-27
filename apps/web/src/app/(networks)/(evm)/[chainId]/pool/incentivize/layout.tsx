@@ -2,7 +2,7 @@ import { Container, typographyVariants } from '@sushiswap/ui'
 import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { BackButton } from 'src/ui/pool/BackButton'
-import { ChainId } from 'sushi/chain'
+import { EvmChainId } from 'sushi/chain'
 import { isMerklChainId } from 'sushi/config'
 
 export const metadata: Metadata = {
@@ -19,7 +19,7 @@ export default async function Layout(props: {
 
   const { children } = props
 
-  const chainId = +params.chainId as ChainId
+  const chainId = +params.chainId as EvmChainId
   if (!isMerklChainId(chainId)) {
     return notFound()
   }

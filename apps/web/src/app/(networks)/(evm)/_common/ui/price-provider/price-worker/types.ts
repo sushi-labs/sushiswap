@@ -1,4 +1,4 @@
-import type { ChainId } from 'sushi'
+import type { EvmChainId } from 'sushi'
 
 export enum PriceWorkerPostMessageType {
   Initialize = 'Initialize',
@@ -14,17 +14,17 @@ type Initialize = {
 }
 
 type IncrementChainId = {
-  chainId: ChainId
+  chainId: EvmChainId
   type: PriceWorkerPostMessageType.IncrementChainId
 }
 
 type DecrementChainId = {
-  chainId: ChainId
+  chainId: EvmChainId
   type: PriceWorkerPostMessageType.DecrementChainId
 }
 
 type RefetchChainId = {
-  chainId: ChainId
+  chainId: EvmChainId
   type: PriceWorkerPostMessageType.RefetchChainId
 }
 
@@ -47,7 +47,7 @@ export enum PriceWorkerReceiveMessageType {
 export type PriceWorkerReceiveMessageChainState = {
   type: PriceWorkerReceiveMessageType.ChainState
   payload: Partial<Omit<WorkerChainState, 'priceObject' | 'listenerCount'>> & {
-    chainId: ChainId
+    chainId: EvmChainId
   }
 }
 
@@ -58,7 +58,7 @@ export type PriceWorker = (typeof Worker)['prototype'] & {
 }
 
 export interface WorkerChainState {
-  chainId: ChainId
+  chainId: EvmChainId
   listenerCount: number
 
   priceMap: Map<bigint, number>

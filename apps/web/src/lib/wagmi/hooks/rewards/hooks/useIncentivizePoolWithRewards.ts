@@ -1,6 +1,6 @@
 import { createErrorToast, createToast } from '@sushiswap/notifications'
 import { useCallback } from 'react'
-import { ChainId } from 'sushi/chain'
+import { EvmChainId } from 'sushi/chain'
 import { Address, UserRejectedRequestError } from 'viem'
 import {
   UseSimulateContractParameters,
@@ -70,7 +70,7 @@ const distributionCreatorAbi_createDistribution = [
 
 interface UseHarvestAngleRewards {
   account: Address | undefined
-  chainId: ChainId
+  chainId: EvmChainId
   enabled?: boolean
   args:
     | UseSimulateContractParameters<

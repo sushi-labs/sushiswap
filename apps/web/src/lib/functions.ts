@@ -1,5 +1,5 @@
 import type { Incentive } from 'sushi'
-import { ChainId } from 'sushi/chain'
+import { EvmChainId } from 'sushi/chain'
 import { SushiSwapV3FeeAmount, TICK_SPACINGS } from 'sushi/config'
 import {
   DAI,
@@ -31,7 +31,7 @@ export const isSushiSwapV2Pool = (
 }
 
 export const incentiveRewardToToken = (
-  chainId: ChainId,
+  chainId: EvmChainId,
   incentive: Incentive,
 ): Token => {
   return new Token({
