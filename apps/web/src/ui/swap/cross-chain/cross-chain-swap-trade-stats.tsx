@@ -91,7 +91,7 @@ export const CrossChainSwapTradeStats: FC = () => {
 
         <div className="flex justify-between items-center gap-2">
           <span className="text-sm text-gray-700 dark:text-slate-400">
-            Interface fee (0.25%)
+            Fee (0.25%)
           </span>
           <span className="text-sm font-semibold text-gray-700 text-right dark:text-slate-400">
             {isLoading || !feeData ? (
