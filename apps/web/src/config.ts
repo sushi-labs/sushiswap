@@ -62,7 +62,7 @@ export const DISABLED_CHAIN_IDS = [
   ChainId.PALM,
   ChainId.HECO,
   ChainId.OKEX,
-  // NonStandardChainId.TRON,
+  ChainId.HEMI,
 ] as const
 
 export const NEW_CHAIN_IDS = [ChainId.SONIC] as const
