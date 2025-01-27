@@ -7,7 +7,7 @@ const L2_TTL = 5n
 const TTL = 30n
 
 export const getDefaultTTL = (chainId: EvmChainId) => {
-  return Object.keys(evmChainsL2).includes(chainId.toString()) ? L2_TTL : TTL
+  return evmChainsL2[chainId] ? L2_TTL : TTL
 }
 
 interface UseTransactionDeadline {
