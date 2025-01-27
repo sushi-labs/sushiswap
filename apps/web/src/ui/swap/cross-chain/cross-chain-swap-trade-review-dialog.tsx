@@ -661,7 +661,7 @@ const _CrossChainSwapTradeReviewDialog: FC<{
                         {feesBreakdown && feesBreakdown.gas.size > 0 ? (
                           <List.KeyValue
                             title="Network fee"
-                            subtitle="The transaction fee charged by the origin blockEvmChain."
+                            subtitle="The transaction fee charged by the origin blockchain."
                           >
                             <div className="flex flex-col gap-1">
                               {feesBreakdown.gas.get(chainId0) ? (
