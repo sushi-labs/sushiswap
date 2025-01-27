@@ -31,6 +31,7 @@ import {
   Message,
   SelectIcon,
   SkeletonText,
+  classNames,
   useDialog,
 } from '@sushiswap/ui'
 import { nanoid } from 'nanoid'
@@ -126,7 +127,7 @@ const _CrossChainSwapTradeReviewDialog: FC<{
 
   const { data: selectedRoute } = useSelectedCrossChainTradeRoute()
   const { data: _step, isError: isStepQueryError } = useCrossChainTradeStep({
-    step: selectedRoute?.steps?.[0],
+    step: selectedRoute?.step,
     query: {
       enabled: Boolean(
         approved && address && (confirmDialogOpen || reviewDialogOpen),
@@ -137,9 +138,9 @@ const _CrossChainSwapTradeReviewDialog: FC<{
   const step = useMemo(
     () =>
       _step ??
-      (selectedRoute?.steps?.[0]
+      (selectedRoute?.step
         ? {
-            ...selectedRoute.steps[0],
+            ...selectedRoute.step,
             tokenIn: selectedRoute?.tokenIn,
             tokenOut: selectedRoute?.tokenOut,
             amountIn: selectedRoute?.amountIn,
@@ -232,7 +233,8 @@ const _CrossChainSwapTradeReviewDialog: FC<{
         txHash: hash,
         promise: receiptPromise,
         summary:
-          routeRef?.current?.steps?.[0]?.includedSteps?.[0]?.type === 'cross'
+          routeRef?.current?.step?.includedStepsWithoutFees?.[0]?.type ===
+          'cross'
             ? {
                 pending: `Sending ${routeRef?.current?.amountIn?.toSignificant(
                   6,
@@ -254,7 +256,7 @@ const _CrossChainSwapTradeReviewDialog: FC<{
                 )} ${
                   routeRef?.current?.amountIn?.currency.symbol
                 } to bridge token ${
-                  routeRef?.current?.steps?.[0]?.includedSteps?.[0]?.action
+                  routeRef?.current?.step?.includedStepsWithoutFees?.[0]?.action
                     .toToken.symbol
                 }`,
                 completed: `Swapped ${routeRef?.current?.amountIn?.toSignificant(
@@ -262,7 +264,7 @@ const _CrossChainSwapTradeReviewDialog: FC<{
                 )} ${
                   routeRef?.current?.amountIn?.currency.symbol
                 } to bridge token ${
-                  routeRef?.current?.steps?.[0]?.includedSteps?.[0]?.action
+                  routeRef?.current?.step?.includedStepsWithoutFees?.[0]?.action
                     .toToken.symbol
                 }`,
                 failed: `Something went wrong when trying to swap ${routeRef?.current?.amountIn?.currency.symbol} to bridge token`,
@@ -457,23 +459,25 @@ const _CrossChainSwapTradeReviewDialog: FC<{
           })
           .then(reset),
         summary:
-          routeRef?.current?.steps?.[0]?.includedSteps?.[1]?.type === 'swap' ||
-          routeRef?.current?.steps?.[0]?.includedSteps?.[2]?.type === 'swap'
+          routeRef?.current?.step?.includedStepsWithoutFees?.[1]?.type ===
+            'swap' ||
+          routeRef?.current?.step?.includedStepsWithoutFees?.[2]?.type ===
+            'swap'
             ? {
                 pending: `Swapping ${
-                  routeRef?.current?.steps?.[0]?.includedSteps[2]?.action
+                  routeRef?.current?.step?.includedStepsWithoutFees[2]?.action
                     .fromToken?.symbol
                 } to ${routeRef?.current?.amountOut?.toSignificant(6)} ${
                   routeRef?.current?.amountOut?.currency.symbol
                 }`,
                 completed: `Swapped ${
-                  routeRef?.current?.steps?.[0]?.includedSteps[2]?.action
+                  routeRef?.current?.step?.includedStepsWithoutFees[2]?.action
                     .fromToken?.symbol
                 } to ${routeRef?.current?.amountOut?.toSignificant(6)} ${
                   routeRef?.current?.amountOut?.currency.symbol
                 }`,
                 failed: `Something went wrong when trying to swap ${
-                  routeRef?.current?.steps?.[0]?.includedSteps[2]?.action
+                  routeRef?.current?.step?.includedStepsWithoutFees[2]?.action
                     .fromToken?.symbol
                 } to ${routeRef?.current?.amountOut?.toSignificant(6)} ${
                   routeRef?.current?.amountOut?.currency.symbol
@@ -541,7 +545,7 @@ const _CrossChainSwapTradeReviewDialog: FC<{
       }
     }, [step])
 
-  const { data: price } = usePrice({
+  const { data: price, isLoading: isPriceLoading } = usePrice({
     chainId: token1?.chainId,
     address: token1?.wrapped.address,
   })
@@ -567,6 +571,11 @@ const _CrossChainSwapTradeReviewDialog: FC<{
         : undefined,
     [step?.amountOutMin, price],
   )
+
+  const showPriceImpactWarning = useMemo(() => {
+    const priceImpactSeverity = warningSeverity(step?.priceImpact)
+    return priceImpactSeverity > 3
+  }, [step?.priceImpact])
 
   return (
     <>
@@ -701,7 +710,7 @@ const _CrossChainSwapTradeReviewDialog: FC<{
                         {feesBreakdown && feesBreakdown.protocol.size > 0 ? (
                           <List.KeyValue
                             title="Protocol fee"
-                            subtitle="The fee  charged by the bridge provider."
+                            subtitle="The fee charged by the bridge provider."
                           >
                             <div className="flex flex-col gap-1">
                               {feesBreakdown.protocol.get(chainId0) ? (
@@ -769,7 +778,10 @@ const _CrossChainSwapTradeReviewDialog: FC<{
                               <SkeletonText
                                 align="right"
                                 fontSize="xs"
-                                className="w-1/4"
+                                className={classNames(
+                                  'w-1/4',
+                                  !isPriceLoading ? 'invisible' : '',
+                                )}
                               />
                             ) : (
                               <span className="text-xs text-muted-foreground">
@@ -798,7 +810,10 @@ const _CrossChainSwapTradeReviewDialog: FC<{
                               <SkeletonText
                                 align="right"
                                 fontSize="xs"
-                                className="w-1/4"
+                                className={classNames(
+                                  'w-1/4',
+                                  !isPriceLoading ? 'invisible' : '',
+                                )}
                               />
                             ) : (
                               <span className="text-xs text-muted-foreground">
@@ -852,7 +867,10 @@ const _CrossChainSwapTradeReviewDialog: FC<{
                               <SkeletonText
                                 align="right"
                                 fontSize="xs"
-                                className="w-1/4"
+                                className={classNames(
+                                  'w-1/4',
+                                  !isPriceLoading ? 'invisible' : '',
+                                )}
                               />
                             ) : (
                               <span className="text-xs text-muted-foreground">
@@ -929,11 +947,11 @@ const _CrossChainSwapTradeReviewDialog: FC<{
                       isStepQueryError
                     }
                     color={
-                      isEstGasError || isStepQueryError
+                      isEstGasError ||
+                      isStepQueryError ||
+                      showPriceImpactWarning
                         ? 'red'
-                        : warningSeverity(step?.priceImpact) >= 3
-                          ? 'red'
-                          : 'blue'
+                        : 'blue'
                     }
                     testId="confirm-swap"
                   >

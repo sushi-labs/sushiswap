@@ -32,10 +32,10 @@ export const ConfirmationDialogContent: FC<ConfirmationDialogContent> = ({
   const { data: trade } = useSelectedCrossChainTradeRoute()
 
   const swapOnDest =
-    trade?.steps[0] &&
+    trade?.step &&
     [
-      trade.steps[0].includedSteps[1]?.type,
-      trade.steps[0].includedSteps[2]?.type,
+      trade.step.includedStepsWithoutFees[1]?.type,
+      trade.step.includedStepsWithoutFees[2]?.type,
     ].includes('swap')
       ? true
       : false
@@ -98,12 +98,13 @@ export const ConfirmationDialogContent: FC<ConfirmationDialogContent> = ({
 
   if (dialogState.dest === StepState.PartialSuccess) {
     const fromTokenSymbol =
-      routeRef?.current?.steps?.[0]?.includedSteps?.[1]?.type === 'swap'
-        ? routeRef?.current?.steps?.[0]?.includedSteps?.[1]?.action?.fromToken
-            ?.symbol
-        : routeRef?.current?.steps?.[0]?.includedSteps?.[2]?.type === 'swap'
-          ? routeRef?.current?.steps?.[0]?.includedSteps?.[2]?.action?.fromToken
-              ?.symbol
+      routeRef?.current?.step?.includedStepsWithoutFees?.[1]?.type === 'swap'
+        ? routeRef?.current?.step?.includedStepsWithoutFees?.[1]?.action
+            ?.fromToken?.symbol
+        : routeRef?.current?.step?.includedStepsWithoutFees?.[2]?.type ===
+            'swap'
+          ? routeRef?.current?.step?.includedStepsWithoutFees?.[2]?.action
+              ?.fromToken?.symbol
           : undefined
 
     return (

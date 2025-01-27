@@ -3,6 +3,34 @@ import { Amount, Native, Token, Type } from 'sushi/currency'
 import { zeroAddress } from 'viem'
 import { CrossChainStep } from './types'
 
+export const getCrossChainStepBreakdown = (step?: CrossChainStep) => {
+  if (!step)
+    return {
+      srcStep: undefined,
+      bridgeStep: undefined,
+      dstStep: undefined,
+    }
+
+  const feeIndex = step.includedSteps.findIndex(
+    (_step) => _step.type === 'protocol',
+  )
+
+  const steps =
+    feeIndex === -1
+      ? step.includedSteps
+      : [
+          ...step.includedSteps.slice(0, feeIndex),
+          ...step.includedSteps.slice(feeIndex + 1),
+        ]
+
+  const bridgeIndex = steps.findIndex((_step) => _step.type === 'cross')
+  return {
+    srcStep: steps[bridgeIndex - 1],
+    bridgeStep: steps[bridgeIndex],
+    dstStep: steps[bridgeIndex + 1],
+  }
+}
+
 interface FeeBreakdown {
   amount: Amount<Type>
   amountUSD: number
@@ -11,16 +39,23 @@ interface FeeBreakdown {
 export interface FeesBreakdown {
   gas: Map<ChainId, FeeBreakdown>
   protocol: Map<ChainId, FeeBreakdown>
+  ui: Map<ChainId, FeeBreakdown>
 }
 
 enum FeeType {
   GAS = 'GAS',
   PROTOCOL = 'PROTOCOL',
+  UI = 'UI',
 }
 
-export const getCrossChainFeesBreakdown = (route: CrossChainStep[]) => {
-  const gasFeesBreakdown = getFeesBreakdown(route, FeeType.GAS)
-  const protocolFeesBreakdown = getFeesBreakdown(route, FeeType.PROTOCOL)
+const UI_FEE_NAME = 'LIFI Shared Fee'
+
+export const getCrossChainFeesBreakdown = (
+  _steps: CrossChainStep[] | CrossChainStep,
+) => {
+  const steps = Array.isArray(_steps) ? _steps : [_steps]
+  const gasFeesBreakdown = getFeesBreakdown(steps, FeeType.GAS)
+  const protocolFeesBreakdown = getFeesBreakdown(steps, FeeType.PROTOCOL)
   const gasFeesUSD = Array.from(gasFeesBreakdown.values()).reduce(
     (sum, gasCost) => sum + gasCost.amountUSD,
     0,
@@ -29,25 +64,35 @@ export const getCrossChainFeesBreakdown = (route: CrossChainStep[]) => {
     (sum, feeCost) => sum + feeCost.amountUSD,
     0,
   )
-  const totalFeesUSD = gasFeesUSD + protocolFeesUSD
+  const totalFeesUSD = gasFeesUSD + protocolFeesUSD // does not include UI fees
+
+  const uiFeesBreakdown = getFeesBreakdown(steps, FeeType.UI)
+  const uiFeesUSD = Array.from(uiFeesBreakdown.values()).reduce(
+    (sum, feeCost) => sum + feeCost.amountUSD,
+    0,
+  )
 
   return {
     feesBreakdown: {
       gas: gasFeesBreakdown,
       protocol: protocolFeesBreakdown,
+      ui: uiFeesBreakdown,
     },
     totalFeesUSD,
     gasFeesUSD,
     protocolFeesUSD,
+    uiFeesUSD,
   }
 }
 
-const getFeesBreakdown = (route: CrossChainStep[], feeType: FeeType) => {
-  return route.reduce((feesByChainId, step) => {
+const getFeesBreakdown = (steps: CrossChainStep[], feeType: FeeType) => {
+  return steps.reduce((feesByChainId, step) => {
     const fees =
       feeType === FeeType.PROTOCOL
         ? step.estimate.feeCosts.filter((fee) => fee.included === false)
-        : step.estimate.gasCosts
+        : feeType === FeeType.UI
+          ? step.estimate.feeCosts.filter((fee) => fee.name === UI_FEE_NAME)
+          : step.estimate.gasCosts
 
     if (fees.length === 0) return feesByChainId
 
