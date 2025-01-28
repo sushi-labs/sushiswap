@@ -3,13 +3,9 @@ import {
   type UseTradeParams,
   tradeValidator02,
 } from 'src/lib/hooks/react-query'
+import { API_BASE_URL } from 'src/lib/swap/api-base-url'
+import { publicClientConfig } from 'src/lib/wagmi/config/viem'
 import { ChainId } from 'sushi/chain'
-import {
-  API_BASE_URL,
-  // TOKEN_CHOMPER_ADDRESS,
-  // isTokenChomperChainId,
-  publicClientConfig,
-} from 'sushi/config'
 import { Amount, Native, USDC, USDT, WBTC } from 'sushi/currency'
 import { createPublicClient, stringify } from 'viem'
 import { getBlockNumber } from 'viem/actions'

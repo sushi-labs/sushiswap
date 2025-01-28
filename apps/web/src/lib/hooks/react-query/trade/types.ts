@@ -2,7 +2,7 @@ import {
   routeProcessor2Abi_processRoute,
   routeProcessor2Abi_transferValueAndprocessRoute,
 } from 'sushi/abi'
-import { ChainId } from 'sushi/chain'
+import { EvmChainId } from 'sushi/chain'
 import { Amount, Price, type Type } from 'sushi/currency'
 import { Percent } from 'sushi/math'
 import { RouterLiquiditySource } from 'sushi/router'
@@ -12,7 +12,7 @@ import { legValidator, tradeValidator01 } from './validator01'
 import { tradeValidator02 } from './validator02'
 
 export interface UseTradeParams {
-  chainId: ChainId
+  chainId: EvmChainId
   fromToken: Type | undefined
   toToken: Type | undefined
   amount: Amount<Type> | undefined

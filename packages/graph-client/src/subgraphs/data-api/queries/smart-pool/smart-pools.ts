@@ -1,11 +1,11 @@
 import type { VariablesOf } from 'gql.tada'
 
-import { request, type RequestOptions } from 'src/lib/request'
-import type { ChainId } from 'sushi'
+import { request, type RequestOptions } from 'src/lib/request.js'
+import type { EvmChainId } from 'sushi'
 import { SUSHI_DATA_API_HOST } from 'sushi/config/subgraph'
 import type { Address } from 'viem'
-import { graphql } from '../../graphql'
-import { SUSHI_REQUEST_HEADERS } from '../../request-headers'
+import { graphql } from '../../graphql.js'
+import { SUSHI_REQUEST_HEADERS } from '../../request-headers.js'
 
 export const SmartPoolsQuery = graphql(
   `
@@ -76,13 +76,13 @@ export async function getSmartPools(
   if (result) {
     return result.smartPools.map((pool) => ({
       ...pool,
-      chainId: pool.chainId as ChainId,
+      chainId: pool.chainId as EvmChainId,
       id: pool.id as `${string}:0x${string}`,
       strategy: pool.strategy,
       token0: {
         id: pool.token0.id as `${string}:0x${string}`,
         address: pool.token0.address as Address,
-        chainId: pool.token0.chainId as ChainId,
+        chainId: pool.token0.chainId as EvmChainId,
         decimals: pool.token0.decimals,
         name: pool.token0.name,
         symbol: pool.token0.symbol,
@@ -90,7 +90,7 @@ export async function getSmartPools(
       token1: {
         id: pool.token1.id as `${string}:0x${string}`,
         address: pool.token1.address as Address,
-        chainId: pool.token1.chainId as ChainId,
+        chainId: pool.token1.chainId as EvmChainId,
         decimals: pool.token1.decimals,
         name: pool.token1.name,
         symbol: pool.token1.symbol,

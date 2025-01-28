@@ -16,7 +16,7 @@ import { IconButton } from '@sushiswap/ui'
 import { SettingsModule, SettingsOverlay } from '@sushiswap/ui'
 import { Widget, WidgetHeader, WidgetTitle } from '@sushiswap/ui'
 import React, { FC, ReactNode } from 'react'
-import { ChainId } from 'sushi/chain'
+import { EvmChainId } from 'sushi/chain'
 import { Amount, Type } from 'sushi/currency'
 import { ZERO } from 'sushi/math'
 
@@ -26,7 +26,7 @@ import { usePoolPosition } from './PoolPositionProvider'
 
 interface RemoveSectionWidgetProps {
   isFarm: boolean
-  chainId: ChainId
+  chainId: EvmChainId
   percentage: string
   token0: Type
   token1: Type

@@ -5,7 +5,7 @@ import { headers } from 'next/headers'
 import { notFound } from 'next/navigation'
 import React from 'react'
 import { PoolHeader } from 'src/ui/pool/PoolHeader'
-import { ChainId, ChainKey } from 'sushi/chain'
+import { ChainKey, EvmChainId } from 'sushi/chain'
 import { isSushiSwapV2ChainId } from 'sushi/config'
 import { isAddress } from 'viem'
 
@@ -18,7 +18,7 @@ export default async function Layout(props: {
   const { children } = props
 
   const { chainId: _chainId, address } = params
-  const chainId = +_chainId as ChainId
+  const chainId = +_chainId as EvmChainId
 
   if (
     !isSushiSwapV2ChainId(chainId) ||

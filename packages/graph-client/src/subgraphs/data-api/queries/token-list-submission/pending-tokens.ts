@@ -1,7 +1,7 @@
 import { SUSHI_DATA_API_HOST } from 'sushi/config/subgraph'
-import { graphql } from '../../graphql'
-import { SUSHI_REQUEST_HEADERS } from '../../request-headers'
-import { request } from 'src/lib/request'
+import { graphql } from '../../graphql.js'
+import { SUSHI_REQUEST_HEADERS } from '../../request-headers.js'
+import { request } from 'src/lib/request.js'
 
 export const PendingTokensQuery = graphql(
   `

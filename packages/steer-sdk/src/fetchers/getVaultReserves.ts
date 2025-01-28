@@ -1,7 +1,7 @@
 import { getChainIdAddressFromId } from 'sushi/format'
 import { type PublicClient, zeroAddress } from 'viem'
-import { steerPeripheryAbi } from '../abi/steerPeripheryAbi'
-import { STEER_PERIPHERY_ADDRESS, isSteerChainId } from '../constants'
+import { steerPeripheryAbi } from '../abi/steerPeripheryAbi.js'
+import { STEER_PERIPHERY_ADDRESS, isSteerChainId } from '../constants.js'
 
 interface GetVaultsReservesContracts {
   vaultIds: string[]

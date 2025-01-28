@@ -27,7 +27,7 @@ import { NetworkSelector } from 'src/lib/wagmi/components/network-selector'
 import { useSearchTokens } from 'src/lib/wagmi/components/token-selector/hooks/use-search-tokens'
 import { TokenSelector } from 'src/lib/wagmi/components/token-selector/token-selector'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
-import { ChainId } from 'sushi/chain'
+import { EvmChainId } from 'sushi/chain'
 import { Currency, Native } from 'sushi/currency'
 import { Address, zeroAddress } from 'viem'
 import { useAccount, useChainId, useSwitchChain } from 'wagmi'
@@ -153,8 +153,8 @@ const TwapNetworkSelector = ({ children }: { children: ReactNode }) => {
   const { switchChain } = useSwitchChain()
   const chainId = useChainId()
   const onSelect = useCallback(
-    (chainId: number) => {
-      switchChain({ chainId: chainId as ChainId })
+    (chainId: EvmChainId) => {
+      switchChain({ chainId: chainId })
     },
     [switchChain],
   )
@@ -162,7 +162,7 @@ const TwapNetworkSelector = ({ children }: { children: ReactNode }) => {
   return (
     <NetworkSelector
       selected={chainId}
-      networks={supportedChains}
+      networks={supportedChains as EvmChainId[]}
       onSelect={onSelect}
     >
       {children}

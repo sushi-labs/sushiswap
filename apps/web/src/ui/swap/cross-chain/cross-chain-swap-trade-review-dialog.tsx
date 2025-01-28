@@ -14,6 +14,8 @@ import {
   useTrace,
 } from '@sushiswap/telemetry'
 import {
+  Button,
+  Collapsible,
   DialogClose,
   DialogContent,
   DialogCustom,
@@ -24,13 +26,14 @@ import {
   DialogReview,
   DialogTitle,
   DialogType,
+  Dots,
+  List,
   Message,
+  SelectIcon,
+  SkeletonText,
+  classNames,
+  useDialog,
 } from '@sushiswap/ui'
-import { Collapsible } from '@sushiswap/ui'
-import { Button } from '@sushiswap/ui'
-import { Dots } from '@sushiswap/ui'
-import { List } from '@sushiswap/ui'
-import { SkeletonText } from '@sushiswap/ui'
 import { nanoid } from 'nanoid'
 import React, {
   FC,
@@ -41,28 +44,19 @@ import React, {
   useRef,
   useState,
 } from 'react'
+import { isXSwapSupportedChainId } from 'src/config'
 import { APPROVE_TAG_XSWAP } from 'src/lib/constants'
-import { UseCrossChainTradeReturn } from 'src/lib/hooks'
+import { useCrossChainTradeStep } from 'src/lib/hooks/react-query'
 import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
 import {
-  SushiXSwap2Adapter,
-  SushiXSwapFunctionName,
-  SushiXSwapWriteArgsBridge,
-  SushiXSwapWriteArgsSwapAndBridge,
-  useAxelarScanLink,
-  useLayerZeroScanLink,
+  getCrossChainFeesBreakdown,
+  useLiFiStatus,
 } from 'src/lib/swap/cross-chain'
 import { warningSeverity } from 'src/lib/swap/warningSeverity'
 import { useApproved } from 'src/lib/wagmi/systems/Checker/Provider'
-import { sushiXSwap2Abi_bridge, sushiXSwap2Abi_swapAndBridge } from 'sushi/abi'
-import { Chain, chainName } from 'sushi/chain'
-import {
-  SUSHIXSWAP_2_ADDRESS,
-  SushiXSwap2ChainId,
-  isSushiXSwap2ChainId,
-} from 'sushi/config'
-import { Native } from 'sushi/currency'
-import { shortenAddress } from 'sushi/format'
+import { ChainKey, EvmChain } from 'sushi/chain'
+import { Amount, Native } from 'sushi/currency'
+import { formatNumber, formatUSD, shortenAddress } from 'sushi/format'
 import { ZERO } from 'sushi/math'
 import {
   SendTransactionReturnType,
@@ -71,12 +65,13 @@ import {
 } from 'viem'
 import {
   useAccount,
+  useEstimateGas,
   usePublicClient,
-  useSimulateContract,
+  useSendTransaction,
   useTransaction,
-  useWriteContract,
 } from 'wagmi'
 import { useRefetchBalances } from '~evm/_common/ui/balance-provider/use-refetch-balances'
+import { usePrice } from '~evm/_common/ui/price-provider/price-provider/use-price'
 import {
   ConfirmationDialogContent,
   Divider,
@@ -85,43 +80,34 @@ import {
   failedState,
   finishedState,
 } from './cross-chain-swap-confirmation-dialog'
-import { CrossChainSwapTradeReviewRoute } from './cross-chain-swap-trade-review-route'
+import { CrossChainSwapRouteView } from './cross-chain-swap-route-view'
 import {
-  useCrossChainSwapTrade,
+  UseSelectedCrossChainTradeRouteReturn,
   useDerivedStateCrossChainSwap,
+  useSelectedCrossChainTradeRoute,
 } from './derivedstate-cross-chain-swap-provider'
-
-function getConfig(trade: UseCrossChainTradeReturn | undefined) {
-  if (!trade) return {}
-
-  if (trade.functionName === SushiXSwapFunctionName.Bridge) {
-    return {
-      abi: sushiXSwap2Abi_bridge,
-      functionName: 'bridge',
-      args: trade.writeArgs as NonNullable<SushiXSwapWriteArgsBridge>,
-      value: BigInt(trade.value ?? 0) as any,
-    } as const
-  }
-
-  if (trade.functionName === SushiXSwapFunctionName.SwapAndBridge) {
-    return {
-      abi: sushiXSwap2Abi_swapAndBridge,
-      functionName: 'swapAndBridge',
-      args: trade.writeArgs as NonNullable<SushiXSwapWriteArgsSwapAndBridge>,
-      value: BigInt(trade.value ?? 0) as any,
-    } as const
-  }
-}
 
 export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
   children,
 }) => {
+  return (
+    <DialogProvider>
+      <_CrossChainSwapTradeReviewDialog>
+        {children}
+      </_CrossChainSwapTradeReviewDialog>
+    </DialogProvider>
+  )
+}
+
+const _CrossChainSwapTradeReviewDialog: FC<{
+  children: ReactNode
+}> = ({ children }) => {
+  const [showMore, setShowMore] = useState<boolean>(false)
   const [slippagePercent] = useSlippageTolerance()
   const { address, chain } = useAccount()
   const {
     mutate: { setTradeId, setSwapAmount },
     state: {
-      adapter,
       recipient,
       swapAmount,
       swapAmountString,
@@ -134,8 +120,37 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
   } = useDerivedStateCrossChainSwap()
   const client0 = usePublicClient({ chainId: chainId0 })
   const client1 = usePublicClient({ chainId: chainId1 })
-  const { data: trade, isFetching } = useCrossChainSwapTrade()
   const { approved } = useApproved(APPROVE_TAG_XSWAP)
+
+  const { open: confirmDialogOpen } = useDialog(DialogType.Confirm)
+  const { open: reviewDialogOpen } = useDialog(DialogType.Review)
+
+  const { data: selectedRoute } = useSelectedCrossChainTradeRoute()
+  const { data: _step, isError: isStepQueryError } = useCrossChainTradeStep({
+    step: selectedRoute?.step,
+    query: {
+      enabled: Boolean(
+        approved && address && (confirmDialogOpen || reviewDialogOpen),
+      ),
+    },
+  })
+
+  const step = useMemo(
+    () =>
+      _step ??
+      (selectedRoute?.step
+        ? {
+            ...selectedRoute.step,
+            tokenIn: selectedRoute?.tokenIn,
+            tokenOut: selectedRoute?.tokenOut,
+            amountIn: selectedRoute?.amountIn,
+            amountOut: selectedRoute?.amountOut,
+            amountOutMin: selectedRoute?.amountOutMin,
+          }
+        : undefined),
+    [_step, selectedRoute],
+  )
+
   const groupTs = useRef<number>(undefined)
   const { refetchChain: refetchBalances } = useRefetchBalances()
 
@@ -149,39 +164,45 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
     dest: StepState.Success,
   })
 
-  const tradeRef = useRef<UseCrossChainTradeReturn | null>(null)
+  const routeRef = useRef<UseSelectedCrossChainTradeRouteReturn | null>(null)
 
   const {
-    data: simulation,
-    isError,
-    error,
-  } = useSimulateContract({
-    address: SUSHIXSWAP_2_ADDRESS[chainId0 as SushiXSwap2ChainId],
-    ...getConfig(trade),
+    data: estGas,
+    isError: isEstGasError,
+    error: estGasError,
+  } = useEstimateGas({
+    chainId: chainId0,
+    to: step?.transactionRequest?.to,
+    data: step?.transactionRequest?.data,
+    value: step?.transactionRequest?.value,
+    account: step?.transactionRequest?.from,
     query: {
       enabled: Boolean(
-        isSushiXSwap2ChainId(chainId0) &&
-          isSushiXSwap2ChainId(chainId1) &&
-          trade?.writeArgs &&
-          trade?.writeArgs.length > 0 &&
+        isXSwapSupportedChainId(chainId0) &&
+          isXSwapSupportedChainId(chainId1) &&
           chain?.id === chainId0 &&
-          approved &&
-          trade?.status !== 'NoWay',
+          approved,
       ),
     },
   })
 
+  const preparedTx = useMemo(() => {
+    return step?.transactionRequest && estGas
+      ? { ...step.transactionRequest, gas: estGas }
+      : undefined
+  }, [step?.transactionRequest, estGas])
+
   // onSimulateError
   useEffect(() => {
-    if (error) {
-      console.error('cross chain swap prepare error', error)
-      if (error.message.startsWith('user rejected transaction')) return
+    if (estGasError) {
+      console.error('cross chain swap prepare error', estGasError)
+      if (estGasError.message.startsWith('user rejected transaction')) return
 
       sendAnalyticsEvent(SwapEventName.XSWAP_ESTIMATE_GAS_CALL_FAILED, {
-        error: error.message,
+        error: estGasError.message,
       })
     }
-  }, [error])
+  }, [estGasError])
 
   const trace = useTrace()
 
@@ -195,7 +216,7 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
 
       setSwapAmount('')
 
-      if (!tradeRef?.current || !chainId0) return
+      if (!routeRef?.current || !chainId0) return
 
       sendAnalyticsEvent(SwapEventName.XSWAP_SIGNED, {
         ...trace,
@@ -211,29 +232,58 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
         chainId: chainId0,
         txHash: hash,
         promise: receiptPromise,
-        summary: {
-          pending: `Swapping ${tradeRef?.current?.amountIn?.toSignificant(6)} ${
-            tradeRef?.current?.amountIn?.currency.symbol
-          } to bridge token ${tradeRef?.current?.srcBridgeToken?.symbol}`,
-          completed: `Swap ${tradeRef?.current?.amountIn?.toSignificant(6)} ${
-            tradeRef?.current?.amountIn?.currency.symbol
-          } to bridge token ${tradeRef?.current?.srcBridgeToken?.symbol}`,
-          failed: `Something went wrong when trying to swap ${tradeRef?.current?.amountIn?.currency.symbol} to bridge token`,
-        },
+        summary:
+          routeRef?.current?.step?.includedStepsWithoutFees?.[0]?.type ===
+          'cross'
+            ? {
+                pending: `Sending ${routeRef?.current?.amountIn?.toSignificant(
+                  6,
+                )} ${routeRef?.current?.amountIn?.currency.symbol} to ${
+                  EvmChain.fromChainId(routeRef?.current?.toChainId)?.name
+                }`,
+                completed: `Sent ${routeRef?.current?.amountIn?.toSignificant(
+                  6,
+                )} ${routeRef?.current?.amountIn?.currency.symbol} to ${
+                  EvmChain.fromChainId(routeRef?.current?.toChainId)?.name
+                }`,
+                failed: `Something went wrong when trying to send ${
+                  routeRef?.current?.amountIn?.currency.symbol
+                } to ${
+                  EvmChain.fromChainId(routeRef?.current?.toChainId)?.name
+                }`,
+              }
+            : {
+                pending: `Swapping ${routeRef.current?.amountIn?.toSignificant(
+                  6,
+                )} ${
+                  routeRef?.current?.amountIn?.currency.symbol
+                } to bridge token ${
+                  routeRef?.current?.step?.includedStepsWithoutFees?.[0]?.action
+                    .toToken.symbol
+                }`,
+                completed: `Swapped ${routeRef?.current?.amountIn?.toSignificant(
+                  6,
+                )} ${
+                  routeRef?.current?.amountIn?.currency.symbol
+                } to bridge token ${
+                  routeRef?.current?.step?.includedStepsWithoutFees?.[0]?.action
+                    .toToken.symbol
+                }`,
+                failed: `Something went wrong when trying to swap ${routeRef?.current?.amountIn?.currency.symbol} to bridge token`,
+              },
         timestamp: groupTs.current,
         groupTimestamp: groupTs.current,
       })
 
       try {
         const receipt = await receiptPromise
-        const trade = tradeRef.current
+        const trade = routeRef.current
         if (receipt.status === 'success') {
           sendAnalyticsEvent(SwapEventName.XSWAP_SRC_TRANSACTION_COMPLETED, {
             txHash: hash,
             address: receipt.from,
             src_chain_id: trade?.amountIn?.currency?.chainId,
             dst_chain_id: trade?.amountOut?.currency?.chainId,
-            transaction_type: trade?.transactionType,
           })
         } else {
           sendAnalyticsEvent(SwapEventName.XSWAP_SRC_TRANSACTION_FAILED, {
@@ -241,7 +291,6 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
             address: receipt.from,
             src_chain_id: trade?.amountIn?.currency?.chainId,
             dst_chain_id: trade?.amountOut?.currency?.chainId,
-            transaction_type: trade?.transactionType,
           })
 
           setStepStates({
@@ -297,27 +346,24 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
   }, [])
 
   const {
-    writeContractAsync,
+    sendTransactionAsync,
     isPending: isWritePending,
     data: hash,
     reset,
-  } = useWriteContract({
+  } = useSendTransaction({
     mutation: {
       onSuccess: onWriteSuccess,
       onError: onWriteError,
       onMutate: () => {
-        if (tradeRef && trade) {
-          tradeRef.current = trade
+        if (routeRef && selectedRoute) {
+          routeRef.current = selectedRoute
         }
       },
     },
   })
 
-  // Speeds up typechecking in the useMemo below
-  const _simulation: { request: any } | undefined = simulation
-
   const write = useMemo(() => {
-    if (!_simulation?.request) return undefined
+    if (!preparedTx) return undefined
 
     return async (confirm: () => void) => {
       setStepStates({
@@ -328,119 +374,67 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
 
       confirm()
       try {
-        await writeContractAsync(_simulation.request)
+        await sendTransactionAsync(preparedTx)
       } catch {}
     }
-  }, [writeContractAsync, _simulation?.request])
+  }, [sendTransactionAsync, preparedTx])
 
-  const { data: lzData } = useLayerZeroScanLink({
-    tradeId,
-    network1: chainId1,
-    network0: chainId0,
+  const { data: lifiData } = useLiFiStatus({
+    tradeId: tradeId,
     txHash: hash,
-    enabled: adapter === SushiXSwap2Adapter.Stargate,
-  })
-
-  const { data: axelarScanData } = useAxelarScanLink({
-    tradeId,
-    network1: chainId1,
-    network0: chainId0,
-    txHash: hash,
-    enabled: adapter === SushiXSwap2Adapter.Squid,
   })
 
   const { data: receipt } = useTransaction({
     chainId: chainId1,
-    hash: (adapter === SushiXSwap2Adapter.Stargate
-      ? lzData?.dstTxHash
-      : axelarScanData?.dstTxHash) as `0x${string}` | undefined,
+    hash: lifiData?.receiving?.txHash,
     query: {
-      enabled: Boolean(
-        adapter === SushiXSwap2Adapter.Stargate
-          ? lzData?.dstTxHash
-          : axelarScanData?.dstTxHash,
-      ),
+      enabled: Boolean(lifiData?.receiving?.txHash),
     },
   })
 
   useEffect(() => {
-    if (lzData?.status === 'DELIVERED') {
-      setStepStates({
-        source: StepState.Success,
-        bridge: StepState.Success,
-        dest: StepState.Success,
-      })
+    if (lifiData?.status === 'DONE') {
+      if (lifiData?.substatus === 'COMPLETED') {
+        setStepStates({
+          source: StepState.Success,
+          bridge: StepState.Success,
+          dest: StepState.Success,
+        })
+      }
+      if (lifiData?.substatus === 'PARTIAL') {
+        setStepStates({
+          source: StepState.Success,
+          bridge: StepState.Success,
+          dest: StepState.PartialSuccess,
+        })
+      }
     }
-    if (lzData?.status === 'FAILED') {
-      setStepStates((prev) => ({
-        ...prev,
-        dest: StepState.PartialSuccess,
-      }))
-    }
-  }, [lzData?.status])
-
-  useEffect(() => {
-    if (axelarScanData?.status === 'success') {
-      setStepStates({
-        source: StepState.Success,
-        bridge: StepState.Success,
-        dest: StepState.Success,
-      })
-    }
-    if (axelarScanData?.status === 'partial_success') {
-      setStepStates((prev) => ({
-        ...prev,
-        bridge: StepState.Success,
-        dest: StepState.PartialSuccess,
-      }))
-    }
-  }, [axelarScanData?.status])
+  }, [lifiData])
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
     if (
-      axelarScanData?.link &&
+      lifiData?.lifiExplorerLink &&
       groupTs.current &&
       stepStates.source === StepState.Success
     ) {
       void createInfoToast({
         account: address,
-        type: 'squid',
+        type: 'xswap',
         chainId: chainId0,
-        href: axelarScanData.link,
-        summary: `Bridging ${tradeRef?.current?.srcBridgeToken?.symbol} from ${
-          Chain.from(chainId0)?.name
-        } to ${Chain.from(chainId1)?.name}`,
+        href: lifiData.lifiExplorerLink,
+        summary: `Bridging ${routeRef?.current?.fromToken?.symbol} from ${
+          EvmChain.from(chainId0)?.name
+        } to ${EvmChain.from(chainId1)?.name}`,
         timestamp: new Date().getTime(),
         groupTimestamp: groupTs.current,
       })
     }
-  }, [axelarScanData?.link])
+  }, [lifiData?.lifiExplorerLink])
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
-    if (
-      lzData?.link &&
-      groupTs.current &&
-      stepStates.source === StepState.Success
-    ) {
-      void createInfoToast({
-        account: address,
-        type: 'stargate',
-        chainId: chainId0,
-        href: lzData.link,
-        summary: `Bridging ${tradeRef?.current?.srcBridgeToken?.symbol} from ${
-          Chain.from(chainId0)?.name
-        } to ${Chain.from(chainId1)?.name}`,
-        timestamp: new Date().getTime(),
-        groupTimestamp: groupTs.current,
-      })
-    }
-  }, [lzData?.link])
-
-  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
-  useEffect(() => {
-    if (receipt && groupTs.current) {
+    if (receipt?.hash && groupTs.current) {
       void createToast({
         account: address,
         type: 'swap',
@@ -461,36 +455,132 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
           .then(() => {
             sendAnalyticsEvent(SwapEventName.XSWAP_DST_TRANSACTION_COMPLETED, {
               chain_id: chainId1,
-              txHash: axelarScanData?.dstTxHash,
+              txHash: lifiData?.receiving?.txHash,
             })
             refetchBalances(chainId1)
           })
           .then(reset),
-        summary: {
-          pending: `Swapping ${
-            tradeRef?.current?.dstBridgeToken?.symbol
-          } to ${tradeRef?.current?.amountOut?.toSignificant(6)} ${
-            tradeRef?.current?.amountOut?.currency.symbol
-          }`,
-          completed: `Swap ${
-            tradeRef?.current?.dstBridgeToken?.symbol
-          } to ${tradeRef?.current?.amountOut?.toSignificant(6)} ${
-            tradeRef?.current?.amountOut?.currency.symbol
-          }`,
-          failed: `Something went wrong when trying to swap ${
-            tradeRef?.current?.dstBridgeToken?.symbol
-          } to ${tradeRef?.current?.amountOut?.toSignificant(6)} ${
-            tradeRef?.current?.amountOut?.currency.symbol
-          }`,
-        },
+        summary:
+          routeRef?.current?.step?.includedStepsWithoutFees?.[1]?.type ===
+            'swap' ||
+          routeRef?.current?.step?.includedStepsWithoutFees?.[2]?.type ===
+            'swap'
+            ? {
+                pending: `Swapping ${
+                  routeRef?.current?.step?.includedStepsWithoutFees[2]?.action
+                    .fromToken?.symbol
+                } to ${routeRef?.current?.amountOut?.toSignificant(6)} ${
+                  routeRef?.current?.amountOut?.currency.symbol
+                }`,
+                completed: `Swapped ${
+                  routeRef?.current?.step?.includedStepsWithoutFees[2]?.action
+                    .fromToken?.symbol
+                } to ${routeRef?.current?.amountOut?.toSignificant(6)} ${
+                  routeRef?.current?.amountOut?.currency.symbol
+                }`,
+                failed: `Something went wrong when trying to swap ${
+                  routeRef?.current?.step?.includedStepsWithoutFees[2]?.action
+                    .fromToken?.symbol
+                } to ${routeRef?.current?.amountOut?.toSignificant(6)} ${
+                  routeRef?.current?.amountOut?.currency.symbol
+                }`,
+              }
+            : {
+                pending: `Receiving ${routeRef?.current?.amountOut?.toSignificant(
+                  6,
+                )} ${routeRef?.current?.amountOut?.currency.symbol} on ${
+                  EvmChain.fromChainId(routeRef?.current?.toChainId!)?.name
+                }`,
+                completed: `Received ${routeRef?.current?.amountOut?.toSignificant(
+                  6,
+                )} ${routeRef?.current?.amountOut?.currency.symbol} on ${
+                  EvmChain.fromChainId(routeRef?.current?.toChainId!)?.name
+                }`,
+                failed: `Something went wrong when trying to receive ${routeRef?.current?.amountOut?.toSignificant(
+                  6,
+                )} ${routeRef?.current?.amountOut?.currency.symbol} on ${
+                  EvmChain.fromChainId(routeRef?.current?.toChainId!)?.name
+                }`,
+              },
         timestamp: new Date().getTime(),
         groupTimestamp: groupTs.current,
       })
     }
-  }, [receipt])
+  }, [receipt?.hash])
+
+  const { executionDuration, feesBreakdown, totalFeesUSD, chainId0Fees } =
+    useMemo(() => {
+      if (!step)
+        return {
+          executionDuration: undefined,
+          feesBreakdown: undefined,
+          gasFeesUSD: undefined,
+          protocolFeesUSD: undefined,
+          totalFeesUSD: undefined,
+        }
+
+      const executionDurationSeconds = step.estimate.executionDuration
+      const executionDurationMinutes = Math.floor(executionDurationSeconds / 60)
+
+      const executionDuration =
+        executionDurationSeconds < 60
+          ? `${executionDurationSeconds} seconds`
+          : `${executionDurationMinutes} minutes`
+
+      const { feesBreakdown, totalFeesUSD } = getCrossChainFeesBreakdown([step])
+
+      const chainId0Fees = (
+        feesBreakdown.gas.get(step.tokenIn.chainId)?.amount ??
+        Amount.fromRawAmount(Native.onChain(step.tokenIn.chainId), 0)
+      )
+        .add(
+          feesBreakdown.protocol.get(step.tokenIn.chainId)?.amount ??
+            Amount.fromRawAmount(Native.onChain(step.tokenIn.chainId), 0),
+        )
+        .toExact()
+
+      return {
+        executionDuration,
+        feesBreakdown,
+        totalFeesUSD,
+        chainId0Fees,
+      }
+    }, [step])
+
+  const { data: price, isLoading: isPriceLoading } = usePrice({
+    chainId: token1?.chainId,
+    address: token1?.wrapped.address,
+  })
+
+  const amountOutUSD = useMemo(
+    () =>
+      price && step?.amountOut
+        ? `${(
+            (price * Number(step.amountOut.quotient)) /
+            10 ** step.amountOut.currency.decimals
+          ).toFixed(2)}`
+        : undefined,
+    [step?.amountOut, price],
+  )
+
+  const amountOutMinUSD = useMemo(
+    () =>
+      price && step?.amountOutMin
+        ? `${(
+            (price * Number(step.amountOutMin.quotient)) /
+            10 ** step.amountOutMin.currency.decimals
+          ).toFixed(2)}`
+        : undefined,
+    [step?.amountOutMin, price],
+  )
+
+  const showPriceImpactWarning = useMemo(() => {
+    const priceImpactSeverity = warningSeverity(step?.priceImpact)
+    return priceImpactSeverity > 3
+  }, [step?.priceImpact])
 
   return (
-    <DialogProvider>
+    <>
       <DialogReview>
         {({ confirm }) => (
           <>
@@ -498,16 +588,16 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
               <Collapsible
                 open={Boolean(
                   +swapAmountString > 0 &&
-                    stringify(error).includes('insufficient funds'),
+                    stringify(estGasError).includes('insufficient funds'),
                 )}
               >
                 <div className="pt-4">
                   <Message size="sm" variant="destructive">
                     Insufficient {Native.onChain(chainId0).symbol} balance on{' '}
-                    {Chain.fromChainId(chainId0)?.name} to cover the network
+                    {EvmChain.fromChainId(chainId0)?.name} to cover the network
                     fee. Please lower your input amount or{' '}
                     <a
-                      href={`/swap?chainId=${chainId0}&token0=0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE&token1=NATIVE`}
+                      href={`/${ChainKey[chainId0]}/swap?token1=NATIVE`}
                       className="underline decoration-dotted underline-offset-2"
                     >
                       swap for more {Native.onChain(chainId0).symbol}
@@ -521,10 +611,10 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
             <DialogContent>
               <DialogHeader>
                 <DialogTitle>
-                  {isFetching ? (
+                  {!step?.amountOut ? (
                     <SkeletonText fontSize="xs" className="w-2/3" />
                   ) : (
-                    `Receive ${trade?.amountOut?.toSignificant(6)} ${
+                    `Receive ${step?.amountOut?.toSignificant(6)} ${
                       token1?.symbol
                     }`
                   )}
@@ -536,72 +626,298 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
               <div className="flex flex-col gap-4 overflow-x-hidden">
                 <List>
                   <List.Control>
-                    <List.KeyValue title="Network">
-                      <div className="justify-end w-full gap-1 truncate whitespace-nowrap">
-                        {chainName?.[chainId0]
-                          ?.replace('Mainnet Shard 0', '')
-                          ?.replace('Mainnet', '')
-                          ?.trim()}
-                        <br />
-                        <span className="text-gray-400 dark:text-slate-500">
-                          to
-                        </span>{' '}
-                        {chainName?.[chainId1]
-                          ?.replace('Mainnet Shard 0', '')
-                          ?.replace('Mainnet', '')
-                          ?.trim()}
-                      </div>
-                    </List.KeyValue>
-                    <List.KeyValue
-                      title="Price impact"
-                      subtitle="The impact your trade has on the market price of this pool."
-                    >
-                      {isFetching || !trade?.priceImpact ? (
+                    <List.KeyValue title="Estimated arrival">
+                      {!executionDuration ? (
                         <SkeletonText
                           align="right"
                           fontSize="sm"
                           className="w-1/5"
                         />
                       ) : (
-                        `${
-                          trade?.priceImpact?.lessThan(ZERO)
-                            ? '+'
-                            : trade?.priceImpact?.greaterThan(ZERO)
-                              ? '-'
-                              : ''
-                        }${Math.abs(Number(trade?.priceImpact?.toFixed(2)))}%`
+                        `${executionDuration}`
                       )}
                     </List.KeyValue>
-                    <List.KeyValue
-                      title={`Min. received after slippage (${slippagePercent.toPercentageString()})`}
-                      subtitle="The minimum amount you are guaranteed to receive."
-                    >
-                      {isFetching || !trade?.amountOutMin ? (
-                        <SkeletonText
-                          align="right"
-                          fontSize="sm"
-                          className="w-1/2"
-                        />
-                      ) : (
-                        `${trade?.amountOutMin?.toSignificant(6)} ${
-                          token1?.symbol
-                        }`
-                      )}
-                    </List.KeyValue>
+                    {showMore ? (
+                      <>
+                        <List.KeyValue
+                          title="Price impact"
+                          subtitle="The impact your trade has on the market price of this pool."
+                        >
+                          {!step?.priceImpact ? (
+                            <span className="w-24">
+                              <SkeletonText align="right" fontSize="sm" />
+                            </span>
+                          ) : (
+                            `${
+                              step.priceImpact.lessThan(ZERO)
+                                ? '+'
+                                : step.priceImpact.greaterThan(ZERO)
+                                  ? '-'
+                                  : ''
+                            }${Math.abs(Number(step.priceImpact.toFixed(2)))}%`
+                          )}
+                        </List.KeyValue>
+
+                        {feesBreakdown && feesBreakdown.gas.size > 0 ? (
+                          <List.KeyValue
+                            title="Network fee"
+                            subtitle="The transaction fee charged by the origin blockchain."
+                          >
+                            <div className="flex flex-col gap-1">
+                              {feesBreakdown.gas.get(chainId0) ? (
+                                <span>
+                                  {formatNumber(
+                                    feesBreakdown.gas
+                                      .get(chainId0)!
+                                      .amount.toExact(),
+                                  )}{' '}
+                                  {
+                                    feesBreakdown.gas.get(chainId0)!.amount
+                                      .currency.symbol
+                                  }{' '}
+                                  <span className="text-muted-foreground">
+                                    (
+                                    {formatUSD(
+                                      feesBreakdown.gas.get(chainId0)!
+                                        .amountUSD,
+                                    )}
+                                    )
+                                  </span>
+                                </span>
+                              ) : null}
+                              {feesBreakdown.gas.get(chainId1) ? (
+                                <span>
+                                  {formatNumber(
+                                    feesBreakdown.gas
+                                      .get(chainId1)!
+                                      .amount.toExact(),
+                                  )}{' '}
+                                  {
+                                    feesBreakdown.gas.get(chainId1)!.amount
+                                      .currency.symbol
+                                  }{' '}
+                                  <span className="text-muted-foreground">
+                                    (
+                                    {formatUSD(
+                                      feesBreakdown.gas.get(chainId1)!
+                                        .amountUSD,
+                                    )}
+                                  </span>
+                                  )
+                                </span>
+                              ) : null}
+                            </div>
+                          </List.KeyValue>
+                        ) : null}
+                        {feesBreakdown && feesBreakdown.protocol.size > 0 ? (
+                          <List.KeyValue
+                            title="Protocol fee"
+                            subtitle="The fee charged by the bridge provider."
+                          >
+                            <div className="flex flex-col gap-1">
+                              {feesBreakdown.protocol.get(chainId0) ? (
+                                <span>
+                                  {formatNumber(
+                                    feesBreakdown.protocol
+                                      .get(chainId0)!
+                                      .amount.toExact(),
+                                  )}{' '}
+                                  {
+                                    feesBreakdown.protocol.get(chainId0)!.amount
+                                      .currency.symbol
+                                  }{' '}
+                                  <span className="text-muted-foreground">
+                                    (
+                                    {formatUSD(
+                                      feesBreakdown.protocol.get(chainId0)!
+                                        .amountUSD,
+                                    )}
+                                    )
+                                  </span>
+                                </span>
+                              ) : null}
+                              {feesBreakdown.protocol.get(chainId1) ? (
+                                <span>
+                                  {formatNumber(
+                                    feesBreakdown.protocol
+                                      .get(chainId1)!
+                                      .amount.toExact(),
+                                  )}{' '}
+                                  {
+                                    feesBreakdown.protocol.get(chainId1)!.amount
+                                      .currency.symbol
+                                  }{' '}
+                                  <span className="text-muted-foreground">
+                                    (
+                                    {formatUSD(
+                                      feesBreakdown.protocol.get(chainId1)!
+                                        .amountUSD,
+                                    )}
+                                    )
+                                  </span>
+                                </span>
+                              ) : null}
+                            </div>
+                          </List.KeyValue>
+                        ) : null}
+                        <List.KeyValue
+                          title="Est. received"
+                          subtitle="The estimated output amount."
+                        >
+                          <div className="flex flex-col gap-0.5">
+                            {!step?.amountOut ? (
+                              <SkeletonText
+                                align="right"
+                                fontSize="sm"
+                                className="w-1/2"
+                              />
+                            ) : (
+                              <span className="text-sm font-medium">{`${step.amountOut.toSignificant(
+                                6,
+                              )} ${token1?.symbol}`}</span>
+                            )}
+                            {!amountOutUSD ? (
+                              <SkeletonText
+                                align="right"
+                                fontSize="xs"
+                                className={classNames(
+                                  'w-1/4',
+                                  !isPriceLoading ? 'invisible' : '',
+                                )}
+                              />
+                            ) : (
+                              <span className="text-xs text-muted-foreground">
+                                {formatUSD(amountOutUSD)}
+                              </span>
+                            )}
+                          </div>
+                        </List.KeyValue>
+                        <List.KeyValue
+                          title={`Min. received after slippage (${slippagePercent.toPercentageString()})`}
+                          subtitle="The minimum amount you are guaranteed to receive."
+                        >
+                          <div className="flex flex-col gap-0.5">
+                            {!step?.amountOutMin ? (
+                              <SkeletonText
+                                align="right"
+                                fontSize="sm"
+                                className="w-1/2"
+                              />
+                            ) : (
+                              <span className="text-sm font-medium">{`${step.amountOutMin.toSignificant(
+                                6,
+                              )} ${token1?.symbol}`}</span>
+                            )}
+                            {!amountOutMinUSD ? (
+                              <SkeletonText
+                                align="right"
+                                fontSize="xs"
+                                className={classNames(
+                                  'w-1/4',
+                                  !isPriceLoading ? 'invisible' : '',
+                                )}
+                              />
+                            ) : (
+                              <span className="text-xs text-muted-foreground">
+                                {formatUSD(amountOutMinUSD)}
+                              </span>
+                            )}
+                          </div>
+                        </List.KeyValue>
+                      </>
+                    ) : (
+                      <>
+                        <List.KeyValue title="Total fee">
+                          {!totalFeesUSD ? (
+                            <SkeletonText
+                              align="right"
+                              fontSize="sm"
+                              className="w-1/5"
+                            />
+                          ) : (
+                            <div className="flex flex-col gap-1">
+                              <span>
+                                {formatNumber(chainId0Fees)}{' '}
+                                {
+                                  feesBreakdown.gas.get(chainId0)!.amount
+                                    .currency.symbol
+                                }{' '}
+                                <span className="text-muted-foreground">
+                                  ({formatUSD(totalFeesUSD)})
+                                </span>
+                              </span>
+                            </div>
+                          )}
+                        </List.KeyValue>
+                        <List.KeyValue
+                          title="Est. received"
+                          subtitle="The estimated output amount."
+                        >
+                          <div className="flex flex-col gap-0.5">
+                            {!step?.amountOut ? (
+                              <SkeletonText
+                                align="right"
+                                fontSize="sm"
+                                className="w-1/2"
+                              />
+                            ) : (
+                              <span className="text-sm font-medium">{`${step.amountOut.toSignificant(
+                                6,
+                              )} ${token1?.symbol}`}</span>
+                            )}
+                            {!amountOutUSD ? (
+                              <SkeletonText
+                                align="right"
+                                fontSize="xs"
+                                className={classNames(
+                                  'w-1/4',
+                                  !isPriceLoading ? 'invisible' : '',
+                                )}
+                              />
+                            ) : (
+                              <span className="text-xs text-muted-foreground">
+                                {formatUSD(amountOutUSD)}
+                              </span>
+                            )}
+                          </div>
+                        </List.KeyValue>
+                      </>
+                    )}
+
+                    <div className="p-3">
+                      <Button
+                        size="xs"
+                        fullWidth
+                        onClick={() => setShowMore(!showMore)}
+                        variant="ghost"
+                      >
+                        {showMore ? (
+                          <>
+                            <SelectIcon className="rotate-180" />
+                          </>
+                        ) : (
+                          <>
+                            <SelectIcon />
+                          </>
+                        )}
+                      </Button>
+                    </div>
                   </List.Control>
                 </List>
-                <List className="!pt-2">
-                  <List.Control>
-                    <CrossChainSwapTradeReviewRoute />
-                  </List.Control>
-                </List>
+                {step && (
+                  <List className="!pt-2">
+                    <List.Control className="!p-5">
+                      <CrossChainSwapRouteView step={step} />
+                    </List.Control>
+                  </List>
+                )}
                 {recipient && (
                   <List className="!pt-2">
                     <List.Control>
                       <List.KeyValue title="Recipient">
                         <a
                           target="_blank"
-                          href={Chain.accountUrl(chainId0, recipient) ?? '#'}
+                          href={EvmChain.accountUrl(chainId0, recipient) ?? '#'}
                           className="flex items-center gap-2 cursor-pointer text-blue"
                           rel="noreferrer"
                         >
@@ -624,23 +940,24 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
                   <Button
                     fullWidth
                     size="xl"
-                    loading={!write && !isError}
+                    loading={!write && !isEstGasError && !isStepQueryError}
                     onClick={() => write?.(confirm)}
                     disabled={
                       isWritePending ||
                       Boolean(!write && +swapAmountString > 0) ||
-                      isError
+                      isEstGasError ||
+                      isStepQueryError
                     }
                     color={
-                      isError
+                      isEstGasError ||
+                      isStepQueryError ||
+                      showPriceImpactWarning
                         ? 'red'
-                        : warningSeverity(trade?.priceImpact) >= 3
-                          ? 'red'
-                          : 'blue'
+                        : 'blue'
                     }
                     testId="confirm-swap"
                   >
-                    {isError ? (
+                    {isEstGasError || isStepQueryError ? (
                       'Shoot! Something went wrong :('
                     ) : isWritePending ? (
                       <Dots>Confirm Swap</Dots>
@@ -662,11 +979,10 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
               <div>
                 <ConfirmationDialogContent
                   dialogState={stepStates}
-                  bridgeUrl={getBridgeUrl(adapter, lzData, axelarScanData)}
-                  adapter={adapter}
+                  bridgeUrl={lifiData?.lifiExplorerLink}
                   txHash={hash}
-                  dstTxHash={getDstTxHash(adapter, lzData, axelarScanData)}
-                  tradeRef={tradeRef}
+                  dstTxHash={lifiData?.receiving?.txHash}
+                  routeRef={routeRef}
                 />
               </div>
             </DialogDescription>
@@ -695,22 +1011,6 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
           </DialogFooter>
         </DialogContent>
       </DialogCustom>
-    </DialogProvider>
+    </>
   )
 }
-
-const getBridgeUrl = (
-  adapter: SushiXSwap2Adapter | undefined,
-  lzData: Awaited<ReturnType<typeof useLayerZeroScanLink>>['data'],
-  axelarScanData: Awaited<ReturnType<typeof useAxelarScanLink>>['data'],
-) =>
-  adapter === SushiXSwap2Adapter.Stargate ? lzData?.link : axelarScanData?.link
-
-const getDstTxHash = (
-  adapter: SushiXSwap2Adapter | undefined,
-  lzData: Awaited<ReturnType<typeof useLayerZeroScanLink>>['data'],
-  axelarScanData: Awaited<ReturnType<typeof useAxelarScanLink>>['data'],
-) =>
-  adapter === SushiXSwap2Adapter.Stargate
-    ? lzData?.dstTxHash
-    : axelarScanData?.dstTxHash

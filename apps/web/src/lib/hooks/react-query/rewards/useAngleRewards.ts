@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import { ChainId } from 'sushi/chain'
+import { EvmChainId } from 'sushi/chain'
 import { Amount, Token, tryParseAmount } from 'sushi/currency'
 import { ZERO } from 'sushi/math'
 import { parseUnits } from 'viem'
@@ -25,7 +25,7 @@ export type AngleRewardsPool = Omit<
   'rewardsPerToken' | 'token0' | 'token1' | 'distributionData'
 > & {
   id: string
-  chainId: ChainId
+  chainId: EvmChainId
   distributionData: Array<
     Omit<
       z.infer<typeof angleRewardsPoolsValidator>['distributionData'][0],
@@ -40,7 +40,7 @@ export type AngleRewardsPool = Omit<
 type TransformedPools = Record<string, AngleRewardsPool>
 
 interface AngleRewardsQueryParams {
-  chainIds: ChainId[]
+  chainIds: EvmChainId[]
   account?: string | undefined
   enabled?: boolean
 }
@@ -65,7 +65,7 @@ export const angleRewardsQueryFn = async ({
 }
 
 interface AngleRewardsSelect {
-  chainId: ChainId
+  chainId: EvmChainId
   data: z.infer<typeof angleRewardsValidator>[number] | undefined
   prices: ReturnType<typeof usePrices>['data']
 }
@@ -221,7 +221,7 @@ export const angleRewardsSelect = ({
 }
 
 interface UseAngleRewardsParams {
-  chainId: ChainId
+  chainId: EvmChainId
   account?: string | undefined
   enabled?: boolean
 }

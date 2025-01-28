@@ -1,5 +1,5 @@
 import type { ResultOf } from 'gql.tada'
-import type { ImageFieldsFragment } from 'src/subgraphs/strapi/fragments/image-fields'
+import type { ImageFieldsFragment } from 'src/subgraphs/strapi/fragments/image-fields.js'
 
 export type Image = ReturnType<typeof transformImage>
 

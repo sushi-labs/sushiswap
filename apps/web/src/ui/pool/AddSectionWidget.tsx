@@ -14,13 +14,13 @@ import React, { FC, ReactNode } from 'react'
 import { isZapSupportedChainId } from 'src/config'
 import { Web3Input } from 'src/lib/wagmi/components/web3-input'
 import { getDefaultTTL } from 'src/lib/wagmi/hooks/utils/hooks/useTransactionDeadline'
-import { ChainId } from 'sushi/chain'
+import { EvmChainId } from 'sushi/chain'
 import { Type } from 'sushi/currency'
 import { ToggleZapCard } from './ToggleZapCard'
 
 interface AddSectionWidgetProps {
   isFarm: boolean
-  chainId: ChainId
+  chainId: EvmChainId
   input0: string
   input1: string
   token0: Type | undefined

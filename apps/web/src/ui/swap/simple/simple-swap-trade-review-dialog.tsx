@@ -38,7 +38,7 @@ import { UseTradeReturn } from 'src/lib/hooks/react-query'
 import { useSimulateTrade } from 'src/lib/hooks/useSimulateTrade'
 import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
 import { useApproved } from 'src/lib/wagmi/systems/Checker/Provider'
-import { Chain, ChainId } from 'sushi/chain'
+import { ChainId, EvmChain } from 'sushi/chain'
 import { Native } from 'sushi/currency'
 import { shortenAddress } from 'sushi/format'
 import { ZERO } from 'sushi/math'
@@ -281,6 +281,14 @@ export const SimpleSwapTradeReviewDialog: FC<{
     hash: data,
   })
 
+  const { showPriceImpactWarning, priceImpactSeverity } = useMemo(() => {
+    const priceImpactSeverity = warningSeverity(trade?.priceImpact)
+    return {
+      showPriceImpactWarning: priceImpactSeverity > 3,
+      priceImpactSeverity,
+    }
+  }, [trade?.priceImpact])
+
   return (
     <Trace modal={InterfaceModalName.CONFIRM_SWAP}>
       <DialogProvider>
@@ -308,7 +316,7 @@ export const SimpleSwapTradeReviewDialog: FC<{
                   </DialogDescription>
                 </DialogHeader>
                 <div className="flex flex-col gap-4">
-                  {warningSeverity(trade?.priceImpact) >= 3 && (
+                  {showPriceImpactWarning && (
                     <div className="px-4 py-3 mt-4 rounded-xl bg-red/20">
                       <span className="text-sm font-medium text-red-600">
                         High price impact. You will lose a significant portion
@@ -319,7 +327,7 @@ export const SimpleSwapTradeReviewDialog: FC<{
                   <List className="!pt-0">
                     <List.Control>
                       <List.KeyValue title="Network">
-                        {Chain.from(chainId)?.name}
+                        {EvmChain.from(chainId)?.name}
                       </List.KeyValue>
                       {isSwap && (
                         <List.KeyValue
@@ -328,9 +336,7 @@ export const SimpleSwapTradeReviewDialog: FC<{
                         >
                           <span
                             className={classNames(
-                              warningSeverityClassName(
-                                warningSeverity(trade?.priceImpact),
-                              ),
+                              warningSeverityClassName(priceImpactSeverity),
                               'text-right',
                             )}
                           >
@@ -406,7 +412,7 @@ export const SimpleSwapTradeReviewDialog: FC<{
                             <a
                               target="_blank"
                               href={
-                                Chain.fromChainId(chainId)?.getAccountUrl(
+                                EvmChain.fromChainId(chainId)?.getAccountUrl(
                                   recipient,
                                 ) ?? '#'
                               }
@@ -451,11 +457,7 @@ export const SimpleSwapTradeReviewDialog: FC<{
                             isError,
                         )}
                         color={
-                          isError
-                            ? 'red'
-                            : warningSeverity(trade?.priceImpact) >= 3
-                              ? 'red'
-                              : 'blue'
+                          isError || showPriceImpactWarning ? 'red' : 'blue'
                         }
                         testId="confirm-swap"
                       >

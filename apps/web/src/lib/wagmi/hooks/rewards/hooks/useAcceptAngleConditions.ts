@@ -2,7 +2,6 @@
 
 import { createErrorToast, createToast } from '@sushiswap/notifications'
 import { useCallback, useMemo, useState } from 'react'
-import { ChainId } from 'sushi/chain'
 import { SendTransactionReturnType, UserRejectedRequestError } from 'viem'
 import {
   useAccount,
@@ -54,7 +53,8 @@ export const useAcceptAngleConditions = (
     address: '0x8BB4C975Ff3c250e0ceEA271728547f3802B36Fd',
     abi: userSignatureWhitelistAbi,
     functionName: 'userSignatureWhitelist',
-    chainId: chainId as ChainId,
+    // Typescript hack, prevents the "Instantiation too deep" error
+    chainId: chainId as 42161,
     args: [address!],
     query: {
       enabled: Boolean(enabled && address && chainId),
@@ -65,6 +65,8 @@ export const useAcceptAngleConditions = (
     address: '0x8BB4C975Ff3c250e0ceEA271728547f3802B36Fd',
     abi: acceptConditionsAbi,
     functionName: 'acceptConditions',
+    // Typescript hack, prevents the "Instantiation too deep" error
+    chainId: chainId as 42161,
     query: {
       enabled: Boolean(
         enabled &&

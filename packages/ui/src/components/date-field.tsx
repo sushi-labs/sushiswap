@@ -3,18 +3,17 @@
 import { type VariantProps } from 'class-variance-authority'
 import { FC, useState } from 'react'
 import {
-  ReactDatePickerProps,
+  DatePickerProps as ReactDatePickerProps,
   default as ReactDatePicker,
 } from 'react-datepicker'
 
 import { CalendarIcon } from '../icons/CalendarIcon'
 import { textFieldVariants } from './text-field'
 
-interface DateFieldProps
-  extends ReactDatePickerProps,
-    VariantProps<typeof textFieldVariants> {
-  testId?: string
-}
+type DateFieldProps = ReactDatePickerProps &
+  VariantProps<typeof textFieldVariants> & {
+    testId?: string
+  }
 
 const DateField: FC<DateFieldProps> = ({
   testId,

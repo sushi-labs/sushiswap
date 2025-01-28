@@ -1,11 +1,11 @@
 import type { VariablesOf } from 'gql.tada'
 
-import { request, type RequestOptions } from 'src/lib/request'
+import { request, type RequestOptions } from 'src/lib/request.js'
 import { getIdFromChainIdAddress, type ChainId } from 'sushi'
 import { SUSHI_DATA_API_HOST } from 'sushi/config/subgraph'
-import { graphql } from '../../graphql'
-import { SUSHI_REQUEST_HEADERS } from '../../request-headers'
-import type { ChainIdVariable } from 'src/lib/types/chainId'
+import { graphql } from '../../graphql.js'
+import { SUSHI_REQUEST_HEADERS } from '../../request-headers.js'
+import type { ChainIdVariable } from 'src/lib/types/chainId.js'
 
 export const TokenListBalancesQuery = graphql(
   `

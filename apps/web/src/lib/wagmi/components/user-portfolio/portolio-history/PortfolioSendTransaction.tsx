@@ -4,7 +4,7 @@ import { ClipboardController, FormattedNumber, IconButton } from '@sushiswap/ui'
 import { format, fromUnixTime } from 'date-fns'
 import { FC } from 'react'
 import React from 'react'
-import { Chain, ChainId } from 'sushi/chain'
+import { EvmChain, EvmChainId } from 'sushi/chain'
 import { shortenHash } from 'sushi/format'
 import { PortfolioInfoRow } from '../PortfolioInfoRow'
 
@@ -13,8 +13,8 @@ export const PortfolioSendTransaction: FC<{ tx: PortfolioTransaction }> = ({
 }) => {
   return (
     <PortfolioInfoRow
-      chainId={tx.chainId as ChainId}
-      href={Chain.from(tx.chainId)?.getTxUrl(tx.txHash)}
+      chainId={tx.chainId as EvmChainId}
+      href={EvmChain.from(tx.chainId)?.getTxUrl(tx.txHash)}
       externalLink
       icon={
         <div className="p-1.5 bg-[#64748B] rounded-full w-7 h-7">

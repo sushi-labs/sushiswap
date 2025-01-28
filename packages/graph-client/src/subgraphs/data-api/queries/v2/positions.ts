@@ -1,10 +1,10 @@
 import type { VariablesOf } from 'gql.tada'
-import { request, type RequestOptions } from 'src/lib/request'
-import { ChainId, ChefType, RewarderType, SushiSwapProtocol } from 'sushi'
+import { request, type RequestOptions } from 'src/lib/request.js'
+import { EvmChainId, ChefType, RewarderType, SushiSwapProtocol } from 'sushi'
 import { isSushiSwapV2ChainId } from 'sushi/config'
 import { getAddress, type Address } from 'viem'
 import { SUSHI_DATA_API_HOST } from 'sushi/config/subgraph'
-import { graphql } from '../../graphql'
+import { graphql } from '../../graphql.js'
 
 export const V2PositionsQuery = graphql(
   `
@@ -75,7 +75,7 @@ export async function getV2Positions(
   options?: RequestOptions,
 ) {
   const url = `${SUSHI_DATA_API_HOST}/graphql`
-  const chainId = Number(variables.chainId) as ChainId
+  const chainId = Number(variables.chainId) as EvmChainId
 
   if (!isSushiSwapV2ChainId(chainId)) {
     throw new Error('Invalid chainId')

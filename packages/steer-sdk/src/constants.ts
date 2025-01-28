@@ -1,5 +1,7 @@
 import { ChainId } from 'sushi/chain'
-import { DECENTRALIZED_HOST_BY_SUBGRAPH_ID } from 'sushi/config/subgraph'
+import { SUSHI_DOMAIN_RESTRICTED_API_KEY } from 'sushi/config/subgraph'
+
+const DECENTRALIZED_HOST_BY_SUBGRAPH_ID = `gateway-arbitrum.network.thegraph.com/api/${SUSHI_DOMAIN_RESTRICTED_API_KEY}/subgraphs/id`
 
 export const STEER_SUPPORTED_CHAIN_IDS = [
   ChainId.POLYGON,

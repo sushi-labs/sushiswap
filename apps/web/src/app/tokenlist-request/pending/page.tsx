@@ -25,7 +25,7 @@ import React, { useMemo, useState } from 'react'
 import { usePendingTokens } from 'src/lib/hooks/api/usePendingTokenListings'
 import { TokenSecurityView } from 'src/lib/wagmi/components/token-security-view'
 import { formatNumber, formatUSD, shortenAddress } from 'sushi'
-import { Chain } from 'sushi/chain'
+import { EvmChain, EvmChainId } from 'sushi/chain'
 import { Token } from 'sushi/currency'
 import { getAddress } from 'viem'
 import { NavigationItems } from '../navigation-items'
@@ -66,7 +66,7 @@ const COLUMNS: ColumnDef<PendingTokens[number], unknown>[] = [
           </span>
           <LinkExternal
             target="_blank"
-            href={Chain.from(props.row.original.token.chainId)?.getTokenUrl(
+            href={EvmChain.from(props.row.original.token.chainId)?.getTokenUrl(
               props.row.original.token.address,
             )}
           >
@@ -202,7 +202,12 @@ const COLUMNS: ColumnDef<PendingTokens[number], unknown>[] = [
                     trust_list: props.row.original.security.trustList,
                   },
                 }}
-                token={new Token(props.row.original.token)}
+                token={
+                  new Token({
+                    ...props.row.original.token,
+                    chainId: props.row.original.token.chainId as EvmChainId,
+                  })
+                }
               />
             </CardContent>
           </Card>,

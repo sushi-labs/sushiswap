@@ -37,7 +37,7 @@ import {
   useCoinGeckoTokenInfo,
   useTokenSecurity,
 } from 'src/lib/hooks/react-query'
-import { Chain } from 'sushi/chain'
+import { EvmChain } from 'sushi/chain'
 import { Type } from 'sushi/currency'
 import { formatNumber, formatUSD, shortenAddress } from 'sushi/format'
 
@@ -92,7 +92,7 @@ export const CurrencyInfo: FC<CurrencyInfoProps> = ({ currency, onBack }) => {
             <div className="flex gap-1 items-center">
               <span className="text-xl font-medium">{currency.symbol}</span>
               <span className="text-muted-foreground text-base font-normal">
-                {Chain.from(currency.chainId)?.name}
+                {EvmChain.from(currency.chainId)?.name}
               </span>
             </div>
           </DialogTitle>
@@ -226,7 +226,7 @@ export const CurrencyInfo: FC<CurrencyInfoProps> = ({ currency, onBack }) => {
               <span className="flex gap-1 items-center">
                 <LinkExternal
                   className="font-medium"
-                  href={Chain.from(currency.chainId)?.getTokenUrl(
+                  href={EvmChain.from(currency.chainId)?.getTokenUrl(
                     currency.wrapped.address,
                   )}
                 >

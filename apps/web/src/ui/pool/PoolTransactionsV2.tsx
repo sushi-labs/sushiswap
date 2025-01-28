@@ -11,7 +11,7 @@ import {
 import { useQuery } from '@tanstack/react-query'
 import { PaginationState } from '@tanstack/react-table'
 import { FC, useMemo, useState } from 'react'
-import { Chain, ChainId } from 'sushi/chain'
+import { EvmChain, EvmChainId } from 'sushi/chain'
 import { SushiSwapV2ChainId, isSushiSwapV2ChainId } from 'sushi/config'
 
 import {
@@ -95,7 +95,7 @@ function useTransactionsV2(
   return useQuery({
     queryKey: ['poolTransactionsV2', poolAddress, pool?.chainId, opts],
     queryFn: async () => {
-      const chainId = pool?.chainId as ChainId
+      const chainId = pool?.chainId as EvmChainId
 
       if (!pool || !isSushiSwapV2ChainId(chainId)) return []
 
@@ -168,7 +168,7 @@ function useTransactionsV2(
           .sort((a, b) => b.logIndex - a.logIndex)
       })
     },
-    enabled: !!pool && isSushiSwapV2ChainId(pool?.chainId as ChainId),
+    enabled: !!pool && isSushiSwapV2ChainId(pool?.chainId as EvmChainId),
     refetchInterval: opts?.refetchInterval,
   })
 }
@@ -257,7 +257,7 @@ const PoolTransactionsV2: FC<PoolTransactionsV2Props> = ({
       <CardContent className="!px-0">
         <DataTable
           linkFormatter={(row) =>
-            Chain.from(row.chainId)?.getTxUrl(row.txHash) ?? ''
+            EvmChain.from(row.chainId)?.getTxUrl(row.txHash) ?? ''
           }
           loading={isLoading}
           columns={COLUMNS}

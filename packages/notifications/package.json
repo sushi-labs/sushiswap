@@ -50,16 +50,16 @@
     "react-toastify": "11.0.1"
   },
   "devDependencies": {
-    "@tsconfig/esm": "1.0.4",
-    "@tsconfig/strictest": "2.0.2",
-    "@types/react": "19.0.1",
-    "@types/react-dom": "19.0.2",
-    "sushi": "4.2.2",
-    "typescript": "5.7.2"
+    "@tsconfig/node20": "catalog:tsconfig",
+    "@tsconfig/strictest": "catalog:tsconfig",
+    "@types/react": "catalog:react",
+    "@types/react-dom": "catalog:react",
+    "sushi": "catalog:web3",
+    "typescript": "catalog:"
   },
   "peerDependencies": {
-    "react": "19.0.0",
-    "react-dom": "19.0.0"
+    "react": "catalog:react",
+    "react-dom": "catalog:react"
   },
   "peerDependenciesMeta": {
     "react": {

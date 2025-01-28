@@ -17,9 +17,9 @@
     "@sushiswap/ui": "workspace:*",
     "@tanstack/react-table": "8.9.1",
     "class-variance-authority": "0.7.0",
-    "react": "19.0.0",
-    "react-dom": "19.0.0",
-    "sushi": "4.2.2"
+    "react": "catalog:react",
+    "react-dom": "catalog:react",
+    "sushi": "catalog:web3"
   },
   "devDependencies": {
     "@storybook/addon-a11y": "8.4.7",
@@ -34,15 +34,15 @@
     "@storybook/react": "8.4.7",
     "@storybook/react-vite": "8.4.7",
     "@sushiswap/typescript-config": "workspace:*",
-    "@types/react": "19.0.1",
+    "@types/react": "catalog:react",
     "@vitejs/plugin-react": "4.1.0",
     "autoprefixer": "10.4.14",
     "chromatic": "7.4.0",
     "postcss": "8.4.23",
     "serve": "14.2.0",
     "storybook": "8.4.7",
-    "tailwindcss": "3.3.2",
-    "typescript": "5.7.2",
+    "tailwindcss": "catalog:ui",
+    "typescript": "catalog:",
     "vite": "4.3.9"
   }
 }

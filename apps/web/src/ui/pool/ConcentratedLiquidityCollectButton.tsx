@@ -8,12 +8,12 @@ import {
 } from '@sushiswap/telemetry'
 import { FC, ReactElement, useCallback, useMemo } from 'react'
 import { ConcentratedLiquidityPosition } from 'src/lib/wagmi/hooks/positions/types'
-import { ChainId } from 'sushi/chain'
+import { EvmChainId } from 'sushi/chain'
 import {
   SUSHISWAP_V3_POSTIION_MANAGER,
   isSushiSwapV3ChainId,
 } from 'sushi/config'
-import { Amount, Type, unwrapToken } from 'sushi/currency'
+import { Amount, Type } from 'sushi/currency'
 import { NonfungiblePositionManager, Position } from 'sushi/pool/sushiswap-v3'
 import { Hex, SendTransactionReturnType, UserRejectedRequestError } from 'viem'
 import {
@@ -31,7 +31,7 @@ interface ConcentratedLiquidityCollectButton {
   token0: Type | undefined
   token1: Type | undefined
   account: `0x${string}` | undefined
-  chainId: ChainId
+  chainId: EvmChainId
   children(
     params: Omit<
       ReturnType<typeof useSendTransaction>,
@@ -69,16 +69,14 @@ export const ConcentratedLiquidityCollectButton: FC<
         ? Amount.fromRawAmount(token0, positionDetails.fees[0])
         : undefined
       const feeValue1 = positionDetails.fees
-        ? Amount.fromRawAmount(token0, positionDetails.fees[1])
+        ? Amount.fromRawAmount(token1, positionDetails.fees[1])
         : undefined
 
       const { calldata, value } =
         NonfungiblePositionManager.collectCallParameters({
           tokenId: positionDetails.tokenId.toString(),
-          expectedCurrencyOwed0:
-            feeValue0 ?? Amount.fromRawAmount(unwrapToken(token0), 0),
-          expectedCurrencyOwed1:
-            feeValue1 ?? Amount.fromRawAmount(unwrapToken(token1), 0),
+          expectedCurrencyOwed0: feeValue0 ?? Amount.fromRawAmount(token0, 0),
+          expectedCurrencyOwed1: feeValue1 ?? Amount.fromRawAmount(token1, 0),
           recipient: account,
         })
 

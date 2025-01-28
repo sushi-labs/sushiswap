@@ -1,50 +1,44 @@
 import { ArrowTopRightOnSquareIcon } from '@heroicons/react/20/solid'
-import { Button, Currency, Dots, Loader, classNames } from '@sushiswap/ui'
+import { Button, Dots, Loader, classNames } from '@sushiswap/ui'
 import { CheckMarkIcon } from '@sushiswap/ui/icons/CheckMarkIcon'
 import { FailedMarkIcon } from '@sushiswap/ui/icons/FailedMarkIcon'
-import { SquidIcon } from '@sushiswap/ui/icons/SquidIcon'
 import { FC, ReactNode } from 'react'
-import { UseCrossChainTradeReturn } from 'src/lib/hooks'
-import {
-  SushiXSwap2Adapter,
-  SushiXSwapTransactionType,
-} from 'src/lib/swap/cross-chain/lib'
-import { Chain } from 'sushi/chain'
-import { STARGATE_TOKEN } from 'sushi/config'
+import { EvmChain } from 'sushi/chain'
 import { shortenAddress } from 'sushi/format'
 import {
-  useCrossChainSwapTrade,
+  UseSelectedCrossChainTradeRouteReturn,
   useDerivedStateCrossChainSwap,
+  useSelectedCrossChainTradeRoute,
 } from './derivedstate-cross-chain-swap-provider'
 
 interface ConfirmationDialogContent {
   txHash?: string
   dstTxHash?: string
   bridgeUrl?: string
-  adapter?: SushiXSwap2Adapter
   dialogState: { source: StepState; bridge: StepState; dest: StepState }
-  tradeRef: React.MutableRefObject<UseCrossChainTradeReturn | null>
+  routeRef: React.MutableRefObject<UseSelectedCrossChainTradeRouteReturn | null>
 }
 
 export const ConfirmationDialogContent: FC<ConfirmationDialogContent> = ({
   txHash,
   bridgeUrl,
-  adapter,
   dstTxHash,
   dialogState,
-  tradeRef,
+  routeRef,
 }) => {
   const {
     state: { chainId0, chainId1, token0, token1, recipient },
   } = useDerivedStateCrossChainSwap()
-  const { data: trade } = useCrossChainSwapTrade()
+  const { data: trade } = useSelectedCrossChainTradeRoute()
 
   const swapOnDest =
-    trade?.transactionType &&
+    trade?.step &&
     [
-      SushiXSwapTransactionType.BridgeAndSwap,
-      SushiXSwapTransactionType.CrossChainSwap,
-    ].includes(trade.transactionType)
+      trade.step.includedStepsWithoutFees[1]?.type,
+      trade.step.includedStepsWithoutFees[2]?.type,
+    ].includes('swap')
+      ? true
+      : false
 
   if (dialogState.source === StepState.Sign) {
     return <>Please sign order with your wallet.</>
@@ -58,12 +52,12 @@ export const ConfirmationDialogContent: FC<ConfirmationDialogContent> = ({
           <a
             target="_blank"
             rel="noreferrer noopener noreferer"
-            href={txHash ? Chain.from(chainId0)?.getTxUrl(txHash) : ''}
+            href={txHash ? EvmChain.from(chainId0)?.getTxUrl(txHash) : ''}
           >
             transaction
           </a>
         </Button>{' '}
-        to be confirmed on {Chain.from(chainId0)?.name}
+        to be confirmed on {EvmChain.from(chainId0)?.name}
       </>
     )
   }
@@ -98,23 +92,31 @@ export const ConfirmationDialogContent: FC<ConfirmationDialogContent> = ({
             <ArrowTopRightOnSquareIcon width={16} height={16} />
           </a>
         </Button>{' '}
-        <CrossChainAdapter adapter={adapter} />
       </>
     )
   }
 
   if (dialogState.dest === StepState.PartialSuccess) {
+    const fromTokenSymbol =
+      routeRef?.current?.step?.includedStepsWithoutFees?.[1]?.type === 'swap'
+        ? routeRef?.current?.step?.includedStepsWithoutFees?.[1]?.action
+            ?.fromToken?.symbol
+        : routeRef?.current?.step?.includedStepsWithoutFees?.[2]?.type ===
+            'swap'
+          ? routeRef?.current?.step?.includedStepsWithoutFees?.[2]?.action
+              ?.fromToken?.symbol
+          : undefined
+
     return (
       <>
-        We {`couldn't`} swap {tradeRef?.current?.dstBridgeToken?.symbol} into{' '}
-        {token1?.symbol}, {tradeRef?.current?.dstBridgeToken?.symbol} has been
-        send to{' '}
+        We {`couldn't`} swap {fromTokenSymbol} into {token1?.symbol},{' '}
+        {fromTokenSymbol} has been send to{' '}
         {recipient ? (
           <Button asChild size="sm" variant="link">
             <a
               target="_blank"
               rel="noreferrer noopener noreferer"
-              href={Chain.from(chainId1)?.getAccountUrl(recipient)}
+              href={EvmChain.from(chainId1)?.getAccountUrl(recipient)}
             >
               <Dots>{shortenAddress(recipient)}</Dots>
             </a>
@@ -135,7 +137,7 @@ export const ConfirmationDialogContent: FC<ConfirmationDialogContent> = ({
             <a
               target="_blank"
               rel="noreferrer noopener noreferer"
-              href={txHash ? Chain.from(chainId0)?.getTxUrl(txHash) : ''}
+              href={txHash ? EvmChain.from(chainId0)?.getTxUrl(txHash) : ''}
             >
               {trade?.amountIn?.toSignificant(6)} {token0?.symbol}
             </a>
@@ -145,7 +147,9 @@ export const ConfirmationDialogContent: FC<ConfirmationDialogContent> = ({
             <a
               target="_blank"
               rel="noreferrer noopener noreferer"
-              href={dstTxHash ? Chain.from(chainId1)?.getTxUrl(dstTxHash) : ''}
+              href={
+                dstTxHash ? EvmChain.from(chainId1)?.getTxUrl(dstTxHash) : ''
+              }
             >
               {trade?.amountOut?.toSignificant(6)} {token1?.symbol}
             </a>
@@ -160,7 +164,9 @@ export const ConfirmationDialogContent: FC<ConfirmationDialogContent> = ({
             <a
               target="_blank"
               rel="noreferrer noopener noreferer"
-              href={dstTxHash ? Chain.from(chainId1)?.getTxUrl(dstTxHash) : ''}
+              href={
+                dstTxHash ? EvmChain.from(chainId1)?.getTxUrl(dstTxHash) : ''
+              }
             >
               {trade?.amountOut?.toSignificant(6)} {token1?.symbol}
             </a>
@@ -172,31 +178,6 @@ export const ConfirmationDialogContent: FC<ConfirmationDialogContent> = ({
   }
 
   return <span />
-}
-
-const CrossChainAdapter = ({
-  adapter,
-}: { adapter: SushiXSwap2Adapter | undefined }) => {
-  return (
-    <span className="flex items-center gap-1">
-      powered by{' '}
-      {adapter === SushiXSwap2Adapter.Stargate ? (
-        <>
-          <div className="min-h-4 min-w-4">
-            <Currency.Icon currency={STARGATE_TOKEN} width={16} height={16} />
-          </div>{' '}
-          Stargate
-        </>
-      ) : (
-        <>
-          <div className="min-h-4 min-w-4">
-            <SquidIcon width={16} height={16} />
-          </div>{' '}
-          Squid
-        </>
-      )}
-    </span>
-  )
 }
 
 export enum StepState {

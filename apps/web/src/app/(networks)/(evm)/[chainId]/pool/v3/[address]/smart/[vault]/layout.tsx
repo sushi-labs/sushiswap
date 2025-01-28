@@ -6,7 +6,7 @@ import {
 import { Container } from '@sushiswap/ui'
 import { unstable_cache } from 'next/cache'
 import { notFound } from 'next/navigation'
-import { ChainId } from 'sushi/chain'
+import { EvmChainId } from 'sushi/chain'
 import { isSushiSwapV3ChainId } from 'sushi/config'
 import { isAddress } from 'viem'
 
@@ -18,7 +18,7 @@ export default async function Layout(props: {
 
   const { children } = props
 
-  const chainId = Number(params.chainId) as ChainId
+  const chainId = Number(params.chainId) as EvmChainId
   const vaultAddress = params.vault
 
   if (

@@ -4,7 +4,7 @@ import { useIsMounted } from '@sushiswap/hooks'
 import { Collapsible, Explainer, SkeletonBox, classNames } from '@sushiswap/ui'
 import React, { FC } from 'react'
 import { AddressToEnsResolver } from 'src/lib/wagmi/components/account/AddressToEnsResolver'
-import { Chain, ChainId } from 'sushi/chain'
+import { ChainId, EvmChain } from 'sushi/chain'
 import { Native } from 'sushi/currency'
 import { shortenAddress } from 'sushi/format'
 import { ZERO } from 'sushi/math'
@@ -138,7 +138,7 @@ export const SimpleSwapTradeStats: FC = () => {
             <span className="font-semibold text-gray-700 text-right dark:text-slate-400">
               <a
                 target="_blank"
-                href={Chain.from(chainId)?.getAccountUrl(recipient)}
+                href={EvmChain.from(chainId)?.getAccountUrl(recipient)}
                 className={classNames(
                   address !== recipient
                     ? 'text-yellow-600'

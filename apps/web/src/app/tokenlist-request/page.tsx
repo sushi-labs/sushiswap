@@ -30,10 +30,10 @@ import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import { useMutation } from '@tanstack/react-query'
 import { useEffect, useMemo } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
+import { SUSHI_DATA_API_HOST } from 'src/lib/constants'
 import { useTokenAnalysis } from 'src/lib/hooks/api/useTokenAnalysis'
 import { NetworkSelector } from 'src/lib/wagmi/components/network-selector'
-import { Chain, ChainId } from 'sushi/chain'
-import { SUSHI_DATA_API_HOST } from 'sushi/config/subgraph'
+import { ChainId, EvmChain } from 'sushi/chain'
 import { formatNumber, formatUSD } from 'sushi/format'
 import { SUPPORTED_CHAIN_IDS } from '../../config'
 import { NavigationItems } from './navigation-items'
@@ -350,7 +350,7 @@ export default function TokenListing() {
                               width={16}
                               height={16}
                             />
-                            {Chain.from(value)?.name}
+                            {EvmChain.from(value)?.name}
                             <SelectIcon />
                           </Button>
                         </NetworkSelector>

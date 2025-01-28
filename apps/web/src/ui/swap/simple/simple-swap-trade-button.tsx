@@ -8,7 +8,7 @@ import {
   HoverCardTrigger,
 } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui'
-import React, { FC, useEffect, useState } from 'react'
+import React, { FC, useEffect, useMemo, useState } from 'react'
 import { UseTradeReturn } from 'src/lib/hooks/react-query'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
 import {
@@ -99,12 +99,17 @@ const _SimpleSwapTradeButton: FC<SimpleSwapTradeButtonProps> = ({
     token1?.isNative &&
     token0?.wrapped.address === Native.onChain(chainId).wrapped.address
 
+  const showPriceImpactWarning = useMemo(() => {
+    const priceImpactSeverity = warningSeverity(trade?.priceImpact)
+    return priceImpactSeverity > 3
+  }, [trade?.priceImpact])
+
   // Reset
   useEffect(() => {
-    if (warningSeverity(trade?.priceImpact) <= 3) {
+    if (checked && !showPriceImpactWarning) {
       setChecked(false)
     }
-  }, [trade?.priceImpact])
+  }, [showPriceImpactWarning, checked])
 
   return (
     <>
@@ -136,18 +141,13 @@ const _SimpleSwapTradeButton: FC<SimpleSwapTradeButtonProps> = ({
                               !trade?.amountOut?.greaterThan(ZERO) ||
                               trade?.route?.status === 'NoWay' ||
                               +swapAmountString === 0 ||
-                              (!checked &&
-                                warningSeverity(trade?.priceImpact) > 3),
+                              (!checked && showPriceImpactWarning),
                           )}
-                          color={
-                            warningSeverity(trade?.priceImpact) >= 3
-                              ? 'red'
-                              : 'blue'
-                          }
+                          color={showPriceImpactWarning ? 'red' : 'blue'}
                           fullWidth
                           testId="swap"
                         >
-                          {!checked && warningSeverity(trade?.priceImpact) >= 3
+                          {!checked && showPriceImpactWarning
                             ? 'Price impact too high'
                             : trade?.route?.status === 'NoWay'
                               ? 'No trade found'
@@ -166,7 +166,7 @@ const _SimpleSwapTradeButton: FC<SimpleSwapTradeButtonProps> = ({
           </PartialRouteChecker>
         </Checker.Guard>
       </div>
-      {warningSeverity(trade?.priceImpact) > 3 && (
+      {showPriceImpactWarning && (
         <div className="flex items-start px-4 py-3 mt-4 rounded-xl bg-red/20">
           <input
             id="expert-checkbox"

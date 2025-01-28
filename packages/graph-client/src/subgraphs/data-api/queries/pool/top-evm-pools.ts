@@ -1,9 +1,9 @@
 import type { VariablesOf } from 'gql.tada'
-import { type RequestOptions, request } from 'src/lib/request'
+import { type RequestOptions, request } from 'src/lib/request.js'
 import { SUSHI_DATA_API_HOST } from 'sushi/config/subgraph'
-import { graphql } from '../../graphql'
-import { SUSHI_REQUEST_HEADERS } from '../../request-headers'
-import { ChainId, isChainId } from 'sushi'
+import { graphql } from '../../graphql.js'
+import { SUSHI_REQUEST_HEADERS } from '../../request-headers.js'
+import { EvmChainId, isEvmChainId } from 'sushi'
 
 export const TopPoolsQuery = graphql(
   `
@@ -49,12 +49,12 @@ export async function getTopPools(
 ) {
   const url = `${SUSHI_DATA_API_HOST}/graphql`
   try {
-    if (!isChainId(parseInt(variables.chainId))) {
+    if (!isEvmChainId(parseInt(variables.chainId))) {
       throw new Error(
         `Invalid chainId: ${variables.chainId}, this only supports evm networks and must be a number.`,
       )
     }
-    const chainId = parseInt(variables.chainId) as ChainId
+    const chainId = parseInt(variables.chainId) as EvmChainId
     const result = await request(
       {
         url,

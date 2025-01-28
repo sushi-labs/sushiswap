@@ -1,13 +1,13 @@
 import { useQuery } from '@tanstack/react-query'
 import { isPromiseRejected } from 'sushi'
-import { ChainId } from 'sushi/chain'
+import { EvmChainId } from 'sushi/chain'
 
 import { Address } from 'viem'
 import { useAllPrices } from '../prices'
 import { angleRewardsQueryFn, angleRewardsSelect } from './useAngleRewards'
 
 interface UseAngleRewardsParams {
-  chainIds: ChainId[]
+  chainIds: EvmChainId[]
   account: Address | undefined
 }
 

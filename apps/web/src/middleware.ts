@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { ChainKey, getChainInfo } from 'sushi/chain'
+import { ChainKey, getEvmChainInfo } from 'sushi/chain'
 import { isSushiSwapChainId } from 'sushi/config'
 
 export const config = {
@@ -57,7 +57,7 @@ export async function middleware(req: NextRequest) {
     /([\w-]+)(?=\/swap|\/limit|\/dca|\/cross-chain-swap|\/explore|\/pool|\/positions|\/rewards|\/migrate)/,
   )
   if (networkNameMatch?.length) {
-    const { chainId, networkName } = getChainInfo(networkNameMatch[0])
+    const { chainId, networkName } = getEvmChainInfo(networkNameMatch[0])
     if (!chainId) return NextResponse.next()
 
     const url = req.nextUrl.clone()

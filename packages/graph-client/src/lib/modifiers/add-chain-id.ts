@@ -1,5 +1,5 @@
 import type { ChainId } from 'sushi/chain'
-import type { ChainIdVariable } from '../types/chainId'
+import type { ChainIdVariable } from '../types/chainId.js'
 
 type ReturnType<C extends ChainId, T extends Record<string, any>> = T &
   ChainIdVariable<C>

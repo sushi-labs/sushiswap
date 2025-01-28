@@ -5,7 +5,7 @@ import { ArrowUpRightIcon } from '@heroicons/react/24/solid'
 import { useLocalStorage } from '@sushiswap/hooks'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import { FC } from 'react'
-import { Chain, ChainId } from 'sushi/chain'
+import { ChainId, EvmChain } from 'sushi/chain'
 import { useDerivedStateSimpleSwap } from './derivedstate-simple-swap-provider'
 
 const BridgeInfo = {
@@ -53,13 +53,13 @@ export const SimpleSwapBridgeBanner: FC = () => {
             <NetworkIcon chainId={chainId} width={24} height={24} />
             <div className="flex items-center">
               <span className="font-semibold">
-                Bridge to {Chain.fromChainId(chainId)?.name}
+                Bridge to {EvmChain.fromChainId(chainId)?.name}
               </span>
               <ArrowUpRightIcon width={20} height={20} />
             </div>
           </div>
           <span className="text-xs">
-            Deposit your tokens to {Chain.fromChainId(chainId)?.name}.
+            Deposit your tokens to {EvmChain.fromChainId(chainId)?.name}.
           </span>
         </div>
       </div>

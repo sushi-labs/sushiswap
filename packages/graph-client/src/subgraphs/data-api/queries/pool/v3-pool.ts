@@ -1,9 +1,9 @@
 import type { VariablesOf } from 'gql.tada'
 
 import type { PoolHasSteerVaults } from '@sushiswap/steer-sdk'
-import { request, type RequestOptions } from 'src/lib/request'
+import { request, type RequestOptions } from 'src/lib/request.js'
 import {
-  ChainId,
+  EvmChainId,
   ChefType,
   RewarderType,
   SushiSwapProtocol,
@@ -14,10 +14,10 @@ import {
   type PoolWithIncentives,
 } from 'sushi'
 import { isSushiSwapV3ChainId } from 'sushi/config'
-import { SUSHI_DATA_API_HOST } from 'sushi/config/subgraph'
+import { SUSHI_DATA_API_HOST } from '../../data-api-host.js'
 import type { Address } from 'viem'
-import { graphql } from '../../graphql'
-import { SUSHI_REQUEST_HEADERS } from '../../request-headers'
+import { graphql } from '../../graphql.js'
+import { SUSHI_REQUEST_HEADERS } from '../../request-headers.js'
 
 export const V3PoolQuery = graphql(
   `
@@ -102,7 +102,7 @@ export async function getV3Pool(
   options?: RequestOptions,
 ) {
   const url = `${SUSHI_DATA_API_HOST}/graphql`
-  const chainId = Number(variables.chainId) as ChainId
+  const chainId = Number(variables.chainId) as EvmChainId
 
   if (!isSushiSwapV3ChainId(chainId)) {
     throw new Error('Invalid chainId')

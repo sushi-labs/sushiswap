@@ -1,11 +1,11 @@
 import type { VariablesOf } from 'gql.tada'
 
-import { request, type RequestOptions } from 'src/lib/request'
-import { graphql } from '../graphql'
-import { ImageFieldsFragment } from 'src/subgraphs/strapi/fragments/image-fields'
-import { AuthorFieldsFragment } from 'src/subgraphs/strapi/fragments/author-fields'
-import { STRAPI_GRAPHQL_URL } from 'src/subgraphs/strapi/constants'
-import { transformImage } from 'src/subgraphs/strapi/transforms/transform-image'
+import { request, type RequestOptions } from 'src/lib/request.js'
+import { graphql } from '../graphql.js'
+import { ImageFieldsFragment } from 'src/subgraphs/strapi/fragments/image-fields.js'
+import { AuthorFieldsFragment } from 'src/subgraphs/strapi/fragments/author-fields.js'
+import { STRAPI_GRAPHQL_URL } from 'src/subgraphs/strapi/constants.js'
+import { transformImage } from 'src/subgraphs/strapi/transforms/transform-image.js'
 
 export const StrapiAcademyArticlesQuery = graphql(
   `query AcademyArticles($filters: ArticleFiltersInput, $pagination: PaginationArg, $publicationState: PublicationState = LIVE, $sort: [String] = ["publishedAt:desc"]) {

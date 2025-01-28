@@ -13,11 +13,17 @@ export const SimpleSwapTradeButton = () => {
   const [checked, setChecked] = useState<boolean>(false)
   const { data: routes } = useSwap()
 
+  const showPriceImpactWarning = useMemo(() => {
+    const priceImpactSeverity = warningSeverity(routes?.priceImpact)
+    return priceImpactSeverity > 3
+  }, [routes?.priceImpact])
+
+  // Reset
   useEffect(() => {
-    if (warningSeverity(routes?.priceImpact) <= 3) {
+    if (checked && !showPriceImpactWarning) {
       setChecked(false)
     }
-  }, [routes])
+  }, [showPriceImpactWarning, checked])
 
   const checkerAmount = useMemo(() => {
     if (!token0) return []
@@ -48,9 +54,7 @@ export const SimpleSwapTradeButton = () => {
             <Checker.Connect fullWidth size="xl">
               <Checker.Amounts amounts={checkerAmount} fullWidth size="xl">
                 <Checker.Guard
-                  guardWhen={
-                    !checked && warningSeverity(routes?.priceImpact) > 3
-                  }
+                  guardWhen={!checked && showPriceImpactWarning}
                   guardText="Price impact too high"
                   variant="destructive"
                   size="xl"
@@ -74,7 +78,7 @@ export const SimpleSwapTradeButton = () => {
           </Checker.Guard>
         </Checker.Guard>
       </div>
-      {warningSeverity(routes?.priceImpact) > 3 && (
+      {showPriceImpactWarning && (
         <div className="flex items-start px-4 py-3 mt-4 rounded-xl bg-red/20">
           <input
             id="expert-checkbox"

@@ -1,9 +1,9 @@
-import { Chain, ChainId, ChainKey } from 'sushi/chain'
+import { ChainId, ChainKey, EvmChain } from 'sushi/chain'
 import { NonStandardChain, NonStandardChainId } from '../config'
 
 export const getNetworkName = (network: ChainId | NonStandardChainId) => {
   return typeof network === 'number'
-    ? Chain.from(network)?.name
+    ? EvmChain.from(network)?.name
     : NonStandardChain[network].name
 }
 

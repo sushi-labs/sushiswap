@@ -18,7 +18,7 @@ import {
   List,
 } from '@sushiswap/ui'
 import React, { FC, ReactNode, useCallback, useMemo } from 'react'
-import { Chain } from 'sushi/chain'
+import { EvmChain } from 'sushi/chain'
 import { Amount } from 'sushi/currency'
 import { formatUSD } from 'sushi/format'
 import {
@@ -238,7 +238,7 @@ export const SteerPositionAddReviewModal: FC<SteerPositionAddReviewModalProps> =
                   <List className="!pt-0">
                     <List.Control>
                       <List.KeyValue flex title="Network">
-                        {Chain.from(vault.chainId)!.name}
+                        {EvmChain.from(vault.chainId)!.name}
                       </List.KeyValue>
                     </List.Control>
                   </List>

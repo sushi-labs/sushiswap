@@ -1,5 +1,5 @@
 import { type Address } from 'viem'
-import type { SteerVault } from '../types/steer-vault'
+import type { SteerVault } from '../types/steer-vault.js'
 
 interface GetTokenRatiosProps {
   vault: Pick<

@@ -4,9 +4,8 @@ interface BaseNotification {
   account: string | `0x${string}` | undefined
   type:
     | 'send'
-    | 'stargate'
-    | 'squid'
     | 'swap'
+    | 'xswap'
     | 'mint'
     | 'burn'
     | 'approval'

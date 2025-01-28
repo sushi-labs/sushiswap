@@ -1,6 +1,6 @@
 import { getIdFromChainIdAddress } from 'sushi/format'
 import type { Address } from 'viem'
-import type { SteerChainId } from '../constants'
+import type { SteerChainId } from '../constants.js'
 
 interface GetVaultAprs {
   chainId: SteerChainId
@@ -29,7 +29,7 @@ export async function getVaultAprs({ chainId }: GetVaultAprs) {
   if (!result.ok)
     throw new Error(`Failed to fetch aprs for chainId: ${chainId}`)
 
-  const { message, data }: AprData = await result.json()
+  const { message, data } = (await result.json()) as AprData
 
   if (message !== 'Success')
     throw new Error(`Failed to fetch aprs for chainId: ${chainId}`)

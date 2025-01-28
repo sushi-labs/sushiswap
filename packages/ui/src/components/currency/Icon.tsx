@@ -1,6 +1,6 @@
 import { ImageProps } from 'next/image'
 import { FC } from 'react'
-import { Chain, ChainId } from 'sushi/chain'
+import { ChainId, EvmChain } from 'sushi/chain'
 import { Currency } from 'sushi/currency'
 
 import { Avatar, AvatarImage } from '../avatar'
@@ -151,7 +151,7 @@ export const Icon: FC<IconProps> = ({
 
   return (
     <LinkExternal
-      href={Chain.tokenUrl(currency.chainId, currency.wrapped.address)}
+      href={EvmChain.tokenUrl(currency.chainId, currency.wrapped.address)}
     >
       {avatar}
     </LinkExternal>

@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation'
 import React from 'react'
 
 import { MigrateTabContent } from 'src/ui/pool/MigrateTabContent'
-import { ChainId } from 'sushi'
+import { EvmChainId } from 'sushi'
 import { isSushiSwapV2ChainId } from 'sushi/config'
 
 export const metadata: Metadata = {
@@ -15,7 +15,7 @@ export default async function MigratePage(props: {
   params: Promise<{ chainId: string }>
 }) {
   const params = await props.params
-  const chainId = +params.chainId as ChainId
+  const chainId = +params.chainId as EvmChainId
 
   if (!isSushiSwapV2ChainId(chainId)) {
     return notFound()

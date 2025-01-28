@@ -21,7 +21,7 @@ import { List } from '@sushiswap/ui'
 import React, { FC, ReactNode, useMemo } from 'react'
 import { useAngleRewardsMultipleChains } from 'src/lib/hooks/react-query'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
-import { Chain } from 'sushi/chain'
+import { EvmChain } from 'sushi/chain'
 import { formatNumber } from 'sushi/format'
 import { Address } from 'viem'
 import { ConcentratedLiquidityHarvestButton } from './ConcentratedLiquidityHarvestButton'
@@ -48,7 +48,7 @@ export const RewardSlide: FC<RewardSlide> = ({ address, data }) => {
               ? '0'
               : formatNumber(totalUnclaimedAmountUSD)}
           </CardTitle>
-          <CardDescription>{Chain.from(data.chainId)?.name}</CardDescription>
+          <CardDescription>{EvmChain.from(data.chainId)?.name}</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="flex flex-col gap-1">
@@ -128,7 +128,7 @@ export const RewardSlide: FC<RewardSlide> = ({ address, data }) => {
             <CardTitle>Claimable</CardTitle>
             <CardDescription>
               Claiming will harvest all your rewards for all your V3 Positions
-              on {Chain.from(data.chainId)?.name}.
+              on {EvmChain.from(data.chainId)?.name}.
             </CardDescription>
           </CardHeader>
           <CardContent>

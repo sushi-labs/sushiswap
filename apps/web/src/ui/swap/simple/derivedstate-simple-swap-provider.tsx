@@ -18,7 +18,7 @@ import {
 import { useTrade as useApiTrade } from 'src/lib/hooks/react-query'
 import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
 import { useTokenWithCache } from 'src/lib/wagmi/hooks/tokens/useTokenWithCache'
-import { ChainId } from 'sushi/chain'
+import { EvmChainId } from 'sushi/chain'
 import {
   defaultCurrency,
   defaultQuoteCurrency,
@@ -56,7 +56,7 @@ interface State {
   state: {
     token0: Type | undefined
     token1: Type | undefined
-    chainId: ChainId
+    chainId: EvmChainId
     swapAmountString: string
     swapAmount: Amount<Type> | undefined
     recipient: string | undefined
@@ -94,7 +94,7 @@ const DerivedstateSimpleSwapProvider: FC<DerivedStateSimpleSwapProviderProps> =
     const chainId =
       _chainId && isSupportedChainId(+_chainId)
         ? (+_chainId as SupportedChainId)
-        : ChainId.ETHEREUM
+        : EvmChainId.ETHEREUM
 
     // Get the searchParams and complete with defaults.
     // This handles the case where some params might not be provided by the user

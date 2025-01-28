@@ -15,7 +15,7 @@ import {
   SteerAccountPositionExtended,
   useSteerAccountPositionsExtended,
 } from 'src/lib/wagmi/hooks/steer/useSteerAccountPositionsExtended'
-import { ChainId, ChainKey, SushiSwapProtocol, formatPercent } from 'sushi'
+import { ChainKey, SushiSwapProtocol, formatPercent } from 'sushi'
 import { Address } from 'viem'
 import { useAccount } from 'wagmi'
 import { APRHoverCard } from './APRHoverCard'
@@ -52,7 +52,7 @@ const COLUMNS = [
             pool={{
               id: props.row.original.id as `${string}:0x${string}`,
               address: props.row.original.vault.poolAddress as Address,
-              chainId: props.row.original.vault.chainId as ChainId,
+              chainId: props.row.original.vault.chainId,
               protocol: SushiSwapProtocol.SUSHISWAP_V3,
               feeApr1d: props.row.original.vault.feeApr1d,
               incentiveApr: props.row.original.vault.incentiveApr,

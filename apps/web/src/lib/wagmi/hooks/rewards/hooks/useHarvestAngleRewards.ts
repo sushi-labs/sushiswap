@@ -1,6 +1,6 @@
 import { createErrorToast, createToast } from '@sushiswap/notifications'
 import { useCallback, useMemo } from 'react'
-import { ChainId } from 'sushi/chain'
+import { EvmChainId } from 'sushi/chain'
 import { Address, UserRejectedRequestError } from 'viem'
 import {
   useAccount,
@@ -13,7 +13,7 @@ import { useRefetchBalances } from '~evm/_common/ui/balance-provider/use-refetch
 
 interface UseHarvestAngleRewards {
   account: Address | undefined
-  chainId: ChainId
+  chainId: EvmChainId
   enabled?: boolean
   args:
     | {

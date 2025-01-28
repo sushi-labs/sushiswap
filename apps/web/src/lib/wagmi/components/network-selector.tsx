@@ -19,14 +19,14 @@ import {
   isNonStandardChainId,
 } from 'src/config'
 import { getNetworkName, replaceNetworkSlug } from 'src/lib/network'
-import { ChainId, isChainId, isNetworkNameKey } from 'sushi/chain'
+import { EvmChainId, isChainId, isEvmNetworkNameKey } from 'sushi/chain'
 
 export type NetworkSelectorOnSelectCallback<
-  T extends number | string = ChainId | NonStandardChainId,
+  T extends number | string = EvmChainId | NonStandardChainId,
 > = (chainId: T, close: () => void) => void
 
 export interface NetworkSelectorProps<
-  T extends number | string = ChainId | NonStandardChainId,
+  T extends number | string = EvmChainId | NonStandardChainId,
 > {
   networks: readonly T[]
   selected: T
@@ -48,12 +48,15 @@ const NetworkSelector = <T extends number | string>({
       const network = (isChainId(+_network) ? +_network : _network) as T
       const pathSegments = pathname.split('/')
       if (
-        isNetworkNameKey(pathSegments[1]) ||
+        isEvmNetworkNameKey(pathSegments[1]) ||
         isChainId(+pathSegments[1]) ||
         isNonStandardChainId(pathSegments[1])
       ) {
         push(
-          replaceNetworkSlug(network as ChainId | NonStandardChainId, pathname),
+          replaceNetworkSlug(
+            network as EvmChainId | NonStandardChainId,
+            pathname,
+          ),
           { scroll: false },
         )
       } else if (isNonStandardChainId(network.toString())) {
@@ -78,7 +81,7 @@ const NetworkSelector = <T extends number | string>({
           <CommandGroup>
             {networks.map((network) => {
               const name = getNetworkName(
-                network as ChainId | NonStandardChainId,
+                network as EvmChainId | NonStandardChainId,
               )
 
               return (
