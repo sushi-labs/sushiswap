@@ -9,7 +9,7 @@ import { Currency } from '@sushiswap/ui'
 import { SkeletonCircle, SkeletonText } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import { FC, useEffect, useMemo, useRef, useState } from 'react'
-import chains, { ChainId, chainShortName } from 'sushi/chain'
+import { EvmChainId, evmChainShortName, evmChains } from 'sushi/chain'
 import { Native, Token, Type } from 'sushi/currency'
 import { type TokenList } from 'sushi/token-list'
 import { isAddress } from 'viem'
@@ -20,28 +20,28 @@ import { SUPPORTED_CHAIN_IDS } from '../../../config'
 
 const EXAMPLE_CURRENCIES = [
   new Token({
-    chainId: ChainId.ETHEREUM,
+    chainId: EvmChainId.ETHEREUM,
     address: '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2',
     decimals: 18,
     symbol: 'ETH',
     name: 'Ether',
   }),
   new Token({
-    chainId: ChainId.ETHEREUM,
+    chainId: EvmChainId.ETHEREUM,
     address: '0x2260fac5e5542a773aa44fbcfedf7c193bc2c599',
     decimals: 18,
     symbol: 'WBTC',
     name: 'Wrapped BTC',
   }),
   new Token({
-    chainId: ChainId.ETHEREUM,
+    chainId: EvmChainId.ETHEREUM,
     address: '0xdac17f958d2ee523a2206206994597c13d831ec7',
     decimals: 18,
     symbol: 'USDT',
     name: 'Tether USD',
   }),
   new Token({
-    chainId: ChainId.BSC,
+    chainId: EvmChainId.BSC,
     address: '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c',
     decimals: 18,
     symbol: 'BNB',
@@ -52,7 +52,7 @@ const EXAMPLE_CURRENCIES = [
 export const Search: FC = () => {
   const ref = useRef<HTMLDivElement>(null)
   const [query, setQuery] = useState<string>('')
-  const [chainId, setChainId] = useState<ChainId>(ChainId.ETHEREUM)
+  const [chainId, setChainId] = useState<EvmChainId>(EvmChainId.ETHEREUM)
   const debouncedQuery = useDebounce(query, 500)
   const [selectNetwork, setSelectNetwork] = useState(false)
   const [open, setOpen] = useState(false)
@@ -147,7 +147,7 @@ export const Search: FC = () => {
               onKeyDown={() => setSelectNetwork((prev) => !prev)}
               className="font-semibold text-sm flex items-center gap-1 py-2 pl-3 pr-2 rounded-lg cursor-pointer bg-neutral-700 hover:bg-neutral-600 text-neutral-300 hover:text-neutral-200"
             >
-              {chainShortName[chainId].toUpperCase()}{' '}
+              {evmChainShortName[chainId].toUpperCase()}{' '}
               <ChevronDownIcon width={16} height={16} />
             </p>
           </div>
@@ -188,7 +188,7 @@ export const Search: FC = () => {
                         address: web3Token.address,
                         name: web3Token.name,
                         symbol: web3Token.symbol,
-                        chainId: ChainId.ETHEREUM,
+                        chainId: EvmChainId.ETHEREUM,
                         decimals: web3Token.decimals,
                       })
                     }
@@ -206,7 +206,7 @@ export const Search: FC = () => {
                               address,
                               name,
                               symbol,
-                              chainId,
+                              chainId: chainId as EvmChainId,
                               decimals,
                             })
                           }
@@ -261,7 +261,7 @@ const Row: FC<{ currency: Type; onClick?(): void; isNetwork?: boolean }> = ({
       </div>
       <div className="flex flex-col">
         <p className="font-semibold">
-          {isNetwork ? chains[currency.chainId].name : currency.name}
+          {isNetwork ? evmChains[currency.chainId].name : currency.name}
         </p>
         <p className="text-sm font-semibold  text-left text-neutral-400">
           {currency.symbol}

@@ -4,7 +4,7 @@ import {
   type NavigationElementDropdown,
   NavigationElementType,
 } from '@sushiswap/ui'
-import { ChainId, ChainKey, isChainId } from 'sushi'
+import { ChainId, ChainKey, EvmChainId, isChainId } from 'sushi'
 import { isAggregatorOnlyChainId } from 'sushi/config'
 
 export const EXPLORE_NAVIGATION_LINKS = (
@@ -24,7 +24,7 @@ export const EXPLORE_NAVIGATION_LINKS = (
         },
       ] as const)
     : []),
-  ...(!chainId || !isAggregatorOnlyChainId(chainId)
+  ...(!chainId || !isAggregatorOnlyChainId(chainId as EvmChainId)
     ? ([
         {
           title: 'Pool',

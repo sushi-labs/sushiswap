@@ -40,7 +40,7 @@ import { useConcentratedLiquidityPositionsFromTokenId } from 'src/lib/wagmi/hook
 import { useTokenWithCache } from 'src/lib/wagmi/hooks/tokens/useTokenWithCache'
 import { getDefaultTTL } from 'src/lib/wagmi/hooks/utils/hooks/useTransactionDeadline'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
-import { Chain, ChainKey } from 'sushi/chain'
+import { EvmChain, EvmChainKey } from 'sushi/chain'
 import { SushiSwapV3ChainId, isMerklChainId } from 'sushi/config'
 import { Amount, unwrapToken } from 'sushi/currency'
 import { formatPercent, formatUSD } from 'sushi/format'
@@ -314,7 +314,7 @@ const Component: FC<{ chainId: string; address: string; position: string }> = ({
                       <CardTitle>Unclaimed rewards</CardTitle>
                       <CardDescription>
                         This will claim your rewards for <b>every</b> V3
-                        liquidity position on {Chain.from(chainId)?.name}
+                        liquidity position on {EvmChain.from(chainId)?.name}
                       </CardDescription>
                     </CardHeader>
                     <CardContent>
@@ -641,7 +641,7 @@ const Component: FC<{ chainId: string; address: string; position: string }> = ({
                   {_token0 && _token1 ? (
                     <LinkInternal
                       href={`/${
-                        ChainKey[chainId]
+                        EvmChainKey[chainId]
                       }/pool/incentivize?fromCurrency=${
                         _token0.isNative ? 'NATIVE' : _token0.address
                       }&toCurrency=${

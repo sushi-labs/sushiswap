@@ -14,9 +14,10 @@ import { ColumnDef, PaginationState, Row } from '@tanstack/react-table'
 import React, { FC, ReactNode, useCallback, useMemo, useState } from 'react'
 import { useConcentratedLiquidityPositions } from 'src/lib/wagmi/hooks/positions/hooks/useConcentratedLiquidityPositions'
 import { ConcentratedLiquidityPositionWithV3Pool } from 'src/lib/wagmi/hooks/positions/types'
-import { ChainId, ChainKey } from 'sushi'
+import { EvmChainId, EvmChainKey } from 'sushi'
 import { isSushiSwapV3ChainId } from 'sushi/config'
 import { useAccount } from 'wagmi'
+import { ConcentratedLiquidityCollectAllWidget } from '../ConcentratedLiquidityCollectAllWidget'
 import { usePoolFilters } from '../PoolsFiltersProvider'
 import {
   NAME_COLUMN_V3,
@@ -35,12 +36,13 @@ const COLUMNS = [
 const tableState = { sorting: [{ id: 'positionSize', desc: true }] }
 
 interface ConcentratedPositionsTableProps {
-  chainId: ChainId
+  chainId: EvmChainId
   poolAddress?: string
   onRowClick?(row: ConcentratedLiquidityPositionWithV3Pool): void
   hideNewSmartPositionButton?: boolean
   hideNewPositionButton?: boolean
   hideClosedPositions?: boolean
+  hideCollectAllButton?: boolean
   actions?: ReactNode
 }
 
@@ -52,6 +54,7 @@ export const ConcentratedPositionsTable: FC<ConcentratedPositionsTableProps> =
     hideNewSmartPositionButton = true,
     hideNewPositionButton = false,
     hideClosedPositions = true,
+    hideCollectAllButton = false,
     actions,
   }) => {
     const { address } = useAccount()
@@ -125,11 +128,17 @@ export const ConcentratedPositionsTable: FC<ConcentratedPositionsTableProps> =
                   ({_positions.length})
                 </span>
               </span>
-              {actions}
+              {!hideCollectAllButton ? (
+                <ConcentratedLiquidityCollectAllWidget
+                  positions={_positions}
+                  account={address}
+                  chainId={chainId}
+                />
+              ) : null}
               {!hideNewSmartPositionButton ? (
                 <LinkInternal
                   shallow={true}
-                  href={`/${ChainKey[chainId]}/pool/v3/${poolAddress}/smart`}
+                  href={`/${EvmChainKey[chainId]}/pool/v3/${poolAddress}/smart`}
                   className="basis-full md:basis-[unset]"
                 >
                   <Button
@@ -146,7 +155,7 @@ export const ConcentratedPositionsTable: FC<ConcentratedPositionsTableProps> =
               {!hideNewPositionButton ? (
                 <LinkInternal
                   shallow={true}
-                  href={`/${ChainKey[chainId]}/pool/v3/${poolAddress}/create`}
+                  href={`/${EvmChainKey[chainId]}/pool/v3/${poolAddress}/create`}
                   className="basis-full md:basis-[unset]"
                 >
                   <Button icon={PlusIcon} asChild size="sm" className="w-full">
@@ -154,6 +163,7 @@ export const ConcentratedPositionsTable: FC<ConcentratedPositionsTableProps> =
                   </Button>
                 </LinkInternal>
               ) : null}
+              {actions}
             </div>
           </CardTitle>
         </CardHeader>
@@ -161,7 +171,7 @@ export const ConcentratedPositionsTable: FC<ConcentratedPositionsTableProps> =
           testId="concentrated-positions"
           loading={isInitialLoading}
           linkFormatter={(row) =>
-            `/${ChainKey[row.chainId]}/pool/v3/${row.address}/${row.tokenId}`
+            `/${EvmChainKey[row.chainId]}/pool/v3/${row.address}/${row.tokenId}`
           }
           rowRenderer={rowRenderer}
           columns={COLUMNS}

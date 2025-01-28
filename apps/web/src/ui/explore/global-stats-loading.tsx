@@ -1,6 +1,6 @@
 import { SkeletonChart, SkeletonText } from '@sushiswap/ui'
 import { FC } from 'react'
-import { Chain, ChainId } from 'sushi/chain'
+import { ChainId, EvmChain } from 'sushi/chain'
 
 export const GlobalStatsLoading: FC<{ chainId: ChainId }> = ({ chainId }) => {
   return (
@@ -8,7 +8,7 @@ export const GlobalStatsLoading: FC<{ chainId: ChainId }> = ({ chainId }) => {
       <div>
         <div className="flex flex-col gap-3">
           <span className="text-sm text-muted-foreground">
-            {Chain.from(chainId)?.name} TVL
+            {EvmChain.from(chainId)?.name} TVL
           </span>
           <SkeletonText fontSize="3xl" className="!w-36" />
           <SkeletonText fontSize="sm" className="!w-40" />
@@ -18,7 +18,7 @@ export const GlobalStatsLoading: FC<{ chainId: ChainId }> = ({ chainId }) => {
       <div>
         <div className="flex flex-col gap-3">
           <span className="text-sm text-muted-foreground">
-            {Chain.from(chainId)?.name} Volume
+            {EvmChain.from(chainId)?.name} Volume
           </span>
           <SkeletonText fontSize="3xl" className="!w-36" />
           <SkeletonText fontSize="sm" className="!w-40" />

@@ -19,7 +19,7 @@ import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
 import { replaceNetworkSlug } from 'src/lib/network'
 import { CrossChainRoute, CrossChainRouteOrder } from 'src/lib/swap/cross-chain'
 import { useTokenWithCache } from 'src/lib/wagmi/hooks/tokens/useTokenWithCache'
-import { ChainId, ChainKey } from 'sushi/chain'
+import { ChainKey, EvmChainId } from 'sushi/chain'
 import { defaultCurrency } from 'sushi/config'
 import { defaultQuoteCurrency } from 'sushi/config'
 import { Amount, Native, Token, Type, tryParseAmount } from 'sushi/currency'
@@ -57,8 +57,8 @@ interface State {
     tradeId: string
     token0: Type | undefined
     token1: Type | undefined
-    chainId0: ChainId
-    chainId1: ChainId
+    chainId0: EvmChainId
+    chainId1: EvmChainId
     swapAmountString: string
     swapAmount: Amount<Type> | undefined
     recipient: Address | undefined
@@ -74,7 +74,7 @@ const DerivedStateCrossChainSwapContext = createContext<State>({} as State)
 
 interface DerivedStateCrossChainSwapProviderProps {
   children: React.ReactNode
-  defaultChainId: ChainId
+  defaultChainId: EvmChainId
 }
 
 /* Parses the URL and provides the chainId, token0, and token1 globally.
@@ -96,7 +96,9 @@ const DerivedstateCrossChainSwapProvider: FC<
   )
   const [routeOrder, setRouteOrder] = useState<CrossChainRouteOrder>('CHEAPEST')
 
-  const chainId0 = isXSwapSupportedChainId(chainId) ? chainId : ChainId.ETHEREUM
+  const chainId0 = isXSwapSupportedChainId(chainId)
+    ? chainId
+    : EvmChainId.ETHEREUM
 
   // Get the searchParams and complete with defaults.
   // This handles the case where some params might not be provided by the user
@@ -106,9 +108,9 @@ const DerivedstateCrossChainSwapProvider: FC<
     if (!params.has('chainId1'))
       params.set(
         'chainId1',
-        chainId0 === ChainId.ARBITRUM
-          ? ChainId.ETHEREUM.toString()
-          : ChainId.ARBITRUM.toString(),
+        chainId0 === EvmChainId.ARBITRUM
+          ? EvmChainId.ETHEREUM.toString()
+          : EvmChainId.ARBITRUM.toString(),
       )
     if (!params.has('token0'))
       params.set('token0', getDefaultCurrency(chainId0))
@@ -143,14 +145,14 @@ const DerivedstateCrossChainSwapProvider: FC<
     const token1 = params.get('token1')
 
     const pathSegments = pathname.split('/')
-    pathSegments[1] = ChainKey[Number(chainId1) as ChainId]
+    pathSegments[1] = ChainKey[Number(chainId1) as EvmChainId]
 
     // Can safely cast as defaultedParams are always defined
     history.pushState(
       null,
       '',
       `${replaceNetworkSlug(
-        Number(chainId1) as ChainId,
+        Number(chainId1) as EvmChainId,
         pathname,
       )}?${createQueryString([
         { name: 'swapAmount', value: null },
@@ -173,7 +175,7 @@ const DerivedstateCrossChainSwapProvider: FC<
           null,
           '',
           `${replaceNetworkSlug(
-            chainId as ChainId,
+            chainId as EvmChainId,
             pathname,
           )}?${createQueryString([
             { name: 'swapAmount', value: null },
@@ -264,7 +266,7 @@ const DerivedstateCrossChainSwapProvider: FC<
   )
 
   // Derive chainId from defaultedParams
-  const chainId1 = Number(defaultedParams.get('chainId1')) as ChainId
+  const chainId1 = Number(defaultedParams.get('chainId1')) as EvmChainId
 
   // Derive token0
   const { data: token0, isInitialLoading: token0Loading } = useTokenWithCache({

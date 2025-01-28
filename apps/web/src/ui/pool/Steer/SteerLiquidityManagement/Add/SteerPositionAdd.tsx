@@ -4,7 +4,6 @@ import { PlusIcon } from '@heroicons/react/24/solid'
 import { STEER_PERIPHERY_ADDRESS, SteerChainId } from '@sushiswap/steer-sdk'
 import { Button, DialogTrigger, classNames } from '@sushiswap/ui'
 import React, { FC, useMemo } from 'react'
-import { ChainId } from 'sushi/chain'
 
 import { VaultV1 } from '@sushiswap/graph-client/data-api'
 import { useIsMounted } from '@sushiswap/hooks'
@@ -61,7 +60,7 @@ export const SteerPositionAdd: FC<SteerPositionAddProps> = ({ vault }) => {
             id="add-liquidity-token0"
             type="INPUT"
             className="p-3 bg-white dark:bg-secondary rounded-xl border border-accent"
-            chainId={vault.chainId as ChainId}
+            chainId={vault.chainId}
             value={formattedAmounts[Field.CURRENCY_A]}
             onChange={onFieldAInput}
             currency={currencies?.CURRENCY_A}
@@ -82,7 +81,7 @@ export const SteerPositionAdd: FC<SteerPositionAddProps> = ({ vault }) => {
             id="add-liquidity-token1"
             type="INPUT"
             className="p-3 bg-white dark:bg-secondary rounded-xl border border-accent"
-            chainId={vault.chainId as ChainId}
+            chainId={vault.chainId}
             value={formattedAmounts[Field.CURRENCY_B]}
             onChange={onFieldBInput}
             currency={currencies?.CURRENCY_B}
@@ -99,12 +98,12 @@ export const SteerPositionAdd: FC<SteerPositionAddProps> = ({ vault }) => {
               <Checker.Network
                 testId="switch-network"
                 fullWidth
-                chainId={vault.chainId as ChainId}
+                chainId={vault.chainId}
               >
                 <Checker.Amounts
                   testId="check-amounts"
                   fullWidth
-                  chainId={vault.chainId as ChainId}
+                  chainId={vault.chainId}
                   amounts={amounts}
                 >
                   <Checker.ApproveERC20

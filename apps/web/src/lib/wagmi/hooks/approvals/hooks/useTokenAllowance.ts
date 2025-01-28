@@ -2,14 +2,14 @@
 
 import { useQueryClient } from '@tanstack/react-query'
 import { useEffect } from 'react'
-import { ChainId } from 'sushi/chain'
+import { EvmChainId } from 'sushi/chain'
 import { Amount, Token } from 'sushi/currency'
 import { Address, erc20Abi } from 'viem'
 import { useBlockNumber, useReadContract } from 'wagmi'
 
 interface UseTokenAllowance {
   token?: Token
-  chainId: ChainId | undefined
+  chainId: EvmChainId | undefined
   owner: Address | undefined
   spender: Address | undefined
   enabled?: boolean

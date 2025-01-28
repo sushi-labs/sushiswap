@@ -1,9 +1,9 @@
 import type { VariablesOf } from 'gql.tada'
 
 import { request, type RequestOptions } from 'src/lib/request'
-import { ChainId } from 'sushi'
+import { EvmChainId } from 'sushi'
 import { isSushiSwapV3ChainId } from 'sushi/config'
-import { SUSHI_DATA_API_HOST } from 'sushi/config/subgraph'
+import { SUSHI_DATA_API_HOST } from '../../data-api-host'
 import { graphql } from '../../graphql'
 
 export const V3PoolBucketsQuery = graphql(
@@ -38,7 +38,7 @@ export async function getV3PoolBuckets(
   options?: RequestOptions,
 ) {
   const url = `${SUSHI_DATA_API_HOST}/graphql`
-  const chainId = Number(variables.chainId) as ChainId
+  const chainId = Number(variables.chainId) as EvmChainId
 
   if (!isSushiSwapV3ChainId(chainId)) {
     throw new Error('Invalid chainId')

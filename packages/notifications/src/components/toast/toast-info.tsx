@@ -1,6 +1,6 @@
 import { HalfCircleIcon } from '@sushiswap/ui/icons/HalfCircleIcon'
 import type { FC } from 'react'
-import { Chain } from 'sushi/chain'
+import { EvmChain } from 'sushi/chain'
 
 import type { ResolvedNotification } from '../../types'
 import { ToastContent } from './toast-content'
@@ -18,7 +18,7 @@ export const ToastInfo: FC<ToastInfo> = ({
   const txUrl = href
     ? href
     : txHash
-      ? Chain.from(chainId)?.getTxUrl(txHash)
+      ? EvmChain.from(chainId)?.getTxUrl(txHash)
       : ''
   return (
     <>

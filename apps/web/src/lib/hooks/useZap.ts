@@ -1,6 +1,6 @@
 import { UseQueryOptions, useQuery } from '@tanstack/react-query'
 import { isZapSupportedChainId } from 'src/config'
-import { ChainId } from 'sushi/chain'
+import { EvmChainId } from 'sushi/chain'
 import { Percent } from 'sushi/math'
 import { Address, Hex } from 'viem'
 import { z } from 'zod'
@@ -47,7 +47,7 @@ const zapResponseSchema = z.object({
 export type ZapResponse = z.infer<typeof zapResponseSchema>
 
 type UseZapParams = {
-  chainId: ChainId
+  chainId: EvmChainId
   fromAddress?: Address
   receiver?: Address
   amountIn: string | string[]

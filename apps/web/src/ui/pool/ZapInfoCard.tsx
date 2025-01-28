@@ -15,7 +15,7 @@ import {
   warningSeverityClassName,
 } from 'src/lib/swap/warningSeverity'
 import { useTotalSupply } from 'src/lib/wagmi/hooks/tokens/useTotalSupply'
-import { ChainId } from 'sushi/chain'
+import { EvmChainId } from 'sushi/chain'
 import { Amount, Token, Type } from 'sushi/currency'
 import { formatUSD } from 'sushi/format'
 import { Percent, ZERO } from 'sushi/math'
@@ -46,7 +46,7 @@ export const ZapInfoCard: FC<ZapInfoCardProps> = ({
   tokenRatios,
 }) => {
   const { data: prices } = usePrices({
-    chainId: pool?.chainId as ChainId | undefined,
+    chainId: pool?.chainId as EvmChainId | undefined,
   })
 
   const outputToken = useMemo(

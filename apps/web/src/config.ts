@@ -1,5 +1,5 @@
 import { PoolChainIds } from '@sushiswap/graph-client/data-api'
-import { Chain, ChainId, TESTNET_CHAIN_IDS } from 'sushi/chain'
+import { ChainId, EVM_TESTNET_CHAIN_IDS, EvmChain } from 'sushi/chain'
 import {
   AGGREGATOR_ONLY_CHAIN_IDS,
   EXTRACTOR_SUPPORTED_CHAIN_IDS,
@@ -21,7 +21,7 @@ export const isNonStandardChainId = (
     nonStandardChainId as NonStandardChainId,
   )
 
-interface NonStandardChain extends Omit<Chain, 'chainId'> {
+interface NonStandardChain extends Omit<EvmChain, 'chainId'> {
   chainId: string
 }
 
@@ -62,7 +62,7 @@ export const DISABLED_CHAIN_IDS = [
   ChainId.PALM,
   ChainId.HECO,
   ChainId.OKEX,
-  // NonStandardChainId.TRON,
+  ChainId.HEMI,
 ] as const
 
 export const NEW_CHAIN_IDS = [ChainId.SONIC] as const
@@ -135,10 +135,11 @@ export const AMM_SUPPORTED_CHAIN_IDS = SUSHISWAP_SUPPORTED_CHAIN_IDS.filter(
     c,
   ): c is Exclude<
     (typeof SUSHISWAP_SUPPORTED_CHAIN_IDS)[number],
-    (typeof TESTNET_CHAIN_IDS)[number] | (typeof DISABLED_CHAIN_IDS)[number]
+    (typeof EVM_TESTNET_CHAIN_IDS)[number] | (typeof DISABLED_CHAIN_IDS)[number]
   > =>
-    !TESTNET_CHAIN_IDS.includes(c as (typeof TESTNET_CHAIN_IDS)[number]) &&
-    !DISABLED_CHAIN_IDS.includes(c as (typeof DISABLED_CHAIN_IDS)[number]),
+    !EVM_TESTNET_CHAIN_IDS.includes(
+      c as (typeof EVM_TESTNET_CHAIN_IDS)[number],
+    ) && !DISABLED_CHAIN_IDS.includes(c as (typeof DISABLED_CHAIN_IDS)[number]),
 )
 
 export const SUPPORTED_CHAIN_IDS = Array.from(
@@ -153,10 +154,11 @@ export const SUPPORTED_CHAIN_IDS = Array.from(
     c,
   ): c is Exclude<
     (typeof CHAIN_IDS)[number],
-    (typeof TESTNET_CHAIN_IDS)[number] | (typeof DISABLED_CHAIN_IDS)[number]
+    (typeof EVM_TESTNET_CHAIN_IDS)[number] | (typeof DISABLED_CHAIN_IDS)[number]
   > =>
-    !TESTNET_CHAIN_IDS.includes(c as (typeof TESTNET_CHAIN_IDS)[number]) &&
-    !DISABLED_CHAIN_IDS.includes(c as (typeof DISABLED_CHAIN_IDS)[number]),
+    !EVM_TESTNET_CHAIN_IDS.includes(
+      c as (typeof EVM_TESTNET_CHAIN_IDS)[number],
+    ) && !DISABLED_CHAIN_IDS.includes(c as (typeof DISABLED_CHAIN_IDS)[number]),
 )
 
 export type SupportedChainId = (typeof SUPPORTED_CHAIN_IDS)[number]

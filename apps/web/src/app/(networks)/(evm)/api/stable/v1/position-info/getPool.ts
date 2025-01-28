@@ -1,9 +1,9 @@
+import { publicClientConfig } from 'src/lib/wagmi/config/viem'
 import { SushiSwapV3Pool, computeSushiSwapV3PoolAddress } from 'sushi'
 import {
   SUSHISWAP_V3_FACTORY_ADDRESS,
   SushiSwapV3ChainId,
   SushiSwapV3FeeAmount,
-  publicClientConfig,
 } from 'sushi/config'
 import { Token } from 'sushi/currency'
 import { Address, createClient } from 'viem'

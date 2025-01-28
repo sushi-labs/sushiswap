@@ -11,7 +11,7 @@ import {
   typographyVariants,
 } from '@sushiswap/ui'
 import React, { FC, useMemo } from 'react'
-import { Chain, ChainKey } from 'sushi/chain'
+import { EvmChain, EvmChainKey } from 'sushi/chain'
 import { Token, unwrapToken } from 'sushi/currency'
 import { formatPercent, shortenAddress } from 'sushi/format'
 import { APRHoverCard } from './APRHoverCard'
@@ -87,7 +87,7 @@ export const PoolHeader: FC<PoolHeader> = ({
                 })}
               >
                 <LinkExternal
-                  href={Chain.from(pool.chainId)?.getAccountUrl(address)}
+                  href={EvmChain.from(pool.chainId)?.getAccountUrl(address)}
                 >
                   {token0.symbol}/{token1.symbol}
                 </LinkExternal>
@@ -114,9 +114,11 @@ export const PoolHeader: FC<PoolHeader> = ({
                 <LinkInternal
                   href={
                     pool.protocol === 'SUSHISWAP_V2'
-                      ? `/${ChainKey[pool.chainId]}/pool/v2/${pool.address}/add`
+                      ? `/${EvmChainKey[pool.chainId]}/pool/v2/${
+                          pool.address
+                        }/add`
                       : pool.protocol === 'SUSHISWAP_V3'
-                        ? `/${ChainKey[pool.chainId]}/pool/v3/${
+                        ? `/${EvmChainKey[pool.chainId]}/pool/v3/${
                             pool.address
                           }/positions`
                         : ''
@@ -157,7 +159,7 @@ export const PoolHeader: FC<PoolHeader> = ({
           </div>
           <div className="flex items-center gap-1.5">
             <span className="tracking-tighter font-semibold">Network</span>
-            {Chain.from(pool.chainId)?.name}
+            {EvmChain.from(pool.chainId)?.name}
           </div>
           <div className="flex items-center gap-1.5">
             <span className="tracking-tighter font-semibold">
@@ -165,7 +167,7 @@ export const PoolHeader: FC<PoolHeader> = ({
             </span>
             <LinkExternal
               target="_blank"
-              href={Chain.from(pool.chainId)?.getTokenUrl(
+              href={EvmChain.from(pool.chainId)?.getTokenUrl(
                 token0.wrapped.address,
               )}
             >
@@ -186,7 +188,7 @@ export const PoolHeader: FC<PoolHeader> = ({
             </span>
             <LinkExternal
               target="_blank"
-              href={Chain.from(pool.chainId)?.getTokenUrl(
+              href={EvmChain.from(pool.chainId)?.getTokenUrl(
                 token1.wrapped.address,
               )}
             >

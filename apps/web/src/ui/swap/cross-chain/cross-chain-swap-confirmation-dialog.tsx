@@ -3,7 +3,7 @@ import { Button, Dots, Loader, classNames } from '@sushiswap/ui'
 import { CheckMarkIcon } from '@sushiswap/ui/icons/CheckMarkIcon'
 import { FailedMarkIcon } from '@sushiswap/ui/icons/FailedMarkIcon'
 import { FC, ReactNode } from 'react'
-import { Chain } from 'sushi/chain'
+import { EvmChain } from 'sushi/chain'
 import { shortenAddress } from 'sushi/format'
 import {
   UseSelectedCrossChainTradeRouteReturn,
@@ -52,12 +52,12 @@ export const ConfirmationDialogContent: FC<ConfirmationDialogContent> = ({
           <a
             target="_blank"
             rel="noreferrer noopener noreferer"
-            href={txHash ? Chain.from(chainId0)?.getTxUrl(txHash) : ''}
+            href={txHash ? EvmChain.from(chainId0)?.getTxUrl(txHash) : ''}
           >
             transaction
           </a>
         </Button>{' '}
-        to be confirmed on {Chain.from(chainId0)?.name}
+        to be confirmed on {EvmChain.from(chainId0)?.name}
       </>
     )
   }
@@ -116,7 +116,7 @@ export const ConfirmationDialogContent: FC<ConfirmationDialogContent> = ({
             <a
               target="_blank"
               rel="noreferrer noopener noreferer"
-              href={Chain.from(chainId1)?.getAccountUrl(recipient)}
+              href={EvmChain.from(chainId1)?.getAccountUrl(recipient)}
             >
               <Dots>{shortenAddress(recipient)}</Dots>
             </a>
@@ -137,7 +137,7 @@ export const ConfirmationDialogContent: FC<ConfirmationDialogContent> = ({
             <a
               target="_blank"
               rel="noreferrer noopener noreferer"
-              href={txHash ? Chain.from(chainId0)?.getTxUrl(txHash) : ''}
+              href={txHash ? EvmChain.from(chainId0)?.getTxUrl(txHash) : ''}
             >
               {trade?.amountIn?.toSignificant(6)} {token0?.symbol}
             </a>
@@ -147,7 +147,9 @@ export const ConfirmationDialogContent: FC<ConfirmationDialogContent> = ({
             <a
               target="_blank"
               rel="noreferrer noopener noreferer"
-              href={dstTxHash ? Chain.from(chainId1)?.getTxUrl(dstTxHash) : ''}
+              href={
+                dstTxHash ? EvmChain.from(chainId1)?.getTxUrl(dstTxHash) : ''
+              }
             >
               {trade?.amountOut?.toSignificant(6)} {token1?.symbol}
             </a>
@@ -162,7 +164,9 @@ export const ConfirmationDialogContent: FC<ConfirmationDialogContent> = ({
             <a
               target="_blank"
               rel="noreferrer noopener noreferer"
-              href={dstTxHash ? Chain.from(chainId1)?.getTxUrl(dstTxHash) : ''}
+              href={
+                dstTxHash ? EvmChain.from(chainId1)?.getTxUrl(dstTxHash) : ''
+              }
             >
               {trade?.amountOut?.toSignificant(6)} {token1?.symbol}
             </a>

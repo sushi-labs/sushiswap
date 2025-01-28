@@ -1,10 +1,10 @@
 // import { usePinnedTokens } from '@sushiswap/hooks'
 import { useMemo } from 'react'
-import type { ChainId } from 'sushi/chain'
-import { DEFAULT_BASES } from 'sushi/config'
+import type { EvmChainId } from 'sushi/chain'
+import { EVM_DEFAULT_BASES } from 'sushi/config'
 
 interface UseChipTokens {
-  chainId: ChainId
+  chainId: EvmChainId
   includeNative?: boolean
   showPinnedTokens?: boolean
 }
@@ -16,7 +16,7 @@ export function useChipTokens({
   includeNative = true,
   // showPinnedTokens = true,
 }: UseChipTokens) {
-  const defaultBases = DEFAULT_BASES[chainId]
+  const defaultBases = EVM_DEFAULT_BASES[chainId]
 
   // const {} = usePinnedTokens()
 

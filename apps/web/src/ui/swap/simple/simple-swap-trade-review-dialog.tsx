@@ -38,7 +38,7 @@ import { UseTradeReturn } from 'src/lib/hooks/react-query'
 import { useSimulateTrade } from 'src/lib/hooks/useSimulateTrade'
 import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
 import { useApproved } from 'src/lib/wagmi/systems/Checker/Provider'
-import { Chain, ChainId } from 'sushi/chain'
+import { ChainId, EvmChain } from 'sushi/chain'
 import { Native } from 'sushi/currency'
 import { shortenAddress } from 'sushi/format'
 import { ZERO } from 'sushi/math'
@@ -327,7 +327,7 @@ export const SimpleSwapTradeReviewDialog: FC<{
                   <List className="!pt-0">
                     <List.Control>
                       <List.KeyValue title="Network">
-                        {Chain.from(chainId)?.name}
+                        {EvmChain.from(chainId)?.name}
                       </List.KeyValue>
                       {isSwap && (
                         <List.KeyValue
@@ -412,7 +412,7 @@ export const SimpleSwapTradeReviewDialog: FC<{
                             <a
                               target="_blank"
                               href={
-                                Chain.fromChainId(chainId)?.getAccountUrl(
+                                EvmChain.fromChainId(chainId)?.getAccountUrl(
                                   recipient,
                                 ) ?? '#'
                               }

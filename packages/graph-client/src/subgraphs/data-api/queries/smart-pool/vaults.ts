@@ -1,7 +1,7 @@
 import type { SteerChainId } from '@sushiswap/steer-sdk'
 import type { VariablesOf } from 'gql.tada'
 import { request, type RequestOptions } from 'src/lib/request'
-import { SUSHI_DATA_API_HOST } from 'sushi/config/subgraph'
+import { SUSHI_DATA_API_HOST } from '../../data-api-host'
 import type { Address } from 'viem'
 import { graphql } from '../../graphql'
 import type { VaultV1 } from './vault'

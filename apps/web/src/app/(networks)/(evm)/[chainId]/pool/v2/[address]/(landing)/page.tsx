@@ -3,7 +3,7 @@ import { unstable_cache } from 'next/cache'
 import { notFound } from 'next/navigation'
 
 import { PoolPageV2 } from 'src/ui/pool/PoolPageV2'
-import type { ChainId } from 'sushi'
+import type { EvmChainId } from 'sushi'
 import { isSushiSwapV2ChainId } from 'sushi/config'
 import { isAddress } from 'viem'
 
@@ -13,7 +13,7 @@ export default async function PoolPage(props: {
   const params = await props.params
   const { chainId: _chainId, address } = params
 
-  const chainId = +_chainId as ChainId
+  const chainId = +_chainId as EvmChainId
 
   if (
     !isSushiSwapV2ChainId(chainId) ||

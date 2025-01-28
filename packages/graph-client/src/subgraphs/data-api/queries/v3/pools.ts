@@ -1,10 +1,15 @@
 import type { VariablesOf } from 'gql.tada'
 
 import { request, type RequestOptions } from 'src/lib/request'
-import { ChainId, SushiSwapProtocol, type PoolBase, type PoolV3 } from 'sushi'
+import {
+  EvmChainId,
+  SushiSwapProtocol,
+  type PoolBase,
+  type PoolV3,
+} from 'sushi'
 import { isSushiSwapV3ChainId } from 'sushi/config'
 import type { Address } from 'viem'
-import { SUSHI_DATA_API_HOST } from 'sushi/config/subgraph'
+import { SUSHI_DATA_API_HOST } from '../../data-api-host'
 import { graphql } from '../../graphql'
 import { SUSHI_REQUEST_HEADERS } from '../../request-headers'
 
@@ -63,7 +68,7 @@ export async function getV3BasePools(
   options?: RequestOptions,
 ): Promise<PoolV3<PoolBase>[]> {
   const url = `${SUSHI_DATA_API_HOST}/graphql`
-  const chainId = variables.chainId as ChainId
+  const chainId = variables.chainId as EvmChainId
 
   if (!isSushiSwapV3ChainId(chainId)) {
     throw new Error('Invalid chainId')

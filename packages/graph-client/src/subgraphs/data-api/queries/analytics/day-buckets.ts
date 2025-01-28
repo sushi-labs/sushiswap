@@ -2,8 +2,8 @@ import type { VariablesOf } from 'gql.tada'
 
 import { request, type RequestOptions } from 'src/lib/request'
 import { graphql } from '../../graphql'
-import { SUSHI_DATA_API_HOST } from 'sushi/config/subgraph'
 import { SUSHI_REQUEST_HEADERS } from '../../request-headers'
+import { SUSHI_DATA_API_HOST } from '../../data-api-host'
 
 export const AnalyticsDayBucketsQuery = graphql(
   `
