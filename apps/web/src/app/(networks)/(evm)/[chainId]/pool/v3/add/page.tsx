@@ -31,7 +31,6 @@ import {
   SushiSwapV3ChainId,
   isWNativeSupported,
 } from 'sushi/config'
-import { SWRConfig } from 'swr'
 import { Address } from 'viem'
 import { useAccount } from 'wagmi'
 
@@ -41,11 +40,9 @@ export default function Page(props: { params: Promise<{ chainId: string }> }) {
     <ConcentratedLiquidityURLStateProvider
       chainId={+params.chainId as SushiSwapV3ChainId}
     >
-      <SWRConfig>
-        <ConcentratedLiquidityProvider>
-          <_Add />
-        </ConcentratedLiquidityProvider>
-      </SWRConfig>
+      <ConcentratedLiquidityProvider>
+        <_Add />
+      </ConcentratedLiquidityProvider>
     </ConcentratedLiquidityURLStateProvider>
   )
 }

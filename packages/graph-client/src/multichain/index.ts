@@ -1,1 +1,1 @@
-export * from './fetch-multichain'
+export * from './fetch-multichain.js'

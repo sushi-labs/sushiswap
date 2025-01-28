@@ -1,6 +1,6 @@
 import { getIdFromChainIdAddress } from 'sushi/format'
 import type { Address } from 'viem'
-import type { SteerChainId } from '../constants'
+import type { SteerChainId } from '../constants.js'
 
 interface GetVerifiedVaults {
   chainId: SteerChainId
@@ -24,7 +24,7 @@ export async function getVerifiedVaults({ chainId }: GetVerifiedVaults) {
   if (!result.ok)
     throw new Error(`Failed to fetch verified vaults for chainId: ${chainId}`)
 
-  const { pools }: VaultData = await result.json()
+  const { pools } = (await result.json()) as VaultData
 
   const vaultIds = Object.values(pools).flatMap((pool) =>
     pool.map((p) => getIdFromChainIdAddress(chainId, p.vaultAddress)),

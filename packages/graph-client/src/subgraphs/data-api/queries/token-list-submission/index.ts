@@ -1,3 +1,3 @@
-export * from './approved-community-tokens'
-export * from './token-analysis'
-export * from './pending-tokens'
+export * from './approved-community-tokens.js'
+export * from './token-analysis.js'
+export * from './pending-tokens.js'

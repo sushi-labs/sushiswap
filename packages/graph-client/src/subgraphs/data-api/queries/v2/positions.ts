@@ -1,10 +1,10 @@
 import type { VariablesOf } from 'gql.tada'
-import { request, type RequestOptions } from 'src/lib/request'
+import { request, type RequestOptions } from 'src/lib/request.js'
 import { EvmChainId, ChefType, RewarderType, SushiSwapProtocol } from 'sushi'
 import { isSushiSwapV2ChainId } from 'sushi/config'
 import { getAddress, type Address } from 'viem'
-import { SUSHI_DATA_API_HOST } from '../../data-api-host'
-import { graphql } from '../../graphql'
+import { SUSHI_DATA_API_HOST } from 'sushi/config/subgraph'
+import { graphql } from '../../graphql.js'
 
 export const V2PositionsQuery = graphql(
   `

@@ -22,25 +22,25 @@
     "@biomejs/biome": "1.5.2",
     "@types/node": "20",
     "dotenv-cli": "6.0.0",
-    "eslint": "8.43.0",
-    "eslint-config-turbo": "2.0.5",
+    "eslint": "9.18.0",
+    "eslint-config-turbo": "2.3.3",
     "just-pnpm": "1.0.2",
     "sort-package-json": "2.6.0",
     "tsx": "4.19.0",
     "turbo": "2.0.5",
-    "typescript": "5.7.2"
+    "typescript": "catalog:"
   },
-  "packageManager": "pnpm@9.4.0",
+  "packageManager": "pnpm@10.0.0",
   "engines": {
     "node": ">=20.x",
-    "pnpm": "9.4.0"
+    "pnpm": "10.0.0"
   },
   "pnpm": {
     "overrides": {
       "graphql": "16.6.0",
-      "typescript": "5.7.2",
-      "@types/react": "19.0.1",
-      "@types/react-dom": "19.0.2"
+      "typescript": "catalog:",
+      "@types/react": "catalog:react",
+      "@types/react-dom": "catalog:react"
     },
     "patchedDependencies": {
       "@aptos-labs/aptos-client@0.1.0": "patches/@aptos-labs__aptos-client@0.1.0.patch",

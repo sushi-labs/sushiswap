@@ -52,7 +52,6 @@ import {
 import { Amount, Type, tryParseAmount } from 'sushi/currency'
 import { ZERO } from 'sushi/math'
 import { SushiSwapV2Pool } from 'sushi/pool/sushiswap-v2'
-import { SWRConfig } from 'swr'
 import { SendTransactionReturnType } from 'viem'
 import {
   useAccount,
@@ -128,107 +127,105 @@ export default function Page(props: { params: Promise<{ chainId: string }> }) {
   )
 
   return (
-    <SWRConfig>
-      <PoolFinder
-        components={
-          <PoolFinder.Components>
-            <PoolFinder.SushiSwapV2Pool
+    <PoolFinder
+      components={
+        <PoolFinder.Components>
+          <PoolFinder.SushiSwapV2Pool
+            chainId={chainId}
+            token0={token0}
+            token1={token1}
+            enabled={isSushiSwapV2ChainId(chainId)}
+          />
+        </PoolFinder.Components>
+      }
+    >
+      {({ pool: [poolState, pool] }) => {
+        useEffect(() => {
+          if (
+            isZapSupportedChainId(chainId) &&
+            poolState === SushiSwapV2PoolState.EXISTS
+          ) {
+            setIsZapModeEnabled(true)
+          } else {
+            setIsZapModeEnabled(false)
+          }
+        }, [poolState])
+
+        const title =
+          !token0 || !token1 ? (
+            'Select Tokens'
+          ) : [SushiSwapV2PoolState.LOADING].includes(
+              poolState as SushiSwapV2PoolState,
+            ) ? (
+            <div className="h-[20px] flex items-center justify-center">
+              <Loader width={14} />
+            </div>
+          ) : [SushiSwapV2PoolState.EXISTS].includes(
+              poolState as SushiSwapV2PoolState,
+            ) ? (
+            'Add Liquidity'
+          ) : (
+            'Create Pool'
+          )
+
+        return (
+          <>
+            <SelectNetworkWidget
+              networks={networks}
+              selectedNetwork={chainId}
+              onSelect={(chainId) => {
+                if (!isSushiSwapV2ChainId(chainId)) return
+                router.push(`/${EvmChainKey[chainId]}/pool/v2/add`)
+              }}
+            />
+            <SelectTokensWidget
               chainId={chainId}
               token0={token0}
               token1={token1}
-              enabled={isSushiSwapV2ChainId(chainId)}
+              setToken0={_setToken0}
+              setToken1={_setToken1}
+              includeNative={isWNativeSupported(chainId)}
             />
-          </PoolFinder.Components>
-        }
-      >
-        {({ pool: [poolState, pool] }) => {
-          useEffect(() => {
-            if (
-              isZapSupportedChainId(chainId) &&
-              poolState === SushiSwapV2PoolState.EXISTS
-            ) {
-              setIsZapModeEnabled(true)
-            } else {
-              setIsZapModeEnabled(false)
-            }
-          }, [poolState])
-
-          const title =
-            !token0 || !token1 ? (
-              'Select Tokens'
-            ) : [SushiSwapV2PoolState.LOADING].includes(
-                poolState as SushiSwapV2PoolState,
-              ) ? (
-              <div className="h-[20px] flex items-center justify-center">
-                <Loader width={14} />
-              </div>
-            ) : [SushiSwapV2PoolState.EXISTS].includes(
-                poolState as SushiSwapV2PoolState,
-              ) ? (
-              'Add Liquidity'
-            ) : (
-              'Create Pool'
-            )
-
-          return (
-            <>
-              <SelectNetworkWidget
-                networks={networks}
-                selectedNetwork={chainId}
-                onSelect={(chainId) => {
-                  if (!isSushiSwapV2ChainId(chainId)) return
-                  router.push(`/${EvmChainKey[chainId]}/pool/v2/add`)
-                }}
-              />
-              <SelectTokensWidget
-                chainId={chainId}
-                token0={token0}
-                token1={token1}
-                setToken0={_setToken0}
-                setToken1={_setToken1}
-                includeNative={isWNativeSupported(chainId)}
-              />
-              <FormSection
-                title="Deposit"
-                description="Select the amount of tokens you want to deposit"
-              >
-                {isZapSupportedChainId(chainId) &&
-                poolState === SushiSwapV2PoolState.EXISTS ? (
-                  <ToggleZapCard
-                    checked={isZapModeEnabled}
-                    onCheckedChange={setIsZapModeEnabled}
-                  />
-                ) : null}
-                {isZapModeEnabled ? (
-                  <ZapWidget
-                    chainId={chainId}
-                    pool={pool}
-                    poolState={poolState}
-                    title={title}
-                  />
-                ) : (
-                  <AddLiquidityWidget
-                    chainId={chainId}
-                    pool={pool}
-                    poolState={poolState}
-                    title={title}
-                    token0={token0}
-                    token1={token1}
-                    setToken0={_setToken0}
-                    setToken1={_setToken1}
-                    input0={input0}
-                    input1={input1}
-                    setTypedAmounts={setTypedAmounts}
-                    independendField={independendField}
-                    setIndependendField={setIndependendField}
-                  />
-                )}
-              </FormSection>
-            </>
-          )
-        }}
-      </PoolFinder>
-    </SWRConfig>
+            <FormSection
+              title="Deposit"
+              description="Select the amount of tokens you want to deposit"
+            >
+              {isZapSupportedChainId(chainId) &&
+              poolState === SushiSwapV2PoolState.EXISTS ? (
+                <ToggleZapCard
+                  checked={isZapModeEnabled}
+                  onCheckedChange={setIsZapModeEnabled}
+                />
+              ) : null}
+              {isZapModeEnabled ? (
+                <ZapWidget
+                  chainId={chainId}
+                  pool={pool}
+                  poolState={poolState}
+                  title={title}
+                />
+              ) : (
+                <AddLiquidityWidget
+                  chainId={chainId}
+                  pool={pool}
+                  poolState={poolState}
+                  title={title}
+                  token0={token0}
+                  token1={token1}
+                  setToken0={_setToken0}
+                  setToken1={_setToken1}
+                  input0={input0}
+                  input1={input1}
+                  setTypedAmounts={setTypedAmounts}
+                  independendField={independendField}
+                  setIndependendField={setIndependendField}
+                />
+              )}
+            </FormSection>
+          </>
+        )
+      }}
+    </PoolFinder>
   )
 }
 

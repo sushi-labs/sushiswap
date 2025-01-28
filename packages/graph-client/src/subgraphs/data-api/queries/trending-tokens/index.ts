@@ -1,1 +1,1 @@
-export * from './trending-tokens'
+export * from './trending-tokens.js'

@@ -1,3 +1,3 @@
-export * from './queries'
-export * from './request-headers'
-export * from './types'
+export * from './queries/index.js'
+export * from './request-headers.js'
+export * from './types/index.js'

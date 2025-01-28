@@ -1,4 +1,4 @@
-import { graphql } from '../graphql'
+import { graphql } from '../graphql.js'
 
 export const ImageFieldsFragment = graphql(`
   fragment ImageFields on UploadFileEntity @_unmask {

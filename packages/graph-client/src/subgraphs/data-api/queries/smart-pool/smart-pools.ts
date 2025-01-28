@@ -1,11 +1,11 @@
 import type { VariablesOf } from 'gql.tada'
 
-import { request, type RequestOptions } from 'src/lib/request'
+import { request, type RequestOptions } from 'src/lib/request.js'
 import type { EvmChainId } from 'sushi'
-import { SUSHI_DATA_API_HOST } from '../../data-api-host'
+import { SUSHI_DATA_API_HOST } from 'sushi/config/subgraph'
 import type { Address } from 'viem'
-import { graphql } from '../../graphql'
-import { SUSHI_REQUEST_HEADERS } from '../../request-headers'
+import { graphql } from '../../graphql.js'
+import { SUSHI_REQUEST_HEADERS } from '../../request-headers.js'
 
 export const SmartPoolsQuery = graphql(
   `

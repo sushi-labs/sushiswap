@@ -1,5 +1,5 @@
 import type { Token } from 'sushi/types'
-import type { SteerVaultId } from './steer-vault-id'
+import type { SteerVaultId } from './steer-vault-id.js'
 
 export type SteerVault<T extends SteerVaultId = SteerVaultId> = T & {
   feeTier: number

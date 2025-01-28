@@ -164,7 +164,7 @@ const Sidebar: FC<Omit<SidebarContainerProps, 'children' | 'shiftContent'>> = ({
               return (
                 <CommandItem
                   key={network}
-                  className="aria-selected:!bg-[unset] aria-selected:!text-[unset] !p-0 my-0.5"
+                  className={`[aria-selected="true"]:!bg-[unset] [aria-selected="true"]:!text-[unset] !p-0 my-0.5`}
                   testdata-id={`network-selector-${network}`}
                   value={`${name}__${network}`}
                   onSelect={

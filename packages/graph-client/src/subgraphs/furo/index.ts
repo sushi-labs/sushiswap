@@ -1,1 +1,1 @@
-export * from './queries/tokens'
+export * from './queries/tokens.js'

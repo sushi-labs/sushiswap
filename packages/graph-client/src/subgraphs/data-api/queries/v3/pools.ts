@@ -1,6 +1,6 @@
 import type { VariablesOf } from 'gql.tada'
 
-import { request, type RequestOptions } from 'src/lib/request'
+import { request, type RequestOptions } from 'src/lib/request.js'
 import {
   EvmChainId,
   SushiSwapProtocol,
@@ -9,9 +9,9 @@ import {
 } from 'sushi'
 import { isSushiSwapV3ChainId } from 'sushi/config'
 import type { Address } from 'viem'
-import { SUSHI_DATA_API_HOST } from '../../data-api-host'
-import { graphql } from '../../graphql'
-import { SUSHI_REQUEST_HEADERS } from '../../request-headers'
+import { SUSHI_DATA_API_HOST } from 'sushi/config/subgraph'
+import { graphql } from '../../graphql.js'
+import { SUSHI_REQUEST_HEADERS } from '../../request-headers.js'
 
 export const V3PoolsQuery = graphql(
   `
