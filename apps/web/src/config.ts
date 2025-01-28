@@ -64,7 +64,7 @@ export const DISABLED_CHAIN_IDS = [
   ChainId.OKEX,
 ] as const
 
-export const NEW_CHAIN_IDS = [ChainId.SONIC, ChainId.HEMI] as const
+export const NEW_CHAIN_IDS = [ChainId.HEMI] as const
 
 export const PREFERRED_CHAINID_ORDER = [
   ...NEW_CHAIN_IDS,
