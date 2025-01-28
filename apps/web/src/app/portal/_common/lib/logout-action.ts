@@ -2,7 +2,7 @@
 
 import { redirect } from 'next/navigation'
 import { getSession } from 'src/app/portal/_common/lib/client-config'
-import { getSessionServiceClient } from '../../(unauthenticated)/_common/lib/zitadel-client'
+import { getSessionServiceClient } from './zitadel-client'
 
 export async function logoutAction() {
   const session = await getSession()

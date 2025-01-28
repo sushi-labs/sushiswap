@@ -4,8 +4,8 @@ import { CreateSessionResponse } from '@zitadel/proto/zitadel/session/v2/session
 import { AddHumanUserResponse } from '@zitadel/proto/zitadel/user/v2/user_service_pb'
 import { redirect } from 'next/navigation'
 import { createZitadelSession } from 'src/app/portal/(unauthenticated)/_common/lib/create-zitadel-session'
-import { getUserServiceClient } from 'src/app/portal/(unauthenticated)/_common/lib/zitadel-client'
 import { createSession } from 'src/app/portal/_common/lib/client-config'
+import { getUserServiceClient } from 'src/app/portal/_common/lib/zitadel-client'
 import { z } from 'zod'
 import { registerFormSchema } from './register-form-schema'
 
@@ -79,7 +79,7 @@ export async function registerAction(data: FormData): Promise<FormState> {
     },
   })
 
-  redirect('/portal/register/verify')
+  redirect('/portal/verify')
 
   return { success: true }
 }
@@ -111,6 +111,10 @@ async function fetchZitadelUsers(email: string) {
 async function createZitadelUser(data: z.infer<typeof registerFormSchema>) {
   const userServiceClient = getUserServiceClient()
   const user = await userServiceClient.addHumanUser({
+    profile: {
+      givenName: data.email,
+      familyName: 'Password',
+    },
     email: {
       email: data.email,
       verification: {
@@ -118,10 +122,6 @@ async function createZitadelUser(data: z.infer<typeof registerFormSchema>) {
         value: {},
         // TODO: Template
       },
-    },
-    profile: {
-      givenName: '-',
-      familyName: '-',
     },
     passwordType: {
       case: 'password',

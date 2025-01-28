@@ -1,6 +1,6 @@
 import { redirect } from 'next/navigation'
-import { getUserServiceClient } from 'src/app/portal/(unauthenticated)/_common/lib/zitadel-client'
 import { getSession } from 'src/app/portal/_common/lib/client-config'
+import { getUserServiceClient } from 'src/app/portal/_common/lib/zitadel-client'
 
 export async function GET() {
   const authSession = await getSession()

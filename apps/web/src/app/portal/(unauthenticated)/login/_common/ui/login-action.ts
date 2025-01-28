@@ -3,9 +3,9 @@
 import { isRedirectError } from 'next/dist/client/components/redirect-error'
 import { redirect } from 'next/navigation'
 import { createSession } from 'src/app/portal/_common/lib/client-config'
+import { getUserServiceClient } from 'src/app/portal/_common/lib/zitadel-client'
 import { isPromiseRejected } from 'sushi'
 import { createZitadelSession } from '../../../_common/lib/create-zitadel-session'
-import { getUserServiceClient } from '../../../_common/lib/zitadel-client'
 import { loginFormSchema } from './login-form-schema'
 
 export type FormState =
@@ -66,7 +66,7 @@ export async function loginAction(data: FormData): Promise<FormState> {
     })
 
     if (!user.value.type.value.email.isVerified) {
-      redirect('/portal/register/verify')
+      redirect('/portal/verify')
     } else {
       redirect('/portal')
     }

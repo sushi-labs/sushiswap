@@ -5,7 +5,7 @@ import {
   getSession,
 } from 'src/app/portal/_common/lib/client-config'
 import { z } from 'zod'
-import { getSessionServiceClient } from '../../../../_common/lib/zitadel-client'
+import { getSessionServiceClient } from '../../../_common/lib/zitadel-client'
 import { getIdpIntent } from './lib/get-idp-intent'
 import { getUserById } from './lib/get-user-by-id'
 import { login } from './lib/login'

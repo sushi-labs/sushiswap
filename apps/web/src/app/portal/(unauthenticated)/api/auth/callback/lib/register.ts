@@ -1,45 +1,34 @@
-import { authEnv } from 'src/app/portal/_common/lib/auth-env'
-import { z } from 'zod'
+import { getUserServiceClient } from 'src/app/portal/_common/lib/zitadel-client'
 import { IdpIntent } from './get-idp-intent'
 
-const schema = z.object({
-  userId: z.string(),
-})
-
 export async function register(idpIntent: IdpIntent) {
-  const respose = await fetch(`${authEnv.ZITADEL_ISSUER}/v2/users/human`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Accept: 'application/json',
-      Authorization: `Bearer ${authEnv.ZITADEL_SA_TOKEN}`,
+  const userServiceClient = getUserServiceClient()
+  const result = await userServiceClient.addHumanUser({
+    profile: {
+      $typeName: 'zitadel.user.v2.SetHumanProfile',
+      givenName: idpIntent.idpInformation.rawInformation.givenName,
+      familyName: idpIntent.idpInformation.rawInformation.familyName,
     },
-    body: JSON.stringify({
-      profile: {
-        givenName: idpIntent.idpInformation.rawInformation.givenName,
-        familyName: idpIntent.idpInformation.rawInformation.familyName,
+    email: {
+      $typeName: 'zitadel.user.v2.SetHumanEmail',
+      email: idpIntent.idpInformation.rawInformation.email,
+      verification: {
+        case: 'isVerified',
+        value: true,
       },
-      email: {
-        email: idpIntent.idpInformation.rawInformation.email,
-        isVerified: true,
+    },
+    idpLinks: [
+      {
+        $typeName: 'zitadel.user.v2.IDPLink',
+        idpId: idpIntent.idpInformation.idpId,
+        userId: idpIntent.idpInformation.userId,
+        userName: idpIntent.idpInformation.rawInformation.email,
       },
-      idpLinks: [
-        {
-          idpId: idpIntent.idpInformation.idpId,
-          userId: idpIntent.idpInformation.userId,
-          userName: idpIntent.idpInformation.rawInformation.email,
-        },
-      ],
-    }),
+    ],
+    passwordType: {
+      case: undefined,
+    },
   })
 
-  const registrationData = await respose.json()
-
-  const result = schema.safeParse(registrationData)
-
-  if (!result.success) {
-    throw new Error('Registration failed')
-  }
-
-  return result.data
+  return result
 }

@@ -10,6 +10,7 @@ import {
   TextField,
   formClassnames,
 } from '@sushiswap/ui'
+import { useSearchParams } from 'next/navigation'
 import { useCallback, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { z } from 'zod'
@@ -18,8 +19,17 @@ import { loginFormSchema } from './login-form-schema'
 
 type LoginFormValues = z.infer<typeof loginFormSchema>
 
+const paramErrors = {
+  oauthAlreadyExists:
+    'User with this email already exists, please try logging in with your password instead',
+} as Record<string, string>
+
 export function LoginForm() {
-  const [globalErrorMsg, setGlobalErrorMsg] = useState<string | null>(null)
+  const searchParamsError = useSearchParams().get('error')
+
+  const [globalErrorMsg, setGlobalErrorMsg] = useState<string | null>(
+    searchParamsError ? paramErrors[searchParamsError] : null,
+  )
 
   const form = useForm<z.infer<typeof loginFormSchema>>({
     defaultValues: {

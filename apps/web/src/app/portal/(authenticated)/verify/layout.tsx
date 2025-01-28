@@ -1,7 +1,7 @@
 import { Container } from '@sushiswap/ui'
 import { redirect } from 'next/navigation'
 import { getSession } from 'src/app/portal/_common/lib/client-config'
-import { getUserServiceClient } from '../../(unauthenticated)/_common/lib/zitadel-client'
+import { getUserServiceClient } from '../../_common/lib/zitadel-client'
 
 export default async function Layout({
   children,
@@ -27,7 +27,7 @@ export default async function Layout({
     throw new Error('Something went wrong')
   }
   if (result.user.type.value.email.isVerified) {
-    redirect('/portal/register/verify/api/set-email-verified')
+    redirect('/portal/verify/api/set-email-verified')
   }
 
   return (

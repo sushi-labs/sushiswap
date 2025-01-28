@@ -1,6 +1,6 @@
 import { Separator } from '@sushiswap/ui'
-import { GithubButton } from '../_common/ui/github-button'
-import { GoogleButton } from '../_common/ui/google-button'
+import { GithubButton } from '../../_common/ui/oauth/github-button'
+import { GoogleButton } from '../../_common/ui/oauth/google-button'
 import { RegisterForm } from './_common/ui/register-form'
 
 export default function Page() {

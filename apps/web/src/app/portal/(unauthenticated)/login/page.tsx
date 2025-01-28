@@ -1,7 +1,7 @@
 import { Separator } from '@sushiswap/ui'
 import Link from 'next/link'
-import { GithubButton } from '../_common/ui/github-button'
-import { GoogleButton } from '../_common/ui/google-button'
+import { GithubButton } from '../../_common/ui/oauth/github-button'
+import { GoogleButton } from '../../_common/ui/oauth/google-button'
 import { LoginForm } from './_common/ui/login-form'
 
 export default function Page() {
@@ -11,15 +11,24 @@ export default function Page() {
       <span className="flex flex-col space-y-8">
         <div className="flex w-full flex-col space-y-6">
           <LoginForm />
-          <div className="text-sm flex space-x-1 w-full justify-center">
-            <span>{`Don't have an account yet?`}</span>
+          <div className="flex flex-col space-y-1 items-center text-sm">
             <Link
-              href="/portal/register"
+              href="/portal/forgot-password"
               prefetch={true}
-              className="flex items-center text-blue font-medium hover:text-blue-600"
+              className="text-blue font-medium hover:text-blue-600"
             >
-              <span>{`Sign Up`}</span>
+              <span>{`Forgot password?`}</span>
             </Link>
+            <div className="flex space-x-1 w-full justify-center">
+              <span>{`Don't have an account yet?`}</span>
+              <Link
+                href="/portal/register"
+                prefetch={true}
+                className="text-blue font-medium hover:text-blue-600"
+              >
+                <span>{`Sign Up`}</span>
+              </Link>
+            </div>
           </div>
         </div>
         <Separator />
