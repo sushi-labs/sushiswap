@@ -154,7 +154,6 @@ const Sidebar: FC<Omit<SidebarContainerProps, 'children' | 'shiftContent'>> = ({
               testdata-id="network-selector-input"
               placeholder="Search..."
             />
-            <CommandEmpty>No network found.</CommandEmpty>
           </div>
           <CommandGroup className="overflow-y-auto">
             {SUPPORTED_NETWORKS.map((network) => {
@@ -209,6 +208,7 @@ const Sidebar: FC<Omit<SidebarContainerProps, 'children' | 'shiftContent'>> = ({
               )
             })}
           </CommandGroup>
+          <CommandEmpty>No network found.</CommandEmpty>
         </Command>
       </div>
     </nav>

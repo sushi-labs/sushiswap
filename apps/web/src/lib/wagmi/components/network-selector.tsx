@@ -77,7 +77,6 @@ const NetworkSelector = <T extends number | string>({
             testdata-id="network-selector-input"
             placeholder="Search network"
           />
-          <CommandEmpty>No network found.</CommandEmpty>
           <CommandGroup>
             {networks.map((network) => {
               const name = getNetworkName(
@@ -110,6 +109,7 @@ const NetworkSelector = <T extends number | string>({
               )
             })}
           </CommandGroup>
+          <CommandEmpty>No network found.</CommandEmpty>
         </Command>
       </PopoverContent>
     </Popover>
