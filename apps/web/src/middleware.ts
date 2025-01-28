@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { ChainKey, getEvmChainInfo } from 'sushi/chain'
 import { isSushiSwapChainId } from 'sushi/config'
+import { portalMiddleware } from './app/portal/middleware'
 
 export const config = {
   matcher: [
@@ -20,11 +21,16 @@ export const config = {
     '/:chainId/positions/:path*',
     '/:chainId/migrate',
     '/:chainId/rewards',
+    '/portal/:path*',
   ],
 }
 
 export async function middleware(req: NextRequest) {
   const { pathname, searchParams, search } = req.nextUrl
+
+  if (pathname === 'portal' || pathname.startsWith('/portal/')) {
+    return portalMiddleware(req)
+  }
 
   if (
     pathname === '/explore' ||

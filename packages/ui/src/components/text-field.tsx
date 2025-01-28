@@ -74,6 +74,9 @@ interface TextFieldBaseProps
 
 interface TextFieldDynamicProps<T extends InputType> {
   type: T
+  textType?: T extends 'text'
+    ? React.HTMLInputTypeAttribute & ('text' | 'password')
+    : never
   maxDecimals?: T extends 'number' ? number : never
   onValueChange?(val: string): void
 }
@@ -93,6 +96,7 @@ const Component = <T extends InputType>(
     variant,
     className,
     type,
+    textType,
     onChange,
     maxDecimals,
     size,
@@ -171,6 +175,7 @@ const Component = <T extends InputType>(
         autoCapitalize="none"
         spellCheck="false"
         autoComplete="off"
+        type={textType}
         {...(isTypeNumber(type) && numericInputProps)}
         {...(isTypePercent(type) && percentInputProps)}
         {...props}
