@@ -5,8 +5,8 @@ import {
   CardHeader,
   CardTitle,
 } from '@sushiswap/ui'
-import { GithubButton } from 'src/app/portal/(unauthenticated)/_common/ui/github-button'
-import { GoogleButton } from 'src/app/portal/(unauthenticated)/_common/ui/google-button'
+import { GithubButton } from 'src/app/portal/_common/ui/oauth/github-button'
+import { GoogleButton } from 'src/app/portal/_common/ui/oauth/google-button'
 
 export function IdentityProvidersCard() {
   return (

@@ -10,10 +10,10 @@ export async function portalMiddleware(request: NextRequest) {
 
   if (!session.user.email.isVerified) {
     console.log(request.nextUrl)
-    if (request.nextUrl.pathname !== '/portal/register/verify') {
+    if (request.nextUrl.pathname !== '/portal/verify') {
       console.log('redirect')
       return NextResponse.redirect(
-        `${request.nextUrl.protocol}/${request.nextUrl.host}/portal/register/verify`,
+        `${request.nextUrl.protocol}/${request.nextUrl.host}/portal/verify`,
       )
     }
   }

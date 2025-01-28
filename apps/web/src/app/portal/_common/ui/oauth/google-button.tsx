@@ -1,15 +1,15 @@
 import { Button } from '@sushiswap/ui'
-import { GithubIcon } from '@sushiswap/ui/icons/GithubIcon'
-import { getNewIdpIntent } from '../lib/get-new-idp-intent'
+import { GoogleIcon } from '@sushiswap/ui/icons/GoogleIcon'
+import { getNewIdpIntent } from '../../lib/get-new-idp-intent'
 
 export const dynamic = false
 
-export async function GithubButton({
+export async function GoogleButton({
   text,
   type,
   disabled = false,
 }: { text: string; type: 'login' | 'connect'; disabled?: boolean }) {
-  const idpIntent = await getNewIdpIntent({ idpId: '299270310144770125', type })
+  const idpIntent = await getNewIdpIntent({ idpId: '299271776439894093', type })
 
   const Comp = (
     <Button
@@ -18,7 +18,7 @@ export async function GithubButton({
       className="space-x-1 w-full"
       disabled={disabled}
     >
-      <GithubIcon width={24} height={24} />
+      <GoogleIcon width={24} height={24} />
       <span>{text}</span>
     </Button>
   )
@@ -26,7 +26,12 @@ export async function GithubButton({
   if (disabled) return Comp
 
   return (
-    <a href={idpIntent.authUrl} className="w-full">
+    <a
+      href={idpIntent.authUrl}
+      className="w-full"
+      target="_blank"
+      rel="noreferrer"
+    >
       {Comp}
     </a>
   )

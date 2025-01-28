@@ -1,5 +1,5 @@
 import ms from 'ms'
-import { getSessionServiceClient } from 'src/app/portal/(unauthenticated)/_common/lib/zitadel-client'
+import { getSessionServiceClient } from 'src/app/portal/_common/lib/zitadel-client'
 
 export async function createZitadelSession(body: {
   email: string

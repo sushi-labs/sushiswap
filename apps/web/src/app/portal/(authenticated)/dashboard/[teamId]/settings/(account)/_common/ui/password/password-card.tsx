@@ -8,11 +8,13 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
+  Collapsible,
   FormControl,
   FormField,
   FormItem,
   FormLabel,
   TextField,
+  classNames,
   formClassnames,
   useForm,
 } from '@sushiswap/ui'
@@ -25,7 +27,10 @@ import { changeOrCreatePasswordSchema } from './password-form-schema'
 type ChangeOrCreatePasswordValues = z.infer<typeof changeOrCreatePasswordSchema>
 
 export function PasswordCard() {
-  const [globalErrorMsg, setGlobalErrorMsg] = useState<string | null>(null)
+  const [globalMsg, setGlobalMsg] = useState<{
+    type: 'error' | 'success'
+    message: string
+  } | null>(null)
 
   const form = useForm<ChangeOrCreatePasswordValues>({
     defaultValues: {
@@ -61,11 +66,20 @@ export function PasswordCard() {
         if ('field' in result) {
           form.setError(result.field, { message: result.error })
         } else {
-          setGlobalErrorMsg(result.error)
+          setGlobalMsg({
+            type: 'error',
+            message: result.error,
+          })
         }
+      } else {
+        setGlobalMsg({
+          type: 'success',
+          message: 'Password changed successfully',
+        })
+        form.reset()
       }
     },
-    [form.setError],
+    [form.setError, form.reset],
   )
 
   const isPending = form.formState.isSubmitting
@@ -137,11 +151,17 @@ export function PasswordCard() {
               <Button type="submit" fullWidth disabled={isPending}>
                 Change
               </Button>
-              {globalErrorMsg && (
-                <div className="w-full text-center text-red-500 font-medium">
-                  {globalErrorMsg}
+              <Collapsible open={!!globalMsg}>
+                <div
+                  className={classNames(
+                    globalMsg?.type === 'success' && 'text-green-500',
+                    globalMsg?.type === 'error' && 'test-red-500',
+                    'w-full text-center font-medium',
+                  )}
+                >
+                  {globalMsg?.message || ''}
                 </div>
-              )}
+              </Collapsible>
             </div>
           </FormProvider>
         </form>
