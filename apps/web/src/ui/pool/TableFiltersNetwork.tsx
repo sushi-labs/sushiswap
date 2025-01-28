@@ -86,7 +86,6 @@ export const TableFiltersNetwork: FC<{
             testdata-id="network-selector-input"
             placeholder="Search network"
           />
-          <CommandEmpty>No network found.</CommandEmpty>
           <CommandGroup>
             {SUPPORTED_NETWORKS.map((_network) => {
               const name = getNetworkName(_network)
@@ -130,6 +129,7 @@ export const TableFiltersNetwork: FC<{
               )
             })}
           </CommandGroup>
+          <CommandEmpty>No network found.</CommandEmpty>
         </Command>
       </PopoverContent>
     </Popover>

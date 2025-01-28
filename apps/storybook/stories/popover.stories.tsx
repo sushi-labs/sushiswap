@@ -61,13 +61,13 @@ export const PopoverWithMenu = {
       <PopoverContent className="!p-0 !overflow-x-hidden !overflow-y-scroll scroll">
         <Command>
           <CommandInput placeholder="Search network" />
-          <CommandEmpty>No network found.</CommandEmpty>
           <CommandGroup>
             <CommandItem value="Item 0">Command Item 0</CommandItem>
             <CommandItem value="Item 1">Command Item 1</CommandItem>
             <CommandItem value="Item 2">Command Item 2</CommandItem>
             <CommandItem value="Item 3">Command Item 3</CommandItem>
           </CommandGroup>
+          <CommandEmpty>No network found.</CommandEmpty>
         </Command>
       </PopoverContent>
     </Popover>
