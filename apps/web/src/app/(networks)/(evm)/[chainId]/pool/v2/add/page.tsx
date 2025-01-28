@@ -3,6 +3,7 @@
 import { PlusIcon } from '@heroicons/react-v1/solid'
 import { SlippageToleranceStorageKey } from '@sushiswap/hooks'
 import { createToast } from '@sushiswap/notifications'
+import { ZapEventName, sendAnalyticsEvent } from '@sushiswap/telemetry'
 import { Button, Dots, FormSection, Loader } from '@sushiswap/ui'
 import { useRouter } from 'next/navigation'
 import { notFound } from 'next/navigation'
@@ -26,6 +27,7 @@ import {
 import { isSushiSwapV2Pool } from 'src/lib/functions'
 import { useZap } from 'src/lib/hooks'
 import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
+import { warningSeverity } from 'src/lib/swap/warningSeverity'
 import { Web3Input } from 'src/lib/wagmi/components/web3-input'
 import { SushiSwapV2PoolState } from 'src/lib/wagmi/hooks/pools/hooks/useSushiSwapV2Pools'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
@@ -50,7 +52,7 @@ import {
   isWNativeSupported,
 } from 'sushi/config'
 import { Amount, Type, tryParseAmount } from 'sushi/currency'
-import { ZERO } from 'sushi/math'
+import { Percent, ZERO } from 'sushi/math'
 import { SushiSwapV2Pool } from 'sushi/pool/sushiswap-v2'
 import { SendTransactionReturnType } from 'viem'
 import {
@@ -274,7 +276,11 @@ const _ZapWidget: FC<ZapWidgetProps> = ({
     [inputAmount, inputCurrency],
   )
 
-  const { data: zapResponse, isError: isZapError } = useZap({
+  const {
+    data: zapResponse,
+    isError: isZapError,
+    error: zapError,
+  } = useZap({
     chainId,
     fromAddress: address,
     tokenIn: inputCurrency.isNative ? NativeAddress : inputCurrency.address,
@@ -283,9 +289,21 @@ const _ZapWidget: FC<ZapWidgetProps> = ({
     slippage: slippageTolerance,
   })
 
+  useEffect(() => {
+    if (!zapError) return
+
+    sendAnalyticsEvent(ZapEventName.ZAP_ERROR, {
+      error: zapError.message,
+    })
+  }, [zapError])
+
   const { approved } = useApproved(APPROVE_TAG_ZAP_LEGACY)
 
-  const { data: estGas, isError: isEstGasError } = useEstimateGas({
+  const {
+    data: estGas,
+    isError: isEstGasError,
+    error: estGasError,
+  } = useEstimateGas({
     chainId,
     account: address,
     to: zapResponse?.tx.to,
@@ -296,6 +314,14 @@ const _ZapWidget: FC<ZapWidgetProps> = ({
     },
   })
 
+  useEffect(() => {
+    if (!estGasError) return
+
+    sendAnalyticsEvent(ZapEventName.ZAP_ESTIMATE_GAS_CALL_FAILED, {
+      error: estGasError.message,
+    })
+  }, [estGasError])
+
   const preparedTx = useMemo(() => {
     return zapResponse && estGas
       ? { ...zapResponse.tx, gas: estGas }
@@ -305,14 +331,18 @@ const _ZapWidget: FC<ZapWidgetProps> = ({
   const { refetchChain: refetchBalances } = useRefetchBalances()
 
   const onSuccess = useCallback(
-    (hash: SendTransactionReturnType) => {
+    async (hash: SendTransactionReturnType) => {
       if (!chain || !pool) return
 
       setInputAmount('')
 
-      const receipt = client.waitForTransactionReceipt({ hash })
-      receipt.then(() => {
+      const promise = client.waitForTransactionReceipt({ hash })
+      promise.then(() => {
         refetchBalances(chain.id)
+      })
+
+      sendAnalyticsEvent(ZapEventName.ZAP_SIGNED, {
+        txHash: hash,
       })
 
       const ts = new Date().getTime()
@@ -321,7 +351,7 @@ const _ZapWidget: FC<ZapWidgetProps> = ({
         type: 'mint',
         chainId: chain.id,
         txHash: hash,
-        promise: receipt,
+        promise: promise,
         summary: {
           pending: `Zapping into the ${pool.token0.symbol}/${pool.token1.symbol} pair`,
           completed: `Successfully zapped into the ${pool.token0.symbol}/${pool.token1.symbol} pair`,
@@ -330,6 +360,23 @@ const _ZapWidget: FC<ZapWidgetProps> = ({
         timestamp: ts,
         groupTimestamp: ts,
       })
+
+      const receipt = await promise
+      {
+        if (receipt.status === 'success') {
+          sendAnalyticsEvent(ZapEventName.ZAP_TRANSACTION_COMPLETED, {
+            txHash: hash,
+            from: receipt.from,
+            chain_id: chainId,
+          })
+        } else {
+          sendAnalyticsEvent(ZapEventName.ZAP_TRANSACTION_FAILED, {
+            txHash: hash,
+            from: receipt.from,
+            chain_id: chainId,
+          })
+        }
+      }
     },
     [refetchBalances, client, chain, address, pool],
   )
@@ -337,6 +384,17 @@ const _ZapWidget: FC<ZapWidgetProps> = ({
   const { sendTransaction, isPending: isWritePending } = useSendTransaction({
     mutation: { onSuccess },
   })
+
+  const [checked, setChecked] = useState(false)
+
+  const showPriceImpactWarning = useMemo(() => {
+    const priceImpactSeverity = warningSeverity(
+      typeof zapResponse?.priceImpact === 'number'
+        ? new Percent(zapResponse.priceImpact, 10_000n)
+        : undefined,
+    )
+    return priceImpactSeverity > 3
+  }, [zapResponse?.priceImpact])
 
   return (
     <>
@@ -363,38 +421,64 @@ const _ZapWidget: FC<ZapWidgetProps> = ({
             chainId={chainId}
             amount={parsedInputAmount}
           >
-            <Checker.ApproveERC20
-              id="approve-token"
-              className="whitespace-nowrap"
+            <Checker.Guard
+              guardWhen={!checked && showPriceImpactWarning}
+              guardText="Price impact too high"
+              variant="destructive"
+              size="xl"
               fullWidth
-              amount={parsedInputAmount}
-              contract={zapResponse?.tx.to}
             >
-              <Checker.Success tag={APPROVE_TAG_ZAP_LEGACY}>
-                <Button
-                  size="xl"
-                  fullWidth
-                  testId="zap-liquidity"
-                  onClick={() => preparedTx && sendTransaction(preparedTx)}
-                  loading={!preparedTx || isWritePending}
-                  disabled={isZapError || isEstGasError}
-                >
-                  {isZapError || isEstGasError ? (
-                    'Shoot! Something went wrong :('
-                  ) : isWritePending ? (
-                    <Dots>Confirm Transaction</Dots>
-                  ) : (
-                    title
-                  )}
-                </Button>
-              </Checker.Success>
-            </Checker.ApproveERC20>
+              <Checker.ApproveERC20
+                id="approve-token"
+                className="whitespace-nowrap"
+                fullWidth
+                amount={parsedInputAmount}
+                contract={zapResponse?.tx.to}
+              >
+                <Checker.Success tag={APPROVE_TAG_ZAP_LEGACY}>
+                  <Button
+                    size="xl"
+                    fullWidth
+                    testId="zap-liquidity"
+                    onClick={() => preparedTx && sendTransaction(preparedTx)}
+                    loading={!preparedTx || isWritePending}
+                    disabled={isZapError || isEstGasError}
+                  >
+                    {isZapError || isEstGasError ? (
+                      'Shoot! Something went wrong :('
+                    ) : isWritePending ? (
+                      <Dots>Confirm Transaction</Dots>
+                    ) : (
+                      title
+                    )}
+                  </Button>
+                </Checker.Success>
+              </Checker.ApproveERC20>
+            </Checker.Guard>
           </Checker.Amounts>
         </Checker.Network>
       </Checker.Connect>
+      {showPriceImpactWarning && (
+        <div className="flex items-start px-4 py-3 mt-4 rounded-xl bg-red/20">
+          <input
+            id="expert-checkbox"
+            type="checkbox"
+            checked={checked}
+            onChange={(e) => setChecked(e.target.checked)}
+            className="cursor-pointer mr-1 w-5 h-5 mt-0.5 text-red-600 !ring-red-600 bg-white border-red rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2"
+          />
+          <label
+            htmlFor="expert-checkbox"
+            className="ml-2 font-medium text-red-600"
+          >
+            Price impact is too high. You will lose a big portion of your funds
+            in this trade. Please tick the box if you would like to continue.
+          </label>
+        </div>
+      )}
       <ZapInfoCard
         zapResponse={zapResponse}
-        inputCurrency={inputCurrency}
+        inputCurrencyAmount={parsedInputAmount}
         pool={pool}
       />
     </>

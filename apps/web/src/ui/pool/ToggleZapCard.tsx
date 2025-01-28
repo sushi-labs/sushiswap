@@ -1,3 +1,4 @@
+import { ZapEventName, sendAnalyticsEvent } from '@sushiswap/telemetry'
 import {
   Card,
   CardDescription,
@@ -5,7 +6,7 @@ import {
   CardTitle,
   Switch,
 } from '@sushiswap/ui'
-import { FC } from 'react'
+import { FC, useCallback } from 'react'
 
 interface ToggleZapCardProps {
   checked: boolean
@@ -14,8 +15,16 @@ interface ToggleZapCardProps {
 
 export const ToggleZapCard: FC<ToggleZapCardProps> = ({
   checked,
-  onCheckedChange,
+  onCheckedChange: _onCheckedChange,
 }) => {
+  const onCheckedChange = useCallback(
+    (checked: boolean) => {
+      sendAnalyticsEvent(ZapEventName.ZAP_TOGGLE, { checked })
+      _onCheckedChange(checked)
+    },
+    [_onCheckedChange],
+  )
+
   return (
     <Card className="bg-gradient-to-r from-blue/20 to-pink/20">
       <CardHeader>
