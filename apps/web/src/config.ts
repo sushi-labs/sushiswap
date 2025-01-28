@@ -62,10 +62,9 @@ export const DISABLED_CHAIN_IDS = [
   ChainId.PALM,
   ChainId.HECO,
   ChainId.OKEX,
-  ChainId.HEMI,
 ] as const
 
-export const NEW_CHAIN_IDS = [ChainId.SONIC] as const
+export const NEW_CHAIN_IDS = [ChainId.HEMI] as const
 
 export const PREFERRED_CHAINID_ORDER = [
   ...NEW_CHAIN_IDS,
@@ -88,6 +87,7 @@ export const PREFERRED_CHAINID_ORDER = [
   ChainId.GNOSIS,
   ChainId.ROOTSTOCK,
   ChainId.SONIC,
+  ChainId.HEMI,
   ChainId.KAVA,
   ChainId.ZKSYNC_ERA,
   ChainId.FANTOM,
