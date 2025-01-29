@@ -62,7 +62,7 @@ async function GET(req: NextRequest) {
       idpLink: {
         $typeName: 'zitadel.user.v2.IDPLink',
         idpId: intent.idpInformation.idpId,
-        userId: session.user.id,
+        userId: intent.idpInformation.userId,
         userName: user.user.username,
       },
     })
