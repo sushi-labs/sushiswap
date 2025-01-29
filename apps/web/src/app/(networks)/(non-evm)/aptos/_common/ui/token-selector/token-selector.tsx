@@ -12,9 +12,9 @@ import { SkeletonCircle, SkeletonText } from '@sushiswap/ui'
 import { DialogHeader, DialogTitle, DialogTrigger } from '@sushiswap/ui'
 import { classNames } from '@sushiswap/ui'
 import React, {
-  CSSProperties,
-  ReactElement,
-  ReactNode,
+  type CSSProperties,
+  type ReactElement,
+  type ReactNode,
   useCallback,
   useState,
 } from 'react'
@@ -26,7 +26,7 @@ import { useCustomTokens } from '~aptos/_common/lib/common/use-custom-tokens'
 import { useSortedTokenList } from '~aptos/_common/lib/common/use-sorted-token-list'
 import { useTokenBalances } from '~aptos/_common/lib/common/use-token-balances'
 import { useTokenWithCache } from '~aptos/_common/lib/common/use-token-with-cache'
-import { Token } from '~aptos/_common/lib/types/token'
+import type { Token } from '~aptos/_common/lib/types/token'
 import { CurrencyIcon } from '../currency/currency-icon'
 import { TokenSelectorImportRow } from './token-selector-import-row'
 import { TokenListItem } from './token-selector-list-item'

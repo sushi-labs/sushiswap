@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { useStablePrice } from '~tron/_common/lib/hooks/useStablePrice'
-import { IToken } from '~tron/_common/types/token-type'
+import type { IToken } from '~tron/_common/types/token-type'
 
 export const useLPUsdValue = ({
   token0,

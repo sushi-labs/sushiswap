@@ -1,5 +1,5 @@
 import { Button } from '@sushiswap/ui'
-import { FC } from 'react'
+import type { FC } from 'react'
 
 export const SwapModeButtons: FC = () => {
   return (

@@ -2,7 +2,7 @@
 
 import '@tronweb3/tronwallet-adapter-react-ui/style.css'
 
-import { WalletError } from '@tronweb3/tronwallet-abstract-adapter'
+import type { WalletError } from '@tronweb3/tronwallet-abstract-adapter'
 import { WalletProvider } from '@tronweb3/tronwallet-adapter-react-hooks'
 import { WalletModalProvider } from '@tronweb3/tronwallet-adapter-react-ui'
 import { useCallback } from 'react'

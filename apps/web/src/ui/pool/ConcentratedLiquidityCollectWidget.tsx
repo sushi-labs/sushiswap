@@ -9,11 +9,11 @@ import {
   Switch,
 } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui'
-import { FC, useMemo, useState } from 'react'
-import { ConcentratedLiquidityPosition } from 'src/lib/wagmi/hooks/positions/types'
+import { type FC, useMemo, useState } from 'react'
+import type { ConcentratedLiquidityPosition } from 'src/lib/wagmi/hooks/positions/types'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
-import { Address, EvmChainId, Position } from 'sushi'
-import { Amount, Native, Type, unwrapToken } from 'sushi/currency'
+import type { Address, EvmChainId, Position } from 'sushi'
+import { Amount, Native, type Type, unwrapToken } from 'sushi/currency'
 import { formatUSD } from 'sushi/format'
 import { ConcentratedLiquidityCollectButton } from './ConcentratedLiquidityCollectButton'
 

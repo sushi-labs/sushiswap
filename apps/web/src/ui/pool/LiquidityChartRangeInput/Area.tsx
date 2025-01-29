@@ -1,7 +1,7 @@
-import { ScaleLinear, area, curveStepAfter } from 'd3'
-import React, { FC, useMemo } from 'react'
+import { type ScaleLinear, area, curveStepAfter } from 'd3'
+import React, { type FC, useMemo } from 'react'
 
-import { ChartEntry } from './types'
+import type { ChartEntry } from './types'
 
 interface AreaProps {
   series: ChartEntry[]

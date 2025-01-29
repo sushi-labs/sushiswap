@@ -4,7 +4,10 @@ import { useQueryClient } from '@tanstack/react-query'
 import { useEffect } from 'react'
 import { multicall3Abi_getCurrentBlockTimestamp } from 'sushi/abi'
 import { useBlockNumber, useReadContract } from 'wagmi'
-import { MULTICALL_3_ADDRESS, Multicall3ChainId } from '../contracts/multicall3'
+import {
+  MULTICALL_3_ADDRESS,
+  type Multicall3ChainId,
+} from '../contracts/multicall3'
 
 // TODO: Readd direct export, not sure why it's not working
 export const useCurrentBlockTimestamp = (

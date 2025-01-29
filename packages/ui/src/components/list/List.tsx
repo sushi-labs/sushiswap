@@ -1,11 +1,11 @@
 import classNames from 'classnames'
-import React, { FC, ReactNode } from 'react'
+import React, { type FC, type ReactNode } from 'react'
 
-import { ListControl, ListControlProps } from './ListControl'
-import { ListItem, ListItemComponent } from './ListItem'
-import { ListKeyValue, ListKeyValueProps } from './ListKeyValue'
-import { ListLabel, ListLabelProps } from './ListLabel'
-import { ListMenuItem, ListMenuItemComponent } from './ListMenuItem'
+import { ListControl, type ListControlProps } from './ListControl'
+import { ListItem, type ListItemComponent } from './ListItem'
+import { ListKeyValue, type ListKeyValueProps } from './ListKeyValue'
+import { ListLabel, type ListLabelProps } from './ListLabel'
+import { ListMenuItem, type ListMenuItemComponent } from './ListMenuItem'
 
 type List<T> = FC<T> & {
   Item: ListItemComponent

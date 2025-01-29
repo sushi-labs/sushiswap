@@ -1,9 +1,9 @@
-import { Page, expect, test } from '@playwright/test'
-import { EvmChainId, evmChainName } from 'sushi/chain'
-import { Native, Type } from 'sushi/currency'
+import { type Page, expect, test } from '@playwright/test'
+import { type EvmChainId, evmChainName } from 'sushi/chain'
+import { Native, type Type } from 'sushi/currency'
 import { zeroAddress } from 'viem'
 
-import { SupportedChainId } from '../../src/config'
+import type { SupportedChainId } from '../../src/config'
 
 type InputType = 'INPUT' | 'OUTPUT'
 
@@ -15,12 +15,12 @@ if (typeof process.env.NEXT_PUBLIC_DST_CHAIN_ID !== 'string') {
   throw new Error('NEXT_PUBLIC_DST_CHAIN_ID not set')
 }
 
-const srcChainId = parseInt(
+const srcChainId = Number.parseInt(
   process.env.NEXT_PUBLIC_CHAIN_ID,
 ) as SupportedChainId
 
 // TODO: Change to dstChainIds based on paths
-const dstChainId = parseInt(
+const dstChainId = Number.parseInt(
   process.env.NEXT_PUBLIC_DST_CHAIN_ID,
 ) as SupportedChainId
 

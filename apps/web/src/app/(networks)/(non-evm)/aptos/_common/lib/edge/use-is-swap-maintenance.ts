@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { useEdgeConfig } from '~aptos/_common/providers/edge-config-provider'
-import { SwapEdgeConfig } from './get-swap-edge-config'
+import type { SwapEdgeConfig } from './get-swap-edge-config'
 
 export const useIsSwapMaintenance = () => {
   const { maintenance } = useEdgeConfig<SwapEdgeConfig>()

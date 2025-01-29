@@ -1,5 +1,5 @@
-import { Native, Token, type Type } from 'sushi/currency'
-import z from 'zod'
+import { type Native, Token, type Type } from 'sushi/currency'
+import type z from 'zod'
 import type {
   tokenValidator as tokenValidator01,
   tradeValidator01,

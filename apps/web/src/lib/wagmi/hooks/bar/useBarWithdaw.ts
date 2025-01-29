@@ -3,7 +3,7 @@
 import { createErrorToast, createToast } from '@sushiswap/notifications'
 import { useCallback, useMemo } from 'react'
 import { xsushiAbi_leave } from 'sushi/abi'
-import { Amount, Token, XSUSHI_ADDRESS } from 'sushi/currency'
+import { type Amount, type Token, XSUSHI_ADDRESS } from 'sushi/currency'
 import { UserRejectedRequestError } from 'viem'
 import {
   useAccount,
@@ -11,7 +11,7 @@ import {
   useSimulateContract,
   useWriteContract,
 } from 'wagmi'
-import { SendTransactionReturnType } from 'wagmi/actions'
+import type { SendTransactionReturnType } from 'wagmi/actions'
 
 import { ChainId } from 'sushi/chain'
 import { useRefetchBalances } from '~evm/_common/ui/balance-provider/use-refetch-balances'

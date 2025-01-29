@@ -1,7 +1,7 @@
 import { getPortfolioHistory } from '@sushiswap/graph-client/data-api'
 import { SkeletonCircle, SkeletonText } from '@sushiswap/ui'
 import { useQuery } from '@tanstack/react-query'
-import { Address } from 'viem'
+import type { Address } from 'viem'
 import { useAccount } from 'wagmi'
 import { PortfolioApproveTransaction } from './PortfolioApproveTransaction'
 import { PortfolioOtherTransaction } from './PortfolioOtherTransaction'

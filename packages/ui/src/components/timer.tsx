@@ -1,7 +1,7 @@
 'use client'
 
 import { useInterval } from '@sushiswap/hooks'
-import { FC, ReactNode, useState } from 'react'
+import { type FC, type ReactNode, useState } from 'react'
 
 interface State {
   days: string

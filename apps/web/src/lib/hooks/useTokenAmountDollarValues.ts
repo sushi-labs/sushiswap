@@ -2,7 +2,7 @@
 
 import { useMemo } from 'react'
 import type { EvmChainId } from 'sushi/chain'
-import { Amount, Type } from 'sushi/currency'
+import type { Amount, Type } from 'sushi/currency'
 import { ZERO } from 'sushi/math'
 import { usePrices } from '~evm/_common/ui/price-provider/price-provider/use-prices'
 

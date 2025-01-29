@@ -1,6 +1,6 @@
 'use client'
 
-import { SteerVault, getTokenRatios } from '@sushiswap/steer-sdk'
+import { type SteerVault, getTokenRatios } from '@sushiswap/steer-sdk'
 import { useQuery } from '@tanstack/react-query'
 import React from 'react'
 import { stringify } from 'src/instrumentation'

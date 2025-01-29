@@ -1,4 +1,4 @@
-import { PoolReserve } from '~aptos/pool/lib/use-pools-reserves'
+import type { PoolReserve } from '~aptos/pool/lib/use-pools-reserves'
 
 export type PoolInfo = {
   type: string

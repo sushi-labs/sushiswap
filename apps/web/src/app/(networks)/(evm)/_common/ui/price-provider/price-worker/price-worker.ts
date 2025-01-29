@@ -1,12 +1,12 @@
 import { SUSHI_DATA_API_HOST } from 'src/lib/constants'
-import { EvmChainId } from 'sushi'
+import type { EvmChainId } from 'sushi'
 import { UPDATE_INTERVAL } from '../config'
 import {
-  PriceWorkerPostMessage,
+  type PriceWorkerPostMessage,
   PriceWorkerPostMessageType,
-  PriceWorkerReceiveMessage,
+  type PriceWorkerReceiveMessage,
   PriceWorkerReceiveMessageType,
-  WorkerChainState,
+  type WorkerChainState,
 } from './types'
 
 {

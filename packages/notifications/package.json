@@ -3,10 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "description": "Sushi Notifications",
-  "keywords": [
-    "sushi",
-    "notification"
-  ],
+  "keywords": ["sushi", "notification"],
   "homepage": "https://www.sushi.com",
   "repository": {
     "type": "git",
@@ -27,15 +24,10 @@
   },
   "typesVersions": {
     "*": {
-      "*": [
-        "src/*",
-        "src/*/index"
-      ]
+      "*": ["src/*", "src/*/index"]
     }
   },
-  "files": [
-    "dist"
-  ],
+  "files": ["dist"],
   "scripts": {
     "build": "tsc",
     "check": "tsc --pretty --noEmit",

@@ -4,7 +4,7 @@ import { Loader2 } from 'lucide-react'
 import * as React from 'react'
 
 import classNames from 'classnames'
-import { IconComponent } from '../types'
+import type { IconComponent } from '../types'
 
 const buttonVariants = cva(
   'cursor-pointer whitespace-nowrap inline-flex gap-2 items-center justify-center font-medium disabled:opacity-50 disabled:pointer-events-none ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ring-blue',

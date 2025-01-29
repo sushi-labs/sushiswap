@@ -1,4 +1,4 @@
-import { IToken } from './token-type'
+import type { IToken } from './token-type'
 
 export type IPoolData = {
   token0Address: string

@@ -6,7 +6,7 @@ import {
   getSortedTokensByQuery,
   tokenComparator,
 } from '~tron/_common/lib/utils/token-search-helpers'
-import { IToken } from '~tron/_common/types/token-type'
+import type { IToken } from '~tron/_common/types/token-type'
 
 export type TokenWithBalance = IToken & { balance: string }
 

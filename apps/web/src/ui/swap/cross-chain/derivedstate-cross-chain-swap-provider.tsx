@@ -3,9 +3,9 @@
 import { nanoid } from 'nanoid'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import {
-  Dispatch,
-  FC,
-  SetStateAction,
+  type Dispatch,
+  type FC,
+  type SetStateAction,
   createContext,
   useCallback,
   useContext,
@@ -17,14 +17,23 @@ import { isXSwapSupportedChainId } from 'src/config'
 import { useCrossChainTradeRoutes as _useCrossChainTradeRoutes } from 'src/lib/hooks/react-query'
 import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
 import { replaceNetworkSlug } from 'src/lib/network'
-import { CrossChainRoute, CrossChainRouteOrder } from 'src/lib/swap/cross-chain'
+import type {
+  CrossChainRoute,
+  CrossChainRouteOrder,
+} from 'src/lib/swap/cross-chain'
 import { useTokenWithCache } from 'src/lib/wagmi/hooks/tokens/useTokenWithCache'
 import { ChainKey, EvmChainId } from 'sushi/chain'
 import { defaultCurrency } from 'sushi/config'
 import { defaultQuoteCurrency } from 'sushi/config'
-import { Amount, Native, Token, Type, tryParseAmount } from 'sushi/currency'
+import {
+  Amount,
+  Native,
+  Token,
+  type Type,
+  tryParseAmount,
+} from 'sushi/currency'
 import { Percent } from 'sushi/math'
-import { Address, isAddress, zeroAddress } from 'viem'
+import { type Address, isAddress, zeroAddress } from 'viem'
 import { useAccount } from 'wagmi'
 
 const getTokenAsString = (token: Type | string) =>

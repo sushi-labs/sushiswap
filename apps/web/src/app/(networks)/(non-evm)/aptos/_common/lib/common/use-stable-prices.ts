@@ -112,7 +112,15 @@ export function useStablePrices({
       },
       {} as Record<string, number>,
     )
-  }, [currencies, tokenPairs, pairsInfo, default_stable, native, stableTokens])
+  }, [
+    currencies,
+    tokenPairs,
+    pairsInfo,
+    default_stable,
+    native,
+    stableTokens,
+    nativePairsEndIndex,
+  ])
 
   const isLoading = Boolean(currencies && isPairsInfoLoading)
 

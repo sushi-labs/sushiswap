@@ -2,7 +2,7 @@ import { useWallet } from '@aptos-labs/wallet-adapter-react'
 import { Button, CardFooter, CardTitle, Dots } from '@sushiswap/ui'
 import { Card, CardDescription, CardHeader } from '@sushiswap/ui'
 import { CardContent, CardGroup, CardItem, CardLabel } from '@sushiswap/ui'
-import { FC, useState } from 'react'
+import { type FC, useState } from 'react'
 import { formatUSD } from 'sushi/format'
 import { networkNameToNetwork } from '~aptos/_common/config/chains'
 import { Aptos } from '~aptos/_common/config/coins'
@@ -12,7 +12,7 @@ import { useNetwork } from '~aptos/_common/lib/common/use-network'
 import { useStablePrice } from '~aptos/_common/lib/common/use-stable-price'
 import { createToast } from '~aptos/_common/ui/toast'
 import { UserProfile } from '~aptos/_common/ui/user-profile/user-profile'
-import { Pool } from '~aptos/pool/lib/convert-pool-to-sushi-pool'
+import type { Pool } from '~aptos/pool/lib/convert-pool-to-sushi-pool'
 
 interface PoolMyRewards {
   pool: Pool
@@ -36,7 +36,7 @@ export const PoolMyRewards: FC<PoolMyRewards> = ({
   const aptosPrice = useStablePrice({ currency: Aptos[network] })
   const aptosPriceInUsd = aptosPrice
     ? aptosPrice *
-      parseFloat(formatNumberWithDecimals(reward, decimals as number))
+      Number.parseFloat(formatNumberWithDecimals(reward, decimals as number))
     : 0
   const [isTransactionPending, setTransactionPending] = useState<boolean>(false)
 
@@ -102,7 +102,7 @@ export const PoolMyRewards: FC<PoolMyRewards> = ({
             <span className="flex gap-1 font-semibold">
               {' '}
               {reward
-                ? parseFloat(
+                ? Number.parseFloat(
                     String(
                       formatNumberWithDecimals(reward, decimals as number),
                     ),

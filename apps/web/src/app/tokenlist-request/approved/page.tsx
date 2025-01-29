@@ -1,7 +1,7 @@
 'use client'
 
 import { ExternalLinkIcon } from '@heroicons/react-v1/solid'
-import { ApprovedCommunityTokens } from '@sushiswap/graph-client/data-api/queries/token-list-submission'
+import type { ApprovedCommunityTokens } from '@sushiswap/graph-client/data-api/queries/token-list-submission'
 import {
   Badge,
   Card,
@@ -14,7 +14,7 @@ import {
   SkeletonText,
 } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
-import { ColumnDef, SortingState, TableState } from '@tanstack/react-table'
+import type { ColumnDef, SortingState, TableState } from '@tanstack/react-table'
 import React, { useMemo, useState } from 'react'
 import { useApprovedCommunityTokens } from 'src/lib/hooks'
 import { EvmChain } from 'sushi/chain'

@@ -9,13 +9,13 @@ import {
   Toggle,
 } from '@sushiswap/ui'
 import { useQuery } from '@tanstack/react-query'
-import { PaginationState } from '@tanstack/react-table'
-import { FC, useMemo, useState } from 'react'
-import { EvmChain, EvmChainId } from 'sushi/chain'
-import { SushiSwapV2ChainId, isSushiSwapV2ChainId } from 'sushi/config'
+import type { PaginationState } from '@tanstack/react-table'
+import { type FC, useMemo, useState } from 'react'
+import { EvmChain, type EvmChainId } from 'sushi/chain'
+import { type SushiSwapV2ChainId, isSushiSwapV2ChainId } from 'sushi/config'
 
 import {
-  V2Pool,
+  type V2Pool,
   getSushiV2Burns,
   getSushiV2Mints,
   getSushiV2Swaps,

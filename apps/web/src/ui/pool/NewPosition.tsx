@@ -1,7 +1,7 @@
 'use client'
 
 import {
-  SmartPoolChainId,
+  type SmartPoolChainId,
   isSmartPoolChainId,
 } from '@sushiswap/graph-client/data-api'
 import {
@@ -12,11 +12,11 @@ import {
   CardTitle,
   Separator,
 } from '@sushiswap/ui'
-import React, { FC, useEffect, useMemo, useState } from 'react'
+import React, { type FC, useEffect, useMemo, useState } from 'react'
 import { useVaults } from 'src/lib/hooks'
 import { useConcentratedLiquidityPoolStats } from 'src/lib/hooks/react-query'
-import { Address, ChainKey } from 'sushi'
-import { SushiSwapV3ChainId } from 'sushi/config'
+import { type Address, ChainKey } from 'sushi'
+import type { SushiSwapV3ChainId } from 'sushi/config'
 import { unwrapToken } from 'sushi/currency'
 import { useAccount } from 'wagmi'
 import { ConcentratedLiquidityWidget } from './ConcentratedLiquidityWidget'

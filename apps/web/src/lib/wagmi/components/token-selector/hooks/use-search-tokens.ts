@@ -1,5 +1,5 @@
 import {
-  TokenListChainId,
+  type TokenListChainId,
   getTokenList,
 } from '@sushiswap/graph-client/data-api'
 import { useCustomTokens } from '@sushiswap/hooks'

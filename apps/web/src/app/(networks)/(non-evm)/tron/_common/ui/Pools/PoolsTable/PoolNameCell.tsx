@@ -5,7 +5,7 @@ import React from 'react'
 import { formatNumber } from 'sushi'
 import { WTRX } from '~tron/_common/constants/token-list'
 import { useTokenInfo } from '~tron/_common/lib/hooks/useTokenInfo'
-import { TopPool } from '~tron/_common/lib/hooks/useTopPools'
+import type { TopPool } from '~tron/_common/lib/hooks/useTopPools'
 import { Icon } from '../../General/Icon'
 
 export const PoolNameCell = ({ data }: { data: TopPool }) => {

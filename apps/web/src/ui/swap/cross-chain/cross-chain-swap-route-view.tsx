@@ -1,7 +1,7 @@
 import { classNames } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import React, { useMemo } from 'react'
-import { FC } from 'react'
+import type { FC } from 'react'
 import { getCrossChainStepBreakdown } from 'src/lib/swap/cross-chain'
 import type {
   CrossChainAction,
@@ -10,7 +10,7 @@ import type {
   CrossChainToolDetails,
 } from 'src/lib/swap/cross-chain/types'
 import { EvmChain } from 'sushi/chain'
-import { Amount, Native, Token, Type } from 'sushi/currency'
+import { Amount, Native, Token, type Type } from 'sushi/currency'
 import { formatNumber } from 'sushi/format'
 import { zeroAddress } from 'viem'
 

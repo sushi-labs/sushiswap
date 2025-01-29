@@ -1,7 +1,7 @@
 'use client'
 
 import { useLocalStorage } from '@sushiswap/hooks'
-import React, { FC } from 'react'
+import React, { type FC } from 'react'
 import { ChainId } from 'sushi/chain'
 
 import { NetworkIcon } from '../../icons/NetworkIcon'

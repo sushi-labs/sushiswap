@@ -3,7 +3,7 @@ import {
   createInfoToast,
   createSuccessToast,
 } from '@sushiswap/notifications'
-import { Button, ButtonProps } from '@sushiswap/ui'
+import { Button, type ButtonProps } from '@sushiswap/ui'
 import { useQueryClient } from '@tanstack/react-query'
 import { useWallet } from '@tronweb3/tronwallet-adapter-react-hooks'
 import { useMemo } from 'react'
@@ -134,8 +134,8 @@ export const RemoveButton = (props: ButtonProps) => {
       const errorMessage =
         typeof error === 'string'
           ? error
-          : (error as Error)?.message ??
-            'An error occurred while trying to remove liquidity.'
+          : ((error as Error)?.message ??
+            'An error occurred while trying to remove liquidity.')
       //create error toast
       createFailedToast({
         summary: errorMessage,

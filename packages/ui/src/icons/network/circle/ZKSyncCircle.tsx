@@ -3,7 +3,7 @@ import * as React from 'react'
 import { ZKSyncNaked } from '../naked/ZKSyncNaked'
 
 import classNames from 'classnames'
-import { IconComponent } from '../../../types'
+import type { IconComponent } from '../../../types'
 
 export const ZKSyncCircle: IconComponent = (props) => (
   <ZKSyncNaked

@@ -17,7 +17,7 @@ import {
   WidgetHeader,
   WidgetTitle,
 } from '@sushiswap/ui'
-import { FC, useCallback, useEffect, useMemo, useState } from 'react'
+import { type FC, useCallback, useEffect, useMemo, useState } from 'react'
 import { APPROVE_TAG_ZAP_LEGACY, NativeAddress } from 'src/lib/constants'
 import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
 import { warningSeverity } from 'src/lib/swap/warningSeverity'
@@ -29,14 +29,14 @@ import {
   useApproved,
 } from 'src/lib/wagmi/systems/Checker/Provider'
 import {
-  SushiSwapV2ChainId,
+  type SushiSwapV2ChainId,
   defaultCurrency,
   isWNativeSupported,
 } from 'sushi/config'
-import { Amount, Type, tryParseAmount } from 'sushi/currency'
+import { Amount, type Type, tryParseAmount } from 'sushi/currency'
 import { Percent } from 'sushi/math'
-import { SushiSwapV2Pool } from 'sushi/pool'
-import { SendTransactionReturnType } from 'viem'
+import type { SushiSwapV2Pool } from 'sushi/pool'
+import type { SendTransactionReturnType } from 'viem'
 import {
   useAccount,
   useEstimateGas,
@@ -179,20 +179,18 @@ const _ZapSectionLegacy: FC<ZapSectionLegacyProps> = ({
       })
 
       const receipt = await promise
-      {
-        if (receipt.status === 'success') {
-          sendAnalyticsEvent(ZapEventName.ZAP_TRANSACTION_COMPLETED, {
-            txHash: hash,
-            from: receipt.from,
-            chain_id: chainId,
-          })
-        } else {
-          sendAnalyticsEvent(ZapEventName.ZAP_TRANSACTION_FAILED, {
-            txHash: hash,
-            from: receipt.from,
-            chain_id: chainId,
-          })
-        }
+      if (receipt.status === 'success') {
+        sendAnalyticsEvent(ZapEventName.ZAP_TRANSACTION_COMPLETED, {
+          txHash: hash,
+          from: receipt.from,
+          chain_id: chain.id,
+        })
+      } else {
+        sendAnalyticsEvent(ZapEventName.ZAP_TRANSACTION_FAILED, {
+          txHash: hash,
+          from: receipt.from,
+          chain_id: chain.id,
+        })
       }
     },
     [refetchBalances, client, chain, address, pool],

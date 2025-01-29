@@ -2,11 +2,11 @@ import { publicClientConfig } from 'src/lib/wagmi/config/viem'
 import { SushiSwapV3Pool, computeSushiSwapV3PoolAddress } from 'sushi'
 import {
   SUSHISWAP_V3_FACTORY_ADDRESS,
-  SushiSwapV3ChainId,
-  SushiSwapV3FeeAmount,
+  type SushiSwapV3ChainId,
+  type SushiSwapV3FeeAmount,
 } from 'sushi/config'
-import { Token } from 'sushi/currency'
-import { Address, createClient } from 'viem'
+import type { Token } from 'sushi/currency'
+import { type Address, createClient } from 'viem'
 import { multicall } from 'viem/actions'
 
 const abiShard = [

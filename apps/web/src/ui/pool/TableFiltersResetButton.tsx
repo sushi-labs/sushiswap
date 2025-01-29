@@ -2,7 +2,13 @@
 
 import { XMarkIcon } from '@heroicons/react/24/solid'
 import { Button } from '@sushiswap/ui'
-import React, { FC, useCallback, useMemo, useState, useTransition } from 'react'
+import React, {
+  type FC,
+  useCallback,
+  useMemo,
+  useState,
+  useTransition,
+} from 'react'
 
 import { usePoolFilters, useSetPoolFilters } from './PoolsFiltersProvider'
 import { POOL_TYPES } from './TableFiltersPoolType'

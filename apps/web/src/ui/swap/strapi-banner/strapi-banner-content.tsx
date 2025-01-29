@@ -1,11 +1,11 @@
 'use client'
 
 import { XMarkIcon } from '@heroicons/react/20/solid'
-import { Banner } from '@sushiswap/graph-client/strapi'
+import type { Banner } from '@sushiswap/graph-client/strapi'
 import { LinkExternal, classNames } from '@sushiswap/ui'
 import type { RequestCookie } from 'next/dist/compiled/@edge-runtime/cookies'
 import Image from 'next/legacy/image'
-import { MouseEventHandler, useCallback, useMemo, useState } from 'react'
+import { type MouseEventHandler, useCallback, useMemo, useState } from 'react'
 import { getOptimizedMedia } from 'src/app/(cms)/lib/media'
 
 export function StrapiBannerContent({

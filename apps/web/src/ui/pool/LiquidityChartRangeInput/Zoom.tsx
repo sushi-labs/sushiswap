@@ -4,16 +4,16 @@ import {
 } from '@heroicons/react/20/solid'
 import { Button } from '@sushiswap/ui'
 import {
-  ScaleLinear,
-  ZoomBehavior,
-  ZoomTransform,
+  type ScaleLinear,
+  type ZoomBehavior,
+  type ZoomTransform,
   select,
   zoom,
   zoomIdentity,
 } from 'd3'
-import React, { FC, useEffect, useMemo, useRef } from 'react'
+import React, { type FC, useEffect, useMemo, useRef } from 'react'
 
-import { ZoomLevels } from './types'
+import type { ZoomLevels } from './types'
 
 interface ZoomProps {
   svg: SVGElement | null

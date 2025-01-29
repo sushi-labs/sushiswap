@@ -15,7 +15,7 @@ import {
 } from '@sushiswap/ui'
 import { JazzIcon } from '@sushiswap/ui/icons/JazzIcon'
 import Image from 'next/image'
-import { FC, ReactNode, useMemo, useState } from 'react'
+import { type FC, type ReactNode, useMemo, useState } from 'react'
 import { ChainId, shortenAddress } from 'sushi'
 import { useAccount, useEnsAvatar, useEnsName } from 'wagmi'
 import { ConnectButton } from '../connect-button'

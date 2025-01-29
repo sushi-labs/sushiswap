@@ -1,7 +1,7 @@
 // Skeleton.stories.ts|tsx
 
 import type { Meta, StoryObj } from '@storybook/react'
-import { SkeletonText, SkeletonTextProps } from '@sushiswap/ui'
+import { SkeletonText, type SkeletonTextProps } from '@sushiswap/ui'
 
 const fontSizes: SkeletonTextProps['fontSize'][] = [
   'xs',

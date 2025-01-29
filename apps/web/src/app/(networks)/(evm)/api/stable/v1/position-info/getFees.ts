@@ -1,6 +1,9 @@
 import { publicClientConfig } from 'src/lib/wagmi/config/viem'
-import { SUSHISWAP_V3_POSTIION_MANAGER, SushiSwapV3ChainId } from 'sushi/config'
-import { Address, createClient } from 'viem'
+import {
+  SUSHISWAP_V3_POSTIION_MANAGER,
+  type SushiSwapV3ChainId,
+} from 'sushi/config'
+import { type Address, createClient } from 'viem'
 import { simulateContract } from 'viem/actions'
 
 const MAX_UINT128 = 2n ** 128n - 1n

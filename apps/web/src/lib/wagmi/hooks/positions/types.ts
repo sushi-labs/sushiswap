@@ -1,7 +1,7 @@
-import { SushiSwapV3ChainId } from 'sushi/config'
+import type { SushiSwapV3ChainId } from 'sushi/config'
 
 import type { Address } from 'viem'
-import { useConcentratedLiquidityPositions } from './hooks/useConcentratedLiquidityPositions'
+import type { useConcentratedLiquidityPositions } from './hooks/useConcentratedLiquidityPositions'
 
 export interface ConcentratedLiquidityPosition {
   id: string

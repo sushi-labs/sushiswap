@@ -1,8 +1,8 @@
 'use client'
 
 import { useWallet } from '@aptos-labs/wallet-adapter-react'
-import { Button, ButtonProps } from '@sushiswap/ui'
-import { FC, useMemo } from 'react'
+import { Button, type ButtonProps } from '@sushiswap/ui'
+import { type FC, useMemo } from 'react'
 import { ZERO } from 'sushi/math'
 import { useTokenBalances } from '~aptos/_common/lib/common/use-token-balances'
 

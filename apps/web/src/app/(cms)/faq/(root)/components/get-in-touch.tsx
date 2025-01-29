@@ -2,7 +2,8 @@ import {
   ChatBubbleOvalLeftIcon /*, TicketIcon*/,
 } from '@heroicons/react/24/solid'
 import { Button } from '@sushiswap/ui'
-import React, { FC } from 'react'
+import type React from 'react'
+import type { FC } from 'react'
 
 interface Block {
   title: string

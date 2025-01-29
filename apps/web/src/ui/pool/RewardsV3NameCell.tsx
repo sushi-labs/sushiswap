@@ -11,9 +11,9 @@ import {
 import { Badge } from '@sushiswap/ui'
 import { Currency } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
-import { Row } from '@tanstack/react-table'
-import React, { FC } from 'react'
-import { AngleRewardsPool } from 'src/lib/hooks/react-query'
+import type { Row } from '@tanstack/react-table'
+import React, { type FC } from 'react'
+import type { AngleRewardsPool } from 'src/lib/hooks/react-query'
 import { unwrapToken } from 'sushi/currency'
 
 import { DistributionDataTable } from './DistributionDataTable'

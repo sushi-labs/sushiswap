@@ -53,13 +53,13 @@ import { SelectTokensWidget } from 'src/ui/pool/SelectTokensWidget'
 import { ChainKey, EvmChain, EvmChainId } from 'sushi/chain'
 import {
   MERKL_SUPPORTED_CHAIN_IDS,
-  SushiSwapV3ChainId,
+  type SushiSwapV3ChainId,
   isMerklChainId,
   isWNativeSupported,
 } from 'sushi/config'
-import { Token, Type, tryParseAmount } from 'sushi/currency'
+import { type Token, type Type, tryParseAmount } from 'sushi/currency'
 import { SushiSwapV3Pool } from 'sushi/pool/sushiswap-v3'
-import { Address, zeroAddress } from 'viem'
+import { type Address, zeroAddress } from 'viem'
 import { useAccount, useWaitForTransactionReceipt } from 'wagmi'
 
 const APPROVE_TAG = 'approve-incentivize'

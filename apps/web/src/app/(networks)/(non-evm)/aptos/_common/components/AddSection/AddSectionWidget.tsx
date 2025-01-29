@@ -1,7 +1,7 @@
 import { Cog6ToothIcon } from '@heroicons/react/24/outline'
 import { SlippageToleranceStorageKey } from '@sushiswap/hooks'
 import {
-  ButtonProps,
+  type ButtonProps,
   IconButton,
   SettingsModule,
   SettingsOverlay,
@@ -12,9 +12,9 @@ import {
   WidgetHeader,
   WidgetTitle,
 } from '@sushiswap/ui'
-import React, { FC, useEffect } from 'react'
+import React, { type FC, useEffect } from 'react'
 import { DEFAULT_SLIPPAGE } from 'sushi/config'
-import { Pool } from '~aptos/pool/lib/convert-pool-to-sushi-pool'
+import type { Pool } from '~aptos/pool/lib/convert-pool-to-sushi-pool'
 import { useTokensFromPool } from '~aptos/pool/lib/use-tokens-from-pool'
 import { PoolAddCurrencyInput } from '~aptos/pool/ui/pool/add/pool-add-currency-input'
 import { PoolAddDepositButton } from '~aptos/pool/ui/pool/add/pool-add-deposit-button'

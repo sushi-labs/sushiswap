@@ -3,7 +3,7 @@ import { Button, SelectIcon, TextField, classNames } from '@sushiswap/ui'
 import React, { useCallback, useEffect, useState } from 'react'
 import { useStablePrice } from '~aptos/_common/lib/common/use-stable-price'
 import { useTokenBalance } from '~aptos/_common/lib/common/use-token-balances'
-import { Token } from '~aptos/_common/lib/types/token'
+import type { Token } from '~aptos/_common/lib/types/token'
 import TokenSelector from '../../token-selector/token-selector'
 import { CurrencyIcon } from '../currency-icon'
 import { CurrencyInputBalancePanel } from './currency-input-balance-panel'
@@ -58,7 +58,7 @@ export function CurrencyInput({
 
   useEffect(() => {
     if (typeof balance !== 'undefined') {
-      const priceEst = balance / 10 ** token.decimals < parseFloat(value)
+      const priceEst = balance / 10 ** token.decimals < Number.parseFloat(value)
       setInsufficientBalance(priceEst)
     }
   }, [balance, value, token])

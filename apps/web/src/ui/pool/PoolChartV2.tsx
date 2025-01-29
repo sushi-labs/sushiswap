@@ -1,8 +1,8 @@
 'use client'
 
-import { V2Pool } from '@sushiswap/graph-client/data-api'
+import type { V2Pool } from '@sushiswap/graph-client/data-api'
 import { Card } from '@sushiswap/ui'
-import React, { FC, useState } from 'react'
+import React, { type FC, useState } from 'react'
 import { SushiSwapProtocol } from 'sushi'
 import { PoolChartGraph } from './PoolChartGraph'
 import { PoolChartPeriod, PoolChartPeriods } from './PoolChartPeriods'

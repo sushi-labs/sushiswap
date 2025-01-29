@@ -28,9 +28,9 @@ import {
   classNames,
 } from '@sushiswap/ui'
 import { GoPlusLabsIcon } from '@sushiswap/ui/icons/GoPlusLabsIcon'
-import { FC, useMemo, useState } from 'react'
+import { type FC, useMemo, useState } from 'react'
 import {
-  TokenSecurity,
+  type TokenSecurity,
   TokenSecurityLabel,
   TokenSecurityMessage,
   isTokenSecurityIssue,
@@ -38,7 +38,7 @@ import {
   useTokenSecurity,
 } from 'src/lib/hooks/react-query'
 import { EvmChain } from 'sushi/chain'
-import { Type } from 'sushi/currency'
+import type { Type } from 'sushi/currency'
 import { formatNumber, formatUSD, shortenAddress } from 'sushi/format'
 
 interface CurrencyInfoProps {

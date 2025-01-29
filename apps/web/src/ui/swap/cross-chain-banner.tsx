@@ -14,7 +14,7 @@ import {
 import { ShuffleIcon } from '@sushiswap/ui/icons/ShuffleIcon'
 import { AnimatePresence, motion } from 'framer-motion'
 import { usePathname, useRouter } from 'next/navigation'
-import React, { FC, useCallback, useState, useTransition } from 'react'
+import React, { type FC, useCallback, useState, useTransition } from 'react'
 
 export const CrossChainBanner: FC = () => {
   const [minimized, setBannerMinimize] = useLocalStorage(

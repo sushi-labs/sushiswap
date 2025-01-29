@@ -2,7 +2,7 @@
 
 import { AdjustmentsHorizontalIcon } from '@heroicons/react/24/solid'
 import { DropdownMenuTrigger } from '@radix-ui/react-dropdown-menu'
-import { Table } from '@tanstack/react-table'
+import type { Table } from '@tanstack/react-table'
 
 import { Button } from '../button'
 import {

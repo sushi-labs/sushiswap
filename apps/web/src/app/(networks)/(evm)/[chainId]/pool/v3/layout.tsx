@@ -1,5 +1,5 @@
 import { notFound } from 'next/navigation'
-import { EvmChainId } from 'sushi/chain'
+import type { EvmChainId } from 'sushi/chain'
 import { isSushiSwapV3ChainId } from 'sushi/config'
 
 export default async function Layout(props: {

@@ -3,7 +3,7 @@
 import { Cog6ToothIcon } from '@heroicons/react/24/outline'
 import { SlippageToleranceStorageKey, useDebounce } from '@sushiswap/hooks'
 import { createErrorToast, createToast } from '@sushiswap/notifications'
-import { SteerVault, isSteerChainId } from '@sushiswap/steer-sdk'
+import { type SteerVault, isSteerChainId } from '@sushiswap/steer-sdk'
 import { steerMultiPositionManager } from '@sushiswap/steer-sdk/abi'
 import {
   Button,
@@ -16,16 +16,16 @@ import {
   SettingsOverlay,
   classNames,
 } from '@sushiswap/ui'
-import React, { FC, useCallback, useMemo, useState } from 'react'
+import React, { type FC, useCallback, useMemo, useState } from 'react'
 import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
 import { useSteerAccountPosition } from 'src/lib/wagmi/hooks/steer/useSteerAccountPosition'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
 import { slippageAmount } from 'sushi'
 import { Amount, Token } from 'sushi/currency'
 import { Percent } from 'sushi/math'
-import { SendTransactionReturnType, UserRejectedRequestError } from 'viem'
+import { type SendTransactionReturnType, UserRejectedRequestError } from 'viem'
 import {
-  UseSimulateContractParameters,
+  type UseSimulateContractParameters,
   useAccount,
   usePublicClient,
   useSimulateContract,

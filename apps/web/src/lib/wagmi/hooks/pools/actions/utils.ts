@@ -1,4 +1,4 @@
-import { Currency, Token } from 'sushi/currency'
+import type { Currency, Token } from 'sushi/currency'
 
 export const pairsUnique = (
   currencies: [Currency | undefined, Currency | undefined][],

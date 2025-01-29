@@ -30,8 +30,8 @@ import {
 import { SkeletonText } from '@sushiswap/ui'
 import { Toggle } from '@sushiswap/ui'
 import React, {
-  FC,
-  ReactNode,
+  type FC,
+  type ReactNode,
   useCallback,
   useEffect,
   useMemo,
@@ -40,11 +40,11 @@ import React, {
 import { Bound, Field } from 'src/lib/constants'
 import { useTokenAmountDollarValues } from 'src/lib/hooks'
 import {
-  SushiSwapV3ChainId,
-  SushiSwapV3FeeAmount,
+  type SushiSwapV3ChainId,
+  type SushiSwapV3FeeAmount,
   TICK_SPACINGS,
 } from 'sushi/config'
-import { Type, tryParseAmount } from 'sushi/currency'
+import { type Type, tryParseAmount } from 'sushi/currency'
 import {
   getCapitalEfficiency,
   getTokenRatio,
@@ -56,7 +56,7 @@ import { LockClosedIcon, LockOpenIcon } from '@heroicons/react/24/solid'
 import { ExclamationTriangleIcon } from '@heroicons/react/24/solid'
 import { useConcentratedLiquidityPoolStats } from 'src/lib/hooks/react-query'
 import { useConcentratedLiquidityPositionsFromTokenId } from 'src/lib/wagmi/hooks/positions/hooks/useConcentratedPositionsFromTokenId'
-import { Address } from 'sushi'
+import type { Address } from 'sushi'
 import { formatPercent } from 'sushi/format'
 import { Fraction } from 'sushi/math'
 import { useAccount } from 'wagmi'
@@ -278,16 +278,16 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
       [Field.CURRENCY_A]:
         independentField === Field.CURRENCY_A
           ? typedValue
-          : parsedAmounts[dependentField]?.toSignificant(6) ?? '',
+          : (parsedAmounts[dependentField]?.toSignificant(6) ?? ''),
       [Field.CURRENCY_B]:
         independentField === Field.CURRENCY_A
-          ? parsedAmounts[dependentField]?.toSignificant(6) ?? ''
+          ? (parsedAmounts[dependentField]?.toSignificant(6) ?? '')
           : typedValue,
     }),
     [typedValue, dependentField, independentField, parsedAmounts],
   )
 
-  const handleSwitchTokens = () => {
+  const handleSwitchTokens = useCallback(() => {
     switchTokens?.()
 
     if (!ticksAtLimit[Bound.LOWER] && !ticksAtLimit[Bound.UPPER]) {
@@ -311,7 +311,24 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
         onFieldAInput(formattedAmounts[Field.CURRENCY_B] ?? '', noLiquidity)
       }
     }
-  }
+  }, [
+    switchTokens,
+    ticksAtLimit,
+    setWeightLockedCurrencyBase,
+    setIndependentRangeField,
+    onLeftRangeInput,
+    onRightRangeInput,
+    weightLockedCurrencyBase,
+    invertPrice,
+    priceUpper,
+    priceLower,
+    noLiquidity,
+    independentField,
+    onFieldAInput,
+    onFieldBInput,
+    formattedAmounts,
+    independentRangeField,
+  ])
 
   const PRICE_RANGE_OPTIONS = useMemo(
     () => [
@@ -537,39 +554,36 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
                 </div>
               )}
               {!noLiquidity && (
-                <>
-                  <LiquidityChartRangeInput
-                    chainId={chainId}
-                    currencyA={token0}
-                    currencyB={token1}
-                    feeAmount={feeAmount}
-                    ticksAtLimit={ticksAtLimit}
-                    priceRange={priceRange}
-                    price={
-                      price
-                        ? parseFloat(
-                            (invertPrice
-                              ? price.invert()
-                              : price
-                            ).toSignificant(8),
-                          )
-                        : undefined
-                    }
-                    priceLower={priceLower}
-                    priceUpper={priceUpper}
-                    weightLockedCurrencyBase={weightLockedCurrencyBase}
-                    onLeftRangeInput={(input) => {
-                      setPriceRangeSelector(undefined)
-                      onLeftRangeInput(input)
-                    }}
-                    onRightRangeInput={(input) => {
-                      setPriceRangeSelector(undefined)
-                      onRightRangeInput(input)
-                    }}
-                    interactive={!hasExistingPosition}
-                    tokenToggle={tokenToggle}
-                  />
-                </>
+                <LiquidityChartRangeInput
+                  chainId={chainId}
+                  currencyA={token0}
+                  currencyB={token1}
+                  feeAmount={feeAmount}
+                  ticksAtLimit={ticksAtLimit}
+                  priceRange={priceRange}
+                  price={
+                    price
+                      ? Number.parseFloat(
+                          (invertPrice ? price.invert() : price).toSignificant(
+                            8,
+                          ),
+                        )
+                      : undefined
+                  }
+                  priceLower={priceLower}
+                  priceUpper={priceUpper}
+                  weightLockedCurrencyBase={weightLockedCurrencyBase}
+                  onLeftRangeInput={(input) => {
+                    setPriceRangeSelector(undefined)
+                    onLeftRangeInput(input)
+                  }}
+                  onRightRangeInput={(input) => {
+                    setPriceRangeSelector(undefined)
+                    onRightRangeInput(input)
+                  }}
+                  interactive={!hasExistingPosition}
+                  tokenToggle={tokenToggle}
+                />
               )}
             </div>
           )}
@@ -581,7 +595,6 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
                 <div
                   onClick={() => setInvert((prev) => !prev)}
                   onKeyDown={() => setInvert((prev) => !prev)}
-                  role="button"
                   className="text-xs flex items-center font-semibold gap-1.5 rounded-xl text-blue hover:text-blue-600"
                 >
                   <SwitchHorizontalIcon width={16} height={16} />
@@ -791,7 +804,7 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
               value={
                 ticksAtLimit[isSorted ? Bound.LOWER : Bound.UPPER]
                   ? '0'
-                  : leftPrice?.toSignificant(5) ?? ''
+                  : (leftPrice?.toSignificant(5) ?? '')
               }
               onUserInput={(input) => {
                 setIndependentRangeField(Bound.LOWER)
@@ -815,7 +828,7 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
               value={
                 ticksAtLimit[isSorted ? Bound.UPPER : Bound.LOWER]
                   ? '∞'
-                  : rightPrice?.toSignificant(5) ?? ''
+                  : (rightPrice?.toSignificant(5) ?? '')
               }
               onUserInput={(input) => {
                 setIndependentRangeField(Bound.UPPER)

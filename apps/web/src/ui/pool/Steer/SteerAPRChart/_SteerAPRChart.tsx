@@ -1,6 +1,6 @@
 'use client'
 
-import { getSteerVaultAprTimeseries } from '@sushiswap/steer-sdk'
+import type { getSteerVaultAprTimeseries } from '@sushiswap/steer-sdk'
 import { SkeletonBox } from '@sushiswap/ui'
 import format from 'date-fns/format'
 import React, { useMemo } from 'react'
@@ -10,7 +10,7 @@ import tailwindConfig from 'tailwind.config.js'
 import resolveConfig from 'tailwindcss/resolveConfig'
 
 import ReactEChartsCore from 'echarts-for-react/lib/core'
-import { EChartsOption } from 'echarts-for-react/lib/types'
+import type { EChartsOption } from 'echarts-for-react/lib/types'
 import 'echarts/lib/chart/line'
 import 'echarts/lib/component/tooltip'
 import 'echarts/lib/component/visualMap'

@@ -1,7 +1,7 @@
 'use client'
 
 import { ChevronLeftIcon } from '@heroicons/react/24/outline'
-import { IconButton, IconButtonProps } from '@sushiswap/ui'
+import { IconButton, type IconButtonProps } from '@sushiswap/ui'
 import { useRouter } from 'next/navigation'
 import { forwardRef } from 'react'
 

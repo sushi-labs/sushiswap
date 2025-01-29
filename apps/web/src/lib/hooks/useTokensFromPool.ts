@@ -1,7 +1,7 @@
 'use client'
 
 import { useMemo } from 'react'
-import { EvmChainId } from 'sushi'
+import type { EvmChainId } from 'sushi'
 import { Native, Token } from 'sushi/currency'
 
 export const getTokensFromPool = (pool: {

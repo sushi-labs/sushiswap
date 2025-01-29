@@ -1,7 +1,7 @@
 import maxBy from 'lodash.maxby'
 import uniqBy from 'lodash.uniqby'
-import { Token } from '~aptos/_common/lib/types/token'
-import { Pair, PairState } from '~aptos/pool/lib/use-pools-by-tokens'
+import type { Token } from '~aptos/_common/lib/types/token'
+import { type Pair, PairState } from '~aptos/pool/lib/use-pools-by-tokens'
 
 export function getCurrencyPrice(
   currency: Token,
@@ -40,7 +40,7 @@ export function getCurrencyPrice(
           ? reserveOf(stablePair, stablePairToken)
           : null
       if (stablePairToken && stablePairTokenAmount) {
-        return parseInt(stablePairTokenAmount)
+        return Number.parseInt(stablePairTokenAmount)
       }
       return 0
     },

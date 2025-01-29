@@ -1,8 +1,8 @@
 'use client'
 
 import {
-  BlogArticle,
-  BlogArticleMeta,
+  type BlogArticle,
+  type BlogArticleMeta,
   getBlogArticles,
 } from '@sushiswap/graph-client/strapi'
 import { Loader } from '@sushiswap/ui'
@@ -103,7 +103,7 @@ export function ArticleListClient({
     <InfiniteScroll
       dataLength={articles.length}
       next={fetchNextPage}
-      hasMore={articles.length < (meta?.total || -Infinity)}
+      hasMore={articles.length < (meta?.total || Number.NEGATIVE_INFINITY)}
       loader={
         <div className="flex justify-center w-full py-4">
           <Loader size={16} />

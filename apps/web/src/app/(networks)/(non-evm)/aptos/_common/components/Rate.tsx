@@ -1,8 +1,8 @@
 import { classNames } from '@sushiswap/ui'
 import {
-  FC,
-  ReactElement,
-  ReactNode,
+  type FC,
+  type ReactElement,
+  type ReactNode,
   useCallback,
   useMemo,
   useState,

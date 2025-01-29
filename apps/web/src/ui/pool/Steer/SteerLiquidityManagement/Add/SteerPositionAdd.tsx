@@ -1,11 +1,14 @@
 'use client'
 
 import { PlusIcon } from '@heroicons/react/24/solid'
-import { STEER_PERIPHERY_ADDRESS, SteerChainId } from '@sushiswap/steer-sdk'
+import {
+  STEER_PERIPHERY_ADDRESS,
+  type SteerChainId,
+} from '@sushiswap/steer-sdk'
 import { Button, DialogTrigger, classNames } from '@sushiswap/ui'
-import React, { FC, useMemo } from 'react'
+import React, { type FC, useMemo } from 'react'
 
-import { VaultV1 } from '@sushiswap/graph-client/data-api'
+import type { VaultV1 } from '@sushiswap/graph-client/data-api'
 import { useIsMounted } from '@sushiswap/hooks'
 import { APPROVE_TAG_STEER, Field } from 'src/lib/constants'
 import { Web3Input } from 'src/lib/wagmi/components/web3-input'

@@ -2,7 +2,8 @@
 
 import { Transition } from '@headlessui/react'
 import classNames from 'classnames'
-import React, { FC, Fragment } from 'react'
+import type React from 'react'
+import { type FC, Fragment } from 'react'
 
 import { SushiIcon } from '../icons/SushiIcon'
 

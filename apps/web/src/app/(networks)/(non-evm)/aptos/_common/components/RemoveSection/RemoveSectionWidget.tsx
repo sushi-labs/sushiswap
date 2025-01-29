@@ -16,12 +16,12 @@ import {
   WidgetHeader,
   WidgetTitle,
 } from '@sushiswap/ui'
-import { FC, ReactNode } from 'react'
+import type { FC, ReactNode } from 'react'
 import { DEFAULT_SLIPPAGE } from 'sushi/config'
 import { formatUSD } from 'sushi/format'
 import { CardCurrencyAmountItem } from '~aptos/_common/components/CardCurrencyAmountItem'
 import { useStablePrice } from '~aptos/_common/lib/common/use-stable-price'
-import { Token as TokenType } from '~aptos/_common/lib/types/token'
+import type { Token as TokenType } from '~aptos/_common/lib/types/token'
 
 interface RemoveSectionWidgetProps {
   title?: string

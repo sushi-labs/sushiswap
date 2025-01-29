@@ -2,7 +2,7 @@
 
 import { ChevronRightIcon } from '@heroicons/react/20/solid'
 import { usePathname, useSearchParams } from 'next/navigation'
-import React, { FC, Suspense, useCallback, useMemo } from 'react'
+import React, { type FC, Suspense, useCallback, useMemo } from 'react'
 
 import classNames from 'classnames'
 import { Button } from './button'

@@ -1,6 +1,6 @@
 import { SkeletonChart, SkeletonText } from '@sushiswap/ui'
-import { FC } from 'react'
-import { ChainId, EvmChain } from 'sushi/chain'
+import type { FC } from 'react'
+import { type ChainId, EvmChain } from 'sushi/chain'
 
 export const GlobalStatsLoading: FC<{ chainId: ChainId }> = ({ chainId }) => {
   return (

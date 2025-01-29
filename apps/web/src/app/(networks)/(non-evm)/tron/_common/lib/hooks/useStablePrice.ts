@@ -7,8 +7,8 @@ import {
   getToken1Price,
   getValidTokenAddress,
 } from '~tron/_common/lib/utils/helpers'
-import { IReserveDataResponse } from '~tron/_common/types/get-pools-type'
-import { IToken } from '~tron/_common/types/token-type'
+import type { IReserveDataResponse } from '~tron/_common/types/get-pools-type'
+import type { IToken } from '~tron/_common/types/token-type'
 
 type Pair = {
   token0Address: string

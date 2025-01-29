@@ -1,13 +1,13 @@
 import { getTokenList } from '@sushiswap/graph-client/data-api'
 import { Ratelimit } from '@upstash/ratelimit'
 import { ipAddress } from '@vercel/functions'
-import { NextRequest, NextResponse } from 'next/server'
+import { type NextRequest, NextResponse } from 'next/server'
 import { rateLimit } from 'src/lib/rate-limit'
 import { Position, formatPercent } from 'sushi'
-import { EvmChainId } from 'sushi/chain'
+import type { EvmChainId } from 'sushi/chain'
 import {
-  SushiSwapV3ChainId,
-  SushiSwapV3FeeAmount,
+  type SushiSwapV3ChainId,
+  type SushiSwapV3FeeAmount,
   isSushiSwapV3ChainId,
 } from 'sushi/config'
 import { Token } from 'sushi/currency'

@@ -184,8 +184,8 @@ export const SwapButton = ({
       const errorMessage =
         typeof error === 'string'
           ? error
-          : (error as Error)?.message ??
-            'An error occurred while trying to swap'
+          : ((error as Error)?.message ??
+            'An error occurred while trying to swap')
       //create error toast
       createFailedToast({
         summary: errorMessage,

@@ -8,11 +8,11 @@ import {
   CardTitle,
   SkeletonText,
 } from '@sushiswap/ui'
-import { FC } from 'react'
+import type { FC } from 'react'
 import { formatUSD } from 'sushi/format'
 import { formatNumberWithDecimals } from '~aptos/_common/lib/common/format-number-with-decimals'
 import { useStablePrice } from '~aptos/_common/lib/common/use-stable-price'
-import { Pool } from '~aptos/pool/lib/convert-pool-to-sushi-pool'
+import type { Pool } from '~aptos/pool/lib/convert-pool-to-sushi-pool'
 import { useTokensFromPool } from '~aptos/pool/lib/use-tokens-from-pool'
 import { CardCurrencyAmountItem } from '../CardCurrencyAmountItem'
 

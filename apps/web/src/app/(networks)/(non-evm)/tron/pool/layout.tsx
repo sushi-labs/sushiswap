@@ -1,4 +1,4 @@
-import React from 'react'
+import type React from 'react'
 import { POOL_SUPPORTED_NETWORKS } from 'src/config'
 import { SidebarContainer, SidebarProvider } from '~tron/_common/ui/sidebar'
 import { Header } from '../header'

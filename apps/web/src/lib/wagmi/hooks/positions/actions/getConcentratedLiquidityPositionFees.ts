@@ -1,6 +1,9 @@
 import { simulateContract } from '@wagmi/core/actions'
-import { SUSHISWAP_V3_POSTIION_MANAGER, SushiSwapV3ChainId } from 'sushi/config'
-import { PublicWagmiConfig } from '../../../config/public'
+import {
+  SUSHISWAP_V3_POSTIION_MANAGER,
+  type SushiSwapV3ChainId,
+} from 'sushi/config'
+import type { PublicWagmiConfig } from '../../../config/public'
 import { getConcentratedPositionOwners } from '../../pools/actions/getConcentratedPositionOwner'
 
 const MAX_UINT128 = 2n ** 128n - 1n

@@ -1,9 +1,9 @@
-import { Metadata } from 'next'
+import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import React from 'react'
 
 import { MigrateTabContent } from 'src/ui/pool/MigrateTabContent'
-import { EvmChainId } from 'sushi'
+import type { EvmChainId } from 'sushi'
 import { isSushiSwapV2ChainId } from 'sushi/config'
 
 export const metadata: Metadata = {

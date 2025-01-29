@@ -2,11 +2,11 @@ import { readContracts } from '@wagmi/core/actions'
 import {
   SUSHISWAP_V3_FACTORY_ADDRESS,
   SUSHISWAP_V3_POSTIION_MANAGER,
-  SushiSwapV3ChainId,
+  type SushiSwapV3ChainId,
 } from 'sushi/config'
 import { computeSushiSwapV3PoolAddress } from 'sushi/pool/sushiswap-v3'
-import { PublicWagmiConfig } from '../../../config/public'
-import { ConcentratedLiquidityPosition } from '../types'
+import type { PublicWagmiConfig } from '../../../config/public'
+import type { ConcentratedLiquidityPosition } from '../types'
 import { getConcentratedLiquidityPositionFees } from './getConcentratedLiquidityPositionFees'
 
 const abiShard = [

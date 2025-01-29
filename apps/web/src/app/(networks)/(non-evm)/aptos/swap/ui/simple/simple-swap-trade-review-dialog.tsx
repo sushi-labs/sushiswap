@@ -18,7 +18,7 @@ import {
   List,
   classNames,
 } from '@sushiswap/ui'
-import React, { FC, ReactNode } from 'react'
+import React, { type FC, type ReactNode } from 'react'
 import { DEFAULT_SLIPPAGE } from 'sushi/config'
 import { networkNameToNetwork } from '~aptos/_common/config/chains'
 import { AptosSDK } from '~aptos/_common/lib/common/aptos-sdk'
@@ -68,12 +68,12 @@ export const SimpleSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
     const aptos = AptosSDK.onNetwork(networkNameToNetwork(network))
     const payload = getSwapPayload(
       swapContract,
-      parseInt(
-        (parseFloat(String(amount)) *
+      Number.parseInt(
+        (Number.parseFloat(String(amount)) *
           10 ** token0.decimals) as unknown as string,
       ),
       bestRoutes,
-      parseInt(String(slippageAmount)),
+      Number.parseInt(String(slippageAmount)),
     )
 
     if (!account?.address) return []
@@ -88,8 +88,8 @@ export const SimpleSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
       if (!response?.output.success) return
       const toastId = `completed:${response?.hash}`
       createToast({
-        summery: `Swap ${amount} ${token0.symbol} for ${parseFloat(
-          (parseInt(outputAmount) / 10 ** token1?.decimals).toFixed(9),
+        summery: `Swap ${amount} ${token0.symbol} for ${Number.parseFloat(
+          (Number.parseInt(outputAmount) / 10 ** token1?.decimals).toFixed(9),
         )} ${token1.symbol}`,
         toastId: toastId,
       })

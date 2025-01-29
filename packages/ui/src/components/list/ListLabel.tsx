@@ -1,5 +1,5 @@
 import classNames from 'classnames'
-import React, { FC, ReactNode } from 'react'
+import React, { type FC, type ReactNode } from 'react'
 
 export interface ListLabelProps {
   children: ReactNode

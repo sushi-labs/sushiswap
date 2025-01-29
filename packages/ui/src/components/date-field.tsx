@@ -1,10 +1,10 @@
 'use client'
 
-import { type VariantProps } from 'class-variance-authority'
-import { FC, useState } from 'react'
+import type { VariantProps } from 'class-variance-authority'
+import { type FC, useState } from 'react'
 import {
-  DatePickerProps as ReactDatePickerProps,
   default as ReactDatePicker,
+  type DatePickerProps as ReactDatePickerProps,
 } from 'react-datepicker'
 
 import { CalendarIcon } from '../icons/CalendarIcon'
@@ -41,7 +41,6 @@ const DateField: FC<DateFieldProps> = ({
       />
       {variant !== 'naked' ? (
         <div
-          role="button"
           onClick={() => setOpen((open) => !open)}
           onKeyDown={() => setOpen((open) => !open)}
           className="cursor-pointer absolute right-3 top-0 bottom-0 flex items-center"

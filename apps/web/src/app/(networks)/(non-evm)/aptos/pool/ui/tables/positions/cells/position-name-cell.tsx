@@ -1,11 +1,11 @@
 import { TooltipContent } from '@sushiswap/ui'
 import { Tooltip, TooltipProvider, TooltipTrigger } from '@sushiswap/ui'
-import React, { FC } from 'react'
+import React, { type FC } from 'react'
 import { CurrencyIcon } from '~aptos/_common/ui/currency/currency-icon'
 import { CurrencyIconList } from '~aptos/_common/ui/currency/currency-icon-list'
 import { useFarms, useIsFarm } from '~aptos/pool/lib/farm/use-farms'
-import { PoolExtendedWithAprVolume } from '~aptos/pool/lib/use-user-position-pools'
-import { Row } from '../../types'
+import type { PoolExtendedWithAprVolume } from '~aptos/pool/lib/use-user-position-pools'
+import type { Row } from '../../types'
 
 export const PositionNameCell: FC<Row<PoolExtendedWithAprVolume>> = ({
   row,

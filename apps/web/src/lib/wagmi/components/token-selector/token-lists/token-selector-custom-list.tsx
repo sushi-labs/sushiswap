@@ -1,7 +1,7 @@
 import { isTokenListChainId } from '@sushiswap/graph-client/data-api'
 import { List } from '@sushiswap/ui'
 import { useMemo } from 'react'
-import { Address } from 'sushi'
+import type { Address } from 'sushi'
 import type { EvmChainId } from 'sushi/chain'
 import type { Type } from 'sushi/currency'
 import { usePrices } from '~evm/_common/ui/price-provider/price-provider/use-prices'

@@ -1,8 +1,8 @@
 import { Button, FormSection, SelectIcon } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
-import React, { FC, memo } from 'react'
+import React, { type FC, memo } from 'react'
 import { NetworkSelector } from 'src/lib/wagmi/components/network-selector'
-import { EvmChainId, evmChainName } from 'sushi/chain'
+import { type EvmChainId, evmChainName } from 'sushi/chain'
 
 interface SelectNetworkWidgetProps {
   networks: readonly EvmChainId[]

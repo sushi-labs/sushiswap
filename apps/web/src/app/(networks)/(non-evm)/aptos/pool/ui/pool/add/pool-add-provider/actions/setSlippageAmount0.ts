@@ -1,4 +1,4 @@
-import { Actions, State } from '../types'
+import type { Actions, State } from '../types'
 
 export function setSlippageAmount0(state: State, action: Actions): State {
   if (action.type !== 'setSlippageAmount0')

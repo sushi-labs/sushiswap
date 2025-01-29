@@ -8,10 +8,10 @@ import {
   DataTable,
 } from '@sushiswap/ui'
 import { Carousel } from '@sushiswap/ui'
-import { ColumnDef, PaginationState } from '@tanstack/react-table'
-import React, { FC, useCallback, useMemo, useState } from 'react'
+import type { ColumnDef, PaginationState } from '@tanstack/react-table'
+import React, { type FC, useCallback, useMemo, useState } from 'react'
 import {
-  AngleRewardsPool,
+  type AngleRewardsPool,
   useAngleRewardsMultipleChains,
 } from 'src/lib/hooks/react-query'
 import { MERKL_SUPPORTED_CHAIN_IDS } from 'sushi/config'

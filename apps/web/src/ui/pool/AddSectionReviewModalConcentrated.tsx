@@ -24,7 +24,7 @@ import {
   SettingsModule,
   SettingsOverlay,
 } from '@sushiswap/ui'
-import React, { FC, ReactNode, useCallback, useMemo } from 'react'
+import React, { type FC, type ReactNode, useCallback, useMemo } from 'react'
 import { Bound } from 'src/lib/constants'
 import { NativeAddress } from 'src/lib/constants'
 import { useTokenAmountDollarValues } from 'src/lib/hooks'
@@ -33,17 +33,24 @@ import {
   getDefaultTTL,
   useTransactionDeadline,
 } from 'src/lib/wagmi/hooks/utils/hooks/useTransactionDeadline'
-import { EvmChain, EvmChainId } from 'sushi/chain'
+import { EvmChain, type EvmChainId } from 'sushi/chain'
 import {
   SUSHISWAP_V3_POSTIION_MANAGER,
-  SushiSwapV3FeeAmount,
+  type SushiSwapV3FeeAmount,
   isSushiSwapV3ChainId,
 } from 'sushi/config'
-import { Amount, Type, tryParseAmount } from 'sushi/currency'
-import { NonfungiblePositionManager, Position } from 'sushi/pool/sushiswap-v3'
-import { Hex, SendTransactionReturnType, UserRejectedRequestError } from 'viem'
+import { type Amount, type Type, tryParseAmount } from 'sushi/currency'
 import {
-  UseCallParameters,
+  NonfungiblePositionManager,
+  type Position,
+} from 'sushi/pool/sushiswap-v3'
+import {
+  type Hex,
+  type SendTransactionReturnType,
+  UserRejectedRequestError,
+} from 'viem'
+import {
+  type UseCallParameters,
   useAccount,
   useCall,
   usePublicClient,
@@ -51,7 +58,7 @@ import {
   useWaitForTransactionReceipt,
 } from 'wagmi'
 import { useRefetchBalances } from '~evm/_common/ui/balance-provider/use-refetch-balances'
-import { useConcentratedDerivedMintInfo } from './ConcentratedLiquidityProvider'
+import type { useConcentratedDerivedMintInfo } from './ConcentratedLiquidityProvider'
 
 interface AddSectionReviewModalConcentratedProps
   extends Pick<

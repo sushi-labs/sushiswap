@@ -1,8 +1,11 @@
 import { useMemo } from 'react'
-import { TickProcessed, useConcentratedActiveLiquidity } from 'src/lib/pool/v3'
-import { SushiSwapV3ChainId, SushiSwapV3FeeAmount } from 'sushi/config'
-import { Type } from 'sushi/currency'
-import { ChartEntry } from './types'
+import {
+  type TickProcessed,
+  useConcentratedActiveLiquidity,
+} from 'src/lib/pool/v3'
+import type { SushiSwapV3ChainId, SushiSwapV3FeeAmount } from 'sushi/config'
+import type { Type } from 'sushi/currency'
+import type { ChartEntry } from './types'
 
 interface UseDensityChartData {
   chainId: SushiSwapV3ChainId
@@ -36,8 +39,8 @@ export function useDensityChartData({
       const t: TickProcessed = data[i]
 
       const chartEntry = {
-        activeLiquidity: parseFloat(t.liquidityActive.toString()),
-        price0: parseFloat(t.price0),
+        activeLiquidity: Number.parseFloat(t.liquidityActive.toString()),
+        price0: Number.parseFloat(t.price0),
       }
 
       if (chartEntry.activeLiquidity > 0) {

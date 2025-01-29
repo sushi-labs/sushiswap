@@ -1,8 +1,8 @@
 'use client'
 
 import {
-  FC,
-  ReactNode,
+  type FC,
+  type ReactNode,
   createContext,
   useCallback,
   useContext,
@@ -13,16 +13,16 @@ import { Bound, Field } from 'src/lib/constants'
 import { getTickToPrice, tryParseTick } from 'src/lib/functions'
 import { useConcentratedLiquidityPool } from 'src/lib/wagmi/hooks/pools/hooks/useConcentratedLiquidityPool'
 import {
-  SushiSwapV3ChainId,
-  SushiSwapV3FeeAmount,
+  type SushiSwapV3ChainId,
+  type SushiSwapV3FeeAmount,
   TICK_SPACINGS,
 } from 'sushi/config'
 import {
   Amount,
-  Currency,
+  type Currency,
   Price,
-  Token,
-  Type,
+  type Token,
+  type Type,
   tryParseAmount,
 } from 'sushi/currency'
 import { withoutScientificNotation } from 'sushi/format'

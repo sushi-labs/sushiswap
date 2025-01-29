@@ -36,8 +36,8 @@ import {
 } from '@sushiswap/ui'
 import { nanoid } from 'nanoid'
 import React, {
-  FC,
-  ReactNode,
+  type FC,
+  type ReactNode,
   useCallback,
   useEffect,
   useMemo,
@@ -59,7 +59,7 @@ import { Amount, Native } from 'sushi/currency'
 import { formatNumber, formatUSD, shortenAddress } from 'sushi/format'
 import { ZERO } from 'sushi/math'
 import {
-  SendTransactionReturnType,
+  type SendTransactionReturnType,
   UserRejectedRequestError,
   stringify,
 } from 'viem'
@@ -82,7 +82,7 @@ import {
 } from './cross-chain-swap-confirmation-dialog'
 import { CrossChainSwapRouteView } from './cross-chain-swap-route-view'
 import {
-  UseSelectedCrossChainTradeRouteReturn,
+  type UseSelectedCrossChainTradeRouteReturn,
   useDerivedStateCrossChainSwap,
   useSelectedCrossChainTradeRoute,
 } from './derivedstate-cross-chain-swap-provider'
@@ -557,7 +557,7 @@ const _CrossChainSwapTradeReviewDialog: FC<{
       price && step?.amountOut
         ? `${(
             (price * Number(step.amountOut.quotient)) /
-            10 ** step.amountOut.currency.decimals
+              10 ** step.amountOut.currency.decimals
           ).toFixed(2)}`
         : undefined,
     [step?.amountOut, price],
@@ -568,7 +568,7 @@ const _CrossChainSwapTradeReviewDialog: FC<{
       price && step?.amountOutMin
         ? `${(
             (price * Number(step.amountOutMin.quotient)) /
-            10 ** step.amountOutMin.currency.decimals
+              10 ** step.amountOutMin.currency.decimals
           ).toFixed(2)}`
         : undefined,
     [step?.amountOutMin, price],

@@ -27,14 +27,14 @@ import {
   classNames,
 } from '@sushiswap/ui'
 import React, {
-  FC,
-  ReactNode,
+  type FC,
+  type ReactNode,
   useCallback,
   useEffect,
   useMemo,
   useRef,
 } from 'react'
-import { UseTradeReturn } from 'src/lib/hooks/react-query'
+import type { UseTradeReturn } from 'src/lib/hooks/react-query'
 import { useSimulateTrade } from 'src/lib/hooks/useSimulateTrade'
 import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
 import { useApproved } from 'src/lib/wagmi/systems/Checker/Provider'
@@ -43,7 +43,7 @@ import { Native } from 'sushi/currency'
 import { shortenAddress } from 'sushi/format'
 import { ZERO } from 'sushi/math'
 import {
-  SendTransactionReturnType,
+  type SendTransactionReturnType,
   UserRejectedRequestError,
   stringify,
 } from 'viem'

@@ -2,7 +2,7 @@
 
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/20/solid'
 import React, {
-  ReactNode,
+  type ReactNode,
   useCallback,
   useLayoutEffect,
   useRef,

@@ -1,4 +1,4 @@
-import { ComponentProps, useEffect, useMemo } from 'react'
+import { type ComponentProps, useEffect, useMemo } from 'react'
 import {
   formatUnitsForInput,
   parseUnits,

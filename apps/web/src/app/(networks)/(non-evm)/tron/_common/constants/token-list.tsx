@@ -1,4 +1,4 @@
-import { IToken } from '~tron/_common/types/token-type'
+import type { IToken } from '~tron/_common/types/token-type'
 import { IS_TESTNET } from './is-testnet'
 
 export const TRON: IToken = {

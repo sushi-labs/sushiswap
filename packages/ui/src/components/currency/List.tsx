@@ -1,6 +1,12 @@
 'use client'
 
-import React, { CSSProperties, FC, ReactElement, useCallback } from 'react'
+import type React from 'react'
+import {
+  type CSSProperties,
+  type FC,
+  type ReactElement,
+  useCallback,
+} from 'react'
 import AutoSizer from 'react-virtualized-auto-sizer'
 import { FixedSizeList } from 'react-window'
 

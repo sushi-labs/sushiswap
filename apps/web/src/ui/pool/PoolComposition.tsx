@@ -1,6 +1,6 @@
 'use client'
 
-import { V2Pool } from '@sushiswap/graph-client/data-api'
+import type { V2Pool } from '@sushiswap/graph-client/data-api'
 import {
   Card,
   CardContent,
@@ -12,7 +12,7 @@ import {
   CardTitle,
   SkeletonText,
 } from '@sushiswap/ui'
-import { FC, useMemo } from 'react'
+import { type FC, useMemo } from 'react'
 import { useTokenAmountDollarValues } from 'src/lib/hooks'
 import { Amount, Token } from 'sushi/currency'
 import { formatUSD } from 'sushi/format'

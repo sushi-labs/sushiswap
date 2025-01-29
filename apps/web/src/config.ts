@@ -1,5 +1,5 @@
 import { PoolChainIds } from '@sushiswap/graph-client/data-api'
-import { ChainId, EVM_TESTNET_CHAIN_IDS, EvmChain } from 'sushi/chain'
+import { ChainId, EVM_TESTNET_CHAIN_IDS, type EvmChain } from 'sushi/chain'
 import {
   AGGREGATOR_ONLY_CHAIN_IDS,
   EXTRACTOR_SUPPORTED_CHAIN_IDS,

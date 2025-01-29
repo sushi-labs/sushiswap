@@ -2,15 +2,15 @@
 
 import { useRouter } from 'next/navigation'
 import {
-  Dispatch,
-  FC,
-  ReactNode,
-  SetStateAction,
+  type Dispatch,
+  type FC,
+  type ReactNode,
+  type SetStateAction,
   createContext,
   useContext,
   useMemo,
 } from 'react'
-import { SushiSwapProtocol } from 'sushi'
+import type { SushiSwapProtocol } from 'sushi'
 import { z } from 'zod'
 
 import { parseArgs } from 'src/lib/functions'

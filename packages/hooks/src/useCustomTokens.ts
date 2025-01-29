@@ -4,7 +4,7 @@ import { useCallback, useMemo } from 'react'
 import { Token } from 'sushi/currency'
 import { getAddress, isAddress } from 'viem/utils'
 
-import { EvmChainId } from 'sushi'
+import type { EvmChainId } from 'sushi'
 import { useLocalStorage } from './useLocalStorage'
 
 type Data = {

@@ -8,10 +8,10 @@ import { Button, Dots, FormSection, Loader } from '@sushiswap/ui'
 import { useRouter } from 'next/navigation'
 import { notFound } from 'next/navigation'
 import React, {
-  Dispatch,
-  FC,
-  ReactNode,
-  SetStateAction,
+  type Dispatch,
+  type FC,
+  type ReactNode,
+  type SetStateAction,
   useCallback,
   useEffect,
   useMemo,
@@ -42,7 +42,11 @@ import { SelectNetworkWidget } from 'src/ui/pool/SelectNetworkWidget'
 import { SelectTokensWidget } from 'src/ui/pool/SelectTokensWidget'
 import { ToggleZapCard } from 'src/ui/pool/ToggleZapCard'
 import { ZapInfoCard } from 'src/ui/pool/ZapInfoCard'
-import { EVM_TESTNET_CHAIN_IDS, EvmChainId, EvmChainKey } from 'sushi/chain'
+import {
+  EVM_TESTNET_CHAIN_IDS,
+  type EvmChainId,
+  EvmChainKey,
+} from 'sushi/chain'
 import {
   SUSHISWAP_V2_ROUTER_ADDRESS,
   SUSHISWAP_V2_SUPPORTED_CHAIN_IDS,
@@ -51,10 +55,10 @@ import {
   isSushiSwapV2ChainId,
   isWNativeSupported,
 } from 'sushi/config'
-import { Amount, Type, tryParseAmount } from 'sushi/currency'
+import { Amount, type Type, tryParseAmount } from 'sushi/currency'
 import { Percent, ZERO } from 'sushi/math'
-import { SushiSwapV2Pool } from 'sushi/pool/sushiswap-v2'
-import { SendTransactionReturnType } from 'viem'
+import type { SushiSwapV2Pool } from 'sushi/pool/sushiswap-v2'
+import type { SendTransactionReturnType } from 'viem'
 import {
   useAccount,
   useEstimateGas,
@@ -362,20 +366,18 @@ const _ZapWidget: FC<ZapWidgetProps> = ({
       })
 
       const receipt = await promise
-      {
-        if (receipt.status === 'success') {
-          sendAnalyticsEvent(ZapEventName.ZAP_TRANSACTION_COMPLETED, {
-            txHash: hash,
-            from: receipt.from,
-            chain_id: chainId,
-          })
-        } else {
-          sendAnalyticsEvent(ZapEventName.ZAP_TRANSACTION_FAILED, {
-            txHash: hash,
-            from: receipt.from,
-            chain_id: chainId,
-          })
-        }
+      if (receipt.status === 'success') {
+        sendAnalyticsEvent(ZapEventName.ZAP_TRANSACTION_COMPLETED, {
+          txHash: hash,
+          from: receipt.from,
+          chain_id: chain.id,
+        })
+      } else {
+        sendAnalyticsEvent(ZapEventName.ZAP_TRANSACTION_FAILED, {
+          txHash: hash,
+          from: receipt.from,
+          chain_id: chain.id,
+        })
       }
     },
     [refetchBalances, client, chain, address, pool],
@@ -676,46 +678,40 @@ const AddLiquidityWidget: FC<AddLiquidityWidgetProps> = ({
               >
                 {(!pool || isSushiSwapV2Pool(pool)) &&
                   isSushiSwapV2ChainId(chainId) && (
-                    <>
+                    <Checker.ApproveERC20
+                      id="approve-token-0"
+                      className="whitespace-nowrap"
+                      fullWidth
+                      amount={parsedInput0}
+                      contract={SUSHISWAP_V2_ROUTER_ADDRESS[chainId]}
+                    >
                       <Checker.ApproveERC20
-                        id="approve-token-0"
+                        id="approve-token-1"
                         className="whitespace-nowrap"
                         fullWidth
-                        amount={parsedInput0}
+                        amount={parsedInput1}
                         contract={SUSHISWAP_V2_ROUTER_ADDRESS[chainId]}
                       >
-                        <Checker.ApproveERC20
-                          id="approve-token-1"
-                          className="whitespace-nowrap"
-                          fullWidth
-                          amount={parsedInput1}
-                          contract={SUSHISWAP_V2_ROUTER_ADDRESS[chainId]}
-                        >
-                          <Checker.Success tag={APPROVE_TAG_ADD_LEGACY}>
-                            <AddSectionReviewModalLegacy
-                              poolAddress={pool?.liquidityToken.address}
-                              poolState={poolState as SushiSwapV2PoolState}
-                              chainId={chainId}
-                              token0={token0}
-                              token1={token1}
-                              input0={parsedInput0}
-                              input1={parsedInput1}
-                              onSuccess={() => {
-                                setTypedAmounts({ input0: '', input1: '' })
-                              }}
-                            >
-                              <Button
-                                size="xl"
-                                fullWidth
-                                testId="add-liquidity"
-                              >
-                                {title}
-                              </Button>
-                            </AddSectionReviewModalLegacy>
-                          </Checker.Success>
-                        </Checker.ApproveERC20>
+                        <Checker.Success tag={APPROVE_TAG_ADD_LEGACY}>
+                          <AddSectionReviewModalLegacy
+                            poolAddress={pool?.liquidityToken.address}
+                            poolState={poolState as SushiSwapV2PoolState}
+                            chainId={chainId}
+                            token0={token0}
+                            token1={token1}
+                            input0={parsedInput0}
+                            input1={parsedInput1}
+                            onSuccess={() => {
+                              setTypedAmounts({ input0: '', input1: '' })
+                            }}
+                          >
+                            <Button size="xl" fullWidth testId="add-liquidity">
+                              {title}
+                            </Button>
+                          </AddSectionReviewModalLegacy>
+                        </Checker.Success>
                       </Checker.ApproveERC20>
-                    </>
+                    </Checker.ApproveERC20>
                   )}
               </Checker.Amounts>
             </Checker.Network>

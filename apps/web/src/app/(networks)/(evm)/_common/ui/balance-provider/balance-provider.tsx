@@ -14,10 +14,10 @@ import { NativeAddress } from 'src/lib/constants'
 import { publicWagmiConfig } from 'src/lib/wagmi/config/public'
 import { type EvmChainId, LowercaseMap } from 'sushi'
 import { erc20Abi_balanceOf, multicall3Abi_getEthBalance } from 'sushi/abi'
-import { Address } from 'viem'
+import type { Address } from 'viem'
 import { multicall } from 'viem/actions'
 import { useAccount, useConfig } from 'wagmi'
-import {
+import type {
   Balance,
   Provider,
   ProviderActions,

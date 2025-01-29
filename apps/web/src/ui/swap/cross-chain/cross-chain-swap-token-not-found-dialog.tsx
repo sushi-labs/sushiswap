@@ -22,7 +22,7 @@ import {
   defaultQuoteCurrency,
   isTokenSecurityChainId,
 } from 'sushi/config'
-import { Token } from 'sushi/currency'
+import type { Token } from 'sushi/currency'
 import { shortenAddress } from 'sushi/format'
 import { useDerivedStateCrossChainSwap } from './derivedstate-cross-chain-swap-provider'
 

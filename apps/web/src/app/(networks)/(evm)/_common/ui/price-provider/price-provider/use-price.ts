@@ -16,17 +16,19 @@ export function usePrice({
 }) {
   const enabled = chainId && address && _enabled
 
-  const { data, ...rest } = usePrices({
+  const prices = usePrices({
     chainId,
     enabled,
   })
 
   return useMemo(() => {
+    const { data, ...rest } = prices
+
     const price = address ? data?.get(address) : undefined
 
     return {
       data: price,
       ...rest,
     }
-  }, [address, data, rest])
+  }, [address, prices])
 }

@@ -1,4 +1,4 @@
-import { ChainId } from 'sushi/chain'
+import type { ChainId } from 'sushi/chain'
 import { SidebarProvider } from '~evm/_common/ui/sidebar'
 import { Header } from '../header'
 import { Providers } from './providers'

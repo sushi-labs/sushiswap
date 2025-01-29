@@ -9,7 +9,11 @@ import {
   PlusIcon,
 } from '@heroicons/react/24/outline'
 import { Slot } from '@radix-ui/react-slot'
-import { GetPools, PoolChainId, Pools } from '@sushiswap/graph-client/data-api'
+import type {
+  GetPools,
+  PoolChainId,
+  Pools,
+} from '@sushiswap/graph-client/data-api'
 import {
   Button,
   Card,
@@ -31,9 +35,20 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@sushiswap/ui'
-import { ColumnDef, Row, SortingState, TableState } from '@tanstack/react-table'
+import type {
+  ColumnDef,
+  Row,
+  SortingState,
+  TableState,
+} from '@tanstack/react-table'
 import Link from 'next/link'
-import React, { FC, ReactNode, useCallback, useMemo, useState } from 'react'
+import React, {
+  type FC,
+  type ReactNode,
+  useCallback,
+  useMemo,
+  useState,
+} from 'react'
 import InfiniteScroll from 'react-infinite-scroll-component'
 import { usePoolsInfinite } from 'src/lib/hooks'
 import { ChainKey } from 'sushi/chain'

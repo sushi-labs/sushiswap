@@ -5,7 +5,7 @@ import { MagnifyingGlassIcon } from '@heroicons/react/24/solid'
 import type { Meta, StoryObj } from '@storybook/react'
 import {
   TextField,
-  TextFieldBaseProps,
+  type TextFieldBaseProps,
   TextFieldDescription,
 } from '@sushiswap/ui'
 import * as React from 'react'

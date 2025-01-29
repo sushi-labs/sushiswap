@@ -1,7 +1,13 @@
 import { usePrevious } from '@sushiswap/hooks'
-import { BrushBehavior, D3BrushEvent, ScaleLinear, brushX, select } from 'd3'
+import {
+  type BrushBehavior,
+  type D3BrushEvent,
+  type ScaleLinear,
+  brushX,
+  select,
+} from 'd3'
 import React, {
-  FC,
+  type FC,
   useCallback,
   useEffect,
   useMemo,

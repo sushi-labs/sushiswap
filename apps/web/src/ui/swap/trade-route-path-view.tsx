@@ -18,10 +18,16 @@ import {
   DialogTrigger,
   ScrollArea,
 } from '@sushiswap/ui'
-import React, { FC, ReactNode, useEffect, useRef, useState } from 'react'
-import { UseTradeReturn } from 'src/lib/hooks/react-query'
+import React, {
+  type FC,
+  type ReactNode,
+  useEffect,
+  useRef,
+  useState,
+} from 'react'
+import type { UseTradeReturn } from 'src/lib/hooks/react-query'
 import { ChainId } from 'sushi/chain'
-import { Type, WETH9 } from 'sushi/currency'
+import { type Type, WETH9 } from 'sushi/currency'
 
 // const tokenFromRToken = (token: TradeLegType['tokenFrom']) => {
 //   if (

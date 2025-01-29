@@ -1,6 +1,6 @@
 import { getFaqAnswerGroup } from '@sushiswap/graph-client/strapi'
 import { notFound, redirect } from 'next/navigation'
-import { NextRequest } from 'next/server'
+import type { NextRequest } from 'next/server'
 
 export const revalidate = 3600
 

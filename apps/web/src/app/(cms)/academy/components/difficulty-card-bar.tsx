@@ -3,7 +3,10 @@ import { ArrowRightIcon } from '@heroicons/react/24/outline'
 import { Chip } from '@sushiswap/ui'
 import { CircleIcon } from '@sushiswap/ui/icons/CircleIcon'
 
-import { Difficulty, getDifficulties } from '@sushiswap/graph-client/strapi'
+import {
+  type Difficulty,
+  getDifficulties,
+} from '@sushiswap/graph-client/strapi'
 import { classNames } from '@sushiswap/ui'
 import { AcademyIcon } from '../../components/icons'
 import { DOCS_URL } from '../../constants'

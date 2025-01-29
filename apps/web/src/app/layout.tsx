@@ -3,7 +3,7 @@ import '@sushiswap/ui/index.css'
 import { ToastContainer } from '@sushiswap/notifications'
 import type { Metadata } from 'next'
 import { Inter, Roboto_Mono } from 'next/font/google'
-import React from 'react'
+import type React from 'react'
 import { CookieDialogContainer } from './_common/cookies/cookie-dialog-container'
 import { Trackers } from './trackers'
 

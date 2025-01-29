@@ -1,5 +1,5 @@
 import {
-  TrendingTokensChainId,
+  type TrendingTokensChainId,
   getTrendingTokens,
 } from '@sushiswap/graph-client/data-api'
 import { useQuery } from '@tanstack/react-query'

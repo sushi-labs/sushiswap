@@ -2,7 +2,7 @@
 // import { createServer } from 'prool'
 // import { anvil } from 'prool/instances'
 
-import { type FullConfig } from '@playwright/test'
+import type { FullConfig } from '@playwright/test'
 import { startProxy } from '@viem/anvil'
 
 export default async function globalSetup(_config: FullConfig) {

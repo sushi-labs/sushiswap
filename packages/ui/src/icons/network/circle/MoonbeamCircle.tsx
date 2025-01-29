@@ -2,7 +2,7 @@ import * as React from 'react'
 
 import { MoonbeamNaked } from '../naked/MoonbeamNaked'
 
-import { IconComponent } from '../../../types'
+import type { IconComponent } from '../../../types'
 
 export const MoonbeamCircle: IconComponent = (props) => (
   <MoonbeamNaked

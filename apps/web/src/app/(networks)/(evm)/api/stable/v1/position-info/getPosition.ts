@@ -1,7 +1,7 @@
 import {
   SUSHISWAP_V3_FACTORY_ADDRESS,
   SUSHISWAP_V3_POSTIION_MANAGER,
-  SushiSwapV3ChainId,
+  type SushiSwapV3ChainId,
 } from 'sushi/config'
 import { createClient } from 'viem'
 import { readContract } from 'viem/actions'

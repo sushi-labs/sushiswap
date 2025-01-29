@@ -1,6 +1,6 @@
-import { V3Pool } from '@sushiswap/graph-client/data-api'
+import type { V3Pool } from '@sushiswap/graph-client/data-api'
 import { useQuery } from '@tanstack/react-query'
-import { SushiSwapV3ChainId } from 'sushi/config'
+import type { SushiSwapV3ChainId } from 'sushi/config'
 import { useConfig } from 'wagmi'
 import { getConcentratedLiquidityPoolReserves } from '../actions/getConcentratedLiquidityPoolReserves'
 

@@ -2,7 +2,7 @@
 
 import { createErrorToast, createToast } from '@sushiswap/notifications'
 import { useCallback, useMemo, useState } from 'react'
-import { SendTransactionReturnType, UserRejectedRequestError } from 'viem'
+import { type SendTransactionReturnType, UserRejectedRequestError } from 'viem'
 import {
   useAccount,
   usePublicClient,

@@ -1,6 +1,6 @@
 import React, { useId } from 'react'
 
-import { IconComponent } from '../types'
+import type { IconComponent } from '../types'
 
 export const EnsoIcon: IconComponent = (props) => {
   const id = useId()

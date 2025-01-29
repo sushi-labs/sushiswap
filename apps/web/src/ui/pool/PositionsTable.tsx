@@ -1,10 +1,14 @@
 import { Card, CardHeader, CardTitle, DataTable, Slot } from '@sushiswap/ui'
-import { DisplayColumnDef, PaginationState, Row } from '@tanstack/react-table'
-import { FC, ReactNode, useCallback, useMemo, useState } from 'react'
+import type {
+  DisplayColumnDef,
+  PaginationState,
+  Row,
+} from '@tanstack/react-table'
+import { type FC, type ReactNode, useCallback, useMemo, useState } from 'react'
 import { useSushiV2UserPositions } from 'src/lib/hooks'
 
-import { V2Position } from '@sushiswap/graph-client/data-api'
-import { SushiSwapV2ChainId } from 'sushi/config'
+import type { V2Position } from '@sushiswap/graph-client/data-api'
+import type { SushiSwapV2ChainId } from 'sushi/config'
 import { useAccount } from 'wagmi'
 import { APR_COLUMN, NAME_COLUMN_POOL, VALUE_COLUMN } from './columns'
 

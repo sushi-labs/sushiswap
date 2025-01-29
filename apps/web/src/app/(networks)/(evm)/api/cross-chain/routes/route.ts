@@ -1,4 +1,4 @@
-import { NextRequest } from 'next/server'
+import type { NextRequest } from 'next/server'
 import { isXSwapSupportedChainId } from 'src/config'
 import { isAddress } from 'viem'
 import { z } from 'zod'

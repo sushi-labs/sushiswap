@@ -5,17 +5,17 @@ import { useEffect, useMemo } from 'react'
 import { uniswapV2PairAbi_getReserves } from 'sushi/abi'
 import {
   SUSHISWAP_V2_FACTORY_ADDRESS,
-  SushiSwapV2ChainId,
+  type SushiSwapV2ChainId,
   isSushiSwapV2ChainId,
 } from 'sushi/config'
-import { Amount, Currency, Token, Type } from 'sushi/currency'
+import { Amount, type Currency, type Token, type Type } from 'sushi/currency'
 import {
   SushiSwapV2Pool,
   computeSushiSwapV2PoolAddress,
 } from 'sushi/pool/sushiswap-v2'
-import { Address } from 'viem'
+import type { Address } from 'viem'
 import {
-  UseReadContractsParameters,
+  type UseReadContractsParameters,
   useBlockNumber,
   useReadContracts,
 } from 'wagmi'

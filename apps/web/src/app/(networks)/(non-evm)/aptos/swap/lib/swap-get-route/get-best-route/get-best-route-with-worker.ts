@@ -1,4 +1,4 @@
-import { getBestRoute } from './get-best-route'
+import type { getBestRoute } from './get-best-route'
 
 export async function getBestRouteWithWorker(
   ...args: Parameters<typeof getBestRoute>

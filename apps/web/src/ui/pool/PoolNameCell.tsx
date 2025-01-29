@@ -10,11 +10,11 @@ import {
   TooltipTrigger,
 } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
-import { FC, type JSX } from 'react'
+import type { FC, JSX } from 'react'
 import { useTokensFromPool } from 'src/lib/hooks'
 import { formatNumber } from 'sushi/format'
 
-import { PoolHasSteerVaults } from '@sushiswap/steer-sdk'
+import type { PoolHasSteerVaults } from '@sushiswap/steer-sdk'
 import {
   type PoolBase,
   type PoolIfIncentivized,

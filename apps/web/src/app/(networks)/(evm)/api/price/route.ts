@@ -1,4 +1,4 @@
-import { NextRequest } from 'next/server'
+import type { NextRequest } from 'next/server'
 import { getAllPrices } from 'src/lib/get-all-prices'
 
 import { z } from 'zod'

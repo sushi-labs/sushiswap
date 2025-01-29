@@ -122,7 +122,10 @@ export function ArticleListFiltered({
       <InfiniteScroll
         dataLength={articles.length}
         next={fetchNextPage}
-        hasMore={infinite && articles.length < (meta?.total || -Infinity)}
+        hasMore={
+          infinite &&
+          articles.length < (meta?.total || Number.NEGATIVE_INFINITY)
+        }
         loader={
           <div className="flex justify-center w-full py-4">
             <Loader size={16} />
