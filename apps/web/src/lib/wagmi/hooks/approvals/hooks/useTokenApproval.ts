@@ -3,8 +3,10 @@
 import { createErrorToast, createToast } from '@sushiswap/notifications'
 import { InterfaceEventName, sendAnalyticsEvent } from '@sushiswap/telemetry'
 import { useCallback, useMemo, useState } from 'react'
+import { EvmChainId } from 'sushi'
 import { erc20Abi_approve } from 'sushi/abi'
-import { Amount, Type } from 'sushi/currency'
+import { Amount, Token, Type } from 'sushi/currency'
+import { USDT_ADDRESS } from 'sushi/currency'
 import {
   Address,
   SendTransactionReturnType,
@@ -34,6 +36,32 @@ interface UseTokenApprovalParams {
   amount: Amount<Type> | undefined
   approveMax?: boolean
   enabled?: boolean
+}
+
+function getApprovaAmount(
+  amount: Amount<Type> | undefined,
+  approveMax: boolean | undefined,
+  allowance: Amount<Token> | undefined,
+): bigint {
+  if (!amount || !allowance) {
+    return 0n
+  }
+
+  const isMainnetTether =
+    amount.currency.chainId === EvmChainId.ETHEREUM &&
+    amount.currency.wrapped.address === USDT_ADDRESS[EvmChainId.ETHEREUM]
+
+  // USDT on Ethereum mainnet is a special case where we can't go from N to M (where N != 0)
+  // without going to 0 first.
+  if (isMainnetTether && allowance.quotient !== 0n) {
+    return 0n
+  }
+
+  if (approveMax) {
+    return maxUint256
+  }
+
+  return amount.quotient
 }
 
 export const useTokenApproval = ({
@@ -66,10 +94,7 @@ export const useTokenApproval = ({
     abi: erc20Abi_approve,
     address: amount?.currency?.wrapped?.address as Address,
     functionName: 'approve',
-    args: [
-      spender as Address,
-      approveMax ? maxUint256 : amount ? amount.quotient : 0n,
-    ],
+    args: [spender as Address, getApprovaAmount(amount, approveMax, allowance)],
     query: {
       enabled: Boolean(
         amount &&
