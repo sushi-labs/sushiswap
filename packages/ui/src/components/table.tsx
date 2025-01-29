@@ -145,7 +145,7 @@ export {
   TableBody,
   TableCaption,
   TableCell,
-  type TableCellAsLink,
+  TableCellAsLink,
   TableFooter,
   TableHead,
   TableHeader,
