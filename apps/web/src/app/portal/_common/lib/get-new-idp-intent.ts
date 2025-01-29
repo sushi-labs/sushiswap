@@ -2,6 +2,15 @@ import { headers } from 'next/headers'
 import { authEnv } from 'src/app/portal/_common/lib/auth-env'
 import { z } from 'zod'
 
+export type GetIdpIntentConfig =
+  | {
+      type: 'login'
+    }
+  | {
+      type: 'connect'
+      redirect: string
+    }
+
 const newIdpIntentSchema = z.object({
   details: z.object({
     sequence: z.string(),
@@ -11,9 +20,38 @@ const newIdpIntentSchema = z.object({
   authUrl: z.string(),
 })
 
+function getSuccessUrl({
+  host,
+  proto,
+  config,
+}: {
+  host: string
+  proto: string
+  config: GetIdpIntentConfig
+}) {
+  let url = `${proto}://${host}/portal/api/auth`
+
+  switch (config.type) {
+    case 'login': {
+      url += '/callback'
+      break
+    }
+    case 'connect': {
+      url += `/callback-connect?redirect=${config.redirect}`
+      break
+    }
+  }
+
+  return url
+}
+
 export async function getNewIdpIntent({
   idpId,
-}: { idpId: string; type: 'login' | 'connect' }) {
+  config,
+}: {
+  idpId: string
+  config: GetIdpIntentConfig
+}) {
   const headers_ = await headers()
   const host = headers_.get('Host')!
   const proto = headers_.get('X-Forwarded-Proto') || 'https'
@@ -28,7 +66,7 @@ export async function getNewIdpIntent({
     body: JSON.stringify({
       idpId,
       urls: {
-        successUrl: `${proto}://${host}/portal/api/auth/callback`,
+        successUrl: getSuccessUrl({ host, proto, config }),
         failureUrl: `${proto}://${host}/portal`,
       },
     }),

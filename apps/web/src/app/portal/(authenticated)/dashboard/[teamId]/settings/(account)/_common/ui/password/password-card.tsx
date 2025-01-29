@@ -20,7 +20,7 @@ import {
 } from '@sushiswap/ui'
 import { useCallback, useEffect, useState } from 'react'
 import { FormProvider } from 'react-hook-form'
-import { z } from 'zod'
+import type { z } from 'zod'
 import { changeOrCreatePasswordAction } from './password-action'
 import { changeOrCreatePasswordSchema } from './password-form-schema'
 

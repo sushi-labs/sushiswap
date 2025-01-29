@@ -13,7 +13,7 @@ import {
 import { useSearchParams } from 'next/navigation'
 import { useCallback, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
-import { z } from 'zod'
+import type { z } from 'zod'
 import { loginAction } from './login-action'
 import { loginFormSchema } from './login-form-schema'
 

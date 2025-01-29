@@ -12,7 +12,7 @@ import {
 } from '@sushiswap/ui'
 import { useCallback, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
-import { z } from 'zod'
+import type { z } from 'zod'
 import { ResendCodeButton } from './resend-code/resend-code-button'
 import { verifyEmailAction } from './verify-email-action'
 import { verifyEmailFormSchema } from './verify-form-schema'

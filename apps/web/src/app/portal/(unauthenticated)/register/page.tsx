@@ -1,6 +1,5 @@
 import { Separator } from '@sushiswap/ui'
-import { GithubButton } from '../../_common/ui/oauth/github-button'
-import { GoogleButton } from '../../_common/ui/oauth/google-button'
+import { OAuthButton, OAuthProvider } from '../../_common/ui/oauth/oauth-button'
 import { RegisterForm } from './_common/ui/register-form'
 
 export default function Page() {
@@ -11,8 +10,16 @@ export default function Page() {
         <RegisterForm />
         <Separator />
         <div className="flex flex-col space-y-4">
-          <GoogleButton text="Register with Google" type="login" />
-          <GithubButton text="Register with Github" type="login" />
+          <OAuthButton
+            provider={OAuthProvider.Google}
+            text="Register with Google"
+            config={{ type: 'login' }}
+          />
+          <OAuthButton
+            provider={OAuthProvider.Github}
+            text="Register with Github"
+            config={{ type: 'login' }}
+          />
         </div>
       </span>
     </div>

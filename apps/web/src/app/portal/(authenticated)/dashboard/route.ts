@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { type NextRequest, NextResponse } from 'next/server'
 import { getSessionData } from '../../_common/lib/client-config'
 
 export async function GET(request: NextRequest) {

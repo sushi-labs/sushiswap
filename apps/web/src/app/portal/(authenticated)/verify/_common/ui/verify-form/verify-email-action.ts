@@ -1,9 +1,9 @@
 'use server'
 
-import { getSession } from "src/app/portal/_common/lib/client-config"
-import { verifyEmailFormSchema } from "./verify-form-schema"
-import { getUserServiceClient } from "src/app/portal/_common/lib/zitadel-client"
-import { redirect } from "next/navigation"
+import { redirect } from 'next/navigation'
+import { getSession } from 'src/app/portal/_common/lib/client-config'
+import { getUserServiceClient } from 'src/app/portal/_common/lib/zitadel-client'
+import { verifyEmailFormSchema } from './verify-form-schema'
 
 export type FormState =
   | {

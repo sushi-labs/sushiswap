@@ -1,12 +1,12 @@
 import { redirect } from 'next/navigation'
-import { type NextRequest } from 'next/server'
+import type { NextRequest } from 'next/server'
 import {
   createSession,
   getSession,
 } from 'src/app/portal/_common/lib/client-config'
 import { z } from 'zod'
+import { getIdpIntent } from '../../../../_common/lib/get-idp-intent'
 import { getSessionServiceClient } from '../../../../_common/lib/zitadel-client'
-import { getIdpIntent } from './lib/get-idp-intent'
 import { getUserById } from './lib/get-user-by-id'
 import { login } from './lib/login'
 import { register } from './lib/register'
