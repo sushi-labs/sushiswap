@@ -1,20 +1,15 @@
 import { redirect } from 'next/navigation'
-import { type NextRequest } from 'next/server'
-import {
-  createSession,
-  getSession,
-} from 'src/app/portal/_common/lib/client-config'
+import type { NextRequest } from 'next/server'
+import { getSessionData } from 'src/app/portal/_common/lib/client-config'
+import { getIdpIntent } from 'src/app/portal/_common/lib/get-idp-intent'
+import { getUserServiceClient } from 'src/app/portal/_common/lib/zitadel-client'
 import { z } from 'zod'
-import { getSessionServiceClient } from '../../../_common/lib/zitadel-client'
-import { getIdpIntent } from './lib/get-idp-intent'
-import { getUserById } from './lib/get-user-by-id'
-import { login } from './lib/login'
-import { register } from './lib/register'
 
 const schema = z.object({
   id: z.string(),
   token: z.string(),
   user: z.string().nullable(),
+  redirect: z.string(),
 })
 
 async function GET(req: NextRequest) {
@@ -24,77 +19,59 @@ async function GET(req: NextRequest) {
     id: url.searchParams.get('id'),
     token: url.searchParams.get('token'),
     user: url.searchParams.get('user'),
+    redirect: url.searchParams.get('redirect'),
   })
 
   if (!result.success) {
     return new Response(JSON.stringify(result.error, null, 2), { status: 400 })
   }
 
-  const data = result.data
-  let email: string | undefined
-
-  if (!data.user) {
-    try {
-      // Register
-      const idpIntent = await getIdpIntent(data.id, data.token)
-      const { userId } = await register(idpIntent)
-      data.user = userId
-      email = idpIntent.idpInformation.rawInformation.email
-    } catch (e) {
-      console.error(e)
-      if (e instanceof Error && 'code' in e) {
-        // User already exists
-        if (e.code === 6) {
-          return redirect('/portal/login?error=oauthAlreadyExists')
-        }
-      }
-      return new Response('An unknown error occured', { status: 500 })
-    }
+  let intent: Awaited<ReturnType<typeof getIdpIntent>>
+  try {
+    intent = await getIdpIntent(result.data.id, result.data.token)
+  } catch (e) {
+    console.error(e)
+    return new Response('Failed to get IDP intent', { status: 500 })
   }
 
-  const session = await login({
-    userId: data.user,
-    idpIntentId: data.id,
-    idpIntentToken: data.token,
+  const session = await getSessionData()
+
+  if (!session.isLoggedIn) {
+    return new Response('Not logged in', { status: 412 })
+  }
+
+  if (result.data.user !== null) {
+    return new Response('User already exists', { status: 412 })
+  }
+
+  const userServiceClient = getUserServiceClient()
+
+  const user = await userServiceClient.getUserByID({
+    $typeName: 'zitadel.user.v2.GetUserByIDRequest',
+    userId: session.user.id,
   })
 
-  if (!email) {
-    const user = await getUserById(data.user)
-    if (user.state !== 'USER_STATE_ACTIVE') {
-      return new Response('User is not active', { status: 400 })
-    }
-
-    email = user.human.email.email
+  if (user.user?.type.case !== 'human') {
+    return new Response('Not a human user', { status: 412 })
   }
 
-  const previousSession = await getSession()
-  let logoutP: Promise<any> | null = null
-  if (previousSession.isLoggedIn) {
-    const sessionServiceClient = getSessionServiceClient()
-    logoutP = sessionServiceClient.deleteSession({
-      $typeName: 'zitadel.session.v2.DeleteSessionRequest',
-      sessionId: previousSession.session.id,
-      sessionToken: previousSession.session.token,
-    })
-  }
-
-  await createSession({
-    session: {
-      id: session.sessionId,
-      token: session.sessionToken,
-    },
-    user: {
-      id: data.user,
-      email: {
-        email,
-        isVerified: true,
+  try {
+    userServiceClient.addIDPLink({
+      $typeName: 'zitadel.user.v2.AddIDPLinkRequest',
+      userId: session.user.id,
+      idpLink: {
+        $typeName: 'zitadel.user.v2.IDPLink',
+        idpId: intent.idpInformation.idpId,
+        userId: session.user.id,
+        userName: user.user.username,
       },
-    },
-  })
+    })
+  } catch (e) {
+    console.error(e)
+    return new Response('Failed to add IDP link', { status: 500 })
+  }
 
-  await logoutP
-
-  return redirect('/portal')
+  return redirect(result.data.redirect)
 }
 
 export { GET }

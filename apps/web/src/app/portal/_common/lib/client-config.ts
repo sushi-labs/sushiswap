@@ -1,4 +1,8 @@
-import { IronSession, SessionOptions, getIronSession } from 'iron-session'
+import {
+  type IronSession,
+  type SessionOptions,
+  getIronSession,
+} from 'iron-session'
 import { cookies } from 'next/headers'
 import { authEnv } from './auth-env'
 

@@ -1,10 +1,10 @@
 import type { VariablesOf } from 'gql.tada'
 
-import { request, type RequestOptions } from 'src/lib/request.js'
-import { SushiSwapProtocol, type PoolBase, type PoolV3 } from 'sushi'
+import { type RequestOptions, request } from 'src/lib/request.js'
+import { type PoolBase, type PoolV3, SushiSwapProtocol } from 'sushi'
 import { isSushiSwapV3ChainId } from 'sushi/config'
-import type { Address } from 'viem'
 import { SUSHI_DATA_API_HOST } from 'sushi/config/subgraph'
+import type { Address } from 'viem'
 import { graphql } from '../../graphql.js'
 
 export const V3PoolsByTokensQuery = graphql(

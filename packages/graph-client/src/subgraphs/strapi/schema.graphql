@@ -13,7 +13,9 @@ The `BigInt` scalar type represents non-fractional signed whole numeric values.
 """
 scalar Long
 
-"""The `Upload` scalar type represents a file upload."""
+"""
+The `Upload` scalar type represents a file upload.
+"""
 scalar Upload
 
 type Error {
@@ -269,7 +271,11 @@ type ComponentSharedSeo {
 
 type ComponentSharedSlider {
   id: ID!
-  files(filters: UploadFileFiltersInput, pagination: PaginationArg = {}, sort: [String] = []): UploadFileRelationResponseCollection
+  files(
+    filters: UploadFileFiltersInput
+    pagination: PaginationArg = {}
+    sort: [String] = []
+  ): UploadFileRelationResponseCollection
 }
 
 input ComponentSharedTableOfContentsEntryFiltersInput {
@@ -288,7 +294,11 @@ type ComponentSharedTableOfContentsEntry {
 
 type ComponentSharedTableOfContents {
   id: ID!
-  entries(filters: ComponentSharedTableOfContentsEntryFiltersInput, pagination: PaginationArg = {}, sort: [String] = []): [ComponentSharedTableOfContentsEntry]
+  entries(
+    filters: ComponentSharedTableOfContentsEntryFiltersInput
+    pagination: PaginationArg = {}
+    sort: [String] = []
+  ): [ComponentSharedTableOfContentsEntry]
   header: String!
 }
 
@@ -402,8 +412,16 @@ type UploadFolder {
   name: String!
   pathId: Int!
   parent: UploadFolderEntityResponse
-  children(filters: UploadFolderFiltersInput, pagination: PaginationArg = {}, sort: [String] = []): UploadFolderRelationResponseCollection
-  files(filters: UploadFileFiltersInput, pagination: PaginationArg = {}, sort: [String] = []): UploadFileRelationResponseCollection
+  children(
+    filters: UploadFolderFiltersInput
+    pagination: PaginationArg = {}
+    sort: [String] = []
+  ): UploadFolderRelationResponseCollection
+  files(
+    filters: UploadFileFiltersInput
+    pagination: PaginationArg = {}
+    sort: [String] = []
+  ): UploadFileRelationResponseCollection
   path: String!
   createdAt: DateTime
   updatedAt: DateTime
@@ -560,8 +578,16 @@ type UsersPermissionsRole {
   name: String!
   description: String
   type: String
-  permissions(filters: UsersPermissionsPermissionFiltersInput, pagination: PaginationArg = {}, sort: [String] = []): UsersPermissionsPermissionRelationResponseCollection
-  users(filters: UsersPermissionsUserFiltersInput, pagination: PaginationArg = {}, sort: [String] = []): UsersPermissionsUserRelationResponseCollection
+  permissions(
+    filters: UsersPermissionsPermissionFiltersInput
+    pagination: PaginationArg = {}
+    sort: [String] = []
+  ): UsersPermissionsPermissionRelationResponseCollection
+  users(
+    filters: UsersPermissionsUserFiltersInput
+    pagination: PaginationArg = {}
+    sort: [String] = []
+  ): UsersPermissionsUserRelationResponseCollection
   createdAt: DateTime
   updatedAt: DateTime
 }
@@ -639,7 +665,11 @@ type UsersPermissionsUserRelationResponseCollection {
   data: [UsersPermissionsUserEntity!]!
 }
 
-union AboutBlocksDynamicZone = ComponentSharedMedia | ComponentSharedRichText | ComponentSharedSlider | Error
+union AboutBlocksDynamicZone =
+  | ComponentSharedMedia
+  | ComponentSharedRichText
+  | ComponentSharedSlider
+  | Error
 
 scalar AboutBlocksDynamicZoneInput
 
@@ -710,16 +740,44 @@ type Article {
   customDate: DateTime
   slug: String!
   cover: UploadFileEntityResponse!
-  authors(filters: AuthorFiltersInput, pagination: PaginationArg = {}, sort: [String] = []): AuthorRelationResponseCollection
-  categories(filters: CategoryFiltersInput, pagination: PaginationArg = {}, sort: [String] = []): CategoryRelationResponseCollection
+  authors(
+    filters: AuthorFiltersInput
+    pagination: PaginationArg = {}
+    sort: [String] = []
+  ): AuthorRelationResponseCollection
+  categories(
+    filters: CategoryFiltersInput
+    pagination: PaginationArg = {}
+    sort: [String] = []
+  ): CategoryRelationResponseCollection
   difficulty: DifficultyEntityResponse
-  topics(filters: TopicFiltersInput, pagination: PaginationArg = {}, sort: [String] = [], publicationState: PublicationState = LIVE): TopicRelationResponseCollection
-  products(filters: ProductFiltersInput, pagination: PaginationArg = {}, sort: [String] = [], publicationState: PublicationState = LIVE): ProductRelationResponseCollection
-  articleTypes(filters: ArticleTypeFiltersInput, pagination: PaginationArg = {}, sort: [String] = [], publicationState: PublicationState = LIVE): ArticleTypeRelationResponseCollection
+  topics(
+    filters: TopicFiltersInput
+    pagination: PaginationArg = {}
+    sort: [String] = []
+    publicationState: PublicationState = LIVE
+  ): TopicRelationResponseCollection
+  products(
+    filters: ProductFiltersInput
+    pagination: PaginationArg = {}
+    sort: [String] = []
+    publicationState: PublicationState = LIVE
+  ): ProductRelationResponseCollection
+  articleTypes(
+    filters: ArticleTypeFiltersInput
+    pagination: PaginationArg = {}
+    sort: [String] = []
+    publicationState: PublicationState = LIVE
+  ): ArticleTypeRelationResponseCollection
   createdAt: DateTime
   updatedAt: DateTime
   publishedAt: DateTime
-  localizations(filters: ArticleFiltersInput, pagination: PaginationArg = {}, sort: [String] = [], publicationState: PublicationState = LIVE): ArticleRelationResponseCollection
+  localizations(
+    filters: ArticleFiltersInput
+    pagination: PaginationArg = {}
+    sort: [String] = []
+    publicationState: PublicationState = LIVE
+  ): ArticleRelationResponseCollection
   locale: String
 }
 
@@ -761,7 +819,12 @@ input ArticleTypeInput {
 
 type ArticleType {
   type: String
-  types(filters: ArticleFiltersInput, pagination: PaginationArg = {}, sort: [String] = [], publicationState: PublicationState = LIVE): ArticleRelationResponseCollection
+  types(
+    filters: ArticleFiltersInput
+    pagination: PaginationArg = {}
+    sort: [String] = []
+    publicationState: PublicationState = LIVE
+  ): ArticleRelationResponseCollection
   createdAt: DateTime
   updatedAt: DateTime
   publishedAt: DateTime
@@ -811,7 +874,12 @@ type Author {
   avatar: UploadFileEntityResponse!
   email: String!
   handle: String!
-  articles(filters: ArticleFiltersInput, pagination: PaginationArg = {}, sort: [String] = [], publicationState: PublicationState = LIVE): ArticleRelationResponseCollection
+  articles(
+    filters: ArticleFiltersInput
+    pagination: PaginationArg = {}
+    sort: [String] = []
+    publicationState: PublicationState = LIVE
+  ): ArticleRelationResponseCollection
   createdAt: DateTime
   updatedAt: DateTime
 }
@@ -905,10 +973,19 @@ type Category {
   name: String!
   slug: String!
   description: String!
-  articles(filters: ArticleFiltersInput, pagination: PaginationArg = {}, sort: [String] = [], publicationState: PublicationState = LIVE): ArticleRelationResponseCollection
+  articles(
+    filters: ArticleFiltersInput
+    pagination: PaginationArg = {}
+    sort: [String] = []
+    publicationState: PublicationState = LIVE
+  ): ArticleRelationResponseCollection
   createdAt: DateTime
   updatedAt: DateTime
-  localizations(filters: CategoryFiltersInput, pagination: PaginationArg = {}, sort: [String] = []): CategoryRelationResponseCollection
+  localizations(
+    filters: CategoryFiltersInput
+    pagination: PaginationArg = {}
+    sort: [String] = []
+  ): CategoryRelationResponseCollection
   locale: String
 }
 
@@ -961,11 +1038,20 @@ type Difficulty {
   shortDescription: String
   longDescription: String
   slug: String
-  articles(filters: ArticleFiltersInput, pagination: PaginationArg = {}, sort: [String] = [], publicationState: PublicationState = LIVE): ArticleRelationResponseCollection
+  articles(
+    filters: ArticleFiltersInput
+    pagination: PaginationArg = {}
+    sort: [String] = []
+    publicationState: PublicationState = LIVE
+  ): ArticleRelationResponseCollection
   label: String
   createdAt: DateTime
   updatedAt: DateTime
-  localizations(filters: DifficultyFiltersInput, pagination: PaginationArg = {}, sort: [String] = []): DifficultyRelationResponseCollection
+  localizations(
+    filters: DifficultyFiltersInput
+    pagination: PaginationArg = {}
+    sort: [String] = []
+  ): DifficultyRelationResponseCollection
   locale: String
 }
 
@@ -1065,7 +1151,12 @@ input FaqAnswerGroupInput {
 
 type FaqAnswerGroup {
   name: String!
-  faqAnswers(filters: FaqAnswerFiltersInput, pagination: PaginationArg = {}, sort: [String] = [], publicationState: PublicationState = LIVE): FaqAnswerRelationResponseCollection!
+  faqAnswers(
+    filters: FaqAnswerFiltersInput
+    pagination: PaginationArg = {}
+    sort: [String] = []
+    publicationState: PublicationState = LIVE
+  ): FaqAnswerRelationResponseCollection!
   slug: String!
   faqDefaultAnswer: FaqAnswerEntityResponse
   faqCategory: FaqCategoryEntityResponse!
@@ -1116,7 +1207,12 @@ input FaqCategoryInput {
 type FaqCategory {
   name: String!
   slug: String!
-  faqAnswerGroups(filters: FaqAnswerGroupFiltersInput, pagination: PaginationArg = {}, sort: [String] = [], publicationState: PublicationState = LIVE): FaqAnswerGroupRelationResponseCollection!
+  faqAnswerGroups(
+    filters: FaqAnswerGroupFiltersInput
+    pagination: PaginationArg = {}
+    sort: [String] = []
+    publicationState: PublicationState = LIVE
+  ): FaqAnswerGroupRelationResponseCollection!
   createdAt: DateTime
   updatedAt: DateTime
   publishedAt: DateTime
@@ -1306,7 +1402,12 @@ type Product {
   description: String
   show: Boolean
   longName: String
-  articles(filters: ArticleFiltersInput, pagination: PaginationArg = {}, sort: [String] = [], publicationState: PublicationState = LIVE): ArticleRelationResponseCollection
+  articles(
+    filters: ArticleFiltersInput
+    pagination: PaginationArg = {}
+    sort: [String] = []
+    publicationState: PublicationState = LIVE
+  ): ArticleRelationResponseCollection
   slug: String
   url: String
   relevantArticleIds: JSON
@@ -1314,7 +1415,12 @@ type Product {
   createdAt: DateTime
   updatedAt: DateTime
   publishedAt: DateTime
-  localizations(filters: ProductFiltersInput, pagination: PaginationArg = {}, sort: [String] = [], publicationState: PublicationState = LIVE): ProductRelationResponseCollection
+  localizations(
+    filters: ProductFiltersInput
+    pagination: PaginationArg = {}
+    sort: [String] = []
+    publicationState: PublicationState = LIVE
+  ): ProductRelationResponseCollection
   locale: String
 }
 
@@ -1361,11 +1467,21 @@ input TopicInput {
 type Topic {
   name: String
   slug: String
-  articles(filters: ArticleFiltersInput, pagination: PaginationArg = {}, sort: [String] = [], publicationState: PublicationState = LIVE): ArticleRelationResponseCollection
+  articles(
+    filters: ArticleFiltersInput
+    pagination: PaginationArg = {}
+    sort: [String] = []
+    publicationState: PublicationState = LIVE
+  ): ArticleRelationResponseCollection
   createdAt: DateTime
   updatedAt: DateTime
   publishedAt: DateTime
-  localizations(filters: TopicFiltersInput, pagination: PaginationArg = {}, sort: [String] = [], publicationState: PublicationState = LIVE): TopicRelationResponseCollection
+  localizations(
+    filters: TopicFiltersInput
+    pagination: PaginationArg = {}
+    sort: [String] = []
+    publicationState: PublicationState = LIVE
+  ): TopicRelationResponseCollection
   locale: String
 }
 
@@ -1406,7 +1522,38 @@ type TrendingSearchEntityResponse {
   data: TrendingSearchEntity
 }
 
-union GenericMorph = ComponentSharedDivider | ComponentSharedMedia | ComponentSharedRichText | ComponentSharedSeo | ComponentSharedSlider | ComponentSharedTableOfContentsEntry | ComponentSharedTableOfContents | UploadFile | UploadFolder | SchedulerScheduler | I18NLocale | UsersPermissionsPermission | UsersPermissionsRole | UsersPermissionsUser | About | Article | ArticleType | Author | Banner | Category | Difficulty | FaqAnswer | FaqAnswerGroup | FaqCategory | FaqMostSearched | FaqProduct | Global | GlobalAcademy | Product | Topic | TrendingSearch
+union GenericMorph =
+  | ComponentSharedDivider
+  | ComponentSharedMedia
+  | ComponentSharedRichText
+  | ComponentSharedSeo
+  | ComponentSharedSlider
+  | ComponentSharedTableOfContentsEntry
+  | ComponentSharedTableOfContents
+  | UploadFile
+  | UploadFolder
+  | SchedulerScheduler
+  | I18NLocale
+  | UsersPermissionsPermission
+  | UsersPermissionsRole
+  | UsersPermissionsUser
+  | About
+  | Article
+  | ArticleType
+  | Author
+  | Banner
+  | Category
+  | Difficulty
+  | FaqAnswer
+  | FaqAnswerGroup
+  | FaqCategory
+  | FaqMostSearched
+  | FaqProduct
+  | Global
+  | GlobalAcademy
+  | Product
+  | Topic
+  | TrendingSearch
 
 input FileInfoInput {
   name: String
@@ -1414,7 +1561,9 @@ input FileInfoInput {
   caption: String
 }
 
-"""A string used to identify an i18n locale"""
+"""
+A string used to identify an i18n locale
+"""
 scalar I18NLocaleCode
 
 type UsersPermissionsMe {
@@ -1475,45 +1624,131 @@ input PaginationArg {
 
 type Query {
   uploadFile(id: ID): UploadFileEntityResponse
-  uploadFiles(filters: UploadFileFiltersInput, pagination: PaginationArg = {}, sort: [String] = []): UploadFileEntityResponseCollection!
+  uploadFiles(
+    filters: UploadFileFiltersInput
+    pagination: PaginationArg = {}
+    sort: [String] = []
+  ): UploadFileEntityResponseCollection!
   uploadFolder(id: ID): UploadFolderEntityResponse
-  uploadFolders(filters: UploadFolderFiltersInput, pagination: PaginationArg = {}, sort: [String] = []): UploadFolderEntityResponseCollection!
-  schedulerScheduler(filters: SchedulerSchedulerFiltersInput, pagination: PaginationArg = {}, sort: [String] = []): SchedulerSchedulerEntityResponseCollection!
+  uploadFolders(
+    filters: UploadFolderFiltersInput
+    pagination: PaginationArg = {}
+    sort: [String] = []
+  ): UploadFolderEntityResponseCollection!
+  schedulerScheduler(
+    filters: SchedulerSchedulerFiltersInput
+    pagination: PaginationArg = {}
+    sort: [String] = []
+  ): SchedulerSchedulerEntityResponseCollection!
   i18NLocale(id: ID): I18NLocaleEntityResponse
-  i18NLocales(filters: I18NLocaleFiltersInput, pagination: PaginationArg = {}, sort: [String] = []): I18NLocaleEntityResponseCollection!
+  i18NLocales(
+    filters: I18NLocaleFiltersInput
+    pagination: PaginationArg = {}
+    sort: [String] = []
+  ): I18NLocaleEntityResponseCollection!
   usersPermissionsRole(id: ID): UsersPermissionsRoleEntityResponse
-  usersPermissionsRoles(filters: UsersPermissionsRoleFiltersInput, pagination: PaginationArg = {}, sort: [String] = []): UsersPermissionsRoleEntityResponseCollection!
+  usersPermissionsRoles(
+    filters: UsersPermissionsRoleFiltersInput
+    pagination: PaginationArg = {}
+    sort: [String] = []
+  ): UsersPermissionsRoleEntityResponseCollection!
   usersPermissionsUser(id: ID): UsersPermissionsUserEntityResponse
-  usersPermissionsUsers(filters: UsersPermissionsUserFiltersInput, pagination: PaginationArg = {}, sort: [String] = []): UsersPermissionsUserEntityResponseCollection!
+  usersPermissionsUsers(
+    filters: UsersPermissionsUserFiltersInput
+    pagination: PaginationArg = {}
+    sort: [String] = []
+  ): UsersPermissionsUserEntityResponseCollection!
   about: AboutEntityResponse
   article(id: ID, locale: I18NLocaleCode): ArticleEntityResponse
-  articles(filters: ArticleFiltersInput, pagination: PaginationArg = {}, sort: [String] = [], publicationState: PublicationState = LIVE): ArticleEntityResponseCollection!
+  articles(
+    filters: ArticleFiltersInput
+    pagination: PaginationArg = {}
+    sort: [String] = []
+    publicationState: PublicationState = LIVE
+  ): ArticleEntityResponseCollection!
   articleType(id: ID): ArticleTypeEntityResponse
-  articleTypes(filters: ArticleTypeFiltersInput, pagination: PaginationArg = {}, sort: [String] = [], publicationState: PublicationState = LIVE): ArticleTypeEntityResponseCollection!
+  articleTypes(
+    filters: ArticleTypeFiltersInput
+    pagination: PaginationArg = {}
+    sort: [String] = []
+    publicationState: PublicationState = LIVE
+  ): ArticleTypeEntityResponseCollection!
   author(id: ID): AuthorEntityResponse
-  authors(filters: AuthorFiltersInput, pagination: PaginationArg = {}, sort: [String] = []): AuthorEntityResponseCollection!
+  authors(
+    filters: AuthorFiltersInput
+    pagination: PaginationArg = {}
+    sort: [String] = []
+  ): AuthorEntityResponseCollection!
   banner(id: ID): BannerEntityResponse
-  banners(filters: BannerFiltersInput, pagination: PaginationArg = {}, sort: [String] = [], publicationState: PublicationState = LIVE): BannerEntityResponseCollection!
+  banners(
+    filters: BannerFiltersInput
+    pagination: PaginationArg = {}
+    sort: [String] = []
+    publicationState: PublicationState = LIVE
+  ): BannerEntityResponseCollection!
   category(id: ID, locale: I18NLocaleCode): CategoryEntityResponse
-  categories(filters: CategoryFiltersInput, pagination: PaginationArg = {}, sort: [String] = []): CategoryEntityResponseCollection!
+  categories(
+    filters: CategoryFiltersInput
+    pagination: PaginationArg = {}
+    sort: [String] = []
+  ): CategoryEntityResponseCollection!
   difficulty(id: ID, locale: I18NLocaleCode): DifficultyEntityResponse
-  difficulties(filters: DifficultyFiltersInput, pagination: PaginationArg = {}, sort: [String] = []): DifficultyEntityResponseCollection!
+  difficulties(
+    filters: DifficultyFiltersInput
+    pagination: PaginationArg = {}
+    sort: [String] = []
+  ): DifficultyEntityResponseCollection!
   faqAnswer(id: ID): FaqAnswerEntityResponse
-  faqAnswers(filters: FaqAnswerFiltersInput, pagination: PaginationArg = {}, sort: [String] = [], publicationState: PublicationState = LIVE): FaqAnswerEntityResponseCollection!
+  faqAnswers(
+    filters: FaqAnswerFiltersInput
+    pagination: PaginationArg = {}
+    sort: [String] = []
+    publicationState: PublicationState = LIVE
+  ): FaqAnswerEntityResponseCollection!
   faqAnswerGroup(id: ID): FaqAnswerGroupEntityResponse
-  faqAnswerGroups(filters: FaqAnswerGroupFiltersInput, pagination: PaginationArg = {}, sort: [String] = [], publicationState: PublicationState = LIVE): FaqAnswerGroupEntityResponseCollection!
+  faqAnswerGroups(
+    filters: FaqAnswerGroupFiltersInput
+    pagination: PaginationArg = {}
+    sort: [String] = []
+    publicationState: PublicationState = LIVE
+  ): FaqAnswerGroupEntityResponseCollection!
   faqCategory(id: ID): FaqCategoryEntityResponse
-  faqCategories(filters: FaqCategoryFiltersInput, pagination: PaginationArg = {}, sort: [String] = [], publicationState: PublicationState = LIVE): FaqCategoryEntityResponseCollection!
+  faqCategories(
+    filters: FaqCategoryFiltersInput
+    pagination: PaginationArg = {}
+    sort: [String] = []
+    publicationState: PublicationState = LIVE
+  ): FaqCategoryEntityResponseCollection!
   faqMostSearched(id: ID): FaqMostSearchedEntityResponse
-  faqMostSearcheds(filters: FaqMostSearchedFiltersInput, pagination: PaginationArg = {}, sort: [String] = [], publicationState: PublicationState = LIVE): FaqMostSearchedEntityResponseCollection!
+  faqMostSearcheds(
+    filters: FaqMostSearchedFiltersInput
+    pagination: PaginationArg = {}
+    sort: [String] = []
+    publicationState: PublicationState = LIVE
+  ): FaqMostSearchedEntityResponseCollection!
   faqProduct(id: ID): FaqProductEntityResponse
-  faqProducts(filters: FaqProductFiltersInput, pagination: PaginationArg = {}, sort: [String] = [], publicationState: PublicationState = LIVE): FaqProductEntityResponseCollection!
+  faqProducts(
+    filters: FaqProductFiltersInput
+    pagination: PaginationArg = {}
+    sort: [String] = []
+    publicationState: PublicationState = LIVE
+  ): FaqProductEntityResponseCollection!
   global: GlobalEntityResponse
   globalAcademy: GlobalAcademyEntityResponse
   product(id: ID, locale: I18NLocaleCode): ProductEntityResponse
-  products(filters: ProductFiltersInput, pagination: PaginationArg = {}, sort: [String] = [], publicationState: PublicationState = LIVE): ProductEntityResponseCollection!
+  products(
+    filters: ProductFiltersInput
+    pagination: PaginationArg = {}
+    sort: [String] = []
+    publicationState: PublicationState = LIVE
+  ): ProductEntityResponseCollection!
   topic(id: ID, locale: I18NLocaleCode): TopicEntityResponse
-  topics(filters: TopicFiltersInput, pagination: PaginationArg = {}, sort: [String] = [], publicationState: PublicationState = LIVE): TopicEntityResponseCollection!
+  topics(
+    filters: TopicFiltersInput
+    pagination: PaginationArg = {}
+    sort: [String] = []
+    publicationState: PublicationState = LIVE
+  ): TopicEntityResponseCollection!
   trendingSearch: TrendingSearchEntityResponse
   me: UsersPermissionsMe
 }
@@ -1523,15 +1758,30 @@ type Mutation {
   updateUploadFile(id: ID!, data: UploadFileInput!): UploadFileEntityResponse
   deleteUploadFile(id: ID!): UploadFileEntityResponse
   createUploadFolder(data: UploadFolderInput!): UploadFolderEntityResponse
-  updateUploadFolder(id: ID!, data: UploadFolderInput!): UploadFolderEntityResponse
+  updateUploadFolder(
+    id: ID!
+    data: UploadFolderInput!
+  ): UploadFolderEntityResponse
   deleteUploadFolder(id: ID!): UploadFolderEntityResponse
-  createSchedulerScheduler(data: SchedulerSchedulerInput!): SchedulerSchedulerEntityResponse
-  updateSchedulerScheduler(id: ID!, data: SchedulerSchedulerInput!): SchedulerSchedulerEntityResponse
+  createSchedulerScheduler(
+    data: SchedulerSchedulerInput!
+  ): SchedulerSchedulerEntityResponse
+  updateSchedulerScheduler(
+    id: ID!
+    data: SchedulerSchedulerInput!
+  ): SchedulerSchedulerEntityResponse
   deleteSchedulerScheduler(id: ID!): SchedulerSchedulerEntityResponse
   updateAbout(data: AboutInput!): AboutEntityResponse
   deleteAbout: AboutEntityResponse
-  createArticle(data: ArticleInput!, locale: I18NLocaleCode): ArticleEntityResponse
-  updateArticle(id: ID!, data: ArticleInput!, locale: I18NLocaleCode): ArticleEntityResponse
+  createArticle(
+    data: ArticleInput!
+    locale: I18NLocaleCode
+  ): ArticleEntityResponse
+  updateArticle(
+    id: ID!
+    data: ArticleInput!
+    locale: I18NLocaleCode
+  ): ArticleEntityResponse
   deleteArticle(id: ID!, locale: I18NLocaleCode): ArticleEntityResponse
   createArticleType(data: ArticleTypeInput!): ArticleTypeEntityResponse
   updateArticleType(id: ID!, data: ArticleTypeInput!): ArticleTypeEntityResponse
@@ -1542,23 +1792,45 @@ type Mutation {
   createBanner(data: BannerInput!): BannerEntityResponse
   updateBanner(id: ID!, data: BannerInput!): BannerEntityResponse
   deleteBanner(id: ID!): BannerEntityResponse
-  createCategory(data: CategoryInput!, locale: I18NLocaleCode): CategoryEntityResponse
-  updateCategory(id: ID!, data: CategoryInput!, locale: I18NLocaleCode): CategoryEntityResponse
+  createCategory(
+    data: CategoryInput!
+    locale: I18NLocaleCode
+  ): CategoryEntityResponse
+  updateCategory(
+    id: ID!
+    data: CategoryInput!
+    locale: I18NLocaleCode
+  ): CategoryEntityResponse
   deleteCategory(id: ID!, locale: I18NLocaleCode): CategoryEntityResponse
-  createDifficulty(data: DifficultyInput!, locale: I18NLocaleCode): DifficultyEntityResponse
-  updateDifficulty(id: ID!, data: DifficultyInput!, locale: I18NLocaleCode): DifficultyEntityResponse
+  createDifficulty(
+    data: DifficultyInput!
+    locale: I18NLocaleCode
+  ): DifficultyEntityResponse
+  updateDifficulty(
+    id: ID!
+    data: DifficultyInput!
+    locale: I18NLocaleCode
+  ): DifficultyEntityResponse
   deleteDifficulty(id: ID!, locale: I18NLocaleCode): DifficultyEntityResponse
   createFaqAnswer(data: FaqAnswerInput!): FaqAnswerEntityResponse
   updateFaqAnswer(id: ID!, data: FaqAnswerInput!): FaqAnswerEntityResponse
   deleteFaqAnswer(id: ID!): FaqAnswerEntityResponse
   createFaqAnswerGroup(data: FaqAnswerGroupInput!): FaqAnswerGroupEntityResponse
-  updateFaqAnswerGroup(id: ID!, data: FaqAnswerGroupInput!): FaqAnswerGroupEntityResponse
+  updateFaqAnswerGroup(
+    id: ID!
+    data: FaqAnswerGroupInput!
+  ): FaqAnswerGroupEntityResponse
   deleteFaqAnswerGroup(id: ID!): FaqAnswerGroupEntityResponse
   createFaqCategory(data: FaqCategoryInput!): FaqCategoryEntityResponse
   updateFaqCategory(id: ID!, data: FaqCategoryInput!): FaqCategoryEntityResponse
   deleteFaqCategory(id: ID!): FaqCategoryEntityResponse
-  createFaqMostSearched(data: FaqMostSearchedInput!): FaqMostSearchedEntityResponse
-  updateFaqMostSearched(id: ID!, data: FaqMostSearchedInput!): FaqMostSearchedEntityResponse
+  createFaqMostSearched(
+    data: FaqMostSearchedInput!
+  ): FaqMostSearchedEntityResponse
+  updateFaqMostSearched(
+    id: ID!
+    data: FaqMostSearchedInput!
+  ): FaqMostSearchedEntityResponse
   deleteFaqMostSearched(id: ID!): FaqMostSearchedEntityResponse
   createFaqProduct(data: FaqProductInput!): FaqProductEntityResponse
   updateFaqProduct(id: ID!, data: FaqProductInput!): FaqProductEntityResponse
@@ -1567,57 +1839,137 @@ type Mutation {
   deleteGlobal: GlobalEntityResponse
   updateGlobalAcademy(data: GlobalAcademyInput!): GlobalAcademyEntityResponse
   deleteGlobalAcademy: GlobalAcademyEntityResponse
-  createProduct(data: ProductInput!, locale: I18NLocaleCode): ProductEntityResponse
-  updateProduct(id: ID!, data: ProductInput!, locale: I18NLocaleCode): ProductEntityResponse
+  createProduct(
+    data: ProductInput!
+    locale: I18NLocaleCode
+  ): ProductEntityResponse
+  updateProduct(
+    id: ID!
+    data: ProductInput!
+    locale: I18NLocaleCode
+  ): ProductEntityResponse
   deleteProduct(id: ID!, locale: I18NLocaleCode): ProductEntityResponse
   createTopic(data: TopicInput!, locale: I18NLocaleCode): TopicEntityResponse
-  updateTopic(id: ID!, data: TopicInput!, locale: I18NLocaleCode): TopicEntityResponse
+  updateTopic(
+    id: ID!
+    data: TopicInput!
+    locale: I18NLocaleCode
+  ): TopicEntityResponse
   deleteTopic(id: ID!, locale: I18NLocaleCode): TopicEntityResponse
   updateTrendingSearch(data: TrendingSearchInput!): TrendingSearchEntityResponse
   deleteTrendingSearch: TrendingSearchEntityResponse
-  upload(refId: ID, ref: String, field: String, info: FileInfoInput, file: Upload!): UploadFileEntityResponse!
-  multipleUpload(refId: ID, ref: String, field: String, files: [Upload]!): [UploadFileEntityResponse]!
+  upload(
+    refId: ID
+    ref: String
+    field: String
+    info: FileInfoInput
+    file: Upload!
+  ): UploadFileEntityResponse!
+  multipleUpload(
+    refId: ID
+    ref: String
+    field: String
+    files: [Upload]!
+  ): [UploadFileEntityResponse]!
   updateFileInfo(id: ID!, info: FileInfoInput): UploadFileEntityResponse!
   removeFile(id: ID!): UploadFileEntityResponse
-  createArticleLocalization(id: ID, data: ArticleInput, locale: I18NLocaleCode): ArticleEntityResponse
-  createCategoryLocalization(id: ID, data: CategoryInput, locale: I18NLocaleCode): CategoryEntityResponse
-  createDifficultyLocalization(id: ID, data: DifficultyInput, locale: I18NLocaleCode): DifficultyEntityResponse
-  createProductLocalization(id: ID, data: ProductInput, locale: I18NLocaleCode): ProductEntityResponse
-  createTopicLocalization(id: ID, data: TopicInput, locale: I18NLocaleCode): TopicEntityResponse
+  createArticleLocalization(
+    id: ID
+    data: ArticleInput
+    locale: I18NLocaleCode
+  ): ArticleEntityResponse
+  createCategoryLocalization(
+    id: ID
+    data: CategoryInput
+    locale: I18NLocaleCode
+  ): CategoryEntityResponse
+  createDifficultyLocalization(
+    id: ID
+    data: DifficultyInput
+    locale: I18NLocaleCode
+  ): DifficultyEntityResponse
+  createProductLocalization(
+    id: ID
+    data: ProductInput
+    locale: I18NLocaleCode
+  ): ProductEntityResponse
+  createTopicLocalization(
+    id: ID
+    data: TopicInput
+    locale: I18NLocaleCode
+  ): TopicEntityResponse
 
-  """Create a new role"""
-  createUsersPermissionsRole(data: UsersPermissionsRoleInput!): UsersPermissionsCreateRolePayload
+  """
+  Create a new role
+  """
+  createUsersPermissionsRole(
+    data: UsersPermissionsRoleInput!
+  ): UsersPermissionsCreateRolePayload
 
-  """Update an existing role"""
-  updateUsersPermissionsRole(id: ID!, data: UsersPermissionsRoleInput!): UsersPermissionsUpdateRolePayload
+  """
+  Update an existing role
+  """
+  updateUsersPermissionsRole(
+    id: ID!
+    data: UsersPermissionsRoleInput!
+  ): UsersPermissionsUpdateRolePayload
 
-  """Delete an existing role"""
+  """
+  Delete an existing role
+  """
   deleteUsersPermissionsRole(id: ID!): UsersPermissionsDeleteRolePayload
 
-  """Create a new user"""
-  createUsersPermissionsUser(data: UsersPermissionsUserInput!): UsersPermissionsUserEntityResponse!
+  """
+  Create a new user
+  """
+  createUsersPermissionsUser(
+    data: UsersPermissionsUserInput!
+  ): UsersPermissionsUserEntityResponse!
 
-  """Update an existing user"""
-  updateUsersPermissionsUser(id: ID!, data: UsersPermissionsUserInput!): UsersPermissionsUserEntityResponse!
+  """
+  Update an existing user
+  """
+  updateUsersPermissionsUser(
+    id: ID!
+    data: UsersPermissionsUserInput!
+  ): UsersPermissionsUserEntityResponse!
 
-  """Delete an existing user"""
+  """
+  Delete an existing user
+  """
   deleteUsersPermissionsUser(id: ID!): UsersPermissionsUserEntityResponse!
   login(input: UsersPermissionsLoginInput!): UsersPermissionsLoginPayload!
 
-  """Register a user"""
+  """
+  Register a user
+  """
   register(input: UsersPermissionsRegisterInput!): UsersPermissionsLoginPayload!
 
-  """Request a reset password token"""
+  """
+  Request a reset password token
+  """
   forgotPassword(email: String!): UsersPermissionsPasswordPayload
 
   """
   Reset user password. Confirm with a code (resetToken from forgotPassword)
   """
-  resetPassword(password: String!, passwordConfirmation: String!, code: String!): UsersPermissionsLoginPayload
+  resetPassword(
+    password: String!
+    passwordConfirmation: String!
+    code: String!
+  ): UsersPermissionsLoginPayload
 
-  """Change user password. Confirm with the current password."""
-  changePassword(currentPassword: String!, password: String!, passwordConfirmation: String!): UsersPermissionsLoginPayload
+  """
+  Change user password. Confirm with the current password.
+  """
+  changePassword(
+    currentPassword: String!
+    password: String!
+    passwordConfirmation: String!
+  ): UsersPermissionsLoginPayload
 
-  """Confirm an email users email address"""
+  """
+  Confirm an email users email address
+  """
   emailConfirmation(confirmation: String!): UsersPermissionsLoginPayload
 }

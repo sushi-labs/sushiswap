@@ -1,7 +1,7 @@
 'use server'
 
-import { getSessionData } from "src/app/portal/_common/lib/client-config"
-import { getUserServiceClient } from "src/app/portal/_common/lib/zitadel-client"
+import { getSessionData } from 'src/app/portal/_common/lib/client-config'
+import { getUserServiceClient } from 'src/app/portal/_common/lib/zitadel-client'
 
 export async function resendCodeAction() {
   const session = await getSessionData()

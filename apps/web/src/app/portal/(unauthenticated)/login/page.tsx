@@ -1,7 +1,6 @@
 import { Separator } from '@sushiswap/ui'
 import Link from 'next/link'
-import { GithubButton } from '../../_common/ui/oauth/github-button'
-import { GoogleButton } from '../../_common/ui/oauth/google-button'
+import { OAuthButton, OAuthProvider } from '../../_common/ui/oauth/oauth-button'
 import { LoginForm } from './_common/ui/login-form'
 
 export default function Page() {
@@ -33,8 +32,16 @@ export default function Page() {
         </div>
         <Separator />
         <div className="flex flex-col space-y-4">
-          <GoogleButton text="Sign in with Google" type="login" />
-          <GithubButton text="Sign In with Github" type="login" />
+          <OAuthButton
+            provider={OAuthProvider.Google}
+            text="Sign in with Google"
+            config={{ type: 'login' }}
+          />
+          <OAuthButton
+            provider={OAuthProvider.Github}
+            text="Sign In with Github"
+            config={{ type: 'login' }}
+          />
         </div>
       </span>
     </div>

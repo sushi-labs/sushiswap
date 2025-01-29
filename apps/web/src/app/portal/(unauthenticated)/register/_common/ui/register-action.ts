@@ -1,12 +1,12 @@
 'use server'
 
-import { CreateSessionResponse } from '@zitadel/proto/zitadel/session/v2/session_service_pb'
-import { AddHumanUserResponse } from '@zitadel/proto/zitadel/user/v2/user_service_pb'
+import type { CreateSessionResponse } from '@zitadel/proto/zitadel/session/v2/session_service_pb'
+import type { AddHumanUserResponse } from '@zitadel/proto/zitadel/user/v2/user_service_pb'
 import { redirect } from 'next/navigation'
 import { createZitadelSession } from 'src/app/portal/(unauthenticated)/_common/lib/create-zitadel-session'
 import { createSession } from 'src/app/portal/_common/lib/client-config'
 import { getUserServiceClient } from 'src/app/portal/_common/lib/zitadel-client'
-import { z } from 'zod'
+import type { z } from 'zod'
 import { registerFormSchema } from './register-form-schema'
 
 export type FormState =

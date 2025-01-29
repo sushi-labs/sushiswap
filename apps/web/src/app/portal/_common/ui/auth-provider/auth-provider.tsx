@@ -1,7 +1,7 @@
 'use client'
 
 import { createContext, useContext, useEffect, useState } from 'react'
-import { Session } from '../../lib/client-config'
+import type { Session } from '../../lib/client-config'
 
 const AuthContext = createContext<Session>({ isLoggedIn: false })
 

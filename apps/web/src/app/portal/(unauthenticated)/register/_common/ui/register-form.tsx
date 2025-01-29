@@ -12,7 +12,7 @@ import {
 } from '@sushiswap/ui'
 import { useCallback, useEffect, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
-import { z } from 'zod'
+import type { z } from 'zod'
 import { registerAction } from './register-action'
 import { registerFormSchema } from './register-form-schema'
 

@@ -1,5 +1,5 @@
 import { getUserServiceClient } from 'src/app/portal/_common/lib/zitadel-client'
-import { IdpIntent } from './get-idp-intent'
+import type { IdpIntent } from '../../../../../_common/lib/get-idp-intent'
 
 export async function register(idpIntent: IdpIntent) {
   const userServiceClient = getUserServiceClient()
