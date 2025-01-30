@@ -1222,3 +1222,11 @@ export const ENOSYS_EETH = new Token({
   symbol: 'eETH',
   name: 'Enosys ETH',
 })
+
+export const cUSDX = new Token({
+  chainId: 14,
+  address: '0xFE2907DFa8DB6e320cDbF45f0aa888F6135ec4f8',
+  decimals: 6,
+  symbol: 'cUSDX',
+  name: 'USDX',
+})
