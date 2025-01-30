@@ -1230,3 +1230,11 @@ export const cUSDX = new Token({
   symbol: 'cUSDX',
   name: 'USDX',
 })
+
+export const sFLR = new Token({
+  chainId: 14,
+  address: '0x12e605bc104e93B45e1aD99F9e555f659051c2BB',
+  decimals: 18,
+  symbol: 'sFLR',
+  name: 'Staked FLR',
+})

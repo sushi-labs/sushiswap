@@ -1,5 +1,5 @@
 import { ChainId } from '../chain/index.js'
-import { MUSD, Token, USDB, cUSDX } from '../currency/index.js'
+import { MUSD, Token, USDB, cUSDX, sFLR } from '../currency/index.js'
 import {
   AAVE,
   BUSD,
@@ -484,6 +484,7 @@ export const BASES_TO_CHECK_TRADES_AGAINST: {
     WETH9[ChainId.FLARE],
     USDT[ChainId.FLARE],
     USDC[ChainId.FLARE],
+    sFLR,
     cUSDX,
   ],
   [ChainId.MATCHAIN]: [
