@@ -19,21 +19,13 @@ import {
   useWriteContract,
 } from 'wagmi'
 
-import { ERC20ApproveABI, ERC20ApproveArgs } from './types'
+import {
+  ERC20ApproveABI,
+  ERC20ApproveArgs,
+  OLD_ERC20ApproveABI,
+  old_erc20Abi_approve,
+} from './types'
 import { useTokenAllowance } from './useTokenAllowance'
-
-const old_erc20Abi_approve = [
-  {
-    type: 'function',
-    name: 'approve',
-    stateMutability: 'nonpayable',
-    inputs: [
-      { name: '_spender', type: 'address' },
-      { name: '_value', type: 'uint256' },
-    ],
-    outputs: [],
-  },
-] as const
 
 export enum ApprovalState {
   LOADING = 'LOADING',
@@ -71,6 +63,8 @@ export const useTokenApproval = ({
     enabled: Boolean(amount?.currency?.isToken && enabled),
   })
 
+  const [fallback, setFallback] = useState(false)
+
   const simulationEnabled = Boolean(
     amount && spender && address && allowance && enabled && !isAllowanceLoading,
   )
@@ -89,22 +83,22 @@ export const useTokenApproval = ({
       approveMax ? maxUint256 : amount ? amount.quotient : 0n,
     ],
     query: {
-      enabled: simulationEnabled,
+      enabled: simulationEnabled && !fallback,
       retry: (failureCount, error) => {
-        if (error instanceof ContractFunctionZeroDataError) return false
+        if (
+          error instanceof ContractFunctionZeroDataError ||
+          error.cause instanceof ContractFunctionZeroDataError
+        ) {
+          setFallback(true)
+          return false
+        }
         return failureCount < 2
       },
     },
   })
 
-  const fallbackSimulationEnabled = Boolean(
-    standardSimulation.isError &&
-      standardSimulation.error instanceof ContractFunctionZeroDataError &&
-      simulationEnabled,
-  )
-
   const fallbackSimulation = useSimulateContract<
-    typeof old_erc20Abi_approve,
+    OLD_ERC20ApproveABI,
     'approve',
     ERC20ApproveArgs
   >({
@@ -117,11 +111,11 @@ export const useTokenApproval = ({
       approveMax ? maxUint256 : amount ? amount.quotient : 0n,
     ],
     query: {
-      enabled: fallbackSimulationEnabled,
+      enabled: simulationEnabled && fallback,
     },
   })
 
-  const { data: simulation } = fallbackSimulationEnabled
+  const { data: simulation } = fallback
     ? fallbackSimulation
     : standardSimulation
 

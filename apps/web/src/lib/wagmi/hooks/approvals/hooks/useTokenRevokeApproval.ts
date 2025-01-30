@@ -4,25 +4,43 @@ import { createErrorToast, createToast } from '@sushiswap/notifications'
 import { useCallback, useMemo, useState } from 'react'
 import { erc20Abi_approve } from 'sushi/abi'
 import { Token } from 'sushi/currency'
-import { Address, UserRejectedRequestError } from 'viem'
+import {
+  Address,
+  ContractFunctionZeroDataError,
+  UserRejectedRequestError,
+} from 'viem'
 import { usePublicClient, useSimulateContract, useWriteContract } from 'wagmi'
 import { SendTransactionReturnType } from 'wagmi/actions'
-import { ERC20ApproveABI, ERC20ApproveArgs } from './types'
+import {
+  ERC20ApproveABI,
+  ERC20ApproveArgs,
+  OLD_ERC20ApproveABI,
+  old_erc20Abi_approve,
+} from './types'
 
 interface UseTokenRevokeApproval {
   account: Address | undefined
-  spender: Address
+  spender: Address | undefined
   token: Omit<Token, 'wrapped'> | undefined
+  enabled?: boolean
 }
 
 export const useTokenRevokeApproval = ({
   account,
   spender,
   token,
+  enabled = true,
 }: UseTokenRevokeApproval) => {
   const [isPending, setPending] = useState(false)
   const client = usePublicClient()
-  const { data: simulation } = useSimulateContract<
+
+  const [fallback, setFallback] = useState(false)
+
+  const simulationEnabled = Boolean(
+    enabled && account && spender && token?.address,
+  )
+
+  const standardSimulation = useSimulateContract<
     ERC20ApproveABI,
     'approve',
     ERC20ApproveArgs
@@ -31,9 +49,40 @@ export const useTokenRevokeApproval = ({
     abi: erc20Abi_approve,
     chainId: token?.chainId,
     functionName: 'approve',
-    args: [spender, 0n],
-    query: { enabled: Boolean(account && spender && token?.address) },
+    args: [spender as Address, 0n],
+    query: {
+      enabled: simulationEnabled && !fallback,
+      retry: (failureCount, error) => {
+        if (
+          error instanceof ContractFunctionZeroDataError ||
+          error.cause instanceof ContractFunctionZeroDataError
+        ) {
+          setFallback(true)
+          return false
+        }
+        return failureCount < 2
+      },
+    },
   })
+
+  const fallbackSimulation = useSimulateContract<
+    OLD_ERC20ApproveABI,
+    'approve',
+    ERC20ApproveArgs
+  >({
+    address: token?.address as Address,
+    abi: old_erc20Abi_approve,
+    chainId: token?.chainId,
+    functionName: 'approve',
+    args: [spender as Address, 0n],
+    query: {
+      enabled: simulationEnabled && fallback,
+    },
+  })
+
+  const { data: simulation } = fallback
+    ? fallbackSimulation
+    : standardSimulation
 
   const onSuccess = useCallback(
     async (data: SendTransactionReturnType) => {

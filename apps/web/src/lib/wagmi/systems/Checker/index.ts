@@ -16,6 +16,10 @@ import { Custom, CustomProps } from './Custom'
 import { Guard, GuardProps } from './Guard'
 import { Network, NetworkProps } from './Network'
 import { CheckerProvider as Root, ProviderProps } from './Provider'
+import {
+  RevokeApproveERC20,
+  RevokeApproveERC20Props,
+} from './RevokeApproveERC20'
 import { Success, SuccessProps } from './Success'
 
 export type CheckerProps = {
@@ -26,6 +30,7 @@ export type CheckerProps = {
   ApproveERC20: ComponentType<ApproveERC20Props>
   ApproveERC20Multiple: ComponentType<ApproveERC20MultipleProps>
   ApproveERC20WithPermit: ComponentType<ApproveERC20WithPermitProps>
+  RevokeApproveERC20: ComponentType<RevokeApproveERC20Props>
   Connect: ComponentType<ButtonProps>
   Success: FC<SuccessProps>
   Root: FC<ProviderProps>
@@ -40,6 +45,7 @@ export const Checker: CheckerProps = {
   ApproveERC20,
   ApproveERC20Multiple,
   ApproveERC20WithPermit,
+  RevokeApproveERC20,
   Success,
   Root,
 }
