@@ -82,6 +82,7 @@ export const useTokenApproval = ({
       spender as Address,
       approveMax ? maxUint256 : amount ? amount.quotient : 0n,
     ],
+    scopeKey: 'approve-std',
     query: {
       enabled: simulationEnabled && !fallback,
       retry: (failureCount, error) => {
@@ -110,6 +111,7 @@ export const useTokenApproval = ({
       spender as Address,
       approveMax ? maxUint256 : amount ? amount.quotient : 0n,
     ],
+    scopeKey: 'approve-fallback',
     query: {
       enabled: simulationEnabled && fallback,
     },

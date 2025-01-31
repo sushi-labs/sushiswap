@@ -6,14 +6,22 @@ export type ERC20ApproveArgs = [Address, bigint]
 
 export const old_erc20Abi_approve = [
   {
-    type: 'function',
-    name: 'approve',
-    stateMutability: 'nonpayable',
+    constant: false,
     inputs: [
-      { name: '_spender', type: 'address' },
-      { name: '_value', type: 'uint256' },
+      {
+        name: '_spender',
+        type: 'address',
+      },
+      {
+        name: '_value',
+        type: 'uint256',
+      },
     ],
-    outputs: [],
+    name: 'approve',
+    outputs: {},
+    payable: false,
+    stateMutability: 'nonpayable',
+    type: 'function',
   },
 ] as const
 

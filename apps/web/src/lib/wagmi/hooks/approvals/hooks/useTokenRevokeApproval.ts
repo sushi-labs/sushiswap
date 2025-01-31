@@ -50,6 +50,7 @@ export const useTokenRevokeApproval = ({
     chainId: token?.chainId,
     functionName: 'approve',
     args: [spender as Address, 0n],
+    scopeKey: 'revoke-std',
     query: {
       enabled: simulationEnabled && !fallback,
       retry: (failureCount, error) => {
@@ -75,6 +76,7 @@ export const useTokenRevokeApproval = ({
     chainId: token?.chainId,
     functionName: 'approve',
     args: [spender as Address, 0n],
+    scopeKey: 'revoke-fallback',
     query: {
       enabled: simulationEnabled && fallback,
     },
