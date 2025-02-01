@@ -180,32 +180,25 @@ async function runTest() {
 
         // only for pancakev3 with 0.2.5% fee pool pair
         if (chainId === ChainId.BSC) {
-          const token = new Token({
-            chainId: ChainId.BSC,
-            address: '0x4BE35Ec329343d7d9F548d42B0F8c17FFfe07db4',
-            decimals: 18,
-            symbol: 'USDT.z',
-          })
           allFoundPools.push(
             await testDF(
               chName,
               dataFetcher,
-              token,
+              WNATIVE[chainId],
               USDT[chainId as keyof typeof USDT],
-              'USDT.z',
+              'WNATIVE',
               'USDT',
             ),
           )
           const pcMap = dataFetcher.getCurrentPoolCodeMap(
-            token,
+            WNATIVE[chainId],
             USDT[chainId as keyof typeof USDT],
           )
-          assert.ok(!!pcMap.get('0xB30b2030b2F950401aBCD69763e9D0F81958d72d'))
-
+          assert.ok(!!pcMap.get('0x1401ff943D08a7E098328C1d3a9d388923B115D2'))
           foundRouteReports.push(
             findRoute(
               dataFetcher,
-              token,
+              WNATIVE[chainId],
               USDT[chainId as keyof typeof USDT],
               chainId,
               [LiquidityProviders.PancakeSwapV3],
