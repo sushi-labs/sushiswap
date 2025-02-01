@@ -5,6 +5,7 @@ import { Command as CommandPrimitive } from 'cmdk'
 import { Search } from 'lucide-react'
 import * as React from 'react'
 
+import { useIsMounted } from '@sushiswap/hooks'
 import classNames from 'classnames'
 import { Dialog, DialogContent } from './dialog'
 
@@ -75,13 +76,19 @@ CommandList.displayName = CommandPrimitive.List.displayName
 const CommandEmpty = React.forwardRef<
   React.ElementRef<typeof CommandPrimitive.Empty>,
   React.ComponentPropsWithoutRef<typeof CommandPrimitive.Empty>
->((props, ref) => (
-  <CommandPrimitive.Empty
-    ref={ref}
-    className="py-6 text-center text-sm"
-    {...props}
-  />
-))
+>((props, ref) => {
+  // Displays unexpectedly on first render,
+  // only show when mounted to resolve
+  const isMounted = useIsMounted()
+  if (!isMounted) return null
+  return (
+    <CommandPrimitive.Empty
+      ref={ref}
+      className="py-6 text-center text-sm"
+      {...props}
+    />
+  )
+})
 
 CommandEmpty.displayName = CommandPrimitive.Empty.displayName
 
