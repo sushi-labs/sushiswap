@@ -2,24 +2,40 @@ import { http, PublicClient, createPublicClient } from 'viem'
 import { ChainId, TestnetChainId } from '../chain/index.js'
 import { publicClientConfig } from '../config/index.js'
 import { Type } from '../currency/index.js'
+import { AlienBaseV2Provider } from './liquidity-providers/AlienBaseV2.js'
+import { AlienBaseV3Provider } from './liquidity-providers/AlienBaseV3.js'
 import { ApeSwapProvider } from './liquidity-providers/ApeSwap.js'
+import { BSCSwapProvider } from './liquidity-providers/BSCSwap.js'
+import { BakerySwapProvider } from './liquidity-providers/BakerySwap.js'
 import { BaseSwapProvider } from './liquidity-providers/BaseSwap.js'
+import { BaseSwapV3Provider } from './liquidity-providers/BaseSwapV3.js'
 import { BiswapProvider } from './liquidity-providers/Biswap.js'
+import { BladeSwapProvider } from './liquidity-providers/BladeSwap.js'
 import { BlastDEXProvider } from './liquidity-providers/BlastDEX.js'
 import { BlazeSwapProvider } from './liquidity-providers/BlazeSwap.js'
+import { CORExProvider } from './liquidity-providers/COREx.js'
 import { CamelotProvider } from './liquidity-providers/Camelot.js'
+import { CroDefiSwapProvider } from './liquidity-providers/CroDefiSwap.js'
 import { CurveProvider } from './liquidity-providers/CurveProvider.js'
+import { DackieSwapV2Provider } from './liquidity-providers/DackieSwapV2.js'
+import { DackieSwapV3Provider } from './liquidity-providers/DackieSwapV3.js'
 import { DfynProvider } from './liquidity-providers/Dfyn.js'
 import { DovishV3Provider } from './liquidity-providers/DovishV3.js'
 import { DyorV2Provider } from './liquidity-providers/DyorV2.js'
+import { EddyFinanceProvider } from './liquidity-providers/EddyFinance.js'
 import { ElkProvider } from './liquidity-providers/Elk.js'
 import { EnosysProvider } from './liquidity-providers/Enosys.js'
+import { FenixProvider } from './liquidity-providers/Fenix.js'
+import { GlyphV4Provider } from './liquidity-providers/GlyphV4.js'
 import { GravityFinanceProvider } from './liquidity-providers/GravityFinance.js'
 import { HoneySwapProvider } from './liquidity-providers/HoneySwap.js'
+import { HorizonProvider } from './liquidity-providers/Horizon.js'
 import { HyperBlastProvider } from './liquidity-providers/HyperBlast.js'
 import { JetSwapProvider } from './liquidity-providers/JetSwap.js'
+import { KimV4Provider } from './liquidity-providers/KimV4.js'
 import { KinetixV2Provider } from './liquidity-providers/KinetixV2.js'
 import { KinetixV3Provider } from './liquidity-providers/KinetixV3.js'
+import { KwikswapProvider } from './liquidity-providers/Kwikswap.js'
 import { LaserSwapV2Provider } from './liquidity-providers/LaserSwap.js'
 import {
   LiquidityProvider,
@@ -27,24 +43,33 @@ import {
 } from './liquidity-providers/LiquidityProvider.js'
 import { LynexV1Provider } from './liquidity-providers/LynexV1.js'
 import { LynexV2Provider } from './liquidity-providers/LynexV2.js'
+import { MMFinanceProvider } from './liquidity-providers/MMFinance.js'
 import { MSwapProvider } from './liquidity-providers/MSwap.js'
 import { MonoswapV2Provider } from './liquidity-providers/MonoSwapV2.js'
 import { MonoswapV3Provider } from './liquidity-providers/MonoSwapV3.js'
 import { NativeWrapProvider } from './liquidity-providers/NativeWrapProvider.js'
 import { NetSwapProvider } from './liquidity-providers/NetSwap.js'
+import { NineInchProvider } from './liquidity-providers/NineInch.js'
 import { PancakeSwapV2Provider } from './liquidity-providers/PancakeSwapV2.js'
 import { PancakeSwapV3Provider } from './liquidity-providers/PancakeSwapV3.js'
+import { PangolinProvider } from './liquidity-providers/Pangolin.js'
 import { QuickSwapV2Provider } from './liquidity-providers/QuickSwapV2.js'
 import { QuickSwapV3Provider } from './liquidity-providers/QuickswapV3.js'
+import { RingExchangeV2Provider } from './liquidity-providers/RingExchangeV2.js'
+import { RingExchangeV3Provider } from './liquidity-providers/RingExchangeV3.js'
+import { ScribeProvider } from './liquidity-providers/Scribe.js'
+import { ShibaSwapProvider } from './liquidity-providers/ShibaSwap.js'
 import { SolarbeamProvider } from './liquidity-providers/Solarbeam.js'
 import { SparkDexV2Provider } from './liquidity-providers/SparkDexV2.js'
 import { SparkDexV3Provider } from './liquidity-providers/SparkDexV3.js'
 import { SparkDexV3_1Provider } from './liquidity-providers/SparkDexV3_1.js'
 import { SpookySwapV2Provider } from './liquidity-providers/SpookySwapV2.js'
 import { SpookySwapV3Provider } from './liquidity-providers/SpookySwapV3.js'
+import { SquadSwapV2Provider } from './liquidity-providers/SquadSwapV2.js'
 import { SushiSwapV2Provider } from './liquidity-providers/SushiSwapV2.js'
 import { SushiSwapV3Provider } from './liquidity-providers/SushiSwapV3.js'
 import { SwapBlastProvider } from './liquidity-providers/SwapBlast.js'
+import { SwapsicleProvider } from './liquidity-providers/Swapsicle.js'
 import {
   ThrusterV2_1Provider,
   ThrusterV2_3Provider,
@@ -55,8 +80,11 @@ import { TridentProvider } from './liquidity-providers/Trident.js'
 import { UbeSwapProvider } from './liquidity-providers/UbeSwap.js'
 import { UniswapV2Provider } from './liquidity-providers/UniswapV2.js'
 import { UniswapV3Provider } from './liquidity-providers/UniswapV3.js'
+import { VVSFlawlessProvider } from './liquidity-providers/VVSFlawless.js'
 import { VVSStandardProvider } from './liquidity-providers/VVSStandard.js'
 import { WagmiProvider } from './liquidity-providers/Wagmi.js'
+import { WigoswapProvider } from './liquidity-providers/Wigoswap.js'
+import { ZebraV2Provider } from './liquidity-providers/ZebraV2.js'
 import type { PoolCode } from './pool-codes/index.js'
 import { promiseTimeout } from './timeout.js'
 
@@ -155,44 +183,69 @@ export class DataFetcher {
     // concrete providers
     this.providers = [new NativeWrapProvider(this.chainId, this.web3Client)]
     ;[
+      AlienBaseV2Provider,
+      AlienBaseV3Provider,
       ApeSwapProvider,
+      BakerySwapProvider,
       BaseSwapProvider,
+      BaseSwapV3Provider,
       BiswapProvider,
+      BladeSwapProvider,
       BlastDEXProvider,
       BlazeSwapProvider,
+      BSCSwapProvider,
       CamelotProvider,
+      CORExProvider,
+      CroDefiSwapProvider,
       CurveProvider,
+      DackieSwapV2Provider,
+      DackieSwapV3Provider,
       DfynProvider,
       DovishV3Provider,
       DyorV2Provider,
+      EddyFinanceProvider,
       ElkProvider,
       EnosysProvider,
+      FenixProvider,
+      GlyphV4Provider,
       GravityFinanceProvider,
       HoneySwapProvider,
+      HorizonProvider,
       HyperBlastProvider,
       JetSwapProvider,
+      KimV4Provider,
       KinetixV2Provider,
       KinetixV3Provider,
+      KwikswapProvider,
       LaserSwapV2Provider,
       LynexV1Provider,
       LynexV2Provider,
+      MMFinanceProvider,
       MonoswapV2Provider,
       MonoswapV3Provider,
       MSwapProvider,
       NetSwapProvider,
+      NineInchProvider,
       PancakeSwapV2Provider,
       PancakeSwapV3Provider,
+      PangolinProvider,
       QuickSwapV2Provider,
       QuickSwapV3Provider,
+      RingExchangeV2Provider,
+      RingExchangeV3Provider,
+      ScribeProvider,
+      ShibaSwapProvider,
       SolarbeamProvider,
       SparkDexV2Provider,
       SparkDexV3Provider,
       SparkDexV3_1Provider,
       SpookySwapV2Provider,
       SpookySwapV3Provider,
+      SquadSwapV2Provider,
       SushiSwapV2Provider,
       SushiSwapV3Provider,
       SwapBlastProvider,
+      SwapsicleProvider,
       ThrusterV2_1Provider,
       ThrusterV2_3Provider,
       ThrusterV3Provider,
@@ -202,7 +255,10 @@ export class DataFetcher {
       UniswapV2Provider,
       UniswapV3Provider,
       VVSStandardProvider,
+      VVSFlawlessProvider,
       WagmiProvider,
+      WigoswapProvider,
+      ZebraV2Provider,
     ].forEach((p) => {
       try {
         const provider = new p(this.chainId, this.web3Client)
