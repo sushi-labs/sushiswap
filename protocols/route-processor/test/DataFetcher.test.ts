@@ -351,12 +351,7 @@ async function runTest() {
             ),
           )
           foundRouteReports.push(
-            findRoute(
-              dataFetcher,
-              token0,
-              token1,
-              chainId,
-            ),
+            findRoute(dataFetcher, token0, token1, chainId),
           )
         }
 
