@@ -81,7 +81,11 @@ const RevokeApproveERC20: FC<RevokeApproveERC20Props> = ({
     enabled: revokeEnabled,
   })
 
-  if (!allowanceEnabled || !revokeEnabled || isRevokeSuccess)
+  if (
+    !allowanceEnabled ||
+    (!isAllowanceLoading && !revokeEnabled) ||
+    isRevokeSuccess
+  )
     return <>{children}</>
 
   const loading = isAllowanceLoading || isRevokePending
