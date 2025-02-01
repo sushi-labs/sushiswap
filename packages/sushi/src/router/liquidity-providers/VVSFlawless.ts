@@ -70,7 +70,7 @@ export class VVSFlawlessProvider extends UniswapV3BaseProvider {
             abi: [
               {
                 inputs: [],
-                name: 'factory',
+                name: 'factoryAddress',
                 outputs: [
                   {
                     internalType: 'address',
@@ -82,7 +82,7 @@ export class VVSFlawlessProvider extends UniswapV3BaseProvider {
                 type: 'function',
               },
             ],
-            functionName: 'factory',
+            functionName: 'factoryAddress',
           } as const,
         ],
       })

@@ -1,9 +1,9 @@
 import { PublicClient } from 'viem'
 import { ChainId } from '../../chain/index.js'
-import { AlgebraV1BaseProvider } from './AlgebraV1Base.js'
+import { AlgebraV2BaseProvider } from './AlgebraV2Base.js'
 import { LiquidityProviders } from './LiquidityProvider.js'
 
-export class ScribeProvider extends AlgebraV1BaseProvider {
+export class ScribeProvider extends AlgebraV2BaseProvider {
   constructor(chainId: ChainId, web3Client: PublicClient) {
     const factory = {
       [ChainId.SCROLL]: '0xDc62aCDF75cc7EA4D93C69B2866d9642E79d5e2e',

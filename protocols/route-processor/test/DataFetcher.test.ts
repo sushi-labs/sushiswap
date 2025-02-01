@@ -213,6 +213,66 @@ async function runTest() {
           )
         }
 
+        // only for kimv4 on base
+        if (chainId === ChainId.BASE) {
+          const token = new Token({
+            chainId: ChainId.BASE,
+            address: '0x5dC25aA049837B696d1dc0F966aC8DF1491f819B',
+            decimals: 18,
+            symbol: 'KIM',
+          })
+          allFoundPools.push(
+            await testDF(
+              chName,
+              dataFetcher,
+              token,
+              WNATIVE[chainId as keyof typeof WNATIVE],
+              'KIM',
+              'WETH',
+            ),
+          )
+
+          foundRouteReports.push(
+            findRoute(
+              dataFetcher,
+              token,
+              WNATIVE[chainId as keyof typeof WNATIVE],
+              chainId,
+              [LiquidityProviders.KimV4],
+            ),
+          )
+        }
+
+        // only for horizon on linea
+        if (chainId === ChainId.LINEA) {
+          const token = new Token({
+            chainId: ChainId.LINEA,
+            address: '0x7d43AABC515C356145049227CeE54B608342c0ad',
+            decimals: 18,
+            symbol: 'BUSD',
+          })
+          allFoundPools.push(
+            await testDF(
+              chName,
+              dataFetcher,
+              token,
+              WNATIVE[chainId as keyof typeof WNATIVE],
+              'BUSD',
+              'WETH',
+            ),
+          )
+
+          foundRouteReports.push(
+            findRoute(
+              dataFetcher,
+              token,
+              WNATIVE[chainId as keyof typeof WNATIVE],
+              chainId,
+              [LiquidityProviders.Horizon],
+            ),
+          )
+        }
+
         // only for Dfyn and JetSwap on fantom chain
         if (
           chainId === ChainId.FANTOM &&
@@ -258,6 +318,43 @@ async function runTest() {
               dataFetcher,
               WNATIVE[chainId],
               USDB[chainId as keyof typeof USDB],
+              chainId,
+            ),
+          )
+        }
+
+        // only for Blast chain
+        if (
+          chainId === ChainId.BLAST &&
+          reportMissingDexes(allFoundPools).hasMissingDex
+        ) {
+          const token0 = new Token({
+            chainId: ChainId.BLAST,
+            address: '0x18755D2ceC785aB87680Edb8e117615E4B005430',
+            decimals: 18,
+            symbol: 'fwRING',
+          })
+          const token1 = new Token({
+            chainId: ChainId.BLAST,
+            address: '0x66714DB8F3397c767d0A602458B5b4E3C0FE7dd1',
+            decimals: 18,
+            symbol: 'fwWETH',
+          })
+          allFoundPools.push(
+            await testDF(
+              chName,
+              dataFetcher,
+              token0,
+              token1,
+              'fwRING',
+              'fwWETH',
+            ),
+          )
+          foundRouteReports.push(
+            findRoute(
+              dataFetcher,
+              token0,
+              token1,
               chainId,
             ),
           )
