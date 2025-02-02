@@ -20,6 +20,10 @@ type SushiDayBuckets {
 
 type Query {
   sushiDayBuckets(chainId: SushiSwapChainId!): SushiDayBuckets!
+  exploreTokens(chainId: SushiSwapChainId!): [ExploreToken!]!
+  exploreTokenChart(chainId: SushiSwapChainId!, address: Bytes!, duration: ExploreTokenChartDuration!): [OHLC!]!
+  exploreTokenInfo(chainId: SushiSwapChainId!, address: Bytes!): ExploreTokenInfo
+  exploreTokenPools(chainId: PoolChainId!, address: Bytes!): Pools!
   pools(chainId: PoolChainId!, page: Int = 1, search: [String], protocols: [Protocol], onlyIncentivized: Boolean = false, onlySmartPools: Boolean = false, orderBy: PoolsOrderBy = liquidityUSD, orderDirection: OrderDirection = desc): Pools!
   poolAddresses(chainId: PoolChainId!, protocols: [Protocol]): [Bytes!]!
   topPools(chainId: String!): [TopPool!]!
@@ -56,6 +60,43 @@ type Query {
   v3Mints(address: Bytes!, chainId: SushiSwapV3ChainId!): [V3Mint!]!
   v3Collects(address: Bytes!, chainId: SushiSwapV3ChainId!): [V3Collect!]!
   v3Transactions(address: Bytes!, chainId: SushiSwapV3ChainId!): [V3Transaction!]!
+}
+
+type ExploreToken {
+  address: Bytes!
+  chainId: SushiSwapChainId!
+  symbol: String!
+  name: String!
+  decimals: Int!
+  logoUrl: String
+  price: Float!
+  priceChangePercentage1d: Float!
+  marketCapUSD: Float!
+  sparkline7d: [Float!]!
+}
+
+type ExploreTokenInfo {
+  categories: [String!]!
+  description: String
+  website: String
+  twitter: String
+  telegram: String
+  discord: String
+}
+
+enum ExploreTokenChartDuration {
+  DAY
+  WEEK
+  MONTH
+  YEAR
+}
+
+type OHLC {
+  timestamp: Int!
+  open: Float!
+  high: Float!
+  low: Float!
+  close: Float!
 }
 
 enum PoolsOrderBy {
