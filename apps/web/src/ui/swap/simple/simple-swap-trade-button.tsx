@@ -122,8 +122,8 @@ const _SimpleSwapTradeButton: FC<SimpleSwapTradeButtonProps> = ({
             <Checker.Connect>
               <Checker.Network chainId={chainId}>
                 <Checker.Amounts chainId={chainId} amount={swapAmount}>
-                  <Checker.RevokeApproveERC20
-                    id="revoke-approve-erc20"
+                  <Checker.ApproveERC20
+                    id="approve-erc20"
                     amount={swapAmount}
                     contract={
                       isRouteProcessor5ChainId(chainId)
@@ -131,45 +131,35 @@ const _SimpleSwapTradeButton: FC<SimpleSwapTradeButtonProps> = ({
                         : undefined
                     }
                   >
-                    <Checker.ApproveERC20
-                      id="approve-erc20"
-                      amount={swapAmount}
-                      contract={
-                        isRouteProcessor5ChainId(chainId)
-                          ? ROUTE_PROCESSOR_5_ADDRESS[chainId]
-                          : undefined
-                      }
-                    >
-                      <Checker.Success tag={APPROVE_TAG_SWAP}>
-                        <DialogTrigger asChild>
-                          <Button
-                            size="xl"
-                            disabled={Boolean(
-                              isSlippageError ||
-                                error ||
-                                !trade?.amountOut?.greaterThan(ZERO) ||
-                                trade?.route?.status === 'NoWay' ||
-                                +swapAmountString === 0 ||
-                                (!checked && showPriceImpactWarning),
-                            )}
-                            color={showPriceImpactWarning ? 'red' : 'blue'}
-                            fullWidth
-                            testId="swap"
-                          >
-                            {!checked && showPriceImpactWarning
-                              ? 'Price impact too high'
-                              : trade?.route?.status === 'NoWay'
-                                ? 'No trade found'
-                                : isWrap
-                                  ? 'Wrap'
-                                  : isUnwrap
-                                    ? 'Unwrap'
-                                    : 'Swap'}
-                          </Button>
-                        </DialogTrigger>
-                      </Checker.Success>
-                    </Checker.ApproveERC20>
-                  </Checker.RevokeApproveERC20>
+                    <Checker.Success tag={APPROVE_TAG_SWAP}>
+                      <DialogTrigger asChild>
+                        <Button
+                          size="xl"
+                          disabled={Boolean(
+                            isSlippageError ||
+                              error ||
+                              !trade?.amountOut?.greaterThan(ZERO) ||
+                              trade?.route?.status === 'NoWay' ||
+                              +swapAmountString === 0 ||
+                              (!checked && showPriceImpactWarning),
+                          )}
+                          color={showPriceImpactWarning ? 'red' : 'blue'}
+                          fullWidth
+                          testId="swap"
+                        >
+                          {!checked && showPriceImpactWarning
+                            ? 'Price impact too high'
+                            : trade?.route?.status === 'NoWay'
+                              ? 'No trade found'
+                              : isWrap
+                                ? 'Wrap'
+                                : isUnwrap
+                                  ? 'Unwrap'
+                                  : 'Swap'}
+                        </Button>
+                      </DialogTrigger>
+                    </Checker.Success>
+                  </Checker.ApproveERC20>
                 </Checker.Amounts>
               </Checker.Network>
             </Checker.Connect>
