@@ -9,7 +9,7 @@ catalog:
 
 catalogs:
   web3:
-    "sushi": 5.0.4
+    "sushi": 5.0.8
     "wagmi": 2.12.10
     "@wagmi/core": 2.13.5
     "viem": 2.21.55
