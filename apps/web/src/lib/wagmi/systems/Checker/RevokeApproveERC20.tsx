@@ -1,7 +1,7 @@
 import { InformationCircleIcon } from '@heroicons/react/24/solid'
 import {
   Button,
-  ButtonProps,
+  type ButtonProps,
   CardDescription,
   CardHeader,
   CardTitle,
@@ -10,10 +10,10 @@ import {
   HoverCardTrigger,
   classNames,
 } from '@sushiswap/ui'
-import { FC } from 'react'
+import type { FC } from 'react'
 import { EvmChainId } from 'sushi/chain'
-import { Amount, LDO, Token, Type, USDT } from 'sushi/currency'
-import { Address } from 'sushi/types'
+import { type Amount, LDO, type Token, type Type, USDT } from 'sushi/currency'
+import type { Address } from 'sushi/types'
 import { useAccount } from 'wagmi'
 import { useTokenAllowance } from '../../hooks/approvals/hooks/useTokenAllowance'
 import { useTokenRevokeApproval } from '../../hooks/approvals/hooks/useTokenRevokeApproval'

@@ -12,15 +12,15 @@ import {
   type ApproveERC20WithPermitProps,
 } from './ApproveERC20WithPermit'
 import { Connect } from './Connect'
-import { Custom, CustomProps } from './Custom'
-import { Guard, GuardProps } from './Guard'
-import { Network, NetworkProps } from './Network'
-import { CheckerProvider as Root, ProviderProps } from './Provider'
+import { Custom, type CustomProps } from './Custom'
+import { Guard, type GuardProps } from './Guard'
+import { Network, type NetworkProps } from './Network'
+import { type ProviderProps, CheckerProvider as Root } from './Provider'
 import {
   RevokeApproveERC20,
-  RevokeApproveERC20Props,
+  type RevokeApproveERC20Props,
 } from './RevokeApproveERC20'
-import { Success, SuccessProps } from './Success'
+import { Success, type SuccessProps } from './Success'
 
 export type CheckerProps = {
   Amounts: ComponentType<AmountsProps>

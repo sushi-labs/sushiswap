@@ -6,9 +6,9 @@ import { useCallback, useMemo, useState } from 'react'
 import { erc20Abi_approve } from 'sushi/abi'
 import type { Amount, Type } from 'sushi/currency'
 import {
-  Address,
+  type Address,
   ContractFunctionZeroDataError,
-  SendTransactionReturnType,
+  type SendTransactionReturnType,
   UserRejectedRequestError,
   maxUint256,
 } from 'viem'
@@ -19,9 +19,9 @@ import {
   useWriteContract,
 } from 'wagmi'
 import {
-  ERC20ApproveABI,
-  ERC20ApproveArgs,
-  OLD_ERC20ApproveABI,
+  type ERC20ApproveABI,
+  type ERC20ApproveArgs,
+  type OLD_ERC20ApproveABI,
   old_erc20Abi_approve,
 } from './types'
 import { useTokenAllowance } from './useTokenAllowance'
