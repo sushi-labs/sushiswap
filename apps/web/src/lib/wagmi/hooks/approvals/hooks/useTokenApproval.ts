@@ -7,6 +7,7 @@ import { erc20Abi_approve } from 'sushi/abi'
 import type { Amount, Type } from 'sushi/currency'
 import {
   type Address,
+  ContractFunctionZeroDataError,
   type SendTransactionReturnType,
   UserRejectedRequestError,
   maxUint256,
@@ -17,8 +18,12 @@ import {
   useSimulateContract,
   useWriteContract,
 } from 'wagmi'
-
-import type { ERC20ApproveABI, ERC20ApproveArgs } from './types'
+import {
+  type ERC20ApproveABI,
+  type ERC20ApproveArgs,
+  type OLD_ERC20ApproveABI,
+  old_erc20Abi_approve,
+} from './types'
 import { useTokenAllowance } from './useTokenAllowance'
 
 export enum ApprovalState {
@@ -57,7 +62,13 @@ export const useTokenApproval = ({
     enabled: Boolean(amount?.currency?.isToken && enabled),
   })
 
-  const { data: simulation } = useSimulateContract<
+  const [fallback, setFallback] = useState(false)
+
+  const simulationEnabled = Boolean(
+    amount && spender && address && allowance && enabled && !isAllowanceLoading,
+  )
+
+  const standardSimulation = useSimulateContract<
     ERC20ApproveABI,
     'approve',
     ERC20ApproveArgs
@@ -70,17 +81,44 @@ export const useTokenApproval = ({
       spender as Address,
       approveMax ? maxUint256 : amount ? amount.quotient : 0n,
     ],
+    scopeKey: 'approve-std',
     query: {
-      enabled: Boolean(
-        amount &&
-          spender &&
-          address &&
-          allowance &&
-          enabled &&
-          !isAllowanceLoading,
-      ),
+      enabled: simulationEnabled && !fallback,
+      retry: (failureCount, error) => {
+        if (
+          error instanceof ContractFunctionZeroDataError ||
+          error.cause instanceof ContractFunctionZeroDataError
+        ) {
+          setFallback(true)
+          return false
+        }
+        return failureCount < 2
+      },
     },
   })
+
+  const fallbackSimulation = useSimulateContract<
+    OLD_ERC20ApproveABI,
+    'approve',
+    ERC20ApproveArgs
+  >({
+    chainId: amount?.currency.chainId,
+    abi: old_erc20Abi_approve,
+    address: amount?.currency?.wrapped?.address as Address,
+    functionName: 'approve',
+    args: [
+      spender as Address,
+      approveMax ? maxUint256 : amount ? amount.quotient : 0n,
+    ],
+    scopeKey: 'approve-fallback',
+    query: {
+      enabled: simulationEnabled && fallback,
+    },
+  })
+
+  const { data: simulation } = fallback
+    ? fallbackSimulation
+    : standardSimulation
 
   const onSuccess = useCallback(
     async (data: SendTransactionReturnType) => {

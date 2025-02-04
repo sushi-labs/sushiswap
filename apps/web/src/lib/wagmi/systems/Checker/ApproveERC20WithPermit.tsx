@@ -36,6 +36,7 @@ import {
 } from '../../hooks/approvals/hooks/useTokenPermit'
 import { ApproveERC20 } from './ApproveERC20'
 import { useApprovedActions } from './Provider'
+import { RevokeApproveERC20 } from './RevokeApproveERC20'
 
 enum ApprovalType {
   Approve = 'approve',
@@ -63,7 +64,9 @@ const isPermitSupportedChainId = (chainId: number) =>
 
 const ApproveERC20WithPermit: FC<ApproveERC20WithPermitProps> = (props) => {
   return isPermitSupportedChainId(props.chainId) ? (
-    <_ApproveERC20WithPermit {...props} />
+    <RevokeApproveERC20 {...props} id={`revoke-${props.id}`}>
+      <_ApproveERC20WithPermit {...props} />
+    </RevokeApproveERC20>
   ) : (
     <ApproveERC20 {...props} />
   )

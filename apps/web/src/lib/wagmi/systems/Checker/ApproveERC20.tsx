@@ -27,6 +27,7 @@ import {
   ApprovalState,
   useTokenApproval,
 } from '../../hooks/approvals/hooks/useTokenApproval'
+import { RevokeApproveERC20 } from './RevokeApproveERC20'
 
 interface ApproveERC20Props extends ButtonProps {
   id: string
@@ -35,7 +36,15 @@ interface ApproveERC20Props extends ButtonProps {
   enabled?: boolean
 }
 
-const ApproveERC20: FC<ApproveERC20Props> = ({
+const ApproveERC20: FC<ApproveERC20Props> = (props) => {
+  return (
+    <RevokeApproveERC20 {...props} id={`revoke-${props.id}`}>
+      <_ApproveERC20 {...props} />
+    </RevokeApproveERC20>
+  )
+}
+
+const _ApproveERC20: FC<ApproveERC20Props> = ({
   id,
   amount,
   contract,
