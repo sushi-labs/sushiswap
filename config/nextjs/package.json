@@ -3,11 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "description": "Sushi Next.js Config",
-  "keywords": [
-    "sushi",
-    "nextjs",
-    "config"
-  ],
+  "keywords": ["sushi", "nextjs", "config"],
   "homepage": "https://www.sushi.com",
   "repository": {
     "type": "git",
@@ -18,9 +14,7 @@
   "author": "Matthew Lilley <hello@matthewLilley.com>",
   "sideEffects": false,
   "main": "index.js",
-  "files": [
-    "index.js"
-  ],
+  "files": ["index.js"],
   "devDependencies": {
     "next": "catalog:react"
   },

@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { NakedNetworkIconComponent } from '../../../types'
+import type { NakedNetworkIconComponent } from '../../../types'
 
 export const ThunderCoreNaked: NakedNetworkIconComponent = (props) => {
   return (

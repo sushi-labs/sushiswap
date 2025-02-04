@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import { SupportedNetwork, chains } from '~aptos/_common/config/chains'
+import { type SupportedNetwork, chains } from '~aptos/_common/config/chains'
 import { useNetwork } from './use-network'
 
 export type CoinInfo = {

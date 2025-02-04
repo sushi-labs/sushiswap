@@ -1,8 +1,14 @@
 'use client'
 
 import { Button, classNames } from '@sushiswap/ui'
-import { FC, ReactElement, ReactNode, useCallback, useState } from 'react'
-import { Price, Type } from 'sushi/currency'
+import {
+  type FC,
+  type ReactElement,
+  type ReactNode,
+  useCallback,
+  useState,
+} from 'react'
+import type { Price, Type } from 'sushi/currency'
 import { usePrices } from '~evm/_common/ui/price-provider/price-provider/use-prices'
 
 interface RenderPayload {

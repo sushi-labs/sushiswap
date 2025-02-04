@@ -16,8 +16,8 @@ import {
 } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import { ChainId } from 'sushi/chain'
-import { Type, XSUSHI } from 'sushi/currency'
-import { Fraction } from 'sushi/math'
+import { type Type, XSUSHI } from 'sushi/currency'
+import type { Fraction } from 'sushi/math'
 import { SUSHI_ETH_SLP } from './VotingPowerProvider'
 
 export const BoostVotingPowerModal = ({

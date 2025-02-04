@@ -14,7 +14,7 @@ import {
   SkeletonText,
 } from '@sushiswap/ui'
 import { useMemo } from 'react'
-import { Amount, Type } from 'sushi/currency'
+import type { Amount, Type } from 'sushi/currency'
 import { formatNumber } from 'sushi/format'
 // import { BoostVotingPowerModal } from './BoostVotingPowerModal'
 import { useVotingPower } from './VotingPowerProvider'

@@ -1,9 +1,9 @@
 import type { ButtonProps } from '@sushiswap/ui'
-import { ComponentType, FC } from 'react'
+import type { ComponentType, FC } from 'react'
 
-import { Amounts, AmountsProps } from './amounts'
+import { Amounts, type AmountsProps } from './amounts'
 import { Connect } from './connect'
-import { Guard, GuardProps } from './guard'
+import { Guard, type GuardProps } from './guard'
 
 type CheckerProps = {
   Amounts: ComponentType<AmountsProps>

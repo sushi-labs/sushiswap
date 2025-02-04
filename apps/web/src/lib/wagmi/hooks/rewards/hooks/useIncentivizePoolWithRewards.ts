@@ -1,17 +1,17 @@
 import { createErrorToast, createToast } from '@sushiswap/notifications'
 import { useCallback } from 'react'
-import { EvmChainId } from 'sushi/chain'
-import { Address, UserRejectedRequestError } from 'viem'
+import type { EvmChainId } from 'sushi/chain'
+import { type Address, UserRejectedRequestError } from 'viem'
 import {
-  UseSimulateContractParameters,
+  type UseSimulateContractParameters,
   useAccount,
   usePublicClient,
   useSimulateContract,
   useWriteContract,
 } from 'wagmi'
 
-import { SendTransactionReturnType } from 'wagmi/actions'
-import { DistributionCreator } from '../abis/DistributionCreator'
+import type { SendTransactionReturnType } from 'wagmi/actions'
+import type { DistributionCreator } from '../abis/DistributionCreator'
 
 const distributionCreatorAbi_createDistribution = [
   {

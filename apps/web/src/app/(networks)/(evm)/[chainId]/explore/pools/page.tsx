@@ -10,7 +10,7 @@ import { TableFiltersNetwork } from 'src/ui/pool/TableFiltersNetwork'
 import { TableFiltersPoolType } from 'src/ui/pool/TableFiltersPoolType'
 import { TableFiltersResetButton } from 'src/ui/pool/TableFiltersResetButton'
 import { TableFiltersSearchToken } from 'src/ui/pool/TableFiltersSearchToken'
-import { ChainId } from 'sushi/chain'
+import type { ChainId } from 'sushi/chain'
 
 export default async function PoolsPage(props: {
   params: Promise<{ chainId: string }>

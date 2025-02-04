@@ -1,5 +1,5 @@
 import { Currency } from '@sushiswap/ui'
-import React, { FC } from 'react'
+import React, { type FC } from 'react'
 import { formatUSD } from 'sushi/format'
 
 import { usePoolPosition } from './PoolPositionProvider'

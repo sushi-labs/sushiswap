@@ -1,6 +1,6 @@
 'use client'
 
-import { SteerVault } from '@sushiswap/steer-sdk'
+import type { SteerVault } from '@sushiswap/steer-sdk'
 import {
   CardContent,
   CardCurrencyAmountItem,
@@ -10,7 +10,7 @@ import {
   CardLabel,
   CardTitle,
 } from '@sushiswap/ui'
-import React, { FC, useMemo } from 'react'
+import React, { type FC, useMemo } from 'react'
 import { useSteerAccountPosition } from 'src/lib/wagmi/hooks/steer/useSteerAccountPosition'
 import { Amount, Token } from 'sushi/currency'
 import { formatUSD } from 'sushi/format'

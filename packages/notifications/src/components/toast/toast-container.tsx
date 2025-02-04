@@ -14,7 +14,7 @@ export const ToastContainer: FC<ToastContainer> = ({ className }) => {
     <ToastifyContainer
       newestOnTop
       toastClassName={() =>
-        'border border-accent mx-4 flex flex-col shadow-md bg-background mt-12 md:mt-2 rounded-xl overflow-hidden text-[color:var(--color)] pointer-events-auto'
+        'max-w-sm border border-accent mx-4 flex flex-col shadow-md bg-background mt-12 md:mt-2 rounded-xl overflow-hidden text-[color:var(--color)] pointer-events-auto'
       }
       className={className}
     />

@@ -5,7 +5,7 @@ import {
   CaretSortIcon,
   CaretUpIcon,
 } from '@radix-ui/react-icons'
-import { Column } from '@tanstack/react-table'
+import type { Column } from '@tanstack/react-table'
 import { useCallback } from 'react'
 
 import classNames from 'classnames'

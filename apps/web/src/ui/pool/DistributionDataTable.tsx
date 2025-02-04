@@ -9,10 +9,10 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@sushiswap/ui'
-import { ColumnDef } from '@tanstack/react-table'
+import type { ColumnDef } from '@tanstack/react-table'
 import format from 'date-fns/format'
-import { FC, useMemo } from 'react'
-import { AngleRewardsPool } from 'src/lib/hooks/react-query'
+import { type FC, useMemo } from 'react'
+import type { AngleRewardsPool } from 'src/lib/hooks/react-query'
 
 import { rewardPerDay } from '../../lib/functions'
 

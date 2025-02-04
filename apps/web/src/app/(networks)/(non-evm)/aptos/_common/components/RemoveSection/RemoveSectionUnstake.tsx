@@ -14,9 +14,9 @@ import {
   WidgetHeader,
   WidgetTitle,
 } from '@sushiswap/ui'
-import { FC, useState } from 'react'
+import { type FC, useState } from 'react'
 import { AptosSDK } from '~aptos/_common/lib/common/aptos-sdk'
-import { Pool } from '~aptos/pool/lib/convert-pool-to-sushi-pool'
+import type { Pool } from '~aptos/pool/lib/convert-pool-to-sushi-pool'
 
 interface AddSectionStakeProps {
   pool: Pool
@@ -69,7 +69,9 @@ export const _RemoveSectionUnstake: FC<AddSectionStakeProps> = ({
       const response = await signAndSubmitTransaction({
         data: {
           typeArguments: [`${swapContract}::swap::LPToken<${pool.id}>`],
-          functionArguments: [parseInt(String(Number(value) * 10 ** decimals))],
+          functionArguments: [
+            Number.parseInt(String(Number(value) * 10 ** decimals)),
+          ],
           function: `${masterchefContract}::masterchef::withdraw`,
         },
       })

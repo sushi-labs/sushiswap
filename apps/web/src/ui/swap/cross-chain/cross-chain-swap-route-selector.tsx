@@ -21,10 +21,13 @@ import {
   SelectValue,
   cloudinaryFetchLoader,
 } from '@sushiswap/ui'
-import { QueryStatus } from '@tanstack/react-query'
+import type { QueryStatus } from '@tanstack/react-query'
 import Image from 'next/image'
-import { FC, useId, useState } from 'react'
-import { CrossChainRoute, CrossChainRouteOrder } from 'src/lib/swap/cross-chain'
+import { type FC, useId, useState } from 'react'
+import type {
+  CrossChainRoute,
+  CrossChainRouteOrder,
+} from 'src/lib/swap/cross-chain'
 import { useSidebar } from 'src/ui/sidebar'
 import { CrossChainSwapRouteCard } from './cross-chain-swap-route-card'
 import { CrossChainSwapRouteMobileCard } from './cross-chain-swap-route-mobile-card'

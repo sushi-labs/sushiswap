@@ -11,7 +11,7 @@ import {
   CardGroup,
   CardHeader,
   CardLabel,
-  CardProps,
+  type CardProps,
   CardTitle,
 } from '@sushiswap/ui'
 import * as React from 'react'

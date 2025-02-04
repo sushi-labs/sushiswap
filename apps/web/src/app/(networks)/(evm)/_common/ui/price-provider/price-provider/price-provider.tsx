@@ -9,14 +9,14 @@ import {
   useReducer,
   useState,
 } from 'react'
-import { ChainId } from 'sushi'
+import type { ChainId } from 'sushi'
 import {
-  PriceWorker,
+  type PriceWorker,
   PriceWorkerPostMessageType,
-  PriceWorkerReceiveMessage,
+  type PriceWorkerReceiveMessage,
   PriceWorkerReceiveMessageType,
 } from '../price-worker/types'
-import { Provider, ProviderActions, ProviderState } from './types'
+import type { Provider, ProviderActions, ProviderState } from './types'
 
 function reducer(state: ProviderState, action: ProviderActions): ProviderState {
   switch (action.type) {

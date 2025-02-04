@@ -1,4 +1,4 @@
-import { Pool } from '@sushiswap/graph-client/data-api'
+import type { Pool } from '@sushiswap/graph-client/data-api'
 import {
   Currency,
   HoverCard,
@@ -8,7 +8,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@sushiswap/ui'
-import { FC, ReactNode } from 'react'
+import type { FC, ReactNode } from 'react'
 import React from 'react'
 import { formatPercent } from 'sushi/format'
 

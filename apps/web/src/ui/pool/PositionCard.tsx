@@ -1,4 +1,4 @@
-import { V2Position } from '@sushiswap/graph-client/data-api'
+import type { V2Position } from '@sushiswap/graph-client/data-api'
 import { LinkInternal } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui'
 import { Currency } from '@sushiswap/ui'
@@ -9,7 +9,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@sushiswap/ui'
-import React, { FC } from 'react'
+import React, { type FC } from 'react'
 import { useTokensFromPool } from 'src/lib/hooks'
 import { EvmChain, EvmChainKey } from 'sushi/chain'
 import { formatPercent, formatUSD } from 'sushi/format'

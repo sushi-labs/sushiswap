@@ -2,9 +2,9 @@
 
 import { InformationCircleIcon } from '@heroicons/react/24/solid'
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@sushiswap/ui'
-import { Button, ButtonProps } from '@sushiswap/ui'
-import { FC, ReactElement, ReactNode } from 'react'
-import { EvmChainId, evmChainName } from 'sushi/chain'
+import { Button, type ButtonProps } from '@sushiswap/ui'
+import type { FC, ReactElement, ReactNode } from 'react'
+import { type EvmChainId, evmChainName } from 'sushi/chain'
 import { useAccount, useSwitchChain } from 'wagmi'
 
 interface NetworkProps extends ButtonProps {

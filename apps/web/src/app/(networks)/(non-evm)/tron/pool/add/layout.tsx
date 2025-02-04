@@ -1,5 +1,5 @@
 import { Container, typographyVariants } from '@sushiswap/ui'
-import { Metadata } from 'next'
+import type { Metadata } from 'next'
 import { BackButton } from 'src/ui/pool/BackButton'
 import { PoolProvider } from '~tron/_common/ui/Pools/pool-provider'
 

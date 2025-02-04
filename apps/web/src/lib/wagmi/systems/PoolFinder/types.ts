@@ -1,8 +1,8 @@
-import { ReactElement } from 'react'
-import { SushiSwapV2ChainId } from 'sushi/config'
-import { Type } from 'sushi/currency'
-import { SushiSwapV2Pool } from 'sushi/pool/sushiswap-v2'
-import { SushiSwapV2PoolState } from '../../hooks/pools/hooks/useSushiSwapV2Pools'
+import type { ReactElement } from 'react'
+import type { SushiSwapV2ChainId } from 'sushi/config'
+import type { Type } from 'sushi/currency'
+import type { SushiSwapV2Pool } from 'sushi/pool/sushiswap-v2'
+import type { SushiSwapV2PoolState } from '../../hooks/pools/hooks/useSushiSwapV2Pools'
 
 export type ComponentsWrapperProps<T> = {
   children:

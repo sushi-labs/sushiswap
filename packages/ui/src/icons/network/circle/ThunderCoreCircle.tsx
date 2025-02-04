@@ -2,7 +2,7 @@ import React from 'react'
 
 import { ThunderCoreNaked } from '../naked/ThunderCoreNaked'
 
-import { IconComponent } from '../../../types'
+import type { IconComponent } from '../../../types'
 
 export const ThunderCoreCircle: IconComponent = (props) => (
   <ThunderCoreNaked

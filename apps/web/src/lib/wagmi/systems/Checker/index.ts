@@ -1,15 +1,15 @@
-import { ButtonProps } from '@sushiswap/ui'
-import { ComponentType, FC } from 'react'
+import type { ButtonProps } from '@sushiswap/ui'
+import type { ComponentType, FC } from 'react'
 
-import { Amounts, AmountsProps } from './Amounts'
-import { ApproveERC20, ApproveERC20Props } from './ApproveERC20'
+import { Amounts, type AmountsProps } from './Amounts'
+import { ApproveERC20, type ApproveERC20Props } from './ApproveERC20'
 import {
   ApproveERC20Multiple,
-  ApproveERC20MultipleProps,
+  type ApproveERC20MultipleProps,
 } from './ApproveERC20Multiple'
 import {
   ApproveERC20WithPermit,
-  ApproveERC20WithPermitProps,
+  type ApproveERC20WithPermitProps,
 } from './ApproveERC20WithPermit'
 import { Connect } from './Connect'
 import { Custom, CustomProps } from './Custom'

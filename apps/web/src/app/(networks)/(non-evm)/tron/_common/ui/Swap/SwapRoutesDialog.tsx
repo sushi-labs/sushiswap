@@ -7,7 +7,7 @@ import {
   DialogTrigger,
   ScrollArea,
 } from '@sushiswap/ui'
-import { FC, ReactNode } from 'react'
+import type { FC, ReactNode } from 'react'
 import { useTokenInfo } from '~tron/_common/lib/hooks/useTokenInfo'
 import { useSwapState } from '~tron/swap/swap-provider'
 import { Icon } from '../General/Icon'

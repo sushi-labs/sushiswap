@@ -1,5 +1,5 @@
 import { Navigation } from '@sushiswap/ui'
-import { Metadata } from 'next'
+import type { Metadata } from 'next'
 import { headerElements } from '../_common/header-elements'
 
 export const metadata: Metadata = {

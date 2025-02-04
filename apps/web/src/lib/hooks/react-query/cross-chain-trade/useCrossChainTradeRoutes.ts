@@ -1,10 +1,10 @@
-import { UseQueryOptions, useQuery } from '@tanstack/react-query'
-import { Amount, Type } from 'sushi/currency'
-import { Percent } from 'sushi/math'
-import { Address, zeroAddress } from 'viem'
+import { type UseQueryOptions, useQuery } from '@tanstack/react-query'
+import type { Amount, Type } from 'sushi/currency'
+import type { Percent } from 'sushi/math'
+import { type Address, zeroAddress } from 'viem'
 import { z } from 'zod'
 import { crossChainRouteSchema } from '../../../swap/cross-chain/schema'
-import { CrossChainRoute } from '../../../swap/cross-chain/types'
+import type { CrossChainRoute } from '../../../swap/cross-chain/types'
 
 const crossChainRoutesResponseSchema = z.object({
   routes: z.array(crossChainRouteSchema),

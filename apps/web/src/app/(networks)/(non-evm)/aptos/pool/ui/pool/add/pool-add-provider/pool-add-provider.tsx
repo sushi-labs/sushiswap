@@ -1,7 +1,7 @@
 import { useSlippageTolerance } from '@sushiswap/hooks'
 import {
-  FC,
-  ReactNode,
+  type FC,
+  type ReactNode,
   createContext,
   useContext,
   useMemo,
@@ -9,8 +9,8 @@ import {
 } from 'react'
 import { getBaseTokensWithoutKey } from '~aptos/_common/lib/common/use-base-tokens'
 import { useNetwork } from '~aptos/_common/lib/common/use-network'
-import { Token } from '~aptos/_common/lib/types/token'
-import { PoolReserve } from '~aptos/pool/lib/use-pools-reserves'
+import type { Token } from '~aptos/_common/lib/types/token'
+import type { PoolReserve } from '~aptos/pool/lib/use-pools-reserves'
 import { setAmount0 } from './actions/setAmount0'
 import { setAmount1 } from './actions/setAmount1'
 import { setPoolPairRatio } from './actions/setPoolPairRatio'
@@ -23,7 +23,7 @@ import {
 import { setToken0 } from './actions/setToken0'
 import { setToken1 } from './actions/setToken1'
 import { swapTokens } from './actions/swapTokens'
-import { Actions, PoolApi, State } from './types'
+import type { Actions, PoolApi, State } from './types'
 
 interface PoolProviderProps {
   children: ReactNode

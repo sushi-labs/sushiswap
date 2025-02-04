@@ -1,15 +1,15 @@
 import {
-  SendTransactionParameters,
+  type SendTransactionParameters,
   createConfig,
   getBalance,
   getTransactionCount,
-  prepareTransactionRequest,
+  type prepareTransactionRequest,
   sendTransaction,
 } from '@wagmi/core'
-import { NextRequest, NextResponse } from 'next/server'
+import { type NextRequest, NextResponse } from 'next/server'
 import { publicWagmiConfig } from 'src/lib/wagmi/config/public'
 import { ChainId } from 'sushi/chain'
-import { Hex, getAddress } from 'viem'
+import { type Hex, getAddress } from 'viem'
 import { privateKeyToAccount } from 'viem/accounts'
 import { z } from 'zod'
 

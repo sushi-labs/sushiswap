@@ -1,5 +1,5 @@
 import TronWeb from 'tronweb'
-import { IToken } from '~tron/_common/types/token-type'
+import type { IToken } from '~tron/_common/types/token-type'
 import { getValidTokenAddress } from './helpers'
 
 export const truncateText = (str: string | `0x${string}`, n = 5): string => {
@@ -63,10 +63,12 @@ export const formatUnits = (
   }
   if (maxDecimals) {
     return toBigNumber(
-      parseFloat(val.toFixed(maxDecimals)).toString(),
+      Number.parseFloat(val.toFixed(maxDecimals)).toString(),
     ).toString(10)
   }
-  return toBigNumber(parseFloat(val.toFixed(decimals)).toString()).toString(10)
+  return toBigNumber(
+    Number.parseFloat(val.toFixed(decimals)).toString(),
+  ).toString(10)
 }
 
 export const formatUnitsForInput = (
@@ -84,7 +86,9 @@ export const formatUnitsForInput = (
     return '0'
   }
 
-  return toBigNumber(parseFloat(val.toFixed(decimals)).toString()).toString(10)
+  return toBigNumber(
+    Number.parseFloat(val.toFixed(decimals)).toString(),
+  ).toString(10)
 }
 
 export const parseUnits = (

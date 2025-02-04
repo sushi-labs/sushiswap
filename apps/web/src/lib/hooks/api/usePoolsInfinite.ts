@@ -1,4 +1,4 @@
-import { GetPools, getPools } from '@sushiswap/graph-client/data-api'
+import { type GetPools, getPools } from '@sushiswap/graph-client/data-api'
 import { useInfiniteQuery } from '@tanstack/react-query'
 
 export const usePoolsInfinite = (args: Omit<GetPools, 'page'>) => {

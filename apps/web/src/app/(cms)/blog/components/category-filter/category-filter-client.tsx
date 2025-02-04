@@ -2,7 +2,7 @@
 
 import { Toggle } from '@sushiswap/ui'
 import { useCallback, useState } from 'react'
-import { Category } from 'src/app/(cms)/lib/strapi/categories'
+import type { Category } from 'src/app/(cms)/lib/strapi/categories'
 import { useBlogSearch, useSetBlogSearch } from '../blog-search-provider'
 
 interface CategoryFilterClient {

@@ -14,7 +14,7 @@ import {
   useTrace,
 } from '@sushiswap/telemetry'
 import { Button, Dots } from '@sushiswap/ui'
-import { FC, useCallback, useEffect, useMemo, useState } from 'react'
+import { type FC, useCallback, useEffect, useMemo, useState } from 'react'
 import { APPROVE_TAG_REMOVE_LEGACY } from 'src/lib/constants'
 import {
   useTokensFromPool,
@@ -22,14 +22,14 @@ import {
 } from 'src/lib/hooks'
 import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
 import { gasMargin, slippageAmount } from 'sushi/calculate'
-import { SushiSwapV2ChainId } from 'sushi/config'
+import type { SushiSwapV2ChainId } from 'sushi/config'
 import { Amount, Native } from 'sushi/currency'
 import { Percent } from 'sushi/math'
-import { SendTransactionReturnType, encodeFunctionData } from 'viem'
+import { type SendTransactionReturnType, encodeFunctionData } from 'viem'
 
-import { V2Pool } from '@sushiswap/graph-client/data-api'
+import type { V2Pool } from '@sushiswap/graph-client/data-api'
 import {
-  PermitInfo,
+  type PermitInfo,
   PermitType,
 } from 'src/lib/wagmi/hooks/approvals/hooks/useTokenPermit'
 import {
@@ -49,7 +49,7 @@ import {
   withCheckerRoot,
 } from 'src/lib/wagmi/systems/Checker/Provider'
 import {
-  UseCallParameters,
+  type UseCallParameters,
   useAccount,
   useCall,
   usePublicClient,

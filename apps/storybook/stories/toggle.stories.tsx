@@ -1,7 +1,7 @@
 // Toggle.stories.ts|tsx
 
 import type { Meta, StoryObj } from '@storybook/react'
-import { Toggle, ToggleProps } from '@sushiswap/ui'
+import { Toggle, type ToggleProps } from '@sushiswap/ui'
 import * as React from 'react'
 
 import { ViewGroup } from '../components/View'

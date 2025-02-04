@@ -1,6 +1,6 @@
 import {
-  V3Pool,
-  VaultV1,
+  type V3Pool,
+  type VaultV1,
   getV3Pool,
   getVault,
   isSmartPoolChainId,
@@ -11,14 +11,19 @@ import formatDistanceToNow from 'date-fns/formatDistanceToNow'
 import { unstable_cache } from 'next/cache'
 import { notFound } from 'next/navigation'
 import { publicClientConfig } from 'src/lib/wagmi/config/viem'
-import { SteerStrategyGeneric } from 'src/ui/pool/Steer/SteerStrategies'
+import type { SteerStrategyGeneric } from 'src/ui/pool/Steer/SteerStrategies'
 import { SteerBaseStrategy } from 'src/ui/pool/Steer/SteerStrategies/SteerBaseStrategy'
 import type { EvmChainId } from 'sushi'
 import { isSushiSwapV3ChainId } from 'sushi/config'
 import { Token } from 'sushi/currency'
 import { formatNumber } from 'sushi/format'
 import { tickToPrice } from 'sushi/pool/sushiswap-v3'
-import { Address, PublicClient, createPublicClient, isAddress } from 'viem'
+import {
+  type Address,
+  type PublicClient,
+  createPublicClient,
+  isAddress,
+} from 'viem'
 
 function getPriceExtremes(
   vault: VaultV1,

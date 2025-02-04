@@ -18,12 +18,12 @@ import {
 import { Button } from '@sushiswap/ui'
 import { Currency } from '@sushiswap/ui'
 import { List } from '@sushiswap/ui'
-import React, { FC, ReactNode, useMemo } from 'react'
-import { useAngleRewardsMultipleChains } from 'src/lib/hooks/react-query'
+import React, { type FC, type ReactNode, useMemo } from 'react'
+import type { useAngleRewardsMultipleChains } from 'src/lib/hooks/react-query'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
 import { EvmChain } from 'sushi/chain'
 import { formatNumber } from 'sushi/format'
-import { Address } from 'viem'
+import type { Address } from 'viem'
 import { ConcentratedLiquidityHarvestButton } from './ConcentratedLiquidityHarvestButton'
 
 interface RewardSlide {

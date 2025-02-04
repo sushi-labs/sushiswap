@@ -1,12 +1,12 @@
 import TronWeb from 'tronweb'
 import { ROUTER_CONTRACT } from '~tron/_common/constants/contracts'
 import { DEFAULT_TOKEN_LIST } from '~tron/_common/constants/token-list'
-import {
+import type {
   IRouterFunctionSelector,
   IRouterLiquidityFunctionSelector,
   IRouterRemoveLiquidityFunctionSelector,
 } from '~tron/_common/types/router-selector-type'
-import { IToken } from '~tron/_common/types/token-type'
+import type { IToken } from '~tron/_common/types/token-type'
 
 export const isAddress = (address: string): boolean => {
   if (!address) return false

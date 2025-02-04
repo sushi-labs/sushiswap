@@ -1,6 +1,6 @@
 import { SkeletonCircle, SkeletonText } from '@sushiswap/ui'
-import { ColumnDef } from '@tanstack/react-table'
-import { PoolExtendedWithAprVolume } from '~aptos/pool/lib/use-user-position-pools'
+import type { ColumnDef } from '@tanstack/react-table'
+import type { PoolExtendedWithAprVolume } from '~aptos/pool/lib/use-user-position-pools'
 import { PoolMyPositionAprCell } from './cells/position-apr-cell'
 import { PositionNameCell } from './cells/position-name-cell'
 import { PoolMyPositionTVLCell } from './cells/position-tvl-cell'

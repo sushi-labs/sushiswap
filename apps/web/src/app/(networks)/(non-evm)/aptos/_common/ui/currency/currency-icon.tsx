@@ -1,5 +1,5 @@
 import React from 'react'
-import { Token } from '~aptos/_common/lib/types/token'
+import type { Token } from '~aptos/_common/lib/types/token'
 
 interface CurrencyIcon {
   currency: Token | undefined

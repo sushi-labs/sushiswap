@@ -1,12 +1,12 @@
 import {
-  PortfolioFarmClaim,
+  type PortfolioFarmClaim,
   getPortfolioClaimables,
 } from '@sushiswap/graph-client/data-api'
 import { Accordion, SkeletonCircle, SkeletonText } from '@sushiswap/ui'
 import { useQuery } from '@tanstack/react-query'
 import React, { useMemo } from 'react'
 import { formatUSD } from 'sushi/format'
-import { Address } from 'viem'
+import type { Address } from 'viem'
 import { useAccount } from 'wagmi'
 import { PortfolioFarmClaimables } from './PortfolioFarmClaimables'
 import { PortfolioFuroClaimables } from './PortfolioFuroClaimables'

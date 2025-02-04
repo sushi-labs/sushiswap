@@ -1,10 +1,10 @@
 import {
   RP2ClaimChainIds,
-  RP2MerkleTreeClaimSchema,
+  type RP2MerkleTreeClaimSchema,
   RP2MerkleTreeSchema,
 } from 'src/lib/wagmi/hooks/exploits/constants'
 import { RP2MerkleTree } from 'src/lib/wagmi/hooks/exploits/rp2-merkle-trees'
-import { RP2ClaimChainId } from 'src/lib/wagmi/hooks/exploits/types'
+import type { RP2ClaimChainId } from 'src/lib/wagmi/hooks/exploits/types'
 import type { Address } from 'viem'
 import { z } from 'zod'
 

@@ -1,12 +1,12 @@
 import { useWallet } from '@aptos-labs/wallet-adapter-react'
 import { Card, CardHeader, CardTitle, DataTable } from '@sushiswap/ui'
-import { PaginationState } from '@tanstack/react-table'
-import { ColumnDef, SortingState, TableState } from '@tanstack/react-table'
+import type { PaginationState } from '@tanstack/react-table'
+import type { ColumnDef, SortingState, TableState } from '@tanstack/react-table'
 import React, { useCallback, useMemo, useState } from 'react'
 import { usePoolFilters } from 'src/ui/pool'
-import { PoolExtended } from '~aptos/pool/lib/use-pools-extended'
+import type { PoolExtended } from '~aptos/pool/lib/use-pools-extended'
 import {
-  PoolExtendedWithAprVolume,
+  type PoolExtendedWithAprVolume,
   useUserPositionPools,
 } from '~aptos/pool/lib/use-user-position-pools'
 import {

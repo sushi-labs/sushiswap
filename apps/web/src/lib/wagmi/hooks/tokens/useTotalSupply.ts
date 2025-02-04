@@ -2,8 +2,8 @@
 
 import { keepPreviousData, useQueryClient } from '@tanstack/react-query'
 import { useEffect, useMemo } from 'react'
-import { Amount, Token } from 'sushi/currency'
-import { Address, erc20Abi } from 'viem'
+import { Amount, type Token } from 'sushi/currency'
+import { type Address, erc20Abi } from 'viem'
 import { useReadContracts } from 'wagmi'
 
 function bigIntToCurrencyAmount(totalSupply?: bigint, token?: Token) {

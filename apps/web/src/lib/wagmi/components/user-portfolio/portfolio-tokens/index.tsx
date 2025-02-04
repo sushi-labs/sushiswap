@@ -3,7 +3,7 @@ import { SkeletonCircle, SkeletonText, classNames } from '@sushiswap/ui'
 import { useQuery } from '@tanstack/react-query'
 import React from 'react'
 import { formatPercent, formatUSD } from 'sushi/format'
-import { Address } from 'viem'
+import type { Address } from 'viem'
 import { useAccount } from 'wagmi'
 import { PortfolioTokensList } from './PortfolioTokensList'
 

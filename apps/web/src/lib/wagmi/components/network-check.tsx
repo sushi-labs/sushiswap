@@ -2,9 +2,9 @@
 
 import { useIsMounted } from '@sushiswap/hooks'
 import { Button } from '@sushiswap/ui'
-import { FC, useEffect, useState } from 'react'
+import { type FC, useEffect, useState } from 'react'
 import ReactDOM from 'react-dom'
-import { EvmChain, EvmChainId, evmChainName } from 'sushi/chain'
+import { EvmChain, type EvmChainId, evmChainName } from 'sushi/chain'
 import { useAccount, useSwitchChain } from 'wagmi'
 
 export const NetworkCheck: FC<{ chainId: EvmChainId }> = ({ chainId }) => {

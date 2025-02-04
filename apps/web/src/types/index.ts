@@ -1,4 +1,4 @@
-import {
+import type {
   SushiSwapV2ChainId,
   SushiSwapV3ChainId,
   TridentChainId,

@@ -3,7 +3,7 @@ import * as React from 'react'
 import { EthereumNaked } from '../naked/EthereumNaked'
 
 import classNames from 'classnames'
-import { IconComponent } from '../../../types'
+import type { IconComponent } from '../../../types'
 
 export const EthereumCircle: IconComponent = (props) => (
   <EthereumNaked

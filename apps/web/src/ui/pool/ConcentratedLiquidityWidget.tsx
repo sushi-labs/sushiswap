@@ -4,15 +4,15 @@ import { Transition } from '@headlessui/react'
 import { LockClosedIcon, PlusIcon } from '@heroicons/react-v1/solid'
 import { DialogTrigger, FormSection, Message, classNames } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui'
-import { FC, Fragment, useCallback, useMemo } from 'react'
+import { type FC, Fragment, useCallback, useMemo } from 'react'
 import {
   SUSHISWAP_V3_POSTIION_MANAGER,
-  SushiSwapV3ChainId,
-  SushiSwapV3FeeAmount,
+  type SushiSwapV3ChainId,
+  type SushiSwapV3FeeAmount,
   isWNativeSupported,
 } from 'sushi/config'
-import { Type } from 'sushi/currency'
-import { Position } from 'sushi/pool/sushiswap-v3'
+import type { Type } from 'sushi/currency'
+import type { Position } from 'sushi/pool/sushiswap-v3'
 
 import { Web3Input } from 'src/lib/wagmi/components/web3-input'
 import { useConcentratedPositionOwner } from 'src/lib/wagmi/hooks/positions/hooks/useConcentratedPositionOwner'

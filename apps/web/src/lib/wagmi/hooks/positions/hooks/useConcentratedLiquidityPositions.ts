@@ -1,12 +1,12 @@
 import { useCustomTokens } from '@sushiswap/hooks'
 import { useQuery } from '@tanstack/react-query'
 import { useAllPrices } from 'src/lib/hooks/react-query'
-import { SushiSwapV3ChainId } from 'sushi/config'
-import { Amount, Token } from 'sushi/currency'
-import { Position, SushiSwapV3Pool } from 'sushi/pool/sushiswap-v3'
+import type { SushiSwapV3ChainId } from 'sushi/config'
+import { Amount, type Token } from 'sushi/currency'
+import { Position, type SushiSwapV3Pool } from 'sushi/pool/sushiswap-v3'
 
 import { useMemo } from 'react'
-import { Address } from 'viem'
+import type { Address } from 'viem'
 import { useConfig } from 'wagmi'
 import { usePrices } from '~evm/_common/ui/price-provider/price-provider/use-prices'
 import { getConcentratedLiquidityPool } from '../../pools/actions/getConcentratedLiquidityPool'
@@ -15,7 +15,7 @@ import {
   getTokenWithQueryCacheHydrate,
 } from '../../tokens/useTokenWithCache'
 import { getConcentratedLiquidityPositions } from '../actions/getConcentratedLiquidityPositions'
-import { ConcentratedLiquidityPosition } from '../types'
+import type { ConcentratedLiquidityPosition } from '../types'
 
 interface UseConcentratedLiquidityPositionsData
   extends ConcentratedLiquidityPosition {
@@ -176,7 +176,7 @@ export const useConcentratedLiquidityPositions = ({
 
       return []
     },
-    refetchInterval: Infinity,
+    refetchInterval: Number.POSITIVE_INFINITY,
     enabled: Boolean(
       account && chainIds && enabled && (prices || isPriceError),
     ),

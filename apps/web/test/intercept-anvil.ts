@@ -1,4 +1,4 @@
-import { Page } from '@playwright/test'
+import type { Page } from '@playwright/test'
 import type { NextFixture } from 'next/experimental/testmode/playwright'
 import { http, type Address, createTestClient } from 'viem'
 import { foundry } from 'viem/chains'

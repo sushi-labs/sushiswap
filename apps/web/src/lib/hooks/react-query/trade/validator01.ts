@@ -1,5 +1,5 @@
 import { isAddressFast } from 'sushi/validate'
-import { Address } from 'viem'
+import type { Address } from 'viem'
 import z from 'zod'
 
 export const tokenValidator = z.object({

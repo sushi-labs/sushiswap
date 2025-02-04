@@ -1,10 +1,11 @@
-import React, {
+import type React from 'react'
+import {
   Children,
+  type PropsWithChildren,
+  type SyntheticEvent,
   cloneElement,
   isValidElement,
   memo,
-  type PropsWithChildren,
-  type SyntheticEvent,
 } from 'react'
 
 import { type ITraceContext, Trace, TraceContext } from './Trace'

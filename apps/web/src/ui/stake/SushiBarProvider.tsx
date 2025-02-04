@@ -1,13 +1,19 @@
 'use client'
 
-import { FC, ReactNode, createContext, useContext, useMemo } from 'react'
+import {
+  type FC,
+  type ReactNode,
+  createContext,
+  useContext,
+  useMemo,
+} from 'react'
 import { useBarData } from 'src/lib/stake'
 import { ChainId } from 'sushi/chain'
 import {
   Amount,
   SUSHI,
   SUSHI_ADDRESS,
-  Type,
+  type Type,
   XSUSHI,
   XSUSHI_ADDRESS,
 } from 'sushi/currency'

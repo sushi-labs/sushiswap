@@ -12,7 +12,7 @@ import {
   getValidTokenAddress,
   isContract,
 } from '~tron/_common/lib/utils/helpers'
-import { IToken } from '~tron/_common/types/token-type'
+import type { IToken } from '~tron/_common/types/token-type'
 import { useTronWeb } from './useTronWeb'
 
 const abi = {

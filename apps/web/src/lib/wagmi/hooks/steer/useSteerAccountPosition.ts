@@ -9,7 +9,7 @@ import {
   getVaultsReservesContracts,
   getVaultsReservesSelect,
 } from '@sushiswap/steer-sdk'
-import { Address } from 'viem'
+import type { Address } from 'viem'
 
 import { useMemo } from 'react'
 import type { ID } from 'sushi/types'

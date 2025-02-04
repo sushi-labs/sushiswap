@@ -1,7 +1,7 @@
 import { LinkInternal } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui'
 import { Container } from '@sushiswap/ui'
-import { FC } from 'react'
+import type { FC } from 'react'
 
 import { MoveImage } from './MoveImage'
 

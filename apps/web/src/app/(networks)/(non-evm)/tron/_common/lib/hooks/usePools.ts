@@ -2,7 +2,7 @@ import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import ms from 'ms'
 import { FACTORY_CONTRACT } from '~tron/_common/constants/contracts'
 import { chunk } from '~tron/_common/lib/utils/helpers'
-import {
+import type {
   IPoolDataResponse,
   IReserveDataResponse,
 } from '~tron/_common/types/get-pools-type'

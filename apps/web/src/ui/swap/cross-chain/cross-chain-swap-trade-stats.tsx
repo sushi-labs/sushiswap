@@ -1,7 +1,7 @@
 'use client'
 
 import { Collapsible, Explainer, SkeletonBox, classNames } from '@sushiswap/ui'
-import React, { FC, useMemo } from 'react'
+import React, { type FC, useMemo } from 'react'
 import { EvmChain } from 'sushi/chain'
 import { formatUSD, shortenAddress } from 'sushi/format'
 import { ZERO } from 'sushi/math'

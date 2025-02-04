@@ -4,7 +4,7 @@ import { Fuul } from '@fuul/sdk'
 import { useIsMounted } from '@sushiswap/hooks'
 import { watchAccount } from '@wagmi/core'
 import { useSearchParams } from 'next/navigation'
-import { FC, useEffect } from 'react'
+import { type FC, useEffect } from 'react'
 import { useConfig, useSignMessage } from 'wagmi'
 
 interface FuulReferralProviderProps {

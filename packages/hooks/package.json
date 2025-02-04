@@ -3,32 +3,20 @@
   "version": "3.0.0",
   "private": true,
   "description": "Sushi Hooks",
-  "keywords": [
-    "sushi",
-    "hooks",
-    "react"
-  ],
+  "keywords": ["sushi", "hooks", "react"],
   "license": "MIT",
   "author": "Matthew Lilley <hello@matthewLilley.com>",
   "type": "module",
   "exports": {
     ".": "./dist/index.js",
-    "./*": [
-      "./dist/*.js",
-      "./dist/*/index.js"
-    ]
+    "./*": ["./dist/*.js", "./dist/*/index.js"]
   },
   "typesVersions": {
     "*": {
-      "*": [
-        "src/*",
-        "src/*/index"
-      ]
+      "*": ["src/*", "src/*/index"]
     }
   },
-  "files": [
-    "dist/**"
-  ],
+  "files": ["dist/**"],
   "scripts": {
     "build": "tsc",
     "check": "tsc --pretty --noEmit",

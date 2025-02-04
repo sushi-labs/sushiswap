@@ -1,6 +1,6 @@
 import * as React from 'react'
 
-import { NakedNetworkIconComponent } from '../../../types'
+import type { NakedNetworkIconComponent } from '../../../types'
 
 export const LineaNaked: NakedNetworkIconComponent = (props) => (
   <svg

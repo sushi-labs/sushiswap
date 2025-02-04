@@ -3,7 +3,7 @@ import { useMemo } from 'react'
 import { PAIR_ABI } from '~tron/_common/constants/abis/pair-abi'
 import { sortTokens } from '~tron/_common/lib/utils/formatters'
 import { isAddress } from '~tron/_common/lib/utils/helpers'
-import { IToken } from '~tron/_common/types/token-type'
+import type { IToken } from '~tron/_common/types/token-type'
 import { useTronWeb } from './useTronWeb'
 
 export const useReserves = ({

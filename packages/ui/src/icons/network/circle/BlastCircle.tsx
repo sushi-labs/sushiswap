@@ -2,7 +2,7 @@ import * as React from 'react'
 
 import { BlastNaked } from '../naked/BlastNaked'
 
-import { IconComponent } from '../../../types'
+import type { IconComponent } from '../../../types'
 
 export const BlastCircle: IconComponent = (props) => (
   <BlastNaked

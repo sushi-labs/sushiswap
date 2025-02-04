@@ -1,11 +1,11 @@
 'use client'
 
 import { useWallet as useAptosWallet } from '@aptos-labs/wallet-adapter-react'
-import { FC } from 'react'
+import type { FC } from 'react'
 import { NonStandardChainId } from 'src/config'
 import {
   SidebarContainer as BaseSidebarContainer,
-  SidebarContainerProps,
+  type SidebarContainerProps,
   SidebarProvider,
 } from 'src/ui/sidebar'
 

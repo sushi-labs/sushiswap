@@ -1,4 +1,4 @@
-import { createConfig } from '@wagmi/core'
+import type { createConfig } from '@wagmi/core'
 import { publicChains, publicTransports } from './viem'
 
 export const publicWagmiConfig = {

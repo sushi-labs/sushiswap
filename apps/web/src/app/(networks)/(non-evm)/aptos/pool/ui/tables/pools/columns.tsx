@@ -1,7 +1,7 @@
 import { SkeletonCircle, SkeletonText } from '@sushiswap/ui'
-import { ColumnDef } from '@tanstack/react-table'
+import type { ColumnDef } from '@tanstack/react-table'
 import { formatPercent, formatUSD } from 'sushi/format'
-import { TopPool } from '~aptos/pool/lib/use-top-pools'
+import type { TopPool } from '~aptos/pool/lib/use-top-pools'
 import { PoolNameCell } from './cells/pool-name-cell'
 
 export const NAME_COLUMN: ColumnDef<TopPool, unknown> = {

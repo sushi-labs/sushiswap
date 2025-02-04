@@ -1,7 +1,7 @@
 'use client'
 
 import { ExternalLinkIcon } from '@heroicons/react-v1/solid'
-import { PendingTokens } from '@sushiswap/graph-client/data-api/queries/token-list-submission'
+import type { PendingTokens } from '@sushiswap/graph-client/data-api/queries/token-list-submission'
 import {
   Badge,
   Card,
@@ -19,13 +19,13 @@ import {
 } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import { XIcon } from '@sushiswap/ui/icons/XIcon'
-import { ColumnDef, SortingState, TableState } from '@tanstack/react-table'
+import type { ColumnDef, SortingState, TableState } from '@tanstack/react-table'
 import differenceInDays from 'date-fns/differenceInDays'
 import React, { useMemo, useState } from 'react'
 import { usePendingTokens } from 'src/lib/hooks/api/usePendingTokenListings'
 import { TokenSecurityView } from 'src/lib/wagmi/components/token-security-view'
 import { formatNumber, formatUSD, shortenAddress } from 'sushi'
-import { EvmChain, EvmChainId } from 'sushi/chain'
+import { EvmChain, type EvmChainId } from 'sushi/chain'
 import { Token } from 'sushi/currency'
 import { getAddress } from 'viem'
 import { NavigationItems } from '../navigation-items'
@@ -149,6 +149,7 @@ const COLUMNS: ColumnDef<PendingTokens[number], unknown>[] = [
       const [trigger, content] = useMemo(
         () => [
           <span
+            key="span"
             className={classNames(
               'whitespace-nowrap',
               props.row.original.reasoning.length > 0
@@ -159,7 +160,7 @@ const COLUMNS: ColumnDef<PendingTokens[number], unknown>[] = [
             {props.row.original.reasoning.length} detail
             {props.row.original.reasoning.length !== 1 ? 's' : ''}
           </span>,
-          <Card>
+          <Card key="card">
             <CardHeader>
               <CardTitle>Details</CardTitle>
             </CardHeader>

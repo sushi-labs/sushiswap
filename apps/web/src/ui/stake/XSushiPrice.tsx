@@ -4,11 +4,11 @@ import { useMemo, useState } from 'react'
 import { useTokenAmountDollarValues } from 'src/lib/hooks'
 import { ChainId } from 'sushi/chain'
 import {
-  Amount,
+  type Amount,
   Price,
   SUSHI,
   SUSHI_ADDRESS,
-  Type,
+  type Type,
   tryParseAmount,
 } from 'sushi/currency'
 import { formatUSD } from 'sushi/format'

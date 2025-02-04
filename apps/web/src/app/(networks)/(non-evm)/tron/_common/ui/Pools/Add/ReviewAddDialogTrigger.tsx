@@ -1,4 +1,4 @@
-import { Button, ButtonProps, DialogTrigger } from '@sushiswap/ui'
+import { Button, type ButtonProps, DialogTrigger } from '@sushiswap/ui'
 import { useWallet } from '@tronweb3/tronwallet-adapter-react-hooks'
 import { useMemo } from 'react'
 import { ROUTER_CONTRACT } from '~tron/_common/constants/contracts'

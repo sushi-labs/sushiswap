@@ -1,4 +1,4 @@
-import { IconComponent } from '../types'
+import type { IconComponent } from '../types'
 
 export const GnosisSafeIcon: IconComponent = (props) => {
   return (

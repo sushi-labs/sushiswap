@@ -14,12 +14,18 @@ import {
   SkeletonCircle,
 } from '@sushiswap/ui'
 import Image from 'next/image'
-import { Dispatch, FC, SetStateAction, useMemo, useState } from 'react'
+import {
+  type Dispatch,
+  type FC,
+  type SetStateAction,
+  useMemo,
+  useState,
+} from 'react'
 import { SUPPORTED_NETWORKS } from 'src/config'
 import { HeaderNetworkSelector } from 'src/lib/wagmi/components/header-network-selector'
-import { ChainId, evmChains, shortenAddress } from 'sushi'
+import { type ChainId, evmChains, shortenAddress } from 'sushi'
 import { useAccount, useDisconnect } from 'wagmi'
-import { GetEnsNameReturnType } from 'wagmi/actions'
+import type { GetEnsNameReturnType } from 'wagmi/actions'
 import { PortfolioView } from '.'
 import { PortfolioClaimables } from './portfolio-claimables'
 import { PortfolioPositions } from './portfolio-positions'

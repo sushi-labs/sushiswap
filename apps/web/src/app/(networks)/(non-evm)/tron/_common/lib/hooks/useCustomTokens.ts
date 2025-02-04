@@ -2,7 +2,7 @@ import { useLocalStorage } from '@sushiswap/hooks'
 import { useCallback, useMemo } from 'react'
 import { IS_TESTNET } from '~tron/_common/constants/is-testnet'
 import { isAddress } from '~tron/_common/lib/utils/helpers'
-import { IToken } from '~tron/_common/types/token-type'
+import type { IToken } from '~tron/_common/types/token-type'
 
 const localStorageKey = IS_TESTNET
   ? 'sushi.customTokens.shasta'

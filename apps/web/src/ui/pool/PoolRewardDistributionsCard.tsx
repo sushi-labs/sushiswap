@@ -13,13 +13,13 @@ import {
   TabsList,
   TabsTrigger,
 } from '@sushiswap/ui'
-import { FC } from 'react'
+import type { FC } from 'react'
 import { useAngleRewards } from 'src/lib/hooks/react-query'
 import { ChainKey } from 'sushi/chain'
 import { Native } from 'sushi/currency'
 import { getAddress } from 'viem'
 
-import { V3Pool } from '@sushiswap/graph-client/data-api'
+import type { V3Pool } from '@sushiswap/graph-client/data-api'
 import { isMerklChainId } from 'sushi/config'
 import { DistributionDataTable } from './DistributionDataTable'
 

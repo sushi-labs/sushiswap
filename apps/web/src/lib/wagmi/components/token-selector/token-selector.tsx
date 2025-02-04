@@ -19,15 +19,15 @@ import {
   gtagEvent,
 } from '@sushiswap/ui'
 import React, {
-  FC,
-  ReactNode,
+  type FC,
+  type ReactNode,
   useCallback,
   useEffect,
   useMemo,
   useState,
 } from 'react'
-import { EvmChainId } from 'sushi/chain'
-import { Currency, Token, Type } from 'sushi/currency'
+import type { EvmChainId } from 'sushi/chain'
+import type { Currency, Token, Type } from 'sushi/currency'
 import { useAccount } from 'wagmi'
 import { CurrencyInfo } from './currency-info'
 import { DesktopNetworkSelector } from './desktop-network-selector'

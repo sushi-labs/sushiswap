@@ -2,7 +2,7 @@
 
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline'
 import { default as cn } from 'classnames'
-import * as React from 'react'
+import type * as React from 'react'
 import { DayFlag, DayPicker, SelectionState, UI } from 'react-day-picker'
 
 import { buttonVariants } from './button'

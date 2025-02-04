@@ -1,12 +1,12 @@
-import { PortfolioSmartPosition } from '@sushiswap/graph-client/data-api'
+import type { PortfolioSmartPosition } from '@sushiswap/graph-client/data-api'
 import {
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
   Currency,
 } from '@sushiswap/ui'
-import React, { FC } from 'react'
-import { ChainKey, EvmChainId } from 'sushi/chain'
+import React, { type FC } from 'react'
+import { ChainKey, type EvmChainId } from 'sushi/chain'
 import { formatUSD } from 'sushi/format'
 import { PortfolioInfoRow } from '../PortfolioInfoRow'
 

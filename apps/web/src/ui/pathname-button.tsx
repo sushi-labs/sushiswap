@@ -1,6 +1,6 @@
 'use client'
 
-import { Button, ButtonProps } from '@sushiswap/ui'
+import { Button, type ButtonProps } from '@sushiswap/ui'
 import { usePathname } from 'next/navigation'
 import { forwardRef } from 'react'
 

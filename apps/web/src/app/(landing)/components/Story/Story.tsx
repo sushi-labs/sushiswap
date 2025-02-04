@@ -1,4 +1,4 @@
-import { FC } from 'react'
+import type { FC } from 'react'
 
 import { Custody } from './Section1/Custody'
 import { Move } from './Section2/Move'

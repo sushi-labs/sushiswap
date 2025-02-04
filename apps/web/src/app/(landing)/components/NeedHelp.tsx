@@ -5,7 +5,7 @@ import { DiscordIcon } from '@sushiswap/ui/icons/DiscordIcon'
 import { GithubIcon } from '@sushiswap/ui/icons/GithubIcon'
 import { TwitterIcon } from '@sushiswap/ui/icons/TwitterIcon'
 import { YoutubeIcon } from '@sushiswap/ui/icons/YoutubeIcon'
-import React, { FC } from 'react'
+import React, { type FC } from 'react'
 
 const SUPPORT_CHANNELS = [
   {

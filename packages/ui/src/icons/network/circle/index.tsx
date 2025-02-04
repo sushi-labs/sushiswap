@@ -1,6 +1,6 @@
 import { ChainId } from 'sushi/chain'
 
-import { IconComponent } from '../../../types'
+import type { IconComponent } from '../../../types'
 import { ApeCircle } from './ApeCircle'
 import { AptosCircle } from './AptosCircle'
 import { ArbitrumCircle } from './ArbitrumCircle'

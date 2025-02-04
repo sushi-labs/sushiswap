@@ -12,14 +12,14 @@ import {
 } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import { usePathname, useRouter } from 'next/navigation'
-import React, { ReactNode, useCallback, useState } from 'react'
+import React, { type ReactNode, useCallback, useState } from 'react'
 import {
   NEW_CHAIN_IDS,
-  NonStandardChainId,
+  type NonStandardChainId,
   isNonStandardChainId,
 } from 'src/config'
 import { getNetworkName, replaceNetworkSlug } from 'src/lib/network'
-import { EvmChainId, isChainId, isEvmNetworkNameKey } from 'sushi/chain'
+import { type EvmChainId, isChainId, isEvmNetworkNameKey } from 'sushi/chain'
 
 export type NetworkSelectorOnSelectCallback<
   T extends number | string = EvmChainId | NonStandardChainId,

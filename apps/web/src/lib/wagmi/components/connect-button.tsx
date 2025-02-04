@@ -7,8 +7,8 @@ import {
   InterfaceEventName,
   TraceEvent,
 } from '@sushiswap/telemetry'
-import { Button, ButtonProps } from '@sushiswap/ui'
-import React, { FC, useCallback } from 'react'
+import { Button, type ButtonProps } from '@sushiswap/ui'
+import React, { type FC, useCallback } from 'react'
 import { useConnect } from '../hooks/wallet/useConnect'
 
 export const ConnectButton: FC<ButtonProps> = ({

@@ -1,6 +1,6 @@
-import { FC } from 'react'
+import type { FC } from 'react'
 
-import { V3Pool, VaultV1 } from '@sushiswap/graph-client/data-api'
+import type { V3Pool, VaultV1 } from '@sushiswap/graph-client/data-api'
 
 export interface SteerStrategyGeneric {
   tokenRatios: {

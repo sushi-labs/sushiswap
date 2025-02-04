@@ -1,4 +1,4 @@
-import { AcademyArticle } from '@sushiswap/graph-client/strapi'
+import type { AcademyArticle } from '@sushiswap/graph-client/strapi'
 import { ArticleCard } from '../article-card/article-card'
 
 interface ArticleList {

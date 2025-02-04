@@ -35,7 +35,7 @@ export const SimpleSwapTradeStats = () => {
 
   const outputSwapTokenAmount = outputAmount
     ? formatNumberWithDecimals(
-        parseFloat(outputAmount),
+        Number.parseFloat(outputAmount),
         token1 ? token1.decimals : 8,
       )
     : ''

@@ -1,4 +1,4 @@
-import { AcademyArticle } from '@sushiswap/graph-client/strapi'
+import type { AcademyArticle } from '@sushiswap/graph-client/strapi'
 import { classNames } from '@sushiswap/ui'
 import { CircleIcon } from '@sushiswap/ui/icons/CircleIcon'
 import { DIFFICULTY_ELEMENTS } from '../contants'

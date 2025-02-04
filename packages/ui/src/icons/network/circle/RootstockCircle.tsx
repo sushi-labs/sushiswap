@@ -2,7 +2,7 @@ import * as React from 'react'
 
 import { RootstockNaked } from '../naked/RootstockNaked'
 
-import { IconComponent } from '../../../types'
+import type { IconComponent } from '../../../types'
 
 export const RootstockCircle: IconComponent = (props) => (
   <RootstockNaked

@@ -22,11 +22,12 @@ import {
 } from '@sushiswap/ui'
 import { Badge } from '@sushiswap/ui'
 import { Currency } from '@sushiswap/ui'
-import React, { CSSProperties, FC, memo, useCallback } from 'react'
+import type React from 'react'
+import { type CSSProperties, type FC, memo, useCallback } from 'react'
 import { NativeAddress } from 'src/lib/constants'
 import { EvmChain } from 'sushi/chain'
-import { Amount, Type } from 'sushi/currency'
-import { Fraction, ZERO } from 'sushi/math'
+import type { Amount, Type } from 'sushi/currency'
+import { type Fraction, ZERO } from 'sushi/math'
 import { zeroAddress } from 'viem'
 
 export interface TokenSelectorRow {

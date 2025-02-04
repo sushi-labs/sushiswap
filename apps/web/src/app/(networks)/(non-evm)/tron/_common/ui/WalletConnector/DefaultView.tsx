@@ -8,14 +8,14 @@ import { ClipboardController, IconButton, SkeletonText } from '@sushiswap/ui'
 import { JazzIcon } from '@sushiswap/ui/icons/JazzIcon'
 import { useWallet } from '@tronweb3/tronwallet-adapter-react-hooks'
 import Link from 'next/link'
-import React, { Dispatch, SetStateAction } from 'react'
+import React, { type Dispatch, type SetStateAction } from 'react'
 import { formatNumber, formatUSD } from 'sushi/format'
 import { WTRX } from '~tron/_common/constants/token-list'
 import { useNativeBalance } from '~tron/_common/lib/hooks/useNativeBalance'
 import { useStablePrice } from '~tron/_common/lib/hooks/useStablePrice'
 import { truncateText } from '~tron/_common/lib/utils/formatters'
 import { getTronscanAddressLink } from '~tron/_common/lib/utils/tronscan-helpers'
-import { IProfileView } from './WalletConnector'
+import type { IProfileView } from './WalletConnector'
 
 type DefaultViewProps = {
   setView: Dispatch<SetStateAction<IProfileView>>

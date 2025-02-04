@@ -2,7 +2,7 @@
 
 import { SwitchHorizontalIcon } from '@heroicons/react-v1/solid'
 import { Cog6ToothIcon } from '@heroicons/react/24/outline'
-import { V2Pool } from '@sushiswap/graph-client/data-api'
+import type { V2Pool } from '@sushiswap/graph-client/data-api'
 import { SlippageToleranceStorageKey, TTLStorageKey } from '@sushiswap/hooks'
 import {
   Card,
@@ -33,7 +33,7 @@ import {
   SettingsOverlay,
 } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui'
-import React, { FC, useMemo, useState } from 'react'
+import React, { type FC, useMemo, useState } from 'react'
 import { APPROVE_TAG_MIGRATE, Bound, Field } from 'src/lib/constants'
 import { useTokenAmountDollarValues, useV2Pool } from 'src/lib/hooks'
 import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
@@ -41,7 +41,7 @@ import {
   V3MigrateContractConfig,
   useV3Migrate,
 } from 'src/lib/wagmi/hooks/migrate/hooks/useV3Migrate'
-import { V3MigrateChainId } from 'src/lib/wagmi/hooks/migrate/types'
+import type { V3MigrateChainId } from 'src/lib/wagmi/hooks/migrate/types'
 import { useSushiSwapV2Pool } from 'src/lib/wagmi/hooks/pools/hooks/useSushiSwapV2Pools'
 import { useTotalSupply } from 'src/lib/wagmi/hooks/tokens/useTotalSupply'
 import {
@@ -55,20 +55,20 @@ import {
 } from 'src/lib/wagmi/systems/Checker/Provider'
 import { EvmChain } from 'sushi/chain'
 import {
-  SushiSwapV2ChainId,
-  SushiSwapV3ChainId,
+  type SushiSwapV2ChainId,
+  type SushiSwapV3ChainId,
   SushiSwapV3FeeAmount,
 } from 'sushi/config'
 import { Amount, Price, tryParseAmount, unwrapToken } from 'sushi/currency'
 import { formatUSD } from 'sushi/format'
-import { Fraction, ZERO } from 'sushi/math'
+import { type Fraction, ZERO } from 'sushi/math'
 import {
   Position,
   SushiSwapV3Pool,
   TickMath,
   priceToClosestTick,
 } from 'sushi/pool/sushiswap-v3'
-import { Address } from 'viem'
+import type { Address } from 'viem'
 import { useAccount, useWaitForTransactionReceipt } from 'wagmi'
 import { useConcentratedDerivedMintInfo } from './ConcentratedLiquidityProvider'
 import { usePoolPosition } from './PoolPositionProvider'

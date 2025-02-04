@@ -3,7 +3,7 @@
 import {
   Badge,
   Button,
-  ButtonProps,
+  type ButtonProps,
   Command,
   CommandEmpty,
   CommandGroup,
@@ -14,10 +14,10 @@ import {
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import { usePathname, useRouter } from 'next/navigation'
 import {
-  Dispatch,
-  FC,
-  ReactNode,
-  SetStateAction,
+  type Dispatch,
+  type FC,
+  type ReactNode,
+  type SetStateAction,
   createContext,
   useCallback,
   useContext,
@@ -25,11 +25,11 @@ import {
 } from 'react'
 import {
   NEW_CHAIN_IDS,
-  NonStandardChainId,
+  type NonStandardChainId,
   SUPPORTED_NETWORKS,
 } from 'src/config'
 import { getNetworkName, replaceNetworkSlug } from 'src/lib/network'
-import { ChainId, isChainId } from 'sushi/chain'
+import { type ChainId, isChainId } from 'sushi/chain'
 
 interface SidebarContextType {
   isOpen: boolean

@@ -1,4 +1,4 @@
-import { ITronInUSDTResponse } from '~tron/_common/types/pricing-types'
+import type { ITronInUSDTResponse } from '~tron/_common/types/pricing-types'
 
 export const getTronPrice = async () => {
   try {

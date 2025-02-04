@@ -16,7 +16,7 @@ export const useTokenInfo = ({
 }: { tokenAddress: string; enabled?: boolean }) => {
   return useQuery({
     queryKey: ['useTokenInfo2', { tokenAddress }],
-    staleTime: Infinity,
+    staleTime: Number.POSITIVE_INFINITY,
     queryFn: async () => {
       if (tokenAddress === 'TRON') {
         return TRON

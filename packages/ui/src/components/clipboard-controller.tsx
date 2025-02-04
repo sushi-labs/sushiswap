@@ -1,5 +1,6 @@
 import { useCopyClipboard } from '@sushiswap/hooks'
-import React, { FC } from 'react'
+import type React from 'react'
+import type { FC } from 'react'
 
 interface ClipboardControllerPayload {
   isCopied: boolean

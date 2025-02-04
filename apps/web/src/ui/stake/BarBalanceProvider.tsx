@@ -1,8 +1,14 @@
 'use client'
 
-import { FC, ReactNode, createContext, useContext, useMemo } from 'react'
+import {
+  type FC,
+  type ReactNode,
+  createContext,
+  useContext,
+  useMemo,
+} from 'react'
 import { ChainId } from 'sushi/chain'
-import { Amount, SUSHI, Type, XSUSHI } from 'sushi/currency'
+import { Amount, SUSHI, type Type, XSUSHI } from 'sushi/currency'
 import { useAccount } from 'wagmi'
 import { useAmountBalance } from '~evm/_common/ui/balance-provider/use-balance'
 

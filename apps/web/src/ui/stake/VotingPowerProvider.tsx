@@ -1,7 +1,13 @@
 'use client'
 
 import { useQuery } from '@tanstack/react-query'
-import { FC, ReactNode, createContext, useContext, useMemo } from 'react'
+import {
+  type FC,
+  type ReactNode,
+  createContext,
+  useContext,
+  useMemo,
+} from 'react'
 import {
   erc20Abi_balanceOf,
   erc20Abi_totalSupply,
@@ -13,7 +19,7 @@ import {
   Amount,
   SUSHI_ADDRESS,
   Token,
-  Type,
+  type Type,
   XSUSHI,
   XSUSHI_ADDRESS,
   tryParseAmount,

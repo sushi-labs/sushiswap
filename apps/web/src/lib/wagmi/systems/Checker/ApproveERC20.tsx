@@ -12,17 +12,17 @@ import {
   LinkExternal,
   classNames,
 } from '@sushiswap/ui'
-import { Button, ButtonProps } from '@sushiswap/ui'
+import { Button, type ButtonProps } from '@sushiswap/ui'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectPrimitive,
 } from '@sushiswap/ui'
-import { FC, useState } from 'react'
-import { Amount, Type } from 'sushi/currency'
+import { type FC, useState } from 'react'
+import type { Amount, Type } from 'sushi/currency'
 
-import { Address } from 'viem'
+import type { Address } from 'viem'
 import {
   ApprovalState,
   useTokenApproval,

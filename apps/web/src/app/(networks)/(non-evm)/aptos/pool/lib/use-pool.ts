@@ -1,7 +1,10 @@
 import { keepPreviousData, useQuery } from '@tanstack/react-query'
-import { SupportedNetwork, chains } from '~aptos/_common/config/chains'
+import { type SupportedNetwork, chains } from '~aptos/_common/config/chains'
 import { useNetwork } from '~aptos/_common/lib/common/use-network'
-import { AptosPool, convertPoolToSushiPool } from './convert-pool-to-sushi-pool'
+import {
+  type AptosPool,
+  convertPoolToSushiPool,
+} from './convert-pool-to-sushi-pool'
 
 interface GetPoolQueryFn {
   poolAddress: string

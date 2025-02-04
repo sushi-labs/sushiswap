@@ -1,7 +1,7 @@
 // If you want to use other PostCSS plugins, see the following:
 // https://tailwindcss.com/docs/using-with-preprocessors
 
-const path = require('path')
+const path = require('node:path')
 
 module.exports = {
   plugins: {

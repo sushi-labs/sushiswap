@@ -1,10 +1,10 @@
-import { V3Pool, getV3Pool } from '@sushiswap/graph-client/data-api'
+import { type V3Pool, getV3Pool } from '@sushiswap/graph-client/data-api'
 import { Container } from '@sushiswap/ui'
 import { unstable_cache } from 'next/cache'
 import { headers } from 'next/headers'
 import { notFound } from 'next/navigation'
 import { PoolHeader } from 'src/ui/pool/PoolHeader'
-import { ChainKey, EvmChainId } from 'sushi/chain'
+import { ChainKey, type EvmChainId } from 'sushi/chain'
 import { isSushiSwapV3ChainId } from 'sushi/config'
 import { isAddress } from 'viem'
 

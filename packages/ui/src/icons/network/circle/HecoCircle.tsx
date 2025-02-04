@@ -2,7 +2,7 @@ import * as React from 'react'
 
 import { HecoNaked } from '../naked/HecoNaked'
 
-import { IconComponent } from '../../../types'
+import type { IconComponent } from '../../../types'
 
 export const HecoCircle: IconComponent = (props) => (
   <HecoNaked

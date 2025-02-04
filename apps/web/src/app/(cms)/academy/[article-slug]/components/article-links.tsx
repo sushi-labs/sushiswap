@@ -4,7 +4,7 @@ import { EnvelopeIcon, LinkIcon } from '@heroicons/react/24/outline'
 import type { AcademyArticle } from '@sushiswap/graph-client/strapi'
 import { ClipboardController } from '@sushiswap/ui'
 import { TwitterIcon } from '@sushiswap/ui/icons/TwitterIcon'
-import { FC } from 'react'
+import type { FC } from 'react'
 import { getShareText } from 'src/app/(cms)/constants'
 
 interface ArticleLinks {

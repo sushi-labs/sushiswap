@@ -1,6 +1,6 @@
 import { classNames } from '@sushiswap/ui'
 import { useInView } from 'framer-motion'
-import { FC, ReactNode, useRef } from 'react'
+import { type FC, type ReactNode, useRef } from 'react'
 
 export const AnimatedTitle: FC<{ children: ReactNode; className?: string }> = ({
   children,

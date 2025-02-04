@@ -2,11 +2,11 @@
 
 import { useMemo } from 'react'
 import {
-  SushiSwapV3ChainId,
-  SushiSwapV3FeeAmount,
+  type SushiSwapV3ChainId,
+  type SushiSwapV3FeeAmount,
   TICK_SPACINGS,
 } from 'sushi/config'
-import { Type } from 'sushi/currency'
+import type { Type } from 'sushi/currency'
 import { tickToPrice } from 'sushi/pool/sushiswap-v3'
 
 import { useConcentratedLiquidityPool } from 'src/lib/wagmi/hooks/pools/hooks/useConcentratedLiquidityPool'

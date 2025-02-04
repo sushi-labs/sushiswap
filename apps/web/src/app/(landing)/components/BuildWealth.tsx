@@ -1,6 +1,6 @@
 import { Container } from '@sushiswap/ui'
 import Image from 'next/legacy/image'
-import React, { FC } from 'react'
+import React, { type FC } from 'react'
 
 import { ExpandableCard } from './ExpandableCard'
 

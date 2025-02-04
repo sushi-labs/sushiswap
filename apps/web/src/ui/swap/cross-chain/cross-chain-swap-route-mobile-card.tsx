@@ -1,11 +1,11 @@
 import { ClockIcon } from '@heroicons/react/24/outline'
 import { Card, SkeletonCircle, SkeletonText, classNames } from '@sushiswap/ui'
 import { GasIcon } from '@sushiswap/ui/icons/GasIcon'
-import React, { FC, useMemo } from 'react'
+import React, { type FC, useMemo } from 'react'
 import { getCrossChainFeesBreakdown } from 'src/lib/swap/cross-chain'
 import type {
-  CrossChainRoute as CrossChainRouteType,
   CrossChainRouteOrder,
+  CrossChainRoute as CrossChainRouteType,
 } from 'src/lib/swap/cross-chain/types'
 import { Amount } from 'sushi/currency'
 import { formatUSD } from 'sushi/format'
@@ -45,7 +45,7 @@ export const CrossChainSwapRouteMobileCard: FC<
       price && amountOut
         ? `${(
             (price * Number(amountOut.quotient)) /
-            10 ** amountOut.currency.decimals
+              10 ** amountOut.currency.decimals
           ).toFixed(2)}`
         : undefined,
     [amountOut, price],

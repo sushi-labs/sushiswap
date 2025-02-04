@@ -4,7 +4,7 @@ import {
   isSushiSwapV2ChainId,
   isSushiSwapV3ChainId,
 } from 'sushi/config'
-import { Native, Token } from 'sushi/currency'
+import { Native, type Token } from 'sushi/currency'
 import { Fee } from 'sushi/dex'
 import { chainId } from 'test/constants'
 import { createERC20 } from 'test/erc20'

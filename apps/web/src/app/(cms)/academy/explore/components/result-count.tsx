@@ -1,9 +1,9 @@
 'use client'
 
-import { getAcademyArticles } from '@sushiswap/graph-client/strapi'
+import type { getAcademyArticles } from '@sushiswap/graph-client/strapi'
 import { SkeletonText } from '@sushiswap/ui'
 import { useInfiniteQuery } from '@tanstack/react-query'
-import React from 'react'
+import type React from 'react'
 import { useAcademySearch } from '../../components/academy-search-provider'
 
 const Shell = ({ children }: { children: React.ReactNode }) => (

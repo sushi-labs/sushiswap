@@ -2,8 +2,8 @@
 
 import { useSlippageTolerance } from '@sushiswap/hooks'
 import {
-  FC,
-  ReactNode,
+  type FC,
+  type ReactNode,
   createContext,
   useCallback,
   useContext,
@@ -13,7 +13,7 @@ import {
 import { DEFAULT_SLIPPAGE } from 'sushi/config'
 import { getBaseTokensWithoutKey } from '~aptos/_common/lib/common/use-base-tokens'
 import { useNetwork } from '~aptos/_common/lib/common/use-network'
-import { Token } from '~aptos/_common/lib/types/token'
+import type { Token } from '~aptos/_common/lib/types/token'
 
 interface SimpleSwapProvider {
   children: ReactNode
@@ -92,7 +92,7 @@ export const SimpleSwapProvider: FC<SimpleSwapProvider> = ({ children }) => {
           slippageAmount:
             action.value -
             (action.value *
-              parseFloat(
+              Number.parseFloat(
                 slippageTolerance
                   ? slippageTolerance === 'AUTO'
                     ? DEFAULT_SLIPPAGE

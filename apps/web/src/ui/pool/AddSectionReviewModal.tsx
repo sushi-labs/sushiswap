@@ -1,9 +1,9 @@
 import { Button, List } from '@sushiswap/ui'
 import { Currency } from '@sushiswap/ui'
-import { FC, useMemo } from 'react'
+import { type FC, useMemo } from 'react'
 import { useTokenAmountDollarValues } from 'src/lib/hooks'
-import { BentoBoxChainId } from 'sushi/config'
-import { Amount, Price, Type } from 'sushi/currency'
+import type { BentoBoxChainId } from 'sushi/config'
+import { type Amount, Price, type Type } from 'sushi/currency'
 import { formatUSD } from 'sushi/format'
 
 import { Rate } from './Rate'

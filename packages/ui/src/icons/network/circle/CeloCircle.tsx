@@ -2,7 +2,7 @@ import * as React from 'react'
 
 import { CeloNaked } from '../naked/CeloNaked'
 
-import { IconComponent } from '../../../types'
+import type { IconComponent } from '../../../types'
 
 export const CeloCircle: IconComponent = (props) => (
   <CeloNaked

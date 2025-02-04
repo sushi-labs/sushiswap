@@ -8,7 +8,7 @@ import {
   CardLabel,
   CardTitle,
 } from '@sushiswap/ui'
-import { FC } from 'react'
+import type { FC } from 'react'
 
 export const PoolRewards: FC<{
   isFarm: boolean
