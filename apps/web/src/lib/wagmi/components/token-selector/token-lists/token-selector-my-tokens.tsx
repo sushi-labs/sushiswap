@@ -1,4 +1,4 @@
-import { TokenListChainId } from '@sushiswap/graph-client/data-api'
+import type { TokenListChainId } from '@sushiswap/graph-client/data-api'
 import { List } from '@sushiswap/ui'
 import type { Type } from 'sushi/currency'
 import { useAccount } from 'wagmi'

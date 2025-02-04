@@ -8,8 +8,9 @@ import {
   HoverCardTrigger,
 } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui'
-import React, { FC, useEffect, useMemo, useState } from 'react'
-import { UseTradeReturn } from 'src/lib/hooks/react-query'
+import type React from 'react'
+import { type FC, useEffect, useMemo, useState } from 'react'
+import type { UseTradeReturn } from 'src/lib/hooks/react-query'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
 import {
   ROUTE_PROCESSOR_5_ADDRESS,

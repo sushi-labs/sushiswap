@@ -1,7 +1,7 @@
 'use client'
 
-import Image, { ImageProps } from 'next/image'
-import { FC } from 'react'
+import Image, { type ImageProps } from 'next/image'
+import type { FC } from 'react'
 import { cloudinaryImageLoader } from '../cloudinary'
 
 type CloudinaryImage = Omit<ImageProps, 'loader'>

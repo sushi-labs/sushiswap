@@ -3,11 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "description": "Sushi Tailwind Config",
-  "keywords": [
-    "sushi",
-    "tailwindcss",
-    "config"
-  ],
+  "keywords": ["sushi", "tailwindcss", "config"],
   "homepage": "https://www.sushi.com",
   "repository": {
     "type": "git",
@@ -20,9 +16,7 @@
   "main": "index.js",
   "source": "index.js",
   "types": "index.d.ts",
-  "files": [
-    "index.js"
-  ],
+  "files": ["index.js"],
   "dependencies": {
     "@tailwindcss/aspect-ratio": "0.4.2",
     "@tailwindcss/forms": "0.5.3",

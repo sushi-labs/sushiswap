@@ -1,16 +1,16 @@
 import { ChartBarIcon, InboxIcon, StopIcon } from '@heroicons/react-v1/solid'
 import { SkeletonBox } from '@sushiswap/ui'
 import { format } from 'd3'
-import React, { FC, ReactNode, useCallback, useMemo } from 'react'
+import React, { type FC, type ReactNode, useCallback, useMemo } from 'react'
 import { Bound } from 'src/lib/constants'
-import { SushiSwapV3ChainId, SushiSwapV3FeeAmount } from 'sushi/config'
-import { Price, Token, Type } from 'sushi/currency'
+import { type SushiSwapV3ChainId, SushiSwapV3FeeAmount } from 'sushi/config'
+import type { Price, Token, Type } from 'sushi/currency'
 import { getPriceRangeWithTokenRatio } from 'sushi/pool/sushiswap-v3'
 import colors from 'tailwindcss/colors'
 
 import { Chart } from './Chart'
 import { useDensityChartData } from './hooks'
-import { HandleType, ZoomLevels } from './types'
+import type { HandleType, ZoomLevels } from './types'
 
 const brushKeyToFieldKey: Record<HandleType, 'LOWER' | 'UPPER'> = {
   e: 'LOWER',
@@ -147,8 +147,8 @@ export default function LiquidityChartRangeInput({
 
     return leftPrice && rightPrice
       ? [
-          parseFloat(leftPrice?.toSignificant(6)),
-          parseFloat(rightPrice?.toSignificant(6)),
+          Number.parseFloat(leftPrice?.toSignificant(6)),
+          Number.parseFloat(rightPrice?.toSignificant(6)),
         ]
       : undefined
   }, [isSorted, priceLower, priceUpper])

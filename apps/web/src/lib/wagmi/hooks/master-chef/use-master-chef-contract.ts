@@ -2,13 +2,13 @@
 
 import { useMemo } from 'react'
 import { ChefType } from 'sushi'
-import { ChainId } from 'sushi/chain'
+import type { ChainId } from 'sushi/chain'
 import {
   MASTERCHEF_ADDRESS,
   MASTERCHEF_V2_ADDRESS,
   MINICHEF_ADDRESS,
 } from 'sushi/config'
-import { Address } from 'viem'
+import type { Address } from 'viem'
 
 export const _getMasterChefContractConfig = (
   chainId: keyof typeof MASTERCHEF_ADDRESS,

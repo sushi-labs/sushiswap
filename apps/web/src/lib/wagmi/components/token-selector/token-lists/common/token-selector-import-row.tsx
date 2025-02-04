@@ -17,10 +17,10 @@ import {
 import { Button } from '@sushiswap/ui'
 import { Currency } from '@sushiswap/ui'
 import { List } from '@sushiswap/ui'
-import { FC, useCallback, useState } from 'react'
+import { type FC, useCallback, useState } from 'react'
 import { useTokenSecurity } from 'src/lib/hooks/react-query'
 import { EvmChain } from 'sushi/chain'
-import { Token } from 'sushi/currency'
+import type { Token } from 'sushi/currency'
 import { shortenAddress } from 'sushi/format'
 
 import { isTokenSecurityChainId } from 'sushi/config'

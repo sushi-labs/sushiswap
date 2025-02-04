@@ -2,13 +2,13 @@
 
 import { useIsMounted } from '@sushiswap/hooks'
 import { Collapsible, Explainer, SkeletonBox, classNames } from '@sushiswap/ui'
-import React, { FC } from 'react'
+import React, { type FC } from 'react'
 import { AddressToEnsResolver } from 'src/lib/wagmi/components/account/AddressToEnsResolver'
 import { ChainId, EvmChain } from 'sushi/chain'
 import { Native } from 'sushi/currency'
 import { shortenAddress } from 'sushi/format'
 import { ZERO } from 'sushi/math'
-import { Address, isAddress } from 'viem'
+import { type Address, isAddress } from 'viem'
 import { useAccount } from 'wagmi'
 import {
   warningSeverity,

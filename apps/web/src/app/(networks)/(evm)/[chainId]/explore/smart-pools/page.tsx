@@ -1,5 +1,5 @@
 import {
-  SmartPoolChainId,
+  type SmartPoolChainId,
   SmartPoolChainIds,
   getSmartPools,
   isSmartPoolChainId,
@@ -7,14 +7,14 @@ import {
 import { Container } from '@sushiswap/ui'
 import { unstable_cache } from 'next/cache'
 import { notFound } from 'next/navigation'
-import React, { FC, Suspense } from 'react'
+import React, { type FC, Suspense } from 'react'
 import { SmartPoolsTable } from 'src/ui/pool/SmartPoolsTable'
 import { TableFiltersFarmsOnly } from 'src/ui/pool/TableFiltersFarmsOnly'
 import { TableFiltersNetwork } from 'src/ui/pool/TableFiltersNetwork'
 import { TableFiltersPoolType } from 'src/ui/pool/TableFiltersPoolType'
 import { TableFiltersResetButton } from 'src/ui/pool/TableFiltersResetButton'
 import { TableFiltersSearchToken } from 'src/ui/pool/TableFiltersSearchToken'
-import { ChainId } from 'sushi/chain'
+import type { ChainId } from 'sushi/chain'
 
 const _SmartPoolsTable: FC<{ chainId: SmartPoolChainId }> = async ({
   chainId,

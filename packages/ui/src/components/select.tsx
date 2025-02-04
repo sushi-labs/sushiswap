@@ -4,7 +4,7 @@ import { CheckIcon, ChevronDownIcon } from '@heroicons/react/24/outline'
 import * as SelectPrimitive from '@radix-ui/react-select'
 import classNames from 'classnames'
 import * as React from 'react'
-import { FC } from 'react'
+import type { FC } from 'react'
 
 import { textFieldVariants } from './text-field'
 

@@ -2,7 +2,7 @@ import { type VariantProps, cva } from 'class-variance-authority'
 import * as React from 'react'
 
 import classNames from 'classnames'
-import { IconComponent } from '../types'
+import type { IconComponent } from '../types'
 import { buttonIconVariants } from './button'
 
 const inputRegex = /^\d*(?:\\[.])?\d*$/ // match escaped "." characters via in a non-capturing group

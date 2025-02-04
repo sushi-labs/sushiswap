@@ -1,11 +1,17 @@
 'use client'
 
-import { VaultV1 } from '@sushiswap/graph-client/data-api'
+import type { VaultV1 } from '@sushiswap/graph-client/data-api'
 import { SlippageToleranceStorageKey } from '@sushiswap/hooks'
 import { createToast } from '@sushiswap/notifications'
 import { ZapEventName, sendAnalyticsEvent } from '@sushiswap/telemetry'
 import { Button, Dots } from '@sushiswap/ui'
-import React, { FC, useCallback, useEffect, useMemo, useState } from 'react'
+import React, {
+  type FC,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react'
 import { APPROVE_TAG_ZAP_STEER, NativeAddress } from 'src/lib/constants'
 import { useZap } from 'src/lib/hooks'
 import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
@@ -18,9 +24,9 @@ import {
 } from 'src/lib/wagmi/systems/Checker/Provider'
 import { ZapInfoCard } from 'src/ui/pool/ZapInfoCard'
 import { defaultCurrency, isWNativeSupported } from 'sushi/config'
-import { Amount, Type, tryParseAmount } from 'sushi/currency'
+import { Amount, type Type, tryParseAmount } from 'sushi/currency'
 import { Percent } from 'sushi/math'
-import { SendTransactionReturnType } from 'viem'
+import type { SendTransactionReturnType } from 'viem'
 import {
   useAccount,
   useEstimateGas,
@@ -156,20 +162,18 @@ const _SteerPositionZap: FC<SteerPositionZapProps> = ({
       })
 
       const receipt = await promise
-      {
-        if (receipt.status === 'success') {
-          sendAnalyticsEvent(ZapEventName.ZAP_TRANSACTION_COMPLETED, {
-            txHash: hash,
-            from: receipt.from,
-            chain_id: vault.chainId,
-          })
-        } else {
-          sendAnalyticsEvent(ZapEventName.ZAP_TRANSACTION_FAILED, {
-            txHash: hash,
-            from: receipt.from,
-            chain_id: vault.chainId,
-          })
-        }
+      if (receipt.status === 'success') {
+        sendAnalyticsEvent(ZapEventName.ZAP_TRANSACTION_COMPLETED, {
+          txHash: hash,
+          from: receipt.from,
+          chain_id: vault.chainId,
+        })
+      } else {
+        sendAnalyticsEvent(ZapEventName.ZAP_TRANSACTION_FAILED, {
+          txHash: hash,
+          from: receipt.from,
+          chain_id: vault.chainId,
+        })
       }
     },
     [refetchBalances, client, chain, address, vault],

@@ -1,5 +1,5 @@
-import { ChainId, ChainKey, EvmChain } from 'sushi/chain'
-import { NonStandardChain, NonStandardChainId } from '../config'
+import { type ChainId, ChainKey, EvmChain } from 'sushi/chain'
+import { NonStandardChain, type NonStandardChainId } from '../config'
 
 export const getNetworkName = (network: ChainId | NonStandardChainId) => {
   return typeof network === 'number'

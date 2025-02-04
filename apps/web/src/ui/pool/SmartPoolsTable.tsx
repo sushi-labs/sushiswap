@@ -8,7 +8,7 @@ import {
   MinusIcon,
   PlusIcon,
 } from '@heroicons/react/24/outline'
-import { SmartPoolsV1 } from '@sushiswap/graph-client/data-api'
+import type { SmartPoolsV1 } from '@sushiswap/graph-client/data-api'
 import {
   Badge,
   Button,
@@ -36,14 +36,14 @@ import {
   classNames,
 } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
-import {
+import type {
   ColumnDef,
   PaginationState,
   SortingState,
   TableState,
 } from '@tanstack/react-table'
 import Link from 'next/link'
-import React, { FC, useMemo, useState } from 'react'
+import React, { type FC, useMemo, useState } from 'react'
 import { ChainKey } from 'sushi/chain'
 import { isMerklChainId } from 'sushi/config'
 import { Native, Token, unwrapToken } from 'sushi/currency'

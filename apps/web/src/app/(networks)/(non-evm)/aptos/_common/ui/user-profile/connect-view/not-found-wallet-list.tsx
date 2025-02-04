@@ -1,4 +1,4 @@
-import { Wallet } from '@aptos-labs/wallet-adapter-core'
+import type { Wallet } from '@aptos-labs/wallet-adapter-core'
 import { LinkExternal } from '@sushiswap/ui'
 import React from 'react'
 import { useNetwork } from '~aptos/_common/lib/common/use-network'

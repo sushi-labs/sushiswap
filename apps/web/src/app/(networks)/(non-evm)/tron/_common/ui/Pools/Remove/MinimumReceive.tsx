@@ -93,7 +93,7 @@ export const MinimumReceive = () => {
     if (!amountToken1) return ''
     const output = Number(amountToken1) * (1 - slippage)
     return output.toString()
-  }, [slippageTolerance, amountToken1, slippage])
+  }, [amountToken1, slippage])
 
   useEffect(() => {
     if (minAmountToken1) {

@@ -1,7 +1,7 @@
 import { isPromiseFulfilled } from 'sushi'
 import {
   EXTRACTOR_SUPPORTED_CHAIN_IDS,
-  ExtractorSupportedChainId,
+  type ExtractorSupportedChainId,
 } from 'sushi/config'
 
 export async function getAllPrices() {

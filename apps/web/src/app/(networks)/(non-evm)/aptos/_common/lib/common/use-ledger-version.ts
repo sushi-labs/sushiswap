@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import { SupportedNetwork } from '~aptos/_common/config/chains'
+import type { SupportedNetwork } from '~aptos/_common/config/chains'
 import { useNetwork } from './use-network'
 
 type UseLedgerVersion = { secondsAgo: number; network: SupportedNetwork }

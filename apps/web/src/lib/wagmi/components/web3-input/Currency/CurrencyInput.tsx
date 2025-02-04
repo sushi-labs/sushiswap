@@ -14,16 +14,16 @@ import { Currency } from '@sushiswap/ui'
 import { SkeletonBox } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import {
-  FC,
+  type FC,
   useCallback,
   useEffect,
   useMemo,
   useState,
   useTransition,
 } from 'react'
-import { EvmChain, EvmChainId } from 'sushi/chain'
-import { Token, Type, tryParseAmount } from 'sushi/currency'
-import { Percent } from 'sushi/math'
+import { EvmChain, type EvmChainId } from 'sushi/chain'
+import { type Token, type Type, tryParseAmount } from 'sushi/currency'
+import type { Percent } from 'sushi/math'
 import { useAccount } from 'wagmi'
 import { useAmountBalance } from '~evm/_common/ui/balance-provider/use-balance'
 import { usePrice } from '~evm/_common/ui/price-provider/price-provider/use-price'
@@ -303,16 +303,14 @@ const CurrencyInput: FC<CurrencyInputProps> = ({
             {currency ? (
               <>
                 {!hideIcon && (
-                  <>
-                    <div className="w-[28px] h-[28px] mr-0.5">
-                      <Currency.Icon
-                        disableLink
-                        currency={currency}
-                        width={28}
-                        height={28}
-                      />
-                    </div>
-                  </>
+                  <div className="w-[28px] h-[28px] mr-0.5">
+                    <Currency.Icon
+                      disableLink
+                      currency={currency}
+                      width={28}
+                      height={28}
+                    />
+                  </div>
                 )}
                 {currency.symbol}
               </>

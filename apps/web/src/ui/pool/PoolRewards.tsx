@@ -1,6 +1,6 @@
 'use client'
 
-import { V2Pool } from '@sushiswap/graph-client/data-api'
+import type { V2Pool } from '@sushiswap/graph-client/data-api'
 import {
   Card,
   CardContent,
@@ -11,7 +11,7 @@ import {
   CardLabel,
   CardTitle,
 } from '@sushiswap/ui'
-import { FC } from 'react'
+import type { FC } from 'react'
 import { incentiveRewardToToken } from 'src/lib/functions'
 import { tryParseAmount } from 'sushi/currency'
 

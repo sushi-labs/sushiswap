@@ -1,7 +1,7 @@
 'use client'
 
-import { Button, ButtonProps } from '@sushiswap/ui'
-import { FC } from 'react'
+import { Button, type ButtonProps } from '@sushiswap/ui'
+import type { FC } from 'react'
 import { useAccount } from 'wagmi'
 
 import { Dots } from '@sushiswap/ui'

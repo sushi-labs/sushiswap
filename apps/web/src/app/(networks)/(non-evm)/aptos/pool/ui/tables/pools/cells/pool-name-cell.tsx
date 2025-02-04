@@ -1,13 +1,13 @@
 import { Badge, TooltipContent } from '@sushiswap/ui'
 import { Tooltip, TooltipProvider, TooltipTrigger } from '@sushiswap/ui'
 import { AptosCircle } from '@sushiswap/ui/icons/network/circle/AptosCircle'
-import React, { FC } from 'react'
+import React, { type FC } from 'react'
 // import { ProtocolBadge } from 'src/ui/pool/PoolNameCell'
 import { formatNumber } from 'sushi'
 import { CurrencyIcon } from '~aptos/_common/ui/currency/currency-icon'
 import { CurrencyIconList } from '~aptos/_common/ui/currency/currency-icon-list'
-import { TopPool } from '~aptos/pool/lib/use-top-pools'
-import { Row } from '../../types'
+import type { TopPool } from '~aptos/pool/lib/use-top-pools'
+import type { Row } from '../../types'
 
 export const PoolNameCell: FC<Row<TopPool>> = ({ row }) => {
   return (

@@ -7,7 +7,12 @@ import { classNames } from '@sushiswap/ui'
 import { IconButton } from '@sushiswap/ui'
 import { Switch } from '@sushiswap/ui'
 import { useTheme } from 'next-themes'
-import React, { Dispatch, FC, Fragment, SetStateAction } from 'react'
+import React, {
+  type Dispatch,
+  type FC,
+  Fragment,
+  type SetStateAction,
+} from 'react'
 import { PortfolioView } from '.'
 
 interface PortfolioSettingsViewProps {

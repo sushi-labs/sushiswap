@@ -1,7 +1,7 @@
 import { SkeletonText } from '@sushiswap/ui'
 import { formatPercent } from 'sushi/format'
 import { usePoolOwnership } from '~tron/_common/lib/hooks/usePoolOwnership'
-import { IPositionRowData } from './PositionsTable'
+import type { IPositionRowData } from './PositionsTable'
 
 export const PositionSizeCell = ({ data }: { data: IPositionRowData }) => {
   const { pairAddress } = data

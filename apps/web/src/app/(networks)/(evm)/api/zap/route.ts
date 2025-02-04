@@ -1,5 +1,5 @@
-import { NextRequest } from 'next/server'
-import { ZapSupportedChainId, isZapSupportedChainId } from 'src/config'
+import type { NextRequest } from 'next/server'
+import { type ZapSupportedChainId, isZapSupportedChainId } from 'src/config'
 import { TOKEN_CHOMPER_ADDRESS, isTokenChomperChainId } from 'sushi/config'
 import { getAddress } from 'viem/utils'
 import { z } from 'zod'

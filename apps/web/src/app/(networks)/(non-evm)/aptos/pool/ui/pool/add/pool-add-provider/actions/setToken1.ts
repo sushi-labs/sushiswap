@@ -1,4 +1,4 @@
-import { Actions, State } from '../types'
+import type { Actions, State } from '../types'
 import { swapTokens } from './swapTokens'
 
 export function setToken1(state: State, action: Actions): State {

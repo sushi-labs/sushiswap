@@ -1,12 +1,12 @@
 'use client'
 
-import { TTLStorageKey } from '@sushiswap/hooks'
+import type { TTLStorageKey } from '@sushiswap/hooks'
 import { createErrorToast } from '@sushiswap/notifications'
 import { useCallback, useMemo, useState } from 'react'
 import { eip2612Abi_nonces } from 'sushi/abi'
-import { EvmChainId } from 'sushi/chain'
-import { Amount, Type } from 'sushi/currency'
-import { Address, UserRejectedRequestError, hexToSignature } from 'viem'
+import type { EvmChainId } from 'sushi/chain'
+import type { Amount, Type } from 'sushi/currency'
+import { type Address, UserRejectedRequestError, hexToSignature } from 'viem'
 import { useAccount, useReadContract, useSignTypedData } from 'wagmi'
 import {
   useApprovedActions,

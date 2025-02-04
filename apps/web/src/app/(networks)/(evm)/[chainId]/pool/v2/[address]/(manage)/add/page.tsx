@@ -1,10 +1,10 @@
-import { V2Pool, getV2Pool } from '@sushiswap/graph-client/data-api'
+import { type V2Pool, getV2Pool } from '@sushiswap/graph-client/data-api'
 import { unstable_cache } from 'next/cache'
 import { notFound } from 'next/navigation'
 import { PoolPositionProvider } from 'src/ui/pool'
 import { ManageV2LiquidityCard } from 'src/ui/pool/ManageV2LiquidityCard'
 import { PoolPosition } from 'src/ui/pool/PoolPosition'
-import { EvmChainId } from 'sushi/chain'
+import type { EvmChainId } from 'sushi/chain'
 import { isSushiSwapV2ChainId } from 'sushi/config'
 import { isAddress } from 'viem'
 

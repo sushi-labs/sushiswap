@@ -1,5 +1,5 @@
 import { classNames } from '@sushiswap/ui'
-import React from 'react'
+import type React from 'react'
 import { QueryClientProvider } from 'src/providers/query-client-provider'
 import { WagmiProvider } from 'src/providers/wagmi-provider'
 import { BalanceProvider } from '~evm/_common/ui/balance-provider/balance-provider'

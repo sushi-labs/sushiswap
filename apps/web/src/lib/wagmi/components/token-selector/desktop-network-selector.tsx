@@ -11,9 +11,9 @@ import {
   classNames,
 } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
-import { FC, useCallback } from 'react'
+import { type FC, useCallback } from 'react'
 import { getNetworkName } from 'src/lib/network'
-import { ChainId } from 'sushi/chain'
+import type { ChainId } from 'sushi/chain'
 import { useAccount } from 'wagmi'
 
 interface DesktopNetworkSelector {

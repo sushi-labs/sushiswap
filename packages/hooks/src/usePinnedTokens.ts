@@ -1,8 +1,8 @@
 'use client'
 
 import { useCallback, useMemo } from 'react'
-import { ID } from 'sushi'
-import { type Currency } from 'sushi/currency'
+import type { ID } from 'sushi'
+import type { Currency } from 'sushi/currency'
 import { getAddress as _getAddress, isAddress } from 'viem/utils'
 import { useLocalStorage } from './useLocalStorage'
 

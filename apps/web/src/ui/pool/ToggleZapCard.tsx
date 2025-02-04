@@ -6,7 +6,7 @@ import {
   CardTitle,
   Switch,
 } from '@sushiswap/ui'
-import { FC, useCallback } from 'react'
+import { type FC, useCallback } from 'react'
 
 interface ToggleZapCardProps {
   checked: boolean

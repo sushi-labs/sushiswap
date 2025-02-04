@@ -13,7 +13,7 @@ import { ShuffleIcon } from '@sushiswap/ui/icons/ShuffleIcon'
 import Link from 'next/link'
 import { useParams } from 'next/navigation'
 import { isTwapSupportedChainId, isXSwapSupportedChainId } from 'src/config'
-import { ChainKey, EvmChainId } from 'sushi/chain'
+import { ChainKey, type EvmChainId } from 'sushi/chain'
 import { PathnameButton } from '../pathname-button'
 
 export const SwapModeButtons = () => {

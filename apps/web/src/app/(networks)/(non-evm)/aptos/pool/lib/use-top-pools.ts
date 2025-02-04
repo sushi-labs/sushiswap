@@ -1,12 +1,12 @@
 import {
-  TopNonEvmPools,
+  type TopNonEvmPools,
   getTopNonEvmPools,
 } from '@sushiswap/graph-client/data-api'
 import { useQuery } from '@tanstack/react-query'
 import { useMemo } from 'react'
 import { NonStandardChainId } from 'src/config'
 import { tokenlists } from '~aptos/_common/config/tokenlists'
-import { Token } from '~aptos/_common/lib/types/token'
+import type { Token } from '~aptos/_common/lib/types/token'
 
 interface UseTopPools {
   enabled?: boolean

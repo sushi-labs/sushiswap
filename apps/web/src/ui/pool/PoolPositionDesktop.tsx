@@ -1,8 +1,8 @@
 import { CardCurrencyAmountItem, CardGroup, CardLabel } from '@sushiswap/ui'
-import { FC } from 'react'
+import type { FC } from 'react'
 import { formatUSD } from 'sushi/format'
 
-import { V2Pool } from '@sushiswap/graph-client/data-api'
+import type { V2Pool } from '@sushiswap/graph-client/data-api'
 import { usePoolPosition } from './PoolPositionProvider'
 
 interface PoolPositionProps {

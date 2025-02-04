@@ -2,7 +2,7 @@ import * as React from 'react'
 
 import { ZetaChainNaked } from '../naked/ZetaChainNaked'
 
-import { IconComponent } from '../../../types'
+import type { IconComponent } from '../../../types'
 
 export const ZetaChainCircle: IconComponent = (props) => (
   <ZetaChainNaked

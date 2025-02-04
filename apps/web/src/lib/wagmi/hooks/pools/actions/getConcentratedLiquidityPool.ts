@@ -1,16 +1,16 @@
 import { readContracts } from '@wagmi/core/actions'
 import {
   SUSHISWAP_V3_FACTORY_ADDRESS,
-  SushiSwapV3ChainId,
-  SushiSwapV3FeeAmount,
+  type SushiSwapV3ChainId,
+  type SushiSwapV3FeeAmount,
 } from 'sushi/config'
-import { Token, Type } from 'sushi/currency'
+import type { Token, Type } from 'sushi/currency'
 import {
   SushiSwapV3Pool,
   computeSushiSwapV3PoolAddress,
 } from 'sushi/pool/sushiswap-v3'
-import { Address } from 'viem'
-import { PublicWagmiConfig } from '../../../config/public'
+import type { Address } from 'viem'
+import type { PublicWagmiConfig } from '../../../config/public'
 
 export const getConcentratedLiquidityPools = async ({
   chainId,

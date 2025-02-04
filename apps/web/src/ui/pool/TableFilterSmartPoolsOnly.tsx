@@ -1,7 +1,7 @@
 'use client'
 
 import { Toggle } from '@sushiswap/ui'
-import React, { FC, useCallback, useState, useTransition } from 'react'
+import React, { type FC, useCallback, useState, useTransition } from 'react'
 
 import { usePoolFilters, useSetPoolFilters } from './PoolsFiltersProvider'
 

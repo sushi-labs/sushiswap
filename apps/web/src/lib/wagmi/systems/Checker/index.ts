@@ -1,22 +1,22 @@
-import { ButtonProps } from '@sushiswap/ui'
-import { ComponentType, FC } from 'react'
+import type { ButtonProps } from '@sushiswap/ui'
+import type { ComponentType, FC } from 'react'
 
-import { Amounts, AmountsProps } from './Amounts'
-import { ApproveERC20, ApproveERC20Props } from './ApproveERC20'
+import { Amounts, type AmountsProps } from './Amounts'
+import { ApproveERC20, type ApproveERC20Props } from './ApproveERC20'
 import {
   ApproveERC20Multiple,
-  ApproveERC20MultipleProps,
+  type ApproveERC20MultipleProps,
 } from './ApproveERC20Multiple'
 import {
   ApproveERC20WithPermit,
-  ApproveERC20WithPermitProps,
+  type ApproveERC20WithPermitProps,
 } from './ApproveERC20WithPermit'
 import { Connect } from './Connect'
-import { Custom, CustomProps } from './Custom'
-import { Guard, GuardProps } from './Guard'
-import { Network, NetworkProps } from './Network'
-import { CheckerProvider as Root, ProviderProps } from './Provider'
-import { Success, SuccessProps } from './Success'
+import { Custom, type CustomProps } from './Custom'
+import { Guard, type GuardProps } from './Guard'
+import { Network, type NetworkProps } from './Network'
+import { type ProviderProps, CheckerProvider as Root } from './Provider'
+import { Success, type SuccessProps } from './Success'
 
 export type CheckerProps = {
   Amounts: ComponentType<AmountsProps>

@@ -1,4 +1,4 @@
-import { MetadataRoute } from 'next'
+import type { MetadataRoute } from 'next'
 import { CHAIN_IDS } from 'src/config'
 import { getNetworkKey } from 'src/lib/network'
 

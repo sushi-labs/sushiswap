@@ -1,4 +1,4 @@
-import { SushiSwapProtocol } from 'sushi'
+import type { SushiSwapProtocol } from 'sushi'
 import { SUSHI_DATA_API_HOST as PROD_SUSHI_DATA_API_HOST } from 'sushi/config/subgraph'
 
 export const SUSHI_DATA_API_HOST =

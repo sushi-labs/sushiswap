@@ -3,11 +3,11 @@
 import { createErrorToast, createToast } from '@sushiswap/notifications'
 import { useCallback, useMemo, useState } from 'react'
 import { erc20Abi_approve } from 'sushi/abi'
-import { Token } from 'sushi/currency'
-import { Address, UserRejectedRequestError } from 'viem'
+import type { Token } from 'sushi/currency'
+import { type Address, UserRejectedRequestError } from 'viem'
 import { usePublicClient, useSimulateContract, useWriteContract } from 'wagmi'
-import { SendTransactionReturnType } from 'wagmi/actions'
-import { ERC20ApproveABI, ERC20ApproveArgs } from './types'
+import type { SendTransactionReturnType } from 'wagmi/actions'
+import type { ERC20ApproveABI, ERC20ApproveArgs } from './types'
 
 interface UseTokenRevokeApproval {
   account: Address | undefined

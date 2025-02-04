@@ -2,7 +2,7 @@ import React from 'react'
 
 import { HaqqNaked } from '../naked/HaqqNaked'
 
-import { IconComponent } from '../../../types'
+import type { IconComponent } from '../../../types'
 
 export const HaqqCircle: IconComponent = (props) => {
   return (

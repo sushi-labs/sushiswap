@@ -1,7 +1,7 @@
 // Button.stories.ts|tsx
 
 import type { Meta, StoryObj } from '@storybook/react'
-import { Message, MessageProps } from '@sushiswap/ui'
+import { Message, type MessageProps } from '@sushiswap/ui'
 import * as React from 'react'
 
 import { ViewGroup } from '../components/View'

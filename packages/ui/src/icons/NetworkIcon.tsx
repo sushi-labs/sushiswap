@@ -1,6 +1,6 @@
-import React, { FC, useMemo } from 'react'
+import React, { type FC, useMemo } from 'react'
 
-import { IconProps } from '../types'
+import type { IconProps } from '../types'
 import { NETWORK_CIRCLE_ICON, NETWORK_NAKED_ICON } from './network'
 
 interface Props extends IconProps {

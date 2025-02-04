@@ -1,5 +1,5 @@
 import { FACTORY_CONTRACT } from '~tron/_common/constants/contracts'
-import { IPoolDataResponse } from '~tron/_common/types/get-pools-type'
+import type { IPoolDataResponse } from '~tron/_common/types/get-pools-type'
 
 export const getAllPairAddresses = async () => {
   try {

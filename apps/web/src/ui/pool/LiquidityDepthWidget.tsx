@@ -1,10 +1,10 @@
 'use client'
 
 import { SkeletonBox } from '@sushiswap/ui'
-import React, { FC, useMemo } from 'react'
+import React, { type FC, useMemo } from 'react'
 import { Bound } from 'src/lib/constants'
 import { useConcentratedLiquidityPoolStats } from 'src/lib/hooks/react-query'
-import { SushiSwapV3ChainId } from 'sushi/config'
+import type { SushiSwapV3ChainId } from 'sushi/config'
 import type { Address } from 'viem'
 import { useConcentratedDerivedMintInfo } from './ConcentratedLiquidityProvider'
 import LiquidityChartRangeInput from './LiquidityChartRangeInput'
@@ -45,7 +45,9 @@ export const LiquidityDepthWidget: FC<LiquidityDepthWidget> = ({
   const current = useMemo(() => {
     if (!price) return null
 
-    return parseFloat((invertPrice ? price.invert() : price)?.toSignificant(8))
+    return Number.parseFloat(
+      (invertPrice ? price.invert() : price)?.toSignificant(8),
+    )
   }, [invertPrice, price])
 
   return (
@@ -60,7 +62,7 @@ export const LiquidityDepthWidget: FC<LiquidityDepthWidget> = ({
           ticksAtLimit={{ [Bound.LOWER]: false, [Bound.UPPER]: false }}
           price={
             price
-              ? parseFloat(
+              ? Number.parseFloat(
                   (invertPrice ? price.invert() : price).toSignificant(8),
                 )
               : undefined

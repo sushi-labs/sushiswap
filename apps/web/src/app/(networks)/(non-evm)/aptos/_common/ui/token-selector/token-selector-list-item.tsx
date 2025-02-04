@@ -1,9 +1,9 @@
 import { CheckCircleIcon } from '@heroicons/react/20/solid'
 import { Badge, classNames } from '@sushiswap/ui'
-import React, { CSSProperties } from 'react'
+import React, { type CSSProperties } from 'react'
 import { formatNumberWithDecimals } from '~aptos/_common/lib/common/format-number-with-decimals'
-import { TokenWithBalance } from '~aptos/_common/lib/common/use-sorted-token-list'
-import { Token } from '~aptos/_common/lib/types/token'
+import type { TokenWithBalance } from '~aptos/_common/lib/common/use-sorted-token-list'
+import type { Token } from '~aptos/_common/lib/types/token'
 import { CurrencyIcon } from '../currency/currency-icon'
 
 type TokenListItem = {

@@ -2,7 +2,7 @@ import * as React from 'react'
 
 import { PolygonZKNaked } from '../naked/PolygonZKNaked'
 
-import { IconComponent } from '../../../types'
+import type { IconComponent } from '../../../types'
 
 export const PolygonZKCircle: IconComponent = (props) => (
   <PolygonZKNaked

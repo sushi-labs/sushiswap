@@ -1,8 +1,8 @@
 import { keepPreviousData, useQuery } from '@tanstack/react-query'
-import { SupportedNetwork, chains } from '~aptos/_common/config/chains'
+import { type SupportedNetwork, chains } from '~aptos/_common/config/chains'
 import { useNetwork } from '~aptos/_common/lib/common/use-network'
 import {
-  AptosPool,
+  type AptosPool,
   convertPoolToSushiPool,
 } from '~aptos/pool/lib/convert-pool-to-sushi-pool'
 

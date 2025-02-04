@@ -1,13 +1,13 @@
 import { useWallet } from '@aptos-labs/wallet-adapter-react'
 import { Transition } from '@headlessui/react'
 import { Button, Dots } from '@sushiswap/ui'
-import { FC, Fragment, useState } from 'react'
+import { type FC, Fragment, useState } from 'react'
 import { networkNameToNetwork } from '~aptos/_common/config/chains'
 import { AptosSDK } from '~aptos/_common/lib/common/aptos-sdk'
 import { useNetwork } from '~aptos/_common/lib/common/use-network'
-import { Token } from '~aptos/_common/lib/types/token'
+import type { Token } from '~aptos/_common/lib/types/token'
 import { createToast } from '~aptos/_common/ui/toast'
-import { Pool } from '~aptos/pool/lib/convert-pool-to-sushi-pool'
+import type { Pool } from '~aptos/pool/lib/convert-pool-to-sushi-pool'
 import { AddSectionStakeWidget } from './AddSectionStakeWidget'
 
 interface AddSectionStakeProps {
@@ -96,7 +96,9 @@ const _AddSectionStake: FC<AddSectionStakeProps> = ({
       const response = await signAndSubmitTransaction({
         data: {
           typeArguments: [`${swapContract}::swap::LPToken<${pool.id}>`],
-          functionArguments: [parseInt(String(Number(value) * 10 ** decimals))],
+          functionArguments: [
+            Number.parseInt(String(Number(value) * 10 ** decimals)),
+          ],
           function: `${masterchefContract}::masterchef::deposit`,
         },
       })

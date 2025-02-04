@@ -1,7 +1,7 @@
 import { InformationCircleIcon } from '@heroicons/react/20/solid'
-import { TTLStorageKey, useTTL } from '@sushiswap/hooks'
+import { type TTLStorageKey, useTTL } from '@sushiswap/hooks'
 import classNames from 'classnames'
-import React, { FC, useCallback } from 'react'
+import React, { type FC, useCallback } from 'react'
 
 import { CardDescription, CardHeader, CardTitle } from '../card'
 import {

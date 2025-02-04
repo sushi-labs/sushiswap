@@ -1,7 +1,7 @@
 import { CardGroup } from '@sushiswap/ui'
-import { FC } from 'react'
+import type { FC } from 'react'
 import { formatUSD } from 'sushi/format'
-import { Pool } from '~aptos/pool/lib/convert-pool-to-sushi-pool'
+import type { Pool } from '~aptos/pool/lib/convert-pool-to-sushi-pool'
 import { useTokensFromPool } from '~aptos/pool/lib/use-tokens-from-pool'
 import { CardCurrencyAmountItem } from '../../CardCurrencyAmountItem'
 

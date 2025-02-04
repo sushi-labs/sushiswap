@@ -9,7 +9,7 @@ import {
   typographyVariants,
 } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui'
-import { FC } from 'react'
+import type { FC } from 'react'
 import { networkNameToNetwork } from '~aptos/_common/config/chains'
 import { useNetwork } from '~aptos/_common/lib/common/use-network'
 import { CurrencyIcon } from '~aptos/_common/ui/currency/currency-icon'

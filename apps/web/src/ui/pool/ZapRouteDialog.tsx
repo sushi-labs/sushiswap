@@ -1,4 +1,4 @@
-import { SteerVault } from '@sushiswap/steer-sdk'
+import type { SteerVault } from '@sushiswap/steer-sdk'
 import {
   Currency,
   Dialog,
@@ -7,8 +7,8 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@sushiswap/ui'
-import { FC, ReactNode, useMemo } from 'react'
-import { Token, Type } from 'sushi/currency'
+import { type FC, type ReactNode, useMemo } from 'react'
+import { Token, type Type } from 'sushi/currency'
 import { formatPercent } from 'sushi/format'
 import { SushiSwapV2Pool } from 'sushi/pool'
 

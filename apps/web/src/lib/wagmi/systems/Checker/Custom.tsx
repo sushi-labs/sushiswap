@@ -1,5 +1,5 @@
-import { Button, ButtonProps } from '@sushiswap/ui'
-import React, { FC } from 'react'
+import { Button, type ButtonProps } from '@sushiswap/ui'
+import React, { type FC } from 'react'
 
 interface CustomProps extends ButtonProps {
   showChildren?: boolean

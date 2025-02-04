@@ -1,7 +1,7 @@
-import { ChainId } from 'sushi/chain'
-import { Amount, Native, Token, Type } from 'sushi/currency'
+import type { ChainId } from 'sushi/chain'
+import { Amount, Native, Token, type Type } from 'sushi/currency'
 import { zeroAddress } from 'viem'
-import { CrossChainStep } from './types'
+import type { CrossChainStep } from './types'
 
 export const getCrossChainStepBreakdown = (step?: CrossChainStep) => {
   if (!step)

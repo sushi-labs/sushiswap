@@ -2,11 +2,11 @@
 
 import { Cog6ToothIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import {
-  SlippageToleranceStorageKey,
-  TTLStorageKey,
+  type SlippageToleranceStorageKey,
+  type TTLStorageKey,
   useSlippageTolerance,
 } from '@sushiswap/hooks'
-import React, { FC, ReactNode, useState } from 'react'
+import React, { type FC, type ReactNode, useState } from 'react'
 
 import { DEFAULT_SLIPPAGE } from 'sushi/config'
 import { Button } from '../button'

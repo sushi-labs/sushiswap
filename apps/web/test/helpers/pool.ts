@@ -1,16 +1,16 @@
-import { Page, expect } from '@playwright/test'
-import { NextFixture } from 'next/experimental/testmode/playwright'
+import { type Page, expect } from '@playwright/test'
+import type { NextFixture } from 'next/experimental/testmode/playwright'
 import { isZapSupportedChainId } from 'src/config'
 import { NativeAddress } from 'src/lib/constants'
-import { EvmChainId } from 'sushi'
+import type { EvmChainId } from 'sushi'
 import {
   SUSHISWAP_V2_FACTORY_ADDRESS,
   SUSHISWAP_V3_FACTORY_ADDRESS,
-  SushiSwapV2ChainId,
-  SushiSwapV3ChainId,
+  type SushiSwapV2ChainId,
+  type SushiSwapV3ChainId,
   SushiSwapV3FeeAmount,
 } from 'sushi/config'
-import { Native, Token, Type } from 'sushi/currency'
+import { Native, type Token, type Type } from 'sushi/currency'
 import {
   computeSushiSwapV2PoolAddress,
   computeSushiSwapV3PoolAddress,

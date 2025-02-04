@@ -1,11 +1,11 @@
 import { SkeletonCircle, SkeletonText } from '@sushiswap/ui'
-import { ColumnDef } from '@tanstack/react-table'
+import type { ColumnDef } from '@tanstack/react-table'
 import { ICON_SIZE } from '~tron/_common/constants/icon-size'
 import { PositionAprCell } from './PositionAprCell'
 import { PositionNameCell } from './PositionNameCell'
 import { PositionSizeCell } from './PositionSizeCell'
 import { PositionValueCell } from './PositionValueCell'
-import { IPositionRowData } from './PositionsTable'
+import type { IPositionRowData } from './PositionsTable'
 
 export const POSITION_NAME_COLUMN: ColumnDef<IPositionRowData, unknown> = {
   id: 'name',

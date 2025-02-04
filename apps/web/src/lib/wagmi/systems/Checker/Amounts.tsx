@@ -1,9 +1,9 @@
 'use client'
 
-import { Button, ButtonProps } from '@sushiswap/ui'
-import { FC, useMemo } from 'react'
-import { EvmChainId } from 'sushi/chain'
-import { Amount, Type } from 'sushi/currency'
+import { Button, type ButtonProps } from '@sushiswap/ui'
+import { type FC, useMemo } from 'react'
+import type { EvmChainId } from 'sushi/chain'
+import type { Amount, Type } from 'sushi/currency'
 import { ZERO } from 'sushi/math'
 import { useAmountBalances } from '~evm/_common/ui/balance-provider/use-balances'
 

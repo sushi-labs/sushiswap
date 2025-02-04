@@ -3,7 +3,7 @@ import * as React from 'react'
 import { GnosisNaked } from '../naked/GnosisNaked'
 
 import classNames from 'classnames'
-import { IconComponent } from '../../../types'
+import type { IconComponent } from '../../../types'
 
 export const GnosisCircle: IconComponent = (props) => (
   <GnosisNaked

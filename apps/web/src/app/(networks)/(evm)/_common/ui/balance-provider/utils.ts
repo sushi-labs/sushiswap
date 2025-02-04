@@ -1,6 +1,6 @@
 import { getChainIdAddressFromId } from 'sushi'
 import { STALE_TIME, STALE_WHILE_REVALIDATE } from './config'
-import { Balance, TokenId } from './types'
+import type { Balance, TokenId } from './types'
 
 export function getTokenIds(tokenIds: TokenId | TokenId[]) {
   const array = Array.isArray(tokenIds) ? tokenIds : [tokenIds]

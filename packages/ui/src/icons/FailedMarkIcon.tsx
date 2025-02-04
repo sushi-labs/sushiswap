@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { IconComponent } from '../types'
+import type { IconComponent } from '../types'
 
 export const FailedMarkIcon: IconComponent = (props) => {
   return (

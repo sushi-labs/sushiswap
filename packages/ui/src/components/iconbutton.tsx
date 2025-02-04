@@ -2,8 +2,8 @@ import { Slot } from '@radix-ui/react-slot'
 import { type VariantProps, cva } from 'class-variance-authority'
 import * as React from 'react'
 
-import { IconComponent } from '../types'
-import { buttonIconVariants, buttonVariants } from './button'
+import type { IconComponent } from '../types'
+import { buttonIconVariants, type buttonVariants } from './button'
 import {
   Tooltip,
   TooltipContent,

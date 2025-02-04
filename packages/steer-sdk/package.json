@@ -3,10 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "description": "Sushi Steer SDK",
-  "keywords": [
-    "sushi",
-    "steer"
-  ],
+  "keywords": ["sushi", "steer"],
   "repository": {
     "type": "git",
     "url": "https://github.com/sushiswap/sushiswap.git",
@@ -33,18 +30,12 @@
   "types": "./dist/index.d.ts",
   "typesVersions": {
     "*": {
-      ".": [
-        "src/index"
-      ],
-      "abi": [
-        "src/abi/index"
-      ]
+      ".": ["src/index"],
+      "abi": ["src/abi/index"]
     }
   },
   "typings": "dist/index.d.ts",
-  "files": [
-    "dist/**"
-  ],
+  "files": ["dist/**"],
   "scripts": {
     "build": "tsc",
     "check": "tsc --pretty --noEmit",

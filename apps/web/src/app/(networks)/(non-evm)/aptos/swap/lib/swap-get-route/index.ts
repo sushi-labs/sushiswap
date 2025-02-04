@@ -1,10 +1,10 @@
-import { SupportedNetwork, chains } from '~aptos/_common/config/chains'
-import { Token } from '~aptos/_common/lib/types/token'
-import { Pool } from '~aptos/pool/lib/convert-pool-to-sushi-pool'
-import { PoolReserve } from '~aptos/pool/lib/use-pools-reserves'
+import { type SupportedNetwork, chains } from '~aptos/_common/config/chains'
+import type { Token } from '~aptos/_common/lib/types/token'
+import type { Pool } from '~aptos/pool/lib/convert-pool-to-sushi-pool'
+import type { PoolReserve } from '~aptos/pool/lib/use-pools-reserves'
 import { baseTokens } from '../swap-base-tokens'
 import { getBestRouteWithWorker } from './get-best-route'
-import { PoolInfo, Vertex } from './types'
+import type { PoolInfo, Vertex } from './types'
 
 interface GetSwapRoute {
   amountIn?: number

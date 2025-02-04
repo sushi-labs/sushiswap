@@ -1,10 +1,10 @@
 import { ArrowDownIcon, Square2StackIcon } from '@heroicons/react/24/outline'
-import { PortfolioTransaction } from '@sushiswap/graph-client/data-api'
+import type { PortfolioTransaction } from '@sushiswap/graph-client/data-api'
 import { ClipboardController, FormattedNumber, IconButton } from '@sushiswap/ui'
 import { format, fromUnixTime } from 'date-fns'
-import { FC } from 'react'
+import type { FC } from 'react'
 import React from 'react'
-import { EvmChain, EvmChainId } from 'sushi/chain'
+import { EvmChain, type EvmChainId } from 'sushi/chain'
 import { shortenHash } from 'sushi/format'
 import { PortfolioInfoRow } from '../PortfolioInfoRow'
 

@@ -1,8 +1,8 @@
 'use client'
 
 import {
-  GetSmartPools,
-  SmartPoolsV1,
+  type GetSmartPools,
+  type SmartPoolsV1,
   getSmartPools,
 } from '@sushiswap/graph-client/data-api'
 import { useQuery } from '@tanstack/react-query'

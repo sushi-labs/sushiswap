@@ -16,7 +16,7 @@ import {
 import { Amount, Native, Price, type Type } from 'sushi/currency'
 import { Fraction, Percent, ZERO } from 'sushi/math'
 import { isLsd, isStable, isWrapOrUnwrap } from 'sushi/router'
-import { Address, stringify, zeroAddress } from 'viem'
+import { type Address, stringify, zeroAddress } from 'viem'
 import { usePrices } from '~evm/_common/ui/price-provider/price-provider/use-prices'
 import { apiAdapter02To01 } from './apiAdapter'
 import type { UseTradeParams, UseTradeQuerySelect } from './types'

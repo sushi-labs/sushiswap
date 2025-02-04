@@ -1,6 +1,10 @@
 'use client'
 
-import { GetV3Pool, V3Pool, getV3Pool } from '@sushiswap/graph-client/data-api'
+import {
+  type GetV3Pool,
+  type V3Pool,
+  getV3Pool,
+} from '@sushiswap/graph-client/data-api'
 import { useQuery } from '@tanstack/react-query'
 
 export const useV3Pool = (params: Partial<GetV3Pool>, shouldFetch = true) => {

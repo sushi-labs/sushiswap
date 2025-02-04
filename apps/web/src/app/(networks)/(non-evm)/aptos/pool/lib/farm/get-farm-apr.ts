@@ -8,7 +8,7 @@ export default function getFarmApr(
 ) {
   const yearlyCakeRewardAllocation = poolWeight
     ? poolWeight * regularCakePerSecond
-    : NaN
+    : Number.NaN
   const cakeRewardsApr =
     ((yearlyCakeRewardAllocation * cakePriceUsd) / poolLiquidityUsd) * 100
   let cakeRewardsAprAsNumber: null | number = null

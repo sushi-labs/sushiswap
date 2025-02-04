@@ -101,29 +101,31 @@ const TableCell = React.forwardRef<
 ))
 TableCell.displayName = 'TableCell'
 
-interface TableCellAsLink extends React.TdHTMLAttributes<HTMLTableCellElement> {
+interface TableCellAsLinkProps
+  extends React.TdHTMLAttributes<HTMLTableCellElement> {
   href: string
   external: boolean
 }
 
-const TableCellAsLink = React.forwardRef<HTMLTableCellElement, TableCellAsLink>(
-  ({ external, className, children, href, ...props }, ref) => (
-    <td className="!p-0 h-[76px]" ref={ref} {...props}>
-      <Link
-        scroll={false}
-        shallow={true}
-        href={href}
-        target={external ? '_blank' : '_self'}
-        className={classNames(
-          'flex items-center text-sm font-medium p-4 align-middle [&:has([role=checkbox])]:pr-0',
-          className,
-        )}
-      >
-        {children}
-      </Link>
-    </td>
-  ),
-)
+const TableCellAsLink = React.forwardRef<
+  HTMLTableCellElement,
+  TableCellAsLinkProps
+>(({ external, className, children, href, ...props }, ref) => (
+  <td className="!p-0 h-[76px]" ref={ref} {...props}>
+    <Link
+      scroll={false}
+      shallow={true}
+      href={href}
+      target={external ? '_blank' : '_self'}
+      className={classNames(
+        'flex items-center text-sm font-medium p-4 align-middle [&:has([role=checkbox])]:pr-0',
+        className,
+      )}
+    >
+      {children}
+    </Link>
+  </td>
+))
 TableCellAsLink.displayName = 'TableCellAsLink'
 
 const TableCaption = React.forwardRef<

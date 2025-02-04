@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import React from 'react'
+import type React from 'react'
 import { SanctionedAddressDialog } from 'src/lib/wagmi/components/sanctioned-address-dialog'
 import { Providers } from './providers'
 

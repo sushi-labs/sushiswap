@@ -1,9 +1,9 @@
 import { useQuery } from '@tanstack/react-query'
 import ms from 'ms'
-import { ChainId, LowercaseMap } from 'sushi'
+import { type ChainId, LowercaseMap } from 'sushi'
 import { withoutScientificNotation } from 'sushi/format'
 import { Fraction } from 'sushi/math'
-import { Address, parseUnits } from 'viem'
+import { type Address, parseUnits } from 'viem'
 
 const hydrate = (data: Record<Address, number>) => {
   const chainPriceMap = new Map<ChainId, LowercaseMap<Address, Fraction>>()
@@ -24,7 +24,7 @@ const hydrate = (data: Record<Address, number>) => {
       }
     })
 
-    chainPriceMap.set(parseInt(chainId) as ChainId, priceMap)
+    chainPriceMap.set(Number.parseInt(chainId) as ChainId, priceMap)
   })
 
   return chainPriceMap

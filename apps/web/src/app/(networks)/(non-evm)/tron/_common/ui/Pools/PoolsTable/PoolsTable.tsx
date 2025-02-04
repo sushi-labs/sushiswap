@@ -7,10 +7,10 @@ import {
   DataTable,
   SkeletonText,
 } from '@sushiswap/ui'
-import { ColumnDef, SortingState, TableState } from '@tanstack/react-table'
+import type { ColumnDef, SortingState, TableState } from '@tanstack/react-table'
 import React, { useCallback, useMemo, useState } from 'react'
 import { usePoolFilters } from 'src/ui/pool'
-import { TopPool, useTopPools } from '~tron/_common/lib/hooks/useTopPools'
+import { type TopPool, useTopPools } from '~tron/_common/lib/hooks/useTopPools'
 import {
   APR_COLUMN,
   FEES_1D_COLUMN,

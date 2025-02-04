@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
-import { EvmChainId } from 'sushi/chain'
-import { Type } from 'sushi/currency'
-import { Address, zeroAddress } from 'viem'
+import type { EvmChainId } from 'sushi/chain'
+import type { Type } from 'sushi/currency'
+import { type Address, zeroAddress } from 'viem'
 
 import { serialize, useBalance, useConfig } from 'wagmi'
 import { useWatchByInterval } from '../watch/useWatchByInterval'

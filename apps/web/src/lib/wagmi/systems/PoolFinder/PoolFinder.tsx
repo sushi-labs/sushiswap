@@ -1,8 +1,8 @@
 import {
   Children,
-  FC,
-  ReactElement,
-  ReactNode,
+  type FC,
+  type ReactElement,
+  type ReactNode,
   cloneElement,
   isValidElement,
   useMemo,
@@ -12,7 +12,7 @@ import {
 import { SushiSwapV2PoolState } from '../../hooks/pools/hooks/useSushiSwapV2Pools'
 import { ComponentsWrapper } from './ComponentsWrapper'
 import { SushiSwapV2Pool } from './SushiSwapV2Pool'
-import {
+import type {
   ComponentsWrapperProps,
   PoolExistenceStateAction,
   PoolStateUnion,

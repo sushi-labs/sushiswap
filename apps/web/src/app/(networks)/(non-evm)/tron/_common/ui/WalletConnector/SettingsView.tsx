@@ -5,9 +5,10 @@ import { List } from '@sushiswap/ui'
 import { IconButton } from '@sushiswap/ui'
 import { classNames } from '@sushiswap/ui'
 import { useTheme } from 'next-themes'
-import React, { FC, Fragment } from 'react'
+import type React from 'react'
+import { type FC, Fragment } from 'react'
 // import { type } from '../../../../../../../../../packages/graph-client/src/subgraphs/strapi/index'
-import { IProfileView } from './WalletConnector'
+import type { IProfileView } from './WalletConnector'
 
 type SettingsViewProps = {
   setView: React.Dispatch<React.SetStateAction<IProfileView>>

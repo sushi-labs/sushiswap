@@ -1,9 +1,9 @@
-import { EstimateGasErrorType, EstimateGasReturnType } from '@wagmi/core'
+import type { EstimateGasErrorType, EstimateGasReturnType } from '@wagmi/core'
 import { useEffect, useMemo, useRef } from 'react'
-import { UseTradeReturn } from 'src/lib/hooks/react-query'
+import type { UseTradeReturn } from 'src/lib/hooks/react-query'
 import { useDerivedStateSimpleSwap } from 'src/ui/swap/simple/derivedstate-simple-swap-provider'
 import { isRouteProcessor5ChainId } from 'sushi/config'
-import { Hex, RawContractError } from 'viem'
+import type { Hex, RawContractError } from 'viem'
 import { useAccount, useEstimateGas } from 'wagmi'
 import { getTokenTax } from '../swap/getTokenTax'
 

@@ -3,7 +3,7 @@
 import { LinkInternal } from '@sushiswap/ui'
 import { useSearchParams } from 'next/navigation'
 import { PathnameButton } from 'src/ui/pathname-button'
-import { ChainId, ChainKey } from 'sushi/chain'
+import { type ChainId, ChainKey } from 'sushi/chain'
 
 export function NavigationItems({ chainId }: { chainId: ChainId }) {
   const searchParams = useSearchParams()

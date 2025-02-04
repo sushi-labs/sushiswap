@@ -1,4 +1,4 @@
-import { Token } from '~aptos/_common/lib/types/token'
+import type { Token } from '~aptos/_common/lib/types/token'
 const alwaysTrue = () => true
 
 export function createTokenFilterFunction<T extends Token>(

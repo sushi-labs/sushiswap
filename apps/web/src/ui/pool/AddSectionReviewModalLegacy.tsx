@@ -23,7 +23,7 @@ import {
 } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui'
 import { Dots } from '@sushiswap/ui'
-import { FC, ReactNode, useCallback, useMemo } from 'react'
+import { type FC, type ReactNode, useCallback, useMemo } from 'react'
 import { APPROVE_TAG_ADD_LEGACY } from 'src/lib/constants'
 import { NativeAddress } from 'src/lib/constants'
 import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
@@ -36,17 +36,17 @@ import {
 import { useApproved } from 'src/lib/wagmi/systems/Checker/Provider'
 import { gasMargin, slippageAmount } from 'sushi/calculate'
 import { ChainKey } from 'sushi/chain'
-import { SushiSwapV2ChainId } from 'sushi/config'
-import { BentoBoxChainId } from 'sushi/config'
-import { Amount, Type } from 'sushi/currency'
+import type { SushiSwapV2ChainId } from 'sushi/config'
+import type { BentoBoxChainId } from 'sushi/config'
+import { Amount, type Type } from 'sushi/currency'
 import { ZERO } from 'sushi/math'
 import {
-  Address,
-  SendTransactionReturnType,
+  type Address,
+  type SendTransactionReturnType,
   UserRejectedRequestError,
 } from 'viem'
 import {
-  UseSimulateContractParameters,
+  type UseSimulateContractParameters,
   usePublicClient,
   useWriteContract,
 } from 'wagmi'
@@ -292,223 +292,224 @@ interface AddSectionReviewModalLegacyProps {
   onSuccess: () => void
 }
 
-export const AddSectionReviewModalLegacy: FC<AddSectionReviewModalLegacyProps> =
-  ({
-    poolAddress,
-    poolState,
+export const AddSectionReviewModalLegacy: FC<
+  AddSectionReviewModalLegacyProps
+> = ({
+  poolAddress,
+  poolState,
+  chainId,
+  token0,
+  token1,
+  input0,
+  input1,
+  children,
+  onSuccess: _onSuccess,
+}) => {
+  const { data: deadline } = useTransactionDeadline({
+    storageKey: TTLStorageKey.AddLiquidity,
     chainId,
+  })
+  const { address } = useAccount()
+  const { approved } = useApproved(APPROVE_TAG_ADD_LEGACY)
+  const [slippageTolerance] = useSlippageTolerance(
+    SlippageToleranceStorageKey.AddLiquidity,
+  )
+  const client = usePublicClient()
+  const trace = useTrace()
+
+  const { refetchChain: refetchBalances } = useRefetchBalances()
+
+  const onSuccess = useCallback(
+    (hash: SendTransactionReturnType) => {
+      _onSuccess()
+
+      if (!token0 || !token1) return
+
+      sendAnalyticsEvent(LiquidityEventName.REMOVE_LIQUIDITY_SUBMITTED, {
+        chain_id: chainId,
+        txHash: hash,
+        address,
+        source: LiquiditySource.V2,
+        label: [token0.symbol, token1.symbol].join('/'),
+        token0_address: token0.isNative ? NativeAddress : token0.address,
+        token0_amount: input0?.quotient,
+        token1_address: token1.isNative ? NativeAddress : token1.address,
+        token1_amount: input1?.quotient,
+        create_pool: poolState === SushiSwapV2PoolState.NOT_EXISTS,
+        ...trace,
+      })
+
+      const receipt = client.waitForTransactionReceipt({ hash })
+      receipt.then(() => {
+        refetchBalances(chainId)
+      })
+
+      const ts = new Date().getTime()
+      void createToast({
+        account: address,
+        type: 'mint',
+        chainId,
+        txHash: hash,
+        promise: receipt,
+        summary: {
+          pending: `Adding liquidity to the ${token0.symbol}/${token1.symbol} pair`,
+          completed: `Successfully added liquidity to the ${token0.symbol}/${token1.symbol} pair`,
+          failed: 'Something went wrong when adding liquidity',
+        },
+        timestamp: ts,
+        groupTimestamp: ts,
+      })
+    },
+    [
+      refetchBalances,
+      client,
+      chainId,
+      token0,
+      token1,
+      address,
+      _onSuccess,
+      trace,
+      poolState,
+      input0,
+      input1,
+    ],
+  )
+
+  const onError = useCallback((e: Error) => {
+    if (!(e.cause instanceof UserRejectedRequestError)) {
+      createErrorToast(e?.message, true)
+    }
+  }, [])
+
+  const [minAmount0, minAmount1] = useMemo(() => {
+    return [
+      input0
+        ? poolState === SushiSwapV2PoolState.NOT_EXISTS
+          ? input0
+          : Amount.fromRawAmount(
+              input0.currency,
+              slippageAmount(input0, slippageTolerance)[0],
+            )
+        : undefined,
+      input1
+        ? poolState === SushiSwapV2PoolState.NOT_EXISTS
+          ? input1
+          : Amount.fromRawAmount(
+              input1.currency,
+              slippageAmount(input1, slippageTolerance)[0],
+            )
+        : undefined,
+    ]
+  }, [poolState, input0, input1, slippageTolerance])
+
+  const writeWithNative = useWriteWithNative({
     token0,
     token1,
+    chainId,
     input0,
     input1,
-    children,
-    onSuccess: _onSuccess,
-  }) => {
-    const { data: deadline } = useTransactionDeadline({
-      storageKey: TTLStorageKey.AddLiquidity,
-      chainId,
-    })
-    const { address } = useAccount()
-    const { approved } = useApproved(APPROVE_TAG_ADD_LEGACY)
-    const [slippageTolerance] = useSlippageTolerance(
-      SlippageToleranceStorageKey.AddLiquidity,
-    )
-    const client = usePublicClient()
-    const trace = useTrace()
+    address,
+    minAmount0,
+    minAmount1,
+    deadline,
+    mutation: {
+      onSuccess,
+      onError,
+    },
+  })
 
-    const { refetchChain: refetchBalances } = useRefetchBalances()
+  const writeWithoutNative = useWriteWithoutNative({
+    token0,
+    token1,
+    chainId,
+    input0,
+    input1,
+    address,
+    minAmount0,
+    minAmount1,
+    deadline,
+    mutation: {
+      onSuccess,
+      onError,
+    },
+  })
 
-    const onSuccess = useCallback(
-      (hash: SendTransactionReturnType) => {
-        _onSuccess()
+  // check shouldn't be necessary
+  const write = writeWithNative.write || writeWithoutNative.write
+  const data = writeWithNative.data || writeWithoutNative.data
+  const isWritePending =
+    writeWithNative.isPending || writeWithoutNative.isPending
 
-        if (!token0 || !token1) return
+  const { status } = useWaitForTransactionReceipt({ chainId, hash: data })
 
-        sendAnalyticsEvent(LiquidityEventName.REMOVE_LIQUIDITY_SUBMITTED, {
-          chain_id: chainId,
-          txHash: hash,
-          address,
-          source: LiquiditySource.V2,
-          label: [token0.symbol, token1.symbol].join('/'),
-          token0_address: token0.isNative ? NativeAddress : token0.address,
-          token0_amount: input0?.quotient,
-          token1_address: token1.isNative ? NativeAddress : token1.address,
-          token1_amount: input1?.quotient,
-          create_pool: poolState === SushiSwapV2PoolState.NOT_EXISTS,
-          ...trace,
-        })
-
-        const receipt = client.waitForTransactionReceipt({ hash })
-        receipt.then(() => {
-          refetchBalances(chainId)
-        })
-
-        const ts = new Date().getTime()
-        void createToast({
-          account: address,
-          type: 'mint',
-          chainId,
-          txHash: hash,
-          promise: receipt,
-          summary: {
-            pending: `Adding liquidity to the ${token0.symbol}/${token1.symbol} pair`,
-            completed: `Successfully added liquidity to the ${token0.symbol}/${token1.symbol} pair`,
-            failed: 'Something went wrong when adding liquidity',
-          },
-          timestamp: ts,
-          groupTimestamp: ts,
-        })
-      },
-      [
-        refetchBalances,
-        client,
-        chainId,
-        token0,
-        token1,
-        address,
-        _onSuccess,
-        trace,
-        poolState,
-        input0,
-        input1,
-      ],
-    )
-
-    const onError = useCallback((e: Error) => {
-      if (!(e.cause instanceof UserRejectedRequestError)) {
-        createErrorToast(e?.message, true)
-      }
-    }, [])
-
-    const [minAmount0, minAmount1] = useMemo(() => {
-      return [
-        input0
-          ? poolState === SushiSwapV2PoolState.NOT_EXISTS
-            ? input0
-            : Amount.fromRawAmount(
-                input0.currency,
-                slippageAmount(input0, slippageTolerance)[0],
-              )
-          : undefined,
-        input1
-          ? poolState === SushiSwapV2PoolState.NOT_EXISTS
-            ? input1
-            : Amount.fromRawAmount(
-                input1.currency,
-                slippageAmount(input1, slippageTolerance)[0],
-              )
-          : undefined,
-      ]
-    }, [poolState, input0, input1, slippageTolerance])
-
-    const writeWithNative = useWriteWithNative({
-      token0,
-      token1,
-      chainId,
-      input0,
-      input1,
-      address,
-      minAmount0,
-      minAmount1,
-      deadline,
-      mutation: {
-        onSuccess,
-        onError,
-      },
-    })
-
-    const writeWithoutNative = useWriteWithoutNative({
-      token0,
-      token1,
-      chainId,
-      input0,
-      input1,
-      address,
-      minAmount0,
-      minAmount1,
-      deadline,
-      mutation: {
-        onSuccess,
-        onError,
-      },
-    })
-
-    // check shouldn't be necessary
-    const write = writeWithNative.write || writeWithoutNative.write
-    const data = writeWithNative.data || writeWithoutNative.data
-    const isWritePending =
-      writeWithNative.isPending || writeWithoutNative.isPending
-
-    const { status } = useWaitForTransactionReceipt({ chainId, hash: data })
-
-    return (
-      <DialogProvider>
-        <DialogReview>
-          {({ confirm }) => (
-            <>
-              <DialogTrigger asChild>{children}</DialogTrigger>
-              <DialogContent>
-                <div className="flex justify-between">
-                  <DialogHeader>
-                    <DialogTitle>Add liquidity</DialogTitle>
-                    <DialogDescription>
-                      Please review your entered details.
-                    </DialogDescription>
-                  </DialogHeader>
-                  <SettingsOverlay
-                    options={{
-                      slippageTolerance: {
-                        storageKey: SlippageToleranceStorageKey.AddLiquidity,
-                        title: 'Add Liquidity Slippage',
-                      },
-                      transactionDeadline: {
-                        storageKey: TTLStorageKey.AddLiquidity,
-                        defaultValue: getDefaultTTL(chainId).toString(),
-                      },
-                    }}
-                    modules={[
-                      SettingsModule.SlippageTolerance,
-                      SettingsModule.TransactionDeadline,
-                    ]}
-                  >
-                    <IconButton
-                      name="Settings"
-                      icon={Cog6ToothIcon}
-                      variant="secondary"
-                      className="mr-12"
-                    />
-                  </SettingsOverlay>
-                </div>
-                <AddSectionReviewModal
-                  chainId={chainId as BentoBoxChainId}
-                  input0={input0}
-                  input1={input1}
-                />
-                <DialogFooter>
-                  <Button
-                    size="xl"
-                    disabled={isWritePending || !approved || !write}
-                    loading={Boolean(!write)}
-                    fullWidth
-                    onClick={() => write?.(confirm)}
-                    testId="confirm-add-v2-liquidity"
-                  >
-                    {isWritePending ? <Dots>Confirm transaction</Dots> : 'Add'}
-                  </Button>
-                </DialogFooter>
-              </DialogContent>
-            </>
-          )}
-        </DialogReview>
-        <DialogConfirm
-          chainId={chainId}
-          status={status}
-          testId="incentivize-confirmation-modal"
-          successMessage="Successfully added liquidity"
-          buttonText="Go to pool"
-          buttonLink={`/${ChainKey[chainId]}/pool/v2/${poolAddress}`}
-          txHash={data}
-        />
-      </DialogProvider>
-    )
-  }
+  return (
+    <DialogProvider>
+      <DialogReview>
+        {({ confirm }) => (
+          <>
+            <DialogTrigger asChild>{children}</DialogTrigger>
+            <DialogContent>
+              <div className="flex justify-between">
+                <DialogHeader>
+                  <DialogTitle>Add liquidity</DialogTitle>
+                  <DialogDescription>
+                    Please review your entered details.
+                  </DialogDescription>
+                </DialogHeader>
+                <SettingsOverlay
+                  options={{
+                    slippageTolerance: {
+                      storageKey: SlippageToleranceStorageKey.AddLiquidity,
+                      title: 'Add Liquidity Slippage',
+                    },
+                    transactionDeadline: {
+                      storageKey: TTLStorageKey.AddLiquidity,
+                      defaultValue: getDefaultTTL(chainId).toString(),
+                    },
+                  }}
+                  modules={[
+                    SettingsModule.SlippageTolerance,
+                    SettingsModule.TransactionDeadline,
+                  ]}
+                >
+                  <IconButton
+                    name="Settings"
+                    icon={Cog6ToothIcon}
+                    variant="secondary"
+                    className="mr-12"
+                  />
+                </SettingsOverlay>
+              </div>
+              <AddSectionReviewModal
+                chainId={chainId as BentoBoxChainId}
+                input0={input0}
+                input1={input1}
+              />
+              <DialogFooter>
+                <Button
+                  size="xl"
+                  disabled={isWritePending || !approved || !write}
+                  loading={Boolean(!write)}
+                  fullWidth
+                  onClick={() => write?.(confirm)}
+                  testId="confirm-add-v2-liquidity"
+                >
+                  {isWritePending ? <Dots>Confirm transaction</Dots> : 'Add'}
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </>
+        )}
+      </DialogReview>
+      <DialogConfirm
+        chainId={chainId}
+        status={status}
+        testId="incentivize-confirmation-modal"
+        successMessage="Successfully added liquidity"
+        buttonText="Go to pool"
+        buttonLink={`/${ChainKey[chainId]}/pool/v2/${poolAddress}`}
+        txHash={data}
+      />
+    </DialogProvider>
+  )
+}

@@ -1,7 +1,7 @@
 import { isSmartPoolChainId } from '@sushiswap/graph-client/data-api'
 import { LinkInternal } from '@sushiswap/ui'
 import { PathnameButton } from 'src/ui/pathname-button'
-import { ChainId, ChainKey } from 'sushi/chain'
+import { type ChainId, ChainKey } from 'sushi/chain'
 
 export function NavigationItems({ chainId }: { chainId: ChainId }) {
   return (

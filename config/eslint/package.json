@@ -3,11 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "description": "Sushi Config",
-  "keywords": [
-    "sushi",
-    "config",
-    "eslint"
-  ],
+  "keywords": ["sushi", "config", "eslint"],
   "license": "MIT",
   "author": "Matthew Lilley <hello@matthewLilley.com>",
   "sideEffects": false,

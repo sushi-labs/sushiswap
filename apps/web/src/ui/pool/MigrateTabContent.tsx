@@ -7,8 +7,8 @@ import {
   Carousel,
   Container,
 } from '@sushiswap/ui'
-import React, { FC } from 'react'
-import { SushiSwapV2ChainId, isSushiSwapV3ChainId } from 'sushi/config'
+import React, { type FC } from 'react'
+import { type SushiSwapV2ChainId, isSushiSwapV3ChainId } from 'sushi/config'
 
 import { useIsMounted } from '@sushiswap/hooks'
 import { ConnectButton } from 'src/lib/wagmi/components/connect-button'

@@ -1,6 +1,6 @@
-import { QueryKey, useQueryClient } from '@tanstack/react-query'
+import { type QueryKey, useQueryClient } from '@tanstack/react-query'
 import { useEffect, useMemo } from 'react'
-import { EvmChainId } from 'sushi/chain'
+import type { EvmChainId } from 'sushi/chain'
 import { useBlockNumber } from 'wagmi'
 
 type UseWatchByBlockKey = {

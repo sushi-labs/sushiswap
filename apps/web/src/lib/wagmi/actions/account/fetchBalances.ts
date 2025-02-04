@@ -1,6 +1,6 @@
-import { Config, readContracts } from '@wagmi/core'
-import { ChainId } from 'sushi/chain'
-import { Address, erc20Abi } from 'viem'
+import { type Config, readContracts } from '@wagmi/core'
+import type { ChainId } from 'sushi/chain'
+import { type Address, erc20Abi } from 'viem'
 
 export async function fetchBalances(
   args: { token: string; user: string; chainId: ChainId }[],

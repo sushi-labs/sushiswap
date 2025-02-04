@@ -1,12 +1,12 @@
 import { useQuery } from '@tanstack/react-query'
 import { useEffect } from 'react'
-import { EvmChainId } from 'sushi/chain'
-import { Amount, Native, Token, Type } from 'sushi/currency'
-import { Address, erc20Abi, isAddress, zeroAddress } from 'viem'
+import type { EvmChainId } from 'sushi/chain'
+import { Amount, Native, type Token, type Type } from 'sushi/currency'
+import { type Address, erc20Abi, isAddress, zeroAddress } from 'viem'
 
 import { getBalance, readContracts } from '@wagmi/core'
-import { Config, serialize, useBalance, useConfig } from 'wagmi'
-import { GetBalanceReturnType } from 'wagmi/actions'
+import { type Config, serialize, useBalance, useConfig } from 'wagmi'
+import type { GetBalanceReturnType } from 'wagmi/actions'
 import { useWatchByInterval } from '../watch/useWatchByInterval'
 
 interface QueryBalanceParams {

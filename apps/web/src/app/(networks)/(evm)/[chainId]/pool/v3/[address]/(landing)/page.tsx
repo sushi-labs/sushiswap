@@ -1,4 +1,4 @@
-import { V3Pool, getV3Pool } from '@sushiswap/graph-client/data-api'
+import { type V3Pool, getV3Pool } from '@sushiswap/graph-client/data-api'
 import { unstable_cache } from 'next/cache'
 import { notFound } from 'next/navigation'
 

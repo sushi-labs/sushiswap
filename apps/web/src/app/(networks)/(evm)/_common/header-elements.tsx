@@ -12,7 +12,7 @@ import {
   EXPLORE_NAVIGATION_LINKS,
   // MORE_NAVIGATION_LINKS,
 } from 'src/app/_common/header-elements'
-import { ChainId, ChainKey, EvmChainId } from 'sushi/chain'
+import { ChainId, ChainKey, type EvmChainId } from 'sushi/chain'
 import { isAggregatorOnlyChainId } from 'sushi/config'
 
 interface HeaderElements {

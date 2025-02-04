@@ -1,7 +1,7 @@
-import { Token } from '~aptos/_common/lib/types/token'
+import type { Token } from '~aptos/_common/lib/types/token'
 import { computeExactOutput } from '../compute-exact-output'
 import { computePriceImpact } from '../compute-price-impact'
-import { Route, Vertex } from '../types'
+import type { Route, Vertex } from '../types'
 
 interface GetBestRoute {
   amountIn: number

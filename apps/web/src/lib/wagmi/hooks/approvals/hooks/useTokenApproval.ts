@@ -4,10 +4,10 @@ import { createErrorToast, createToast } from '@sushiswap/notifications'
 import { InterfaceEventName, sendAnalyticsEvent } from '@sushiswap/telemetry'
 import { useCallback, useMemo, useState } from 'react'
 import { erc20Abi_approve } from 'sushi/abi'
-import { Amount, Type } from 'sushi/currency'
+import type { Amount, Type } from 'sushi/currency'
 import {
-  Address,
-  SendTransactionReturnType,
+  type Address,
+  type SendTransactionReturnType,
   UserRejectedRequestError,
   maxUint256,
 } from 'viem'
@@ -18,7 +18,7 @@ import {
   useWriteContract,
 } from 'wagmi'
 
-import { ERC20ApproveABI, ERC20ApproveArgs } from './types'
+import type { ERC20ApproveABI, ERC20ApproveArgs } from './types'
 import { useTokenAllowance } from './useTokenAllowance'
 
 export enum ApprovalState {

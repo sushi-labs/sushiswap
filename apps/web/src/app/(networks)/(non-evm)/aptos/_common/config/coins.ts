@@ -1,6 +1,6 @@
 import { NetworkName } from '@aptos-labs/wallet-adapter-core'
-import { type SupportedNetwork } from '~aptos/_common/config/chains'
-import { type Token } from '~aptos/_common/lib/types/token'
+import type { SupportedNetwork } from '~aptos/_common/config/chains'
+import type { Token } from '~aptos/_common/lib/types/token'
 
 export const USDC = {
   [NetworkName.Testnet]: {

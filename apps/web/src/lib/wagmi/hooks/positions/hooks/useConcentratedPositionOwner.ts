@@ -1,4 +1,7 @@
-import { SUSHISWAP_V3_POSTIION_MANAGER, SushiSwapV3ChainId } from 'sushi/config'
+import {
+  SUSHISWAP_V3_POSTIION_MANAGER,
+  type SushiSwapV3ChainId,
+} from 'sushi/config'
 import { useReadContract } from 'wagmi'
 
 export const useConcentratedPositionOwner = ({

@@ -1,7 +1,7 @@
 import type { AcademyArticle } from '@sushiswap/graph-client/strapi'
 import { Container } from '@sushiswap/ui'
 import format from 'date-fns/format'
-import { FC } from 'react'
+import type { FC } from 'react'
 import { Media } from 'src/app/(cms)/components/media'
 import { DifficultyLabel } from '../../components/difficulty-label'
 

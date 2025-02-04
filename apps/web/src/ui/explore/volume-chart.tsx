@@ -1,13 +1,13 @@
 'use client'
 
-import { AnalyticsDayBuckets } from '@sushiswap/graph-client/data-api'
+import type { AnalyticsDayBuckets } from '@sushiswap/graph-client/data-api'
 import format from 'date-fns/format'
 import ReactECharts from 'echarts-for-react'
-import { EChartsOption } from 'echarts-for-react/lib/types'
+import type { EChartsOption } from 'echarts-for-react/lib/types'
 import echarts from 'echarts/lib/echarts'
 import { useTheme } from 'next-themes'
-import { FC, useCallback, useMemo } from 'react'
-import { ChainId, EvmChain } from 'sushi/chain'
+import { type FC, useCallback, useMemo } from 'react'
+import { type ChainId, EvmChain } from 'sushi/chain'
 import { formatUSD } from 'sushi/format'
 
 interface VolumeChart {

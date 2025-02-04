@@ -2,7 +2,7 @@ import * as React from 'react'
 
 import { KavaNaked } from '../naked/KavaNaked'
 
-import { IconComponent } from '../../../types'
+import type { IconComponent } from '../../../types'
 
 export const KavaCircle: IconComponent = (props) => (
   <KavaNaked
