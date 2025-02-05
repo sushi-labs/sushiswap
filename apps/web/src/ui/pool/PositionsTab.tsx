@@ -13,12 +13,10 @@ import {
 import type React from 'react'
 import { type FC, useState } from 'react'
 
-import { isSmartPoolChainId } from '@sushiswap/graph-client/data-api'
 import { ChainKey } from 'sushi/chain'
 import type { SushiSwapChainId } from 'sushi/config'
 import { ConcentratedPositionsTable } from './ConcentratedPositionsTable/ConcentratedPositionsTable'
 import { PositionsTable } from './PositionsTable'
-import { SmartPositionsTable } from './SmartPositionsTable'
 
 const ITEMS: { id: string; value: string; children: React.ReactNode }[] = [
   {
@@ -92,7 +90,7 @@ export const PositionsTab: FC<{ chainId: SushiSwapChainId }> = ({
             ))}
           </TabsList>
           {tab === 'v3' ? (
-            <div className="flex gap-3 items-center whitespace-nowrap">
+            <div className="flex items-center gap-3 whitespace-nowrap">
               <span className="text-sm font-medium text-gray-600 dark:text-slate-400">
                 Hide closed
               </span>
@@ -118,11 +116,6 @@ export const PositionsTab: FC<{ chainId: SushiSwapChainId }> = ({
             }
           />
         </TabsContent>
-        {isSmartPoolChainId(chainId) ? (
-          <TabsContent value="smart">
-            <SmartPositionsTable chainId={chainId} />
-          </TabsContent>
-        ) : null}
       </Tabs>
     </div>
   )

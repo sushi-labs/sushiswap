@@ -45,7 +45,6 @@ interface ConcentratedPositionsTableProps {
   chainId: EvmChainId
   poolAddress?: string
   onRowClick?(row: ConcentratedLiquidityPositionWithV3Pool): void
-  hideNewSmartPositionButton?: boolean
   hideNewPositionButton?: boolean
   hideClosedPositions?: boolean
   hideCollectAllButton?: boolean
@@ -58,7 +57,6 @@ export const ConcentratedPositionsTable: FC<
   chainId,
   onRowClick,
   poolAddress,
-  hideNewSmartPositionButton = true,
   hideNewPositionButton = false,
   hideClosedPositions = true,
   hideCollectAllButton = false,
@@ -124,7 +122,7 @@ export const ConcentratedPositionsTable: FC<
     <Card>
       <CardHeader>
         <CardTitle>
-          <div className="flex items-center justify-between gap-4 flex-wrap">
+          <div className="flex flex-wrap items-center justify-between gap-4">
             <span className="flex-grow whitespace-nowrap">
               My Positions{' '}
               <span className="text-gray-400 dark:text-slate-500">
@@ -137,23 +135,6 @@ export const ConcentratedPositionsTable: FC<
                 account={address}
                 chainId={chainId}
               />
-            ) : null}
-            {!hideNewSmartPositionButton ? (
-              <LinkInternal
-                shallow={true}
-                href={`/${EvmChainKey[chainId]}/pool/v3/${poolAddress}/smart`}
-                className="basis-full md:basis-[unset]"
-              >
-                <Button
-                  icon={PlusIcon}
-                  asChild
-                  size="sm"
-                  variant="outline"
-                  className="w-full"
-                >
-                  Create smart position
-                </Button>
-              </LinkInternal>
             ) : null}
             {!hideNewPositionButton ? (
               <LinkInternal

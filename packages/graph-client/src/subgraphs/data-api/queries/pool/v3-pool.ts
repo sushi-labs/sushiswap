@@ -1,6 +1,5 @@
 import type { VariablesOf } from 'gql.tada'
 
-import type { PoolHasSteerVaults } from '@sushiswap/steer-sdk'
 import { request, type RequestOptions } from 'src/lib/request.js'
 import {
   EvmChainId,
@@ -196,9 +195,7 @@ export async function getV3Pool(
           rewarderAddress: incentive.rewarderAddress as Address,
           rewarderType: incentive.rewarderType as RewarderType,
         })),
-      } satisfies PoolHasSteerVaults<
-        PoolWithAprs<PoolWithIncentives<PoolHistory1D<PoolV3<PoolBase>>>>
-      >
+      } satisfies PoolWithAprs<PoolWithIncentives<PoolHistory1D<PoolV3<PoolBase>>>>
     }
   } catch (error) {
     console.error('getV3Pool error', error)

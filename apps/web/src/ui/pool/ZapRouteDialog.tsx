@@ -1,4 +1,3 @@
-import type { SteerVault } from '@sushiswap/steer-sdk'
 import {
   Currency,
   Dialog,
@@ -15,7 +14,7 @@ import { SushiSwapV2Pool } from 'sushi/pool'
 interface ZapRouteDialogProps {
   children: ReactNode
   inputCurrency: Type
-  pool: SushiSwapV2Pool | SteerVault
+  pool: SushiSwapV2Pool
   tokenRatios?: { token0: number; token1: number }
 }
 
@@ -43,8 +42,8 @@ export const ZapRouteDialog: FC<ZapRouteDialogProps> = ({
 
         <div className="flex flex-col gap-3">
           <span className="text-sm text-muted-foreground">Split & Swap</span>
-          <div className="bg-secondary rounded-xl flex flex-col gap-1">
-            <div className="px-5 py-2 grid grid-cols-3 gap-3 items-center">
+          <div className="flex flex-col gap-1 bg-secondary rounded-xl">
+            <div className="grid items-center grid-cols-3 gap-3 px-5 py-2">
               <div className="flex items-center gap-1">
                 <Currency.Icon
                   disableLink
@@ -80,7 +79,7 @@ export const ZapRouteDialog: FC<ZapRouteDialogProps> = ({
                 </span>
               </div>
             </div>
-            <div className="px-5 py-2 grid grid-cols-3 gap-3 items-center">
+            <div className="grid items-center grid-cols-3 gap-3 px-5 py-2">
               <div className="flex items-center gap-1">
                 <Currency.Icon
                   disableLink
@@ -121,8 +120,8 @@ export const ZapRouteDialog: FC<ZapRouteDialogProps> = ({
 
         <div className="flex flex-col gap-3">
           <span className="text-sm text-muted-foreground">Add Liquidity</span>
-          <div className="bg-secondary rounded-xl flex flex-col gap-1">
-            <div className="px-5 py-2 grid grid-cols-3 gap-3 items-center">
+          <div className="flex flex-col gap-1 bg-secondary rounded-xl">
+            <div className="grid items-center grid-cols-3 gap-3 px-5 py-2">
               <div className="flex flex-col gap-0.5">
                 <div className="flex items-center gap-1">
                   <Currency.Icon
@@ -150,8 +149,7 @@ export const ZapRouteDialog: FC<ZapRouteDialogProps> = ({
               <div className="flex flex-col items-center">
                 <div className="text-sm font-medium truncate">100%</div>
                 <span className="text-[10px] font-medium text-muted-foreground truncate">
-                  Deposit to{' '}
-                  {pool instanceof SushiSwapV2Pool ? 'SushiSwap V2' : 'Steer'}
+                  Deposit to SushiSwap V2
                 </span>
               </div>
               <div className="flex items-center justify-end gap-1">
@@ -162,7 +160,7 @@ export const ZapRouteDialog: FC<ZapRouteDialogProps> = ({
                     width={16}
                     height={16}
                   />
-                  <div className="-ml-1 inline-flex">
+                  <div className="inline-flex -ml-1">
                     <Currency.Icon
                       disableLink
                       currency={token1}
@@ -172,7 +170,7 @@ export const ZapRouteDialog: FC<ZapRouteDialogProps> = ({
                   </div>
                 </span>
                 <span className="text-sm font-semibold truncate">
-                  {pool instanceof SushiSwapV2Pool ? 'SLP' : 'Steer LP'}
+                  SLP
                 </span>
               </div>
             </div>

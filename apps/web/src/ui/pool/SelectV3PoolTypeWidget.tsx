@@ -17,13 +17,11 @@ export enum V3PoolType {
 interface SelectV3PoolTypeWidgetProps {
   poolType: V3PoolType
   setPoolType: (poolType: V3PoolType) => void
-  isSmartPoolSupported: boolean
 }
 
 export const SelectV3PoolTypeWidget: FC<SelectV3PoolTypeWidgetProps> = ({
   poolType,
   setPoolType,
-  isSmartPoolSupported,
 }) => {
   return (
     <FormSection
@@ -44,25 +42,6 @@ export const SelectV3PoolTypeWidget: FC<SelectV3PoolTypeWidgetProps> = ({
         onChange={setPoolType}
         className="grid grid-cols-2 gap-4"
       >
-        <RadioGroup.Option
-          value={V3PoolType.SMART}
-          disabled={!isSmartPoolSupported}
-        >
-          {({ checked }) => (
-            <Toggle
-              pressed={checked}
-              asChild
-              className="!h-full !w-full !p-0 !text-left !justify-start cursor-pointer dark:data-[state=on]:bg-secondary"
-            >
-              <Card className={!isSmartPoolSupported ? 'opacity-40' : ''}>
-                <CardHeader>
-                  <CardTitle>Smart Pool</CardTitle>
-                  <CardDescription>Apply automated strategy</CardDescription>
-                </CardHeader>
-              </Card>
-            </Toggle>
-          )}
-        </RadioGroup.Option>
         <RadioGroup.Option value={V3PoolType.MANUAL}>
           {({ checked }) => (
             <Toggle
