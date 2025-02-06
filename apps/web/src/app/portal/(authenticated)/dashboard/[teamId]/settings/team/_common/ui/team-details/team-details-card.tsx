@@ -10,33 +10,30 @@ import {
   ClipboardController,
   List,
 } from '@sushiswap/ui'
-import { useSession } from 'src/app/portal/_common/ui/auth-provider/auth-provider'
 
-export function UserCard() {
-  const session = useSession()
+interface TeamDetailsCard {
+  teamId: string
+}
 
-  if (!session.isLoggedIn) {
-    return null
-  }
-
+export function TeamDetailsCard({ teamId }: TeamDetailsCard) {
   return (
-    <Card className="w-full min-w-[470px]">
+    <Card className="w-full min-w-[470px] h-min">
       <CardHeader className="bg-secondary rounded-t-xl">
-        <CardTitle>User Details</CardTitle>
+        <CardTitle>Team Details</CardTitle>
         <CardDescription>Useful when requesting support</CardDescription>
       </CardHeader>
       <CardContent className="bg-secondary rounded-b-xl">
         <List>
           <List.Control>
             <List.KeyValue flex title="ID">
-              <span>{session.user.id}</span>
+              <span>{teamId}</span>
               <ClipboardController>
                 {({ setCopied }) => (
                   <ClipboardDocumentIcon
                     width={20}
                     height={20}
                     className="ml-1 cursor-pointer"
-                    onClick={() => setCopied(session.user.id)}
+                    onClick={() => setCopied(teamId)}
                   />
                 )}
               </ClipboardController>
