@@ -54,6 +54,16 @@ export function PasswordCard() {
     ...form.watch(['password', 'passwordConfirmation']),
   ])
 
+  useEffect(() => {
+    let timeout: NodeJS.Timeout
+
+    if (globalMsg?.type === 'success') {
+      timeout = setTimeout(() => setGlobalMsg(null), 2000)
+    }
+
+    return () => clearTimeout(timeout)
+  }, [globalMsg])
+
   const onSubmit = useCallback(
     async (values: ChangeOrCreatePasswordValues) => {
       const formData = new FormData()
@@ -148,20 +158,22 @@ export function PasswordCard() {
                   )}
                 />
               </div>
-              <Button type="submit" fullWidth disabled={isPending}>
-                Change
-              </Button>
-              <Collapsible open={!!globalMsg}>
-                <div
-                  className={classNames(
-                    globalMsg?.type === 'success' && 'text-green-500',
-                    globalMsg?.type === 'error' && 'test-red-500',
-                    'w-full text-center font-medium',
-                  )}
-                >
-                  {globalMsg?.message || ''}
-                </div>
-              </Collapsible>
+              <div>
+                <Button type="submit" fullWidth disabled={isPending}>
+                  Change
+                </Button>
+                <Collapsible open={!!globalMsg}>
+                  <div
+                    className={classNames(
+                      globalMsg?.type === 'success' && 'text-green-500',
+                      globalMsg?.type === 'error' && 'text-red-500',
+                      'w-full text-center font-medium pt-4',
+                    )}
+                  >
+                    {globalMsg?.message || ''}
+                  </div>
+                </Collapsible>
+              </div>
             </div>
           </FormProvider>
         </form>
