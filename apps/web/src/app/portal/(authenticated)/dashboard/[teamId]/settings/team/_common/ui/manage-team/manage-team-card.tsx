@@ -19,7 +19,9 @@ export async function ManageTeamCard({ teamId }: ManageTeamCard) {
         <CardDescription>Manage your team</CardDescription>
       </CardHeader>
       <CardContent className="bg-secondary rounded-b-xl">
-        <ManageTeamForm team={{ id: teamId, name: 'Sushi Team' }} />
+        <ManageTeamForm
+          team={{ id: teamId, name: 'Sushi Team', memberPermissions: 'none' }}
+        />
       </CardContent>
     </Card>
   )
