@@ -60,17 +60,19 @@ export const REWARDS_V3_NAME_COLUMN: ColumnDef<AngleRewardsPool, unknown> = {
   header: 'Pool',
   cell: (props) => <RewardsV3NameCell {...props.row} />,
   meta: {
-    skeleton: (
-      <div className="flex items-center w-full gap-2">
-        <div className="flex items-center">
-          <SkeletonCircle radius={40} />
-          <SkeletonCircle radius={40} className="-ml-[12px]" />
+    body: {
+      skeleton: (
+        <div className="flex items-center w-full gap-2">
+          <div className="flex items-center">
+            <SkeletonCircle radius={40} />
+            <SkeletonCircle radius={40} className="-ml-[12px]" />
+          </div>
+          <div className="flex flex-col w-full">
+            <SkeletonText fontSize="lg" />
+          </div>
         </div>
-        <div className="flex flex-col w-full">
-          <SkeletonText fontSize="lg" />
-        </div>
-      </div>
-    ),
+      ),
+    },
   },
 }
 
@@ -83,7 +85,9 @@ export const REWARDS_V3_POSITION_SIZE_COLUMN: ColumnDef<
   accessorFn: (row) => row.userTVL ?? 0,
   cell: (props) => `$${formatNumber(props.row.original.userTVL || 0)}`,
   meta: {
-    skeleton: <SkeletonText fontSize="lg" />,
+    body: {
+      skeleton: <SkeletonText fontSize="lg" />,
+    },
   },
 }
 
@@ -114,7 +118,9 @@ export const REWARDS_V3_APR_COLUMN: ColumnDef<AngleRewardsPool, unknown> = {
     </TooltipProvider>
   ),
   meta: {
-    skeleton: <SkeletonText fontSize="lg" />,
+    body: {
+      skeleton: <SkeletonText fontSize="lg" />,
+    },
   },
 }
 
@@ -125,7 +131,9 @@ export const REWARDS_V3_CLAIMABLE_COLUMN: ColumnDef<AngleRewardsPool, unknown> =
     accessorFn: (row) => row.userTVL ?? 0,
     cell: (props) => <RewardsV3ClaimableCell {...props.row} />,
     meta: {
-      skeleton: <SkeletonText fontSize="lg" />,
+      body: {
+        skeleton: <SkeletonText fontSize="lg" />,
+      },
     },
   }
 
@@ -138,17 +146,19 @@ export const NAME_COLUMN_POOL: ColumnDef<
 
   cell: (props) => <PoolNameCell pool={unnestPool(props.row.original)} />,
   meta: {
-    skeleton: (
-      <div className="flex items-center w-full gap-2">
-        <div className="flex items-center">
-          <SkeletonCircle radius={26} />
-          <SkeletonCircle radius={26} className="-ml-[12px]" />
+    body: {
+      skeleton: (
+        <div className="flex items-center w-full gap-2">
+          <div className="flex items-center">
+            <SkeletonCircle radius={26} />
+            <SkeletonCircle radius={26} className="-ml-[12px]" />
+          </div>
+          <div className="flex flex-col w-full">
+            <SkeletonText fontSize="lg" />
+          </div>
         </div>
-        <div className="flex flex-col w-full">
-          <SkeletonText fontSize="lg" />
-        </div>
-      </div>
-    ),
+      ),
+    },
   },
   size: 300,
 }
@@ -261,17 +271,19 @@ export const EXPLORE_NAME_COLUMN_POOL: ColumnDef<Pool, unknown> = {
   },
   size: 300,
   meta: {
-    skeleton: (
-      <div className="flex items-center w-full gap-2">
-        <div className="flex items-center">
-          <SkeletonCircle radius={30} />
-          <SkeletonCircle radius={30} className="-ml-[10px]" />
+    body: {
+      skeleton: (
+        <div className="flex items-center w-full gap-2">
+          <div className="flex items-center">
+            <SkeletonCircle radius={30} />
+            <SkeletonCircle radius={30} className="-ml-[10px]" />
+          </div>
+          <div className="flex flex-col w-full min-w-[120px]">
+            <SkeletonText fontSize="lg" />
+          </div>
         </div>
-        <div className="flex flex-col w-full min-w-[120px]">
-          <SkeletonText fontSize="lg" />
-        </div>
-      </div>
-    ),
+      ),
+    },
   },
 }
 
@@ -304,7 +316,9 @@ export const TVL_COLUMN: ColumnDef<Pool, unknown> = {
     </div>
   ),
   meta: {
-    skeleton: <SkeletonText fontSize="lg" />,
+    body: {
+      skeleton: <SkeletonText fontSize="lg" />,
+    },
   },
 }
 
@@ -337,7 +351,9 @@ export const VOLUME_1D_COLUMN: ColumnDef<Pool, unknown> = {
     </div>
   ),
   meta: {
-    skeleton: <SkeletonText fontSize="lg" />,
+    body: {
+      skeleton: <SkeletonText fontSize="lg" />,
+    },
   },
 }
 
@@ -370,7 +386,9 @@ export const VOLUME_1W_COLUMN: ColumnDef<Pool, unknown> = {
     </div>
   ),
   meta: {
-    skeleton: <SkeletonText fontSize="lg" />,
+    body: {
+      skeleton: <SkeletonText fontSize="lg" />,
+    },
   },
 }
 
@@ -382,7 +400,9 @@ export const TRANSACTIONS_1D_COLUMN: ColumnDef<Pool, unknown> = {
     rowA.txCount1d - rowB.txCount1d,
   cell: (props) => props.row.original.txCount1d,
   meta: {
-    skeleton: <SkeletonText fontSize="lg" />,
+    body: {
+      skeleton: <SkeletonText fontSize="lg" />,
+    },
   },
 }
 
@@ -412,7 +432,9 @@ export const APR_WITH_REWARDS_COLUMN: ColumnDef<Pool, unknown> = {
     </APRWithRewardsHoverCard>
   ),
   meta: {
-    skeleton: <SkeletonText fontSize="lg" />,
+    body: {
+      skeleton: <SkeletonText fontSize="lg" />,
+    },
     disableLink: true,
   },
 }
@@ -431,7 +453,9 @@ export const APR_COLUMN = {
     </APRHoverCard>
   ),
   meta: {
-    skeleton: <SkeletonText fontSize="lg" />,
+    body: {
+      skeleton: <SkeletonText fontSize="lg" />,
+    },
   },
 } as const satisfies ColumnDef<
   MaybeNestedPool<PoolWithIncentives<PoolWithAprs>>,
@@ -455,7 +479,9 @@ export const VALUE_COLUMN = {
     </span>
   ),
   meta: {
-    skeleton: <SkeletonText fontSize="lg" />,
+    body: {
+      skeleton: <SkeletonText fontSize="lg" />,
+    },
   },
 } as const satisfies ColumnDef<
   SushiPositionWithPool<PoolBase, SushiPositionStaked>,
@@ -470,17 +496,19 @@ export const NAME_COLUMN_V3: ColumnDef<
   header: 'Name',
   cell: (props) => <PoolNameCellV3 {...props.row} />,
   meta: {
-    skeleton: (
-      <div className="flex items-center w-full gap-2">
-        <div className="flex items-center">
-          <SkeletonCircle radius={26} />
-          <SkeletonCircle radius={26} className="-ml-[12px]" />
+    body: {
+      skeleton: (
+        <div className="flex items-center w-full gap-2">
+          <div className="flex items-center">
+            <SkeletonCircle radius={26} />
+            <SkeletonCircle radius={26} className="-ml-[12px]" />
+          </div>
+          <div className="flex flex-col w-full">
+            <SkeletonText fontSize="lg" />
+          </div>
         </div>
-        <div className="flex flex-col w-full">
-          <SkeletonText fontSize="lg" />
-        </div>
-      </div>
-    ),
+      ),
+    },
   },
 }
 
@@ -492,7 +520,9 @@ export const PRICE_RANGE_COLUMN: ColumnDef<
   header: 'Price Range',
   cell: (props) => <PriceRangeCell {...props.row} />,
   meta: {
-    skeleton: <SkeletonText fontSize="lg" />,
+    body: {
+      skeleton: <SkeletonText fontSize="lg" />,
+    },
   },
 }
 
@@ -504,7 +534,9 @@ export const CLIQ_APR_COLUMN: ColumnDef<
   header: 'Price Range',
   cell: (props) => <ConcentratedLiquidityPositionAPRCell {...props.row} />,
   meta: {
-    skeleton: <SkeletonText fontSize="lg" />,
+    body: {
+      skeleton: <SkeletonText fontSize="lg" />,
+    },
   },
 }
 
@@ -517,7 +549,9 @@ export const POSITION_SIZE_CELL: ColumnDef<
   header: 'Position Size',
   cell: (props) => formatUSD(props.row.original.position.positionUSD),
   meta: {
-    skeleton: <SkeletonText fontSize="lg" />,
+    body: {
+      skeleton: <SkeletonText fontSize="lg" />,
+    },
   },
 }
 
@@ -530,7 +564,9 @@ export const POSITION_UNCLAIMED_CELL: ColumnDef<
   header: 'Unclaimed fees',
   cell: (props) => formatUSD(props.row.original.position.unclaimedUSD),
   meta: {
-    skeleton: <SkeletonText fontSize="lg" />,
+    body: {
+      skeleton: <SkeletonText fontSize="lg" />,
+    },
   },
 }
 
@@ -539,7 +575,9 @@ export const TX_SENDER_V2_COLUMN: ColumnDef<Transaction, unknown> = {
   header: 'Maker',
   cell: (props) => shortenAddress(props.row.original.sender),
   meta: {
-    skeleton: <SkeletonText fontSize="lg" />,
+    body: {
+      skeleton: <SkeletonText fontSize="lg" />,
+    },
   },
 }
 
@@ -576,7 +614,9 @@ export const TX_AMOUNT_IN_V2_COLUMN = (
     }
   },
   meta: {
-    skeleton: <SkeletonText fontSize="lg" />,
+    body: {
+      skeleton: <SkeletonText fontSize="lg" />,
+    },
   },
 })
 
@@ -613,7 +653,9 @@ export const TX_AMOUNT_OUT_V2_COLUMN = (
     }
   },
   meta: {
-    skeleton: <SkeletonText fontSize="lg" />,
+    body: {
+      skeleton: <SkeletonText fontSize="lg" />,
+    },
   },
 })
 
@@ -622,7 +664,9 @@ export const TX_AMOUNT_USD_V2_COLUMN: ColumnDef<Transaction, unknown> = {
   header: 'Amount (USD)',
   cell: (props) => formatUSD(props.row.original.amountUSD),
   meta: {
-    skeleton: <SkeletonText fontSize="lg" />,
+    body: {
+      skeleton: <SkeletonText fontSize="lg" />,
+    },
   },
 }
 
@@ -634,7 +678,9 @@ export const TX_CREATED_TIME_V2_COLUMN: ColumnDef<Transaction, unknown> = {
       addSuffix: true,
     }),
   meta: {
-    skeleton: <SkeletonText fontSize="lg" />,
+    body: {
+      skeleton: <SkeletonText fontSize="lg" />,
+    },
   },
 }
 
@@ -643,7 +689,9 @@ export const TX_TYPE_COLUMN: ColumnDef<Transaction, unknown> = {
   header: 'Type',
   cell: (props) => TransactionType[props.row.original.type],
   meta: {
-    skeleton: <SkeletonText fontSize="lg" />,
+    body: {
+      skeleton: <SkeletonText fontSize="lg" />,
+    },
   },
 }
 
@@ -652,7 +700,9 @@ export const TX_ORIGIN_V3_COLUMN: ColumnDef<TransactionV3, unknown> = {
   header: 'Maker',
   cell: (props) => shortenAddress(props.row.original.origin),
   meta: {
-    skeleton: <SkeletonText fontSize="lg" />,
+    body: {
+      skeleton: <SkeletonText fontSize="lg" />,
+    },
   },
 }
 
@@ -693,7 +743,9 @@ export const TX_AMOUNT_IN_V3_COLUMN = (
     }
   },
   meta: {
-    skeleton: <SkeletonText fontSize="lg" />,
+    body: {
+      skeleton: <SkeletonText fontSize="lg" />,
+    },
   },
 })
 
@@ -734,7 +786,9 @@ export const TX_AMOUNT_OUT_V3_COLUMN = (
     }
   },
   meta: {
-    skeleton: <SkeletonText fontSize="lg" />,
+    body: {
+      skeleton: <SkeletonText fontSize="lg" />,
+    },
   },
 })
 
@@ -743,7 +797,9 @@ export const TX_AMOUNT_USD_V3_COLUMN: ColumnDef<TransactionV3, unknown> = {
   header: 'Amount (USD)',
   cell: (props) => formatUSD(props.row.original.amountUSD),
   meta: {
-    skeleton: <SkeletonText fontSize="lg" />,
+    body: {
+      skeleton: <SkeletonText fontSize="lg" />,
+    },
   },
 }
 
@@ -755,6 +811,8 @@ export const TX_TIME_V3_COLUMN: ColumnDef<TransactionV3, unknown> = {
       addSuffix: true,
     }),
   meta: {
-    skeleton: <SkeletonText fontSize="lg" />,
+    body: {
+      skeleton: <SkeletonText fontSize="lg" />,
+    },
   },
 }
