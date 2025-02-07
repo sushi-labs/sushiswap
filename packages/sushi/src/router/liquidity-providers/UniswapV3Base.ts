@@ -485,8 +485,7 @@ export abstract class UniswapV3BaseProvider extends LiquidityProvider {
   }
 
   getStaticPools(t1: Token, t2: Token): StaticPoolUniV3[] {
-    const fees = Object.values(this.FEE)
-    const feeList = fees.splice(fees.length / 2) as number[]
+    const feeList = Object.values(this.FEE).filter((v) => typeof v === 'number')
     const currencyCombinations = getCurrencyCombinations(this.chainId, t1, t2)
 
     const allCurrencyCombinationsWithAllFees: [Type, Type, number][] =
@@ -570,8 +569,7 @@ export abstract class UniswapV3BaseProvider extends LiquidityProvider {
   }
 
   async ensureFeeAndTicks(): Promise<boolean> {
-    const fees = Object.values(this.FEE)
-    const feeList = fees.splice(fees.length / 2) as number[]
+    const feeList = Object.values(this.FEE).filter((v) => typeof v === 'number')
     const results = (await this.client.multicall({
       multicallAddress: this.client.chain?.contracts?.multicall3
         ?.address as Address,
