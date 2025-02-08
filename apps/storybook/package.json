@@ -37,7 +37,7 @@
     "@types/react": "catalog:react",
     "@vitejs/plugin-react": "4.1.0",
     "autoprefixer": "10.4.14",
-    "chromatic": "7.4.0",
+    "chromatic": "11.25.2",
     "postcss": "8.4.23",
     "serve": "14.2.0",
     "storybook": "8.4.7",
