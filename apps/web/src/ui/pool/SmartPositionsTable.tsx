@@ -69,7 +69,9 @@ const COLUMNS = [
       )
     },
     meta: {
-      skeleton: <SkeletonText fontSize="lg" />,
+      body: {
+        skeleton: <SkeletonText fontSize="lg" />,
+      },
     },
   },
 ] satisfies ColumnDef<SteerAccountPositionExtended, unknown>[]
