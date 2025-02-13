@@ -2,7 +2,7 @@ import type { EstimateGasErrorType, EstimateGasReturnType } from '@wagmi/core'
 import { useEffect, useMemo, useRef } from 'react'
 import type { UseTradeReturn } from 'src/lib/hooks/react-query'
 import { useDerivedStateSimpleSwap } from 'src/ui/swap/simple/derivedstate-simple-swap-provider'
-import { isRouteProcessor5ChainId } from 'sushi/config'
+import { isRouteProcessor6ChainId } from 'sushi/config'
 import type { Hex, RawContractError } from 'viem'
 import { useAccount, useEstimateGas } from 'wagmi'
 import { getTokenTax } from '../swap/getTokenTax'
@@ -52,7 +52,7 @@ export function useSimulateTrade({
         Boolean(
           address &&
             trade?.tx &&
-            isRouteProcessor5ChainId(chainId) &&
+            isRouteProcessor6ChainId(chainId) &&
             trade?.route?.status !== 'NoWay',
         ),
     },

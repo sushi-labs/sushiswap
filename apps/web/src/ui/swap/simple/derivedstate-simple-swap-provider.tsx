@@ -15,7 +15,7 @@ import {
   useMemo,
   useState,
 } from 'react'
-import { useTrade as useApiTrade } from 'src/lib/hooks/react-query'
+import { useTrade, useTradeQuote } from 'src/lib/hooks/react-query'
 import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
 import { useTokenWithCache } from 'src/lib/wagmi/hooks/tokens/useTokenWithCache'
 import { EvmChainId } from 'sushi/chain'
@@ -349,45 +349,57 @@ const useDerivedStateSimpleSwap = () => {
   return context
 }
 
-const useSimpleSwapTrade = () => {
+const useSimpleSwapTrade = (enabled = true) => {
   const {
-    state: { token0, chainId, swapAmount, token1, recipient, tokenTax },
-    mutate: { setTokenTax },
+    state: { token0, chainId, swapAmount, token1, recipient },
   } = useDerivedStateSimpleSwap()
 
   const [slippagePercent] = useSlippageTolerance()
   const [carbonOffset] = useCarbonOffset()
   const { data: gasPrice } = useGasPrice({ chainId })
 
-  const adjustedSlippage = useMemo(
-    () => (tokenTax ? slippagePercent.add(tokenTax) : slippagePercent),
-    [slippagePercent, tokenTax],
-  )
-
-  const trade = useApiTrade({
+  const trade = useTrade({
     chainId,
     fromToken: token0,
     toToken: token1,
     amount: swapAmount,
-    slippagePercentage: adjustedSlippage.toFixed(2),
+    slippagePercentage: slippagePercent.toFixed(2),
+    gasPrice,
+    recipient: recipient as Address,
+    enabled: Boolean(enabled && swapAmount?.greaterThan(ZERO)),
+    carbonOffset,
+  })
+
+  return trade
+}
+
+const useSimpleSwapTradeQuote = () => {
+  const {
+    state: { token0, chainId, swapAmount, token1, recipient },
+  } = useDerivedStateSimpleSwap()
+
+  const [slippagePercent] = useSlippageTolerance()
+  const [carbonOffset] = useCarbonOffset()
+  const { data: gasPrice } = useGasPrice({ chainId })
+
+  const quote = useTradeQuote({
+    chainId,
+    fromToken: token0,
+    toToken: token1,
+    amount: swapAmount,
+    slippagePercentage: slippagePercent.toFixed(2),
     gasPrice,
     recipient: recipient as Address,
     enabled: Boolean(swapAmount?.greaterThan(ZERO)),
     carbonOffset,
-    tokenTax,
   })
 
-  // Reset tokenTax when token0 or token1 changes
-  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
-  useEffect(() => {
-    setTokenTax(undefined)
-  }, [token0, token1, setTokenTax])
-
-  return trade
+  return quote
 }
 
 export {
   DerivedstateSimpleSwapProvider,
   useDerivedStateSimpleSwap,
   useSimpleSwapTrade,
+  useSimpleSwapTradeQuote,
 }

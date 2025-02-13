@@ -16,7 +16,7 @@ import {
 } from '../../../lib/swap/warningSeverity'
 import {
   useDerivedStateSimpleSwap,
-  useSimpleSwapTrade,
+  useSimpleSwapTradeQuote,
 } from './derivedstate-simple-swap-provider'
 
 export const SimpleSwapTradeStats: FC = () => {
@@ -25,12 +25,12 @@ export const SimpleSwapTradeStats: FC = () => {
   const {
     state: { chainId, swapAmountString, recipient },
   } = useDerivedStateSimpleSwap()
-  const { isLoading, data: trade } = useSimpleSwapTrade()
-  const loading = Boolean(isLoading && !trade)
+  const { isLoading, data: quote } = useSimpleSwapTradeQuote()
+  const loading = Boolean(isLoading && !quote)
 
   return (
     <Collapsible
-      open={+swapAmountString > 0 && trade?.route?.status !== 'NoWay'}
+      open={+swapAmountString > 0 && quote?.route?.status !== 'NoWay'}
     >
       <div className="w-full px-2 flex flex-col gap-1">
         <div className="flex justify-between items-center gap-2">
@@ -39,20 +39,20 @@ export const SimpleSwapTradeStats: FC = () => {
           </span>
           <span
             className={classNames(
-              warningSeverityClassName(warningSeverity(trade?.priceImpact)),
+              warningSeverityClassName(warningSeverity(quote?.priceImpact)),
               'text-sm font-semibold text-gray-700 text-right dark:text-slate-400',
             )}
           >
-            {loading || !trade?.priceImpact ? (
+            {loading || !quote?.priceImpact ? (
               <SkeletonBox className="h-4 py-0.5 w-[40px]" />
-            ) : trade?.priceImpact ? (
+            ) : quote?.priceImpact ? (
               `${
-                trade?.priceImpact?.lessThan(ZERO)
+                quote?.priceImpact?.lessThan(ZERO)
                   ? '+'
-                  : trade?.priceImpact?.greaterThan(ZERO)
+                  : quote?.priceImpact?.greaterThan(ZERO)
                     ? '-'
                     : ''
-              }${Math.abs(Number(trade?.priceImpact?.toFixed(2)))}%`
+              }${Math.abs(Number(quote?.priceImpact?.toFixed(2)))}%`
             ) : null}
           </span>
         </div>
@@ -62,11 +62,11 @@ export const SimpleSwapTradeStats: FC = () => {
             Est. received
           </span>
           <span className="text-sm font-semibold text-gray-700 text-right dark:text-slate-400">
-            {loading || !trade?.amountOut ? (
+            {loading || !quote?.amountOut ? (
               <SkeletonBox className="h-4 py-0.5 w-[120px]" />
             ) : (
-              `${trade?.amountOut?.toSignificant(6) ?? '0.00'} ${
-                trade?.amountOut?.currency?.symbol ?? ''
+              `${quote?.amountOut?.toSignificant(6) ?? '0.00'} ${
+                quote?.amountOut?.currency?.symbol ?? ''
               }`
             )}
           </span>
@@ -77,11 +77,11 @@ export const SimpleSwapTradeStats: FC = () => {
             Min. received
           </span>
           <span className="text-sm font-semibold text-gray-700 text-right dark:text-slate-400">
-            {loading || !trade?.minAmountOut ? (
+            {loading || !quote?.minAmountOut ? (
               <SkeletonBox className="h-4 py-0.5 w-[100px]" />
             ) : (
-              `${trade?.minAmountOut?.toSignificant(6) ?? '0.00'} ${
-                trade?.amountOut?.currency?.symbol ?? ''
+              `${quote?.minAmountOut?.toSignificant(6) ?? '0.00'} ${
+                quote?.amountOut?.currency?.symbol ?? ''
               }`
             )}
           </span>
@@ -92,10 +92,10 @@ export const SimpleSwapTradeStats: FC = () => {
             Fee (0.25%)
           </span>
           <span className="text-sm font-semibold text-gray-700 text-right dark:text-slate-400">
-            {loading || !trade?.fee ? (
+            {loading || !quote?.fee ? (
               <SkeletonBox className="h-4 py-0.5 w-[100px]" />
             ) : (
-              `${trade?.fee}`
+              `${quote?.fee}`
             )}
           </span>
         </div>
@@ -107,11 +107,11 @@ export const SimpleSwapTradeStats: FC = () => {
           <span className="text-sm font-semibold text-gray-700 text-right dark:text-slate-400">
             {chainId === ChainId.SKALE_EUROPA ? (
               'FREE'
-            ) : loading || !trade?.gasSpent || trade.gasSpent === '0' ? (
+            ) : loading || !quote?.gasSpent || quote.gasSpent === '0' ? (
               <SkeletonBox className="h-4 py-0.5 w-[120px]" />
-            ) : trade?.gasSpent ? (
-              `${trade.gasSpent} ${Native.onChain(chainId).symbol} ${
-                trade?.gasSpentUsd ? `($${trade.gasSpentUsd})` : ''
+            ) : quote?.gasSpent ? (
+              `${quote.gasSpent} ${Native.onChain(chainId).symbol} ${
+                quote?.gasSpentUsd ? `($${quote.gasSpentUsd})` : ''
               }`
             ) : null}
           </span>
@@ -122,7 +122,7 @@ export const SimpleSwapTradeStats: FC = () => {
             Routing source
           </span>
           <span className="text-sm font-semibold text-gray-700 text-right dark:text-slate-400">
-            {loading || !trade ? (
+            {loading || !quote ? (
               <SkeletonBox className="h-4 py-0.5 w-[120px]" />
             ) : (
               'SushiSwap API'
