@@ -385,10 +385,12 @@ const _SimpleSwapTradeReviewDialog: FC<{
                             fontSize="sm"
                             className="w-1/2"
                           />
-                        ) : (
+                        ) : trade?.minAmountOut ? (
                           `${trade?.minAmountOut?.toSignificant(6)} ${
                             token1?.symbol
                           }`
+                        ) : (
+                          '-'
                         )}
                       </List.KeyValue>
                     )}
