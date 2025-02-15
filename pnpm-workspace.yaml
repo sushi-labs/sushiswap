@@ -10,9 +10,9 @@ catalog:
 catalogs:
   web3:
     "sushi": 5.0.8
-    "wagmi": 2.12.10
-    "@wagmi/core": 2.13.5
-    "viem": 2.21.55
+    "wagmi": 2.14.11
+    "@wagmi/core": 2.16.4
+    "viem": 2.23.2
 
   react:
     "next": 15.1.4
