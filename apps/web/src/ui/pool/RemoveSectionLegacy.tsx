@@ -48,6 +48,7 @@ import {
   useSignature,
   withCheckerRoot,
 } from 'src/lib/wagmi/systems/Checker/Provider'
+import type { EvmChainId } from 'sushi/chain'
 import {
   type UseCallParameters,
   useAccount,
@@ -194,14 +195,14 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> =
 
         const receipt = client.waitForTransactionReceipt({ hash })
         receipt.then(() => {
-          refetchBalances(chain.id)
+          refetchBalances(chain.id as EvmChainId)
         })
 
         const ts = new Date().getTime()
         void createToast({
           account: address,
           type: 'burn',
-          chainId: chain.id,
+          chainId: chain.id as EvmChainId,
           txHash: hash,
           promise: receipt,
           summary: {

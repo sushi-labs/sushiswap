@@ -23,6 +23,7 @@ import {
   useApproved,
 } from 'src/lib/wagmi/systems/Checker/Provider'
 import { ZapInfoCard } from 'src/ui/pool/ZapInfoCard'
+import type { EvmChainId } from 'sushi/chain'
 import { defaultCurrency, isWNativeSupported } from 'sushi/config'
 import { Amount, type Type, tryParseAmount } from 'sushi/currency'
 import { Percent } from 'sushi/math'
@@ -138,7 +139,7 @@ const _SteerPositionZap: FC<SteerPositionZapProps> = ({
 
       const promise = client.waitForTransactionReceipt({ hash })
       promise.then(() => {
-        refetchBalances(chain.id)
+        refetchBalances(chain.id as EvmChainId)
       })
 
       sendAnalyticsEvent(ZapEventName.ZAP_SIGNED, {
@@ -149,7 +150,7 @@ const _SteerPositionZap: FC<SteerPositionZapProps> = ({
       void createToast({
         account: address,
         type: 'mint',
-        chainId: chain.id,
+        chainId: chain.id as EvmChainId,
         txHash: hash,
         promise: promise,
         summary: {

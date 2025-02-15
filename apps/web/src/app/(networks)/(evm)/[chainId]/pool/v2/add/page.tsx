@@ -342,7 +342,7 @@ const _ZapWidget: FC<ZapWidgetProps> = ({
 
       const promise = client.waitForTransactionReceipt({ hash })
       promise.then(() => {
-        refetchBalances(chain.id)
+        refetchBalances(chain.id as EvmChainId)
       })
 
       sendAnalyticsEvent(ZapEventName.ZAP_SIGNED, {
@@ -353,7 +353,7 @@ const _ZapWidget: FC<ZapWidgetProps> = ({
       void createToast({
         account: address,
         type: 'mint',
-        chainId: chain.id,
+        chainId: chain.id as EvmChainId,
         txHash: hash,
         promise: promise,
         summary: {

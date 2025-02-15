@@ -1,19 +1,10 @@
 'use client'
 
-import { connectorsForWallets } from '@rainbow-me/rainbowkit'
-import {
-  argentWallet,
-  coinbaseWallet,
-  injectedWallet,
-  metaMaskWallet,
-  safeWallet,
-  trustWallet,
-  walletConnectWallet,
-} from '@rainbow-me/rainbowkit/wallets'
 import { gtagEvent } from '@sushiswap/ui'
 import { EvmChainId } from 'sushi/chain'
 import { http, cookieStorage, createConfig, createStorage } from 'wagmi'
 import type { Writeable } from 'zod'
+import { connectors } from './connectors'
 import { publicWagmiConfig } from './public'
 import { publicTransports } from './viem'
 
@@ -32,23 +23,6 @@ const pollingInterval = new Proxy(
         ? target[Number(name) as keyof typeof target]
         : DEFAULT_POLLING_INTERVAL
     },
-  },
-)
-
-const connectors = connectorsForWallets(
-  [
-    {
-      groupName: 'Recommended',
-      wallets: [metaMaskWallet, coinbaseWallet, trustWallet],
-    },
-    {
-      groupName: 'Others',
-      wallets: [injectedWallet, walletConnectWallet, argentWallet, safeWallet],
-    },
-  ],
-  {
-    appName: 'Sushi',
-    projectId: '3f44629277b155ef0caebf3dc705c4ba',
   },
 )
 
