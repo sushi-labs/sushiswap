@@ -1,4 +1,5 @@
 import type { createConfig } from '@wagmi/core'
+import type { connectors } from './connectors'
 import { publicChains, publicTransports } from './viem'
 
 export const publicWagmiConfig = {
@@ -14,6 +15,7 @@ export const publicWagmiConfig = {
 export type PublicWagmiConfig = ReturnType<
   typeof createConfig<
     (typeof publicWagmiConfig)['chains'],
-    (typeof publicWagmiConfig)['transports']
+    (typeof publicWagmiConfig)['transports'],
+    typeof connectors
   >
 >

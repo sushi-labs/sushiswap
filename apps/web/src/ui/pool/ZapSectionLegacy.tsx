@@ -28,6 +28,7 @@ import {
   CheckerProvider,
   useApproved,
 } from 'src/lib/wagmi/systems/Checker/Provider'
+import type { EvmChainId } from 'sushi/chain'
 import {
   type SushiSwapV2ChainId,
   defaultCurrency,
@@ -155,7 +156,7 @@ const _ZapSectionLegacy: FC<ZapSectionLegacyProps> = ({
 
       const promise = client.waitForTransactionReceipt({ hash })
       promise.then(() => {
-        refetchBalances(chain.id)
+        refetchBalances(chain.id as EvmChainId)
       })
 
       sendAnalyticsEvent(ZapEventName.ZAP_SIGNED, {
@@ -166,7 +167,7 @@ const _ZapSectionLegacy: FC<ZapSectionLegacyProps> = ({
       void createToast({
         account: address,
         type: 'mint',
-        chainId: chain.id,
+        chainId: chain.id as EvmChainId,
         txHash: hash,
         promise: promise,
         summary: {
