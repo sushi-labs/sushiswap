@@ -27,7 +27,7 @@ jobs:
     timeout-minutes: 15
     strategy:
       matrix:
-        block-number: [61755107]
+        block-number: [68044731]
         chain-id: [137]
     steps:
       - name: Clone repository
