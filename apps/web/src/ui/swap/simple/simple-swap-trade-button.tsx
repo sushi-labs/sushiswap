@@ -12,7 +12,10 @@ import type React from 'react'
 import { type FC, useEffect, useMemo, useState } from 'react'
 import type { UseTradeReturn } from 'src/lib/hooks/react-query'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
-import { RED_SNWAPPER_ADDRESS, isRedSnwapperChainId } from 'sushi/config'
+import {
+  ROUTE_PROCESSOR_6_ADDRESS,
+  isRouteProcessor6ChainId,
+} from 'sushi/config'
 import { Native } from 'sushi/currency'
 import { ZERO } from 'sushi/math'
 import { APPROVE_TAG_SWAP } from '../../../lib/constants'
@@ -124,8 +127,8 @@ const _SimpleSwapTradeButton: FC<SimpleSwapTradeButtonProps> = ({
                     id="approve-erc20"
                     amount={swapAmount}
                     contract={
-                      isRedSnwapperChainId(chainId)
-                        ? RED_SNWAPPER_ADDRESS[chainId]
+                      isRouteProcessor6ChainId(chainId)
+                        ? ROUTE_PROCESSOR_6_ADDRESS[chainId]
                         : undefined
                     }
                   >
