@@ -86,6 +86,8 @@ export const useTradeQuery = (
       params.searchParams.set('fee', '0.0025')
       params.searchParams.set('feeBy', 'output')
       if (source !== undefined) params.searchParams.set('source', `${source}`)
+      if (process.env.NEXT_PUBLIC_APP_ENV === 'test')
+        params.searchParams.set('simulate', 'false')
 
       const res = await fetch(params.toString())
       const json = await res.json()
