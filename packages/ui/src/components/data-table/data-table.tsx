@@ -38,9 +38,14 @@ import { DataTablePagination } from './data-table-pagination'
 declare module '@tanstack/react-table' {
   // biome-ignore lint/correctness/noUnusedVariables: <explanation>
   interface ColumnMeta<TData extends RowData, TValue> {
-    className?: string
-    skeleton?: React.ReactNode
-    headerDescription?: string
+    body?: {
+      className?: string
+      skeleton?: React.ReactNode
+    }
+    header?: {
+      className?: string
+      description?: string
+    }
     disableLink?: boolean
   }
 }
@@ -129,13 +134,7 @@ export function DataTable<TData, TValue>({
                       )}
                     >
                       {header.isPlaceholder ? null : (
-                        <DataTableColumnHeader
-                          description={
-                            header.column.columnDef?.meta?.headerDescription
-                          }
-                          column={header.column}
-                          title={header.column.columnDef.header as string}
-                        />
+                        <DataTableColumnHeader header={header} />
                       )}
                     </TableHead>
                   )
@@ -156,8 +155,9 @@ export function DataTable<TData, TValue>({
                       <TableCell
                         style={{ width: column.getSize() }}
                         key={column.id}
+                        className={column.columnDef.meta?.body?.className}
                       >
-                        {column.columnDef.meta?.skeleton}
+                        {column.columnDef.meta?.body?.skeleton}
                       </TableCell>
                     )
                   })}
@@ -183,6 +183,7 @@ export function DataTable<TData, TValue>({
                         href={linkFormatter(row.original)}
                         external={externalLink}
                         key={cell.id}
+                        className={cell.column.columnDef.meta?.body?.className}
                         testdata-id={`${testId}-${r}-${i}-td`}
                       >
                         {flexRender(
@@ -195,6 +196,7 @@ export function DataTable<TData, TValue>({
                         style={{ width: cell.column.getSize() }}
                         testdata-id={`${testId}-${r}-${i}-td`}
                         key={cell.id}
+                        className={cell.column.columnDef.meta?.body?.className}
                       >
                         {flexRender(
                           cell.column.columnDef.cell,

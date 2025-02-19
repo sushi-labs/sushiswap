@@ -254,7 +254,9 @@ const COLUMNS = [
     size: 80,
     meta: {
       disableLink: true,
-      skeleton: <SkeletonText fontSize="lg" />,
+      body: {
+        skeleton: <SkeletonText fontSize="lg" />,
+      },
     },
   } satisfies ColumnDef<Pools[number], unknown>,
 ] as ColumnDef<Pools[number], unknown>[]

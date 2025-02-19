@@ -23,9 +23,9 @@ import {
   useApproved,
 } from 'src/lib/wagmi/systems/Checker/Provider'
 import { ZapInfoCard } from 'src/ui/pool/ZapInfoCard'
+import { Percent } from 'sushi'
 import { defaultCurrency, isWNativeSupported } from 'sushi/config'
 import { Amount, type Type, tryParseAmount } from 'sushi/currency'
-import { Percent } from 'sushi/math'
 import type { SendTransactionReturnType } from 'viem'
 import {
   useAccount,
