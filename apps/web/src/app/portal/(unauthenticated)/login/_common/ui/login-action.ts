@@ -30,7 +30,7 @@ export async function loginAction(data: FormData): Promise<FormState> {
 
   try {
     const [session, user] = await Promise.allSettled([
-      createZitadelSession(result.data),
+      createZitadelSession({ type: 'password', ...result.data }),
       fetchZitadelUser(result.data.email),
     ])
 

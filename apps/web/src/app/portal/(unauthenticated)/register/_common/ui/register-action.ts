@@ -56,6 +56,7 @@ export async function registerAction(data: FormData): Promise<FormState> {
   let session: CreateSessionResponse
   try {
     session = await createZitadelSession({
+      type: 'password',
       email: result.data.email,
       password: result.data.password,
     })
