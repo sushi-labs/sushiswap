@@ -180,35 +180,88 @@ async function runTest() {
 
         // only for pancakev3 with 0.2.5% fee pool pair
         if (chainId === ChainId.BSC) {
+          allFoundPools.push(
+            await testDF(
+              chName,
+              dataFetcher,
+              WNATIVE[chainId],
+              USDT[chainId as keyof typeof USDT],
+              'WNATIVE',
+              'USDT',
+            ),
+          )
+          const pcMap = dataFetcher.getCurrentPoolCodeMap(
+            WNATIVE[chainId],
+            USDT[chainId as keyof typeof USDT],
+          )
+          assert.ok(!!pcMap.get('0x1401ff943D08a7E098328C1d3a9d388923B115D2'))
+          foundRouteReports.push(
+            findRoute(
+              dataFetcher,
+              WNATIVE[chainId],
+              USDT[chainId as keyof typeof USDT],
+              chainId,
+              [LiquidityProviders.PancakeSwapV3],
+            ),
+          )
+        }
+
+        // only for kimv4 on base
+        if (chainId === ChainId.BASE) {
           const token = new Token({
-            chainId: ChainId.BSC,
-            address: '0x4BE35Ec329343d7d9F548d42B0F8c17FFfe07db4',
+            chainId: ChainId.BASE,
+            address: '0x5dC25aA049837B696d1dc0F966aC8DF1491f819B',
             decimals: 18,
-            symbol: 'USDT.z',
+            symbol: 'KIM',
           })
           allFoundPools.push(
             await testDF(
               chName,
               dataFetcher,
               token,
-              USDT[chainId as keyof typeof USDT],
-              'USDT.z',
-              'USDT',
+              WNATIVE[chainId as keyof typeof WNATIVE],
+              'KIM',
+              'WETH',
             ),
           )
-          const pcMap = dataFetcher.getCurrentPoolCodeMap(
-            token,
-            USDT[chainId as keyof typeof USDT],
-          )
-          assert.ok(!!pcMap.get('0xB30b2030b2F950401aBCD69763e9D0F81958d72d'))
 
           foundRouteReports.push(
             findRoute(
               dataFetcher,
               token,
-              USDT[chainId as keyof typeof USDT],
+              WNATIVE[chainId as keyof typeof WNATIVE],
               chainId,
-              [LiquidityProviders.PancakeSwapV3],
+              [LiquidityProviders.KimV4],
+            ),
+          )
+        }
+
+        // only for horizon on linea
+        if (chainId === ChainId.LINEA) {
+          const token = new Token({
+            chainId: ChainId.LINEA,
+            address: '0x7d43AABC515C356145049227CeE54B608342c0ad',
+            decimals: 18,
+            symbol: 'BUSD',
+          })
+          allFoundPools.push(
+            await testDF(
+              chName,
+              dataFetcher,
+              token,
+              WNATIVE[chainId as keyof typeof WNATIVE],
+              'BUSD',
+              'WETH',
+            ),
+          )
+
+          foundRouteReports.push(
+            findRoute(
+              dataFetcher,
+              token,
+              WNATIVE[chainId as keyof typeof WNATIVE],
+              chainId,
+              [LiquidityProviders.Horizon],
             ),
           )
         }
@@ -260,6 +313,38 @@ async function runTest() {
               USDB[chainId as keyof typeof USDB],
               chainId,
             ),
+          )
+        }
+
+        // only for Blast chain
+        if (
+          chainId === ChainId.BLAST &&
+          reportMissingDexes(allFoundPools).hasMissingDex
+        ) {
+          const token0 = new Token({
+            chainId: ChainId.BLAST,
+            address: '0x18755D2ceC785aB87680Edb8e117615E4B005430',
+            decimals: 18,
+            symbol: 'fwRING',
+          })
+          const token1 = new Token({
+            chainId: ChainId.BLAST,
+            address: '0x66714DB8F3397c767d0A602458B5b4E3C0FE7dd1',
+            decimals: 18,
+            symbol: 'fwWETH',
+          })
+          allFoundPools.push(
+            await testDF(
+              chName,
+              dataFetcher,
+              token0,
+              token1,
+              'fwRING',
+              'fwWETH',
+            ),
+          )
+          foundRouteReports.push(
+            findRoute(dataFetcher, token0, token1, chainId),
           )
         }
 

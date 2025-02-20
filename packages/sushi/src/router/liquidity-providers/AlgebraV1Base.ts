@@ -20,11 +20,42 @@ import {
   bitmapIndex,
 } from './UniswapV3Base.js'
 
+export const globalStateAbi = [
+  {
+    inputs: [],
+    name: 'globalState',
+    outputs: [
+      { internalType: 'uint160', name: 'price', type: 'uint160' },
+      { internalType: 'int24', name: 'tick', type: 'int24' },
+      { internalType: 'uint16', name: 'fee', type: 'uint16' },
+      {
+        internalType: 'uint16',
+        name: 'timepointIndex',
+        type: 'uint16',
+      },
+      {
+        internalType: 'uint8',
+        name: 'communityFeeToken0',
+        type: 'uint8',
+      },
+      {
+        internalType: 'uint8',
+        name: 'communityFeeToken1',
+        type: 'uint8',
+      },
+      { internalType: 'bool', name: 'unlocked', type: 'bool' },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+] as const
+
 export abstract class AlgebraV1BaseProvider extends UniswapV3BaseProvider {
   override TICK_SPACINGS: Record<string, number> = {}
 
   readonly BASE_FEE = 100
   DEFAULT_TICK_SPACING = 1
+  gloablStateAbi = globalStateAbi
 
   poolDeployer: Record<number, Address> = {}
 
@@ -67,35 +98,7 @@ export abstract class AlgebraV1BaseProvider extends UniswapV3BaseProvider {
           ({
             address: pool.address,
             chainId: this.chainId,
-            abi: [
-              {
-                inputs: [],
-                name: 'globalState',
-                outputs: [
-                  { internalType: 'uint160', name: 'price', type: 'uint160' },
-                  { internalType: 'int24', name: 'tick', type: 'int24' },
-                  { internalType: 'uint16', name: 'fee', type: 'uint16' },
-                  {
-                    internalType: 'uint16',
-                    name: 'timepointIndex',
-                    type: 'uint16',
-                  },
-                  {
-                    internalType: 'uint8',
-                    name: 'communityFeeToken0',
-                    type: 'uint8',
-                  },
-                  {
-                    internalType: 'uint8',
-                    name: 'communityFeeToken1',
-                    type: 'uint8',
-                  },
-                  { internalType: 'bool', name: 'unlocked', type: 'bool' },
-                ],
-                stateMutability: 'view',
-                type: 'function',
-              },
-            ] as const,
+            abi: this.gloablStateAbi,
             functionName: 'globalState',
           }) as const,
       ),
