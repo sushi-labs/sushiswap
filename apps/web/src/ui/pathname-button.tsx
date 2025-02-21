@@ -27,4 +27,4 @@ const PathnameButton = forwardRef<HTMLButtonElement, PathnameButton>(
 
 PathnameButton.displayName = 'PathnameButton'
 
-export { PathnameButton }
+export type { PathnameButton }
