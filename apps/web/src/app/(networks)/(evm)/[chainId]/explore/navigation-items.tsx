@@ -9,6 +9,20 @@ export function NavigationItems({ chainId }: { chainId: ChainId }) {
       <LinkInternal
         shallow={true}
         scroll={false}
+        href={`/${ChainKey[chainId]}/explore/tokens`}
+      >
+        <PathnameButton
+          id="tokens"
+          pathname={`/${ChainKey[chainId]}/explore/tokens`}
+          asChild
+          size="sm"
+        >
+          Tokens
+        </PathnameButton>
+      </LinkInternal>
+      <LinkInternal
+        shallow={true}
+        scroll={false}
         href={`/${ChainKey[chainId]}/explore/pools`}
       >
         <PathnameButton
