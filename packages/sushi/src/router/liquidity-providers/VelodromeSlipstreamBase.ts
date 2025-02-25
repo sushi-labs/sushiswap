@@ -13,12 +13,12 @@ import { Token } from '../../currency/index.js'
 import { DataFetcherOptions } from '../data-fetcher.js'
 import { getCurrencyCombinations } from '../get-currency-combinations.js'
 import {
-  bitmapIndex,
   NUMBER_OF_SURROUNDING_TICKS,
   PoolFilter,
   StaticPoolUniV3,
   UniswapV3BaseProvider,
   V3Pool,
+  bitmapIndex,
 } from './UniswapV3Base.js'
 
 export const ZERO_FEE_INDICATOR = 420
@@ -248,7 +248,9 @@ export abstract class VelodromeSlipstreamBaseProvider extends UniswapV3BaseProvi
       DLiquidity: 0n,
     })
     const upperUnknownTick =
-      (maxIndexes[i]! + 1) * this.TICK_SPACINGS[pool.address.toLowerCase()]! * 256
+      (maxIndexes[i]! + 1) *
+      this.TICK_SPACINGS[pool.address.toLowerCase()]! *
+      256
     console.assert(
       poolTicks[poolTicks.length - 1]!.index < upperUnknownTick,
       'Error 244: unexpected max tick index',

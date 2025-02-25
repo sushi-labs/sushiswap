@@ -164,7 +164,7 @@ async function runTest() {
             chainId,
           ),
         )
-        await sleep(60_000);
+        await sleep(60_000)
 
         // only for quickswapv3
         if (chainId === ChainId.POLYGON) {
@@ -205,7 +205,7 @@ async function runTest() {
               [LiquidityProviders.PancakeSwapV3],
             ),
           )
-          await sleep(60_000);
+          await sleep(60_000)
         }
 
         // only for kimv4 on base
@@ -236,7 +236,7 @@ async function runTest() {
               [LiquidityProviders.KimV4],
             ),
           )
-          await sleep(60_000);
+          await sleep(60_000)
         }
 
         // only for horizon on linea
@@ -267,7 +267,7 @@ async function runTest() {
               [LiquidityProviders.Horizon],
             ),
           )
-          await sleep(60_000);
+          await sleep(60_000)
         }
 
         // only for Dfyn and JetSwap on fantom chain
@@ -293,7 +293,7 @@ async function runTest() {
               chainId,
             ),
           )
-          await sleep(60_000);
+          await sleep(60_000)
         }
 
         // only for Blast chain
@@ -319,7 +319,7 @@ async function runTest() {
               chainId,
             ),
           )
-          await sleep(60_000);
+          await sleep(60_000)
         }
 
         // only for Blast chain
@@ -352,7 +352,7 @@ async function runTest() {
           foundRouteReports.push(
             findRoute(dataFetcher, token0, token1, chainId),
           )
-          await sleep(60_000);
+          await sleep(60_000)
         }
 
         // only for Moonbeam chain
@@ -384,7 +384,7 @@ async function runTest() {
               chainId,
             ),
           )
-          await sleep(60_000);
+          await sleep(60_000)
         }
 
         // only for Elk dex on Moonriver since it only has 1 pool deployed which is with following pair
@@ -416,7 +416,7 @@ async function runTest() {
               chainId,
             ),
           )
-          await sleep(60_000);
+          await sleep(60_000)
         }
 
         // shared pairs for all chains and dexes
@@ -439,7 +439,7 @@ async function runTest() {
               chainId,
             ),
           )
-          await sleep(60_000);
+          await sleep(60_000)
         }
 
         if (reportMissingDexes(allFoundPools).hasMissingDex) {
@@ -461,7 +461,7 @@ async function runTest() {
               chainId,
             ),
           )
-          await sleep(60_000);
+          await sleep(60_000)
         }
 
         if (reportMissingDexes(allFoundPools).hasMissingDex) {
@@ -483,7 +483,7 @@ async function runTest() {
               chainId,
             ),
           )
-          await sleep(60_000);
+          await sleep(60_000)
         }
 
         dataFetcher.stopDataFetching()
@@ -525,11 +525,8 @@ async function runTest() {
   })
 }
 
-async function sleep(ms: number, msg = "") {
-  let _timeoutReference: string | number | NodeJS.Timeout | undefined;
-  return new Promise(
-      (resolve) => (_timeoutReference = setTimeout(() => resolve(msg), ms)),
-  ).finally(() => clearTimeout(_timeoutReference));
+async function sleep(ms: number, msg = '') {
+  return new Promise((resolve) => setTimeout(() => resolve(msg), ms))
 }
 
 runTest()
