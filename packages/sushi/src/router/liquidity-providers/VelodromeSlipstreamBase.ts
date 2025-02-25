@@ -13,6 +13,8 @@ import { Token } from '../../currency/index.js'
 import { DataFetcherOptions } from '../data-fetcher.js'
 import { getCurrencyCombinations } from '../get-currency-combinations.js'
 import {
+  bitmapIndex,
+  NUMBER_OF_SURROUNDING_TICKS,
   PoolFilter,
   StaticPoolUniV3,
   UniswapV3BaseProvider,
@@ -206,6 +208,55 @@ export abstract class VelodromeSlipstreamBaseProvider extends UniswapV3BaseProvi
     })
 
     return existingPools
+  }
+
+  override getIndexes(existingPools: V3Pool[]): [number[], number[]] {
+    const minIndexes = existingPools.map((pool) =>
+      bitmapIndex(
+        pool.activeTick - NUMBER_OF_SURROUNDING_TICKS,
+        this.TICK_SPACINGS[pool.address.toLowerCase()]!,
+      ),
+    )
+    const maxIndexes = existingPools.map((pool) =>
+      bitmapIndex(
+        pool.activeTick + NUMBER_OF_SURROUNDING_TICKS,
+        this.TICK_SPACINGS[pool.address.toLowerCase()]!,
+      ),
+    )
+    return [minIndexes, maxIndexes]
+  }
+
+  override handleTickBoundries(
+    i: number,
+    pool: V3Pool,
+    poolTicks: {
+      index: number
+      DLiquidity: bigint
+    }[],
+    minIndexes: number[],
+    maxIndexes: number[],
+  ) {
+    const lowerUnknownTick =
+      minIndexes[i]! * this.TICK_SPACINGS[pool.address.toLowerCase()]! * 256 -
+      this.TICK_SPACINGS[pool.address.toLowerCase()]!
+    console.assert(
+      poolTicks.length === 0 || lowerUnknownTick < poolTicks[0]!.index,
+      'Error 236: unexpected min tick index',
+    )
+    poolTicks.unshift({
+      index: lowerUnknownTick,
+      DLiquidity: 0n,
+    })
+    const upperUnknownTick =
+      (maxIndexes[i]! + 1) * this.TICK_SPACINGS[pool.address.toLowerCase()]! * 256
+    console.assert(
+      poolTicks[poolTicks.length - 1]!.index < upperUnknownTick,
+      'Error 244: unexpected max tick index',
+    )
+    poolTicks.push({
+      index: upperUnknownTick,
+      DLiquidity: 0n,
+    })
   }
 
   override getStaticPools(t1: Token, t2: Token): SlipstreamPool[] {
