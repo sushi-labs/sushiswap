@@ -672,7 +672,7 @@ export const publicClientConfig = {
     chain: mainnet as Chain,
     transport: fallback([
       http('https://rpc.ankr.com/eth'),
-      publicTransports[ChainId.ETHEREUM], // default that uses ankr rpc is now only available as paid account
+      publicTransports[ChainId.ETHEREUM],
     ]),
   },
   [ChainId.FANTOM]: {
@@ -760,7 +760,10 @@ export const publicClientConfig = {
   },
   [ChainId.BASE]: {
     chain: base as Chain,
-    transport: publicTransports[ChainId.BASE],
+    transport: fallback([
+      http('https://rpc.ankr.com/base'),
+      publicTransports[ChainId.BASE],
+    ]),
   },
   [ChainId.SCROLL]: {
     chain: scroll as Chain,
