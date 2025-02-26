@@ -173,7 +173,7 @@ export const useTradeQuote = (variables: UseTradeParams) => {
         const gasSpent = gasPrice
           ? Amount.fromRawAmount(
               Native.onChain(chainId),
-              gasPrice * BigInt((data.route.gasSpent + 100_000) * 1.2),
+              gasPrice * BigInt(data.route.gasSpent * 1.2),
             )
           : undefined
 
