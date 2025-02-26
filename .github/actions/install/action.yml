@@ -12,4 +12,4 @@ runs:
     #   run: npx playwright install --with-deps chromium
 
     - name: Set up pnpm
-      uses: sushi-labs/actions/.github/actions/pnpm@pnpm-10
+      uses: sushi-labs/actions/.github/actions/pnpm@pnpm-10.4.1

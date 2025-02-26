@@ -375,24 +375,44 @@ const _SimpleSwapTradeReviewDialog: FC<{
                       </List.KeyValue>
                     )}
                     {isSwap && (
-                      <List.KeyValue
-                        title={`Min. received after slippage (${slippagePercent.toPercentageString()})`}
-                        subtitle="The minimum amount you are guaranteed to receive."
-                      >
-                        {isSwapQueryFetching ? (
-                          <SkeletonText
-                            align="right"
-                            fontSize="sm"
-                            className="w-1/2"
-                          />
-                        ) : trade?.minAmountOut ? (
-                          `${trade?.minAmountOut?.toSignificant(6)} ${
-                            token1?.symbol
-                          }`
-                        ) : (
-                          '-'
-                        )}
-                      </List.KeyValue>
+                      <>
+                        <List.KeyValue
+                          title={`Max. received`}
+                          subtitle="The maximum amount you are guaranteed to receive."
+                        >
+                          {isSwapQueryFetching ? (
+                            <SkeletonText
+                              align="right"
+                              fontSize="sm"
+                              className="w-1/2"
+                            />
+                          ) : trade?.amountOut ? (
+                            `${trade?.amountOut?.toSignificant(6)} ${
+                              token1?.symbol
+                            }`
+                          ) : (
+                            '-'
+                          )}
+                        </List.KeyValue>
+                        <List.KeyValue
+                          title={`Min. received after slippage (${slippagePercent.toPercentageString()})`}
+                          subtitle="The minimum amount you are guaranteed to receive."
+                        >
+                          {isSwapQueryFetching ? (
+                            <SkeletonText
+                              align="right"
+                              fontSize="sm"
+                              className="w-1/2"
+                            />
+                          ) : trade?.minAmountOut ? (
+                            `${trade?.minAmountOut?.toSignificant(6)} ${
+                              token1?.symbol
+                            }`
+                          ) : (
+                            '-'
+                          )}
+                        </List.KeyValue>
+                      </>
                     )}
                     <List.KeyValue title="Network fee">
                       {chainId === ChainId.SKALE_EUROPA ? (

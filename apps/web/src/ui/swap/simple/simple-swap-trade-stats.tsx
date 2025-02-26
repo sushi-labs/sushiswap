@@ -59,7 +59,7 @@ export const SimpleSwapTradeStats: FC = () => {
 
         <div className="flex justify-between items-center gap-2">
           <span className="text-sm text-gray-700 dark:text-slate-400">
-            Est. received
+            Max. received
           </span>
           <span className="text-sm font-semibold text-gray-700 text-right dark:text-slate-400">
             {loading || !quote?.amountOut ? (
