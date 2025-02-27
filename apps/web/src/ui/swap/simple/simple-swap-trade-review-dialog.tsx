@@ -39,6 +39,7 @@ import React, {
 import type { UseTradeReturn } from 'src/lib/hooks/react-query'
 import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
 import { useApproved } from 'src/lib/wagmi/systems/Checker/Provider'
+import { gasMargin } from 'sushi'
 import { ChainId, EvmChain } from 'sushi/chain'
 import { Native } from 'sushi/currency'
 import { shortenAddress } from 'sushi/format'
@@ -274,7 +275,7 @@ const _SimpleSwapTradeReviewDialog: FC<{
         to,
         data,
         value,
-        gas: gas ? BigInt(Math.ceil(+gas * 1.2)) : undefined,
+        gas: gas ? gasMargin(BigInt(gas)) : undefined,
       })
       confirm()
     }
