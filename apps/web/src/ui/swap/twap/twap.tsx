@@ -34,7 +34,7 @@ import { useAccount, useChainId, useSwitchChain } from 'wagmi'
 import { usePrice } from '~evm/_common/ui/price-provider/price-provider/use-price'
 import {
   useDerivedStateSimpleSwap,
-  useSimpleSwapTrade,
+  useSimpleSwapTradeQuote,
 } from '../simple/derivedstate-simple-swap-provider'
 import { SimpleSwapBridgeBanner } from '../simple/simple-swap-bridge-banner'
 import { SimpleSwapHeader } from '../simple/simple-swap-header'
@@ -99,11 +99,11 @@ const TokenSelectModal = ({
 }
 
 const useTrade = () => {
-  const { data: trade, isLoading } = useSimpleSwapTrade()
+  const { data: quote, isLoading } = useSimpleSwapTradeQuote()
 
   return {
     isLoading,
-    outAmount: trade?.amountOut?.quotient.toString(),
+    outAmount: quote?.amountOut?.quotient.toString(),
   }
 }
 
