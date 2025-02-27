@@ -39,6 +39,7 @@ import React, {
 import type { UseTradeReturn } from 'src/lib/hooks/react-query'
 import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
 import { useApproved } from 'src/lib/wagmi/systems/Checker/Provider'
+import { gasMargin } from 'sushi'
 import { ChainId, EvmChain } from 'sushi/chain'
 import { Native } from 'sushi/currency'
 import { shortenAddress } from 'sushi/format'
@@ -265,15 +266,16 @@ const _SimpleSwapTradeReviewDialog: FC<{
   })
 
   const write = useMemo(() => {
-    if (!trade?.tx || address !== trade?.tx?.from) return undefined
+    if (!trade?.tx || address !== trade.tx.from) return undefined
 
-    const { to, data, value } = trade.tx
+    const { to, gas, data, value } = trade.tx
 
     return async (confirm: () => void) => {
       await sendTransactionAsync({
         to,
-        value,
         data,
+        value,
+        gas: gas ? gasMargin(BigInt(gas)) : undefined,
       })
       confirm()
     }

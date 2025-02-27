@@ -205,14 +205,7 @@ export const useTradeQuote = (variables: UseTradeParams) => {
                   .toSignificant(4)} ${!tokenOutPrice ? toToken.symbol : ''}`
               : '$0',
           route: data.route,
-          tx: data?.tx
-            ? {
-                from: data.tx.from,
-                to: data.tx.to,
-                data: data.tx.data as Hex,
-                value: data.tx.value,
-              }
-            : undefined,
+          tx: undefined,
           tokenTax,
         }
       }
