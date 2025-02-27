@@ -265,15 +265,16 @@ const _SimpleSwapTradeReviewDialog: FC<{
   })
 
   const write = useMemo(() => {
-    if (!trade?.tx || address !== trade?.tx?.from) return undefined
+    if (!trade?.tx || address !== trade.tx.from) return undefined
 
-    const { to, data, value } = trade.tx
+    const { to, gas, data, value } = trade.tx
 
     return async (confirm: () => void) => {
       await sendTransactionAsync({
         to,
-        value,
         data,
+        value,
+        gas: gas ? BigInt(Math.ceil(+gas * 1.2)) : undefined,
       })
       confirm()
     }

@@ -237,6 +237,8 @@ export const useTrade = (variables: UseTradeParams) => {
                 to: data.tx.to,
                 data: data.tx.data as Hex,
                 value: data.tx.value,
+                gas: data.tx.gas,
+                gasPrice: data.tx.gasPrice,
               }
             : undefined,
           tokenTax,
