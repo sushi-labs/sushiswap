@@ -51,7 +51,7 @@ export interface UseTradeReturn {
         from: Address
         to: Address
         gas?: string | undefined
-        gasPrice: number
+        gasPrice?: number | undefined
         data: Hex
         value?: bigint | undefined
       }
