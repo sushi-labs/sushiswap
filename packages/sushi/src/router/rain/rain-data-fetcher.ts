@@ -222,4 +222,17 @@ export class RainDataFetcher extends DataFetcher {
       }
     })
   }
+
+  reset() {
+    this.providers.forEach((provider) => {
+      if (
+        provider instanceof RainUniswapV2BaseProvider ||
+        provider instanceof RainUniswapV3BaseProvider
+      ) {
+        provider.pools.clear()
+        provider.poolsByTrade.clear()
+        provider.nonExistentPools.clear()
+      }
+    })
+  }
 }
