@@ -37,7 +37,7 @@ export const SimpleSwapBridgeBanner: FC = () => {
       rel="noopener noreferrer"
       className={BridgeInfo[chainId as keyof typeof BridgeInfo].textColor}
     >
-      <div className="block xl:fixed xl:right-8 xl:bottom-8 rounded-xl relative p-6 bg-blue/10 min-w-[360px] overflow-hidden">
+      <div className="block rounded-xl relative p-6 bg-blue/10 min-w-[360px] overflow-hidden">
         {BridgeInfo[chainId as keyof typeof BridgeInfo].background}
         <XMarkIcon
           width={20}
