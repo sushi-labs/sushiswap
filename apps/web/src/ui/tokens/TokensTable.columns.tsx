@@ -1,6 +1,6 @@
-import { type ExploreToken } from '@sushiswap/graph-client/data-api'
+import type { ExploreToken } from '@sushiswap/graph-client/data-api'
 import { SkeletonCircle, SkeletonText, classNames } from '@sushiswap/ui'
-import { ColumnDef } from '@tanstack/react-table'
+import type { ColumnDef } from '@tanstack/react-table'
 import { formatNumber, formatPercent } from 'sushi/format'
 import { SparklineCell } from './SparklineCell'
 import { TokenNameCell } from './TokenNameCell'

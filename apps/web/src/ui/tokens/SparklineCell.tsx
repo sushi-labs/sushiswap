@@ -1,4 +1,4 @@
-import { FC } from 'react'
+import type { FC } from 'react'
 
 export const SparklineCell: FC<{ data: number[] }> = ({ data }) => {
   if (!data?.length) return null

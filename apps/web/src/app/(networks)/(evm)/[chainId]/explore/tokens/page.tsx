@@ -5,7 +5,7 @@ import React from 'react'
 import { GlobalStatsCharts } from 'src/ui/explore/global-stats-charts'
 import { TokenFiltersProvider } from 'src/ui/tokens/TokenFiltersProvider'
 import { TokensTable } from 'src/ui/tokens/TokensTable'
-import { ChainId } from 'sushi/chain'
+import type { ChainId } from 'sushi/chain'
 import { NavigationItems } from '../navigation-items'
 
 export default async function TokensPage(props: {

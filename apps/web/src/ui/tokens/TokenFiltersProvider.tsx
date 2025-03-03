@@ -2,10 +2,10 @@
 
 import { useRouter } from 'next/navigation'
 import {
-  Dispatch,
-  FC,
-  ReactNode,
-  SetStateAction,
+  type Dispatch,
+  type FC,
+  type ReactNode,
+  type SetStateAction,
   createContext,
   useContext,
   useMemo,

@@ -1,4 +1,4 @@
-import { type ExploreToken } from '@sushiswap/graph-client/data-api'
+import type { ExploreToken } from '@sushiswap/graph-client/data-api'
 import { Currency } from '@sushiswap/ui'
 import { useMemo } from 'react'
 import { Token } from 'sushi/currency'

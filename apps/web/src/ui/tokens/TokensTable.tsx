@@ -1,7 +1,7 @@
 'use client'
 
 import { Slot } from '@radix-ui/react-slot'
-import {
+import type {
   ExploreTokens,
   GetExploreTokens,
   TokenListChainId,
@@ -13,8 +13,19 @@ import {
   DataTable,
   SkeletonText,
 } from '@sushiswap/ui'
-import { ColumnDef, Row, SortingState, TableState } from '@tanstack/react-table'
-import React, { FC, ReactNode, useCallback, useMemo, useState } from 'react'
+import type {
+  ColumnDef,
+  Row,
+  SortingState,
+  TableState,
+} from '@tanstack/react-table'
+import React, {
+  type FC,
+  type ReactNode,
+  useCallback,
+  useMemo,
+  useState,
+} from 'react'
 import { useExploreTokens } from 'src/lib/hooks/api/useExploreTokens'
 import { ChainKey } from 'sushi/chain'
 import {

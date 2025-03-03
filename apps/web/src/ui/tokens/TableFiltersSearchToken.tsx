@@ -2,7 +2,7 @@
 
 import { MagnifyingGlassIcon } from '@heroicons/react/24/solid'
 import { ChipInput } from '@sushiswap/ui'
-import React, { FC, useCallback, useState, useTransition } from 'react'
+import React, { type FC, useCallback, useState, useTransition } from 'react'
 
 import { useSetTokenFilters, useTokenFilters } from './TokenFiltersProvider'
 

@@ -1,8 +1,8 @@
 'use client'
 
 import {
-  ExploreTokens,
-  GetExploreTokens,
+  type ExploreTokens,
+  type GetExploreTokens,
   getExploreTokens,
 } from '@sushiswap/graph-client/data-api/queries'
 import { useQuery } from '@tanstack/react-query'
