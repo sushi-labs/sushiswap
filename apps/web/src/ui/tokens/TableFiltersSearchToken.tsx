@@ -29,7 +29,7 @@ export const TableFiltersSearchToken: FC = () => {
         icon={MagnifyingGlassIcon}
         delimiters={[',', ' ', ';', ':', 'Enter']}
         variant="outline"
-        values={isPending ? values : tokenSymbols ?? []}
+        values={isPending ? values : (tokenSymbols ?? [])}
         onValueChange={onValueChange}
         placeholder="Search"
         maxValues={3}
