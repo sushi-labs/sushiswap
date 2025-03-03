@@ -6,13 +6,13 @@ import { Button, Explainer, List, SelectIcon, classNames } from '@sushiswap/ui'
 import { GoPlusLabsIcon } from '@sushiswap/ui/icons/GoPlusLabsIcon'
 import { useMemo, useState } from 'react'
 import {
-  TokenSecurity,
+  type TokenSecurity,
   TokenSecurityLabel,
   TokenSecurityMessage,
-  TokenSecurityResponse,
+  type TokenSecurityResponse,
   isTokenSecurityIssue,
 } from 'src/lib/hooks/react-query'
-import { Token } from 'sushi/currency'
+import type { Token } from 'sushi/currency'
 
 export const TokenSecurityView = ({
   tokenSecurityResponse,

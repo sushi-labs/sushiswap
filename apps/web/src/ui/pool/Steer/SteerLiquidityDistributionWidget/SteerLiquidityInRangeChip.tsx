@@ -1,9 +1,9 @@
 'use client'
 
-import { SteerVault } from '@sushiswap/steer-sdk'
+import type { SteerVault } from '@sushiswap/steer-sdk'
 import { Chip, SkeletonBox, classNames } from '@sushiswap/ui'
-import React, { FC, useMemo } from 'react'
-import { SushiSwapV3ChainId } from 'sushi/config'
+import React, { type FC, useMemo } from 'react'
+import type { SushiSwapV3ChainId } from 'sushi/config'
 import { Token } from 'sushi/currency'
 import { useConcentratedActiveLiquidity } from '../../../../lib/pool/v3/use-concentrated-active-liquidity'
 

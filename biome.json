@@ -35,14 +35,12 @@
       "recommended": true,
       "a11y": {
         "noSvgWithoutTitle": "off",
-        "useHeadingContent": "off"
+        "useHeadingContent": "off",
+        "useSemanticElements": "off"
       },
       "correctness": {
         "noUnusedVariables": "error",
         "useExhaustiveDependencies": "error"
-      },
-      "nursery": {
-        "useGroupedTypeImport": "off"
       },
       "performance": {
         "noDelete": "off"
@@ -74,7 +72,7 @@
   "javascript": {
     "formatter": {
       "quoteStyle": "single",
-      "trailingComma": "all",
+      "trailingCommas": "all",
       "semicolons": "asNeeded"
     }
   },

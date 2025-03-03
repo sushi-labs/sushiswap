@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { type NextRequest, NextResponse } from 'next/server'
 import { ChainKey, getEvmChainInfo } from 'sushi/chain'
 import { isSushiSwapChainId } from 'sushi/config'
 

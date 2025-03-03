@@ -2,7 +2,7 @@ import * as React from 'react'
 
 import { SkaleNaked } from '../naked/SkaleNaked'
 
-import { IconComponent } from '../../../types'
+import type { IconComponent } from '../../../types'
 
 export const SkaleCircle: IconComponent = (props) => (
   <SkaleNaked

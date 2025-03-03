@@ -5,7 +5,7 @@ import { FEE_PERCENTAGE } from '~tron/_common/constants/fee-percentage'
 import { useLPUsdValue } from '~tron/_common/lib/hooks/useLPUsdValue'
 import { useDayVolumeUSD } from '~tron/_common/lib/hooks/useOneDayApr'
 import { usePoolOwnership } from '~tron/_common/lib/hooks/usePoolOwnership'
-import { IPositionRowData } from './PositionsTable'
+import type { IPositionRowData } from './PositionsTable'
 
 export const PositionAprCell = ({ data }: { data: IPositionRowData }) => {
   const { pairAddress, token0, token1, reserve0, reserve1 } = data

@@ -1,7 +1,7 @@
 'use client'
 
 import {
-  PendingTokens,
+  type PendingTokens,
   getPendingTokens,
 } from '@sushiswap/graph-client/data-api/queries/token-list-submission'
 import { useQuery } from '@tanstack/react-query'

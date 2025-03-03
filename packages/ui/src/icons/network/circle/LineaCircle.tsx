@@ -2,7 +2,7 @@ import * as React from 'react'
 
 import { LineaNaked } from '../naked/LineaNaked'
 
-import { IconComponent } from '../../../types'
+import type { IconComponent } from '../../../types'
 
 export const LineaCircle: IconComponent = (props) => (
   <LineaNaked

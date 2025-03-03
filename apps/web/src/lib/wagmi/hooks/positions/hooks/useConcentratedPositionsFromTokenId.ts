@@ -1,5 +1,5 @@
 import { keepPreviousData, useQuery } from '@tanstack/react-query'
-import { SushiSwapV3ChainId } from 'sushi/config'
+import type { SushiSwapV3ChainId } from 'sushi/config'
 
 import { useConfig } from 'wagmi'
 import { getConcentratedLiquidityPositionsFromTokenIds } from '../actions/getConcentratedLiquidityPositionsFromTokenIds'

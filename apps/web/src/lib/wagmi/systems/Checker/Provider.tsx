@@ -1,9 +1,10 @@
 'use client'
 
 import { watchAccount } from '@wagmi/core'
-import React, {
-  FC,
-  ReactNode,
+import type React from 'react'
+import {
+  type FC,
+  type ReactNode,
   createContext,
   useCallback,
   useContext,
@@ -11,7 +12,7 @@ import React, {
   useMemo,
   useState,
 } from 'react'
-import { SignTypedDataParameters, type Signature as _Signature } from 'viem'
+import type { SignTypedDataParameters, Signature as _Signature } from 'viem'
 import { useConfig } from 'wagmi'
 
 type Signature = _Signature & Partial<SignTypedDataParameters>

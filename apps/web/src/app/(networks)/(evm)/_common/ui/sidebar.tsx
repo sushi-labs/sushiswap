@@ -1,9 +1,9 @@
 'use client'
 
-import { FC } from 'react'
+import type { FC } from 'react'
 import {
   SidebarContainer as BaseSidebarContainer,
-  SidebarContainerProps,
+  type SidebarContainerProps,
   SidebarProvider,
 } from 'src/ui/sidebar'
 import { useAccount } from 'wagmi'

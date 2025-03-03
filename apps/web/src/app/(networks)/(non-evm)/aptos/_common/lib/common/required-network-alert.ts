@@ -1,4 +1,4 @@
-import { NetworkInfo } from '@aptos-labs/wallet-adapter-core'
+import type { NetworkInfo } from '@aptos-labs/wallet-adapter-core'
 
 export default function requiredNetworkAlert(
   network: NetworkInfo | null,

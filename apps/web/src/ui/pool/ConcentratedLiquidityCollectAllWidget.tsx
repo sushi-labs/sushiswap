@@ -16,17 +16,21 @@ import {
 } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui'
 import { Currency } from '@sushiswap/ui'
-import React, { FC, useCallback, useMemo, useState } from 'react'
-import { ConcentratedLiquidityPositionWithV3Pool } from 'src/lib/wagmi/hooks/positions/types'
+import React, { type FC, useCallback, useMemo, useState } from 'react'
+import type { ConcentratedLiquidityPositionWithV3Pool } from 'src/lib/wagmi/hooks/positions/types'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
-import { EvmChain, EvmChainId } from 'sushi/chain'
+import { EvmChain, type EvmChainId } from 'sushi/chain'
 import {
   SUSHISWAP_V3_POSTIION_MANAGER,
   isSushiSwapV3ChainId,
 } from 'sushi/config'
-import { Amount, Native, Type, unwrapToken } from 'sushi/currency'
+import { Amount, Native, type Type, unwrapToken } from 'sushi/currency'
 import { NonfungiblePositionManager } from 'sushi/pool/sushiswap-v3'
-import { Hex, SendTransactionReturnType, UserRejectedRequestError } from 'viem'
+import {
+  type Hex,
+  type SendTransactionReturnType,
+  UserRejectedRequestError,
+} from 'viem'
 import {
   useCall,
   useSendTransaction,

@@ -4,7 +4,7 @@ import { ArrowLeftIcon, ShareIcon } from '@heroicons/react/24/solid'
 import type { AcademyArticle } from '@sushiswap/graph-client/strapi'
 import { Container, IconButton } from '@sushiswap/ui'
 import { useRouter } from 'next/navigation'
-import { FC, useCallback } from 'react'
+import { type FC, useCallback } from 'react'
 import { getShareText } from 'src/app/(cms)/constants'
 
 interface Breadcrumb {

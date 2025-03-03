@@ -1,6 +1,6 @@
 import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import { ChainId } from 'sushi/chain'
-import { Token } from 'sushi/currency'
+import type { Token } from 'sushi/currency'
 import { z } from 'zod'
 
 const COINGECKO_CHAIN_ID_BY_NAME = {

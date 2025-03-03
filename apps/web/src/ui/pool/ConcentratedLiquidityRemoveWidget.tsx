@@ -39,9 +39,9 @@ import {
   classNames,
 } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui'
-import React, { FC, useCallback, useMemo, useState } from 'react'
+import React, { type FC, useCallback, useMemo, useState } from 'react'
 import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
-import { ConcentratedLiquidityPosition } from 'src/lib/wagmi/hooks/positions/types'
+import type { ConcentratedLiquidityPosition } from 'src/lib/wagmi/hooks/positions/types'
 import {
   getDefaultTTL,
   useTransactionDeadline,
@@ -50,13 +50,20 @@ import { Checker } from 'src/lib/wagmi/systems/Checker'
 import { EvmChain } from 'sushi/chain'
 import {
   SUSHISWAP_V3_POSTIION_MANAGER,
-  SushiSwapV3ChainId,
+  type SushiSwapV3ChainId,
   isSushiSwapV3ChainId,
 } from 'sushi/config'
-import { Amount, Native, Type, unwrapToken } from 'sushi/currency'
+import { Amount, Native, type Type, unwrapToken } from 'sushi/currency'
 import { Percent, ZERO } from 'sushi/math'
-import { NonfungiblePositionManager, Position } from 'sushi/pool/sushiswap-v3'
-import { Hex, SendTransactionReturnType, UserRejectedRequestError } from 'viem'
+import {
+  NonfungiblePositionManager,
+  type Position,
+} from 'sushi/pool/sushiswap-v3'
+import {
+  type Hex,
+  type SendTransactionReturnType,
+  UserRejectedRequestError,
+} from 'viem'
 import {
   useCall,
   useSendTransaction,

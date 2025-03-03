@@ -2,8 +2,11 @@
 
 import { useMemo } from 'react'
 import { sushiSwapV2FactoryAbi_feeTo, uniswapV2PairAbi_kLast } from 'sushi/abi'
-import { SUSHISWAP_V2_FACTORY_ADDRESS, SushiSwapV2ChainId } from 'sushi/config'
-import { Amount, Token, Type } from 'sushi/currency'
+import {
+  SUSHISWAP_V2_FACTORY_ADDRESS,
+  type SushiSwapV2ChainId,
+} from 'sushi/config'
+import { Amount, type Token, type Type } from 'sushi/currency'
 import { ZERO } from 'sushi/math'
 import { SushiSwapV2Pool } from 'sushi/pool'
 import { zeroAddress } from 'viem'

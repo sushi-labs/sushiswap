@@ -1,6 +1,6 @@
 import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import { isTokenSecurityChainId } from 'sushi/config'
-import { Token } from 'sushi/currency'
+import type { Token } from 'sushi/currency'
 import { z } from 'zod'
 
 const bit = z.optional(z.enum(['0', '1']).transform((val) => val !== '0'))

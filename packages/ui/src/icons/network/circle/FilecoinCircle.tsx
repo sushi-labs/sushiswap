@@ -2,7 +2,7 @@ import * as React from 'react'
 
 import { FilecoinNaked } from '../naked/FilecoinNaked'
 
-import { IconComponent } from '../../../types'
+import type { IconComponent } from '../../../types'
 
 export const FilecoinCircle: IconComponent = (props) => (
   <FilecoinNaked

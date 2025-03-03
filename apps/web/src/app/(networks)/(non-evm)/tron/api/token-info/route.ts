@@ -21,7 +21,7 @@ export async function GET(req: Request): Promise<NextResponse> {
 
     const res = await fetch(BITQUERY_ENDPOINT, {
       ...options,
-      next: { revalidate: Infinity },
+      next: { revalidate: Number.POSITIVE_INFINITY },
     })
     if (!res.ok) {
       throw new Error('Failed to fetch data from Bitquery API')

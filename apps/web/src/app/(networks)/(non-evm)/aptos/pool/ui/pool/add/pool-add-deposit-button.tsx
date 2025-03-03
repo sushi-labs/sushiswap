@@ -1,7 +1,7 @@
 'use client'
 
-import { Button, ButtonProps } from '@sushiswap/ui'
-import { FC, useMemo } from 'react'
+import { Button, type ButtonProps } from '@sushiswap/ui'
+import { type FC, useMemo } from 'react'
 import { AddSectionReviewModal } from '~aptos/_common/components/Pool/AddSectionReviewModel'
 import { Checker } from '~aptos/_common/ui/checker'
 import { usePoolState } from '~aptos/pool/ui/pool/add/pool-add-provider/pool-add-provider'

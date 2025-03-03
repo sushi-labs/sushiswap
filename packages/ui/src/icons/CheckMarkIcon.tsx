@@ -1,7 +1,7 @@
 import React from 'react'
 
 import { classNames } from '../index'
-import { IconComponent } from '../types'
+import type { IconComponent } from '../types'
 
 export const CheckMarkIcon: IconComponent = (props) => {
   return (

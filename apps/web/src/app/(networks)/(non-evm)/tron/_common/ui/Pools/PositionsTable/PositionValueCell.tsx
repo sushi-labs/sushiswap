@@ -2,7 +2,7 @@ import { SkeletonText } from '@sushiswap/ui'
 import { formatUSD } from 'sushi/format'
 import { useLPUsdValue } from '~tron/_common/lib/hooks/useLPUsdValue'
 import { usePoolOwnership } from '~tron/_common/lib/hooks/usePoolOwnership'
-import { IPositionRowData } from './PositionsTable'
+import type { IPositionRowData } from './PositionsTable'
 
 export const PositionValueCell = ({ data }: { data: IPositionRowData }) => {
   const { token0, token1, reserve0, reserve1, pairAddress } = data

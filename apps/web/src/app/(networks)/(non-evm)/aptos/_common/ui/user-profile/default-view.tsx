@@ -7,7 +7,7 @@ import {
 import { ArrowLeftOnRectangleIcon } from '@heroicons/react/24/outline'
 import { ClipboardController, IconButton, SkeletonText } from '@sushiswap/ui'
 import { LinkExternal } from '@sushiswap/ui'
-import React, { Dispatch, SetStateAction } from 'react'
+import React, { type Dispatch, type SetStateAction } from 'react'
 import { formatUSD } from 'sushi/format'
 import { networkNameToNetwork } from '~aptos/_common/config/chains'
 import { Aptos } from '~aptos/_common/config/coins'

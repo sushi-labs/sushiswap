@@ -9,10 +9,10 @@ import {
   DialogTrigger,
   List,
 } from '@sushiswap/ui'
-import React, { FC, useCallback, useState } from 'react'
+import React, { type FC, useCallback, useState } from 'react'
 import { networkNameToNetwork } from '~aptos/_common/config/chains'
 import { useNetwork } from '~aptos/_common/lib/common/use-network'
-import { Token } from '~aptos/_common/lib/types/token'
+import type { Token } from '~aptos/_common/lib/types/token'
 import { CurrencyIcon } from '../currency/currency-icon'
 
 interface TokenSelectorImportRow {

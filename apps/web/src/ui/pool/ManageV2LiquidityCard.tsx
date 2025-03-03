@@ -13,9 +13,9 @@ import {
   TabsTrigger,
 } from '@sushiswap/ui'
 import Link from 'next/link'
-import { FC } from 'react'
+import type { FC } from 'react'
 
-import { V2Pool } from '@sushiswap/graph-client/data-api'
+import type { V2Pool } from '@sushiswap/graph-client/data-api'
 import { ChainKey } from 'sushi/chain'
 import { AddSectionLegacy } from './AddSectionLegacy'
 import { PoolPositionProvider } from './PoolPositionProvider'

@@ -1,5 +1,6 @@
 import { ArrowLeftIcon } from '@heroicons/react/20/solid'
-import React, { FC, Fragment } from 'react'
+import type React from 'react'
+import { type FC, Fragment } from 'react'
 
 import { RadioGroup } from '@headlessui/react'
 import { MoonIcon, SunIcon } from '@heroicons/react/24/outline'

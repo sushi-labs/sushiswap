@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import {
-  SupportedNetwork,
+  type SupportedNetwork,
   networkNameToNetwork,
 } from '~aptos/_common/config/chains'
 import { AptosSDK } from './aptos-sdk'

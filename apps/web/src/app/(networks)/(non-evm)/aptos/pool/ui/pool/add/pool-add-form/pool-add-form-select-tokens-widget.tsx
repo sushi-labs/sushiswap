@@ -1,7 +1,7 @@
 import { FormSection } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui'
 import { SelectIcon } from '@sushiswap/ui'
-import React, { FC } from 'react'
+import React, { type FC } from 'react'
 import { CurrencyIcon } from '~aptos/_common/ui/currency/currency-icon'
 import TokenSelector from '~aptos/_common/ui/token-selector/token-selector'
 import {

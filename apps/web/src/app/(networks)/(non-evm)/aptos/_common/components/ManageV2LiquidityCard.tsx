@@ -13,7 +13,7 @@ import {
   TabsList,
   TabsTrigger,
 } from '@sushiswap/ui'
-import { FC, useMemo, useState } from 'react'
+import { type FC, useMemo, useState } from 'react'
 import { useNetwork } from '~aptos/_common/lib/common/use-network'
 import { useFarms, useIsFarm } from '~aptos/pool/lib/farm/use-farms'
 import { usePool } from '~aptos/pool/lib/use-pool'

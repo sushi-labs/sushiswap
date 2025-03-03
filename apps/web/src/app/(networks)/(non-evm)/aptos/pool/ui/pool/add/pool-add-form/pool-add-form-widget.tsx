@@ -1,7 +1,7 @@
 'use client'
 
-import { ButtonProps, FormSection } from '@sushiswap/ui'
-import { FC } from 'react'
+import { type ButtonProps, FormSection } from '@sushiswap/ui'
+import type { FC } from 'react'
 import { PoolAddCurrencyInput } from '../pool-add-currency-input'
 import { PoolAddDepositButton } from '../pool-add-deposit-button'
 

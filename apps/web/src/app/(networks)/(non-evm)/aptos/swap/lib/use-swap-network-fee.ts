@@ -60,9 +60,9 @@ export const useSwapNetworkFee = () => {
 
         const payload = getSwapPayload(
           swapContract,
-          parseInt(amountIn),
+          Number.parseInt(amountIn),
           bestRoutes,
-          parseInt(minOut),
+          Number.parseInt(minOut),
         )
 
         const transaction = await aptos.transaction.build.simple({

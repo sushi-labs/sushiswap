@@ -1,14 +1,17 @@
 import { useQuery } from '@tanstack/react-query'
-import { EvmChainId } from 'sushi/chain'
+import type { EvmChainId } from 'sushi/chain'
 import { Amount, Token, tryParseAmount } from 'sushi/currency'
 import { ZERO } from 'sushi/math'
 import { parseUnits } from 'viem'
-import z from 'zod'
+import type z from 'zod'
 
 import { isMerklChainId } from 'sushi/config'
 
 import { usePrices } from '~evm/_common/ui/price-provider/price-provider/use-prices'
-import { angleRewardsPoolsValidator, angleRewardsValidator } from './validator'
+import {
+  type angleRewardsPoolsValidator,
+  angleRewardsValidator,
+} from './validator'
 
 type TransformedRewardsPerToken = Record<
   string,

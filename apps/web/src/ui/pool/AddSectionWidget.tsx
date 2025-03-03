@@ -10,12 +10,12 @@ import {
 import { IconButton } from '@sushiswap/ui'
 import { SettingsModule, SettingsOverlay } from '@sushiswap/ui'
 import { Widget, WidgetHeader } from '@sushiswap/ui'
-import React, { FC, ReactNode } from 'react'
+import React, { type FC, type ReactNode } from 'react'
 import { isZapSupportedChainId } from 'src/config'
 import { Web3Input } from 'src/lib/wagmi/components/web3-input'
 import { getDefaultTTL } from 'src/lib/wagmi/hooks/utils/hooks/useTransactionDeadline'
-import { EvmChainId } from 'sushi/chain'
-import { Type } from 'sushi/currency'
+import type { EvmChainId } from 'sushi/chain'
+import type { Type } from 'sushi/currency'
 import { ToggleZapCard } from './ToggleZapCard'
 
 interface AddSectionWidgetProps {

@@ -6,18 +6,25 @@ import {
   LiquiditySource,
   sendAnalyticsEvent,
 } from '@sushiswap/telemetry'
-import { FC, ReactElement, useCallback, useMemo } from 'react'
-import { ConcentratedLiquidityPosition } from 'src/lib/wagmi/hooks/positions/types'
-import { EvmChainId } from 'sushi/chain'
+import { type FC, type ReactElement, useCallback, useMemo } from 'react'
+import type { ConcentratedLiquidityPosition } from 'src/lib/wagmi/hooks/positions/types'
+import type { EvmChainId } from 'sushi/chain'
 import {
   SUSHISWAP_V3_POSTIION_MANAGER,
   isSushiSwapV3ChainId,
 } from 'sushi/config'
-import { Amount, Type } from 'sushi/currency'
-import { NonfungiblePositionManager, Position } from 'sushi/pool/sushiswap-v3'
-import { Hex, SendTransactionReturnType, UserRejectedRequestError } from 'viem'
+import { Amount, type Type } from 'sushi/currency'
 import {
-  UseCallParameters,
+  NonfungiblePositionManager,
+  type Position,
+} from 'sushi/pool/sushiswap-v3'
+import {
+  type Hex,
+  type SendTransactionReturnType,
+  UserRejectedRequestError,
+} from 'viem'
+import {
+  type UseCallParameters,
   useAccount,
   useCall,
   usePublicClient,

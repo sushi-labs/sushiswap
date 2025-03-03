@@ -3,7 +3,7 @@ import * as React from 'react'
 import { TelosNaked } from '../naked/TelosNaked'
 
 import classNames from 'classnames'
-import { IconComponent } from '../../../types'
+import type { IconComponent } from '../../../types'
 
 export const TelosCircle: IconComponent = (props) => (
   <TelosNaked

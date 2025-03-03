@@ -1,8 +1,8 @@
 import { Container, typographyVariants } from '@sushiswap/ui'
-import { Metadata } from 'next'
+import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { BackButton } from 'src/ui/pool/BackButton'
-import { EvmChainId } from 'sushi/chain'
+import type { EvmChainId } from 'sushi/chain'
 import { isMerklChainId } from 'sushi/config'
 
 export const metadata: Metadata = {

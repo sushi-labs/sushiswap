@@ -1,4 +1,4 @@
-import { PortfolioV3Position } from '@sushiswap/graph-client/data-api'
+import type { PortfolioV3Position } from '@sushiswap/graph-client/data-api'
 import {
   AccordionContent,
   AccordionItem,
@@ -7,8 +7,8 @@ import {
   classNames,
 } from '@sushiswap/ui'
 import { BagIcon } from '@sushiswap/ui/icons/BagIcon'
-import React, { FC } from 'react'
-import { ChainKey, EvmChainId } from 'sushi/chain'
+import React, { type FC } from 'react'
+import { ChainKey, type EvmChainId } from 'sushi/chain'
 import { formatUSD } from 'sushi/format'
 import { PortfolioInfoRow } from '../PortfolioInfoRow'
 

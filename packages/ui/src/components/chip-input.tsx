@@ -1,13 +1,20 @@
 'use client'
 
-import { VariantProps } from 'class-variance-authority'
+import type { VariantProps } from 'class-variance-authority'
 import classNames from 'classnames'
 import * as React from 'react'
-import { FC, useEffect, useMemo, useRef, useState, useTransition } from 'react'
+import {
+  type FC,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  useTransition,
+} from 'react'
 
-import { IconComponent } from '../types'
+import type { IconComponent } from '../types'
 import { buttonIconVariants } from './button'
-import { Chip, chipVariants } from './chip'
+import { Chip, type chipVariants } from './chip'
 import { textFieldVariants } from './text-field'
 import {
   Tooltip,

@@ -8,7 +8,7 @@ import { PositionsTab } from 'src/ui/pool/PositionsTab'
 import { TableFiltersNetwork } from 'src/ui/pool/TableFiltersNetwork'
 import { TableFiltersResetButton } from 'src/ui/pool/TableFiltersResetButton'
 import { TableFiltersSearchToken } from 'src/ui/pool/TableFiltersSearchToken'
-import { EvmChainId } from 'sushi/chain'
+import type { EvmChainId } from 'sushi/chain'
 import { isSushiSwapChainId } from 'sushi/config'
 
 export default function MyPositionsPage(props: {

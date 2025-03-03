@@ -1,8 +1,8 @@
 'use client'
 
-import { V3Pool, VaultV1 } from '@sushiswap/graph-client/data-api'
+import type { V3Pool, VaultV1 } from '@sushiswap/graph-client/data-api'
 import { Carousel, SkeletonBox } from '@sushiswap/ui'
-import { FC, useCallback, useMemo } from 'react'
+import { type FC, useCallback, useMemo } from 'react'
 import { SteerPoolCard } from './SteerPoolCard'
 
 interface SteerCarousel {

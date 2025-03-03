@@ -5,7 +5,7 @@ import {
   typographyVariants,
 } from '@sushiswap/ui'
 import { DiscordIcon } from '@sushiswap/ui/icons/DiscordIcon'
-import { FC } from 'react'
+import type { FC } from 'react'
 
 export const Hero: FC = () => {
   return (

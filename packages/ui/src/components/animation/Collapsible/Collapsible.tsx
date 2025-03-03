@@ -1,6 +1,6 @@
 'use client'
 
-import { FC, ReactNode } from 'react'
+import type { FC, ReactNode } from 'react'
 import { animated, useSpring } from 'react-spring'
 import useResizeObserver from 'use-resize-observer'
 
@@ -22,7 +22,7 @@ export const Collapsible: FC<Collapsible> = ({
   const { ref, height } = useResizeObserver()
 
   const props = useSpring({
-    height: open ? height ?? 0 : 0,
+    height: open ? (height ?? 0) : 0,
     config: {
       mass: 1.2,
       tension: 300,

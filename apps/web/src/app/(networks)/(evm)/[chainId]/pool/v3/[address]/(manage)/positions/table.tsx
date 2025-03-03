@@ -1,6 +1,6 @@
 'use client'
 
-import { V3Pool } from '@sushiswap/graph-client/data-api'
+import type { V3Pool } from '@sushiswap/graph-client/data-api'
 import { Switch } from '@sushiswap/ui'
 import { useState } from 'react'
 import { ConcentratedPositionsTable } from 'src/ui/pool/ConcentratedPositionsTable'

@@ -19,8 +19,12 @@ import {
   MINICHEF_ADDRESS,
 } from 'sushi/config'
 import { SUSHI, SUSHI_ADDRESS } from 'sushi/currency'
-import { Amount, Token } from 'sushi/currency'
-import { Address, UserRejectedRequestError, encodeFunctionData } from 'viem'
+import { Amount, type Token } from 'sushi/currency'
+import {
+  type Address,
+  UserRejectedRequestError,
+  encodeFunctionData,
+} from 'viem'
 import {
   useAccount,
   useBlockNumber,
@@ -28,8 +32,8 @@ import {
   useReadContracts,
   useSendTransaction,
 } from 'wagmi'
-import { SendTransactionErrorType } from 'wagmi/actions'
-import { SendTransactionData } from 'wagmi/query'
+import type { SendTransactionErrorType } from 'wagmi/actions'
+import type { SendTransactionData } from 'wagmi/query'
 import { useMasterChefContract } from './use-master-chef-contract'
 
 interface UseMasterChefReturn

@@ -1,7 +1,7 @@
 import { getFaqAnswerGroup } from '@sushiswap/graph-client/strapi'
 import { Container } from '@sushiswap/ui'
 import {
-  Sidebar,
+  type Sidebar,
   SidebarDesktop,
   SidebarMobile,
 } from '../../../components/sidebar'

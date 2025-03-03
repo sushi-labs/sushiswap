@@ -1,5 +1,5 @@
-import { Pool } from '@sushiswap/graph-client/data-api'
-import { PoolHasSteerVaults } from '@sushiswap/steer-sdk'
+import type { Pool } from '@sushiswap/graph-client/data-api'
+import type { PoolHasSteerVaults } from '@sushiswap/steer-sdk'
 import {
   Badge,
   Currency,
@@ -13,11 +13,11 @@ import {
 } from '@sushiswap/ui'
 import { SkeletonCircle, SkeletonText } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
-import { ColumnDef } from '@tanstack/react-table'
+import type { ColumnDef } from '@tanstack/react-table'
 import formatDistance from 'date-fns/formatDistance'
 import React, { useMemo } from 'react'
-import { AngleRewardsPool } from 'src/lib/hooks/react-query'
-import { ConcentratedLiquidityPositionWithV3Pool } from 'src/lib/wagmi/hooks/positions/types'
+import type { AngleRewardsPool } from 'src/lib/hooks/react-query'
+import type { ConcentratedLiquidityPositionWithV3Pool } from 'src/lib/wagmi/hooks/positions/types'
 import type {
   MaybeNestedPool,
   PoolBase,
@@ -42,14 +42,14 @@ import { ConcentratedLiquidityPositionAPRCell } from './ConcentratedLiquidityPos
 import { PoolNameCell, ProtocolBadge } from './PoolNameCell'
 import { PoolNameCellV3 } from './PoolNameCellV3'
 import {
-  Transaction,
+  type Transaction,
   TransactionType,
-  useTransactionsV2,
+  type useTransactionsV2,
 } from './PoolTransactionsV2'
 import {
   TransactionTypeV3,
-  TransactionV3,
-  useTransactionsV3,
+  type TransactionV3,
+  type useTransactionsV3,
 } from './PoolTransactionsV3'
 import { PriceRangeCell } from './PriceRangeCell'
 import { RewardsV3ClaimableCell } from './RewardsV3ClaimableCell'

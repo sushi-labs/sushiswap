@@ -1,7 +1,7 @@
-import { FC, useEffect } from 'react'
+import { type FC, useEffect } from 'react'
 
 import { useSushiSwapV2Pool } from '../../hooks/pools/hooks/useSushiSwapV2Pools'
-import { PoolFinderType, SushiSwapV2PoolFinderProps } from './types'
+import { PoolFinderType, type SushiSwapV2PoolFinderProps } from './types'
 
 export const SushiSwapV2Pool: FC<SushiSwapV2PoolFinderProps> = ({
   chainId,

@@ -1,7 +1,7 @@
 // IconButton.stories.ts|tsx
 
 import type { Meta, StoryObj } from '@storybook/react'
-import { IconButton, IconButtonProps } from '@sushiswap/ui'
+import { IconButton, type IconButtonProps } from '@sushiswap/ui'
 import { DiscordIcon } from '@sushiswap/ui/icons/DiscordIcon'
 import * as React from 'react'
 

@@ -1,6 +1,9 @@
 import { RadioGroup } from '@headlessui/react'
 import { ArrowUpRightIcon } from '@heroicons/react/24/outline'
-import { SmartPoolChainId, VaultV1 } from '@sushiswap/graph-client/data-api'
+import type {
+  SmartPoolChainId,
+  VaultV1,
+} from '@sushiswap/graph-client/data-api'
 import {
   Card,
   CardContent,
@@ -15,9 +18,9 @@ import {
   SkeletonText,
   Toggle,
 } from '@sushiswap/ui'
-import { Dispatch, SetStateAction } from 'react'
+import type { Dispatch, SetStateAction } from 'react'
 import { useV3Pool } from 'src/lib/hooks'
-import { Address } from 'sushi'
+import type { Address } from 'sushi'
 import { ChainKey } from 'sushi/chain'
 import { Token } from 'sushi/currency'
 import { formatPercent, formatUSD } from 'sushi/format'
@@ -83,7 +86,7 @@ export const SelectSmartPoolStrategyWidget = ({
                                   (incentive) => incentive.rewardPerDay > 0,
                                 )
                                 .map((incentive) => (
-                                  <div>
+                                  <div key={incentive.id}>
                                     <Currency.Icon
                                       currency={
                                         new Token(incentive.rewardToken)

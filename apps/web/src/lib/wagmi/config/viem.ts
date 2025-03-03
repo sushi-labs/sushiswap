@@ -7,6 +7,11 @@ import {
   type Transport,
 } from 'viem'
 import {
+  // zkSyncTestnet,
+  curtis as _curtis,
+  fuse as _fuse, // missing multicall
+  haqqMainnet as _haqq,
+  zkLinkNova as _zkLinkNova, // missing multicall
   arbitrum,
   // arbitrumGoerli,
   arbitrumNova,
@@ -27,8 +32,6 @@ import {
   celo,
   // ronin,
   cronos,
-  // zkSyncTestnet,
-  curtis as _curtis,
   // celoAlfajores,
   // crossbell,
   // evmos,
@@ -38,10 +41,8 @@ import {
   // fantomTestnet,
   // filecoinTestnet,
   foundry,
-  fuse as _fuse, // missing multicall
   gnosis,
   goerli,
-  haqqMainnet as _haqq,
   // gnosisChiado,
   hardhat,
   harmonyOne,
@@ -72,7 +73,6 @@ import {
   //  taraxa,
   // taraxaTestnet,
   telos,
-  zkLinkNova as _zkLinkNova, // missing multicall
   zkSync,
 } from 'viem/chains'
 

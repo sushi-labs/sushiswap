@@ -1,10 +1,10 @@
 {
-    "name": "sushiswap",
-    "version": "0.0.0",
-    "private": true,
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/sushi-labs/sushiswap.git",
-        "directory": "packages/sushiswap"
-    }
+  "name": "sushiswap",
+  "version": "0.0.0",
+  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sushi-labs/sushiswap.git",
+    "directory": "packages/sushiswap"
+  }
 }

@@ -1,6 +1,6 @@
 import { keepPreviousData, useQuery } from '@tanstack/react-query'
-import { SushiSwapV3ChainId } from 'sushi/config'
-import { Type } from 'sushi/currency'
+import type { SushiSwapV3ChainId } from 'sushi/config'
+import type { Type } from 'sushi/currency'
 import { Position } from 'sushi/pool/sushiswap-v3'
 import { stringify } from 'viem'
 

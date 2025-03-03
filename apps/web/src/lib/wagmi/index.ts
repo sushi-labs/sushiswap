@@ -1,4 +1,4 @@
-import { PublicWagmiConfig } from './config/public'
+import type { PublicWagmiConfig } from './config/public'
 
 declare module 'wagmi' {
   interface Register {

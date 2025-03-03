@@ -1,6 +1,6 @@
 import { ChevronRightIcon } from '@heroicons/react/24/solid'
 import {
-  FaqMostSearched,
+  type FaqMostSearched,
   getFaqMostSearched,
 } from '@sushiswap/graph-client/strapi'
 import Link from 'next/link'

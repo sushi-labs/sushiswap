@@ -1,6 +1,10 @@
 'use client'
 
-import { GetVaults, VaultV1, getVaults } from '@sushiswap/graph-client/data-api'
+import {
+  type GetVaults,
+  type VaultV1,
+  getVaults,
+} from '@sushiswap/graph-client/data-api'
 import { useQuery } from '@tanstack/react-query'
 
 export function useVaults(args: Partial<GetVaults>, shouldFetch = true) {

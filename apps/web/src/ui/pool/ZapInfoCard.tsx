@@ -1,4 +1,4 @@
-import { SteerVault } from '@sushiswap/steer-sdk'
+import type { SteerVault } from '@sushiswap/steer-sdk'
 import {
   Card,
   CardContent,
@@ -8,15 +8,15 @@ import {
   classNames,
 } from '@sushiswap/ui'
 import { EnsoIcon } from '@sushiswap/ui/icons/EnsoIcon'
-import { FC, useMemo } from 'react'
-import { ZapResponse } from 'src/lib/hooks'
+import { type FC, useMemo } from 'react'
+import type { ZapResponse } from 'src/lib/hooks'
 import {
   warningSeverity,
   warningSeverityClassName,
 } from 'src/lib/swap/warningSeverity'
 import { useTotalSupply } from 'src/lib/wagmi/hooks/tokens/useTotalSupply'
-import { EvmChainId } from 'sushi/chain'
-import { Amount, Token, Type } from 'sushi/currency'
+import type { EvmChainId } from 'sushi/chain'
+import { Amount, Token, type Type } from 'sushi/currency'
 import { formatUSD } from 'sushi/format'
 import { Percent, ZERO } from 'sushi/math'
 import { SushiSwapV2Pool } from 'sushi/pool'

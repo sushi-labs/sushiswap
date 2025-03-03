@@ -1,6 +1,6 @@
 'use client'
 
-import { SmartPoolChainId } from '@sushiswap/graph-client/data-api'
+import type { SmartPoolChainId } from '@sushiswap/graph-client/data-api'
 import { Card, CardHeader, CardTitle, DataTable } from '@sushiswap/ui'
 import {
   SkeletonText,
@@ -9,14 +9,14 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@sushiswap/ui'
-import { ColumnDef, PaginationState } from '@tanstack/react-table'
-import React, { FC, useMemo, useState } from 'react'
+import type { ColumnDef, PaginationState } from '@tanstack/react-table'
+import React, { type FC, useMemo, useState } from 'react'
 import {
-  SteerAccountPositionExtended,
+  type SteerAccountPositionExtended,
   useSteerAccountPositionsExtended,
 } from 'src/lib/wagmi/hooks/steer/useSteerAccountPositionsExtended'
 import { ChainKey, SushiSwapProtocol, formatPercent } from 'sushi'
-import { Address } from 'viem'
+import type { Address } from 'viem'
 import { useAccount } from 'wagmi'
 import { APRHoverCard } from './APRHoverCard'
 import {

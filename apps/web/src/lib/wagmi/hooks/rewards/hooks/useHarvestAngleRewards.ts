@@ -1,14 +1,14 @@
 import { createErrorToast, createToast } from '@sushiswap/notifications'
 import { useCallback, useMemo } from 'react'
-import { EvmChainId } from 'sushi/chain'
-import { Address, UserRejectedRequestError } from 'viem'
+import type { EvmChainId } from 'sushi/chain'
+import { type Address, UserRejectedRequestError } from 'viem'
 import {
   useAccount,
   usePublicClient,
   useSimulateContract,
   useWriteContract,
 } from 'wagmi'
-import { SendTransactionReturnType } from 'wagmi/actions'
+import type { SendTransactionReturnType } from 'wagmi/actions'
 import { useRefetchBalances } from '~evm/_common/ui/balance-provider/use-refetch-balances'
 
 interface UseHarvestAngleRewards {

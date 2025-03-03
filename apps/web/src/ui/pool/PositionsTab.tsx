@@ -10,11 +10,12 @@ import {
   TabsList,
   TabsTrigger,
 } from '@sushiswap/ui'
-import React, { FC, useState } from 'react'
+import type React from 'react'
+import { type FC, useState } from 'react'
 
 import { isSmartPoolChainId } from '@sushiswap/graph-client/data-api'
 import { ChainKey } from 'sushi/chain'
-import { SushiSwapChainId } from 'sushi/config'
+import type { SushiSwapChainId } from 'sushi/config'
 import { ConcentratedPositionsTable } from './ConcentratedPositionsTable/ConcentratedPositionsTable'
 import { PositionsTable } from './PositionsTable'
 import { SmartPositionsTable } from './SmartPositionsTable'

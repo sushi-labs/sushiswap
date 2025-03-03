@@ -1,7 +1,7 @@
 'use client'
 
-import { EvmChainId } from 'sushi/chain'
-import { Type } from 'sushi/currency'
+import type { EvmChainId } from 'sushi/chain'
+import type { Type } from 'sushi/currency'
 
 import {
   isTokenListChainId,

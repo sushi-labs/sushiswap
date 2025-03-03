@@ -4,7 +4,7 @@ import { Web3Input } from 'src/lib/wagmi/components/web3-input'
 import { isWNativeSupported } from 'sushi/config'
 import {
   useDerivedStateSimpleSwap,
-  useSimpleSwapTrade,
+  useSimpleSwapTradeQuote,
 } from './derivedstate-simple-swap-provider'
 
 export const SimpleSwapToken1Input = () => {
@@ -17,8 +17,8 @@ export const SimpleSwapToken1Input = () => {
   const {
     isInitialLoading: isLoading,
     isFetching,
-    data: trade,
-  } = useSimpleSwapTrade()
+    data: quote,
+  } = useSimpleSwapTradeQuote()
 
   return (
     <Web3Input.Currency
@@ -26,7 +26,7 @@ export const SimpleSwapToken1Input = () => {
       type="OUTPUT"
       disabled
       className="border border-accent p-3 bg-white dark:bg-slate-800 rounded-xl"
-      value={trade?.amountOut?.toSignificant() ?? ''}
+      value={quote?.amountOut?.toSignificant() ?? ''}
       chainId={chainId}
       onSelect={setToken1}
       currency={token1}
@@ -36,7 +36,7 @@ export const SimpleSwapToken1Input = () => {
       currencyLoading={tokenLoading}
       allowNative={isWNativeSupported(chainId)}
       label="Buy"
-      // priceImpact={trade?.priceImpact}
+      // priceImpact={quote?.priceImpact}
     />
   )
 }

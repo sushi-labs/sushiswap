@@ -1,6 +1,6 @@
 import { ChainId } from 'sushi/chain'
 
-import { IconComponent } from '../../../types'
+import type { IconComponent } from '../../../types'
 import { ApeNaked } from './ApeNaked'
 import { AptosNaked } from './AptosNaked'
 import { ArbitrumNaked } from './ArbitrumNaked'

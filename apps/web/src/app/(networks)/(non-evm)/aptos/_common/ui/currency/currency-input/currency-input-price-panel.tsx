@@ -1,5 +1,5 @@
 import { SkeletonText } from '@sushiswap/ui'
-import React, { FC } from 'react'
+import React, { type FC } from 'react'
 
 interface CurrencyInputPricePanel {
   isLoading: boolean

@@ -1,8 +1,11 @@
 'use client'
 
-import { SteerVaultId, getSteerVaultAprTimeseries } from '@sushiswap/steer-sdk'
+import {
+  type SteerVaultId,
+  getSteerVaultAprTimeseries,
+} from '@sushiswap/steer-sdk'
 import { useQuery } from '@tanstack/react-query'
-import React, { FC } from 'react'
+import React, { type FC } from 'react'
 
 import { _SteerAPRChart } from './_SteerAPRChart'
 

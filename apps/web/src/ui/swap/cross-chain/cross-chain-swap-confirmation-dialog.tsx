@@ -2,11 +2,11 @@ import { ArrowTopRightOnSquareIcon } from '@heroicons/react/20/solid'
 import { Button, Dots, Loader, classNames } from '@sushiswap/ui'
 import { CheckMarkIcon } from '@sushiswap/ui/icons/CheckMarkIcon'
 import { FailedMarkIcon } from '@sushiswap/ui/icons/FailedMarkIcon'
-import { FC, ReactNode } from 'react'
+import type { FC, ReactNode } from 'react'
 import { EvmChain } from 'sushi/chain'
 import { shortenAddress } from 'sushi/format'
 import {
-  UseSelectedCrossChainTradeRouteReturn,
+  type UseSelectedCrossChainTradeRouteReturn,
   useDerivedStateCrossChainSwap,
   useSelectedCrossChainTradeRoute,
 } from './derivedstate-cross-chain-swap-provider'
@@ -37,8 +37,6 @@ export const ConfirmationDialogContent: FC<ConfirmationDialogContent> = ({
       trade.step.includedStepsWithoutFees[1]?.type,
       trade.step.includedStepsWithoutFees[2]?.type,
     ].includes('swap')
-      ? true
-      : false
 
   if (dialogState.source === StepState.Sign) {
     return <>Please sign order with your wallet.</>

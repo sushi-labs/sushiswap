@@ -1,5 +1,5 @@
 import { Container } from '@sushiswap/ui'
-import { FC } from 'react'
+import type { FC } from 'react'
 
 import {
   ArbitrumSVG,

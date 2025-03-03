@@ -5,13 +5,17 @@ import {
   sendAnalyticsEvent,
   useTrace,
 } from '@sushiswap/telemetry'
-import { SendTransactionReturnType } from '@wagmi/core'
+import type { SendTransactionReturnType } from '@wagmi/core'
 import { useCallback, useMemo } from 'react'
-import { SushiSwapV3FeeAmount } from 'sushi/config'
-import { Amount, Token, Type } from 'sushi/currency'
-import { Address, UserRejectedRequestError, encodeFunctionData } from 'viem'
+import type { SushiSwapV3FeeAmount } from 'sushi/config'
+import type { Amount, Token, Type } from 'sushi/currency'
 import {
-  UseSimulateContractParameters,
+  type Address,
+  UserRejectedRequestError,
+  encodeFunctionData,
+} from 'viem'
+import {
+  type UseSimulateContractParameters,
   usePublicClient,
   useSimulateContract,
   useWriteContract,
@@ -20,7 +24,7 @@ import {
 import { useRefetchBalances } from '~evm/_common/ui/balance-provider/use-refetch-balances'
 import { V3Migrator } from '../abis/V3Migrator'
 import { V3MigrateAddress } from '../constants'
-import { V3MigrateChainId } from '../types'
+import type { V3MigrateChainId } from '../types'
 
 interface UseV3Migrate {
   chainId: V3MigrateChainId

@@ -1,4 +1,4 @@
-import { VaultV1 } from '@sushiswap/graph-client/data-api'
+import type { VaultV1 } from '@sushiswap/graph-client/data-api'
 import {
   Card,
   CardContent,
@@ -12,7 +12,7 @@ import {
   StatValue,
   classNames,
 } from '@sushiswap/ui'
-import { FC } from 'react'
+import type { FC } from 'react'
 import { ChainKey } from 'sushi/chain'
 import { formatPercent, formatUSD } from 'sushi/format'
 import type { PoolWithFeeAprs, PoolWithIncentives } from 'sushi/types'

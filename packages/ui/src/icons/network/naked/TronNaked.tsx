@@ -1,7 +1,7 @@
 import * as React from 'react'
 
 import classNames from 'classnames'
-import { NakedNetworkIconComponent } from '../../../types'
+import type { NakedNetworkIconComponent } from '../../../types'
 
 export const TronNaked: NakedNetworkIconComponent = ({ circle, ...props }) => (
   <svg

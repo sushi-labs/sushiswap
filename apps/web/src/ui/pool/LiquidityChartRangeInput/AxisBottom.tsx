@@ -1,11 +1,11 @@
 import {
-  Axis as d3Axis,
-  NumberValue,
-  ScaleLinear,
+  type NumberValue,
+  type ScaleLinear,
   axisBottom,
+  type Axis as d3Axis,
   select,
 } from 'd3'
-import React, { FC, useMemo } from 'react'
+import React, { type FC, useMemo } from 'react'
 
 interface AxisProps {
   axisGenerator: d3Axis<NumberValue>

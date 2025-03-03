@@ -1,7 +1,7 @@
 // Button.stories.ts|tsx
 
 import type { Meta, StoryObj } from '@storybook/react'
-import { Button, ButtonProps } from '@sushiswap/ui'
+import { Button, type ButtonProps } from '@sushiswap/ui'
 import { Currency } from '@sushiswap/ui'
 import { DiscordIcon } from '@sushiswap/ui/icons/DiscordIcon'
 import * as React from 'react'

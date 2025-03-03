@@ -13,7 +13,7 @@ import {
   DialogTrigger,
   List,
 } from '@sushiswap/ui'
-import { FC, ReactNode, useCallback } from 'react'
+import { type FC, type ReactNode, useCallback } from 'react'
 import { formatUSD } from 'sushi/format'
 import { networkNameToNetwork } from '~aptos/_common/config/chains'
 import { AptosSDK } from '~aptos/_common/lib/common/aptos-sdk'
@@ -60,10 +60,14 @@ export const AddSectionReviewModal: FC<Props> = ({ children }) => {
         swapContract,
         token0.address,
         token1.address,
-        parseInt(String(Number(amount0) * 10 ** token0.decimals)),
-        parseInt(String(Number(amount1) * 10 ** token1.decimals)),
-        parseInt(String(Number(slippageAmount0) * 10 ** token0.decimals)),
-        parseInt(String(Number(slippageAmount1) * 10 ** token1.decimals)),
+        Number.parseInt(String(Number(amount0) * 10 ** token0.decimals)),
+        Number.parseInt(String(Number(amount1) * 10 ** token1.decimals)),
+        Number.parseInt(
+          String(Number(slippageAmount0) * 10 ** token0.decimals),
+        ),
+        Number.parseInt(
+          String(Number(slippageAmount1) * 10 ** token1.decimals),
+        ),
       )
 
       setisTransactionPending(true)

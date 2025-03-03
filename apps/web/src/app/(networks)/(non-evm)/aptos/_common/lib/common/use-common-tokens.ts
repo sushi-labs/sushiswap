@@ -1,7 +1,7 @@
 import { keepPreviousData, useQuery } from '@tanstack/react-query'
-import { SupportedNetwork } from '~aptos/_common/config/chains'
+import type { SupportedNetwork } from '~aptos/_common/config/chains'
 import { tokenlists } from '~aptos/_common/config/tokenlists'
-import { Token } from '~aptos/_common/lib/types/token'
+import type { Token } from '~aptos/_common/lib/types/token'
 import { useNetwork } from './use-network'
 
 const fetchCommonTokensQueryFn = async ({

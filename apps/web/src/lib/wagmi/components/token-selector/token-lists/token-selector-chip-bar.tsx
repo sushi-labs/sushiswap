@@ -9,7 +9,7 @@ import {
 import { Button, Currency, IconButton, buttonIconVariants } from '@sushiswap/ui'
 import { NativeAddress } from 'src/lib/constants'
 import type { EvmChainId } from 'sushi/chain'
-import { Type } from 'sushi/currency'
+import type { Type } from 'sushi/currency'
 import { useChipTokens } from '../hooks/use-chip-tokens'
 
 interface TokenSelectorChipBar {

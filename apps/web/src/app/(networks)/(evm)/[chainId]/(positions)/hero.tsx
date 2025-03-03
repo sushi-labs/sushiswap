@@ -10,10 +10,10 @@ import {
   LinkInternal,
   SelectIcon,
 } from '@sushiswap/ui'
-import { FC } from 'react'
+import type { FC } from 'react'
 import { ChainKey, EvmChainId } from 'sushi/chain'
 import {
-  SushiSwapV3ChainId,
+  type SushiSwapV3ChainId,
   isSushiSwapV2ChainId,
   isSushiSwapV3ChainId,
 } from 'sushi/config'

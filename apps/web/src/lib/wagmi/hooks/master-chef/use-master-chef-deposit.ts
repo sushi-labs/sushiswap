@@ -2,18 +2,18 @@
 
 import { createErrorToast, createToast } from '@sushiswap/notifications'
 import { useCallback, useMemo } from 'react'
-import { Amount, Token } from 'sushi/currency'
+import type { Amount, Token } from 'sushi/currency'
 import { UserRejectedRequestError } from 'viem'
 import {
-  UseSimulateContractParameters,
+  type UseSimulateContractParameters,
   useAccount,
   usePublicClient,
   useSimulateContract,
   useWriteContract,
 } from 'wagmi'
-import { SendTransactionReturnType } from 'wagmi/actions'
+import type { SendTransactionReturnType } from 'wagmi/actions'
 
-import { ChefType, EvmChainId } from 'sushi'
+import { ChefType, type EvmChainId } from 'sushi'
 import { masterChefV1Abi_deposit, masterChefV2Abi_deposit } from 'sushi/abi'
 import { useMasterChefContract } from './use-master-chef-contract'
 

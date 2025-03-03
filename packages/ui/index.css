@@ -1,6 +1,6 @@
-@import '@fontsource-variable/inter/index.css';
-@import 'react-datepicker/dist/react-datepicker.css';
-@import './date-picker.css';
+@import "@fontsource-variable/inter/index.css";
+@import "react-datepicker/dist/react-datepicker.css";
+@import "./date-picker.css";
 
 @tailwind base;
 @tailwind components;
@@ -8,8 +8,9 @@
 
 @layer base {
   :root {
-    --font-sans: 'Inter Variable', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell',
-    'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+    --font-sans: "Inter Variable", -apple-system, BlinkMacSystemFont, "Segoe UI",
+      "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans",
+      "Helvetica Neue", sans-serif;
 
     --background-color: #f4f5f6;
     --color: #000;
@@ -109,16 +110,18 @@ body {
   background-clip: padding-box;
   background-color: rgba(0, 0, 0, 0.2);
   -webkit-border-radius: 7px;
-  -webkit-box-shadow: inset -1px -1px 0px rgba(255, 255, 255, 0.05), inset 1px 1px 0px rgba(255, 255, 255, 0.05);
+  -webkit-box-shadow: inset -1px -1px 0px rgba(255, 255, 255, 0.05), inset 1px
+    1px 0px rgba(255, 255, 255, 0.05);
 }
 
-html[class='dark'] *.scroll::-webkit-scrollbar-thumb {
+html[class="dark"] *.scroll::-webkit-scrollbar-thumb {
   height: 30px;
   border: 4px solid rgba(255, 255, 255, 0);
   background-clip: padding-box;
   background-color: rgba(255, 255, 255, 0.2);
   -webkit-border-radius: 7px;
-  -webkit-box-shadow: inset -1px -1px 0px rgba(0, 0, 0, 0.05), inset 1px 1px 0px rgba(0, 0, 0, 0.05);
+  -webkit-box-shadow: inset -1px -1px 0px rgba(0, 0, 0, 0.05), inset 1px 1px 0px
+    rgba(0, 0, 0, 0.05);
 }
 
 *.scroll::-webkit-scrollbar-button {
@@ -139,18 +142,17 @@ html[class='dark'] *.scroll::-webkit-scrollbar-thumb {
   pointer-events: all;
 }
 
-
 @layer utilities {
-  input[type='number']::-webkit-inner-spin-button,
-  input[type='number']::-webkit-outer-spin-button {
+  input[type="number"]::-webkit-inner-spin-button,
+  input[type="number"]::-webkit-outer-spin-button {
     -webkit-appearance: none;
     margin: 0;
   }
-  input[type='search']::-webkit-search-cancel-button {
+  input[type="search"]::-webkit-search-cancel-button {
     -webkit-appearance: none;
   }
 
-  input[type=range]::-webkit-slider-thumb {
-    @apply appearance-none w-6 h-6 bg-blue rounded-full
+  input[type="range"]::-webkit-slider-thumb {
+    @apply appearance-none w-6 h-6 bg-blue rounded-full;
   }
 }

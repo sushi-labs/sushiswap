@@ -1,7 +1,7 @@
 'use client'
 
 import { ArrowTopRightOnSquareIcon } from '@heroicons/react/20/solid'
-import { V2Pool, V3Pool } from '@sushiswap/graph-client/data-api'
+import type { V2Pool, V3Pool } from '@sushiswap/graph-client/data-api'
 import {
   Button,
   Currency,
@@ -10,7 +10,7 @@ import {
   classNames,
   typographyVariants,
 } from '@sushiswap/ui'
-import React, { FC, useMemo } from 'react'
+import React, { type FC, useMemo } from 'react'
 import { EvmChain, EvmChainKey } from 'sushi/chain'
 import { Token, unwrapToken } from 'sushi/currency'
 import { formatPercent, shortenAddress } from 'sushi/format'

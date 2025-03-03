@@ -3,7 +3,7 @@ import { type VariantProps, cva } from 'class-variance-authority'
 import * as React from 'react'
 
 import classNames from 'classnames'
-import { IconComponent } from '../types'
+import type { IconComponent } from '../types'
 
 const chipVariants = cva(
   'whitespace-nowrap inline-flex items-center rounded-lg px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 ring-offset-background',
@@ -65,7 +65,6 @@ const Chip = React.forwardRef<HTMLDivElement, ChipProps>(
         <span>{children}</span>
         {onClose ? (
           <div
-            role="button"
             onClick={onClose}
             onKeyDown={onClose}
             className="p-0.5 bg-secondary hover:bg-accent rounded-full cursor-pointer"

@@ -1,6 +1,6 @@
 import * as React from 'react'
 
-import { IconComponent } from '../../../types'
+import type { IconComponent } from '../../../types'
 import { TaikoNaked } from '../naked/TaikoNaked'
 
 export const TaikoCircle: IconComponent = (props) => (

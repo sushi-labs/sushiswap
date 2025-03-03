@@ -1,8 +1,8 @@
 import { getV3Pool } from '@sushiswap/graph-client/data-api'
 import { useQuery } from '@tanstack/react-query'
-import { SushiSwapV3ChainId } from 'sushi/config'
+import type { SushiSwapV3ChainId } from 'sushi/config'
 import { Amount, Token } from 'sushi/currency'
-import { Address, parseUnits } from 'viem'
+import { type Address, parseUnits } from 'viem'
 
 interface UseConcentratedLiquidityPoolStats {
   chainId: SushiSwapV3ChainId | undefined

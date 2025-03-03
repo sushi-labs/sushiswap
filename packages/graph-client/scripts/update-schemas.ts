@@ -1,6 +1,6 @@
 import { buildClientSchema, getIntrospectionQuery, printSchema } from 'graphql'
 
-import fs from 'fs'
+import fs from 'node:fs'
 
 const schemas = {
   bentobox: 'api.studio.thegraph.com/query/32073/bentobox-ethereum/v0.0.1',

@@ -8,7 +8,7 @@ import {
   PopoverTrigger,
   Separator,
 } from '@sushiswap/ui'
-import { FC, ReactNode } from 'react'
+import type { FC, ReactNode } from 'react'
 import { formatPercent } from 'sushi/format'
 
 import type {

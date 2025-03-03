@@ -2,7 +2,7 @@ import * as React from 'react'
 
 import { BaseNaked } from '../naked/BaseNaked'
 
-import { IconComponent } from '../../../types'
+import type { IconComponent } from '../../../types'
 
 export const BaseCircle: IconComponent = (props) => (
   <BaseNaked

@@ -2,7 +2,7 @@ import * as React from 'react'
 
 import { FuseNaked } from '../naked/FuseNaked'
 
-import { IconComponent } from '../../../types'
+import type { IconComponent } from '../../../types'
 
 export const FuseCircle: IconComponent = (props) => (
   <FuseNaked

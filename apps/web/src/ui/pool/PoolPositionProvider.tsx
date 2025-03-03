@@ -1,13 +1,19 @@
 'use client'
 
-import { V2Pool, V3Pool } from '@sushiswap/graph-client/data-api'
-import { FC, ReactNode, createContext, useContext, useMemo } from 'react'
+import type { V2Pool, V3Pool } from '@sushiswap/graph-client/data-api'
+import {
+  type FC,
+  type ReactNode,
+  createContext,
+  useContext,
+  useMemo,
+} from 'react'
 import {
   getTokensFromPool,
   useTokenAmountDollarValues,
   useUnderlyingTokenBalanceFromPool,
 } from 'src/lib/hooks'
-import { Amount, Type } from 'sushi/currency'
+import { Amount, type Type } from 'sushi/currency'
 import { useAmountBalance } from '~evm/_common/ui/balance-provider/use-balance'
 
 interface PoolPositionContext {

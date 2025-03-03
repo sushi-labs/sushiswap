@@ -1,12 +1,12 @@
 import { useWallet } from '@aptos-labs/wallet-adapter-react'
 import { SkeletonText } from '@sushiswap/ui'
-import { FC, useMemo } from 'react'
+import { type FC, useMemo } from 'react'
 import { formatPercent } from 'sushi/format'
 import { formatNumberWithDecimals } from '~aptos/_common/lib/common/format-number-with-decimals'
 import { useNetwork } from '~aptos/_common/lib/common/use-network'
 import { useTokenBalance } from '~aptos/_common/lib/common/use-token-balances'
-import { PoolExtendedWithAprVolume } from '~aptos/pool/lib/use-user-position-pools'
-import { Row } from '../../types'
+import type { PoolExtendedWithAprVolume } from '~aptos/pool/lib/use-user-position-pools'
+import type { Row } from '../../types'
 
 export const PoolMyPositionAprCell: FC<Row<PoolExtendedWithAprVolume>> = ({
   row,

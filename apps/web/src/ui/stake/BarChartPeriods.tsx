@@ -1,5 +1,5 @@
 import { Toggle } from '@sushiswap/ui'
-import React, { FC } from 'react'
+import React, { type FC } from 'react'
 
 export enum BarChartPeriod {
   Day = '1D',
@@ -14,7 +14,7 @@ export const chartPeriods: Record<BarChartPeriod, number> = {
   [BarChartPeriod.Week]: 604800 * 1000,
   [BarChartPeriod.Month]: 2629746 * 1000,
   [BarChartPeriod.Year]: 31556952 * 1000,
-  [BarChartPeriod.All]: Infinity,
+  [BarChartPeriod.All]: Number.POSITIVE_INFINITY,
 }
 
 interface BarChartPeriodsProps {

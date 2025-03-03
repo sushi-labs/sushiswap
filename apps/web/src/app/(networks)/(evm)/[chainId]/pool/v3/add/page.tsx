@@ -1,11 +1,11 @@
 'use client'
 
 import {
-  SmartPoolChainId,
+  type SmartPoolChainId,
   isSmartPoolChainId,
 } from '@sushiswap/graph-client/data-api'
 import { useRouter } from 'next/navigation'
-import React, { FC, useEffect, useMemo, useState, use } from 'react'
+import React, { type FC, useEffect, useMemo, useState, use } from 'react'
 import { useVaults } from 'src/lib/hooks'
 import { useConcentratedPositionInfo } from 'src/lib/wagmi/hooks/positions/hooks/useConcentratedPositionInfo'
 import { ConcentratedLiquidityProvider } from 'src/ui/pool/ConcentratedLiquidityProvider'
@@ -28,10 +28,10 @@ import { ChainKey, computeSushiSwapV3PoolAddress } from 'sushi'
 import {
   SUSHISWAP_V3_FACTORY_ADDRESS,
   SUSHISWAP_V3_SUPPORTED_CHAIN_IDS,
-  SushiSwapV3ChainId,
+  type SushiSwapV3ChainId,
   isWNativeSupported,
 } from 'sushi/config'
-import { Address } from 'viem'
+import type { Address } from 'viem'
 import { useAccount } from 'wagmi'
 
 export default function Page(props: { params: Promise<{ chainId: string }> }) {

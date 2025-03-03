@@ -5,7 +5,7 @@ import {
   QueryClient,
   QueryClientProvider as _QueryClientProvider,
 } from '@tanstack/react-query'
-import { FC, ReactNode } from 'react'
+import type { FC, ReactNode } from 'react'
 
 const queryClientConfig = {
   defaultOptions: {

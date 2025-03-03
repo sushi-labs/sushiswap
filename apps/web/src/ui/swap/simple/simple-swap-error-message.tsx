@@ -17,7 +17,7 @@ import {
   TextField,
   classNames,
 } from '@sushiswap/ui'
-import { FC } from 'react'
+import type { FC } from 'react'
 import { usePersistedSlippageError } from '../../../lib/hooks'
 
 export const SimpleSwapErrorMessage: FC<{

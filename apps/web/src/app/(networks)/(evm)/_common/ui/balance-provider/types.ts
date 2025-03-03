@@ -1,5 +1,5 @@
 import type { EvmChainId, ID, LowercaseMap } from 'sushi'
-import { Address } from 'viem'
+import type { Address } from 'viem'
 
 export interface Balance {
   amount: bigint

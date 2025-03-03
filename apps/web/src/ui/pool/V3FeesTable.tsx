@@ -1,6 +1,6 @@
 'use client'
 
-import { V3BasePool } from '@sushiswap/graph-client/data-api'
+import type { V3BasePool } from '@sushiswap/graph-client/data-api'
 import {
   Badge,
   Button,
@@ -15,10 +15,16 @@ import {
   classNames,
 } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
-import { ColumnDef, SortingState, TableState } from '@tanstack/react-table'
-import { FC, MouseEventHandler, useCallback, useMemo, useState } from 'react'
+import type { ColumnDef, SortingState, TableState } from '@tanstack/react-table'
+import {
+  type FC,
+  type MouseEventHandler,
+  useCallback,
+  useMemo,
+  useState,
+} from 'react'
 import { ProtocolBadge } from 'src/ui/pool/PoolNameCell'
-import { Address, EvmChain, EvmChainId } from 'sushi'
+import { type Address, EvmChain, type EvmChainId } from 'sushi'
 import { uniswapV3PoolAbi_setFeeProtocol } from 'sushi/abi'
 import { Token } from 'sushi/currency'
 import { formatNumber, formatUSD } from 'sushi/format'

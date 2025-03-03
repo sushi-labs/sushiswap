@@ -1,10 +1,10 @@
 'use client'
 
-import { FC, ReactElement, useMemo } from 'react'
+import { type FC, type ReactElement, useMemo } from 'react'
 import { useAngleRewards } from 'src/lib/hooks/react-query'
 import { useHarvestAngleRewards } from 'src/lib/wagmi/hooks/rewards/hooks/useHarvestAngleRewards'
-import { EvmChainId } from 'sushi/chain'
-import { Address } from 'viem'
+import type { EvmChainId } from 'sushi/chain'
+import type { Address } from 'viem'
 
 interface ConcentratedLiquidityHarvestButton {
   account: Address | undefined

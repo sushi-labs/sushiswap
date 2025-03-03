@@ -1,7 +1,8 @@
-import { WalletName, useWallet } from '@aptos-labs/wallet-adapter-react'
+import { type WalletName, useWallet } from '@aptos-labs/wallet-adapter-react'
 import { ChevronRightIcon } from '@heroicons/react/24/outline'
 import { List } from '@sushiswap/ui'
-import React, { FC } from 'react'
+import type React from 'react'
+import type { FC } from 'react'
 import { NotFoundWalletList } from './not-found-wallet-list'
 
 export const ConnectView: FC<{ close(): void }> = ({ close }) => {

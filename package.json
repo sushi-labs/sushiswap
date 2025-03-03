@@ -19,7 +19,7 @@
     "web": "pnpm exec turbo run dev --filter web"
   },
   "devDependencies": {
-    "@biomejs/biome": "1.5.2",
+    "@biomejs/biome": "1.9.5-nightly.81fdedb",
     "@types/node": "20",
     "dotenv-cli": "6.0.0",
     "eslint": "9.18.0",
@@ -30,10 +30,10 @@
     "turbo": "2.0.5",
     "typescript": "catalog:"
   },
-  "packageManager": "pnpm@10.0.0",
+  "packageManager": "pnpm@10.4.1",
   "engines": {
     "node": ">=20.x",
-    "pnpm": "10.0.0"
+    "pnpm": "10.4.1"
   },
   "pnpm": {
     "overrides": {
@@ -48,6 +48,7 @@
       "@walletconnect/logger@2.1.2": "patches/@walletconnect__logger@2.1.2.patch",
       "swarm-js@0.1.42": "patches/swarm-js@0.1.42.patch",
       "@walletconnect/jsonrpc-http-connection@1.0.8": "patches/@walletconnect__jsonrpc-http-connection@1.0.8.patch"
-    }
+    },
+    "onlyBuiltDependencies": ["@biomejs/biome"]
   }
 }

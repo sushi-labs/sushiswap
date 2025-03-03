@@ -1,4 +1,6 @@
-import GhostContentAPI, { GhostContentAPIOptions } from '@tryghost/content-api'
+import GhostContentAPI, {
+  type GhostContentAPIOptions,
+} from '@tryghost/content-api'
 
 interface CustomGhostContentAPIOptions extends GhostContentAPIOptions {
   makeRequest: (options: {

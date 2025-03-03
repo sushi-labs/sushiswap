@@ -1,5 +1,5 @@
-import { ScaleLinear } from 'd3'
-import React, { FC, useMemo } from 'react'
+import type { ScaleLinear } from 'd3'
+import React, { type FC, useMemo } from 'react'
 
 interface LineProps {
   value: number

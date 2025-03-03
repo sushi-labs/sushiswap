@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 import type { EvmChainId } from 'sushi'
 import { nativeAddress } from 'sushi/config'
-import { Amount, Type } from 'sushi/currency'
+import { Amount, type Type } from 'sushi/currency'
 import type { Address } from 'viem'
 import { useBalances } from './use-balances'
 

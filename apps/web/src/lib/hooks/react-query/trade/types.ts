@@ -1,15 +1,15 @@
-import {
+import type {
   routeProcessor2Abi_processRoute,
   routeProcessor2Abi_transferValueAndprocessRoute,
 } from 'sushi/abi'
-import { EvmChainId } from 'sushi/chain'
-import { Amount, Price, type Type } from 'sushi/currency'
-import { Percent } from 'sushi/math'
-import { RouterLiquiditySource } from 'sushi/router'
-import type { Address, WriteContractParameters } from 'viem'
-import z from 'zod'
-import { legValidator, tradeValidator01 } from './validator01'
-import { tradeValidator02 } from './validator02'
+import type { EvmChainId } from 'sushi/chain'
+import type { Amount, Price, Type } from 'sushi/currency'
+import type { Percent } from 'sushi/math'
+import type { RouterLiquiditySource } from 'sushi/router'
+import type { Address, Hex, WriteContractParameters } from 'viem'
+import type z from 'zod'
+import type { legValidator, tradeValidator01 } from './validator01'
+import type { tradeValidator02 } from './validator02'
 
 export interface UseTradeParams {
   chainId: EvmChainId
@@ -50,7 +50,9 @@ export interface UseTradeReturn {
     | {
         from: Address
         to: Address
-        data: string
+        gas?: string | undefined
+        gasPrice?: number | undefined
+        data: Hex
         value?: bigint | undefined
       }
     | undefined

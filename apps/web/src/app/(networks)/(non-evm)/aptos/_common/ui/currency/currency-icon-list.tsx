@@ -1,13 +1,13 @@
 import { classNames } from '@sushiswap/ui'
 import {
   Children,
-  ComponentProps,
-  FC,
-  ReactNode,
+  type ComponentProps,
+  type FC,
+  type ReactNode,
   cloneElement,
   isValidElement,
 } from 'react'
-import { CurrencyIcon } from './currency-icon'
+import type { CurrencyIcon } from './currency-icon'
 
 export interface CurrencyIconList {
   children: ReactNode

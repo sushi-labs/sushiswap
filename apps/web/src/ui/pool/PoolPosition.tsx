@@ -7,10 +7,10 @@ import {
   CardHeader,
   CardTitle,
 } from '@sushiswap/ui'
-import { FC } from 'react'
+import type { FC } from 'react'
 import { formatUSD } from 'sushi/format'
 
-import { V2Pool } from '@sushiswap/graph-client/data-api'
+import type { V2Pool } from '@sushiswap/graph-client/data-api'
 import { SkeletonText } from '@sushiswap/ui'
 import { ConnectButton } from 'src/lib/wagmi/components/connect-button'
 import { useAccount } from 'wagmi'

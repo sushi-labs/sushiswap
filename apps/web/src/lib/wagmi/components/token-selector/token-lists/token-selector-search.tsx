@@ -1,4 +1,4 @@
-import { TokenListChainId } from '@sushiswap/graph-client/data-api'
+import type { TokenListChainId } from '@sushiswap/graph-client/data-api'
 import { useCustomTokens } from '@sushiswap/hooks'
 import { List } from '@sushiswap/ui'
 import { useMemo } from 'react'

@@ -1,6 +1,6 @@
 'use client'
 
-import { Address } from 'viem'
+import type { Address } from 'viem'
 import { publicWagmiConfig } from '../../config/public'
 
 export type Multicall3ChainId =

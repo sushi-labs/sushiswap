@@ -1,6 +1,6 @@
 import { Fraction, Percent } from 'sushi'
-import { Amount, Type } from 'sushi/currency'
-import { Hex, decodeErrorResult } from 'viem'
+import type { Amount, Type } from 'sushi/currency'
+import { type Hex, decodeErrorResult } from 'viem'
 
 const MAX_TOKEN_TAX = new Percent(1_000, 10_000) // 10%
 

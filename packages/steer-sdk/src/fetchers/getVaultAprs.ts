@@ -41,22 +41,22 @@ export async function getVaultAprs({ chainId }: GetVaultAprs) {
 
   for (const apr of data.daily) {
     const vaultId = getIdFromChainIdAddress(chainId, apr.vault)
-    map.set(vaultId, { apr1d: parseFloat(apr.apr) })
+    map.set(vaultId, { apr1d: Number.parseFloat(apr.apr) })
   }
 
   for (const apr of data.weekly) {
     const vaultId = getIdFromChainIdAddress(chainId, apr.vault)
-    map.set(vaultId, { ...map.get(vaultId), apr1w: parseFloat(apr.apr) })
+    map.set(vaultId, { ...map.get(vaultId), apr1w: Number.parseFloat(apr.apr) })
   }
 
   for (const apr of data.monthly) {
     const vaultId = getIdFromChainIdAddress(chainId, apr.vault)
-    map.set(vaultId, { ...map.get(vaultId), apr1m: parseFloat(apr.apr) })
+    map.set(vaultId, { ...map.get(vaultId), apr1m: Number.parseFloat(apr.apr) })
   }
 
   for (const apr of data.default) {
     const vaultId = getIdFromChainIdAddress(chainId, apr.vault)
-    map.set(vaultId, { ...map.get(vaultId), apr: parseFloat(apr.apr) })
+    map.set(vaultId, { ...map.get(vaultId), apr: Number.parseFloat(apr.apr) })
   }
 
   return Object.fromEntries(map)

@@ -1,10 +1,10 @@
-import { UseQueryOptions, useQuery } from '@tanstack/react-query'
-import { Amount, Native, Token, Type } from 'sushi/currency'
+import { type UseQueryOptions, useQuery } from '@tanstack/react-query'
+import { Amount, Native, Token, type Type } from 'sushi/currency'
 import { Percent } from 'sushi/math'
 import { zeroAddress } from 'viem'
 import { stringify } from 'viem/utils'
 import { crossChainStepSchema } from '../../../swap/cross-chain/schema'
-import { CrossChainStep } from '../../../swap/cross-chain/types'
+import type { CrossChainStep } from '../../../swap/cross-chain/types'
 
 export interface UseCrossChainTradeStepReturn extends CrossChainStep {
   tokenIn: Type

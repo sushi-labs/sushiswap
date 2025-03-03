@@ -6,7 +6,7 @@ import {
 } from '@sushiswap/notifications'
 import {
   Button,
-  ButtonProps,
+  type ButtonProps,
   Command,
   CommandGroup,
   CommandItem,
@@ -24,7 +24,7 @@ import {
   parseTxnError,
 } from '~tron/_common/lib/utils/helpers'
 import { getTronscanTxnLink } from '~tron/_common/lib/utils/tronscan-helpers'
-import { IToken } from '~tron/_common/types/token-type'
+import type { IToken } from '~tron/_common/types/token-type'
 
 export const ApproveToken = ({
   tokenToApprove,
@@ -99,8 +99,8 @@ export const ApproveToken = ({
       const errorMessage =
         typeof error === 'string'
           ? error
-          : (error as Error)?.message ??
-            'An error occurred while setting approval'
+          : ((error as Error)?.message ??
+            'An error occurred while setting approval')
       //create error toast
       createFailedToast({
         summary: errorMessage,

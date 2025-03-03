@@ -7,7 +7,7 @@ import {
   FormSection,
   Toggle,
 } from '@sushiswap/ui'
-import { FC } from 'react'
+import type { FC } from 'react'
 
 export enum V3PoolType {
   MANUAL = 'manual',

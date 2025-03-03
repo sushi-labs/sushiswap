@@ -1,6 +1,6 @@
-import { TTLStorageKey, useTTL } from '@sushiswap/hooks'
+import { type TTLStorageKey, useTTL } from '@sushiswap/hooks'
 import { useQuery } from '@tanstack/react-query'
-import { EvmChainId, evmChainsL2 } from 'sushi/chain'
+import { type EvmChainId, evmChainsL2 } from 'sushi/chain'
 import { useCurrentBlockTimestamp } from '../../block/useCurrentBlockTimestamp'
 
 const L2_TTL = 5n

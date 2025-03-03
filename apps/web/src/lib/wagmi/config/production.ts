@@ -13,7 +13,7 @@ import {
 import { gtagEvent } from '@sushiswap/ui'
 import { EvmChainId } from 'sushi/chain'
 import { http, cookieStorage, createConfig, createStorage } from 'wagmi'
-import { Writeable } from 'zod'
+import type { Writeable } from 'zod'
 import { publicWagmiConfig } from './public'
 import { publicTransports } from './viem'
 

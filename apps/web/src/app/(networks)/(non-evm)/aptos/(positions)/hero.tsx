@@ -1,6 +1,6 @@
 import { GiftIcon } from '@heroicons/react-v1/outline'
 import { Button, LinkInternal } from '@sushiswap/ui'
-import { FC } from 'react'
+import type { FC } from 'react'
 
 export const Hero: FC = () => {
   return (

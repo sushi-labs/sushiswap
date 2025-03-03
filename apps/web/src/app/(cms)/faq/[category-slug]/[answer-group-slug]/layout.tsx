@@ -1,7 +1,7 @@
 import { getFaqAnswerGroup } from '@sushiswap/graph-client/strapi'
 import { Breadcrumb, Container, typographyVariants } from '@sushiswap/ui'
 import { notFound } from 'next/navigation'
-import React from 'react'
+import type React from 'react'
 import { AnswerGroupLayout } from './components/answer-group-layout'
 
 export const revalidate = 900

@@ -7,7 +7,7 @@ import {
 } from '@orbs-network/twap-ui-sushiswap'
 import { useConnectModal } from '@rainbow-me/rainbowkit'
 import {
-  TokenListChainId,
+  type TokenListChainId,
   isTokenListChainId,
 } from '@sushiswap/graph-client/data-api'
 import {
@@ -22,19 +22,19 @@ import {
   TooltipTrigger,
 } from '@sushiswap/ui'
 import { useTheme } from 'next-themes'
-import { ReactNode, useCallback, useEffect } from 'react'
+import { type ReactNode, useCallback, useEffect } from 'react'
 import { NetworkSelector } from 'src/lib/wagmi/components/network-selector'
 import { useSearchTokens } from 'src/lib/wagmi/components/token-selector/hooks/use-search-tokens'
 import { TokenSelector } from 'src/lib/wagmi/components/token-selector/token-selector'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
-import { EvmChainId } from 'sushi/chain'
-import { Currency, Native } from 'sushi/currency'
-import { Address, zeroAddress } from 'viem'
+import type { EvmChainId } from 'sushi/chain'
+import { type Currency, Native } from 'sushi/currency'
+import { type Address, zeroAddress } from 'viem'
 import { useAccount, useChainId, useSwitchChain } from 'wagmi'
 import { usePrice } from '~evm/_common/ui/price-provider/price-provider/use-price'
 import {
   useDerivedStateSimpleSwap,
-  useSimpleSwapTrade,
+  useSimpleSwapTradeQuote,
 } from '../simple/derivedstate-simple-swap-provider'
 import { SimpleSwapBridgeBanner } from '../simple/simple-swap-bridge-banner'
 import { SimpleSwapHeader } from '../simple/simple-swap-header'
@@ -99,11 +99,11 @@ const TokenSelectModal = ({
 }
 
 const useTrade = () => {
-  const { data: trade, isLoading } = useSimpleSwapTrade()
+  const { data: quote, isLoading } = useSimpleSwapTradeQuote()
 
   return {
     isLoading,
-    outAmount: trade?.amountOut?.quotient.toString(),
+    outAmount: quote?.amountOut?.quotient.toString(),
   }
 }
 

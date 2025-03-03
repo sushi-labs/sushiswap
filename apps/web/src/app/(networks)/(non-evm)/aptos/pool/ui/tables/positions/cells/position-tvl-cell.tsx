@@ -1,6 +1,6 @@
 import { useWallet } from '@aptos-labs/wallet-adapter-react'
 import { SkeletonText } from '@sushiswap/ui'
-import { FC, useMemo } from 'react'
+import { type FC, useMemo } from 'react'
 import { formatPercent, formatUSD } from 'sushi/format'
 import { formatNumberWithDecimals } from '~aptos/_common/lib/common/format-number-with-decimals'
 import { useNetwork } from '~aptos/_common/lib/common/use-network'
@@ -8,8 +8,8 @@ import { useStablePrice } from '~aptos/_common/lib/common/use-stable-price'
 import { useTokenBalance } from '~aptos/_common/lib/common/use-token-balances'
 import { useTotalSupply } from '~aptos/_common/lib/common/use-total-supply'
 import { useTokensFromPool } from '~aptos/pool/lib/use-tokens-from-pool'
-import { PoolExtendedWithAprVolume } from '~aptos/pool/lib/use-user-position-pools'
-import { Row } from '../../types'
+import type { PoolExtendedWithAprVolume } from '~aptos/pool/lib/use-user-position-pools'
+import type { Row } from '../../types'
 
 export const PoolMyPositionTVLCell: FC<
   Row<PoolExtendedWithAprVolume> & { isSize: boolean }

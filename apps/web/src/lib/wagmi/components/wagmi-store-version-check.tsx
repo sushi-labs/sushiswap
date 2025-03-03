@@ -1,6 +1,7 @@
 'use client'
 
-import React, { FC, useEffect } from 'react'
+import type React from 'react'
+import { type FC, useEffect } from 'react'
 
 interface WagmiStoreVersionCheckProps {
   children: React.ReactNode

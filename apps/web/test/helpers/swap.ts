@@ -1,8 +1,8 @@
-import { Page, expect } from '@playwright/test'
+import { type Page, expect } from '@playwright/test'
 import { NativeAddress } from 'src/lib/constants'
 import { API_BASE_URL } from 'src/lib/swap/api-base-url'
-import { EvmChainId } from 'sushi/chain'
-import { Amount, Native, Type } from 'sushi/currency'
+import type { EvmChainId } from 'sushi/chain'
+import { type Amount, Native, type Type } from 'sushi/currency'
 import { BaseActions } from './base' // Adjust the import path as necessary
 
 type InputType = 'INPUT' | 'OUTPUT'
@@ -254,7 +254,13 @@ export class SwapPage extends BaseActions {
 
   async mockSwapApi(jsonFile: string) {
     await this.page.route(
-      `${API_BASE_URL}/swap/v5/${this.chainId}*`,
+      `${API_BASE_URL}/quote/v6/${this.chainId}*`,
+      (route) => {
+        return route.fulfill({ path: jsonFile })
+      },
+    )
+    await this.page.route(
+      `${API_BASE_URL}/swap/v6/${this.chainId}*`,
       (route) => {
         return route.fulfill({ path: jsonFile })
       },

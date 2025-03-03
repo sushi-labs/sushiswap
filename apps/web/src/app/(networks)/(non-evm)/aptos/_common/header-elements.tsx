@@ -1,5 +1,5 @@
 import {
-  NavigationElement,
+  type NavigationElement,
   NavigationElementType,
   NavigationListItem,
   NavigationMenuContent,

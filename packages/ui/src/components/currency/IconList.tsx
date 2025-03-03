@@ -1,13 +1,13 @@
 import classNames from 'classnames'
 import {
   Children,
-  ComponentProps,
-  FC,
-  ReactNode,
+  type ComponentProps,
+  type FC,
+  type ReactNode,
   cloneElement,
   isValidElement,
 } from 'react'
-import { Icon } from './Icon'
+import type { Icon } from './Icon'
 
 export interface IconListProps {
   children: ReactNode

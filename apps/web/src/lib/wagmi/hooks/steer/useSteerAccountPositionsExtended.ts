@@ -1,10 +1,10 @@
-import { SmartPoolChainId } from '@sushiswap/graph-client/data-api'
+import type { SmartPoolChainId } from '@sushiswap/graph-client/data-api'
 import { useMemo } from 'react'
 import { useSmartPools } from 'src/lib/hooks/api/userSmartPools'
 import { useAllPrices } from 'src/lib/hooks/react-query'
-import { ID } from 'sushi'
+import type { ID } from 'sushi'
 import { Amount, Token } from 'sushi/currency'
-import { Address } from 'viem'
+import type { Address } from 'viem'
 import { useSteerAccountPositions } from './useSteerAccountPosition'
 
 interface UseSteerAccountPositionsExtended {

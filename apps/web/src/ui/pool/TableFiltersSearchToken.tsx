@@ -2,7 +2,7 @@
 
 import { MagnifyingGlassIcon } from '@heroicons/react/24/solid'
 import { ChipInput } from '@sushiswap/ui'
-import React, { FC, useCallback, useState, useTransition } from 'react'
+import React, { type FC, useCallback, useState, useTransition } from 'react'
 
 import { usePoolFilters, useSetPoolFilters } from './PoolsFiltersProvider'
 
@@ -29,7 +29,7 @@ export const TableFiltersSearchToken: FC = () => {
         icon={MagnifyingGlassIcon}
         delimiters={[',', ' ', ';', ':', 'Enter']}
         variant="outline"
-        values={isPending ? values : tokenSymbols ?? []}
+        values={isPending ? values : (tokenSymbols ?? [])}
         onValueChange={onValueChange}
         placeholder="Search"
         maxValues={3}

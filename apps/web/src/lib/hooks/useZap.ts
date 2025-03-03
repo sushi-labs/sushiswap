@@ -1,8 +1,8 @@
-import { UseQueryOptions, useQuery } from '@tanstack/react-query'
+import { type UseQueryOptions, useQuery } from '@tanstack/react-query'
 import { isZapSupportedChainId } from 'src/config'
-import { EvmChainId } from 'sushi/chain'
-import { Percent } from 'sushi/math'
-import { Address, Hex } from 'viem'
+import type { EvmChainId } from 'sushi/chain'
+import type { Percent } from 'sushi/math'
+import type { Address, Hex } from 'viem'
 import { z } from 'zod'
 
 const txSchema = z.object({

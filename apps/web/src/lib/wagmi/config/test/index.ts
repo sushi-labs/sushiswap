@@ -1,8 +1,8 @@
 'use client'
 
 import { mock } from '@wagmi/connectors'
-import { ChainId } from 'sushi'
-import { http, HttpTransport } from 'viem'
+import type { ChainId } from 'sushi'
+import { http, type HttpTransport } from 'viem'
 import { privateKeyToAccount } from 'viem/accounts'
 import { createConfig } from 'wagmi'
 import { accounts, testChains } from './constants'

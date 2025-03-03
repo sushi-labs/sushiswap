@@ -10,7 +10,7 @@ import { useMemo } from 'react'
 import { useStablePrice } from '~tron/_common/lib/hooks/useStablePrice'
 import { useTokenBalance } from '~tron/_common/lib/hooks/useTokenBalance'
 import { formatUnitsForInput } from '~tron/_common/lib/utils/formatters'
-import { IToken } from '~tron/_common/types/token-type'
+import type { IToken } from '~tron/_common/types/token-type'
 import { Icon } from '../General/Icon'
 import { TokenSelector } from '../General/TokenSelector'
 import { DollarAmountDisplay } from '../Shared/DollarAmountDisplay'
@@ -97,7 +97,7 @@ export const TokenInput = ({
         </Button>
       </TokenSelector>
     )
-  }, [currency, currencyLoading, id, setToken])
+  }, [currency, id, setToken])
 
   return (
     <div
@@ -161,11 +161,9 @@ export const TokenInput = ({
             {currency ? (
               <>
                 {!hideIcon && (
-                  <>
-                    <div className="w-[28px] h-[28px] mr-0.5">
-                      <Icon currency={currency} width={28} height={28} />
-                    </div>
-                  </>
+                  <div className="w-[28px] h-[28px] mr-0.5">
+                    <Icon currency={currency} width={28} height={28} />
+                  </div>
                 )}
                 {currency.symbol}
               </>
@@ -204,8 +202,8 @@ export const TokenInput = ({
   )
 }
 
-{
-  /* {hasTokenListSelect ? (
+/*{
+  {hasTokenListSelect ? (
           <TokenListSelect setToken={setToken} token={token} />
         ) : (
           <Button
@@ -224,5 +222,5 @@ export const TokenInput = ({
         
         
       </div>
-    </div> */
-}
+    </div>
+}*/

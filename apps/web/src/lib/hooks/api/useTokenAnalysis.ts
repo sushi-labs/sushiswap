@@ -1,8 +1,8 @@
 'use client'
 
 import {
-  GetTokenAnalysis,
-  TokenAnalysis,
+  type GetTokenAnalysis,
+  type TokenAnalysis,
   getTokenAnalysis,
 } from '@sushiswap/graph-client/data-api/queries/token-list-submission'
 import { useQuery } from '@tanstack/react-query'

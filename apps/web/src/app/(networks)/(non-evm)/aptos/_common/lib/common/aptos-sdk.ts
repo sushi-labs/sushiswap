@@ -1,4 +1,4 @@
-import { Aptos, AptosConfig, Network } from '@aptos-labs/ts-sdk'
+import { Aptos, AptosConfig, type Network } from '@aptos-labs/ts-sdk'
 
 export class AptosSDK {
   private static instances: { [key in Network]?: Aptos } = {}

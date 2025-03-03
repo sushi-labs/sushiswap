@@ -10,11 +10,11 @@ import {
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import { SushiIcon } from '@sushiswap/ui/icons/SushiIcon'
 import { SushiWithTextIcon } from '@sushiswap/ui/icons/SushiWithTextIcon'
-import React, { FC } from 'react'
+import React, { type FC } from 'react'
 import { SUPPORTED_NETWORKS } from 'src/config'
 import { WagmiHeaderComponents } from 'src/lib/wagmi/components/wagmi-header-components'
 import { SidebarToggle, useSidebar } from 'src/ui/sidebar'
-import { ChainId } from 'sushi/chain'
+import type { ChainId } from 'sushi/chain'
 import { useAccount, useChainId } from 'wagmi'
 import { headerElements } from '../_common/header-elements'
 

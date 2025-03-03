@@ -1,14 +1,14 @@
 'use client'
 
 import { SkeletonBox } from '@sushiswap/ui'
-import React, { FC, useMemo } from 'react'
+import React, { type FC, useMemo } from 'react'
 import { useConcentratedLiquidityPoolStats } from 'src/lib/hooks/react-query'
-import { SushiSwapV3ChainId } from 'sushi/config'
+import type { SushiSwapV3ChainId } from 'sushi/config'
 import { TickMath, tickToPrice } from 'sushi/pool/sushiswap-v3'
 import type { PoolId } from 'sushi/types'
 import { useConcentratedDerivedMintInfo } from '../../ConcentratedLiquidityProvider'
 import { useDensityChartData } from '../../LiquidityChartRangeInput/hooks'
-import { SteerStrategyGeneric } from '../SteerStrategies'
+import type { SteerStrategyGeneric } from '../SteerStrategies'
 import { SteerStrategyLiquidityDistributionChart } from './SteerStrategyLiquidityDistributionChart'
 
 interface SteerStrategyLiquidityDistribution {
@@ -89,7 +89,9 @@ const _SteerStrategyLiquidityDistribution: FC<
   const current = useMemo(() => {
     if (!price) return null
 
-    return parseFloat((invertPrice ? price.invert() : price)?.toSignificant(8))
+    return Number.parseFloat(
+      (invertPrice ? price.invert() : price)?.toSignificant(8),
+    )
   }, [invertPrice, price])
 
   const isLoading =
