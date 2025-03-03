@@ -7,14 +7,23 @@ import { SUSHI_REQUEST_HEADERS } from '../../request-headers.js'
 
 export const ExploreTokenInfoQuery = graphql(
   `
-  query ExploreTokenInfoQuery($chainId: SushiSwapChainId!, $address: String!) {
+  query ExploreTokenInfoQuery($chainId: SushiSwapChainId!, $chainIdInt: Int!, $address: Bytes!) {
     exploreTokenInfo(chainId: $chainId, address: $address) {
-      categories
       description
       website
       twitter
       telegram
       discord
+    }
+    tokenAnalysis(chainId: $chainIdInt, address: $address) {
+      token {
+        id
+        chainId
+        address
+        name
+        symbol
+        decimals
+      }
     }
   }
 `,
@@ -27,20 +36,27 @@ export async function getTokenInfo(
   options?: RequestOptions,
 ) {
   const url = `${SUSHI_DATA_API_HOST}/graphql`
-
   const result = await request(
     {
       url,
       document: ExploreTokenInfoQuery,
-      variables,
+      variables: {
+        ...variables,
+        address: variables.address.toLowerCase(),
+      },
       requestHeaders: SUSHI_REQUEST_HEADERS,
     },
     options,
   )
 
-  if (result) {
-    return result.exploreTokenInfo
+  if (result.exploreTokenInfo && result.tokenAnalysis.token) {
+    return {
+      info: result.exploreTokenInfo,
+      token: result.tokenAnalysis.token,
+    }
   }
+
+  console.dir({ result }, { depth: null })
 
   throw new Error('No token info found')
 }

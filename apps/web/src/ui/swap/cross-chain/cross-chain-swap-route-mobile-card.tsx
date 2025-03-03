@@ -11,7 +11,7 @@ import { Amount } from 'sushi/currency'
 import { formatUSD } from 'sushi/format'
 import { usePrice } from '~evm/_common/ui/price-provider/price-provider/use-price'
 import { CrossChainSwapFeesHoverCard } from './cross-chain-swap-fees-hover-card'
-import { useDerivedStateCrossChainSwap } from './derivedstate-cross-chain-swap-provider'
+import { useDerivedStateCrossChainSwap } from './derivedstate-cross-chain-swap-context'
 
 interface CrossChainSwapRouteMobileCardProps {
   route: CrossChainRouteType | undefined

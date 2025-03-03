@@ -1,5 +1,5 @@
 import { StrapiBanner } from '../strapi-banner/strapi-banner'
-import { SwapModeButtons } from '../swap-mode-buttons'
+import { DefaultSwapModeUrlButtons } from '../swap-mode-buttons'
 import { SimpleSwapBridgeBanner } from './simple-swap-bridge-banner'
 import { SimpleSwapHeader } from './simple-swap-header'
 import { SimpleSwapSettingsOverlay } from './simple-swap-settings-overlay'
@@ -17,7 +17,7 @@ export const SimpleSwapWidget = () => {
       <SimpleSwapBridgeBanner />
       <SimpleSwapHeader />
       <div className="flex items-center justify-between">
-        <SwapModeButtons />
+        <DefaultSwapModeUrlButtons />
         <SimpleSwapSettingsOverlay />
       </div>
       <SwapMaintenanceMessage />

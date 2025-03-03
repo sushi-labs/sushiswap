@@ -1,4 +1,4 @@
-import { SwapModeButtons } from '../swap-mode-buttons'
+import { DefaultSwapModeUrlButtons } from '../swap-mode-buttons'
 import { CrossChainSwapHeader } from './cross-chain-swap-header'
 import { CrossChainSwapMaintenanceMessage } from './cross-chain-swap-maintenance-message'
 import { CrossChainSwapSettingsOverlay } from './cross-chain-swap-settings-overlay'
@@ -15,7 +15,7 @@ export const CrossChainSwapWidget = () => {
       <div />
       <CrossChainSwapHeader />
       <div className="flex items-center justify-between">
-        <SwapModeButtons />
+        <DefaultSwapModeUrlButtons />
         <CrossChainSwapSettingsOverlay />
       </div>
       <CrossChainSwapMaintenanceMessage />

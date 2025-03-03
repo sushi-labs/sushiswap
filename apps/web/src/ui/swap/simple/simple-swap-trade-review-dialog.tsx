@@ -65,7 +65,7 @@ import {
 import {
   useDerivedStateSimpleSwap,
   useSimpleSwapTrade,
-} from './derivedstate-simple-swap-provider'
+} from './derivedstate-simple-swap-context'
 import { SimpleSwapErrorMessage } from './simple-swap-error-message'
 
 export const SimpleSwapTradeReviewDialog: FC<{

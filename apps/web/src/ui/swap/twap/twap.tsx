@@ -1,10 +1,6 @@
 'use client'
 
 import { ExclamationCircleIcon } from '@heroicons/react/20/solid'
-import {
-  TWAP as TwapContainer,
-  supportedChains,
-} from '@orbs-network/twap-ui-sushiswap'
 import { useConnectModal } from '@rainbow-me/rainbowkit'
 import {
   type TokenListChainId,
@@ -22,28 +18,42 @@ import {
   TooltipTrigger,
 } from '@sushiswap/ui'
 import { useTheme } from 'next-themes'
-import { type ReactNode, useCallback, useEffect } from 'react'
-import { NetworkSelector } from 'src/lib/wagmi/components/network-selector'
+import dynamic from 'next/dynamic'
+import { type FC, type ReactNode, useEffect } from 'react'
 import { useSearchTokens } from 'src/lib/wagmi/components/token-selector/hooks/use-search-tokens'
 import { TokenSelector } from 'src/lib/wagmi/components/token-selector/token-selector'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
-import type { EvmChainId } from 'sushi/chain'
 import { type Currency, Native } from 'sushi/currency'
 import { type Address, zeroAddress } from 'viem'
-import { useAccount, useChainId, useSwitchChain } from 'wagmi'
+import { useAccount, useChainId } from 'wagmi'
 import { usePrice } from '~evm/_common/ui/price-provider/price-provider/use-price'
 import {
   useDerivedStateSimpleSwap,
   useSimpleSwapTradeQuote,
-} from '../simple/derivedstate-simple-swap-provider'
+} from '../simple/derivedstate-simple-swap-context'
 import { SimpleSwapBridgeBanner } from '../simple/simple-swap-bridge-banner'
 import { SimpleSwapHeader } from '../simple/simple-swap-header'
 import { SimpleSwapSettingsOverlay } from '../simple/simple-swap-settings-overlay'
-import { SwapModeButtons } from '../swap-mode-buttons'
+import { DefaultSwapModeUrlButtons } from '../swap-mode-buttons'
 import { DCAMaintenanceMessage } from './dca-maintenance-message'
 import { LimitMaintenanceMessage } from './limit-maintenance-message'
 import { useIsDCAMaintenance } from './use-is-dca-maintenance'
 import { useIsLimitMaintenance } from './use-is-limit-maintenance'
+
+const BaseTwapContainer = dynamic(
+  () => import('@orbs-network/twap-ui-sushiswap').then((mod) => mod.TWAP),
+  {
+    ssr: false,
+  },
+)
+
+const TwapNetworkSelector = dynamic(
+  () =>
+    import('./twap-network-selector').then((mod) => mod.TwapNetworkSelector),
+  {
+    ssr: false,
+  },
+)
 
 const Modal = ({
   open,
@@ -149,27 +159,6 @@ const Tooltip = ({ tooltipText }: any) => {
   )
 }
 
-const TwapNetworkSelector = ({ children }: { children: ReactNode }) => {
-  const { switchChain } = useSwitchChain()
-  const chainId = useChainId()
-  const onSelect = useCallback(
-    (chainId: EvmChainId) => {
-      switchChain({ chainId: chainId })
-    },
-    [switchChain],
-  )
-
-  return (
-    <NetworkSelector
-      selected={chainId}
-      networks={supportedChains as EvmChainId[]}
-      onSelect={onSelect}
-    >
-      {children}
-    </NetworkSelector>
-  )
-}
-
 const LimitButton = ({
   disabled,
   children,
@@ -228,7 +217,7 @@ const useToken = (address?: string) => {
   return result.data?.[0]
 }
 
-function Provider({ isLimit }: { isLimit?: boolean }) {
+export function TwapContainer({ isLimit }: { isLimit?: boolean }) {
   const { openConnectModal } = useConnectModal()
   const { connector } = useAccount()
   const { state, mutate } = useDerivedStateSimpleSwap()
@@ -243,37 +232,43 @@ function Provider({ isLimit }: { isLimit?: boolean }) {
   }, [state.swapAmountString, mutate])
 
   return (
+    <BaseTwapContainer
+      TokenSelectModal={TokenSelectModal}
+      Modal={Modal}
+      connect={openConnectModal}
+      account={state.recipient}
+      limit={isLimit}
+      useTrade={useTrade}
+      connector={connector}
+      srcToken={state.token0}
+      dstToken={state.token1}
+      getTokenLogo={getTokenLogo}
+      onSrcTokenSelected={mutate.setToken0}
+      onDstTokenSelected={mutate.setToken1}
+      useUSD={usePriceUSD}
+      isDarkTheme={resolvedTheme === 'dark'}
+      onSwitchTokens={mutate.switchTokens}
+      configChainId={state.chainId}
+      connectedChainId={connectedChainId}
+      Tooltip={Tooltip}
+      NetworkSelector={TwapNetworkSelector as FC}
+      Button={isLimit ? LimitButton : DCAButton}
+      useToken={useToken}
+    />
+  )
+}
+
+function Provider({ isLimit }: { isLimit?: boolean }) {
+  return (
     <div className="flex flex-col gap-4">
       <SimpleSwapBridgeBanner />
       <SimpleSwapHeader />
       <div className="flex items-center justify-between">
-        <SwapModeButtons />
+        <DefaultSwapModeUrlButtons />
         <SimpleSwapSettingsOverlay />
       </div>
       {isLimit ? <LimitMaintenanceMessage /> : <DCAMaintenanceMessage />}
-      <TwapContainer
-        TokenSelectModal={TokenSelectModal}
-        Modal={Modal}
-        connect={openConnectModal}
-        account={state.recipient}
-        limit={isLimit}
-        useTrade={useTrade}
-        connector={connector}
-        srcToken={state.token0}
-        dstToken={state.token1}
-        getTokenLogo={getTokenLogo}
-        onSrcTokenSelected={mutate.setToken0}
-        onDstTokenSelected={mutate.setToken1}
-        useUSD={usePriceUSD}
-        isDarkTheme={resolvedTheme === 'dark'}
-        onSwitchTokens={mutate.switchTokens}
-        configChainId={state.chainId}
-        connectedChainId={connectedChainId}
-        Tooltip={Tooltip}
-        NetworkSelector={TwapNetworkSelector}
-        Button={isLimit ? LimitButton : DCAButton}
-        useToken={useToken}
-      />
+      <TwapContainer isLimit={isLimit} />
     </div>
   )
 }
