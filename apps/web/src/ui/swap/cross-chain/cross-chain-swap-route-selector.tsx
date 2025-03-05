@@ -34,7 +34,7 @@ import { CrossChainSwapRouteMobileCard } from './cross-chain-swap-route-mobile-c
 import {
   useCrossChainTradeRoutes,
   useDerivedStateCrossChainSwap,
-} from './derivedstate-cross-chain-swap-provider'
+} from './derivedstate-cross-chain-swap-context'
 
 export const CrossChainSwapRouteSelector = () => {
   const { data: routes, status } = useCrossChainTradeRoutes()

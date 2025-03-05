@@ -5,7 +5,7 @@ import { isWNativeSupported } from 'sushi/config'
 import {
   useDerivedStateSimpleSwap,
   useSimpleSwapTradeQuote,
-} from './derivedstate-simple-swap-provider'
+} from './derivedstate-simple-swap-context'
 
 export const SimpleSwapToken1Input = () => {
   const {

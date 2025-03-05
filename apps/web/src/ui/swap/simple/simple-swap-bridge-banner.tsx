@@ -6,7 +6,7 @@ import { useLocalStorage } from '@sushiswap/hooks'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import type { FC } from 'react'
 import { ChainId, EvmChain } from 'sushi/chain'
-import { useDerivedStateSimpleSwap } from './derivedstate-simple-swap-provider'
+import { useDerivedStateSimpleSwap } from './derivedstate-simple-swap-context'
 
 const BridgeInfo = {
   [ChainId.SKALE_EUROPA]: {

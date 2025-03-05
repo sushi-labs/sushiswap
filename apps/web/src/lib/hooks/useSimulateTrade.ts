@@ -1,7 +1,7 @@
 import type { EstimateGasErrorType, EstimateGasReturnType } from '@wagmi/core'
 import { useEffect, useMemo, useRef } from 'react'
 import type { UseTradeReturn } from 'src/lib/hooks/react-query'
-import { useDerivedStateSimpleSwap } from 'src/ui/swap/simple/derivedstate-simple-swap-provider'
+import { useDerivedStateSimpleSwap } from 'src/ui/swap/simple/derivedstate-simple-swap-context'
 import { isRouteProcessor6ChainId } from 'sushi/config'
 import type { Hex, RawContractError } from 'viem'
 import { useAccount, useEstimateGas } from 'wagmi'

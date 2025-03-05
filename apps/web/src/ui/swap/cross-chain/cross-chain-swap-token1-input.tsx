@@ -6,7 +6,7 @@ import { isWNativeSupported } from 'sushi/config'
 import {
   useDerivedStateCrossChainSwap,
   useSelectedCrossChainTradeRoute,
-} from './derivedstate-cross-chain-swap-provider'
+} from './derivedstate-cross-chain-swap-context'
 
 const networks = getSortedChainIds(XSWAP_SUPPORTED_CHAIN_IDS)
 

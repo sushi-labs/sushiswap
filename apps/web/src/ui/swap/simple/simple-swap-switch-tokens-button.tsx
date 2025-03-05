@@ -8,7 +8,7 @@ import {
   TraceEvent,
 } from '@sushiswap/telemetry'
 
-import { useDerivedStateSimpleSwap } from './derivedstate-simple-swap-provider'
+import { useDerivedStateSimpleSwap } from './derivedstate-simple-swap-context'
 
 export const SimpleSwapSwitchTokensButton = () => {
   const {

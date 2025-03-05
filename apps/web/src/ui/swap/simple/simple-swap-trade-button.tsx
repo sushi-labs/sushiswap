@@ -21,7 +21,7 @@ import { warningSeverity } from '../../../lib/swap/warningSeverity'
 import {
   useDerivedStateSimpleSwap,
   useSimpleSwapTradeQuote,
-} from './derivedstate-simple-swap-provider'
+} from './derivedstate-simple-swap-context'
 import { SimpleSwapTradeReviewDialog } from './simple-swap-trade-review-dialog'
 import { useIsSwapMaintenance } from './use-is-swap-maintenance'
 

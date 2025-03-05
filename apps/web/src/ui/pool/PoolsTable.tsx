@@ -262,9 +262,14 @@ const COLUMNS = [
 interface PoolsTableProps {
   chainId: PoolChainId
   onRowClick?(row: Pools[number]): void
+  tokenSymbols?: string[]
 }
 
-export const PoolsTable: FC<PoolsTableProps> = ({ chainId, onRowClick }) => {
+export const PoolsTable: FC<PoolsTableProps> = ({
+  chainId,
+  onRowClick,
+  tokenSymbols: fixedTokenSymbols,
+}) => {
   const { tokenSymbols, protocols, farmsOnly, smartPoolsOnly } =
     usePoolFilters()
 
@@ -273,16 +278,28 @@ export const PoolsTable: FC<PoolsTableProps> = ({ chainId, onRowClick }) => {
   ])
 
   const args = useMemo<Omit<GetPools, 'page'>>(() => {
+    const tokenSymbolsSet = new Set([
+      ...tokenSymbols.map((symbol) => symbol.toLowerCase()),
+      ...(fixedTokenSymbols ?? []).map((symbol) => symbol.toLowerCase()),
+    ])
     return {
       chainId,
-      search: tokenSymbols,
+      search: Array.from(tokenSymbolsSet),
       onlyIncentivized: farmsOnly,
       onlySmartPools: smartPoolsOnly,
       protocols,
       orderBy: sorting[0]?.id as GetPools['orderBy'],
       orderDirection: sorting[0] ? (sorting[0].desc ? 'desc' : 'asc') : 'desc',
     }
-  }, [chainId, tokenSymbols, farmsOnly, smartPoolsOnly, sorting, protocols])
+  }, [
+    chainId,
+    tokenSymbols,
+    fixedTokenSymbols,
+    farmsOnly,
+    smartPoolsOnly,
+    sorting,
+    protocols,
+  ])
 
   const { data: pools, isLoading, fetchNextPage } = usePoolsInfinite(args)
 

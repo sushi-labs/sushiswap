@@ -5,9 +5,9 @@ import { SUSHI_DATA_API_HOST } from 'sushi/config/subgraph'
 import { graphql } from '../../graphql.js'
 import { SUSHI_REQUEST_HEADERS } from '../../request-headers.js'
 
-export const ExploreTokenChartQuery = graphql(
+export const ExploreTokenPriceChartQuery = graphql(
   `
-  query ExploreTokenChartQuery($chainId: SushiSwapChainId!, $address: String!, $duration: ExploreTokenChartDuration!) {
+  query ExploreTokenPriceChartQuery($chainId: SushiSwapChainId!, $address: Bytes!, $duration: ExploreTokenChartDuration!) {
     exploreTokenChart(
         chainId: $chainId
         address: $address
@@ -23,10 +23,10 @@ export const ExploreTokenChartQuery = graphql(
 `,
 )
 
-export type GetExploreTokenChart = VariablesOf<typeof ExploreTokenChartQuery>
+export type GetExploreTokenPriceChart = VariablesOf<typeof ExploreTokenPriceChartQuery>
 
-export async function getTokenChart(
-  variables: GetExploreTokenChart,
+export async function getTokenPriceChart(
+  variables: GetExploreTokenPriceChart,
   options?: RequestOptions,
 ) {
   const url = `${SUSHI_DATA_API_HOST}/graphql`
@@ -34,7 +34,7 @@ export async function getTokenChart(
   const result = await request(
     {
       url,
-      document: ExploreTokenChartQuery,
+      document: ExploreTokenPriceChartQuery,
       variables,
       requestHeaders: SUSHI_REQUEST_HEADERS,
     },
@@ -48,4 +48,4 @@ export async function getTokenChart(
   throw new Error('No token chart found')
 }
 
-export type ExploreTokenChart = Awaited<ReturnType<typeof getTokenChart>>
+export type ExploreTokenPriceChart = Awaited<ReturnType<typeof getTokenPriceChart>>

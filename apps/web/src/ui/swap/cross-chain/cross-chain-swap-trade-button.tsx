@@ -11,7 +11,7 @@ import { CrossChainSwapTradeReviewDialog } from './cross-chain-swap-trade-review
 import {
   useDerivedStateCrossChainSwap,
   useSelectedCrossChainTradeRoute,
-} from './derivedstate-cross-chain-swap-provider'
+} from './derivedstate-cross-chain-swap-context'
 import { useIsCrossChainSwapMaintenance } from './use-is-cross-chain-swap-maintenance'
 
 export const CrossChainSwapTradeButton: FC = () => {

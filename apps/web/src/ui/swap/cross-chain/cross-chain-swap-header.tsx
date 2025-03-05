@@ -9,7 +9,7 @@ import { Amount, Price, Token, tryParseAmount } from 'sushi/currency'
 import { formatUSD } from 'sushi/format'
 
 import { usePrices } from '~evm/_common/ui/price-provider/price-provider/use-prices'
-import { useDerivedStateCrossChainSwap } from './derivedstate-cross-chain-swap-provider'
+import { useDerivedStateCrossChainSwap } from './derivedstate-cross-chain-swap-context'
 
 export const CrossChainSwapHeader = () => {
   const [invert, setInvert] = useState(false)
