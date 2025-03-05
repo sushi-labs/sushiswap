@@ -7,7 +7,7 @@ export const revalidate = 3600
 
 export const fetchCache = 'default-no-store'
 
-export async function StrapiBanner() {
+export async function StrapiBanner({ className }: { className?: string }) {
   let banners
 
   try {
@@ -27,6 +27,7 @@ export async function StrapiBanner() {
     <StrapiBannerContent
       banner={activeBanner}
       cookie={(await cookies()).get('hidden-banner-ids')}
+      className={className}
     />
   )
 }

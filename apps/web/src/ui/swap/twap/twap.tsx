@@ -36,7 +36,7 @@ import {
   useDerivedStateSimpleSwap,
   useSimpleSwapTradeQuote,
 } from '../simple/derivedstate-simple-swap-provider'
-import { SimpleSwapBridgeBanner } from '../simple/simple-swap-bridge-banner'
+import { SimpleSwapBanner } from '../simple/simple-swap-banner'
 import { SimpleSwapHeader } from '../simple/simple-swap-header'
 import { SimpleSwapSettingsOverlay } from '../simple/simple-swap-settings-overlay'
 import { SwapModeButtons } from '../swap-mode-buttons'
@@ -244,7 +244,6 @@ function Provider({ isLimit }: { isLimit?: boolean }) {
 
   return (
     <div className="flex flex-col gap-4">
-      <SimpleSwapBridgeBanner />
       <SimpleSwapHeader />
       <div className="flex items-center justify-between">
         <SwapModeButtons />
