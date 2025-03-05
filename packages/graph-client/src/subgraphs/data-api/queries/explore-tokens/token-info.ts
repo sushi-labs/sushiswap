@@ -56,8 +56,6 @@ export async function getTokenInfo(
     }
   }
 
-  console.dir({ result }, { depth: null })
-
   throw new Error('No token info found')
 }
 
