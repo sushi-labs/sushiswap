@@ -72,7 +72,10 @@ export function StrapiBannerContent({
           alt={image.alternativeText || ''}
           layout="fill"
           onLoad={() => setImageLoading(false)}
-          className={classNames('-z-10', isImageLoading && 'animate-pulse')}
+          className={classNames(
+            '-z-10 object-cover object-left',
+            isImageLoading && 'animate-pulse',
+          )}
         />
       </div>
     </a>
