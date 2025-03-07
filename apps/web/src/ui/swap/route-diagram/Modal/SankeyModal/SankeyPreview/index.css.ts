@@ -7,11 +7,15 @@
 // export var sankeyContainerClass = '_1ye189v5vu _1ye189v4gl';
 // export var sankeyLegendClass = '_1ye189v4h6';
 
-export const borderOverrideClass = 'rounded-lg bg-[#FCFCFD] border border-solid border-[#F1F2F4]';
-export const headerContainerClass = 'w-full flex justify-between items-center';
-export const headerTextClass = 'font-sans font-medium text-[16px] leading-[16px] text-[#22262A] antialiased';
-export const loadingSkeletonWrapper = 'gfngzc2 flex justify-center items-center';
-export const openButtonStyle = 'transition-all ease-in-out duration-200 inline-flex items-center justify-center font-sans font-medium text-[14px] leading-[16px] pl-3 pr-3 h-9 w-fit bg-white rounded-lg';
-export const previewContainerClass = 'pl-6 pr-6 bg-white pt-3 pb-4 rounded-[1.625rem] mt-3 mb-3';
-export const sankeyContainerClass = 'w-full mt-3';
-export const sankeyLegendClass = 'mt-6';
+export const borderOverrideClass =
+  'rounded-lg bg-[#FCFCFD] border border-solid border-[#F1F2F4]'
+export const headerContainerClass = 'w-full flex justify-between items-center'
+export const headerTextClass =
+  'font-sans font-medium text-[16px] leading-[16px] text-[#22262A] antialiased'
+export const loadingSkeletonWrapper = 'gfngzc2 flex justify-center items-center'
+export const openButtonStyle =
+  'transition-all ease-in-out duration-200 inline-flex items-center justify-center font-sans font-medium text-[14px] leading-[16px] pl-3 pr-3 h-9 w-fit bg-white rounded-lg'
+export const previewContainerClass =
+  'pl-6 pr-6 bg-white pt-3 pb-4 rounded-[1.625rem] mt-3 mb-3'
+export const sankeyContainerClass = 'w-full mt-3'
+export const sankeyLegendClass = 'mt-6'

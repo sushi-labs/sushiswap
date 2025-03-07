@@ -8,7 +8,6 @@ import type { Fill, Route } from './types'
 function convertSushiResponseToRoute(
   trade: UseTradeReturn | undefined,
 ): Route | null {
-  console.log({ trade })
   if (trade === undefined || trade.vizualization === undefined) return null
   const data = trade.vizualization
   const transformed = {
@@ -22,7 +21,6 @@ function convertSushiResponseToRoute(
     }),
     tokens: data.nodes,
   }
-  console.log({ transformed })
   return transformed
 }
 

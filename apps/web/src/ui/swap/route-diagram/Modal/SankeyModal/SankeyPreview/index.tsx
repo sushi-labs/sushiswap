@@ -1,10 +1,10 @@
 'use client'
 import { useMemo, useState } from 'react'
 
-import { NativeAddress } from 'src/lib/constants'
+import { classNames } from '@sushiswap/ui'
 import type { UseTradeReturn } from 'src/lib/hooks/react-query'
-import { useSimpleSwapTrade } from 'src/ui/swap/simple/derivedstate-simple-swap-provider'
-import { type Fill, type Route, Token } from '../../../types'
+import { useSimpleSwapTradeQuote } from 'src/ui/swap/simple/derivedstate-simple-swap-provider'
+import type { Fill, Route } from '../../../types'
 import { SankeyDiagram } from '../SankeyDiagram'
 import { SankeyLegend } from '../SankeyDiagram/SankeyLegend'
 import {
@@ -19,7 +19,7 @@ import {
 
 function LoadingSkeleton() {
   return (
-    <div className={loadingSkeletonWrapper}>
+    <div className={classNames(loadingSkeletonWrapper, 'h-[208px]')}>
       <svg
         width="361"
         height="115"
@@ -185,13 +185,13 @@ function convertSushiResponseToRoute(
 }
 
 export function SankeyPreview() {
-  const { isLoading, data: trade } = useSimpleSwapTrade()
+  const { isLoading, data: trade } = useSimpleSwapTradeQuote()
   const [sankeyContainerRef, setSankeyContainerRef] =
     useState<HTMLDivElement | null>(null)
 
   const route = useMemo(() => convertSushiResponseToRoute(trade), [trade])
 
-  return route ? (
+  return (
     <div className={previewContainerClass}>
       <div className={headerContainerClass}>
         <span className={headerTextClass}>Routing</span>
@@ -224,5 +224,5 @@ export function SankeyPreview() {
         </div>
       ) : null}
     </div>
-  ) : null
+  )
 }

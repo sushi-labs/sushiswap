@@ -1,5 +1,5 @@
+import type { Route, SourceLegendType } from '../../../../types'
 import { transformRouteToSankeyLegend } from '../helpers'
-import { Route, SourceLegendType } from '../../../../types'
 import { sankeyLegendContainerClass } from './index.css'
 
 interface SankeyLegendProps {
