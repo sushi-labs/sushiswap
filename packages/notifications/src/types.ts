@@ -3,6 +3,7 @@ import type { ChainId } from 'sushi/chain'
 interface BaseNotification {
   account: string | `0x${string}` | undefined
   type:
+    | 'portal-deposit'
     | 'send'
     | 'swap'
     | 'xswap'

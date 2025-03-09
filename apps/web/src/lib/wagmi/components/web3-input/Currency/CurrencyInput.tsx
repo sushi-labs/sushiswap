@@ -39,6 +39,7 @@ interface CurrencyInputProps {
   currency: Type | undefined
   onSelect?(currency: Type): void
   chainId: EvmChainId
+  currencyClassName?: string
   className?: string
   loading?: boolean
   priceImpact?: Percent | undefined
@@ -68,6 +69,7 @@ const CurrencyInput: FC<CurrencyInputProps> = ({
   currency,
   onSelect,
   chainId,
+  currencyClassName,
   className,
   loading,
   priceImpact,
@@ -175,6 +177,7 @@ const CurrencyInput: FC<CurrencyInputProps> = ({
           className={classNames(
             currency ? 'pl-2 pr-3' : '',
             networks ? '!h-11' : '',
+            currencyClassName,
             '!rounded-full data-[state=inactive]:hidden data-[state=active]:flex',
           )}
         >
@@ -232,6 +235,7 @@ const CurrencyInput: FC<CurrencyInputProps> = ({
       </TokenSelector>
     )
   }, [
+    currencyClassName,
     currencyLoading,
     id,
     onSelect,
@@ -297,6 +301,7 @@ const CurrencyInput: FC<CurrencyInputProps> = ({
           <div
             id={`${id}-button`}
             className={classNames(
+              currencyClassName,
               'flex items-center gap-1 text-xl py-2 pl-2 pr-2 rounded-full font-medium whitespace-nowrap',
             )}
           >
