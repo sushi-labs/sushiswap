@@ -62,6 +62,8 @@ export const tradeValidator01 = z.object({
         (val) => isAddressFast(val),
         (val) => ({ message: `Incorrect address for 'to': ${val}` }),
       ),
+      gas: z.string().optional(),
+      gasPrice: z.number().optional(),
       data: z.string(),
       value: z.coerce.bigint().optional(),
     }),

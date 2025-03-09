@@ -6,7 +6,7 @@ import type { EvmChainId } from 'sushi/chain'
 import type { Amount, Price, Type } from 'sushi/currency'
 import type { Percent } from 'sushi/math'
 import type { RouterLiquiditySource } from 'sushi/router'
-import type { Address, WriteContractParameters } from 'viem'
+import type { Address, Hex, WriteContractParameters } from 'viem'
 import type z from 'zod'
 import type { legValidator, tradeValidator01 } from './validator01'
 import type { tradeValidator02 } from './validator02'
@@ -50,7 +50,9 @@ export interface UseTradeReturn {
     | {
         from: Address
         to: Address
-        data: string
+        gas?: string | undefined
+        gasPrice?: number | undefined
+        data: Hex
         value?: bigint | undefined
       }
     | undefined
