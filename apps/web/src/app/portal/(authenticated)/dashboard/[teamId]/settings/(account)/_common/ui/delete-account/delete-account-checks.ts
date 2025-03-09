@@ -1,4 +1,5 @@
 import { getSessionData } from 'src/app/portal/_common/lib/client-config'
+import { getStyroClient } from 'src/app/portal/_common/lib/styro/styro-client'
 
 export type DeleteAccountChecklist = {
   checks?: {
@@ -14,9 +15,14 @@ export async function getDeleteAccountChecklist(): Promise<DeleteAccountChecklis
     return { canDelete: false }
   }
 
+  const client = await getStyroClient()
+  const response = await client.getUsersMe()
+
   // TODO: Checks
   const checks = {
-    teamMembership: true,
+    teamMembership: response.data.user.teams.every(
+      (team) => team.type === 'personal',
+    ),
   }
 
   return {

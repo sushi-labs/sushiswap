@@ -69,3 +69,13 @@ export async function getSessionData<
 
   return JSON.parse(JSON.stringify(session))
 }
+
+export async function getLoggedInSessionData() {
+  const session = await getSessionData()
+
+  if (!session.isLoggedIn) {
+    throw new Error('User not logged in')
+  }
+
+  return session
+}

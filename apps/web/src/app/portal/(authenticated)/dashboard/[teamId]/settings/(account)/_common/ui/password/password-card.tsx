@@ -159,7 +159,15 @@ export function PasswordCard() {
                 />
               </div>
               <div>
-                <Button type="submit" fullWidth disabled={isPending}>
+                <Button
+                  type="submit"
+                  fullWidth
+                  disabled={
+                    isPending ||
+                    !form.formState.isDirty ||
+                    !form.formState.isValid
+                  }
+                >
                   Change
                 </Button>
                 <Collapsible open={!!globalMsg}>

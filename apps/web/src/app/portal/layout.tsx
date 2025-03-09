@@ -7,8 +7,6 @@ export default async function Layout({
 }: { children: React.ReactNode }) {
   const authSession = await getSessionData()
 
-  console.log(authSession)
-
   return (
     <Providers authSession={authSession}>
       <Header />

@@ -33,8 +33,6 @@ async function GET(req: NextRequest) {
   const data = result.data
   let email: string | undefined
 
-  console.log(data)
-
   if (!data.user) {
     try {
       // Register

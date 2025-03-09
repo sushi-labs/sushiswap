@@ -1,6 +1,7 @@
 'use client'
 
 import { zodResolver } from '@hookform/resolvers/zod'
+import type { ResponseError } from '@sushiswap/styro-client'
 import {
   Button,
   Collapsible,
@@ -8,43 +9,39 @@ import {
   FormField,
   FormItem,
   FormLabel,
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
   TextField,
   classNames,
   formClassnames,
 } from '@sushiswap/ui'
 import { useMutation } from '@tanstack/react-query'
-import { revalidateTag } from 'next/cache'
+import { useRouter } from 'next/navigation'
 import { useCallback, useEffect, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
+import { parseStyroError } from 'src/app/portal/_common/lib/styro/parse-error'
+import { useStyroClient } from 'src/app/portal/_common/ui/auth-provider/auth-provider'
 import { z } from 'zod'
 
 interface ManageTeamForm {
   team: {
     id: string
     name: string
-    memberPermissions: z.infer<typeof zMemberPermission>
   }
 }
-
-const zMemberPermission = z.enum(['none', 'add-remove'])
 
 const manageTeamFormSchema = z.object({
   id: z.string(),
   name: z
     .string()
     .min(4, { message: 'Minimum length is 4 characters' })
-    .max(16, { message: 'Maximum length is 16 characters' }),
-  memberPermissions: zMemberPermission,
+    .max(14, { message: 'Maximum length is 14 characters' }),
 })
 
 type ManageTeamFormValues = z.infer<typeof manageTeamFormSchema>
 
 export function ManageTeamForm({ team: initialTeam }: ManageTeamForm) {
+  const client = useStyroClient(true)
+  const router = useRouter()
+
   const [globalMsg, setGlobalMsg] = useState<{
     type: 'error' | 'success'
     message: string
@@ -68,9 +65,22 @@ export function ManageTeamForm({ team: initialTeam }: ManageTeamForm) {
 
   const { mutateAsync } = useMutation({
     mutationKey: ['manage-team'],
-    onMutate: async (_values: ManageTeamFormValues) => {},
+    mutationFn: async (values: ManageTeamFormValues) => {
+      const response = await client.patchTeamsTeamId({
+        teamId: initialTeam.id,
+        patchTeamsTeamIdRequest: {
+          name: values.name,
+        },
+      })
+
+      form.reset(response.data.team)
+    },
     onSuccess: () => {
-      revalidateTag(`portal-team-${initialTeam.id}`)
+      setGlobalMsg({ type: 'success', message: 'Team name updated' })
+      router.refresh()
+    },
+    onError: async (e: ResponseError) => {
+      setGlobalMsg({ type: 'error', message: await parseStyroError(e) })
     },
   })
 
@@ -112,41 +122,6 @@ export function ManageTeamForm({ team: initialTeam }: ManageTeamForm) {
                         disabled={isPending}
                       />
                     </>
-                  </FormItem>
-                </FormControl>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="memberPermissions"
-              render={({
-                field: { value, onChange },
-                fieldState: { isDirty },
-                formState: { disabled },
-              }) => (
-                <FormControl>
-                  <FormItem className="w-full">
-                    <FormLabel>Member Permissions</FormLabel>
-                    <Select
-                      value={value}
-                      onValueChange={onChange}
-                      disabled={disabled}
-                    >
-                      <SelectTrigger className={formClassnames({ isDirty })}>
-                        <SelectValue />
-                      </SelectTrigger>
-
-                      <SelectContent>
-                        <SelectItem value={zMemberPermission.Enum['none']}>
-                          None
-                        </SelectItem>
-                        <SelectItem
-                          value={zMemberPermission.Enum['add-remove']}
-                        >
-                          Add or Remove Members
-                        </SelectItem>
-                      </SelectContent>
-                    </Select>
                   </FormItem>
                 </FormControl>
               )}

@@ -49,6 +49,8 @@
       "swarm-js@0.1.42": "patches/swarm-js@0.1.42.patch",
       "@walletconnect/jsonrpc-http-connection@1.0.8": "patches/@walletconnect__jsonrpc-http-connection@1.0.8.patch"
     },
-    "onlyBuiltDependencies": ["@biomejs/biome"]
+    "onlyBuiltDependencies": [
+      "@biomejs/biome"
+    ]
   }
 }

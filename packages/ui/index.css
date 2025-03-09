@@ -156,3 +156,7 @@ html[class="dark"] *.scroll::-webkit-scrollbar-thumb {
     @apply appearance-none w-6 h-6 bg-blue rounded-full;
   }
 }
+
+[aria-labelledby="rk_connect_title"] {
+  @apply pointer-events-auto;
+}

@@ -1,6 +1,7 @@
 'use client'
 
 import { zodResolver } from '@hookform/resolvers/zod'
+import type { ResponseError } from '@sushiswap/styro-client'
 import {
   Button,
   Checkbox,
@@ -17,13 +18,15 @@ import {
   FormItem,
   useForm,
 } from '@sushiswap/ui'
-import { useMutation } from '@tanstack/react-query'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useRouter } from 'next/navigation'
 import { type ReactNode, useCallback, useState } from 'react'
 import { FormProvider } from 'react-hook-form'
+import { parseStyroError } from 'src/app/portal/_common/lib/styro/parse-error'
+import { useStyroClient } from 'src/app/portal/_common/ui/auth-provider/auth-provider'
 import { z } from 'zod'
 
-interface DeleteTeamModal {
+interface DeleteTeamDialog {
   children: ReactNode
   teamId: string
 }
@@ -34,9 +37,12 @@ const deleteTeamFormSchema = z.object({
 
 type DeleteTeamFormValues = z.infer<typeof deleteTeamFormSchema>
 
-export function DeleteTeamModal({ children }: DeleteTeamModal) {
+export function DeleteTeamDialog({ children, teamId }: DeleteTeamDialog) {
   const [globalErrorMsg, setGlobalErrorMsg] = useState<string | null>(null)
   const router = useRouter()
+
+  const queryClient = useQueryClient()
+  const client = useStyroClient(true)
 
   const form = useForm<DeleteTeamFormValues>({
     defaultValues: {
@@ -47,12 +53,18 @@ export function DeleteTeamModal({ children }: DeleteTeamModal) {
   })
 
   const { mutateAsync } = useMutation({
-    mutationKey: ['delete-team'],
+    mutationKey: ['portal-deleteTeamsTeamId', teamId],
     mutationFn: async () => {
-      return undefined
+      await client.deleteTeamsTeamId({
+        teamId,
+      })
     },
     onSuccess: () => {
+      queryClient.refetchQueries({ queryKey: ['portal-getUsersMe'] })
       router.push('/portal/dashboard')
+    },
+    onError: async (e: ResponseError) => {
+      setGlobalErrorMsg(await parseStyroError(e))
     },
   })
 

@@ -1,12 +1,7 @@
 'use client'
 
-import {
-  Button,
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-  Separator,
-} from '@sushiswap/ui'
+import { ArrowRightOnRectangleIcon } from '@heroicons/react/24/solid'
+import { Button } from '@sushiswap/ui'
 import Link from 'next/link'
 import { logoutAction } from 'src/app/portal/_common/lib/logout-action'
 import { useSession } from '../auth-provider/auth-provider'
@@ -28,21 +23,13 @@ export function HeaderProfile() {
   }
 
   return (
-    <Popover>
-      <PopoverTrigger>
-        <Button asChild variant="secondary">
-          {session.user.email.email}
-        </Button>
-      </PopoverTrigger>
-      <PopoverContent className="w-[200px] space-y-3">
-        <div>Dunno something</div>
-        <Separator />
-        <div className="flex w-full justify-end">
-          <Button variant="secondary" size="sm" onClick={logoutAction}>
-            Sign Out
-          </Button>
-        </div>
-      </PopoverContent>
-    </Popover>
+    <Button asChild variant="secondary" className="items-center flex">
+      <span>{session.user.email.email}</span>
+      <ArrowRightOnRectangleIcon
+        width={18}
+        height={18}
+        onClick={() => logoutAction()}
+      />
+    </Button>
   )
 }

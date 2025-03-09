@@ -3,31 +3,82 @@
 import { CheckIcon } from '@heroicons/react-v1/solid'
 import { ChevronDownIcon, PlusIcon } from '@heroicons/react/24/solid'
 import { useOnClickOutside } from '@sushiswap/hooks'
-import { Separator, classNames } from '@sushiswap/ui'
+import type { StyroClient } from '@sushiswap/styro-client'
+import { Separator, SkeletonText, classNames } from '@sushiswap/ui'
+import { useQuery } from '@tanstack/react-query'
 import { useRouter } from 'next/navigation'
 import { useRef, useState } from 'react'
+import { useStyroClient } from 'src/app/portal/_common/ui/auth-provider/auth-provider'
+import { CreateTeamDialog } from './create-team-dialog'
 
-interface TeamSwitcher {
-  currentTeamId: string
+function TeamSwitcherEntry(
+  props:
+    | { isLoading: true }
+    | {
+        active: boolean
+        onClick: (id: string) => void
+        team: { id: string; name: string }
+      },
+) {
+  const baseClassNames = classNames(
+    'px-4 py-3 w-full font-medium rounded-xl',
+    'flex flex-row justify-between items-center',
+    'hover:bg-accent dark:hover:bg-accent',
+  )
+
+  if ('isLoading' in props) {
+    return (
+      <div className={baseClassNames}>
+        <SkeletonText />
+      </div>
+    )
+  }
+
+  return (
+    <div
+      className={classNames(
+        props.active ? 'cursor-default' : 'cursor-pointer',
+        baseClassNames,
+      )}
+      onClick={() => props.onClick(props.team.id)}
+      onKeyUp={() => props.onClick(props.team.id)}
+    >
+      {props.team.name}
+      {props.active && (
+        <CheckIcon height={20} width={20} className="text-green-500" />
+      )}
+    </div>
+  )
 }
 
-const teams = ['1', '2', '3', '4', '5'].map((id) => ({
-  id,
-  name: `Team${id}`,
-}))
+interface TeamSwitcher {
+  currentTeam: Awaited<
+    ReturnType<StyroClient['getTeamsTeamId']>
+  >['data']['team']
+}
 
-export function TeamSwitcher({ currentTeamId }: TeamSwitcher) {
+export function TeamSwitcher({ currentTeam }: TeamSwitcher) {
   const [open, setOpen] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
 
   const router = useRouter()
+  const client = useStyroClient(true)
+
+  const { data, isLoading, isError } = useQuery({
+    queryKey: ['portal-getUsersMe'],
+    queryFn: async () => {
+      const response = await client.getUsersMe()
+
+      return response.data.user
+    },
+  })
 
   useOnClickOutside(ref, () => {
     setOpen(false)
   })
 
   const onTeamClick = (teamId: string) => {
-    if (currentTeamId === teamId) return
+    if (currentTeam.id === teamId) return
     router.push(`/portal/dashboard/${teamId}`)
   }
 
@@ -37,7 +88,7 @@ export function TeamSwitcher({ currentTeamId }: TeamSwitcher) {
         <div ref={ref} className="w-full">
           <div
             className={classNames(
-              'px-6 py-3 space-x-4 w-full',
+              'px-6 py-3 space-x-6 w-full',
               'border border-accent bg-secondary',
               'cursor-pointer rounded-xl ',
               'font-medium flex flex-row justify-between items-center select-none',
@@ -45,7 +96,7 @@ export function TeamSwitcher({ currentTeamId }: TeamSwitcher) {
             onClick={() => setOpen(!open)}
             onKeyUp={(e) => e.key === 'Enter' && setOpen(!open)}
           >
-            <span>{currentTeamId}</span>
+            <span>{currentTeam.name}</span>
             <ChevronDownIcon
               width={20}
               height={20}
@@ -62,35 +113,31 @@ export function TeamSwitcher({ currentTeamId }: TeamSwitcher) {
               // 'border-black border-opacity-30 bg-neutral-100',
             )}
           >
-            {teams.map((team) => (
-              <div
+            {isLoading && (
+              <>
+                <TeamSwitcherEntry key={1} isLoading />
+                <TeamSwitcherEntry key={2} isLoading />
+                <TeamSwitcherEntry key={3} isLoading />
+              </>
+            )}
+            {isError && (
+              <span className="text-sm text-center">Error loading teams</span>
+            )}
+            {data?.teams.map((team) => (
+              <TeamSwitcherEntry
                 key={team.id}
-                className={classNames(
-                  currentTeamId === team.id
-                    ? 'cursor-default'
-                    : 'cursor-pointer',
-                  'px-4 py-3 w-full font-medium rounded-xl',
-                  'flex flex-row justify-between items-center',
-                  'hover:bg-accent dark:hover:bg-accent',
-                )}
-                onClick={() => onTeamClick(team.id)}
-                onKeyUp={() => onTeamClick(team.id)}
-              >
-                {team.name}
-                {team.id === currentTeamId && (
-                  <CheckIcon
-                    height={20}
-                    width={20}
-                    className="text-green-500"
-                  />
-                )}
-              </div>
+                active={currentTeam.id === team.id}
+                onClick={onTeamClick}
+                team={team}
+              />
             ))}
             <Separator />
-            <div className="px-4 py-2 flex flex-row justify-between w-full hover:bg-accent rounded-xl cursor-pointer">
-              <span className="text-sm">Create team</span>
-              <PlusIcon width={20} height={20} />
-            </div>
+            <CreateTeamDialog>
+              <div className="px-4 py-2 flex flex-row justify-between w-full hover:bg-accent rounded-xl cursor-pointer">
+                <span className="text-sm">Create team</span>
+                <PlusIcon width={20} height={20} />
+              </div>
+            </CreateTeamDialog>
           </div>
         </div>
       </div>

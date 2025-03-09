@@ -5,6 +5,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@sushiswap/ui'
+import { getStyroClient } from 'src/app/portal/_common/lib/styro/styro-client'
 import { ManageTeamForm } from './manage-team-form'
 
 interface ManageTeamCard {
@@ -12,6 +13,9 @@ interface ManageTeamCard {
 }
 
 export async function ManageTeamCard({ teamId }: ManageTeamCard) {
+  const client = await getStyroClient()
+  const team = await client.getTeamsTeamId({ teamId })
+
   return (
     <Card className="w-full min-w-[470px] h-min">
       <CardHeader className="bg-secondary rounded-t-xl">
@@ -19,9 +23,7 @@ export async function ManageTeamCard({ teamId }: ManageTeamCard) {
         <CardDescription>Manage your team</CardDescription>
       </CardHeader>
       <CardContent className="bg-secondary rounded-b-xl">
-        <ManageTeamForm
-          team={{ id: teamId, name: 'Sushi Team', memberPermissions: 'none' }}
-        />
+        <ManageTeamForm team={{ id: teamId, name: team.data.team.name }} />
       </CardContent>
     </Card>
   )

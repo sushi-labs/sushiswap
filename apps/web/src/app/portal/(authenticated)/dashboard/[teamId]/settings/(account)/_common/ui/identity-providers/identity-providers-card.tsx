@@ -5,7 +5,10 @@ import {
   CardHeader,
   CardTitle,
 } from '@sushiswap/ui'
-import { getSessionData } from 'src/app/portal/_common/lib/client-config'
+import {
+  getLoggedInSessionData,
+  getSessionData,
+} from 'src/app/portal/_common/lib/client-config'
 import { getUserServiceClient } from 'src/app/portal/_common/lib/zitadel-client'
 import {
   OAuthButton,
@@ -18,11 +21,7 @@ interface IdentityProvidersCard {
 }
 
 export async function IdentityProvidersCard({ teamId }: IdentityProvidersCard) {
-  const session = await getSessionData()
-
-  if (!session.isLoggedIn) {
-    return null
-  }
+  const session = await getLoggedInSessionData()
 
   const idpLinks = await getUserServiceClient()
     .listIDPLinks({

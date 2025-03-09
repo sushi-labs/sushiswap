@@ -13,11 +13,7 @@ import {
 import { useSession } from 'src/app/portal/_common/ui/auth-provider/auth-provider'
 
 export function UserDetailsCard() {
-  const session = useSession()
-
-  if (!session.isLoggedIn) {
-    return null
-  }
+  const session = useSession(true)
 
   return (
     <Card className="w-full min-w-[470px]">

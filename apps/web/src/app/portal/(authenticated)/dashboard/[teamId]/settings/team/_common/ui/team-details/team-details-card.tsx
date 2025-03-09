@@ -1,21 +1,22 @@
-'use client'
-
-import { ClipboardDocumentIcon } from '@heroicons/react/24/solid'
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-  ClipboardController,
   List,
 } from '@sushiswap/ui'
+import { getStyroClient } from 'src/app/portal/_common/lib/styro/styro-client'
+import { CopyButton } from 'src/app/portal/_common/ui/copy-button'
 
 interface TeamDetailsCard {
   teamId: string
 }
 
-export function TeamDetailsCard({ teamId }: TeamDetailsCard) {
+export async function TeamDetailsCard({ teamId }: TeamDetailsCard) {
+  const client = await getStyroClient()
+  const response = await client.getTeamsTeamId({ teamId })
+
   return (
     <Card className="w-full min-w-[470px] h-min">
       <CardHeader className="bg-secondary rounded-t-xl">
@@ -27,16 +28,10 @@ export function TeamDetailsCard({ teamId }: TeamDetailsCard) {
           <List.Control>
             <List.KeyValue flex title="ID">
               <span>{teamId}</span>
-              <ClipboardController>
-                {({ setCopied }) => (
-                  <ClipboardDocumentIcon
-                    width={20}
-                    height={20}
-                    className="ml-1 cursor-pointer"
-                    onClick={() => setCopied(teamId)}
-                  />
-                )}
-              </ClipboardController>
+              <CopyButton value={teamId} />
+            </List.KeyValue>
+            <List.KeyValue flex title="Type">
+              <span className="capitalize">{response.data.team.type}</span>
             </List.KeyValue>
           </List.Control>
         </List>

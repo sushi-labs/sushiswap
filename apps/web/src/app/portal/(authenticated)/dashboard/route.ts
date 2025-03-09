@@ -1,13 +1,17 @@
 import { type NextRequest, NextResponse } from 'next/server'
-import { getSessionData } from '../../_common/lib/client-config'
+import { getStyroClient } from '../../_common/lib/styro/styro-client'
 
 export async function GET(request: NextRequest) {
-  const session = await getSessionData()
+  try {
+    const client = await getStyroClient()
+    const response = await client.getUsersMe()
 
-  // TODO: Implement this logic
-  const defaultTeamId = '1'
-
-  return NextResponse.redirect(
-    `${request.nextUrl.protocol}/${request.nextUrl.host}/portal/dashboard/${defaultTeamId}`,
-  )
+    return NextResponse.redirect(
+      `${request.nextUrl.protocol}/${request.nextUrl.host}/portal/dashboard/${response.data.user.personalTeam}`,
+    )
+  } catch {
+    return NextResponse.redirect(
+      `${request.nextUrl.protocol}//${request.nextUrl.host}/portal/login`,
+    )
+  }
 }
