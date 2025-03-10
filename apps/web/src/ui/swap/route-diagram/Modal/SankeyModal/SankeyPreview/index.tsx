@@ -1,21 +1,19 @@
 'use client'
-import { useMemo, useState } from 'react'
+import { useMemo, useRef, useState } from 'react'
 
-import { classNames } from '@sushiswap/ui'
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  classNames,
+} from '@sushiswap/ui'
 import type { UseTradeReturn } from 'src/lib/hooks/react-query'
 import { useSimpleSwapTradeQuote } from 'src/ui/swap/simple/derivedstate-simple-swap-provider'
 import type { Fill, Route } from '../../../types'
 import { SankeyDiagram } from '../SankeyDiagram'
 import { SankeyLegend } from '../SankeyDiagram/SankeyLegend'
-import {
-  borderOverrideClass,
-  headerContainerClass,
-  headerTextClass,
-  loadingSkeletonWrapper,
-  previewContainerClass,
-  sankeyContainerClass,
-  sankeyLegendClass,
-} from './index.css'
+import { borderOverrideClass, loadingSkeletonWrapper } from './index.css'
 
 function LoadingSkeleton() {
   return (
@@ -186,22 +184,18 @@ function convertSushiResponseToRoute(
 
 export function SankeyPreview() {
   const { isLoading, data: trade } = useSimpleSwapTradeQuote()
-  const [sankeyContainerRef, setSankeyContainerRef] =
-    useState<HTMLDivElement | null>(null)
+  const sankeyContainerRef = useRef<HTMLDivElement>(null)
 
   const route = useMemo(() => convertSushiResponseToRoute(trade), [trade])
 
   return (
-    <div className={previewContainerClass}>
-      <div className={headerContainerClass}>
-        <span className={headerTextClass}>Routing</span>
-      </div>
-      <div
-        className={sankeyContainerClass}
-        ref={(ref) => setSankeyContainerRef(ref)}
-      >
+    <Card className="bg-gray-50 dark:bg-slate-800 overflow-hidden flex flex-col max-h-[600px] w-full">
+      <CardHeader>
+        <CardTitle>Routing</CardTitle>
+      </CardHeader>
+      <CardContent className="h-full">
         {sankeyContainerRef ? (
-          <>
+          <div ref={sankeyContainerRef}>
             {isLoading && <LoadingSkeleton />}
             {route && (
               <SankeyDiagram
@@ -210,19 +204,16 @@ export function SankeyPreview() {
                 isPreview
                 isMobile={false}
                 onSubRouteTouch={() => {}}
-                width={sankeyContainerRef.clientWidth ?? 200}
+                width={sankeyContainerRef.current?.clientWidth ?? 200}
                 route={route}
-                className={borderOverrideClass}
               />
             )}
-          </>
+          </div>
         ) : null}
-      </div>
-      {sankeyContainerRef && route && !isLoading ? (
-        <div className={sankeyLegendClass}>
+        {sankeyContainerRef && route && !isLoading ? (
           <SankeyLegend route={route} />
-        </div>
-      ) : null}
-    </div>
+        ) : null}
+      </CardContent>
+    </Card>
   )
 }
