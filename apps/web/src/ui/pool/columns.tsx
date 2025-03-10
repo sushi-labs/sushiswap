@@ -4,6 +4,7 @@ import {
   Badge,
   Currency,
   FormattedNumber,
+  SkeletonBox,
   Tooltip,
   TooltipContent,
   TooltipPrimitive,
@@ -16,7 +17,10 @@ import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import type { ColumnDef } from '@tanstack/react-table'
 import formatDistance from 'date-fns/formatDistance'
 import React, { useMemo } from 'react'
-import type { AngleRewardsPool } from 'src/lib/hooks/react-query'
+import type {
+  AngleRewardsPool,
+  ClaimableRewards,
+} from 'src/lib/hooks/react-query'
 import type { ConcentratedLiquidityPositionWithV3Pool } from 'src/lib/wagmi/hooks/positions/types'
 import type {
   MaybeNestedPool,
@@ -38,6 +42,9 @@ import {
 import { unnestPool } from 'sushi/types'
 import { APRHoverCard } from './APRHoverCard'
 import { APRWithRewardsHoverCard } from './APRWithRewardsHoverCard'
+import { ClaimableRewardsActionCell } from './ClaimableRewardsActionCell'
+import { ClaimableRewardsAmountCell } from './ClaimableRewardsAmountCell'
+import { ClaimableRewardsChainCell } from './ClaimableRewardsChainCell'
 import { ConcentratedLiquidityPositionAPRCell } from './ConcentratedLiquidityPositionAPRCell'
 import { PoolNameCell, ProtocolBadge } from './PoolNameCell'
 import { PoolNameCellV3 } from './PoolNameCellV3'
@@ -54,6 +61,50 @@ import {
 import { PriceRangeCell } from './PriceRangeCell'
 import { RewardsV3ClaimableCell } from './RewardsV3ClaimableCell'
 import { RewardsV3NameCell } from './RewardsV3NameCell'
+
+export const REWARDS_CHAIN_COLUMN: ColumnDef<ClaimableRewards, unknown> = {
+  id: 'chain',
+  header: 'Chain',
+  cell: (props) => <ClaimableRewardsChainCell {...props.row} />,
+  size: 300,
+  meta: {
+    skeleton: (
+      <div className="flex gap-2 items-center w-full">
+        <SkeletonCircle radius={18} />
+        <div className="w-28">
+          <SkeletonText fontSize="sm" />
+        </div>
+      </div>
+    ),
+  },
+}
+
+export const REWARDS_AMOUNT_COLUMN: ColumnDef<ClaimableRewards, unknown> = {
+  id: 'amount',
+  header: 'Rewards Amount',
+  cell: (props) => <ClaimableRewardsAmountCell {...props.row} />,
+  meta: {
+    skeleton: (
+      <div className="w-24">
+        <SkeletonText fontSize="sm" />
+      </div>
+    ),
+  },
+}
+
+export const REWARDS_ACTION_COLUMN: ColumnDef<ClaimableRewards, unknown> = {
+  id: 'action',
+  header: 'Action',
+  cell: (props) => <ClaimableRewardsActionCell {...props.row} />,
+  meta: {
+    skeleton: (
+      <div className="flex gap-3 w-[280px]">
+        <SkeletonBox className="h-10 w-full" />
+        <SkeletonBox className="h-10 w-full" />
+      </div>
+    ),
+  },
+}
 
 export const REWARDS_V3_NAME_COLUMN: ColumnDef<AngleRewardsPool, unknown> = {
   id: 'poolName',

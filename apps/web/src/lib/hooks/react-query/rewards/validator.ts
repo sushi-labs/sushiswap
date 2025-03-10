@@ -1,3 +1,7 @@
+import type { EvmChainId } from 'sushi/chain'
+import type { MerklChainId } from 'sushi/config'
+import type { Address } from 'sushi/types'
+import type { Hex } from 'viem'
 import z from 'zod'
 
 export const angleRewardsPoolsValidator = z.object({
@@ -118,3 +122,27 @@ export const angleRewardTokensValidator = z.object({
       tokens.filter((token) => typeof token !== 'undefined'),
     ),
 })
+
+export const merklRewardsValidator = z.array(
+  z.object({
+    chain: z.object({
+      id: z.number().transform((chainId) => chainId as MerklChainId),
+    }),
+    rewards: z.array(
+      z.object({
+        root: z.string().transform((hex) => hex as Hex),
+        recipient: z.string().transform((address) => address as Address),
+        amount: z.string().transform((value) => BigInt(value)),
+        claimed: z.string().transform((value) => BigInt(value)),
+        pending: z.string().transform((value) => BigInt(value)),
+        proofs: z.array(z.string().transform((hex) => hex as Hex)),
+        token: z.object({
+          address: z.string(),
+          chainId: z.number().transform((chainId) => chainId as EvmChainId),
+          symbol: z.string(),
+          decimals: z.number(),
+        }),
+      }),
+    ),
+  }),
+)
