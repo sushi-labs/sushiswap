@@ -16,7 +16,9 @@ export const StrapiBannerProvider: FC<{ children: ReactNode }> = async ({
   } catch {}
 
   // Only supporting one active banner at a time for now
-  const activeBanner = banners?.find((banner) => banner.isActive)
+  const activeBanner = banners?.find(
+    (banner) => banner.isActive && banner.image,
+  )
   const cookie = (await cookies()).get('hidden-banner-ids')
 
   return (
