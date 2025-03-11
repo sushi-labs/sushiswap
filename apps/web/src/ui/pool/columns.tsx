@@ -83,6 +83,7 @@ export const REWARDS_AMOUNT_COLUMN: ColumnDef<ClaimableRewards, unknown> = {
   id: 'amount',
   header: 'Rewards Amount',
   cell: (props) => <ClaimableRewardsAmountCell {...props.row} />,
+  size: 300,
   meta: {
     skeleton: (
       <div className="w-24">
@@ -96,6 +97,7 @@ export const REWARDS_ACTION_COLUMN: ColumnDef<ClaimableRewards, unknown> = {
   id: 'action',
   header: 'Action',
   cell: (props) => <ClaimableRewardsActionCell {...props.row} />,
+  size: 280,
   meta: {
     skeleton: (
       <div className="flex gap-3 w-[280px]">
