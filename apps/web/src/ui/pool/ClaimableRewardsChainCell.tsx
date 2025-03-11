@@ -10,7 +10,7 @@ export const ClaimableRewardsChainCell: FC<Row<ClaimableRewards>> = ({
   return (
     <div className="flex gap-2 items-center w-full">
       <NetworkIcon chainId={original.chainId} width={18} height={18} />
-      <span className="font-medium text-sm">
+      <span className="font-medium text-sm whitespace-nowrap">
         {EvmChain.from(original.chainId)?.name}
       </span>
     </div>

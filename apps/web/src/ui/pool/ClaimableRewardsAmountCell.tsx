@@ -71,7 +71,7 @@ export const ClaimableRewardsAmountCell: FC<Row<ClaimableRewards>> = ({
       Object.values(original.rewardAmounts).length - rewardTokens.length
 
     const trigger = (
-      <div className="flex gap-2 items-center">
+      <div className="flex gap-2 items-center w-fit">
         <span className="font-medium text-sm underline decoration-dotted underline-offset-2">
           {formatUSD(original.totalRewardsUSD)}
         </span>
