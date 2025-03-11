@@ -8,40 +8,35 @@ import {
   DataTable,
 } from '@sushiswap/ui'
 import type { ColumnDef, PaginationState } from '@tanstack/react-table'
-import React, { type FC, useState } from 'react'
+import React, { type FC, useMemo, useState } from 'react'
 import {
-  type AngleRewardsPool,
-  useAngleRewardsMultipleChains,
+  type ClaimableRewards,
+  useClaimableRewards,
 } from 'src/lib/hooks/react-query'
-import { MERKL_SUPPORTED_CHAIN_IDS } from 'sushi/config'
 import { useAccount } from 'wagmi'
 import {
-  REWARDS_V3_APR_COLUMN,
-  REWARDS_V3_CLAIMABLE_COLUMN,
-  REWARDS_V3_NAME_COLUMN,
-  REWARDS_V3_POSITION_SIZE_COLUMN,
+  REWARDS_ACTION_COLUMN,
+  REWARDS_AMOUNT_COLUMN,
+  REWARDS_CHAIN_COLUMN,
 } from './columns'
 
+// TODO
 const COLUMNS = [
-  REWARDS_V3_NAME_COLUMN,
-  REWARDS_V3_POSITION_SIZE_COLUMN,
-  REWARDS_V3_CLAIMABLE_COLUMN,
-  REWARDS_V3_APR_COLUMN,
-] satisfies ColumnDef<AngleRewardsPool, unknown>[]
+  REWARDS_CHAIN_COLUMN,
+  REWARDS_AMOUNT_COLUMN,
+  REWARDS_ACTION_COLUMN,
+] satisfies ColumnDef<ClaimableRewards, unknown>[]
 
 export const ClaimableFeesTab: FC = () => {
   const { address, isConnecting } = useAccount()
-  const { data: _data, isLoading } = useAngleRewardsMultipleChains({
-    chainIds: MERKL_SUPPORTED_CHAIN_IDS,
-    account: address,
-  })
+  const { data: _data, isLoading } = useClaimableRewards({ account: address }) // TODO
 
   const [paginationState, setPaginationState] = useState<PaginationState>({
     pageIndex: 0,
     pageSize: 10,
   })
 
-  const networksWithFees = [] as AngleRewardsPool[]
+  const data = useMemo(() => (_data ? Object.values(_data) : []), [_data])
 
   return (
     <Container maxWidth="7xl" className="px-4 mx-auto">
@@ -50,14 +45,14 @@ export const ClaimableFeesTab: FC = () => {
           <CardTitle>
             Claimable Fees{' '}
             <span className="text-gray-400 dark:text-slate-500">
-              ({networksWithFees.length})
+              ({data.length})
             </span>
           </CardTitle>
         </CardHeader>
         <DataTable
           loading={isLoading || isConnecting}
           columns={COLUMNS}
-          data={networksWithFees}
+          data={data}
           pagination={true}
           onPaginationChange={setPaginationState}
           state={{

@@ -2,25 +2,9 @@ import { Button } from '@sushiswap/ui'
 import type { Row } from '@tanstack/react-table'
 import type { FC } from 'react'
 import type { ClaimableRewards } from 'src/lib/hooks/react-query'
-import { useClaimRewards } from 'src/lib/wagmi/hooks/rewards/hooks/useClaimRewards'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
 import { ChainKey } from 'sushi/chain'
-
-const ClaimRewardsButton: FC<{ rewards: ClaimableRewards }> = ({ rewards }) => {
-  const { isPending, write } = useClaimRewards({ rewards })
-
-  return (
-    <Button
-      size="default"
-      fullWidth
-      disabled={!write}
-      loading={isPending}
-      onClick={() => write?.()}
-    >
-      Claim
-    </Button>
-  )
-}
+import { ClaimRewardsButton } from './ClaimRewardsButton'
 
 export const ClaimableRewardsActionCell: FC<Row<ClaimableRewards>> = ({
   original,

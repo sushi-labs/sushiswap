@@ -9,8 +9,7 @@ import { useAccount } from 'wagmi'
 export const Hero: FC = () => {
   const { address } = useAccount()
   const { data: rewardsData } = useClaimableRewards({ account: address })
-  const totalFeesUSD = 0
-  const isFeesLoading = true
+  const totalFeesUSD = undefined
 
   const totalRewardsUSD = useMemo(() => {
     return rewardsData
@@ -37,8 +36,7 @@ export const Hero: FC = () => {
             </span>
           </CardHeader>
           <CardContent>
-            {/* TODO:  {typeof totalFeesUSD === 'number' ? ( */}
-            {totalFeesUSD ? (
+            {typeof totalFeesUSD === 'number' ? (
               <span className="font-bold text-lg">
                 {formatUSD(totalFeesUSD)}
               </span>

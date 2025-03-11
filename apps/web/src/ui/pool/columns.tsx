@@ -7,7 +7,6 @@ import {
   SkeletonBox,
   Tooltip,
   TooltipContent,
-  TooltipPrimitive,
   TooltipProvider,
   TooltipTrigger,
   classNames,
@@ -17,10 +16,7 @@ import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import type { ColumnDef } from '@tanstack/react-table'
 import formatDistance from 'date-fns/formatDistance'
 import React, { useMemo } from 'react'
-import type {
-  AngleRewardsPool,
-  ClaimableRewards,
-} from 'src/lib/hooks/react-query'
+import type { ClaimableRewards } from 'src/lib/hooks/react-query'
 import type { ConcentratedLiquidityPositionWithV3Pool } from 'src/lib/wagmi/hooks/positions/types'
 import type {
   MaybeNestedPool,
@@ -59,8 +55,6 @@ import {
   type useTransactionsV3,
 } from './PoolTransactionsV3'
 import { PriceRangeCell } from './PriceRangeCell'
-import { RewardsV3ClaimableCell } from './RewardsV3ClaimableCell'
-import { RewardsV3NameCell } from './RewardsV3NameCell'
 
 export const REWARDS_CHAIN_COLUMN: ColumnDef<ClaimableRewards, unknown> = {
   id: 'chain',
@@ -107,80 +101,6 @@ export const REWARDS_ACTION_COLUMN: ColumnDef<ClaimableRewards, unknown> = {
     ),
   },
 }
-
-export const REWARDS_V3_NAME_COLUMN: ColumnDef<AngleRewardsPool, unknown> = {
-  id: 'poolName',
-  header: 'Pool',
-  cell: (props) => <RewardsV3NameCell {...props.row} />,
-  meta: {
-    skeleton: (
-      <div className="flex items-center w-full gap-2">
-        <div className="flex items-center">
-          <SkeletonCircle radius={40} />
-          <SkeletonCircle radius={40} className="-ml-[12px]" />
-        </div>
-        <div className="flex flex-col w-full">
-          <SkeletonText fontSize="lg" />
-        </div>
-      </div>
-    ),
-  },
-}
-
-export const REWARDS_V3_POSITION_SIZE_COLUMN: ColumnDef<
-  AngleRewardsPool,
-  unknown
-> = {
-  id: 'positionSize',
-  header: 'Position Size',
-  accessorFn: (row) => row.userTVL ?? 0,
-  cell: (props) => `$${formatNumber(props.row.original.userTVL || 0)}`,
-  meta: {
-    skeleton: <SkeletonText fontSize="lg" />,
-  },
-}
-
-export const REWARDS_V3_APR_COLUMN: ColumnDef<AngleRewardsPool, unknown> = {
-  id: 'apr',
-  header: 'APR',
-  accessorFn: (row) => row.meanAPR ?? 0,
-  cell: (props) => (
-    <TooltipProvider>
-      <Tooltip delayDuration={0}>
-        <TooltipTrigger asChild>
-          <span className="underline decoration-dotted underline-offset-2 flex items-center justify-end gap-1 text-sm text-gray-900 dark:text-slate-50">
-            {formatPercent((props.row.original.meanAPR ?? 0) / 100)}
-          </span>
-        </TooltipTrigger>
-        <TooltipPrimitive.Portal>
-          <TooltipPrimitive.Content
-            sideOffset={4}
-            className={classNames(
-              'border border-accent max-h-[var(--radix-popper-available-height)] z-50 w-72 bg-white/50 dark:bg-slate-800/50 paper rounded-xl p-4 shadow-md outline-none animate-in data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2',
-            )}
-            {...props}
-          >
-            The APR displayed is algorithmic and subject to change..
-          </TooltipPrimitive.Content>
-        </TooltipPrimitive.Portal>
-      </Tooltip>
-    </TooltipProvider>
-  ),
-  meta: {
-    skeleton: <SkeletonText fontSize="lg" />,
-  },
-}
-
-export const REWARDS_V3_CLAIMABLE_COLUMN: ColumnDef<AngleRewardsPool, unknown> =
-  {
-    id: 'claimable',
-    header: 'Claimable',
-    accessorFn: (row) => row.userTVL ?? 0,
-    cell: (props) => <RewardsV3ClaimableCell {...props.row} />,
-    meta: {
-      skeleton: <SkeletonText fontSize="lg" />,
-    },
-  }
 
 export const NAME_COLUMN_POOL: ColumnDef<
   MaybeNestedPool<PoolHasSteerVaults<PoolIfIncentivized<PoolBase, true>, true>>,

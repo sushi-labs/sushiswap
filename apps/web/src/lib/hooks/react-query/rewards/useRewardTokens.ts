@@ -2,27 +2,24 @@ import { useQuery } from '@tanstack/react-query'
 import type { EvmChainId } from 'sushi/chain'
 import { Token, tryParseAmount } from 'sushi/currency'
 
-import { angleRewardTokensValidator } from './validator'
+import { merklRewardsTokensValidator } from './validator'
 
 interface UseAngleRewardTokensParams {
   chainId: EvmChainId
 }
 
-export const useAngleRewardTokens = ({
-  chainId,
-}: UseAngleRewardTokensParams) => {
+export const useRewardTokens = ({ chainId }: UseAngleRewardTokensParams) => {
   return useQuery({
-    queryKey: ['getAngleRewardTokens', { chainId }],
+    queryKey: ['merklRewardTokens', { chainId }],
     queryFn: async () => {
-      const url = new URL('https://api.merkl.xyz/v2/merkl')
-      url.searchParams.set('AMMs', 'sushiswapv3')
-      url.searchParams.set('chainIds', chainId.toString())
+      const url = new URL('https://api.merkl.xyz/v3/overview')
+      url.searchParams.set('chainId', `${chainId}`)
 
       const res = await fetch(url)
       const json = await res.json()
-      const parsed = angleRewardTokensValidator.parse(json[chainId])
+      const parsed = merklRewardsTokensValidator.parse(json[chainId])
 
-      return parsed.validRewardTokens
+      return parsed
         .map((el) => {
           const token = new Token({
             chainId,

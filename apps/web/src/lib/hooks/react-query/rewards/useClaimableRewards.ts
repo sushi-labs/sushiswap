@@ -7,6 +7,7 @@ import { useAllPrices } from '../prices'
 import { merklRewardsValidator } from './validator'
 
 interface UseClaimableRewardsParams {
+  chainIds?: MerklChainId[]
   account?: Address | undefined
   enabled?: boolean
 }
@@ -22,6 +23,7 @@ export type ClaimableRewards = {
 type UseClaimableRewardReturn = Record<MerklChainId, ClaimableRewards>
 
 export const useClaimableRewards = ({
+  chainIds = MERKL_SUPPORTED_CHAIN_IDS,
   account,
   enabled = true,
 }: UseClaimableRewardsParams) => {
@@ -34,7 +36,7 @@ export const useClaimableRewards = ({
       url.searchParams.set('test', `${false}`)
 
       const res = await Promise.allSettled(
-        MERKL_SUPPORTED_CHAIN_IDS.map(async (chainId) => {
+        chainIds.map(async (chainId) => {
           const _url = new URL(url)
           _url.searchParams.set('chainId', `${chainId}`)
 

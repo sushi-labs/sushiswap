@@ -28,7 +28,7 @@ const claimAbi = [
   },
 ] as const
 
-interface UseClaimRewardsProps {
+interface UseClaimRewardsParams {
   rewards: ClaimableRewards
   enabled?: boolean
 }
@@ -36,7 +36,7 @@ interface UseClaimRewardsProps {
 export const useClaimRewards = ({
   rewards,
   enabled = true,
-}: UseClaimRewardsProps) => {
+}: UseClaimRewardsParams) => {
   const { address, chainId } = useAccount()
 
   const { data: simulation } = useSimulateContract({

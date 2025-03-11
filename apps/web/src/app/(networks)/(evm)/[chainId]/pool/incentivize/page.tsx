@@ -29,7 +29,7 @@ import {
 import format from 'date-fns/format'
 import { useRouter } from 'next/navigation'
 import { use, useMemo, useState } from 'react'
-import { useAngleRewardTokens } from 'src/lib/hooks/react-query'
+import { useRewardTokens } from 'src/lib/hooks/react-query'
 import { Web3Input } from 'src/lib/wagmi/components/web3-input'
 import { useConcentratedLiquidityPool } from 'src/lib/wagmi/hooks/pools/hooks/useConcentratedLiquidityPool'
 import {
@@ -131,7 +131,7 @@ const Incentivize = withCheckerRoot(() => {
   const [angleConditionsState, { write }] = useAcceptAngleConditions()
 
   const { data: angleRewardTokens, isLoading: angleRewardTokensLoading } =
-    useAngleRewardTokens({ chainId })
+    useRewardTokens({ chainId })
 
   const minAmount = useMemo(() => {
     if (!angleRewardTokens) return undefined
