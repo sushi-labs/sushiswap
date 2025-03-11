@@ -1,8 +1,8 @@
 import { useQuery } from '@tanstack/react-query'
-import type { EvmChainId } from 'sushi/chain'
 import { MERKL_SUPPORTED_CHAIN_IDS, type MerklChainId } from 'sushi/config'
 import { Amount, Token, type Type } from 'sushi/currency'
-import type { Address } from 'sushi/types'
+import type { Hex } from 'viem'
+import type { Address } from 'viem/accounts'
 import { useAllPrices } from '../prices'
 import { merklRewardsValidator } from './validator'
 
@@ -16,6 +16,7 @@ export type ClaimableRewards = {
   rewardAmounts: Record<string, Amount<Type>>
   rewardAmountsUSD: Record<string, number>
   totalRewardsUSD: number
+  claimArgs: [Address[], Address[], bigint[], Hex[][]]
 }
 
 type UseClaimableRewardReturn = Record<MerklChainId, ClaimableRewards>
@@ -52,10 +53,22 @@ export const useClaimableRewards = ({
 
         const rewardAmounts = {} as Record<string, Amount<Type>>
 
+        const claimArgs = {
+          users: [] as Address[],
+          tokens: [] as Address[],
+          amounts: [] as bigint[],
+          proofs: [] as Hex[][],
+        }
+
         rewards.forEach((reward) => {
           const unclaimed = reward.amount - reward.claimed
 
           if (unclaimed === 0n) return
+
+          claimArgs.users.push(account as Address)
+          claimArgs.tokens.push(reward.token.address as Address)
+          claimArgs.amounts.push(reward.amount)
+          claimArgs.proofs.push(reward.proofs)
 
           const currentValue = rewardAmounts[reward.token.address as Address]
 
@@ -108,6 +121,12 @@ export const useClaimableRewards = ({
           rewardAmounts,
           rewardAmountsUSD,
           totalRewardsUSD,
+          claimArgs: [
+            claimArgs.users,
+            claimArgs.tokens,
+            claimArgs.amounts,
+            claimArgs.proofs,
+          ],
         }
 
         return accum
