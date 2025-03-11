@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query'
 import type { EvmChainId } from 'sushi/chain'
 import { Token, tryParseAmount } from 'sushi/currency'
 
+import { withoutScientificNotation } from 'sushi/format'
 import { merklRewardsTokensValidator } from './validator'
 
 interface UseAngleRewardTokensParams {
@@ -17,25 +18,28 @@ export const useRewardTokens = ({ chainId }: UseAngleRewardTokensParams) => {
 
       const res = await fetch(url)
       const json = await res.json()
-      const parsed = merklRewardsTokensValidator.parse(json[chainId])
+
+      const parsed = merklRewardsTokensValidator.parse(
+        json.rewardTokens[chainId],
+      )
 
       return parsed
+        .filter((el) => el.decimals && el.symbol !== 'aglaMerkl')
         .map((el) => {
           const token = new Token({
             chainId,
             address: el.token,
             symbol: el.symbol,
-            decimals: el.decimals,
+            decimals: el.decimals!,
           })
           return {
             minimumAmountPerEpoch: tryParseAmount(
-              el.minimumAmountPerEpoch.toString(),
+              withoutScientificNotation(el.minimumAmountPerEpoch.toString()),
               token,
             ),
             token,
           }
         })
-        .filter((el) => el.token.symbol !== 'aglaMerkl')
     },
   })
 }

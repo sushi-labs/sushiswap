@@ -6,8 +6,8 @@ import z from 'zod'
 
 const merklRewardsTokenValidator = z.object({
   token: z.string().transform((address) => address as Address),
-  decimals: z.number(),
-  symbol: z.string(),
+  decimals: z.number().optional(),
+  symbol: z.string().optional(),
   minimumAmountPerEpoch: z.number(),
 })
 
