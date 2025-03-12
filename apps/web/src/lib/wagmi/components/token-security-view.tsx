@@ -2,9 +2,10 @@ import {
   ExclamationTriangleIcon,
   HandThumbUpIcon,
 } from '@heroicons/react/24/solid'
-import { Button, Explainer, List, SelectIcon, classNames } from '@sushiswap/ui'
+import { Explainer, Loader, classNames } from '@sushiswap/ui'
+import { DeFiIcon } from '@sushiswap/ui/icons/DeFiIcon'
 import { GoPlusLabsIcon } from '@sushiswap/ui/icons/GoPlusLabsIcon'
-import { useMemo, useState } from 'react'
+import { useMemo } from 'react'
 import {
   type TokenSecurity,
   TokenSecurityLabel,
@@ -12,138 +13,267 @@ import {
   type TokenSecurityResponse,
   isTokenSecurityIssue,
 } from 'src/lib/hooks/react-query'
-import type { Token } from 'sushi/currency'
 
 export const TokenSecurityView = ({
-  tokenSecurityResponse,
-  token,
-  forceShowMore = false,
+  tokenSecurity,
+  isTokenSecurityLoading,
 }: {
-  tokenSecurityResponse: TokenSecurityResponse | undefined
-  token: Token
-  forceShowMore?: boolean
+  tokenSecurity: TokenSecurityResponse | undefined
+  isTokenSecurityLoading: boolean
 }) => {
-  const [showMore, setShowMore] = useState<boolean>(forceShowMore)
-
-  const { tokenSecurity, issues, nonIssues } = useMemo(() => {
-    const tokenSecurity = tokenSecurityResponse?.[token.address]
+  const { issues, nonIssues } = useMemo(() => {
     const issues: (keyof TokenSecurity)[] = []
     const nonIssues: (keyof TokenSecurity)[] = []
 
     for (const [_key, value] of Object.entries(tokenSecurity || {})) {
       const key = _key as keyof TokenSecurity
-      if (key in isTokenSecurityIssue && isTokenSecurityIssue[key](value))
+      if (
+        key in isTokenSecurityIssue &&
+        (isTokenSecurityIssue[key](value.deFi) ||
+          isTokenSecurityIssue[key](value.goPlus))
+      )
         issues.push(key)
       else nonIssues.push(key)
     }
 
     return { tokenSecurity, issues, nonIssues }
-  }, [tokenSecurityResponse, token])
+  }, [tokenSecurity])
 
   return (
-    <List className="!pt-0 overflow-hidden">
-      <List.Control className="!overflow-y-auto">
-        <List.Item
-          className="justify-between items-center !cursor-default outline-none"
-          iconProps={{ width: undefined, height: undefined }}
-          title="Token Security"
-          subtitle={
-            <div className="flex items-center">
-              powered by GoPlus
-              <GoPlusLabsIcon width={16} height={20} />
-            </div>
-          }
-          value={
-            <div
-              className={classNames(
-                'rounded-full flex items-center px-2 py-1 gap-1',
-                Number(issues?.length) > 0
+    <div className="flex gap-3">
+      <div className="grow flex flex-col gap-3">
+        <div className="h-12">
+          <div
+            className={classNames(
+              'rounded-full flex items-center px-2 py-1.5 gap-1 w-fit',
+              isTokenSecurityLoading
+                ? 'bg-muted'
+                : Number(issues?.length) > 0
                   ? 'bg-yellow/20 text-yellow'
                   : 'bg-green/20 text-green',
-              )}
-            >
-              {Number(issues?.length) > 0 ? (
-                <ExclamationTriangleIcon width={16} height={16} />
-              ) : (
-                <HandThumbUpIcon width={16} height={16} />
-              )}
+            )}
+          >
+            {isTokenSecurityLoading ? (
+              <Loader width={16} height={16} />
+            ) : Number(issues?.length) > 0 ? (
+              <ExclamationTriangleIcon width={16} height={16} />
+            ) : (
+              <HandThumbUpIcon width={16} height={16} />
+            )}
+            {isTokenSecurityLoading ? (
+              <span className="text-sm">Pending</span>
+            ) : (
               <span className="text-sm">{`${Number(issues?.length)} issue${
                 Number(issues?.length) !== 1 ? 's' : ''
               } found`}</span>
-            </div>
-          }
-        />
+            )}
+          </div>
+        </div>
         {issues.map((key) => (
-          <List.KeyValue
-            className="hover:bg-secondary"
-            key={key}
-            title={
-              <div className="flex gap-1">
-                {TokenSecurityLabel[key]}
-                <Explainer>{TokenSecurityMessage[key]}</Explainer>
-              </div>
-            }
-          >
-            <div className="flex items-center gap-1">
-              <div>
-                {tokenSecurity?.[key] === undefined
-                  ? 'Unknown'
-                  : tokenSecurity[key]
-                    ? 'Yes'
-                    : 'No'}
-              </div>
+          <div key={key} className="flex gap-1">
+            <Explainer iconProps={{ className: 'text-muted-foreground' }}>
+              {TokenSecurityMessage[key]}
+            </Explainer>
+            <span className="text-sm">{TokenSecurityLabel[key]}</span>
+          </div>
+        ))}
+        {nonIssues.map((key) => (
+          <div key={key} className="flex gap-1">
+            <Explainer iconProps={{ className: 'text-muted-foreground' }}>
+              {TokenSecurityMessage[key]}
+            </Explainer>
+            <span className="text-sm font-medium">
+              {TokenSecurityLabel[key]}
+            </span>
+          </div>
+        ))}
+      </div>
+      <div className="flex flex-col gap-3">
+        <div className="flex flex-col gap-1 items-center h-12">
+          <GoPlusLabsIcon width={28} height={24} />
+          <span className="font-semibold text-sm">GoPlus</span>
+        </div>
+        {issues.map((key) => (
+          <div key={key} className="flex items-center justify-center gap-1">
+            <span className="text-sm font-medium">
+              {tokenSecurity?.[key].goPlus === undefined
+                ? '-'
+                : tokenSecurity[key].goPlus
+                  ? 'Yes'
+                  : 'No'}
+            </span>
+            {tokenSecurity?.[key].deFi ===
+            undefined ? null : isTokenSecurityIssue[key](
+                tokenSecurity?.[key].goPlus,
+              ) ? (
               <ExclamationTriangleIcon
                 width={14}
                 height={14}
-                className="fill-yellow"
+                className="fill-red"
               />
-            </div>
-          </List.KeyValue>
-        ))}
-        {showMore
-          ? nonIssues.map((key) => (
-              <List.KeyValue
-                className="hover:bg-muted py-1.5"
-                key={key}
-                title={
-                  <div className="flex gap-1 text-gray-900 dark:text-slate-50">
-                    {TokenSecurityLabel[key]}
-                    <Explainer>{TokenSecurityMessage[key]}</Explainer>
-                  </div>
-                }
-              >
-                <div className="flex items-center gap-1">
-                  <span>{tokenSecurity?.[key] ? 'Yes' : 'No'}</span>
-                  <HandThumbUpIcon
-                    width={14}
-                    height={14}
-                    className="fill-green"
-                  />
-                </div>
-              </List.KeyValue>
-            ))
-          : null}
-        {!forceShowMore ? (
-          <div className="p-3">
-            <Button
-              size="xs"
-              fullWidth
-              onClick={() => setShowMore(!showMore)}
-              variant="ghost"
-            >
-              {showMore ? (
-                <>
-                  <SelectIcon className="rotate-180" />
-                </>
-              ) : (
-                <>
-                  <SelectIcon />
-                </>
-              )}
-            </Button>
+            ) : (
+              <HandThumbUpIcon width={14} height={14} className="fill-green" />
+            )}
           </div>
-        ) : null}
-      </List.Control>
-    </List>
+        ))}
+        {nonIssues.map((key) => (
+          <div key={key} className="flex items-center justify-center gap-1">
+            <span className="text-sm font-medium">
+              {tokenSecurity?.[key].goPlus ? 'Yes' : 'No'}
+            </span>
+            {isTokenSecurityIssue[key](tokenSecurity?.[key].goPlus) ? (
+              <ExclamationTriangleIcon
+                width={14}
+                height={14}
+                className="fill-red"
+              />
+            ) : (
+              <HandThumbUpIcon width={14} height={14} className="fill-green" />
+            )}
+          </div>
+        ))}
+      </div>
+      <div className="flex flex-col gap-3">
+        <div className="flex flex-col gap-1 items-center h-12">
+          <DeFiIcon width={24} height={24} />
+          <span className="font-semibold text-sm">De.Fi</span>
+        </div>
+        {issues.map((key) => (
+          <div key={key} className="flex items-center justify-center gap-1">
+            <span className="text-sm font-medium">
+              {tokenSecurity?.[key].deFi === undefined
+                ? '-'
+                : tokenSecurity[key].deFi
+                  ? 'Yes'
+                  : 'No'}
+            </span>
+            {tokenSecurity?.[key].deFi ===
+            undefined ? null : isTokenSecurityIssue[key](
+                tokenSecurity?.[key].deFi,
+              ) ? (
+              <ExclamationTriangleIcon
+                width={14}
+                height={14}
+                className="fill-red"
+              />
+            ) : (
+              <HandThumbUpIcon width={14} height={14} className="fill-green" />
+            )}
+          </div>
+        ))}
+        {nonIssues.map((key) => (
+          <div key={key} className="flex items-center justify-center gap-1">
+            <span className="text-sm font-medium">
+              {tokenSecurity?.[key].deFi ? 'Yes' : 'No'}
+            </span>
+            {isTokenSecurityIssue[key](tokenSecurity?.[key].deFi) ? (
+              <ExclamationTriangleIcon
+                width={14}
+                height={14}
+                className="fill-red"
+              />
+            ) : (
+              <HandThumbUpIcon width={14} height={14} className="fill-green" />
+            )}
+          </div>
+        ))}
+      </div>
+    </div>
+    // <List className="!pt-0 overflow-hidden">
+    //   <List.Control className="!overflow-y-auto">
+    //     <div className="flex gap-3">
+    //       <div className="flex flex-col gap-3">
+    //         <div
+    //           className={classNames(
+    //             'rounded-full flex items-center px-2 py-1 gap-1',
+    //             Number(issues?.length) > 0
+    //               ? 'bg-yellow/20 text-yellow'
+    //               : 'bg-green/20 text-green',
+    //           )}
+    //         >
+    //           {Number(issues?.length) > 0 ? (
+    //             <ExclamationTriangleIcon width={16} height={16} />
+    //           ) : (
+    //             <HandThumbUpIcon width={16} height={16} />
+    //           )}
+    //           <span className="text-sm">{`${Number(issues?.length)} issue${
+    //             Number(issues?.length) !== 1 ? 's' : ''
+    //           } found`}</span>
+    //         </div>
+    //       </div>
+    //       <div className="flex flex-col gap-3">
+    //         <GoPlusLabsIcon width={16} height={20} />
+    //       </div>
+    //       <div className="flex flex-col gap-3">
+    //         <GoPlusLabsIcon width={16} height={20} />
+    //       </div>
+    //     </div>
+    //     {/* <List.Item
+    //       className="justify-between items-center !cursor-default outline-none"
+    //       iconProps={{ width: undefined, height: undefined }}
+    //       title="Token Security"
+    //       subtitle={
+    //         <div className="flex items-center">
+    //           powered by GoPlus
+    //           <GoPlusLabsIcon width={16} height={20} />
+    //         </div>
+    //       }
+    //       value={
+
+    //       }
+    //     /> */}
+    //     {issues.map((key) => (
+    //       <List.KeyValue
+    //         className="hover:bg-secondary"
+    //         key={key}
+    //         title={
+    //           <div className="flex gap-1">
+    //             {TokenSecurityLabel[key]}
+    //             <Explainer>{TokenSecurityMessage[key]}</Explainer>
+    //           </div>
+    //         }
+    //       >
+    //         <div className="flex items-center gap-1">
+    //           <div>
+    //             {tokenSecurity?.[key] === undefined
+    //               ? 'Unknown'
+    //               : tokenSecurity[key]
+    //                 ? 'Yes'
+    //                 : 'No'}
+    //           </div>
+    //           <ExclamationTriangleIcon
+    //             width={14}
+    //             height={14}
+    //             className="fill-yellow"
+    //           />
+    //         </div>
+    //       </List.KeyValue>
+    //     ))}
+    //     {showMore
+    //       ? nonIssues.map((key) => (
+    //           <List.KeyValue
+    //             className="hover:bg-muted py-1.5"
+    //             key={key}
+    //             title={
+    //               <div className="flex gap-1 text-gray-900 dark:text-slate-50">
+    //                 {TokenSecurityLabel[key]}
+    //                 <Explainer>{TokenSecurityMessage[key]}</Explainer>
+    //               </div>
+    //             }
+    //           >
+    //             <div className="flex items-center gap-1">
+    //               <span>{tokenSecurity?.[key] ? 'Yes' : 'No'}</span>
+    //               <HandThumbUpIcon
+    //                 width={14}
+    //                 height={14}
+    //                 className="fill-green"
+    //               />
+    //             </div>
+    //           </List.KeyValue>
+    //         ))
+    //       : null}
+
+    //   </List.Control>
+    // </List>
   )
 }

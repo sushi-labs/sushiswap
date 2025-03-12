@@ -1,9 +1,20 @@
+import {
+  type TokenScannerResponse,
+  isTokenScannerChainId,
+} from '@sushiswap/graph-client/de.fi'
 import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import { isTokenSecurityChainId } from 'sushi/config'
 import type { Token } from 'sushi/currency'
 import { z } from 'zod'
 
-const bit = z.optional(z.enum(['0', '1']).transform((val) => val !== '0'))
+const bit = z
+  .union([z.enum(['0', '1']), z.undefined()])
+  .transform((val) => {
+    if (val === '0') return false
+    if (val === '1') return true
+    return undefined
+  })
+  .optional()
 
 const tokenSecuritySchema = z
   .object({
@@ -16,18 +27,22 @@ const tokenSecuritySchema = z
     selfdestruct: bit,
     external_call: bit,
     gas_abuse: bit,
-    buy_tax: z.optional(
-      z.preprocess(
-        (val) => (val === '' ? undefined : val !== '0'),
-        z.optional(z.boolean()),
-      ),
-    ),
-    sell_tax: z.optional(
-      z.preprocess(
-        (val) => (val === '' ? undefined : val !== '0'),
-        z.optional(z.boolean()),
-      ),
-    ),
+    buy_tax: z
+      .optional(
+        z.preprocess(
+          (val) => (val === '' ? undefined : val !== '0'),
+          z.optional(z.boolean()),
+        ),
+      )
+      .default(undefined),
+    sell_tax: z
+      .optional(
+        z.preprocess(
+          (val) => (val === '' ? undefined : val !== '0'),
+          z.optional(z.boolean()),
+        ),
+      )
+      .default(undefined),
     cannot_buy: bit,
     cannot_sell_all: bit,
     slippage_modifiable: bit,
@@ -50,10 +65,6 @@ const tokenSecuritySchema = z
   }))
 
 export type TokenSecurity = z.infer<typeof tokenSecuritySchema>
-
-export type TokenSecurityResponse = Record<string, TokenSecurity>
-
-type GoPlusAPIResponse = Record<string, Record<keyof TokenSecurity, string>>
 
 export const TokenSecurityLabel: Record<keyof TokenSecurity, string> = {
   is_open_source: 'Contract Verified',
@@ -167,46 +178,151 @@ export const TokenSecurityMessage: Record<keyof TokenSecurity, string> = {
   trust_list: 'Whether or not this token is a famous and trustworthy one.',
 }
 
-const fetchTokenSecurityQueryFn = async (currencies: (Token | undefined)[]) => {
-  const supportedCurrencies = currencies.filter(
-    (currency) => currency && isTokenSecurityChainId(currency.chainId),
-  ) as Token[]
-
-  if (supportedCurrencies.length === 0) return {} as TokenSecurityResponse
-
-  const tokenSecurity = await Promise.all(
-    supportedCurrencies.map((currency) =>
-      fetch(
-        `https://api.gopluslabs.io/api/v1/token_security/${currency.chainId}?contract_addresses=${currency.address}`,
-      )
-        .then(
-          (response) =>
-            response.json() as Promise<{ result?: GoPlusAPIResponse }>,
-        )
-        .then((data) => data?.result?.[currency.address.toLowerCase()])
-        .then((tokenSecurityResponse) =>
-          tokenSecuritySchema.parse(tokenSecurityResponse),
-        ),
-    ),
+const fetchGoPlusResponse = async (currency: Token) => {
+  const url = new URL(
+    `https://api.gopluslabs.io/api/v1/token_security/${currency.chainId}`,
   )
+  url.searchParams.set('contract_addresses', currency.address)
 
-  return supportedCurrencies.reduce((prev, cur, i) => {
-    prev[cur.address] = tokenSecurity[i] as TokenSecurity
-    return prev
-  }, {} as TokenSecurityResponse)
+  const response = await fetch(url)
+
+  if (!response.ok) {
+    throw new Error(`Error: ${response.statusText}`)
+  }
+
+  const json = await response.json()
+
+  return tokenSecuritySchema.parse(json.result[currency.address.toLowerCase()])
 }
 
+enum DeFiScannerIssue {
+  VERIFIED_CONTRACT = '185',
+  UPGRADABLE_CONTRACT = '193',
+  IS_MINTABLE = '186',
+  VULNERABLE_OWNERSHIP = '230',
+  HAS_BALANCE_CONTROLS = '220',
+  HIDDEN_OWNERSHIP = '231',
+  SELF_DESTRUCT = '106',
+  HAS_EXTERNAL_CALLS = '210-b',
+  GAS_ABUSE = '179',
+  TRANSFER_FEES = '209',
+  TRANSFER_LIMITS = '211',
+  TRANSFER_PAUSABLE = '189',
+  HAS_BLACKLIST = '208',
+  HAS_WHITELIST = '237',
+  TRANSFER_COOLDOWN = '219',
+  AIRDROP = '10004',
+}
+
+const fetchDeFiResponse = async (currency: Token) => {
+  const url = new URL('/api/token-scanner', window.location.origin)
+  url.searchParams.set('chainId', `${currency.chainId}`)
+  url.searchParams.set('address', `${currency.address}`)
+
+  const response = await fetch(url)
+
+  if (!response.ok) {
+    throw new Error(`Error: ${response.statusText}`)
+  }
+
+  const json = (await response.json()) as TokenScannerResponse
+
+  const issues = [...json.coreIssues, ...json.generalIssues].reduce(
+    (accum, cur) => {
+      accum[cur.scwId] = cur
+      return accum
+    },
+    {} as Record<string, TokenScannerResponse['generalIssues'][number]>,
+  )
+
+  return {
+    is_open_source:
+      issues[DeFiScannerIssue.VERIFIED_CONTRACT].issues.length === 0,
+    is_proxy: issues[DeFiScannerIssue.UPGRADABLE_CONTRACT].issues.length > 0,
+    is_mintable: issues[DeFiScannerIssue.IS_MINTABLE].issues.length > 0,
+    can_take_back_ownership:
+      issues[DeFiScannerIssue.VULNERABLE_OWNERSHIP].issues.length > 0,
+    owner_change_balance:
+      issues[DeFiScannerIssue.HAS_BALANCE_CONTROLS].issues.length > 0,
+    hidden_owner: issues[DeFiScannerIssue.HIDDEN_OWNERSHIP].issues.length > 0,
+    selfdestruct: issues[DeFiScannerIssue.SELF_DESTRUCT].issues.length > 0,
+    external_call:
+      issues[DeFiScannerIssue.HAS_EXTERNAL_CALLS].issues.length > 0,
+    gas_abuse: issues[DeFiScannerIssue.GAS_ABUSE].issues.length > 0,
+    buy_tax: issues[DeFiScannerIssue.TRANSFER_FEES].issues.length > 0,
+    sell_tax: issues[DeFiScannerIssue.TRANSFER_FEES].issues.length > 0,
+    cannot_buy: issues[DeFiScannerIssue.TRANSFER_LIMITS].issues.length > 0,
+    cannot_sell_all: issues[DeFiScannerIssue.TRANSFER_LIMITS].issues.length > 0,
+    transfer_pausable:
+      issues[DeFiScannerIssue.TRANSFER_PAUSABLE].issues.length > 0,
+    is_blacklisted: issues[DeFiScannerIssue.HAS_BLACKLIST].issues.length > 0,
+    is_whitelisted: issues[DeFiScannerIssue.HAS_WHITELIST].issues.length > 0,
+    trading_cooldown:
+      issues[DeFiScannerIssue.TRANSFER_COOLDOWN].issues.length > 0,
+    is_airdrop_scam: issues[DeFiScannerIssue.AIRDROP].issues.length > 0,
+    is_buyable: issues[DeFiScannerIssue.TRANSFER_LIMITS].issues.length === 0,
+    is_sell_limit: issues[DeFiScannerIssue.TRANSFER_LIMITS].issues.length > 0,
+    is_fake_token: undefined,
+    slippage_modifiable: undefined,
+    is_honeypot: undefined,
+    is_anti_whale: undefined,
+    trust_list: undefined,
+  } as TokenSecurity
+}
+
+const fetchTokenSecurityQueryFn = async (currency: Token | undefined) => {
+  if (!currency) {
+    throw new Error()
+  }
+
+  const [goPlusResponseResult, deFiResponseResult] = await Promise.allSettled([
+    isTokenSecurityChainId(currency.chainId)
+      ? fetchGoPlusResponse(currency)
+      : Promise.resolve(undefined),
+    isTokenScannerChainId(currency.chainId)
+      ? fetchDeFiResponse(currency)
+      : Promise.resolve(undefined),
+  ])
+
+  const goPlusResponse =
+    goPlusResponseResult.status === 'fulfilled'
+      ? goPlusResponseResult.value
+      : undefined
+  const deFiResponse =
+    deFiResponseResult.status === 'fulfilled'
+      ? deFiResponseResult.value
+      : undefined
+
+  return Object.keys(goPlusResponse ?? {}).reduce(
+    (acc, key) => {
+      type SecurityKey = keyof TokenSecurity
+      const field = key as SecurityKey
+
+      acc[field] = {
+        goPlus: goPlusResponse?.[field],
+        deFi: deFiResponse?.[field],
+      }
+      return acc
+    },
+    {} as Record<keyof TokenSecurity, { goPlus?: boolean; deFi?: boolean }>,
+  )
+}
+
+export type TokenSecurityResponse = Awaited<
+  ReturnType<typeof fetchTokenSecurityQueryFn>
+>
+
 export const useTokenSecurity = ({
-  currencies,
+  currency,
   enabled = true,
 }: {
   enabled?: boolean
-  currencies: (Token | undefined)[]
+  currency: Token | undefined
 }) => {
   return useQuery({
-    queryKey: ['useTokenSecurity', currencies?.map((currency) => currency?.id)],
-    queryFn: () => fetchTokenSecurityQueryFn(currencies),
-    enabled,
+    queryKey: ['useTokenSecurity', currency?.id],
+    queryFn: () => fetchTokenSecurityQueryFn(currency),
+    enabled: Boolean(enabled && currency),
     placeholderData: keepPreviousData,
     staleTime: 900000, // 15 mins
     gcTime: 86400000, // 24hs

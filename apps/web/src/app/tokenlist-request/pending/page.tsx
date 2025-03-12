@@ -11,6 +11,7 @@ import {
   Container,
   DataTable,
   LinkExternal,
+  List,
   Popover,
   PopoverContent,
   PopoverTrigger,
@@ -170,46 +171,85 @@ const COLUMNS: ColumnDef<PendingTokens[number], unknown>[] = [
                   <li key={`reason-${i}`}>{reason}</li>
                 ))}
               </ul>
-              <TokenSecurityView
-                tokenSecurityResponse={{
-                  [getAddress(props.row.original.token.address)]: {
-                    is_buyable: props.row.original.security.isBuyable,
-                    is_open_source: props.row.original.security.isOpenSource,
-                    is_proxy: props.row.original.security.isProxy,
-                    is_mintable: props.row.original.security.isMintable,
-                    can_take_back_ownership:
-                      props.row.original.security.canTakeBackOwnership,
-                    owner_change_balance:
-                      props.row.original.security.ownerChangeBalance,
-                    hidden_owner: props.row.original.security.hiddenOwner,
-                    selfdestruct: props.row.original.security.selfDestruct,
-                    external_call: props.row.original.security.externalCall,
-                    gas_abuse: props.row.original.security.gasAbuse,
-                    buy_tax: props.row.original.security.buyTax,
-                    sell_tax: props.row.original.security.sellTax,
-                    is_sell_limit: props.row.original.security.cannotSellAll,
-                    slippage_modifiable:
-                      props.row.original.security.slippageModifiable,
-                    is_honeypot: props.row.original.security.isHoneypot,
-                    transfer_pausable:
-                      props.row.original.security.transferPausable,
-                    is_blacklisted: props.row.original.security.isBlacklisted,
-                    is_whitelisted: props.row.original.security.isWhitelisted,
-                    is_anti_whale: props.row.original.security.isAntiWhale,
-                    trading_cooldown:
-                      props.row.original.security.tradingCooldown,
-                    is_fake_token: !props.row.original.security.isTrueToken,
-                    is_airdrop_scam: props.row.original.security.isAirdropScam,
-                    trust_list: props.row.original.security.trustList,
-                  },
-                }}
-                token={
-                  new Token({
-                    ...props.row.original.token,
-                    chainId: props.row.original.token.chainId as EvmChainId,
-                  })
-                }
-              />
+              <List className="!pt-0 overflow-hidden">
+                <List.Control className="!overflow-y-auto">
+                  <TokenSecurityView
+                    isTokenSecurityLoading={false}
+                    tokenSecurity={{
+                      is_buyable: {
+                        goPlus: props.row.original.security.isBuyable,
+                      },
+                      is_open_source: {
+                        goPlus: props.row.original.security.isOpenSource,
+                      },
+                      is_proxy: {
+                        goPlus: props.row.original.security.isProxy,
+                      },
+                      is_mintable: {
+                        goPlus: props.row.original.security.isMintable,
+                      },
+                      can_take_back_ownership: {
+                        goPlus:
+                          props.row.original.security.canTakeBackOwnership,
+                      },
+                      owner_change_balance: {
+                        goPlus: props.row.original.security.ownerChangeBalance,
+                      },
+                      hidden_owner: {
+                        goPlus: props.row.original.security.hiddenOwner,
+                      },
+                      selfdestruct: {
+                        goPlus: props.row.original.security.selfDestruct,
+                      },
+                      external_call: {
+                        goPlus: props.row.original.security.externalCall,
+                      },
+                      gas_abuse: {
+                        goPlus: props.row.original.security.gasAbuse,
+                      },
+                      buy_tax: {
+                        goPlus: props.row.original.security.buyTax,
+                      },
+                      sell_tax: {
+                        goPlus: props.row.original.security.sellTax,
+                      },
+                      is_sell_limit: {
+                        goPlus: props.row.original.security.cannotSellAll,
+                      },
+                      slippage_modifiable: {
+                        goPlus: props.row.original.security.slippageModifiable,
+                      },
+                      is_honeypot: {
+                        goPlus: props.row.original.security.isHoneypot,
+                      },
+                      transfer_pausable: {
+                        goPlus: props.row.original.security.transferPausable,
+                      },
+                      is_blacklisted: {
+                        goPlus: props.row.original.security.isBlacklisted,
+                      },
+                      is_whitelisted: {
+                        goPlus: props.row.original.security.isWhitelisted,
+                      },
+                      is_anti_whale: {
+                        goPlus: props.row.original.security.isAntiWhale,
+                      },
+                      trading_cooldown: {
+                        goPlus: props.row.original.security.tradingCooldown,
+                      },
+                      is_fake_token: {
+                        goPlus: !props.row.original.security.isTrueToken,
+                      },
+                      is_airdrop_scam: {
+                        goPlus: props.row.original.security.isAirdropScam,
+                      },
+                      trust_list: {
+                        goPlus: props.row.original.security.trustList,
+                      },
+                    }}
+                  />
+                </List.Control>
+              </List>
             </CardContent>
           </Card>,
         ],

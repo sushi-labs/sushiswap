@@ -20,10 +20,9 @@ import { List } from '@sushiswap/ui'
 import { type FC, useCallback, useState } from 'react'
 import { useTokenSecurity } from 'src/lib/hooks/react-query'
 import { EvmChain } from 'sushi/chain'
+import { isTokenSecurityChainId } from 'sushi/config'
 import type { Token } from 'sushi/currency'
 import { shortenAddress } from 'sushi/format'
-
-import { isTokenSecurityChainId } from 'sushi/config'
 import { TokenSecurityView } from '../../../token-security-view'
 
 interface TokenSelectorImportRow {
@@ -37,13 +36,11 @@ export const TokenSelectorImportRow: FC<TokenSelectorImportRow> = ({
 }) => {
   const [open, setOpen] = useState(false)
 
-  const {
-    data: tokenSecurityResponse,
-    isInitialLoading: tokenSecurityLoading,
-  } = useTokenSecurity({
-    currencies: [currency],
-    enabled: open,
-  })
+  const { data: tokenSecurity, isLoading: isTokenSecurityLoading } =
+    useTokenSecurity({
+      currency,
+      enabled: open,
+    })
 
   const onClick = useCallback(() => {
     onImport()
@@ -54,7 +51,7 @@ export const TokenSelectorImportRow: FC<TokenSelectorImportRow> = ({
   }, [onImport])
 
   const honeypot = Boolean(
-    currency && tokenSecurityResponse?.[currency.address]?.is_honeypot,
+    tokenSecurity?.is_honeypot?.goPlus || tokenSecurity?.is_honeypot?.deFi,
   )
 
   return (
@@ -88,7 +85,7 @@ export const TokenSelectorImportRow: FC<TokenSelectorImportRow> = ({
           </div>
         </div>
       </div>
-      {!isTokenSecurityChainId(currency.chainId) || !tokenSecurityLoading ? (
+      {!isTokenSecurityChainId(currency.chainId) || !isTokenSecurityLoading ? (
         <DialogContent className="!flex flex-col max-h-[80vh]">
           <DialogHeader>
             <DialogTitle>Import token</DialogTitle>
@@ -138,11 +135,14 @@ export const TokenSelectorImportRow: FC<TokenSelectorImportRow> = ({
           </List>
           {isTokenSecurityChainId(currency.chainId) ? (
             <div className="flex flex-1 flex-grow flex-col overflow-y-scroll relative pr-4">
-              <TokenSecurityView
-                tokenSecurityResponse={tokenSecurityResponse}
-                token={currency}
-                forceShowMore
-              />
+              <List className="!pt-0 overflow-hidden">
+                <List.Control className="!overflow-y-auto">
+                  <TokenSecurityView
+                    tokenSecurity={tokenSecurity}
+                    isTokenSecurityLoading={isTokenSecurityLoading}
+                  />
+                </List.Control>
+              </List>
             </div>
           ) : null}
           <DialogFooter>
