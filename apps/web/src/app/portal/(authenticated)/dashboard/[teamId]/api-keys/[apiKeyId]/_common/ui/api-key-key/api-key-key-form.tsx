@@ -1,7 +1,7 @@
 'use client'
 
 import { zodResolver } from '@hookform/resolvers/zod'
-import type { ResponseError, StyroClient } from '@sushiswap/styro-client'
+import type { ResponseError, StyroResults } from '@sushiswap/styro-client'
 import {
   Button,
   Collapsible,
@@ -22,18 +22,14 @@ import { useCallback, useState } from 'react'
 import { FormProvider } from 'react-hook-form'
 import { parseStyroError } from 'src/app/portal/_common/lib/styro/parse-error'
 import { useStyroClient } from 'src/app/portal/_common/ui/auth-provider/auth-provider'
+import { CheckerRoleClient } from 'src/app/portal/_common/ui/checker/checker-role/checker-role-client'
 import { CopyButton } from 'src/app/portal/_common/ui/copy-button'
 import { z } from 'zod'
 
 interface ApiKeyKeyForm {
   teamId: string
-  teamMembership: Awaited<
-    ReturnType<StyroClient['getTeamsTeamIdMembersUserId']>
-  >['data']['member']
   apiKey: Pick<
-    Awaited<
-      ReturnType<StyroClient['getTeamsTeamIdApiKeysApiKeyId']>
-    >['data']['team']['apiKey'],
+    StyroResults['getTeamsTeamIdApiKeysApiKeyId']['data']['team']['apiKey'],
     'id' | 'key'
   >
 }
@@ -44,11 +40,7 @@ const apiKeyKeySchema = z.object({
 
 type ApiKeyKeyFormValues = z.infer<typeof apiKeyKeySchema>
 
-export function ApiKeyKeyForm({
-  teamId,
-  teamMembership,
-  apiKey,
-}: ApiKeyKeyForm) {
+export function ApiKeyKeyForm({ teamId, apiKey }: ApiKeyKeyForm) {
   const client = useStyroClient(true)
 
   const [globalMsg, setGlobalMsg] = useState<{
@@ -97,12 +89,6 @@ export function ApiKeyKeyForm({
 
   const canSubmit = isValid && !isPending
 
-  const error = (() => {
-    if (teamMembership.role !== 'owner' && teamMembership.role !== 'admin') {
-      return 'You must be the owner or admin of the team to reset it.'
-    }
-  })()
-
   return (
     <form onSubmit={form.handleSubmit(onSubmit)}>
       <FormProvider {...form}>
@@ -127,29 +113,22 @@ export function ApiKeyKeyForm({
             />
           </div>
           <div>
-            <TooltipProvider>
-              <Tooltip delayDuration={0}>
-                <TooltipTrigger asChild>
-                  <span>
-                    <Button
-                      type="submit"
-                      variant="destructive"
-                      fullWidth
-                      disabled={!!error || !canSubmit}
-                    >
-                      Reset
-                    </Button>
-                  </span>
-                </TooltipTrigger>
-                <TooltipContent
-                  align="end"
-                  className="!bg-background !p-4"
-                  hidden={!error}
+            <CheckerRoleClient
+              message="You must be the owner or admin of the team to reset api keys"
+              requiredRole="admin"
+              teamId={teamId}
+            >
+              {(disabled) => (
+                <Button
+                  type="submit"
+                  variant="destructive"
+                  fullWidth
+                  disabled={disabled || !canSubmit}
                 >
-                  {error}
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
+                  Reset
+                </Button>
+              )}
+            </CheckerRoleClient>
             <Collapsible open={!!globalMsg}>
               <div
                 className={classNames(

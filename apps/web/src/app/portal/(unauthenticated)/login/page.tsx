@@ -1,6 +1,7 @@
 import { Separator } from '@sushiswap/ui'
 import Link from 'next/link'
-import { OAuthButton, OAuthProvider } from '../../_common/ui/oauth/oauth-button'
+import { OAuthButton } from '../../_common/ui/oauth/oauth-button'
+import { OAuthProvider } from '../../_common/ui/oauth/oauth-config'
 import { LoginForm } from './_common/ui/login-form'
 
 export default function Page() {

@@ -1,7 +1,11 @@
 'use client'
 
 import { zodResolver } from '@hookform/resolvers/zod'
-import type { ResponseError, StyroClient } from '@sushiswap/styro-client'
+import type {
+  ResponseError,
+  StyroClient,
+  StyroResults,
+} from '@sushiswap/styro-client'
 import {
   Button,
   Collapsible,
@@ -11,12 +15,7 @@ import {
   FormItem,
   FormLabel,
   Slider,
-  Tabs,
-  TabsList,
-  TabsTrigger,
-  TextField,
   classNames,
-  formClassnames,
   useForm,
 } from '@sushiswap/ui'
 import { useMutation } from '@tanstack/react-query'
@@ -24,19 +23,16 @@ import { useCallback, useEffect, useState } from 'react'
 import { FormProvider } from 'react-hook-form'
 import { parseStyroError } from 'src/app/portal/_common/lib/styro/parse-error'
 import { useStyroClient } from 'src/app/portal/_common/ui/auth-provider/auth-provider'
+import { CheckerRoleClient } from 'src/app/portal/_common/ui/checker/checker-role/checker-role-client'
 import { z } from 'zod'
 
 interface ApiKeyRateLimitForm {
   teamId: string
   apiKey: Pick<
-    Awaited<
-      ReturnType<StyroClient['getTeamsTeamIdApiKeysApiKeyId']>
-    >['data']['team']['apiKey'],
+    StyroResults['getTeamsTeamIdApiKeysApiKeyId']['data']['team']['apiKey'],
     'id' | 'rateLimit'
   >
-  plan: Awaited<
-    ReturnType<StyroClient['getTeamsTeamIdPlan']>
-  >['data']['team']['plan']
+  plan: StyroResults['getTeamsTeamIdPlan']['data']['team']['plan']
 }
 
 const apiKeyRateLimitSchema = (max: number) =>
@@ -217,9 +213,21 @@ export function ApiKeyRateLimitForm({
             />
           </div>
           <div>
-            <Button type="submit" fullWidth disabled={!canSubmit}>
-              Save
-            </Button>
+            <CheckerRoleClient
+              message="You must be the owner or admin of the team to update rate limits"
+              requiredRole="admin"
+              teamId={teamId}
+            >
+              {(disabled) => (
+                <Button
+                  type="submit"
+                  fullWidth
+                  disabled={disabled || !canSubmit}
+                >
+                  Save
+                </Button>
+              )}
+            </CheckerRoleClient>
             <Collapsible open={!!globalMsg}>
               <div
                 className={classNames(

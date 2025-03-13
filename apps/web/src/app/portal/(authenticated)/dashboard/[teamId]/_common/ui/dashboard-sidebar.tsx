@@ -6,7 +6,7 @@ import {
   HomeIcon,
   KeyIcon,
 } from '@heroicons/react/24/outline'
-import type { StyroClient } from '@sushiswap/styro-client'
+import type { StyroResults } from '@sushiswap/styro-client'
 import { classNames } from '@sushiswap/ui'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
@@ -36,7 +36,7 @@ function DashboardEntry({ children, selected = false, href }: DashboardEntry) {
 export function DashboardSidebar({
   team,
 }: {
-  team: Awaited<ReturnType<StyroClient['getTeamsTeamId']>>['data']['team']
+  team: StyroResults['getTeamsTeamId']['data']['team']
 }) {
   const pathname = usePathname()
 

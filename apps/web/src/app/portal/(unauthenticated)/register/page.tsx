@@ -1,5 +1,6 @@
 import { Separator } from '@sushiswap/ui'
-import { OAuthButton, OAuthProvider } from '../../_common/ui/oauth/oauth-button'
+import { OAuthButton } from '../../_common/ui/oauth/oauth-button'
+import { OAuthProvider } from '../../_common/ui/oauth/oauth-config'
 import { RegisterForm } from './_common/ui/register-form'
 
 export default function Page() {

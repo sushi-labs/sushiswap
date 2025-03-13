@@ -53,11 +53,11 @@ export function CreateTeamDialog({ children }: { children: React.ReactNode }) {
   })
 
   const { mutateAsync } = useMutation({
-    mutationKey: ['manage-team'],
-    mutationFn: async (_values: CreateTeamFormValues) => {
+    mutationKey: ['portal-postTeams'],
+    mutationFn: async (values: CreateTeamFormValues) => {
       const response = await client.postTeams({
         patchTeamsTeamIdRequest: {
-          name: form.getValues('name'),
+          name: values.name,
         },
       })
 

@@ -1,6 +1,7 @@
 import { DeleteTeamCard } from './_common/ui/delete-team/delete-team-card'
 import { ManageTeamCard } from './_common/ui/manage-team/manage-team-card'
 import { TeamDetailsCard } from './_common/ui/team-details/team-details-card'
+import { TeamInvitesCard } from './_common/ui/team-invites/team-invites-card'
 import { TeamMembersCard } from './_common/ui/team-members/team-members-card'
 
 export default async function Page({
@@ -18,6 +19,7 @@ export default async function Page({
         <ManageTeamCard teamId={teamId} />
       </div>
       <TeamMembersCard teamId={teamId} />
+      <TeamInvitesCard teamId={teamId} />
     </div>
   )
 }

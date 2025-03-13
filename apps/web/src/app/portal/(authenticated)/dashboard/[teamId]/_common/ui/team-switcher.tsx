@@ -3,10 +3,10 @@
 import { CheckIcon } from '@heroicons/react-v1/solid'
 import { ChevronDownIcon, PlusIcon } from '@heroicons/react/24/solid'
 import { useOnClickOutside } from '@sushiswap/hooks'
-import type { StyroClient } from '@sushiswap/styro-client'
+import type { StyroResults } from '@sushiswap/styro-client'
 import { Separator, SkeletonText, classNames } from '@sushiswap/ui'
 import { useQuery } from '@tanstack/react-query'
-import { useRouter } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import { useRef, useState } from 'react'
 import { useStyroClient } from 'src/app/portal/_common/ui/auth-provider/auth-provider'
 import { CreateTeamDialog } from './create-team-dialog'
@@ -52,9 +52,7 @@ function TeamSwitcherEntry(
 }
 
 interface TeamSwitcher {
-  currentTeam: Awaited<
-    ReturnType<StyroClient['getTeamsTeamId']>
-  >['data']['team']
+  currentTeam: StyroResults['getTeamsTeamId']['data']['team']
 }
 
 export function TeamSwitcher({ currentTeam }: TeamSwitcher) {
@@ -63,6 +61,8 @@ export function TeamSwitcher({ currentTeam }: TeamSwitcher) {
 
   const router = useRouter()
   const client = useStyroClient(true)
+
+  const pathname = usePathname()
 
   const { data, isLoading, isError } = useQuery({
     queryKey: ['portal-getUsersMe'],
@@ -79,7 +79,7 @@ export function TeamSwitcher({ currentTeam }: TeamSwitcher) {
 
   const onTeamClick = (teamId: string) => {
     if (currentTeam.id === teamId) return
-    router.push(`/portal/dashboard/${teamId}`)
+    router.push(pathname.replace(currentTeam.id, teamId))
   }
 
   return (

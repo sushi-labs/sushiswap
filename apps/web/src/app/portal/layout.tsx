@@ -1,3 +1,4 @@
+import NextTopLoader from 'nextjs-toploader'
 import { getSessionData } from './_common/lib/client-config'
 import { Header } from './_common/ui/header/header'
 import { Providers } from './providers'
@@ -10,6 +11,7 @@ export default async function Layout({
   return (
     <Providers authSession={authSession}>
       <Header />
+      <NextTopLoader />
       {children}
     </Providers>
   )

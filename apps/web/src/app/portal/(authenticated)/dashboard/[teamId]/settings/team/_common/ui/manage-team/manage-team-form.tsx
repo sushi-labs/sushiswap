@@ -19,6 +19,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { parseStyroError } from 'src/app/portal/_common/lib/styro/parse-error'
 import { useStyroClient } from 'src/app/portal/_common/ui/auth-provider/auth-provider'
+import { CheckerRoleClient } from 'src/app/portal/_common/ui/checker/checker-role/checker-role-client'
 import { z } from 'zod'
 
 interface ManageTeamForm {
@@ -128,9 +129,22 @@ export function ManageTeamForm({ team: initialTeam }: ManageTeamForm) {
             />
           </div>
           <div>
-            <Button type="submit" fullWidth disabled={!canSubmit}>
-              Change
-            </Button>
+            <CheckerRoleClient
+              requiredRole="admin"
+              message="Only admins and owners can manage the team"
+              teamId={initialTeam.id}
+            >
+              {(disabled) => (
+                <Button
+                  type="submit"
+                  fullWidth
+                  disabled={!canSubmit || disabled}
+                >
+                  Change
+                </Button>
+              )}
+            </CheckerRoleClient>
+
             <Collapsible open={!!globalMsg}>
               <div
                 className={classNames(

@@ -1,7 +1,7 @@
 'use client'
 
 import { CheckIcon, XIcon } from '@heroicons/react-v1/solid'
-import type { StyroClient } from '@sushiswap/styro-client'
+import type { StyroClient, StyroResults } from '@sushiswap/styro-client'
 import { DataTable, Explainer } from '@sushiswap/ui'
 import { useQuery } from '@tanstack/react-query'
 import type { ColumnDef } from '@tanstack/react-table'
@@ -9,9 +9,7 @@ import { formatDistanceToNow } from 'date-fns/esm'
 import { useMemo } from 'react'
 import { useStyroClient } from 'src/app/portal/_common/ui/auth-provider/auth-provider'
 
-type TeamWithApiKeys = Awaited<
-  ReturnType<StyroClient['getTeamsTeamIdApiKeys']>
->['data']['team']
+type TeamWithApiKeys = StyroResults['getTeamsTeamIdApiKeys']['data']['team']
 
 export type ApiKey = TeamWithApiKeys['apiKeys'][number]
 

@@ -1,7 +1,11 @@
 'use client'
 
 import { zodResolver } from '@hookform/resolvers/zod'
-import type { ResponseError, StyroClient } from '@sushiswap/styro-client'
+import type {
+  ResponseError,
+  StyroClient,
+  StyroResults,
+} from '@sushiswap/styro-client'
 import {
   Button,
   Collapsible,
@@ -9,10 +13,8 @@ import {
   FormField,
   FormItem,
   FormLabel,
-  Label,
   Switch,
   Tabs,
-  TabsContent,
   TabsList,
   TabsTrigger,
   TextField,
@@ -25,14 +27,13 @@ import { useCallback, useEffect, useState } from 'react'
 import { FormProvider } from 'react-hook-form'
 import { parseStyroError } from 'src/app/portal/_common/lib/styro/parse-error'
 import { useStyroClient } from 'src/app/portal/_common/ui/auth-provider/auth-provider'
+import { CheckerRoleClient } from 'src/app/portal/_common/ui/checker/checker-role/checker-role-client'
 import { z } from 'zod'
 
 interface ApiKeyBasicSettingsForm {
   teamId: string
   apiKey: Pick<
-    Awaited<
-      ReturnType<StyroClient['getTeamsTeamIdApiKeysApiKeyId']>
-    >['data']['team']['apiKey'],
+    StyroResults['getTeamsTeamIdApiKeysApiKeyId']['data']['team']['apiKey'],
     'id' | 'name' | 'enabled'
   >
 }
@@ -192,9 +193,21 @@ export function ApiKeyBasicSettingsForm({
             />
           </div>
           <div>
-            <Button type="submit" fullWidth disabled={!canSubmit}>
-              Save
-            </Button>
+            <CheckerRoleClient
+              message="You must be the owner or admin of the team to change key settings"
+              requiredRole="admin"
+              teamId={teamId}
+            >
+              {(disabled) => (
+                <Button
+                  type="submit"
+                  fullWidth
+                  disabled={disabled || !canSubmit}
+                >
+                  Save
+                </Button>
+              )}
+            </CheckerRoleClient>
             <Collapsible open={!!globalMsg}>
               <div
                 className={classNames(

@@ -1,6 +1,16 @@
 import { createStyroClient } from '@sushiswap/styro-client'
 import { STYRO_BASE_PATH } from './config'
 
+export function getUnauthenticatedStyroClient() {
+  return createStyroClient({
+    basePath: STYRO_BASE_PATH,
+    accessToken: {
+      sessionId: '',
+      sessionToken: '',
+    },
+  })
+}
+
 export async function getStyroClient() {
   const { getSessionData } = await import('../client-config')
   const session = await getSessionData()

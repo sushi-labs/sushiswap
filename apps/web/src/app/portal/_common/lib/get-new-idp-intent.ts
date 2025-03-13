@@ -2,14 +2,18 @@ import { headers } from 'next/headers'
 import { authEnv } from 'src/app/portal/_common/lib/auth-env'
 import { z } from 'zod'
 
-export type GetIdpIntentConfig =
-  | {
-      type: 'login'
-    }
-  | {
-      type: 'connect'
-      redirect: string
-    }
+export const getIdpIntentSchema = z
+  .object({
+    type: z.literal('login'),
+  })
+  .or(
+    z.object({
+      type: z.literal('connect'),
+      redirect: z.string(),
+    }),
+  )
+
+export type GetIdpIntentConfig = z.infer<typeof getIdpIntentSchema>
 
 const newIdpIntentSchema = z.object({
   details: z.object({

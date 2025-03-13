@@ -1,4 +1,4 @@
-import { Button } from '@sushiswap/ui'
+import { Button, Dots } from '@sushiswap/ui'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useMemo } from 'react'
 import { useStyroClient } from 'src/app/portal/_common/ui/auth-provider/auth-provider'
@@ -18,12 +18,16 @@ export function TeamMembersRemoveAction({
   const client = useStyroClient(true)
   const queryClient = useQueryClient()
 
-  const { mutateAsync } = useMutation({
-    mutationKey: ['portal-deleteTeamsTeamIdMembersUserId', teamId, member.id],
+  const { mutateAsync, isPending } = useMutation({
+    mutationKey: [
+      'portal-deleteTeamsTeamIdMembersUserId',
+      teamId,
+      member.user.id,
+    ],
     mutationFn: async () => {
       await client.deleteTeamsTeamIdMembersUserId({
         teamId,
-        userId: member.id,
+        userId: member.user.id,
       })
     },
     onSuccess: () => {
@@ -56,10 +60,18 @@ export function TeamMembersRemoveAction({
           key={`remove`}
           fullWidth
           variant="ghost"
-          className="flex items-center !justify-normal text-green-500"
+          className="flex items-center !justify-normal text-red-500"
           onClick={() => mutateAsync()}
+          disabled={isPending}
         >
-          Remove from team
+          {!isPending ? (
+            'Remove'
+          ) : (
+            <span>
+              Removing
+              <Dots />
+            </span>
+          )}
         </Button>
       ) : null}
     </>

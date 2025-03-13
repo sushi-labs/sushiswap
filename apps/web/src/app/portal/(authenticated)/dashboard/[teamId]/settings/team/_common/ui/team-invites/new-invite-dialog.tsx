@@ -12,6 +12,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  Dots,
   FormControl,
   FormField,
   FormItem,
@@ -19,58 +20,60 @@ import {
   TextField,
   classNames,
   formClassnames,
+  useForm,
 } from '@sushiswap/ui'
-import { useMutation } from '@tanstack/react-query'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useRouter } from 'next/navigation'
-import type React from 'react'
 import { useCallback, useState } from 'react'
-import { FormProvider, useForm } from 'react-hook-form'
+import { FormProvider } from 'react-hook-form'
 import { parseStyroError } from 'src/app/portal/_common/lib/styro/parse-error'
 import { useStyroClient } from 'src/app/portal/_common/ui/auth-provider/auth-provider'
 import { z } from 'zod'
 
-const createApiKeyFormSchema = z.object({
-  name: z
-    .string()
-    .min(4, { message: 'Minimum length is 4 characters' })
-    .max(20, { message: 'Maximum length is 20 characters' }),
+interface NewInviteDialog {
+  teamId: string
+  children: React.ReactNode
+}
+
+const newInviteFormSchema = z.object({
+  email: z.string().email(),
 })
 
-type CreateApiKeyFormValues = z.infer<typeof createApiKeyFormSchema>
+type NewInviteFormValues = z.infer<typeof newInviteFormSchema>
 
-export function CreateApiKeyDialog({
-  teamId,
-  children,
-}: { teamId: string; children: React.ReactNode }) {
+export function NewInviteDialog({ teamId, children }: NewInviteDialog) {
+  const [open, setOpen] = useState(false)
+
+  const queryClient = useQueryClient()
   const client = useStyroClient(true)
-  const router = useRouter()
 
   const [globalErrorMsg, setGlobalErrorMsg] = useState<string | null>(null)
 
-  const form = useForm<CreateApiKeyFormValues>({
+  const form = useForm<NewInviteFormValues>({
     defaultValues: {
-      name: '',
+      email: '',
     },
     mode: 'all',
-    resolver: zodResolver(createApiKeyFormSchema),
+    resolver: zodResolver(newInviteFormSchema),
   })
 
   const { mutateAsync } = useMutation({
-    mutationKey: ['portal-postTeamsTeamIdApiKeys', teamId],
-    mutationFn: async (values: CreateApiKeyFormValues) => {
-      const response = await client.postTeamsTeamIdApiKeys({
+    mutationKey: ['portal-postTeamsTeamIdInvites', teamId],
+    mutationFn: async (values: NewInviteFormValues) => {
+      const response = await client.postTeamsTeamIdInvites({
         teamId,
-        postTeamsTeamIdApiKeysRequest: {
-          name: values.name,
+        postTeamsTeamIdInvitesRequest: {
+          email: values.email,
         },
       })
 
       return response.data
     },
-    onSuccess: (data) => {
-      router.push(
-        `/portal/dashboard/${data.team.id}/api-keys/${data.team.apiKey.id}`,
-      )
+    onSuccess: () => {
+      queryClient.refetchQueries({
+        queryKey: ['portal-getTeamsTeamIdInvites', teamId],
+      })
+      setOpen(false)
     },
     onError: async (e: ResponseError) => {
       setGlobalErrorMsg(await parseStyroError(e))
@@ -78,7 +81,7 @@ export function CreateApiKeyDialog({
   })
 
   const onSubmit = useCallback(
-    async (values: CreateApiKeyFormValues) => {
+    async (values: NewInviteFormValues) => {
       await mutateAsync(values)
     },
     [mutateAsync],
@@ -90,18 +93,18 @@ export function CreateApiKeyDialog({
   const canSubmit = isValid && !isPending
 
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent>
         <FormProvider {...form}>
           <DialogHeader>
-            <DialogTitle>Create a new API key</DialogTitle>
+            <DialogTitle>New Invite</DialogTitle>
             <DialogDescription>
-              Name your API key to get started. After that, you’ll be taken to a
-              page for advanced configuration options
+              Invite a new user to your team
             </DialogDescription>
           </DialogHeader>
           <FormField
-            name="name"
+            name="email"
             control={form.control}
             render={({
               field: { value, onChange, onBlur },
@@ -110,10 +113,10 @@ export function CreateApiKeyDialog({
               <FormControl>
                 <FormItem className="w-full">
                   <>
-                    <FormLabel>Key Name</FormLabel>
+                    <FormLabel>E-mail</FormLabel>
                     <TextField
                       type="text"
-                      placeholder="Backend"
+                      placeholder="john@gmail.com"
                       value={value}
                       onChange={(e) => onChange(e.target.value)}
                       onBlur={onBlur}
@@ -128,7 +131,14 @@ export function CreateApiKeyDialog({
           <DialogFooter>
             <form onSubmit={form.handleSubmit(onSubmit)} className="w-full">
               <Button type="submit" className="w-full" disabled={!canSubmit}>
-                Create
+                {!isPending ? (
+                  'Create'
+                ) : (
+                  <span>
+                    Creating
+                    <Dots />
+                  </span>
+                )}
               </Button>
               <Collapsible open={!!globalErrorMsg}>
                 <div
@@ -144,7 +154,6 @@ export function CreateApiKeyDialog({
           </DialogFooter>
         </FormProvider>
       </DialogContent>
-      <DialogTrigger asChild>{children}</DialogTrigger>
     </Dialog>
   )
 }

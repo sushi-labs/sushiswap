@@ -1,4 +1,4 @@
-import { Button } from '@sushiswap/ui'
+import { Button, Dots } from '@sushiswap/ui'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useMemo } from 'react'
 import { useStyroClient } from 'src/app/portal/_common/ui/auth-provider/auth-provider'
@@ -18,12 +18,17 @@ export function TeamMembersPromoteAction({
   const client = useStyroClient(true)
   const queryClient = useQueryClient()
 
-  const { mutateAsync } = useMutation({
-    mutationKey: ['portal-patchTeamsTeamIdMembersUserId', teamId, member.id],
+  const { mutateAsync, variables, isPending } = useMutation({
+    mutationKey: [
+      'portal-patchTeamsTeamIdMembersUserId',
+      'promote',
+      teamId,
+      member.id,
+    ],
     mutationFn: async (role: Member['role']) => {
       await client.patchTeamsTeamIdMembersUserId({
         teamId,
-        userId: member.id,
+        userId: member.user.id,
         patchTeamsTeamIdMembersUserIdRequest: {
           role,
         },
@@ -55,10 +60,19 @@ export function TeamMembersPromoteAction({
       key={`promote-${role}`}
       fullWidth
       variant="ghost"
-      className="flex items-center !justify-normal text-green-500"
+      className="flex items-center !justify-normal text-green-500 min-w-[120px]"
       onClick={() => mutateAsync(role)}
     >
-      Promote to <span className="capitalize">{role}</span>
+      {!isPending || variables !== role ? (
+        <span>
+          Promote to <span className="capitalize">{role}</span>
+        </span>
+      ) : (
+        <span>
+          Promoting
+          <Dots />
+        </span>
+      )}
     </Button>
   ))
 }

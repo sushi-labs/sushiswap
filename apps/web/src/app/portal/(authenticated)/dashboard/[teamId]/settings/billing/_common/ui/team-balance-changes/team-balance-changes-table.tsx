@@ -1,7 +1,7 @@
 'use client'
 
 import { useIsMounted } from '@sushiswap/hooks'
-import type { StyroClient } from '@sushiswap/styro-client'
+import type { StyroResults } from '@sushiswap/styro-client'
 import { Button, DataTable, classNames } from '@sushiswap/ui'
 import type {
   ColumnDef,
@@ -12,9 +12,7 @@ import { useMemo, useState } from 'react'
 import { _RemoveSectionUnstake } from '~aptos/_common/components/RemoveSection/RemoveSectionUnstake'
 import { Erc20DepositDialog } from './erc-20-deposit-dialog'
 
-type Team = Awaited<
-  ReturnType<StyroClient['getTeamsTeamIdBilling']>
->['data']['team']
+type Team = StyroResults['getTeamsTeamIdBilling']['data']['team']
 
 type BillDeduction = Team['balanceDeductions']['billDeductions'][number] & {
   type: 'Bill Deduction'
@@ -132,6 +130,7 @@ export function TeamBalanceChangesTable({ team }: TeamBalanceChangesTable) {
     const billDeductions =
       team.balanceDeductions.billDeductions.map<BillDeduction>((deduction) => ({
         ...deduction,
+        amountUSD: -deduction.amountUSD,
         type: 'Bill Deduction',
       }))
     return [...voucherDeposits, ...erc20Deposits, ...billDeductions]

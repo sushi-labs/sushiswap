@@ -1,4 +1,4 @@
-import { Button } from '@sushiswap/ui'
+import { Button, Dots } from '@sushiswap/ui'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useMemo } from 'react'
 import { useStyroClient } from 'src/app/portal/_common/ui/auth-provider/auth-provider'
@@ -18,12 +18,17 @@ export function TeamMembersDemoteAction({
   const client = useStyroClient(true)
   const queryClient = useQueryClient()
 
-  const { mutateAsync } = useMutation({
-    mutationKey: ['portal-patchTeamsTeamIdMembersUserId', teamId, member.id],
+  const { mutateAsync, isPending } = useMutation({
+    mutationKey: [
+      'portal-patchTeamsTeamIdMembersUserId',
+      'demote',
+      teamId,
+      member.id,
+    ],
     mutationFn: async (role: Member['role']) => {
       await client.patchTeamsTeamIdMembersUserId({
         teamId,
-        userId: member.id,
+        userId: member.user.id,
         patchTeamsTeamIdMembersUserIdRequest: {
           role,
         },
@@ -36,7 +41,7 @@ export function TeamMembersDemoteAction({
     },
   })
 
-  const canPromoteTo = useMemo(() => {
+  const canDemoteTo = useMemo(() => {
     if (activeUser.role === 'owner') {
       if (member.role === 'admin') {
         return ['viewer'] as const
@@ -46,15 +51,24 @@ export function TeamMembersDemoteAction({
     return [] as const
   }, [member, activeUser])
 
-  return canPromoteTo.map((role) => (
+  return canDemoteTo.map((role) => (
     <Button
       key={`demote-${role}`}
       fullWidth
       variant="ghost"
-      className="flex items-center !justify-normal text-green-500"
+      className="flex items-center !justify-normal text-red-500"
       onClick={() => mutateAsync(role)}
     >
-      Demote to <span className="capitalize">{role}</span>
+      {!isPending ? (
+        <span>
+          Demote to <span className="capitalize">{role}</span>
+        </span>
+      ) : (
+        <span>
+          Demoting
+          <Dots />
+        </span>
+      )}
     </Button>
   ))
 }

@@ -1,6 +1,6 @@
 'use client'
 
-import type { StyroClient } from '@sushiswap/styro-client'
+import type { StyroClient, StyroResults } from '@sushiswap/styro-client'
 import {
   Button,
   Card,
@@ -26,9 +26,7 @@ import { TeamMembersDemoteAction } from './actions/demote'
 import { TeamMembersPromoteAction } from './actions/promote'
 import { TeamMembersRemoveAction } from './actions/remove'
 
-type TeamWithMembers = Awaited<
-  ReturnType<StyroClient['getTeamsTeamIdMembers']>
->['data']['team']
+type TeamWithMembers = StyroResults['getTeamsTeamIdMembers']['data']['team']
 
 export type Member = TeamWithMembers['members'][number]
 
@@ -104,7 +102,7 @@ const columns = [
             </Button>
           </PopoverTrigger>
           <PopoverContent
-            className="!p-1 !overflow-x-hidden !overflow-y-scroll scroll w-[140px]"
+            className="!p-1 !overflow-x-hidden !overflow-y-scroll scroll !w-min min-w-[140px]"
             align="end"
             onOpenAutoFocus={(event) => {
               event.preventDefault()

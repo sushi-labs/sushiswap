@@ -10,11 +10,11 @@ import {
   getSessionData,
 } from 'src/app/portal/_common/lib/client-config'
 import { getUserServiceClient } from 'src/app/portal/_common/lib/zitadel-client'
+import { OAuthButton } from 'src/app/portal/_common/ui/oauth/oauth-button'
 import {
-  OAuthButton,
   OAuthId,
   OAuthProvider,
-} from 'src/app/portal/_common/ui/oauth/oauth-button'
+} from 'src/app/portal/_common/ui/oauth/oauth-config'
 
 interface IdentityProvidersCard {
   teamId: string
