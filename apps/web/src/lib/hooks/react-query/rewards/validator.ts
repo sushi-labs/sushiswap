@@ -5,10 +5,11 @@ import type { Hex } from 'viem'
 import z from 'zod'
 
 const merklRewardsTokenValidator = z.object({
-  token: z.string().transform((address) => address as Address),
+  address: z.string().transform((address) => address as Address),
   decimals: z.number().optional(),
   symbol: z.string().optional(),
-  minimumAmountPerEpoch: z.number(),
+  minimumAmountPerHour: z.string().transform((amount) => BigInt(amount)),
+  isTest: z.boolean().optional(),
 })
 
 export const merklRewardsTokensValidator = z.array(merklRewardsTokenValidator)

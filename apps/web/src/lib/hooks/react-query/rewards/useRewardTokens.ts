@@ -13,28 +13,28 @@ export const useRewardTokens = ({ chainId }: UseAngleRewardTokensParams) => {
   return useQuery({
     queryKey: ['merklRewardTokens', { chainId }],
     queryFn: async () => {
-      const url = new URL('https://api.merkl.xyz/v3/overview')
-      url.searchParams.set('chainId', `${chainId}`)
+      const url = new URL(`https://api.merkl.xyz/v4/tokens/reward/${chainId}`)
 
       const res = await fetch(url)
       const json = await res.json()
 
-      const parsed = merklRewardsTokensValidator.parse(
-        json.rewardTokens[chainId],
-      )
+      const parsed = merklRewardsTokensValidator.parse(json)
 
       return parsed
-        .filter((el) => el.decimals && el.symbol !== 'aglaMerkl')
+        .filter(
+          (el) =>
+            el.decimals && el.symbol !== 'aglaMerkl' && el.isTest !== true,
+        )
         .map((el) => {
           const token = new Token({
             chainId,
-            address: el.token,
+            address: el.address,
             symbol: el.symbol,
             decimals: el.decimals!,
           })
           return {
-            minimumAmountPerEpoch: tryParseAmount(
-              withoutScientificNotation(el.minimumAmountPerEpoch.toString()),
+            minimumAmountPerHour: tryParseAmount(
+              withoutScientificNotation(el.minimumAmountPerHour.toString()),
               token,
             ),
             token,
