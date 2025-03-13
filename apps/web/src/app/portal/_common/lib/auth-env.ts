@@ -1,5 +1,7 @@
 import { z } from 'zod'
 
+console.log(process.env)
+
 export const authEnv = z
   .object({
     AUTH_SESSION_SECRET: z.string(),
