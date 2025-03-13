@@ -37,10 +37,8 @@ export const headerElements = ({
     item: (
       <NavigationMenuItem className={NavigationElementType.Custom}>
         <NavigationMenuTrigger>
-        <LinkInternal
-            href={`/${ChainKey[chainId ?? ChainId.ETHEREUM]}/swap`}
-          >
-          Trade
+          <LinkInternal href={`/${ChainKey[chainId ?? ChainId.ETHEREUM]}/swap`}>
+            Trade
           </LinkInternal>
         </NavigationMenuTrigger>
         <NavigationMenuContent>
