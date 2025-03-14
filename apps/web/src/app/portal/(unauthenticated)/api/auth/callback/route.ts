@@ -1,3 +1,4 @@
+import { UserState } from '@zitadel/proto/zitadel/user/v2/user_pb'
 import { redirect } from 'next/navigation'
 import type { NextRequest } from 'next/server'
 import {
@@ -45,7 +46,7 @@ async function GET(req: NextRequest) {
       if (e instanceof Error && 'code' in e) {
         // User already exists
         if (e.code === 6) {
-          return redirect('/portal/login?error=oauthAlreadyExists')
+          return redirect('/portal/login?error_tag=oauthAlreadyExists')
         }
       }
       return new Response('An unknown error occured', { status: 500 })
@@ -60,11 +61,19 @@ async function GET(req: NextRequest) {
 
   if (!email) {
     const user = await getUserById(data.user)
-    if (user.state !== 'USER_STATE_ACTIVE') {
+    if (user?.user?.state !== UserState.ACTIVE) {
       return new Response('User is not active', { status: 400 })
     }
 
-    email = user.human.email.email
+    if (user.user.type.case !== 'human') {
+      return new Response('User is not a human', { status: 400 })
+    }
+
+    if (!user.user.type.value.email?.email) {
+      return new Response('User has no email', { status: 400 })
+    }
+
+    email = user.user.type.value.email.email
   }
 
   const previousSession = await getSession()

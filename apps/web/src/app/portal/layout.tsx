@@ -11,7 +11,7 @@ export default async function Layout({
   return (
     <Providers authSession={authSession}>
       <Header />
-      <NextTopLoader />
+      <NextTopLoader showSpinner={false} />
       {children}
     </Providers>
   )

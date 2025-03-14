@@ -20,5 +20,6 @@ export async function oauthAction(data: z.infer<typeof oauthFormSchema>) {
     config: parsed.config,
   })
 
-  redirect(idpIntent.authUrl)
+  // Remove :443 from the redirect URL
+  redirect(idpIntent.nextStep.value.replace('%3A443', ''))
 }

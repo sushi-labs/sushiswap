@@ -22,10 +22,12 @@ type LoginFormValues = z.infer<typeof loginFormSchema>
 const paramErrors = {
   oauthAlreadyExists:
     'User with this email already exists, please try logging in with your password instead',
+  oauthFailed:
+    'Failed to authenticate with OAuth provider, contact us for support',
 } as Record<string, string>
 
 export function LoginForm() {
-  const searchParamsError = useSearchParams().get('error')
+  const searchParamsError = useSearchParams().get('error_tag')
 
   const [globalErrorMsg, setGlobalErrorMsg] = useState<string | null>(
     searchParamsError ? paramErrors[searchParamsError] : null,

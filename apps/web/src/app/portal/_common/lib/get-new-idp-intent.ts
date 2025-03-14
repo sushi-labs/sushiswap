@@ -1,5 +1,4 @@
 import { headers } from 'next/headers'
-import { authEnv } from 'src/app/portal/_common/lib/auth-env'
 import { z } from 'zod'
 import { getUserServiceClient } from './zitadel-client'
 
@@ -15,15 +14,6 @@ export const getIdpIntentSchema = z
   )
 
 export type GetIdpIntentConfig = z.infer<typeof getIdpIntentSchema>
-
-const newIdpIntentSchema = z.object({
-  details: z.object({
-    sequence: z.string(),
-    changeDate: z.string(),
-    resourceOwner: z.string(),
-  }),
-  authUrl: z.string(),
-})
 
 function getSuccessUrl({
   host,
@@ -63,7 +53,7 @@ export async function getNewIdpIntent({
 
   const userServiceClient = getUserServiceClient()
 
-  const response = userServiceClient.startIdentityProviderIntent({
+  const response = await userServiceClient.startIdentityProviderIntent({
     $typeName: 'zitadel.user.v2.StartIdentityProviderIntentRequest',
     idpId,
     content: {
@@ -71,10 +61,14 @@ export async function getNewIdpIntent({
       value: {
         $typeName: 'zitadel.user.v2.RedirectURLs',
         successUrl: getSuccessUrl({ host, proto, config }),
-        failureUrl: `${proto}://${host}/portal`,
+        failureUrl: `${proto}://${host}/portal/login?error_tag=oauthFailed`,
       },
     },
   })
 
-  return newIdpIntentSchema.parse(response)
+  type Result = Omit<typeof response, 'nextStep'> & {
+    nextStep: Extract<(typeof response)['nextStep'], { case: 'authUrl' }>
+  }
+
+  return response as Result
 }
