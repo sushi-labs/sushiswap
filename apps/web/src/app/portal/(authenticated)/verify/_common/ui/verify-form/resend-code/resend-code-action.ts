@@ -14,9 +14,11 @@ export async function resendCodeAction() {
   const host = headers_.get('Host')!
   const proto = headers_.get('X-Forwarded-Proto') || 'https'
 
+  console.log(`${proto}://${host}/portal/email/verify-email?code={{.Code}}`)
+
   try {
     const userServiceClient = getUserServiceClient()
-    await userServiceClient.resendEmailCode({
+    const response = await userServiceClient.resendEmailCode({
       $typeName: 'zitadel.user.v2.ResendEmailCodeRequest',
       userId: session.user.id,
       verification: {
@@ -27,6 +29,8 @@ export async function resendCodeAction() {
         },
       },
     })
+
+    console.log(response)
   } catch (e) {
     console.error(e)
     return { error: 'Failed to resend code' }
