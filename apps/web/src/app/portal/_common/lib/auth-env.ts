@@ -16,6 +16,14 @@ const authParsed = authSchema.safeParse({
   ZITADEL_SA_TOKEN: process.env.ZITADEL_SA_TOKEN,
 })
 
+export let authEnv = {
+  AUTH_SESSION_SECRET: '',
+  ZITADEL_ISSUER: '',
+  ZITADEL_CLIENT_ID: '',
+  ZITADEL_CLIENT_SECRET: '',
+  ZITADEL_SA_TOKEN: '',
+}
+
 if (!authParsed.success) {
   if (process.env.npm_lifecycle_event !== 'build') {
     console.error(authParsed.error.issues)
@@ -24,4 +32,4 @@ if (!authParsed.success) {
 }
 
 // Needed because env is missing at vercel build time
-export const authEnv = authParsed.data!
+authEnv = authParsed.data!
