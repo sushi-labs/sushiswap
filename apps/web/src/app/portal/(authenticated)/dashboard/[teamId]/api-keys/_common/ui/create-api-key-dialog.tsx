@@ -21,7 +21,7 @@ import {
   formClassnames,
 } from '@sushiswap/ui'
 import { useMutation } from '@tanstack/react-query'
-import { useRouter } from 'next/navigation'
+import { useRouter } from 'nextjs-toploader/app'
 import type React from 'react'
 import { useCallback, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'

@@ -3,7 +3,7 @@
 import type { ResponseError } from '@sushiswap/styro-client'
 import { Button, Collapsible, Dots, classNames } from '@sushiswap/ui'
 import { useMutation } from '@tanstack/react-query'
-import { useRouter } from 'next/navigation'
+import { useRouter } from 'nextjs-toploader/app'
 import { useState } from 'react'
 import { parseStyroError } from 'src/app/portal/_common/lib/styro/parse-error'
 import { useStyroClient } from 'src/app/portal/_common/ui/auth-provider/auth-provider'

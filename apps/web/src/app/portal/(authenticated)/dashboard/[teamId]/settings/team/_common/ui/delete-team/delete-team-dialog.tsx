@@ -19,7 +19,7 @@ import {
   useForm,
 } from '@sushiswap/ui'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { useRouter } from 'next/navigation'
+import { useRouter } from 'nextjs-toploader/app'
 import { type ReactNode, useCallback, useState } from 'react'
 import { FormProvider } from 'react-hook-form'
 import { parseStyroError } from 'src/app/portal/_common/lib/styro/parse-error'

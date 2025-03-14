@@ -1,7 +1,8 @@
 'use client'
 
 import { Tabs, TabsList, TabsTrigger } from '@sushiswap/ui'
-import { usePathname, useRouter } from 'next/navigation'
+import { usePathname } from 'next/navigation'
+import { useRouter } from 'nextjs-toploader/app'
 
 function getTab(pathname: string) {
   if (pathname.endsWith('/settings')) {
