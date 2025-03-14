@@ -1,5 +1,6 @@
 import { authEnv } from 'src/app/portal/_common/lib/auth-env'
 import { z } from 'zod'
+import { getUserServiceClient } from './zitadel-client'
 
 const googleSchema = z.object({
   User: z.object({
@@ -95,24 +96,14 @@ const schema = z
 export type IdpIntent = z.infer<typeof schema>
 
 export async function getIdpIntent(id: string, token: string) {
-  const response = await fetch(
-    `${authEnv.ZITADEL_ISSUER}/v2/idp_intents/${id}`,
-    {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Accept: 'application/json',
-        Authorization: `Bearer ${authEnv.ZITADEL_SA_TOKEN}`,
-      },
-      body: JSON.stringify({
-        idpIntentToken: token,
-      }),
-    },
-  )
+  const userServiceClient = getUserServiceClient()
+  const response = await userServiceClient.retrieveIdentityProviderIntent({
+    $typeName: 'zitadel.user.v2.RetrieveIdentityProviderIntentRequest',
+    idpIntentId: id,
+    idpIntentToken: token,
+  })
 
-  const data = await response.json()
-
-  const result = schema.safeParse(data)
+  const result = schema.safeParse(response)
 
   if (!result.success) {
     throw new Error(`Couldn't get intent`)
