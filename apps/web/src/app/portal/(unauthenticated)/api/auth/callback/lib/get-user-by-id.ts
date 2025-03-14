@@ -1,4 +1,5 @@
 import { authEnv } from 'src/app/portal/_common/lib/auth-env'
+import { getUserServiceClient } from 'src/app/portal/_common/lib/zitadel-client'
 import { z } from 'zod'
 
 // Not exhaustive
@@ -27,18 +28,14 @@ const schema = z.object({
 })
 
 export async function getUserById(id: string) {
-  const response = await fetch(`${authEnv.ZITADEL_ISSUER}/v2/users/${id}`, {
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-      Accept: 'application/json',
-      Authorization: `Bearer ${authEnv.ZITADEL_SA_TOKEN}`,
-    },
+  const userServiceClient = getUserServiceClient()
+
+  const response = await userServiceClient.getUserByID({
+    $typeName: 'zitadel.user.v2.GetUserByIDRequest',
+    userId: id,
   })
 
-  const data = await response.json()
-
-  const result = schema.safeParse(data)
+  const result = schema.safeParse(response)
 
   if (!result.success) {
     throw new Error(`Couldn't fetch user data`)

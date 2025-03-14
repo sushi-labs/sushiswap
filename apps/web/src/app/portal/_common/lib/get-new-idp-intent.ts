@@ -1,6 +1,7 @@
 import { headers } from 'next/headers'
 import { authEnv } from 'src/app/portal/_common/lib/auth-env'
 import { z } from 'zod'
+import { getUserServiceClient } from './zitadel-client'
 
 export const getIdpIntentSchema = z
   .object({
@@ -60,23 +61,20 @@ export async function getNewIdpIntent({
   const host = headers_.get('Host')!
   const proto = headers_.get('X-Forwarded-Proto') || 'https'
 
-  const response = await fetch(`${authEnv.ZITADEL_ISSUER}/v2/idp_intents`, {
-    method: 'POST',
-    headers: {
-      Accept: 'application/json',
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${authEnv.ZITADEL_SA_TOKEN}`,
-    },
-    body: JSON.stringify({
-      idpId,
-      urls: {
+  const userServiceClient = getUserServiceClient()
+
+  const response = userServiceClient.startIdentityProviderIntent({
+    $typeName: 'zitadel.user.v2.StartIdentityProviderIntentRequest',
+    idpId,
+    content: {
+      case: 'urls',
+      value: {
+        $typeName: 'zitadel.user.v2.RedirectURLs',
         successUrl: getSuccessUrl({ host, proto, config }),
         failureUrl: `${proto}://${host}/portal`,
       },
-    }),
+    },
   })
 
-  const data = await response.json()
-
-  return newIdpIntentSchema.parse(data)
+  return newIdpIntentSchema.parse(response)
 }

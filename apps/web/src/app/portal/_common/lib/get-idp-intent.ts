@@ -1,4 +1,3 @@
-import { authEnv } from 'src/app/portal/_common/lib/auth-env'
 import { z } from 'zod'
 import { getUserServiceClient } from './zitadel-client'
 
