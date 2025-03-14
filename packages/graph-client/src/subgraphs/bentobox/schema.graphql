@@ -3,7 +3,9 @@ Marks the GraphQL type as indexable entity.  Each type that should be an entity 
 """
 directive @entity on OBJECT
 
-"""Defined a Subgraph ID for an object type"""
+"""
+Defined a Subgraph ID for an object type
+"""
 directive @subgraphId(id: String!) on OBJECT
 
 """
@@ -83,7 +85,9 @@ input Balance_filter {
   share_in: [BigInt!]
   share_not_in: [BigInt!]
 
-  """Filter for the block changed event."""
+  """
+  Filter for the block changed event.
+  """
   _change_block: BlockChangedFilter
   and: [Balance_filter]
   or: [Balance_filter]
@@ -107,118 +111,239 @@ enum Balance_orderBy {
 }
 
 type BentoBox {
-  """ BentoBox address """
-  id: ID!
-
-  """ Protocols that belong to this bento box """
-  protocols(skip: Int = 0, first: Int = 100, orderBy: Protocol_orderBy, orderDirection: OrderDirection, where: Protocol_filter): [Protocol!]
-
-  """ Users that belong to this bento box """
-  users(skip: Int = 0, first: Int = 100, orderBy: User_orderBy, orderDirection: OrderDirection, where: User_filter): [User!]
-
-  """ Tokens that belong to this bento box """
-  tokens(skip: Int = 0, first: Int = 100, orderBy: Token_orderBy, orderDirection: OrderDirection, where: Token_filter): [Token!]
-
-  """ Master contracts that belong to this bento box """
-  masterContracts(skip: Int = 0, first: Int = 100, orderBy: MasterContract_orderBy, orderDirection: OrderDirection, where: MasterContract_filter): [MasterContract!]!
-
-  """ Clones that belong to this bento box """
-  clones(skip: Int = 0, first: Int = 100, orderBy: Clone_orderBy, orderDirection: OrderDirection, where: Clone_filter): [Clone!]
-
-  """ Flash loans that belong to this bento box """
-  flashloans(skip: Int = 0, first: Int = 100, orderBy: FlashLoan_orderBy, orderDirection: OrderDirection, where: FlashLoan_filter): [FlashLoan!]
-
-  """ Transactions that belong to this bento box """
-  transactions(skip: Int = 0, first: Int = 100, orderBy: Transaction_orderBy, orderDirection: OrderDirection, where: Transaction_filter): [Transaction!]
-
-  """ Totals that belong to this bento box """
-  totals(skip: Int = 0, first: Int = 100, orderBy: Rebase_orderBy, orderDirection: OrderDirection, where: Rebase_filter): [Rebase!]
-}
-
-type BentoBoxDailyKpi {
-  """ created by id, infix '-day-' and unix timestamp, e.g. '0x00..00-day-1657270000'
+  """
+  BentoBox address
   """
   id: ID!
 
-  """ Start date """
+  """
+  Protocols that belong to this bento box
+  """
+  protocols(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: Protocol_orderBy
+    orderDirection: OrderDirection
+    where: Protocol_filter
+  ): [Protocol!]
+
+  """
+  Users that belong to this bento box
+  """
+  users(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: User_orderBy
+    orderDirection: OrderDirection
+    where: User_filter
+  ): [User!]
+
+  """
+  Tokens that belong to this bento box
+  """
+  tokens(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: Token_orderBy
+    orderDirection: OrderDirection
+    where: Token_filter
+  ): [Token!]
+
+  """
+  Master contracts that belong to this bento box
+  """
+  masterContracts(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: MasterContract_orderBy
+    orderDirection: OrderDirection
+    where: MasterContract_filter
+  ): [MasterContract!]!
+
+  """
+  Clones that belong to this bento box
+  """
+  clones(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: Clone_orderBy
+    orderDirection: OrderDirection
+    where: Clone_filter
+  ): [Clone!]
+
+  """
+  Flash loans that belong to this bento box
+  """
+  flashloans(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: FlashLoan_orderBy
+    orderDirection: OrderDirection
+    where: FlashLoan_filter
+  ): [FlashLoan!]
+
+  """
+  Transactions that belong to this bento box
+  """
+  transactions(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: Transaction_orderBy
+    orderDirection: OrderDirection
+    where: Transaction_filter
+  ): [Transaction!]
+
+  """
+  Totals that belong to this bento box
+  """
+  totals(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: Rebase_orderBy
+    orderDirection: OrderDirection
+    where: Rebase_filter
+  ): [Rebase!]
+}
+
+type BentoBoxDailyKpi {
+  """
+  created by id, infix '-day-' and unix timestamp, e.g. '0x00..00-day-1657270000'
+  """
+  id: ID!
+
+  """
+  Start date
+  """
   date: Int!
 
-  """ Deposit count """
+  """
+  Deposit count
+  """
   depositCount: BigInt!
 
-  """ Deposit count for the given timeframe """
+  """
+  Deposit count for the given timeframe
+  """
   newDepositCount: BigInt!
 
-  """ Withdraw count """
+  """
+  Withdraw count
+  """
   withdrawCount: BigInt!
 
-  """ Withdraw count for the given timeframe """
+  """
+  Withdraw count for the given timeframe
+  """
   newWithdrawCount: BigInt!
 
-  """ Transfer count """
+  """
+  Transfer count
+  """
   transferCount: BigInt!
 
-  """ Transfer count for the given timeframe """
+  """
+  Transfer count for the given timeframe
+  """
   newTransferCount: BigInt!
 
-  """ Protocol count """
+  """
+  Protocol count
+  """
   protocolCount: BigInt!
 
-  """ Protocol count for the given timeframe """
+  """
+  Protocol count for the given timeframe
+  """
   newProtocolCount: BigInt!
 
-  """ User count """
+  """
+  User count
+  """
   userCount: BigInt!
 
-  """ User count for the given timeframe """
+  """
+  User count for the given timeframe
+  """
   newUserCount: BigInt!
 
-  """ Token count """
+  """
+  Token count
+  """
   tokenCount: BigInt!
 
-  """ Token count for the given timeframe """
+  """
+  Token count for the given timeframe
+  """
   newTokenCount: BigInt!
 
-  """ Master contract count """
+  """
+  Master contract count
+  """
   masterContractCount: BigInt!
 
-  """ Master contract count for the given timeframe """
+  """
+  Master contract count for the given timeframe
+  """
   newMasterContractCount: BigInt!
 
-  """ Clone count """
+  """
+  Clone count
+  """
   cloneCount: BigInt!
 
-  """ Clone count for the given timeframe """
+  """
+  Clone count for the given timeframe
+  """
   newCloneCount: BigInt!
 
-  """ Flash loan count """
+  """
+  Flash loan count
+  """
   flashloanCount: BigInt!
 
-  """ Flash loan count for the given timeframe """
+  """
+  Flash loan count for the given timeframe
+  """
   newFlashloanCount: BigInt!
 
-  """ Transaction count """
+  """
+  Transaction count
+  """
   transactionCount: BigInt!
 
-  """ Transaction count for the given timeframe """
+  """
+  Transaction count for the given timeframe
+  """
   newTransactionCount: BigInt!
 
-  """ Strategy count """
+  """
+  Strategy count
+  """
   strategyCount: BigInt!
 
-  """ Strategy for the given timeframe """
+  """
+  Strategy for the given timeframe
+  """
   newStrategyCount: BigInt!
 
-  """ Active strategy count """
+  """
+  Active strategy count
+  """
   activeStrategyCount: BigInt!
 
-  """ Active strategy count for the given timeframe """
+  """
+  Active strategy count for the given timeframe
+  """
   newActiveStrategyCount: BigInt!
 
-  """ Pending strategy count """
+  """
+  Pending strategy count
+  """
   pendingStrategyCount: BigInt!
 
-  """ Pending strategy count for the given timeframe """
+  """
+  Pending strategy count for the given timeframe
+  """
   newPendingStrategyCount: BigInt!
 }
 
@@ -448,7 +573,9 @@ input BentoBoxDailyKpi_filter {
   newPendingStrategyCount_in: [BigInt!]
   newPendingStrategyCount_not_in: [BigInt!]
 
-  """Filter for the block changed event."""
+  """
+  Filter for the block changed event.
+  """
   _change_block: BlockChangedFilter
   and: [BentoBoxDailyKpi_filter]
   or: [BentoBoxDailyKpi_filter]
@@ -486,89 +613,144 @@ enum BentoBoxDailyKpi_orderBy {
 }
 
 type BentoBoxHourlyKpi {
-  """ created by a prefix 'bentobox-hour-' and unix timestamp, e.g. 'bentobox-hour-1657270000'
+  """
+  created by a prefix 'bentobox-hour-' and unix timestamp, e.g. 'bentobox-hour-1657270000'
   """
   id: ID!
 
-  """ Start date """
+  """
+  Start date
+  """
   date: Int!
 
-  """ Deposit count """
+  """
+  Deposit count
+  """
   depositCount: BigInt!
 
-  """ Deposit count for the given timeframe """
+  """
+  Deposit count for the given timeframe
+  """
   newDepositCount: BigInt!
 
-  """ Withdraw count """
+  """
+  Withdraw count
+  """
   withdrawCount: BigInt!
 
-  """ Withdraw count for the given timeframe """
+  """
+  Withdraw count for the given timeframe
+  """
   newWithdrawCount: BigInt!
 
-  """ Transfer count """
+  """
+  Transfer count
+  """
   transferCount: BigInt!
 
-  """ Transfer count for the given timeframe """
+  """
+  Transfer count for the given timeframe
+  """
   newTransferCount: BigInt!
 
-  """ Protocol count """
+  """
+  Protocol count
+  """
   protocolCount: BigInt!
 
-  """ Protocol count for the given timeframe """
+  """
+  Protocol count for the given timeframe
+  """
   newProtocolCount: BigInt!
 
-  """ User count """
+  """
+  User count
+  """
   userCount: BigInt!
 
-  """ User count for the given timeframe """
+  """
+  User count for the given timeframe
+  """
   newUserCount: BigInt!
 
-  """ Token count """
+  """
+  Token count
+  """
   tokenCount: BigInt!
 
-  """ Token count for the given timeframe """
+  """
+  Token count for the given timeframe
+  """
   newTokenCount: BigInt!
 
-  """ Master contract count """
+  """
+  Master contract count
+  """
   masterContractCount: BigInt!
 
-  """ Master contract count for the given timeframe """
+  """
+  Master contract count for the given timeframe
+  """
   newMasterContractCount: BigInt!
 
-  """ Clone count """
+  """
+  Clone count
+  """
   cloneCount: BigInt!
 
-  """ Clone count for the given timeframe """
+  """
+  Clone count for the given timeframe
+  """
   newCloneCount: BigInt!
 
-  """ Flash loan count """
+  """
+  Flash loan count
+  """
   flashloanCount: BigInt!
 
-  """ Flash loan count for the given timeframe """
+  """
+  Flash loan count for the given timeframe
+  """
   newFlashloanCount: BigInt!
 
-  """ Transaction count """
+  """
+  Transaction count
+  """
   transactionCount: BigInt!
 
-  """ Transaction count for the given timeframe """
+  """
+  Transaction count for the given timeframe
+  """
   newTransactionCount: BigInt!
 
-  """ Strategy count """
+  """
+  Strategy count
+  """
   strategyCount: BigInt!
 
-  """ Strategy for the given timeframe """
+  """
+  Strategy for the given timeframe
+  """
   newStrategyCount: BigInt!
 
-  """ Active strategy count """
+  """
+  Active strategy count
+  """
   activeStrategyCount: BigInt!
 
-  """ Active strategy count given timeframe """
+  """
+  Active strategy count given timeframe
+  """
   newActiveStrategyCount: BigInt!
 
-  """ Pending strategy count """
+  """
+  Pending strategy count
+  """
   pendingStrategyCount: BigInt!
 
-  """ Pending strategy count given timeframe """
+  """
+  Pending strategy count given timeframe
+  """
   newPendingStrategyCount: BigInt!
 }
 
@@ -798,7 +980,9 @@ input BentoBoxHourlyKpi_filter {
   newPendingStrategyCount_in: [BigInt!]
   newPendingStrategyCount_not_in: [BigInt!]
 
-  """Filter for the block changed event."""
+  """
+  Filter for the block changed event.
+  """
   _change_block: BlockChangedFilter
   and: [BentoBoxHourlyKpi_filter]
   or: [BentoBoxHourlyKpi_filter]
@@ -836,46 +1020,74 @@ enum BentoBoxHourlyKpi_orderBy {
 }
 
 type BentoBoxKpi {
-  """ BentoBox address """
+  """
+  BentoBox address
+  """
   id: ID!
 
-  """ Deposit count """
+  """
+  Deposit count
+  """
   depositCount: BigInt!
 
-  """ Withdraw count """
+  """
+  Withdraw count
+  """
   withdrawCount: BigInt!
 
-  """ Transfer count """
+  """
+  Transfer count
+  """
   transferCount: BigInt!
 
-  """ Protocol count """
+  """
+  Protocol count
+  """
   protocolCount: BigInt!
 
-  """ User count """
+  """
+  User count
+  """
   userCount: BigInt!
 
-  """ Token count """
+  """
+  Token count
+  """
   tokenCount: BigInt!
 
-  """ Master contract count """
+  """
+  Master contract count
+  """
   masterContractCount: BigInt!
 
-  """ Clone count """
+  """
+  Clone count
+  """
   cloneCount: BigInt!
 
-  """ Flash loan count """
+  """
+  Flash loan count
+  """
   flashloanCount: BigInt!
 
-  """ Transaction count """
+  """
+  Transaction count
+  """
   transactionCount: BigInt!
 
-  """ Strategy count """
+  """
+  Strategy count
+  """
   strategyCount: BigInt!
 
-  """ Active strategy count """
+  """
+  Active strategy count
+  """
   activeStrategyCount: BigInt!
 
-  """ Pending strategy count """
+  """
+  Pending strategy count
+  """
   pendingStrategyCount: BigInt!
 }
 
@@ -993,7 +1205,9 @@ input BentoBoxKpi_filter {
   pendingStrategyCount_in: [BigInt!]
   pendingStrategyCount_not_in: [BigInt!]
 
-  """Filter for the block changed event."""
+  """
+  Filter for the block changed event.
+  """
   _change_block: BlockChangedFilter
   and: [BentoBoxKpi_filter]
   or: [BentoBoxKpi_filter]
@@ -1034,7 +1248,9 @@ input BentoBox_filter {
   transactions_: Transaction_filter
   totals_: Rebase_filter
 
-  """Filter for the block changed event."""
+  """
+  Filter for the block changed event.
+  """
   _change_block: BlockChangedFilter
   and: [BentoBox_filter]
   or: [BentoBox_filter]
@@ -1069,22 +1285,34 @@ input Block_height {
 scalar Bytes
 
 type Clone {
-  """ Clone address """
+  """
+  Clone address
+  """
   id: ID!
 
-  """ BentoBox this clone belongs to """
+  """
+  BentoBox this clone belongs to
+  """
   bentoBox: BentoBox!
 
-  """ Master contract this clone belongs to """
+  """
+  Master contract this clone belongs to
+  """
   masterContract: MasterContract!
 
-  """ Clone data """
+  """
+  Clone data
+  """
   data: Bytes!
 
-  """ Block number of this clone """
+  """
+  Block number of this clone
+  """
   block: BigInt!
 
-  """ Timestamp of this clone """
+  """
+  Timestamp of this clone
+  """
   timestamp: BigInt!
 }
 
@@ -1166,7 +1394,9 @@ input Clone_filter {
   timestamp_in: [BigInt!]
   timestamp_not_in: [BigInt!]
 
-  """Filter for the block changed event."""
+  """
+  Filter for the block changed event.
+  """
   _change_block: BlockChangedFilter
   and: [Clone_filter]
   or: [Clone_filter]
@@ -1185,31 +1415,49 @@ enum Clone_orderBy {
 }
 
 type FlashLoan {
-  """ Concatenation of transaction and log index """
+  """
+  Concatenation of transaction and log index
+  """
   id: ID!
 
-  """ BentoBox this flash loan belongs to """
+  """
+  BentoBox this flash loan belongs to
+  """
   bentoBox: BentoBox!
 
-  """ Borrower address """
+  """
+  Borrower address
+  """
   borrower: Bytes!
 
-  """ Receiver address """
+  """
+  Receiver address
+  """
   receiver: Bytes!
 
-  """ Token this flash loan belongs to """
+  """
+  Token this flash loan belongs to
+  """
   token: Token!
 
-  """ Amount of this flash loan """
+  """
+  Amount of this flash loan
+  """
   amount: BigInt!
 
-  """ Fee amount of this flash loan """
+  """
+  Fee amount of this flash loan
+  """
   feeAmount: BigInt!
 
-  """ Block number of this flash loan """
+  """
+  Block number of this flash loan
+  """
   block: BigInt!
 
-  """ Timestamp of this flash loan """
+  """
+  Timestamp of this flash loan
+  """
   timestamp: BigInt!
 }
 
@@ -1317,7 +1565,9 @@ input FlashLoan_filter {
   timestamp_in: [BigInt!]
   timestamp_not_in: [BigInt!]
 
-  """Filter for the block changed event."""
+  """
+  Filter for the block changed event.
+  """
   _change_block: BlockChangedFilter
   and: [FlashLoan_filter]
   or: [FlashLoan_filter]
@@ -1344,25 +1594,39 @@ enum FlashLoan_orderBy {
 }
 
 type Harvest {
-  """ Concatenation of strategy and block number """
+  """
+  Concatenation of strategy and block number
+  """
   id: ID!
 
-  """ The Token this harvest belongs to """
+  """
+  The Token this harvest belongs to
+  """
   token: Token!
 
-  """ The Strategy this harvest belongs to """
+  """
+  The Strategy this harvest belongs to
+  """
   strategy: Strategy!
 
-  """ The ProfitOrLoss of this harvest """
+  """
+  The ProfitOrLoss of this harvest
+  """
   profitOrLoss: ProfitOrLoss
 
-  """ The InvestOrDivest of this harvest """
+  """
+  The InvestOrDivest of this harvest
+  """
   investOrDivest: InvestOrDivest
 
-  """ Block number of this harvest """
+  """
+  Block number of this harvest
+  """
   block: BigInt!
 
-  """ Timestamp of this harvest """
+  """
+  Timestamp of this harvest
+  """
   timestamp: BigInt!
 }
 
@@ -1476,7 +1740,9 @@ input Harvest_filter {
   timestamp_in: [BigInt!]
   timestamp_not_in: [BigInt!]
 
-  """Filter for the block changed event."""
+  """
+  Filter for the block changed event.
+  """
   _change_block: BlockChangedFilter
   and: [Harvest_filter]
   or: [Harvest_filter]
@@ -1518,25 +1784,39 @@ enum Harvest_orderBy {
 scalar Int8
 
 type InvestOrDivest {
-  """ Concatenation of strategy and invest or divest count """
+  """
+  Concatenation of strategy and invest or divest count
+  """
   id: ID!
 
-  """ The Harvest this invest or divest belongs to """
+  """
+  The Harvest this invest or divest belongs to
+  """
   harvest: Harvest!
 
-  """ The cached token elastic at time of invest or divest"""
+  """
+  The cached token elastic at time of invest or divest
+  """
   elastic: BigInt!
 
-  """ The cached token base at time of invest or divest"""
+  """
+  The cached token base at time of invest or divest
+  """
   base: BigInt!
 
-  """ Amount of invest or divest """
+  """
+  Amount of invest or divest
+  """
   amount: BigInt!
 
-  """ Block number of this invest or divest """
+  """
+  Block number of this invest or divest
+  """
   block: BigInt!
 
-  """ Timestamp of this invest or divest """
+  """
+  Timestamp of this invest or divest
+  """
   timestamp: BigInt!
 }
 
@@ -1611,7 +1891,9 @@ input InvestOrDivest_filter {
   timestamp_in: [BigInt!]
   timestamp_not_in: [BigInt!]
 
-  """Filter for the block changed event."""
+  """
+  Filter for the block changed event.
+  """
   _change_block: BlockChangedFilter
   and: [InvestOrDivest_filter]
   or: [InvestOrDivest_filter]
@@ -1631,33 +1913,63 @@ enum InvestOrDivest_orderBy {
 }
 
 type MasterContract {
-  """ MasterContract address """
+  """
+  MasterContract address
+  """
   id: ID!
 
-  """ BentoBox this master contract belongs to """
+  """
+  BentoBox this master contract belongs to
+  """
   bentoBox: BentoBox!
 
-  """ Clones that belong to this master contract """
-  clones(skip: Int = 0, first: Int = 100, orderBy: Clone_orderBy, orderDirection: OrderDirection, where: Clone_filter): [Clone!]
+  """
+  Clones that belong to this master contract
+  """
+  clones(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: Clone_orderBy
+    orderDirection: OrderDirection
+    where: Clone_filter
+  ): [Clone!]
 
-  """ MasterContractApprovals that belong to this master contract """
-  masterContractApprovals(skip: Int = 0, first: Int = 100, orderBy: MasterContractApproval_orderBy, orderDirection: OrderDirection, where: MasterContractApproval_filter): [MasterContractApproval!]
+  """
+  MasterContractApprovals that belong to this master contract
+  """
+  masterContractApprovals(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: MasterContractApproval_orderBy
+    orderDirection: OrderDirection
+    where: MasterContractApproval_filter
+  ): [MasterContractApproval!]
 
-  """ MasterContract is whitelisted by Sushi Operations"""
+  """
+  MasterContract is whitelisted by Sushi Operations
+  """
   approved: Boolean!
 }
 
 type MasterContractApproval {
-  """Concatenation of user adddress and master contract address"""
+  """
+  Concatenation of user adddress and master contract address
+  """
   id: ID!
 
-  """ MasterContract this master contract approval belongs to """
+  """
+  MasterContract this master contract approval belongs to
+  """
   masterContract: MasterContract!
 
-  """ User this master contract approval belongs to """
+  """
+  User this master contract approval belongs to
+  """
   user: User!
 
-  """ If user has approved this master contract """
+  """
+  If user has approved this master contract
+  """
   approved: Boolean!
 }
 
@@ -1717,7 +2029,9 @@ input MasterContractApproval_filter {
   approved_in: [Boolean!]
   approved_not_in: [Boolean!]
 
-  """Filter for the block changed event."""
+  """
+  Filter for the block changed event.
+  """
   _change_block: BlockChangedFilter
   and: [MasterContractApproval_filter]
   or: [MasterContractApproval_filter]
@@ -1772,7 +2086,9 @@ input MasterContract_filter {
   approved_in: [Boolean!]
   approved_not_in: [Boolean!]
 
-  """Filter for the block changed event."""
+  """
+  Filter for the block changed event.
+  """
   _change_block: BlockChangedFilter
   and: [MasterContract_filter]
   or: [MasterContract_filter]
@@ -1787,32 +2103,48 @@ enum MasterContract_orderBy {
   approved
 }
 
-"""Defines the order direction, either ascending or descending"""
+"""
+Defines the order direction, either ascending or descending
+"""
 enum OrderDirection {
   asc
   desc
 }
 
 type ProfitOrLoss {
-  """ Concatenation of strategy and profit or loss count """
+  """
+  Concatenation of strategy and profit or loss count
+  """
   id: ID!
 
-  """ The Harvest this profit or loss belongs to """
+  """
+  The Harvest this profit or loss belongs to
+  """
   harvest: Harvest!
 
-  """ The cached token elastic at time of profit or loss"""
+  """
+  The cached token elastic at time of profit or loss
+  """
   elastic: BigInt!
 
-  """ The cached token base at time of profit or loss"""
+  """
+  The cached token base at time of profit or loss
+  """
   base: BigInt!
 
-  """ Amount of profit or loss """
+  """
+  Amount of profit or loss
+  """
   amount: BigInt!
 
-  """ Block number of this profit or loss """
+  """
+  Block number of this profit or loss
+  """
   block: BigInt!
 
-  """ Timestamp of this profit or loss """
+  """
+  Timestamp of this profit or loss
+  """
   timestamp: BigInt!
 }
 
@@ -1887,7 +2219,9 @@ input ProfitOrLoss_filter {
   timestamp_in: [BigInt!]
   timestamp_not_in: [BigInt!]
 
-  """Filter for the block changed event."""
+  """
+  Filter for the block changed event.
+  """
   _change_block: BlockChangedFilter
   and: [ProfitOrLoss_filter]
   or: [ProfitOrLoss_filter]
@@ -1907,10 +2241,14 @@ enum ProfitOrLoss_orderBy {
 }
 
 type Protocol {
-  """ Protocol address """
+  """
+  Protocol address
+  """
   id: ID!
 
-  """ BentoBox this protocol belongs to """
+  """
+  BentoBox this protocol belongs to
+  """
   bentoBox: BentoBox!
 }
 
@@ -1945,7 +2283,9 @@ input Protocol_filter {
   bentoBox_not_ends_with_nocase: String
   bentoBox_: BentoBox_filter
 
-  """Filter for the block changed event."""
+  """
+  Filter for the block changed event.
+  """
   _change_block: BlockChangedFilter
   and: [Protocol_filter]
   or: [Protocol_filter]
@@ -2739,24 +3079,36 @@ type Query {
     subgraphError: _SubgraphErrorPolicy_! = deny
   ): [TokenDailyKpi!]!
 
-  """Access to subgraph metadata"""
+  """
+  Access to subgraph metadata
+  """
   _meta(block: Block_height): _Meta_
 }
 
 type Rebase {
-  """ Token address """
+  """
+  Token address
+  """
   id: ID!
 
-  """ BentoBox this rebase belongs to """
+  """
+  BentoBox this rebase belongs to
+  """
   bentoBox: BentoBox!
 
-  """ Token this rebase belongs to """
+  """
+  Token this rebase belongs to
+  """
   token: Token!
 
-  """ Base (Share) """
+  """
+  Base (Share)
+  """
   base: BigInt!
 
-  """ Elastic (Amount) """
+  """
+  Elastic (Amount)
+  """
   elastic: BigInt!
 }
 
@@ -2828,7 +3180,9 @@ input Rebase_filter {
   elastic_in: [BigInt!]
   elastic_not_in: [BigInt!]
 
-  """Filter for the block changed event."""
+  """
+  Filter for the block changed event.
+  """
   _change_block: BlockChangedFilter
   and: [Rebase_filter]
   or: [Rebase_filter]
@@ -2851,106 +3205,177 @@ enum Rebase_orderBy {
 }
 
 type Strategy {
-  """ Strategy address """
+  """
+  Strategy address
+  """
   id: ID!
 
-  """ StrategyKpi of this strategy """
+  """
+  StrategyKpi of this strategy
+  """
   kpi: StrategyKpi!
 
-  """ Harvests which belong to this strategy """
-  harvests(skip: Int = 0, first: Int = 100, orderBy: Harvest_orderBy, orderDirection: OrderDirection, where: Harvest_filter): [Harvest!]
+  """
+  Harvests which belong to this strategy
+  """
+  harvests(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: Harvest_orderBy
+    orderDirection: OrderDirection
+    where: Harvest_filter
+  ): [Harvest!]
 
-  """ The Token this strategy belongs to """
+  """
+  The Token this strategy belongs to
+  """
   token: Token!
 
-  """ Block number of this strategy """
+  """
+  Block number of this strategy
+  """
   block: BigInt!
 
-  """ Timestamp of this strategy """
+  """
+  Timestamp of this strategy
+  """
   timestamp: BigInt!
 }
 
 type StrategyDailyKpi {
-  """ created by id, infix '-day-' and unix timestamp, e.g. '0x00..00-day-1657270000'
+  """
+  created by id, infix '-day-' and unix timestamp, e.g. '0x00..00-day-1657270000'
   """
   id: ID!
 
-  """ The Strategy this KPI belongs to """
+  """
+  The Strategy this KPI belongs to
+  """
   strategy: Strategy!
 
-  """ Start date """
+  """
+  Start date
+  """
   date: Int!
 
-  """ Harvest count """
+  """
+  Harvest count
+  """
   harvestCount: BigInt!
 
-  """ Invest or divest count """
+  """
+  Invest or divest count
+  """
   investOrDivestCount: BigInt!
 
-  """ Invest count """
+  """
+  Invest count
+  """
   investCount: BigInt!
 
-  """ Invested """
+  """
+  Invested
+  """
   invested: BigInt!
 
-  """ Divest count """
+  """
+  Divest count
+  """
   divestCount: BigInt!
 
-  """ Divested"""
+  """
+  Divested
+  """
   divested: BigInt!
 
-  """ Profit or loss count """
+  """
+  Profit or loss count
+  """
   profitOrLossCount: BigInt!
 
-  """ Profit count """
+  """
+  Profit count
+  """
   profitCount: BigInt!
 
-  """ Loss count """
+  """
+  Loss count
+  """
   lossCount: BigInt!
 
-  """ Profit & Loss"""
+  """
+  Profit & Loss
+  """
   profitAndLoss: BigInt!
 
-  """ APR """
+  """
+  APR
+  """
   apr: BigDecimal
 
-  """ Utilization """
+  """
+  Utilization
+  """
   utilization: BigDecimal
 
-  """ Harvest count for the given timeframe """
+  """
+  Harvest count for the given timeframe
+  """
   newHarvestCount: BigInt!
 
-  """ Invest or divest count for the given timeframe """
+  """
+  Invest or divest count for the given timeframe
+  """
   newInvestOrDivestCount: BigInt!
 
-  """ Invest count for the given timeframe """
+  """
+  Invest count for the given timeframe
+  """
   newInvestCount: BigInt!
 
-  """ Invested for the given timeframe """
+  """
+  Invested for the given timeframe
+  """
   newInvested: BigInt!
 
-  """ Divest count for the given timeframe """
+  """
+  Divest count for the given timeframe
+  """
   newDivestCount: BigInt!
 
-  """ Divested for the given timeframe """
+  """
+  Divested for the given timeframe
+  """
   newDivested: BigInt!
 
-  """ Profit or loss count for the given timeframe """
+  """
+  Profit or loss count for the given timeframe
+  """
   newProfitOrLossCount: BigInt!
 
-  """ Profit count for the given timeframe """
+  """
+  Profit count for the given timeframe
+  """
   newProfitCount: BigInt!
 
-  """ Loss count for the given timeframe """
+  """
+  Loss count for the given timeframe
+  """
   newLossCount: BigInt!
 
-  """ Profit & Los for the given timeframe """
+  """
+  Profit & Los for the given timeframe
+  """
   newProfitAndLoss: BigInt!
 
-  """ APR for the given timeframe """
+  """
+  APR for the given timeframe
+  """
   newApr: BigDecimal
 
-  """ Utilization for the given timeframe """
+  """
+  Utilization for the given timeframe
+  """
   newUtilization: BigDecimal
 }
 
@@ -3185,7 +3610,9 @@ input StrategyDailyKpi_filter {
   newUtilization_in: [BigDecimal!]
   newUtilization_not_in: [BigDecimal!]
 
-  """Filter for the block changed event."""
+  """
+  Filter for the block changed event.
+  """
   _change_block: BlockChangedFilter
   and: [StrategyDailyKpi_filter]
   or: [StrategyDailyKpi_filter]
@@ -3225,16 +3652,24 @@ enum StrategyDailyKpi_orderBy {
 }
 
 type StrategyData {
-  """ Token address """
+  """
+  Token address
+  """
   id: ID!
 
-  """ Strategy start date """
+  """
+  Strategy start date
+  """
   strategyStartDate: BigInt!
 
-  """ Target percentage """
+  """
+  Target percentage
+  """
   targetPercentage: BigInt!
 
-  """ BentoBox's understanding of the balance """
+  """
+  BentoBox's understanding of the balance
+  """
   balance: BigInt!
 }
 
@@ -3272,7 +3707,9 @@ input StrategyData_filter {
   balance_in: [BigInt!]
   balance_not_in: [BigInt!]
 
-  """Filter for the block changed event."""
+  """
+  Filter for the block changed event.
+  """
   _change_block: BlockChangedFilter
   and: [StrategyData_filter]
   or: [StrategyData_filter]
@@ -3286,86 +3723,139 @@ enum StrategyData_orderBy {
 }
 
 type StrategyHourlyKpi {
-  """ created by id, infix '-hour-' and unix timestamp, e.g. '0x00..00-hour-1657270000'
+  """
+  created by id, infix '-hour-' and unix timestamp, e.g. '0x00..00-hour-1657270000'
   """
   id: ID!
 
-  """ The Strategy this KPI belongs to """
+  """
+  The Strategy this KPI belongs to
+  """
   strategy: Strategy!
 
-  """ Start date """
+  """
+  Start date
+  """
   date: Int!
 
-  """ Harvest count """
+  """
+  Harvest count
+  """
   harvestCount: BigInt!
 
-  """ Invest or divest count """
+  """
+  Invest or divest count
+  """
   investOrDivestCount: BigInt!
 
-  """ Invest count """
+  """
+  Invest count
+  """
   investCount: BigInt!
 
-  """ Invested """
+  """
+  Invested
+  """
   invested: BigInt!
 
-  """ Divest count """
+  """
+  Divest count
+  """
   divestCount: BigInt!
 
-  """ Divested"""
+  """
+  Divested
+  """
   divested: BigInt!
 
-  """ Profit or loss count """
+  """
+  Profit or loss count
+  """
   profitOrLossCount: BigInt!
 
-  """ Profit count """
+  """
+  Profit count
+  """
   profitCount: BigInt!
 
-  """ Loss count """
+  """
+  Loss count
+  """
   lossCount: BigInt!
 
-  """ Profit & Loss"""
+  """
+  Profit & Loss
+  """
   profitAndLoss: BigInt!
 
-  """ APR """
+  """
+  APR
+  """
   apr: BigDecimal
 
-  """ Utilization """
+  """
+  Utilization
+  """
   utilization: BigDecimal
 
-  """ Harvest count for the given timeframe """
+  """
+  Harvest count for the given timeframe
+  """
   newHarvestCount: BigInt!
 
-  """ Invest or divest count for the given timeframe """
+  """
+  Invest or divest count for the given timeframe
+  """
   newInvestOrDivestCount: BigInt!
 
-  """ Invest count for the given timeframe """
+  """
+  Invest count for the given timeframe
+  """
   newInvestCount: BigInt!
 
-  """ Invested for the given timeframe """
+  """
+  Invested for the given timeframe
+  """
   newInvested: BigInt!
 
-  """ Divest count for the given timeframe """
+  """
+  Divest count for the given timeframe
+  """
   newDivestCount: BigInt!
 
-  """ Divested for the given timeframe """
+  """
+  Divested for the given timeframe
+  """
   newDivested: BigInt!
 
-  """ Profit or loss count for the given timeframe """
+  """
+  Profit or loss count for the given timeframe
+  """
   newProfitOrLossCount: BigInt!
 
-  """ Profit count for the given timeframe """
+  """
+  Profit count for the given timeframe
+  """
   newProfitCount: BigInt!
 
-  """ Loss count for the given timeframe """
+  """
+  Loss count for the given timeframe
+  """
   newLossCount: BigInt!
 
-  """ Profit & Los for the given timeframe """
+  """
+  Profit & Los for the given timeframe
+  """
   newProfitAndLoss: BigInt!
 
-  """ APR for the given timeframe """
+  """
+  APR for the given timeframe
+  """
   newApr: BigDecimal
 
-  """ Utilization for the given timeframe """
+  """
+  Utilization for the given timeframe
+  """
   newUtilization: BigDecimal
 }
 
@@ -3600,7 +4090,9 @@ input StrategyHourlyKpi_filter {
   newUtilization_in: [BigDecimal!]
   newUtilization_not_in: [BigDecimal!]
 
-  """Filter for the block changed event."""
+  """
+  Filter for the block changed event.
+  """
   _change_block: BlockChangedFilter
   and: [StrategyHourlyKpi_filter]
   or: [StrategyHourlyKpi_filter]
@@ -3640,43 +4132,69 @@ enum StrategyHourlyKpi_orderBy {
 }
 
 type StrategyKpi {
-  """ Strategy address """
+  """
+  Strategy address
+  """
   id: ID!
 
-  """ Harvest count """
+  """
+  Harvest count
+  """
   harvestCount: BigInt!
 
-  """ Invest or divest count """
+  """
+  Invest or divest count
+  """
   investOrDivestCount: BigInt!
 
-  """ Invest count """
+  """
+  Invest count
+  """
   investCount: BigInt!
 
-  """ Invested """
+  """
+  Invested
+  """
   invested: BigInt!
 
-  """ Divest count """
+  """
+  Divest count
+  """
   divestCount: BigInt!
 
-  """ Divested"""
+  """
+  Divested
+  """
   divested: BigInt!
 
-  """ Profit or loss count """
+  """
+  Profit or loss count
+  """
   profitOrLossCount: BigInt!
 
-  """ Profit count """
+  """
+  Profit count
+  """
   profitCount: BigInt!
 
-  """ Loss count """
+  """
+  Loss count
+  """
   lossCount: BigInt!
 
-  """ Profit & Loss"""
+  """
+  Profit & Loss
+  """
   profitAndLoss: BigInt!
 
-  """ Isolated Strategy APR """
+  """
+  Isolated Strategy APR
+  """
   apr: BigDecimal
 
-  """ Utilization """
+  """
+  Utilization
+  """
   utilization: BigDecimal
 }
 
@@ -3786,7 +4304,9 @@ input StrategyKpi_filter {
   utilization_in: [BigDecimal!]
   utilization_not_in: [BigDecimal!]
 
-  """Filter for the block changed event."""
+  """
+  Filter for the block changed event.
+  """
   _change_block: BlockChangedFilter
   and: [StrategyKpi_filter]
   or: [StrategyKpi_filter]
@@ -3877,7 +4397,9 @@ input Strategy_filter {
   timestamp_in: [BigInt!]
   timestamp_not_in: [BigInt!]
 
-  """Filter for the block changed event."""
+  """
+  Filter for the block changed event.
+  """
   _change_block: BlockChangedFilter
   and: [Strategy_filter]
   or: [Strategy_filter]
@@ -4694,7 +5216,9 @@ type Subscription {
     subgraphError: _SubgraphErrorPolicy_! = deny
   ): [TokenDailyKpi!]!
 
-  """Access to subgraph metadata"""
+  """
+  Access to subgraph metadata
+  """
   _meta(block: Block_height): _Meta_
 }
 
@@ -4702,58 +5226,97 @@ type Subscription {
 scalar Timestamp
 
 type Token {
-  """ Token address """
+  """
+  Token address
+  """
   id: ID!
 
-  """ The BentoBox this token belongs to """
+  """
+  The BentoBox this token belongs to
+  """
   bentoBox: BentoBox!
 
-  """ The Rebase that belongs to this token """
+  """
+  The Rebase that belongs to this token
+  """
   rebase: Rebase!
 
-  """ Strategies, past and present, which belong to this token """
-  strategies(skip: Int = 0, first: Int = 100, orderBy: Strategy_orderBy, orderDirection: OrderDirection, where: Strategy_filter): [Strategy!]
+  """
+  Strategies, past and present, which belong to this token
+  """
+  strategies(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: Strategy_orderBy
+    orderDirection: OrderDirection
+    where: Strategy_filter
+  ): [Strategy!]
 
-  """ The Kpi which belong to this token """
+  """
+  The Kpi which belong to this token
+  """
   kpi: TokenKpi!
 
-  """ Token symbol, if fetched successfully, else default to ??? """
+  """
+  Token symbol, if fetched successfully, else default to ???
+  """
   symbol: String!
 
-  """ If the symbol was succesfully fetched """
+  """
+  If the symbol was succesfully fetched
+  """
   symbolSuccess: Boolean!
 
-  """ Token name, if fetched successfully, else default to ??? """
+  """
+  Token name, if fetched successfully, else default to ???
+  """
   name: String!
 
-  """ If the name was succesfully fetched """
+  """
+  If the name was succesfully fetched
+  """
   nameSuccess: Boolean!
 
-  """ Token decimals, if fetched successfully, else default to 18 """
+  """
+  Token decimals, if fetched successfully, else default to 18
+  """
   decimals: BigInt!
 
-  """ If the decimals was succesfully fetched """
+  """
+  If the decimals was succesfully fetched
+  """
   decimalsSuccess: Boolean!
 }
 
 type TokenDailyKpi {
-  """ created by id, infix '-day-' and unix timestamp, e.g. '0x00..00-day-1657270000'
+  """
+  created by id, infix '-day-' and unix timestamp, e.g. '0x00..00-day-1657270000'
   """
   id: ID!
 
-  """ Token this KPI belongs to """
+  """
+  Token this KPI belongs to
+  """
   token: Token!
 
-  """ Liquidity """
+  """
+  Liquidity
+  """
   liquidity: BigInt!
 
-  """ Liquidity for the given timeframe """
+  """
+  Liquidity for the given timeframe
+  """
   newLiquidity: BigInt!
 
-  """ Strategy count """
+  """
+  Strategy count
+  """
   strategyCount: BigInt!
 
-  """ Strategy count for the given timeframe """
+  """
+  Strategy count for the given timeframe
+  """
   newStrategyCount: BigInt!
 }
 
@@ -4820,7 +5383,9 @@ input TokenDailyKpi_filter {
   newStrategyCount_in: [BigInt!]
   newStrategyCount_not_in: [BigInt!]
 
-  """Filter for the block changed event."""
+  """
+  Filter for the block changed event.
+  """
   _change_block: BlockChangedFilter
   and: [TokenDailyKpi_filter]
   or: [TokenDailyKpi_filter]
@@ -4843,23 +5408,34 @@ enum TokenDailyKpi_orderBy {
 }
 
 type TokenHourlyKpi {
-  """ created by id, infix '-hour-' and unix timestamp, e.g. '0x00..00-hour-1657270000'
+  """
+  created by id, infix '-hour-' and unix timestamp, e.g. '0x00..00-hour-1657270000'
   """
   id: ID!
 
-  """ Token this KPI belongs to """
+  """
+  Token this KPI belongs to
+  """
   token: Token!
 
-  """ Liquidity """
+  """
+  Liquidity
+  """
   liquidity: BigInt!
 
-  """ Liquidity for the given timeframe """
+  """
+  Liquidity for the given timeframe
+  """
   newLiquidity: BigInt!
 
-  """ Strategy count """
+  """
+  Strategy count
+  """
   strategyCount: BigInt!
 
-  """ Strategy count for the given timeframe """
+  """
+  Strategy count for the given timeframe
+  """
   newStrategyCount: BigInt!
 }
 
@@ -4926,7 +5502,9 @@ input TokenHourlyKpi_filter {
   newStrategyCount_in: [BigInt!]
   newStrategyCount_not_in: [BigInt!]
 
-  """Filter for the block changed event."""
+  """
+  Filter for the block changed event.
+  """
   _change_block: BlockChangedFilter
   and: [TokenHourlyKpi_filter]
   or: [TokenHourlyKpi_filter]
@@ -4949,19 +5527,29 @@ enum TokenHourlyKpi_orderBy {
 }
 
 type TokenKpi {
-  """ Token address """
+  """
+  Token address
+  """
   id: ID!
 
-  """ Token that belongs to this Kpi """
+  """
+  Token that belongs to this Kpi
+  """
   token: Token!
 
-  """ Liquidity """
+  """
+  Liquidity
+  """
   liquidity: BigInt!
 
-  """ Strategy count """
+  """
+  Strategy count
+  """
   strategyCount: BigInt!
 
-  """ Token Strategy APR """
+  """
+  Token Strategy APR
+  """
   apr: BigDecimal
 }
 
@@ -5020,7 +5608,9 @@ input TokenKpi_filter {
   apr_in: [BigDecimal!]
   apr_not_in: [BigDecimal!]
 
-  """Filter for the block changed event."""
+  """
+  Filter for the block changed event.
+  """
   _change_block: BlockChangedFilter
   and: [TokenKpi_filter]
   or: [TokenKpi_filter]
@@ -5042,25 +5632,39 @@ enum TokenKpi_orderBy {
 }
 
 type TokenStrategy {
-  """ Token address """
+  """
+  Token address
+  """
   id: ID!
 
-  """ The Token this strategy belongs to """
+  """
+  The Token this strategy belongs to
+  """
   token: Token!
 
-  """ Strategy address """
+  """
+  Strategy address
+  """
   strategy: Strategy
 
-  """ Pending strategy address """
+  """
+  Pending strategy address
+  """
   pendingStrategy: Strategy
 
-  """ The Strategy data """
+  """
+  The Strategy data
+  """
   data: StrategyData!
 
-  """ The block number of this strategy """
+  """
+  The block number of this strategy
+  """
   block: BigInt!
 
-  """ The timestamp of this strategy """
+  """
+  The timestamp of this strategy
+  """
   timestamp: BigInt!
 }
 
@@ -5174,7 +5778,9 @@ input TokenStrategy_filter {
   timestamp_in: [BigInt!]
   timestamp_not_in: [BigInt!]
 
-  """Filter for the block changed event."""
+  """
+  Filter for the block changed event.
+  """
   _change_block: BlockChangedFilter
   and: [TokenStrategy_filter]
   or: [TokenStrategy_filter]
@@ -5341,7 +5947,9 @@ input Token_filter {
   decimalsSuccess_in: [Boolean!]
   decimalsSuccess_not_in: [Boolean!]
 
-  """Filter for the block changed event."""
+  """
+  Filter for the block changed event.
+  """
   _change_block: BlockChangedFilter
   and: [Token_filter]
   or: [Token_filter]
@@ -5370,34 +5978,54 @@ enum Token_orderBy {
 }
 
 type Transaction {
-  """ Concatenation of transaction hash and log index """
+  """
+  Concatenation of transaction hash and log index
+  """
   id: ID!
 
-  """ BentoBox this transaction belongs to """
+  """
+  BentoBox this transaction belongs to
+  """
   bentoBox: BentoBox!
 
-  """ Transaction type """
+  """
+  Transaction type
+  """
   type: TransactionType!
 
-  """ User from whom this transaction is made """
+  """
+  User from whom this transaction is made
+  """
   from: User!
 
-  """ User to whom the transaction is sent """
+  """
+  User to whom the transaction is sent
+  """
   to: User!
 
-  """ Token this transaction belongs to """
+  """
+  Token this transaction belongs to
+  """
   token: Token!
 
-  """ Amount of this transaction """
+  """
+  Amount of this transaction
+  """
   amount: BigInt
 
-  """ Share of this transaction """
+  """
+  Share of this transaction
+  """
   share: BigInt!
 
-  """ Block number of this transaction """
+  """
+  Block number of this transaction
+  """
   block: BigInt!
 
-  """ Timestamp of this transaction """
+  """
+  Timestamp of this transaction
+  """
   timestamp: BigInt!
 }
 
@@ -5537,7 +6165,9 @@ input Transaction_filter {
   timestamp_in: [BigInt!]
   timestamp_not_in: [BigInt!]
 
-  """Filter for the block changed event."""
+  """
+  Filter for the block changed event.
+  """
   _change_block: BlockChangedFilter
   and: [Transaction_filter]
   or: [Transaction_filter]
@@ -5571,22 +6201,46 @@ enum Transaction_orderBy {
 }
 
 type User {
-  """ User address """
+  """
+  User address
+  """
   id: ID!
 
-  """ BentoBox this user belongs to """
+  """
+  BentoBox this user belongs to
+  """
   bentoBox: BentoBox!
 
-  """ MasterContractApprovals that belong to this user """
-  masterContractApprovals(skip: Int = 0, first: Int = 100, orderBy: MasterContractApproval_orderBy, orderDirection: OrderDirection, where: MasterContractApproval_filter): [MasterContractApproval!]
+  """
+  MasterContractApprovals that belong to this user
+  """
+  masterContractApprovals(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: MasterContractApproval_orderBy
+    orderDirection: OrderDirection
+    where: MasterContractApproval_filter
+  ): [MasterContractApproval!]
 
-  """ Balances that belong to this user """
-  balances(skip: Int = 0, first: Int = 100, orderBy: Balance_orderBy, orderDirection: OrderDirection, where: Balance_filter): [Balance!]
+  """
+  Balances that belong to this user
+  """
+  balances(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: Balance_orderBy
+    orderDirection: OrderDirection
+    where: Balance_filter
+  ): [Balance!]
 
-  """ Block number of this user """
+  """
+  Block number of this user
+  """
   block: BigInt!
 
-  """ Timestamp of this user """
+  """
+  Timestamp of this user
+  """
   timestamp: BigInt!
 }
 
@@ -5639,7 +6293,9 @@ input User_filter {
   timestamp_in: [BigInt!]
   timestamp_not_in: [BigInt!]
 
-  """Filter for the block changed event."""
+  """
+  Filter for the block changed event.
+  """
   _change_block: BlockChangedFilter
   and: [User_filter]
   or: [User_filter]
@@ -5656,33 +6312,49 @@ enum User_orderBy {
 }
 
 type _Block_ {
-  """The hash of the block"""
+  """
+  The hash of the block
+  """
   hash: Bytes
 
-  """The block number"""
+  """
+  The block number
+  """
   number: Int!
 
-  """Integer representation of the timestamp stored in blocks for the chain"""
+  """
+  Integer representation of the timestamp stored in blocks for the chain
+  """
   timestamp: Int
 
-  """The hash of the parent block"""
+  """
+  The hash of the parent block
+  """
   parentHash: Bytes
 }
 
-"""The type for the top-level _meta field"""
+"""
+The type for the top-level _meta field
+"""
 type _Meta_ {
   "Information about a specific subgraph block. The hash of the block\nwill be null if the _meta field has a block constraint that asks for\na block number. It will be filled if the _meta field has no block constraint\nand therefore asks for the latest  block\n"
   block: _Block_!
 
-  """The deployment ID"""
+  """
+  The deployment ID
+  """
   deployment: String!
 
-  """If `true`, the subgraph encountered indexing errors at some past block"""
+  """
+  If `true`, the subgraph encountered indexing errors at some past block
+  """
   hasIndexingErrors: Boolean!
 }
 
 enum _SubgraphErrorPolicy_ {
-  """Data will be returned even if the subgraph has indexing errors"""
+  """
+  Data will be returned even if the subgraph has indexing errors
+  """
   allow
 
   """
