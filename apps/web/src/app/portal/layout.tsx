@@ -10,9 +10,11 @@ export default async function Layout({
 
   return (
     <Providers authSession={authSession}>
-      <Header />
-      <NextTopLoader showSpinner={false} />
-      {children}
+      <div className="fixed flex flex-col h-full w-full">
+        <Header />
+        <NextTopLoader showSpinner={false} />
+        {children}
+      </div>
     </Providers>
   )
 }

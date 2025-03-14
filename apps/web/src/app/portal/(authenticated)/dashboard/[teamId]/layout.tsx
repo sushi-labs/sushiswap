@@ -35,11 +35,13 @@ export default async function Layout({
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
-      <div className="flex flex-row flex-1 items-stretch">
+      <div className="inline-flex flex-1 overflow-y-auto">
         <DashboardSidebar team={teamResponse.data.team} />
-        <Container maxWidth="5xl" className="p-8">
-          {children}
-        </Container>
+        <div className="overflow-y-auto w-full [scrollbar-gutter:stable]">
+          <Container maxWidth="5xl" className="p-8">
+            {children}
+          </Container>
+        </div>
       </div>
     </HydrationBoundary>
   )
