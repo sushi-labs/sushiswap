@@ -10,6 +10,7 @@ import {
   TextField,
   formClassnames,
 } from '@sushiswap/ui'
+import { useRouter } from 'nextjs-toploader/app'
 import { useCallback, useEffect, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import type { z } from 'zod'
@@ -19,6 +20,8 @@ import { registerFormSchema } from './register-form-schema'
 type RegisterFormValues = z.infer<typeof registerFormSchema>
 
 export function RegisterForm() {
+  const router = useRouter()
+
   const [globalErrorMsg, setGlobalErrorMsg] = useState<string | null>(null)
 
   const form = useForm<RegisterFormValues>({
@@ -59,9 +62,11 @@ export function RegisterForm() {
         } else {
           setGlobalErrorMsg(result.error)
         }
+      } else {
+        router.push('/portal/verify')
       }
     },
-    [form.setError],
+    [form.setError, router.push],
   )
 
   const isPending = form.formState.isSubmitting

@@ -13,8 +13,10 @@ import { TeamInvitesTable } from './team-invites-table'
 
 export async function TeamInvitesCard({ teamId }: { teamId: string }) {
   const client = await getStyroClient()
-  const teamResponse = await client.getTeamsTeamId({ teamId })
-  const invitesResponse = await client.getTeamsTeamIdInvites({ teamId })
+  const [teamResponse, invitesResponse] = await Promise.all([
+    client.getTeamsTeamId({ teamId }),
+    client.getTeamsTeamIdInvites({ teamId }),
+  ])
 
   if (teamResponse.data.team.type === 'personal') {
     return null

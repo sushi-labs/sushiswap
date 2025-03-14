@@ -14,10 +14,9 @@ import { getStyroClient } from 'src/app/portal/_common/lib/styro/styro-client'
 import { TeamApiKeyTable } from './team-api-key-table'
 
 export async function TeamApiKeyCard({ teamId }: { teamId: string }) {
-  const queryClient = new QueryClient()
-
   const client = await getStyroClient()
 
+  const queryClient = new QueryClient()
   await queryClient.prefetchQuery({
     queryKey: ['portal-getTeamsTeamIdApiKeys', teamId],
     queryFn: async () => {

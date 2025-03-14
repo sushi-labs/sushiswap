@@ -10,7 +10,8 @@ import {
   TextField,
   formClassnames,
 } from '@sushiswap/ui'
-import { useCallback, useState } from 'react'
+import { useSearchParams } from 'next/navigation'
+import { useCallback, useEffect, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import type { z } from 'zod'
 import { ResendCodeButton } from './resend-code/resend-code-button'
@@ -20,6 +21,7 @@ import { verifyEmailFormSchema } from './verify-form-schema'
 type VerifyFormValues = z.infer<typeof verifyEmailFormSchema>
 
 export function VerifyForm() {
+  const searchParams = useSearchParams()
   const [globalErrorMsg, setGlobalErrorMsg] = useState<string | null>(null)
 
   const form = useForm<VerifyFormValues>({
@@ -29,6 +31,12 @@ export function VerifyForm() {
     mode: 'onBlur',
     resolver: zodResolver(verifyEmailFormSchema),
   })
+
+  useEffect(() => {
+    if (searchParams.has('code')) {
+      form.setValue('code', searchParams.get('code')!)
+    }
+  }, [searchParams, form.setValue])
 
   const onSubmit = useCallback(
     async (values: VerifyFormValues) => {

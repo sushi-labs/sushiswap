@@ -13,23 +13,25 @@ export default async function Layout({
   params,
 }: { children: React.ReactNode; params: Promise<{ teamId: string }> }) {
   const teamId = (await params).teamId
+  
   const client = await getStyroClient()
   const session = await getLoggedInSessionData()
 
-  const teamResponse = await client.getTeamsTeamId({
-    teamId,
-  })
-
-  const teamMemberShipResponse = await client.getTeamsTeamIdMembersUserId({
-    teamId,
-    userId: session.user.id,
-  })
+  const [teamResponse, teamMembershipResponse] = await Promise.all([
+    client.getTeamsTeamId({
+      teamId,
+    }),
+    client.getTeamsTeamIdMembersUserId({
+      teamId,
+      userId: session.user.id,
+    }),
+  ])
 
   const queryClient = new QueryClient()
   await queryClient.prefetchQuery({
     queryKey: ['portal-getTeamsTeamIdMembersUserId', teamId, session.user.id],
     queryFn: () => {
-      return teamMemberShipResponse.data
+      return teamMembershipResponse.data
     },
   })
 

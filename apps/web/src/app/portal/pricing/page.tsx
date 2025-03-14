@@ -1,4 +1,4 @@
-import { Carousel, typographyVariants } from '@sushiswap/ui'
+import { typographyVariants } from '@sushiswap/ui'
 import { getUnauthenticatedStyroClient } from '../_common/lib/styro/styro-client'
 import { PlanCard } from '../_common/ui/plans/plan-card'
 

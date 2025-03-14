@@ -2,6 +2,7 @@
 
 import type { CreateSessionResponse } from '@zitadel/proto/zitadel/session/v2/session_service_pb'
 import type { AddHumanUserResponse } from '@zitadel/proto/zitadel/user/v2/user_service_pb'
+import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { createZitadelSession } from 'src/app/portal/(unauthenticated)/_common/lib/create-zitadel-session'
 import { createSession } from 'src/app/portal/_common/lib/client-config'
@@ -80,8 +81,6 @@ export async function registerAction(data: FormData): Promise<FormState> {
     },
   })
 
-  redirect('/portal/verify')
-
   return { success: true }
 }
 
@@ -110,6 +109,10 @@ async function fetchZitadelUsers(email: string) {
 }
 
 async function createZitadelUser(data: z.infer<typeof registerFormSchema>) {
+  const headers_ = await headers()
+  const host = headers_.get('Host')!
+  const proto = headers_.get('X-Forwarded-Proto') || 'https'
+
   const userServiceClient = getUserServiceClient()
   const user = await userServiceClient.addHumanUser({
     profile: {
@@ -120,8 +123,10 @@ async function createZitadelUser(data: z.infer<typeof registerFormSchema>) {
       email: data.email,
       verification: {
         case: 'sendCode',
-        value: {},
-        // TODO: Template
+        value: {
+          $typeName: 'zitadel.user.v2.SendEmailVerificationCode',
+          urlTemplate: `${proto}://${host}/portal/email/verify-email?code={{.Code}}`,
+        },
       },
     },
     passwordType: {

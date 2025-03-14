@@ -15,9 +15,12 @@ import { TeamChangePlanDialog } from './team-change-plan-dialog'
 export async function TeamPlanCard({ teamId }: { teamId: string }) {
   const client = await getStyroClient()
 
-  const teamBillingResponse = await client.getTeamsTeamIdBilling({ teamId })
-  const teamPlanResponse = await client.getTeamsTeamIdPlan({ teamId })
-  const plansResponse = await client.getPlans()
+  const [teamBillingResponse, teamPlanResponse, plansResponse] =
+    await Promise.all([
+      client.getTeamsTeamIdBilling({ teamId }),
+      client.getTeamsTeamIdPlan({ teamId }),
+      client.getPlans(),
+    ])
 
   return (
     <Card className="w-full min-w-[470px] h-min">

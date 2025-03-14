@@ -18,13 +18,15 @@ export async function ApiKeyRateLimitCard({
   apiKeyId: string
 }) {
   const client = await getStyroClient()
-  const apiKeyResponse = await client.getTeamsTeamIdApiKeysApiKeyId({
-    teamId,
-    apiKeyId,
-  })
-  const planResponse = await client.getTeamsTeamIdPlan({
-    teamId,
-  })
+  const [apiKeyResponse, planResponse] = await Promise.all([
+    client.getTeamsTeamIdApiKeysApiKeyId({
+      teamId,
+      apiKeyId,
+    }),
+    client.getTeamsTeamIdPlan({
+      teamId,
+    }),
+  ])
 
   return (
     <Card className="w-full min-w-[470px] h-min">

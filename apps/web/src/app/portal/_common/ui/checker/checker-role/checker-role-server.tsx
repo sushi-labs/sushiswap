@@ -26,9 +26,11 @@ async function _CheckerRoleServer({
   disabled,
   requiredRole,
 }: CheckerRoleServer) {
-  const session = await getLoggedInSessionData()
+  const [session, client] = await Promise.all([
+    getLoggedInSessionData(),
+    getStyroClient(),
+  ])
 
-  const client = await getStyroClient()
   const response = await client.getTeamsTeamIdMembersUserId({
     teamId: teamId,
     userId: session.user.id,

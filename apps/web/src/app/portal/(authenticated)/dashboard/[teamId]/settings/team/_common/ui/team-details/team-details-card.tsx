@@ -15,6 +15,7 @@ interface TeamDetailsCard {
 
 export async function TeamDetailsCard({ teamId }: TeamDetailsCard) {
   const client = await getStyroClient()
+
   const response = await client.getTeamsTeamId({ teamId })
 
   return (
