@@ -11,6 +11,7 @@ import {
   formClassnames,
 } from '@sushiswap/ui'
 import { useSearchParams } from 'next/navigation'
+import { useRouter } from 'nextjs-toploader/app'
 import { useCallback, useEffect, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import type { z } from 'zod'
@@ -21,6 +22,8 @@ import { verifyEmailFormSchema } from './verify-form-schema'
 type VerifyFormValues = z.infer<typeof verifyEmailFormSchema>
 
 export function VerifyForm() {
+  const router = useRouter()
+
   const searchParams = useSearchParams()
   const [globalErrorMsg, setGlobalErrorMsg] = useState<string | null>(null)
 
@@ -51,9 +54,11 @@ export function VerifyForm() {
         } else {
           setGlobalErrorMsg(result.error)
         }
+      } else {
+        router.push('/portal')
       }
     },
-    [form.setError],
+    [form.setError, router.push],
   )
 
   return (

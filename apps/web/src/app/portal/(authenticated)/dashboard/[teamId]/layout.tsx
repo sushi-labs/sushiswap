@@ -13,7 +13,7 @@ export default async function Layout({
   params,
 }: { children: React.ReactNode; params: Promise<{ teamId: string }> }) {
   const teamId = (await params).teamId
-  
+
   const client = await getStyroClient()
   const session = await getLoggedInSessionData()
 

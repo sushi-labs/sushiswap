@@ -10,7 +10,11 @@ export function ResendCodeButton() {
   const { mutate, isSuccess, error, isPending } = useMutation({
     mutationKey: ['resend-code'],
     mutationFn: async () => {
-      await resendCodeAction()
+      const result = await resendCodeAction()
+
+      if ('error' in result) {
+        throw new Error(result.error)
+      }
     },
   })
 

@@ -51,7 +51,5 @@ export async function verifyEmailAction(data: FormData): Promise<FormState> {
     }
   }
 
-  redirect('/portal')
-
   return { success: true }
 }
