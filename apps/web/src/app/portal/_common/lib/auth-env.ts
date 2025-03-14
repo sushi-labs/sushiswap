@@ -29,7 +29,6 @@ if (!authParsed.success) {
     console.error(authParsed.error.issues)
     throw new Error('Failed to parse auth env')
   }
+} else {
+  authEnv = authParsed.data
 }
-
-// Needed because env is missing at vercel build time
-authEnv = authParsed.data!
