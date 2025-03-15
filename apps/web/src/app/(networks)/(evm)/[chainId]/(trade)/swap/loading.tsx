@@ -5,7 +5,6 @@ export default function SimpleSwapLoading() {
   return (
     <Container maxWidth="lg" className="px-4">
       <div className="flex flex-col gap-4">
-        <div />
         <div className="flex flex-col gap-2 mb-4 sm:mt-10 mt-2">
           <SkeletonBox className="w-[140px] h-[36px] lg:h-[53px] rounded-xl" />
           <SkeletonBox className="h-[20px] w-[280px] rounded-xl" />
