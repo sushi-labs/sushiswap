@@ -6,7 +6,12 @@ export function NavigationItems() {
     <>
       <LinkInternal shallow={true} scroll={false} href={`/claim`}>
         <PathnameButton id="fees" pathname={`/claim`} asChild size="sm">
-          Fees
+          <span className="flex items-center gap-2">
+            <span>💰</span>{' '}
+            <span>
+              Fees <sup>v3</sup>
+            </span>
+          </span>
         </PathnameButton>
       </LinkInternal>
       <LinkInternal shallow={true} scroll={false} href={`/claim/rewards`}>
@@ -16,7 +21,12 @@ export function NavigationItems() {
           asChild
           size="sm"
         >
-          Rewards
+          <span className="flex items-center gap-2">
+            <span>🍣</span>{' '}
+            <span>
+              Rewards <sup>v3</sup>
+            </span>
+          </span>
         </PathnameButton>
       </LinkInternal>
     </>

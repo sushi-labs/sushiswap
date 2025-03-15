@@ -19,6 +19,7 @@ export default function ClaimLayout({
         shiftContent
         selectedNetwork={EvmChainId.ETHEREUM}
         supportedNetworks={supportedNetworks}
+        onSelect={null}
       >
         <main className="flex flex-col h-full flex-1">
           <Container maxWidth="7xl" className="px-4 pt-16 pb-8">
