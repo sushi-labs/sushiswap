@@ -27,20 +27,6 @@ export function NavigationItems({ chainId }: { chainId: ChainId }) {
       <LinkInternal
         shallow={true}
         scroll={false}
-        href={`/${ChainKey[chainId]}/rewards?${searchParams.toString()}`}
-      >
-        <PathnameButton
-          id="my-rewards"
-          pathname={`/${ChainKey[chainId]}/rewards`}
-          asChild
-          size="sm"
-        >
-          My Rewards
-        </PathnameButton>
-      </LinkInternal>
-      <LinkInternal
-        shallow={true}
-        scroll={false}
         href={`/${ChainKey[chainId]}/migrate?${searchParams.toString()}`}
       >
         <PathnameButton
