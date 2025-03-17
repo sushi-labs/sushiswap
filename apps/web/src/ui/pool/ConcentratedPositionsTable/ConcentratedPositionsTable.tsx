@@ -136,6 +136,7 @@ export const ConcentratedPositionsTable: FC<
                 positions={_positions}
                 account={address}
                 chainId={chainId}
+                buttonContainerClassname="ml-auto"
               />
             ) : null}
             {!hideNewSmartPositionButton ? (

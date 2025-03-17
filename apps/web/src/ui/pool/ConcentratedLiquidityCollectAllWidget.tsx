@@ -45,11 +45,19 @@ interface ConcentratedLiquidityCollectAllWidget {
   positions: ConcentratedLiquidityPositionWithV3Pool[]
   chainId: EvmChainId
   account: `0x${string}` | undefined
+  buttonContainerClassname?: string
+  buttonText?: string
 }
 
 export const ConcentratedLiquidityCollectAllWidget: FC<
   ConcentratedLiquidityCollectAllWidget
-> = ({ positions, chainId, account }) => {
+> = ({
+  positions,
+  chainId,
+  account,
+  buttonContainerClassname,
+  buttonText = 'Claim Fees',
+}) => {
   const { chain } = useAccount()
   const client = usePublicClient()
   const { refetchChain: refetchBalances } = useRefetchBalances()
@@ -229,7 +237,7 @@ export const ConcentratedLiquidityCollectAllWidget: FC<
         {({ confirm }) => (
           <>
             {aggregatedAmounts.length > 0 ? (
-              <div className="ml-auto">
+              <div className={buttonContainerClassname}>
                 <Checker.Connect className="min-w-[160px]" size="sm" fullWidth>
                   <Checker.Network
                     className="min-w-[160px]"
@@ -245,7 +253,7 @@ export const ConcentratedLiquidityCollectAllWidget: FC<
                         disabled={!aggregatedAmounts.length}
                         testId="claim-fees-all"
                       >
-                        Claim Fees
+                        {buttonText}
                       </Button>
                     </DialogTrigger>
                   </Checker.Network>

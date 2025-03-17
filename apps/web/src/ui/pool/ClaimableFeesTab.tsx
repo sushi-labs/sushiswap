@@ -1,5 +1,6 @@
 'use client'
 
+import { PoolChainIds } from '@sushiswap/graph-client/data-api'
 import {
   Card,
   CardHeader,
@@ -9,34 +10,70 @@ import {
 } from '@sushiswap/ui'
 import type { ColumnDef, PaginationState } from '@tanstack/react-table'
 import React, { type FC, useMemo, useState } from 'react'
-import {
-  type ClaimableRewards,
-  useClaimableRewards,
-} from 'src/lib/hooks/react-query'
+import { useConcentratedLiquidityPositions } from 'src/lib/wagmi/hooks/positions/hooks/useConcentratedLiquidityPositions'
+import type { ConcentratedLiquidityPositionWithV3Pool } from 'src/lib/wagmi/hooks/positions/types'
+import { type SushiSwapV3ChainId, isSushiSwapV3ChainId } from 'sushi/config'
 import { useAccount } from 'wagmi'
 import {
-  REWARDS_ACTION_COLUMN,
-  REWARDS_AMOUNT_COLUMN,
-  REWARDS_CHAIN_COLUMN,
+  CLAIM_POSITIONS_CHAIN_COLUMN,
+  CLAIM_POSITIONS_FEES_ACTIONS_COLUMN,
+  CLAIM_POSITIONS_FEES_AMOUNTS_COLUMN,
 } from './columns'
 
-// TODO
 const COLUMNS = [
-  REWARDS_CHAIN_COLUMN,
-  REWARDS_AMOUNT_COLUMN,
-  REWARDS_ACTION_COLUMN,
-] satisfies ColumnDef<ClaimableRewards, unknown>[]
+  CLAIM_POSITIONS_CHAIN_COLUMN,
+  CLAIM_POSITIONS_FEES_AMOUNTS_COLUMN,
+  CLAIM_POSITIONS_FEES_ACTIONS_COLUMN,
+] satisfies ColumnDef<
+  {
+    chainId: SushiSwapV3ChainId
+    positions: ConcentratedLiquidityPositionWithV3Pool[]
+  },
+  unknown
+>[]
 
 export const ClaimableFeesTab: FC = () => {
   const { address, isConnecting } = useAccount()
-  const { data: _data, isLoading } = useClaimableRewards({ account: address }) // TODO
-
+  const poolChainIds = useMemo(
+    () => PoolChainIds.filter((el) => isSushiSwapV3ChainId(el)),
+    [],
+  )
+  const { data: positionsData, isInitialLoading: isLoading } =
+    useConcentratedLiquidityPositions({
+      account: address,
+      chainIds: poolChainIds,
+    })
   const [paginationState, setPaginationState] = useState<PaginationState>({
     pageIndex: 0,
     pageSize: 10,
   })
 
-  const data = useMemo(() => (_data ? Object.values(_data) : []), [_data])
+  const positionsByChain = useMemo(() => {
+    return positionsData?.reduce(
+      (acc, position) => {
+        acc[position.chainId] = acc[position.chainId] || []
+        acc[position.chainId].push(position)
+        return acc
+      },
+      {} as Record<
+        SushiSwapV3ChainId,
+        ConcentratedLiquidityPositionWithV3Pool[]
+      >,
+    )
+  }, [positionsData])
+
+  const chainsCount = useMemo(() => {
+    return Object.keys(positionsByChain || {}).length
+  }, [positionsByChain])
+
+  const data = useMemo(() => {
+    return Object.entries(positionsByChain || {}).map(
+      ([chainId, positions]) => ({
+        chainId: Number(chainId) as SushiSwapV3ChainId,
+        positions,
+      }),
+    )
+  }, [positionsByChain])
 
   return (
     <Container maxWidth="7xl" className="px-4 mx-auto">
@@ -45,7 +82,7 @@ export const ClaimableFeesTab: FC = () => {
           <CardTitle>
             Claimable Fees{' '}
             <span className="text-gray-400 dark:text-slate-500">
-              ({data.length})
+              ({chainsCount})
             </span>
           </CardTitle>
         </CardHeader>

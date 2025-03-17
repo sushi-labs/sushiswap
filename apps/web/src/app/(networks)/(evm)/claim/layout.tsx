@@ -1,11 +1,10 @@
 import { Container } from '@sushiswap/ui'
+import { POOL_SUPPORTED_NETWORKS } from 'src/config'
 import { EvmChainId } from 'sushi/chain'
 import { Header } from '~evm/[chainId]/header'
 import { SidebarContainer, SidebarProvider } from '~evm/_common/ui/sidebar'
 import { Hero } from './hero'
 import { NavigationItems } from './navigation-items'
-
-const supportedNetworks = [EvmChainId.ETHEREUM]
 
 export default function ClaimLayout({
   children,
@@ -17,8 +16,7 @@ export default function ClaimLayout({
       <Header chainId={EvmChainId.ETHEREUM} />
       <SidebarContainer
         shiftContent
-        selectedNetwork={EvmChainId.ETHEREUM}
-        supportedNetworks={supportedNetworks}
+        supportedNetworks={POOL_SUPPORTED_NETWORKS}
         onSelect={null}
       >
         <main className="flex flex-col h-full flex-1">
