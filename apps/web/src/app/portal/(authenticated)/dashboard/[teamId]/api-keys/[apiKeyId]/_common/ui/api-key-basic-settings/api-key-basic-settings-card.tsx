@@ -7,7 +7,7 @@ import {
   CardTitle,
   TextField,
 } from '@sushiswap/ui'
-import { getStyroClient } from 'src/app/portal/_common/lib/styro/styro-client'
+import { getUserStyroClient } from 'src/app/portal/_common/lib/styro/styro-client'
 import { ApiKeyBasicSettingsForm } from './api-key-basic-settings-form'
 
 export async function ApiKeyBasicSettingsCard({
@@ -17,7 +17,7 @@ export async function ApiKeyBasicSettingsCard({
   teamId: string
   apiKeyId: string
 }) {
-  const client = await getStyroClient()
+  const client = await getUserStyroClient()
   const response = await client.getTeamsTeamIdApiKeysApiKeyId({
     teamId,
     apiKeyId,

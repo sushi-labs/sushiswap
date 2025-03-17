@@ -5,7 +5,7 @@ import {
   dehydrate,
 } from '@tanstack/react-query'
 import { getLoggedInSessionData } from 'src/app/portal/_common/lib/client-config'
-import { getStyroClient } from 'src/app/portal/_common/lib/styro/styro-client'
+import { getUserStyroClient } from 'src/app/portal/_common/lib/styro/styro-client'
 import { DashboardSidebar } from './_common/ui/dashboard-sidebar'
 
 export default async function Layout({
@@ -14,7 +14,7 @@ export default async function Layout({
 }: { children: React.ReactNode; params: Promise<{ teamId: string }> }) {
   const teamId = (await params).teamId
 
-  const client = await getStyroClient()
+  const client = await getUserStyroClient()
   const session = await getLoggedInSessionData()
 
   const [teamResponse, teamMembershipResponse] = await Promise.all([

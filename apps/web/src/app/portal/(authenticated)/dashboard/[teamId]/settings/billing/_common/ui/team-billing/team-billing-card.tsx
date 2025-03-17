@@ -10,10 +10,10 @@ import {
   List,
 } from '@sushiswap/ui'
 import { formatDistance } from 'date-fns/esm'
-import { getStyroClient } from 'src/app/portal/_common/lib/styro/styro-client'
+import { getUserStyroClient } from 'src/app/portal/_common/lib/styro/styro-client'
 
 export async function TeamBillingCard({ teamId }: { teamId: string }) {
-  const client = await getStyroClient()
+  const client = await getUserStyroClient()
   const response = await client.getTeamsTeamIdBilling({ teamId })
 
   return (

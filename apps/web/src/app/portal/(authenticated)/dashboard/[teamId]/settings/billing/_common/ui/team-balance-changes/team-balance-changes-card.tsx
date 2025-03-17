@@ -5,11 +5,11 @@ import {
   CardHeader,
   CardTitle,
 } from '@sushiswap/ui'
-import { getStyroClient } from 'src/app/portal/_common/lib/styro/styro-client'
+import { getUserStyroClient } from 'src/app/portal/_common/lib/styro/styro-client'
 import { TeamBalanceChangesTable } from './team-balance-changes-table'
 
 export async function TeamBalanceChangesCard({ teamId }: { teamId: string }) {
-  const client = await getStyroClient()
+  const client = await getUserStyroClient()
   const response = await client.getTeamsTeamIdBilling({
     teamId,
   })

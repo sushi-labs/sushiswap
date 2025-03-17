@@ -9,11 +9,11 @@ import {
   FormattedNumber,
   List,
 } from '@sushiswap/ui'
-import { getStyroClient } from 'src/app/portal/_common/lib/styro/styro-client'
+import { getUserStyroClient } from 'src/app/portal/_common/lib/styro/styro-client'
 import { TeamChangePlanDialog } from './team-change-plan-dialog'
 
 export async function TeamPlanCard({ teamId }: { teamId: string }) {
-  const client = await getStyroClient()
+  const client = await getUserStyroClient()
 
   const [teamBillingResponse, teamPlanResponse, plansResponse] =
     await Promise.all([

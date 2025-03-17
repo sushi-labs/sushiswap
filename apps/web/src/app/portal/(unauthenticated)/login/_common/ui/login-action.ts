@@ -18,6 +18,7 @@ export type FormState =
     }
   | {
       success: true
+      redirect: '/portal' | '/portal/verify'
     }
 
 export async function loginAction(data: FormData): Promise<FormState> {
@@ -66,12 +67,10 @@ export async function loginAction(data: FormData): Promise<FormState> {
     })
 
     if (!user.value.type.value.email.isVerified) {
-      redirect('/portal/verify')
+      return { success: true, redirect: '/portal/verify' }
     } else {
-      redirect('/portal')
+      return { success: true, redirect: '/portal' }
     }
-
-    return { success: true }
   } catch (e) {
     if (isRedirectError(e)) {
       throw e

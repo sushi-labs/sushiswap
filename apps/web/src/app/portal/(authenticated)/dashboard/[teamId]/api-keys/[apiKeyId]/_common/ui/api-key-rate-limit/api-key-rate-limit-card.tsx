@@ -7,7 +7,7 @@ import {
   CardTitle,
   TextField,
 } from '@sushiswap/ui'
-import { getStyroClient } from 'src/app/portal/_common/lib/styro/styro-client'
+import { getUserStyroClient } from 'src/app/portal/_common/lib/styro/styro-client'
 import { ApiKeyRateLimitForm } from './api-key-rate-limit-form'
 
 export async function ApiKeyRateLimitCard({
@@ -17,7 +17,7 @@ export async function ApiKeyRateLimitCard({
   teamId: string
   apiKeyId: string
 }) {
-  const client = await getStyroClient()
+  const client = await getUserStyroClient()
   const [apiKeyResponse, planResponse] = await Promise.all([
     client.getTeamsTeamIdApiKeysApiKeyId({
       teamId,

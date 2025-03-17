@@ -10,11 +10,11 @@ import {
   QueryClient,
   dehydrate,
 } from '@tanstack/react-query'
-import { getStyroClient } from 'src/app/portal/_common/lib/styro/styro-client'
+import { getUserStyroClient } from 'src/app/portal/_common/lib/styro/styro-client'
 import { TeamApiKeyTable } from './team-api-key-table'
 
 export async function TeamApiKeyCard({ teamId }: { teamId: string }) {
-  const client = await getStyroClient()
+  const client = await getUserStyroClient()
 
   const queryClient = new QueryClient()
   await queryClient.prefetchQuery({

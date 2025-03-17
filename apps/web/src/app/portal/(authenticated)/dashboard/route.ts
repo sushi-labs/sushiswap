@@ -1,9 +1,9 @@
 import { type NextRequest, NextResponse } from 'next/server'
-import { getStyroClient } from '../../_common/lib/styro/styro-client'
+import { getUserStyroClient } from '../../_common/lib/styro/styro-client'
 
 export async function GET(request: NextRequest) {
   try {
-    const client = await getStyroClient()
+    const client = await getUserStyroClient()
     const response = await client.getUsersMe()
 
     return NextResponse.redirect(

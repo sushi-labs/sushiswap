@@ -6,7 +6,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@sushiswap/ui'
-import { getStyroClient } from 'src/app/portal/_common/lib/styro/styro-client'
+import { getUserStyroClient } from 'src/app/portal/_common/lib/styro/styro-client'
 import { CheckerCustom } from 'src/app/portal/_common/ui/checker/checker-custom/checker-custom'
 import { CheckerRoleServer } from 'src/app/portal/_common/ui/checker/checker-role/checker-role-server'
 import { DeleteTeamDialog } from './delete-team-dialog'
@@ -16,7 +16,7 @@ interface DeleteTeamCard {
 }
 
 export async function DeleteTeamCard({ teamId }: DeleteTeamCard) {
-  const client = await getStyroClient()
+  const client = await getUserStyroClient()
 
   const teamResponse = await client.getTeamsTeamId({ teamId })
 

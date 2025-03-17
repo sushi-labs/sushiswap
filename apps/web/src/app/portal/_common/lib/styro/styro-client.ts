@@ -1,4 +1,5 @@
 import { createStyroClient } from '@sushiswap/styro-client'
+import { authEnv } from '../auth-env'
 import { STYRO_BASE_PATH } from './config'
 
 export function getUnauthenticatedStyroClient() {
@@ -11,7 +12,16 @@ export function getUnauthenticatedStyroClient() {
   })
 }
 
-export async function getStyroClient() {
+export function getAdminStyroClient() {
+  return createStyroClient({
+    basePath: STYRO_BASE_PATH,
+    accessToken: {
+      pat: authEnv.ZITADEL_SA_TOKEN,
+    },
+  })
+}
+
+export async function getUserStyroClient() {
   const { getSessionData } = await import('../client-config')
   const session = await getSessionData()
 

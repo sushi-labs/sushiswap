@@ -7,11 +7,11 @@ import {
   CardHeader,
   CardTitle,
 } from '@sushiswap/ui'
-import { getStyroClient } from 'src/app/portal/_common/lib/styro/styro-client'
+import { getUserStyroClient } from 'src/app/portal/_common/lib/styro/styro-client'
 import { BalanceTopUpDialog } from './balance-top-up-dialog'
 
 export async function TeamBalanceCard({ teamId }: { teamId: string }) {
-  const client = await getStyroClient()
+  const client = await getUserStyroClient()
   const response = await client.getTeamsTeamIdBilling({ teamId })
 
   return (

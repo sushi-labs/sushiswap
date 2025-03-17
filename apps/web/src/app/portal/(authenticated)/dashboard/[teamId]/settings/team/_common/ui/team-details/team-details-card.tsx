@@ -6,7 +6,7 @@ import {
   CardTitle,
   List,
 } from '@sushiswap/ui'
-import { getStyroClient } from 'src/app/portal/_common/lib/styro/styro-client'
+import { getUserStyroClient } from 'src/app/portal/_common/lib/styro/styro-client'
 import { CopyButton } from 'src/app/portal/_common/ui/copy-button'
 
 interface TeamDetailsCard {
@@ -14,7 +14,7 @@ interface TeamDetailsCard {
 }
 
 export async function TeamDetailsCard({ teamId }: TeamDetailsCard) {
-  const client = await getStyroClient()
+  const client = await getUserStyroClient()
 
   const response = await client.getTeamsTeamId({ teamId })
 

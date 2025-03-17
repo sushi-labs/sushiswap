@@ -11,6 +11,7 @@ import {
   formClassnames,
 } from '@sushiswap/ui'
 import { useSearchParams } from 'next/navigation'
+import { useRouter } from 'nextjs-toploader/app'
 import { useCallback, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import type { z } from 'zod'
@@ -27,6 +28,7 @@ const paramErrors = {
 } as Record<string, string>
 
 export function LoginForm() {
+  const router = useRouter()
   const searchParamsError = useSearchParams().get('error_tag')
 
   const [globalErrorMsg, setGlobalErrorMsg] = useState<string | null>(
@@ -56,9 +58,11 @@ export function LoginForm() {
         } else {
           setGlobalErrorMsg(result.error)
         }
+      } else {
+        router.push(result.redirect)
       }
     },
-    [form.setError],
+    [form.setError, router.push],
   )
 
   return (

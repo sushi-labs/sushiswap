@@ -5,7 +5,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@sushiswap/ui'
-import { getStyroClient } from 'src/app/portal/_common/lib/styro/styro-client'
+import { getUserStyroClient } from 'src/app/portal/_common/lib/styro/styro-client'
 import { ApiKeyKeyForm } from './api-key-key-form'
 
 interface ApiKeyResetCard {
@@ -14,7 +14,7 @@ interface ApiKeyResetCard {
 }
 
 export async function ApiKeyKeyCard({ teamId, apiKeyId }: ApiKeyResetCard) {
-  const client = await getStyroClient()
+  const client = await getUserStyroClient()
 
   const response = await client.getTeamsTeamIdApiKeysApiKeyId({
     teamId,

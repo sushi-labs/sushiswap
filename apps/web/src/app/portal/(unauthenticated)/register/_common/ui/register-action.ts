@@ -3,9 +3,9 @@
 import type { CreateSessionResponse } from '@zitadel/proto/zitadel/session/v2/session_service_pb'
 import type { AddHumanUserResponse } from '@zitadel/proto/zitadel/user/v2/user_service_pb'
 import { headers } from 'next/headers'
-import { redirect } from 'next/navigation'
 import { createZitadelSession } from 'src/app/portal/(unauthenticated)/_common/lib/create-zitadel-session'
 import { createSession } from 'src/app/portal/_common/lib/client-config'
+import { getAdminStyroClient } from 'src/app/portal/_common/lib/styro/styro-client'
 import { getUserServiceClient } from 'src/app/portal/_common/lib/zitadel-client'
 import type { z } from 'zod'
 import { registerFormSchema } from './register-form-schema'
@@ -122,10 +122,9 @@ async function createZitadelUser(data: z.infer<typeof registerFormSchema>) {
     email: {
       email: data.email,
       verification: {
-        case: 'sendCode',
+        case: 'returnCode',
         value: {
-          $typeName: 'zitadel.user.v2.SendEmailVerificationCode',
-          urlTemplate: `${proto}://${host}/portal/email/verify-email?code={{.Code}}`,
+          $typeName: 'zitadel.user.v2.ReturnEmailVerificationCode',
         },
       },
     },
@@ -133,6 +132,26 @@ async function createZitadelUser(data: z.infer<typeof registerFormSchema>) {
       case: 'password',
       value: {
         password: data.password,
+      },
+    },
+  })
+
+  if (!user.emailCode) {
+    throw new Error('Email verification code missing')
+  }
+
+  const client = getAdminStyroClient()
+  await client.postAdminFrontendEmail({
+    postAdminFrontendEmailRequest: {
+      email: {
+        type: 'verify_email',
+        frontend: {
+          baseUrl: `${proto}://${host}`,
+        },
+        verification: {
+          code: user.emailCode,
+          email: data.email,
+        },
       },
     },
   })

@@ -5,7 +5,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@sushiswap/ui'
-import { getStyroClient } from 'src/app/portal/_common/lib/styro/styro-client'
+import { getUserStyroClient } from 'src/app/portal/_common/lib/styro/styro-client'
 import { ManageTeamForm } from './manage-team-form'
 
 interface ManageTeamCard {
@@ -13,7 +13,7 @@ interface ManageTeamCard {
 }
 
 export async function ManageTeamCard({ teamId }: ManageTeamCard) {
-  const client = await getStyroClient()
+  const client = await getUserStyroClient()
   const team = await client.getTeamsTeamId({ teamId })
 
   return (

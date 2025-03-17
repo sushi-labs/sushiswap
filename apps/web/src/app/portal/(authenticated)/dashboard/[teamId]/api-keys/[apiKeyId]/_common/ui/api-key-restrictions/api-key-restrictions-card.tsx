@@ -5,7 +5,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@sushiswap/ui'
-import { getStyroClient } from 'src/app/portal/_common/lib/styro/styro-client'
+import { getUserStyroClient } from 'src/app/portal/_common/lib/styro/styro-client'
 import { ApiKeyRestrictionsForm } from './api-key-restrictions-form'
 
 export async function ApiKeyRestrictionsCard({
@@ -15,7 +15,7 @@ export async function ApiKeyRestrictionsCard({
   teamId: string
   apiKeyId: string
 }) {
-  const client = await getStyroClient()
+  const client = await getUserStyroClient()
   const response = await client.getTeamsTeamIdApiKeysApiKeyId({
     teamId,
     apiKeyId,

@@ -1,6 +1,6 @@
 import { Suspense } from 'react'
 import { getLoggedInSessionData } from '../../../lib/client-config'
-import { getStyroClient } from '../../../lib/styro/styro-client'
+import { getUserStyroClient } from '../../../lib/styro/styro-client'
 import { CheckerRole, type roles } from './checker-role'
 
 interface CheckerRoleServer {
@@ -28,7 +28,7 @@ async function _CheckerRoleServer({
 }: CheckerRoleServer) {
   const [session, client] = await Promise.all([
     getLoggedInSessionData(),
-    getStyroClient(),
+    getUserStyroClient(),
   ])
 
   const response = await client.getTeamsTeamIdMembersUserId({

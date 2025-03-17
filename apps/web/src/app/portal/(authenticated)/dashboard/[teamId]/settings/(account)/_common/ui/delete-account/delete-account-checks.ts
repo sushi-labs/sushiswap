@@ -1,5 +1,5 @@
 import { getSessionData } from 'src/app/portal/_common/lib/client-config'
-import { getStyroClient } from 'src/app/portal/_common/lib/styro/styro-client'
+import { getUserStyroClient } from 'src/app/portal/_common/lib/styro/styro-client'
 
 export type DeleteAccountChecklist = {
   checks?: {
@@ -15,7 +15,7 @@ export async function getDeleteAccountChecklist(): Promise<DeleteAccountChecklis
     return { canDelete: false }
   }
 
-  const client = await getStyroClient()
+  const client = await getUserStyroClient()
   const response = await client.getUsersMe()
 
   // TODO: Checks
