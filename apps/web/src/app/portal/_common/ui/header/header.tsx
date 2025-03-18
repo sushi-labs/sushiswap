@@ -1,10 +1,18 @@
-import { Navigation, NavigationElementType } from '@sushiswap/ui'
+import {
+  Button,
+  Navigation,
+  NavigationElementType,
+  Separator,
+} from '@sushiswap/ui'
 import { SushiIcon } from '@sushiswap/ui/icons/SushiIcon'
+import Link from 'next/link'
 import { getSessionData } from '../../lib/client-config'
+import { HeaderLogo } from './header-logo'
 import { HeaderProfile } from './header-profile'
 
 export async function Header() {
   const session = await getSessionData()
+  const showDashboard = session.isLoggedIn && session.user.email.isVerified
 
   return (
     <div className="flex z-20">
@@ -15,19 +23,35 @@ export async function Header() {
           {
             item: <SushiIcon width={24} height={24} className="mr-2" />,
             href: '/portal',
-            show: 'everywhere',
+            show: 'mobile',
             type: NavigationElementType.Custom,
           },
-          ...(session.isLoggedIn && session.user.email.isVerified
-            ? [
-                {
-                  title: 'Dashboard',
-                  href: '/portal/dashboard',
-                  show: 'everywhere',
-                  type: NavigationElementType.Single,
-                } as const,
-              ]
-            : []),
+          {
+            item: (
+              <div className="flex flex-row pr-4">
+                <SushiIcon width={24} height={24} className="mr-2" />
+                <HeaderLogo height={24} />
+              </div>
+            ),
+            href: '/portal',
+            show: 'desktop',
+            type: NavigationElementType.Custom,
+          },
+          {
+            item: (
+              <div className="h-6">
+                <Separator orientation="vertical" />
+              </div>
+            ),
+            show: 'desktop',
+            type: NavigationElementType.Custom,
+          },
+          {
+            title: 'Dashboard',
+            href: '/portal/dashboard',
+            show: showDashboard ? 'everywhere' : 'never',
+            type: NavigationElementType.Single,
+          },
           {
             title: 'Pricing',
             href: '/portal/pricing',

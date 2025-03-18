@@ -21,7 +21,7 @@ interface PlanCard {
 
 export function PlanCard({ plan, children, className }: PlanCard) {
   return (
-    <Card className={classNames(className, 'min-w-[320px]')}>
+    <Card className={className}>
       <CardHeader className="flex !flex-row space-y-0 justify-between w-full">
         <div className="space-y-1.5">
           <CardTitle>{plan.name}</CardTitle>

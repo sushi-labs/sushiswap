@@ -109,7 +109,7 @@ export function TeamChangePlanDialog({
             const canSelect = !isSelected && canAfford && !isPending
 
             return (
-              <PlanCard key={plan.id} plan={plan}>
+              <PlanCard key={plan.id} plan={plan} className="min-w-[320px]">
                 <div className="flex flex-col w-full">
                   <CheckerCustom
                     disableWhen={!canAfford && !isSelected}

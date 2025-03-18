@@ -52,7 +52,7 @@ export default async function Page({
         {session.isLoggedIn ? (
           <AcceptInviteButton inviteId={inviteId} />
         ) : (
-          <Link href="/portal/login" prefetch className="w-full">
+          <Link href="/portal" prefetch className="w-full">
             <Button fullWidth>Sign In</Button>
           </Link>
         )}

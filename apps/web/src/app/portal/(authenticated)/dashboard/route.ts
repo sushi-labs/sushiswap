@@ -11,7 +11,7 @@ export async function GET(request: NextRequest) {
     )
   } catch {
     return NextResponse.redirect(
-      `${request.nextUrl.protocol}//${request.nextUrl.host}/portal/login`,
+      `${request.nextUrl.protocol}//${request.nextUrl.host}/portal`,
     )
   }
 }

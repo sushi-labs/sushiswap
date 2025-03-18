@@ -34,7 +34,7 @@ export async function changeOrCreatePasswordAction(
 
   try {
     const userServiceClient = getUserServiceClient()
-    userServiceClient.setPassword({
+    await userServiceClient.setPassword({
       $typeName: 'zitadel.user.v2.SetPasswordRequest',
       userId: session.user.id,
       verification: {

@@ -1,5 +1,6 @@
 import { headers } from 'next/headers'
 import { z } from 'zod'
+import { getBaseUrl } from './get-base-url'
 import { getUserServiceClient } from './zitadel-client'
 
 export const getIdpIntentSchema = z
@@ -16,15 +17,13 @@ export const getIdpIntentSchema = z
 export type GetIdpIntentConfig = z.infer<typeof getIdpIntentSchema>
 
 function getSuccessUrl({
-  host,
-  proto,
+  baseUrl,
   config,
 }: {
-  host: string
-  proto: string
+  baseUrl: string
   config: GetIdpIntentConfig
 }) {
-  let url = `${proto}://${host}/portal/api/auth`
+  let url = `${baseUrl}/portal/api/auth`
 
   switch (config.type) {
     case 'login': {
@@ -47,9 +46,7 @@ export async function getNewIdpIntent({
   idpId: string
   config: GetIdpIntentConfig
 }) {
-  const headers_ = await headers()
-  const host = headers_.get('Host')!
-  const proto = headers_.get('X-Forwarded-Proto') || 'https'
+  const baseUrl = await getBaseUrl()
 
   const userServiceClient = getUserServiceClient()
 
@@ -60,8 +57,8 @@ export async function getNewIdpIntent({
       case: 'urls',
       value: {
         $typeName: 'zitadel.user.v2.RedirectURLs',
-        successUrl: getSuccessUrl({ host, proto, config }),
-        failureUrl: `${proto}://${host}/portal/login?error_tag=oauthFailed`,
+        successUrl: getSuccessUrl({ baseUrl, config }),
+        failureUrl: `${baseUrl}/portal?error_tag=oauthFailed`,
       },
     },
   })

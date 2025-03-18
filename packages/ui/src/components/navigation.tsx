@@ -104,12 +104,17 @@ const NavigationContainer: React.FC<NavContainerProps> = ({
   )
 }
 
-export type NavigationElementShow = 'mobile' | 'desktop' | 'everywhere'
+export type NavigationElementShow =
+  | 'mobile'
+  | 'desktop'
+  | 'everywhere'
+  | 'never'
 
 const navigationElementShowMap: Record<NavigationElementShow, string> = {
   mobile: 'md:hidden block',
   desktop: 'md:block hidden',
   everywhere: '',
+  never: 'hidden',
 }
 
 export enum NavigationElementType {
