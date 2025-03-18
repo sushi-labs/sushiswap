@@ -6,6 +6,8 @@ import { SidebarContainer, SidebarProvider } from '~evm/_common/ui/sidebar'
 import { Hero } from './hero'
 import { NavigationItems } from './navigation-items'
 
+const supportedNetworks = [EvmChainId.ETHEREUM]
+
 export default function ClaimLayout({
   children,
 }: {
@@ -16,7 +18,8 @@ export default function ClaimLayout({
       <Header chainId={EvmChainId.ETHEREUM} />
       <SidebarContainer
         shiftContent
-        supportedNetworks={POOL_SUPPORTED_NETWORKS}
+        selectedNetwork={EvmChainId.ETHEREUM}
+        supportedNetworks={supportedNetworks}
         onSelect={null}
       >
         <main className="flex flex-col h-full flex-1">

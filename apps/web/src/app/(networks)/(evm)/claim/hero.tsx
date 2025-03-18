@@ -1,23 +1,19 @@
 'use client'
 
-import { PoolChainIds } from '@sushiswap/graph-client/data-api'
 import { Card, CardContent, CardHeader, SkeletonText } from '@sushiswap/ui'
 import { type FC, useMemo } from 'react'
 import { useClaimableRewards } from 'src/lib/hooks/react-query'
 import { useConcentratedLiquidityPositions } from 'src/lib/wagmi/hooks/positions/hooks/useConcentratedLiquidityPositions'
-import { isSushiSwapV3ChainId } from 'sushi/config'
+import { SushiSwapV3ChainIds } from 'sushi/config'
 import { formatUSD } from 'sushi/format'
 import { useAccount } from 'wagmi'
 
 export const Hero: FC = () => {
   const { address } = useAccount()
-  const poolChainIds = useMemo(
-    () => PoolChainIds.filter((el) => isSushiSwapV3ChainId(el)),
-    [],
-  )
+
   const { data: positionsData } = useConcentratedLiquidityPositions({
     account: address,
-    chainIds: poolChainIds,
+    chainIds: SushiSwapV3ChainIds,
   })
   const totalFeesUSD = useMemo(() => {
     return positionsData?.reduce(

@@ -1,6 +1,5 @@
 'use client'
 
-import { PoolChainIds } from '@sushiswap/graph-client/data-api'
 import {
   Card,
   CardHeader,
@@ -10,70 +9,152 @@ import {
 } from '@sushiswap/ui'
 import type { ColumnDef, PaginationState } from '@tanstack/react-table'
 import React, { type FC, useMemo, useState } from 'react'
+import { useAllPrices } from 'src/lib/hooks/react-query'
 import { useConcentratedLiquidityPositions } from 'src/lib/wagmi/hooks/positions/hooks/useConcentratedLiquidityPositions'
 import type { ConcentratedLiquidityPositionWithV3Pool } from 'src/lib/wagmi/hooks/positions/types'
-import { type SushiSwapV3ChainId, isSushiSwapV3ChainId } from 'sushi/config'
+import { type SushiSwapV3ChainId, SushiSwapV3ChainIds } from 'sushi/config'
+import { Amount, type Type } from 'sushi/currency'
 import { useAccount } from 'wagmi'
 import {
-  CLAIM_POSITIONS_CHAIN_COLUMN,
-  CLAIM_POSITIONS_FEES_ACTIONS_COLUMN,
-  CLAIM_POSITIONS_FEES_AMOUNTS_COLUMN,
+  FEES_ACTION_COLUMN,
+  FEES_AMOUNT_COLUMN,
+  FEES_CHAIN_COLUMN,
 } from './columns'
 
+export type ClaimableFees = {
+  chainId: SushiSwapV3ChainId
+  feeAmounts: Record<string, Amount<Type>>
+  feeAmountsUSD: Record<string, number>
+  totalFeesUSD: number
+  positions: ConcentratedLiquidityPositionWithV3Pool[]
+}
+
 const COLUMNS = [
-  CLAIM_POSITIONS_CHAIN_COLUMN,
-  CLAIM_POSITIONS_FEES_AMOUNTS_COLUMN,
-  CLAIM_POSITIONS_FEES_ACTIONS_COLUMN,
-] satisfies ColumnDef<
-  {
-    chainId: SushiSwapV3ChainId
-    positions: ConcentratedLiquidityPositionWithV3Pool[]
-  },
-  unknown
->[]
+  FEES_CHAIN_COLUMN,
+  FEES_AMOUNT_COLUMN,
+  FEES_ACTION_COLUMN,
+] satisfies ColumnDef<ClaimableFees, unknown>[]
 
 export const ClaimableFeesTab: FC = () => {
   const { address, isConnecting } = useAccount()
-  const poolChainIds = useMemo(
-    () => PoolChainIds.filter((el) => isSushiSwapV3ChainId(el)),
-    [],
-  )
-  const { data: positionsData, isInitialLoading: isLoading } =
+  const { data: _data, isInitialLoading: isPositionsLoading } =
     useConcentratedLiquidityPositions({
       account: address,
-      chainIds: poolChainIds,
+      chainIds: SushiSwapV3ChainIds,
     })
+
   const [paginationState, setPaginationState] = useState<PaginationState>({
     pageIndex: 0,
     pageSize: 10,
   })
 
-  const positionsByChain = useMemo(() => {
-    return positionsData?.reduce(
-      (acc, position) => {
-        acc[position.chainId] = acc[position.chainId] || []
-        acc[position.chainId].push(position)
-        return acc
+  const { data: prices, isLoading: isPricesLoading } = useAllPrices()
+
+  const isLoading = isPositionsLoading || isPricesLoading
+
+  const data = useMemo(() => {
+    if (!_data) return []
+    const positionsByChain = _data.reduce(
+      (accum, cur) => {
+        accum[cur.chainId] = accum[cur.chainId] || []
+        accum[cur.chainId].push(cur)
+        return accum
       },
       {} as Record<
         SushiSwapV3ChainId,
         ConcentratedLiquidityPositionWithV3Pool[]
       >,
     )
-  }, [positionsData])
 
-  const chainsCount = useMemo(() => {
-    return Object.keys(positionsByChain || {}).length
-  }, [positionsByChain])
+    const feesByChain = Object.entries(positionsByChain).reduce(
+      (accum, [_chainId, positions]) => {
+        if (positions.length < 1) return accum
 
-  const data = useMemo(() => {
-    return Object.entries(positionsByChain || {}).map(
-      ([chainId, positions]) => ({
-        chainId: Number(chainId) as SushiSwapV3ChainId,
-        positions,
-      }),
+        const chainId = +_chainId as SushiSwapV3ChainId
+
+        const feeAmounts = {} as Record<string, Amount<Type>>
+
+        positions.forEach((position) => {
+          if (
+            !position.fees ||
+            (position.fees[0] === 0n && position.fees[1] === 0n)
+          )
+            return
+
+          const fees0 = position.fees[0]
+          const fees1 = position.fees[1]
+
+          const currentValue0 = feeAmounts[position.token0]
+          const currentValue1 = feeAmounts[position.token1]
+
+          if (currentValue0) {
+            const amount = currentValue0.add(
+              Amount.fromRawAmount(currentValue0.currency, fees0),
+            )
+            feeAmounts[position.token0] = amount
+          } else {
+            const amount = Amount.fromRawAmount(position.pool.token0, fees0)
+            feeAmounts[position.token0] = amount
+          }
+
+          if (currentValue1) {
+            const amount = currentValue1.add(
+              Amount.fromRawAmount(currentValue1.currency, fees1),
+            )
+            feeAmounts[position.token1] = amount
+          } else {
+            const amount = Amount.fromRawAmount(position.pool.token1, fees1)
+            feeAmounts[position.token1] = amount
+          }
+        })
+
+        if (Object.keys(feeAmounts).length < 1) return accum
+
+        const feeAmountsUSD = Object.entries(feeAmounts).reduce(
+          (prev, [key, amount]) => {
+            const price = prices
+              ?.get(chainId)
+              ?.get(amount.currency.wrapped.address.toLowerCase())
+
+            if (!price) {
+              return prev
+            }
+
+            const _amountUSD = Number(
+              Number(amount.toExact()) * Number(price.toFixed(10)),
+            )
+
+            const amountUSD =
+              Number.isNaN(price) || +price.toFixed(10) < 0.000001
+                ? 0
+                : _amountUSD
+
+            prev[key] = amountUSD
+            return prev
+          },
+          {} as Record<string, number>,
+        )
+
+        const totalFeesUSD = Object.values(feeAmountsUSD).reduce(
+          (prev, amount) => prev + amount,
+          0,
+        )
+
+        accum[chainId] = {
+          chainId,
+          feeAmounts,
+          feeAmountsUSD,
+          totalFeesUSD,
+          positions,
+        }
+
+        return accum
+      },
+      {} as Record<SushiSwapV3ChainId, ClaimableFees>,
     )
-  }, [positionsByChain])
+
+    return Object.values(feesByChain)
+  }, [_data, prices])
 
   return (
     <Container maxWidth="7xl" className="px-4 mx-auto">
@@ -82,7 +163,7 @@ export const ClaimableFeesTab: FC = () => {
           <CardTitle>
             Claimable Fees{' '}
             <span className="text-gray-400 dark:text-slate-500">
-              ({chainsCount})
+              ({data.length})
             </span>
           </CardTitle>
         </CardHeader>

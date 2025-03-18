@@ -17,7 +17,6 @@ import type { ColumnDef } from '@tanstack/react-table'
 import formatDistance from 'date-fns/formatDistance'
 import React, { useMemo } from 'react'
 import type { ClaimableRewards } from 'src/lib/hooks/react-query'
-import type { useConcentratedLiquidityPositions } from 'src/lib/wagmi/hooks/positions/hooks/useConcentratedLiquidityPositions'
 import type { ConcentratedLiquidityPositionWithV3Pool } from 'src/lib/wagmi/hooks/positions/types'
 import type {
   MaybeNestedPool,
@@ -40,9 +39,10 @@ import {
 import { unnestPool } from 'sushi/types'
 import { APRHoverCard } from './APRHoverCard'
 import { APRWithRewardsHoverCard } from './APRWithRewardsHoverCard'
-import { ClaimPositionFeesActionsCell } from './ClaimPositionFeesActionsCell'
-import { ClaimPositionFeesAmountsCell } from './ClaimPositionFeesAmountsCell'
-import { ClaimPositionFeesChainCell } from './ClaimPositionFeesChainCell'
+import { ClaimableFeesActionCell } from './ClaimableFeesActionCell'
+import { ClaimableFeesAmountCell } from './ClaimableFeesAmountCell'
+import { ClaimableFeesChainCell } from './ClaimableFeesChainCell'
+import type { ClaimableFees } from './ClaimableFeesTab'
 import { ClaimableRewardsActionCell } from './ClaimableRewardsActionCell'
 import { ClaimableRewardsAmountCell } from './ClaimableRewardsAmountCell'
 import { ClaimableRewardsChainCell } from './ClaimableRewardsChainCell'
@@ -96,6 +96,52 @@ export const REWARDS_ACTION_COLUMN: ColumnDef<ClaimableRewards, unknown> = {
   id: 'action',
   header: 'Action',
   cell: (props) => <ClaimableRewardsActionCell {...props.row} />,
+  size: 280,
+  meta: {
+    skeleton: (
+      <div className="flex gap-3 w-[280px]">
+        <SkeletonBox className="h-10 w-full" />
+        <SkeletonBox className="h-10 w-full" />
+      </div>
+    ),
+  },
+}
+
+export const FEES_CHAIN_COLUMN: ColumnDef<ClaimableFees, unknown> = {
+  id: 'chain',
+  header: 'Chain',
+  cell: (props) => <ClaimableFeesChainCell {...props.row} />,
+  size: 300,
+  meta: {
+    skeleton: (
+      <div className="flex gap-2 items-center w-full">
+        <SkeletonCircle radius={18} />
+        <div className="w-28">
+          <SkeletonText fontSize="sm" />
+        </div>
+      </div>
+    ),
+  },
+}
+
+export const FEES_AMOUNT_COLUMN: ColumnDef<ClaimableFees, unknown> = {
+  id: 'amount',
+  header: 'Fees Amount',
+  cell: (props) => <ClaimableFeesAmountCell {...props.row} />,
+  size: 300,
+  meta: {
+    skeleton: (
+      <div className="w-24">
+        <SkeletonText fontSize="sm" />
+      </div>
+    ),
+  },
+}
+
+export const FEES_ACTION_COLUMN: ColumnDef<ClaimableFees, unknown> = {
+  id: 'action',
+  header: 'Action',
+  cell: (props) => <ClaimableFeesActionCell {...props.row} />,
   size: 280,
   meta: {
     skeleton: (
@@ -734,73 +780,5 @@ export const TX_TIME_V3_COLUMN: ColumnDef<TransactionV3, unknown> = {
     }),
   meta: {
     skeleton: <SkeletonText fontSize="lg" />,
-  },
-}
-
-export const CLAIM_POSITIONS_CHAIN_COLUMN: ColumnDef<
-  {
-    chainId: SushiSwapV3ChainId
-    positions: ConcentratedLiquidityPositionWithV3Pool[]
-  },
-  unknown
-> = {
-  id: 'chainId',
-  header: 'Chain',
-  cell: (props) => <ClaimPositionFeesChainCell {...props.row} />,
-  size: 300,
-  meta: {
-    skeleton: (
-      <div className="flex gap-2 items-center w-full">
-        <SkeletonCircle radius={18} />
-        <div className="w-28">
-          <SkeletonText fontSize="sm" />
-        </div>
-      </div>
-    ),
-  },
-}
-
-export const CLAIM_POSITIONS_FEES_AMOUNTS_COLUMN: ColumnDef<
-  {
-    chainId: SushiSwapV3ChainId
-    positions: ConcentratedLiquidityPositionWithV3Pool[]
-  },
-  unknown
-> = {
-  id: 'feesAmount',
-  header: 'Fees Amount',
-  cell: (props) => <ClaimPositionFeesAmountsCell {...props.row} />,
-  size: 300,
-  meta: {
-    skeleton: (
-      <div className="flex gap-2 items-center justify-start w-32">
-        <SkeletonText fontSize="sm" />
-        <div className="flex gap-2">
-          <SkeletonCircle radius={18} />
-          <SkeletonCircle radius={18} />
-        </div>
-      </div>
-    ),
-  },
-}
-
-export const CLAIM_POSITIONS_FEES_ACTIONS_COLUMN: ColumnDef<
-  {
-    chainId: SushiSwapV3ChainId
-    positions: ConcentratedLiquidityPositionWithV3Pool[]
-  },
-  unknown
-> = {
-  id: 'actions',
-  header: 'Actions',
-  cell: (props) => <ClaimPositionFeesActionsCell {...props.row} />,
-  size: 280,
-  meta: {
-    skeleton: (
-      <div className="flex gap-3 justify-start">
-        <SkeletonBox className="h-10 w-full" />
-        <SkeletonBox className="h-10 w-full" />
-      </div>
-    ),
   },
 }

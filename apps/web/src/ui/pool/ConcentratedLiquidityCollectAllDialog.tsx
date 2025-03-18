@@ -10,15 +10,16 @@ import {
   DialogProvider,
   DialogReview,
   DialogTitle,
-  DialogTrigger,
+  DialogType,
   Dots,
   Switch,
+  useDialog,
 } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui'
 import { Currency } from '@sushiswap/ui'
-import React, { type FC, useCallback, useMemo, useState } from 'react'
+import type React from 'react'
+import { type FC, type ReactNode, useCallback, useMemo, useState } from 'react'
 import type { ConcentratedLiquidityPositionWithV3Pool } from 'src/lib/wagmi/hooks/positions/types'
-import { Checker } from 'src/lib/wagmi/systems/Checker'
 import { EvmChain, type EvmChainId } from 'sushi/chain'
 import {
   SUSHISWAP_V3_POSTIION_MANAGER,
@@ -41,23 +42,35 @@ import { usePublicClient } from 'wagmi'
 import { useRefetchBalances } from '~evm/_common/ui/balance-provider/use-refetch-balances'
 import { useTokenAmountDollarValues } from '../../lib/hooks'
 
-interface ConcentratedLiquidityCollectAllWidget {
+interface ConcentratedLiquidityCollectAllDialog {
   positions: ConcentratedLiquidityPositionWithV3Pool[]
   chainId: EvmChainId
   account: `0x${string}` | undefined
-  buttonContainerClassname?: string
-  buttonText?: string
+  children?:
+    | React.ReactNode
+    | ((args: { amounts: Amount<Type>[] }) => ReactNode)
 }
 
-export const ConcentratedLiquidityCollectAllWidget: FC<
-  ConcentratedLiquidityCollectAllWidget
-> = ({
-  positions,
-  chainId,
-  account,
-  buttonContainerClassname,
-  buttonText = 'Claim Fees',
-}) => {
+export const ConcentratedLiquidityCollectAllDialog: FC<
+  ConcentratedLiquidityCollectAllDialog
+> = ({ positions, chainId, account, children }) => {
+  return (
+    <DialogProvider>
+      <_ConcentratedLiquidityCollectAllDialog
+        positions={positions}
+        chainId={chainId}
+        account={account}
+      >
+        {children}
+      </_ConcentratedLiquidityCollectAllDialog>
+    </DialogProvider>
+  )
+}
+
+const _ConcentratedLiquidityCollectAllDialog: FC<
+  ConcentratedLiquidityCollectAllDialog
+> = ({ positions, chainId, account, children }) => {
+  const { open: isOpen } = useDialog(DialogType.Review)
   const { chain } = useAccount()
   const client = usePublicClient()
   const { refetchChain: refetchBalances } = useRefetchBalances()
@@ -200,7 +213,7 @@ export const ConcentratedLiquidityCollectAllWidget: FC<
     ...prepare,
     chainId,
     query: {
-      enabled: Boolean(prepare && chainId === chain?.id),
+      enabled: Boolean(isOpen && prepare && chainId === chain?.id),
     },
   })
 
@@ -232,35 +245,13 @@ export const ConcentratedLiquidityCollectAllWidget: FC<
   }, [isSimulationError, prepare, sendTransactionAsync])
 
   return (
-    <DialogProvider>
+    <>
       <DialogReview>
         {({ confirm }) => (
           <>
-            {aggregatedAmounts.length > 0 ? (
-              <div className={buttonContainerClassname}>
-                <Checker.Connect className="min-w-[160px]" size="sm" fullWidth>
-                  <Checker.Network
-                    className="min-w-[160px]"
-                    size="sm"
-                    fullWidth
-                    chainId={chainId}
-                  >
-                    <DialogTrigger asChild>
-                      <Button
-                        className="min-w-[160px]"
-                        size="sm"
-                        fullWidth
-                        disabled={!aggregatedAmounts.length}
-                        testId="claim-fees-all"
-                      >
-                        {buttonText}
-                      </Button>
-                    </DialogTrigger>
-                  </Checker.Network>
-                </Checker.Connect>
-              </div>
-            ) : null}
-
+            {typeof children === 'function'
+              ? children({ amounts: aggregatedAmounts })
+              : children}
             <DialogContent>
               <DialogHeader>
                 <DialogTitle>Claim V3 Fees</DialogTitle>
@@ -353,6 +344,6 @@ export const ConcentratedLiquidityCollectAllWidget: FC<
         txHash={hash}
         successMessage="You successfully claimed fees from all your positions"
       />
-    </DialogProvider>
+    </>
   )
 }

@@ -1,16 +1,12 @@
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import type { Row } from '@tanstack/react-table'
 import type { FC } from 'react'
-import type { ConcentratedLiquidityPositionWithV3Pool } from 'src/lib/wagmi/hooks/positions/types'
 import { EvmChain } from 'sushi/chain'
-import type { SushiSwapV3ChainId } from 'sushi/config'
+import type { ClaimableFees } from './ClaimableFeesTab'
 
-export const ClaimPositionFeesChainCell: FC<
-  Row<{
-    chainId: SushiSwapV3ChainId
-    positions: ConcentratedLiquidityPositionWithV3Pool[]
-  }>
-> = ({ original }) => {
+export const ClaimableFeesChainCell: FC<Row<ClaimableFees>> = ({
+  original,
+}) => {
   return (
     <div className="flex gap-2 items-center w-full">
       <NetworkIcon chainId={original.chainId} width={18} height={18} />

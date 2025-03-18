@@ -46,7 +46,7 @@ export const getConcentratedLiquidityPositions = async ({
   config,
 }: {
   account: `0x${string}` | undefined
-  chainIds: SushiSwapV3ChainId[]
+  chainIds: readonly SushiSwapV3ChainId[]
   config: PublicWagmiConfig
 }) => {
   if (!account) return undefined

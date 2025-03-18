@@ -10,9 +10,14 @@ export const ClaimableRewardsActionCell: FC<Row<ClaimableRewards>> = ({
   original,
 }) => {
   return (
-    <div className="flex gap-3 w-[280px]">
+    <div className="grid grid-cols-2 gap-3 w-[280px]">
       <Checker.Connect size="default" fullWidth>
-        <Checker.Network size="default" fullWidth chainId={original.chainId}>
+        <Checker.Network
+          size="default"
+          fullWidth
+          chainId={original.chainId}
+          hideChainName
+        >
           <ClaimRewardsButton rewards={original} />
         </Checker.Network>
       </Checker.Connect>
