@@ -9,28 +9,34 @@ import { formatUSD } from 'sushi/format'
 import { useAccount } from 'wagmi'
 
 export const Hero: FC = () => {
-  const { address } = useAccount()
+  const { address, isConnected } = useAccount()
 
   const { data: positionsData } = useConcentratedLiquidityPositions({
     account: address,
     chainIds: SushiSwapV3ChainIds,
   })
   const totalFeesUSD = useMemo(() => {
-    return positionsData?.reduce(
-      (accum, { position: { unclaimedUSD } }) => accum + unclaimedUSD,
-      0,
-    )
-  }, [positionsData])
+    return !isConnected
+      ? 0
+      : positionsData
+        ? positionsData.reduce(
+            (accum, { position: { unclaimedUSD } }) => accum + unclaimedUSD,
+            0,
+          )
+        : undefined
+  }, [positionsData, isConnected])
 
   const { data: rewardsData } = useClaimableRewards({ account: address })
   const totalRewardsUSD = useMemo(() => {
-    return rewardsData
-      ? Object.values(rewardsData).reduce(
-          (accum, { totalRewardsUSD }) => accum + totalRewardsUSD,
-          0,
-        )
-      : undefined
-  }, [rewardsData])
+    return !isConnected
+      ? 0
+      : rewardsData
+        ? Object.values(rewardsData).reduce(
+            (accum, { totalRewardsUSD }) => accum + totalRewardsUSD,
+            0,
+          )
+        : undefined
+  }, [rewardsData, isConnected])
 
   return (
     <section className="flex flex-col gap-6">
