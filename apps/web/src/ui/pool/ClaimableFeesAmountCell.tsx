@@ -19,7 +19,7 @@ export const ClaimableFeesAmountCell: FC<Row<ClaimableFees>> = ({
     const card = (
       <div className="flex flex-col gap-5 p-5 w-80">
         <span className="text-muted-foreground font-medium text-xs">
-          Rewards Breakdown
+          Fees Breakdown
         </span>
         <div className="flex flex-col gap-5 p-4 bg-background rounded-xl">
           <div className="flex flex-col gap-4">
