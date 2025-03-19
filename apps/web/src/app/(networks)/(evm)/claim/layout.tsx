@@ -14,12 +14,12 @@ export default function ClaimLayout({
   children: React.ReactNode
 }) {
   return (
-    <SidebarProvider>
+    <SidebarProvider defaultOpen={false}>
       <Header chainId={EvmChainId.ETHEREUM} />
       <SidebarContainer
-        shiftContent
         selectedNetwork={EvmChainId.ETHEREUM}
         supportedNetworks={supportedNetworks}
+        shiftContent
         onSelect={null}
       >
         <main className="flex flex-col h-full flex-1">
