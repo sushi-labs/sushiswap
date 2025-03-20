@@ -1,6 +1,14 @@
+import { useId } from 'react'
 import type { IconComponent } from '../../../types'
 
-export const KadenaCircle: IconComponent = (props) => (
+export const KadenaCircle: IconComponent = (props) => {
+  const id = useId() 
+
+  const patternId = `pattern_${id}_kadena`
+  const imageId = `image_${id}_kadena`
+
+  
+  return(
   <svg
     width="22"
     height="22"
@@ -10,21 +18,21 @@ export const KadenaCircle: IconComponent = (props) => (
     xmlnsXlink="http://www.w3.org/1999/xlink"
     {...props}
   >
-    <rect width="22" height="22" fill="url(#pattern0_3_107)" />
+    <rect width="22" height="22" fill={`url(#${patternId})`} />
     <defs>
       <pattern
-        id="pattern0_3_107"
+        id={`${patternId}`}
         patternContentUnits="objectBoundingBox"
         width="1"
         height="1"
       >
         <use
-          xlinkHref="#image0_3_107"
+          xlinkHref={`#${imageId}`}
           transform="translate(-0.00390625) scale(0.0078125)"
         />
       </pattern>
       <image
-        id="image0_3_107"
+        id={`${imageId}`}
         width="129"
         height="128"
         preserveAspectRatio="none"
@@ -32,4 +40,4 @@ export const KadenaCircle: IconComponent = (props) => (
       />
     </defs>
   </svg>
-)
+)}
