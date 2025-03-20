@@ -670,7 +670,10 @@ export const publicClientConfig = {
   },
   [ChainId.ETHEREUM]: {
     chain: mainnet as Chain,
-    transport: publicTransports[ChainId.ETHEREUM],
+    transport: fallback([
+      http('https://rpc.ankr.com/eth'),
+      publicTransports[ChainId.ETHEREUM],
+    ]),
   },
   [ChainId.FANTOM]: {
     chain: fantom as Chain,
@@ -757,7 +760,10 @@ export const publicClientConfig = {
   },
   [ChainId.BASE]: {
     chain: base as Chain,
-    transport: publicTransports[ChainId.BASE],
+    transport: fallback([
+      http('https://rpc.ankr.com/base'),
+      publicTransports[ChainId.BASE],
+    ]),
   },
   [ChainId.SCROLL]: {
     chain: scroll as Chain,

@@ -2,6 +2,7 @@ import { http, PublicClient, createPublicClient } from 'viem'
 import { ChainId, TestnetChainId } from '../chain/index.js'
 import { publicClientConfig } from '../config/index.js'
 import { Type } from '../currency/index.js'
+import { AerodromeSlipstreamProvider } from './liquidity-providers/AerodromeSlipstream.js'
 import { AlienBaseV2Provider } from './liquidity-providers/AlienBaseV2.js'
 import { AlienBaseV3Provider } from './liquidity-providers/AlienBaseV3.js'
 import { ApeSwapProvider } from './liquidity-providers/ApeSwap.js'
@@ -82,6 +83,7 @@ import { UniswapV2Provider } from './liquidity-providers/UniswapV2.js'
 import { UniswapV3Provider } from './liquidity-providers/UniswapV3.js'
 import { VVSFlawlessProvider } from './liquidity-providers/VVSFlawless.js'
 import { VVSStandardProvider } from './liquidity-providers/VVSStandard.js'
+import { VelodromeSlipstreamProvider } from './liquidity-providers/VelodromeSlipstream.js'
 import { WagmiProvider } from './liquidity-providers/Wagmi.js'
 import { WigoswapProvider } from './liquidity-providers/Wigoswap.js'
 import { ZebraV2Provider } from './liquidity-providers/ZebraV2.js'
@@ -183,6 +185,7 @@ export class DataFetcher {
     // concrete providers
     this.providers = [new NativeWrapProvider(this.chainId, this.web3Client)]
     ;[
+      AerodromeSlipstreamProvider,
       AlienBaseV2Provider,
       AlienBaseV3Provider,
       ApeSwapProvider,
@@ -254,6 +257,7 @@ export class DataFetcher {
       UbeSwapProvider,
       UniswapV2Provider,
       UniswapV3Provider,
+      VelodromeSlipstreamProvider,
       VVSStandardProvider,
       VVSFlawlessProvider,
       WagmiProvider,

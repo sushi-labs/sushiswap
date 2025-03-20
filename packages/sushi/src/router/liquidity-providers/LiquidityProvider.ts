@@ -83,6 +83,8 @@ export enum LiquidityProviders {
   EddyFinance = 'EddyFinance',
   MMFinance = 'MMFinance',
   VVSFlawless = 'VVSFlawless',
+  AerodromeSlipstream = 'AerodromeSlipstream',
+  VelodromeSlipstream = 'VelodromeSlipstream',
 }
 
 export abstract class LiquidityProvider {
@@ -236,4 +238,6 @@ export const UniV3LiquidityProviders: LiquidityProviders[] = [
   LiquidityProviders.Scribe,
   LiquidityProviders.Horizon,
   LiquidityProviders.VVSFlawless,
+  LiquidityProviders.AerodromeSlipstream,
+  LiquidityProviders.VelodromeSlipstream,
 ]
