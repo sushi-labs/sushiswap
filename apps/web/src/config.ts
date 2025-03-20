@@ -202,6 +202,7 @@ const UNSORTED_POOL_SUPPORTED_NETWORKS = [
   ...PoolChainIds,
   NonStandardChainId.APTOS,
   NonStandardChainId.TRON,
+  NonStandardChainId.KADENA,
 ].filter(
   (c) => !DISABLED_CHAIN_IDS.includes(c as (typeof DISABLED_CHAIN_IDS)[number]),
 )
