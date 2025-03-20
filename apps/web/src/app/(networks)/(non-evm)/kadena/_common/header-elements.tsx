@@ -20,7 +20,7 @@ export const headerElements: NavigationElement[] = [
   {
     show: "desktop",
     type: NavigationElementType.Custom,
-    href: "/swap",
+    href: "#",
     item: (
       <NavigationMenuItem className={NavigationElementType.Custom}>
         <NavigationMenuTrigger>Trade</NavigationMenuTrigger>
@@ -28,7 +28,7 @@ export const headerElements: NavigationElement[] = [
           <ul className='w-[400px] gap-3 p-4'>
             <NavigationListItem
               title={"Swap"}
-              href={"/tron/swap"}
+              href={"/kadena/swap"}
             >
               The easiest way to trade.
             </NavigationListItem>
@@ -42,13 +42,13 @@ export const headerElements: NavigationElement[] = [
   },
   {
     title: "Explore",
-    href: `/tron/explore/pools`,
+    href: `/kadena/explore/pools`,
     show: "desktop",
     type: NavigationElementType.Single,
   },
   {
     title: "Pool",
-    href: `/tron/pool`,
+    href: `/kadena/pool`,
     show: "desktop",
     type: NavigationElementType.Single,
   },
@@ -58,10 +58,4 @@ export const headerElements: NavigationElement[] = [
     show: "desktop",
     type: NavigationElementType.Single,
   },
-  // {
-  //   title: 'More',
-  //   items: MORE_NAVIGATION_LINKS,
-  //   show: 'desktop',
-  //   type: NavigationElementType.Dropdown,
-  // },
 ];
