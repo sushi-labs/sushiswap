@@ -209,9 +209,6 @@ importers:
       '@cloudinary/url-gen':
         specifier: 1.11.2
         version: 1.11.2
-      '@fuul/sdk':
-        specifier: 4.11.1
-        version: 4.11.1
       '@headlessui/react':
         specifier: 2.2.0
         version: 2.2.0(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
@@ -2609,9 +2606,6 @@ packages:
 
   '@fontsource-variable/inter@5.0.1':
     resolution: {integrity: sha512-cqBEayOWZqERrWnwDUTyUsClZpN1Pv3w/1+NRxwKV4sRdy3RyyRL9DRIgauq8ySxNtJ5ZkNimxsZzCdoiR2Fcw==}
-
-  '@fuul/sdk@4.11.1':
-    resolution: {integrity: sha512-4YbzplgbOHyihllTNqzhv5XCYuA17Wutz498KSa7c59bKNoJ0Ia2r+or1DFhpjnxQMEyTBhmZjFcion11nM31Q==}
 
   '@gql.tada/cli-utils@1.3.9':
     resolution: {integrity: sha512-oRb7SG/+csx9CiypSJTI21KaLfulOUnhX1vxg4FXi2snub9XShkGR2XnnlJVTAOZXY9Vcxti1NutAElxdDkycA==}
@@ -15553,13 +15547,6 @@ snapshots:
   '@floating-ui/utils@0.2.9': {}
 
   '@fontsource-variable/inter@5.0.1': {}
-
-  '@fuul/sdk@4.11.1':
-    dependencies:
-      axios: 1.7.7
-      nanoid: 4.0.0
-    transitivePeerDependencies:
-      - debug
 
   '@gql.tada/cli-utils@1.3.9(graphql@16.6.0)(svelte@4.2.17)(typescript@5.7.2)':
     dependencies:
