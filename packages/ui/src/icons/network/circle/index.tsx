@@ -49,6 +49,7 @@ import { TronCircle } from './TronCircle'
 import { ZKLinkCircle } from './ZKLinkCircle'
 import { ZKSyncCircle } from './ZKSyncCircle'
 import { ZetaChainCircle } from './ZetaChainCircle'
+import { KadenaCircle } from './KadenaCircle'
 
 export * from './ApeCircle'
 export * from './AptosCircle'
@@ -148,6 +149,7 @@ export const NETWORK_CIRCLE_ICON: Partial<
   [ChainId.APE]: ApeCircle,
   [ChainId.SONIC]: SonicCircle,
   [ChainId.HEMI]: HemiCircle,
+  kadena: KadenaCircle,
   aptos: AptosCircle,
   tron: TronCircle,
 }
