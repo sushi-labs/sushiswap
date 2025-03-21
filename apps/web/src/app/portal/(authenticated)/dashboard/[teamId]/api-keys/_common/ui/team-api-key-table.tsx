@@ -99,8 +99,14 @@ const columns = [
     header: 'Last Updated',
     accessorFn: (row) => row.apiKey.updatedAt,
     enableSorting: false,
-    cell: ({ row }) =>
-      formatDistanceToNow(row.original.apiKey.updatedAt, { addSuffix: true }),
+    cell: ({ row }) => (
+      <span className="whitespace-nowrap">
+        {formatDistanceToNow(row.original.apiKey.updatedAt, {
+          addSuffix: true,
+        })}
+        ,
+      </span>
+    ),
   },
   {
     header: 'Active',

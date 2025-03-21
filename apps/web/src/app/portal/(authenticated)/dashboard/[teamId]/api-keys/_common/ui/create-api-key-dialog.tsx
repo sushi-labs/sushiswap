@@ -20,7 +20,7 @@ import {
   classNames,
   formClassnames,
 } from '@sushiswap/ui'
-import { useMutation } from '@tanstack/react-query'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useRouter } from 'nextjs-toploader/app'
 import type React from 'react'
 import { useCallback, useState } from 'react'
@@ -42,6 +42,7 @@ export function CreateApiKeyDialog({
   teamId,
   children,
 }: { teamId: string; children: React.ReactNode }) {
+  const queryClient = useQueryClient()
   const client = useStyroClient(true)
   const router = useRouter()
 
@@ -68,6 +69,9 @@ export function CreateApiKeyDialog({
       return response.data
     },
     onSuccess: (data) => {
+      queryClient.invalidateQueries({
+        queryKey: ['portal-getTeamsTeamIdApiKeys', teamId],
+      })
       router.push(
         `/portal/dashboard/${data.team.id}/api-keys/${data.team.apiKey.id}`,
       )

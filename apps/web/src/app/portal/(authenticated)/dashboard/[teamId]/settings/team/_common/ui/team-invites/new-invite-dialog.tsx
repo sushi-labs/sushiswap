@@ -64,6 +64,7 @@ export function NewInviteDialog({ teamId, children }: NewInviteDialog) {
         teamId,
         postTeamsTeamIdInvitesRequest: {
           email: values.email,
+          frontendUrl: window.location.origin,
         },
       })
 

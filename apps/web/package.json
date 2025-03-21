@@ -42,7 +42,7 @@
     "@sushiswap/nextjs-config": "workspace:*",
     "@sushiswap/notifications": "workspace:*",
     "@sushiswap/steer-sdk": "workspace:*",
-    "@sushiswap/styro-client": "0.0.25",
+    "@sushiswap/styro-client": "0.0.26",
     "@sushiswap/tailwindcss-config": "workspace:*",
     "@sushiswap/telemetry": "workspace:*",
     "@sushiswap/ui": "workspace:*",
