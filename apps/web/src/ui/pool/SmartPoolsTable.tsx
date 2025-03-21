@@ -164,17 +164,19 @@ const COLUMNS = [
       )
     },
     meta: {
-      skeleton: (
-        <div className="flex items-center w-full gap-2">
-          <div className="flex items-center">
-            <SkeletonCircle radius={26} />
-            <SkeletonCircle radius={26} className="-ml-[12px]" />
+      body: {
+        skeleton: (
+          <div className="flex items-center w-full gap-2">
+            <div className="flex items-center">
+              <SkeletonCircle radius={26} />
+              <SkeletonCircle radius={26} className="-ml-[12px]" />
+            </div>
+            <div className="flex flex-col w-full">
+              <SkeletonText fontSize="lg" />
+            </div>
           </div>
-          <div className="flex flex-col w-full">
-            <SkeletonText fontSize="lg" />
-          </div>
-        </div>
-      ),
+        ),
+      },
     },
     size: 300,
   },
@@ -196,7 +198,9 @@ const COLUMNS = [
       </TooltipProvider>
     ),
     meta: {
-      skeleton: <SkeletonText fontSize="lg" />,
+      body: {
+        skeleton: <SkeletonText fontSize="lg" />,
+      },
     },
   },
   {
@@ -227,7 +231,9 @@ const COLUMNS = [
       </span>
     ),
     meta: {
-      skeleton: <SkeletonText fontSize="lg" />,
+      body: {
+        skeleton: <SkeletonText fontSize="lg" />,
+      },
     },
   },
   {
@@ -239,7 +245,9 @@ const COLUMNS = [
         ? '$0.00'
         : formatUSD(props.row.original.feeUSD1d),
     meta: {
-      skeleton: <SkeletonText fontSize="lg" />,
+      body: {
+        skeleton: <SkeletonText fontSize="lg" />,
+      },
     },
   },
   {
@@ -282,7 +290,9 @@ const COLUMNS = [
       )
     },
     meta: {
-      skeleton: <SkeletonText fontSize="lg" />,
+      body: {
+        skeleton: <SkeletonText fontSize="lg" />,
+      },
     },
   },
   {
@@ -461,7 +471,9 @@ const COLUMNS = [
       ),
     meta: {
       disableLink: true,
-      skeleton: <SkeletonText fontSize="lg" />,
+      body: {
+        skeleton: <SkeletonText fontSize="lg" />,
+      },
     },
   },
 ] satisfies ColumnDef<SmartPoolsV1[number], unknown>[]

@@ -79,7 +79,9 @@ const COLUMNS: ColumnDef<PendingTokens[number], unknown>[] = [
       </div>
     ),
     meta: {
-      skeleton: <SkeletonText fontSize="lg" className="min-w-[175px]" />,
+      body: {
+        skeleton: <SkeletonText fontSize="lg" className="min-w-[175px]" />,
+      },
     },
   },
   {
@@ -99,7 +101,9 @@ const COLUMNS: ColumnDef<PendingTokens[number], unknown>[] = [
         />
       ),
     meta: {
-      skeleton: <SkeletonText fontSize="lg" />,
+      body: {
+        skeleton: <SkeletonText fontSize="lg" />,
+      },
     },
   },
   {
@@ -108,7 +112,9 @@ const COLUMNS: ColumnDef<PendingTokens[number], unknown>[] = [
     accessorFn: (row) => row.metrics.marketcapUSD,
     cell: (props) => formatUSD(props.row.original.metrics.marketcapUSD),
     meta: {
-      skeleton: <SkeletonText fontSize="lg" />,
+      body: {
+        skeleton: <SkeletonText fontSize="lg" />,
+      },
     },
   },
   {
@@ -117,7 +123,9 @@ const COLUMNS: ColumnDef<PendingTokens[number], unknown>[] = [
     accessorFn: (row) => row.metrics.volumeUSD24h,
     cell: (props) => formatUSD(props.row.original.metrics.volumeUSD24h),
     meta: {
-      skeleton: <SkeletonText fontSize="lg" />,
+      body: {
+        skeleton: <SkeletonText fontSize="lg" />,
+      },
     },
   },
   {
@@ -130,7 +138,9 @@ const COLUMNS: ColumnDef<PendingTokens[number], unknown>[] = [
         new Date(props.row.original.createdAt * 1000),
       )} days`,
     meta: {
-      skeleton: <SkeletonText fontSize="lg" />,
+      body: {
+        skeleton: <SkeletonText fontSize="lg" />,
+      },
     },
   },
   {
@@ -139,7 +149,9 @@ const COLUMNS: ColumnDef<PendingTokens[number], unknown>[] = [
     accessorFn: (row) => row.metrics.holders,
     cell: (props) => formatNumber(props.row.original.metrics.holders),
     meta: {
-      skeleton: <SkeletonText fontSize="lg" />,
+      body: {
+        skeleton: <SkeletonText fontSize="lg" />,
+      },
     },
   },
   {
@@ -232,7 +244,9 @@ const COLUMNS: ColumnDef<PendingTokens[number], unknown>[] = [
       )
     },
     meta: {
-      skeleton: <SkeletonText fontSize="lg" />,
+      body: {
+        skeleton: <SkeletonText fontSize="lg" />,
+      },
     },
   },
 ]
