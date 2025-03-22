@@ -1,3 +1,3 @@
-export * from './useAngleRewards'
-export * from './useAngleRewardsMultipleChains'
-export * from './useAngleRewardTokens'
+export * from './useClaimableRewards'
+export * from './useRewardCampaigns'
+export * from './useRewardTokens'

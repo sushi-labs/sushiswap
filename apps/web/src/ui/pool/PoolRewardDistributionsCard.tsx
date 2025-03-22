@@ -1,5 +1,6 @@
 'use client'
 
+import type { V3Pool } from '@sushiswap/graph-client/data-api'
 import {
   Button,
   Card,
@@ -7,6 +8,7 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
+  LinkExternal,
   LinkInternal,
   Tabs,
   TabsContent,
@@ -14,13 +16,10 @@ import {
   TabsTrigger,
 } from '@sushiswap/ui'
 import type { FC } from 'react'
-import { useAngleRewards } from 'src/lib/hooks/react-query'
+import { useRewardCampaigns } from 'src/lib/hooks/react-query'
 import { ChainKey } from 'sushi/chain'
-import { Native } from 'sushi/currency'
-import { getAddress } from 'viem'
-
-import type { V3Pool } from '@sushiswap/graph-client/data-api'
 import { isMerklChainId } from 'sushi/config'
+import { Native } from 'sushi/currency'
 import { DistributionDataTable } from './DistributionDataTable'
 
 interface PoolRewardDistributionsCardParams {
@@ -30,14 +29,13 @@ interface PoolRewardDistributionsCardParams {
 export const PoolRewardDistributionsCard: FC<
   PoolRewardDistributionsCardParams
 > = ({ pool }) => {
-  const { data: rewardsData, isLoading: rewardsLoading } = useAngleRewards({
+  const { data: rewardsData, isLoading: rewardsLoading } = useRewardCampaigns({
+    pool: pool.address,
     chainId: pool.chainId,
   })
 
   if (!pool) return null
   if (!isMerklChainId(pool.chainId)) return null
-
-  const currentAngleRewardsPool = rewardsData?.pools[getAddress(pool.address)]
 
   return (
     <Card>
@@ -82,17 +80,13 @@ export const PoolRewardDistributionsCard: FC<
         <TabsContent value="active">
           <DistributionDataTable
             isLoading={rewardsLoading}
-            data={currentAngleRewardsPool?.distributionData.filter(
-              (el) => el.isLive,
-            )}
+            data={rewardsData?.filter((el) => el.isLive)}
           />
         </TabsContent>
         <TabsContent value="inactive">
           <DistributionDataTable
             isLoading={rewardsLoading}
-            data={currentAngleRewardsPool?.distributionData.filter(
-              (el) => !el.isLive,
-            )}
+            data={rewardsData?.filter((el) => !el.isLive)}
           />
         </TabsContent>
       </Tabs>

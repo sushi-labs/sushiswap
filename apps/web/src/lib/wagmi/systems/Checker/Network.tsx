@@ -10,6 +10,7 @@ import { useAccount, useSwitchChain } from 'wagmi'
 interface NetworkProps extends ButtonProps {
   chainId: EvmChainId | undefined
   hoverCardContent?: ReactNode | undefined
+  hideChainName?: boolean
 }
 
 const Network: FC<NetworkProps> = ({
@@ -18,6 +19,7 @@ const Network: FC<NetworkProps> = ({
   size = 'xl',
   children,
   hoverCardContent,
+  hideChainName = false,
   ...rest
 }): ReactElement<any, any> | null => {
   const { chain } = useAccount()
@@ -36,7 +38,9 @@ const Network: FC<NetworkProps> = ({
         testId={`switch-network-${chainId}`}
         {...rest}
       >
-        Switch to {evmChainName[chainId]}
+        {hideChainName
+          ? 'Switch Network'
+          : `Switch to ${evmChainName[chainId]}`}
       </Button>
     ) : (
       <HoverCard openDelay={0} closeDelay={0}>
@@ -47,7 +51,9 @@ const Network: FC<NetworkProps> = ({
           testId={`switch-network-${chainId}`}
           {...rest}
         >
-          Switch to {evmChainName[chainId]}
+          {hideChainName
+            ? 'Switch Network'
+            : `Switch to ${evmChainName[chainId]}`}
           <HoverCardTrigger>
             <InformationCircleIcon width={16} height={16} />
           </HoverCardTrigger>
