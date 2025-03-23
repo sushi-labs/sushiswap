@@ -10,7 +10,6 @@ import { ChainId } from '../../chain/index.js'
 import { Token } from '../../currency/index.js'
 import { DataFetcherOptions } from '../data-fetcher.js'
 import { getCurrencyCombinations } from '../get-currency-combinations.js'
-import { memoizer } from '../memoizer.js'
 import {
   NUMBER_OF_SURROUNDING_TICKS,
   PoolFilter,
@@ -87,8 +86,6 @@ export abstract class AlgebraV1BaseProvider extends UniswapV3BaseProvider {
     if (excludePools)
       staticPools = staticPools.filter((p) => !excludePools.has(p.address))
 
-    const multicallMemoize = await memoizer.fn(this.client.multicall)
-
     const globalStateData = {
       multicallAddress: this.client.chain?.contracts?.multicall3?.address!,
       allowFailure: true,
@@ -102,24 +99,17 @@ export abstract class AlgebraV1BaseProvider extends UniswapV3BaseProvider {
             functionName: 'globalState',
           }) as const,
       ),
-    }
-    const globalState = options?.memoize
-      ? await (multicallMemoize(globalStateData) as Promise<any>).catch((e) => {
-          console.warn(
-            `${this.getLogPrefix()} - INIT: multicall failed, message: ${
-              e.message
-            }`,
-          )
-          return undefined
-        })
-      : await this.client.multicall(globalStateData).catch((e) => {
-          console.warn(
-            `${this.getLogPrefix()} - INIT: multicall failed, message: ${
-              e.message
-            }`,
-          )
-          return undefined
-        })
+    } as const
+    const globalState = await this.client
+      .multicall(globalStateData)
+      .catch((e) => {
+        console.warn(
+          `${this.getLogPrefix()} - INIT: multicall failed, message: ${
+            e.message
+          }`,
+        )
+        return undefined
+      })
 
     let poolsTickSpacing:
       | (
@@ -159,26 +149,17 @@ export abstract class AlgebraV1BaseProvider extends UniswapV3BaseProvider {
               functionName: 'tickSpacing',
             }) as const,
         ),
-      }
-      poolsTickSpacing = options?.memoize
-        ? await (multicallMemoize(tickSpacingsData) as Promise<any>).catch(
-            (e) => {
-              console.warn(
-                `${this.getLogPrefix()} - INIT: multicall failed, message: ${
-                  e.message
-                }`,
-              )
-              return undefined
-            },
+      } as const
+      poolsTickSpacing = await this.client
+        .multicall(tickSpacingsData)
+        .catch((e) => {
+          console.warn(
+            `${this.getLogPrefix()} - INIT: multicall failed, message: ${
+              e.message
+            }`,
           )
-        : await this.client.multicall(tickSpacingsData).catch((e) => {
-            console.warn(
-              `${this.getLogPrefix()} - INIT: multicall failed, message: ${
-                e.message
-              }`,
-            )
-            return undefined
-          })
+          return undefined
+        })
     } catch (_error) {}
 
     const existingPools: V3Pool[] = []

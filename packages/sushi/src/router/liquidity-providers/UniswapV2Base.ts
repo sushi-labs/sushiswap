@@ -17,7 +17,6 @@ import {
   filterTopPools,
   mapToken,
 } from '../lib/api.js'
-import { memoizer } from '../memoizer.js'
 import { ConstantProductPoolCode, type PoolCode } from '../pool-codes/index.js'
 import { LiquidityProvider } from './LiquidityProvider.js'
 
@@ -163,8 +162,6 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
     poolCodesToCreate: PoolCode[],
     options?: DataFetcherOptions,
   ): Promise<any> {
-    const multicallMemoize = await memoizer.fn(this.client.multicall)
-
     const multicallData = {
       multicallAddress: this.client.chain?.contracts?.multicall3
         ?.address as Address,
@@ -180,23 +177,14 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
           }) as const,
       ),
     }
-    return options?.memoize
-      ? await (multicallMemoize(multicallData) as Promise<any>).catch((e) => {
-          console.warn(
-            `${this.getLogPrefix()} - UPDATE: on-demand pools multicall failed, message: ${
-              e.message
-            }`,
-          )
-          return undefined
-        })
-      : await this.client.multicall(multicallData).catch((e) => {
-          console.warn(
-            `${this.getLogPrefix()} - UPDATE: on-demand pools multicall failed, message: ${
-              e.message
-            }`,
-          )
-          return undefined
-        })
+    return await this.client.multicall(multicallData).catch((e) => {
+      console.warn(
+        `${this.getLogPrefix()} - UPDATE: on-demand pools multicall failed, message: ${
+          e.message
+        }`,
+      )
+      return undefined
+    })
   }
 
   async getOnDemandPools(
