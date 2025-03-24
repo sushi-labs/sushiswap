@@ -534,6 +534,37 @@ export const matchain = {
   },
 } as const
 
+export const berachain = {
+  id: ChainId.BERA,
+  name: 'Berachain',
+  network: 'Berachain',
+  nativeCurrency: { name: 'BERA Token', symbol: 'BERA', decimals: 18 },
+  rpcUrls: {
+    default: {
+      http: ['https://rpc.berachain.com'],
+    },
+    public: {
+      http: ['https://berachain.drpc.org'],
+    },
+  },
+  blockExplorers: {
+    etherscan: {
+      name: 'Berachain Explorer',
+      url: 'https://berascan.com',
+    },
+    default: {
+      name: 'Berachain Explorer',
+      url: 'https://berascan.com',
+    },
+  },
+  contracts: {
+    multicall3: {
+      address: '0xcA11bde05977b3631167028862bE2a173976CA11' as Address,
+      blockCreated: 0,
+    },
+  },
+} as const
+
 export const publicTransports: Record<ChainId, Transport> = {
   [ChainId.ARBITRUM_NOVA]: http(arbitrumNova.rpcUrls.default.http[0]),
   [ChainId.ARBITRUM]: http(arbitrum.rpcUrls.default.http[0]),
@@ -572,6 +603,7 @@ export const publicTransports: Record<ChainId, Transport> = {
   [ChainId.CRONOS]: http(cronos.rpcUrls.default.http[0]),
   [ChainId.BLAST]: http(blast.rpcUrls.default.http[0]),
   [ChainId.FLARE]: http(flare.rpcUrls.default.http[0]),
+  [ChainId.BERA]: http(berachain.rpcUrls.default.http[0]),
   /* Testnets */ // TODO: add testnet transports
   [ChainId.ARBITRUM_TESTNET]: http(arbitrumSepolia.rpcUrls.default.http[0]),
   [ChainId.AVALANCHE_TESTNET]: http(avalancheFuji.rpcUrls.default.http[0]),
@@ -621,6 +653,7 @@ export const publicChains = [
   zetachain,
   flare as Chain,
   matchain,
+  berachain,
 
   /* Testnets */
   arbitrumSepolia as Chain,
@@ -792,6 +825,10 @@ export const publicClientConfig = {
   [ChainId.MATCHAIN]: {
     chain: matchain as Chain,
     transport: publicTransports[ChainId.MATCHAIN],
+  },
+  [ChainId.BERA]: {
+    chain: berachain as Chain,
+    transport: publicTransports[ChainId.BERA],
   },
 
   /* Testnets */

@@ -66,7 +66,7 @@ export default [
         standard: 'EIP3091',
       },
       {
-        name: 'flarescan',
+        name: 'Routescan',
         url: 'https://mainnet.flarescan.com',
         standard: 'EIP3091',
       },
@@ -267,12 +267,12 @@ export default [
       },
     ],
     nativeCurrency: {
-      name: 'MATIC',
-      symbol: 'MATIC',
+      name: 'POL',
+      symbol: 'POL',
       decimals: 18,
     },
     name: 'Polygon Mainnet',
-    shortName: 'matic',
+    shortName: 'pol',
   },
   {
     chainId: 199,
@@ -406,6 +406,33 @@ export default [
       bridges: [
         {
           url: 'https://bridge.zksync.io/',
+        },
+      ],
+    },
+  },
+  {
+    chainId: 698,
+    explorers: [
+      {
+        name: 'Matchscan',
+        url: 'https://matchscan.io',
+        icon: 'matchain',
+        standard: 'EIP3091',
+      },
+    ],
+    nativeCurrency: {
+      name: 'BNB',
+      symbol: 'BNB',
+      decimals: 18,
+    },
+    name: 'Matchain',
+    shortName: 'Matchain',
+    parent: {
+      type: 'L2',
+      chain: 'eip155-56',
+      bridges: [
+        {
+          url: 'https://bnb-bridge.matchain.io',
         },
       ],
     },
@@ -556,7 +583,7 @@ export default [
     explorers: [
       {
         name: 'ZetaChain Mainnet Explorer',
-        url: 'https://explorer.mainnet.zetachain.com',
+        url: 'https://explorer.zetachain.com',
         standard: 'none',
       },
     ],
@@ -574,7 +601,7 @@ export default [
       {
         name: 'basescan',
         url: 'https://basescan.org',
-        standard: 'none',
+        standard: 'EIP3091',
       },
       {
         name: 'basescout',
@@ -710,7 +737,12 @@ export default [
     chainId: 43113,
     explorers: [
       {
-        name: 'snowtrace',
+        name: 'Etherscan',
+        url: 'https://testnet.snowscan.xyz',
+        standard: 'EIP3091',
+      },
+      {
+        name: 'Routescan',
         url: 'https://testnet.snowtrace.io',
         standard: 'EIP3091',
       },
@@ -727,8 +759,18 @@ export default [
     chainId: 43114,
     explorers: [
       {
-        name: 'snowtrace',
+        name: 'Etherscan',
+        url: 'https://snowscan.xyz',
+        standard: 'EIP3091',
+      },
+      {
+        name: 'Routescan',
         url: 'https://snowtrace.io',
+        standard: 'EIP3091',
+      },
+      {
+        name: 'Avascan',
+        url: 'https://avascan.info',
         standard: 'EIP3091',
       },
     ],
@@ -775,7 +817,7 @@ export default [
     shortName: 'BobaBnb',
     parent: {
       type: 'L2',
-      chain: 'eip155-5',
+      chain: 'eip155-56',
       bridges: [
         {
           url: 'https://gateway.boba.network',
@@ -840,6 +882,28 @@ export default [
     shortName: 'maticmum',
   },
   {
+    chainId: 80094,
+    explorers: [
+      {
+        name: 'Berascan',
+        url: 'https://berascan.com',
+        standard: 'EIP3091',
+      },
+      {
+        name: 'Beratrail',
+        url: 'https://beratrail.io',
+        standard: 'EIP3091',
+      },
+    ],
+    nativeCurrency: {
+      name: 'BERA Token',
+      symbol: 'BERA',
+      decimals: 18,
+    },
+    name: 'Berachain',
+    shortName: 'berachain',
+  },
+  {
     chainId: 81457,
     explorers: [
       {
@@ -870,6 +934,11 @@ export default [
   {
     chainId: 421614,
     explorers: [
+      {
+        name: 'arbiscan-sepolia',
+        url: 'https://sepolia.arbiscan.io',
+        standard: 'EIP3091',
+      },
       {
         name: 'Arbitrum Sepolia Rollup Testnet Explorer',
         url: 'https://sepolia-explorer.arbitrum.io',
@@ -979,22 +1048,5 @@ export default [
     },
     name: 'Palm',
     shortName: 'palm',
-  },
-  {
-    chainId: 698,
-    explorers: [
-      {
-        name: 'matchain',
-        url: 'https://matchscan.io',
-        standard: 'none',
-      },
-    ],
-    nativeCurrency: {
-      name: 'BNB',
-      symbol: 'BNB',
-      decimals: 18,
-    },
-    name: 'MatChain Mainnet',
-    shortName: 'matchain',
   },
 ] as const
