@@ -2,7 +2,7 @@ import {
   ExclamationTriangleIcon,
   HandThumbUpIcon,
 } from '@heroicons/react/24/solid'
-import { Explainer, Loader, classNames } from '@sushiswap/ui'
+import { Explainer, Loader, SkeletonText, classNames } from '@sushiswap/ui'
 import { DeFiIcon } from '@sushiswap/ui/icons/DeFiIcon'
 import { GoPlusLabsIcon } from '@sushiswap/ui/icons/GoPlusLabsIcon'
 import { useMemo } from 'react'
@@ -110,87 +110,112 @@ export const TokenSecurityView = ({
         </thead>
 
         <tbody className="[&>tr:not(:last-child)]:border-b-[12px] [&>tr:not(:last-child)]:border-b-transparent">
-          {rows.map(({ key, isIssue }) => {
-            const goPlusValue = tokenSecurity?.[key]?.goPlus
-            const deFiValue = tokenSecurity?.[key]?.deFi
-            const goPlusIsIssue =
-              goPlusValue !== undefined &&
-              isTokenSecurityIssue[key](goPlusValue)
-            const deFiIsIssue =
-              deFiValue !== undefined && isTokenSecurityIssue[key](deFiValue)
-
-            return (
-              <tr key={key}>
-                <td>
-                  <div className="flex items-center gap-1">
-                    <Explainer
-                      iconProps={{ className: 'text-muted-foreground' }}
-                    >
-                      {TokenSecurityMessage[key]}
-                    </Explainer>
-                    <span
-                      className={classNames(
-                        'text-sm',
-                        !isIssue && 'font-medium',
-                      )}
-                    >
-                      {TokenSecurityLabel[key]}
+          {isTokenSecurityLoading
+            ? Array.from({ length: 6 }).map((_, index) => (
+                <tr key={`loading-${index}`}>
+                  <td>
+                    <span className="w-full max-w-[120px]">
+                      <SkeletonText fontSize="sm" />
                     </span>
-                  </div>
-                </td>
-
-                <td className="text-center">
-                  {goPlusValue === undefined ? (
-                    '-'
-                  ) : (
-                    <div className="inline-flex items-center gap-1">
-                      <span className="text-sm font-medium">
-                        {goPlusValue ? 'Yes' : 'No'}
+                  </td>
+                  <td>
+                    <div className="flex justify-center">
+                      <span className="w-full max-w-[40px]">
+                        <SkeletonText fontSize="sm" />
                       </span>
-                      {goPlusIsIssue ? (
-                        <ExclamationTriangleIcon
-                          width={14}
-                          height={14}
-                          className="fill-red"
-                        />
-                      ) : (
-                        <HandThumbUpIcon
-                          width={14}
-                          height={14}
-                          className="fill-green"
-                        />
-                      )}
                     </div>
-                  )}
-                </td>
-
-                <td className="text-center">
-                  {deFiValue === undefined ? (
-                    '-'
-                  ) : (
-                    <div className="inline-flex items-center gap-1">
-                      <span className="text-sm font-medium">
-                        {deFiValue ? 'Yes' : 'No'}
+                  </td>
+                  <td>
+                    <div className="flex justify-center">
+                      <span className="w-full max-w-[40px]">
+                        <SkeletonText fontSize="sm" />
                       </span>
-                      {deFiIsIssue ? (
-                        <ExclamationTriangleIcon
-                          width={14}
-                          height={14}
-                          className="fill-red"
-                        />
-                      ) : (
-                        <HandThumbUpIcon
-                          width={14}
-                          height={14}
-                          className="fill-green"
-                        />
-                      )}
                     </div>
-                  )}
-                </td>
-              </tr>
-            )
-          })}
+                  </td>
+                </tr>
+              ))
+            : rows.map(({ key, isIssue }) => {
+                const goPlusValue = tokenSecurity?.[key]?.goPlus
+                const deFiValue = tokenSecurity?.[key]?.deFi
+                const goPlusIsIssue =
+                  goPlusValue !== undefined &&
+                  isTokenSecurityIssue[key](goPlusValue)
+                const deFiIsIssue =
+                  deFiValue !== undefined &&
+                  isTokenSecurityIssue[key](deFiValue)
+
+                return (
+                  <tr key={key}>
+                    <td>
+                      <div className="flex items-center gap-1">
+                        <Explainer
+                          iconProps={{ className: 'text-muted-foreground' }}
+                        >
+                          {TokenSecurityMessage[key]}
+                        </Explainer>
+                        <span
+                          className={classNames(
+                            'text-sm',
+                            !isIssue && 'font-medium',
+                          )}
+                        >
+                          {TokenSecurityLabel[key]}
+                        </span>
+                      </div>
+                    </td>
+
+                    <td className="text-center">
+                      {goPlusValue === undefined ? (
+                        '-'
+                      ) : (
+                        <div className="inline-flex items-center gap-1">
+                          <span className="text-sm font-medium">
+                            {goPlusValue ? 'Yes' : 'No'}
+                          </span>
+                          {goPlusIsIssue ? (
+                            <ExclamationTriangleIcon
+                              width={14}
+                              height={14}
+                              className="fill-red"
+                            />
+                          ) : (
+                            <HandThumbUpIcon
+                              width={14}
+                              height={14}
+                              className="fill-green"
+                            />
+                          )}
+                        </div>
+                      )}
+                    </td>
+
+                    <td className="text-center">
+                      {deFiValue === undefined ? (
+                        '-'
+                      ) : (
+                        <div className="inline-flex items-center gap-1">
+                          <span className="text-sm font-medium">
+                            {deFiValue ? 'Yes' : 'No'}
+                          </span>
+                          {deFiIsIssue ? (
+                            <ExclamationTriangleIcon
+                              width={14}
+                              height={14}
+                              className="fill-red"
+                            />
+                          ) : (
+                            <HandThumbUpIcon
+                              width={14}
+                              height={14}
+                              className="fill-green"
+                            />
+                          )}
+                        </div>
+                      )}
+                    </td>
+                  </tr>
+                )
+              })}
         </tbody>
       </table>
     </div>
