@@ -62,6 +62,10 @@ export const DISABLED_CHAIN_IDS = [
   ChainId.PALM,
   ChainId.HECO,
   ChainId.OKEX,
+  ChainId.MOONBEAM,
+  ChainId.MOONRIVER,
+  ChainId.HARMONY,
+  ChainId.POLYGON_ZKEVM,
 ] as const
 
 export const NEW_CHAIN_IDS = [ChainId.HEMI] as const
