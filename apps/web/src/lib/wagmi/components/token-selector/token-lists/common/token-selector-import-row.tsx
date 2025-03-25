@@ -85,7 +85,7 @@ export const TokenSelectorImportRow: FC<TokenSelectorImportRow> = ({
   }, [tokenSecurity])
 
   return (
-    <Dialog onOpenChange={(open) => !open && setOpen(false)}>
+    <Dialog open={open}>
       <div className="relative py-0.5 h-[64px]">
         <div className="flex items-center w-full hover:bg-muted focus:bg-accent h-full rounded-lg px-3">
           <div className="flex flex-row items-center flex-grow gap-4">
@@ -231,7 +231,7 @@ export const TokenSelectorImportRow: FC<TokenSelectorImportRow> = ({
               Close
             </Button>
           ) : (
-            <div className="flex gap-3">
+            <div className="flex gap-3 w-full">
               <TraceEvent
                 events={[BrowserEvent.onClick, BrowserEvent.onKeyPress]}
                 name={InterfaceEventName.TOKEN_IMPORTED}
