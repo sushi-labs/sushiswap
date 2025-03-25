@@ -7,7 +7,7 @@ export const KADENA: IToken = {
   logoURI:
     'https://kdswapassets.blob.core.windows.net/public/tokens/K%20Logo%20Dark%20Blue%20Backround.png',
   name: 'KADENA',
-  symbol: 'KDN',
+  symbol: 'KDA',
 }
 
 const MAINNET_TOKENS: IToken[] = [

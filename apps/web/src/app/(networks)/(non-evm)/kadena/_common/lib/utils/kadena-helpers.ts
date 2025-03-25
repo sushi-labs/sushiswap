@@ -1,4 +1,4 @@
-import { IS_TESTNET } from '~tron/_common/constants/is-testnet'
+import { IS_TESTNET } from '~kadena/_common/constants/is-testnet'
 
 export const getChainwebAddressLink = (address: string) => {
   if (IS_TESTNET) {

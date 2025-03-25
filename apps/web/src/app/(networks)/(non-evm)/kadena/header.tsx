@@ -17,10 +17,10 @@ import { SidebarToggle, useSidebar } from 'src/ui/sidebar'
 import { useAccount, useChainId } from 'wagmi'
 import { headerElements } from './_common/header-elements'
 import { WalletConnector } from './_common/ui/WalletConnector/WalletConnector'
-import { useSwapState } from './swap/swap-provider'
+import { useWalletState } from './wallet-provider'
 
 export const Header: FC = () => {
-  const { connected } = useSwapState()
+  const { connected } = useWalletState()
 
   const evmChainId = useChainId()
 

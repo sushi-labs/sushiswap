@@ -1,5 +1,7 @@
 'use client'
 
+import { WalletProvider } from './wallet-provider'
+
 export function Providers({ children }: { children: React.ReactNode }) {
-  return <>{children}</>
+  return <WalletProvider>{children}</WalletProvider>
 }

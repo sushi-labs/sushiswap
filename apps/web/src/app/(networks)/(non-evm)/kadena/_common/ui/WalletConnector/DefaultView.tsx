@@ -16,7 +16,7 @@ import React, {
 import { formatNumber, formatUSD } from 'sushi/format'
 import { truncateText } from '~kadena/_common/lib/utils/formatters'
 import { getChainwebAddressLink } from '~kadena/_common/lib/utils/kadena-helpers'
-import { useSwapDispatch } from '~kadena/swap/swap-provider'
+import { useWalletDispatch } from '~kadena/wallet-provider'
 import type { IProfileView } from './WalletConnector'
 
 type DefaultViewProps = {
@@ -24,7 +24,7 @@ type DefaultViewProps = {
 }
 
 export const DefaultView = ({ setView }: DefaultViewProps) => {
-  const { setConnected } = useSwapDispatch()
+  const { setConnected } = useWalletDispatch()
   const [isLoadingPrice, setIsLoadingPrice] = useState(true)
   const [isLoadingBalance, setIsLoadingBalance] = useState(true)
 
@@ -108,11 +108,11 @@ export const DefaultView = ({ setView }: DefaultViewProps) => {
         {isLoading || !price || data?.formattedBalance === undefined ? (
           <div className="flex items-center gap-2">
             <SkeletonText className="!w-24 mx-auto !h-7" />
-            <span className="text-3xl font-medium h-7">KDN</span>
+            <span className="text-3xl font-medium h-7">KDA</span>
           </div>
         ) : (
           <p className="text-3xl font-medium whitespace-nowrap">
-            {formatNumber(data?.formattedBalance)} KDN
+            {formatNumber(data?.formattedBalance)} KDA
           </p>
         )}
         {isLoading || !price || data?.formattedBalance === undefined ? (

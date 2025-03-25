@@ -6,8 +6,6 @@ import type { IToken } from '~kadena/_common/types/token-type'
 
 // @TODO: Connected and Connecting will be replaced by wallet hook
 type Action =
-  | { type: 'setConnected'; value: boolean }
-  | { type: 'setConnecting'; value: boolean }
   | { type: 'swapTokens' }
   | { type: 'setToken0'; value: IToken }
   | { type: 'setToken1'; value: IToken }
@@ -18,8 +16,6 @@ type Action =
   | { type: 'setPriceImpactPercentage'; value: number }
 
 type Dispatch = {
-  setConnected(connected: boolean): void
-  setConnecting(connecting: boolean): void
   swapTokens(): void
   setToken0(token: IToken): void
   setToken1(token: IToken): void
@@ -31,8 +27,6 @@ type Dispatch = {
 }
 
 type State = {
-  connected: boolean
-  connecting: boolean
   token0: IToken
   token1: IToken
   isTxnPending: boolean
@@ -50,12 +44,6 @@ const SwapContext = createContext<
 
 function swapReducer(_state: State, action: Action) {
   switch (action.type) {
-    case 'setConnected': {
-      return { ..._state, connected: action.value }
-    }
-    case 'setConnecting': {
-      return { ..._state, connecting: action.value }
-    }
     case 'setToken0': {
       if (_state.token1.address === action.value.address) {
         //if token1 is the same as the new token0, swap them
@@ -114,8 +102,6 @@ function swapReducer(_state: State, action: Action) {
 
 const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
   const [state, dispatch] = useReducer(swapReducer, {
-    connected: false,
-    connecting: false,
     token0: KADENA,
     token1: STABLE_TOKENS[0],
     isTxnPending: false,
@@ -127,10 +113,6 @@ const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
 
   const dispatchWithAction = useMemo(
     () => ({
-      setConnected: (value: boolean) =>
-        dispatch({ type: 'setConnected', value }),
-      setConnecting: (value: boolean) =>
-        dispatch({ type: 'setConnecting', value }),
       setToken0: (value: IToken) => dispatch({ type: 'setToken0', value }),
       setToken1: (value: IToken) => dispatch({ type: 'setToken1', value }),
       swapTokens: () => dispatch({ type: 'swapTokens' }),

@@ -10,7 +10,7 @@ import { JazzIcon } from '@sushiswap/ui/icons/JazzIcon'
 import { useEffect, useState } from 'react'
 import { IS_TESTNET } from '~kadena/_common/constants/is-testnet'
 import { truncateText } from '~kadena/_common/lib/utils/formatters'
-import { useSwapDispatch, useSwapState } from '~kadena/swap/swap-provider'
+import { useWalletDispatch, useWalletState } from '~kadena/wallet-provider'
 import { DefaultView } from './DefaultView'
 import { SettingsView } from './SettingsView'
 import { WalletListView } from './WalletListView'
@@ -18,8 +18,8 @@ import { WalletListView } from './WalletListView'
 export type IProfileView = 'default' | 'settings'
 
 export const WalletConnector = (props: ButtonProps) => {
-  const { connected, connecting } = useSwapState()
-  const { setConnected, setConnecting } = useSwapDispatch()
+  const { connected, connecting } = useWalletState()
+  const { setConnected, setConnecting } = useWalletDispatch()
 
   const [view, setView] = useState<IProfileView>('default')
 
@@ -59,12 +59,7 @@ export const WalletConnector = (props: ButtonProps) => {
 
       <PopoverContent className="!p-1 !rounded-2xl w-fit">
         {!isConnected ? (
-          <WalletListView
-            setIsConnecting={() => {
-              console.log('set connecting to ', true)
-              setConnecting(true)
-            }}
-          />
+          <WalletListView setIsConnecting={() => setConnecting(true)} />
         ) : null}
         {view === 'default' && isConnected ? (
           <DefaultView setView={setView} />

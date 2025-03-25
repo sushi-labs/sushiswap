@@ -10,7 +10,7 @@ export const WalletListView = ({
   const adapters = [
     {
       name: 'Metamask',
-      icon: '/images/wallets/metamask.png',
+      icon: 'https://images.ctfassets.net/clixtyxoaeas/1ezuBGezqfIeifWdVtwU4c/d970d4cdf13b163efddddd5709164d2e/MetaMask-icon-Fox.svg',
       readyState: 'Found',
     },
   ]
