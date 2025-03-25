@@ -1,26 +1,38 @@
 import {
+  ExclamationCircleIcon,
+  ExclamationTriangleIcon,
+} from '@heroicons/react/24/solid'
+import {
   BrowserEvent,
   InterfaceElementName,
   InterfaceEventName,
   TraceEvent,
 } from '@sushiswap/telemetry'
 import {
+  Badge,
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  LinkExternal,
+  Loader,
   Message,
+  SkeletonText,
+  classNames,
 } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui'
 import { Currency } from '@sushiswap/ui'
 import { List } from '@sushiswap/ui'
-import { type FC, useCallback, useState } from 'react'
-import { useTokenSecurity } from 'src/lib/hooks/react-query'
+import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
+import { type FC, useCallback, useMemo, useState } from 'react'
+import {
+  type TokenSecurity,
+  isTokenSecurityIssue,
+  useTokenSecurity,
+} from 'src/lib/hooks/react-query'
 import { EvmChain } from 'sushi/chain'
-import { isTokenSecurityChainId } from 'sushi/config'
 import type { Token } from 'sushi/currency'
 import { shortenAddress } from 'sushi/format'
 import { TokenSecurityView } from '../../../token-security-view'
@@ -50,9 +62,27 @@ export const TokenSelectorImportRow: FC<TokenSelectorImportRow> = ({
     }, 250)
   }, [onImport])
 
-  const honeypot = Boolean(
-    tokenSecurity?.is_honeypot?.goPlus || tokenSecurity?.is_honeypot?.deFi,
-  )
+  const { isHoneypot, isFoT, isRisky } = useMemo(() => {
+    return {
+      isHoneypot:
+        tokenSecurity?.is_honeypot?.goPlus || tokenSecurity?.is_honeypot?.deFi,
+      isFoT:
+        tokenSecurity?.buy_tax?.goPlus ||
+        tokenSecurity?.buy_tax?.deFi ||
+        tokenSecurity?.sell_tax?.goPlus ||
+        tokenSecurity?.buy_tax?.deFi,
+      isRisky: Object.entries(tokenSecurity || {}).some(([_key, value]) => {
+        const key = _key as keyof TokenSecurity
+        if (
+          key in isTokenSecurityIssue &&
+          (isTokenSecurityIssue[key](value.deFi) ||
+            isTokenSecurityIssue[key](value.goPlus))
+        ) {
+          return true
+        }
+      }),
+    }
+  }, [tokenSecurity])
 
   return (
     <Dialog onOpenChange={(open) => !open && setOpen(false)}>
@@ -85,105 +115,148 @@ export const TokenSelectorImportRow: FC<TokenSelectorImportRow> = ({
           </div>
         </div>
       </div>
-      {!isTokenSecurityChainId(currency.chainId) || !isTokenSecurityLoading ? (
-        <DialogContent className="!flex flex-col max-h-[80vh]">
-          <DialogHeader>
-            <DialogTitle>Import token</DialogTitle>
-            <DialogDescription>
-              Anyone can create a token, including creating fake versions of
-              existing tokens that claim to represent projects. If you purchase
-              this token, you may not be able to sell it back.
-            </DialogDescription>
-          </DialogHeader>
-          <List>
-            <List.Control>
-              <List.KeyValue
-                title={
-                  <span className="text-gray-900 dark:text-slate-50">Name</span>
-                }
-              >
-                {currency.name}
-              </List.KeyValue>
-              <List.KeyValue
-                title={
-                  <span className="text-gray-900 dark:text-slate-50">
-                    Symbol
-                  </span>
-                }
-              >
-                {currency.symbol}
-              </List.KeyValue>
-              <List.KeyValue
-                title={
-                  <span className="text-gray-900 dark:text-slate-50">
-                    Address
-                  </span>
-                }
-              >
-                <a
-                  target="_blank"
-                  href={EvmChain.from(currency.chainId)?.getTokenUrl(
-                    currency.address,
-                  )}
-                  className="text-blue"
-                  rel="noreferrer"
-                >
-                  {shortenAddress(currency.address)}
-                </a>
-              </List.KeyValue>
-            </List.Control>
-          </List>
-          {isTokenSecurityChainId(currency.chainId) ? (
-            <div className="flex flex-1 flex-grow flex-col overflow-y-scroll relative">
-              <List className="!pt-0 overflow-hidden">
-                <List.Control className="!overflow-y-auto flex flex-col gap-3 p-4">
-                  <div className="flex items-center">
-                    <span className="text-sm font-medium text-muted-foreground">
-                      Token Security Scan
-                    </span>
-                  </div>
-                  <TokenSecurityView
-                    token={currency}
-                    tokenSecurity={tokenSecurity}
-                    isTokenSecurityLoading={isTokenSecurityLoading}
-                  />
-                </List.Control>
-              </List>
-            </div>
-          ) : null}
-          <DialogFooter>
-            <div className="flex flex-col gap-3 w-full">
-              {!honeypot ? (
-                <TraceEvent
-                  events={[BrowserEvent.onClick, BrowserEvent.onKeyPress]}
-                  name={InterfaceEventName.TOKEN_IMPORTED}
-                  properties={{
-                    token_symbol: currency?.symbol,
-                    token_address: currency?.address,
-                  }}
-                  element={InterfaceElementName.IMPORT_TOKEN_BUTTON}
-                >
-                  <Button fullWidth size="xl" onClick={onClick}>
-                    I understand
-                  </Button>
-                </TraceEvent>
+      <DialogContent className="!flex flex-col max-h-[80vh]" hideClose>
+        <DialogHeader className="!text-left !space-y-3">
+          <DialogTitle>
+            <div
+              className={classNames(
+                'inline-flex items-center px-2 py-1.5 gap-1 rounded-full',
+                isTokenSecurityLoading
+                  ? 'bg-muted'
+                  : isHoneypot || isFoT || isRisky
+                    ? 'bg-red/20 text-red'
+                    : 'bg-yellow/20 text-yellow',
+              )}
+            >
+              {isTokenSecurityLoading ? (
+                <Loader width={28} height={28} />
+              ) : isHoneypot || isFoT || isRisky ? (
+                <ExclamationTriangleIcon width={28} height={28} />
               ) : (
-                <div className="flex flex-col gap-3">
-                  <DialogTrigger asChild>
-                    <Button fullWidth size="xl" onClick={() => setOpen(false)}>
-                      Close
-                    </Button>
-                  </DialogTrigger>
-                  <Message variant="destructive" size="sm">
-                    Sushi does not support honeypot tokens. This token contract
-                    cannot be imported!
-                  </Message>
-                </div>
+                <ExclamationCircleIcon width={28} height={28} />
               )}
             </div>
-          </DialogFooter>
-        </DialogContent>
-      ) : null}
+          </DialogTitle>
+          {isTokenSecurityLoading ? (
+            <span>
+              <SkeletonText fontSize="xl" />
+            </span>
+          ) : (
+            <span className="text-xl font-semibold">
+              {isHoneypot
+                ? 'Honeypot Token Detected'
+                : isFoT
+                  ? 'Tax Token Deteceted'
+                  : isRisky
+                    ? 'Token Flagged for Risks'
+                    : 'Unverified Token'}
+            </span>
+          )}
+        </DialogHeader>
+        <List>
+          <List.Control className="!p-4">
+            <div className="flex justify-between items-center">
+              <div className="flex items-center gap-4">
+                <Badge
+                  position="bottom-right"
+                  badgeContent={
+                    <div className="bg-white rounded-full dark:bg-slate-800">
+                      <NetworkIcon
+                        width={20}
+                        height={20}
+                        chainId={currency.chainId}
+                      />
+                    </div>
+                  }
+                >
+                  <div className="w-10 h-10">
+                    <Currency.Icon
+                      disableLink
+                      currency={currency}
+                      width={40}
+                      height={40}
+                    />
+                  </div>
+                </Badge>
+                <div className="flex flex-col">
+                  <span className="text-2xl font-medium">
+                    {currency.symbol ?? '-'}
+                  </span>
+                  <span className="font-medium text-muted-foreground">
+                    {currency.name ?? '-'}
+                  </span>
+                </div>
+              </div>
+              <LinkExternal
+                target="_blank"
+                href={EvmChain.from(currency.chainId)?.getTokenUrl(
+                  currency.address,
+                )}
+                className="font-medium"
+              >
+                {shortenAddress(currency.address)}{' '}
+              </LinkExternal>
+            </div>
+          </List.Control>
+        </List>
+        <List className="!pt-0 overflow-hidden">
+          <List.Control className="!overflow-y-auto flex flex-col gap-3 p-4">
+            <div className="flex items-center">
+              <span className="text-sm font-medium text-muted-foreground">
+                Token Security Scan
+              </span>
+            </div>
+            <TokenSecurityView
+              token={currency}
+              tokenSecurity={tokenSecurity}
+              isTokenSecurityLoading={isTokenSecurityLoading}
+            />
+          </List.Control>
+        </List>
+        <Message
+          size="sm"
+          variant={isHoneypot || isFoT || isRisky ? 'destructive' : 'warning'}
+        >
+          {isHoneypot
+            ? 'Honeypot tokens restrict selling. Sushi does not support this token type.'
+            : isFoT
+              ? 'This token charges a tax fee on transfer. Tax tokens are not supported in V3. You might not be able to trade, transfer, or withdraw liquidity of this token.'
+              : isRisky
+                ? 'Our security scan has identified risks associated with this token. Proceeding may result in the loss of your funds. Please exercise caution and review the details before continuing.'
+                : 'Anyone can create a token, including creating fake versions of existing tokens that claim to represent projects. If you purchase this token, you may not be able to sell it back.'}
+        </Message>
+        <DialogFooter>
+          {isHoneypot ? (
+            <Button fullWidth size="xl" onClick={() => setOpen(false)}>
+              Close
+            </Button>
+          ) : (
+            <div className="flex gap-3">
+              <TraceEvent
+                events={[BrowserEvent.onClick, BrowserEvent.onKeyPress]}
+                name={InterfaceEventName.TOKEN_IMPORTED}
+                properties={{
+                  token_symbol: currency?.symbol,
+                  token_address: currency?.address,
+                }}
+                element={InterfaceElementName.IMPORT_TOKEN_BUTTON}
+              >
+                <Button
+                  fullWidth
+                  size="xl"
+                  onClick={onClick}
+                  variant={isFoT || isRisky ? 'destructive' : 'default'}
+                >
+                  {isFoT || isRisky ? 'Import Anyways' : 'Confirm Import'}
+                </Button>
+              </TraceEvent>
+              <Button fullWidth size="xl" onClick={() => setOpen(false)}>
+                Cancel
+              </Button>
+            </div>
+          )}
+        </DialogFooter>
+      </DialogContent>
     </Dialog>
   )
 }
