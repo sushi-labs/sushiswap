@@ -1,7 +1,5 @@
-"use client";
-
-import "@tronweb3/tronwallet-adapter-react-ui/style.css";
+'use client'
 
 export function Providers({ children }: { children: React.ReactNode }) {
-  return <>{children}</>;
+  return <>{children}</>
 }
