@@ -12,11 +12,11 @@ export function NavigationItems() {
       <LinkInternal
         shallow={true}
         scroll={false}
-        href={`/aptos/pool?${searchParams.toString()}`}
+        href={`/kadena/pool?${searchParams.toString()}`}
       >
         <PathnameButton
           id="my-positions"
-          pathname={'/aptos/pool'}
+          pathname={'/kadena/pool'}
           asChild
           size="sm"
         >

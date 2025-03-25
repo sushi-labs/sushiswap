@@ -3,7 +3,7 @@ import React from 'react'
 import { NonStandardChainId, POOL_SUPPORTED_NETWORKS } from 'src/config'
 import { TableFiltersNetwork } from 'src/ui/pool/TableFiltersNetwork'
 import { TableFiltersSearchToken } from 'src/ui/pool/TableFiltersSearchToken'
-import { PoolsTable } from '~aptos/pool/ui/tables/pools/pools-table'
+import { PoolsTable } from '~kadena/_common/ui/Pools/PoolsTable/PoolsTable'
 
 export default async function PoolsPage() {
   return (

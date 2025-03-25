@@ -13,7 +13,7 @@ export default function MyPositionsPage() {
       <div className="flex flex-col sm:flex-row gap-3 mb-4">
         <TableFiltersSearchToken />
         <TableFiltersNetwork
-          network="aptos"
+          network="kadena"
           supportedNetworks={POOL_SUPPORTED_NETWORKS}
           unsupportedNetworkHref="/ethereum/pool"
           className="lg:hidden block"

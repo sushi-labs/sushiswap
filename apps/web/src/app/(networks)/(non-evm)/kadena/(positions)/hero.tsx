@@ -16,7 +16,7 @@ export const Hero: FC = () => {
         </span>
         <div className="flex flex-col w-full sm:w-[unset] gap-4">
           <Button asChild size="sm">
-            <LinkInternal href="/aptos/pool/add">
+            <LinkInternal href="/kadena/pool/add">
               I want to create a position
             </LinkInternal>
           </Button>
@@ -28,7 +28,7 @@ export const Hero: FC = () => {
             variant="secondary"
             size="sm"
           >
-            <LinkInternal className="text-sm" href={`/aptos/pool/incentivize`}>
+            <LinkInternal className="text-sm" href={`/kadena/pool/incentivize`}>
               I want to incentivize a pool
             </LinkInternal>
           </Button>
