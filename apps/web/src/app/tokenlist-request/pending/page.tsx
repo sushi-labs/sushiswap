@@ -174,6 +174,12 @@ const COLUMNS: ColumnDef<PendingTokens[number], unknown>[] = [
               <List className="!pt-0 overflow-hidden">
                 <List.Control className="!overflow-y-auto">
                   <TokenSecurityView
+                    token={
+                      new Token({
+                        ...props.row.original.token,
+                        chainId: props.row.original.token.chainId as EvmChainId,
+                      })
+                    }
                     isTokenSecurityLoading={false}
                     tokenSecurity={{
                       is_buyable: {

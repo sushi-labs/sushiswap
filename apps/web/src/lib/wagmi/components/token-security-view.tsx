@@ -13,15 +13,18 @@ import {
   type TokenSecurityResponse,
   isTokenSecurityIssue,
 } from 'src/lib/hooks/react-query'
+import type { Token } from 'sushi/currency'
 
 export const TokenSecurityView = ({
+  token,
   tokenSecurity,
   isTokenSecurityLoading,
 }: {
+  token: Token
   tokenSecurity: TokenSecurityResponse | undefined
   isTokenSecurityLoading: boolean
 }) => {
-  const { issues, nonIssues } = useMemo(() => {
+  const { rows, issueCount } = useMemo(() => {
     const issues: (keyof TokenSecurity)[] = []
     const nonIssues: (keyof TokenSecurity)[] = []
 
@@ -31,153 +34,165 @@ export const TokenSecurityView = ({
         key in isTokenSecurityIssue &&
         (isTokenSecurityIssue[key](value.deFi) ||
           isTokenSecurityIssue[key](value.goPlus))
-      )
+      ) {
         issues.push(key)
-      else nonIssues.push(key)
+      } else {
+        nonIssues.push(key)
+      }
     }
-
-    return { tokenSecurity, issues, nonIssues }
+    return {
+      rows: [
+        ...issues.map((key) => ({ key, isIssue: true })),
+        ...nonIssues.map((key) => ({ key, isIssue: false })),
+      ],
+      issueCount: issues.length,
+    }
   }, [tokenSecurity])
 
   return (
-    <div className="flex gap-3">
-      <div className="grow flex flex-col gap-3">
-        <div className="h-12">
-          <div
-            className={classNames(
-              'rounded-full flex items-center px-2 py-1.5 gap-1 w-fit',
-              isTokenSecurityLoading
-                ? 'bg-muted'
-                : Number(issues?.length) > 0
-                  ? 'bg-yellow/20 text-yellow'
-                  : 'bg-green/20 text-green',
-            )}
-          >
-            {isTokenSecurityLoading ? (
-              <Loader width={16} height={16} />
-            ) : Number(issues?.length) > 0 ? (
-              <ExclamationTriangleIcon width={16} height={16} />
-            ) : (
-              <HandThumbUpIcon width={16} height={16} />
-            )}
-            {isTokenSecurityLoading ? (
-              <span className="text-sm">Pending</span>
-            ) : (
-              <span className="text-sm">{`${Number(issues?.length)} issue${
-                Number(issues?.length) !== 1 ? 's' : ''
-              } found`}</span>
-            )}
-          </div>
-        </div>
-        {issues.map((key) => (
-          <div key={key} className="flex gap-1">
-            <Explainer iconProps={{ className: 'text-muted-foreground' }}>
-              {TokenSecurityMessage[key]}
-            </Explainer>
-            <span className="text-sm">{TokenSecurityLabel[key]}</span>
-          </div>
-        ))}
-        {nonIssues.map((key) => (
-          <div key={key} className="flex gap-1">
-            <Explainer iconProps={{ className: 'text-muted-foreground' }}>
-              {TokenSecurityMessage[key]}
-            </Explainer>
-            <span className="text-sm font-medium">
-              {TokenSecurityLabel[key]}
-            </span>
-          </div>
-        ))}
-      </div>
-      <div className="flex flex-col gap-3">
-        <div className="flex flex-col gap-1 items-center h-12">
-          <GoPlusLabsIcon width={28} height={24} />
-          <span className="font-semibold text-sm">GoPlus</span>
-        </div>
-        {issues.map((key) => (
-          <div key={key} className="flex items-center justify-center gap-1">
-            <span className="text-sm font-medium">
-              {tokenSecurity?.[key].goPlus === undefined
-                ? '-'
-                : tokenSecurity[key].goPlus
-                  ? 'Yes'
-                  : 'No'}
-            </span>
-            {tokenSecurity?.[key].deFi ===
-            undefined ? null : isTokenSecurityIssue[key](
-                tokenSecurity?.[key].goPlus,
-              ) ? (
-              <ExclamationTriangleIcon
-                width={14}
-                height={14}
-                className="fill-red"
-              />
-            ) : (
-              <HandThumbUpIcon width={14} height={14} className="fill-green" />
-            )}
-          </div>
-        ))}
-        {nonIssues.map((key) => (
-          <div key={key} className="flex items-center justify-center gap-1">
-            <span className="text-sm font-medium">
-              {tokenSecurity?.[key].goPlus ? 'Yes' : 'No'}
-            </span>
-            {isTokenSecurityIssue[key](tokenSecurity?.[key].goPlus) ? (
-              <ExclamationTriangleIcon
-                width={14}
-                height={14}
-                className="fill-red"
-              />
-            ) : (
-              <HandThumbUpIcon width={14} height={14} className="fill-green" />
-            )}
-          </div>
-        ))}
-      </div>
-      <div className="flex flex-col gap-3">
-        <div className="flex flex-col gap-1 items-center h-12">
-          <DeFiIcon width={24} height={24} />
-          <span className="font-semibold text-sm">De.Fi</span>
-        </div>
-        {issues.map((key) => (
-          <div key={key} className="flex items-center justify-center gap-1">
-            <span className="text-sm font-medium">
-              {tokenSecurity?.[key].deFi === undefined
-                ? '-'
-                : tokenSecurity[key].deFi
-                  ? 'Yes'
-                  : 'No'}
-            </span>
-            {tokenSecurity?.[key].deFi ===
-            undefined ? null : isTokenSecurityIssue[key](
-                tokenSecurity?.[key].deFi,
-              ) ? (
-              <ExclamationTriangleIcon
-                width={14}
-                height={14}
-                className="fill-red"
-              />
-            ) : (
-              <HandThumbUpIcon width={14} height={14} className="fill-green" />
-            )}
-          </div>
-        ))}
-        {nonIssues.map((key) => (
-          <div key={key} className="flex items-center justify-center gap-1">
-            <span className="text-sm font-medium">
-              {tokenSecurity?.[key].deFi ? 'Yes' : 'No'}
-            </span>
-            {isTokenSecurityIssue[key](tokenSecurity?.[key].deFi) ? (
-              <ExclamationTriangleIcon
-                width={14}
-                height={14}
-                className="fill-red"
-              />
-            ) : (
-              <HandThumbUpIcon width={14} height={14} className="fill-green" />
-            )}
-          </div>
-        ))}
-      </div>
+    <div className="w-full overflow-x-auto">
+      <table className="w-full table-auto border-collapse ">
+        <thead className="[&>tr:last-child]:border-b-[12px] [&>tr:last-child]:border-b-transparent">
+          <tr className="whitespace-nowrap">
+            <th className="text-left !font-normal">
+              <div
+                className={classNames(
+                  'inline-flex items-center px-2 py-1.5 gap-1 rounded-full',
+                  isTokenSecurityLoading
+                    ? 'bg-muted'
+                    : issueCount > 0
+                      ? 'bg-red/20 text-red'
+                      : 'bg-green/20 text-green',
+                )}
+              >
+                {isTokenSecurityLoading ? (
+                  <Loader width={16} height={16} />
+                ) : issueCount > 0 ? (
+                  <ExclamationTriangleIcon width={16} height={16} />
+                ) : (
+                  <HandThumbUpIcon width={16} height={16} />
+                )}
+
+                {isTokenSecurityLoading ? (
+                  <span className="text-sm">Pending</span>
+                ) : (
+                  <span className="text-sm">
+                    {issueCount} issue{issueCount !== 1 ? 's' : ''} found
+                  </span>
+                )}
+              </div>
+            </th>
+
+            <th className="text-center">
+              <a
+                target="_blank"
+                rel="noopener noreferrer"
+                href={`https://gopluslabs.io/token-security/${token?.chainId}/${token?.address}`}
+                className="inline-flex flex-col items-center"
+              >
+                <GoPlusLabsIcon width={28} height={24} />
+                <span className="font-semibold text-sm">GoPlus</span>
+              </a>
+            </th>
+
+            <th className="text-center">
+              <a
+                target="_blank"
+                rel="noopener noreferrer"
+                href={`https://de.fi/scanner/contract/${token?.address}`}
+                className="inline-flex flex-col items-center"
+              >
+                <DeFiIcon width={24} height={24} />
+                <span className="font-semibold text-sm">De.Fi</span>
+              </a>
+            </th>
+          </tr>
+        </thead>
+
+        <tbody className="[&>tr:not(:last-child)]:border-b-[12px] [&>tr:not(:last-child)]:border-b-transparent">
+          {rows.map(({ key, isIssue }) => {
+            const goPlusValue = tokenSecurity?.[key]?.goPlus
+            const deFiValue = tokenSecurity?.[key]?.deFi
+            const goPlusIsIssue =
+              goPlusValue !== undefined &&
+              isTokenSecurityIssue[key](goPlusValue)
+            const deFiIsIssue =
+              deFiValue !== undefined && isTokenSecurityIssue[key](deFiValue)
+
+            return (
+              <tr key={key}>
+                <td>
+                  <div className="flex items-center gap-1">
+                    <Explainer
+                      iconProps={{ className: 'text-muted-foreground' }}
+                    >
+                      {TokenSecurityMessage[key]}
+                    </Explainer>
+                    <span
+                      className={classNames(
+                        'text-sm',
+                        !isIssue && 'font-medium',
+                      )}
+                    >
+                      {TokenSecurityLabel[key]}
+                    </span>
+                  </div>
+                </td>
+
+                <td className="text-center">
+                  {goPlusValue === undefined ? (
+                    '-'
+                  ) : (
+                    <div className="inline-flex items-center gap-1">
+                      <span className="text-sm font-medium">
+                        {goPlusValue ? 'Yes' : 'No'}
+                      </span>
+                      {goPlusIsIssue ? (
+                        <ExclamationTriangleIcon
+                          width={14}
+                          height={14}
+                          className="fill-red"
+                        />
+                      ) : (
+                        <HandThumbUpIcon
+                          width={14}
+                          height={14}
+                          className="fill-green"
+                        />
+                      )}
+                    </div>
+                  )}
+                </td>
+
+                <td className="text-center">
+                  {deFiValue === undefined ? (
+                    '-'
+                  ) : (
+                    <div className="inline-flex items-center gap-1">
+                      <span className="text-sm font-medium">
+                        {deFiValue ? 'Yes' : 'No'}
+                      </span>
+                      {deFiIsIssue ? (
+                        <ExclamationTriangleIcon
+                          width={14}
+                          height={14}
+                          className="fill-red"
+                        />
+                      ) : (
+                        <HandThumbUpIcon
+                          width={14}
+                          height={14}
+                          className="fill-green"
+                        />
+                      )}
+                    </div>
+                  )}
+                </td>
+              </tr>
+            )
+          })}
+        </tbody>
+      </table>
     </div>
   )
 }

@@ -2,6 +2,7 @@ import {
   ArrowLeftIcon,
   ChartBarSquareIcon,
   DocumentDuplicateIcon,
+  ShieldCheckIcon,
 } from '@heroicons/react/24/outline'
 import { XMarkIcon } from '@heroicons/react/24/solid'
 import {
@@ -223,10 +224,17 @@ export const CurrencyInfo: FC<CurrencyInfoProps> = ({ currency, onBack }) => {
             </div>
           </div>
           <Separator className="my-6" />
-          <TokenSecurityView
-            isTokenSecurityLoading={isTokenSecurityLoading}
-            tokenSecurity={tokenSecurity}
-          />
+          <div className="flex flex-col">
+            <div className="flex gap-1 items-center py-2">
+              <ShieldCheckIcon className="h-4 w-4" />
+              <span className="font-medium">Security Info</span>
+            </div>
+            <TokenSecurityView
+              token={currency.wrapped}
+              isTokenSecurityLoading={isTokenSecurityLoading}
+              tokenSecurity={tokenSecurity}
+            />
+          </div>
         </div>
       </div>
     </div>

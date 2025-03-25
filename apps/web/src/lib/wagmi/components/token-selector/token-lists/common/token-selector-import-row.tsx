@@ -134,10 +134,16 @@ export const TokenSelectorImportRow: FC<TokenSelectorImportRow> = ({
             </List.Control>
           </List>
           {isTokenSecurityChainId(currency.chainId) ? (
-            <div className="flex flex-1 flex-grow flex-col overflow-y-scroll relative pr-4">
+            <div className="flex flex-1 flex-grow flex-col overflow-y-scroll relative">
               <List className="!pt-0 overflow-hidden">
-                <List.Control className="!overflow-y-auto">
+                <List.Control className="!overflow-y-auto flex flex-col gap-3 p-4">
+                  <div className="flex items-center">
+                    <span className="text-sm font-medium text-muted-foreground">
+                      Token Security Scan
+                    </span>
+                  </div>
                   <TokenSecurityView
+                    token={currency}
                     tokenSecurity={tokenSecurity}
                     isTokenSecurityLoading={isTokenSecurityLoading}
                   />
