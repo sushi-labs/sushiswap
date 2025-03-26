@@ -98,8 +98,6 @@ export type DataFetcherOptions = {
    * price, etc of a certain block
    */
   blockNumber?: bigint
-  /** Determines if memoizer should be used or not */
-  memoize?: boolean
   /** Determines a timeout (in ms) for fetching pools for a token pair */
   fetchPoolsTimeout?: number
 }

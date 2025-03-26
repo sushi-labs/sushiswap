@@ -13,7 +13,6 @@ import {
 import { Currency, Token } from '../../currency/index.js'
 import { DataFetcherOptions } from '../data-fetcher.js'
 import { getCurrencyCombinations } from '../get-currency-combinations.js'
-import { memoizer } from '../memoizer.js'
 
 export interface TridentStaticPool {
   address: Address
@@ -63,9 +62,7 @@ export class TridentStaticPoolFetcher {
             chainId as TridentChainId
           ] as Address)
 
-    const multicallMemoize = await memoizer.fn(client.multicall)
-
-    const callStatePoolsCountData = {
+    const callStatePoolsCount = await client.multicall({
       multicallAddress: client.chain?.contracts?.multicall3?.address as Address,
       allowFailure: true,
       blockNumber: options?.blockNumber,
@@ -79,21 +76,7 @@ export class TridentStaticPoolFetcher {
             args: el as [Address, Address],
           }) as const,
       ),
-    }
-    const callStatePoolsCount: (
-      | {
-          error?: undefined
-          result: bigint
-          status: 'success'
-        }
-      | {
-          error: Error
-          result?: undefined
-          status: 'failure'
-        }
-    )[] = options?.memoize
-      ? await (multicallMemoize(callStatePoolsCountData) as Promise<any>)
-      : await client.multicall(callStatePoolsCountData)
+    })
 
     const callStatePoolsCountProcessed = callStatePoolsCount
       ?.map(
@@ -125,7 +108,7 @@ export class TridentStaticPoolFetcher {
       .filter(([, length]) => length)
       .map(([i]) => [_pairsUnique[i]![0], _pairsUnique[i]![1]])
 
-    const callStatePoolsData = {
+    const callStatePools = await client.multicall({
       multicallAddress: client.chain?.contracts?.multicall3?.address as Address,
       allowFailure: true,
       blockNumber: options?.blockNumber,
@@ -139,21 +122,7 @@ export class TridentStaticPoolFetcher {
             args,
           }) as const,
       ),
-    }
-    const callStatePools: (
-      | {
-          error?: undefined
-          result: readonly `0x${string}`[]
-          status: 'success'
-        }
-      | {
-          error: Error
-          result?: undefined
-          status: 'failure'
-        }
-    )[] = options?.memoize
-      ? await (multicallMemoize(callStatePoolsData) as Promise<any>)
-      : await client.multicall(callStatePoolsData)
+    })
 
     const pools: TridentStaticPool[] = []
     callStatePools.forEach((s, i) => {
@@ -170,7 +139,7 @@ export class TridentStaticPoolFetcher {
 
     const poolsAddresses = pools.map((p) => p.address)
 
-    const feesData = {
+    const fees = await client.multicall({
       multicallAddress: client.chain?.contracts?.multicall3?.address as Address,
       allowFailure: true,
       blockNumber: options?.blockNumber,
@@ -183,21 +152,7 @@ export class TridentStaticPoolFetcher {
             functionName: 'swapFee',
           }) as const,
       ),
-    }
-    const fees: (
-      | {
-          error?: undefined
-          result: bigint
-          status: 'success'
-        }
-      | {
-          error: Error
-          result?: undefined
-          status: 'failure'
-        }
-    )[] = options?.memoize
-      ? await (multicallMemoize(feesData) as Promise<any>)
-      : await client.multicall(feesData)
+    })
 
     const results: TridentStaticPool[] = []
 
