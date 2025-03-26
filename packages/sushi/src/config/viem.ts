@@ -691,7 +691,10 @@ export const publicClientConfig = {
   },
   [ChainId.BSC]: {
     chain: bsc as Chain,
-    transport: publicTransports[ChainId.BSC],
+    transport: fallback([
+      http('https://bsc.drpc.org'),
+      publicTransports[ChainId.BSC],
+    ]),
   },
   [ChainId.BTTC]: {
     chain: bttc as Chain,
@@ -704,7 +707,7 @@ export const publicClientConfig = {
   [ChainId.ETHEREUM]: {
     chain: mainnet as Chain,
     transport: fallback([
-      http('https://rpc.ankr.com/eth'),
+      http('https://eth.drpc.org'),
       publicTransports[ChainId.ETHEREUM],
     ]),
   },
@@ -725,7 +728,11 @@ export const publicClientConfig = {
   },
   [ChainId.HARMONY]: {
     chain: harmonyOne as Chain,
-    transport: publicTransports[ChainId.HARMONY],
+    transport: fallback([
+      http('https://api.harmony.one'),
+      http('https://harmony-0.drpc.org'),
+      publicTransports[ChainId.HARMONY],
+    ]),
   },
   [ChainId.KAVA]: {
     chain: kava as Chain,
@@ -794,7 +801,7 @@ export const publicClientConfig = {
   [ChainId.BASE]: {
     chain: base as Chain,
     transport: fallback([
-      http('https://rpc.ankr.com/base'),
+      http('https://base.drpc.org'),
       publicTransports[ChainId.BASE],
     ]),
   },
