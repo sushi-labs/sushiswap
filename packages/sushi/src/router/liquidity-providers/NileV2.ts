@@ -11,10 +11,6 @@ import { PoolCode } from '../pool-codes/PoolCode.js'
 import { LiquidityProviders } from './LiquidityProvider.js'
 import { StaticPool, UniswapV2BaseProvider } from './UniswapV2Base.js'
 
-interface NileV2Pool extends StaticPool {
-  stable: boolean
-}
-
 export class NileV2Provider extends UniswapV2BaseProvider {
   constructor(chainId: ChainId, web3Client: PublicClient) {
     const factory = {
@@ -39,11 +35,8 @@ export class NileV2Provider extends UniswapV2BaseProvider {
     excludePools?: Set<string>,
     options?: DataFetcherOptions,
   ): Promise<void> {
-    let pools = this.getStaticPools(t0, t1) as StaticPool[]
-    if (excludePools)
-      pools = (pools as StaticPool[]).filter(
-        (p) => !excludePools.has(p.address),
-      )
+    let pools = this.getStaticPools(t0, t1)
+    if (excludePools) pools = pools.filter((p) => !excludePools.has(p.address))
 
     if (pools.length === 0) {
       return
@@ -124,7 +117,7 @@ export class NileV2Provider extends UniswapV2BaseProvider {
     this.handleCreatePoolCode(poolCodesToCreate, reserves, 0)
   }
 
-  override getStaticPools(t1: Token, t2: Token): NileV2Pool[] {
+  override getStaticPools(t1: Token, t2: Token): StaticPool[] {
     const currencyCombination = getCurrencyCombinations(
       this.chainId,
       t1,
@@ -139,7 +132,6 @@ export class NileV2Provider extends UniswapV2BaseProvider {
         ),
         token0: combination[0]!,
         token1: combination[1]!,
-        stable: true,
         fee: 0,
       },
       {
@@ -150,7 +142,6 @@ export class NileV2Provider extends UniswapV2BaseProvider {
         ),
         token0: combination[0]!,
         token1: combination[1]!,
-        stable: false,
         fee: 0,
       },
     ])
