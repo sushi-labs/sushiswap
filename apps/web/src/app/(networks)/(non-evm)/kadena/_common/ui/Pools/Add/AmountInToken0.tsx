@@ -1,10 +1,7 @@
 import { type ComponentProps, useEffect, useMemo } from 'react'
-import {
-  formatUnitsForInput,
-  parseUnits,
-} from '~tron/_common/lib/utils/formatters'
+import { formatUnitsForInput } from '~kadena/_common/lib/utils/formatters'
+import { TokenInput } from '~kadena/_common/ui/Input/TokenInput'
 import { getToken1AmountForLiquidity } from '~tron/_common/lib/utils/helpers'
-import { TokenInput } from '~tron/_common/ui/Input/TokenInput'
 import { usePoolDispatch, usePoolState } from '../pool-provider'
 
 export const AmountInToken0 = ({
@@ -18,8 +15,7 @@ export const AmountInToken0 = ({
     token0,
     token1,
     amountInToken0,
-    reserve0,
-    reserve1,
+
     pairAddress,
     inputField,
   } = usePoolState()
@@ -28,15 +24,7 @@ export const AmountInToken0 = ({
 
   const pairExists = !!pairAddress
 
-  const rateOfToken1 = useMemo(() => {
-    if (!reserve0 || !reserve1) return
-    if (!token0 || !token1) return
-    return getToken1AmountForLiquidity(
-      parseUnits(amountInToken0 ?? 0, token0?.decimals),
-      reserve0,
-      reserve1,
-    )
-  }, [token0, token1, reserve0, reserve1, amountInToken0])
+  const rateOfToken1 = '1.5'
 
   useEffect(() => {
     if (inputField === 'token1') {
@@ -46,7 +34,7 @@ export const AmountInToken0 = ({
       setAmountInToken1('')
       return
     }
-    if (pairExists && rateOfToken1 && rateOfToken1 !== 'NaN' && token1) {
+    if (pairExists && rateOfToken1 && token1) {
       const amountFormatted = formatUnitsForInput(
         rateOfToken1,
         token1?.decimals,
@@ -57,14 +45,7 @@ export const AmountInToken0 = ({
         setAmountInToken1('')
       }
     }
-  }, [
-    amountInToken0,
-    pairExists,
-    rateOfToken1,
-    token1,
-    inputField,
-    setAmountInToken1,
-  ])
+  }, [amountInToken0, pairExists, token1, inputField, setAmountInToken1])
 
   const setAmount = (amount: string) => {
     setInputField('token0')

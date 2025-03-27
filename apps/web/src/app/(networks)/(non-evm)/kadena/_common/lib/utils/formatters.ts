@@ -31,3 +31,45 @@ const _djb2 = (str: string) => {
 export const toBigNumber = (amount: string | number) => {
   return TronWeb.toBigNumber(amount)
 }
+
+export const formatUnits = (
+  amount: string | number,
+  decimals: number,
+  maxDecimals?: number,
+): string => {
+  if (Number.isNaN(Number(amount))) {
+    return '0'
+  }
+  const val = TronWeb.toBigNumber(amount).div(10 ** decimals)
+  if (Number(val) < 0.0001) {
+    return '<0.0001'
+  }
+  if (maxDecimals) {
+    return toBigNumber(
+      Number.parseFloat(val.toFixed(maxDecimals)).toString(),
+    ).toString(10)
+  }
+  return toBigNumber(
+    Number.parseFloat(val.toFixed(decimals)).toString(),
+  ).toString(10)
+}
+
+export const formatUnitsForInput = (
+  amount: string | number,
+  decimals: number,
+): string => {
+  if (Number.isNaN(Number(amount))) {
+    return '0'
+  }
+
+  const _decimals = toBigNumber(10).pow(decimals)
+
+  const val = TronWeb.toBigNumber(amount).div(_decimals)
+  if (Number.isNaN(val)) {
+    return '0'
+  }
+
+  return toBigNumber(
+    Number.parseFloat(val.toFixed(decimals)).toString(),
+  ).toString(10)
+}

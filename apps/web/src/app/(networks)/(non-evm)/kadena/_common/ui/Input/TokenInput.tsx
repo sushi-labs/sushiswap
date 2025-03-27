@@ -6,8 +6,8 @@ import {
   classNames,
 } from '@sushiswap/ui'
 import { useEffect, useMemo, useState } from 'react'
+import { formatUnitsForInput } from '~kadena/_common/lib/utils/formatters'
 import type { IToken } from '~kadena/_common/types/token-type'
-import { formatUnitsForInput } from '~tron/_common/lib/utils/formatters'
 import { Icon } from '../General/Icon'
 import { TokenSelector } from '../General/TokenSelector'
 import { DollarAmountDisplay } from '../Shared/DollarAmountDisplay'

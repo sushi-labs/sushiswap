@@ -8,7 +8,7 @@ import {
   CardTitle,
 } from '@sushiswap/ui'
 import { CardItem } from '@sushiswap/ui'
-import { WTRX } from '~tron/_common/constants/token-list'
+import { KADENA } from '~kadena/_common/constants/token-list'
 import { Icon } from '../../General/Icon'
 
 export const PoolRewards = () => {
@@ -26,7 +26,7 @@ export const PoolRewards = () => {
           <CardItem
             title={
               <div className="font-medium flex items-center gap-2 text-muted-foreground">
-                <Icon currency={WTRX} width={18} height={18} /> TRX
+                <Icon currency={KADENA} width={18} height={18} /> KDA
               </div>
             }
           >

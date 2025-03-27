@@ -1,6 +1,6 @@
 import { SkeletonCircle, SkeletonText } from '@sushiswap/ui'
 import type { ColumnDef } from '@tanstack/react-table'
-import { ICON_SIZE } from '~tron/_common/constants/icon-size'
+import { ICON_SIZE } from '~kadena/_common/constants/icon-size'
 import { PositionAprCell } from './PositionAprCell'
 import { PositionNameCell } from './PositionNameCell'
 import { PositionSizeCell } from './PositionSizeCell'

@@ -1,28 +1,11 @@
 import {
-  SlippageToleranceStorageKey,
-  useSlippageTolerance,
-} from '@sushiswap/hooks'
-import {
   createFailedToast,
   createInfoToast,
   createSuccessToast,
 } from '@sushiswap/notifications'
 import { Button, type ButtonProps } from '@sushiswap/ui'
 import { useQueryClient } from '@tanstack/react-query'
-import { useWallet } from '@tronweb3/tronwallet-adapter-react-hooks'
-import { useMemo } from 'react'
-import { useTronWeb } from '~tron/_common/lib/hooks/useTronWeb'
-import { parseUnits } from '~tron/_common/lib/utils/formatters'
-import {
-  cleanArgs,
-  getArgsForAddLiquidity,
-  getDeadline,
-  getLiquidityFunctionSelector,
-  getTransactionInfo,
-  parseTxnError,
-  safeGasEstimates,
-} from '~tron/_common/lib/utils/helpers'
-import { getTronscanTxnLink } from '~tron/_common/lib/utils/tronscan-helpers'
+import { getChainwebTxnLink } from '~kadena/_common/lib/utils/kadena-helpers'
 import { usePoolDispatch, usePoolState } from '../pool-provider'
 
 export const AddButton = ({
@@ -31,85 +14,21 @@ export const AddButton = ({
 }: { closeModal: () => void; buttonProps?: ButtonProps }) => {
   const queryClient = useQueryClient()
 
-  const {
-    token0,
-    token1,
-    isTxnPending,
-    amountInToken0,
-    amountInToken1,
-    pairAddress,
-  } = usePoolState()
+  const { token0, token1, isTxnPending, amountInToken0, amountInToken1 } =
+    usePoolState()
   const { setIsTxnPending, setAmountInToken0, setAmountInToken1 } =
     usePoolDispatch()
-  const { address, signTransaction } = useWallet()
-  const { tronWeb } = useTronWeb()
-  const [slippageTolerance] = useSlippageTolerance(
-    SlippageToleranceStorageKey.AddLiquidity,
-  )
-  const slippage =
-    slippageTolerance === 'AUTO' ? 0.005 : Number(slippageTolerance) / 100
-
-  const pairExists = !!pairAddress
-
-  const minAmountToken0 = useMemo(() => {
-    if (!amountInToken0) return ''
-    const output = Number(amountInToken0) * (1 - slippage)
-    return output.toString()
-  }, [slippage, amountInToken0])
-
-  const minAmountToken1 = useMemo(() => {
-    if (!amountInToken1) return ''
-    const output = Number(amountInToken1) * (1 - slippage)
-    return output.toString()
-  }, [slippage, amountInToken1])
+  const address =
+    'abf594a764e49a90a98cddf30872d8497e37399684c1d8e2b8e96fd865728cc2'
 
   const addLiquidity = async () => {
     if (!token0 || !token1 || !amountInToken0 || !amountInToken1 || !address)
       return
     try {
       setIsTxnPending(true)
-      const methodName = getLiquidityFunctionSelector(token0, token1)
-      const deadline = getDeadline()
-      const parsedAmount0 = parseUnits(amountInToken0, token0.decimals)
-      const parsedAmount1 = parseUnits(amountInToken1, token1.decimals)
-      const parsedMinAmount0 = parseUnits(minAmountToken0, token0.decimals)
-      const parsedMinAmount1 = parseUnits(minAmountToken1, token1.decimals)
 
-      const args = getArgsForAddLiquidity(
-        methodName,
-        token0.address,
-        token1.address,
-        parsedAmount0,
-        parsedAmount1,
-        parsedMinAmount0,
-        parsedMinAmount1,
-        address,
-        deadline,
-      )
-      console.log('args', args)
-      const estimates = await safeGasEstimates(tronWeb, [args])
-      console.log(estimates)
-      const safeGasEstimate = estimates.findIndex(
-        (predicate) => predicate !== undefined,
-      )
-      console.log('safeGasEstimate', safeGasEstimate)
-
-      if (safeGasEstimate === -1) {
-        throw new Error('Failed to estimate energy. Transaction will fail.')
-      }
-      const feeLimit = pairExists ? undefined : 3000000000 //3000 trx since contract will need to be deployed
-      const cleanedArgs = cleanArgs(args, feeLimit)
-      console.log('cleanedArgs', cleanedArgs)
-      const { transaction } =
-        await tronWeb.transactionBuilder.triggerSmartContract(...cleanedArgs)
-      const signedTransation = await signTransaction(transaction)
-
-      const result = await tronWeb.trx.sendRawTransaction(signedTransation)
-
-      if (!result.result && 'code' in result) {
-        throw new Error(parseTxnError(result.code))
-      }
-      const txId = result?.txid
+      const txId =
+        'abf594a764e49a90a98cddf30872d8497e37399684c1d8e2b8e96fd865728cc2'
 
       createInfoToast({
         summary: 'Add liquidity initiated...',
@@ -119,13 +38,10 @@ export const AddButton = ({
         groupTimestamp: Date.now(),
         timestamp: Date.now(),
         txHash: txId,
-        href: getTronscanTxnLink(txId),
+        href: getChainwebTxnLink(txId),
       })
 
-      const transactionInfo = await getTransactionInfo(tronWeb, txId)
-      if (transactionInfo?.receipt?.result !== 'SUCCESS') {
-        throw new Error('Transaction failed')
-      }
+      await new Promise((resolve) => setTimeout(resolve, 1800))
 
       //create success toast
       createSuccessToast({
@@ -136,7 +52,7 @@ export const AddButton = ({
         chainId: 1,
         groupTimestamp: Date.now(),
         timestamp: Date.now(),
-        href: getTronscanTxnLink(txId),
+        href: getChainwebTxnLink(txId),
       })
 
       onSuccess()

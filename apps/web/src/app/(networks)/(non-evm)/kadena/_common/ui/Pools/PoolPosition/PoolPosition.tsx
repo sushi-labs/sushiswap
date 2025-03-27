@@ -7,21 +7,16 @@ import {
   CardTitle,
   SkeletonText,
 } from '@sushiswap/ui'
-import { useWallet } from '@tronweb3/tronwallet-adapter-react-hooks'
-import { useEffect, useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { formatUSD } from 'sushi/format'
-import { PAIR_DECIMALS } from '~tron/_common/constants/pair-decimals'
-import { useStablePrice } from '~tron/_common/lib/hooks/useStablePrice'
-import { useTokenBalance } from '~tron/_common/lib/hooks/useTokenBalance'
-import { useTotalSupply } from '~tron/_common/lib/hooks/useTotalSupply'
+import { PAIR_DECIMALS } from '~kadena/_common/constants/pair-decimals'
+import type { IToken } from '~kadena/_common/types/token-type'
 import {
   formatUnitsForInput,
   parseUnits,
   toBigNumber,
 } from '~tron/_common/lib/utils/formatters'
-import type { IToken } from '~tron/_common/types/token-type'
 import { LiquidityItem } from '../PoolDetails/LiquidityItem'
-// import { LiquidityItem } from '../PoolDetails/LiquidityItem'
 import { useRemoveLiqDispatch } from '../Remove/pool-remove-provider'
 import { usePoolState } from '../pool-provider'
 
@@ -36,41 +31,45 @@ export const PoolPosition = ({
 }) => {
   const token0StakedInUsd = 0
   const token1StakedInUsd = 0
-  const { reserve0, reserve1, pairAddress } = usePoolState()
+  const { reserve0, reserve1 } = usePoolState()
   const {
     setTotalSupplyLP,
     setAmountToken0PerLP,
     setAmountToken1PerLP,
     setLPBalance,
   } = useRemoveLiqDispatch()
-  const { data: totalSupply, isLoading: isLoadingTotalSupply } = useTotalSupply(
-    {
-      tokenAddress: pairAddress,
-    },
-  )
-  const { address } = useWallet()
-  const { data: lpBalance, isLoading: isLoadingLPBalance } = useTokenBalance({
-    accountAddress: address,
-    tokenAddress: pairAddress,
-  })
-  const { data: token0Price, isLoading: isLoadingToken0Price } = useStablePrice(
-    { token: token0 },
-  )
-  const { data: token1Price, isLoading: isLoadingToken1Price } = useStablePrice(
-    { token: token1 },
-  )
+
+  const totalSupply = '5.4'
+  const [isLoadingTotalSupply, setIsLoadingTotalSupply] = useState(true)
+
+  const lpBalance = '.09'
+  const token0Price = '3.93'
+  const token1Price = '2.7'
+
+  const [isLoadingToken0Price, setIsLoadingToken0Price] = useState(true)
+  const [isLoadingToken1Price, setIsLoadingToken1Price] = useState(true)
+  const [isLoadingLPBalance, setIsLoadingLPBalance] = useState(true)
+
+  useEffect(() => {
+    setTimeout(() => {
+      setIsLoadingToken0Price(false)
+      setIsLoadingToken1Price(false)
+      setIsLoadingTotalSupply(false)
+      setIsLoadingLPBalance(false)
+    }, 1800)
+  }, [])
 
   useEffect(() => {
     if (lpBalance && !isLoadingLPBalance) {
       setLPBalance(lpBalance)
     }
-  }, [lpBalance, isLoadingLPBalance, setLPBalance])
+  }, [isLoadingLPBalance, setLPBalance])
 
   useEffect(() => {
     if (totalSupply && !isLoadingTotalSupply) {
       setTotalSupplyLP(totalSupply)
     }
-  }, [totalSupply, isLoadingTotalSupply, setTotalSupplyLP])
+  }, [isLoadingTotalSupply, setTotalSupplyLP])
 
   const _amountToken0PerLP = useMemo(() => {
     if (!totalSupply || !reserve0) return ''
@@ -82,7 +81,7 @@ export const PoolPosition = ({
     const resBN = toBigNumber(formattedReserve0)
     const totalSupplyBN = toBigNumber(formattedTotalSupply)
     return String(resBN.div(totalSupplyBN))
-  }, [reserve0, totalSupply, token0])
+  }, [reserve0, token0])
 
   useEffect(() => {
     if (_amountToken0PerLP) {
@@ -100,7 +99,7 @@ export const PoolPosition = ({
     const resBN = toBigNumber(formattedReserve1)
     const totalSupplyBN = toBigNumber(formattedTotalSupply)
     return String(resBN.div(totalSupplyBN))
-  }, [reserve1, totalSupply, token1])
+  }, [reserve1, token1])
 
   useEffect(() => {
     if (_amountToken1PerLP) {
@@ -114,7 +113,7 @@ export const PoolPosition = ({
     const lpTokenAmountBeingRemovedBN = toBigNumber(formattedLP)
     const amountToken0PerLPBN = toBigNumber(_amountToken0PerLP)
     return String(lpTokenAmountBeingRemovedBN.times(amountToken0PerLPBN))
-  }, [lpBalance, _amountToken0PerLP])
+  }, [_amountToken0PerLP])
 
   const amountToken1 = useMemo(() => {
     if (!lpBalance || !_amountToken1PerLP) return '0'
@@ -122,7 +121,7 @@ export const PoolPosition = ({
     const lpTokenAmountBeingRemovedBN = toBigNumber(formattedLP)
     const amountToken1PerLPBN = toBigNumber(_amountToken1PerLP)
     return String(lpTokenAmountBeingRemovedBN.times(amountToken1PerLPBN))
-  }, [lpBalance, _amountToken1PerLP])
+  }, [_amountToken1PerLP])
 
   const loading = isLoading || isLoadingToken0Price || isLoadingToken1Price
 

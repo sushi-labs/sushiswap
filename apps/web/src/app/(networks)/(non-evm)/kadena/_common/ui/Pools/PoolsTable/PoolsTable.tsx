@@ -39,7 +39,7 @@ export const PoolsTable = () => {
   const { data: pools, isLoading } = useTopPools()
 
   const rowLink = useCallback((row: TopPool) => {
-    return `/tron/pool/${row.token0Address}:${row.token1Address}:${row.address}`
+    return `/kadena/pool/${row.token0Address}:${row.token1Address}:${row.address}`
   }, [])
 
   const filtered = useMemo(() => {

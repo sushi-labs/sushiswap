@@ -29,10 +29,9 @@ import {
   DEFAULT_TOKEN_LIST,
   KADENA,
 } from '~kadena/_common/constants/token-list'
-import type { TokenWithBalance } from '~tron/_common/lib/hooks/useSortedTokenList'
 
-import type { IToken } from '~kadena/_common/types/token-type'
-import { formatUnitsForInput } from '~tron/_common/lib/utils/formatters'
+import { formatUnitsForInput } from '~kadena/_common/lib/utils/formatters'
+import type { IToken, TokenWithBalance } from '~kadena/_common/types/token-type'
 import { Icon } from './Icon'
 
 export const TokenSelector = ({

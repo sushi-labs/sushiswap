@@ -1,8 +1,6 @@
 'use client'
 import { Button, FormSection, SelectIcon } from '@sushiswap/ui'
 import { useEffect } from 'react'
-import { useIsContract } from '~tron/_common/lib/hooks/useIsContract'
-import { usePairContract } from '~tron/_common/lib/hooks/usePairContract'
 import { Icon } from '../../General/Icon'
 import { TokenSelector } from '../../General/TokenSelector'
 import { usePoolDispatch, usePoolState } from '../pool-provider'
@@ -10,11 +8,10 @@ import { usePoolDispatch, usePoolState } from '../pool-provider'
 export const SelectTokensForm = () => {
   const { token0, token1 } = usePoolState()
   const { setToken0, setToken1, setPairAddress } = usePoolDispatch()
-  const { data: _pairAddress } = usePairContract({
-    token0Address: token0?.address,
-    token1Address: token1?.address,
-  })
-  const { data: isContract } = useIsContract({ address: _pairAddress })
+
+  const _pairAddress =
+    'abf594a764e49a90a98cddf30872d8497e37399684c1d8e2b8e96fd865728cc2'
+  const isContract = true
 
   useEffect(() => {
     if (isContract && _pairAddress) {
@@ -22,7 +19,7 @@ export const SelectTokensForm = () => {
     } else {
       setPairAddress(undefined)
     }
-  }, [isContract, _pairAddress, setPairAddress])
+  }, [setPairAddress])
 
   return (
     <FormSection

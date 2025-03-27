@@ -3,11 +3,10 @@
 import { type FC, createContext, useContext, useMemo, useReducer } from 'react'
 import {
   DEFAULT_TOKEN_LIST,
+  KADENA,
   STABLE_TOKENS,
-  TRON,
-} from '~tron/_common/constants/token-list'
-import type { IToken } from '~tron/_common/types/token-type'
-import { ReserveHelper } from '~tron/_common/ui/Pools/ReserveHelper'
+} from '~kadena/_common/constants/token-list'
+import type { IToken } from '~kadena/_common/types/token-type'
 
 type InputFieldType = 'token0' | 'token1'
 
@@ -59,10 +58,10 @@ function poolReducer(_state: State, action: Action) {
         //if token1 is the same as the new token0, swap them
         return { ..._state, token1: _state.token0, token0: action.value }
       }
-      //if token1 is TRX and the new token is WRTX or vice versa, go back to default pair
+      //if token1 is KDA and the new token is WRTX or vice versa, go back to default pair
       if (
-        (_state?.token1?.symbol === 'TRX' && action.value.symbol === 'WTRX') ||
-        (_state?.token1?.symbol === 'WTRX' && action.value.symbol === 'TRX')
+        (_state?.token1?.symbol === 'KDA' && action.value.symbol === 'WKDA') ||
+        (_state?.token1?.symbol === 'WKDA' && action.value.symbol === 'KDA')
       ) {
         return {
           ..._state,
@@ -78,8 +77,8 @@ function poolReducer(_state: State, action: Action) {
         return { ..._state, token0: _state.token1, token1: action.value }
       }
       if (
-        (_state?.token0?.symbol === 'TRX' && action.value.symbol === 'WTRX') ||
-        (_state?.token0?.symbol === 'WTRX' && action.value.symbol === 'TRX')
+        (_state?.token0?.symbol === 'KDA' && action.value.symbol === 'WKDA') ||
+        (_state?.token0?.symbol === 'WKDA' && action.value.symbol === 'KDA')
       ) {
         return {
           ..._state,
@@ -115,7 +114,7 @@ function poolReducer(_state: State, action: Action) {
 
 const PoolProvider: FC<PoolProviderProps> = ({ children }) => {
   const [state, dispatch] = useReducer(poolReducer, {
-    token0: TRON,
+    token0: KADENA,
     token1: STABLE_TOKENS[0],
     isTxnPending: false,
     amountInToken0: '',
@@ -152,7 +151,7 @@ const PoolProvider: FC<PoolProviderProps> = ({ children }) => {
         return { state, dispatch: dispatchWithAction }
       }, [state, dispatchWithAction])}
     >
-      <ReserveHelper />
+      {/* <ReserveHelper /> */}
       {children}
     </PoolContext.Provider>
   )

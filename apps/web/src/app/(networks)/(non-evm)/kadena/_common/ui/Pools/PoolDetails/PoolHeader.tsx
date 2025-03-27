@@ -10,8 +10,10 @@ import {
   SkeletonText,
   typographyVariants,
 } from '@sushiswap/ui'
-import { useTokenInfo } from '~tron/_common/lib/hooks/useTokenInfo'
-import { Icon } from '~tron/_common/ui/General/Icon'
+import { useEffect, useState } from 'react'
+import { getChainwebAddressLink } from '~kadena/_common/lib/utils/kadena-helpers'
+import { Icon } from '~kadena/_common/ui/General/Icon'
+import { MOCK_TOKEN_1, MOCK_TOKEN_2 } from '../PositionsTable/PositionsTable'
 
 export const PoolHeader = ({
   token0: _token0,
@@ -24,13 +26,17 @@ export const PoolHeader = ({
   pairAddress: string
   backUrl: string
 }) => {
-  const { data: token0, isLoading: isLoadingToken0 } = useTokenInfo({
-    tokenAddress: _token0,
-  })
+  const token0 = MOCK_TOKEN_1
+  const token1 = MOCK_TOKEN_2
+  const [isLoadingToken0, setIsLoadingToken0] = useState(true)
+  const [isLoadingToken1, setIsLoadingToken1] = useState(true)
 
-  const { data: token1, isLoading: isLoadingToken1 } = useTokenInfo({
-    tokenAddress: _token1,
-  })
+  useEffect(() => {
+    setTimeout(() => {
+      setIsLoadingToken0(false)
+      setIsLoadingToken1(false)
+    }, 1200)
+  }, [])
 
   const isLoading = isLoadingToken0 || isLoadingToken1
 
@@ -68,9 +74,7 @@ export const PoolHeader = ({
                   'sm:!text2-xl sm:!text-4xl !font-bold text-gray-900 dark:text-slate-50 truncate overflow-x-auto',
               })}
             >
-              <LinkExternal
-                href={`https://tronscan.org/#/contract/${pairAddress}`}
-              >
+              <LinkExternal href={getChainwebAddressLink(pairAddress)}>
                 {token0?.symbol}/{token1?.symbol}
               </LinkExternal>
             </Button>
@@ -87,7 +91,7 @@ export const PoolHeader = ({
         </div>
         <div className="flex items-center gap-1.5">
           <span className="tracking-tighter font-semibold">Network</span>
-          Tron
+          Kadena
         </div>
         {isLoading ? (
           <>
@@ -106,7 +110,7 @@ export const PoolHeader = ({
               </span>
               <LinkExternal
                 target="_blank"
-                href={`https://tronscan.org/#/token20/${token0?.address}`}
+                href={getChainwebAddressLink(token0?.address)}
               >
                 <Button
                   asChild
@@ -127,7 +131,7 @@ export const PoolHeader = ({
               </span>
               <LinkExternal
                 target="_blank"
-                href={`https://tronscan.org/#/token20/${token1?.address}`}
+                href={getChainwebAddressLink(token1?.address)}
               >
                 <Button
                   asChild

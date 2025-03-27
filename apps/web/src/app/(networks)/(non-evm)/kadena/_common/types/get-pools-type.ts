@@ -8,7 +8,7 @@ export type IPoolData = {
 
 export type IPoolDataResponse = {
   data: {
-    tron: {
+    kadena: {
       smartContractEvents: {
         arguments: [
           {
@@ -44,7 +44,7 @@ export type IMyPositionData = {
 
 export type IReserveDataResponse = {
   data: {
-    tron: {
+    kadena: {
       smartContractEvents: {
         arguments: [
           {
@@ -71,7 +71,7 @@ export type IReserveDataResponse = {
 
 export type IGetTradeAmountsForDayResponse = {
   data: {
-    tron: {
+    kadena: {
       dexTrades: {
         baseCurrency: {
           symbol: string

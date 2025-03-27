@@ -7,11 +7,10 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@sushiswap/ui'
-import { useWallet } from '@tronweb3/tronwallet-adapter-react-hooks'
-import { useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { formatUSD } from 'sushi/format'
-import { useStablePrice } from '~tron/_common/lib/hooks/useStablePrice'
-import { formatUnits } from '~tron/_common/lib/utils/formatters'
+import { formatUnits } from '~kadena/_common/lib/utils/formatters'
+import { useWalletState } from '~kadena/wallet-provider'
 import { Icon } from '../../General/Icon'
 import { WalletConnector } from '../../WalletConnector/WalletConnector'
 import { usePoolState } from '../pool-provider'
@@ -21,14 +20,23 @@ import { ReviewAddDialogTrigger } from './ReviewAddDialogTrigger'
 export const ReviewAddDialog = (props: ButtonProps) => {
   const { token0, token1, amountInToken0, amountInToken1 } = usePoolState()
   const closeBtnRef = useRef<HTMLButtonElement>(null)
-  const { address, connected } = useWallet()
+  const address =
+    'abf594a764e49a90a98cddf30872d8497e37399684c1d8e2b8e96fd865728cc2'
+  const { connected } = useWalletState()
   const isConnected = address && connected
-  const { data: token0Price, isLoading: isLoadingToken0Price } = useStablePrice(
-    { token: token0 },
-  )
-  const { data: token1Price, isLoading: isLoadingToken1Price } = useStablePrice(
-    { token: token1 },
-  )
+
+  const token0Price = '3.93'
+  const token1Price = '2.7'
+
+  const [isLoadingToken0Price, setIsLoadingToken0Price] = useState(true)
+  const [isLoadingToken1Price, setIsLoadingToken1Price] = useState(true)
+
+  useEffect(() => {
+    setTimeout(() => {
+      setIsLoadingToken0Price(false)
+      setIsLoadingToken1Price(false)
+    }, 1800)
+  }, [])
 
   const closeModal = () => {
     closeBtnRef?.current?.click()

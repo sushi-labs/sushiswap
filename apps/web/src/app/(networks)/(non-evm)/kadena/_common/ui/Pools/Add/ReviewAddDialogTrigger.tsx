@@ -1,43 +1,28 @@
 import { Button, type ButtonProps, DialogTrigger } from '@sushiswap/ui'
-import { useWallet } from '@tronweb3/tronwallet-adapter-react-hooks'
-import { useMemo } from 'react'
-import { ROUTER_CONTRACT } from '~tron/_common/constants/contracts'
-import { useAllowance } from '~tron/_common/lib/hooks/useAllowance'
-import { useTokenBalance } from '~tron/_common/lib/hooks/useTokenBalance'
-import { formatUnitsForInput } from '~tron/_common/lib/utils/formatters'
-import { ApproveToken } from '~tron/_common/ui/Shared/ApproveToken'
+import { useEffect, useMemo, useState } from 'react'
+import { formatUnitsForInput } from '~kadena/_common/lib/utils/formatters'
+// import { ApproveToken } from '~tron/_common/ui/Shared/ApproveToken'
+// import { ROUTER_CONTRACT } from '../Remove/RemoveButton'
 import { usePoolState } from '../pool-provider'
 
 export const ReviewAddDialogTrigger = (props: ButtonProps) => {
   const { token0, token1, isTxnPending, amountInToken0, amountInToken1 } =
     usePoolState()
-  const { address } = useWallet()
 
-  const { data: token0Balance, isLoading: isLoadingToken0Balance } =
-    useTokenBalance({
-      accountAddress: address,
-      tokenAddress: token0?.address,
-    })
+  const token0Balance = '1.2'
+  const token1Balance = '2.4'
+  const [isLoadingToken0Balance, setIsLoadingToken0Balance] = useState(true)
+  const [isLoadingToken1Balance, setIsLoadingToken1Balance] = useState(true)
 
-  const { data: token1Balance, isLoading: isLoadingToken1Balance } =
-    useTokenBalance({
-      accountAddress: address,
-      tokenAddress: token1?.address,
-    })
+  useEffect(() => {
+    setIsLoadingToken0Balance(true)
+    setIsLoadingToken1Balance(true)
+  }, [])
 
-  const { data: token0AllowanceAmount, refetch: refetchToken0Allowance } =
-    useAllowance({
-      tokenAddress: token0?.address as string,
-      ownerAddress: address as string,
-      spenderAddress: ROUTER_CONTRACT,
-    })
-
-  const { data: token1AllowanceAmount, refetch: refetchToken1Allowance } =
-    useAllowance({
-      tokenAddress: token1?.address as string,
-      ownerAddress: address as string,
-      spenderAddress: ROUTER_CONTRACT,
-    })
+  const token0AllowanceAmount = '2.4'
+  const token1AllowanceAmount = '3.6'
+  // const refetchToken0Allowance = async () => {}
+  // const refetchToken1Allowance = async () => {}
 
   const hasInsufficientToken0Balance = useMemo(() => {
     if (isLoadingToken0Balance) return true
@@ -46,7 +31,7 @@ export const ReviewAddDialogTrigger = (props: ButtonProps) => {
         formatUnitsForInput(token0Balance ?? '0', token0?.decimals ?? 18),
       ) < Number(amountInToken0)
     )
-  }, [token0Balance, token0, amountInToken0, isLoadingToken0Balance])
+  }, [token0, amountInToken0, isLoadingToken0Balance])
 
   const hasInsufficientToken1Balance = useMemo(() => {
     if (isLoadingToken1Balance) return true
@@ -55,7 +40,7 @@ export const ReviewAddDialogTrigger = (props: ButtonProps) => {
         formatUnitsForInput(token1Balance ?? '0', token1?.decimals ?? 18),
       ) < Number(amountInToken1)
     )
-  }, [token1Balance, token1, amountInToken1, isLoadingToken1Balance])
+  }, [token1, amountInToken1, isLoadingToken1Balance])
 
   const token0AllowanceFormatted = formatUnitsForInput(
     token0AllowanceAmount ?? '0',
@@ -72,14 +57,14 @@ export const ReviewAddDialogTrigger = (props: ButtonProps) => {
       !!token1AllowanceAmount &&
       Number(token0AllowanceFormatted) < Number(amountInToken0)
     )
-  }, [token0AllowanceFormatted, amountInToken0, token1AllowanceAmount])
+  }, [token0AllowanceFormatted, amountInToken0])
 
   const hasInsufficientToken1Allowance = useMemo(() => {
     return (
       !!token1AllowanceAmount &&
       Number(token1AllowanceFormatted) < Number(amountInToken1)
     )
-  }, [token1AllowanceFormatted, amountInToken1, token1AllowanceAmount])
+  }, [token1AllowanceFormatted, amountInToken1])
 
   const invalidAmount = useMemo(() => {
     return (
@@ -122,33 +107,33 @@ export const ReviewAddDialogTrigger = (props: ButtonProps) => {
     isTxnPending,
   ])
 
-  if (buttonText === `Approve ${token0?.symbol} Token`) {
-    return (
-      <ApproveToken
-        tokenToApprove={token0!}
-        amount={amountInToken0}
-        spenderAddress={ROUTER_CONTRACT}
-        onSuccess={async () => {
-          await refetchToken0Allowance()
-        }}
-        buttonProps={props}
-      />
-    )
-  }
+  // if (buttonText === `Approve ${token0?.symbol} Token`) {
+  //   return (
+  //     <ApproveToken
+  //       tokenToApprove={token0!}
+  //       amount={amountInToken0}
+  //       spenderAddress={ROUTER_CONTRACT}
+  //       onSuccess={async () => {
+  //         await refetchToken0Allowance()
+  //       }}
+  //       buttonProps={props}
+  //     />
+  //   )
+  // }
 
-  if (buttonText === `Approve ${token1?.symbol} Token`) {
-    return (
-      <ApproveToken
-        tokenToApprove={token1!}
-        amount={amountInToken1}
-        spenderAddress={ROUTER_CONTRACT}
-        onSuccess={async () => {
-          await refetchToken1Allowance()
-        }}
-        buttonProps={props}
-      />
-    )
-  }
+  // if (buttonText === `Approve ${token1?.symbol} Token`) {
+  //   return (
+  //     <ApproveToken
+  //       tokenToApprove={token1!}
+  //       amount={amountInToken1}
+  //       spenderAddress={ROUTER_CONTRACT}
+  //       onSuccess={async () => {
+  //         await refetchToken1Allowance()
+  //       }}
+  //       buttonProps={props}
+  //     />
+  //   )
+  // }
 
   return (
     <DialogTrigger

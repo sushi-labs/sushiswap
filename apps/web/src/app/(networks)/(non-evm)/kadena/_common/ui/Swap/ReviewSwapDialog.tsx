@@ -43,7 +43,7 @@ export const ReviewSwapDialog = () => {
   const minOutput = '0.123'
 
   // @TODO: replace w hook
-  const networkFeeInTrx = '0.123'
+  const networkFeeInKDA = '0.123'
 
   const routeData = {
     pairs: ['pair1', 'pair2'],
@@ -122,7 +122,7 @@ export const ReviewSwapDialog = () => {
                     </List.KeyValue>
 
                     <List.KeyValue title="Network fee">
-                      <>{networkFeeInTrx ?? '0'} TRX</>
+                      <>{networkFeeInKDA ?? '0'} KDA</>
                     </List.KeyValue>
                   </List.Control>
                 </List>

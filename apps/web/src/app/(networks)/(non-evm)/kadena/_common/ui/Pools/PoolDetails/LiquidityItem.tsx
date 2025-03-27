@@ -1,8 +1,7 @@
 import { CardItem } from '@sushiswap/ui'
 import { formatUSD } from 'sushi/format'
-import { formatUnits } from '~tron/_common/lib/utils/formatters'
-import type { IToken } from '~tron/_common/types/token-type'
-import { Icon } from '~tron/_common/ui/General/Icon'
+import type { IToken } from '~kadena/_common/types/token-type'
+import { Icon } from '~kadena/_common/ui/General/Icon'
 
 export const LiquidityItem = ({
   isLoading,
@@ -18,6 +17,8 @@ export const LiquidityItem = ({
   if (isLoading || !token) {
     return <CardItem skeleton={true} />
   }
+
+  const _amount = '0.234'
   return (
     <CardItem
       title={
@@ -28,7 +29,7 @@ export const LiquidityItem = ({
       }
     >
       <span className="flex gap-1 font-semibold">
-        {+amount > 0 ? formatUnits(amount, token.decimals, 4) : 0}{' '}
+        {+amount > 0 ? _amount : 0}{' '}
         <span className="font-normal text-gray-400 dark:text-slate-600">
           {formatUSD(usdAmount)}
         </span>

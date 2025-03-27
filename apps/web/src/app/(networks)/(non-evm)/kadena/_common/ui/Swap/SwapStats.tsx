@@ -23,7 +23,7 @@ export const SwapStats = () => {
   const address =
     'abf594a764e49a90a98cddf30872d8497e37399684c1d8e2b8e96fd865728cc2'
   const [isPriceLoading, setisPriceLoading] = useState(true)
-  const trxPrice = '0.123'
+  const KDAPrice = '0.123'
 
   useEffect(() => {
     setTimeout(() => {
@@ -44,8 +44,8 @@ export const SwapStats = () => {
   const minOutput = useMemo(() => {
     if (!amountOut) return ''
     if (
-      (token0?.symbol === 'WTRX' && token1?.address === 'TRON') ||
-      (token0?.address === 'TRON' && token1?.symbol === 'WTRX')
+      (token0?.symbol === 'WKDA' && token1?.address === 'KDA') ||
+      (token0?.address === 'KDA' && token1?.symbol === 'WKDA')
     ) {
       return amountIn
     }
@@ -55,7 +55,7 @@ export const SwapStats = () => {
   }, [amountOut, slippage, token0, token1, amountIn])
 
   const [isNetworkFeeLoading, setIsNetworkFeeLoading] = useState(true)
-  const networkFeeInTrx = '0.123'
+  const networkFeeInKDA = '0.123'
 
   const isLoading =
     priceImpactPercentage === undefined ||
@@ -70,9 +70,9 @@ export const SwapStats = () => {
   }, [priceImpactPercentage])
 
   const networkFee = useMemo(() => {
-    const fee = toBigNumber(networkFeeInTrx ?? '0')
-    const feeInUsd = fee.multipliedBy(trxPrice).toString()
-    return { feeInUsd, feeInToken: networkFeeInTrx }
+    const fee = toBigNumber(networkFeeInKDA ?? '0')
+    const feeInUsd = fee.multipliedBy(KDAPrice).toString()
+    return { feeInUsd, feeInToken: networkFeeInKDA }
   }, [])
 
   return (
@@ -139,7 +139,7 @@ export const SwapStats = () => {
               <SkeletonBox className="h-4 py-0.5 w-[120px] rounded-md" />
             ) : (
               <>
-                {networkFee.feeInToken} TRX (~
+                {networkFee.feeInToken} KDA (~
                 {formatUSD(networkFee?.feeInUsd)})
               </>
             )}

@@ -5,3 +5,5 @@ export type IToken = {
   name: string
   symbol: string
 }
+
+export type TokenWithBalance = IToken & { balance: string }

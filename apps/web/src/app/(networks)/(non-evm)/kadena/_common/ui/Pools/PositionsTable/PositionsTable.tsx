@@ -33,6 +33,39 @@ export type IPositionRowData = {
   reserve1: string
 }
 
+export const MOCK_TOKEN_1 = {
+  address: 'abf594a764e49a90a98cddf30872d8497e37399684c1d8e2b8e96fd865728cc2',
+  symbol: 'TKN1',
+  name: 'Token1',
+  decimals: 12,
+  logoURI: '',
+}
+
+export const MOCK_TOKEN_2 = {
+  address: 'abf594a764e49a90a98cddf30872d8497e37399684c1d8e2b8e96fd865728cc2',
+  symbol: 'TKN2',
+  name: 'Token2',
+  decimals: 12,
+  logoURI: '',
+}
+
+export const POOLS: {
+  token0: IToken
+  token1: IToken
+  pairAddress: string
+  reserve0: string
+  reserve1: string
+}[] = [
+  {
+    token0: MOCK_TOKEN_1,
+    token1: MOCK_TOKEN_2,
+    pairAddress:
+      'abf594a764e49a90a98cddf30872d8497e37399684c1d8e2b8e96fd865728cc2',
+    reserve0: 'reserve0',
+    reserve1: 'reserve1',
+  },
+]
+
 export const PositionsTable = ({
   hideNewPositionButton,
 }: PositionsTableProps) => {
@@ -51,41 +84,14 @@ export const PositionsTable = ({
     }, 1200)
   }, [])
 
-  const data: {
-    token0: IToken
-    token1: IToken
-    pairAddress: string
-    reserve0: string
-    reserve1: string
-  }[] = [
-    {
-      token0: {
-        address: '0x1',
-        symbol: 'TKN1',
-        name: 'Token1',
-        decimals: 12,
-        logoURI: '',
-      },
-      token1: {
-        address: '0x2',
-        symbol: 'TKN2',
-        name: 'Token2',
-        decimals: 12,
-        logoURI: '',
-      },
-      pairAddress: 'pairAddress',
-      reserve0: 'reserve0',
-      reserve1: 'reserve1',
-    },
-  ]
   const filteredData = useMemo(() => {
-    if (!data) return []
-    if (!tokenSymbols.length) return data
+    if (!POOLS) return []
+    if (!tokenSymbols.length) return POOLS
     const queries = tokenSymbols.map((symbol) =>
       symbol.toLowerCase()?.replaceAll(' ', ''),
     )
 
-    return data.filter((pool) => {
+    return POOLS.filter((pool) => {
       const poolValues = [
         pool.pairAddress,
         pool.token0?.address,
@@ -138,9 +144,7 @@ export const PositionsTable = ({
         }
         columns={[POSITION_NAME_COLUMN, VALUE_COLUMN, SIZE_COLUMN, APR_COLUMN]}
         linkFormatter={(data: IMyPositionData) => {
-          const token0 = data?.token0?.address
-          const token1 = data?.token1?.address
-          return `/kadena/pool/${token0}:${token1}:${data?.pairAddress}`
+          return `/kadena/pool/${data?.pairAddress}`
         }}
         externalLink={false}
         pagination={true}

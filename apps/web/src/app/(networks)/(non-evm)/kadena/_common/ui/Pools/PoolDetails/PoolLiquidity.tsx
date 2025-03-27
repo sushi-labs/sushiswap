@@ -8,17 +8,17 @@ import {
   CardTitle,
   SkeletonText,
 } from '@sushiswap/ui'
+import { useEffect, useState } from 'react'
 import { formatUSD } from 'sushi/format'
-import { useReserves } from '~tron/_common/lib/hooks/useReserves'
-import { useStablePrice } from '~tron/_common/lib/hooks/useStablePrice'
-import { formatUnitsForInput } from '~tron/_common/lib/utils/formatters'
-import type { IToken } from '~tron/_common/types/token-type'
+import { formatUnitsForInput } from '~kadena/_common/lib/utils/formatters'
+import type { IToken } from '~kadena/_common/types/token-type'
 import { LiquidityItem } from './LiquidityItem'
 
 export const PoolLiquidity = ({
   token0,
   token1,
   isLoading,
+  // biome-ignore lint/correctness/noUnusedVariables: <explanation>
   pairAddress,
 }: {
   token0: IToken | undefined
@@ -26,11 +26,28 @@ export const PoolLiquidity = ({
   isLoading: boolean
   pairAddress: string
 }) => {
-  const { data, isLoading: isLoadingReserves } = useReserves({
-    pairAddress,
-    token0,
-    token1,
-  })
+  const data = [
+    {
+      reserve: '123',
+      address:
+        'abf594a764e49a90a98cddf30872d8497e37399684c1d8e2b8e96fd865728cc2',
+      decimals: 12,
+      logoURI: '',
+      name: 'Token1',
+      symbol: 'TKN1',
+    },
+  ]
+  const [isLoadingReserves, setIsLoadingReserves] = useState(true)
+  const [isToken0PriceLoading, setIsToken0PriceLoading] = useState(true)
+  const [isToken1PriceLoading, setIsToken1PriceLoading] = useState(true)
+
+  useEffect(() => {
+    setTimeout(() => {
+      setIsLoadingReserves(false)
+      setIsToken0PriceLoading(false)
+      setIsToken1PriceLoading(false)
+    }, 1200)
+  }, [])
 
   const reserve0 = data?.[0]?.reserve ?? '0'
   const reserve0Formatted = formatUnitsForInput(reserve0, token0?.decimals ?? 0)
@@ -38,12 +55,8 @@ export const PoolLiquidity = ({
   const reserve1 = data?.[1]?.reserve ?? '0'
   const reserve1Formatted = formatUnitsForInput(reserve1, token1?.decimals ?? 0)
 
-  const { data: token0Price, isLoading: isToken0PriceLoading } = useStablePrice(
-    { token: token0 },
-  )
-  const { data: token1Price, isLoading: isToken1PriceLoading } = useStablePrice(
-    { token: token1 },
-  )
+  const token0Price = '.123'
+  const token1Price = '.243'
 
   const token0PoolPrice = (
     Number(token0Price) * Number(reserve0Formatted)

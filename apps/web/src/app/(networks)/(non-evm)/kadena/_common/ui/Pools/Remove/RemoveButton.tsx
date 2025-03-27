@@ -5,31 +5,23 @@ import {
 } from '@sushiswap/notifications'
 import { Button, type ButtonProps } from '@sushiswap/ui'
 import { useQueryClient } from '@tanstack/react-query'
-import { useWallet } from '@tronweb3/tronwallet-adapter-react-hooks'
 import { useMemo } from 'react'
-import { ROUTER_CONTRACT } from '~tron/_common/constants/contracts'
-import { PAIR_DECIMALS } from '~tron/_common/constants/pair-decimals'
-import { useAllowance } from '~tron/_common/lib/hooks/useAllowance'
-import { useTronWeb } from '~tron/_common/lib/hooks/useTronWeb'
-import { formatUnitsForInput } from '~tron/_common/lib/utils/formatters'
-import {
-  cleanArgs,
-  getArgsForRemoveLiquidity,
-  getDeadline,
-  getRemoveLiquidityFunctionSelector,
-  getTransactionInfo,
-  parseTxnError,
-  safeGasEstimates,
-} from '~tron/_common/lib/utils/helpers'
-import { getTronscanTxnLink } from '~tron/_common/lib/utils/tronscan-helpers'
-import { ApproveToken } from '~tron/_common/ui/Shared/ApproveToken'
-import { WalletConnector } from '~tron/_common/ui/WalletConnector/WalletConnector'
+import { formatUnitsForInput } from '~kadena/_common/lib/utils/formatters'
+import { getChainwebTxnLink } from '~kadena/_common/lib/utils/kadena-helpers'
+import { WalletConnector } from '~kadena/_common/ui/WalletConnector/WalletConnector'
+import { useWalletState } from '~kadena/wallet-provider'
+// import { ApproveToken } from '~tron/_common/ui/Shared/ApproveToken'
 import { usePoolState } from '../pool-provider'
 import { useRemoveLiqDispatch, useRemoveLiqState } from './pool-remove-provider'
 
+export const ROUTER_CONTRACT = 'TG61TbGhkx757ATfceRbnSHD3kHzQ7tk97'
+const PAIR_DECIMALS = 18
+
 export const RemoveButton = (props: ButtonProps) => {
   const queryClient = useQueryClient()
-  const { address, connected, signTransaction } = useWallet()
+  const address =
+    'abf594a764e49a90a98cddf30872d8497e37399684c1d8e2b8e96fd865728cc2'
+  const { connected } = useWalletState()
   const isConnected = address && connected
   const {
     percentage,
@@ -40,12 +32,8 @@ export const RemoveButton = (props: ButtonProps) => {
   } = useRemoveLiqState()
   const { setIsTxnPending, setPercentage } = useRemoveLiqDispatch()
   const { token0, token1, pairAddress } = usePoolState()
-  const { tronWeb } = useTronWeb()
-  const { data: allowanceAmount, refetch } = useAllowance({
-    tokenAddress: pairAddress as string,
-    ownerAddress: address as string,
-    spenderAddress: ROUTER_CONTRACT,
-  })
+  const allowanceAmount = '.72'
+  // const refetch = () => {}
 
   const removeLiquidity = async () => {
     if (
@@ -61,46 +49,9 @@ export const RemoveButton = (props: ButtonProps) => {
     }
     try {
       setIsTxnPending(true)
-      const methodNames = getRemoveLiquidityFunctionSelector(token0, token1)
-      const deadline = getDeadline()
-      const args = []
-      for (let i = 0; i < methodNames.length; i++) {
-        const _args = getArgsForRemoveLiquidity(
-          methodNames[i],
-          token0.address,
-          token1.address,
-          lpToRemove,
-          minAmountToken0,
-          minAmountToken1,
-          address,
-          deadline,
-        )
-        args.push(_args)
-      }
-      console.log(args)
-      const estimates = await safeGasEstimates(tronWeb, args)
-      console.log('estimates', estimates)
-      const safeGasEstimate = estimates.findIndex(
-        (predicate) => predicate !== undefined,
-      )
-      console.log('safeGasEstimate', safeGasEstimate)
-      if (safeGasEstimate === -1) {
-        throw new Error('Failed to estimate energy. Transaction will fail.')
-      }
-      const argsForTransaction = cleanArgs(args[safeGasEstimate])
-      console.log('argsForTransaction', argsForTransaction)
 
-      const { transaction } =
-        await tronWeb.transactionBuilder.triggerSmartContract(
-          ...argsForTransaction,
-        )
-      const signedTransation = await signTransaction(transaction)
-      const result = await tronWeb.trx.sendRawTransaction(signedTransation)
-
-      if (!result.result && 'code' in result) {
-        throw new Error(parseTxnError(result.code))
-      }
-      const txId = result?.txid
+      const txId =
+        'abf594a764e49a90a98cddf30872d8497e37399684c1d8e2b8e96fd865728cc2'
 
       createInfoToast({
         summary: `Removing liquidity from the ${token0.symbol}/${token1.symbol} pair.`,
@@ -110,15 +61,11 @@ export const RemoveButton = (props: ButtonProps) => {
         groupTimestamp: Date.now(),
         timestamp: Date.now(),
         txHash: txId,
-        href: getTronscanTxnLink(txId),
+        href: getChainwebTxnLink(txId),
       })
 
-      const transactionInfo = await getTransactionInfo(tronWeb, txId)
-      if (transactionInfo?.receipt?.result !== 'SUCCESS') {
-        throw new Error('Transaction failed')
-      }
+      await new Promise((resolve) => setTimeout(resolve, 1800))
 
-      //create success toast
       createSuccessToast({
         summary: 'Successfully removed liquidity!',
         txHash: txId,
@@ -127,7 +74,7 @@ export const RemoveButton = (props: ButtonProps) => {
         chainId: 1,
         groupTimestamp: Date.now(),
         timestamp: Date.now(),
-        href: getTronscanTxnLink(txId),
+        href: getChainwebTxnLink(txId),
       })
       onSuccess()
     } catch (error) {
@@ -168,7 +115,7 @@ export const RemoveButton = (props: ButtonProps) => {
 
   const buttonText = useMemo(() => {
     if (isTxnPending) {
-      ;('Removing')
+      return 'Removing'
     }
     if (percentage === 0) {
       return 'Enter Amount'
@@ -181,36 +128,30 @@ export const RemoveButton = (props: ButtonProps) => {
       return 'Approve'
     }
     return 'Remove'
-  }, [
-    percentage,
-    isTxnPending,
-    allowanceFormatted,
-    allowanceAmount,
-    lpToRemove,
-  ])
+  }, [percentage, isTxnPending, allowanceFormatted, lpToRemove])
 
   if (!isConnected) {
     return <WalletConnector {...props} />
   }
 
-  if (buttonText === 'Approve') {
-    return (
-      <ApproveToken
-        tokenToApprove={{
-          address: pairAddress as string,
-          decimals: PAIR_DECIMALS,
-          symbol: 'SLP',
-          name: 'SushiSwap LP',
-        }}
-        amount={formatUnitsForInput(lpToRemove, PAIR_DECIMALS)}
-        spenderAddress={ROUTER_CONTRACT}
-        onSuccess={async () => {
-          await refetch()
-        }}
-        buttonProps={props}
-      />
-    )
-  }
+  // if (buttonText === 'Approve') {
+  //   return (
+  //     <ApproveToken
+  //       tokenToApprove={{
+  //         address: pairAddress as string,
+  //         decimals: PAIR_DECIMALS,
+  //         symbol: 'SLP',
+  //         name: 'SushiSwap LP',
+  //       }}
+  //       amount={formatUnitsForInput(lpToRemove, PAIR_DECIMALS)}
+  //       spenderAddress={ROUTER_CONTRACT}
+  //       onSuccess={async () => {
+  //         await refetch()
+  //       }}
+  //       buttonProps={props}
+  //     />
+  //   )
+  // }
 
   return (
     <Button

@@ -1,7 +1,7 @@
 import { SkeletonText, classNames } from '@sushiswap/ui'
 import { WalletIcon } from '@sushiswap/ui/icons/WalletIcon'
 import { useMemo } from 'react'
-import { formatUnits } from '~tron/_common/lib/utils/formatters'
+import { formatUnits } from '~kadena/_common/lib/utils/formatters'
 
 type TokenBalanceDisplayProps = {
   amount: number

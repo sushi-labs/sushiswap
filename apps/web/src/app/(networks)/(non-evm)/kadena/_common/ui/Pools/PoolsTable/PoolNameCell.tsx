@@ -1,21 +1,15 @@
 import { Badge, Currency, TooltipContent } from '@sushiswap/ui'
 import { Tooltip, TooltipProvider, TooltipTrigger } from '@sushiswap/ui'
 import React from 'react'
-// import { ProtocolBadge } from 'src/ui/pool/PoolNameCell'
 import { formatNumber } from 'sushi'
-import { WTRX } from '~tron/_common/constants/token-list'
-import { useTokenInfo } from '~tron/_common/lib/hooks/useTokenInfo'
+import { KADENA } from '~kadena/_common/constants/token-list'
 import type { TopPool } from '~tron/_common/lib/hooks/useTopPools'
 import { Icon } from '../../General/Icon'
+import { MOCK_TOKEN_1, MOCK_TOKEN_2 } from '../PositionsTable/PositionsTable'
 
 export const PoolNameCell = ({ data }: { data: TopPool }) => {
-  const { data: token0 } = useTokenInfo({
-    tokenAddress: data.token0Address,
-  })
-
-  const { data: token1 } = useTokenInfo({
-    tokenAddress: data.token1Address,
-  })
+  const token0 = MOCK_TOKEN_1
+  const token1 = MOCK_TOKEN_2
 
   return (
     <div className="flex items-center gap-5">
@@ -23,7 +17,7 @@ export const PoolNameCell = ({ data }: { data: TopPool }) => {
         <Badge
           className="border-2 border-slate-900 rounded-full z-[11]"
           position="bottom-right"
-          badgeContent={<Icon currency={WTRX} width={14} height={14} />}
+          badgeContent={<Icon currency={KADENA} width={14} height={14} />}
         >
           <Currency.IconList iconWidth={26} iconHeight={26}>
             <Icon currency={token0} />

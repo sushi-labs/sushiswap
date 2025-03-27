@@ -3,9 +3,8 @@ import {
   useSlippageTolerance,
 } from '@sushiswap/hooks'
 import { Card, CardGroup, CardLabel } from '@sushiswap/ui'
-import { useEffect, useMemo } from 'react'
-import { PAIR_DECIMALS } from '~tron/_common/constants/pair-decimals'
-import { useStablePrice } from '~tron/_common/lib/hooks/useStablePrice'
+import { useEffect, useMemo, useState } from 'react'
+import { PAIR_DECIMALS } from '~kadena/_common/constants/pair-decimals'
 import {
   formatUnitsForInput,
   parseUnits,
@@ -27,12 +26,20 @@ export const MinimumReceive = () => {
   const { setLPToRemove, setMinAmountToken0, setMinAmountToken1 } =
     useRemoveLiqDispatch()
   const { token0, token1 } = usePoolState()
-  const { data: token0Price, isLoading: isLoadingToken0Price } = useStablePrice(
-    { token: token0 },
-  )
-  const { data: token1Price, isLoading: isLoadingToken1Price } = useStablePrice(
-    { token: token1 },
-  )
+
+  const token0Price = '3.93'
+  const token1Price = '2.7'
+
+  const [isLoadingToken0Price, setIsLoadingToken0Price] = useState(true)
+  const [isLoadingToken1Price, setIsLoadingToken1Price] = useState(true)
+
+  useEffect(() => {
+    if (token0Price) {
+      setIsLoadingToken0Price(false)
+      setIsLoadingToken1Price(false)
+    }
+  }, [])
+
   const [slippageTolerance] = useSlippageTolerance(
     SlippageToleranceStorageKey.RemoveLiquidity,
   )

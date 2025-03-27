@@ -1,12 +1,12 @@
 import { useDebounce } from '@sushiswap/hooks'
 import { useQuery } from '@tanstack/react-query'
 import { formatUnits } from 'viem'
+import type { IToken } from '~kadena/_common/types/token-type'
 import {
   filterTokens,
   getSortedTokensByQuery,
   tokenComparator,
 } from '~tron/_common/lib/utils/token-search-helpers'
-import type { IToken } from '~tron/_common/types/token-type'
 
 export type TokenWithBalance = IToken & { balance: string }
 
