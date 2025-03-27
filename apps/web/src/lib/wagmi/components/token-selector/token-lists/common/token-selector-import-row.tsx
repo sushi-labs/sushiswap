@@ -85,7 +85,7 @@ export const TokenSelectorImportRow: FC<TokenSelectorImportRow> = ({
   }, [tokenSecurity])
 
   return (
-    <Dialog open={open}>
+    <Dialog open={open} onOpenChange={setOpen}>
       <div className="relative py-0.5 h-[64px]">
         <div className="flex items-center w-full hover:bg-muted focus:bg-accent h-full rounded-lg px-3">
           <div className="flex flex-row items-center flex-grow gap-4">
@@ -129,7 +129,9 @@ export const TokenSelectorImportRow: FC<TokenSelectorImportRow> = ({
               )}
             >
               {isTokenSecurityLoading ? (
-                <Loader width={28} height={28} />
+                <div className="w-7 h-7 flex justify-center items-center">
+                  <Loader width={28} height={28} />
+                </div>
               ) : isHoneypot || isFoT || isRisky ? (
                 <ExclamationTriangleIcon width={28} height={28} />
               ) : (
@@ -138,7 +140,7 @@ export const TokenSelectorImportRow: FC<TokenSelectorImportRow> = ({
             </div>
           </DialogTitle>
           {isTokenSecurityLoading ? (
-            <span>
+            <span className="w-52">
               <SkeletonText fontSize="xl" />
             </span>
           ) : (

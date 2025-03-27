@@ -111,7 +111,7 @@ export const TokenSecurityView = ({
 
         <tbody className="[&>tr:not(:last-child)]:border-b-[12px] [&>tr:not(:last-child)]:border-b-transparent">
           {isTokenSecurityLoading
-            ? Array.from({ length: 6 }).map((_, index) => (
+            ? Array.from({ length: 8 }).map((_, index) => (
                 <tr key={`loading-${index}`}>
                   <td>
                     <span className="w-full max-w-[120px]">
