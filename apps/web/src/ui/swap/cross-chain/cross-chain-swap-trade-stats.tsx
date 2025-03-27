@@ -18,7 +18,7 @@ import { CrossChainSwapFeesHoverCard } from './cross-chain-swap-fees-hover-card'
 import {
   useDerivedStateCrossChainSwap,
   useSelectedCrossChainTradeRoute,
-} from './derivedstate-cross-chain-swap-context'
+} from './derivedstate-cross-chain-swap-provider'
 
 export const CrossChainSwapTradeStats: FC = () => {
   const { address } = useAccount()

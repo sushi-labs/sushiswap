@@ -2,14 +2,13 @@
 
 import { Web3Input } from 'src/lib/wagmi/components/web3-input'
 import { isWNativeSupported } from 'sushi/config'
-import { useDerivedStateSimpleSwap } from './derivedstate-simple-swap-provider'
+import { useDerivedStateSwapWidget } from './derivedstate-swap-widget-provider'
 
-export const SimpleSwapToken0Input = () => {
+export const SwapWidgetToken0Input = () => {
   const {
     state: { swapAmountString, chainId, token0 },
     mutate: { setSwapAmount, setToken0 },
-    isToken0Loading: isLoading,
-  } = useDerivedStateSimpleSwap()
+  } = useDerivedStateSwapWidget()
 
   return (
     <Web3Input.Currency
@@ -21,8 +20,6 @@ export const SimpleSwapToken0Input = () => {
       value={swapAmountString}
       onChange={setSwapAmount}
       currency={token0}
-      loading={isLoading}
-      currencyLoading={isLoading}
       allowNative={isWNativeSupported(chainId)}
       label="Sell"
     />

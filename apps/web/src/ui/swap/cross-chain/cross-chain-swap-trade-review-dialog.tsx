@@ -85,7 +85,7 @@ import {
   type UseSelectedCrossChainTradeRouteReturn,
   useDerivedStateCrossChainSwap,
   useSelectedCrossChainTradeRoute,
-} from './derivedstate-cross-chain-swap-context'
+} from './derivedstate-cross-chain-swap-provider'
 
 export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
   children,

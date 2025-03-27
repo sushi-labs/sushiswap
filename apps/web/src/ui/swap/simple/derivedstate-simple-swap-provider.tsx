@@ -1,6 +1,22 @@
 'use client'
 
-import { type FC, useCallback, useMemo, useState } from 'react'
+import {
+  useParams,
+  usePathname,
+  useRouter,
+  useSearchParams,
+} from 'next/navigation'
+import {
+  type FC,
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react'
+import { useTrade, useTradeQuote } from 'src/lib/hooks/react-query'
+import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
 import { useTokenWithCache } from 'src/lib/wagmi/hooks/tokens/useTokenWithCache'
 import { EvmChainId } from 'sushi/chain'
 import {
@@ -8,12 +24,12 @@ import {
   defaultQuoteCurrency,
   isWNativeSupported,
 } from 'sushi/config'
-import { Native, type Type, tryParseAmount } from 'sushi/currency'
-import type { Percent } from 'sushi/math'
+import { type Amount, Native, type Type, tryParseAmount } from 'sushi/currency'
+import { type Percent, ZERO } from 'sushi/math'
 import { type Address, isAddress } from 'viem'
-import { useAccount } from 'wagmi'
+import { useAccount, useGasPrice } from 'wagmi'
 import { type SupportedChainId, isSupportedChainId } from '../../../config'
-import { DerivedStateSimpleSwapContext } from './derivedstate-simple-swap-context'
+import { useCarbonOffset } from '../../../lib/swap/useCarbonOffset'
 
 const getTokenAsString = (token: Type | string) =>
   typeof token === 'string'
@@ -28,48 +44,226 @@ const getQuoteCurrency = (chainId: number) =>
     defaultQuoteCurrency[chainId as keyof typeof defaultQuoteCurrency],
   )
 
-interface DerivedStateSimpleSwapProviderProps {
-  children: React.ReactNode
-  chainId?: SupportedChainId
-  defaultToken0?: string
+interface State {
+  mutate: {
+    setToken0(token0: Type | string): void
+    setToken1(token1: Type | string): void
+    setTokens(token0: Type | string, token1: Type | string): void
+    setSwapAmount(swapAmount: string): void
+    switchTokens(): void
+    setTokenTax(tax: Percent | false | undefined): void
+  }
+  state: {
+    token0: Type | undefined
+    token1: Type | undefined
+    chainId: EvmChainId
+    swapAmountString: string
+    swapAmount: Amount<Type> | undefined
+    recipient: string | undefined
+    tokenTax: Percent | false | undefined
+  }
+  isLoading: boolean
+  isToken0Loading: boolean
+  isToken1Loading: boolean
 }
 
-export const DerivedstateSimpleSwapProvider: FC<
+const DerivedStateSimpleSwapContext = createContext<State>({} as State)
+
+interface DerivedStateSimpleSwapProviderProps {
+  children: React.ReactNode
+}
+
+/* Parses the URL and provides the chainId, token0, and token1 globally.
+ * URL example:
+ * /swap?token0=NATIVE&token1=0x6b3595068778dd592e39a122f4f5a5cf09c90fe2
+ */
+const DerivedstateSimpleSwapProvider: FC<
   DerivedStateSimpleSwapProviderProps
-> = ({ children, chainId: providedChainId, defaultToken0 }) => {
+> = ({ children }) => {
+  const { push } = useRouter()
+  const { chainId: _chainId } = useParams()
   const { address } = useAccount()
+  const pathname = usePathname()
+  const searchParams = useSearchParams()
   const [tokenTax, setTokenTax] = useState<Percent | false | undefined>(
     undefined,
   )
   const [localTokenCache, setLocalTokenCache] = useState<Map<string, Type>>(
     new Map(),
   )
-  const [swapAmountString, setSwapAmountString] = useState('')
-  const [token0String, setToken0String] = useState(() => {
-    if (defaultToken0) {
-      return defaultToken0
-    }
-    return getDefaultCurrency(providedChainId ?? EvmChainId.ETHEREUM)
-  })
-  const [token1String, setToken1String] = useState(() =>
-    getQuoteCurrency(providedChainId ?? EvmChainId.ETHEREUM),
-  )
 
   const chainId =
-    providedChainId && isSupportedChainId(providedChainId)
-      ? providedChainId
+    _chainId && isSupportedChainId(+_chainId)
+      ? (+_chainId as SupportedChainId)
       : EvmChainId.ETHEREUM
 
-  const token0FromLocalCache = localTokenCache.get(token0String)
-  const token1FromLocalCache = localTokenCache.get(token1String)
+  // Get the searchParams and complete with defaults.
+  // This handles the case where some params might not be provided by the user
+  const defaultedParams = useMemo(() => {
+    const params = new URLSearchParams(searchParams)
+
+    if (!params.has('token0')) {
+      params.set('token0', getDefaultCurrency(chainId))
+    }
+    if (!params.has('token1')) {
+      params.set('token1', getQuoteCurrency(chainId))
+    }
+    return params
+  }, [chainId, searchParams])
+
+  // Get a new searchParams string by merging the current
+  // searchParams with a provided key/value pair
+  const createQueryString = useCallback(
+    (values: { name: string; value: string | null }[]) => {
+      const params = new URLSearchParams(defaultedParams)
+      values.forEach(({ name, value }) => {
+        if (value === null) {
+          params.delete(name)
+        } else {
+          params.set(name, value)
+        }
+      })
+      return params.toString()
+    },
+    [defaultedParams],
+  )
+
+  // Switch token0 and token1
+  const switchTokens = useCallback(() => {
+    // console.log('switchTokens', {
+    //   token0: defaultedParams.get('token1'),
+    //   token1: defaultedParams.get('token0'),
+    // })
+    push(
+      `${pathname}?${createQueryString([
+        { name: 'swapAmount', value: null },
+        { name: 'token0', value: defaultedParams.get('token1') as string },
+        { name: 'token1', value: defaultedParams.get('token0') as string },
+      ])}`,
+      { scroll: false },
+    )
+  }, [createQueryString, defaultedParams, pathname, push])
+
+  // Update the URL with a new token0
+  const setToken0 = useCallback<(_token0: string | Type) => void>(
+    (_token0) => {
+      // If entity is provided, parse it to a string
+      const token0 = getTokenAsString(_token0)
+
+      if (typeof _token0 !== 'string') {
+        setLocalTokenCache(localTokenCache.set(token0, _token0))
+      }
+
+      // Switch tokens if the new token0 is the same as the current token1
+      if (
+        defaultedParams.get('token1')?.toLowerCase() === token0.toLowerCase()
+      ) {
+        switchTokens()
+      }
+
+      // Push new route
+      else {
+        push(
+          `${pathname}?${createQueryString([
+            { name: 'token0', value: token0 },
+          ])}`,
+          { scroll: false },
+        )
+      }
+    },
+    [
+      createQueryString,
+      defaultedParams,
+      localTokenCache,
+      pathname,
+      push,
+      switchTokens,
+    ],
+  )
+
+  // Update the URL with a new token1
+  const setToken1 = useCallback<(_token1: string | Type) => void>(
+    (_token1) => {
+      // If entity is provided, parse it to a string
+      const token1 = getTokenAsString(_token1)
+
+      if (typeof _token1 !== 'string') {
+        setLocalTokenCache(localTokenCache.set(token1, _token1))
+      }
+
+      // Switch tokens if the new token0 is the same as the current token1
+      if (
+        defaultedParams.get('token0')?.toLowerCase() === token1.toLowerCase()
+      ) {
+        switchTokens()
+      }
+
+      // Push new route
+      else {
+        push(
+          `${pathname}?${createQueryString([
+            { name: 'token1', value: token1 },
+          ])}`,
+          { scroll: false },
+        )
+      }
+    },
+    [
+      createQueryString,
+      defaultedParams,
+      localTokenCache,
+      pathname,
+      push,
+      switchTokens,
+    ],
+  )
+
+  // Update the URL with both tokens
+  const setTokens = useCallback<
+    (_token0: string | Type, _token1: string | Type) => void
+  >(
+    (_token0, _token1) => {
+      // If entity is provided, parse it to a string
+      const token0 = getTokenAsString(_token0)
+      const token1 = getTokenAsString(_token1)
+
+      push(
+        `${pathname}?${createQueryString([
+          { name: 'token0', value: token0 },
+          { name: 'token1', value: token1 },
+        ])}`,
+        { scroll: false },
+      )
+    },
+    [createQueryString, pathname, push],
+  )
+
+  // Update the URL with a new swapAmount
+  const setSwapAmount = useCallback<(value: string) => void>(
+    (value) => {
+      push(
+        `${pathname}?${createQueryString([
+          { name: 'swapAmount', value: value },
+        ])}`,
+        { scroll: false },
+      )
+    },
+    [createQueryString, pathname, push],
+  )
+
+  const token0Param = defaultedParams.get('token0') as string
+  const token1Param = defaultedParams.get('token1') as string
+
+  const token0FromLocalCache = localTokenCache.get(token0Param)
+  const token1FromLocalCache = localTokenCache.get(token1Param)
 
   // Derive token0
   const { data: token0FromCache, isInitialLoading: token0Loading } =
     useTokenWithCache({
       chainId,
-      address: token0String as Address,
+      address: token0Param as Address,
       enabled:
-        isAddress(token0String, { strict: false }) && !token0FromLocalCache,
+        isAddress(token0Param, { strict: false }) && !token0FromLocalCache,
       keepPreviousData: false,
     })
 
@@ -77,88 +271,27 @@ export const DerivedstateSimpleSwapProvider: FC<
   const { data: token1FromCache, isInitialLoading: token1Loading } =
     useTokenWithCache({
       chainId,
-      address: token1String as Address,
+      address: token1Param as Address,
       enabled:
-        isAddress(token1String, { strict: false }) && !token1FromLocalCache,
+        isAddress(token1Param, { strict: false }) && !token1FromLocalCache,
       keepPreviousData: false,
     })
 
   const token0 = token0FromLocalCache ?? token0FromCache
   const token1 = token1FromLocalCache ?? token1FromCache
 
-  // Switch token0 and token1
-  const switchTokens = useCallback(() => {
-    setToken0String(token1String)
-    setToken1String(token0String)
-    setSwapAmountString('')
-  }, [token0String, token1String])
-
-  // Update token0
-  const setToken0 = useCallback<(_token0: string | Type) => void>(
-    (_token0) => {
-      const token0 = getTokenAsString(_token0)
-
-      if (typeof _token0 !== 'string') {
-        setLocalTokenCache(new Map(localTokenCache.set(token0, _token0)))
-      }
-
-      if (token1String.toLowerCase() === token0.toLowerCase()) {
-        switchTokens()
-      } else {
-        setToken0String(token0)
-      }
-    },
-    [localTokenCache, switchTokens, token1String],
-  )
-
-  // Update token1
-  const setToken1 = useCallback<(_token1: string | Type) => void>(
-    (_token1) => {
-      const token1 = getTokenAsString(_token1)
-
-      if (typeof _token1 !== 'string') {
-        setLocalTokenCache(new Map(localTokenCache.set(token1, _token1)))
-      }
-
-      if (token0String.toLowerCase() === token1.toLowerCase()) {
-        switchTokens()
-      } else {
-        setToken1String(token1)
-      }
-    },
-    [localTokenCache, switchTokens, token0String],
-  )
-
-  // Update both tokens
-  const setTokens = useCallback<
-    (_token0: string | Type, _token1: string | Type) => void
-  >(
-    (_token0, _token1) => {
-      const token0 = getTokenAsString(_token0)
-      const token1 = getTokenAsString(_token1)
-
-      if (typeof _token0 !== 'string') {
-        setLocalTokenCache(new Map(localTokenCache.set(token0, _token0)))
-      }
-      if (typeof _token1 !== 'string') {
-        setLocalTokenCache(new Map(localTokenCache.set(token1, _token1)))
-      }
-
-      setToken0String(token0)
-      setToken1String(token1)
-    },
-    [localTokenCache],
-  )
-
   return (
     <DerivedStateSimpleSwapContext.Provider
       value={useMemo(() => {
+        const swapAmountString = defaultedParams.get('swapAmount') || ''
         const _token0 =
-          token0String === 'NATIVE' && isWNativeSupported(chainId)
+          defaultedParams.get('token0') === 'NATIVE' &&
+          isWNativeSupported(chainId)
             ? Native.onChain(chainId)
             : token0
         const _token1 =
-          token1String === 'NATIVE' && isWNativeSupported(chainId)
+          defaultedParams.get('token1') === 'NATIVE' &&
+          isWNativeSupported(chainId)
             ? Native.onChain(chainId)
             : token1
 
@@ -168,7 +301,7 @@ export const DerivedstateSimpleSwapProvider: FC<
             setToken1,
             setTokens,
             switchTokens,
-            setSwapAmount: setSwapAmountString,
+            setSwapAmount,
             setTokenTax,
           },
           state: {
@@ -185,23 +318,88 @@ export const DerivedstateSimpleSwapProvider: FC<
           isToken1Loading: token1Loading,
         }
       }, [
+        address,
+        chainId,
+        defaultedParams,
+        setSwapAmount,
         setToken0,
         setToken1,
         setTokens,
         switchTokens,
-        token0String,
-        token1String,
         token0,
-        token1,
         token0Loading,
+        token1,
         token1Loading,
-        chainId,
-        address,
         tokenTax,
-        swapAmountString,
       ])}
     >
       {children}
     </DerivedStateSimpleSwapContext.Provider>
   )
+}
+
+const useDerivedStateSimpleSwap = () => {
+  const context = useContext(DerivedStateSimpleSwapContext)
+  if (!context) {
+    throw new Error(
+      'Hook can only be used inside Simple Swap Derived State Context',
+    )
+  }
+
+  return context
+}
+
+const useSimpleSwapTrade = (enabled = true) => {
+  const {
+    state: { token0, chainId, swapAmount, token1, recipient },
+  } = useDerivedStateSimpleSwap()
+
+  const [slippagePercent] = useSlippageTolerance()
+  const [carbonOffset] = useCarbonOffset()
+  const { data: gasPrice } = useGasPrice({ chainId })
+
+  const trade = useTrade({
+    chainId,
+    fromToken: token0,
+    toToken: token1,
+    amount: swapAmount,
+    slippagePercentage: slippagePercent.toFixed(2),
+    gasPrice,
+    recipient: recipient as Address,
+    enabled: Boolean(enabled && swapAmount?.greaterThan(ZERO)),
+    carbonOffset,
+  })
+
+  return trade
+}
+
+const useSimpleSwapTradeQuote = () => {
+  const {
+    state: { token0, chainId, swapAmount, token1, recipient },
+  } = useDerivedStateSimpleSwap()
+
+  const [slippagePercent] = useSlippageTolerance()
+  const [carbonOffset] = useCarbonOffset()
+  const { data: gasPrice } = useGasPrice({ chainId })
+
+  const quote = useTradeQuote({
+    chainId,
+    fromToken: token0,
+    toToken: token1,
+    amount: swapAmount,
+    slippagePercentage: slippagePercent.toFixed(2),
+    gasPrice,
+    recipient: recipient as Address,
+    enabled: Boolean(swapAmount?.greaterThan(ZERO)),
+    carbonOffset,
+  })
+
+  return quote
+}
+
+export {
+  DerivedstateSimpleSwapProvider,
+  useDerivedStateSimpleSwap,
+  useSimpleSwapTrade,
+  useSimpleSwapTradeQuote,
 }

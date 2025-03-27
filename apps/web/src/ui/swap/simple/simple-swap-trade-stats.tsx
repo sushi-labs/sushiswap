@@ -17,7 +17,7 @@ import {
 import {
   useDerivedStateSimpleSwap,
   useSimpleSwapTradeQuote,
-} from './derivedstate-simple-swap-context'
+} from './derivedstate-simple-swap-provider'
 
 export const SimpleSwapTradeStats: FC = () => {
   const { address } = useAccount()

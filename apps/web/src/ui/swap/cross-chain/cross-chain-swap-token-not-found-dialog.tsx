@@ -24,7 +24,7 @@ import {
 } from 'sushi/config'
 import type { Token } from 'sushi/currency'
 import { shortenAddress } from 'sushi/format'
-import { useDerivedStateCrossChainSwap } from './derivedstate-cross-chain-swap-context'
+import { useDerivedStateCrossChainSwap } from './derivedstate-cross-chain-swap-provider'
 
 export const CrossChainSwapTokenNotFoundDialog = () => {
   const {

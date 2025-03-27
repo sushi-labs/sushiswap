@@ -262,13 +262,13 @@ const COLUMNS = [
 interface PoolsTableProps {
   chainId: PoolChainId
   onRowClick?(row: Pools[number]): void
-  tokenSymbols?: string[]
+  forcedTokenSymbols?: string[]
 }
 
 export const PoolsTable: FC<PoolsTableProps> = ({
   chainId,
   onRowClick,
-  tokenSymbols: fixedTokenSymbols,
+  forcedTokenSymbols,
 }) => {
   const { tokenSymbols, protocols, farmsOnly, smartPoolsOnly } =
     usePoolFilters()
@@ -280,7 +280,7 @@ export const PoolsTable: FC<PoolsTableProps> = ({
   const args = useMemo<Omit<GetPools, 'page'>>(() => {
     const tokenSymbolsSet = new Set([
       ...tokenSymbols.map((symbol) => symbol.toLowerCase()),
-      ...(fixedTokenSymbols ?? []).map((symbol) => symbol.toLowerCase()),
+      ...(forcedTokenSymbols ?? []).map((symbol) => symbol.toLowerCase()),
     ])
     return {
       chainId,
@@ -294,7 +294,7 @@ export const PoolsTable: FC<PoolsTableProps> = ({
   }, [
     chainId,
     tokenSymbols,
-    fixedTokenSymbols,
+    forcedTokenSymbols,
     farmsOnly,
     smartPoolsOnly,
     sorting,

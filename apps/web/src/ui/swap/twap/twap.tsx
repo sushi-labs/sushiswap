@@ -30,7 +30,7 @@ import { usePrice } from '~evm/_common/ui/price-provider/price-provider/use-pric
 import {
   useDerivedStateSimpleSwap,
   useSimpleSwapTradeQuote,
-} from '../simple/derivedstate-simple-swap-context'
+} from '../simple/derivedstate-simple-swap-provider'
 import { SimpleSwapBridgeBanner } from '../simple/simple-swap-bridge-banner'
 import { SimpleSwapHeader } from '../simple/simple-swap-header'
 import { SimpleSwapSettingsOverlay } from '../simple/simple-swap-settings-overlay'

@@ -1,6 +1,6 @@
 import type { SmartPoolChainId } from '@sushiswap/graph-client/data-api'
 import { useMemo } from 'react'
-import { useSmartPools } from 'src/lib/hooks/api/userSmartPools'
+import { useSmartPools } from 'src/lib/hooks/api/useSmartPools'
 import { useAllPrices } from 'src/lib/hooks/react-query'
 import type { ID } from 'sushi'
 import { Amount, Token } from 'sushi/currency'

@@ -1,11 +1,7 @@
 'use client'
 
 import { Slot } from '@radix-ui/react-slot'
-import type {
-  ExploreTokens,
-  GetExploreTokens,
-  TokenListChainId,
-} from '@sushiswap/graph-client/data-api'
+import type { Token } from '@sushiswap/graph-client/data-api'
 import {
   Card,
   CardHeader,
@@ -26,15 +22,16 @@ import React, {
   useMemo,
   useState,
 } from 'react'
-import { useExploreTokens } from 'src/lib/hooks/api/useExploreTokens'
-import { ChainKey } from 'sushi/chain'
+import { useTokens } from 'src/lib/hooks'
+import { EvmChainKey } from 'sushi/chain'
+import type { SushiSwapChainId } from 'sushi/config'
 import {
   FDV_COLUMN,
   PRICE_CHANGE_1D_COLUMN,
   PRICE_COLUMN,
   SPARKLINE_COLUMN,
   TOKENS_NAME_COLUMN,
-} from './TokensTable.columns'
+} from './columns'
 
 const COLUMNS = [
   TOKENS_NAME_COLUMN,
@@ -42,20 +39,20 @@ const COLUMNS = [
   PRICE_CHANGE_1D_COLUMN,
   FDV_COLUMN,
   SPARKLINE_COLUMN,
-] as ColumnDef<ExploreTokens[number], unknown>[]
+] as ColumnDef<Token, unknown>[]
 
 interface TokensTableProps {
-  chainId: TokenListChainId
-  onRowClick?(row: ExploreTokens[number]): void
+  chainId: SushiSwapChainId
+  onRowClick?(row: Token): void
 }
 
 export const TokensTable: FC<TokensTableProps> = ({ chainId, onRowClick }) => {
   const [sorting, setSorting] = useState<SortingState>([
-    { id: 'liquidityUSD', desc: true },
+    { id: 'marketCapUSD', desc: true },
   ])
 
-  const { data: tokens, isLoading } = useExploreTokens({
-    chainId: chainId as GetExploreTokens['chainId'],
+  const { data: tokens, isLoading } = useTokens({
+    chainId,
   })
 
   const state: Partial<TableState> = useMemo(() => {
@@ -63,13 +60,13 @@ export const TokensTable: FC<TokensTableProps> = ({ chainId, onRowClick }) => {
       sorting,
       pagination: {
         pageIndex: 0,
-        pageSize: tokens?.length ?? 50,
+        pageSize: tokens?.count ?? 50,
       },
     }
-  }, [tokens?.length, sorting])
+  }, [tokens?.count, sorting])
 
   const rowRenderer = useCallback(
-    (row: Row<ExploreTokens[number]>, rowNode: ReactNode) => {
+    (row: Row<Token>, rowNode: ReactNode) => {
       if (onRowClick)
         return (
           <Slot
@@ -84,6 +81,8 @@ export const TokensTable: FC<TokensTableProps> = ({ chainId, onRowClick }) => {
     [onRowClick],
   )
 
+  const data = useMemo(() => tokens?.data ?? [], [tokens])
+
   return (
     <Card>
       <CardHeader>
@@ -93,7 +92,12 @@ export const TokensTable: FC<TokensTableProps> = ({ chainId, onRowClick }) => {
               <SkeletonText />
             </div>
           ) : (
-            <span>Tokens</span>
+            <span>
+              Tokens{' '}
+              <span className="text-gray-400 dark:text-slate-500">
+                ({tokens?.count ?? 0})
+              </span>
+            </span>
           )}
         </CardTitle>
       </CardHeader>
@@ -102,11 +106,11 @@ export const TokensTable: FC<TokensTableProps> = ({ chainId, onRowClick }) => {
         onSortingChange={setSorting}
         loading={isLoading}
         linkFormatter={(row) =>
-          `/${ChainKey[row.chainId]}/explore/tokens/${row.address}`
+          `/${EvmChainKey[row.token.chainId]}/token/${row.token.address}`
         }
         rowRenderer={rowRenderer}
         columns={COLUMNS}
-        data={tokens || []}
+        data={data}
       />
     </Card>
   )

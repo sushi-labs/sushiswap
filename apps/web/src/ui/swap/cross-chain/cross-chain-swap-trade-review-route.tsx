@@ -6,7 +6,7 @@ import { EvmChain } from 'sushi/chain'
 import {
   useDerivedStateCrossChainSwap,
   useSelectedCrossChainTradeRoute,
-} from './derivedstate-cross-chain-swap-context'
+} from './derivedstate-cross-chain-swap-provider'
 
 export const CrossChainSwapTradeReviewRoute = () => {
   const {

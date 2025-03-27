@@ -1,6 +1,5 @@
-'use client'
-
-import { DocumentDuplicateIcon } from '@heroicons/react/24/outline'
+import { DocumentDuplicateIcon } from '@heroicons/react/20/solid'
+import { ChevronDownIcon } from '@heroicons/react/24/outline'
 import {
   ClipboardController,
   Currency,
@@ -10,6 +9,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
   LinkExternal,
+  Separator,
   Tooltip,
   TooltipContent,
   TooltipProvider,
@@ -17,34 +17,27 @@ import {
 } from '@sushiswap/ui'
 import { type FC, useState } from 'react'
 import { EvmChain } from 'sushi/chain'
-import { type SerializedToken, Token } from 'sushi/currency'
+import type { Token } from 'sushi/currency'
 import { shortenAddress } from 'sushi/format'
-import { PriceChart } from './charts/PriceChart'
+import { PriceChart } from './PriceChart'
 
-// type ChartType = 'Price' | 'Volume' | 'TVL'
-type ChartType = 'Price'
+type ChartType = 'Price' // | 'Volume' | 'TVL'
 
-interface TokenPageClientProps {
-  token: SerializedToken
+interface TokenChartProps {
+  token: Token
 }
 
-export const TokenPageClient: FC<TokenPageClientProps> = ({
-  token: tokenSerialized,
-}) => {
-  const token = Token.deserialize(tokenSerialized)
+export const TokenChart: FC<TokenChartProps> = ({ token }) => {
   const [selectedChartType, setSelectedChartType] = useState<ChartType>('Price')
 
   return (
     <div className="flex flex-col">
-      {/* Title row with token info and chart type selector */}
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
-          {token ? (
-            <Currency.Icon currency={token} width={36} height={36} />
-          ) : null}
+          <Currency.Icon currency={token} width={36} height={36} />
           <div className="flex items-end gap-2">
-            <span className="font-bold text-3xl">{token?.name}</span>
-            <span className="font-medium text-lg">{token?.symbol}</span>
+            <span className="font-bold text-3xl">{token.name}</span>
+            <span className="font-medium text-lg">{token.symbol}</span>
             <div className="flex gap-1 items-center mb-[1px]">
               <ClipboardController hideTooltip>
                 {({ setCopied }) => (
@@ -64,7 +57,7 @@ export const TokenPageClient: FC<TokenPageClientProps> = ({
                 )}
               </ClipboardController>
               <LinkExternal
-                className="font-medium text-blue"
+                className="font-medium"
                 href={EvmChain.from(token.chainId)?.getTokenUrl(token.address)}
               >
                 {shortenAddress(token.address)}
@@ -73,28 +66,10 @@ export const TokenPageClient: FC<TokenPageClientProps> = ({
           </div>
         </div>
 
-        {/* Chart type dropdown */}
         <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <button
-              type="button"
-              className="flex items-center gap-2 px-4 py-2 text-sm bg-gray-100 dark:bg-gray-800 rounded-xl"
-            >
-              {selectedChartType}
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <path d="m6 9 6 6 6-6" />
-              </svg>
-            </button>
+          <DropdownMenuTrigger className="flex items-center gap-2 px-4 py-2 text-sm bg-secondary rounded-xl">
+            {selectedChartType}
+            <ChevronDownIcon width={14} height={14} />
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuGroup>
@@ -109,10 +84,8 @@ export const TokenPageClient: FC<TokenPageClientProps> = ({
         </DropdownMenu>
       </div>
 
-      {/* Separation line */}
-      <hr className="w-full h-px bg-gray-200 dark:bg-gray-800 mb-4 border-0" />
+      <Separator />
 
-      {/* Chart container */}
       <div style={{ height: 380 }}>
         {selectedChartType === 'Price' && (
           <PriceChart
@@ -123,8 +96,7 @@ export const TokenPageClient: FC<TokenPageClientProps> = ({
         )}
       </div>
 
-      {/* Separation line */}
-      <hr className="w-full h-px bg-gray-200 dark:bg-gray-800 mt-4 border-0" />
+      <Separator />
     </div>
   )
 }

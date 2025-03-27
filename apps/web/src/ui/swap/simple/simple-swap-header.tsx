@@ -12,7 +12,7 @@ import { Price, tryParseAmount } from 'sushi/currency'
 import { formatUSD } from 'sushi/format'
 import { usePrices } from '~evm/_common/ui/price-provider/price-provider/use-prices'
 import { useTokenAmountDollarValues } from '../../../lib/hooks'
-import { useDerivedStateSimpleSwap } from './derivedstate-simple-swap-context'
+import { useDerivedStateSimpleSwap } from './derivedstate-simple-swap-provider'
 
 export const SimpleSwapHeader = () => {
   const [invert, setInvert] = useState(false)

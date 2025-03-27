@@ -9,7 +9,7 @@ import {
   type UseSelectedCrossChainTradeRouteReturn,
   useDerivedStateCrossChainSwap,
   useSelectedCrossChainTradeRoute,
-} from './derivedstate-cross-chain-swap-context'
+} from './derivedstate-cross-chain-swap-provider'
 
 interface ConfirmationDialogContent {
   txHash?: string

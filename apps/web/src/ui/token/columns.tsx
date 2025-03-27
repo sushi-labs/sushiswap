@@ -1,11 +1,12 @@
-import type { ExploreToken } from '@sushiswap/graph-client/data-api'
+import type { Token } from '@sushiswap/graph-client/data-api'
 import { SkeletonCircle, SkeletonText, classNames } from '@sushiswap/ui'
 import type { ColumnDef } from '@tanstack/react-table'
+import { useMemo } from 'react'
 import { formatNumber, formatPercent } from 'sushi/format'
 import { SparklineCell } from './SparklineCell'
 import { TokenNameCell } from './TokenNameCell'
 
-export const TOKENS_NAME_COLUMN: ColumnDef<ExploreToken, unknown> = {
+export const TOKENS_NAME_COLUMN: ColumnDef<Token, unknown> = {
   id: 'name',
   header: 'Name',
   cell: (props) => <TokenNameCell {...props.row.original} />,
@@ -23,7 +24,7 @@ export const TOKENS_NAME_COLUMN: ColumnDef<ExploreToken, unknown> = {
   },
 }
 
-export const PRICE_COLUMN: ColumnDef<ExploreToken, unknown> = {
+export const PRICE_COLUMN: ColumnDef<Token, unknown> = {
   id: 'price',
   header: 'Price',
   accessorFn: (row) => row.price ?? 0,
@@ -33,7 +34,7 @@ export const PRICE_COLUMN: ColumnDef<ExploreToken, unknown> = {
   },
 }
 
-export const FDV_COLUMN: ColumnDef<ExploreToken, unknown> = {
+export const FDV_COLUMN: ColumnDef<Token, unknown> = {
   id: 'marketCapUSD',
   header: 'FDV',
   accessorFn: (row) => row.marketCapUSD ?? 0,
@@ -45,7 +46,7 @@ export const FDV_COLUMN: ColumnDef<ExploreToken, unknown> = {
   },
 }
 
-export const PRICE_CHANGE_1D_COLUMN: ColumnDef<ExploreToken, unknown> = {
+export const PRICE_CHANGE_1D_COLUMN: ColumnDef<Token, unknown> = {
   id: 'priceChangePercentage1d',
   header: 'Price (1d)',
   accessorFn: (row) => row.priceChangePercentage1d ?? 0,
@@ -72,11 +73,18 @@ export const PRICE_CHANGE_1D_COLUMN: ColumnDef<ExploreToken, unknown> = {
   },
 }
 
-export const SPARKLINE_COLUMN: ColumnDef<ExploreToken, unknown> = {
+export const SPARKLINE_COLUMN: ColumnDef<Token, unknown> = {
   id: 'sparkline',
   header: '',
   cell: (props) => (
-    <SparklineCell data={props.row.original.sparkline7d?.slice(-24) || []} />
+    <SparklineCell
+      data={useMemo(
+        () => props.row.original.sparkline7d?.slice(-24) || [],
+        [props.row.original.sparkline7d],
+      )}
+      width={120}
+      height={40}
+    />
   ),
   meta: {
     skeleton: <SkeletonText fontSize="lg" />,

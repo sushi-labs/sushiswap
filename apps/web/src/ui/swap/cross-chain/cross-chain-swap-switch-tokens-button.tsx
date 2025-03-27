@@ -8,7 +8,7 @@ import {
   TraceEvent,
 } from '@sushiswap/telemetry'
 
-import { useDerivedStateCrossChainSwap } from './derivedstate-cross-chain-swap-context'
+import { useDerivedStateCrossChainSwap } from './derivedstate-cross-chain-swap-provider'
 
 export const CrossChainSwapSwitchTokensButton = () => {
   const {

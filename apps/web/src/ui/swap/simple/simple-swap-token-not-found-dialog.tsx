@@ -23,7 +23,7 @@ import {
 import type { Token } from 'sushi/currency'
 import { shortenAddress } from 'sushi/format'
 
-import { useDerivedStateSimpleSwap } from './derivedstate-simple-swap-context'
+import { useDerivedStateSimpleSwap } from './derivedstate-simple-swap-provider'
 
 export const SimpleSwapTokenNotFoundDialog = () => {
   const {
