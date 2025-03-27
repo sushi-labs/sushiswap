@@ -85,6 +85,7 @@ export enum LiquidityProviders {
   VVSFlawless = 'VVSFlawless',
   AerodromeSlipstream = 'AerodromeSlipstream',
   VelodromeSlipstream = 'VelodromeSlipstream',
+  NileV2 = 'NileV2',
   NileV3 = 'NileV3',
   KodiakV2 = 'KodiakV2',
   KodiakV3 = 'KodiakV3',
@@ -214,6 +215,7 @@ export const UniV2LiquidityProviders: LiquidityProviders[] = [
   LiquidityProviders.EddyFinance,
   LiquidityProviders.MMFinance,
   LiquidityProviders.KodiakV2,
+  LiquidityProviders.NileV2,
 ]
 
 export const UniV3LiquidityProviders: LiquidityProviders[] = [

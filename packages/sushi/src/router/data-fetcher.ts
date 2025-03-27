@@ -52,6 +52,7 @@ import { MonoswapV2Provider } from './liquidity-providers/MonoSwapV2.js'
 import { MonoswapV3Provider } from './liquidity-providers/MonoSwapV3.js'
 import { NativeWrapProvider } from './liquidity-providers/NativeWrapProvider.js'
 import { NetSwapProvider } from './liquidity-providers/NetSwap.js'
+import { NileV2Provider } from './liquidity-providers/NileV2.js'
 import { NileV3Provider } from './liquidity-providers/NileV3.js'
 import { NineInchProvider } from './liquidity-providers/NineInch.js'
 import { PancakeSwapV2Provider } from './liquidity-providers/PancakeSwapV2.js'
@@ -231,6 +232,7 @@ export class DataFetcher {
       MonoswapV3Provider,
       MSwapProvider,
       NetSwapProvider,
+      NileV2Provider,
       NileV3Provider,
       NineInchProvider,
       PancakeSwapV2Provider,
