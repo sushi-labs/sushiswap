@@ -17,7 +17,9 @@ export default function RootLayout({
   console.log('RootLayout Kadena')
   return (
     <Providers>
-      <div className="fixed flex flex-col h-full w-full">{children}</div>
+      <div className="fixed flex flex-col h-full w-full overflow-auto">
+        {children}
+      </div>
     </Providers>
   )
 }

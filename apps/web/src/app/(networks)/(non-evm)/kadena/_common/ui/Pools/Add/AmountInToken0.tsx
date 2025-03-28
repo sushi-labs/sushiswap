@@ -1,7 +1,6 @@
 import { type ComponentProps, useEffect, useMemo } from 'react'
 import { formatUnitsForInput } from '~kadena/_common/lib/utils/formatters'
 import { TokenInput } from '~kadena/_common/ui/Input/TokenInput'
-import { getToken1AmountForLiquidity } from '~tron/_common/lib/utils/helpers'
 import { usePoolDispatch, usePoolState } from '../pool-provider'
 
 export const AmountInToken0 = ({
@@ -11,14 +10,8 @@ export const AmountInToken0 = ({
   theme?: ComponentProps<typeof TokenInput>['theme']
   disabled?: boolean
 }) => {
-  const {
-    token0,
-    token1,
-    amountInToken0,
-
-    pairAddress,
-    inputField,
-  } = usePoolState()
+  const { token0, token1, amountInToken0, pairAddress, inputField } =
+    usePoolState()
   const { setToken0, setAmountInToken0, setAmountInToken1, setInputField } =
     usePoolDispatch()
 

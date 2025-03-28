@@ -1,7 +1,7 @@
 import { Container } from '@sushiswap/ui'
 import { headers } from 'next/headers'
 import { PoolHeader } from '~kadena/_common/ui/Pools/PoolDetails/PoolHeader'
-import Providers from './providers'
+import Providers from './add/providers'
 
 export default async function PoolLayout(props: {
   children: React.ReactNode
