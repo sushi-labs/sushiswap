@@ -86,8 +86,6 @@ export const PoolsFiltersUrlProvider: FC<PoolsFiltersProviderProps> = ({
     return state
   }, [urlFilters])
 
-  console.log({ state, urlFilters })
-
   const mutate = useMemo(() => {
     const setFilters: Dispatch<SetStateAction<PoolFilters>> = (filters) => {
       if (typeof filters === 'function') {

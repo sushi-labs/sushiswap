@@ -44,5 +44,14 @@ export default async function _TokenPage(props: {
     },
   )()
 
-  return <TokenPage token={token} tokenInfo={tokenInfo} />
+  return (
+    <TokenPage
+      token={
+        token && typeof token.serialize === 'function'
+          ? token.serialize()
+          : token
+      }
+      tokenInfo={tokenInfo}
+    />
+  )
 }
