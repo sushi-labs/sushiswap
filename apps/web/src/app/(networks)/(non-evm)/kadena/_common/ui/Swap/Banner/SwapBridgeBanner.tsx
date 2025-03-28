@@ -43,12 +43,12 @@ export const SimpleSwapBridgeBanner: FC<{ className?: string }> = ({
               width={24}
               height={24}
             />
-            <div className="flex items-center">
+            <div className="flex items-center text-black">
               <span className="font-semibold">Bridge to Kadena</span>
-              <ArrowUpRightIcon width={20} height={20} />
+              <ArrowUpRightIcon width={20} height={20} className="text-black" />
             </div>
           </div>
-          <span className="text-xs">Move your tokens to swap.</span>
+          <span className="text-xs text-black">Move your tokens to swap.</span>
         </div>
         <Image
           src={'/kadena-bridge-banner-cube.svg'}
