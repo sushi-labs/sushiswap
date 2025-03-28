@@ -44,6 +44,7 @@ export const SimpleSwapBridgeBanner: FC<{ className?: string }> = ({
               chainId={NonStandardChainId.KADENA}
               width={24}
               height={24}
+              type="naked"
             />
             <div className="flex items-center text-black">
               <span className="font-semibold">Bridge to Kadena</span>
