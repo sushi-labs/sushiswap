@@ -12,7 +12,7 @@ const crossChainType = {
 
 export const SwitchSwapType = () => {
   return (
-    <div className="flex gap-4">
+    <div className="flex md:flex-row flex-col gap-2">
       <div className="flex gap-2">
         {swapTypes.map((type) => (
           <PathnameButton
