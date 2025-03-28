@@ -17,33 +17,23 @@ interface VolumeChart {
 export const VolumeChart: FC<VolumeChart> = ({ data }) => {
   const { resolvedTheme } = useTheme()
 
-  const [v2, v3, totalVolume] = useMemo(() => {
-    const xData = (data.v2.length > data.v3.length ? data.v2 : data.v3)
-      .slice(0, 30)
-      .map((data) => data.date * 1000)
+  const [v2, totalVolume] = useMemo(() => {
+    const xData = data.v2.slice(0, 30).map((data) => data.date * 1000)
 
     const v2 = xData
       .map((xData, i) => [xData, data.v2[i]?.volumeUSD ?? 0])
       .reverse()
-    const v3 = xData
-      .map((xData, i) => [xData, data.v3[i]?.volumeUSD ?? 0])
-      .reverse()
-    const totalVolume = xData.reduce(
-      (sum, _, i) => sum + v2[i][1] + v3[i][1],
-      0,
-    )
+    const totalVolume = v2.reduce((sum, entry) => sum + entry[1], 0)
 
-    return [v2, v3, totalVolume]
+    return [v2, totalVolume]
   }, [data])
 
   const onMouseOver = useCallback((params: { data: number[] }[]) => {
     const volumeNode = document.getElementById('hoveredVolume')
     const v2VolumeNode = document.getElementById('hoveredV2Volume')
-    const v3VolumeNode = document.getElementById('hoveredV3Volume')
     const dateNode = document.getElementById('hoveredVolumeDate')
 
-    if (volumeNode)
-      volumeNode.innerHTML = formatUSD(params[0].data[1] + params[1].data[1])
+    if (volumeNode) volumeNode.innerHTML = formatUSD(params[0].data[1])
     if (dateNode)
       dateNode.innerHTML = format(
         new Date(params[0].data[0]),
@@ -53,22 +43,16 @@ export const VolumeChart: FC<VolumeChart> = ({ data }) => {
       v2VolumeNode.innerHTML = params[0].data[1]
         ? formatUSD(params[0].data[1])
         : ''
-    if (v3VolumeNode)
-      v3VolumeNode.innerHTML = params[1].data[1]
-        ? formatUSD(params[1].data[1])
-        : ''
   }, [])
 
   const onMouseLeave = useCallback(() => {
     const volumeNode = document.getElementById('hoveredVolume')
     const v2VolumeNode = document.getElementById('hoveredV2Volume')
-    const v3VolumeNode = document.getElementById('hoveredV3Volume')
     const dateNode = document.getElementById('hoveredVolumeDate')
 
     if (volumeNode) volumeNode.innerHTML = formatUSD(totalVolume)
     if (dateNode) dateNode.innerHTML = 'Past month'
     if (v2VolumeNode) v2VolumeNode.innerHTML = ''
-    if (v3VolumeNode) v3VolumeNode.innerHTML = ''
   }, [totalVolume])
 
   const DEFAULT_OPTION: EChartsOption = useMemo(
@@ -132,16 +116,9 @@ export const VolumeChart: FC<VolumeChart> = ({ data }) => {
           data: v2,
           itemStyle: { color: '#3B7EF6', barBorderRadius: [0, 0, 2, 2] },
         },
-        {
-          name: 'v3',
-          type: 'bar',
-          stack: 'a',
-          data: v3,
-          itemStyle: { color: '#A755DD', barBorderRadius: [2, 2, 0, 0] },
-        },
       ],
     }),
-    [onMouseOver, resolvedTheme, v2, v3],
+    [onMouseOver, resolvedTheme, v2],
   )
 
   return (
@@ -168,13 +145,6 @@ export const VolumeChart: FC<VolumeChart> = ({ data }) => {
               <span className="flex gap-1 items-center">
                 <span className="font-medium">v2</span>
                 <span className="bg-[#3B7EF6] rounded-[4px] w-3 h-3" />
-              </span>
-            </div>
-            <div className="flex justify-between items-center gap-2 text-sm">
-              <span id="hoveredV3Volume" />
-              <span className="flex gap-1 items-center">
-                <span className="font-medium">v3</span>
-                <span className="bg-[#A755DD] rounded-[4px] w-3 h-3" />
               </span>
             </div>
           </div>

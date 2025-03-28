@@ -19,43 +19,27 @@ export const TVLChart: FC<TVLChart> = ({ data }) => {
 
   const { resolvedTheme } = useTheme()
 
-  const [v2, v3, combinedTVL, currentDate] = useMemo(() => {
-    const xData = (data.v2.length > data.v3.length ? data.v2 : data.v3).map(
-      (data) => data.date * 1000,
-    )
+  const [v2, combinedTVL, currentDate] = useMemo(() => {
+    const xData = data.v2.map((data) => data.date * 1000)
 
     const v2 = xData
       .map((xData, i) => [xData, data.v2[i]?.liquidityUSD ?? 0])
       .reverse()
-    const v3 = xData
-      .map((xData, i) => [xData, data.v3[i]?.liquidityUSD ?? 0])
-      .reverse()
-    const combinedTVL = v2[v2.length - 1][1] + v3[v3.length - 1][1]
+    const combinedTVL = v2[v2.length - 1][1]
 
     const currentDate = xData[0]
 
-    return [v2, v3, combinedTVL, currentDate]
+    return [v2, combinedTVL, currentDate]
   }, [data])
 
-  const zIndex = useMemo(() => {
-    const v2Sum = v2.reduce((sum, [_, value]) => sum + value, 0)
-    const v3Sum = v3.reduce((sum, [_, value]) => sum + value, 0)
-
-    if (v2Sum < v3Sum) {
-      return { v2: 2, v3: 1 }
-    } else {
-      return { v2: 1, v3: 2 }
-    }
-  }, [v2, v3])
+  const zIndex = { v2: 1 }
 
   const onMouseOver = useCallback((params: { data: number[] }[]) => {
     const tvlNode = document.getElementById('hoveredTVL')
     const v2TVLNode = document.getElementById('hoveredV2TVL')
-    const v3TVLNode = document.getElementById('hoveredV3TVL')
     const dateNode = document.getElementById('hoveredTVLDate')
 
-    if (tvlNode)
-      tvlNode.innerHTML = formatUSD(params[0].data[1] + params[1].data[1])
+    if (tvlNode) tvlNode.innerHTML = formatUSD(params[0].data[1])
     if (dateNode)
       dateNode.innerHTML = format(
         new Date(params[0].data[0]),
@@ -65,23 +49,17 @@ export const TVLChart: FC<TVLChart> = ({ data }) => {
       v2TVLNode.innerHTML = params[0].data[1]
         ? formatUSD(params[0].data[1])
         : ''
-    if (v3TVLNode)
-      v3TVLNode.innerHTML = params[1].data[1]
-        ? formatUSD(params[1].data[1])
-        : ''
   }, [])
 
   const onMouseLeave = useCallback(() => {
     const tvlNode = document.getElementById('hoveredTVL')
     const v2TVLNode = document.getElementById('hoveredV2TVL')
-    const v3TVLNode = document.getElementById('hoveredV3TVL')
     const dateNode = document.getElementById('hoveredTVLDate')
 
     if (tvlNode) tvlNode.innerHTML = formatUSD(combinedTVL)
     if (dateNode)
       dateNode.innerHTML = format(new Date(currentDate), 'dd MMM yyyy HH:mm aa')
     if (v2TVLNode) v2TVLNode.innerHTML = ''
-    if (v3TVLNode) v3TVLNode.innerHTML = ''
   }, [combinedTVL, currentDate])
 
   const DEFAULT_OPTION: EChartsOption = useMemo(
@@ -159,25 +137,9 @@ export const TVLChart: FC<TVLChart> = ({ data }) => {
           data: v2,
           z: zIndex.v2,
         },
-        {
-          name: 'v3',
-          type: 'line',
-          stack: 'v3',
-          smooth: true,
-          lineStyle: {
-            width: 0,
-          },
-          showSymbol: false,
-          areaStyle: {
-            color: '#A755DD',
-            opacity: 1,
-          },
-          data: v3,
-          z: zIndex.v3,
-        },
       ],
     }),
-    [onMouseOver, v2, v3, zIndex, resolvedTheme],
+    [onMouseOver, v2, resolvedTheme],
   )
 
   return (
@@ -206,13 +168,6 @@ export const TVLChart: FC<TVLChart> = ({ data }) => {
               <span className="flex gap-1 items-center">
                 <span className="font-medium">v2</span>
                 <span className="bg-[#3B7EF6] rounded-[4px] w-3 h-3" />
-              </span>
-            </div>
-            <div className="flex justify-between items-center gap-2 text-sm">
-              <span id="hoveredV3TVL" />
-              <span className="flex gap-1 items-center">
-                <span className="font-medium">v3</span>
-                <span className="bg-[#A755DD] rounded-[4px] w-3 h-3" />
               </span>
             </div>
           </div>
