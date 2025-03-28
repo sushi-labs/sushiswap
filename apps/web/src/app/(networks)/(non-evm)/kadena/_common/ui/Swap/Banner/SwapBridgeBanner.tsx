@@ -23,7 +23,7 @@ export const SimpleSwapBridgeBanner: FC<{ className?: string }> = ({
     <Link href={'#'} target="_blank" rel="noopener noreferrer">
       <div
         className={classNames(
-          'rounded-xl relative p-6 bg-blue/10 overflow-hidden',
+          'rounded-xl relative p-6 bg-[#E9E9EB] dark:bg-[] overflow-hidden',
           className,
         )}
       >
@@ -44,7 +44,7 @@ export const SimpleSwapBridgeBanner: FC<{ className?: string }> = ({
               height={24}
             />
             <div className="flex items-center">
-              <span className="font-semibold">Bridge to KADENA</span>
+              <span className="font-semibold">Bridge to Kadena</span>
               <ArrowUpRightIcon width={20} height={20} />
             </div>
           </div>
