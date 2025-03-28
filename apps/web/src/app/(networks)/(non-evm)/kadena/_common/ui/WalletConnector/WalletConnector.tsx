@@ -47,7 +47,7 @@ export const WalletConnector = (props: ButtonProps) => {
               <span className="hidden sm:block">{truncateText(address)}</span>
             </>
           ) : (
-            <>{connecting ? 'Connecting' : 'Connect Wallet'} </>
+            <>{connecting ? 'Connecting' : 'Connect'} </>
           )}
         </Button>
         {IS_TESTNET && isConnected ? (
