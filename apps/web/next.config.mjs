@@ -91,18 +91,6 @@ const nextConfig = bundleAnalyzer({
   async rewrites() {
     return []
   },
-  images: {
-    remotePatterns: [
-      {
-        protocol: 'https',
-        hostname: 'kdswapassets.blob.core.windows.net',
-      },
-      {
-        protocol: 'https',
-        hostname: 'cdn.sushi.com',
-      },
-    ],
-  },
 })
 
 export default nextConfig

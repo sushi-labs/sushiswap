@@ -188,6 +188,7 @@ export const CardCurrencyAmountItem = forwardRef<
                   alt=""
                   layout="fill"
                   objectFit="contain"
+                  unoptimized
                 />
               </span>
               {currency.symbol}
