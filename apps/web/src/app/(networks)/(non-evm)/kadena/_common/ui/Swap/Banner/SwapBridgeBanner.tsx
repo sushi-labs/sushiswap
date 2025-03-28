@@ -30,7 +30,9 @@ export const SimpleSwapBridgeBanner: FC<{ className?: string }> = ({
         <XMarkIcon
           width={20}
           height={20}
-          className={'absolute top-[10px] z-10 right-[10px] cursor-pointer'}
+          className={
+            'absolute text-black top-[10px] z-10 right-[10px] cursor-pointer'
+          }
           onClick={(e) => {
             e.preventDefault()
             setHideBanner(true)
