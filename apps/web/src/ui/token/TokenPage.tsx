@@ -60,7 +60,9 @@ export const TokenPage: FC<TokenPageProps> = ({ token: _token, tokenInfo }) => {
                 'hover:underline !inline !font-normal !text-muted-foreground capitalize whitespace-nowrap'
               }
             >
-              <LinkInternal href={`/${EvmChainKey[token.chainId]}/tokens`}>
+              <LinkInternal
+                href={`/${EvmChainKey[token.chainId]}/explore/tokens`}
+              >
                 Explore
               </LinkInternal>
             </Button>

@@ -27,7 +27,6 @@ export default async function PoolLayout(props: {
           supportedNetworks={SUSHISWAP_SUPPORTED_CHAIN_IDS}
           unsupportedNetworkHref={'/ethereum/explore/tokens'}
           shiftContent
-          // TODO
         >
           <main className="flex flex-col h-full flex-1">{children}</main>
         </SidebarContainer>
