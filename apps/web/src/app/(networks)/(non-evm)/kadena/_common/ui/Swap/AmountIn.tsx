@@ -1,4 +1,3 @@
-import { useDebounce } from '@sushiswap/hooks'
 import { useEffect } from 'react'
 import { useSwapDispatch, useSwapState } from '~kadena/swap/swap-provider'
 import { TokenInput } from '../Input/TokenInput'
@@ -24,8 +23,15 @@ export const AmountIn = () => {
       amount={amountIn}
       setAmount={(amount) => {
         setAmountIn(amount)
+
         const amountOut = Number(amount) * 1.5
-        setAmountOut(amountOut.toString())
+        const formatted = amountOut.toString()
+
+        if (formatted.includes('e') || formatted.includes('E')) {
+          setAmountOut('')
+        } else {
+          setAmountOut(formatted)
+        }
       }}
       currency={token0}
       setToken={setToken0}

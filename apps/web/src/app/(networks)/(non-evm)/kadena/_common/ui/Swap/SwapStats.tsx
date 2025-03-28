@@ -55,7 +55,7 @@ export const SwapStats = () => {
   }, [amountOut, slippage, token0, token1, amountIn])
 
   const [isNetworkFeeLoading, setIsNetworkFeeLoading] = useState(true)
-  const networkFeeInKDA = '0.123'
+  const networkFeeInKDA = '0.24'
 
   const isLoading =
     priceImpactPercentage === undefined ||

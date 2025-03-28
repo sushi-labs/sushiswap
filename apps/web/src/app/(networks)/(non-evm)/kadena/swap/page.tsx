@@ -8,6 +8,7 @@ import {
 } from '@sushiswap/ui'
 import { AmountIn } from '~kadena/_common/ui/Swap/AmountIn'
 import { AmountOut } from '~kadena/_common/ui/Swap/AmountOut'
+import { SimpleSwapBanner } from '~kadena/_common/ui/Swap/Banner/SwapBanner'
 import { ReviewSwapDialog } from '~kadena/_common/ui/Swap/ReviewSwapDialog'
 import { SwapStats } from '~kadena/_common/ui/Swap/SwapStats'
 import { SwitchSwapDirection } from '~kadena/_common/ui/Swap/SwitchSwapDirection'
@@ -39,6 +40,7 @@ export default function SwapSimplePage() {
           <ReviewSwapDialog />
         </div>
         <SwapStats />
+        <SimpleSwapBanner />
       </div>
     </Container>
   )

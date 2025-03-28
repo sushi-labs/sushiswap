@@ -5,7 +5,6 @@ import type { V2Pool } from '@sushiswap/graph-client/data-api'
 import type { FC } from 'react'
 import { PoolChartV2 } from './PoolChartV2'
 import { PoolComposition } from './PoolComposition'
-import { PoolRewards } from './PoolRewards'
 import { PoolStats } from './PoolStats'
 // import { UnknownTokenAlert } from './UnknownTokenAlert'
 
@@ -24,7 +23,6 @@ export const PoolPageV2: FC<PoolPageV2> = ({ pool }) => {
         <div className="flex flex-col gap-6">
           <PoolComposition pool={pool} />
           <PoolStats pool={pool} />
-          {pool.isIncentivized ? <PoolRewards pool={pool} /> : null}
         </div>
       </div>
       <div className="py-4">
