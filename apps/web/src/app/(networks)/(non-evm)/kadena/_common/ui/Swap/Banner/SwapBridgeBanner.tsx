@@ -2,7 +2,7 @@
 
 import { XMarkIcon } from '@heroicons/react/24/solid'
 import { ArrowUpRightIcon } from '@heroicons/react/24/solid'
-import { useLocalStorage } from '@sushiswap/hooks'
+import { useIsMounted, useLocalStorage } from '@sushiswap/hooks'
 import { classNames } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import Image from 'next/image'
@@ -13,18 +13,14 @@ import { NonStandardChainId } from 'src/config'
 export const SimpleSwapBridgeBanner: FC<{ className?: string }> = ({
   className,
 }) => {
+  const isMounted = useIsMounted()
   const [hideBanner, setHideBanner] = useLocalStorage(
     'hide-bridge-banner-kadena',
     false,
   )
 
-  return (
-    <Link
-      href={'#'}
-      target="_blank"
-      rel="noopener noreferrer"
-      className={`${hideBanner ? 'hidden' : ''}`}
-    >
+  return !hideBanner && isMounted ? (
+    <Link href={'#'} target="_blank" rel="noopener noreferrer">
       <div
         className={classNames(
           'rounded-xl relative p-6 bg-blue/10 overflow-hidden',
@@ -63,5 +59,5 @@ export const SimpleSwapBridgeBanner: FC<{ className?: string }> = ({
         />
       </div>
     </Link>
-  )
+  ) : null
 }
