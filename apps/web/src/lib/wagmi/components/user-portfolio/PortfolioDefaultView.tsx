@@ -36,7 +36,7 @@ enum PortfolioTab {
   Tokens = 'Tokens',
   Positions = 'Positions',
   Claimable = 'Claimable',
-  History = 'History',
+  // History = 'History',
 }
 
 interface PortfolioDefaultProps {
@@ -63,8 +63,8 @@ export const PortfolioDefaultView: FC<PortfolioDefaultProps> = ({
         return <PortfolioPositions />
       case PortfolioTab.Claimable:
         return <PortfolioClaimables />
-      case PortfolioTab.History:
-        return <PortfolioHistory />
+      // case PortfolioTab.History:
+      // return <PortfolioHistory />
     }
   }, [tab])
 

@@ -31,10 +31,9 @@ import {
   useDerivedStateSimpleSwap,
   useSimpleSwapTradeQuote,
 } from '../simple/derivedstate-simple-swap-provider'
-import { SimpleSwapBridgeBanner } from '../simple/simple-swap-bridge-banner'
 import { SimpleSwapHeader } from '../simple/simple-swap-header'
 import { SimpleSwapSettingsOverlay } from '../simple/simple-swap-settings-overlay'
-import { DefaultSwapModeUrlButtons } from '../swap-mode-buttons'
+import { SwapModeButtons } from '../swap-mode-buttons'
 import { DCAMaintenanceMessage } from './dca-maintenance-message'
 import { LimitMaintenanceMessage } from './limit-maintenance-message'
 import { useIsDCAMaintenance } from './use-is-dca-maintenance'
@@ -261,10 +260,9 @@ export function TwapContainer({ isLimit }: { isLimit?: boolean }) {
 function Provider({ isLimit }: { isLimit?: boolean }) {
   return (
     <div className="flex flex-col gap-4">
-      <SimpleSwapBridgeBanner />
       <SimpleSwapHeader />
       <div className="flex items-center justify-between">
-        <DefaultSwapModeUrlButtons />
+        <SwapModeButtons />
         <SimpleSwapSettingsOverlay />
       </div>
       {isLimit ? <LimitMaintenanceMessage /> : <DCAMaintenanceMessage />}
