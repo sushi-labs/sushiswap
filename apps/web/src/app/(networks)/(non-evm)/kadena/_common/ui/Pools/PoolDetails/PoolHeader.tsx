@@ -10,6 +10,7 @@ import {
   SkeletonText,
   typographyVariants,
 } from '@sushiswap/ui'
+import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { getChainwebAddressLink } from '~kadena/_common/lib/utils/kadena-helpers'
 import { Icon } from '~kadena/_common/ui/General/Icon'
@@ -19,17 +20,16 @@ export const PoolHeader = ({
   token0: _token0,
   token1: _token1,
   pairAddress,
-  backUrl,
 }: {
   token0: string
   token1: string
   pairAddress: string
-  backUrl: string
 }) => {
   const token0 = MOCK_TOKEN_1
   const token1 = MOCK_TOKEN_2
   const [isLoadingToken0, setIsLoadingToken0] = useState(true)
   const [isLoadingToken1, setIsLoadingToken1] = useState(true)
+  const router = useRouter()
 
   useEffect(() => {
     setTimeout(() => {
@@ -43,12 +43,15 @@ export const PoolHeader = ({
   return (
     <div className="flex flex-col gap-6">
       <div className="flex flex-col gap-4">
-        <LinkInternal
-          href={backUrl}
-          className="text-blue hover:underline text-sm"
+        <button
+          className="text-blue hover:underline text-sm w-fit"
+          type="button"
+          onClick={() => {
+            router.back()
+          }}
         >
           ← Back
-        </LinkInternal>
+        </button>
         {isLoading ? (
           <div className="flex items-center w-full gap-3">
             <div className="flex items-center">

@@ -1,6 +1,7 @@
 import { Container } from '@sushiswap/ui'
 import { headers } from 'next/headers'
 import { PoolHeader } from '~kadena/_common/ui/Pools/PoolDetails/PoolHeader'
+import { Header } from '~kadena/header'
 import Providers from './add/providers'
 
 export default async function PoolLayout(props: {
@@ -16,22 +17,11 @@ export default async function PoolLayout(props: {
   const token1 = decodedPoolId[1]
   const pairAddress = decodedPoolId[2]
 
-  const headersList = await headers()
-  const referer = headersList.get('referer')
-
   return (
     <Providers>
-      <Container maxWidth="5xl" className="pt-10 px-4">
-        <PoolHeader
-          backUrl={
-            referer?.includes('/pool?')
-              ? referer?.toString()
-              : `/kadena/explore/pools`
-          }
-          token0={token0}
-          token1={token1}
-          pairAddress={pairAddress}
-        />
+      <Header />
+      <Container maxWidth="5xl" className="py-4 px-4">
+        <PoolHeader token0={token0} token1={token1} pairAddress={pairAddress} />
       </Container>
       <section className="flex flex-col flex-1 mt-4">
         <div className="bg-gray-50 dark:bg-white/[0.02] border-t border-accent pt-10 pb-20 h-full">

@@ -144,7 +144,7 @@ export const PositionsTable = ({
         }
         columns={[POSITION_NAME_COLUMN, VALUE_COLUMN, SIZE_COLUMN, APR_COLUMN]}
         linkFormatter={(data: IMyPositionData) => {
-          return `/kadena/pool/${data?.pairAddress}`
+          return `/kadena/pool/${data?.pairAddress}/add`
         }}
         externalLink={false}
         pagination={true}

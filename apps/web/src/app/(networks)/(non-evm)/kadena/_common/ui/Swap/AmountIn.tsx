@@ -10,7 +10,8 @@ export const AmountIn = () => {
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: Typecheck speedup
   useEffect(() => {
-    if (Number(amountIn) === 0) {
+    const _amountIn = Number(amountIn)
+    if (_amountIn === 0 || Number.isNaN(_amountIn)) {
       setAmountOut('')
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
