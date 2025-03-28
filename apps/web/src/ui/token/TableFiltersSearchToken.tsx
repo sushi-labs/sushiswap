@@ -4,7 +4,7 @@ import { MagnifyingGlassIcon } from '@heroicons/react/24/solid'
 import { ChipInput } from '@sushiswap/ui'
 import React, { type FC, useCallback, useState, useTransition } from 'react'
 
-import { useSetTokenFilters, useTokenFilters } from './TokenFiltersProvider'
+import { useSetTokenFilters, useTokenFilters } from './TokensFiltersProvider'
 
 export const TableFiltersSearchToken: FC = () => {
   const [isPending, startTransition] = useTransition()

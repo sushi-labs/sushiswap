@@ -25,6 +25,7 @@ import React, {
 import { useTokens } from 'src/lib/hooks'
 import { EvmChainKey } from 'sushi/chain'
 import type { SushiSwapChainId } from 'sushi/config'
+import { useTokenFilters } from './TokensFiltersProvider'
 import {
   FDV_COLUMN,
   PRICE_CHANGE_1D_COLUMN,
@@ -47,6 +48,8 @@ interface TokensTableProps {
 }
 
 export const TokensTable: FC<TokensTableProps> = ({ chainId, onRowClick }) => {
+  const { tokenSymbols } = useTokenFilters()
+
   const [sorting, setSorting] = useState<SortingState>([
     { id: 'marketCapUSD', desc: true },
   ])
@@ -60,7 +63,7 @@ export const TokensTable: FC<TokensTableProps> = ({ chainId, onRowClick }) => {
       sorting,
       pagination: {
         pageIndex: 0,
-        pageSize: tokens?.count ?? 50,
+        pageSize: tokens?.count ?? 0,
       },
     }
   }, [tokens?.count, sorting])
@@ -81,7 +84,28 @@ export const TokensTable: FC<TokensTableProps> = ({ chainId, onRowClick }) => {
     [onRowClick],
   )
 
-  const data = useMemo(() => tokens?.data ?? [], [tokens])
+  const data = useMemo(() => {
+    if (!tokens) return []
+
+    if (!tokenSymbols.length) return tokens.data
+
+    const tokenSymbolsSet = new Set([
+      ...tokenSymbols.map((symbol) => symbol.toLowerCase()),
+    ])
+
+    return tokens.data.filter(({ token }) => {
+      if (!token) return false
+      const tokenSymbol = token.symbol?.toLowerCase() ?? ''
+      const tokenName = token.name?.toLowerCase() ?? ''
+
+      for (const prefix of tokenSymbolsSet) {
+        if (tokenSymbol.startsWith(prefix) || tokenName.startsWith(prefix)) {
+          return true
+        }
+      }
+      return false
+    })
+  }, [tokens, tokenSymbols])
 
   return (
     <Card>

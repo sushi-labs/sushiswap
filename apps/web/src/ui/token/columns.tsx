@@ -1,8 +1,13 @@
 import type { Token } from '@sushiswap/graph-client/data-api'
-import { SkeletonCircle, SkeletonText, classNames } from '@sushiswap/ui'
+import {
+  SkeletonBox,
+  SkeletonCircle,
+  SkeletonText,
+  classNames,
+} from '@sushiswap/ui'
 import type { ColumnDef } from '@tanstack/react-table'
 import { useMemo } from 'react'
-import { formatNumber, formatPercent } from 'sushi/format'
+import { formatPercent, formatUSD } from 'sushi/format'
 import { SparklineCell } from './SparklineCell'
 import { TokenNameCell } from './TokenNameCell'
 
@@ -14,11 +19,9 @@ export const TOKENS_NAME_COLUMN: ColumnDef<Token, unknown> = {
     skeleton: (
       <div className="flex items-center w-full gap-2">
         <div className="flex items-center">
-          <SkeletonCircle radius={40} />
+          <SkeletonCircle radius={26} />
         </div>
-        <div className="flex flex-col w-full">
-          <SkeletonText fontSize="lg" />
-        </div>
+        <SkeletonText />
       </div>
     ),
   },
@@ -27,29 +30,19 @@ export const TOKENS_NAME_COLUMN: ColumnDef<Token, unknown> = {
 export const PRICE_COLUMN: ColumnDef<Token, unknown> = {
   id: 'price',
   header: 'Price',
-  accessorFn: (row) => row.price ?? 0,
-  cell: (props) => `$${formatNumber(props.row.original.price || 0)}`,
+  accessorFn: (row) => row.price,
+  cell: (props) => (
+    <span className="font-medium">{`${formatUSD(props.row.original.price)}`}</span>
+  ),
   meta: {
-    skeleton: <SkeletonText fontSize="lg" />,
-  },
-}
-
-export const FDV_COLUMN: ColumnDef<Token, unknown> = {
-  id: 'marketCapUSD',
-  header: 'FDV',
-  accessorFn: (row) => row.marketCapUSD ?? 0,
-  cell: (props) => `$${formatNumber(props.row.original.marketCapUSD || 0)}`,
-  meta: {
-    headerDescription:
-      'Fully diluted valuation (FDV) calculates the total market value assuming all tokens are in circulation.',
-    skeleton: <SkeletonText fontSize="lg" />,
+    skeleton: <SkeletonText />,
   },
 }
 
 export const PRICE_CHANGE_1D_COLUMN: ColumnDef<Token, unknown> = {
   id: 'priceChangePercentage1d',
-  header: 'Price (1d)',
-  accessorFn: (row) => row.priceChangePercentage1d ?? 0,
+  header: '1 day',
+  accessorFn: (row) => row.priceChangePercentage1d,
   cell: (props) => {
     const priceChangePercentage1d =
       props.row.original.priceChangePercentage1d ?? 0
@@ -73,9 +66,22 @@ export const PRICE_CHANGE_1D_COLUMN: ColumnDef<Token, unknown> = {
   },
 }
 
+export const FDV_COLUMN: ColumnDef<Token, unknown> = {
+  id: 'marketCapUSD',
+  header: 'FDV',
+  accessorFn: (row) => row.marketCapUSD,
+  cell: (props) => (
+    <span className="font-medium">{`${formatUSD(props.row.original.marketCapUSD)}`}</span>
+  ),
+  meta: {
+    headerDescription:
+      'Fully diluted valuation (FDV) calculates the total market value assuming all tokens are in circulation.',
+    skeleton: <SkeletonText />,
+  },
+}
+
 export const SPARKLINE_COLUMN: ColumnDef<Token, unknown> = {
   id: 'sparkline',
-  header: '',
   cell: (props) => (
     <SparklineCell
       data={useMemo(
@@ -87,6 +93,6 @@ export const SPARKLINE_COLUMN: ColumnDef<Token, unknown> = {
     />
   ),
   meta: {
-    skeleton: <SkeletonText fontSize="lg" />,
+    skeleton: <SkeletonBox className="w-full h-10" />,
   },
 }

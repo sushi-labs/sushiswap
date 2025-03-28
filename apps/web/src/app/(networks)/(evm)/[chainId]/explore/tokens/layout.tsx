@@ -3,7 +3,7 @@ import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import type React from 'react'
 import { GlobalStatsCharts } from 'src/ui/explore/global-stats-charts'
-import { TokenFiltersProvider } from 'src/ui/token/TokenFiltersProvider'
+import { TokensFiltersProvider } from 'src/ui/token/TokensFiltersProvider'
 import type { EvmChainId } from 'sushi/chain'
 import { SUSHISWAP_SUPPORTED_CHAIN_IDS, isSushiSwapChainId } from 'sushi/config'
 import { SidebarContainer } from '~evm/_common/ui/sidebar'
@@ -44,7 +44,7 @@ export default async function ExploreLayout(props: {
         </Container>
         <section className="flex flex-col flex-1">
           <div className="bg-gray-50 dark:bg-white/[0.02] border-t border-accent pt-4 pb-10 min-h-screen">
-            <TokenFiltersProvider>{children}</TokenFiltersProvider>
+            <TokensFiltersProvider>{children}</TokensFiltersProvider>
           </div>
         </section>
       </main>
