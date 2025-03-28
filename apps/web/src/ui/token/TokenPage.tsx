@@ -91,7 +91,7 @@ export const TokenPage: FC<TokenPageProps> = ({ token: _token, tokenInfo }) => {
               </div>
 
               <div className="max-w-[420px]">
-                <SwapWidget token1={token} />
+                <SwapWidget token={token} />
               </div>
             </div>
 
