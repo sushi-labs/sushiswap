@@ -1,16 +1,15 @@
 import {
-  type PoolChainId,
   getAnalyticsDayBuckets,
+  isPoolChainId,
 } from '@sushiswap/graph-client/data-api'
 import { unstable_cache } from 'next/cache'
 import { type FC, Suspense } from 'react'
+import type { EvmChainId } from 'sushi/chain'
 import { GlobalStatsLoading } from './global-stats-loading'
 import { TVLChart } from './tvl-chart'
 import { VolumeChart } from './volume-chart'
 
-export const GlobalStatsCharts: FC<{ chainId: PoolChainId }> = ({
-  chainId,
-}) => {
+export const GlobalStatsCharts: FC<{ chainId: EvmChainId }> = ({ chainId }) => {
   return (
     <Suspense fallback={<GlobalStatsLoading chainId={chainId} />}>
       <_GlobalStatsCharts chainId={chainId} />
@@ -18,14 +17,17 @@ export const GlobalStatsCharts: FC<{ chainId: PoolChainId }> = ({
   )
 }
 
-const _GlobalStatsCharts: FC<{ chainId: PoolChainId }> = async ({
-  chainId,
-}) => {
+const _GlobalStatsCharts: FC<{ chainId: EvmChainId }> = async ({ chainId }) => {
   const dayBuckets = await unstable_cache(
     async () =>
-      getAnalyticsDayBuckets({
-        chainId,
-      }),
+      isPoolChainId(chainId)
+        ? getAnalyticsDayBuckets({
+            chainId,
+          })
+        : {
+            v2: [],
+            v3: [],
+          },
     ['dayBuckets', `${chainId}`],
     {
       revalidate: 60 * 15,

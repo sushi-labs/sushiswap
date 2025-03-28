@@ -11,50 +11,34 @@ import {
   useMemo,
   useState,
 } from 'react'
-import type { SushiSwapProtocol } from 'sushi'
-import { z } from 'zod'
-
 import { parseArgs } from 'src/lib/functions'
+import { z } from 'zod'
 import { useTypedSearchParams } from '../../lib/hooks'
-import { POOL_TYPES } from './TableFiltersPoolType'
 
-export const poolFiltersSchema = z.object({
+export const tokenFiltersSchema = z.object({
   tokenSymbols: z.coerce.string().transform((symbols) => {
     return symbols.split(',').filter((symbol) => symbol !== '')
   }),
-  protocols: z
-    .string()
-    .transform((protocols) =>
-      protocols !== null && protocols !== ','
-        ? (protocols.split(',') as SushiSwapProtocol[])
-        : [],
-    ),
-  farmsOnly: z
-    .string()
-    .transform((bool) => (bool ? bool === 'true' : undefined)),
-  smartPoolsOnly: z
-    .string()
-    .transform((bool) => (bool ? bool === 'true' : undefined)),
 })
 
-export type PoolFilters = z.infer<typeof poolFiltersSchema>
+export type TokenFilters = z.infer<typeof tokenFiltersSchema>
 
-type PoolsFiltersContextType = {
-  state: PoolFilters
+type TokensFiltersContextType = {
+  state: TokenFilters
   mutate: {
-    setFilters: Dispatch<SetStateAction<PoolFilters>>
+    setFilters: Dispatch<SetStateAction<TokenFilters>>
   }
 }
 
-const FilterContext = createContext<PoolsFiltersContextType | undefined>(
+const FilterContext = createContext<TokensFiltersContextType | undefined>(
   undefined,
 )
 
-interface PoolsFiltersProviderProps {
+interface TokensFiltersProviderProps {
   children?: ReactNode
 }
 
-export const usePoolFilters = () => {
+export const useTokenFilters = () => {
   const context = useContext(FilterContext)
   if (!context) {
     throw new Error('Hook can only be used inside Filter Context')
@@ -63,7 +47,7 @@ export const usePoolFilters = () => {
   return context.state
 }
 
-export const useSetPoolFilters = () => {
+export const useSetTokenFilters = () => {
   const context = useContext(FilterContext)
   if (!context) {
     throw new Error('Hook can only be used inside Filter Context')
@@ -71,23 +55,20 @@ export const useSetPoolFilters = () => {
   return context.mutate.setFilters
 }
 
-export const PoolsFiltersUrlProvider: FC<PoolsFiltersProviderProps> = ({
+export const TokensFiltersUrlProvider: FC<TokensFiltersProviderProps> = ({
   children,
 }) => {
   const { push } = useRouter()
-  const urlFilters = useTypedSearchParams(poolFiltersSchema.partial())
+  const urlFilters = useTypedSearchParams(tokenFiltersSchema.partial())
   const state = useMemo(() => {
-    const state: PoolFilters = {
+    const state: TokenFilters = {
       tokenSymbols: urlFilters.tokenSymbols || [],
-      protocols: urlFilters.protocols || POOL_TYPES,
-      farmsOnly: urlFilters.farmsOnly,
-      smartPoolsOnly: urlFilters.smartPoolsOnly,
     }
     return state
   }, [urlFilters])
 
   const mutate = useMemo(() => {
-    const setFilters: Dispatch<SetStateAction<PoolFilters>> = (filters) => {
+    const setFilters: Dispatch<SetStateAction<TokenFilters>> = (filters) => {
       if (typeof filters === 'function') {
         void push(parseArgs(filters(state)))
       } else {
@@ -109,14 +90,11 @@ export const PoolsFiltersUrlProvider: FC<PoolsFiltersProviderProps> = ({
   )
 }
 
-export const PoolsFiltersStateProvider: FC<PoolsFiltersProviderProps> = ({
+export const TokensFiltersStateProvider: FC<TokensFiltersProviderProps> = ({
   children,
 }) => {
-  const [filters, setFilters] = useState<PoolFilters>({
+  const [filters, setFilters] = useState<TokenFilters>({
     tokenSymbols: [],
-    protocols: POOL_TYPES,
-    farmsOnly: false,
-    smartPoolsOnly: false,
   })
 
   return (
@@ -132,4 +110,4 @@ export const PoolsFiltersStateProvider: FC<PoolsFiltersProviderProps> = ({
 }
 
 // For backward compatibility
-export const PoolsFiltersProvider = PoolsFiltersUrlProvider
+export const TokensFiltersProvider = TokensFiltersUrlProvider

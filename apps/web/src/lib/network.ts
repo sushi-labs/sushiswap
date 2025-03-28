@@ -18,6 +18,9 @@ export const replaceNetworkSlug = (
   if (pathname.includes('/pool/')) {
     return `/${getNetworkKey(network)}/explore/pools`
   }
+  if (pathname.includes('/token/')) {
+    return `/${getNetworkKey(network)}/explore/tokens`
+  }
   const pathSegments = pathname.split('/')
   pathSegments[1] = getNetworkKey(network)
   return pathSegments.join('/')
