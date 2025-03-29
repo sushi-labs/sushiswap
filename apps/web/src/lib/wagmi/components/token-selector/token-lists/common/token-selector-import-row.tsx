@@ -27,6 +27,7 @@ import { Currency } from '@sushiswap/ui'
 import { List } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import { type FC, useCallback, useMemo, useState } from 'react'
+import { UnknownTokenIcon } from 'src/app/(cms)/components/icons'
 import {
   type TokenSecurity,
   isTokenSecurityIssue,
@@ -172,12 +173,7 @@ export const TokenSelectorImportRow: FC<TokenSelectorImportRow> = ({
                   }
                 >
                   <div className="w-10 h-10">
-                    <Currency.Icon
-                      disableLink
-                      currency={currency}
-                      width={40}
-                      height={40}
-                    />
+                    <UnknownTokenIcon width={40} height={40} />
                   </div>
                 </Badge>
                 <div className="flex flex-col">
@@ -252,7 +248,12 @@ export const TokenSelectorImportRow: FC<TokenSelectorImportRow> = ({
                   {isFoT || isRisky ? 'Import Anyways' : 'Confirm Import'}
                 </Button>
               </TraceEvent>
-              <Button fullWidth size="xl" onClick={() => setOpen(false)}>
+              <Button
+                fullWidth
+                size="xl"
+                onClick={() => setOpen(false)}
+                variant="secondary"
+              >
                 Cancel
               </Button>
             </div>
