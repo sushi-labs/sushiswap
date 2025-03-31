@@ -25,9 +25,14 @@ import {
 import AutoSizer from 'react-virtualized-auto-sizer'
 import { FixedSizeList } from 'react-window'
 import {
+  BABENA,
+  BTC,
   COMMON_TOKENS,
   DEFAULT_TOKEN_LIST,
   KADENA,
+  USDC,
+  USDT,
+  WIZA,
 } from '~kadena/_common/constants/token-list'
 
 import { formatUnitsForInput } from '~kadena/_common/lib/utils/formatters'
@@ -70,7 +75,7 @@ export const TokenSelector = ({
     }
   }, [query])
 
-  const sortedTokenList = [KADENA, KADENA]
+  const sortedTokenList: IToken[] = [KADENA, BABENA, WIZA, USDT, USDC, BTC]
 
   const _onSelect = useCallback(
     (token: IToken) => {
