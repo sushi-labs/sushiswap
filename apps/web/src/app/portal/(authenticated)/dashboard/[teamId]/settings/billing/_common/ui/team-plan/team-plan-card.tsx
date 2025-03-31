@@ -68,9 +68,9 @@ export async function TeamPlanCard({ teamId }: { teamId: string }) {
             >
               <span>
                 <FormattedNumber
-                  number={
-                    teamPlanResponse.data.team.plan.swapRateLimit.perMonth
-                  }
+                  number={String(
+                    teamPlanResponse.data.team.plan.swapRateLimit.perMonth,
+                  )}
                 />
               </span>
             </List.KeyValue>

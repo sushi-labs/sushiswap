@@ -46,8 +46,8 @@ const skeletonTextVariants = cva('flex w-full', {
       default: 'h-6 py-[3px]',
       lg: 'h-[28px] py-[3px]',
       xl: 'h-[28px]',
-      '2xl': 'h-[44px] py-[6px]',
-      '3xl': 'h-[36px] py-[3px]',
+      '2xl': 'h-[36px] py-[3px]',
+      '3xl': 'h-[44px] py-[6px]',
     },
     align: {
       left: '',

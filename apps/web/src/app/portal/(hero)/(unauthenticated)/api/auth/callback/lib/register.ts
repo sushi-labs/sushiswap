@@ -6,12 +6,12 @@ export async function register(idpIntent: IdpIntent) {
   const result = await userServiceClient.addHumanUser({
     profile: {
       $typeName: 'zitadel.user.v2.SetHumanProfile',
-      givenName: idpIntent.idpInformation.rawInformation.givenName,
-      familyName: idpIntent.idpInformation.rawInformation.familyName,
+      givenName: idpIntent.userData.givenName,
+      familyName: idpIntent.userData.familyName,
     },
     email: {
       $typeName: 'zitadel.user.v2.SetHumanEmail',
-      email: idpIntent.idpInformation.rawInformation.email,
+      email: idpIntent.userData.email,
       verification: {
         case: 'isVerified',
         value: true,
@@ -22,7 +22,7 @@ export async function register(idpIntent: IdpIntent) {
         $typeName: 'zitadel.user.v2.IDPLink',
         idpId: idpIntent.idpInformation.idpId,
         userId: idpIntent.idpInformation.userId,
-        userName: idpIntent.idpInformation.rawInformation.email,
+        userName: idpIntent.userData.email,
       },
     ],
     passwordType: {

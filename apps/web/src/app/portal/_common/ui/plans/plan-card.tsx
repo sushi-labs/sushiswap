@@ -51,13 +51,13 @@ export function PlanCard({ plan, children, className }: PlanCard) {
                 title="Request per second"
                 className="whitespace-nowrap"
               >
-                <FormattedNumber number={plan.swapRequests.perSecond} />
+                <FormattedNumber number={String(plan.swapRequests.perSecond)} />
               </List.KeyValue>
               <List.KeyValue
                 title="Request per month"
                 className="whitespace-nowrap"
               >
-                <FormattedNumber number={plan.swapRequests.perMonth} />
+                <FormattedNumber number={String(plan.swapRequests.perMonth)} />
               </List.KeyValue>
             </List.Control>
           </List>

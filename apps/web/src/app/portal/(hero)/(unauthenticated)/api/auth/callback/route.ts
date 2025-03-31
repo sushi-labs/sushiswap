@@ -40,7 +40,7 @@ async function GET(req: NextRequest) {
       const idpIntent = await getIdpIntent(data.id, data.token)
       const { userId } = await register(idpIntent)
       data.user = userId
-      email = idpIntent.idpInformation.rawInformation.email
+      email = idpIntent.userData.email
     } catch (e) {
       console.error(e)
       if (e instanceof Error && 'code' in e) {

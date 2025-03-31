@@ -276,8 +276,8 @@ importers:
         specifier: workspace:*
         version: link:../../packages/steer-sdk
       '@sushiswap/styro-client':
-        specifier: 0.0.26
-        version: 0.0.26(typescript@5.7.2)
+        specifier: 0.0.29
+        version: 0.0.29(typescript@5.7.2)
       '@sushiswap/tailwindcss-config':
         specifier: workspace:*
         version: link:../../config/tailwindcss
@@ -5042,8 +5042,8 @@ packages:
     peerDependencies:
       storybook: ^8.2.0 || ^8.3.0-0 || ^8.4.0-0 || ^8.5.0-0 || ^8.6.0-0
 
-  '@sushiswap/styro-client@0.0.26':
-    resolution: {integrity: sha512-ZMkoFRvjfxPA5uUdYwNi1FIrN/3POxl052waw5+wf4R8+nuWWzfErEYWMIvzIKbvUYy/LvwMB3s4I37nUXc/LA==}
+  '@sushiswap/styro-client@0.0.29':
+    resolution: {integrity: sha512-pIcx81DLRL4Y49tL31ciqRvckVbBvJ7t/TDhRPgZdoNSlGvw/xuIKSb+C/tVxGqyWD2YeFWJHjT9smy3OYfC0Q==}
     peerDependencies:
       typescript: 5.7.2
 
@@ -18939,7 +18939,7 @@ snapshots:
     dependencies:
       storybook: 8.4.7(bufferutil@4.0.8)(prettier@3.4.2)(utf-8-validate@6.0.3)
 
-  '@sushiswap/styro-client@0.0.26(typescript@5.7.2)':
+  '@sushiswap/styro-client@0.0.29(typescript@5.7.2)':
     dependencies:
       typescript: 5.7.2
 

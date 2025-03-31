@@ -14,32 +14,9 @@ const githubSchema = z.object({
   name: z.string(),
 })
 
-const schema = z
-  .object({
-    details: z.object({
-      sequence: z.string(),
-      changeDate: z.string(),
-      resourceOwner: z.string(),
-    }),
-    idpInformation: z.object({
-      oauth: z
-        .object({
-          accessToken: z.string(),
-          idToken: z.string().optional(),
-        })
-        .nullable(),
-      ldap: z.object({}).optional(),
-      saml: z.object({}).optional(),
-      idpId: z.string(),
-      userId: z.string(),
-      userName: z.string(),
-      rawInformation: googleSchema.or(githubSchema.or(z.object({}))),
-    }),
-    userId: z.string().optional(),
-  })
-  .transform((data) => {
-    const rawInfo = data.idpInformation.rawInformation
-
+const rawInformationSchema = googleSchema
+  .or(githubSchema.or(z.object({})))
+  .transform((rawInfo) => {
     let userData:
       | {
           email: string
@@ -73,26 +50,10 @@ const schema = z
       throw new Error('Invalid raw information')
     }
 
-    return {
-      details: {
-        sequence: data.details.sequence,
-        changeDate: data.details.changeDate,
-        resourceOwner: data.details.resourceOwner,
-      },
-      idpInformation: {
-        oauth: data.idpInformation.oauth,
-        ldap: data.idpInformation.ldap,
-        saml: data.idpInformation.saml,
-        idpId: data.idpInformation.idpId,
-        userId: data.idpInformation.userId,
-        userName: data.idpInformation.userName,
-        rawInformation: userData,
-      },
-      userId: data.userId,
-    }
+    return userData
   })
 
-export type IdpIntent = z.infer<typeof schema>
+export type IdpIntent = Awaited<ReturnType<typeof getIdpIntent>>
 
 export async function getIdpIntent(id: string, token: string) {
   const userServiceClient = getUserServiceClient()
@@ -102,11 +63,19 @@ export async function getIdpIntent(id: string, token: string) {
     idpIntentToken: token,
   })
 
-  const result = schema.safeParse(response)
+  const userData = rawInformationSchema.safeParse(response)
 
-  if (!result.success) {
-    throw new Error(`Couldn't get intent`)
+  if (!userData.success) {
+    throw new Error(`Couldn't parse rawInformation`)
   }
 
-  return result.data
+  if (!response.idpInformation) {
+    throw new Error(`Missing idpInformation`)
+  }
+
+  return {
+    ...response,
+    idpInformation: response.idpInformation,
+    userData: userData.data,
+  }
 }

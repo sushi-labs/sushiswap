@@ -35,10 +35,10 @@ interface ApiKeyRateLimitForm {
   plan: StyroResults['getTeamsTeamIdPlan']['data']['team']['plan']
 }
 
-const apiKeyRateLimitSchema = (max: number) =>
+const apiKeyRateLimitSchema = (max: bigint) =>
   z.object({
-    perSecond: z.number().int().min(0).max(max).nullable().optional(),
-    perIpPerSecond: z.number().int().min(0).max(max).nullable().optional(),
+    perSecond: z.bigint().min(0n).max(max).nullable().optional(),
+    perIpPerSecond: z.bigint().min(0n).max(max).nullable().optional(),
   }) satisfies z.ZodType<
     Parameters<
       StyroClient['patchTeamsTeamIdApiKeysApiKeyId']
@@ -139,11 +139,13 @@ export function ApiKeyRateLimitForm({
                       <div className="flex flex-row items-center space-x-4 justify-between w-full py-2">
                         <div className="flex flex-col w-full space-y-2">
                           <Slider
-                            value={value ? [value] : [0]}
+                            value={value ? [Number(value)] : [0]}
                             min={0}
-                            max={plan.swapRateLimit.perSecond}
+                            max={Number(plan.swapRateLimit.perSecond)}
                             step={1}
-                            onValueChange={([value]) => onChange(value || null)}
+                            onValueChange={([value]) =>
+                              onChange(BigInt(value) || null)
+                            }
                             onBlur={onBlur}
                             disabled={isPending}
                           />
@@ -184,11 +186,13 @@ export function ApiKeyRateLimitForm({
                       <div className="flex flex-row items-center space-x-4 justify-between w-full py-2">
                         <div className="flex flex-col w-full space-y-2">
                           <Slider
-                            value={value ? [value] : [0]}
+                            value={value ? [Number(value)] : [0]}
                             min={0}
-                            max={plan.swapRateLimit.perSecond}
+                            max={Number(plan.swapRateLimit.perSecond)}
                             step={1}
-                            onValueChange={([value]) => onChange(value || null)}
+                            onValueChange={([value]) =>
+                              onChange(BigInt(value) || null)
+                            }
                             onBlur={onBlur}
                             disabled={isPending}
                           />
