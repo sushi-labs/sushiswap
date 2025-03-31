@@ -1,5 +1,5 @@
 import { BeakerIcon, ClockIcon, GlobeIcon } from '@heroicons/react-v1/solid'
-import { Card, CardContent, Container, Separator } from '@sushiswap/ui'
+import { Card, CardContent, Container } from '@sushiswap/ui'
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
@@ -8,8 +8,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         <Container maxWidth="md" className="space-y-14">
           <div className="text-center space-y-8">
             <span className="text-lg font-semibold">
-              Unleash the power of DeFi to swap anything with the Sushi Labs
-              Swap API
+              Sushi Swap API: Power your D'app to Swap Anything
             </span>
             <div className="w-full h-[280px] bg-secondary rounded-2xl" />
           </div>

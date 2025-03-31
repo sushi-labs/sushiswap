@@ -63,14 +63,16 @@ export async function getIdpIntent(id: string, token: string) {
     idpIntentToken: token,
   })
 
-  const userData = rawInformationSchema.safeParse(response)
+  if (!response.idpInformation) {
+    throw new Error(`Missing idpInformation`)
+  }
+
+  const userData = rawInformationSchema.safeParse(
+    response.idpInformation.rawInformation,
+  )
 
   if (!userData.success) {
     throw new Error(`Couldn't parse rawInformation`)
-  }
-
-  if (!response.idpInformation) {
-    throw new Error(`Missing idpInformation`)
   }
 
   return {
