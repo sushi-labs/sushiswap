@@ -21,7 +21,11 @@ import {
   RevokeApproveERC20,
   type RevokeApproveERC20Props,
 } from './RevokeApproveERC20'
-import { Slippage, type SlippageProps } from './Slippage'
+import {
+  SLIPPAGE_WARNING_THRESHOLD,
+  Slippage,
+  type SlippageProps,
+} from './Slippage'
 import { Success, type SuccessProps } from './Success'
 
 export type CheckerProps = {
@@ -55,3 +59,5 @@ export const Checker: CheckerProps = {
   PartialRoute,
   Slippage,
 }
+
+export { SLIPPAGE_WARNING_THRESHOLD }

@@ -1,10 +1,13 @@
 'use client'
 
-import { DialogTrigger } from '@sushiswap/ui'
+import { DialogTrigger, Message } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui'
 import type React from 'react'
 import { type FC, useEffect, useMemo, useState } from 'react'
+import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
+import { SLIPPAGE_WARNING_THRESHOLD } from 'src/lib/wagmi/systems/Checker/Slippage'
+import { PriceImpactWarning, SlippageWarning } from 'src/ui/common'
 import { RED_SNWAPPER_ADDRESS, isRedSnwapperChainId } from 'sushi/config'
 import { Native } from 'sushi/currency'
 import { ZERO } from 'sushi/math'
@@ -37,6 +40,8 @@ const _SimpleSwapTradeButton: FC<SimpleSwapTradeButtonProps> = ({
   error,
   isSuccess,
 }) => {
+  const [slippagePercent] = useSlippageTolerance()
+
   const { data: maintenance } = useIsSwapMaintenance()
   const { isSlippageError } = usePersistedSlippageError({ isSuccess, error })
   const { data: quote } = useSimpleSwapTradeQuote()
@@ -59,6 +64,10 @@ const _SimpleSwapTradeButton: FC<SimpleSwapTradeButtonProps> = ({
     return priceImpactSeverity > 3
   }, [quote?.priceImpact])
 
+  const showSlippageWarning = useMemo(() => {
+    return !slippagePercent.lessThan(SLIPPAGE_WARNING_THRESHOLD)
+  }, [slippagePercent])
+
   // Reset
   useEffect(() => {
     if (checked && !showPriceImpactWarning) {
@@ -73,11 +82,14 @@ const _SimpleSwapTradeButton: FC<SimpleSwapTradeButtonProps> = ({
           guardWhen={maintenance}
           guardText="Maintenance in progress"
         >
-          <Checker.Slippage text="Swap With High Slippage">
-            <Checker.PartialRoute trade={quote} setSwapAmount={setSwapAmount}>
-              <Checker.Connect>
-                <Checker.Network chainId={chainId}>
-                  <Checker.Amounts chainId={chainId} amount={swapAmount}>
+          <Checker.PartialRoute trade={quote} setSwapAmount={setSwapAmount}>
+            <Checker.Connect>
+              <Checker.Network chainId={chainId}>
+                <Checker.Amounts chainId={chainId} amount={swapAmount}>
+                  <Checker.Slippage
+                    text="Swap With High Slippage"
+                    slippageTolerance={slippagePercent}
+                  >
                     <Checker.ApproveERC20
                       id="approve-erc20"
                       amount={swapAmount}
@@ -99,7 +111,11 @@ const _SimpleSwapTradeButton: FC<SimpleSwapTradeButtonProps> = ({
                                 +swapAmountString === 0 ||
                                 (!checked && showPriceImpactWarning),
                             )}
-                            color={showPriceImpactWarning ? 'red' : 'blue'}
+                            color={
+                              showPriceImpactWarning || showSlippageWarning
+                                ? 'red'
+                                : 'blue'
+                            }
                             fullWidth
                             testId="swap"
                           >
@@ -116,30 +132,20 @@ const _SimpleSwapTradeButton: FC<SimpleSwapTradeButtonProps> = ({
                         </DialogTrigger>
                       </Checker.Success>
                     </Checker.ApproveERC20>
-                  </Checker.Amounts>
-                </Checker.Network>
-              </Checker.Connect>
-            </Checker.PartialRoute>
-          </Checker.Slippage>
+                  </Checker.Slippage>
+                </Checker.Amounts>
+              </Checker.Network>
+            </Checker.Connect>
+          </Checker.PartialRoute>
         </Checker.Guard>
       </div>
+      {showSlippageWarning && <SlippageWarning className="mt-4" />}
       {showPriceImpactWarning && (
-        <div className="flex items-start px-4 py-3 mt-4 rounded-xl bg-red/20">
-          <input
-            id="expert-checkbox"
-            type="checkbox"
-            checked={checked}
-            onChange={(e) => setChecked(e.target.checked)}
-            className="cursor-pointer mr-1 w-5 h-5 mt-0.5 text-red-600 !ring-red-600 bg-white border-red rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2"
-          />
-          <label
-            htmlFor="expert-checkbox"
-            className="ml-2 font-medium text-red-600"
-          >
-            Price impact is too high. You will lose a big portion of your funds
-            in this trade. Please tick the box if you would like to continue.
-          </label>
-        </div>
+        <PriceImpactWarning
+          className="mt-4"
+          checked={checked}
+          setChecked={setChecked}
+        />
       )}
     </>
   )

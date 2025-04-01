@@ -28,7 +28,6 @@ const PartialRoute: FC<PartialRouteProps> = ({
     <HoverCard openDelay={0} closeDelay={0}>
       <Button
         id="partial-route-checker"
-        disabled={true}
         fullWidth={fullWidth}
         size={size}
         {...props}

@@ -9,8 +9,9 @@ import { Button, DialogTrigger, classNames } from '@sushiswap/ui'
 import React, { type FC, useMemo } from 'react'
 
 import type { VaultV1 } from '@sushiswap/graph-client/data-api'
-import { useIsMounted } from '@sushiswap/hooks'
+import { SlippageToleranceStorageKey, useIsMounted } from '@sushiswap/hooks'
 import { APPROVE_TAG_STEER, Field } from 'src/lib/constants'
+import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
 import { Web3Input } from 'src/lib/wagmi/components/web3-input'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
 import { CheckerProvider } from 'src/lib/wagmi/systems/Checker/Provider'
@@ -27,6 +28,9 @@ interface SteerPositionAddProps {
 
 export const SteerPositionAdd: FC<SteerPositionAddProps> = ({ vault }) => {
   const isMounted = useIsMounted()
+  const [slippagePercent] = useSlippageTolerance(
+    SlippageToleranceStorageKey.AddSteerLiquidity,
+  )
 
   const {
     currencies,
@@ -109,44 +113,50 @@ export const SteerPositionAdd: FC<SteerPositionAddProps> = ({ vault }) => {
                   chainId={vault.chainId}
                   amounts={amounts}
                 >
-                  <Checker.ApproveERC20
+                  <Checker.Slippage
                     fullWidth
-                    id="approve-erc20-0"
-                    amount={parsedAmounts?.[Field.CURRENCY_A]}
-                    contract={
-                      STEER_PERIPHERY_ADDRESS[vault.chainId as SteerChainId]
-                    }
+                    slippageTolerance={slippagePercent}
+                    text="Continue With High Slippage"
                   >
                     <Checker.ApproveERC20
                       fullWidth
-                      id="approve-erc20-1"
-                      amount={parsedAmounts?.[Field.CURRENCY_B]}
+                      id="approve-erc20-0"
+                      amount={parsedAmounts?.[Field.CURRENCY_A]}
                       contract={
                         STEER_PERIPHERY_ADDRESS[vault.chainId as SteerChainId]
                       }
                     >
-                      <Checker.Success tag={APPROVE_TAG_STEER}>
-                        <SteerPositionAddReviewModal
-                          vault={vault}
-                          onSuccess={() => {
-                            onFieldAInput('')
-                            onFieldBInput('')
-                          }}
-                          // successLink={successLink}
-                        >
-                          <DialogTrigger asChild>
-                            <Button
-                              fullWidth
-                              size="xl"
-                              testId="add-steer-liquidity-preview"
-                            >
-                              Preview
-                            </Button>
-                          </DialogTrigger>
-                        </SteerPositionAddReviewModal>
-                      </Checker.Success>
+                      <Checker.ApproveERC20
+                        fullWidth
+                        id="approve-erc20-1"
+                        amount={parsedAmounts?.[Field.CURRENCY_B]}
+                        contract={
+                          STEER_PERIPHERY_ADDRESS[vault.chainId as SteerChainId]
+                        }
+                      >
+                        <Checker.Success tag={APPROVE_TAG_STEER}>
+                          <SteerPositionAddReviewModal
+                            vault={vault}
+                            onSuccess={() => {
+                              onFieldAInput('')
+                              onFieldBInput('')
+                            }}
+                            // successLink={successLink}
+                          >
+                            <DialogTrigger asChild>
+                              <Button
+                                fullWidth
+                                size="xl"
+                                testId="add-steer-liquidity-preview"
+                              >
+                                Preview
+                              </Button>
+                            </DialogTrigger>
+                          </SteerPositionAddReviewModal>
+                        </Checker.Success>
+                      </Checker.ApproveERC20>
                     </Checker.ApproveERC20>
-                  </Checker.ApproveERC20>
+                  </Checker.Slippage>
                 </Checker.Amounts>
               </Checker.Network>
             </Checker.Connect>

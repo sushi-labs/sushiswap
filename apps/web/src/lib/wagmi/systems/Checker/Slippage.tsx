@@ -1,35 +1,35 @@
 'use client'
 
-import type { SlippageToleranceStorageKey } from '@sushiswap/hooks'
 import { Button, type ButtonProps } from '@sushiswap/ui'
-import type { FC } from 'react'
-import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
+import { type FC, useState } from 'react'
 import { Percent } from 'sushi/math'
 
-const MAX_SLIPPAGE = new Percent(1, 5) // 20%
+const SLIPPAGE_WARNING_THRESHOLD = new Percent(1, 5) // 20%
 
 type SlippageProps = ButtonProps & {
   text: string
-  storageKey?: SlippageToleranceStorageKey
+  slippageTolerance: Percent
 }
 
 const Slippage: FC<SlippageProps> = ({
   text,
-  storageKey,
+  slippageTolerance,
   children,
   fullWidth = true,
   size = 'xl',
   ...props
 }) => {
-  const [slippageTolerance] = useSlippageTolerance(storageKey)
+  const [open, setOpen] = useState(
+    () => !slippageTolerance.lessThan(SLIPPAGE_WARNING_THRESHOLD),
+  )
 
-  return !slippageTolerance.lessThan(MAX_SLIPPAGE) ? (
+  return open ? (
     <Button
       id="slippage-checker"
-      disabled={true}
       fullWidth={fullWidth}
       size={size}
       variant="destructive"
+      onClick={() => setOpen(false)}
       {...props}
     >
       {text}
@@ -39,4 +39,4 @@ const Slippage: FC<SlippageProps> = ({
   )
 }
 
-export { Slippage, type SlippageProps }
+export { Slippage, type SlippageProps, SLIPPAGE_WARNING_THRESHOLD }
