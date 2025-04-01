@@ -76,21 +76,21 @@ export const SwapWidgetTradeButton = () => {
   }, [quote?.priceImpact])
 
   const url = useMemo(() => {
-    const url = new URL(`/${EvmChainKey[chainId]}/swap`, window.location.origin)
-    token0 &&
-      url.searchParams.set(
-        'token0',
-        token0.isNative ? 'NATIVE' : token0.address,
-      )
-    token1 &&
-      url.searchParams.set(
-        'token1',
-        token1.isNative ? 'NATIVE' : token1.address,
-      )
-    swapAmountString && url.searchParams.set('swapAmount', swapAmountString)
+    const base = `/${EvmChainKey[chainId]}/swap`
+    const params = new URLSearchParams()
 
-    return url
-  }, [chainId, swapAmountString, token0, token1])
+    if (token0) {
+      params.set('token0', token0.isNative ? 'NATIVE' : token0.address)
+    }
+    if (token1) {
+      params.set('token1', token1.isNative ? 'NATIVE' : token1.address)
+    }
+    if (swapAmountString) {
+      params.set('swapAmount', swapAmountString)
+    }
+
+    return `${base}?${params.toString()}`
+  }, [chainId, token0, token1, swapAmountString])
 
   return (
     <Checker.Guard guardWhen={maintenance} guardText="Maintenance in progress">
