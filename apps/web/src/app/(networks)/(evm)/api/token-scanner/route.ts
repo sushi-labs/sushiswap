@@ -23,7 +23,13 @@ export const revalidate = 900000
 export async function GET(request: NextRequest) {
   const params = Object.fromEntries(request.nextUrl.searchParams.entries())
 
-  const { chainId, address } = schema.parse(params)
+  const result = schema.safeParse(params)
+
+  if (!result.success) {
+    return Response.json({ error: result.error.flatten() }, { status: 400 })
+  }
+
+  const { chainId, address } = result.data
 
   const response = await scanToken({ chainId, address })
 
