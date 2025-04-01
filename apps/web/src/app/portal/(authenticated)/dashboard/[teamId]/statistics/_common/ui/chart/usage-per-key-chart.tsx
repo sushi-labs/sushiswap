@@ -3,7 +3,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { useMemo, useState } from 'react'
 import { useStyroClient } from 'src/app/portal/_common/ui/auth-provider/auth-provider'
-import { BaseChart, type Timeframe } from './base-chart'
+import { BaseChart, type BaseChartBase, type Timeframe } from './base-chart'
 
 const timeframes = ['24h', '7d', '30d'] as const
 
@@ -12,7 +12,7 @@ export function UsagePerKeyChart({ teamId }: { teamId: string }) {
 
   const client = useStyroClient(true)
 
-  const { data } = useQuery({
+  const { data, isLoading, isError } = useQuery({
     queryKey: ['portal-getTeamsTeamIdStatisticsUsagePerKey', teamId, timeframe],
     queryFn: async () => {
       const response = await client.getTeamsTeamIdStatisticsUsagePerKey({
@@ -33,18 +33,33 @@ export function UsagePerKeyChart({ teamId }: { teamId: string }) {
     [data],
   )
 
-  if (!data) return null
+  const baseProps = useMemo<BaseChartBase<typeof timeframes>>(
+    () => ({
+      title: 'Usage per key',
+      timeframes,
+      selectedTimeframe: timeframe,
+      setTimeframe: (value) => {
+        setTimeframe(value)
+      },
+    }),
+    [timeframe],
+  )
+
+  if (isLoading) {
+    return <BaseChart {...baseProps} loading />
+  }
+
+  if (isError || !data) {
+    return <BaseChart {...baseProps} error />
+  }
 
   return (
     <BaseChart
-      title="Usage per key"
+      {...baseProps}
       meta={{
-        start: data?.team.usagePerKey.meta.start,
-        end: data?.team.usagePerKey.meta.end,
+        start: data.team.usagePerKey.meta.start,
+        end: data.team.usagePerKey.meta.end,
       }}
-      timeframes={timeframes}
-      selectedTimeframe={timeframe}
-      setTimeframe={setTimeframe}
       data={formatted}
     />
   )

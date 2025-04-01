@@ -3,9 +3,12 @@
 import type { AnalyticsDayBuckets } from '@sushiswap/graph-client/data-api'
 import { useIsMounted } from '@sushiswap/hooks'
 import format from 'date-fns/format'
-import ReactEcharts from 'echarts-for-react'
-import type { EChartsOption } from 'echarts-for-react/lib/types'
-import echarts from 'echarts/lib/echarts'
+import type { EChartOption } from 'echarts'
+import ReactEchartsCore from 'echarts-for-react/lib/core'
+import { LineChart } from 'echarts/charts'
+import { GridComponent, TooltipComponent } from 'echarts/components'
+import * as echarts from 'echarts/core'
+import { CanvasRenderer } from 'echarts/renderers'
 import { useTheme } from 'next-themes'
 import { type FC, useCallback, useMemo } from 'react'
 import { type ChainId, EvmChain } from 'sushi/chain'
@@ -15,6 +18,8 @@ interface TVLChart {
   data: AnalyticsDayBuckets
   chainId: ChainId
 }
+
+echarts.use([CanvasRenderer, LineChart, TooltipComponent, GridComponent])
 
 export const TVLChart: FC<TVLChart> = ({ data, chainId }) => {
   const isMounted = useIsMounted()
@@ -50,7 +55,9 @@ export const TVLChart: FC<TVLChart> = ({ data, chainId }) => {
     }
   }, [v2, v3])
 
-  const onMouseOver = useCallback((params: { data: number[] }[]) => {
+  const onMouseOver = useCallback((params: { data?: number[] }[]) => {
+    if (!params[0].data || !params[1].data) return ''
+
     const tvlNode = document.getElementById('hoveredTVL')
     const v2TVLNode = document.getElementById('hoveredV2TVL')
     const v3TVLNode = document.getElementById('hoveredV3TVL')
@@ -71,6 +78,8 @@ export const TVLChart: FC<TVLChart> = ({ data, chainId }) => {
       v3TVLNode.innerHTML = params[1].data[1]
         ? formatUSD(params[1].data[1])
         : ''
+
+    return ''
   }, [])
 
   const onMouseLeave = useCallback(() => {
@@ -86,17 +95,24 @@ export const TVLChart: FC<TVLChart> = ({ data, chainId }) => {
     if (v3TVLNode) v3TVLNode.innerHTML = ''
   }, [combinedTVL, currentDate])
 
-  const DEFAULT_OPTION: EChartsOption = useMemo(
+  const DEFAULT_OPTION = useMemo<EChartOption>(
     () => ({
       tooltip: {
         trigger: 'axis',
-        formatter: onMouseOver,
+        axisPointer: {
+          lineStyle: {
+            type: 'solid',
+          },
+        },
+        formatter: (params) =>
+          onMouseOver(Array.isArray(params) ? params : [params]),
       },
       color: ['#3B7EF6', '#A755DD'],
       grid: {
         top: 0,
         left: 0,
         right: 0,
+        bottom: 30,
       },
       xAxis: [
         {
@@ -110,6 +126,7 @@ export const TVLChart: FC<TVLChart> = ({ data, chainId }) => {
           axisTick: {
             show: false,
           },
+          splitNumber: 3,
           axisLabel: {
             hideOverlap: true,
             showMinLabel: true,
@@ -222,7 +239,7 @@ export const TVLChart: FC<TVLChart> = ({ data, chainId }) => {
           </div>
         </div>
       </div>
-      <ReactEcharts
+      <ReactEchartsCore
         option={DEFAULT_OPTION}
         echarts={echarts}
         style={{ height: 400 }}

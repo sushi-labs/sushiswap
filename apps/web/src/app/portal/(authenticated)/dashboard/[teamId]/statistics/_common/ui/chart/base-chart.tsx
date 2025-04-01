@@ -1,5 +1,6 @@
 'use client'
 
+import { useIsMounted } from '@sushiswap/hooks'
 import {
   Card,
   CardContent,
@@ -11,11 +12,21 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
+  SkeletonChart,
 } from '@sushiswap/ui'
-import ReactEcharts from 'echarts-for-react'
-import echarts, { type EChartOption } from 'echarts/lib/echarts'
-import ms from 'ms'
-import { useMemo, useState } from 'react'
+import format from 'date-fns/format'
+import type { EChartOption } from 'echarts'
+import ReactEchartsCore from 'echarts-for-react/lib/core'
+import { BarChart, LineChart } from 'echarts/charts'
+import {
+  GraphicComponent,
+  GridComponent,
+  TitleComponent,
+  TooltipComponent,
+} from 'echarts/components'
+import * as echarts from 'echarts/core'
+import { CanvasRenderer } from 'echarts/renderers'
+import { useMemo } from 'react'
 import { formatNumber } from 'sushi/format'
 
 const possibleTimeframes = ['24h', '7d', '30d'] as const
@@ -26,23 +37,49 @@ const timeframeStrings: Record<(typeof possibleTimeframes)[number], string> = {
   '30d': 'Last 30 Days',
 }
 
-const interval: Record<Timeframe, number> = {
-  '24h': ms('6h'),
-  '7d': ms('1d'),
-  '30d': ms('6d'),
+const getAxisValues = (count: number, start?: Date, end?: Date) => {
+  if (start === undefined || end === undefined) return []
+
+  const values: number[] = []
+  const step = (end.getTime() - start.getTime()) / (count - 1)
+
+  for (let i = 0; i < count; i++) {
+    values.push(start.getTime() + step * i)
+  }
+
+  return values
 }
 
-interface BaseChart<EnabledTimeframes extends Timeframe[]> {
+export type BaseChartBase<
+  EnabledTimeframes extends Timeframe[] | Readonly<Timeframe[]>,
+> = {
   title: string
+  timeframes: EnabledTimeframes | Readonly<EnabledTimeframes>
+  selectedTimeframe: EnabledTimeframes[number]
+  setTimeframe: (value: EnabledTimeframes[number]) => void
+  error?: boolean
+  loading?: boolean
+}
+
+type BaseChartData = {
   meta: {
     start: Date
     end: Date
   }
-  timeframes: EnabledTimeframes | Readonly<EnabledTimeframes>
-  selectedTimeframe: EnabledTimeframes[number]
-  setTimeframe: (value: EnabledTimeframes[number]) => void
   data: { name: string; data: { date: Date; value: number }[] }[]
 }
+
+type BaseChartLoading = {
+  loading: true
+}
+
+type BaseChartError = {
+  error: true
+}
+
+type BaseChart<EnabledTimeframes extends Timeframe[]> =
+  BaseChartBase<EnabledTimeframes> &
+    (BaseChartData | BaseChartLoading | BaseChartError)
 
 const colors = [
   '#c12e34',
@@ -55,23 +92,39 @@ const colors = [
   '#32a487',
 ]
 
+echarts.use([
+  CanvasRenderer,
+  LineChart,
+  GridComponent,
+  TooltipComponent,
+  BarChart,
+  TitleComponent,
+  GraphicComponent,
+])
+
 export function BaseChart<EnabledTimeframes extends Timeframe[]>({
   title,
-  meta,
   selectedTimeframe,
   setTimeframe,
   timeframes,
-  data: _data,
+  loading = false,
+  error = false,
+  ...rest
 }: BaseChart<EnabledTimeframes>) {
+  const _data = 'data' in rest ? rest.data : null
+  const meta = 'meta' in rest ? rest.meta : null
+
   const data = useMemo(() => {
-    return _data.map((item) => {
-      return {
-        name: item.name,
-        data: item.data.map(
-          (data) => [data.date.getTime(), data.value] as [number, number],
-        ),
-      }
-    })
+    return (
+      _data?.map((item) => {
+        return {
+          name: item.name,
+          data: item.data.map(
+            (data) => [data.date.getTime(), data.value] as [number, number],
+          ),
+        }
+      }) || []
+    )
   }, [_data])
 
   const type = selectedTimeframe.includes('d') ? 'day' : 'hour'
@@ -94,6 +147,39 @@ export function BaseChart<EnabledTimeframes extends Timeframe[]>({
       tooltip: {
         trigger: 'axis',
         show: hasData,
+        padding: 0,
+        formatter: (_params) => {
+          const params = (Array.isArray(_params) ? _params : [_params]).sort(
+            (a, b) => b.data[1] - a.data[1],
+          )
+
+          const date = new Date(Number(params[0].data[0]))
+          return `<div class="flex flex-col gap-0.5 paper bg-white/50 dark:bg-slate-800 px-4 py-3 rounded-xl overflow-hidden shadow-lg">
+            ${params
+              .map(
+                (serie, i) =>
+                  `<div key="${i}" class="flex flex-row justify-between items-center w-full space-x-8 text-sm text-primary">
+                    <div class="flex flex-row items-center space-x-2">
+                      <div class="w-2 h-2 rounded-full" style="background-color:${colors[i]}"></div>
+                      <span>${serie.seriesName}</span>
+                    </div>
+                    <span>
+                      ${formatNumber(serie.data[1])}
+                    </span>
+                  </div>`,
+              )
+              .join('')}          
+                    <span class="text-xs text-gray-500 dark:text-slate-400 font-medium mt-1">
+                    ${
+                      date instanceof Date && !Number.isNaN(date?.getTime())
+                        ? format(
+                            date,
+                            `dd MMM yyyy${type === 'hour' ? ' p' : ''}`,
+                          )
+                        : ''
+                    }</span>
+                  </div>`
+        },
       },
       color: colors,
       grid: {
@@ -114,15 +200,11 @@ export function BaseChart<EnabledTimeframes extends Timeframe[]>({
           axisTick: {
             show: false,
           },
-          min: meta.start.getTime(),
-          max: meta.end.getTime(),
-          interval: interval[selectedTimeframe],
+          min: meta?.start.getTime(),
+          max: meta?.end.getTime(),
           axisLabel: {
-            hideOverlap: true,
-            showMinLabel: true,
-            showMaxLabel: true,
+            customValues: getAxisValues(5, meta?.start, meta?.end),
             align: 'center',
-            inside: false,
             color: '#8D9BB0',
             fontWeight: 600,
             margin: 24,
@@ -178,8 +260,10 @@ export function BaseChart<EnabledTimeframes extends Timeframe[]>({
           }) satisfies EChartOption.SeriesBar,
       ),
     }),
-    [data, meta, type, hasData, selectedTimeframe],
+    [data, meta, type, hasData],
   )
+
+  const isMounted = useIsMounted()
 
   return (
     <Card>
@@ -208,11 +292,17 @@ export function BaseChart<EnabledTimeframes extends Timeframe[]>({
         </div>
       </CardHeader>
       <CardContent>
-        <ReactEcharts
-          option={DEFAULT_OPTION}
-          echarts={echarts}
-          style={{ height: '350px' }}
-        />
+        {loading ? (
+          isMounted ? (
+            <SkeletonChart height={350} type="bar" />
+          ) : null
+        ) : (
+          <ReactEchartsCore
+            option={DEFAULT_OPTION}
+            echarts={echarts}
+            style={{ height: '350px', width: '100%' }}
+          />
+        )}
       </CardContent>
     </Card>
   )

@@ -95,7 +95,7 @@ function ChartLoadingStateMask({
   switch (type) {
     case 'area':
       return (
-        <g transform={`translate(0, ${height - 60}) scale(1,-1)`}>
+        <g transform={`translate(0, ${height - 40}) scale(1,-1)`}>
           <path
             d="M0 170 Q50 90, 100 170 T200 170 T300 170 T400 170 T500 170 T600 170 T700 170 T800 170 V0 H0 Z"
             className="fill-black/[0.10] dark:fill-white/[0.10] animate-pulse"
@@ -104,7 +104,7 @@ function ChartLoadingStateMask({
       )
     case 'bar':
       return (
-        <g transform={`translate(0, ${height - 60}) scale(1,-1)`}>
+        <g transform={`translate(0, ${height - 40}) scale(1,-1)`}>
           {Array.from({ length: 25 }).map((_, i) => {
             const _height = Math.random() * height * 0.8 + 20
             return (
@@ -113,7 +113,7 @@ function ChartLoadingStateMask({
                 rx="3"
                 width="3%"
                 height={_height}
-                x={`${i * 4}%`}
+                x={`${i * (4 + 1 / 25)}%`}
                 className="fill-black/[0.10] dark:fill-white/[0.10] animate-pulse"
               />
             )
@@ -125,46 +125,93 @@ function ChartLoadingStateMask({
   }
 }
 
-function SkeletonChartAxes({
+function SkeletonXChartAxe({
   height,
 }: {
   height: number
 }) {
   return (
-    <g transform={`translate(0, ${height - 50})`}>
+    <svg transform={`translate(0, ${height - 19})`}>
       <rect
         width="7%"
-        height="6"
+        height="16"
         rx="3"
-        x="10%"
+        x="0%"
         className={'fill-black/[0.10] dark:fill-white/[0.10]'}
       />
       <rect
         width="7%"
-        height="6"
+        height="16"
         rx="3"
-        x="28.25%"
+        x="23.25%"
         className={'fill-black/[0.10] dark:fill-white/[0.10]'}
       />
       <rect
         width="7%"
-        height="6"
+        height="16"
         rx="3"
         x="46.5%"
         className={'fill-black/[0.10] dark:fill-white/[0.10]'}
       />
       <rect
         width="7%"
-        height="6"
+        height="16"
         rx="3"
-        x="64.75%"
+        x="69.75%"
         className={'fill-black/[0.10] dark:fill-white/[0.10]'}
       />
       <rect
         width="7%"
-        height="6"
+        height="16"
         rx="3"
-        x="83%"
+        x="93%"
+        className={'fill-black/[0.10] dark:fill-white/[0.10]'}
+      />
+    </svg>
+  )
+}
+
+function SkeletonYChartAxe() {
+  return (
+    <g transform={`translate(0, 0)`}>
+      <rect
+        width="32px"
+        height="16"
+        rx="3"
+        y="0%"
+        x="0%"
+        className={'fill-black/[0.10] dark:fill-white/[0.10]'}
+      />
+      <rect
+        width="32px"
+        height="16"
+        rx="3"
+        y="23.25%"
+        x="0%"
+        className={'fill-black/[0.10] dark:fill-white/[0.10]'}
+      />
+      <rect
+        width="32px"
+        height="16"
+        rx="3"
+        y="46.5%"
+        x="0%"
+        className={'fill-black/[0.10] dark:fill-white/[0.10]'}
+      />
+      <rect
+        width="32px"
+        height="16"
+        rx="3"
+        y="69.75%"
+        x="0%"
+        className={'fill-black/[0.10] dark:fill-white/[0.10]'}
+      />
+      <rect
+        width="32px"
+        height="16"
+        rx="3"
+        y="93%"
+        x="0%"
         className={'fill-black/[0.10] dark:fill-white/[0.10]'}
       />
     </g>
@@ -179,14 +226,17 @@ function SkeletonChart({
   type: ChartType
 }) {
   return (
-    <div className="relative">
+    <div className="relative flex flex-row">
+      <svg width={56} height={height - 32} xmlns="http://www.w3.org/2000/svg">
+        <SkeletonYChartAxe />
+      </svg>
       <svg
         width="100%"
         height={height}
         xmlns="http://www.w3.org/2000/svg"
         fill="none"
       >
-        <SkeletonChartAxes height={height} />
+        <SkeletonXChartAxe height={height} />
         <ChartLoadingStateMask type={type} height={height} />
       </svg>
     </div>
