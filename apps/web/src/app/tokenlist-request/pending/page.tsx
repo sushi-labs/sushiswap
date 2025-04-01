@@ -28,8 +28,81 @@ import { TokenSecurityView } from 'src/lib/wagmi/components/token-security-view'
 import { formatNumber, formatUSD, shortenAddress } from 'sushi'
 import { EvmChain, type EvmChainId } from 'sushi/chain'
 import { Token } from 'sushi/currency'
-import { getAddress } from 'viem'
 import { NavigationItems } from '../navigation-items'
+
+const getTokenSecurity = (security: PendingTokens[number]['security']) => {
+  return {
+    is_buyable: {
+      goPlus: security.isBuyable,
+    },
+    is_open_source: {
+      goPlus: security.isOpenSource,
+    },
+    is_proxy: {
+      goPlus: security.isProxy,
+    },
+    is_mintable: {
+      goPlus: security.isMintable,
+    },
+    can_take_back_ownership: {
+      goPlus: security.canTakeBackOwnership,
+    },
+    owner_change_balance: {
+      goPlus: security.ownerChangeBalance,
+    },
+    hidden_owner: {
+      goPlus: security.hiddenOwner,
+    },
+    selfdestruct: {
+      goPlus: security.selfDestruct,
+    },
+    external_call: {
+      goPlus: security.externalCall,
+    },
+    gas_abuse: {
+      goPlus: security.gasAbuse,
+    },
+    buy_tax: {
+      goPlus: security.buyTax,
+    },
+    sell_tax: {
+      goPlus: security.sellTax,
+    },
+    is_sell_limit: {
+      goPlus: security.cannotSellAll,
+    },
+    slippage_modifiable: {
+      goPlus: security.slippageModifiable,
+    },
+    is_honeypot: {
+      goPlus: security.isHoneypot,
+    },
+    transfer_pausable: {
+      goPlus: security.transferPausable,
+    },
+    is_blacklisted: {
+      goPlus: security.isBlacklisted,
+    },
+    is_whitelisted: {
+      goPlus: security.isWhitelisted,
+    },
+    is_anti_whale: {
+      goPlus: security.isAntiWhale,
+    },
+    trading_cooldown: {
+      goPlus: security.tradingCooldown,
+    },
+    is_fake_token: {
+      goPlus: !security.isTrueToken,
+    },
+    is_airdrop_scam: {
+      goPlus: security.isAirdropScam,
+    },
+    trust_list: {
+      goPlus: security.trustList,
+    },
+  }
+}
 
 const COLUMNS: ColumnDef<PendingTokens[number], unknown>[] = [
   {
@@ -181,78 +254,9 @@ const COLUMNS: ColumnDef<PendingTokens[number], unknown>[] = [
                       })
                     }
                     isTokenSecurityLoading={false}
-                    tokenSecurity={{
-                      is_buyable: {
-                        goPlus: props.row.original.security.isBuyable,
-                      },
-                      is_open_source: {
-                        goPlus: props.row.original.security.isOpenSource,
-                      },
-                      is_proxy: {
-                        goPlus: props.row.original.security.isProxy,
-                      },
-                      is_mintable: {
-                        goPlus: props.row.original.security.isMintable,
-                      },
-                      can_take_back_ownership: {
-                        goPlus:
-                          props.row.original.security.canTakeBackOwnership,
-                      },
-                      owner_change_balance: {
-                        goPlus: props.row.original.security.ownerChangeBalance,
-                      },
-                      hidden_owner: {
-                        goPlus: props.row.original.security.hiddenOwner,
-                      },
-                      selfdestruct: {
-                        goPlus: props.row.original.security.selfDestruct,
-                      },
-                      external_call: {
-                        goPlus: props.row.original.security.externalCall,
-                      },
-                      gas_abuse: {
-                        goPlus: props.row.original.security.gasAbuse,
-                      },
-                      buy_tax: {
-                        goPlus: props.row.original.security.buyTax,
-                      },
-                      sell_tax: {
-                        goPlus: props.row.original.security.sellTax,
-                      },
-                      is_sell_limit: {
-                        goPlus: props.row.original.security.cannotSellAll,
-                      },
-                      slippage_modifiable: {
-                        goPlus: props.row.original.security.slippageModifiable,
-                      },
-                      is_honeypot: {
-                        goPlus: props.row.original.security.isHoneypot,
-                      },
-                      transfer_pausable: {
-                        goPlus: props.row.original.security.transferPausable,
-                      },
-                      is_blacklisted: {
-                        goPlus: props.row.original.security.isBlacklisted,
-                      },
-                      is_whitelisted: {
-                        goPlus: props.row.original.security.isWhitelisted,
-                      },
-                      is_anti_whale: {
-                        goPlus: props.row.original.security.isAntiWhale,
-                      },
-                      trading_cooldown: {
-                        goPlus: props.row.original.security.tradingCooldown,
-                      },
-                      is_fake_token: {
-                        goPlus: !props.row.original.security.isTrueToken,
-                      },
-                      is_airdrop_scam: {
-                        goPlus: props.row.original.security.isAirdropScam,
-                      },
-                      trust_list: {
-                        goPlus: props.row.original.security.trustList,
-                      },
-                    }}
+                    tokenSecurity={getTokenSecurity(
+                      props.row.original.security,
+                    )}
                   />
                 </List.Control>
               </List>
