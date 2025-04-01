@@ -10,15 +10,15 @@ import { SwapWidgetToken1Input } from './swap-widget-token1-input'
 import { SwapWidgetTradeButton } from './swap-widget-trade-button'
 
 interface SwapWidgetProps {
-  token: Token
+  token1: Token
 }
 
-export const SwapWidget: FC<SwapWidgetProps> = ({ token }) => {
+export const SwapWidget: FC<SwapWidgetProps> = ({ token1 }) => {
   return (
-    <DerivedstateSwapWidgetProvider chainId={token.chainId} token1={token}>
+    <DerivedstateSwapWidgetProvider chainId={token1.chainId} token1={token1}>
       <div className="flex flex-col gap-4">
         <div className="flex items-center justify-between">
-          <SwapModeButtons token={token} />
+          <SwapModeButtons token={token1} />
           <SimpleSwapSettingsOverlay />
         </div>
         <SwapMaintenanceMessage />

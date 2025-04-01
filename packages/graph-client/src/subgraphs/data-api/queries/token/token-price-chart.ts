@@ -35,18 +35,21 @@ export async function getTokenPriceChart(
       {
         url,
         document: TokenPriceChartQuery,
-        variables,
+        variables: {
+          ...variables,
+          address: variables.address.toLowerCase()
+        },
         requestHeaders: SUSHI_REQUEST_HEADERS,
       },
       options,
     )
-    if (result) {
+    if (result.exploreTokenChart) {
       return result.exploreTokenChart
     }
   } catch (error) {
     console.error('getTokenPriceChart error', error)
   }
-  return null
+  return []
 }
 
 export type TokenPriceChart = Awaited<ReturnType<typeof getTokenPriceChart>>

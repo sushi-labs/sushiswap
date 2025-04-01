@@ -1,3 +1,5 @@
+'use client'
+
 import { DocumentDuplicateIcon } from '@heroicons/react/20/solid'
 import { ChevronDownIcon } from '@heroicons/react/24/outline'
 import {
@@ -86,15 +88,7 @@ export const TokenChart: FC<TokenChartProps> = ({ token }) => {
 
       <Separator />
 
-      <div style={{ height: 380 }}>
-        {selectedChartType === 'Price' && (
-          <PriceChart
-            address={token.address}
-            symbol={token.symbol}
-            chainId={token.chainId}
-          />
-        )}
-      </div>
+      <div>{selectedChartType === 'Price' && <PriceChart token={token} />}</div>
 
       <Separator />
     </div>
