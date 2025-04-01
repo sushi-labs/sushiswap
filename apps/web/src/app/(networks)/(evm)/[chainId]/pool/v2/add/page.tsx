@@ -684,6 +684,7 @@ const AddLiquidityWidget: FC<AddLiquidityWidgetProps> = ({
                 )}
               >
                 <Checker.Slippage
+                  fullWidth
                   slippageTolerance={slippagePercent}
                   text="Continue With High Slippage"
                 >

@@ -53,6 +53,7 @@ export const CrossChainSwapTradeButton: FC = () => {
             <Checker.Network fullWidth chainId={chainId0}>
               <Checker.Amounts fullWidth chainId={chainId0} amount={swapAmount}>
                 <Checker.Slippage
+                  fullWidth
                   text="Swap With High Slippage"
                   slippageTolerance={slippagePercent}
                 >
