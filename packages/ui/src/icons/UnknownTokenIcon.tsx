@@ -17,7 +17,7 @@ export const UnknownTokenIcon = (props: React.ComponentProps<'svg'>) => {
         cy="36.5"
         r="36"
         stroke="#95A1B4"
-        stroke-dasharray="2 2"
+        strokeDasharray="2 2"
       />
     </svg>
   )

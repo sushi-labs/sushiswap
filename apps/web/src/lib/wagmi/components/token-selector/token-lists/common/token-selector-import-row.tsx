@@ -10,6 +10,8 @@ import {
 } from '@sushiswap/telemetry'
 import {
   Badge,
+  Button,
+  Currency,
   Dialog,
   DialogContent,
   DialogFooter,
@@ -17,17 +19,15 @@ import {
   DialogTitle,
   DialogTrigger,
   LinkExternal,
+  List,
   Loader,
   Message,
   SkeletonText,
   classNames,
 } from '@sushiswap/ui'
-import { Button } from '@sushiswap/ui'
-import { Currency } from '@sushiswap/ui'
-import { List } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
+import { UnknownTokenIcon } from '@sushiswap/ui/icons/UnknownTokenIcon'
 import { type FC, useCallback, useMemo, useState } from 'react'
-import { UnknownTokenIcon } from 'src/app/(cms)/components/icons'
 import {
   type TokenSecurity,
   isTokenSecurityIssue,
