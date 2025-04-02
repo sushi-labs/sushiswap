@@ -46,12 +46,12 @@
     --color: #ffffff;
     --secondary: #171717;
     --muted: #202020;
-    --muted-foreground: #A9A9A9;
-    --accent: #2A2A2A;
+    --muted-foreground: #a9a9a9;
+    --accent: #2a2a2a;
     --accent-foreground: #ffffff;
     --background: #121212;
-    --green: #4CAF50;
-    --red: #DC2626;
+    --green: #4caf50;
+    --red: #dc2626;
   }
 
   .dark .paper {
