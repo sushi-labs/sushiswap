@@ -9,13 +9,12 @@ import { formatPercent } from 'sushi/format'
 import tailwindConfig from 'tailwind.config.js'
 import resolveConfig from 'tailwindcss/resolveConfig'
 
+import type { EChartOption } from 'echarts'
 import ReactEChartsCore from 'echarts-for-react/lib/core'
-import type { EChartsOption } from 'echarts-for-react/lib/types'
-import 'echarts/lib/chart/line'
-import 'echarts/lib/component/tooltip'
-import 'echarts/lib/component/visualMap'
-import echarts from 'echarts/lib/echarts'
-import 'echarts/lib/visual/seriesColor'
+import { LineChart } from 'echarts/charts'
+import { GridComponent, TooltipComponent } from 'echarts/components'
+import * as echarts from 'echarts/core'
+import { CanvasRenderer } from 'echarts/renderers'
 
 const tailwind = resolveConfig(tailwindConfig)
 
@@ -27,12 +26,11 @@ interface _SteerAPRChartProps {
     | undefined
 }
 
+echarts.use([LineChart, CanvasRenderer, GridComponent, TooltipComponent])
+
 export function _SteerAPRChart({ timeseries, loading }: _SteerAPRChartProps) {
-  const chartConfig = useMemo<EChartsOption>(
+  const chartConfig = useMemo<EChartOption>(
     () => ({
-      toolbox: {
-        show: false,
-      },
       tooltip: {
         trigger: 'axis',
         extraCssText: 'z-index: 1000',
@@ -55,11 +53,6 @@ export function _SteerAPRChart({ timeseries, loading }: _SteerAPRChartProps) {
           </div>`
         },
         borderWidth: 0,
-      },
-      visualMap: {
-        show: false,
-        // @ts-ignore
-        color: [tailwind.theme.colors.blue['500']],
       },
       grid: {
         top: 2,

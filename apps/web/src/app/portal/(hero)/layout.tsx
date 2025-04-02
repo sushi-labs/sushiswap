@@ -1,5 +1,5 @@
 import { BeakerIcon, ClockIcon, GlobeIcon } from '@heroicons/react-v1/solid'
-import { Card, CardContent, Container } from '@sushiswap/ui'
+import { Card, CardContent, CloudinaryImage, Container } from '@sushiswap/ui'
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
@@ -10,7 +10,16 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             <span className="text-lg font-semibold">
               Sushi Swap API: Power your D'app to Swap Anything
             </span>
-            <div className="w-full h-[280px] bg-secondary rounded-2xl" />
+            <div className="flex justify-center">
+              <CloudinaryImage
+                alt="hero"
+                src="sushi_developer_portal_hero_image.png"
+                width={300}
+                height={300}
+                quality={100}
+                className="object-cover"
+              />
+            </div>
           </div>
           <div className="gap-4 flex flex-row w-full">
             <Card className="w-full">
@@ -55,7 +64,6 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           </div>
         </Container>
       </div>
-      {/* <Separator orientation="vertical" /> */}
       <div className="w-[49.5%]">
         <Container className="py-16 px-10 h-full">
           <div className="flex items-center relative h-full">{children}</div>

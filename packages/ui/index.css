@@ -41,6 +41,19 @@
     --red: 180 48 60;
   }
 
+  .black {
+    --background-color: #121212;
+    --color: #ffffff;
+    --secondary: #171717;
+    --muted: #202020;
+    --muted-foreground: #A9A9A9;
+    --accent: #2A2A2A;
+    --accent-foreground: #ffffff;
+    --background: #121212;
+    --green: #4CAF50;
+    --red: #DC2626;
+  }
+
   .dark .paper {
     backdrop-filter: blur(10px) saturate(190%) contrast(70%) brightness(80%);
   }

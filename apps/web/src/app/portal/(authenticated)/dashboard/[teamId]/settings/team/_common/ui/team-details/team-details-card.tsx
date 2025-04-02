@@ -3,6 +3,7 @@ import {
   CardContent,
   CardDescription,
   CardHeader,
+  CardLabel,
   CardTitle,
   List,
 } from '@sushiswap/ui'
@@ -23,6 +24,7 @@ export async function TeamDetailsCard({ teamId }: TeamDetailsCard) {
       <CardHeader className="bg-secondary rounded-t-xl">
         <CardTitle>Team Details</CardTitle>
         <CardDescription>Useful when requesting support</CardDescription>
+        <CardLabel>assaasa</CardLabel>
       </CardHeader>
       <CardContent className="bg-secondary rounded-b-xl">
         <List>

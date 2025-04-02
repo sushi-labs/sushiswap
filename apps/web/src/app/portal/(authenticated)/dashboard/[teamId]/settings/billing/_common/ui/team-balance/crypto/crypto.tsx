@@ -204,7 +204,7 @@ function DepositTab({
   return (
     <div className="space-y-4">
       <div className="space-y-4">
-        <div className="justify-between flex items-center px-3 py-2 bg-white dark:bg-background rounded-xl">
+        <div className="justify-between flex items-center px-3 py-2 rounded-xl bg-muted">
           <span>Selected Network</span>
           {!isLoading && data?.chainIds ? (
             <NetworkSelector
@@ -240,23 +240,28 @@ function DepositTab({
           hidePricing
           currencies={activeConfig?.stables}
           currencyClassName="!rounded-xl"
-          className="bg-white dark:bg-background rounded-xl !px-3 py-2"
+          className="rounded-xl !px-3 py-2 bg-muted"
           loading={isLoading}
         />
-        <div className="flex justify-between px-3 text-sm bg-white dark:bg-background py-2 rounded-xl">
-          <span>Connected Account</span>
+        <div className="flex justify-between px-3 text-sm py-2 rounded-xl bg-muted">
           <span className="space-x-2 items-center flex">
+            <div
+              className={classNames(
+                'w-3 h-3 rounded-full',
+                address ? 'bg-green-500' : 'bg-red-500',
+              )}
+            />
             <span>{address ? shortenAddress(address) : 'None'}</span>
-            {address && (
-              <span
-                className="text-xs text-blue-500 cursor-pointer"
-                onKeyUp={() => disconnect()}
-                onClick={() => disconnect()}
-              >
-                Disconnect
-              </span>
-            )}
           </span>
+          {address && (
+            <span
+              className="text-blue-500 cursor-pointer text-sm font-medium"
+              onKeyUp={() => disconnect()}
+              onClick={() => disconnect()}
+            >
+              Disconnect
+            </span>
+          )}
         </div>
       </div>
       <CheckerProvider>

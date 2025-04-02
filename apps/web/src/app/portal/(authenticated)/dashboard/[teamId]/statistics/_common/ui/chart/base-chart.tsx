@@ -15,6 +15,9 @@ import {
   SkeletonChart,
 } from '@sushiswap/ui'
 import format from 'date-fns/format'
+import { useMemo } from 'react'
+import { formatNumber } from 'sushi/format'
+
 import type { EChartOption } from 'echarts'
 import ReactEchartsCore from 'echarts-for-react/lib/core'
 import { BarChart, LineChart } from 'echarts/charts'
@@ -26,8 +29,6 @@ import {
 } from 'echarts/components'
 import * as echarts from 'echarts/core'
 import { CanvasRenderer } from 'echarts/renderers'
-import { useMemo } from 'react'
-import { formatNumber } from 'sushi/format'
 
 const possibleTimeframes = ['24h', '7d', '30d'] as const
 export type Timeframe = (typeof possibleTimeframes)[number]

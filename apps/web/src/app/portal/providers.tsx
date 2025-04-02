@@ -12,7 +12,11 @@ interface Providers {
 
 export function Providers({ children, authSession }: Providers) {
   return (
-    <ThemeProvider forcedTheme="dark">
+    <ThemeProvider
+      forcedTheme="black"
+      themes={['dark', 'black']}
+      attribute="class"
+    >
       <AuthProvider initialSession={authSession}>
         <QueryClientProvider>{children}</QueryClientProvider>
       </AuthProvider>

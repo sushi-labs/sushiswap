@@ -5,13 +5,18 @@ import colors from 'tailwindcss/colors'
 
 import type { ChartEntry } from '../../LiquidityChartRangeInput/types'
 
+import type { EChartOption } from 'echarts'
 import ReactEChartsCore from 'echarts-for-react/lib/core'
-import type { EChartsOption } from 'echarts-for-react/lib/types'
-import 'echarts/lib/chart/line'
-import 'echarts/lib/component/markArea'
-import 'echarts/lib/component/markLine'
-import echarts from 'echarts/lib/echarts'
-import 'echarts/lib/visual/seriesColor'
+import { LineChart } from 'echarts/charts'
+import {
+  GridComponent,
+  MarkAreaComponent,
+  MarkLineComponent,
+  TitleComponent,
+  TooltipComponent,
+} from 'echarts/components'
+import * as echarts from 'echarts/core'
+import { CanvasRenderer } from 'echarts/renderers'
 
 interface SteerStrategyLiquidityDistributionChart {
   series: ChartEntry[]
@@ -21,6 +26,16 @@ interface SteerStrategyLiquidityDistributionChart {
     maxPrice: number
   }
 }
+
+echarts.use([
+  LineChart,
+  CanvasRenderer,
+  TooltipComponent,
+  GridComponent,
+  TitleComponent,
+  MarkAreaComponent,
+  MarkLineComponent,
+])
 
 export const SteerStrategyLiquidityDistributionChart: FC<
   SteerStrategyLiquidityDistributionChart
@@ -45,21 +60,13 @@ export const SteerStrategyLiquidityDistributionChart: FC<
     return [_series, _current]
   }, [invertTokens, _current, _series])
 
-  const DEFAULT_OPTION = useMemo<EChartsOption>(
+  const DEFAULT_OPTION = useMemo<EChartOption>(
     () => ({
-      toolbox: {
-        show: false,
-      },
       grid: {
         top: 10,
         left: 10,
         right: 10,
         bottom: 10,
-      },
-      dataZoom: {
-        show: false,
-        start: 0,
-        end: 100,
       },
       xAxis: [
         {
