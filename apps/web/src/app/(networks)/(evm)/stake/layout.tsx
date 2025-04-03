@@ -21,6 +21,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           selectedNetwork={ChainId.ETHEREUM}
           supportedNetworks={supportedNetworks}
           shiftContent
+          onSelect={null}
         >
           <div className="flex flex-col flex-1 overflow-y-auto">
             <Container maxWidth="5xl" className="px-4 pt-16 mb-12">

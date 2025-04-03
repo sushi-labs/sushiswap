@@ -35,7 +35,7 @@ import {
 } from 'src/lib/wagmi/hooks/utils/hooks/useTransactionDeadline'
 import { EvmChain, type EvmChainId } from 'sushi/chain'
 import {
-  SUSHISWAP_V3_POSTIION_MANAGER,
+  SUSHISWAP_V3_POSITION_MANAGER,
   type SushiSwapV3FeeAmount,
   isSushiSwapV3ChainId,
 } from 'sushi/config'
@@ -254,7 +254,7 @@ export const AddSectionReviewModalConcentrated: FC<
           })
 
     return {
-      to: SUSHISWAP_V3_POSTIION_MANAGER[chainId],
+      to: SUSHISWAP_V3_POSITION_MANAGER[chainId],
       account: address,
       chainId,
       data: calldata as Hex,

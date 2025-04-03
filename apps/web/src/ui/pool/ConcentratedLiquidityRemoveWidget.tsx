@@ -49,7 +49,7 @@ import {
 import { Checker } from 'src/lib/wagmi/systems/Checker'
 import { EvmChain } from 'sushi/chain'
 import {
-  SUSHISWAP_V3_POSTIION_MANAGER,
+  SUSHISWAP_V3_POSITION_MANAGER,
   type SushiSwapV3ChainId,
   isSushiSwapV3ChainId,
 } from 'sushi/config'
@@ -265,7 +265,7 @@ export const ConcentratedLiquidityRemoveWidget: FC<
       })
 
       return {
-        to: SUSHISWAP_V3_POSTIION_MANAGER[chainId],
+        to: SUSHISWAP_V3_POSITION_MANAGER[chainId],
         data: calldata as Hex,
         value: BigInt(_value),
       }

@@ -21,7 +21,7 @@ import type { ConcentratedLiquidityPositionWithV3Pool } from 'src/lib/wagmi/hook
 import { Checker } from 'src/lib/wagmi/systems/Checker'
 import { EvmChain, type EvmChainId } from 'sushi/chain'
 import {
-  SUSHISWAP_V3_POSTIION_MANAGER,
+  SUSHISWAP_V3_POSITION_MANAGER,
   isSushiSwapV3ChainId,
 } from 'sushi/config'
 import { Amount, Native, type Type, unwrapToken } from 'sushi/currency'
@@ -149,7 +149,7 @@ export const ConcentratedLiquidityCollectAllWidget: FC<
       NonfungiblePositionManager.collectCallParameters(positionsToCollect)
 
     return {
-      to: SUSHISWAP_V3_POSTIION_MANAGER[chainId],
+      to: SUSHISWAP_V3_POSITION_MANAGER[chainId],
       data: calldata as Hex,
       value: BigInt(value),
       chainId,

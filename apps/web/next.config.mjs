@@ -59,7 +59,7 @@ const nextConfig = bundleAnalyzer({
       {
         source: '/discord{/}?',
         permanent: true,
-        destination: 'https://discord.gg/ej78AWjy6Y',
+        destination: 'https://discord.gg/qGeREffeAH',
       },
       {
         source: '/github{/}?',

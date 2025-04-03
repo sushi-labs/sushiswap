@@ -76,6 +76,7 @@ export interface SidebarContainerProps {
   connectedNetwork?: number | string
   supportedNetworks?: readonly (ChainId | NonStandardChainId)[]
   unsupportedNetworkHref?: string
+  onSelect?: ((network: ChainId | NonStandardChainId) => void) | null
 }
 
 export const SidebarContainer: FC<SidebarContainerProps> = ({
@@ -85,6 +86,7 @@ export const SidebarContainer: FC<SidebarContainerProps> = ({
   connectedNetwork,
   supportedNetworks,
   unsupportedNetworkHref,
+  onSelect,
 }) => {
   const { isOpen } = useSidebar()
 
@@ -94,6 +96,7 @@ export const SidebarContainer: FC<SidebarContainerProps> = ({
         selectedNetwork={selectedNetwork}
         connectedNetwork={connectedNetwork}
         supportedNetworks={supportedNetworks}
+        onSelect={onSelect}
         unsupportedNetworkHref={unsupportedNetworkHref}
       />
       <div
@@ -113,6 +116,7 @@ const Sidebar: FC<Omit<SidebarContainerProps, 'children' | 'shiftContent'>> = ({
   connectedNetwork,
   supportedNetworks = SUPPORTED_NETWORKS,
   unsupportedNetworkHref,
+  onSelect: _onSelect,
 }) => {
   const { isOpen } = useSidebar()
 
@@ -127,19 +131,18 @@ const Sidebar: FC<Omit<SidebarContainerProps, 'children' | 'shiftContent'>> = ({
 
   const onSelect = useCallback(
     (value: string) => {
-      const network = value.split('__')[1]
+      const _network = value.split('__')[1]
 
-      push(
-        replaceNetworkSlug(
-          isChainId(+network)
-            ? (+network as ChainId)
-            : (network as NonStandardChainId),
-          pathname,
-        ),
-        { scroll: false },
-      )
+      const network = isChainId(+_network)
+        ? (+_network as ChainId)
+        : (_network as NonStandardChainId)
+
+      if (_onSelect === null) return
+      if (typeof _onSelect === 'function') return _onSelect(network)
+
+      push(replaceNetworkSlug(network, pathname), { scroll: false })
     },
-    [pathname, push],
+    [pathname, push, _onSelect],
   )
 
   return !isOpen ? null : (

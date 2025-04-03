@@ -1,6 +1,6 @@
 import { simulateContract } from '@wagmi/core/actions'
 import {
-  SUSHISWAP_V3_POSTIION_MANAGER,
+  SUSHISWAP_V3_POSITION_MANAGER,
   type SushiSwapV3ChainId,
 } from 'sushi/config'
 import type { PublicWagmiConfig } from '../../../config/public'
@@ -75,7 +75,7 @@ export const getConcentratedLiquidityPositionFees = async ({
       result = await simulateContract(config, {
         chainId: el.chainId,
         abi: abiShard,
-        address: SUSHISWAP_V3_POSTIION_MANAGER[el.chainId],
+        address: SUSHISWAP_V3_POSITION_MANAGER[el.chainId],
         functionName: 'collect',
         args: [
           {

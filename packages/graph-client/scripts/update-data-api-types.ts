@@ -46,5 +46,5 @@ res.forEach((content, i) => {
 
 writeFileSync(
   `${path}/index.ts`,
-  res.map((_, i) => `export * from './${features[i]}'`).join('\n'),
+  res.map((_, i) => `export * from './${features[i]}.js'`).join('\n'),
 )
