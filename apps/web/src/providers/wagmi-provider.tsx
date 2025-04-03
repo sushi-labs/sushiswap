@@ -8,6 +8,7 @@ import {
   type Theme,
   darkTheme as rainbowDarkTheme,
   lightTheme as rainbowLightTheme,
+  midnightTheme as rainbowMidnightTheme,
 } from '@rainbow-me/rainbowkit'
 import { useIsMounted } from '@sushiswap/hooks'
 import { useTheme } from 'next-themes'
@@ -48,6 +49,10 @@ const lightTheme: Theme = {
   },
 }
 
+const midnightTheme: Theme = {
+  ...rainbowMidnightTheme({}),
+}
+
 const Disclaimer: DisclaimerComponent = ({ Text, Link }) => (
   <Text>
     By connecting your wallet, you agree to Sushi Labs{"' "}
@@ -63,15 +68,23 @@ export const WagmiProvider: FC<{
   const initialState = getWagmiInitialState(cookie)
   const isMounted = useIsMounted()
 
-  const { resolvedTheme } = useTheme()
+  const { forcedTheme, resolvedTheme } = useTheme()
+
+  const theme = forcedTheme || resolvedTheme
 
   const rainbowKitTheme = useMemo(() => {
-    if (isMounted && resolvedTheme === 'dark') {
+    if (!isMounted) return lightTheme
+
+    if (theme === 'dark') {
       return darkTheme
     }
 
+    if (theme === 'black') {
+      return midnightTheme
+    }
+
     return lightTheme
-  }, [resolvedTheme, isMounted])
+  }, [theme, isMounted])
 
   return (
     <_WagmiProvider config={getWagmiConfig()} initialState={initialState}>

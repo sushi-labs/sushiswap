@@ -303,7 +303,7 @@ function Steps({ steps }: { steps: { text: string; completed: boolean }[] }) {
         <React.Fragment key={i}>
           <div
             className={classNames(
-              step.completed && 'bg-blue-500',
+              step.completed ? 'bg-blue-500' : 'border-opacity-50',
               lastCompleted + 1 === i && 'animate-pulse',
               'h-10 w-10 rounded-full border-blue-500 border-2 flex-shrink-0 relative flex justify-center items-center',
             )}
@@ -315,6 +315,7 @@ function Steps({ steps }: { steps: { text: string; completed: boolean }[] }) {
             <div
               className={classNames(
                 lastCompleted === i && 'animate-pulse',
+                !step.completed && 'bg-opacity-50',
                 'w-full h-1 bg-blue-500',
               )}
             />

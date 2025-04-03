@@ -22,13 +22,19 @@ export function Erc20DepositDialog({
   return (
     <Dialog>
       <DialogTrigger asChild>{children}</DialogTrigger>
-      <DialogContent>
+      <DialogContent className="!w-[400px]">
         <DialogHeader>
           <DialogTitle>ERC20 Deposit</DialogTitle>
           <DialogDescription>The details of your deposit</DialogDescription>
         </DialogHeader>
         <List>
           <List.Control>
+            <List.KeyValue flex title="Date" className="whitespace-nowrap">
+              {erc20Deposit.createdAt.toLocaleDateString(undefined, {
+                hour: 'numeric',
+                minute: 'numeric',
+              })}
+            </List.KeyValue>
             <List.KeyValue flex title="Chain" className="whitespace-nowrap">
               {evmChainName[1]}
             </List.KeyValue>
@@ -49,16 +55,13 @@ export function Erc20DepositDialog({
               <CopyTokenAddress address={erc20Deposit.token as Address} />
             </List.KeyValue>
             <List.KeyValue flex title="Amount" className="whitespace-nowrap">
-              {erc20Deposit.amountUSD.toLocaleString(undefined, {
-                style: 'currency',
-                currency: 'USD',
-              })}
-            </List.KeyValue>
-            <List.KeyValue flex title="Date" className="whitespace-nowrap">
-              {erc20Deposit.createdAt.toLocaleDateString(undefined, {
-                hour: 'numeric',
-                minute: 'numeric',
-              })}
+              <span className="text-green-500">
+                +
+                {erc20Deposit.amountUSD.toLocaleString(undefined, {
+                  style: 'currency',
+                  currency: 'USD',
+                })}
+              </span>
             </List.KeyValue>
           </List.Control>
         </List>

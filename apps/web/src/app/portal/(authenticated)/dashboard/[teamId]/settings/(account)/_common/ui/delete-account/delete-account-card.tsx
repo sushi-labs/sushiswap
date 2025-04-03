@@ -16,13 +16,13 @@ export async function DeleteAccountCard() {
 
   return (
     <Card className="w-full min-w-[470px]">
-      <CardHeader className="bg-secondary rounded-t-xl">
+      <CardHeader className="rounded-t-xl">
         <CardTitle>Delete Account</CardTitle>
         <CardDescription>
           Permanently delete your account and all associated data
         </CardDescription>
       </CardHeader>
-      <CardContent className="bg-secondary rounded-b-xl">
+      <CardContent className="rounded-b-xl">
         <div className="space-y-6 flex flex-col">
           <List>
             <List.Control>

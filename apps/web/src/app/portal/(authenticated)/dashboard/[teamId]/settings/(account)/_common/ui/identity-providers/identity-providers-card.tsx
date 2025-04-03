@@ -41,11 +41,11 @@ export async function IdentityProvidersCard({ teamId }: IdentityProvidersCard) {
 
   return (
     <Card className="w-full min-w-[470px]">
-      <CardHeader className="bg-secondary rounded-t-xl">
+      <CardHeader>
         <CardTitle>Identity Providers</CardTitle>
         <CardDescription>Connect supported identity providers</CardDescription>
       </CardHeader>
-      <CardContent className="bg-secondary rounded-b-xl">
+      <CardContent>
         <div className="space-y-3 flex flex-col">
           <OAuthButton
             provider={OAuthProvider.Google}

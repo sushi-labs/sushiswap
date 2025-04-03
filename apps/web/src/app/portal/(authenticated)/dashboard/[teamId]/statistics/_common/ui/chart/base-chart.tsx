@@ -134,34 +134,49 @@ export function BaseChart<EnabledTimeframes extends Timeframe[]>({
 
   const DEFAULT_OPTION: EChartOption = useMemo(
     () => ({
-      title: {
-        text: 'No data',
-        show: !hasData,
-        left: 'center',
-        textStyle: {
-          fontSize: 20,
-          fontWeight: 500,
-          color: '#8D9BB0',
+      title: [
+        {
+          text: 'No data',
+          show: !hasData && !error,
+          left: 'center',
+          textStyle: {
+            fontSize: 20,
+            fontWeight: 500,
+            color: '#A9A9A9',
+          },
+          padding: [155, 0, 0, 0],
         },
-        padding: [155, 0, 0, 0],
-      },
+        {
+          text: 'An error occurred',
+          show: error,
+          left: 'center',
+          textStyle: {
+            fontSize: 20,
+            fontWeight: 500,
+            color: '#A9A9A9',
+          },
+          padding: [155, 0, 0, 0],
+        },
+      ],
       tooltip: {
         trigger: 'axis',
         show: hasData,
         padding: 0,
+        borderWidth: 0,
+        backgroundColor: 'transparent',
         formatter: (_params) => {
           const params = (Array.isArray(_params) ? _params : [_params]).sort(
             (a, b) => b.data[1] - a.data[1],
           )
 
           const date = new Date(Number(params[0].data[0]))
-          return `<div class="flex flex-col gap-0.5 paper bg-white/50 dark:bg-slate-800 px-4 py-3 rounded-xl overflow-hidden shadow-lg">
+          return `<div class="flex flex-col gap-0.5 paper bg-white/50 dark:bg-slate-800 black:bg-muted px-4 py-3 rounded-xl overflow-hidden shadow-lg">
             ${params
               .map(
                 (serie, i) =>
                   `<div key="${i}" class="flex flex-row justify-between items-center w-full space-x-8 text-sm text-primary">
                     <div class="flex flex-row items-center space-x-2">
-                      <div class="w-2 h-2 rounded-full" style="background-color:${colors[i]}"></div>
+                      <div class="w-2 h-2 rounded-full" style="background-color:${serie.color}"></div>
                       <span>${serie.seriesName}</span>
                     </div>
                     <span>
@@ -170,7 +185,7 @@ export function BaseChart<EnabledTimeframes extends Timeframe[]>({
                   </div>`,
               )
               .join('')}          
-                    <span class="text-xs text-gray-500 dark:text-slate-400 font-medium mt-1">
+                    <span class="text-xs text-gray-500 dark:text-slate-400 black:text-muted-foreground font-medium mt-1">
                     ${
                       date instanceof Date && !Number.isNaN(date?.getTime())
                         ? format(
@@ -206,7 +221,7 @@ export function BaseChart<EnabledTimeframes extends Timeframe[]>({
           axisLabel: {
             customValues: getAxisValues(5, meta?.start, meta?.end),
             align: 'center',
-            color: '#8D9BB0',
+            color: '#A9A9A9',
             fontWeight: 600,
             margin: 24,
             formatter: (value: number) => {
@@ -228,7 +243,7 @@ export function BaseChart<EnabledTimeframes extends Timeframe[]>({
         show: hasData,
         splitNumber: 3,
         axisLabel: {
-          color: '#8D9BB0',
+          color: '#A9A9A9',
           fontSize: 12,
           fontWeight: 600,
           margin: 24,
@@ -261,7 +276,7 @@ export function BaseChart<EnabledTimeframes extends Timeframe[]>({
           }) satisfies EChartOption.SeriesBar,
       ),
     }),
-    [data, meta, type, hasData],
+    [data, meta, type, hasData, error],
   )
 
   const isMounted = useIsMounted()

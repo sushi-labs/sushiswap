@@ -50,8 +50,8 @@
     --accent: #2A2A2A;
     --accent-foreground: #ffffff;
     --background: #121212;
-    --green: #4CAF50;
-    --red: #DC2626;
+    --green: 76 175 80;
+    --red: 220 38 38;
   }
 
   .dark .paper {

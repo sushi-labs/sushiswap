@@ -24,7 +24,7 @@ function TeamSwitcherEntry(
   const baseClassNames = classNames(
     'px-4 py-3 w-full font-medium rounded-xl',
     'flex flex-row justify-between items-center',
-    'hover:bg-accent dark:hover:bg-accent',
+    'hover:bg-accent',
   )
 
   if ('isLoading' in props) {
@@ -90,7 +90,7 @@ export function TeamSwitcher({ currentTeam }: TeamSwitcher) {
           <div
             className={classNames(
               'px-6 py-3 space-x-6 w-full',
-              'border border-accent bg-secondary',
+              'border border-accent bg-background',
               'cursor-pointer rounded-xl ',
               'font-medium flex flex-row justify-between items-center select-none',
             )}
@@ -110,8 +110,7 @@ export function TeamSwitcher({ currentTeam }: TeamSwitcher) {
                 ? 'max-h-[800px] pt-4 pb-2 border-b border-l border-r overflow-y-hidden'
                 : 'max-h-[0px]',
               'z-[100] rounded-b-xl flex flex-col gap-2 overflow-hidden transition-all duration-200 absolute w-full -mt-2.5 px-3',
-              'dark:bg-[#21293a] dark:border-accent',
-              // 'border-black border-opacity-30 bg-neutral-100',
+              'bg-background border-accent',
             )}
           >
             {isLoading && (

@@ -3,13 +3,19 @@ import type * as React from 'react'
 
 import classNames from 'classnames'
 
+const skeletonBgColorClassName =
+  'bg-black/[0.10] dark:bg-white/[0.10] black:bg-white/[0.25]'
+const skeletonFillColorClassName =
+  'fill-black/[0.10] dark:fill-white/[0.10] black:fill-white/[0.25]'
+
 function SkeletonBox(props: React.HTMLAttributes<HTMLDivElement>) {
   return (
     <div
       {...props}
       className={classNames(
         props.className,
-        'rounded-lg overflow-hidden animate-pulse bg-black/[0.10] dark:bg-white/[0.10]',
+        skeletonBgColorClassName,
+        'rounded-lg overflow-hidden animate-pulse',
       )}
     />
   )
@@ -32,7 +38,8 @@ function SkeletonCircle(props: CircleProps) {
       }}
       className={classNames(
         props.className,
-        'rounded-full overflow-hidden animate-pulse bg-black/[0.10] dark:bg-white/[0.10]',
+        skeletonBgColorClassName,
+        'rounded-full overflow-hidden animate-pulse',
       )}
     />
   )
@@ -79,7 +86,8 @@ function SkeletonText({
       <div
         className={classNames(
           className,
-          'flex w-full h-full rounded-md overflow-hidden animate-pulse bg-black/[0.10] dark:bg-white/[0.10]',
+          skeletonBgColorClassName,
+          'flex w-full h-full rounded-md overflow-hidden animate-pulse',
         )}
       />
     </div>
@@ -98,7 +106,7 @@ function ChartLoadingStateMask({
         <g transform={`translate(0, ${height - 40}) scale(1,-1)`}>
           <path
             d="M0 170 Q50 90, 100 170 T200 170 T300 170 T400 170 T500 170 T600 170 T700 170 T800 170 V0 H0 Z"
-            className="fill-black/[0.10] dark:fill-white/[0.10] animate-pulse"
+            className={classNames(skeletonFillColorClassName, 'animate-pulse')}
           />
         </g>
       )
@@ -114,7 +122,10 @@ function ChartLoadingStateMask({
                 width="3%"
                 height={_height}
                 x={`${i * (4 + 1 / 25)}%`}
-                className="fill-black/[0.10] dark:fill-white/[0.10] animate-pulse"
+                className={classNames(
+                  skeletonFillColorClassName,
+                  'animate-pulse',
+                )}
               />
             )
           })}
@@ -137,35 +148,35 @@ function SkeletonXChartAxe({
         height="16"
         rx="3"
         x="0%"
-        className={'fill-black/[0.10] dark:fill-white/[0.10]'}
+        className={classNames(skeletonFillColorClassName, 'animate-pulse')}
       />
       <rect
         width="7%"
         height="16"
         rx="3"
         x="23.25%"
-        className={'fill-black/[0.10] dark:fill-white/[0.10]'}
+        className={classNames(skeletonFillColorClassName, 'animate-pulse')}
       />
       <rect
         width="7%"
         height="16"
         rx="3"
         x="46.5%"
-        className={'fill-black/[0.10] dark:fill-white/[0.10]'}
+        className={classNames(skeletonFillColorClassName, 'animate-pulse')}
       />
       <rect
         width="7%"
         height="16"
         rx="3"
         x="69.75%"
-        className={'fill-black/[0.10] dark:fill-white/[0.10]'}
+        className={classNames(skeletonFillColorClassName, 'animate-pulse')}
       />
       <rect
         width="7%"
         height="16"
         rx="3"
         x="93%"
-        className={'fill-black/[0.10] dark:fill-white/[0.10]'}
+        className={classNames(skeletonFillColorClassName, 'animate-pulse')}
       />
     </svg>
   )
@@ -180,7 +191,7 @@ function SkeletonYChartAxe() {
         rx="3"
         y="0%"
         x="0%"
-        className={'fill-black/[0.10] dark:fill-white/[0.10]'}
+        className={classNames(skeletonFillColorClassName, 'animate-pulse')}
       />
       <rect
         width="32px"
@@ -188,7 +199,7 @@ function SkeletonYChartAxe() {
         rx="3"
         y="23.25%"
         x="0%"
-        className={'fill-black/[0.10] dark:fill-white/[0.10]'}
+        className={classNames(skeletonFillColorClassName, 'animate-pulse')}
       />
       <rect
         width="32px"
@@ -196,7 +207,7 @@ function SkeletonYChartAxe() {
         rx="3"
         y="46.5%"
         x="0%"
-        className={'fill-black/[0.10] dark:fill-white/[0.10]'}
+        className={classNames(skeletonFillColorClassName, 'animate-pulse')}
       />
       <rect
         width="32px"
@@ -204,7 +215,7 @@ function SkeletonYChartAxe() {
         rx="3"
         y="69.75%"
         x="0%"
-        className={'fill-black/[0.10] dark:fill-white/[0.10]'}
+        className={classNames(skeletonFillColorClassName, 'animate-pulse')}
       />
       <rect
         width="32px"
@@ -212,7 +223,7 @@ function SkeletonYChartAxe() {
         rx="3"
         y="93%"
         x="0%"
-        className={'fill-black/[0.10] dark:fill-white/[0.10]'}
+        className={classNames(skeletonFillColorClassName, 'animate-pulse')}
       />
     </g>
   )
