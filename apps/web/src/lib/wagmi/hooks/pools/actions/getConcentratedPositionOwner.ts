@@ -1,5 +1,5 @@
 import {
-  SUSHISWAP_V3_POSTIION_MANAGER,
+  SUSHISWAP_V3_POSITION_MANAGER,
   type SushiSwapV3ChainId,
 } from 'sushi/config'
 import { readContracts } from 'wagmi/actions'
@@ -17,7 +17,7 @@ export const getConcentratedPositionOwners = async ({
       ({ tokenId, chainId }) =>
         ({
           chainId,
-          address: SUSHISWAP_V3_POSTIION_MANAGER[chainId],
+          address: SUSHISWAP_V3_POSITION_MANAGER[chainId],
           abi: [
             {
               inputs: [
