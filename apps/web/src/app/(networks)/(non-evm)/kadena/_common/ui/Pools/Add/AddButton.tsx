@@ -71,7 +71,7 @@ export const AddButton = ({
         groupTimestamp: Date.now(),
         timestamp: Date.now(),
       })
-      console.log(error)
+      console.error(error)
       setIsTxnPending(false)
     }
   }

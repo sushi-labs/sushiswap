@@ -67,7 +67,7 @@ export const SwapButton = ({ closeModal }: { closeModal: () => void }) => {
         timestamp: Date.now(),
         href: txId ? getChainwebTxnLink(txId) : undefined,
       })
-      console.log(error)
+      console.error(error)
 
       setIsTxnPending(false)
     }

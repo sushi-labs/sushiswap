@@ -14,7 +14,6 @@ export const metadata: Metadata = {
 export default function RootLayout({
   children,
 }: { children: React.ReactNode }) {
-  console.log('RootLayout Kadena')
   return (
     <Providers>
       <div className="fixed flex flex-col h-full w-full overflow-auto">

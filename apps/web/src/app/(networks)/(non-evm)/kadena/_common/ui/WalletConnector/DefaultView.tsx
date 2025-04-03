@@ -16,7 +16,8 @@ import React, {
 import { formatNumber, formatUSD } from 'sushi/format'
 import { truncateText } from '~kadena/_common/lib/utils/formatters'
 import { getChainwebAddressLink } from '~kadena/_common/lib/utils/kadena-helpers'
-import { useWalletDispatch } from '~kadena/wallet-provider'
+import { useWalletAdaptersContext } from '~kadena/wallet-adapters-provider'
+import { useWalletState } from '~kadena/wallet-provider'
 import type { IProfileView } from './WalletConnector'
 
 type DefaultViewProps = {
@@ -24,7 +25,8 @@ type DefaultViewProps = {
 }
 
 export const DefaultView = ({ setView }: DefaultViewProps) => {
-  const { setConnected } = useWalletDispatch()
+  const { disconnect } = useWalletAdaptersContext()
+  const { account } = useWalletState()
   const [isLoadingPrice, setIsLoadingPrice] = useState(true)
   const [isLoadingBalance, setIsLoadingBalance] = useState(true)
 
@@ -42,24 +44,21 @@ export const DefaultView = ({ setView }: DefaultViewProps) => {
 
   const price = '0.123'
 
-  const address =
-    'abf594a764e49a90a98cddf30872d8497e37399684c1d8e2b8e96fd865728cc2'
-
   const isLoading = isLoadingBalance || isLoadingPrice
 
   return (
     <div className="flex flex-col gap-8 p-4 w-full">
       <div className="flex justify-between gap-2 w-full">
         <div className="text-sm font-semibold flex items-center gap-1.5 text-gray-700 dark:text-slate-200">
-          {address && <JazzIcon diameter={16} address={address} />}
+          {account && <JazzIcon diameter={16} address={account} />}
           <ClipboardController>
             {({ setCopied }) => (
               <span
-                onKeyDown={() => setCopied(address ?? '')}
+                onKeyDown={() => setCopied(account ?? '')}
                 className="cursor-pointer"
-                onClick={() => setCopied(address ?? '')}
+                onClick={() => setCopied(account ?? '')}
               >
-                {truncateText(address ?? '')}
+                {truncateText(account ?? '')}
               </span>
             )}
           </ClipboardController>
@@ -76,7 +75,7 @@ export const DefaultView = ({ setView }: DefaultViewProps) => {
             {({ setCopied }) => (
               <IconButton
                 icon={DocumentDuplicateIcon}
-                onClick={() => setCopied(address ?? '')}
+                onClick={() => setCopied(account ?? '')}
                 name={'Copy Address'}
                 description={'Copy Address'}
                 size="xs"
@@ -84,7 +83,7 @@ export const DefaultView = ({ setView }: DefaultViewProps) => {
             )}
           </ClipboardController>
           <Link
-            href={getChainwebAddressLink(address ?? '')}
+            href={getChainwebAddressLink(account ?? '')}
             target="_blank"
             rel="noopenner noreferrer"
           >
@@ -97,7 +96,7 @@ export const DefaultView = ({ setView }: DefaultViewProps) => {
           </Link>
           <IconButton
             icon={ArrowLeftOnRectangleIcon}
-            onClick={() => setConnected(false)}
+            onClick={disconnect}
             name="Disconnect"
             size="xs"
             description="Disconnect"

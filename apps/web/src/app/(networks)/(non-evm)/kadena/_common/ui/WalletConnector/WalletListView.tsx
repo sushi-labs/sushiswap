@@ -1,19 +1,9 @@
 import { List, SelectIcon } from '@sushiswap/ui'
 import Image from 'next/image'
+import { useWalletAdaptersContext } from '~kadena/wallet-adapters-provider'
 
-// @TODO: replace prop with hook during integration
-export const WalletListView = ({
-  setIsConnecting,
-}: {
-  setIsConnecting: () => void
-}) => {
-  const adapters = [
-    {
-      name: 'Metamask',
-      icon: 'https://images.ctfassets.net/clixtyxoaeas/1ezuBGezqfIeifWdVtwU4c/d970d4cdf13b163efddddd5709164d2e/MetaMask-icon-Fox.svg',
-      readyState: 'Found',
-    },
-  ]
+export const WalletListView = () => {
+  const { adapters } = useWalletAdaptersContext()
 
   return (
     <List className="flex flex-col gap-1 !p-0">
@@ -28,15 +18,12 @@ export const WalletListView = ({
                 height={25}
               />
             )}
-            className="w-full items-center text-left justify-start flex"
+            className="w-full items-center text-left justify-start flex px-0"
             key={adapter.name}
             title={adapter.name}
-            onClick={async () => {
-              if (adapter.readyState === 'Found') {
-                setIsConnecting()
-              }
-            }}
+            onClick={adapter.onClick}
             hoverIcon={() => <SelectIcon className="-rotate-90" />}
+            disabled={adapter.readyState === 'NotDetected'}
           />
         ))}
       </List.Control>
