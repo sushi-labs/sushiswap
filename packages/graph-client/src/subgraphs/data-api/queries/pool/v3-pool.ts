@@ -1,21 +1,21 @@
 import type { VariablesOf } from 'gql.tada'
 
 import type { PoolHasSteerVaults } from '@sushiswap/steer-sdk'
-import { request, type RequestOptions } from 'src/lib/request.js'
+import { type RequestOptions, request } from 'src/lib/request.js'
 import {
-  EvmChainId,
-  ChefType,
-  RewarderType,
-  SushiSwapProtocol,
+  type ChefType,
+  type EvmChainId,
   type PoolBase,
   type PoolHistory1D,
   type PoolV3,
   type PoolWithAprs,
   type PoolWithIncentives,
+  type RewarderType,
+  SushiSwapProtocol,
 } from 'sushi'
 import { isSushiSwapV3ChainId } from 'sushi/config'
-import { SUSHI_DATA_API_HOST } from '../../data-api-host.js'
 import type { Address } from 'viem'
+import { SUSHI_DATA_API_HOST } from '../../data-api-host.js'
 import { graphql } from '../../graphql.js'
 import { SUSHI_REQUEST_HEADERS } from '../../request-headers.js'
 
