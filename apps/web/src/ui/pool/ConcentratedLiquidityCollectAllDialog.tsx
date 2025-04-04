@@ -22,7 +22,7 @@ import { type FC, type ReactNode, useCallback, useMemo, useState } from 'react'
 import type { ConcentratedLiquidityPositionWithV3Pool } from 'src/lib/wagmi/hooks/positions/types'
 import { EvmChain, type EvmChainId } from 'sushi/chain'
 import {
-  SUSHISWAP_V3_POSTIION_MANAGER,
+  SUSHISWAP_V3_POSITION_MANAGER,
   isSushiSwapV3ChainId,
 } from 'sushi/config'
 import { Amount, Native, type Type, unwrapToken } from 'sushi/currency'
@@ -170,7 +170,7 @@ const _ConcentratedLiquidityCollectAllDialog: FC<
       NonfungiblePositionManager.collectCallParameters(positionsToCollect)
 
     return {
-      to: SUSHISWAP_V3_POSTIION_MANAGER[chainId],
+      to: SUSHISWAP_V3_POSITION_MANAGER[chainId],
       data: calldata as Hex,
       value: BigInt(value),
       chainId,
