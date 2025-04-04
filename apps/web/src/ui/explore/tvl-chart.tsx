@@ -209,7 +209,7 @@ export const TVLChart: FC<TVLChart> = ({ data, chainId, startDate }) => {
                 className="text-sm text-gray-500 dark:text-slate-500"
               >
                 {isMounted
-                  ? format(new Date(currentDate), 'MMM dd yyyy HH:mm aa')
+                  ? format(new Date(currentDate), 'dd MMM yyyy HH:mm aa')
                   : ''}
               </div>
             </div>
