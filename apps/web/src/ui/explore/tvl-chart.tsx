@@ -14,9 +14,10 @@ import { formatUSD } from 'sushi/format'
 interface TVLChart {
   data: AnalyticsDayBuckets
   chainId: ChainId
+  startDate?: Date
 }
 
-export const TVLChart: FC<TVLChart> = ({ data, chainId }) => {
+export const TVLChart: FC<TVLChart> = ({ data, chainId, startDate }) => {
   const isMounted = useIsMounted()
 
   const { resolvedTheme } = useTheme()
@@ -33,7 +34,12 @@ export const TVLChart: FC<TVLChart> = ({ data, chainId }) => {
     data.v2.forEach((item) => uniqueDates.add(item.date * 1000))
     data.v3.forEach((item) => uniqueDates.add(item.date * 1000))
 
-    const sortedDates = Array.from(uniqueDates).sort((a, b) => a - b)
+    const startTimestamp = startDate ? startDate.getTime() : 0
+    const filteredDates = startTimestamp
+      ? Array.from(uniqueDates).filter((date) => date >= startTimestamp)
+      : Array.from(uniqueDates)
+
+    const sortedDates = filteredDates.sort((a, b) => a - b)
     const v2 = sortedDates.map((date) => [date, v2Map.get(date) ?? 0])
     const v3 = sortedDates.map((date) => [date, v3Map.get(date) ?? 0])
 
@@ -41,7 +47,7 @@ export const TVLChart: FC<TVLChart> = ({ data, chainId }) => {
     const currentDate = sortedDates[sortedDates.length - 1]
 
     return [v2, v3, combinedTVL, currentDate]
-  }, [data])
+  }, [data, startDate])
 
   const zIndex = useMemo(() => {
     const v2Sum = v2.reduce((sum, [_, value]) => sum + value, 0)

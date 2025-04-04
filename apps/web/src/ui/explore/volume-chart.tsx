@@ -13,9 +13,10 @@ import { formatUSD } from 'sushi/format'
 interface VolumeChart {
   data: AnalyticsDayBuckets
   chainId: ChainId
+  startDate?: Date
 }
 
-export const VolumeChart: FC<VolumeChart> = ({ data, chainId }) => {
+export const VolumeChart: FC<VolumeChart> = ({ data, chainId, startDate }) => {
   const { resolvedTheme } = useTheme()
 
   const [v2, v3, totalVolume] = useMemo(() => {
@@ -23,9 +24,12 @@ export const VolumeChart: FC<VolumeChart> = ({ data, chainId }) => {
     data.v2.forEach((item) => uniqueDates.add(item.date * 1000))
     data.v3.forEach((item) => uniqueDates.add(item.date * 1000))
 
-    const sortedDates = Array.from(uniqueDates)
-      .sort((a, b) => a - b)
-      .slice(-30)
+    const startTimestamp = startDate ? startDate.getTime() : 0
+    const filteredDates = startTimestamp
+      ? Array.from(uniqueDates).filter((date) => date >= startTimestamp)
+      : Array.from(uniqueDates)
+
+    const sortedDates = filteredDates.sort((a, b) => a - b)
     const v2Map = new Map(
       data.v2.map((item) => [item.date * 1000, item.volumeUSD]),
     )
@@ -41,7 +45,7 @@ export const VolumeChart: FC<VolumeChart> = ({ data, chainId }) => {
       v3.reduce((sum, [_, value]) => sum + value, 0)
 
     return [v2, v3, totalVolume]
-  }, [data])
+  }, [data, startDate])
 
   const onMouseOver = useCallback((params: { data: number[] }[]) => {
     const volumeNode = document.getElementById('hoveredVolume')
