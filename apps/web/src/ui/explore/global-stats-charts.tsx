@@ -42,7 +42,9 @@ const _GlobalStatsCharts: FC<{ chainId: PoolChainId }> = async ({
   const tvlStartDate = getChartStartDate(500)
   const volumeStartDate = getChartStartDate(30)
 
-  return !dayBuckets.v2.length && !dayBuckets.v3.length ? (
+  return !dayBuckets.v2.length &&
+    !dayBuckets.v3.length &&
+    !dayBuckets.blade?.length ? (
     <GlobalStatsLoading chainId={chainId} />
   ) : (
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-20 gap-y-10">
