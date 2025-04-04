@@ -15,7 +15,7 @@ import { NonStandardChainId, SUPPORTED_NETWORKS } from 'src/config'
 import { HeaderNetworkSelector } from 'src/lib/wagmi/components/header-network-selector'
 import { SidebarToggle, useSidebar } from 'src/ui/sidebar'
 import { useAccount, useChainId } from 'wagmi'
-import { headerElements } from './_common/header-elements'
+import { HeaderElements } from './_common/header-elements'
 import { WalletConnector } from './_common/ui/WalletConnector/WalletConnector'
 import { useWalletState } from './wallet-provider'
 
@@ -67,7 +67,7 @@ export const Header: FC = () => {
       <Navigation
         className="!pl-0 lg:!pl-4 !z-[unset]"
         hideSushiDropdown
-        leftElements={headerElements}
+        leftElements={HeaderElements()}
         rightElement={
           <Suspense>
             <HeaderNetworkSelector

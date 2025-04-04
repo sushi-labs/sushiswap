@@ -1,5 +1,6 @@
 'use client'
 
+import { useIsSmScreen } from '@sushiswap/hooks'
 import { Button } from '@sushiswap/ui'
 import {
   Tooltip,
@@ -8,6 +9,7 @@ import {
   TooltipTrigger,
 } from '@sushiswap/ui'
 import { ShuffleIcon } from '@sushiswap/ui/icons/ShuffleIcon'
+import { useState } from 'react'
 import { PathnameButton } from 'src/ui/pathname-button'
 
 const swapTypes = ['Swap', 'Limit', 'DCA']
@@ -19,25 +21,45 @@ const crossChainType = {
 }
 
 export const SwitchSwapType = () => {
+  const [openTypeTooltip, setOpenTypeTooltip] = useState<string | null>(null)
+  const [openCrossChainTooltip, setOpenCrossChainTooltip] = useState(false)
+
+  const isSmallScreen = useIsSmScreen()
+
   return (
     <TooltipProvider>
       <div className="flex md:flex-row flex-col gap-2">
         <div className="flex gap-2">
           {swapTypes.map((type) => {
             const isDisabled = type !== 'Swap'
+            const isOpen = openTypeTooltip === type
+
             const button = (
               <PathnameButton
                 key={type}
                 pathname={`/kadena/${type.toLowerCase()}`}
                 size="sm"
                 disabled={isDisabled}
+                onClick={() => {
+                  if (isSmallScreen && isDisabled) {
+                    setOpenTypeTooltip((prev) => (prev === type ? null : type))
+                  }
+                }}
               >
                 {type}
               </PathnameButton>
             )
 
             return isDisabled ? (
-              <Tooltip key={type}>
+              <Tooltip
+                key={type}
+                open={isSmallScreen ? isOpen : undefined}
+                onOpenChange={(open) =>
+                  isSmallScreen
+                    ? setOpenTypeTooltip(open ? type : null)
+                    : undefined
+                }
+              >
                 <TooltipTrigger asChild>
                   <div>{button}</div>
                 </TooltipTrigger>
@@ -51,9 +73,25 @@ export const SwitchSwapType = () => {
           })}
         </div>
         <div className="flex gap-2">
-          <Tooltip>
+          <Tooltip
+            open={isSmallScreen ? openCrossChainTooltip : undefined}
+            onOpenChange={(open) =>
+              isSmallScreen ? setOpenCrossChainTooltip(open) : undefined
+            }
+          >
             <TooltipTrigger asChild>
-              <div>
+              <div
+                onClick={() =>
+                  isSmallScreen
+                    ? setOpenCrossChainTooltip((prev) => !prev)
+                    : undefined
+                }
+                onKeyDown={() =>
+                  isSmallScreen
+                    ? setOpenCrossChainTooltip((prev) => !prev)
+                    : undefined
+                }
+              >
                 <Button
                   key={crossChainType.label}
                   size="sm"

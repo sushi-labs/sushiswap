@@ -1,5 +1,6 @@
 'use client'
 
+import { useIsSmScreen } from '@sushiswap/hooks'
 import {
   LinkInternal,
   Tooltip,
@@ -8,21 +9,38 @@ import {
   TooltipTrigger,
 } from '@sushiswap/ui'
 import { useSearchParams } from 'next/navigation'
+import { useState } from 'react'
 import { PathnameButton } from 'src/ui/pathname-button'
 
 export function NavigationItems() {
   const searchParams = useSearchParams()
+  const isSmallScreen = useIsSmScreen()
+
+  const [tooltips, setTooltips] = useState<{ [key: string]: boolean }>({
+    rewards: false,
+    migrate: false,
+  })
+
+  const handleToggleTooltip = (id: string) => {
+    setTooltips((prev) => {
+      const newState: typeof prev = Object.fromEntries(
+        Object.keys(prev).map((key) => [key, false]),
+      )
+      newState[id] = !prev[id]
+      return newState
+    })
+  }
 
   return (
     <>
       <LinkInternal
-        shallow={true}
+        shallow
         scroll={false}
         href={`/kadena/pool?${searchParams.toString()}`}
       >
         <PathnameButton
           id="my-positions"
-          pathname={'/kadena/pool'}
+          pathname="/kadena/pool"
           asChild
           size="sm"
         >
@@ -32,36 +50,36 @@ export function NavigationItems() {
 
       <TooltipProvider>
         <div className="flex gap-2">
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <div>
-                <PathnameButton
-                  disabled
-                  id="my-rewards"
-                  pathname={''}
-                  size="sm"
+          {(['rewards', 'migrate'] as const).map((id) => (
+            <Tooltip
+              key={id}
+              open={isSmallScreen ? tooltips[id] : undefined}
+              onOpenChange={(open) => {
+                if (isSmallScreen) {
+                  setTooltips((prev) => ({ ...prev, [id]: open }))
+                }
+              }}
+            >
+              <TooltipTrigger asChild>
+                <div
+                  onClick={() => isSmallScreen && handleToggleTooltip(id)}
+                  onKeyDown={() => isSmallScreen && handleToggleTooltip(id)}
                 >
-                  My Rewards
-                </PathnameButton>
-              </div>
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>Not currently supported on Kadena network</p>
-            </TooltipContent>
-          </Tooltip>
-
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <div>
-                <PathnameButton disabled id="migrate" pathname={''} size="sm">
-                  Migrate
-                </PathnameButton>
-              </div>
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>Not currently supported on Kadena network</p>
-            </TooltipContent>
-          </Tooltip>
+                  <PathnameButton
+                    disabled
+                    id={`btn-${id}`}
+                    pathname=""
+                    size="sm"
+                  >
+                    {id === 'rewards' ? 'My Rewards' : 'Migrate'}
+                  </PathnameButton>
+                </div>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Not currently supported on Kadena network</p>
+              </TooltipContent>
+            </Tooltip>
+          ))}
         </div>
       </TooltipProvider>
     </>
