@@ -47,7 +47,7 @@ export const PriceImpactWarning: FC<PriceImpactWarningProps> = ({
       className={classNames('!p-4', className)}
     >
       Price impact is too high. You will lose a big portion of your funds in
-      this transaction. Please tick the box if you would like to continue.
+      this transaction.
     </Message>
   )
 }
