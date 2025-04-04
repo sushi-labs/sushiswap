@@ -67,7 +67,7 @@ export const SwitchSwapType = () => {
               </div>
             </TooltipTrigger>
             <TooltipContent>
-              <p>Not currently supported on Kadena network</p>
+              <p>Coming Soon</p>
             </TooltipContent>
           </Tooltip>
         </div>
