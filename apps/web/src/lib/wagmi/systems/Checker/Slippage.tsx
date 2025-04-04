@@ -19,15 +19,17 @@ const Slippage: FC<SlippageProps> = ({
   size = 'xl',
   ...props
 }) => {
-  const [open, setOpen] = useState(
-    () => !slippageTolerance.lessThan(SLIPPAGE_WARNING_THRESHOLD),
-  )
+  const [open, setOpen] = useState(false)
 
   useEffect(() => {
-    if (!open && !slippageTolerance.lessThan(SLIPPAGE_WARNING_THRESHOLD)) {
-      setOpen(true)
-    }
-  }, [open, slippageTolerance])
+    const shouldBeOpen = !slippageTolerance.lessThan(SLIPPAGE_WARNING_THRESHOLD)
+
+    setOpen((prev) => {
+      if (shouldBeOpen && !prev) return true
+      if (!shouldBeOpen && prev) return false
+      return prev
+    })
+  }, [slippageTolerance])
 
   return open ? (
     <Button
