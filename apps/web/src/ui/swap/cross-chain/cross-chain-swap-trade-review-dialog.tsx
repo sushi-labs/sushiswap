@@ -54,6 +54,8 @@ import {
 } from 'src/lib/swap/cross-chain'
 import { warningSeverity } from 'src/lib/swap/warningSeverity'
 import { useApproved } from 'src/lib/wagmi/systems/Checker/Provider'
+import { SLIPPAGE_WARNING_THRESHOLD } from 'src/lib/wagmi/systems/Checker/Slippage'
+import { PriceImpactWarning, SlippageWarning } from 'src/ui/common'
 import { ChainKey, EvmChain } from 'sushi/chain'
 import { Amount, Native } from 'sushi/currency'
 import { formatNumber, formatUSD, shortenAddress } from 'sushi/format'
@@ -579,6 +581,10 @@ const _CrossChainSwapTradeReviewDialog: FC<{
     return priceImpactSeverity > 3
   }, [step?.priceImpact])
 
+  const showSlippageWarning = useMemo(() => {
+    return !slippagePercent.lessThan(SLIPPAGE_WARNING_THRESHOLD)
+  }, [slippagePercent])
+
   return (
     <>
       <DialogReview>
@@ -624,6 +630,8 @@ const _CrossChainSwapTradeReviewDialog: FC<{
                 </DialogDescription>
               </DialogHeader>
               <div className="flex flex-col gap-4 overflow-x-hidden">
+                {showSlippageWarning && <SlippageWarning />}
+                {showPriceImpactWarning && <PriceImpactWarning />}
                 <List>
                   <List.Control>
                     <List.KeyValue title="Estimated arrival">
@@ -951,7 +959,8 @@ const _CrossChainSwapTradeReviewDialog: FC<{
                     color={
                       isEstGasError ||
                       isStepQueryError ||
-                      showPriceImpactWarning
+                      showPriceImpactWarning ||
+                      showSlippageWarning
                         ? 'red'
                         : 'blue'
                     }

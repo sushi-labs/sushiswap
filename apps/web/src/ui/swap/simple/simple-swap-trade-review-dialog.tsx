@@ -23,6 +23,7 @@ import {
   DialogTitle,
   DialogType,
   List,
+  Message,
   SkeletonBox,
   SkeletonText,
   classNames,
@@ -32,20 +33,20 @@ import React, {
   type FC,
   type ReactNode,
   useCallback,
-  useEffect,
   useMemo,
   useRef,
 } from 'react'
 import type { UseTradeReturn } from 'src/lib/hooks/react-query'
 import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
 import { useApproved } from 'src/lib/wagmi/systems/Checker/Provider'
+import { SLIPPAGE_WARNING_THRESHOLD } from 'src/lib/wagmi/systems/Checker/Slippage'
+import { PriceImpactWarning, SlippageWarning } from 'src/ui/common'
 import { gasMargin } from 'sushi'
 import { ChainId, EvmChain } from 'sushi/chain'
 import { Native } from 'sushi/currency'
 import { shortenAddress } from 'sushi/format'
 import { ZERO } from 'sushi/math'
 import {
-  type Hex,
   type SendTransactionReturnType,
   UserRejectedRequestError,
   stringify,
@@ -294,6 +295,10 @@ const _SimpleSwapTradeReviewDialog: FC<{
     }
   }, [trade?.priceImpact])
 
+  const showSlippageWarning = useMemo(() => {
+    return !slippagePercent.lessThan(SLIPPAGE_WARNING_THRESHOLD)
+  }, [slippagePercent])
+
   return (
     <Trace modal={InterfaceModalName.CONFIRM_SWAP}>
       <DialogReview>
@@ -323,14 +328,8 @@ const _SimpleSwapTradeReviewDialog: FC<{
                 </DialogDescription>
               </DialogHeader>
               <div className="flex flex-col gap-4">
-                {showPriceImpactWarning && (
-                  <div className="px-4 py-3 mt-4 rounded-xl bg-red/20">
-                    <span className="text-sm font-medium text-red-600">
-                      High price impact. You will lose a significant portion of
-                      your funds in this trade due to price impact.
-                    </span>
-                  </div>
-                )}
+                {showSlippageWarning && <SlippageWarning />}
+                {showPriceImpactWarning && <PriceImpactWarning />}
                 <List className="!pt-0">
                   <List.Control>
                     <List.KeyValue title="Network">
@@ -486,7 +485,9 @@ const _SimpleSwapTradeReviewDialog: FC<{
                           isSwapQueryError,
                       )}
                       color={
-                        isSwapQueryError || showPriceImpactWarning
+                        isSwapQueryError ||
+                        showPriceImpactWarning ||
+                        showSlippageWarning
                           ? 'red'
                           : 'blue'
                       }

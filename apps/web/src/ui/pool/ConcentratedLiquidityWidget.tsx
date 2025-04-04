@@ -14,6 +14,8 @@ import {
 import type { Type } from 'sushi/currency'
 import type { Position } from 'sushi/pool/sushiswap-v3'
 
+import { SlippageToleranceStorageKey } from '@sushiswap/hooks'
+import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
 import { Web3Input } from 'src/lib/wagmi/components/web3-input'
 import { useConcentratedPositionOwner } from 'src/lib/wagmi/hooks/positions/hooks/useConcentratedPositionOwner'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
@@ -56,6 +58,9 @@ export const ConcentratedLiquidityWidget: FC<ConcentratedLiquidityWidget> = ({
   successLink,
   withTitleAndDescription = true,
 }) => {
+  const [slippagePercent] = useSlippageTolerance(
+    SlippageToleranceStorageKey.AddLiquidity,
+  )
   const { onFieldAInput, onFieldBInput } = useConcentratedMintActionHandlers()
   const { independentField, typedValue } = useConcentratedMintState()
   const { data: owner, isInitialLoading: isOwnerLoading } =
@@ -256,52 +261,58 @@ export const ConcentratedLiquidityWidget: FC<ConcentratedLiquidityWidget> = ({
         <Checker.Connect fullWidth>
           <Checker.Network fullWidth chainId={chainId}>
             <Checker.Amounts fullWidth chainId={chainId} amounts={amounts}>
-              <Checker.ApproveERC20
+              <Checker.Slippage
                 fullWidth
-                id="approve-erc20-0"
-                amount={parsedAmounts[Field.CURRENCY_A]}
-                contract={SUSHISWAP_V3_POSITION_MANAGER[chainId]}
-                enabled={!depositADisabled}
+                slippageTolerance={slippagePercent}
+                text="Continue With High Slippage"
               >
                 <Checker.ApproveERC20
                   fullWidth
-                  id="approve-erc20-1"
-                  amount={parsedAmounts[Field.CURRENCY_B]}
+                  id="approve-erc20-0"
+                  amount={parsedAmounts[Field.CURRENCY_A]}
                   contract={SUSHISWAP_V3_POSITION_MANAGER[chainId]}
-                  enabled={!depositBDisabled}
+                  enabled={!depositADisabled}
                 >
-                  <AddSectionReviewModalConcentrated
-                    chainId={chainId}
-                    feeAmount={feeAmount}
-                    token0={token0}
-                    token1={token1}
-                    input0={parsedAmounts[Field.CURRENCY_A]}
-                    input1={parsedAmounts[Field.CURRENCY_B]}
-                    position={position}
-                    noLiquidity={noLiquidity}
-                    price={price}
-                    pricesAtTicks={pricesAtTicks}
-                    ticksAtLimit={ticksAtLimit}
-                    tokenId={tokenId}
-                    existingPosition={existingPosition}
-                    onSuccess={() => {
-                      _onFieldAInput('')
-                      _onFieldBInput('')
-                    }}
-                    successLink={successLink}
+                  <Checker.ApproveERC20
+                    fullWidth
+                    id="approve-erc20-1"
+                    amount={parsedAmounts[Field.CURRENCY_B]}
+                    contract={SUSHISWAP_V3_POSITION_MANAGER[chainId]}
+                    enabled={!depositBDisabled}
                   >
-                    <DialogTrigger asChild>
-                      <Button
-                        fullWidth
-                        size="xl"
-                        testId="add-liquidity-preview"
-                      >
-                        Preview
-                      </Button>
-                    </DialogTrigger>
-                  </AddSectionReviewModalConcentrated>
+                    <AddSectionReviewModalConcentrated
+                      chainId={chainId}
+                      feeAmount={feeAmount}
+                      token0={token0}
+                      token1={token1}
+                      input0={parsedAmounts[Field.CURRENCY_A]}
+                      input1={parsedAmounts[Field.CURRENCY_B]}
+                      position={position}
+                      noLiquidity={noLiquidity}
+                      price={price}
+                      pricesAtTicks={pricesAtTicks}
+                      ticksAtLimit={ticksAtLimit}
+                      tokenId={tokenId}
+                      existingPosition={existingPosition}
+                      onSuccess={() => {
+                        _onFieldAInput('')
+                        _onFieldBInput('')
+                      }}
+                      successLink={successLink}
+                    >
+                      <DialogTrigger asChild>
+                        <Button
+                          fullWidth
+                          size="xl"
+                          testId="add-liquidity-preview"
+                        >
+                          Preview
+                        </Button>
+                      </DialogTrigger>
+                    </AddSectionReviewModalConcentrated>
+                  </Checker.ApproveERC20>
                 </Checker.ApproveERC20>
-              </Checker.ApproveERC20>
+              </Checker.Slippage>
             </Checker.Amounts>
           </Checker.Network>
         </Checker.Connect>

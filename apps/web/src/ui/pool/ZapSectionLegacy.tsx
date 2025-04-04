@@ -23,7 +23,10 @@ import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
 import { warningSeverity } from 'src/lib/swap/warningSeverity'
 import { Web3Input } from 'src/lib/wagmi/components/web3-input'
 import { SushiSwapV2PoolState } from 'src/lib/wagmi/hooks/pools/hooks/useSushiSwapV2Pools'
-import { Checker } from 'src/lib/wagmi/systems/Checker'
+import {
+  Checker,
+  SLIPPAGE_WARNING_THRESHOLD,
+} from 'src/lib/wagmi/systems/Checker'
 import {
   CheckerProvider,
   useApproved,
@@ -45,6 +48,7 @@ import {
 } from 'wagmi'
 import { useRefetchBalances } from '~evm/_common/ui/balance-provider/use-refetch-balances'
 import { useZap } from '../../lib/hooks'
+import { PriceImpactWarning, SlippageWarning } from '../common'
 import { ToggleZapCard } from './ToggleZapCard'
 import { ZapInfoCard } from './ZapInfoCard'
 
@@ -211,6 +215,10 @@ const _ZapSectionLegacy: FC<ZapSectionLegacyProps> = ({
     return priceImpactSeverity > 3
   }, [zapResponse?.priceImpact])
 
+  const showSlippageWarning = useMemo(() => {
+    return !slippageTolerance.lessThan(SLIPPAGE_WARNING_THRESHOLD)
+  }, [slippageTolerance])
+
   return (
     <Widget id="zapLiquidity" variant="empty">
       <WidgetHeader>
@@ -275,56 +283,51 @@ const _ZapSectionLegacy: FC<ZapSectionLegacyProps> = ({
                   size="xl"
                   fullWidth
                 >
-                  <Checker.ApproveERC20
-                    id="approve-token"
-                    className="whitespace-nowrap"
+                  <Checker.Slippage
+                    text="Zap With High Slippage"
+                    slippageTolerance={slippageTolerance}
                     fullWidth
-                    amount={parsedInputAmount}
-                    contract={zapResponse?.tx.to}
                   >
-                    <Checker.Success tag={APPROVE_TAG_ZAP_LEGACY}>
-                      <Button
-                        size="xl"
-                        fullWidth
-                        testId="zap-liquidity"
-                        onClick={() =>
-                          preparedTx && sendTransaction(preparedTx)
-                        }
-                        loading={!preparedTx || isWritePending}
-                        disabled={isZapError || isEstGasError}
-                      >
-                        {isZapError || isEstGasError ? (
-                          'Shoot! Something went wrong :('
-                        ) : isWritePending ? (
-                          <Dots>Confirm Transaction</Dots>
-                        ) : (
-                          'Add Liquidity'
-                        )}
-                      </Button>
-                    </Checker.Success>
-                  </Checker.ApproveERC20>
+                    <Checker.ApproveERC20
+                      id="approve-token"
+                      className="whitespace-nowrap"
+                      fullWidth
+                      amount={parsedInputAmount}
+                      contract={zapResponse?.tx.to}
+                    >
+                      <Checker.Success tag={APPROVE_TAG_ZAP_LEGACY}>
+                        <Button
+                          size="xl"
+                          fullWidth
+                          testId="zap-liquidity"
+                          onClick={() =>
+                            preparedTx && sendTransaction(preparedTx)
+                          }
+                          loading={!preparedTx || isWritePending}
+                          disabled={isZapError || isEstGasError}
+                        >
+                          {isZapError || isEstGasError ? (
+                            'Shoot! Something went wrong :('
+                          ) : isWritePending ? (
+                            <Dots>Confirm Transaction</Dots>
+                          ) : (
+                            'Add Liquidity'
+                          )}
+                        </Button>
+                      </Checker.Success>
+                    </Checker.ApproveERC20>
+                  </Checker.Slippage>
                 </Checker.Guard>
               </Checker.Amounts>
             </Checker.Network>
           </Checker.Connect>
+          {showSlippageWarning && <SlippageWarning className="mt-4" />}
           {showPriceImpactWarning && (
-            <div className="flex items-start px-4 py-3 mt-4 rounded-xl bg-red/20">
-              <input
-                id="expert-checkbox"
-                type="checkbox"
-                checked={checked}
-                onChange={(e) => setChecked(e.target.checked)}
-                className="cursor-pointer mr-1 w-5 h-5 mt-0.5 text-red-600 !ring-red-600 bg-white border-red rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2"
-              />
-              <label
-                htmlFor="expert-checkbox"
-                className="ml-2 font-medium text-red-600"
-              >
-                Price impact is too high. You will lose a big portion of your
-                funds in this trade. Please tick the box if you would like to
-                continue.
-              </label>
-            </div>
+            <PriceImpactWarning
+              className="mt-4"
+              checked={checked}
+              setChecked={setChecked}
+            />
           )}
           <ZapInfoCard
             zapResponse={zapResponse}
