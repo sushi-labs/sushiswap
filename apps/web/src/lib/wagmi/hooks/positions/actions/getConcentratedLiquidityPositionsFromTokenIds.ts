@@ -1,7 +1,7 @@
 import { readContracts } from '@wagmi/core/actions'
 import {
   SUSHISWAP_V3_FACTORY_ADDRESS,
-  SUSHISWAP_V3_POSTIION_MANAGER,
+  SUSHISWAP_V3_POSITION_MANAGER,
   type SushiSwapV3ChainId,
 } from 'sushi/config'
 import { computeSushiSwapV3PoolAddress } from 'sushi/pool/sushiswap-v3'
@@ -95,7 +95,7 @@ export const getConcentratedLiquidityPositionsFromTokenIds = async ({
 }): Promise<ConcentratedLiquidityPosition[]> => {
   const results = await readContracts(config, {
     contracts: tokenIds.map((el) => ({
-      address: SUSHISWAP_V3_POSTIION_MANAGER[el.chainId],
+      address: SUSHISWAP_V3_POSITION_MANAGER[el.chainId],
       abi: abiShard,
       chainId: el.chainId,
       functionName: 'positions',

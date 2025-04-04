@@ -6,7 +6,7 @@ import { DialogTrigger, FormSection, Message, classNames } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui'
 import { type FC, Fragment, useCallback, useMemo } from 'react'
 import {
-  SUSHISWAP_V3_POSTIION_MANAGER,
+  SUSHISWAP_V3_POSITION_MANAGER,
   type SushiSwapV3ChainId,
   type SushiSwapV3FeeAmount,
   isWNativeSupported,
@@ -270,14 +270,14 @@ export const ConcentratedLiquidityWidget: FC<ConcentratedLiquidityWidget> = ({
                   fullWidth
                   id="approve-erc20-0"
                   amount={parsedAmounts[Field.CURRENCY_A]}
-                  contract={SUSHISWAP_V3_POSTIION_MANAGER[chainId]}
+                  contract={SUSHISWAP_V3_POSITION_MANAGER[chainId]}
                   enabled={!depositADisabled}
                 >
                   <Checker.ApproveERC20
                     fullWidth
                     id="approve-erc20-1"
                     amount={parsedAmounts[Field.CURRENCY_B]}
-                    contract={SUSHISWAP_V3_POSTIION_MANAGER[chainId]}
+                    contract={SUSHISWAP_V3_POSITION_MANAGER[chainId]}
                     enabled={!depositBDisabled}
                   >
                     <AddSectionReviewModalConcentrated
