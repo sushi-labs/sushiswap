@@ -43,8 +43,13 @@ export const TVLChart: FC<TVLChart> = ({ data, chainId, startDate }) => {
     const v2 = sortedDates.map((date) => [date, v2Map.get(date) ?? 0])
     const v3 = sortedDates.map((date) => [date, v3Map.get(date) ?? 0])
 
-    const combinedTVL = v2[v2.length - 1][1] + v3[v3.length - 1][1]
-    const currentDate = sortedDates[sortedDates.length - 1]
+    const v2TVL = v2[v2.length - 1]?.[1] ?? 0
+    const v3TVL = v3[v3.length - 1]?.[1] ?? 0
+    const combinedTVL = v2TVL + v3TVL
+    const currentDate =
+      sortedDates.length > 0
+        ? sortedDates[sortedDates.length - 1]
+        : new Date().getTime()
 
     return [v2, v3, combinedTVL, currentDate]
   }, [data, startDate])
