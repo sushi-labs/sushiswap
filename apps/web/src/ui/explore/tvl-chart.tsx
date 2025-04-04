@@ -22,19 +22,23 @@ export const TVLChart: FC<TVLChart> = ({ data, chainId }) => {
   const { resolvedTheme } = useTheme()
 
   const [v2, v3, combinedTVL, currentDate] = useMemo(() => {
-    const xData = (data.v2.length > data.v3.length ? data.v2 : data.v3).map(
-      (data) => data.date * 1000,
+    const v2Map = new Map(
+      data.v2.map((item) => [item.date * 1000, item.liquidityUSD]),
+    )
+    const v3Map = new Map(
+      data.v3.map((item) => [item.date * 1000, item.liquidityUSD]),
     )
 
-    const v2 = xData
-      .map((xData, i) => [xData, data.v2[i]?.liquidityUSD ?? 0])
-      .reverse()
-    const v3 = xData
-      .map((xData, i) => [xData, data.v3[i]?.liquidityUSD ?? 0])
-      .reverse()
-    const combinedTVL = v2[v2.length - 1][1] + v3[v3.length - 1][1]
+    const uniqueDates = new Set<number>()
+    data.v2.forEach((item) => uniqueDates.add(item.date * 1000))
+    data.v3.forEach((item) => uniqueDates.add(item.date * 1000))
 
-    const currentDate = xData[0]
+    const sortedDates = Array.from(uniqueDates).sort((a, b) => a - b)
+    const v2 = sortedDates.map((date) => [date, v2Map.get(date) ?? 0])
+    const v3 = sortedDates.map((date) => [date, v3Map.get(date) ?? 0])
+
+    const combinedTVL = v2[v2.length - 1][1] + v3[v3.length - 1][1]
+    const currentDate = sortedDates[sortedDates.length - 1]
 
     return [v2, v3, combinedTVL, currentDate]
   }, [data])
