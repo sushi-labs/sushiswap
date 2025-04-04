@@ -29,7 +29,7 @@ import {
 import format from 'date-fns/format'
 import { useRouter } from 'next/navigation'
 import { use, useMemo, useState } from 'react'
-import { useAngleRewardTokens } from 'src/lib/hooks/react-query'
+import { useRewardTokens } from 'src/lib/hooks/react-query'
 import { Web3Input } from 'src/lib/wagmi/components/web3-input'
 import { useConcentratedLiquidityPool } from 'src/lib/wagmi/hooks/pools/hooks/useConcentratedLiquidityPool'
 import {
@@ -122,7 +122,7 @@ const Incentivize = withCheckerRoot(() => {
       ? SushiSwapV3Pool.getAddress(token0.wrapped, token1.wrapped, feeAmount)
       : undefined
 
-  const epochs = useMemo(() => {
+  const numHours = useMemo(() => {
     return startDate && endDate
       ? Math.floor((endDate.getTime() - startDate.getTime()) / 3600000)
       : undefined
@@ -131,15 +131,15 @@ const Incentivize = withCheckerRoot(() => {
   const [angleConditionsState, { write }] = useAcceptAngleConditions()
 
   const { data: angleRewardTokens, isLoading: angleRewardTokensLoading } =
-    useAngleRewardTokens({ chainId })
+    useRewardTokens({ chainId })
 
   const minAmount = useMemo(() => {
     if (!angleRewardTokens) return undefined
     const token = angleRewardTokens.find(
       (el) => el.token.wrapped.address === rewardToken?.wrapped.address,
     )
-    if (token && epochs) return token.minimumAmountPerEpoch?.multiply(epochs)
-  }, [angleRewardTokens, epochs, rewardToken])
+    if (token && numHours) return token.minimumAmountPerHour?.multiply(numHours)
+  }, [angleRewardTokens, numHours, rewardToken])
 
   const {
     simulation: { isError, data: simulationData },
@@ -147,7 +147,7 @@ const Incentivize = withCheckerRoot(() => {
   } = useIncentivizePoolWithRewards({
     account: address,
     args:
-      amount[0] && v3Address && rewardToken && epochs && startDate
+      amount[0] && v3Address && rewardToken && numHours && startDate
         ? [
             {
               uniV3Pool: v3Address as Address,
@@ -160,7 +160,7 @@ const Incentivize = withCheckerRoot(() => {
               propToken1: customize ? distro2[0] * 100 : 2000,
               propFees: customize ? distro3[0] * 100 : 6000,
               epochStart: Math.floor(startDate.getTime() / 1000) || 0,
-              numEpoch: epochs,
+              numEpoch: numHours,
               isOutOfRangeIncentivized: customizeOOR ? 1 : 0,
               boostedReward: 0,
               boostingAddress: zeroAddress,
@@ -176,7 +176,7 @@ const Incentivize = withCheckerRoot(() => {
       amount[0] &&
         v3Address &&
         rewardToken &&
-        epochs &&
+        numHours &&
         startDate &&
         approved &&
         angleConditionsState === AngleConditionsState.ACCEPTED,
@@ -295,7 +295,7 @@ const Incentivize = withCheckerRoot(() => {
             allowNative={false}
             hidePinnedTokens={true}
             hideSearch={true}
-            {...(epochs &&
+            {...(numHours &&
               rewardToken &&
               amount[0] &&
               minAmount &&
