@@ -7,7 +7,8 @@ import type { EChartsOption } from 'echarts-for-react/lib/types'
 import echarts from 'echarts/lib/echarts'
 import { useTheme } from 'next-themes'
 import { type FC, useCallback, useMemo } from 'react'
-import { type ChainId, EvmChain } from 'sushi/chain'
+import { type ChainId, EvmChain, isEvmChainId } from 'sushi/chain'
+import { isBladeChainId } from 'sushi/config'
 import { formatUSD } from 'sushi/format'
 
 interface VolumeChart {
@@ -18,11 +19,14 @@ interface VolumeChart {
 
 export const VolumeChart: FC<VolumeChart> = ({ data, chainId, startDate }) => {
   const { resolvedTheme } = useTheme()
+  const isBladeChain = isEvmChainId(chainId) && isBladeChainId(chainId)
 
-  const [v2, v3, totalVolume] = useMemo(() => {
+  const [v2, v3, blade, totalVolume] = useMemo(() => {
     const uniqueDates = new Set<number>()
     data.v2.forEach((item) => uniqueDates.add(item.date * 1000))
     data.v3.forEach((item) => uniqueDates.add(item.date * 1000))
+    const bladeData = isBladeChain && data.blade ? data.blade : []
+    bladeData.forEach((item) => uniqueDates.add(item.date * 1000))
 
     const startTimestamp = startDate ? startDate.getTime() : 0
     const filteredDates = startTimestamp
@@ -36,25 +40,33 @@ export const VolumeChart: FC<VolumeChart> = ({ data, chainId, startDate }) => {
     const v3Map = new Map(
       data.v3.map((item) => [item.date * 1000, item.volumeUSD]),
     )
+    const bladeMap = new Map(
+      bladeData.map((item) => [item.date * 1000, item.volumeUSD]),
+    )
 
     const v2 = sortedDates.map((date) => [date, v2Map.get(date) ?? 0])
     const v3 = sortedDates.map((date) => [date, v3Map.get(date) ?? 0])
+    const blade = sortedDates.map((date) => [date, bladeMap.get(date) ?? 0])
 
     const totalVolume =
       v2.reduce((sum, [_, value]) => sum + value, 0) +
-      v3.reduce((sum, [_, value]) => sum + value, 0)
+      v3.reduce((sum, [_, value]) => sum + value, 0) +
+      blade.reduce((sum, [_, value]) => sum + value, 0)
 
-    return [v2, v3, totalVolume]
-  }, [data, startDate])
+    return [v2, v3, blade, totalVolume]
+  }, [data, startDate, isBladeChain])
 
   const onMouseOver = useCallback((params: { data: number[] }[]) => {
     const volumeNode = document.getElementById('hoveredVolume')
     const v2VolumeNode = document.getElementById('hoveredV2Volume')
     const v3VolumeNode = document.getElementById('hoveredV3Volume')
+    const bladeVolumeNode = document.getElementById('hoveredBladeVolume')
     const dateNode = document.getElementById('hoveredVolumeDate')
 
     if (volumeNode)
-      volumeNode.innerHTML = formatUSD(params[0].data[1] + params[1].data[1])
+      volumeNode.innerHTML = formatUSD(
+        params[0].data[1] + params[1].data[1] + (params[2]?.data?.[1] || 0),
+      )
     if (dateNode)
       dateNode.innerHTML = format(
         new Date(params[0].data[0]),
@@ -68,18 +80,24 @@ export const VolumeChart: FC<VolumeChart> = ({ data, chainId, startDate }) => {
       v3VolumeNode.innerHTML = params[1].data[1]
         ? formatUSD(params[1].data[1])
         : ''
+    if (bladeVolumeNode)
+      bladeVolumeNode.innerHTML = params[2]?.data?.[1]
+        ? formatUSD(params[2].data[1])
+        : ''
   }, [])
 
   const onMouseLeave = useCallback(() => {
     const volumeNode = document.getElementById('hoveredVolume')
     const v2VolumeNode = document.getElementById('hoveredV2Volume')
     const v3VolumeNode = document.getElementById('hoveredV3Volume')
+    const bladeVolumeNode = document.getElementById('hoveredBladeVolume')
     const dateNode = document.getElementById('hoveredVolumeDate')
 
     if (volumeNode) volumeNode.innerHTML = formatUSD(totalVolume)
     if (dateNode) dateNode.innerHTML = 'Past month'
     if (v2VolumeNode) v2VolumeNode.innerHTML = ''
     if (v3VolumeNode) v3VolumeNode.innerHTML = ''
+    if (bladeVolumeNode) bladeVolumeNode.innerHTML = ''
   }, [totalVolume])
 
   const DEFAULT_OPTION: EChartsOption = useMemo(
@@ -150,9 +168,20 @@ export const VolumeChart: FC<VolumeChart> = ({ data, chainId, startDate }) => {
           data: v3,
           itemStyle: { color: '#A755DD', barBorderRadius: [2, 2, 0, 0] },
         },
+        ...(isBladeChain
+          ? [
+              {
+                name: 'blade',
+                type: 'bar',
+                stack: 'a',
+                data: blade,
+                itemStyle: { color: '#F23BF6', barBorderRadius: [2, 2, 0, 0] },
+              },
+            ]
+          : []),
       ],
     }),
-    [onMouseOver, resolvedTheme, v2, v3],
+    [onMouseOver, resolvedTheme, v2, v3, blade, isBladeChain],
   )
 
   return (
@@ -190,6 +219,15 @@ export const VolumeChart: FC<VolumeChart> = ({ data, chainId, startDate }) => {
                 <span className="bg-[#A755DD] rounded-[4px] w-3 h-3" />
               </span>
             </div>
+            {isBladeChain && (
+              <div className="flex justify-between items-center gap-2 text-sm">
+                <span id="hoveredBladeVolume" />
+                <span className="flex gap-1 items-center">
+                  <span className="font-medium">blade</span>
+                  <span className="bg-[#F23BF6] rounded-[4px] w-3 h-3" />
+                </span>
+              </div>
+            )}
           </div>
         </div>
       </div>
