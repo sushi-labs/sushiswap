@@ -6,6 +6,10 @@ import {
   NavigationMenuItem,
   NavigationMenuTrigger,
   OnramperButton,
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
 } from '@sushiswap/ui'
 import React from 'react'
 import { EXPLORE_NAVIGATION_LINKS } from 'src/app/_common/header-elements'
@@ -54,13 +58,22 @@ export const headerElements: NavigationElement[] = [
     show: 'desktop',
     type: NavigationElementType.Custom,
     item: (
-      <button
-        className="py-2 px-4 text-sm opacity-50 font-medium"
-        disabled
-        type="button"
-      >
-        Stake
-      </button>
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <button
+              className="py-2 px-4 text-sm opacity-50 font-medium"
+              disabled
+              type="button"
+            >
+              Stake
+            </button>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>Not currently supported on Kadena network</p>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
     ),
   },
 ]

@@ -1,6 +1,12 @@
 'use client'
 
-import { LinkInternal } from '@sushiswap/ui'
+import {
+  LinkInternal,
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@sushiswap/ui'
 import { useSearchParams } from 'next/navigation'
 import { PathnameButton } from 'src/ui/pathname-button'
 
@@ -24,12 +30,40 @@ export function NavigationItems() {
         </PathnameButton>
       </LinkInternal>
 
-      <PathnameButton disabled id="my-rewards" pathname={''} size="sm">
-        My Rewards
-      </PathnameButton>
-      <PathnameButton disabled id="my-rewards" pathname={''} size="sm">
-        Migrate
-      </PathnameButton>
+      <TooltipProvider>
+        <div className="flex gap-2">
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <div>
+                <PathnameButton
+                  disabled
+                  id="my-rewards"
+                  pathname={''}
+                  size="sm"
+                >
+                  My Rewards
+                </PathnameButton>
+              </div>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Not currently supported on Kadena network</p>
+            </TooltipContent>
+          </Tooltip>
+
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <div>
+                <PathnameButton disabled id="migrate" pathname={''} size="sm">
+                  Migrate
+                </PathnameButton>
+              </div>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Not currently supported on Kadena network</p>
+            </TooltipContent>
+          </Tooltip>
+        </div>
+      </TooltipProvider>
     </>
   )
 }
