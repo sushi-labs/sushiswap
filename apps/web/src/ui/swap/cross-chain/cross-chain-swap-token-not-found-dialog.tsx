@@ -62,29 +62,28 @@ export const CrossChainSwapTokenNotFoundDialog = () => {
     )
   }, [chainId0, chainId1, setTokens])
 
-  const {
-    data: tokenSecurityResponse,
-    isInitialLoading: tokenSecurityLoading,
-  } = useTokenSecurity({
-    currencies: useMemo(
-      () => [
-        ...(token0NotInList && token0?.isToken ? [token0] : []),
-        ...(token1NotInList && token1?.isToken ? [token1] : []),
-      ],
-      [token0NotInList, token1NotInList, token0, token1],
-    ),
-    enabled: Boolean(token0NotInList || token1NotInList),
-  })
+  const { data: token0SecurityResponse, isLoading: token0SecurityLoading } =
+    useTokenSecurity({
+      currency: token0NotInList && token0?.isToken ? token0 : undefined,
+      enabled: Boolean(token0NotInList && token0),
+    })
+
+  const { data: token1SecurityResponse, isLoading: token1SecurityLoading } =
+    useTokenSecurity({
+      currency: token1NotInList && token1?.isToken ? token1 : undefined,
+      enabled: Boolean(token1NotInList && token1),
+    })
 
   const honeypot = Boolean(
-    (token0?.isToken &&
-      tokenSecurityResponse?.[token0?.address]?.is_honeypot) ||
-      (token1?.isToken && tokenSecurityResponse?.[token1.address]?.is_honeypot),
+    token0SecurityResponse?.is_honeypot?.goPlus ||
+      token0SecurityResponse?.is_honeypot?.deFi ||
+      token1SecurityResponse?.is_honeypot?.goPlus ||
+      token1SecurityResponse?.is_honeypot?.deFi,
   )
 
   if (
     (isTokenSecurityChainId(chainId0) || isTokenSecurityChainId(chainId1)) &&
-    tokenSecurityLoading
+    (token0SecurityLoading || token1SecurityLoading)
   )
     return null
 
