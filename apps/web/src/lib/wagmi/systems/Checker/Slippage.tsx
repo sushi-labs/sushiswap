@@ -1,7 +1,7 @@
 'use client'
 
 import { Button, type ButtonProps } from '@sushiswap/ui'
-import { type FC, useState } from 'react'
+import { type FC, useEffect, useState } from 'react'
 import { Percent } from 'sushi/math'
 
 const SLIPPAGE_WARNING_THRESHOLD = new Percent(1, 5) // 20%
@@ -22,6 +22,12 @@ const Slippage: FC<SlippageProps> = ({
   const [open, setOpen] = useState(
     () => !slippageTolerance.lessThan(SLIPPAGE_WARNING_THRESHOLD),
   )
+
+  useEffect(() => {
+    if (!open && !slippageTolerance.lessThan(SLIPPAGE_WARNING_THRESHOLD)) {
+      setOpen(true)
+    }
+  }, [open, slippageTolerance])
 
   return open ? (
     <Button
