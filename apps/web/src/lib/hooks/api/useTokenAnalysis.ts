@@ -8,6 +8,7 @@ import {
 import { useQuery } from '@tanstack/react-query'
 import { isAddressFast } from 'sushi/validate'
 
+// NOTE: This is not intended to be used anywhere else other than the token listing page, do not replace this with goplusapi requests.
 export function useTokenAnalysis(
   args: Partial<GetTokenAnalysis>,
   shouldFetch = true,
