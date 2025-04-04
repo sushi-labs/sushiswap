@@ -48,7 +48,7 @@ export function NavigationItems() {
         </PathnameButton>
       </LinkInternal>
 
-      <TooltipProvider>
+      <TooltipProvider delayDuration={0}>
         <div className="flex gap-2">
           {(['rewards', 'migrate'] as const).map((id) => (
             <Tooltip

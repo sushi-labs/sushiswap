@@ -59,6 +59,7 @@ export const SwitchSwapType = () => {
                     ? setOpenTypeTooltip(open ? type : null)
                     : undefined
                 }
+                delayDuration={0}
               >
                 <TooltipTrigger asChild>
                   <div>{button}</div>
@@ -74,6 +75,7 @@ export const SwitchSwapType = () => {
         </div>
         <div className="flex gap-2">
           <Tooltip
+            delayDuration={0}
             open={isSmallScreen ? openCrossChainTooltip : undefined}
             onOpenChange={(open) =>
               isSmallScreen ? setOpenCrossChainTooltip(open) : undefined

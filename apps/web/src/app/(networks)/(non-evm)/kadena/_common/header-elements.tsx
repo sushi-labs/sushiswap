@@ -78,7 +78,7 @@ export const HeaderElements = () => {
       show: 'desktop',
       type: NavigationElementType.Custom,
       item: (
-        <TooltipProvider>
+        <TooltipProvider delayDuration={0}>
           <Tooltip
             open={isSmallScreen ? tooltips.stake : undefined}
             onOpenChange={(open) =>
