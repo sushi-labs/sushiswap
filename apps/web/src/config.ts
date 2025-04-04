@@ -263,6 +263,7 @@ export const XSWAP_SUPPORTED_CHAIN_IDS = [
   // ChainId.POLYGON_ZKEVM,
   ChainId.ROOTSTOCK,
   ChainId.SCROLL,
+  ChainId.SONIC,
   ChainId.TAIKO,
   ChainId.ZKSYNC_ERA,
 ] as const
