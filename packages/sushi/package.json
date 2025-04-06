@@ -23,108 +23,150 @@
   "exports": {
     ".": {
       "types": "./dist/types/index.d.ts",
+      "node": "./dist/cjs/index.js",
       "require": "./dist/cjs/index.js",
-      "import": "./dist/esm/index.js"
+      "import": "./dist/esm/index.js",
+      "default": "./dist/cjs/index.js"
     },
     "./abi": {
       "types": "./dist/types/abi/index.d.ts",
+      "node": "./dist/cjs/abi/index.js",
       "require": "./dist/cjs/abi/index.js",
-      "import": "./dist/esm/abi/index.js"
+      "import": "./dist/esm/abi/index.js",
+      "default": "./dist/cjs/abi/index.js"
     },
     "./calculate": {
       "types": "./dist/types/calculate/index.d.ts",
+      "node": "./dist/cjs/calculate/index.js",
       "require": "./dist/cjs/calculate/index.js",
-      "import": "./dist/esm/calculate/index.js"
+      "import": "./dist/esm/calculate/index.js",
+      "default": "./dist/cjs/calculate/index.js"
     },
     "./chain": {
       "types": "./dist/types/chain/index.d.ts",
+      "node": "./dist/cjs/chain/index.js",
       "require": "./dist/cjs/chain/index.js",
-      "import": "./dist/esm/chain/index.js"
+      "import": "./dist/esm/chain/index.js",
+      "default": "./dist/cjs/chain/index.js"
     },
     "./config": {
       "types": "./dist/types/config/index.d.ts",
+      "node": "./dist/cjs/config/index.js",
       "require": "./dist/cjs/config/index.js",
-      "import": "./dist/esm/config/index.js"
+      "import": "./dist/esm/config/index.js",
+      "default": "./dist/cjs/config/index.js"
     },
     "./contract": {
       "types": "./dist/types/contract/index.d.ts",
+      "node": "./dist/cjs/contract/index.js",
       "require": "./dist/cjs/contract/index.js",
-      "import": "./dist/esm/contract/index.js"
+      "import": "./dist/esm/contract/index.js",
+      "default": "./dist/cjs/contract/index.js"
     },
     "./convert": {
       "types": "./dist/types/convert/index.d.ts",
+      "node": "./dist/cjs/convert/index.js",
       "require": "./dist/cjs/convert/index.js",
-      "import": "./dist/esm/convert/index.js"
+      "import": "./dist/esm/convert/index.js",
+      "default": "./dist/cjs/convert/index.js"
     },
     "./currency": {
       "types": "./dist/types/currency/index.d.ts",
+      "node": "./dist/cjs/currency/index.js",
       "require": "./dist/cjs/currency/index.js",
-      "import": "./dist/esm/currency/index.js"
+      "import": "./dist/esm/currency/index.js",
+      "default": "./dist/cjs/currency/index.js"
     },
     "./extractor": {
       "types": "./dist/types/extractor/index.d.ts",
+      "node": "./dist/cjs/extractor/index.js",
       "require": "./dist/cjs/extractor/index.js",
-      "import": "./dist/esm/extractor/index.js"
+      "import": "./dist/esm/extractor/index.js",
+      "default": "./dist/cjs/extractor/index.js"
     },
     "./dex": {
       "types": "./dist/types/dex/index.d.ts",
+      "node": "./dist/cjs/dex/index.js",
       "require": "./dist/cjs/dex/index.js",
-      "import": "./dist/esm/dex/index.js"
+      "import": "./dist/esm/dex/index.js",
+      "default": "./dist/cjs/dex/index.js"
     },
     "./format": {
       "types": "./dist/types/format/index.d.ts",
+      "node": "./dist/cjs/format/index.js",
       "require": "./dist/cjs/format/index.js",
-      "import": "./dist/esm/format/index.js"
+      "import": "./dist/esm/format/index.js",
+      "default": "./dist/cjs/format/index.js"
     },
     "./log": {
       "types": "./dist/types/log/index.d.ts",
+      "node": "./dist/cjs/log/index.js",
       "require": "./dist/cjs/log/index.js",
-      "import": "./dist/esm/log/index.js"
+      "import": "./dist/esm/log/index.js",
+      "default": "./dist/cjs/log/index.js"
     },
     "./pool": {
       "types": "./dist/types/pool/index.d.ts",
+      "node": "./dist/cjs/pool/index.js",
       "require": "./dist/cjs/pool/index.js",
-      "import": "./dist/esm/pool/index.js"
+      "import": "./dist/esm/pool/index.js",
+      "default": "./dist/cjs/pool/index.js"
     },
     "./router": {
       "types": "./dist/types/router/index.d.ts",
+      "node": "./dist/cjs/router/index.js",
       "require": "./dist/cjs/router/index.js",
-      "import": "./dist/esm/router/index.js"
+      "import": "./dist/esm/router/index.js",
+      "default": "./dist/cjs/router/index.js"
     },
     "./serializer": {
       "types": "./dist/types/serializer/index.d.ts",
+      "node": "./dist/cjs/serializer/index.js",
       "require": "./dist/cjs/serializer/index.js",
-      "import": "./dist/esm/serializer/index.js"
+      "import": "./dist/esm/serializer/index.js",
+      "default": "./dist/cjs/serializer/index.js"
     },
     "./math": {
       "types": "./dist/types/math/index.d.ts",
+      "node": "./dist/cjs/math/index.js",
       "require": "./dist/cjs/math/index.js",
-      "import": "./dist/esm/math/index.js"
+      "import": "./dist/esm/math/index.js",
+      "default": "./dist/cjs/math/index.js"
     },
     "./sort": {
       "types": "./dist/types/sort/index.d.ts",
+      "node": "./dist/cjs/sort/index.js",
       "require": "./dist/cjs/sort/index.js",
-      "import": "./dist/esm/sort/index.js"
+      "import": "./dist/esm/sort/index.js",
+      "default": "./dist/cjs/sort/index.js"
     },
     "./tines": {
       "types": "./dist/types/tines/index.d.ts",
+      "node": "./dist/cjs/tines/index.js",
       "require": "./dist/cjs/tines/index.js",
-      "import": "./dist/esm/tines/index.js"
+      "import": "./dist/esm/tines/index.js",
+      "default": "./dist/cjs/tines/index.js"
     },
     "./token-list": {
       "types": "./dist/types/token-list/index.d.ts",
+      "node": "./dist/cjs/token-list/index.js",
       "require": "./dist/cjs/token-list/index.js",
-      "import": "./dist/esm/token-list/index.js"
+      "import": "./dist/esm/token-list/index.js",
+      "default": "./dist/cjs/token-list/index.js"
     },
     "./types": {
       "types": "./dist/types/types/index.d.ts",
+      "node": "./dist/cjs/types/index.js",
       "require": "./dist/cjs/types/index.js",
-      "import": "./dist/esm/types/index.js"
+      "import": "./dist/esm/types/index.js",
+      "default": "./dist/cjs/types/index.js"
     },
     "./validate": {
       "types": "./dist/types/validate/index.d.ts",
+      "node": "./dist/cjs/validate/index.js",
       "require": "./dist/cjs/validate/index.js",
-      "import": "./dist/esm/validate/index.js"
+      "import": "./dist/esm/validate/index.js",
+      "default": "./dist/cjs/validate/index.js"
     },
     "./package.json": "./package.json"
   },

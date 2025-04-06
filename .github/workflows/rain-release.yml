@@ -38,11 +38,11 @@ jobs:
 
       # Create sushi npm package tarball
       - name: Create sushi NPM Package Tarball
-        run: echo "NPM_PACKAGE=$(nix develop -c pnpm pack --pack-destination ../..)" >> $GITHUB_ENV
+        run: echo "NPM_PACKAGE=$(nix develop -c pnpm pack)" >> $GITHUB_ENV
         working-directory: packages/sushi
 
       - name: Rename sushi NPM Package Tarball
-        run: mv ${{ env.NPM_PACKAGE }} sushi-${{ github.sha }}.tgz
+        run: mv ${{ env.NPM_PACKAGE }} ../../sushi-${{ github.sha }}.tgz
 
       # Create a gitHub release with tarball
       - name: Create GitHub Release with sushi pkg
