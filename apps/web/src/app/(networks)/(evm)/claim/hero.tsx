@@ -11,12 +11,13 @@ import { useAccount } from 'wagmi'
 export const Hero: FC = () => {
   const { address, isConnected } = useAccount()
 
-  const { data: positionsData } = useConcentratedLiquidityPositions({
-    account: address,
-    chainIds: SushiSwapV3ChainIds,
-  })
+  const { data: positionsData, isError: isPositionsError } =
+    useConcentratedLiquidityPositions({
+      account: address,
+      chainIds: SushiSwapV3ChainIds,
+    })
   const totalFeesUSD = useMemo(() => {
-    return !isConnected
+    return !isConnected || isPositionsError
       ? 0
       : positionsData
         ? positionsData.reduce(
@@ -24,11 +25,13 @@ export const Hero: FC = () => {
             0,
           )
         : undefined
-  }, [positionsData, isConnected])
+  }, [positionsData, isConnected, isPositionsError])
 
-  const { data: rewardsData } = useClaimableRewards({ account: address })
+  const { data: rewardsData, isError: isRewardsError } = useClaimableRewards({
+    account: address,
+  })
   const totalRewardsUSD = useMemo(() => {
-    return !isConnected
+    return !isConnected || isRewardsError
       ? 0
       : rewardsData
         ? Object.values(rewardsData).reduce(
@@ -36,7 +39,7 @@ export const Hero: FC = () => {
             0,
           )
         : undefined
-  }, [rewardsData, isConnected])
+  }, [rewardsData, isConnected, isRewardsError])
 
   return (
     <section className="flex flex-col gap-6">
