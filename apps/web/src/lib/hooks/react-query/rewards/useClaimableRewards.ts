@@ -8,7 +8,7 @@ import { merklRewardsValidator } from './validator'
 
 interface UseClaimableRewardsParams {
   chainIds?: MerklChainId[]
-  account?: Address | undefined
+  account: Address | undefined
   enabled?: boolean
 }
 

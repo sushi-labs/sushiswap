@@ -7,8 +7,8 @@ import type { z } from 'zod'
 import { merklCampaignsValidator } from './validator'
 
 interface UseRewardCampaignsParams {
-  pool?: Address | undefined
-  chainId?: EvmChainId | undefined
+  pool: Address | undefined
+  chainId: EvmChainId | undefined
   enabled?: boolean
 }
 
