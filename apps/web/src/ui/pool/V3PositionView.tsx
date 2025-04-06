@@ -177,6 +177,18 @@ const Component: FC<{ chainId: string; address: string; position: string }> = ({
       enabled: isMerklChainId(chainId),
     })
 
+  const [activeCampaigns, inactiveCampaigns] = useMemo(() => {
+    const activeCampaigns: typeof campaignsData = []
+    const inactiveCampaigns: typeof campaignsData = []
+
+    campaignsData?.forEach((campaign) => {
+      if (campaign.isLive) activeCampaigns.push(campaign)
+      else inactiveCampaigns.push(campaign)
+    })
+
+    return [activeCampaigns, inactiveCampaigns]
+  }, [campaignsData])
+
   const fiatValuesAmounts = useTokenAmountDollarValues({ chainId, amounts })
   const positionAmounts = useMemo(
     () => [position?.amount0, position?.amount1],
@@ -675,13 +687,13 @@ const Component: FC<{ chainId: string; address: string; position: string }> = ({
                 <TabsContent value="active">
                   <DistributionDataTable
                     isLoading={isCampaignsLoading}
-                    data={campaignsData?.filter((el) => el.isLive)}
+                    data={activeCampaigns}
                   />
                 </TabsContent>
                 <TabsContent value="inactive">
                   <DistributionDataTable
                     isLoading={isCampaignsLoading}
-                    data={campaignsData?.filter((el) => !el.isLive)}
+                    data={inactiveCampaigns}
                   />
                 </TabsContent>
               </Tabs>
