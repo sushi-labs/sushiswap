@@ -7,7 +7,6 @@ import { computeSushiSwapV3PoolAddress } from '../../pool/index.js'
 import { RToken, UniV3Pool } from '../../tines/index.js'
 import { DataFetcherOptions } from '../data-fetcher.js'
 import { getCurrencyCombinations } from '../get-currency-combinations.js'
-import { memoizer } from '../memoizer.js'
 import { type PoolCode, UniV3PoolCode } from '../pool-codes/index.js'
 import { LiquidityProvider } from './LiquidityProvider.js'
 
@@ -102,8 +101,6 @@ export abstract class UniswapV3BaseProvider extends LiquidityProvider {
     if (excludePools)
       staticPools = staticPools.filter((p) => !excludePools.has(p.address))
 
-    const multicallMemoize = await memoizer.fn(this.client.multicall)
-
     const slot0Data = {
       multicallAddress: this.client.chain?.contracts?.multicall3
         ?.address as Address,
@@ -154,24 +151,15 @@ export abstract class UniswapV3BaseProvider extends LiquidityProvider {
             functionName: 'slot0',
           }) as const,
       ),
-    }
-    const slot0 = options?.memoize
-      ? await (multicallMemoize(slot0Data) as Promise<any>).catch((e) => {
-          console.warn(
-            `${this.getLogPrefix()} - INIT: multicall failed, message: ${
-              e.message
-            }`,
-          )
-          return undefined
-        })
-      : await this.client.multicall(slot0Data).catch((e) => {
-          console.warn(
-            `${this.getLogPrefix()} - INIT: multicall failed, message: ${
-              e.message
-            }`,
-          )
-          return undefined
-        })
+    } as const
+    const slot0 = await this.client.multicall(slot0Data).catch((e) => {
+      console.warn(
+        `${this.getLogPrefix()} - INIT: multicall failed, message: ${
+          e.message
+        }`,
+      )
+      return undefined
+    })
 
     const existingPools: V3Pool[] = []
 
@@ -256,8 +244,6 @@ export abstract class UniswapV3BaseProvider extends LiquidityProvider {
     )
     if (existingPools.length === 0) return
 
-    const multicallMemoize = await memoizer.fn(this.client.multicall)
-
     const liquidityContractsData = {
       multicallAddress: this.client.chain?.contracts?.multicall3
         ?.address as Address,
@@ -282,23 +268,8 @@ export abstract class UniswapV3BaseProvider extends LiquidityProvider {
             functionName: 'liquidity',
           }) as const,
       ),
-    }
-    const liquidityContracts: Promise<
-      (
-        | {
-            error?: undefined
-            result: bigint
-            status: 'success'
-          }
-        | {
-            error: Error
-            result?: undefined
-            status: 'failure'
-          }
-      )[]
-    > = options?.memoize
-      ? (multicallMemoize(liquidityContractsData) as Promise<any>)
-      : this.client.multicall(liquidityContractsData)
+    } as const
+    const liquidityContracts = this.client.multicall(liquidityContractsData)
 
     const token0ContractsData = {
       multicallAddress: this.client.chain?.contracts?.multicall3
@@ -315,23 +286,8 @@ export abstract class UniswapV3BaseProvider extends LiquidityProvider {
             functionName: 'balanceOf',
           }) as const,
       ),
-    }
-    const token0Contracts: Promise<
-      (
-        | {
-            error: Error
-            result?: undefined
-            status: 'failure'
-          }
-        | {
-            error?: undefined
-            result: bigint
-            status: 'success'
-          }
-      )[]
-    > = options?.memoize
-      ? (multicallMemoize(token0ContractsData) as Promise<any>)
-      : this.client.multicall(token0ContractsData)
+    } as const
+    const token0Contracts = this.client.multicall(token0ContractsData)
 
     const token1ContractsData = {
       multicallAddress: this.client.chain?.contracts?.multicall3
@@ -348,23 +304,8 @@ export abstract class UniswapV3BaseProvider extends LiquidityProvider {
             functionName: 'balanceOf',
           }) as const,
       ),
-    }
-    const token1Contracts: Promise<
-      (
-        | {
-            error?: undefined
-            result: bigint
-            status: 'success'
-          }
-        | {
-            error: Error
-            result?: undefined
-            status: 'failure'
-          }
-      )[]
-    > = options?.memoize
-      ? (multicallMemoize(token1ContractsData) as Promise<any>)
-      : this.client.multicall(token1ContractsData)
+    } as const
+    const token1Contracts = this.client.multicall(token1ContractsData)
 
     const [minIndexes, maxIndexes] = this.getIndexes(existingPools)
 
@@ -394,27 +335,8 @@ export abstract class UniswapV3BaseProvider extends LiquidityProvider {
       allowFailure: true,
       contracts: wordList,
       blockNumber: options?.blockNumber,
-    }
-    const ticksContracts: Promise<
-      (
-        | {
-            error?: undefined
-            result: readonly {
-              tick: number
-              liquidityNet: bigint
-              liquidityGross: bigint
-            }[]
-            status: 'success'
-          }
-        | {
-            error: Error
-            result?: undefined
-            status: 'failure'
-          }
-      )[]
-    > = options?.memoize
-      ? (multicallMemoize(ticksContractsData) as Promise<any>)
-      : this.client.multicall(ticksContractsData)
+    } as const
+    const ticksContracts = this.client.multicall(ticksContractsData)
 
     const [liquidityResults, token0Balances, token1Balances, tickResults] =
       await Promise.all([
@@ -485,18 +407,14 @@ export abstract class UniswapV3BaseProvider extends LiquidityProvider {
   }
 
   getStaticPools(t1: Token, t2: Token): StaticPoolUniV3[] {
+    const feeList = Object.values(this.FEE).filter((v) => typeof v === 'number')
     const currencyCombinations = getCurrencyCombinations(this.chainId, t1, t2)
 
     const allCurrencyCombinationsWithAllFees: [Type, Type, number][] =
       currencyCombinations.reduce<[Currency, Currency, number][]>(
         (list, [tokenA, tokenB]) => {
           if (tokenA !== undefined && tokenB !== undefined) {
-            return list.concat([
-              [tokenA, tokenB, this.FEE.LOWEST],
-              [tokenA, tokenB, this.FEE.LOW],
-              [tokenA, tokenB, this.FEE.MEDIUM],
-              [tokenA, tokenB, this.FEE.HIGH],
-            ])
+            return list.concat(feeList.map((fee) => [tokenA, tokenB, fee]))
           }
           return []
         },
@@ -573,12 +491,7 @@ export abstract class UniswapV3BaseProvider extends LiquidityProvider {
   }
 
   async ensureFeeAndTicks(): Promise<boolean> {
-    const feeList = [
-      this.FEE.LOWEST,
-      this.FEE.LOW,
-      this.FEE.MEDIUM,
-      this.FEE.HIGH,
-    ] as number[]
+    const feeList = Object.values(this.FEE).filter((v) => typeof v === 'number')
     const results = (await this.client.multicall({
       multicallAddress: this.client.chain?.contracts?.multicall3
         ?.address as Address,

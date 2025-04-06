@@ -4,7 +4,6 @@ import { ChainId } from '../../chain/index.js'
 import { Token } from '../../currency/index.js'
 import { DataFetcherOptions } from '../data-fetcher.js'
 import { getCurrencyCombinations } from '../get-currency-combinations.js'
-import { memoizer } from '../memoizer.js'
 import { RainUniswapV2BaseProvider } from '../rain/RainUniswapV2Base.js'
 import { LiquidityProviders } from './LiquidityProvider.js'
 import { StaticPool } from './UniswapV2Base.js'
@@ -44,7 +43,6 @@ export class LynexV1Provider extends RainUniswapV2BaseProvider {
     options?: DataFetcherOptions,
   ): Promise<void> {
     // get current fees
-    const multicallMemoize = await memoizer.fn(this.client.multicall)
     const getFeesData = {
       multicallAddress: this.client.chain?.contracts?.multicall3
         ?.address as Address,
@@ -62,29 +60,20 @@ export class LynexV1Provider extends RainUniswapV2BaseProvider {
             args: [isStable],
           }) as const,
       ),
-    }
-    const fees = options?.memoize
-      ? await (multicallMemoize(getFeesData) as Promise<any>).catch((e) => {
-          console.warn(
-            `${this.getLogPrefix()} - UPDATE: on-demand pools multicall failed, message: ${
-              e.message
-            }`,
-          )
-          return undefined
-        })
-      : await this.client.multicall(getFeesData).catch((e) => {
-          console.warn(
-            `${this.getLogPrefix()} - UPDATE: on-demand pools multicall failed, message: ${
-              e.message
-            }`,
-          )
-          return undefined
-        })
+    } as const
+    const fees = await this.client.multicall(getFeesData).catch((e) => {
+      console.warn(
+        `${this.getLogPrefix()} - UPDATE: on-demand pools multicall failed, message: ${
+          e.message
+        }`,
+      )
+      return undefined
+    })
     // convert to % in number
     // returned values are represented in 1/100th of a percent
     // so returned value of 25 is 0.25%, ie 0.0025 in numeric value
-    this.STABLE_FEE = Number(fees[0]) * 0.0001
-    this.VOLATILE_FEE = Number(fees[1]) * 0.0001
+    this.STABLE_FEE = Number(fees?.[0]) * 0.0001
+    this.VOLATILE_FEE = Number(fees?.[1]) * 0.0001
 
     // proceed the rest as a normal univ2 based dex
     await this.getOnDemandPools(t0, t1, excludePools, options)

@@ -202,7 +202,6 @@
     "date-fns": "3.3.1",
     "decimal.js-light": "2.5.1",
     "lodash.flatmap": "4.5.0",
-    "memoize-fs": "github:rouzwelt/memoize-fs#e5fcc9f6effc4ad087514372a53a49d380520ad5",
     "numbro": "2.5.0",
     "seedrandom": "3.0.5",
     "serialijse": "0.3.0",

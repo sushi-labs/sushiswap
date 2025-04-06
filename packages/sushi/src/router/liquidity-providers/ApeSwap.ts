@@ -10,6 +10,7 @@ export class ApeSwapProvider extends RainUniswapV2BaseProvider {
       [ChainId.POLYGON]: '0xCf083Be4164828f00cAE704EC15a36D711491284',
       [ChainId.BSC]: '0x0841BD0B734E4F5853f0dD8d7Ea041c241fb0Da6',
       [ChainId.TELOS]: '0x411172Dfcd5f68307656A1ff35520841C2F7fAec',
+      [ChainId.ARBITRUM]: '0xCf083Be4164828f00cAE704EC15a36D711491284',
     } as const
     const initCodeHash = {
       [ChainId.ETHEREUM]:
@@ -20,6 +21,8 @@ export class ApeSwapProvider extends RainUniswapV2BaseProvider {
         '0xf4ccce374816856d11f00e4069e7cada164065686fbef53c6167a63ec2fd8c5b',
       [ChainId.TELOS]:
         '0x7d4b9bb0d5808344c0184aada7d10aae8f6b0cc8ceb5eba8dd084f63b8c32099',
+      [ChainId.ARBITRUM]:
+        '0xae7373e804a043c4c08107a81def627eeb3792e211fb4711fcfe32f0e4c45fd5',
     } as const
     super(chainId, web3Client, factory, initCodeHash)
   }

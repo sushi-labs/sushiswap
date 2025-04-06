@@ -1222,3 +1222,19 @@ export const ENOSYS_EETH = new Token({
   symbol: 'eETH',
   name: 'Enosys ETH',
 })
+
+export const cUSDX = new Token({
+  chainId: 14,
+  address: '0xFE2907DFa8DB6e320cDbF45f0aa888F6135ec4f8',
+  decimals: 6,
+  symbol: 'cUSDX',
+  name: 'USDX',
+})
+
+export const sFLR = new Token({
+  chainId: 14,
+  address: '0x12e605bc104e93B45e1aD99F9e555f659051c2BB',
+  decimals: 18,
+  symbol: 'sFLR',
+  name: 'Staked FLR',
+})

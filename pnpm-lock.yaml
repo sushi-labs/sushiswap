@@ -1814,9 +1814,6 @@ importers:
       lodash.flatmap:
         specifier: 4.5.0
         version: 4.5.0
-      memoize-fs:
-        specifier: github:rouzwelt/memoize-fs#e5fcc9f6effc4ad087514372a53a49d380520ad5
-        version: github.com/rouzwelt/memoize-fs/e5fcc9f6effc4ad087514372a53a49d380520ad5
       numbro:
         specifier: 2.5.0
         version: 2.5.0
@@ -42494,13 +42491,3 @@ packages:
     dependencies:
       bn.js: 4.12.0
       ethereumjs-util: 6.2.1
-
-  github.com/rouzwelt/memoize-fs/e5fcc9f6effc4ad087514372a53a49d380520ad5:
-    resolution: {tarball: https://codeload.github.com/rouzwelt/memoize-fs/tar.gz/e5fcc9f6effc4ad087514372a53a49d380520ad5}
-    name: memoize-fs
-    version: 3.0.0
-    engines: {node: '>= 10.13.0', npm: '>= 6.0.0'}
-    requiresBuild: true
-    dependencies:
-      meriyah: 4.4.2
-    dev: false

@@ -658,7 +658,10 @@ export const publicClientConfig = {
   },
   [ChainId.BSC]: {
     chain: bsc as Chain,
-    transport: publicTransports[ChainId.BSC],
+    transport: fallback([
+      http('https://bsc.drpc.org'),
+      publicTransports[ChainId.BSC],
+    ]),
   },
   [ChainId.BTTC]: {
     chain: bttc as Chain,
@@ -670,7 +673,10 @@ export const publicClientConfig = {
   },
   [ChainId.ETHEREUM]: {
     chain: mainnet as Chain,
-    transport: publicTransports[ChainId.ETHEREUM],
+    transport: fallback([
+      http('https://eth.drpc.org'),
+      publicTransports[ChainId.ETHEREUM],
+    ]),
   },
   [ChainId.FANTOM]: {
     chain: fantom as Chain,
@@ -689,7 +695,11 @@ export const publicClientConfig = {
   },
   [ChainId.HARMONY]: {
     chain: harmonyOne as Chain,
-    transport: publicTransports[ChainId.HARMONY],
+    transport: fallback([
+      http('https://api.harmony.one'),
+      http('https://harmony-0.drpc.org'),
+      publicTransports[ChainId.HARMONY],
+    ]),
   },
   [ChainId.KAVA]: {
     chain: kava as Chain,
@@ -757,7 +767,10 @@ export const publicClientConfig = {
   },
   [ChainId.BASE]: {
     chain: base as Chain,
-    transport: publicTransports[ChainId.BASE],
+    transport: fallback([
+      http('https://base.drpc.org'),
+      publicTransports[ChainId.BASE],
+    ]),
   },
   [ChainId.SCROLL]: {
     chain: scroll as Chain,

@@ -16,7 +16,6 @@ import {
   PoolFilter,
   StaticPoolUniV3,
 } from '../liquidity-providers/UniswapV3Base.js'
-import { memoizer } from '../memoizer.js'
 import { RainUniswapV3BaseProvider, RainV3Pool } from './RainUniswapV3Base.js'
 
 export const AlgebraEventsAbi = [
@@ -43,12 +42,43 @@ export const AlgebraEventsAbi = [
   ),
 ]
 
+export const globalStateAbi = [
+  {
+    inputs: [],
+    name: 'globalState',
+    outputs: [
+      { internalType: 'uint160', name: 'price', type: 'uint160' },
+      { internalType: 'int24', name: 'tick', type: 'int24' },
+      { internalType: 'uint16', name: 'fee', type: 'uint16' },
+      {
+        internalType: 'uint16',
+        name: 'timepointIndex',
+        type: 'uint16',
+      },
+      {
+        internalType: 'uint8',
+        name: 'communityFeeToken0',
+        type: 'uint8',
+      },
+      {
+        internalType: 'uint8',
+        name: 'communityFeeToken1',
+        type: 'uint8',
+      },
+      { internalType: 'bool', name: 'unlocked', type: 'bool' },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+] as const
+
 export abstract class AlgebraV1BaseProvider extends RainUniswapV3BaseProvider {
   override TICK_SPACINGS: Record<string, number> = {}
   override eventsAbi = AlgebraEventsAbi as any
 
   readonly BASE_FEE = 100
   DEFAULT_TICK_SPACING = 1
+  gloablStateAbi = globalStateAbi
 
   poolDeployer: Record<number, Address> = {}
 
@@ -87,8 +117,6 @@ export abstract class AlgebraV1BaseProvider extends RainUniswapV3BaseProvider {
         staticPools.map((pool) => pool.address.toLowerCase()),
       )
 
-    const multicallMemoize = await memoizer.fn(this.client.multicall)
-
     const globalStateData = {
       multicallAddress: this.client.chain?.contracts?.multicall3?.address!,
       allowFailure: true,
@@ -98,61 +126,25 @@ export abstract class AlgebraV1BaseProvider extends RainUniswapV3BaseProvider {
           ({
             address: pool.address,
             chainId: this.chainId,
-            abi: [
-              {
-                inputs: [],
-                name: 'globalState',
-                outputs: [
-                  { internalType: 'uint160', name: 'price', type: 'uint160' },
-                  { internalType: 'int24', name: 'tick', type: 'int24' },
-                  { internalType: 'uint16', name: 'fee', type: 'uint16' },
-                  {
-                    internalType: 'uint16',
-                    name: 'timepointIndex',
-                    type: 'uint16',
-                  },
-                  {
-                    internalType: 'uint8',
-                    name: 'communityFeeToken0',
-                    type: 'uint8',
-                  },
-                  {
-                    internalType: 'uint8',
-                    name: 'communityFeeToken1',
-                    type: 'uint8',
-                  },
-                  { internalType: 'bool', name: 'unlocked', type: 'bool' },
-                ],
-                stateMutability: 'view',
-                type: 'function',
-              },
-            ] as const,
+            abi: this.gloablStateAbi,
             functionName: 'globalState',
           }) as const,
       ),
-    }
-    const globalState = options?.memoize
-      ? await (multicallMemoize(globalStateData) as Promise<any>).catch((e) => {
-          console.warn(
-            `${this.getLogPrefix()} - INIT: multicall failed, message: ${
-              e.message
-            }`,
-          )
-          return undefined
-        })
-      : await this.client.multicall(globalStateData).catch((e) => {
-          console.warn(
-            `${this.getLogPrefix()} - INIT: multicall failed, message: ${
-              e.message
-            }`,
-          )
-          return undefined
-        })
+    } as const
+    const globalState = await this.client
+      .multicall(globalStateData)
+      .catch((e) => {
+        console.warn(
+          `${this.getLogPrefix()} - INIT: multicall failed, message: ${
+            e.message
+          }`,
+        )
+        return undefined
+      })
 
     const tickSpacings = await this.getTickSpacing(staticPools, options)
 
     const existingPools: RainV3Pool[] = []
-
     staticPools.forEach((pool, i) => {
       const poolAddress = pool.address.toLowerCase()
       if (this.pools.has(poolAddress)) return
