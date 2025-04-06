@@ -43,6 +43,7 @@ jobs:
 
       - name: Rename sushi NPM Package Tarball
         run: mv ${{ env.NPM_PACKAGE }} ../../sushi-${{ github.sha }}.tgz
+        working-directory: packages/sushi
 
       # Create a gitHub release with tarball
       - name: Create GitHub Release with sushi pkg
