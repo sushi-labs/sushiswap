@@ -311,7 +311,7 @@ export const CrossChainSwapTokenNotFoundDialog = () => {
               Close
             </Button>
           ) : (
-            <div className="flex gap-3 w-full">
+            <div className="flex flex-col sm:flex-row gap-3 w-full">
               <Button
                 fullWidth
                 size="xl"

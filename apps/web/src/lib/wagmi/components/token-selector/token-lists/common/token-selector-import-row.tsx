@@ -229,7 +229,7 @@ export const TokenSelectorImportRow: FC<TokenSelectorImportRow> = ({
               Close
             </Button>
           ) : (
-            <div className="flex gap-3 w-full">
+            <div className="flex flex-col sm:flex-row gap-3 w-full">
               <TraceEvent
                 events={[BrowserEvent.onClick, BrowserEvent.onKeyPress]}
                 name={InterfaceEventName.TOKEN_IMPORTED}
