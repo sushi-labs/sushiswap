@@ -1,21 +1,30 @@
 'use client'
 
+import {
+  ExclamationCircleIcon,
+  ExclamationTriangleIcon,
+} from '@heroicons/react/24/solid'
 import { useCustomTokens } from '@sushiswap/hooks'
 import {
+  Badge,
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
+  LinkExternal,
+  Loader,
   Message,
+  SkeletonText,
+  classNames,
 } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui'
-import { Currency } from '@sushiswap/ui'
 import { List } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
-import React, { useCallback, useMemo } from 'react'
+import { UnknownTokenIcon } from '@sushiswap/ui/icons/UnknownTokenIcon'
+import React, { useCallback } from 'react'
 import { useTokenSecurity } from 'src/lib/hooks/react-query'
+import { TokenSecurityView } from 'src/lib/wagmi/components/token-security-view'
 import { EvmChain } from 'sushi/chain'
 import {
   defaultCurrency,
@@ -62,30 +71,27 @@ export const CrossChainSwapTokenNotFoundDialog = () => {
     )
   }, [chainId0, chainId1, setTokens])
 
-  const { data: token0SecurityResponse, isLoading: token0SecurityLoading } =
+  const { data: token0SecurityResponse, isLoading: isToken0SecurityLoading } =
     useTokenSecurity({
       currency: token0NotInList && token0?.isToken ? token0 : undefined,
       enabled: Boolean(token0NotInList && token0),
     })
 
-  const { data: token1SecurityResponse, isLoading: token1SecurityLoading } =
+  const { data: token1SecurityResponse, isLoading: isToken1SecurityLoading } =
     useTokenSecurity({
       currency: token1NotInList && token1?.isToken ? token1 : undefined,
       enabled: Boolean(token1NotInList && token1),
     })
 
-  const honeypot = Boolean(
+  const isTokenSecurityLoading =
+    isToken0SecurityLoading || isToken1SecurityLoading
+
+  const isHoneypot = Boolean(
     token0SecurityResponse?.is_honeypot?.goPlus ||
       token0SecurityResponse?.is_honeypot?.deFi ||
       token1SecurityResponse?.is_honeypot?.goPlus ||
       token1SecurityResponse?.is_honeypot?.deFi,
   )
-
-  if (
-    (isTokenSecurityChainId(chainId0) || isTokenSecurityChainId(chainId1)) &&
-    (token0SecurityLoading || token1SecurityLoading)
-  )
-    return null
 
   return (
     <Dialog
@@ -93,52 +99,43 @@ export const CrossChainSwapTokenNotFoundDialog = () => {
       onOpenChange={(open) => !open && reset()}
     >
       <DialogContent className="!max-h-screen overflow-y-auto">
-        <DialogHeader>
+        <DialogHeader className="!text-left !space-y-3">
           <DialogTitle>
-            <div className="flex gap-4 pb-2">
-              {token0 && token0NotInList ? (
-                <div className="relative pr-3">
-                  <Currency.Icon currency={token0} width={44} height={44} />
-                  <NetworkIcon
-                    chainId={chainId0}
-                    className="absolute bottom-0 right-0"
-                    width={24}
-                    height={24}
-                  />
+            <div
+              className={classNames(
+                'inline-flex items-center px-2 py-1.5 gap-1 rounded-full',
+                isTokenSecurityLoading
+                  ? 'bg-muted'
+                  : isHoneypot
+                    ? 'bg-red/20 text-red'
+                    : 'bg-yellow/20 text-yellow',
+              )}
+            >
+              {isTokenSecurityLoading ? (
+                <div className="w-7 h-7 flex justify-center items-center">
+                  <Loader width={28} height={28} />
                 </div>
-              ) : null}
-              {token1 && token1NotInList ? (
-                <div className="relative pr-3">
-                  <Currency.Icon currency={token1} width={44} height={44} />
-                  <NetworkIcon
-                    chainId={chainId1}
-                    className="absolute bottom-0 right-0"
-                    width={24}
-                    height={24}
-                  />
-                </div>
-              ) : null}
+              ) : isHoneypot ? (
+                <ExclamationTriangleIcon width={28} height={28} />
+              ) : (
+                <ExclamationCircleIcon width={28} height={28} />
+              )}
             </div>
-            <span>
-              Unknown token
-              {(token0NotInList || !token0?.isToken) &&
-              (token1NotInList || !token1?.isToken)
-                ? 's'
-                : ''}
-            </span>
           </DialogTitle>
-          <DialogDescription className="!mr-0 !text-xs">
-            Anyone can create a token, including creating fake versions of
-            existing tokens that claim to represent projects. If you purchase
-            this token, you may not be able to sell it back.
-          </DialogDescription>
+          {isTokenSecurityLoading ? (
+            <span className="w-52">
+              <SkeletonText fontSize="xl" />
+            </span>
+          ) : (
+            <span className="text-xl font-semibold">
+              {isHoneypot ? 'Honeypot Token Detected' : 'Unverified Token'}
+            </span>
+          )}
         </DialogHeader>
         <div className="flex flex-col gap-4">
           {token0 && token0NotInList && !token0?.isToken && (
             <List>
-              {token1NotInList || !token1?.isToken ? (
-                <List.Label>Token 1</List.Label>
-              ) : null}
+              {token1NotInList ? <List.Label>Token 1</List.Label> : null}
               <List.Control>
                 <p className="p-3 text-sm text-gray-900 dark:text-slate-50">
                   Could not retrieve token info for{' '}
@@ -158,53 +155,70 @@ export const CrossChainSwapTokenNotFoundDialog = () => {
             </List>
           )}
           {token0NotInList && token0?.isToken && (
-            <List>
-              {token1NotInList || !token1?.isToken ? (
-                <List.Label>Token 1</List.Label>
-              ) : null}
-              <List.Control>
-                <List.KeyValue
-                  title={
-                    <span className="text-gray-900 dark:text-slate-50">
-                      Name
-                    </span>
-                  }
-                >
-                  {token0.name}
-                </List.KeyValue>
-                <List.KeyValue
-                  title={
-                    <span className="text-gray-900 dark:text-slate-50">
-                      Symbol
-                    </span>
-                  }
-                >
-                  {token0.symbol}
-                </List.KeyValue>
-                <List.KeyValue
-                  title={
-                    <span className="text-gray-900 dark:text-slate-50">
-                      Address
-                    </span>
-                  }
-                >
-                  <a
-                    target="_blank"
-                    href={EvmChain.from(chainId0)?.getTokenUrl(token0.address)}
-                    className="text-blue"
-                    rel="noreferrer"
-                  >
-                    {shortenAddress(token0.address)}
-                  </a>
-                </List.KeyValue>
-              </List.Control>
-            </List>
+            <>
+              <List>
+                {token1NotInList ? <List.Label>Token 1</List.Label> : null}
+                <List.Control className="!p-4">
+                  <div className="flex justify-between items-center">
+                    <div className="flex items-center gap-4">
+                      <Badge
+                        position="bottom-right"
+                        badgeContent={
+                          <div className="bg-white rounded-full dark:bg-slate-800">
+                            <NetworkIcon
+                              width={20}
+                              height={20}
+                              chainId={token0.chainId}
+                            />
+                          </div>
+                        }
+                      >
+                        <div className="w-10 h-10">
+                          <UnknownTokenIcon width={40} height={40} />
+                        </div>
+                      </Badge>
+                      <div className="flex flex-col">
+                        <span className="text-2xl font-medium">
+                          {token0.symbol ?? '-'}
+                        </span>
+                        <span className="font-medium text-muted-foreground">
+                          {token0.name ?? '-'}
+                        </span>
+                      </div>
+                    </div>
+                    <LinkExternal
+                      target="_blank"
+                      href={EvmChain.from(token0.chainId)?.getTokenUrl(
+                        token0.address,
+                      )}
+                      className="font-medium"
+                    >
+                      {shortenAddress(token0.address)}{' '}
+                    </LinkExternal>
+                  </div>
+                </List.Control>
+              </List>
+              {isTokenSecurityChainId(token0.chainId) && (
+                <List className="!pt-0 h-64">
+                  <List.Control className="!overflow-y-auto flex flex-col gap-3 p-4">
+                    <div className="flex items-center">
+                      <span className="text-sm font-medium text-muted-foreground">
+                        Token Security Scan
+                      </span>
+                    </div>
+                    <TokenSecurityView
+                      token={token0}
+                      tokenSecurity={token0SecurityResponse}
+                      isTokenSecurityLoading={isToken0SecurityLoading}
+                    />
+                  </List.Control>
+                </List>
+              )}
+            </>
           )}
           {token1 && token1NotInList && !token1.isToken && (
             <List>
-              {token0NotInList || !token0?.isToken ? (
-                <List.Label>Token 2</List.Label>
-              ) : null}
+              {token0NotInList ? <List.Label>Token 2</List.Label> : null}
               <List.Control>
                 <p className="p-3 text-sm text-gray-900 dark:text-slate-50">
                   Could not retrieve token info for{' '}
@@ -224,74 +238,95 @@ export const CrossChainSwapTokenNotFoundDialog = () => {
             </List>
           )}
           {token1NotInList && token1?.isToken && (
-            <List>
-              {token0NotInList || !token0?.isToken ? (
-                <List.Label>Token 2</List.Label>
-              ) : null}
-              <List.Control>
-                <List.KeyValue
-                  title={
-                    <span className="text-gray-900 dark:text-slate-50">
-                      Name
-                    </span>
-                  }
-                >
-                  {token1.name}
-                </List.KeyValue>
-                <List.KeyValue
-                  title={
-                    <span className="text-gray-900 dark:text-slate-50">
-                      Symbol
-                    </span>
-                  }
-                >
-                  {token1.symbol}
-                </List.KeyValue>
-                <List.KeyValue
-                  title={
-                    <span className="text-gray-900 dark:text-slate-50">
-                      Address
-                    </span>
-                  }
-                >
-                  <a
-                    target="_blank"
-                    href={EvmChain.from(chainId1)?.getTokenUrl(token1.address)}
-                    className="text-blue"
-                    rel="noreferrer"
-                  >
-                    {shortenAddress(token1.address)}
-                  </a>
-                </List.KeyValue>
-              </List.Control>
-            </List>
+            <>
+              <List>
+                {token0NotInList ? <List.Label>Token 2</List.Label> : null}
+                <List.Control className="!p-4">
+                  <div className="flex justify-between items-center">
+                    <div className="flex items-center gap-4">
+                      <Badge
+                        position="bottom-right"
+                        badgeContent={
+                          <div className="bg-white rounded-full dark:bg-slate-800">
+                            <NetworkIcon
+                              width={20}
+                              height={20}
+                              chainId={token1.chainId}
+                            />
+                          </div>
+                        }
+                      >
+                        <div className="w-10 h-10">
+                          <UnknownTokenIcon width={40} height={40} />
+                        </div>
+                      </Badge>
+                      <div className="flex flex-col">
+                        <span className="text-2xl font-medium">
+                          {token1.symbol ?? '-'}
+                        </span>
+                        <span className="font-medium text-muted-foreground">
+                          {token1.name ?? '-'}
+                        </span>
+                      </div>
+                    </div>
+                    <LinkExternal
+                      target="_blank"
+                      href={EvmChain.from(token1.chainId)?.getTokenUrl(
+                        token1.address,
+                      )}
+                      className="font-medium"
+                    >
+                      {shortenAddress(token1.address)}{' '}
+                    </LinkExternal>
+                  </div>
+                </List.Control>
+              </List>
+              {isTokenSecurityChainId(token1.chainId) && (
+                <List className="!pt-0 h-64">
+                  <List.Control className="!overflow-y-auto flex flex-col gap-3 p-4">
+                    <div className="flex items-center">
+                      <span className="text-sm font-medium text-muted-foreground">
+                        Token Security Scan
+                      </span>
+                    </div>
+                    <TokenSecurityView
+                      token={token1}
+                      tokenSecurity={token1SecurityResponse}
+                      isTokenSecurityLoading={isToken1SecurityLoading}
+                    />
+                  </List.Control>
+                </List>
+              )}
+            </>
           )}
         </div>
+        <Message size="sm" variant={isHoneypot ? 'destructive' : 'warning'}>
+          {isHoneypot
+            ? 'Honeypot tokens restrict selling. Sushi does not support this token type.'
+            : 'Anyone can create a token, including creating fake versions of existing tokens that claim to represent projects. If you purchase this token, you may not be able to sell it back.'}
+        </Message>
         <DialogFooter>
-          {!honeypot &&
-          ((token0NotInList && token0?.isToken) ||
-            (token1NotInList && token1?.isToken)) ? (
-            <Button
-              fullWidth
-              size="xl"
-              onClick={() =>
-                onImport([
-                  token0?.isToken ? token0 : undefined,
-                  token1?.isToken ? token1 : undefined,
-                ])
-              }
-            >
-              I understand
+          {isHoneypot ? (
+            <Button fullWidth size="xl" onClick={reset}>
+              Close
             </Button>
           ) : (
-            <div className="flex flex-col gap-3">
-              <Button fullWidth size="xl" onClick={reset}>
-                Close
+            <div className="flex gap-3 w-full">
+              <Button
+                fullWidth
+                size="xl"
+                onClick={() =>
+                  onImport([
+                    token0?.isToken ? token0 : undefined,
+                    token1?.isToken ? token1 : undefined,
+                  ])
+                }
+              >
+                Confirm Import
               </Button>
-              <Message variant="destructive" size="sm">
-                Sushi does not support honeypot tokens. This token contract
-                cannot be imported!
-              </Message>
+              <Button fullWidth size="xl" onClick={reset} variant="secondary">
+                Cancel
+              </Button>
             </div>
           )}
         </DialogFooter>
