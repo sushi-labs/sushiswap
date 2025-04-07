@@ -28,7 +28,7 @@ export const TokenSecurityView = ({
     const issues: (keyof TokenSecurity)[] = []
     const nonIssues: (keyof TokenSecurity)[] = []
 
-    for (const [_key, value] of Object.entries(tokenSecurity || {})) {
+    for (const [_key, value] of Object.entries(tokenSecurity?.data || {})) {
       const key = _key as keyof TokenSecurity
       if (
         key in isTokenSecurityIssue &&
@@ -135,8 +135,8 @@ export const TokenSecurityView = ({
                 </tr>
               ))
             : rows.map(({ key, isIssue }) => {
-                const goPlusValue = tokenSecurity?.[key]?.goPlus
-                const deFiValue = tokenSecurity?.[key]?.deFi
+                const goPlusValue = tokenSecurity?.data?.[key]?.goPlus
+                const deFiValue = tokenSecurity?.data?.[key]?.deFi
                 const goPlusIsIssue =
                   goPlusValue !== undefined &&
                   isTokenSecurityIssue[key](goPlusValue)

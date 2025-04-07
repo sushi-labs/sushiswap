@@ -86,12 +86,11 @@ export const SimpleSwapTokenNotFoundDialog = () => {
   const isTokenSecurityLoading =
     isToken0SecurityLoading || isToken1SecurityLoading
 
-  const isHoneypot = Boolean(
-    token0SecurityResponse?.is_honeypot?.goPlus ||
-      token0SecurityResponse?.is_honeypot?.deFi ||
-      token1SecurityResponse?.is_honeypot?.goPlus ||
-      token1SecurityResponse?.is_honeypot?.deFi,
-  )
+  const isHoneypot =
+    token0SecurityResponse?.isHoneypot || token1SecurityResponse?.isHoneypot
+  const isFoT = token0SecurityResponse?.isFoT || token1SecurityResponse?.isFoT
+  const isRisky =
+    token0SecurityResponse?.isRisky || token1SecurityResponse?.isRisky
 
   return (
     <Dialog
@@ -106,7 +105,7 @@ export const SimpleSwapTokenNotFoundDialog = () => {
                 'inline-flex items-center px-2 py-1.5 gap-1 rounded-full',
                 isTokenSecurityLoading
                   ? 'bg-muted'
-                  : isHoneypot
+                  : isHoneypot || isFoT || isRisky
                     ? 'bg-red/20 text-red'
                     : 'bg-yellow/20 text-yellow',
               )}
@@ -115,7 +114,7 @@ export const SimpleSwapTokenNotFoundDialog = () => {
                 <div className="w-7 h-7 flex justify-center items-center">
                   <Loader width={28} height={28} />
                 </div>
-              ) : isHoneypot ? (
+              ) : isHoneypot || isFoT || isRisky ? (
                 <ExclamationTriangleIcon width={28} height={28} />
               ) : (
                 <ExclamationCircleIcon width={28} height={28} />
@@ -128,7 +127,13 @@ export const SimpleSwapTokenNotFoundDialog = () => {
             </span>
           ) : (
             <span className="text-xl font-semibold">
-              {isHoneypot ? 'Honeypot Token Detected' : 'Unverified Token'}
+              {isHoneypot
+                ? 'Honeypot Token Detected'
+                : isFoT
+                  ? 'Tax Token Deteceted'
+                  : isRisky
+                    ? 'Token Flagged for Risks'
+                    : `Unverified Token${token0NotInList && token1NotInList ? 's' : ''}`}
             </span>
           )}
         </DialogHeader>
@@ -141,7 +146,7 @@ export const SimpleSwapTokenNotFoundDialog = () => {
                   Could not retrieve token info for{' '}
                   <a
                     target="_blank"
-                    href={EvmChain.from(chainId)?.getTokenUrl(
+                    href={EvmChain.from(token0.chainId)?.getTokenUrl(
                       token0.wrapped.address,
                     )}
                     className="text-blue font-medium"
@@ -149,7 +154,8 @@ export const SimpleSwapTokenNotFoundDialog = () => {
                   >
                     {shortenAddress(token0.wrapped.address)}
                   </a>{' '}
-                  are you sure this token is on {EvmChain.from(chainId)?.name}?
+                  are you sure this token is on{' '}
+                  {EvmChain.from(token0.chainId)?.name}?
                 </p>
               </List.Control>
             </List>
@@ -224,7 +230,7 @@ export const SimpleSwapTokenNotFoundDialog = () => {
                   Could not retrieve token info for{' '}
                   <a
                     target="_blank"
-                    href={EvmChain.from(chainId)?.getTokenUrl(
+                    href={EvmChain.from(token1.chainId)?.getTokenUrl(
                       token1.wrapped.address,
                     )}
                     className="text-blue font-medium"
@@ -232,7 +238,8 @@ export const SimpleSwapTokenNotFoundDialog = () => {
                   >
                     {shortenAddress(token1.wrapped.address)}
                   </a>{' '}
-                  are you sure this token is on {EvmChain.from(chainId)?.name}?
+                  are you sure this token is on{' '}
+                  {EvmChain.from(token1.chainId)?.name}?
                 </p>
               </List.Control>
             </List>
@@ -300,10 +307,17 @@ export const SimpleSwapTokenNotFoundDialog = () => {
             </>
           )}
         </div>
-        <Message size="sm" variant={isHoneypot ? 'destructive' : 'warning'}>
+        <Message
+          size="sm"
+          variant={isHoneypot || isFoT || isRisky ? 'destructive' : 'warning'}
+        >
           {isHoneypot
             ? 'Honeypot tokens restrict selling. Sushi does not support this token type.'
-            : 'Anyone can create a token, including creating fake versions of existing tokens that claim to represent projects. If you purchase this token, you may not be able to sell it back.'}
+            : isFoT
+              ? 'This token charges a tax fee on transfer. Tax tokens are not supported in V3. You might not be able to trade, transfer, or withdraw liquidity of this token.'
+              : isRisky
+                ? 'Our security scan has identified risks associated with this token. Proceeding may result in the loss of your funds. Please exercise caution and review the details before continuing.'
+                : 'Anyone can create a token, including creating fake versions of existing tokens that claim to represent projects. If you purchase this token, you may not be able to sell it back.'}
         </Message>
         <DialogFooter>
           {isHoneypot ? (
@@ -321,8 +335,9 @@ export const SimpleSwapTokenNotFoundDialog = () => {
                     token1?.isToken ? token1 : undefined,
                   ])
                 }
+                variant={isFoT || isRisky ? 'destructive' : 'default'}
               >
-                Confirm Import
+                {isFoT || isRisky ? 'Import Anyways' : 'Confirm Import'}
               </Button>
               <Button fullWidth size="xl" onClick={reset} variant="secondary">
                 Cancel

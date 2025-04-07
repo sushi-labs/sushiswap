@@ -27,12 +27,8 @@ import {
 } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import { UnknownTokenIcon } from '@sushiswap/ui/icons/UnknownTokenIcon'
-import { type FC, useCallback, useMemo, useState } from 'react'
-import {
-  type TokenSecurity,
-  isTokenSecurityIssue,
-  useTokenSecurity,
-} from 'src/lib/hooks/react-query'
+import { type FC, useCallback, useState } from 'react'
+import { useTokenSecurity } from 'src/lib/hooks/react-query'
 import { EvmChain } from 'sushi/chain'
 import type { Token } from 'sushi/currency'
 import { shortenAddress } from 'sushi/format'
@@ -62,28 +58,6 @@ export const TokenSelectorImportRow: FC<TokenSelectorImportRow> = ({
       setOpen(false)
     }, 250)
   }, [onImport])
-
-  const { isHoneypot, isFoT, isRisky } = useMemo(() => {
-    return {
-      isHoneypot:
-        tokenSecurity?.is_honeypot?.goPlus || tokenSecurity?.is_honeypot?.deFi,
-      isFoT:
-        tokenSecurity?.buy_tax?.goPlus ||
-        tokenSecurity?.buy_tax?.deFi ||
-        tokenSecurity?.sell_tax?.goPlus ||
-        tokenSecurity?.buy_tax?.deFi,
-      isRisky: Object.entries(tokenSecurity || {}).some(([_key, value]) => {
-        const key = _key as keyof TokenSecurity
-        if (
-          key in isTokenSecurityIssue &&
-          (isTokenSecurityIssue[key](value.deFi) ||
-            isTokenSecurityIssue[key](value.goPlus))
-        ) {
-          return true
-        }
-      }),
-    }
-  }, [tokenSecurity])
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -124,7 +98,9 @@ export const TokenSelectorImportRow: FC<TokenSelectorImportRow> = ({
                 'inline-flex items-center px-2 py-1.5 gap-1 rounded-full',
                 isTokenSecurityLoading
                   ? 'bg-muted'
-                  : isHoneypot || isFoT || isRisky
+                  : tokenSecurity?.isHoneypot ||
+                      tokenSecurity?.isFoT ||
+                      tokenSecurity?.isRisky
                     ? 'bg-red/20 text-red'
                     : 'bg-yellow/20 text-yellow',
               )}
@@ -133,7 +109,9 @@ export const TokenSelectorImportRow: FC<TokenSelectorImportRow> = ({
                 <div className="w-7 h-7 flex justify-center items-center">
                   <Loader width={28} height={28} />
                 </div>
-              ) : isHoneypot || isFoT || isRisky ? (
+              ) : tokenSecurity?.isHoneypot ||
+                tokenSecurity?.isFoT ||
+                tokenSecurity?.isRisky ? (
                 <ExclamationTriangleIcon width={28} height={28} />
               ) : (
                 <ExclamationCircleIcon width={28} height={28} />
@@ -146,11 +124,11 @@ export const TokenSelectorImportRow: FC<TokenSelectorImportRow> = ({
             </span>
           ) : (
             <span className="text-xl font-semibold">
-              {isHoneypot
+              {tokenSecurity?.isHoneypot
                 ? 'Honeypot Token Detected'
-                : isFoT
+                : tokenSecurity?.isFoT
                   ? 'Tax Token Deteceted'
-                  : isRisky
+                  : tokenSecurity?.isRisky
                     ? 'Token Flagged for Risks'
                     : 'Unverified Token'}
             </span>
@@ -213,18 +191,24 @@ export const TokenSelectorImportRow: FC<TokenSelectorImportRow> = ({
         </List>
         <Message
           size="sm"
-          variant={isHoneypot || isFoT || isRisky ? 'destructive' : 'warning'}
+          variant={
+            tokenSecurity?.isHoneypot ||
+            tokenSecurity?.isFoT ||
+            tokenSecurity?.isRisky
+              ? 'destructive'
+              : 'warning'
+          }
         >
-          {isHoneypot
+          {tokenSecurity?.isHoneypot
             ? 'Honeypot tokens restrict selling. Sushi does not support this token type.'
-            : isFoT
+            : tokenSecurity?.isFoT
               ? 'This token charges a tax fee on transfer. Tax tokens are not supported in V3. You might not be able to trade, transfer, or withdraw liquidity of this token.'
-              : isRisky
+              : tokenSecurity?.isRisky
                 ? 'Our security scan has identified risks associated with this token. Proceeding may result in the loss of your funds. Please exercise caution and review the details before continuing.'
                 : 'Anyone can create a token, including creating fake versions of existing tokens that claim to represent projects. If you purchase this token, you may not be able to sell it back.'}
         </Message>
         <DialogFooter>
-          {isHoneypot ? (
+          {tokenSecurity?.isHoneypot ? (
             <Button fullWidth size="xl" onClick={() => setOpen(false)}>
               Close
             </Button>
@@ -243,9 +227,15 @@ export const TokenSelectorImportRow: FC<TokenSelectorImportRow> = ({
                   fullWidth
                   size="xl"
                   onClick={onClick}
-                  variant={isFoT || isRisky ? 'destructive' : 'default'}
+                  variant={
+                    tokenSecurity?.isFoT || tokenSecurity?.isRisky
+                      ? 'destructive'
+                      : 'default'
+                  }
                 >
-                  {isFoT || isRisky ? 'Import Anyways' : 'Confirm Import'}
+                  {tokenSecurity?.isFoT || tokenSecurity?.isRisky
+                    ? 'Import Anyways'
+                    : 'Confirm Import'}
                 </Button>
               </TraceEvent>
               <Button

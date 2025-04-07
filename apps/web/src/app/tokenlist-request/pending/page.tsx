@@ -24,6 +24,10 @@ import type { ColumnDef, SortingState, TableState } from '@tanstack/react-table'
 import differenceInDays from 'date-fns/differenceInDays'
 import React, { useMemo, useState } from 'react'
 import { usePendingTokens } from 'src/lib/hooks/api/usePendingTokenListings'
+import {
+  type TokenSecurity,
+  isTokenSecurityIssue,
+} from 'src/lib/hooks/react-query'
 import { TokenSecurityView } from 'src/lib/wagmi/components/token-security-view'
 import { formatNumber, formatUSD, shortenAddress } from 'sushi'
 import { EvmChain, type EvmChainId } from 'sushi/chain'
@@ -31,7 +35,7 @@ import { Token } from 'sushi/currency'
 import { NavigationItems } from '../navigation-items'
 
 const getTokenSecurity = (security: PendingTokens[number]['security']) => {
-  return {
+  const data = {
     is_buyable: {
       goPlus: security.isBuyable,
     },
@@ -101,6 +105,21 @@ const getTokenSecurity = (security: PendingTokens[number]['security']) => {
     trust_list: {
       goPlus: security.trustList,
     },
+  }
+
+  return {
+    data,
+    isHoneypot: data?.is_honeypot?.goPlus,
+    isFoT: data?.buy_tax?.goPlus || data?.sell_tax?.goPlus,
+    isRisky: Object.entries(data || {}).some(([_key, value]) => {
+      const key = _key as keyof TokenSecurity
+      if (
+        key in isTokenSecurityIssue &&
+        isTokenSecurityIssue[key](value.goPlus)
+      ) {
+        return true
+      }
+    }),
   }
 }
 

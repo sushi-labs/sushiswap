@@ -293,7 +293,7 @@ const fetchTokenSecurityQueryFn = async (currency: Token | undefined) => {
       ? deFiResponseResult.value
       : undefined
 
-  return Object.keys(goPlusResponse ?? {}).reduce(
+  const data = Object.keys(goPlusResponse ?? {}).reduce(
     (acc, key) => {
       type SecurityKey = keyof TokenSecurity
       const field = key as SecurityKey
@@ -306,6 +306,26 @@ const fetchTokenSecurityQueryFn = async (currency: Token | undefined) => {
     },
     {} as Record<keyof TokenSecurity, { goPlus?: boolean; deFi?: boolean }>,
   )
+
+  return {
+    data,
+    isHoneypot: data?.is_honeypot?.goPlus || data?.is_honeypot?.deFi,
+    isFoT:
+      data?.buy_tax?.goPlus ||
+      data?.buy_tax?.deFi ||
+      data?.sell_tax?.goPlus ||
+      data?.buy_tax?.deFi,
+    isRisky: Object.entries(data || {}).some(([_key, value]) => {
+      const key = _key as keyof TokenSecurity
+      if (
+        key in isTokenSecurityIssue &&
+        (isTokenSecurityIssue[key](value.deFi) ||
+          isTokenSecurityIssue[key](value.goPlus))
+      ) {
+        return true
+      }
+    }),
+  }
 }
 
 export type TokenSecurityResponse = Awaited<
