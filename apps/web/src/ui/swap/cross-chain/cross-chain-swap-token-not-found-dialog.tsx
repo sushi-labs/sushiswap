@@ -53,8 +53,8 @@ export const CrossChainSwapTokenNotFoundDialog = () => {
   const onImport = useCallback(
     ([token0, token1]: (Token | undefined)[]) => {
       const _tokens: Token[] = []
-      if (token0?.approved === false && token0) _tokens.push(token0)
-      if (token1?.approved === false && token1) _tokens.push(token1)
+      if (token0?.approved === false) _tokens.push(token0)
+      if (token1?.approved === false) _tokens.push(token1)
 
       customTokensMutate('add', _tokens)
 
@@ -74,13 +74,13 @@ export const CrossChainSwapTokenNotFoundDialog = () => {
   const { data: token0SecurityResponse, isLoading: isToken0SecurityLoading } =
     useTokenSecurity({
       currency: token0NotInList && token0?.isToken ? token0 : undefined,
-      enabled: Boolean(token0NotInList && token0),
+      enabled: Boolean(token0NotInList && token0?.isToken),
     })
 
   const { data: token1SecurityResponse, isLoading: isToken1SecurityLoading } =
     useTokenSecurity({
       currency: token1NotInList && token1?.isToken ? token1 : undefined,
-      enabled: Boolean(token1NotInList && token1),
+      enabled: Boolean(token1NotInList && token1?.isToken),
     })
 
   const isTokenSecurityLoading =
@@ -199,7 +199,7 @@ export const CrossChainSwapTokenNotFoundDialog = () => {
                 </List.Control>
               </List>
               {isTokenSecurityChainId(token0.chainId) && (
-                <List className="!pt-0 h-64">
+                <List className="!pt-0 max-h-64">
                   <List.Control className="!overflow-y-auto flex flex-col gap-3 p-4">
                     <div className="flex items-center">
                       <span className="text-sm font-medium text-muted-foreground">
@@ -282,7 +282,7 @@ export const CrossChainSwapTokenNotFoundDialog = () => {
                 </List.Control>
               </List>
               {isTokenSecurityChainId(token1.chainId) && (
-                <List className="!pt-0 h-64">
+                <List className="!pt-0 max-h-64">
                   <List.Control className="!overflow-y-auto flex flex-col gap-3 p-4">
                     <div className="flex items-center">
                       <span className="text-sm font-medium text-muted-foreground">
