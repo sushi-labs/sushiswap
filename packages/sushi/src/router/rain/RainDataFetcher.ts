@@ -91,6 +91,7 @@ import { VelodromeSlipstreamBaseProvider } from './VelodromeSlipstreamBase.js'
 
 export class RainDataFetcher extends DataFetcher {
   eventsAbi: ParseAbiItem<any>[] = []
+  factories: string[] = []
 
   /**
    * Creates an instance of RainDataFecther, constructor of this class should
@@ -231,6 +232,19 @@ export class RainDataFetcher extends DataFetcher {
             }
           })
         }
+        // gather factory addresses
+        if (
+          provider instanceof UniswapV2BaseProvider ||
+          provider instanceof UniswapV3BaseProvider
+        ) {
+          const factory =
+            provider.factory[
+              this.chainId as keyof typeof provider.factory
+            ]!.toLowerCase()
+          if (!this.factories.includes(factory)) {
+            this.factories.push(factory)
+          }
+        }
       }
     }
   }
@@ -242,24 +256,17 @@ export class RainDataFetcher extends DataFetcher {
    */
   async updatePools(untilBlock?: bigint) {
     let fromBlock = -1n
-    const addresses: string[] = []
+    const addresses: string[] = [...this.factories]
     if (typeof untilBlock !== 'bigint') {
       untilBlock = await this.web3Client.getBlockNumber()
     }
 
-    // gather all provider factory and pools addresses
+    // gather all provider pools addresses
     this.providers.forEach((provider: any) => {
       if (
         provider instanceof UniswapV2BaseProvider ||
         provider instanceof UniswapV3BaseProvider
       ) {
-        const factory =
-          provider.factory[
-            this.chainId as keyof typeof provider.factory
-          ]!.toLowerCase()
-        if (!addresses.includes(factory)) {
-          addresses.push(factory)
-        }
         const pools = provider.pools
         pools.forEach((pool, address) => {
           if (!addresses.includes(address)) {
@@ -273,6 +280,7 @@ export class RainDataFetcher extends DataFetcher {
           }
         })
 
+        // slipstream has swapFeeModule address to be collected as well
         if (provider instanceof VelodromeSlipstreamBaseProvider) {
           const swapFeeModule =
             provider.swapFeeModule[

@@ -385,24 +385,17 @@ export abstract class VelodromeSlipstreamBaseProvider extends UniswapV3BaseProvi
         this.handleNullPool(poolAddress)
         return
       }
-
-      if (slot0 === undefined || !slot0[i]) {
-        this.handleNullPool(poolAddress)
-        return
-      }
       const sqrtPriceX96 = slot0[i]!.result?.[0] // price
       const tick = slot0[i]!.result?.[1] // tick
       if (!sqrtPriceX96 || sqrtPriceX96 === 0n || typeof tick !== 'number') {
         this.handleNullPool(poolAddress)
         return
       }
-
       const activeTick = Math.floor(tick / pool.tickSpacing) * pool.tickSpacing
       if (typeof activeTick !== 'number') {
         this.handleNullPool(poolAddress)
         return
       }
-
       const fee = (() => {
         if (pool.feeType === FeeType.Zero) {
           return 0

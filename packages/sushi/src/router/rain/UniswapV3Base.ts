@@ -695,7 +695,9 @@ export abstract class UniswapV3BaseProvider extends _UniswapV3BaseProvider {
   }
 
   /**
-   * Gets triggered if a pool's current tick get changed after processing event logs
+   * Gets triggered if a pool's current tick get changed after processing event logs,
+   * this calculates the new tciks that need to be fetched from onchain which then
+   * takes place when afterProcessLog() is called
    */
   onPoolTickChange(tick: number, pool: RainV3Pool): number[] {
     const currentTickWord = bitmapIndex(tick, pool.tickSpacing)
