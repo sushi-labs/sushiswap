@@ -5,8 +5,8 @@ import {
   PANCAKESWAP_V3_FEE_SPACING_MAP,
   PancakeSwapV3FeeAmount,
 } from '../../config/index.js'
+import { UniswapV3BaseProvider } from '../rain/UniswapV3Base.js'
 import { LiquidityProviders } from './LiquidityProvider.js'
-import { UniswapV3BaseProvider } from './UniswapV3Base.js'
 
 export class DackieSwapV3Provider extends UniswapV3BaseProvider {
   override FEE = PancakeSwapV3FeeAmount

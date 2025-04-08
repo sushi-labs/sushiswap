@@ -1,9 +1,9 @@
 import { PublicClient } from 'viem'
 import { ChainId } from '../../chain/index.js'
-import { RainUniswapV2BaseProvider } from '../rain/RainUniswapV2Base.js'
+import { UniswapV2BaseProvider } from '../rain/UniswapV2Base.js'
 import { LiquidityProviders } from './LiquidityProvider.js'
 
-export class ElkProvider extends RainUniswapV2BaseProvider {
+export class ElkProvider extends UniswapV2BaseProvider {
   constructor(chainId: ChainId, web3Client: PublicClient) {
     const factory = {
       [ChainId.AVALANCHE]: '0x091d35d7F63487909C863001ddCA481c6De47091',

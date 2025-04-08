@@ -16,7 +16,7 @@ import {
   PoolFilter,
   StaticPoolUniV3,
 } from '../liquidity-providers/UniswapV3Base.js'
-import { RainUniswapV3BaseProvider, RainV3Pool } from './RainUniswapV3Base.js'
+import { RainV3Pool, UniswapV3BaseProvider } from './UniswapV3Base.js'
 
 export const AlgebraEventsAbi = [
   parseAbiItem(
@@ -72,7 +72,7 @@ export const globalStateAbi = [
   },
 ] as const
 
-export abstract class AlgebraV1BaseProvider extends RainUniswapV3BaseProvider {
+export abstract class AlgebraV1BaseProvider extends UniswapV3BaseProvider {
   override TICK_SPACINGS: Record<string, number> = {}
   override eventsAbi = AlgebraEventsAbi as any
 
@@ -117,6 +117,11 @@ export abstract class AlgebraV1BaseProvider extends RainUniswapV3BaseProvider {
         staticPools.map((pool) => pool.address.toLowerCase()),
       )
 
+    // filter out cached pools
+    if (!options?.ignoreCache) {
+      staticPools = this.filterCachedPools(staticPools)
+    }
+
     const globalStateData = {
       multicallAddress: this.client.chain?.contracts?.multicall3?.address!,
       allowFailure: true,
@@ -147,37 +152,28 @@ export abstract class AlgebraV1BaseProvider extends RainUniswapV3BaseProvider {
     const existingPools: RainV3Pool[] = []
     staticPools.forEach((pool, i) => {
       const poolAddress = pool.address.toLowerCase()
-      if (this.pools.has(poolAddress)) return
-      if (this.nonExistentPools.get(poolAddress) ?? 0 > 1) return
       if (globalState === undefined || !globalState[i]) {
-        this.handleNonExistentPool(poolAddress)
+        this.handleNullPool(poolAddress)
         return
       }
       let tickSpacing = this.DEFAULT_TICK_SPACING
-      if (tickSpacings?.[i] !== undefined) {
-        const ts = tickSpacings[i]
-        if (typeof ts === 'number') {
-          tickSpacing = ts
-        } else {
-          if (ts?.status === 'success') {
-            tickSpacing = ts.result
-          }
-        }
+      if (typeof tickSpacings?.[i]?.result === 'number') {
+        tickSpacing = tickSpacings[i]!.result!
       }
       const sqrtPriceX96 = globalState[i]!.result?.[0] // price
       const tick = globalState[i]!.result?.[1] // tick
       if (!sqrtPriceX96 || sqrtPriceX96 === 0n || typeof tick !== 'number') {
-        this.handleNonExistentPool(poolAddress)
+        this.handleNullPool(poolAddress)
         return
       }
       const fee = globalState[i]!.result?.[2] // fee
       if (!fee) {
-        this.handleNonExistentPool(poolAddress)
+        this.handleNullPool(poolAddress)
         return
       }
       const activeTick = this.getActiveTick(tick, tickSpacing)
       if (typeof activeTick !== 'number') {
-        this.handleNonExistentPool(poolAddress)
+        this.handleNullPool(poolAddress)
         return
       }
       existingPools.push({

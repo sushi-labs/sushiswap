@@ -5,7 +5,7 @@ import { DataFetcherOptions } from '../data-fetcher.js'
 import { filterOnDemandPools } from '../lib/api.js'
 import {
   StaticPool,
-  UniswapV2BaseProvider,
+  UniswapV2BaseProvider as _UniswapV2BaseProvider,
 } from '../liquidity-providers/UniswapV2Base.js'
 import { ConstantProductPoolCode, type PoolCode } from '../pool-codes/index.js'
 
@@ -23,8 +23,8 @@ export const UniV2EventsAbi = [
   ),
 ]
 
-export abstract class RainUniswapV2BaseProvider extends UniswapV2BaseProvider {
-  nonExistentPools: Map<string, number> = new Map()
+export abstract class UniswapV2BaseProvider extends _UniswapV2BaseProvider {
+  nullPools: Map<string, number> = new Map()
   pools: Map<string, RainV2Pool> = new Map()
   eventsAbi = UniV2EventsAbi
 
@@ -58,22 +58,20 @@ export abstract class RainUniswapV2BaseProvider extends UniswapV2BaseProvider {
       this.getTradeId(t0, t1),
       pools.map((pool) => pool.address.toLowerCase() as `0x${string}`),
     )
-    const poolCodesToCreate: RainV2Pool[] = []
-    pools.forEach((pool) => {
-      const existingPool = this.pools.get(pool.address.toLowerCase())
-      const nonExistentPool = this.nonExistentPools.get(
-        pool.address.toLowerCase(),
-      )
-      if (
-        existingPool === undefined &&
-        (!nonExistentPool || nonExistentPool < 2)
-      ) {
-        poolCodesToCreate.push({
+
+    // filter out cached pools
+    if (!options?.ignoreCache) {
+      pools = this.filterCachedPools(pools as StaticPool[])
+    }
+
+    const poolCodesToCreate = pools.map(
+      (pool) =>
+        ({
           ...pool,
           blockNumber: options?.blockNumber ?? 0n,
-        } as RainV2Pool)
-      }
-    })
+        }) as RainV2Pool,
+    )
+    if (!poolCodesToCreate.length) return
 
     const reserves = await this.getReserves(
       poolCodesToCreate.map((v) => v.address),
@@ -121,7 +119,7 @@ export abstract class RainUniswapV2BaseProvider extends UniswapV2BaseProvider {
           abi: this.eventsAbi,
           eventName: 'PairCreated',
         })[0]!
-        this.nonExistentPools.delete(event.args[2].toLowerCase())
+        this.nullPools.delete(event.args[2].toLowerCase())
       } catch {}
     } else {
       const pool = this.pools.get(logAddress as `0x${string}`)
@@ -144,28 +142,44 @@ export abstract class RainUniswapV2BaseProvider extends UniswapV2BaseProvider {
 
   setPool(poolCodesToCreate: RainV2Pool[], reserves: any[]) {
     poolCodesToCreate.forEach((pool, i) => {
+      const poolAddress = pool.address.toLowerCase()
       const res0 = reserves?.[i]?.result?.[0]
       const res1 = reserves?.[i]?.result?.[1]
 
       if (res0 !== undefined && res1 !== undefined) {
-        this.pools.set(pool.address.toLowerCase(), {
+        this.pools.set(poolAddress, {
           ...pool,
           reserve0: res0,
           reserve1: res1,
         })
       } else {
-        const nonExistentPool = this.nonExistentPools.get(
-          pool.address.toLowerCase(),
-        )
-        if (nonExistentPool) {
-          this.nonExistentPools.set(
-            pool.address.toLowerCase(),
-            nonExistentPool + 1,
-          )
-        } else {
-          this.nonExistentPools.set(pool.address.toLowerCase(), 1)
-        }
+        this.handleNullPool(poolAddress)
       }
     })
+  }
+
+  handleNullPool(poolAddress: string) {
+    const v = this.nullPools.get(poolAddress)
+    if (v) {
+      this.nullPools.set(poolAddress, v + 1)
+    } else {
+      this.nullPools.set(poolAddress, 1)
+    }
+  }
+
+  filterCachedPools(pools: StaticPool[]) {
+    return pools.filter((pool) => {
+      const poolAddress = pool.address.toLowerCase()
+      if (this.pools.has(poolAddress)) return false
+      const nullPool = this.nullPools.get(poolAddress)
+      if (typeof nullPool === 'number' && nullPool > 1) return false
+      return true
+    })
+  }
+
+  reset() {
+    this.pools.clear()
+    this.poolsByTrade.clear()
+    this.nullPools.clear()
   }
 }

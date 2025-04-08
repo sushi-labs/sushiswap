@@ -92,6 +92,7 @@ export abstract class LiquidityProvider {
   client: PublicClient
   lastUpdateBlock = 0
   isTest = false
+  initialized = false
   readonly ON_DEMAND_POOLS_LIFETIME_IN_SECONDS = 60
   readonly FETCH_AVAILABLE_POOLS_AFTER_SECONDS = 900
 
@@ -159,6 +160,10 @@ export abstract class LiquidityProvider {
     [t0.address.toLowerCase(), t1.address.toLowerCase()]
       .sort((first, second) => (first > second ? -1 : 1))
       .join(':')
+
+  async init(_blockNumber?: bigint) {
+    this.initialized = true
+  }
 
   // methods interface for event log handling
   processLog(_log: Log) {}

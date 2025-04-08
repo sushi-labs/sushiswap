@@ -27,5 +27,6 @@ export default defineConfig({
     setupFiles: [join(__dirname, './setupFiles.ts')],
     globalSetup: [join(__dirname, './globalSetup.ts')],
     testTimeout: 10_000,
+    hookTimeout: 70_000,
   },
 })

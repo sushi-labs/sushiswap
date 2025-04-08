@@ -1,9 +1,9 @@
 import { PublicClient } from 'viem'
 import { ChainId } from '../../chain/index.js'
-import { RainUniswapV3BaseProvider } from '../rain/RainUniswapV3Base.js'
+import { UniswapV3BaseProvider } from '../rain/UniswapV3Base.js'
 import { LiquidityProviders } from './LiquidityProvider.js'
 
-export class DovishV3Provider extends RainUniswapV3BaseProvider {
+export class DovishV3Provider extends UniswapV3BaseProvider {
   constructor(chainId: ChainId, web3Client: PublicClient) {
     const factory = {
       [ChainId.POLYGON_ZKEVM]: '0xdE474Db1Fa59898BC91314328D29507AcD0D593c',

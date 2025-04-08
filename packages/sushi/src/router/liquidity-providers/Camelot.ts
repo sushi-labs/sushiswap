@@ -2,7 +2,7 @@ import { Address, PublicClient, parseAbi } from 'viem'
 import { ChainId } from '../../chain/index.js'
 import { DataFetcherOptions } from '../data-fetcher.js'
 import { type PoolCode } from '../pool-codes/index.js'
-import { RainUniswapV2BaseProvider } from '../rain/RainUniswapV2Base.js'
+import { UniswapV2BaseProvider } from '../rain/UniswapV2Base.js'
 import { LiquidityProviders } from './LiquidityProvider.js'
 
 type IsStableSwap =
@@ -21,7 +21,7 @@ type IsStableSwap =
     )[]
   | undefined
 
-export class CamelotProvider extends RainUniswapV2BaseProvider {
+export class CamelotProvider extends UniswapV2BaseProvider {
   // Camelot has a slightly different getReserves() abi
   // so needs to be overriden
   override getReservesAbi = parseAbi([

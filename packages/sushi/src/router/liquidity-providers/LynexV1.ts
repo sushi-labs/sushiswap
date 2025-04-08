@@ -4,7 +4,7 @@ import { ChainId } from '../../chain/index.js'
 import { Token } from '../../currency/index.js'
 import { DataFetcherOptions } from '../data-fetcher.js'
 import { getCurrencyCombinations } from '../get-currency-combinations.js'
-import { RainUniswapV2BaseProvider } from '../rain/RainUniswapV2Base.js'
+import { UniswapV2BaseProvider } from '../rain/UniswapV2Base.js'
 import { LiquidityProviders } from './LiquidityProvider.js'
 import { StaticPool } from './UniswapV2Base.js'
 
@@ -12,7 +12,7 @@ const GetFeesAbi = parseAbi([
   'function getFee(bool _stable) public view returns(uint256)',
 ])
 
-export class LynexV1Provider extends RainUniswapV2BaseProvider {
+export class LynexV1Provider extends UniswapV2BaseProvider {
   STABLE_FEE = 0.0001
   VOLATILE_FEE = 0.0025
   constructor(chainId: ChainId, web3Client: PublicClient) {

@@ -1,9 +1,9 @@
 import { PublicClient } from 'viem'
 import { ChainId } from '../../chain/index.js'
-import { RainUniswapV3BaseProvider } from '../rain/RainUniswapV3Base.js'
+import { UniswapV3BaseProvider } from '../rain/UniswapV3Base.js'
 import { LiquidityProviders } from './LiquidityProvider.js'
 
-export class SparkDexV3Provider extends RainUniswapV3BaseProvider {
+export class SparkDexV3Provider extends UniswapV3BaseProvider {
   constructor(chainId: ChainId, web3Client: PublicClient) {
     const factory = {
       [ChainId.FLARE]: '0xb3fB4f96175f6f9D716c17744e5A6d4BA9da8176',

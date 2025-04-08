@@ -3,7 +3,7 @@ import { Address, PublicClient, encodePacked, keccak256 } from 'viem'
 import { ChainId } from '../../chain/index.js'
 import { Token } from '../../currency/Token.js'
 import { getCurrencyCombinations } from '../get-currency-combinations.js'
-import { RainUniswapV2BaseProvider } from '../rain/RainUniswapV2Base.js'
+import { UniswapV2BaseProvider } from '../rain/UniswapV2Base.js'
 import { LiquidityProviders } from './LiquidityProvider.js'
 import { StaticPool } from './UniswapV2Base.js'
 
@@ -11,7 +11,7 @@ import { StaticPool } from './UniswapV2Base.js'
 // calculations methods to use all the available initCodeHashes to generate multiple
 // pool addresses for a pair and then the wrong ones will be filtered out automatically
 // on multicall, just the same as any other non existant calculated pool addresses
-export class EnosysProvider extends RainUniswapV2BaseProvider {
+export class EnosysProvider extends UniswapV2BaseProvider {
   constructor(chainId: ChainId, web3Client: PublicClient) {
     const factory = {
       [ChainId.FLARE]: '0x28b70f6Ed97429E40FE9a9CD3EB8E86BCBA11dd4',

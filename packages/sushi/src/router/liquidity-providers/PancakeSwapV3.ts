@@ -5,7 +5,7 @@ import {
   PANCAKESWAP_V3_FEE_SPACING_MAP,
   PancakeSwapV3FeeAmount,
 } from '../../config/index.js'
-import { RainUniswapV3BaseProvider } from '../rain/RainUniswapV3Base.js'
+import { UniswapV3BaseProvider } from '../rain/UniswapV3Base.js'
 import { LiquidityProviders } from './LiquidityProvider.js'
 
 export const PancakeV3EventsAbi = [
@@ -33,11 +33,11 @@ export const PancakeV3EventsAbi = [
   ),
 ]
 
-export class PancakeSwapV3Provider extends RainUniswapV3BaseProvider {
+export class PancakeSwapV3Provider extends UniswapV3BaseProvider {
   override FEE = PancakeSwapV3FeeAmount
   override TICK_SPACINGS = PANCAKESWAP_V3_FEE_SPACING_MAP
   override eventsAbi =
-    PancakeV3EventsAbi as any as RainUniswapV3BaseProvider['eventsAbi']
+    PancakeV3EventsAbi as any as UniswapV3BaseProvider['eventsAbi']
 
   constructor(chainId: ChainId, web3Client: PublicClient) {
     const factory = {

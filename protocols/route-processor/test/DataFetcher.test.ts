@@ -12,8 +12,8 @@ import {
   WNATIVE,
 } from 'sushi/currency'
 import {
-  DataFetcher,
   LiquidityProviders,
+  RainDataFetcher,
   Router,
   UniV3LiquidityProviders,
 } from 'sushi/router'
@@ -21,7 +21,7 @@ import { UniswapV3BaseProvider } from '../../../packages/sushi/dist/router/liqui
 
 async function testDF(
   _chainName: string,
-  dataFetcher: DataFetcher,
+  dataFetcher: RainDataFetcher,
   t0: Type | undefined,
   t1: Type | undefined,
   name0: string,
@@ -77,7 +77,7 @@ function reportMissingDexes(reports: Record<string, number>[]): {
 
 // tries to find a route for a token pair from current fetched pools
 function findRoute(
-  dataFetcher: DataFetcher,
+  dataFetcher: RainDataFetcher,
   fromToken: Type,
   toToken: Type,
   chainId: ChainId,
@@ -128,14 +128,13 @@ const chainIds = Object.values(ChainId).filter((v) => {
 })
 
 async function runTest() {
-  describe.only('DataFetcher Pools/Time check', async () => {
+  describe.only('RainDataFetcher Pools/Time check', async () => {
     chainIds.forEach((chainId) => {
       //if (chainId !== ChainId.OPTIMISM) return
       const chName = chainName[chainId]
 
-      const dataFetcher = DataFetcher.onChain(chainId)
-
       it(`${chName}(${chainId})`, async () => {
+        const dataFetcher = await RainDataFetcher.init(chainId)
         dataFetcher.startDataFetching()
         console.log(chName)
         const allFoundPools = []

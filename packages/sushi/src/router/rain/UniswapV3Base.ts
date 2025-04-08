@@ -1,5 +1,5 @@
 import { Address, Log, parseAbiItem, parseEventLogs } from 'viem'
-import { erc20Abi, tickLensAbi } from '../../abi/index.js'
+import { erc20Abi, slot0Abi, tickLensAbi } from '../../abi/index.js'
 import { Token } from '../../currency/index.js'
 import { CLTick, RToken, UniV3Pool } from '../../tines/index.js'
 import { DataFetcherOptions } from '../data-fetcher.js'
@@ -7,7 +7,7 @@ import {
   NUMBER_OF_SURROUNDING_TICKS,
   PoolFilter,
   StaticPoolUniV3,
-  UniswapV3BaseProvider,
+  UniswapV3BaseProvider as _UniswapV3BaseProvider,
   V3Pool,
   bitmapIndex,
 } from '../liquidity-providers/UniswapV3Base.js'
@@ -57,9 +57,9 @@ export const UniV3EventsAbi = [
   ),
 ]
 
-export abstract class RainUniswapV3BaseProvider extends UniswapV3BaseProvider {
+export abstract class UniswapV3BaseProvider extends _UniswapV3BaseProvider {
   pools: Map<string, RainV3Pool> = new Map()
-  nonExistentPools: Map<string, number> = new Map()
+  nullPools: Map<string, number> = new Map()
   eventsAbi = UniV3EventsAbi
   newTicksQueue: [RainV3Pool, number[]][] = []
 
@@ -85,6 +85,11 @@ export abstract class RainUniswapV3BaseProvider extends UniswapV3BaseProvider {
         staticPools.map((pool) => pool.address.toLowerCase()),
       )
 
+    // filter out cached pools
+    if (!options?.ignoreCache) {
+      staticPools = this.filterCachedPools(staticPools)
+    }
+
     const slot0 = await this.client
       .multicall({
         multicallAddress: this.client.chain?.contracts?.multicall3
@@ -96,43 +101,7 @@ export abstract class RainUniswapV3BaseProvider extends UniswapV3BaseProvider {
             ({
               address: pool.address as Address,
               chainId: this.chainId,
-              abi: [
-                {
-                  inputs: [],
-                  name: 'slot0',
-                  outputs: [
-                    {
-                      internalType: 'uint160',
-                      name: 'sqrtPriceX96',
-                      type: 'uint160',
-                    },
-                    { internalType: 'int24', name: 'tick', type: 'int24' },
-                    {
-                      internalType: 'uint16',
-                      name: 'observationIndex',
-                      type: 'uint16',
-                    },
-                    {
-                      internalType: 'uint16',
-                      name: 'observationCardinality',
-                      type: 'uint16',
-                    },
-                    {
-                      internalType: 'uint16',
-                      name: 'observationCardinalityNext',
-                      type: 'uint16',
-                    },
-                    {
-                      internalType: 'uint8',
-                      name: 'feeProtocol',
-                      type: 'uint8',
-                    },
-                    { internalType: 'bool', name: 'unlocked', type: 'bool' },
-                  ],
-                  stateMutability: 'view',
-                  type: 'function',
-                },
-              ],
+              abi: slot0Abi,
               functionName: 'slot0',
             }) as const,
         ),
@@ -146,38 +115,23 @@ export abstract class RainUniswapV3BaseProvider extends UniswapV3BaseProvider {
         return undefined
       })
 
-    const tickSpacings = await this.getTickSpacing(staticPools, options)
-
     const existingPools: RainV3Pool[] = []
-
     staticPools.forEach((pool, i) => {
       const poolAddress = pool.address.toLowerCase()
-      if (this.pools.has(poolAddress)) return
-      if (this.nonExistentPools.get(poolAddress) ?? 0 > 1) return
       if (slot0 === undefined || !slot0[i]) {
-        this.handleNonExistentPool(poolAddress)
+        this.handleNullPool(poolAddress)
         return
       }
       const sqrtPriceX96 = slot0[i]!.result?.[0]
       const tick = slot0[i]!.result?.[1]
       if (!sqrtPriceX96 || sqrtPriceX96 === 0n || typeof tick !== 'number') {
-        this.handleNonExistentPool(poolAddress)
+        this.handleNullPool(poolAddress)
         return
       }
-      let tickSpacing = this.TICK_SPACINGS[pool.fee]!
-      if (typeof tickSpacings?.[i] !== 'undefined') {
-        const ts = tickSpacings[i]
-        if (typeof ts === 'number') {
-          tickSpacing = ts
-        } else {
-          if (ts?.status === 'success') {
-            tickSpacing = ts.result
-          }
-        }
-      }
+      const tickSpacing = this.TICK_SPACINGS[pool.fee]!
       const activeTick = this.getActiveTick(tick, tickSpacing)
       if (typeof activeTick !== 'number') {
-        this.handleNonExistentPool(poolAddress)
+        this.handleNullPool(poolAddress)
         return
       }
       existingPools.push({
@@ -455,32 +409,31 @@ export abstract class RainUniswapV3BaseProvider extends UniswapV3BaseProvider {
     return poolTicks
   }
 
-  // fetches pool tickSpacing, this will be used
-  // instead of hardcoded TICK_SPACINGS values
   async getTickSpacing(pools: StaticPoolUniV3[], options?: DataFetcherOptions) {
-    const calldata = {
-      multicallAddress: this.client.chain?.contracts?.multicall3
-        ?.address as Address,
-      allowFailure: true,
-      blockNumber: options?.blockNumber,
-      contracts: pools.map(
-        (pool) =>
-          ({
-            address: pool.address as Address,
-            chainId: this.chainId,
-            abi: tickSpacingAbi,
-            functionName: 'tickSpacing',
-          }) as const,
-      ),
-    }
-    return await this.client.multicall(calldata).catch((e) => {
-      console.warn(
-        `${this.getLogPrefix()} - INIT: multicall failed, message: ${
-          e.message
-        }`,
-      )
-      return undefined
-    })
+    return await this.client
+      .multicall({
+        multicallAddress: this.client.chain?.contracts?.multicall3
+          ?.address as Address,
+        allowFailure: true,
+        blockNumber: options?.blockNumber,
+        contracts: pools.map(
+          (pool) =>
+            ({
+              address: pool.address as Address,
+              chainId: this.chainId,
+              abi: tickSpacingAbi,
+              functionName: 'tickSpacing',
+            }) as const,
+        ),
+      })
+      .catch((e) => {
+        console.warn(
+          `${this.getLogPrefix()} - INIT: multicall failed, message: ${
+            e.message
+          }`,
+        )
+        return undefined
+      })
   }
 
   getMaxTickDiapason(tick: number, pool: RainV3Pool): CLTick[] {
@@ -530,7 +483,7 @@ export abstract class RainUniswapV3BaseProvider extends UniswapV3BaseProvider {
           abi: this.eventsAbi,
           eventName: 'PoolCreated',
         })[0]!
-        this.nonExistentPools.delete(event.args.pool.toLowerCase())
+        this.nullPools.delete(event.args.pool.toLowerCase())
       } catch {}
     } else {
       const pool = this.pools.get(logAddress) as RainV3Pool | undefined
@@ -749,12 +702,28 @@ export abstract class RainUniswapV3BaseProvider extends UniswapV3BaseProvider {
     return positiveFirst ? res : -res
   }
 
-  handleNonExistentPool(poolAddress: string) {
-    const v = this.nonExistentPools.get(poolAddress)
+  handleNullPool(poolAddress: string) {
+    const v = this.nullPools.get(poolAddress)
     if (v) {
-      this.nonExistentPools.set(poolAddress, v + 1)
+      this.nullPools.set(poolAddress, v + 1)
     } else {
-      this.nonExistentPools.set(poolAddress, 1)
+      this.nullPools.set(poolAddress, 1)
     }
+  }
+
+  filterCachedPools(pools: StaticPoolUniV3[]) {
+    return pools.filter((pool) => {
+      const poolAddress = pool.address.toLowerCase()
+      if (this.pools.has(poolAddress)) return false
+      const nullPool = this.nullPools.get(poolAddress)
+      if (typeof nullPool === 'number' && nullPool > 1) return false
+      return true
+    })
+  }
+
+  reset() {
+    this.pools.clear()
+    this.poolsByTrade.clear()
+    this.nullPools.clear()
   }
 }

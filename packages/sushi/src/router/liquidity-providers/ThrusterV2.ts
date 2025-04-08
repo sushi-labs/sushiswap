@@ -1,9 +1,9 @@
 import { PublicClient } from 'viem'
 import { ChainId } from '../../chain/index.js'
-import { RainUniswapV2BaseProvider } from '../rain/RainUniswapV2Base.js'
+import { UniswapV2BaseProvider } from '../rain/UniswapV2Base.js'
 import { LiquidityProviders } from './LiquidityProvider.js'
 
-export class ThrusterV2_3Provider extends RainUniswapV2BaseProvider {
+export class ThrusterV2_3Provider extends UniswapV2BaseProvider {
   override fee = 0.003
   constructor(chainId: ChainId, web3Client: PublicClient) {
     const factory = {
@@ -23,7 +23,7 @@ export class ThrusterV2_3Provider extends RainUniswapV2BaseProvider {
   }
 }
 
-export class ThrusterV2_1Provider extends RainUniswapV2BaseProvider {
+export class ThrusterV2_1Provider extends UniswapV2BaseProvider {
   override fee = 0.01
   constructor(chainId: ChainId, web3Client: PublicClient) {
     const factory = {
