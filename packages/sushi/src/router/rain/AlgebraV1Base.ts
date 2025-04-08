@@ -7,6 +7,7 @@ import {
   getAddress,
   keccak256,
   parseAbiItem,
+  parseEventLogs,
 } from 'viem'
 import { ChainId } from '../../chain/index.js'
 import { Token } from '../../currency/index.js'
@@ -16,27 +17,17 @@ import {
   PoolFilter,
   StaticPoolUniV3,
 } from '../liquidity-providers/UniswapV3Base.js'
-import { RainV3Pool, UniswapV3BaseProvider } from './UniswapV3Base.js'
+import {
+  RainV3Pool,
+  UniV3EventsAbi,
+  UniswapV3BaseProvider,
+} from './UniswapV3Base.js'
 
 export const AlgebraEventsAbi = [
-  parseAbiItem(
-    'event Mint(address sender, address indexed owner, int24 indexed tickLower, int24 indexed tickUpper, uint128 amount, uint256 amount0, uint256 amount1)',
-  ),
-  parseAbiItem(
-    'event Collect(address indexed owner, address recipient, int24 indexed tickLower, int24 indexed tickUpper, uint128 amount0, uint128 amount1)',
-  ),
-  parseAbiItem(
-    'event Burn(address indexed owner, int24 indexed tickLower, int24 indexed tickUpper, uint128 amount, uint256 amount0, uint256 amount1)',
-  ),
-  parseAbiItem(
-    'event Swap(address indexed sender, address indexed recipient, int256 amount0, int256 amount1, uint160 sqrtPriceX96, uint128 liquidity, int24 tick)',
-  ),
-  parseAbiItem(
-    'event Flash(address indexed sender, address indexed recipient, uint256 amount0, uint256 amount1, uint256 paid0, uint256 paid1)',
-  ),
+  ...UniV3EventsAbi.slice(0, 5), // same as univ3 Swap, Mint, Collect, Burn, Flash events
+  // algebra specific events
   parseAbiItem('event Fee(uint16 fee)'),
   parseAbiItem('event TickSpacing(int24 newTickSpacing)'),
-  // for algebra factory, new pool created
   parseAbiItem(
     'event Pool(address indexed token0, address indexed token1, address pool)',
   ),
@@ -224,6 +215,23 @@ export abstract class AlgebraV1BaseProvider extends UniswapV3BaseProvider {
   // algebra doesnt have the fee/ticks setup the same way univ3 has
   override async ensureFeeAndTicks(): Promise<boolean> {
     return true
+  }
+
+  // handle algebra specific pool creation event
+  override handleFactoryEvents(log: Log) {
+    const factory =
+      this.factory[this.chainId as keyof typeof this.factory]!.toLowerCase()
+    const logAddress = log.address.toLowerCase()
+    if (logAddress === factory) {
+      try {
+        const event = parseEventLogs({
+          logs: [log],
+          abi: AlgebraEventsAbi,
+          eventName: 'Pool',
+        })[0]!
+        this.nullPools.delete(event.args.pool.toLowerCase())
+      } catch {}
+    }
   }
 
   // handle extra events that Algebra has

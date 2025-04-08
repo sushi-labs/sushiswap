@@ -99,10 +99,10 @@ async function testRainDataFetcher(
   oldBlockNumber: bigint,
 ) {
   // data fetcher without indexer (normal way ie raw pool data fecthed directly by contract calls)
-  const dataFectherFresh = await RainDataFetcher.init(ChainId.BASE, client, lps)
+  const dataFetcherFresh = await RainDataFetcher.init(ChainId.BASE, client, lps)
 
   // data fetcher with indexer (pool data will be updated from older block to current block by event logs)
-  const dataFectherIndexer = await RainDataFetcher.init(
+  const dataFetcherIndexer = await RainDataFetcher.init(
     ChainId.BASE,
     client,
     lps,
@@ -110,7 +110,7 @@ async function testRainDataFetcher(
 
   // get route at current block height for fresh dataFetcher
   const { pcMap: freshPcMap, route: freshRoute } =
-    await dataFectherFresh.findBestRoute(
+    await dataFetcherFresh.findBestRoute(
       ChainId.BASE,
       fromToken,
       toToken,
@@ -126,7 +126,7 @@ async function testRainDataFetcher(
   // get route at older block height for indexer dataFetcher, then ensure the
   // amount out it gives is different to fresh datafetcher amount out
   // and then update the pools data with contract logs from between the blocks
-  const { route: indexerRouteOld } = await dataFectherIndexer.findBestRoute(
+  const { route: indexerRouteOld } = await dataFetcherIndexer.findBestRoute(
     ChainId.BASE,
     fromToken,
     toToken,
@@ -145,7 +145,7 @@ async function testRainDataFetcher(
 
   // now get route at current block height for indexer dataFetcher with updating pool data
   const { pcMap: indexerPcMap, route: indexerRoute } =
-    await dataFectherIndexer.findBestRoute(
+    await dataFetcherIndexer.findBestRoute(
       ChainId.BASE,
       fromToken,
       toToken,

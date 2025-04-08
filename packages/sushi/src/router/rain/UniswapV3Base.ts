@@ -35,6 +35,9 @@ export const tickSpacingAbi = [
 
 export const UniV3EventsAbi = [
   parseAbiItem(
+    'event Swap(address indexed sender, address indexed recipient, int256 amount0, int256 amount1, uint160 sqrtPriceX96, uint128 liquidity, int24 tick)',
+  ),
+  parseAbiItem(
     'event Mint(address sender, address indexed owner, int24 indexed tickLower, int24 indexed tickUpper, uint128 amount, uint256 amount0, uint256 amount1)',
   ),
   parseAbiItem(
@@ -42,9 +45,6 @@ export const UniV3EventsAbi = [
   ),
   parseAbiItem(
     'event Burn(address indexed owner, int24 indexed tickLower, int24 indexed tickUpper, uint128 amount, uint256 amount0, uint256 amount1)',
-  ),
-  parseAbiItem(
-    'event Swap(address indexed sender, address indexed recipient, int256 amount0, int256 amount1, uint160 sqrtPriceX96, uint128 liquidity, int24 tick)',
   ),
   parseAbiItem(
     'event Flash(address indexed sender, address indexed recipient, uint256 amount0, uint256 amount1, uint256 paid0, uint256 paid1)',
@@ -235,6 +235,33 @@ export abstract class UniswapV3BaseProvider extends _UniswapV3BaseProvider {
       })
   }
 
+  override processLog(log: Log) {
+    this.handleFactoryEvents(log)
+    this.handlePoolEvents(log)
+  }
+
+  override async afterProcessLog(untilBlock: bigint) {
+    const newTicksQueue = [...this.newTicksQueue.splice(0)]
+    if (newTicksQueue.length) {
+      const newTicks = await this.getTicksInner(newTicksQueue, {
+        blockNumber: untilBlock,
+      })
+      if (newTicks) {
+        newTicksQueue.forEach(([pool], i) => {
+          newTicks?.[i]?.forEach((newTick, index) => {
+            pool.ticks.set(index, newTick)
+          })
+        })
+      } else {
+        // if unsuccessfull to get new ticks, put them back on queue for next try
+        this.newTicksQueue.push(...newTicksQueue)
+      }
+    }
+  }
+
+  /**
+   * Fecthes reserves of the given list of pools
+   */
   async getReserves(
     existingPools: RainV3Pool[],
     options?: DataFetcherOptions,
@@ -287,6 +314,9 @@ export abstract class UniswapV3BaseProvider extends _UniswapV3BaseProvider {
     return reserves
   }
 
+  /**
+   * Fecthes liquidity of the given list of pools
+   */
   async getLiquidity(
     existingPools: RainV3Pool[],
     options?: DataFetcherOptions,
@@ -338,6 +368,9 @@ export abstract class UniswapV3BaseProvider extends _UniswapV3BaseProvider {
     return liquidities
   }
 
+  /**
+   * Fecthes ticks capped at pool boundries of the given list of pools
+   */
   async getTicks(
     existingPools: RainV3Pool[],
     options?: DataFetcherOptions,
@@ -355,6 +388,9 @@ export abstract class UniswapV3BaseProvider extends _UniswapV3BaseProvider {
     return await this.getTicksInner(wordList, options)
   }
 
+  /**
+   * Fecthes ticks of the given list of pools
+   */
   async getTicksInner(
     existingPools: [RainV3Pool, number[]][],
     options?: DataFetcherOptions,
@@ -409,6 +445,9 @@ export abstract class UniswapV3BaseProvider extends _UniswapV3BaseProvider {
     return poolTicks
   }
 
+  /**
+   * Fecthes tick spacing of the given list of pools
+   */
   async getTickSpacing(pools: StaticPoolUniV3[], options?: DataFetcherOptions) {
     return await this.client
       .multicall({
@@ -436,6 +475,9 @@ export abstract class UniswapV3BaseProvider extends _UniswapV3BaseProvider {
       })
   }
 
+  /**
+   * Calculates and returns the list of current ticks for the given pool
+   */
   getMaxTickDiapason(tick: number, pool: RainV3Pool): CLTick[] {
     const currentTickIndex = bitmapIndex(tick, pool.tickSpacing)
     if (!pool.ticks.has(currentTickIndex)) return []
@@ -472,7 +514,10 @@ export abstract class UniswapV3BaseProvider extends _UniswapV3BaseProvider {
     return poolTicks
   }
 
-  override processLog(log: Log) {
+  /**
+   * Hanldes factory events and updates the cache with the results
+   */
+  handleFactoryEvents(log: Log) {
     const factory =
       this.factory[this.chainId as keyof typeof this.factory]!.toLowerCase()
     const logAddress = log.address.toLowerCase()
@@ -485,161 +530,139 @@ export abstract class UniswapV3BaseProvider extends _UniswapV3BaseProvider {
         })[0]!
         this.nullPools.delete(event.args.pool.toLowerCase())
       } catch {}
-    } else {
-      const pool = this.pools.get(logAddress) as RainV3Pool | undefined
-      if (pool) {
-        try {
-          const event = parseEventLogs({ logs: [log], abi: this.eventsAbi })[0]!
-          switch (event.eventName) {
-            case 'Mint': {
-              const { amount, amount0, amount1 } = event.args
-              const { tickLower, tickUpper } = event.args
-              if (log.blockNumber! >= pool.blockNumber) {
-                pool.blockNumber = log.blockNumber!
-                if (
-                  tickLower !== undefined &&
-                  tickUpper !== undefined &&
-                  amount !== undefined
-                ) {
-                  const tick = pool.activeTick
-                  if (tickLower <= tick && tick < tickUpper)
-                    pool.liquidity += amount
-                }
-                if (amount1 !== undefined && amount0 !== undefined) {
-                  pool.reserve0 += amount0
-                  pool.reserve1 += amount1
-                }
-                if (
-                  tickLower !== undefined &&
-                  tickUpper !== undefined &&
-                  amount !== undefined
-                ) {
-                  this.addTick(tickLower, amount, pool)
-                  this.addTick(tickUpper, -amount, pool)
-                }
+    }
+  }
+
+  /**
+   * Hanldes pool events and updates the pool cache with the results
+   */
+  handlePoolEvents(log: Log) {
+    const logAddress = log.address.toLowerCase()
+    const pool = this.pools.get(logAddress)
+    if (pool) {
+      try {
+        const event = parseEventLogs({ logs: [log], abi: this.eventsAbi })[0]!
+        switch (event.eventName) {
+          case 'Mint': {
+            const { amount, amount0, amount1 } = event.args
+            const { tickLower, tickUpper } = event.args
+            if (log.blockNumber! >= pool.blockNumber) {
+              pool.blockNumber = log.blockNumber!
+              if (
+                tickLower !== undefined &&
+                tickUpper !== undefined &&
+                amount !== undefined
+              ) {
+                const tick = pool.activeTick
+                if (tickLower <= tick && tick < tickUpper)
+                  pool.liquidity += amount
               }
-              break
-            }
-            case 'Burn': {
-              const { amount } = event.args
-              const { tickLower, tickUpper } = event.args
-              if (log.blockNumber! >= pool.blockNumber) {
-                pool.blockNumber = log.blockNumber!
-                if (
-                  tickLower !== undefined &&
-                  tickUpper !== undefined &&
-                  amount !== undefined
-                ) {
-                  const tick = pool.activeTick
-                  if (tickLower <= tick && tick < tickUpper)
-                    pool.liquidity -= amount
-                }
-                if (
-                  tickLower !== undefined &&
-                  tickUpper !== undefined &&
-                  amount !== undefined
-                ) {
-                  this.addTick(tickLower, -amount, pool)
-                  this.addTick(tickUpper, amount, pool)
-                }
+              if (amount1 !== undefined && amount0 !== undefined) {
+                pool.reserve0 += amount0
+                pool.reserve1 += amount1
               }
-              break
-            }
-            case 'Collect':
-            case 'CollectProtocol': {
-              if (log.blockNumber! >= pool.blockNumber) {
-                pool.blockNumber = log.blockNumber!
-                const { amount0, amount1 } = event.args
-                if (amount0 !== undefined && amount1 !== undefined) {
-                  pool.reserve0 -= amount0
-                  pool.reserve1 -= amount1
-                }
+              if (
+                tickLower !== undefined &&
+                tickUpper !== undefined &&
+                amount !== undefined
+              ) {
+                this.addTick(tickLower, amount, pool)
+                this.addTick(tickUpper, -amount, pool)
               }
-              break
             }
-            case 'Flash': {
-              if (log.blockNumber! >= pool.blockNumber) {
-                pool.blockNumber = log.blockNumber!
-                const { paid0, paid1 } = event.args
-                if (paid0 !== undefined && paid1 !== undefined) {
-                  pool.reserve0 += paid0
-                  pool.reserve1 += paid1
-                }
-              }
-              break
-            }
-            case 'Swap': {
-              if (log.blockNumber! >= pool.blockNumber) {
-                pool.blockNumber = log.blockNumber!
-                const { amount0, amount1, sqrtPriceX96, liquidity, tick } =
-                  event.args
-                if (amount0 !== undefined && amount1 !== undefined) {
-                  pool.reserve0 += amount0
-                  pool.reserve1 += amount1
-                }
-                if (sqrtPriceX96 !== undefined) pool.sqrtPriceX96 = sqrtPriceX96
-                if (liquidity !== undefined) pool.liquidity = liquidity
-                if (tick !== undefined) {
-                  pool.activeTick =
-                    Math.floor(tick / pool.tickSpacing) * pool.tickSpacing
-                  const newTicks = this.onPoolTickChange(pool.activeTick, pool)
-                  const queue = this.newTicksQueue.find(
-                    (v) => v[0].address === pool.address,
-                  )
-                  if (queue) {
-                    for (const tick of newTicks) {
-                      if (!queue[1].includes(tick)) queue[1].push(tick)
-                    }
-                  } else {
-                    this.newTicksQueue.push([pool, newTicks])
-                  }
-                }
-              }
-              break
-            }
-            default: {
-              this.otherEventCases(log, event, pool)
-            }
+            break
           }
-        } catch {}
-      }
+          case 'Burn': {
+            const { amount } = event.args
+            const { tickLower, tickUpper } = event.args
+            if (log.blockNumber! >= pool.blockNumber) {
+              pool.blockNumber = log.blockNumber!
+              if (
+                tickLower !== undefined &&
+                tickUpper !== undefined &&
+                amount !== undefined
+              ) {
+                const tick = pool.activeTick
+                if (tickLower <= tick && tick < tickUpper)
+                  pool.liquidity -= amount
+              }
+              if (
+                tickLower !== undefined &&
+                tickUpper !== undefined &&
+                amount !== undefined
+              ) {
+                this.addTick(tickLower, -amount, pool)
+                this.addTick(tickUpper, amount, pool)
+              }
+            }
+            break
+          }
+          case 'Collect':
+          case 'CollectProtocol': {
+            if (log.blockNumber! >= pool.blockNumber) {
+              pool.blockNumber = log.blockNumber!
+              const { amount0, amount1 } = event.args
+              if (amount0 !== undefined && amount1 !== undefined) {
+                pool.reserve0 -= amount0
+                pool.reserve1 -= amount1
+              }
+            }
+            break
+          }
+          case 'Flash': {
+            if (log.blockNumber! >= pool.blockNumber) {
+              pool.blockNumber = log.blockNumber!
+              const { paid0, paid1 } = event.args
+              if (paid0 !== undefined && paid1 !== undefined) {
+                pool.reserve0 += paid0
+                pool.reserve1 += paid1
+              }
+            }
+            break
+          }
+          case 'Swap': {
+            if (log.blockNumber! >= pool.blockNumber) {
+              pool.blockNumber = log.blockNumber!
+              const { amount0, amount1, sqrtPriceX96, liquidity, tick } =
+                event.args
+              if (amount0 !== undefined && amount1 !== undefined) {
+                pool.reserve0 += amount0
+                pool.reserve1 += amount1
+              }
+              if (sqrtPriceX96 !== undefined) pool.sqrtPriceX96 = sqrtPriceX96
+              if (liquidity !== undefined) pool.liquidity = liquidity
+              if (tick !== undefined) {
+                pool.activeTick =
+                  Math.floor(tick / pool.tickSpacing) * pool.tickSpacing
+                const newTicks = this.onPoolTickChange(pool.activeTick, pool)
+                const queue = this.newTicksQueue.find(
+                  (v) => v[0].address === pool.address,
+                )
+                if (queue) {
+                  for (const tick of newTicks) {
+                    if (!queue[1].includes(tick)) queue[1].push(tick)
+                  }
+                } else {
+                  this.newTicksQueue.push([pool, newTicks])
+                }
+              }
+            }
+            break
+          }
+          default: {
+            this.otherEventCases(log, event, pool)
+          }
+        }
+      } catch {}
     }
   }
 
   // for child classes if they have other events to handle such as AlgebraV1Base
   otherEventCases(_log: Log, _event: Log, _pool: RainV3Pool) {}
 
-  override async afterProcessLog(untilBlock: bigint) {
-    const newTicksQueue = [...this.newTicksQueue.splice(0)]
-    try {
-      if (newTicksQueue.length) {
-        const newTicks = await this.getTicksInner(newTicksQueue, {
-          blockNumber: untilBlock,
-        })
-        newTicksQueue.forEach(([pool], i) => {
-          newTicks?.[i]?.forEach((newTick, index) => {
-            pool.ticks.set(index, newTick)
-          })
-        })
-      }
-    } catch {
-      // if unsuccessfull to get new ticks, put them back on queue for next try
-      newTicksQueue.forEach(([pool, newTicks]) => {
-        const queue = this.newTicksQueue.find(
-          (v) => v[0].address === pool.address,
-        )
-        if (queue) {
-          for (const tick of newTicks) {
-            if (!queue[1].includes(tick)) queue[1].push(tick)
-          }
-        } else {
-          this.newTicksQueue.push([pool, newTicks])
-        }
-      })
-      throw ''
-    }
-  }
-
+  /**
+   * Adds a new tick to the given pool's tick list
+   */
   addTick(tick: number, amount: bigint, pool: RainV3Pool) {
     const tickWord = bitmapIndex(tick, pool.tickSpacing)
     const ticks = pool.ticks.get(tickWord)
@@ -671,6 +694,9 @@ export abstract class UniswapV3BaseProvider extends _UniswapV3BaseProvider {
     }
   }
 
+  /**
+   * Gets triggered if a pool's current tick get changed after processing event logs
+   */
   onPoolTickChange(tick: number, pool: RainV3Pool): number[] {
     const currentTickWord = bitmapIndex(tick, pool.tickSpacing)
     const minWord = bitmapIndex(
@@ -702,6 +728,9 @@ export abstract class UniswapV3BaseProvider extends _UniswapV3BaseProvider {
     return positiveFirst ? res : -res
   }
 
+  /**
+   * Caches non existent pools
+   */
   handleNullPool(poolAddress: string) {
     const v = this.nullPools.get(poolAddress)
     if (v) {
@@ -711,6 +740,9 @@ export abstract class UniswapV3BaseProvider extends _UniswapV3BaseProvider {
     }
   }
 
+  /**
+   * Filters out already cached pools from the given list
+   */
   filterCachedPools(pools: StaticPoolUniV3[]) {
     return pools.filter((pool) => {
       const poolAddress = pool.address.toLowerCase()
@@ -721,6 +753,9 @@ export abstract class UniswapV3BaseProvider extends _UniswapV3BaseProvider {
     })
   }
 
+  /**
+   * Resets the cache
+   */
   reset() {
     this.pools.clear()
     this.poolsByTrade.clear()

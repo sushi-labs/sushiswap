@@ -438,7 +438,7 @@ export abstract class VelodromeSlipstreamBaseProvider extends UniswapV3BaseProvi
     return existingPools
   }
 
-  override processLog(log: Log) {
+  override handleFactoryEvents(log: Log) {
     const logAddress = log.address.toLowerCase()
     const factory =
       this.factory[this.chainId as keyof typeof this.factory]!.toLowerCase()
@@ -504,8 +504,6 @@ export abstract class VelodromeSlipstreamBaseProvider extends UniswapV3BaseProvi
           default:
         }
       } catch {}
-    } else {
-      super.processLog(log)
     }
   }
 

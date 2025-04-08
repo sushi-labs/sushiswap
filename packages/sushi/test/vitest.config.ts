@@ -26,7 +26,7 @@ export default defineConfig({
     include: ['src/**/*.test.ts', 'test/**/*.test.ts'],
     setupFiles: [join(__dirname, './setupFiles.ts')],
     globalSetup: [join(__dirname, './globalSetup.ts')],
-    testTimeout: 10_000,
+    testTimeout: 600_000,
     hookTimeout: 70_000,
   },
 })

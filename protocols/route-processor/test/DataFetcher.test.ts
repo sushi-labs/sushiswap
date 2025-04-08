@@ -82,15 +82,20 @@ function findRoute(
   toToken: Type,
   chainId: ChainId,
   liquidityProviders?: LiquidityProviders[],
+  amountIn?: bigint,
 ): boolean {
   try {
     // find the best route map
     const pcMap = dataFetcher.getCurrentPoolCodeMap(fromToken, toToken)
+    amountIn =
+      typeof amountIn !== 'bigint'
+        ? BigInt(`1${'0'.repeat(fromToken.decimals)}`)
+        : amountIn
     const route = Router.findBestRoute(
       pcMap,
       chainId,
       fromToken,
-      BigInt(`1${'0'.repeat(fromToken.decimals)}`),
+      amountIn,
       toToken,
       30e9,
       liquidityProviders,
@@ -161,6 +166,9 @@ async function runTest() {
             WNATIVE[chainId],
             USDC[chainId as keyof typeof USDC],
             chainId,
+            undefined,
+            // BTTC price against USDC is low, we need more amountIn for a swap
+            chainId === ChainId.BTTC ? 10n ** 22n : undefined,
           ),
         )
         await sleep(60_000)

@@ -161,12 +161,25 @@ export abstract class LiquidityProvider {
       .sort((first, second) => (first > second ? -1 : 1))
       .join(':')
 
+  /**
+   * Override this method to perform additional initialization tasks
+   * such as fetching initial data.
+   * @param _blockNumber - The block height at which should be initialized
+   */
   async init(_blockNumber?: bigint) {
     this.initialized = true
   }
 
-  // methods interface for event log handling
+  /**
+   * Processes event logs to update pool data
+   * @param _log - The event log
+   */
   processLog(_log: Log) {}
+
+  /**
+   * Represents any process that needs to take place after event logs are processed
+   * @param _untilBlock - The block height that pool data are updated to at processLog
+   */
   async afterProcessLog(_untilBlock: bigint) {}
 }
 

@@ -109,6 +109,14 @@ export abstract class UniswapV2BaseProvider extends _UniswapV2BaseProvider {
   }
 
   override processLog(log: Log) {
+    this.handleFactoryEvents(log)
+    this.handlePoolEvents(log)
+  }
+
+  /**
+   * Hanldes factory events and updates the cache with the results
+   */
+  handleFactoryEvents(log: Log) {
     const factory =
       this.factory[this.chainId as keyof typeof this.factory]!.toLowerCase()
     const logAddress = log.address.toLowerCase()
@@ -121,25 +129,34 @@ export abstract class UniswapV2BaseProvider extends _UniswapV2BaseProvider {
         })[0]!
         this.nullPools.delete(event.args[2].toLowerCase())
       } catch {}
-    } else {
-      const pool = this.pools.get(logAddress as `0x${string}`)
-      if (pool) {
-        if (log.blockNumber! >= pool.blockNumber) {
-          try {
-            const event = parseEventLogs({
-              logs: [log],
-              abi: this.eventsAbi,
-              eventName: 'Sync',
-            })[0]!
-            pool.blockNumber = log.blockNumber!
-            pool.reserve0 = event.args.reserve0
-            pool.reserve1 = event.args.reserve1
-          } catch {}
-        }
+    }
+  }
+
+  /**
+   * Hanldes pool events and updates the pool cache with the results
+   */
+  handlePoolEvents(log: Log) {
+    const logAddress = log.address.toLowerCase()
+    const pool = this.pools.get(logAddress as `0x${string}`)
+    if (pool) {
+      if (log.blockNumber! >= pool.blockNumber) {
+        try {
+          const event = parseEventLogs({
+            logs: [log],
+            abi: this.eventsAbi,
+            eventName: 'Sync',
+          })[0]!
+          pool.blockNumber = log.blockNumber!
+          pool.reserve0 = event.args.reserve0
+          pool.reserve1 = event.args.reserve1
+        } catch {}
       }
     }
   }
 
+  /**
+   * Updates reserves of the given pool in the cache
+   */
   setPool(poolCodesToCreate: RainV2Pool[], reserves: any[]) {
     poolCodesToCreate.forEach((pool, i) => {
       const poolAddress = pool.address.toLowerCase()
@@ -158,6 +175,9 @@ export abstract class UniswapV2BaseProvider extends _UniswapV2BaseProvider {
     })
   }
 
+  /**
+   * Caches non existent pools
+   */
   handleNullPool(poolAddress: string) {
     const v = this.nullPools.get(poolAddress)
     if (v) {
@@ -167,6 +187,9 @@ export abstract class UniswapV2BaseProvider extends _UniswapV2BaseProvider {
     }
   }
 
+  /**
+   * Filters out already cached pools from the given list
+   */
   filterCachedPools(pools: StaticPool[]) {
     return pools.filter((pool) => {
       const poolAddress = pool.address.toLowerCase()
@@ -177,6 +200,9 @@ export abstract class UniswapV2BaseProvider extends _UniswapV2BaseProvider {
     })
   }
 
+  /**
+   * Resets the cache
+   */
   reset() {
     this.pools.clear()
     this.poolsByTrade.clear()
