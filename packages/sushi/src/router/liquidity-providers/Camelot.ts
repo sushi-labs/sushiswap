@@ -2,8 +2,8 @@ import { Address, PublicClient, parseAbi } from 'viem'
 import { ChainId } from '../../chain/index.js'
 import { DataFetcherOptions } from '../data-fetcher.js'
 import { type PoolCode } from '../pool-codes/index.js'
-import { UniswapV2BaseProvider } from '../rain/UniswapV2Base.js'
 import { LiquidityProviders } from './LiquidityProvider.js'
+import { UniswapV2BaseProvider } from './UniswapV2Base.js'
 
 type IsStableSwap =
   | (
