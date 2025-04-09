@@ -2,7 +2,6 @@ import { Log, parseAbiItem, parseEventLogs } from 'viem'
 import { Token } from '../../currency/index.js'
 import { ConstantProductRPool, RToken } from '../../tines/index.js'
 import { DataFetcherOptions } from '../data-fetcher.js'
-import { filterOnDemandPools } from '../lib/api.js'
 import {
   StaticPool,
   UniswapV2BaseProvider as _UniswapV2BaseProvider,
@@ -34,17 +33,7 @@ export abstract class UniswapV2BaseProvider extends _UniswapV2BaseProvider {
     excludePools?: Set<string>,
     options?: DataFetcherOptions,
   ): Promise<void> {
-    const topPoolAddresses = Array.from(this.topPools.keys())
-    let pools =
-      topPoolAddresses.length > 0
-        ? filterOnDemandPools(
-            Array.from(this.availablePools.values()),
-            t0.address,
-            t1.address,
-            topPoolAddresses,
-            this.ON_DEMAND_POOL_SIZE,
-          )
-        : this.getStaticPools(t0, t1)
+    let pools = this.getStaticPools(t0, t1)
     if (excludePools)
       pools = (pools as RainV2Pool[]).filter(
         (p) => !excludePools.has(p.address),
