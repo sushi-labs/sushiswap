@@ -103,7 +103,7 @@ export abstract class UniswapV2BaseProvider extends _UniswapV2BaseProvider {
   }
 
   /**
-   * Hanldes factory events and updates the cache with the results
+   * Handles factory events and updates the cache with the results
    */
   handleFactoryEvents(log: Log) {
     const factory =
@@ -122,7 +122,7 @@ export abstract class UniswapV2BaseProvider extends _UniswapV2BaseProvider {
   }
 
   /**
-   * Hanldes pool events and updates the pool cache with the results
+   * Handles pool events and updates the pool cache with the results
    */
   handlePoolEvents(log: Log) {
     const logAddress = log.address.toLowerCase()

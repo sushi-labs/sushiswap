@@ -269,9 +269,7 @@ export class RainDataFetcher extends DataFetcher {
       ) {
         const pools = provider.pools
         pools.forEach((pool, address) => {
-          if (!addresses.includes(address)) {
-            addresses.push(address)
-          }
+          addresses.push(address)
           if (fromBlock === -1n) {
             fromBlock = pool.blockNumber
           }
@@ -286,9 +284,7 @@ export class RainDataFetcher extends DataFetcher {
             provider.swapFeeModule[
               this.chainId as keyof typeof provider.swapFeeModule
             ]!.toLowerCase()
-          if (!addresses.includes(swapFeeModule)) {
-            addresses.push(swapFeeModule)
-          }
+          addresses.push(swapFeeModule)
         }
       }
     })

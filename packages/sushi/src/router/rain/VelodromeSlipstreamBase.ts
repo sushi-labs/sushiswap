@@ -76,6 +76,16 @@ const slot0Abi = [
   },
 ] as const
 
+export const customFeeAbi = [
+  {
+    inputs: [{ internalType: 'address', name: '_pool', type: 'address' }],
+    name: 'customFee',
+    outputs: [{ internalType: 'uint24', name: '', type: 'uint24' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
+] as const
+
 const SlipstreamEventsAbi = [
   ...UniV3EventsAbi.slice(0, -1), // univ3 shared events except PoolCreated
   parseAbiItem(
@@ -95,6 +105,7 @@ export abstract class VelodromeSlipstreamBaseProvider extends UniswapV3BaseProvi
   DEFAULT_TICK_SPACINGS = [1, 50, 100, 200, 2000] as const
   tickSpacings: number[] = [...this.DEFAULT_TICK_SPACINGS]
 
+  shouldResetFees = false
   feeSpacingMap: Record<number, number> = {} // fee to tick spacing map
   spacingFeeMap: Record<number, number> = {} // tick spacing to fee map
 
@@ -311,28 +322,13 @@ export abstract class VelodromeSlipstreamBaseProvider extends UniswapV3BaseProvi
         multicallAddress: this.client.chain?.contracts?.multicall3?.address!,
         allowFailure: true,
         blockNumber: options?.blockNumber,
-        contracts: staticPools.map(
-          (pool) =>
-            ({
-              address: this.swapFeeModule[this.chainId]!,
-              chainId: this.chainId,
-              abi: [
-                {
-                  inputs: [
-                    { internalType: 'address', name: '_pool', type: 'address' },
-                  ],
-                  name: 'customFee',
-                  outputs: [
-                    { internalType: 'uint24', name: '', type: 'uint24' },
-                  ],
-                  stateMutability: 'view',
-                  type: 'function',
-                },
-              ] as const,
-              functionName: 'customFee',
-              args: [pool.address],
-            }) as const,
-        ),
+        contracts: staticPools.map((pool) => ({
+          address: this.swapFeeModule[this.chainId]!,
+          chainId: this.chainId,
+          abi: customFeeAbi,
+          functionName: 'customFee',
+          args: [pool.address],
+        })),
       })
       .catch((e) => {
         console.warn(
@@ -486,11 +482,11 @@ export abstract class VelodromeSlipstreamBaseProvider extends UniswapV3BaseProvi
               this.swapFeeModule[this.chainId]?.toLowerCase() !==
               event.args.newFeeModule.toLowerCase()
             ) {
-              // currently sushi can't process it correctly, so we need to reset the cached
-              // pools as they might have wrong fees after swapFeeModule address is changed
-              // PS: this event is rare
+              // we need to reset the cached pools fees as they might
+              // have wrong fees after swapFeeModule address is changed
+              // PS: this event is very rare
               this.swapFeeModule[this.chainId] = event.args.newFeeModule
-              this.reset()
+              this.shouldResetFees = true
             }
             break
           }
@@ -501,39 +497,94 @@ export abstract class VelodromeSlipstreamBaseProvider extends UniswapV3BaseProvi
   }
 
   override async afterProcessLog(untilBlock: bigint) {
-    const pools: SlipstreamPool[] = []
+    let pools: SlipstreamPool[] = []
+    let shouldResetFees = false
+    if (this.shouldResetFees) {
+      shouldResetFees = true
+      this.shouldResetFees = false
+    }
     this.pools.forEach((pool) => {
-      if ((pool as SlipstreamPool).feeType === FeeType.Dynamic) {
+      if (shouldResetFees) {
         pools.push(pool as SlipstreamPool)
+      } else {
+        if ((pool as SlipstreamPool).feeType === FeeType.Dynamic) {
+          pools.push(pool as SlipstreamPool)
+        }
       }
     })
 
-    const [_, poolFees] = await Promise.allSettled([
-      // base process
+    let [_, poolFees] = await Promise.allSettled([
+      // base after log process
       super.afterProcessLog(untilBlock),
-      // get dynamic pool fees
-      this.client.multicall({
-        multicallAddress: this.client.chain?.contracts?.multicall3?.address!,
-        allowFailure: true,
-        blockNumber: untilBlock,
-        contracts: pools.map(
-          (pool) =>
-            ({
+      // get pool new fees
+      shouldResetFees
+        ? this.client.multicall({
+            multicallAddress:
+              this.client.chain?.contracts?.multicall3?.address!,
+            allowFailure: true,
+            blockNumber: untilBlock,
+            contracts: pools.map((pool) => ({
+              address: this.swapFeeModule[this.chainId]!,
+              chainId: this.chainId,
+              abi: customFeeAbi,
+              functionName: 'customFee',
+              args: [pool.address],
+            })),
+          })
+        : this.client.multicall({
+            multicallAddress:
+              this.client.chain?.contracts?.multicall3?.address!,
+            allowFailure: true,
+            blockNumber: untilBlock,
+            contracts: pools.map((pool) => ({
               address: pool.address,
               chainId: this.chainId,
               abi: feeAbi,
               functionName: 'fee',
-            }) as const,
-        ),
-      }),
+            })),
+          }),
     ])
 
-    // set dynamic pool fees
+    // handle pool fees
+    if (poolFees.status === 'fulfilled') {
+      if (shouldResetFees) {
+        const newDynamicPools: SlipstreamPool[] = []
+        pools.forEach((pool, i) => {
+          const result = (poolFees as any).value?.[i]?.result
+          if (typeof result === 'number') {
+            if (result === 0) pool.feeType = FeeType.Default
+            else if (result === ZERO_FEE_INDICATOR) pool.feeType = FeeType.Zero
+            else {
+              pool.feeType = FeeType.Dynamic
+              newDynamicPools.push(pool)
+            }
+          }
+        })
+        pools = newDynamicPools
+        ;[poolFees] = await Promise.allSettled([
+          this.client.multicall({
+            multicallAddress:
+              this.client.chain?.contracts?.multicall3?.address!,
+            allowFailure: true,
+            blockNumber: untilBlock,
+            contracts: pools.map((pool) => ({
+              address: pool.address,
+              chainId: this.chainId,
+              abi: feeAbi,
+              functionName: 'fee',
+            })),
+          }),
+        ])
+      }
+    }
     if (poolFees.status === 'fulfilled') {
       pools.forEach((pool, i) => {
-        const fee = poolFees.value?.[i]?.result
+        const fee = (poolFees as any).value?.[i]?.result
         if (typeof fee === 'number') pool.fee = fee
       })
+    } else {
+      // if failed to update pool fees, we'll try again on next update
+      this.shouldResetFees = true
     }
   }
 
