@@ -261,7 +261,7 @@ export abstract class UniswapV3BaseProvider extends _UniswapV3BaseProvider {
   }
 
   /**
-   * Fecthes reserves of the given list of pools
+   * Fetches reserves of the given list of pools
    */
   async getReserves(
     existingPools: RainV3Pool[],
@@ -316,7 +316,7 @@ export abstract class UniswapV3BaseProvider extends _UniswapV3BaseProvider {
   }
 
   /**
-   * Fecthes liquidity of the given list of pools
+   * Fetches liquidity of the given list of pools
    */
   async getLiquidity(
     existingPools: RainV3Pool[],
@@ -370,7 +370,7 @@ export abstract class UniswapV3BaseProvider extends _UniswapV3BaseProvider {
   }
 
   /**
-   * Fecthes ticks capped at pool boundries of the given list of pools
+   * Fetches ticks capped at pool boundries of the given list of pools
    */
   async getTicks(
     existingPools: RainV3Pool[],
@@ -390,7 +390,7 @@ export abstract class UniswapV3BaseProvider extends _UniswapV3BaseProvider {
   }
 
   /**
-   * Fecthes ticks of the given list of pools
+   * Fetches ticks of the given list of pools
    */
   async getTicksInner(
     existingPools: [RainV3Pool, number[]][],
@@ -447,7 +447,7 @@ export abstract class UniswapV3BaseProvider extends _UniswapV3BaseProvider {
   }
 
   /**
-   * Fecthes tick spacing of the given list of pools
+   * Fetches tick spacing of the given list of pools
    */
   async getTickSpacing(
     pools: StaticPoolUniV3[],

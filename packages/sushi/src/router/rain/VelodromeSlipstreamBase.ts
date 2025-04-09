@@ -109,6 +109,8 @@ export abstract class VelodromeSlipstreamBaseProvider extends UniswapV3BaseProvi
   feeSpacingMap: Record<number, number> = {} // fee to tick spacing map
   spacingFeeMap: Record<number, number> = {} // tick spacing to fee map
 
+  // poolImplementation and swapFeeModule addresses, fetched at init() from
+  // factory since they can change over time and are not contract constants
   poolImplementation: Record<number, Address> = {}
   swapFeeModule: Record<number, Address> = {}
 
@@ -125,7 +127,7 @@ export abstract class VelodromeSlipstreamBaseProvider extends UniswapV3BaseProvi
       chainId,
       web3Client,
       factory,
-      { [chainId]: `0x${'0'.repeat(64)}` },
+      { [chainId]: `0x${'0'.repeat(64)}` }, // dummy, since slipstream has no initCodeHash
       tickLens,
       isTest,
     )
@@ -153,7 +155,7 @@ export abstract class VelodromeSlipstreamBaseProvider extends UniswapV3BaseProvi
           })
           .catch((e) => {
             console.warn(
-              `${this.getLogPrefix()} - INIT: multicall failed, message: ${
+              `${this.getLogPrefix()} - INIT: failed to get poolImplementation address, message: ${
                 e.message
               }`,
             )
@@ -183,7 +185,7 @@ export abstract class VelodromeSlipstreamBaseProvider extends UniswapV3BaseProvi
           })
           .catch((e) => {
             console.warn(
-              `${this.getLogPrefix()} - INIT: multicall failed, message: ${
+              `${this.getLogPrefix()} - INIT: failed to get swapFeeModule address, message: ${
                 e.message
               }`,
             )
@@ -213,7 +215,7 @@ export abstract class VelodromeSlipstreamBaseProvider extends UniswapV3BaseProvi
           })
           .catch((e) => {
             console.warn(
-              `${this.getLogPrefix()} - INIT: multicall failed, message: ${
+              `${this.getLogPrefix()} - INIT: failed to get tickSpacings, message: ${
                 e.message
               }`,
             )
@@ -250,7 +252,7 @@ export abstract class VelodromeSlipstreamBaseProvider extends UniswapV3BaseProvi
           })
           .catch((e) => {
             console.warn(
-              `${this.getLogPrefix()} - INIT: multicall failed, message: ${
+              `${this.getLogPrefix()} - INIT: multicall failed to get tickSpacingToFee, message: ${
                 e.message
               }`,
             )
@@ -478,7 +480,7 @@ export abstract class VelodromeSlipstreamBaseProvider extends UniswapV3BaseProvi
             break
           }
           case 'SwapFeeModuleChanged': {
-            // factory swapFeeMoulde address changed
+            // factory swapFeeModule address changed
             if (
               this.swapFeeModule[this.chainId]?.toLowerCase() !==
               event.args.newFeeModule.toLowerCase()
