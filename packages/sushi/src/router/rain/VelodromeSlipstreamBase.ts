@@ -131,7 +131,7 @@ export abstract class VelodromeSlipstreamBaseProvider extends UniswapV3BaseProvi
     )
   }
 
-  override async init(blockNumber?: bigint) {
+  override async init(blockNumber: bigint) {
     if (!this.initialized) {
       if (!this.poolImplementation[this.chainId]) {
         const poolImplementation = await this.client
@@ -276,8 +276,6 @@ export abstract class VelodromeSlipstreamBaseProvider extends UniswapV3BaseProvi
     excludePools?: Set<string> | PoolFilter,
     options?: DataFetcherOptions,
   ): Promise<SlipstreamPool[]> {
-    await this.init(options?.blockNumber)
-
     let staticPools = this.getStaticPools(t0, t1)
     if (excludePools)
       staticPools = staticPools.filter((p) => !excludePools.has(p.address))

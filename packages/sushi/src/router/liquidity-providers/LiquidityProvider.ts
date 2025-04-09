@@ -166,7 +166,7 @@ export abstract class LiquidityProvider {
    * such as fetching initial data.
    * @param _blockNumber - The block height at which should be initialized
    */
-  async init(_blockNumber?: bigint) {
+  async init(_blockNumber: bigint) {
     this.initialized = true
   }
 

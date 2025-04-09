@@ -90,23 +90,39 @@ import { UniswapV3BaseProvider } from './UniswapV3Base.js'
 import { VelodromeSlipstreamBaseProvider } from './VelodromeSlipstreamBase.js'
 
 export class RainDataFetcher extends DataFetcher {
+  initBlockNumber = -1n
   eventsAbi: ParseAbiItem<any>[] = []
   factories: string[] = []
 
+  // make constructor private, must use init() for instantiation
+  private constructor(chainId: ChainId, publicClient?: PublicClient) {
+    super(chainId, publicClient)
+  }
+
   /**
    * Creates an instance of RainDataFecther, constructor of this class should
-   * not generally be used, instead, use this method to create a new instance
+   * not be used, instead, use this method to create a new instance
    * @param chainId - The chain id
    * @param publicClient - (optional) The viem client
    * @param liquidityProviders - (optional) List of liquidity providers, includes all if undefined
+   * @param initBlockNumber - (optional) Block height to initiailize at
    * @returns A new instance of RainDataFetcher
    */
   static async init(
     chainId: ChainId,
     publicClient?: PublicClient,
     liquidityProviders?: LiquidityProviders[],
+    initBlockNumber?: bigint,
   ): Promise<RainDataFetcher> {
     const dataFetcher = new RainDataFetcher(chainId, publicClient)
+    if (typeof initBlockNumber === 'bigint') {
+      if (initBlockNumber < 0n)
+        throw 'expected block number greater than equal zero'
+      dataFetcher.initBlockNumber = initBlockNumber
+    } else {
+      dataFetcher.initBlockNumber =
+        await dataFetcher.web3Client.getBlockNumber()
+    }
     await dataFetcher.initProviders(liquidityProviders)
     dataFetcher.startDataFetching(liquidityProviders)
     return dataFetcher
@@ -201,7 +217,6 @@ export class RainDataFetcher extends DataFetcher {
 
     const _pendings = []
     const _providers = []
-    const blockNumber = await this.web3Client.getBlockNumber()
     for (const p of allProviders) {
       try {
         const provider = new p(this.chainId, this.web3Client)
@@ -210,7 +225,7 @@ export class RainDataFetcher extends DataFetcher {
           !providers ||
           this._providerIsIncluded(provider.getType(), providers)
         ) {
-          _pendings.push(provider.init(blockNumber))
+          _pendings.push(provider.init(this.initBlockNumber))
           _providers?.push(provider)
         }
       } catch (_e: unknown) {}
@@ -256,6 +271,7 @@ export class RainDataFetcher extends DataFetcher {
    */
   async updatePools(untilBlock?: bigint) {
     let fromBlock = -1n
+    const poolAddresses: string[] = []
     const addresses: string[] = [...this.factories]
     if (typeof untilBlock !== 'bigint') {
       untilBlock = await this.web3Client.getBlockNumber()
@@ -269,7 +285,7 @@ export class RainDataFetcher extends DataFetcher {
       ) {
         const pools = provider.pools
         pools.forEach((pool, address) => {
-          addresses.push(address)
+          poolAddresses.push(address)
           if (fromBlock === -1n) {
             fromBlock = pool.blockNumber
           }
@@ -288,15 +304,17 @@ export class RainDataFetcher extends DataFetcher {
         }
       }
     })
-    if (!addresses.length) return
+    if (fromBlock === -1n) return
     if (fromBlock === untilBlock) return
     if (fromBlock > untilBlock) {
       throw [
         'pools data are cached at higher block height than the given untilBlock',
         'if you wish to get pools data at untilBlock',
-        'consider first resetting the cached data and then getting pools data at your desired block height',
+        'consider calling fetchPoolsForToken() with "ignoreCache" option',
       ].join(', ')
     }
+    if (!poolAddresses.length) return
+    addresses.push(...poolAddresses)
 
     // get logs and sort them from earliest block to latest
     const logs = await this.web3Client.getLogs({
