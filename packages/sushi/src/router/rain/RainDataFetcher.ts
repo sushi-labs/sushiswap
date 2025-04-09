@@ -89,6 +89,14 @@ import { UniswapV2BaseProvider } from './UniswapV2Base.js'
 import { UniswapV3BaseProvider } from './UniswapV3Base.js'
 import { VelodromeSlipstreamBaseProvider } from './VelodromeSlipstreamBase.js'
 
+// options for data fetching, such as pinning block number and memoize
+export interface RainDataFetcherOptions extends DataFetcherOptions {
+  /**
+   * Set to true for ignoring cached pools data and fetch them regardless
+   */
+  ignoreCache?: boolean
+}
+
 export class RainDataFetcher extends DataFetcher {
   initBlockNumber = -1n
   eventsAbi: ParseAbiItem<any>[] = []
@@ -391,7 +399,7 @@ export class RainDataFetcher extends DataFetcher {
     amountIn: bigint,
     gasPrice: bigint,
     update = false,
-    options?: DataFetcherOptions,
+    options?: RainDataFetcherOptions,
     lps?: LiquidityProviders[],
     poolFilter?: PoolFilter,
     routeType: 'single' | 'multi' = 'single',
@@ -407,6 +415,9 @@ export class RainDataFetcher extends DataFetcher {
     const opts = { ...options }
     if (typeof opts.blockNumber !== 'bigint') {
       opts.blockNumber = await this.web3Client.getBlockNumber()
+    }
+    if (typeof opts.ignoreCache !== 'boolean') {
+      opts.ignoreCache = false
     }
 
     if (update) await this.updatePools(opts.blockNumber)
@@ -441,11 +452,14 @@ export class RainDataFetcher extends DataFetcher {
     currency0: Type,
     currency1: Type,
     excludePools?: Set<string>,
-    options?: DataFetcherOptions,
+    options?: RainDataFetcherOptions,
   ): Promise<void> {
     const opts = { ...options }
     if (typeof opts.blockNumber !== 'bigint') {
       opts.blockNumber = await this.web3Client.getBlockNumber()
+    }
+    if (typeof opts.ignoreCache !== 'boolean') {
+      opts.ignoreCache = false
     }
     await super.fetchPoolsForToken(currency0, currency1, excludePools, opts)
   }

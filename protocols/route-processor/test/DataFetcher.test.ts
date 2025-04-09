@@ -12,8 +12,8 @@ import {
   WNATIVE,
 } from 'sushi/currency'
 import {
+  DataFetcher,
   LiquidityProviders,
-  RainDataFetcher,
   Router,
   UniV3LiquidityProviders,
 } from 'sushi/router'
@@ -21,7 +21,7 @@ import { UniswapV3BaseProvider } from '../../../packages/sushi/dist/router/liqui
 
 async function testDF(
   _chainName: string,
-  dataFetcher: RainDataFetcher,
+  dataFetcher: DataFetcher,
   t0: Type | undefined,
   t1: Type | undefined,
   name0: string,
@@ -77,25 +77,20 @@ function reportMissingDexes(reports: Record<string, number>[]): {
 
 // tries to find a route for a token pair from current fetched pools
 function findRoute(
-  dataFetcher: RainDataFetcher,
+  dataFetcher: DataFetcher,
   fromToken: Type,
   toToken: Type,
   chainId: ChainId,
   liquidityProviders?: LiquidityProviders[],
-  amountIn?: bigint,
 ): boolean {
   try {
     // find the best route map
     const pcMap = dataFetcher.getCurrentPoolCodeMap(fromToken, toToken)
-    amountIn =
-      typeof amountIn !== 'bigint'
-        ? BigInt(`1${'0'.repeat(fromToken.decimals)}`)
-        : amountIn
     const route = Router.findBestRoute(
       pcMap,
       chainId,
       fromToken,
-      amountIn,
+      BigInt(`1${'0'.repeat(fromToken.decimals)}`),
       toToken,
       30e9,
       liquidityProviders,
@@ -133,13 +128,14 @@ const chainIds = Object.values(ChainId).filter((v) => {
 })
 
 async function runTest() {
-  describe.only('RainDataFetcher Pools/Time check', async () => {
+  describe.only('DataFetcher Pools/Time check', async () => {
     chainIds.forEach((chainId) => {
       //if (chainId !== ChainId.OPTIMISM) return
       const chName = chainName[chainId]
 
+      const dataFetcher = DataFetcher.onChain(chainId)
+
       it(`${chName}(${chainId})`, async () => {
-        const dataFetcher = await RainDataFetcher.init(chainId)
         dataFetcher.startDataFetching()
         console.log(chName)
         const allFoundPools = []
@@ -166,9 +162,6 @@ async function runTest() {
             WNATIVE[chainId],
             USDC[chainId as keyof typeof USDC],
             chainId,
-            undefined,
-            // BTTC price against USDC is low, we need more amountIn for a swap
-            chainId === ChainId.BTTC ? 10n ** 22n : undefined,
           ),
         )
         await sleep(60_000)

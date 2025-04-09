@@ -2,7 +2,6 @@ import { Address, Log, parseAbiItem, parseEventLogs } from 'viem'
 import { erc20Abi, slot0Abi, tickLensAbi } from '../../abi/index.js'
 import { Token } from '../../currency/index.js'
 import { CLTick, RToken, UniV3Pool } from '../../tines/index.js'
-import { DataFetcherOptions } from '../data-fetcher.js'
 import {
   NUMBER_OF_SURROUNDING_TICKS,
   PoolFilter,
@@ -12,6 +11,7 @@ import {
   bitmapIndex,
 } from '../liquidity-providers/UniswapV3Base.js'
 import { type PoolCode, UniV3PoolCode } from '../pool-codes/index.js'
+import { RainDataFetcherOptions } from './RainDataFetcher.js'
 
 // extends V3Pool from UniswapV3Base
 export interface RainV3Pool extends V3Pool {
@@ -72,7 +72,7 @@ export abstract class UniswapV3BaseProvider extends _UniswapV3BaseProvider {
     t0: Token,
     t1: Token,
     excludePools?: Set<string> | PoolFilter,
-    options?: DataFetcherOptions,
+    options?: RainDataFetcherOptions,
   ): Promise<RainV3Pool[]> {
     let staticPools = this.getStaticPools(t0, t1)
     if (excludePools)
@@ -86,7 +86,8 @@ export abstract class UniswapV3BaseProvider extends _UniswapV3BaseProvider {
       )
 
     // filter out cached pools
-    if (!options?.ignoreCache) {
+    // this ensures backward compatibility for original DataFetcher
+    if (typeof options?.ignoreCache === 'boolean' && !options.ignoreCache) {
       staticPools = this.filterCachedPools(staticPools)
     }
 
@@ -170,7 +171,7 @@ export abstract class UniswapV3BaseProvider extends _UniswapV3BaseProvider {
     t0: Token,
     t1: Token,
     excludePools?: Set<string> | PoolFilter,
-    options?: DataFetcherOptions,
+    options?: RainDataFetcherOptions,
   ): Promise<void> {
     const existingPools = await this.fetchPoolData(
       t0,
@@ -264,7 +265,7 @@ export abstract class UniswapV3BaseProvider extends _UniswapV3BaseProvider {
    */
   async getReserves(
     existingPools: RainV3Pool[],
-    options?: DataFetcherOptions,
+    options?: RainDataFetcherOptions,
   ): Promise<([bigint, bigint] | undefined)[]> {
     const results = await this.client
       .multicall({
@@ -319,7 +320,7 @@ export abstract class UniswapV3BaseProvider extends _UniswapV3BaseProvider {
    */
   async getLiquidity(
     existingPools: RainV3Pool[],
-    options?: DataFetcherOptions,
+    options?: RainDataFetcherOptions,
   ): Promise<(bigint | undefined)[]> {
     const results = await this.client
       .multicall({
@@ -373,7 +374,7 @@ export abstract class UniswapV3BaseProvider extends _UniswapV3BaseProvider {
    */
   async getTicks(
     existingPools: RainV3Pool[],
-    options?: DataFetcherOptions,
+    options?: RainDataFetcherOptions,
   ): Promise<Map<number, CLTick[]>[] | undefined> {
     const [minIndexes, maxIndexes] = this.getIndexes(existingPools)
     const wordList = existingPools.map((pool, i) => {
@@ -393,7 +394,7 @@ export abstract class UniswapV3BaseProvider extends _UniswapV3BaseProvider {
    */
   async getTicksInner(
     existingPools: [RainV3Pool, number[]][],
-    options?: DataFetcherOptions,
+    options?: RainDataFetcherOptions,
   ): Promise<Map<number, CLTick[]>[] | undefined> {
     const wordList = existingPools.flatMap(([pool, words], i) => {
       return words.flatMap((j) => ({
@@ -448,7 +449,10 @@ export abstract class UniswapV3BaseProvider extends _UniswapV3BaseProvider {
   /**
    * Fecthes tick spacing of the given list of pools
    */
-  async getTickSpacing(pools: StaticPoolUniV3[], options?: DataFetcherOptions) {
+  async getTickSpacing(
+    pools: StaticPoolUniV3[],
+    options?: RainDataFetcherOptions,
+  ) {
     return await this.client
       .multicall({
         multicallAddress: this.client.chain?.contracts?.multicall3

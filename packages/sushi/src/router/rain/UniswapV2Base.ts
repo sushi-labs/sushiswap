@@ -1,12 +1,12 @@
 import { Log, parseAbiItem, parseEventLogs } from 'viem'
 import { Token } from '../../currency/index.js'
 import { ConstantProductRPool, RToken } from '../../tines/index.js'
-import { DataFetcherOptions } from '../data-fetcher.js'
 import {
   StaticPool,
   UniswapV2BaseProvider as _UniswapV2BaseProvider,
 } from '../liquidity-providers/UniswapV2Base.js'
 import { ConstantProductPoolCode, type PoolCode } from '../pool-codes/index.js'
+import { RainDataFetcherOptions } from './RainDataFetcher.js'
 
 // extends v2 static pool
 export interface RainV2Pool extends StaticPool {
@@ -31,7 +31,7 @@ export abstract class UniswapV2BaseProvider extends _UniswapV2BaseProvider {
     t0: Token,
     t1: Token,
     excludePools?: Set<string>,
-    options?: DataFetcherOptions,
+    options?: RainDataFetcherOptions,
   ): Promise<void> {
     let pools = this.getStaticPools(t0, t1)
     if (excludePools)
@@ -49,7 +49,8 @@ export abstract class UniswapV2BaseProvider extends _UniswapV2BaseProvider {
     )
 
     // filter out cached pools
-    if (!options?.ignoreCache) {
+    // this ensures backward compatibility for original DataFetcher
+    if (typeof options?.ignoreCache === 'boolean' && !options.ignoreCache) {
       pools = this.filterCachedPools(pools as StaticPool[])
     }
 

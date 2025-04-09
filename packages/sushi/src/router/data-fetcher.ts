@@ -100,10 +100,6 @@ export type DataFetcherOptions = {
   blockNumber?: bigint
   /** Determines a timeout (in ms) for fetching pools for a token pair */
   fetchPoolsTimeout?: number
-  /**
-   * Set to true for ignoring cached pools data and fetch them regardless
-   */
-  ignoreCache?: boolean
 }
 
 // TODO: Should be a mode on the config for DataFetcher

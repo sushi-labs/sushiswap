@@ -11,12 +11,12 @@ import {
 } from 'viem'
 import { ChainId } from '../../chain/index.js'
 import { Token } from '../../currency/index.js'
-import { DataFetcherOptions } from '../data-fetcher.js'
 import { getCurrencyCombinations } from '../get-currency-combinations.js'
 import {
   PoolFilter,
   StaticPoolUniV3,
 } from '../liquidity-providers/UniswapV3Base.js'
+import { RainDataFetcherOptions } from './RainDataFetcher.js'
 import {
   RainV3Pool,
   UniV3EventsAbi,
@@ -95,7 +95,7 @@ export abstract class AlgebraV1BaseProvider extends UniswapV3BaseProvider {
     t0: Token,
     t1: Token,
     excludePools?: Set<string> | PoolFilter,
-    options?: DataFetcherOptions,
+    options?: RainDataFetcherOptions,
   ): Promise<RainV3Pool[]> {
     let staticPools = this.getStaticPools(t0, t1)
     if (excludePools)
@@ -109,7 +109,8 @@ export abstract class AlgebraV1BaseProvider extends UniswapV3BaseProvider {
       )
 
     // filter out cached pools
-    if (!options?.ignoreCache) {
+    // this ensures backward compatibility for original DataFetcher
+    if (typeof options?.ignoreCache === 'boolean' && !options.ignoreCache) {
       staticPools = this.filterCachedPools(staticPools)
     }
 
