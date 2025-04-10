@@ -108,7 +108,7 @@ export class RainDataFetcher extends DataFetcher {
   }
 
   /**
-   * Creates an instance of RainDataFecther, constructor of this class should
+   * Creates an instance of RainDataFetcher, constructor of this class should
    * not be used, instead, use this method to create a new instance
    * @param chainId - The chain id
    * @param publicClient - (optional) The viem client
