@@ -113,7 +113,7 @@ export class RainDataFetcher extends DataFetcher {
    * @param chainId - The chain id
    * @param publicClient - (optional) The viem client
    * @param liquidityProviders - (optional) List of liquidity providers, includes all if undefined
-   * @param initBlockNumber - (optional) Block height to initiailize at
+   * @param initBlockNumber - (optional) Block height to initialize at
    * @returns A new instance of RainDataFetcher
    */
   static async init(
