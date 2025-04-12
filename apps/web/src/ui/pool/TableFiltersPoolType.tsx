@@ -57,20 +57,15 @@ export const TableFiltersPoolType: FC = () => {
     (item: SushiSwapProtocol) => {
       let _newValues: SushiSwapProtocol[]
       if (values?.includes(item)) {
-        _newValues = values.filter((el) => el !== item)
+        _newValues = isAllThenNone(values.filter((el) => el !== item))
       } else {
-        _newValues = [...(values ?? []), item]
+        _newValues = isAllThenNone([...(values ?? []), item])
       }
       setValues(_newValues)
 
       startTransition(() => {
         setFilters((prev) => {
-          if (prev.protocols?.includes(item)) {
-            const protocols = prev.protocols.filter((el) => el !== item)
-            return { ...prev, protocols }
-          } else {
-            return { ...prev, protocols: [...(prev.protocols ?? []), item] }
-          }
+          return { ...prev, protocols: _newValues }
         })
       })
     },

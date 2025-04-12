@@ -34,9 +34,9 @@ import { useAccount, useChainId, useSwitchChain } from 'wagmi'
 import { usePrice } from '~evm/_common/ui/price-provider/price-provider/use-price'
 import {
   useDerivedStateSimpleSwap,
-  useSimpleSwapTrade,
+  useSimpleSwapTradeQuote,
 } from '../simple/derivedstate-simple-swap-provider'
-import { SimpleSwapBridgeBanner } from '../simple/simple-swap-bridge-banner'
+import { SimpleSwapBanner } from '../simple/simple-swap-banner'
 import { SimpleSwapHeader } from '../simple/simple-swap-header'
 import { SimpleSwapSettingsOverlay } from '../simple/simple-swap-settings-overlay'
 import { SwapModeButtons } from '../swap-mode-buttons'
@@ -99,11 +99,11 @@ const TokenSelectModal = ({
 }
 
 const useTrade = () => {
-  const { data: trade, isLoading } = useSimpleSwapTrade()
+  const { data: quote, isLoading } = useSimpleSwapTradeQuote()
 
   return {
     isLoading,
-    outAmount: trade?.amountOut?.quotient.toString(),
+    outAmount: quote?.amountOut?.quotient.toString(),
   }
 }
 
@@ -244,7 +244,6 @@ function Provider({ isLimit }: { isLimit?: boolean }) {
 
   return (
     <div className="flex flex-col gap-4">
-      <SimpleSwapBridgeBanner />
       <SimpleSwapHeader />
       <div className="flex items-center justify-between">
         <SwapModeButtons />

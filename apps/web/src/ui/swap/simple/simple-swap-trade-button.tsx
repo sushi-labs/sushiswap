@@ -12,10 +12,7 @@ import type React from 'react'
 import { type FC, useEffect, useMemo, useState } from 'react'
 import type { UseTradeReturn } from 'src/lib/hooks/react-query'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
-import {
-  ROUTE_PROCESSOR_5_ADDRESS,
-  isRouteProcessor5ChainId,
-} from 'sushi/config'
+import { RED_SNWAPPER_ADDRESS, isRedSnwapperChainId } from 'sushi/config'
 import { Native } from 'sushi/currency'
 import { ZERO } from 'sushi/math'
 import { APPROVE_TAG_SWAP } from '../../../lib/constants'
@@ -23,7 +20,7 @@ import { usePersistedSlippageError } from '../../../lib/hooks'
 import { warningSeverity } from '../../../lib/swap/warningSeverity'
 import {
   useDerivedStateSimpleSwap,
-  useSimpleSwapTrade,
+  useSimpleSwapTradeQuote,
 } from './derivedstate-simple-swap-provider'
 import { SimpleSwapTradeReviewDialog } from './simple-swap-trade-review-dialog'
 import { useIsSwapMaintenance } from './use-is-swap-maintenance'
@@ -86,7 +83,7 @@ const _SimpleSwapTradeButton: FC<SimpleSwapTradeButtonProps> = ({
 }) => {
   const { data: maintenance } = useIsSwapMaintenance()
   const { isSlippageError } = usePersistedSlippageError({ isSuccess, error })
-  const { data: trade } = useSimpleSwapTrade()
+  const { data: quote } = useSimpleSwapTradeQuote()
   const [checked, setChecked] = useState(false)
 
   const {
@@ -101,9 +98,9 @@ const _SimpleSwapTradeButton: FC<SimpleSwapTradeButtonProps> = ({
     token0?.wrapped.address === Native.onChain(chainId).wrapped.address
 
   const showPriceImpactWarning = useMemo(() => {
-    const priceImpactSeverity = warningSeverity(trade?.priceImpact)
+    const priceImpactSeverity = warningSeverity(quote?.priceImpact)
     return priceImpactSeverity > 3
-  }, [trade?.priceImpact])
+  }, [quote?.priceImpact])
 
   // Reset
   useEffect(() => {
@@ -119,7 +116,7 @@ const _SimpleSwapTradeButton: FC<SimpleSwapTradeButtonProps> = ({
           guardWhen={maintenance}
           guardText="Maintenance in progress"
         >
-          <PartialRouteChecker trade={trade}>
+          <PartialRouteChecker trade={quote}>
             <Checker.Connect>
               <Checker.Network chainId={chainId}>
                 <Checker.Amounts chainId={chainId} amount={swapAmount}>
@@ -127,8 +124,8 @@ const _SimpleSwapTradeButton: FC<SimpleSwapTradeButtonProps> = ({
                     id="approve-erc20"
                     amount={swapAmount}
                     contract={
-                      isRouteProcessor5ChainId(chainId)
-                        ? ROUTE_PROCESSOR_5_ADDRESS[chainId]
+                      isRedSnwapperChainId(chainId)
+                        ? RED_SNWAPPER_ADDRESS[chainId]
                         : undefined
                     }
                   >
@@ -139,8 +136,8 @@ const _SimpleSwapTradeButton: FC<SimpleSwapTradeButtonProps> = ({
                           disabled={Boolean(
                             isSlippageError ||
                               error ||
-                              !trade?.amountOut?.greaterThan(ZERO) ||
-                              trade?.route?.status === 'NoWay' ||
+                              !quote?.amountOut?.greaterThan(ZERO) ||
+                              quote?.route?.status === 'NoWay' ||
                               +swapAmountString === 0 ||
                               (!checked && showPriceImpactWarning),
                           )}
@@ -150,7 +147,7 @@ const _SimpleSwapTradeButton: FC<SimpleSwapTradeButtonProps> = ({
                         >
                           {!checked && showPriceImpactWarning
                             ? 'Price impact too high'
-                            : trade?.route?.status === 'NoWay'
+                            : quote?.route?.status === 'NoWay'
                               ? 'No trade found'
                               : isWrap
                                 ? 'Wrap'

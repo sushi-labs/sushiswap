@@ -36,7 +36,7 @@ const SelectTrigger = React.forwardRef<
   const content = props.asChild ? (
     children
   ) : (
-    <div className="flex gap-2 items-center">
+    <div className="flex gap-2 items-center justify-between w-full">
       {children}
       <SelectIcon />
     </div>

@@ -3,6 +3,7 @@
 import { XMarkIcon } from '@heroicons/react/24/solid'
 import { ArrowUpRightIcon } from '@heroicons/react/24/solid'
 import { useLocalStorage } from '@sushiswap/hooks'
+import { classNames } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import type { FC } from 'react'
 import { ChainId, EvmChain } from 'sushi/chain'
@@ -20,7 +21,9 @@ const BridgeInfo = {
   },
 } as const
 
-export const SimpleSwapBridgeBanner: FC = () => {
+export const SimpleSwapBridgeBanner: FC<{ className?: string }> = ({
+  className,
+}) => {
   const [hideBanner, setHideBanner] = useLocalStorage(
     'hide-bridge-banner',
     false,
@@ -37,7 +40,12 @@ export const SimpleSwapBridgeBanner: FC = () => {
       rel="noopener noreferrer"
       className={BridgeInfo[chainId as keyof typeof BridgeInfo].textColor}
     >
-      <div className="block xl:fixed xl:right-8 xl:bottom-8 rounded-xl relative p-6 bg-blue/10 min-w-[360px] overflow-hidden">
+      <div
+        className={classNames(
+          'rounded-xl relative p-6 bg-blue/10 overflow-hidden',
+          className,
+        )}
+      >
         {BridgeInfo[chainId as keyof typeof BridgeInfo].background}
         <XMarkIcon
           width={20}
@@ -64,7 +72,5 @@ export const SimpleSwapBridgeBanner: FC = () => {
         </div>
       </div>
     </a>
-  ) : (
-    <div />
-  )
+  ) : null
 }

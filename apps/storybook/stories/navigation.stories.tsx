@@ -1,11 +1,25 @@
 // Form.stories.ts|tsx
 
 import type { Meta, StoryObj } from '@storybook/react'
-import { Navigation, OnramperProvider } from '@sushiswap/ui'
+import {
+  Navigation,
+  NavigationElementType,
+  OnramperProvider,
+} from '@sushiswap/ui'
 
 const meta = {
   title: 'Components/Navigation',
   component: Navigation,
+  args: {
+    leftElements: [
+      {
+        title: 'Home',
+        href: '/',
+        show: 'everywhere',
+        type: NavigationElementType.Single,
+      },
+    ],
+  },
   argTypes: {},
   parameters: {
     docs: {
@@ -20,7 +34,7 @@ const meta = {
 } satisfies Meta<typeof Navigation>
 
 export default meta
-type Story = StoryObj<typeof Navigation>
+type Story = StoryObj<typeof meta>
 
 export const Default = {
   args: {},
