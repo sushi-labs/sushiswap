@@ -43,16 +43,6 @@ const ITEMS: { id: string; value: string; children: React.ReactNode }[] = [
       </div>
     ),
   },
-  {
-    id: 'sushiswap-smart',
-    value: 'smart',
-    children: (
-      <div className="flex items-center gap-2">
-        <span>💡</span>
-        <span>Smart Pool</span>
-      </div>
-    ),
-  },
 ]
 
 export const PositionsTab: FC<{ chainId: SushiSwapChainId }> = ({
@@ -71,7 +61,11 @@ export const PositionsTab: FC<{ chainId: SushiSwapChainId }> = ({
               </SelectTrigger>
               <SelectContent>
                 {ITEMS.map((item) => (
-                  <SelectItem key={item.value} value={item.value}>
+                  <SelectItem
+                    key={item.value}
+                    value={item.value}
+                    disabled={item.id === 'sushiswap-smart'}
+                  >
                     {item.children}
                   </SelectItem>
                 ))}
