@@ -5,7 +5,7 @@ import {
   EllipsisHorizontalIcon,
   GiftIcon,
   MinusIcon,
-  PlusIcon
+  PlusIcon,
 } from '@heroicons/react/24/outline'
 import { Slot } from '@radix-ui/react-slot'
 import type {
@@ -41,13 +41,7 @@ import type {
   TableState,
 } from '@tanstack/react-table'
 import Link from 'next/link'
-import {
-  type FC,
-  type ReactNode,
-  useCallback,
-  useMemo,
-  useState,
-} from 'react'
+import { type FC, type ReactNode, useCallback, useMemo, useState } from 'react'
 import InfiniteScroll from 'react-infinite-scroll-component'
 import { usePoolsInfinite } from 'src/lib/hooks'
 import { ChainKey } from 'sushi/chain'
@@ -225,8 +219,7 @@ interface PoolsTableProps {
 }
 
 export const PoolsTable: FC<PoolsTableProps> = ({ chainId, onRowClick }) => {
-  const { tokenSymbols, protocols, farmsOnly } =
-    usePoolFilters()
+  const { tokenSymbols, protocols, farmsOnly } = usePoolFilters()
 
   const [sorting, setSorting] = useState<SortingState>([
     { id: 'liquidityUSD', desc: true },

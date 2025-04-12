@@ -169,9 +169,7 @@ export const ZapRouteDialog: FC<ZapRouteDialogProps> = ({
                     />
                   </div>
                 </span>
-                <span className="text-sm font-semibold truncate">
-                  SLP
-                </span>
+                <span className="text-sm font-semibold truncate">SLP</span>
               </div>
             </div>
           </div>

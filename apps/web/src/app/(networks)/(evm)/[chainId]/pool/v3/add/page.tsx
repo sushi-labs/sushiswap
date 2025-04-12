@@ -73,7 +73,6 @@ const _Add: FC = () => {
     [chainId, feeAmount, token0, token1],
   )
 
-
   return (
     <>
       <SelectNetworkWidget
@@ -95,28 +94,28 @@ const _Add: FC = () => {
         token1={token1}
         token0={token0}
       />
-          <SelectPricesWidget
-            chainId={chainId}
-            token0={token0}
-            token1={token1}
-            poolAddress={poolAddress}
-            tokenId={tokenId}
-            feeAmount={feeAmount}
-            switchTokens={switchTokens}
-          />
-          <ConcentratedLiquidityWidget
-            chainId={chainId}
-            account={address}
-            token0={token0}
-            token1={token1}
-            setToken0={setToken0}
-            setToken1={setToken1}
-            feeAmount={feeAmount}
-            tokensLoading={tokensLoading}
-            existingPosition={position ?? undefined}
-            tokenId={tokenId}
-            successLink={`/${ChainKey[chainId]}/pool/v3/${poolAddress}/${tokenId}`}
-          />
-      </>
+      <SelectPricesWidget
+        chainId={chainId}
+        token0={token0}
+        token1={token1}
+        poolAddress={poolAddress}
+        tokenId={tokenId}
+        feeAmount={feeAmount}
+        switchTokens={switchTokens}
+      />
+      <ConcentratedLiquidityWidget
+        chainId={chainId}
+        account={address}
+        token0={token0}
+        token1={token1}
+        setToken0={setToken0}
+        setToken1={setToken1}
+        feeAmount={feeAmount}
+        tokensLoading={tokensLoading}
+        existingPosition={position ?? undefined}
+        tokenId={tokenId}
+        successLink={`/${ChainKey[chainId]}/pool/v3/${poolAddress}/${tokenId}`}
+      />
+    </>
   )
 }
