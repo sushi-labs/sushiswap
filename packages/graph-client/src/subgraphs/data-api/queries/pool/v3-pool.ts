@@ -173,8 +173,6 @@ export async function getV3Pool(
         incentiveApr: pool.incentiveApr,
         isIncentivized: pool.isIncentivized,
         wasIncentivized: pool.wasIncentivized,
-        hasEnabledSteerVault: pool.hasSmartPool,
-        hadEnabledSteerVault: pool.hadSmartPool,
 
         incentives: incentives.map((incentive) => ({
           id: incentive.id as `${string}:0x${string}`,
