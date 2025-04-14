@@ -136,10 +136,7 @@ export const PoolHeader: FC<PoolHeader> = ({
 
               <APRHoverCard pool={pool}>
                 <span className="underline decoration-dotted underline-offset-2">
-                  {formatPercent(
-                    (apy.fees ||
-                      0) + (apy.rewards || 0),
-                  )}
+                  {formatPercent((apy.fees || 0) + (apy.rewards || 0))}
                 </span>
               </APRHoverCard>
             </div>

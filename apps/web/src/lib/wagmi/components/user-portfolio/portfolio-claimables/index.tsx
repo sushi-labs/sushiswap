@@ -33,12 +33,7 @@ export const PortfolioClaimables = () => {
 
   const farmClaimables: PortfolioFarmClaim[] = useMemo(
     () =>
-      data
-        ? [
-            ...data.v2PositionClaimables,
-            ...data.v3PositionClaimables,
-          ]
-        : [],
+      data ? [...data.v2PositionClaimables, ...data.v3PositionClaimables] : [],
     [data],
   )
 

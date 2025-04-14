@@ -1,6 +1,5 @@
 'use client'
 
-
 import {
   Card,
   CardContent,
@@ -41,7 +40,6 @@ export const NewPosition: FC<NewPositionProps> = ({ address, chainId }) => {
     return invertTokens ? tokens.reverse() : tokens
   }, [invertTokens, poolStats])
 
-
   return (
     <Card>
       <CardHeader>
@@ -54,28 +52,28 @@ export const NewPosition: FC<NewPositionProps> = ({ address, chainId }) => {
         <Separator />
       </div>
       <CardContent>
-          <>
-            <SelectPricesWidget
-              chainId={chainId}
-              token0={_token0}
-              token1={_token1}
-              poolAddress={address}
-              feeAmount={poolStats?.feeAmount}
-              tokenId={undefined}
-              switchTokens={() => setInvertTokens((prev) => !prev)}
-            />
-            <ConcentratedLiquidityWidget
-              chainId={chainId}
-              account={account}
-              token0={_token0}
-              token1={_token1}
-              feeAmount={poolStats?.feeAmount}
-              tokensLoading={false}
-              existingPosition={undefined}
-              tokenId={undefined}
-              successLink={`/${ChainKey[chainId]}/pool/v3/${address}/positions`}
-            />
-          </>
+        <>
+          <SelectPricesWidget
+            chainId={chainId}
+            token0={_token0}
+            token1={_token1}
+            poolAddress={address}
+            feeAmount={poolStats?.feeAmount}
+            tokenId={undefined}
+            switchTokens={() => setInvertTokens((prev) => !prev)}
+          />
+          <ConcentratedLiquidityWidget
+            chainId={chainId}
+            account={account}
+            token0={_token0}
+            token1={_token1}
+            feeAmount={poolStats?.feeAmount}
+            tokensLoading={false}
+            existingPosition={undefined}
+            tokenId={undefined}
+            successLink={`/${ChainKey[chainId]}/pool/v3/${address}/positions`}
+          />
+        </>
       </CardContent>
     </Card>
   )
