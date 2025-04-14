@@ -66,8 +66,6 @@ export const V3PoolQuery = graphql(
       txCount1dChange
       liquidityUSD1dChange
       incentiveApr
-      hadSmartPool
-      hasSmartPool
       isIncentivized
       wasIncentivized
       incentives {
@@ -88,7 +86,6 @@ export const V3PoolQuery = graphql(
         rewarderAddress
         rewarderType
       }
-      vaults
     }
   }
 `,
