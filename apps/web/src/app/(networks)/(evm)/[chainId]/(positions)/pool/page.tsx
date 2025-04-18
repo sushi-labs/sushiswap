@@ -23,9 +23,9 @@ export default function MyPositionsPage(props: {
 
   return (
     <Container maxWidth="7xl" className="px-4">
-      <Message size="xs" variant="info" className="mb-3">
-        We’re no longer supporting Smart Pools in our application. If you’re
-        looking to manage your smart pool positions, visit {'  '}
+      <Message size="sm" variant="info" className="mb-4 text-center">
+        Smart Pools are no longer supported in our app. To manage your Smart
+        Pool positions, please visit:{' '}
         <LinkExternal href="https://app.steer.finance/profile">
           <span className="text-slate-300">
             https://app.steer.finance/profile
