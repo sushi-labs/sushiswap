@@ -126,40 +126,6 @@ export const PortfolioClaimablesQuery = graphql(
             amountUSD
           }
         }
-        smartPositionClaimables {
-          token {
-            id
-            chain
-            chainId
-            name
-            symbol
-            decimals
-            logoUrl
-            protocolId
-            price
-            isVerified
-            isCore
-            isWallet
-            timeAt
-            amount
-            amountUSD
-          }
-          position {
-            id
-            chainId
-            chain
-            protocol
-            protocolId
-            protocolLogoUrl
-            address
-            name
-            vaultAddress
-            swapFee
-            strategy
-            amountUSD
-            updatedAt
-          }
-        }
         furoClaimables {
           position {
             id
@@ -223,13 +189,10 @@ export type PortfolioClaimables = Awaited<
 
 export type PortfolioV2Claim = PortfolioClaimables['v2PositionClaimables'][0]
 export type PortfolioV3Claim = PortfolioClaimables['v3PositionClaimables'][0]
-export type PortfolioSmartPositionClaim =
-  PortfolioClaimables['smartPositionClaimables'][0]
 export type PortfolioFuroClaim = PortfolioClaimables['furoClaimables'][0]
 
 export type PortfolioFarmClaim =
   | PortfolioV2Claim
   | PortfolioV3Claim
-  | PortfolioSmartPositionClaim
 
 export type PortfolioClaim = PortfolioFarmClaim | PortfolioFuroClaim

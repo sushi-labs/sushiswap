@@ -61,11 +61,7 @@ export const PositionsTab: FC<{ chainId: SushiSwapChainId }> = ({
               </SelectTrigger>
               <SelectContent>
                 {ITEMS.map((item) => (
-                  <SelectItem
-                    key={item.value}
-                    value={item.value}
-                    disabled={item.id === 'sushiswap-smart'}
-                  >
+                  <SelectItem key={item.value} value={item.value}>
                     {item.children}
                   </SelectItem>
                 ))}
