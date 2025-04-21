@@ -1,5 +1,6 @@
 'use client'
 
+import type { V2Pool, V3Pool } from '@sushiswap/graph-client/data-api'
 import {
   CardContent,
   CardDescription,
@@ -10,26 +11,24 @@ import {
   classNames,
 } from '@sushiswap/ui'
 import format from 'date-fns/format'
+import type { EChartOption } from 'echarts'
+import ReactEchartsCore from 'echarts-for-react/lib/core'
+import { BarChart, LineChart } from 'echarts/charts'
+import {
+  GridComponent,
+  ToolboxComponent,
+  TooltipComponent,
+} from 'echarts/components'
+import * as echarts from 'echarts/core'
+import { CanvasRenderer } from 'echarts/renderers'
 import { type FC, useCallback, useMemo } from 'react'
-
+import { usePoolGraphData } from 'src/lib/hooks'
+import type { SushiSwapProtocol } from 'sushi'
 import { formatUSD } from 'sushi/format'
 import tailwindConfig from 'tailwind.config.js'
 import resolveConfig from 'tailwindcss/resolveConfig'
-
 import { PoolChartPeriod, chartPeriods } from './PoolChartPeriods'
 import { PoolChartType } from './PoolChartTypes'
-
-import type { V2Pool, V3Pool } from '@sushiswap/graph-client/data-api'
-import ReactEchartsCore from 'echarts-for-react/lib/core'
-import type { EChartsOption } from 'echarts-for-react/lib/types'
-import 'echarts/lib/chart/bar'
-import 'echarts/lib/chart/line'
-import 'echarts/lib/component/tooltip'
-import 'echarts/lib/component/visualMap'
-import echarts from 'echarts/lib/echarts'
-import 'echarts/lib/visual/seriesColor'
-import { usePoolGraphData } from 'src/lib/hooks'
-import type { SushiSwapProtocol } from 'sushi'
 
 interface PoolChartProps {
   chart: PoolChartType.Volume | PoolChartType.Fees | PoolChartType.TVL
@@ -39,6 +38,15 @@ interface PoolChartProps {
 }
 
 const tailwind = resolveConfig(tailwindConfig)
+
+echarts.use([
+  CanvasRenderer,
+  BarChart,
+  LineChart,
+  TooltipComponent,
+  ToolboxComponent,
+  GridComponent,
+])
 
 export const PoolChartGraph: FC<PoolChartProps> = ({
   chart,
@@ -112,7 +120,7 @@ export const PoolChartGraph: FC<PoolChartProps> = ({
     [period, chart, pool?.swapFee],
   )
 
-  const DEFAULT_OPTION: EChartsOption = useMemo(
+  const DEFAULT_OPTION = useMemo<EChartOption>(
     () => ({
       tooltip: {
         trigger: 'axis',
@@ -157,22 +165,23 @@ export const PoolChartGraph: FC<PoolChartProps> = ({
       toolbox: {
         show: false,
       },
+      color: [(tailwind.theme?.colors?.blue as Record<string, string>)['500']],
       grid: {
         top: 0,
         left: 0,
         right: 0,
         bottom: 0,
       },
-      dataZoom: {
-        show: false,
-        start: 0,
-        end: 100,
-      },
-      visualMap: {
-        show: false,
-        // @ts-ignore
-        color: [tailwind.theme.colors.blue['500']],
-      },
+      // dataZoom: {
+      //   show: false,
+      //   start: 0,
+      //   end: 100,
+      // },
+      // visualMap: {
+      //   show: false,
+      //   // @ts-ignore
+      //   color: [tailwind.theme.colors.blue['500']],
+      // },
       xAxis: [
         {
           show: false,
@@ -195,6 +204,7 @@ export const PoolChartGraph: FC<PoolChartProps> = ({
           xAxisIndex: 0,
           yAxisIndex: 0,
           barWidth: '70%',
+          symbolSize: 5,
           itemStyle: {
             color: 'blue',
             normal: {
@@ -206,7 +216,7 @@ export const PoolChartGraph: FC<PoolChartProps> = ({
             color: tailwind.theme.colors.blue['500'],
           },
           animationEasing: 'elasticOut',
-          animationDelayUpdate: (idx: number) => idx * 2,
+          animationDelayUpdate: (idx: number) => Math.min(idx, 150),
           data: yData,
         },
       ],
@@ -219,7 +229,7 @@ export const PoolChartGraph: FC<PoolChartProps> = ({
   return (
     <>
       <CardHeader>
-        <CardTitle>
+        <CardTitle className="h-[22px]">
           <span className="hoveredItemValue">{formatUSD(defaultValue)}</span>{' '}
           {chart === PoolChartType.Volume && (
             <span className="text-sm font-medium text-gray-600 dark:text-slate-300">

@@ -23,7 +23,7 @@ const percentInputProps: Partial<React.InputHTMLAttributes<HTMLInputElement>> =
   }
 
 const textFieldVariants = cva(
-  'truncate appearance-none dark:text-slate-50 text-gray-900 w-full !ring-0 !outline-none',
+  'truncate appearance-none dark:text-slate-50 text-gray-900 black:text-primary black:bg-muted black:placeholder:text-[#A9A9A9] w-full !ring-0 !outline-none',
   {
     variants: {
       size: {
@@ -74,6 +74,9 @@ interface TextFieldBaseProps
 
 interface TextFieldDynamicProps<T extends InputType> {
   type: T
+  textType?: T extends 'text'
+    ? React.HTMLInputTypeAttribute & ('text' | 'password')
+    : never
   maxDecimals?: T extends 'number' ? number : never
   onValueChange?(val: string): void
 }
@@ -93,6 +96,7 @@ const Component = <T extends InputType>(
     variant,
     className,
     type,
+    textType,
     onChange,
     maxDecimals,
     size,
@@ -171,6 +175,7 @@ const Component = <T extends InputType>(
         autoCapitalize="none"
         spellCheck="false"
         autoComplete="off"
+        type={textType}
         {...(isTypeNumber(type) && numericInputProps)}
         {...(isTypePercent(type) && percentInputProps)}
         {...props}

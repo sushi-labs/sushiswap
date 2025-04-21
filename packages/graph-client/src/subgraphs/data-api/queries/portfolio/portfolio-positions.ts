@@ -1,6 +1,6 @@
 import type { VariablesOf } from 'gql.tada'
 
-import { request, type RequestOptions } from 'src/lib/request.js'
+import { type RequestOptions, request } from 'src/lib/request.js'
 import { SUSHI_DATA_API_HOST } from 'sushi/config/subgraph'
 import { graphql } from '../../graphql.js'
 
@@ -154,6 +154,4 @@ export type PortfolioPositions = Awaited<
 export type PortfolioV2Position = PortfolioPositions['v2Positions'][0]
 export type PortfolioV3Position = PortfolioPositions['v3Positions'][0]
 
-export type PortfolioPosition =
-  | PortfolioV2Position
-  | PortfolioV3Position
+export type PortfolioPosition = PortfolioV2Position | PortfolioV3Position
