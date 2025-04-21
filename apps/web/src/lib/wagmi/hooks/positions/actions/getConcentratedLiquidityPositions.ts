@@ -3,7 +3,7 @@ import type { ChainId } from 'sushi/chain'
 import {
   SUSHISWAP_V3_FACTORY_ADDRESS,
   SUSHISWAP_V3_INIT_CODE_HASH,
-  SUSHISWAP_V3_POSTIION_MANAGER,
+  SUSHISWAP_V3_POSITION_MANAGER,
   type SushiSwapV3ChainId,
 } from 'sushi/config'
 import { computeSushiSwapV3PoolAddress } from 'sushi/pool/sushiswap-v3'
@@ -55,7 +55,7 @@ export const getConcentratedLiquidityPositions = async ({
     contracts: chainIds.map(
       (el) =>
         ({
-          address: SUSHISWAP_V3_POSTIION_MANAGER[el],
+          address: SUSHISWAP_V3_POSITION_MANAGER[el],
           abi: erc20Abi,
           chainId: el,
           functionName: 'balanceOf' as const,
@@ -87,7 +87,7 @@ export const getConcentratedLiquidityPositions = async ({
       ([_chainId, account, index]) =>
         ({
           chainId: _chainId,
-          address: SUSHISWAP_V3_POSTIION_MANAGER[_chainId],
+          address: SUSHISWAP_V3_POSITION_MANAGER[_chainId],
           abi: abiShard,
           functionName: 'tokenOfOwnerByIndex' as const,
           args: [account, BigInt(index)],
