@@ -16,16 +16,13 @@ interface APRWithRewardsHoverCardProps {
   children: ReactNode
   pool: Pool
   showEmissions?: boolean
-  smartPoolAPR?: number
 }
 
 export const APRWithRewardsHoverCard: FC<APRWithRewardsHoverCardProps> = ({
   children,
   pool,
-  smartPoolAPR,
 }) => {
-  const feeApr1d =
-    typeof smartPoolAPR === 'number' ? smartPoolAPR : pool.feeApr1d
+  const feeApr1d = pool.feeApr1d
 
   const totalAPR = (feeApr1d + pool.incentiveApr) * 100
 
@@ -38,24 +35,15 @@ export const APRWithRewardsHoverCard: FC<APRWithRewardsHoverCardProps> = ({
           the last 24 hours. The APR displayed is algorithmic and subject to
           change.
         </span>
-        <div className="flex flex-col gap-6 bg-background px-4 py-2 rounded-xl">
+        <div className="flex flex-col gap-6 px-4 py-2 bg-background rounded-xl">
           <div className="flex flex-col gap-3">
-            {typeof smartPoolAPR === 'number' ? (
-              <div className="flex justify-between gap-1 items-center">
-                <span className="font-medium">Smart pool APR</span>
-                <span className="text-muted-foreground">
-                  {formatPercent(smartPoolAPR)}
-                </span>
-              </div>
-            ) : (
-              <div className="flex justify-between gap-1 items-center">
-                <span className="font-medium">Fees</span>
-                <span className="text-muted-foreground">
-                  {formatPercent(pool.feeApr1d)}
-                </span>
-              </div>
-            )}
-            <div className="flex justify-between gap-1 items-center">
+            <div className="flex items-center justify-between gap-1">
+              <span className="font-medium">Fees</span>
+              <span className="text-muted-foreground">
+                {formatPercent(pool.feeApr1d)}
+              </span>
+            </div>
+            <div className="flex items-center justify-between gap-1">
               <span className="font-medium ">Rewards</span>
               <span className="text-muted-foreground">
                 {formatPercent(pool.incentiveApr)}
@@ -63,7 +51,7 @@ export const APRWithRewardsHoverCard: FC<APRWithRewardsHoverCardProps> = ({
             </div>
           </div>
 
-          <div className="flex justify-between gap-1 items-center">
+          <div className="flex items-center justify-between gap-1">
             <span className="font-medium">Total</span>
             <span className="font-bold">{formatPercent(totalAPR / 100)}</span>
           </div>
@@ -73,11 +61,11 @@ export const APRWithRewardsHoverCard: FC<APRWithRewardsHoverCardProps> = ({
       {pool.incentives.length ? (
         <div className="flex flex-col gap-2">
           <span className="text-xs text-muted-foreground">Reward per day</span>
-          <div className="flex flex-col gap-6 bg-background px-4 py-2 rounded-xl">
+          <div className="flex flex-col gap-6 px-4 py-2 bg-background rounded-xl">
             {pool.incentives.map((incentive) => (
               <div
                 key={incentive.id}
-                className="flex justify-between gap-1 items-center"
+                className="flex items-center justify-between gap-1"
               >
                 <span className="flex gap-1.5 items-center">
                   <Currency.Icon

@@ -12,26 +12,14 @@ import {
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import type { FC, JSX } from 'react'
 import { useTokensFromPool } from 'src/lib/hooks'
-import { formatNumber } from 'sushi/format'
-
-import type { PoolHasSteerVaults } from '@sushiswap/steer-sdk'
 import {
   type PoolBase,
   type PoolIfIncentivized,
   SushiSwapProtocol,
 } from 'sushi'
+import { formatNumber } from 'sushi/format'
 
 export const ProtocolBadge: Record<SushiSwapProtocol, JSX.Element> = {
-  // [Protocol.BENTOBOX_STABLE]: (
-  //   <div className="whitespace-nowrap bg-green/20 text-green text-[10px] px-2 rounded-full">
-  //     Trident Stable
-  //   </div>
-  // ),
-  // [Protocol.BENTOBOX_CLASSIC]: (
-  //   <div className="whitespace-nowrap bg-green/20 text-green text-[10px] px-2 rounded-full">
-  //     Trident Classic
-  //   </div>
-  // ),
   [SushiSwapProtocol.SUSHISWAP_V2]: (
     <div className="whitespace-nowrap bg-pink/20 text-pink text-[10px] px-2 rounded-full">
       V2
@@ -45,13 +33,11 @@ export const ProtocolBadge: Record<SushiSwapProtocol, JSX.Element> = {
 }
 
 export const PoolNameCell: FC<{
-  pool: PoolHasSteerVaults<PoolIfIncentivized<PoolBase, true>, true>
+  pool: PoolIfIncentivized<PoolBase, true>
 }> = ({ pool }) => {
   const { token0, token1 } = useTokensFromPool(pool)
 
   const isIncentivized = 'isIncentivized' in pool && pool.isIncentivized
-  const hasEnabledVault =
-    'hasEnabledSteerVault' in pool && pool.hasEnabledSteerVault
 
   return (
     <div className="flex items-center gap-5">
@@ -117,20 +103,6 @@ export const PoolNameCell: FC<{
                 </TooltipTrigger>
                 <TooltipContent>
                   <p>Farm rewards available</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          )}
-          {hasEnabledVault && (
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <div className="bg-[#F2E9D6] dark:bg-yellow/60 text-[10px] px-2 rounded-full">
-                    💡
-                  </div>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>Smart Pool available</p>
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>
