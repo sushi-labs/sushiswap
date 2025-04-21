@@ -43,9 +43,13 @@ const COLUMNS = [
       )
     },
     meta: {
-      skeleton: <SkeletonText fontSize="lg" />,
-      headerDescription:
-        'The amount of tokens that gets distributed per day to everyone that provided liquidity to this pool.',
+      body: {
+        skeleton: <SkeletonText fontSize="lg" />,
+      },
+      header: {
+        description:
+          'The amount of tokens that gets distributed per day to everyone that provided liquidity to this pool.',
+      },
     },
   },
   {
@@ -70,7 +74,9 @@ const COLUMNS = [
       )
     },
     meta: {
-      skeleton: <SkeletonText fontSize="lg" />,
+      body: {
+        skeleton: <SkeletonText fontSize="lg" />,
+      },
     },
   },
   {
@@ -95,7 +101,9 @@ const COLUMNS = [
       )
     },
     meta: {
-      skeleton: <SkeletonText fontSize="lg" />,
+      body: {
+        skeleton: <SkeletonText fontSize="lg" />,
+      },
     },
   },
   {
@@ -107,8 +115,12 @@ const COLUMNS = [
       return <CheckIcon width={20} height={20} className="text-green" />
     },
     meta: {
-      skeleton: <SkeletonText fontSize="lg" />,
-      headerDescription: 'Only rewards in-range positions',
+      body: {
+        skeleton: <SkeletonText fontSize="lg" />,
+      },
+      header: {
+        description: 'Only rewards in-range positions',
+      },
     },
   },
 ] satisfies ColumnDef<RewardCampaign, unknown>[]

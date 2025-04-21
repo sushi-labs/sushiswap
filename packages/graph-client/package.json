@@ -3,11 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "description": "Graph Client",
-  "keywords": [
-    "sushi",
-    "graph",
-    "subgraph"
-  ],
+  "keywords": ["sushi", "graph", "subgraph"],
   "repository": {
     "type": "git",
     "url": "https://github.com/sushiswap/sushiswap.git",
@@ -36,22 +32,13 @@
   },
   "typesVersions": {
     "*": {
-      ".": [
-        "src/subgraphs/**/*",
-        "src/lib/**/*"
-      ],
-      "./multichain": [
-        "src/multichain/*"
-      ],
-      "./composite": [
-        "src/composite/*"
-      ]
+      ".": ["src/subgraphs/**/*", "src/lib/**/*"],
+      "./multichain": ["src/multichain/*"],
+      "./composite": ["src/composite/*"]
     }
   },
   "typings": "dist/index.d.ts",
-  "files": [
-    "dist/**"
-  ],
+  "files": ["dist/**"],
   "scripts": {
     "build": "pnpm build:types && pnpm build:compile",
     "build:compile": "tsc && tsc-alias -p tsconfig.json",

@@ -10,7 +10,7 @@ import { SkeletonText } from './skeleton'
 const cardVariants = cva('relative rounded-xl border border-accent', {
   variants: {
     variant: {
-      default: 'shadow-sm bg-white dark:bg-background',
+      default: 'shadow-sm bg-white dark:bg-background black:bg-secondary',
       outline: '',
     },
   },
@@ -44,7 +44,10 @@ const CardOverlay = React.forwardRef<HTMLDivElement, CardOverlayProps>(
       data-state={show ? 'active' : 'inactive'}
       ref={ref}
       className={classNames(
-        'data-[state=active]:flex data-[state=inactive]:hidden rounded-xl z-10 bg-white/[0.8] dark:bg-slate-900/[0.8] pointer-events-none absolute inset-0 justify-center items-center',
+        'data-[state=active]:flex data-[state=inactive]:hidden rounded-xl z-10 pointer-events-none absolute inset-0 justify-center items-center',
+        'bg-white/[0.8]',
+        'dark:bg-slate-900/[0.8]',
+        'black:bg-slate-900/[0.8]',
         className,
       )}
       {...props}
@@ -114,7 +117,10 @@ const CardLabel = React.forwardRef<
   <span
     ref={ref}
     className={classNames(
-      'font-normal text-xs text-gray-400 dark:text-slate-600',
+      'font-normal text-xs',
+      'text-gray-400',
+      'dark:text-slate-600',
+      'black:text-muted-foreground',
       className,
     )}
     {...props}
