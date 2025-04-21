@@ -5,8 +5,9 @@ import type {
   PoolChainId,
   TokenInfo as TokenInfoType,
 } from '@sushiswap/graph-client/data-api'
-import { useMediaQuery } from '@sushiswap/hooks'
+import { useIsMounted, useMediaQuery } from '@sushiswap/hooks'
 import { Button, Container, LinkInternal, classNames } from '@sushiswap/ui'
+import { AnimatePresence, motion } from 'framer-motion'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { type FC, useMemo } from 'react'
@@ -38,6 +39,8 @@ export const TokenPage: FC<TokenPageProps> = ({ token: _token, tokenInfo }) => {
   const token = useMemo(() => new Token(_token), [_token])
 
   const router = useRouter()
+
+  const isMounted = useIsMounted()
 
   const { isOpen: isSidebarOpen } = useSidebar()
 
@@ -105,11 +108,20 @@ export const TokenPage: FC<TokenPageProps> = ({ token: _token, tokenInfo }) => {
                 <div className="flex-auto min-w-0">
                   <TokenChart token={token} />
                 </div>
-                {showWidget ? (
-                  <div className="w-[420px] flex-none">
-                    <SwapWidget token1={token} />
-                  </div>
-                ) : null}
+                <AnimatePresence>
+                  {isMounted && showWidget ? (
+                    <motion.div
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: 20 }}
+                      transition={{ duration: 0.5, ease: 'easeOut' }}
+                    >
+                      <div className="w-[420px] flex-none">
+                        <SwapWidget token1={token} />
+                      </div>
+                    </motion.div>
+                  ) : null}
+                </AnimatePresence>
               </div>
 
               <TokenInfo token={token} tokenInfo={tokenInfo} />
@@ -149,7 +161,7 @@ export const TokenPage: FC<TokenPageProps> = ({ token: _token, tokenInfo }) => {
           </section>
         </div>
       </section>
-      {!showWidget ? (
+      {isMounted && !showWidget ? (
         <div
           className={classNames(
             'absolute inset-x-0 bottom-0 p-4 z-[10]',
