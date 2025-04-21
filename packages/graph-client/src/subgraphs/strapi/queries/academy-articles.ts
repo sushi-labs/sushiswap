@@ -133,7 +133,7 @@ export async function getAcademyArticles(
       id: topic.id,
       name: topic.attributes.name,
     })),
-    difficulty: article.attributes.difficulty.data
+    difficulty: article.attributes.difficulty?.data
       ? {
           id: article.attributes.difficulty.data.id,
           name: article.attributes.difficulty.data.attributes.name,

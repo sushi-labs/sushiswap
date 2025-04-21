@@ -25,7 +25,7 @@ export const PoolNameCell: FC<Row<TopPool>> = ({ row }) => {
         </Badge>
       </div>
       <div className="flex flex-col gap-0.5">
-        <span className="flex items-center gap-1 text-sm font-medium text-gray-900 dark:text-slate-50 whitespace-nowrap pr-2">
+        <span className="flex items-center gap-1 pr-2 text-sm font-medium text-gray-900 dark:text-slate-50 whitespace-nowrap">
           {row.name}
         </span>
         <div className="flex gap-1">
@@ -61,20 +61,6 @@ export const PoolNameCell: FC<Row<TopPool>> = ({ row }) => {
                 </TooltipTrigger>
                 <TooltipContent>
                   <p>Farm rewards available</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          )}
-          {row.isSmartPool && (
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <div className="bg-[#F2E9D6] dark:bg-yellow/60 text-[10px] px-2 rounded-full">
-                    💡
-                  </div>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>Smart Pool available</p>
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>

@@ -123,56 +123,6 @@ query PortfolioPositions($id: ID!) {
       amountUSD
       updatedAt
     }
-    smartPositions {
-      id
-      chainId
-      chain
-      protocol
-      protocolId
-      protocolLogoUrl
-      
-      token0 {
-        id
-        chain
-        chainId
-        name
-        symbol
-        decimals
-        logoUrl
-        protocolId
-        price
-        isVerified
-        isCore
-        isWallet
-        timeAt
-        amount
-        amountUSD
-      }
-      token1 {
-        id
-        chain
-        chainId
-        name
-        symbol
-        decimals
-        logoUrl
-        protocolId
-        price
-        isVerified
-        isCore
-        isWallet
-        timeAt
-        amount
-        amountUSD
-      }
-      address
-      name
-      vaultAddress
-      swapFee
-      strategy
-      amountUSD
-      updatedAt
-    }
   }
 }
 `,
@@ -203,9 +153,7 @@ export type PortfolioPositions = Awaited<
 
 export type PortfolioV2Position = PortfolioPositions['v2Positions'][0]
 export type PortfolioV3Position = PortfolioPositions['v3Positions'][0]
-export type PortfolioSmartPosition = PortfolioPositions['smartPositions'][0]
 
 export type PortfolioPosition =
   | PortfolioV2Position
   | PortfolioV3Position
-  | PortfolioSmartPosition

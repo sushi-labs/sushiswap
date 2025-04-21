@@ -59,9 +59,11 @@ export async function getFaqMostSearched(
     throw new Error('Failed to fetch faq most searched')
   }
 
-  const mostSearched = result.faqMostSearcheds.data.map((mostSearched) => {
+  const mostSearched = result.faqMostSearcheds.data
+    .filter((mostSearched) => mostSearched.attributes.faqAnswerGroup?.data)
+    .map((mostSearched) => {
     const faqAnswerGroup =
-      mostSearched.attributes.faqAnswerGroup!.data.attributes
+      mostSearched.attributes.faqAnswerGroup.data!.attributes
     const faqCategory = faqAnswerGroup.faqCategory.data!.attributes
 
     let url = `/faq/${faqCategory.slug}/${faqAnswerGroup.slug}`

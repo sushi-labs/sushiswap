@@ -550,12 +550,9 @@ export class PoolPage extends BaseActions {
                   txCount1dChange: 0,
                   liquidityUSD1dChange: 0,
                   incentiveApr: 0,
-                  hadSmartPool: false,
-                  hasSmartPool: false,
                   isIncentivized: false,
                   wasIncentivized: false,
                   incentives: [],
-                  vaults: [],
                 },
               },
             }

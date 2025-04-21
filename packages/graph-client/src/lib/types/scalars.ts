@@ -1,5 +1,4 @@
 import type { PoolChainId } from 'src/subgraphs/data-api/types/PoolChainId.js'
-import type { SmartPoolChainId } from 'src/subgraphs/data-api/types/SmartPoolChainId.js'
 import type { TokenListChainId } from 'src/subgraphs/data-api/types/TokenListChainId.js'
 import type { TrendingTokensChainId } from 'src/subgraphs/data-api/types/TrendingTokensChainId.js'
 import type { ChainId } from 'sushi/chain'
@@ -31,7 +30,6 @@ export type Scalars = {
   SushiSwapV3ChainId: SushiSwapV3ChainId
 
   PoolChainId: PoolChainId
-  SmartPoolChainId: SmartPoolChainId
 
   TokenListChainId: TokenListChainId
   TrendingTokensChainId: TrendingTokensChainId

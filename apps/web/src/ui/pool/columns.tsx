@@ -1,5 +1,4 @@
 import type { Pool } from '@sushiswap/graph-client/data-api'
-import type { PoolHasSteerVaults } from '@sushiswap/steer-sdk'
 import {
   Badge,
   Currency,
@@ -95,7 +94,7 @@ export const REWARDS_V3_APR_COLUMN: ColumnDef<AngleRewardsPool, unknown> = {
     <TooltipProvider>
       <Tooltip delayDuration={0}>
         <TooltipTrigger asChild>
-          <span className="underline decoration-dotted underline-offset-2 flex items-center justify-end gap-1 text-sm text-gray-900 dark:text-slate-50">
+          <span className="flex items-center justify-end gap-1 text-sm text-gray-900 underline decoration-dotted underline-offset-2 dark:text-slate-50">
             {formatPercent((props.row.original.meanAPR ?? 0) / 100)}
           </span>
         </TooltipTrigger>
@@ -130,7 +129,7 @@ export const REWARDS_V3_CLAIMABLE_COLUMN: ColumnDef<AngleRewardsPool, unknown> =
   }
 
 export const NAME_COLUMN_POOL: ColumnDef<
-  MaybeNestedPool<PoolHasSteerVaults<PoolIfIncentivized<PoolBase, true>, true>>,
+  MaybeNestedPool<PoolIfIncentivized<PoolBase, true>>,
   unknown
 > = {
   id: 'name',
@@ -196,7 +195,7 @@ export const EXPLORE_NAME_COLUMN_POOL: ColumnDef<Pool, unknown> = {
           ) : null}
         </div>
         <div className="flex flex-col gap-0.5">
-          <span className="flex items-center gap-1 text-sm font-medium text-gray-900 dark:text-slate-50 whitespace-nowrap pr-2">
+          <span className="flex items-center gap-1 pr-2 text-sm font-medium text-gray-900 dark:text-slate-50 whitespace-nowrap">
             {props.row.original.name}
           </span>
           <div className="flex gap-1">
@@ -236,20 +235,6 @@ export const EXPLORE_NAME_COLUMN_POOL: ColumnDef<Pool, unknown> = {
                   </TooltipTrigger>
                   <TooltipContent>
                     <p>Farm rewards available</p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-            )}
-            {props.row.original.isSmartPool && (
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <div className="bg-[#F2E9D6] dark:bg-yellow/60 text-[10px] px-2 rounded-full">
-                      💡
-                    </div>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>Smart Pool available</p>
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
@@ -392,7 +377,7 @@ export const APR_WITH_REWARDS_COLUMN: ColumnDef<Pool, unknown> = {
   accessorFn: (row) => row.totalApr1d,
   cell: (props) => (
     <APRWithRewardsHoverCard pool={props.row.original}>
-      <div className="flex gap-1 items-center">
+      <div className="flex items-center gap-1">
         <span
           className={classNames(
             'underline decoration-dotted underline-offset-2',
