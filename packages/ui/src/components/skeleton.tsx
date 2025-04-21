@@ -95,7 +95,7 @@ function ChartLoadingStateMask({
   switch (type) {
     case 'area':
       return (
-        <g transform={`translate(0, ${height - 60}) scale(1,-1)`}>
+        <g transform={`translate(0, ${height - 16}) scale(1,-1)`}>
           <path
             d="M0 170 Q50 90, 100 170 T200 170 T300 170 T400 170 T500 170 T600 170 T700 170 T800 170 V0 H0 Z"
             className="fill-black/[0.10] dark:fill-white/[0.10] animate-pulse"
@@ -104,7 +104,7 @@ function ChartLoadingStateMask({
       )
     case 'bar':
       return (
-        <g transform={`translate(0, ${height - 60}) scale(1,-1)`}>
+        <g transform={`translate(0, ${height - 16}) scale(1,-1)`}>
           {Array.from({ length: 25 }).map((_, i) => {
             const _height = Math.random() * height * 0.8 + 20
             return (
@@ -125,13 +125,13 @@ function ChartLoadingStateMask({
   }
 }
 
-function SkeletonChartAxes({
+function SkeletonChartAxis({
   height,
 }: {
   height: number
 }) {
   return (
-    <g transform={`translate(0, ${height - 50})`}>
+    <g transform={`translate(0, ${height - 6})`}>
       <rect
         width="7%"
         height="6"
@@ -186,7 +186,7 @@ function SkeletonChart({
         xmlns="http://www.w3.org/2000/svg"
         fill="none"
       >
-        <SkeletonChartAxes height={height} />
+        <SkeletonChartAxis height={height} />
         <ChartLoadingStateMask type={type} height={height} />
       </svg>
     </div>
