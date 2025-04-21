@@ -1,6 +1,6 @@
 'use client'
 
-import { Button, SkeletonChart, SkeletonText, Toggle } from '@sushiswap/ui'
+import { SkeletonChart, SkeletonText, Toggle } from '@sushiswap/ui'
 import format from 'date-fns/format'
 import * as echarts from 'echarts'
 import ReactEcharts, { type EChartsOption } from 'echarts-for-react'
@@ -8,8 +8,9 @@ import { useTheme } from 'next-themes'
 import { type FC, useCallback, useMemo, useState } from 'react'
 import { useTokenPriceChart } from 'src/lib/hooks/api/useTokenPriceChart'
 import type { SushiSwapChainId } from 'sushi/config'
+import type { SerializedToken } from 'sushi/currency'
 import { formatPercent, formatUSD } from 'sushi/format'
-import type { Token } from 'sushi/types'
+import type { Address } from 'sushi/types'
 
 enum CHART_DURATION {
   DAY = 'DAY',
@@ -19,7 +20,7 @@ enum CHART_DURATION {
 }
 
 interface PriceChartProps {
-  token: Token
+  token: SerializedToken
 }
 
 export const PriceChart: FC<PriceChartProps> = ({ token }) => {
@@ -29,7 +30,7 @@ export const PriceChart: FC<PriceChartProps> = ({ token }) => {
 
   const { data, isLoading } = useTokenPriceChart({
     chainId: token.chainId as SushiSwapChainId,
-    address: token.address,
+    address: token.address as Address,
     duration,
   })
 

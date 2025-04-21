@@ -17,16 +17,16 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@sushiswap/ui'
-import { type FC, useState } from 'react'
+import { type FC, useMemo, useState } from 'react'
 import { EvmChain } from 'sushi/chain'
-import type { Token } from 'sushi/currency'
+import { type SerializedToken, Token } from 'sushi/currency'
 import { shortenAddress } from 'sushi/format'
 import { PriceChart } from './PriceChart'
 
 type ChartType = 'Price' // | 'Volume' | 'TVL'
 
 interface TokenChartProps {
-  token: Token
+  token: SerializedToken
 }
 
 export const TokenChart: FC<TokenChartProps> = ({ token }) => {
@@ -36,7 +36,11 @@ export const TokenChart: FC<TokenChartProps> = ({ token }) => {
     <div className="flex flex-col">
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
-          <Currency.Icon currency={token} width={36} height={36} />
+          <Currency.Icon
+            currency={useMemo(() => new Token(token), [token])}
+            width={36}
+            height={36}
+          />
           <div className="flex items-end gap-2">
             <span className="font-bold text-3xl">{token.name}</span>
             <span className="font-medium text-lg">{token.symbol}</span>
