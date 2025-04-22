@@ -66,8 +66,9 @@ const columns = [
             userId: session.user.id,
           })
 
-          return response.data.member
+          return response
         },
+        select: (response) => response.data.member,
       })
 
       const actionProps = useMemo(
@@ -143,6 +144,7 @@ export function TeamMembersTable({ team: initialTeam }: TeamMembersTable) {
 
       return response.data.team
     },
+    // TODO: Use prefetch queries instead of initialData
     initialData: initialTeam,
   })
 

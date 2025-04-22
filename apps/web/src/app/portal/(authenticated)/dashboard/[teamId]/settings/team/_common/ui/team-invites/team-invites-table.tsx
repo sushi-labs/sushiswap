@@ -55,8 +55,9 @@ const columns = [
             userId: session.user.id,
           })
 
-          return response.data.member
+          return response
         },
+        select: (response) => response.data.member,
       })
 
       const { mutateAsync, isPending } = useMutation({
@@ -133,6 +134,7 @@ export function TeamInvitesTable({ team: initialTeam }: TeamInvitesTable) {
 
       return { id: initialTeam.id, invites: response.data.invites }
     },
+    // TODO: Use prefetch queries instead of initialData
     initialData: initialTeam,
   })
 
