@@ -93,8 +93,6 @@ export const TokenChart: FC<TokenChartProps> = ({ token }) => {
       <Separator />
 
       <div>{selectedChartType === 'Price' && <PriceChart token={token} />}</div>
-
-      <Separator />
     </div>
   )
 }
