@@ -41,7 +41,7 @@ export const TokenChart: FC<TokenChartProps> = ({ token }) => {
             width={36}
             height={36}
           />
-          <div className="flex items-end gap-2">
+          <div className="flex items-end gap-2 flex-wrap">
             <span className="font-bold text-3xl">{token.name}</span>
             <span className="font-medium text-lg">{token.symbol}</span>
             <div className="flex gap-1 items-center mb-[1px]">
