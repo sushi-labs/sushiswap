@@ -36,10 +36,15 @@ export const poolFiltersSchema = z.object({
 
 export type PoolFilters = z.infer<typeof poolFiltersSchema>
 
+type SetFilters = {
+  (next: SetStateAction<PoolFilters>): void
+  (reset?: undefined): void
+}
+
 type PoolsFiltersContext = {
   state: PoolFilters
   mutate: {
-    setFilters: Dispatch<SetStateAction<Partial<PoolFilters>>>
+    setFilters: SetFilters
   }
 }
 
@@ -66,6 +71,12 @@ export const useSetPoolFilters = () => {
   return context.mutate.setFilters
 }
 
+const DEFAULT_STATE = {
+  tokenSymbols: [],
+  protocols: POOL_TYPES,
+  farmsOnly: undefined,
+}
+
 const PoolsFiltersUrlProvider: FC<PoolsFiltersProviderProps> = ({
   children,
 }) => {
@@ -76,21 +87,19 @@ const PoolsFiltersUrlProvider: FC<PoolsFiltersProviderProps> = ({
   const state = useMemo(() => {
     const { tokenSymbols, protocols, farmsOnly } = urlFilters
     const state: PoolFilters = {
-      tokenSymbols: tokenSymbols ? tokenSymbols : [],
-      protocols: protocols ? protocols : POOL_TYPES,
-      farmsOnly: farmsOnly ? farmsOnly : false,
+      tokenSymbols: tokenSymbols ? tokenSymbols : DEFAULT_STATE.tokenSymbols,
+      protocols: protocols ? protocols : DEFAULT_STATE.protocols,
+      farmsOnly: farmsOnly ? farmsOnly : DEFAULT_STATE.farmsOnly,
     }
     return state
   }, [urlFilters])
 
   const mutate = useMemo(() => {
-    const setFilters: Dispatch<SetStateAction<Partial<PoolFilters>>> = (
-      filters,
-    ) => {
+    const setFilters: SetFilters = (filters) => {
       if (typeof filters === 'function') {
         void replace(parseArgs(filters(state)))
       } else {
-        void replace(parseArgs(filters))
+        void replace(parseArgs(filters ?? {}))
       }
     }
 
@@ -111,20 +120,14 @@ const PoolsFiltersUrlProvider: FC<PoolsFiltersProviderProps> = ({
 const PoolsFiltersLocalStateProvider: FC<PoolsFiltersProviderProps> = ({
   children,
 }) => {
-  const [state, setState] = useState<PoolFilters>({
-    tokenSymbols: [],
-    protocols: POOL_TYPES,
-    farmsOnly: false,
-  })
+  const [state, setState] = useState<PoolFilters>(DEFAULT_STATE)
 
   const mutate = useMemo(() => {
-    const setFilters: Dispatch<SetStateAction<Partial<PoolFilters>>> = (
-      filters,
-    ) => {
+    const setFilters: SetFilters = (filters) => {
       if (typeof filters === 'function') {
-        setState({ ...state, ...filters(state) })
+        setState(filters(state))
       } else {
-        setState({ ...state, ...filters })
+        setState(filters ?? DEFAULT_STATE)
       }
     }
 

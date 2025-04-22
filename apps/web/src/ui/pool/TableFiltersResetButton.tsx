@@ -29,11 +29,7 @@ export const TableFiltersResetButton: FC = () => {
   const reset = useCallback(() => {
     setShow(false)
     startTransition(() => {
-      setFilters({
-        protocols: undefined,
-        tokenSymbols: undefined,
-        farmsOnly: undefined,
-      })
+      setFilters(undefined)
     })
   }, [setFilters])
 

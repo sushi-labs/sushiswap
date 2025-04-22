@@ -23,10 +23,15 @@ export const tokenFiltersSchema = z.object({
 
 export type TokenFilters = z.infer<typeof tokenFiltersSchema>
 
+type SetFilters = {
+  (next: SetStateAction<TokenFilters>): void
+  (reset?: undefined): void
+}
+
 type TokensFiltersContext = {
   state: TokenFilters
   mutate: {
-    setFilters: Dispatch<SetStateAction<Partial<TokenFilters>>>
+    setFilters: SetFilters
   }
 }
 
@@ -53,6 +58,10 @@ export const useSetTokenFilters = () => {
   return context.mutate.setFilters
 }
 
+const DEFAULT_STATE = {
+  tokenSymbols: [],
+}
+
 const TokensFiltersUrlProvider: FC<TokensFiltersProviderProps> = ({
   children,
 }) => {
@@ -60,19 +69,17 @@ const TokensFiltersUrlProvider: FC<TokensFiltersProviderProps> = ({
   const urlFilters = useTypedSearchParams(tokenFiltersSchema.partial())
   const state = useMemo(() => {
     const state: TokenFilters = {
-      tokenSymbols: urlFilters.tokenSymbols || [],
+      tokenSymbols: urlFilters.tokenSymbols || DEFAULT_STATE.tokenSymbols,
     }
     return state
   }, [urlFilters])
 
   const mutate = useMemo(() => {
-    const setFilters: Dispatch<SetStateAction<Partial<TokenFilters>>> = (
-      filters,
-    ) => {
+    const setFilters: SetFilters = (filters) => {
       if (typeof filters === 'function') {
         void replace(parseArgs(filters(state)))
       } else {
-        void replace(parseArgs(filters))
+        void replace(parseArgs(filters ?? {}))
       }
     }
 
@@ -93,18 +100,14 @@ const TokensFiltersUrlProvider: FC<TokensFiltersProviderProps> = ({
 const TokensFiltersLocalStateProvider: FC<TokensFiltersProviderProps> = ({
   children,
 }) => {
-  const [state, setState] = useState<TokenFilters>({
-    tokenSymbols: [],
-  })
+  const [state, setState] = useState<TokenFilters>(DEFAULT_STATE)
 
   const mutate = useMemo(() => {
-    const setFilters: Dispatch<SetStateAction<Partial<TokenFilters>>> = (
-      filters,
-    ) => {
+    const setFilters: SetFilters = (filters) => {
       if (typeof filters === 'function') {
-        setState({ ...state, ...filters(state) })
+        setState(filters(state))
       } else {
-        setState({ ...state, ...filters })
+        setState(filters ?? DEFAULT_STATE)
       }
     }
 
