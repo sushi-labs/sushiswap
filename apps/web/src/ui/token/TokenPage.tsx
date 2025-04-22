@@ -17,9 +17,8 @@ import {
   type SushiSwapChainId,
 } from 'sushi/config'
 import { type SerializedToken, Token } from 'sushi/currency'
-import { PoolsFiltersStateProvider } from '../pool'
+import { PoolsFiltersProvider } from '../pool'
 import { PoolsTable } from '../pool/PoolsTable'
-import { TableFiltersSmartPoolsOnly } from '../pool/TableFilterSmartPoolsOnly'
 import { TableFiltersFarmsOnly } from '../pool/TableFiltersFarmsOnly'
 import { TableFiltersNetwork } from '../pool/TableFiltersNetwork'
 import { TableFiltersPoolType } from '../pool/TableFiltersPoolType'
@@ -129,7 +128,7 @@ export const TokenPage: FC<TokenPageProps> = ({ token: _token, tokenInfo }) => {
           </Container>
           <section className="flex flex-col flex-1 mt-10">
             <div className="bg-gray-50 dark:bg-white/[0.02] border-t border-accent pt-4 pb-10 min-h-screen">
-              <PoolsFiltersStateProvider>
+              <PoolsFiltersProvider url={false}>
                 <Container maxWidth="7xl" className="px-4">
                   <div className="flex flex-wrap gap-3 mb-4">
                     <TableFiltersSearchToken />
@@ -146,7 +145,6 @@ export const TokenPage: FC<TokenPageProps> = ({ token: _token, tokenInfo }) => {
                       className="lg:hidden block"
                     />
                     <TableFiltersFarmsOnly />
-                    <TableFiltersSmartPoolsOnly />
                     <TableFiltersResetButton />
                   </div>
                   <PoolsTable
@@ -156,7 +154,7 @@ export const TokenPage: FC<TokenPageProps> = ({ token: _token, tokenInfo }) => {
                     }
                   />
                 </Container>
-              </PoolsFiltersStateProvider>
+              </PoolsFiltersProvider>
             </div>
           </section>
         </div>

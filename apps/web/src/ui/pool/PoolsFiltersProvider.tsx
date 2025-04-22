@@ -36,16 +36,14 @@ export const poolFiltersSchema = z.object({
 
 export type PoolFilters = z.infer<typeof poolFiltersSchema>
 
-type PoolsFiltersContextType = {
+type PoolsFiltersContext = {
   state: PoolFilters
   mutate: {
-    setFilters: Dispatch<SetStateAction<PoolFilters>>
+    setFilters: Dispatch<SetStateAction<Partial<PoolFilters>>>
   }
 }
 
-const FilterContext = createContext<PoolsFiltersContextType | undefined>(
-  undefined,
-)
+const FilterContext = createContext<PoolsFiltersContext | undefined>(undefined)
 
 interface PoolsFiltersProviderProps {
   children?: ReactNode
@@ -68,33 +66,38 @@ export const useSetPoolFilters = () => {
   return context.mutate.setFilters
 }
 
-export const PoolsFiltersUrlProvider: FC<PoolsFiltersProviderProps> = ({
+const PoolsFiltersUrlProvider: FC<PoolsFiltersProviderProps> = ({
   children,
 }) => {
-  const { push } = useRouter()
+  const { replace } = useRouter()
+
   const urlFilters = useTypedSearchParams(poolFiltersSchema.partial())
+
   const state = useMemo(() => {
+    const { tokenSymbols, protocols, farmsOnly } = urlFilters
     const state: PoolFilters = {
-      tokenSymbols: urlFilters.tokenSymbols || [],
-      protocols: urlFilters.protocols || POOL_TYPES,
-      farmsOnly: urlFilters.farmsOnly,
+      tokenSymbols: tokenSymbols ? tokenSymbols : [],
+      protocols: protocols ? protocols : POOL_TYPES,
+      farmsOnly: farmsOnly ? farmsOnly : false,
     }
     return state
   }, [urlFilters])
 
   const mutate = useMemo(() => {
-    const setFilters: Dispatch<SetStateAction<PoolFilters>> = (filters) => {
+    const setFilters: Dispatch<SetStateAction<Partial<PoolFilters>>> = (
+      filters,
+    ) => {
       if (typeof filters === 'function') {
-        void push(parseArgs(filters(state)))
+        void replace(parseArgs(filters(state)))
       } else {
-        void push(parseArgs(filters))
+        void replace(parseArgs(filters))
       }
     }
 
     return {
       setFilters,
     }
-  }, [push, state])
+  }, [replace, state])
 
   return (
     <FilterContext.Provider
@@ -105,20 +108,39 @@ export const PoolsFiltersUrlProvider: FC<PoolsFiltersProviderProps> = ({
   )
 }
 
-export const PoolsFiltersStateProvider: FC<PoolsFiltersProviderProps> = ({
+const PoolsFiltersLocalStateProvider: FC<PoolsFiltersProviderProps> = ({
   children,
 }) => {
-  const [filters, setFilters] = useState<PoolFilters>({
+  const [state, setState] = useState<PoolFilters>({
     tokenSymbols: [],
     protocols: POOL_TYPES,
     farmsOnly: false,
   })
 
+  const mutate = useMemo(() => {
+    const setFilters: Dispatch<SetStateAction<Partial<PoolFilters>>> = (
+      filters,
+    ) => {
+      if (typeof filters === 'function') {
+        setState({ ...state, ...filters(state) })
+      } else {
+        setState({ ...state, ...filters })
+      }
+    }
+
+    return {
+      setFilters,
+    }
+  }, [state])
+
   return (
     <FilterContext.Provider
       value={useMemo(
-        () => ({ state: filters, mutate: { setFilters } }),
-        [filters],
+        () => ({
+          state,
+          mutate,
+        }),
+        [state, mutate],
       )}
     >
       {children}
@@ -126,5 +148,12 @@ export const PoolsFiltersStateProvider: FC<PoolsFiltersProviderProps> = ({
   )
 }
 
-// For backward compatibility
-export const PoolsFiltersProvider = PoolsFiltersUrlProvider
+export const PoolsFiltersProvider: FC<
+  PoolsFiltersProviderProps & { url?: boolean }
+> = ({ url = true, children }) => {
+  return url ? (
+    <PoolsFiltersUrlProvider>{children}</PoolsFiltersUrlProvider>
+  ) : (
+    <PoolsFiltersLocalStateProvider>{children}</PoolsFiltersLocalStateProvider>
+  )
+}

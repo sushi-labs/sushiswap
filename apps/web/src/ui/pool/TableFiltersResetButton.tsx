@@ -30,9 +30,9 @@ export const TableFiltersResetButton: FC = () => {
     setShow(false)
     startTransition(() => {
       setFilters({
-        protocols: POOL_TYPES,
-        tokenSymbols: [],
-        farmsOnly: false,
+        protocols: undefined,
+        tokenSymbols: undefined,
+        farmsOnly: undefined,
       })
     })
   }, [setFilters])

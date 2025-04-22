@@ -23,16 +23,14 @@ export const tokenFiltersSchema = z.object({
 
 export type TokenFilters = z.infer<typeof tokenFiltersSchema>
 
-type TokensFiltersContextType = {
+type TokensFiltersContext = {
   state: TokenFilters
   mutate: {
-    setFilters: Dispatch<SetStateAction<TokenFilters>>
+    setFilters: Dispatch<SetStateAction<Partial<TokenFilters>>>
   }
 }
 
-const FilterContext = createContext<TokensFiltersContextType | undefined>(
-  undefined,
-)
+const FilterContext = createContext<TokensFiltersContext | undefined>(undefined)
 
 interface TokensFiltersProviderProps {
   children?: ReactNode
@@ -55,10 +53,10 @@ export const useSetTokenFilters = () => {
   return context.mutate.setFilters
 }
 
-export const TokensFiltersUrlProvider: FC<TokensFiltersProviderProps> = ({
+const TokensFiltersUrlProvider: FC<TokensFiltersProviderProps> = ({
   children,
 }) => {
-  const { push } = useRouter()
+  const { replace } = useRouter()
   const urlFilters = useTypedSearchParams(tokenFiltersSchema.partial())
   const state = useMemo(() => {
     const state: TokenFilters = {
@@ -68,18 +66,20 @@ export const TokensFiltersUrlProvider: FC<TokensFiltersProviderProps> = ({
   }, [urlFilters])
 
   const mutate = useMemo(() => {
-    const setFilters: Dispatch<SetStateAction<TokenFilters>> = (filters) => {
+    const setFilters: Dispatch<SetStateAction<Partial<TokenFilters>>> = (
+      filters,
+    ) => {
       if (typeof filters === 'function') {
-        void push(parseArgs(filters(state)))
+        void replace(parseArgs(filters(state)))
       } else {
-        void push(parseArgs(filters))
+        void replace(parseArgs(filters))
       }
     }
 
     return {
       setFilters,
     }
-  }, [push, state])
+  }, [replace, state])
 
   return (
     <FilterContext.Provider
@@ -90,24 +90,46 @@ export const TokensFiltersUrlProvider: FC<TokensFiltersProviderProps> = ({
   )
 }
 
-export const TokensFiltersStateProvider: FC<TokensFiltersProviderProps> = ({
+const TokensFiltersLocalStateProvider: FC<TokensFiltersProviderProps> = ({
   children,
 }) => {
-  const [filters, setFilters] = useState<TokenFilters>({
+  const [state, setState] = useState<TokenFilters>({
     tokenSymbols: [],
   })
 
+  const mutate = useMemo(() => {
+    const setFilters: Dispatch<SetStateAction<Partial<TokenFilters>>> = (
+      filters,
+    ) => {
+      if (typeof filters === 'function') {
+        setState({ ...state, ...filters(state) })
+      } else {
+        setState({ ...state, ...filters })
+      }
+    }
+
+    return {
+      setFilters,
+    }
+  }, [state])
+
   return (
     <FilterContext.Provider
-      value={useMemo(
-        () => ({ state: filters, mutate: { setFilters } }),
-        [filters],
-      )}
+      value={useMemo(() => ({ state, mutate }), [state, mutate])}
     >
       {children}
     </FilterContext.Provider>
   )
 }
 
-// For backward compatibility
-export const TokensFiltersProvider = TokensFiltersUrlProvider
+export const TokensFiltersProvider: FC<
+  TokensFiltersProviderProps & { url?: boolean }
+> = ({ children, url = true }) => {
+  return url ? (
+    <TokensFiltersUrlProvider>{children}</TokensFiltersUrlProvider>
+  ) : (
+    <TokensFiltersLocalStateProvider>
+      {children}
+    </TokensFiltersLocalStateProvider>
+  )
+}
