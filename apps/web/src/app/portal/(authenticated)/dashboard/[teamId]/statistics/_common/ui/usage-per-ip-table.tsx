@@ -82,8 +82,9 @@ export function UsagePerIpTable({ teamId }: UsagePerIpTable) {
         type: timeframe,
       })
 
-      return response.data.team.usagePerIp.data
+      return response
     },
+    select: (response) => response.data.team.usagePerIp.data,
   })
 
   return (

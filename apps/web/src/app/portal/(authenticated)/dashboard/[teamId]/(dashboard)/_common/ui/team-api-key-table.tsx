@@ -138,8 +138,9 @@ export function TeamApiKeyTable({ teamId }: { teamId: string }) {
         teamId,
       })
 
-      return response.data.team
+      return response
     },
+    select: (response) => response.data.team,
   })
 
   const { data: stats24h, isLoading: isStats24hLoading } = useQuery({
@@ -150,11 +151,13 @@ export function TeamApiKeyTable({ teamId }: { teamId: string }) {
         type: '24h',
       })
 
-      return response.data.team.usagePerKey.data.map((entry) => ({
+      return response
+    },
+    select: (response) =>
+      response.data.team.usagePerKey.data.map((entry) => ({
         id: entry.key.id,
         total: entry.data.reduce((acc, cur) => acc + cur.value, 0),
-      }))
-    },
+      })),
   })
 
   const { data: stats7d, isLoading: isStats7dLoading } = useQuery({
@@ -165,11 +168,13 @@ export function TeamApiKeyTable({ teamId }: { teamId: string }) {
         type: '7d',
       })
 
-      return response.data.team.usagePerKey.data.map((entry) => ({
+      return response
+    },
+    select: (response) =>
+      response.data.team.usagePerKey.data.map((entry) => ({
         id: entry.key.id,
         total: entry.data.reduce((acc, cur) => acc + cur.value, 0),
-      }))
-    },
+      })),
   })
 
   const formatted = useMemo(() => {

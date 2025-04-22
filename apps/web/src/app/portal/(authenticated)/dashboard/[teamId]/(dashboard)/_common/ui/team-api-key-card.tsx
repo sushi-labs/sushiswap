@@ -24,8 +24,7 @@ export async function TeamApiKeyCard({ teamId }: { teamId: string }) {
     queryKey: ['portal-getTeamsTeamIdApiKeys', teamId],
     queryFn: async () => {
       const response = await client.getTeamsTeamIdApiKeys({ teamId })
-
-      return response.data.team
+      return response
     },
   })
 

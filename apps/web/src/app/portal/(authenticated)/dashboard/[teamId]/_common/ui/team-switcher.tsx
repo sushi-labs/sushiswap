@@ -70,8 +70,9 @@ export function TeamSwitcher({ currentTeam }: TeamSwitcher) {
     queryFn: async () => {
       const response = await client.getUsersMe()
 
-      return response.data.user
+      return response
     },
+    select: (response) => response.data.user,
   })
 
   useOnClickOutside(ref, () => {

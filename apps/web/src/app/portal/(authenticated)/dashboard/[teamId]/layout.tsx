@@ -32,7 +32,7 @@ export default async function Layout({
   await queryClient.prefetchQuery({
     queryKey: ['portal-getTeamsTeamIdMembersUserId', teamId, session.user.id],
     queryFn: () => {
-      return teamMembershipResponse.data
+      return teamMembershipResponse
     },
   })
 

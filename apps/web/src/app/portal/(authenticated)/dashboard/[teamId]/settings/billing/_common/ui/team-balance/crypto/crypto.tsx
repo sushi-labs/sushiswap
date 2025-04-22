@@ -49,27 +49,28 @@ function useErc20BillingServiceConfig() {
     queryFn: async () => {
       const response = await client.getServicesErc20DepositsConfig()
 
-      return {
-        chainIds: response.data.chains.map(
-          (chain) => chain.chainId as EvmChainId,
-        ),
-        configs: response.data.chains.map((chain) => ({
-          ...chain,
-          chainId: chain.chainId as EvmChainId,
-          stables: chain.stables.reduce(
-            (acc, token) => {
-              acc[token.address.toLowerCase() as Address] = new Token({
-                ...token,
-                chainId: chain.chainId as EvmChainId,
-              })
-
-              return acc
-            },
-            {} as Record<Address, Token>,
-          ),
-        })),
-      }
+      return response
     },
+    select: (response) => ({
+      chainIds: response.data.chains.map(
+        (chain) => chain.chainId as EvmChainId,
+      ),
+      configs: response.data.chains.map((chain) => ({
+        ...chain,
+        chainId: chain.chainId as EvmChainId,
+        stables: chain.stables.reduce(
+          (acc, token) => {
+            acc[token.address.toLowerCase() as Address] = new Token({
+              ...token,
+              chainId: chain.chainId as EvmChainId,
+            })
+
+            return acc
+          },
+          {} as Record<Address, Token>,
+        ),
+      })),
+    }),
   })
 }
 
@@ -346,8 +347,9 @@ function WaitTab({ txData }: { txData: TxData }) {
         chainId: String(txData.chainId),
       })
 
-      return response.data
+      return response
     },
+    select: (response) => response.data,
     refetchInterval: 2500,
   })
 

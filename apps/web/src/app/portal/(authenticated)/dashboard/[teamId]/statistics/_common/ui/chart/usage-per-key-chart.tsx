@@ -21,8 +21,9 @@ export function UsagePerKeyChart({ teamId }: { teamId: string }) {
         type: timeframe,
       })
 
-      return response.data
+      return response
     },
+    select: (response) => response.data,
   })
 
   const formatted = useMemo(

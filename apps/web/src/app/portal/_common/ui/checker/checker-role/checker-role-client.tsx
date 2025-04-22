@@ -28,8 +28,9 @@ export function CheckerRoleClient({
         userId: session.user.id,
       })
 
-      return response.data
+      return response
     },
+    select: (response) => response.data,
   })
 
   if (!data) {

@@ -22,7 +22,7 @@ export function AcceptInviteButton({ inviteId }: AcceptInviteButton) {
   const { message, setMessage } = useCollapsibleMessage()
 
   const { mutateAsync, isPending } = useMutation({
-    mutationKey: ['portal-', inviteId],
+    mutationKey: ['portal-postInvitesInviteIdAccept', inviteId],
     mutationFn: async () => {
       const response = await client.postInvitesInviteIdAccept({
         inviteId,
