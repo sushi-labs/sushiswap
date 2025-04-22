@@ -25,12 +25,12 @@ export function NavigationItems({ chainId }: { chainId: ChainId }) {
         href={`/${ChainKey[chainId]}/explore/pools`}
       >
         <PathnameButton
-          id="all-pools"
+          id="pools"
           pathname={`/${ChainKey[chainId]}/explore/pools`}
           asChild
           size="sm"
         >
-          All Pools
+          Pools
         </PathnameButton>
       </LinkInternal>
     </>
