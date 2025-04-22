@@ -8,8 +8,8 @@ import { isEvmChainId } from 'sushi'
 
 export const PoolsQuery = graphql(
   `
-  query Pools($chainId: PoolChainId!, $page: Int, $search: [String], $orderBy: PoolsOrderBy, $orderDirection: OrderDirection, $protocols: [Protocol], $onlyIncentivized: Boolean, $onlySmartPools: Boolean) {
-    pools(chainId: $chainId, page: $page, search: $search, protocols: $protocols, onlyIncentivized: $onlyIncentivized, onlySmartPools: $onlySmartPools, orderBy: $orderBy, orderDirection: $orderDirection) {
+  query Pools($chainId: PoolChainId!, $page: Int, $search: [String], $orderBy: PoolsOrderBy, $orderDirection: OrderDirection, $protocols: [Protocol], $onlyIncentivized: Boolean) {
+    pools(chainId: $chainId, page: $page, search: $search, protocols: $protocols, onlyIncentivized: $onlyIncentivized, orderBy: $orderBy, orderDirection: $orderDirection) {
       count
       data {
         id
@@ -32,7 +32,6 @@ export const PoolsQuery = graphql(
         feeApr1d
         totalApr1d
         incentiveApr
-        isSmartPool
         isIncentivized
         wasIncentivized
         incentives {

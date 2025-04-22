@@ -10,7 +10,7 @@ import { type FC, type ReactElement, useCallback, useMemo } from 'react'
 import type { ConcentratedLiquidityPosition } from 'src/lib/wagmi/hooks/positions/types'
 import type { EvmChainId } from 'sushi/chain'
 import {
-  SUSHISWAP_V3_POSTIION_MANAGER,
+  SUSHISWAP_V3_POSITION_MANAGER,
   isSushiSwapV3ChainId,
 } from 'sushi/config'
 import { Amount, type Type } from 'sushi/currency'
@@ -88,7 +88,7 @@ export const ConcentratedLiquidityCollectButton: FC<
         })
 
       return {
-        to: SUSHISWAP_V3_POSTIION_MANAGER[chainId],
+        to: SUSHISWAP_V3_POSITION_MANAGER[chainId],
         chainId,
         data: calldata as Hex,
         value: BigInt(value),

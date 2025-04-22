@@ -32,9 +32,6 @@ export const poolFiltersSchema = z.object({
   farmsOnly: z
     .string()
     .transform((bool) => (bool ? bool === 'true' : undefined)),
-  smartPoolsOnly: z
-    .string()
-    .transform((bool) => (bool ? bool === 'true' : undefined)),
 })
 
 export type PoolFilters = z.infer<typeof poolFiltersSchema>
@@ -81,7 +78,6 @@ export const PoolsFiltersUrlProvider: FC<PoolsFiltersProviderProps> = ({
       tokenSymbols: urlFilters.tokenSymbols || [],
       protocols: urlFilters.protocols || POOL_TYPES,
       farmsOnly: urlFilters.farmsOnly,
-      smartPoolsOnly: urlFilters.smartPoolsOnly,
     }
     return state
   }, [urlFilters])
@@ -116,7 +112,6 @@ export const PoolsFiltersStateProvider: FC<PoolsFiltersProviderProps> = ({
     tokenSymbols: [],
     protocols: POOL_TYPES,
     farmsOnly: false,
-    smartPoolsOnly: false,
   })
 
   return (

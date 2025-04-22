@@ -15,10 +15,9 @@ export function ManageV3PoolPositionsTable({
     <ConcentratedPositionsTable
       chainId={pool.chainId}
       poolAddress={pool.address}
-      hideNewSmartPositionButton={!pool.hasEnabledSteerVault}
       hideClosedPositions={hideClosed}
       actions={
-        <div className="flex gap-3 items-center whitespace-nowrap">
+        <div className="flex items-center gap-3 whitespace-nowrap">
           <span className="text-sm font-medium text-gray-600 dark:text-slate-400">
             Hide closed
           </span>
