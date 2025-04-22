@@ -1,3 +1,4 @@
+import { isSushiSwapChainId } from '@sushiswap/graph-client/data-api'
 import {
   getTokenInfo,
   getTokenList,
@@ -6,7 +7,6 @@ import { unstable_cache } from 'next/cache'
 import { notFound } from 'next/navigation'
 import { TokenPage } from 'src/ui/token/TokenPage'
 import type { EvmChainId } from 'sushi'
-import { isSushiSwapChainId } from 'sushi/config'
 import { Token } from 'sushi/currency'
 import { isAddress } from 'viem'
 
@@ -24,7 +24,7 @@ export default async function _TokenPage(props: {
   const { token, tokenInfo } = await unstable_cache(
     async () => {
       const [tokenInfoResult, tokenListResult] = await Promise.allSettled([
-        getTokenInfo({ chainId, address: address }),
+        getTokenInfo({ chainId, address }),
         getTokenList({ chainId, search: address }),
       ])
 

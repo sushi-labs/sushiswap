@@ -1,6 +1,9 @@
+import {
+  SushiSwapChainIds,
+  isSushiSwapChainId,
+} from '@sushiswap/graph-client/data-api'
 import { notFound } from 'next/navigation'
 import type { EvmChainId } from 'sushi/chain'
-import { SUSHISWAP_SUPPORTED_CHAIN_IDS, isSushiSwapChainId } from 'sushi/config'
 import { SidebarContainer, SidebarProvider } from '~evm/_common/ui/sidebar'
 import { Header } from '../../header'
 import { Providers } from './providers'
@@ -24,7 +27,7 @@ export default async function PoolLayout(props: {
         <Header chainId={chainId} />
         <SidebarContainer
           selectedNetwork={chainId}
-          supportedNetworks={SUSHISWAP_SUPPORTED_CHAIN_IDS}
+          supportedNetworks={SushiSwapChainIds}
           unsupportedNetworkHref={'/ethereum/explore/tokens'}
           shiftContent
         >
