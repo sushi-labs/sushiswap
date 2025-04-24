@@ -344,12 +344,6 @@ importers:
       '@wagmi/core':
         specifier: catalog:web3
         version: 2.13.5(@tanstack/query-core@5.62.8)(@types/react@19.0.1)(immer@9.0.21)(react@19.0.0)(typescript@5.7.2)(viem@2.21.55(bufferutil@4.0.8)(typescript@5.7.2)(utf-8-validate@5.0.10)(zod@3.23.8))
-      '@walletconnect/modal':
-        specifier: ^2.7.0
-        version: 2.7.0(@types/react@19.0.1)(react@19.0.0)
-      '@walletconnect/universal-provider':
-        specifier: ^2.19.2
-        version: 2.19.2(@upstash/redis@1.22.1(encoding@0.1.13))(bufferutil@4.0.8)(encoding@0.1.13)(typescript@5.7.2)(utf-8-validate@5.0.10)(zod@3.23.8)
       cors:
         specifier: 2.8.5
         version: 2.8.5
@@ -22030,6 +22024,7 @@ snapshots:
       - typescript
       - utf-8-validate
       - zod
+    optional: true
 
   '@walletconnect/utils@2.11.0(@upstash/redis@1.22.1(encoding@0.1.13))':
     dependencies:
