@@ -1,18 +1,9 @@
-import { useKadenaWallet } from '@kadena/wallet-adapter-react'
 import { List, SelectIcon } from '@sushiswap/ui'
 import Image from 'next/image'
 import { useKadena } from '~kadena/kadena-wallet-provider'
 
 export const WalletListView = () => {
   const { adapters, handleConnect } = useKadena()
-  const { adapters: adapters2, client } = useKadenaWallet()
-  const providers = client.getProviders()
-
-  console.log({
-    adapters2,
-    client,
-    providers,
-  })
 
   return (
     <List className="flex flex-col gap-1 !p-0">

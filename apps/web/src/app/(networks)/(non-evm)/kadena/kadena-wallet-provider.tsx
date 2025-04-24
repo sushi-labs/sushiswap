@@ -63,7 +63,6 @@ export const KadenaWalletProvider = ({
         setActiveAccount(accountInfo)
         setCurrentWallet(walletAdapterName)
         setIsConnected(true)
-        console.log('Connected account:', accountInfo)
       } catch (error) {
         console.error('Failed to connect wallet:', error)
       } finally {
@@ -79,7 +78,6 @@ export const KadenaWalletProvider = ({
       setActiveAccount(null)
       setCurrentWallet(null)
       setIsConnected(false)
-      console.log('Disconnected wallet:', currentWallet)
     }
   }, [client, currentWallet])
 
