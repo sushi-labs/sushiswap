@@ -58,12 +58,17 @@ export const KadenaWalletProvider = ({
     async (walletAdapterName: string) => {
       if (!walletAdapterName) return
       setIsConnecting(true)
-      const accountInfo = await client.connect(walletAdapterName)
-      setActiveAccount(accountInfo)
-      setCurrentWallet(walletAdapterName)
-      setIsConnected(true)
-      setIsConnecting(false)
-      console.log('Connected account:', accountInfo)
+      try {
+        const accountInfo = await client.connect(walletAdapterName)
+        setActiveAccount(accountInfo)
+        setCurrentWallet(walletAdapterName)
+        setIsConnected(true)
+        console.log('Connected account:', accountInfo)
+      } catch (error) {
+        console.error('Failed to connect wallet:', error)
+      } finally {
+        setIsConnecting(false)
+      }
     },
     [client],
   )
