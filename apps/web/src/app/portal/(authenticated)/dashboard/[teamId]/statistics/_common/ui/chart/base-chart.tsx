@@ -161,9 +161,15 @@ export function BaseChart<EnabledTimeframes extends Timeframe[]>({
         borderWidth: 0,
         backgroundColor: 'transparent',
         formatter: (_params) => {
+          const showCount = 10
+
           const params = (Array.isArray(_params) ? _params : [_params]).sort(
             (a, b) => b.data[1] - a.data[1],
           )
+
+          const restLength = Math.max(0, params.length - showCount)
+
+          params.splice(showCount, restLength)
 
           const date = new Date(Number(params[0].data[0]))
           return `<div class="flex flex-col gap-0.5 paper bg-white/50 dark:bg-slate-800 black:bg-muted px-4 py-3 rounded-xl overflow-hidden shadow-lg">
@@ -180,7 +186,8 @@ export function BaseChart<EnabledTimeframes extends Timeframe[]>({
                     </span>
                   </div>`,
               )
-              .join('')}          
+              .join('')}
+                    ${restLength > 0 ? `<div class="text-xs text-gray-500 dark:text-slate-400 black:text-muted-foreground font-medium mt-1">And ${restLength} more</div>` : ''}       
                     <span class="text-xs text-gray-500 dark:text-slate-400 black:text-muted-foreground font-medium mt-1">
                     ${
                       date instanceof Date && !Number.isNaN(date?.getTime())
