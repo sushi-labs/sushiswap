@@ -17,7 +17,6 @@ import { formatNumber, formatUSD } from 'sushi/format'
 import { truncateText } from '~kadena/_common/lib/utils/formatters'
 import { getChainwebAddressLink } from '~kadena/_common/lib/utils/kadena-helpers'
 import { useKadena } from '~kadena/kadena-wallet-provider'
-import { useWalletState } from '~kadena/wallet-provider'
 import type { IProfileView } from './WalletConnector'
 
 type DefaultViewProps = {

@@ -5,8 +5,6 @@ import { useKadena } from '~kadena/kadena-wallet-provider'
 export const WalletListView = () => {
   const { adapters, handleConnect } = useKadena()
 
-  console.log('adapters', adapters)
-
   return (
     <List className="flex flex-col gap-1 !p-0">
       <List.Control className="bg-gray-100 ">
