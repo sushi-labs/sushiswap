@@ -31,6 +31,7 @@ type WalletContextType = {
     name: string
     detected: boolean
     imageURI: string
+    installUrl: string
   }[]
   isConnected: boolean
   isConnecting: boolean
@@ -81,10 +82,17 @@ export const KadenaWalletProvider = ({
     Ecko: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMjUiIHZpZXdCb3g9IjAgMCAxMiAyNSIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTguOTk0ODcgMTUuNjA5Mkw4LjA1Nzk1IDE0LjYzOTRMNS45OTAwNCAxMi41MDAzTDguMDU3OTUgMTAuMzYwOEw4Ljk5NDg3IDkuMzkxODNMOS45MzIwNyAxMC4zNjA4TDEyIDEyLjUwMDNMOS45MzIwNyAxNC42Mzk0TDguOTk0ODcgMTUuNjA5MlpNOC45OTQ4NyAxOC42MDcxVjI1TDAgMTUuNjk1M0wzLjA5MDg3IDEyLjQ5OTVMOC45OTQ4NyAxOC42MDcxWk0wIDkuMzA0OTdWMTUuNjk1M0wzLjA5MDg3IDEyLjQ5OTVMOC45OTQ4NyA2LjM5NDE3VjBMMCA5LjMwNDk3WiIgZmlsbD0idXJsKCNwYWludDBfbGluZWFyXzIwNTFfMTYpIi8+CjxkZWZzPgo8bGluZWFyR3JhZGllbnQgaWQ9InBhaW50MF9saW5lYXJfMjA1MV8xNiIgeDE9IjYiIHkxPSIwIiB4Mj0iNiIgeTI9IjI1IiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+CjxzdG9wIHN0b3AtY29sb3I9IiNGRkQzMDAiLz4KPHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjRkYwMEI4Ii8+CjwvbGluZWFyR3JhZGllbnQ+CjwvZGVmcz4KPC9zdmc+Cg==',
   }
 
+  const ADAPTER_INSTALL_URLS = {
+    Ecko: 'https://wallet.ecko.finance/',
+  }
+
   const walletAdapters = client.getProviders().map((adapter) => ({
     name: adapter.name,
     detected: adapter.detected,
     imageURI: ADAPTER_ICONS[adapter.name as keyof typeof ADAPTER_ICONS] || '',
+    installUrl:
+      ADAPTER_INSTALL_URLS[adapter.name as keyof typeof ADAPTER_INSTALL_URLS] ||
+      '',
   }))
 
   const contextValue = useMemo(
