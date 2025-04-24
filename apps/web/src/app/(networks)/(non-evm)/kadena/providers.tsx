@@ -1,15 +1,13 @@
 'use client'
 
-import { WalletAdaptersProvider } from './wallet-adapters-provider'
-import { WalletConnectProvider } from './wallet-connect-provider'
-import { WalletProvider } from './wallet-provider'
+import { eckoAdapter } from '@kadena/wallet-adapter-ecko'
+import { KadenaWalletProvider as KadenaWalletProviderReact } from '@kadena/wallet-adapter-react'
+import { KadenaWalletProvider } from './kadena-wallet-provider'
 
 export function Providers({ children }: { children: React.ReactNode }) {
   return (
-    <WalletProvider>
-      <WalletConnectProvider>
-        <WalletAdaptersProvider>{children}</WalletAdaptersProvider>
-      </WalletConnectProvider>
-    </WalletProvider>
+    <KadenaWalletProviderReact adapters={[eckoAdapter()]}>
+      <KadenaWalletProvider>{children}</KadenaWalletProvider>
+    </KadenaWalletProviderReact>
   )
 }

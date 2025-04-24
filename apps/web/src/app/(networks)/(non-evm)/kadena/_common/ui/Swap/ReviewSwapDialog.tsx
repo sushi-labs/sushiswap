@@ -22,19 +22,17 @@ import {
   warningSeverityClassName,
 } from '~kadena/_common/lib/utils/warning-severity'
 import { WalletConnector } from '~kadena/_common/ui/WalletConnector/WalletConnector'
-import { useWalletState } from '~kadena/wallet-provider'
+import { useKadena } from '~kadena/kadena-wallet-provider'
 import { useSwapDispatch, useSwapState } from '../../..//swap/swap-provider'
 import { ReviewSwapDialogTrigger } from './ReviewSwapDialogTrigger'
 import { SwapButton } from './SwapButton'
 
 export const ReviewSwapDialog = () => {
   const { token0, token1, amountIn, amountOut } = useSwapState()
-  const { connected } = useWalletState()
+  const { isConnected } = useKadena()
   const { setRoute, setPriceImpactPercentage } = useSwapDispatch()
   const address =
     'abf594a764e49a90a98cddf30872d8497e37399684c1d8e2b8e96fd865728cc2'
-
-  const isConnected = address && connected
 
   const [slippageTolerance] = useSlippageTolerance(
     SlippageToleranceStorageKey.Swap,

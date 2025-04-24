@@ -9,6 +9,7 @@ import { useMemo } from 'react'
 import { formatUnitsForInput } from '~kadena/_common/lib/utils/formatters'
 import { getChainwebTxnLink } from '~kadena/_common/lib/utils/kadena-helpers'
 import { WalletConnector } from '~kadena/_common/ui/WalletConnector/WalletConnector'
+import { useKadena } from '~kadena/kadena-wallet-provider'
 import { useWalletState } from '~kadena/wallet-provider'
 // import { ApproveToken } from '~tron/_common/ui/Shared/ApproveToken'
 import { usePoolState } from '../pool-provider'
@@ -21,8 +22,7 @@ export const RemoveButton = (props: ButtonProps) => {
   const queryClient = useQueryClient()
   const address =
     'abf594a764e49a90a98cddf30872d8497e37399684c1d8e2b8e96fd865728cc2'
-  const { connected } = useWalletState()
-  const isConnected = address && connected
+  const { isConnected } = useKadena()
   const {
     percentage,
     isTxnPending,

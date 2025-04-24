@@ -10,6 +10,7 @@ import {
 import { useEffect, useRef, useState } from 'react'
 import { formatUSD } from 'sushi/format'
 import { formatUnits } from '~kadena/_common/lib/utils/formatters'
+import { useKadena } from '~kadena/kadena-wallet-provider'
 import { useWalletState } from '~kadena/wallet-provider'
 import { Icon } from '../../General/Icon'
 import { WalletConnector } from '../../WalletConnector/WalletConnector'
@@ -20,10 +21,8 @@ import { ReviewAddDialogTrigger } from './ReviewAddDialogTrigger'
 export const ReviewAddDialog = (props: ButtonProps) => {
   const { token0, token1, amountInToken0, amountInToken1 } = usePoolState()
   const closeBtnRef = useRef<HTMLButtonElement>(null)
-  const address =
-    'abf594a764e49a90a98cddf30872d8497e37399684c1d8e2b8e96fd865728cc2'
-  const { connected } = useWalletState()
-  const isConnected = address && connected
+
+  const { isConnected } = useKadena()
 
   const token0Price = '3.93'
   const token1Price = '2.7'
@@ -58,7 +57,7 @@ export const ReviewAddDialog = (props: ButtonProps) => {
           </DialogDescription>
         </DialogHeader>
         <div className="max-w-[504px] mx-auto w-full">
-          <div className="flex flex-col gap-4 w-full">
+          <div className="flex flex-col w-full gap-4">
             <List className="w-full">
               <List.Control>
                 <List.KeyValue title={token0?.symbol}>

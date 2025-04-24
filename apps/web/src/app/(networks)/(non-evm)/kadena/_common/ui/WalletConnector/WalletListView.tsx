@@ -1,9 +1,11 @@
 import { List, SelectIcon } from '@sushiswap/ui'
 import Image from 'next/image'
-import { useWalletAdaptersContext } from '~kadena/wallet-adapters-provider'
+import { useKadena } from '~kadena/kadena-wallet-provider'
 
 export const WalletListView = () => {
-  const { adapters } = useWalletAdaptersContext()
+  const { adapters, handleConnect } = useKadena()
+
+  console.log('adapters', adapters)
 
   return (
     <List className="flex flex-col gap-1 !p-0">
@@ -12,18 +14,17 @@ export const WalletListView = () => {
           <List.MenuItem
             icon={() => (
               <Image
-                src={adapter.icon}
+                src={adapter.imageURI}
                 alt={adapter.name}
-                width={25}
-                height={25}
+                width={12}
+                height={12}
               />
             )}
-            className="w-full items-center text-left justify-start flex px-0"
+            className="flex items-center justify-start w-full px-0 text-left"
             key={adapter.name}
             title={adapter.name}
-            onClick={adapter.onClick}
+            onClick={() => handleConnect(adapter.name)}
             hoverIcon={() => <SelectIcon className="-rotate-90" />}
-            disabled={adapter.readyState === 'NotDetected'}
           />
         ))}
       </List.Control>

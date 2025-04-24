@@ -10,7 +10,7 @@ import { JazzIcon } from '@sushiswap/ui/icons/JazzIcon'
 import { useState } from 'react'
 import { IS_TESTNET } from '~kadena/_common/constants/is-testnet'
 import { truncateText } from '~kadena/_common/lib/utils/formatters'
-import { useWalletState } from '~kadena/wallet-provider'
+import { useKadena } from '~kadena/kadena-wallet-provider'
 import { DefaultView } from './DefaultView'
 import { SettingsView } from './SettingsView'
 import { WalletListView } from './WalletListView'
@@ -18,23 +18,28 @@ import { WalletListView } from './WalletListView'
 export type IProfileView = 'default' | 'settings'
 
 export const WalletConnector = (props: ButtonProps) => {
-  const { connected, connecting, account } = useWalletState()
+  const { isConnected, isConnecting, activeAccount } = useKadena()
 
   const [view, setView] = useState<IProfileView>('default')
-
-  const isConnected = Boolean(account && connected)
 
   return (
     <Popover>
       <PopoverTrigger className="relative w-full">
-        <Button loading={connecting} disabled={connecting} asChild {...props}>
+        <Button
+          loading={isConnecting}
+          disabled={isConnecting}
+          asChild
+          {...props}
+        >
           {isConnected ? (
             <>
-              <JazzIcon diameter={20} address={account} />
-              <span className="hidden sm:block">{truncateText(account)}</span>
+              <JazzIcon diameter={20} address={activeAccount.accountName} />
+              <span className="hidden sm:block">
+                {truncateText(activeAccount.accountName)}
+              </span>
             </>
           ) : (
-            <>{connecting ? 'Connecting' : 'Connect'} </>
+            <>{isConnecting ? 'Connecting' : 'Connect'} </>
           )}
         </Button>
         {IS_TESTNET && isConnected ? (
