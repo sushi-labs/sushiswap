@@ -28,8 +28,7 @@ export const PoolComposition: FC<PoolCompositionProps> = ({ pool }) => {
       decimals: pool.token0.decimals,
       symbol: pool.token0.symbol,
       name: pool.token0.name,
-      logoUrl:
-        'https://kdswapassets.blob.core.windows.net/public/tokens/K%20Logo%20Dark%20Blue%20Backround.png',
+      logoUrl: '/kadena-logo.png',
     })
 
     const token1 = new Token({
