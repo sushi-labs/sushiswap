@@ -14,7 +14,8 @@ export const WalletListView = () => {
 
   return (
     <List className="flex flex-col gap-1 !p-0">
-      <List.Control className="bg-gray-100 ">
+      <List.Control className="bg-gray-100">
+        {/* @ts-ignore */}
         {client.adapters.length === 0 ? (
           <div className="p-3 text-sm">No wallets found</div>
         ) : (
