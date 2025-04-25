@@ -95,12 +95,12 @@ export const useConcentratedLiquidityPositions = ({
     ],
     queryFn: async () => {
       const positions = await getConcentratedLiquidityPositions({
-        account: account,
+        account,
         chainIds,
         config,
       })
 
-      if (!positions?.length || (!prices && !isPriceError)) return []
+      if (!positions.length) return []
 
       const positionsWithTokens = (
         await Promise.all(
