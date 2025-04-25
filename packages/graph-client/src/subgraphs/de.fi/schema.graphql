@@ -1,0 +1,1573 @@
+"""Chain detailed info"""
+type ChainDetailed {
+  id: Int!
+  absoluteChainId: String!
+  abbr: String!
+  name: String!
+  type: String!
+}
+
+"""Chain"""
+type Chain {
+  id: Int!
+  abbr: String!
+  name: String!
+}
+
+"""Asset Category"""
+type AssetCategory {
+  name: String!
+  code: String!
+}
+
+"""Asset Underlying"""
+type AssetUnderlying {
+  id: Int
+  address: String!
+  chainId: Int!
+  name: String
+  displayName: String
+  symbol: String
+  icon: String
+  decimals: Int!
+  categories: [AssetCategory!]!
+  chain: Chain!
+  price: Float
+  underlying: [AssetUnderlying!]!
+  reserve: String
+}
+
+type Asset {
+  id: Int
+  address: String!
+  chainId: Int!
+  name: String
+  displayName: String
+  symbol: String
+  icon: String
+  decimals: Int
+  categories: [AssetCategory!]!
+  chain: Chain!
+  price: Float
+  underlying: [AssetUnderlying!]!
+}
+
+"""Asset Balance"""
+type AssetBalance {
+  asset: Asset!
+
+  """Asset balance"""
+  balance: Float!
+
+  """Asset price in USD"""
+  price: Float
+  total: Float!
+}
+
+"""Asset Chain Balance"""
+type AssetChainBalance {
+  chain: Chain!
+  total: Float!
+  assets: [AssetBalance!]!
+}
+
+"""Asset Balance Response"""
+type AssetBalancesAdvancedResponse {
+  total: Float!
+  wallet: String!
+  chains: [AssetChainBalance!]!
+}
+
+"""Asset Balance Response"""
+type AssetBalancesResponse {
+  total: Float!
+  assets: [AssetBalance!]!
+}
+
+"""Asset Price"""
+type AssetPrice {
+  id: Int!
+  address: String!
+  chainId: Int!
+
+  """Price in USD"""
+  price: Float
+}
+
+type AuditChainBase {
+  id: Int
+  name: String
+}
+
+type AuditChain {
+  id: Int
+  name: String
+  iconLink: String
+  scamCount: Float
+}
+
+type AuditPartner {
+  id: Int!
+  name: String!
+  partnerFilesCount: Int
+  partnerScamsFilesCount: Int
+  logoLink: String
+  mediumLink: String
+  telegramLink: String
+  twitterLink: String
+  websiteLink: String
+}
+
+type AuditChainStat {
+  id: Int!
+  name: String
+  count: Int
+}
+
+type AuditFile {
+  id: Int!
+  name: String
+  auditLink: String
+  date: String
+  techIssues: Int
+  techIssuesLow: Int
+  techIssuesMedium: Int
+  techIssuesHigh: Int
+  score: String
+}
+
+type AuditNetwork {
+  id: Int!
+  tokenAddress: String
+  tokenTicker: String
+  network: AuditChainBase
+}
+
+type Partner {
+  id: Int!
+  name: String
+}
+
+type PartnerAudit {
+  id: Int!
+  name: String
+  auditLink: String
+  date: String
+  techIssues: Int
+  techIssuesLow: Int
+  techIssuesMedium: Int
+  techIssuesHigh: Int
+  score: Int
+  partner: Partner
+}
+
+type Audit {
+  id: Int!
+  projectName: String
+  projectLink: String
+  logoLink: String
+  active: Boolean
+  createdAt: String
+  auditNetworks: [AuditNetwork!]
+  auditFiles: [AuditFile!]
+  partnerAudits: [PartnerAudit!]
+}
+
+type AuditsResponse {
+  items: [Audit!]!
+  currentPage: Int!
+  lastPage: Int!
+  count: Int!
+  chainsStats: [AuditChainStat!]!
+}
+
+"""Chain detailed info"""
+type Credits {
+  """Cost for the current call"""
+  cost: Int!
+
+  """Remaining number of credits"""
+  remaining: Int!
+
+  """
+  Time at which the current limit resets, a signed integer which represents date and time as number of milliseconds from start of UNIX epoch
+  """
+  resetAt: Timestamp
+}
+
+"""
+`Date` type as integer. Type represents date and time as number of milliseconds from start of UNIX epoch.
+"""
+scalar Timestamp
+
+"""Shield approval"""
+type ShieldApproval {
+  """Internal record id"""
+  id: String
+
+  """Address of token on which made the approval"""
+  token: String
+
+  """Address of user who made the approval"""
+  user: String
+
+  """Address of spender to whom the funds are entrusted"""
+  spender: String
+
+  """Approval amount, 0 if approve was revoked"""
+  amount: String
+
+  """Block number of approval transaction"""
+  block: Int
+
+  """Approve transaction hash"""
+  hash: String
+
+  """Approve transaction timestamp"""
+  timestamp: Float
+}
+
+"""Approve sub transaction"""
+type TransactionApprove {
+  type: String!
+  amount: String
+  amountRaw: String!
+  address: String
+  symbol: String
+  icon: String
+  spender: String
+}
+
+"""Transaction details"""
+type TransactionDetails {
+  from: String
+  to: String
+  nonce: Float
+  feeAmount: Float
+  feeValue: Float
+  signatureHex: String
+  signatureDecoded: String
+  signatureDisplay: String
+}
+
+"""Receive sub transaction"""
+type TransactionReceive {
+  type: String!
+  amount: Float!
+  address: String
+  symbol: String
+  icon: String
+  source: String
+  value: Float
+  isFungible: Boolean
+  tokenId: Float
+}
+
+"""Send sub transaction"""
+type TransactionSend {
+  type: String!
+  amount: Float!
+  address: String
+  symbol: String
+  icon: String
+  destination: String
+  value: Float
+  isFungible: Boolean
+  tokenId: Float
+}
+
+"""Get list of transactions for the wallet(s)"""
+type Transaction {
+  id: Float!
+  address: String!
+  hash: String!
+  chainId: Float!
+  chainName: Network
+  timestamp: Float!
+  type: TransactionTypeEnum!
+  isSuccess: Boolean!
+  tx: TransactionDetails!
+  sends: [TransactionSend!]!
+  receives: [TransactionReceive!]!
+  approve: TransactionApprove
+}
+
+enum Network {
+  arbitrum
+  aurora
+  avalanche
+  boba
+  bsc
+  celo
+  cronos
+  ethereum
+  fantom
+  gnosis
+  kcc
+  heco
+  metis
+  milkomeda
+  moonbeam
+  moonriver
+  optimism
+  polygon
+  zksyncera
+  polygonzkevm
+  base
+  linea
+}
+
+enum TransactionTypeEnum {
+  Send
+  Receive
+  Exchange
+  Approval
+  Revoke
+  ContractInteraction
+  ContractDeploy
+}
+
+"""Protocol balance token info"""
+type ProtocolBalanceToken {
+  id: Int
+  address: String!
+  chainId: Int!
+  name: String
+  displayName: String
+  symbol: String
+  icon: String
+  decimals: Int
+  price: Float
+
+  """Token position balance"""
+  balance: Float
+
+  """Position value in USD"""
+  value: Float
+
+  """Token amount"""
+  amount: Float
+  underlying: [ProtocolBalanceToken!]!
+}
+
+"""Protocol balance position entry"""
+type ProtocolBalancePositionEntry {
+  """Year APR"""
+  apr: Float
+
+  """Token amount"""
+  amount: Float
+
+  """Position value in USD"""
+  value: Float
+  tvl: Float
+  token: ProtocolBalanceToken!
+}
+
+"""Protocol balance position on chain"""
+type ProtocolBalancePosition {
+  id: String!
+  feature: ProtocolFeatureEnum!
+  borrowed: [ProtocolBalancePositionEntry!]
+  supplied: [ProtocolBalancePositionEntry!]
+  rewarded: [ProtocolBalancePositionEntry!]
+}
+
+enum ProtocolFeatureEnum {
+  pools
+  staking
+  claimable
+  lending
+  delegation
+  lockedBalances
+  leverageFarming
+  insurance
+  perpetual
+  vesting
+}
+
+"""Protocol balance on chain"""
+type ProtocolBalanceChain {
+  chain: Chain!
+  featureList: [ProtocolFeatureEnum!]!
+  total: Float!
+  positions: [ProtocolBalancePosition!]!
+}
+
+"""Protocol feature"""
+type ProtocolFeature {
+  list: [ProtocolFeatureEnum!]!
+  chain: Chain!
+}
+
+"""Protocol"""
+type Protocol {
+  name: String!
+  slug: String!
+  features: [ProtocolFeature!]!
+}
+
+"""Protocol balance"""
+type ProtocolBalance {
+  protocol: Protocol!
+  address: String!
+  total: Float!
+  chains: [ProtocolBalanceChain!]!
+}
+
+"""Protocol balance V2"""
+type ProtocolBalanceV2 {
+  errors: [String!]!
+  balances: [ProtocolBalance!]!
+}
+
+"""Historical opportunity info"""
+type OpportunityHistorical {
+  opportunityId: Int!
+  date: String!
+  medianApr: Float
+  averageApr: Float
+  averageValueLocked: Float
+  deviation: Float
+}
+
+"""Farm model"""
+type Farm {
+  id: Int!
+  url: String!
+  slug: String!
+  logo: String
+  categories: [String!]!
+}
+
+"""Token model"""
+type Token {
+  address: String!
+  displayName: String!
+  icon: String
+  symbol: String!
+  name: String!
+  tokens: [Token!]
+}
+
+"""Tokens separated by category"""
+type TokenCategorization {
+  borrowRewards: [Token!]
+  deposits: [Token!]!
+  rewards: [Token!]!
+}
+
+"""Opportunities model"""
+type Opportunities {
+  id: Int!
+  chainId: Int!
+  apr: Float!
+  totalValueLocked: Float!
+  categories: [String!]!
+  investmentUrl: String
+  isNew: Boolean!
+  status: OpportunityStatus!
+  farm: Farm!
+  tokens: TokenCategorization!
+}
+
+enum OpportunityStatus {
+  VALID
+  UNTRUSTED
+  DISABLED
+}
+
+"""Rekt token info"""
+type RektToken {
+  name: String
+  addresses: [String!]!
+}
+
+"""Rekt info model"""
+type Rekt {
+  id: Int!
+  projectName: String!
+  title: String!
+
+  """Incident description with HTML tags"""
+  description: String
+
+  """Date in: YYYY-mm-dd"""
+  date: String
+  fundsLost: String
+  fundsReturned: String
+  chaindIds: [Int!]!
+  category: String
+  issueType: String
+  token: RektToken!
+}
+
+"""Project member"""
+type ScannerGovernanceOffChainMember {
+  """Member address"""
+  address: String
+
+  """Member type"""
+  type: String
+}
+
+"""Project strategy"""
+type ScannerGovernanceOffChainStrategy {
+  """Strategy name"""
+  name: String
+
+  """Strategy description"""
+  description: String
+
+  """Strategy author"""
+  strategyAuthor: String
+
+  """Additional strategy information"""
+  additionalInfo: String
+}
+
+"""Off-chain project information"""
+type ScannerGovernanceOffChain {
+  """Project id"""
+  id: String
+
+  """Project name"""
+  name: String
+
+  """Number of followers"""
+  followers: Int
+
+  """Number of proposals"""
+  proposals: Int
+
+  """Number of members"""
+  membersCount: Int
+
+  """Number of strategies"""
+  strategiesCount: Int
+
+  """Members"""
+  members: [ScannerGovernanceOffChainMember!]
+
+  """Strategies"""
+  strategies: ScannerGovernanceOffChainStrategy
+}
+
+"""Address governance"""
+type ScannerGovernanceOnChainOwnerGovernance {
+  """Number of proposals"""
+  proposals: Int
+
+  """Max proposal actions"""
+  proposalMaxActions: Int
+
+  """Proposal voting period"""
+  votingPeriod: String
+
+  """Quorum value"""
+  quorum: String
+
+  """Threshold value"""
+  threshold: String
+
+  """Governor name"""
+  name: String
+}
+
+"""Multisig data"""
+type ScannerGovernanceOnChainOwnerMultisig {
+  """Multisig owners"""
+  multisigOwners: [String!]
+
+  """Threshold value"""
+  threshold: Int
+
+  """Transaction count"""
+  transactionCount: Int
+}
+
+"""Contract owner"""
+type ScannerGovernanceOnChainOwner {
+  """Owner type"""
+  type: String
+
+  """Owner address"""
+  owner: String
+
+  """Can it be modified"""
+  modifiable: Boolean
+
+  """Time lock delay"""
+  timelockDelay: Int
+
+  """Time lock contract"""
+  timelock: String
+
+  """Multisig data"""
+  multisig: ScannerGovernanceOnChainOwnerMultisig
+
+  """Address governance"""
+  governance: ScannerGovernanceOnChainOwnerGovernance
+}
+
+"""Issue contract owner"""
+type ScannerGovernanceOnChainIssueOwner {
+  """Smart contract weakness ID"""
+  scwId: String
+
+  """Issue owners"""
+  owners: [ScannerGovernanceOnChainOwner!]
+}
+
+"""On-chain project information"""
+type ScannerGovernanceOnChain {
+  """Visible contract owner"""
+  visibleOwner: String
+
+  """Proxy contract owners"""
+  proxyOwners: [ScannerGovernanceOnChainOwner!]
+
+  """Contract owners"""
+  contractOwners: [ScannerGovernanceOnChainOwner!]
+
+  """Issues contract owners"""
+  issueOwners: [ScannerGovernanceOnChainIssueOwner!]
+}
+
+"""Scanner governance"""
+type ScannerGovernance {
+  """On-chain project information"""
+  onChain: ScannerGovernanceOnChain
+
+  """Off-chain project information"""
+  offChain: ScannerGovernanceOffChain
+}
+
+"""Scanner holder analysis top holder"""
+type ScannerHolderAnalysisTopHolder {
+  """Holder address"""
+  address: String
+
+  """Holder balance"""
+  balance: String
+
+  """Holder balance % of total supply"""
+  percent: Float
+
+  """True if holder is smart contract"""
+  isContract: Boolean
+}
+
+"""Scanner project issue governance owner"""
+type ScannerProjectIssueGovernanceOwner {
+  """
+  Governance type of owner. Supported types: Governance, Timelock, Multisig, Masterchef, Contract, EOA, NullAddress, NotFound
+  """
+  type: String
+
+  """Onwer address"""
+  owner: String
+
+  """Execution delay of timelock contract in seconds"""
+  timelockDelay: Int
+}
+
+"""Scanner project issue severity changes"""
+type ScannerProjectIssueSeverityChanges {
+  """Severity of issue before change"""
+  from: String
+
+  """Severity of issue after change"""
+  to: String
+
+  """Text explanation why scanner reduced severity level of issue"""
+  reason: String
+}
+
+"""Scanner project issue additional data"""
+type ScannerProjectIssueAdditionalData {
+  """Additional category name"""
+  title: String
+
+  """Additional category data"""
+  description: String
+}
+
+"""Scanner project issue governance info"""
+type ScannerProjectIssueGovernanceInfo {
+  """List of all admins/owners which can execute this function"""
+  owners: [ScannerProjectIssueGovernanceOwner!]
+
+  """The most 'weak' admin/owner of function"""
+  worstOwner: ScannerProjectIssueGovernanceOwner
+}
+
+"""Scanner project issue"""
+type ScannerProjectIssue {
+  """Issue internal id"""
+  id: Int
+
+  """
+  Expresses how confident we are in the correctness of this result. Can be Low, Medium or High
+  """
+  confidence: String
+
+  """
+  Severity level of issue. Supported levels (from most to least dangerous): Critical, High, Medium, Low, Informational, Optimisation
+  """
+  impact: String
+
+  """Issue description with stack location in contract"""
+  description: String
+
+  """Issue snippet first line in contract code"""
+  start: Int
+
+  """Issue snippet last line in contract code"""
+  end: Int
+
+  """DEPRECATED. Additinal parameters for comples detectors"""
+  data: String
+
+  """Code snippet of function which contain issue issue"""
+  snippet: String
+
+  """List of issue severity reduces with reasons"""
+  severityChanges: [ScannerProjectIssueSeverityChanges!]
+
+  """List of additinal parameters(fees, limits, etc.) for some issues"""
+  additionalData: [ScannerProjectIssueAdditionalData!]
+
+  """Contains governance information of vurnalable function"""
+  governanceInfo: ScannerProjectIssueGovernanceInfo
+}
+
+"""Scanner project scan declaration"""
+type ScannerProjectScanDeclaration {
+  """Vulnerability id"""
+  scwId: String
+
+  """Vulnerability title"""
+  scwTitle: String
+
+  """Vulnerability description, null if no issues"""
+  scwDescription: String
+
+  """Vulnerability found issues"""
+  issues: [ScannerProjectIssue!]
+}
+
+"""Scanner holder analysis"""
+type ScannerHolderAnalysis {
+  """List of bigges token holders"""
+  topHolders: [ScannerHolderAnalysisTopHolder!]
+
+  """Total token amount holding by top holders"""
+  topHoldersTotal: Float
+
+  """
+  Total token amount % of total supply holding by top holders. High % indicates a possible dump risk
+  """
+  topHoldersTotalPercentage: Float
+
+  """Token deployer address"""
+  creator: String
+
+  """Token deployer holding amount"""
+  creatorBalance: Float
+
+  """Token deployer holding % of total supply"""
+  creatorBalancePercentage: Float
+
+  """Token owner address"""
+  owner: String
+
+  """Token owner holding amount"""
+  ownerBalance: Float
+
+  """Token owner holding % of total supply"""
+  ownerBalancePercentage: Float
+
+  """
+  Burned tokens amount. Burned tokens is tokens sent to zero(burn) address
+  """
+  burned: Float
+
+  """Burned tokens amount % of total supply"""
+  burnedPercentage: Float
+
+  """Total supply of token"""
+  tokenTotalSupply: Float
+
+  """Total amount of token holders"""
+  totalHolders: Int
+
+  """Major token vulnerabilities list"""
+  issues: [ScannerProjectScanDeclaration!]
+}
+
+"""Scanner liquidity pool holder source"""
+type ScannerLiquidityPoolHolderSource {
+  """Liquidity pool"""
+  source: String
+
+  """Liquidity pool address"""
+  poolAddress: String
+}
+
+"""Scanner liquidity pool holder"""
+type ScannerLiquidityPoolHolder {
+  """Sources (pair names and dex names) of LP holding tokens"""
+  sources: [ScannerLiquidityPoolHolderSource!]
+
+  """Holder address"""
+  address: String
+
+  """Holder owning usd liquidity"""
+  liquidityUsd: Float
+
+  """Unicript locker name or null if holder is not a locker"""
+  locker: String
+
+  """True if holder address is smart contract"""
+  isContract: Boolean
+}
+
+"""Scanner liquidity pool initial liquidity"""
+type ScannerInitialLiquidity {
+  """Token address"""
+  token: String
+
+  """Token initial balance or reserve"""
+  amount: Float
+
+  """Token initial balance or reserve in usd equivalent"""
+  amountUsd: Float
+}
+
+"""Scanner liquidity distribution"""
+type ScannerLiquidityDistribution {
+  """Pair creator LP holding amount"""
+  creator: Float
+
+  """Pair creator LP holding %"""
+  creatorPercentage: Float
+
+  """Pair LP tokens holding amount on contracts"""
+  locked: Float
+
+  """Pair LP tokens holding % on contracts"""
+  lockedPercentage: Float
+
+  """Pair LP tokens holding amount on zero(burn) addresses"""
+  burned: Float
+
+  """Pair LP tokens holding % on zero(burn) addresses"""
+  burnedPercentage: Float
+}
+
+"""Scanner liquidity pool token"""
+type ScannerLiquidityPoolToken {
+  """Token price"""
+  price: Float
+
+  """Pair token reserve or balance amount"""
+  reserve: Float
+
+  """Pair token reserve or balance usd amount"""
+  reserveUsd: Float
+
+  """Token address"""
+  address: String
+
+  """Token decimals"""
+  decimals: Int
+
+  """Token symbol"""
+  symbol: String
+
+  """Token weight in pair (for weighted pairs)"""
+  weight: Float
+}
+
+"""Scanner liquidity pool info"""
+type ScannerLiquidityPool {
+  """
+  Initial pair liqudity info, liquidity that was provided to the pair during deployment
+  """
+  initialLiquidity: [ScannerInitialLiquidity!]
+
+  """Distribution info of pair LP tokens"""
+  liquidityDistribution: ScannerLiquidityDistribution
+
+  """Pair tokens info"""
+  tokens: [ScannerLiquidityPoolToken!]
+
+  """Pair name"""
+  name: String
+
+  """Dex name"""
+  source: String
+
+  """Pair address"""
+  address: String
+
+  """
+  True if liquidityUsd is more than for a certain threshold (around $100k). Indicates whether the pair is sufficiently 'thick' for use
+  """
+  isAdequateLiquidityPresent: Boolean
+
+  """
+  True if level of locked LP token is more than for a certain threshold (around 90%). A high score indicates low chances of rugpool
+  """
+  isEnoughLiquidityLocked: Boolean
+
+  """
+  True if level of owner holding LP token is lower than for a certain threshold (around 5%). A high score indicates high chances of rugpool
+  """
+  isCreatorNotContainLiquidity: Boolean
+
+  """Total weight of pair (for weighted pools, ex. Balancer)"""
+  totalWeigth: Float
+
+  """Pair default swap fee"""
+  swapFee: Float
+
+  """Pair owner address"""
+  owner: String
+
+  """
+  Pair balance of liquidity token. Liquidity token - is token opposite to analysing one. We analyse pairs only with strong stables, and wrapped native coins
+  """
+  liquidity: String
+
+  """Pair usd balance of liqudiity token"""
+  liquidityUsd: String
+
+  """Dex router address"""
+  router: String
+}
+
+"""Scanner liquidity analysis"""
+type ScannerLiquidityAnalysis {
+  """Total Usd liquidity of token on all pairs"""
+  totalLiquidity: String
+
+  """Total locked LP % on all pairs"""
+  totalLockedPercent: Float
+
+  """Total burned LP % on all pairs"""
+  totalBurnedPercent: Float
+
+  """Total creator LP % on all pairs"""
+  totalCreatorPercent: Float
+
+  """Total unlocked(100% - rest) LP % on all pairs"""
+  totalUnlockedPercent: Float
+
+  """
+  True if total level of locked LP token is more than for a certain threshold (around 90%). A high score indicates low chances of rugpool
+  """
+  isEnoughLiquidityLocked: Boolean
+
+  """
+  True if at least 1 pairs have more usd liquidity than a certain threshold (around $100k)
+  """
+  isAdequateLiquidityPresent: Boolean
+
+  """
+  List of all found liquidity pools for token. We are looking only for strange stable pool or wrapped native coins
+  """
+  liquidityPools: [ScannerLiquidityPool!]
+
+  """List of the biggest LP tokens holders combined through all pairs"""
+  liquidityPoolHolders: [ScannerLiquidityPoolHolder!]
+
+  """Major token vulnerabilities list"""
+  issues: [ScannerProjectScanDeclaration!]
+}
+
+"""Scanner project diff"""
+type ScannerProjectDiff {
+  """Id of simmilar project"""
+  id: Int
+
+  """Address of simmilar project"""
+  address: String
+
+  """Network id of simmilar project"""
+  network: Int
+
+  """Contract name of simmilar project"""
+  name: String
+
+  """Project name of simmilar project"""
+  projectName: String
+
+  """Source codes similarity percent"""
+  score: Float
+
+  """Comparing timestamp"""
+  createdAt: String
+}
+
+"""Scanner project proxy implementation data"""
+type ScannerProjectImplementationData {
+  """
+  Deployer - address which initiated deploy transation of smart contract.
+  """
+  firstTxFrom: String
+
+  """Contract deployment date"""
+  firstTxDate: String
+
+  """Contract deployment block"""
+  firstTxBlock: Int
+
+  """Smart contract name"""
+  name: String
+
+  """First native token income tx sender address"""
+  initialFunder: String
+
+  """First native token income tx value"""
+  initialFunding: Float
+}
+
+"""Scanner project proxy data"""
+type ScannerProjectProxyData {
+  """Owner of proxy contract, controlls set up new implementations"""
+  proxyOwner: String
+
+  """Link to the proxy contract source code"""
+  sourceCodeLink: String
+
+  """Major vulnerabilities of proxy contract"""
+  proxyIssues: [ScannerProjectScanDeclaration!]
+
+  """Additinal data for current proxy implementation contract"""
+  implementationData: ScannerProjectImplementationData
+}
+
+"""Scanner project stats"""
+type ScannerProjectStats {
+  """Amount of found low-risk vulnerabilities"""
+  low: Int
+
+  """Amount of found medium-risk vulnerabilities"""
+  medium: Int
+
+  """Amount of found high-risk vulnerabilities"""
+  high: Int
+
+  """Amount of found critical-risk vulnerabilities"""
+  critical: Int
+
+  """Total amount of issues"""
+  total: Int
+
+  """De.Fi score (0-100)"""
+  percentage: Int
+
+  """True if project was involved in rekt case from De.Fi Rekt DB"""
+  scammed: Boolean
+}
+
+"""Scanner project info"""
+type ScannerProject {
+  """Internal project id"""
+  id: Int
+
+  """Contract address"""
+  address: String
+
+  """Contract network id"""
+  network: Int
+
+  """
+  Contract is scanning or updating results. if it's first scan, no more data will be available
+  """
+  inProgress: Boolean
+
+  """AI score"""
+  aiScore: Int
+
+  """Project name"""
+  name: String
+
+  """Smart contract name"""
+  contractName: String
+
+  """
+  Deployer - address which initiated deploy transation of smart contract.
+  """
+  firstTxFrom: String
+
+  """Contract deployment date"""
+  firstTxDate: String
+
+  """Contract deployment block"""
+  firstTxBlock: Int
+  onChainScanned: Int
+  staticAnalizeScanned: Int
+  diffCheckScanned: Int
+
+  """Project logo url"""
+  logo: String
+
+  """Solidity compliler version used during smart contract deployment"""
+  compilerVersion: String
+
+  """Estimated amount of normal transactions on contract"""
+  txCount: Int
+
+  """First native token income tx sender address"""
+  initialFunder: String
+
+  """First native token income tx value"""
+  initialFunding: Float
+
+  """
+  True if solidity version < 0.4.0 in this case static analyses is skipped
+  """
+  outdatedCompiler: Boolean
+
+  """Version of the scanner with which the last scan of contract was made"""
+  scannedVersion: String
+
+  """Latest available scanner version"""
+  scannerVersion: String
+
+  """
+  Smart contract protocol. Supported protocols: erc20, erc721, erc1155, proxy, vault, masterchef, singlechef, pair, factory, governance, multisig, timelock, staking, unknown
+  """
+  protocol: String
+
+  """Smart contract is whitelisted by De.Fi"""
+  whitelisted: Boolean
+
+  """
+  If contract scanning (inProgress: true) shows estimated amont of time in minutes to finish scanning
+  """
+  estimatedAnalyzingTime: Float
+  rescanCount: Int
+  deploymentBlock: Int
+
+  """Link to the contract source code"""
+  sourceCodeLink: String
+
+  """Link to the contract page on De.Fi"""
+  link: String
+
+  """Major token vulnerabilities list"""
+  coreIssues: [ScannerProjectScanDeclaration!]
+
+  """Minor token vulnerabilities list"""
+  generalIssues: [ScannerProjectScanDeclaration!]
+
+  """Contract scan metrics"""
+  stats: ScannerProjectStats
+
+  """Additinal security data for proxy contract if present"""
+  proxyData: ScannerProjectProxyData
+
+  """Similar smart contracts"""
+  diffs: ScannerProjectDiff
+}
+
+"""Score project info"""
+type ScannerAIScore {
+  """total score"""
+  totalScore: Int
+
+  """reputation score"""
+  reputation: Int
+
+  """dex score"""
+  dex: Int
+
+  """organic score"""
+  organic: Int
+
+  """sybil score"""
+  sybil: Int
+
+  """utility score"""
+  utility: Int
+}
+
+"""Score dimension project info"""
+type ScannerScoreDimension {
+  """Score"""
+  score: Int
+
+  """Security vertical"""
+  name: String
+}
+
+"""Score project info"""
+type ScannerScore {
+  """
+  Set to true when the DeFi team has whitelisted the project behind a given token
+  """
+  whitelisted: Boolean
+
+  """
+  Boolean flag that indicates if the contract has been exploited in the past
+  """
+  exploited: Boolean
+
+  """
+  Boolean flag that indicates the result of our honeypot simulation, set to true if the token is a honeypot, false if not.
+  """
+  honeypot: Boolean
+
+  """
+  The DeFi score that aggregates all the safety checks of our scanner into a single value, out of 100. It is a dynamically weighted average of aiScore and the elements available in dimensions
+  """
+  score: Int
+
+  """The number of available security verticals in the dimensions field"""
+  dimensionsAmount: Int
+
+  """
+  The on-chain AI score, out of 100, resulting from our AI-powered analysis that leverages on-chain data to assess risks
+  """
+  aiScore: ScannerAIScore
+
+  """
+  List of the available security verticals at the time of scanning and their associated score out of 100
+  """
+  dimensions: [ScannerScoreDimension!]
+}
+
+"""Shield issue"""
+type ShieldIssue {
+  """Internal id"""
+  id: Int
+
+  """Vulnerability id"""
+  registryId: String
+
+  """
+  Vulnerability severity level. Supported levels (from most to least dangerous): Critical, High, Medium, Low, Informational, Optimisation
+  """
+  impact: String
+
+  """Vulnerability name"""
+  title: String
+
+  """Vulnerability description"""
+  description: String
+
+  """
+  Vulnerability category. Supported categories: Authorisation control, Byte-Code Safety, Control Flow, Defi-Specific, ERC Standarts, Private data safety, Solidity Coding Best Practices
+  """
+  category: String
+
+  """Vulnerability additional data"""
+  data: String
+}
+
+"""Shield tag"""
+type ShieldTag {
+  """Blockscan tag of contract"""
+  contract: String
+}
+
+"""Shield version"""
+type ShieldVersion {
+  """Latest available shield version"""
+  scanner: String
+
+  """Version of the scanner with which the last scan of contract was made"""
+  scanned: String
+}
+
+"""Shield info"""
+type Shield {
+  """Internal project id"""
+  id: Int!
+
+  """Contract address"""
+  address: String
+
+  """Contract network id"""
+  network: Int
+
+  """Contract name"""
+  name: String
+
+  """Contract logo url"""
+  logo: String
+
+  """
+  Contract is scanning or updating results. if it's first scan, no more data will be available
+  """
+  inProgress: Boolean
+
+  """Smart contract is whitelisted by De.Fi"""
+  whitelisted: Boolean
+
+  """Shield versions"""
+  version: ShieldVersion
+
+  """Shield contract tags"""
+  tags: ShieldTag
+
+  """Contract vulnerabilities list"""
+  issues: [ShieldIssue!]
+}
+
+"""Shield advanced info"""
+type ShieldAdvanced {
+  """Contracts responses passed to shield query"""
+  contracts: [Shield!]
+
+  """Wallet addresses passed to shield query"""
+  wallets: [String!]
+}
+
+"""Shield approval NFTs"""
+type ShieldApprovalNft {
+  """Internal record id"""
+  id: String
+
+  """Address of token on which made the approval"""
+  token: String
+
+  """Address of user who made the approval"""
+  user: String
+
+  """Address of spender to whom the funds are entrusted"""
+  spender: String
+
+  """True if approve was granted, False is approve was revoked"""
+  approved: Boolean
+
+  """Block number of approval transaction"""
+  block: Int
+
+  """Approve transaction hash"""
+  hash: String
+}
+
+type Query {
+  credits: Credits!
+  chains: [ChainDetailed!]!
+  assets(first: Int = 50, skip: Int = 0, where: AssetFilterInput, orderBy: OrderByFields, orderDirection: OrderDirection): [Asset!]!
+  assetsCached(first: Int = 50, skip: Int = 0, where: AssetFilterInput, orderBy: OrderByFields, orderDirection: OrderDirection): [Asset!]!
+  assetsPrices(assets: [AssetInput!]!): [AssetPrice!]!
+  assetBalances(chainId: Int!, walletAddress: String!): AssetBalancesResponse!
+  assetBalancesAdvanced(chainIds: [Int!]!, walletAddresses: [String!]!): [AssetBalancesAdvancedResponse!]!
+  protocols(name: String, slug: String, chainIds: [Int!], features: [ProtocolFeatureEnum!], version: ProtocolBalancesVersion): [Protocol!]!
+  protocolBalance(balances: [ProtocolBalanceRequest!]!): [ProtocolBalance!]!
+  protocolBalanceV2(chainIds: [Int!]!, walletAddresses: [String!]!): ProtocolBalanceV2!
+  rekts(
+    pageNumber: Int! = 1
+
+    """Number of records per page"""
+    pageSize: Int! = 50
+
+    """Search by project name, token name, token address"""
+    searchText: String
+
+    """Filter by project name"""
+    projectName: String
+    chainIds: [Int!]
+    orderBy: GetRektsOrder
+    issueTypes: [IssueType!]
+    projectCategories: [ProjectCategory!]
+  ): [Rekt!]!
+  shields(where: ManyAddressesFilter!): [Shield!]!
+  shieldAdvanced(where: ManyAddressesFilter!): ShieldAdvanced!
+  shieldApprovalsNft(where: OneAddressFilter!): [ShieldApprovalNft!]
+  scannerLiquidityAnalysis(where: OneAddressFilter!): ScannerLiquidityAnalysis
+  scannerHolderAnalysis(where: OneAddressFilter!): ScannerHolderAnalysis
+  scannerProject(where: OneAddressFilter!): ScannerProject
+  scannerGovernance(where: OneAddressFilter!): ScannerGovernance
+  scannerProjectScore(where: OneAddressFilter!): ScannerScore
+  opportunities(first: Int = 50, skip: Int = 0, where: OpportunitiesFilter, orderBy: OpportunitySortField = TVL, orderDirection: OrderDirection = desc): [Opportunities!]!
+  opportunityFarms: [Farm!]!
+  opportunitiesHistorical(where: OpportunitiesHistoricalFilter!): [OpportunityHistorical!]!
+  auditChains: [AuditChain!]!
+  auditPartners: [AuditPartner!]!
+  audits(
+    skip: Int = 0
+    first: Int = 20
+    sortField: String = "project"
+
+    """Search by project name, token name, token address"""
+    searchText: String
+    sortDirection: String = "asc"
+    chains: [Int!]
+    partners: [Int!]
+  ): AuditsResponse!
+  shieldApprovals(where: OneAddressFilter!): [ShieldApproval!]
+  transactions(first: Int = 10, skip: Int = 0, where: TransactionsFilterInput!): [Transaction!]!
+}
+
+input AssetFilterInput {
+  chainId: Int
+  addresses: [String!]
+  symbols: [String!]
+}
+
+enum OrderByFields {
+  symbol
+  address
+  name
+  chainId
+  decimals
+}
+
+enum OrderDirection {
+  asc
+  desc
+}
+
+input AssetInput {
+  chainId: Int!
+  address: String!
+}
+
+enum ProtocolBalancesVersion {
+  V1
+  V2
+}
+
+input ProtocolBalanceRequest {
+  chainIds: [Int!]!
+  walletAddress: String!
+  protocolName: String!
+}
+
+input GetRektsOrder {
+  project: Sort
+  ticker: Sort
+  fundsLost: Sort
+  chain: Sort
+  issue: Sort
+  date: Sort
+  category: Sort
+}
+
+enum Sort {
+  asc
+  desc
+}
+
+enum IssueType {
+  ExitScamAbandoned
+  ExitScamHoneypot
+  ExitScamRugpull
+  ExitScamOthers
+  ExploitAccessControl
+  ExploitPhishing
+  ExploitFlashLoanAttack
+  ExploitReentrancy
+  ExploitOracleIssue
+  ExploitOthers
+}
+
+enum ProjectCategory {
+  NFT
+  Bridge
+  CeFi
+  DEX
+  Gaming
+  Stablecoin
+  Token
+  YieldAggregator
+  LendingBorrowing
+  Other
+}
+
+input ManyAddressesFilter {
+  addresses: [String!]!
+  chainId: Int!
+}
+
+input OneAddressFilter {
+  address: String!
+  chainId: Int!
+}
+
+input OpportunitiesFilter {
+  ids: [Int!] = []
+
+  """Search by text"""
+  searchCriteria: String
+  farmIds: [Int!] = []
+  opportunityType: [OpportunityType!] = []
+  farmCategories: [FarmCategories!] = []
+  minTVL: Float
+  maxTVL: Float
+  minAPR: Float
+  maxAPR: Float
+  chainIds: [Float!] = []
+  statuses: [OpportunityStatus!]
+}
+
+enum OpportunityType {
+  POOL
+  STABLE_POOL
+  STABLECOIN
+  SINGLE_STAKE
+  NO_IL
+  LENDING
+  LIQUID_STAKE
+}
+
+enum FarmCategories {
+  Dex
+  Yield
+  Lending
+  Cdp
+  YieldAggregator
+  CrossChain
+  LiquidStaking
+  dPosStaking
+  Derivatives
+  AlgoStable
+  Insurance
+  Synthetics
+  Gaming
+  Governance
+  NftMarketplace
+  NftLending
+  Restaking
+  Other
+}
+
+enum OpportunitySortField {
+  APR
+  TVL
+  APR_WEEK
+  APR_MONTH
+  FARM_NAME
+  IS_ENABLED
+}
+
+input OpportunitiesHistoricalFilter {
+  ids: [Int!]!
+  period: OpportunitiesHistoricalInterval!
+}
+
+enum OpportunitiesHistoricalInterval {
+  DAY
+  WEEK
+  MONTH
+  YEAR
+  ALL
+}
+
+input TransactionsFilterInput {
+  address: String
+  address_in: [String!]
+  timestamp_lt: Float
+  timestamp_gt: Float
+  type: TransactionTypeEnum
+  type_in: [TransactionTypeEnum!]
+  chain_in: [Int!]
+}
