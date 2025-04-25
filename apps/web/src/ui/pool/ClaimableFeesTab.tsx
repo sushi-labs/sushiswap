@@ -84,27 +84,27 @@ export const ClaimableFeesTab: FC = () => {
           const fees0 = position.fees[0]
           const fees1 = position.fees[1]
 
-          const currentValue0 = feeAmounts[position.token0]
-          const currentValue1 = feeAmounts[position.token1]
+          const currentValue0 = feeAmounts[position.token0.id]
+          const currentValue1 = feeAmounts[position.token1.id]
 
           if (currentValue0) {
             const amount = currentValue0.add(
               Amount.fromRawAmount(currentValue0.currency, fees0),
             )
-            feeAmounts[position.token0] = amount
+            feeAmounts[position.token0.id] = amount
           } else {
             const amount = Amount.fromRawAmount(position.pool.token0, fees0)
-            feeAmounts[position.token0] = amount
+            feeAmounts[position.token0.id] = amount
           }
 
           if (currentValue1) {
             const amount = currentValue1.add(
               Amount.fromRawAmount(currentValue1.currency, fees1),
             )
-            feeAmounts[position.token1] = amount
+            feeAmounts[position.token1.id] = amount
           } else {
             const amount = Amount.fromRawAmount(position.pool.token1, fees1)
-            feeAmounts[position.token1] = amount
+            feeAmounts[position.token1.id] = amount
           }
         })
 

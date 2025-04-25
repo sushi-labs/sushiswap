@@ -37,11 +37,13 @@ export const useConcentratedPositionInfo = ({
       { chainId, token0, token1, tokenId, positionDetails },
     ],
     queryFn: async () => {
+      if (!token0 || !token1 || !positionDetails) throw new Error()
+
       const pool = await getConcentratedLiquidityPool({
         chainId,
         token0,
         token1,
-        feeAmount: positionDetails?.fee,
+        feeAmount: positionDetails.fee,
         config,
       })
 

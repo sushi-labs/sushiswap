@@ -41,12 +41,8 @@ export const ClaimableFeesAmountCell: FC<Row<ClaimableFees>> = ({
                   </div>
 
                   <span className="font-semibold text-muted-foreground">
-                    {original.feeAmountsUSD[amount.currency.wrapped.address]
-                      ? formatUSD(
-                          original.feeAmountsUSD[
-                            amount.currency.wrapped.address
-                          ],
-                        )
+                    {original.feeAmountsUSD[amount.currency.id]
+                      ? formatUSD(original.feeAmountsUSD[amount.currency.id])
                       : '-'}
                   </span>
                 </div>
