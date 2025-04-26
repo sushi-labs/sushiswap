@@ -17,7 +17,7 @@ import {
   Router,
   UniV3LiquidityProviders,
 } from 'sushi/router'
-import { UniswapV3BaseProvider } from '../../../packages/sushi/dist/router/liquidity-providers/UniswapV3Base.js'
+import { UniswapV3BaseProvider } from '../../../packages/sushi/src/router/liquidity-providers/UniswapV3Base.js'
 
 async function testDF(
   _chainName: string,
