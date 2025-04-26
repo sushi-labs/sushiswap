@@ -159,7 +159,7 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
   }
 
   async getReserves(
-    poolCodesToCreate: PoolCode[],
+    poolCodesToCreate: Address[],
     options?: DataFetcherOptions,
   ): Promise<any> {
     const multicallData = {
@@ -168,9 +168,9 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
       allowFailure: true,
       blockNumber: options?.blockNumber,
       contracts: poolCodesToCreate.map(
-        (poolCode) =>
+        (address) =>
           ({
-            address: poolCode.pool.address as Address,
+            address,
             chainId: this.chainId,
             abi: this.getReservesAbi,
             functionName: 'getReserves',
@@ -251,7 +251,10 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
       }
     })
 
-    const reserves = await this.getReserves(poolCodesToCreate, options)
+    const reserves = await this.getReserves(
+      poolCodesToCreate.map((v) => v.pool.address),
+      options,
+    )
     this.handleCreatePoolCode(poolCodesToCreate, reserves, validUntilTimestamp)
     // console.debug(
     //   `${this.getLogPrefix()} - ON DEMAND: Created and fetched reserves for ${created} pools, extended 'lifetime' for ${updated} pools`

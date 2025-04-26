@@ -1,7 +1,7 @@
 import { PublicClient } from 'viem'
 import { ChainId } from '../../chain/index.js'
+import { UniswapV3BaseProvider } from '../rain/UniswapV3Base.js'
 import { LiquidityProviders } from './LiquidityProvider.js'
-import { UniswapV3BaseProvider } from './UniswapV3Base.js'
 
 /**
  * The default factory enabled fee amounts, denominated in hundredths of bips.

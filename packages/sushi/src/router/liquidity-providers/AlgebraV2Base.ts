@@ -1,4 +1,4 @@
-import { AlgebraV1BaseProvider } from './AlgebraV1Base.js'
+import { AlgebraV1BaseProvider } from '../rain/AlgebraV1Base.js'
 
 export const globalStateAbi = [
   {
