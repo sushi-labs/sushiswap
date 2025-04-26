@@ -1,6 +1,6 @@
 import { PublicClient } from 'viem'
 import { ChainId } from '../../chain/index.js'
-import { AlgebraV1BaseProvider } from './AlgebraV1Base.js'
+import { AlgebraV1BaseProvider } from '../rain/AlgebraV1Base.js'
 import { LiquidityProviders } from './LiquidityProvider.js'
 
 export class LynexV2Provider extends AlgebraV1BaseProvider {

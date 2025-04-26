@@ -1,23 +1,37 @@
 import {
   Address,
   Hex,
+  Log,
   PublicClient,
   encodeAbiParameters,
   getAddress,
   keccak256,
+  parseAbiItem,
+  parseEventLogs,
 } from 'viem'
 import { ChainId } from '../../chain/index.js'
 import { Token } from '../../currency/index.js'
-import { DataFetcherOptions } from '../data-fetcher.js'
 import { getCurrencyCombinations } from '../get-currency-combinations.js'
 import {
-  NUMBER_OF_SURROUNDING_TICKS,
   PoolFilter,
   StaticPoolUniV3,
+} from '../liquidity-providers/UniswapV3Base.js'
+import { RainDataFetcherOptions } from './RainDataFetcher.js'
+import {
+  RainV3Pool,
+  UniV3EventsAbi,
   UniswapV3BaseProvider,
-  V3Pool,
-  bitmapIndex,
 } from './UniswapV3Base.js'
+
+export const AlgebraEventsAbi = [
+  ...UniV3EventsAbi.slice(0, 5), // same as univ3 Swap, Mint, Collect, Burn, Flash events
+  // algebra specific events
+  parseAbiItem('event Fee(uint16 fee)'),
+  parseAbiItem('event TickSpacing(int24 newTickSpacing)'),
+  parseAbiItem(
+    'event Pool(address indexed token0, address indexed token1, address pool)',
+  ),
+]
 
 export const globalStateAbi = [
   {
@@ -51,6 +65,7 @@ export const globalStateAbi = [
 
 export abstract class AlgebraV1BaseProvider extends UniswapV3BaseProvider {
   override TICK_SPACINGS: Record<string, number> = {}
+  override eventsAbi = AlgebraEventsAbi as any
 
   readonly BASE_FEE = 100
   DEFAULT_TICK_SPACING = 1
@@ -80,11 +95,24 @@ export abstract class AlgebraV1BaseProvider extends UniswapV3BaseProvider {
     t0: Token,
     t1: Token,
     excludePools?: Set<string> | PoolFilter,
-    options?: DataFetcherOptions,
-  ): Promise<V3Pool[]> {
+    options?: RainDataFetcherOptions,
+  ): Promise<RainV3Pool[]> {
     let staticPools = this.getStaticPools(t0, t1)
     if (excludePools)
       staticPools = staticPools.filter((p) => !excludePools.has(p.address))
+
+    const tradeId = this.getTradeId(t0, t1)
+    if (!this.poolsByTrade.has(tradeId))
+      this.poolsByTrade.set(
+        tradeId,
+        staticPools.map((pool) => pool.address.toLowerCase()),
+      )
+
+    // filter out cached pools
+    // this ensures backward compatibility for original DataFetcher
+    if (typeof options?.ignoreCache === 'boolean' && !options.ignoreCache) {
+      staticPools = this.filterCachedPools(staticPools)
+    }
 
     const globalStateData = {
       multicallAddress: this.client.chain?.contracts?.multicall3?.address!,
@@ -111,144 +139,50 @@ export abstract class AlgebraV1BaseProvider extends UniswapV3BaseProvider {
         return undefined
       })
 
-    let poolsTickSpacing:
-      | (
-          | number
-          | {
-              error?: undefined
-              result: number
-              status: 'success'
-            }
-          | {
-              error: Error
-              result?: undefined
-              status: 'failure'
-            }
-        )[]
-      | undefined
+    const tickSpacings = await this.getTickSpacing(staticPools, options)
 
-    try {
-      const tickSpacingsData = {
-        multicallAddress: this.client.chain?.contracts?.multicall3?.address!,
-        allowFailure: true,
-        blockNumber: options?.blockNumber,
-        contracts: staticPools.map(
-          (pool) =>
-            ({
-              address: pool.address,
-              chainId: this.chainId,
-              abi: [
-                {
-                  inputs: [],
-                  name: 'tickSpacing',
-                  outputs: [{ internalType: 'int24', name: '', type: 'int24' }],
-                  stateMutability: 'view',
-                  type: 'function',
-                },
-              ] as const,
-              functionName: 'tickSpacing',
-            }) as const,
-        ),
-      } as const
-      poolsTickSpacing = await this.client
-        .multicall(tickSpacingsData)
-        .catch((e) => {
-          console.warn(
-            `${this.getLogPrefix()} - INIT: multicall failed, message: ${
-              e.message
-            }`,
-          )
-          return undefined
-        })
-    } catch (_error) {}
-
-    const existingPools: V3Pool[] = []
-
+    const existingPools: RainV3Pool[] = []
     staticPools.forEach((pool, i) => {
-      if (globalState === undefined || !globalState[i]) return
-      let thisPoolTickSpacing = this.DEFAULT_TICK_SPACING
-      if (poolsTickSpacing !== undefined && Array.isArray(poolsTickSpacing)) {
-        if (poolsTickSpacing[i] !== undefined) {
-          const ts = poolsTickSpacing[i]
-          if (typeof ts === 'number') {
-            thisPoolTickSpacing = ts
-          } else {
-            if (ts?.status === 'success') {
-              thisPoolTickSpacing = ts.result
-            }
-          }
-        }
+      const poolAddress = pool.address.toLowerCase()
+      if (globalState === undefined || !globalState[i]) {
+        this.handleNullPool(poolAddress)
+        return
+      }
+      let tickSpacing = this.DEFAULT_TICK_SPACING
+      if (typeof tickSpacings?.[i]?.result === 'number') {
+        tickSpacing = tickSpacings[i]!.result!
       }
       const sqrtPriceX96 = globalState[i]!.result?.[0] // price
       const tick = globalState[i]!.result?.[1] // tick
-      if (!sqrtPriceX96 || sqrtPriceX96 === 0n || typeof tick !== 'number')
+      if (!sqrtPriceX96 || sqrtPriceX96 === 0n || typeof tick !== 'number') {
+        this.handleNullPool(poolAddress)
         return
+      }
       const fee = globalState[i]!.result?.[2] // fee
-      if (!fee) return
-      const activeTick =
-        Math.floor(tick / thisPoolTickSpacing) * thisPoolTickSpacing
-      if (typeof activeTick !== 'number') return
-      this.TICK_SPACINGS[pool.address.toLowerCase()] = thisPoolTickSpacing
+      if (!fee) {
+        this.handleNullPool(poolAddress)
+        return
+      }
+      const activeTick = this.getActiveTick(tick, tickSpacing)
+      if (typeof activeTick !== 'number') {
+        this.handleNullPool(poolAddress)
+        return
+      }
       existingPools.push({
         ...pool,
         fee,
         sqrtPriceX96,
         activeTick,
+        tickSpacing,
+        ticks: new Map(),
+        reserve0: 0n,
+        reserve1: 0n,
+        liquidity: 0n,
+        blockNumber: options?.blockNumber ?? 0n,
       })
     })
 
     return existingPools
-  }
-
-  override getIndexes(existingPools: V3Pool[]): [number[], number[]] {
-    const minIndexes = existingPools.map((pool) =>
-      bitmapIndex(
-        pool.activeTick - NUMBER_OF_SURROUNDING_TICKS,
-        this.TICK_SPACINGS[pool.address.toLowerCase()]!,
-      ),
-    )
-    const maxIndexes = existingPools.map((pool) =>
-      bitmapIndex(
-        pool.activeTick + NUMBER_OF_SURROUNDING_TICKS,
-        this.TICK_SPACINGS[pool.address.toLowerCase()]!,
-      ),
-    )
-    return [minIndexes, maxIndexes]
-  }
-
-  override handleTickBoundries(
-    i: number,
-    pool: V3Pool,
-    poolTicks: {
-      index: number
-      DLiquidity: bigint
-    }[],
-    minIndexes: number[],
-    maxIndexes: number[],
-  ) {
-    const lowerUnknownTick =
-      minIndexes[i]! * this.TICK_SPACINGS[pool.address.toLowerCase()]! * 256 -
-      this.TICK_SPACINGS[pool.address.toLowerCase()]!
-    console.assert(
-      poolTicks.length === 0 || lowerUnknownTick < poolTicks[0]!.index,
-      'Error 236: unexpected min tick index',
-    )
-    poolTicks.unshift({
-      index: lowerUnknownTick,
-      DLiquidity: 0n,
-    })
-    const upperUnknownTick =
-      (maxIndexes[i]! + 1) *
-      this.TICK_SPACINGS[pool.address.toLowerCase()]! *
-      256
-    console.assert(
-      poolTicks[poolTicks.length - 1]!.index < upperUnknownTick,
-      'Error 244: unexpected max tick index',
-    )
-    poolTicks.push({
-      index: upperUnknownTick,
-      DLiquidity: 0n,
-    })
   }
 
   override getStaticPools(t1: Token, t2: Token): StaticPoolUniV3[] {
@@ -282,6 +216,56 @@ export abstract class AlgebraV1BaseProvider extends UniswapV3BaseProvider {
   // algebra doesnt have the fee/ticks setup the same way univ3 has
   override async ensureFeeAndTicks(): Promise<boolean> {
     return true
+  }
+
+  // handle algebra specific pool creation event
+  override handleFactoryEvents(log: Log) {
+    const factory =
+      this.factory[this.chainId as keyof typeof this.factory]!.toLowerCase()
+    const logAddress = log.address.toLowerCase()
+    if (logAddress === factory) {
+      try {
+        const event = parseEventLogs({
+          logs: [log],
+          abi: AlgebraEventsAbi,
+          eventName: 'Pool',
+        })[0]!
+        this.nullPools.delete(event.args.pool.toLowerCase())
+      } catch {}
+    }
+  }
+
+  // handle extra events that Algebra has
+  override otherEventCases(
+    log: Log,
+    event: Log<
+      bigint,
+      number,
+      boolean,
+      (typeof AlgebraEventsAbi)[number],
+      true,
+      typeof AlgebraEventsAbi,
+      (typeof AlgebraEventsAbi)[number]['name']
+    >,
+    pool: RainV3Pool,
+  ): void {
+    switch (event.eventName) {
+      case 'Fee': {
+        if (log.blockNumber! >= pool.blockNumber) {
+          pool.blockNumber = log.blockNumber!
+          pool.fee = event.args.fee
+        }
+        break
+      }
+      case 'TickSpacing': {
+        if (log.blockNumber! >= pool.blockNumber) {
+          pool.blockNumber = log.blockNumber!
+          pool.tickSpacing = event.args.newTickSpacing
+        }
+        break
+      }
+      default:
+    }
   }
 }
 

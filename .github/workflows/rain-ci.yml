@@ -1,6 +1,10 @@
 name: Rain CI
 on: [push]
 
+concurrency:
+  group: ${{ github.ref }}-rainix
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
 jobs:
   router-test:
     runs-on: ubuntu-latest

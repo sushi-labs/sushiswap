@@ -4,8 +4,9 @@ import { ChainId } from '../../chain/index.js'
 import { Token } from '../../currency/index.js'
 import { DataFetcherOptions } from '../data-fetcher.js'
 import { getCurrencyCombinations } from '../get-currency-combinations.js'
+import { UniswapV2BaseProvider } from '../rain/UniswapV2Base.js'
 import { LiquidityProviders } from './LiquidityProvider.js'
-import { StaticPool, UniswapV2BaseProvider } from './UniswapV2Base.js'
+import { StaticPool } from './UniswapV2Base.js'
 
 const GetFeesAbi = parseAbi([
   'function getFee(bool _stable) public view returns(uint256)',
@@ -104,7 +105,7 @@ export class LynexV1Provider extends UniswapV2BaseProvider {
     ]
   }
 
-  // same as original getStaticPools() in UniswapV2BaseProvider, but
+  // same as original getStaticPools() in RainUniswapV2BaseProvider, but
   // just overriden to do flatMap() to flatten array of pool addresses
   // per token pair, since LynexV1 also has bool variable in the pool address salt
   // also has 2 fees if the pair is `stable` or not
