@@ -14,8 +14,8 @@ export const swaggerConfig = {
   paths: {
     '/kadena/tokens': {
       get: {
-        summary: 'Get all tokens',
-        description: 'Retrieve information about all Kadena tokens',
+        summary: 'Get all Kadena tokens',
+        description: 'Retrieve information about all available Kadena tokens',
         responses: {
           '200': {
             description: 'Successful response',
@@ -47,8 +47,7 @@ export const swaggerConfig = {
                           },
                           tokenImage: {
                             type: 'string',
-                            example:
-                              'https://sushi-swapassets.blob.core.windows.net/public/tokens/K%20Logo%20Dark%20Blue%20Backround.png',
+                            example: 'https://sushi-swapassets.blob.core.windows.net/public/tokens/K%20Logo%20Dark%20Blue%20Backround.png',
                           },
                           name: {
                             type: 'string',
@@ -67,8 +66,7 @@ export const swaggerConfig = {
                               },
                               description: {
                                 type: 'string',
-                                example:
-                                  'The native token of the Kadena blockchain',
+                                example: 'The native token of the Kadena blockchain',
                               },
                               discordUrl: {
                                 type: 'string',
@@ -217,7 +215,7 @@ export const swaggerConfig = {
                             },
                             mediumUrl: {
                               type: 'string',
-                              example: 'https://medium.com/kadena_io',
+                              example: 'https://medium.com/kadena-io',
                             },
                           },
                         },
