@@ -10,6 +10,7 @@ type IconProps = {
 }
 
 export const Icon = ({ currency, height = 40, width = 40 }: IconProps) => {
+  console.log('currency', currency)
   return (
     <>
       {currency?.logoURI ? (
@@ -19,6 +20,8 @@ export const Icon = ({ currency, height = 40, width = 40 }: IconProps) => {
         >
           <Image
             loader={cloudinaryLogoFetchLoader}
+            // @TODO: need this to render local images, remove when we have a CDN
+            unoptimized
             src={currency.logoURI}
             alt={currency.symbol}
             height={height}

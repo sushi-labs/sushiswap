@@ -4,8 +4,7 @@ import { IS_TESTNET } from './is-testnet'
 export const KADENA: IToken = {
   address: 'KADENA',
   decimals: 12,
-  logoURI:
-    'https://kdswapassets.blob.core.windows.net/public/tokens/K%20Logo%20Dark%20Blue%20Backround.png',
+  logoURI: '/kadena-logo.png',
   name: 'KADENA',
   symbol: 'KDA',
 }
