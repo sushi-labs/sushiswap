@@ -44,7 +44,7 @@ export const PoolHeader = ({
     <div className="flex flex-col gap-6">
       <div className="flex flex-col gap-4">
         <button
-          className="text-blue hover:underline text-sm w-fit"
+          className="text-sm text-blue hover:underline w-fit"
           type="button"
           onClick={() => {
             router.back()
@@ -78,7 +78,7 @@ export const PoolHeader = ({
               })}
             >
               <LinkExternal href={getChainwebAddressLink(pairAddress)}>
-                {token0?.symbol}/{token1?.symbol}
+                {token0?.tokenSymbol}/{token1?.tokenSymbol}
               </LinkExternal>
             </Button>
             {/* <div className="bg-pink/20 text-pink text-sm px-2 py-1 font-semibold rounded-full mt-0.5">
@@ -89,11 +89,11 @@ export const PoolHeader = ({
       </div>
       <div className="flex flex-wrap items-center gap-y-5 gap-x-[32px] text-secondary-foreground mb-8 mt-1.5">
         <div className="flex items-center gap-1.5">
-          <span className="tracking-tighter font-semibold">Fee</span>
+          <span className="font-semibold tracking-tighter">Fee</span>
           0.3%
         </div>
         <div className="flex items-center gap-1.5">
-          <span className="tracking-tighter font-semibold">Network</span>
+          <span className="font-semibold tracking-tighter">Network</span>
           Kadena
         </div>
         {isLoading ? (
@@ -108,12 +108,12 @@ export const PoolHeader = ({
         ) : (
           <>
             <div className="flex items-center gap-1.5">
-              <span className="tracking-tighter font-semibold">
-                {token0?.symbol}
+              <span className="font-semibold tracking-tighter">
+                {token0?.tokenSymbol}
               </span>
               <LinkExternal
                 target="_blank"
-                href={getChainwebAddressLink(token0?.address)}
+                href={getChainwebAddressLink(token0?.tokenAddress)}
               >
                 <Button
                   asChild
@@ -121,7 +121,7 @@ export const PoolHeader = ({
                   size="sm"
                   className="!font-medium !text-secondary-foreground"
                 >
-                  {`${token0?.address.slice(0, 6)}...${token0?.address.slice(
+                  {`${token0?.tokenAddress.slice(0, 6)}...${token0?.tokenAddress.slice(
                     -4,
                   )}`}
                   <ArrowTopRightOnSquareIcon className="w-3 h-3" />
@@ -129,12 +129,12 @@ export const PoolHeader = ({
               </LinkExternal>
             </div>
             <div className="flex items-center gap-1.5">
-              <span className="tracking-tighter font-semibold">
-                {token1?.symbol}
+              <span className="font-semibold tracking-tighter">
+                {token1?.tokenSymbol}
               </span>
               <LinkExternal
                 target="_blank"
-                href={getChainwebAddressLink(token1?.address)}
+                href={getChainwebAddressLink(token1?.tokenAddress)}
               >
                 <Button
                   asChild
@@ -142,7 +142,7 @@ export const PoolHeader = ({
                   size="sm"
                   className="!font-medium !text-secondary-foreground"
                 >
-                  {`${token1?.address.slice(0, 6)}...${token1?.address.slice(
+                  {`${token1?.tokenAddress.slice(0, 6)}...${token1?.tokenAddress.slice(
                     -4,
                   )}`}
                   <ArrowTopRightOnSquareIcon className="w-3 h-3" />

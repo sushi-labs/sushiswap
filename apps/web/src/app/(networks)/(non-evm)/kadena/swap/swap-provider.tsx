@@ -2,13 +2,13 @@
 
 import { type FC, createContext, useContext, useMemo, useReducer } from 'react'
 import { KADENA, STABLE_TOKENS } from '~kadena/_common/constants/token-list'
-import type { IToken } from '~kadena/_common/types/token-type'
+import type { KadenaToken } from '~kadena/_common/types/token-type'
 
 // @TODO: Connected and Connecting will be replaced by wallet hook
 type Action =
   | { type: 'swapTokens' }
-  | { type: 'setToken0'; value: IToken }
-  | { type: 'setToken1'; value: IToken }
+  | { type: 'setToken0'; value: KadenaToken }
+  | { type: 'setToken1'; value: KadenaToken }
   | { type: 'setIsTxnPending'; value: boolean }
   | { type: 'setAmountIn'; value: string }
   | { type: 'setAmountOut'; value: string }
@@ -17,8 +17,8 @@ type Action =
 
 type Dispatch = {
   swapTokens(): void
-  setToken0(token: IToken): void
-  setToken1(token: IToken): void
+  setToken0(token: KadenaToken): void
+  setToken1(token: KadenaToken): void
   setIsTxnPending(isPending: boolean): void
   setAmountIn(amount: string): void
   setAmountOut(amount: string): void
@@ -27,8 +27,8 @@ type Dispatch = {
 }
 
 type State = {
-  token0: IToken
-  token1: IToken
+  token0: KadenaToken
+  token1: KadenaToken
   isTxnPending: boolean
   amountIn: string
   amountOut: string
@@ -45,7 +45,7 @@ const SwapContext = createContext<
 function swapReducer(_state: State, action: Action) {
   switch (action.type) {
     case 'setToken0': {
-      if (_state.token1.address === action.value.address) {
+      if (_state.token1.tokenAddress === action.value.tokenAddress) {
         //if token1 is the same as the new token0, swap them
         return {
           ..._state,
@@ -58,7 +58,7 @@ function swapReducer(_state: State, action: Action) {
       return { ..._state, token0: action.value, amountIn: '', amountOut: '' }
     }
     case 'setToken1': {
-      if (_state.token0.address === action.value.address) {
+      if (_state.token0.tokenAddress === action.value.tokenAddress) {
         //if token0 is the same as the new token1, swap them
         return {
           ..._state,
@@ -113,8 +113,8 @@ const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
 
   const dispatchWithAction = useMemo(
     () => ({
-      setToken0: (value: IToken) => dispatch({ type: 'setToken0', value }),
-      setToken1: (value: IToken) => dispatch({ type: 'setToken1', value }),
+      setToken0: (value: KadenaToken) => dispatch({ type: 'setToken0', value }),
+      setToken1: (value: KadenaToken) => dispatch({ type: 'setToken1', value }),
       swapTokens: () => dispatch({ type: 'swapTokens' }),
       setIsTxnPending: (value: boolean) =>
         dispatch({ type: 'setIsTxnPending', value }),

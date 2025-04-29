@@ -30,7 +30,7 @@ export const AmountInToken1 = ({
     if (pairExists && rateOfToken0 && token0) {
       const amountFormatted = formatUnitsForInput(
         rateOfToken0,
-        token0?.decimals,
+        token0?.tokenDecimals,
       )
       if (amountFormatted) {
         setAmountInToken0(amountFormatted)

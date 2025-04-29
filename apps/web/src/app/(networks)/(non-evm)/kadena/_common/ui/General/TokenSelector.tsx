@@ -25,18 +25,15 @@ import {
 import AutoSizer from 'react-virtualized-auto-sizer'
 import { FixedSizeList } from 'react-window'
 import {
-  BABENA,
-  BTC,
   COMMON_TOKENS,
   DEFAULT_TOKEN_LIST,
-  KADENA,
-  USDC,
-  USDT,
-  WIZA,
 } from '~kadena/_common/constants/token-list'
-
+import { useBaseTokens } from '~kadena/_common/lib/hooks/use-base-tokens'
 import { formatUnitsForInput } from '~kadena/_common/lib/utils/formatters'
-import type { IToken, TokenWithBalance } from '~kadena/_common/types/token-type'
+import type {
+  KadenaToken,
+  TokenWithBalance,
+} from '~kadena/_common/types/token-type'
 import { Icon } from './Icon'
 
 export const TokenSelector = ({
@@ -44,13 +41,15 @@ export const TokenSelector = ({
   onSelect,
   children,
 }: {
-  selected: IToken | undefined
-  onSelect: (token: IToken) => void
+  selected: KadenaToken | undefined
+  onSelect: (token: KadenaToken) => void
   children: ReactNode
 }) => {
   const [open, setOpen] = useState(false)
   const [query, setQuery] = useState('')
-  const [queryToken, setQueryToken] = useState<IToken | undefined>(undefined)
+  const [queryToken, setQueryToken] = useState<KadenaToken | undefined>(
+    undefined,
+  )
   // const { customTokens, addOrRemoveToken, hasToken } = useCustomTokens()
   const addOrRemoveToken = () => {}
   const hasToken = () => false
@@ -68,17 +67,17 @@ export const TokenSelector = ({
   // @TODO: remove this during integration
   // query token should come from token info hook
   useEffect(() => {
-    if (query) {
-      setQueryToken(KADENA)
+    if (query && baseTokens) {
+      setQueryToken(baseTokens?.[0])
     } else {
       setQueryToken(undefined)
     }
   }, [query])
 
-  const sortedTokenList: IToken[] = [KADENA, BABENA, WIZA, USDT, USDC, BTC]
+  const { data: baseTokens } = useBaseTokens()
 
   const _onSelect = useCallback(
-    (token: IToken) => {
+    (token: KadenaToken) => {
       onSelect(token)
       setOpen(false)
     },
@@ -92,12 +91,14 @@ export const TokenSelector = ({
       return (
         <TokenButton
           style={style}
-          token={sortedTokenList?.[index]}
+          token={baseTokens?.[index]}
           selectToken={_onSelect}
-          key={sortedTokenList?.[index]?.address}
+          key={baseTokens?.[index]?.tokenAddress}
           hasToken={hasToken}
           addOrRemoveToken={addOrRemoveToken}
-          isSelected={sortedTokenList?.[index]?.address === selected?.address}
+          isSelected={
+            baseTokens?.[index]?.tokenAddress === selected?.tokenAddress
+          }
         />
       )
     },
@@ -175,10 +176,10 @@ export const TokenSelector = ({
               <TokenButton
                 token={queryToken}
                 selectToken={_onSelect}
-                key={queryToken.address}
+                key={queryToken.tokenAddress}
                 hasToken={hasToken}
                 addOrRemoveToken={addOrRemoveToken}
-                isSelected={queryToken.symbol === selected?.symbol}
+                isSelected={queryToken.tokenAddress === selected?.tokenAddress}
               />
             )}
             <AutoSizer disableWidth>
@@ -186,7 +187,7 @@ export const TokenSelector = ({
                 <FixedSizeList
                   width="100%"
                   height={height}
-                  itemCount={sortedTokenList ? sortedTokenList?.length : 0}
+                  itemCount={baseTokens ? baseTokens?.length : 0}
                   itemSize={64}
                   className={'scroll'}
                   style={{ overflow: 'overlay' }}
@@ -195,12 +196,12 @@ export const TokenSelector = ({
                 </FixedSizeList>
               )}
             </AutoSizer>
-            {sortedTokenList?.length === 0 && !queryToken && (
+            {baseTokens?.length === 0 && !queryToken && (
               <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                 <div className="flex flex-col items-center justify-center gap-1">
                   <span className="flex items-center text-xs text-gray-500 dark:text-slate-500">
                     No tokens found on
-                    <span className="font-medium ml-1">KADENA</span>.
+                    <span className="ml-1 font-medium">KADENA</span>.
                   </span>
                   <span className="text-xs text-gray-500 dark:text-slate-500">
                     Did you try searching with the token address?
@@ -224,15 +225,15 @@ const TokenButton = ({
   isSelected,
 }: {
   style?: CSSProperties
-  token?: IToken | TokenWithBalance
-  selectToken: (_token: IToken) => void
-  hasToken?: (currency: IToken) => boolean
+  token?: KadenaToken | TokenWithBalance
+  selectToken: (_token: KadenaToken) => void
+  hasToken?: (currency: KadenaToken) => boolean
   isSelected: boolean
-  addOrRemoveToken?: (type: 'add' | 'remove', currency: IToken[]) => void
+  addOrRemoveToken?: (type: 'add' | 'remove', currency: KadenaToken[]) => void
 }) => {
   if (!token) return null
   const isOnDefaultList = useMemo(
-    () => DEFAULT_TOKEN_LIST.some((t) => t.address === token.address),
+    () => DEFAULT_TOKEN_LIST.some((t) => t.name === token.name),
     [token],
   )
   const isNew = !hasToken?.(token)
@@ -245,21 +246,21 @@ const TokenButton = ({
     >
       <Button
         onClick={() => selectToken(token)}
-        key={token.address}
+        key={token.tokenAddress}
         size="xl"
         className="flex items-center justify-between w-full"
         variant="ghost"
       >
-        <div className="flex items-center gap-3 w-full ">
+        <div className="flex items-center w-full gap-3 ">
           {isSelected ? (
             <Badge
               position="bottom-right"
               badgeContent={
-                <div className="bg-white dark:bg-slate-800 rounded-full">
+                <div className="bg-white rounded-full dark:bg-slate-800">
                   <CheckCircleIcon
                     width={14}
                     height={14}
-                    className="text-blue rounded-full"
+                    className="rounded-full text-blue"
                   />
                 </div>
               }
@@ -271,7 +272,7 @@ const TokenButton = ({
           )}
 
           <div className="flex flex-col items-start">
-            <p>{token.symbol}</p>
+            <p>{token.tokenSymbol}</p>
             <p className="text-xs text-gray-400 dark:text-slate-500">
               {token.name}
             </p>
@@ -287,7 +288,7 @@ const TokenButton = ({
             >
               {formatUnitsForInput(
                 (token as TokenWithBalance)?.balance,
-                token?.decimals,
+                token?.tokenDecimals,
               ) ?? '0'}
             </span>
           </div>
@@ -324,21 +325,21 @@ const CommonTokenButton = ({
   token,
   selectToken,
 }: {
-  token: IToken
-  selectToken: (_token: IToken) => void
+  token: KadenaToken
+  selectToken: (_token: KadenaToken) => void
 }) => {
   return (
     <Button
       onClick={() => selectToken(token)}
-      key={token.address}
+      key={token.tokenAddress}
       size="sm"
       className="flex items-center justify-between w-fit"
       variant="secondary"
     >
-      <div className="flex items-center gap-2 w-full ">
+      <div className="flex items-center w-full gap-2 ">
         <Icon currency={token} height={18} width={18} />
 
-        <p>{token.symbol}</p>
+        <p>{token.tokenSymbol}</p>
       </div>
     </Button>
   )

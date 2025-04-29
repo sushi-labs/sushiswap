@@ -44,8 +44,8 @@ export const SwapStats = () => {
   const minOutput = useMemo(() => {
     if (!amountOut) return ''
     if (
-      (token0?.symbol === 'WKDA' && token1?.address === 'KDA') ||
-      (token0?.address === 'KDA' && token1?.symbol === 'WKDA')
+      (token0?.tokenSymbol === 'WKDA' && token1?.tokenSymbol === 'KDA') ||
+      (token0?.tokenSymbol === 'KDA' && token1?.tokenSymbol === 'WKDA')
     ) {
       return amountIn
     }
@@ -114,7 +114,7 @@ export const SwapStats = () => {
             {isLoading ? (
               <SkeletonBox className="h-4 py-0.5 w-[120px] rounded-md" />
             ) : (
-              `${amountOut} ${token1.symbol}`
+              `${amountOut} ${token1?.tokenSymbol}`
             )}
           </span>
         </div>
@@ -126,7 +126,7 @@ export const SwapStats = () => {
             {isLoading ? (
               <SkeletonBox className="h-4 py-0.5 w-[120px] rounded-md" />
             ) : (
-              `${minOutput} ${token1.symbol}`
+              `${minOutput} ${token1?.tokenSymbol}`
             )}
           </span>
         </div>
@@ -156,7 +156,7 @@ export const SwapStats = () => {
               <SwapRoutesDialog>
                 <button
                   type="button"
-                  className="text-sm text-blue font-semibold"
+                  className="text-sm font-semibold text-blue"
                 >
                   View
                 </button>

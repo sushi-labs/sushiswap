@@ -1,4 +1,4 @@
-import { type ComponentProps, useEffect, useMemo } from 'react'
+import { type ComponentProps, useEffect } from 'react'
 import { formatUnitsForInput } from '~kadena/_common/lib/utils/formatters'
 import { TokenInput } from '~kadena/_common/ui/Input/TokenInput'
 import { usePoolDispatch, usePoolState } from '../pool-provider'
@@ -30,7 +30,7 @@ export const AmountInToken0 = ({
     if (pairExists && rateOfToken1 && token1) {
       const amountFormatted = formatUnitsForInput(
         rateOfToken1,
-        token1?.decimals,
+        token1?.tokenDecimals,
       )
       if (amountFormatted) {
         setAmountInToken1(amountFormatted)

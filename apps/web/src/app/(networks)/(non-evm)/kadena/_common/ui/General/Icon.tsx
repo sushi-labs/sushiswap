@@ -1,10 +1,10 @@
 import { cloudinaryLogoFetchLoader } from '@sushiswap/ui'
 import Image from 'next/image'
 import { hashStringToColor } from '~kadena/_common/lib/utils/formatters'
-import type { IToken } from '~kadena/_common/types/token-type'
+import type { KadenaToken } from '~kadena/_common/types/token-type'
 
 type IconProps = {
-  currency: IToken | undefined
+  currency: KadenaToken | undefined
   height?: number
   width?: number
 }
@@ -12,7 +12,7 @@ type IconProps = {
 export const Icon = ({ currency, height = 40, width = 40 }: IconProps) => {
   return (
     <>
-      {currency?.logoURI ? (
+      {currency?.tokenImage ? (
         <div
           style={{ width, height }}
           className="relative flex overflow-hidden rounded-full shrink-0"
@@ -21,8 +21,8 @@ export const Icon = ({ currency, height = 40, width = 40 }: IconProps) => {
             loader={cloudinaryLogoFetchLoader}
             // @TODO: need this to render local images, remove when we have a CDN
             unoptimized
-            src={currency.logoURI}
-            alt={currency.symbol}
+            src={currency.tokenImage}
+            alt={currency.tokenSymbol}
             height={height}
             width={width}
             className="w-full h-full aspect-square"
@@ -35,11 +35,11 @@ export const Icon = ({ currency, height = 40, width = 40 }: IconProps) => {
             width: `${width}px`,
             height: `${height}px`,
             background: hashStringToColor(
-              currency ? `${currency.symbol} ${currency.name}` : '??',
+              currency ? `${currency.tokenSymbol} ${currency.name}` : '??',
             ),
           }}
         >
-          {currency?.symbol?.substring(0, 2) ?? '??'}
+          {currency?.tokenSymbol?.substring(0, 2) ?? '??'}
         </div>
       )}
     </>

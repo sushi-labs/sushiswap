@@ -1,4 +1,4 @@
-import type { IToken } from './token-type'
+import type { KadenaToken } from './token-type'
 
 export type IPoolData = {
   token0Address: string
@@ -37,8 +37,8 @@ export type IPoolDataResponse = {
 }
 
 export type IMyPositionData = {
-  token0: IToken | undefined
-  token1: IToken | undefined
+  token0: KadenaToken | undefined
+  token1: KadenaToken | undefined
   pairAddress: string | undefined
 }
 

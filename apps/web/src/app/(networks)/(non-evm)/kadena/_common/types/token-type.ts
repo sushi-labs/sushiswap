@@ -1,9 +1,22 @@
-export type IToken = {
-  address: string
-  decimals: number
-  logoURI?: string
-  name: string
-  symbol: string
+export interface TokenInfo {
+  decimalsToDisplay?: number
+  description?: string
+  discordUrl?: string
+  websiteUrl?: string
+  twitterUrl?: string
+  themeColor?: string
+  telegramUrl?: string
+  mediumUrl?: string
 }
 
-export type TokenWithBalance = IToken & { balance: string }
+export interface KadenaToken {
+  tokenAddress: string
+  tokenSymbol: string
+  tokenDecimals: number
+  tokenImage?: string
+  name: string
+  tokenInfo?: TokenInfo
+  validated?: boolean
+}
+
+export type TokenWithBalance = KadenaToken & { balance: string }

@@ -52,7 +52,7 @@ export const RemoveButton = (props: ButtonProps) => {
         'abf594a764e49a90a98cddf30872d8497e37399684c1d8e2b8e96fd865728cc2'
 
       createInfoToast({
-        summary: `Removing liquidity from the ${token0.symbol}/${token1.symbol} pair.`,
+        summary: `Removing liquidity from the ${token0.tokenSymbol}/${token1.tokenSymbol} pair.`,
         type: 'swap',
         account: address as string,
         chainId: 1,
@@ -108,7 +108,7 @@ export const RemoveButton = (props: ButtonProps) => {
 
   const allowanceFormatted = formatUnitsForInput(
     allowanceAmount ?? '0',
-    token0?.decimals ?? 18,
+    token0?.tokenDecimals ?? 18,
   )
 
   const buttonText = useMemo(() => {

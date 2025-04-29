@@ -1,6 +1,6 @@
 import { CardItem } from '@sushiswap/ui'
 import { formatUSD } from 'sushi/format'
-import type { IToken } from '~kadena/_common/types/token-type'
+import type { KadenaToken } from '~kadena/_common/types/token-type'
 import { Icon } from '~kadena/_common/ui/General/Icon'
 
 export const LiquidityItem = ({
@@ -10,7 +10,7 @@ export const LiquidityItem = ({
   usdAmount,
 }: {
   isLoading: boolean
-  token: IToken | undefined
+  token: KadenaToken | undefined
   amount: string
   usdAmount: string
 }) => {
@@ -22,9 +22,9 @@ export const LiquidityItem = ({
   return (
     <CardItem
       title={
-        <div className="font-medium flex items-center gap-2 text-muted-foreground">
+        <div className="flex items-center gap-2 font-medium text-muted-foreground">
           <Icon currency={token} width={18} height={18} />
-          {token?.symbol}
+          {token?.tokenSymbol}
         </div>
       }
     >

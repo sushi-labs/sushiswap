@@ -6,13 +6,13 @@ import {
   KADENA,
   STABLE_TOKENS,
 } from '~kadena/_common/constants/token-list'
-import type { IToken } from '~kadena/_common/types/token-type'
+import type { KadenaToken } from '~kadena/_common/types/token-type'
 
 type InputFieldType = 'token0' | 'token1'
 
 type Action =
-  | { type: 'setToken0'; value: IToken }
-  | { type: 'setToken1'; value: IToken }
+  | { type: 'setToken0'; value: KadenaToken }
+  | { type: 'setToken1'; value: KadenaToken }
   | { type: 'setIsTxnPending'; value: boolean }
   | { type: 'setAmountInToken0'; value: string }
   | { type: 'setAmountInToken1'; value: string }
@@ -22,8 +22,8 @@ type Action =
   | { type: 'setInputField'; value: InputFieldType }
 
 type Dispatch = {
-  setToken0(token: IToken): void
-  setToken1(token: IToken): void
+  setToken0(token: KadenaToken): void
+  setToken1(token: KadenaToken): void
   setIsTxnPending(isPending: boolean): void
   setAmountInToken0(amount: string): void
   setAmountInToken1(amount: string): void
@@ -34,8 +34,8 @@ type Dispatch = {
 }
 
 type State = {
-  token0: IToken | undefined
-  token1: IToken | undefined
+  token0: KadenaToken | undefined
+  token1: KadenaToken | undefined
   isTxnPending: boolean
   amountInToken0: string
   amountInToken1: string
@@ -54,14 +54,16 @@ const PoolContext = createContext<
 function poolReducer(_state: State, action: Action) {
   switch (action.type) {
     case 'setToken0': {
-      if (_state?.token1?.address === action.value.address) {
+      if (_state?.token1?.tokenAddress === action.value.tokenAddress) {
         //if token1 is the same as the new token0, swap them
         return { ..._state, token1: _state.token0, token0: action.value }
       }
       //if token1 is KDA and the new token is WRTX or vice versa, go back to default pair
       if (
-        (_state?.token1?.symbol === 'KDA' && action.value.symbol === 'WKDA') ||
-        (_state?.token1?.symbol === 'WKDA' && action.value.symbol === 'KDA')
+        (_state?.token1?.tokenSymbol === 'KDA' &&
+          action.value.tokenSymbol === 'WKDA') ||
+        (_state?.token1?.tokenSymbol === 'WKDA' &&
+          action.value.tokenSymbol === 'KDA')
       ) {
         return {
           ..._state,
@@ -72,13 +74,15 @@ function poolReducer(_state: State, action: Action) {
       return { ..._state, token0: action.value }
     }
     case 'setToken1': {
-      if (_state?.token0?.address === action.value.address) {
+      if (_state?.token0?.tokenAddress === action.value.tokenAddress) {
         //if token0 is the same as the new token1, swap them
         return { ..._state, token0: _state.token1, token1: action.value }
       }
       if (
-        (_state?.token0?.symbol === 'KDA' && action.value.symbol === 'WKDA') ||
-        (_state?.token0?.symbol === 'WKDA' && action.value.symbol === 'KDA')
+        (_state?.token0?.tokenSymbol === 'KDA' &&
+          action.value.tokenSymbol === 'WKDA') ||
+        (_state?.token0?.tokenSymbol === 'WKDA' &&
+          action.value.tokenSymbol === 'KDA')
       ) {
         return {
           ..._state,
@@ -127,8 +131,8 @@ const PoolProvider: FC<PoolProviderProps> = ({ children }) => {
 
   const dispatchWithAction = useMemo(
     () => ({
-      setToken0: (value: IToken) => dispatch({ type: 'setToken0', value }),
-      setToken1: (value: IToken) => dispatch({ type: 'setToken1', value }),
+      setToken0: (value: KadenaToken) => dispatch({ type: 'setToken0', value }),
+      setToken1: (value: KadenaToken) => dispatch({ type: 'setToken1', value }),
       setIsTxnPending: (value: boolean) =>
         dispatch({ type: 'setIsTxnPending', value }),
       setAmountInToken0: (value: string) =>

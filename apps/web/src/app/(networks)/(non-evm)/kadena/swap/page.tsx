@@ -37,7 +37,7 @@ export default function SwapSimplePage() {
   return (
     <Container maxWidth="lg" className="px-4">
       <div className="flex flex-col gap-4">
-        <div className="flex flex-col items-start gap-2 mb-4 sm:mt-10 mt-2">
+        <div className="flex flex-col items-start gap-2 mt-2 mb-4 sm:mt-10">
           <h1 className={typographyVariants({ variant: 'h1' })}>Trade</h1>
           {isLoading || !token0 || !token1 ? (
             <SkeletonText fontSize="sm" className="w-2/4" />
@@ -49,13 +49,13 @@ export default function SwapSimplePage() {
             >
               <ArrowTrendingUpIcon width={16} height={16} />
               <span className="flex items-baseline gap-1 whitespace-nowrap scroll hide-scrollbar">
-                1 {invert ? token0.symbol : token1.symbol}{' '}
+                1 {invert ? token0.tokenSymbol : token1.tokenSymbol}{' '}
                 <span className="font-normal">
                   ({formatUSD(invert ? token0FiatPrice : token1FiatPrice)})
                 </span>{' '}
                 =
                 <FormattedNumber number={price} />{' '}
-                {invert ? token1.symbol : token0.symbol}{' '}
+                {invert ? token1.tokenSymbol : token0.tokenSymbol}{' '}
                 <span className="font-normal">
                   ({formatUSD(invert ? token1FiatPrice : token0FiatPrice)})
                 </span>

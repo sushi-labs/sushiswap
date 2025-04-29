@@ -30,9 +30,9 @@ export const Rate = ({
         className="hover:!no-underline"
         onClick={handleToggleRate}
       >
-        1 {showToken0First ? token0?.symbol : token1?.symbol} ={' '}
+        1 {showToken0First ? token0?.tokenSymbol : token1?.tokenSymbol} ={' '}
         {showToken0First ? rateOfToken1 : rateOfToken2}
-        {showToken0First ? token1?.symbol : token0?.symbol}
+        {showToken0First ? token1?.tokenSymbol : token0?.tokenSymbol}
       </Button>
       {isLoading ? (
         <SkeletonBox className="h-3 w-[35px] rounded-sm" />

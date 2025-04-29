@@ -11,7 +11,7 @@ import {
 import { useEffect, useState } from 'react'
 import { formatUSD } from 'sushi/format'
 import { formatUnitsForInput } from '~kadena/_common/lib/utils/formatters'
-import type { IToken } from '~kadena/_common/types/token-type'
+import type { KadenaToken } from '~kadena/_common/types/token-type'
 import { LiquidityItem } from './LiquidityItem'
 
 export const PoolLiquidity = ({
@@ -21,8 +21,8 @@ export const PoolLiquidity = ({
   // biome-ignore lint/correctness/noUnusedVariables: <explanation>
   pairAddress,
 }: {
-  token0: IToken | undefined
-  token1: IToken | undefined
+  token0: KadenaToken | undefined
+  token1: KadenaToken | undefined
   isLoading: boolean
   pairAddress: string
 }) => {
@@ -50,10 +50,16 @@ export const PoolLiquidity = ({
   }, [])
 
   const reserve0 = data?.[0]?.reserve ?? '0'
-  const reserve0Formatted = formatUnitsForInput(reserve0, token0?.decimals ?? 0)
+  const reserve0Formatted = formatUnitsForInput(
+    reserve0,
+    token0?.tokenDecimals ?? 0,
+  )
 
   const reserve1 = data?.[1]?.reserve ?? '0'
-  const reserve1Formatted = formatUnitsForInput(reserve1, token1?.decimals ?? 0)
+  const reserve1Formatted = formatUnitsForInput(
+    reserve1,
+    token1?.tokenDecimals ?? 0,
+  )
 
   const token0Price = '.123'
   const token1Price = '.243'

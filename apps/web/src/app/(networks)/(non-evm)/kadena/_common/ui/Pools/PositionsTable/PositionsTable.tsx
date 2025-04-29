@@ -13,7 +13,7 @@ import type { PaginationState } from '@tanstack/react-table'
 import { useEffect, useMemo, useState } from 'react'
 import { usePoolFilters } from 'src/ui/pool'
 import type { IMyPositionData } from '~kadena/_common/types/get-pools-type'
-import type { IToken } from '~kadena/_common/types/token-type'
+import type { KadenaToken } from '~kadena/_common/types/token-type'
 import {
   APR_COLUMN,
   POSITION_NAME_COLUMN,
@@ -26,32 +26,36 @@ type PositionsTableProps = {
 }
 
 export type IPositionRowData = {
-  token0: IToken
-  token1: IToken
+  token0: KadenaToken
+  token1: KadenaToken
   pairAddress: string
   reserve0: string
   reserve1: string
 }
 
-export const MOCK_TOKEN_1 = {
-  address: 'abf594a764e49a90a98cddf30872d8497e37399684c1d8e2b8e96fd865728cc2',
-  symbol: 'TKN1',
+export const MOCK_TOKEN_1: KadenaToken = {
+  tokenAddress:
+    'abf594a764e49a90a98cddf30872d8497e37399684c1d8e2b8e96fd865728cc2',
+  tokenSymbol: 'TKN1',
+  tokenDecimals: 12,
   name: 'Token1',
-  decimals: 12,
-  logoURI: '',
+  tokenImage: '',
+  validated: true,
 }
 
-export const MOCK_TOKEN_2 = {
-  address: 'abf594a764e49a90a98cddf30872d8497e37399684c1d8e2b8e96fd865728cc2',
-  symbol: 'TKN2',
+export const MOCK_TOKEN_2: KadenaToken = {
+  tokenAddress:
+    'abf594a764e49a90a98cddf30872d8497e37399684c1d8e2b8e96fd865728cc2',
+  tokenSymbol: 'TKN2',
+  tokenDecimals: 12,
   name: 'Token2',
-  decimals: 12,
-  logoURI: '',
+  tokenImage: '',
+  validated: true,
 }
 
 export const POOLS: {
-  token0: IToken
-  token1: IToken
+  token0: KadenaToken
+  token1: KadenaToken
   pairAddress: string
   reserve0: string
   reserve1: string
@@ -94,10 +98,10 @@ export const PositionsTable = ({
     return POOLS.filter((pool) => {
       const poolValues = [
         pool.pairAddress,
-        pool.token0?.address,
-        pool.token1?.address,
-        pool.token0?.symbol,
-        pool.token1?.symbol,
+        pool.token0?.tokenAddress,
+        pool.token1?.tokenAddress,
+        pool.token0?.tokenSymbol,
+        pool.token1?.tokenSymbol,
         pool.token0?.name,
         pool.token1?.name,
       ]

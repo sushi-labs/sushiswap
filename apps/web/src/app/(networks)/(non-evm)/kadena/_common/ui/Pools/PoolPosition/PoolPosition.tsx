@@ -10,7 +10,7 @@ import {
 import { useEffect, useMemo, useState } from 'react'
 import { formatUSD } from 'sushi/format'
 import { PAIR_DECIMALS } from '~kadena/_common/constants/pair-decimals'
-import type { IToken } from '~kadena/_common/types/token-type'
+import type { KadenaToken } from '~kadena/_common/types/token-type'
 import {
   formatUnitsForInput,
   parseUnits,
@@ -25,8 +25,8 @@ export const PoolPosition = ({
   token1,
   isLoading,
 }: {
-  token0: IToken | undefined
-  token1: IToken | undefined
+  token0: KadenaToken | undefined
+  token1: KadenaToken | undefined
   isLoading: boolean
 }) => {
   const token0StakedInUsd = 0
@@ -75,7 +75,7 @@ export const PoolPosition = ({
     if (!totalSupply || !reserve0) return ''
     const formattedReserve0 = formatUnitsForInput(
       reserve0,
-      token0?.decimals ?? 0,
+      token0?.tokenDecimals ?? 0,
     )
     const formattedTotalSupply = formatUnitsForInput(totalSupply, PAIR_DECIMALS)
     const resBN = toBigNumber(formattedReserve0)
@@ -93,7 +93,7 @@ export const PoolPosition = ({
     if (!totalSupply || !reserve1) return ''
     const formattedReserve1 = formatUnitsForInput(
       reserve1,
-      token1?.decimals ?? 0,
+      token1?.tokenDecimals ?? 0,
     )
     const formattedTotalSupply = formatUnitsForInput(totalSupply, PAIR_DECIMALS)
     const resBN = toBigNumber(formattedReserve1)
@@ -155,13 +155,17 @@ export const PoolPosition = ({
           <LiquidityItem
             isLoading={loading}
             token={token0}
-            amount={String(parseUnits(amountToken0, token0?.decimals ?? 18))}
+            amount={String(
+              parseUnits(amountToken0, token0?.tokenDecimals ?? 18),
+            )}
             usdAmount={String(token0UnstakedInUsd)}
           />
           <LiquidityItem
             isLoading={loading}
             token={token1}
-            amount={String(parseUnits(amountToken1, token1?.decimals ?? 18))}
+            amount={String(
+              parseUnits(amountToken1, token1?.tokenDecimals ?? 18),
+            )}
             usdAmount={String(token1UnstakedInUsd)}
           />
         </CardGroup>

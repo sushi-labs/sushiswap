@@ -41,12 +41,12 @@ export const ReserveHelper = () => {
       const reserve0 = data.find(
         (d) =>
           getValidTokenAddress(d.address!) ===
-          getValidTokenAddress(token0?.address),
+          getValidTokenAddress(token0?.tokenAddress),
       )
       const reserve1 = data.find(
         (d) =>
           getValidTokenAddress(d.address!) ===
-          getValidTokenAddress(token1?.address),
+          getValidTokenAddress(token1?.tokenAddress),
       )
       setReserve0(reserve0?.reserve ?? '')
       setReserve1(reserve1?.reserve ?? '')

@@ -84,13 +84,13 @@ export const AddButton = ({
     queryClient.invalidateQueries({
       queryKey: [
         'useTokenBalance',
-        { accountAddress: address, tokenAddress: token0?.address },
+        { accountAddress: address, tokenAddress: token0?.tokenAddress },
       ],
     })
     queryClient.invalidateQueries({
       queryKey: [
         'useTokenBalance',
-        { accountAddress: address, tokenAddress: token1?.address },
+        { accountAddress: address, tokenAddress: token1?.tokenAddress },
       ],
     })
   }

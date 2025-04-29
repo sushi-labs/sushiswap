@@ -90,11 +90,14 @@ export const MinimumReceive = () => {
 
   useEffect(() => {
     if (minAmountToken0) {
-      const parsedAmount = parseUnits(minAmountToken0, token0?.decimals ?? 18)
+      const parsedAmount = parseUnits(
+        minAmountToken0,
+        token0?.tokenDecimals ?? 18,
+      )
 
       setMinAmountToken0(parsedAmount)
     }
-  }, [minAmountToken0, setMinAmountToken0, token0?.decimals])
+  }, [minAmountToken0, setMinAmountToken0, token0?.tokenDecimals])
 
   const minAmountToken1 = useMemo(() => {
     if (!amountToken1) return ''
@@ -104,11 +107,14 @@ export const MinimumReceive = () => {
 
   useEffect(() => {
     if (minAmountToken1) {
-      const parsedAmount = parseUnits(minAmountToken1, token1?.decimals ?? 18)
+      const parsedAmount = parseUnits(
+        minAmountToken1,
+        token1?.tokenDecimals ?? 18,
+      )
 
       setMinAmountToken1(parsedAmount)
     }
-  }, [minAmountToken1, setMinAmountToken1, token1?.decimals])
+  }, [minAmountToken1, setMinAmountToken1, token1?.tokenDecimals])
 
   const isLoading =
     !totalSupplyLP || isLoadingToken0Price || isLoadingToken1Price
@@ -120,13 +126,17 @@ export const MinimumReceive = () => {
         <LiquidityItem
           isLoading={isLoading}
           token={token0}
-          amount={String(parseUnits(minAmountToken0, token0?.decimals ?? 18))}
+          amount={String(
+            parseUnits(minAmountToken0, token0?.tokenDecimals ?? 18),
+          )}
           usdAmount={String(Number(token0Price) * Number(minAmountToken0))}
         />
         <LiquidityItem
           isLoading={isLoading}
           token={token1}
-          amount={String(parseUnits(minAmountToken1, token1?.decimals ?? 18))}
+          amount={String(
+            parseUnits(minAmountToken1, token1?.tokenDecimals ?? 18),
+          )}
           usdAmount={String(Number(token1Price) * Number(minAmountToken1))}
         />
       </CardGroup>

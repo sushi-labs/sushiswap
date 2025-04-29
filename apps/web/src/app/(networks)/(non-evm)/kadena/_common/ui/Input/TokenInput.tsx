@@ -7,7 +7,7 @@ import {
 } from '@sushiswap/ui'
 import { useEffect, useMemo, useState } from 'react'
 import { formatUnitsForInput } from '~kadena/_common/lib/utils/formatters'
-import type { IToken } from '~kadena/_common/types/token-type'
+import type { KadenaToken } from '~kadena/_common/types/token-type'
 import { Icon } from '../General/Icon'
 import { TokenSelector } from '../General/TokenSelector'
 import { DollarAmountDisplay } from '../Shared/DollarAmountDisplay'
@@ -21,8 +21,8 @@ const themes = {
 type TokenInputProps = {
   id?: string
   type: 'input' | 'output'
-  currency: IToken | undefined
-  setToken?: (token: IToken) => void
+  currency: KadenaToken | undefined
+  setToken?: (token: KadenaToken) => void
   amount: string
   setAmount: (amount: string) => void
   className?: string
@@ -89,7 +89,7 @@ export const TokenInput = ({
               <div className="w-[28px] h-[28px] mr-0.5">
                 <Icon currency={currency} width={28} height={28} />
               </div>
-              {currency.symbol}
+              {currency.tokenSymbol}
               <SelectIcon />
             </>
           ) : (
@@ -166,7 +166,7 @@ export const TokenInput = ({
                     <Icon currency={currency} width={28} height={28} />
                   </div>
                 )}
-                {currency.symbol}
+                {currency.tokenSymbol}
               </>
             ) : (
               <span className="text-gray-400 dark:text-slate-500">
@@ -186,7 +186,7 @@ export const TokenInput = ({
           amount={Number(tokenBalance ?? 0)}
           isLoading={isInitialLoadingTokenBalance}
           type={type}
-          decimals={currency?.decimals ?? 0}
+          decimals={currency?.tokenDecimals ?? 0}
           maxAmount={() => {
             if (type === 'output') return
             if (tokenBalance === '0') {
@@ -194,7 +194,10 @@ export const TokenInput = ({
               return
             }
             setAmount(
-              formatUnitsForInput(tokenBalance ?? '0', currency?.decimals ?? 0),
+              formatUnitsForInput(
+                tokenBalance ?? '0',
+                currency?.tokenDecimals ?? 0,
+              ),
             )
           }}
         />
@@ -219,7 +222,7 @@ export const TokenInput = ({
           </Button>
         )}
 
-      <div className="flex justify-between gap-2 items-center">
+      <div className="flex items-center justify-between gap-2">
         
         
       </div>

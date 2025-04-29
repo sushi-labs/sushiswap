@@ -28,7 +28,7 @@ export const ReviewAddDialogTrigger = (props: ButtonProps) => {
     if (isLoadingToken0Balance) return true
     return (
       Number(
-        formatUnitsForInput(token0Balance ?? '0', token0?.decimals ?? 18),
+        formatUnitsForInput(token0Balance ?? '0', token0?.tokenDecimals ?? 18),
       ) < Number(amountInToken0)
     )
   }, [token0, amountInToken0, isLoadingToken0Balance])
@@ -37,19 +37,19 @@ export const ReviewAddDialogTrigger = (props: ButtonProps) => {
     if (isLoadingToken1Balance) return true
     return (
       Number(
-        formatUnitsForInput(token1Balance ?? '0', token1?.decimals ?? 18),
+        formatUnitsForInput(token1Balance ?? '0', token1?.tokenDecimals ?? 18),
       ) < Number(amountInToken1)
     )
   }, [token1, amountInToken1, isLoadingToken1Balance])
 
   const token0AllowanceFormatted = formatUnitsForInput(
     token0AllowanceAmount ?? '0',
-    token0?.decimals ?? 18,
+    token0?.tokenDecimals ?? 18,
   )
 
   const token1AllowanceFormatted = formatUnitsForInput(
     token1AllowanceAmount ?? '0',
-    token1?.decimals ?? 18,
+    token1?.tokenDecimals ?? 18,
   )
 
   const hasInsufficientToken0Allowance = useMemo(() => {
@@ -83,16 +83,16 @@ export const ReviewAddDialogTrigger = (props: ButtonProps) => {
       return 'Enter Amount'
     }
     if (hasInsufficientToken0Balance) {
-      return `Insufficient ${token0?.symbol} Balance`
+      return `Insufficient ${token0?.tokenSymbol} Balance`
     }
     if (hasInsufficientToken1Balance) {
-      return `Insufficient ${token1?.symbol} Balance`
+      return `Insufficient ${token1?.tokenSymbol} Balance`
     }
     if (hasInsufficientToken0Allowance) {
-      return `Approve ${token0?.symbol} Token`
+      return `Approve ${token0?.tokenSymbol} Token`
     }
     if (hasInsufficientToken1Allowance) {
-      return `Approve ${token1?.symbol} Token`
+      return `Approve ${token1?.tokenSymbol} Token`
     }
 
     return 'Add Liquidity'
@@ -107,7 +107,7 @@ export const ReviewAddDialogTrigger = (props: ButtonProps) => {
     isTxnPending,
   ])
 
-  // if (buttonText === `Approve ${token0?.symbol} Token`) {
+  // if (buttonText === `Approve ${token0?.tokenSymbol} Token`) {
   //   return (
   //     <ApproveToken
   //       tokenToApprove={token0!}
@@ -121,7 +121,7 @@ export const ReviewAddDialogTrigger = (props: ButtonProps) => {
   //   )
   // }
 
-  // if (buttonText === `Approve ${token1?.symbol} Token`) {
+  // if (buttonText === `Approve ${token1?.tokenSymbol} Token`) {
   //   return (
   //     <ApproveToken
   //       tokenToApprove={token1!}

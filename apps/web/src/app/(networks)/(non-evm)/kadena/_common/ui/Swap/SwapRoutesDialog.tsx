@@ -26,9 +26,9 @@ export const SwapRoutesDialog: FC<{ children: ReactNode }> = ({ children }) => {
             pools to get you the best price.
           </DialogDescription>
         </DialogHeader>
-        <ScrollArea className="bg-secondary border border-accent rounded-xl">
+        <ScrollArea className="border bg-secondary border-accent rounded-xl">
           <div className="flex flex-col max-h-[300px] divide-y divide-accent">
-            <div className="flex items-center w-full gap-3 justify-between bg-secondary p-3">
+            <div className="flex items-center justify-between w-full gap-3 p-3 bg-secondary">
               {route?.map((_, idx) => (
                 <SwapItem key={idx} />
               ))}
@@ -44,7 +44,7 @@ const SwapItem = () => {
   return (
     <div className="flex items-center gap-2">
       <Icon width={16} height={16} currency={KADENA} />
-      <span className="text-sm font-medium">{KADENA?.symbol}</span>
+      <span className="text-sm font-medium">{KADENA?.tokenSymbol}</span>
     </div>
   )
 }

@@ -83,14 +83,14 @@ export const SwapButton = ({ closeModal }: { closeModal: () => void }) => {
     queryClient.invalidateQueries({
       queryKey: [
         'useTokenBalance',
-        { accountAddress: address, tokenAddress: token0?.address },
+        { accountAddress: address, tokenAddress: token0?.tokenAddress },
       ],
     })
 
     queryClient.invalidateQueries({
       queryKey: [
         'useTokenBalance',
-        { accountAddress: address, tokenAddress: token1?.address },
+        { accountAddress: address, tokenAddress: token1?.tokenAddress },
       ],
     })
   }
@@ -107,7 +107,7 @@ export const SwapButton = ({ closeModal }: { closeModal: () => void }) => {
         <Dots>Confirming Swap</Dots>
       ) : (
         <>
-          Swap {token0?.symbol} For {token1?.symbol}
+          Swap {token0?.tokenSymbol} For {token1?.tokenSymbol}
         </>
       )}
     </Button>

@@ -11,12 +11,12 @@ export const DepositForm = () => {
       title="Deposit"
       description="Select the amount of tokens you want to deposit"
     >
-      <section className="flex flex-col gap-4 relative w-full">
+      <section className="relative flex flex-col w-full gap-4">
         <AmountInToken0 />
         <Plus />
         <AmountInToken1 />
       </section>
-      <div className="flex w-full flex-col">
+      <div className="flex flex-col w-full">
         <ReviewAddDialog size="xl" fullWidth />
       </div>
     </FormSection>

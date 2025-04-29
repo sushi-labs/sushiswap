@@ -59,13 +59,13 @@ export const ReviewAddDialog = (props: ButtonProps) => {
           <div className="flex flex-col w-full gap-4">
             <List className="w-full">
               <List.Control>
-                <List.KeyValue title={token0?.symbol}>
+                <List.KeyValue title={token0?.tokenSymbol}>
                   <div className="flex flex-col items-end">
                     <div className="flex items-center gap-1">
                       <Icon currency={token0} width={16} height={16} />
                       {/* show max 12 decimals so nothing is cut off */}
                       <div>{formatUnits(amountInToken0, 0, 12)}</div>{' '}
-                      <div>{token0?.symbol}</div>
+                      <div>{token0?.tokenSymbol}</div>
                     </div>
                     {isLoadingToken0Price ? (
                       <SkeletonBox className="h-3 w-[40px] rounded-sm" />
@@ -78,13 +78,13 @@ export const ReviewAddDialog = (props: ButtonProps) => {
                     )}
                   </div>
                 </List.KeyValue>
-                <List.KeyValue title={token1?.symbol}>
+                <List.KeyValue title={token1?.tokenSymbol}>
                   <div className="flex flex-col items-end">
                     <div className="flex items-center gap-1">
                       <Icon currency={token1} width={16} height={16} />
                       {/* show max 12 decimals so nothing is cut off */}
                       <div>{formatUnits(amountInToken1, 0, 12)}</div>{' '}
-                      <div>{token1?.symbol}</div>
+                      <div>{token1?.tokenSymbol}</div>
                     </div>
                     {isLoadingToken1Price ? (
                       <SkeletonBox className="h-3 w-[40px] rounded-sm" />
