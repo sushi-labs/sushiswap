@@ -22,11 +22,11 @@ export async function DeleteTeamCard({ teamId }: DeleteTeamCard) {
 
   return (
     <Card className="w-full min-w-[470px]">
-      <CardHeader className="bg-secondary rounded-t-xl">
+      <CardHeader className="rounded-t-xl">
         <CardTitle>Delete Team</CardTitle>
         <CardDescription>Permanently delete the team</CardDescription>
       </CardHeader>
-      <CardContent className="bg-secondary rounded-b-xl">
+      <CardContent className="rounded-b-xl">
         <DeleteTeamDialog teamId={teamId}>
           <div>
             <CheckerCustom

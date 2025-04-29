@@ -23,11 +23,11 @@ export async function ApiKeyKeyCard({ teamId, apiKeyId }: ApiKeyResetCard) {
 
   return (
     <Card className="w-full min-w-[470px]">
-      <CardHeader className="bg-secondary rounded-t-xl">
+      <CardHeader className="rounded-t-xl">
         <CardTitle>API Key</CardTitle>
         <CardDescription>View or reset the key</CardDescription>
       </CardHeader>
-      <CardContent className="bg-secondary rounded-b-xl">
+      <CardContent className="rounded-b-xl">
         <ApiKeyKeyForm teamId={teamId} apiKey={response.data.team.apiKey} />
       </CardContent>
     </Card>

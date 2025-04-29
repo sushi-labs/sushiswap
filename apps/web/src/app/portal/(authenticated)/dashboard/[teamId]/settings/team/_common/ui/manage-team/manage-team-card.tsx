@@ -18,11 +18,11 @@ export async function ManageTeamCard({ teamId }: ManageTeamCard) {
 
   return (
     <Card className="w-full min-w-[470px] h-min">
-      <CardHeader className="bg-secondary rounded-t-xl">
+      <CardHeader className="rounded-t-xl">
         <CardTitle>Manage Team</CardTitle>
         <CardDescription>Manage your team</CardDescription>
       </CardHeader>
-      <CardContent className="bg-secondary rounded-b-xl">
+      <CardContent className="rounded-b-xl">
         <ManageTeamForm team={{ id: teamId, name: team.data.team.name }} />
       </CardContent>
     </Card>

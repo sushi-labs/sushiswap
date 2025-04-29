@@ -24,11 +24,11 @@ export async function TeamPlanCard({ teamId }: { teamId: string }) {
 
   return (
     <Card className="w-full min-w-[470px] h-min">
-      <CardHeader className="bg-secondary rounded-t-xl">
+      <CardHeader className="rounded-t-xl">
         <CardTitle>Plan</CardTitle>
         <CardDescription>The currently selected plan</CardDescription>
       </CardHeader>
-      <CardContent className="bg-secondary rounded-b-xl">
+      <CardContent className="rounded-b-xl">
         <List>
           <List.Control>
             <List.KeyValue flex title="Name">

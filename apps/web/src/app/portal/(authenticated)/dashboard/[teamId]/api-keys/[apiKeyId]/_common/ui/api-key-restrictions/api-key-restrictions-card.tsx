@@ -23,13 +23,13 @@ export async function ApiKeyRestrictionsCard({
 
   return (
     <Card className="w-full min-w-[470px] h-min">
-      <CardHeader className="bg-secondary rounded-t-xl">
+      <CardHeader className="rounded-t-xl">
         <CardTitle>Restrictions</CardTitle>
         <CardDescription>
           Limit the key to specific IP addresses and origins
         </CardDescription>
       </CardHeader>
-      <CardContent className="bg-secondary rounded-b-xl pb-0">
+      <CardContent className="rounded-b-xl pb-0">
         <ApiKeyRestrictionsForm
           teamId={teamId}
           apiKey={response.data.team.apiKey}

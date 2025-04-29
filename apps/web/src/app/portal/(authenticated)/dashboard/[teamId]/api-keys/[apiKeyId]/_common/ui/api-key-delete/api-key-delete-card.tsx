@@ -17,11 +17,11 @@ interface ApiKeyDeleteCard {
 export async function ApiKeyDeleteCard({ teamId, apiKeyId }: ApiKeyDeleteCard) {
   return (
     <Card className="w-full min-w-[470px]">
-      <CardHeader className="bg-secondary rounded-t-xl">
+      <CardHeader className="rounded-t-xl">
         <CardTitle>Delete API Key</CardTitle>
         <CardDescription>Permanently delete the key</CardDescription>
       </CardHeader>
-      <CardContent className="bg-secondary rounded-b-xl">
+      <CardContent className="rounded-b-xl">
         <CheckerRoleServer
           teamId={teamId}
           requiredRole="admin"

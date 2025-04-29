@@ -30,11 +30,11 @@ export async function ApiKeyRateLimitCard({
 
   return (
     <Card className="w-full min-w-[470px] h-min">
-      <CardHeader className="bg-secondary rounded-t-xl">
+      <CardHeader className="rounded-t-xl">
         <CardTitle>Rate Limit</CardTitle>
         <CardDescription>Change the key's rate limit settings</CardDescription>
       </CardHeader>
-      <CardContent className="bg-secondary rounded-b-xl">
+      <CardContent className="rounded-b-xl">
         <ApiKeyRateLimitForm
           teamId={teamId}
           apiKey={apiKeyResponse.data.team.apiKey}

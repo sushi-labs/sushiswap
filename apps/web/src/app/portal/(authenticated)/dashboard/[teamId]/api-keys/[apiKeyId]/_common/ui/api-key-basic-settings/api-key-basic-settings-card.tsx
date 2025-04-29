@@ -25,13 +25,13 @@ export async function ApiKeyBasicSettingsCard({
 
   return (
     <Card className="w-full min-w-[470px] h-min">
-      <CardHeader className="bg-secondary rounded-t-xl">
+      <CardHeader className="rounded-t-xl">
         <CardTitle>Basic Settings</CardTitle>
         <CardDescription>
           Change the name of the key, enable or disable it
         </CardDescription>
       </CardHeader>
-      <CardContent className="bg-secondary rounded-b-xl">
+      <CardContent className="rounded-b-xl">
         <ApiKeyBasicSettingsForm
           teamId={teamId}
           apiKey={response.data.team.apiKey}

@@ -16,11 +16,11 @@ export async function TeamBalanceCard({ teamId }: { teamId: string }) {
 
   return (
     <Card className="w-full min-w-[470px] h-min">
-      <CardHeader className="bg-secondary rounded-t-xl">
+      <CardHeader className="rounded-t-xl">
         <CardTitle>Balance</CardTitle>
         <CardDescription>Your team's current balance</CardDescription>
       </CardHeader>
-      <CardContent className="bg-secondary rounded-b-xl">
+      <CardContent className="rounded-b-xl">
         <div className="space-y-1">
           <div className="text-4xl text-right">
             {response.data.team.balanceUSD.toLocaleString('en-US', {

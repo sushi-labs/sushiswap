@@ -21,11 +21,11 @@ export async function TeamDetailsCard({ teamId }: TeamDetailsCard) {
 
   return (
     <Card className="w-full min-w-[470px] h-min">
-      <CardHeader className="bg-secondary rounded-t-xl">
+      <CardHeader className="rounded-t-xl">
         <CardTitle>Team Details</CardTitle>
         <CardDescription>Useful when requesting support</CardDescription>
       </CardHeader>
-      <CardContent className="bg-secondary rounded-b-xl">
+      <CardContent className="rounded-b-xl">
         <List>
           <List.Control>
             <List.KeyValue flex title="ID">
