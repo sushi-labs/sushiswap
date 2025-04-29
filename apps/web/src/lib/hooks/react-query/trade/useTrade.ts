@@ -9,7 +9,7 @@ import { API_BASE_URL } from 'src/lib/swap/api-base-url'
 import { slippageAmount } from 'sushi/calculate'
 import {
   TOKEN_CHOMPER_ADDRESS,
-  isRouteProcessor6ChainId,
+  isRouteProcessor7ChainId,
   isTokenChomperChainId,
   isWNativeSupported,
 } from 'sushi/config'
@@ -55,7 +55,7 @@ export const useTradeQuery = (
       },
     ],
     queryFn: async () => {
-      const params = new URL(`${API_BASE_URL}/swap/v6/${chainId}`)
+      const params = new URL(`${API_BASE_URL}/swap/v7/${chainId}`)
       params.searchParams.set('referrer', 'sushi')
       params.searchParams.set(
         'tokenIn',
@@ -156,7 +156,7 @@ export const useTrade = (variables: UseTradeParams) => {
   const select: UseTradeQuerySelect = useCallback(
     (data) => {
       if (
-        isRouteProcessor6ChainId(chainId) &&
+        isRouteProcessor7ChainId(chainId) &&
         data &&
         amount &&
         data.route &&
