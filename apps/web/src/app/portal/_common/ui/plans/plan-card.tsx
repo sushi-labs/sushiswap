@@ -34,6 +34,7 @@ export function PlanCard({ plan, children, className }: PlanCard) {
             {plan.priceUSD.toLocaleString(undefined, {
               style: 'currency',
               currency: 'USD',
+              maximumFractionDigits: 0,
             })}
             /m
           </span>

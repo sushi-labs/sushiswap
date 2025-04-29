@@ -16,11 +16,11 @@ export async function TeamBalanceChangesCard({ teamId }: { teamId: string }) {
 
   return (
     <Card className="w-full min-w-[470px] h-min">
-      <CardHeader className="bg-secondary rounded-t-xl">
+      <CardHeader className="rounded-t-xl">
         <CardTitle>Balance Changes</CardTitle>
         <CardDescription>Deposits and deductions</CardDescription>
       </CardHeader>
-      <CardContent className="bg-secondary rounded-b-xl">
+      <CardContent className="rounded-b-xl">
         <TeamBalanceChangesTable team={response.data.team} />
       </CardContent>
     </Card>

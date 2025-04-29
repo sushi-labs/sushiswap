@@ -88,11 +88,11 @@ export function PasswordCard() {
 
   return (
     <Card className="w-full min-w-[470px]">
-      <CardHeader className="bg-secondary rounded-t-xl">
+      <CardHeader className="rounded-t-xl">
         <CardTitle>Password</CardTitle>
         <CardDescription>Change or create your password</CardDescription>
       </CardHeader>
-      <CardContent className="bg-secondary rounded-b-xl">
+      <CardContent className="rounded-b-xl">
         <PortalForm form={form} onValid={onSubmit}>
           <div className="space-y-4">
             <FormField

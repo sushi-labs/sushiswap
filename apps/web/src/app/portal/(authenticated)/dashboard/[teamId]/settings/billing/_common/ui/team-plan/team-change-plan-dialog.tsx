@@ -10,6 +10,8 @@ import {
   DialogTitle,
   DialogTrigger,
   Dots,
+  ScrollArea,
+  ScrollBar,
 } from '@sushiswap/ui'
 import { useMutation } from '@tanstack/react-query'
 import { useRouter } from 'next/navigation'
@@ -70,71 +72,74 @@ export function TeamChangePlanDialog({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>{children}</DialogTrigger>
-      <DialogContent className="!max-w-[70vw] !min-w-0">
+      <DialogContent className="!max-w-[70vw] !w-max !min-w-0">
         <DialogHeader>
           <DialogTitle>Change Plan</DialogTitle>
           <DialogDescription>
             Upgrade or downgrade your team's subscription.
           </DialogDescription>
         </DialogHeader>
-        <div className="inline-flex flex-row gap-4 overflow-x-scroll pb-4">
-          {plans.map((plan) => {
-            const isPlanPending = isPending && variables === plan.id
+        <ScrollArea className="pb-6" type="always">
+          <div className="flex w-max gap-4 px-1">
+            {plans.map((plan) => {
+              const isPlanPending = isPending && variables === plan.id
 
-            const isSelected = plan.id === teamPlan.id
-            const canAfford = teamBalance >= plan.priceUSD
+              const isSelected = plan.id === teamPlan.id
+              const canAfford = teamBalance >= plan.priceUSD
 
-            const buttonText = (() => {
-              if (isPlanPending) {
-                return (
-                  <span>
-                    Pending
-                    <Dots />
-                  </span>
-                )
-              }
+              const buttonText = (() => {
+                if (isPlanPending) {
+                  return (
+                    <span>
+                      Pending
+                      <Dots />
+                    </span>
+                  )
+                }
 
-              if (isSelected) {
-                return <span>Selected</span>
-              }
+                if (isSelected) {
+                  return <span>Selected</span>
+                }
 
-              return <span>Select</span>
-            })()
+                return <span>Select</span>
+              })()
 
-            const canSelect = !isSelected && canAfford && !isPending
+              const canSelect = !isSelected && canAfford && !isPending
 
-            return (
-              <PlanCard key={plan.id} plan={plan} className="min-w-[320px]">
-                <div className="flex flex-col w-full">
-                  <CheckerCustom
-                    disableWhen={!canAfford && !isSelected}
-                    message="Your team has insufficient balance"
-                  >
-                    {(disabled) => (
-                      <CheckerRoleClient
-                        message="You must be the owner of the team to change the plan"
-                        teamId={teamId}
-                        disabled={disabled || isSelected}
-                        requiredRole="owner"
-                      >
-                        {(disabled) => (
-                          <Button
-                            fullWidth
-                            disabled={disabled || !canSelect}
-                            onClick={() => mutateAsync(plan.id)}
-                          >
-                            {buttonText}
-                          </Button>
-                        )}
-                      </CheckerRoleClient>
-                    )}
-                  </CheckerCustom>
-                  <CollapsibleMessage message={message} />
-                </div>
-              </PlanCard>
-            )
-          })}
-        </div>
+              return (
+                <PlanCard key={plan.id} plan={plan} className="min-w-[320px]">
+                  <div className="flex flex-col w-full">
+                    <CheckerCustom
+                      disableWhen={!canAfford && !isSelected}
+                      message="Your team has insufficient balance"
+                    >
+                      {(disabled) => (
+                        <CheckerRoleClient
+                          message="You must be the owner of the team to change the plan"
+                          teamId={teamId}
+                          disabled={disabled || isSelected}
+                          requiredRole="owner"
+                        >
+                          {(disabled) => (
+                            <Button
+                              fullWidth
+                              disabled={disabled || !canSelect}
+                              onClick={() => mutateAsync(plan.id)}
+                            >
+                              {buttonText}
+                            </Button>
+                          )}
+                        </CheckerRoleClient>
+                      )}
+                    </CheckerCustom>
+                    <CollapsibleMessage message={message} />
+                  </div>
+                </PlanCard>
+              )
+            })}
+          </div>
+          <ScrollBar orientation="horizontal" className="px-1" />
+        </ScrollArea>
       </DialogContent>
     </Dialog>
   )

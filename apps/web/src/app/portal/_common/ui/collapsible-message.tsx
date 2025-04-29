@@ -1,6 +1,6 @@
 'use client'
 
-import { classNames } from '@sushiswap/ui'
+import { Collapsible, classNames } from '@sushiswap/ui'
 import { useEffect, useState } from 'react'
 
 type Message = {
@@ -37,14 +37,16 @@ interface CollapsibleMessage {
 
 export function CollapsibleMessage({ message }: CollapsibleMessage) {
   return (
-    <div
-      className={classNames(
-        message?.type === 'success' && 'text-green-500',
-        message?.type === 'error' && 'text-red-500',
-        'w-full text-center font-medium pt-4',
-      )}
-    >
-      {message?.message || ''}
-    </div>
+    <Collapsible open={!!message}>
+      <div
+        className={classNames(
+          message?.type === 'success' && 'text-green-500',
+          message?.type === 'error' && 'text-red-500',
+          'w-full text-center font-medium pt-4',
+        )}
+      >
+        {message?.message || ''}
+      </div>
+    </Collapsible>
   )
 }
