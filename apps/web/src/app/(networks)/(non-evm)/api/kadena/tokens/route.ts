@@ -1,12 +1,12 @@
-import { NextResponse } from 'next/server';
-
-import { KADENA_TOKENS } from '@/config/tokens/kadena';
+import { NextResponse } from 'next/server'
+import { KADENA_TOKENS } from '~kadena/_common/constants/token-list'
 
 export async function GET() {
+  const tokens = KADENA_TOKENS.slice(0, -1)
   try {
-    return NextResponse.json({
+    const response = NextResponse.json({
       success: true,
-      data: KADENA_TOKENS.map((token) => ({
+      data: tokens.map((token) => ({
         tokenAddress: token.tokenAddress,
         tokenSymbol: token.tokenSymbol,
         tokenDecimals: token.tokenDecimals,
@@ -16,6 +16,8 @@ export async function GET() {
         tokenInfo: token.tokenInfo,
       })),
     })
+
+    return response
   } catch (error) {
     console.error('Error in tokens route:', error)
     return NextResponse.json(

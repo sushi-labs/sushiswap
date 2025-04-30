@@ -1,6 +1,5 @@
-import { NextResponse } from 'next/server';
-
-import { KADENA_TOKENS } from '@/config/tokens/kadena';
+import { NextResponse } from 'next/server'
+import { KADENA_TOKENS } from '~kadena/_common/constants/token-list'
 
 export async function GET(request: Request) {
   try {

@@ -10,15 +10,15 @@ export const useBaseTokens = () => {
   return useQuery({
     queryKey: ['base-tokens'],
     queryFn: async (): Promise<KadenaToken[]> => {
-      const response = await fetch('/api/kadena-tokens')
+      const response = await fetch('/api/kadena/tokens')
       const data = (await response.json()) as KadenaTokensApiResponse
       if (!data.success) {
         throw new Error('Failed to fetch Kadena tokens')
       }
       return data.data
     },
-    staleTime: 1000 * 60 * 60 * 24, // 24 hours
-    gcTime: 30 * 60 * 1000, // Garbage collect after 30 mins
+    staleTime: 1000 * 60 * 60 * 24,
+    gcTime: 30 * 60 * 1000,
     refetchOnMount: false,
     refetchOnWindowFocus: false,
   })

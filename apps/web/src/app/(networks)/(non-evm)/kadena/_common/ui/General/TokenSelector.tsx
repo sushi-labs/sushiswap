@@ -29,6 +29,9 @@ import {
   DEFAULT_TOKEN_LIST,
 } from '~kadena/_common/constants/token-list'
 import { useBaseTokens } from '~kadena/_common/lib/hooks/use-base-tokens'
+import { useCustomTokens } from '~kadena/_common/lib/hooks/use-custom-tokens'
+import { useSortedTokenList } from '~kadena/_common/lib/hooks/use-sorted-token-list'
+import { useTokenWithCache } from '~kadena/_common/lib/hooks/use-token-with-cache'
 import { formatUnitsForInput } from '~kadena/_common/lib/utils/formatters'
 import type {
   KadenaToken,
@@ -47,34 +50,32 @@ export const TokenSelector = ({
 }) => {
   const [open, setOpen] = useState(false)
   const [query, setQuery] = useState('')
-  const [queryToken, setQueryToken] = useState<KadenaToken | undefined>(
-    undefined,
-  )
-  // const { customTokens, addOrRemoveToken, hasToken } = useCustomTokens()
-  const addOrRemoveToken = () => {}
-  const hasToken = () => false
-
-  const [isQueryTokenLoading, setIsQueryTokenLoading] = useState(false)
-
-  // @TODO: remove this during integration
-  // loading state should come from query hook
-  useEffect(() => {
-    setTimeout(() => {
-      setIsQueryTokenLoading(false)
-    }, 1000)
-  }, [])
-
-  // @TODO: remove this during integration
-  // query token should come from token info hook
-  useEffect(() => {
-    if (query && baseTokens) {
-      setQueryToken(baseTokens?.[0])
-    } else {
-      setQueryToken(undefined)
-    }
-  }, [query])
-
+  const { data: queryToken, isLoading: isQueryTokenLoading } =
+    useTokenWithCache({
+      address: query,
+      enabled: true,
+      keepPreviousData: false,
+    })
+  const { customTokens, addOrRemoveToken, hasToken } = useCustomTokens()
   const { data: baseTokens } = useBaseTokens()
+  console.log('baseTokens', baseTokens)
+
+  const baseTokenMap = useMemo(() => {
+    if (!baseTokens) return undefined
+    const tokenMap: Record<string, KadenaToken> = {}
+    baseTokens.forEach((token) => {
+      tokenMap[token.tokenAddress] = token
+    })
+    console.log('Converted baseTokens to baseTokenMap:', tokenMap)
+    return tokenMap
+  }, [baseTokens])
+
+  const { data: sortedTokens } = useSortedTokenList({
+    tokenMap: baseTokenMap,
+    customTokenMap: customTokens,
+    balanceMap: {},
+    query: query,
+  })
 
   const _onSelect = useCallback(
     (token: KadenaToken) => {
@@ -85,24 +86,23 @@ export const TokenSelector = ({
   )
 
   // @TODO: remove this ignore during integration
-  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   const Row = useCallback(
     ({ index, style }: { index: number; style: CSSProperties }) => {
       return (
         <TokenButton
           style={style}
-          token={baseTokens?.[index]}
+          token={sortedTokens?.[index]}
           selectToken={_onSelect}
-          key={baseTokens?.[index]?.tokenAddress}
+          key={sortedTokens?.[index]?.tokenAddress}
           hasToken={hasToken}
           addOrRemoveToken={addOrRemoveToken}
           isSelected={
-            baseTokens?.[index]?.tokenAddress === selected?.tokenAddress
+            sortedTokens?.[index]?.tokenAddress === selected?.tokenAddress
           }
         />
       )
     },
-    [selected, _onSelect],
+    [selected, _onSelect, sortedTokens, addOrRemoveToken, hasToken],
   )
 
   return (
@@ -187,7 +187,7 @@ export const TokenSelector = ({
                 <FixedSizeList
                   width="100%"
                   height={height}
-                  itemCount={baseTokens ? baseTokens?.length : 0}
+                  itemCount={sortedTokens ? sortedTokens?.length : 0}
                   itemSize={64}
                   className={'scroll'}
                   style={{ overflow: 'overlay' }}
@@ -196,7 +196,7 @@ export const TokenSelector = ({
                 </FixedSizeList>
               )}
             </AutoSizer>
-            {baseTokens?.length === 0 && !queryToken && (
+            {sortedTokens?.length === 0 && !queryToken && (
               <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                 <div className="flex flex-col items-center justify-center gap-1">
                   <span className="flex items-center text-xs text-gray-500 dark:text-slate-500">

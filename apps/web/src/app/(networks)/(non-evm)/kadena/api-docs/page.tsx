@@ -1,10 +1,10 @@
 'use client'
 
-import 'swagger-ui-react/swagger-ui.css';
+import 'swagger-ui-react/swagger-ui.css'
 
-import SwaggerUI from 'swagger-ui-react';
+import SwaggerUI from 'swagger-ui-react'
 
-import { swaggerConfig } from '@/config/swagger';
+import { swaggerConfig } from '~kadena/_common/lib/utils/config'
 
 export default function ApiDocs() {
   return (
