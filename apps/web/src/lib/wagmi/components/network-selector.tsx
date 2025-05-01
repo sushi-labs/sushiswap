@@ -1,6 +1,7 @@
 'use client'
 
 import {
+  classNames,
   Command,
   CommandEmpty,
   CommandGroup,
@@ -12,7 +13,7 @@ import {
 } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import { usePathname, useRouter } from 'next/navigation'
-import React, { type ReactNode, useCallback, useState } from 'react'
+import React, { type ReactNode, useCallback, useMemo, useState } from 'react'
 import {
   NEW_CHAIN_IDS,
   type NonStandardChainId,
@@ -29,6 +30,7 @@ export interface NetworkSelectorProps<
   T extends number | string = EvmChainId | NonStandardChainId,
 > {
   networks: readonly T[]
+  supportedNetworks?: readonly T[]
   selected: T
   onSelect: NetworkSelectorOnSelectCallback<T>
   children: ReactNode
@@ -37,11 +39,13 @@ export interface NetworkSelectorProps<
 const NetworkSelector = <T extends number | string>({
   onSelect,
   networks = [],
+  supportedNetworks = networks,
   children,
 }: Omit<NetworkSelectorProps<T>, 'variant'>) => {
   const [open, setOpen] = useState(false)
   const { push } = useRouter()
   const pathname = usePathname()
+  const supportedNetworksSet = useMemo(() => new Set(supportedNetworks), [supportedNetworks]);
 
   const _onSelect = useCallback(
     (_network: string, close: () => void) => {
@@ -77,18 +81,23 @@ const NetworkSelector = <T extends number | string>({
             testdata-id="network-selector-input"
             placeholder="Search network"
           />
-          <CommandGroup>
+          <CommandGroup className="!pr-0">
             {networks.map((network) => {
+              const isSupported = supportedNetworksSet.has(network)
               const name = getNetworkName(
                 network as EvmChainId | NonStandardChainId,
               )
 
               return (
                 <CommandItem
-                  className="cursor-pointer"
+                  className={classNames('transition-colors duration-100', {
+                    'cursor-pointer hover:bg-secondary': isSupported,
+                    'opacity-50': !isSupported
+                  })}
                   testdata-id={`network-selector-${network}`}
                   value={`${name}__${network}`}
                   key={network}
+                  disabled={!isSupported}
                   onSelect={(value) => {
                     const network = value.split('__')[1]
                     _onSelect(network, () => setOpen(false))

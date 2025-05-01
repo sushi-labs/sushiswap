@@ -41,7 +41,7 @@ const SidebarContext = createContext<SidebarContextType>({
   setIsOpen: null,
 })
 
-export const useSidebar = () => {
+const useSidebar = () => {
   return useContext(SidebarContext)
 }
 
@@ -50,7 +50,7 @@ interface SidebarProviderProps {
   defaultOpen?: boolean
 }
 
-export const SidebarProvider: FC<SidebarProviderProps> = ({
+const SidebarProvider: FC<SidebarProviderProps> = ({
   children,
   defaultOpen = true,
 }) => {
@@ -63,13 +63,13 @@ export const SidebarProvider: FC<SidebarProviderProps> = ({
   )
 }
 
-export const SidebarToggle: FC<Omit<ButtonProps, 'onClick'>> = (props) => {
+const SidebarToggle: FC<Omit<ButtonProps, 'onClick'>> = (props) => {
   const { isOpen, setIsOpen } = useSidebar()
 
   return <Button onClick={() => setIsOpen?.(!isOpen)} {...props} />
 }
 
-export interface SidebarContainerProps {
+interface SidebarContainerProps {
   children: ReactNode
   shiftContent?: boolean
   selectedNetwork?: number | string
@@ -79,7 +79,7 @@ export interface SidebarContainerProps {
   onSelect?: ((network: ChainId | NonStandardChainId) => void) | null
 }
 
-export const SidebarContainer: FC<SidebarContainerProps> = ({
+const SidebarContainer: FC<SidebarContainerProps> = ({
   children,
   shiftContent = false,
   selectedNetwork,

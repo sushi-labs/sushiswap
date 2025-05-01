@@ -1,7 +1,7 @@
 'use client'
 
 import { ChevronRightIcon } from '@heroicons/react/24/outline'
-import { useBreakpoint, useMediaQuery } from '@sushiswap/hooks'
+import { useMediaQuery } from '@sushiswap/hooks'
 import {
   Card,
   CardContent,
@@ -28,7 +28,6 @@ import type {
   CrossChainRoute,
   CrossChainRouteOrder,
 } from 'src/lib/swap/cross-chain'
-import { useSidebar } from 'src/ui/sidebar'
 import { CrossChainSwapRouteCard } from './cross-chain-swap-route-card'
 import { CrossChainSwapRouteMobileCard } from './cross-chain-swap-route-mobile-card'
 import {
@@ -38,7 +37,6 @@ import {
 
 export const CrossChainSwapRouteSelector = () => {
   const { data: routes, status } = useCrossChainTradeRoutes()
-  const { isOpen: isSidebarOpen } = useSidebar()
 
   const {
     state: { routeOrder, selectedBridge },
@@ -48,11 +46,8 @@ export const CrossChainSwapRouteSelector = () => {
   const isLg = useMediaQuery({
     query: `(min-width: 1056px)`,
   })
-  const { isXl } = useBreakpoint('xl')
 
-  const showDesktopSelector = isSidebarOpen ? isXl : isLg
-
-  return showDesktopSelector ? (
+  return isLg ? (
     <DesktopRouteSelector
       routeOrder={routeOrder}
       setRouteOrder={setRouteOrder}
