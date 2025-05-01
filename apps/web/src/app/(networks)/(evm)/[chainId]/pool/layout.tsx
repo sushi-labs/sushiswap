@@ -2,7 +2,6 @@ import { isPoolChainId } from '@sushiswap/graph-client/data-api'
 import { notFound } from 'next/navigation'
 import { POOL_SUPPORTED_NETWORKS } from 'src/config'
 import type { ChainId } from 'sushi/chain'
-import { SidebarContainer, SidebarProvider } from '~evm/_common/ui/sidebar'
 import { Header } from '../header'
 
 export const metadata = {
@@ -23,16 +22,12 @@ export default async function PoolLayout(props: {
   }
 
   return (
-    <SidebarProvider>
-      <Header chainId={chainId} />
-      <SidebarContainer
-        selectedNetwork={chainId}
+    <>
+      <Header
+        chainId={chainId}
         supportedNetworks={POOL_SUPPORTED_NETWORKS}
-        unsupportedNetworkHref={'/ethereum/explore/pools'}
-        shiftContent
-      >
-        <main className="flex flex-col h-full flex-1">{children}</main>
-      </SidebarContainer>
-    </SidebarProvider>
+      />
+      <main className="flex flex-col h-full flex-1">{children}</main>
+    </>
   )
 }

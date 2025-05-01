@@ -1,4 +1,3 @@
-import { SidebarContainer, SidebarProvider } from '~tron/_common/ui/sidebar'
 import { Header } from '~tron/header'
 import { Providers } from './providers'
 
@@ -13,12 +12,8 @@ export default function SwapLayout({
 }: { children: React.ReactNode }) {
   return (
     <Providers>
-      <SidebarProvider>
-        <Header />
-        <SidebarContainer>
-          <main className="lg:p-4 mt-16 mb-[86px]">{children}</main>
-        </SidebarContainer>
-      </SidebarProvider>
+      <Header />
+      <main className="lg:p-4 mt-16 mb-[86px]">{children}</main>
     </Providers>
   )
 }

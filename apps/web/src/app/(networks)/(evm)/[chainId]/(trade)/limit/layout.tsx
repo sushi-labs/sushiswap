@@ -1,8 +1,7 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
-import { TWAP_SUPPORTED_CHAIN_IDS, isTwapSupportedChainId } from 'src/config'
+import { isTwapSupportedChainId } from 'src/config'
 import type { ChainId } from 'sushi/chain'
-import { SidebarContainer } from '~evm/_common/ui/sidebar'
 import { Providers } from './providers'
 
 export const metadata: Metadata = {
@@ -26,13 +25,7 @@ export default async function SwapLimitLayout(props: {
 
   return (
     <Providers>
-      <SidebarContainer
-        selectedNetwork={chainId}
-        supportedNetworks={TWAP_SUPPORTED_CHAIN_IDS}
-        unsupportedNetworkHref="/ethereum/limit"
-      >
-        <main className="lg:p-4 mt-16 mb-[86px]">{children}</main>
-      </SidebarContainer>
+      <main className="lg:p-4 mt-16 mb-[86px]">{children}</main>
     </Providers>
   )
 }

@@ -1,7 +1,7 @@
 import type { ChainId } from 'sushi/chain'
-import { SidebarProvider } from '~evm/_common/ui/sidebar'
 import { Header } from '../header'
 import { Providers } from './providers'
+import { HeaderNetworkSelectorProvider } from 'src/lib/wagmi/components/header-network-selector';
 
 export default async function TradeLayout(props: {
   children: React.ReactNode
@@ -15,10 +15,10 @@ export default async function TradeLayout(props: {
 
   return (
     <Providers>
-      <SidebarProvider>
+      <HeaderNetworkSelectorProvider>
         <Header chainId={chainId} />
         {children}
-      </SidebarProvider>
+      </HeaderNetworkSelectorProvider>
     </Providers>
   )
 }

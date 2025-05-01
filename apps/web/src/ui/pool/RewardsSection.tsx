@@ -17,7 +17,6 @@ import {
 import { MERKL_SUPPORTED_CHAIN_IDS } from 'sushi/config'
 
 import { useAccount } from 'wagmi'
-import { useSidebar } from '../sidebar'
 import { usePoolFilters } from './PoolsFiltersProvider'
 import { RewardSlide, RewardSlideSkeleton } from './RewardSlide'
 import {
@@ -41,8 +40,6 @@ export const RewardsSection: FC = () => {
     chainIds: MERKL_SUPPORTED_CHAIN_IDS,
     account: address,
   })
-
-  const { isOpen: isSidebarOpen } = useSidebar()
 
   const [paginationState, setPaginationState] = useState<PaginationState>({
     pageIndex: 0,
@@ -88,7 +85,7 @@ export const RewardsSection: FC = () => {
     <>
       <div className="pl-4">
         <Carousel<NonNullable<typeof chainsSorted>[0] | number>
-          containerWidth={isSidebarOpen ? 1504 : 1280}
+          containerWidth={1280}
           slides={chainsSorted || MERKL_SUPPORTED_CHAIN_IDS}
           render={(row) =>
             typeof row === 'number' ? (

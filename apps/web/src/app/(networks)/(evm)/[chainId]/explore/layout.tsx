@@ -1,7 +1,7 @@
 import type React from 'react'
 import type { ChainId } from 'sushi/chain'
-import { SidebarProvider } from '~evm/_common/ui/sidebar'
 import { Header } from '../header'
+import { POOL_SUPPORTED_NETWORKS } from 'src/config';
 
 export default async function ExploreLayout(props: {
   children: React.ReactNode
@@ -14,9 +14,12 @@ export default async function ExploreLayout(props: {
   const chainId = +params.chainId as ChainId
 
   return (
-    <SidebarProvider>
-      <Header chainId={chainId} />
+    <>
+      <Header
+        chainId={chainId}
+        supportedNetworks={POOL_SUPPORTED_NETWORKS}
+      />
       {children}
-    </SidebarProvider>
+    </>
   )
 }

@@ -1,3 +1,4 @@
+/*
 'use client'
 
 import type { FC } from 'react'
@@ -17,3 +18,4 @@ export const SidebarContainer: FC<
 }
 
 export { SidebarProvider }
+*/

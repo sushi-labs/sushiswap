@@ -4,7 +4,6 @@ import { notFound } from 'next/navigation'
 import { POOL_SUPPORTED_NETWORKS } from 'src/config'
 import { PoolsFiltersProvider } from 'src/ui/pool'
 import type { ChainId } from 'sushi/chain'
-import { SidebarContainer, SidebarProvider } from '~evm/_common/ui/sidebar'
 import { Header } from '../header'
 import { Hero } from './hero'
 import { NavigationItems } from './navigation-items'
@@ -24,14 +23,11 @@ export default async function PositionsLayout(props: {
   }
 
   return (
-    <SidebarProvider>
-      <Header chainId={chainId} />
-      <SidebarContainer
-        shiftContent
-        selectedNetwork={chainId}
+    <>
+      <Header
+        chainId={chainId}
         supportedNetworks={POOL_SUPPORTED_NETWORKS}
-        unsupportedNetworkHref={'/ethereum/pool'}
-      >
+      />
         <main className="flex flex-col h-full flex-1">
           <Container maxWidth="7xl" className="px-4 py-16">
             <Hero chainId={chainId} />
@@ -45,7 +41,6 @@ export default async function PositionsLayout(props: {
             </div>
           </section>
         </main>
-      </SidebarContainer>
-    </SidebarProvider>
+    </>
   )
 }

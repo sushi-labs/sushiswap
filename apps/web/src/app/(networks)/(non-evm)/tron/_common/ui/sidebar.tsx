@@ -1,3 +1,4 @@
+/*
 'use client'
 
 import { useWallet as useTronWallet } from '@tronweb3/tronwallet-adapter-react-hooks'
@@ -24,3 +25,4 @@ export const SidebarContainer: FC<
 }
 
 export { SidebarProvider }
+*/

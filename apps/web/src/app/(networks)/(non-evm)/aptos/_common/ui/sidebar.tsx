@@ -1,3 +1,4 @@
+/*
 'use client'
 
 import { useWallet as useAptosWallet } from '@aptos-labs/wallet-adapter-react'
@@ -26,3 +27,4 @@ export const SidebarContainer: FC<
 }
 
 export { SidebarProvider }
+*/

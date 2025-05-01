@@ -15,11 +15,13 @@ import { UserPortfolio } from './user-portfolio'
 
 interface WagmiHeaderComponentsProps {
   networks: readonly (EvmChainId | NonStandardChainId)[]
+  supportedNetworks?: readonly (EvmChainId | NonStandardChainId)[]
   onChange?(chainId: EvmChainId): void
 }
 
 export const WagmiHeaderComponents: React.FC<WagmiHeaderComponentsProps> = ({
   networks,
+  supportedNetworks,
   onChange,
 }) => {
   const { chainId, address, connector } = useAccount()
@@ -43,8 +45,9 @@ export const WagmiHeaderComponents: React.FC<WagmiHeaderComponentsProps> = ({
     <Suspense>
       <HeaderNetworkSelector
         networks={networks}
+        supportedNetworks={supportedNetworks}
         onChange={onChange}
-        className="flex lg:hidden"
+        className="flex"
       />
       <UserPortfolio />
     </Suspense>
