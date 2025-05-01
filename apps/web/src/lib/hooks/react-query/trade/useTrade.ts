@@ -8,9 +8,9 @@ import { useCallback, useMemo } from 'react'
 import { API_BASE_URL } from 'src/lib/swap/api-base-url'
 import { slippageAmount } from 'sushi/calculate'
 import {
-  TOKEN_CHOMPER_ADDRESS,
+  UI_FEE_COLLECTOR_ADDRESS,
   isRouteProcessor7ChainId,
-  isTokenChomperChainId,
+  isUIFeeCollectorChainId,
   isWNativeSupported,
 } from 'sushi/config'
 import { Amount, Native, Price, type Type } from 'sushi/currency'
@@ -79,8 +79,8 @@ export const useTradeQuery = (
       recipient && params.searchParams.set('recipient', `${recipient}`)
       params.searchParams.set(
         'feeReceiver',
-        isTokenChomperChainId(chainId)
-          ? TOKEN_CHOMPER_ADDRESS[chainId]
+        isUIFeeCollectorChainId(chainId)
+          ? UI_FEE_COLLECTOR_ADDRESS[chainId]
           : '0xFF64C2d5e23e9c48e8b42a23dc70055EEC9ea098',
       )
       params.searchParams.set('fee', '0.0025')

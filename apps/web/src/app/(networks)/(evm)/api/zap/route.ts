@@ -1,6 +1,6 @@
 import type { NextRequest } from 'next/server'
 import { type ZapSupportedChainId, isZapSupportedChainId } from 'src/config'
-import { TOKEN_CHOMPER_ADDRESS, isTokenChomperChainId } from 'sushi/config'
+import { UI_FEE_COLLECTOR_ADDRESS, isUIFeeCollectorChainId } from 'sushi/config'
 import { getAddress } from 'viem/utils'
 import { z } from 'zod'
 
@@ -58,8 +58,8 @@ export async function GET(request: NextRequest) {
     url.searchParams.set('fee', '25') // 0.25%
     url.searchParams.set(
       'feeReceiver',
-      isTokenChomperChainId(parsedParams.chainId)
-        ? TOKEN_CHOMPER_ADDRESS[parsedParams.chainId]
+      isUIFeeCollectorChainId(parsedParams.chainId)
+        ? UI_FEE_COLLECTOR_ADDRESS[parsedParams.chainId]
         : '0xFF64C2d5e23e9c48e8b42a23dc70055EEC9ea098',
     )
   })
