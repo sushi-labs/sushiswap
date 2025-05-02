@@ -18,7 +18,7 @@ export const WalletListView = () => {
                 height={12}
               />
             )}
-            className="flex items-center justify-start w-full px-0 text-left"
+            className="flex items-center justify-start w-full min-w-[100px] text-left"
             key={adapter.name}
             title={adapter.name}
             onClick={() => {
