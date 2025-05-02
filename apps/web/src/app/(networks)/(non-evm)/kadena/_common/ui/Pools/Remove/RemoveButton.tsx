@@ -129,7 +129,7 @@ export const RemoveButton = (props: ButtonProps) => {
   }, [percentage, isTxnPending, allowanceFormatted, lpToRemove])
 
   if (!isConnected) {
-    return <WalletConnector {...props} />
+    return <WalletConnector fullWidth {...props} />
   }
 
   // if (buttonText === 'Approve') {

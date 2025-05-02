@@ -54,7 +54,6 @@ export const useSortedTokenList = ({
         debouncedQuery,
       )
       if (balanceMap) {
-        console.log('Updating token balances from balanceMap')
         filteredSortedTokens.forEach((token) => {
           ;(token as unknown as TokenWithBalance).balance = String(
             balanceMap[token.tokenAddress] || 0,

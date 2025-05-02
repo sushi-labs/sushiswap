@@ -45,7 +45,7 @@ export const ReviewAddDialog = (props: ButtonProps) => {
       {isConnected ? (
         <ReviewAddDialogTrigger {...props} />
       ) : (
-        <WalletConnector {...props} />
+        <WalletConnector fullWidth {...props} />
       )}
       <DialogContent>
         <DialogClose ref={closeBtnRef} />

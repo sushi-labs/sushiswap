@@ -2,11 +2,17 @@ import { List, SelectIcon } from '@sushiswap/ui'
 import Image from 'next/image'
 import { useKadena } from '~kadena/kadena-wallet-provider'
 
-export const WalletListView = () => {
+export const WalletListView = ({
+  isFullWidth = false,
+}: {
+  isFullWidth?: boolean
+}) => {
   const { adapters, handleConnect } = useKadena()
 
   return (
-    <List className="flex flex-col gap-1 !p-0">
+    <List
+      className={`flex flex-col gap-1 !p-0 ${isFullWidth ? '[width:calc(var(--radix-popover-trigger-width)_-_10px)]' : ''}`}
+    >
       <List.Control className="bg-gray-100">
         {adapters.map((adapter) => (
           <List.MenuItem

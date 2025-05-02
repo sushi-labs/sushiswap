@@ -49,8 +49,8 @@ export const WalletConnector = (props: ButtonProps) => {
         ) : null}
       </PopoverTrigger>
 
-      <PopoverContent className="!p-1 !rounded-2xl w-fit">
-        {!isConnected ? <WalletListView /> : null}
+      <PopoverContent className="!p-1 !rounded-2xl w-full">
+        {!isConnected ? <WalletListView isFullWidth={props.fullWidth} /> : null}
         {view === 'default' && isConnected ? (
           <DefaultView setView={setView} />
         ) : null}

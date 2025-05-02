@@ -23,7 +23,7 @@ export const SimpleSwapBridgeBanner: FC<{ className?: string }> = ({
     <Link href={'#'} target="_blank" rel="noopener noreferrer">
       <div
         className={classNames(
-          'rounded-xl relative p-6 bg-[#E9E9EB] dark:bg-[] overflow-hidden',
+          'rounded-xl relative p-6 bg-[#E9E9EB] overflow-hidden',
           className,
         )}
       >
@@ -58,7 +58,7 @@ export const SimpleSwapBridgeBanner: FC<{ className?: string }> = ({
           alt="Kadena Bridge Banner Cube"
           width={119}
           height={119}
-          className="absolute top-1/2 -translate-y-1/2 right-3"
+          className="absolute -translate-y-1/2 top-1/2 right-3"
         />
       </div>
     </Link>

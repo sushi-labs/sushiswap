@@ -58,7 +58,6 @@ export const TokenSelector = ({
     })
   const { customTokens, addOrRemoveToken, hasToken } = useCustomTokens()
   const { data: baseTokens } = useBaseTokens()
-  console.log('baseTokens', baseTokens)
 
   const baseTokenMap = useMemo(() => {
     if (!baseTokens) return undefined
@@ -66,7 +65,6 @@ export const TokenSelector = ({
     baseTokens.forEach((token) => {
       tokenMap[token.tokenAddress] = token
     })
-    console.log('Converted baseTokens to baseTokenMap:', tokenMap)
     return tokenMap
   }, [baseTokens])
 
