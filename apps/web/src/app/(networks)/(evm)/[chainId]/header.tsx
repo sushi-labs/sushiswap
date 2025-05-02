@@ -1,10 +1,6 @@
 'use client'
 
-import {
-  Navigation,
-  SushiNavigationDropdown,
-  classNames,
-} from '@sushiswap/ui'
+import { Navigation, SushiNavigationDropdown, classNames } from '@sushiswap/ui'
 import { SushiIcon } from '@sushiswap/ui/icons/SushiIcon'
 import { SushiWithTextIcon } from '@sushiswap/ui/icons/SushiWithTextIcon'
 import React, { type FC } from 'react'

@@ -6,11 +6,15 @@ import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import React, {
   createContext,
   type Dispatch,
-  type FC, type ReactNode,
+  type FC,
+  type ReactNode,
   type SetStateAction,
   Suspense,
   useCallback,
-  useContext, useEffect, useMemo, useState
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
 } from 'react'
 import type { NonStandardChainId } from 'src/config'
 import { getNetworkName } from 'src/lib/network'
@@ -29,32 +33,36 @@ interface HeaderNetworkSelectorContextType {
   setSupportedNetworks: Dispatch<SetStateAction<SupportedNetworks | null>>
 }
 
-const HeaderNetworkSelectorContext = createContext<HeaderNetworkSelectorContextType>({
-  supportedNetworks: null,
-  setSupportedNetworks: () => {},
-})
+const HeaderNetworkSelectorContext =
+  createContext<HeaderNetworkSelectorContextType>({
+    supportedNetworks: null,
+    setSupportedNetworks: () => {},
+  })
 
-export const useHeaderNetworkSelector = (supportedNetworks: SupportedNetworks) => {
-  const context = useContext(HeaderNetworkSelectorContext);
+export const useHeaderNetworkSelector = (
+  supportedNetworks: SupportedNetworks,
+) => {
+  const context = useContext(HeaderNetworkSelectorContext)
 
   useEffect(() => {
-    context.setSupportedNetworks(supportedNetworks);
+    context.setSupportedNetworks(supportedNetworks)
 
     return () => {
-      context.setSupportedNetworks(null);
+      context.setSupportedNetworks(null)
     }
-  }, []);
+  }, [supportedNetworks, context])
 }
 
 export const HeaderNetworkSelectorProvider: FC<{
   children: ReactNode
-}> = ({
-  children,
-}) => {
-  const [supportedNetworks, setSupportedNetworks] = useState<SupportedNetworks | null>(null)
+}> = ({ children }) => {
+  const [supportedNetworks, setSupportedNetworks] =
+    useState<SupportedNetworks | null>(null)
 
   return (
-    <HeaderNetworkSelectorContext.Provider value={{ supportedNetworks, setSupportedNetworks }}>
+    <HeaderNetworkSelectorContext.Provider
+      value={{ supportedNetworks, setSupportedNetworks }}
+    >
       {children}
     </HeaderNetworkSelectorContext.Provider>
   )
@@ -77,8 +85,13 @@ export const HeaderNetworkSelector: FC<{
 }) => {
   const { switchChainAsync } = useSwitchChain()
   const chainId = useChainId()
-  const { supportedNetworks: contextSupportedNetworks } = useContext(HeaderNetworkSelectorContext);
-  const supportedNetworks = useMemo(() => propsSupportedNetworks ?? contextSupportedNetworks ?? undefined, [propsSupportedNetworks, contextSupportedNetworks]);
+  const { supportedNetworks: contextSupportedNetworks } = useContext(
+    HeaderNetworkSelectorContext,
+  )
+  const supportedNetworks = useMemo(
+    () => propsSupportedNetworks ?? contextSupportedNetworks ?? undefined,
+    [propsSupportedNetworks, contextSupportedNetworks],
+  )
 
   const onSwitchNetwork = useCallback<NetworkSelectorOnSelectCallback>(
     async (el, close) => {

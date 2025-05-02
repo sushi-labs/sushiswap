@@ -1,7 +1,7 @@
 import type React from 'react'
+import { POOL_SUPPORTED_NETWORKS } from 'src/config'
 import type { ChainId } from 'sushi/chain'
 import { Header } from '../header'
-import { POOL_SUPPORTED_NETWORKS } from 'src/config';
 
 export default async function ExploreLayout(props: {
   children: React.ReactNode
@@ -15,10 +15,7 @@ export default async function ExploreLayout(props: {
 
   return (
     <>
-      <Header
-        chainId={chainId}
-        supportedNetworks={POOL_SUPPORTED_NETWORKS}
-      />
+      <Header chainId={chainId} supportedNetworks={POOL_SUPPORTED_NETWORKS} />
       {children}
     </>
   )
