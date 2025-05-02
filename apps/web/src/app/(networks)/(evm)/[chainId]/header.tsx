@@ -40,6 +40,7 @@ export const Header: FC<{
         rightElement={
           <WagmiHeaderComponents
             networks={SUPPORTED_NETWORKS}
+            selectedNetwork={chainId as EvmChainId}
             supportedNetworks={supportedNetworks}
           />
         }
