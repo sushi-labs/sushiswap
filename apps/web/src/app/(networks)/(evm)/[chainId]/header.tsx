@@ -14,12 +14,12 @@ import React, { type FC } from 'react'
 import { SUPPORTED_NETWORKS } from 'src/config'
 import { WagmiHeaderComponents } from 'src/lib/wagmi/components/wagmi-header-components'
 import { SidebarToggle, useSidebar } from 'src/ui/sidebar'
-import type { EvmChainId } from 'sushi/chain'
+import type { ChainId } from 'sushi/chain'
 import { useAccount, useChainId } from 'wagmi'
 import { headerElements } from '../_common/header-elements'
 
 interface HeaderProps {
-  chainId?: EvmChainId
+  chainId?: ChainId
 }
 
 export const Header: FC<HeaderProps> = ({ chainId: _chainId }) => {
