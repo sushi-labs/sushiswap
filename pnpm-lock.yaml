@@ -270,6 +270,9 @@ importers:
       '@hookform/resolvers':
         specifier: 3.3.1
         version: 3.3.1(react-hook-form@7.54.2(react@19.0.0))
+      '@kadena/client':
+        specifier: ^1.17.1
+        version: 1.17.1(@upstash/redis@1.22.1(encoding@0.1.13))(bufferutil@4.0.8)(encoding@0.1.13)(utf-8-validate@5.0.10)
       '@kadena/wallet-adapter-ecko':
         specifier: 0.0.1-beta.2
         version: 0.0.1-beta.2(@upstash/redis@1.22.1(encoding@0.1.13))(bufferutil@4.0.8)(encoding@0.1.13)(typescript@5.7.2)(utf-8-validate@5.0.10)
