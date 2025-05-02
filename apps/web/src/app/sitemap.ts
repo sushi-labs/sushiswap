@@ -5,7 +5,6 @@ import { getNetworkKey } from 'src/lib/network'
 const evmChainPaths = [
   '/migrate',
   '/pool',
-  '/rewards',
   '/cross-chain-swap',
   '/dca',
   '/limit',

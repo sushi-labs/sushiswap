@@ -1,11 +1,10 @@
 import type { EvmChainId } from 'sushi/chain'
 import type { MerklChainId } from 'sushi/config'
-import type { Address } from 'sushi/types'
-import type { Hex } from 'viem'
+import { sz } from 'sushi/validate'
 import z from 'zod'
 
 const merklRewardsTokenValidator = z.object({
-  address: z.string().transform((address) => address as Address),
+  address: sz.address(),
   decimals: z.number().optional(),
   symbol: z.string().optional(),
   minimumAmountPerHour: z.string().transform((amount) => BigInt(amount)),
@@ -20,12 +19,12 @@ const merklRewardValidator = z.object({
   }),
   rewards: z.array(
     z.object({
-      root: z.string().transform((hex) => hex as Hex),
-      recipient: z.string().transform((address) => address as Address),
+      root: sz.hex(),
+      recipient: sz.address(),
       amount: z.string().transform((value) => BigInt(value)),
       claimed: z.string().transform((value) => BigInt(value)),
       pending: z.string().transform((value) => BigInt(value)),
-      proofs: z.array(z.string().transform((hex) => hex as Hex)),
+      proofs: z.array(sz.hex()),
       token: z.object({
         address: z.string(),
         chainId: z.number().transform((chainId) => chainId as EvmChainId),

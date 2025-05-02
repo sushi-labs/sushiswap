@@ -27,6 +27,8 @@ import {
   typographyVariants,
 } from '@sushiswap/ui'
 import format from 'date-fns/format'
+import getUnixTime from 'date-fns/getUnixTime'
+import ms from 'ms'
 import { useRouter } from 'next/navigation'
 import { use, useMemo, useState } from 'react'
 import { useRewardTokens } from 'src/lib/hooks/react-query'
@@ -124,7 +126,7 @@ const Incentivize = withCheckerRoot(() => {
 
   const numHours = useMemo(() => {
     return startDate && endDate
-      ? Math.floor((endDate.getTime() - startDate.getTime()) / 3600000)
+      ? Math.floor((endDate.getTime() - startDate.getTime()) / ms('1h'))
       : undefined
   }, [startDate, endDate])
 
@@ -159,7 +161,7 @@ const Incentivize = withCheckerRoot(() => {
               propToken0: customize ? distro1[0] * 100 : 2000,
               propToken1: customize ? distro2[0] * 100 : 2000,
               propFees: customize ? distro3[0] * 100 : 6000,
-              epochStart: Math.floor(startDate.getTime() / 1000) || 0,
+              epochStart: getUnixTime(startDate),
               numEpoch: numHours,
               isOutOfRangeIncentivized: customizeOOR ? 1 : 0,
               boostedReward: 0,

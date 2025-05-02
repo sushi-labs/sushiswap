@@ -47,11 +47,11 @@ export const useClaimableRewards = ({
       )
 
       return res.reduce((accum, cur) => {
-        if (cur.status !== 'fulfilled' || cur.value.length < 1) return accum
+        if (cur.status !== 'fulfilled' || cur.value.length === 0) return accum
 
         const { chain, rewards } = cur.value[0]
 
-        if (rewards.length < 1) return accum
+        if (rewards.length === 0) return accum
 
         const rewardAmounts = {} as Record<string, Amount<Type>>
 
@@ -86,7 +86,7 @@ export const useClaimableRewards = ({
           }
         })
 
-        if (Object.keys(rewardAmounts).length < 1) return accum
+        if (Object.keys(rewardAmounts).length === 0) return accum
 
         const rewardAmountsUSD = Object.entries(rewardAmounts).reduce(
           (prev, [key, amount]) => {

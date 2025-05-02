@@ -11,35 +11,38 @@ import { useAccount } from 'wagmi'
 export const Hero: FC = () => {
   const { address, isConnected } = useAccount()
 
-  const { data: positionsData, isError: isPositionsError } =
-    useConcentratedLiquidityPositions({
-      account: address,
-      chainIds: SushiSwapV3ChainIds,
-    })
+  const {
+    data: positionsData,
+    isError: isPositionsError,
+    isInitialLoading: isPositonsLoading,
+  } = useConcentratedLiquidityPositions({
+    account: address,
+    chainIds: SushiSwapV3ChainIds,
+  })
   const totalFeesUSD = useMemo(() => {
-    return !isConnected || isPositionsError
-      ? 0
-      : positionsData
-        ? positionsData.reduce(
-            (accum, { position: { unclaimedUSD } }) => accum + unclaimedUSD,
-            0,
-          )
-        : undefined
-  }, [positionsData, isConnected, isPositionsError])
+    if (!isConnected || isPositionsError) return 0
+    if (isPositonsLoading || !positionsData) return undefined
+    return positionsData.reduce(
+      (accum, { position: { unclaimedUSD } }) => accum + unclaimedUSD,
+      0,
+    )
+  }, [positionsData, isConnected, isPositionsError, isPositonsLoading])
 
-  const { data: rewardsData, isError: isRewardsError } = useClaimableRewards({
+  const {
+    data: rewardsData,
+    isError: isRewardsError,
+    isLoading: isRewardsLoading,
+  } = useClaimableRewards({
     account: address,
   })
   const totalRewardsUSD = useMemo(() => {
-    return !isConnected || isRewardsError
-      ? 0
-      : rewardsData
-        ? Object.values(rewardsData).reduce(
-            (accum, { totalRewardsUSD }) => accum + totalRewardsUSD,
-            0,
-          )
-        : undefined
-  }, [rewardsData, isConnected, isRewardsError])
+    if (!isConnected || isRewardsError) return 0
+    if (isRewardsLoading || !rewardsData) return undefined
+    return Object.values(rewardsData).reduce(
+      (accum, { totalRewardsUSD }) => accum + totalRewardsUSD,
+      0,
+    )
+  }, [rewardsData, isConnected, isRewardsError, isRewardsLoading])
 
   return (
     <section className="flex flex-col gap-6">

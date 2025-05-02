@@ -68,7 +68,7 @@ export const ClaimableFeesTab: FC = () => {
 
     const feesByChain = Object.entries(positionsByChain).reduce(
       (accum, [_chainId, positions]) => {
-        if (positions.length < 1) return accum
+        if (positions.length === 0) return accum
 
         const chainId = +_chainId as SushiSwapV3ChainId
 
@@ -108,7 +108,7 @@ export const ClaimableFeesTab: FC = () => {
           }
         })
 
-        if (Object.keys(feeAmounts).length < 1) return accum
+        if (Object.keys(feeAmounts).length === 0) return accum
 
         const feeAmountsUSD = Object.entries(feeAmounts).reduce(
           (prev, [key, amount]) => {
