@@ -65,5 +65,11 @@ export async function Header() {
     },
   ]
 
-  return <Navigation leftElements={navData} />
+  return (
+    <div className="w-full h-[56px] z-20">
+      <div className="fixed w-full flex z-20">
+        <Navigation leftElements={navData}/>
+      </div>
+    </div>
+  )
 }

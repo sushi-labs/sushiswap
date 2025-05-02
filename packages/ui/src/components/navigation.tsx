@@ -69,7 +69,7 @@ const SUPPORT_NAVIGATION_LINKS: NavigationElementDropdown['items'] = [
 ]
 
 const navigationContainerVariants = cva(
-  'px-4 sticky flex items-center flex-grow gap-4 top-0 z-50 min-h-[56px] max-h-[56px] h-[56px]',
+  'px-4 flex items-center flex-grow gap-4 top-0 z-50 min-h-[56px] max-h-[56px] h-[56px]',
   {
     variants: {
       variant: {
