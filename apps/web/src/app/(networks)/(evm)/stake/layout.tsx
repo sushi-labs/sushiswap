@@ -18,7 +18,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         chainId={ChainId.ETHEREUM}
         supportedNetworks={supportedNetworks}
       />
-      <div className="flex flex-col flex-1 overflow-y-auto">
+      <div className="flex flex-col flex-1 overflow-y-auto animate-slide">
         <Container maxWidth="5xl" className="px-4 pt-16 mb-12">
           <BarHeader />
         </Container>

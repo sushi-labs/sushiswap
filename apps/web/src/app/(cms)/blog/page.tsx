@@ -10,25 +10,27 @@ export default function Page() {
   return (
     <Suspense>
       <BlogSearchProvider>
-        <Hero />
-        <div className="h-[0.5px] bg-accent w-full" />
-        <Container
-          className="z-10 px-4 md:pb-20 py-4 mx-auto space-y-12"
-          maxWidth="5xl"
-        >
-          <div className="flex justify-between gap-4 items-start md:flex-row flex-col-reverse">
-            <div className="w-full">
-              <CategoryFilter />
+        <div className="animate-slide">
+          <Hero />
+          <div className="h-[0.5px] bg-accent w-full" />
+          <Container
+            className="z-10 px-4 md:pb-20 py-4 mx-auto space-y-12"
+            maxWidth="5xl"
+          >
+            <div className="flex justify-between gap-4 items-start md:flex-row flex-col-reverse">
+              <div className="w-full">
+                <CategoryFilter />
+              </div>
+              <div className="md:w-[400px] md:max-w-[1/4] w-full">
+                <SearchFilter />
+              </div>
             </div>
-            <div className="md:w-[400px] md:max-w-[1/4] w-full">
-              <SearchFilter />
-            </div>
-          </div>
-          <ArticleList />
-        </Container>
-        <a href="/blog/article-list" className="hidden">
-          Article List
-        </a>
+            <ArticleList />
+          </Container>
+          <a href="/blog/article-list" className="hidden">
+            Article List
+          </a>
+        </div>
       </BlogSearchProvider>
     </Suspense>
   )

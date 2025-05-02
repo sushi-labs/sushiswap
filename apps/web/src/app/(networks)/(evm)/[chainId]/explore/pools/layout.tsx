@@ -28,7 +28,7 @@ export default async function ExploreLayout(props: {
   }
 
   return (
-    <main className="flex flex-col h-full flex-1">
+    <main className="flex flex-col h-full flex-1 animate-slide">
       <Container maxWidth="7xl" className="px-4 py-4">
         <GlobalStatsCharts chainId={chainId} />
       </Container>

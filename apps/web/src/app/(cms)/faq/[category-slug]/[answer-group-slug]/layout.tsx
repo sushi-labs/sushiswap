@@ -25,7 +25,7 @@ export default async function Layout(props: {
   }
 
   return (
-    <div>
+    <div className="animate-slide">
       <div className="dark:bg-[#19202F] w-full pl-[calc(100vw-100%)]">
         <Container maxWidth="4xl" className="px-5 md:px-8 space-y-6 pb-14">
           <Breadcrumb replace={{ '-': ' ' }} truncate={false} />

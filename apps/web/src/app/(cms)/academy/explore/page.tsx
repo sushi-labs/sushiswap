@@ -18,7 +18,7 @@ export default async function Page() {
 
   return (
     <AcademySearchProvider>
-      <div className="flex flex-col">
+      <div className="flex flex-col animate-slide">
         <ExplorePageHeader />
         <Container
           maxWidth="6xl"

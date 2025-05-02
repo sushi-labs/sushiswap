@@ -17,7 +17,7 @@ export default async function TradeLayout(props: {
     <Providers>
       <HeaderNetworkSelectorProvider>
         <Header chainId={chainId} />
-        {children}
+        <div className="animate-slide">{children}</div>
       </HeaderNetworkSelectorProvider>
     </Providers>
   )

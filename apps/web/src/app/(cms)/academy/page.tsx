@@ -21,7 +21,7 @@ export default async function Page() {
   })
 
   return (
-    <div className="relative">
+    <div className="relative animate-slide">
       <div className="absolute inset-0 w-full h-full overflow-hidden pointer-events-none">
         <NextImage
           className="-z-[1]"

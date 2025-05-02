@@ -121,7 +121,7 @@ export default async function Page(props: Props) {
   }
 
   return (
-    <section>
+    <section className="animate-slide">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
