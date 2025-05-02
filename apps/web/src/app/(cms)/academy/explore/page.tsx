@@ -28,7 +28,7 @@ export default async function Page() {
           )}
         >
           <div className="md:col-span-2">
-            <div className="md:space-y-12 space-y-6 sticky top-12">
+            <div className="md:space-y-12 space-y-6 sticky top-[88px]">
               <SearchFilter />
               <TopicProductSidebar />
             </div>
