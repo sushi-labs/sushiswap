@@ -112,7 +112,7 @@ export const SidebarContainer: FC<SidebarContainerProps> = ({
 }
 
 const Sidebar: FC<Omit<SidebarContainerProps, 'children' | 'shiftContent'>> = ({
-  selectedNetwork,
+  selectedNetwork: _selectedNetwork,
   connectedNetwork,
   supportedNetworks = SUPPORTED_NETWORKS,
   unsupportedNetworkHref,
@@ -144,6 +144,8 @@ const Sidebar: FC<Omit<SidebarContainerProps, 'children' | 'shiftContent'>> = ({
     },
     [pathname, push, _onSelect],
   )
+
+  const selectedNetwork = _selectedNetwork ?? connectedNetwork
 
   return !isOpen ? null : (
     <nav className="hidden lg:block z-10 bg-gray-100 dark:bg-slate-900 w-56 h-full border-r border-gray-200 dark:border-slate-800">

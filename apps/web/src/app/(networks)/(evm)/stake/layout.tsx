@@ -16,7 +16,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <Providers>
       <SidebarProvider defaultOpen={false}>
-        <Header chainId={EvmChainId.ETHEREUM} />
+        <Header />
         <SidebarContainer
           selectedNetwork={EvmChainId.ETHEREUM}
           supportedNetworks={supportedNetworks}
