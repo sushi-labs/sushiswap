@@ -1,7 +1,6 @@
 'use client'
 
 import {
-  classNames,
   Command,
   CommandEmpty,
   CommandGroup,
@@ -10,6 +9,7 @@ import {
   Popover,
   PopoverContent,
   PopoverPrimitive,
+  classNames,
 } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import { usePathname, useRouter } from 'next/navigation'
@@ -45,7 +45,10 @@ const NetworkSelector = <T extends number | string>({
   const [open, setOpen] = useState(false)
   const { push } = useRouter()
   const pathname = usePathname()
-  const supportedNetworksSet = useMemo(() => new Set(supportedNetworks), [supportedNetworks]);
+  const supportedNetworksSet = useMemo(
+    () => new Set(supportedNetworks),
+    [supportedNetworks],
+  )
 
   const _onSelect = useCallback(
     (_network: string, close: () => void) => {
@@ -92,7 +95,7 @@ const NetworkSelector = <T extends number | string>({
                 <CommandItem
                   className={classNames('transition-colors duration-100', {
                     'cursor-pointer hover:bg-secondary': isSupported,
-                    'opacity-50': !isSupported
+                    'opacity-50': !isSupported,
                   })}
                   testdata-id={`network-selector-${network}`}
                   value={`${name}__${network}`}

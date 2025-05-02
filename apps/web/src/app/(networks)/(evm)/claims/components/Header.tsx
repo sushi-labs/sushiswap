@@ -13,8 +13,8 @@ export const Header: FC = () => {
     <div className="w-full h-[56px] z-20">
       <div className="fixed w-full flex z-20">
         <Navigation
-          leftElements={headerElements({chainId})}
-          rightElement={<WagmiHeaderComponents networks={SUPPORTED_NETWORKS}/>}
+          leftElements={headerElements({ chainId })}
+          rightElement={<WagmiHeaderComponents networks={SUPPORTED_NETWORKS} />}
         />
       </div>
     </div>

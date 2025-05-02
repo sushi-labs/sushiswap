@@ -1,7 +1,7 @@
+import { HeaderNetworkSelectorProvider } from 'src/lib/wagmi/components/header-network-selector'
 import type { ChainId } from 'sushi/chain'
 import { Header } from '../header'
 import { Providers } from './providers'
-import { HeaderNetworkSelectorProvider } from 'src/lib/wagmi/components/header-network-selector';
 
 export default async function TradeLayout(props: {
   children: React.ReactNode
