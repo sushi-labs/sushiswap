@@ -14,6 +14,7 @@ import React, {
   type SetStateAction,
 } from 'react'
 import { formatNumber, formatUSD } from 'sushi/format'
+import { useNativeTokenBalance } from '~kadena/_common/lib/hooks/use-native-token-balance'
 import { truncateText } from '~kadena/_common/lib/utils/formatters'
 import { getChainwebAddressLink } from '~kadena/_common/lib/utils/kadena-helpers'
 import { useKadena } from '~kadena/kadena-wallet-provider'
@@ -27,23 +28,21 @@ export const DefaultView = ({ setView }: DefaultViewProps) => {
   const { handleDisconnect } = useKadena()
   const { activeAccount } = useKadena()
   const [isLoadingPrice, setIsLoadingPrice] = useState(true)
-  const [isLoadingBalance, setIsLoadingBalance] = useState(true)
-
-  const data = {
-    formattedBalance: 0.123,
-    balance: 0.123,
-  }
+  const { data, isLoading: isLoadingNativeTokenBalance } =
+    useNativeTokenBalance({
+      account: activeAccount.accountName,
+      enabled: true,
+    })
 
   useEffect(() => {
     setTimeout(() => {
       setIsLoadingPrice(false)
-      setIsLoadingBalance(false)
     }, 1000)
   }, [])
 
-  const price = '0.123'
+  const price = '0.68'
 
-  const isLoading = isLoadingBalance || isLoadingPrice
+  const isLoading = isLoadingNativeTokenBalance || isLoadingPrice
 
   return (
     <div className="flex flex-col w-full gap-8 p-4">
@@ -105,21 +104,21 @@ export const DefaultView = ({ setView }: DefaultViewProps) => {
         </div>
       </div>
       <div className="flex flex-col items-center justify-center gap-2">
-        {isLoading || !price || data?.formattedBalance === undefined ? (
+        {isLoading || !price || data?.balance === undefined ? (
           <div className="flex items-center gap-2">
             <SkeletonText className="!w-24 mx-auto !h-7" />
             <span className="text-3xl font-medium h-7">KDA</span>
           </div>
         ) : (
           <p className="text-3xl font-medium whitespace-nowrap">
-            {formatNumber(data?.formattedBalance)} KDA
+            {formatNumber(data?.balance)} KDA
           </p>
         )}
-        {isLoading || !price || data?.formattedBalance === undefined ? (
+        {isLoading || !price || data?.balance === undefined ? (
           <SkeletonText className="!w-12 mx-auto" />
         ) : (
           <p className="font-medium text-slate-400">
-            {formatUSD(Number(price) * data?.formattedBalance)}
+            {formatUSD(Number(price) * data?.balance)}
           </p>
         )}
       </div>

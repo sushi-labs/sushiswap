@@ -1,3 +1,4 @@
+import { Pact, createClient } from '@kadena/client'
 import {
   Button,
   type ButtonProps,
@@ -7,7 +8,7 @@ import {
   PopoverTrigger,
 } from '@sushiswap/ui'
 import { JazzIcon } from '@sushiswap/ui/icons/JazzIcon'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { IS_TESTNET } from '~kadena/_common/constants/is-testnet'
 import { truncateText } from '~kadena/_common/lib/utils/formatters'
 import { useKadena } from '~kadena/kadena-wallet-provider'
