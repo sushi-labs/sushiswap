@@ -28,7 +28,7 @@ const RP2ClaimPage = () => {
   return (
     <>
       <Header />
-      <Container className="mx-auto py-20 pb-40 prose !prose-invert prose-slate">
+      <Container className="mx-auto py-20 pb-40 prose !prose-invert prose-slate animate-slide">
         <div className="flex flex-col">
           <h1>RouteProcessor2 Exploit</h1>
           <span>

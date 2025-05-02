@@ -54,7 +54,7 @@ export default async function Page(props: Props) {
   })
 
   return (
-    <Container className="px-6 mt-20 pb-40 space-y-10">
+    <Container className="px-6 mt-20 pb-40 space-y-10 animate-slide">
       <div className="flex flex-col gap-3">
         <h1 className="text-4xl font-semibold">{title}</h1>
         <p className="text-sm text-neutral-800 dark:text-neutral-400">

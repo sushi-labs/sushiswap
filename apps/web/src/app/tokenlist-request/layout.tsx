@@ -12,7 +12,7 @@ export default async function Layout({
     <Providers cookie={cookie}>
       <div className="flex flex-col h-full">
         <Header />
-        {children}
+        <div className="animate-slide">{children}</div>
       </div>
     </Providers>
   )

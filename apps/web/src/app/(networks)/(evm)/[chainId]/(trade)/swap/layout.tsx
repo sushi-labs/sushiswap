@@ -21,7 +21,9 @@ export default async function SwapLayout(props: {
 
   return (
     <Providers>
-      <main className="lg:p-4 mt-16 mb-[86px]">{children}</main>
+      <main className="lg:p-4 mt-16 mb-[86px] min-h-[calc(100vh-228px)]">
+        {children}
+      </main>
     </Providers>
   )
 }

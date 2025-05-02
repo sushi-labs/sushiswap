@@ -12,7 +12,9 @@ export default function PoolLayout({
   return (
     <Providers>
       <Header supportedNetworks={POOL_SUPPORTED_NETWORKS} />
-      <main className="flex flex-col h-full flex-1">{children}</main>
+      <main className="flex flex-col h-full flex-1 animate-slide">
+        {children}
+      </main>
     </Providers>
   )
 }
