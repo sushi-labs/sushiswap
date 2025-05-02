@@ -56,7 +56,7 @@ async function GET(req: NextRequest) {
   }
 
   try {
-    userServiceClient.addIDPLink({
+    await userServiceClient.addIDPLink({
       $typeName: 'zitadel.user.v2.AddIDPLinkRequest',
       userId: session.user.id,
       idpLink: {
