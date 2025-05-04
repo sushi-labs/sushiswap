@@ -53,6 +53,7 @@ export async function IdentityProvidersCard({ teamId }: IdentityProvidersCard) {
             config={{
               type: 'connect',
               redirect: redirectPath,
+              csrf: '', // will be filled by the server
             }}
             disabled={googleConnected}
           />
@@ -62,6 +63,7 @@ export async function IdentityProvidersCard({ teamId }: IdentityProvidersCard) {
             config={{
               type: 'connect',
               redirect: redirectPath,
+              csrf: '', // will be filled by the serve
             }}
             disabled={githubConnected}
           />

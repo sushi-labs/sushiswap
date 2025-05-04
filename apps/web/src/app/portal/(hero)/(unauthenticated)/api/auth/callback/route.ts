@@ -103,7 +103,7 @@ async function GET(req: NextRequest) {
 
   await logoutP
 
-  return redirect('/portal')
+  return redirect('/portal/dashboard')
 }
 
 export { GET }

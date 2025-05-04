@@ -2,7 +2,6 @@
 
 import type { CreateSessionResponse } from '@zitadel/proto/zitadel/session/v2/session_service_pb'
 import type { AddHumanUserResponse } from '@zitadel/proto/zitadel/user/v2/user_service_pb'
-import { headers } from 'next/headers'
 import { createZitadelSession } from 'src/app/portal/(hero)/(unauthenticated)/_common/lib/create-zitadel-session'
 import { createSession } from 'src/app/portal/_common/lib/client-config'
 import { getBaseUrl } from 'src/app/portal/_common/lib/get-base-url'
@@ -36,7 +35,7 @@ export async function registerAction(data: FormData): Promise<FormState> {
     const existingUsers = await fetchZitadelUsers(result.data.email)
     if (existingUsers.result.length > 0) {
       return {
-        error: 'An user with this e-mail already exists',
+        error: 'A user with this e-mail already exists',
         field: 'email',
       }
     }

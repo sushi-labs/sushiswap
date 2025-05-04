@@ -1,4 +1,3 @@
-import { headers } from 'next/headers'
 import { z } from 'zod'
 import { getBaseUrl } from './get-base-url'
 import { getUserServiceClient } from './zitadel-client'
@@ -11,6 +10,7 @@ export const getIdpIntentSchema = z
     z.object({
       type: z.literal('connect'),
       redirect: z.string(),
+      csrf: z.string(),
     }),
   )
 
@@ -23,20 +23,22 @@ function getSuccessUrl({
   baseUrl: string
   config: GetIdpIntentConfig
 }) {
-  let url = `${baseUrl}/portal/api/auth`
+  const url = new URL(`${baseUrl}/portal/api/auth`)
 
   switch (config.type) {
     case 'login': {
-      url += '/callback'
+      url.pathname += '/callback'
       break
     }
     case 'connect': {
-      url += `/callback-connect?redirect=${config.redirect}`
+      url.pathname += '/callback-connect'
+      url.searchParams.set('redirect', `${baseUrl}/${config.redirect}`)
+      url.searchParams.set('csrf', config.csrf)
       break
     }
   }
 
-  return url
+  return url.toString()
 }
 
 export async function getNewIdpIntent({
@@ -47,7 +49,6 @@ export async function getNewIdpIntent({
   config: GetIdpIntentConfig
 }) {
   const baseUrl = await getBaseUrl()
-
   const userServiceClient = getUserServiceClient()
 
   const response = await userServiceClient.startIdentityProviderIntent({

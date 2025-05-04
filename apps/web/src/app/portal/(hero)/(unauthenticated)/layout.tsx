@@ -7,7 +7,7 @@ export default async function Layout({
   const authSession = await getSessionData()
 
   if (authSession.isLoggedIn) {
-    redirect('/portal')
+    redirect('/portal/dashboard')
   }
 
   return children
