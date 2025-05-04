@@ -20,10 +20,10 @@ export default async function Page({
       </div>
       <UsagePerKeyChart teamId={teamId} />
       <UsagePerChainChart teamId={teamId} />
-      <div className="flex flex-row gap-6 [&>*]:flex-1">
-        <UsagePerIpTable teamId={teamId} />
-        <UsagePerOriginTable teamId={teamId} />
-      </div>
+      {/* <div className="flex flex-row gap-6 [&>*]:flex-1"> */}
+      {/* <UsagePerIpTable teamId={teamId} /> */}
+      <UsagePerOriginTable teamId={teamId} />
+      {/* </div> */}
     </div>
   )
 }
