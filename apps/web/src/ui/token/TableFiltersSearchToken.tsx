@@ -16,7 +16,10 @@ export const TableFiltersSearchToken: FC = () => {
     (values: string[]) => {
       setValues(values)
       startTransition(() => {
-        setFilters((prev) => ({ ...prev, tokenSymbols: values }))
+        setFilters((prev) => ({
+          ...prev,
+          tokenSymbols: values.map((value) => value.trim()),
+        }))
       })
     },
     [setFilters],
