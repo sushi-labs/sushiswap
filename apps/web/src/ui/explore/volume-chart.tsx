@@ -13,29 +13,39 @@ import { formatUSD } from 'sushi/format'
 interface VolumeChart {
   data: AnalyticsDayBuckets
   chainId: ChainId
+  startDate?: Date
 }
 
-export const VolumeChart: FC<VolumeChart> = ({ data, chainId }) => {
+export const VolumeChart: FC<VolumeChart> = ({ data, chainId, startDate }) => {
   const { resolvedTheme } = useTheme()
 
   const [v2, v3, totalVolume] = useMemo(() => {
-    const xData = (data.v2.length > data.v3.length ? data.v2 : data.v3)
-      .slice(0, 30)
-      .map((data) => data.date * 1000)
+    const uniqueDates = new Set<number>()
+    data.v2.forEach((item) => uniqueDates.add(item.date * 1000))
+    data.v3.forEach((item) => uniqueDates.add(item.date * 1000))
 
-    const v2 = xData
-      .map((xData, i) => [xData, data.v2[i]?.volumeUSD ?? 0])
-      .reverse()
-    const v3 = xData
-      .map((xData, i) => [xData, data.v3[i]?.volumeUSD ?? 0])
-      .reverse()
-    const totalVolume = xData.reduce(
-      (sum, _, i) => sum + v2[i][1] + v3[i][1],
-      0,
+    const startTimestamp = startDate ? startDate.getTime() : 0
+    const filteredDates = startTimestamp
+      ? Array.from(uniqueDates).filter((date) => date >= startTimestamp)
+      : Array.from(uniqueDates)
+
+    const sortedDates = filteredDates.sort((a, b) => a - b)
+    const v2Map = new Map(
+      data.v2.map((item) => [item.date * 1000, item.volumeUSD]),
+    )
+    const v3Map = new Map(
+      data.v3.map((item) => [item.date * 1000, item.volumeUSD]),
     )
 
+    const v2 = sortedDates.map((date) => [date, v2Map.get(date) ?? 0])
+    const v3 = sortedDates.map((date) => [date, v3Map.get(date) ?? 0])
+
+    const totalVolume =
+      v2.reduce((sum, [_, value]) => sum + value, 0) +
+      v3.reduce((sum, [_, value]) => sum + value, 0)
+
     return [v2, v3, totalVolume]
-  }, [data])
+  }, [data, startDate])
 
   const onMouseOver = useCallback((params: { data: number[] }[]) => {
     const volumeNode = document.getElementById('hoveredVolume')
