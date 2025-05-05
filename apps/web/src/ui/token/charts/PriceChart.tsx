@@ -258,6 +258,11 @@ export const PriceChart: FC<PriceChartProps> = ({ token }) => {
         onEvents={{
           globalout: onMouseLeave,
         }}
+        onChartReady={(chart) => {
+          setTimeout(() => {
+            chart.resize()
+          }, 0)
+        }}
       />
     </div>
   )
