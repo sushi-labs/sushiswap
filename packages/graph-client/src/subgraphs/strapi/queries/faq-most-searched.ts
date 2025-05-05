@@ -1,8 +1,8 @@
 import type { VariablesOf } from 'gql.tada'
 
-import { request, type RequestOptions } from 'src/lib/request.js'
-import { graphql } from '../graphql.js'
+import { type RequestOptions, request } from 'src/lib/request.js'
 import { STRAPI_GRAPHQL_URL } from 'src/subgraphs/strapi/constants.js'
+import { graphql } from '../graphql.js'
 
 export const StrapiFaqMostSearchedQuery = graphql(
   `query FaqMostSearched {
@@ -62,23 +62,24 @@ export async function getFaqMostSearched(
   const mostSearched = result.faqMostSearcheds.data
     .filter((mostSearched) => mostSearched.attributes.faqAnswerGroup?.data)
     .map((mostSearched) => {
-    const faqAnswerGroup =
-      mostSearched.attributes.faqAnswerGroup.data!.attributes
-    const faqCategory = faqAnswerGroup.faqCategory.data!.attributes
+      const faqAnswerGroup =
+        mostSearched.attributes.faqAnswerGroup.data!.attributes
+      const faqCategory = faqAnswerGroup.faqCategory.data!.attributes
 
-    let url = `/faq/${faqCategory.slug}/${faqAnswerGroup.slug}`
+      let url = `/faq/${faqCategory.slug}/${faqAnswerGroup.slug}`
 
-    const faqDefaultAnswer = faqAnswerGroup?.faqDefaultAnswer?.data?.attributes
+      const faqDefaultAnswer =
+        faqAnswerGroup?.faqDefaultAnswer?.data?.attributes
 
-    if (faqDefaultAnswer) {
-      url += `/${faqDefaultAnswer.slug}`
-    }
+      if (faqDefaultAnswer) {
+        url += `/${faqDefaultAnswer.slug}`
+      }
 
-    return {
-      question: faqAnswerGroup.name,
-      url,
-    }
-  })
+      return {
+        question: faqAnswerGroup.name,
+        url,
+      }
+    })
 
   return mostSearched
 }
