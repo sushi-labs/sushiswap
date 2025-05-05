@@ -18,12 +18,18 @@ import type { ChainId } from 'sushi/chain'
 import { useAccount, useChainId } from 'wagmi'
 import { headerElements } from '../_common/header-elements'
 
-export const Header: FC<{ chainId: ChainId }> = ({ chainId }) => {
+interface HeaderProps {
+  chainId?: ChainId
+}
+
+export const Header: FC<HeaderProps> = ({ chainId: _chainId }) => {
   const connectedChainId = useChainId()
 
   const { address } = useAccount()
 
   const { isOpen } = useSidebar()
+
+  const chainId = _chainId ?? connectedChainId
 
   return (
     <div className="flex z-20">
