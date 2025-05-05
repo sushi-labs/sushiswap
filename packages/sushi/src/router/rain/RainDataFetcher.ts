@@ -313,9 +313,11 @@ export class RainDataFetcher extends DataFetcher {
     if (fromBlock === untilBlock) return
     if (fromBlock > untilBlock) {
       throw [
-        'pools data are cached at higher block height than the given untilBlock',
+        'pools data are cached at higher block height than the requested block height',
         'if you wish to get pools data at untilBlock',
         'consider calling fetchPoolsForToken() with "ignoreCache" option',
+        `pools block: ${fromBlock}`,
+        `current block: ${untilBlock}`,
       ].join(', ')
     }
     if (!poolAddresses.length) return
