@@ -31,7 +31,10 @@ export const TokenScannerQuery = graphql(
   [IssueFieldsFragment],
 )
 
-export type ScanToken = Omit<VariablesOf<typeof TokenScannerQuery>, "chainId"> & { chainId: TokenScannerChainId }
+export type ScanToken = Omit<
+  VariablesOf<typeof TokenScannerQuery>,
+  'chainId'
+> & { chainId: TokenScannerChainId }
 
 export type TokenScannerResponse = Awaited<ReturnType<typeof scanToken>>
 
