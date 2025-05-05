@@ -240,8 +240,8 @@ importers:
         specifier: 4.0.7
         version: 4.0.7(encoding@0.1.13)
       '@orbs-network/twap-ui-sushiswap':
-        specifier: 1.1.70
-        version: 1.1.70(bufferutil@4.0.8)(encoding@0.1.13)(react-dom@19.0.0(react@19.0.0))(react-native@0.73.7(@babel/core@7.26.0)(@babel/preset-env@7.24.4(@babel/core@7.26.0))(bufferutil@4.0.8)(encoding@0.1.13)(react@19.0.0)(utf-8-validate@5.0.10))(react@19.0.0)(utf-8-validate@5.0.10)
+        specifier: 1.1.71
+        version: 1.1.71(bufferutil@4.0.8)(encoding@0.1.13)(react-dom@19.0.0(react@19.0.0))(react-native@0.73.7(@babel/core@7.26.0)(@babel/preset-env@7.24.4(@babel/core@7.26.0))(bufferutil@4.0.8)(encoding@0.1.13)(react@19.0.0)(utf-8-validate@5.0.10))(react@19.0.0)(utf-8-validate@5.0.10)
       '@pontem/wallet-adapter-plugin':
         specifier: 0.2.1
         version: 0.2.1
@@ -3397,20 +3397,17 @@ packages:
     resolution: {integrity: sha512-3giAOQvZiH5F9bMlMiv8+GSPMeqg0dbaeo58/0SlA9sxSqZhnUtxzX9/2FzyhS9sWQf5S0GJE0AKBrFqjpeYcg==}
     engines: {node: '>=8.0.0'}
 
-  '@orbs-network/twap-ui-sushiswap@1.1.70':
-    resolution: {integrity: sha512-T4R+ARgfTpRWbtYz6mc/ykcoEwZ0nPVDL4bOGhyoRIwMRbl42MGo37IhBGb2MbQZ/+1uGLLbn2gJsIqPz+Hxhw==}
+  '@orbs-network/twap-ui-sushiswap@1.1.71':
+    resolution: {integrity: sha512-LvSniA+IcLKB+VUdTJZEWy+3rzce6z3Mwnv4XOJZnJc1f1ha78Qtrckrne0Ukj/67G7KEN/UDNfNc3DR8Rp5Ng==}
     peerDependencies:
       react: '*'
       react-dom: '*'
 
-  '@orbs-network/twap-ui@1.1.70':
-    resolution: {integrity: sha512-Hku/jmK6QES/JBaniScrIzvXeN6K4E1lw5CFj1GOE1maN8HPhBg5VtlvT8UTg0QSxGotQm9n1OVX84XnPMV/8A==}
+  '@orbs-network/twap-ui@1.1.71':
+    resolution: {integrity: sha512-M5Df9lt23Mdjtb7HRBEGV4t/MFEG/vFZXl+6IlxZThCNWSuVo7fhgL1sCiexHjNPm7AcAgs8hmKkKaUpL70pTA==}
     peerDependencies:
       react: '*'
       react-dom: '*'
-
-  '@orbs-network/twap@2.2.12':
-    resolution: {integrity: sha512-wX+pQoyI9pYc9qGU2wizY1A8YNUDrDfhfnicERCEAr/yJmvU+jVGkobfrqNunAO1p989/iHPDLYaUaiKKnFJ3w==}
 
   '@orbs-network/twap@2.3.4':
     resolution: {integrity: sha512-XYfV5k+1zvVtbU9a918Zj6Ucbza7Oi1+5muc8vJSni8eMJYAsOtzhA+eP/ullR7j3mrQqaj2LZLkK/I+u7lzSw==}
@@ -12830,6 +12827,7 @@ packages:
   yaeti@0.0.6:
     resolution: {integrity: sha512-MvQa//+KcZCUkBTIC9blM+CU9J2GzuTytsOUwf2lidtvkx/6gnEp1QvJv34t9vdjhFmha/mUiNDbN0D0mJWdug==}
     engines: {node: '>=0.10.32'}
+    deprecated: Package no longer supported. Contact Support at https://www.npmjs.com/support for more info.
 
   yallist@3.1.1:
     resolution: {integrity: sha512-a4UGQaWPH59mOXUYnAG2ewncQS4i4F43Tv3JoAM+s2VDAmS9NsK8GpDMLrCHPksFT7h3K6TOoUNn2pb7RoXx4g==}
@@ -16155,10 +16153,10 @@ snapshots:
   '@opentelemetry/api@1.9.0':
     optional: true
 
-  '@orbs-network/twap-ui-sushiswap@1.1.70(bufferutil@4.0.8)(encoding@0.1.13)(react-dom@19.0.0(react@19.0.0))(react-native@0.73.7(@babel/core@7.26.0)(@babel/preset-env@7.24.4(@babel/core@7.26.0))(bufferutil@4.0.8)(encoding@0.1.13)(react@19.0.0)(utf-8-validate@5.0.10))(react@19.0.0)(utf-8-validate@5.0.10)':
+  '@orbs-network/twap-ui-sushiswap@1.1.71(bufferutil@4.0.8)(encoding@0.1.13)(react-dom@19.0.0(react@19.0.0))(react-native@0.73.7(@babel/core@7.26.0)(@babel/preset-env@7.24.4(@babel/core@7.26.0))(bufferutil@4.0.8)(encoding@0.1.13)(react@19.0.0)(utf-8-validate@5.0.10))(react@19.0.0)(utf-8-validate@5.0.10)':
     dependencies:
-      '@orbs-network/twap': 2.2.12
-      '@orbs-network/twap-ui': 1.1.70(bufferutil@4.0.8)(encoding@0.1.13)(react-dom@19.0.0(react@19.0.0))(react-native@0.73.7(@babel/core@7.26.0)(@babel/preset-env@7.24.4(@babel/core@7.26.0))(bufferutil@4.0.8)(encoding@0.1.13)(react@19.0.0)(utf-8-validate@5.0.10))(react@19.0.0)(utf-8-validate@5.0.10)
+      '@orbs-network/twap': 2.3.4
+      '@orbs-network/twap-ui': 1.1.71(bufferutil@4.0.8)(encoding@0.1.13)(react-dom@19.0.0(react@19.0.0))(react-native@0.73.7(@babel/core@7.26.0)(@babel/preset-env@7.24.4(@babel/core@7.26.0))(bufferutil@4.0.8)(encoding@0.1.13)(react@19.0.0)(utf-8-validate@5.0.10))(react@19.0.0)(utf-8-validate@5.0.10)
       react: 19.0.0
       react-dom: 19.0.0(react@19.0.0)
       web3: 1.10.3(bufferutil@4.0.8)(encoding@0.1.13)(utf-8-validate@5.0.10)
@@ -16169,7 +16167,7 @@ snapshots:
       - supports-color
       - utf-8-validate
 
-  '@orbs-network/twap-ui@1.1.70(bufferutil@4.0.8)(encoding@0.1.13)(react-dom@19.0.0(react@19.0.0))(react-native@0.73.7(@babel/core@7.26.0)(@babel/preset-env@7.24.4(@babel/core@7.26.0))(bufferutil@4.0.8)(encoding@0.1.13)(react@19.0.0)(utf-8-validate@5.0.10))(react@19.0.0)(utf-8-validate@5.0.10)':
+  '@orbs-network/twap-ui@1.1.71(bufferutil@4.0.8)(encoding@0.1.13)(react-dom@19.0.0(react@19.0.0))(react-native@0.73.7(@babel/core@7.26.0)(@babel/preset-env@7.24.4(@babel/core@7.26.0))(bufferutil@4.0.8)(encoding@0.1.13)(react@19.0.0)(utf-8-validate@5.0.10))(react@19.0.0)(utf-8-validate@5.0.10)':
     dependencies:
       '@defi.org/web3-candies': 5.0.0(bufferutil@4.0.8)(encoding@0.1.13)(utf-8-validate@5.0.10)
       '@orbs-network/twap': 2.3.4
@@ -16192,8 +16190,6 @@ snapshots:
       - react-native
       - supports-color
       - utf-8-validate
-
-  '@orbs-network/twap@2.2.12': {}
 
   '@orbs-network/twap@2.3.4': {}
 
