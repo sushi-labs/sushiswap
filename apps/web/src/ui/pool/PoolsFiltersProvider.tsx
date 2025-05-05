@@ -74,7 +74,7 @@ export const useSetPoolFilters = () => {
 const DEFAULT_STATE = {
   tokenSymbols: [],
   protocols: POOL_TYPES,
-  farmsOnly: undefined,
+  farmsOnly: false,
 }
 
 const PoolsFiltersUrlProvider: FC<PoolsFiltersProviderProps> = ({
