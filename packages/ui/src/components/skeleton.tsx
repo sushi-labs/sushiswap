@@ -96,9 +96,24 @@ function ChartLoadingStateMask({
     case 'area':
       return (
         <g transform={`translate(0, ${height - 16}) scale(1,-1)`}>
-          <path
-            d="M0 170 Q50 90, 100 170 T200 170 T300 170 T400 170 T500 170 T600 170 T700 170 T800 170 V0 H0 Z"
-            className="fill-black/[0.10] dark:fill-white/[0.10] animate-pulse"
+          <defs>
+            <pattern
+              id="wavePattern"
+              patternUnits="userSpaceOnUse"
+              width="200"
+              height={height}
+            >
+              <path
+                d="M-150 170 Q-100 90, -50 170 T50 170 T150 170 T250 170 V0 H-150 Z"
+                className="fill-black/[0.10] dark:fill-white/[0.10]"
+              />
+            </pattern>
+          </defs>
+          <rect
+            width="100%"
+            height={height}
+            fill="url(#wavePattern)"
+            className="animate-pulse"
           />
         </g>
       )
