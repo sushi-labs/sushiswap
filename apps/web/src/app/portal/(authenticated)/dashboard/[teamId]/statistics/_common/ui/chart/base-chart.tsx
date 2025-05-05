@@ -315,7 +315,7 @@ export function BaseChart<EnabledTimeframes extends Timeframe[]>({
       <CardContent>
         {loading ? (
           isMounted ? (
-            <SkeletonChart height={350} type="bar" />
+            <SkeletonChart height={350} type="bar" showYChartAxe={true} />
           ) : null
         ) : (
           <ReactEchartsCore

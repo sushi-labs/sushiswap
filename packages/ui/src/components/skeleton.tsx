@@ -247,15 +247,19 @@ function SkeletonYChartAxe() {
 function SkeletonChart({
   height,
   type,
+  showYChartAxe = false,
 }: {
   height: number
   type: ChartType
+  showYChartAxe?: boolean
 }) {
   return (
     <div className="relative flex flex-row">
-      <svg width={58} height={height - 32} xmlns="http://www.w3.org/2000/svg">
-        <SkeletonYChartAxe />
-      </svg>
+      {showYChartAxe && (
+        <svg width={58} height={height - 32} xmlns="http://www.w3.org/2000/svg">
+          <SkeletonYChartAxe />
+        </svg>
+      )}
       <svg
         width="100%"
         height={height}
