@@ -33,9 +33,9 @@ export const TokenChart: FC<TokenChartProps> = ({ token }) => {
   const [selectedChartType, setSelectedChartType] = useState<ChartType>('Price')
 
   return (
-    <div className="flex flex-col">
-      <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center gap-2">
+    <div className="flex flex-col gap-4">
+      <div className="flex items-start justify-between">
+        <div className="flex gap-2">
           <Currency.Icon
             currency={useMemo(() => new Token(token), [token])}
             width={36}
