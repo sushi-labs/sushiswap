@@ -24,7 +24,7 @@ export default async function MigrateV2PoolPage(props: {
 
   const pool = (await unstable_cache(
     async () => getV2Pool({ chainId, address }),
-    ['pool', `${chainId}:${address}`],
+    ['v2', 'pool', `${chainId}:${address}`],
     {
       revalidate: 60 * 15,
     },
