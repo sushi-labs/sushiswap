@@ -8,10 +8,6 @@ import { ChainKey, type EvmChainId } from 'sushi/chain'
 import { isSushiSwapV3ChainId } from 'sushi/config'
 import { isAddress } from 'viem'
 
-export const metadata = {
-  title: 'Pool 💦',
-}
-
 export default async function Layout(props: {
   children: React.ReactNode
   params: Promise<{ chainId: string; address: string }>
