@@ -26,7 +26,7 @@ export default async function SwapLayout(props: {
   return (
     <Providers>
       <Header chainId={chainId} />
-      <main className="lg:p-4 mt-16 lg:pb-24 min-h-[calc(100vh-120px)] animate-slide">
+      <main className="lg:p-4 mt-16 lg:pb-24 min-h-[calc(100vh-120px)]">
         {children}
       </main>
     </Providers>
