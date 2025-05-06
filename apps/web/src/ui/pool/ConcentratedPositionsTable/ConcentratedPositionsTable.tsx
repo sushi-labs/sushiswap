@@ -7,6 +7,7 @@ import {
   CardHeader,
   CardTitle,
   DataTable,
+  DialogTrigger,
   LinkInternal,
 } from '@sushiswap/ui'
 import { Slot } from '@sushiswap/ui'
@@ -20,10 +21,11 @@ import React, {
 } from 'react'
 import { useConcentratedLiquidityPositions } from 'src/lib/wagmi/hooks/positions/hooks/useConcentratedLiquidityPositions'
 import type { ConcentratedLiquidityPositionWithV3Pool } from 'src/lib/wagmi/hooks/positions/types'
+import { Checker } from 'src/lib/wagmi/systems/Checker'
 import { type EvmChainId, EvmChainKey } from 'sushi'
 import { isSushiSwapV3ChainId } from 'sushi/config'
 import { useAccount } from 'wagmi'
-import { ConcentratedLiquidityCollectAllWidget } from '../ConcentratedLiquidityCollectAllWidget'
+import { ConcentratedLiquidityCollectAllDialog } from '../ConcentratedLiquidityCollectAllDialog'
 import { usePoolFilters } from '../PoolsFiltersProvider'
 import {
   NAME_COLUMN_V3,
@@ -130,11 +132,29 @@ export const ConcentratedPositionsTable: FC<
               </span>
             </span>
             {!hideCollectAllButton ? (
-              <ConcentratedLiquidityCollectAllWidget
+              <ConcentratedLiquidityCollectAllDialog
                 positions={_positions}
                 account={address}
                 chainId={chainId}
-              />
+              >
+                {({ amounts }) => (
+                  <div>
+                    <Checker.Connect size="sm">
+                      <Checker.Network size="sm" chainId={chainId}>
+                        <DialogTrigger asChild>
+                          <Button
+                            size="sm"
+                            disabled={!amounts.length}
+                            testId="claim-fees-all"
+                          >
+                            Claim Fees
+                          </Button>
+                        </DialogTrigger>
+                      </Checker.Network>
+                    </Checker.Connect>
+                  </div>
+                )}
+              </ConcentratedLiquidityCollectAllDialog>
             ) : null}
             {!hideNewPositionButton ? (
               <LinkInternal

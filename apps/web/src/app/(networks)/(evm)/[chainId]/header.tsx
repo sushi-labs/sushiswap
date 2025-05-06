@@ -7,12 +7,21 @@ import React, { type FC } from 'react'
 import { type NonStandardChainId, SUPPORTED_NETWORKS } from 'src/config'
 import { WagmiHeaderComponents } from 'src/lib/wagmi/components/wagmi-header-components'
 import type { ChainId, EvmChainId } from 'sushi/chain'
+import { useChainId } from 'wagmi'
 import { headerElements } from '../_common/header-elements'
 
-export const Header: FC<{
-  chainId: ChainId
+interface HeaderProps {
+  chainId?: ChainId
   supportedNetworks?: readonly (EvmChainId | NonStandardChainId)[]
-}> = ({ chainId, supportedNetworks }) => {
+}
+
+export const Header: FC<HeaderProps> = ({
+  chainId: _chainId,
+  supportedNetworks,
+}) => {
+  const connectedChainId = useChainId()
+  const chainId = _chainId ?? connectedChainId
+
   return (
     <div className="w-full h-[56px] z-20">
       <div className="fixed w-full flex z-20">
