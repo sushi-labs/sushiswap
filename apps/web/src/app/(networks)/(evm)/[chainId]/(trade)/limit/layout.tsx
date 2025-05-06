@@ -1,7 +1,8 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
-import { isTwapSupportedChainId } from 'src/config'
+import { TWAP_SUPPORTED_CHAIN_IDS, isTwapSupportedChainId } from 'src/config'
 import type { ChainId } from 'sushi/chain'
+import { Header } from '~evm/[chainId]/header'
 import { Providers } from './providers'
 
 export const metadata: Metadata = {
@@ -14,9 +15,7 @@ export default async function SwapLimitLayout(props: {
   params: Promise<{ chainId: string }>
 }) {
   const params = await props.params
-
   const { children } = props
-
   const chainId = +params.chainId as ChainId
 
   if (!isTwapSupportedChainId(chainId)) {
@@ -25,7 +24,8 @@ export default async function SwapLimitLayout(props: {
 
   return (
     <Providers>
-      <main className="lg:p-4 mt-16 mb-[86px]">{children}</main>
+      <Header chainId={chainId} supportedNetworks={TWAP_SUPPORTED_CHAIN_IDS} />
+      <main className="lg:p-4 mt-16 mb-[86px] animate-slide">{children}</main>
     </Providers>
   )
 }

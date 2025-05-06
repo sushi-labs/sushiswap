@@ -1,14 +1,11 @@
 'use client'
 
 import { Container, classNames } from '@sushiswap/ui'
-import { XSWAP_SUPPORTED_CHAIN_IDS } from 'src/config'
-import { useHeaderNetworkSelector } from 'src/lib/wagmi/components/header-network-selector'
 import { CrossChainSwapRouteSelector } from 'src/ui/swap/cross-chain/cross-chain-swap-route-selector'
 import { CrossChainSwapWidget } from 'src/ui/swap/cross-chain/cross-chain-swap-widget'
 import { useCrossChainTradeRoutes } from 'src/ui/swap/cross-chain/derivedstate-cross-chain-swap-provider'
 
 export default function CrossChainSwapPage() {
-  useHeaderNetworkSelector(XSWAP_SUPPORTED_CHAIN_IDS)
   const { isLoading, isFetched } = useCrossChainTradeRoutes()
   const showRouteSelector = isLoading || isFetched
 
