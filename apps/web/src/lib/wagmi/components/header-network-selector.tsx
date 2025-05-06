@@ -3,19 +3,7 @@
 import { createErrorToast } from '@sushiswap/notifications'
 import { Button } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
-import React, {
-  createContext,
-  type Dispatch,
-  type FC,
-  type ReactNode,
-  type SetStateAction,
-  Suspense,
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-} from 'react'
+import React, { type FC, Suspense, useCallback } from 'react'
 import type { NonStandardChainId } from 'src/config'
 import { getNetworkName } from 'src/lib/network'
 import { type EvmChainId, isEvmChainId } from 'sushi/chain'
@@ -28,46 +16,6 @@ import {
 
 type SupportedNetworks = readonly (EvmChainId | NonStandardChainId)[]
 
-interface HeaderNetworkSelectorContextType {
-  supportedNetworks: SupportedNetworks | null
-  setSupportedNetworks: Dispatch<SetStateAction<SupportedNetworks | null>>
-}
-
-const HeaderNetworkSelectorContext =
-  createContext<HeaderNetworkSelectorContextType>({
-    supportedNetworks: null,
-    setSupportedNetworks: () => {},
-  })
-
-export const useHeaderNetworkSelector = (
-  supportedNetworks: SupportedNetworks,
-) => {
-  const context = useContext(HeaderNetworkSelectorContext)
-
-  useEffect(() => {
-    context.setSupportedNetworks(supportedNetworks)
-
-    return () => {
-      context.setSupportedNetworks(null)
-    }
-  }, [supportedNetworks, context])
-}
-
-export const HeaderNetworkSelectorProvider: FC<{
-  children: ReactNode
-}> = ({ children }) => {
-  const [supportedNetworks, setSupportedNetworks] =
-    useState<SupportedNetworks | null>(null)
-
-  return (
-    <HeaderNetworkSelectorContext.Provider
-      value={{ supportedNetworks, setSupportedNetworks }}
-    >
-      {children}
-    </HeaderNetworkSelectorContext.Provider>
-  )
-}
-
 export const HeaderNetworkSelector: FC<{
   networks: SupportedNetworks
   supportedNetworks?: SupportedNetworks
@@ -77,7 +25,7 @@ export const HeaderNetworkSelector: FC<{
   className?: string
 }> = ({
   networks,
-  supportedNetworks: propsSupportedNetworks,
+  supportedNetworks,
   selectedNetwork,
   onChange,
   className,
@@ -85,13 +33,6 @@ export const HeaderNetworkSelector: FC<{
 }) => {
   const { switchChainAsync } = useSwitchChain()
   const chainId = useChainId()
-  const { supportedNetworks: contextSupportedNetworks } = useContext(
-    HeaderNetworkSelectorContext,
-  )
-  const supportedNetworks = useMemo(
-    () => propsSupportedNetworks ?? contextSupportedNetworks ?? undefined,
-    [propsSupportedNetworks, contextSupportedNetworks],
-  )
 
   const onSwitchNetwork = useCallback<NetworkSelectorOnSelectCallback>(
     async (el, close) => {
