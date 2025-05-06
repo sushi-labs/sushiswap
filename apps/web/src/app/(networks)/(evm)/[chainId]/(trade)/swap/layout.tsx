@@ -1,6 +1,8 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { isSupportedChainId } from 'src/config'
+import type { ChainId } from 'sushi/chain'
+import { Header } from '~evm/[chainId]/header'
 import { Providers } from './providers'
 
 export const metadata: Metadata = {
@@ -13,7 +15,9 @@ export default async function SwapLayout(props: {
   children: React.ReactNode
   params: Promise<{ chainId: string }>
 }) {
+  const params = await props.params
   const { children } = props
+  const chainId = +params.chainId as ChainId
 
   if (!isSupportedChainId) {
     return notFound()
@@ -21,7 +25,8 @@ export default async function SwapLayout(props: {
 
   return (
     <Providers>
-      <main className="lg:p-4 mt-16 mb-[86px] min-h-[calc(100vh-228px)]">
+      <Header chainId={chainId} />
+      <main className="lg:p-4 mt-16 lg:pb-24 min-h-[calc(100vh-120px)] animate-slide">
         {children}
       </main>
     </Providers>
