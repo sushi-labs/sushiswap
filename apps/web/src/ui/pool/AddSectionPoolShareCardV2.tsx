@@ -6,10 +6,10 @@ import {
   StatLabel,
   StatValue,
 } from '@sushiswap/ui'
-import { FC, useMemo } from 'react'
+import { type FC, useMemo } from 'react'
 import { SushiSwapV2PoolState } from 'src/lib/wagmi/hooks/pools/hooks/useSushiSwapV2Pools'
-import { SushiSwapV2Pool } from 'sushi'
-import { Amount, Type } from 'sushi/currency'
+import type { SushiSwapV2Pool } from 'sushi'
+import type { Amount, Type } from 'sushi/currency'
 import { formatPercent } from 'sushi/format'
 
 interface AddSectionPoolShareCardV2 {

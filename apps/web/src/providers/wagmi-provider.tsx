@@ -1,7 +1,7 @@
 'use client'
 
 import {
-  DisclaimerComponent,
+  type DisclaimerComponent,
   RainbowKitProvider,
   type Theme,
   darkTheme as rainbowDarkTheme,

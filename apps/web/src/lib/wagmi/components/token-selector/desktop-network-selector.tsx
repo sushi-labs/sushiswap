@@ -11,9 +11,9 @@ import {
   classNames,
 } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
-import { FC, useCallback } from 'react'
+import { type FC, useCallback } from 'react'
 import { getNetworkName } from 'src/lib/network'
-import { ChainId } from 'sushi/chain'
+import type { ChainId } from 'sushi/chain'
 import { useAccount } from 'wagmi'
 
 interface DesktopNetworkSelector {
@@ -42,7 +42,6 @@ export const DesktopNetworkSelector: FC<DesktopNetworkSelector> = ({
           placeholder="Search network"
         />
       </div>
-      <CommandEmpty className="p-2 mx-auto">No network found.</CommandEmpty>
       <CommandGroup className="overflow-y-auto px-3 pb-3">
         {networks.map((network) => {
           const name = getNetworkName(network)
@@ -79,6 +78,7 @@ export const DesktopNetworkSelector: FC<DesktopNetworkSelector> = ({
           )
         })}
       </CommandGroup>
+      <CommandEmpty className="p-2 mx-auto">No network found.</CommandEmpty>
     </Command>
   )
 }

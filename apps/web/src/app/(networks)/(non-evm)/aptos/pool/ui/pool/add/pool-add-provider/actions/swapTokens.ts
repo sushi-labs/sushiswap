@@ -1,4 +1,4 @@
-import { Actions, State } from '../types'
+import type { Actions, State } from '../types'
 
 export function swapTokens(state: State, action: Actions): State {
   if (action.type !== 'swapTokens') throw new Error('Invalid action type')

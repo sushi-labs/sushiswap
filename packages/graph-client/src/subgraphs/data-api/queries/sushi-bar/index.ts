@@ -1,2 +1,2 @@
-export * from './history'
-export * from './stats'
+export * from './history.js'
+export * from './stats.js'

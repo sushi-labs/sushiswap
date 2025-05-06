@@ -9,7 +9,7 @@ import {
   TooltipTrigger,
 } from '@sushiswap/ui'
 import React from 'react'
-import { Chain, ChainId } from 'sushi/chain'
+import { ChainId, EvmChain } from 'sushi/chain'
 import { XSUSHI } from 'sushi/currency'
 import { formatPercent, shortenAddress } from 'sushi/format'
 import { useSushiBar } from './SushiBarProvider'
@@ -62,7 +62,7 @@ export const BarHeader = () => {
         <div className="flex items-center gap-1.5">
           <span className="tracking-tighter font-semibold">XSUSHI</span>
           <LinkExternal
-            href={Chain.from(ChainId.ETHEREUM)?.getTokenUrl(
+            href={EvmChain.from(ChainId.ETHEREUM)?.getTokenUrl(
               XSUSHI[ChainId.ETHEREUM].address,
             )}
           >

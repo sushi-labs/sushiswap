@@ -17,6 +17,7 @@ import {
   HoverCardContent,
   HoverCardTrigger,
   IconButton,
+  LinkExternal,
   LinkInternal,
   Separator,
   SettingsModule,
@@ -32,19 +33,22 @@ import {
 import { Button } from '@sushiswap/ui'
 import { FormattedNumber } from '@sushiswap/ui'
 import { SkeletonText } from '@sushiswap/ui'
-import { FC, useMemo, useState } from 'react'
-import { useAngleRewards } from 'src/lib/hooks/react-query'
+import { type FC, useMemo, useState } from 'react'
+import {
+  useClaimableRewards,
+  useRewardCampaigns,
+} from 'src/lib/hooks/react-query'
 import { useConcentratedPositionInfo } from 'src/lib/wagmi/hooks/positions/hooks/useConcentratedPositionInfo'
 import { useConcentratedPositionOwner } from 'src/lib/wagmi/hooks/positions/hooks/useConcentratedPositionOwner'
 import { useConcentratedLiquidityPositionsFromTokenId } from 'src/lib/wagmi/hooks/positions/hooks/useConcentratedPositionsFromTokenId'
 import { useTokenWithCache } from 'src/lib/wagmi/hooks/tokens/useTokenWithCache'
 import { getDefaultTTL } from 'src/lib/wagmi/hooks/utils/hooks/useTransactionDeadline'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
-import { Chain, ChainKey } from 'sushi/chain'
-import { SushiSwapV3ChainId, isMerklChainId } from 'sushi/config'
+import { EvmChain, EvmChainKey } from 'sushi/chain'
+import { type SushiSwapV3ChainId, isMerklChainId } from 'sushi/config'
 import { Amount, unwrapToken } from 'sushi/currency'
 import { formatPercent, formatUSD } from 'sushi/format'
-import { getAddress } from 'viem'
+import type { Address } from 'sushi/types'
 import { useAccount } from 'wagmi'
 import { Bound } from '../../lib/constants'
 import {
@@ -53,8 +57,8 @@ import {
 } from '../../lib/functions'
 import { usePriceInverter, useTokenAmountDollarValues } from '../../lib/hooks'
 import { useIsTickAtLimit } from '../../lib/pool/v3'
-import { ConcentratedLiquidityCollectButton } from './ConcentratedLiquidityCollectButton'
-import { ConcentratedLiquidityHarvestButton } from './ConcentratedLiquidityHarvestButton'
+import { ClaimRewardsButton } from './ClaimRewardsButton'
+import { ConcentratedLiquidityCollectWidget } from './ConcentratedLiquidityCollectWidget'
 import {
   ConcentratedLiquidityProvider,
   useConcentratedDerivedMintInfo,
@@ -65,7 +69,7 @@ import { DistributionDataTable } from './DistributionDataTable'
 
 const Component: FC<{ chainId: string; address: string; position: string }> = ({
   chainId: _chainId,
-  address: poolId,
+  address: poolAddress,
   position: tokenId,
 }) => {
   const { address } = useAccount()
@@ -159,10 +163,31 @@ const Component: FC<{ chainId: string; address: string; position: string }> = ({
   )
 
   const { data: owner } = useConcentratedPositionOwner({ chainId, tokenId })
-  const { data: rewardsData, isLoading: rewardsLoading } = useAngleRewards({
-    chainId,
-    account: owner,
-  })
+
+  const { data: rewardsData, isLoading: isRewardsLoading } =
+    useClaimableRewards({
+      chainIds: isMerklChainId(chainId) ? [chainId] : [],
+      account: owner,
+      enabled: isMerklChainId(chainId),
+    })
+  const { data: campaignsData, isLoading: isCampaignsLoading } =
+    useRewardCampaigns({
+      pool: poolAddress as Address,
+      chainId,
+      enabled: isMerklChainId(chainId),
+    })
+
+  const [activeCampaigns, inactiveCampaigns] = useMemo(() => {
+    const activeCampaigns: typeof campaignsData = []
+    const inactiveCampaigns: typeof campaignsData = []
+
+    campaignsData?.forEach((campaign) => {
+      if (campaign.isLive) activeCampaigns.push(campaign)
+      else inactiveCampaigns.push(campaign)
+    })
+
+    return [activeCampaigns, inactiveCampaigns]
+  }, [campaignsData])
 
   const fiatValuesAmounts = useTokenAmountDollarValues({ chainId, amounts })
   const positionAmounts = useMemo(
@@ -173,7 +198,6 @@ const Component: FC<{ chainId: string; address: string; position: string }> = ({
     chainId,
     amounts: positionAmounts,
   })
-  const currentAngleRewardsPool = rewardsData?.pools[getAddress(poolId)]
 
   return (
     <>
@@ -296,46 +320,17 @@ const Component: FC<{ chainId: string; address: string; position: string }> = ({
                       {formatUSD(fiatValuesAmounts[0] + fiatValuesAmounts[1])}
                     </CardDescription>
                   </CardHeader>
-                  <CardContent>
-                    <CardGroup>
-                      <CardLabel>Tokens</CardLabel>
-                      <CardCurrencyAmountItem
-                        amount={amounts[0]}
-                        isLoading={isPositionLoading}
-                        fiatValue={formatUSD(fiatValuesAmounts[0])}
-                      />
-                      <CardCurrencyAmountItem
-                        amount={amounts[1]}
-                        isLoading={isPositionLoading}
-                        fiatValue={formatUSD(fiatValuesAmounts[1])}
-                      />
-                    </CardGroup>
-                  </CardContent>
-                  <CardFooter>
-                    <ConcentratedLiquidityCollectButton
-                      position={position ?? undefined}
-                      positionDetails={positionDetails}
-                      token0={token0}
-                      token1={token1}
-                      account={address}
-                      chainId={chainId}
-                    >
-                      {({ send, isPending }) => (
-                        <Checker.Connect fullWidth>
-                          <Checker.Network fullWidth chainId={chainId}>
-                            <Button
-                              fullWidth
-                              size="xl"
-                              disabled={isPending}
-                              onClick={send}
-                            >
-                              Collect
-                            </Button>
-                          </Checker.Network>
-                        </Checker.Connect>
-                      )}
-                    </ConcentratedLiquidityCollectButton>
-                  </CardFooter>
+                  <ConcentratedLiquidityCollectWidget
+                    position={position ?? undefined}
+                    positionDetails={positionDetails}
+                    token0={token0}
+                    token1={token1}
+                    chainId={chainId}
+                    isLoading={isPositionLoading}
+                    address={address}
+                    amounts={amounts}
+                    fiatValuesAmounts={fiatValuesAmounts}
+                  />
                 </TabsContent>
                 {isMerklChainId(chainId) ? (
                   <TabsContent value="rewards">
@@ -343,7 +338,7 @@ const Component: FC<{ chainId: string; address: string; position: string }> = ({
                       <CardTitle>Unclaimed rewards</CardTitle>
                       <CardDescription>
                         This will claim your rewards for <b>every</b> V3
-                        liquidity position on {Chain.from(chainId)?.name}
+                        liquidity position on {EvmChain.from(chainId)?.name}
                       </CardDescription>
                     </CardHeader>
                     <CardContent>
@@ -351,49 +346,43 @@ const Component: FC<{ chainId: string; address: string; position: string }> = ({
                         <CardLabel>
                           Tokens (accrued over all positions)
                         </CardLabel>
-                        {rewardsLoading || isPositionLoading ? (
+                        {isRewardsLoading || isPositionLoading ? (
                           <CardItem skeleton />
-                        ) : rewardsData &&
+                        ) : rewardsData?.[chainId] &&
                           positionDetails &&
-                          rewardsData.pools[positionDetails.address] &&
-                          Object.values(
-                            rewardsData.pools[positionDetails.address]
-                              .rewardsPerToken,
-                          ).length > 0 ? (
-                          Object.values(
-                            rewardsData.pools[positionDetails.address]
-                              .rewardsPerToken,
-                          ).map((el) => (
-                            <CardCurrencyAmountItem
-                              key={el.unclaimed.currency.address}
-                              amount={el.unclaimed}
-                            />
-                          ))
+                          Object.values(rewardsData[chainId].rewardAmounts)
+                            .length > 0 ? (
+                          Object.values(rewardsData[chainId].rewardAmounts).map(
+                            (el) => (
+                              <CardCurrencyAmountItem
+                                key={el.currency.id}
+                                amount={el}
+                              />
+                            ),
+                          )
                         ) : (
                           <CardItem title="No rewards found" />
                         )}
                       </CardGroup>
                     </CardContent>
                     <CardFooter>
-                      <ConcentratedLiquidityHarvestButton
-                        account={address}
-                        chainId={chainId}
-                      >
-                        {({ write, isPending }) => (
-                          <Checker.Connect fullWidth>
-                            <Checker.Network fullWidth chainId={chainId}>
-                              <Button
-                                fullWidth
-                                size="xl"
-                                disabled={isPending}
-                                onClick={() => write?.()}
-                              >
-                                Harvest
-                              </Button>
-                            </Checker.Network>
-                          </Checker.Connect>
-                        )}
-                      </ConcentratedLiquidityHarvestButton>
+                      {rewardsData ? (
+                        <Checker.Connect size="default" fullWidth>
+                          <Checker.Network
+                            size="default"
+                            fullWidth
+                            chainId={chainId}
+                          >
+                            <ClaimRewardsButton
+                              rewards={rewardsData[chainId]}
+                            />
+                          </Checker.Network>
+                        </Checker.Connect>
+                      ) : (
+                        <Button size="default" fullWidth loading>
+                          Claim
+                        </Button>
+                      )}
                     </CardFooter>
                   </TabsContent>
                 ) : null}
@@ -512,7 +501,7 @@ const Component: FC<{ chainId: string; address: string; position: string }> = ({
                               {unwrapToken(currencyQuote)?.symbol}{' '}
                               <HoverCard closeDelay={0} openDelay={0}>
                                 <HoverCardTrigger asChild>
-                                  <span className="text-sm underline decoration-dotted underline-offset-2 underline-offset-2 text-muted-foreground font-normal">
+                                  <span className="text-sm underline decoration-dotted underline-offset-2 text-muted-foreground font-normal">
                                     (
                                     {formatPercent(
                                       priceLower
@@ -670,7 +659,7 @@ const Component: FC<{ chainId: string; address: string; position: string }> = ({
                   {_token0 && _token1 ? (
                     <LinkInternal
                       href={`/${
-                        ChainKey[chainId]
+                        EvmChainKey[chainId]
                       }/pool/incentivize?fromCurrency=${
                         _token0.isNative ? 'NATIVE' : _token0.address
                       }&toCurrency=${
@@ -697,18 +686,14 @@ const Component: FC<{ chainId: string; address: string; position: string }> = ({
                 </CardContent>
                 <TabsContent value="active">
                   <DistributionDataTable
-                    isLoading={rewardsLoading}
-                    data={currentAngleRewardsPool?.distributionData.filter(
-                      (el) => el.isLive,
-                    )}
+                    isLoading={isCampaignsLoading}
+                    data={activeCampaigns}
                   />
                 </TabsContent>
                 <TabsContent value="inactive">
                   <DistributionDataTable
-                    isLoading={rewardsLoading}
-                    data={currentAngleRewardsPool?.distributionData.filter(
-                      (el) => !el.isLive,
-                    )}
+                    isLoading={isCampaignsLoading}
+                    data={inactiveCampaigns}
                   />
                 </TabsContent>
               </Tabs>

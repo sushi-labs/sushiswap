@@ -1,7 +1,7 @@
 import { getFaqCategory } from '@sushiswap/graph-client/strapi'
 import { Breadcrumb, Container, typographyVariants } from '@sushiswap/ui'
 import { notFound } from 'next/navigation'
-import React from 'react'
+import type React from 'react'
 import { CategoryLayout } from './components/category-layout'
 
 export const revalidate = 900

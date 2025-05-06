@@ -9,12 +9,12 @@ import {
   DataTable,
   LinkInternal,
 } from '@sushiswap/ui'
-import { PaginationState } from '@tanstack/react-table'
+import type { PaginationState } from '@tanstack/react-table'
 import { useMemo, useState } from 'react'
 import { usePoolFilters } from 'src/ui/pool'
 import { useMyPositions } from '~tron/_common/lib/hooks/useMyPositions'
-import { IMyPositionData } from '~tron/_common/types/get-pools-type'
-import { IToken } from '~tron/_common/types/token-type'
+import type { IMyPositionData } from '~tron/_common/types/get-pools-type'
+import type { IToken } from '~tron/_common/types/token-type'
 import {
   APR_COLUMN,
   POSITION_NAME_COLUMN,

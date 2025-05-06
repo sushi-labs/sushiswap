@@ -9,10 +9,10 @@ import {
   Toggle,
 } from '@sushiswap/ui'
 import { useQuery } from '@tanstack/react-query'
-import { PaginationState } from '@tanstack/react-table'
-import { FC, useMemo, useState } from 'react'
-import { Chain, ChainId } from 'sushi/chain'
-import { SushiSwapV3ChainId, isSushiSwapV3ChainId } from 'sushi/config'
+import type { PaginationState } from '@tanstack/react-table'
+import { type FC, useMemo, useState } from 'react'
+import { EvmChain, type EvmChainId } from 'sushi/chain'
+import { type SushiSwapV3ChainId, isSushiSwapV3ChainId } from 'sushi/config'
 
 import {
   getSushiV3Burns,
@@ -21,7 +21,7 @@ import {
   getSushiV3Swaps,
 } from '@sushiswap/graph-client/data-api'
 
-import { V3Pool } from '@sushiswap/graph-client/data-api'
+import type { V3Pool } from '@sushiswap/graph-client/data-api'
 import type { Address } from 'viem'
 import {
   TX_AMOUNT_IN_V3_COLUMN,
@@ -115,7 +115,7 @@ function useTransactionsV3(
   return useQuery({
     queryKey: ['poolTransactionsV3', poolAddress, opts],
     queryFn: async () => {
-      const chainId = pool?.chainId as ChainId
+      const chainId = pool?.chainId as EvmChainId
 
       if (!pool || !isSushiSwapV3ChainId(chainId)) return []
 
@@ -194,7 +194,7 @@ function useTransactionsV3(
           .sort((a, b) => b.logIndex - a.logIndex)
       })
     },
-    enabled: !!pool && isSushiSwapV3ChainId(pool?.chainId as ChainId),
+    enabled: !!pool && isSushiSwapV3ChainId(pool?.chainId as EvmChainId),
     refetchInterval: opts?.refetchInterval,
   })
 }
@@ -285,7 +285,7 @@ const PoolTransactionsV3: FC<PoolTransactionsV3Props> = ({
       <CardContent className="!px-0">
         <DataTable
           linkFormatter={(row) =>
-            Chain.from(row.pool.chainId)?.getTxUrl(row.transaction.id) ?? ''
+            EvmChain.from(row.pool.chainId)?.getTxUrl(row.transaction.id) ?? ''
           }
           loading={isLoading}
           columns={COLUMNS}

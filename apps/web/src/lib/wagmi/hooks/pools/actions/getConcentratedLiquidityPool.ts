@@ -1,133 +1,101 @@
-import { readContracts } from '@wagmi/core/actions'
+import { type MulticallReturnType, readContracts } from '@wagmi/core/actions'
+import { slot0Abi_slot0, v3baseAbi_liquidity } from 'sushi/abi'
 import {
   SUSHISWAP_V3_FACTORY_ADDRESS,
-  SushiSwapV3ChainId,
-  SushiSwapV3FeeAmount,
+  type SushiSwapV3ChainId,
+  type SushiSwapV3FeeAmount,
 } from 'sushi/config'
-import { Token, Type } from 'sushi/currency'
+import type { Token, Type } from 'sushi/currency'
 import {
   SushiSwapV3Pool,
   computeSushiSwapV3PoolAddress,
 } from 'sushi/pool/sushiswap-v3'
-import { Address } from 'viem'
-import { PublicWagmiConfig } from '../../../config/public'
+import type { Address, ContractFunctionReturnType } from 'viem'
+import type { PublicWagmiConfig } from '../../../config/public'
+
+type Slot0 = ContractFunctionReturnType<typeof slot0Abi_slot0, 'view', 'slot0'>
+type Liquidity = ContractFunctionReturnType<
+  typeof v3baseAbi_liquidity,
+  'view',
+  'liquidity'
+>
 
 export const getConcentratedLiquidityPools = async ({
-  chainId,
   poolKeys,
   config,
 }: {
-  chainId: SushiSwapV3ChainId
-  poolKeys: [
-    Type | undefined,
-    Type | undefined,
-    SushiSwapV3FeeAmount | undefined,
-  ][]
+  poolKeys: {
+    chainId: SushiSwapV3ChainId
+    token0: Type
+    token1: Type
+    feeAmount: SushiSwapV3FeeAmount
+  }[]
   config: PublicWagmiConfig
 }): Promise<(SushiSwapV3Pool | null)[]> => {
-  let poolTokens: ([Token, Token, SushiSwapV3FeeAmount] | undefined)[]
-  if (!chainId) {
-    poolTokens = new Array(poolKeys.length)
-  } else {
-    poolTokens = poolKeys.map(([currencyA, currencyB, feeAmount]) => {
-      if (currencyA && currencyB && feeAmount) {
-        const tokenA = currencyA.wrapped
-        const tokenB = currencyB.wrapped
-        if (tokenA.equals(tokenB)) return undefined
+  const pools = poolKeys.map((pool) => {
+    let address: Address | undefined
 
-        return tokenA.sortsBefore(tokenB)
-          ? [tokenA, tokenB, feeAmount]
-          : [tokenB, tokenA, feeAmount]
+    const tokenA = pool.token0.wrapped
+    const tokenB = pool.token1.wrapped
+
+    if (tokenA.equals(tokenB)) {
+      return {
+        ...pool,
+        address: undefined,
       }
-      return undefined
-    })
-  }
+    } else {
+      const [token0, token1] = tokenA.sortsBefore(tokenB)
+        ? [tokenA, tokenB]
+        : [tokenB, tokenA]
 
-  const poolAddresses = poolTokens.map(
-    (value) =>
-      value &&
-      computeSushiSwapV3PoolAddress({
-        factoryAddress: SUSHISWAP_V3_FACTORY_ADDRESS[chainId],
-        tokenA: value[0],
-        tokenB: value[1],
-        fee: value[2],
-      }),
-  )
+      address = computeSushiSwapV3PoolAddress({
+        factoryAddress: SUSHISWAP_V3_FACTORY_ADDRESS[pool.chainId],
+        tokenA: token0,
+        tokenB: token1,
+        fee: pool.feeAmount,
+      }) as Address
 
-  const slot0s = await readContracts(config, {
-    contracts: poolAddresses.map(
-      (el) =>
-        ({
-          chainId,
-          address: el as Address,
-          abi: [
-            {
-              inputs: [],
-              name: 'slot0',
-              outputs: [
-                {
-                  internalType: 'uint160',
-                  name: 'sqrtPriceX96',
-                  type: 'uint160',
-                },
-                { internalType: 'int24', name: 'tick', type: 'int24' },
-                {
-                  internalType: 'uint16',
-                  name: 'observationIndex',
-                  type: 'uint16',
-                },
-                {
-                  internalType: 'uint16',
-                  name: 'observationCardinality',
-                  type: 'uint16',
-                },
-                {
-                  internalType: 'uint16',
-                  name: 'observationCardinalityNext',
-                  type: 'uint16',
-                },
-                { internalType: 'uint8', name: 'feeProtocol', type: 'uint8' },
-                { internalType: 'bool', name: 'unlocked', type: 'bool' },
-              ],
-              stateMutability: 'view',
-              type: 'function',
-            },
-          ],
-          functionName: 'slot0',
-        }) as const,
-    ),
+      return {
+        ...pool,
+        token0,
+        token1,
+        address,
+      }
+    }
   })
 
-  const liquidities = await readContracts(config, {
-    contracts: poolAddresses.map(
-      (el) =>
-        ({
-          chainId,
-          address: el as Address,
-          abi: [
-            {
-              inputs: [],
-              name: 'liquidity',
-              outputs: [{ internalType: 'uint128', name: '', type: 'uint128' }],
-              stateMutability: 'view',
-              type: 'function',
-            },
-          ],
-          functionName: 'liquidity',
-        }) as const,
-    ),
+  // Batching slot0 and liquidity multicalls into one
+  const results = await readContracts(config, {
+    contracts: pools.flatMap(({ chainId, address }) => [
+      {
+        chainId,
+        address: address as Address,
+        abi: slot0Abi_slot0,
+        functionName: 'slot0',
+      } as const,
+      {
+        chainId,
+        address: address as Address,
+        abi: v3baseAbi_liquidity,
+        functionName: 'liquidity',
+      } as const,
+    ]),
   })
 
-  return poolKeys.map((_key, index) => {
-    const tokens = poolTokens[index]
-    if (!tokens) return null
-    const [token0, token1, fee] = tokens
+  // Split results back into slot0s and liquidities arrays
+  const slot0s = results.filter((_, i) => i % 2 === 0)
+  const liquidities = results.filter((_, i) => i % 2 === 1)
+
+  return pools.map((pool, index) => {
+    const tokens = pools[index]
+    if (!pool.address) return null
+    const { token0, token1, feeAmount } = pool
 
     if (!slot0s[index]) return null
-    const slot0 = slot0s[index].result
+    const slot0 = slot0s[index].result as Slot0
 
     if (!liquidities[index]) return null
-    const liquidity = liquidities[index].result
+    const liquidity = liquidities[index].result as Liquidity
 
     if (!tokens || !slot0 || typeof liquidity === 'undefined') return null
 
@@ -140,7 +108,7 @@ export const getConcentratedLiquidityPools = async ({
     return new SushiSwapV3Pool(
       token0,
       token1,
-      fee,
+      feeAmount,
       sqrtPriceX96,
       liquidity,
       tick,
@@ -156,15 +124,22 @@ export const getConcentratedLiquidityPool = async ({
   config,
 }: {
   chainId: SushiSwapV3ChainId
-  token0: Type | undefined
-  token1: Type | undefined
-  feeAmount: SushiSwapV3FeeAmount | undefined
+  token0: Type
+  token1: Type
+  feeAmount: SushiSwapV3FeeAmount
   config: PublicWagmiConfig
 }): Promise<SushiSwapV3Pool | null> => {
-  const poolKeys: [
-    Type | undefined,
-    Type | undefined,
-    SushiSwapV3FeeAmount | undefined,
-  ][] = [[token0, token1, feeAmount]]
-  return (await getConcentratedLiquidityPools({ poolKeys, chainId, config }))[0]
+  return (
+    await getConcentratedLiquidityPools({
+      poolKeys: [
+        {
+          chainId,
+          token0,
+          token1,
+          feeAmount,
+        },
+      ],
+      config,
+    })
+  )[0]
 }

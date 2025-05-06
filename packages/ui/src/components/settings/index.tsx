@@ -2,11 +2,11 @@
 
 import { Cog6ToothIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import {
-  SlippageToleranceStorageKey,
-  TTLStorageKey,
+  type SlippageToleranceStorageKey,
+  type TTLStorageKey,
   useSlippageTolerance,
 } from '@sushiswap/hooks'
-import React, { FC, ReactNode, useState } from 'react'
+import React, { type FC, type ReactNode, useState } from 'react'
 
 import { DEFAULT_SLIPPAGE } from 'sushi/config'
 import { Button } from '../button'
@@ -92,7 +92,11 @@ export const SettingsOverlay: FC<SettingsOverlayProps> = ({
                       className="!rounded-full -mr-1.5 !bg-opacity-50"
                       iconPosition="end"
                       variant={
-                        Number(slippageTolerance) > 2 ? 'warning' : 'secondary'
+                        Number(slippageTolerance) > 20
+                          ? 'destructive'
+                          : Number(slippageTolerance) > 2
+                            ? 'warning'
+                            : 'secondary'
                       }
                       size="xs"
                       asChild

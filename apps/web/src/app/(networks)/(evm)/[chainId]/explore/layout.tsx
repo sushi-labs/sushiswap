@@ -1,5 +1,5 @@
-import React from 'react'
-import { ChainId } from 'sushi/chain'
+import type React from 'react'
+import type { ChainId } from 'sushi/chain'
 import { SidebarProvider } from '~evm/_common/ui/sidebar'
 import { Header } from '../header'
 

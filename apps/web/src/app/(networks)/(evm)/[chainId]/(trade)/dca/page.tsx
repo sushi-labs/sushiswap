@@ -1,3 +1,5 @@
+'use client'
+
 import { Container } from '@sushiswap/ui'
 import { DcaWidget } from 'src/ui/swap/twap/dca-widget'
 

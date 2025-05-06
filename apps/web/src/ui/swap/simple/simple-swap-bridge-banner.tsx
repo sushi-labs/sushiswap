@@ -3,9 +3,10 @@
 import { XMarkIcon } from '@heroicons/react/24/solid'
 import { ArrowUpRightIcon } from '@heroicons/react/24/solid'
 import { useLocalStorage } from '@sushiswap/hooks'
+import { classNames } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
-import { FC } from 'react'
-import { Chain, ChainId } from 'sushi/chain'
+import type { FC } from 'react'
+import { ChainId, EvmChain } from 'sushi/chain'
 import { useDerivedStateSimpleSwap } from './derivedstate-simple-swap-provider'
 
 const BridgeInfo = {
@@ -20,7 +21,9 @@ const BridgeInfo = {
   },
 } as const
 
-export const SimpleSwapBridgeBanner: FC = () => {
+export const SimpleSwapBridgeBanner: FC<{ className?: string }> = ({
+  className,
+}) => {
   const [hideBanner, setHideBanner] = useLocalStorage(
     'hide-bridge-banner',
     false,
@@ -37,7 +40,12 @@ export const SimpleSwapBridgeBanner: FC = () => {
       rel="noopener noreferrer"
       className={BridgeInfo[chainId as keyof typeof BridgeInfo].textColor}
     >
-      <div className="block xl:fixed xl:right-8 xl:bottom-8 rounded-xl relative p-6 bg-blue/10 min-w-[360px] overflow-hidden">
+      <div
+        className={classNames(
+          'rounded-xl relative p-6 bg-blue/10 overflow-hidden',
+          className,
+        )}
+      >
         {BridgeInfo[chainId as keyof typeof BridgeInfo].background}
         <XMarkIcon
           width={20}
@@ -53,18 +61,16 @@ export const SimpleSwapBridgeBanner: FC = () => {
             <NetworkIcon chainId={chainId} width={24} height={24} />
             <div className="flex items-center">
               <span className="font-semibold">
-                Bridge to {Chain.fromChainId(chainId)?.name}
+                Bridge to {EvmChain.fromChainId(chainId)?.name}
               </span>
               <ArrowUpRightIcon width={20} height={20} />
             </div>
           </div>
           <span className="text-xs">
-            Deposit your tokens to {Chain.fromChainId(chainId)?.name}.
+            Deposit your tokens to {EvmChain.fromChainId(chainId)?.name}.
           </span>
         </div>
       </div>
     </a>
-  ) : (
-    <div />
-  )
+  ) : null
 }

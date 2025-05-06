@@ -1,11 +1,11 @@
 'use client'
 
 import { useWallet as useTronWallet } from '@tronweb3/tronwallet-adapter-react-hooks'
-import { FC } from 'react'
+import type { FC } from 'react'
 import { NonStandardChainId } from 'src/config'
 import {
   SidebarContainer as BaseSidebarContainer,
-  SidebarContainerProps,
+  type SidebarContainerProps,
   SidebarProvider,
 } from 'src/ui/sidebar'
 

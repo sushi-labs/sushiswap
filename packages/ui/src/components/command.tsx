@@ -1,10 +1,11 @@
 'use client'
 
-import { DialogProps } from '@radix-ui/react-dialog'
+import type { DialogProps } from '@radix-ui/react-dialog'
 import { Command as CommandPrimitive } from 'cmdk'
 import { Search } from 'lucide-react'
 import * as React from 'react'
 
+import { useIsMounted } from '@sushiswap/hooks'
 import classNames from 'classnames'
 import { Dialog, DialogContent } from './dialog'
 
@@ -75,13 +76,19 @@ CommandList.displayName = CommandPrimitive.List.displayName
 const CommandEmpty = React.forwardRef<
   React.ElementRef<typeof CommandPrimitive.Empty>,
   React.ComponentPropsWithoutRef<typeof CommandPrimitive.Empty>
->((props, ref) => (
-  <CommandPrimitive.Empty
-    ref={ref}
-    className="py-6 text-center text-sm"
-    {...props}
-  />
-))
+>((props, ref) => {
+  // Displays unexpectedly on first render,
+  // only show when mounted to resolve
+  const isMounted = useIsMounted()
+  if (!isMounted) return null
+  return (
+    <CommandPrimitive.Empty
+      ref={ref}
+      className="py-6 text-center text-sm"
+      {...props}
+    />
+  )
+})
 
 CommandEmpty.displayName = CommandPrimitive.Empty.displayName
 
@@ -120,7 +127,7 @@ const CommandItem = React.forwardRef<
   <CommandPrimitive.Item
     ref={ref}
     className={classNames(
-      'relative flex cursor-default select-none items-center rounded-lg p-2 text-sm outline-none aria-selected:bg-muted aria-selected:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50',
+      'relative flex cursor-default select-none items-center rounded-lg p-2 text-sm outline-none [aria-selected="true"]:bg-muted [aria-selected="true"]:text-accent-foreground [aria-disabled="true"]:pointer-events-none [aria-disabled="true"]:opacity-50',
       className,
     )}
     {...props}

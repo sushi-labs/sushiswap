@@ -1,6 +1,6 @@
 import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import ms from 'ms'
-import { IGetTradeAmountsForDayResponse } from '~tron/_common/types/get-pools-type'
+import type { IGetTradeAmountsForDayResponse } from '~tron/_common/types/get-pools-type'
 
 const getTradeAmountsForDay = async (pairAddress: string) => {
   try {

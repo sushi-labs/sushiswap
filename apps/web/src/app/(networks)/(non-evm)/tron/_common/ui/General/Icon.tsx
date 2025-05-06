@@ -1,7 +1,7 @@
 import { cloudinaryLogoFetchLoader } from '@sushiswap/ui'
 import Image from 'next/image'
 import { hashStringToColor } from '~tron/_common/lib/utils/formatters'
-import { IToken } from '~tron/_common/types/token-type'
+import type { IToken } from '~tron/_common/types/token-type'
 
 type IconProps = {
   currency: IToken | undefined

@@ -1,5 +1,5 @@
 import {
-  TopNonEvmPools,
+  type TopNonEvmPools,
   getTopNonEvmPools,
 } from '@sushiswap/graph-client/data-api'
 import { useQuery } from '@tanstack/react-query'

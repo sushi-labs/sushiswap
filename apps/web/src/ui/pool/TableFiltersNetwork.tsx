@@ -19,10 +19,10 @@ import {
 import { CheckIcon } from '@sushiswap/ui/icons/CheckIcon'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import { usePathname, useRouter } from 'next/navigation'
-import React, { FC, useCallback, useState } from 'react'
-import { NonStandardChainId, SUPPORTED_NETWORKS } from 'src/config'
+import React, { type FC, useCallback, useState } from 'react'
+import { type NonStandardChainId, SUPPORTED_NETWORKS } from 'src/config'
 import { getNetworkName, replaceNetworkSlug } from 'src/lib/network'
-import { ChainId, isChainId } from 'sushi/chain'
+import { type ChainId, isChainId } from 'sushi/chain'
 
 export const TableFiltersNetwork: FC<{
   network: ChainId | NonStandardChainId
@@ -86,7 +86,6 @@ export const TableFiltersNetwork: FC<{
             testdata-id="network-selector-input"
             placeholder="Search network"
           />
-          <CommandEmpty>No network found.</CommandEmpty>
           <CommandGroup>
             {SUPPORTED_NETWORKS.map((_network) => {
               const name = getNetworkName(_network)
@@ -130,6 +129,7 @@ export const TableFiltersNetwork: FC<{
               )
             })}
           </CommandGroup>
+          <CommandEmpty>No network found.</CommandEmpty>
         </Command>
       </PopoverContent>
     </Popover>

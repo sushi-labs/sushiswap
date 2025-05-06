@@ -1,7 +1,7 @@
 'use client'
 
 import type { ButtonProps } from '@sushiswap/ui'
-import { FC } from 'react'
+import type { FC } from 'react'
 
 import { useWallet } from '@aptos-labs/wallet-adapter-react'
 import { ConnectButton } from '~aptos/_common/ui/user-profile/connect-button'

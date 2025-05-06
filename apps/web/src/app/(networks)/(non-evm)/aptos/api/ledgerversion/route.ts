@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { type NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
 
 // Need to redeclare because the Aptos library tries to create a React context on import
@@ -71,7 +71,7 @@ export async function GET(request: NextRequest) {
     timestamp = Math.floor(Date.now() / 1000) - params.data.secondsAgo
   }
 
-  let closestTimestamp = Infinity
+  let closestTimestamp = Number.POSITIVE_INFINITY
 
   let closestVersion = 0
   let lowerVersion = 0

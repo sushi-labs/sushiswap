@@ -10,15 +10,15 @@ import {
   LinkInternal,
   SelectIcon,
 } from '@sushiswap/ui'
-import { FC } from 'react'
-import { ChainId, ChainKey } from 'sushi/chain'
+import type { FC } from 'react'
+import { ChainKey, EvmChainId } from 'sushi/chain'
 import {
-  SushiSwapV3ChainId,
+  type SushiSwapV3ChainId,
   isSushiSwapV2ChainId,
   isSushiSwapV3ChainId,
 } from 'sushi/config'
 
-export const Hero: FC<{ chainId: ChainId }> = ({ chainId }) => {
+export const Hero: FC<{ chainId: EvmChainId }> = ({ chainId }) => {
   return (
     <section className="flex flex-col gap-6">
       <span className="text-5xl font-bold">Manage Liquidity Positions</span>
@@ -41,7 +41,7 @@ export const Hero: FC<{ chainId: ChainId }> = ({ chainId }) => {
                     ? `/${ChainKey[chainId]}/pool/v3/add`
                     : isSushiSwapV2ChainId(chainId as SushiSwapV3ChainId)
                       ? `/${ChainKey[chainId]}/pool/v2/add`
-                      : `/${ChainKey[ChainId.ETHEREUM]}/pool/v3/add`
+                      : `/${ChainKey[EvmChainId.ETHEREUM]}/pool/v3/add`
                 }
               >
                 I want to create a position
@@ -56,9 +56,7 @@ export const Hero: FC<{ chainId: ChainId }> = ({ chainId }) => {
               <DropdownMenuContent className="w-80">
                 <DropdownMenuGroup>
                   <DropdownMenuItem
-                    disabled={
-                      !isSushiSwapV3ChainId(chainId as SushiSwapV3ChainId)
-                    }
+                    disabled={!isSushiSwapV3ChainId(chainId)}
                     asChild
                   >
                     <LinkInternal
@@ -68,7 +66,7 @@ export const Hero: FC<{ chainId: ChainId }> = ({ chainId }) => {
                       <div className="flex items-center gap-1 font-medium leading-none">
                         V3 Position
                         <Chip variant="secondary">
-                          {isSushiSwapV3ChainId(chainId as SushiSwapV3ChainId)
+                          {isSushiSwapV3ChainId(chainId)
                             ? 'New 🔥'
                             : 'Unavailable'}
                         </Chip>
@@ -78,7 +76,7 @@ export const Hero: FC<{ chainId: ChainId }> = ({ chainId }) => {
                       </p>
                     </LinkInternal>
                   </DropdownMenuItem>
-                  {isSushiSwapV2ChainId(chainId as ChainId) ? (
+                  {isSushiSwapV2ChainId(chainId) ? (
                     <DropdownMenuItem asChild>
                       <LinkInternal
                         href={`/${ChainKey[chainId]}/pool/v2/add`}

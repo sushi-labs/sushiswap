@@ -7,14 +7,14 @@ import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import { getToken as getTokenWeb3 } from '@wagmi/core/actions'
 import { useCallback } from 'react'
 import type { ID } from 'sushi'
-import { ChainId } from 'sushi/chain'
+import type { EvmChainId } from 'sushi/chain'
 import { Token } from 'sushi/currency'
-import { Address, getAddress, isAddress } from 'viem'
+import { type Address, getAddress, isAddress } from 'viem'
 import { useConfig } from 'wagmi'
-import { PublicWagmiConfig } from '../../config/public'
+import type { PublicWagmiConfig } from '../../config/public'
 
 interface UseTokenParams {
-  chainId: ChainId | undefined
+  chainId: EvmChainId | undefined
   address: Address | undefined
   enabled?: boolean
   keepPreviousData?: boolean
@@ -32,7 +32,7 @@ type Data = {
 }
 
 export const getTokenWithQueryCacheHydrate = (
-  chainId: ChainId | undefined,
+  chainId: EvmChainId | undefined,
   data: Data,
 ): UseTokenReturn | undefined => {
   if (data && chainId) {
@@ -53,7 +53,7 @@ export const getTokenWithQueryCacheHydrate = (
 }
 
 interface GetTokenWithQueryCacheFn {
-  chainId: ChainId | undefined
+  chainId: EvmChainId | undefined
   address: Address | undefined | null
   customTokens: Record<string, Token>
   hasToken: (cur: string | Token) => boolean

@@ -1,7 +1,7 @@
 import { getDifficulties } from '@sushiswap/graph-client/strapi'
 import {
   Navigation,
-  NavigationElement,
+  type NavigationElement,
   NavigationElementType,
 } from '@sushiswap/ui'
 import React from 'react'

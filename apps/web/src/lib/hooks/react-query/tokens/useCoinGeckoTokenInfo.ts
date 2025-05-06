@@ -1,6 +1,6 @@
 import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import { ChainId } from 'sushi/chain'
-import { Token } from 'sushi/currency'
+import type { Token } from 'sushi/currency'
 import { z } from 'zod'
 
 const COINGECKO_CHAIN_ID_BY_NAME = {
@@ -52,7 +52,7 @@ const isCoinGeckoChainId = (chainId: ChainId): chainId is CoinGeckoChainId =>
   Object.keys(COINGECKO_CHAIN_ID_BY_NAME).includes(chainId.toString())
 
 const coinGeckoSchema = z.object({
-  market_cap_rank: z.number(),
+  market_cap_rank: z.number().nullable(),
   market_data: z.object({
     current_price: z.object({
       usd: z.number(),
@@ -70,7 +70,7 @@ const coinGeckoSchema = z.object({
       usd: z.number(),
     }),
     circulating_supply: z.number(),
-    total_supply: z.number(),
+    total_supply: z.number().nullable(),
   }),
 })
 

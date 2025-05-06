@@ -1,21 +1,21 @@
 import { createErrorToast } from '@sushiswap/notifications'
 import { Button } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
-import React, { FC, Suspense, useCallback } from 'react'
-import { NonStandardChainId } from 'src/config'
+import React, { type FC, Suspense, useCallback } from 'react'
+import type { NonStandardChainId } from 'src/config'
 import { getNetworkName } from 'src/lib/network'
-import { ChainId } from 'sushi/chain'
+import { type EvmChainId, isEvmChainId } from 'sushi/chain'
 import { ProviderRpcError, UserRejectedRequestError } from 'viem'
 import { useChainId, useSwitchChain } from 'wagmi'
 import {
   NetworkSelector,
-  NetworkSelectorOnSelectCallback,
+  type NetworkSelectorOnSelectCallback,
 } from './network-selector'
 
 export const HeaderNetworkSelector: FC<{
-  networks: readonly (ChainId | NonStandardChainId)[]
-  selectedNetwork?: ChainId | NonStandardChainId
-  onChange?(network: ChainId | NonStandardChainId): void
+  networks: readonly (EvmChainId | NonStandardChainId)[]
+  selectedNetwork?: EvmChainId | NonStandardChainId
+  onChange?(network: EvmChainId | NonStandardChainId): void
   hideNetworkName?: boolean
   className?: string
 }> = ({
@@ -32,7 +32,12 @@ export const HeaderNetworkSelector: FC<{
     async (el, close) => {
       console.debug('onSwitchNetwork', el)
       try {
-        if (typeof el === 'number' && switchChainAsync && chainId !== el) {
+        if (
+          typeof el === 'number' &&
+          isEvmChainId(el) &&
+          switchChainAsync &&
+          chainId !== el
+        ) {
           await switchChainAsync({ chainId: el })
         }
 

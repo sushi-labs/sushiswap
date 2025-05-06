@@ -1,4 +1,4 @@
-import { ITokenDataResponse } from '~tron/_common/types/token-type'
+import type { ITokenDataResponse } from '~tron/_common/types/token-type'
 
 export const getTokenData = async ({
   contractAddress,

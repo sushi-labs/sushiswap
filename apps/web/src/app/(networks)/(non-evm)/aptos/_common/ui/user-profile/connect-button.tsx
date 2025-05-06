@@ -1,7 +1,7 @@
-import { WalletName, useWallet } from '@aptos-labs/wallet-adapter-react'
+import { type WalletName, useWallet } from '@aptos-labs/wallet-adapter-react'
 import {
   Button,
-  ButtonProps,
+  type ButtonProps,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuGroup,

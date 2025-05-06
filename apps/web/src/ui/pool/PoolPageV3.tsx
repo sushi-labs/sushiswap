@@ -1,6 +1,6 @@
 'use client'
 
-import { V3Pool } from '@sushiswap/graph-client/data-api'
+import type { V3Pool } from '@sushiswap/graph-client/data-api'
 import {
   Card,
   CardContent,
@@ -17,7 +17,7 @@ import {
   SkeletonText,
   classNames,
 } from '@sushiswap/ui'
-import { FC } from 'react'
+import type { FC } from 'react'
 import { useTokenAmountDollarValues } from 'src/lib/hooks'
 import { useConcentratedLiquidityPoolStats } from 'src/lib/hooks/react-query'
 import { useConcentratedLiquidityPoolReserves } from 'src/lib/wagmi/hooks/pools/hooks/useConcentratedLiquidityPoolReserves'
@@ -53,24 +53,7 @@ const Pool: FC<{ pool: V3Pool }> = ({ pool }) => {
 
   return (
     <Container maxWidth="5xl" className="flex flex-col gap-4 px-4">
-      {pool.hasEnabledSteerVault && (
-        <Message variant="info" size="sm" className="mb-4">
-          {`This pool has been activated to leverage our smart pool feature. Smart pools are designed to optimize the
-        allocation of liquidity within customized price ranges, thereby improving trading efficiency. They achieve
-        this by enhancing liquidity depth around the current price, which results in higher fee earnings for liquidity
-        providers (LPs) and allows the market to dictate the distribution of LPs' positions based on rational
-        decisions.`}{' '}
-          To create a smart pool position, click{' '}
-          <LinkInternal
-            shallow={true}
-            href={`/${ChainKey[chainId]}/pool/v3/${address}/smart`}
-            className="underline"
-          >
-            here
-          </LinkInternal>
-        </Message>
-      )}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
         <StatisticsChartsV3 address={address} chainId={chainId} pool={pool} />
         <div className="flex flex-col gap-6">
           <Card>
@@ -99,7 +82,7 @@ const Pool: FC<{ pool: V3Pool }> = ({ pool }) => {
           <Card>
             <CardHeader>
               <CardTitle>
-                <div className="flex flex-col md:flex-row justify-between gap-y-4">
+                <div className="flex flex-col justify-between md:flex-row gap-y-4">
                   Statistics
                 </div>
               </CardTitle>

@@ -10,7 +10,7 @@ import {
   classNames,
 } from '@sushiswap/ui'
 import format from 'date-fns/format'
-import { FC, useCallback, useMemo } from 'react'
+import { type FC, useCallback, useMemo } from 'react'
 
 import { formatUSD } from 'sushi/format'
 import tailwindConfig from 'tailwind.config.js'
@@ -19,9 +19,9 @@ import resolveConfig from 'tailwindcss/resolveConfig'
 import { PoolChartPeriod, chartPeriods } from './PoolChartPeriods'
 import { PoolChartType } from './PoolChartTypes'
 
-import { V2Pool, V3Pool } from '@sushiswap/graph-client/data-api'
+import type { V2Pool, V3Pool } from '@sushiswap/graph-client/data-api'
 import ReactEchartsCore from 'echarts-for-react/lib/core'
-import { EChartsOption } from 'echarts-for-react/lib/types'
+import type { EChartsOption } from 'echarts-for-react/lib/types'
 import 'echarts/lib/chart/bar'
 import 'echarts/lib/chart/line'
 import 'echarts/lib/component/tooltip'
@@ -29,7 +29,7 @@ import 'echarts/lib/component/visualMap'
 import echarts from 'echarts/lib/echarts'
 import 'echarts/lib/visual/seriesColor'
 import { usePoolGraphData } from 'src/lib/hooks'
-import { SushiSwapProtocol } from 'sushi'
+import type { SushiSwapProtocol } from 'sushi'
 
 interface PoolChartProps {
   chart: PoolChartType.Volume | PoolChartType.Fees | PoolChartType.TVL

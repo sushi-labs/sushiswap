@@ -1,13 +1,13 @@
-import { PortfolioFuroClaim } from '@sushiswap/graph-client/data-api'
+import type { PortfolioFuroClaim } from '@sushiswap/graph-client/data-api'
 import {
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
   FormattedNumber,
 } from '@sushiswap/ui'
-import { FC } from 'react'
+import type { FC } from 'react'
 import React from 'react'
-import { ChainId } from 'sushi/chain'
+import type { EvmChainId } from 'sushi/chain'
 import { formatUSD } from 'sushi/format'
 import { PortfolioInfoRow } from '../PortfolioInfoRow'
 
@@ -26,7 +26,7 @@ export const PortfolioFuroClaimables: FC<PortfolioFuroClaimablesProps> = ({
       {claimables.map(({ position, token }) => (
         <PortfolioInfoRow
           key={`${position.chainId}:${position.id}`}
-          chainId={token.chainId as ChainId}
+          chainId={token.chainId as EvmChainId}
           href={`https://pay.sushi.com/${
             position.name.startsWith('Vesting') ? 'vesting' : 'stream'
           }/${position.chainId}:${position.positionId}`}

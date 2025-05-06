@@ -4,12 +4,15 @@ import {
   ArrowDownRightIcon,
   EllipsisHorizontalIcon,
   GiftIcon,
-  LightBulbIcon,
   MinusIcon,
   PlusIcon,
 } from '@heroicons/react/24/outline'
 import { Slot } from '@radix-ui/react-slot'
-import { GetPools, PoolChainId, Pools } from '@sushiswap/graph-client/data-api'
+import type {
+  GetPools,
+  PoolChainId,
+  Pools,
+} from '@sushiswap/graph-client/data-api'
 import {
   Button,
   Card,
@@ -31,9 +34,14 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@sushiswap/ui'
-import { ColumnDef, Row, SortingState, TableState } from '@tanstack/react-table'
+import type {
+  ColumnDef,
+  Row,
+  SortingState,
+  TableState,
+} from '@tanstack/react-table'
 import Link from 'next/link'
-import React, { FC, ReactNode, useCallback, useMemo, useState } from 'react'
+import { type FC, type ReactNode, useCallback, useMemo, useState } from 'react'
 import InfiniteScroll from 'react-infinite-scroll-component'
 import { usePoolsInfinite } from 'src/lib/hooks'
 import { ChainKey } from 'sushi/chain'
@@ -102,45 +110,6 @@ const COLUMNS = [
                   Create position
                 </Link>
               </DropdownMenuItem>
-              <TooltipProvider>
-                <Tooltip delayDuration={0}>
-                  <TooltipTrigger asChild={row.original.isSmartPool}>
-                    <DropdownMenuItem
-                      asChild
-                      disabled={!row.original.isSmartPool}
-                    >
-                      <Link
-                        onClick={(e) => e.stopPropagation()}
-                        shallow={true}
-                        className="flex items-center"
-                        href={`/${ChainKey[row.original.chainId]}/pool/v3/${
-                          row.original.address
-                        }/smart`}
-                      >
-                        <span className="relative">
-                          <LightBulbIcon
-                            width={16}
-                            height={16}
-                            className="mr-2"
-                          />
-                          <sup className="rounded-full bg-background absolute right-[3px]">
-                            <PlusIcon width={12} height={12} />
-                          </sup>
-                        </span>
-                        Create smart position
-                      </Link>
-                    </DropdownMenuItem>
-                  </TooltipTrigger>
-                  <TooltipContent side="left" className="max-w-[240px]">
-                    <p>
-                      {!row.original.isSmartPool
-                        ? 'No Steer vaults available for this pool'
-                        : `Smart pools optimize liquidity allocation within custom price ranges, enhancing trading efficiency by
-          providing deeper liquidity around the current price, increasing Liquidity Providers (LP) fee earnings.`}
-                    </p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
@@ -250,8 +219,7 @@ interface PoolsTableProps {
 }
 
 export const PoolsTable: FC<PoolsTableProps> = ({ chainId, onRowClick }) => {
-  const { tokenSymbols, protocols, farmsOnly, smartPoolsOnly } =
-    usePoolFilters()
+  const { tokenSymbols, protocols, farmsOnly } = usePoolFilters()
 
   const [sorting, setSorting] = useState<SortingState>([
     { id: 'liquidityUSD', desc: true },
@@ -262,12 +230,11 @@ export const PoolsTable: FC<PoolsTableProps> = ({ chainId, onRowClick }) => {
       chainId,
       search: tokenSymbols,
       onlyIncentivized: farmsOnly,
-      onlySmartPools: smartPoolsOnly,
       protocols,
       orderBy: sorting[0]?.id as GetPools['orderBy'],
       orderDirection: sorting[0] ? (sorting[0].desc ? 'desc' : 'asc') : 'desc',
     }
-  }, [chainId, tokenSymbols, farmsOnly, smartPoolsOnly, sorting, protocols])
+  }, [chainId, tokenSymbols, farmsOnly, sorting, protocols])
 
   const { data: pools, isLoading, fetchNextPage } = usePoolsInfinite(args)
 

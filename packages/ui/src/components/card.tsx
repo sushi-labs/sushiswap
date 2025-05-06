@@ -1,7 +1,7 @@
 import { type VariantProps, cva } from 'class-variance-authority'
 import * as React from 'react'
-import { ReactNode } from 'react'
-import { Amount, Type, unwrapToken } from 'sushi/currency'
+import type { ReactNode } from 'react'
+import { type Amount, type Type, unwrapToken } from 'sushi/currency'
 
 import classNames from 'classnames'
 import { Currency } from './currency'

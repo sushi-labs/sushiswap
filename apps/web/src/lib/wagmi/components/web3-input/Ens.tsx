@@ -1,7 +1,7 @@
 'use client'
 
-import { TextField, TextFieldProps } from '@sushiswap/ui'
-import { ForwardedRef, forwardRef, useEffect } from 'react'
+import { TextField, type TextFieldProps } from '@sushiswap/ui'
+import { type ForwardedRef, forwardRef, useEffect } from 'react'
 import { ChainId } from 'sushi/chain'
 import { useEnsAddress } from 'wagmi'
 

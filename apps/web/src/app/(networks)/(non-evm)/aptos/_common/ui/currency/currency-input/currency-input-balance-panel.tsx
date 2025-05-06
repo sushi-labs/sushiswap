@@ -1,6 +1,6 @@
 import { SkeletonText, classNames } from '@sushiswap/ui'
 import { WalletIcon } from '@sushiswap/ui/icons/WalletIcon'
-import React, { FC, useMemo } from 'react'
+import React, { type FC, useMemo } from 'react'
 import { Fraction } from 'sushi/math'
 
 interface CurrencyInputBalancePanel {

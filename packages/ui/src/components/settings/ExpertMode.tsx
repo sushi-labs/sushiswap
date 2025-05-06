@@ -2,7 +2,7 @@
 
 import { LightBulbIcon } from '@heroicons/react/24/outline'
 import { useLocalStorage } from '@sushiswap/hooks'
-import React, { FC } from 'react'
+import React, { type FC } from 'react'
 
 import { List } from '../list/List'
 import { Switch } from '../switch'

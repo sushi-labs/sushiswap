@@ -12,15 +12,19 @@ import {
   masterChefV2Abi_harvestFromMasterChef,
   miniChefV2Abi_harvest,
 } from 'sushi/abi'
-import { ChainId } from 'sushi/chain'
+import { EvmChainId } from 'sushi/chain'
 import {
   MASTERCHEF_ADDRESS,
   MASTERCHEF_V2_ADDRESS,
   MINICHEF_ADDRESS,
 } from 'sushi/config'
 import { SUSHI, SUSHI_ADDRESS } from 'sushi/currency'
-import { Amount, Token } from 'sushi/currency'
-import { Address, UserRejectedRequestError, encodeFunctionData } from 'viem'
+import { Amount, type Token } from 'sushi/currency'
+import {
+  type Address,
+  UserRejectedRequestError,
+  encodeFunctionData,
+} from 'viem'
 import {
   useAccount,
   useBlockNumber,
@@ -28,8 +32,8 @@ import {
   useReadContracts,
   useSendTransaction,
 } from 'wagmi'
-import { SendTransactionErrorType } from 'wagmi/actions'
-import { SendTransactionData } from 'wagmi/query'
+import type { SendTransactionErrorType } from 'wagmi/actions'
+import type { SendTransactionData } from 'wagmi/query'
 import { useMasterChefContract } from './use-master-chef-contract'
 
 interface UseMasterChefReturn
@@ -42,7 +46,7 @@ interface UseMasterChefReturn
 }
 
 interface UseMasterChefParams {
-  chainId: ChainId
+  chainId: EvmChainId
   chef: ChefType
   pid: number
   token: Token | undefined
@@ -67,10 +71,10 @@ export const useMasterChef: UseMasterChef = ({
   const contracts = useMemo(() => {
     if (!chainId || !enabled || !address) return []
 
-    if (chainId === ChainId.ETHEREUM) {
+    if (chainId === EvmChainId.ETHEREUM) {
       return [
         {
-          chainId: ChainId.ETHEREUM as ChainId,
+          chainId: EvmChainId.ETHEREUM as EvmChainId,
           address: SUSHI_ADDRESS[chainId] as Address,
           abi: erc20Abi_balanceOf,
           functionName: 'balanceOf',
@@ -81,7 +85,7 @@ export const useMasterChef: UseMasterChef = ({
           ],
         } as const,
         {
-          chainId: ChainId.ETHEREUM as ChainId,
+          chainId: EvmChainId.ETHEREUM as EvmChainId,
           address: (chef === ChefType.MasterChefV1
             ? MASTERCHEF_ADDRESS[chainId]
             : MASTERCHEF_V2_ADDRESS[chainId]) as Address,
@@ -134,7 +138,7 @@ export const useMasterChef: UseMasterChef = ({
           args: [pid, address as Address],
         } as const,
         {
-          chainId: ChainId.ETHEREUM as ChainId,
+          chainId: EvmChainId.ETHEREUM as EvmChainId,
           address: MASTERCHEF_V2_ADDRESS[chainId] as Address,
           abi: [
             {

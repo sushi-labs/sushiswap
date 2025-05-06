@@ -2,7 +2,7 @@
 
 import { cookieToInitialState } from '@wagmi/core'
 import { createProductionConfig } from './production'
-import { PublicWagmiConfig } from './public'
+import type { PublicWagmiConfig } from './public'
 import { createTestConfig } from './test'
 
 export { createProductionConfig }

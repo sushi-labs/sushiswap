@@ -1,5 +1,10 @@
 import { useIsSmScreen } from '@sushiswap/hooks'
-import { MotionTransform, motion, useScroll, useTransform } from 'framer-motion'
+import {
+  type MotionTransform,
+  motion,
+  useScroll,
+  useTransform,
+} from 'framer-motion'
 import Image from 'next/legacy/image'
 import { useRef } from 'react'
 

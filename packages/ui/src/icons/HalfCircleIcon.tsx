@@ -1,4 +1,4 @@
-import { IconComponent } from '../types'
+import type { IconComponent } from '../types'
 
 export const HalfCircleIcon: IconComponent = (props) => {
   return (

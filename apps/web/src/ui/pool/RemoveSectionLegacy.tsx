@@ -14,7 +14,7 @@ import {
   useTrace,
 } from '@sushiswap/telemetry'
 import { Button, Dots } from '@sushiswap/ui'
-import { FC, useCallback, useEffect, useMemo, useState } from 'react'
+import { type FC, useCallback, useEffect, useMemo, useState } from 'react'
 import { APPROVE_TAG_REMOVE_LEGACY } from 'src/lib/constants'
 import {
   useTokensFromPool,
@@ -22,15 +22,14 @@ import {
 } from 'src/lib/hooks'
 import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
 import { gasMargin, slippageAmount } from 'sushi/calculate'
-import { ChainId } from 'sushi/chain'
-import { SushiSwapV2ChainId } from 'sushi/config'
+import type { SushiSwapV2ChainId } from 'sushi/config'
 import { Amount, Native } from 'sushi/currency'
 import { Percent } from 'sushi/math'
-import { SendTransactionReturnType, encodeFunctionData } from 'viem'
+import { type SendTransactionReturnType, encodeFunctionData } from 'viem'
 
-import { V2Pool } from '@sushiswap/graph-client/data-api'
+import type { V2Pool } from '@sushiswap/graph-client/data-api'
 import {
-  PermitInfo,
+  type PermitInfo,
   PermitType,
 } from 'src/lib/wagmi/hooks/approvals/hooks/useTokenPermit'
 import {
@@ -50,7 +49,7 @@ import {
   withCheckerRoot,
 } from 'src/lib/wagmi/systems/Checker/Provider'
 import {
-  UseCallParameters,
+  type UseCallParameters,
   useAccount,
   useCall,
   usePublicClient,
@@ -80,7 +79,7 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> =
     const { address, chain } = useAccount()
     const { data: deadline } = useTransactionDeadline({
       storageKey: TTLStorageKey.RemoveLiquidity,
-      chainId: _pool.chainId as ChainId,
+      chainId: _pool.chainId,
     })
     const contract = useSushiSwapRouterContract(
       _pool.chainId as SushiSwapV2ChainId,
@@ -433,7 +432,7 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> =
       <div>
         <RemoveSectionWidget
           isFarm={!!_pool.incentives && _pool.incentives.length > 0}
-          chainId={_pool.chainId as ChainId}
+          chainId={_pool.chainId}
           percentage={percentage}
           token0={token0}
           token1={token1}
@@ -453,41 +452,47 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> =
               }
               guardText="Pool not found"
             >
-              <Checker.Network fullWidth chainId={_pool.chainId as ChainId}>
+              <Checker.Network fullWidth chainId={_pool.chainId}>
                 <Checker.Guard
                   fullWidth
                   guardWhen={+percentage <= 0}
                   guardText="Enter amount"
                 >
-                  <Checker.ApproveERC20WithPermit
+                  <Checker.Slippage
                     fullWidth
-                    id="approve-remove-liquidity-slp"
-                    chainId={_pool.chainId}
-                    amount={amountToRemove}
-                    contract={
-                      getSushiSwapRouterContractConfig(
-                        _pool.chainId as SushiSwapV2ChainId,
-                      ).address
-                    }
-                    permitInfo={REMOVE_V2_LIQUIDITY_PERMIT_INFO}
-                    tag={APPROVE_TAG_REMOVE_LEGACY}
-                    ttlStorageKey={TTLStorageKey.RemoveLiquidity}
+                    text="Continue With High Slippage"
+                    slippageTolerance={slippageTolerance}
                   >
-                    <Checker.Success tag={APPROVE_TAG_REMOVE_LEGACY}>
-                      <Button
-                        fullWidth
-                        onClick={() => send?.()}
-                        disabled={!approved || isWritePending || !send}
-                        testId="remove-liquidity"
-                      >
-                        {isWritePending ? (
-                          <Dots>Confirm transaction</Dots>
-                        ) : (
-                          'Remove Liquidity'
-                        )}
-                      </Button>
-                    </Checker.Success>
-                  </Checker.ApproveERC20WithPermit>
+                    <Checker.ApproveERC20WithPermit
+                      fullWidth
+                      id="approve-remove-liquidity-slp"
+                      chainId={_pool.chainId}
+                      amount={amountToRemove}
+                      contract={
+                        getSushiSwapRouterContractConfig(
+                          _pool.chainId as SushiSwapV2ChainId,
+                        ).address
+                      }
+                      permitInfo={REMOVE_V2_LIQUIDITY_PERMIT_INFO}
+                      tag={APPROVE_TAG_REMOVE_LEGACY}
+                      ttlStorageKey={TTLStorageKey.RemoveLiquidity}
+                    >
+                      <Checker.Success tag={APPROVE_TAG_REMOVE_LEGACY}>
+                        <Button
+                          fullWidth
+                          onClick={() => send?.()}
+                          disabled={!approved || isWritePending || !send}
+                          testId="remove-liquidity"
+                        >
+                          {isWritePending ? (
+                            <Dots>Confirm transaction</Dots>
+                          ) : (
+                            'Remove Liquidity'
+                          )}
+                        </Button>
+                      </Checker.Success>
+                    </Checker.ApproveERC20WithPermit>
+                  </Checker.Slippage>
                 </Checker.Guard>
               </Checker.Network>
             </Checker.Guard>

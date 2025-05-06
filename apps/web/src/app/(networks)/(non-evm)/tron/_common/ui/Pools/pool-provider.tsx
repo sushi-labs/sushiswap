@@ -1,12 +1,12 @@
 'use client'
 
-import { FC, createContext, useContext, useMemo, useReducer } from 'react'
+import { type FC, createContext, useContext, useMemo, useReducer } from 'react'
 import {
   DEFAULT_TOKEN_LIST,
   STABLE_TOKENS,
   TRON,
 } from '~tron/_common/constants/token-list'
-import { IToken } from '~tron/_common/types/token-type'
+import type { IToken } from '~tron/_common/types/token-type'
 import { ReserveHelper } from '~tron/_common/ui/Pools/ReserveHelper'
 
 type InputFieldType = 'token0' | 'token1'

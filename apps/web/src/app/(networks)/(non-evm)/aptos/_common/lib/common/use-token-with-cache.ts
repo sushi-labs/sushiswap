@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import { SupportedNetwork, chains } from '~aptos/_common/config/chains'
+import { type SupportedNetwork, chains } from '~aptos/_common/config/chains'
 import type { Token } from '~aptos/_common/lib/types/token'
 import { useCustomTokens } from './use-custom-tokens'
 import { useNetwork } from './use-network'

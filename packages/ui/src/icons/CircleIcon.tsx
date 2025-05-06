@@ -1,7 +1,7 @@
 import classNames from 'classnames'
-import { FC } from 'react'
+import type { FC } from 'react'
 
-import { IconProps } from '../types'
+import type { IconProps } from '../types'
 
 interface CircleWithText extends IconProps {
   text?: string | number

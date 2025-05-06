@@ -1,13 +1,13 @@
 import { getTokenList } from '@sushiswap/graph-client/data-api'
 import { Ratelimit } from '@upstash/ratelimit'
 import { ipAddress } from '@vercel/functions'
-import { NextRequest, NextResponse } from 'next/server'
+import { type NextRequest, NextResponse } from 'next/server'
 import { rateLimit } from 'src/lib/rate-limit'
 import { Position, formatPercent } from 'sushi'
-import { ChainId } from 'sushi/chain'
+import type { EvmChainId } from 'sushi/chain'
 import {
-  SushiSwapV3ChainId,
-  SushiSwapV3FeeAmount,
+  type SushiSwapV3ChainId,
+  type SushiSwapV3FeeAmount,
   isSushiSwapV3ChainId,
 } from 'sushi/config'
 import { Token } from 'sushi/currency'
@@ -20,7 +20,7 @@ import { getPosition } from './getPosition'
 async function getPrices({
   chainId,
 }: {
-  chainId: ChainId
+  chainId: EvmChainId
 }): Promise<Record<string, number>> {
   return fetch(`https://api.sushi.com/price/v1/${chainId}`, {
     next: { revalidate: 0 },
@@ -35,7 +35,7 @@ async function getPrices({
 const schema = z.object({
   chainId: z.coerce
     .number()
-    .refine((chainId) => isSushiSwapV3ChainId(chainId as ChainId), {
+    .refine((chainId) => isSushiSwapV3ChainId(chainId as EvmChainId), {
       message: 'Invalid chainId',
     })
     .transform((chainId) => {

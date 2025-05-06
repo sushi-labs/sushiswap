@@ -7,7 +7,6 @@ const features: introspection['types']['ChainIdFeature']['enumValues'][] = [
   // 'SushiSwapV2ChainId',
   // 'SushiSwapV3ChainId',
   'PoolChainId',
-  'SmartPoolChainId',
   'TokenListChainId',
   'TrendingTokensChainId',
 ] as const
@@ -46,5 +45,5 @@ res.forEach((content, i) => {
 
 writeFileSync(
   `${path}/index.ts`,
-  res.map((_, i) => `export * from './${features[i]}'`).join('\n'),
+  res.map((_, i) => `export * from './${features[i]}.js'`).join('\n'),
 )

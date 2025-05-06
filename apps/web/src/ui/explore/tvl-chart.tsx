@@ -1,14 +1,14 @@
 'use client'
 
-import { AnalyticsDayBuckets } from '@sushiswap/graph-client/data-api'
+import type { AnalyticsDayBuckets } from '@sushiswap/graph-client/data-api'
 import { useIsMounted } from '@sushiswap/hooks'
 import format from 'date-fns/format'
 import ReactEcharts from 'echarts-for-react'
-import { EChartsOption } from 'echarts-for-react/lib/types'
+import type { EChartsOption } from 'echarts-for-react/lib/types'
 import echarts from 'echarts/lib/echarts'
 import { useTheme } from 'next-themes'
-import { FC, useCallback, useMemo } from 'react'
-import { Chain, ChainId } from 'sushi/chain'
+import { type FC, useCallback, useMemo } from 'react'
+import { type ChainId, EvmChain } from 'sushi/chain'
 import { formatUSD } from 'sushi/format'
 
 interface TVLChart {
@@ -186,7 +186,7 @@ export const TVLChart: FC<TVLChart> = ({ data, chainId }) => {
     <div>
       <div className="flex flex-col gap-3">
         <span className="text-muted-foreground text-sm">
-          {Chain.from(chainId)?.name} TVL
+          {EvmChain.from(chainId)?.name} TVL
         </span>
         <div className="flex justify-between">
           <div className="flex flex-col gap-3">

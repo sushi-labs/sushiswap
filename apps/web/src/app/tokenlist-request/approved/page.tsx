@@ -1,7 +1,7 @@
 'use client'
 
 import { ExternalLinkIcon } from '@heroicons/react-v1/solid'
-import { ApprovedCommunityTokens } from '@sushiswap/graph-client/data-api/queries/token-list-submission'
+import type { ApprovedCommunityTokens } from '@sushiswap/graph-client/data-api/queries/token-list-submission'
 import {
   Badge,
   Card,
@@ -14,10 +14,10 @@ import {
   SkeletonText,
 } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
-import { ColumnDef, SortingState, TableState } from '@tanstack/react-table'
+import type { ColumnDef, SortingState, TableState } from '@tanstack/react-table'
 import React, { useMemo, useState } from 'react'
 import { useApprovedCommunityTokens } from 'src/lib/hooks'
-import { Chain } from 'sushi/chain'
+import { EvmChain } from 'sushi/chain'
 import { shortenAddress } from 'sushi/format'
 import { NavigationItems } from '../navigation-items'
 
@@ -26,7 +26,7 @@ const COLUMNS: ColumnDef<ApprovedCommunityTokens[number], unknown>[] = [
     id: 'chain',
     header: 'Network',
     accessorFn: (row) => row.chainId,
-    cell: (props) => Chain.from(props.row.original.chainId)?.name,
+    cell: (props) => EvmChain.from(props.row.original.chainId)?.name,
     meta: { skeleton: <SkeletonText fontSize="lg" /> },
   },
   {
@@ -89,7 +89,7 @@ const COLUMNS: ColumnDef<ApprovedCommunityTokens[number], unknown>[] = [
         <span className="hidden sm:block">{props.row.original.address}</span>
         <LinkExternal
           target="_blank"
-          href={Chain.from(props.row.original.chainId)?.getTokenUrl(
+          href={EvmChain.from(props.row.original.chainId)?.getTokenUrl(
             props.row.original.address,
           )}
         >

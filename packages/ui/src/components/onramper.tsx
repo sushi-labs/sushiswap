@@ -2,10 +2,10 @@
 import { XMarkIcon } from '@heroicons/react/24/solid'
 import { Slot } from '@radix-ui/react-slot'
 import React, {
-  Dispatch,
-  FC,
-  ReactNode,
-  SetStateAction,
+  type Dispatch,
+  type FC,
+  type ReactNode,
+  type SetStateAction,
   createContext,
   useCallback,
   useContext,

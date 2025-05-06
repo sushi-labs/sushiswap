@@ -1,7 +1,7 @@
-import { ImageProps } from 'next/image'
-import { FC } from 'react'
-import { Chain, ChainId } from 'sushi/chain'
-import { Currency } from 'sushi/currency'
+import type { ImageProps } from 'next/image'
+import type { FC } from 'react'
+import { ChainId, EvmChain } from 'sushi/chain'
+import type { Currency } from 'sushi/currency'
 
 import { Avatar, AvatarImage } from '../avatar'
 import { LinkExternal } from '../link'
@@ -94,6 +94,7 @@ const LOGO: Record<number, string> = {
   [ChainId.ZKLINK]: EthereumLogo,
   [ChainId.APE]: ApeLogo,
   [ChainId.SONIC]: SonicLogo,
+  [ChainId.HEMI]: EthereumLogo,
 }
 
 // function djb2(str: string) {
@@ -150,7 +151,7 @@ export const Icon: FC<IconProps> = ({
 
   return (
     <LinkExternal
-      href={Chain.tokenUrl(currency.chainId, currency.wrapped.address)}
+      href={EvmChain.tokenUrl(currency.chainId, currency.wrapped.address)}
     >
       {avatar}
     </LinkExternal>

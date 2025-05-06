@@ -2,7 +2,7 @@
 
 import type { Meta, StoryObj } from '@storybook/react'
 import { DataTable } from '@sushiswap/ui'
-import { ColumnDef, PaginationState } from '@tanstack/react-table'
+import type { ColumnDef, PaginationState } from '@tanstack/react-table'
 import { useState } from 'react'
 
 type Payment = {

@@ -1,5 +1,5 @@
-import { createConfig } from '@wagmi/core'
-import { publicChains, publicTransports } from 'sushi/config'
+import type { createConfig } from '@wagmi/core'
+import { publicChains, publicTransports } from './viem'
 
 export const publicWagmiConfig = {
   chains: publicChains,

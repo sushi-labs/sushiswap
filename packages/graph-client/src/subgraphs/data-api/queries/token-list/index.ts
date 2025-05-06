@@ -1,2 +1,2 @@
-export * from './token-list-balances'
-export * from './token-list'
+export * from './token-list-balances.js'
+export * from './token-list.js'

@@ -1,5 +1,5 @@
 import { notFound } from 'next/navigation'
-import { ChainId } from 'sushi/chain'
+import type { EvmChainId } from 'sushi/chain'
 import { isSushiSwapV3ChainId } from 'sushi/config'
 
 export default async function Layout(props: {
@@ -10,7 +10,7 @@ export default async function Layout(props: {
 
   const { children } = props
 
-  const chainId = +params.chainId as ChainId
+  const chainId = +params.chainId as EvmChainId
   if (!isSushiSwapV3ChainId(chainId)) {
     return notFound()
   }

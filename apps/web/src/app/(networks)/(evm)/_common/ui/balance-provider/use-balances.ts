@@ -1,13 +1,13 @@
 import { useEffect, useMemo } from 'react'
-import { ChainId, ID, LowercaseMap } from 'sushi'
+import { type EvmChainId, type ID, LowercaseMap } from 'sushi'
 import { nativeAddress } from 'sushi/config'
-import { Amount, Type } from 'sushi/currency'
-import { Address } from 'viem'
+import { Amount, type Type } from 'sushi/currency'
+import type { Address } from 'viem'
 import { useBalanceProvider } from './balance-provider'
 import { isBalanceStaleWhileRevalidate } from './utils'
 
 export function useBalances(
-  chainId: ChainId | undefined,
+  chainId: EvmChainId | undefined,
   tokenAddresses: Address[] | undefined,
 ) {
   const { state, mutate } = useBalanceProvider()
@@ -91,7 +91,7 @@ export function useBalances(
 }
 
 export function useAmountBalances(
-  chainId: ChainId | undefined,
+  chainId: EvmChainId | undefined,
   _currencies: (Type | undefined)[] | undefined,
 ) {
   const currencies = useMemo(() => {

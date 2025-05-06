@@ -1,21 +1,29 @@
 'use client'
 
+import { ChevronRightIcon } from '@heroicons/react/24/outline'
 import { useIsMounted } from '@sushiswap/hooks'
-import { Badge, Button, SelectIcon, TextField, classNames } from '@sushiswap/ui'
+import {
+  Badge,
+  Button,
+  SelectIcon,
+  SelectPrimitive,
+  TextField,
+  classNames,
+} from '@sushiswap/ui'
 import { Currency } from '@sushiswap/ui'
 import { SkeletonBox } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import {
-  FC,
+  type FC,
   useCallback,
   useEffect,
   useMemo,
   useState,
   useTransition,
 } from 'react'
-import { ChainId } from 'sushi/chain'
-import { Token, Type, tryParseAmount } from 'sushi/currency'
-import { Percent } from 'sushi/math'
+import { EvmChain, type EvmChainId } from 'sushi/chain'
+import { type Token, type Type, tryParseAmount } from 'sushi/currency'
+import type { Percent } from 'sushi/math'
 import { useAccount } from 'wagmi'
 import { useAmountBalance } from '~evm/_common/ui/balance-provider/use-balance'
 import { usePrice } from '~evm/_common/ui/price-provider/price-provider/use-price'
@@ -30,7 +38,7 @@ interface CurrencyInputProps {
   onChange?(value: string): void
   currency: Type | undefined
   onSelect?(currency: Type): void
-  chainId: ChainId
+  chainId: EvmChainId
   className?: string
   loading?: boolean
   priceImpact?: Percent | undefined
@@ -47,8 +55,8 @@ interface CurrencyInputProps {
   hidePricing?: boolean
   hideIcon?: boolean
   label?: string
-  networks?: readonly ChainId[]
-  selectedNetwork?: ChainId
+  networks?: readonly EvmChainId[]
+  selectedNetwork?: EvmChainId
   onNetworkChange?: (network: number) => void
 }
 
@@ -165,14 +173,15 @@ const CurrencyInput: FC<CurrencyInputProps> = ({
           id={id}
           type="button"
           className={classNames(
-            currency ? 'pl-2 pr-3 text-xl' : '',
+            currency ? 'pl-2 pr-3' : '',
+            networks ? '!h-11' : '',
             '!rounded-full data-[state=inactive]:hidden data-[state=active]:flex',
           )}
         >
           {currency ? (
-            <>
-              <div className="w-[28px] h-[28px] mr-0.5">
-                {networks ? (
+            networks ? (
+              <>
+                <div className="w-[28px] h-[28px] mr-1.5">
                   <Badge
                     className="border border-slate-900 rounded-full z-[11]"
                     position="bottom-right"
@@ -184,20 +193,38 @@ const CurrencyInput: FC<CurrencyInputProps> = ({
                       />
                     }
                   >
-                    <Currency.Icon currency={currency} width={28} height={28} />
+                    <Currency.Icon
+                      disableLink
+                      currency={currency}
+                      width={28}
+                      height={28}
+                    />
                   </Badge>
-                ) : (
+                </div>
+                <div className="flex flex-col items-start">
+                  <span className="text-xl leading-5">{currency.symbol}</span>
+                  <span className="text-xs leading-3 text-muted-foreground">
+                    {EvmChain.from(currency.chainId)?.name}
+                  </span>
+                </div>
+                <SelectPrimitive.Icon asChild>
+                  <ChevronRightIcon strokeWidth={2} width={16} height={16} />
+                </SelectPrimitive.Icon>
+              </>
+            ) : (
+              <>
+                <div className="w-[28px] h-[28px] mr-0.5">
                   <Currency.Icon
                     disableLink
                     currency={currency}
                     width={28}
                     height={28}
                   />
-                )}
-              </div>
-              {currency.symbol}
-              <SelectIcon />
-            </>
+                </div>
+                <span className="text-xl">{currency.symbol}</span>
+                <SelectIcon />
+              </>
+            )
           ) : (
             'Select token'
           )}
@@ -276,16 +303,14 @@ const CurrencyInput: FC<CurrencyInputProps> = ({
             {currency ? (
               <>
                 {!hideIcon && (
-                  <>
-                    <div className="w-[28px] h-[28px] mr-0.5">
-                      <Currency.Icon
-                        disableLink
-                        currency={currency}
-                        width={28}
-                        height={28}
-                      />
-                    </div>
-                  </>
+                  <div className="w-[28px] h-[28px] mr-0.5">
+                    <Currency.Icon
+                      disableLink
+                      currency={currency}
+                      width={28}
+                      height={28}
+                    />
+                  </div>
                 )}
                 {currency.symbol}
               </>

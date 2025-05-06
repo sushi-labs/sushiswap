@@ -1,22 +1,32 @@
-import { ButtonProps } from '@sushiswap/ui'
-import { ComponentType, FC } from 'react'
+import type { ButtonProps } from '@sushiswap/ui'
+import type { ComponentType, FC } from 'react'
 
-import { Amounts, AmountsProps } from './Amounts'
-import { ApproveERC20, ApproveERC20Props } from './ApproveERC20'
+import { Amounts, type AmountsProps } from './Amounts'
+import { ApproveERC20, type ApproveERC20Props } from './ApproveERC20'
 import {
   ApproveERC20Multiple,
-  ApproveERC20MultipleProps,
+  type ApproveERC20MultipleProps,
 } from './ApproveERC20Multiple'
 import {
   ApproveERC20WithPermit,
-  ApproveERC20WithPermitProps,
+  type ApproveERC20WithPermitProps,
 } from './ApproveERC20WithPermit'
 import { Connect } from './Connect'
-import { Custom, CustomProps } from './Custom'
-import { Guard, GuardProps } from './Guard'
-import { Network, NetworkProps } from './Network'
-import { CheckerProvider as Root, ProviderProps } from './Provider'
-import { Success, SuccessProps } from './Success'
+import { Custom, type CustomProps } from './Custom'
+import { Guard, type GuardProps } from './Guard'
+import { Network, type NetworkProps } from './Network'
+import { PartialRoute, type PartialRouteProps } from './PartialRoute'
+import { type ProviderProps, CheckerProvider as Root } from './Provider'
+import {
+  RevokeApproveERC20,
+  type RevokeApproveERC20Props,
+} from './RevokeApproveERC20'
+import {
+  SLIPPAGE_WARNING_THRESHOLD,
+  Slippage,
+  type SlippageProps,
+} from './Slippage'
+import { Success, type SuccessProps } from './Success'
 
 export type CheckerProps = {
   Amounts: ComponentType<AmountsProps>
@@ -26,9 +36,12 @@ export type CheckerProps = {
   ApproveERC20: ComponentType<ApproveERC20Props>
   ApproveERC20Multiple: ComponentType<ApproveERC20MultipleProps>
   ApproveERC20WithPermit: ComponentType<ApproveERC20WithPermitProps>
+  RevokeApproveERC20: ComponentType<RevokeApproveERC20Props>
   Connect: ComponentType<ButtonProps>
   Success: FC<SuccessProps>
   Root: FC<ProviderProps>
+  PartialRoute: FC<PartialRouteProps>
+  Slippage: FC<SlippageProps>
 }
 
 export const Checker: CheckerProps = {
@@ -40,6 +53,11 @@ export const Checker: CheckerProps = {
   ApproveERC20,
   ApproveERC20Multiple,
   ApproveERC20WithPermit,
+  RevokeApproveERC20,
   Success,
   Root,
+  PartialRoute,
+  Slippage,
 }
+
+export { SLIPPAGE_WARNING_THRESHOLD }

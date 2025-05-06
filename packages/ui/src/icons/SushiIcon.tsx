@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { IconComponent } from '../types'
+import type { IconComponent } from '../types'
 
 export const SushiIcon: IconComponent = (props) => {
   const id = React.useId()

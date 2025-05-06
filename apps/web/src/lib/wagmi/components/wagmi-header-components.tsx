@@ -7,15 +7,15 @@ import {
   sendAnalyticsEvent,
 } from '@sushiswap/telemetry'
 import { Suspense, useEffect } from 'react'
-import { NonStandardChainId } from 'src/config'
-import { ChainId } from 'sushi/chain'
+import type { NonStandardChainId } from 'src/config'
+import type { EvmChainId } from 'sushi/chain'
 import { useAccount } from 'wagmi'
 import { HeaderNetworkSelector } from './header-network-selector'
 import { UserPortfolio } from './user-portfolio'
 
 interface WagmiHeaderComponentsProps {
-  networks: readonly (ChainId | NonStandardChainId)[]
-  onChange?(chainId: ChainId): void
+  networks: readonly (EvmChainId | NonStandardChainId)[]
+  onChange?(chainId: EvmChainId): void
 }
 
 export const WagmiHeaderComponents: React.FC<WagmiHeaderComponentsProps> = ({

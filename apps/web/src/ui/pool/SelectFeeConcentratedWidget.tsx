@@ -22,10 +22,10 @@ import {
   Toggle,
 } from '@sushiswap/ui'
 import { Dots } from '@sushiswap/ui'
-import React, { FC, memo, useCallback, useMemo } from 'react'
+import React, { type FC, memo, useCallback, useMemo } from 'react'
 import { usePoolsByTokenPair } from 'src/lib/hooks/usePoolsByTokenPair'
 import { SushiSwapV3FeeAmount } from 'sushi/config'
-import { Type } from 'sushi/currency'
+import type { Type } from 'sushi/currency'
 
 export const FEE_OPTIONS = [
   {

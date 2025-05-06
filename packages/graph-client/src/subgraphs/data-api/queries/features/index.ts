@@ -1,1 +1,1 @@
-export * from './chain-ids-by-feature'
+export * from './chain-ids-by-feature.js'

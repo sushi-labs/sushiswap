@@ -2,13 +2,13 @@ import { FormSection } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui'
 import { Currency } from '@sushiswap/ui'
 import { SelectIcon } from '@sushiswap/ui'
-import React, { FC } from 'react'
+import React, { type FC } from 'react'
 import { TokenSelector } from 'src/lib/wagmi/components/token-selector/token-selector'
-import { ChainId } from 'sushi/chain'
-import { Type } from 'sushi/currency'
+import type { EvmChainId } from 'sushi/chain'
+import type { Type } from 'sushi/currency'
 
 interface SelectTokensWidget {
-  chainId: ChainId
+  chainId: EvmChainId
   token0: Type | undefined
   token1: Type | undefined
   setToken0(token: Type): void

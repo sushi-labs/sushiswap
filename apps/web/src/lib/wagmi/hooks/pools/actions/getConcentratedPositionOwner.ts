@@ -1,6 +1,9 @@
-import { SUSHISWAP_V3_POSTIION_MANAGER, SushiSwapV3ChainId } from 'sushi/config'
+import {
+  SUSHISWAP_V3_POSITION_MANAGER,
+  type SushiSwapV3ChainId,
+} from 'sushi/config'
 import { readContracts } from 'wagmi/actions'
-import { PublicWagmiConfig } from '../../../config/public'
+import type { PublicWagmiConfig } from '../../../config/public'
 
 export const getConcentratedPositionOwners = async ({
   tokenIds,
@@ -14,7 +17,7 @@ export const getConcentratedPositionOwners = async ({
       ({ tokenId, chainId }) =>
         ({
           chainId,
-          address: SUSHISWAP_V3_POSTIION_MANAGER[chainId],
+          address: SUSHISWAP_V3_POSITION_MANAGER[chainId],
           abi: [
             {
               inputs: [

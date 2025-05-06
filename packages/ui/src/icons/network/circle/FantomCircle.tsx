@@ -2,7 +2,7 @@ import * as React from 'react'
 
 import { FantomNaked } from '../naked/FantomNaked'
 
-import { IconComponent } from '../../../types'
+import type { IconComponent } from '../../../types'
 
 export const FantomCircle: IconComponent = (props) => (
   <FantomNaked

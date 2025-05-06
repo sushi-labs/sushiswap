@@ -2,15 +2,15 @@
 
 import { useRouter } from 'next/navigation'
 import {
-  Dispatch,
-  FC,
-  ReactNode,
-  SetStateAction,
+  type Dispatch,
+  type FC,
+  type ReactNode,
+  type SetStateAction,
   createContext,
   useContext,
   useMemo,
 } from 'react'
-import { SushiSwapProtocol } from 'sushi'
+import type { SushiSwapProtocol } from 'sushi'
 import { z } from 'zod'
 
 import { parseArgs } from 'src/lib/functions'
@@ -42,16 +42,13 @@ export const poolFiltersSchema = z.object({
   farmsOnly: z
     .string()
     .transform((bool) => (bool ? bool === 'true' : undefined)),
-  smartPoolsOnly: z
-    .string()
-    .transform((bool) => (bool ? bool === 'true' : undefined)),
 })
 
 export const PoolsFiltersProvider: FC<PoolsFiltersProvider> = ({
   children,
 }) => {
   const urlFilters = useTypedSearchParams(poolFiltersSchema.partial())
-  const { tokenSymbols, protocols, farmsOnly, smartPoolsOnly } = urlFilters
+  const { tokenSymbols, protocols, farmsOnly } = urlFilters
 
   return (
     <FilterContext.Provider
@@ -60,9 +57,8 @@ export const PoolsFiltersProvider: FC<PoolsFiltersProvider> = ({
           tokenSymbols: tokenSymbols ? tokenSymbols : [],
           protocols: protocols ? protocols : POOL_TYPES,
           farmsOnly: farmsOnly ? farmsOnly : false,
-          smartPoolsOnly: smartPoolsOnly ? smartPoolsOnly : false,
         }),
-        [farmsOnly, protocols, tokenSymbols, smartPoolsOnly],
+        [farmsOnly, protocols, tokenSymbols],
       )}
     >
       {children}

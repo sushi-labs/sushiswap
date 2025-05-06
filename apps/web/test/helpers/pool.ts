@@ -1,15 +1,16 @@
-import { Page, expect } from '@playwright/test'
-import { NextFixture } from 'next/experimental/testmode/playwright'
+import { type Page, expect } from '@playwright/test'
+import type { NextFixture } from 'next/experimental/testmode/playwright'
 import { isZapSupportedChainId } from 'src/config'
 import { NativeAddress } from 'src/lib/constants'
+import type { EvmChainId } from 'sushi'
 import {
   SUSHISWAP_V2_FACTORY_ADDRESS,
   SUSHISWAP_V3_FACTORY_ADDRESS,
-  SushiSwapV2ChainId,
-  SushiSwapV3ChainId,
+  type SushiSwapV2ChainId,
+  type SushiSwapV3ChainId,
   SushiSwapV3FeeAmount,
 } from 'sushi/config'
-import { Native, Token, Type } from 'sushi/currency'
+import { Native, type Token, type Type } from 'sushi/currency'
 import {
   computeSushiSwapV2PoolAddress,
   computeSushiSwapV3PoolAddress,
@@ -50,9 +51,9 @@ interface AddV2LiquidityArgs {
 const BASE_URL = 'http://localhost:3000'
 
 export class PoolPage extends BaseActions {
-  readonly chainId: number
+  readonly chainId: EvmChainId
   readonly nativeToken: Native
-  constructor(page: Page, chainId: number) {
+  constructor(page: Page, chainId: EvmChainId) {
     super(page)
     this.chainId = chainId
     this.nativeToken = Native.onChain(chainId)
@@ -549,12 +550,9 @@ export class PoolPage extends BaseActions {
                   txCount1dChange: 0,
                   liquidityUSD1dChange: 0,
                   incentiveApr: 0,
-                  hadSmartPool: false,
-                  hasSmartPool: false,
                   isIncentivized: false,
                   wasIncentivized: false,
                   incentives: [],
-                  vaults: [],
                 },
               },
             }

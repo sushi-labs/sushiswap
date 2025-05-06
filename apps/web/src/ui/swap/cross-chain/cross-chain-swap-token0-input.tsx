@@ -1,14 +1,11 @@
 'use client'
 
-import { useMemo } from 'react'
-import { PREFERRED_CHAINID_ORDER } from 'src/config'
+import { XSWAP_SUPPORTED_CHAIN_IDS, getSortedChainIds } from 'src/config'
 import { Web3Input } from 'src/lib/wagmi/components/web3-input'
-import { ChainId } from 'sushi/chain'
-import {
-  SUSHIXSWAP_2_SUPPORTED_CHAIN_IDS,
-  isWNativeSupported,
-} from 'sushi/config'
+import { isWNativeSupported } from 'sushi/config'
 import { useDerivedStateCrossChainSwap } from './derivedstate-cross-chain-swap-provider'
+
+const networks = getSortedChainIds(XSWAP_SUPPORTED_CHAIN_IDS)
 
 export const CrossChainSwapToken0Input = () => {
   const {
@@ -16,21 +13,6 @@ export const CrossChainSwapToken0Input = () => {
     mutate: { setSwapAmount, setToken0, setChainId0 },
     isToken0Loading: isLoading,
   } = useDerivedStateCrossChainSwap()
-
-  const networks = useMemo(
-    () =>
-      Array.from(
-        new Set([
-          ...(PREFERRED_CHAINID_ORDER.filter((el) =>
-            SUSHIXSWAP_2_SUPPORTED_CHAIN_IDS.includes(
-              el as (typeof SUSHIXSWAP_2_SUPPORTED_CHAIN_IDS)[number],
-            ),
-          ) as ChainId[]),
-          ...SUSHIXSWAP_2_SUPPORTED_CHAIN_IDS,
-        ]),
-      ),
-    [],
-  )
 
   return (
     <Web3Input.Currency

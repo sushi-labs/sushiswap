@@ -1,6 +1,6 @@
 import type { Incentive } from 'sushi'
-import { ChainId } from 'sushi/chain'
-import { SushiSwapV3FeeAmount, TICK_SPACINGS } from 'sushi/config'
+import type { EvmChainId } from 'sushi/chain'
+import { type SushiSwapV3FeeAmount, TICK_SPACINGS } from 'sushi/config'
 import {
   DAI,
   Native,
@@ -13,7 +13,7 @@ import {
 } from 'sushi/currency'
 import { SushiSwapV2Pool } from 'sushi/pool/sushiswap-v2'
 import {
-  Position,
+  type Position,
   TickMath,
   encodeSqrtRatioX96,
   nearestUsableTick,
@@ -21,8 +21,8 @@ import {
   tickToPrice,
 } from 'sushi/pool/sushiswap-v3'
 import { Bound } from './constants'
-import { useTicks } from './hooks'
-import { TickProcessed } from './pool/v3/use-concentrated-active-liquidity'
+import type { useTicks } from './hooks'
+import type { TickProcessed } from './pool/v3/use-concentrated-active-liquidity'
 
 export const isSushiSwapV2Pool = (
   pool: SushiSwapV2Pool | null,
@@ -31,7 +31,7 @@ export const isSushiSwapV2Pool = (
 }
 
 export const incentiveRewardToToken = (
-  chainId: ChainId,
+  chainId: EvmChainId,
   incentive: Incentive,
 ): Token => {
   return new Token({

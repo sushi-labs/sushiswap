@@ -1,21 +1,17 @@
-import fs from 'fs'
+import fs from 'node:fs'
 import {
   type UseTradeParams,
   tradeValidator02,
 } from 'src/lib/hooks/react-query'
+import { API_BASE_URL } from 'src/lib/swap/api-base-url'
+import { publicClientConfig } from 'src/lib/wagmi/config/viem'
 import { ChainId } from 'sushi/chain'
-import {
-  API_BASE_URL,
-  // TOKEN_CHOMPER_ADDRESS,
-  // isTokenChomperChainId,
-  publicClientConfig,
-} from 'sushi/config'
 import { Amount, Native, USDC, USDT, WBTC } from 'sushi/currency'
 import { createPublicClient, stringify } from 'viem'
 import { getBlockNumber } from 'viem/actions'
 import { isSwapApiEnabledChainId } from '../../../src/config'
 
-const RECIPIENT = '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266'
+const sender = '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266'
 
 type TradeParams = Omit<
   UseTradeParams,
@@ -59,11 +55,10 @@ const getSwapApiResult = async ({
   fromToken,
   toToken,
   amount,
-  gasPrice = 50n,
   slippagePercentage,
   source,
 }: TradeParams) => {
-  const params = new URL(`${API_BASE_URL}/swap/v5/${chainId}`)
+  const params = new URL(`${API_BASE_URL}/swap/v7/${chainId}`)
 
   params.searchParams.set(
     'tokenIn',
@@ -82,21 +77,9 @@ const getSwapApiResult = async ({
     }`,
   )
   params.searchParams.set('amount', `${amount?.quotient.toString()}`)
-  params.searchParams.set('maxSlippage', `${+slippagePercentage / 100}`)
-  params.searchParams.set('gasPrice', `${gasPrice}`)
-  params.searchParams.set('to', `${RECIPIENT}`)
-  params.searchParams.set('preferSushi', 'false')
-  // params.searchParams.set('enableFee', 'true')
-  // params.searchParams.set(
-  //   'feeReceiver',
-  //   isTokenChomperChainId(chainId)
-  //     ? TOKEN_CHOMPER_ADDRESS[chainId]
-  //     : '0xFF64C2d5e23e9c48e8b42a23dc70055EEC9ea098',
-  // )
-  // params.searchParams.set('fee', '0.0025')
-  // params.searchParams.set('feeBy', 'output')
-  params.searchParams.set('includeTransaction', 'true')
-  params.searchParams.set('includeRoute', 'true')
+  params.searchParams.set('maxSlippage', `${Number(slippagePercentage) / 100}`)
+  params.searchParams.set('sender', sender)
+  params.searchParams.set('simulate', 'false')
 
   if (source !== undefined) params.searchParams.set('source', `${source}`)
 

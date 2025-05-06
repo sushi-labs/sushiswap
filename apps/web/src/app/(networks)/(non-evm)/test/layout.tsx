@@ -1,5 +1,5 @@
 import { Container } from '@sushiswap/ui'
-import { Metadata } from 'next'
+import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
   title: 'SushiSwap | Test',

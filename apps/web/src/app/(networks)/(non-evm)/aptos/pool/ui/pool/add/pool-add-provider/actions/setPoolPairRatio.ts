@@ -1,4 +1,4 @@
-import { Actions, State } from '../types'
+import type { Actions, State } from '../types'
 import { setAmount0 } from './setAmount0'
 import { setAmount1 } from './setAmount1'
 

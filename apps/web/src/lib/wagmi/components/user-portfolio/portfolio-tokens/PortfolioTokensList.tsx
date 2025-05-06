@@ -1,7 +1,7 @@
-import { PortfolioWalletToken } from '@sushiswap/graph-client/data-api'
+import type { PortfolioWalletToken } from '@sushiswap/graph-client/data-api'
 import { FormattedNumber, classNames } from '@sushiswap/ui'
-import React, { FC } from 'react'
-import { ChainId } from 'sushi/chain'
+import React, { type FC } from 'react'
+import type { EvmChainId } from 'sushi/chain'
 import { formatPercent, formatUSD } from 'sushi/format'
 import { PortfolioInfoRow } from '../PortfolioInfoRow'
 
@@ -17,7 +17,7 @@ export const PortfolioTokensList: FC<PortfolioTokensListProps> = ({
       return (
         <PortfolioInfoRow
           key={`${token.chainId}:${token.id}`}
-          chainId={token.chainId as ChainId}
+          chainId={token.chainId as EvmChainId}
           icon={
             <img
               className="rounded-full"

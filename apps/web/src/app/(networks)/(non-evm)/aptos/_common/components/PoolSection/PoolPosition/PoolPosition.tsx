@@ -7,13 +7,13 @@ import {
   CardTitle,
   SkeletonText,
 } from '@sushiswap/ui'
-import { FC, useMemo } from 'react'
+import { type FC, useMemo } from 'react'
 import { formatUSD } from 'sushi/format'
 import { useNetwork } from '~aptos/_common/lib/common/use-network'
 import { useStablePrice } from '~aptos/_common/lib/common/use-stable-price'
 import { useTokenBalance } from '~aptos/_common/lib/common/use-token-balances'
 import { useTotalSupply } from '~aptos/_common/lib/common/use-total-supply'
-import { Pool } from '~aptos/pool/lib/convert-pool-to-sushi-pool'
+import type { Pool } from '~aptos/pool/lib/convert-pool-to-sushi-pool'
 import { useTokensFromPool } from '~aptos/pool/lib/use-tokens-from-pool'
 import { useUnderlyingTokenBalanceFromPool } from '~aptos/pool/lib/use-underlying-token-balance-from-pool'
 import { PoolPositionDesktop } from './PoolPositionDesktop'

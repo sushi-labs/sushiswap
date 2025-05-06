@@ -1,5 +1,5 @@
 import classNames from 'classnames'
-import { FC, ReactElement } from 'react'
+import type { FC, ReactElement } from 'react'
 
 interface Badge {
   badgeContent: ReactElement

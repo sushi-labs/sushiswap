@@ -2,7 +2,7 @@ import * as React from 'react'
 
 import { OkexNaked } from '../naked/OkexNaked'
 
-import { IconComponent } from '../../../types'
+import type { IconComponent } from '../../../types'
 
 export const OkexCircle: IconComponent = (props) => (
   <OkexNaked

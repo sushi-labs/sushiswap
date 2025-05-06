@@ -1,8 +1,8 @@
 'use client'
 
 import {
-  GetV2Positions,
-  V2Position,
+  type GetV2Positions,
+  type V2Position,
   getV2Positions,
 } from '@sushiswap/graph-client/data-api'
 import { useQuery } from '@tanstack/react-query'

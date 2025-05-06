@@ -1,5 +1,5 @@
 import { Container } from '@sushiswap/ui'
-import React from 'react'
+import type React from 'react'
 import { POOL_SUPPORTED_NETWORKS } from 'src/config'
 import { PoolsFiltersProvider } from 'src/ui/pool'
 import { SidebarContainer, SidebarProvider } from '~tron/_common/ui/sidebar'

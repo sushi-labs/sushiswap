@@ -5,7 +5,7 @@ import React from 'react'
 import { formatNumber } from 'sushi'
 import { WTRX } from '~tron/_common/constants/token-list'
 import { useTokenInfo } from '~tron/_common/lib/hooks/useTokenInfo'
-import { TopPool } from '~tron/_common/lib/hooks/useTopPools'
+import type { TopPool } from '~tron/_common/lib/hooks/useTopPools'
 import { Icon } from '../../General/Icon'
 
 export const PoolNameCell = ({ data }: { data: TopPool }) => {
@@ -68,20 +68,6 @@ export const PoolNameCell = ({ data }: { data: TopPool }) => {
                 </TooltipTrigger>
                 <TooltipContent>
                   <p>Farm rewards available</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          )}
-          {data.isSmartPool && (
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <div className="bg-[#F2E9D6] dark:bg-yellow/60 text-[10px] px-2 rounded-full">
-                    💡
-                  </div>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>Smart Pool available</p>
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>

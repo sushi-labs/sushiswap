@@ -1,13 +1,13 @@
 import { classNames } from '@sushiswap/ui'
 import { SkeletonText } from '@sushiswap/ui'
-import { FC, useMemo } from 'react'
+import { type FC, useMemo } from 'react'
 import {
   warningSeverity,
   warningSeverityClassName,
 } from 'src/lib/swap/warningSeverity'
 import { tryParseAmount } from 'sushi/currency'
 import { ZERO } from 'sushi/math'
-import { CurrencyInputProps } from './CurrencyInput'
+import type { CurrencyInputProps } from './CurrencyInput'
 
 type PricePanel = Pick<
   CurrencyInputProps,
@@ -34,7 +34,7 @@ export const PricePanel: FC<PricePanel> = ({
     parsedValue && price
       ? `${(
           (price * Number(parsedValue.quotient)) /
-          10 ** parsedValue.currency.decimals
+            10 ** parsedValue.currency.decimals
         ).toFixed(2)}`
       : '0.00'
   ).split('.')

@@ -1,11 +1,10 @@
 'use client'
 
-import { V2Pool } from '@sushiswap/graph-client/data-api'
+import type { V2Pool } from '@sushiswap/graph-client/data-api'
 import { useCustomTokens } from '@sushiswap/hooks'
 import { Message } from '@sushiswap/ui'
-import { FC, useMemo } from 'react'
+import { type FC, useMemo } from 'react'
 import { useTokenWithCache } from 'src/lib/wagmi/hooks/tokens/useTokenWithCache'
-import { ChainId } from 'sushi/chain'
 import { shortenAddress } from 'sushi/format'
 
 interface UnknownTokenAlert {
@@ -21,12 +20,12 @@ export const UnknownTokenAlert: FC<UnknownTokenAlert> = ({ pool }) => {
   const { hasToken } = useCustomTokens()
 
   const { data: tokenFrom } = useTokenWithCache({
-    chainId: pool.chainId as ChainId,
+    chainId: pool.chainId,
     address: token0.address,
   })
 
   const { data: tokenTo } = useTokenWithCache({
-    chainId: pool.chainId as ChainId,
+    chainId: pool.chainId,
     address: token1.address,
   })
 

@@ -4,7 +4,7 @@ import {
   getValidTokenAddress,
   isAddress,
 } from '~tron/_common/lib/utils/helpers'
-import { IReserves, IToken } from '~tron/_common/types/token-type'
+import type { IReserves, IToken } from '~tron/_common/types/token-type'
 import { useTronWeb } from './useTronWeb'
 
 const calculatePriceImpact = ({

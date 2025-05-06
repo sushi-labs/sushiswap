@@ -1,6 +1,6 @@
 'use client'
 
-import { V3BasePool } from '@sushiswap/graph-client/data-api'
+import type { V3BasePool } from '@sushiswap/graph-client/data-api'
 import {
   Badge,
   Button,
@@ -15,10 +15,16 @@ import {
   classNames,
 } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
-import { ColumnDef, SortingState, TableState } from '@tanstack/react-table'
-import { FC, MouseEventHandler, useCallback, useMemo, useState } from 'react'
+import type { ColumnDef, SortingState, TableState } from '@tanstack/react-table'
+import {
+  type FC,
+  type MouseEventHandler,
+  useCallback,
+  useMemo,
+  useState,
+} from 'react'
 import { ProtocolBadge } from 'src/ui/pool/PoolNameCell'
-import { Address, Chain, ChainId } from 'sushi'
+import { type Address, EvmChain, type EvmChainId } from 'sushi'
 import { uniswapV3PoolAbi_setFeeProtocol } from 'sushi/abi'
 import { Token } from 'sushi/currency'
 import { formatNumber, formatUSD } from 'sushi/format'
@@ -143,7 +149,7 @@ const VOLUME_COLUMN: ColumnDef<V3Pool, unknown> = {
   },
 }
 
-const EnableProtocolFeeButton: FC<{ pool: Address; chainId: ChainId }> = ({
+const EnableProtocolFeeButton: FC<{ pool: Address; chainId: EvmChainId }> = ({
   pool,
   chainId,
 }) => {
@@ -213,7 +219,7 @@ const COLUMNS = [
   PROTOCOL_FEE_COLUMN,
 ]
 
-export const V3FeesTable: FC<{ pools: V3BasePool[]; chainId: ChainId }> = ({
+export const V3FeesTable: FC<{ pools: V3BasePool[]; chainId: EvmChainId }> = ({
   pools,
   chainId,
 }) => {
@@ -248,7 +254,9 @@ export const V3FeesTable: FC<{ pools: V3BasePool[]; chainId: ChainId }> = ({
       loading={!pools}
       columns={COLUMNS}
       data={data}
-      linkFormatter={(row) => Chain.from(chainId)!.getAccountUrl(row.address)}
+      linkFormatter={(row) =>
+        EvmChain.from(chainId)!.getAccountUrl(row.address)
+      }
     />
   )
 }

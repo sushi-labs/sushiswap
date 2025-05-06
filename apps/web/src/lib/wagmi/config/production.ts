@@ -11,21 +11,21 @@ import {
   walletConnectWallet,
 } from '@rainbow-me/rainbowkit/wallets'
 import { gtagEvent } from '@sushiswap/ui'
-import { ChainId } from 'sushi/chain'
-import { publicTransports } from 'sushi/config'
+import { EvmChainId } from 'sushi/chain'
 import { http, cookieStorage, createConfig, createStorage } from 'wagmi'
-import { Writeable } from 'zod'
+import type { Writeable } from 'zod'
 import { publicWagmiConfig } from './public'
+import { publicTransports } from './viem'
 
 export const DEFAULT_POLLING_INTERVAL = 4_000
 
 // Allow for custom polling intervals for each chain with a default
 const pollingInterval = new Proxy(
   {
-    [ChainId.ETHEREUM]: 8000, // BT is 12s
-    [ChainId.POLYGON_ZKEVM]: 8000, // BT is 13s
-    [ChainId.FILECOIN]: 20000, // BT is 30s
-  } as Partial<Record<ChainId, number>>,
+    [EvmChainId.ETHEREUM]: 8000, // BT is 12s
+    [EvmChainId.POLYGON_ZKEVM]: 8000, // BT is 13s
+    [EvmChainId.FILECOIN]: 20000, // BT is 30s
+  } as Partial<Record<EvmChainId, number>>,
   {
     get: (target, name) => {
       return Object.hasOwn(target, name)
@@ -68,7 +68,7 @@ export const createProductionConfig = () => {
         }
       }
 
-      acc[Number(chainId) as ChainId] = http(transportUrl, {
+      acc[Number(chainId) as EvmChainId] = http(transportUrl, {
         fetchOptions,
         onFetchRequest(_req) {
           if (typeof window !== 'undefined' && transportUrl.includes('drpc')) {

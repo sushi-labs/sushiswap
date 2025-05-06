@@ -1,7 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
-import { SushiSwapV3ChainId, SushiSwapV3FeeAmount } from 'sushi/config'
-import { Type } from 'sushi/currency'
-
+import type { SushiSwapV3ChainId, SushiSwapV3FeeAmount } from 'sushi/config'
+import type { Type } from 'sushi/currency'
 import { useConfig } from 'wagmi'
 import { getConcentratedLiquidityPool } from '../actions/getConcentratedLiquidityPool'
 
@@ -28,6 +27,7 @@ export const useConcentratedLiquidityPool = ({
       { chainId, token0, token1, feeAmount },
     ],
     queryFn: async () => {
+      if (!token0 || !token1 || !feeAmount) throw new Error()
       return getConcentratedLiquidityPool({
         chainId,
         token0,

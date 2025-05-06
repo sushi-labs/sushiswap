@@ -1,8 +1,8 @@
 import { Container, Separator } from '@sushiswap/ui'
 import { PoolTransactionsV2 } from 'src/ui/pool/PoolTransactionsV2'
 
-import { V2Pool } from '@sushiswap/graph-client/data-api'
-import { FC } from 'react'
+import type { V2Pool } from '@sushiswap/graph-client/data-api'
+import type { FC } from 'react'
 import { PoolChartV2 } from './PoolChartV2'
 import { PoolComposition } from './PoolComposition'
 import { PoolRewards } from './PoolRewards'

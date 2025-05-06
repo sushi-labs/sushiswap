@@ -1,4 +1,4 @@
-import { InputTransactionData } from '@aptos-labs/wallet-adapter-core'
+import type { InputTransactionData } from '@aptos-labs/wallet-adapter-core'
 
 export function getSwapPayload(
   contractAddress: string,

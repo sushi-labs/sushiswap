@@ -1,4 +1,4 @@
-import { FarmLP } from './use-farms'
+import type { FarmLP } from './use-farms'
 import { ACC_SUSHI_PRECISION } from './use-user-rewards'
 
 export default function getTokenPerShare(

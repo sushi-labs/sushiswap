@@ -1,5 +1,5 @@
-import { graphql } from '../graphql'
-import { ImageFieldsFragment } from './image-fields'
+import { graphql } from '../graphql.js'
+import { ImageFieldsFragment } from './image-fields.js'
 
 export const AuthorFieldsFragment = graphql(
   `

@@ -3,7 +3,7 @@
 import {
   Badge,
   Button,
-  ButtonProps,
+  type ButtonProps,
   Command,
   CommandEmpty,
   CommandGroup,
@@ -14,10 +14,10 @@ import {
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import { usePathname, useRouter } from 'next/navigation'
 import {
-  Dispatch,
-  FC,
-  ReactNode,
-  SetStateAction,
+  type Dispatch,
+  type FC,
+  type ReactNode,
+  type SetStateAction,
   createContext,
   useCallback,
   useContext,
@@ -25,11 +25,11 @@ import {
 } from 'react'
 import {
   NEW_CHAIN_IDS,
-  NonStandardChainId,
+  type NonStandardChainId,
   SUPPORTED_NETWORKS,
 } from 'src/config'
 import { getNetworkName, replaceNetworkSlug } from 'src/lib/network'
-import { ChainId, isChainId } from 'sushi/chain'
+import { type ChainId, isChainId } from 'sushi/chain'
 
 interface SidebarContextType {
   isOpen: boolean
@@ -76,6 +76,7 @@ export interface SidebarContainerProps {
   connectedNetwork?: number | string
   supportedNetworks?: readonly (ChainId | NonStandardChainId)[]
   unsupportedNetworkHref?: string
+  onSelect?: ((network: ChainId | NonStandardChainId) => void) | null
 }
 
 export const SidebarContainer: FC<SidebarContainerProps> = ({
@@ -85,6 +86,7 @@ export const SidebarContainer: FC<SidebarContainerProps> = ({
   connectedNetwork,
   supportedNetworks,
   unsupportedNetworkHref,
+  onSelect,
 }) => {
   const { isOpen } = useSidebar()
 
@@ -94,6 +96,7 @@ export const SidebarContainer: FC<SidebarContainerProps> = ({
         selectedNetwork={selectedNetwork}
         connectedNetwork={connectedNetwork}
         supportedNetworks={supportedNetworks}
+        onSelect={onSelect}
         unsupportedNetworkHref={unsupportedNetworkHref}
       />
       <div
@@ -109,10 +112,11 @@ export const SidebarContainer: FC<SidebarContainerProps> = ({
 }
 
 const Sidebar: FC<Omit<SidebarContainerProps, 'children' | 'shiftContent'>> = ({
-  selectedNetwork,
+  selectedNetwork: _selectedNetwork,
   connectedNetwork,
   supportedNetworks = SUPPORTED_NETWORKS,
   unsupportedNetworkHref,
+  onSelect: _onSelect,
 }) => {
   const { isOpen } = useSidebar()
 
@@ -127,20 +131,21 @@ const Sidebar: FC<Omit<SidebarContainerProps, 'children' | 'shiftContent'>> = ({
 
   const onSelect = useCallback(
     (value: string) => {
-      const network = value.split('__')[1]
+      const _network = value.split('__')[1]
 
-      push(
-        replaceNetworkSlug(
-          isChainId(+network)
-            ? (+network as ChainId)
-            : (network as NonStandardChainId),
-          pathname,
-        ),
-        { scroll: false },
-      )
+      const network = isChainId(+_network)
+        ? (+_network as ChainId)
+        : (_network as NonStandardChainId)
+
+      if (_onSelect === null) return
+      if (typeof _onSelect === 'function') return _onSelect(network)
+
+      push(replaceNetworkSlug(network, pathname), { scroll: false })
     },
-    [pathname, push],
+    [pathname, push, _onSelect],
   )
+
+  const selectedNetwork = _selectedNetwork ?? connectedNetwork
 
   return !isOpen ? null : (
     <nav className="hidden lg:block z-10 bg-gray-100 dark:bg-slate-900 w-56 h-full border-r border-gray-200 dark:border-slate-800">
@@ -154,7 +159,6 @@ const Sidebar: FC<Omit<SidebarContainerProps, 'children' | 'shiftContent'>> = ({
               testdata-id="network-selector-input"
               placeholder="Search..."
             />
-            <CommandEmpty>No network found.</CommandEmpty>
           </div>
           <CommandGroup className="overflow-y-auto">
             {SUPPORTED_NETWORKS.map((network) => {
@@ -164,7 +168,7 @@ const Sidebar: FC<Omit<SidebarContainerProps, 'children' | 'shiftContent'>> = ({
               return (
                 <CommandItem
                   key={network}
-                  className="aria-selected:!bg-[unset] aria-selected:!text-[unset] !p-0 my-0.5"
+                  className={`[aria-selected="true"]:!bg-[unset] [aria-selected="true"]:!text-[unset] !p-0 my-0.5`}
                   testdata-id={`network-selector-${network}`}
                   value={`${name}__${network}`}
                   onSelect={
@@ -209,6 +213,7 @@ const Sidebar: FC<Omit<SidebarContainerProps, 'children' | 'shiftContent'>> = ({
               )
             })}
           </CommandGroup>
+          <CommandEmpty>No network found.</CommandEmpty>
         </Command>
       </div>
     </nav>

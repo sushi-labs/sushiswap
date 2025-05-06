@@ -1,4 +1,4 @@
-import { ButtonProps, List, SkeletonBox } from '@sushiswap/ui'
+import { type ButtonProps, List, SkeletonBox } from '@sushiswap/ui'
 import {
   Dialog,
   DialogClose,

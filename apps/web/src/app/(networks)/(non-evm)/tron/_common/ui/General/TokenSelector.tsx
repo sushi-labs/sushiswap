@@ -15,7 +15,13 @@ import {
   classNames,
 } from '@sushiswap/ui'
 import { useWallet } from '@tronweb3/tronwallet-adapter-react-hooks'
-import { CSSProperties, ReactNode, useCallback, useMemo, useState } from 'react'
+import {
+  type CSSProperties,
+  type ReactNode,
+  useCallback,
+  useMemo,
+  useState,
+} from 'react'
 import AutoSizer from 'react-virtualized-auto-sizer'
 import { FixedSizeList } from 'react-window'
 import {
@@ -25,14 +31,14 @@ import {
 } from '~tron/_common/constants/token-list'
 import { useCustomTokens } from '~tron/_common/lib/hooks/useCustomTokens'
 import {
-  TokenWithBalance,
+  type TokenWithBalance,
   useSortedTokenList,
 } from '~tron/_common/lib/hooks/useSortedTokenList'
 import { useTokenBalances } from '~tron/_common/lib/hooks/useTokenBalances'
 import { useTokenInfo } from '~tron/_common/lib/hooks/useTokenInfo'
 import { formatUnitsForInput } from '~tron/_common/lib/utils/formatters'
 import { isAddress } from '~tron/_common/lib/utils/helpers'
-import { IToken } from '~tron/_common/types/token-type'
+import type { IToken } from '~tron/_common/types/token-type'
 import { Icon } from './Icon'
 
 export const TokenSelector = ({

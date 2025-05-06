@@ -3,7 +3,7 @@
 import { useEffect, useMemo } from 'react'
 import {
   type Address,
-  type ChainId,
+  type EvmChainId,
   Fraction,
   withoutScientificNotation,
 } from 'sushi'
@@ -19,7 +19,7 @@ export type PriceMap = {
 export function usePrices({
   chainId,
   enabled = true,
-}: { chainId: ChainId | undefined; enabled?: boolean }) {
+}: { chainId: EvmChainId | undefined; enabled?: boolean }) {
   // Important to use state, not state.chains directly, as the reference to state.chains won't be changing and the component won't re-render
   // It's not best practice, but it's controlled here in the hook and not exposed
   const { state, mutate } = usePriceProvider()

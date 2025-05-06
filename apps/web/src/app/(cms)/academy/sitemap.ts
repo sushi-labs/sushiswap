@@ -3,8 +3,6 @@ import type { MetadataRoute } from 'next'
 
 export const revalidate = 0
 
-const products = ['bentobox', 'furo', 'onsen', 'sushixswap']
-
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   try {
     const { articles } = await getAcademyArticles({
@@ -22,14 +20,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         lastModified: new Date(),
         changeFrequency: 'weekly',
       },
-      ...products.map(
-        (product) =>
-          ({
-            url: `https://www.sushi.com/academy/products/${product}`,
-            lastModified: new Date(),
-            changeFrequency: 'monthly',
-          }) as const,
-      ),
       ...articles.map(
         (article) =>
           ({

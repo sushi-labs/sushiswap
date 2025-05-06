@@ -1,14 +1,15 @@
 import type { VariablesOf } from 'gql.tada'
-import { type RequestOptions, request } from 'src/lib/request'
+import { type RequestOptions, request } from 'src/lib/request.js'
 import { SUSHI_DATA_API_HOST } from 'sushi/config/subgraph'
-import { graphql } from '../../graphql'
-import { SUSHI_REQUEST_HEADERS } from '../../request-headers'
+import { graphql } from '../../graphql.js'
+import { SUSHI_REQUEST_HEADERS } from '../../request-headers.js'
 import { Token } from 'sushi/currency'
+import { isEvmChainId } from 'sushi'
 
 export const PoolsQuery = graphql(
   `
-  query Pools($chainId: PoolChainId!, $page: Int, $search: [String], $orderBy: PoolsOrderBy, $orderDirection: OrderDirection, $protocols: [Protocol], $onlyIncentivized: Boolean, $onlySmartPools: Boolean) {
-    pools(chainId: $chainId, page: $page, search: $search, protocols: $protocols, onlyIncentivized: $onlyIncentivized, onlySmartPools: $onlySmartPools, orderBy: $orderBy, orderDirection: $orderDirection) {
+  query Pools($chainId: PoolChainId!, $page: Int, $search: [String], $orderBy: PoolsOrderBy, $orderDirection: OrderDirection, $protocols: [Protocol], $onlyIncentivized: Boolean) {
+    pools(chainId: $chainId, page: $page, search: $search, protocols: $protocols, onlyIncentivized: $onlyIncentivized, orderBy: $orderBy, orderDirection: $orderDirection) {
       count
       data {
         id
@@ -31,7 +32,6 @@ export const PoolsQuery = graphql(
         feeApr1d
         totalApr1d
         incentiveApr
-        isSmartPool
         isIncentivized
         wasIncentivized
         incentives {
@@ -80,10 +80,20 @@ export async function getPools(variables: GetPools, options?: RequestOptions) {
         data: result.pools.data.map((pool) => ({
           ...pool,
           chainId: variables.chainId,
-          incentives: pool.incentives.map((incentive) => ({
-            ...incentive,
-            rewardToken: new Token(incentive.rewardToken),
-          })),
+          incentives: pool.incentives.map((incentive) => {
+            // Shouldn't happen, just to make typescript happy
+            if (!isEvmChainId(incentive.rewardToken.chainId)) {
+              throw new Error('Invalid chainId')
+            }
+
+            return {
+              ...incentive,
+              rewardToken: new Token({
+                ...incentive.rewardToken,
+                chainId: incentive.rewardToken.chainId,
+              }),
+            }
+          }),
         })),
       }
     }

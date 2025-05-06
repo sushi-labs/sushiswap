@@ -1,6 +1,6 @@
 import { keepPreviousData, useQuery } from '@tanstack/react-query'
-import { SushiSwapV3ChainId } from 'sushi/config'
-import { Type } from 'sushi/currency'
+import type { SushiSwapV3ChainId } from 'sushi/config'
+import type { Type } from 'sushi/currency'
 import { Position } from 'sushi/pool/sushiswap-v3'
 import { stringify } from 'viem'
 
@@ -37,11 +37,13 @@ export const useConcentratedPositionInfo = ({
       { chainId, token0, token1, tokenId, positionDetails },
     ],
     queryFn: async () => {
+      if (!token0 || !token1 || !positionDetails) throw new Error()
+
       const pool = await getConcentratedLiquidityPool({
         chainId,
         token0,
         token1,
-        feeAmount: positionDetails?.fee,
+        feeAmount: positionDetails.fee,
         config,
       })
 

@@ -1,9 +1,9 @@
 import {
-  PoolChainId,
+  type PoolChainId,
   getAnalyticsDayBuckets,
 } from '@sushiswap/graph-client/data-api'
 import { unstable_cache } from 'next/cache'
-import { FC, Suspense } from 'react'
+import { type FC, Suspense } from 'react'
 import { GlobalStatsLoading } from './global-stats-loading'
 import { TVLChart } from './tvl-chart'
 import { VolumeChart } from './volume-chart'

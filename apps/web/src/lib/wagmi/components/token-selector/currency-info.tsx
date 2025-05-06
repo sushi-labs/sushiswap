@@ -2,44 +2,32 @@ import {
   ArrowLeftIcon,
   ChartBarSquareIcon,
   DocumentDuplicateIcon,
+  ShieldCheckIcon,
 } from '@heroicons/react/24/outline'
 import { XMarkIcon } from '@heroicons/react/24/solid'
 import {
-  ExclamationTriangleIcon,
-  HandThumbUpIcon,
-} from '@heroicons/react/24/solid'
-import {
-  Button,
   ClipboardController,
   DialogHeader,
   DialogPrimitive,
   DialogTitle,
-  Explainer,
   IconButton,
   LinkExternal,
-  Loader,
-  SelectIcon,
   Separator,
   SkeletonText,
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-  classNames,
 } from '@sushiswap/ui'
-import { GoPlusLabsIcon } from '@sushiswap/ui/icons/GoPlusLabsIcon'
-import { FC, useMemo, useState } from 'react'
+import type { FC } from 'react'
 import {
-  TokenSecurity,
-  TokenSecurityLabel,
-  TokenSecurityMessage,
-  isTokenSecurityIssue,
   useCoinGeckoTokenInfo,
   useTokenSecurity,
 } from 'src/lib/hooks/react-query'
-import { Chain } from 'sushi/chain'
-import { Type } from 'sushi/currency'
+import { EvmChain } from 'sushi/chain'
+import type { Type } from 'sushi/currency'
 import { formatNumber, formatUSD, shortenAddress } from 'sushi/format'
+import { TokenSecurityView } from '../token-security-view'
 
 interface CurrencyInfoProps {
   currency: Type
@@ -47,32 +35,15 @@ interface CurrencyInfoProps {
 }
 
 export const CurrencyInfo: FC<CurrencyInfoProps> = ({ currency, onBack }) => {
-  const { data: tokenSecurityInfo, isLoading: isTokenSecurityInfoLoading } =
+  const { data: tokenSecurity, isLoading: isTokenSecurityLoading } =
     useTokenSecurity({
-      currencies: useMemo(() => [currency.wrapped], [currency]),
+      currency: currency.wrapped,
     })
 
   const { data: coinGeckoInfo, isLoading: isCoinGeckoInfoLoading } =
     useCoinGeckoTokenInfo({
       token: currency.wrapped,
     })
-
-  const [showMore, setShowMore] = useState(false)
-
-  const { tokenSecurity, issues, nonIssues } = useMemo(() => {
-    const tokenSecurity = tokenSecurityInfo?.[currency.wrapped.address]
-    const issues: (keyof TokenSecurity)[] = []
-    const nonIssues: (keyof TokenSecurity)[] = []
-
-    for (const [_key, value] of Object.entries(tokenSecurity || {})) {
-      const key = _key as keyof TokenSecurity
-      if (key in isTokenSecurityIssue && isTokenSecurityIssue[key](value))
-        issues.push(key)
-      else nonIssues.push(key)
-    }
-
-    return { tokenSecurity, issues, nonIssues }
-  }, [tokenSecurityInfo, currency.wrapped])
 
   return (
     <div className="absolute inset-0 z-20 py-6 bg-gray-100 dark:bg-slate-800 rounded-2xl">
@@ -92,7 +63,7 @@ export const CurrencyInfo: FC<CurrencyInfoProps> = ({ currency, onBack }) => {
             <div className="flex gap-1 items-center">
               <span className="text-xl font-medium">{currency.symbol}</span>
               <span className="text-muted-foreground text-base font-normal">
-                {Chain.from(currency.chainId)?.name}
+                {EvmChain.from(currency.chainId)?.name}
               </span>
             </div>
           </DialogTitle>
@@ -226,7 +197,7 @@ export const CurrencyInfo: FC<CurrencyInfoProps> = ({ currency, onBack }) => {
               <span className="flex gap-1 items-center">
                 <LinkExternal
                   className="font-medium"
-                  href={Chain.from(currency.chainId)?.getTokenUrl(
+                  href={EvmChain.from(currency.chainId)?.getTokenUrl(
                     currency.wrapped.address,
                   )}
                 >
@@ -253,108 +224,16 @@ export const CurrencyInfo: FC<CurrencyInfoProps> = ({ currency, onBack }) => {
             </div>
           </div>
           <Separator className="my-6" />
-
-          <div className="flex flex-col gap-6">
-            <div className="flex justify-between items-center">
-              <div className="flex flex-col gap-1">
-                <span className="font-medium text-sm">Token Security</span>
-                <div className="flex items-center text-xs">
-                  powered by GoPlus
-                  <GoPlusLabsIcon width={16} height={20} />
-                </div>
-              </div>
-              <div>
-                <div
-                  className={classNames(
-                    'rounded-full flex items-center px-2 py-1.5 gap-1',
-                    isTokenSecurityInfoLoading
-                      ? 'bg-muted'
-                      : Number(issues?.length) > 0
-                        ? 'bg-yellow/20 text-yellow'
-                        : 'bg-green/20 text-green',
-                  )}
-                >
-                  {isTokenSecurityInfoLoading ? (
-                    <Loader width={16} height={16} />
-                  ) : Number(issues?.length) > 0 ? (
-                    <ExclamationTriangleIcon width={16} height={16} />
-                  ) : (
-                    <HandThumbUpIcon width={16} height={16} />
-                  )}
-                  {isTokenSecurityInfoLoading ? (
-                    <span className="text-sm">Pending</span>
-                  ) : (
-                    <span className="text-sm">{`${Number(
-                      issues?.length,
-                    )} issue${
-                      Number(issues?.length) !== 1 ? 's' : ''
-                    } found`}</span>
-                  )}
-                </div>
-              </div>
+          <div className="flex flex-col">
+            <div className="flex gap-1 items-center py-2">
+              <ShieldCheckIcon className="h-4 w-4" />
+              <span className="font-medium">Security Info</span>
             </div>
-            <div className="flex flex-col gap-3">
-              {isTokenSecurityInfoLoading ? <SkeletonText /> : null}
-              {issues.map((key) => (
-                <div key={key} className="flex justify-between">
-                  <div className="flex gap-1 text-muted-foreground">
-                    {TokenSecurityLabel[key]}
-                    <Explainer>{TokenSecurityMessage[key]}</Explainer>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <div>
-                      {tokenSecurity?.[key] === undefined
-                        ? 'Unknown'
-                        : tokenSecurity[key]
-                          ? 'Yes'
-                          : 'No'}
-                    </div>
-                    <ExclamationTriangleIcon
-                      width={14}
-                      height={14}
-                      className="fill-yellow"
-                    />
-                  </div>
-                </div>
-              ))}
-              {showMore
-                ? nonIssues.map((key) => (
-                    <div
-                      key={key}
-                      className="flex justify-between text-muted-foreground"
-                    >
-                      <div className="flex gap-1 text-muted-foreground">
-                        {TokenSecurityLabel[key]}
-                        <Explainer>{TokenSecurityMessage[key]}</Explainer>
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <span>{tokenSecurity?.[key] ? 'Yes' : 'No'}</span>
-                        <HandThumbUpIcon
-                          width={14}
-                          height={14}
-                          className="fill-green"
-                        />
-                      </div>
-                    </div>
-                  ))
-                : null}
-              <Button
-                size="xs"
-                fullWidth
-                onClick={() => setShowMore(!showMore)}
-                variant="secondary"
-              >
-                {showMore ? (
-                  <>
-                    <SelectIcon className="rotate-180" />
-                  </>
-                ) : (
-                  <>
-                    <SelectIcon />
-                  </>
-                )}
-              </Button>
-            </div>
+            <TokenSecurityView
+              token={currency.wrapped}
+              isTokenSecurityLoading={isTokenSecurityLoading}
+              tokenSecurity={tokenSecurity}
+            />
           </div>
         </div>
       </div>

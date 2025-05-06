@@ -1,6 +1,6 @@
 'use client'
 
-import { FC, createContext, useContext, useMemo, useReducer } from 'react'
+import { type FC, createContext, useContext, useMemo, useReducer } from 'react'
 
 type Action =
   | { type: 'setPercentage'; value: number }

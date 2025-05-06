@@ -1,6 +1,6 @@
 'use client'
 
-import { FC, ReactNode, useEffect } from 'react'
+import { type FC, type ReactNode, useEffect } from 'react'
 
 import { watchAccount } from '@wagmi/core'
 import { useConfig } from 'wagmi'

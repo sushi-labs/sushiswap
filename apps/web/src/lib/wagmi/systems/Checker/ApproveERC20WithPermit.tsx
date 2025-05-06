@@ -12,30 +12,31 @@ import {
   LinkExternal,
   classNames,
 } from '@sushiswap/ui'
-import { Button, ButtonProps } from '@sushiswap/ui'
+import { Button, type ButtonProps } from '@sushiswap/ui'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectPrimitive,
 } from '@sushiswap/ui'
-import { FC, useEffect, useState } from 'react'
-import { Amount, Type } from 'sushi/currency'
+import { type FC, useEffect, useState } from 'react'
+import type { Amount, Type } from 'sushi/currency'
 
-import { TTLStorageKey } from '@sushiswap/hooks'
+import type { TTLStorageKey } from '@sushiswap/hooks'
 import { ChainId } from 'sushi/chain'
-import { Address } from 'viem'
+import type { Address } from 'viem'
 import { useAccount, useBytecode } from 'wagmi'
 import {
   ApprovalState,
   useTokenApproval,
 } from '../../hooks/approvals/hooks/useTokenApproval'
 import {
-  PermitInfo,
+  type PermitInfo,
   useTokenPermit,
 } from '../../hooks/approvals/hooks/useTokenPermit'
 import { ApproveERC20 } from './ApproveERC20'
 import { useApprovedActions } from './Provider'
+import { RevokeApproveERC20 } from './RevokeApproveERC20'
 
 enum ApprovalType {
   Approve = 'approve',
@@ -63,7 +64,9 @@ const isPermitSupportedChainId = (chainId: number) =>
 
 const ApproveERC20WithPermit: FC<ApproveERC20WithPermitProps> = (props) => {
   return isPermitSupportedChainId(props.chainId) ? (
-    <_ApproveERC20WithPermit {...props} />
+    <RevokeApproveERC20 {...props} id={`revoke-${props.id}`}>
+      <_ApproveERC20WithPermit {...props} />
+    </RevokeApproveERC20>
   ) : (
     <ApproveERC20 {...props} />
   )
@@ -90,7 +93,7 @@ const _ApproveERC20WithPermit: FC<ApproveERC20WithPermitProps> = ({
   const { data: bytecode } = useBytecode({
     address,
     query: {
-      refetchInterval: Infinity,
+      refetchInterval: Number.POSITIVE_INFINITY,
     },
   })
 

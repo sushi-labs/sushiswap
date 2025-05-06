@@ -1,7 +1,7 @@
 'use client'
 
 import { useLocalStorage } from '@sushiswap/hooks'
-import { FC } from 'react'
+import type { FC } from 'react'
 
 import { Message, type MessageProps } from './message'
 

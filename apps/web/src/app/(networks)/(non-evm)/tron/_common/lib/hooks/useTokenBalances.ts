@@ -3,7 +3,7 @@ import { useEffect } from 'react'
 import { decodeAbiParameters } from 'viem'
 import { TRON_MULTICALL_ABI } from '~tron/_common/constants/abis/tron-multicall'
 import { MULTICALL_CONTRACT } from '~tron/_common/constants/contracts'
-import { IToken } from '../../types/token-type'
+import type { IToken } from '../../types/token-type'
 import { useNativeBalance } from './useNativeBalance'
 import { useTronWeb } from './useTronWeb'
 

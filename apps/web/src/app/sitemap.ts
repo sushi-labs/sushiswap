@@ -1,17 +1,17 @@
-import { MetadataRoute } from 'next'
+import type { MetadataRoute } from 'next'
 import { CHAIN_IDS } from 'src/config'
 import { getNetworkKey } from 'src/lib/network'
 
 const evmChainPaths = [
   '/migrate',
   '/pool',
-  '/rewards',
   '/cross-chain-swap',
   '/dca',
   '/limit',
   '/swap',
+  '/stake',
+  '/claim',
   '/explore/pools',
-  '/explore/smart-pools',
   '/pool/incentivize',
   '/pool/v2/add',
   '/pool/v3/add',

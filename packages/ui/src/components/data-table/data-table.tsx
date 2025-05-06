@@ -1,16 +1,16 @@
 'use client'
 
 import {
-  ColumnDef,
-  ColumnFiltersState,
-  OnChangeFn,
-  PaginationState,
-  Row,
-  RowData,
-  SortingState,
+  type ColumnDef,
+  type ColumnFiltersState,
+  type OnChangeFn,
+  type PaginationState,
+  type Row,
+  type RowData,
+  type SortingState,
+  type TableState,
   type Table as TableType,
-  TableState,
-  VisibilityState,
+  type VisibilityState,
   flexRender,
   getCoreRowModel,
   getFacetedRowModel,
@@ -20,7 +20,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table'
-import { ReactNode, default as React } from 'react'
+import { default as React, type ReactNode } from 'react'
 
 import classNames from 'classnames'
 import {

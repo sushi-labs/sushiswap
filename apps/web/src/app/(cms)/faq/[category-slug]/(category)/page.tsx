@@ -1,4 +1,7 @@
-import { FaqCategory, getFaqCategory } from '@sushiswap/graph-client/strapi'
+import {
+  type FaqCategory,
+  getFaqCategory,
+} from '@sushiswap/graph-client/strapi'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 

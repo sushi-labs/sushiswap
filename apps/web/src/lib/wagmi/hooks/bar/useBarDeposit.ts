@@ -2,7 +2,7 @@
 
 import { createErrorToast, createToast } from '@sushiswap/notifications'
 import { useCallback, useMemo } from 'react'
-import { Amount, Token, XSUSHI_ADDRESS } from 'sushi/currency'
+import { type Amount, type Token, XSUSHI_ADDRESS } from 'sushi/currency'
 import { UserRejectedRequestError } from 'viem'
 import {
   useAccount,
@@ -10,7 +10,7 @@ import {
   useSimulateContract,
   useWriteContract,
 } from 'wagmi'
-import { SendTransactionReturnType } from 'wagmi/actions'
+import type { SendTransactionReturnType } from 'wagmi/actions'
 
 import { xsushiAbi_enter } from 'sushi/abi'
 import { ChainId } from 'sushi/chain'

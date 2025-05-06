@@ -2,7 +2,7 @@ import React from 'react'
 
 import { CoreNaked } from '../naked/CoreNaked'
 
-import { IconComponent } from '../../../types'
+import type { IconComponent } from '../../../types'
 
 export const CoreCircle: IconComponent = (props) => {
   return (

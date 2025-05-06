@@ -1,4 +1,4 @@
-import { TrendingTokensChainId } from '@sushiswap/graph-client/data-api'
+import type { TrendingTokensChainId } from '@sushiswap/graph-client/data-api'
 import { List } from '@sushiswap/ui'
 import type { Type } from 'sushi/currency'
 import { usePrices } from '~evm/_common/ui/price-provider/price-provider/use-prices'

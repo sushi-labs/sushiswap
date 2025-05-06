@@ -1,8 +1,8 @@
 import { getTopNonEvmPools } from '@sushiswap/graph-client/data-api'
 import { useQuery } from '@tanstack/react-query'
-import { SupportedNetwork, chains } from '~aptos/_common/config/chains'
+import { type SupportedNetwork, chains } from '~aptos/_common/config/chains'
 import { useNetwork } from '~aptos/_common/lib/common/use-network'
-import { PoolExtended, usePoolsExtended } from './use-pools-extended'
+import { type PoolExtended, usePoolsExtended } from './use-pools-extended'
 
 export type CoinStore = {
   type: string

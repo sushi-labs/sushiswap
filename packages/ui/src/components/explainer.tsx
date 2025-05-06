@@ -1,8 +1,8 @@
 import { InformationCircleIcon } from '@heroicons/react/20/solid'
-import React, { FC, ReactNode } from 'react'
+import React, { type FC, type ReactNode } from 'react'
 
 import classNames from 'classnames'
-import { IconComponent, IconProps } from '../types'
+import type { IconComponent, IconProps } from '../types'
 import {
   Tooltip,
   TooltipContent,

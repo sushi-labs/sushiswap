@@ -11,7 +11,7 @@ import {
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import { SushiIcon } from '@sushiswap/ui/icons/SushiIcon'
 import { SushiWithTextIcon } from '@sushiswap/ui/icons/SushiWithTextIcon'
-import React, { FC, Suspense } from 'react'
+import React, { type FC, Suspense } from 'react'
 import { NonStandardChainId, SUPPORTED_NETWORKS } from 'src/config'
 import { HeaderNetworkSelector } from 'src/lib/wagmi/components/header-network-selector'
 import { SidebarToggle, useSidebar } from 'src/ui/sidebar'

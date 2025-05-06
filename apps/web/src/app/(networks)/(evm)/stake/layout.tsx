@@ -1,6 +1,6 @@
 import { Container } from '@sushiswap/ui'
 import { BarHeader } from 'src/ui/stake'
-import { ChainId } from 'sushi/chain'
+import { EvmChainId } from 'sushi/chain'
 import { Header } from '~evm/[chainId]/header'
 import { SidebarContainer, SidebarProvider } from '~evm/_common/ui/sidebar'
 import { Providers } from './providers'
@@ -10,17 +10,18 @@ export const metadata = {
   description: 'Stake SUSHI in the SushiBar to earn more SUSHI.',
 }
 
-const supportedNetworks = [ChainId.ETHEREUM]
+const supportedNetworks = [EvmChainId.ETHEREUM]
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <Providers>
       <SidebarProvider defaultOpen={false}>
-        <Header chainId={ChainId.ETHEREUM} />
+        <Header />
         <SidebarContainer
-          selectedNetwork={ChainId.ETHEREUM}
+          selectedNetwork={EvmChainId.ETHEREUM}
           supportedNetworks={supportedNetworks}
           shiftContent
+          onSelect={null}
         >
           <div className="flex flex-col flex-1 overflow-y-auto">
             <Container maxWidth="5xl" className="px-4 pt-16 mb-12">

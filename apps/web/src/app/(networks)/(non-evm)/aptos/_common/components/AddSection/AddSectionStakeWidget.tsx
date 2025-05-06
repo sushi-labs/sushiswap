@@ -9,9 +9,9 @@ import {
   WidgetTitle,
   textFieldVariants,
 } from '@sushiswap/ui'
-import { FC, Fragment, ReactNode, useMemo } from 'react'
+import { type FC, Fragment, type ReactNode, useMemo } from 'react'
 import { formatUSD } from 'sushi/format'
-import { Token } from '~aptos/_common/lib/types/token'
+import type { Token } from '~aptos/_common/lib/types/token'
 import { CurrencyIcon } from '~aptos/_common/ui/currency/currency-icon'
 import { CurrencyIconList } from '~aptos/_common/ui/currency/currency-icon-list'
 

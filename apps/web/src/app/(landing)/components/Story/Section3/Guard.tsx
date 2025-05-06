@@ -1,9 +1,9 @@
 import { Button } from '@sushiswap/ui'
 import { Container } from '@sushiswap/ui'
 import { motion } from 'framer-motion'
-import { FC } from 'react'
+import type { FC } from 'react'
 
-import { ExpandableCard, ExpendableCardData } from '../../ExpandableCard'
+import { ExpandableCard, type ExpendableCardData } from '../../ExpandableCard'
 import { GuardImage } from './GuardImage'
 
 const DATA: ExpendableCardData = {

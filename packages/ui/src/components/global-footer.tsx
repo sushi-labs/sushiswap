@@ -1,14 +1,14 @@
 'use client'
 
 import dynamic from 'next/dynamic'
-import { ReactNode, useCallback } from 'react'
+import { type ReactNode, useCallback } from 'react'
 import { DiscordIcon } from '../icons/DiscordIcon'
 import { GithubIcon } from '../icons/GithubIcon'
 import { InstagramIcon } from '../icons/InstagramIcon'
 import { SushiWithTextIcon } from '../icons/SushiWithTextIcon'
 import { TwitterIcon } from '../icons/TwitterIcon'
-import { ExtractProps } from '../types'
-import { Container, ContainerProps } from './container'
+import type { ExtractProps } from '../types'
+import { Container, type ContainerProps } from './container'
 import { LinkExternal } from './link'
 
 export interface FooterProps

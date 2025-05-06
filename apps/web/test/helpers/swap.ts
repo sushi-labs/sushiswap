@@ -1,15 +1,16 @@
-import { Page, expect } from '@playwright/test'
+import { type Page, expect } from '@playwright/test'
 import { NativeAddress } from 'src/lib/constants'
-import { API_BASE_URL } from 'sushi/config'
-import { Amount, Native, Type } from 'sushi/currency'
+import { API_BASE_URL } from 'src/lib/swap/api-base-url'
+import type { EvmChainId } from 'sushi/chain'
+import { type Amount, Native, type Type } from 'sushi/currency'
 import { BaseActions } from './base' // Adjust the import path as necessary
 
 type InputType = 'INPUT' | 'OUTPUT'
 
 export class SwapPage extends BaseActions {
-  readonly chainId: number
+  readonly chainId: EvmChainId
   readonly nativeToken: Native
-  constructor(page: Page, chainId: number) {
+  constructor(page: Page, chainId: EvmChainId) {
     super(page)
     this.chainId = chainId
     this.nativeToken = Native.onChain(chainId)
@@ -253,7 +254,13 @@ export class SwapPage extends BaseActions {
 
   async mockSwapApi(jsonFile: string) {
     await this.page.route(
-      `${API_BASE_URL}/swap/v5/${this.chainId}*`,
+      `${API_BASE_URL}/quote/v7/${this.chainId}*`,
+      (route) => {
+        return route.fulfill({ path: jsonFile })
+      },
+    )
+    await this.page.route(
+      `${API_BASE_URL}/swap/v7/${this.chainId}*`,
       (route) => {
         return route.fulfill({ path: jsonFile })
       },

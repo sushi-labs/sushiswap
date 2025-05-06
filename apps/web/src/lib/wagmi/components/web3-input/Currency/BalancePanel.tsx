@@ -1,10 +1,10 @@
 import { SkeletonText, classNames } from '@sushiswap/ui'
 import { WalletIcon } from '@sushiswap/ui/icons/WalletIcon'
-import { FC, memo, useCallback } from 'react'
-import { Amount, Native, Type } from 'sushi/currency'
+import { type FC, memo, useCallback } from 'react'
+import { Amount, Native, type Type } from 'sushi/currency'
 
 import { useIsMounted } from '@sushiswap/hooks'
-import { CurrencyInputProps } from './CurrencyInput'
+import type { CurrencyInputProps } from './CurrencyInput'
 
 type BalancePanel = Pick<
   CurrencyInputProps,

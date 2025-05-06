@@ -3,6 +3,7 @@
 import { Cog6ToothIcon } from '@heroicons/react/24/outline'
 import { SlippageToleranceStorageKey } from '@sushiswap/hooks'
 import { createToast } from '@sushiswap/notifications'
+import { ZapEventName, sendAnalyticsEvent } from '@sushiswap/telemetry'
 import {
   Button,
   Dots,
@@ -16,24 +17,29 @@ import {
   WidgetHeader,
   WidgetTitle,
 } from '@sushiswap/ui'
-import { FC, useCallback, useMemo, useState } from 'react'
+import { type FC, useCallback, useEffect, useMemo, useState } from 'react'
 import { APPROVE_TAG_ZAP_LEGACY, NativeAddress } from 'src/lib/constants'
 import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
+import { warningSeverity } from 'src/lib/swap/warningSeverity'
 import { Web3Input } from 'src/lib/wagmi/components/web3-input'
 import { SushiSwapV2PoolState } from 'src/lib/wagmi/hooks/pools/hooks/useSushiSwapV2Pools'
-import { Checker } from 'src/lib/wagmi/systems/Checker'
+import {
+  Checker,
+  SLIPPAGE_WARNING_THRESHOLD,
+} from 'src/lib/wagmi/systems/Checker'
 import {
   CheckerProvider,
   useApproved,
 } from 'src/lib/wagmi/systems/Checker/Provider'
 import {
-  SushiSwapV2ChainId,
+  type SushiSwapV2ChainId,
   defaultCurrency,
   isWNativeSupported,
 } from 'sushi/config'
-import { Amount, Type, tryParseAmount } from 'sushi/currency'
-import { SushiSwapV2Pool } from 'sushi/pool'
-import { SendTransactionReturnType } from 'viem'
+import { Amount, type Type, tryParseAmount } from 'sushi/currency'
+import { Percent } from 'sushi/math'
+import type { SushiSwapV2Pool } from 'sushi/pool'
+import type { SendTransactionReturnType } from 'viem'
 import {
   useAccount,
   useEstimateGas,
@@ -42,6 +48,7 @@ import {
 } from 'wagmi'
 import { useRefetchBalances } from '~evm/_common/ui/balance-provider/use-refetch-balances'
 import { useZap } from '../../lib/hooks'
+import { PriceImpactWarning, SlippageWarning } from '../common'
 import { ToggleZapCard } from './ToggleZapCard'
 import { ZapInfoCard } from './ZapInfoCard'
 
@@ -90,7 +97,11 @@ const _ZapSectionLegacy: FC<ZapSectionLegacyProps> = ({
     [inputAmount, inputCurrency],
   )
 
-  const { data: zapResponse, isError: isZapError } = useZap({
+  const {
+    data: zapResponse,
+    isError: isZapError,
+    error: zapError,
+  } = useZap({
     chainId,
     fromAddress: address,
     tokenIn: inputCurrency.isNative ? NativeAddress : inputCurrency.address,
@@ -99,9 +110,21 @@ const _ZapSectionLegacy: FC<ZapSectionLegacyProps> = ({
     slippage: slippageTolerance,
   })
 
+  useEffect(() => {
+    if (!zapError) return
+
+    sendAnalyticsEvent(ZapEventName.ZAP_ERROR, {
+      error: zapError.message,
+    })
+  }, [zapError])
+
   const { approved } = useApproved(APPROVE_TAG_ZAP_LEGACY)
 
-  const { data: estGas, isError: isEstGasError } = useEstimateGas({
+  const {
+    data: estGas,
+    isError: isEstGasError,
+    error: estGasError,
+  } = useEstimateGas({
     chainId,
     account: address,
     to: zapResponse?.tx.to,
@@ -112,6 +135,14 @@ const _ZapSectionLegacy: FC<ZapSectionLegacyProps> = ({
     },
   })
 
+  useEffect(() => {
+    if (!estGasError) return
+
+    sendAnalyticsEvent(ZapEventName.ZAP_ESTIMATE_GAS_CALL_FAILED, {
+      error: estGasError.message,
+    })
+  }, [estGasError])
+
   const preparedTx = useMemo(() => {
     return zapResponse && estGas
       ? { ...zapResponse.tx, gas: estGas }
@@ -121,14 +152,18 @@ const _ZapSectionLegacy: FC<ZapSectionLegacyProps> = ({
   const { refetchChain: refetchBalances } = useRefetchBalances()
 
   const onSuccess = useCallback(
-    (hash: SendTransactionReturnType) => {
+    async (hash: SendTransactionReturnType) => {
       if (!chain || !pool) return
 
       setInputAmount('')
 
-      const receipt = client.waitForTransactionReceipt({ hash })
-      receipt.then(() => {
+      const promise = client.waitForTransactionReceipt({ hash })
+      promise.then(() => {
         refetchBalances(chain.id)
+      })
+
+      sendAnalyticsEvent(ZapEventName.ZAP_SIGNED, {
+        txHash: hash,
       })
 
       const ts = new Date().getTime()
@@ -137,7 +172,7 @@ const _ZapSectionLegacy: FC<ZapSectionLegacyProps> = ({
         type: 'mint',
         chainId: chain.id,
         txHash: hash,
-        promise: receipt,
+        promise: promise,
         summary: {
           pending: `Zapping into the ${pool.token0.symbol}/${pool.token1.symbol} pair`,
           completed: `Successfully zapped into the ${pool.token0.symbol}/${pool.token1.symbol} pair`,
@@ -146,6 +181,21 @@ const _ZapSectionLegacy: FC<ZapSectionLegacyProps> = ({
         timestamp: ts,
         groupTimestamp: ts,
       })
+
+      const receipt = await promise
+      if (receipt.status === 'success') {
+        sendAnalyticsEvent(ZapEventName.ZAP_TRANSACTION_COMPLETED, {
+          txHash: hash,
+          from: receipt.from,
+          chain_id: chain.id,
+        })
+      } else {
+        sendAnalyticsEvent(ZapEventName.ZAP_TRANSACTION_FAILED, {
+          txHash: hash,
+          from: receipt.from,
+          chain_id: chain.id,
+        })
+      }
     },
     [refetchBalances, client, chain, address, pool],
   )
@@ -153,6 +203,21 @@ const _ZapSectionLegacy: FC<ZapSectionLegacyProps> = ({
   const { sendTransaction, isPending: isWritePending } = useSendTransaction({
     mutation: { onSuccess },
   })
+
+  const [checked, setChecked] = useState(false)
+
+  const showPriceImpactWarning = useMemo(() => {
+    const priceImpactSeverity = warningSeverity(
+      typeof zapResponse?.priceImpact === 'number'
+        ? new Percent(zapResponse.priceImpact, 10_000n)
+        : undefined,
+    )
+    return priceImpactSeverity > 3
+  }, [zapResponse?.priceImpact])
+
+  const showSlippageWarning = useMemo(() => {
+    return !slippageTolerance.lessThan(SLIPPAGE_WARNING_THRESHOLD)
+  }, [slippageTolerance])
 
   return (
     <Widget id="zapLiquidity" variant="empty">
@@ -211,38 +276,62 @@ const _ZapSectionLegacy: FC<ZapSectionLegacyProps> = ({
                 chainId={chainId}
                 amount={parsedInputAmount}
               >
-                <Checker.ApproveERC20
-                  id="approve-token"
-                  className="whitespace-nowrap"
+                <Checker.Guard
+                  guardWhen={!checked && showPriceImpactWarning}
+                  guardText="Price impact too high"
+                  variant="destructive"
+                  size="xl"
                   fullWidth
-                  amount={parsedInputAmount}
-                  contract={zapResponse?.tx.to}
                 >
-                  <Checker.Success tag={APPROVE_TAG_ZAP_LEGACY}>
-                    <Button
-                      size="xl"
+                  <Checker.Slippage
+                    text="Zap With High Slippage"
+                    slippageTolerance={slippageTolerance}
+                    fullWidth
+                  >
+                    <Checker.ApproveERC20
+                      id="approve-token"
+                      className="whitespace-nowrap"
                       fullWidth
-                      testId="zap-liquidity"
-                      onClick={() => preparedTx && sendTransaction(preparedTx)}
-                      loading={!preparedTx || isWritePending}
-                      disabled={isZapError || isEstGasError}
+                      amount={parsedInputAmount}
+                      contract={zapResponse?.tx.to}
                     >
-                      {isZapError || isEstGasError ? (
-                        'Shoot! Something went wrong :('
-                      ) : isWritePending ? (
-                        <Dots>Confirm Transaction</Dots>
-                      ) : (
-                        'Add Liquidity'
-                      )}
-                    </Button>
-                  </Checker.Success>
-                </Checker.ApproveERC20>
+                      <Checker.Success tag={APPROVE_TAG_ZAP_LEGACY}>
+                        <Button
+                          size="xl"
+                          fullWidth
+                          testId="zap-liquidity"
+                          onClick={() =>
+                            preparedTx && sendTransaction(preparedTx)
+                          }
+                          loading={!preparedTx || isWritePending}
+                          disabled={isZapError || isEstGasError}
+                        >
+                          {isZapError || isEstGasError ? (
+                            'Shoot! Something went wrong :('
+                          ) : isWritePending ? (
+                            <Dots>Confirm Transaction</Dots>
+                          ) : (
+                            'Add Liquidity'
+                          )}
+                        </Button>
+                      </Checker.Success>
+                    </Checker.ApproveERC20>
+                  </Checker.Slippage>
+                </Checker.Guard>
               </Checker.Amounts>
             </Checker.Network>
           </Checker.Connect>
+          {showSlippageWarning && <SlippageWarning className="mt-4" />}
+          {showPriceImpactWarning && (
+            <PriceImpactWarning
+              className="mt-4"
+              checked={checked}
+              setChecked={setChecked}
+            />
+          )}
           <ZapInfoCard
             zapResponse={zapResponse}
-            inputCurrency={inputCurrency}
+            inputCurrencyAmount={parsedInputAmount}
             pool={pool}
           />
         </div>

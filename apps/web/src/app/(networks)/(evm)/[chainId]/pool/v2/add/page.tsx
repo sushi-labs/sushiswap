@@ -3,14 +3,15 @@
 import { PlusIcon } from '@heroicons/react-v1/solid'
 import { SlippageToleranceStorageKey } from '@sushiswap/hooks'
 import { createToast } from '@sushiswap/notifications'
+import { ZapEventName, sendAnalyticsEvent } from '@sushiswap/telemetry'
 import { Button, Dots, FormSection, Loader } from '@sushiswap/ui'
 import { useRouter } from 'next/navigation'
 import { notFound } from 'next/navigation'
 import React, {
-  Dispatch,
-  FC,
-  ReactNode,
-  SetStateAction,
+  type Dispatch,
+  type FC,
+  type ReactNode,
+  type SetStateAction,
   useCallback,
   useEffect,
   useMemo,
@@ -26,21 +27,30 @@ import {
 import { isSushiSwapV2Pool } from 'src/lib/functions'
 import { useZap } from 'src/lib/hooks'
 import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
+import { warningSeverity } from 'src/lib/swap/warningSeverity'
 import { Web3Input } from 'src/lib/wagmi/components/web3-input'
 import { SushiSwapV2PoolState } from 'src/lib/wagmi/hooks/pools/hooks/useSushiSwapV2Pools'
-import { Checker } from 'src/lib/wagmi/systems/Checker'
+import {
+  Checker,
+  SLIPPAGE_WARNING_THRESHOLD,
+} from 'src/lib/wagmi/systems/Checker'
 import {
   CheckerProvider,
   useApproved,
 } from 'src/lib/wagmi/systems/Checker/Provider'
 import { PoolFinder } from 'src/lib/wagmi/systems/PoolFinder/PoolFinder'
+import { PriceImpactWarning, SlippageWarning } from 'src/ui/common'
 import { AddSectionPoolShareCardV2 } from 'src/ui/pool/AddSectionPoolShareCardV2'
 import { AddSectionReviewModalLegacy } from 'src/ui/pool/AddSectionReviewModalLegacy'
 import { SelectNetworkWidget } from 'src/ui/pool/SelectNetworkWidget'
 import { SelectTokensWidget } from 'src/ui/pool/SelectTokensWidget'
 import { ToggleZapCard } from 'src/ui/pool/ToggleZapCard'
 import { ZapInfoCard } from 'src/ui/pool/ZapInfoCard'
-import { ChainId, ChainKey, TESTNET_CHAIN_IDS } from 'sushi/chain'
+import {
+  EVM_TESTNET_CHAIN_IDS,
+  type EvmChainId,
+  EvmChainKey,
+} from 'sushi/chain'
 import {
   SUSHISWAP_V2_ROUTER_ADDRESS,
   SUSHISWAP_V2_SUPPORTED_CHAIN_IDS,
@@ -49,11 +59,10 @@ import {
   isSushiSwapV2ChainId,
   isWNativeSupported,
 } from 'sushi/config'
-import { Amount, Type, tryParseAmount } from 'sushi/currency'
-import { ZERO } from 'sushi/math'
-import { SushiSwapV2Pool } from 'sushi/pool/sushiswap-v2'
-import { SWRConfig } from 'swr'
-import { SendTransactionReturnType } from 'viem'
+import { Amount, type Type, tryParseAmount } from 'sushi/currency'
+import { Percent, ZERO } from 'sushi/math'
+import type { SushiSwapV2Pool } from 'sushi/pool/sushiswap-v2'
+import type { SendTransactionReturnType } from 'viem'
 import {
   useAccount,
   useEstimateGas,
@@ -64,7 +73,7 @@ import { useRefetchBalances } from '~evm/_common/ui/balance-provider/use-refetch
 
 export default function Page(props: { params: Promise<{ chainId: string }> }) {
   const params = use(props.params)
-  const chainId = +params.chainId as ChainId
+  const chainId = +params.chainId as EvmChainId
   if (!isSushiSwapV2ChainId(chainId)) {
     return notFound()
   }
@@ -90,8 +99,8 @@ export default function Page(props: { params: Promise<{ chainId: string }> }) {
     () =>
       SUSHISWAP_V2_SUPPORTED_CHAIN_IDS.filter(
         (chainId) =>
-          !TESTNET_CHAIN_IDS.includes(
-            chainId as (typeof TESTNET_CHAIN_IDS)[number],
+          !EVM_TESTNET_CHAIN_IDS.includes(
+            chainId as (typeof EVM_TESTNET_CHAIN_IDS)[number],
           ) &&
           !DISABLED_CHAIN_IDS.includes(
             chainId as (typeof DISABLED_CHAIN_IDS)[number],
@@ -128,112 +137,110 @@ export default function Page(props: { params: Promise<{ chainId: string }> }) {
   )
 
   return (
-    <SWRConfig>
-      <PoolFinder
-        components={
-          <PoolFinder.Components>
-            <PoolFinder.SushiSwapV2Pool
+    <PoolFinder
+      components={
+        <PoolFinder.Components>
+          <PoolFinder.SushiSwapV2Pool
+            chainId={chainId}
+            token0={token0}
+            token1={token1}
+            enabled={isSushiSwapV2ChainId(chainId)}
+          />
+        </PoolFinder.Components>
+      }
+    >
+      {({ pool: [poolState, pool] }) => {
+        useEffect(() => {
+          if (
+            isZapSupportedChainId(chainId) &&
+            poolState === SushiSwapV2PoolState.EXISTS
+          ) {
+            setIsZapModeEnabled(true)
+          } else {
+            setIsZapModeEnabled(false)
+          }
+        }, [poolState])
+
+        const title =
+          !token0 || !token1 ? (
+            'Select Tokens'
+          ) : [SushiSwapV2PoolState.LOADING].includes(
+              poolState as SushiSwapV2PoolState,
+            ) ? (
+            <div className="h-[20px] flex items-center justify-center">
+              <Loader width={14} />
+            </div>
+          ) : [SushiSwapV2PoolState.EXISTS].includes(
+              poolState as SushiSwapV2PoolState,
+            ) ? (
+            'Add Liquidity'
+          ) : (
+            'Create Pool'
+          )
+
+        return (
+          <>
+            <SelectNetworkWidget
+              networks={networks}
+              selectedNetwork={chainId}
+              onSelect={(chainId) => {
+                if (!isSushiSwapV2ChainId(chainId)) return
+                router.push(`/${EvmChainKey[chainId]}/pool/v2/add`)
+              }}
+            />
+            <SelectTokensWidget
               chainId={chainId}
               token0={token0}
               token1={token1}
-              enabled={isSushiSwapV2ChainId(chainId)}
+              setToken0={_setToken0}
+              setToken1={_setToken1}
+              includeNative={isWNativeSupported(chainId)}
             />
-          </PoolFinder.Components>
-        }
-      >
-        {({ pool: [poolState, pool] }) => {
-          useEffect(() => {
-            if (
-              isZapSupportedChainId(chainId) &&
-              poolState === SushiSwapV2PoolState.EXISTS
-            ) {
-              setIsZapModeEnabled(true)
-            } else {
-              setIsZapModeEnabled(false)
-            }
-          }, [poolState])
-
-          const title =
-            !token0 || !token1 ? (
-              'Select Tokens'
-            ) : [SushiSwapV2PoolState.LOADING].includes(
-                poolState as SushiSwapV2PoolState,
-              ) ? (
-              <div className="h-[20px] flex items-center justify-center">
-                <Loader width={14} />
-              </div>
-            ) : [SushiSwapV2PoolState.EXISTS].includes(
-                poolState as SushiSwapV2PoolState,
-              ) ? (
-              'Add Liquidity'
-            ) : (
-              'Create Pool'
-            )
-
-          return (
-            <>
-              <SelectNetworkWidget
-                networks={networks}
-                selectedNetwork={chainId}
-                onSelect={(chainId) => {
-                  if (!isSushiSwapV2ChainId(chainId)) return
-                  router.push(`/${ChainKey[chainId]}/pool/v2/add`)
-                }}
-              />
-              <SelectTokensWidget
-                chainId={chainId}
-                token0={token0}
-                token1={token1}
-                setToken0={_setToken0}
-                setToken1={_setToken1}
-                includeNative={isWNativeSupported(chainId)}
-              />
-              <FormSection
-                title="Deposit"
-                description="Select the amount of tokens you want to deposit"
-              >
-                {isZapSupportedChainId(chainId) &&
-                poolState === SushiSwapV2PoolState.EXISTS ? (
-                  <ToggleZapCard
-                    checked={isZapModeEnabled}
-                    onCheckedChange={setIsZapModeEnabled}
-                  />
-                ) : null}
-                {isZapModeEnabled ? (
-                  <ZapWidget
-                    chainId={chainId}
-                    pool={pool}
-                    poolState={poolState}
-                    title={title}
-                  />
-                ) : (
-                  <AddLiquidityWidget
-                    chainId={chainId}
-                    pool={pool}
-                    poolState={poolState}
-                    title={title}
-                    token0={token0}
-                    token1={token1}
-                    setToken0={_setToken0}
-                    setToken1={_setToken1}
-                    input0={input0}
-                    input1={input1}
-                    setTypedAmounts={setTypedAmounts}
-                    independendField={independendField}
-                    setIndependendField={setIndependendField}
-                  />
-                )}
-              </FormSection>
-            </>
-          )
-        }}
-      </PoolFinder>
-    </SWRConfig>
+            <FormSection
+              title="Deposit"
+              description="Select the amount of tokens you want to deposit"
+            >
+              {isZapSupportedChainId(chainId) &&
+              poolState === SushiSwapV2PoolState.EXISTS ? (
+                <ToggleZapCard
+                  checked={isZapModeEnabled}
+                  onCheckedChange={setIsZapModeEnabled}
+                />
+              ) : null}
+              {isZapModeEnabled ? (
+                <ZapWidget
+                  chainId={chainId}
+                  pool={pool}
+                  poolState={poolState}
+                  title={title}
+                />
+              ) : (
+                <AddLiquidityWidget
+                  chainId={chainId}
+                  pool={pool}
+                  poolState={poolState}
+                  title={title}
+                  token0={token0}
+                  token1={token1}
+                  setToken0={_setToken0}
+                  setToken1={_setToken1}
+                  input0={input0}
+                  input1={input1}
+                  setTypedAmounts={setTypedAmounts}
+                  independendField={independendField}
+                  setIndependendField={setIndependendField}
+                />
+              )}
+            </FormSection>
+          </>
+        )
+      }}
+    </PoolFinder>
   )
 }
 
 interface ZapWidgetProps {
-  chainId: ChainId
+  chainId: EvmChainId
   pool: SushiSwapV2Pool | null
   poolState: SushiSwapV2PoolState
   title: ReactNode
@@ -277,7 +284,11 @@ const _ZapWidget: FC<ZapWidgetProps> = ({
     [inputAmount, inputCurrency],
   )
 
-  const { data: zapResponse, isError: isZapError } = useZap({
+  const {
+    data: zapResponse,
+    isError: isZapError,
+    error: zapError,
+  } = useZap({
     chainId,
     fromAddress: address,
     tokenIn: inputCurrency.isNative ? NativeAddress : inputCurrency.address,
@@ -286,9 +297,21 @@ const _ZapWidget: FC<ZapWidgetProps> = ({
     slippage: slippageTolerance,
   })
 
+  useEffect(() => {
+    if (!zapError) return
+
+    sendAnalyticsEvent(ZapEventName.ZAP_ERROR, {
+      error: zapError.message,
+    })
+  }, [zapError])
+
   const { approved } = useApproved(APPROVE_TAG_ZAP_LEGACY)
 
-  const { data: estGas, isError: isEstGasError } = useEstimateGas({
+  const {
+    data: estGas,
+    isError: isEstGasError,
+    error: estGasError,
+  } = useEstimateGas({
     chainId,
     account: address,
     to: zapResponse?.tx.to,
@@ -299,6 +322,14 @@ const _ZapWidget: FC<ZapWidgetProps> = ({
     },
   })
 
+  useEffect(() => {
+    if (!estGasError) return
+
+    sendAnalyticsEvent(ZapEventName.ZAP_ESTIMATE_GAS_CALL_FAILED, {
+      error: estGasError.message,
+    })
+  }, [estGasError])
+
   const preparedTx = useMemo(() => {
     return zapResponse && estGas
       ? { ...zapResponse.tx, gas: estGas }
@@ -308,14 +339,18 @@ const _ZapWidget: FC<ZapWidgetProps> = ({
   const { refetchChain: refetchBalances } = useRefetchBalances()
 
   const onSuccess = useCallback(
-    (hash: SendTransactionReturnType) => {
+    async (hash: SendTransactionReturnType) => {
       if (!chain || !pool) return
 
       setInputAmount('')
 
-      const receipt = client.waitForTransactionReceipt({ hash })
-      receipt.then(() => {
+      const promise = client.waitForTransactionReceipt({ hash })
+      promise.then(() => {
         refetchBalances(chain.id)
+      })
+
+      sendAnalyticsEvent(ZapEventName.ZAP_SIGNED, {
+        txHash: hash,
       })
 
       const ts = new Date().getTime()
@@ -324,7 +359,7 @@ const _ZapWidget: FC<ZapWidgetProps> = ({
         type: 'mint',
         chainId: chain.id,
         txHash: hash,
-        promise: receipt,
+        promise: promise,
         summary: {
           pending: `Zapping into the ${pool.token0.symbol}/${pool.token1.symbol} pair`,
           completed: `Successfully zapped into the ${pool.token0.symbol}/${pool.token1.symbol} pair`,
@@ -333,6 +368,21 @@ const _ZapWidget: FC<ZapWidgetProps> = ({
         timestamp: ts,
         groupTimestamp: ts,
       })
+
+      const receipt = await promise
+      if (receipt.status === 'success') {
+        sendAnalyticsEvent(ZapEventName.ZAP_TRANSACTION_COMPLETED, {
+          txHash: hash,
+          from: receipt.from,
+          chain_id: chain.id,
+        })
+      } else {
+        sendAnalyticsEvent(ZapEventName.ZAP_TRANSACTION_FAILED, {
+          txHash: hash,
+          from: receipt.from,
+          chain_id: chain.id,
+        })
+      }
     },
     [refetchBalances, client, chain, address, pool],
   )
@@ -340,6 +390,21 @@ const _ZapWidget: FC<ZapWidgetProps> = ({
   const { sendTransaction, isPending: isWritePending } = useSendTransaction({
     mutation: { onSuccess },
   })
+
+  const [checked, setChecked] = useState(false)
+
+  const showPriceImpactWarning = useMemo(() => {
+    const priceImpactSeverity = warningSeverity(
+      typeof zapResponse?.priceImpact === 'number'
+        ? new Percent(zapResponse.priceImpact, 10_000n)
+        : undefined,
+    )
+    return priceImpactSeverity > 3
+  }, [zapResponse?.priceImpact])
+
+  const showSlippageWarning = useMemo(() => {
+    return !slippageTolerance.lessThan(SLIPPAGE_WARNING_THRESHOLD)
+  }, [slippageTolerance])
 
   return (
     <>
@@ -366,38 +431,60 @@ const _ZapWidget: FC<ZapWidgetProps> = ({
             chainId={chainId}
             amount={parsedInputAmount}
           >
-            <Checker.ApproveERC20
-              id="approve-token"
-              className="whitespace-nowrap"
+            <Checker.Guard
+              guardWhen={!checked && showPriceImpactWarning}
+              guardText="Price impact too high"
+              variant="destructive"
+              size="xl"
               fullWidth
-              amount={parsedInputAmount}
-              contract={zapResponse?.tx.to}
             >
-              <Checker.Success tag={APPROVE_TAG_ZAP_LEGACY}>
-                <Button
-                  size="xl"
+              <Checker.Slippage
+                fullWidth
+                text="Zap With High Slippage"
+                slippageTolerance={slippageTolerance}
+              >
+                <Checker.ApproveERC20
+                  id="approve-token"
+                  className="whitespace-nowrap"
                   fullWidth
-                  testId="zap-liquidity"
-                  onClick={() => preparedTx && sendTransaction(preparedTx)}
-                  loading={!preparedTx || isWritePending}
-                  disabled={isZapError || isEstGasError}
+                  amount={parsedInputAmount}
+                  contract={zapResponse?.tx.to}
                 >
-                  {isZapError || isEstGasError ? (
-                    'Shoot! Something went wrong :('
-                  ) : isWritePending ? (
-                    <Dots>Confirm Transaction</Dots>
-                  ) : (
-                    title
-                  )}
-                </Button>
-              </Checker.Success>
-            </Checker.ApproveERC20>
+                  <Checker.Success tag={APPROVE_TAG_ZAP_LEGACY}>
+                    <Button
+                      size="xl"
+                      fullWidth
+                      testId="zap-liquidity"
+                      onClick={() => preparedTx && sendTransaction(preparedTx)}
+                      loading={!preparedTx || isWritePending}
+                      disabled={isZapError || isEstGasError}
+                    >
+                      {isZapError || isEstGasError ? (
+                        'Shoot! Something went wrong :('
+                      ) : isWritePending ? (
+                        <Dots>Confirm Transaction</Dots>
+                      ) : (
+                        title
+                      )}
+                    </Button>
+                  </Checker.Success>
+                </Checker.ApproveERC20>
+              </Checker.Slippage>
+            </Checker.Guard>
           </Checker.Amounts>
         </Checker.Network>
       </Checker.Connect>
+      {showSlippageWarning && <SlippageWarning className="mt-4" />}
+      {showPriceImpactWarning && (
+        <PriceImpactWarning
+          className="mt-4"
+          checked={checked}
+          setChecked={setChecked}
+        />
+      )}
       <ZapInfoCard
         zapResponse={zapResponse}
-        inputCurrency={inputCurrency}
+        inputCurrencyAmount={parsedInputAmount}
         pool={pool}
       />
     </>
@@ -405,7 +492,7 @@ const _ZapWidget: FC<ZapWidgetProps> = ({
 }
 
 interface AddLiquidityWidgetProps {
-  chainId: ChainId
+  chainId: EvmChainId
   pool: SushiSwapV2Pool | null
   poolState: SushiSwapV2PoolState
   title: ReactNode
@@ -435,6 +522,9 @@ const AddLiquidityWidget: FC<AddLiquidityWidgetProps> = ({
   independendField,
   setIndependendField,
 }) => {
+  const [slippagePercent] = useSlippageTolerance(
+    SlippageToleranceStorageKey.AddLiquidity,
+  )
   const [parsedInput0, parsedInput1] = useMemo(() => {
     if (!token0 || !token1) return [undefined, undefined]
 
@@ -593,9 +683,13 @@ const AddLiquidityWidget: FC<AddLiquidityWidgetProps> = ({
                   [parsedInput0, parsedInput1],
                 )}
               >
-                {(!pool || isSushiSwapV2Pool(pool)) &&
-                  isSushiSwapV2ChainId(chainId) && (
-                    <>
+                <Checker.Slippage
+                  fullWidth
+                  slippageTolerance={slippagePercent}
+                  text="Continue With High Slippage"
+                >
+                  {(!pool || isSushiSwapV2Pool(pool)) &&
+                    isSushiSwapV2ChainId(chainId) && (
                       <Checker.ApproveERC20
                         id="approve-token-0"
                         className="whitespace-nowrap"
@@ -634,8 +728,8 @@ const AddLiquidityWidget: FC<AddLiquidityWidgetProps> = ({
                           </Checker.Success>
                         </Checker.ApproveERC20>
                       </Checker.ApproveERC20>
-                    </>
-                  )}
+                    )}
+                </Checker.Slippage>
               </Checker.Amounts>
             </Checker.Network>
           </Checker.Connect>

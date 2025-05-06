@@ -1,6 +1,6 @@
-import { V3Pool } from '@sushiswap/graph-client/data-api'
+import type { V3Pool } from '@sushiswap/graph-client/data-api'
 import { getBalance } from '@wagmi/core'
-import { PublicWagmiConfig } from 'src/lib/wagmi/config/public'
+import type { PublicWagmiConfig } from 'src/lib/wagmi/config/public'
 import { Amount, Token } from 'sushi/currency'
 
 export const getConcentratedLiquidityPoolReserves = async ({

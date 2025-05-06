@@ -4,14 +4,17 @@ import { Button } from '@sushiswap/ui'
 import { Currency } from '@sushiswap/ui'
 import { List } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
-import React, { FC } from 'react'
+import React, { type FC } from 'react'
 import { useTokenAllowance } from 'src/lib/wagmi/hooks/approvals/hooks/useTokenAllowance'
 import { useTokenRevokeApproval } from 'src/lib/wagmi/hooks/approvals/hooks/useTokenRevokeApproval'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
-import { ROUTE_PROCESSOR_2_ADDRESS, RouteProcessor2ChainId } from 'sushi/config'
-import { Token } from 'sushi/currency'
+import {
+  ROUTE_PROCESSOR_2_ADDRESS,
+  type RouteProcessor2ChainId,
+} from 'sushi/config'
+import type { Token } from 'sushi/currency'
 import { ZERO } from 'sushi/math'
-import { Address } from 'viem'
+import type { Address } from 'viem'
 
 export const RevokeItem: FC<{ token: Token; account: Address }> = ({
   account,

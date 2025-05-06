@@ -1,9 +1,8 @@
 import type { VariablesOf } from 'gql.tada'
 
-import type { PoolHasSteerVaults } from '@sushiswap/steer-sdk'
-import { request, type RequestOptions } from 'src/lib/request'
+import { request, type RequestOptions } from 'src/lib/request.js'
 import {
-  ChainId,
+  EvmChainId,
   ChefType,
   RewarderType,
   SushiSwapProtocol,
@@ -14,10 +13,10 @@ import {
   type PoolWithIncentives,
 } from 'sushi'
 import { isSushiSwapV3ChainId } from 'sushi/config'
-import { SUSHI_DATA_API_HOST } from 'sushi/config/subgraph'
+import { SUSHI_DATA_API_HOST } from '../../data-api-host.js'
 import type { Address } from 'viem'
-import { graphql } from '../../graphql'
-import { SUSHI_REQUEST_HEADERS } from '../../request-headers'
+import { graphql } from '../../graphql.js'
+import { SUSHI_REQUEST_HEADERS } from '../../request-headers.js'
 
 export const V3PoolQuery = graphql(
   `
@@ -67,8 +66,6 @@ export const V3PoolQuery = graphql(
       txCount1dChange
       liquidityUSD1dChange
       incentiveApr
-      hadSmartPool
-      hasSmartPool
       isIncentivized
       wasIncentivized
       incentives {
@@ -89,7 +86,6 @@ export const V3PoolQuery = graphql(
         rewarderAddress
         rewarderType
       }
-      vaults
     }
   }
 `,
@@ -102,7 +98,7 @@ export async function getV3Pool(
   options?: RequestOptions,
 ) {
   const url = `${SUSHI_DATA_API_HOST}/graphql`
-  const chainId = Number(variables.chainId) as ChainId
+  const chainId = Number(variables.chainId) as EvmChainId
 
   if (!isSushiSwapV3ChainId(chainId)) {
     throw new Error('Invalid chainId')
@@ -174,8 +170,6 @@ export async function getV3Pool(
         incentiveApr: pool.incentiveApr,
         isIncentivized: pool.isIncentivized,
         wasIncentivized: pool.wasIncentivized,
-        hasEnabledSteerVault: pool.hasSmartPool,
-        hadEnabledSteerVault: pool.hadSmartPool,
 
         incentives: incentives.map((incentive) => ({
           id: incentive.id as `${string}:0x${string}`,
@@ -196,9 +190,7 @@ export async function getV3Pool(
           rewarderAddress: incentive.rewarderAddress as Address,
           rewarderType: incentive.rewarderType as RewarderType,
         })),
-      } satisfies PoolHasSteerVaults<
-        PoolWithAprs<PoolWithIncentives<PoolHistory1D<PoolV3<PoolBase>>>>
-      >
+      } satisfies PoolWithAprs<PoolWithIncentives<PoolHistory1D<PoolV3<PoolBase>>>>
     }
   } catch (error) {
     console.error('getV3Pool error', error)

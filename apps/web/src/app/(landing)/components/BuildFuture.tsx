@@ -1,7 +1,7 @@
 import { Button } from '@sushiswap/ui'
 import { Container } from '@sushiswap/ui'
 import { motion } from 'framer-motion'
-import React, { FC } from 'react'
+import React, { type FC } from 'react'
 
 import { ExpandableCard } from './ExpandableCard'
 import { BentoBoxSVG, SwitchSVG } from './svgs'

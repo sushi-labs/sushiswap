@@ -1,18 +1,24 @@
 'use client'
 
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
-import React, { FC, ReactNode, createContext, useContext, useMemo } from 'react'
+import React, {
+  type FC,
+  type ReactNode,
+  createContext,
+  useContext,
+  useMemo,
+} from 'react'
 import { useTokenWithCache } from 'src/lib/wagmi/hooks/tokens/useTokenWithCache'
-import { ChainId } from 'sushi/chain'
+import { EvmChainId } from 'sushi/chain'
 import {
   SUSHISWAP_V3_SUPPORTED_CHAIN_IDS,
-  SushiSwapV3ChainId,
+  type SushiSwapV3ChainId,
   SushiSwapV3FeeAmount,
   currencyFromShortCurrencyName,
   isShortCurrencyName,
   isWNativeSupported,
 } from 'sushi/config'
-import { Native, Token, Type } from 'sushi/currency'
+import { Native, type Token, type Type } from 'sushi/currency'
 import { type Address, isAddress } from 'viem'
 import { z } from 'zod'
 
@@ -52,11 +58,11 @@ export const ConcentratedLiquidityUrlStateContext = createContext<State>(
 interface ConcentratedLiquidityURLStateProvider {
   children: ReactNode | ((state: State) => ReactNode)
   chainId: SushiSwapV3ChainId
-  supportedNetworks?: ChainId[]
+  supportedNetworks?: EvmChainId[]
 }
 
 const getTokenFromUrl = (
-  chainId: ChainId,
+  chainId: EvmChainId,
   currencyId: string | undefined | null,
   token: Token | undefined,
   isLoading: boolean,
@@ -70,7 +76,7 @@ const getTokenFromUrl = (
   } else if (!currencyId || !isWNativeSupported(chainId)) {
     return undefined
   } else {
-    return Native.onChain(chainId ? chainId : ChainId.ETHEREUM)
+    return Native.onChain(chainId ? chainId : EvmChainId.ETHEREUM)
   }
 }
 
@@ -95,7 +101,7 @@ export const ConcentratedLiquidityURLStateProvider: FC<
 
   const _chainId = supportedNetworks?.includes(chainId)
     ? chainId
-    : ChainId.ETHEREUM
+    : EvmChainId.ETHEREUM
 
   const { data: tokenFrom, isInitialLoading: isTokenFromLoading } =
     useTokenWithCache({

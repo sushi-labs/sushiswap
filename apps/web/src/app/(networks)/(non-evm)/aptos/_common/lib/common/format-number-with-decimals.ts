@@ -5,7 +5,7 @@ export const formatNumberWithDecimals = (number: number, decimals: number) => {
     if (_number.includes('.') && _number.split('.')[1].length > 8) {
       _number = Number(_number).toFixed(8)
     }
-    if (_number.includes('.') && parseFloat(_number.split('.')[0]) > 0) {
+    if (_number.includes('.') && Number.parseFloat(_number.split('.')[0]) > 0) {
       _number = Number(_number).toFixed(4)
     }
   } else {

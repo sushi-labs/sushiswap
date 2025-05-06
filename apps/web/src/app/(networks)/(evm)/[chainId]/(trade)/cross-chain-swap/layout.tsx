@@ -1,10 +1,7 @@
-import { Metadata } from 'next'
+import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
-import { ChainId } from 'sushi/chain'
-import {
-  SUSHIXSWAP_2_SUPPORTED_CHAIN_IDS,
-  isSushiXSwap2ChainId,
-} from 'sushi/config'
+import { XSWAP_SUPPORTED_CHAIN_IDS, isXSwapSupportedChainId } from 'src/config'
+import type { EvmChainId } from 'sushi/chain'
 import { SidebarContainer } from '~evm/_common/ui/sidebar'
 import { Providers } from './providers'
 
@@ -22,9 +19,9 @@ export default async function CrossChainSwapLayout(props: {
 
   const { children } = props
 
-  const chainId = +params.chainId as ChainId
+  const chainId = +params.chainId as EvmChainId
 
-  if (!isSushiXSwap2ChainId(chainId)) {
+  if (!isXSwapSupportedChainId(chainId)) {
     return notFound()
   }
 
@@ -32,10 +29,12 @@ export default async function CrossChainSwapLayout(props: {
     <Providers chainId={chainId}>
       <SidebarContainer
         selectedNetwork={chainId}
-        supportedNetworks={SUSHIXSWAP_2_SUPPORTED_CHAIN_IDS}
+        supportedNetworks={XSWAP_SUPPORTED_CHAIN_IDS}
         unsupportedNetworkHref="/ethereum/cross-chain-swap"
       >
-        <main className="lg:p-4 mt-16 mb-[86px]">{children}</main>
+        <main className="lg:p-4 mt-16 mb-[86px] h-[clamp(600px,_calc(100vh_-_280px),_800px)]">
+          {children}
+        </main>
       </SidebarContainer>
     </Providers>
   )

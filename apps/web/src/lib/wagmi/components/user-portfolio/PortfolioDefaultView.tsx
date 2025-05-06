@@ -14,12 +14,18 @@ import {
   SkeletonCircle,
 } from '@sushiswap/ui'
 import Image from 'next/image'
-import { Dispatch, FC, SetStateAction, useMemo, useState } from 'react'
+import {
+  type Dispatch,
+  type FC,
+  type SetStateAction,
+  useMemo,
+  useState,
+} from 'react'
 import { SUPPORTED_NETWORKS } from 'src/config'
 import { HeaderNetworkSelector } from 'src/lib/wagmi/components/header-network-selector'
-import { ChainId, chains, shortenAddress } from 'sushi'
+import { type ChainId, evmChains, shortenAddress } from 'sushi'
 import { useAccount, useDisconnect } from 'wagmi'
-import { GetEnsNameReturnType } from 'wagmi/actions'
+import type { GetEnsNameReturnType } from 'wagmi/actions'
 import { PortfolioView } from '.'
 import { PortfolioClaimables } from './portfolio-claimables'
 import { PortfolioPositions } from './portfolio-positions'
@@ -30,7 +36,7 @@ enum PortfolioTab {
   Tokens = 'Tokens',
   Positions = 'Positions',
   Claimable = 'Claimable',
-  History = 'History',
+  // History = 'History',
 }
 
 interface PortfolioDefaultProps {
@@ -57,8 +63,8 @@ export const PortfolioDefaultView: FC<PortfolioDefaultProps> = ({
         return <PortfolioPositions />
       case PortfolioTab.Claimable:
         return <PortfolioClaimables />
-      case PortfolioTab.History:
-        return <PortfolioHistory />
+      // case PortfolioTab.History:
+      // return <PortfolioHistory />
     }
   }, [tab])
 
@@ -119,7 +125,7 @@ export const PortfolioDefaultView: FC<PortfolioDefaultProps> = ({
               )}
             </ClipboardController>
             <LinkExternal
-              href={chains[chainId as ChainId]?.getAccountUrl(address!)}
+              href={evmChains[chainId as ChainId]?.getAccountUrl(address!)}
             >
               <IconButton
                 size="xs"

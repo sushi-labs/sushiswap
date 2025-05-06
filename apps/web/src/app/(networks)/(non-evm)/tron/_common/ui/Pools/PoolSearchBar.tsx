@@ -1,6 +1,6 @@
 import { MagnifyingGlassIcon } from '@heroicons/react/20/solid'
 import { ChipInput } from '@sushiswap/ui'
-import { FC, useCallback, useState, useTransition } from 'react'
+import { type FC, useCallback, useState, useTransition } from 'react'
 
 type PoolSearchBarProps = {
   query: string

@@ -3,11 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "description": "Sushi Config",
-  "keywords": [
-    "sushi",
-    "config",
-    "eslint"
-  ],
+  "keywords": ["sushi", "config", "eslint"],
   "license": "MIT",
   "author": "Matthew Lilley <hello@matthewLilley.com>",
   "sideEffects": false,
@@ -19,14 +15,14 @@
   ],
   "dependencies": {
     "@vercel/style-guide": "6.0.0",
-    "eslint-config-turbo": "2.0.5",
-    "eslint-plugin-mdx": "2.2.0",
+    "eslint-config-turbo": "2.3.3",
+    "eslint-plugin-mdx": "3.1.5",
     "eslint-plugin-only-warn": "1.1.0",
-    "eslint-plugin-storybook": "0.6.15"
+    "eslint-plugin-storybook": "0.11.2"
   },
   "devDependencies": {
-    "@types/eslint": "8.44.4",
+    "@types/eslint": "9.6.1",
     "@types/node": "20",
-    "typescript": "5.7.2"
+    "typescript": "catalog:"
   }
 }

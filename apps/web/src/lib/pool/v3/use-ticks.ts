@@ -5,18 +5,18 @@ import { useConcentratedLiquidityPool } from 'src/lib/wagmi/hooks/pools/hooks/us
 import {
   SUSHISWAP_V3_FACTORY_ADDRESS,
   SUSHISWAP_V3_TICK_LENS,
-  SushiSwapV3ChainId,
-  SushiSwapV3FeeAmount,
+  type SushiSwapV3ChainId,
+  type SushiSwapV3FeeAmount,
   TICK_SPACINGS,
 } from 'sushi/config'
-import { Type } from 'sushi/currency'
+import type { Type } from 'sushi/currency'
 import {
   computeSushiSwapV3PoolAddress,
   nearestUsableTick,
 } from 'sushi/pool/sushiswap-v3'
-import { Address } from 'viem'
+import type { Address } from 'viem'
 import { useReadContracts } from 'wagmi'
-import { Writeable } from 'zod'
+import type { Writeable } from 'zod'
 
 interface useTicksProps {
   token0: Type | undefined

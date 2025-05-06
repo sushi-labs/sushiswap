@@ -1,7 +1,7 @@
 'use client'
 
 import { ExternalLinkIcon } from '@heroicons/react-v1/solid'
-import { PendingTokens } from '@sushiswap/graph-client/data-api/queries/token-list-submission'
+import type { PendingTokens } from '@sushiswap/graph-client/data-api/queries/token-list-submission'
 import {
   Badge,
   Card,
@@ -11,6 +11,7 @@ import {
   Container,
   DataTable,
   LinkExternal,
+  List,
   Popover,
   PopoverContent,
   PopoverTrigger,
@@ -19,16 +20,108 @@ import {
 } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import { XIcon } from '@sushiswap/ui/icons/XIcon'
-import { ColumnDef, SortingState, TableState } from '@tanstack/react-table'
+import type { ColumnDef, SortingState, TableState } from '@tanstack/react-table'
 import differenceInDays from 'date-fns/differenceInDays'
 import React, { useMemo, useState } from 'react'
 import { usePendingTokens } from 'src/lib/hooks/api/usePendingTokenListings'
+import {
+  type TokenSecurity,
+  isTokenSecurityIssue,
+} from 'src/lib/hooks/react-query'
 import { TokenSecurityView } from 'src/lib/wagmi/components/token-security-view'
 import { formatNumber, formatUSD, shortenAddress } from 'sushi'
-import { Chain } from 'sushi/chain'
+import { EvmChain, type EvmChainId } from 'sushi/chain'
 import { Token } from 'sushi/currency'
-import { getAddress } from 'viem'
 import { NavigationItems } from '../navigation-items'
+
+const getTokenSecurity = (security: PendingTokens[number]['security']) => {
+  const data = {
+    is_buyable: {
+      goPlus: security.isBuyable,
+    },
+    is_open_source: {
+      goPlus: security.isOpenSource,
+    },
+    is_proxy: {
+      goPlus: security.isProxy,
+    },
+    is_mintable: {
+      goPlus: security.isMintable,
+    },
+    can_take_back_ownership: {
+      goPlus: security.canTakeBackOwnership,
+    },
+    owner_change_balance: {
+      goPlus: security.ownerChangeBalance,
+    },
+    hidden_owner: {
+      goPlus: security.hiddenOwner,
+    },
+    selfdestruct: {
+      goPlus: security.selfDestruct,
+    },
+    external_call: {
+      goPlus: security.externalCall,
+    },
+    gas_abuse: {
+      goPlus: security.gasAbuse,
+    },
+    buy_tax: {
+      goPlus: security.buyTax,
+    },
+    sell_tax: {
+      goPlus: security.sellTax,
+    },
+    is_sell_limit: {
+      goPlus: security.cannotSellAll,
+    },
+    slippage_modifiable: {
+      goPlus: security.slippageModifiable,
+    },
+    is_honeypot: {
+      goPlus: security.isHoneypot,
+    },
+    transfer_pausable: {
+      goPlus: security.transferPausable,
+    },
+    is_blacklisted: {
+      goPlus: security.isBlacklisted,
+    },
+    is_whitelisted: {
+      goPlus: security.isWhitelisted,
+    },
+    is_anti_whale: {
+      goPlus: security.isAntiWhale,
+    },
+    trading_cooldown: {
+      goPlus: security.tradingCooldown,
+    },
+    is_fake_token: {
+      goPlus: !security.isTrueToken,
+    },
+    is_airdrop_scam: {
+      goPlus: security.isAirdropScam,
+    },
+    trust_list: {
+      goPlus: security.trustList,
+    },
+  }
+
+  return {
+    data,
+    isHoneypot: data?.is_honeypot?.goPlus,
+    isFoT: data?.buy_tax?.goPlus || data?.sell_tax?.goPlus,
+    isRisky: Object.entries(data || {}).some(([_key, value]) => {
+      const key = _key as keyof TokenSecurity
+      if (
+        key in isTokenSecurityIssue &&
+        isTokenSecurityIssue[key](value.goPlus)
+      ) {
+        return true
+      }
+    }),
+  }
+}
 
 const COLUMNS: ColumnDef<PendingTokens[number], unknown>[] = [
   {
@@ -66,7 +159,7 @@ const COLUMNS: ColumnDef<PendingTokens[number], unknown>[] = [
           </span>
           <LinkExternal
             target="_blank"
-            href={Chain.from(props.row.original.token.chainId)?.getTokenUrl(
+            href={EvmChain.from(props.row.original.token.chainId)?.getTokenUrl(
               props.row.original.token.address,
             )}
           >
@@ -149,6 +242,7 @@ const COLUMNS: ColumnDef<PendingTokens[number], unknown>[] = [
       const [trigger, content] = useMemo(
         () => [
           <span
+            key="span"
             className={classNames(
               'whitespace-nowrap',
               props.row.original.reasoning.length > 0
@@ -159,7 +253,7 @@ const COLUMNS: ColumnDef<PendingTokens[number], unknown>[] = [
             {props.row.original.reasoning.length} detail
             {props.row.original.reasoning.length !== 1 ? 's' : ''}
           </span>,
-          <Card>
+          <Card key="card">
             <CardHeader>
               <CardTitle>Details</CardTitle>
             </CardHeader>
@@ -169,41 +263,22 @@ const COLUMNS: ColumnDef<PendingTokens[number], unknown>[] = [
                   <li key={`reason-${i}`}>{reason}</li>
                 ))}
               </ul>
-              <TokenSecurityView
-                tokenSecurityResponse={{
-                  [getAddress(props.row.original.token.address)]: {
-                    is_buyable: props.row.original.security.isBuyable,
-                    is_open_source: props.row.original.security.isOpenSource,
-                    is_proxy: props.row.original.security.isProxy,
-                    is_mintable: props.row.original.security.isMintable,
-                    can_take_back_ownership:
-                      props.row.original.security.canTakeBackOwnership,
-                    owner_change_balance:
-                      props.row.original.security.ownerChangeBalance,
-                    hidden_owner: props.row.original.security.hiddenOwner,
-                    selfdestruct: props.row.original.security.selfDestruct,
-                    external_call: props.row.original.security.externalCall,
-                    gas_abuse: props.row.original.security.gasAbuse,
-                    buy_tax: props.row.original.security.buyTax,
-                    sell_tax: props.row.original.security.sellTax,
-                    is_sell_limit: props.row.original.security.cannotSellAll,
-                    slippage_modifiable:
-                      props.row.original.security.slippageModifiable,
-                    is_honeypot: props.row.original.security.isHoneypot,
-                    transfer_pausable:
-                      props.row.original.security.transferPausable,
-                    is_blacklisted: props.row.original.security.isBlacklisted,
-                    is_whitelisted: props.row.original.security.isWhitelisted,
-                    is_anti_whale: props.row.original.security.isAntiWhale,
-                    trading_cooldown:
-                      props.row.original.security.tradingCooldown,
-                    is_fake_token: !props.row.original.security.isTrueToken,
-                    is_airdrop_scam: props.row.original.security.isAirdropScam,
-                    trust_list: props.row.original.security.trustList,
-                  },
-                }}
-                token={new Token(props.row.original.token)}
-              />
+              <List className="!pt-0 overflow-hidden">
+                <List.Control className="!overflow-y-auto">
+                  <TokenSecurityView
+                    token={
+                      new Token({
+                        ...props.row.original.token,
+                        chainId: props.row.original.token.chainId as EvmChainId,
+                      })
+                    }
+                    isTokenSecurityLoading={false}
+                    tokenSecurity={getTokenSecurity(
+                      props.row.original.security,
+                    )}
+                  />
+                </List.Control>
+              </List>
             </CardContent>
           </Card>,
         ],

@@ -1,3 +1,5 @@
+'use client'
+
 import { Container } from '@sushiswap/ui'
 import { LimitWidget } from 'src/ui/swap/twap/limit-widget'
 

@@ -1,4 +1,3 @@
-export * from './PoolChainId'
-export * from './SmartPoolChainId'
-export * from './TokenListChainId'
-export * from './TrendingTokensChainId'
+export * from './PoolChainId.js'
+export * from './TokenListChainId.js'
+export * from './TrendingTokensChainId.js'

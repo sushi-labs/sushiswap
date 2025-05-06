@@ -1,8 +1,8 @@
-import type { ChainId } from 'sushi'
-import { PriceWorkerReceiveMessageChainState } from '../price-worker/types'
+import type { EvmChainId } from 'sushi'
+import type { PriceWorkerReceiveMessageChainState } from '../price-worker/types'
 
 export interface ProviderChainState {
-  chainId: ChainId
+  chainId: EvmChainId
 
   priceMap?: Map<bigint, number>
 
@@ -14,13 +14,13 @@ export interface ProviderChainState {
 }
 
 export interface ProviderState {
-  chains: Map<ChainId, ProviderChainState>
+  chains: Map<EvmChainId, ProviderChainState>
   ready: boolean
 }
 
 export interface ProviderMutations {
-  incrementChainId: (chainId: ChainId) => void
-  decrementChainId: (chainId: ChainId) => void
+  incrementChainId: (chainId: EvmChainId) => void
+  decrementChainId: (chainId: EvmChainId) => void
 }
 
 export interface Provider {

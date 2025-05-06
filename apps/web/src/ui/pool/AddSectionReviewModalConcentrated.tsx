@@ -24,7 +24,7 @@ import {
   SettingsModule,
   SettingsOverlay,
 } from '@sushiswap/ui'
-import React, { FC, ReactNode, useCallback, useMemo } from 'react'
+import React, { type FC, type ReactNode, useCallback, useMemo } from 'react'
 import { Bound } from 'src/lib/constants'
 import { NativeAddress } from 'src/lib/constants'
 import { useTokenAmountDollarValues } from 'src/lib/hooks'
@@ -33,17 +33,24 @@ import {
   getDefaultTTL,
   useTransactionDeadline,
 } from 'src/lib/wagmi/hooks/utils/hooks/useTransactionDeadline'
-import { Chain, ChainId } from 'sushi/chain'
+import { EvmChain, type EvmChainId } from 'sushi/chain'
 import {
-  SUSHISWAP_V3_POSTIION_MANAGER,
-  SushiSwapV3FeeAmount,
+  SUSHISWAP_V3_POSITION_MANAGER,
+  type SushiSwapV3FeeAmount,
   isSushiSwapV3ChainId,
 } from 'sushi/config'
-import { Amount, Type, tryParseAmount } from 'sushi/currency'
-import { NonfungiblePositionManager, Position } from 'sushi/pool/sushiswap-v3'
-import { Hex, SendTransactionReturnType, UserRejectedRequestError } from 'viem'
+import { type Amount, type Type, tryParseAmount } from 'sushi/currency'
 import {
-  UseCallParameters,
+  NonfungiblePositionManager,
+  type Position,
+} from 'sushi/pool/sushiswap-v3'
+import {
+  type Hex,
+  type SendTransactionReturnType,
+  UserRejectedRequestError,
+} from 'viem'
+import {
+  type UseCallParameters,
   useAccount,
   useCall,
   usePublicClient,
@@ -51,14 +58,14 @@ import {
   useWaitForTransactionReceipt,
 } from 'wagmi'
 import { useRefetchBalances } from '~evm/_common/ui/balance-provider/use-refetch-balances'
-import { useConcentratedDerivedMintInfo } from './ConcentratedLiquidityProvider'
+import type { useConcentratedDerivedMintInfo } from './ConcentratedLiquidityProvider'
 
 interface AddSectionReviewModalConcentratedProps
   extends Pick<
     ReturnType<typeof useConcentratedDerivedMintInfo>,
     'noLiquidity' | 'position' | 'price' | 'pricesAtTicks' | 'ticksAtLimit'
   > {
-  chainId: ChainId
+  chainId: EvmChainId
   feeAmount: SushiSwapV3FeeAmount | undefined
   token0: Type | undefined
   token1: Type | undefined
@@ -247,7 +254,7 @@ export const AddSectionReviewModalConcentrated: FC<
           })
 
     return {
-      to: SUSHISWAP_V3_POSTIION_MANAGER[chainId],
+      to: SUSHISWAP_V3_POSITION_MANAGER[chainId],
       account: address,
       chainId,
       data: calldata as Hex,
@@ -341,7 +348,7 @@ export const AddSectionReviewModalConcentrated: FC<
                 <List className="!pt-0">
                   <List.Control>
                     <List.KeyValue flex title="Network">
-                      {Chain.from(chainId)?.name}
+                      {EvmChain.from(chainId)?.name}
                     </List.KeyValue>
                     {feeAmount && (
                       <List.KeyValue title="Fee Tier">{`${

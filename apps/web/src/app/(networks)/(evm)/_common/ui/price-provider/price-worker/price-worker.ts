@@ -1,18 +1,18 @@
-import { ChainId } from 'sushi'
-import { SUSHI_DATA_API_HOST } from 'sushi/config/subgraph'
+import { SUSHI_DATA_API_HOST } from 'src/lib/constants'
+import type { EvmChainId } from 'sushi'
 import { UPDATE_INTERVAL } from '../config'
 import {
-  PriceWorkerPostMessage,
+  type PriceWorkerPostMessage,
   PriceWorkerPostMessageType,
-  PriceWorkerReceiveMessage,
+  type PriceWorkerReceiveMessage,
   PriceWorkerReceiveMessageType,
-  WorkerChainState,
+  type WorkerChainState,
 } from './types'
 
 {
   const state = {
-    chains: new Map<ChainId, WorkerChainState>(),
-    intervals: new Map<ChainId, NodeJS.Timeout>(),
+    chains: new Map<EvmChainId, WorkerChainState>(),
+    intervals: new Map<EvmChainId, NodeJS.Timeout>(),
     enabled: true,
     canUseSharedArrayBuffer: false,
   }
@@ -77,7 +77,7 @@ import {
     }
   }
 
-  function incrementChainId(chainId: ChainId) {
+  function incrementChainId(chainId: EvmChainId) {
     const chainState = state.chains.get(chainId)
     if (chainState) {
       chainState.listenerCount++
@@ -108,7 +108,7 @@ import {
     return true
   }
 
-  function decrementChainId(chainId: ChainId) {
+  function decrementChainId(chainId: EvmChainId) {
     const chainState = state.chains.get(chainId)
     if (chainState && chainState.listenerCount > 0) {
       chainState.listenerCount--
@@ -144,7 +144,7 @@ import {
     }
   }
 
-  async function updateChainId(chainId: ChainId) {
+  async function updateChainId(chainId: EvmChainId) {
     const chainState = state.chains.get(chainId)
     if (!chainState) {
       return
