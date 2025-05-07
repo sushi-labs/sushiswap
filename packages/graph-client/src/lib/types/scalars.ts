@@ -1,9 +1,9 @@
 import type { PoolChainId } from 'src/subgraphs/data-api/types/PoolChainId.js'
 import type { TokenListChainId } from 'src/subgraphs/data-api/types/TokenListChainId.js'
 import type { TrendingTokensChainId } from 'src/subgraphs/data-api/types/TrendingTokensChainId.js'
+import type { SushiSwapChainId } from 'src/subgraphs/data-api/types/SushiSwapChainId.js'
 import type { ChainId } from 'sushi/chain'
 import type {
-  SushiSwapChainId,
   SushiSwapV2ChainId,
   SushiSwapV3ChainId,
 } from 'sushi/config'

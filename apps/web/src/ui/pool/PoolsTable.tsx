@@ -216,9 +216,14 @@ const COLUMNS = [
 interface PoolsTableProps {
   chainId: PoolChainId
   onRowClick?(row: Pools[number]): void
+  forcedTokenSymbols?: string[]
 }
 
-export const PoolsTable: FC<PoolsTableProps> = ({ chainId, onRowClick }) => {
+export const PoolsTable: FC<PoolsTableProps> = ({
+  chainId,
+  onRowClick,
+  forcedTokenSymbols,
+}) => {
   const { tokenSymbols, protocols, farmsOnly } = usePoolFilters()
 
   const [sorting, setSorting] = useState<SortingState>([
@@ -226,15 +231,19 @@ export const PoolsTable: FC<PoolsTableProps> = ({ chainId, onRowClick }) => {
   ])
 
   const args = useMemo<Omit<GetPools, 'page'>>(() => {
+    const tokenSymbolsSet = new Set([
+      ...tokenSymbols.map((symbol) => symbol.toLowerCase()),
+      ...(forcedTokenSymbols ?? []).map((symbol) => symbol.toLowerCase()),
+    ])
     return {
       chainId,
-      search: tokenSymbols,
+      search: Array.from(tokenSymbolsSet),
       onlyIncentivized: farmsOnly,
       protocols,
       orderBy: sorting[0]?.id as GetPools['orderBy'],
       orderDirection: sorting[0] ? (sorting[0].desc ? 'desc' : 'asc') : 'desc',
     }
-  }, [chainId, tokenSymbols, farmsOnly, sorting, protocols])
+  }, [chainId, tokenSymbols, forcedTokenSymbols, farmsOnly, sorting, protocols])
 
   const { data: pools, isLoading, fetchNextPage } = usePoolsInfinite(args)
 

@@ -13,7 +13,9 @@ export const GlobalStatsLoading: FC<{ chainId: ChainId }> = ({ chainId }) => {
           <SkeletonText fontSize="3xl" className="!w-36" />
           <SkeletonText fontSize="sm" className="!w-40" />
         </div>
-        <SkeletonChart type="area" height={400} />
+        <div className="pb-10">
+          <SkeletonChart type="area" height={360} />
+        </div>
       </div>
       <div>
         <div className="flex flex-col gap-3">
@@ -23,7 +25,9 @@ export const GlobalStatsLoading: FC<{ chainId: ChainId }> = ({ chainId }) => {
           <SkeletonText fontSize="3xl" className="!w-36" />
           <SkeletonText fontSize="sm" className="!w-40" />
         </div>
-        <SkeletonChart type="bar" height={400} />
+        <div className="pb-10">
+          <SkeletonChart type="bar" height={360} />
+        </div>
       </div>
     </div>
   )

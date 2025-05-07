@@ -31,7 +31,7 @@ export function useBalances(
       return {
         data: undefined,
         isError: false,
-        isLoading: true,
+        isLoading: false,
         isFetching: false,
       }
     }
@@ -42,7 +42,7 @@ export function useBalances(
       return {
         data: undefined,
         isError: false,
-        isLoading: true,
+        isLoading: false,
         isFetching: false,
       }
     }
