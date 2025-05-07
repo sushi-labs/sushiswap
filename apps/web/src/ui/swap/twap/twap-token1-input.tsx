@@ -8,7 +8,7 @@ export const TwapToken1Input = () => {
   const {
     state: { chainId, token1 },
     mutate: { setToken1 },
-    isToken1Loading: tokenLoading,
+    isToken1Loading: isLoading,
   } = useDerivedStateTwap()
 
   const trade = useTwapTrade()
@@ -23,10 +23,8 @@ export const TwapToken1Input = () => {
       chainId={chainId}
       onSelect={setToken1}
       currency={token1}
-      // loading={isLoading}
-      // fetching={isFetching}
       disableMaxButton
-      currencyLoading={tokenLoading}
+      currencyLoading={isLoading}
       allowNative={isWNativeSupported(chainId)}
       label="You're buying"
     />

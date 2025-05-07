@@ -1,5 +1,5 @@
-import { Amount, Type } from 'sushi/currency'
-import { Fraction, Percent } from 'sushi/math'
+import type { Amount, Type } from 'sushi/currency'
+import { type Fraction, Percent } from 'sushi/math'
 import { isLsd, isStable, isWrapOrUnwrap } from 'sushi/router'
 
 export const getFeeString = ({

@@ -1,16 +1,16 @@
 'use client'
 
 import ArrowDownIcon from '@heroicons/react/24/solid/ArrowDownIcon'
-import { InterfaceModalName, Trace } from '@sushiswap/telemetry'
+import { createErrorToast, createToast } from '@sushiswap/notifications'
 import {
   Button,
+  DialogConfirm,
   DialogContent,
   DialogFooter,
   DialogHeader,
   DialogProvider,
   DialogReview,
   DialogTitle,
-  DialogTrigger,
   FormattedNumber,
   List,
   Switch,
@@ -20,14 +20,125 @@ import {
   TooltipTrigger,
 } from '@sushiswap/ui'
 import { format } from 'date-fns'
-import React, { FC, ReactNode, useMemo, useState } from 'react'
+import React, {
+  type FC,
+  type ReactNode,
+  useCallback,
+  useMemo,
+  useRef,
+  useState,
+} from 'react'
+import { APPROVE_TAG_SWAP } from 'src/lib/constants'
 import { TwapSDK } from 'src/lib/swap/twap/TwapSDK'
-import { Chain } from 'sushi/chain'
+import { Checker } from 'src/lib/wagmi/systems/Checker'
+import { useApproved } from 'src/lib/wagmi/systems/Checker/Provider'
+import { EvmChain } from 'sushi/chain'
+import { Native } from 'sushi/currency'
 import { formatUSD, shortenAddress } from 'sushi/format'
+import { ZERO } from 'sushi/math'
+import type { Address } from 'sushi/types'
+import { UserRejectedRequestError } from 'viem'
+import {
+  useAccount,
+  usePublicClient,
+  useSendTransaction,
+  useSimulateContract,
+  useWaitForTransactionReceipt,
+} from 'wagmi'
+import type { SendTransactionReturnType } from 'wagmi/actions'
+import { useRefetchBalances } from '~evm/_common/ui/balance-provider/use-refetch-balances'
 import { AmountPanel } from '../amount-panel'
-import { SimpleSwapErrorMessage } from '../simple/simple-swap-error-message'
-import { useDerivedStateTwap, useTwapTrade } from './derivedstate-twap-provider'
-import { TwapTradeTxDialog } from './twap-trade-tx-dialog'
+import {
+  useDerivedStateTwap,
+  usePrepareTwapOrderArgs,
+  useTwapTrade,
+} from './derivedstate-twap-provider'
+
+const askAbiShard = [
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: 'uint64',
+        name: 'id',
+        type: 'uint64',
+      },
+      {
+        indexed: true,
+        internalType: 'address',
+        name: 'maker',
+        type: 'address',
+      },
+      {
+        indexed: true,
+        internalType: 'address',
+        name: 'exchange',
+        type: 'address',
+      },
+      {
+        components: [
+          {
+            internalType: 'address',
+            name: 'exchange',
+            type: 'address',
+          },
+          {
+            internalType: 'address',
+            name: 'srcToken',
+            type: 'address',
+          },
+          {
+            internalType: 'address',
+            name: 'dstToken',
+            type: 'address',
+          },
+          {
+            internalType: 'uint256',
+            name: 'srcAmount',
+            type: 'uint256',
+          },
+          {
+            internalType: 'uint256',
+            name: 'srcBidAmount',
+            type: 'uint256',
+          },
+          {
+            internalType: 'uint256',
+            name: 'dstMinAmount',
+            type: 'uint256',
+          },
+          {
+            internalType: 'uint32',
+            name: 'deadline',
+            type: 'uint32',
+          },
+          {
+            internalType: 'uint32',
+            name: 'bidDelay',
+            type: 'uint32',
+          },
+          {
+            internalType: 'uint32',
+            name: 'fillDelay',
+            type: 'uint32',
+          },
+          {
+            internalType: 'bytes',
+            name: 'data',
+            type: 'bytes',
+          },
+        ],
+        indexed: false,
+        internalType: 'struct OrderLib.Ask',
+        name: 'ask',
+        type: 'tuple',
+      },
+    ],
+    name: 'OrderCreated',
+    type: 'event',
+  },
+] as const
 
 export const TwapTradeReviewDialog: FC<{
   children: ReactNode
@@ -41,32 +152,29 @@ export const TwapTradeReviewDialog: FC<{
       recipient,
       limitPrice,
       marketPrice,
-      token1Price,
+      token1PriceUSD,
     },
-    // mutate: { setSwapAmount },
+    mutate: { setSwapAmount },
   } = useDerivedStateTwap()
 
   const [acceptDisclaimer, setAcceptDisclaimer] = useState(true)
 
-  // const { approved } = useApproved(APPROVE_TAG_SWAP)
-  // const [slippagePercent] = useSlippageTolerance()
+  const { approved } = useApproved(APPROVE_TAG_SWAP)
   const trade = useTwapTrade()
-  // const isFetching = false
-  // const { address, chain } = useAccount()
-  // const tradeRef = useRef<UseTradeReturn | null>(null)
-  // const client = usePublicClient()
+  const { address, chain } = useAccount()
+  const tradeRef = useRef<typeof trade>(null)
+  const client = usePublicClient()
 
-  // const { refetchChain: refetchBalances } = useRefetchBalances()
+  const { refetchChain: refetchBalances } = useRefetchBalances()
 
-  // const isWrap =
-  //   token0?.isNative &&
-  //   token1?.wrapped.address === Native.onChain(chainId).wrapped.address
-  // const isUnwrap =
-  //   token1?.isNative &&
-  //   token0?.wrapped.address === Native.onChain(chainId).wrapped.address
-  // const isSwap = !isWrap && !isUnwrap
+  const isWrap =
+    token0?.isNative &&
+    token1?.wrapped.address === Native.onChain(chainId).wrapped.address
+  const isUnwrap =
+    token1?.isNative &&
+    token0?.wrapped.address === Native.onChain(chainId).wrapped.address
 
-  // const args = usePrepareTwapOrderArgs(trade)
+  const args = usePrepareTwapOrderArgs(trade)
 
   const deadline = useMemo(
     () =>
@@ -79,356 +187,268 @@ export const TwapTradeReviewDialog: FC<{
     [trade, chainId],
   )
 
-  // console.log('args', args)
+  const {
+    data: simulation,
+    isError,
+    error,
+    // isFetching: isPrepareFetching,
+    // isSuccess: isPrepareSuccess,
+  } = useSimulateContract({
+    abi: askAbiShard,
+    address: TwapSDK.onNetwork(chainId).config.twapAddress as Address,
+    functionName: 'ask',
+    args,
+    query: {
+      enabled: Boolean(
+        approved && chain?.id === chainId && token1?.chainId === chainId,
+      ),
+    },
+  })
 
-  // const {
-  //   data: simulation,
-  //   isError,
-  //   error,
-  //   isFetching: isPrepareFetching,
-  //   isSuccess: isPrepareSuccess,
-  // } = useSimulateContract({
-  //   abi: TwapAbi,
-  //   address: TwapSDK.onNetwork(chainId).config.twapAddress as Address,
-  //   functionName: 'ask',
-  //   args,
-  //   query: {
-  //     enabled: Boolean(
-  //       approved && chain?.id === chainId && token1?.chainId === chainId,
-  //     ),
-  //   },
-  // })
+  const onSwapSuccess = useCallback(
+    async (hash: SendTransactionReturnType) => {
+      if (!trade || !chainId) return
 
-  // useEffect(() => {
-  //   if (!error) return
+      try {
+        const ts = new Date().getTime()
+        const promise = client.waitForTransactionReceipt({
+          hash,
+        })
 
-  //   console.error('swap prepare error', error)
-  //   const message = error.message.toLowerCase()
-  //   if (
-  //     message.includes('user rejected') ||
-  //     message.includes('user cancelled')
-  //   ) {
-  //     return
-  //   }
+        void createToast({
+          account: address,
+          type: 'swap',
+          chainId: chainId,
+          txHash: hash,
+          promise,
+          summary: {
+            pending: `${
+              isWrap ? 'Wrapping' : isUnwrap ? 'Unwrapping' : 'Swapping'
+            } ${trade.amountIn?.toSignificant(6)} ${
+              trade.amountIn?.currency.symbol
+            } ${
+              isWrap ? 'to' : isUnwrap ? 'to' : 'for'
+            } ${trade.amountOut?.toSignificant(6)} ${
+              trade.amountOut?.currency.symbol
+            }`,
+            completed: `${
+              isWrap ? 'Wrap' : isUnwrap ? 'Unwrap' : 'Swap'
+            } ${trade.amountIn?.toSignificant(6)} ${
+              trade.amountIn?.currency.symbol
+            } ${
+              isWrap ? 'to' : isUnwrap ? 'to' : 'for'
+            } ${trade.amountOut?.toSignificant(6)} ${
+              trade.amountOut?.currency.symbol
+            }`,
+            failed: `Something went wrong when trying to ${
+              isWrap ? 'wrap' : isUnwrap ? 'unwrap' : 'swap'
+            } ${trade.amountIn?.currency.symbol} ${
+              isWrap ? 'to' : isUnwrap ? 'to' : 'for'
+            } ${trade.amountOut?.currency.symbol}`,
+          },
+          timestamp: ts,
+          groupTimestamp: ts,
+        })
+      } finally {
+        setSwapAmount('')
+        refetchBalances(chainId)
+      }
+    },
+    [
+      setSwapAmount,
+      trade,
+      chainId,
+      client,
+      address,
+      isWrap,
+      isUnwrap,
+      refetchBalances,
+    ],
+  )
 
-  //   sendAnalyticsEvent(SwapEventName.SWAP_ESTIMATE_GAS_CALL_FAILED, {
-  //     slippageTolerance: slippagePercent.toPercentageString(),
-  //     error: error.message,
-  //   })
-  // }, [error, slippagePercent])
+  const onSwapError = useCallback((e: Error) => {
+    if (e.cause instanceof UserRejectedRequestError) {
+      return
+    }
 
-  // const trace = useTrace()
+    createErrorToast(e.message, false)
+  }, [])
 
-  // const onSwapSuccess = useCallback(
-  //   async (hash: SendTransactionReturnType) => {
-  //     if (!trade || !chainId) return
+  const {
+    sendTransactionAsync,
+    isPending: isWritePending,
+    data,
+  } = useSendTransaction({
+    mutation: {
+      onMutate: () => {
+        // Set reference of current trade
+        if (tradeRef && trade) {
+          tradeRef.current = trade
+        }
+      },
+      onSuccess: onSwapSuccess,
+      onError: onSwapError,
+    },
+  })
 
-  //     try {
-  //       const ts = new Date().getTime()
-  //       const promise = client.waitForTransactionReceipt({
-  //         hash,
-  //       })
+  const write = useMemo(() => {
+    if (!sendTransactionAsync || !simulation) return undefined
 
-  //       sendAnalyticsEvent(SwapEventName.SWAP_SIGNED, {
-  //         ...trace,
-  //         txHash: hash,
-  //         chainId: chainId,
-  //         token0: tradeRef?.current?.amountIn?.currency?.isToken
-  //           ? tradeRef?.current?.amountIn?.currency?.address
-  //           : NativeAddress,
-  //         token1: tradeRef?.current?.amountOut?.currency?.isToken
-  //           ? tradeRef?.current?.amountOut?.currency?.address
-  //           : NativeAddress,
-  //         amountIn: tradeRef?.current?.amountIn?.quotient,
-  //         amountOut: tradeRef?.current?.amountOut?.quotient,
-  //         amountOutMin: tradeRef?.current?.minAmountOut?.quotient,
-  //       })
+    return async (confirm: () => void) => {
+      await sendTransactionAsync(simulation)
+      confirm()
+    }
+  }, [simulation, sendTransactionAsync])
 
-  //       // void createToast({
-  //       //   account: address,
-  //       //   type: 'swap',
-  //       //   chainId: chainId,
-  //       //   txHash: hash,
-  //       //   promise,
-  //       //   summary: {
-  //       //     pending: `${
-  //       //       isWrap ? 'Wrapping' : isUnwrap ? 'Unwrapping' : 'Swapping'
-  //       //     } ${trade.amountIn?.toSignificant(6)} ${
-  //       //       trade.amountIn?.currency.symbol
-  //       //     } ${
-  //       //       isWrap ? 'to' : isUnwrap ? 'to' : 'for'
-  //       //     } ${trade.amountOut?.toSignificant(6)} ${
-  //       //       trade.amountOut?.currency.symbol
-  //       //     }`,
-  //       //     completed: `${
-  //       //       isWrap ? 'Wrap' : isUnwrap ? 'Unwrap' : 'Swap'
-  //       //     } ${trade.amountIn?.toSignificant(6)} ${
-  //       //       trade.amountIn?.currency.symbol
-  //       //     } ${
-  //       //       isWrap ? 'to' : isUnwrap ? 'to' : 'for'
-  //       //     } ${trade.amountOut?.toSignificant(6)} ${
-  //       //       trade.amountOut?.currency.symbol
-  //       //     }`,
-  //       //     failed: `Something went wrong when trying to ${
-  //       //       isWrap ? 'wrap' : isUnwrap ? 'unwrap' : 'swap'
-  //       //     } ${trade.amountIn?.currency.symbol} ${
-  //       //       isWrap ? 'to' : isUnwrap ? 'to' : 'for'
-  //       //     } ${trade.amountOut?.currency.symbol}`,
-  //       //   },
-  //       //   timestamp: ts,
-  //       //   groupTimestamp: ts,
-  //       // })
-
-  //       const receipt = await promise
-  //       {
-  //         const trade = tradeRef.current
-  //         if (receipt.status === 'success') {
-  //           sendAnalyticsEvent(SwapEventName.SWAP_TRANSACTION_COMPLETED, {
-  //             txHash: hash,
-  //             from: receipt.from,
-  //             chain_id: chainId,
-  //             tx: stringify(trade?.tx),
-  //           })
-  //         } else {
-  //           sendAnalyticsEvent(SwapEventName.SWAP_TRANSACTION_FAILED, {
-  //             txHash: hash,
-  //             from: receipt.from,
-  //             chain_id: chainId,
-  //             token_from: trade?.amountIn?.currency.isToken
-  //               ? trade?.amountIn?.currency.address
-  //               : NativeAddress,
-  //             token_to: trade?.amountOut?.currency.isToken
-  //               ? trade?.amountOut?.currency.address
-  //               : NativeAddress,
-  //             tx: stringify(trade?.tx),
-  //           })
-  //         }
-  //       }
-  //     } finally {
-  //       setSwapAmount('')
-  //       refetchBalances(chainId)
-  //     }
-  //   },
-  //   [
-  //     setSwapAmount,
-  //     trade,
-  //     chainId,
-  //     client,
-  //     address,
-  //     isWrap,
-  //     isUnwrap,
-  //     refetchBalances,
-  //     trace,
-  //   ],
-  // )
-
-  // const onSwapError = useCallback(
-  //   (e: Error) => {
-  //     if (e.cause instanceof UserRejectedRequestError) {
-  //       return
-  //     }
-
-  //     sendAnalyticsEvent(SwapEventName.SWAP_ERROR, {
-  //       token_from: trade?.amountIn?.currency.isToken
-  //         ? trade?.amountIn?.currency.address
-  //         : NativeAddress,
-  //       token_to: trade?.amountOut?.currency.isToken
-  //         ? trade?.amountOut?.currency.address
-  //         : NativeAddress,
-  //       tx: stringify(trade?.tx),
-  //       error: e instanceof Error ? e.message : undefined,
-  //     })
-  //     createErrorToast(e.message, false)
-  //   },
-  //   [trade?.amountIn?.currency, trade?.amountOut?.currency, trade?.tx],
-  // )
-
-  // const onSwapError = () => null
-
-  // const {
-  //   sendTransactionAsync,
-  //   isPending: isWritePending,
-  //   data,
-  // } = useSendTransaction({
-  //   mutation: {
-  //     onMutate: () => {
-  //       // Set reference of current trade
-  //       if (tradeRef && trade) {
-  //         // tradeRef.current = trade
-  //       }
-  //     },
-  //     onSuccess: onSwapSuccess,
-  //     onError: onSwapError,
-  //   },
-  // })
-
-  // const write = useMemo(() => {
-  //   if (!sendTransactionAsync || !simulation) return undefined
-
-  //   return async (confirm: () => void) => {
-  //     await sendTransactionAsync(simulation)
-  //     confirm()
-  //   }
-  // }, [simulation, sendTransactionAsync])
-
-  // const { status } = useWaitForTransactionReceipt({
-  //   chainId: chainId,
-  //   hash: data,
-  // })
+  const { status } = useWaitForTransactionReceipt({
+    chainId: chainId,
+    hash: data,
+  })
 
   return (
-    <Trace modal={InterfaceModalName.CONFIRM_SWAP}>
-      <DialogProvider>
-        <DialogReview>
-          {({ confirm }) => (
-            <>
-              {children}
-              <DialogContent>
-                <DialogHeader className="pb-7">
+    <DialogProvider>
+      <DialogReview>
+        {({ confirm }) => (
+          <>
+            {children}
+            <DialogContent>
+              <div className="flex flex-col gap-8 overflow-hidden">
+                <DialogHeader>
                   <DialogTitle className="!text-xl py-1.5">
-                    {/* Buy {trade?.amountOut?.toSignificant(6)} {token1?.symbol} */}
                     Review order
                   </DialogTitle>
-                  {/* <DialogDescription>
-                    {isWrap ? 'Wrap' : isUnwrap ? 'Unwrap' : 'Sell'}{' '}
-                    {swapAmount?.toSignificant(6)} {token0?.symbol}
-                  </DialogDescription> */}
                 </DialogHeader>
-                <AmountPanel amount={swapAmount} label={'From'} />
-                <div className="left-0 right-0 lg:mt-[-26px] lg:mb-[-26px] flex items-center justify-center">
-                  <button
-                    type="button"
-                    className="hover:shadow-sm transition-border z-10 group bg-background p-2 border border-accent transition-all rounded-full cursor-pointer"
-                  >
-                    <div className="transition-transform rotate-0 group-hover:rotate-180">
+                <div className="flex flex-col gap-2 relative">
+                  <AmountPanel amount={swapAmount} label={'From'} />
+                  <div className="absolute inset-1/2 flex items-center justify-center bg-transparent">
+                    <div className="z-10 bg-background p-2 border border-accent rounded-full">
                       <ArrowDownIcon
                         strokeWidth={3}
                         className="w-4 h-4 lg:w-3 lg:h-3 text-blue"
                       />
                     </div>
-                  </button>
+                  </div>
+                  <AmountPanel amount={trade?.amountOut} label={'To'} />
                 </div>
-                <AmountPanel amount={trade?.amountOut} label={'To'} />
-                <div className="flex flex-col gap-2">
-                  <List className="!pt-0 !gap-2">
-                    <List.KeyValue
-                      className="!py-0"
-                      title={
+                <List className="!pt-0 !gap-2">
+                  <List.KeyValue
+                    className="!py-0"
+                    title={
+                      <span className="text-muted-foreground">Limit price</span>
+                    }
+                  >
+                    {token0 &&
+                    marketPrice &&
+                    limitPrice &&
+                    token1 &&
+                    token1PriceUSD ? (
+                      <span className="flex items-baseline gap-1 whitespace-nowrap scroll hide-scrollbar">
+                        1 {token0.symbol} =
+                        <FormattedNumber number={limitPrice.toFixed(4)} />{' '}
+                        {token1.symbol}{' '}
                         <span className="text-muted-foreground">
-                          Limit price
+                          ({formatUSD(token1PriceUSD.toFixed(6))})
                         </span>
-                      }
-                    >
-                      {token0 &&
-                      marketPrice &&
-                      limitPrice &&
-                      token1 &&
-                      token1Price ? (
-                        <span className="flex items-baseline gap-1 whitespace-nowrap scroll hide-scrollbar">
-                          1 {token0.symbol} =
-                          <FormattedNumber number={limitPrice.toFixed(4)} />{' '}
-                          {token1.symbol}{' '}
-                          <span className="text-muted-foreground">
-                            ({formatUSD(token1Price.toFixed(2))})
-                          </span>
-                        </span>
-                      ) : null}
-                    </List.KeyValue>
-                    <List.KeyValue
-                      className="!py-0"
-                      title={
-                        <TooltipProvider>
-                          <Tooltip>
-                            <TooltipTrigger className="text-muted-foreground border-b border-muted-foreground border-dotted">
-                              Expiry
-                            </TooltipTrigger>
-                            <TooltipContent className="w-64">
-                              This is the date and time marking the end of the
-                              period which you have selected for your order to
-                              be executed.
-                            </TooltipContent>
-                          </Tooltip>
-                        </TooltipProvider>
-                      }
-                    >
-                      {deadline
-                        ? format(deadline, "MMMM d, yyyy 'at' h:mm a")
-                        : null}
-                    </List.KeyValue>
-                    <List.KeyValue
-                      className="!py-0"
-                      title={
-                        <span className="text-muted-foreground">Recipient</span>
-                      }
-                    >
-                      {recipient ? (
-                        <Button variant="link" size="sm" asChild>
-                          <a
-                            target="_blank"
-                            href={
-                              Chain.fromChainId(chainId)?.getAccountUrl(
-                                recipient,
-                              ) ?? '#'
-                            }
-                            rel="noreferrer"
-                          >
-                            {shortenAddress(recipient)}
-                          </a>
-                        </Button>
-                      ) : null}
-                    </List.KeyValue>
-                    <List.KeyValue
-                      className="!py-0"
-                      title={
-                        <span className="text-muted-foreground">
-                          Fee (0.25%)
-                        </span>
-                      }
-                    >
-                      {trade?.fee ? `${trade.fee}` : undefined}
-                    </List.KeyValue>
-                    <List.KeyValue
-                      className="!py-0"
-                      title={
-                        <span className="text-muted-foreground">
-                          Accept{' '}
-                          <a
-                            href="https://www.orbs.com/dtwap-dlimit-disclaimer/"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="border-b border-muted-foreground"
-                          >
-                            Disclaimer
-                          </a>
-                        </span>
-                      }
-                    >
-                      <Switch
-                        checked={acceptDisclaimer}
-                        onCheckedChange={setAcceptDisclaimer}
-                      />
-                    </List.KeyValue>
-                  </List>
-                </div>
+                      </span>
+                    ) : null}
+                  </List.KeyValue>
+                  <List.KeyValue
+                    className="!py-0"
+                    title={
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger className="text-muted-foreground border-b border-muted-foreground border-dotted">
+                            Expiry
+                          </TooltipTrigger>
+                          <TooltipContent className="w-64">
+                            This is the date and time marking the end of the
+                            period which you have selected for your order to be
+                            executed.
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    }
+                  >
+                    {deadline
+                      ? format(deadline, "MMMM d, yyyy 'at' h:mm a")
+                      : null}
+                  </List.KeyValue>
+                  <List.KeyValue
+                    className="!py-0"
+                    title={
+                      <span className="text-muted-foreground">Recipient</span>
+                    }
+                  >
+                    {recipient ? (
+                      <Button variant="link" size="sm" asChild>
+                        <a
+                          target="_blank"
+                          href={
+                            EvmChain.fromChainId(chainId)?.getAccountUrl(
+                              recipient,
+                            ) ?? '#'
+                          }
+                          rel="noreferrer"
+                        >
+                          {shortenAddress(recipient)}
+                        </a>
+                      </Button>
+                    ) : null}
+                  </List.KeyValue>
+                  <List.KeyValue
+                    className="!py-0"
+                    title={
+                      <span className="text-muted-foreground">Fee (0.25%)</span>
+                    }
+                  >
+                    {trade?.fee ? `${trade.fee}` : undefined}
+                  </List.KeyValue>
+                  <List.KeyValue
+                    className="!py-0"
+                    title={
+                      <span className="text-muted-foreground">
+                        Accept{' '}
+                        <a
+                          href="https://www.orbs.com/dtwap-dlimit-disclaimer/"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="border-b border-muted-foreground"
+                        >
+                          Disclaimer
+                        </a>
+                      </span>
+                    }
+                  >
+                    <Switch
+                      checked={acceptDisclaimer}
+                      onCheckedChange={setAcceptDisclaimer}
+                    />
+                  </List.KeyValue>
+                </List>
                 <DialogFooter>
-                  <div className="flex flex-col gap-4 w-full">
-                    <TwapTradeTxDialog>
-                      <DialogTrigger>
+                  <Checker.Connect>
+                    <Checker.Network chainId={chainId}>
+                      {/* <Checker.Amounts chainId={chainId} amount={swapAmount}>
+                <Checker.ApproveERC20
+                  id="approve-erc20"
+                  amount={swapAmount}
+                  contract={simulation?.request?.address}
+                > */}
+                      <Checker.Success tag={APPROVE_TAG_SWAP}>
                         <Button
                           fullWidth
                           size="xl"
-                          onClick={confirm}
-                          // loading={!write && !isError}
-                          // onClick={() => write?.(confirm)}
-                          // disabled={Boolean(
-                          //   !!error ||
-                          //     isWritePending ||
-                          //     Boolean(
-                          //       !sendTransactionAsync &&
-                          //         swapAmount?.greaterThan(ZERO),
-                          //     ) ||
-                          //     isError,
-                          // )}
+                          loading={!write && !isError}
+                          onClick={() => write?.(confirm)}
+                          disabled={Boolean(
+                            !!error ||
+                              isWritePending ||
+                              Boolean(
+                                !sendTransactionAsync &&
+                                  swapAmount?.greaterThan(ZERO),
+                              ) ||
+                              isError,
+                          )}
                           // color={
                           //   isError
                           //     ? 'red'
@@ -438,17 +458,33 @@ export const TwapTradeReviewDialog: FC<{
                           // }
                           testId="confirm-swap"
                         >
-                          Confirm
+                          {isError
+                            ? 'Shoot! Something went wrong :('
+                            : isWrap
+                              ? 'Wrap'
+                              : isUnwrap
+                                ? 'Unwrap'
+                                : `Swap ${token0?.symbol} for ${token1?.symbol}`}
                         </Button>
-                      </DialogTrigger>
-                    </TwapTradeTxDialog>
-                  </div>
+                      </Checker.Success>
+                      {/* </Checker.ApproveERC20> */}
+                      {/* </Checker.Amounts> */}
+                    </Checker.Network>
+                  </Checker.Connect>
                 </DialogFooter>
-              </DialogContent>
-            </>
-          )}
-        </DialogReview>
-      </DialogProvider>
-    </Trace>
+              </div>
+            </DialogContent>
+          </>
+        )}
+      </DialogReview>
+      <DialogConfirm
+        chainId={chainId}
+        status={status}
+        testId="make-another-swap"
+        buttonText="Make another swap"
+        txHash={data}
+        successMessage={`You ${isWrap ? 'wrapped' : isUnwrap ? 'unwrapped' : 'sold'} $tradeRef.current?.amountIn?.toSignificant(6)$token0?.symbol$isWrap ? 'to' : isUnwrap ? 'to' : 'for'$tradeRef.current?.amountOut?.toSignificant(6)$token1?.symbol`}
+      />
+    </DialogProvider>
   )
 }

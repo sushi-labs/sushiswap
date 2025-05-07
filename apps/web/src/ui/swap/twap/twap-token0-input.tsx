@@ -21,7 +21,6 @@ export const TwapToken0Input = () => {
       value={swapAmountString}
       onChange={setSwapAmount}
       currency={token0}
-      loading={isLoading}
       currencyLoading={isLoading}
       allowNative={isWNativeSupported(chainId)}
       label="You're selling"

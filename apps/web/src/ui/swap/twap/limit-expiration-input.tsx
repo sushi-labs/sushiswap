@@ -31,13 +31,12 @@ export const LimitExpirationInput = () => {
   } = useDerivedStateTwap()
 
   return (
-    <div className="flex justify-between items-center">
+    <div className="flex justify-between items-center pb-2">
       <span className="text-muted-foreground font-medium">Expires in</span>
       <RadioGroup value={expiry} className="gap-2 flex flex-wrap py-1">
         {EXPIRATION_OPTIONS.map((option) => (
           <Radio value={option.value} key={option.value.unit}>
             <Toggle
-              //   disabled={isLoading}
               variant="outline"
               className="whitespace-nowrap !rounded-[50px] !px-4 !h-7"
               onClick={() => setExpiry(option.value)}

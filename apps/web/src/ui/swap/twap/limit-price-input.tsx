@@ -13,7 +13,7 @@ import {
   classNames,
 } from '@sushiswap/ui'
 import { useEffect, useMemo, useState } from 'react'
-import { Amount, Price, Type } from 'sushi/currency'
+import { Amount, Price, type Type } from 'sushi/currency'
 import { parseUnits } from 'viem/utils'
 import { useDerivedStateTwap } from './derivedstate-twap-provider'
 
@@ -38,23 +38,6 @@ const PRICE_OPTIONS = [
 
 type PriceOption = (typeof PRICE_OPTIONS)[number]
 
-{
-  /* <Web3Input.Currency
-id="swap-from"
-type="INPUT"
-className="border border-accent p-3 bg-white dark:bg-slate-800 rounded-xl"
-chainId={chainId}
-onSelect={setToken1}
-value={swapAmountString}
-onChange={setSwapAmount}
-currency={token1}
-loading={isLoading}
-currencyLoading={isLoading}
-allowNative={isWNativeSupported(chainId)}
-label="You're buying"
-/> */
-}
-
 // interface LimitOrderPriceInputProps {
 //   error?: string
 //   hidePinnedTokens?: boolean
@@ -68,18 +51,6 @@ label="You're buying"
 //   onNetworkChange?: (network: number) => void
 // }
 
-const applyPriceOption = (price: Price<Type, Type>, { value }: PriceOption) => {
-  const oneUnitOfBaseCurrency = Amount.fromRawAmount(
-    price.baseCurrency,
-    parseUnits('1', price.baseCurrency.decimals),
-  )
-  return price.quote(oneUnitOfBaseCurrency)
-}
-
-// const applyPriceOption = (price: string, { value }: PriceOption) => {
-//   return (+price * (1 + value / 100))
-// }
-
 export const LimitPriceInput = () => {
   const {
     state: { token0, token1, marketPrice, limitPrice },
@@ -88,28 +59,35 @@ export const LimitPriceInput = () => {
     isLoading,
   } = useDerivedStateTwap()
 
+  const token0PriceQuote = useMemo(() => {
+    if (!limitPrice) return undefined
+
+    const oneUnitOfBaseCurrency = Amount.fromRawAmount(
+      limitPrice.baseCurrency,
+      parseUnits('1', limitPrice.baseCurrency.decimals),
+    )
+
+    return limitPrice.quote(oneUnitOfBaseCurrency)
+  }, [limitPrice])
+
   const ADJUSTED_PRICES = useMemo(() => {
     if (!marketPrice) return undefined
 
-    const oneUnitOfBaseCurrency = Amount.fromRawAmount(
-      marketPrice.baseCurrency,
-      parseUnits('1', marketPrice.baseCurrency.decimals),
-    )
-
     const getAdjustedPrice = (priceAdjustmentPercentage: number) => {
       if (priceAdjustmentPercentage === 0) return marketPrice
+
+      const oneUnitOfBaseCurrency = Amount.fromRawAmount(
+        marketPrice.baseCurrency,
+        parseUnits('1', marketPrice.baseCurrency.decimals),
+      )
+
       return new Price({
-        // 100 input token
-        baseAmount: Amount.fromRawAmount(
-          marketPrice.baseCurrency,
-          parseUnits('100', marketPrice.baseCurrency.decimals),
-        ),
-        // (100 + adjustmentPercentage) times the market quote amount for 1 input token
+        baseAmount: oneUnitOfBaseCurrency,
         quoteAmount: Amount.fromRawAmount(
           marketPrice.quoteCurrency,
-
-          BigInt(100 + priceAdjustmentPercentage) *
-            marketPrice.quote(oneUnitOfBaseCurrency).quotient,
+          (marketPrice.quote(oneUnitOfBaseCurrency).quotient *
+            BigInt(100 + priceAdjustmentPercentage)) /
+            100n,
         ),
       })
     }
@@ -182,21 +160,21 @@ export const LimitPriceInput = () => {
               // value={pending ? localValue : value}
               // readOnly={disabled}
               // onValueChange={setLimitPrice}
-              value={limitPrice?.toSignificant() ?? ''}
-              maxDecimals={token0?.decimals}
+              value={token0PriceQuote?.toSignificant() ?? ''}
+              maxDecimals={token1?.decimals}
               data-state={isLoading ? 'inactive' : 'active'}
               className={classNames('p-0 py-1 !text-3xl font-medium')}
             />
           </div>
-          {token0 ? (
+          {token1 ? (
             <div className="flex items-center gap-1">
               <Currency.Icon
                 disableLink
-                currency={token0}
+                currency={token1}
                 width={20}
                 height={20}
               />
-              <span className="font-medium">{token0.symbol}</span>
+              <span className="font-medium">{token1.symbol}</span>
             </div>
           ) : null}
 
