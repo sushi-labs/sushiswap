@@ -28,11 +28,13 @@ export const TableFiltersNetwork: FC<{
   network: ChainId | NonStandardChainId
   supportedNetworks?: readonly (ChainId | NonStandardChainId)[]
   unsupportedNetworkHref?: string
+  onSelect?: ((network: ChainId | NonStandardChainId) => void) | null
   className?: string
 }> = ({
   network,
   supportedNetworks = SUPPORTED_NETWORKS,
   unsupportedNetworkHref,
+  onSelect: _onSelect,
   className,
 }) => {
   const [open, setOpen] = useState(false)
@@ -42,18 +44,18 @@ export const TableFiltersNetwork: FC<{
 
   const onSelect = useCallback(
     (value: string) => {
-      const network = value.split('__')[1]
-      push(
-        replaceNetworkSlug(
-          isChainId(+network)
-            ? (+network as ChainId)
-            : (network as NonStandardChainId),
-          pathname,
-        ),
-        { scroll: false },
-      )
+      const _network = value.split('__')[1]
+
+      const network = isChainId(+_network)
+        ? (+_network as ChainId)
+        : (_network as NonStandardChainId)
+
+      if (_onSelect === null) return
+      if (typeof _onSelect === 'function') return _onSelect(network)
+
+      push(replaceNetworkSlug(network, pathname), { scroll: false })
     },
-    [pathname, push],
+    [pathname, push, _onSelect],
   )
 
   const isSupportedNetwork = useCallback(

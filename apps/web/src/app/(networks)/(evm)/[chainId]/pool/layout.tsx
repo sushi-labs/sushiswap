@@ -5,10 +5,6 @@ import type { ChainId } from 'sushi/chain'
 import { SidebarContainer, SidebarProvider } from '~evm/_common/ui/sidebar'
 import { Header } from '../header'
 
-export const metadata = {
-  title: 'Pool 💦',
-}
-
 export default async function PoolLayout(props: {
   children: React.ReactNode
   params: Promise<{ chainId: string }>

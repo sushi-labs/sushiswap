@@ -6,8 +6,36 @@ import type { EvmChainId } from 'sushi'
 import { isSushiSwapV2ChainId } from 'sushi/config'
 import { isAddress } from 'viem'
 
-export const metadata: Metadata = {
-  title: 'Pool 💦',
+export async function generateMetadata(props: {
+  params: Promise<{ chainId: string; address: string }>
+}): Promise<Metadata> {
+  console.log('generateMetadata')
+  const params = await props.params
+  const { chainId: _chainId, address } = params
+  const chainId = +_chainId as EvmChainId
+
+  if (
+    !isSushiSwapV2ChainId(chainId) ||
+    !isAddress(address, { strict: false })
+  ) {
+    return {}
+  }
+
+  const pool = await unstable_cache(
+    async () => getV2Pool({ chainId, address }),
+    ['v2', 'pool', `${chainId}:${address}`],
+    {
+      revalidate: 60 * 15,
+    },
+  )()
+
+  if (!pool) {
+    return {}
+  }
+
+  return {
+    title: `BUY & SELL ${pool.token0.symbol}/${pool.token1.symbol}`,
+  }
 }
 
 export default async function Layout(props: {
@@ -30,7 +58,7 @@ export default async function Layout(props: {
 
   const pool = await unstable_cache(
     async () => getV2Pool({ chainId, address }),
-    ['pool', `${chainId}:${address}`],
+    ['v2', 'pool', `${chainId}:${address}`],
     {
       revalidate: 60 * 15,
     },
