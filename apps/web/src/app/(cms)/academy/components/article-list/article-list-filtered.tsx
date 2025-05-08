@@ -5,6 +5,7 @@ import {
   type AcademyArticleMeta,
   getAcademyArticles,
 } from '@sushiswap/graph-client/strapi'
+import { useIsMounted } from '@sushiswap/hooks'
 import { Loader } from '@sushiswap/ui'
 import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query'
 import { useEffect, useMemo } from 'react'
@@ -99,7 +100,9 @@ export function ArticleListFiltered({
 
   const meta = data?.pages[0].meta
 
-  if (isLoading) {
+  const isMounted = useIsMounted()
+
+  if (isLoading || !isMounted) {
     return (
       <div className={className}>
         {Array.from({ length: pageSize }).map((_, index) => (
