@@ -1,6 +1,7 @@
 'use client'
 
 import { Radio, RadioGroup } from '@headlessui/react'
+import { XCircleIcon } from '@heroicons/react/20/solid'
 import ArrowsUpDownIcon from '@heroicons/react/24/solid/ArrowsUpDownIcon'
 import {
   Currency,
@@ -12,8 +13,8 @@ import {
   Toggle,
   classNames,
 } from '@sushiswap/ui'
-import { useEffect, useMemo, useState } from 'react'
-import { Amount, Price, type Type } from 'sushi/currency'
+import { useCallback, useEffect, useMemo, useState } from 'react'
+import { Amount, Price } from 'sushi/currency'
 import { parseUnits } from 'viem/utils'
 import { useDerivedStateTwap } from './derivedstate-twap-provider'
 
@@ -35,21 +36,6 @@ const PRICE_OPTIONS = [
     value: 10,
   },
 ]
-
-type PriceOption = (typeof PRICE_OPTIONS)[number]
-
-// interface LimitOrderPriceInputProps {
-//   error?: string
-//   hidePinnedTokens?: boolean
-//   disableInsufficientBalanceError?: boolean
-//   hideSearch?: boolean
-//   hidePricing?: boolean
-//   hideIcon?: boolean
-//   label?: string
-//   networks?: readonly ChainId[]
-//   selectedNetwork?: ChainId
-//   onNetworkChange?: (network: number) => void
-// }
 
 export const LimitPriceInput = () => {
   const {
@@ -95,13 +81,58 @@ export const LimitPriceInput = () => {
     return PRICE_OPTIONS.map(({ value }) => getAdjustedPrice(value))
   }, [marketPrice])
 
-  const [priceOptionIndex, setPriceOptionIndex] = useState<number>(0)
+  const [customInput, setCustomInput] = useState<string | undefined>(undefined)
+  const [priceOptionIndex, _setPriceOptionIndex] = useState<number>(0)
+
+  const setPriceOptionIndex = useCallback((priceOptionIndex: number) => {
+    setCustomInput(undefined)
+    _setPriceOptionIndex(priceOptionIndex)
+  }, [])
+
+  const percentDiff = useMemo(() => {
+    if (!marketPrice || !limitPrice) return undefined
+
+    const oneUnit = Amount.fromRawAmount(
+      marketPrice.baseCurrency,
+      parseUnits('1', marketPrice.baseCurrency.decimals),
+    )
+    const marketAmount = marketPrice.quote(oneUnit).quotient
+    const limitAmount = limitPrice.quote(oneUnit).quotient
+
+    const diff = (limitAmount * 10_000n) / marketAmount - 10_000n
+    return Number(diff) / 100
+  }, [marketPrice, limitPrice])
 
   useEffect(() => {
-    if (ADJUSTED_PRICES?.length) {
-      setLimitPrice(ADJUSTED_PRICES[priceOptionIndex])
-    }
-  }, [ADJUSTED_PRICES, priceOptionIndex, setLimitPrice])
+    if (!ADJUSTED_PRICES?.length) return
+    if (priceOptionIndex === 0 && typeof customInput !== 'undefined') return
+    setLimitPrice(ADJUSTED_PRICES[priceOptionIndex])
+  }, [ADJUSTED_PRICES, priceOptionIndex, setLimitPrice, customInput])
+
+  const onInputChange = useCallback(
+    (value: string) => {
+      setCustomInput(value)
+      _setPriceOptionIndex(0)
+      if (!marketPrice || value === '') return
+
+      const oneUnit = Amount.fromRawAmount(
+        marketPrice.baseCurrency,
+        parseUnits('1', marketPrice.baseCurrency.decimals),
+      )
+      const inputAmount = parseUnits(value, marketPrice.quoteCurrency.decimals)
+
+      const customPrice = new Price({
+        baseAmount: oneUnit,
+        quoteAmount: Amount.fromRawAmount(
+          marketPrice.quoteCurrency,
+          BigInt(inputAmount.toString()),
+        ),
+      })
+
+      setLimitPrice(customPrice)
+    },
+    [marketPrice, setLimitPrice],
+  )
 
   return (
     <div
@@ -156,11 +187,12 @@ export const LimitPriceInput = () => {
             <TextField
               type="number"
               variant="naked"
-              // onValueChange={_onChange}
-              // value={pending ? localValue : value}
-              // readOnly={disabled}
-              // onValueChange={setLimitPrice}
-              value={token0PriceQuote?.toSignificant() ?? ''}
+              onValueChange={onInputChange}
+              value={
+                typeof customInput !== 'undefined'
+                  ? customInput
+                  : (token0PriceQuote?.toSignificant() ?? '')
+              }
               maxDecimals={token1?.decimals}
               data-state={isLoading ? 'inactive' : 'active'}
               className={classNames('p-0 py-1 !text-3xl font-medium')}
@@ -177,56 +209,34 @@ export const LimitPriceInput = () => {
               <span className="font-medium">{token1.symbol}</span>
             </div>
           ) : null}
-
-          {/* {selector} */}
-          {/* {!onSelect ? (
-          <div
-            id={`${id}-button`}
-            className={classNames(
-              'flex items-center gap-1 text-xl py-2 pl-2 pr-2 rounded-full font-medium whitespace-nowrap',
-            )}
-          >
-            {currency ? (
-              <>
-                {!hideIcon && (
-                  <>
-                    <div className="w-[28px] h-[28px] mr-0.5">
-                      <Currency.Icon
-                        disableLink
-                        currency={currency}
-                        width={28}
-                        height={28}
-                      />
-                    </div>
-                  </>
-                )}
-                {currency.symbol}
-              </>
-            ) : (
-              <span className="text-gray-400 dark:text-slate-500">
-                No token selected
-              </span>
-            )}
-          </div>
-        ) : null} */}
         </div>
-
-        {/* TODO: HANDLE CUSTOM INPUT */}
 
         <RadioGroup
           value={priceOptionIndex}
           className="gap-2 flex flex-wrap py-1"
         >
-          {PRICE_OPTIONS.map((option, idx) => (
+          {PRICE_OPTIONS.map((option, i) => (
             <Radio value={option.value} key={option.value}>
               <Toggle
                 disabled={isLoading}
                 variant="outline"
-                className="whitespace-nowrap !rounded-[50px] !px-4 !h-7"
-                onClick={() => setPriceOptionIndex(idx)}
-                pressed={priceOptionIndex === idx}
+                className="whitespace-nowrap !rounded-[50px] !px-4 !h-7 relative"
+                onClick={() => setPriceOptionIndex(i)}
+                pressed={priceOptionIndex === i}
               >
-                {option.label}
+                {i === 0 &&
+                typeof customInput !== 'undefined' &&
+                customInput !== '' &&
+                percentDiff !== undefined ? (
+                  <>
+                    {`${percentDiff > 0 ? '+' : ''}${percentDiff.toFixed(2)}%`}
+                    <div className="pl-1">
+                      <XCircleIcon height={14} width={14} />
+                    </div>
+                  </>
+                ) : (
+                  option.label
+                )}
               </Toggle>
             </Radio>
           ))}
@@ -234,37 +244,4 @@ export const LimitPriceInput = () => {
       </div>
     </div>
   )
-
-  // return (
-  //   <Card>
-  //     <CardHeader>
-  //       <CardTitle>
-  //         <CardHeader className="!flex-row justify-between items-center">
-  //           <div className="flex flex-row items-center gap-2">
-  //             <span>When 1</span>
-  //             {token0 ? (
-  //               <>
-  //                 <Currency.Icon currency={token0} width={16} height={16} />
-  //                 <span>{token0.name}</span>
-  //               </>
-  //             ) : (
-  //               <>
-  //                 <SkeletonCircle radius={16} />
-  //                 <SkeletonText />
-  //               </>
-  //             )}
-  //             <span>is worth</span>
-  //           </div>
-  //           <IconButton
-  //             icon={ArrowsUpDownIcon}
-  //             onClick={switchTokens}
-  //             name={'Switch tokens'}
-  //           />
-  //         </CardHeader>
-  //       </CardTitle>
-  //     </CardHeader>
-  //     {/* <CardContent></CardContent> */}
-  //     <CardFooter></CardFooter>
-  //   </Card>
-  // )
 }
