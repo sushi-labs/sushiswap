@@ -17,7 +17,7 @@ interface HeaderProps {
 
 export const Header: FC<HeaderProps> = ({
   chainId: _chainId,
-  supportedNetworks
+  supportedNetworks,
 }) => {
   const connectedChainId = useChainId()
   const chainId = _chainId ?? connectedChainId

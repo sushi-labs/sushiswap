@@ -24,7 +24,6 @@ import { TableFiltersNetwork } from '../pool/TableFiltersNetwork'
 import { TableFiltersPoolType } from '../pool/TableFiltersPoolType'
 import { TableFiltersResetButton } from '../pool/TableFiltersResetButton'
 import { TableFiltersSearchToken } from '../pool/TableFiltersSearchToken'
-import { useSidebar } from '../sidebar'
 import { SwapWidget } from '../swap/widget/swap-widget'
 import { TokenInfo } from './TokenInfo'
 import { TokenChart } from './charts/TokenChart'
@@ -41,17 +40,11 @@ export const TokenPage: FC<TokenPageProps> = ({ token: _token, tokenInfo }) => {
 
   const isMounted = useIsMounted()
 
-  const { isOpen: isSidebarOpen } = useSidebar()
-
-  const isLg = useMediaQuery({
-    query: `(min-width: 1080px)`,
-  })
-
   const isMd = useMediaQuery({
     query: `(min-width: 854px)`,
   })
 
-  const showWidget = isSidebarOpen ? isLg : isMd
+  const showWidget = isMd
 
   return (
     <>
@@ -160,12 +153,7 @@ export const TokenPage: FC<TokenPageProps> = ({ token: _token, tokenInfo }) => {
         </div>
       </section>
       {isMounted && !showWidget ? (
-        <div
-          className={classNames(
-            'absolute inset-x-0 bottom-0 p-4 z-[10]',
-            isSidebarOpen ? 'lg:ml-56' : '',
-          )}
-        >
+        <div className="absolute inset-x-0 bottom-0 p-4 z-[10]">
           <Link
             href={`/${EvmChainKey[token.chainId]}/swap?token1=${token.address}`}
           >
