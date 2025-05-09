@@ -1,8 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import type { EvmChainId } from 'sushi/chain'
-import { Token, tryParseAmount } from 'sushi/currency'
-
-import { withoutScientificNotation } from 'sushi/format'
+import { Amount, Token } from 'sushi/currency'
 import { merklRewardsTokensValidator } from './validator'
 
 interface UseAngleRewardTokensParams {
@@ -33,9 +31,9 @@ export const useRewardTokens = ({ chainId }: UseAngleRewardTokensParams) => {
             decimals: el.decimals!,
           })
           return {
-            minimumAmountPerHour: tryParseAmount(
-              withoutScientificNotation(el.minimumAmountPerHour.toString()),
+            minimumAmountPerHour: Amount.fromRawAmount(
               token,
+              el.minimumAmountPerHour,
             ),
             token,
           }
