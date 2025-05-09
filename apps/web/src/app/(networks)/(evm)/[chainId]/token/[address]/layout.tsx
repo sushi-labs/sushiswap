@@ -4,7 +4,6 @@ import {
 } from '@sushiswap/graph-client/data-api'
 import { notFound } from 'next/navigation'
 import type { EvmChainId } from 'sushi/chain'
-import { SidebarContainer, SidebarProvider } from '~evm/_common/ui/sidebar'
 import { Header } from '../../header'
 import { Providers } from './providers'
 
@@ -23,17 +22,10 @@ export default async function PoolLayout(props: {
 
   return (
     <Providers>
-      <SidebarProvider>
-        <Header chainId={chainId} />
-        <SidebarContainer
-          selectedNetwork={chainId}
-          supportedNetworks={SushiSwapChainIds}
-          unsupportedNetworkHref={'/ethereum/explore/tokens'}
-          shiftContent
-        >
-          <main className="flex flex-col h-full flex-1">{children}</main>
-        </SidebarContainer>
-      </SidebarProvider>
+      <Header chainId={chainId} supportedNetworks={SushiSwapChainIds} />
+      <main className="flex flex-col h-full flex-1 animate-slide">
+        {children}
+      </main>
     </Providers>
   )
 }

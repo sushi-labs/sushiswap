@@ -60,7 +60,7 @@ export function StrapiBannerContent({
         <XMarkIcon
           width={20}
           height={20}
-          className={'absolute top-[10px] right-[10px] cursor-pointer'}
+          className={'absolute top-[10px] right-[10px] cursor-pointer z-[1]'}
           onClick={onHide}
         />
         <Image
