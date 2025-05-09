@@ -239,6 +239,9 @@ importers:
       '@octokit/auth-app':
         specifier: 4.0.7
         version: 4.0.7(encoding@0.1.13)
+      '@orbs-network/twap-sdk':
+        specifier: 2.0.54
+        version: 2.0.54
       '@orbs-network/twap-ui-sushiswap':
         specifier: 1.1.71
         version: 1.1.71(bufferutil@4.0.8)(encoding@0.1.13)(react-dom@19.0.0(react@19.0.0))(react-native@0.73.7(@babel/core@7.26.0)(@babel/preset-env@7.24.4(@babel/core@7.26.0))(bufferutil@4.0.8)(encoding@0.1.13)(react@19.0.0)(utf-8-validate@5.0.10))(react@19.0.0)(utf-8-validate@5.0.10)
@@ -1005,6 +1008,7 @@ packages:
   '@aptos-labs/ts-sdk@1.27.0':
     resolution: {integrity: sha512-LsQpkrVEXGLaDFSLXvvU0+1X27kTlGBiy1rZqfcaW2hARN9m/Bc/AjztxXKeEXS/D7QmEJAeB6RS7CLM8aqC3w==}
     engines: {node: '>=11.0.0'}
+    deprecated: <1.30.0 is no longer supported please upgrade to the latest version
 
   '@aptos-labs/wallet-adapter-core@0.1.7':
     resolution: {integrity: sha512-g3HvX31kuFT5HqEe9Vh0ZgV1u0Otsfx54yeAwL7RO8CioBVBjYELhMsOYz0BOjecmAKhQ14G60VU8MqDyzYkIA==}
@@ -3397,6 +3401,9 @@ packages:
     resolution: {integrity: sha512-3giAOQvZiH5F9bMlMiv8+GSPMeqg0dbaeo58/0SlA9sxSqZhnUtxzX9/2FzyhS9sWQf5S0GJE0AKBrFqjpeYcg==}
     engines: {node: '>=8.0.0'}
 
+  '@orbs-network/twap-sdk@2.0.54':
+    resolution: {integrity: sha512-q3qRztikrWLKK3CT1sksS0K+qpVearvmaZv5UXrhAqQwaZ4foWxCk4gtAFGibe8nbvzq9z2W2g+yemPRCfOkSw==}
+
   '@orbs-network/twap-ui-sushiswap@1.1.71':
     resolution: {integrity: sha512-LvSniA+IcLKB+VUdTJZEWy+3rzce6z3Mwnv4XOJZnJc1f1ha78Qtrckrne0Ukj/67G7KEN/UDNfNc3DR8Rp5Ng==}
     peerDependencies:
@@ -3411,6 +3418,9 @@ packages:
 
   '@orbs-network/twap@2.3.4':
     resolution: {integrity: sha512-XYfV5k+1zvVtbU9a918Zj6Ucbza7Oi1+5muc8vJSni8eMJYAsOtzhA+eP/ullR7j3mrQqaj2LZLkK/I+u7lzSw==}
+
+  '@orbs-network/twap@2.7.2':
+    resolution: {integrity: sha512-gcv/0r0vV3K21VE1JRHL1Fr3B8Ug0Dr2xU5NhsknuGeVYhjckcKGhtUYZWG7seFNTJT80bV2HDydd1M9lckZhQ==}
 
   '@parcel/watcher-android-arm64@2.3.0':
     resolution: {integrity: sha512-f4o9eA3dgk0XRT3XhB0UWpWpLnKgrh1IwNJKJ7UJek7eTYccQ8LR7XUWFKqw6aEq5KUNlCcGvSzKqSX/vtWVVA==}
@@ -16153,6 +16163,11 @@ snapshots:
   '@opentelemetry/api@1.9.0':
     optional: true
 
+  '@orbs-network/twap-sdk@2.0.54':
+    dependencies:
+      '@orbs-network/twap': 2.7.2
+      bignumber.js: 9.1.1
+
   '@orbs-network/twap-ui-sushiswap@1.1.71(bufferutil@4.0.8)(encoding@0.1.13)(react-dom@19.0.0(react@19.0.0))(react-native@0.73.7(@babel/core@7.26.0)(@babel/preset-env@7.24.4(@babel/core@7.26.0))(bufferutil@4.0.8)(encoding@0.1.13)(react@19.0.0)(utf-8-validate@5.0.10))(react@19.0.0)(utf-8-validate@5.0.10)':
     dependencies:
       '@orbs-network/twap': 2.3.4
@@ -16192,6 +16207,8 @@ snapshots:
       - utf-8-validate
 
   '@orbs-network/twap@2.3.4': {}
+
+  '@orbs-network/twap@2.7.2': {}
 
   '@parcel/watcher-android-arm64@2.3.0':
     optional: true
