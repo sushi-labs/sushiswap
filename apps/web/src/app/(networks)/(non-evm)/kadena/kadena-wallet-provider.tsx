@@ -57,7 +57,7 @@ export const KadenaWalletProvider = ({
   const handleConnect = useCallback(
     async (walletAdapterName: string) => {
       if (!walletAdapterName) return
-      if (walletAdapterName === 'eckoWALLET') {
+      if (walletAdapterName !== 'WalletConnect') {
         setIsConnecting(true)
       }
       try {
