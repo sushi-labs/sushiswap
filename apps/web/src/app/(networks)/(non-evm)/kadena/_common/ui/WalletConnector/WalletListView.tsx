@@ -20,13 +20,14 @@ export const WalletListView = ({
               <Image
                 src={adapter.imageURI}
                 alt={adapter.name}
-                width={12}
-                height={12}
+                width={25}
+                height={25}
+                className="max-h-[25px]"
               />
             )}
-            className="flex items-center justify-start w-full min-w-[100px] text-left"
+            className="flex items-center justify-start w-full min-w-[180px] text-left"
             key={adapter.name}
-            title={adapter.name}
+            title={adapter.name === 'Ecko' ? 'eckoWALLET' : adapter.name}
             onClick={() => {
               adapter.detected
                 ? handleConnect(adapter.name)

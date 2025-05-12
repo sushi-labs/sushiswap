@@ -28,6 +28,7 @@
     "@kadena/client": "^1.17.1",
     "@kadena/wallet-adapter-ecko": "0.0.1-beta.2",
     "@kadena/wallet-adapter-react": "0.0.1-beta.2",
+    "@kadena/wallet-adapter-walletconnect": "0.0.1-beta.1",
     "@layerzerolabs/scan-client": "0.0.6",
     "@martianwallet/aptos-wallet-adapter": "0.0.5",
     "@msafe/aptos-wallet-adapter": "1.1.3",
