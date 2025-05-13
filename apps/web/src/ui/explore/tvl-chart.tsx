@@ -99,6 +99,8 @@ export const TVLChart: FC<TVLChart> = ({ data, chainId }) => {
     () => ({
       tooltip: {
         trigger: 'axis',
+        padding: 0,
+        borderWidth: 0,
         axisPointer: {
           lineStyle: {
             type: 'solid',
@@ -112,7 +114,7 @@ export const TVLChart: FC<TVLChart> = ({ data, chainId }) => {
         top: 0,
         left: 0,
         right: 0,
-        bottom: 30,
+        bottom: 40,
       },
       xAxis: [
         {
@@ -144,7 +146,6 @@ export const TVLChart: FC<TVLChart> = ({ data, chainId }) => {
                   ? `{max|${label}}`
                   : label
             },
-            padding: [0, 10, 0, 10],
             rich: {
               min: {
                 padding: [0, 10, 0, 50],

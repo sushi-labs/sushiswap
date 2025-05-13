@@ -96,14 +96,14 @@ function SkeletonText({
 
 type ChartType = 'area' | 'bar'
 
-function ChartLoadingStateMask({
+function SkeletonChartLoadingStateMask({
   type,
   height,
 }: { type: ChartType; height: number }) {
   switch (type) {
     case 'area':
       return (
-        <g transform={`translate(0, ${height - 40}) scale(1,-1)`}>
+        <g transform={`translate(0, ${height}) scale(1,-1)`}>
           <defs>
             <pattern
               id="wavePattern"
@@ -127,7 +127,7 @@ function ChartLoadingStateMask({
       )
     case 'bar':
       return (
-        <g transform={`translate(0, ${height - 40}) scale(1,-1)`}>
+        <g transform={`translate(0, ${height}) scale(1,-1)`}>
           {Array.from({ length: 25 }).map((_, i) => {
             const _height = Math.random() * height * 0.8 + 20
             return (
@@ -151,13 +151,13 @@ function ChartLoadingStateMask({
   }
 }
 
-function SkeletonXChartAxe({
+function SkeletonChartXAxe({
   height,
 }: {
   height: number
 }) {
   return (
-    <svg transform={`translate(0, ${height - 19})`}>
+    <svg transform={`translate(0, ${height})`}>
       <rect
         width="7%"
         height="16"
@@ -197,11 +197,11 @@ function SkeletonXChartAxe({
   )
 }
 
-function SkeletonYChartAxe() {
+function SkeletonChartYAxe() {
   return (
     <g transform={`translate(0, 0)`}>
       <rect
-        width="32px"
+        width="36px"
         height="16"
         rx="3"
         y="0%"
@@ -209,34 +209,34 @@ function SkeletonYChartAxe() {
         className={classNames(skeletonFillColorClassName, 'animate-pulse')}
       />
       <rect
-        width="32px"
+        width="36px"
         height="16"
         rx="3"
-        y="23.25%"
+        y="23.5%"
         x="0%"
         className={classNames(skeletonFillColorClassName, 'animate-pulse')}
       />
       <rect
-        width="32px"
+        width="36px"
         height="16"
         rx="3"
-        y="46.5%"
+        y="47.25%"
         x="0%"
         className={classNames(skeletonFillColorClassName, 'animate-pulse')}
       />
       <rect
-        width="32px"
+        width="36px"
         height="16"
         rx="3"
-        y="69.75%"
+        y="71%"
         x="0%"
         className={classNames(skeletonFillColorClassName, 'animate-pulse')}
       />
       <rect
-        width="32px"
+        width="36px"
         height="16"
         rx="3"
-        y="93%"
+        y="94.5%"
         x="0%"
         className={classNames(skeletonFillColorClassName, 'animate-pulse')}
       />
@@ -244,33 +244,42 @@ function SkeletonYChartAxe() {
   )
 }
 
-function SkeletonChart({
-  height,
-  type,
-  showYChartAxe = false,
-}: {
-  height: number
-  type: ChartType
-  showYChartAxe?: boolean
-}) {
-  return (
-    <div className="relative flex flex-row">
-      {showYChartAxe && (
-        <svg width={58} height={height - 32} xmlns="http://www.w3.org/2000/svg">
-          <SkeletonYChartAxe />
-        </svg>
-      )}
-      <svg
-        width="100%"
-        height={height}
-        xmlns="http://www.w3.org/2000/svg"
-        fill="none"
-      >
-        <SkeletonXChartAxe height={height} />
-        <ChartLoadingStateMask type={type} height={height} />
-      </svg>
-    </div>
-  )
-}
+// function SkeletonChart({
+//   height,
+//   type,
+//   showYChartAxe = false,
+//   xAxisMargin = 0,
+// }: {
+//   height: number
+//   type: ChartType
+//   showYChartAxe?: boolean
+//   xAxisMargin?: number
+// }) {
+//   return (
+//     <div className="relative flex flex-row">
+//       {showYChartAxe && (
+//         <svg width={58} height={height - 32} xmlns="http://www.w3.org/2000/svg">
+//           <SkeletonYChartAxe />
+//         </svg>
+//       )}
+//       <svg
+//         width="100%"
+//         height={height}
+//         xmlns="http://www.w3.org/2000/svg"
+//         fill="none"
+//       >
+//         <SkeletonXChartAxe height={height} margin={xAxisMargin} />
+//         <ChartLoadingStateMask type={type} height={height - 8} />
+//       </svg>
+//     </div>
+//   )
+// }
 
-export { SkeletonBox, SkeletonCircle, SkeletonText, SkeletonChart }
+export {
+  SkeletonBox,
+  SkeletonCircle,
+  SkeletonText,
+  SkeletonChartYAxe,
+  SkeletonChartXAxe,
+  SkeletonChartLoadingStateMask,
+}

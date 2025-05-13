@@ -12,7 +12,9 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-  SkeletonChart,
+  SkeletonChartLoadingStateMask,
+  SkeletonChartXAxe,
+  SkeletonChartYAxe,
   classNames,
 } from '@sushiswap/ui'
 import format from 'date-fns/format'
@@ -227,6 +229,7 @@ export function BaseChart<EnabledTimeframes extends Timeframe[]>({
             color: '#A9A9A9',
             fontWeight: 600,
             margin: 24,
+            padding: [0, 0, 0, 14],
             formatter: (value: number) => {
               const date = new Date(value)
 
@@ -272,14 +275,14 @@ export function BaseChart<EnabledTimeframes extends Timeframe[]>({
             stack: 'total',
             animation: false,
             data,
-            barWidth: 10,
+            barWidth: selectedTimeframe === '7d' ? 30 : 10,
             barMinWidth: 10,
             barMaxWidth: '30%',
             barGap: '-20%',
           }) satisfies EChartOption.SeriesBar,
       ),
     }),
-    [data, meta, type, hasData, error],
+    [data, meta, type, hasData, error, selectedTimeframe],
   )
 
   const isMounted = useIsMounted()
@@ -315,16 +318,39 @@ export function BaseChart<EnabledTimeframes extends Timeframe[]>({
       <CardContent>
         {loading ? (
           isMounted ? (
-            <SkeletonChart height={350} type="bar" showYChartAxe={true} />
+            <SkeletonChart />
           ) : null
         ) : (
-          <ReactEchartsCore
-            option={DEFAULT_OPTION}
-            echarts={echarts}
-            style={{ height: '350px', width: '100%' }}
-          />
+          <>
+            <ReactEchartsCore
+              option={DEFAULT_OPTION}
+              echarts={echarts}
+              style={{ height: '350px', width: '100%' }}
+            />
+          </>
         )}
       </CardContent>
     </Card>
+  )
+}
+
+function SkeletonChart() {
+  const height = 350
+
+  return (
+    <div className="relative flex flex-row">
+      <svg width={62} height={height - 32} xmlns="http://www.w3.org/2000/svg">
+        <SkeletonChartYAxe />
+      </svg>
+      <svg
+        width="100%"
+        height={height}
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+      >
+        <SkeletonChartLoadingStateMask type="bar" height={height - 40} />
+        <SkeletonChartXAxe height={height - 19} />
+      </svg>
+    </div>
   )
 }
