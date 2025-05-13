@@ -1,6 +1,11 @@
 'use client'
 
-import { SkeletonChart, SkeletonText, Toggle } from '@sushiswap/ui'
+import {
+  SkeletonChartLoadingStateMask,
+  SkeletonChartXAxe,
+  SkeletonText,
+  Toggle,
+} from '@sushiswap/ui'
 import format from 'date-fns/format'
 import * as echarts from 'echarts'
 import ReactEcharts, { type EChartsOption } from 'echarts-for-react'
@@ -200,17 +205,15 @@ export const PriceChart: FC<PriceChartProps> = ({ token }) => {
 
   return isLoading ? (
     <div>
-      <div className="h-14 flex flex-col gap-1">
-        <div className="py-1">
-          <SkeletonText className="!h-6 !w-32" />
-        </div>
-        <SkeletonText fontSize="sm" className="!w-12" />
+      <div className="h-14 flex flex-col gap-1 space-y-2">
+        <SkeletonText className="!h-[26] !w-32" />
+        <SkeletonText fontSize="sm" className="!w-14" />
       </div>
-      <SkeletonChart type="area" height={300} />
+      <SkeletonChart type="area" />
     </div>
   ) : (
     <div>
-      <div className="flex justify-between">
+      <div className="flex justify-between ">
         <div className="flex flex-col gap-1">
           <div className="text-2xl font-bold">
             <span id="hoveredPrice">{formatUSD(currentPrice)}</span>
@@ -264,6 +267,24 @@ export const PriceChart: FC<PriceChartProps> = ({ token }) => {
           }, 0)
         }}
       />
+    </div>
+  )
+}
+
+export function SkeletonChart({ type }: { type: 'area' | 'bar' }) {
+  const height = 300
+
+  return (
+    <div className="relative flex flex-row">
+      <svg
+        width="100%"
+        height={height}
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+      >
+        <SkeletonChartLoadingStateMask type={type} height={height - 20} />
+        <SkeletonChartXAxe height={height - 16} />
+      </svg>
     </div>
   )
 }
