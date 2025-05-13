@@ -1,11 +1,11 @@
 import type { VariablesOf } from 'gql.tada'
 
-import { request, type RequestOptions } from 'src/lib/request.js'
-import { graphql } from '../graphql.js'
-import { IssueFieldsFragment } from '../fragments/issue-fields.js'
+import { type RequestOptions, request } from 'src/lib/request.js'
 import { TOKEN_SCANNER_GRAPHQL_URL } from '../constants.js'
-import { DE_FI_CHAIN_ID, TokenScannerChainId } from '../types/index.js'
+import { IssueFieldsFragment } from '../fragments/issue-fields.js'
+import { graphql } from '../graphql.js'
 import { TOKEN_SCANNER_REQUEST_HEADERS } from '../request-headers.js'
+import { DE_FI_CHAIN_ID, type TokenScannerChainId } from '../types/index.js'
 
 export const TokenScannerQuery = graphql(
   `query TokenScanner($address: String!, $chainId: Int!) {
@@ -31,7 +31,10 @@ export const TokenScannerQuery = graphql(
   [IssueFieldsFragment],
 )
 
-export type ScanToken = Omit<VariablesOf<typeof TokenScannerQuery>, "chainId"> & { chainId: TokenScannerChainId }
+export type ScanToken = Omit<
+  VariablesOf<typeof TokenScannerQuery>,
+  'chainId'
+> & { chainId: TokenScannerChainId }
 
 export type TokenScannerResponse = Awaited<ReturnType<typeof scanToken>>
 

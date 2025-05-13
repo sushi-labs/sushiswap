@@ -74,7 +74,7 @@ const navigationContainerVariants = cva(
     variants: {
       variant: {
         default:
-          'bg-gray-100 dark:bg-slate-900 border-b border-gray-200 dark:border-slate-800',
+          'bg-gray-100 dark:bg-slate-900 border-b border-gray-200 dark:border-slate-800 black:bg-background black:border-accent',
         transparent: '',
       },
     },
@@ -104,12 +104,17 @@ const NavigationContainer: React.FC<NavContainerProps> = ({
   )
 }
 
-export type NavigationElementShow = 'mobile' | 'desktop' | 'everywhere'
+export type NavigationElementShow =
+  | 'mobile'
+  | 'desktop'
+  | 'everywhere'
+  | 'never'
 
 const navigationElementShowMap: Record<NavigationElementShow, string> = {
   mobile: 'md:hidden block',
   desktop: 'md:block hidden',
   everywhere: '',
+  never: 'hidden',
 }
 
 export enum NavigationElementType {

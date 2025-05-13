@@ -1,10 +1,10 @@
 import type { VariablesOf } from 'gql.tada'
 
-import { request, type RequestOptions } from 'src/lib/request.js'
+import { type RequestOptions, request } from 'src/lib/request.js'
 import { SUSHI_DATA_API_HOST } from 'sushi/config/subgraph'
+import { Token as _Token } from 'sushi/currency'
 import { graphql } from '../../graphql.js'
 import { SUSHI_REQUEST_HEADERS } from '../../request-headers.js'
-import { Token as _Token } from 'sushi/currency'
 
 export const TokensQuery = graphql(
   `
@@ -38,7 +38,7 @@ export async function getTokens(
         url,
         document: TokensQuery,
         variables: {
-          chainId: variables.chainId as any
+          chainId: variables.chainId as any,
         },
         requestHeaders: SUSHI_REQUEST_HEADERS,
       },
@@ -47,10 +47,19 @@ export async function getTokens(
     if (result) {
       return {
         count: result.exploreTokens.length,
-        data: result.exploreTokens.map(({ address, chainId, symbol, name, decimals, logoUrl, ...rest}) => ({
-          token: new _Token({ address, chainId, symbol, name, decimals, logoUrl }),
-          ...rest,
-        }))
+        data: result.exploreTokens.map(
+          ({ address, chainId, symbol, name, decimals, logoUrl, ...rest }) => ({
+            token: new _Token({
+              address,
+              chainId,
+              symbol,
+              name,
+              decimals,
+              logoUrl,
+            }),
+            ...rest,
+          }),
+        ),
       }
     }
   } catch (error) {
