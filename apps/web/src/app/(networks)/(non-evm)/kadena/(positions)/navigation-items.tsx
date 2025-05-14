@@ -75,7 +75,7 @@ export function NavigationItems() {
                   </PathnameButton>
                 </div>
               </TooltipTrigger>
-              <TooltipContent>
+              <TooltipContent className="!text-yellow-200">
                 <p>Not currently supported on Kadena network</p>
               </TooltipContent>
             </Tooltip>

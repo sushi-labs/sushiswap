@@ -89,7 +89,7 @@ export const HeaderElements = () => {
           >
             <TooltipTrigger asChild>
               <button
-                className="py-2 px-4 text-sm opacity-50 font-medium"
+                className="px-4 py-2 text-sm font-medium opacity-50"
                 disabled
                 type="button"
                 onClick={() => isSmallScreen && handleToggleTooltip('stake')}
@@ -98,7 +98,7 @@ export const HeaderElements = () => {
                 Stake
               </button>
             </TooltipTrigger>
-            <TooltipContent>
+            <TooltipContent className="!text-yellow-200">
               <p>Not currently supported on Kadena network</p>
             </TooltipContent>
           </Tooltip>

@@ -28,7 +28,7 @@ export const SwitchSwapType = () => {
 
   return (
     <TooltipProvider>
-      <div className="flex md:flex-row flex-col gap-2">
+      <div className="flex flex-col gap-2 md:flex-row">
         <div className="flex gap-2">
           {swapTypes.map((type) => {
             const isDisabled = type !== 'Swap'
@@ -64,7 +64,7 @@ export const SwitchSwapType = () => {
                 <TooltipTrigger asChild>
                   <div>{button}</div>
                 </TooltipTrigger>
-                <TooltipContent>
+                <TooltipContent className="!text-yellow-200">
                   <p>Not currently supported on Kadena network</p>
                 </TooltipContent>
               </Tooltip>
