@@ -280,8 +280,8 @@ importers:
         specifier: 0.0.1-beta.2
         version: 0.0.1-beta.2(@upstash/redis@1.22.1(encoding@0.1.13))(bufferutil@4.0.8)(encoding@0.1.13)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(typescript@5.7.2)(utf-8-validate@5.0.10)
       '@kadena/wallet-adapter-walletconnect':
-        specifier: 0.0.1-beta.1
-        version: 0.0.1-beta.1(@types/react@19.0.1)(@upstash/redis@1.22.1(encoding@0.1.13))(bufferutil@4.0.8)(encoding@0.1.13)(react@19.0.0)(typescript@5.7.2)(utf-8-validate@5.0.10)(zod@3.23.8)
+        specifier: 0.0.1-beta.2
+        version: 0.0.1-beta.2(@types/react@19.0.1)(@upstash/redis@1.22.1(encoding@0.1.13))(bufferutil@4.0.8)(encoding@0.1.13)(react@19.0.0)(typescript@5.7.2)(utf-8-validate@5.0.10)(zod@3.23.8)
       '@layerzerolabs/scan-client':
         specifier: 0.0.6
         version: 0.0.6(axios@1.8.4)
@@ -3168,8 +3168,8 @@ packages:
       react: ^18.2.0
       react-dom: ^18.2.0
 
-  '@kadena/wallet-adapter-walletconnect@0.0.1-beta.1':
-    resolution: {integrity: sha512-+oTFnAkNFvhjX+gWq0mdHRCWjOJUgMRHoXv5DWOPmGOkz3s6naxb3ilOpUtvVSBIBnfG83OOwywMLELu/TFgSQ==}
+  '@kadena/wallet-adapter-walletconnect@0.0.1-beta.2':
+    resolution: {integrity: sha512-hRHTfHb0FtQdY3ThRSE0/0HNGnFMmctHcQnM5aEI9eOoQ7aojSFLtehMioO7WH9aHr0wcxc07hEGvXsc6qu1ow==}
 
   '@layerzerolabs/scan-client@0.0.6':
     resolution: {integrity: sha512-K6Dpktj8bsPK/bE4DjgPclWn/mOZm/zm6lwRaaZvPkfPhmLQx43j5voBod9hqT2hSh26lC7ZkFAb+8aVUpPISQ==}
@@ -6503,12 +6503,15 @@ packages:
 
   '@walletconnect/ethereum-provider@2.11.0':
     resolution: {integrity: sha512-YrTeHVjuSuhlUw7SQ6xBJXDuJ6iAC+RwINm9nVhoKYJSHAy3EVSJZOofMKrnecL0iRMtD29nj57mxAInIBRuZA==}
+    deprecated: 'Reliability and performance improvements. See: https://github.com/WalletConnect/walletconnect-monorepo/releases'
 
   '@walletconnect/ethereum-provider@2.16.1':
     resolution: {integrity: sha512-oD7DNCssUX3plS5gGUZ9JQ63muQB/vxO68X6RzD2wd8gBsYtSPw4BqYFc7KTO6dUizD6gfPirw32yW2pTvy92w==}
+    deprecated: 'Reliability and performance improvements. See: https://github.com/WalletConnect/walletconnect-monorepo/releases'
 
   '@walletconnect/ethereum-provider@2.17.0':
     resolution: {integrity: sha512-b+KTAXOb6JjoxkwpgYQQKPUcTwENGmdEdZoIDLeRicUmZTn/IQKfkMoC2frClB4YxkyoVMtj1oMV2JAax+yu9A==}
+    deprecated: 'Reliability and performance improvements. See: https://github.com/WalletConnect/walletconnect-monorepo/releases'
 
   '@walletconnect/ethereum-provider@2.19.2':
     resolution: {integrity: sha512-NzPzNcjMLqow6ha2nssB1ciMD0cdHZesYcHSQKjCi9waIDMov9Fr2yEJccbiVFE3cxek7f9dCPsoZez2q8ihvg==}
@@ -17310,11 +17313,11 @@ snapshots:
       - typescript
       - utf-8-validate
 
-  '@kadena/wallet-adapter-walletconnect@0.0.1-beta.1(@types/react@19.0.1)(@upstash/redis@1.22.1(encoding@0.1.13))(bufferutil@4.0.8)(encoding@0.1.13)(react@19.0.0)(typescript@5.7.2)(utf-8-validate@5.0.10)(zod@3.23.8)':
+  '@kadena/wallet-adapter-walletconnect@0.0.1-beta.2(@types/react@19.0.1)(@upstash/redis@1.22.1(encoding@0.1.13))(bufferutil@4.0.8)(encoding@0.1.13)(react@19.0.0)(typescript@5.7.2)(utf-8-validate@5.0.10)(zod@3.23.8)':
     dependencies:
       '@kadena/client': 1.17.1(@upstash/redis@1.22.1(encoding@0.1.13))(bufferutil@4.0.8)(encoding@0.1.13)(utf-8-validate@5.0.10)
       '@kadena/wallet-adapter-core': 0.0.1-beta.2(@upstash/redis@1.22.1(encoding@0.1.13))(bufferutil@4.0.8)(encoding@0.1.13)(typescript@5.7.2)(utf-8-validate@5.0.10)
-      '@walletconnect/modal': 2.6.2(@types/react@19.0.1)(react@19.0.0)
+      '@walletconnect/modal': 2.7.0(@types/react@19.0.1)(react@19.0.0)
       '@walletconnect/sign-client': 2.8.6(@upstash/redis@1.22.1(encoding@0.1.13))(bufferutil@4.0.8)(utf-8-validate@5.0.10)
       '@walletconnect/utils': 2.19.2(@upstash/redis@1.22.1(encoding@0.1.13))(bufferutil@4.0.8)(typescript@5.7.2)(utf-8-validate@5.0.10)(zod@3.23.8)
     transitivePeerDependencies:
