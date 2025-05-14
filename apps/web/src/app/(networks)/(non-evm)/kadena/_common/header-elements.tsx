@@ -98,7 +98,7 @@ export const HeaderElements = () => {
                 Stake
               </button>
             </TooltipTrigger>
-            <TooltipContent className="!text-yellow-200">
+            <TooltipContent className="dark:!text-yellow-200">
               <p>Not currently supported on Kadena network</p>
             </TooltipContent>
           </Tooltip>
