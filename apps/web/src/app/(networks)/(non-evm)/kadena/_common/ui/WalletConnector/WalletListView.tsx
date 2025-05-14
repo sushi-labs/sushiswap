@@ -9,6 +9,8 @@ export const WalletListView = ({
 }) => {
   const { adapters, handleConnect } = useKadena()
 
+  console.log('adapters', adapters)
+
   return (
     <List
       className={`flex flex-col gap-1 !p-0 ${isFullWidth ? '[width:calc(var(--radix-popover-trigger-width)_-_10px)]' : ''}`}
