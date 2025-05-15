@@ -7,7 +7,7 @@ import { classNames } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import type { FC } from 'react'
 import { ChainId, EvmChain } from 'sushi/chain'
-import { useDerivedStateSimpleSwap } from './derivedstate-simple-swap-provider'
+import { useParams } from 'next/navigation';
 
 const BridgeInfo = {
   [ChainId.SKALE_EUROPA]: {
@@ -29,9 +29,8 @@ export const SimpleSwapBridgeBanner: FC<{ className?: string }> = ({
     false,
   )
 
-  const {
-    state: { chainId },
-  } = useDerivedStateSimpleSwap()
+  const params = useParams<{ chainId: string }>()
+  const chainId = +params.chainId
 
   return chainId in BridgeInfo && !hideBanner ? (
     <a

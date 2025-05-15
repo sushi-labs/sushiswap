@@ -1,6 +1,5 @@
 import { notFound } from 'next/navigation'
 import { isSupportedChainId } from 'src/config'
-import { Providers } from './providers'
 
 export default async function PoolLayout(props: {
   children: React.ReactNode
@@ -16,5 +15,5 @@ export default async function PoolLayout(props: {
     return notFound()
   }
 
-  return <Providers>{children}</Providers>
+  return children
 }

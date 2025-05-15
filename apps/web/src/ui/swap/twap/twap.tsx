@@ -228,7 +228,7 @@ const useToken = (address?: string) => {
   return result.data?.[0]
 }
 
-function Provider({ isLimit }: { isLimit?: boolean }) {
+function ProviderContainer({ isLimit }: { isLimit?: boolean }) {
   const { openConnectModal } = useConnectModal()
   const { connector } = useAccount()
   const { state, mutate } = useDerivedStateSimpleSwap()
@@ -243,12 +243,7 @@ function Provider({ isLimit }: { isLimit?: boolean }) {
   }, [state.swapAmountString, mutate])
 
   return (
-    <div className="flex flex-col gap-4">
-      <SimpleSwapHeader />
-      <div className="flex items-center justify-between">
-        <SwapModeButtons />
-        <SimpleSwapSettingsOverlay />
-      </div>
+    <>
       {isLimit ? <LimitMaintenanceMessage /> : <DCAMaintenanceMessage />}
       <TwapContainer
         TokenSelectModal={TokenSelectModal}
@@ -273,9 +268,31 @@ function Provider({ isLimit }: { isLimit?: boolean }) {
         Button={isLimit ? LimitButton : DCAButton}
         useToken={useToken}
       />
+    </>
+  )
+}
+
+export const LimitContainerPanel = () => {
+  return <div className="mt-[-6px]"><ProviderContainer isLimit={true} /></div>
+}
+
+export const TWAPContainerPanel = () => {
+  return <ProviderContainer />
+}
+
+function Provider({ isLimit }: { isLimit?: boolean }) {
+  return (
+    <div className="flex flex-col gap-4">
+      <SimpleSwapHeader />
+      <div className="flex items-center justify-between">
+        <SwapModeButtons />
+        <SimpleSwapSettingsOverlay />
+      </div>
+      <ProviderContainer isLimit={isLimit} />
     </div>
   )
 }
+
 export const LimitPanel = () => {
   return <Provider isLimit={true} />
 }

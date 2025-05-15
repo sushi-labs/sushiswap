@@ -3,7 +3,7 @@ import { Button, LinkInternal, typographyVariants } from '@sushiswap/ui'
 
 export default function NotFound() {
   return (
-    <div className="flex justify-center items-center pt-20 px-4">
+    <div className="flex justify-center items-center pt-20 px-4 animate-slide">
       <div className="flex flex-col gap-8 text-center">
         <h2
           className={typographyVariants({

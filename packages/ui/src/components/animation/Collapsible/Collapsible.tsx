@@ -7,6 +7,7 @@ import useResizeObserver from 'use-resize-observer'
 interface Collapsible {
   open: boolean
   children: ReactNode
+  disabled?: boolean
   className?: string
   afterChange?: () => void
 }
@@ -16,6 +17,7 @@ const AnimatedDiv = animated.div as any
 export const Collapsible: FC<Collapsible> = ({
   className,
   open,
+  disabled,
   children,
   afterChange,
 }) => {
@@ -33,15 +35,17 @@ export const Collapsible: FC<Collapsible> = ({
     onRest: afterChange,
   })
 
+  const style = disabled ? {
+    height: open ? 'auto' : 0,
+  } : {
+    ...props,
+    overflow: 'hidden',
+    width: '100%',
+    willChange: 'height',
+  }
+
   return (
-    <AnimatedDiv
-      style={{
-        ...props,
-        overflow: 'hidden',
-        width: '100%',
-        willChange: 'height',
-      }}
-    >
+    <AnimatedDiv style={style}>
       <div ref={ref} className={className}>
         {children}
       </div>
