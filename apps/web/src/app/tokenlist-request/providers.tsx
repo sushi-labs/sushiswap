@@ -1,7 +1,5 @@
 'use client'
 
-import '@rainbow-me/rainbowkit/styles.css'
-
 import { BaseProviders, OnramperProvider } from '@sushiswap/ui'
 import { QueryClientProvider } from '../../providers/query-client-provider'
 import { WagmiProvider } from '../../providers/wagmi-provider'

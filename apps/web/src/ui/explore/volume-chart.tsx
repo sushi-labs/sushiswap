@@ -2,9 +2,12 @@
 
 import type { AnalyticsDayBuckets } from '@sushiswap/graph-client/data-api'
 import format from 'date-fns/format'
-import ReactECharts from 'echarts-for-react'
-import type { EChartsOption } from 'echarts-for-react/lib/types'
-import echarts from 'echarts/lib/echarts'
+import type { EChartOption } from 'echarts'
+import ReactEchartsCore from 'echarts-for-react/lib/core'
+import { BarChart } from 'echarts/charts'
+import { GridComponent, TooltipComponent } from 'echarts/components'
+import * as echarts from 'echarts/core'
+import { CanvasRenderer } from 'echarts/renderers'
 import { useTheme } from 'next-themes'
 import { type FC, useCallback, useMemo } from 'react'
 import { type ChainId, EvmChain } from 'sushi/chain'
@@ -14,6 +17,8 @@ interface VolumeChart {
   data: AnalyticsDayBuckets
   chainId: ChainId
 }
+
+echarts.use([CanvasRenderer, BarChart, TooltipComponent, GridComponent])
 
 export const VolumeChart: FC<VolumeChart> = ({ data, chainId }) => {
   const { resolvedTheme } = useTheme()
@@ -37,7 +42,9 @@ export const VolumeChart: FC<VolumeChart> = ({ data, chainId }) => {
     return [v2, v3, totalVolume]
   }, [data])
 
-  const onMouseOver = useCallback((params: { data: number[] }[]) => {
+  const onMouseOver = useCallback((params: { data?: number[] }[]) => {
+    if (!params[0].data || !params[1].data) return ''
+
     const volumeNode = document.getElementById('hoveredVolume')
     const v2VolumeNode = document.getElementById('hoveredV2Volume')
     const v3VolumeNode = document.getElementById('hoveredV3Volume')
@@ -58,6 +65,8 @@ export const VolumeChart: FC<VolumeChart> = ({ data, chainId }) => {
       v3VolumeNode.innerHTML = params[1].data[1]
         ? formatUSD(params[1].data[1])
         : ''
+
+    return ''
   }, [])
 
   const onMouseLeave = useCallback(() => {
@@ -72,16 +81,25 @@ export const VolumeChart: FC<VolumeChart> = ({ data, chainId }) => {
     if (v3VolumeNode) v3VolumeNode.innerHTML = ''
   }, [totalVolume])
 
-  const DEFAULT_OPTION: EChartsOption = useMemo(
+  const DEFAULT_OPTION = useMemo<EChartOption>(
     () => ({
       tooltip: {
         trigger: 'axis',
-        formatter: onMouseOver,
+        padding: 0,
+        borderWidth: 0,
+        axisPointer: {
+          lineStyle: {
+            type: 'solid',
+          },
+        },
+        formatter: (params) =>
+          onMouseOver(Array.isArray(params) ? params : [params]),
       },
       grid: {
         top: 0,
         left: 0,
         right: 0,
+        bottom: 40,
       },
       xAxis: [
         {
@@ -95,6 +113,7 @@ export const VolumeChart: FC<VolumeChart> = ({ data, chainId }) => {
           axisTick: {
             show: false,
           },
+          splitNumber: 2,
           axisLabel: {
             hideOverlap: true,
             showMinLabel: true,
@@ -108,7 +127,6 @@ export const VolumeChart: FC<VolumeChart> = ({ data, chainId }) => {
                   ? `{max|${label}}`
                   : label
             },
-            padding: [0, 10, 0, 10],
             rich: {
               min: {
                 padding: [0, 10, 0, 50],
@@ -183,7 +201,7 @@ export const VolumeChart: FC<VolumeChart> = ({ data, chainId }) => {
           </div>
         </div>
       </div>
-      <ReactECharts
+      <ReactEchartsCore
         option={DEFAULT_OPTION}
         echarts={echarts}
         style={{ height: 400 }}

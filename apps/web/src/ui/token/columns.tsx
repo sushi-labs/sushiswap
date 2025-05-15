@@ -16,14 +16,16 @@ export const TOKENS_NAME_COLUMN: ColumnDef<Token, unknown> = {
   header: 'Name',
   cell: (props) => <TokenNameCell {...props.row.original} />,
   meta: {
-    skeleton: (
-      <div className="flex items-center w-full gap-2">
-        <div className="flex items-center">
-          <SkeletonCircle radius={26} />
+    body: {
+      skeleton: (
+        <div className="flex items-center w-full gap-2">
+          <div className="flex items-center">
+            <SkeletonCircle radius={26} />
+          </div>
+          <SkeletonText />
         </div>
-        <SkeletonText />
-      </div>
-    ),
+      ),
+    },
   },
 }
 
@@ -35,7 +37,9 @@ export const PRICE_COLUMN: ColumnDef<Token, unknown> = {
     <span className="font-medium">{`${formatUSD(props.row.original.price)}`}</span>
   ),
   meta: {
-    skeleton: <SkeletonText />,
+    body: {
+      skeleton: <SkeletonText />,
+    },
   },
 }
 
@@ -62,7 +66,9 @@ export const PRICE_CHANGE_1D_COLUMN: ColumnDef<Token, unknown> = {
     )
   },
   meta: {
-    skeleton: <SkeletonText fontSize="lg" />,
+    body: {
+      skeleton: <SkeletonText fontSize="lg" />,
+    },
   },
 }
 
@@ -74,9 +80,13 @@ export const FDV_COLUMN: ColumnDef<Token, unknown> = {
     <span className="font-medium">{`${formatUSD(props.row.original.marketCapUSD)}`}</span>
   ),
   meta: {
-    headerDescription:
-      'Fully diluted valuation (FDV) calculates the total market value assuming all tokens are in circulation.',
-    skeleton: <SkeletonText />,
+    header: {
+      description:
+        'Fully diluted valuation (FDV) calculates the total market value assuming all tokens are in circulation.',
+    },
+    body: {
+      skeleton: <SkeletonText />,
+    },
   },
 }
 
@@ -93,6 +103,8 @@ export const SPARKLINE_COLUMN: ColumnDef<Token, unknown> = {
     />
   ),
   meta: {
-    skeleton: <SkeletonBox className="w-full h-10" />,
+    body: {
+      skeleton: <SkeletonBox className="w-full h-10" />,
+    },
   },
 }

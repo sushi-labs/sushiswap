@@ -143,7 +143,6 @@ export const PortfolioDefaultView: FC<PortfolioDefaultProps> = ({
             />
           </div>
         </div>
-        <HeaderNetworkSelector networks={SUPPORTED_NETWORKS} hideNetworkName />
       </div>
       <div className="flex px-5 gap-x-2">
         {Object.values(PortfolioTab).map((_tab) => (

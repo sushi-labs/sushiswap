@@ -1,8 +1,8 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
-import { SUPPORTED_NETWORKS, isSupportedChainId } from 'src/config'
+import { isSupportedChainId } from 'src/config'
 import type { ChainId } from 'sushi/chain'
-import { SidebarContainer } from '~evm/_common/ui/sidebar'
+import { Header } from '~evm/[chainId]/header'
 import { Providers } from './providers'
 
 export const metadata: Metadata = {
@@ -16,9 +16,7 @@ export default async function SwapLayout(props: {
   params: Promise<{ chainId: string }>
 }) {
   const params = await props.params
-
   const { children } = props
-
   const chainId = +params.chainId as ChainId
 
   if (!isSupportedChainId) {
@@ -27,13 +25,8 @@ export default async function SwapLayout(props: {
 
   return (
     <Providers>
-      <SidebarContainer
-        selectedNetwork={chainId}
-        supportedNetworks={SUPPORTED_NETWORKS}
-        unsupportedNetworkHref="/ethereum/swap"
-      >
-        <main className="lg:p-4 mt-16 mb-[86px]">{children}</main>
-      </SidebarContainer>
+      <Header chainId={chainId} />
+      <main className="lg:p-4 mt-16 mb-[86px]">{children}</main>
     </Providers>
   )
 }

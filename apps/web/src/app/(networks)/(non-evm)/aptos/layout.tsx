@@ -16,7 +16,7 @@ export default function AptosLayout({
 }: { children: React.ReactNode }) {
   return (
     <Providers>
-      <div className="fixed flex flex-col h-full w-full">{children}</div>
+      <div className="flex flex-col h-full w-full">{children}</div>
     </Providers>
   )
 }

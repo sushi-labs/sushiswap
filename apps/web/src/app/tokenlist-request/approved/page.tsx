@@ -27,7 +27,7 @@ const COLUMNS: ColumnDef<ApprovedCommunityTokens[number], unknown>[] = [
     header: 'Network',
     accessorFn: (row) => row.chainId,
     cell: (props) => EvmChain.from(props.row.original.chainId)?.name,
-    meta: { skeleton: <SkeletonText fontSize="lg" /> },
+    meta: { body: { skeleton: <SkeletonText fontSize="lg" /> } },
   },
   {
     id: 'logo',
@@ -57,7 +57,9 @@ const COLUMNS: ColumnDef<ApprovedCommunityTokens[number], unknown>[] = [
       </div>
     ),
     meta: {
-      skeleton: <SkeletonCircle radius={32} />,
+      body: {
+        skeleton: <SkeletonCircle radius={32} />,
+      },
     },
   },
   {
@@ -66,7 +68,9 @@ const COLUMNS: ColumnDef<ApprovedCommunityTokens[number], unknown>[] = [
     accessorFn: (row) => row.name,
     cell: (props) => props.row.original.name,
     meta: {
-      skeleton: <SkeletonText fontSize="lg" />,
+      body: {
+        skeleton: <SkeletonText fontSize="lg" />,
+      },
     },
   },
   {
@@ -75,7 +79,9 @@ const COLUMNS: ColumnDef<ApprovedCommunityTokens[number], unknown>[] = [
     accessorFn: (row) => row.symbol,
     cell: (props) => props.row.original.symbol,
     meta: {
-      skeleton: <SkeletonText fontSize="lg" />,
+      body: {
+        skeleton: <SkeletonText fontSize="lg" />,
+      },
     },
   },
   {
@@ -98,7 +104,9 @@ const COLUMNS: ColumnDef<ApprovedCommunityTokens[number], unknown>[] = [
       </div>
     ),
     meta: {
-      skeleton: <SkeletonText fontSize="lg" />,
+      body: {
+        skeleton: <SkeletonText fontSize="lg" />,
+      },
     },
   },
 ]

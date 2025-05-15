@@ -7,7 +7,7 @@ import { POOL_SUPPORTED_NETWORKS } from 'src/config'
 import { GlobalStatsCharts } from 'src/ui/explore/global-stats-charts'
 import { PoolsFiltersProvider } from 'src/ui/pool'
 import type { ChainId } from 'sushi/chain'
-import { SidebarContainer } from '~evm/_common/ui/sidebar'
+import { Header } from '../../header'
 import { NavigationItems } from '../navigation-items'
 
 export const metadata: Metadata = {
@@ -30,13 +30,9 @@ export default async function ExploreLayout(props: {
   }
 
   return (
-    <SidebarContainer
-      selectedNetwork={chainId}
-      supportedNetworks={POOL_SUPPORTED_NETWORKS}
-      unsupportedNetworkHref={'/ethereum/explore/pools'}
-      shiftContent
-    >
-      <main className="flex flex-col h-full flex-1">
+    <>
+      <Header chainId={chainId} supportedNetworks={POOL_SUPPORTED_NETWORKS} />
+      <main className="flex flex-col h-full flex-1 animate-slide">
         <Container maxWidth="7xl" className="px-4 py-4">
           <GlobalStatsCharts chainId={chainId} />
         </Container>
@@ -49,6 +45,6 @@ export default async function ExploreLayout(props: {
           </div>
         </section>
       </main>
-    </SidebarContainer>
+    </>
   )
 }
