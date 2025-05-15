@@ -20,7 +20,9 @@ import { TwapDuration } from 'src/lib/swap/twap/types'
 import { ChainId } from 'sushi/chain'
 import { Amount, Price, type Type, tryParseAmount } from 'sushi/currency'
 import type { Fraction } from 'sushi/math'
+import { sz } from 'sushi/validate'
 import { parseUnits } from 'viem/utils'
+import { z } from 'zod'
 import { usePrices } from '~evm/_common/ui/price-provider/price-provider/use-prices'
 import {
   DerivedstateSimpleSwapProvider,
@@ -251,6 +253,32 @@ const useTwapTrade = ():
   ])
 }
 
+const bigIntValidator = z.preprocess(
+  (v) => (typeof v === 'string' ? BigInt(v) : v),
+  z.bigint(),
+)
+
+const prepareOrderArgsValidator = z.tuple([
+  sz.address(), // 0: exchange
+  sz.address(), // 1: srcToken
+  sz.address(), // 2: dstToken
+  bigIntValidator, // 3: srcAmount
+  bigIntValidator, // 4: srcBidAmount
+  bigIntValidator, // 5: dstMinAmount
+  z.coerce.number(), // 6: deadline
+  z.coerce.number(), // 7: bidDelay
+  z.coerce.number(), // 8: fillDelay
+  z.preprocess((v) => {
+    // twap SDK incorrectly returns data as an array, looks like it always returns [] though
+    if (Array.isArray(v)) {
+      if (v.length === 0) return '0x'
+      if (v.length === 1) return v[0]
+      throw new Error('data must be a single hex string')
+    }
+    return v ?? '0x'
+  }, sz.hex()), // 9: data
+])
+
 const usePrepareTwapOrderArgs = (trade: ReturnType<typeof useTwapTrade>) => {
   const {
     state: { chainId, swapAmount, token0, token1 },
@@ -258,7 +286,7 @@ const usePrepareTwapOrderArgs = (trade: ReturnType<typeof useTwapTrade>) => {
 
   return useMemo(() => {
     if (!trade || !trade.minAmountOut || !swapAmount || !token0 || !token1)
-      return undefined
+      return { params: undefined, error: undefined }
 
     const { minAmountOut, srcChunkAmount, duration, fillDelay } = trade
 
@@ -267,7 +295,7 @@ const usePrepareTwapOrderArgs = (trade: ReturnType<typeof useTwapTrade>) => {
       duration,
     )
 
-    return TwapSDK.onNetwork(chainId).prepareOrderArgs({
+    const sdkParams = TwapSDK.onNetwork(chainId).prepareOrderArgs({
       destTokenMinAmount: minAmountOut.toExact(),
       srcChunkAmount,
       deadline,
@@ -276,6 +304,35 @@ const usePrepareTwapOrderArgs = (trade: ReturnType<typeof useTwapTrade>) => {
       srcTokenAddress: token0?.wrapped.address,
       destTokenAddress: token1?.wrapped.address,
     })
+
+    const {
+      success,
+      data: params,
+      error,
+    } = prepareOrderArgsValidator.safeParse(sdkParams)
+
+    if (!success) {
+      return {
+        params: undefined,
+        error: error,
+      }
+    }
+
+    return {
+      params: {
+        exchange: params[0],
+        srcToken: params[1],
+        dstToken: params[2],
+        srcAmount: params[3],
+        srcBidAmount: params[4],
+        dstMinAmount: params[5],
+        deadline: params[6],
+        bidDelay: params[7],
+        fillDelay: params[8],
+        data: params[9],
+      },
+      error: undefined,
+    }
   }, [trade, swapAmount, token0, token1, chainId])
 }
 
