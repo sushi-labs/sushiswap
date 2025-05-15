@@ -1,14 +1,15 @@
 import { useQuery } from '@tanstack/react-query'
+import ms from 'ms'
 import { useEdgeConfig } from 'src/providers/edge-config-provider'
-import type { CrossChainSwapEdgeConfig } from '~evm/[chainId]/(trade)/cross-chain-swap-old/get-cross-chain-swap-edge-config'
+import type { LimitEdgeConfig } from '~evm/[chainId]/(trade)/limit-old/get-limit-edge-config'
 
-export const useIsCrossChainSwapMaintenance = () => {
-  const { maintenance } = useEdgeConfig<CrossChainSwapEdgeConfig>()
+export const useIsLimitMaintenance = () => {
+  const { maintenance } = useEdgeConfig<LimitEdgeConfig>()
 
   return useQuery({
-    queryKey: ['cross-chain-swap-maintenance'],
+    queryKey: ['limit-maintenance'],
     queryFn: async () => {
-      const resp = await fetch('/api/config/xswap', {
+      const resp = await fetch('/api/config/limit', {
         next: { revalidate: 60 },
       })
       const data = await resp.json()
@@ -20,6 +21,6 @@ export const useIsCrossChainSwapMaintenance = () => {
       return false
     },
     initialData: maintenance,
-    refetchInterval: 60000,
+    refetchInterval: ms('1m'),
   })
 }

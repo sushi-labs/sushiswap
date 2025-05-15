@@ -64,7 +64,7 @@ const DerivedstateSimpleTradeProvider: FC<
       ).toString()
       window.history.pushState({}, '', newUrl)
     },
-    [_setTradeMode, tradeMode],
+    [chainId, tradeMode],
   )
 
   return (
@@ -80,7 +80,7 @@ const DerivedstateSimpleTradeProvider: FC<
             chainId,
           },
         }
-      }, [tradeMode, chainId, tradeModeChanged])}
+      }, [tradeMode, chainId, setTradeMode, tradeModeChanged])}
     >
       <TradeModeContext.Provider
         value={useMemo(
@@ -91,7 +91,11 @@ const DerivedstateSimpleTradeProvider: FC<
             ),
             switchTradeMode: setTradeMode,
           }),
+<<<<<<< HEAD
           [tradeMode, setTradeMode],
+=======
+          [tradeMode, setTradeMode, chainId],
+>>>>>>> 1d8c958171 (fix: lint)
         )}
       >
         {children}

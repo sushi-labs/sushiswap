@@ -54,7 +54,11 @@ const useTradeModeOptions = (): TradeModeOption[] => {
           onClick: () => context.switchTradeMode(item),
         }
       }),
+<<<<<<< HEAD
     [context],
+=======
+    [modes, context],
+>>>>>>> 1d8c958171 (fix: lint)
   )
 }
 
