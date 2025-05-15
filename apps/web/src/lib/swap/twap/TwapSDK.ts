@@ -2,8 +2,8 @@ import {
   type TwapSDK as TwapSDKType,
   constructSDK,
 } from '@orbs-network/twap-sdk'
-import { Config } from '@orbs-network/twap-sdk/dist/lib/types'
-import { TwapSupportedChainId } from 'src/config'
+import type { Config } from '@orbs-network/twap-sdk/dist/lib/types'
+import type { TwapSupportedChainId } from 'src/config'
 import { ChainId } from 'sushi/chain'
 
 const CONFIG: Record<TwapSupportedChainId, Config> = {

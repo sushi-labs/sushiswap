@@ -1,5 +1,5 @@
 import { useId } from 'react'
-import { IconComponent } from '../types'
+import type { IconComponent } from '../types'
 
 export const OrbsIcon: IconComponent = (props) => {
   const idPrefix = useId()

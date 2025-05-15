@@ -1,4 +1,4 @@
-import { FC, ReactElement } from 'react'
+import type { FC, ReactElement } from 'react'
 
 export interface StepDetails {
   // Left-justified icon representing the step and grayed out when step is not active
