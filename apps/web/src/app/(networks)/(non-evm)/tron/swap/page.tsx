@@ -1,10 +1,6 @@
 'use client'
 import { SlippageToleranceStorageKey } from '@sushiswap/hooks'
-import {
-  Container,
-  SettingsModule,
-  SettingsOverlay,
-} from '@sushiswap/ui'
+import { Container, SettingsModule, SettingsOverlay } from '@sushiswap/ui'
 import { AmountIn } from '~tron/_common/ui/Swap/AmountIn'
 import { AmountOut } from '~tron/_common/ui/Swap/AmountOut'
 import { ReviewSwapDialog } from '~tron/_common/ui/Swap/ReviewSwapDialog'

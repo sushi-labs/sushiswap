@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import ms from 'ms'
 import { useEdgeConfig } from 'src/providers/edge-config-provider'
-import type { DCAEdgeConfig } from '~evm/[chainId]/(trade)/dca/get-dca-edge-config'
+import type { DCAEdgeConfig } from '~evm/[chainId]/(trade)/dca-old/get-dca-edge-config'
 
 export const useIsDCAMaintenance = () => {
   const { maintenance } = useEdgeConfig<DCAEdgeConfig>()

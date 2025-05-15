@@ -1,10 +1,6 @@
 'use client'
 
-import {
-  useParams,
-  usePathname,
-  useSearchParams,
-} from 'next/navigation'
+import { useParams, usePathname, useSearchParams } from 'next/navigation'
 import {
   type FC,
   createContext,
@@ -79,8 +75,8 @@ const DerivedstateSimpleSwapProvider: FC<
   DerivedStateSimpleSwapProviderProps
 > = ({ children }) => {
   const push = useCallback((path: string) => {
-    const newUrl = new URL(`${window.location.origin}${path}`).toString();
-    window.history.pushState({}, '', newUrl);
+    const newUrl = new URL(`${window.location.origin}${path}`).toString()
+    window.history.pushState({}, '', newUrl)
   }, [])
   const { chainId: _chainId } = useParams()
   const { address } = useAccount()
@@ -140,7 +136,7 @@ const DerivedstateSimpleSwapProvider: FC<
         { name: 'swapAmount', value: null },
         { name: 'token0', value: defaultedParams.get('token1') as string },
         { name: 'token1', value: defaultedParams.get('token0') as string },
-      ])}`
+      ])}`,
     )
   }, [createQueryString, defaultedParams, pathname, push])
 
@@ -166,7 +162,7 @@ const DerivedstateSimpleSwapProvider: FC<
         push(
           `${pathname}?${createQueryString([
             { name: 'token0', value: token0 },
-          ])}`
+          ])}`,
         )
       }
     },
@@ -202,7 +198,7 @@ const DerivedstateSimpleSwapProvider: FC<
         push(
           `${pathname}?${createQueryString([
             { name: 'token1', value: token1 },
-          ])}`
+          ])}`,
         )
       }
     },
@@ -229,7 +225,7 @@ const DerivedstateSimpleSwapProvider: FC<
         `${pathname}?${createQueryString([
           { name: 'token0', value: token0 },
           { name: 'token1', value: token1 },
-        ])}`
+        ])}`,
       )
     },
     [createQueryString, pathname, push],
@@ -241,7 +237,7 @@ const DerivedstateSimpleSwapProvider: FC<
       push(
         `${pathname}?${createQueryString([
           { name: 'swapAmount', value: value },
-        ])}`
+        ])}`,
       )
     },
     [createQueryString, pathname, push],

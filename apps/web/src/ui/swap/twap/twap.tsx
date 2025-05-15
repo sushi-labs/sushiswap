@@ -273,7 +273,11 @@ function ProviderContainer({ isLimit }: { isLimit?: boolean }) {
 }
 
 export const LimitContainerPanel = () => {
-  return <div className="mt-[-6px]"><ProviderContainer isLimit={true} /></div>
+  return (
+    <div className="mt-[-6px]">
+      <ProviderContainer isLimit={true} />
+    </div>
+  )
 }
 
 export const TWAPContainerPanel = () => {

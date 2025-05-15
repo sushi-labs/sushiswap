@@ -1,5 +1,5 @@
 import { getAll } from '@vercel/edge-config'
-import { TradeMode } from './config';
+import type { TradeMode } from './config'
 
 interface CrossChainSwapEdgeConfig {
   maintenance: boolean
@@ -18,10 +18,10 @@ interface SwapEdgeConfig {
 }
 
 interface TradeEdgeConfig {
-  swap: SwapEdgeConfig;
-  limit: LimitEdgeConfig;
-  dca: DCAEdgeConfig;
-  xswap: CrossChainSwapEdgeConfig;
+  swap: SwapEdgeConfig
+  limit: LimitEdgeConfig
+  dca: DCAEdgeConfig
+  xswap: CrossChainSwapEdgeConfig
 }
 
 const getTradeEdgeConfig = async (): Promise<TradeEdgeConfig> => {
@@ -29,14 +29,14 @@ const getTradeEdgeConfig = async (): Promise<TradeEdgeConfig> => {
 }
 
 const edgeConfigMap: Record<TradeMode, keyof TradeEdgeConfig> = {
-  'swap': 'swap',
-  'limit': 'limit',
-  'dca': 'dca',
-  'cross-chain-swap': 'xswap'
+  swap: 'swap',
+  limit: 'limit',
+  dca: 'dca',
+  'cross-chain-swap': 'xswap',
 }
 
 const sliceEdgeConfig = (config: TradeEdgeConfig, mode: TradeMode) => {
-  return config[edgeConfigMap[mode]];
+  return config[edgeConfigMap[mode]]
 }
 
 export { type TradeEdgeConfig, getTradeEdgeConfig, sliceEdgeConfig }

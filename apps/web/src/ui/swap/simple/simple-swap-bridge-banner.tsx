@@ -5,9 +5,9 @@ import { ArrowUpRightIcon } from '@heroicons/react/24/solid'
 import { useLocalStorage } from '@sushiswap/hooks'
 import { classNames } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
+import { useParams } from 'next/navigation'
 import type { FC } from 'react'
 import { ChainId, EvmChain } from 'sushi/chain'
-import { useParams } from 'next/navigation';
 
 const BridgeInfo = {
   [ChainId.SKALE_EUROPA]: {

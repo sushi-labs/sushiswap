@@ -1,20 +1,23 @@
 'use client'
 
-import {
-  useParams,
-  useRouter,
-} from 'next/navigation'
+import { useParams, useRouter } from 'next/navigation'
 import {
   type FC,
   createContext,
+  useCallback,
   useContext,
-  useMemo, useState, useCallback,
+  useMemo,
+  useState,
 } from 'react'
+import { type SupportedChainId, isSupportedChainId } from 'src/config'
 import { EvmChainId } from 'sushi/chain'
-import { TradeModeContext } from './trade-mode-buttons';
-import { isSupportedTradeModeOnChainId, TRADE_MODES, TradeMode } from './config';
-import { isSupportedChainId, type SupportedChainId } from 'src/config';
-import { EvmChainKey } from 'sushi/chain';
+import { EvmChainKey } from 'sushi/chain'
+import {
+  TRADE_MODES,
+  type TradeMode,
+  isSupportedTradeModeOnChainId,
+} from './config'
+import { TradeModeContext } from './trade-mode-buttons'
 
 interface State {
   mutate: {
@@ -48,16 +51,21 @@ const DerivedstateSimpleTradeProvider: FC<
   const [tradeMode, _setTradeMode] = useState<TradeMode>(trade as TradeMode)
   const [tradeModeChanged, _setTradeModeChanged] = useState<boolean>(false)
 
-  const setTradeMode = useCallback((trade: TradeMode) => {
-    if (trade === tradeMode) {
-      return;
-    }
+  const setTradeMode = useCallback(
+    (trade: TradeMode) => {
+      if (trade === tradeMode) {
+        return
+      }
 
-    _setTradeMode(trade)
-    _setTradeModeChanged(true)
-    const newUrl = new URL(`${window.location.origin}/${EvmChainKey[chainId]}/${trade}`).toString();
-    window.history.pushState({}, '', newUrl)
-  }, [_setTradeMode, tradeMode]);
+      _setTradeMode(trade)
+      _setTradeModeChanged(true)
+      const newUrl = new URL(
+        `${window.location.origin}/${EvmChainKey[chainId]}/${trade}`,
+      ).toString()
+      window.history.pushState({}, '', newUrl)
+    },
+    [chainId, tradeMode],
+  )
 
   return (
     <DerivedStateSimpleTradeContext.Provider
@@ -69,19 +77,23 @@ const DerivedstateSimpleTradeProvider: FC<
           state: {
             tradeMode,
             tradeModeChanged,
-            chainId
+            chainId,
           },
         }
-      }, [tradeMode, chainId, tradeModeChanged])}
+      }, [tradeMode, chainId, setTradeMode, tradeModeChanged])}
     >
-      <TradeModeContext.Provider value={useMemo(() => ({
-        tradeMode,
-        supportedTradeModes: TRADE_MODES.filter(item => isSupportedTradeModeOnChainId(item, chainId)),
-        switchTradeMode: setTradeMode
-      }), [
-        tradeMode,
-        setTradeMode
-      ])}>
+      <TradeModeContext.Provider
+        value={useMemo(
+          () => ({
+            tradeMode,
+            supportedTradeModes: TRADE_MODES.filter((item) =>
+              isSupportedTradeModeOnChainId(item, chainId),
+            ),
+            switchTradeMode: setTradeMode,
+          }),
+          [tradeMode, setTradeMode, chainId],
+        )}
+      >
         {children}
       </TradeModeContext.Provider>
     </DerivedStateSimpleTradeContext.Provider>
@@ -99,7 +111,4 @@ const useDerivedStateSimpleTrade = () => {
   return context
 }
 
-export {
-  DerivedstateSimpleTradeProvider,
-  useDerivedStateSimpleTrade,
-}
+export { DerivedstateSimpleTradeProvider, useDerivedStateSimpleTrade }

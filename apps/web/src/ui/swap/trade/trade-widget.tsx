@@ -1,19 +1,21 @@
 'use client'
 
-import { SimpleSwapSettingsOverlay } from '../simple/simple-swap-settings-overlay';
-import { TradeModeButtons } from './trade-mode-buttons';
-import { useDerivedStateSimpleTrade } from './derivedstate-simple-trade-provider';
+import { Collapsible } from '@sushiswap/ui'
+import { EdgeProvider, useEdgeConfig } from 'src/providers/edge-config-provider'
+import { DerivedstateCrossChainSwapProvider } from 'src/ui/swap/cross-chain/derivedstate-cross-chain-swap-provider'
 import { DerivedstateSimpleSwapProvider } from 'src/ui/swap/simple/derivedstate-simple-swap-provider'
-import { DerivedstateCrossChainSwapProvider } from 'src/ui/swap/cross-chain/derivedstate-cross-chain-swap-provider';
-import { EdgeProvider, useEdgeConfig } from 'src/providers/edge-config-provider';
-import { sliceEdgeConfig, TradeEdgeConfig } from './trade-edge-config';
-import { SwapWidget } from './widgets/swap';
-import { DCAWidget, LimitWidget } from './widgets/twap';
-import { CrossChainSwapWidget } from './widgets/cross-chain-swap';
-import { Collapsible } from '@sushiswap/ui';
+import { SimpleSwapSettingsOverlay } from '../simple/simple-swap-settings-overlay'
+import { useDerivedStateSimpleTrade } from './derivedstate-simple-trade-provider'
+import { type TradeEdgeConfig, sliceEdgeConfig } from './trade-edge-config'
+import { TradeModeButtons } from './trade-mode-buttons'
+import { CrossChainSwapWidget } from './widgets/cross-chain-swap'
+import { SwapWidget } from './widgets/swap'
+import { DCAWidget, LimitWidget } from './widgets/twap'
 
 export const TradeWidget = () => {
-  const { state: { tradeMode, chainId, tradeModeChanged } } = useDerivedStateSimpleTrade()
+  const {
+    state: { tradeMode, chainId, tradeModeChanged },
+  } = useDerivedStateSimpleTrade()
   const tradeEdge = useEdgeConfig<TradeEdgeConfig>()
   const modeEdge = sliceEdgeConfig(tradeEdge, tradeMode)
 
@@ -25,37 +27,37 @@ export const TradeWidget = () => {
             {tradeMode === 'swap' && (
               <DerivedstateSimpleSwapProvider>
                 <div className="flex items-center justify-between">
-                  <TradeModeButtons/>
-                  <SimpleSwapSettingsOverlay/>
+                  <TradeModeButtons />
+                  <SimpleSwapSettingsOverlay />
                 </div>
-                <SwapWidget animated={tradeModeChanged}/>
+                <SwapWidget animated={tradeModeChanged} />
               </DerivedstateSimpleSwapProvider>
             )}
             {tradeMode === 'limit' && (
               <DerivedstateSimpleSwapProvider>
                 <div className="flex items-center justify-between">
-                  <TradeModeButtons/>
-                  <SimpleSwapSettingsOverlay/>
+                  <TradeModeButtons />
+                  <SimpleSwapSettingsOverlay />
                 </div>
-                <LimitWidget animated={tradeModeChanged}/>
+                <LimitWidget animated={tradeModeChanged} />
               </DerivedstateSimpleSwapProvider>
             )}
             {tradeMode === 'dca' && (
               <DerivedstateSimpleSwapProvider>
                 <div className="flex items-center justify-between">
-                  <TradeModeButtons/>
-                  <SimpleSwapSettingsOverlay/>
+                  <TradeModeButtons />
+                  <SimpleSwapSettingsOverlay />
                 </div>
-                <DCAWidget animated={tradeModeChanged}/>
+                <DCAWidget animated={tradeModeChanged} />
               </DerivedstateSimpleSwapProvider>
             )}
             {tradeMode === 'cross-chain-swap' && (
               <DerivedstateCrossChainSwapProvider defaultChainId={chainId}>
                 <div className="flex items-center justify-between">
-                  <TradeModeButtons/>
-                  <SimpleSwapSettingsOverlay/>
+                  <TradeModeButtons />
+                  <SimpleSwapSettingsOverlay />
                 </div>
-                <CrossChainSwapWidget animated={tradeModeChanged}/>
+                <CrossChainSwapWidget animated={tradeModeChanged} />
               </DerivedstateCrossChainSwapProvider>
             )}
           </div>

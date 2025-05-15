@@ -96,8 +96,8 @@ const DerivedstateCrossChainSwapProvider: FC<
   DerivedStateCrossChainSwapProviderProps
 > = ({ children, defaultChainId }) => {
   const push = useCallback((path: string) => {
-    const newUrl = new URL(`${window.location.origin}${path}`).toString();
-    window.history.pushState({}, '', newUrl);
+    const newUrl = new URL(`${window.location.origin}${path}`).toString()
+    window.history.pushState({}, '', newUrl)
   }, [])
   const pathname = usePathname()
   const searchParams = useSearchParams()
@@ -212,7 +212,7 @@ const DerivedstateCrossChainSwapProvider: FC<
             { name: 'swapAmount', value: null },
             { name: 'chainId1', value: chainId.toString() },
             { name: 'token1', value: getQuoteCurrency(chainId) },
-          ])}`
+          ])}`,
         )
       }
     },
@@ -225,7 +225,7 @@ const DerivedstateCrossChainSwapProvider: FC<
       // If entity is provided, parse it to a string
       const token0 = getTokenAsString(_token0)
       push(
-        `${pathname}?${createQueryString([{ name: 'token0', value: token0 }])}`
+        `${pathname}?${createQueryString([{ name: 'token0', value: token0 }])}`,
       )
     },
     [createQueryString, pathname, push],
@@ -237,7 +237,7 @@ const DerivedstateCrossChainSwapProvider: FC<
       // If entity is provided, parse it to a string
       const token1 = getTokenAsString(_token1)
       push(
-        `${pathname}?${createQueryString([{ name: 'token1', value: token1 }])}`
+        `${pathname}?${createQueryString([{ name: 'token1', value: token1 }])}`,
       )
     },
     [createQueryString, pathname, push],
@@ -254,7 +254,7 @@ const DerivedstateCrossChainSwapProvider: FC<
         `${pathname}?${createQueryString([
           { name: 'token0', value: token0 },
           { name: 'token1', value: token1 },
-        ])}`
+        ])}`,
       )
     },
     [createQueryString, pathname, push],
@@ -266,7 +266,7 @@ const DerivedstateCrossChainSwapProvider: FC<
       push(
         `${pathname}?${createQueryString([
           { name: 'swapAmount', value: swapAmount },
-        ])}`
+        ])}`,
       )
     },
     [createQueryString, pathname, push],

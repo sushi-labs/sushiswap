@@ -35,14 +35,16 @@ export const Collapsible: FC<Collapsible> = ({
     onRest: afterChange,
   })
 
-  const style = disabled ? {
-    height: open ? 'auto' : 0,
-  } : {
-    ...props,
-    overflow: 'hidden',
-    width: '100%',
-    willChange: 'height',
-  }
+  const style = disabled
+    ? {
+        height: open ? 'auto' : 0,
+      }
+    : {
+        ...props,
+        overflow: 'hidden',
+        width: '100%',
+        willChange: 'height',
+      }
 
   return (
     <AnimatedDiv style={style}>

@@ -1,10 +1,13 @@
+import type { Metadata } from 'next'
+import { notFound } from 'next/navigation'
+import { SimpleSwapBanner } from 'src/ui/swap/simple/simple-swap-banner'
+import {
+  type TradeMode,
+  isSupportedTradeModeOnChainId,
+} from 'src/ui/swap/trade/config'
+import type { ChainId } from 'sushi/chain'
+import { Header } from '~evm/[chainId]/header'
 import { Providers } from './providers'
-import { Header } from '~evm/[chainId]/header';
-import type { ChainId } from 'sushi/chain';
-import { notFound } from 'next/navigation';
-import type { Metadata } from 'next';
-import { isSupportedTradeModeOnChainId, TradeMode } from 'src/ui/swap/trade/config';
-import { SimpleSwapBanner } from 'src/ui/swap/simple/simple-swap-banner';
 
 export const metadata: Metadata = {
   title: 'Trade',
@@ -14,12 +17,12 @@ export const metadata: Metadata = {
 
 export default async function TradeLayout(props: {
   children: React.ReactNode
-  params: Promise<{ chainId: string; trade: string; }>
+  params: Promise<{ chainId: string; trade: string }>
 }) {
   const params = await props.params
   const { children } = props
-  const chainId = +params.chainId as ChainId;
-  const trade = params.trade as TradeMode;
+  const chainId = +params.chainId as ChainId
+  const trade = params.trade as TradeMode
 
   if (!isSupportedTradeModeOnChainId(trade, chainId)) {
     return notFound()
@@ -28,9 +31,7 @@ export default async function TradeLayout(props: {
   return (
     <Providers>
       <Header chainId={chainId} />
-      <main className="lg:p-4 mt-16 mb-[86px] animate-slide">
-        {children}
-      </main>
+      <main className="lg:p-4 mt-16 mb-[86px] animate-slide">{children}</main>
       <SimpleSwapBanner className="hidden xl:flex" />
     </Providers>
   )

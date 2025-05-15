@@ -1,16 +1,23 @@
 'use client'
 
 import {
-  Button, CardContent, CardDescription, CardHeader, CardTitle, HoverCard, HoverCardContent, HoverCardTrigger,
+  Button,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
 } from '@sushiswap/ui'
-import { createContext, useContext, useMemo } from 'react';
-import { TRADE_MODES, TradeMode } from './config';
 import { ShuffleIcon } from '@sushiswap/ui/icons/ShuffleIcon'
+import { createContext, useContext, useMemo } from 'react'
+import { TRADE_MODES, type TradeMode } from './config'
 
 interface ContextState {
-  switchTradeMode(mode: TradeMode): void;
-  supportedTradeModes?: TradeMode[];
-  tradeMode: TradeMode;
+  switchTradeMode(mode: TradeMode): void
+  supportedTradeModes?: TradeMode[]
+  tradeMode: TradeMode
 }
 
 export const TradeModeContext = createContext<ContextState>({
@@ -19,11 +26,11 @@ export const TradeModeContext = createContext<ContextState>({
 } as ContextState)
 
 interface TradeModeOption {
-  name: string;
-  mode: TradeMode;
-  active: boolean;
-  onClick?: () => void;
-  href?: string;
+  name: string
+  mode: TradeMode
+  active: boolean
+  onClick?: () => void
+  href?: string
 }
 
 const OPTION_NAMES: Record<TradeMode, string> = {
@@ -34,17 +41,21 @@ const OPTION_NAMES: Record<TradeMode, string> = {
 }
 
 const useTradeModeOptions = (): TradeModeOption[] => {
-  const context = useContext(TradeModeContext);
-  const modes = context.supportedTradeModes ?? [...TRADE_MODES];
+  const context = useContext(TradeModeContext)
+  const modes = context.supportedTradeModes ?? [...TRADE_MODES]
 
-  return useMemo(() => modes.map(item => {
-    return {
-      mode: item,
-      name: OPTION_NAMES[item],
-      active: item === context.tradeMode,
-      onClick: () => context.switchTradeMode(item),
-    }
-  }), [context]);
+  return useMemo(
+    () =>
+      modes.map((item) => {
+        return {
+          mode: item,
+          name: OPTION_NAMES[item],
+          active: item === context.tradeMode,
+          onClick: () => context.switchTradeMode(item),
+        }
+      }),
+    [modes, context],
+  )
 }
 
 const TradeModeOptionButton = (item: TradeModeOption) => {
@@ -100,9 +111,13 @@ const TradeModeOptionButton = (item: TradeModeOption) => {
 }
 
 export const TradeModeButtons = () => {
-  const options = useTradeModeOptions();
+  const options = useTradeModeOptions()
 
-  return <div className="flex gap-2 flex-wrap">
-    { options.map((option, index) => <TradeModeOptionButton key={index} {...option} />) }
-  </div>
+  return (
+    <div className="flex gap-2 flex-wrap">
+      {options.map((option, index) => (
+        <TradeModeOptionButton key={index} {...option} />
+      ))}
+    </div>
+  )
 }
