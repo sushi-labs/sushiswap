@@ -95,7 +95,10 @@ interface DerivedStateCrossChainSwapProviderProps {
 const DerivedstateCrossChainSwapProvider: FC<
   DerivedStateCrossChainSwapProviderProps
 > = ({ children, defaultChainId }) => {
-  const { push } = useRouter()
+  const push = useCallback((path: string) => {
+    const newUrl = new URL(`${window.location.origin}${path}`).toString()
+    window.history.pushState({}, '', newUrl)
+  }, [])
   const pathname = usePathname()
   const searchParams = useSearchParams()
   const [tradeId, setTradeId] = useState(nanoid())
@@ -210,7 +213,6 @@ const DerivedstateCrossChainSwapProvider: FC<
             { name: 'chainId1', value: chainId.toString() },
             { name: 'token1', value: getQuoteCurrency(chainId) },
           ])}`,
-          { scroll: false },
         )
       }
     },
@@ -224,7 +226,6 @@ const DerivedstateCrossChainSwapProvider: FC<
       const token0 = getTokenAsString(_token0)
       push(
         `${pathname}?${createQueryString([{ name: 'token0', value: token0 }])}`,
-        { scroll: false },
       )
     },
     [createQueryString, pathname, push],
@@ -237,7 +238,6 @@ const DerivedstateCrossChainSwapProvider: FC<
       const token1 = getTokenAsString(_token1)
       push(
         `${pathname}?${createQueryString([{ name: 'token1', value: token1 }])}`,
-        { scroll: false },
       )
     },
     [createQueryString, pathname, push],
@@ -255,7 +255,6 @@ const DerivedstateCrossChainSwapProvider: FC<
           { name: 'token0', value: token0 },
           { name: 'token1', value: token1 },
         ])}`,
-        { scroll: false },
       )
     },
     [createQueryString, pathname, push],
@@ -268,7 +267,6 @@ const DerivedstateCrossChainSwapProvider: FC<
         `${pathname}?${createQueryString([
           { name: 'swapAmount', value: swapAmount },
         ])}`,
-        { scroll: false },
       )
     },
     [createQueryString, pathname, push],

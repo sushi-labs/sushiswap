@@ -22,6 +22,11 @@ export const config = {
     '/:chainId/migrate',
     '/:chainId/rewards',
     '/portal/:path*',
+
+    '/:chainId/swap-old/:path*',
+    '/:chainId/limit-old/:path*',
+    '/:chainId/dca-old/:path*',
+    '/:chainId/cross-chain-swap-old/:path*',
   ],
 }
 

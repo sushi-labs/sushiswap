@@ -30,10 +30,21 @@ const tailwindConfig = {
             transform: 'translateY(0)',
           },
         },
+        'slide-secondary': {
+          '0%': {
+            opacity: 0,
+            transform: 'translateY(-25px)',
+          },
+          '100%': {
+            opacity: 1,
+            transform: 'translateY(0)',
+          },
+        },
       },
       animation: {
         marquee: 'marquee 5s linear infinite',
         slide: 'slide .5s',
+        'slide-secondary': 'slide-secondary .4s',
       },
     },
   },

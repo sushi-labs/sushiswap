@@ -1,5 +1,5 @@
 import { EdgeProvider } from 'src/providers/edge-config-provider'
-import { getSwapEdgeConfig } from '~evm/[chainId]/(trade)/swap/get-swap-edge-config'
+import { getSwapEdgeConfig } from '~evm/[chainId]/(trade)/swap-old/get-swap-edge-config'
 
 export async function Providers({ children }: { children: React.ReactNode }) {
   const config = await getSwapEdgeConfig()
