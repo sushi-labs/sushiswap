@@ -376,7 +376,7 @@ export const TwapTradeReviewDialog: FC<{
                     >
                       {isEstGasError
                         ? 'Shoot! Something went wrong :('
-                        : `Swap ${token0?.symbol} for ${token1?.symbol}`}
+                        : 'Place Order'}
                     </Button>
                   </Checker.Network>
                 </Checker.Connect>

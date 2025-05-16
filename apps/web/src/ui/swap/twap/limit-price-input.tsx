@@ -56,31 +56,6 @@ export const LimitPriceInput = () => {
     return limitPrice.quote(oneUnitOfBaseCurrency)
   }, [limitPrice])
 
-  const ADJUSTED_PRICES = useMemo(() => {
-    if (!marketPrice) return undefined
-
-    const getAdjustedPrice = (priceAdjustmentPercentage: number) => {
-      if (priceAdjustmentPercentage === 0) return marketPrice
-
-      const oneUnitOfBaseCurrency = Amount.fromRawAmount(
-        marketPrice.baseCurrency,
-        parseUnits('1', marketPrice.baseCurrency.decimals),
-      )
-
-      return new Price({
-        baseAmount: oneUnitOfBaseCurrency,
-        quoteAmount: Amount.fromRawAmount(
-          marketPrice.quoteCurrency,
-          (marketPrice.quote(oneUnitOfBaseCurrency).quotient *
-            BigInt(100 + priceAdjustmentPercentage)) /
-            100n,
-        ),
-      })
-    }
-
-    return PRICE_OPTIONS.map(({ value }) => getAdjustedPrice(value))
-  }, [marketPrice])
-
   const [customInput, setCustomInput] = useState<string | undefined>(undefined)
   const [priceOptionIndex, _setPriceOptionIndex] = useState<number>(0)
 
@@ -89,8 +64,36 @@ export const LimitPriceInput = () => {
     _setPriceOptionIndex(priceOptionIndex)
   }, [])
 
+  useEffect(() => {
+    if (priceOptionIndex === 0 && typeof customInput !== 'undefined') return
+    if (!marketPrice) return
+    const priceAdjustmentPercentage = PRICE_OPTIONS[priceOptionIndex].value
+
+    const oneUnitOfBaseCurrency = Amount.fromRawAmount(
+      marketPrice.baseCurrency,
+      parseUnits('1', marketPrice.baseCurrency.decimals),
+    )
+
+    const limitPrice = new Price({
+      baseAmount: oneUnitOfBaseCurrency,
+      quoteAmount: Amount.fromRawAmount(
+        marketPrice.quoteCurrency,
+        (marketPrice.quote(oneUnitOfBaseCurrency).quotient *
+          BigInt(100 + priceAdjustmentPercentage)) /
+          100n,
+      ),
+    })
+
+    setLimitPrice(limitPrice)
+  }, [marketPrice, priceOptionIndex, setLimitPrice, customInput])
+
   const percentDiff = useMemo(() => {
-    if (!marketPrice || !limitPrice) return undefined
+    if (
+      !marketPrice ||
+      !limitPrice ||
+      !marketPrice.baseCurrency.equals(limitPrice.baseCurrency)
+    )
+      return undefined
 
     const oneUnit = Amount.fromRawAmount(
       marketPrice.baseCurrency,
@@ -102,12 +105,6 @@ export const LimitPriceInput = () => {
     const diff = (limitAmount * 10_000n) / marketAmount - 10_000n
     return Number(diff) / 100
   }, [marketPrice, limitPrice])
-
-  useEffect(() => {
-    if (!ADJUSTED_PRICES?.length) return
-    if (priceOptionIndex === 0 && typeof customInput !== 'undefined') return
-    setLimitPrice(ADJUSTED_PRICES[priceOptionIndex])
-  }, [ADJUSTED_PRICES, priceOptionIndex, setLimitPrice, customInput])
 
   const onInputChange = useCallback(
     (value: string) => {
