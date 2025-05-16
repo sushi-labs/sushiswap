@@ -18,7 +18,7 @@ export const CrossChainSwapToken0Input = () => {
     <Web3Input.Currency
       id="swap-from"
       type="INPUT"
-      className="p-4 bg-white dark:bg-slate-900 rounded-xl"
+      className="p-4 bg-gray-100 dark:bg-slate-900 rounded-xl"
       chainId={chainId0}
       onSelect={setToken0}
       value={swapAmountString}

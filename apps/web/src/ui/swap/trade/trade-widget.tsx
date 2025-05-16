@@ -21,7 +21,7 @@ export const TradeWidget = () => {
 
   return (
     <EdgeProvider config={modeEdge}>
-      <div className="bg-slate-800 p-4 rounded-xl">
+      <div className="bg-white dark:bg-slate-800 p-4 rounded-xl">
         <Collapsible open={true} disabled={!tradeModeChanged}>
           <div className="flex flex-col gap-4">
             {tradeMode === 'swap' && (

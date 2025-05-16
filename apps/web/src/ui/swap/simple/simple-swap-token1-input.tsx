@@ -25,7 +25,7 @@ export const SimpleSwapToken1Input = () => {
       id="swap-to"
       type="OUTPUT"
       disabled
-      className="p-4 bg-white dark:bg-slate-900 rounded-xl"
+      className="p-4 bg-gray-100 dark:bg-slate-900 rounded-xl"
       value={quote?.amountOut?.toSignificant() ?? ''}
       chainId={chainId}
       onSelect={setToken1}

@@ -17,7 +17,7 @@ import { DollarAmountDisplay } from '../Shared/DollarAmountDisplay'
 import { TokenBalanceDisplay } from '../Shared/TokenBalanceDisplay'
 
 const themes = {
-  default: 'bg-white dark:bg-slate-800',
+  default: 'bg-gray-100 dark:bg-slate-800',
   outline: 'border border-accent',
 } as const
 
