@@ -49,7 +49,7 @@ export const UnstakeSectionWidget = ({
       <div className="flex flex-col gap-4">
         <Web3Input.Currency
           type="INPUT"
-          className="p-4 py-1.5 !rounded-xl"
+          className="p-4 bg-white dark:bg-slate-800 rounded-xl"
           loading={false}
           value={input}
           onChange={onInput}
@@ -67,7 +67,7 @@ export const UnstakeSectionWidget = ({
         </div>
         <Web3Input.Currency
           type="INPUT"
-          className="p-4 py-1.5 !rounded-xl"
+          className="p-4 bg-white dark:bg-slate-800 rounded-xl"
           value={sushiAmount}
           currency={SUSHI[ChainId.ETHEREUM]}
           chainId={ChainId.ETHEREUM}

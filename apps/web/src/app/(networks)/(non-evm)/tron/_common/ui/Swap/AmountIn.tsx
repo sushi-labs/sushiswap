@@ -44,7 +44,7 @@ export const AmountIn = () => {
 
   return (
     <TokenInput
-      className="p-4 bg-white dark:bg-slate-900 rounded-xl"
+      className="p-4 bg-gray-100 dark:bg-slate-900 rounded-xl"
       type="input"
       amount={amountIn}
       setAmount={setAmountIn}
