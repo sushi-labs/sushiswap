@@ -11,7 +11,7 @@ import type { CurrencyInputProps } from './CurrencyInput'
 
 type PricePanel = Pick<
   CurrencyInputProps,
-  'loading' | 'currency' | 'value' | 'priceImpact'
+  'loading' | 'currency' | 'value' | 'priceImpact' | 'className'
 > & {
   error?: string
   price: number | undefined
@@ -24,6 +24,7 @@ export const PricePanel: FC<PricePanel> = ({
   value,
   priceImpact,
   error,
+  className,
 }) => {
   const parsedValue = useMemo(
     () => tryParseAmount(value, currency),
@@ -52,7 +53,12 @@ export const PricePanel: FC<PricePanel> = ({
   }
 
   return (
-    <p className="font-medium text-lg flex items-baseline select-none text-gray-500 dark:text-slate-400">
+    <p
+      className={classNames(
+        'font-medium text-lg flex items-baseline select-none text-gray-500 dark:text-slate-400',
+        className,
+      )}
+    >
       {!loading && price === 0 ? (
         <span className="text-sm flex items-center">Price not available</span>
       ) : (

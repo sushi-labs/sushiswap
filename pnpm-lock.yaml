@@ -239,6 +239,9 @@ importers:
       '@octokit/auth-app':
         specifier: 4.0.7
         version: 4.0.7(encoding@0.1.13)
+      '@orbs-network/twap-sdk':
+        specifier: 2.0.54
+        version: 2.0.54
       '@orbs-network/twap-ui-sushiswap':
         specifier: 1.1.72
         version: 1.1.72(bufferutil@4.0.8)(encoding@0.1.13)(react-dom@19.0.0(react@19.0.0))(react-native@0.73.7(@babel/core@7.26.0)(@babel/preset-env@7.24.4(@babel/core@7.26.0))(bufferutil@4.0.8)(encoding@0.1.13)(react@19.0.0)(utf-8-validate@5.0.10))(react@19.0.0)(utf-8-validate@5.0.10)
@@ -3432,6 +3435,9 @@ packages:
   '@opentelemetry/api@1.9.0':
     resolution: {integrity: sha512-3giAOQvZiH5F9bMlMiv8+GSPMeqg0dbaeo58/0SlA9sxSqZhnUtxzX9/2FzyhS9sWQf5S0GJE0AKBrFqjpeYcg==}
     engines: {node: '>=8.0.0'}
+
+  '@orbs-network/twap-sdk@2.0.54':
+    resolution: {integrity: sha512-q3qRztikrWLKK3CT1sksS0K+qpVearvmaZv5UXrhAqQwaZ4foWxCk4gtAFGibe8nbvzq9z2W2g+yemPRCfOkSw==}
 
   '@orbs-network/twap-ui-sushiswap@1.1.72':
     resolution: {integrity: sha512-RcPFtPHA1/k0GdBvEBTtV/Zx58XlCPsvnTI+DSsEWOWjIWDRgEZ7UDLWiyihfPGDEtPgoV40hjZ0X/gEzRZIiA==}
@@ -16238,6 +16244,11 @@ snapshots:
 
   '@opentelemetry/api@1.9.0':
     optional: true
+
+  '@orbs-network/twap-sdk@2.0.54':
+    dependencies:
+      '@orbs-network/twap': 2.3.4
+      bignumber.js: 9.1.1
 
   '@orbs-network/twap-ui-sushiswap@1.1.72(bufferutil@4.0.8)(encoding@0.1.13)(react-dom@19.0.0(react@19.0.0))(react-native@0.73.7(@babel/core@7.26.0)(@babel/preset-env@7.24.4(@babel/core@7.26.0))(bufferutil@4.0.8)(encoding@0.1.13)(react@19.0.0)(utf-8-validate@5.0.10))(react@19.0.0)(utf-8-validate@5.0.10)':
     dependencies:
