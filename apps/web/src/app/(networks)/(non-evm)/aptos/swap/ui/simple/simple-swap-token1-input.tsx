@@ -27,7 +27,7 @@ export const SimpleSwapToken1Input = () => {
       disabled={true}
       type="OUTPUT"
       value={outputSwapTokenAmount}
-      className="border border-accent p-3 bg-white dark:bg-slate-800 rounded-xl"
+      className="p-4 bg-white dark:bg-slate-900 rounded-xl"
       disableInsufficientBalanceError={true}
       label="Buy"
     />

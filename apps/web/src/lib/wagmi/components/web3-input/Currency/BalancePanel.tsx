@@ -1,5 +1,4 @@
 import { SkeletonText, classNames } from '@sushiswap/ui'
-import { WalletIcon } from '@sushiswap/ui/icons/WalletIcon'
 import { type FC, memo, useCallback } from 'react'
 import { Amount, Native, type Type } from 'sushi/currency'
 
@@ -27,10 +26,7 @@ export const BalancePanel: FC<BalancePanel> = memo(function BalancePanel({
   type,
 }) {
   const isMounted = useIsMounted()
-
-  const [big, portion] = (
-    balance ? `${balance?.toSignificant(6)}` : '0.00'
-  ).split('.')
+  const balanceStr = balance ? `${balance?.toSignificant(6)}` : `0`
 
   const onClick = useCallback(() => {
     if (onChange && balance?.greaterThan(0)) {
@@ -52,7 +48,7 @@ export const BalancePanel: FC<BalancePanel> = memo(function BalancePanel({
   if (loading || !isMounted) {
     return (
       <div className="w-[60px] flex items-center">
-        <SkeletonText fontSize="lg" className="w-full" />
+        <SkeletonText fontSize="sm" className="w-full" />
       </div>
     )
   }
@@ -66,16 +62,13 @@ export const BalancePanel: FC<BalancePanel> = memo(function BalancePanel({
       onClick={onClick}
       className={classNames(
         type === 'INPUT'
-          ? 'text-blue hover:text-blue-600 active:text-blue-700 hover:dark:text-slate-300'
+          ? 'text-skyblue hover:text-skyblue-600 active:text-skyblue-700'
           : 'text-gray-500 dark:text-slate-500',
-        'font-medium flex gap-1.5 items-center py-1 dark:text-slate-400 px-2 rounded-md',
+        'text-sm font-medium flex gap-1 items-center rounded-md',
       )}
       disabled={disableMaxButton}
     >
-      <WalletIcon width={18} height={18} />
-      <span className="text-lg">
-        {big}.<span className="text-sm font-semibold">{portion ?? '00'}</span>
-      </span>
+      Balance: {balanceStr}
     </button>
   )
 })

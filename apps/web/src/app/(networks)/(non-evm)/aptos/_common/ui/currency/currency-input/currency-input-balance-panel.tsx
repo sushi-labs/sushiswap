@@ -18,14 +18,21 @@ export const CurrencyInputBalancePanel: FC<CurrencyInputBalancePanel> = ({
   onClick,
   type,
 }) => {
-  const [big, portion] = useMemo(
+  const balanceStr = useMemo(
     () =>
-      (coinData
+      coinData
         ? `${new Fraction(coinData, 10 ** decimals).toSignificant(6)}`
-        : '0.00'
-      ).split('.'),
+        : '0',
     [coinData, decimals],
   )
+
+  if (isLoading) {
+    return (
+      <div className="w-[60px] flex items-center">
+        <SkeletonText fontSize="sm" className="w-full" />
+      </div>
+    )
+  }
 
   return (
     <button
@@ -35,21 +42,12 @@ export const CurrencyInputBalancePanel: FC<CurrencyInputBalancePanel> = ({
       onClick={onClick}
       className={classNames(
         type === 'INPUT'
-          ? 'text-blue hover:text-blue-600 active:text-blue-700 hover:dark:text-slate-300'
+          ? 'text-skyblue hover:text-skyblue-600 active:text-skyblue-700'
           : 'text-gray-500 dark:text-slate-500',
-        'font-medium flex gap-1.5 items-center py-1 dark:text-slate-400 px-2 rounded-md',
+        'text-sm font-medium flex gap-1 items-center rounded-md',
       )}
     >
-      <WalletIcon width={18} height={18} />
-      {isLoading ? (
-        <div className="w-[60px] flex items-center">
-          <SkeletonText fontSize="lg" className="w-full" />
-        </div>
-      ) : (
-        <span className="text-lg">
-          {big}.<span className="text-sm font-semibold">{portion ?? '00'}</span>
-        </span>
-      )}
+      Balance: {balanceStr}
     </button>
   )
 }

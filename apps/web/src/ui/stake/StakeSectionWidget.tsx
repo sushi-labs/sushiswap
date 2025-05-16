@@ -49,7 +49,7 @@ export const StakeSectionWidget = ({
       <div className="flex flex-col gap-4">
         <Web3Input.Currency
           type="INPUT"
-          className="border border-accent px-3 py-1.5 !rounded-xl"
+          className="p-4 py-1.5 !rounded-xl"
           loading={false}
           value={input}
           onChange={onInput}
@@ -67,7 +67,7 @@ export const StakeSectionWidget = ({
         </div>
         <Web3Input.Currency
           type="INPUT"
-          className="border border-accent px-3 py-1.5 !rounded-xl"
+          className="p-4 py-1.5 !rounded-xl"
           value={xSushiAmount}
           currency={XSUSHI[ChainId.ETHEREUM]}
           chainId={ChainId.ETHEREUM}
