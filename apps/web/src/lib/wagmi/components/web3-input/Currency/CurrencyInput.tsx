@@ -254,7 +254,7 @@ const CurrencyInput: FC<CurrencyInputProps> = ({
     <div
       className={classNames(
         _error ? '!bg-red-500/20 !dark:bg-red-900/30' : '',
-        'relative space-y-2 overflow-hidden pb-2',
+        'relative overflow-hidden',
         className,
       )}
     >
@@ -262,38 +262,69 @@ const CurrencyInput: FC<CurrencyInputProps> = ({
         data-state={fetching ? 'active' : 'inactive'}
         className="transition-all data-[state=inactive]:hidden data-[state=active]:block absolute inset-0 overflow-hidden p-4 before:absolute before:inset-0 before:-translate-x-full before:animate-[shimmer_.5s_infinite] before:bg-gradient-to-r before:from-transparent dark:before:via-slate-50/10 before:via-gray-900/[0.07] before:to-transparent"
       />
-      {label ? (
-        <span className="text-sm text-muted-foreground">{label}</span>
-      ) : null}
-      <div className="relative flex items-center gap-4">
-        <div
-          data-state={isLoading ? 'active' : 'inactive'}
-          className={classNames(
-            'data-[state=inactive]:hidden data-[state=active]:flex',
-            'gap-4 items-center justify-between flex-grow h-[44px]',
-          )}
-        >
-          <SkeletonBox className="w-2/3 h-[32px] rounded-lg" />
-          {currencyLoading ? (
-            <SkeletonBox className="w-1/3 h-[32px] rounded-lg" />
-          ) : null}
-        </div>
-        <div
-          data-state={isLoading ? 'inactive' : 'active'}
-          className="data-[state=inactive]:hidden data-[state=active]:flex flex-1 items-center"
-        >
-          <TextField
-            testdata-id={`${id}-input`}
-            type="number"
-            variant="naked"
-            disabled={disabled}
-            onValueChange={_onChange}
-            value={pending ? localValue : value}
-            readOnly={disabled}
-            maxDecimals={currency?.decimals}
+      <div className="flex items-center justify-between">
+        {label ? (
+          <span className="text-sm text-muted-foreground">{label}</span>
+        ) : (
+          <span />
+        )}
+
+        <BalancePanel
+          id={id}
+          loading={isBalanceLoading}
+          chainId={chainId}
+          account={address}
+          onChange={onChange}
+          currency={currency}
+          disableMaxButton={disableMaxButton}
+          balance={balance}
+          type={type}
+        />
+      </div>
+      <div className="relative flex items-center gap-4 mt-1">
+        <div className="w-full">
+          <div
+            data-state={isLoading ? 'active' : 'inactive'}
+            className={classNames(
+              'data-[state=inactive]:hidden data-[state=active]:flex',
+              'gap-4 items-center justify-between flex-grow h-[40px]',
+            )}
+          >
+            <SkeletonBox className="w-2/3 h-[28px] rounded-lg" />
+            {currencyLoading ? (
+              <SkeletonBox className="w-1/3 h-[28px] rounded-lg" />
+            ) : null}
+          </div>
+          <div
             data-state={isLoading ? 'inactive' : 'active'}
-            className={classNames('p-0 py-1 !text-3xl font-medium')}
-          />
+            className="data-[state=inactive]:hidden data-[state=active]:flex flex-1 items-center"
+          >
+            <TextField
+              testdata-id={`${id}-input`}
+              type="number"
+              variant="naked"
+              disabled={disabled}
+              onValueChange={_onChange}
+              value={pending ? localValue : value}
+              readOnly={disabled}
+              maxDecimals={currency?.decimals}
+              data-state={isLoading ? 'inactive' : 'active'}
+              className={classNames('p-0 py-1 w-full !text-2xl font-medium')}
+            />
+          </div>
+
+          {hidePricing ? (
+            <div />
+          ) : (
+            <PricePanel
+              value={value}
+              currency={currency}
+              priceImpact={priceImpact}
+              error={_error}
+              loading={isPriceLoading}
+              price={price}
+            />
+          )}
         </div>
 
         {selector}
@@ -326,31 +357,6 @@ const CurrencyInput: FC<CurrencyInputProps> = ({
             )}
           </div>
         ) : null}
-      </div>
-      <div className="flex flex-row items-center justify-between h-[36px]">
-        {hidePricing ? (
-          <div />
-        ) : (
-          <PricePanel
-            value={value}
-            currency={currency}
-            priceImpact={priceImpact}
-            error={_error}
-            loading={isPriceLoading}
-            price={price}
-          />
-        )}
-        <BalancePanel
-          id={id}
-          loading={isBalanceLoading}
-          chainId={chainId}
-          account={address}
-          onChange={onChange}
-          currency={currency}
-          disableMaxButton={disableMaxButton}
-          balance={balance}
-          type={type}
-        />
       </div>
     </div>
   )

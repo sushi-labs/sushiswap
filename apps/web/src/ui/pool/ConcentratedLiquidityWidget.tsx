@@ -189,7 +189,7 @@ export const ConcentratedLiquidityWidget: FC<ConcentratedLiquidityWidget> = ({
           <Web3Input.Currency
             id="add-liquidity-token0"
             type="INPUT"
-            className="p-3 bg-white dark:bg-secondary rounded-xl border border-accent"
+            className="p-4 bg-white dark:bg-secondary rounded-xl"
             chainId={chainId}
             value={formattedAmounts[Field.CURRENCY_A]}
             onChange={_onFieldAInput}
@@ -246,7 +246,7 @@ export const ConcentratedLiquidityWidget: FC<ConcentratedLiquidityWidget> = ({
           <Web3Input.Currency
             id="add-liquidity-token1"
             type="INPUT"
-            className="p-3 bg-white dark:bg-secondary rounded-xl border border-accent"
+            className="p-4 bg-white dark:bg-secondary rounded-xl"
             chainId={chainId}
             value={formattedAmounts[Field.CURRENCY_B]}
             onChange={_onFieldBInput}

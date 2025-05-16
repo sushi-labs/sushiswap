@@ -30,29 +30,27 @@ export const PricePanel: FC<PricePanel> = ({
     () => tryParseAmount(value, currency),
     [currency, value],
   )
-  const [big, portion] = (
+  const currencyValueStr =
     parsedValue && price
       ? `${(
           (price * Number(parsedValue.quotient)) /
             10 ** parsedValue.currency.decimals
         ).toFixed(2)}`
       : '0.00'
-  ).split('.')
 
   if (loading)
     return (
       <div className="w-1/5 flex items-center">
-        <SkeletonText fontSize="lg" className="w-full" />
+        <SkeletonText fontSize="sm" className="w-full" />
       </div>
     )
 
   if (error) {
-    return (
-      <p className="font-medium text-lg py-1 select-none text-red">{error}</p>
-    )
+    return <p className="font-medium text-sm select-none text-red">{error}</p>
   }
 
   return (
+<<<<<<< HEAD
     <p
       className={classNames(
         'font-medium text-lg flex items-baseline select-none text-gray-500 dark:text-slate-400',
@@ -66,6 +64,10 @@ export const PricePanel: FC<PricePanel> = ({
           $ {big}.<span className="text-sm font-semibold">{portion}</span>
         </>
       )}
+=======
+    <p className="font-medium text-sm flex items-baseline select-none text-gray-500 dark:text-slate-400">
+      {!loading && price === 0 ? 'Price not available' : `$${currencyValueStr}`}
+>>>>>>> 6d0b61e939 (feat: new input design & color palette)
       {!(!loading && price === 0) && priceImpact && (
         <span
           className={classNames(
