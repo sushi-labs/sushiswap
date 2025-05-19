@@ -39,4 +39,12 @@ const sliceEdgeConfig = (config: TradeEdgeConfig, mode: TradeMode) => {
   return config[edgeConfigMap[mode]]
 }
 
-export { type TradeEdgeConfig, getTradeEdgeConfig, sliceEdgeConfig }
+export {
+  type TradeEdgeConfig,
+  type CrossChainSwapEdgeConfig,
+  type DCAEdgeConfig,
+  type LimitEdgeConfig,
+  type SwapEdgeConfig,
+  getTradeEdgeConfig,
+  sliceEdgeConfig,
+}

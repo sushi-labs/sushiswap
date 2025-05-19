@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import ms from 'ms'
 import { useEdgeConfig } from 'src/providers/edge-config-provider'
-import type { LimitEdgeConfig } from '~evm/[chainId]/(trade)/limit-old/get-limit-edge-config'
+import type { LimitEdgeConfig } from 'src/ui/swap/trade/trade-edge-config'
 
 export const useIsLimitMaintenance = () => {
   const { maintenance } = useEdgeConfig<LimitEdgeConfig>()
