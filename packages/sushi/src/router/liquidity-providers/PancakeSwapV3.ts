@@ -1,16 +1,26 @@
-import { Address, PublicClient } from 'viem'
+import { Address, PublicClient, parseAbiItem } from 'viem'
 import { uniswapV3FactoryAbi } from '../../abi/uniswapV3FactoryAbi.js'
 import { ChainId } from '../../chain/index.js'
 import {
   PANCAKESWAP_V3_FEE_SPACING_MAP,
   PancakeSwapV3FeeAmount,
 } from '../../config/index.js'
+import { UniV3EventsAbi, UniswapV3BaseProvider } from '../rain/UniswapV3Base.js'
 import { LiquidityProviders } from './LiquidityProvider.js'
-import { UniswapV3BaseProvider } from './UniswapV3Base.js'
+
+export const PancakeV3EventsAbi = [
+  ...UniV3EventsAbi.slice(1), // univ3 events except Swap
+  parseAbiItem(
+    // PancakeV3 specific Swap event
+    'event Swap(address indexed sender, address indexed recipient, int256 amount0, int256 amount1, uint160 sqrtPriceX96, uint128 liquidity, int24 tick, uint128 protocolFeesToken0, uint128 protocolFeesToken1)',
+  ),
+]
 
 export class PancakeSwapV3Provider extends UniswapV3BaseProvider {
   override FEE = PancakeSwapV3FeeAmount
   override TICK_SPACINGS = PANCAKESWAP_V3_FEE_SPACING_MAP
+  override eventsAbi = PancakeV3EventsAbi as any
+
   constructor(chainId: ChainId, web3Client: PublicClient) {
     const factory = {
       [ChainId.ARBITRUM]: '0x41ff9AA7e16B8B1a8a8dc4f0eFacd93D02d071c9',

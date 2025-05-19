@@ -2,8 +2,8 @@ import { Address, PublicClient } from 'viem'
 import { uniswapV3FactoryAbi } from '../../abi/uniswapV3FactoryAbi.js'
 import { ChainId } from '../../chain/index.js'
 import { SushiSwapV3FeeAmount } from '../../config/sushiswap-v3.js'
+import { UniswapV3BaseProvider } from '../rain/UniswapV3Base.js'
 import { LiquidityProviders } from './LiquidityProvider.js'
-import { UniswapV3BaseProvider } from './UniswapV3Base.js'
 
 /**
  * The default factory enabled fee amounts, denominated in hundredths of bips.

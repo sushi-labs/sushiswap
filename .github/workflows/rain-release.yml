@@ -1,0 +1,57 @@
+# creates a github release with packed tarball (.tgz) for sushi pkg
+name: Create GitHub Release
+on: ["workflow_dispatch"]
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ssh-key: ${{ secrets.PUBLISH_PRIVATE_KEY }}
+
+      - uses: DeterminateSystems/nix-installer-action@main
+        with:
+          determinate: true
+      - uses: DeterminateSystems/flakehub-cache-action@main
+
+      - run: nix develop -c pnpm install --frozen-lockfile
+      - run: nix develop -c pnpm exec turbo run build --filter=./packages/sushi
+
+      - name: Git Config
+        run: |
+          git config --global user.email "${{ secrets.CI_GIT_EMAIL }}"
+          git config --global user.name "${{ secrets.CI_GIT_USER }}"
+
+      # create tag
+      - name: Create Tag
+        run: git tag sushi-${{ github.sha }}
+
+      # Push the tag to remote
+      - name: Push Changes To Remote
+        run: git push origin sushi-${{ github.sha }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # Create sushi npm package tarball
+      - name: Create sushi NPM Package Tarball
+        run: echo "NPM_PACKAGE=$(nix develop -c pnpm pack)" >> $GITHUB_ENV
+        working-directory: packages/sushi
+
+      - name: Rename sushi NPM Package Tarball
+        run: mv ${{ env.NPM_PACKAGE }} ../../sushi-${{ github.sha }}.tgz
+        working-directory: packages/sushi
+
+      # Create a gitHub release with tarball
+      - name: Create GitHub Release with sushi pkg
+        id: gh_release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: sushi-${{ github.sha }}
+          name: Sushi NPM Package Release ${{ github.sha }}
+          files: sushi-${{ github.sha }}.tgz
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

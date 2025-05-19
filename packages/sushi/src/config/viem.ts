@@ -715,6 +715,7 @@ export const publicClientConfig = {
     chain: fantom as Chain,
     transport: fallback([
       http('https://fantom.drpc.org'),
+      http('https://fantom-rpc.publicnode.com'),
       publicTransports[ChainId.FANTOM], // default that uses ankr rpc is now only available as paid account
     ]),
   },

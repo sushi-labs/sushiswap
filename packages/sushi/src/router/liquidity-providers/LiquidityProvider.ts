@@ -1,4 +1,4 @@
-import { PublicClient } from 'viem'
+import { Log, PublicClient } from 'viem'
 import { ChainId, chainShortName } from '../../chain/index.js'
 import type { Token } from '../../currency/index.js'
 import { DataFetcherOptions } from '../data-fetcher.js'
@@ -96,6 +96,7 @@ export abstract class LiquidityProvider {
   client: PublicClient
   lastUpdateBlock = 0
   isTest = false
+  initialized = false
   readonly ON_DEMAND_POOLS_LIFETIME_IN_SECONDS = 60
   readonly FETCH_AVAILABLE_POOLS_AFTER_SECONDS = 900
 
@@ -163,6 +164,27 @@ export abstract class LiquidityProvider {
     [t0.address.toLowerCase(), t1.address.toLowerCase()]
       .sort((first, second) => (first > second ? -1 : 1))
       .join(':')
+
+  /**
+   * Override this method to perform additional initialization tasks
+   * such as fetching initial data.
+   * @param _blockNumber - The block height at which should be initialized
+   */
+  async init(_blockNumber: bigint) {
+    this.initialized = true
+  }
+
+  /**
+   * Processes event logs to update pool data
+   * @param _log - The event log
+   */
+  processLog(_log: Log) {}
+
+  /**
+   * Represents any process that needs to take place after event logs are processed
+   * @param _untilBlock - The block height that pool data are updated to at processLog
+   */
+  async afterProcessLog(_untilBlock: bigint) {}
 }
 
 export const UniV2LiquidityProviders: LiquidityProviders[] = [

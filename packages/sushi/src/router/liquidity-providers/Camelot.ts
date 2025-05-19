@@ -47,7 +47,7 @@ export class CamelotProvider extends UniswapV2BaseProvider {
   }
 
   override async getReserves(
-    poolCodesToCreate: PoolCode[],
+    poolCodesToCreate: Address[],
     options?: DataFetcherOptions,
   ): Promise<any> {
     if (!this.FEE_INFO) {
@@ -87,9 +87,9 @@ export class CamelotProvider extends UniswapV2BaseProvider {
       allowFailure: true,
       blockNumber: options?.blockNumber,
       contracts: poolCodesToCreate.map(
-        (poolCode) =>
+        (address) =>
           ({
-            address: poolCode.pool.address as Address,
+            address,
             chainId: this.chainId,
             abi: this.getReservesAbi,
             functionName: 'getReserves',
@@ -111,9 +111,9 @@ export class CamelotProvider extends UniswapV2BaseProvider {
       allowFailure: true,
       blockNumber: options?.blockNumber,
       contracts: poolCodesToCreate.map(
-        (poolCode) =>
+        (address) =>
           ({
-            address: poolCode.pool.address as Address,
+            address,
             chainId: this.chainId,
             abi: [
               {
