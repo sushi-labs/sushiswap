@@ -28,3 +28,7 @@ export const isSupportedTradeModeOnChainId = (
     CHAIN_IDS_BY_TRADE_MODE[mode].includes(chainId as ChainId)
   )
 }
+
+export const TRADE_VIEWS = ['simple', 'advanced'] as const
+
+export type TradeView = (typeof TRADE_VIEWS)[number]
