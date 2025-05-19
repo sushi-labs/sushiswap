@@ -2,29 +2,29 @@
 
 import { Radio, RadioGroup } from '@headlessui/react'
 import { Toggle } from '@sushiswap/ui'
-import { TwapDuration } from 'src/lib/swap/twap/types'
+import { TwapExpiryTimeDurations } from 'src/lib/swap/twap/types'
 import { useDerivedStateTwap } from './derivedstate-twap-provider'
 
 const EXPIRATION_OPTIONS = [
   {
     label: '1 day',
-    value: TwapDuration.Day,
+    value: TwapExpiryTimeDurations.Day,
   },
   {
     label: '1 week',
-    value: TwapDuration.Week,
+    value: TwapExpiryTimeDurations.Week,
   },
   {
     label: '1 month',
-    value: TwapDuration.Month,
+    value: TwapExpiryTimeDurations.Month,
   },
   {
     label: '1 year',
-    value: TwapDuration.Year,
+    value: TwapExpiryTimeDurations.Year,
   },
 ]
 
-export const LimitExpirationInput = () => {
+export const LimitExpiryInput = () => {
   const {
     state: { expiry },
     mutate: { setExpiry },
@@ -40,7 +40,7 @@ export const LimitExpirationInput = () => {
               variant="outline"
               className="whitespace-nowrap !rounded-[50px] !px-4 !h-7"
               onClick={() => setExpiry(option.value)}
-              pressed={expiry.unit === option.value.unit}
+              pressed={expiry?.unit === option.value.unit}
             >
               {option.label}
             </Toggle>

@@ -1,6 +1,6 @@
 import { SimpleSwapTokenNotFoundDialog } from '../simple/simple-swap-token-not-found-dialog'
 import { SwapModeButtons } from '../swap-mode-buttons'
-import { LimitExpirationInput } from './limit-expiration-input'
+import { LimitExpiryInput } from './limit-expiry-input'
 import { LimitPriceInput } from './limit-price-input'
 import { OrbsBanner } from './orbs-banner'
 import { TwapHeader } from './twap-header'
@@ -28,7 +28,7 @@ export const LimitWidget = () => {
           <TwapSwitchTokensButton />
           <TwapToken1Input />
         </div>
-        <LimitExpirationInput />
+        <LimitExpiryInput />
         <TwapTradeButton />
       </div>
       <TwapOrdersDialogTriggerButton />
