@@ -1,6 +1,6 @@
 import { TimeUnit } from '@orbs-network/twap-sdk'
 
-export const TwapDuration = {
+export const TwapExpiryTimeDurations = {
   Day: {
     unit: TimeUnit.Days,
     value: 1,

@@ -1,8 +1,9 @@
 'use client'
 
-import type {
-  DerivedSwapValuesResponse,
-  TimeDuration,
+import {
+  type DerivedSwapValuesResponse,
+  type TimeDuration,
+  TimeUnit,
 } from '@orbs-network/twap-sdk'
 import {
   type Dispatch,
@@ -16,7 +17,7 @@ import {
 import { type TwapSupportedChainId, isTwapSupportedChainId } from 'src/config'
 import { getFeeString } from 'src/lib/swap/fee'
 import { TwapSDK } from 'src/lib/swap/twap/TwapSDK'
-import { TwapDuration } from 'src/lib/swap/twap/types'
+import { TwapExpiryTimeDurations } from 'src/lib/swap/twap/types'
 import { ChainId } from 'sushi/chain'
 import { Amount, Price, type Type, tryParseAmount } from 'sushi/currency'
 import type { Fraction } from 'sushi/math'
@@ -40,10 +41,14 @@ type State = DerivedStateSimpleSwapState & {
     token0PriceUSD: Fraction | undefined
     token1PriceUSD: Fraction | undefined
     expiry: TimeDuration
+    chunks: number
+    fillDelay: TimeDuration
   }
   mutate: DerivedStateSimpleSwapState['mutate'] & {
     setLimitPrice: Dispatch<SetStateAction<Price<Type, Type> | undefined>>
     setExpiry: Dispatch<SetStateAction<TimeDuration>>
+    setChunks: Dispatch<SetStateAction<number>>
+    setFillDelay: Dispatch<SetStateAction<TimeDuration>>
   }
 }
 
@@ -81,7 +86,14 @@ const _DerivedStateTwapProvider: FC<DerivedStateTwapProviderProps> = ({
     undefined,
   )
 
-  const [expiry, setExpiry] = useState<TimeDuration>(TwapDuration.Day)
+  const [expiry, setExpiry] = useState<TimeDuration>(
+    TwapExpiryTimeDurations.Day,
+  )
+  const [chunks, setChunks] = useState<number>(1)
+  const [fillDelay, setFillDelay] = useState<TimeDuration>({
+    unit: TimeUnit.Minutes,
+    value: 5,
+  })
 
   const [marketPrice, token0PriceUSD, token1PriceUSD] = useMemo(() => {
     const [token0, token1] = [
@@ -135,16 +147,20 @@ const _DerivedStateTwapProvider: FC<DerivedStateTwapProviderProps> = ({
             ...mutate,
             setLimitPrice,
             setExpiry,
+            setChunks,
+            setFillDelay,
           },
           state: {
             ...state,
             chainId,
             isLimitOrder,
             marketPrice,
-            limitPrice,
+            limitPrice: limitPrice ?? marketPrice, // todo: check
             token0PriceUSD,
             token1PriceUSD,
             expiry,
+            chunks,
+            fillDelay,
           },
           isLoading,
           isToken0Loading,
@@ -158,6 +174,8 @@ const _DerivedStateTwapProvider: FC<DerivedStateTwapProviderProps> = ({
         token0PriceUSD,
         token1PriceUSD,
         expiry,
+        chunks,
+        fillDelay,
       ])}
     >
       {children}
@@ -196,6 +214,8 @@ const useTwapTrade = ():
       token0,
       token1,
       expiry,
+      chunks,
+      fillDelay,
     },
   } = useDerivedStateTwap()
 
@@ -212,7 +232,6 @@ const useTwapTrade = ():
     ).derivedSwapValues({
       srcAmount: swapAmount.quotient.toString(),
       price: price.quotient.toString(),
-      customDuration: expiry,
       isLimitPanel: isLimitOrder,
       oneSrcTokenUsd: marketPrice
         .quote(Amount.fromRawAmount(token0, '1'))
@@ -220,6 +239,9 @@ const useTwapTrade = ():
       srcDecimals: token0.decimals,
       destDecimals: token1.decimals,
       isMarketOrder: !isLimitOrder,
+      customDuration: expiry,
+      customChunks: chunks,
+      customFillDelay: fillDelay,
     })
 
     const amountOut = destTokenAmount
@@ -250,6 +272,8 @@ const useTwapTrade = ():
     token0,
     token1,
     expiry,
+    chunks,
+    fillDelay,
   ])
 }
 

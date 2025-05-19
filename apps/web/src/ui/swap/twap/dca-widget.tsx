@@ -1,5 +1,6 @@
 import { SimpleSwapTokenNotFoundDialog } from '../simple/simple-swap-token-not-found-dialog'
 import { SwapModeButtons } from '../swap-mode-buttons'
+import { DcaOptionsInput } from './dca-options-input'
 import { DcaToken1Input } from './dca-token1-input'
 import { OrbsBanner } from './orbs-banner'
 import { TwapHeader } from './twap-header'
@@ -25,6 +26,7 @@ export const DcaWidget = () => {
           <TwapSwitchTokensButton />
           <DcaToken1Input />
         </div>
+        <DcaOptionsInput />
         <TwapTradeButton />
       </div>
       <TwapOrdersDialogTriggerButton />
