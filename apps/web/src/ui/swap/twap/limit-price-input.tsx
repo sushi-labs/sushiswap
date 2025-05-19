@@ -192,7 +192,7 @@ export const LimitPriceInput = () => {
               }
               maxDecimals={token1?.decimals}
               data-state={isLoading ? 'inactive' : 'active'}
-              className={classNames('p-0 py-1 !text-3xl font-medium')}
+              className={'p-0 py-1 !text-3xl font-medium'}
             />
           </div>
           {token1 ? (

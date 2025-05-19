@@ -2,25 +2,16 @@
 
 import { createErrorToast, createToast } from '@sushiswap/notifications'
 import { InterfaceEventName, sendAnalyticsEvent } from '@sushiswap/telemetry'
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useMemo } from 'react'
 import { weth9Abi_deposit } from 'sushi/abi'
 import type { Amount, Type } from 'sushi/currency'
 import { type SendTransactionReturnType, UserRejectedRequestError } from 'viem'
 import {
-  type UseSimulateContractParameters,
   useAccount,
   usePublicClient,
   useSimulateContract,
   useWriteContract,
 } from 'wagmi'
-
-// export enum WrapState {
-//   LOADING = 'LOADING',
-//   UNKNOWN = 'UNKNOWN',
-//   NOT_APPROVED = 'NOT_APPROVED',
-//   PENDING = 'PENDING',
-//   APPROVED = 'APPROVED',
-// }
 
 interface UseWrapNativeParams {
   amount: Amount<Type> | undefined

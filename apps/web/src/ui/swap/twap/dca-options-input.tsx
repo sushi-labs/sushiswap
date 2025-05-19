@@ -98,12 +98,12 @@ const DcaTradesInput = () => {
 }
 
 const TimeUnitLabel = {
-  [TimeUnit.Days]: 'Days',
-  [TimeUnit.Hours]: 'Hours',
   [TimeUnit.Minutes]: 'Minutes',
-  [TimeUnit.Months]: 'Months',
-  [TimeUnit.Weeks]: 'Weeks',
-  [TimeUnit.Years]: 'Years',
+  [TimeUnit.Hours]: 'Hours',
+  [TimeUnit.Days]: 'Days',
+  // [TimeUnit.Months]: 'Months',
+  // [TimeUnit.Weeks]: 'Weeks',
+  // [TimeUnit.Years]: 'Years',
 } as const
 
 const DcaIntervalInput = () => {
@@ -157,7 +157,7 @@ const DcaIntervalInput = () => {
         />
         <DropdownMenu>
           <DropdownMenuTrigger className="flex items-center gap-2 px-3 py-2 text-sm bg-secondary rounded-xl capitalize">
-            {TimeUnitLabel[fillDelay.unit]}
+            {TimeUnitLabel[fillDelay.unit as keyof typeof TimeUnitLabel]}
             <ChevronDownIcon width={14} height={14} />
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
