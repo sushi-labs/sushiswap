@@ -1,6 +1,6 @@
 'use client'
 
-import { useParams, useRouter } from 'next/navigation'
+import { useParams, usePathname } from 'next/navigation'
 import {
   type FC,
   createContext,
@@ -14,16 +14,20 @@ import { EvmChainId } from 'sushi/chain'
 import { EvmChainKey } from 'sushi/chain'
 import {
   TRADE_MODES,
+  TRADE_VIEWS,
   type TradeMode,
+  type TradeView,
   isSupportedTradeModeOnChainId,
 } from './config'
 import { TradeModeContext } from './trade-mode-buttons'
 
 interface State {
   mutate: {
-    setTrade(trade: string): void
+    setTradeMode(tradeMode: TradeMode): void
+    setTradeView(tradeView: TradeView): void
   }
   state: {
+    tradeView: TradeView
     tradeMode: TradeMode
     tradeModeChanged: boolean
     chainId: EvmChainId
@@ -36,6 +40,22 @@ interface DerivedStateSimpleTradeProviderProps {
   children: React.ReactNode
 }
 
+const resolveViewModeFromPathname = (pathname: string): TradeView => {
+  const view = pathname.split('/')?.[3]
+  return TRADE_VIEWS.includes(view as TradeView)
+    ? (view as TradeView)
+    : 'simple'
+}
+
+const createUrl = (
+  chainId: EvmChainId,
+  view: TradeView,
+  mode: TradeMode,
+): string => {
+  const newPath = `/${EvmChainKey[chainId]}/${mode}${view !== 'simple' ? `/${view}` : ''}`
+  return new URL(`${window.location.origin}${newPath}`).toString()
+}
+
 /* Parses the URL and provides the tradeMode and chainId globally.
  * URL example:
  * /swap || /limit || /dca ...
@@ -43,13 +63,30 @@ interface DerivedStateSimpleTradeProviderProps {
 const DerivedstateSimpleTradeProvider: FC<
   DerivedStateSimpleTradeProviderProps
 > = ({ children }) => {
+  const pathname = usePathname()
   const { chainId: _chainId, trade } = useParams()
   const chainId =
     _chainId && isSupportedChainId(+_chainId)
       ? (+_chainId as SupportedChainId)
       : EvmChainId.ETHEREUM
   const [tradeMode, _setTradeMode] = useState<TradeMode>(trade as TradeMode)
+  const [tradeView, _setTradeView] = useState<TradeView>(
+    resolveViewModeFromPathname(pathname),
+  )
   const [tradeModeChanged, _setTradeModeChanged] = useState<boolean>(false)
+
+  const setTradeView = useCallback(
+    (view: TradeView) => {
+      if (view === tradeView) {
+        return
+      }
+
+      _setTradeView(view)
+      _setTradeModeChanged(false)
+      window.history.pushState({}, '', createUrl(chainId, view, tradeMode))
+    },
+    [chainId, tradeView, tradeMode],
+  )
 
   const setTradeMode = useCallback(
     (trade: TradeMode) => {
@@ -59,12 +96,9 @@ const DerivedstateSimpleTradeProvider: FC<
 
       _setTradeMode(trade)
       _setTradeModeChanged(true)
-      const newUrl = new URL(
-        `${window.location.origin}/${EvmChainKey[chainId]}/${trade}`,
-      ).toString()
-      window.history.pushState({}, '', newUrl)
+      window.history.pushState({}, '', createUrl(chainId, tradeView, trade))
     },
-    [chainId, tradeMode],
+    [chainId, tradeView, tradeMode],
   )
 
   return (
@@ -72,15 +106,24 @@ const DerivedstateSimpleTradeProvider: FC<
       value={useMemo(() => {
         return {
           mutate: {
-            setTrade: setTradeMode,
+            setTradeMode,
+            setTradeView,
           },
           state: {
+            tradeView,
             tradeMode,
             tradeModeChanged,
             chainId,
           },
         }
-      }, [tradeMode, chainId, setTradeMode, tradeModeChanged])}
+      }, [
+        tradeMode,
+        tradeView,
+        chainId,
+        setTradeMode,
+        setTradeView,
+        tradeModeChanged,
+      ])}
     >
       <TradeModeContext.Provider
         value={useMemo(

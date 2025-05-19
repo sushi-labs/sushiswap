@@ -21,12 +21,15 @@ export const config = {
     '/:chainId/positions/:path*',
     '/:chainId/migrate',
     '/:chainId/rewards',
+<<<<<<< HEAD
     '/portal/:path*',
 
     '/:chainId/swap-old/:path*',
     '/:chainId/limit-old/:path*',
     '/:chainId/dca-old/:path*',
     '/:chainId/cross-chain-swap-old/:path*',
+=======
+>>>>>>> fcd1774f3b (feat: init trade2.0 layout)
   ],
 }
 

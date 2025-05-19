@@ -31,7 +31,7 @@ export default async function TradeLayout(props: {
   return (
     <Providers>
       <Header chainId={chainId} />
-      <main className="lg:p-4 mt-16 mb-[86px] animate-slide">{children}</main>
+      {children}
       <SimpleSwapBanner className="hidden xl:flex" />
     </Providers>
   )
