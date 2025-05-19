@@ -13,8 +13,10 @@ import {
   Dialog,
   DialogContent,
   DialogProvider,
+  DialogReview,
   DialogTitle,
   DialogTrigger,
+  DialogType,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuGroup,
@@ -25,6 +27,7 @@ import {
   Progress,
   SkeletonCircle,
   classNames,
+  useDialog,
 } from '@sushiswap/ui'
 import format from 'date-fns/format'
 import { type FC, type ReactNode, useMemo, useState } from 'react'
@@ -50,6 +53,18 @@ enum OrderFilter {
 const TwapOrdersDialog: FC<{
   children: ReactNode
 }> = ({ children }) => {
+  return (
+    <DialogProvider>
+      <_TwapOrdersDialog>{children}</_TwapOrdersDialog>
+    </DialogProvider>
+  )
+}
+
+const _TwapOrdersDialog: FC<{
+  children: ReactNode
+}> = ({ children }) => {
+  const { open } = useDialog(DialogType.Review)
+
   const {
     state: { chainId },
   } = useDerivedStateTwap()
@@ -59,6 +74,7 @@ const TwapOrdersDialog: FC<{
   const { data: orders, isLoading: isOrdersLoading } = useTwapOrders({
     chainId,
     account: address,
+    enabled: open,
   })
 
   const [orderFilter, setOrderFilter] = useState<OrderFilter>(OrderFilter.All)
@@ -89,94 +105,98 @@ const TwapOrdersDialog: FC<{
   console.log('selectedOrder', selectedOrder)
 
   return (
-    <DialogProvider>
-      <Dialog
-        onOpenChange={(isOpen) => {
-          if (!isOpen) {
-            setSelectedOrder(undefined)
-          }
-        }}
-      >
-        {children}
-        <DialogContent className="max-h-screen overflow-y-auto">
-          {selectedOrder ? (
-            <TwapOrderDialogContent
-              order={selectedOrder}
-              chainId={chainId}
-              onBack={() => setSelectedOrder(undefined)}
-            />
-          ) : (
-            <>
-              <DialogTitle className="!text-[unset] !font-normal !leading-[unset] !tracking-[unset]">
-                <DropdownMenu>
-                  <DropdownMenuTrigger className="flex items-center gap-2 px-4 py-2.5 text-sm bg-secondary rounded-xl">
-                    {orderFilter}
-                    <ChevronDownIcon width={14} height={14} />
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
-                    <DropdownMenuGroup>
-                      <DropdownMenuItem
-                        onClick={() => setOrderFilter(OrderFilter.All)}
-                        className="cursor-pointer"
-                      >
-                        All
-                      </DropdownMenuItem>
-                      <DropdownMenuItem
-                        onClick={() => setOrderFilter(OrderFilter.Open)}
-                        className="cursor-pointer"
-                      >
-                        Open
-                      </DropdownMenuItem>
-                      <DropdownMenuItem
-                        onClick={() => setOrderFilter(OrderFilter.Canceled)}
-                        className="cursor-pointer"
-                      >
-                        Canceled
-                      </DropdownMenuItem>
-                      <DropdownMenuItem
-                        onClick={() => setOrderFilter(OrderFilter.Completed)}
-                        className="cursor-pointer"
-                      >
-                        Completed
-                      </DropdownMenuItem>
-                      <DropdownMenuItem
-                        onClick={() => setOrderFilter(OrderFilter.Expired)}
-                        className="cursor-pointer"
-                      >
-                        Expired
-                      </DropdownMenuItem>
-                    </DropdownMenuGroup>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </DialogTitle>
-              <List className="min-h-[420px]">
-                <div className="flex flex-col gap-4">
-                  {isOrdersLoading ? (
-                    <List.Control className="px-4 py-3">
-                      <div className="text-sm text-center">Loading...</div>
-                    </List.Control>
-                  ) : filteredOrders.length ? (
-                    filteredOrders.map((order) => (
-                      <button
-                        type="button"
-                        key={order.id}
-                        onClick={() => setSelectedOrder(order)}
-                      >
-                        <TwapOrderCard order={order} chainId={chainId} />
-                      </button>
-                    ))
-                  ) : (
-                    <List.Control className="px-4 py-3">
-                      <div className="text-sm text-center">No orders found</div>
-                    </List.Control>
-                  )}
-                </div>
-              </List>
-            </>
-          )}
-        </DialogContent>
-      </Dialog>
-    </DialogProvider>
+    <DialogReview
+      onOpenChange={(isOpen) => {
+        if (!isOpen) {
+          setSelectedOrder(undefined)
+        }
+      }}
+    >
+      {(_) => (
+        <>
+          {children}
+          <DialogContent className="max-h-screen overflow-y-auto">
+            {selectedOrder ? (
+              <TwapOrderDialogContent
+                order={selectedOrder}
+                chainId={chainId}
+                onBack={() => setSelectedOrder(undefined)}
+              />
+            ) : (
+              <>
+                <DialogTitle className="!text-[unset] !font-normal !leading-[unset] !tracking-[unset]">
+                  <DropdownMenu>
+                    <DropdownMenuTrigger className="flex items-center gap-2 px-4 py-2.5 text-sm bg-secondary rounded-xl">
+                      {orderFilter}
+                      <ChevronDownIcon width={14} height={14} />
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      <DropdownMenuGroup>
+                        <DropdownMenuItem
+                          onClick={() => setOrderFilter(OrderFilter.All)}
+                          className="cursor-pointer"
+                        >
+                          All
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          onClick={() => setOrderFilter(OrderFilter.Open)}
+                          className="cursor-pointer"
+                        >
+                          Open
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          onClick={() => setOrderFilter(OrderFilter.Canceled)}
+                          className="cursor-pointer"
+                        >
+                          Canceled
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          onClick={() => setOrderFilter(OrderFilter.Completed)}
+                          className="cursor-pointer"
+                        >
+                          Completed
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          onClick={() => setOrderFilter(OrderFilter.Expired)}
+                          className="cursor-pointer"
+                        >
+                          Expired
+                        </DropdownMenuItem>
+                      </DropdownMenuGroup>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </DialogTitle>
+                <List className="min-h-[420px]">
+                  <div className="flex flex-col gap-4">
+                    {isOrdersLoading ? (
+                      <List.Control className="px-4 py-3">
+                        <div className="text-sm text-center">Loading...</div>
+                      </List.Control>
+                    ) : filteredOrders.length ? (
+                      filteredOrders.map((order) => (
+                        <button
+                          type="button"
+                          key={order.id}
+                          onClick={() => setSelectedOrder(order)}
+                        >
+                          <TwapOrderCard order={order} chainId={chainId} />
+                        </button>
+                      ))
+                    ) : (
+                      <List.Control className="px-4 py-3">
+                        <div className="text-sm text-center">
+                          No orders found
+                        </div>
+                      </List.Control>
+                    )}
+                  </div>
+                </List>
+              </>
+            )}
+          </DialogContent>
+        </>
+      )}
+    </DialogReview>
   )
 }
 

@@ -7,9 +7,14 @@ import type { Address } from 'sushi/types'
 interface TwapOrdersParams {
   chainId: TwapSupportedChainId
   account: Address | undefined
+  enabled?: boolean
 }
 
-export const useTwapOrders = ({ chainId, account }: TwapOrdersParams) => {
+export const useTwapOrders = ({
+  chainId,
+  account,
+  enabled = true,
+}: TwapOrdersParams) => {
   return useQuery({
     queryKey: ['twap-orders', chainId, account],
     queryFn: async () => {
@@ -17,6 +22,6 @@ export const useTwapOrders = ({ chainId, account }: TwapOrdersParams) => {
       const orders = await TwapSDK.onNetwork(chainId).getUserOrders({ account })
       return groupOrdersByStatus(orders)
     },
-    enabled: Boolean(account),
+    enabled: Boolean(enabled && account),
   })
 }
