@@ -13,9 +13,10 @@ import {
   DialogTitle,
   FormattedNumber,
   List,
+  SkeletonText,
   Switch,
 } from '@sushiswap/ui'
-import { format } from 'date-fns'
+import { format, formatDistanceStrict } from 'date-fns'
 import React, {
   type FC,
   type ReactNode,
@@ -25,6 +26,7 @@ import React, {
   useState,
 } from 'react'
 import { APPROVE_TAG_SWAP } from 'src/lib/constants'
+import { fillDelayText } from 'src/lib/swap/twap'
 import { TwapSDK } from 'src/lib/swap/twap/TwapSDK'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
 import { useApproved } from 'src/lib/wagmi/systems/Checker/Provider'
@@ -133,7 +135,7 @@ export const TwapTradeReviewDialog: FC<{
       swapAmount,
       recipient,
       limitPrice,
-      marketPrice,
+      isLimitOrder,
       token1PriceUSD,
     },
     mutate: { setSwapAmount },
@@ -152,8 +154,8 @@ export const TwapTradeReviewDialog: FC<{
   const { params, error: _prepareTwapOrderArgsError } =
     usePrepareTwapOrderArgs(trade)
 
-  const preparedTransaction = useMemo(
-    () => ({
+  const preparedTransaction = useMemo(() => {
+    return {
       chainId,
       to: TwapSDK.onNetwork(chainId).config.twapAddress as Address,
       data: params
@@ -163,20 +165,19 @@ export const TwapTradeReviewDialog: FC<{
             args: [params],
           })
         : undefined,
-    }),
-    [chainId, params],
-  )
+    }
+  }, [chainId, params])
 
-  const deadline = useMemo(
-    () =>
+  const [deadline, currentTime] = useMemo(() => {
+    const now = new Date().getTime()
+
+    return [
       trade
-        ? TwapSDK.onNetwork(chainId).orderDeadline(
-            new Date().getTime(),
-            trade.duration,
-          )
+        ? TwapSDK.onNetwork(chainId).orderDeadline(now, trade.duration)
         : undefined,
-    [trade, chainId],
-  )
+      now,
+    ]
+  }, [trade, chainId])
 
   const { data: estGas, isError: isEstGasError } = useEstimateGas({
     ...preparedTransaction,
@@ -277,10 +278,17 @@ export const TwapTradeReviewDialog: FC<{
             <DialogContent>
               <DialogHeader>
                 <DialogTitle>
-                  Buy {trade?.amountOut?.toSignificant(6)} {token1?.symbol}
+                  Sell {swapAmount?.toSignificant(6)} {token0?.symbol}
                 </DialogTitle>
                 <DialogDescription>
-                  Sell {swapAmount?.toSignificant(6)} {token0?.symbol}
+                  {!trade ? (
+                    <SkeletonText />
+                  ) : isLimitOrder ? (
+                    `Receive at least ${trade.minAmountOut?.toSignificant(6)} ${token1?.symbol}`
+                  ) : (
+                    `Every ${fillDelayText(trade.fillDelay.value * trade.fillDelay.unit)} over ${trade.chunks} order
+                ${trade.chunks > 1 ? 's' : ''}`
+                  )}
                 </DialogDescription>
               </DialogHeader>
               <div className="flex flex-col gap-4">
@@ -289,27 +297,84 @@ export const TwapTradeReviewDialog: FC<{
                     <List.KeyValue title="Network">
                       {EvmChain.from(chainId)?.name}
                     </List.KeyValue>
-                    <List.KeyValue title="Limit price">
-                      {token0 &&
-                      marketPrice &&
-                      limitPrice &&
-                      token1 &&
-                      token1PriceUSD ? (
-                        <span className="flex items-baseline gap-1 whitespace-nowrap scroll hide-scrollbar">
-                          1 {token0.symbol} =
-                          <FormattedNumber number={limitPrice.toFixed(4)} />{' '}
-                          {token1.symbol}{' '}
-                          <span className="text-muted-foreground">
-                            ({formatUSD(token1PriceUSD.toFixed(6))})
-                          </span>
-                        </span>
-                      ) : null}
-                    </List.KeyValue>
-                    <List.KeyValue title="Expiry">
-                      {deadline
-                        ? format(deadline, "MMMM d, yyyy 'at' h:mm a")
-                        : null}
-                    </List.KeyValue>
+                    {isLimitOrder ? (
+                      <>
+                        <List.KeyValue title="Limit price">
+                          {token0 && limitPrice && token1 && token1PriceUSD ? (
+                            <span className="flex items-baseline gap-1 whitespace-nowrap scroll hide-scrollbar">
+                              1 {token0.symbol} =
+                              <FormattedNumber number={limitPrice.toFixed(4)} />{' '}
+                              {token1.symbol}{' '}
+                              <span className="text-muted-foreground">
+                                ({formatUSD(token1PriceUSD.toFixed(6))})
+                              </span>
+                            </span>
+                          ) : (
+                            <SkeletonText fontSize="sm" />
+                          )}
+                        </List.KeyValue>
+                        <List.KeyValue title="Expiry">
+                          {deadline ? (
+                            format(deadline, "MMMM d, yyyy 'at' h:mm a")
+                          ) : (
+                            <SkeletonText fontSize="sm" />
+                          )}
+                        </List.KeyValue>
+                      </>
+                    ) : (
+                      <>
+                        <List.KeyValue title="Sell Total">
+                          {trade?.amountIn ? (
+                            <span>
+                              <FormattedNumber
+                                number={trade.amountIn.toExact()}
+                              />{' '}
+                              {token0?.symbol}
+                            </span>
+                          ) : (
+                            <SkeletonText />
+                          )}
+                        </List.KeyValue>
+                        <List.KeyValue title="Sell per Order">
+                          {trade?.amountInChunk ? (
+                            <span>
+                              <FormattedNumber
+                                number={trade.amountInChunk.toExact()}
+                              />{' '}
+                              {token0?.symbol}
+                            </span>
+                          ) : (
+                            <SkeletonText />
+                          )}
+                        </List.KeyValue>
+                        <List.KeyValue title="Order Interval">
+                          {trade?.fillDelay ? (
+                            formatDistanceStrict(
+                              0,
+                              trade.fillDelay.unit * trade.fillDelay.value,
+                              { roundingMethod: 'floor' },
+                            )
+                          ) : (
+                            <SkeletonText />
+                          )}
+                        </List.KeyValue>
+                        <List.KeyValue title="Start Date">
+                          {currentTime ? (
+                            format(currentTime, "MMMM d, yyyy 'at' h:mm a")
+                          ) : (
+                            <SkeletonText />
+                          )}
+                        </List.KeyValue>
+                        <List.KeyValue title="Est. End Date">
+                          {deadline ? (
+                            format(deadline, "MMMM d, yyyy 'at' h:mm a")
+                          ) : (
+                            <SkeletonText />
+                          )}
+                        </List.KeyValue>
+                      </>
+                    )}
+
                     <List.KeyValue title="Recipient">
                       {recipient ? (
                         <Button variant="link" size="sm" asChild>
@@ -327,9 +392,11 @@ export const TwapTradeReviewDialog: FC<{
                         </Button>
                       ) : null}
                     </List.KeyValue>
-                    <List.KeyValue title="Fee (0.25%)">
-                      {trade?.fee ? `${trade.fee}` : undefined}
-                    </List.KeyValue>
+                    {isLimitOrder ? (
+                      <List.KeyValue title="Fee (0.25%)">
+                        {trade?.fee ? `${trade.fee}` : <SkeletonText />}
+                      </List.KeyValue>
+                    ) : null}
                   </List.Control>
                   <List.Control>
                     <List.KeyValue

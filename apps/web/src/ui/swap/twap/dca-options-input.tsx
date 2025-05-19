@@ -30,6 +30,7 @@ const DcaTradesInput = () => {
   const {
     state: { token0, chunks, token0PriceUSD },
     mutate: { setChunks },
+    isLoading,
   } = useDerivedStateTwap()
 
   const trade = useTwapTrade()
@@ -46,15 +47,10 @@ const DcaTradesInput = () => {
   //   // trade size must be at least $50
   // }, [])
 
-  const token0ChunkAmount = useMemo(() => {
-    if (!token0 || !trade) return undefined
-    return Amount.fromRawAmount(token0, trade.srcChunkAmount)
-  }, [token0, trade])
-
   const token0ChunkAmountUSD = useMemo(() => {
-    if (!token0ChunkAmount || !token0PriceUSD) return undefined
-    return token0ChunkAmount.multiply(token0PriceUSD).toSignificant(6)
-  }, [token0ChunkAmount, token0PriceUSD])
+    if (!trade?.amountInChunk || !token0PriceUSD) return undefined
+    return trade.amountInChunk.multiply(token0PriceUSD).toSignificant(6)
+  }, [trade?.amountInChunk, token0PriceUSD])
 
   return (
     <div className="flex-1 flex flex-col gap-1 whitespace-nowrap">
@@ -82,10 +78,10 @@ const DcaTradesInput = () => {
           className={'!h-5 !min-h-[5] !px-0 !py-0 !text-lg font-medium'}
         />
       </div>
-      {trade ? (
+      {!isLoading ? (
         <span className="text-xs text-muted-foreground">
-          {token0ChunkAmount ? (
-            <FormattedNumber number={token0ChunkAmount.toExact()} />
+          {trade?.amountInChunk ? (
+            <FormattedNumber number={trade.amountInChunk.toExact()} />
           ) : (
             '0'
           )}{' '}
@@ -151,7 +147,7 @@ const DcaIntervalInput = () => {
         <TextField
           type="number"
           variant="naked"
-          placeholder="0"
+          placeholder="1"
           maxDecimals={0}
           onValueChange={onValueChange}
           value={fillDelay.value}

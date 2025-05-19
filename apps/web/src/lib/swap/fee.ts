@@ -19,6 +19,6 @@ export const getFeeString = ({
     ? `${tokenOutPrice ? '$' : ''}${minAmountOut
         .multiply(new Percent(25, 10000))
         .multiply(tokenOutPrice ? tokenOutPrice.asFraction : 1)
-        .toSignificant(4)} ${!tokenOutPrice ? toToken.symbol : ''}`
+        .toSignificant(4)}${!tokenOutPrice ? ` ${toToken.symbol}` : ''}`
     : '$0'
 }
