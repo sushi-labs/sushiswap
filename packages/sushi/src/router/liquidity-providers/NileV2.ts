@@ -2,13 +2,14 @@ import { getCreate2Address } from '@ethersproject/address'
 import { Address, PublicClient, encodePacked, keccak256 } from 'viem'
 import { ChainId } from '../../chain/index.js'
 import { Token } from '../../currency/Token.js'
-import { ConstantProductRPool } from '../../tines/PrimaryPools.js'
-import { RToken } from '../../tines/RPool.js'
-import { DataFetcherOptions } from '../data-fetcher.js'
+// import { ConstantProductRPool } from '../../tines/PrimaryPools.js'
+// import { RToken } from '../../tines/RPool.js'
+// import { DataFetcherOptions } from '../data-fetcher.js'
 import { getCurrencyCombinations } from '../get-currency-combinations.js'
-import { ConstantProductPoolCode } from '../pool-codes/ConstantProductPool.js'
-import { PoolCode } from '../pool-codes/PoolCode.js'
-import { UniswapV2BaseProvider } from '../rain/UniswapV2Base.js'
+import { RainDataFetcherOptions } from '../rain/RainDataFetcher.js'
+// import { ConstantProductPoolCode } from '../pool-codes/ConstantProductPool.js'
+// import { PoolCode } from '../pool-codes/PoolCode.js'
+import { RainV2Pool, UniswapV2BaseProvider } from '../rain/UniswapV2Base.js'
 import { LiquidityProviders } from './LiquidityProvider.js'
 import { StaticPool } from './UniswapV2Base.js'
 
@@ -34,7 +35,7 @@ export class NileV2Provider extends UniswapV2BaseProvider {
     t0: Token,
     t1: Token,
     excludePools?: Set<string>,
-    options?: DataFetcherOptions,
+    options?: RainDataFetcherOptions,
   ): Promise<void> {
     let pools = this.getStaticPools(t0, t1)
     if (excludePools) pools = pools.filter((p) => !excludePools.has(p.address))
@@ -48,6 +49,12 @@ export class NileV2Provider extends UniswapV2BaseProvider {
       pools.map((pool) => pool.address),
     )
 
+    // filter out cached pools
+    // this ensures backward compatibility for original DataFetcher
+    if (typeof options?.ignoreCache === 'boolean' && !options.ignoreCache) {
+      pools = this.filterCachedPools(pools as StaticPool[])
+    }
+
     const fees = await this.client
       .multicall({
         multicallAddress: this.client.chain?.contracts?.multicall3
@@ -57,7 +64,7 @@ export class NileV2Provider extends UniswapV2BaseProvider {
         contracts: pools.map(
           (poolCode) =>
             ({
-              address: this.factory[this.chainId as keyof typeof this.factory]!,
+              address: this.factory[this.chainId]!,
               chainId: this.chainId,
               abi: [
                 {
@@ -86,36 +93,25 @@ export class NileV2Provider extends UniswapV2BaseProvider {
         return undefined
       })
 
-    const poolCodesToCreate: PoolCode[] = []
+    if (!fees) return
+
+    const poolCodesToCreate: RainV2Pool[] = []
     pools.forEach((pool, i) => {
       const fee = fees?.[i]?.result
-      const existingPool = this.onDemandPools.get(pool.address)
-      if (existingPool === undefined) {
-        if (fee === undefined) {
-          return
-        }
-        const token0 = pool.token0 as RToken
-        const token1 = pool.token1 as RToken
-
-        const rPool = new ConstantProductRPool(
-          pool.address,
-          token0,
-          token1,
-          Number(fee) * 0.0001,
-          0n,
-          0n,
-        )
-        const pc = new ConstantProductPoolCode(
-          rPool,
-          this.getType(),
-          this.getPoolProviderName(),
-        )
-        poolCodesToCreate.push(pc)
-      }
+      if (typeof fee === 'undefined') return
+      poolCodesToCreate.push({
+        ...pool,
+        fee,
+        blockNumber: options?.blockNumber ?? 0n,
+      } as any as RainV2Pool)
     })
+    if (!poolCodesToCreate.length) return
 
-    const reserves = await this.getReserves(poolCodesToCreate, options)
-    this.handleCreatePoolCode(poolCodesToCreate, reserves, 0)
+    const reserves = await this.getReserves(
+      poolCodesToCreate.map((v) => v.address),
+      options,
+    )
+    this.setPool(poolCodesToCreate, reserves)
   }
 
   override getStaticPools(t1: Token, t2: Token): StaticPool[] {
