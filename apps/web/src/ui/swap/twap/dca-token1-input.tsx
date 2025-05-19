@@ -1,6 +1,12 @@
 'use client'
 
-import { Button, Currency, SelectIcon, classNames } from '@sushiswap/ui'
+import {
+  Button,
+  Currency,
+  SelectIcon,
+  SkeletonBox,
+  classNames,
+} from '@sushiswap/ui'
 import { useMemo } from 'react'
 import { TokenSelector } from 'src/lib/wagmi/components/token-selector/token-selector'
 import { BalancePanel } from 'src/lib/wagmi/components/web3-input/Currency/BalancePanel'
@@ -12,7 +18,7 @@ export const DcaToken1Input = () => {
   const {
     state: { chainId, token1: token },
     mutate: { setToken1: onSelect },
-    isToken1Loading: tokenLoading,
+    isToken1Loading: isTokenLoading,
   } = useDerivedStateTwap()
 
   const { address } = useAccount()
@@ -20,12 +26,10 @@ export const DcaToken1Input = () => {
   const { data: balance, isLoading: isBalanceLoading } = useAmountBalance(token)
 
   const selector = useMemo(() => {
-    if (!onSelect) return null
-
     return (
       <TokenSelector selected={token} chainId={chainId} onSelect={onSelect}>
         <Button
-          data-state={tokenLoading ? 'inactive' : 'active'}
+          data-state={isTokenLoading ? 'inactive' : 'active'}
           size="lg"
           variant={token ? 'secondary' : 'default'}
           id={'swap-to'}
@@ -54,7 +58,7 @@ export const DcaToken1Input = () => {
         </Button>
       </TokenSelector>
     )
-  }, [tokenLoading, onSelect, token, chainId])
+  }, [isTokenLoading, onSelect, token, chainId])
 
   return (
     <div
@@ -63,37 +67,12 @@ export const DcaToken1Input = () => {
       }
     >
       <span className="text-sm text-muted-foreground">You're buying</span>
-      <div className="relative flex justify-between items-end gap-4">
-        {/* <div
-          data-state={isLoading ? 'active' : 'inactive'}
-          className={classNames(
-            'data-[state=inactive]:hidden data-[state=active]:flex',
-            'gap-4 items-center justify-between flex-grow h-[44px]',
-          )}
-        >
-          <SkeletonBox className="w-2/3 h-[32px] rounded-lg" />
-          {currencyLoading ? (
-            <SkeletonBox className="w-1/3 h-[32px] rounded-lg" />
-          ) : null}
-        </div>
-        <div
-          data-state={isLoading ? 'inactive' : 'active'}
-          className="data-[state=inactive]:hidden data-[state=active]:flex flex-1 items-center"
-        >
-          <TextField
-            testdata-id={`${id}-input`}
-            type="number"
-            variant="naked"
-            disabled={disabled}
-            onValueChange={_onChange}
-            value={pending ? localValue : value}
-            readOnly={disabled}
-            maxDecimals={currency?.decimals}
-            data-state={isLoading ? 'inactive' : 'active'}
-            className={classNames('p-0 py-1 !text-3xl font-medium')}
-          />
-        </div> */}
-
+      <div className="flex justify-between items-end gap-4">
+        {isTokenLoading ? (
+          <div className="flex items-center h-[44px] w-full">
+            <SkeletonBox className="w-32 h-8 rounded-lg" />
+          </div>
+        ) : null}
         {selector}
         <BalancePanel
           id={'swap-to'}
@@ -105,33 +84,6 @@ export const DcaToken1Input = () => {
           balance={balance}
           type={'OUTPUT'}
         />
-        {/* {!onSelect ? (
-          <div
-            id={`swap-to-button`}
-            className={classNames(
-              'flex items-center gap-1 text-xl py-2 pl-2 pr-2 rounded-full font-medium whitespace-nowrap',
-            )}
-          >
-            {token ? (
-              <>
-                <div className="w-[28px] h-[28px] mr-0.5">
-                  <Currency.Icon
-                    disableLink
-                    currency={token}
-                    width={28}
-                    height={28}
-                  />
-                </div>
-
-                {token.symbol}
-              </>
-            ) : (
-              <span className="text-gray-400 dark:text-slate-500">
-                No token selected
-              </span>
-            )}
-          </div>
-        ) : null} */}
       </div>
     </div>
   )
