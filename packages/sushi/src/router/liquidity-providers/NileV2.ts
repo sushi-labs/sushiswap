@@ -8,8 +8,9 @@ import { DataFetcherOptions } from '../data-fetcher.js'
 import { getCurrencyCombinations } from '../get-currency-combinations.js'
 import { ConstantProductPoolCode } from '../pool-codes/ConstantProductPool.js'
 import { PoolCode } from '../pool-codes/PoolCode.js'
+import { UniswapV2BaseProvider } from '../rain/UniswapV2Base.js'
 import { LiquidityProviders } from './LiquidityProvider.js'
-import { StaticPool, UniswapV2BaseProvider } from './UniswapV2Base.js'
+import { StaticPool } from './UniswapV2Base.js'
 
 export class NileV2Provider extends UniswapV2BaseProvider {
   constructor(chainId: ChainId, web3Client: PublicClient) {
