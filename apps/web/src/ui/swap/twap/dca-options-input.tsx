@@ -78,7 +78,7 @@ const DcaTradesInput = () => {
           maxDecimals={0}
           onValueChange={onChange}
           value={chunks}
-          className={'!h-5 !min-h-[5] !px-0 !py-0 !text-lg font-medium'}
+          className={'!h-[20px] !min-h-[5px] !px-0 !py-1 !text-lg font-medium'}
         />
       </div>
       {!isLoading ? (
@@ -164,9 +164,7 @@ const DcaIntervalInput = () => {
           maxDecimals={0}
           onValueChange={onValueChange}
           value={fillDelay.value}
-          className={
-            '!h-[22px] !min-h-[22px] !px-0 !py-1 !text-lg font-medium '
-          }
+          className={'!h-[22px] !min-h-[22px] !px-0 !py-1 !text-lg font-medium'}
         />
         <DropdownMenu>
           <DropdownMenuTrigger className="flex items-center gap-2 px-3 py-2 text-sm bg-secondary rounded-xl capitalize">
