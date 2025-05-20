@@ -6,12 +6,10 @@ import { useDerivedStateTwap, useTwapTrade } from './derivedstate-twap-provider'
 
 export const TwapToken1Input = () => {
   const {
-    state: { chainId, token1 },
+    state: { chainId, token1, amountOut },
     mutate: { setToken1 },
     isToken1Loading: isLoading,
   } = useDerivedStateTwap()
-
-  const trade = useTwapTrade()
 
   return (
     <Web3Input.Currency
@@ -19,7 +17,7 @@ export const TwapToken1Input = () => {
       type="OUTPUT"
       disabled
       className="border border-accent p-3 bg-white dark:bg-slate-800 rounded-xl"
-      value={trade?.amountOut?.toSignificant() ?? ''}
+      value={amountOut?.toSignificant() ?? ''}
       chainId={chainId}
       onSelect={setToken1}
       currency={token1}

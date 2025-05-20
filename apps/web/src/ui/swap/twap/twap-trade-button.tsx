@@ -10,7 +10,11 @@ import { useWrapNative } from 'src/lib/wagmi/hooks/wnative/useWrapNative'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
 import type { Amount, Type } from 'sushi/currency'
 import type { Address } from 'viem'
-import { useDerivedStateTwap, useTwapTrade } from './derivedstate-twap-provider'
+import {
+  useDerivedStateTwap,
+  useTwapTrade,
+  useTwapTradeErrors,
+} from './derivedstate-twap-provider'
 import { TwapTradeReviewDialog } from './twap-trade-review-dialog'
 import { useIsTwapMaintenance } from './use-is-twap-maintenance'
 
@@ -62,10 +66,9 @@ const TwapTradeChecker: FC<TwapTradeCheckerProps> = ({
   enabled = true,
   ...props
 }) => {
-  const trade = useTwapTrade()
-  return trade?.warnings?.minFillDelay ||
-    trade?.warnings?.maxFillDelay ||
-    trade?.warnings.tradeSize ? (
+  const { minTradeSizeError, minFillDelayError, maxFillDelayError } =
+    useTwapTradeErrors()
+  return minTradeSizeError || minFillDelayError || maxFillDelayError ? (
     <Button
       disabled={true}
       className={className}
@@ -74,12 +77,12 @@ const TwapTradeChecker: FC<TwapTradeCheckerProps> = ({
       testId={id}
       {...props}
     >
-      {trade?.warnings.minFillDelay
-        ? 'Trade Interval Below Limit'
-        : trade?.warnings.maxFillDelay
-          ? 'Trade Interval Exceeds Limit'
-          : trade?.warnings.tradeSize
-            ? 'Inadequate Trade Size'
+      {minTradeSizeError
+        ? 'Inadequate Trade Size'
+        : minFillDelayError
+          ? 'Trade Interval Below Limit'
+          : maxFillDelayError
+            ? 'Trade Interval Exceeds Limit'
             : ''}
     </Button>
   ) : (

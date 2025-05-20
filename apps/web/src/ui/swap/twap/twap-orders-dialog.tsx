@@ -2,7 +2,12 @@
 
 import { ArrowRightIcon, ChevronDownIcon } from '@heroicons/react/24/outline'
 import { ArrowLeftIcon } from '@heroicons/react/24/solid'
-import { type Order, OrderType } from '@orbs-network/twap-sdk'
+import {
+  OrderStatus,
+  OrderType,
+  getOrderExcecutionRate,
+  getOrderLimitPriceRate,
+} from '@orbs-network/twap-sdk'
 import {
   Accordion,
   AccordionContent,
@@ -10,7 +15,6 @@ import {
   AccordionTrigger,
   Button,
   Currency,
-  Dialog,
   DialogContent,
   DialogProvider,
   DialogReview,
@@ -32,22 +36,22 @@ import {
 import format from 'date-fns/format'
 import { type FC, type ReactNode, useMemo, useState } from 'react'
 import type { TwapSupportedChainId } from 'src/config'
-import { useTwapOrders } from 'src/lib/hooks/react-query/twap'
-import { TwapSDK, fillDelayText } from 'src/lib/swap/twap'
+import { type TwapOrder, useTwapOrders } from 'src/lib/hooks/react-query/twap'
+import { fillDelayText } from 'src/lib/swap/twap'
 import { useTokenWithCache } from 'src/lib/wagmi/hooks/tokens/useTokenWithCache'
 import { shortenAddress, shortenHash } from 'sushi'
 import { EvmChain } from 'sushi/chain'
-import { Amount, Token } from 'sushi/currency'
+import { Amount } from 'sushi/currency'
 import type { Address } from 'viem'
 import { useAccount } from 'wagmi'
 import { useDerivedStateTwap } from './derivedstate-twap-provider'
 
 enum OrderFilter {
-  All = 'All',
-  Open = 'Open',
-  Canceled = 'Canceled',
-  Completed = 'Completed',
-  Expired = 'Expired',
+  All = 'ALL',
+  Open = 'OPEN',
+  Canceled = 'CANCELED',
+  Completed = 'COMPLETED',
+  Expired = 'EXPIRED',
 }
 
 const TwapOrdersDialog: FC<{
@@ -84,21 +88,21 @@ const _TwapOrdersDialog: FC<{
 
     switch (orderFilter) {
       case OrderFilter.All:
-        return orders.all ?? []
+        return orders.ALL
       case OrderFilter.Open:
-        return orders.open ?? []
+        return orders.OPEN
       case OrderFilter.Completed:
-        return orders.completed ?? []
+        return orders.COMPLETED
       case OrderFilter.Canceled:
-        return orders.canceled ?? []
+        return orders.CANCELED
       case OrderFilter.Expired:
-        return orders.expired ?? []
+        return orders.EXPIRED
       default:
-        return orders.all ?? []
+        return orders.ALL
     }
   }, [orders, orderFilter])
 
-  const [selectedOrder, setSelectedOrder] = useState<Order | undefined>(
+  const [selectedOrder, setSelectedOrder] = useState<TwapOrder | undefined>(
     undefined,
   )
 
@@ -204,12 +208,10 @@ const TwapOrderDialogContent = ({
   chainId,
   order,
   onBack,
-}: { chainId: TwapSupportedChainId; order: Order; onBack: () => void }) => {
+}: { chainId: TwapSupportedChainId; order: TwapOrder; onBack: () => void }) => {
   const { address } = useAccount()
-  const fillDelay = useMemo(
-    () => order.getFillDelay(TwapSDK.onNetwork(chainId).config),
-    [order, chainId],
-  )
+
+  const isLimit = order.type === OrderType.LIMIT
 
   const { data: token0 } = useTokenWithCache({
     chainId,
@@ -235,29 +237,27 @@ const TwapOrderDialogContent = ({
         ? Amount.fromRawAmount(token0, order.srcAmount)
         : undefined,
       srcChunkAmount: token0
-        ? Amount.fromRawAmount(token0, order.srcBidAmount)
+        ? Amount.fromRawAmount(token0, order.srcAmountPerChunk)
         : undefined,
       srcFilledAmount: token0
-        ? Amount.fromRawAmount(token0, order.srcFilledAmount)
+        ? Amount.fromRawAmount(token0, order.filledSrcAmount)
         : undefined,
       dstFilledAmount: token1
-        ? Amount.fromRawAmount(token1, order.dstFilledAmount)
+        ? Amount.fromRawAmount(token1, order.filledDstAmount)
         : undefined,
       dstMinAmountOut: token1
         ? Amount.fromRawAmount(token1, order.dstMinAmount)
         : undefined,
       executionPrice:
         token0 && token1
-          ? order.getExcecutionPrice(token0.decimals, token1.decimals)
+          ? getOrderExcecutionRate(order, token0.decimals, token1.decimals)
           : undefined,
       limitPrice:
         token0 && token1
-          ? order.getLimitPrice(token0.decimals, token1.decimals)
+          ? getOrderLimitPriceRate(order, token0.decimals, token1.decimals)
           : undefined,
     }
   }, [token0, token1, order])
-
-  const isLimit = order.orderType === OrderType.LIMIT
 
   return (
     <>
@@ -270,7 +270,7 @@ const TwapOrderDialogContent = ({
           <div className="flex justify-between items-center gap-4">
             <div className="flex flex-col">
               <span className="text-muted-foreground text-sm">Sell</span>
-              <span>{order.srcTokenSymbol}</span>
+              <span>{token0?.symbol}</span>
             </div>
             {token0 ? (
               <Currency.Icon currency={token0} width={36} height={36} />
@@ -282,7 +282,7 @@ const TwapOrderDialogContent = ({
             <div className="flex justify-between items-center gap-4">
               <div className="flex flex-col">
                 <span className="text-muted-foreground text-sm">Buy</span>
-                <span>{order.dstTokenSymbol}</span>
+                <span>{token1?.symbol}</span>
               </div>
               {token1 ? (
                 <Currency.Icon currency={token1} width={36} height={36} />
@@ -292,8 +292,7 @@ const TwapOrderDialogContent = ({
             </div>
             {!isLimit ? (
               <span className="text-muted-foreground text-sm">
-                Every {fillDelayText(fillDelay)} over {order.totalChunks} order
-                {order.totalChunks > 1 ? 's' : ''}
+                {`Every ${fillDelayText(order.fillDelayMillis)} over ${order.chunks} order${order.chunks > 1 ? 's' : ''}`}
               </span>
             ) : null}
           </div>
@@ -321,19 +320,18 @@ const TwapOrderDialogContent = ({
                   </List.KeyValue>
                   <List.KeyValue className="!p-0" title="Amount sent">
                     <span className="text-muted-foreground">
-                      {srcFilledAmount?.toSignificant(6)} {order.srcTokenSymbol}
+                      {srcFilledAmount?.toSignificant(6)} {token0?.symbol}
                     </span>
                   </List.KeyValue>
                   <List.KeyValue className="!p-0" title="Amount received">
                     <span className="text-muted-foreground">
-                      {dstFilledAmount?.toSignificant(6)} {order.dstTokenSymbol}
+                      {dstFilledAmount?.toSignificant(6)} {token1?.symbol}
                     </span>
                   </List.KeyValue>
                   <List.KeyValue className="!p-0" title="Final execution price">
                     {executionPrice ? (
                       <span className="text-muted-foreground">
-                        1 {order.srcTokenSymbol} = {executionPrice}{' '}
-                        {order.dstTokenSymbol}
+                        1 {token0?.symbol} = {executionPrice} {token1?.symbol}
                       </span>
                     ) : null}
                   </List.KeyValue>
@@ -351,8 +349,7 @@ const TwapOrderDialogContent = ({
                   {!order.isMarketOrder ? (
                     <List.KeyValue className="!p-0" title="Limit Price">
                       <span className="text-muted-foreground">
-                        1 {order.srcTokenSymbol} = {limitPrice}{' '}
-                        {order.dstTokenSymbol}
+                        1 {token0?.symbol} = {limitPrice} {token1?.symbol}
                       </span>
                     </List.KeyValue>
                   ) : null}
@@ -368,7 +365,7 @@ const TwapOrderDialogContent = ({
                   </List.KeyValue>
                   <List.KeyValue className="!p-0" title="Amount in">
                     <span className="text-muted-foreground">
-                      {srcAmount?.toSignificant(6)} {order.srcTokenSymbol}
+                      {srcAmount?.toSignificant(6)} {token0?.symbol}
                     </span>
                   </List.KeyValue>
                   {!isLimit ? (
@@ -378,18 +375,17 @@ const TwapOrderDialogContent = ({
                         title="Individual trade size"
                       >
                         <span className="text-muted-foreground">
-                          {srcChunkAmount?.toSignificant(6)}{' '}
-                          {order.srcTokenSymbol}
+                          {srcChunkAmount?.toSignificant(6)} {token0?.symbol}
                         </span>
                       </List.KeyValue>
                       <List.KeyValue className="!p-0" title="Trade interval">
                         <span className="text-muted-foreground">
-                          {fillDelayText(fillDelay)}
+                          {fillDelayText(order.fillDelayMillis)}
                         </span>
                       </List.KeyValue>
                       <List.KeyValue className="!p-0" title="Number of trades">
                         <span className="text-muted-foreground">
-                          {order.totalChunks}
+                          {order.chunks}
                         </span>
                       </List.KeyValue>
                     </>
@@ -398,14 +394,13 @@ const TwapOrderDialogContent = ({
                     <List.KeyValue
                       className="!p-0"
                       title={
-                        order.totalChunks === 1
+                        order.chunks === 1
                           ? 'Min. received'
                           : 'Min. received per trade'
                       }
                     >
                       <span className="text-muted-foreground">
-                        {dstMinAmountOut?.toSignificant(6)}{' '}
-                        {order.dstTokenSymbol}
+                        {dstMinAmountOut?.toSignificant(6)} {token1?.symbol}
                       </span>
                     </List.KeyValue>
                   ) : null}
@@ -448,75 +443,69 @@ const TwapOrderDialogContent = ({
 const TwapOrderCard = ({
   chainId,
   order,
-}: { chainId: TwapSupportedChainId; order: Order }) => (
-  <List.Control className="p-4 flex flex-col gap-2 hover:opacity-80">
-    <div className="flex items-center justify-between">
-      <span className="text-xs">
-        #{order.id} {order.orderType === OrderType.LIMIT ? 'Limit' : 'DCA'}{' '}
-        <span className="text-muted-foreground">
-          ({format(order.createdAt, 'MMM d, yyyy HH:mm')})
+}: { chainId: TwapSupportedChainId; order: TwapOrder }) => {
+  const { data: token0 } = useTokenWithCache({
+    chainId,
+    address: order.srcTokenAddress as Address,
+  })
+
+  const { data: token1 } = useTokenWithCache({
+    chainId,
+    address: order.dstTokenAddress as Address,
+  })
+
+  return (
+    <List.Control className="p-4 flex flex-col gap-2 hover:opacity-80">
+      <div className="flex items-center justify-between">
+        <span className="text-xs">
+          #{order.id} {order.type === OrderType.LIMIT ? 'Limit' : 'DCA'}{' '}
+          <span className="text-muted-foreground">
+            ({format(order.createdAt, 'MMM d, yyyy HH:mm')})
+          </span>
         </span>
-      </span>
-      <div
-        className={classNames(
-          '!rounded-full px-2 text-[10px] flex items-center',
-          order.status === 'open'
-            ? 'bg-blue/20 text-blue'
-            : order.status === 'completed'
-              ? 'bg-green/20 text-green'
-              : order.status === 'canceled'
-                ? 'bg-yellow/20 text-yellow'
-                : order.status === 'expired'
-                  ? 'bg-muted text-muted-foreground'
-                  : '',
-        )}
-      >
-        <span className="capitalize">{order.status}</span>
+        <div
+          className={classNames(
+            '!rounded-full px-2 text-[10px] flex items-center',
+            order.status === OrderStatus.Open
+              ? 'bg-blue/20 text-blue'
+              : order.status === OrderStatus.Completed
+                ? 'bg-green/20 text-green'
+                : order.status === OrderStatus.Canceled
+                  ? 'bg-yellow/20 text-yellow'
+                  : order.status === OrderStatus.Expired
+                    ? 'bg-muted text-muted-foreground'
+                    : '',
+          )}
+        >
+          <span className="capitalize">{order.status}</span>
+        </div>
       </div>
-    </div>
-    <div className="flex items-center gap-2">
-      <Progress value={order.progress} className="!h-2 flex-1" />
-      <span className="text-xs text-muted-foreground">{order.progress}%</span>
-    </div>
-    <div className="flex gap-2 items-center">
-      <span className="flex gap-1 items-center text-xs text-muted-foreground">
-        <Currency.Icon
-          currency={useMemo(
-            () =>
-              new Token({
-                chainId,
-                address: order.srcTokenAddress,
-                symbol: order.srcTokenSymbol,
-                decimals: 0,
-              }),
-            [chainId, order.srcTokenAddress, order.srcTokenSymbol],
+      <div className="flex items-center gap-2">
+        <Progress value={order.progress} className="!h-2 flex-1" />
+        <span className="text-xs text-muted-foreground">{order.progress}%</span>
+      </div>
+      <div className="flex gap-2 items-center">
+        <span className="flex gap-1 items-center text-xs text-muted-foreground">
+          {token0 ? (
+            <Currency.Icon currency={token0} width={14} height={14} />
+          ) : (
+            <SkeletonCircle radius={14} />
           )}
-          width={14}
-          height={14}
-        />
-        {order.srcTokenSymbol}
-      </span>
-      <ArrowRightIcon width={12} height={12} />
-      <span className="flex gap-1 items-center text-xs text-muted-foreground">
-        <Currency.Icon
-          currency={useMemo(
-            () =>
-              new Token({
-                chainId,
-                address: order.dstTokenAddress,
-                symbol: order.dstTokenSymbol,
-                decimals: 0,
-              }),
-            [chainId, order.dstTokenAddress, order.dstTokenSymbol],
+          {token0?.symbol}
+        </span>
+        <ArrowRightIcon width={12} height={12} />
+        <span className="flex gap-1 items-center text-xs text-muted-foreground">
+          {token1 ? (
+            <Currency.Icon currency={token1} width={14} height={14} />
+          ) : (
+            <SkeletonCircle radius={14} />
           )}
-          width={14}
-          height={14}
-        />
-        {order.dstTokenSymbol}
-      </span>
-    </div>
-  </List.Control>
-)
+          {token1?.symbol}
+        </span>
+      </div>
+    </List.Control>
+  )
+}
 
 export const TwapOrdersDialogTriggerButton = () => {
   const { address } = useAccount()

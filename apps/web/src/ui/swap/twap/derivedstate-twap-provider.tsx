@@ -1,10 +1,9 @@
 'use client'
 
 import {
-  type DerivedSwapValuesArgs,
-  type DerivedSwapValuesResponse,
   type TimeDuration,
   TimeUnit,
+  type getAskParamsProps,
 } from '@orbs-network/twap-sdk'
 import {
   type Dispatch,
@@ -18,11 +17,13 @@ import {
 import { type TwapSupportedChainId, isTwapSupportedChainId } from 'src/config'
 import { getFeeString } from 'src/lib/swap/fee'
 import { TwapExpiryTimeDurations, TwapSDK } from 'src/lib/swap/twap'
-import { getTradeSizeWarning } from 'src/lib/swap/twap/warnings'
-import { ChainId } from 'sushi/chain'
+import { twapAbi_ask } from 'src/lib/swap/twap/abi'
+import { ChainId, type EvmChainId } from 'sushi/chain'
 import { Amount, Price, type Type } from 'sushi/currency'
 import type { Fraction } from 'sushi/math'
 import { sz } from 'sushi/validate'
+import { type Hex, encodeFunctionData } from 'viem'
+import type { Address } from 'viem/accounts'
 import { parseUnits } from 'viem/utils'
 import { z } from 'zod'
 import { usePrices } from '~evm/_common/ui/price-provider/price-provider/use-prices'
@@ -44,6 +45,10 @@ type State = DerivedStateSimpleSwapState & {
     expiry: TimeDuration
     chunks: number
     fillDelay: TimeDuration
+    deadline: number
+    amountOut: Amount<Type> | undefined
+    minAmountOut: Amount<Type> | undefined
+    amountInPerChunk: Amount<Type> | undefined
   }
   mutate: DerivedStateSimpleSwapState['mutate'] & {
     setLimitPrice: Dispatch<SetStateAction<Price<Type, Type> | undefined>>
@@ -142,6 +147,63 @@ const _DerivedStateTwapProvider: FC<DerivedStateTwapProviderProps> = ({
           ? state.chainId
           : ChainId.ETHEREUM
 
+        const sdk = TwapSDK.onNetwork(chainId)
+
+        const duration = sdk.getOrderDuration(chunks, fillDelay, expiry)
+
+        const deadline = sdk.getOrderDeadline(Date.now(), duration)
+
+        const amountInPerChunk =
+          state.swapAmount && chunks
+            ? Amount.fromRawAmount(
+                state.swapAmount.currency,
+                sdk.getSrcTokenChunkAmount(
+                  state.swapAmount.quotient.toString(),
+                  chunks,
+                ),
+              )
+            : undefined
+
+        const price =
+          state.token0 && marketPrice
+            ? (limitPrice ?? marketPrice).quote(
+                Amount.fromRawAmount(
+                  state.token0,
+                  parseUnits('1', state.token0.decimals),
+                ),
+              )
+            : undefined
+
+        const dstTokenAmount =
+          state.swapAmount && price
+            ? sdk.getDestTokenAmount(
+                state.swapAmount.quotient.toString(),
+
+                price.quotient.toString(),
+                state.swapAmount.currency.decimals,
+              )
+            : undefined
+
+        const amountOut =
+          state.token1 && dstTokenAmount
+            ? Amount.fromRawAmount(state.token1, dstTokenAmount)
+            : undefined
+
+        const dstMinAmount =
+          state.token1 && amountInPerChunk && price
+            ? sdk.getDestTokenMinAmount(
+                amountInPerChunk.quotient.toString(),
+                price.quotient.toString(),
+                !isLimitOrder,
+                state.token1.decimals,
+              )
+            : undefined
+
+        const minAmountOut =
+          state.token1 && dstMinAmount
+            ? Amount.fromRawAmount(state.token1, dstMinAmount)
+            : undefined
+
         return {
           mutate: {
             ...mutate,
@@ -161,6 +223,10 @@ const _DerivedStateTwapProvider: FC<DerivedStateTwapProviderProps> = ({
             expiry,
             chunks,
             fillDelay,
+            deadline,
+            amountOut,
+            minAmountOut,
+            amountInPerChunk,
           },
           isLoading,
           isToken0Loading,
@@ -192,100 +258,6 @@ const useDerivedStateTwap = () => {
   return context
 }
 
-const useTwapTrade = ():
-  | (Omit<
-      DerivedSwapValuesResponse,
-      'srcChunkAmount' | 'destTokenMinAmount' | 'destTokenAmount'
-    > & {
-      amountIn: Amount<Type>
-      amountInChunk: Amount<Type>
-      amountOut: Amount<Type> | undefined
-      minAmountOut: Amount<Type>
-      fee: string | undefined
-    })
-  | undefined => {
-  const {
-    state: {
-      isLimitOrder,
-      chainId,
-      swapAmount,
-      marketPrice,
-      limitPrice,
-      token0PriceUSD,
-      token1PriceUSD,
-      token0,
-      token1,
-      expiry,
-      chunks,
-      fillDelay,
-    },
-  } = useDerivedStateTwap()
-
-  return useMemo(() => {
-    if (!swapAmount || !marketPrice || !token0PriceUSD || !token0 || !token1)
-      return undefined
-
-    const derivedValueArgs: DerivedSwapValuesArgs = {
-      srcAmount: swapAmount?.quotient.toString(),
-      oneSrcTokenUsd: token0PriceUSD.toFixed(6),
-      srcDecimals: token0.decimals,
-      destDecimals: token1.decimals,
-    }
-
-    if (isLimitOrder) {
-      derivedValueArgs.isLimitPanel = true
-      derivedValueArgs.customDuration = expiry
-      derivedValueArgs.price = (limitPrice ?? marketPrice)
-        .quote(Amount.fromRawAmount(token0, parseUnits('1', token0.decimals)))
-        .quotient.toString()
-    } else {
-      derivedValueArgs.isMarketOrder = true
-      derivedValueArgs.customChunks = chunks
-      derivedValueArgs.customFillDelay = fillDelay
-    }
-
-    const { srcChunkAmount, destTokenAmount, destTokenMinAmount, ...trade } =
-      TwapSDK.onNetwork(chainId).derivedSwapValues(derivedValueArgs)
-
-    const amountOut = destTokenAmount
-      ? Amount.fromRawAmount(token1, destTokenAmount)
-      : undefined
-
-    const minAmountOut = Amount.fromRawAmount(token1, destTokenMinAmount)
-
-    const amountInChunk = Amount.fromRawAmount(token1, srcChunkAmount)
-
-    return {
-      ...trade,
-      amountIn: swapAmount,
-      amountInChunk,
-      amountOut,
-      minAmountOut,
-      fee: isLimitOrder
-        ? getFeeString({
-            fromToken: token0,
-            toToken: token1,
-            tokenOutPrice: token1PriceUSD,
-            minAmountOut,
-          })
-        : undefined,
-    }
-  }, [
-    swapAmount,
-    chainId,
-    marketPrice,
-    limitPrice,
-    token0PriceUSD,
-    token1PriceUSD,
-    isLimitOrder,
-    token0,
-    token1,
-    expiry,
-    chunks,
-    fillDelay,
-  ])
-}
-
 const bigIntValidator = z.preprocess(
   (v) => (typeof v === 'string' ? BigInt(v) : v),
   z.bigint(),
@@ -310,36 +282,64 @@ const prepareOrderArgsValidator = z.tuple([
     .number()
     .int()
     .gte(0), // 8: fillDelay
-  z.preprocess((v) => {
-    // twap SDK incorrectly returns data as an array, looks like it always returns [] though
-    if (Array.isArray(v)) {
-      if (v.length === 0) return '0x'
-      if (v.length === 1) return v[0]
-      throw new Error('data must be a single hex string')
-    }
-    return v ?? '0x'
-  }, sz.hex()), // 9: data
+  z.preprocess((val) => (val === '' ? '0x' : val), sz.hex()), // 9: data
 ])
 
-const usePrepareTwapOrderArgs = (trade: ReturnType<typeof useTwapTrade>) => {
+export interface UseTwapTradeReturn {
+  isLimitOrder: boolean | undefined
+  limitPrice: Price<Type, Type> | undefined
+  marketPrice: Price<Type, Type> | undefined
+  amountIn: Amount<Type> | undefined
+  chunks: number | undefined
+  fillDelay: TimeDuration | undefined
+  amountInPerChunk: Amount<Type> | undefined
+  amountOut: Amount<Type> | undefined
+  minAmountOut: Amount<Type> | undefined
+  tx:
+    | {
+        chainId: EvmChainId
+        to: Address
+        data: Hex
+      }
+    | undefined
+  fee: string | undefined
+}
+
+const useTwapTrade = () => {
   const {
-    state: { chainId, swapAmount, token0, token1 },
+    state: {
+      chainId,
+      swapAmount,
+      token0,
+      token1,
+      deadline,
+      amountOut,
+      minAmountOut,
+      amountInPerChunk,
+      fillDelay,
+      limitPrice,
+      marketPrice,
+      token1PriceUSD,
+      chunks,
+      isLimitOrder,
+    },
   } = useDerivedStateTwap()
 
   return useMemo(() => {
-    if (!trade || !swapAmount || !token0 || !token1)
-      return { params: undefined, error: undefined }
-
-    const { minAmountOut, amountInChunk, duration, fillDelay } = trade
-
-    const deadline = TwapSDK.onNetwork(chainId).orderDeadline(
-      Date.now(),
-      duration,
+    if (
+      !swapAmount ||
+      !token0 ||
+      !token1 ||
+      !minAmountOut ||
+      !amountInPerChunk ||
+      !fillDelay ||
+      !chunks
     )
+      return { data: undefined, error: undefined }
 
-    const sdkParams = TwapSDK.onNetwork(chainId).prepareOrderArgs({
+    const sdkParams = TwapSDK.onNetwork(chainId).getAskParams({
       destTokenMinAmount: minAmountOut.quotient.toString(),
-      srcChunkAmount: amountInChunk.quotient.toString(),
+      srcChunkAmount: amountInPerChunk.quotient.toString(),
       deadline,
       fillDelay,
       srcAmount: swapAmount.quotient.toString(),
@@ -355,32 +355,124 @@ const usePrepareTwapOrderArgs = (trade: ReturnType<typeof useTwapTrade>) => {
 
     if (!success) {
       return {
-        params: undefined,
+        data: undefined,
         error: error,
       }
     }
 
+    const tx = {
+      chainId,
+      to: TwapSDK.onNetwork(chainId).config.twapAddress,
+      data: encodeFunctionData({
+        abi: twapAbi_ask,
+        functionName: 'ask',
+        args: [
+          {
+            exchange: params[0],
+            srcToken: params[1],
+            dstToken: params[2],
+            srcAmount: params[3],
+            srcBidAmount: params[4],
+            dstMinAmount: params[5],
+            deadline: params[6],
+            bidDelay: params[7],
+            fillDelay: params[8],
+            data: params[9],
+          },
+        ],
+      }),
+    }
+
     return {
-      params: {
-        exchange: params[0],
-        srcToken: params[1],
-        dstToken: params[2],
-        srcAmount: params[3],
-        srcBidAmount: params[4],
-        dstMinAmount: params[5],
-        deadline: params[6],
-        bidDelay: params[7],
-        fillDelay: params[8],
-        data: params[9],
-      },
+      data: {
+        isLimitOrder,
+        limitPrice: isLimitOrder ? limitPrice : undefined,
+        marketPrice,
+        amountIn: swapAmount,
+        chunks,
+        fillDelay,
+        amountInPerChunk,
+        amountOut,
+        minAmountOut,
+        tx,
+        fee: isLimitOrder
+          ? getFeeString({
+              fromToken: token0,
+              toToken: token1,
+              tokenOutPrice: token1PriceUSD,
+              minAmountOut,
+            })
+          : undefined, // todo: check if fees are even taken
+      } as UseTwapTradeReturn,
       error: undefined,
     }
-  }, [trade, swapAmount, token0, token1, chainId])
+  }, [
+    token0,
+    token1,
+    chainId,
+    fillDelay,
+    deadline,
+    swapAmount,
+    chunks,
+    amountInPerChunk,
+    amountOut,
+    minAmountOut,
+    limitPrice,
+    marketPrice,
+    token1PriceUSD,
+    isLimitOrder,
+  ])
+}
+
+const useTwapTradeErrors = () => {
+  const {
+    state: {
+      chainId,
+      amountInPerChunk,
+      fillDelay,
+      token0PriceUSD,
+      chunks,
+      isLimitOrder,
+    },
+  } = useDerivedStateTwap()
+
+  return useMemo(() => {
+    const sdk = TwapSDK.onNetwork(chainId)
+
+    const minFillDelayError = isLimitOrder
+      ? false
+      : sdk.getMinFillDelayError(fillDelay).isError
+    const maxFillDelayError = isLimitOrder
+      ? false
+      : sdk.getMaxFillDelayError(fillDelay, chunks).isError
+
+    const minTradeSizeError =
+      amountInPerChunk && token0PriceUSD
+        ? sdk.getMinTradeSizeError(
+            amountInPerChunk.toExact(),
+            +token0PriceUSD.toFixed(6),
+            sdk.config.minChunkSizeUsd,
+          ).isError
+        : false
+
+    return {
+      minFillDelayError,
+      maxFillDelayError,
+      minTradeSizeError,
+    }
+  }, [
+    chainId,
+    isLimitOrder,
+    fillDelay,
+    chunks,
+    amountInPerChunk,
+    token0PriceUSD,
+  ])
 }
 
 export {
   DerivedStateTwapProvider,
   useDerivedStateTwap,
   useTwapTrade,
-  usePrepareTwapOrderArgs,
+  useTwapTradeErrors,
 }

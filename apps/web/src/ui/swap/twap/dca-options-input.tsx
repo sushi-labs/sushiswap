@@ -18,12 +18,11 @@ import {
   TWAP_MIN_FILL_DELAY,
   TwapSDK,
 } from 'src/lib/swap/twap'
-import {
-  getMaxFillDelayWarning,
-  getMinFillDelayWarning,
-} from 'src/lib/swap/twap/warnings'
 import { formatUSD } from 'sushi/format'
-import { useDerivedStateTwap, useTwapTrade } from './derivedstate-twap-provider'
+import {
+  useDerivedStateTwap,
+  useTwapTradeErrors,
+} from './derivedstate-twap-provider'
 
 export const DcaOptionsInput = () => {
   return (
@@ -36,12 +35,12 @@ export const DcaOptionsInput = () => {
 
 const DcaTradesInput = () => {
   const {
-    state: { chainId, token0, chunks, token0PriceUSD },
+    state: { chainId, token0, chunks, token0PriceUSD, amountInPerChunk },
     mutate: { setChunks },
     isLoading,
   } = useDerivedStateTwap()
 
-  const trade = useTwapTrade()
+  const { minTradeSizeError } = useTwapTradeErrors()
 
   const onChange = useCallback(
     (value: string) => {
@@ -52,9 +51,9 @@ const DcaTradesInput = () => {
   )
 
   const token0ChunkAmountUSD = useMemo(() => {
-    if (!trade?.amountInChunk || !token0PriceUSD) return undefined
-    return trade.amountInChunk.multiply(token0PriceUSD).toSignificant(6)
-  }, [trade?.amountInChunk, token0PriceUSD])
+    if (!amountInPerChunk || !token0PriceUSD) return undefined
+    return amountInPerChunk.multiply(token0PriceUSD).toSignificant(6)
+  }, [amountInPerChunk, token0PriceUSD])
 
   return (
     <div className="flex-1 flex flex-col gap-1 whitespace-nowrap">
@@ -68,9 +67,7 @@ const DcaTradesInput = () => {
 
       <div
         className={classNames(
-          trade?.warnings?.tradeSize
-            ? '!bg-red-500/20 !dark:bg-red-900/30'
-            : '',
+          minTradeSizeError ? '!bg-red-500/20 !dark:bg-red-900/30' : '',
           'px-3 py-4 overflow-hidden border border-accent bg-white dark:bg-slate-800 rounded-xl',
         )}
       >
@@ -87,19 +84,19 @@ const DcaTradesInput = () => {
       {!isLoading ? (
         <span
           className={classNames(
-            trade?.warnings?.tradeSize ? 'text-red' : '',
+            minTradeSizeError ? 'text-red' : '',
             'text-xs text-muted-foreground',
           )}
         >
-          {trade?.amountInChunk ? (
-            <FormattedNumber number={trade.amountInChunk.toExact()} />
+          {amountInPerChunk ? (
+            <FormattedNumber number={amountInPerChunk.toExact()} />
           ) : (
             '0'
           )}{' '}
           {token0?.symbol} per trade (
           {token0ChunkAmountUSD ? formatUSD(token0ChunkAmountUSD) : '$0'}
-          {trade?.warnings?.tradeSize
-            ? ` - min $${TwapSDK.onNetwork(chainId).minChunkSizeUsd}`
+          {minTradeSizeError
+            ? ` - min $${TwapSDK.onNetwork(chainId).config.minChunkSizeUsd}`
             : ''}
           )
         </span>
@@ -138,12 +135,7 @@ const DcaIntervalInput = () => {
     [setFillDelay],
   )
 
-  const [minFillDelayError, maxFillDelayError] = useMemo(() => {
-    return [
-      getMinFillDelayWarning(fillDelay),
-      getMaxFillDelayWarning(fillDelay),
-    ]
-  }, [fillDelay])
+  const { minFillDelayError, maxFillDelayError } = useTwapTradeErrors()
 
   return (
     <div className="flex-1 flex flex-col gap-1 whitespace-nowrap">

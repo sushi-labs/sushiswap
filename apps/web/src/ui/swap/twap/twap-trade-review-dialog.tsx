@@ -27,14 +27,12 @@ import React, {
 } from 'react'
 import { APPROVE_TAG_SWAP } from 'src/lib/constants'
 import { fillDelayText, getTimeDurationMs } from 'src/lib/swap/twap'
-import { TwapSDK } from 'src/lib/swap/twap/TwapSDK'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
 import { useApproved } from 'src/lib/wagmi/systems/Checker/Provider'
 import { EvmChain } from 'sushi/chain'
 import { formatUSD, shortenAddress } from 'sushi/format'
 import { ZERO } from 'sushi/math'
-import type { Address } from 'sushi/types'
-import { UserRejectedRequestError, encodeFunctionData } from 'viem'
+import { UserRejectedRequestError } from 'viem'
 import {
   useAccount,
   useEstimateGas,
@@ -45,84 +43,10 @@ import {
 import type { SendTransactionReturnType } from 'wagmi/actions'
 import { useRefetchBalances } from '~evm/_common/ui/balance-provider/use-refetch-balances'
 import {
+  type UseTwapTradeReturn,
   useDerivedStateTwap,
-  usePrepareTwapOrderArgs,
   useTwapTrade,
 } from './derivedstate-twap-provider'
-
-const askAbiShard = [
-  {
-    inputs: [
-      {
-        components: [
-          {
-            internalType: 'address',
-            name: 'exchange',
-            type: 'address',
-          },
-          {
-            internalType: 'address',
-            name: 'srcToken',
-            type: 'address',
-          },
-          {
-            internalType: 'address',
-            name: 'dstToken',
-            type: 'address',
-          },
-          {
-            internalType: 'uint256',
-            name: 'srcAmount',
-            type: 'uint256',
-          },
-          {
-            internalType: 'uint256',
-            name: 'srcBidAmount',
-            type: 'uint256',
-          },
-          {
-            internalType: 'uint256',
-            name: 'dstMinAmount',
-            type: 'uint256',
-          },
-          {
-            internalType: 'uint32',
-            name: 'deadline',
-            type: 'uint32',
-          },
-          {
-            internalType: 'uint32',
-            name: 'bidDelay',
-            type: 'uint32',
-          },
-          {
-            internalType: 'uint32',
-            name: 'fillDelay',
-            type: 'uint32',
-          },
-          {
-            internalType: 'bytes',
-            name: 'data',
-            type: 'bytes',
-          },
-        ],
-        internalType: 'struct OrderLib.Ask',
-        name: '_ask',
-        type: 'tuple',
-      },
-    ],
-    name: 'ask',
-    outputs: [
-      {
-        internalType: 'uint64',
-        name: 'id',
-        type: 'uint64',
-      },
-    ],
-    stateMutability: 'nonpayable',
-    type: 'function',
-  },
-] as const
 
 export const TwapTradeReviewDialog: FC<{
   children: ReactNode
@@ -137,6 +61,7 @@ export const TwapTradeReviewDialog: FC<{
       limitPrice,
       isLimitOrder,
       token1PriceUSD,
+      deadline,
     },
     mutate: { setSwapAmount },
   } = useDerivedStateTwap()
@@ -144,45 +69,18 @@ export const TwapTradeReviewDialog: FC<{
   const [acceptDisclaimer, setAcceptDisclaimer] = useState(true)
 
   const { approved } = useApproved(APPROVE_TAG_SWAP)
-  const trade = useTwapTrade()
   const { address } = useAccount()
-  const tradeRef = useRef<typeof trade>(null)
+  const tradeRef = useRef<UseTwapTradeReturn>(null)
   const client = usePublicClient()
 
   const { refetchChain: refetchBalances } = useRefetchBalances()
 
-  const { params, error: _prepareTwapOrderArgsError } =
-    usePrepareTwapOrderArgs(trade)
-
-  const preparedTransaction = useMemo(() => {
-    return {
-      chainId,
-      to: TwapSDK.onNetwork(chainId).config.twapAddress as Address,
-      data: params
-        ? encodeFunctionData({
-            abi: askAbiShard,
-            functionName: 'ask',
-            args: [params],
-          })
-        : undefined,
-    }
-  }, [chainId, params])
-
-  const [deadline, currentTime] = useMemo(() => {
-    const now = new Date().getTime()
-
-    return [
-      trade
-        ? TwapSDK.onNetwork(chainId).orderDeadline(now, trade.duration)
-        : undefined,
-      now,
-    ]
-  }, [trade, chainId])
+  const { data: trade } = useTwapTrade()
 
   const { data: estGas, isError: isEstGasError } = useEstimateGas({
-    ...preparedTransaction,
+    ...trade?.tx,
     query: {
-      enabled: Boolean(approved && preparedTransaction.data),
+      enabled: Boolean(approved && trade?.tx?.data),
     },
   })
 
@@ -203,17 +101,9 @@ export const TwapTradeReviewDialog: FC<{
           txHash: hash,
           promise,
           summary: {
-            pending: `${'Swapping'} ${trade.amountIn?.toSignificant(6)} ${
-              trade.amountIn?.currency.symbol
-            } ${'for'} ${trade.amountOut?.toSignificant(6)} ${
-              trade.amountOut?.currency.symbol
-            }`,
-            completed: `${'Swap'} ${trade.amountIn?.toSignificant(6)} ${
-              trade.amountIn?.currency.symbol
-            } ${'for'} ${trade.amountOut?.toSignificant(6)} ${
-              trade.amountOut?.currency.symbol
-            }`,
-            failed: `Something went wrong when trying to ${'swap'} ${trade.amountIn?.currency.symbol} ${'for'} ${trade.amountOut?.currency.symbol}`,
+            pending: `Placing ${trade.isLimitOrder ? 'limit' : 'DCA'} order`,
+            completed: `Placed ${trade.isLimitOrder ? 'limit' : 'DCA'} order`,
+            failed: `Something went wrong when placing ${trade.isLimitOrder ? 'limit' : 'DCA'} order`,
           },
           timestamp: ts,
           groupTimestamp: ts,
@@ -252,17 +142,16 @@ export const TwapTradeReviewDialog: FC<{
   })
 
   const write = useMemo(() => {
-    if (!sendTransactionAsync || !preparedTransaction || !estGas)
-      return undefined
+    if (!sendTransactionAsync || !trade?.tx || !estGas) return undefined
 
     return async (confirm: () => void) => {
       await sendTransactionAsync({
-        ...preparedTransaction,
+        ...trade?.tx,
         gas: (estGas * 6n) / 5n,
       })
       confirm()
     }
-  }, [sendTransactionAsync, preparedTransaction, estGas])
+  }, [sendTransactionAsync, trade?.tx, estGas])
 
   const { status } = useWaitForTransactionReceipt({
     chainId: chainId,
@@ -287,7 +176,7 @@ export const TwapTradeReviewDialog: FC<{
                     `Receive at least ${trade.minAmountOut?.toSignificant(6)} ${token1?.symbol}`
                   ) : (
                     `Every ${fillDelayText(trade.fillDelay)} over ${trade.chunks} order
-                ${trade.chunks > 1 ? 's' : ''}`
+                ${(trade.chunks ?? 0 > 1) ? 's' : ''}`
                   )}
                 </DialogDescription>
               </DialogHeader>
@@ -336,10 +225,10 @@ export const TwapTradeReviewDialog: FC<{
                           )}
                         </List.KeyValue>
                         <List.KeyValue title="Sell per Order">
-                          {trade?.amountInChunk ? (
+                          {trade?.amountInPerChunk ? (
                             <span>
                               <FormattedNumber
-                                number={trade.amountInChunk.toExact()}
+                                number={trade.amountInPerChunk.toExact()}
                               />{' '}
                               {token0?.symbol}
                             </span>
@@ -359,11 +248,7 @@ export const TwapTradeReviewDialog: FC<{
                           )}
                         </List.KeyValue>
                         <List.KeyValue title="Start Date">
-                          {currentTime ? (
-                            format(currentTime, "MMMM d, yyyy 'at' h:mm a")
-                          ) : (
-                            <SkeletonText />
-                          )}
+                          {format(Date.now(), "MMMM d, yyyy 'at' h:mm a")}
                         </List.KeyValue>
                         <List.KeyValue title="Est. End Date">
                           {deadline ? (
@@ -458,7 +343,7 @@ export const TwapTradeReviewDialog: FC<{
         testId="make-another-swap"
         buttonText="Make another swap"
         txHash={data}
-        successMessage={`You sold ${tradeRef.current?.amountIn?.toSignificant(6)} ${token0?.symbol} for ${tradeRef.current?.amountOut?.toSignificant(6)} ${token1?.symbol}`}
+        successMessage={`Your ${tradeRef.current?.isLimitOrder ? 'limit' : 'DCA'} order was placed`}
       />
     </DialogProvider>
   )
