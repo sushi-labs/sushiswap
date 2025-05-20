@@ -26,7 +26,7 @@ import React, {
   useState,
 } from 'react'
 import { APPROVE_TAG_SWAP } from 'src/lib/constants'
-import { fillDelayText } from 'src/lib/swap/twap'
+import { fillDelayText, getTimeDurationMs } from 'src/lib/swap/twap'
 import { TwapSDK } from 'src/lib/swap/twap/TwapSDK'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
 import { useApproved } from 'src/lib/wagmi/systems/Checker/Provider'
@@ -286,7 +286,7 @@ export const TwapTradeReviewDialog: FC<{
                   ) : isLimitOrder ? (
                     `Receive at least ${trade.minAmountOut?.toSignificant(6)} ${token1?.symbol}`
                   ) : (
-                    `Every ${fillDelayText(trade.fillDelay.value * trade.fillDelay.unit)} over ${trade.chunks} order
+                    `Every ${fillDelayText(trade.fillDelay)} over ${trade.chunks} order
                 ${trade.chunks > 1 ? 's' : ''}`
                   )}
                 </DialogDescription>
@@ -351,7 +351,7 @@ export const TwapTradeReviewDialog: FC<{
                           {trade?.fillDelay ? (
                             formatDistanceStrict(
                               0,
-                              trade.fillDelay.unit * trade.fillDelay.value,
+                              getTimeDurationMs(trade.fillDelay),
                               { roundingMethod: 'floor' },
                             )
                           ) : (

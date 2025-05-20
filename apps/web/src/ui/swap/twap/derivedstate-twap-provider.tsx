@@ -17,10 +17,10 @@ import {
 } from 'react'
 import { type TwapSupportedChainId, isTwapSupportedChainId } from 'src/config'
 import { getFeeString } from 'src/lib/swap/fee'
-import { TwapSDK } from 'src/lib/swap/twap/TwapSDK'
-import { TwapExpiryTimeDurations } from 'src/lib/swap/twap/types'
+import { TwapExpiryTimeDurations, TwapSDK } from 'src/lib/swap/twap'
+import { getTradeSizeWarning } from 'src/lib/swap/twap/warnings'
 import { ChainId } from 'sushi/chain'
-import { Amount, Price, type Type, tryParseAmount } from 'sushi/currency'
+import { Amount, Price, type Type } from 'sushi/currency'
 import type { Fraction } from 'sushi/math'
 import { sz } from 'sushi/validate'
 import { parseUnits } from 'viem/utils'
@@ -211,6 +211,7 @@ const useTwapTrade = ():
       swapAmount,
       marketPrice,
       limitPrice,
+      token0PriceUSD,
       token1PriceUSD,
       token0,
       token1,
@@ -221,13 +222,12 @@ const useTwapTrade = ():
   } = useDerivedStateTwap()
 
   return useMemo(() => {
-    if (!swapAmount || !marketPrice || !token0 || !token1) return undefined
+    if (!swapAmount || !marketPrice || !token0PriceUSD || !token0 || !token1)
+      return undefined
 
     const derivedValueArgs: DerivedSwapValuesArgs = {
-      srcAmount: swapAmount.quotient.toString(),
-      oneSrcTokenUsd: marketPrice
-        .quote(Amount.fromRawAmount(token0, '1'))
-        .toExact(),
+      srcAmount: swapAmount?.quotient.toString(),
+      oneSrcTokenUsd: token0PriceUSD.toFixed(6),
       srcDecimals: token0.decimals,
       destDecimals: token1.decimals,
     }
@@ -275,6 +275,7 @@ const useTwapTrade = ():
     chainId,
     marketPrice,
     limitPrice,
+    token0PriceUSD,
     token1PriceUSD,
     isLimitOrder,
     token0,

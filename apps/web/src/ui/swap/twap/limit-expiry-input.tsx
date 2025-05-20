@@ -2,7 +2,7 @@
 
 import { Radio, RadioGroup } from '@headlessui/react'
 import { Toggle } from '@sushiswap/ui'
-import { TwapExpiryTimeDurations } from 'src/lib/swap/twap/types'
+import { TwapExpiryTimeDurations } from 'src/lib/swap/twap'
 import { useDerivedStateTwap } from './derivedstate-twap-provider'
 
 const EXPIRATION_OPTIONS = [

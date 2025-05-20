@@ -1,8 +1,9 @@
 'use client'
 
+import { classNames } from '@sushiswap/ui'
 import { Web3Input } from 'src/lib/wagmi/components/web3-input'
 import { isWNativeSupported } from 'sushi/config'
-import { useDerivedStateTwap } from './derivedstate-twap-provider'
+import { useDerivedStateTwap, useTwapTrade } from './derivedstate-twap-provider'
 
 export const TwapToken0Input = () => {
   const {
@@ -11,11 +12,16 @@ export const TwapToken0Input = () => {
     isToken0Loading: isLoading,
   } = useDerivedStateTwap()
 
+  const trade = useTwapTrade()
+
   return (
     <Web3Input.Currency
       id="swap-from"
       type="INPUT"
-      className="border border-accent p-3 bg-white dark:bg-slate-800 rounded-xl"
+      className={classNames(
+        'border border-accent p-3 bg-white dark:bg-slate-800 rounded-xl',
+        trade?.warnings.tradeSize ? '!bg-red-500/20 !dark:bg-red-900/30' : '',
+      )}
       chainId={chainId}
       onSelect={setToken0}
       value={swapAmountString}

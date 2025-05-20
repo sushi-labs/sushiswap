@@ -1,7 +1,11 @@
-export const fillDelayText = (value?: number) => {
-  if (!value) {
+import type { TimeDuration } from '@orbs-network/twap-sdk'
+
+export const fillDelayText = (_value?: number | TimeDuration) => {
+  if (!_value) {
     return ''
   }
+
+  const value = typeof _value === 'object' ? getTimeDurationMs(_value) : _value
 
   const secondsTotal = Math.floor(value / 1000)
   const days = Math.floor(secondsTotal / (24 * 60 * 60))
@@ -25,4 +29,9 @@ export const fillDelayText = (value?: number) => {
   }
 
   return arr.join(' ')
+}
+
+export const getTimeDurationMs = (duration?: TimeDuration) => {
+  if (!duration) return 0
+  return duration.value * duration.unit
 }

@@ -13,7 +13,15 @@ import {
   classNames,
 } from '@sushiswap/ui'
 import { useCallback, useMemo } from 'react'
-import { Amount } from 'sushi/currency'
+import {
+  TWAP_MAX_FILL_DELAY,
+  TWAP_MIN_FILL_DELAY,
+  TwapSDK,
+} from 'src/lib/swap/twap'
+import {
+  getMaxFillDelayWarning,
+  getMinFillDelayWarning,
+} from 'src/lib/swap/twap/warnings'
 import { formatUSD } from 'sushi/format'
 import { useDerivedStateTwap, useTwapTrade } from './derivedstate-twap-provider'
 
@@ -28,7 +36,7 @@ export const DcaOptionsInput = () => {
 
 const DcaTradesInput = () => {
   const {
-    state: { token0, chunks, token0PriceUSD },
+    state: { chainId, token0, chunks, token0PriceUSD },
     mutate: { setChunks },
     isLoading,
   } = useDerivedStateTwap()
@@ -42,10 +50,6 @@ const DcaTradesInput = () => {
     },
     [setChunks],
   )
-
-  // const error = useMemo(() => {
-  //   // trade size must be at least $50
-  // }, [])
 
   const token0ChunkAmountUSD = useMemo(() => {
     if (!trade?.amountInChunk || !token0PriceUSD) return undefined
@@ -64,7 +68,9 @@ const DcaTradesInput = () => {
 
       <div
         className={classNames(
-          // error ? '!bg-red-500/20 !dark:bg-red-900/30' : '',
+          trade?.warnings?.tradeSize
+            ? '!bg-red-500/20 !dark:bg-red-900/30'
+            : '',
           'px-3 py-4 overflow-hidden border border-accent bg-white dark:bg-slate-800 rounded-xl',
         )}
       >
@@ -79,14 +85,23 @@ const DcaTradesInput = () => {
         />
       </div>
       {!isLoading ? (
-        <span className="text-xs text-muted-foreground">
+        <span
+          className={classNames(
+            trade?.warnings?.tradeSize ? 'text-red' : '',
+            'text-xs text-muted-foreground',
+          )}
+        >
           {trade?.amountInChunk ? (
             <FormattedNumber number={trade.amountInChunk.toExact()} />
           ) : (
             '0'
           )}{' '}
           {token0?.symbol} per trade (
-          {token0ChunkAmountUSD ? formatUSD(token0ChunkAmountUSD) : '$0'})
+          {token0ChunkAmountUSD ? formatUSD(token0ChunkAmountUSD) : '$0'}
+          {trade?.warnings?.tradeSize
+            ? ` - min $${TwapSDK.onNetwork(chainId).minChunkSizeUsd}`
+            : ''}
+          )
         </span>
       ) : (
         <div className="w-40 h-4 py-0.5">
@@ -101,9 +116,6 @@ const TimeUnitLabel = {
   [TimeUnit.Minutes]: 'Minutes',
   [TimeUnit.Hours]: 'Hours',
   [TimeUnit.Days]: 'Days',
-  // [TimeUnit.Months]: 'Months',
-  // [TimeUnit.Weeks]: 'Weeks',
-  // [TimeUnit.Years]: 'Years',
 } as const
 
 const DcaIntervalInput = () => {
@@ -126,6 +138,13 @@ const DcaIntervalInput = () => {
     [setFillDelay],
   )
 
+  const [minFillDelayError, maxFillDelayError] = useMemo(() => {
+    return [
+      getMinFillDelayWarning(fillDelay),
+      getMaxFillDelayWarning(fillDelay),
+    ]
+  }, [fillDelay])
+
   return (
     <div className="flex-1 flex flex-col gap-1 whitespace-nowrap">
       <div className="flex justify-between items-center">
@@ -140,7 +159,9 @@ const DcaIntervalInput = () => {
 
       <div
         className={classNames(
-          // error ? '!bg-red-500/20 !dark:bg-red-900/30' : '',
+          minFillDelayError || maxFillDelayError
+            ? '!bg-red-500/20 !dark:bg-red-900/30'
+            : '',
           'px-3 py-2 overflow-hidden border border-accent bg-white dark:bg-slate-800 rounded-xl flex justify-between items-center',
         )}
       >
@@ -175,6 +196,19 @@ const DcaIntervalInput = () => {
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
+
+      {minFillDelayError ? (
+        <span className="text-xs text-red">
+          Must be ≥ {TWAP_MIN_FILL_DELAY.value}{' '}
+          {TimeUnitLabel[TWAP_MIN_FILL_DELAY.unit].toLowerCase()}
+        </span>
+      ) : maxFillDelayError ? (
+        <span className="text-xs text-red">
+          {' '}
+          Must be ≤ {TWAP_MAX_FILL_DELAY.value}{' '}
+          {TimeUnitLabel[TWAP_MAX_FILL_DELAY.unit].toLowerCase()}
+        </span>
+      ) : null}
     </div>
   )
 }
