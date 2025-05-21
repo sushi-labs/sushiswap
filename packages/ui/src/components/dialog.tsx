@@ -16,8 +16,6 @@ import {
   useState,
 } from 'react'
 import { type ChainId, EvmChain } from 'sushi/chain'
-
-import { ArrowLeft } from 'lucide-react'
 import { CheckMarkIcon } from '../icons/CheckMarkIcon'
 import { FailedMarkIcon } from '../icons/FailedMarkIcon'
 import {
@@ -112,7 +110,6 @@ interface DialogContentProps
   extends React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content>,
     VariantProps<typeof dialogVariants> {
   hideClose?: boolean
-  topCloseBtn?: boolean
 }
 
 const DialogContent = React.forwardRef<
@@ -120,14 +117,7 @@ const DialogContent = React.forwardRef<
   DialogContentProps
 >(
   (
-    {
-      className,
-      hideClose: _hideClose = false,
-      topCloseBtn,
-      variant,
-      children,
-      ...props
-    },
+    { className, hideClose: _hideClose = false, variant, children, ...props },
     ref,
   ) => (
     <DialogPortal>
@@ -137,14 +127,6 @@ const DialogContent = React.forwardRef<
         className={dialogVariants({ variant, className })}
         {...props}
       >
-        {topCloseBtn ? null : (
-          <DialogPrimitive.Close
-            asChild
-            className={dialogCloseVariants({ variant })}
-          >
-            <IconButton icon={XMarkIcon} name="Close" />
-          </DialogPrimitive.Close>
-        )}
         {children}
         {_hideClose ? null : (
           <DialogPrimitive.Close
