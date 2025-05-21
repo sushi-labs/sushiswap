@@ -33,7 +33,7 @@ export const TradeViewSwitch = () => {
       <Button
         onClick={handleCloseBanner}
         variant="ghost"
-        className="absolute right-4 top-1/2 -translate-y-1/2"
+        className="absolute right-2 md:right-4 top-1/2 -translate-y-1/2"
       >
         <XIcon width={15} height={15} />
       </Button>
