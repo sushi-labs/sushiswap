@@ -42,15 +42,24 @@ export default function TradePage() {
       {tradeView === 'advanced' && (
         <main className="lg:p-4 mt-9 mb-[86px] animate-slide">
           <Container maxWidth="screen-2xl" className="px-4">
-            <div className="flex w-full gap-4">
-              <div className="flex flex-col gap-4 w-[calc(100%-480px)]">
-                <SkeletonBox className="w-full h-[648px] rounded-xl" />
-                <SkeletonBox className="w-full h-[320px] rounded-xl" />
+            <div className="flex-col-reverse md:flex-row flex w-full gap-4">
+              <div className="flex w-full flex-col gap-4 md:w-1/2 lg:w-[calc(100%-480px)]">
+                <div className="w-full md:h-[648px] rounded-xl border">
+                  chart
+                </div>
+                <div className="w-full md:h-[320px] rounded-xl border">
+                  tables
+                </div>
               </div>
-              <div className="flex flex-col gap-4 w-[480px]">
-                <SkeletonBox className="w-full h-[210px] rounded-xl" />
+              <div className="flex w-full flex-col gap-4 md:w-[480px]">
+                <div className="border w-full h-[210px] rounded-xl">
+                  <span className="hidden md:block">search</span>
+                  <span className="md:hidden block">fav/recent + search</span>
+                </div>
                 <TradeWidget />
-                <SkeletonBox className="w-full h-[420px] rounded-xl" />
+                <div className="w-full h-[420px] rounded-xl border hidden md:block">
+                  fav/recent
+                </div>
               </div>
             </div>
           </Container>
