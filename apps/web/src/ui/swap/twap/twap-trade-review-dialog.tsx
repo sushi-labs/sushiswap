@@ -111,7 +111,7 @@ export const TwapTradeReviewDialog: FC<{
                 hash,
                 trade.params.map((param) => param.toString()),
                 trade.amountIn.currency.wrapped,
-                trade.minAmountOut.currency.wrapped,
+                trade.minAmountOut.currency,
               )
             }
           })
@@ -305,11 +305,7 @@ export const TwapTradeReviewDialog: FC<{
                         </Button>
                       ) : null}
                     </List.KeyValue>
-                    {isLimitOrder ? (
-                      <List.KeyValue title="Fee (0.25%)">
-                        {trade?.fee ? `${trade.fee}` : <SkeletonText />}
-                      </List.KeyValue>
-                    ) : null}
+                    <List.KeyValue title="Fee">0.25%</List.KeyValue>
                   </List.Control>
                   <List.Control>
                     <List.KeyValue

@@ -4,6 +4,7 @@ import {
   buildOrder,
   getOrderFillDelay,
   parseOrderStatus,
+  zeroAddress,
 } from '@orbs-network/twap-sdk'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { multicall } from '@wagmi/core'
@@ -11,7 +12,7 @@ import { useCallback, useMemo } from 'react'
 import type { TwapSupportedChainId } from 'src/config'
 import { TwapSDK } from 'src/lib/swap/twap'
 import { twapAbi_status } from 'src/lib/swap/twap/abi'
-import type { Token } from 'sushi/currency'
+import type { Token, Type } from 'sushi/currency'
 import type { Address } from 'sushi/types'
 import { useConfig } from 'wagmi'
 
@@ -51,7 +52,7 @@ export const usePersistedOrdersStore = ({
       txHash: string,
       params: string[],
       srcToken: Token,
-      dstToken: Token,
+      dstToken: Type,
     ) => {
       if (!account) return
 
@@ -60,7 +61,7 @@ export const usePersistedOrdersStore = ({
       const order = buildOrder({
         srcAmount: params[3],
         srcTokenAddress: srcToken.address,
-        dstTokenAddress: dstToken.address,
+        dstTokenAddress: dstToken.isToken ? dstToken.address : zeroAddress,
         srcAmountPerChunk: params[4],
         deadline: Number(params[6]) * 1000,
         dstMinAmountPerChunk: params[5],
@@ -82,8 +83,9 @@ export const usePersistedOrdersStore = ({
       queryClient.setQueryData(
         ['twap-orders', chainId, account],
         (orders?: TwapOrder[]) => {
-          if (!orders) return [order]
-          return [{ ...order, status: OrderStatus.Open }, ...orders]
+          const _order = { ...order, status: OrderStatus.Open }
+          if (!orders) return [_order]
+          return [_order, ...orders]
         },
       )
     },
@@ -217,7 +219,7 @@ const useTwapOrdersQuery = ({
             order.fillDelay,
             TwapSDK.onNetwork(chainId).config,
           ),
-        }
+        } satisfies TwapOrder
       })
 
       return orders
@@ -239,7 +241,7 @@ export const useTwapOrders = ({
       ...rest,
       data: orders
         ? {
-            ALL: orders,
+            ALL: orders as TwapOrder[],
             [OrderStatus.Open]: filterAndSortOrders(orders, OrderStatus.Open),
             [OrderStatus.Completed]: filterAndSortOrders(
               orders,

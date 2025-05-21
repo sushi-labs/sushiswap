@@ -4,6 +4,7 @@ import {
   type TimeDuration,
   TimeUnit,
   type getAskParamsProps,
+  zeroAddress,
 } from '@orbs-network/twap-sdk'
 import {
   type Dispatch,
@@ -354,8 +355,8 @@ const useTwapTrade = () => {
       deadline,
       fillDelay,
       srcAmount: swapAmount.quotient.toString(),
-      srcTokenAddress: token0?.wrapped.address,
-      destTokenAddress: token1?.wrapped.address,
+      srcTokenAddress: token0.wrapped.address,
+      destTokenAddress: token1.isToken ? token1.address : zeroAddress,
     })
 
     const {
