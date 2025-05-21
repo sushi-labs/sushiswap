@@ -26,6 +26,7 @@ import {
   DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  FormattedNumber,
   IconButton,
   List,
   Progress,
@@ -45,6 +46,7 @@ import { Amount } from 'sushi/currency'
 import type { Address } from 'viem'
 import { useAccount } from 'wagmi'
 import { useDerivedStateTwap } from './derivedstate-twap-provider'
+import { TwapCancelOrderButton } from './twap-cancel-order-button'
 
 enum OrderFilter {
   All = 'ALL',
@@ -102,17 +104,15 @@ const _TwapOrdersDialog: FC<{
     }
   }, [orders, orderFilter])
 
-  const [selectedOrder, setSelectedOrder] = useState<TwapOrder | undefined>(
-    undefined,
-  )
-
-  console.log('selectedOrder', selectedOrder)
+  const [selectedOrderIndex, setSelectedOrderIndex] = useState<
+    number | undefined
+  >(undefined)
 
   return (
     <DialogReview
       onOpenChange={(isOpen) => {
         if (!isOpen) {
-          setSelectedOrder(undefined)
+          setSelectedOrderIndex(undefined)
         }
       }}
     >
@@ -120,52 +120,31 @@ const _TwapOrdersDialog: FC<{
         <>
           {children}
           <DialogContent className="max-h-screen overflow-y-auto">
-            {selectedOrder ? (
+            {typeof selectedOrderIndex === 'number' ? (
               <TwapOrderDialogContent
-                order={selectedOrder}
+                order={filteredOrders[selectedOrderIndex]}
                 chainId={chainId}
-                onBack={() => setSelectedOrder(undefined)}
+                onBack={() => setSelectedOrderIndex(undefined)}
               />
             ) : (
               <>
                 <DialogTitle className="!text-[unset] !font-normal !leading-[unset] !tracking-[unset]">
                   <DropdownMenu>
-                    <DropdownMenuTrigger className="flex items-center gap-2 px-4 py-2.5 text-sm bg-secondary rounded-xl">
-                      {orderFilter}
+                    <DropdownMenuTrigger className="flex items-center gap-2 px-4 py-2.5 text-sm bg-secondary rounded-xl capitalize">
+                      {orderFilter.toLowerCase()}
                       <ChevronDownIcon width={14} height={14} />
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
+                    <DropdownMenuContent align="start">
                       <DropdownMenuGroup>
-                        <DropdownMenuItem
-                          onClick={() => setOrderFilter(OrderFilter.All)}
-                          className="cursor-pointer"
-                        >
-                          All
-                        </DropdownMenuItem>
-                        <DropdownMenuItem
-                          onClick={() => setOrderFilter(OrderFilter.Open)}
-                          className="cursor-pointer"
-                        >
-                          Open
-                        </DropdownMenuItem>
-                        <DropdownMenuItem
-                          onClick={() => setOrderFilter(OrderFilter.Canceled)}
-                          className="cursor-pointer"
-                        >
-                          Canceled
-                        </DropdownMenuItem>
-                        <DropdownMenuItem
-                          onClick={() => setOrderFilter(OrderFilter.Completed)}
-                          className="cursor-pointer"
-                        >
-                          Completed
-                        </DropdownMenuItem>
-                        <DropdownMenuItem
-                          onClick={() => setOrderFilter(OrderFilter.Expired)}
-                          className="cursor-pointer"
-                        >
-                          Expired
-                        </DropdownMenuItem>
+                        {Object.entries(OrderFilter).map(([label, value]) => (
+                          <DropdownMenuItem
+                            key={value}
+                            onClick={() => setOrderFilter(value)}
+                            className="cursor-pointer"
+                          >
+                            {label}
+                          </DropdownMenuItem>
+                        ))}
                       </DropdownMenuGroup>
                     </DropdownMenuContent>
                   </DropdownMenu>
@@ -177,11 +156,11 @@ const _TwapOrdersDialog: FC<{
                         <div className="text-sm text-center">Loading...</div>
                       </List.Control>
                     ) : filteredOrders.length ? (
-                      filteredOrders.map((order) => (
+                      filteredOrders.map((order, i) => (
                         <button
                           type="button"
                           key={order.id}
-                          onClick={() => setSelectedOrder(order)}
+                          onClick={() => setSelectedOrderIndex(i)}
                         >
                           <TwapOrderCard order={order} chainId={chainId} />
                         </button>
@@ -315,7 +294,7 @@ const TwapOrderDialogContent = ({
                 <List className="!gap-2">
                   <List.KeyValue className="!p-0" title="Status">
                     <span className="capitalize text-muted-foreground">
-                      {order.status}
+                      {order.status.toLowerCase()}
                     </span>
                   </List.KeyValue>
                   <List.KeyValue className="!p-0" title="Amount sent">
@@ -331,9 +310,13 @@ const TwapOrderDialogContent = ({
                   <List.KeyValue className="!p-0" title="Final execution price">
                     {executionPrice ? (
                       <span className="text-muted-foreground">
-                        1 {token0?.symbol} = {executionPrice} {token1?.symbol}
+                        1 {token0?.symbol} ={' '}
+                        <FormattedNumber number={executionPrice} />{' '}
+                        {token1?.symbol}
                       </span>
-                    ) : null}
+                    ) : (
+                      '-'
+                    )}
                   </List.KeyValue>
                 </List>
               </AccordionContent>
@@ -349,18 +332,19 @@ const TwapOrderDialogContent = ({
                   {!order.isMarketOrder ? (
                     <List.KeyValue className="!p-0" title="Limit Price">
                       <span className="text-muted-foreground">
-                        1 {token0?.symbol} = {limitPrice} {token1?.symbol}
+                        1 {token0?.symbol} ={' '}
+                        <FormattedNumber number={limitPrice} /> {token1?.symbol}
                       </span>
                     </List.KeyValue>
                   ) : null}
                   <List.KeyValue className="!p-0" title="Created at">
                     <span className="text-muted-foreground">
-                      {format(order.createdAt, 'MMM d, yyyy HH:mm')}
+                      {format(order.createdAt, 'MMM d, yyyy h:mm a')}
                     </span>
                   </List.KeyValue>
                   <List.KeyValue className="!p-0" title="Expiry">
                     <span className="text-muted-foreground">
-                      {format(order.deadline, 'MMM d, yyyy HH:mm')}
+                      {format(order.deadline, 'MMM d, yyyy h:mm a')}
                     </span>
                   </List.KeyValue>
                   <List.KeyValue className="!p-0" title="Amount in">
@@ -435,6 +419,9 @@ const TwapOrderDialogContent = ({
             </AccordionItem>
           </List.Control>
         </Accordion>
+        {order.status === OrderStatus.Open ? (
+          <TwapCancelOrderButton chainId={chainId} order={order} />
+        ) : null}
       </div>
     </>
   )
@@ -460,7 +447,7 @@ const TwapOrderCard = ({
         <span className="text-xs">
           #{order.id} {order.type === OrderType.LIMIT ? 'Limit' : 'DCA'}{' '}
           <span className="text-muted-foreground">
-            ({format(order.createdAt, 'MMM d, yyyy HH:mm')})
+            ({format(order.createdAt, 'MMM d, yyyy h:mm a')})
           </span>
         </span>
         <div
@@ -477,7 +464,7 @@ const TwapOrderCard = ({
                     : '',
           )}
         >
-          <span className="capitalize">{order.status}</span>
+          <span className="capitalize">{order.status.toLowerCase()}</span>
         </div>
       </div>
       <div className="flex items-center gap-2">

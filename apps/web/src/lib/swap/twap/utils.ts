@@ -1,4 +1,6 @@
 import type { TimeDuration } from '@orbs-network/twap-sdk'
+import { type TransactionReceipt, decodeEventLog } from 'viem'
+import { twapAbi_orderCreated } from './abi/twapAbi_orderCreated'
 
 export const fillDelayText = (_value?: number | TimeDuration) => {
   if (!_value) {
@@ -34,4 +36,19 @@ export const fillDelayText = (_value?: number | TimeDuration) => {
 export const getTimeDurationMs = (duration?: TimeDuration) => {
   if (!duration) return 0
   return duration.value * duration.unit
+}
+
+export function getOrderIdFromCreateOrderEvent(receipt: TransactionReceipt) {
+  try {
+    const decodedLog = decodeEventLog({
+      abi: twapAbi_orderCreated,
+      data: receipt.logs[0].data,
+      topics: receipt.logs[0].topics,
+      eventName: 'OrderCreated',
+    })
+
+    return Number(decodedLog.args.id)
+  } catch (_) {
+    return undefined
+  }
 }

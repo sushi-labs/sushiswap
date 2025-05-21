@@ -26,7 +26,12 @@ import React, {
   useState,
 } from 'react'
 import { APPROVE_TAG_SWAP } from 'src/lib/constants'
-import { fillDelayText, getTimeDurationMs } from 'src/lib/swap/twap'
+import { usePersistedOrdersStore } from 'src/lib/hooks/react-query/twap'
+import {
+  fillDelayText,
+  getOrderIdFromCreateOrderEvent,
+  getTimeDurationMs,
+} from 'src/lib/swap/twap'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
 import { useApproved } from 'src/lib/wagmi/systems/Checker/Provider'
 import { EvmChain } from 'sushi/chain'
@@ -41,7 +46,6 @@ import {
   useWaitForTransactionReceipt,
 } from 'wagmi'
 import type { SendTransactionReturnType } from 'wagmi/actions'
-import { useRefetchBalances } from '~evm/_common/ui/balance-provider/use-refetch-balances'
 import {
   type UseTwapTradeReturn,
   useDerivedStateTwap,
@@ -73,7 +77,10 @@ export const TwapTradeReviewDialog: FC<{
   const tradeRef = useRef<UseTwapTradeReturn>(null)
   const client = usePublicClient()
 
-  const { refetchChain: refetchBalances } = useRefetchBalances()
+  const { addCreatedOrder } = usePersistedOrdersStore({
+    chainId,
+    account: address,
+  })
 
   const { data: trade } = useTwapTrade()
 
@@ -90,9 +97,24 @@ export const TwapTradeReviewDialog: FC<{
 
       try {
         const ts = new Date().getTime()
-        const promise = client.waitForTransactionReceipt({
-          hash,
-        })
+        const promise = client
+          .waitForTransactionReceipt({
+            hash,
+          })
+          .then((receipt) => {
+            if (receipt.status === 'success') {
+              const orderId = getOrderIdFromCreateOrderEvent(receipt)
+              if (!orderId) return
+
+              addCreatedOrder(
+                orderId,
+                hash,
+                trade.params.map((param) => param.toString()),
+                trade.amountIn.currency.wrapped,
+                trade.minAmountOut.currency.wrapped,
+              )
+            }
+          })
 
         void createToast({
           account: address,
@@ -110,10 +132,9 @@ export const TwapTradeReviewDialog: FC<{
         })
       } finally {
         setSwapAmount('')
-        refetchBalances(chainId)
       }
     },
-    [setSwapAmount, trade, chainId, client, address, refetchBalances],
+    [setSwapAmount, trade, chainId, client, address, addCreatedOrder],
   )
 
   const onSwapError = useCallback((e: Error) => {
@@ -220,6 +241,13 @@ export const TwapTradeReviewDialog: FC<{
                               />{' '}
                               {token0?.symbol}
                             </span>
+                          ) : (
+                            <SkeletonText />
+                          )}
+                        </List.KeyValue>
+                        <List.KeyValue title="Number of Orders">
+                          {trade?.chunks ? (
+                            <span>{trade.chunks}</span>
                           ) : (
                             <SkeletonText />
                           )}
@@ -340,8 +368,8 @@ export const TwapTradeReviewDialog: FC<{
       <DialogConfirm
         chainId={chainId}
         status={status}
-        testId="make-another-swap"
-        buttonText="Make another swap"
+        testId="place-another-order"
+        buttonText="Place another order"
         txHash={data}
         successMessage={`Your ${tradeRef.current?.isLimitOrder ? 'limit' : 'DCA'} order was placed`}
       />

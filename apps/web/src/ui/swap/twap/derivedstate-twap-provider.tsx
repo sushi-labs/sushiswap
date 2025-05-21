@@ -149,7 +149,11 @@ const _DerivedStateTwapProvider: FC<DerivedStateTwapProviderProps> = ({
 
         const sdk = TwapSDK.onNetwork(chainId)
 
-        const duration = sdk.getOrderDuration(chunks, fillDelay, expiry)
+        const duration = sdk.getOrderDuration(
+          chunks,
+          fillDelay,
+          isLimitOrder ? expiry : undefined,
+        )
 
         const deadline = sdk.getOrderDeadline(Date.now(), duration)
 
@@ -164,9 +168,15 @@ const _DerivedStateTwapProvider: FC<DerivedStateTwapProviderProps> = ({
               )
             : undefined
 
+        const _limitPrice =
+          marketPrice &&
+          limitPrice?.baseCurrency.equals(marketPrice.baseCurrency)
+            ? limitPrice
+            : marketPrice
+
         const price =
-          state.token0 && marketPrice
-            ? (limitPrice ?? marketPrice).quote(
+          state.token0 && _limitPrice
+            ? _limitPrice.quote(
                 Amount.fromRawAmount(
                   state.token0,
                   parseUnits('1', state.token0.decimals),
@@ -190,12 +200,12 @@ const _DerivedStateTwapProvider: FC<DerivedStateTwapProviderProps> = ({
             : undefined
 
         const dstMinAmount =
-          state.token1 && amountInPerChunk && price
+          state.token0 && amountInPerChunk && price
             ? sdk.getDestTokenMinAmount(
                 amountInPerChunk.quotient.toString(),
                 price.quotient.toString(),
                 !isLimitOrder,
-                state.token1.decimals,
+                state.token0.decimals,
               )
             : undefined
 
@@ -217,7 +227,7 @@ const _DerivedStateTwapProvider: FC<DerivedStateTwapProviderProps> = ({
             chainId,
             isLimitOrder,
             marketPrice,
-            limitPrice,
+            limitPrice: _limitPrice,
             token0PriceUSD,
             token1PriceUSD,
             expiry,
@@ -302,6 +312,7 @@ export interface UseTwapTradeReturn {
         data: Hex
       }
     | undefined
+  params: z.infer<typeof prepareOrderArgsValidator>
   fee: string | undefined
 }
 
@@ -362,7 +373,7 @@ const useTwapTrade = () => {
 
     const tx = {
       chainId,
-      to: TwapSDK.onNetwork(chainId).config.twapAddress,
+      to: TwapSDK.onNetwork(chainId).config.twapAddress as Address,
       data: encodeFunctionData({
         abi: twapAbi_ask,
         functionName: 'ask',
@@ -395,6 +406,7 @@ const useTwapTrade = () => {
         amountOut,
         minAmountOut,
         tx,
+        params,
         fee: isLimitOrder
           ? getFeeString({
               fromToken: token0,
@@ -403,7 +415,7 @@ const useTwapTrade = () => {
               minAmountOut,
             })
           : undefined, // todo: check if fees are even taken
-      } as UseTwapTradeReturn,
+      } satisfies UseTwapTradeReturn,
       error: undefined,
     }
   }, [
