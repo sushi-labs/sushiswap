@@ -1,6 +1,6 @@
 'use client'
 
-import { Container, SkeletonBox } from '@sushiswap/ui'
+import { Container } from '@sushiswap/ui'
 import React from 'react'
 import type { NonStandardChainId } from 'src/config'
 import { useSkaleEuropaFaucet } from 'src/lib/hooks'
