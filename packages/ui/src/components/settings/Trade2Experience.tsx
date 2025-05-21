@@ -12,7 +12,6 @@ export const Trade2Experience = ({
   tradeView: TradeViewOptions
   toggleTradeView: (view: TradeViewOptions) => void
 }) => {
-  // const [tradeView, setTradeView] = useTradeView(TradeViewStorageKey.TradeView);
   return (
     <div className={classNames('p-4 rounded-lg')}>
       <div className="flex justify-between items-center gap-4">
