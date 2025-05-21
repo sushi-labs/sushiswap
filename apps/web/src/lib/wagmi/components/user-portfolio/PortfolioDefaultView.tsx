@@ -1,3 +1,4 @@
+import { ArrowLeftIcon } from '@heroicons/react-v1/solid'
 import {
   ArrowLeftOnRectangleIcon,
   Cog6ToothIcon,
@@ -8,6 +9,7 @@ import { UserCircleIcon } from '@heroicons/react/24/solid'
 import {
   Button,
   ClipboardController,
+  DialogPrimitive,
   IconButton,
   LinkExternal,
   SkeletonBox,
@@ -70,83 +72,89 @@ export const PortfolioDefaultView: FC<PortfolioDefaultProps> = ({
 
   return (
     <div className="flex flex-col h-full gap-y-5 overflow-hidden">
-      <div className="flex justify-between px-5 py-6">
-        <div>
-          <div className="flex gap-x-2 items-center">
-            {connector ? (
-              connector.icon ? (
-                <Image
-                  src={connector.icon}
-                  width="40"
-                  height="40"
-                  className="p-1"
-                  alt={connector.name}
-                />
+      <div className="flex flex-col gap-2 px-5 py-6 sm:bg-gray-100 bg-slate-100 dark:bg-slate-800 sm:dark:bg-slate-900">
+        <DialogPrimitive.Close asChild className={'flex sm:hidden'}>
+          <IconButton icon={ArrowLeftIcon} name="Close" variant="ghost" />
+        </DialogPrimitive.Close>
+        <div className="flex justify-between">
+          <div>
+            <div className="flex gap-x-2 items-center">
+              {connector ? (
+                connector.icon ? (
+                  <Image
+                    src={connector.icon}
+                    width="40"
+                    height="40"
+                    className="p-1"
+                    alt={connector.name}
+                  />
+                ) : (
+                  <UserCircleIcon
+                    width={40}
+                    height={40}
+                    className="!text-primary opacity-50"
+                  />
+                )
               ) : (
-                <UserCircleIcon
-                  width={40}
-                  height={40}
-                  className="!text-primary opacity-50"
-                />
-              )
-            ) : (
-              <SkeletonCircle radius={40} />
-            )}
-            {!address || isENSNameLoading ? (
-              <SkeletonBox className="h-8 w-32" />
-            ) : ensName ? (
-              <div>
-                <div className="font-semibold">{ensName}</div>
-                <div className="text-xs text-muted-foreground">
-                  {shortenAddress(address)}
-                </div>
-              </div>
-            ) : (
-              <span className="font-semibold">{shortenAddress(address)}</span>
-            )}
-          </div>
-          <div className="flex gap-x-3 pt-1 px-2">
-            <IconButton
-              size="xs"
-              icon={Cog6ToothIcon}
-              onClick={() => setView(PortfolioView.Settings)}
-              description="Settings"
-              name="Settings"
-            />
-            <ClipboardController hideTooltip>
-              {({ setCopied, isCopied }) => (
-                <IconButton
-                  size="xs"
-                  icon={DocumentDuplicateIcon}
-                  onClick={() => setCopied(address!)}
-                  description={isCopied ? 'Copied!' : 'Copy Address'}
-                  name="Copy"
-                />
+                <SkeletonCircle radius={40} />
               )}
-            </ClipboardController>
-            <LinkExternal
-              href={evmChains[chainId as ChainId]?.getAccountUrl(address!)}
-            >
+              {!address || isENSNameLoading ? (
+                <SkeletonBox className="h-8 w-32" />
+              ) : ensName ? (
+                <div>
+                  <div className="font-semibold">{ensName}</div>
+                  <div className="text-xs text-muted-foreground">
+                    {shortenAddress(address)}
+                  </div>
+                </div>
+              ) : (
+                <span className="font-semibold">{shortenAddress(address)}</span>
+              )}
+            </div>
+            <div className="flex gap-x-3 pt-1 px-2">
               <IconButton
                 size="xs"
-                icon={LinkIcon}
-                description="View on Explorer"
-                name="View on Explorer"
+                icon={Cog6ToothIcon}
+                onClick={() => setView(PortfolioView.Settings)}
+                description="Settings"
+                name="Settings"
               />
-            </LinkExternal>
-            <IconButton
-              size="xs"
-              icon={ArrowLeftOnRectangleIcon}
-              onClick={() => disconnect()}
-              description="Disconnect"
-              name="Disconnect"
-            />
+              <ClipboardController hideTooltip>
+                {({ setCopied, isCopied }) => (
+                  <IconButton
+                    size="xs"
+                    icon={DocumentDuplicateIcon}
+                    onClick={() => setCopied(address!)}
+                    description={isCopied ? 'Copied!' : 'Copy Address'}
+                    name="Copy"
+                  />
+                )}
+              </ClipboardController>
+              <LinkExternal
+                href={evmChains[chainId as ChainId]?.getAccountUrl(address!)}
+              >
+                <IconButton
+                  size="xs"
+                  icon={LinkIcon}
+                  description="View on Explorer"
+                  name="View on Explorer"
+                />
+              </LinkExternal>
+              <IconButton
+                size="xs"
+                icon={ArrowLeftOnRectangleIcon}
+                onClick={() => disconnect()}
+                description="Disconnect"
+                name="Disconnect"
+              />
+            </div>
           </div>
+          <HeaderNetworkSelector
+            className="!px-2.5"
+            networks={SUPPORTED_NETWORKS}
+            hideNetworkName={true}
+          />
         </div>
-        <HeaderNetworkSelector
-          networks={SUPPORTED_NETWORKS}
-          hideNetworkName={true}
-        />
       </div>
       <div className="flex px-5 gap-x-2">
         {Object.values(PortfolioTab).map((_tab) => (

@@ -17,6 +17,7 @@ import {
 } from 'react'
 import { type ChainId, EvmChain } from 'sushi/chain'
 
+import { ArrowLeft } from 'lucide-react'
 import { CheckMarkIcon } from '../icons/CheckMarkIcon'
 import { FailedMarkIcon } from '../icons/FailedMarkIcon'
 import {
@@ -36,6 +37,8 @@ const dialogVariants = cva(
         default:
           'rounded-b-none md:rounded-b-2xl bottom-0 md:bottom-[unset] fixed left-[50%] md:top-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] md:translate-y-[-50%] gap-4 bg-gray-100 dark:bg-slate-800 p-6 shadow-lg rounded-2xl md:w-full data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-bottom-[48%] md:data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-bottom-[48%] md:data-[state=open]:slide-in-from-top-[48%]',
         opaque: 'px-4 fixed z-50 top-4 grid w-full max-w-xl',
+        'semi-opaque':
+          'rounded-none bottom-0 md:bottom-[unset] fixed left-[50%] md:top-[50%] z-50 grid w-full translate-x-[-50%] md:translate-y-[-50%] gap-4 bg-white dark:bg-slate-900 p-6 md:w-full data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-bottom-[48%] md:data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-bottom-[48%] md:data-[state=open]:slide-in-from-top-[48%]',
       },
     },
     defaultVariants: {
@@ -51,6 +54,7 @@ const dialogOverlayVariants = cva(
       variant: {
         default: 'bg-black/10 backdrop-blur-sm',
         opaque: 'bg-gray-100 dark:bg-slate-900',
+        'semi-opaque': 'dark:bg-slate-900/50 bg-gray-100/50',
       },
     },
     defaultVariants: {
@@ -64,6 +68,7 @@ const dialogCloseVariants = cva('', {
     variant: {
       default: 'absolute top-6 right-6',
       opaque: 'hidden',
+      'semi-opaque': 'absolute top-6 left-6',
     },
   },
   defaultVariants: {
@@ -107,6 +112,7 @@ interface DialogContentProps
   extends React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content>,
     VariantProps<typeof dialogVariants> {
   hideClose?: boolean
+  topCloseBtn?: boolean
 }
 
 const DialogContent = React.forwardRef<
@@ -114,7 +120,14 @@ const DialogContent = React.forwardRef<
   DialogContentProps
 >(
   (
-    { className, hideClose: _hideClose = false, variant, children, ...props },
+    {
+      className,
+      hideClose: _hideClose = false,
+      topCloseBtn,
+      variant,
+      children,
+      ...props
+    },
     ref,
   ) => (
     <DialogPortal>
@@ -124,6 +137,14 @@ const DialogContent = React.forwardRef<
         className={dialogVariants({ variant, className })}
         {...props}
       >
+        {topCloseBtn ? null : (
+          <DialogPrimitive.Close
+            asChild
+            className={dialogCloseVariants({ variant })}
+          >
+            <IconButton icon={XMarkIcon} name="Close" />
+          </DialogPrimitive.Close>
+        )}
         {children}
         {_hideClose ? null : (
           <DialogPrimitive.Close

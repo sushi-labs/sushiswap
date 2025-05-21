@@ -47,7 +47,12 @@ const ResponsivePortfolioWrapper: FC<{
   ) : (
     <Dialog>
       <DialogTrigger asChild>{trigger}</DialogTrigger>
-      <DialogContent hideClose className="!p-0 h-[calc(100%-16px)]">
+      <DialogContent
+        topCloseBtn={true}
+        variant="semi-opaque"
+        hideClose
+        className="!p-0 h-[calc(100%-95px)]"
+      >
         {content}
       </DialogContent>
     </Dialog>
