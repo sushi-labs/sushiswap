@@ -28,9 +28,9 @@ import {
 import { CarbonOffset } from './CarbonOffset'
 import { ExpertMode } from './ExpertMode'
 import { SlippageTolerance } from './SlippageTolerance'
-import { TransactionDeadline } from './TransactionDeadline'
-import { Trade2Experience, TradeViewOptions } from './Trade2Experience'
+import { Trade2Experience, type TradeViewOptions } from './Trade2Experience'
 import { Trade2ExperienceMessage } from './Trade2ExperienceMessage'
+import { TransactionDeadline } from './TransactionDeadline'
 
 export enum SettingsModule {
   CarbonOffset = 'CarbonOffset',

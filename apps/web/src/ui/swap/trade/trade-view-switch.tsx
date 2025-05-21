@@ -1,7 +1,7 @@
-import { Button, Switch } from '@sushiswap/ui'
-import { useDerivedStateSimpleTrade } from './derivedstate-simple-trade-provider'
 import { XIcon } from '@heroicons/react-v1/solid'
 import { useLocalStorage } from '@sushiswap/hooks'
+import { Button, Switch } from '@sushiswap/ui'
+import { useDerivedStateSimpleTrade } from './derivedstate-simple-trade-provider'
 
 export const TradeViewSwitch = () => {
   const {

@@ -1,7 +1,7 @@
+import classNames from 'classnames'
 import { Label } from '../label'
 import { Switch } from '../switch'
 import { typographyVariants } from '../typography'
-import classNames from 'classnames'
 
 export type TradeViewOptions = 'simple' | 'advanced'
 

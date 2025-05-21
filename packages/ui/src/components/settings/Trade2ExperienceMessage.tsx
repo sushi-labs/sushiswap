@@ -1,7 +1,7 @@
 import { useLocalStorage } from '@sushiswap/hooks'
-import { Card } from '../card'
 import { SparkleIcon } from '../../icons/SparkleIcon'
 import { Button } from '../button'
+import { Card } from '../card'
 
 export const Trade2ExperienceMessage = () => {
   const [hasClosedBanner] = useLocalStorage(
@@ -18,6 +18,9 @@ export const Trade2ExperienceMessage = () => {
         <>
           <div className="w-screen h-screen top-12 left-0 bottom-0 right-0 dark:bg-[#0C0C23]/50 bg-[#f3f2f4]/50 fixed z-[11]" />
           <div
+            onKeyDown={(e) => {
+              e.stopPropagation()
+            }}
             onClick={(e) => {
               e.stopPropagation()
             }}
