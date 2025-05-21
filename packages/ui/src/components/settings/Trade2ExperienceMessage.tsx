@@ -16,7 +16,7 @@ export const Trade2ExperienceMessage = () => {
     <>
       {hasClosedBanner && !hasDismissedMessage ? (
         <>
-          <div className="w-screen h-screen top-12 left-0 bottom-0 right-0 dark:bg-[#0C0C23]/50 bg-[#f3f2f4]/50 fixed z-[11]" />
+          <div className="w-screen h-screen top-12 left-0 bottom-0 right-0 dark:bg-slate-900/50 bg-gray-100/50 fixed z-[11]" />
           <div
             onKeyDown={(e) => {
               e.stopPropagation()

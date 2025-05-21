@@ -70,7 +70,7 @@ export const PortfolioDefaultView: FC<PortfolioDefaultProps> = ({
 
   return (
     <div className="flex flex-col h-full gap-y-5 overflow-hidden">
-      <div className="flex justify-between px-5 py-6 bg-secondary">
+      <div className="flex justify-between px-5 py-6">
         <div>
           <div className="flex gap-x-2 items-center">
             {connector ? (
@@ -143,6 +143,10 @@ export const PortfolioDefaultView: FC<PortfolioDefaultProps> = ({
             />
           </div>
         </div>
+        <HeaderNetworkSelector
+          networks={SUPPORTED_NETWORKS}
+          hideNetworkName={true}
+        />
       </div>
       <div className="flex px-5 gap-x-2">
         {Object.values(PortfolioTab).map((_tab) => (
