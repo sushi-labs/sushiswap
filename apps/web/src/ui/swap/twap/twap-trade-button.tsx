@@ -97,7 +97,7 @@ export const TwapTradeButton = () => {
     state: { swapAmount, chainId },
   } = useDerivedStateTwap()
 
-  const trade = useTwapTrade()
+  const { data: trade } = useTwapTrade()
 
   return (
     <TwapTradeReviewDialog>
