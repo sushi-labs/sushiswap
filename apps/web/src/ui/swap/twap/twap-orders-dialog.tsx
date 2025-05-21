@@ -7,6 +7,7 @@ import {
   OrderType,
   getOrderExcecutionRate,
   getOrderLimitPriceRate,
+  zeroAddress,
 } from '@orbs-network/twap-sdk'
 import {
   Accordion,
@@ -35,14 +36,14 @@ import {
   useDialog,
 } from '@sushiswap/ui'
 import format from 'date-fns/format'
-import { type FC, type ReactNode, useMemo, useState } from 'react'
+import { type FC, type ReactNode, useEffect, useMemo, useState } from 'react'
 import type { TwapSupportedChainId } from 'src/config'
 import { type TwapOrder, useTwapOrders } from 'src/lib/hooks/react-query/twap'
 import { fillDelayText } from 'src/lib/swap/twap'
 import { useTokenWithCache } from 'src/lib/wagmi/hooks/tokens/useTokenWithCache'
 import { shortenAddress, shortenHash } from 'sushi'
 import { EvmChain } from 'sushi/chain'
-import { Amount } from 'sushi/currency'
+import { Amount, Native } from 'sushi/currency'
 import type { Address } from 'viem'
 import { useAccount } from 'wagmi'
 import { useDerivedStateTwap } from './derivedstate-twap-provider'
@@ -108,14 +109,12 @@ const _TwapOrdersDialog: FC<{
     number | undefined
   >(undefined)
 
+  useEffect(() => {
+    !open && setSelectedOrderIndex(undefined)
+  }, [open])
+
   return (
-    <DialogReview
-      onOpenChange={(isOpen) => {
-        if (!isOpen) {
-          setSelectedOrderIndex(undefined)
-        }
-      }}
-    >
+    <DialogReview>
       {(_) => (
         <>
           {children}
@@ -197,10 +196,17 @@ const TwapOrderDialogContent = ({
     address: order.srcTokenAddress as Address,
   })
 
-  const { data: token1 } = useTokenWithCache({
+  const { data: _token1 } = useTokenWithCache({
     chainId,
     address: order.dstTokenAddress as Address,
+    enabled: order.dstTokenAddress !== zeroAddress,
   })
+
+  const token1 = useMemo(
+    () =>
+      order.dstTokenAddress === zeroAddress ? Native.onChain(chainId) : _token1,
+    [order, chainId, _token1],
+  )
 
   const {
     srcAmount,
@@ -436,10 +442,17 @@ const TwapOrderCard = ({
     address: order.srcTokenAddress as Address,
   })
 
-  const { data: token1 } = useTokenWithCache({
+  const { data: _token1 } = useTokenWithCache({
     chainId,
     address: order.dstTokenAddress as Address,
+    enabled: order.dstTokenAddress !== zeroAddress,
   })
+
+  const token1 = useMemo(
+    () =>
+      order.dstTokenAddress === zeroAddress ? Native.onChain(chainId) : _token1,
+    [order, chainId, _token1],
+  )
 
   return (
     <List.Control className="p-4 flex flex-col gap-2 hover:opacity-80">
