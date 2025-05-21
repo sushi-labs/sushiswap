@@ -1,6 +1,6 @@
 import { useLocalStorage } from '@sushiswap/hooks'
 import { Card } from '../card'
-import { SparkleIcon } from '../../icons/Sparkle'
+import { SparkleIcon } from '../../icons/SparkleIcon'
 import { Button } from '../button'
 
 export const Trade2ExperienceMessage = () => {
