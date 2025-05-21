@@ -29,15 +29,13 @@ import { type ChainId, evmChains, shortenAddress } from 'sushi'
 import { useAccount, useDisconnect } from 'wagmi'
 import type { GetEnsNameReturnType } from 'wagmi/actions'
 import { PortfolioView } from '.'
-import { PortfolioClaimables } from './portfolio-claimables'
-import { PortfolioPositions } from './portfolio-positions'
-import { PortfolioTokens } from './portfolio-tokens'
-import { PortfolioHistory } from './portolio-history'
+import { NotificationBadge } from './notification-badge'
+import { PortfolioAssets } from './portfolio-assets/portfolio-assets'
 
 enum PortfolioTab {
-  Tokens = 'Tokens',
-  Positions = 'Positions',
-  Claimable = 'Claimable',
+  Assets = 'Assets',
+  Orders = 'Orders',
+  Inbox = 'Inbox',
   // History = 'History',
 }
 
@@ -55,16 +53,19 @@ export const PortfolioDefaultView: FC<PortfolioDefaultProps> = ({
   const { connector, address, chainId } = useAccount()
   const { disconnect } = useDisconnect()
 
-  const [tab, setTab] = useState(PortfolioTab.Tokens)
+  const [tab, setTab] = useState(PortfolioTab.Assets)
 
   const content = useMemo(() => {
+    //TODO: update to correct names and content. satart with assets
     switch (tab) {
-      case PortfolioTab.Tokens:
-        return <PortfolioTokens />
-      case PortfolioTab.Positions:
-        return <PortfolioPositions />
-      case PortfolioTab.Claimable:
-        return <PortfolioClaimables />
+      case PortfolioTab.Assets:
+        return <PortfolioAssets />
+      case PortfolioTab.Orders:
+        return <>TODO orders</>
+      // return <PortfolioPositions />;
+      case PortfolioTab.Inbox:
+        return <>TODO inbox</>
+      // return <PortfolioClaimables />;
       // case PortfolioTab.History:
       // return <PortfolioHistory />
     }
@@ -163,10 +164,15 @@ export const PortfolioDefaultView: FC<PortfolioDefaultProps> = ({
             asChild
             size="xs"
             variant={_tab === tab ? 'secondary' : 'ghost'}
-            onClick={() => setTab(_tab)}
-            className="select-none"
+            onClick={() => {
+              setTab(_tab)
+            }}
+            className="select-none !gap-1"
           >
             {_tab}
+            {_tab === PortfolioTab.Orders ? (
+              <NotificationBadge notificationCount={3} size="sm" />
+            ) : null}
           </Button>
         ))}
       </div>
