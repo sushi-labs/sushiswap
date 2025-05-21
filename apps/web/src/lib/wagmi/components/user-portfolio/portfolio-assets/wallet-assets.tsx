@@ -13,22 +13,28 @@ import { useAccount } from 'wagmi'
 import { PortfolioInfoRow } from '../PortfolioInfoRow'
 import { usePortfolioWallet } from '../hooks/use-portfolio-wallet'
 import { PortfolioInfoRowSkeleton } from '../portfolio-info-row-skeleton'
+import type {
+  PortfolioAccordionValue,
+  PortfolioAssetsProps,
+} from './portfolio-assets'
 
-export const WalletAssets = () => {
+export const WalletAssets = (props: PortfolioAssetsProps) => {
+  const { value, onValueChange } = props
   const { address } = useAccount()
 
   const { data, isError, isLoading } = usePortfolioWallet(address)
 
   return (
     <Accordion
-      type="multiple"
-      className="h-full overflow-y-auto border border-accent rounded-xl"
-      defaultValue={['wallet']}
+      type="single"
+      className="border border-accent rounded-xl"
+      value={value}
+      onValueChange={(val) => onValueChange(val as PortfolioAccordionValue)}
     >
       <AccordionItem value="wallet" className="!border-0">
         <AccordionTrigger
           hideChevron={true}
-          className="px-3 text-xs !py-2 hover:!no-underline data-[state=closed]:border-0 border-b border-b-accent dark:bg-slate-800 bg-slate-100 sm:bg-white flex justify-between items-center"
+          className="px-3 text-xs !py-2 hover:!no-underline data-[state=closed]:border-0 data-[state=closed]:rounded-b-xl !rounded-t-xl border-b border-b-accent dark:bg-slate-800 bg-slate-100 sm:bg-white flex justify-between items-center"
         >
           <span>Wallet</span>
           <span className="text-[#535263] dark:text-[#E4DDEC]">

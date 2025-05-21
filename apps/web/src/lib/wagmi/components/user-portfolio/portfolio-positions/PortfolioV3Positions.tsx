@@ -20,7 +20,14 @@ export const PortfolioV3Positions: FC<PortfolioV3PositionsProps> = ({
   positions,
 }) => (
   <AccordionItem value="v3" className="!border-0">
-    <AccordionTrigger className="px-5 underline-offset-2">
+    <AccordionTrigger
+      // chevronChildren={
+      // 	<span className="data-[state=open]:block data-[state=closed]:!hidden text-xs text-[#64748B]">
+      // 		Hide
+      // 	</span>
+      // }
+      className="px-3 !py-2 text-xs text-[#64748B] hover:!no-underline"
+    >
       {`V3 Positions (${positions.length})`}
     </AccordionTrigger>
     <AccordionContent className="cursor-default">
@@ -28,9 +35,9 @@ export const PortfolioV3Positions: FC<PortfolioV3PositionsProps> = ({
         <PortfolioInfoRow
           key={`${position.chainId}:${position.id}`}
           chainId={position.chainId as EvmChainId}
-          href={`/${ChainKey[position.chainId as EvmChainId]}/pool/v3/${
-            position.address
-          }/${position.positionId}`}
+          href={`/${ChainKey[position.chainId as EvmChainId]}/pool/v3/${position.address}/${
+            position.positionId
+          }`}
           icon={
             <Currency.IconList iconWidth={24} iconHeight={24}>
               <img
@@ -51,9 +58,7 @@ export const PortfolioV3Positions: FC<PortfolioV3PositionsProps> = ({
                 {position.name}
               </div>
               <div className="flex items-center gap-x-1">
-                <div className="text-muted-foreground text-xs">{`V3-${
-                  position.swapFee * 100
-                }%`}</div>
+                <div className="text-muted-foreground text-xs">{`V3-${position.swapFee * 100}%`}</div>
                 <div
                   className={classNames(
                     position.range === 'OUT_OF_RANGE'
