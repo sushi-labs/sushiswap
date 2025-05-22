@@ -39,97 +39,106 @@ const PRICE_OPTIONS = [
 
 export const LimitPriceInput = () => {
   const {
-    state: { token0, token1, marketPrice, limitPrice },
-    mutate: { switchTokens, setLimitPrice },
+    state: {
+      token0,
+      token1,
+      marketPrice,
+      limitPrice,
+      isLimitPriceInverted,
+      limitPriceString,
+    },
+    mutate: { setIsLimitPriceInverted, setLimitPrice },
     isToken0Loading,
     isLoading,
   } = useDerivedStateTwap()
 
-  const token0PriceQuote = useMemo(() => {
-    if (!limitPrice) return undefined
-
-    const oneUnitOfBaseCurrency = Amount.fromRawAmount(
-      limitPrice.baseCurrency,
-      parseUnits('1', limitPrice.baseCurrency.decimals),
-    )
-
-    return limitPrice.quote(oneUnitOfBaseCurrency)
-  }, [limitPrice])
-
-  const [customInput, setCustomInput] = useState<string | undefined>(undefined)
-  const [priceOptionIndex, _setPriceOptionIndex] = useState<number>(0)
-
-  const setPriceOptionIndex = useCallback((priceOptionIndex: number) => {
-    setCustomInput(undefined)
-    _setPriceOptionIndex(priceOptionIndex)
-  }, [])
+  const [priceOptionIndex, setPriceOptionIndex] = useState<number | undefined>(
+    0,
+  )
 
   useEffect(() => {
-    if (priceOptionIndex === 0 && typeof customInput !== 'undefined') return
-    if (!marketPrice) return
-    const priceAdjustmentPercentage = PRICE_OPTIONS[priceOptionIndex].value
+    // reset priceOptionIndex && isLimitPriceInverted on token change
+    if (token0 && token1) {
+      setPriceOptionIndex(0)
+      setIsLimitPriceInverted(false)
+    }
+  }, [token0, token1, setIsLimitPriceInverted])
 
-    const oneUnitOfBaseCurrency = Amount.fromRawAmount(
-      marketPrice.baseCurrency,
-      parseUnits('1', marketPrice.baseCurrency.decimals),
-    )
+  useEffect(() => {
+    // update limitPrice based on selected price option & current market price
+    if (typeof priceOptionIndex === 'undefined' || !marketPrice) {
+      return
+    }
 
-    const limitPrice = new Price({
-      baseAmount: oneUnitOfBaseCurrency,
-      quoteAmount: Amount.fromRawAmount(
-        marketPrice.quoteCurrency,
-        (marketPrice.quote(oneUnitOfBaseCurrency).quotient *
-          BigInt(100 + priceAdjustmentPercentage)) /
-          100n,
-      ),
-    })
+    if (priceOptionIndex === 0) {
+      setLimitPrice(
+        (isLimitPriceInverted
+          ? marketPrice.invert()
+          : marketPrice
+        ).toSignificant(),
+      )
+    } else {
+      const priceAdjustmentPercentage = PRICE_OPTIONS[priceOptionIndex].value
 
-    setLimitPrice(limitPrice)
-  }, [marketPrice, priceOptionIndex, setLimitPrice, customInput])
-
-  const percentDiff = useMemo(() => {
-    if (
-      !marketPrice ||
-      !limitPrice ||
-      !marketPrice.baseCurrency.equals(limitPrice.baseCurrency)
-    )
-      return undefined
-
-    const oneUnit = Amount.fromRawAmount(
-      marketPrice.baseCurrency,
-      parseUnits('1', marketPrice.baseCurrency.decimals),
-    )
-    const marketAmount = marketPrice.quote(oneUnit).quotient
-    const limitAmount = limitPrice.quote(oneUnit).quotient
-
-    const diff = (limitAmount * 10_000n) / marketAmount - 10_000n
-    return Number(diff) / 100
-  }, [marketPrice, limitPrice])
-
-  const onInputChange = useCallback(
-    (value: string) => {
-      setCustomInput(value)
-      _setPriceOptionIndex(0)
-      if (!marketPrice || value === '') return
-
-      const oneUnit = Amount.fromRawAmount(
+      const oneUnitOfBaseCurrency = Amount.fromRawAmount(
         marketPrice.baseCurrency,
         parseUnits('1', marketPrice.baseCurrency.decimals),
       )
-      const inputAmount = parseUnits(value, marketPrice.quoteCurrency.decimals)
 
-      const customPrice = new Price({
-        baseAmount: oneUnit,
+      const limitPrice = new Price({
+        baseAmount: oneUnitOfBaseCurrency,
         quoteAmount: Amount.fromRawAmount(
           marketPrice.quoteCurrency,
-          BigInt(inputAmount.toString()),
+          (marketPrice.quote(oneUnitOfBaseCurrency).quotient *
+            BigInt(100 + priceAdjustmentPercentage)) /
+            100n,
         ),
       })
 
-      setLimitPrice(customPrice)
+      setLimitPrice(
+        (isLimitPriceInverted
+          ? limitPrice.invert()
+          : limitPrice
+        ).toSignificant(),
+      )
+    }
+  }, [marketPrice, priceOptionIndex, isLimitPriceInverted, setLimitPrice])
+
+  const percentDiff = useMemo(() => {
+    if (!marketPrice || !limitPrice || typeof priceOptionIndex !== 'undefined')
+      return undefined
+
+    const oneUnitOfBaseCurrency = Amount.fromRawAmount(
+      marketPrice.baseCurrency,
+      parseUnits('1', marketPrice.baseCurrency.decimals),
+    )
+    const marketAmount = marketPrice.quote(oneUnitOfBaseCurrency).quotient
+    const limitAmount = limitPrice.quote(oneUnitOfBaseCurrency).quotient
+
+    const [from, to] = isLimitPriceInverted
+      ? [marketAmount, limitAmount]
+      : [limitAmount, marketAmount]
+
+    const diff = (from * 10_000n) / to - 10_000n
+    return Number(diff) / 100
+  }, [priceOptionIndex, marketPrice, limitPrice, isLimitPriceInverted])
+
+  const onInputChange = useCallback(
+    (value: string) => {
+      setPriceOptionIndex(undefined)
+      setLimitPrice(value)
     },
-    [marketPrice, setLimitPrice],
+    [setLimitPrice],
   )
+
+  const onInvert = useCallback(() => {
+    setPriceOptionIndex(0)
+    setIsLimitPriceInverted((inverted) => !inverted)
+  }, [setIsLimitPriceInverted])
+
+  const [_token0, _token1] = isLimitPriceInverted
+    ? [token1, token0]
+    : [token0, token1]
 
   return (
     <div
@@ -141,10 +150,10 @@ export const LimitPriceInput = () => {
       <div className="flex justify-between items-center border-b border-accent p-3">
         <div className="flex items-center gap-2 whitespace-nowrap text-xs">
           <span className="font-medium">When 1</span>
-          {token0 ? (
+          {_token0 ? (
             <>
-              <Currency.Icon currency={token0} width={16} height={16} />
-              <span className="font-medium">{token0.name}</span>
+              <Currency.Icon currency={_token0} width={16} height={16} />
+              <span className="font-medium">{_token0.name}</span>
             </>
           ) : (
             <>
@@ -158,9 +167,9 @@ export const LimitPriceInput = () => {
         </div>
         <IconButton
           icon={ArrowsUpDownIcon}
-          onClick={switchTokens}
-          name={'Switch tokens'}
-          className="!min-h-[30px] !h-[30px] !min-w-[30px] !w-[30px] px-2"
+          onClick={onInvert}
+          name={'Invert'}
+          className="!min-h-[30px] !h-[30px] !min-w-[30px] !w-[30px] px-2 transition-transform rotate-0 hover:rotate-180"
         />
       </div>
       <div className="flex flex-col gap-2 px-3 py-2">
@@ -185,31 +194,27 @@ export const LimitPriceInput = () => {
               type="number"
               variant="naked"
               onValueChange={onInputChange}
-              value={
-                typeof customInput !== 'undefined'
-                  ? customInput
-                  : (token0PriceQuote?.toSignificant() ?? '')
-              }
-              maxDecimals={token1?.decimals}
+              value={limitPriceString}
+              maxDecimals={_token1?.decimals}
               data-state={isLoading ? 'inactive' : 'active'}
               className={'p-0 py-1 !text-3xl font-medium'}
             />
           </div>
-          {token1 ? (
+          {_token1 ? (
             <div className="flex items-center gap-1">
               <Currency.Icon
                 disableLink
-                currency={token1}
+                currency={_token1}
                 width={20}
                 height={20}
               />
-              <span className="font-medium">{token1.symbol}</span>
+              <span className="font-medium">{_token1.symbol}</span>
             </div>
           ) : null}
         </div>
 
         <RadioGroup
-          value={priceOptionIndex}
+          value={priceOptionIndex ?? 0}
           className="gap-2 flex flex-wrap py-1"
         >
           {PRICE_OPTIONS.map((option, i) => (
@@ -219,12 +224,14 @@ export const LimitPriceInput = () => {
                 variant="outline"
                 className="whitespace-nowrap !rounded-[50px] !px-4 !h-7 relative"
                 onClick={() => setPriceOptionIndex(i)}
-                pressed={priceOptionIndex === i}
+                pressed={
+                  i === priceOptionIndex ||
+                  (i === 0 &&
+                    typeof priceOptionIndex === 'undefined' &&
+                    +limitPriceString !== 0)
+                }
               >
-                {i === 0 &&
-                typeof customInput !== 'undefined' &&
-                customInput !== '' &&
-                percentDiff !== undefined ? (
+                {i === 0 && typeof percentDiff !== 'undefined' ? (
                   <>
                     {`${percentDiff > 0 ? '+' : ''}${percentDiff.toFixed(2)}%`}
                     <div className="pl-1">

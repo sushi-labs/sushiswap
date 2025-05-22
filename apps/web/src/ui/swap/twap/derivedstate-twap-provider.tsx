@@ -3,7 +3,6 @@
 import {
   type TimeDuration,
   TimeUnit,
-  type getAskParamsProps,
   zeroAddress,
 } from '@orbs-network/twap-sdk'
 import {
@@ -20,7 +19,7 @@ import { getFeeString } from 'src/lib/swap/fee'
 import { TwapExpiryTimeDurations, TwapSDK } from 'src/lib/swap/twap'
 import { twapAbi_ask } from 'src/lib/swap/twap/abi'
 import { ChainId, type EvmChainId } from 'sushi/chain'
-import { Amount, Price, type Type } from 'sushi/currency'
+import { Amount, Price, type Type, tryParseAmount } from 'sushi/currency'
 import type { Fraction } from 'sushi/math'
 import { sz } from 'sushi/validate'
 import { type Hex, encodeFunctionData } from 'viem'
@@ -39,6 +38,8 @@ type State = DerivedStateSimpleSwapState & {
   state: Omit<DerivedStateSimpleSwapState['state'], 'chainId'> & {
     chainId: TwapSupportedChainId
     isLimitOrder: boolean
+    isLimitPriceInverted: boolean
+    limitPriceString: string
     limitPrice: Price<Type, Type> | undefined
     marketPrice: Price<Type, Type> | undefined
     token0PriceUSD: Fraction | undefined
@@ -52,7 +53,8 @@ type State = DerivedStateSimpleSwapState & {
     amountInPerChunk: Amount<Type> | undefined
   }
   mutate: DerivedStateSimpleSwapState['mutate'] & {
-    setLimitPrice: Dispatch<SetStateAction<Price<Type, Type> | undefined>>
+    setIsLimitPriceInverted: Dispatch<SetStateAction<boolean>>
+    setLimitPrice: Dispatch<SetStateAction<string>>
     setExpiry: Dispatch<SetStateAction<TimeDuration>>
     setChunks: Dispatch<SetStateAction<number>>
     setFillDelay: Dispatch<SetStateAction<TimeDuration>>
@@ -89,9 +91,9 @@ const _DerivedStateTwapProvider: FC<DerivedStateTwapProviderProps> = ({
     chainId: derivedStateSimpleSwap.state.chainId,
   })
 
-  const [limitPrice, setLimitPrice] = useState<Price<Type, Type> | undefined>(
-    undefined,
-  )
+  const [isLimitPriceInverted, setIsLimitPriceInverted] =
+    useState<boolean>(false)
+  const [limitPriceString, setLimitPrice] = useState<string>('')
   const [expiry, setExpiry] = useState<TimeDuration>(
     TwapExpiryTimeDurations.Day,
   )
@@ -169,55 +171,75 @@ const _DerivedStateTwapProvider: FC<DerivedStateTwapProviderProps> = ({
               )
             : undefined
 
-        const _limitPrice =
-          marketPrice &&
-          limitPrice?.baseCurrency.equals(marketPrice.baseCurrency)
-            ? limitPrice
-            : marketPrice
+        const [baseCurrency, quoteCurrency] =
+          state.token0 && state.token1
+            ? isLimitPriceInverted
+              ? [state.token1, state.token0]
+              : [state.token0, state.token1]
+            : [undefined, undefined]
 
-        const price =
-          state.token0 && _limitPrice
-            ? _limitPrice.quote(
-                Amount.fromRawAmount(
-                  state.token0,
-                  parseUnits('1', state.token0.decimals),
-                ),
-              )
+        const baseAmount = baseCurrency
+          ? Amount.fromRawAmount(
+              baseCurrency,
+              parseUnits('1', baseCurrency.decimals),
+            )
+          : undefined
+
+        const quoteAmount = tryParseAmount(limitPriceString, quoteCurrency)
+
+        const _limitPrice =
+          baseAmount && quoteAmount
+            ? new Price({ baseAmount, quoteAmount })
             : undefined
 
-        const dstTokenAmount =
-          state.swapAmount && price
+        const limitPrice = isLimitPriceInverted
+          ? _limitPrice?.invert()
+          : _limitPrice
+
+        const orderPrice = isLimitOrder ? limitPrice : marketPrice
+
+        const orderPriceOfOneToken0 = orderPrice
+          ? orderPrice.quote(
+              Amount.fromRawAmount(
+                orderPrice.baseCurrency,
+                parseUnits('1', orderPrice.baseCurrency.decimals),
+              ),
+            )
+          : undefined
+
+        const destTokenAmount =
+          state.swapAmount && orderPriceOfOneToken0
             ? sdk.getDestTokenAmount(
                 state.swapAmount.quotient.toString(),
-
-                price.quotient.toString(),
+                orderPriceOfOneToken0.quotient.toString(),
                 state.swapAmount.currency.decimals,
               )
             : undefined
 
         const amountOut =
-          state.token1 && dstTokenAmount
-            ? Amount.fromRawAmount(state.token1, dstTokenAmount)
+          state.token1 && destTokenAmount
+            ? Amount.fromRawAmount(state.token1, destTokenAmount)
             : undefined
 
-        const dstMinAmount =
-          state.token0 && amountInPerChunk && price
+        const destMinAmount =
+          state.token0 && amountInPerChunk && orderPriceOfOneToken0
             ? sdk.getDestTokenMinAmount(
                 amountInPerChunk.quotient.toString(),
-                price.quotient.toString(),
+                orderPriceOfOneToken0.quotient.toString(),
                 !isLimitOrder,
                 state.token0.decimals,
               )
             : undefined
 
         const minAmountOut =
-          state.token1 && dstMinAmount
-            ? Amount.fromRawAmount(state.token1, dstMinAmount)
+          state.token1 && destMinAmount
+            ? Amount.fromRawAmount(state.token1, destMinAmount)
             : undefined
 
         return {
           mutate: {
             ...mutate,
+            setIsLimitPriceInverted,
             setLimitPrice,
             setExpiry,
             setChunks,
@@ -228,7 +250,9 @@ const _DerivedStateTwapProvider: FC<DerivedStateTwapProviderProps> = ({
             chainId,
             isLimitOrder,
             marketPrice,
-            limitPrice: _limitPrice,
+            isLimitPriceInverted,
+            limitPriceString,
+            limitPrice,
             token0PriceUSD,
             token1PriceUSD,
             expiry,
@@ -245,9 +269,10 @@ const _DerivedStateTwapProvider: FC<DerivedStateTwapProviderProps> = ({
         }
       }, [
         derivedStateSimpleSwap,
+        isLimitPriceInverted,
         isLimitOrder,
         marketPrice,
-        limitPrice,
+        limitPriceString,
         token0PriceUSD,
         token1PriceUSD,
         expiry,
@@ -398,7 +423,7 @@ const useTwapTrade = () => {
     return {
       data: {
         isLimitOrder,
-        limitPrice: isLimitOrder ? limitPrice : undefined,
+        limitPrice,
         marketPrice,
         amountIn: swapAmount,
         chunks,
@@ -415,7 +440,7 @@ const useTwapTrade = () => {
               tokenOutPrice: token1PriceUSD,
               minAmountOut,
             })
-          : undefined, // todo: check if fees are even taken
+          : undefined,
       } satisfies UseTwapTradeReturn,
       error: undefined,
     }

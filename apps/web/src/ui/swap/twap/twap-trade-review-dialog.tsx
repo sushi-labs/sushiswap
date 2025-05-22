@@ -64,7 +64,7 @@ export const TwapTradeReviewDialog: FC<{
       recipient,
       limitPrice,
       isLimitOrder,
-      token1PriceUSD,
+      token0PriceUSD,
       deadline,
     },
     mutate: { setSwapAmount },
@@ -209,15 +209,26 @@ export const TwapTradeReviewDialog: FC<{
                     </List.KeyValue>
                     {isLimitOrder ? (
                       <>
-                        <List.KeyValue title="Limit price">
-                          {token0 && limitPrice && token1 && token1PriceUSD ? (
+                        <List.KeyValue
+                          title={
+                            <span className="whitespace-nowrap">
+                              Limit price
+                            </span>
+                          }
+                          flex
+                        >
+                          {limitPrice ? (
                             <span className="flex items-baseline gap-1 whitespace-nowrap scroll hide-scrollbar">
-                              1 {token0.symbol} =
-                              <FormattedNumber number={limitPrice.toFixed(4)} />{' '}
-                              {token1.symbol}{' '}
-                              <span className="text-muted-foreground">
-                                ({formatUSD(token1PriceUSD.toFixed(6))})
-                              </span>
+                              1 {limitPrice.baseCurrency.symbol} =
+                              <FormattedNumber
+                                number={limitPrice.toSignificant()}
+                              />{' '}
+                              {limitPrice.quoteCurrency.symbol}{' '}
+                              {token0PriceUSD ? (
+                                <span className="text-muted-foreground">
+                                  ({formatUSD(token0PriceUSD.toFixed(6))})
+                                </span>
+                              ) : null}
                             </span>
                           ) : (
                             <SkeletonText fontSize="sm" />
@@ -239,7 +250,7 @@ export const TwapTradeReviewDialog: FC<{
                               <FormattedNumber
                                 number={trade.amountIn.toExact()}
                               />{' '}
-                              {token0?.symbol}
+                              {trade.amountIn.currency.symbol}
                             </span>
                           ) : (
                             <SkeletonText />
@@ -258,7 +269,7 @@ export const TwapTradeReviewDialog: FC<{
                               <FormattedNumber
                                 number={trade.amountInPerChunk.toExact()}
                               />{' '}
-                              {token0?.symbol}
+                              {trade.amountInPerChunk.currency.symbol}
                             </span>
                           ) : (
                             <SkeletonText />
