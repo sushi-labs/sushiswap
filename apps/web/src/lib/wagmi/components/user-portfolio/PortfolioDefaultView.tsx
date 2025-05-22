@@ -31,7 +31,7 @@ import type { GetEnsNameReturnType } from 'wagmi/actions'
 import { PortfolioView } from '.'
 import { NotificationBadge } from './notification-badge'
 import { PortfolioAssets } from './portfolio-assets/portfolio-assets'
-import { PortfolioTokens } from './portfolio-tokens'
+import { PortfolioOrders } from './portfolio-orders/portfolio-orders'
 
 enum PortfolioTab {
   Assets = 'Assets',
@@ -57,19 +57,14 @@ export const PortfolioDefaultView: FC<PortfolioDefaultProps> = ({
   const [tab, setTab] = useState(PortfolioTab.Assets)
 
   const content = useMemo(() => {
-    //TODO: update to correct names and content. satart with assets
     switch (tab) {
       case PortfolioTab.Assets:
-        // return <PortfolioTokens />;
         return <PortfolioAssets />
       case PortfolioTab.Orders:
-        return <>TODO orders</>
-      // return <PortfolioPositions />;
+        return <PortfolioOrders />
       case PortfolioTab.Inbox:
         return <>TODO inbox</>
       // return <PortfolioClaimables />;
-      // case PortfolioTab.History:
-      // return <PortfolioHistory />
     }
   }, [tab])
 
