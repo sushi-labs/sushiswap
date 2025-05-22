@@ -1,6 +1,6 @@
 'use client'
 
-import { useParams, usePathname } from 'next/navigation'
+import { useParams, usePathname, useSearchParams } from 'next/navigation'
 import {
   type FC,
   createContext,
@@ -34,9 +34,9 @@ interface State {
   }
 }
 
-const DerivedStateSimpleTradeContext = createContext<State>({} as State)
+const DerivedstateTradeContext = createContext<State>({} as State)
 
-interface DerivedStateSimpleTradeProviderProps {
+interface DerivedstateTradeProviderProps {
   children: React.ReactNode
 }
 
@@ -60,9 +60,9 @@ const createUrl = (
  * URL example:
  * /swap || /limit || /dca ...
  */
-const DerivedstateSimpleTradeProvider: FC<
-  DerivedStateSimpleTradeProviderProps
-> = ({ children }) => {
+const DerivedstateTradeProvider: FC<DerivedstateTradeProviderProps> = ({
+  children,
+}) => {
   const pathname = usePathname()
   const { chainId: _chainId, trade } = useParams()
   const chainId =
@@ -74,6 +74,11 @@ const DerivedstateSimpleTradeProvider: FC<
     resolveViewModeFromPathname(pathname),
   )
   const [tradeModeChanged, _setTradeModeChanged] = useState<boolean>(false)
+
+  const params = useParams()
+  console.log('pathname', pathname)
+  console.log('params', params)
+  console.log('trade', trade)
 
   const setTradeView = useCallback(
     (view: TradeView) => {
@@ -102,7 +107,7 @@ const DerivedstateSimpleTradeProvider: FC<
   )
 
   return (
-    <DerivedStateSimpleTradeContext.Provider
+    <DerivedstateTradeContext.Provider
       value={useMemo(() => {
         return {
           mutate: {
@@ -139,12 +144,12 @@ const DerivedstateSimpleTradeProvider: FC<
       >
         {children}
       </TradeModeContext.Provider>
-    </DerivedStateSimpleTradeContext.Provider>
+    </DerivedstateTradeContext.Provider>
   )
 }
 
-const useDerivedStateSimpleTrade = () => {
-  const context = useContext(DerivedStateSimpleTradeContext)
+const useDerivedStateTrade = () => {
+  const context = useContext(DerivedstateTradeContext)
   if (!context) {
     throw new Error(
       'Hook can only be used inside Simple Trade Derived State Context',
@@ -154,4 +159,4 @@ const useDerivedStateSimpleTrade = () => {
   return context
 }
 
-export { DerivedstateSimpleTradeProvider, useDerivedStateSimpleTrade }
+export { DerivedstateTradeProvider, useDerivedStateTrade }

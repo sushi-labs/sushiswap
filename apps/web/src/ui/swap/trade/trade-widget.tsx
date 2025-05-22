@@ -5,7 +5,7 @@ import { EdgeProvider, useEdgeConfig } from 'src/providers/edge-config-provider'
 import { DerivedstateCrossChainSwapProvider } from 'src/ui/swap/cross-chain/derivedstate-cross-chain-swap-provider'
 import { DerivedstateSimpleSwapProvider } from 'src/ui/swap/simple/derivedstate-simple-swap-provider'
 import { SimpleSwapSettingsOverlay } from '../simple/simple-swap-settings-overlay'
-import { useDerivedStateSimpleTrade } from './derivedstate-simple-trade-provider'
+import { useDerivedStateTrade } from './derivedstate-trade-provider'
 import { type TradeEdgeConfig, sliceEdgeConfig } from './trade-edge-config'
 import { TradeModeButtons } from './trade-mode-buttons'
 import { CrossChainSwapWidget } from './widgets/cross-chain-swap'
@@ -15,7 +15,7 @@ import { DCAWidget, LimitWidget } from './widgets/twap'
 export const TradeWidget = () => {
   const {
     state: { tradeMode, chainId, tradeModeChanged },
-  } = useDerivedStateSimpleTrade()
+  } = useDerivedStateTrade()
   const tradeEdge = useEdgeConfig<TradeEdgeConfig>()
   const modeEdge = sliceEdgeConfig(tradeEdge, tradeMode)
 

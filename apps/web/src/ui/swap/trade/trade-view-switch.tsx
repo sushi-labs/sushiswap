@@ -1,11 +1,11 @@
 import { Switch } from '@sushiswap/ui'
-import { useDerivedStateSimpleTrade } from './derivedstate-simple-trade-provider'
+import { useDerivedStateTrade } from './derivedstate-trade-provider'
 
 export const TradeViewSwitch = () => {
   const {
     mutate: { setTradeView },
     state: { tradeView },
-  } = useDerivedStateSimpleTrade()
+  } = useDerivedStateTrade()
 
   return (
     <div className="w-full flex justify-center p-3 bg-gradient-to-r from-blue/10 to-skyblue/10 animate-slide">
