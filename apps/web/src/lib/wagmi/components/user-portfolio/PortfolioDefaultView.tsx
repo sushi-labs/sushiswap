@@ -31,13 +31,13 @@ import type { GetEnsNameReturnType } from 'wagmi/actions'
 import { PortfolioView } from '.'
 import { NotificationBadge } from './notification-badge'
 import { PortfolioAssets } from './portfolio-assets/portfolio-assets'
+import { PortfolioInbox } from './portfolio-inbox/portfolio-inbox'
 import { PortfolioOrders } from './portfolio-orders/portfolio-orders'
 
 enum PortfolioTab {
   Assets = 'Assets',
   Orders = 'Orders',
   Inbox = 'Inbox',
-  // History = 'History',
 }
 
 interface PortfolioDefaultProps {
@@ -63,8 +63,7 @@ export const PortfolioDefaultView: FC<PortfolioDefaultProps> = ({
       case PortfolioTab.Orders:
         return <PortfolioOrders />
       case PortfolioTab.Inbox:
-        return <>TODO inbox</>
-      // return <PortfolioClaimables />;
+        return <PortfolioInbox />
     }
   }, [tab])
 
