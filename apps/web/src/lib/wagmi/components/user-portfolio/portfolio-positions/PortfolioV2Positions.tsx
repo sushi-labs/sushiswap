@@ -18,17 +18,18 @@ export const PortfolioV2Positions: FC<PortfolioV2PositionssProps> = ({
   positions,
 }) => (
   <AccordionItem value="v2" className="!border-0">
-    <AccordionTrigger className="px-5 underline-offset-2">
+    <AccordionTrigger
+      chevronChildren={<span className="text-xs text-[#64748B]">Hide</span>}
+      className="px-3 !py-2 text-xs text-[#64748B] hover:!no-underline [&[data-state=open]>div>span]:block [&[data-state=closed]>div>span]:hidden"
+    >
       {`V2 Positions (${positions.length})`}
     </AccordionTrigger>
-    <AccordionContent className="cursor-default">
+    <AccordionContent childClassName="!pb-0" className="cursor-default">
       {positions.map((position) => (
         <PortfolioInfoRow
           key={`${position.chainId}:${position.id}`}
           chainId={position.chainId as EvmChainId}
-          href={`/${ChainKey[position.chainId as EvmChainId]}/pool/v2/${
-            position.address
-          }/add`}
+          href={`/${ChainKey[position.chainId as EvmChainId]}/pool/v2/${position.address}/add`}
           icon={
             <Currency.IconList iconWidth={24} iconHeight={24}>
               <img

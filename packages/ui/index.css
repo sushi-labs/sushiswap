@@ -16,7 +16,7 @@
     --color: #000;
     --secondary: #0000000a;
     --muted: #0000000f;
-    --muted-foreground: #6b7280;
+    --muted-foreground: #535263;
     --accent: #00000014;
     --accent-foreground: #111827;
     --background: #f3f2f4;
@@ -31,7 +31,7 @@
   .dark {
     --secondary: #ffffff0a;
     --muted: #ffffff0f;
-    --muted-foreground: #94a3b8;
+    --muted-foreground: #e4ddec;
     --accent: #ffffff14;
     --accent-foreground: #e2e8f0;
     --background-color: #0c0c23;
