@@ -1,42 +1,42 @@
+import {
+  getPortfolioClaimables,
+  getPortfolioPositions,
+  getPortfolioWallet,
+} from '@sushiswap/graph-client/data-api'
 import { useQuery } from '@tanstack/react-query'
-import { useMemo } from 'react'
 import type { Address } from 'viem'
-import { usePortfolioClaimables } from './use-portfolio-claimables'
-import { usePortfolioPositions } from './use-portfolio-positions'
-import { usePortfolioWallet } from './use-portfolio-wallet'
 
-export const useTotalBalance = (
-  address: Address | undefined,
-  refetchInterval?: 600_000,
-) => {
-  const { data: walletData, isFetched: walletFetched } =
-    usePortfolioWallet(address)
-  const { data: claimableData, isFetched: claimablesFetched } =
-    usePortfolioClaimables(address)
-  const { data: positionData, isFetched: positionsFetched } =
-    usePortfolioPositions(address)
-
-  const totalUSD = useMemo(() => {
-    if (!walletData || !claimableData || !positionData) return 0
-
-    const walletTotalUSD = walletData?.totalUSD ?? 0
-    const claimableTotalUSD = claimableData?.totalUSD ?? 0
-    const positionTotalUSD = positionData?.totalUSD ?? 0
-
-    return walletTotalUSD + claimableTotalUSD + positionTotalUSD
-  }, [walletData, claimableData, positionData])
-
+export const useTotalBalance = ({
+  address,
+  refetchInterval = 600_000,
+}: {
+  address: Address | undefined
+  refetchInterval?: number
+}) => {
   return useQuery({
     queryKey: ['total-balance', address],
-    queryFn: () => {
+    queryFn: async () => {
+      const res = await Promise.all([
+        getPortfolioWallet({ id: address as string }),
+        getPortfolioPositions({ id: address as string }),
+        getPortfolioClaimables({ id: address as string }),
+      ])
+      const walletData = res?.[0]
+      const posData = res?.[1]
+      const claimData = res?.[2]
+
+      const totalUSD =
+        (walletData?.totalUSD ?? 0) +
+        (posData?.totalUSD ?? 0) +
+        (claimData?.totalUSD ?? 0)
+
       return {
         totalUSD,
         percentageChange24h: walletData?.percentageChange24h ?? 0,
         amountUSD24Change: walletData?.amountUSD24Change ?? 0,
       }
     },
-    enabled:
-      !!address && walletFetched && claimablesFetched && positionsFetched,
+    enabled: !!address,
     refetchInterval,
   })
 }

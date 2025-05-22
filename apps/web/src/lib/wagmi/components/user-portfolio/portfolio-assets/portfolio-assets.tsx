@@ -2,11 +2,16 @@ import { Button } from '@sushiswap/ui'
 import { useState } from 'react'
 import { useAccount } from 'wagmi'
 import { useTotalBalance } from '../hooks/use-total-balance'
+import { ClaimableAssets } from './claimable-assets'
 import { PositionAssets } from './position-assets'
 import { TotalBalance } from './total-balance'
 import { WalletAssets } from './wallet-assets'
 
-export type PortfolioAccordionValue = 'wallet' | 'lps' | 'claimables'
+export type PortfolioAccordionValue =
+  | 'wallet'
+  | 'lps'
+  | 'claimables'
+  | (string & {})
 
 export type PortfolioAssetsProps = {
   value: PortfolioAccordionValue
@@ -16,7 +21,8 @@ export type PortfolioAssetsProps = {
 export const PortfolioAssets = () => {
   const [value, setValue] = useState<PortfolioAccordionValue>('wallet')
   const { address } = useAccount()
-  const { data, isLoading } = useTotalBalance(address)
+  const { data, isLoading } = useTotalBalance({ address })
+
   const totalUSD = data?.totalUSD ?? 0
 
   const handleValueChange = (value: PortfolioAccordionValue) => {
@@ -24,7 +30,7 @@ export const PortfolioAssets = () => {
   }
 
   return (
-    <div className="flex flex-col gap-y-5 h-full overflow-y-auto">
+    <div className="flex flex-col gap-y-5 h-full pb-4 overflow-y-auto">
       <div className="px-5">
         <TotalBalance />
       </div>
@@ -40,6 +46,7 @@ export const PortfolioAssets = () => {
         <div className="flex flex-col gap-y-5 px-4">
           <WalletAssets value={value} onValueChange={handleValueChange} />
           <PositionAssets value={value} onValueChange={handleValueChange} />
+          <ClaimableAssets value={value} onValueChange={handleValueChange} />
         </div>
       )}
     </div>

@@ -21,12 +21,8 @@ export const PortfolioV3Positions: FC<PortfolioV3PositionsProps> = ({
 }) => (
   <AccordionItem value="v3" className="!border-0">
     <AccordionTrigger
-      // chevronChildren={
-      // 	<span className="data-[state=open]:block data-[state=closed]:!hidden text-xs text-[#64748B]">
-      // 		Hide
-      // 	</span>
-      // }
-      className="px-3 !py-2 text-xs text-[#64748B] hover:!no-underline"
+      chevronChildren={<span className="text-xs text-[#64748B]">Hide</span>}
+      className="px-3 !py-2 text-xs text-[#64748B] hover:!no-underline [&[data-state=open]>div>span]:block [&[data-state=closed]>div>span]:hidden"
     >
       {`V3 Positions (${positions.length})`}
     </AccordionTrigger>

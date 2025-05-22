@@ -19,19 +19,20 @@ export const PortfolioFarmClaimables: FC<PortfolioFarmClaimablesProps> = ({
   claimables,
 }) => (
   <AccordionItem value="alm" className="!border-0">
-    <AccordionTrigger className="px-5 underline-offset-2">
+    <AccordionTrigger
+      chevronChildren={<span className="text-xs text-[#64748B]">Hide</span>}
+      className="px-3 !py-2 text-xs text-[#64748B] hover:!no-underline [&[data-state=open]>div>span]:block [&[data-state=closed]>div>span]:hidden"
+    >
       {`Farms (${claimables.length})`}
     </AccordionTrigger>
-    <AccordionContent className="cursor-default">
+    <AccordionContent childClassName="!pb-0" className="cursor-default">
       {claimables.map(({ position, token }) => (
         <PortfolioInfoRow
           key={`${position.chainId}:${position.id}`}
           chainId={token.chainId as EvmChainId}
           href={
             position.protocol === 'SUSHISWAP_V2'
-              ? `/${ChainKey[position.chainId as EvmChainId]}/pool/v2/${
-                  position.address
-                }/add`
+              ? `/${ChainKey[position.chainId as EvmChainId]}/pool/v2/${position.address}/add`
               : `/${ChainKey[position.chainId as EvmChainId]}/rewards`
           }
           icon={
@@ -55,10 +56,7 @@ export const PortfolioFarmClaimables: FC<PortfolioFarmClaimablesProps> = ({
                     : position.protocol === 'SUSHISWAP_V3'
                       ? 'V3'
                       : position.protocol
-                }-${position.swapFee * 100}%-${position.name.replace(
-                  ' / ',
-                  '-',
-                )}`}
+                }-${position.swapFee * 100}%-${position.name.replace(' / ', '-')}`}
               </div>
             </React.Fragment>
           }

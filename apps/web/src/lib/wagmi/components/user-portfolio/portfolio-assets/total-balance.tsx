@@ -5,10 +5,13 @@ import { useTotalBalance } from '../hooks/use-total-balance'
 
 export const TotalBalance = () => {
   const { address } = useAccount()
-  const { data, isLoading, isError } = useTotalBalance(address)
+  const { data, isLoading, isError } = useTotalBalance({
+    address,
+  })
   const amountUSD24Change = data?.amountUSD24Change ?? 0
   const percentageChange24h = data?.percentageChange24h ?? 0
   const totalUSD = data?.totalUSD ?? 0
+
   return (
     <div className="flex flex-col gap-y-3 dark:bg-slate-800 bg-slate-100 sm:bg-slate-50 rounded-xl px-5 py-3">
       <span className="text-sm text-muted-foreground">Total Balance</span>
