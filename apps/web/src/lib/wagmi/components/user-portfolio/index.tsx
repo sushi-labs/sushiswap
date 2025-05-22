@@ -21,6 +21,7 @@ import { useAccount, useEnsAvatar, useEnsName } from 'wagmi'
 import { ConnectButton } from '../connect-button'
 import { PortfolioDefaultView } from './PortfolioDefaultView'
 import { PortfolioSettingsView } from './PortfolioSettingsView'
+import { NotificationBadge } from './notification-badge'
 
 export enum PortfolioView {
   Default = 'Default',
@@ -35,14 +36,22 @@ const ResponsivePortfolioWrapper: FC<{
   return isSm ? (
     <Sheet>
       <SheetTrigger asChild>{trigger}</SheetTrigger>
-      <SheetContent hideClose className="!p-0">
+      <SheetContent
+        overlayClassName="!h-[calc(100%-56px)] dark:bg-slate-900/50 bg-gray-100/50 !inset-y-[56px] backdrop-blur-none"
+        hideClose
+        className="!p-0 !shadow-none border-t-0 !rounded-none dark:!bg-slate-900 !right-0 !inset-y-[56px] !h-[calc(100%-56px)]"
+      >
         {content}
       </SheetContent>
     </Sheet>
   ) : (
     <Dialog>
       <DialogTrigger asChild>{trigger}</DialogTrigger>
-      <DialogContent hideClose className="!p-0 h-[calc(100%-16px)]">
+      <DialogContent
+        variant="semi-opaque"
+        hideClose
+        className="!p-0 h-[calc(100%-95px)]"
+      >
         {content}
       </DialogContent>
     </Dialog>
@@ -110,6 +119,7 @@ export const UserPortfolio = () => {
             <JazzIcon diameter={20} address={address} />
           )}
           <span className="hidden sm:block">{shortenAddress(address)}</span>
+          <NotificationBadge notificationCount={3} />
         </Button>
       }
       content={content}
