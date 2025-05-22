@@ -66,7 +66,7 @@ module.exports = {
         },
         slate: {
           50: '#FDFCFD',
-          100: '#F9FAFB',
+          100: '#F9F9F9',
           800: '#15152B',
           900: '#0C0C23',
         },

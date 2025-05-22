@@ -34,7 +34,7 @@ export const PositionAssets = (props: PortfolioAssetsProps) => {
             LP Positions{' '}
             <NotificationBadge size="sm" notificationCount={totalPositions} />
           </div>
-          <span className="text-[#535263] dark:text-[#E4DDEC]">
+          <span className="text-muted-foreground">
             {formatUSD(data?.totalUSD ?? 0)}
           </span>
         </>
