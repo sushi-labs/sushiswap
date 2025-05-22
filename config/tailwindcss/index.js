@@ -111,6 +111,7 @@ module.exports = {
         },
         red: {
           DEFAULT: 'rgb(var(--red))',
+          100: '#DE5852',
         },
         yellow: {
           DEFAULT: '#eab308',
