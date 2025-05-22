@@ -5,7 +5,6 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  classNames,
 } from '@sushiswap/ui'
 import { useMemo, useState } from 'react'
 import { ActiveOrders } from './active-orders'
@@ -37,7 +36,7 @@ export const PortfolioOrders = () => {
   }, [tab, completedOrderFilter])
 
   return (
-    <div className="flex flex-col gap-y-5 h-full">
+    <div className="flex flex-col gap-y-5 min-h-0">
       <div className="h-px w-[95%] mx-auto border border-accent" />
       <div className="flex items-center px-5 gap-2 justify-between">
         <div className="flex gap-x-2">
@@ -85,7 +84,7 @@ export const PortfolioOrders = () => {
         ) : null}
       </div>
 
-      <div className="flex flex-col gap-y-5 px-5 h-[calc(100%-310px)] sm:h-[calc(100%-260px)] overflow-y-auto">
+      <div className="flex flex-col gap-y-5 px-5 overflow-y-auto">
         {content}
       </div>
     </div>

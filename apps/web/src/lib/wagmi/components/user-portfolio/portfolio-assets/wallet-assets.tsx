@@ -23,7 +23,7 @@ export const WalletAssets = (props: PortfolioAssetsProps) => {
       triggerChildren={
         <>
           <span>Wallet</span>
-          <span className="text-[#535263] dark:text-[#E4DDEC]">
+          <span className="text-muted-foreground">
             {formatUSD(data?.totalUSD ?? 0)}
           </span>
         </>
@@ -41,7 +41,6 @@ export const WalletAssets = (props: PortfolioAssetsProps) => {
         </div>
       ) : (
         data?.tokens?.map((token) => {
-          console.log(token.logoUrl)
           return (
             <PortfolioInfoRow
               key={`${token.chainId}:${token.id}`}

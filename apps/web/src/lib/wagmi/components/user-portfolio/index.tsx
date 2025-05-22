@@ -50,7 +50,7 @@ const ResponsivePortfolioWrapper: FC<{
       <DialogContent
         variant="semi-opaque"
         hideClose
-        className="!p-0 h-[calc(100%-95px)]"
+        className="!p-0 h-[calc(100%-55px)]"
       >
         {content}
       </DialogContent>
