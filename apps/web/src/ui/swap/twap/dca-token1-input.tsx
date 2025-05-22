@@ -14,7 +14,7 @@ import { useAccount } from 'wagmi'
 import { useAmountBalance } from '~evm/_common/ui/balance-provider/use-balance'
 import { useDerivedStateTwap } from './derivedstate-twap-provider'
 
-export const DcaToken1Input = () => {
+export const DCAToken1Input = () => {
   const {
     state: { chainId, token1: token },
     mutate: { setToken1: onSelect },

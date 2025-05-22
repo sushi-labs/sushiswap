@@ -1,7 +1,7 @@
 import { SimpleSwapTokenNotFoundDialog } from '../simple/simple-swap-token-not-found-dialog'
 import { SwapModeButtons } from '../swap-mode-buttons'
-import { DcaOptionsInput } from './dca-options-input'
-import { DcaToken1Input } from './dca-token1-input'
+import { DCAOptionsInput } from './dca-options-input'
+import { DCAToken1Input } from './dca-token1-input'
 import { OrbsBanner } from './orbs-banner'
 import { TwapHeader } from './twap-header'
 import { TwapMaintenanceMessage } from './twap-maintenance-message'
@@ -11,7 +11,7 @@ import { TwapSwitchTokensButton } from './twap-switch-tokens-button'
 import { TwapToken0Input } from './twap-token0-input'
 import { TwapTradeButton } from './twap-trade-button'
 
-export const DcaWidget = () => {
+export const DCAWidget = () => {
   return (
     <div className="flex flex-col gap-4">
       <TwapHeader />
@@ -24,9 +24,9 @@ export const DcaWidget = () => {
         <div className="flex flex-col gap-4">
           <TwapToken0Input />
           <TwapSwitchTokensButton />
-          <DcaToken1Input />
+          <DCAToken1Input />
         </div>
-        <DcaOptionsInput />
+        <DCAOptionsInput />
         <TwapTradeButton />
       </div>
       <TwapOrdersDialogTriggerButton />

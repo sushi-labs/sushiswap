@@ -24,16 +24,16 @@ import {
   useTwapTradeErrors,
 } from './derivedstate-twap-provider'
 
-export const DcaOptionsInput = () => {
+export const DCAOptionsInput = () => {
   return (
     <div className="flex flex-wrap gap-3 pb-2">
-      <DcaTradesInput />
-      <DcaIntervalInput />
+      <DCATradesInput />
+      <DCAIntervalInput />
     </div>
   )
 }
 
-const DcaTradesInput = () => {
+const DCATradesInput = () => {
   const {
     state: { chainId, token0, chunks, token0PriceUSD, amountInPerChunk },
     mutate: { setChunks },
@@ -115,7 +115,7 @@ const TimeUnitLabel = {
   [TimeUnit.Days]: 'Days',
 } as const
 
-const DcaIntervalInput = () => {
+const DCAIntervalInput = () => {
   const {
     state: { fillDelay },
     mutate: { setFillDelay },
