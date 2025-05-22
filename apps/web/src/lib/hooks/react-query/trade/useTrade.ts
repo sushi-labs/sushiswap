@@ -6,6 +6,7 @@ import {
 import { useQuery } from '@tanstack/react-query'
 import { useCallback, useMemo } from 'react'
 import { API_BASE_URL } from 'src/lib/swap/api-base-url'
+import { getFeeString } from 'src/lib/swap/fee'
 import { slippageAmount } from 'sushi/calculate'
 import {
   UI_FEE_COLLECTOR_ADDRESS,
@@ -221,15 +222,12 @@ export const useTrade = (variables: UseTradeParams) => {
             nativePrice && gasSpent
               ? gasSpent.multiply(nativePrice.asFraction).toSignificant(4)
               : undefined,
-          fee:
-            !isWrapOrUnwrap({ fromToken, toToken }) &&
-            !isStable({ fromToken, toToken }) &&
-            !isLsd({ fromToken, toToken })
-              ? `${tokenOutPrice ? '$' : ''}${minAmountOut
-                  .multiply(new Percent(25, 10000))
-                  .multiply(tokenOutPrice ? tokenOutPrice.asFraction : 1)
-                  .toSignificant(4)} ${!tokenOutPrice ? toToken.symbol : ''}`
-              : '$0',
+          fee: getFeeString({
+            fromToken,
+            toToken,
+            tokenOutPrice,
+            minAmountOut,
+          }),
           route: data.route,
           tx: data?.tx
             ? {
