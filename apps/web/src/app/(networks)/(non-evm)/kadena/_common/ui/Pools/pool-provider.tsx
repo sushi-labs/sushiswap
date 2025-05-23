@@ -1,6 +1,7 @@
 'use client'
 
 import { type FC, createContext, useContext, useMemo, useReducer } from 'react'
+import { PoolChartPeriod } from 'src/ui/pool/PoolChartPeriods'
 import {
   DEFAULT_TOKEN_LIST,
   KADENA,
@@ -9,6 +10,13 @@ import {
 import type { KadenaToken } from '~kadena/_common/types/token-type'
 
 type InputFieldType = 'token0' | 'token1'
+
+type PoolByIdChartTimeFrame =
+  | PoolChartPeriod.Day
+  | PoolChartPeriod.Week
+  | PoolChartPeriod.Month
+  | PoolChartPeriod.Year
+  | PoolChartPeriod.All
 
 type Action =
   | { type: 'setToken0'; value: KadenaToken }
@@ -20,6 +28,7 @@ type Action =
   | { type: 'setReserve0'; value: string }
   | { type: 'setReserve1'; value: string }
   | { type: 'setInputField'; value: InputFieldType }
+  | { type: 'setPoolByIdChartTimeFrame'; value: PoolByIdChartTimeFrame }
 
 type Dispatch = {
   setToken0(token: KadenaToken): void
@@ -31,6 +40,9 @@ type Dispatch = {
   setReserve0(reserve0: string): void
   setReserve1(reserve1: string): void
   setInputField(inputField: InputFieldType): void
+  setPoolByIdChartTimeFrame(
+    poolByIdChartTimeFrame: PoolByIdChartTimeFrame,
+  ): void
 }
 
 type State = {
@@ -43,6 +55,7 @@ type State = {
   reserve0: string
   reserve1: string
   inputField: 'token0' | 'token1'
+  poolByIdChartTimeFrame: PoolByIdChartTimeFrame
 }
 
 type PoolProviderProps = { children: React.ReactNode }
@@ -113,6 +126,9 @@ function poolReducer(_state: State, action: Action) {
     case 'setInputField': {
       return { ..._state, inputField: action.value }
     }
+    case 'setPoolByIdChartTimeFrame': {
+      return { ..._state, poolByIdChartTimeFrame: action.value }
+    }
   }
 }
 
@@ -127,6 +143,7 @@ const PoolProvider: FC<PoolProviderProps> = ({ children }) => {
     reserve0: '',
     reserve1: '',
     inputField: 'token0',
+    poolByIdChartTimeFrame: PoolChartPeriod.Day,
   })
 
   const dispatchWithAction = useMemo(
@@ -145,6 +162,8 @@ const PoolProvider: FC<PoolProviderProps> = ({ children }) => {
       setReserve1: (value: string) => dispatch({ type: 'setReserve1', value }),
       setInputField: (value: InputFieldType) =>
         dispatch({ type: 'setInputField', value }),
+      setPoolByIdChartTimeFrame: (value: PoolByIdChartTimeFrame) =>
+        dispatch({ type: 'setPoolByIdChartTimeFrame', value }),
     }),
     [],
   )

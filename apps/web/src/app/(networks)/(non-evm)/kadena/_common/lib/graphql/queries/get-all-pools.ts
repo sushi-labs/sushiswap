@@ -1,0 +1,41 @@
+export const getAllPools = ({
+  first = 50,
+  orderBy = 'TVL_USD_DESC',
+  after = null,
+}: {
+  first?: number
+  orderBy?: string
+  after?: string | null
+}) => {
+  return JSON.stringify({
+    query: `
+      query GetPools($first: Int, $orderBy: PoolOrderBy = TVL_USD_DESC, $after: String) {
+        pools(first: $first, orderBy: $orderBy, after: $after) {
+          edges {
+            node {
+              id
+              address
+              token0 { id name }
+              token1 { id name }
+              tvlUsd
+              volume24hUsd
+              volume7dUsd
+              transactionCount24h
+              apr24h
+            }
+          }
+          pageInfo {
+            hasNextPage
+            endCursor
+          }
+          totalCount
+        }
+      }
+    `,
+    variables: {
+      first,
+      orderBy,
+      after,
+    },
+  })
+}

@@ -1,34 +1,49 @@
 import { useQuery } from '@tanstack/react-query'
-import type { KadenaToken } from '~kadena/_common/types/token-type'
+import { kadenaClient } from '~kadena/_common/constants/client'
+import {
+  KADENA_CHAIN_ID,
+  KADENA_NETWORK_ID,
+} from '~kadena/_common/constants/network'
+import { buildGetTokenMetaTx } from '~kadena/_common/lib/pact/builders'
 
-type KadenaTokenInfoApiResponse = {
-  success: boolean
-  data: KadenaToken
+type TokenInfo = {
+  name: string
+  symbol: string
+  decimals: number
 }
 
-export const useTokenInfo = (tokenAddress?: string) => {
+export const useTokenInfo = ({
+  tokenContract,
+  enabled = true,
+}: {
+  tokenContract: string
+  enabled?: boolean
+}) => {
   return useQuery({
-    queryKey: ['token-info', tokenAddress],
-    queryFn: async (): Promise<KadenaToken> => {
-      if (!tokenAddress) {
-        throw new Error('Token address is required')
-      }
-
-      const response = await fetch(
-        `/api/kadena/tokens?tokenAddress=${tokenAddress}`,
+    queryKey: ['kadena-token-info', tokenContract],
+    queryFn: async (): Promise<TokenInfo> => {
+      const tx = buildGetTokenMetaTx(
+        tokenContract,
+        KADENA_CHAIN_ID,
+        KADENA_NETWORK_ID,
       )
-      const data = (await response.json()) as KadenaTokenInfoApiResponse
 
-      if (!data.success) {
-        throw new Error('Failed to fetch token info')
+      const res = await kadenaClient.local(tx, {
+        preflight: false,
+        signatureVerification: false,
+      })
+
+      if (res.result.status !== 'success') {
+        throw new Error(
+          res.result.error?.message || 'Failed to fetch token info',
+        )
       }
 
-      return data.data
+      const { name, symbol, decimals } = res.result.data
+      return { name, symbol, decimals }
     },
-    enabled: !!tokenAddress,
-    staleTime: 1000 * 60 * 60 * 24,
-    gcTime: 30 * 60 * 1000,
-    refetchOnMount: false,
-    refetchOnWindowFocus: false,
+    enabled: !!tokenContract && enabled,
+    staleTime: 5 * 60 * 1000,
+    gcTime: 10 * 60 * 1000,
   })
 }

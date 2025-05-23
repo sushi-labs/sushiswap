@@ -11,7 +11,7 @@ export async function GET() {
         tokenSymbol: token.tokenSymbol,
         tokenDecimals: token.tokenDecimals,
         tokenImage: token.tokenImage,
-        name: token.name,
+        name: token.tokenName,
         validated: token.validated,
         tokenInfo: token.tokenInfo,
       })),

@@ -3,13 +3,19 @@ import { Tooltip, TooltipProvider, TooltipTrigger } from '@sushiswap/ui'
 import React from 'react'
 import { formatNumber } from 'sushi'
 import { KADENA } from '~kadena/_common/constants/token-list'
-import type { TopPool } from '~tron/_common/lib/hooks/useTopPools'
+import type { Pool } from '~kadena/_common/types/get-all-pools-type'
 import { Icon } from '../../General/Icon'
-import { MOCK_TOKEN_1, MOCK_TOKEN_2 } from '../PositionsTable/PositionsTable'
 
-export const PoolNameCell = ({ data }: { data: TopPool }) => {
-  const token0 = MOCK_TOKEN_1
-  const token1 = MOCK_TOKEN_2
+export const PoolNameCell = ({ data }: { data: Pool }) => {
+  console.log('data', data)
+  const token0Name = data.token0.name
+  const token1Name = data.token1.name
+  const token0Symbol =
+    token0Name === 'coin' ? 'KDA' : token0Name.slice(0, 3).toUpperCase()
+  const token1Symbol =
+    token1Name === 'coin' ? 'KDA' : token1Name.slice(0, 3).toUpperCase()
+  const poolName = `${token0Symbol}-${token1Symbol}`
+  const mockSwapFee = 0.001
 
   return (
     <div className="flex items-center gap-5">
@@ -20,14 +26,26 @@ export const PoolNameCell = ({ data }: { data: TopPool }) => {
           badgeContent={<Icon currency={KADENA} width={14} height={14} />}
         >
           <Currency.IconList iconWidth={26} iconHeight={26}>
-            <Icon currency={token0} />
-            <Icon currency={token1} />
+            <Icon
+              currency={{
+                tokenSymbol: token0Symbol,
+                tokenName: token0Name,
+                tokenImage: '',
+              }}
+            />
+            <Icon
+              currency={{
+                tokenImage: '',
+                tokenSymbol: token1Symbol,
+                tokenName: token1Name,
+              }}
+            />
           </Currency.IconList>
         </Badge>
       </div>
       <div className="flex flex-col gap-0.5">
-        <span className="flex items-center gap-1 text-sm font-medium text-gray-900 dark:text-slate-50 whitespace-nowrap pr-2">
-          {data.name}
+        <span className="flex items-center gap-1 pr-2 text-sm font-medium text-gray-900 dark:text-slate-50 whitespace-nowrap">
+          {poolName}
         </span>
         <div className="flex gap-1">
           {/* <TooltipProvider>
@@ -44,7 +62,7 @@ export const PoolNameCell = ({ data }: { data: TopPool }) => {
             <Tooltip>
               <TooltipTrigger asChild>
                 <div className="bg-gray-200 text-gray-700 dark:bg-slate-800 dark:text-slate-300 text-[10px] px-2 rounded-full">
-                  {formatNumber(data.swapFee * 100)}%
+                  {formatNumber(mockSwapFee * 100)}%
                 </div>
               </TooltipTrigger>
               <TooltipContent>
@@ -52,7 +70,7 @@ export const PoolNameCell = ({ data }: { data: TopPool }) => {
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
-          {data.isIncentivized && (
+          {/* {data.isIncentivized && (
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
@@ -79,7 +97,7 @@ export const PoolNameCell = ({ data }: { data: TopPool }) => {
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>
-          )}
+          )} */}
         </div>
       </div>
     </div>

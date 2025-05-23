@@ -8,26 +8,22 @@ import {
   DataTable,
   Toggle,
 } from '@sushiswap/ui'
-import { useQuery } from '@tanstack/react-query'
-import type { PaginationState } from '@tanstack/react-table'
-import { type FC, useMemo, useState } from 'react'
-import { EvmChain, type EvmChainId } from 'sushi/chain'
-import { type SushiSwapV2ChainId, isSushiSwapV2ChainId } from 'sushi/config'
+import type { ColumnDef, PaginationState } from '@tanstack/react-table'
+import { type FC, useCallback, useState } from 'react'
 
+import type { useTransactionsV2 } from 'src/ui/pool/PoolTransactionsV2'
+import { getChainwebTxnLink } from '~kadena/_common/lib/utils/kadena-helpers'
+import type {
+  PoolByIdResponse,
+  PoolTransaction,
+} from '~kadena/_common/types/get-pool-by-id'
 import {
-  type V2Pool,
-  getSushiV2Burns,
-  getSushiV2Mints,
-  getSushiV2Swaps,
-} from '@sushiswap/graph-client/data-api'
-import {
-  TX_AMOUNT_IN_V2_COLUMN,
-  TX_AMOUNT_OUT_V2_COLUMN,
-  TX_AMOUNT_USD_V2_COLUMN,
-  TX_CREATED_TIME_V2_COLUMN,
-  TX_SENDER_V2_COLUMN,
-} from 'src/ui/pool/columns'
-import type { Address } from 'viem'
+  AMOUNT_IN_COLUMN,
+  AMOUNT_OUT_COLUMN,
+  AMOUNT_USD_COLUMN,
+  TIMESTAMP_COLUMN,
+} from './PoolTransactionsColumns'
+import { MAKER_COLUMN } from './PoolTransactionsColumns'
 
 export enum TransactionType {
   Mint = 'Mint',
@@ -35,154 +31,11 @@ export enum TransactionType {
   Swap = 'Swap',
 }
 
-interface UseTransactionsV2Opts {
-  type?: TransactionType | 'All'
-  refetchInterval?: number
-  first: number
-  skip?: number
-}
-
-const fetchMints = async (address: Address, chainId: SushiSwapV2ChainId) => {
-  const mints = await getSushiV2Mints({
-    chainId,
-    address,
-  })
-
-  return mints.map((mint) => ({
-    ...mint.transaction,
-    mints: [mint],
-    burns: [],
-    swaps: [],
-  }))
-}
-
-const fetchBurns = async (address: Address, chainId: SushiSwapV2ChainId) => {
-  const burns = await getSushiV2Burns({
-    chainId,
-    address,
-  })
-
-  return burns.map((burn) => ({
-    ...burn.transaction,
-    mints: [],
-    burns: [burn],
-    swaps: [],
-  }))
-}
-
-const fetchSwaps = async (address: Address, chainId: SushiSwapV2ChainId) => {
-  const swaps = await getSushiV2Swaps({
-    chainId,
-    address,
-  })
-
-  return swaps.map((swap) => ({
-    ...swap.transaction,
-    mints: [],
-    burns: [],
-    swaps: [swap],
-  }))
-}
-
-// Will only support the last 1k txs
-// The fact that there are different subtransactions aggregated under one transaction makes paging a bit difficult
-function useTransactionsV2(
-  pool: V2Pool | undefined | null,
-  poolAddress: Address,
-  opts: UseTransactionsV2Opts,
-) {
-  return useQuery({
-    queryKey: ['poolTransactionsV2', poolAddress, pool?.chainId, opts],
-    queryFn: async () => {
-      const chainId = pool?.chainId as EvmChainId
-
-      if (!pool || !isSushiSwapV2ChainId(chainId)) return []
-
-      let transactions
-
-      switch (opts.type) {
-        case TransactionType.Burn:
-          transactions = await fetchBurns(poolAddress, chainId)
-          break
-        case TransactionType.Mint:
-          transactions = await fetchMints(poolAddress, chainId)
-          break
-        case TransactionType.Swap:
-          transactions = await fetchSwaps(poolAddress, chainId)
-          break
-        default:
-          transactions = await fetchSwaps(poolAddress, chainId)
-      }
-
-      if (!transactions.length) return []
-
-      return transactions.flatMap((transaction) => {
-        const mints = (
-          transaction.mints as NonNullable<(typeof transaction.mints)[0]>[]
-        ).map((mint) => ({
-          ...mint,
-          sender: String(mint.sender),
-          amount0: Number(mint.amount0),
-          amount1: Number(mint.amount1),
-          type: TransactionType.Mint as const,
-        }))
-
-        const burns = (
-          transaction.burns as NonNullable<(typeof transaction.burns)[0]>[]
-        ).map((burn) => ({
-          ...burn,
-          sender: String(burn.sender),
-          amount0: Number(burn.amount0),
-          amount1: Number(burn.amount1),
-          type: TransactionType.Burn as const,
-        }))
-
-        const swaps = (
-          transaction.swaps as NonNullable<(typeof transaction.swaps)[0]>[]
-        ).map((swap) => ({
-          ...swap,
-          sender: String(swap.sender),
-          to: String(swap.to),
-          amountIn: Number(
-            swap.amount0In !== '0' ? swap.amount0In : swap.amount1In,
-          ),
-          amountOut: Number(
-            swap.amount0Out !== '0' ? swap.amount0Out : swap.amount1Out,
-          ),
-          type: TransactionType.Swap as const,
-        }))
-
-        return [...mints, ...burns, ...swaps]
-          .flatMap((subtransaction) => ({
-            symbol0: pool.token0.symbol,
-            symbol1: pool.token1.symbol,
-            chainId,
-            txHash: transaction.id,
-            createdAtTimestamp: Number(transaction.createdAtTimestamp),
-            createdAtBlock: Number(transaction.createdAtBlock),
-            ...subtransaction,
-            amountUSD: Number(subtransaction.amountUSD),
-            logIndex: Number(subtransaction.logIndex),
-          }))
-          .sort((a, b) => b.logIndex - a.logIndex)
-      })
-    },
-    enabled: !!pool && isSushiSwapV2ChainId(pool?.chainId as EvmChainId),
-    refetchInterval: opts?.refetchInterval,
-  })
-}
-
-type Transaction = NonNullable<ReturnType<typeof useTransactionsV2>['data']>[0]
-
 interface PoolTransactionsV2Props {
-  pool: V2Pool | undefined | null
-  poolAddress: Address
+  pool: PoolByIdResponse | undefined
 }
 
-const PoolTransactionsV2: FC<PoolTransactionsV2Props> = ({
-  pool,
-  poolAddress,
-}) => {
+const PoolTransactionsV2: FC<PoolTransactionsV2Props> = ({ pool }) => {
   const [type, setType] = useState<
     Parameters<typeof useTransactionsV2>['2']['type']
   >(TransactionType.Swap)
@@ -191,38 +44,35 @@ const PoolTransactionsV2: FC<PoolTransactionsV2Props> = ({
     pageSize: 10,
   })
 
-  const COLUMNS = useMemo(() => {
-    return [
-      TX_SENDER_V2_COLUMN,
-      TX_AMOUNT_IN_V2_COLUMN(type),
-      TX_AMOUNT_OUT_V2_COLUMN(type),
-      TX_AMOUNT_USD_V2_COLUMN,
-      TX_CREATED_TIME_V2_COLUMN,
-    ]
-  }, [type])
+  const COLUMNS = [
+    MAKER_COLUMN,
+    AMOUNT_IN_COLUMN,
+    AMOUNT_OUT_COLUMN,
+    AMOUNT_USD_COLUMN,
+    TIMESTAMP_COLUMN,
+  ] satisfies ColumnDef<PoolTransaction, unknown>[]
 
-  const opts = useMemo(
-    () =>
-      ({
-        refetchInterval: 60_000,
-        first:
-          paginationState.pageSize === 0 ? paginationState.pageIndex + 1 : 100,
-        type,
-      }) as const,
-    [paginationState.pageIndex, paginationState.pageSize, type],
-  )
+  // const opts = useMemo(
+  //   () =>
+  //     ({
+  //       refetchInterval: 60_000,
+  //       first:
+  //         paginationState.pageSize === 0 ? paginationState.pageIndex + 1 : 100,
+  //       type,
+  //     }) as const,
+  //   [paginationState.pageIndex, paginationState.pageSize, type],
+  // )
 
-  const { data, isLoading } = useTransactionsV2(pool, poolAddress, opts)
+  const rowLink = useCallback((row: PoolTransaction) => {
+    return getChainwebTxnLink(row.maker)
+  }, [])
 
-  const _data = useMemo(() => {
-    return data ?? []
-  }, [data])
-
+  const isLoading = pool === undefined
   return (
     <Card>
       <CardHeader>
         <CardTitle>
-          <div className="flex flex-col md:flex-row justify-between gap-y-4">
+          <div className="flex flex-col justify-between md:flex-row gap-y-4">
             Transactions
             <div className="flex items-center gap-1">
               <Toggle
@@ -255,12 +105,13 @@ const PoolTransactionsV2: FC<PoolTransactionsV2Props> = ({
       </CardHeader>
       <CardContent className="!px-0">
         <DataTable
-          linkFormatter={(row) =>
-            EvmChain.from(row.chainId)?.getTxUrl(row.txHash) ?? ''
-          }
           loading={isLoading}
           columns={COLUMNS}
-          data={_data}
+          data={
+            pool?.transactions.transactions ??
+            ([] as unknown as PoolTransaction[])
+          }
+          linkFormatter={rowLink}
           pagination={true}
           externalLink={true}
           onPaginationChange={setPaginationState}
@@ -273,5 +124,4 @@ const PoolTransactionsV2: FC<PoolTransactionsV2Props> = ({
   )
 }
 
-export { PoolTransactionsV2, useTransactionsV2 }
-export type { Transaction }
+export { PoolTransactionsV2 }

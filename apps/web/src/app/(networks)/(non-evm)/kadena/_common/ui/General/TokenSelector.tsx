@@ -231,7 +231,7 @@ const TokenButton = ({
 }) => {
   if (!token) return null
   const isOnDefaultList = useMemo(
-    () => DEFAULT_TOKEN_LIST.some((t) => t.name === token.name),
+    () => DEFAULT_TOKEN_LIST.some((t) => t.tokenName === token.tokenName),
     [token],
   )
   const isNew = !hasToken?.(token)
@@ -272,7 +272,7 @@ const TokenButton = ({
           <div className="flex flex-col items-start">
             <p>{token.tokenSymbol}</p>
             <p className="text-xs text-gray-400 dark:text-slate-500">
-              {token.name}
+              {token.tokenName}
             </p>
           </div>
         </div>

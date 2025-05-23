@@ -24,7 +24,7 @@ export const swaggerConfig = {
     },
   ],
   paths: {
-    '/api/kadena/tokens': {
+    '/kadena/api/tokens': {
       get: {
         summary: 'Get all Kadena tokens',
         description: 'Retrieve information about all available Kadena tokens',
@@ -139,7 +139,7 @@ export const swaggerConfig = {
         },
       },
     },
-    '/api/kadena/token-info': {
+    '/kadena/api/token-info': {
       get: {
         summary: 'Get token information',
         description: 'Retrieve information about a specific Kadena token',

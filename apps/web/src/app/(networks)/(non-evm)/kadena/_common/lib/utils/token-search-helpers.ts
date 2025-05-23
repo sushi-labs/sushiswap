@@ -25,10 +25,10 @@ export function createTokenFilterFunction<T extends KadenaToken>(
     )
   }
 
-  return ({ name, tokenSymbol }: T): boolean =>
+  return ({ tokenName, tokenSymbol }: T): boolean =>
     Boolean(
       (tokenSymbol && matchesSearch(tokenSymbol)) ||
-        (name && matchesSearch(name)),
+        (tokenName && matchesSearch(tokenName)),
     )
 }
 

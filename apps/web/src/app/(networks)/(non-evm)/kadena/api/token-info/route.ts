@@ -37,7 +37,7 @@ export async function GET(request: Request) {
         tokenSymbol: token.tokenSymbol,
         tokenDecimals: token.tokenDecimals,
         tokenImage: token.tokenImage,
-        name: token.name,
+        name: token.tokenName,
         validated: token.validated,
         tokenInfo: token.tokenInfo,
       },

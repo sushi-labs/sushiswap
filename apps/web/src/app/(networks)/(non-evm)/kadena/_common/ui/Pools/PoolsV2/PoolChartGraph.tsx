@@ -12,7 +12,6 @@ import {
 import format from 'date-fns/format'
 import { type FC, useCallback, useEffect, useMemo, useState } from 'react'
 
-import type { V2Pool, V3Pool } from '@sushiswap/graph-client/data-api'
 import ReactEchartsCore from 'echarts-for-react/lib/core'
 import type { EChartsOption } from 'echarts-for-react/lib/types'
 import { formatUSD } from 'sushi/format'
@@ -26,13 +25,12 @@ import echarts from 'echarts/lib/echarts'
 import 'echarts/lib/visual/seriesColor'
 import { PoolChartPeriod, chartPeriods } from 'src/ui/pool/PoolChartPeriods'
 import { PoolChartType } from 'src/ui/pool/PoolChartTypes'
-import type { SushiSwapProtocol } from 'sushi'
+import type { PoolByIdResponse } from '~kadena/_common/types/get-pool-by-id'
 
 interface PoolChartProps {
-  chart: PoolChartType.Volume | PoolChartType.Fees | PoolChartType.TVL
+  chart: 'Volume' | 'TVL' | 'Fees'
   period: PoolChartPeriod
-  pool: V2Pool | V3Pool
-  protocol: SushiSwapProtocol
+  pool: PoolByIdResponse | undefined
 }
 
 const tailwind = resolveConfig(tailwindConfig)
@@ -45,50 +43,19 @@ export const PoolChartGraph: FC<PoolChartProps> = ({ chart, period, pool }) => {
     setTimeout(() => setIsLoading(false), 1000)
   }, [])
 
-  const buckets = {
-    hourBuckets: Array.from({ length: 24 }).map((_, i) => {
-      const date = Date.now() - i * 60 * 60 * 1000 // hourly intervals
-      return {
-        id: `hour-${i}`,
-        date,
-        feesUSD: Number.parseFloat((Math.random() * 100).toFixed(2)),
-        txCount: Math.floor(Math.random() * 200),
-        liquidityUSD: Number.parseFloat((Math.random() * 1_000_000).toFixed(2)),
-        volumeUSD: Number.parseFloat((Math.random() * 500_000).toFixed(2)),
-      }
-    }),
-    dayBuckets: Array.from({ length: 7 }).map((_, i) => {
-      const date = Date.now() - i * 24 * 60 * 60 * 1000 // daily intervals
-      return {
-        id: `day-${i}`,
-        date,
-        feesUSD: Number.parseFloat((Math.random() * 1000).toFixed(2)),
-        txCount: Math.floor(Math.random() * 1000),
-        liquidityUSD: Number.parseFloat((Math.random() * 5_000_000).toFixed(2)),
-        volumeUSD: Number.parseFloat((Math.random() * 2_000_000).toFixed(2)),
-      }
-    }),
-  }
-
-  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   const [xData, yData]: [number[], number[]] = useMemo(() => {
-    const data =
-      (chartPeriods[period] < chartPeriods[PoolChartPeriod.Week]
-        ? buckets?.hourBuckets
-        : buckets?.dayBuckets) || []
+    if (!pool?.charts) return [[], []]
 
-    const currentDate = Math.round(Date.now())
-    const [x, y] = data.reduce<[number[], number[]]>(
-      (acc, cur) => {
-        if (cur?.date * 1000 >= currentDate - chartPeriods[period]) {
-          acc[0].push(cur?.date)
-          if (chart === PoolChartType.Fees) {
-            acc[1].push(Number(cur?.feesUSD))
-          } else if (chart === PoolChartType.Volume) {
-            acc[1].push(Number(cur?.volumeUSD))
-          } else if (chart === PoolChartType.TVL) {
-            acc[1].push(Number(cur?.liquidityUSD))
-          }
+    const chartData =
+      pool.charts[chart.toLowerCase() as keyof typeof pool.charts] ?? []
+    const cutoff = Date.now() - chartPeriods[period]
+
+    const [x, y] = chartData.reduce<[number[], number[]]>(
+      (acc, point) => {
+        const timestampMs = new Date(point.timestamp).getTime()
+        if (timestampMs >= cutoff) {
+          acc[0].push(timestampMs)
+          acc[1].push(Number(point.value))
         }
         return acc
       },
@@ -96,7 +63,8 @@ export const PoolChartGraph: FC<PoolChartProps> = ({ chart, period, pool }) => {
     )
 
     return [x.reverse(), y.reverse()]
-  }, [chart, period])
+  }, [chart, period, pool])
+
   // Transient update for performance
   const onMouseOver = useCallback(
     ({ name, value }: { name: number; value: number }) => {
@@ -109,7 +77,7 @@ export const PoolChartGraph: FC<PoolChartProps> = ({ chart, period, pool }) => {
 
       if (valueNodes[1]) {
         if (chart === PoolChartType.Volume) {
-          valueNodes[1].innerHTML = formatUSD(value * Number(pool.swapFee))
+          valueNodes[1].innerHTML = formatUSD(value * Number(swapFee))
         }
       }
 
@@ -124,7 +92,7 @@ export const PoolChartGraph: FC<PoolChartProps> = ({ chart, period, pool }) => {
         )
       }
     },
-    [period, chart, pool?.swapFee],
+    [period, chart],
   )
 
   const DEFAULT_OPTION: EChartsOption = useMemo(
@@ -231,6 +199,9 @@ export const PoolChartGraph: FC<PoolChartProps> = ({ chart, period, pool }) => {
 
   const defaultValue = yData[yData.length - 1] || 0
 
+  // TODO: Get swap fee from pool
+  // @ts-ignore
+  const swapFee = pool?.swapFee || 0.003
   return (
     <>
       <CardHeader>
@@ -240,7 +211,7 @@ export const PoolChartGraph: FC<PoolChartProps> = ({ chart, period, pool }) => {
             <span className="text-sm font-medium text-gray-600 dark:text-slate-300">
               <span className="text-xs top-[-2px] relative">•</span>{' '}
               <span className="hoveredItemValue">
-                {formatUSD(defaultValue * Number(pool?.swapFee))}
+                {formatUSD(defaultValue * Number(swapFee))}
               </span>{' '}
               earned
             </span>

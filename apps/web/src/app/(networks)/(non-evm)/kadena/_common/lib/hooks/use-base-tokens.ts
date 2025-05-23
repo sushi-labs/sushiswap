@@ -10,7 +10,7 @@ export const useBaseTokens = () => {
   return useQuery({
     queryKey: ['base-tokens'],
     queryFn: async (): Promise<KadenaToken[]> => {
-      const response = await fetch('/api/kadena/tokens')
+      const response = await fetch('/kadena/api/tokens')
       const data = (await response.json()) as KadenaTokensApiResponse
       if (!data.success) {
         throw new Error('Failed to fetch Kadena tokens')

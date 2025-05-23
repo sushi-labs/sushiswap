@@ -1,10 +1,11 @@
 import { SkeletonCircle, SkeletonText } from '@sushiswap/ui'
 import type { ColumnDef } from '@tanstack/react-table'
 import { formatPercent, formatUSD } from 'sushi/format'
+import type { Pool } from '~kadena/_common/types/get-all-pools-type'
 import type { TopPool } from '~tron/_common/lib/hooks/useTopPools'
 import { PoolNameCell } from './PoolNameCell'
 
-export const NAME_COLUMN: ColumnDef<TopPool, unknown> = {
+export const NAME_COLUMN: ColumnDef<Pool, unknown> = {
   id: 'name',
   header: 'Name',
   cell: (props) => <PoolNameCell data={props.row.original} />,
@@ -23,68 +24,68 @@ export const NAME_COLUMN: ColumnDef<TopPool, unknown> = {
   },
 }
 
-export const TVL_COLUMN: ColumnDef<TopPool, unknown> = {
+export const TVL_COLUMN: ColumnDef<Pool, unknown> = {
   id: 'liquidityUSD',
   header: 'TVL',
-  accessorFn: (row) => row.liquidityUSD,
+  accessorFn: (row) => row.tvlUsd,
   sortingFn: ({ original: rowA }, { original: rowB }) =>
-    rowA.liquidityUSD - rowB.liquidityUSD,
+    rowA.tvlUsd - rowB.tvlUsd,
   cell: (props) =>
-    formatUSD(props.row.original.liquidityUSD).includes('NaN')
+    formatUSD(props.row.original.tvlUsd).includes('NaN')
       ? '$0.00'
-      : formatUSD(props.row.original.liquidityUSD),
+      : formatUSD(props.row.original.tvlUsd),
   meta: {
     skeleton: <SkeletonText fontSize="lg" />,
   },
 }
 
-export const VOLUME_1D_COLUMN: ColumnDef<TopPool, unknown> = {
+export const VOLUME_1D_COLUMN: ColumnDef<Pool, unknown> = {
   id: 'volumeUSD1d',
   header: 'Volume (24h)',
-  accessorFn: (row) => row.volumeUSD1d,
+  accessorFn: (row) => row.volume24hUsd,
   sortingFn: ({ original: rowA }, { original: rowB }) =>
-    rowA.volumeUSD1d - rowB.volumeUSD1d,
+    rowA.volume24hUsd - rowB.volume24hUsd,
   cell: (props) =>
-    formatUSD(props.row.original.volumeUSD1d).includes('NaN')
+    formatUSD(props.row.original.volume24hUsd).includes('NaN')
       ? '$0.00'
-      : formatUSD(props.row.original.volumeUSD1d),
+      : formatUSD(props.row.original.volume24hUsd),
   meta: {
     skeleton: <SkeletonText fontSize="lg" />,
   },
 }
 
-export const FEES_1D_COLUMN: ColumnDef<TopPool, unknown> = {
+export const FEES_1D_COLUMN: ColumnDef<Pool, unknown> = {
   id: 'feeUSD1d',
   header: 'Fees (24h)',
-  accessorFn: (row) => row.feeUSD1d,
+  accessorFn: (row) => row.volume24hUsd,
   sortingFn: ({ original: rowA }, { original: rowB }) =>
-    rowA.feeUSD1d - rowB.feeUSD1d,
+    rowA.volume24hUsd - rowB.volume24hUsd,
   cell: (props) =>
-    formatUSD(props.row.original.feeUSD1d).includes('NaN')
+    formatUSD(props.row.original.volume24hUsd).includes('NaN')
       ? '$0.00'
-      : formatUSD(props.row.original.feeUSD1d),
+      : formatUSD(props.row.original.volume24hUsd),
   meta: {
     skeleton: <SkeletonText fontSize="lg" />,
   },
 }
 
-export const TRANSACTIONS_1D_COLUMN: ColumnDef<TopPool, unknown> = {
+export const TRANSACTIONS_1D_COLUMN: ColumnDef<Pool, unknown> = {
   id: 'txCount1d',
   header: 'Transactions (24h)',
-  accessorFn: (row) => row.txCount1d,
+  accessorFn: (row) => row.transactionCount24h,
   sortingFn: ({ original: rowA }, { original: rowB }) =>
-    rowA.txCount1d - rowB.txCount1d,
-  cell: (props) => props.row.original.txCount1d,
+    rowA.transactionCount24h - rowB.transactionCount24h,
+  cell: (props) => props.row.original.transactionCount24h,
   meta: {
     skeleton: <SkeletonText fontSize="lg" />,
   },
 }
 
-export const APR_COLUMN: ColumnDef<TopPool, unknown> = {
+export const APR_COLUMN: ColumnDef<Pool, unknown> = {
   id: 'totalApr1d',
   header: 'APR',
-  accessorFn: (row) => row.totalApr1d,
-  cell: (props) => formatPercent(props.row.original.totalApr1d),
+  accessorFn: (row) => row.apr24h,
+  cell: (props) => formatPercent(props.row.original.apr24h),
   meta: {
     skeleton: <SkeletonText fontSize="lg" />,
   },

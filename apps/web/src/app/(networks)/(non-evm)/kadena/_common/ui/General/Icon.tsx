@@ -4,12 +4,25 @@ import { hashStringToColor } from '~kadena/_common/lib/utils/formatters'
 import type { KadenaToken } from '~kadena/_common/types/token-type'
 
 type IconProps = {
-  currency: KadenaToken | undefined
+  currency:
+    | KadenaToken
+    | undefined
+    | {
+        tokenSymbol: string | undefined
+        tokenImage: string | undefined
+        tokenName: string | undefined
+      }
   height?: number
   width?: number
+  fontSize?: number
 }
 
-export const Icon = ({ currency, height = 40, width = 40 }: IconProps) => {
+export const Icon = ({
+  currency,
+  height = 40,
+  width = 40,
+  fontSize = 12,
+}: IconProps) => {
   return (
     <>
       {currency?.tokenImage ? (
@@ -22,7 +35,7 @@ export const Icon = ({ currency, height = 40, width = 40 }: IconProps) => {
             // @TODO: need this to render local images, remove when we have a CDN
             unoptimized
             src={currency.tokenImage}
-            alt={currency.tokenSymbol}
+            alt={currency.tokenSymbol ?? currency.tokenName ?? ''}
             height={height}
             width={width}
             className="w-full h-full aspect-square"
@@ -30,13 +43,14 @@ export const Icon = ({ currency, height = 40, width = 40 }: IconProps) => {
         </div>
       ) : (
         <div
-          className="flex items-center justify-center text-xs font-bold text-white rounded-full bg-gradient-to-b from-gray-300 to-gray-200 dark:from-blue-700 dark:to-blue-900"
+          className="flex items-center justify-center text-xs font-bold text-white uppercase rounded-full bg-gradient-to-b from-gray-300 to-gray-200 dark:from-blue-700 dark:to-blue-900"
           style={{
             width: `${width}px`,
             height: `${height}px`,
             background: hashStringToColor(
-              currency ? `${currency.tokenSymbol} ${currency.name}` : '??',
+              currency ? `${currency.tokenSymbol} ${currency.tokenName}` : '??',
             ),
+            fontSize: `${fontSize}px`,
           }}
         >
           {currency?.tokenSymbol?.substring(0, 2) ?? '??'}

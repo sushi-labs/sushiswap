@@ -1,5 +1,11 @@
 import { Pact, createClient } from '@kadena/client'
 import { useQuery } from '@tanstack/react-query'
+import { kadenaClient } from '~kadena/_common/constants/client'
+import {
+  KADENA_CHAIN_ID,
+  KADENA_NETWORK_ID,
+} from '~kadena/_common/constants/network'
+import { buildGetBalanceTx } from '../pact/builders'
 
 type NativeTokenBalanceResponse = {
   chainId: number
@@ -14,23 +20,11 @@ export const useNativeTokenBalance = ({
   enabled: boolean
 }) => {
   return useQuery({
-    queryKey: ['kadena-native-balance-chain1', account],
+    queryKey: ['kadena-native-balance', account],
     queryFn: async (): Promise<NativeTokenBalanceResponse> => {
-      const networkId = 'mainnet01'
-      const chainId = 1
+      const tx = buildGetBalanceTx(account, KADENA_CHAIN_ID, KADENA_NETWORK_ID)
 
-      const client = createClient(
-        `https://api.chainweb.com/chainweb/0.0/${networkId}/chain/${chainId}/pact`,
-      )
-
-      const tx = Pact.builder
-        // @ts-expect-error
-        .execution(Pact.modules.coin['get-balance'](account))
-        .setMeta({ chainId: String(chainId) })
-        .setNetworkId(networkId)
-        .createTransaction()
-
-      const res = await client.local(tx, {
+      const res = await kadenaClient.local(tx, {
         preflight: false,
         signatureVerification: false,
       })
@@ -40,7 +34,7 @@ export const useNativeTokenBalance = ({
       }
 
       return {
-        chainId,
+        chainId: KADENA_CHAIN_ID,
         balance: Number(res.result.data),
       }
     },

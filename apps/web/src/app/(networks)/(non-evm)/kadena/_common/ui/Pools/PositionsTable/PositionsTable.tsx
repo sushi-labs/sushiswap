@@ -38,7 +38,7 @@ export const MOCK_TOKEN_1: KadenaToken = {
     'abf594a764e49a90a98cddf30872d8497e37399684c1d8e2b8e96fd865728cc2',
   tokenSymbol: 'TKN1',
   tokenDecimals: 12,
-  name: 'Token1',
+  tokenName: 'Token1',
   tokenImage: '',
   validated: true,
 }
@@ -48,7 +48,7 @@ export const MOCK_TOKEN_2: KadenaToken = {
     'abf594a764e49a90a98cddf30872d8497e37399684c1d8e2b8e96fd865728cc2',
   tokenSymbol: 'TKN2',
   tokenDecimals: 12,
-  name: 'Token2',
+  tokenName: 'Token2',
   tokenImage: '',
   validated: true,
 }
@@ -102,8 +102,8 @@ export const PositionsTable = ({
         pool.token1?.tokenAddress,
         pool.token0?.tokenSymbol,
         pool.token1?.tokenSymbol,
-        pool.token0?.name,
-        pool.token1?.name,
+        pool.token0?.tokenName,
+        pool.token1?.tokenName,
       ]
 
       return poolValues.some((value) =>

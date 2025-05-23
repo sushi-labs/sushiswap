@@ -10,7 +10,8 @@ import {
 import type { ColumnDef, SortingState, TableState } from '@tanstack/react-table'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { usePoolFilters } from 'src/ui/pool'
-import { type TopPool, useTopPools } from '~tron/_common/lib/hooks/useTopPools'
+import { useAllPools } from '~kadena/_common/lib/hooks/use-all-pools'
+import type { Pool } from '~kadena/_common/types/get-all-pools-type'
 import {
   APR_COLUMN,
   FEES_1D_COLUMN,
@@ -27,7 +28,7 @@ const COLUMNS = [
   FEES_1D_COLUMN,
   TRANSACTIONS_1D_COLUMN,
   APR_COLUMN,
-] satisfies ColumnDef<TopPool, unknown>[]
+] satisfies ColumnDef<Pool, unknown>[]
 
 export const PoolsTable = () => {
   const { tokenSymbols, farmsOnly } = usePoolFilters()
@@ -42,90 +43,97 @@ export const PoolsTable = () => {
     setTimeout(() => setIsLoading(false), 1200)
   }, [])
 
-  const pools: {
-    token0PriceUSD: number
-    token1Address: string
-    token0Address: string
-    token1Price: number
-    token0Price: number
-    protocol: string
-    swapFee: number
-    createdAt: string
-    address: string
-    name: string
-    chainId: string
-    id: string
+  const { data } = useAllPools({
+    first: 4,
+  })
+  console.log('pools', data?.pools)
 
-    source: string
-    wasIncentivized: boolean
-    isIncentivized: boolean
-    isSmartPool: boolean
-    incentiveApr: number
-    totalApr1d: number
-    feeApr1d: number
-    volumeUSD1d: number
-    volumeUSD1h: number
-    feeUSD1d: number
-    feeUSD1h: number
-    txCount1d: number
-    txCount1h: number
-    liquidityUSD: number
-    token1PriceUSD: number
-  }[] = [
-    {
-      token0PriceUSD: 3000,
-      token1Address:
-        'abf594a764e49a90a98cddf30872d8497e37399684c1d8e2b8e96fd865728cc2',
-      token0Address:
-        'abf594a764e49a90a98cddf30872d8497e37399684c1d8e2b8e96fd865728cc2',
-      token1Price: 1 / 3000,
-      token0Price: 3000,
-      protocol: 'SushiSwapV2',
-      swapFee: 0.003,
-      createdAt: new Date('2023-01-01T00:00:00Z').toISOString(),
-      address:
-        'abf594a764e49a90a98cddf30872d8497e37399684c1d8e2b8e96fd865728cc2',
-      name: 'TKN1-TKN2',
-      chainId: '1',
-      id: 'abf594a764e49a90a98cddf30872d8497e37399684c1d8e2b8e96fd865728cc2',
+  // const pools: {
+  //   token0PriceUSD: number
+  //   token1Address: string
+  //   token0Address: string
+  //   token1Price: number
+  //   token0Price: number
+  //   protocol: string
+  //   swapFee: number
+  //   createdAt: string
+  //   address: string
+  //   name: string
+  //   chainId: string
+  //   id: string
 
-      source: 'subgraph',
-      wasIncentivized: false,
-      isIncentivized: false,
-      isSmartPool: false,
-      incentiveApr: 6.25,
-      totalApr1d: 18.75,
-      feeApr1d: 12.5,
-      volumeUSD1d: 250000,
-      volumeUSD1h: 10500,
-      feeUSD1d: 750,
-      feeUSD1h: 31.5,
-      txCount1d: 1200,
-      txCount1h: 55,
-      liquidityUSD: 1_500_000,
-      token1PriceUSD: 1,
-    },
-  ]
+  //   source: string
+  //   wasIncentivized: boolean
+  //   isIncentivized: boolean
+  //   isSmartPool: boolean
+  //   incentiveApr: number
+  //   totalApr1d: number
+  //   feeApr1d: number
+  //   volumeUSD1d: number
+  //   volumeUSD1h: number
+  //   feeUSD1d: number
+  //   feeUSD1h: number
+  //   txCount1d: number
+  //   txCount1h: number
+  //   liquidityUSD: number
+  //   token1PriceUSD: number
+  // }[] = [
+  //   {
+  //     token0PriceUSD: 3000,
+  //     token1Address:
+  //       'abf594a764e49a90a98cddf30872d8497e37399684c1d8e2b8e96fd865728cc2',
+  //     token0Address:
+  //       'abf594a764e49a90a98cddf30872d8497e37399684c1d8e2b8e96fd865728cc2',
+  //     token1Price: 1 / 3000,
+  //     token0Price: 3000,
+  //     protocol: 'SushiSwapV2',
+  //     swapFee: 0.003,
+  //     createdAt: new Date('2023-01-01T00:00:00Z').toISOString(),
+  //     address:
+  //       'abf594a764e49a90a98cddf30872d8497e37399684c1d8e2b8e96fd865728cc2',
+  //     name: 'TKN1-TKN2',
+  //     chainId: '1',
+  //     id: 'abf594a764e49a90a98cddf30872d8497e37399684c1d8e2b8e96fd865728cc2',
 
-  const rowLink = useCallback((row: TopPool) => {
-    return `/kadena/pool/${row.token0Address}:${row.token1Address}:${row.address}`
+  //     source: 'subgraph',
+  //     wasIncentivized: false,
+  //     isIncentivized: false,
+  //     isSmartPool: false,
+  //     incentiveApr: 6.25,
+  //     totalApr1d: 18.75,
+  //     feeApr1d: 12.5,
+  //     volumeUSD1d: 250000,
+  //     volumeUSD1h: 10500,
+  //     feeUSD1d: 750,
+  //     feeUSD1h: 31.5,
+  //     txCount1d: 1200,
+  //     txCount1h: 55,
+  //     liquidityUSD: 1_500_000,
+  //     token1PriceUSD: 1,
+  //   },
+  // ]
+
+  const rowLink = useCallback((row: Pool) => {
+    return `/kadena/pool/${row.id}`
   }, [])
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   const filtered = useMemo(() => {
-    if (!pools) return [] as TopPool[]
+    if (!data?.pools) return [] as Pool[]
 
-    return pools.filter((pool) => {
-      if (farmsOnly) {
-        if (!pool.isIncentivized) return false
-      }
+    return data.pools.filter((pool) => {
+      // if (farmsOnly) {
+      //   if (!pool.isIncentivized) return false
+      // }
 
       if (tokenSymbols.length) {
         if (
           !tokenSymbols.every((symbol) => {
             symbol = symbol.toLowerCase()
 
-            if (pool.name.toLowerCase().includes(symbol)) return true
+            const poolName = `${pool.token0.name}-${pool.token1.name}`
+
+            if (poolName.toLowerCase().includes(symbol)) return true
 
             return false
           })
@@ -136,7 +144,7 @@ export const PoolsTable = () => {
 
       return true
     })
-  }, [farmsOnly, tokenSymbols])
+  }, [farmsOnly, tokenSymbols, data?.pools])
 
   const state: Partial<TableState> = useMemo(() => {
     return {

@@ -14,7 +14,7 @@ export interface KadenaToken {
   tokenSymbol: string
   tokenDecimals: number
   tokenImage?: string
-  name: string
+  tokenName: string
   tokenInfo?: TokenInfo
   validated?: boolean
 }

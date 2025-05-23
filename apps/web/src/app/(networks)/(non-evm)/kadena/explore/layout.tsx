@@ -21,7 +21,7 @@ export default function PoolLayout({
         unsupportedNetworkHref={'/ethereum/explore/pools'}
         shiftContent
       >
-        <main className="flex flex-col h-full flex-1">
+        <main className="flex flex-col flex-1 h-full">
           <Container maxWidth="7xl" className="px-4 py-4">
             <GlobalStatsCharts />
           </Container>

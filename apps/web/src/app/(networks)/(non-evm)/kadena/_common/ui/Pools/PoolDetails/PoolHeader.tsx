@@ -5,40 +5,34 @@ import {
   Button,
   Currency,
   LinkExternal,
-  LinkInternal,
   SkeletonCircle,
   SkeletonText,
   typographyVariants,
 } from '@sushiswap/ui'
 import { useRouter } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { usePoolById } from '~kadena/_common/lib/hooks/use-pool-by-id'
 import { getChainwebAddressLink } from '~kadena/_common/lib/utils/kadena-helpers'
 import { Icon } from '~kadena/_common/ui/General/Icon'
-import { MOCK_TOKEN_1, MOCK_TOKEN_2 } from '../PositionsTable/PositionsTable'
 
 export const PoolHeader = ({
-  token0: _token0,
-  token1: _token1,
-  pairAddress,
+  poolId,
 }: {
-  token0: string
-  token1: string
-  pairAddress: string
+  poolId: string
 }) => {
-  const token0 = MOCK_TOKEN_1
-  const token1 = MOCK_TOKEN_2
-  const [isLoadingToken0, setIsLoadingToken0] = useState(true)
-  const [isLoadingToken1, setIsLoadingToken1] = useState(true)
   const router = useRouter()
 
-  useEffect(() => {
-    setTimeout(() => {
-      setIsLoadingToken0(false)
-      setIsLoadingToken1(false)
-    }, 1200)
-  }, [])
+  const { data, isLoading } = usePoolById({
+    poolId,
+    first: 4,
+  })
+  console.log('poolheader usePoolById', data)
 
-  const isLoading = isLoadingToken0 || isLoadingToken1
+  const token0Name = data?.token0.name
+  const token1Name = data?.token1.name
+  const token0Symbol =
+    token0Name === 'coin' ? 'KDA' : token0Name?.slice(0, 3).toUpperCase()
+  const token1Symbol =
+    token1Name === 'coin' ? 'KDA' : token1Name?.slice(0, 3).toUpperCase()
 
   return (
     <div className="flex flex-col gap-6">
@@ -65,8 +59,20 @@ export const PoolHeader = ({
         ) : (
           <div className="relative flex items-center gap-3 max-w-[100vh]">
             <Currency.IconList iconWidth={36} iconHeight={36}>
-              <Icon currency={token0} />
-              <Icon currency={token1} />
+              <Icon
+                currency={{
+                  tokenSymbol: token0Symbol,
+                  tokenName: token0Name,
+                  tokenImage: '',
+                }}
+              />
+              <Icon
+                currency={{
+                  tokenSymbol: token1Symbol,
+                  tokenName: token1Name,
+                  tokenImage: '',
+                }}
+              />
             </Currency.IconList>
             <Button
               asChild
@@ -77,8 +83,8 @@ export const PoolHeader = ({
                   'sm:!text2-xl sm:!text-4xl !font-bold text-gray-900 dark:text-slate-50 truncate overflow-x-auto',
               })}
             >
-              <LinkExternal href={getChainwebAddressLink(pairAddress)}>
-                {token0?.tokenSymbol}/{token1?.tokenSymbol}
+              <LinkExternal href={getChainwebAddressLink(data?.address ?? '')}>
+                {token0Symbol}/{token1Symbol}
               </LinkExternal>
             </Button>
             {/* <div className="bg-pink/20 text-pink text-sm px-2 py-1 font-semibold rounded-full mt-0.5">
@@ -109,11 +115,11 @@ export const PoolHeader = ({
           <>
             <div className="flex items-center gap-1.5">
               <span className="font-semibold tracking-tighter">
-                {token0?.tokenSymbol}
+                {token0Symbol}
               </span>
               <LinkExternal
                 target="_blank"
-                href={getChainwebAddressLink(token0?.tokenAddress)}
+                href={getChainwebAddressLink(data?.token0.name ?? '')}
               >
                 <Button
                   asChild
@@ -121,20 +127,18 @@ export const PoolHeader = ({
                   size="sm"
                   className="!font-medium !text-secondary-foreground"
                 >
-                  {`${token0?.tokenAddress.slice(0, 6)}...${token0?.tokenAddress.slice(
-                    -4,
-                  )}`}
+                  {`${token0Name}`}
                   <ArrowTopRightOnSquareIcon className="w-3 h-3" />
                 </Button>
               </LinkExternal>
             </div>
             <div className="flex items-center gap-1.5">
               <span className="font-semibold tracking-tighter">
-                {token1?.tokenSymbol}
+                {token1Symbol}
               </span>
               <LinkExternal
                 target="_blank"
-                href={getChainwebAddressLink(token1?.tokenAddress)}
+                href={getChainwebAddressLink(data?.token1.name ?? '')}
               >
                 <Button
                   asChild
@@ -142,9 +146,7 @@ export const PoolHeader = ({
                   size="sm"
                   className="!font-medium !text-secondary-foreground"
                 >
-                  {`${token1?.tokenAddress.slice(0, 6)}...${token1?.tokenAddress.slice(
-                    -4,
-                  )}`}
+                  {`${token1Name}`}
                   <ArrowTopRightOnSquareIcon className="w-3 h-3" />
                 </Button>
               </LinkExternal>

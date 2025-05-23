@@ -12,12 +12,12 @@ export const useCustomTokens = () => {
 
   const hydrate = useCallback((data: Record<string, KadenaToken>) => {
     return Object.entries(data).reduce<Record<string, KadenaToken>>(
-      (acc, [k, { tokenAddress, name, tokenSymbol, tokenDecimals }]) => {
+      (acc, [k, { tokenAddress, tokenName, tokenSymbol, tokenDecimals }]) => {
         acc[k] = {
           tokenAddress,
           tokenSymbol,
           tokenDecimals,
-          name,
+          tokenName,
           tokenImage: data[k].tokenImage,
           validated: data[k].validated,
           tokenInfo: data[k].tokenInfo,
@@ -35,7 +35,7 @@ export const useCustomTokens = () => {
         tokenSymbol: currency.tokenSymbol,
         tokenDecimals: currency.tokenDecimals,
         tokenImage: currency.tokenImage,
-        name: currency.name,
+        tokenName: currency.tokenName,
         validated: currency.validated,
         tokenInfo: currency.tokenInfo,
       }))

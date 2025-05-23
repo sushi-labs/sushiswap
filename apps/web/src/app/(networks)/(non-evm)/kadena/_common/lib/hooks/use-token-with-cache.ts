@@ -1,5 +1,11 @@
 import { useQuery } from '@tanstack/react-query'
+import { kadenaClient } from '~kadena/_common/constants/client'
+import {
+  KADENA_CHAIN_ID,
+  KADENA_NETWORK_ID,
+} from '~kadena/_common/constants/network'
 import type { KadenaToken } from '~kadena/_common/types/token-type'
+import { buildGetTokenMetaTx } from '../pact/builders'
 import { useCustomTokens } from './use-custom-tokens'
 
 interface GetTokenWithQueryCacheFn {
@@ -14,27 +20,35 @@ export async function getTokenDetails({
   customTokens,
 }: GetTokenWithQueryCacheFn) {
   if (hasToken(address)) {
-    const { tokenAddress, name, tokenSymbol, tokenDecimals } =
-      customTokens[`${address}`]
-    return {
-      tokenAddress,
-      name,
-      tokenSymbol,
-      tokenDecimals,
-    }
+    const { tokenAddress, tokenName, tokenSymbol, tokenDecimals } =
+      customTokens[address]
+    return { tokenAddress, tokenName, tokenSymbol, tokenDecimals }
   }
 
-  const response = await fetch(`/api/kadena/token-info?tokenAddress=${address}`)
+  const tx = buildGetTokenMetaTx(address, KADENA_CHAIN_ID, KADENA_NETWORK_ID)
 
-  if (response.status === 200) {
-    const data = await response.json()
+  const res = await kadenaClient.local(tx, {
+    preflight: false,
+    signatureVerification: false,
+  })
 
-    return data.data
+  if (res.result.status !== 'success') {
+    throw new Error(
+      res.result.error?.message || 'Failed to fetch token metadata',
+    )
   }
 
-  return undefined
+  console.log('getTokenDetails', res.result.data)
+
+  const { name, symbol, decimals } = res.result.data
+
+  return {
+    tokenAddress: address,
+    tokenName: name,
+    tokenSymbol: symbol,
+    tokenDecimals: decimals,
+  }
 }
-
 interface UseTokenParams {
   address: string
   enabled?: boolean
