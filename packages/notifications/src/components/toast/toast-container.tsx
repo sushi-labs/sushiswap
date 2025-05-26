@@ -21,20 +21,21 @@ export const ToastContainer: FC<ToastContainer> = ({ className }) => {
 		toast.dismiss();
 		const url = new URL(window.location.href);
 		url.searchParams.set("accountDrawer", "true");
+		url.searchParams.set("accountTab", "Inbox");
 		window.history.pushState({}, "", url);
 	};
 
 	return (
 		<ToastifyContainer
 			toastClassName={() =>
-				"bg-[#FFFFFF24] dark:bg-[#00000024] border dark:border-[#FFFFFF14] border-[#00000014] mx-2 flex flex-col backdrop-blur-md rounded-xl overflow-hidden text-[color:var(--color)] pointer-events-auto"
+				"bg-[#FFFFFF24] dark:bg-[#00000024] border dark:border-[#FFFFFF14] border-[#00000014] flex flex-col backdrop-blur-md rounded-xl  text-[color:var(--color)] pointer-events-auto"
 			}
 			className={className}
 			position={!breakpoint.isSm ? "bottom-center" : "top-right"}
 			stacked={true}
 			transition={Slide}
 			underToastChildren={
-				<div className="flex flex-col gap-2">
+				<div className="flex flex-col gap-2 w-full">
 					<Button
 						size="sm"
 						className={classNames("w-full")}

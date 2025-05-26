@@ -691,8 +691,8 @@ importers:
         specifier: 11.0.1
         version: 11.0.1(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       react-toastify-v2:
-        specifier: 11.0.6
-        version: 11.0.6(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+        specifier: 11.0.8
+        version: 11.0.8(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
     devDependencies:
       '@tsconfig/node20':
         specifier: catalog:tsconfig
@@ -10828,8 +10828,8 @@ packages:
       '@types/react':
         optional: true
 
-  react-toastify-v2@11.0.6:
-    resolution: {integrity: sha512-Z8ZFmbe93zLtfHd3S93FZOim0jSS/ImDL4pg8jkh5RQxF6ZO1JWA6paouP2jsbQRffjsMYl61taL2OTQRZC3lQ==}
+  react-toastify-v2@11.0.8:
+    resolution: {integrity: sha512-x0H5B8xi7/R4EnlOmsAcYh117DVWKOhk33SCrDmjRzDt11hmZovKnV7LRahrmsoMQLf+ea0TekniZbp4vHAFFg==}
     peerDependencies:
       react: ^18 || ^19
       react-dom: ^18 || ^19
@@ -26419,7 +26419,7 @@ snapshots:
     optionalDependencies:
       '@types/react': 19.0.1
 
-  react-toastify-v2@11.0.6(react-dom@19.0.0(react@19.0.0))(react@19.0.0):
+  react-toastify-v2@11.0.8(react-dom@19.0.0(react@19.0.0))(react@19.0.0):
     dependencies:
       clsx: 2.1.1
       react: 19.0.0
