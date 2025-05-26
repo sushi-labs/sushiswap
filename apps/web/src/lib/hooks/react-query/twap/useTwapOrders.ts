@@ -18,7 +18,7 @@ import { useConfig } from 'wagmi'
 
 export type TwapOrder = Order & {
   status: OrderStatus
-  fillDelayMillis: number
+  fillDelayMs: number
 }
 
 interface TwapOrdersStoreParams {
@@ -204,10 +204,10 @@ const useTwapOrdersQuery = ({
         let status = parseOrderStatus(order.progress, statuses?.[index])
         if (canceledOrders.has(order.id)) {
           if (status !== OrderStatus.Canceled) {
-            // console.log(`Cancelled added: ${order.id}`);
+            // console.log(`Cancelled added: ${order.id}`)
             status = OrderStatus.Canceled
           } else {
-            // console.log(`Cancelled removed: ${order.id}`);
+            // console.log(`Cancelled removed: ${order.id}`)
             deleteCancelledOrderId(order.id)
           }
         }
@@ -215,7 +215,7 @@ const useTwapOrdersQuery = ({
         return {
           ...order,
           status,
-          fillDelayMillis: getOrderFillDelay(
+          fillDelayMs: getOrderFillDelay(
             order.fillDelay,
             TwapSDK.onNetwork(chainId).config,
           ),

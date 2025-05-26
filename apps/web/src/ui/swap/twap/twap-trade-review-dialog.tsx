@@ -196,8 +196,7 @@ export const TwapTradeReviewDialog: FC<{
                   ) : isLimitOrder ? (
                     `Receive at least ${trade.minAmountOut?.toSignificant(6)} ${token1?.symbol}`
                   ) : (
-                    `Every ${fillDelayText(trade.fillDelay)} over ${trade.chunks} order
-                ${(trade.chunks ?? 0 > 1) ? 's' : ''}`
+                    `Every ${fillDelayText(trade.fillDelay)} over ${trade.chunks} order${trade.chunks > 1 ? 's' : ''}`
                   )}
                 </DialogDescription>
               </DialogHeader>

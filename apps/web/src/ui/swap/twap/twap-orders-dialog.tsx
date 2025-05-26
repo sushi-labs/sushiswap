@@ -277,7 +277,7 @@ const TwapOrderDialogContent = ({
             </div>
             {!isLimit ? (
               <span className="text-muted-foreground text-sm">
-                {`Every ${fillDelayText(order.fillDelayMillis)} over ${order.chunks} order${order.chunks > 1 ? 's' : ''}`}
+                {`Every ${fillDelayText(order.fillDelayMs)} over ${order.chunks} order${order.chunks > 1 ? 's' : ''}`}
               </span>
             ) : null}
           </div>
@@ -370,7 +370,7 @@ const TwapOrderDialogContent = ({
                       </List.KeyValue>
                       <List.KeyValue className="!p-0" title="Trade interval">
                         <span className="text-muted-foreground">
-                          {fillDelayText(order.fillDelayMillis)}
+                          {fillDelayText(order.fillDelayMs)}
                         </span>
                       </List.KeyValue>
                       <List.KeyValue className="!p-0" title="Number of trades">
