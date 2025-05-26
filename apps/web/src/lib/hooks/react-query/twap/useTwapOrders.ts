@@ -80,14 +80,20 @@ export const usePersistedOrdersStore = ({
       if (orders.some((o) => o.id === order.id)) return
       orders.push(order)
       localStorage.setItem(ordersKey, JSON.stringify(orders))
-      queryClient.setQueryData(
-        ['twap-orders', chainId, account],
-        (orders?: TwapOrder[]) => {
-          const _order = { ...order, status: OrderStatus.Open }
-          if (!orders) return [_order]
-          return [_order, ...orders]
-        },
-      )
+      const queryKey = ['twap-orders', chainId, account]
+      queryClient.setQueryData(queryKey, (orders?: TwapOrder[]) => {
+        const _order = {
+          ...order,
+          status: OrderStatus.Open,
+          fillDelayMs: getOrderFillDelay(
+            order.fillDelay,
+            TwapSDK.onNetwork(chainId).config,
+          ),
+        }
+        if (!orders) return [_order]
+        return [_order, ...orders]
+      })
+      queryClient.invalidateQueries({ queryKey })
     },
     [getCreatedOrders, ordersKey, queryClient, chainId, account],
   )
@@ -215,6 +221,7 @@ const useTwapOrdersQuery = ({
         return {
           ...order,
           status,
+          progress: status === OrderStatus.Completed ? 100 : order.progress,
           fillDelayMs: getOrderFillDelay(
             order.fillDelay,
             TwapSDK.onNetwork(chainId).config,
@@ -224,6 +231,7 @@ const useTwapOrdersQuery = ({
 
       return orders
     },
+    refetchInterval: 20_000,
     enabled: Boolean(enabled && account && config),
   })
 }
