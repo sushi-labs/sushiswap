@@ -687,9 +687,6 @@ importers:
       react-dom:
         specifier: catalog:react
         version: 19.0.0(react@19.0.0)
-      react-toastify:
-        specifier: 11.0.1
-        version: 11.0.1(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       react-toastify-v2:
         specifier: 11.0.8
         version: 11.0.8(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
