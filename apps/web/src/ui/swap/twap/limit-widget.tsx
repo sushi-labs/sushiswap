@@ -6,7 +6,6 @@ import { OrbsBanner } from './orbs-banner'
 import { TwapHeader } from './twap-header'
 import { TwapMaintenanceMessage } from './twap-maintenance-message'
 import { TwapOrdersDialogTriggerButton } from './twap-orders-dialog'
-import { TwapSettingsOverlay } from './twap-settings-overlay'
 import { TwapSwitchTokensButton } from './twap-switch-tokens-button'
 import { TwapToken0Input } from './twap-token0-input'
 import { TwapToken1Input } from './twap-token1-input'
@@ -18,7 +17,6 @@ export const LimitWidget = () => {
       <TwapHeader />
       <div className="flex items-center justify-between">
         <SwapModeButtons />
-        <TwapSettingsOverlay />
       </div>
       <TwapMaintenanceMessage />
       <div className="flex flex-col gap-2">
