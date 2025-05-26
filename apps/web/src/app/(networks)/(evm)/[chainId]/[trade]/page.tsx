@@ -1,7 +1,8 @@
 'use client'
 
+import { createSuccessToast } from '@sushiswap/notifications'
 import { Container } from '@sushiswap/ui'
-import React from 'react'
+import React, { useEffect } from 'react'
 import type { NonStandardChainId } from 'src/config'
 import { useSkaleEuropaFaucet } from 'src/lib/hooks'
 import { useHeaderNetworkSelector } from 'src/lib/wagmi/components/header-network-selector'
@@ -28,6 +29,44 @@ export default function TradePage() {
   } = useDerivedStateSimpleTrade()
   useHeaderNetworkSelector(chainIdsByTradeMode[tradeMode])
   useSkaleEuropaFaucet()
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      createSuccessToast({
+        summary: 'This is an example toast',
+        href: 'https://sushi.com',
+        type: 'addLiquidity',
+        chainId: 1,
+        txHash: `0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef${Date.now()}1`,
+        account: '0x1234567890abcdef1234567890abcdef12345678',
+        groupTimestamp: 0,
+        timestamp: 0,
+      })
+      createSuccessToast({
+        summary: 'This is an example toast',
+        href: 'https://sushi.com',
+        type: 'removeLiquidity',
+        chainId: 1,
+        txHash: `0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef${Date.now()}2`,
+        account: '0x1234567890abcdef1234567890abcdef12345678',
+        groupTimestamp: 0,
+        timestamp: 1,
+      })
+      createSuccessToast({
+        summary: 'This is an example toast',
+        href: 'https://sushi.com',
+        type: 'dca',
+        chainId: 1,
+        txHash: `0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef${Date.now()}3`,
+        account: '0x1234567890abcdef1234567890abcdef12345678',
+        groupTimestamp: 0,
+        timestamp: 2,
+      })
+    }, 2000)
+    return () => {
+      clearTimeout(timeout)
+    }
+  }, [])
 
   return (
     <>

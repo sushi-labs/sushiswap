@@ -1,5 +1,5 @@
 import { nanoid } from 'nanoid'
-import { type ToastOptions, toast } from 'react-toastify'
+import { type ToastOptions, toast } from 'react-toastify-v2'
 
 import { addNotification } from '../../functions/addNotification'
 import type { PromiseNotification, ResolvedNotification } from '../../types'
@@ -11,13 +11,12 @@ import { ToastInfo } from './toast-info'
 import { ToastPending } from './toast-pending'
 
 export const TOAST_OPTIONS: ToastOptions = {
-  position: 'top-right',
   autoClose: false,
   hideProgressBar: true,
   closeOnClick: false,
   pauseOnHover: true,
   draggable: false,
-  closeButton: false,
+  closeButton: true,
   icon: false,
 }
 

@@ -108,6 +108,7 @@ module.exports = {
         },
         green: {
           DEFAULT: 'rgb(var(--green))',
+          500: '#1DA67D',
         },
         red: {
           DEFAULT: 'rgb(var(--red))',

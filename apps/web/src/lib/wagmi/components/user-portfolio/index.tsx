@@ -21,6 +21,7 @@ import { useAccount, useEnsAvatar, useEnsName } from 'wagmi'
 import { ConnectButton } from '../connect-button'
 import { PortfolioDefaultView } from './PortfolioDefaultView'
 import { PortfolioSettingsView } from './PortfolioSettingsView'
+import { useAccountDrawer } from './hooks/use-account-drawer'
 import { NotificationBadge } from './notification-badge'
 
 export enum PortfolioView {
@@ -33,8 +34,13 @@ const ResponsivePortfolioWrapper: FC<{
   trigger: ReactNode
   isSm: boolean
 }> = ({ content, trigger, isSm }) => {
+  const { isOpen, handleAccountDrawer } = useAccountDrawer()
+
   return isSm ? (
-    <Sheet>
+    <Sheet
+      open={isOpen}
+      onOpenChange={(open) => handleAccountDrawer({ state: open })}
+    >
       <SheetTrigger asChild>{trigger}</SheetTrigger>
       <SheetContent
         overlayClassName="!h-[calc(100%-56px)] dark:bg-slate-900/50 bg-gray-100/50 !inset-y-[56px] backdrop-blur-none"
@@ -45,7 +51,10 @@ const ResponsivePortfolioWrapper: FC<{
       </SheetContent>
     </Sheet>
   ) : (
-    <Dialog>
+    <Dialog
+      open={isOpen}
+      onOpenChange={(open) => handleAccountDrawer({ state: open })}
+    >
       <DialogTrigger asChild>{trigger}</DialogTrigger>
       <DialogContent
         variant="semi-opaque"
