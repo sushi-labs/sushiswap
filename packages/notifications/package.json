@@ -1,72 +1,64 @@
 {
-	"name": "@sushiswap/notifications",
-	"version": "0.0.0",
-	"private": true,
-	"description": "Sushi Notifications",
-	"keywords": [
-		"sushi",
-		"notification"
-	],
-	"homepage": "https://www.sushi.com",
-	"repository": {
-		"type": "git",
-		"url": "https://github.com/sushiswap/sushiswap.git",
-		"directory": "packages/notifications"
-	},
-	"license": "MIT",
-	"author": "Lufy <me@lufy.cz>",
-	"sideEffects": false,
-	"type": "module",
-	"exports": {
-		".": {
-			"types": "./dist/index.d.ts",
-			"import": "./dist/index.js",
-			"require": "./dist/index.js",
-			"default": "./dist/index.js"
-		}
-	},
-	"typesVersions": {
-		"*": {
-			"*": [
-				"src/*",
-				"src/*/index"
-			]
-		}
-	},
-	"files": [
-		"dist"
-	],
-	"scripts": {
-		"build": "tsc",
-		"check": "tsc --pretty --noEmit",
-		"clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
-		"dev": "tsc --watch"
-	},
-	"dependencies": {
-		"@heroicons/react": "2.0.13",
-		"@sushiswap/ui": "workspace:*",
-		"idb": "8.0.0",
-		"nanoid": "4.0.0",
-		"react-toastify-v2": "11.0.8"
-	},
-	"devDependencies": {
-		"@tsconfig/node20": "catalog:tsconfig",
-		"@tsconfig/strictest": "catalog:tsconfig",
-		"@types/react": "catalog:react",
-		"@types/react-dom": "catalog:react",
-		"sushi": "catalog:web3",
-		"typescript": "catalog:"
-	},
-	"peerDependencies": {
-		"react": "catalog:react",
-		"react-dom": "catalog:react"
-	},
-	"peerDependenciesMeta": {
-		"react": {
-			"optional": false
-		},
-		"react-dom": {
-			"optional": false
-		}
-	}
+  "name": "@sushiswap/notifications",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Sushi Notifications",
+  "keywords": ["sushi", "notification"],
+  "homepage": "https://www.sushi.com",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sushiswap/sushiswap.git",
+    "directory": "packages/notifications"
+  },
+  "license": "MIT",
+  "author": "Lufy <me@lufy.cz>",
+  "sideEffects": false,
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.js",
+      "default": "./dist/index.js"
+    }
+  },
+  "typesVersions": {
+    "*": {
+      "*": ["src/*", "src/*/index"]
+    }
+  },
+  "files": ["dist"],
+  "scripts": {
+    "build": "tsc",
+    "check": "tsc --pretty --noEmit",
+    "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
+    "dev": "tsc --watch"
+  },
+  "dependencies": {
+    "@heroicons/react": "2.0.13",
+    "@sushiswap/ui": "workspace:*",
+    "idb": "8.0.0",
+    "nanoid": "4.0.0",
+    "react-toastify-v2": "11.0.8"
+  },
+  "devDependencies": {
+    "@tsconfig/node20": "catalog:tsconfig",
+    "@tsconfig/strictest": "catalog:tsconfig",
+    "@types/react": "catalog:react",
+    "@types/react-dom": "catalog:react",
+    "sushi": "catalog:web3",
+    "typescript": "catalog:"
+  },
+  "peerDependencies": {
+    "react": "catalog:react",
+    "react-dom": "catalog:react"
+  },
+  "peerDependenciesMeta": {
+    "react": {
+      "optional": false
+    },
+    "react-dom": {
+      "optional": false
+    }
+  }
 }
