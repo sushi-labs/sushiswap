@@ -20,6 +20,7 @@ import {
   type Dispatch,
   type FC,
   type SetStateAction,
+  useEffect,
   useMemo,
   useState,
 } from 'react'
@@ -29,6 +30,7 @@ import { type ChainId, evmChains, shortenAddress } from 'sushi'
 import { useAccount, useDisconnect } from 'wagmi'
 import type { GetEnsNameReturnType } from 'wagmi/actions'
 import { PortfolioView } from '.'
+import { useAccountDrawer } from './hooks/use-account-drawer'
 import { NotificationBadge } from './notification-badge'
 import { PortfolioAssets } from './portfolio-assets/portfolio-assets'
 import { PortfolioInbox } from './portfolio-inbox/portfolio-inbox'
@@ -53,8 +55,23 @@ export const PortfolioDefaultView: FC<PortfolioDefaultProps> = ({
 }) => {
   const { connector, address, chainId } = useAccount()
   const { disconnect } = useDisconnect()
+  const { handleAccountDrawer, accountTab } = useAccountDrawer()
 
-  const [tab, setTab] = useState(PortfolioTab.Assets)
+  const [tab, setTab] = useState<PortfolioTab>(PortfolioTab.Assets)
+
+  const handleTabChange = (newTab: PortfolioTab) => {
+    setTab(newTab)
+    handleAccountDrawer({
+      state: true,
+      params: { name: 'accountTab', value: newTab },
+    })
+  }
+
+  useEffect(() => {
+    if (Object.values(PortfolioTab).includes(accountTab as PortfolioTab)) {
+      setTab(accountTab as PortfolioTab)
+    }
+  }, [accountTab])
 
   const content = useMemo(() => {
     switch (tab) {
@@ -161,7 +178,7 @@ export const PortfolioDefaultView: FC<PortfolioDefaultProps> = ({
             size="xs"
             variant={_tab === tab ? 'secondary' : 'ghost'}
             onClick={() => {
-              setTab(_tab)
+              handleTabChange(_tab)
             }}
             className="select-none !gap-1"
           >

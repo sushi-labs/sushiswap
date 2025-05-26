@@ -39,7 +39,7 @@
     "@sushiswap/ui": "workspace:*",
     "idb": "8.0.0",
     "nanoid": "4.0.0",
-    "react-toastify": "11.0.1"
+    "react-toastify-v2": "11.0.8"
   },
   "devDependencies": {
     "@tsconfig/node20": "catalog:tsconfig",

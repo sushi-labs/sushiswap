@@ -1,5 +1,6 @@
 import { Button } from '@sushiswap/ui'
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
+import { useAccountDrawer } from '../hooks/use-account-drawer'
 import { AllInbox } from './all-inbox'
 import { Product } from './product'
 import { Transactions } from './transactions'
@@ -12,6 +13,21 @@ enum InboxTab {
 
 export const PortfolioInbox = () => {
   const [tab, setTab] = useState(InboxTab.All)
+  const { handleAccountDrawer, subAccountTab } = useAccountDrawer()
+
+  const handleTabChange = (newTab: InboxTab) => {
+    setTab(newTab)
+    handleAccountDrawer({
+      state: true,
+      params: { name: 'subAccountTab', value: newTab },
+    })
+  }
+
+  useEffect(() => {
+    if (Object.values(InboxTab).includes(subAccountTab as InboxTab)) {
+      setTab(subAccountTab as InboxTab)
+    }
+  }, [subAccountTab])
 
   const content = useMemo(() => {
     switch (tab) {
@@ -36,7 +52,7 @@ export const PortfolioInbox = () => {
               size="xs"
               variant={_tab === tab ? 'secondary' : 'ghost'}
               onClick={() => {
-                setTab(_tab)
+                handleTabChange(_tab)
               }}
               className="select-none !gap-1"
             >

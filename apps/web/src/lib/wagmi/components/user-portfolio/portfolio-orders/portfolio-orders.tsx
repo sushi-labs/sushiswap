@@ -6,7 +6,8 @@ import {
   SelectItem,
   SelectTrigger,
 } from '@sushiswap/ui'
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
+import { useAccountDrawer } from '../hooks/use-account-drawer'
 import { ActiveOrders } from './active-orders'
 import { CompletedOrders } from './completed-orders'
 
@@ -21,10 +22,25 @@ export enum CompletedOrderType {
   DCA = 'DCA',
 }
 export const PortfolioOrders = () => {
-  const [tab, setTab] = useState(OrdersTab.Active)
+  const [tab, setTab] = useState<OrdersTab>(OrdersTab.Active)
   const [completedOrderFilter, setCompletedOrderFilter] = useState(
     CompletedOrderType.All,
   )
+  const { handleAccountDrawer, subAccountTab } = useAccountDrawer()
+
+  const handleTabChange = (newTab: OrdersTab) => {
+    setTab(newTab)
+    handleAccountDrawer({
+      state: true,
+      params: { name: 'subAccountTab', value: newTab },
+    })
+  }
+
+  useEffect(() => {
+    if (Object.values(OrdersTab).includes(subAccountTab as OrdersTab)) {
+      setTab(subAccountTab as OrdersTab)
+    }
+  }, [subAccountTab])
 
   const content = useMemo(() => {
     switch (tab) {
@@ -47,7 +63,7 @@ export const PortfolioOrders = () => {
               size="xs"
               variant={_tab === tab ? 'secondary' : 'ghost'}
               onClick={() => {
-                setTab(_tab)
+                handleTabChange(_tab)
               }}
               className="select-none !gap-1"
             >

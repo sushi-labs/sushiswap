@@ -156,3 +156,12 @@ html[class="dark"] *.scroll::-webkit-scrollbar-thumb {
     @apply appearance-none w-6 h-6 bg-blue rounded-full;
   }
 }
+
+.Toastify__close-button {
+  top: 17px !important;
+  right: 17px !important;
+}
+
+.dark .Toastify__close-button {
+  color: #fff !important;
+}
