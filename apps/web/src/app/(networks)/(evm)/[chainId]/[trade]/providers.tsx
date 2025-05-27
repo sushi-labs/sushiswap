@@ -3,6 +3,7 @@ import { CheckerProvider } from 'src/lib/wagmi/systems/Checker/Provider'
 import { EdgeProvider } from 'src/providers/edge-config-provider'
 import { StrapiBannerProvider } from 'src/ui/swap/strapi-banner/strapi-banner-provider'
 import { DerivedstateSimpleTradeProvider } from 'src/ui/swap/trade/derivedstate-simple-trade-provider'
+import { SearchProvider } from 'src/ui/swap/trade/search/search-provider'
 import { getTradeEdgeConfig } from 'src/ui/swap/trade/trade-edge-config'
 import { FuulReferralProvider } from '~evm/_common/ui/fuul-referral-provider'
 
@@ -15,7 +16,9 @@ export async function Providers({ children }: { children: React.ReactNode }) {
         <DerivedstateSimpleTradeProvider>
           <HeaderNetworkSelectorProvider>
             <FuulReferralProvider>
-              <StrapiBannerProvider>{children}</StrapiBannerProvider>
+              <StrapiBannerProvider>
+                <SearchProvider>{children}</SearchProvider>
+              </StrapiBannerProvider>
             </FuulReferralProvider>
           </HeaderNetworkSelectorProvider>
         </DerivedstateSimpleTradeProvider>
