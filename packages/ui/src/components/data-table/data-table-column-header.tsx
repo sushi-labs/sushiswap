@@ -47,11 +47,6 @@ export function DataTableColumnHeader<TData, TValue>({
     }
   }, [column])
 
-  // When the header (=title) is undefined, it becomes a function, can't render functions...
-  if (typeof title !== 'string') {
-    title = ''
-  }
-
   if (!column.getCanSort()) {
     return (
       <div className={classNames(className)}>
@@ -85,11 +80,11 @@ export function DataTableColumnHeader<TData, TValue>({
                     {title}
                   </span>
                   {column.getIsSorted() === 'desc' ? (
-                    <CaretDownIcon className="ml-2 h-4 w-4" />
+                    <CaretDownIcon className="w-4 h-4 ml-2" />
                   ) : column.getIsSorted() === 'asc' ? (
-                    <CaretUpIcon className="ml-2 h-4 w-4" />
+                    <CaretUpIcon className="w-4 h-4 ml-2" />
                   ) : (
-                    <CaretSortIcon className="ml-2 h-4 w-4" />
+                    <CaretSortIcon className="w-4 h-4 ml-2" />
                   )}
                 </div>
               </TooltipTrigger>
@@ -101,11 +96,11 @@ export function DataTableColumnHeader<TData, TValue>({
         <Button onClick={onClick} variant="ghost" size="xs">
           <span>{title}</span>
           {column.getIsSorted() === 'desc' ? (
-            <CaretDownIcon className="ml-2 h-4 w-4" />
+            <CaretDownIcon className="w-4 h-4 ml-2" />
           ) : column.getIsSorted() === 'asc' ? (
-            <CaretUpIcon className="ml-2 h-4 w-4" />
+            <CaretUpIcon className="w-4 h-4 ml-2" />
           ) : (
-            <CaretSortIcon className="ml-2 h-4 w-4" />
+            <CaretSortIcon className="w-4 h-4 ml-2" />
           )}
         </Button>
       )}

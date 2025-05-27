@@ -134,7 +134,10 @@ export function DataTable<TData, TValue>({
                             header.column.columnDef?.meta?.headerDescription
                           }
                           column={header.column}
-                          title={header.column.columnDef.header as string}
+                          title={flexRender(
+                            header.column.columnDef.header,
+                            header.getContext(),
+                          )}
                         />
                       )}
                     </TableHead>
