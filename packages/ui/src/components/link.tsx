@@ -1,6 +1,7 @@
 'use client'
 
 import { InterfaceEventName, sendAnalyticsEvent } from '@sushiswap/telemetry'
+import classNames from 'classnames'
 import Link from 'next/link'
 import type { AnchorHTMLAttributes, FC } from 'react'
 
@@ -23,7 +24,10 @@ const LinkExternal: FC<AnchorHTMLAttributes<HTMLAnchorElement>> = ({
         {...props}
         target={target}
         rel={rel}
-        className="cursor-pointer text-blue hover:underline"
+        className={classNames(
+          'cursor-pointer text-blue hover:underline',
+          props.className,
+        )}
       />
     </button>
   )

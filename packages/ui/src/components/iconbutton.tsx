@@ -34,6 +34,7 @@ const iconButtonVariants = cva(
         link: 'text-blue hover:text-blue-700 font-semibold !p-0 !h-[unset] !min-h-[unset]',
       },
       size: {
+        xxs: 'min-h-[16px] h-[16px] min-w-[16px] w-[16px] text-xs',
         xs: 'min-h-[26px] h-[26px] min-w-[26px] w-[26px] text-xs',
         sm: 'min-h-[36px] h-[36px] min-w-[36px] w-[36px] text-sm',
         default: 'min-h-[40px] h-[40px] min-w-[40px] w-[40px] text-sm',
