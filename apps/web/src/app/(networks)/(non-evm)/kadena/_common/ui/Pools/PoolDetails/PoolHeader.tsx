@@ -61,15 +61,15 @@ export const PoolHeader = ({
             <Currency.IconList iconWidth={36} iconHeight={36}>
               <Icon
                 currency={{
-                  tokenSymbol: token0Symbol,
-                  tokenName: token0Name,
+                  tokenSymbol: token0Symbol ?? '',
+                  tokenName: token0Name ?? '',
                   tokenImage: '',
                 }}
               />
               <Icon
                 currency={{
-                  tokenSymbol: token1Symbol,
-                  tokenName: token1Name,
+                  tokenSymbol: token1Symbol ?? '',
+                  tokenName: token1Name ?? '',
                   tokenImage: '',
                 }}
               />

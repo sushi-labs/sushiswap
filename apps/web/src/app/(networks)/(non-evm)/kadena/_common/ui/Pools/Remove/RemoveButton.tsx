@@ -29,7 +29,7 @@ export const RemoveButton = (props: ButtonProps) => {
     minAmountToken1,
   } = useRemoveLiqState()
   const { setIsTxnPending, setPercentage } = useRemoveLiqDispatch()
-  const { token0, token1, pairAddress } = usePoolState()
+  const { token0, token1, poolId } = usePoolState()
   const allowanceAmount = '.72'
   // const refetch = () => {}
 
@@ -101,7 +101,7 @@ export const RemoveButton = (props: ButtonProps) => {
     queryClient.invalidateQueries({
       queryKey: [
         'useTokenBalance',
-        { accountAddress: address, tokenAddress: pairAddress },
+        { accountAddress: address, tokenAddress: poolId },
       ],
     })
   }

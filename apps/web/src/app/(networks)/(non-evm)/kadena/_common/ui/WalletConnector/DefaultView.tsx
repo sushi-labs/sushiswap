@@ -30,7 +30,7 @@ export const DefaultView = ({ setView }: DefaultViewProps) => {
   const [isLoadingPrice, setIsLoadingPrice] = useState(true)
   const { data, isLoading: isLoadingNativeTokenBalance } =
     useNativeTokenBalance({
-      account: activeAccount.accountName,
+      account: activeAccount?.accountName ?? '',
       enabled: true,
     })
 

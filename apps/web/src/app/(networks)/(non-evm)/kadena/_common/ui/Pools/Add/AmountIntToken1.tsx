@@ -10,12 +10,11 @@ export const AmountInToken1 = ({
   theme?: ComponentProps<typeof TokenInput>['theme']
   disabled?: boolean
 }) => {
-  const { token0, token1, amountInToken1, pairAddress, inputField } =
-    usePoolState()
+  const { token0, token1, amountInToken1, poolId, inputField } = usePoolState()
   const { setToken1, setAmountInToken1, setAmountInToken0, setInputField } =
     usePoolDispatch()
 
-  const pairExists = !!pairAddress
+  const pairExists = !!poolId
 
   const rateOfToken0 = '0.234'
 
