@@ -1,162 +1,131 @@
 'use client'
 
-import type { AnalyticsDayBuckets } from '@sushiswap/graph-client/data-api'
 import format from 'date-fns/format'
 import ReactECharts from 'echarts-for-react'
 import type { EChartsOption } from 'echarts-for-react/lib/types'
 import echarts from 'echarts/lib/echarts'
 import { useTheme } from 'next-themes'
 import { type FC, useCallback, useMemo } from 'react'
-import { type ChainId, EvmChain } from 'sushi/chain'
 import { formatUSD } from 'sushi/format'
+import type { DexMetrics } from '~kadena/_common/types/get-dex-metrics'
 
-interface VolumeChart {
-  data: AnalyticsDayBuckets
+interface VolumeChartProps {
+  data: DexMetrics | undefined
 }
 
-export const VolumeChart: FC<VolumeChart> = ({ data }) => {
+export const VolumeChart: FC<VolumeChartProps> = ({ data }) => {
   const { resolvedTheme } = useTheme()
 
-  const [v2, totalVolume] = useMemo(() => {
-    const xData = data.v2.slice(0, 30).map((data) => data.date * 1000)
+  /* ------------------------------------------------------------------ */
+  /*  Prep last-30-days series & totals                                 */
+  /* ------------------------------------------------------------------ */
+  const [volumeSeries, totalVolume] = useMemo(() => {
+    if (!data) return [[], 0]
+    const last30 = [...data.volumeHistory]
+      .filter((d) => d.value > 0)
+      .sort(
+        (a, b) =>
+          new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime(),
+      )
+      .slice(-30)
 
-    const v2 = xData
-      .map((xData, i) => [xData, data.v2[i]?.volumeUSD ?? 0])
-      .reverse()
-    const totalVolume = v2.reduce((sum, entry) => sum + entry[1], 0)
+    const series = last30.map((d) => [new Date(d.timestamp).getTime(), d.value])
 
-    return [v2, totalVolume]
+    const total = series.reduce((sum, [, v]) => sum + v, 0)
+
+    return [series, total]
   }, [data])
 
+  /* ------------------------------------------------------------------ */
+  /*  Tooltip DOM updates                                               */
+  /* ------------------------------------------------------------------ */
   const onMouseOver = useCallback((params: { data: number[] }[]) => {
-    const volumeNode = document.getElementById('hoveredVolume')
-    const v2VolumeNode = document.getElementById('hoveredV2Volume')
+    const volNode = document.getElementById('hoveredVolume')
     const dateNode = document.getElementById('hoveredVolumeDate')
 
-    if (volumeNode) volumeNode.innerHTML = formatUSD(params[0].data[1])
+    if (volNode) volNode.innerHTML = formatUSD(params[0].data[1])
     if (dateNode)
       dateNode.innerHTML = format(
         new Date(params[0].data[0]),
         'dd MMM yyyy HH:mm aa',
       )
-    if (v2VolumeNode)
-      v2VolumeNode.innerHTML = params[0].data[1]
-        ? formatUSD(params[0].data[1])
-        : ''
   }, [])
 
   const onMouseLeave = useCallback(() => {
-    const volumeNode = document.getElementById('hoveredVolume')
-    const v2VolumeNode = document.getElementById('hoveredV2Volume')
+    const volNode = document.getElementById('hoveredVolume')
     const dateNode = document.getElementById('hoveredVolumeDate')
 
-    if (volumeNode) volumeNode.innerHTML = formatUSD(totalVolume)
+    if (volNode) volNode.innerHTML = formatUSD(totalVolume)
     if (dateNode) dateNode.innerHTML = 'Past month'
-    if (v2VolumeNode) v2VolumeNode.innerHTML = ''
   }, [totalVolume])
 
-  const DEFAULT_OPTION: EChartsOption = useMemo(
+  /* ------------------------------------------------------------------ */
+  /*  ECharts option                                                    */
+  /* ------------------------------------------------------------------ */
+  const option: EChartsOption = useMemo(
     () => ({
-      tooltip: {
-        trigger: 'axis',
-        formatter: onMouseOver,
-      },
-      grid: {
-        top: 0,
-        left: 0,
-        right: 0,
-      },
-      xAxis: [
-        {
-          type: 'time',
-          splitLine: {
-            show: false,
+      tooltip: { trigger: 'axis', formatter: onMouseOver },
+      grid: { top: 0, left: 0, right: 0 },
+      xAxis: {
+        type: 'time',
+        splitLine: { show: false },
+        axisLine: { show: false },
+        axisTick: { show: false },
+        axisLabel: {
+          hideOverlap: true,
+          color: resolvedTheme === 'dark' ? 'white' : 'black',
+          formatter: (value: number, index: number) => {
+            const label = format(new Date(value), 'MMM d')
+            return index === 0
+              ? `{min|${label}}`
+              : value > volumeSeries.at(-2)?.[0]!
+                ? `{max|${label}}`
+                : label
           },
-          axisLine: {
-            show: false,
-          },
-          axisTick: {
-            show: false,
-          },
-          axisLabel: {
-            hideOverlap: true,
-            showMinLabel: true,
-            showMaxLabel: true,
-            color: resolvedTheme === 'dark' ? 'white' : 'black',
-            formatter: (value: number, index: number) => {
-              const label = format(new Date(value), 'MMM d')
-              return index === 0
-                ? `{min|${label}}`
-                : value > v2?.[v2.length - 2]?.[0]
-                  ? `{max|${label}}`
-                  : label
-            },
-            padding: [0, 10, 0, 10],
-            rich: {
-              min: {
-                padding: [0, 10, 0, 50],
-              },
-              max: {
-                padding: [0, 50, 0, 10],
-              },
-            },
+          padding: [0, 10, 0, 10],
+          rich: {
+            min: { padding: [0, 10, 0, 50] },
+            max: { padding: [0, 50, 0, 10] },
           },
         },
-      ],
-      yAxis: [
-        {
-          show: false,
-        },
-      ],
+      },
+      yAxis: { show: false },
       series: [
         {
-          name: 'v2',
+          name: 'Volume',
           type: 'bar',
-          stack: 'a',
-          data: v2,
+          data: volumeSeries,
           itemStyle: { color: '#3B7EF6', barBorderRadius: [0, 0, 2, 2] },
         },
       ],
     }),
-    [onMouseOver, resolvedTheme, v2],
+    [onMouseOver, resolvedTheme, volumeSeries],
   )
 
+  /* ------------------------------------------------------------------ */
+  /*  Render                                                            */
+  /* ------------------------------------------------------------------ */
   return (
     <div>
       <div className="flex flex-col gap-3">
-        <span className="text-muted-foreground text-sm">Kadena Volume</span>
-        <div className="flex justify-between">
-          <div className="flex flex-col gap-3">
-            <div className="text-3xl font-medium">
-              <span id="hoveredVolume">{formatUSD(totalVolume)}</span>
-            </div>
-            <div>
-              <div
-                id="hoveredVolumeDate"
-                className="text-sm text-gray-500 dark:text-slate-500"
-              >
-                Past month
-              </div>
-            </div>
-          </div>
-          <div className="flex flex-col">
-            <div className="flex justify-between items-center gap-2 text-sm">
-              <span id="hoveredV2Volume" />
-              <span className="flex gap-1 items-center">
-                <span className="font-medium">v2</span>
-                <span className="bg-[#3B7EF6] rounded-[4px] w-3 h-3" />
-              </span>
-            </div>
-          </div>
+        <span className="text-sm text-muted-foreground">Kadena Volume</span>
+
+        <div className="text-3xl font-medium">
+          <span id="hoveredVolume">{formatUSD(totalVolume)}</span>
         </div>
+        <span
+          id="hoveredVolumeDate"
+          className="text-sm text-gray-500 dark:text-slate-500"
+        >
+          Past month
+        </span>
       </div>
+
       <ReactECharts
-        option={DEFAULT_OPTION}
+        option={option}
         echarts={echarts}
         style={{ height: 400 }}
-        onEvents={{
-          globalout: onMouseLeave,
-        }}
+        onEvents={{ globalout: onMouseLeave }}
       />
     </div>
   )

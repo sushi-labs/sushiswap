@@ -8,6 +8,7 @@ import {
   STABLE_TOKENS,
 } from '~kadena/_common/constants/token-list'
 import type { KadenaToken } from '~kadena/_common/types/token-type'
+import { ReserveHelper } from './ReserveHelper'
 
 type InputFieldType = 'token0' | 'token1'
 
@@ -24,7 +25,7 @@ type Action =
   | { type: 'setIsTxnPending'; value: boolean }
   | { type: 'setAmountInToken0'; value: string }
   | { type: 'setAmountInToken1'; value: string }
-  | { type: 'setPairAddress'; value: string | undefined | null }
+  | { type: 'setPoolId'; value: string | undefined | null }
   | { type: 'setReserve0'; value: string }
   | { type: 'setReserve1'; value: string }
   | { type: 'setInputField'; value: InputFieldType }
@@ -36,7 +37,7 @@ type Dispatch = {
   setIsTxnPending(isPending: boolean): void
   setAmountInToken0(amount: string): void
   setAmountInToken1(amount: string): void
-  setPairAddress(pairAddress: string | undefined | null): void
+  setPoolId(poolId: string | undefined | null): void
   setReserve0(reserve0: string): void
   setReserve1(reserve1: string): void
   setInputField(inputField: InputFieldType): void
@@ -51,7 +52,7 @@ type State = {
   isTxnPending: boolean
   amountInToken0: string
   amountInToken1: string
-  pairAddress: string | undefined | null
+  poolId: string | undefined | null
   reserve0: string
   reserve1: string
   inputField: 'token0' | 'token1'
@@ -114,8 +115,8 @@ function poolReducer(_state: State, action: Action) {
     case 'setAmountInToken1': {
       return { ..._state, amountInToken1: action.value }
     }
-    case 'setPairAddress': {
-      return { ..._state, pairAddress: action.value }
+    case 'setPoolId': {
+      return { ..._state, poolId: action.value }
     }
     case 'setReserve0': {
       return { ..._state, reserve0: action.value }
@@ -139,7 +140,7 @@ const PoolProvider: FC<PoolProviderProps> = ({ children }) => {
     isTxnPending: false,
     amountInToken0: '',
     amountInToken1: '',
-    pairAddress: undefined,
+    poolId: undefined,
     reserve0: '',
     reserve1: '',
     inputField: 'token0',
@@ -156,8 +157,8 @@ const PoolProvider: FC<PoolProviderProps> = ({ children }) => {
         dispatch({ type: 'setAmountInToken0', value }),
       setAmountInToken1: (value: string) =>
         dispatch({ type: 'setAmountInToken1', value }),
-      setPairAddress: (value: string | undefined | null) =>
-        dispatch({ type: 'setPairAddress', value }),
+      setPoolId: (value: string | undefined | null) =>
+        dispatch({ type: 'setPoolId', value }),
       setReserve0: (value: string) => dispatch({ type: 'setReserve0', value }),
       setReserve1: (value: string) => dispatch({ type: 'setReserve1', value }),
       setInputField: (value: InputFieldType) =>
@@ -174,7 +175,7 @@ const PoolProvider: FC<PoolProviderProps> = ({ children }) => {
         return { state, dispatch: dispatchWithAction }
       }, [state, dispatchWithAction])}
     >
-      {/* <ReserveHelper /> */}
+      <ReserveHelper />
       {children}
     </PoolContext.Provider>
   )

@@ -31,6 +31,8 @@ export const PoolNameCell = ({ data }: { data: Pool }) => {
                 tokenSymbol: token0Symbol,
                 tokenName: token0Name,
                 tokenImage: '',
+                tokenAddress: '',
+                tokenDecimals: 18,
               }}
             />
             <Icon
@@ -38,6 +40,8 @@ export const PoolNameCell = ({ data }: { data: Pool }) => {
                 tokenImage: '',
                 tokenSymbol: token1Symbol,
                 tokenName: token1Name,
+                tokenAddress: '',
+                tokenDecimals: 18,
               }}
             />
           </Currency.IconList>

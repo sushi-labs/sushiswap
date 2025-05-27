@@ -7,7 +7,7 @@ import { usePoolDispatch, usePoolState } from '../pool-provider'
 
 export const SelectTokensForm = () => {
   const { token0, token1 } = usePoolState()
-  const { setToken0, setToken1, setPairAddress } = usePoolDispatch()
+  const { setToken0, setToken1, setPoolId } = usePoolDispatch()
 
   const _pairAddress =
     'abf594a764e49a90a98cddf30872d8497e37399684c1d8e2b8e96fd865728cc2'
@@ -15,11 +15,11 @@ export const SelectTokensForm = () => {
 
   useEffect(() => {
     if (isContract && _pairAddress) {
-      setPairAddress(_pairAddress)
+      setPoolId(_pairAddress)
     } else {
-      setPairAddress(undefined)
+      setPoolId(undefined)
     }
-  }, [setPairAddress])
+  }, [setPoolId])
 
   return (
     <FormSection

@@ -23,7 +23,7 @@ type WalletContextType = {
       pred: string
     }
     chainAccounts: string[]
-  }
+  } | null
   handleConnect: (walletAdapterName: string) => Promise<void>
   handleDisconnect: () => Promise<void>
   setCurrentWallet: (wallet: string) => void

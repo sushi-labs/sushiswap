@@ -21,14 +21,11 @@ export const useAllPools = ({
       const res = await fetch(url.toString())
       const data = (await res.json()) as KadenaPoolsApiResponse
 
-      console.log('data', data)
-
       if (!data.success) throw new Error('Failed to fetch pools')
 
       return data.data
     },
     staleTime: 5 * 60 * 1000,
     gcTime: 10 * 60 * 1000,
-    refetchOnWindowFocus: false,
   })
 }

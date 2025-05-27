@@ -2,18 +2,24 @@
 
 import { Container } from '@sushiswap/ui'
 import { use, useEffect, useState } from 'react'
+import { usePoolById } from '~kadena/_common/lib/hooks/use-pool-by-id'
 import { Manage } from '~kadena/_common/ui/Pools/Manage/Manage'
-import { PoolLiquidity } from '~kadena/_common/ui/Pools/PoolDetails/PoolLiquidity'
 import { PoolPosition } from '~kadena/_common/ui/Pools/PoolPosition/PoolPosition'
-import { POOLS } from '~kadena/_common/ui/Pools/PositionsTable/PositionsTable'
+import { PoolComposition } from '~kadena/_common/ui/Pools/PoolsV2/PoolComposition'
 import { usePoolDispatch } from '~kadena/_common/ui/Pools/pool-provider'
 
 export default function AddRemoveLiqPage(props: {
-  params: Promise<{ address: string }>
+  params: Promise<{ id: string }>
 }) {
   const params = use(props.params)
-  const decodedPoolId = params.address
-  const pairAddress = decodedPoolId[2]
+  const poolId = params.id
+
+  const { data: pool } = usePoolById({
+    poolId,
+    first: 10,
+  })
+
+  console.log('swag poolById', pool)
   const [isLoadingToken0, setIsLoadingToken0] = useState(true)
   const [isLoadingToken1, setIsLoadingToken1] = useState(true)
 
@@ -24,42 +30,62 @@ export default function AddRemoveLiqPage(props: {
     }, 1200)
   }, [])
   const isLoadingTokens = isLoadingToken0 || isLoadingToken1
-  const { setToken0, setToken1, setPairAddress } = usePoolDispatch()
+  const { setToken0, setToken1, setPoolId } = usePoolDispatch()
 
   useEffect(() => {
     const isAddress = (_address: string) => true
-    if (pairAddress && isAddress(pairAddress)) {
-      setPairAddress(pairAddress)
+    if (poolId && isAddress(poolId)) {
+      setPoolId(poolId)
     }
-  }, [pairAddress, setPairAddress])
+  }, [poolId, setPoolId])
 
-  const token0 = POOLS[0].token0
-  const token1 = POOLS[0].token1
   useEffect(() => {
-    if (token0) {
-      setToken0(token0)
+    if (pool?.token0) {
+      setToken0({
+        tokenAddress: '',
+        tokenSymbol: token0Symbol ?? '',
+        tokenDecimals: 18,
+        tokenName: pool.token0.name,
+      })
     }
-    if (token1) {
-      setToken1(token1)
+    if (pool?.token1) {
+      setToken1({
+        tokenAddress: '',
+        tokenSymbol: token1Symbol ?? '',
+        tokenDecimals: 18,
+        tokenName: pool.token1.name,
+      })
     }
-  }, [token0, token1, setToken0, setToken1])
+  }, [pool?.token0, pool?.token1, setToken0, setToken1])
+
+  const token0Name = pool?.token0?.name
+  const token1Name = pool?.token1?.name
+  const token0Symbol =
+    token0Name === 'coin' ? 'KDA' : token0Name?.slice(0, 3).toUpperCase()
+  const token1Symbol =
+    token1Name === 'coin' ? 'KDA' : token1Name?.slice(0, 3).toUpperCase()
 
   return (
     <Container maxWidth="5xl" className="px-2 sm:px-4">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
         <div className="flex flex-col gap-6">
           <Manage />
-          <PoolLiquidity
-            pairAddress={pairAddress}
-            token0={token0}
-            token1={token1}
-            isLoading={isLoadingTokens}
-          />
+          <PoolComposition pool={pool} />
         </div>
         <div className="flex flex-col gap-6">
           <PoolPosition
-            token0={token0}
-            token1={token1}
+            token0={{
+              tokenName: token0Name ?? '',
+              tokenId: pool?.token0?.id ?? '',
+              tokenSymbol: token0Symbol ?? '',
+              tokenImage: '',
+            }}
+            token1={{
+              tokenName: token1Name ?? '',
+              tokenId: pool?.token1?.id ?? '',
+              tokenSymbol: token1Symbol ?? '',
+              tokenImage: '',
+            }}
             isLoading={isLoadingTokens}
           />
         </div>

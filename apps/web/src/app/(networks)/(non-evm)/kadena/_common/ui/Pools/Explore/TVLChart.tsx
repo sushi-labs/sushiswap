@@ -1,6 +1,5 @@
 'use client'
 
-import type { AnalyticsDayBuckets } from '@sushiswap/graph-client/data-api'
 import { useIsMounted } from '@sushiswap/hooks'
 import format from 'date-fns/format'
 import ReactEcharts from 'echarts-for-react'
@@ -9,34 +8,39 @@ import echarts from 'echarts/lib/echarts'
 import { useTheme } from 'next-themes'
 import { type FC, useCallback, useMemo } from 'react'
 import { formatUSD } from 'sushi/format'
+import type { DexMetrics } from '~kadena/_common/types/get-dex-metrics'
 
-interface TVLChart {
-  data: AnalyticsDayBuckets
+interface TVLChartProps {
+  data: DexMetrics | undefined
 }
 
-export const TVLChart: FC<TVLChart> = ({ data }) => {
+export const TVLChart: FC<TVLChartProps> = ({ data }) => {
   const isMounted = useIsMounted()
-
   const { resolvedTheme } = useTheme()
 
-  const [v2, combinedTVL, currentDate] = useMemo(() => {
-    const xData = data.v2.map((data) => data.date * 1000)
+  /* -------------------------------------------------------------------- */
+  /*  Prepare data for ECharts                                             */
+  /* -------------------------------------------------------------------- */
+  const [tvlSeries, latestTvl, latestDate] = useMemo(() => {
+    if (!data) return [[], 0, 0]
+    const sorted = [...data.tvlHistory]
+      .filter((d) => d.value > 0)
+      .sort(
+        (a, b) =>
+          new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime(),
+      )
 
-    const v2 = xData
-      .map((xData, i) => [xData, data.v2[i]?.liquidityUSD ?? 0])
-      .reverse()
-    const combinedTVL = v2[v2.length - 1][1]
+    const series = sorted.map((d) => [new Date(d.timestamp).getTime(), d.value])
+    const last = series.at(-1) ?? [Date.now(), 0]
 
-    const currentDate = xData[0]
-
-    return [v2, combinedTVL, currentDate]
+    return [series, last[1] as number, last[0] as number]
   }, [data])
 
-  const zIndex = { v2: 1 }
-
+  /* -------------------------------------------------------------------- */
+  /*  Tooltip handlers (DOM mutation keeps current CSS animation-free)    */
+  /* -------------------------------------------------------------------- */
   const onMouseOver = useCallback((params: { data: number[] }[]) => {
     const tvlNode = document.getElementById('hoveredTVL')
-    const v2TVLNode = document.getElementById('hoveredV2TVL')
     const dateNode = document.getElementById('hoveredTVLDate')
 
     if (tvlNode) tvlNode.innerHTML = formatUSD(params[0].data[1])
@@ -45,142 +49,101 @@ export const TVLChart: FC<TVLChart> = ({ data }) => {
         new Date(params[0].data[0]),
         'dd MMM yyyy HH:mm aa',
       )
-    if (v2TVLNode)
-      v2TVLNode.innerHTML = params[0].data[1]
-        ? formatUSD(params[0].data[1])
-        : ''
   }, [])
 
   const onMouseLeave = useCallback(() => {
     const tvlNode = document.getElementById('hoveredTVL')
-    const v2TVLNode = document.getElementById('hoveredV2TVL')
     const dateNode = document.getElementById('hoveredTVLDate')
 
-    if (tvlNode) tvlNode.innerHTML = formatUSD(combinedTVL)
+    if (tvlNode) tvlNode.innerHTML = formatUSD(latestTvl)
     if (dateNode)
-      dateNode.innerHTML = format(new Date(currentDate), 'dd MMM yyyy HH:mm aa')
-    if (v2TVLNode) v2TVLNode.innerHTML = ''
-  }, [combinedTVL, currentDate])
+      dateNode.innerHTML = format(new Date(latestDate), 'dd MMM yyyy HH:mm aa')
+  }, [latestTvl, latestDate])
 
-  const DEFAULT_OPTION: EChartsOption = useMemo(
+  /* -------------------------------------------------------------------- */
+  /*  ECharts option                                                      */
+  /* -------------------------------------------------------------------- */
+  const option: EChartsOption = useMemo(
     () => ({
-      tooltip: {
-        trigger: 'axis',
-        formatter: onMouseOver,
-      },
-      color: ['#3B7EF6', '#A755DD'],
-      grid: {
-        top: 0,
-        left: 0,
-        right: 0,
-      },
-      xAxis: [
-        {
-          type: 'time',
-          splitLine: {
-            show: false,
-          },
-          axisLine: {
-            show: false,
-          },
-          axisTick: {
-            show: false,
-          },
-          axisLabel: {
-            hideOverlap: true,
-            showMinLabel: true,
-            showMaxLabel: true,
-            color: resolvedTheme === 'dark' ? 'white' : 'black',
-            formatter: (value: number, index: number) => {
-              const date = new Date(value)
-              const label = `${date.toLocaleString('en-US', {
-                month: 'short',
-              })} ${date.getDate()}\n${date.getFullYear()}`
+      tooltip: { trigger: 'axis', formatter: onMouseOver },
+      color: ['#3B7EF6'],
+      grid: { top: 0, left: 0, right: 0 },
+      xAxis: {
+        type: 'time',
+        splitLine: { show: false },
+        axisLine: { show: false },
+        axisTick: { show: false },
+        axisLabel: {
+          hideOverlap: true,
+          color: resolvedTheme === 'dark' ? 'white' : 'black',
+          formatter: (value: number, index: number) => {
+            const date = new Date(value)
+            const label = `${date.toLocaleString('en-US', {
+              month: 'short',
+            })} ${date.getDate()}\n${date.getFullYear()}`
 
-              return index === 0
-                ? `{min|${label}}`
-                : value > v2?.[v2.length - 2]?.[0]
-                  ? `{max|${label}}`
-                  : label
-            },
-            padding: [0, 10, 0, 10],
-            rich: {
-              min: {
-                padding: [0, 10, 0, 50],
-              },
-              max: {
-                padding: [0, 50, 0, 10],
-              },
-            },
+            return index === 0
+              ? `{min|${label}}`
+              : value > tvlSeries.at(-2)?.[0]!
+                ? `{max|${label}}`
+                : label
+          },
+          padding: [0, 10, 0, 10],
+          rich: {
+            min: { padding: [0, 10, 0, 50] },
+            max: { padding: [0, 50, 0, 10] },
           },
         },
-      ],
-      yAxis: [
-        {
-          show: false,
-        },
-      ],
+      },
+      yAxis: { show: false },
       series: [
         {
-          name: 'v2',
+          name: 'TVL',
           type: 'line',
-          stack: 'v2',
           smooth: true,
-          lineStyle: {
-            width: 0,
-          },
+          lineStyle: { width: 0 },
           showSymbol: false,
-          areaStyle: {
-            color: '#3B7EF6',
-            opacity: 1,
-          },
-          data: v2,
-          z: zIndex.v2,
+          areaStyle: { color: '#3B7EF6', opacity: 1 },
+          data: tvlSeries,
         },
       ],
     }),
-    [onMouseOver, v2, resolvedTheme],
+    [onMouseOver, tvlSeries, resolvedTheme],
   )
 
+  /* -------------------------------------------------------------------- */
+  /*  Render                                                              */
+  /* -------------------------------------------------------------------- */
   return (
     <div>
       <div className="flex flex-col gap-3">
-        <span className="text-muted-foreground text-sm">Kadena TVL</span>
+        <span className="text-sm text-muted-foreground">Kadena TVL</span>
+
         <div className="flex justify-between">
           <div className="flex flex-col gap-3">
             <div className="text-3xl font-medium">
-              <span id="hoveredTVL">{formatUSD(combinedTVL)}</span>
+              <span id="hoveredTVL">{formatUSD(latestTvl)}</span>
             </div>
             <div>
-              <div
+              <span
                 id="hoveredTVLDate"
                 className="text-sm text-gray-500 dark:text-slate-500"
               >
                 {isMounted
-                  ? format(new Date(currentDate), 'MMM dd yyyy HH:mm aa')
+                  ? format(new Date(latestDate), 'MMM dd yyyy HH:mm aa')
                   : ''}
-              </div>
-            </div>
-          </div>
-          <div className="flex flex-col">
-            <div className="flex justify-between items-center gap-2 text-sm">
-              <span id="hoveredV2TVL" />
-              <span className="flex gap-1 items-center">
-                <span className="font-medium">v2</span>
-                <span className="bg-[#3B7EF6] rounded-[4px] w-3 h-3" />
               </span>
             </div>
           </div>
         </div>
       </div>
+
       {isMounted && (
         <ReactEcharts
-          option={DEFAULT_OPTION}
+          option={option}
           echarts={echarts}
           style={{ height: 400 }}
-          onEvents={{
-            globalout: onMouseLeave,
-          }}
+          onEvents={{ globalout: onMouseLeave }}
         />
       )}
     </div>

@@ -2,16 +2,10 @@ import { cloudinaryLogoFetchLoader } from '@sushiswap/ui'
 import Image from 'next/image'
 import { hashStringToColor } from '~kadena/_common/lib/utils/formatters'
 import type { KadenaToken } from '~kadena/_common/types/token-type'
+import type { TempToken } from '../Pools/PoolPosition/PoolPosition'
 
 type IconProps = {
-  currency:
-    | KadenaToken
-    | undefined
-    | {
-        tokenSymbol: string | undefined
-        tokenImage: string | undefined
-        tokenName: string | undefined
-      }
+  currency: KadenaToken | undefined | TempToken
   height?: number
   width?: number
   fontSize?: number

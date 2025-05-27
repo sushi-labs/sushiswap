@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server'
+import { GRAPHQL_ENDPOINT } from '~kadena/_common/lib/graphql/endpoint'
 import { getPoolById } from '~kadena/_common/lib/graphql/queries/get-pool-by-id'
-
-const GRAPHQL_ENDPOINT = 'https://api.mainnet.kadindexer.io/v0'
 
 const timeFrameMap = {
   '1D': 'DAY',

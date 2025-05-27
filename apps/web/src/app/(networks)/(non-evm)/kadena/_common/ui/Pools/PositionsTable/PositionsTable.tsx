@@ -10,9 +10,10 @@ import {
   LinkInternal,
 } from '@sushiswap/ui'
 import type { PaginationState } from '@tanstack/react-table'
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { usePoolFilters } from 'src/ui/pool'
-import type { IMyPositionData } from '~kadena/_common/types/get-pools-type'
+import { useMyPositions } from '~kadena/_common/lib/hooks/use-my-positions'
+import type { WalletPosition } from '~kadena/_common/types/get-positions'
 import type { KadenaToken } from '~kadena/_common/types/token-type'
 import {
   APR_COLUMN,
@@ -26,11 +27,21 @@ type PositionsTableProps = {
 }
 
 export type IPositionRowData = {
-  token0: KadenaToken
-  token1: KadenaToken
-  pairAddress: string
+  token0: {
+    address: string
+    symbol: string
+    name: string
+  }
+  token1: {
+    address: string
+    symbol: string
+    name: string
+  }
+  poolId: string
   reserve0: string
   reserve1: string
+  apr24h: string
+  valueUsd: string
 }
 
 export const MOCK_TOKEN_1: KadenaToken = {
@@ -78,39 +89,29 @@ export const PositionsTable = ({
     pageSize: 10,
   })
   const { tokenSymbols } = usePoolFilters()
-  const [isLoading, setIsLoading] = useState(true)
-  const [isPending, setIsPending] = useState(true)
 
-  useEffect(() => {
-    setTimeout(() => {
-      setIsLoading(false)
-      setIsPending(false)
-    }, 1200)
-  }, [])
+  const { data: positions, isLoading } = useMyPositions()
+  console.log('positions', positions)
 
   const filteredData = useMemo(() => {
-    if (!POOLS) return []
-    if (!tokenSymbols.length) return POOLS
+    if (!positions) return []
+    if (!tokenSymbols.length) return positions
     const queries = tokenSymbols.map((symbol) =>
       symbol.toLowerCase()?.replaceAll(' ', ''),
     )
 
-    return POOLS.filter((pool) => {
+    return positions.filter((pool) => {
       const poolValues = [
-        pool.pairAddress,
-        pool.token0?.tokenAddress,
-        pool.token1?.tokenAddress,
-        pool.token0?.tokenSymbol,
-        pool.token1?.tokenSymbol,
-        pool.token0?.tokenName,
-        pool.token1?.tokenName,
+        pool.pair.address,
+        pool.pair.reserve0,
+        pool.pair.reserve1,
       ]
 
       return poolValues.some((value) =>
         queries.some((query) => value?.toLowerCase().includes(query)),
       )
     })
-  }, [tokenSymbols])
+  }, [tokenSymbols, positions])
 
   return (
     <Card>
@@ -136,19 +137,29 @@ export const PositionsTable = ({
         </CardTitle>
       </CardHeader>
       <DataTable
-        loading={isLoading || isPending}
+        loading={isLoading}
         data={
           filteredData?.map((pool) => ({
-            token0: pool?.token0,
-            token1: pool?.token1,
-            pairAddress: pool?.pairAddress,
-            reserve0: pool?.reserve0,
-            reserve1: pool?.reserve1,
+            token0: {
+              address: pool?.pair.reserve0,
+              symbol: 'TKN1',
+              name: 'Token1',
+            },
+            token1: {
+              address: pool?.pair.reserve1,
+              symbol: 'TKN2',
+              name: 'Token2',
+            },
+            poolId: pool?.id,
+            reserve0: pool?.pair.reserve0,
+            reserve1: pool?.pair.reserve1,
+            apr24h: pool?.apr24h,
+            valueUsd: pool?.valueUsd,
           })) ?? []
         }
-        columns={[POSITION_NAME_COLUMN, VALUE_COLUMN, SIZE_COLUMN, APR_COLUMN]}
-        linkFormatter={(data: IMyPositionData) => {
-          return `/kadena/pool/${data?.pairAddress}/add`
+        columns={[POSITION_NAME_COLUMN, VALUE_COLUMN, APR_COLUMN]}
+        linkFormatter={(data: IPositionRowData) => {
+          return `/kadena/pool/${data?.poolId}/add`
         }}
         externalLink={false}
         pagination={true}

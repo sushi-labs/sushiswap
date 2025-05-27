@@ -11,9 +11,7 @@ import {
   CardTitle,
   SkeletonText,
 } from '@sushiswap/ui'
-import Image from 'next/image'
 import { type FC, type ReactNode, forwardRef, useMemo } from 'react'
-import { Amount, Token, type Type } from 'sushi/currency'
 import { formatUSD } from 'sushi/format'
 import type { PoolByIdResponse } from '~kadena/_common/types/get-pool-by-id'
 import { Icon } from '../../General/Icon'
@@ -23,8 +21,8 @@ interface PoolCompositionProps {
 }
 
 export const PoolComposition: FC<PoolCompositionProps> = ({ pool }) => {
-  const token0Name = pool?.token0.name === 'coin' ? 'KDA' : pool?.token0.name
-  const token1Name = pool?.token1.name === 'coin' ? 'KDA' : pool?.token1.name
+  const token0Name = pool?.token0?.name === 'coin' ? 'KDA' : pool?.token0?.name
+  const token1Name = pool?.token1?.name === 'coin' ? 'KDA' : pool?.token1?.name
   const token0Symbol =
     token0Name === 'coin' ? 'KDA' : token0Name?.slice(0, 3).toUpperCase()
   const token1Symbol =

@@ -20,13 +20,22 @@ import { LiquidityItem } from '../PoolDetails/LiquidityItem'
 import { useRemoveLiqDispatch } from '../Remove/pool-remove-provider'
 import { usePoolState } from '../pool-provider'
 
+export type TempToken = {
+  tokenName: string
+  tokenId?: string
+  tokenSymbol: string
+  tokenImage: string
+  tokenDecimals?: number
+  tokenAddress?: string
+}
+
 export const PoolPosition = ({
   token0,
   token1,
   isLoading,
 }: {
-  token0: KadenaToken | undefined
-  token1: KadenaToken | undefined
+  token0: TempToken | undefined
+  token1: TempToken | undefined
   isLoading: boolean
 }) => {
   const token0StakedInUsd = 0
@@ -151,7 +160,6 @@ export const PoolPosition = ({
       </CardHeader>
       <CardContent>
         <CardGroup>
-          {/* <CardLabel>Unstaked</CardLabel> */}
           <LiquidityItem
             isLoading={loading}
             token={token0}

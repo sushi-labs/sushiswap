@@ -32,11 +32,11 @@ export const WalletConnector = (props: ButtonProps) => {
           asChild
           {...props}
         >
-          {isConnected ? (
+          {isConnected && activeAccount?.accountName ? (
             <>
-              <JazzIcon diameter={20} address={activeAccount.accountName} />
+              <JazzIcon diameter={20} address={activeAccount?.accountName} />
               <span className="hidden sm:block">
-                {truncateText(activeAccount.accountName)}
+                {truncateText(activeAccount?.accountName)}
               </span>
             </>
           ) : (

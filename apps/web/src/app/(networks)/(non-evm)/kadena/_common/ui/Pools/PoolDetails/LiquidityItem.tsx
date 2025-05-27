@@ -1,7 +1,7 @@
 import { CardItem } from '@sushiswap/ui'
 import { formatUSD } from 'sushi/format'
-import type { KadenaToken } from '~kadena/_common/types/token-type'
 import { Icon } from '~kadena/_common/ui/General/Icon'
+import type { TempToken } from '../PoolPosition/PoolPosition'
 
 export const LiquidityItem = ({
   isLoading,
@@ -10,7 +10,7 @@ export const LiquidityItem = ({
   usdAmount,
 }: {
   isLoading: boolean
-  token: KadenaToken | undefined
+  token: TempToken | undefined
   amount: string
   usdAmount: string
 }) => {

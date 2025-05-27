@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server'
+import { GRAPHQL_ENDPOINT } from '~kadena/_common/lib/graphql/endpoint'
 import { getAllPools } from '~kadena/_common/lib/graphql/queries/get-all-pools'
-
-const GRAPHQL_ENDPOINT = 'https://api.mainnet.kadindexer.io/v0'
 
 export async function GET(req: Request): Promise<NextResponse> {
   const { searchParams } = new URL(req.url)

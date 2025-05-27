@@ -27,8 +27,8 @@ export const PoolHeader = ({
   })
   console.log('poolheader usePoolById', data)
 
-  const token0Name = data?.token0.name
-  const token1Name = data?.token1.name
+  const token0Name = data?.token0?.name
+  const token1Name = data?.token1?.name
   const token0Symbol =
     token0Name === 'coin' ? 'KDA' : token0Name?.slice(0, 3).toUpperCase()
   const token1Symbol =
@@ -119,7 +119,7 @@ export const PoolHeader = ({
               </span>
               <LinkExternal
                 target="_blank"
-                href={getChainwebAddressLink(data?.token0.name ?? '')}
+                href={getChainwebAddressLink(data?.token0?.name ?? '')}
               >
                 <Button
                   asChild
@@ -138,7 +138,7 @@ export const PoolHeader = ({
               </span>
               <LinkExternal
                 target="_blank"
-                href={getChainwebAddressLink(data?.token1.name ?? '')}
+                href={getChainwebAddressLink(data?.token1?.name ?? '')}
               >
                 <Button
                   asChild

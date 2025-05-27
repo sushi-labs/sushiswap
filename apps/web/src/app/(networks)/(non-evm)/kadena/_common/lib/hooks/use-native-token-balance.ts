@@ -1,4 +1,3 @@
-import { Pact, createClient } from '@kadena/client'
 import { useQuery } from '@tanstack/react-query'
 import { kadenaClient } from '~kadena/_common/constants/client'
 import {
@@ -41,6 +40,5 @@ export const useNativeTokenBalance = ({
     enabled: !!account && enabled,
     staleTime: 60 * 1000,
     gcTime: 5 * 60 * 1000,
-    refetchOnWindowFocus: false,
   })
 }
