@@ -27,6 +27,9 @@ const iconButtonVariants = cva(
         secondary: 'bg-secondary hover:bg-muted focus:bg-accent',
         tertiary:
           'dark:bg-skyblue/10 hover:dark:bg-skyblue/20 focus:dark:bg-skyblue/30 active:dark:bg-skyblue/20 dark:text-skyblue bg-blue/10 hover:bg-blue/20 focus:bg-blue/30 active:bg-blue/20 text-blue',
+        quaternary:
+          'bg-blue-550/10 text-blue-550 hover:bg-blue-550/20 focus:bg-blue-550/30',
+
         ghost: 'hover:bg-secondary focus:bg-accent',
         link: 'text-blue hover:text-blue-700 font-semibold !p-0 !h-[unset] !min-h-[unset]',
       },

@@ -11,6 +11,7 @@ import { TradeModeButtons } from './trade-mode-buttons'
 import { CrossChainSwapWidget } from './widgets/cross-chain-swap'
 import { SwapWidget } from './widgets/swap'
 import { DCAWidget, LimitWidget } from './widgets/twap'
+import { Wrapper } from './wrapper'
 
 export const TradeWidget = () => {
   const {
@@ -21,7 +22,7 @@ export const TradeWidget = () => {
 
   return (
     <EdgeProvider config={modeEdge}>
-      <div className="bg-white dark:bg-slate-800 p-4 rounded-xl">
+      <Wrapper>
         <Collapsible open={true} disabled={!tradeModeChanged}>
           <div className="flex flex-col gap-4">
             {tradeMode === 'swap' && (
@@ -62,7 +63,7 @@ export const TradeWidget = () => {
             )}
           </div>
         </Collapsible>
-      </div>
+      </Wrapper>
     </EdgeProvider>
   )
 }

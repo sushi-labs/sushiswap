@@ -1,5 +1,4 @@
 'use client'
-//TODO: remove old version of react-toastify
 import 'react-toastify-v2/dist/ReactToastify.css'
 
 import { Button, classNames, useBreakpoint } from '@sushiswap/ui'

@@ -1,8 +1,7 @@
 'use client'
 
-import { createSuccessToast } from '@sushiswap/notifications'
 import { Container } from '@sushiswap/ui'
-import React, { useEffect } from 'react'
+import React from 'react'
 import type { NonStandardChainId } from 'src/config'
 import { useSkaleEuropaFaucet } from 'src/lib/hooks'
 import { useHeaderNetworkSelector } from 'src/lib/wagmi/components/header-network-selector'
@@ -11,6 +10,7 @@ import {
   type TradeMode,
 } from 'src/ui/swap/trade/config'
 import { useDerivedStateSimpleTrade } from 'src/ui/swap/trade/derivedstate-simple-trade-provider'
+import { Search } from 'src/ui/swap/trade/search/search'
 import { TradeViewSwitch } from 'src/ui/swap/trade/trade-view-switch'
 import { TradeWidget } from 'src/ui/swap/trade/trade-widget'
 import type { EvmChainId } from 'sushi/chain'
@@ -29,44 +29,6 @@ export default function TradePage() {
   } = useDerivedStateSimpleTrade()
   useHeaderNetworkSelector(chainIdsByTradeMode[tradeMode])
   useSkaleEuropaFaucet()
-
-  useEffect(() => {
-    const timeout = setTimeout(() => {
-      createSuccessToast({
-        summary: 'This is an example toast',
-        href: 'https://sushi.com',
-        type: 'addLiquidity',
-        chainId: 1,
-        txHash: `0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef${Date.now()}1`,
-        account: '0x1234567890abcdef1234567890abcdef12345678',
-        groupTimestamp: 0,
-        timestamp: 0,
-      })
-      createSuccessToast({
-        summary: 'This is an example toast',
-        href: 'https://sushi.com',
-        type: 'removeLiquidity',
-        chainId: 1,
-        txHash: `0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef${Date.now()}2`,
-        account: '0x1234567890abcdef1234567890abcdef12345678',
-        groupTimestamp: 0,
-        timestamp: 1,
-      })
-      createSuccessToast({
-        summary: 'This is an example toast',
-        href: 'https://sushi.com',
-        type: 'dca',
-        chainId: 1,
-        txHash: `0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef${Date.now()}3`,
-        account: '0x1234567890abcdef1234567890abcdef12345678',
-        groupTimestamp: 0,
-        timestamp: 2,
-      })
-    }, 2000)
-    return () => {
-      clearTimeout(timeout)
-    }
-  }, [])
 
   return (
     <>
@@ -91,10 +53,7 @@ export default function TradePage() {
                 </div>
               </div>
               <div className="flex w-full flex-col gap-4 md:w-[480px]">
-                <div className="border w-full h-[210px] rounded-xl">
-                  <span className="hidden md:block">search</span>
-                  <span className="md:hidden block">fav/recent + search</span>
-                </div>
+                <Search />
                 <TradeWidget />
                 <div className="w-full h-[420px] rounded-xl border hidden md:block">
                   fav/recent
