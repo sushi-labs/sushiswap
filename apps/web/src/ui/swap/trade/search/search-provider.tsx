@@ -13,9 +13,11 @@ import {
 interface State {
   mutate: {
     setSearchValue(value: string): void
+    clearSearchValue(): void
   }
   state: {
     searchValue: string
+    debouncedSearchValue: string
   }
 }
 
@@ -26,11 +28,15 @@ interface SearchProviderProps {
 }
 
 const SearchProvider: FC<SearchProviderProps> = ({ children }) => {
-  const [_searchValue, _setSearchValue] = useState<string>('')
-  const searchValue = useDebounce(_searchValue, 200)
+  const [searchValue, _setSearchValue] = useState<string>('')
+  const debouncedSearchValue = useDebounce(searchValue, 200)
 
   const setSearchValue = useCallback((value: string) => {
     _setSearchValue(value)
+  }, [])
+
+  const clearSearchValue = useCallback(() => {
+    _setSearchValue('')
   }, [])
 
   return (
@@ -39,12 +45,14 @@ const SearchProvider: FC<SearchProviderProps> = ({ children }) => {
         return {
           mutate: {
             setSearchValue,
+            clearSearchValue,
           },
           state: {
             searchValue,
+            debouncedSearchValue,
           },
         }
-      }, [searchValue, setSearchValue])}
+      }, [searchValue, setSearchValue, debouncedSearchValue, clearSearchValue])}
     >
       {children}
     </SearchContext.Provider>
