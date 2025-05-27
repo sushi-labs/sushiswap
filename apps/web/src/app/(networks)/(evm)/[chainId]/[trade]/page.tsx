@@ -12,6 +12,7 @@ import {
 import { useDerivedStateSimpleTrade } from 'src/ui/swap/trade/derivedstate-simple-trade-provider'
 import { FavoriteRecentTabView } from 'src/ui/swap/trade/favorite-recent/favorite-recent-tab-view'
 import { Search } from 'src/ui/swap/trade/search/search'
+import { LimitOrdersTable } from 'src/ui/swap/trade/tables/limit-orders-table'
 import { TradeViewSwitch } from 'src/ui/swap/trade/trade-view-switch'
 import { TradeWidget } from 'src/ui/swap/trade/trade-widget'
 import type { EvmChainId } from 'sushi/chain'
@@ -44,13 +45,13 @@ export default function TradePage() {
       {tradeView === 'advanced' && (
         <main className="lg:p-4 mt-9 mb-[86px] animate-slide">
           <Container maxWidth="screen-2xl" className="px-4">
-            <div className="flex-col-reverse md:flex-row flex w-full gap-4">
+            <div className="flex flex-col-reverse w-full gap-4 md:flex-row">
               <div className="flex w-full flex-col gap-4 md:w-1/2 lg:w-[calc(100%-480px)]">
                 <div className="w-full md:h-[648px] rounded-xl border">
                   chart
                 </div>
                 <div className="w-full md:h-[320px] rounded-xl border">
-                  tables
+                  <LimitOrdersTable />
                 </div>
               </div>
               <div className="flex w-full flex-col gap-4 md:w-[480px]">
