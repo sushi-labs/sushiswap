@@ -100,7 +100,7 @@ export const PortfolioOrders = () => {
         ) : null}
       </div>
 
-      <div className="flex flex-col gap-y-5 px-5 overflow-y-auto">
+      <div className="flex flex-col gap-y-5 px-5 overflow-y-auto hide-scrollbar">
         {content}
       </div>
     </div>
