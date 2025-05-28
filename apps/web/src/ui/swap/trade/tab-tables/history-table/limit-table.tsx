@@ -1,7 +1,7 @@
 'use client'
 
-import { CurrencyDollarIcon } from '@heroicons/react-v1/outline'
-import { XMarkIcon } from '@heroicons/react/24/solid'
+import { ArrowUpRightIcon } from '@heroicons/react/24/outline'
+import { CurrencyDollarIcon } from '@heroicons/react/24/outline'
 import { Card, Chip, Currency, DataTable, Loader } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import type { ColumnDef } from '@tanstack/react-table'
@@ -16,68 +16,84 @@ import { formatNumber, formatPercent, formatUSD } from 'sushi/format'
 /* 📝 Types & Mock Data                                               */
 /* ------------------------------------------------------------------ */
 
-export interface LimitOrder {
+export type LimitOrderStatus = 'Completed' | 'Cancelled' | 'Pending'
+
+export interface LimitOrderHistory {
   id: string
-  chainId: number
+  timestamp: number
   buyToken: ReturnType<typeof Native.onChain>
   buyAmount: number
   sellToken: ReturnType<typeof Native.onChain>
   sellAmount: number
-  valueUSD: number
-  pnlPercent: number
+  chainId: number
+  valueUsd: number
+  pnlUsd: number
+  priceUsd: number
   filledAmount: number
   totalAmount: number
   filledPercent: number
-  timestamp: number
-  priceUsd: number
+  status: LimitOrderStatus
 }
 
-const MOCK_DATA: LimitOrder[] = [
+const MOCK_DATA: LimitOrderHistory[] = [
   {
     id: '1',
+    timestamp: 1736122860000, // 02/04/25 3:41 PM
+    buyToken: Native.onChain(1), // SUSHI
+    buyAmount: 21,
+    sellToken: Native.onChain(1), // ETH
+    sellAmount: 0.01,
     chainId: 1,
-    buyToken: Native.onChain(1), // ETH
-    buyAmount: 0.42,
-    sellToken: Native.onChain(137), // MATIC
-    sellAmount: 1200,
-    valueUSD: 1200,
-    pnlPercent: 6.4,
-    filledAmount: 0,
-    totalAmount: 0.42,
-    filledPercent: 0,
-    timestamp: 1741737600000, // 2025-04-10
-    priceUsd: 0.84,
+    valueUsd: 100.23,
+    pnlUsd: +19.8,
+    priceUsd: 0.86,
+    filledAmount: 21,
+    totalAmount: 21,
+    filledPercent: 100,
+    status: 'Completed',
   },
   {
     id: '2',
-    chainId: 56,
-    buyToken: Native.onChain(56), // BNB
-    buyAmount: 10,
-    sellToken: Native.onChain(1), // ETH
-    sellAmount: 32,
-    valueUSD: 950,
-    pnlPercent: -3.2,
-    filledAmount: 5,
-    totalAmount: 10,
-    filledPercent: 50,
-    timestamp: 1739644800000, // 2025-03-18
-    priceUsd: 1.2,
+    timestamp: 1736122860000,
+    buyToken: Native.onChain(1),
+    buyAmount: 21,
+    sellToken: Native.onChain(1),
+    sellAmount: 0.01,
+    chainId: 137,
+    valueUsd: 100.23,
+    pnlUsd: +19.8,
+    priceUsd: 0.86,
+    filledAmount: 10,
+    totalAmount: 21,
+    filledPercent: 45,
+    status: 'Cancelled',
   },
-  // Add more rows as needed for layout
 ]
 
 /* ------------------------------------------------------------------ */
 /* 🔢 Column Definitions                                              */
 /* ------------------------------------------------------------------ */
 
-const BUY_COLUMN: ColumnDef<LimitOrder> = {
+/** Date column */
+const DATE_COLUMN: ColumnDef<LimitOrderHistory> = {
+  id: 'date',
+  header: 'Date',
+  enableSorting: false,
+  accessorFn: (row) => row.timestamp,
+  cell: ({ row }) =>
+    format(new Date(row.original.timestamp), 'MM/dd/yy h:mm a'),
+}
+
+/** Buy column */
+const BUY_COLUMN: ColumnDef<LimitOrderHistory> = {
   id: 'buy',
   header: 'Buy',
-  accessorFn: (row) => row,
   enableSorting: false,
+
+  accessorFn: (row) => row.buyAmount,
   cell: ({ row }) => (
     <div className="flex items-center gap-2">
-      <Currency.Icon disableLink currency={row.original.buyToken} />{' '}
+      <Currency.Icon currency={row.original.buyToken} width={18} height={18} />
       <span>
         {formatNumber(row.original.buyAmount)} {row.original.buyToken.symbol}
       </span>
@@ -85,14 +101,16 @@ const BUY_COLUMN: ColumnDef<LimitOrder> = {
   ),
 }
 
-const SELL_COLUMN: ColumnDef<LimitOrder> = {
+/** Sell column */
+const SELL_COLUMN: ColumnDef<LimitOrderHistory> = {
   id: 'sell',
   header: 'Sell',
-  accessorFn: (row) => row,
   enableSorting: false,
+
+  accessorFn: (row) => row.sellAmount,
   cell: ({ row }) => (
     <div className="flex items-center gap-2">
-      <Currency.Icon disableLink currency={row.original.sellToken} />
+      <Currency.Icon currency={row.original.sellToken} width={18} height={18} />
       <span>
         {formatNumber(row.original.sellAmount)} {row.original.sellToken.symbol}
       </span>
@@ -100,71 +118,74 @@ const SELL_COLUMN: ColumnDef<LimitOrder> = {
   ),
 }
 
-const CHAIN_COLUMN: ColumnDef<LimitOrder> = {
+/** Chain column */
+const CHAIN_COLUMN: ColumnDef<LimitOrderHistory> = {
   id: 'chain',
   header: 'Chain',
   enableSorting: false,
+
   accessorFn: (row) => row.chainId,
   cell: ({ row }) => (
     <NetworkIcon
       type="square"
       chainId={row.original.chainId}
-      width={16}
-      height={16}
-      className="rounded-md"
+      width={20}
+      height={20}
+      className="border rounded-sm dark:border-[#F5F5F5]"
     />
   ),
 }
 
-const VALUE_PNL_COLUMN: ColumnDef<LimitOrder> = {
+/** Value / PnL column */
+const VALUE_PNL_COLUMN: ColumnDef<LimitOrderHistory> = {
   id: 'valueUsd',
-  header: 'Value / Est. PnL',
+  header: () => <span className="border-b border-dotted">Value / PnL</span>,
   enableSorting: false,
-  accessorFn: (row) => row.valueUSD,
-  sortingFn: ({ original: a }, { original: b }) => a.valueUSD - b.valueUSD,
+
+  accessorFn: (row) => row.valueUsd,
   cell: ({ row }) => (
-    <div className="flex flex-col">
-      <span>{formatUSD(row.original.valueUSD)}</span>
+    <div className="flex flex-col ">
+      <span>{formatUSD(row.original.valueUsd)}</span>
       <span
         className={
-          row.original.pnlPercent > 0
+          row.original.pnlUsd > 0
             ? 'text-xs text-green'
-            : row.original.pnlPercent < 0
+            : row.original.pnlUsd < 0
               ? 'text-xs text-red'
               : 'text-xs text-muted-foreground'
         }
       >
-        {row.original.pnlPercent > 0 ? '+' : ''}
-        {formatPercent(row.original.pnlPercent)}
+        {row.original.pnlUsd > 0 ? '+' : ''}
+        {formatUSD(row.original.pnlUsd)}
       </span>
     </div>
   ),
 }
 
-const PRICE_USD_COLUMN: ColumnDef<LimitOrder> = {
+/** Price USD column */
+const PRICE_USD_COLUMN: ColumnDef<LimitOrderHistory> = {
   id: 'priceUsd',
+  enableSorting: false,
+
   header: () => (
-    <div className="flex items-center gap-1">
+    <div className="flex items-start gap-1">
       <span>Price</span>
-      <span className="inline-flex items-center dark:text-[#3DB1FF] font-normal gap-[1px] border-b border-dashed border-current pb-[1px]">
-        <DollarCircledIcon className="w-4 h-4" />
+      <span className="inline-flex items-center dark:text-skyblue font-normal gap-[1px] border-b border-dashed border-current">
+        <DollarCircledIcon className="w-3 h-3" />
         <span>USD</span>
       </span>
     </div>
   ),
-  enableSorting: false,
   accessorFn: (row) => row.priceUsd,
-  cell: ({ row }) => (
-    <div className="flex items-center gap-2">
-      <span>{formatUSD(row.original.priceUsd)}</span>
-    </div>
-  ),
+  cell: ({ row }) => <span>{formatUSD(row.original.priceUsd)}</span>,
 }
 
-const FILLED_COLUMN: ColumnDef<LimitOrder> = {
+/** Filled column: ratio + percentage chip */
+const FILLED_COLUMN: ColumnDef<LimitOrderHistory> = {
   id: 'filled',
   header: 'Filled',
   enableSorting: false,
+
   accessorFn: (row) => row.filledPercent,
   cell: ({ row }) => (
     <div className="flex items-center gap-2">
@@ -179,44 +200,45 @@ const FILLED_COLUMN: ColumnDef<LimitOrder> = {
   ),
 }
 
-const TIME_COLUMN: ColumnDef<LimitOrder> = {
-  id: 'time',
-  header: 'Time',
+/** Status column */
+const STATUS_COLUMN: ColumnDef<LimitOrderHistory> = {
+  id: 'status',
+  header: 'Status',
   enableSorting: false,
-  accessorFn: (row) => row.timestamp,
-  cell: ({ row }) => format(new Date(row.original.timestamp), 'yyyy/MM/dd'),
+  accessorFn: (row) => row.status,
+  cell: ({ row }) => {
+    const color =
+      row.original.status === 'Completed'
+        ? 'text-green'
+        : row.original.status === 'Cancelled'
+          ? 'text-orange-400'
+          : 'text-muted-foreground'
+    return (
+      <span className={`${color} inline-flex items-center gap-1`}>
+        {row.original.status}
+        <ArrowUpRightIcon className="w-3.5 h-3.5" />
+      </span>
+    )
+  },
 }
 
-const ACTION_COLUMN: ColumnDef<LimitOrder> = {
-  id: 'action',
-  header: 'Action',
-  enableSorting: false,
-  accessorFn: (row) => row.id,
-  cell: () => (
-    <XMarkIcon
-      className="w-4 h-4 ml-auto cursor-pointer text-red"
-      aria-label="Cancel order"
-    />
-  ),
-}
-
-const COLUMNS: ColumnDef<LimitOrder>[] = [
+/** Assemble column list */
+const COLUMNS: ColumnDef<LimitOrderHistory>[] = [
+  DATE_COLUMN,
   BUY_COLUMN,
   SELL_COLUMN,
   CHAIN_COLUMN,
   VALUE_PNL_COLUMN,
   PRICE_USD_COLUMN,
   FILLED_COLUMN,
-  TIME_COLUMN,
-  ACTION_COLUMN,
+  STATUS_COLUMN,
 ]
 
 /* ------------------------------------------------------------------ */
 /* 📈 Table Component                                                 */
 /* ------------------------------------------------------------------ */
 
-export const LimitOrdersTable = () => {
-  // Layout-only phase: static mock data, no pagination needed yet
+export const LimitOrdersHistoryTable = () => {
   const data = MOCK_DATA
 
   return (
@@ -236,7 +258,7 @@ export const LimitOrdersTable = () => {
           data={data}
           loading={false}
           className="border-none"
-          pagination={true}
+          pagination
         />
       </Card>
     </InfiniteScroll>

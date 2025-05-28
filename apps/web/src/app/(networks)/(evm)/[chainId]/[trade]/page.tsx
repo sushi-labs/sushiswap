@@ -12,7 +12,9 @@ import {
 import { useDerivedStateSimpleTrade } from 'src/ui/swap/trade/derivedstate-simple-trade-provider'
 import { FavoriteRecentTabView } from 'src/ui/swap/trade/favorite-recent/favorite-recent-tab-view'
 import { Search } from 'src/ui/swap/trade/search/search'
-import { LimitOrdersTable } from 'src/ui/swap/trade/tables/limit-orders-table'
+import { DCAOrdersTable } from 'src/ui/swap/trade/tab-tables/dca-orders-table/dca-orders-table'
+import { LimitOrdersTable } from 'src/ui/swap/trade/tab-tables/limit-orders-table/limit-orders-table'
+import { TradeTableTabs } from 'src/ui/swap/trade/tab-tables/trade-tabs/trade-table-tabs'
 import { TradeViewSwitch } from 'src/ui/swap/trade/trade-view-switch'
 import { TradeWidget } from 'src/ui/swap/trade/trade-widget'
 import type { EvmChainId } from 'sushi/chain'
@@ -51,7 +53,7 @@ export default function TradePage() {
                   chart
                 </div>
                 <div className="w-full md:h-[320px]">
-                  <LimitOrdersTable />
+                  <TradeTableTabs />
                 </div>
               </div>
               <div className="flex w-full flex-col gap-4 md:w-[480px]">
