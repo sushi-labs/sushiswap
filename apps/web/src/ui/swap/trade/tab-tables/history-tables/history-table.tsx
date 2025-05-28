@@ -9,7 +9,7 @@ import {
 import { useState } from 'react'
 import { DCAOrdersHistoryTable } from './dca-history-table'
 import { LimitOrdersHistoryTable } from './limit-history-table'
-import { MarketTable } from './market-history-table'
+import { MarketTable } from './market-history-table/market-history-table'
 
 export const TABS = [
   {
