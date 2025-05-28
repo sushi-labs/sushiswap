@@ -51,7 +51,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${inter.variable} ${roboto_mono.variable} dark`}
+      className={`${inter.variable} ${roboto_mono.variable} dark hide-scrollbar`}
       suppressHydrationWarning
     >
       <head>
