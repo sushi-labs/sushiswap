@@ -43,7 +43,7 @@ export const SearchBar = () => {
             className="!px-3"
           >
             <div className="flex items-center justify-between mb-4">
-              <DialogTitle>Search</DialogTitle>
+              <DialogTitle className="text-xl font-medium">Search</DialogTitle>
               <DialogClose className="mr-2">
                 <XIcon width={20} height={20} />
               </DialogClose>

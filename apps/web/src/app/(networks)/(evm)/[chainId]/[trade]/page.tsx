@@ -10,6 +10,7 @@ import {
   type TradeMode,
 } from 'src/ui/swap/trade/config'
 import { useDerivedStateSimpleTrade } from 'src/ui/swap/trade/derivedstate-simple-trade-provider'
+import { FavoriteRecentTabView } from 'src/ui/swap/trade/favorite-recent/favorite-recent-tab-view'
 import { Search } from 'src/ui/swap/trade/search/search'
 import { TradeViewSwitch } from 'src/ui/swap/trade/trade-view-switch'
 import { TradeWidget } from 'src/ui/swap/trade/trade-widget'
@@ -55,9 +56,7 @@ export default function TradePage() {
               <div className="flex w-full flex-col gap-4 md:w-[480px]">
                 <Search />
                 <TradeWidget />
-                <div className="w-full h-[420px] rounded-xl border hidden md:block">
-                  fav/recent
-                </div>
+                <FavoriteRecentTabView />
               </div>
             </div>
           </Container>
