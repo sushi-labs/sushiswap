@@ -70,7 +70,11 @@ export const CHAIN_COLUMN: ColumnDef<LimitOrder> = {
 
 export const VALUE_PNL_COLUMN: ColumnDef<LimitOrder> = {
   id: 'valueUsd',
-  header: 'Value / Est. PnL',
+  header: () => (
+    <span className="border-b border-dotted border-muted-foreground">
+      Value / Est. PnL
+    </span>
+  ),
   enableSorting: false,
   accessorFn: (row) => row.valueUSD,
   sortingFn: ({ original: a }, { original: b }) => a.valueUSD - b.valueUSD,
@@ -98,7 +102,7 @@ export const PRICE_USD_COLUMN: ColumnDef<LimitOrder> = {
   header: () => (
     <div className="flex items-center gap-1">
       <span>Price</span>
-      <span className="inline-flex items-center dark:text-skyblue font-normal gap-[1px] border-b border-dashed border-current pb-[1px]">
+      <span className="inline-flex items-center dark:text-skyblue text-blue font-normal gap-[1px] border-b border-dashed border-current pb-[1px]">
         <DollarCircledIcon />
         <span>USD</span>
       </span>
@@ -124,7 +128,7 @@ export const FILLED_COLUMN: ColumnDef<LimitOrder> = {
         {formatNumber(row.original.filledAmount)}/
         {formatNumber(row.original.totalAmount)} {row.original.buyToken.symbol}
       </span>
-      <Chip className="dark:bg-[#222137] !p-2 dark:text-[#ABA5B0]">
+      <Chip className="dark:bg-[#222137] bg-[#E8E7EB] dark:text-slate-450 !p-2 dark:text-slate-500 text-slate-450">
         {formatPercent(row.original.filledPercent)}
       </Chip>
     </div>

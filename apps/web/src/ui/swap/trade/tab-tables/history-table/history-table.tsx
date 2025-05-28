@@ -7,9 +7,9 @@ import {
   TabsTrigger,
 } from '@sushiswap/ui'
 import { useState } from 'react'
-
-import { LimitOrdersHistoryTable } from './limit-table'
-import { MarketTable } from './market-table'
+import { DCAOrdersHistoryTable } from './dca-history-table'
+import { LimitOrdersHistoryTable } from './limit-history-table'
+import { MarketTable } from './market-history-table'
 
 export const TABS = [
   {
@@ -41,7 +41,7 @@ export const HistoryTable = () => {
             <TabsTrigger
               key={tab.value}
               value={tab.value}
-              className="!bg-transparent border-none"
+              className="!bg-transparent border-none !px-0 !shadow-none"
             >
               <Button
                 size="sm"
@@ -57,6 +57,9 @@ export const HistoryTable = () => {
         </TabsContent>
         <TabsContent value={TABS[1].value}>
           <LimitOrdersHistoryTable />
+        </TabsContent>
+        <TabsContent value={TABS[2].value}>
+          <DCAOrdersHistoryTable />
         </TabsContent>
       </Tabs>
     </Card>
