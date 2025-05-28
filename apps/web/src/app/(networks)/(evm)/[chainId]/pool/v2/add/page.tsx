@@ -25,7 +25,7 @@ import {
   NativeAddress,
 } from 'src/lib/constants'
 import { isSushiSwapV2Pool } from 'src/lib/functions'
-import { useZap } from 'src/lib/hooks'
+import { isZapRouteNotFoundError, useZap } from 'src/lib/hooks'
 import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
 import { warningSeverity } from 'src/lib/swap/warningSeverity'
 import { Web3Input } from 'src/lib/wagmi/components/web3-input'
@@ -286,6 +286,7 @@ const _ZapWidget: FC<ZapWidgetProps> = ({
 
   const {
     data: zapResponse,
+    isLoading: isZapLoading,
     isError: isZapError,
     error: zapError,
   } = useZap({
@@ -456,10 +457,12 @@ const _ZapWidget: FC<ZapWidgetProps> = ({
                       fullWidth
                       testId="zap-liquidity"
                       onClick={() => preparedTx && sendTransaction(preparedTx)}
-                      loading={!preparedTx || isWritePending}
-                      disabled={isZapError || isEstGasError}
+                      loading={isZapLoading || isWritePending}
+                      disabled={!preparedTx}
                     >
-                      {isZapError || isEstGasError ? (
+                      {zapError && isZapRouteNotFoundError(zapError) ? (
+                        'No route found'
+                      ) : isZapError || isEstGasError ? (
                         'Shoot! Something went wrong :('
                       ) : isWritePending ? (
                         <Dots>Confirm Transaction</Dots>
