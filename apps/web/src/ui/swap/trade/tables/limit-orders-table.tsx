@@ -194,7 +194,7 @@ const ACTION_COLUMN: ColumnDef<LimitOrder> = {
   accessorFn: (row) => row.id,
   cell: () => (
     <XMarkIcon
-      className="w-4 h-4 cursor-pointer text-red"
+      className="w-4 h-4 ml-auto cursor-pointer text-red"
       aria-label="Cancel order"
     />
   ),
@@ -236,6 +236,7 @@ export const LimitOrdersTable = () => {
           data={data}
           loading={false}
           className="border-none"
+          pagination={true}
         />
       </Card>
     </InfiniteScroll>
