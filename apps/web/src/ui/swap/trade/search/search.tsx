@@ -1,4 +1,5 @@
 import { Button } from '@sushiswap/ui'
+import { FavoriteDialog } from '../favorite-recent/favorite-dialog'
 import { Wrapper } from '../wrapper'
 import { AvailableTokens } from './available-tokens'
 import { SearchBar } from './search-bar'
@@ -14,7 +15,7 @@ export const Search = () => {
         <div className="flex justify-between items-center">
           <div className="flex items-center gap-1">
             <Button variant="quaternary">Available</Button>
-            <Button variant="ghost">Favourite</Button>
+            <FavoriteDialog />
             <Button variant="ghost">Recent</Button>
           </div>
 
