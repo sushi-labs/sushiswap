@@ -57,10 +57,14 @@ export const ToastContent: FC<ToastContent> = ({
               </a>
             )}
 <<<<<<< HEAD
+<<<<<<< HEAD
             <span className="text-[10px] font-medium text-gray-600 dark:text-slate-400 black:text-muted-foreground">
 =======
             <span className="text-xs text-[#7B7A87] dark:text-[#ABA5B0]">
 >>>>>>> de54a48669 (Feature/dex 36: toast system (#1874))
+=======
+            <span className="text-xs text-slate-450 dark:text-slate-500">
+>>>>>>> 50bdd3703f (Feature/dex 13: bridge selection flow in search bar (#1878))
               <TimeAgo value={date} />
             </span>
           </>
