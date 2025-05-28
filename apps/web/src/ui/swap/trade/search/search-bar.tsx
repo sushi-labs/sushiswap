@@ -36,7 +36,12 @@ export const SearchBar = () => {
               <MagnifyingGlassIcon width={20} height={20} />
             </Button>
           </DialogTrigger>
-          <DialogContent hideClose variant="semi-opaque" className="!px-3">
+          <DialogContent
+            aria-describedby={undefined}
+            hideClose
+            variant="semi-opaque"
+            className="!px-3"
+          >
             <div className="flex items-center justify-between mb-4">
               <DialogTitle>Search</DialogTitle>
               <DialogClose className="mr-2">
