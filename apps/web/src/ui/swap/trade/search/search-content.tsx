@@ -22,7 +22,7 @@ export const SearchContent = () => {
           variant="naked"
           placeholder="Search by name or address"
           className={classNames(
-            'pl-4 pr-8 placeholder:text-[#7B7A87] !dark:text-[#ABA5B0] placeholder:dark:text-[#7B7A87] rounded-lg py-1 w-full dark:!bg-slate-900 !bg-gray-100',
+            'pl-4 pr-8 placeholder:text-slate-450 !dark:text-slate-500 placeholder:dark:text-slate-450 rounded-lg py-1 w-full dark:!bg-slate-900 !bg-gray-100',
           )}
         />
         {searchValue ? (
@@ -37,7 +37,7 @@ export const SearchContent = () => {
         ) : null}
       </div>
       <Collapsible open={!!searchValue}>
-        <div className="overflow-y-auto text-xs max-h-[calc(100vh-220px)] md:max-h-[250px] grid grid-cols-[30px_auto_auto_auto] gap-2">
+        <div className="overflow-y-auto hide-scrollbar text-xs max-h-[calc(100vh-220px)] md:max-h-[250px] grid grid-cols-[30px_auto_auto_auto] gap-2">
           {/* TODO: loading state */}
           {/* TODO: error state */}
           <div />

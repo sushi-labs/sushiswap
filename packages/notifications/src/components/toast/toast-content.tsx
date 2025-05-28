@@ -48,7 +48,7 @@ export const ToastContent: FC<ToastContent> = ({
                 />
               </a>
             )}
-            <span className="text-xs text-[#7B7A87] dark:text-[#ABA5B0]">
+            <span className="text-xs text-slate-450 dark:text-slate-500">
               <TimeAgo value={date} />
             </span>
           </>

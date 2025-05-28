@@ -1,4 +1,8 @@
-import { ArrowUpIcon, StarIcon } from '@heroicons/react-v1/solid'
+import {
+  ArrowRightIcon,
+  ArrowUpIcon,
+  StarIcon,
+} from '@heroicons/react-v1/solid'
 import {
   Badge,
   Button,
@@ -12,6 +16,7 @@ import { useState } from 'react'
 import { shortenAddress } from 'sushi'
 import { Token } from 'sushi/currency'
 import { formatNumber, formatUSD } from 'sushi/format'
+import { ChainOptionsSelector } from '../../chain-options-selector'
 
 export const SearchItem = () => {
   const [isHovered, setIsHovered] = useState(false)
@@ -120,7 +125,30 @@ export const SearchItem = () => {
             )}
           >
             <div className="flex w-full col-span-4 flex-col gap-4">
-              <div>TODO: bridge info</div>
+              <div className="flex gap-2 items-end">
+                <div className="flex items-start flex-col gap-2 h-full justify-between pb-1">
+                  <span className="text-slate-450 dark:text-slate-500 text-[10px]">
+                    Bridge From
+                  </span>
+                  <div className="flex items-center gap-1 font-medium text-muted-foreground">
+                    <NetworkIcon chainId={1} width={16} height={16} />
+                    <span className="text-xs">Ethereum</span>
+                  </div>
+                </div>
+                <div className="ml-10 mr-3 pb-1">
+                  <ArrowRightIcon
+                    width={16}
+                    height={16}
+                    className="text-slate-450 dark:text-slate-500"
+                  />
+                </div>
+                <div className="flex items-start flex-col gap-2 h-full w-full justify-between">
+                  <span className="text-slate-450 dark:text-slate-500 text-[10px]">
+                    Bridge To
+                  </span>
+                  <ChainOptionsSelector />
+                </div>
+              </div>
               <div className="flex items-center gap-5">
                 <Button
                   className="w-1/2"
