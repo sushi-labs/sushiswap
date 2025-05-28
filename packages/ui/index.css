@@ -165,15 +165,3 @@ html[class="dark"] *.scroll::-webkit-scrollbar-thumb {
 .dark .Toastify__close-button {
   color: #fff !important;
 }
-
-.hide-scrollbar {
-  /* IE and Edge */
-  -ms-overflow-style: none;
-  /* Firefox */
-  scrollbar-width: none;
-}
-
-.hide-scrollbar::-webkit-scrollbar {
-  /* Chrome, Safari, Opera */
-  display: none;
-}
