@@ -9,7 +9,7 @@ import {
 } from '@sushiswap/ui'
 import { useState } from 'react'
 import { DCAOrdersTable } from '../dca-orders-table/dca-orders-table'
-import { HistoryTable } from '../history-table/history-table'
+import { HistoryTable } from '../history-tables/history-table'
 import { LimitOrdersTable } from '../limit-orders-table/limit-orders-table'
 
 export const TABS = [
