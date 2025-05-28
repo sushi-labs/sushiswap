@@ -22,7 +22,7 @@ export const SearchContent = () => {
           variant="naked"
           placeholder="Search by name or address"
           className={classNames(
-            'pl-4 pr-8 placeholder:text-slate-450 !dark:text-slate-500 placeholder:dark:text-slate-450 rounded-lg py-1 w-full dark:!bg-slate-900 !bg-gray-100',
+            'pl-4 pr-8 placeholder:text-slate-450 !dark:text-slate-500 placeholder:dark:text-slate-450 rounded-lg py-1 w-full dark:!bg-slate-800 md:dark:!bg-slate-900 !bg-gray-100',
           )}
         />
         {searchValue ? (
