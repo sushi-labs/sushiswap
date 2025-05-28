@@ -50,7 +50,7 @@ export default function TradePage() {
                 <div className="w-full md:h-[648px] rounded-xl border">
                   chart
                 </div>
-                <div className="w-full md:h-[320px] rounded-xl border">
+                <div className="w-full md:h-[320px]">
                   <LimitOrdersTable />
                 </div>
               </div>
