@@ -30,7 +30,7 @@ export const PortfolioAssets = () => {
   }
 
   return (
-    <div className="flex flex-col gap-y-5 h-full pb-4 overflow-y-auto">
+    <div className="flex flex-col gap-y-2 pb-4 h-full overflow-y-auto hide-scrollbar">
       <div className="px-5">
         <TotalBalance />
       </div>
@@ -43,7 +43,7 @@ export const PortfolioAssets = () => {
           Buy Crypto
         </Button>
       ) : (
-        <div className="flex flex-col gap-y-5 px-4">
+        <div className="flex flex-col gap-y-2 px-4">
           <WalletAssets value={value} onValueChange={handleValueChange} />
           <PositionAssets value={value} onValueChange={handleValueChange} />
           <ClaimableAssets value={value} onValueChange={handleValueChange} />

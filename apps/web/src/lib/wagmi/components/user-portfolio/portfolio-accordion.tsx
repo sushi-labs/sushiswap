@@ -34,7 +34,7 @@ export const PortfolfioAccordion = ({
         >
           {triggerChildren}
         </AccordionTrigger>
-        <AccordionContent className="cursor-default max-h-[225px] overflow-y-auto">
+        <AccordionContent className="cursor-default max-h-[225px] overflow-y-auto hide-scrollbar">
           {children}
         </AccordionContent>
       </AccordionItem>
