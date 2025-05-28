@@ -75,14 +75,12 @@ export const InboxItem = ({
           {ICONS[type] ? ICONS[type] : null}
         </div>
       </div>
-      <div className="flex text-xs font-medium  text-[#6B7280] w-full justify-between items-center gap-x-3 overflow-hidden">
-        <div className="flex flex-col overflow-hidden">
+      <div className="flex text-xs font-medium text-[#6B7280] w-full justify-between items-center gap-x-3">
+        <div className="flex flex-col whitespace-normal">
           <div className="text-sm text-muted-foreground">{TITLE[type]}</div>
-          <div>{details}</div>
+          <div className="">{details}</div>
         </div>
-        <div className="flex-[1_0_20%] flex flex-col overflow-hidden text-right">
-          {date}
-        </div>
+        <div className="flex-[1_0_20%] flex flex-col text-right">{date}</div>
       </div>
     </div>
   )
