@@ -40,7 +40,7 @@ const MOCK_DATA: DCAOrder[] = [
   {
     id: '1',
     chainId: 1,
-    token: Native.onChain(1), // ETH
+    token: Native.onChain(1),
     sizeAmount: 8_000,
     sizeUSD: 8_000,
     filledAmount: 0,
