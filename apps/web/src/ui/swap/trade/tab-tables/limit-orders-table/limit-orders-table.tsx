@@ -47,34 +47,33 @@ export const MOCK_DATA: LimitOrder[] = [
   {
     id: '1',
     chainId: 1,
-    buyToken: Native.onChain(1), // ETH
+    buyToken: Native.onChain(1),
     buyAmount: 0.42,
-    sellToken: Native.onChain(43114), // AVAX
+    sellToken: Native.onChain(43114),
     sellAmount: 1200,
     valueUSD: 1200,
     pnlPercent: 6.4,
     filledAmount: 0,
     totalAmount: 0.42,
     filledPercent: 0,
-    timestamp: 1741737600000, // 2025-04-10
+    timestamp: 1741737600000,
     priceUsd: 0.84,
   },
   {
     id: '2',
     chainId: 56,
-    buyToken: Native.onChain(56), // BNB
+    buyToken: Native.onChain(56),
     buyAmount: 10,
-    sellToken: Native.onChain(1), // ETH
+    sellToken: Native.onChain(1),
     sellAmount: 32,
     valueUSD: 950,
     pnlPercent: -3.2,
     filledAmount: 5,
     totalAmount: 10,
     filledPercent: 50,
-    timestamp: 1739644800000, // 2025-03-18
+    timestamp: 1739644800000,
     priceUsd: 1.2,
   },
-  // Add more rows as needed for layout
 ]
 
 export const LimitOrdersTable = () => {

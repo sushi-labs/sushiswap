@@ -28,7 +28,6 @@ export const TABS = [
 
 export const HistoryTable = () => {
   const [currentTab, setCurrentTab] = useState(TABS[0].value)
-
   return (
     <Card className="p-3 overflow-hidden border-none bg-slate-50 dark:bg-slate-800">
       <Tabs
