@@ -59,6 +59,7 @@ interface DataTableProps<TData, TValue> {
   onPaginationChange?: OnChangeFn<PaginationState>
   rowRenderer?: (row: Row<TData>, value: ReactNode) => ReactNode
   showColumnHeaders?: boolean
+  className?: string
 }
 
 export function DataTable<TData, TValue>({
@@ -75,6 +76,7 @@ export function DataTable<TData, TValue>({
   onPaginationChange,
   rowRenderer,
   showColumnHeaders = true,
+  className,
 }: DataTableProps<TData, TValue>) {
   const [rowSelection, setRowSelection] = React.useState({})
   const [columnVisibility, setColumnVisibility] =
@@ -112,7 +114,9 @@ export function DataTable<TData, TValue>({
   })
 
   return (
-    <div className="space-y-4 border-t border-secondary">
+    <div
+      className={classNames('space-y-4 border-t border-secondary', className)}
+    >
       {toolbar ? toolbar(table) : null}
       <Table className={pagination ? 'border-b border-secondary' : ''}>
         {showColumnHeaders ? (

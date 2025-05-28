@@ -2,7 +2,7 @@
 
 import { CurrencyDollarIcon } from '@heroicons/react-v1/outline'
 import { XMarkIcon } from '@heroicons/react/24/solid'
-import { Chip, Currency, DataTable, Loader } from '@sushiswap/ui'
+import { Card, Chip, Currency, DataTable, Loader } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import type { ColumnDef } from '@tanstack/react-table'
 import { format } from 'date-fns'
@@ -230,7 +230,14 @@ export const LimitOrdersTable = () => {
         </div>
       }
     >
-      <DataTable columns={COLUMNS} data={data} loading={false} />
+      <Card className="overflow-hidden border-none bg-slate-50 dark:bg-slate-800">
+        <DataTable
+          columns={COLUMNS}
+          data={data}
+          loading={false}
+          className="border-none"
+        />
+      </Card>
     </InfiniteScroll>
   )
 }
