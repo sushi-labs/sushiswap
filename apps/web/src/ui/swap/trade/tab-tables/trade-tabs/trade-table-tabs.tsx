@@ -1,11 +1,20 @@
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@sushiswap/ui'
+'use client'
+
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+  classNames,
+} from '@sushiswap/ui'
+import { useState } from 'react'
 import { DCAOrdersTable } from '../dca-orders-table/dca-orders-table'
 import { HistoryTable } from '../history-table/history-table'
 import { LimitOrdersTable } from '../limit-orders-table/limit-orders-table'
 
 export const TABS = [
   {
-    label: 'Limit Orders',
+    label: 'Limit Orders (2)',
     value: 'limit-orders',
   },
   {
@@ -19,14 +28,21 @@ export const TABS = [
 ]
 
 export const TradeTableTabs = () => {
+  const [currentTab, setCurrentTab] = useState(TABS[0].value)
+
   return (
-    <Tabs defaultValue={TABS[0].value}>
+    <Tabs defaultValue={TABS[0].value} onValueChange={setCurrentTab}>
       <TabsList className="border-none">
         {TABS.map((tab) => (
           <TabsTrigger
             key={tab.value}
             value={tab.value}
-            className="text-white dark:data-[state=active]:text-skyblue dark:data-[state=active]:bg-[#3DB1FF14] border-none"
+            className={classNames(
+              'text-primary !shadow-none data-[state=active]:text-blue  dark:data-[state=active]:!text-skyblue transition-colors !pl-3 !pt-2 border-none',
+              currentTab === tab.value
+                ? '!bg-blue/[8%] hover:!bg-blue/[15%] focus:!bg-blue/[18%] dark:!bg-[#3DB1FF]/[8%] dark:hover:!bg-[#3DB1FF]/[15%] dark:focus:!bg-[#3DB1FF]/[18%]'
+                : 'hover:!bg-blue/[8%] focus:!bg-blue/[18%] dark:hover:!bg-[#3DB1FF]/[8%] dark:focus:!bg-[#3DB1FF]/[18%]',
+            )}
           >
             {tab.label}
           </TabsTrigger>

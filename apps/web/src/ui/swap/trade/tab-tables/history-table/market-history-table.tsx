@@ -11,7 +11,7 @@ import {
   SELL_COLUMN,
   TX_HASH_COLUMN,
   VALUE_PNL_COLUMN,
-} from './market-columns'
+} from './market-history-columns'
 
 export interface MarketTrade {
   id: string
@@ -31,28 +31,28 @@ export interface MarketTrade {
 const MOCK_DATA: MarketTrade[] = [
   {
     id: '1',
-    buyToken: Native.onChain(1), // ETH
+    buyToken: Native.onChain(1),
     buyAmount: 0.5,
-    sellToken: Native.onChain(5), // USDT
+    sellToken: Native.onChain(5),
     sellAmount: 850,
     chainFrom: 1,
     chainTo: 56,
     valueUsd: 850,
-    pnlPercent: 190.8 / 850, // ≈ 0.2245
+    pnlPercent: 190.8 / 850,
     priceUsd: 1900,
     txHash: '0x855f13a0d9e3cbe1c0e3255f50Fe',
-    timestamp: 1736122860000, // 02/04/25 3:41 PM
+    timestamp: 1736122860000,
   },
   {
     id: '2',
-    buyToken: Native.onChain(1), // ETH
+    buyToken: Native.onChain(1),
     buyAmount: 0.5,
-    sellToken: Native.onChain(5), // USDT
+    sellToken: Native.onChain(5),
     sellAmount: 850,
     chainFrom: 1,
     chainTo: 56,
     valueUsd: 850,
-    pnlPercent: -10.9 / 850, // ≈ -0.0128
+    pnlPercent: -10.9 / 850,
     priceUsd: 1900,
     txHash: '0x855f13a0d9e3cbe1c0e3255f50Fe',
     timestamp: 1736122860000,

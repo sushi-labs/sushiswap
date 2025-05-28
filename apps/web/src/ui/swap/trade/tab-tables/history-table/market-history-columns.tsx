@@ -9,7 +9,7 @@ import { Icon } from 'node_modules/@sushiswap/ui/dist/components/currency/Icon'
 import { DollarCircledIcon } from 'src/ui/icons/dollar-circled'
 import { formatNumber } from 'sushi/format'
 import { formatUSD } from 'sushi/format'
-import type { MarketTrade } from './market-table'
+import type { MarketTrade } from './market-history-table'
 export const BUY_COLUMN: ColumnDef<MarketTrade> = {
   id: 'buy',
   header: 'Buy',
@@ -52,15 +52,15 @@ export const CHAIN_COLUMN: ColumnDef<MarketTrade> = {
         chainId={row.original.chainFrom}
         width={20}
         height={20}
-        className="border rounded-sm dark:border-[#F5F5F5]"
+        className="border rounded-[4px] dark:border-[#222137] border-[#F5F5F5]"
       />
-      <ArrowSmallRightIcon className="w-3 h-3 text-muted-foreground dark-text-[#ABA5B0]" />
+      <ArrowSmallRightIcon className="w-3 h-3 dark:text-slate-500 text-slate-450" />
       <NetworkIcon
         type="square"
         chainId={row.original.chainTo}
         width={20}
         height={20}
-        className="border rounded-sm dark:border-[#F5F5F5]"
+        className="border rounded-[4px] dark:border-[#222137] border-[#F5F5F5]"
       />
     </div>
   ),
@@ -68,7 +68,11 @@ export const CHAIN_COLUMN: ColumnDef<MarketTrade> = {
 
 export const VALUE_PNL_COLUMN: ColumnDef<MarketTrade> = {
   id: 'valueUsd',
-  header: 'Value / PnL',
+  header: () => (
+    <span className="border-b border-dotted border-muted-foreground">
+      Value / PnL
+    </span>
+  ),
   enableSorting: false,
   accessorFn: (row) => row.valueUsd,
   sortingFn: ({ original: a }, { original: b }) => a.valueUsd - b.valueUsd,
@@ -97,7 +101,7 @@ export const PRICE_USD_COLUMN: ColumnDef<MarketTrade> = {
   header: () => (
     <div className="flex items-start gap-1">
       <span>Price</span>
-      <span className="inline-flex items-center dark:text-skyblue font-normal gap-[1px] border-b border-dashed border-current">
+      <span className="inline-flex items-center dark:text-skyblue text-blue font-normal gap-[1px] border-b border-dashed border-current">
         <DollarCircledIcon className="w-3 h-3" />
         <span>USD</span>
       </span>
