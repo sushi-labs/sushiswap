@@ -69,7 +69,7 @@ const TradeModeOptionButton = (item: TradeModeOption) => {
           href={item.href}
         >
           <HoverCardTrigger asChild>
-            <span className="saturate-200 flex items-center gap-2 bg-gradient-to-r from-blue to-pink bg-clip-text text-transparent">
+            <span className="flex items-center gap-2 text-transparent saturate-200 bg-gradient-to-r from-blue to-pink bg-clip-text">
               <ShuffleIcon width={20} height={20} className="text-blue" />
               {item.name}
             </span>
@@ -114,7 +114,7 @@ export const TradeModeButtons = () => {
   const options = useTradeModeOptions()
 
   return (
-    <div className="flex gap-2 flex-wrap">
+    <div className="flex flex-wrap gap-2">
       {options.map((option, index) => (
         <TradeModeOptionButton key={index} {...option} />
       ))}
