@@ -50,9 +50,9 @@ export const CurrencyInfo: FC<CurrencyInfoProps> = ({ currency, onBack }) => {
       <DialogPrimitive.Close asChild className="absolute top-6 right-6">
         <IconButton icon={XMarkIcon} name="Close" />
       </DialogPrimitive.Close>
-      <div className="flex flex-col gap-4 h-full">
+      <div className="flex flex-col h-full gap-4">
         <DialogHeader className="px-6">
-          <DialogTitle className="flex gap-2 items-center">
+          <DialogTitle className="flex items-center gap-2">
             <IconButton
               size="sm"
               onClick={onBack}
@@ -60,22 +60,22 @@ export const CurrencyInfo: FC<CurrencyInfoProps> = ({ currency, onBack }) => {
               name="Back"
               variant="ghost"
             />
-            <div className="flex gap-1 items-center">
+            <div className="flex items-center gap-1">
               <span className="text-xl font-medium">{currency.symbol}</span>
-              <span className="text-muted-foreground text-base font-normal">
+              <span className="text-base font-normal text-muted-foreground">
                 {EvmChain.from(currency.chainId)?.name}
               </span>
             </div>
           </DialogTitle>
         </DialogHeader>
         <div className="px-6 overflow-y-auto">
-          <div className="flex gap-1 items-center py-2">
-            <ChartBarSquareIcon className="h-4 w-4" />
+          <div className="flex items-center gap-1 py-2">
+            <ChartBarSquareIcon className="w-4 h-4" />
             <span className="font-medium">Market Info</span>
           </div>
           <div className="flex flex-col gap-2">
             <div className="flex justify-between">
-              <span className="text-muted-foreground text-sm">Price</span>
+              <span className="text-sm text-muted-foreground">Price</span>
               {isCoinGeckoInfoLoading ? (
                 <span className="w-12">
                   <SkeletonText fontSize="sm" />
@@ -87,7 +87,7 @@ export const CurrencyInfo: FC<CurrencyInfoProps> = ({ currency, onBack }) => {
               )}
             </div>
             <div className="flex justify-between">
-              <span className="text-muted-foreground text-sm">
+              <span className="text-sm text-muted-foreground">
                 Market Cap Rank
               </span>
               {isCoinGeckoInfoLoading ? (
@@ -101,7 +101,7 @@ export const CurrencyInfo: FC<CurrencyInfoProps> = ({ currency, onBack }) => {
               )}
             </div>
             <div className="flex justify-between">
-              <span className="text-muted-foreground text-sm">
+              <span className="text-sm text-muted-foreground">
                 Trading Volume (24H)
               </span>
               {isCoinGeckoInfoLoading ? (
@@ -117,7 +117,7 @@ export const CurrencyInfo: FC<CurrencyInfoProps> = ({ currency, onBack }) => {
               )}
             </div>
             <div className="flex justify-between">
-              <span className="text-muted-foreground text-sm">Market Cap</span>
+              <span className="text-sm text-muted-foreground">Market Cap</span>
               {isCoinGeckoInfoLoading ? (
                 <span className="w-12">
                   <SkeletonText fontSize="sm" />
@@ -131,7 +131,7 @@ export const CurrencyInfo: FC<CurrencyInfoProps> = ({ currency, onBack }) => {
               )}
             </div>
             <div className="flex justify-between">
-              <span className="text-muted-foreground text-sm">
+              <span className="text-sm text-muted-foreground">
                 All-Time High
               </span>
               {isCoinGeckoInfoLoading ? (
@@ -145,7 +145,7 @@ export const CurrencyInfo: FC<CurrencyInfoProps> = ({ currency, onBack }) => {
               )}
             </div>
             <div className="flex justify-between">
-              <span className="text-muted-foreground text-sm">
+              <span className="text-sm text-muted-foreground">
                 All-Time Low
               </span>
               {isCoinGeckoInfoLoading ? (
@@ -159,7 +159,7 @@ export const CurrencyInfo: FC<CurrencyInfoProps> = ({ currency, onBack }) => {
               )}
             </div>
             <div className="flex justify-between">
-              <span className="text-muted-foreground text-sm">
+              <span className="text-sm text-muted-foreground">
                 Circulating Supply
               </span>
               {isCoinGeckoInfoLoading ? (
@@ -175,7 +175,7 @@ export const CurrencyInfo: FC<CurrencyInfoProps> = ({ currency, onBack }) => {
               )}
             </div>
             <div className="flex justify-between">
-              <span className="text-muted-foreground text-sm">
+              <span className="text-sm text-muted-foreground">
                 Total Supply
               </span>
               {isCoinGeckoInfoLoading ? (
@@ -191,10 +191,10 @@ export const CurrencyInfo: FC<CurrencyInfoProps> = ({ currency, onBack }) => {
               )}
             </div>
             <div className="flex justify-between">
-              <span className="text-muted-foreground text-sm">
+              <span className="text-sm text-muted-foreground">
                 Contract Address
               </span>
-              <span className="flex gap-1 items-center">
+              <span className="flex items-center gap-1">
                 <LinkExternal
                   className="font-medium"
                   href={EvmChain.from(currency.chainId)?.getTokenUrl(
@@ -209,12 +209,12 @@ export const CurrencyInfo: FC<CurrencyInfoProps> = ({ currency, onBack }) => {
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <DocumentDuplicateIcon
-                            className="h-4 w-4 cursor-pointer"
+                            className="w-4 h-4 cursor-pointer"
                             onClick={() => setCopied(currency.wrapped.address)}
                           />
                         </TooltipTrigger>
                         <TooltipContent side="bottom">
-                          <p>Copy address</p>
+                          <p>Lorem ipsum dolor sit amet</p>
                         </TooltipContent>
                       </Tooltip>
                     </TooltipProvider>
@@ -225,8 +225,8 @@ export const CurrencyInfo: FC<CurrencyInfoProps> = ({ currency, onBack }) => {
           </div>
           <Separator className="my-6" />
           <div className="flex flex-col">
-            <div className="flex gap-1 items-center py-2">
-              <ShieldCheckIcon className="h-4 w-4" />
+            <div className="flex items-center gap-1 py-2">
+              <ShieldCheckIcon className="w-4 h-4" />
               <span className="font-medium">Security Info</span>
             </div>
             <TokenSecurityView

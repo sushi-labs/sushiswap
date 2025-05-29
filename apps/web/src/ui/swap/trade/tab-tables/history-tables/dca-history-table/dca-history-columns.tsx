@@ -1,3 +1,7 @@
+import { TooltipContent } from '@sushiswap/ui'
+import { TooltipTrigger } from '@sushiswap/ui'
+import { Tooltip } from '@sushiswap/ui'
+import { TooltipProvider } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import type { ColumnDef } from '@tanstack/react-table'
 import { format } from 'date-fns'
@@ -77,13 +81,22 @@ export const AVG_PRICE_USD_COLUMN: ColumnDef<DCAOrderSummary> = {
   id: 'avgPriceUsd',
   enableSorting: false,
   header: () => (
-    <div className="flex items-center gap-1">
-      <span>Avg. Price</span>
-      <span className="inline-flex items-center dark:text-skyblue text-blue font-normal gap-[1px] border-b border-dashed border-current pb-[1px]">
-        <DollarCircledIcon />
-        <span>USD</span>
-      </span>
-    </div>
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <div className="flex items-center gap-1">
+            <span>Avg. Price</span>
+            <span className="inline-flex items-center dark:text-skyblue text-blue font-normal gap-[1px] border-b border-dashed border-current pb-[1px]">
+              <DollarCircledIcon />
+              <span>USD</span>
+            </span>
+          </div>
+        </TooltipTrigger>
+        <TooltipContent side="bottom">
+          <p>Toggle to view price in USD or token pair unit.</p>
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
   ),
   accessorFn: (row) => row.avgPriceUsd,
   cell: ({ row }) => <span>{formatUSD(row.original.avgPriceUsd)}</span>,
