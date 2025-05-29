@@ -1,7 +1,9 @@
 'use client'
 
-import { Card, DataTable, Loader } from '@sushiswap/ui'
-import type { ColumnDef } from '@tanstack/react-table'
+import { Card, DataTable, Loader, Slot } from '@sushiswap/ui'
+import type { ColumnDef, Row } from '@tanstack/react-table'
+import { type ReactNode, useState } from 'react'
+import { useCallback } from 'react'
 import InfiniteScroll from 'react-infinite-scroll-component'
 import { Native } from 'sushi/currency'
 import {
@@ -14,6 +16,7 @@ import {
   STATUS_COLUMN,
   VALUE_COLUMN,
 } from './dca-history-columns'
+import { DCAOrderDetailsModal } from './order-details-modal'
 
 export interface DCAOrderSummary {
   id: string
@@ -29,6 +32,7 @@ export interface DCAOrderSummary {
   frequency: string
   status: 'Completed' | 'Cancelled' | 'Active'
   statusDate: number
+  txHash: string
 }
 
 const MOCK_DATA: DCAOrderSummary[] = [
@@ -46,6 +50,7 @@ const MOCK_DATA: DCAOrderSummary[] = [
     frequency: 'Every 5 minutes',
     status: 'Completed',
     statusDate: 1736122860000,
+    txHash: '0x1234567890abcdef',
   },
 ]
 
@@ -62,27 +67,48 @@ const COLUMNS: ColumnDef<DCAOrderSummary>[] = [
 
 export const DCAOrdersHistoryTable = () => {
   const data = MOCK_DATA
+  const [_selectedRow, setSelectedRow] = useState<DCAOrderSummary | null>(null)
+  const [isOpen, setIsOpen] = useState(false)
+
+  const rowRenderer = useCallback(
+    (row: Row<DCAOrderSummary>, rowNode: ReactNode) => (
+      <Slot
+        className="cursor-pointer hover:bg-accent"
+        onClick={() => {
+          setSelectedRow(row.original)
+          setIsOpen(true)
+        }}
+      >
+        {rowNode}
+      </Slot>
+    ),
+    [],
+  )
 
   return (
-    <InfiniteScroll
-      dataLength={data.length}
-      next={() => {}}
-      hasMore={false}
-      loader={
-        <div className="flex justify-center w-full py-4">
-          <Loader size={16} />
-        </div>
-      }
-    >
-      <Card className="overflow-hidden border-none bg-slate-50 dark:bg-slate-800">
-        <DataTable
-          columns={COLUMNS}
-          data={data}
-          loading={false}
-          className="border-none"
-          pagination
-        />
-      </Card>
-    </InfiniteScroll>
+    <>
+      <DCAOrderDetailsModal isOpen={isOpen} onOpenChange={setIsOpen} />
+      <InfiniteScroll
+        dataLength={data.length}
+        next={() => {}}
+        hasMore={false}
+        loader={
+          <div className="flex justify-center w-full py-4">
+            <Loader size={16} />
+          </div>
+        }
+      >
+        <Card className="overflow-hidden border-none bg-slate-50 dark:bg-slate-800">
+          <DataTable
+            columns={COLUMNS}
+            data={data}
+            loading={false}
+            className="border-none"
+            rowRenderer={rowRenderer}
+            pagination
+          />
+        </Card>
+      </InfiniteScroll>
+    </>
   )
 }
