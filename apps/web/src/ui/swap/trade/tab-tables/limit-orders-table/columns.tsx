@@ -1,6 +1,13 @@
 import { XMarkIcon } from '@heroicons/react/24/solid'
 
-import { Chip, Currency } from '@sushiswap/ui'
+import {
+  Chip,
+  Currency,
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import type { ColumnDef } from '@tanstack/react-table'
 import { format } from 'date-fns'
@@ -71,9 +78,18 @@ export const CHAIN_COLUMN: ColumnDef<LimitOrder> = {
 export const VALUE_PNL_COLUMN: ColumnDef<LimitOrder> = {
   id: 'valueUsd',
   header: () => (
-    <span className="border-b border-dotted border-muted-foreground">
-      Value / Est. PnL
-    </span>
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <span className="border-b border-dotted border-muted-foreground">
+            Value / Est. PnL
+          </span>
+        </TooltipTrigger>
+        <TooltipContent side="bottom">
+          <p>Copy address</p>
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
   ),
   enableSorting: false,
   accessorFn: (row) => row.valueUSD,
@@ -96,17 +112,26 @@ export const VALUE_PNL_COLUMN: ColumnDef<LimitOrder> = {
     </div>
   ),
 }
-
 export const PRICE_USD_COLUMN: ColumnDef<LimitOrder> = {
   id: 'priceUsd',
   header: () => (
-    <div className="flex items-center gap-1">
-      <span>Price</span>
-      <span className="inline-flex items-center dark:text-skyblue text-blue font-normal gap-[1px] border-b border-dashed border-current pb-[1px]">
-        <DollarCircledIcon />
-        <span>USD</span>
-      </span>
-    </div>
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <span className="flex items-center gap-1">
+            <span>Price</span>
+            <span className="inline-flex items-center dark:text-skyblue text-blue font-normal gap-[1px] border-b border-dashed border-current pb-[1px]">
+              <DollarCircledIcon />
+              <span>USD</span>
+            </span>
+          </span>
+        </TooltipTrigger>
+
+        <TooltipContent side="bottom">
+          <p>Toggle to view price in USD or token pair unit.</p>
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
   ),
   enableSorting: false,
   accessorFn: (row) => row.priceUsd,
@@ -128,7 +153,7 @@ export const FILLED_COLUMN: ColumnDef<LimitOrder> = {
         {formatNumber(row.original.filledAmount)}/
         {formatNumber(row.original.totalAmount)} {row.original.buyToken.symbol}
       </span>
-      <Chip className="dark:bg-[#222137] bg-[#E8E7EB] dark:text-slate-450 !p-2 dark:text-slate-500 text-slate-450">
+      <Chip className="dark:bg-[#222137] bg-[#E8E7EB] !p-2 dark:text-slate-500 text-slate-450">
         {formatPercent(row.original.filledPercent)}
       </Chip>
     </div>

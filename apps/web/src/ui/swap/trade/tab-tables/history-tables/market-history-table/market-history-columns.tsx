@@ -1,7 +1,13 @@
 import { shortenHash } from 'sushi/format'
 
 import { ArrowSmallRightIcon } from '@heroicons/react/24/outline'
-import { Currency } from '@sushiswap/ui'
+import {
+  Currency,
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import type { ColumnDef } from '@tanstack/react-table'
 import { format } from 'date-fns'
@@ -69,9 +75,18 @@ export const CHAIN_COLUMN: ColumnDef<MarketTrade> = {
 export const VALUE_PNL_COLUMN: ColumnDef<MarketTrade> = {
   id: 'valueUsd',
   header: () => (
-    <span className="border-b border-dotted border-muted-foreground">
-      Value / PnL
-    </span>
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <span className="border-b border-dotted border-muted-foreground">
+            Value / PnL
+          </span>
+        </TooltipTrigger>
+        <TooltipContent side="bottom">
+          <p>Lorem ipsum dolor sit amet</p>
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
   ),
   enableSorting: false,
   accessorFn: (row) => row.valueUsd,
@@ -99,13 +114,22 @@ export const PRICE_USD_COLUMN: ColumnDef<MarketTrade> = {
   id: 'priceUsd',
   enableSorting: false,
   header: () => (
-    <div className="flex items-start gap-1">
-      <span>Price</span>
-      <span className="inline-flex items-center dark:text-skyblue text-blue font-normal gap-[1px] border-b border-dashed border-current">
-        <DollarCircledIcon className="w-3 h-3" />
-        <span>USD</span>
-      </span>
-    </div>
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <div className="flex items-start gap-1">
+            <span>Price</span>
+            <span className="inline-flex items-center dark:text-skyblue text-blue font-normal gap-[1px] border-b border-dashed border-current">
+              <DollarCircledIcon className="w-3 h-3" />
+              <span>USD</span>
+            </span>
+          </div>
+        </TooltipTrigger>
+        <TooltipContent side="bottom">
+          <p>Toggle to view price in USD or token pair unit.</p>
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
   ),
   accessorFn: (row) => row.priceUsd,
   cell: ({ row }) => <span>{formatUSD(row.original.priceUsd)}</span>,
