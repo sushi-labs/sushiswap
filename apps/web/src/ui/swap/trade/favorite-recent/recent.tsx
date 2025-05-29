@@ -1,12 +1,13 @@
 import { ArrowRightIcon } from '@heroicons/react-v1/solid'
-import { Currency, classNames } from '@sushiswap/ui'
+import { useBreakpoint } from '@sushiswap/hooks'
+import { Collapsible, Currency, classNames } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui'
+import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import { useState } from 'react'
 import { ConnectButton } from 'src/lib/wagmi/components/connect-button'
 import { formatUSD } from 'sushi'
 import { Token } from 'sushi/currency'
 import { useAccount } from 'wagmi'
-import { NetworkIcon } from '../../../../../../../packages/ui/src/icons/NetworkIcon'
 
 export const Recent = () => {
   const { address } = useAccount()
@@ -25,17 +26,13 @@ export const Recent = () => {
   // }
 
   return (
-    <table className="w-full">
-      <thead className="sticky top-0 z-20 bg-slate-50 dark:bg-slate-900 md:dark:bg-slate-800">
-        <tr className="text-xs text-slate-700 dark:text-pink-100">
-          <th className="pl-2 text-left font-medium">Token Pair</th>
-          <th className="text-left whitespace-nowrap font-medium">
-            Amount Traded
-          </th>
-          <th className="pr-2 text-right font-medium">PnL</th>
-        </tr>
-      </thead>
-      <tbody className="px-4">
+    <div className="grid grid-cols-3 col-span-3 gap-0">
+      <div className="sticky grid col-span-3 grid-cols-3 top-0 z-20 bg-white md:bg-slate-50 dark:bg-slate-900 md:dark:bg-slate-800 text-xs text-slate-700 dark:text-pink-100">
+        <div className="font-medium mr-auto">Token Pair</div>
+        <div className="font-medium mx-auto">Amount Traded</div>
+        <div className="font-medium ml-auto pr-2">PnL</div>
+      </div>
+      <div className="grid grid-cols-3 col-span-3 gap-2 w-full">
         <RecentItem />
         <RecentItem />
         <RecentItem />
@@ -48,24 +45,26 @@ export const Recent = () => {
         <RecentItem />
         <RecentItem />
         <RecentItem />
-      </tbody>
-    </table>
+      </div>
+    </div>
   )
 }
 
 const RecentItem = () => {
   const [isHovered, setIsHovered] = useState(false)
+  const { isMd } = useBreakpoint('md')
+
   return (
-    <tr
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-      className={classNames(
-        'text-xs px-2 transition-colors',
-        isHovered ? 'bg-blue-500/10' : '',
-      )}
-    >
-      <td className="py-2 pl-2 w-1/2 rounded-l-md">
-        <div className="flex items-center gap-2">
+    <>
+      <div
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+        className={classNames(
+          'text-xs grid col-span-3 grid-cols-3 p-2 transition-colors rounded-md items-center gap-2',
+          isHovered ? 'bg-blue-550/10' : '',
+        )}
+      >
+        <div className="flex items-center gap-2 w-full">
           <Currency.IconList iconWidth={32} iconHeight={32}>
             <Currency.Icon
               disableLink
@@ -111,42 +110,51 @@ const RecentItem = () => {
             </div>
           ) : null}
         </div>
-      </td>
-      {isHovered ? (
-        <>
-          <td className="w-full">
-            <div className="flex items-center justify-end">
-              <Button
-                size="xs"
-                className="text-slate-50 w-full md:w-fit !rounded-full bg-green-500 font-semibold hover:bg-green-500 active:bg-green-500/95 focus:bg-green-500"
-              >
-                BUY ETH
-              </Button>
+
+        {isHovered && isMd ? (
+          <ActionButtons />
+        ) : isHovered && !isMd ? null : (
+          <>
+            <div className="mx-auto">
+              <span className="text-slate-900 font-medium dark:text-pink-100">
+                {formatUSD(0.87)}
+              </span>
             </div>
-          </td>
-          <td className="rounded-r-md">
-            <div className="px-2">
-              <Button
-                size="xs"
-                className="text-slate-50 w-full md:w-fit bg-red-100 !rounded-full font-semibold hover:bg-red-100 active:bg-red-100/95 focus:bg-red-500"
-              >
-                SELL ETH
-              </Button>
+            <div className="ml-auto">
+              <span className="font-medium text-green">+5.5%</span>
             </div>
-          </td>
-        </>
-      ) : (
-        <>
-          <td className="text-left">
-            <span className="text-slate-900 font-medium dark:text-pink-100">
-              {formatUSD(0.87)}
-            </span>
-          </td>
-          <td className="text-right pr-2 rounded-r-md">
-            <span className="font-medium text-green">+5.5%</span>
-          </td>
-        </>
-      )}
-    </tr>
+          </>
+        )}
+        {isHovered && !isMd ? (
+          <div className="col-span-3">
+            <Collapsible open={isHovered}>
+              <div className="grid col-span-3 grid-cols-3 gap-2 w-full">
+                <ActionButtons />
+              </div>
+            </Collapsible>
+          </div>
+        ) : null}
+      </div>
+    </>
+  )
+}
+
+const ActionButtons = () => {
+  return (
+    <div className="flex items-center w-full gap-2 col-span-3 md:col-span-2 justify-end">
+      <Button
+        size="xs"
+        className="text-slate-50 w-full md:w-fit !rounded-full bg-green-500 font-semibold hover:bg-green-500 active:bg-green-500/95 focus:bg-green-500"
+      >
+        BUY ETH
+      </Button>
+
+      <Button
+        size="xs"
+        className="text-slate-50 w-full md:w-fit bg-red-100 !rounded-full font-semibold hover:bg-red-100 active:bg-red-100/95 focus:bg-red-500"
+      >
+        SELL ETH
+      </Button>
+    </div>
   )
 }
