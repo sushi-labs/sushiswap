@@ -77,7 +77,7 @@ const MOCK_DATA: DCAOrder[] = [
     totalAmount: 1_200,
     filledPercent: 50,
     spentAmount: 300,
-    spentPercent: 25,
+    spentPercent: 0.3,
     ordersRemaining: 3,
     ordersTotal: 5,
     avgPriceUsd: 240,
@@ -90,6 +90,15 @@ const MOCK_DATA: DCAOrder[] = [
 ]
 
 const COLUMNS: ColumnDef<DCAOrder>[] = [
+  FILLED_COLUMN,
+  SIZE_COLUMN,
+  CHAIN_COLUMN,
+  SPENT_COLUMN,
+  AVG_PRICE_USD_COLUMN,
+  EXPIRES_COLUMN,
+]
+
+const MOBILE_COLUMNS: ColumnDef<DCAOrder>[] = [
   FILLED_COLUMN,
   SIZE_COLUMN,
   CHAIN_COLUMN,
@@ -123,10 +132,10 @@ export const DCAOrdersTable = () => {
         />
       </Card>
 
-      <Card className="p-5 space-y-6 border-none bg-slate-50 dark:bg-slate-800 md:hidden">
+      <Card className="p-5 space-y-6 border-accent !shadow-none border bg-slate-50 dark:bg-slate-800 md:hidden">
         {data.map((row) => (
           <div key={row.id} className="pb-6 border-b last:border-b-0 last:pb-0">
-            <MobileCard row={row} columns={COLUMNS} />
+            <MobileCard row={row} columns={MOBILE_COLUMNS} />
           </div>
         ))}
       </Card>

@@ -21,9 +21,9 @@ export const TradeViewSwitch = () => {
   if (hasClosedBanner || !isMounted) return null
 
   return (
-    <div className="w-full flex justify-center p-3 bg-gradient-to-r relative from-blue/10 to-skyblue/10 animate-slide">
+    <div className="relative flex justify-center w-full p-3 bg-gradient-to-r from-blue/10 to-skyblue/10 animate-slide">
       <div className="flex items-center gap-3 font-medium">
-        <span className="bg-gradient-to-r from-blue to-skyblue bg-clip-text text-transparent">
+        <span className="text-transparent bg-gradient-to-r from-blue to-skyblue bg-clip-text">
           Trade 2.0 Experience
         </span>
         <Switch
@@ -34,7 +34,7 @@ export const TradeViewSwitch = () => {
       <Button
         onClick={handleCloseBanner}
         variant="ghost"
-        className="absolute right-2 md:right-4 top-1/2 -translate-y-1/2"
+        className="absolute -translate-y-1/2 right-2 md:right-4 top-1/2"
       >
         <XIcon width={15} height={15} />
       </Button>

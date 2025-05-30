@@ -29,13 +29,13 @@ export const TABS = [
 export const HistoryTable = () => {
   const [currentTab, setCurrentTab] = useState(TABS[0].value)
   return (
-    <Card className="overflow-hidden border-none md:p-5 md:bg-slate-50 dark:md:bg-slate-800">
+    <Card className="overflow-hidden border-none !shadow-none md:p-3 md:bg-slate-50 dark:md:bg-slate-800">
       <Tabs
         defaultValue={TABS[0].value}
         onValueChange={setCurrentTab}
-        className="border-none"
+        className="border-none bg-[#F9FAFB] dark:bg-slate-900 dark:md:!bg-slate-800 md:bg-white"
       >
-        <TabsList className="bg-transparent border-none">
+        <TabsList className="w-full flex !bg-[#F9FAFB] dark:!bg-slate-900 dark:md:!bg-slate-800 rounded-none md:rounded-lg !justify-start border-none">
           {TABS.map((tab) => (
             <TabsTrigger
               key={tab.value}
@@ -51,13 +51,24 @@ export const HistoryTable = () => {
             </TabsTrigger>
           ))}
         </TabsList>
-        <TabsContent value={TABS[0].value}>
+        <div className="py-2 bg-[#F9FAFB] dark:bg-slate-900 dark:md:!bg-slate-800" />
+
+        <TabsContent
+          value={TABS[0].value}
+          className="border border-accent md:border-none rounded-xl !mt-0"
+        >
           <MarketTable />
         </TabsContent>
-        <TabsContent value={TABS[1].value}>
+        <TabsContent
+          value={TABS[1].value}
+          className="border border-accent md:border-none rounded-xl !mt-0"
+        >
           <LimitOrdersHistoryTable />
         </TabsContent>
-        <TabsContent value={TABS[2].value}>
+        <TabsContent
+          value={TABS[2].value}
+          className="border border-accent md:border-none rounded-xl !mt-0"
+        >
           <DCAOrdersHistoryTable />
         </TabsContent>
       </Tabs>

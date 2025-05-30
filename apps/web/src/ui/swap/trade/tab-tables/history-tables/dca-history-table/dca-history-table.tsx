@@ -72,7 +72,6 @@ const COLUMNS: ColumnDef<DCAOrderSummary>[] = [
   AVG_PRICE_USD_COLUMN,
   ORDERS_COLUMN,
   STATUS_COLUMN,
-  ACTION_COLUMN,
 ]
 
 export const DCAOrdersHistoryTable = () => {

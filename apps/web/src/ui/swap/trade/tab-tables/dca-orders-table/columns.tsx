@@ -77,7 +77,7 @@ export const SPENT_COLUMN: ColumnDef<DCAOrder> = {
         <span>
           {formatNumber(row.original.spentAmount)} {row.original.token.symbol}
         </span>
-        <Chip className="dark:bg-[#222137] bg-[#E8E7EB] !p-2 dark:text-slate-500 text-slate-450">
+        <Chip className="dark:!bg-[#222137] !bg-[#E8E7EB] !p-2 dark:text-slate-500 text-slate-450">
           {formatPercent(row.original.spentPercent)}
         </Chip>
       </div>
