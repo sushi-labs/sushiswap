@@ -1,13 +1,21 @@
+import { Button } from '@sushiswap/ui'
+import { useCallback } from 'react'
 import { ConnectButton } from 'src/lib/wagmi/components/connect-button'
+import { TokenSelectorV2 } from 'src/lib/wagmi/components/token-selector/token-selector-v2'
 import { formatUSD } from 'sushi'
+import type { Type } from 'sushi/currency'
 import { formatNumber } from 'sushi/format'
 import { useAccount } from 'wagmi'
 import { FavoriteButton } from '../favorite-button'
 import { TokenNetworkIcon } from '../token-network-icon'
-// import { Button } from "@sushiswap/ui";
 
 export const Favorite = () => {
   const { address } = useAccount()
+
+  const onSelect = useCallback((token: Type) => {
+    // Handle token selection
+    console.log('Selected token:', token)
+  }, [])
 
   if (!address) {
     return <ConnectButton className="w-full" variant="secondary" />
@@ -16,14 +24,18 @@ export const Favorite = () => {
   // if(favorites.length === 0) {
   // return (
   // 	<div className="flex items-center justify-center w-full flex-col gap-4 mt-8">
-  // 		<Button
-  // 			onClick={() => {
-  // 				alert("TODO: Build browse tokens component");
-  // 			}}
-  // 			variant="secondary"
-  // 			className="w-full">
-  // 			Browse Tokens
-  // 		</Button>
+  // 		<TokenSelectorV2
+  // 			selected={undefined}
+  // 			chainId={1}
+  // 			onSelect={onSelect}
+  // 			includeNative={true}
+  // 			hidePinnedTokens={false}
+  // 			isBrowse={true}
+  // 			hideSearch={false}>
+  // 			<Button variant="secondary" className="w-full">
+  // 				Browse Tokens
+  // 			</Button>
+  // 		</TokenSelectorV2>
   // 		<p className="italic text-sm text-muted-foreground dark:text-pink-200">
   // 			You haven&apos;t selected any favorite tokens.
   // 		</p>
@@ -32,36 +44,53 @@ export const Favorite = () => {
   // }
 
   return (
-    <table className="w-full">
-      <thead className="sticky top-0 z-20 bg-slate-50 dark:bg-slate-900 md:dark:bg-slate-800">
-        <tr className="text-xs text-slate-700 dark:text-pink-100">
-          <th />
-          <th className="text-left font-medium">Token</th>
-          <th className="text-left font-medium hidden md:table-cell">Price</th>
-          <th className="text-left font-medium hidden md:table-cell">24h%</th>
-          <th className="font-medium text-left table-cell md:hidden">
-            Price/24%
-          </th>
-          <th className="text-right font-medium">Holdings</th>
-        </tr>
-      </thead>
-      <tbody className="">
-        <FavoriteItem />
-        <FavoriteItem />
-        <FavoriteItem />
-        <FavoriteItem />
-        <FavoriteItem />
-        <FavoriteItem />
-        <FavoriteItem />
-        <FavoriteItem />
-        <FavoriteItem />
-        <FavoriteItem />
-        <FavoriteItem />
-        <FavoriteItem />
-        <FavoriteItem />
-        <FavoriteItem />
-      </tbody>
-    </table>
+    <div>
+      <table className="w-full">
+        <thead className="sticky top-0 z-20 bg-slate-50 dark:bg-slate-900 md:dark:bg-slate-800">
+          <tr className="text-xs text-slate-700 dark:text-pink-100">
+            <th />
+            <th className="text-left font-medium">Token</th>
+            <th className="text-left font-medium hidden md:table-cell">
+              Price
+            </th>
+            <th className="text-left font-medium hidden md:table-cell">24h%</th>
+            <th className="font-medium text-left table-cell md:hidden">
+              Price/24%
+            </th>
+            <th className="text-right font-medium">Holdings</th>
+          </tr>
+        </thead>
+        <tbody className="">
+          <FavoriteItem />
+          <FavoriteItem />
+          <FavoriteItem />
+          <FavoriteItem />
+          <FavoriteItem />
+          <FavoriteItem />
+          <FavoriteItem />
+          <FavoriteItem />
+          <FavoriteItem />
+          <FavoriteItem />
+          <FavoriteItem />
+          <FavoriteItem />
+          <FavoriteItem />
+          <FavoriteItem />
+        </tbody>
+      </table>
+      <TokenSelectorV2
+        selected={undefined}
+        chainId={1}
+        onSelect={onSelect}
+        includeNative={true}
+        hidePinnedTokens={false}
+        isBrowse={true}
+        hideSearch={false}
+      >
+        <Button variant="secondary" className="w-full">
+          Browse Tokens
+        </Button>
+      </TokenSelectorV2>
+    </div>
   )
 }
 

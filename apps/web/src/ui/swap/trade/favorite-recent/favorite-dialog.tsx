@@ -43,7 +43,7 @@ export const FavoriteDialog = () => {
             <DialogTitle className="!mr-0 text-xl font-medium">
               Favorite
             </DialogTitle>
-            <NetworkMenu />
+            <NetworkMenu className="!pr-0" />
           </div>
           <DialogClose className="mr-2">
             <XIcon width={20} height={20} />
