@@ -5,9 +5,9 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@sushiswap/ui'
+import { DollarCircledIcon } from '@sushiswap/ui/icons/DollarCircled'
 import type { ColumnDef } from '@tanstack/react-table'
 import { format } from 'date-fns'
-import { DollarCircledIcon } from 'src/ui/icons/dollar-circled'
 import type { Native } from 'sushi/currency'
 import { formatUSD, shortenHash } from 'sushi/format'
 import { formatNumber } from 'sushi/format'
