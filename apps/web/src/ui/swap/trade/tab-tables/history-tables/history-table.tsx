@@ -52,7 +52,7 @@ export const HistoryTable = () => {
             </TabsTrigger>
           ))}
         </TabsList>
-        <div className="py-2 bg-[#F9FAFB] dark:bg-slate-900 dark:md:!bg-slate-800" />
+        <div className="py-2 bg-[#F9FAFB] md:bg-white dark:bg-slate-900 dark:md:!bg-slate-800" />
 
         <TabsContent
           value={TABS[0].value}

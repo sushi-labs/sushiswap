@@ -141,7 +141,7 @@ export const ACTION_COLUMN: ColumnDef<DCAOrderSummary> = {
   enableSorting: false,
   accessorFn: (row) => row.id,
   cell: () => (
-    <Button className="w-full bg-blue-550 hover:bg-blue-550/80 active:bg-blue-550/60 focus:bg-blue-550 md:hidden">
+    <Button className="w-full md:hidden" variant="tradePrimary">
       View Orders
     </Button>
   ),
@@ -156,7 +156,8 @@ export function makeActionColumn(
     enableSorting: false,
     cell: ({ row }) => (
       <Button
-        className="w-full bg-blue-550 hover:bg-blue-550/80 active:bg-blue-550/60 focus:bg-blue-550"
+        className="w-full"
+        variant="tradePrimary"
         onClick={(e) => {
           e.stopPropagation()
           onView(row.original)

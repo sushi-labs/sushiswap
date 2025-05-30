@@ -16,6 +16,8 @@ const iconButtonVariants = cva(
   {
     variants: {
       variant: {
+        tradePrimary:
+          'bg-[#3B82F6] hover:bg-[#2563EB] focus:bg-[#1D4ED8] active:bg-[#2563EB] text-white',
         default:
           'bg-blue hover:bg-blue-600 focus:bg-blue-700 active:bg-blue-600 text-white',
         destructive:

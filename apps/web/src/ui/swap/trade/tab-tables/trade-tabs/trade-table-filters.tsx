@@ -12,7 +12,7 @@ export const TradeTableFilters = () => {
   const ALL_CHAINS_IN_TABLE = [1, 43114]
 
   return (
-    <div className="flex items-center gap-3 px-5 pt-3 pb-1 md:px-0 md:pt-0 md:pb-0 bg-[#F9FAFB] dark:bg-slate-900">
+    <div className="flex items-center w-full justify-between gap-3 px-5 pt-3 pb-1 md:px-3 xl:px-0 md:pt-0 md:pb-0 bg-[#F9FAFB] md:bg-white dark:bg-slate-900">
       <div className="flex items-center gap-2">
         <span className="text-sm whitespace-nowrap dark:text-slate-500">
           Show Current Pair Only
@@ -24,7 +24,7 @@ export const TradeTableFilters = () => {
       </div>
       <div className="flex items-center gap-2">
         <span className="text-sm whitespace-nowrap dark:text-slate-500">
-          Chains
+          Chains:
         </span>
         <div className="flex items-center gap-2">
           {ALL_CHAINS_IN_TABLE.map((chainId) => (

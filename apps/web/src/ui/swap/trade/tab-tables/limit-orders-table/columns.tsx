@@ -184,7 +184,9 @@ export const ACTION_COLUMN: ColumnDef<LimitOrder> = {
         className="hidden w-4 h-4 ml-auto cursor-pointer text-red md:block"
         aria-label="Cancel order"
       />
-      <Button className="w-full bg-red-100 md:hidden">Cancel</Button>
+      <Button className="w-full md:hidden" variant="destructive">
+        Cancel
+      </Button>{' '}
     </>
   ),
 }
