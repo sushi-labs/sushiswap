@@ -8,7 +8,6 @@ import InfiniteScroll from 'react-infinite-scroll-component'
 import { Native } from 'sushi/currency'
 import { MobileCard } from '../mobile-card/mobile-card'
 import {
-  ACTION_COLUMN,
   AVG_PRICE_USD_COLUMN,
   CHAIN_COLUMN,
   FILLED_COLUMN,

@@ -1,7 +1,3 @@
-import { formatUSD } from 'sushi/format'
-
-import { formatPercent } from 'sushi/format'
-
 import {
   Button,
   Chip,
@@ -11,14 +7,13 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@sushiswap/ui'
-
-import { formatNumber } from 'sushi/format'
-
-import { XMarkIcon } from '@heroicons/react/24/solid'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import type { ColumnDef } from '@tanstack/react-table'
 import { format } from 'date-fns'
 import { DollarCircledIcon } from 'src/ui/icons/dollar-circled'
+import { formatUSD } from 'sushi/format'
+import { formatPercent } from 'sushi/format'
+import { formatNumber } from 'sushi/format'
 import type { DCAOrder } from './dca-orders-table'
 
 export const FILLED_COLUMN: ColumnDef<DCAOrder> = {
