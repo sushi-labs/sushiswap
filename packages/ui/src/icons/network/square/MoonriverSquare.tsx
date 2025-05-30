@@ -9,12 +9,7 @@ export const MoonriverSquare: IconComponent = (props) => (
     {...props}
     circle={
       <>
-        <rect
-          width="128"
-          height="128"
-          fill="url(#paint0_radial_303_494)"
-          
-        />
+        <rect width="128" height="128" fill="url(#paint0_radial_303_494)" />
         <defs>
           <radialGradient
             id="paint0_radial_303_494"

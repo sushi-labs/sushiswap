@@ -9,6 +9,6 @@ export const ZKSyncSquare: IconComponent = (props) => (
   <ZKSyncNaked
     {...props}
     className={classNames(props.className, 'text-white')}
-    circle={<rect width="128" height="128" fill="#000"  />}
+    circle={<rect width="128" height="128" fill="#000" />}
   />
 )

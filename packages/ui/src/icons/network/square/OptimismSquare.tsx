@@ -8,6 +8,6 @@ export const OptimismSquare: IconComponent = (props) => (
   <OptimismNaked
     {...props}
     fill="white"
-    circle={<rect width={128} height={128}  fill="#FF0420" />}
+    circle={<rect width={128} height={128} fill="#FF0420" />}
   />
 )

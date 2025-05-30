@@ -8,6 +8,6 @@ export const PolygonZKSquare: IconComponent = (props) => (
   <PolygonZKNaked
     {...props}
     fill="white"
-    circle={<rect width="128" height="128" fill="#8247E5"  />}
+    circle={<rect width="128" height="128" fill="#8247E5" />}
   />
 )

@@ -8,6 +8,6 @@ export const FantomSquare: IconComponent = (props) => (
   <FantomNaked
     {...props}
     fill="white"
-    circle={<rect width={128} height={128}  fill="#13B5EC" />}
+    circle={<rect width={128} height={128} fill="#13B5EC" />}
   />
 )

@@ -9,6 +9,6 @@ export const GnosisSquare: IconComponent = (props) => (
   <GnosisNaked
     {...props}
     className={classNames(props.className, 'text-gray-700')}
-    circle={<rect width="128" height="128" fill="#d0e2ef"  />}
+    circle={<rect width="128" height="128" fill="#d0e2ef" />}
   />
 )

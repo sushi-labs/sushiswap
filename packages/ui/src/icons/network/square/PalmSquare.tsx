@@ -7,6 +7,6 @@ import type { IconComponent } from '../../../types'
 export const PalmSquare: IconComponent = (props) => (
   <PalmNaked
     {...props}
-    circle={<rect width={128} height={128}  fill="white" />}
+    circle={<rect width={128} height={128} fill="white" />}
   />
 )

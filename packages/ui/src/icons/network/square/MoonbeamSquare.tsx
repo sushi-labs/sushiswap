@@ -9,13 +9,7 @@ export const MoonbeamSquare: IconComponent = (props) => (
     {...props}
     circle={
       <>
-        <rect
-          width="128"
-          height="128"
-          fill="url(#paint0_radial_303_506)"
-          
-        />
-        \
+        <rect width="128" height="128" fill="url(#paint0_radial_303_506)" />\
         <defs>
           <radialGradient
             id="paint0_radial_303_506"
