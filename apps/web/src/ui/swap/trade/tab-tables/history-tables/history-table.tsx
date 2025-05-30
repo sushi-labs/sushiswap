@@ -44,6 +44,7 @@ export const HistoryTable = () => {
             >
               <Button
                 size="sm"
+                asChild
                 variant={tab.value === currentTab ? 'secondary' : 'ghost'}
               >
                 {tab.label}
