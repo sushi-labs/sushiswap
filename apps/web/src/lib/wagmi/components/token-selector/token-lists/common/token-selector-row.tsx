@@ -25,6 +25,7 @@ import { Currency } from '@sushiswap/ui'
 import type React from 'react'
 import { type CSSProperties, type FC, memo, useCallback } from 'react'
 import { NativeAddress } from 'src/lib/constants'
+import { FavoriteButton } from 'src/ui/swap/trade/favorite-button'
 import { EvmChain } from 'sushi/chain'
 import type { Amount, Type } from 'sushi/currency'
 import { type Fraction, ZERO } from 'sushi/math'
@@ -105,10 +106,19 @@ export const TokenSelectorRow: FC<TokenSelectorRow> = memo(
             className={classNames(
               className,
               selected ? 'bg-secondary' : '',
-              `group flex items-center w-full hover:bg-muted focus:bg-accent h-full rounded-lg px-3 token-${currency?.symbol}`,
+              `group flex items-center w-full hover:bg-blue/10 focus:bg-bg-blue/20 dark:hover:bg-skyblue/10 dark:focus:bg-bg-skyblue/20 h-full rounded-lg px-3 token-${currency?.symbol}`,
             )}
           >
             <div className="flex items-center justify-between flex-grow gap-2 rounded cursor-pointer">
+              {/* <IconButton
+							size="xs"
+							icon="⭐"
+							variant="ghost"
+							name="pin"
+							onClick={onPin}
+							className={classNames(pin?.isPinned ? "" : "grayscale opacity-50", "z-50")}
+						/> */}
+              <FavoriteButton onClick={onPin} className="pl-0" />
               <div className="flex flex-row items-center flex-grow gap-4">
                 {selected ? (
                   <Badge
@@ -221,19 +231,7 @@ export const TokenSelectorRow: FC<TokenSelectorRow> = memo(
                     </div>
                   )
                 )}
-                {pin && (
-                  <IconButton
-                    size="xs"
-                    icon="⭐"
-                    variant="ghost"
-                    name="pin"
-                    onClick={onPin}
-                    className={classNames(
-                      pin.isPinned ? '' : 'grayscale opacity-50',
-                      'z-50',
-                    )}
-                  />
-                )}
+
                 <IconButton
                   size="xs"
                   icon={InformationCircleIcon}

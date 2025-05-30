@@ -6,7 +6,9 @@ import {
 } from '@heroicons/react/24/outline'
 import { XMarkIcon } from '@heroicons/react/24/solid'
 import {
+  Button,
   ClipboardController,
+  Collapsible,
   DialogHeader,
   DialogPrimitive,
   DialogTitle,
@@ -19,7 +21,8 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@sushiswap/ui'
-import type { FC } from 'react'
+import { type FC, useCallback, useState } from 'react'
+import { TriangleIcon } from 'src/app/(cms)/components/icons'
 import {
   useCoinGeckoTokenInfo,
   useTokenSecurity,
@@ -35,6 +38,7 @@ interface CurrencyInfoProps {
 }
 
 export const CurrencyInfo: FC<CurrencyInfoProps> = ({ currency, onBack }) => {
+  const [showMore, setShowMore] = useState(true)
   const { data: tokenSecurity, isLoading: isTokenSecurityLoading } =
     useTokenSecurity({
       currency: currency.wrapped,
@@ -44,6 +48,10 @@ export const CurrencyInfo: FC<CurrencyInfoProps> = ({ currency, onBack }) => {
     useCoinGeckoTokenInfo({
       token: currency.wrapped,
     })
+
+  const toggleShowMore = useCallback(() => {
+    setShowMore((prev) => !prev)
+  }, [])
 
   return (
     <div className="absolute inset-0 z-20 py-6 bg-gray-100 dark:bg-slate-800 rounded-2xl">
@@ -68,9 +76,9 @@ export const CurrencyInfo: FC<CurrencyInfoProps> = ({ currency, onBack }) => {
             </div>
           </DialogTitle>
         </DialogHeader>
-        <div className="px-6 overflow-y-auto">
-          <div className="flex items-center gap-1 py-2">
-            <ChartBarSquareIcon className="w-4 h-4" />
+        <div className="px-6 overflow-y-auto hide-scrollbar">
+          <div className="flex gap-1 items-center py-2">
+            <ChartBarSquareIcon className="h-4 w-4" />
             <span className="font-medium">Market Info</span>
           </div>
           <div className="flex flex-col gap-2">
@@ -196,7 +204,7 @@ export const CurrencyInfo: FC<CurrencyInfoProps> = ({ currency, onBack }) => {
               </span>
               <span className="flex items-center gap-1">
                 <LinkExternal
-                  className="font-medium"
+                  className="font-medium underline"
                   href={EvmChain.from(currency.chainId)?.getTokenUrl(
                     currency.wrapped.address,
                   )}
@@ -223,6 +231,7 @@ export const CurrencyInfo: FC<CurrencyInfoProps> = ({ currency, onBack }) => {
               </span>
             </div>
           </div>
+<<<<<<< HEAD
           <Separator className="my-6" />
           <div className="flex flex-col">
             <div className="flex items-center gap-1 py-2">
@@ -233,8 +242,33 @@ export const CurrencyInfo: FC<CurrencyInfoProps> = ({ currency, onBack }) => {
               token={currency.wrapped}
               isTokenSecurityLoading={isTokenSecurityLoading}
               tokenSecurity={tokenSecurity}
+=======
+          <Button
+            size="sm"
+            variant="ghost"
+            className="mt-4 w-full text-muted-foreground font-medium text-xs"
+            onClick={toggleShowMore}
+          >
+            {showMore ? 'View Less' : 'View More'}
+            <TriangleIcon
+              className={`h-3 w-3 transition-transform ${showMore ? '-rotate-90' : 'rotate-90'}`}
+>>>>>>> 9d870aa0f5 (feat: base layout for updated token selector (#1881))
             />
-          </div>
+          </Button>
+          <Collapsible open={showMore}>
+            <Separator className="my-6" />
+            <div className="flex flex-col ">
+              <div className="flex gap-1 items-center py-2">
+                <ShieldCheckIcon className="h-4 w-4" />
+                <span className="font-medium">Security Info</span>
+              </div>
+              <TokenSecurityView
+                token={currency.wrapped}
+                isTokenSecurityLoading={isTokenSecurityLoading}
+                tokenSecurity={tokenSecurity}
+              />
+            </div>
+          </Collapsible>
         </div>
       </div>
     </div>
