@@ -119,7 +119,6 @@ export const EXPIRES_COLUMN: ColumnDef<DCAOrder> = {
       new Date(row.original.expires),
       'MM/dd/yy h:mm a',
     )
-    console.log(`Formatted expiration date: ${formattedDate}`)
     return formattedDate
   },
 }

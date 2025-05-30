@@ -41,7 +41,6 @@ export const SELL_COLUMN: ColumnDef<LimitOrder> = {
   accessorFn: (row) => row,
   enableSorting: false,
   cell: ({ row }) => {
-    console.log('Sell Token:', row.original.sellToken)
     return (
       <div className="flex items-center gap-1 md:gap-2">
         <Currency.Icon
