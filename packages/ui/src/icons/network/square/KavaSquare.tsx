@@ -8,6 +8,6 @@ export const KavaSquare: IconComponent = (props) => (
   <KavaNaked
     {...props}
     fill="white"
-    circle={<rect width="128" height="128"  fill="#FF433E" />}
+    circle={<rect width="128" height="128" fill="#FF433E" />}
   />
 )

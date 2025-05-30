@@ -15,7 +15,6 @@ export const HaqqSquare: IconComponent = (props) => {
           x="0.265"
           fill="currentColor"
           className="fill-black dark:fill-white"
-          
         />
       }
     />

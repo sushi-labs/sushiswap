@@ -10,13 +10,8 @@ export const HarmonySquare: IconComponent = (props) => (
     fill="#FFFFFF"
     circle={
       <>
-        <rect width="128" height="128" fill="#fff"  />
-        <rect
-          width="128"
-          height="128"
-          fill="url(#paint0_linear_301_2)"
-          
-        />
+        <rect width="128" height="128" fill="#fff" />
+        <rect width="128" height="128" fill="url(#paint0_linear_301_2)" />
         <defs>
           <linearGradient
             id="paint0_linear_301_2"

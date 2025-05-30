@@ -10,12 +10,7 @@ export const ThunderCoreSquare: IconComponent = (props) => (
     fill="white"
     circle={
       <>
-        <rect
-          width={128}
-          height={128}
-          
-          fill="url(#paint0_linear_1413_10030)"
-        />
+        <rect width={128} height={128} fill="url(#paint0_linear_1413_10030)" />
         <defs>
           <linearGradient
             id="paint0_linear_1413_10030"
