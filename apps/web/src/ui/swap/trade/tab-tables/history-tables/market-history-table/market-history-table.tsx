@@ -3,6 +3,7 @@ import { DataTable } from '@sushiswap/ui'
 import { Card } from '@sushiswap/ui'
 import InfiniteScroll from 'react-infinite-scroll-component'
 import { Native } from 'sushi/currency'
+import { MobileCard } from '../mobile-card/mobile-card'
 import {
   BUY_COLUMN,
   CHAIN_COLUMN,
@@ -19,8 +20,14 @@ export interface MarketTrade {
   buyAmount: number
   sellToken: ReturnType<typeof Native.onChain>
   sellAmount: number
-  chainFrom: number
-  chainTo: number
+  chainFrom: {
+    id: number
+    name: string
+  }
+  chainTo: {
+    id: number
+    name: string
+  }
   valueUsd: number
   pnlPercent: number
   priceUsd: number
@@ -28,15 +35,21 @@ export interface MarketTrade {
   timestamp: number
 }
 
-const MOCK_DATA: MarketTrade[] = [
+export const MOCK_DATA: MarketTrade[] = [
   {
     id: '1',
     buyToken: Native.onChain(1),
     buyAmount: 0.5,
-    sellToken: Native.onChain(5),
+    sellToken: Native.onChain(43114),
     sellAmount: 850,
-    chainFrom: 1,
-    chainTo: 56,
+    chainFrom: {
+      id: 1,
+      name: 'Ethereum',
+    },
+    chainTo: {
+      id: 43114,
+      name: 'Avalanche',
+    },
     valueUsd: 850,
     pnlPercent: 190.8 / 850,
     priceUsd: 1900,
@@ -47,10 +60,16 @@ const MOCK_DATA: MarketTrade[] = [
     id: '2',
     buyToken: Native.onChain(1),
     buyAmount: 0.5,
-    sellToken: Native.onChain(5),
+    sellToken: Native.onChain(43114),
     sellAmount: 850,
-    chainFrom: 1,
-    chainTo: 56,
+    chainFrom: {
+      id: 1,
+      name: 'Ethereum',
+    },
+    chainTo: {
+      id: 43114,
+      name: 'Avalanche',
+    },
     valueUsd: 850,
     pnlPercent: -10.9 / 850,
     priceUsd: 1900,
@@ -59,7 +78,7 @@ const MOCK_DATA: MarketTrade[] = [
   },
 ]
 
-const COLUMNS = [
+export const COLUMNS = [
   BUY_COLUMN,
   SELL_COLUMN,
   CHAIN_COLUMN,
@@ -83,7 +102,7 @@ export const MarketTable = () => {
         </div>
       }
     >
-      <Card className="overflow-hidden border-none bg-slate-50 dark:bg-slate-800">
+      <Card className="hidden overflow-hidden border-none bg-slate-50 dark:bg-slate-800 md:block">
         <DataTable
           columns={COLUMNS}
           data={data}
@@ -91,6 +110,14 @@ export const MarketTable = () => {
           className="border-none"
           pagination
         />
+      </Card>
+
+      <Card className="p-5 space-y-6 border-none bg-slate-50 dark:bg-slate-800 md:hidden">
+        {data.map((row) => (
+          <div key={row.id} className="pb-6 border-b last:border-b-0 last:pb-0">
+            <MobileCard row={row} columns={COLUMNS} />
+          </div>
+        ))}
       </Card>
     </InfiniteScroll>
   )

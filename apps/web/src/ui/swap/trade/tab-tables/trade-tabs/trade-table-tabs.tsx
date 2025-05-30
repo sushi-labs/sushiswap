@@ -1,5 +1,6 @@
 'use client'
 
+import { useIsSmScreen } from '@sushiswap/hooks'
 import {
   Tabs,
   TabsContent,
@@ -10,6 +11,7 @@ import {
 import { useState } from 'react'
 import { DCAOrdersTable } from '../dca-orders-table/dca-orders-table'
 import { HistoryTable } from '../history-tables/history-table'
+import { LimitOrdersMobile } from '../limit-orders-table/limit-orders-card'
 import { LimitOrdersTable } from '../limit-orders-table/limit-orders-table'
 
 export const TABS = [
@@ -29,6 +31,7 @@ export const TABS = [
 
 export const TradeTableTabs = () => {
   const [currentTab, setCurrentTab] = useState(TABS[0].value)
+  const isSmallScreen = useIsSmScreen()
 
   return (
     <Tabs defaultValue={TABS[0].value} onValueChange={setCurrentTab}>
@@ -49,7 +52,7 @@ export const TradeTableTabs = () => {
         ))}
       </TabsList>
       <TabsContent value={TABS[0].value}>
-        <LimitOrdersTable />
+        {isSmallScreen ? <LimitOrdersMobile /> : <LimitOrdersTable />}
       </TabsContent>
       <TabsContent value={TABS[1].value}>
         <DCAOrdersTable />

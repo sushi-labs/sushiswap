@@ -6,7 +6,9 @@ import { type ReactNode, useState } from 'react'
 import { useCallback } from 'react'
 import InfiniteScroll from 'react-infinite-scroll-component'
 import { Native } from 'sushi/currency'
+import { MobileCard } from '../mobile-card/mobile-card'
 import {
+  ACTION_COLUMN,
   AVG_PRICE_USD_COLUMN,
   CHAIN_COLUMN,
   FILLED_COLUMN,
@@ -15,6 +17,7 @@ import {
   SIZE_COLUMN,
   STATUS_COLUMN,
   VALUE_COLUMN,
+  makeActionColumn,
 } from './dca-history-columns'
 import { DCAOrderDetailsModal } from './order-details-modal'
 
@@ -25,7 +28,10 @@ export interface DCAOrderSummary {
   filledAmount: number
   sizeToken: ReturnType<typeof Native.onChain>
   sizeAmount: number
-  chainId: number
+  chain: {
+    id: number
+    name: string
+  }
   valueUsd: number
   avgPriceUsd: number
   ordersCount: number
@@ -43,7 +49,10 @@ const MOCK_DATA: DCAOrderSummary[] = [
     filledAmount: 10,
     sizeToken: Native.onChain(43114),
     sizeAmount: 19_000,
-    chainId: 43114,
+    chain: {
+      id: 43114,
+      name: 'Avalanche',
+    },
     valueUsd: 19_000,
     avgPriceUsd: 1_900,
     ordersCount: 5,
@@ -63,12 +72,32 @@ const COLUMNS: ColumnDef<DCAOrderSummary>[] = [
   AVG_PRICE_USD_COLUMN,
   ORDERS_COLUMN,
   STATUS_COLUMN,
+  ACTION_COLUMN,
 ]
 
 export const DCAOrdersHistoryTable = () => {
   const data = MOCK_DATA
   const [_selectedRow, setSelectedRow] = useState<DCAOrderSummary | null>(null)
   const [isOpen, setIsOpen] = useState(false)
+
+  const openDetails = (row: DCAOrderSummary) => {
+    setSelectedRow(row)
+    setIsOpen(true)
+  }
+
+  const MOBILE_ACTION_COLUMN = makeActionColumn(openDetails)
+
+  const MOBILE_COLUMNS: ColumnDef<DCAOrderSummary>[] = [
+    FILLED_COLUMN,
+    SIZE_COLUMN,
+    AVG_PRICE_USD_COLUMN,
+    VALUE_COLUMN,
+    CHAIN_COLUMN,
+    ORDERS_COLUMN,
+    STATUS_COLUMN,
+    MOBILE_ACTION_COLUMN,
+    ORDER_ID_COLUMN,
+  ]
 
   const rowRenderer = useCallback(
     (row: Row<DCAOrderSummary>, rowNode: ReactNode) => (
@@ -98,7 +127,7 @@ export const DCAOrdersHistoryTable = () => {
           </div>
         }
       >
-        <Card className="overflow-hidden border-none bg-slate-50 dark:bg-slate-800">
+        <Card className="hidden overflow-hidden border-none md:block bg-slate-50 dark:bg-slate-800">
           <DataTable
             columns={COLUMNS}
             data={data}
@@ -107,6 +136,17 @@ export const DCAOrdersHistoryTable = () => {
             rowRenderer={rowRenderer}
             pagination
           />
+        </Card>
+
+        <Card className="p-5 space-y-6 border-none bg-slate-50 dark:bg-slate-800 md:hidden">
+          {data.map((row) => (
+            <div
+              key={row.id}
+              className="pb-6 border-b last:border-b-0 last:pb-0"
+            >
+              <MobileCard row={row} columns={MOBILE_COLUMNS} />
+            </div>
+          ))}
         </Card>
       </InfiniteScroll>
     </>

@@ -16,14 +16,15 @@ import { DollarCircledIcon } from 'src/ui/icons/dollar-circled'
 import { formatNumber } from 'sushi/format'
 import { formatUSD } from 'sushi/format'
 import type { MarketTrade } from './market-history-table'
+
 export const BUY_COLUMN: ColumnDef<MarketTrade> = {
   id: 'buy',
   header: 'Buy',
   enableSorting: false,
   accessorFn: (row) => row.buyAmount,
   cell: ({ row }) => (
-    <div className="flex items-center gap-2">
-      <Currency.Icon currency={row.original.buyToken} width={18} height={18} />
+    <div className="flex items-center gap-1 md:gap-2">
+      <Currency.Icon currency={row.original.buyToken} width={24} height={24} />
       <span>
         {formatNumber(row.original.buyAmount)} {row.original.buyToken.symbol}
       </span>
@@ -37,8 +38,8 @@ export const SELL_COLUMN: ColumnDef<MarketTrade> = {
   enableSorting: false,
   accessorFn: (row) => row.sellAmount,
   cell: ({ row }) => (
-    <div className="flex items-center gap-2">
-      <Icon currency={row.original.sellToken} width={18} height={18} />
+    <div className="flex items-center gap-1 md:gap-2">
+      <Icon currency={row.original.sellToken} width={24} height={24} />
       <span>
         {formatNumber(row.original.sellAmount)} {row.original.sellToken.symbol}
       </span>
@@ -52,22 +53,30 @@ export const CHAIN_COLUMN: ColumnDef<MarketTrade> = {
   enableSorting: false,
   accessorFn: (row) => `${row.chainFrom}-${row.chainTo}`,
   cell: ({ row }) => (
-    <div className="flex items-center gap-2.5">
-      <NetworkIcon
-        type="square"
-        chainId={row.original.chainFrom}
-        width={20}
-        height={20}
-        className="border rounded-[4px] dark:border-[#222137] border-[#F5F5F5]"
-      />
-      <ArrowSmallRightIcon className="w-3 h-3 dark:text-slate-500 text-slate-450" />
-      <NetworkIcon
-        type="square"
-        chainId={row.original.chainTo}
-        width={20}
-        height={20}
-        className="border rounded-[4px] dark:border-[#222137] border-[#F5F5F5]"
-      />
+    <div className="flex items-center gap-2">
+      <div className="flex items-center gap-1 md:gap-2">
+        <div className="dark:border-[#222137] border-[#F5F5F5] border rounded-[4px] overflow-hidden">
+          <NetworkIcon
+            type="square"
+            chainId={row.original.chainFrom.id}
+            className="w-3 h-3 md:w-5 md:h-5"
+          />
+        </div>
+        <span className="block text-xs md:hidden">
+          {row.original.chainFrom.name}
+        </span>
+        <ArrowSmallRightIcon className="w-3 h-3 dark:text-slate-500 text-slate-450" />
+        <div className="dark:border-[#222137] border-[#F5F5F5] border rounded-[4px] overflow-hidden">
+          <NetworkIcon
+            type="square"
+            chainId={row.original.chainTo.id}
+            className="w-3 h-3 md:w-5 md:h-5"
+          />
+        </div>
+        <span className="block text-xs md:hidden">
+          {row.original.chainTo.name}
+        </span>
+      </div>
     </div>
   ),
 }
