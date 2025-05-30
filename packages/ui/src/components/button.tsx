@@ -11,12 +11,12 @@ const buttonVariants = cva(
 	{
 		variants: {
 			variant: {
+				tradePrimary: "bg-[#3B82F6] hover:bg-[#2563EB] focus:bg-[#1D4ED8] active:bg-[#2563EB] text-white",
 				default: "bg-blue hover:bg-blue-600 focus:bg-blue-700 active:bg-blue-600 text-white",
 				destructive: "bg-red hover:bg-red-600 focus:bg-red-700 active:bg-red-600 text-white",
 				warning: "bg-amber-400 hover:bg-amber-500 focus:bg-amber-600 active:bg-amber-500 text-amber-900",
 				outline: "!border border-accent bg-background hover:bg-muted hover:text-accent-foreground",
-				secondary:
-					"bg-secondary hover:bg-muted focus:bg-accent black:bg-muted black:hover:bg-accent black:focus:bg-accent",
+				secondary: "bg-secondary hover:bg-muted focus:bg-accent",
 				tertiary:
 					"dark:bg-skyblue/10 hover:dark:bg-skyblue/20 focus:dark:bg-skyblue/30 active:dark:bg-skyblue/20 dark:text-skyblue bg-blue/10 hover:bg-blue/20 focus:bg-blue/30 active:bg-blue/20 text-blue",
 				quaternary: "bg-blue-550/10 text-blue-550 hover:bg-blue-550/20 focus:bg-blue-550/30",
