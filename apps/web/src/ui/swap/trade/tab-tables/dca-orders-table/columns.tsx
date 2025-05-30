@@ -7,10 +7,10 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@sushiswap/ui'
+import { DollarCircledIcon } from '@sushiswap/ui/icons/DollarCircled'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import type { ColumnDef } from '@tanstack/react-table'
 import { format } from 'date-fns'
-import { DollarCircledIcon } from 'src/ui/icons/dollar-circled'
 import { formatUSD } from 'sushi/format'
 import { formatPercent } from 'sushi/format'
 import { formatNumber } from 'sushi/format'

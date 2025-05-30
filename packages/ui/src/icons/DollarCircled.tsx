@@ -1,4 +1,4 @@
-import type { IconComponent } from '@sushiswap/ui'
+import type { IconComponent } from '../types'
 
 export const DollarCircledIcon: IconComponent = (props) => {
   return (
