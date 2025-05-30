@@ -1,6 +1,14 @@
 import { ArrowRightIcon } from '@heroicons/react-v1/solid'
 import { useBreakpoint } from '@sushiswap/hooks'
-import { Collapsible, Currency, classNames } from '@sushiswap/ui'
+import {
+  Collapsible,
+  Currency,
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+  classNames,
+} from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import { useState } from 'react'
@@ -30,7 +38,27 @@ export const Recent = () => {
       <div className="sticky grid col-span-3 grid-cols-3 top-0 z-20 bg-white md:bg-slate-50 dark:bg-slate-900 md:dark:bg-slate-800 text-xs text-slate-700 dark:text-pink-100">
         <div className="font-medium mr-auto">Token Pair</div>
         <div className="font-medium mx-auto">Amount Traded</div>
-        <div className="font-medium ml-auto pr-2">PnL</div>
+        <div className="font-medium ml-auto pr-2">
+          <TooltipProvider>
+            <Tooltip delayDuration={0}>
+              <TooltipTrigger asChild>
+                <span className="decoration-dotted cursor-default underline">
+                  PnL
+                </span>
+              </TooltipTrigger>
+              <TooltipContent
+                side="left"
+                sideOffset={8}
+                className="border-black/5 dark:border-white/10 !rounded-md bg-white/20 dark:bg-black/20"
+              >
+                <div className="max-w-[250px] px-1 py-2 text-black dark:text-pink-100 text-sm">
+                  Profit or loss calculated as the difference in USD value of
+                  the asset on the day it was bought and the day it was sold.
+                </div>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        </div>
       </div>
       <div className="grid grid-cols-3 col-span-3 gap-2 w-full">
         <RecentItem />
