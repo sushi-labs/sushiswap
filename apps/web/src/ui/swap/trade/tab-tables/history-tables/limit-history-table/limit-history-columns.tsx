@@ -62,16 +62,18 @@ export const CHAIN_COLUMN: ColumnDef<LimitOrderHistory> = {
   id: 'chain',
   header: 'Chain',
   enableSorting: false,
-
-  accessorFn: (row) => row.chainId,
+  accessorFn: (row) => row.chain.id,
   cell: ({ row }) => (
-    <NetworkIcon
-      type="square"
-      chainId={row.original.chainId}
-      width={20}
-      height={20}
-      className="border rounded-[4px] dark:border-[#222137] border-[#F5F5F5]"
-    />
+    <div className="flex items-center gap-1 md:gap-2">
+      <div className="dark:border-[#222137] border-[#F5F5F5] border rounded-[4px] overflow-hidden">
+        <NetworkIcon
+          type="square"
+          chainId={row.original.chain.id}
+          className="w-3 h-3 md:w-5 md:h-5"
+        />
+      </div>
+      <span className="block text-xs md:hidden">{row.original.chain.name}</span>
+    </div>
   ),
 }
 
@@ -95,7 +97,7 @@ export const VALUE_PNL_COLUMN: ColumnDef<LimitOrderHistory> = {
 
   accessorFn: (row) => row.valueUsd,
   cell: ({ row }) => (
-    <div className="flex flex-col ">
+    <div className="flex items-center gap-1 md:flex-col ">
       <span>{formatUSD(row.original.valueUsd)}</span>
       <span
         className={

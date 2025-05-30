@@ -3,6 +3,7 @@ import { formatUSD } from 'sushi/format'
 import { formatPercent } from 'sushi/format'
 
 import {
+  Button,
   Chip,
   Currency,
   Tooltip,
@@ -20,13 +21,33 @@ import { format } from 'date-fns'
 import { DollarCircledIcon } from 'src/ui/icons/dollar-circled'
 import type { DCAOrder } from './dca-orders-table'
 
+export const FILLED_COLUMN: ColumnDef<DCAOrder> = {
+  id: 'filled',
+  header: 'Filled',
+  enableSorting: false,
+  accessorFn: (row) => row.filledPercent,
+  cell: ({ row }) => (
+    <div className="flex items-center gap-1 md:gap-2">
+      <Currency.Icon
+        disableLink
+        currency={row.original.token}
+        width={24}
+        height={24}
+      />{' '}
+      <span>
+        {formatNumber(row.original.totalAmount)} {row.original.token.symbol}
+      </span>
+    </div>
+  ),
+}
+
 export const SIZE_COLUMN: ColumnDef<DCAOrder> = {
   id: 'size',
   header: 'Size',
   enableSorting: false,
   accessorFn: (row) => row.sizeAmount,
   cell: ({ row }) => (
-    <div className="flex items-center gap-2">
+    <div className="flex items-center gap-1 md:gap-2">
       <Currency.Icon
         disableLink
         currency={row.original.token}
@@ -37,7 +58,7 @@ export const SIZE_COLUMN: ColumnDef<DCAOrder> = {
         <span>
           {formatNumber(row.original.sizeAmount)} {row.original.token.symbol}
         </span>
-        <span className="text-xs text-muted-foreground">
+        <span className="hidden text-xs text-muted-foreground md:block">
           {formatUSD(row.original.sizeUSD)}
         </span>
       </div>
@@ -63,26 +84,6 @@ export const SPENT_COLUMN: ColumnDef<DCAOrder> = {
       <span className="text-xs text-muted-foreground">
         {row.original.ordersRemaining}/{row.original.ordersTotal} Order
         Remaining
-      </span>
-    </div>
-  ),
-}
-
-export const FILLED_COLUMN: ColumnDef<DCAOrder> = {
-  id: 'filled',
-  header: 'Filled',
-  enableSorting: false,
-  accessorFn: (row) => row.filledPercent,
-  cell: ({ row }) => (
-    <div className="flex items-center gap-2">
-      <Currency.Icon
-        disableLink
-        currency={row.original.token}
-        width={24}
-        height={24}
-      />{' '}
-      <span>
-        {formatNumber(row.original.totalAmount)} {row.original.token.symbol}
       </span>
     </div>
   ),
@@ -132,15 +133,18 @@ export const CHAIN_COLUMN: ColumnDef<DCAOrder> = {
   id: 'chain',
   header: 'Chain',
   enableSorting: false,
-  accessorFn: (row) => row.chainId,
+  accessorFn: (row) => row.chain.id,
   cell: ({ row }) => (
-    <NetworkIcon
-      type="square"
-      chainId={row.original.chainId}
-      width={20}
-      height={20}
-      className="rounded-sm"
-    />
+    <div className="flex items-center gap-1 md:gap-2">
+      <div className="dark:border-[#222137] border-[#F5F5F5] border rounded-[4px] overflow-hidden">
+        <NetworkIcon
+          type="square"
+          chainId={row.original.chain.id}
+          className="w-3 h-3 md:w-5 md:h-5"
+        />
+      </div>
+      <span className="block text-xs md:hidden">{row.original.chain.name}</span>
+    </div>
   ),
 }
 
@@ -149,10 +153,5 @@ export const ACTION_COLUMN: ColumnDef<DCAOrder> = {
   header: 'Action',
   enableSorting: false,
   accessorFn: (row) => row.id,
-  cell: () => (
-    <XMarkIcon
-      className="w-4 h-4 ml-auto cursor-pointer text-red"
-      aria-label="Cancel order"
-    />
-  ),
+  cell: () => <Button className="w-full bg-red-100 md:hidden">Cancel</Button>,
 }

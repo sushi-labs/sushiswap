@@ -1,4 +1,4 @@
-import { TooltipContent } from '@sushiswap/ui'
+import { Button, TooltipContent } from '@sushiswap/ui'
 import { TooltipTrigger } from '@sushiswap/ui'
 import { Tooltip } from '@sushiswap/ui'
 import { TooltipProvider } from '@sushiswap/ui'
@@ -27,8 +27,8 @@ export const FILLED_COLUMN: ColumnDef<DCAOrderSummary> = {
     <div className="flex items-center gap-2">
       <Currency.Icon
         currency={row.original.filledToken}
-        width={28}
-        height={28}
+        width={24}
+        height={24}
       />
       <span>
         {formatNumber(row.original.filledAmount)}{' '}
@@ -45,7 +45,7 @@ export const SIZE_COLUMN: ColumnDef<DCAOrderSummary> = {
   accessorFn: (row) => row.sizeAmount,
   cell: ({ row }) => (
     <div className="flex items-center gap-2">
-      <Currency.Icon currency={row.original.sizeToken} width={28} height={28} />
+      <Currency.Icon currency={row.original.sizeToken} width={24} height={24} />
       <span>
         {formatNumber(row.original.sizeAmount)} {row.original.sizeToken.symbol}
       </span>
@@ -57,15 +57,18 @@ export const CHAIN_COLUMN: ColumnDef<DCAOrderSummary> = {
   id: 'chain',
   header: 'Chain',
   enableSorting: false,
-  accessorFn: (row) => row.chainId,
+  accessorFn: (row) => row.chain.id,
   cell: ({ row }) => (
-    <NetworkIcon
-      type="square"
-      chainId={row.original.chainId}
-      width={20}
-      height={20}
-      className="border rounded-[4px] dark:border-[#222137] border-[#F5F5F5]"
-    />
+    <div className="flex items-center gap-1 md:gap-2">
+      <div className="dark:border-[#222137] border-[#F5F5F5] border rounded-[4px] overflow-hidden">
+        <NetworkIcon
+          type="square"
+          chainId={row.original.chain.id}
+          className="w-3 h-3 md:w-5 md:h-5"
+        />
+      </div>
+      <span className="block text-xs md:hidden">{row.original.chain.name}</span>
+    </div>
   ),
 }
 
@@ -130,4 +133,37 @@ export const STATUS_COLUMN: ColumnDef<DCAOrderSummary> = {
       </span>
     </div>
   ),
+}
+
+export const ACTION_COLUMN: ColumnDef<DCAOrderSummary> = {
+  id: 'action',
+  header: 'Action',
+  enableSorting: false,
+  accessorFn: (row) => row.id,
+  cell: () => (
+    <Button className="w-full bg-blue-550 hover:bg-blue-550/80 active:bg-blue-550/60 focus:bg-blue-550 md:hidden">
+      View Orders
+    </Button>
+  ),
+}
+
+export function makeActionColumn(
+  onView: (row: DCAOrderSummary) => void,
+): ColumnDef<DCAOrderSummary> {
+  return {
+    id: 'action',
+    header: 'Action',
+    enableSorting: false,
+    cell: ({ row }) => (
+      <Button
+        className="w-full bg-blue-550 hover:bg-blue-550/80 active:bg-blue-550/60 focus:bg-blue-550"
+        onClick={(e) => {
+          e.stopPropagation()
+          onView(row.original)
+        }}
+      >
+        View Orders
+      </Button>
+    ),
+  }
 }

@@ -1,6 +1,7 @@
 import { XMarkIcon } from '@heroicons/react/24/solid'
 
 import {
+  Button,
   Chip,
   Currency,
   Tooltip,
@@ -21,7 +22,7 @@ export const BUY_COLUMN: ColumnDef<LimitOrder> = {
   accessorFn: (row) => row,
   enableSorting: false,
   cell: ({ row }) => (
-    <div className="flex items-center gap-2">
+    <div className="flex items-center gap-1 md:gap-2">
       <Currency.Icon
         disableLink
         currency={row.original.buyToken}
@@ -43,7 +44,7 @@ export const SELL_COLUMN: ColumnDef<LimitOrder> = {
   cell: ({ row }) => {
     console.log('Sell Token:', row.original.sellToken)
     return (
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-1 md:gap-2">
         <Currency.Icon
           disableLink
           currency={row.original.sellToken}
@@ -63,15 +64,18 @@ export const CHAIN_COLUMN: ColumnDef<LimitOrder> = {
   id: 'chain',
   header: 'Chain',
   enableSorting: false,
-  accessorFn: (row) => row.chainId,
+  accessorFn: (row) => row.chain.id,
   cell: ({ row }) => (
-    <NetworkIcon
-      type="square"
-      chainId={row.original.chainId}
-      width={20}
-      height={20}
-      className="rounded-sm"
-    />
+    <div className="flex items-center gap-1 md:gap-2">
+      <div className="dark:border-[#222137] border-[#F5F5F5] border rounded-[4px] overflow-hidden">
+        <NetworkIcon
+          type="square"
+          chainId={row.original.chain.id}
+          className="w-3 h-3 md:w-5 md:h-5"
+        />
+      </div>
+      <span className="block text-xs md:hidden">{row.original.chain.name}</span>
+    </div>
   ),
 }
 
@@ -86,7 +90,10 @@ export const VALUE_PNL_COLUMN: ColumnDef<LimitOrder> = {
           </span>
         </TooltipTrigger>
         <TooltipContent side="bottom">
-          <p>Copy address</p>
+          <p>
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam,
+            quos.
+          </p>
         </TooltipContent>
       </Tooltip>
     </TooltipProvider>
@@ -95,7 +102,7 @@ export const VALUE_PNL_COLUMN: ColumnDef<LimitOrder> = {
   accessorFn: (row) => row.valueUSD,
   sortingFn: ({ original: a }, { original: b }) => a.valueUSD - b.valueUSD,
   cell: ({ row }) => (
-    <div className="flex flex-col">
+    <div className="flex items-center gap-1 md:flex-col ">
       <span>{formatUSD(row.original.valueUSD)}</span>
       <span
         className={
@@ -174,10 +181,13 @@ export const ACTION_COLUMN: ColumnDef<LimitOrder> = {
   enableSorting: false,
   accessorFn: (row) => row.id,
   cell: () => (
-    <XMarkIcon
-      className="w-4 h-4 ml-auto cursor-pointer text-red"
-      aria-label="Cancel order"
-    />
+    <>
+      <XMarkIcon
+        className="hidden w-4 h-4 ml-auto cursor-pointer text-red md:block"
+        aria-label="Cancel order"
+      />
+      <Button className="w-full bg-red-100 md:hidden">Cancel</Button>
+    </>
   ),
 }
 

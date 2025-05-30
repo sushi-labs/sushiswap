@@ -5,6 +5,7 @@ import type { ColumnDef } from '@tanstack/react-table'
 import React from 'react'
 import InfiniteScroll from 'react-infinite-scroll-component'
 import { Native } from 'sushi/currency'
+import { MobileCard } from '../history-tables/mobile-card/mobile-card'
 import {
   ACTION_COLUMN,
   AVG_PRICE_USD_COLUMN,
@@ -17,7 +18,10 @@ import {
 
 export interface DCAOrder {
   id: string
-  chainId: number
+  chain: {
+    id: number
+    name: string
+  }
   token: ReturnType<typeof Native.onChain>
   sizeAmount: number
   sizeUSD: number
@@ -39,7 +43,10 @@ export interface DCAOrder {
 const MOCK_DATA: DCAOrder[] = [
   {
     id: '1',
-    chainId: 1,
+    chain: {
+      id: 1,
+      name: 'Ethereum',
+    },
     token: Native.onChain(1),
     sizeAmount: 8_000,
     sizeUSD: 8_000,
@@ -59,7 +66,10 @@ const MOCK_DATA: DCAOrder[] = [
   },
   {
     id: '2',
-    chainId: 56,
+    chain: {
+      id: 56,
+      name: 'Binance Smart Chain',
+    },
     token: Native.onChain(56),
     sizeAmount: 1_200,
     sizeUSD: 300,
@@ -103,7 +113,7 @@ export const DCAOrdersTable = () => {
         </div>
       }
     >
-      <Card className="overflow-hidden border-none bg-slate-50 dark:bg-slate-800">
+      <Card className="hidden overflow-hidden border-none bg-slate-50 dark:bg-slate-800 md:block">
         <DataTable
           columns={COLUMNS}
           data={data}
@@ -111,6 +121,14 @@ export const DCAOrdersTable = () => {
           className="border-none"
           pagination
         />
+      </Card>
+
+      <Card className="p-5 space-y-6 border-none bg-slate-50 dark:bg-slate-800 md:hidden">
+        {data.map((row) => (
+          <div key={row.id} className="pb-6 border-b last:border-b-0 last:pb-0">
+            <MobileCard row={row} columns={COLUMNS} />
+          </div>
+        ))}
       </Card>
     </InfiniteScroll>
   )

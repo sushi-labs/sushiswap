@@ -18,7 +18,10 @@ import {
 
 export interface LimitOrder {
   id: string
-  chainId: number
+  chain: {
+    id: number
+    name: string
+  }
   buyToken: ReturnType<typeof Native.onChain>
   buyAmount: number
   sellToken: ReturnType<typeof Native.onChain>
@@ -32,7 +35,7 @@ export interface LimitOrder {
   priceUsd: number
 }
 
-const COLUMNS: ColumnDef<LimitOrder>[] = [
+export const LIMIT_ORDER_COLUMNS: ColumnDef<LimitOrder>[] = [
   BUY_COLUMN,
   SELL_COLUMN,
   CHAIN_COLUMN,
@@ -43,25 +46,31 @@ const COLUMNS: ColumnDef<LimitOrder>[] = [
   ACTION_COLUMN,
 ]
 
-export const MOCK_DATA: LimitOrder[] = [
+export const LIMIT_ORDER_MOCK_DATA: LimitOrder[] = [
   {
     id: '1',
-    chainId: 1,
+    chain: {
+      id: 1,
+      name: 'Ethereum',
+    },
     buyToken: Native.onChain(1),
     buyAmount: 0.42,
     sellToken: Native.onChain(43114),
     sellAmount: 1200,
     valueUSD: 1200,
     pnlPercent: 6.4,
-    filledAmount: 0,
-    totalAmount: 0.42,
+    filledAmount: 0.0,
+    totalAmount: 21,
     filledPercent: 0,
     timestamp: 1741737600000,
     priceUsd: 0.84,
   },
   {
     id: '2',
-    chainId: 56,
+    chain: {
+      id: 56,
+      name: 'Binance Smart Chain',
+    },
     buyToken: Native.onChain(56),
     buyAmount: 10,
     sellToken: Native.onChain(1),
@@ -77,7 +86,7 @@ export const MOCK_DATA: LimitOrder[] = [
 ]
 
 export const LimitOrdersTable = () => {
-  const data = MOCK_DATA
+  const data = LIMIT_ORDER_MOCK_DATA
 
   return (
     <InfiniteScroll
@@ -92,7 +101,7 @@ export const LimitOrdersTable = () => {
     >
       <Card className="overflow-hidden border-none bg-slate-50 dark:bg-slate-800">
         <DataTable
-          columns={COLUMNS}
+          columns={LIMIT_ORDER_COLUMNS}
           data={data}
           loading={false}
           className="border-none"

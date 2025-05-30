@@ -5,6 +5,7 @@ import type { ColumnDef } from '@tanstack/react-table'
 import React from 'react'
 import InfiniteScroll from 'react-infinite-scroll-component'
 import { Native } from 'sushi/currency'
+import { MobileCard } from '../mobile-card/mobile-card'
 import {
   BUY_COLUMN,
   CHAIN_COLUMN,
@@ -25,7 +26,10 @@ export interface LimitOrderHistory {
   buyAmount: number
   sellToken: ReturnType<typeof Native.onChain>
   sellAmount: number
-  chainId: number
+  chain: {
+    id: number
+    name: string
+  }
   valueUsd: number
   pnlUsd: number
   priceUsd: number
@@ -43,13 +47,16 @@ const MOCK_DATA: LimitOrderHistory[] = [
     buyAmount: 21,
     sellToken: Native.onChain(1),
     sellAmount: 0.01,
-    chainId: 1,
+    chain: {
+      id: 1,
+      name: 'Ethereum',
+    },
     valueUsd: 100.23,
     pnlUsd: +19.8,
     priceUsd: 0.86,
     filledAmount: 21,
     totalAmount: 21,
-    filledPercent: 100,
+    filledPercent: 1,
     status: 'Completed',
   },
   {
@@ -59,7 +66,10 @@ const MOCK_DATA: LimitOrderHistory[] = [
     buyAmount: 21,
     sellToken: Native.onChain(1),
     sellAmount: 0.01,
-    chainId: 137,
+    chain: {
+      id: 137,
+      name: 'Polygon',
+    },
     valueUsd: 100.23,
     pnlUsd: +19.8,
     priceUsd: 0.86,
@@ -81,6 +91,17 @@ const COLUMNS: ColumnDef<LimitOrderHistory>[] = [
   STATUS_COLUMN,
 ]
 
+const MOBILE_COLUMNS: ColumnDef<LimitOrderHistory>[] = [
+  BUY_COLUMN,
+  SELL_COLUMN,
+  PRICE_USD_COLUMN,
+  VALUE_PNL_COLUMN,
+  FILLED_COLUMN,
+  STATUS_COLUMN,
+  DATE_COLUMN,
+  CHAIN_COLUMN,
+]
+
 export const LimitOrdersHistoryTable = () => {
   const data = MOCK_DATA
 
@@ -95,7 +116,7 @@ export const LimitOrdersHistoryTable = () => {
         </div>
       }
     >
-      <Card className="overflow-hidden border-none bg-slate-50 dark:bg-slate-800">
+      <Card className="hidden overflow-hidden border-none bg-slate-50 dark:bg-slate-800 md:block">
         <DataTable
           columns={COLUMNS}
           data={data}
@@ -103,6 +124,14 @@ export const LimitOrdersHistoryTable = () => {
           className="border-none"
           pagination
         />
+      </Card>
+
+      <Card className="p-5 space-y-6 border-none bg-slate-50 dark:bg-slate-800 md:hidden">
+        {data.map((row) => (
+          <div key={row.id} className="pb-6 border-b last:border-b-0 last:pb-0">
+            <MobileCard row={row} columns={MOBILE_COLUMNS} />
+          </div>
+        ))}
       </Card>
     </InfiniteScroll>
   )

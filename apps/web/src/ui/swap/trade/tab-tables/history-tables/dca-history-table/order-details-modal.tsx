@@ -8,9 +8,12 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  Loader,
 } from '@sushiswap/ui'
 import type { ColumnDef } from '@tanstack/react-table'
+import InfiniteScroll from 'react-infinite-scroll-component'
 import { Native } from 'sushi/currency'
+import { MobileCard } from '../mobile-card/mobile-card'
 import type { DCAOrderDetails } from './order-details-columns'
 import {
   BUY_COLUMN,
@@ -22,6 +25,15 @@ import {
 } from './order-details-columns'
 
 const COLUMNS: ColumnDef<DCAOrderDetails>[] = [
+  DATE_COLUMN,
+  BUY_COLUMN,
+  SELL_COLUMN,
+  VALUE_COLUMN,
+  PRICE_USD_COLUMN,
+  TX_HASH_COLUMN,
+]
+
+export const MOBILE_COLUMNS: ColumnDef<DCAOrderDetails>[] = [
   DATE_COLUMN,
   BUY_COLUMN,
   SELL_COLUMN,
@@ -102,8 +114,8 @@ export const DCAOrderDetailsModal = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogTrigger asChild>
-        <span>View Details</span>
+      <DialogTrigger asChild className="hidden">
+        <span />
       </DialogTrigger>
       <DialogContent
         className="!max-w-5xl bg-slate-50 dark:bg-slate-800"
@@ -123,8 +135,41 @@ export const DCAOrderDetailsModal = ({
             <XMarkIcon className="w-5 h-5" />
           </DialogClose>
         </DialogHeader>
-        <div className="overflow-x-auto">
-          <DataTable columns={COLUMNS} data={MOCK_DATA} loading={false} />
+        <div
+          id="dca-scroll" // 👈  this is the target
+          className="max-h-[70vh] overflow-y-auto"
+        >
+          <InfiniteScroll
+            dataLength={MOCK_DATA.length}
+            next={() => {}}
+            hasMore={false}
+            loader={
+              <div className="flex justify-center w-full py-4">
+                <Loader size={16} />
+              </div>
+            }
+            scrollableTarget="dca-scroll"
+          >
+            <div className="max-h-full overflow-auto">
+              <DataTable
+                columns={COLUMNS}
+                data={MOCK_DATA}
+                loading={false}
+                className="hidden md:block"
+              />
+              <div className="md:hidden">
+                {MOCK_DATA.map((row) => (
+                  <div key={row.id} className="pb-6">
+                    <MobileCard
+                      row={row}
+                      columns={COLUMNS}
+                      className="p-5 border rounded-xl dark:border-[#222137] border-[#F5F5F5]"
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
+          </InfiniteScroll>
         </div>
       </DialogContent>
     </Dialog>
