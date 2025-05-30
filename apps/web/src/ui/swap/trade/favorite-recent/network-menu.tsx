@@ -13,7 +13,7 @@ import { useState } from 'react'
 import { SUPPORTED_CHAIN_IDS } from 'src/config'
 import { type EvmChainId, EvmChainKey } from 'sushi'
 
-export const NetworkMenu = () => {
+export const NetworkMenu = ({ className }: { className?: string }) => {
   //TODO: bring this out to a context or global state
   const [tempNetworkState, setTempNetworkState] = useState<null | number>(null)
   return (
@@ -21,7 +21,10 @@ export const NetworkMenu = () => {
       <DropdownMenuTrigger>
         <Button
           variant="ghost"
-          className={classNames('flex items-center font-medium !gap-1 !pr-0')}
+          className={classNames(
+            'flex items-center font-medium !gap-1',
+            className,
+          )}
         >
           {tempNetworkState === null ? (
             'All Networks'
@@ -54,10 +57,12 @@ export const NetworkMenu = () => {
 }
 
 const NetworkItem = ({ chainId }: { chainId: number }) => {
+  const chainName = EvmChainKey[chainId as EvmChainId]
   return (
-    <div className="flex items-center gap-1">
+    <div className="flex items-center gap-1 text-muted-foreground dark:text-pink-200">
       <NetworkIcon chainId={chainId} width={16} height={16} />
-      <div>{EvmChainKey[chainId as EvmChainId].toLocaleUpperCase()}</div>
+      {/* TODO: make a util for this */}
+      <div>{`${chainName.slice(0, 1).toUpperCase()}${chainName.slice(1)}`}</div>
     </div>
   )
 }
