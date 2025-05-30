@@ -1,5 +1,3 @@
-import { shortenHash } from 'sushi/format'
-
 import { ArrowSmallRightIcon } from '@heroicons/react/24/outline'
 import {
   Currency,
@@ -13,6 +11,7 @@ import type { ColumnDef } from '@tanstack/react-table'
 import { format } from 'date-fns'
 import { Icon } from 'node_modules/@sushiswap/ui/dist/components/currency/Icon'
 import { DollarCircledIcon } from 'src/ui/icons/dollar-circled'
+import { shortenHash } from 'sushi/format'
 import { formatNumber } from 'sushi/format'
 import { formatUSD } from 'sushi/format'
 import type { MarketTrade } from './market-history-table'
