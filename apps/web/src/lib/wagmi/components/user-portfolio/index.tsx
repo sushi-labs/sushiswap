@@ -59,6 +59,7 @@ const ResponsivePortfolioWrapper: FC<{
       <DialogContent
         variant="semi-opaque"
         hideClose
+        aria-describedby={undefined}
         className="!p-0 h-[calc(100%-55px)]"
       >
         {content}
