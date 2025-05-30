@@ -6,7 +6,14 @@ import {
   InterfaceEventName,
   TraceEvent,
 } from '@sushiswap/telemetry'
-import { Button, Currency, IconButton, buttonIconVariants } from '@sushiswap/ui'
+import {
+  Badge,
+  Button,
+  Currency,
+  IconButton,
+  buttonIconVariants,
+} from '@sushiswap/ui'
+import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import { NativeAddress } from 'src/lib/constants'
 import type { EvmChainId } from 'sushi/chain'
 import type { Type } from 'sushi/currency'
@@ -31,7 +38,7 @@ export function TokenSelectorChipBar({
 
   return (
     <div className="flex flex-wrap gap-2">
-      {tokens.map(({ token, default: isDefault }) => (
+      {tokens?.slice(0, 5)?.map(({ token, default: isDefault }) => (
         <TraceEvent
           events={[BrowserEvent.onClick, BrowserEvent.onKeyPress]}
           name={InterfaceEventName.TOKEN_SELECTED}
@@ -51,17 +58,25 @@ export function TokenSelectorChipBar({
             <Button
               size="sm"
               variant="secondary"
-              className="group"
+              className="group !rounded-full"
               key={token.id}
               onClick={() => onSelect(token)}
             >
-              <Currency.Icon
-                width={20}
-                height={20}
-                className={buttonIconVariants({ size: 'default' })}
-                currency={token}
-                disableLink
-              />
+              <Badge
+                className="border border-slate-50 dark:border-slate-900 rounded-full z-[11]"
+                position="bottom-right"
+                badgeContent={
+                  <NetworkIcon chainId={token.chainId} width={12} height={12} />
+                }
+              >
+                <Currency.Icon
+                  width={24}
+                  height={24}
+                  className={buttonIconVariants({ size: 'default' })}
+                  currency={token}
+                  disableLink
+                />
+              </Badge>
               {token.symbol}
               {!isDefault && (
                 <IconButton

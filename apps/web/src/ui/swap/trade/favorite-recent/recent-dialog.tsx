@@ -9,10 +9,10 @@ import {
   DialogTrigger,
 } from '@sushiswap/ui'
 import { useEffect, useState } from 'react'
-import { Favorite } from './favorite'
 import { NetworkMenu } from './network-menu'
+import { Recent } from './recent'
 
-export const FavoriteDialog = () => {
+export const RecentDialog = () => {
   const { isMd } = useBreakpoint('md')
   const [isOpen, setIsOpen] = useState(false)
 
@@ -30,7 +30,7 @@ export const FavoriteDialog = () => {
       }}
     >
       <DialogTrigger asChild>
-        <Button variant="ghost">Favorite</Button>
+        <Button variant="ghost">Recent</Button>
       </DialogTrigger>
       <DialogContent
         aria-describedby={undefined}
@@ -41,7 +41,7 @@ export const FavoriteDialog = () => {
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-1">
             <DialogTitle className="!mr-0 text-xl font-medium">
-              Favorite
+              Recent
             </DialogTitle>
             <NetworkMenu className="!pr-0" />
           </div>
@@ -50,7 +50,7 @@ export const FavoriteDialog = () => {
           </DialogClose>
         </div>
         <div className="mt-4 max-h-[calc(100vh-200px)] overflow-y-auto hide-scrollbar">
-          <Favorite />
+          <Recent />
         </div>
       </DialogContent>
     </Dialog>

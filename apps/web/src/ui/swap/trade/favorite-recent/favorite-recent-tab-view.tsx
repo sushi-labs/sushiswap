@@ -4,6 +4,7 @@ import { useMemo, useState } from 'react'
 import { Wrapper } from '../wrapper'
 import { Favorite } from './favorite'
 import { NetworkMenu } from './network-menu'
+import { Recent } from './recent'
 
 enum FavoriteRecentTab {
   Favorite = 'Favorite',
@@ -23,7 +24,7 @@ export const FavoriteRecentTabView = () => {
       case FavoriteRecentTab.Favorite:
         return <Favorite />
       case FavoriteRecentTab.Recent:
-        return 'recent'
+        return <Recent />
     }
   }, [tab])
 
@@ -52,7 +53,7 @@ export const FavoriteRecentTabView = () => {
             </Button>
           ))}
         </div>
-        <NetworkMenu />
+        <NetworkMenu className="!pr-0" />
       </div>
       <div className="mt-4 max-h-[500px] overflow-y-auto hide-scrollbar">
         {content}
