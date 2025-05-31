@@ -39,12 +39,12 @@ export const TradeTableTabs = () => {
       className="-mx-5 md:mx-0"
     >
       <div className="flex flex-col items-start justify-between xl:items-center xl:flex-row">
-        <TabsList className="!px-5 w-full md:!px-0 md:!pb-0 !pb-6 !justify-start bg-white dark:bg-background border-t-0 border-l-0 border-r-0 rounded-none shadow-none md:rounded-lg md:border-none md:mx-0 xl:rounded-lg !rounded-b-none">
+        <TabsList className="!px-3 w-full md:!px-0 md:!pb-0 !pb-6 !justify-start bg-white xl:bg-transparent dark:bg-background border-t-0 border-l-0 border-r-0 rounded-none shadow-none md:rounded-lg md:border-none md:mx-0 xl:rounded-lg !rounded-b-none">
           {TABS.map((tab) => (
             <TabsTrigger
               key={tab.value}
               value={tab.value}
-              className="!bg-transparent !border-none !shadow-none"
+              className="!bg-transparent !border-none !shadow-none !px-0"
             >
               <Button
                 key={tab.value}
@@ -68,19 +68,19 @@ export const TradeTableTabs = () => {
       </div>
       <TabsContent
         value={TABS[0].value}
-        className="px-5 !mt-0 !pt-2 bg-[#F9FAFB] dark:bg-slate-900 md:px-0 pb-[86px] md:bg-white md:pb-0"
+        className="px-5 !mt-0 !pt-2 bg-[#F9FAFB] dark:bg-slate-900 md:px-0 pb-[86px] md:bg-white xl:bg-transparent md:pb-0"
       >
         <LimitOrdersTable />
       </TabsContent>
       <TabsContent
         value={TABS[1].value}
-        className="px-5 !mt-0 !pt-2 bg-[#F9FAFB] dark:bg-slate-900 md:px-0 pb-[86px] md:bg-white md:pb-0"
+        className="px-5 !mt-0 !pt-2 bg-[#F9FAFB] dark:bg-slate-900 md:px-0 pb-[86px] md:bg-white xl:bg-transparent md:pb-0"
       >
         <DCAOrdersTable />
       </TabsContent>
       <TabsContent
         value={TABS[2].value}
-        className="px-5 !mt-0 !pt-2 bg-[#F9FAFB] dark:bg-slate-900 md:px-0 pb-[86px] md:bg-white md:pb-0"
+        className="px-5 !mt-0 !pt-2 bg-[#F9FAFB] dark:bg-slate-900 md:px-0 pb-[86px] md:bg-white xl:bg-transparent md:pb-0"
       >
         <HistoryTable />
       </TabsContent>
