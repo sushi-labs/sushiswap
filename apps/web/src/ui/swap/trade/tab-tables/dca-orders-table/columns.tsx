@@ -148,8 +148,8 @@ export const ACTION_COLUMN: ColumnDef<DCAOrder> = {
   enableSorting: false,
   accessorFn: (row) => row.id,
   cell: () => (
-    <Button className="w-full md:hidden" variant="destructive">
-      Cancel
+    <Button className="w-full md:hidden" variant="destructive" asChild>
+      <span>Cancel</span>
     </Button>
   ),
 }
