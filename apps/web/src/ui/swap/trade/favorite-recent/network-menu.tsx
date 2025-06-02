@@ -18,7 +18,7 @@ export const NetworkMenu = ({ className }: { className?: string }) => {
   const [tempNetworkState, setTempNetworkState] = useState<null | number>(null)
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger>
+      <DropdownMenuTrigger asChild>
         <Button
           variant="ghost"
           className={classNames(
