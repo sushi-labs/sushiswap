@@ -110,15 +110,11 @@ export const TokenSelectorRow: FC<TokenSelectorRow> = memo(
             )}
           >
             <div className="flex items-center justify-between flex-grow gap-2 rounded cursor-pointer">
-              {/* <IconButton
-							size="xs"
-							icon="⭐"
-							variant="ghost"
-							name="pin"
-							onClick={onPin}
-							className={classNames(pin?.isPinned ? "" : "grayscale opacity-50", "z-50")}
-						/> */}
-              <FavoriteButton onClick={onPin} className="pl-0" />
+              <FavoriteButton
+                currencyId={currency?.id}
+                onClick={onPin}
+                className="pl-0"
+              />
               <div className="flex flex-row items-center flex-grow gap-4">
                 {selected ? (
                   <Badge

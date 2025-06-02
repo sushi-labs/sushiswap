@@ -93,7 +93,7 @@ export const ChainOptionsSelector = ({
       ))}
       {overflow.length > 0 ? (
         <DropdownMenu>
-          <DropdownMenuTrigger>
+          <DropdownMenuTrigger asChild>
             <button
               type="button"
               className={classNames(
