@@ -1,6 +1,6 @@
 import type { VariablesOf } from 'gql.tada'
 
-import { request, type RequestOptions } from 'src/lib/request.js'
+import { type RequestOptions, request } from 'src/lib/request.js'
 import { SUSHI_DATA_API_HOST } from 'sushi/config/subgraph'
 import { graphql } from '../../graphql.js'
 
@@ -191,8 +191,6 @@ export type PortfolioV2Claim = PortfolioClaimables['v2PositionClaimables'][0]
 export type PortfolioV3Claim = PortfolioClaimables['v3PositionClaimables'][0]
 export type PortfolioFuroClaim = PortfolioClaimables['furoClaimables'][0]
 
-export type PortfolioFarmClaim =
-  | PortfolioV2Claim
-  | PortfolioV3Claim
+export type PortfolioFarmClaim = PortfolioV2Claim | PortfolioV3Claim
 
 export type PortfolioClaim = PortfolioFarmClaim | PortfolioFuroClaim

@@ -7,6 +7,7 @@ import type {
 } from '@sushiswap/graph-client/data-api'
 import { useIsMounted, useMediaQuery } from '@sushiswap/hooks'
 import { Button, Container, LinkInternal, classNames } from '@sushiswap/ui'
+import { AnimatePresence, motion } from 'framer-motion'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { type FC, useMemo } from 'react'
@@ -38,12 +39,6 @@ export const TokenPage: FC<TokenPageProps> = ({ token: _token, tokenInfo }) => {
   const router = useRouter()
 
   const isMounted = useIsMounted()
-
-  const isMd = useMediaQuery({
-    query: `(min-width: 854px)`,
-  })
-
-  const showWidget = isMd
 
   return (
     <>
@@ -99,11 +94,22 @@ export const TokenPage: FC<TokenPageProps> = ({ token: _token, tokenInfo }) => {
                 <div className="flex-auto min-w-0">
                   <TokenChart token={token} />
                 </div>
-                {isMounted && showWidget ? (
-                  <div className="w-[420px] flex-none">
-                    <SwapWidget token1={token} />
-                  </div>
-                ) : null}
+                <div className="min-[854px]:w-[420px] max-[854px]:hidden">
+                  <AnimatePresence>
+                    {isMounted ? (
+                      <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: 20 }}
+                        transition={{ duration: 0.5, ease: 'easeOut' }}
+                      >
+                        <div className="w-[420px] flex-none">
+                          <SwapWidget token1={token} />
+                        </div>
+                      </motion.div>
+                    ) : null}
+                  </AnimatePresence>
+                </div>
               </div>
 
               <TokenInfo token={token} tokenInfo={tokenInfo} />
@@ -142,17 +148,15 @@ export const TokenPage: FC<TokenPageProps> = ({ token: _token, tokenInfo }) => {
           </section>
         </div>
       </section>
-      {isMounted && !showWidget ? (
-        <div className="absolute inset-x-0 bottom-0 p-4 z-[10]">
-          <Link
-            href={`/${EvmChainKey[token.chainId]}/swap?token1=${token.address}`}
-          >
-            <Button fullWidth size="xl">
-              Swap
-            </Button>
-          </Link>
-        </div>
-      ) : null}
+      <div className="w-full bottom-0 index-x-0 fixed p-4 z-[500] min-[854px]:hidden">
+        <Link
+          href={`/${EvmChainKey[token.chainId]}/swap?token1=${token.address}`}
+        >
+          <Button fullWidth size="xl">
+            Swap
+          </Button>
+        </Link>
+      </div>
     </>
   )
 }

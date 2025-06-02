@@ -124,7 +124,7 @@ export const TokenSelectorRow: FC<TokenSelectorRow> = memo(
                   <Badge
                     position="bottom-right"
                     badgeContent={
-                      <div className="bg-white rounded-full dark:bg-slate-800">
+                      <div className="bg-white rounded-full dark:bg-slate-800 black:bg-gray-900">
                         <CheckCircleIcon
                           width={20}
                           height={20}
@@ -154,7 +154,7 @@ export const TokenSelectorRow: FC<TokenSelectorRow> = memo(
                 )}
                 <div className="flex flex-col items-start">
                   <div className="flex gap-1">
-                    <span className="font-semibold text-gray-900 group-hover:text-gray-900 dark:text-slate-50 dark:group-hover:text-white">
+                    <span className="font-semibold text-primary">
                       {currency.symbol}
                     </span>
                     {showWarning ? (
@@ -218,7 +218,7 @@ export const TokenSelectorRow: FC<TokenSelectorRow> = memo(
                       <span
                         className={classNames(
                           selected ? 'font-semibold' : 'font-medium',
-                          'text-right text-gray-900 dark:text-slate-50 truncate',
+                          'text-right text-gray-900 dark:text-slate-50 truncate black:text-slate-50',
                         )}
                       >
                         {balance?.toSignificant(6)}

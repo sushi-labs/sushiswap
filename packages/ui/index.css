@@ -41,6 +41,19 @@
     --red: 180 48 60;
   }
 
+  .black {
+    --background-color: #121212;
+    --color: #ffffff;
+    --secondary: #171717;
+    --muted: #202020;
+    --muted-foreground: #a9a9a9;
+    --accent: #2a2a2a;
+    --accent-foreground: #ffffff;
+    --background: #121212;
+    --green: 76 175 80;
+    --red: 220 38 38;
+  }
+
   .dark .paper {
     backdrop-filter: blur(10px) saturate(190%) contrast(70%) brightness(80%);
   }
@@ -164,4 +177,8 @@ html[class="dark"] *.scroll::-webkit-scrollbar-thumb {
 
 .dark .Toastify__close-button {
   color: #fff !important;
+}
+
+[aria-labelledby="rk_connect_title"] {
+  @apply pointer-events-auto;
 }

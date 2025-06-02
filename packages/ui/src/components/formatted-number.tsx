@@ -2,11 +2,15 @@ import type React from 'react'
 import { formatNumber, withoutScientificNotation } from 'sushi'
 
 interface FormattedNumberProps {
-  number: string | undefined
+  number: number | string | undefined
 }
 
 const FormattedNumber: React.FC<FormattedNumberProps> = ({ number }) => {
   if (typeof number === 'undefined') return undefined
+  if (typeof number === 'number') {
+    if (!Number.isFinite(number)) return '∞'
+    number = number.toString()
+  }
   if (number === '∞') return number
 
   const numberStr = withoutScientificNotation(number)
