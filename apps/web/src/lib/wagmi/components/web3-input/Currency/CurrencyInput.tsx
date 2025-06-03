@@ -27,6 +27,7 @@ import type { Percent } from 'sushi/math'
 import { useAccount } from 'wagmi'
 import { useAmountBalance } from '~evm/_common/ui/balance-provider/use-balance'
 import { usePrice } from '~evm/_common/ui/price-provider/price-provider/use-price'
+import { QuickSelect } from '../../token-selector/quick-select/quick-select'
 import { TokenSelector } from '../../token-selector/token-selector'
 import { BalancePanel } from './BalancePanel'
 import { PricePanel } from './PricePanel'
@@ -156,83 +157,87 @@ const CurrencyInput: FC<CurrencyInputProps> = ({
     if (!onSelect) return null
 
     return (
-      <TokenSelector
-        currencies={currencies}
-        selected={currency}
-        chainId={chainId}
-        onSelect={onSelect}
-        includeNative={allowNative}
-        hidePinnedTokens={hidePinnedTokens}
-        hideSearch={hideSearch}
-        networks={networks}
-        selectedNetwork={selectedNetwork}
-        onNetworkSelect={onNetworkChange}
-      >
-        <Button
-          data-state={currencyLoading ? 'inactive' : 'active'}
-          size="lg"
-          variant={currency ? 'secondary' : 'default'}
-          id={id}
-          type="button"
-          className={classNames(
-            currency ? 'pl-2 pr-3' : '',
-            networks ? '!h-11' : '',
-            currencyClassName,
-            '!rounded-full data-[state=inactive]:hidden data-[state=active]:flex',
-          )}
+      <div className="flex items-center gap-2">
+        {type === 'OUTPUT' ? <QuickSelect /> : null}
+
+        <TokenSelector
+          currencies={currencies}
+          selected={currency}
+          chainId={chainId}
+          onSelect={onSelect}
+          includeNative={allowNative}
+          hidePinnedTokens={hidePinnedTokens}
+          hideSearch={hideSearch}
+          networks={networks}
+          selectedNetwork={selectedNetwork}
+          onNetworkSelect={onNetworkChange}
         >
-          {currency ? (
-            networks ? (
-              <>
-                <div className="w-[28px] h-[28px] mr-1.5">
-                  <Badge
-                    className="border border-slate-900 rounded-full z-[11]"
-                    position="bottom-right"
-                    badgeContent={
-                      <NetworkIcon
-                        chainId={currency.chainId}
-                        width={16}
-                        height={16}
+          <Button
+            data-state={currencyLoading ? 'inactive' : 'active'}
+            size="lg"
+            variant={currency ? 'secondary' : 'default'}
+            id={id}
+            type="button"
+            className={classNames(
+              currency ? 'pl-2 pr-3' : '',
+              networks ? '!h-11' : '',
+              currencyClassName,
+              '!rounded-full data-[state=inactive]:hidden data-[state=active]:flex',
+            )}
+          >
+            {currency ? (
+              networks ? (
+                <>
+                  <div className="w-[28px] h-[28px] mr-1.5">
+                    <Badge
+                      className="border border-slate-900 rounded-full z-[11]"
+                      position="bottom-right"
+                      badgeContent={
+                        <NetworkIcon
+                          chainId={currency.chainId}
+                          width={16}
+                          height={16}
+                        />
+                      }
+                    >
+                      <Currency.Icon
+                        disableLink
+                        currency={currency}
+                        width={28}
+                        height={28}
                       />
-                    }
-                  >
+                    </Badge>
+                  </div>
+                  <div className="flex flex-col items-start">
+                    <span className="text-xl leading-5">{currency.symbol}</span>
+                    <span className="text-xs leading-3 text-muted-foreground">
+                      {EvmChain.from(currency.chainId)?.name}
+                    </span>
+                  </div>
+                  <SelectPrimitive.Icon asChild>
+                    <ChevronRightIcon strokeWidth={2} width={16} height={16} />
+                  </SelectPrimitive.Icon>
+                </>
+              ) : (
+                <>
+                  <div className="w-[28px] h-[28px] mr-0.5">
                     <Currency.Icon
                       disableLink
                       currency={currency}
                       width={28}
                       height={28}
                     />
-                  </Badge>
-                </div>
-                <div className="flex flex-col items-start">
-                  <span className="text-xl leading-5">{currency.symbol}</span>
-                  <span className="text-xs leading-3 text-muted-foreground">
-                    {EvmChain.from(currency.chainId)?.name}
-                  </span>
-                </div>
-                <SelectPrimitive.Icon asChild>
-                  <ChevronRightIcon strokeWidth={2} width={16} height={16} />
-                </SelectPrimitive.Icon>
-              </>
+                  </div>
+                  <span className="text-xl">{currency.symbol}</span>
+                  <SelectIcon />
+                </>
+              )
             ) : (
-              <>
-                <div className="w-[28px] h-[28px] mr-0.5">
-                  <Currency.Icon
-                    disableLink
-                    currency={currency}
-                    width={28}
-                    height={28}
-                  />
-                </div>
-                <span className="text-xl">{currency.symbol}</span>
-                <SelectIcon />
-              </>
-            )
-          ) : (
-            'Select token'
-          )}
-        </Button>
-      </TokenSelector>
+              'Select token'
+            )}
+          </Button>
+        </TokenSelector>
+      </div>
     )
   }, [
     currencyClassName,
@@ -248,6 +253,7 @@ const CurrencyInput: FC<CurrencyInputProps> = ({
     networks,
     selectedNetwork,
     onNetworkChange,
+    type,
   ])
 
   return (
