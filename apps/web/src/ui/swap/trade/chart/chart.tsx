@@ -1,8 +1,6 @@
 'use client'
 
-import { Currency } from '@sushiswap/ui'
-import { useEffect, useMemo, useRef } from 'react'
-import { Amount, Native, Price } from 'sushi/currency'
+import { Native } from 'sushi/currency'
 import { Rate } from './rate'
 
 export const Chart = () => {
