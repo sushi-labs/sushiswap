@@ -5,6 +5,7 @@ import React from 'react'
 import type { NonStandardChainId } from 'src/config'
 import { useSkaleEuropaFaucet } from 'src/lib/hooks'
 import { useHeaderNetworkSelector } from 'src/lib/wagmi/components/header-network-selector'
+import { Chart } from 'src/ui/swap/trade/chart/chart'
 import {
   CHAIN_IDS_BY_TRADE_MODE,
   type TradeMode,
@@ -49,8 +50,8 @@ export default function TradePage() {
           <Container maxWidth="screen-2xl" className="px-4">
             <div className="flex flex-col-reverse w-full gap-4 md:flex-row">
               <div className="flex w-full flex-col gap-4 md:w-1/2 lg:w-[calc(100%-480px)]">
-                <div className="w-full md:h-[648px] rounded-xl border">
-                  chart
+                <div className="w-full md:h-[648px] flex">
+                  <Chart />
                 </div>
                 <div className="w-full md:h-[320px]">
                   <TradeTableTabs />
