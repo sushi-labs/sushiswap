@@ -6,7 +6,7 @@ import { Amount, Native, Price } from 'sushi/currency'
 import { Rate } from './rate'
 
 export const Chart = () => {
-  const containerRef = useRef(null)
+  // const containerRef = useRef(null)
 
   // useEffect(() => {
   //   const widgetOptions = {
@@ -28,13 +28,13 @@ export const Chart = () => {
 
   const input0 = Native.onChain(1)
   const input1 = Native.onChain(43114)
-  const price = useMemo(() => {
-    if (!input0 || !input1) return undefined
-    return new Price({
-      baseAmount: Amount.fromRawAmount(input0, 123),
-      quoteAmount: Amount.fromRawAmount(input1, 321),
-    })
-  }, [input0, input1])
+  // const price = useMemo(() => {
+  //   if (!input0 || !input1) return undefined
+  //   return new Price({
+  //     baseAmount: Amount.fromRawAmount(input0, 123),
+  //     quoteAmount: Amount.fromRawAmount(input1, 321),
+  //   })
+  // }, [input0, input1])
 
   return (
     <div className="flex flex-col flex-grow md:p-5 md:gap-3 bg-slate-800 rounded-xl">
