@@ -1,6 +1,6 @@
 import type { VariablesOf } from 'gql.tada'
 
-import { request, type RequestOptions } from 'src/lib/request.js'
+import { type RequestOptions, request } from 'src/lib/request.js'
 import { SUSHI_DATA_API_HOST } from 'sushi/config/subgraph'
 import { graphql } from '../../graphql.js'
 import { SUSHI_REQUEST_HEADERS } from '../../request-headers.js'
@@ -37,7 +37,7 @@ export async function getTokenPriceChart(
         document: TokenPriceChartQuery,
         variables: {
           ...variables,
-          address: variables.address.toLowerCase()
+          address: variables.address.toLowerCase(),
         },
         requestHeaders: SUSHI_REQUEST_HEADERS,
       },

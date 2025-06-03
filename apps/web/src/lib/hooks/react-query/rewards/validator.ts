@@ -43,8 +43,8 @@ const merklCampaignValidator = z.object({
   distributionChainId: z.number().transform((chainId) => chainId as EvmChainId),
   campaignId: z.string(),
   amount: z.string(),
-  startTimestamp: z.string().transform((value) => +value),
-  endTimestamp: z.string().transform((value) => +value),
+  startTimestamp: z.coerce.number(),
+  endTimestamp: z.coerce.number(),
   params: z.object({
     blacklist: z.array(z.string()),
     whitelist: z.array(z.string()),

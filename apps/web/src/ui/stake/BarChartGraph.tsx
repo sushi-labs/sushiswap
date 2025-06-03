@@ -11,27 +11,24 @@ import { SkeletonBox } from '@sushiswap/ui'
 import format from 'date-fns/format'
 import { type FC, useCallback, useMemo } from 'react'
 import { formatNumber, formatPercent } from 'sushi/format'
-import tailwindConfig from 'tailwind.config.js'
-import resolveConfig from 'tailwindcss/resolveConfig'
 
 import { useBarChartData } from 'src/lib/stake'
 import { BarChartPeriod, chartPeriods } from './BarChartPeriods'
 import { BarChartType } from './BarChartTypes'
 
-import ReactEchartsCore from 'echarts-for-react/lib/core'
-import type { EChartsOption } from 'echarts-for-react/lib/types'
-import 'echarts/lib/chart/line'
-import 'echarts/lib/component/tooltip'
-import 'echarts/lib/component/visualMap'
-import echarts from 'echarts/lib/echarts'
-import 'echarts/lib/visual/seriesColor'
+import type { EChartOption } from 'echarts'
+import ReactEChartsCore from 'echarts-for-react/lib/core'
+import { LineChart } from 'echarts/charts'
+import { GridComponent, TooltipComponent } from 'echarts/components'
+import * as echarts from 'echarts/core'
+import { CanvasRenderer } from 'echarts/renderers'
 
 interface BarChartProps {
   chart: BarChartType.APR | BarChartType.TotalSupply
   period: BarChartPeriod
 }
 
-const tailwind = resolveConfig(tailwindConfig)
+echarts.use([LineChart, CanvasRenderer, GridComponent, TooltipComponent])
 
 export const BarChartGraph: FC<BarChartProps> = ({ chart, period }) => {
   const { data: barData, isLoading } = useBarChartData()
@@ -90,7 +87,7 @@ export const BarChartGraph: FC<BarChartProps> = ({ chart, period }) => {
     [period, chart],
   )
 
-  const DEFAULT_OPTION: EChartsOption = useMemo(
+  const DEFAULT_OPTION = useMemo<EChartOption>(
     () => ({
       tooltip: {
         trigger: 'axis',
@@ -134,24 +131,11 @@ export const BarChartGraph: FC<BarChartProps> = ({ chart, period }) => {
         },
         borderWidth: 0,
       },
-      toolbox: {
-        show: false,
-      },
       grid: {
         top: 4,
         left: 4,
         right: 4,
         bottom: 0,
-      },
-      dataZoom: {
-        show: false,
-        start: 0,
-        end: 100,
-      },
-      visualMap: {
-        show: false,
-        // @ts-ignore
-        color: [tailwind.theme.colors.blue['500']],
       },
       xAxis: [
         {
@@ -225,7 +209,7 @@ export const BarChartGraph: FC<BarChartProps> = ({ chart, period }) => {
             )}
           />
         ) : (
-          <ReactEchartsCore
+          <ReactEChartsCore
             echarts={echarts}
             option={DEFAULT_OPTION}
             style={{ height: 200 }}

@@ -130,7 +130,6 @@ export const DCAOrdersHistoryTable = () => {
             columns={COLUMNS}
             data={data}
             loading={false}
-            className="border-none"
             rowRenderer={rowRenderer}
             pagination
           />

@@ -366,7 +366,7 @@ const Component: FC<{ chainId: string; address: string; position: string }> = ({
                       </CardGroup>
                     </CardContent>
                     <CardFooter>
-                      {rewardsData ? (
+                      {rewardsData?.[chainId] ? (
                         <Checker.Connect size="default" fullWidth>
                           <Checker.Network
                             size="default"
@@ -379,7 +379,12 @@ const Component: FC<{ chainId: string; address: string; position: string }> = ({
                           </Checker.Network>
                         </Checker.Connect>
                       ) : (
-                        <Button size="default" fullWidth loading>
+                        <Button
+                          size="default"
+                          fullWidth
+                          loading={isRewardsLoading}
+                          disabled={!isRewardsLoading}
+                        >
                           Claim
                         </Button>
                       )}

@@ -1,8 +1,10 @@
+import { usePinnedTokens } from '@sushiswap/hooks'
 import { Button } from '@sushiswap/ui'
-import { useCallback } from 'react'
+import { useCallback, useMemo } from 'react'
 import { ConnectButton } from 'src/lib/wagmi/components/connect-button'
 import { TokenSelectorV2 } from 'src/lib/wagmi/components/token-selector/token-selector-v2'
 import { formatUSD } from 'sushi'
+import type { ID } from 'sushi'
 import type { Type } from 'sushi/currency'
 import { formatNumber } from 'sushi/format'
 import { useAccount } from 'wagmi'
@@ -11,6 +13,24 @@ import { TokenNetworkIcon } from '../token-network-icon'
 
 export const Favorite = () => {
   const { address } = useAccount()
+  const { data: _pinnedTokens } = usePinnedTokens()
+
+  const pinnedTokensArray = useMemo(() => {
+    return Object.values(_pinnedTokens)
+      .flat()
+      .map((i) => {
+        const currencyId = i
+        const chainId = currencyId?.split(':')[0]
+        const contractAddress = currencyId?.split(':')[1]
+        const isNative = currencyId === 'NATIVE'
+        return {
+          currencyId,
+          chainId,
+          contractAddress,
+          isNative,
+        }
+      })
+  }, [_pinnedTokens])
 
   const onSelect = useCallback((token: Type) => {
     // Handle token selection
@@ -21,27 +41,27 @@ export const Favorite = () => {
     return <ConnectButton className="w-full" variant="secondary" />
   }
 
-  // if(favorites.length === 0) {
-  // return (
-  // 	<div className="flex items-center justify-center w-full flex-col gap-4 mt-8">
-  // 		<TokenSelectorV2
-  // 			selected={undefined}
-  // 			chainId={1}
-  // 			onSelect={onSelect}
-  // 			includeNative={true}
-  // 			hidePinnedTokens={false}
-  // 			isBrowse={true}
-  // 			hideSearch={false}>
-  // 			<Button variant="secondary" className="w-full">
-  // 				Browse Tokens
-  // 			</Button>
-  // 		</TokenSelectorV2>
-  // 		<p className="italic text-sm text-muted-foreground dark:text-pink-200">
-  // 			You haven&apos;t selected any favorite tokens.
-  // 		</p>
-  // 	</div>
-  // );
-  // }
+  if (pinnedTokensArray?.length === 0) {
+    return (
+      <div className="flex items-center justify-center w-full flex-col gap-4 mt-8">
+        <TokenSelectorV2
+          selected={undefined}
+          chainId={1}
+          onSelect={onSelect}
+          includeNative={true}
+          hidePinnedTokens={false}
+          isBrowse={true}
+        >
+          <Button variant="secondary" className="w-full">
+            Browse Tokens
+          </Button>
+        </TokenSelectorV2>
+        <p className="italic text-sm text-muted-foreground dark:text-pink-200">
+          You haven&apos;t selected any favorite tokens.
+        </p>
+      </div>
+    )
+  }
 
   return (
     <div>
@@ -60,22 +80,10 @@ export const Favorite = () => {
             <th className="text-right font-medium">Holdings</th>
           </tr>
         </thead>
-        <tbody className="">
-          <FavoriteItem />
-          <FavoriteItem />
-          <FavoriteItem />
-          <FavoriteItem />
-          <FavoriteItem />
-          <FavoriteItem />
-          <FavoriteItem />
-          <FavoriteItem />
-          <FavoriteItem />
-          <FavoriteItem />
-          <FavoriteItem />
-          <FavoriteItem />
-          <FavoriteItem />
-          <FavoriteItem />
-        </tbody>
+
+        {pinnedTokensArray?.map((i, idx) => (
+          <FavoriteItem currencyId={i.currencyId as ID} key={idx} />
+        ))}
       </table>
       <TokenSelectorV2
         selected={undefined}
@@ -93,11 +101,11 @@ export const Favorite = () => {
   )
 }
 
-const FavoriteItem = () => {
+const FavoriteItem = ({ currencyId }: { currencyId: ID }) => {
   return (
     <tr className="text-xs">
       <td className="max-w-[25px] py-3 md:py-4">
-        <FavoriteButton />
+        <FavoriteButton currencyId={currencyId} />
       </td>
       <td>
         <TokenNetworkIcon />
