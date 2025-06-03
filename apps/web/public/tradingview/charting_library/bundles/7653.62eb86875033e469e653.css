@@ -1,0 +1,17 @@
+.body-pdhUiHjR {
+  box-sizing: border-box;
+  color: #131722;
+  font-size: 14px;
+  line-height: 22px;
+  padding: 16px 20px;
+  width: 380px;
+}
+html.theme-dark .body-pdhUiHjR {
+  color: #d1d4dc;
+}
+.text-pdhUiHjR {
+  padding-bottom: 16px;
+}
+.exporting-pdhUiHjR {
+  color: #0000;
+}

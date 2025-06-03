@@ -1,0 +1,229 @@
+.input-RUSovanF {
+  padding: 0
+    calc(
+      8px -
+      var(--ui-lib-control-border-width, 2px) -
+      var(--ui-lib-control-inner-slot-gap, 2px)
+    );
+}
+.input-RUSovanF.size-xxsmall-RUSovanF {
+  -webkit-text-fill-color: var(--ui-lib-control-text-fill-color, currentColor);
+  -webkit-appearance: auto;
+  appearance: textfield;
+  background-color: initial;
+  border: 0;
+  display: block;
+  font-family: inherit;
+  font-size: inherit;
+  height: 100%;
+  line-height: inherit;
+  margin: 0;
+  min-width: 0;
+  order: 0;
+  outline: 0;
+  width: 100%;
+}
+.input-RUSovanF.size-xxsmall-RUSovanF::placeholder {
+  -webkit-text-fill-color: currentColor;
+  color: #a3a6af;
+  opacity: 1;
+}
+html.theme-dark .input-RUSovanF.size-xxsmall-RUSovanF::placeholder {
+  color: #434651;
+}
+.input-RUSovanF.size-xxsmall-RUSovanF::-webkit-calendar-picker-indicator,
+.input-RUSovanF.size-xxsmall-RUSovanF::-webkit-clear-button,
+.input-RUSovanF.size-xxsmall-RUSovanF::-webkit-inner-spin-button,
+.input-RUSovanF.size-xxsmall-RUSovanF::-webkit-outer-spin-button,
+.input-RUSovanF.size-xxsmall-RUSovanF::-webkit-search-cancel-button {
+  -webkit-appearance: none;
+  appearance: none;
+}
+.input-RUSovanF.size-xxsmall-RUSovanF:-webkit-autofill,
+.input-RUSovanF.size-xxsmall-RUSovanF:-webkit-autofill:active,
+.input-RUSovanF.size-xxsmall-RUSovanF:-webkit-autofill:focus,
+.input-RUSovanF.size-xxsmall-RUSovanF:-webkit-autofill:hover {
+  border-radius: 2px;
+}
+html.theme-dark
+  .input-RUSovanF.size-xxsmall-RUSovanF::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+}
+.input-RUSovanF.size-xsmall-RUSovanF {
+  -webkit-text-fill-color: var(--ui-lib-control-text-fill-color, currentColor);
+  -webkit-appearance: auto;
+  appearance: textfield;
+  background-color: initial;
+  border: 0;
+  display: block;
+  font-family: inherit;
+  font-size: inherit;
+  height: 100%;
+  line-height: inherit;
+  margin: 0;
+  min-width: 0;
+  order: 0;
+  outline: 0;
+  width: 100%;
+}
+.input-RUSovanF.size-xsmall-RUSovanF::placeholder {
+  -webkit-text-fill-color: currentColor;
+  color: #a3a6af;
+  opacity: 1;
+}
+html.theme-dark .input-RUSovanF.size-xsmall-RUSovanF::placeholder {
+  color: #434651;
+}
+.input-RUSovanF.size-xsmall-RUSovanF::-webkit-calendar-picker-indicator,
+.input-RUSovanF.size-xsmall-RUSovanF::-webkit-clear-button,
+.input-RUSovanF.size-xsmall-RUSovanF::-webkit-inner-spin-button,
+.input-RUSovanF.size-xsmall-RUSovanF::-webkit-outer-spin-button,
+.input-RUSovanF.size-xsmall-RUSovanF::-webkit-search-cancel-button {
+  -webkit-appearance: none;
+  appearance: none;
+}
+.input-RUSovanF.size-xsmall-RUSovanF:-webkit-autofill,
+.input-RUSovanF.size-xsmall-RUSovanF:-webkit-autofill:active,
+.input-RUSovanF.size-xsmall-RUSovanF:-webkit-autofill:focus,
+.input-RUSovanF.size-xsmall-RUSovanF:-webkit-autofill:hover {
+  border-radius: 4px;
+}
+html.theme-dark
+  .input-RUSovanF.size-xsmall-RUSovanF::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+}
+.input-RUSovanF.size-small-RUSovanF {
+  -webkit-text-fill-color: var(--ui-lib-control-text-fill-color, currentColor);
+  -webkit-appearance: auto;
+  appearance: textfield;
+  background-color: initial;
+  border: 0;
+  display: block;
+  font-family: inherit;
+  font-size: inherit;
+  height: 100%;
+  line-height: inherit;
+  margin: 0;
+  min-width: 0;
+  order: 0;
+  outline: 0;
+  width: 100%;
+}
+.input-RUSovanF.size-small-RUSovanF::placeholder {
+  -webkit-text-fill-color: currentColor;
+  color: #a3a6af;
+  opacity: 1;
+}
+html.theme-dark .input-RUSovanF.size-small-RUSovanF::placeholder {
+  color: #434651;
+}
+.input-RUSovanF.size-small-RUSovanF::-webkit-calendar-picker-indicator,
+.input-RUSovanF.size-small-RUSovanF::-webkit-clear-button,
+.input-RUSovanF.size-small-RUSovanF::-webkit-inner-spin-button,
+.input-RUSovanF.size-small-RUSovanF::-webkit-outer-spin-button,
+.input-RUSovanF.size-small-RUSovanF::-webkit-search-cancel-button {
+  -webkit-appearance: none;
+  appearance: none;
+}
+.input-RUSovanF.size-small-RUSovanF:-webkit-autofill,
+.input-RUSovanF.size-small-RUSovanF:-webkit-autofill:active,
+.input-RUSovanF.size-small-RUSovanF:-webkit-autofill:focus,
+.input-RUSovanF.size-small-RUSovanF:-webkit-autofill:hover {
+  border-radius: 4px;
+}
+html.theme-dark
+  .input-RUSovanF.size-small-RUSovanF::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+}
+.input-RUSovanF.size-medium-RUSovanF {
+  -webkit-text-fill-color: var(--ui-lib-control-text-fill-color, currentColor);
+  -webkit-appearance: auto;
+  appearance: textfield;
+  background-color: initial;
+  border: 0;
+  display: block;
+  font-family: inherit;
+  font-size: inherit;
+  height: 100%;
+  line-height: inherit;
+  margin: 0;
+  min-width: 0;
+  order: 0;
+  outline: 0;
+  width: 100%;
+}
+.input-RUSovanF.size-medium-RUSovanF::placeholder {
+  -webkit-text-fill-color: currentColor;
+  color: #a3a6af;
+  opacity: 1;
+}
+html.theme-dark .input-RUSovanF.size-medium-RUSovanF::placeholder {
+  color: #434651;
+}
+.input-RUSovanF.size-medium-RUSovanF::-webkit-calendar-picker-indicator,
+.input-RUSovanF.size-medium-RUSovanF::-webkit-clear-button,
+.input-RUSovanF.size-medium-RUSovanF::-webkit-inner-spin-button,
+.input-RUSovanF.size-medium-RUSovanF::-webkit-outer-spin-button,
+.input-RUSovanF.size-medium-RUSovanF::-webkit-search-cancel-button {
+  -webkit-appearance: none;
+  appearance: none;
+}
+.input-RUSovanF.size-medium-RUSovanF:-webkit-autofill,
+.input-RUSovanF.size-medium-RUSovanF:-webkit-autofill:active,
+.input-RUSovanF.size-medium-RUSovanF:-webkit-autofill:focus,
+.input-RUSovanF.size-medium-RUSovanF:-webkit-autofill:hover {
+  border-radius: 6px;
+}
+html.theme-dark
+  .input-RUSovanF.size-medium-RUSovanF::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+}
+.input-RUSovanF.size-large-RUSovanF {
+  -webkit-text-fill-color: var(--ui-lib-control-text-fill-color, currentColor);
+  -webkit-appearance: auto;
+  appearance: textfield;
+  background-color: initial;
+  border: 0;
+  display: block;
+  font-family: inherit;
+  font-size: inherit;
+  height: 100%;
+  line-height: inherit;
+  margin: 0;
+  min-width: 0;
+  order: 0;
+  outline: 0;
+  width: 100%;
+}
+.input-RUSovanF.size-large-RUSovanF::placeholder {
+  -webkit-text-fill-color: currentColor;
+  color: #a3a6af;
+  opacity: 1;
+}
+html.theme-dark .input-RUSovanF.size-large-RUSovanF::placeholder {
+  color: #434651;
+}
+.input-RUSovanF.size-large-RUSovanF::-webkit-calendar-picker-indicator,
+.input-RUSovanF.size-large-RUSovanF::-webkit-clear-button,
+.input-RUSovanF.size-large-RUSovanF::-webkit-inner-spin-button,
+.input-RUSovanF.size-large-RUSovanF::-webkit-outer-spin-button,
+.input-RUSovanF.size-large-RUSovanF::-webkit-search-cancel-button {
+  -webkit-appearance: none;
+  appearance: none;
+}
+.input-RUSovanF.size-large-RUSovanF:-webkit-autofill,
+.input-RUSovanF.size-large-RUSovanF:-webkit-autofill:active,
+.input-RUSovanF.size-large-RUSovanF:-webkit-autofill:focus,
+.input-RUSovanF.size-large-RUSovanF:-webkit-autofill:hover {
+  border-radius: 6px;
+}
+html.theme-dark
+  .input-RUSovanF.size-large-RUSovanF::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+}
+.input-RUSovanF.with-start-slot-RUSovanF {
+  padding-right: calc(4px - var(--ui-lib-control-inner-slot-gap, 2px));
+}
+.input-RUSovanF.with-end-slot-RUSovanF {
+  padding-left: calc(4px - var(--ui-lib-control-inner-slot-gap, 2px));
+}

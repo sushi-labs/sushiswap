@@ -1,0 +1,32 @@
+.menuButton-xw2UKKgr {
+  --tv-color-toolbar-button-background-expanded: none;
+  --tv-color-toolbar-button-background-hover: none;
+}
+.select-xw2UKKgr {
+  text-align: left;
+}
+.selectMenu-xw2UKKgr {
+  display: none;
+}
+.title-xw2UKKgr {
+  color: #6a6d78;
+  display: flex;
+  font-size: 14px;
+  line-height: 22px;
+}
+html.theme-dark .title-xw2UKKgr {
+  color: #868993;
+}
+.titleWithError-xw2UKKgr {
+  color: #f23645;
+}
+.wrapper-HLS9OacM {
+  align-items: center;
+  display: flex;
+  flex-direction: row;
+  text-align: left;
+}
+.help-HLS9OacM {
+  --trading-informer-size: 18px;
+  margin-left: 4px;
+}

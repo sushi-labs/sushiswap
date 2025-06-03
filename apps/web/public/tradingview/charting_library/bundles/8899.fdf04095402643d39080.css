@@ -1,0 +1,89 @@
+.overlap-manager-container-txdnDvZo {
+  -webkit-overflow-scrolling: touch;
+  box-sizing: border-box;
+  contain: layout;
+  display: flex;
+  flex-direction: column;
+  max-height: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior-y: contain;
+  padding-top: 8px;
+  scroll-snap-type: y proximity;
+  scrollbar-width: none;
+}
+.overlap-manager-container-txdnDvZo.sb-scrollbar-wrap {
+  display: none;
+}
+.overlap-manager-container-txdnDvZo::-webkit-scrollbar {
+  display: none;
+  height: 0;
+  width: 0;
+}
+.overlap-manager-container-txdnDvZo::-webkit-scrollbar-thumb,
+.overlap-manager-container-txdnDvZo::-webkit-scrollbar-track {
+  display: none;
+}
+.overlap-manager-container-txdnDvZo::-webkit-scrollbar-corner {
+  display: none;
+}
+.overlap-manager-container-txdnDvZo.compact-txdnDvZo {
+  padding-top: 4px;
+  width: 480px;
+}
+.overlap-manager-container-txdnDvZo.on-chart-txdnDvZo {
+  max-width: -webkit-max-content;
+  max-width: max-content;
+}
+.toast-portal-txdnDvZo {
+  flex-shrink: 0;
+  margin: 0 8px;
+  padding-bottom: 8px;
+}
+.compact-txdnDvZo .toast-portal-txdnDvZo {
+  margin: 0 4px;
+  padding-bottom: 4px;
+}
+.toast-portal-txdnDvZo:last-child {
+  scroll-snap-align: end;
+}
+.toast-portal-txdnDvZo:last-child:not(:has(.added-txdnDvZo)) {
+  scroll-snap-align: unset;
+}
+.toast-portal-txdnDvZo:last-child:has(.added-txdnDvZo) {
+  scroll-snap-align: end;
+}
+.toast-portal-txdnDvZo:last-child .no-overflow-txdnDvZo {
+  overflow: hidden;
+}
+.wrapper-txdnDvZo {
+  display: flex;
+}
+.wrapper-txdnDvZo.location-bottom-left-txdnDvZo {
+  justify-content: flex-start;
+}
+.wrapper-txdnDvZo.location-bottom-right-txdnDvZo {
+  justify-content: flex-end;
+}
+.container-txdnDvZo {
+  contain: layout;
+  flex: 0 0 auto;
+  max-width: 100%;
+  transform: translateY(0);
+  transition: transform .3s ease-in-out, opacity .3s ease-in-out;
+  width: -webkit-max-content;
+  width: max-content;
+}
+@media not screen and (min-width: 568px) {
+  .container-txdnDvZo {
+    width: 100%;
+  }
+}
+.hidden-txdnDvZo {
+  opacity: 0;
+  transform: translateY(100%);
+}
+.reset-duration-txdnDvZo {
+  transition-duration: 0s;
+}

@@ -1,0 +1,82 @@
+.errors-bghR31WL {
+  background-color: #2a2e39;
+  border-radius: 3px;
+  box-sizing: border-box;
+  color: #fff;
+  opacity: 0;
+  padding: 10px 15px;
+  pointer-events: none;
+  position: absolute;
+  text-align: center;
+  z-index: 2;
+}
+html.theme-dark .errors-bghR31WL {
+  background-color: #363a45;
+}
+.errors-bghR31WL:empty {
+  display: none;
+}
+.errors-bghR31WL.show-bghR31WL {
+  opacity: 1;
+}
+.errors-bghR31WL .error-bghR31WL {
+  font-size: 12px;
+  line-height: 1.4;
+  margin-top: 10px;
+  text-transform: none;
+  word-break: break-word;
+}
+.errors-bghR31WL .error-bghR31WL:first-child {
+  margin-top: 0;
+}
+.visually-hidden-bghR31WL {
+  clip: rect(0 0 0 0);
+  border: 0;
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  width: 1px;
+}
+.error-icon-UhKAouIg {
+  display: inline-flex;
+}
+.error-icon-UhKAouIg.intent-danger-UhKAouIg,
+html.theme-dark .error-icon-UhKAouIg.intent-danger-UhKAouIg {
+  color: #f23645;
+}
+.error-icon-UhKAouIg.intent-warning-UhKAouIg,
+html.theme-dark .error-icon-UhKAouIg.intent-warning-UhKAouIg {
+  color: #ff9800;
+}
+.static-messages-cF4vS9J8 {
+  --ui-lib-typography-line-height: 17px;
+  --ui-lib-typography-font-size: 12px;
+  flex-flow: column nowrap;
+  font-size: var(--ui-lib-typography-font-size);
+  font-style: normal;
+  font-weight: 400;
+  line-height: var(--ui-lib-typography-line-height);
+}
+.static-messages-cF4vS9J8.errors-cF4vS9J8,
+html.theme-dark .static-messages-cF4vS9J8.errors-cF4vS9J8 {
+  color: #f23645;
+}
+.static-messages-cF4vS9J8.warnings-cF4vS9J8,
+html.theme-dark .static-messages-cF4vS9J8.warnings-cF4vS9J8 {
+  color: #ff9800;
+}
+.static-messages-cF4vS9J8.success-mesages-cF4vS9J8,
+html.theme-dark .static-messages-cF4vS9J8.success-mesages-cF4vS9J8 {
+  color: #089981;
+}
+.static-messages-cF4vS9J8.input-description-cF4vS9J8 {
+  color: #6a6d78;
+}
+html.theme-dark .static-messages-cF4vS9J8.input-description-cF4vS9J8 {
+  color: #868993;
+}
+.static-messages-cF4vS9J8 .message-cF4vS9J8 {
+  margin: 0;
+}

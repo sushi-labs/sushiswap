@@ -1,0 +1,90 @@
+.errorCard-S9sXvhAu {
+  align-items: center;
+  background: var(--backgroundColor, #fff);
+  color: var(--textColor, #434651);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  justify-content: center;
+  width: 100%;
+}
+html.theme-dark .errorCard-S9sXvhAu {
+  background: var(--backgroundColor, #131722);
+  color: var(--textColor, #9598a1);
+}
+.errorCard__icon-S9sXvhAu {
+  margin-bottom: 12px;
+}
+.errorCard_size_big-S9sXvhAu .errorCard__icon-S9sXvhAu {
+  margin-bottom: 21px;
+}
+.errorCard__message-S9sXvhAu {
+  font-size: 14px;
+  line-height: 22px;
+  text-align: center;
+}
+.errorCard_size_big-S9sXvhAu .errorCard__message-S9sXvhAu {
+  font-size: 18px;
+  line-height: 28px;
+}
+.errorCard_limitWidth-S9sXvhAu .errorCard__message-S9sXvhAu {
+  max-width: 350px;
+}
+.errorCard__link-S9sXvhAu {
+  fill: #2962ff;
+  color: #2962ff;
+  cursor: pointer;
+  line-height: 28px;
+}
+html.theme-dark .errorCard__link-S9sXvhAu {
+  fill: #3179f5;
+  color: #3179f5;
+}
+.errorCard__link-S9sXvhAu:visited {
+  fill: #2962ff;
+  color: #2962ff;
+}
+html.theme-dark .errorCard__link-S9sXvhAu:visited {
+  fill: #3179f5;
+  color: #3179f5;
+}
+@media (any-hover: hover) {
+  .errorCard__link-S9sXvhAu:hover {
+    fill: #1e53e5;
+    color: #1e53e5;
+  }
+  html.theme-dark .errorCard__link-S9sXvhAu:hover {
+    fill: #2962ff;
+    color: #2962ff;
+  }
+}
+.errorCard__link-S9sXvhAu:active {
+  fill: #1848cc;
+  color: #1848cc;
+}
+html.theme-dark .errorCard__link-S9sXvhAu:active {
+  fill: #1e53e5;
+  color: #1e53e5;
+}
+.errorCard__link-S9sXvhAu:focus {
+  outline: auto;
+  outline-offset: 2px;
+}
+.errorCard__link-S9sXvhAu:focus-visible {
+  outline: auto;
+  outline-offset: 2px;
+}
+.errorCard__link-S9sXvhAu:focus:not(:focus-visible) {
+  outline: none;
+}
+.errorCardRendererContainer-S9sXvhAu {
+  --backgroundColor: initial;
+  --textColor: initial;
+  cursor: default;
+  height: 100%;
+  position: absolute;
+  width: 100%;
+}
+.errorCardRendererContainer-S9sXvhAu:empty {
+  visibility: hidden;
+}
