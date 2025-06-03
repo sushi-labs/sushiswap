@@ -44,8 +44,11 @@ export const PoolsTable = () => {
   }, [])
 
   const { data } = useAllPools({
-    first: 4,
+    first: 10,
+    orderBy: 'APR_24H_ASC',
+    after: 'NDY4',
   })
+
   console.log('pools', data?.pools)
 
   // const pools: {

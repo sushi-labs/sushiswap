@@ -65,26 +65,42 @@ export async function GET(req: Request): Promise<NextResponse> {
       ? result.data.liquidityPositions.edges.map((edge: any) => edge.node)
       : [
           {
-            id: '112',
+            id: '487',
             pairId: '1',
             pair: {
               id: '1',
               address: 'mock.pool-1',
-              reserve0: '1000',
-              reserve1: '5000',
+              reserve0: {
+                name: 'coin',
+                symbol: 'KDA',
+                amount: '5000',
+              },
+              reserve1: {
+                name: 'free.wiza',
+                symbol: 'WIZA',
+                amount: '1000',
+              },
             },
             liquidity: '100',
             valueUsd: '1234.56',
             apr24h: '0.12',
           },
           {
-            id: '113',
+            id: '486',
             pairId: '2',
             pair: {
               id: '2',
               address: 'mock.pool-2',
-              reserve0: '2000',
-              reserve1: '3000',
+              reserve0: {
+                name: 'coin',
+                symbol: 'KDA',
+                amount: '2000',
+              },
+              reserve1: {
+                name: 'kdlaunch.kdswap-token',
+                symbol: 'KDS',
+                amount: '3000',
+              },
             },
             liquidity: '200',
             valueUsd: '2345.67',

@@ -5,9 +5,7 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-  SkeletonBox,
   SkeletonText,
-  classNames,
 } from '@sushiswap/ui'
 import format from 'date-fns/format'
 import { type FC, useCallback, useEffect, useMemo, useState } from 'react'
@@ -202,6 +200,7 @@ export const PoolChartGraph: FC<PoolChartProps> = ({ chart, period, pool }) => {
   // TODO: Get swap fee from pool
   // @ts-ignore
   const swapFee = pool?.swapFee || 0.003
+  const noData = !yData.length && !isLoading && !isError
   return (
     <>
       <CardHeader>
@@ -233,14 +232,10 @@ export const PoolChartGraph: FC<PoolChartProps> = ({ chart, period, pool }) => {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        {isLoading ? (
-          <SkeletonBox
-            className={classNames(
-              'h-[400px] w-full dark:via-slate-800 dark:to-slate-900',
-            )}
-          />
-        ) : isError ? (
-          <div className="h-[400px] w-full" />
+        {noData || (isError && !isLoading) ? (
+          <div className="flex h-[400px] w-full items-center justify-center text-primary font-medium">
+            No data available
+          </div>
         ) : (
           <ReactEchartsCore
             echarts={echarts}

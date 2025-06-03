@@ -13,12 +13,10 @@ import type { PaginationState } from '@tanstack/react-table'
 import { useMemo, useState } from 'react'
 import { usePoolFilters } from 'src/ui/pool'
 import { useMyPositions } from '~kadena/_common/lib/hooks/use-my-positions'
-import type { WalletPosition } from '~kadena/_common/types/get-positions'
 import type { KadenaToken } from '~kadena/_common/types/token-type'
 import {
   APR_COLUMN,
   POSITION_NAME_COLUMN,
-  SIZE_COLUMN,
   VALUE_COLUMN,
 } from './PositionColumns'
 
@@ -108,7 +106,11 @@ export const PositionsTable = ({
       ]
 
       return poolValues.some((value) =>
-        queries.some((query) => value?.toLowerCase().includes(query)),
+        queries.some((query) =>
+          typeof value === 'string'
+            ? value.toLowerCase().includes(query)
+            : value.symbol.toLowerCase().includes(query),
+        ),
       )
     })
   }, [tokenSymbols, positions])
@@ -141,18 +143,18 @@ export const PositionsTable = ({
         data={
           filteredData?.map((pool) => ({
             token0: {
-              address: pool?.pair.reserve0,
-              symbol: 'TKN1',
-              name: 'Token1',
+              address: pool?.pair.reserve0.name,
+              symbol: pool?.pair.reserve0.symbol,
+              name: pool?.pair.reserve0.name,
             },
             token1: {
-              address: pool?.pair.reserve1,
-              symbol: 'TKN2',
-              name: 'Token2',
+              address: pool?.pair.reserve1.name,
+              symbol: pool?.pair.reserve1.symbol,
+              name: pool?.pair.reserve1.name,
             },
             poolId: pool?.id,
-            reserve0: pool?.pair.reserve0,
-            reserve1: pool?.pair.reserve1,
+            reserve0: pool?.pair.reserve0.amount,
+            reserve1: pool?.pair.reserve1.amount,
             apr24h: pool?.apr24h,
             valueUsd: pool?.valueUsd,
           })) ?? []

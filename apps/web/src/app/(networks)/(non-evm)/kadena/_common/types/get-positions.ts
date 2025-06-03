@@ -4,8 +4,16 @@ export type WalletPosition = {
   pair: {
     address: string
     id: string
-    reserve0: string
-    reserve1: string
+    reserve0: {
+      name: string
+      symbol: string
+      amount: string
+    }
+    reserve1: {
+      name: string
+      symbol: string
+      amount: string
+    }
   }
   liquidity: string
   valueUsd: string
