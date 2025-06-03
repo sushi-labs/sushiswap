@@ -33,10 +33,10 @@ export const KatanaNaked: NakedNetworkIconComponent = ({
           y2="1416.5"
           gradientUnits="userSpaceOnUse"
         >
-          <stop offset="0.06" stop-color="#101631" />
-          <stop offset="0.39" stop-color="#0541B2" />
-          <stop offset="0.57" stop-color="#059EED" />
-          <stop offset="0.7" stop-color="#C5EAFC" />
+          <stop offset="0.06" stopColor="#101631" />
+          <stop offset="0.39" stopColor="#0541B2" />
+          <stop offset="0.57" stopColor="#059EED" />
+          <stop offset="0.7" stopColor="#C5EAFC" />
         </linearGradient>
       </defs>
     </svg>
