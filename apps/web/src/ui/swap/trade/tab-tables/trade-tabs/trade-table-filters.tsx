@@ -2,17 +2,20 @@ import { useDarkMode } from '@sushiswap/hooks'
 import { Button, classNames } from '@sushiswap/ui'
 import { Switch } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
+import { useTheme } from 'next-themes'
 import { useState } from 'react'
 
 export const TradeTableFilters = () => {
   const [showCurrentPairOnly, setShowCurrentPairOnly] = useState(false)
   const [chainsToShow, setChainsToShow] = useState<number[]>([])
-  const isDarkMode = useDarkMode()
+  const { theme } = useTheme()
+
+  const isDarkMode = theme === 'dark'
 
   const ALL_CHAINS_IN_TABLE = [1, 43114]
 
   return (
-    <div className="flex items-center w-full justify-between xl:justify-end gap-3 px-5 pt-3 pb-1 md:px-3 xl:px-0 md:pt-0 md:pb-0 bg-[#F9FAFB] xl:bg-transparent md:bg-white dark:bg-slate-900">
+    <div className="flex items-center w-full justify-between xl:justify-end gap-3 px-5 pt-3 pb-1 md:px-3 xl:px-0 md:pt-0 md:pb-0 bg-[#F9FAFB] xl:!bg-background md:bg-white md:dark:bg-slate-800 dark:bg-background">
       <div className="flex items-center gap-2">
         <span className="text-sm whitespace-nowrap dark:text-slate-500">
           Show Current Pair Only

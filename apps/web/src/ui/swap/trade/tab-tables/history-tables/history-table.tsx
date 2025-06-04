@@ -29,7 +29,7 @@ export const TABS = [
 export const HistoryTable = () => {
   const [currentTab, setCurrentTab] = useState(TABS[0].value)
   return (
-    <Card className="overflow-hidden border-none !shadow-none md:p-3 xl:bg-slate-50 dark:md:bg-slate-800">
+    <Card className="overflow-hidden border-none !shadow-none md:p-3 xl:bg-slate-50 dark:md:bg-slate-800 rounded-t-none xl:rounded-lg">
       <Tabs
         defaultValue={TABS[0].value}
         onValueChange={setCurrentTab}
