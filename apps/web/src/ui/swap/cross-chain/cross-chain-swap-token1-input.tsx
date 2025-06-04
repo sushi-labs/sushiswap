@@ -1,5 +1,6 @@
 'use client'
 
+import { useIsSmScreen } from '@sushiswap/hooks'
 import { XSWAP_SUPPORTED_CHAIN_IDS, getSortedChainIds } from 'src/config'
 import { Web3Input } from 'src/lib/wagmi/components/web3-input'
 import { isWNativeSupported } from 'sushi/config'
@@ -22,7 +23,7 @@ export const CrossChainSwapToken1Input = () => {
     isFetching,
     data: route,
   } = useSelectedCrossChainTradeRoute()
-
+  const isSm = useIsSmScreen()
   return (
     <Web3Input.Currency
       id="swap-to"
@@ -42,6 +43,8 @@ export const CrossChainSwapToken1Input = () => {
       networks={networks}
       selectedNetwork={chainId1}
       onNetworkChange={setChainId1}
+      showQuickSelect={true}
+      hideInputAndPricing={isSm}
     />
   )
 }

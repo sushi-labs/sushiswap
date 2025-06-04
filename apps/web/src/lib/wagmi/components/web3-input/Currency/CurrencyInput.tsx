@@ -60,6 +60,8 @@ interface CurrencyInputProps {
   networks?: readonly EvmChainId[]
   selectedNetwork?: EvmChainId
   onNetworkChange?: (network: number) => void
+  showQuickSelect?: boolean
+  hideInputAndPricing?: boolean
 }
 
 const CurrencyInput: FC<CurrencyInputProps> = ({
@@ -90,6 +92,8 @@ const CurrencyInput: FC<CurrencyInputProps> = ({
   networks,
   selectedNetwork,
   onNetworkChange,
+  showQuickSelect,
+  hideInputAndPricing,
 }) => {
   const isMounted = useIsMounted()
 
@@ -157,8 +161,13 @@ const CurrencyInput: FC<CurrencyInputProps> = ({
     if (!onSelect) return null
 
     return (
-      <div className="flex items-center gap-2">
-        {type === 'OUTPUT' ? <QuickSelect /> : null}
+      <div
+        className={classNames(
+          'flex items-center gap-2',
+          hideInputAndPricing && 'justify-between w-full sm:w-fit',
+        )}
+      >
+        {showQuickSelect ? <QuickSelect /> : null}
 
         <TokenSelector
           currencies={currencies}
@@ -253,7 +262,8 @@ const CurrencyInput: FC<CurrencyInputProps> = ({
     networks,
     selectedNetwork,
     onNetworkChange,
-    type,
+    showQuickSelect,
+    hideInputAndPricing,
   ])
 
   return (
@@ -288,50 +298,52 @@ const CurrencyInput: FC<CurrencyInputProps> = ({
         />
       </div>
       <div className="relative flex items-center gap-4 mt-1">
-        <div className="w-full">
-          <div
-            data-state={isLoading ? 'active' : 'inactive'}
-            className={classNames(
-              'data-[state=inactive]:hidden data-[state=active]:flex',
-              'gap-4 items-center justify-between flex-grow h-[40px]',
-            )}
-          >
-            <SkeletonBox className="w-2/3 h-[28px] rounded-lg" />
-            {currencyLoading ? (
-              <SkeletonBox className="w-1/3 h-[28px] rounded-lg" />
-            ) : null}
-          </div>
-          <div
-            data-state={isLoading ? 'inactive' : 'active'}
-            className="data-[state=inactive]:hidden data-[state=active]:flex flex-1 items-center"
-          >
-            <TextField
-              testdata-id={`${id}-input`}
-              type="number"
-              variant="naked"
-              disabled={disabled}
-              onValueChange={_onChange}
-              value={pending ? localValue : value}
-              readOnly={disabled}
-              maxDecimals={currency?.decimals}
+        {hideInputAndPricing ? null : (
+          <div className="w-full">
+            <div
+              data-state={isLoading ? 'active' : 'inactive'}
+              className={classNames(
+                'data-[state=inactive]:hidden data-[state=active]:flex',
+                'gap-4 items-center justify-between flex-grow h-[40px]',
+              )}
+            >
+              <SkeletonBox className="w-2/3 h-[28px] rounded-lg" />
+              {currencyLoading ? (
+                <SkeletonBox className="w-1/3 h-[28px] rounded-lg" />
+              ) : null}
+            </div>
+            <div
               data-state={isLoading ? 'inactive' : 'active'}
-              className={classNames('p-0 py-1 w-full !text-2xl font-medium')}
-            />
-          </div>
+              className="data-[state=inactive]:hidden data-[state=active]:flex flex-1 items-center"
+            >
+              <TextField
+                testdata-id={`${id}-input`}
+                type="number"
+                variant="naked"
+                disabled={disabled}
+                onValueChange={_onChange}
+                value={pending ? localValue : value}
+                readOnly={disabled}
+                maxDecimals={currency?.decimals}
+                data-state={isLoading ? 'inactive' : 'active'}
+                className={classNames('p-0 py-1 w-full !text-2xl font-medium')}
+              />
+            </div>
 
-          {hidePricing ? (
-            <div />
-          ) : (
-            <PricePanel
-              value={value}
-              currency={currency}
-              priceImpact={priceImpact}
-              error={_error}
-              loading={isPriceLoading}
-              price={price}
-            />
-          )}
-        </div>
+            {hidePricing ? (
+              <div />
+            ) : (
+              <PricePanel
+                value={value}
+                currency={currency}
+                priceImpact={priceImpact}
+                error={_error}
+                loading={isPriceLoading}
+                price={price}
+              />
+            )}
+          </div>
+        )}
 
         {selector}
         {!onSelect ? (

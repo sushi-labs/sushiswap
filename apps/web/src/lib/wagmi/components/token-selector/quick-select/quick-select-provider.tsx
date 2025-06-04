@@ -33,6 +33,8 @@ const QuickSelectProvider: FC<QuickSelectProviderProps> = ({ children }) => {
     setIsOpen(value)
     if (symbol) {
       setSelectedSymbol(symbol)
+    } else {
+      setSelectedSymbol('')
     }
   }, [])
 

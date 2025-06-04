@@ -1,7 +1,7 @@
 'use client'
 
 import { Collapsible } from '@sushiswap/ui'
-import { QuickSelectOverlay } from 'src/lib/wagmi/components/token-selector/quick-select/quick-select'
+import { QuickSelectOverlay } from 'src/lib/wagmi/components/token-selector/quick-select/quick-select-overlay'
 import { EdgeProvider, useEdgeConfig } from 'src/providers/edge-config-provider'
 import { DerivedstateCrossChainSwapProvider } from 'src/ui/swap/cross-chain/derivedstate-cross-chain-swap-provider'
 import { DerivedstateSimpleSwapProvider } from 'src/ui/swap/simple/derivedstate-simple-swap-provider'
