@@ -1,6 +1,5 @@
 'use client'
 
-import { useDarkMode } from '@sushiswap/hooks'
 import { Button, Tabs, TabsContent, TabsList, TabsTrigger } from '@sushiswap/ui'
 import { useTheme } from 'next-themes'
 import { useState } from 'react'
@@ -27,8 +26,6 @@ export const TABS = [
 export const TradeTableTabs = () => {
   const [currentTab, setCurrentTab] = useState(TABS[0].value)
   const { theme } = useTheme()
-
-  console.log('theme', theme)
 
   return (
     <Tabs
