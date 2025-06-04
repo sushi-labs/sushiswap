@@ -5,7 +5,6 @@ import type { ColumnDef } from '@tanstack/react-table'
 import React from 'react'
 import InfiniteScroll from 'react-infinite-scroll-component'
 import { Native } from 'sushi/currency'
-import { headerElements } from '../../../../../app/(networks)/(non-evm)/tron/_common/header-elements'
 import { MobileCard } from '../history-tables/mobile-card/mobile-card'
 import {
   ACTION_COLUMN,
@@ -123,7 +122,7 @@ export const DCAOrdersTable = () => {
         </div>
       }
     >
-      <Card className="hidden overflow-hidden border-none bg-slate-50 dark:bg-slate-800 md:block">
+      <Card className="hidden overflow-hidden border-none bg-slate-50 dark:bg-slate-800 md:block !rounded-t-none xl:!rounded-lg">
         <DataTable
           columns={COLUMNS}
           data={data}

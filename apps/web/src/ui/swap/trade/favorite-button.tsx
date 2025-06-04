@@ -33,6 +33,7 @@ export const FavoriteButton: FC<FavoriteButtonProps> = ({
         className,
       )}
       onClick={toggleFavorite}
+      onKeyDown={toggleFavorite}
       aria-label="Toggle Favorite"
       type="button"
     >

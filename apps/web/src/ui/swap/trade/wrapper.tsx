@@ -10,7 +10,7 @@ export const Wrapper: FC<WrapperProps> = (props) => {
   return (
     <div
       className={classNames(
-        'shadow-[0px_1px_2px_#0000000D] p-4 bg-slate-50 dark:bg-slate-800 rounded-xl',
+        'shadow-[0px_1px_2px_#0000000D] p-4 bg-white md:bg-slate-50 dark:bg-slate-800 rounded-xl',
         className,
       )}
       {...rest}
