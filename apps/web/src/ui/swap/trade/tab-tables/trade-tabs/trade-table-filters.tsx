@@ -1,4 +1,3 @@
-import { useDarkMode } from '@sushiswap/hooks'
 import { Button, classNames } from '@sushiswap/ui'
 import { Switch } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
