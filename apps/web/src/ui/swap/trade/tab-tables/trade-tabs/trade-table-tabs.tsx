@@ -1,13 +1,6 @@
 'use client'
 
-import {
-  Button,
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-  classNames,
-} from '@sushiswap/ui'
+import { Button, Tabs, TabsContent, TabsList, TabsTrigger } from '@sushiswap/ui'
 import { useState } from 'react'
 import { DCAOrdersTable } from '../dca-orders-table/dca-orders-table'
 import { HistoryTable } from '../history-tables/history-table'
