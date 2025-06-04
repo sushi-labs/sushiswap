@@ -22,7 +22,7 @@ export const TradeWidget = () => {
 
   return (
     <EdgeProvider config={modeEdge}>
-      <Wrapper>
+      <Wrapper className="border md:border-none border-black/10">
         <Collapsible open={true} disabled={!tradeModeChanged}>
           <div className="flex flex-col gap-4">
             {tradeMode === 'swap' && (
