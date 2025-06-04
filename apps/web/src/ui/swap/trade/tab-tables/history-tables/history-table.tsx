@@ -35,7 +35,7 @@ export const HistoryTable = () => {
         onValueChange={setCurrentTab}
         className="border-none bg-[#F9FAFB] dark:bg-slate-900 dark:md:!bg-slate-800 md:bg-white"
       >
-        <TabsList className="w-full flex !bg-[#F9FAFB] md:!bg-white dark:!bg-slate-900 dark:md:!bg-slate-800 rounded-none md:rounded-lg !justify-start border-none">
+        <TabsList className="w-full gap-2 flex !bg-[#F9FAFB] md:!bg-white dark:!bg-slate-900 dark:md:!bg-slate-800 rounded-none md:rounded-lg !justify-start border-none">
           {TABS.map((tab) => (
             <TabsTrigger
               key={tab.value}

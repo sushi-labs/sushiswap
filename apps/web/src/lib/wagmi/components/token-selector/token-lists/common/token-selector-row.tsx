@@ -113,7 +113,7 @@ export const TokenSelectorRow: FC<TokenSelectorRow> = memo(
               <FavoriteButton
                 currencyId={currency?.id}
                 onClick={onPin}
-                className="pl-0"
+                className="!px-0.5"
               />
               <div className="flex flex-row items-center flex-grow gap-4">
                 {selected ? (

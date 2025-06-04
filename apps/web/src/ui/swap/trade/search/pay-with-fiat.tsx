@@ -7,10 +7,10 @@ export const PayWithFiat = () => {
     <Button
       variant={'secondary'}
       type="button"
-      className={classNames('!rounded-full')}
+      className={classNames('!rounded-full md:overflow-hidden')}
     >
       <div className="flex items-center gap-0.5">
-        <CreditCardIcon width={20} height={20} />
+        <CreditCardIcon width={18} height={18} />
         Pay with Fiat
         <ChevronDownIcon width={16} height={16} />
       </div>
