@@ -133,6 +133,7 @@ export const DCAOrdersHistoryTable = () => {
             className="border-none"
             rowRenderer={rowRenderer}
             pagination
+            className="!border-none"
           />
         </Card>
 
