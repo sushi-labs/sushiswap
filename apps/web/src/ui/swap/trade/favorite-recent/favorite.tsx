@@ -41,8 +41,32 @@ export const Favorite = () => {
     return <ConnectButton className="w-full" variant="secondary" />
   }
 
-  if (pinnedTokensArray?.length === 0) {
-    return (
+  return (
+    <div>
+      {pinnedTokensArray?.length !== 0 ? (
+        <table className="w-full">
+          <thead className="sticky top-0 z-20 bg-slate-50 dark:bg-slate-900 md:dark:bg-slate-800">
+            <tr className="text-xs text-slate-700 dark:text-pink-100">
+              <th />
+              <th className="text-left font-medium">Token</th>
+              <th className="text-left font-medium hidden md:table-cell">
+                Price
+              </th>
+              <th className="text-left font-medium hidden md:table-cell">
+                24h%
+              </th>
+              <th className="font-medium text-left table-cell md:hidden">
+                Price/24%
+              </th>
+              <th className="text-right font-medium">Holdings</th>
+            </tr>
+          </thead>
+
+          {pinnedTokensArray?.map((i, idx) => (
+            <FavoriteItem currencyId={i.currencyId as ID} key={idx} />
+          ))}
+        </table>
+      ) : null}
       <div className="flex items-center justify-center w-full flex-col gap-4 mt-8">
         <TokenSelectorV2
           selected={undefined}
@@ -56,47 +80,12 @@ export const Favorite = () => {
             Browse Tokens
           </Button>
         </TokenSelectorV2>
-        <p className="italic text-sm text-muted-foreground dark:text-pink-200">
-          You haven&apos;t selected any favorite tokens.
-        </p>
+        {pinnedTokensArray?.length === 0 ? (
+          <p className="italic text-sm text-muted-foreground dark:text-pink-200">
+            You haven&apos;t selected any favorite tokens.
+          </p>
+        ) : null}
       </div>
-    )
-  }
-
-  return (
-    <div>
-      <table className="w-full">
-        <thead className="sticky top-0 z-20 bg-slate-50 dark:bg-slate-900 md:dark:bg-slate-800">
-          <tr className="text-xs text-slate-700 dark:text-pink-100">
-            <th />
-            <th className="text-left font-medium">Token</th>
-            <th className="text-left font-medium hidden md:table-cell">
-              Price
-            </th>
-            <th className="text-left font-medium hidden md:table-cell">24h%</th>
-            <th className="font-medium text-left table-cell md:hidden">
-              Price/24%
-            </th>
-            <th className="text-right font-medium">Holdings</th>
-          </tr>
-        </thead>
-
-        {pinnedTokensArray?.map((i, idx) => (
-          <FavoriteItem currencyId={i.currencyId as ID} key={idx} />
-        ))}
-      </table>
-      <TokenSelectorV2
-        selected={undefined}
-        chainId={1}
-        onSelect={onSelect}
-        includeNative={true}
-        hidePinnedTokens={false}
-        isBrowse={true}
-      >
-        <Button variant="secondary" className="w-full">
-          Browse Tokens
-        </Button>
-      </TokenSelectorV2>
     </div>
   )
 }

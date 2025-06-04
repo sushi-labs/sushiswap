@@ -43,7 +43,7 @@ export const RecentDialog = () => {
             <DialogTitle className="!mr-0 text-xl font-medium">
               Recent
             </DialogTitle>
-            <NetworkMenu className="!pr-0" />
+            <NetworkMenu />
           </div>
           <DialogClose className="mr-2">
             <XIcon width={20} height={20} />

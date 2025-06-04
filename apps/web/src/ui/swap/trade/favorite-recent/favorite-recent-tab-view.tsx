@@ -53,7 +53,7 @@ export const FavoriteRecentTabView = () => {
             </Button>
           ))}
         </div>
-        <NetworkMenu className="!pr-0" />
+        <NetworkMenu className="!px-1" />
       </div>
       <div className="mt-4 max-h-[500px] overflow-y-auto hide-scrollbar">
         {content}
