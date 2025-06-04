@@ -1,4 +1,5 @@
 import { HeaderNetworkSelectorProvider } from 'src/lib/wagmi/components/header-network-selector'
+import { QuickSelectProvider } from 'src/lib/wagmi/components/token-selector/quick-select/quick-select-provider'
 import { CheckerProvider } from 'src/lib/wagmi/systems/Checker/Provider'
 import { EdgeProvider } from 'src/providers/edge-config-provider'
 import { StrapiBannerProvider } from 'src/ui/swap/strapi-banner/strapi-banner-provider'
@@ -17,7 +18,9 @@ export async function Providers({ children }: { children: React.ReactNode }) {
           <HeaderNetworkSelectorProvider>
             <FuulReferralProvider>
               <StrapiBannerProvider>
-                <SearchProvider>{children}</SearchProvider>
+                <QuickSelectProvider>
+                  <SearchProvider>{children}</SearchProvider>
+                </QuickSelectProvider>
               </StrapiBannerProvider>
             </FuulReferralProvider>
           </HeaderNetworkSelectorProvider>
