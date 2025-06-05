@@ -31,8 +31,8 @@ export const usePersistedOrdersStore = ({
   account,
 }: TwapOrdersStoreParams) => {
   const queryClient = useQueryClient()
-  const ordersKey = `orders-${account}`
-  const cancelledOrderIdsKey = `cancelled-orders-${account}`
+  const ordersKey = `orders-${chainId}:${account}`
+  const cancelledOrderIdsKey = `cancelled-orders-${chainId}:${account}`
 
   const getCreatedOrders = useCallback((): Order[] => {
     const res = localStorage.getItem(ordersKey)
