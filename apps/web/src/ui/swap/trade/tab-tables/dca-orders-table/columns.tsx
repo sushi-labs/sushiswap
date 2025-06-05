@@ -77,7 +77,7 @@ export const SPENT_COLUMN: ColumnDef<DCAOrder> = {
           {formatPercent(row.original.spentPercent)}
         </Chip>
       </div>
-      <span className="text-xs font-normal text-muted-foreground">
+      <span className="text-xs font-normal dark:text-slate-500 text-slate-450">
         {row.original.ordersRemaining}/{row.original.ordersTotal} Order
         Remaining
       </span>
