@@ -106,6 +106,7 @@ export class QuotesPulseProvider {
         )
         .then((data: QuoteData[]) => {
           this._requestsPending--
+          // @ts-ignore
           if (!Object.hasOwn(this._subscribers, listenerGuid)) {
             return
           }
