@@ -78,7 +78,10 @@ export const ChainOptionsSelector = ({
   }, [visibleCount])
 
   return (
-    <div className="flex items-center gap-x-1.5 w-full" ref={containerRef}>
+    <div
+      className="flex items-center justify-between gap-x-1.5 w-full"
+      ref={containerRef}
+    >
       {visible.map((chainId) => (
         <TooltipProvider key={chainId}>
           <Tooltip delayDuration={0}>
@@ -97,7 +100,7 @@ export const ChainOptionsSelector = ({
             <button
               type="button"
               className={classNames(
-                'border border-black/5  dark:border-white/5 rounded-md p-1 flex items-center justify-center',
+                'border border-black/10  dark:border-white/10 rounded-md p-1 flex items-center justify-center',
                 size === 'sm'
                   ? 'w-[26px] h-[26px] min-h-[26px] min-w-[26px]'
                   : 'w-[34px] h-[34px] min-h-[34px] min-w-[34px]',
@@ -135,7 +138,7 @@ export const ChainOptionsSelector = ({
   )
 }
 
-const NetworkButton = forwardRef<
+export const NetworkButton = forwardRef<
   HTMLButtonElement,
   { chainId: number; iconSize: number }
 >(({ chainId, iconSize, ...props }, ref) => (
@@ -143,7 +146,7 @@ const NetworkButton = forwardRef<
     ref={ref}
     {...props}
     type="button"
-    className="border border-black/5 dark:border-white/5 rounded-md p-1 flex items-center justify-center"
+    className="border border-black/10 dark:border-white/10 rounded-md p-1 flex items-center justify-center"
   >
     <NetworkIcon chainId={chainId} width={iconSize} height={iconSize} />
   </button>

@@ -1,5 +1,6 @@
 'use client'
 
+import { useBreakpoint, useIsSmScreen } from '@sushiswap/hooks'
 import { Web3Input } from 'src/lib/wagmi/components/web3-input'
 import { isWNativeSupported } from 'sushi/config'
 import {
@@ -19,13 +20,13 @@ export const SimpleSwapToken1Input = () => {
     isFetching,
     data: quote,
   } = useSimpleSwapTradeQuote()
-
+  const isSm = useIsSmScreen()
   return (
     <Web3Input.Currency
       id="swap-to"
       type="OUTPUT"
       disabled
-      className="p-4 bg-gray-100 dark:bg-slate-900 rounded-xl"
+      className="p-4 bg-gray-100 dark:bg-slate-900 rounded-xl overflow-visible"
       value={quote?.amountOut?.toSignificant() ?? ''}
       chainId={chainId}
       onSelect={setToken1}
@@ -37,6 +38,8 @@ export const SimpleSwapToken1Input = () => {
       allowNative={isWNativeSupported(chainId)}
       label="Buy"
       // priceImpact={quote?.priceImpact}
+      showQuickSelect={true}
+      hideInputAndPricing={isSm}
     />
   )
 }

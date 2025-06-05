@@ -17,6 +17,7 @@ import { TokenSelectorCustomList } from './token-lists/token-selector-custom-lis
 import { TokenSelectorMyTokens } from './token-lists/token-selector-my-tokens'
 import { TokenSelectorSearch } from './token-lists/token-selector-search'
 import { TokenSelectorTrendingTokens } from './token-lists/token-selector-trending-tokens'
+import type { TokenSelectorV2Type } from './token-selector-v2'
 
 interface TokenSelectorStates {
   selected: Type | undefined
@@ -28,6 +29,7 @@ interface TokenSelectorStates {
   includeNative?: boolean
   hidePinnedTokens?: boolean
   search?: string
+  type: TokenSelectorV2Type
 }
 
 export function TokenSelectorStatesV2({
@@ -40,6 +42,7 @@ export function TokenSelectorStatesV2({
   includeNative,
   hidePinnedTokens,
   search,
+  type,
 }: TokenSelectorStates) {
   // Ensure that the user's tokens are loaded
   useMyTokens({
@@ -87,6 +90,7 @@ export function TokenSelectorStatesV2({
           onShowInfo={onShowInfo}
           search={search}
           selected={selected}
+          showChainOptions={false}
         />
       </>
     )
@@ -95,18 +99,21 @@ export function TokenSelectorStatesV2({
   if (!isTokenListChainId(chainId) && isTrendingTokensChainId(chainId)) {
     return (
       <>
-        <TokenSelectorChipBar
-          chainId={chainId}
-          onSelect={onSelect}
-          includeNative={includeNative}
-          showPinnedTokens={!hidePinnedTokens}
-        />
+        {type !== 'buy' ? (
+          <TokenSelectorChipBar
+            chainId={chainId}
+            onSelect={onSelect}
+            includeNative={includeNative}
+            showPinnedTokens={!hidePinnedTokens}
+          />
+        ) : null}
         <Title />
         <TokenSelectorTrendingTokens
           chainId={chainId}
           onSelect={onSelect}
           onShowInfo={onShowInfo}
           selected={selected}
+          showChainOptions={type === 'sell'}
         />
       </>
     )
@@ -115,12 +122,14 @@ export function TokenSelectorStatesV2({
   if (isTokenListChainId(chainId) && !isTrendingTokensChainId(chainId)) {
     return (
       <>
-        <TokenSelectorChipBar
-          chainId={chainId}
-          onSelect={onSelect}
-          includeNative={includeNative}
-          showPinnedTokens={!hidePinnedTokens}
-        />
+        {type !== 'buy' ? (
+          <TokenSelectorChipBar
+            chainId={chainId}
+            onSelect={onSelect}
+            includeNative={includeNative}
+            showPinnedTokens={!hidePinnedTokens}
+          />
+        ) : null}
         <Title />
         {account ? (
           <TokenSelectorMyTokens
@@ -128,6 +137,7 @@ export function TokenSelectorStatesV2({
             onSelect={onSelect}
             onShowInfo={onShowInfo}
             selected={selected}
+            showChainOptions={type === 'sell'}
           />
         ) : null}
 
@@ -137,6 +147,7 @@ export function TokenSelectorStatesV2({
           onShowInfo={onShowInfo}
           selected={selected}
           search={''}
+          showChainOptions={type === 'sell'}
         />
       </>
     )
@@ -145,12 +156,14 @@ export function TokenSelectorStatesV2({
   if (isTokenListChainId(chainId) && isTrendingTokensChainId(chainId)) {
     return (
       <>
-        <TokenSelectorChipBar
-          chainId={chainId}
-          onSelect={onSelect}
-          includeNative={includeNative}
-          showPinnedTokens={!hidePinnedTokens}
-        />
+        {type !== 'buy' ? (
+          <TokenSelectorChipBar
+            chainId={chainId}
+            onSelect={onSelect}
+            includeNative={includeNative}
+            showPinnedTokens={!hidePinnedTokens}
+          />
+        ) : null}
         <Title />
 
         {account ? (
@@ -160,6 +173,7 @@ export function TokenSelectorStatesV2({
             onShowInfo={onShowInfo}
             selected={selected}
             includeNative={includeNative}
+            showChainOptions={type === 'sell'}
           />
         ) : null}
 
@@ -168,6 +182,7 @@ export function TokenSelectorStatesV2({
           onSelect={onSelect}
           onShowInfo={onShowInfo}
           selected={selected}
+          showChainOptions={type === 'sell'}
         />
       </>
     )
@@ -183,6 +198,7 @@ export function TokenSelectorStatesV2({
       search={search}
       includeNative={includeNative}
       onShowInfo={onShowInfo}
+      showChainOptions={false}
     />
   )
 }

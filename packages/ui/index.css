@@ -182,3 +182,12 @@ html[class="dark"] *.scroll::-webkit-scrollbar-thumb {
 [aria-labelledby="rk_connect_title"] {
   @apply pointer-events-auto;
 }
+
+.Toastify__close-button {
+  top: 17px !important;
+  right: 17px !important;
+}
+
+.dark .Toastify__close-button {
+  color: #fff !important;
+}

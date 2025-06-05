@@ -21,8 +21,11 @@ export const DATE_COLUMN: ColumnDef<LimitOrderHistory> = {
   header: 'Date',
   enableSorting: false,
   accessorFn: (row) => row.timestamp,
-  cell: ({ row }) =>
-    format(new Date(row.original.timestamp), 'MM/dd/yy h:mm a'),
+  cell: ({ row }) => (
+    <span className="whitespace-nowrap">
+      {format(new Date(row.original.timestamp), 'MM/dd/yy h:mm a')}
+    </span>
+  ),
 }
 
 export const BUY_COLUMN: ColumnDef<LimitOrderHistory> = {
@@ -32,7 +35,7 @@ export const BUY_COLUMN: ColumnDef<LimitOrderHistory> = {
 
   accessorFn: (row) => row.buyAmount,
   cell: ({ row }) => (
-    <div className="flex items-center gap-2">
+    <div className="flex items-center gap-2 whitespace-nowrap">
       <Currency.Icon currency={row.original.buyToken} width={18} height={18} />
       <span>
         {formatNumber(row.original.buyAmount)} {row.original.buyToken.symbol}
@@ -48,7 +51,7 @@ export const SELL_COLUMN: ColumnDef<LimitOrderHistory> = {
 
   accessorFn: (row) => row.sellAmount,
   cell: ({ row }) => (
-    <div className="flex items-center gap-2">
+    <div className="flex items-center gap-2 whitespace-nowrap">
       <Currency.Icon currency={row.original.sellToken} width={18} height={18} />
       <span>
         {formatNumber(row.original.sellAmount)} {row.original.sellToken.symbol}
@@ -147,7 +150,7 @@ export const FILLED_COLUMN: ColumnDef<LimitOrderHistory> = {
 
   accessorFn: (row) => row.filledPercent,
   cell: ({ row }) => (
-    <div className="flex items-center gap-2">
+    <div className="flex items-center gap-2 whitespace-nowrap">
       <span>
         {formatNumber(row.original.filledAmount)}/
         {formatNumber(row.original.totalAmount)} {row.original.buyToken.symbol}
@@ -162,7 +165,7 @@ export const FILLED_COLUMN: ColumnDef<LimitOrderHistory> = {
 /** Status column */
 export const STATUS_COLUMN: ColumnDef<LimitOrderHistory> = {
   id: 'status',
-  header: 'Status',
+  header: () => <span className="md:text-right md:block">Status</span>,
   enableSorting: false,
   accessorFn: (row) => row.status,
   cell: ({ row }) => {

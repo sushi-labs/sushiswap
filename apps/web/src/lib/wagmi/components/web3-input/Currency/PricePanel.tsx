@@ -11,7 +11,7 @@ import type { CurrencyInputProps } from './CurrencyInput'
 
 type PricePanel = Pick<
   CurrencyInputProps,
-  'loading' | 'currency' | 'value' | 'priceImpact'
+  'loading' | 'currency' | 'value' | 'priceImpact' | 'className'
 > & {
   error?: string
   price: number | undefined
@@ -31,10 +31,7 @@ export const PricePanel: FC<PricePanel> = ({
   )
   const currencyValueStr =
     parsedValue && price
-      ? `${(
-          (price * Number(parsedValue.quotient)) /
-            10 ** parsedValue.currency.decimals
-        ).toFixed(2)}`
+      ? `${((price * Number(parsedValue.quotient)) / 10 ** parsedValue.currency.decimals).toFixed(2)}`
       : '0.00'
 
   if (loading)

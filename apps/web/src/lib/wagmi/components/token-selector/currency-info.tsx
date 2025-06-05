@@ -54,7 +54,7 @@ export const CurrencyInfo: FC<CurrencyInfoProps> = ({ currency, onBack }) => {
   }, [])
 
   return (
-    <div className="absolute inset-0 z-20 py-6 bg-gray-100 dark:bg-slate-800 rounded-2xl">
+    <div className="absolute inset-0 z-20 py-6 bg-gray-50 dark:bg-slate-800 rounded-2xl">
       <DialogPrimitive.Close asChild className="absolute top-6 right-6">
         <IconButton icon={XMarkIcon} name="Close" />
       </DialogPrimitive.Close>

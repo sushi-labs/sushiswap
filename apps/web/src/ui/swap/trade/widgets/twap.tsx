@@ -40,12 +40,15 @@ const SkeletonDCAPanel = () => {
 }
 
 const LimitContainerPanel = dynamic(
-  () => import('src/ui/swap/twap/twap').then((it) => it.LimitContainerPanel),
+  () => import('src/ui/swap/twap/limit-widget').then((it) => it.LimitWidget),
   { ssr: false, loading: () => <SkeletonLimitPanel /> },
 )
 const TWAPContainerPanel = dynamic(
-  () => import('src/ui/swap/twap/twap').then((it) => it.TWAPContainerPanel),
-  { ssr: false, loading: () => <SkeletonDCAPanel /> },
+  () => import('src/ui/swap/twap/dca-widget').then((it) => it.DCAWidget),
+  {
+    ssr: false,
+    loading: () => <SkeletonDCAPanel />,
+  },
 )
 
 export const LimitWidget: FC<{ animated: boolean }> = ({ animated }) => {

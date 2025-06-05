@@ -80,7 +80,7 @@ export const LIMIT_ORDER_MOCK_DATA: LimitOrder[] = [
     pnlPercent: -3.2,
     filledAmount: 5,
     totalAmount: 10,
-    filledPercent: 50,
+    filledPercent: 0.5,
     timestamp: 1739644800000,
     priceUsd: 1.2,
   },

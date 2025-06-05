@@ -1,10 +1,12 @@
 'use client'
 
 import { Collapsible } from '@sushiswap/ui'
+import { QuickSelectOverlay } from 'src/lib/wagmi/components/token-selector/quick-select/quick-select-overlay'
 import { EdgeProvider, useEdgeConfig } from 'src/providers/edge-config-provider'
 import { DerivedstateCrossChainSwapProvider } from 'src/ui/swap/cross-chain/derivedstate-cross-chain-swap-provider'
 import { DerivedstateSimpleSwapProvider } from 'src/ui/swap/simple/derivedstate-simple-swap-provider'
 import { SimpleSwapSettingsOverlay } from '../simple/simple-swap-settings-overlay'
+import { DerivedStateTwapProvider } from '../twap/derivedstate-twap-provider'
 import { useDerivedStateSimpleTrade } from './derivedstate-simple-trade-provider'
 import { type TradeEdgeConfig, sliceEdgeConfig } from './trade-edge-config'
 import { TradeModeButtons } from './trade-mode-buttons'
@@ -17,12 +19,14 @@ export const TradeWidget = () => {
   const {
     state: { tradeMode, chainId, tradeModeChanged },
   } = useDerivedStateSimpleTrade()
+
   const tradeEdge = useEdgeConfig<TradeEdgeConfig>()
   const modeEdge = sliceEdgeConfig(tradeEdge, tradeMode)
 
   return (
     <EdgeProvider config={modeEdge}>
-      <Wrapper className="border md:border-none border-black/10">
+      <Wrapper className="border relative md:border-none border-black/10">
+        <QuickSelectOverlay />
         <Collapsible open={true} disabled={!tradeModeChanged}>
           <div className="flex flex-col gap-4">
             {tradeMode === 'swap' && (
@@ -35,22 +39,22 @@ export const TradeWidget = () => {
               </DerivedstateSimpleSwapProvider>
             )}
             {tradeMode === 'limit' && (
-              <DerivedstateSimpleSwapProvider>
+              <DerivedStateTwapProvider isLimitOrder>
                 <div className="flex items-center justify-between">
                   <TradeModeButtons />
                   <SimpleSwapSettingsOverlay />
                 </div>
                 <LimitWidget animated={tradeModeChanged} />
-              </DerivedstateSimpleSwapProvider>
+              </DerivedStateTwapProvider>
             )}
             {tradeMode === 'dca' && (
-              <DerivedstateSimpleSwapProvider>
+              <DerivedStateTwapProvider>
                 <div className="flex items-center justify-between">
                   <TradeModeButtons />
                   <SimpleSwapSettingsOverlay />
                 </div>
                 <DCAWidget animated={tradeModeChanged} />
-              </DerivedstateSimpleSwapProvider>
+              </DerivedStateTwapProvider>
             )}
             {tradeMode === 'cross-chain-swap' && (
               <DerivedstateCrossChainSwapProvider defaultChainId={chainId}>

@@ -6,7 +6,7 @@ import type { EvmChainId } from 'sushi/chain'
 import type { Type } from 'sushi/currency'
 import { usePrices } from '~evm/_common/ui/price-provider/price-provider/use-prices'
 import { useMyTokens } from '../hooks/use-my-tokens'
-import { TokenSelectorCurrencyList } from './common/token-selector-currency-list'
+import { TokenSelectorCurrencyListV2 } from './common/token-selector-currency-list-v2'
 
 interface TokenSelectorCustomList {
   currencies: Readonly<Type[]>
@@ -17,6 +17,7 @@ interface TokenSelectorCustomList {
   search?: string
   includeNative?: boolean
   onShowInfo(currency: Type | false): void
+  showChainOptions: boolean
 }
 
 export function TokenSelectorCustomList({
@@ -28,6 +29,7 @@ export function TokenSelectorCustomList({
   search,
   includeNative,
   onShowInfo,
+  showChainOptions,
 }: TokenSelectorCustomList) {
   const {
     data: { balanceMap },
@@ -61,7 +63,8 @@ export function TokenSelectorCustomList({
     <div className="flex flex-1 flex-col">
       <List.Control className="flex flex-1">
         <div className="flex-1 block">
-          <TokenSelectorCurrencyList
+          <TokenSelectorCurrencyListV2
+            showChainOptions={showChainOptions}
             id="trending"
             selected={selected}
             onSelect={onSelect}
