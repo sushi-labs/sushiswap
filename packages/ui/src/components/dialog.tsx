@@ -133,7 +133,7 @@ const DialogContent = React.forwardRef<
             asChild
             className={dialogCloseVariants({ variant })}
           >
-            <IconButton icon={XMarkIcon} name="Close" />
+            <IconButton variant={'ghost'} icon={XMarkIcon} name="Close" />
           </DialogPrimitive.Close>
         )}
       </DialogPrimitive.Content>

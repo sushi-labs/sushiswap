@@ -75,6 +75,7 @@ export const Favorite = () => {
           includeNative={true}
           hidePinnedTokens={false}
           isBrowse={true}
+          type="browse"
         >
           <Button variant="secondary" className="w-full">
             Browse Tokens

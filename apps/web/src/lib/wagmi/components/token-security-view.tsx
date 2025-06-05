@@ -50,7 +50,7 @@ export const TokenSecurityView = ({
   }, [tokenSecurity])
 
   return (
-    <div className="w-full overflow-x-auto dark:bg-slate-900 bg-slate-100 pt-2 px-4 rounded-lg">
+    <div className="w-full overflow-x-auto dark:bg-slate-900 bg-gray-100 pt-2 px-4 rounded-lg">
       <table className="w-full table-auto border-collapse ">
         <thead className="[&>tr:last-child]:border-b-[12px] [&>tr:last-child]:border-b-transparent">
           <tr className="whitespace-nowrap">
