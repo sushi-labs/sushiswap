@@ -666,6 +666,11 @@ export const tatara = {
   },
 } as const
 
+const kRPCURL =
+  process.env['KAT_RPC_URL'] ||
+  process.env['NEXT_PUBLIC_KAT_RPC_URL'] ||
+  'https://rpc.katanarpc.com'
+
 export const katana = {
   id: 747474,
   name: 'Katana',
@@ -676,7 +681,7 @@ export const katana = {
   },
   rpcUrls: {
     default: {
-      http: ['https://rpc.katanarpc.com'],
+      http: [kRPCURL],
     },
   },
   blockExplorers: {
@@ -825,7 +830,7 @@ export const publicTransports = {
     `https://lb.drpc.org/ogrpc?network=sonic&dkey=${drpcId}`,
   ),
   [EvmChainId.HEMI]: http('https://rpc.hemi.network/rpc'),
-  [EvmChainId.KATANA]: http('https://rpc.hemi.network/rpc'),
+  [EvmChainId.KATANA]: http(kRPCURL),
   /* Testnets */ // TODO: add testnet transports
   [EvmChainId.ARBITRUM_TESTNET]: http('https://sepolia-rollup.arbitrum.io/rpc'),
   [EvmChainId.AVALANCHE_TESTNET]: http(
