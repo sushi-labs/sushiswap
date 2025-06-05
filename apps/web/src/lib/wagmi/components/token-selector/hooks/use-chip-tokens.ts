@@ -4,7 +4,7 @@ import type { EvmChainId } from 'sushi/chain'
 import { EVM_DEFAULT_BASES } from 'sushi/config'
 
 interface UseChipTokens {
-  chainId: EvmChainId
+  chainId: EvmChainId | EvmChainId[]
   includeNative?: boolean
   showPinnedTokens?: boolean
 }
@@ -14,9 +14,14 @@ interface UseChipTokens {
 export function useChipTokens({
   chainId,
   includeNative = true,
-  // showPinnedTokens = true,
-}: UseChipTokens) {
-  const defaultBases = EVM_DEFAULT_BASES[chainId]
+}: // showPinnedTokens = true,
+UseChipTokens) {
+  const defaultBases = useMemo(() => {
+    if (!Array.isArray(chainId)) {
+      return EVM_DEFAULT_BASES[chainId]
+    }
+    return chainId.flatMap((id) => EVM_DEFAULT_BASES[id] || [])
+  }, [chainId])
 
   // const {} = usePinnedTokens()
 

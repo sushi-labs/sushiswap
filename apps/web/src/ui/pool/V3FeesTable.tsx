@@ -104,17 +104,19 @@ const NAME_COLUMN_POOL: ColumnDef<V3Pool, unknown> = {
     </div>
   ),
   meta: {
-    skeleton: (
-      <div className="flex items-center w-full gap-2">
-        <div className="flex items-center">
-          <SkeletonCircle radius={26} />
-          <SkeletonCircle radius={26} className="-ml-[12px]" />
+    body: {
+      skeleton: (
+        <div className="flex items-center w-full gap-2">
+          <div className="flex items-center">
+            <SkeletonCircle radius={26} />
+            <SkeletonCircle radius={26} className="-ml-[12px]" />
+          </div>
+          <div className="flex flex-col w-full">
+            <SkeletonText fontSize="lg" />
+          </div>
         </div>
-        <div className="flex flex-col w-full">
-          <SkeletonText fontSize="lg" />
-        </div>
-      </div>
-    ),
+      ),
+    },
   },
   size: 300,
 }
@@ -130,7 +132,9 @@ const TVL_COLUMN: ColumnDef<V3Pool, unknown> = {
       ? '$0.00'
       : formatUSD(props.row.original.liquidityUSD),
   meta: {
-    skeleton: <SkeletonText fontSize="lg" />,
+    body: {
+      skeleton: <SkeletonText fontSize="lg" />,
+    },
   },
 }
 
@@ -145,7 +149,9 @@ const VOLUME_COLUMN: ColumnDef<V3Pool, unknown> = {
       ? '$0.00'
       : formatUSD(props.row.original.volumeUSD),
   meta: {
-    skeleton: <SkeletonText fontSize="lg" />,
+    body: {
+      skeleton: <SkeletonText fontSize="lg" />,
+    },
   },
 }
 
@@ -208,7 +214,9 @@ const PROTOCOL_FEE_COLUMN: ColumnDef<V3Pool, unknown> = {
     </div>
   ),
   meta: {
-    skeleton: <SkeletonText fontSize="lg" />,
+    body: {
+      skeleton: <SkeletonText fontSize="lg" />,
+    },
   },
 }
 

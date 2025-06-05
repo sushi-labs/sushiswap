@@ -35,7 +35,7 @@ export const Explainer: FC<{
             />
           )}
         </TooltipTrigger>
-        <TooltipContent className="bg-background !p-4 shadow-xl w-80">
+        <TooltipContent className="bg-background !p-4 shadow-xl max-w-[20rem]">
           {children}
         </TooltipContent>
       </Tooltip>

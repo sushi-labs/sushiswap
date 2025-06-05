@@ -27,6 +27,7 @@ import type { Percent } from 'sushi/math'
 import { useAccount } from 'wagmi'
 import { useAmountBalance } from '~evm/_common/ui/balance-provider/use-balance'
 import { usePrice } from '~evm/_common/ui/price-provider/price-provider/use-price'
+import { QuickSelect } from '../../token-selector/quick-select/quick-select'
 import { TokenSelector } from '../../token-selector/token-selector'
 import { BalancePanel } from './BalancePanel'
 import { PricePanel } from './PricePanel'
@@ -39,6 +40,7 @@ interface CurrencyInputProps {
   currency: Type | undefined
   onSelect?(currency: Type): void
   chainId: EvmChainId
+  currencyClassName?: string
   className?: string
   loading?: boolean
   priceImpact?: Percent | undefined
@@ -58,6 +60,8 @@ interface CurrencyInputProps {
   networks?: readonly EvmChainId[]
   selectedNetwork?: EvmChainId
   onNetworkChange?: (network: number) => void
+  showQuickSelect?: boolean
+  hideInputAndPricing?: boolean
 }
 
 const CurrencyInput: FC<CurrencyInputProps> = ({
@@ -68,6 +72,7 @@ const CurrencyInput: FC<CurrencyInputProps> = ({
   currency,
   onSelect,
   chainId,
+  currencyClassName,
   className,
   loading,
   priceImpact,
@@ -87,6 +92,8 @@ const CurrencyInput: FC<CurrencyInputProps> = ({
   networks,
   selectedNetwork,
   onNetworkChange,
+  showQuickSelect,
+  hideInputAndPricing,
 }) => {
   const isMounted = useIsMounted()
 
@@ -154,84 +161,95 @@ const CurrencyInput: FC<CurrencyInputProps> = ({
     if (!onSelect) return null
 
     return (
-      <TokenSelector
-        currencies={currencies}
-        selected={currency}
-        chainId={chainId}
-        onSelect={onSelect}
-        includeNative={allowNative}
-        hidePinnedTokens={hidePinnedTokens}
-        hideSearch={hideSearch}
-        networks={networks}
-        selectedNetwork={selectedNetwork}
-        onNetworkSelect={onNetworkChange}
+      <div
+        className={classNames(
+          'flex items-center gap-2',
+          hideInputAndPricing && 'justify-between w-full sm:w-fit',
+        )}
       >
-        <Button
-          data-state={currencyLoading ? 'inactive' : 'active'}
-          size="lg"
-          variant={currency ? 'secondary' : 'default'}
-          id={id}
-          type="button"
-          className={classNames(
-            currency ? 'pl-2 pr-3' : '',
-            networks ? '!h-11' : '',
-            '!rounded-full data-[state=inactive]:hidden data-[state=active]:flex',
-          )}
+        {showQuickSelect ? <QuickSelect /> : null}
+
+        <TokenSelector
+          currencies={currencies}
+          selected={currency}
+          chainId={chainId}
+          onSelect={onSelect}
+          includeNative={allowNative}
+          hidePinnedTokens={hidePinnedTokens}
+          hideSearch={hideSearch}
+          networks={networks}
+          selectedNetwork={selectedNetwork}
+          onNetworkSelect={onNetworkChange}
         >
-          {currency ? (
-            networks ? (
-              <>
-                <div className="w-[28px] h-[28px] mr-1.5">
-                  <Badge
-                    className="border border-slate-900 rounded-full z-[11]"
-                    position="bottom-right"
-                    badgeContent={
-                      <NetworkIcon
-                        chainId={currency.chainId}
-                        width={16}
-                        height={16}
+          <Button
+            data-state={currencyLoading ? 'inactive' : 'active'}
+            size="lg"
+            variant={currency ? 'secondary' : 'default'}
+            id={id}
+            type="button"
+            className={classNames(
+              currency ? 'pl-2 pr-3' : '',
+              networks ? '!h-11' : '',
+              currencyClassName,
+              '!rounded-full data-[state=inactive]:hidden data-[state=active]:flex',
+            )}
+          >
+            {currency ? (
+              networks ? (
+                <>
+                  <div className="w-[28px] h-[28px] mr-1.5">
+                    <Badge
+                      className="border border-slate-900 rounded-full z-[11]"
+                      position="bottom-right"
+                      badgeContent={
+                        <NetworkIcon
+                          chainId={currency.chainId}
+                          width={16}
+                          height={16}
+                        />
+                      }
+                    >
+                      <Currency.Icon
+                        disableLink
+                        currency={currency}
+                        width={28}
+                        height={28}
                       />
-                    }
-                  >
+                    </Badge>
+                  </div>
+                  <div className="flex flex-col items-start">
+                    <span className="text-xl leading-5">{currency.symbol}</span>
+                    <span className="text-xs leading-3 text-muted-foreground">
+                      {EvmChain.from(currency.chainId)?.name}
+                    </span>
+                  </div>
+                  <SelectPrimitive.Icon asChild>
+                    <ChevronRightIcon strokeWidth={2} width={16} height={16} />
+                  </SelectPrimitive.Icon>
+                </>
+              ) : (
+                <>
+                  <div className="w-[28px] h-[28px] mr-0.5">
                     <Currency.Icon
                       disableLink
                       currency={currency}
                       width={28}
                       height={28}
                     />
-                  </Badge>
-                </div>
-                <div className="flex flex-col items-start">
-                  <span className="text-xl leading-5">{currency.symbol}</span>
-                  <span className="text-xs leading-3 text-muted-foreground">
-                    {EvmChain.from(currency.chainId)?.name}
-                  </span>
-                </div>
-                <SelectPrimitive.Icon asChild>
-                  <ChevronRightIcon strokeWidth={2} width={16} height={16} />
-                </SelectPrimitive.Icon>
-              </>
+                  </div>
+                  <span className="text-xl">{currency.symbol}</span>
+                  <SelectIcon />
+                </>
+              )
             ) : (
-              <>
-                <div className="w-[28px] h-[28px] mr-0.5">
-                  <Currency.Icon
-                    disableLink
-                    currency={currency}
-                    width={28}
-                    height={28}
-                  />
-                </div>
-                <span className="text-xl">{currency.symbol}</span>
-                <SelectIcon />
-              </>
-            )
-          ) : (
-            'Select token'
-          )}
-        </Button>
-      </TokenSelector>
+              'Select token'
+            )}
+          </Button>
+        </TokenSelector>
+      </div>
     )
   }, [
+    currencyClassName,
     currencyLoading,
     id,
     onSelect,
@@ -244,6 +262,8 @@ const CurrencyInput: FC<CurrencyInputProps> = ({
     networks,
     selectedNetwork,
     onNetworkChange,
+    showQuickSelect,
+    hideInputAndPricing,
   ])
 
   return (
@@ -278,56 +298,59 @@ const CurrencyInput: FC<CurrencyInputProps> = ({
         />
       </div>
       <div className="relative flex items-center gap-4 mt-1">
-        <div className="w-full">
-          <div
-            data-state={isLoading ? 'active' : 'inactive'}
-            className={classNames(
-              'data-[state=inactive]:hidden data-[state=active]:flex',
-              'gap-4 items-center justify-between flex-grow h-[40px]',
-            )}
-          >
-            <SkeletonBox className="w-2/3 h-[28px] rounded-lg" />
-            {currencyLoading ? (
-              <SkeletonBox className="w-1/3 h-[28px] rounded-lg" />
-            ) : null}
-          </div>
-          <div
-            data-state={isLoading ? 'inactive' : 'active'}
-            className="data-[state=inactive]:hidden data-[state=active]:flex flex-1 items-center"
-          >
-            <TextField
-              testdata-id={`${id}-input`}
-              type="number"
-              variant="naked"
-              disabled={disabled}
-              onValueChange={_onChange}
-              value={pending ? localValue : value}
-              readOnly={disabled}
-              maxDecimals={currency?.decimals}
+        {hideInputAndPricing ? null : (
+          <div className="w-full">
+            <div
+              data-state={isLoading ? 'active' : 'inactive'}
+              className={classNames(
+                'data-[state=inactive]:hidden data-[state=active]:flex',
+                'gap-4 items-center justify-between flex-grow h-[40px]',
+              )}
+            >
+              <SkeletonBox className="w-2/3 h-[28px] rounded-lg" />
+              {currencyLoading ? (
+                <SkeletonBox className="w-1/3 h-[28px] rounded-lg" />
+              ) : null}
+            </div>
+            <div
               data-state={isLoading ? 'inactive' : 'active'}
-              className={classNames('p-0 py-1 w-full !text-2xl font-medium')}
-            />
-          </div>
+              className="data-[state=inactive]:hidden data-[state=active]:flex flex-1 items-center"
+            >
+              <TextField
+                testdata-id={`${id}-input`}
+                type="number"
+                variant="naked"
+                disabled={disabled}
+                onValueChange={_onChange}
+                value={pending ? localValue : value}
+                readOnly={disabled}
+                maxDecimals={currency?.decimals}
+                data-state={isLoading ? 'inactive' : 'active'}
+                className={classNames('p-0 py-1 w-full !text-2xl font-medium')}
+              />
+            </div>
 
-          {hidePricing ? (
-            <div />
-          ) : (
-            <PricePanel
-              value={value}
-              currency={currency}
-              priceImpact={priceImpact}
-              error={_error}
-              loading={isPriceLoading}
-              price={price}
-            />
-          )}
-        </div>
+            {hidePricing ? (
+              <div />
+            ) : (
+              <PricePanel
+                value={value}
+                currency={currency}
+                priceImpact={priceImpact}
+                error={_error}
+                loading={isPriceLoading}
+                price={price}
+              />
+            )}
+          </div>
+        )}
 
         {selector}
         {!onSelect ? (
           <div
             id={`${id}-button`}
             className={classNames(
+              currencyClassName,
               'flex items-center gap-1 text-xl py-2 pl-2 pr-2 rounded-full font-medium whitespace-nowrap',
             )}
           >

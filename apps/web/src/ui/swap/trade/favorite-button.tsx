@@ -1,21 +1,29 @@
 import { StarIcon } from '@heroicons/react-v1/solid'
+import { usePinnedTokens } from '@sushiswap/hooks'
 import { classNames } from '@sushiswap/ui'
-import { type FC, useState } from 'react'
+import type { FC } from 'react'
+import type { ID } from 'sushi'
 
 interface FavoriteButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   className?: string
+  currencyId?: ID
 }
 
 export const FavoriteButton: FC<FavoriteButtonProps> = ({
   className,
+  currencyId,
   ...props
 }) => {
-  const [isFavorited, setIsFavorited] = useState(false)
+  const { hasToken, mutate } = usePinnedTokens()
+  const isOnList = !currencyId ? false : hasToken(currencyId)
+
   const toggleFavorite = (e: React.MouseEvent | React.KeyboardEvent) => {
     e.stopPropagation()
-    setIsFavorited((prev) => !prev)
+    if (!currencyId) return
+    mutate(isOnList ? 'remove' : 'add', currencyId)
   }
+
   return (
     <button
       {...props}
@@ -25,13 +33,14 @@ export const FavoriteButton: FC<FavoriteButtonProps> = ({
         className,
       )}
       onClick={toggleFavorite}
+      onKeyDown={toggleFavorite}
       aria-label="Toggle Favorite"
       type="button"
     >
       <StarIcon
         width={18}
         height={18}
-        className={classNames(isFavorited ? 'text-yellow' : '')}
+        className={classNames(isOnList ? 'text-yellow' : '')}
       />
     </button>
   )

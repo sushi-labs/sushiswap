@@ -1,10 +1,10 @@
 import type { VariablesOf } from 'gql.tada'
 import { type RequestOptions, request } from 'src/lib/request.js'
+import { isEvmChainId } from 'sushi'
 import { SUSHI_DATA_API_HOST } from 'sushi/config/subgraph'
+import { Token } from 'sushi/currency'
 import { graphql } from '../../graphql.js'
 import { SUSHI_REQUEST_HEADERS } from '../../request-headers.js'
-import { Token } from 'sushi/currency'
-import { isEvmChainId } from 'sushi'
 
 export const PoolsQuery = graphql(
   `

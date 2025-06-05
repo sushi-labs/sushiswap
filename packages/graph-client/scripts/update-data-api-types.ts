@@ -1,4 +1,4 @@
-import { writeFileSync } from 'fs'
+import { writeFileSync } from 'node:fs'
 import type { introspection } from '../src/subgraphs/data-api/data-api-env'
 import { getChainIdsByFeature } from '../src/subgraphs/data-api/queries/features/chain-ids-by-feature'
 

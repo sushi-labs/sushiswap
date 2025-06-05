@@ -17,6 +17,7 @@ export const BaseProviders: FC<BaseProvidersProps> = ({
       attribute="class"
       disableTransitionOnChange
       forcedTheme={forcedTheme}
+      themes={['light', 'black', 'dark']}
     >
       <div id="network-check-portal" />
       {children}

@@ -1,5 +1,5 @@
-import { useDarkMode } from '@sushiswap/hooks'
 import { Button } from '@sushiswap/ui'
+import { useTheme } from 'next-themes'
 import { useMemo, useState } from 'react'
 import { Wrapper } from '../wrapper'
 import { Favorite } from './favorite'
@@ -13,7 +13,8 @@ enum FavoriteRecentTab {
 
 export const FavoriteRecentTabView = () => {
   const [tab, setTab] = useState<FavoriteRecentTab>(FavoriteRecentTab.Favorite)
-  const isDarkMode = useDarkMode()
+
+  const { theme } = useTheme()
 
   const handleTabChange = (tab: FavoriteRecentTab) => {
     setTab(tab)
@@ -38,7 +39,7 @@ export const FavoriteRecentTabView = () => {
               asChild
               size="sm"
               variant={
-                _tab === tab && isDarkMode
+                _tab === tab && theme === 'dark'
                   ? 'quaternary'
                   : _tab === tab
                     ? 'quinary'
@@ -53,7 +54,7 @@ export const FavoriteRecentTabView = () => {
             </Button>
           ))}
         </div>
-        <NetworkMenu className="!pr-0" />
+        <NetworkMenu className="!px-1" />
       </div>
       <div className="mt-4 max-h-[500px] overflow-y-auto hide-scrollbar">
         {content}

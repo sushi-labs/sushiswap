@@ -17,7 +17,7 @@ export const TokenInfo: FC<TokenInfoProps> = ({ token, tokenInfo }) => {
       <div className="flex items-center justify-between">
         <span className="text-xl font-medium">About {token.name}</span>
 
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-4 flex-wrap">
           <LinkExternal
             href={EvmChain.tokenUrl(token.chainId, token.address)}
             target="_blank"

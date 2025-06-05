@@ -21,11 +21,18 @@ export const config = {
     '/:chainId/positions/:path*',
     '/:chainId/migrate',
     '/:chainId/rewards',
+    '/portal/:path*',
   ],
 }
 
 export async function middleware(req: NextRequest) {
   const { pathname, searchParams, search } = req.nextUrl
+
+  if (pathname === 'portal' || pathname.startsWith('/portal/')) {
+    const portalMiddleware = (await import('./app/portal/middleware'))
+      .portalMiddleware
+    return portalMiddleware(req)
+  }
 
   if (
     pathname === '/explore' ||

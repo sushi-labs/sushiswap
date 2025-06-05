@@ -27,7 +27,7 @@ export const ToastContent: FC<ToastContent> = ({
       <div className="flex flex-col gap-1 overflow-hidden">
         {!code ? (
           <>
-            <span className="font-medium text-sm text-muted-foreground">
+            <span className="font-medium text-sm text-muted-foreground black:text-accent-foreground mb-1">
               {summary}
             </span>
             <span className="font-medium text-xs text-muted-foreground">
@@ -37,7 +37,7 @@ export const ToastContent: FC<ToastContent> = ({
               <a
                 href={href}
                 target="_blank"
-                className="flex items-center text-xs font-medium gap-2 text-muted-foreground"
+                className="flex items-center text-xs font-medium gap-2 text-muted-foreground black:text-muted-foreground"
                 rel="noreferrer"
               >
                 View on explorer{' '}
@@ -48,12 +48,12 @@ export const ToastContent: FC<ToastContent> = ({
                 />
               </a>
             )}
-            <span className="text-xs text-slate-450 dark:text-slate-500">
+            <span className="text-xs text-slate-450 dark:text-slate-500 black:text-muted-foreground">
               <TimeAgo value={date} />
             </span>
           </>
         ) : (
-          <div className="scroll bg-gray-100 dark:bg-black/20 p-2 px-3 rounded-lg border border-slate-200/10 text-[10px] text-muted-foreground break-all max-h-[80px] overflow-y-auto">
+          <div className="scroll bg-gray-100 dark:bg-black/20 p-2 px-3 rounded-lg border border-slate-200/10 text-[10px] text-gray-900 dark:text-slate-200 break-all max-h-[80px] overflow-y-auto black:text-primary">
             <code>{summary}</code>
           </div>
         )}

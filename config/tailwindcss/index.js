@@ -2,6 +2,7 @@ const aspectRatio = require('@tailwindcss/aspect-ratio')
 const forms = require('@tailwindcss/forms')
 const typography = require('@tailwindcss/typography')
 const defaultTheme = require('tailwindcss/defaultTheme')
+const plugin = require('tailwindcss/plugin')
 
 /**
  * @type {import('tailwindcss').Config}
@@ -34,7 +35,15 @@ module.exports = {
   //   // include packages if not transpiling
   //   '../../packages/**/*.{js,ts,jsx,tsx}',
   // ],
-  plugins: [forms, aspectRatio, typography, require('tailwindcss-animate')],
+  plugins: [
+    forms,
+    aspectRatio,
+    typography,
+    require('tailwindcss-animate'),
+    plugin(({ addVariant }) => {
+      addVariant('black', '.black &')
+    }),
+  ],
   theme: {
     screens: {
       ...defaultTheme.screens,
@@ -67,6 +76,7 @@ module.exports = {
         slate: {
           50: '#FDFCFD',
           100: '#F9F9F9',
+          200: '#E8E7EB',
           450: '#7B7A87',
           500: '#ABA5B0',
           700: '#6B7280',

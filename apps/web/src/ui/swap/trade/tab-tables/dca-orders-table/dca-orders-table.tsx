@@ -123,7 +123,7 @@ export const DCAOrdersTable = () => {
         </div>
       }
     >
-      <Card className="hidden overflow-hidden border-none bg-slate-50 dark:bg-slate-800 md:block">
+      <Card className="hidden overflow-hidden border-none bg-slate-50 dark:bg-slate-800 md:block !rounded-t-none xl:!rounded-lg">
         <DataTable
           columns={COLUMNS}
           data={data}
