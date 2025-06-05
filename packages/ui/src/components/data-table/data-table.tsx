@@ -106,9 +106,9 @@ export function DataTable<TData, TValue>({
 	});
 
 	return (
-		<div className={classNames("space-y-4 border-t border-secondary", className)}>
+		<div className={classNames("space-y-4 border-t border-secondary black:border-white/[0.1]", className)}>
 			{toolbar ? toolbar(table) : null}
-			<Table className={pagination ? "border-b border-secondary" : ""}>
+			<Table className={pagination ? "border-b border-secondary black:border-white/[0.1]" : ""}>
 				{showColumnHeaders ? (
 					<TableHeader>
 						{table.getHeaderGroups().map((headerGroup) => (
@@ -119,13 +119,7 @@ export function DataTable<TData, TValue>({
 											style={{ width: header.getSize() }}
 											key={header.id}
 											className={classNames(header.column.getCanSort() ? "px-2" : "px-4")}>
-											{header.isPlaceholder ? null : (
-												<DataTableColumnHeader
-													description={header.column.columnDef?.meta?.headerDescription}
-													column={header.column}
-													title={flexRender(header.column.columnDef.header, header.getContext())}
-												/>
-											)}
+											{header.isPlaceholder ? null : <DataTableColumnHeader header={header} />}
 										</TableHead>
 									);
 								})}

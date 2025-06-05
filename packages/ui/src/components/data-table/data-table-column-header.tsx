@@ -30,7 +30,24 @@ export function DataTableColumnHeader<TData, TValue>({ header }: DataTableColumn
 		}
 	}, [header.column]);
 
-	if (!column.getCanSort()) {
+	const className = header?.column.columnDef?.meta?.header?.className;
+	const description = header.column.columnDef?.meta?.header?.description;
+
+	const Title = useMemo(() => {
+		const title = header.column.columnDef.header;
+
+		if (typeof title === "string") {
+			if (description) {
+				return <span className="underline decoration-dotted underline-offset-2">{title}</span>;
+			} else {
+				return <span>{title}</span>;
+			}
+		}
+
+		return flexRender(title, header.getContext());
+	}, [header, description]);
+
+	if (!header.column.getCanSort()) {
 		return (
 			<div className={className}>
 				{description ? (
@@ -55,13 +72,13 @@ export function DataTableColumnHeader<TData, TValue>({ header }: DataTableColumn
 						<Tooltip>
 							<TooltipTrigger asChild>
 								<div className="flex flex-row gap-2 ui-items-center">
-									<span className="underline decoration-dotted underline-offset-2">{title}</span>
-									{column.getIsSorted() === "desc" ? (
-										<CaretDownIcon className="w-4 h-4 ml-2" />
-									) : column.getIsSorted() === "asc" ? (
-										<CaretUpIcon className="w-4 h-4 ml-2" />
+									{Title}
+									{header.column.getIsSorted() === "desc" ? (
+										<CaretDownIcon className="ml-2 h-4 w-4" />
+									) : header.column.getIsSorted() === "asc" ? (
+										<CaretUpIcon className="ml-2 h-4 w-4" />
 									) : (
-										<CaretSortIcon className="w-4 h-4 ml-2" />
+										<CaretSortIcon className="ml-2 h-4 w-4" />
 									)}
 								</div>
 							</TooltipTrigger>
@@ -71,13 +88,13 @@ export function DataTableColumnHeader<TData, TValue>({ header }: DataTableColumn
 				</Button>
 			) : (
 				<Button onClick={onClick} variant="ghost" size="xs">
-					<span>{title}</span>
-					{column.getIsSorted() === "desc" ? (
-						<CaretDownIcon className="w-4 h-4 ml-2" />
-					) : column.getIsSorted() === "asc" ? (
-						<CaretUpIcon className="w-4 h-4 ml-2" />
+					{Title}
+					{header.column.getIsSorted() === "desc" ? (
+						<CaretDownIcon className="ml-2 h-4 w-4" />
+					) : header.column.getIsSorted() === "asc" ? (
+						<CaretUpIcon className="ml-2 h-4 w-4" />
 					) : (
-						<CaretSortIcon className="w-4 h-4 ml-2" />
+						<CaretSortIcon className="ml-2 h-4 w-4" />
 					)}
 				</Button>
 			)}
