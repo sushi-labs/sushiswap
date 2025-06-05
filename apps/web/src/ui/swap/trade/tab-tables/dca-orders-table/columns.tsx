@@ -1,3 +1,4 @@
+import { XMarkIcon } from '@heroicons/react/24/outline'
 import {
   Button,
   Chip,
@@ -22,7 +23,7 @@ export const FILLED_COLUMN: ColumnDef<DCAOrder> = {
   enableSorting: false,
   accessorFn: (row) => row.filledPercent,
   cell: ({ row }) => (
-    <div className="flex items-center gap-1 md:gap-2">
+    <div className="flex items-center gap-1 md:gap-2 whitespace-nowrap">
       <Currency.Icon
         disableLink
         currency={row.original.token}
@@ -42,7 +43,7 @@ export const SIZE_COLUMN: ColumnDef<DCAOrder> = {
   enableSorting: false,
   accessorFn: (row) => row.sizeAmount,
   cell: ({ row }) => (
-    <div className="flex items-center gap-1 md:gap-2">
+    <div className="flex items-center gap-1 md:gap-2 whitespace-nowrap">
       <Currency.Icon
         disableLink
         currency={row.original.token}
@@ -53,7 +54,7 @@ export const SIZE_COLUMN: ColumnDef<DCAOrder> = {
         <span>
           {formatNumber(row.original.sizeAmount)} {row.original.token.symbol}
         </span>
-        <span className="hidden text-xs text-muted-foreground md:block">
+        <span className="hidden text-xs font-normal text-muted-foreground md:block">
           {formatUSD(row.original.sizeUSD)}
         </span>
       </div>
@@ -68,7 +69,7 @@ export const SPENT_COLUMN: ColumnDef<DCAOrder> = {
   accessorFn: (row) => row.spentAmount,
   cell: ({ row }) => (
     <div className="flex flex-col gap-1">
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-2 whitespace-nowrap">
         <span>
           {formatNumber(row.original.spentAmount)} {row.original.token.symbol}
         </span>
@@ -76,7 +77,7 @@ export const SPENT_COLUMN: ColumnDef<DCAOrder> = {
           {formatPercent(row.original.spentPercent)}
         </Chip>
       </div>
-      <span className="text-xs text-muted-foreground">
+      <span className="text-xs font-normal text-muted-foreground">
         {row.original.ordersRemaining}/{row.original.ordersTotal} Order
         Remaining
       </span>
@@ -119,7 +120,7 @@ export const EXPIRES_COLUMN: ColumnDef<DCAOrder> = {
       new Date(row.original.expires),
       'MM/dd/yy h:mm a',
     )
-    return formattedDate
+    return <span className="whitespace-nowrap">{formattedDate}</span>
   },
 }
 
@@ -144,12 +145,18 @@ export const CHAIN_COLUMN: ColumnDef<DCAOrder> = {
 
 export const ACTION_COLUMN: ColumnDef<DCAOrder> = {
   id: 'action',
-  header: 'Action',
+  header: () => <span className="hidden md:text-right md:block">Action</span>,
   enableSorting: false,
   accessorFn: (row) => row.id,
   cell: () => (
-    <Button className="w-full md:hidden" variant="destructive" asChild>
-      <span>Cancel</span>
-    </Button>
+    <>
+      <XMarkIcon
+        className="hidden w-4 h-4 ml-auto cursor-pointer text-red md:block"
+        aria-label="Cancel order"
+      />
+      <Button className="w-full md:hidden" variant="destructive" asChild>
+        <span>Cancel</span>
+      </Button>{' '}
+    </>
   ),
 }

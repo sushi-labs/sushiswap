@@ -21,7 +21,7 @@ export const BUY_COLUMN: ColumnDef<LimitOrder> = {
   accessorFn: (row) => row,
   enableSorting: false,
   cell: ({ row }) => (
-    <div className="flex items-center gap-1 md:gap-2">
+    <div className="flex items-center gap-1 md:gap-2 whitespace-nowrap">
       <Currency.Icon
         disableLink
         currency={row.original.buyToken}
@@ -42,7 +42,7 @@ export const SELL_COLUMN: ColumnDef<LimitOrder> = {
   enableSorting: false,
   cell: ({ row }) => {
     return (
-      <div className="flex items-center gap-1 md:gap-2">
+      <div className="flex items-center gap-1 md:gap-2 whitespace-nowrap">
         <Currency.Icon
           disableLink
           currency={row.original.sellToken}
@@ -153,7 +153,7 @@ export const FILLED_COLUMN: ColumnDef<LimitOrder> = {
   enableSorting: false,
   accessorFn: (row) => row.filledPercent,
   cell: ({ row }) => (
-    <div className="flex items-center gap-2">
+    <div className="flex items-center gap-2 whitespace-nowrap">
       <span>
         {formatNumber(row.original.filledAmount)}/
         {formatNumber(row.original.totalAmount)} {row.original.buyToken.symbol}
@@ -175,7 +175,7 @@ export const TIME_COLUMN: ColumnDef<LimitOrder> = {
 
 export const ACTION_COLUMN: ColumnDef<LimitOrder> = {
   id: 'action',
-  header: 'Action',
+  header: () => <span className="hidden text-right md:block">Action</span>,
   enableSorting: false,
   accessorFn: (row) => row.id,
   cell: () => (
