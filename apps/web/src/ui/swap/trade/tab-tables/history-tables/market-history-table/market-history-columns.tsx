@@ -22,7 +22,7 @@ export const BUY_COLUMN: ColumnDef<MarketTrade> = {
   enableSorting: false,
   accessorFn: (row) => row.buyAmount,
   cell: ({ row }) => (
-    <div className="flex items-center gap-1 md:gap-2">
+    <div className="flex items-center gap-1 md:gap-2 whitespace-nowrap">
       <Currency.Icon currency={row.original.buyToken} width={24} height={24} />
       <span>
         {formatNumber(row.original.buyAmount)} {row.original.buyToken.symbol}
@@ -37,7 +37,7 @@ export const SELL_COLUMN: ColumnDef<MarketTrade> = {
   enableSorting: false,
   accessorFn: (row) => row.sellAmount,
   cell: ({ row }) => (
-    <div className="flex items-center gap-1 md:gap-2">
+    <div className="flex items-center gap-1 md:gap-2 whitespace-nowrap">
       <Icon currency={row.original.sellToken} width={24} height={24} />
       <span>
         {formatNumber(row.original.sellAmount)} {row.original.sellToken.symbol}
@@ -162,9 +162,12 @@ export const TX_HASH_COLUMN: ColumnDef<MarketTrade> = {
 
 export const DATE_COLUMN: ColumnDef<MarketTrade> = {
   id: 'timestamp',
-  header: 'Date',
+  header: () => <span className="md:text-right md:block">Date</span>,
   enableSorting: false,
   accessorFn: (row) => row.timestamp,
-  cell: ({ row }) =>
-    format(new Date(row.original.timestamp), 'MM/dd/yy h:mm a'),
+  cell: ({ row }) => (
+    <span className="whitespace-nowrap">
+      {format(new Date(row.original.timestamp), 'MM/dd/yy h:mm a')}
+    </span>
+  ),
 }

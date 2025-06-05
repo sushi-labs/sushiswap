@@ -24,7 +24,7 @@ export const FILLED_COLUMN: ColumnDef<DCAOrderSummary> = {
   enableSorting: false,
   accessorFn: (row) => row.filledAmount,
   cell: ({ row }) => (
-    <div className="flex items-center gap-2">
+    <div className="flex items-center gap-2 whitespace-nowrap">
       <Currency.Icon
         currency={row.original.filledToken}
         width={24}
@@ -44,7 +44,7 @@ export const SIZE_COLUMN: ColumnDef<DCAOrderSummary> = {
   enableSorting: false,
   accessorFn: (row) => row.sizeAmount,
   cell: ({ row }) => (
-    <div className="flex items-center gap-2">
+    <div className="flex items-center gap-2 whitespace-nowrap">
       <Currency.Icon currency={row.original.sizeToken} width={24} height={24} />
       <span>
         {formatNumber(row.original.sizeAmount)} {row.original.sizeToken.symbol}
@@ -112,8 +112,10 @@ export const ORDERS_COLUMN: ColumnDef<DCAOrderSummary> = {
   accessorFn: (row) => row.ordersCount,
   cell: ({ row }) => (
     <div className="flex flex-col">
-      <span>{row.original.ordersCount} Orders</span>
-      <span className="text-xs dark:text-slate-500 text-slate-450">
+      <span className="whitespace-nowrap">
+        {row.original.ordersCount} Orders
+      </span>
+      <span className="text-xs dark:text-slate-500 text-slate-450 whitespace-nowrap">
         {row.original.frequency}
       </span>
     </div>
@@ -127,8 +129,8 @@ export const STATUS_COLUMN: ColumnDef<DCAOrderSummary> = {
   accessorFn: (row) => row.status,
   cell: ({ row }) => (
     <div className="flex flex-col">
-      <span>{row.original.status} On</span>
-      <span className="text-xs dark:text-slate-500 text-slate-450">
+      <span className="whitespace-nowrap">{row.original.status} On</span>
+      <span className="text-xs dark:text-slate-500 text-slate-450 whitespace-nowrap">
         {format(new Date(row.original.statusDate), 'MM/dd/yy h:mm a')}
       </span>
     </div>

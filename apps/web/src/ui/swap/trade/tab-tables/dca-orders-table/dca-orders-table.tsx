@@ -96,6 +96,7 @@ const COLUMNS: ColumnDef<DCAOrder>[] = [
   SPENT_COLUMN,
   AVG_PRICE_USD_COLUMN,
   EXPIRES_COLUMN,
+  ACTION_COLUMN,
 ]
 
 const MOBILE_COLUMNS: ColumnDef<DCAOrder>[] = [
