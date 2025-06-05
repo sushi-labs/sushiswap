@@ -1,13 +1,14 @@
 import type { TokenListChainId } from '@sushiswap/graph-client/data-api'
-import { List } from '@sushiswap/ui'
+
 import type { Type } from 'sushi/currency'
 import { useAccount } from 'wagmi'
 import { usePrices } from '~evm/_common/ui/price-provider/price-provider/use-prices'
 import { useMyTokens } from '../hooks/use-my-tokens'
+
 import {
-  TokenSelectorCurrencyList,
-  TokenSelectorCurrencyListLoading,
-} from './common/token-selector-currency-list'
+  TokenSelectorCurrencyListLoadingV2,
+  TokenSelectorCurrencyListV2,
+} from './common/token-selector-currency-list-v2'
 
 interface TokenSelectorMyTokens {
   chainId: TokenListChainId
@@ -15,16 +16,11 @@ interface TokenSelectorMyTokens {
   onShowInfo(currency: Type | false): void
   selected: Type | undefined
   includeNative?: boolean
+  showChainOptions: boolean
 }
 
 function Shell({ children }: { children: React.ReactNode }) {
-  return (
-    // <div className="flex flex-col space-y-2">
-    // 	<List.Control className="flex flex-1">
-    <div className="flex-1 flex flex-col">{children}</div>
-    // 	 </List.Control>
-    // </div>
-  )
+  return <div className="flex-1 flex flex-col">{children}</div>
 }
 
 export function TokenSelectorMyTokens({
@@ -33,6 +29,7 @@ export function TokenSelectorMyTokens({
   onShowInfo,
   selected,
   includeNative,
+  showChainOptions,
 }: TokenSelectorMyTokens) {
   const { address } = useAccount()
 
@@ -49,7 +46,7 @@ export function TokenSelectorMyTokens({
   if (isLoading)
     return (
       <Shell>
-        <TokenSelectorCurrencyListLoading count={10} />
+        <TokenSelectorCurrencyListLoadingV2 count={10} />
       </Shell>
     )
 
@@ -73,11 +70,12 @@ export function TokenSelectorMyTokens({
 
   return (
     <Shell>
-      <TokenSelectorCurrencyList
+      <TokenSelectorCurrencyListV2
         id="trending"
         selected={selected}
         onSelect={onSelect}
         onShowInfo={onShowInfo}
+        showChainOptions={showChainOptions}
         // pin={{}}
         currencies={data.tokens}
         chainId={chainId}

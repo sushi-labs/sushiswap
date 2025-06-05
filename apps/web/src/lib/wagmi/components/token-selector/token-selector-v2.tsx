@@ -18,6 +18,7 @@ import React, {
   useMemo,
   useState,
 } from 'react'
+import { ChainOptionsSelector } from 'src/ui/swap/chain-options-selector'
 import { NetworkMenu } from 'src/ui/swap/trade/favorite-recent/network-menu'
 import type { EvmChainId } from 'sushi/chain'
 import type { Currency, Token, Type } from 'sushi/currency'
@@ -25,7 +26,9 @@ import { useAccount } from 'wagmi'
 import { CurrencyInfo } from './currency-info'
 import { TokenSelectorStatesV2 } from './token-selector-states-v2'
 
-interface TokenSelectorProps {
+export type TokenSelectorV2Type = 'buy' | 'sell' | 'browse'
+
+interface TokenSelectorV2Props {
   selected: Type | undefined
   chainId: EvmChainId
   onSelect(currency: Type): void
@@ -38,9 +41,10 @@ interface TokenSelectorProps {
   // selectedNetwork?: EvmChainId
   onNetworkSelect?: (network: number) => void
   isBrowse?: boolean
+  type: TokenSelectorV2Type
 }
 
-export const TokenSelectorV2: FC<TokenSelectorProps> = ({
+export const TokenSelectorV2: FC<TokenSelectorV2Props> = ({
   includeNative = true,
   selected,
   onSelect,
@@ -53,6 +57,7 @@ export const TokenSelectorV2: FC<TokenSelectorProps> = ({
   // selectedNetwork,
   onNetworkSelect,
   isBrowse,
+  type,
 }) => {
   const { address } = useAccount()
 
@@ -118,6 +123,14 @@ export const TokenSelectorV2: FC<TokenSelectorProps> = ({
               {isBrowse ? 'Browse Tokens' : 'Select Token'}
             </DialogTitle>
           </DialogHeader>
+          {type === 'buy' ? (
+            <div className="flex flex-col gap-2">
+              <p className="text-xs text-slate-450 dark:text-slate-500">
+                Chains
+              </p>
+              <ChainOptionsSelector size="lg" />
+            </div>
+          ) : null}
           <div className="flex gap-2 relative">
             <TextField
               placeholder="Search by token or address"
@@ -128,9 +141,11 @@ export const TokenSelectorV2: FC<TokenSelectorProps> = ({
               onValueChange={setQuery}
               className="py-7 placeholder:text-slate-450 !dark:text-slate-500 placeholder:dark:text-slate-450 dark:!bg-slate-900 !bg-gray-100"
             />
-            <div className="absolute top-1/2 -translate-y-1/2 right-2">
-              <NetworkMenu className="bg-slate-50 border !rounded-md !px-2 border-black/10 dark:bg-slate-800 dark:border-white/10" />
-            </div>
+            {type !== 'buy' ? (
+              <div className="absolute top-1/2 -translate-y-1/2 right-2">
+                <NetworkMenu className="bg-slate-50 border !rounded-md !px-2 border-black/10 dark:bg-slate-800 dark:border-white/10" />
+              </div>
+            ) : null}
           </div>
           <div
             id="token-list-container"
@@ -146,6 +161,7 @@ export const TokenSelectorV2: FC<TokenSelectorProps> = ({
               hidePinnedTokens={hidePinnedTokens}
               search={query}
               onShowInfo={showCurrencyInfo}
+              type={type}
             />
           </div>
         </div>
