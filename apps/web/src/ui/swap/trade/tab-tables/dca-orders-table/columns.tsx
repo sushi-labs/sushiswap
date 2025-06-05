@@ -54,7 +54,7 @@ export const SIZE_COLUMN: ColumnDef<DCAOrder> = {
         <span>
           {formatNumber(row.original.sizeAmount)} {row.original.token.symbol}
         </span>
-        <span className="hidden text-xs font-normal text-muted-foreground md:block">
+        <span className="hidden text-xs font-normal dark:text-slate-500 text-slate-450 md:block">
           {formatUSD(row.original.sizeUSD)}
         </span>
       </div>
