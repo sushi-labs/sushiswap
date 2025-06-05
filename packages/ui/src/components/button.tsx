@@ -21,7 +21,8 @@ const buttonVariants = cva(
           'bg-amber-400 hover:bg-amber-500 focus:bg-amber-600 active:bg-amber-500 text-amber-900',
         outline:
           '!border border-accent bg-background hover:bg-muted hover:text-accent-foreground',
-        secondary: 'bg-secondary hover:bg-muted focus:bg-accent',
+        secondary:
+          'bg-secondary hover:bg-muted focus:bg-accent black:bg-muted black:hover:bg-accent black:focus:bg-accent',
         tertiary:
           'dark:bg-skyblue/10 hover:dark:bg-skyblue/20 focus:dark:bg-skyblue/30 active:dark:bg-skyblue/20 dark:text-skyblue bg-blue/10 hover:bg-blue/20 focus:bg-blue/30 active:bg-blue/20 text-blue',
         quaternary:

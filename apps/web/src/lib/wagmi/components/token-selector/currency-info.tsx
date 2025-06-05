@@ -77,8 +77,8 @@ export const CurrencyInfo: FC<CurrencyInfoProps> = ({ currency, onBack }) => {
           </DialogTitle>
         </DialogHeader>
         <div className="px-6 overflow-y-auto hide-scrollbar">
-          <div className="flex gap-1 items-center py-2">
-            <ChartBarSquareIcon className="h-4 w-4" />
+          <div className="flex items-center gap-1 py-2">
+            <ChartBarSquareIcon className="w-4 h-4" />
             <span className="font-medium">Market Info</span>
           </div>
           <div className="flex flex-col gap-2">
@@ -234,7 +234,7 @@ export const CurrencyInfo: FC<CurrencyInfoProps> = ({ currency, onBack }) => {
           <Button
             size="sm"
             variant="ghost"
-            className="mt-4 w-full text-muted-foreground font-medium text-xs"
+            className="w-full mt-4 text-xs font-medium text-muted-foreground"
             onClick={toggleShowMore}
           >
             {showMore ? 'View Less' : 'View More'}
@@ -245,8 +245,8 @@ export const CurrencyInfo: FC<CurrencyInfoProps> = ({ currency, onBack }) => {
           <Collapsible open={showMore}>
             <Separator className="my-6" />
             <div className="flex flex-col ">
-              <div className="flex gap-1 items-center py-2">
-                <ShieldCheckIcon className="h-4 w-4" />
+              <div className="flex items-center gap-1 py-2">
+                <ShieldCheckIcon className="w-4 h-4" />
                 <span className="font-medium">Security Info</span>
               </div>
               <TokenSecurityView
