@@ -27,11 +27,7 @@ export const ToastContent: FC<ToastContent> = ({
       <div className="flex flex-col gap-1 overflow-hidden">
         {!code ? (
           <>
-<<<<<<< HEAD
-            <span className="font-semibold mb-1 text-sm text-gray-900 dark:text-slate-200 black:text-accent-foreground">
-=======
-            <span className="font-medium text-sm text-muted-foreground">
->>>>>>> de54a48669 (Feature/dex 36: toast system (#1874))
+            <span className="font-medium text-sm text-muted-foreground black:text-accent-foreground mb-1">
               {summary}
             </span>
             <span className="font-medium text-xs text-muted-foreground">
@@ -41,11 +37,7 @@ export const ToastContent: FC<ToastContent> = ({
               <a
                 href={href}
                 target="_blank"
-<<<<<<< HEAD
-                className="flex items-center text-sm font-medium gap-2 text-gray-700 dark:text-slate-400 black:text-muted-foreground"
-=======
-                className="flex items-center text-xs font-medium gap-2 text-muted-foreground"
->>>>>>> de54a48669 (Feature/dex 36: toast system (#1874))
+                className="flex items-center text-xs font-medium gap-2 text-muted-foreground black:text-muted-foreground"
                 rel="noreferrer"
               >
                 View on explorer{' '}
@@ -56,24 +48,12 @@ export const ToastContent: FC<ToastContent> = ({
                 />
               </a>
             )}
-<<<<<<< HEAD
-<<<<<<< HEAD
-            <span className="text-[10px] font-medium text-gray-600 dark:text-slate-400 black:text-muted-foreground">
-=======
-            <span className="text-xs text-[#7B7A87] dark:text-[#ABA5B0]">
->>>>>>> de54a48669 (Feature/dex 36: toast system (#1874))
-=======
-            <span className="text-xs text-slate-450 dark:text-slate-500">
->>>>>>> 50bdd3703f (Feature/dex 13: bridge selection flow in search bar (#1878))
+            <span className="text-xs text-slate-450 dark:text-slate-500 black:text-muted-foreground">
               <TimeAgo value={date} />
             </span>
           </>
         ) : (
-<<<<<<< HEAD
           <div className="scroll bg-gray-100 dark:bg-black/20 p-2 px-3 rounded-lg border border-slate-200/10 text-[10px] text-gray-900 dark:text-slate-200 break-all max-h-[80px] overflow-y-auto black:text-primary">
-=======
-          <div className="scroll bg-gray-100 dark:bg-black/20 p-2 px-3 rounded-lg border border-slate-200/10 text-[10px] text-muted-foreground break-all max-h-[80px] overflow-y-auto">
->>>>>>> de54a48669 (Feature/dex 36: toast system (#1874))
             <code>{summary}</code>
           </div>
         )}

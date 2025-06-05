@@ -24,7 +24,6 @@ export const PricePanel: FC<PricePanel> = ({
   value,
   priceImpact,
   error,
-  className,
 }) => {
   const parsedValue = useMemo(
     () => tryParseAmount(value, currency),
@@ -32,10 +31,7 @@ export const PricePanel: FC<PricePanel> = ({
   )
   const currencyValueStr =
     parsedValue && price
-      ? `${(
-          (price * Number(parsedValue.quotient)) /
-            10 ** parsedValue.currency.decimals
-        ).toFixed(2)}`
+      ? `${((price * Number(parsedValue.quotient)) / 10 ** parsedValue.currency.decimals).toFixed(2)}`
       : '0.00'
 
   if (loading)
@@ -50,24 +46,8 @@ export const PricePanel: FC<PricePanel> = ({
   }
 
   return (
-<<<<<<< HEAD
-    <p
-      className={classNames(
-        'font-medium text-lg flex items-baseline select-none text-gray-500 dark:text-slate-400',
-        className,
-      )}
-    >
-      {!loading && price === 0 ? (
-        <span className="text-sm flex items-center">Price not available</span>
-      ) : (
-        <>
-          $ {big}.<span className="text-sm font-semibold">{portion}</span>
-        </>
-      )}
-=======
     <p className="font-medium text-sm flex items-baseline select-none text-gray-500 dark:text-slate-400">
       {!loading && price === 0 ? 'Price not available' : `$${currencyValueStr}`}
->>>>>>> 6d0b61e939 (feat: new input design & color palette)
       {!(!loading && price === 0) && priceImpact && (
         <span
           className={classNames(

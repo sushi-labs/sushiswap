@@ -134,11 +134,7 @@ const DerivedstateSimpleTradeProvider: FC<
             ),
             switchTradeMode: setTradeMode,
           }),
-<<<<<<< HEAD
-          [tradeMode, setTradeMode],
-=======
           [tradeMode, setTradeMode, chainId],
->>>>>>> 1d8c958171 (fix: lint)
         )}
       >
         {children}

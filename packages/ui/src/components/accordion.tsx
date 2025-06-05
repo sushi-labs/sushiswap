@@ -62,13 +62,9 @@ const AccordionContent = React.forwardRef<
     )}
     {...props}
   >
-<<<<<<< HEAD
-    {children}
-=======
     <div className={classNames('pb-4 pt-0', childClassName ?? '')}>
       {children}
     </div>
->>>>>>> b60db3d0b8 (DEX-37: Assets tab content in account drawer (#1871))
   </AccordionPrimitive.Content>
 ))
 AccordionContent.displayName = AccordionPrimitive.Content.displayName

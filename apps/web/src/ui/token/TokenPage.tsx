@@ -7,6 +7,7 @@ import type {
 } from '@sushiswap/graph-client/data-api'
 import { useIsMounted, useMediaQuery } from '@sushiswap/hooks'
 import { Button, Container, LinkInternal, classNames } from '@sushiswap/ui'
+import { AnimatePresence, motion } from 'framer-motion'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { type FC, useMemo } from 'react'
@@ -93,11 +94,22 @@ export const TokenPage: FC<TokenPageProps> = ({ token: _token, tokenInfo }) => {
                 <div className="flex-auto min-w-0">
                   <TokenChart token={token} />
                 </div>
-                {isMounted && showWidget ? (
-                  <div className="w-[420px] flex-none">
-                    <SwapWidget token1={token} />
-                  </div>
-                ) : null}
+                <div className="min-[854px]:w-[420px] max-[854px]:hidden">
+                  <AnimatePresence>
+                    {isMounted ? (
+                      <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: 20 }}
+                        transition={{ duration: 0.5, ease: 'easeOut' }}
+                      >
+                        <div className="w-[420px] flex-none">
+                          <SwapWidget token1={token} />
+                        </div>
+                      </motion.div>
+                    ) : null}
+                  </AnimatePresence>
+                </div>
               </div>
 
               <TokenInfo token={token} tokenInfo={tokenInfo} />
