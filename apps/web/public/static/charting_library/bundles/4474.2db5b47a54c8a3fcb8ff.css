@@ -1,0 +1,72 @@
+.innerLabel-DjbvBF5Y {
+  color: #d1d4dc;
+  display: flex;
+  flex: 0 0 auto;
+  font-size: 16px;
+  padding-left: 5px;
+}
+html.theme-dark .innerLabel-DjbvBF5Y {
+  color: #50535e;
+}
+.controlWrapper-DBTazUk2 {
+  box-sizing: border-box;
+  height: 100%;
+  overflow: hidden;
+  width: 22px;
+}
+.controlWrapper-DBTazUk2.hidden-DBTazUk2 {
+  opacity: 0;
+}
+.control-DBTazUk2 {
+  align-items: center;
+  background-color: initial;
+  border: none;
+  border-radius: 4px;
+  box-sizing: border-box;
+  color: #6a6d78;
+  cursor: default;
+  display: flex;
+  flex: 0 0 auto;
+  height: 50%;
+  justify-content: center;
+  padding: 0 6px;
+  transition: color .35s ease, background-color .35s ease;
+}
+html.theme-dark .control-DBTazUk2 {
+  color: #868993;
+}
+.control-DBTazUk2 svg {
+  fill: currentColor;
+}
+@media (any-hover: hover) {
+  .control-DBTazUk2:hover {
+    background-color: #f0f3fa;
+    color: #131722;
+  }
+  html.theme-dark .control-DBTazUk2:hover {
+    background-color: #363a45;
+    color: #d1d4dc;
+  }
+}
+.controlIncrease-DBTazUk2 {
+  transform: rotate(180deg);
+}
+.controlIcon-DBTazUk2 {
+  display: flex;
+  flex: 0 0 auto;
+  justify-content: center;
+}
+.controlIcon-DBTazUk2 svg {
+  width: 100%;
+}
+.title-DBTazUk2 {
+  color: #b2b5be;
+  display: flex;
+  flex-direction: column;
+  font-size: 12px;
+  justify-content: center;
+  margin-right: 9px;
+}
+html.theme-dark .title-DBTazUk2 {
+  color: #50535e;
+}

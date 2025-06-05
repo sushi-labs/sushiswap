@@ -1,0 +1,16 @@
+.VersionHeader {
+	text-align: center;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	background-color: #222;
+	color: #fff;
+	font-family: Arial, Helvetica, sans-serif;
+	height: 60px;
+	max-height: 60px;
+	font-size: 12px;
+}
+
+.TVChartContainer {
+	height: calc(100vh - 60px);
+}

@@ -1,0 +1,17 @@
+.tab-jJ_D7IlA {
+  all: unset;
+  position: relative;
+}
+.accessible-jJ_D7IlA:before {
+  border-radius: 4px;
+  content: "";
+  height: 100%;
+  outline: 2px none #2962ff;
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 100%;
+}
+.accessible-jJ_D7IlA:focus-visible:before {
+  outline-style: solid;
+}

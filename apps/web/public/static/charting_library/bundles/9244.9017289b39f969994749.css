@@ -1,0 +1,54 @@
+.informer-iBPUmjfh {
+  text-align: initial;
+}
+.dateTimeWrapper-Dg2Jb5Mv {
+  display: flex;
+  gap: 8px;
+  justify-content: space-between;
+  margin-top: 7px;
+}
+.containerDatePicker-Dg2Jb5Mv {
+  flex: 1 1 auto;
+}
+.dateInputContainer-Dg2Jb5Mv {
+  width: 100%;
+}
+.dateInputContainer-Dg2Jb5Mv .dateInput-Dg2Jb5Mv {
+  max-width: none;
+  width: 100%;
+}
+.dateInputContainer-Dg2Jb5Mv .dateInputIcon-Dg2Jb5Mv {
+  height: 100%;
+}
+.wrapper-eYAfVbpw {
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  left: 0;
+  margin: 16px;
+  position: absolute;
+  right: 0;
+  z-index: 3;
+}
+.wrapper-RoaZjf69 {
+  color: #6a6d78;
+  font-size: 14px;
+  line-height: 22px;
+  min-height: 16px;
+  text-align: center;
+}
+html.theme-dark .wrapper-RoaZjf69 {
+  color: #868993;
+}
+.select-RoaZjf69 {
+  text-align: left;
+}
+.selectMenu-RoaZjf69 {
+  display: none;
+}
+.title-RoaZjf69 {
+  display: flex;
+  font-size: 14px;
+  line-height: 22px;
+}

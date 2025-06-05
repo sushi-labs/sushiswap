@@ -1,0 +1,52 @@
+.dialog-qyCw0PaN {
+  max-width: 380px;
+  min-width: 280px;
+  position: fixed;
+  width: 100%;
+}
+.dialog-qyCw0PaN [data-dragg-area="true"] {
+  cursor: grab;
+}
+.dialog-qyCw0PaN [data-dragg-area="true"].dragging-qyCw0PaN {
+  cursor: grabbing;
+}
+.dialogAnimatedAppearance-qyCw0PaN {
+  animation-duration: .3s;
+  animation-name: dialogAnimation-qyCw0PaN;
+  transform-origin: 0 0;
+}
+@keyframes dialogAnimation-qyCw0PaN {
+  0% {
+    opacity: 0;
+    transform: translate(
+        var(--animationTranslateStartX),
+        var(--animationTranslateStartY)
+      )
+      scale(0);
+  }
+  to {
+    opacity: 1;
+    transform: translate(
+        var(--animationTranslateEndX),
+        var(--animationTranslateEndY)
+      )
+      scale(1);
+  }
+}
+.dialogTooltip-qyCw0PaN {
+  color: #fff;
+  font-size: 14px;
+  left: 50%;
+  line-height: 21px;
+  max-width: 540px;
+  position: absolute;
+  top: -20px;
+  transform: translateX(-50%);
+  width: -webkit-max-content;
+  width: max-content;
+}
+@media screen and (max-width: 768px) {
+  .dialogTooltip-qyCw0PaN {
+    max-width: 240px;
+  }
+}

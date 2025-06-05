@@ -1,0 +1,52 @@
+.dialog-aRAWUDhF {
+  background-color: #fff;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  min-width: 280px;
+  text-align: left;
+}
+html.theme-dark .dialog-aRAWUDhF {
+  background-color: #1e222d;
+}
+.dialog-aRAWUDhF.rounded-aRAWUDhF {
+  border-radius: 6px;
+}
+.dialog-aRAWUDhF.shadowed-aRAWUDhF {
+  box-shadow: 0 2px 4px #0003;
+}
+html.theme-dark .dialog-aRAWUDhF.shadowed-aRAWUDhF {
+  box-shadow: 0 2px 4px #0006;
+}
+.dialog-aRAWUDhF.fullscreen-aRAWUDhF {
+  bottom: 0;
+  height: 100%;
+  left: 0;
+  max-height: 100%;
+  max-width: 100%;
+  min-height: 100%;
+  position: fixed;
+  right: 0;
+  top: 0;
+  width: 100%;
+}
+.dialog-aRAWUDhF.darker-aRAWUDhF {
+  background-color: #fff;
+}
+html.theme-dark .dialog-aRAWUDhF.darker-aRAWUDhF {
+  background-color: #131722;
+}
+.backdrop-aRAWUDhF {
+  background-color: #9598a1;
+  bottom: 0;
+  left: 0;
+  opacity: 0.5;
+  position: fixed;
+  right: 0;
+  top: 0;
+  transform: translateZ(0);
+  z-index: -1;
+}
+html.theme-dark .backdrop-aRAWUDhF {
+  background-color: #0c0e15;
+}

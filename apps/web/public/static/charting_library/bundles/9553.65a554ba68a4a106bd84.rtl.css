@@ -1,0 +1,92 @@
+.wrapper-mXzF5cTO {
+  align-items: center;
+  display: flex;
+  height: 100%;
+  justify-content: flex-start;
+}
+.button-mXzF5cTO {
+  height: 24px;
+}
+.container-RoCcHn9S {
+  background-color: var(--tv-color-pane-background, #fff);
+  border-radius: 4px;
+  box-sizing: border-box;
+  display: flex;
+  margin: 2px;
+  max-width: calc(100% - var(--trade-button-width) * 1px);
+  padding: 0 10px;
+}
+html.theme-dark .container-RoCcHn9S {
+  background-color: var(--tv-color-pane-background, #131722);
+}
+@media (any-hover: hover) {
+  .container-RoCcHn9S:hover {
+    background-color: var(--tv-color-toolbar-button-background-hover, #f0f3fa);
+  }
+  html.theme-dark .container-RoCcHn9S:hover {
+    background-color: var(--tv-color-toolbar-button-background-hover, #2a2e39);
+  }
+}
+.active-RoCcHn9S {
+  color: var(--tv-color-toolbar-button-text-active, #2962ff);
+}
+html.theme-sa .active-RoCcHn9S {
+  color: var(--tv-color-toolbar-button-text-active, #ff7200);
+}
+html.theme-dark .active-RoCcHn9S {
+  color: var(--tv-color-toolbar-button-text-active, #2962ff);
+}
+@media (any-hover: hover) {
+  .active-RoCcHn9S:hover,
+  html.theme-dark .active-RoCcHn9S:hover {
+    color: var(--tv-color-toolbar-button-text-active-hover, #1e53e5);
+  }
+}
+.title-RoCcHn9S {
+  align-items: center;
+  display: flex;
+  flex: 1 1 auto;
+  max-width: calc(100% - 6px);
+}
+.inactive-RoCcHn9S .title-RoCcHn9S {
+  max-width: 100%;
+}
+.titleText-RoCcHn9S {
+  line-height: 18px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.indicator-RoCcHn9S {
+  align-items: center;
+  display: flex;
+  flex: 0 0 6px;
+  margin-right: 4px;
+}
+.inactive-RoCcHn9S .indicator-RoCcHn9S {
+  display: none;
+}
+.indicator-RoCcHn9S:after {
+  border-radius: 50%;
+  content: "";
+  display: block;
+  height: 6px;
+  width: 6px;
+}
+.disconnected-RoCcHn9S .indicator-RoCcHn9S:after {
+  background-color: #a3a6af;
+}
+.failed-RoCcHn9S .indicator-RoCcHn9S:after {
+  background-color: #f7525f;
+}
+.connecting-RoCcHn9S .indicator-RoCcHn9S:after {
+  background-color: #fdd835;
+}
+.connected-RoCcHn9S .indicator-RoCcHn9S:after {
+  background-color: #66bb6a;
+}
+.loginTooltip-RoCcHn9S {
+  color: #fff;
+  font-size: 14px;
+  line-height: 21px;
+}

@@ -49,7 +49,8 @@ export default function TradePage() {
             <div className="flex flex-col-reverse w-full gap-4 md:flex-row">
               <div className="flex w-full flex-col gap-4 md:w-1/2 lg:w-[calc(100%-480px)]">
                 <div className="w-full md:h-[648px] flex">
-                  <Chart />
+                  {/* <Chart /> */}
+                  chart
                 </div>
                 <div className="w-full md:h-[320px]">
                   <TradeTableTabs />

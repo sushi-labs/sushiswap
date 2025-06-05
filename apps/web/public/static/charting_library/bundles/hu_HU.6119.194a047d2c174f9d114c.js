@@ -1,0 +1,345 @@
+;(self.webpackChunktradingview = self.webpackChunktradingview || []).push([
+  [6119],
+  {
+    519801: (e) => {
+      e.exports = ['P']
+    },
+    11268: (e) => {
+      e.exports = ['H']
+    },
+    963331: (e) => {
+      e.exports = ['Szo']
+    },
+    85954: (e) => {
+      e.exports = ['V']
+    },
+    226230: (e) => {
+      e.exports = ['Sze']
+    },
+    24793: (e) => {
+      e.exports = ['Cs']
+    },
+    831533: (e) => {
+      e.exports = ['K']
+    },
+    189790: (e) => {
+      e.exports = ['Nem kapható Pine forráskód.']
+    },
+    39589: (e) => {
+      e.exports = 'Collapse pane'
+    },
+    638154: (e) => {
+      e.exports = ['Tanulmányfa Eltávolításának Jóváhagyása']
+    },
+    556934: (e) => {
+      e.exports = 'Change description'
+    },
+    423398: (e) => {
+      e.exports = ['Szimbólum módosítása']
+    },
+    236004: (e) => {
+      e.exports = 'Create a free account'
+    },
+    269419: (e) => {
+      e.exports = "All's well — Market is open."
+    },
+    997637: (e) => {
+      e.exports = ['Április']
+    },
+    486797: (e) => {
+      e.exports = ['Augusztus']
+    },
+    22519: (e) => {
+      e.exports = ['Bar Change Values']
+    },
+    941707: (e) => {
+      e.exports = 'Buy real-time data'
+    },
+    452003: (e) => {
+      e.exports = ['Biztos, hogy törölni akarod a tanulmányt?']
+    },
+    68854: (e) => {
+      e.exports = 'Double click'
+    },
+    597325: (e) => {
+      e.exports = 'Data error'
+    },
+    55669: (e) => {
+      e.exports = 'December'
+    },
+    683498: (e) => {
+      e.exports = 'Delete pane'
+    },
+    482751: (e) => {
+      e.exports = ['Hiba']
+    },
+    540519: (e) => {
+      e.exports = 'Evening. Market is open for post-market trading.'
+    },
+    780227: (e) => {
+      e.exports = 'Exchange timezone'
+    },
+    316467: (e) => {
+      e.exports = ['Február']
+    },
+    825046: (e) => {
+      e.exports = 'Fill out Exchange Agreements'
+    },
+    593666: (e) => {
+      e.exports = 'Flag Symbol'
+    },
+    300564: (e) => {
+      e.exports = ['Pén']
+    },
+    772970: (e) => {
+      e.exports = ['Péntek']
+    },
+    988958: (e) => {
+      e.exports = 'Holiday'
+    },
+    721686: (e) => {
+      e.exports = 'Hide Indicator Legend'
+    },
+    26935: (e) => {
+      e.exports = ['Indikátor Argumentumok']
+    },
+    126315: (e) => {
+      e.exports = ['Indikátor Címkék']
+    },
+    584098: (e) => {
+      e.exports = ['Indikátor Értékek']
+    },
+    950634: (e) => {
+      e.exports = "It'll go to post-market trading in {remainingTime}."
+    },
+    574537: (e) => {
+      e.exports = "It'll open for pre-market trading in {remainingTime}."
+    },
+    926910: (e) => {
+      e.exports = ['Január']
+    },
+    323230: (e) => {
+      e.exports = ['Július']
+    },
+    49385: (e) => {
+      e.exports = ['Június']
+    },
+    199487: (e) => {
+      e.exports = ['OHCL Értékek']
+    },
+    290784: (e) => {
+      e.exports = ['Október']
+    },
+    775991: (e) => {
+      e.exports = 'Open market status'
+    },
+    37274: (e) => {
+      e.exports = 'Last day change values'
+    },
+    939899: (e) => {
+      e.exports = 'Move pane down'
+    },
+    370343: (e) => {
+      e.exports = 'Move pane up'
+    },
+    783085: (e) => {
+      e.exports = ['Hét']
+    },
+    561199: (e) => {
+      e.exports = ['Hétfő']
+    },
+    801653: (e) => {
+      e.exports = 'Morning. Market is open for pre-market trading.'
+    },
+    256470: (e) => {
+      e.exports = 'Maximize chart'
+    },
+    819603: (e) => {
+      e.exports = 'Maximize pane'
+    },
+    668327: (e) => {
+      e.exports = ['Május']
+    },
+    335732: (e) => {
+      e.exports = 'Manage panes'
+    },
+    684675: (e) => {
+      e.exports = ['Március']
+    },
+    383949: (e) => {
+      e.exports = 'Market open'
+    },
+    735701: (e) => {
+      e.exports = 'Market opens in {remainingTime}.'
+    },
+    895814: (e) => {
+      e.exports = 'Market closed'
+    },
+    298105: (e) => {
+      e.exports = 'Market closes in {remainingTime}.'
+    },
+    987202: (e) => {
+      e.exports = 'Market is currently on holiday. Lucky them.'
+    },
+    171194: (e) => {
+      e.exports = 'November'
+    },
+    966324: (e) => {
+      e.exports = ['Forráskód']
+    },
+    936835: (e) => {
+      e.exports = ['Szom']
+    },
+    101144: (e) => {
+      e.exports = ['Szombat']
+    },
+    540653: (e) => {
+      e.exports = 'Scroll to the left'
+    },
+    426721: (e) => {
+      e.exports = 'Scroll to the most recent bar'
+    },
+    135809: (e) => {
+      e.exports = 'Scroll to the right'
+    },
+    661132: (e) => {
+      e.exports = ['Szeptember']
+    },
+    328705: (e) => {
+      e.exports = 'Show Indicator Legend'
+    },
+    551072: (e) => {
+      e.exports = 'Show Object Tree'
+    },
+    337809: (e) => {
+      e.exports = 'Show interval settings'
+    },
+    539045: (e) => {
+      e.exports = 'Study Error'
+    },
+    186577: (e) => {
+      e.exports = ['Vas']
+    },
+    272149: (e) => {
+      e.exports = ['Vasárnap']
+    },
+    246041: (e) => {
+      e.exports = 'Symbol price source'
+    },
+    739339: (e) => {
+      e.exports = 'Symbol title'
+    },
+    429985: (e) => {
+      e.exports = 'Post-market'
+    },
+    356042: (e) => {
+      e.exports = 'Pre-market'
+    },
+    48293: (e) => {
+      e.exports = 'Restore chart'
+    },
+    491029: (e) => {
+      e.exports = 'Restore pane'
+    },
+    875094: (e) => {
+      e.exports = ['Szer']
+    },
+    107147: (e) => {
+      e.exports = ['Szerda']
+    },
+    409787: (e) => {
+      e.exports = ['Cs']
+    },
+    107951: (e) => {
+      e.exports = ['Csütörtök']
+    },
+    673717: (e) => {
+      e.exports = "This symbol doesn't exist, please pick another one."
+    },
+    957048: (e) => {
+      e.exports = 'Time for a walk — this market is closed.'
+    },
+    794316: (e) => {
+      e.exports = ['Ke']
+    },
+    944979: (e) => {
+      e.exports = ['Kedd']
+    },
+    608209: (e) => {
+      e.exports = 'Unflag Symbol'
+    },
+    101111: (e) => {
+      e.exports = ['Volumen']
+    },
+    461311: (e) => {
+      e.exports = ['Nagyítás']
+    },
+    247602: (e) => {
+      e.exports = ['Kicsinyítés']
+    },
+    457889: (e) => {
+      e.exports = 'change OHLC values visibility'
+    },
+    118644: (e) => {
+      e.exports = 'change open market status visibility'
+    },
+    845110: (e) => {
+      e.exports = 'change bar change visibility'
+    },
+    231325: (e) => {
+      e.exports = 'change indicator titles visibility'
+    },
+    399774: (e) => {
+      e.exports = 'change indicator values visibility'
+    },
+    96162: (e) => {
+      e.exports = 'change indicator arguments visibility'
+    },
+    250058: (e) => {
+      e.exports = 'change last day change visibility'
+    },
+    26717: (e) => {
+      e.exports = 'change symbol description visibility'
+    },
+    606091: (e) => {
+      e.exports = 'change symbol field visibility'
+    },
+    709455: (e) => {
+      e.exports = 'change volume values visibility'
+    },
+    539348: (e) => {
+      e.exports = 'less than 1 minute'
+    },
+    787358: (e) => {
+      e.exports = 'show {title}'
+    },
+    107827: (e) => {
+      e.exports = '{days} and {hours}'
+    },
+    19830: (e) => {
+      e.exports = '{hours} and {minutes}'
+    },
+    888841: (e) => {
+      e.exports = [
+        'Data is updated once every {amount} seconds, even if there are more updates on the market.',
+      ]
+    },
+    602121: (e) => {
+      e.exports = [
+        'Data on our Basic plan is updated once every {amount} seconds, even if there are more updates on the market.',
+      ]
+    },
+    705223: (e) => {
+      e.exports = ['One update every {amount} seconds']
+    },
+    458609: (e) => {
+      e.exports = ['{number} days']
+    },
+    224430: (e) => {
+      e.exports = ['{number} hours']
+    },
+    467151: (e) => {
+      e.exports = ['{number} minutes']
+    },
+  },
+])
