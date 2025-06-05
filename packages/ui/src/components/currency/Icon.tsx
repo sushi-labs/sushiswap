@@ -95,6 +95,7 @@ const LOGO: Record<number, string> = {
   [ChainId.APE]: ApeLogo,
   [ChainId.SONIC]: SonicLogo,
   [ChainId.HEMI]: EthereumLogo,
+  [ChainId.KATANA]: EthereumLogo,
 }
 
 // function djb2(str: string) {

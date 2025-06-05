@@ -25,6 +25,7 @@ import { HaqqCircle } from './HaqqCircle'
 import { HarmonyCircle } from './HarmonyCircle'
 import { HecoCircle } from './HecoCircle'
 import { HemiCircle } from './HemiCircle'
+import { KatanaCircle } from './KatanaCircle'
 import { KavaCircle } from './KavaCircle'
 import { LineaCircle } from './LineaCircle'
 import { MantaCircle } from './MantaCircle'
@@ -74,6 +75,7 @@ export * from './HaqqCircle'
 export * from './HarmonyCircle'
 export * from './HecoCircle'
 export * from './HemiCircle'
+export * from './KatanaCircle'
 export * from './KavaCircle'
 export * from './LineaCircle'
 export * from './MantaCircle'
@@ -148,6 +150,7 @@ export const NETWORK_CIRCLE_ICON: Partial<
   [ChainId.APE]: ApeCircle,
   [ChainId.SONIC]: SonicCircle,
   [ChainId.HEMI]: HemiCircle,
+  [ChainId.KATANA]: KatanaCircle,
   aptos: AptosCircle,
   tron: TronCircle,
 }
