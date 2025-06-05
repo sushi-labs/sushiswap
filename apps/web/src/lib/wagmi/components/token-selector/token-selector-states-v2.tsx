@@ -90,6 +90,7 @@ export function TokenSelectorStatesV2({
           onShowInfo={onShowInfo}
           search={search}
           selected={selected}
+          showChainOptions={false}
         />
       </>
     )
@@ -112,6 +113,7 @@ export function TokenSelectorStatesV2({
           onSelect={onSelect}
           onShowInfo={onShowInfo}
           selected={selected}
+          showChainOptions={type === 'sell'}
         />
       </>
     )
@@ -135,6 +137,7 @@ export function TokenSelectorStatesV2({
             onSelect={onSelect}
             onShowInfo={onShowInfo}
             selected={selected}
+            showChainOptions={type === 'sell'}
           />
         ) : null}
 
@@ -144,6 +147,7 @@ export function TokenSelectorStatesV2({
           onShowInfo={onShowInfo}
           selected={selected}
           search={''}
+          showChainOptions={type === 'sell'}
         />
       </>
     )
@@ -169,6 +173,7 @@ export function TokenSelectorStatesV2({
             onShowInfo={onShowInfo}
             selected={selected}
             includeNative={includeNative}
+            showChainOptions={type === 'sell'}
           />
         ) : null}
 
@@ -177,6 +182,7 @@ export function TokenSelectorStatesV2({
           onSelect={onSelect}
           onShowInfo={onShowInfo}
           selected={selected}
+          showChainOptions={type === 'sell'}
         />
       </>
     )
@@ -192,6 +198,7 @@ export function TokenSelectorStatesV2({
       search={search}
       includeNative={includeNative}
       onShowInfo={onShowInfo}
+      showChainOptions={false}
     />
   )
 }

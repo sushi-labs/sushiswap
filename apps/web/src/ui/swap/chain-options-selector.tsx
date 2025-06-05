@@ -138,7 +138,7 @@ export const ChainOptionsSelector = ({
   )
 }
 
-const NetworkButton = forwardRef<
+export const NetworkButton = forwardRef<
   HTMLButtonElement,
   { chainId: number; iconSize: number }
 >(({ chainId, iconSize, ...props }, ref) => (
