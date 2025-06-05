@@ -35,10 +35,12 @@ export const Recent = () => {
 
   return (
     <div className="grid grid-cols-3 col-span-3 gap-0">
-      <div className="sticky grid col-span-3 grid-cols-3 top-0 z-20 bg-white md:bg-slate-50 dark:bg-slate-900 md:dark:bg-slate-800 text-xs text-slate-700 dark:text-pink-100">
-        <div className="font-medium mr-auto">Token Pair</div>
-        <div className="font-medium mx-auto">Amount Traded</div>
-        <div className="font-medium ml-auto pr-2">
+      <div className="sticky grid col-span-5 grid-cols-5 top-0 z-20 bg-white md:bg-slate-50 dark:bg-slate-900 md:dark:bg-slate-800 text-xs text-slate-700 dark:text-pink-100">
+        <div className="font-medium w-full col-span-3 pl-2">Token Pair</div>
+        <div className="font-medium text-left w-full whitespace-nowrap">
+          Amount Traded
+        </div>
+        <div className="font-medium pr-2 col-span-1 w-full text-right">
           <TooltipProvider>
             <Tooltip delayDuration={0}>
               <TooltipTrigger asChild>
@@ -60,7 +62,7 @@ export const Recent = () => {
           </TooltipProvider>
         </div>
       </div>
-      <div className="grid grid-cols-3 col-span-3 gap-2 w-full">
+      <div className="grid grid-cols-5 col-span-5 gap-2 w-full">
         <RecentItem />
         <RecentItem />
         <RecentItem />
@@ -88,11 +90,11 @@ const RecentItem = () => {
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
         className={classNames(
-          'text-xs grid col-span-3 grid-cols-3 p-2 transition-colors rounded-md items-center gap-2',
+          'text-xs grid col-span-5 grid-cols-5 p-2 transition-colors rounded-md items-center',
           isHovered ? 'bg-blue-550/10' : '',
         )}
       >
-        <div className="flex items-center gap-2 w-full">
+        <div className="flex items-center gap-2 w-full col-span-3">
           <Currency.IconList iconWidth={32} iconHeight={32}>
             <Currency.Icon
               disableLink
@@ -143,20 +145,20 @@ const RecentItem = () => {
           <ActionButtons />
         ) : isHovered && !isMd ? null : (
           <>
-            <div className="mx-auto">
+            <div className="text-left pl-0.5">
               <span className="text-slate-900 font-medium dark:text-pink-100">
                 {formatUSD(0.87)}
               </span>
             </div>
-            <div className="ml-auto">
+            <div className="ml-auto col-span-1 w-full text-right">
               <span className="font-medium text-green">+5.5%</span>
             </div>
           </>
         )}
         {isHovered && !isMd ? (
-          <div className="col-span-3">
+          <div className="col-span-5 mt-2">
             <Collapsible open={isHovered}>
-              <div className="grid col-span-3 grid-cols-3 gap-2 w-full">
+              <div className="grid col-span-5 grid-cols-5 gap-2 w-full">
                 <ActionButtons />
               </div>
             </Collapsible>
@@ -169,7 +171,7 @@ const RecentItem = () => {
 
 const ActionButtons = () => {
   return (
-    <div className="flex items-center w-full gap-2 col-span-3 md:col-span-2 justify-end">
+    <div className="flex items-center w-full gap-2 col-span-5 md:col-span-2 justify-end">
       <Button
         size="xs"
         className="text-slate-50 w-full md:w-fit !rounded-full bg-green-500 font-semibold hover:bg-green-500 active:bg-green-500/95 focus:bg-green-500"
