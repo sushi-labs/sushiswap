@@ -1,0 +1,82 @@
+.tv-circle-logo {
+  align-items: center;
+  border-radius: 50%;
+  color: #fff;
+  display: inline-flex;
+  font-style: normal;
+  font-weight: 700;
+  justify-content: center;
+}
+html.theme-dark .tv-circle-logo {
+  color: #5d606b;
+}
+.tv-circle-logo:not(img) {
+  background-color: #e0e3eb;
+}
+html.theme-dark .tv-circle-logo:not(img) {
+  background-color: #2a2e39;
+}
+.tv-circle-logo--xxxsmall {
+  font-size: 11px;
+  height: 18px;
+  line-height: 16px;
+  width: 18px;
+}
+.tv-circle-logo--xxsmall {
+  font-size: 11px;
+  height: 20px;
+  line-height: 16px;
+  width: 20px;
+}
+.tv-circle-logo--xsmall {
+  font-size: 11px;
+  height: 24px;
+  line-height: 16px;
+  width: 24px;
+}
+.tv-circle-logo--small {
+  font-size: 14px;
+  height: 28px;
+  line-height: 16px;
+  width: 28px;
+}
+.tv-circle-logo--medium {
+  font-size: 16px;
+  height: 36px;
+  line-height: 16px;
+  width: 36px;
+}
+.tv-circle-logo--large {
+  font-size: 24px;
+  height: 48px;
+  line-height: 32px;
+  width: 48px;
+}
+.tv-circle-logo--xlarge {
+  font-size: 40px;
+  height: 56px;
+  line-height: 40px;
+  width: 56px;
+}
+.tv-circle-logo--xxlarge {
+  font-size: 80px;
+  height: 112px;
+  line-height: 80px;
+  width: 112px;
+}
+.tv-circle-logo--xxxlarge {
+  font-size: 160px;
+  height: 168px;
+  line-height: 160px;
+  width: 168px;
+}
+.tv-circle-logo--border {
+  border: 1px solid #fff;
+}
+html.theme-dark .tv-circle-logo--border {
+  border: 1px solid #1e222d;
+}
+.tv-circle-logo--visually-hidden {
+  opacity: 0;
+  position: absolute;
+}

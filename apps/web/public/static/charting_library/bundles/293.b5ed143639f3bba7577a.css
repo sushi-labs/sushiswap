@@ -1,0 +1,125 @@
+.tv-data-mode {
+  vertical-align: top;
+}
+.tv-data-mode--realtime {
+  color: #42bda8;
+}
+.tv-data-mode--snapshot {
+  color: #3179f5;
+}
+.tv-data-mode--endofday {
+  color: #ab47bc;
+}
+.tv-data-mode--connecting,
+.tv-data-mode--forbidden,
+.tv-data-mode--invalid,
+.tv-data-mode--loading {
+  visibility: hidden;
+}
+.tv-data-mode--delayed {
+  color: #ff9800;
+}
+.tv-data-mode--for-ticker-last {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 700;
+  margin-left: 2px;
+  position: absolute;
+}
+.tv-data-mode--realtime--for-ticker-last {
+  display: none;
+}
+.tv-data-mode--for-sticky-symbol-header,
+.tv-data-mode--for-ticker-tape {
+  font-size: 10px;
+  transform: translateX(2px);
+}
+.tv-data-mode--realtime--for-sticky-symbol-header,
+.tv-data-mode--realtime--for-ticker-tape {
+  display: none;
+}
+.tv-data-mode--for-ticker-header {
+  display: inline-block;
+  font-size: 10px;
+  line-height: normal;
+  margin-left: 1px;
+  margin-top: 4px;
+  vertical-align: top;
+}
+.tv-data-mode--realtime--for-ticker-header {
+  display: none;
+}
+.tv-data-mode--for-ticker {
+  display: inline-block;
+  font-size: 10px;
+  margin-left: 2px;
+}
+.tv-data-mode--realtime--for-ticker,
+.tv-data-mode--realtime--no-realtime {
+  display: none;
+}
+.tv-data-mode--replay {
+  color: #f7525f;
+}
+.tv-data-mode--for-chart {
+  float: right;
+  line-height: 16px;
+  margin-left: 6px;
+}
+.tv-data-mode--connecting--for-chart,
+.tv-data-mode--loading--for-chart {
+  display: none;
+}
+.tv-data-mode--forbidden--for-chart,
+.tv-data-mode--invalid--for-chart {
+  color: #f23645;
+  visibility: visible;
+}
+.tv-data-mode--realtime--for-chart {
+  display: none;
+}
+.tv-data-mode--for-chart.tv-data-mode--replay {
+  margin-left: 0;
+}
+.tv-data-mode--for-ticker-card {
+  display: inline;
+  margin-left: 4px;
+}
+.tv-data-mode--for-symbol-widget {
+  display: inline;
+  font-size: 15px;
+  line-height: 17px;
+  margin-left: 3px;
+}
+.tv-data-mode--realtime.tv-data-mode--for-symbol-widget,
+.tv-data-mode--realtime.tv-data-mode--for-ticker-card {
+  display: none;
+}
+.tv-data-mode--for-watch-list {
+  font-size: 10px;
+  line-height: 14px;
+  overflow: visible;
+  pointer-events: auto;
+  white-space: nowrap;
+}
+.tv-data-mode--realtime--for-watch-list {
+  visibility: hidden;
+}
+.tv-data-mode--size_large {
+  font-size: 12px;
+}
+.tv-data-mode--for-symbol-info {
+  display: inline;
+  font-size: 15px;
+  line-height: 17px;
+  margin-left: 3px;
+}
+.tv-data-mode--realtime--for-symbol-info {
+  display: none;
+}
+.tv-data-mode--for-screener {
+  font-size: 10px;
+}
+.tv-data-mode--realtime--for-screener {
+  display: none;
+}

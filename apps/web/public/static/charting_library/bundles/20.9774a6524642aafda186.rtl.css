@@ -1,0 +1,73 @@
+#bottom-area {
+  background-color: var(--tv-color-platform-background, #e0e3eb);
+  padding: 0;
+  position: relative;
+}
+html.theme-dark #bottom-area {
+  background-color: var(--tv-color-platform-background, #2a2e39);
+}
+#bottom-area .bottom-widgetbar-handle {
+  cursor: ns-resize;
+  height: 7px;
+  position: absolute;
+  right: 0;
+  top: -44px;
+  width: 100%;
+  z-index: 2;
+}
+#bottom-area .bottom-widgetbar-handle .hider-container {
+  cursor: pointer;
+  margin: 0 auto;
+  width: 28px;
+}
+#bottom-area .bottom-widgetbar-loading-overlay {
+  background-color: #ffffff80;
+  height: 100%;
+  left: 5px;
+  position: absolute;
+  right: 5px;
+  z-index: 1;
+}
+html.theme-dark #bottom-area .bottom-widgetbar-loading-overlay {
+  background-color: #13172280;
+}
+#bottom-area .bottom-widgetbar-content {
+  background: #fff;
+  height: 100%;
+  overflow: auto;
+  position: relative;
+  z-index: 0;
+}
+html.theme-dark #bottom-area .bottom-widgetbar-content {
+  background: #131722;
+}
+#bottom-area .bottom-widgetbar-content::-webkit-scrollbar {
+  height: 5px;
+  width: 5px;
+}
+#bottom-area .bottom-widgetbar-content::-webkit-scrollbar-thumb {
+  background-color: #9598a1;
+  border: 1px solid #f0f3fa;
+  border-radius: 3px;
+}
+html.theme-dark
+  #bottom-area
+  .bottom-widgetbar-content::-webkit-scrollbar-thumb {
+  background-color: #363a45;
+  border-color: #1e222d;
+}
+#bottom-area .bottom-widgetbar-content::-webkit-scrollbar-track {
+  background-color: initial;
+  border-radius: 3px;
+}
+#bottom-area .bottom-widgetbar-content::-webkit-scrollbar-corner {
+  display: none;
+}
+#bottom-area .paper_trading {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+#bottom-area .tv-screener {
+  overflow: hidden;
+}

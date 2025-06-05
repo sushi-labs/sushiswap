@@ -1,0 +1,99 @@
+.positionInfo-oWbWR7tt {
+  flex: 1 0 auto;
+  padding: 16px 8px;
+}
+.title-oWbWR7tt {
+  color: #131722;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 22px;
+  padding: 0 8px 4px;
+  text-align: left;
+}
+html.theme-dark .title-oWbWR7tt {
+  color: #d1d4dc;
+}
+.positionWidget-mbUCea4m {
+  box-sizing: border-box;
+  color: #000;
+  font-size: 15px;
+  height: 100%;
+  overflow: hidden;
+  text-align: center;
+  width: 100%;
+}
+html.theme-dark .positionWidget-mbUCea4m {
+  color: #b2b5be;
+}
+.positionWidget-mbUCea4m .separator-mbUCea4m {
+  background-color: #e0e3eb;
+  height: 1px;
+}
+html.theme-dark .positionWidget-mbUCea4m .separator-mbUCea4m {
+  background-color: #2a2e39;
+}
+.positionWidget-mbUCea4m .brackets-mbUCea4m {
+  display: grid;
+  grid-template-columns: 40% 20% 40%;
+  padding: 20px 16px 0;
+  position: relative;
+}
+@media screen and (max-width: 479px) {
+  .positionWidget-mbUCea4m .brackets-mbUCea4m {
+    padding: 20px 20px 0;
+  }
+}
+.positionWidget-mbUCea4m .customFieldsWrapper-mbUCea4m {
+  padding: 16px 16px 0;
+}
+.positionWidget-mbUCea4m .customFieldsWrapper-mbUCea4m .separator-mbUCea4m {
+  margin: 0 -16px 16px;
+}
+@media screen and (max-width: 479px) {
+  .positionWidget-mbUCea4m .customFieldsWrapper-mbUCea4m {
+    padding: 16px 20px 0;
+  }
+  .positionWidget-mbUCea4m .customFieldsWrapper-mbUCea4m .separator-mbUCea4m {
+    margin: 0 -20px 16px;
+  }
+}
+.positionWidget-mbUCea4m .infoWrapper-mbUCea4m .separator-mbUCea4m {
+  height: 4px;
+}
+.positionWidget-mbUCea4m .warning-mbUCea4m {
+  margin: 16px 16px 0;
+}
+@media screen and (max-width: 479px) {
+  .positionWidget-mbUCea4m .warning-mbUCea4m {
+    margin: 16px 20px 0;
+  }
+}
+.positionWidget-mbUCea4m .button-mbUCea4m {
+  padding: 16px;
+}
+@media screen and (max-width: 479px) {
+  .positionWidget-mbUCea4m .button-mbUCea4m {
+    padding: 16px 20px;
+  }
+}
+.dialog-YZ_qHmON {
+  background-color: var(--tv-color-popup-background, #fff);
+  border-radius: 6px;
+  box-shadow: 0 2px 4px #0003;
+  box-sizing: border-box;
+  max-width: 414px;
+}
+html.theme-dark .dialog-YZ_qHmON {
+  background-color: var(--tv-color-popup-background, #1e222d);
+  box-shadow: 0 2px 4px #0006;
+}
+.dialog-YZ_qHmON .dialogBody-YZ_qHmON {
+  padding: 0;
+}
+.positionPanel-vffbLvO_ {
+  background-color: #fff;
+  height: 100%;
+}
+html.theme-dark .positionPanel-vffbLvO_ {
+  background-color: #131722;
+}

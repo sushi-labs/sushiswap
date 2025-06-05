@@ -1,0 +1,48 @@
+.label-oHMFhnC8 {
+  font-feature-settings: "tnum" on, "lnum" on;
+  --ui-lib-typography-line-height: 18px;
+  --ui-lib-typography-font-size: 14px;
+  color: #6a6d78;
+  display: block;
+  font-family: -apple-system, BlinkMacSystemFont, Trebuchet MS, Roboto, Ubuntu,
+    sans-serif;
+  font-size: var(--ui-lib-typography-font-size);
+  font-style: normal;
+  font-weight: 400;
+  line-height: var(--ui-lib-typography-line-height);
+}
+html.theme-dark .label-oHMFhnC8 {
+  color: #868993;
+}
+.calculator-vLRZh3q9 {
+  background: #fff;
+  border-radius: 6px;
+  box-sizing: border-box;
+  padding: 12px;
+  width: 160px;
+}
+html.theme-dark .calculator-vLRZh3q9 {
+  background: #1e222d;
+}
+.calculatorWithInput-vLRZh3q9 {
+  width: 200px;
+}
+.input-vLRZh3q9 {
+  margin-bottom: 16px;
+}
+.buttonsWrapper-vLRZh3q9 {
+  grid-gap: 4px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+}
+.buttonWithOperation-vLRZh3q9 {
+  margin-bottom: 12px;
+}
+.buttonIcon-vLRZh3q9 {
+  align-items: center;
+  display: flex;
+  justify-content: center;
+}
+.menuBox-rm7KgfIT {
+  padding: 0;
+}

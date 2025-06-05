@@ -1,0 +1,25 @@
+.dialog-LfNchNNG {
+  width: 100%;
+}
+.tabletDialog-LfNchNNG {
+  height: 562px;
+  max-width: 560px;
+}
+.desktopDialog-LfNchNNG {
+  height: 680px;
+  max-width: 840px;
+  min-width: 719px;
+  width: 100%;
+}
+@media (max-width: 768px) {
+  .desktopDialog-LfNchNNG {
+    max-width: 640px;
+    min-width: 480px;
+  }
+}
+@media (max-width: 519px) {
+  .desktopDialog-LfNchNNG {
+    max-width: 479px;
+    min-width: 380px;
+  }
+}

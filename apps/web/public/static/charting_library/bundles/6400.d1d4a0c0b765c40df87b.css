@@ -1,0 +1,126 @@
+.toast-ggQH9Zyp {
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px #0003;
+  box-sizing: border-box;
+  display: flex;
+  flex-flow: row nowrap;
+  max-width: 480px;
+  padding: 16px;
+  position: relative;
+  text-align: left;
+}
+html.theme-dark .toast-ggQH9Zyp {
+  background: #1e222d;
+  box-shadow: 0 2px 4px #0006;
+}
+.toast-ggQH9Zyp.intent-danger-ggQH9Zyp,
+.toast-ggQH9Zyp.intent-success-ggQH9Zyp,
+.toast-ggQH9Zyp.intent-warning-ggQH9Zyp {
+  padding-left: 18px;
+}
+.toast-ggQH9Zyp.intent-danger-ggQH9Zyp:before,
+.toast-ggQH9Zyp.intent-success-ggQH9Zyp:before,
+.toast-ggQH9Zyp.intent-warning-ggQH9Zyp:before {
+  border-bottom-left-radius: inherit;
+  border-left-style: solid;
+  border-left-width: 6px;
+  border-top-left-radius: inherit;
+  bottom: 0;
+  content: "";
+  left: 0;
+  position: absolute;
+  top: 0;
+}
+.toast-ggQH9Zyp.intent-success-ggQH9Zyp:before,
+html.theme-dark .toast-ggQH9Zyp.intent-success-ggQH9Zyp:before {
+  border-color: #089981;
+}
+.toast-ggQH9Zyp.intent-warning-ggQH9Zyp:before,
+html.theme-dark .toast-ggQH9Zyp.intent-warning-ggQH9Zyp:before {
+  border-color: #ff9800;
+}
+.toast-ggQH9Zyp.intent-danger-ggQH9Zyp:before,
+html.theme-dark .toast-ggQH9Zyp.intent-danger-ggQH9Zyp:before {
+  border-color: #f23645;
+}
+.image-ggQH9Zyp {
+  align-items: center;
+  display: flex;
+  flex-shrink: 0;
+  height: 100px;
+  justify-content: center;
+  margin-right: 16px;
+  width: 100px;
+}
+.image-ggQH9Zyp img {
+  max-height: 100px;
+  max-width: 100px;
+}
+.main-content-ggQH9Zyp {
+  word-wrap: break-word;
+  cursor: default;
+  display: flex;
+  flex-flow: column nowrap;
+  gap: 4px;
+  justify-content: center;
+  min-width: 1px;
+  width: 100%;
+}
+.toast-close-button-ggQH9Zyp {
+  position: absolute;
+  right: 16px;
+}
+.title-ggQH9Zyp {
+  font-feature-settings: "tnum" on, "lnum" on;
+  --ui-lib-typography-line-height: 24px;
+  --ui-lib-typography-font-size: 16px;
+  color: #131722;
+  display: block;
+  font-family: -apple-system, BlinkMacSystemFont, Trebuchet MS, Roboto, Ubuntu,
+    sans-serif;
+  font-size: var(--ui-lib-typography-font-size);
+  font-style: normal;
+  font-weight: 600;
+  line-height: var(--ui-lib-typography-line-height);
+}
+html.theme-dark .title-ggQH9Zyp {
+  color: #d1d4dc;
+}
+.header-text-ggQH9Zyp {
+  font-feature-settings: "tnum" on, "lnum" on;
+  --ui-lib-typography-line-height: 18px;
+  --ui-lib-typography-font-size: 14px;
+  font-family: -apple-system, BlinkMacSystemFont, Trebuchet MS, Roboto, Ubuntu,
+    sans-serif;
+  font-size: var(--ui-lib-typography-font-size);
+  font-style: normal;
+  font-weight: 600;
+  line-height: var(--ui-lib-typography-line-height);
+}
+.header-text_margin-top-ggQH9Zyp {
+  margin-top: 4px;
+}
+.main-text-ggQH9Zyp {
+  font-feature-settings: "tnum" on, "lnum" on;
+  --ui-lib-typography-line-height: 18px;
+  --ui-lib-typography-font-size: 14px;
+  color: #131722;
+  font-family: -apple-system, BlinkMacSystemFont, Trebuchet MS, Roboto, Ubuntu,
+    sans-serif;
+  font-size: var(--ui-lib-typography-font-size);
+  font-style: normal;
+  font-weight: 400;
+  line-height: var(--ui-lib-typography-line-height);
+  margin: 0;
+  white-space: pre-wrap;
+}
+html.theme-dark .main-text-ggQH9Zyp {
+  color: #d1d4dc;
+}
+.actions-ggQH9Zyp {
+  margin-top: 4px;
+}
+.with-close-button-ggQH9Zyp {
+  margin-right: 26px;
+}

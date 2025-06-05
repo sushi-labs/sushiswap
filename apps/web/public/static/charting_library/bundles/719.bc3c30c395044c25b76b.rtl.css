@@ -1,0 +1,22 @@
+.container-Q8oybhDM {
+  bottom: 30px;
+  display: flex;
+  justify-content: center;
+  left: 4px;
+  pointer-events: none;
+  position: absolute;
+  right: 4px;
+}
+.centerElement-Q8oybhDM {
+  pointer-events: auto;
+  z-index: 1;
+}
+.notice-Q8oybhDM {
+  opacity: 0;
+  transform: translateY(10px);
+  transition: transform .2s ease-in-out, opacity .2s ease-in-out;
+}
+.noticeShowed-Q8oybhDM {
+  opacity: 1;
+  transform: translateY(0);
+}

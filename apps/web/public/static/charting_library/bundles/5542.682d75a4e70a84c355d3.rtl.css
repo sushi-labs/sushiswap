@@ -1,0 +1,77 @@
+.button-w6lVe_oI {
+  align-items: center;
+  background-color: var(--tv-list-item-button-background-color);
+  border-radius: 4px;
+  color: var(--tv-color-popup-element-toolbox-text, #787b86);
+  display: inline-flex;
+  font-size: 0;
+  height: 22px;
+  justify-content: center;
+  min-width: 22px;
+  width: 22px;
+}
+.button-w6lVe_oI.hovered-w6lVe_oI,
+.button-w6lVe_oI:active {
+  background-color: var(
+    --tv-color-popup-element-toolbox-background-hover,
+    var(--tv-list-item-button-background-hover-color, #e0e3eb)
+  );
+  color: var(--tv-color-popup-element-toolbox-text-hover, #131722);
+}
+@media (any-hover: hover) {
+  .button-w6lVe_oI:hover {
+    background-color: var(
+      --tv-color-popup-element-toolbox-background-hover,
+      var(--tv-list-item-button-background-hover-color, #e0e3eb)
+    );
+    color: var(--tv-color-popup-element-toolbox-text-hover, #131722);
+  }
+}
+html.theme-dark .button-w6lVe_oI.hovered-w6lVe_oI,
+html.theme-dark .button-w6lVe_oI:active {
+  background-color: var(
+    --tv-color-popup-element-toolbox-background-hover,
+    var(--tv-list-item-button-background-hover-color, #363a45)
+  );
+}
+@media (any-hover: hover) {
+  html.theme-dark .button-w6lVe_oI:hover {
+    background-color: var(
+      --tv-color-popup-element-toolbox-background-hover,
+      var(--tv-list-item-button-background-hover-color, #363a45)
+    );
+  }
+}
+html.theme-dark .button-w6lVe_oI.hovered-w6lVe_oI,
+html.theme-dark .button-w6lVe_oI:active {
+  color: var(--tv-color-popup-element-toolbox-text-hover, #d1d4dc);
+}
+@media (any-hover: hover) {
+  html.theme-dark .button-w6lVe_oI:hover {
+    color: var(--tv-color-popup-element-toolbox-text-hover, #d1d4dc);
+  }
+}
+.button-w6lVe_oI.disabled-w6lVe_oI,
+.button-w6lVe_oI.disabled-w6lVe_oI:active {
+  background-color: var(--tv-list-item-button-disabled-background-color, #0000);
+}
+@media (any-hover: hover) {
+  .button-w6lVe_oI.disabled-w6lVe_oI:hover {
+    background-color: var(
+      --tv-list-item-button-disabled-background-color,
+      #0000
+    );
+  }
+}
+html.theme-dark .button-w6lVe_oI.disabled-w6lVe_oI,
+html.theme-dark .button-w6lVe_oI.disabled-w6lVe_oI:active {
+  background-color: var(--tv-list-item-button-disabled-background-color, #0000);
+}
+@media (any-hover: hover) {
+  html.theme-dark .button-w6lVe_oI.disabled-w6lVe_oI:hover {
+    background-color: var(
+      --tv-list-item-button-disabled-background-color,
+      #0000
+    );
+  }
+}

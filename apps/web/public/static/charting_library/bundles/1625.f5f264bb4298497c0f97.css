@@ -1,0 +1,20 @@
+.container-M1mz4quA {
+  display: inline-flex;
+  position: relative;
+}
+.logo-M1mz4quA,
+.pairContainer-M1mz4quA {
+  display: inline-flex;
+}
+.logo-M1mz4quA {
+  border-radius: 50%;
+  flex: none;
+  overflow: hidden;
+}
+.logo-M1mz4quA img {
+  height: 100%;
+  width: 100%;
+}
+.hidden-M1mz4quA {
+  display: none;
+}

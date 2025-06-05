@@ -71,4 +71,3 @@ package-lock.json
 # yarn lock file (we use pnpm)
 yarn.lock
 
-/apps/web/public/static/
