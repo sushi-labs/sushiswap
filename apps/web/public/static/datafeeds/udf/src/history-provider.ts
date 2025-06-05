@@ -109,7 +109,6 @@ export class HistoryProvider {
     }
 
     return new Promise(
-      // biome-ignore lint/suspicious/noAsyncPromiseExecutor: <explanation>
       async (
         resolve: (result: GetBarsResult) => void,
         reject: (reason: string) => void,

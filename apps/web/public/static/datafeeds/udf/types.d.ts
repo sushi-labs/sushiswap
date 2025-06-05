@@ -1,1 +1,1 @@
-export * from './src/udf-compatible-datafeed';
+export * from './src/udf-compatible-datafeed'

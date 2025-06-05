@@ -41,7 +41,6 @@ export class DataPulseProvider implements IDataPulseProvider {
     newDataCallback: SubscribeBarsCallback,
     listenerGuid: string,
   ): void {
-    // @ts-ignore
     if (Object.hasOwn(this._subscribers, listenerGuid)) {
       logMessage(
         `DataPulseProvider: already has subscriber with id=${listenerGuid}`,
@@ -118,7 +117,6 @@ export class DataPulseProvider implements IDataPulseProvider {
     result: GetBarsResult,
   ): void {
     // means the subscription was cancelled while waiting for data
-    // @ts-ignore
     if (!Object.hasOwn(this._subscribers, listenerGuid)) {
       logMessage(
         `DataPulseProvider: Data comes for already unsubscribed subscription #${listenerGuid}`,

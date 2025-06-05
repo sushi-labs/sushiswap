@@ -1,6 +1,6 @@
 import type {
-  // DatafeedErrorCallback,
   DatafeedConfiguration,
+  DatafeedErrorCallback,
   GetMarksCallback,
   HistoryCallback,
   IDatafeedChartApi,
@@ -322,8 +322,6 @@ export class UDFCompatibleDatafeedBase
     this._send<string>('time')
       .then((response: string) => {
         const time = Number.parseInt(response)
-
-        // biome-ignore lint/suspicious/noGlobalIsNan: <explanation>
         if (!isNaN(time)) {
           callback(time)
         }
@@ -389,14 +387,12 @@ export class UDFCompatibleDatafeedBase
   public resolveSymbol(
     symbolName: string,
     onResolve: ResolveCallback,
-    onError: any,
+    onError: DatafeedErrorCallback,
     extension?: SymbolResolveExtension,
   ): void {
     logMessage('Resolve requested')
 
-    // biome-ignore lint/complexity/useOptionalChain: <explanation>
     const currencyCode = extension && extension.currencyCode
-    // biome-ignore lint/complexity/useOptionalChain: <explanation>
     const unitId = extension && extension.unitId
 
     const resolveRequestStartTime = Date.now()
@@ -430,7 +426,6 @@ export class UDFCompatibleDatafeedBase
             const result: LibrarySymbolInfo = {
               ...response,
               name: symbol,
-              // biome-ignore lint/style/useTemplate: <explanation>
               base_name: [listedExchange + ':' + symbol],
               listed_exchange: listedExchange,
               exchange: tradedExchange,
@@ -506,7 +501,7 @@ export class UDFCompatibleDatafeedBase
     resolution: ResolutionString,
     periodParams: PeriodParamsWithOptionalCountback,
     onResult: HistoryCallback,
-    onError: any,
+    onError: DatafeedErrorCallback,
   ): void {
     this._historyProvider
       .getBars(symbolInfo, resolution, periodParams)

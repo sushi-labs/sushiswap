@@ -116,9 +116,7 @@ function symbolKey(symbol: string, currency?: string, unit?: string): string {
   // here we're using a separator that quite possible shouldn't be in a real symbol name
   return (
     symbol +
-    // biome-ignore lint/style/useTemplate: <explanation>
     (currency !== undefined ? '_%|#|%_' + currency : '') +
-    // biome-ignore lint/style/useTemplate: <explanation>
     (unit !== undefined ? '_%|#|%_' + unit : '')
   )
 }
@@ -321,7 +319,6 @@ export class SymbolsStorage {
           'exchange-traded',
           symbolIndex,
         )
-        // biome-ignore lint/style/useTemplate: <explanation>
         const fullName = tradedExchange + ':' + symbolName
         const currencyCode = extractField(data, 'currency-code', symbolIndex)
         const unitId = extractField(data, 'unit-id', symbolIndex)
@@ -333,7 +330,6 @@ export class SymbolsStorage {
         const symbolInfo: LibrarySymbolInfo = {
           ticker: ticker,
           name: symbolName,
-          // biome-ignore lint/style/useTemplate: <explanation>
           base_name: [listedExchange + ':' + symbolName],
           listed_exchange: listedExchange,
           exchange: tradedExchange,

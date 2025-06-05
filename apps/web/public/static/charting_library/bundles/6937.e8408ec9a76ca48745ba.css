@@ -1,9 +1,0 @@
-.informer-j2_OJJT2 {
-  cursor: default;
-  display: block;
-}
-.informer-j2_OJJT2,
-.informer-j2_OJJT2 svg {
-  height: var(--trading-informer-size, 16px);
-  width: var(--trading-informer-size, 16px);
-}

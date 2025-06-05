@@ -43,7 +43,6 @@ export class Requester implements IRequester {
         .join('&')
     }
 
-    // biome-ignore lint/style/useTemplate: <explanation>
     logMessage('New request: ' + urlPath)
 
     // Send user cookies if the URL is on the same origin as the calling script.
