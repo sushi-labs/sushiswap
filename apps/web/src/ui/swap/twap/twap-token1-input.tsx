@@ -2,7 +2,7 @@
 
 import { Web3Input } from 'src/lib/wagmi/components/web3-input'
 import { isWNativeSupported } from 'sushi/config'
-import { useDerivedStateTwap, useTwapTrade } from './derivedstate-twap-provider'
+import { useDerivedStateTwap } from './derivedstate-twap-provider'
 
 export const TwapToken1Input = () => {
   const {
@@ -16,7 +16,7 @@ export const TwapToken1Input = () => {
       id="swap-to"
       type="OUTPUT"
       disabled
-      className="border border-accent p-3 bg-white dark:bg-slate-800 rounded-xl"
+      className="border border-accent p-3 bg-gray-100 dark:bg-slate-900 rounded-xl"
       value={amountOut?.toSignificant() ?? ''}
       chainId={chainId}
       onSelect={setToken1}
@@ -24,7 +24,7 @@ export const TwapToken1Input = () => {
       disableMaxButton
       currencyLoading={isLoading}
       allowNative={isWNativeSupported(chainId)}
-      label="You're buying"
+      label="Buy"
     />
   )
 }

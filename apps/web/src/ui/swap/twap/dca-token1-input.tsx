@@ -1,14 +1,17 @@
 'use client'
 
 import {
+  Badge,
   Button,
   Currency,
   SelectIcon,
   SkeletonBox,
   classNames,
 } from '@sushiswap/ui'
+import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import { useMemo } from 'react'
-import { TokenSelector } from 'src/lib/wagmi/components/token-selector/token-selector'
+import { QuickSelect } from 'src/lib/wagmi/components/token-selector/quick-select/quick-select'
+import { TokenSelectorV2 } from 'src/lib/wagmi/components/token-selector/token-selector-v2'
 import { BalancePanel } from 'src/lib/wagmi/components/web3-input/Currency/BalancePanel'
 import { useAccount } from 'wagmi'
 import { useAmountBalance } from '~evm/_common/ui/balance-provider/use-balance'
@@ -27,7 +30,12 @@ export const DCAToken1Input = () => {
 
   const selector = useMemo(() => {
     return (
-      <TokenSelector selected={token} chainId={chainId} onSelect={onSelect}>
+      <TokenSelectorV2
+        type="buy"
+        selected={token}
+        chainId={chainId}
+        onSelect={onSelect}
+      >
         <Button
           data-state={isTokenLoading ? 'inactive' : 'active'}
           size="lg"
@@ -36,18 +44,32 @@ export const DCAToken1Input = () => {
           type="button"
           className={classNames(
             token ? 'pl-2 pr-3 text-xl' : '',
-            '!rounded-full data-[state=inactive]:hidden data-[state=active]:flex',
+            '!rounded-full data-[state=inactive]:hidden data-[state=active]:flex bg-slate-200 dark:bg-slate-750',
           )}
         >
           {token ? (
             <>
               <div className="w-[28px] h-[28px] mr-0.5">
-                <Currency.Icon
-                  disableLink
-                  currency={token}
-                  width={28}
-                  height={28}
-                />
+                <Badge
+                  className="dark:border-[#222137] border-[#F5F5F5] border rounded-[4px] z-[11]"
+                  position="bottom-right"
+                  badgeContent={
+                    <NetworkIcon
+                      type="square"
+                      className="rounded-[3px]"
+                      chainId={token.chainId}
+                      width={14}
+                      height={14}
+                    />
+                  }
+                >
+                  <Currency.Icon
+                    disableLink
+                    currency={token}
+                    width={28}
+                    height={28}
+                  />
+                </Badge>
               </div>
               {token.symbol}
               <SelectIcon />
@@ -56,24 +78,18 @@ export const DCAToken1Input = () => {
             'Select token'
           )}
         </Button>
-      </TokenSelector>
+      </TokenSelectorV2>
     )
   }, [isTokenLoading, onSelect, token, chainId])
 
   return (
     <div
       className={
-        'relative space-y-2 overflow-hidden border border-accent p-3 bg-white dark:bg-slate-800 rounded-xl'
+        'relative space-y-4 border border-accent p-3 bg-gray-100 dark:bg-slate-900 rounded-xl'
       }
     >
-      <span className="text-sm text-muted-foreground">You're buying</span>
       <div className="flex justify-between items-end gap-4">
-        {isTokenLoading ? (
-          <div className="flex items-center h-[44px] w-full">
-            <SkeletonBox className="w-32 h-8 rounded-lg" />
-          </div>
-        ) : null}
-        {selector}
+        <span className="text-sm text-muted-foreground">Buy</span>
         <BalancePanel
           id={'swap-to'}
           loading={isBalanceLoading}
@@ -84,6 +100,15 @@ export const DCAToken1Input = () => {
           balance={balance}
           type={'OUTPUT'}
         />
+      </div>
+      <div className="flex justify-end items-center gap-4">
+        <QuickSelect />
+        {selector}
+        {isTokenLoading ? (
+          <div className="flex items-center h-[44px] w-full">
+            <SkeletonBox className="w-32 h-8 rounded-lg" />
+          </div>
+        ) : null}
       </div>
     </div>
   )

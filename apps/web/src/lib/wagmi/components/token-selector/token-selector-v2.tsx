@@ -36,9 +36,9 @@ interface TokenSelectorV2Props {
   currencies?: Record<string, Token>
   includeNative?: boolean
   hidePinnedTokens?: boolean
-  // hideSearch?: boolean
-  // networks?: readonly EvmChainId[]
-  // selectedNetwork?: EvmChainId
+  hideSearch?: boolean
+  networks?: readonly EvmChainId[]
+  selectedNetwork?: EvmChainId
   onNetworkSelect?: (network: number) => void
   isBrowse?: boolean
   type: TokenSelectorV2Type
@@ -52,9 +52,9 @@ export const TokenSelectorV2: FC<TokenSelectorV2Props> = ({
   children,
   currencies: _currencies,
   hidePinnedTokens,
-  // hideSearch,
-  // networks,
-  // selectedNetwork,
+  hideSearch,
+  networks,
+  selectedNetwork,
   onNetworkSelect,
   isBrowse,
   type,
@@ -64,7 +64,7 @@ export const TokenSelectorV2: FC<TokenSelectorV2Props> = ({
   const [query, setQuery] = useState('')
   const [open, setOpen] = useState(false)
   const [currencyInfo, showCurrencyInfo] = useState<Currency | false>(false)
-
+  console.log({ hideSearch, networks, selectedNetwork })
   // Clear the query when the dialog is closed
   useEffect(() => {
     if (!open) {
@@ -72,11 +72,11 @@ export const TokenSelectorV2: FC<TokenSelectorV2Props> = ({
     }
   }, [open])
 
-  // const currencies = useMemo(() => {
-  //   if (_currencies) {
-  //     return Object.values(_currencies)
-  //   }
-  // }, [_currencies])
+  const currencies = useMemo(() => {
+    if (_currencies) {
+      return Object.values(_currencies)
+    }
+  }, [_currencies])
 
   const _onSelect = useCallback(
     (currency: Type) => {
@@ -156,7 +156,7 @@ export const TokenSelectorV2: FC<TokenSelectorV2Props> = ({
               chainId={chainId}
               account={address}
               onSelect={_onSelect}
-              // currencies={currencies}
+              currencies={currencies}
               includeNative={includeNative}
               hidePinnedTokens={hidePinnedTokens}
               search={query}
