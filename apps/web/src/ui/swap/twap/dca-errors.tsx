@@ -1,16 +1,11 @@
 import { Collapsible } from '@sushiswap/ui'
 import { useTwapTradeErrors } from './derivedstate-twap-provider'
+import { ErrorMessage } from './error-message'
 
 export const DCAErrors = () => {
   const { minTradeSizeError, minFillDelayError, maxFillDelayError } =
     useTwapTradeErrors()
-  // {minTradeSizeError
-  //       ? 'Inadequate Trade Size'
-  //       : minFillDelayError
-  //         ? 'Trade Interval Below Limit'
-  //         : maxFillDelayError
-  //           ? 'Trade Interval Exceeds Limit'
-  //           : ''}
+
   const errorMessage = minTradeSizeError
     ? 'Inadequate Trade Size'
     : minFillDelayError
@@ -22,9 +17,7 @@ export const DCAErrors = () => {
 
   return (
     <Collapsible open={true} className="w-full">
-      <div className="rounded-xl bg-red/10 text-red font-medium text-sm flex items-center p-4 h-[50px]">
-        {errorMessage}
-      </div>
+      <ErrorMessage title={errorMessage} detail={''} />
     </Collapsible>
   )
 }

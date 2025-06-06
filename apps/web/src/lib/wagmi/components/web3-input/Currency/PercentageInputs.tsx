@@ -75,7 +75,7 @@ export const PercentageInputs: FC<PercentageInputs> = memo(
             size="xs"
             onClick={() => onClick(option.value)}
             className={classNames(
-              '!text-xs !font-medium !rounded-full text-slate-900 !min-h-[22px] !h-[22px] !bg-[#0000001F] dark:!bg-[#FFFFFF1F]',
+              '!text-xs !font-medium !rounded-full text-slate-900 dark:text-slate-50 !min-h-[22px] !h-[22px] !bg-[#0000001F] dark:!bg-[#FFFFFF1F]',
             )}
             disabled={disableMaxButton}
             key={`${id}-percent-button${option.value}`}
