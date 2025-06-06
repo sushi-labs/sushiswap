@@ -25,6 +25,7 @@ export const TwapToken1Input = () => {
       currencyLoading={isLoading}
       allowNative={isWNativeSupported(chainId)}
       label="Buy"
+      showQuickSelect={true}
     />
   )
 }

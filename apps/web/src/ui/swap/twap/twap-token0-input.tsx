@@ -26,7 +26,7 @@ export const TwapToken0Input = () => {
       currency={token0}
       currencyLoading={isLoading}
       allowNative={isWNativeSupported(chainId)}
-      label="Allocate"
+      label="Sell"
     />
   )
 }
