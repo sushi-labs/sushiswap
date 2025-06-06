@@ -67,8 +67,7 @@ const DCATradesInput = () => {
 
       <div
         className={classNames(
-          minTradeSizeError ? '!bg-red-500/20 !dark:bg-red-900/30' : '',
-          'px-3 py-4 overflow-hidden border border-accent bg-white dark:bg-slate-800 rounded-xl',
+          'px-3 py-4 overflow-hidden border border-accent bg-gray-100 dark:bg-slate-900 rounded-xl',
         )}
       >
         <TextField
@@ -154,7 +153,7 @@ const DCAIntervalInput = () => {
           minFillDelayError || maxFillDelayError
             ? '!bg-red-500/20 !dark:bg-red-900/30'
             : '',
-          'px-3 py-2 overflow-hidden border border-accent bg-white dark:bg-slate-800 rounded-xl flex justify-between items-center',
+          'px-3 py-2 overflow-hidden border border-accent bg-gray-100 dark:bg-slate-900 rounded-xl flex justify-between items-center',
         )}
       >
         <TextField
@@ -167,7 +166,7 @@ const DCAIntervalInput = () => {
           className={'!h-[22px] !min-h-[22px] !px-0 !py-1 !text-lg font-medium'}
         />
         <DropdownMenu>
-          <DropdownMenuTrigger className="flex items-center gap-2 px-3 py-2 text-sm bg-secondary rounded-xl capitalize">
+          <DropdownMenuTrigger className="flex items-center gap-2 px-3 py-2 text-sm !bg-[#0000001F] dark:!bg-[#FFFFFF1F] rounded-xl capitalize">
             {TimeUnitLabel[fillDelay.unit as keyof typeof TimeUnitLabel]}
             <ChevronDownIcon width={14} height={14} />
           </DropdownMenuTrigger>
