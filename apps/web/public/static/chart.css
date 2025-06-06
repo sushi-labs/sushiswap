@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&display=swap");
+/* @import url("https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&display=swap");
 
 html,
 body,
@@ -79,7 +79,26 @@ div[data-section-name="extendLeftTradingLine"] {
   display: flex !important;
 }
 
+.theme-light:root {
+  --tv-color-pane-background: #F3F2F4;
+  --tv-color-platform-background: #F3F2F4;
+}
+
 .theme-dark:root {
-  --tv-color-pane-background: rgb(255 255 255);
-  --tv-color-platform-background: rgb(255 255 255);
+  --tv-color-pane-background: #0C0C23;
+  --tv-color-platform-background: #0C0C23;
+
+}
+
+.fadeTop-Z4M3tWHb,
+.fadeBot-Z4M3tWHb {
+  display: none !important;
+}
+
+.chart-page.unselectable.on-widget {
+  background-color: var(--background-color) !important;
+}
+
+.chart-page.unselectable.on-widget .chart-container-border {
+  background-color: var(--background-color) !important;
 }
