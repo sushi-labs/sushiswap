@@ -21,6 +21,20 @@ export const Chart = (props: Partial<ChartingLibraryWidgetOptions>) => {
 
   useEffect(() => {
     console.log('theme', theme)
+
+    console.log('TradingView chart ready, setting up interval widget quicks')
+
+    // Set up local storage for interval widget quick buttons
+    const intervalQuicks = ['1D', '2D', '3D', '1W']
+    localStorage.setItem(
+      'tradingview.IntervalWidget.quicks',
+      JSON.stringify(intervalQuicks),
+    )
+    console.log(
+      'Set tradingview.IntervalWidget.quicks to localStorage:',
+      intervalQuicks,
+    )
+
     const widgetOptions: ChartingLibraryWidgetOptions = {
       symbol: props.symbol,
       // BEWARE: no trailing slash is expected in feed URL
@@ -37,7 +51,7 @@ export const Chart = (props: Partial<ChartingLibraryWidgetOptions>) => {
       library_path: props.library_path,
       locale: props.locale as LanguageCode,
       disabled_features: [
-        'use_localstorage_for_settings',
+        // 'use_localstorage_for_settings',
         'header_settings',
         'header_fullscreen_button',
         'header_screenshot',
@@ -126,7 +140,7 @@ export const Chart = (props: Partial<ChartingLibraryWidgetOptions>) => {
           color2: [
             '#f2edf7',
             '#0000000a', // candles menu active row bg
-            '#ffffffd', // search input border
+            '#a8a8a8', // search input border
             '#ffffffd',
             '#ffffffd',
             '#b396d0',
@@ -247,7 +261,7 @@ export const Chart = (props: Partial<ChartingLibraryWidgetOptions>) => {
             '#eeee00',
             '#dada00',
             '#c6c600',
-            '#b3b300',
+            '#fad46e',
             '#9f9f00',
             '#8b8b00',
             '#777700',
@@ -268,7 +282,7 @@ export const Chart = (props: Partial<ChartingLibraryWidgetOptions>) => {
             '#e48f6b',
             '#e07f56',
             '#dc6f41',
-            '#ABA5B0', // hover left item
+            '#3b83f6', // hover left item
             '#d03f01',
             '#ABA5B0', // active left item
             '#ad3501',
@@ -291,7 +305,7 @@ export const Chart = (props: Partial<ChartingLibraryWidgetOptions>) => {
             '#222137', // compare symbol hover bg inline items
             'E4DDEC', // chevron color
             '#E4DDEC', // popup headers
-            'transparent', // top bottom scroll
+            '#15152b', // top bottom scroll
             '#E4DDEC', // tooltip command text
             '#E4DDEC', // drag icon
             '#E4DDEC',
@@ -332,7 +346,7 @@ export const Chart = (props: Partial<ChartingLibraryWidgetOptions>) => {
             '#a6ffe1',
             '#99ffdd',
             '#8cffd9',
-            '#80ffd5',
+            '#139b6e',
             '#66ffcc',
             '#5eeabb',
             '#55d5aa',
@@ -401,7 +415,7 @@ export const Chart = (props: Partial<ChartingLibraryWidgetOptions>) => {
             '#338fd5',
             '#2e80bf',
             '#2972aa',
-            '#246495',
+            '#e8bd48',
             '#1f5680',
             '#19476a',
             '#143955',

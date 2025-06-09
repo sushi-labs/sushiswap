@@ -14,6 +14,7 @@ coverage
 out/
 build
 dist
+!apps/web/public/static/datafeeds/udf/dist
 robots.txt
 analyze/
 
