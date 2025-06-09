@@ -299,7 +299,7 @@ const DialogConfirm: FC<DialogConfirmProps> = ({
               </a>
             )}
           </DialogDescription>
-          <div className="py-6 flex justify-center">
+          <div className="flex justify-center py-6">
             {status === 'pending' ? (
               <Loader size={132} strokeWidth={1} className="!text-blue" />
             ) : status === 'success' ? (

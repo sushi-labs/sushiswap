@@ -1,26 +1,3 @@
-/* @import url("https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&display=swap");
-
-html,
-body,
-canvas,
-input,
-button,
-span {
-  font-family: "Manrope", roboto, ubuntu, sans-serif !important;
-  font-weight: 600;
-  letter-spacing: 0.03em;
-}
-.theme-dark:root {
-  --tv-color-pane-background: rgb(255 255 255);
-  --tv-color-platform-background: rgb(255 255 255);
-  --up: #008676;
-  --down: #d92d6b;
-  --white-1: rgba(255, 255, 255, 0.98);
-  --tv-color-toolbar-button-text-active: #3a3778;
-  --tv-color-toolbar-toggle-button-background-active: #3a3778;
-  --tv-color-toolbar-toggle-button-background-active-hover: #3a3778;
-}
-
 html.theme-dark .chart-page .chart-container-border {
   background-color: rgb(255 255 255) !important;
 }
@@ -93,42 +70,5 @@ div[data-section-name="extendLeftTradingLine"] {
   background-color: var(--background-color) !important;
 }
 
-:root {  
-  --tv-color-pane-background: #F3F2F4;
-  --tv-color-platform-background: #F3F2F4;
-
-  --tv-color-popup-element-text-active: #ffffff;
-  --tv-color-popup-element-background-active: #4217ff;
-  /* --tv-color-toolbar-button-text: #4217ff; */
-  --themed-color-background-selected: #4217ff;
-  --themed-color-background-special-secondary: #4217ff;
-
-  --tv-color-toolbar-button-text: #535263;
-
-}
-
-.theme-dark:root {
-  --tv-color-pane-background: #0C0C23;
-  --tv-color-platform-background: #0C0C23;
-
-  --tv-color-popup-element-text-active: #ffffff;
-  --tv-color-popup-element-background-active: #3b83f6;
-  /* --tv-color-toolbar-button-text: #3b83f6; */
-  --themed-color-background-selected: #3b83f6;
-  --themed-color-background-special-secondary: #3b83f6;
-
-  --tv-color-toolbar-button-text: #FFF5FA;
-}
 
 
-@media (max-width: 768px) {
-  :root {
-    --tv-color-pane-background: #ffffff;
-    --tv-color-platform-background: #ffffff;
-  }
-
-  .theme-dark:root {
-    --tv-color-pane-background: #15152b;
-    --tv-color-platform-background: #15152b;
-  }
-}

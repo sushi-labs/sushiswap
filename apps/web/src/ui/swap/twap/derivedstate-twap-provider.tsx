@@ -51,6 +51,7 @@ type State = DerivedStateSimpleSwapState & {
     amountOut: Amount<Type> | undefined
     minAmountOut: Amount<Type> | undefined
     amountInPerChunk: Amount<Type> | undefined
+    percentDiff: number | undefined
   }
   mutate: DerivedStateSimpleSwapState['mutate'] & {
     setIsLimitPriceInverted: Dispatch<SetStateAction<boolean>>
@@ -58,6 +59,7 @@ type State = DerivedStateSimpleSwapState & {
     setExpiry: Dispatch<SetStateAction<TimeDuration>>
     setChunks: Dispatch<SetStateAction<number>>
     setFillDelay: Dispatch<SetStateAction<TimeDuration>>
+    setPercentDiff: Dispatch<SetStateAction<number | undefined>>
   }
 }
 
@@ -102,6 +104,7 @@ const _DerivedStateTwapProvider: FC<DerivedStateTwapProviderProps> = ({
     unit: TimeUnit.Minutes,
     value: 5,
   })
+  const [percentDiff, setPercentDiff] = useState<number | undefined>(undefined)
 
   const [marketPrice, token0PriceUSD, token1PriceUSD] = useMemo(() => {
     const [token0, token1] = [
@@ -244,6 +247,7 @@ const _DerivedStateTwapProvider: FC<DerivedStateTwapProviderProps> = ({
             setExpiry,
             setChunks,
             setFillDelay,
+            setPercentDiff,
           },
           state: {
             ...state,
@@ -262,6 +266,7 @@ const _DerivedStateTwapProvider: FC<DerivedStateTwapProviderProps> = ({
             amountOut,
             minAmountOut,
             amountInPerChunk,
+            percentDiff,
           },
           isLoading,
           isToken0Loading,
@@ -278,6 +283,7 @@ const _DerivedStateTwapProvider: FC<DerivedStateTwapProviderProps> = ({
         expiry,
         chunks,
         fillDelay,
+        percentDiff,
       ])}
     >
       {children}

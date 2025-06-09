@@ -40,11 +40,11 @@ export const SearchContent = () => {
         <div className="overflow-y-auto hide-scrollbar text-xs max-h-[calc(100vh-220px)] md:max-h-[250px] grid grid-cols-[30px_auto_auto_auto] gap-2">
           {/* TODO: loading state */}
           {/* TODO: error state */}
-          <div className="sticky grid grid-cols-[30px_auto_auto_auto] col-span-4 top-0 z-20 bg-white md:bg-slate-50 dark:bg-slate-900 md:dark:bg-slate-800 text-xs text-slate-700 dark:text-pink-100">
+          <div className="sticky grid grid-cols-[30px_190px_auto_auto] col-span-4 top-0 z-10 bg-white md:bg-slate-50 dark:bg-slate-900 md:dark:bg-slate-800 text-xs text-slate-700 dark:text-pink-100">
             <div />
-            <div className="mr-auto">Token</div>
-            <div className="ml-auto">Price</div>
-            <div className="ml-auto pr-1.5">Holdings</div>
+            <div className="mr-auto w-full">Token</div>
+            <div className="text-right ml-auto w-full">Price</div>
+            <div className="ml-auto w-full text-right pr-1.5">Holdings</div>
           </div>
 
           <SearchItem />

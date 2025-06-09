@@ -22,6 +22,7 @@ import {
 } from '@sushiswap/ui'
 import { Badge } from '@sushiswap/ui'
 import { Currency } from '@sushiswap/ui'
+import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import type React from 'react'
 import { type CSSProperties, type FC, memo, useCallback, useState } from 'react'
 import { NativeAddress } from 'src/lib/constants'
@@ -126,38 +127,29 @@ export const TokenSelectorRowV2: FC<TokenSelectorRowV2> = memo(
                 className="!px-0.5"
               />
               <div className="flex flex-row items-center flex-grow gap-4">
-                {selected ? (
+                <div className="w-10 h-10">
                   <Badge
+                    className="dark:border-white/10 border-black/10 border rounded-[4px] z-[11]"
                     position="bottom-right"
                     badgeContent={
-                      <div className="bg-white rounded-full dark:bg-slate-800 black:bg-gray-900">
-                        <CheckCircleIcon
-                          width={20}
-                          height={20}
-                          className="rounded-full text-blue"
-                        />
-                      </div>
+                      <NetworkIcon
+                        type="square"
+                        className="rounded-[3px]"
+                        chainId={currency.chainId}
+                        width={18}
+                        height={18}
+                      />
                     }
                   >
-                    <div className="w-10 h-10">
-                      <Currency.Icon
-                        disableLink
-                        currency={currency}
-                        width={40}
-                        height={40}
-                      />
-                    </div>
-                  </Badge>
-                ) : (
-                  <div className="w-10 h-10">
                     <Currency.Icon
                       disableLink
                       currency={currency}
                       width={40}
                       height={40}
                     />
-                  </div>
-                )}
+                  </Badge>
+                </div>
+
                 <div className="flex flex-col items-start">
                   <div className="flex gap-1">
                     <span className="font-semibold text-primary">

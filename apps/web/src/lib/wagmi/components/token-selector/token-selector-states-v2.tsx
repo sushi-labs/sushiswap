@@ -25,7 +25,7 @@ interface TokenSelectorStates {
   account?: Address
   onSelect(currency: Type): void
   onShowInfo(currency: Type | false): void
-  // currencies?: Type[]
+  currencies?: Type[]
   includeNative?: boolean
   hidePinnedTokens?: boolean
   search?: string
@@ -38,7 +38,7 @@ export function TokenSelectorStatesV2({
   account,
   onSelect,
   onShowInfo,
-  // currencies,
+  currencies,
   includeNative,
   hidePinnedTokens,
   search,
@@ -65,20 +65,21 @@ export function TokenSelectorStatesV2({
     search: '',
   })
 
-  // if (currencies) {
-  // 	return (
-  // 		<TokenSelectorCustomList
-  // 			chainId={chainId}
-  // 			account={account}
-  // 			currencies={currencies}
-  // 			onSelect={onSelect}
-  // 			selected={selected}
-  // 			search={search}
-  // 			includeNative={includeNative}
-  // 			onShowInfo={onShowInfo}
-  // 		/>
-  // 	);
-  // }
+  if (currencies) {
+    return (
+      <TokenSelectorCustomList
+        chainId={chainId}
+        account={account}
+        currencies={currencies}
+        onSelect={onSelect}
+        selected={selected}
+        search={search}
+        includeNative={includeNative}
+        onShowInfo={onShowInfo}
+        showChainOptions={type === 'sell'}
+      />
+    )
+  }
 
   if (search && isTokenListChainId(chainId)) {
     return (

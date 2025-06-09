@@ -1,5 +1,6 @@
 'use client'
 
+import { useBreakpoint } from '@sushiswap/hooks'
 import { useTheme } from 'next-themes'
 import type {
   ChartingLibraryWidgetOptions,
@@ -8,16 +9,13 @@ import type {
 } from 'public/static/charting_library/charting_library'
 import { widget } from 'public/static/charting_library/charting_library.esm'
 import { useEffect, useRef } from 'react'
-import { Native } from 'sushi/currency'
-
-import { useIsSmScreen } from '@sushiswap/hooks'
-import { Rate } from './rate'
+import { ChartHeader } from './chart-header'
 
 export const Chart = (props: Partial<ChartingLibraryWidgetOptions>) => {
   const chartContainerRef = useRef<HTMLDivElement>(
     null,
   ) as React.MutableRefObject<HTMLInputElement>
-  const isMobile = useIsSmScreen()
+  const { isMd: isMdScreen } = useBreakpoint('md')
   const { theme } = useTheme()
 
   useEffect(() => {
@@ -25,20 +23,14 @@ export const Chart = (props: Partial<ChartingLibraryWidgetOptions>) => {
 
     console.log('TradingView chart ready, setting up interval widget quicks')
 
-    // Set up local storage for interval widget quick buttons
     const intervalQuicks = ['1D', '2D', '3D', '1W']
     localStorage.setItem(
       'tradingview.IntervalWidget.quicks',
       JSON.stringify(intervalQuicks),
     )
-    console.log(
-      'Set tradingview.IntervalWidget.quicks to localStorage:',
-      intervalQuicks,
-    )
 
     const widgetOptions: ChartingLibraryWidgetOptions = {
       symbol: props.symbol,
-      // BEWARE: no trailing slash is expected in feed URL
       datafeed: new (window as any).Datafeeds.UDFCompatibleDatafeed(
         'https://demo_feed.tradingview.com',
         undefined,
@@ -54,7 +46,7 @@ export const Chart = (props: Partial<ChartingLibraryWidgetOptions>) => {
       disabled_features: [
         // 'use_localstorage_for_settings',
 
-        ...(isMobile ? ['legend_widget' as const] : []),
+        ...(!isMdScreen ? ['legend_widget' as const] : []),
 
         'header_settings' as const,
         'header_fullscreen_button' as const,
@@ -88,7 +80,7 @@ export const Chart = (props: Partial<ChartingLibraryWidgetOptions>) => {
       ],
 
       enabled_features: [
-        ...(isMobile ? [] : ['study_templates' as const]),
+        ...(!isMdScreen ? [] : ['study_templates' as const]),
 
         'hide_unresolved_symbols_in_legend',
         'hide_main_series_symbol_from_indicator_legend',
@@ -102,7 +94,7 @@ export const Chart = (props: Partial<ChartingLibraryWidgetOptions>) => {
       custom_css_url: '/static/chart.css',
       theme: theme === 'dark' ? 'dark' : 'light',
       overrides: {
-        'paneProperties.background': isMobile
+        'paneProperties.background': !isMdScreen
           ? theme === 'dark'
             ? '#15152b'
             : '#ffffff'
@@ -279,7 +271,7 @@ export const Chart = (props: Partial<ChartingLibraryWidgetOptions>) => {
             '#636300',
             '#4f4f00',
           ],
-          white: '#ffffff',
+          white: isMdScreen ? '#F3F2F4' : '#ffffff',
           black: '#421b50',
         },
         dark: {
@@ -323,7 +315,13 @@ export const Chart = (props: Partial<ChartingLibraryWidgetOptions>) => {
             '#15152B', // tooltip background
             '#ffffff0a', // tooltip row bg hover
             '#15152B', // modal background
-            '#0C0C23',
+            isMdScreen && theme === 'dark'
+              ? '#0C0C23'
+              : isMdScreen && theme === 'light'
+                ? '#F3F2F4'
+                : !isMdScreen && theme === 'dark'
+                  ? '#15152b'
+                  : '#ffffff',
             '#381212',
           ],
           color3: [
@@ -467,39 +465,11 @@ export const Chart = (props: Partial<ChartingLibraryWidgetOptions>) => {
     return () => {
       tvWidget.remove()
     }
-  }, [props, chartContainerRef, theme, isMobile])
-
-  const input0 = Native.onChain(1)
-  const input1 = Native.onChain(43114)
-  // const price = useMemo(() => {
-  //   if (!input0 || !input1) return undefined
-  //   return new Price({
-  //     baseAmount: Amount.fromRawAmount(input0, 123),
-  //     quoteAmount: Amount.fromRawAmount(input1, 321),
-  //   })
-  // }, [input0, input1])
+  }, [props, chartContainerRef, theme, isMdScreen])
 
   return (
-    <div className="flex flex-col flex-grow md:p-5 md:gap-3 rounded-xl">
+    <div className="flex flex-col flex-grow rounded-xl">
       <script src="/tradingview/charting_library/bundles" />
-      <div className="flex flex-col items-start justify-between w-full md:items-center md:flex-row">
-        <div>token select</div>
-        <div>
-          {/* <Rate price={price} /> */}
-          <Rate
-            token0={{
-              symbol: input0.symbol,
-              amount: 1,
-              usdPrice: 2700,
-            }}
-            token1={{
-              symbol: input1.symbol,
-              amount: 1,
-              usdPrice: 24,
-            }}
-          />
-        </div>
-      </div>
       <div className="flex-grow">
         <div ref={chartContainerRef} className={'md:h-[590px] h-full'} />
       </div>

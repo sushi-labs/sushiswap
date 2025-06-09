@@ -28,8 +28,9 @@ import { useAccount } from 'wagmi'
 import { useAmountBalance } from '~evm/_common/ui/balance-provider/use-balance'
 import { usePrice } from '~evm/_common/ui/price-provider/price-provider/use-price'
 import { QuickSelect } from '../../token-selector/quick-select/quick-select'
-import { TokenSelector } from '../../token-selector/token-selector'
+import { TokenSelectorV2 } from '../../token-selector/token-selector-v2'
 import { BalancePanel } from './BalancePanel'
+import { PercentageInputs } from './PercentageInputs'
 import { PricePanel } from './PricePanel'
 
 interface CurrencyInputProps {
@@ -62,6 +63,7 @@ interface CurrencyInputProps {
   onNetworkChange?: (network: number) => void
   showQuickSelect?: boolean
   hideInputAndPricing?: boolean
+  isLimit?: boolean
 }
 
 const CurrencyInput: FC<CurrencyInputProps> = ({
@@ -94,6 +96,7 @@ const CurrencyInput: FC<CurrencyInputProps> = ({
   onNetworkChange,
   showQuickSelect,
   hideInputAndPricing,
+  isLimit,
 }) => {
   const isMounted = useIsMounted()
 
@@ -169,7 +172,7 @@ const CurrencyInput: FC<CurrencyInputProps> = ({
       >
         {showQuickSelect ? <QuickSelect /> : null}
 
-        <TokenSelector
+        <TokenSelectorV2
           currencies={currencies}
           selected={currency}
           chainId={chainId}
@@ -179,7 +182,9 @@ const CurrencyInput: FC<CurrencyInputProps> = ({
           hideSearch={hideSearch}
           networks={networks}
           selectedNetwork={selectedNetwork}
+          type={type === 'INPUT' ? 'sell' : 'buy'}
           onNetworkSelect={onNetworkChange}
+          isLimit={isLimit}
         >
           <Button
             data-state={currencyLoading ? 'inactive' : 'active'}
@@ -191,7 +196,7 @@ const CurrencyInput: FC<CurrencyInputProps> = ({
               currency ? 'pl-2 pr-3' : '',
               networks ? '!h-11' : '',
               currencyClassName,
-              '!rounded-full data-[state=inactive]:hidden data-[state=active]:flex',
+              '!rounded-full data-[state=inactive]:hidden data-[state=active]:flex bg-slate-200 dark:bg-slate-750',
             )}
           >
             {currency ? (
@@ -199,10 +204,12 @@ const CurrencyInput: FC<CurrencyInputProps> = ({
                 <>
                   <div className="w-[28px] h-[28px] mr-1.5">
                     <Badge
-                      className="border border-slate-900 rounded-full z-[11]"
+                      className="dark:border-[#222137] border-[#F5F5F5] border rounded-[4px] z-[11]"
                       position="bottom-right"
                       badgeContent={
                         <NetworkIcon
+                          type="square"
+                          className="rounded-[3px]"
                           chainId={currency.chainId}
                           width={16}
                           height={16}
@@ -230,12 +237,26 @@ const CurrencyInput: FC<CurrencyInputProps> = ({
               ) : (
                 <>
                   <div className="w-[28px] h-[28px] mr-0.5">
-                    <Currency.Icon
-                      disableLink
-                      currency={currency}
-                      width={28}
-                      height={28}
-                    />
+                    <Badge
+                      className="dark:border-[#222137] border-[#F5F5F5] border rounded-[4px] z-[11]"
+                      position="bottom-right"
+                      badgeContent={
+                        <NetworkIcon
+                          type="square"
+                          className="rounded-[3px]"
+                          chainId={currency.chainId}
+                          width={16}
+                          height={16}
+                        />
+                      }
+                    >
+                      <Currency.Icon
+                        disableLink
+                        currency={currency}
+                        width={28}
+                        height={28}
+                      />
+                    </Badge>
                   </div>
                   <span className="text-xl">{currency.symbol}</span>
                   <SelectIcon />
@@ -245,7 +266,7 @@ const CurrencyInput: FC<CurrencyInputProps> = ({
               'Select token'
             )}
           </Button>
-        </TokenSelector>
+        </TokenSelectorV2>
       </div>
     )
   }, [
@@ -264,6 +285,8 @@ const CurrencyInput: FC<CurrencyInputProps> = ({
     onNetworkChange,
     showQuickSelect,
     hideInputAndPricing,
+    type,
+    isLimit,
   ])
 
   return (
@@ -284,18 +307,30 @@ const CurrencyInput: FC<CurrencyInputProps> = ({
         ) : (
           <span />
         )}
-
-        <BalancePanel
-          id={id}
-          loading={isBalanceLoading}
-          chainId={chainId}
-          account={address}
-          onChange={onChange}
-          currency={currency}
-          disableMaxButton={disableMaxButton}
-          balance={balance}
-          type={type}
-        />
+        <div className="flex items-center gap-4 justify-end">
+          {type === 'INPUT' ? (
+            <PercentageInputs
+              loading={isBalanceLoading}
+              chainId={chainId}
+              account={address}
+              onChange={onChange}
+              currency={currency}
+              disableMaxButton={disableMaxButton}
+              balance={balance}
+            />
+          ) : null}
+          <BalancePanel
+            id={id}
+            loading={isBalanceLoading}
+            chainId={chainId}
+            account={address}
+            onChange={onChange}
+            currency={currency}
+            disableMaxButton={disableMaxButton}
+            balance={balance}
+            type={type}
+          />
+        </div>
       </div>
       <div className="relative flex items-center gap-4 mt-1">
         {hideInputAndPricing ? null : (

@@ -67,10 +67,16 @@ const TokenOption = ({ token }: { token: PortfolioWalletToken }) => {
       className={classNames('!rounded-full')}
     >
       <Badge
-        className="border border-slate-50 dark:border-slate-900 rounded-full z-[11]"
+        className="border border-slate-50 dark:border-slate-900 rounded-[4px] z-[11]"
         position="bottom-right"
         badgeContent={
-          <NetworkIcon chainId={token.chainId} width={12} height={12} />
+          <NetworkIcon
+            type="square"
+            className="rounded-[3px]"
+            chainId={token.chainId}
+            width={12}
+            height={12}
+          />
         }
       >
         <Currency.Icon
@@ -92,8 +98,8 @@ const TokenOption = ({ token }: { token: PortfolioWalletToken }) => {
       </Badge>
 
       <div className="flex gap-1 items-start">
-        <span>{token.symbol}</span>
         <span>{formatNumber(token.amount, 2)}</span>
+        <span>{token.symbol}</span>
       </div>
     </Button>
   )

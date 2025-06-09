@@ -1,6 +1,6 @@
 'use client'
 
-import { useIsSmScreen } from '@sushiswap/hooks'
+import { useBreakpoint, useIsSmScreen } from '@sushiswap/hooks'
 import { Container } from '@sushiswap/ui'
 import Script from 'next/script'
 import type {
@@ -12,6 +12,7 @@ import type { NonStandardChainId } from 'src/config'
 import { useSkaleEuropaFaucet } from 'src/lib/hooks'
 import { useHeaderNetworkSelector } from 'src/lib/wagmi/components/header-network-selector'
 import { Chart } from 'src/ui/swap/trade/chart/chart'
+import { ChartHeader } from 'src/ui/swap/trade/chart/chart-header'
 import { MobileChart } from 'src/ui/swap/trade/chart/mobile-chart'
 import {
   CHAIN_IDS_BY_TRADE_MODE,
@@ -53,9 +54,9 @@ export default function TradePage() {
   useHeaderNetworkSelector(chainIdsByTradeMode[tradeMode])
   useSkaleEuropaFaucet()
   const [isScriptReady, setIsScriptReady] = useState(false)
-  const isMobile = useIsSmScreen()
+  const { isMd: isMdScreen } = useBreakpoint('md')
 
-  console.log(isMobile)
+  console.log('isMdScreen', isMdScreen)
 
   return (
     <>
@@ -80,12 +81,15 @@ export default function TradePage() {
             <Container maxWidth="screen-2xl" className="px-4">
               <div className="flex flex-col-reverse w-full gap-4 md:flex-row">
                 <div className="flex w-full flex-col gap-4 md:w-1/2 lg:w-[calc(100%-480px)]">
-                  <div className="w-full md:h-[648px] flex">
+                  <div className="w-full md:h-[648px] flex flex-col md:p-5 md:gap-3">
                     {isScriptReady ? (
-                      isMobile ? (
-                        <MobileChart {...defaultWidgetProps} />
+                      isMdScreen ? (
+                        <>
+                          <ChartHeader />
+                          <Chart {...defaultWidgetProps} />
+                        </>
                       ) : (
-                        <Chart {...defaultWidgetProps} />
+                        <MobileChart {...defaultWidgetProps} />
                       )
                     ) : null}
                   </div>

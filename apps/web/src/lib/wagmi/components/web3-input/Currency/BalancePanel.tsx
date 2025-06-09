@@ -62,13 +62,13 @@ export const BalancePanel: FC<BalancePanel> = memo(function BalancePanel({
       onClick={onClick}
       className={classNames(
         type === 'INPUT'
-          ? 'text-skyblue hover:text-skyblue-600 active:text-skyblue-700'
-          : 'text-gray-500 dark:text-slate-500',
+          ? 'text-blue hover:text-blue-600 active:text-blue-700 dark:text-skyblue hover:dark:text-skyblue-600 active:dark:text-skyblue-700'
+          : 'text-muted-foreground dark:text-pink-200',
         'text-sm font-medium flex gap-1 items-center rounded-md',
       )}
       disabled={disableMaxButton}
     >
-      Balance: {balanceStr}
+      Balance: {balanceStr} {balance?.currency?.symbol}
     </button>
   )
 })
