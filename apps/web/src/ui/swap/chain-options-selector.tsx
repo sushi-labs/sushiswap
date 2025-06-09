@@ -27,7 +27,11 @@ const networks = getSortedChainIds(XSWAP_SUPPORTED_CHAIN_IDS)
 
 export const ChainOptionsSelector = ({
   size = 'sm',
-}: { size?: 'sm' | 'lg' }) => {
+  onNetworkSelect,
+}: {
+  size?: 'sm' | 'lg'
+  onNetworkSelect?: (network: number) => void
+}) => {
   const iconSize = size === 'sm' ? 16 : 24
 
   const containerRef = useRef<HTMLDivElement>(null)
@@ -86,7 +90,11 @@ export const ChainOptionsSelector = ({
         <TooltipProvider key={chainId}>
           <Tooltip delayDuration={0}>
             <TooltipTrigger asChild>
-              <NetworkButton iconSize={iconSize} chainId={chainId} />
+              <NetworkButton
+                onClick={() => onNetworkSelect?.(chainId)}
+                iconSize={iconSize}
+                chainId={chainId}
+              />
             </TooltipTrigger>
             <TooltipContent className="border-black/5 dark:border-white/5 !rounded-md bg-white/20 dark:bg-black/20">
               {EvmChainKey[chainId].toLocaleUpperCase()}
@@ -122,7 +130,7 @@ export const ChainOptionsSelector = ({
                 <DropdownMenuItem
                   className="pr-10"
                   key={chainId}
-                  // onClick={() => selectNetwork(chainId)}
+                  onClick={() => onNetworkSelect?.(chainId)}
                 >
                   <NetworkButton iconSize={iconSize} chainId={chainId} />
                   <span className="ml-2">
@@ -140,7 +148,10 @@ export const ChainOptionsSelector = ({
 
 export const NetworkButton = forwardRef<
   HTMLButtonElement,
-  { chainId: number; iconSize: number }
+  {
+    chainId: number
+    iconSize: number
+  } & React.ButtonHTMLAttributes<HTMLButtonElement>
 >(({ chainId, iconSize, ...props }, ref) => (
   <button
     ref={ref}
