@@ -159,7 +159,13 @@ export const NetworkButton = forwardRef<
     type="button"
     className="border border-black/10 dark:border-white/10 rounded-md p-1 flex items-center justify-center"
   >
-    <NetworkIcon chainId={chainId} width={iconSize} height={iconSize} />
+    <NetworkIcon
+      type="square"
+      className="rounded-[3px]"
+      chainId={chainId}
+      width={iconSize}
+      height={iconSize}
+    />
   </button>
 ))
 NetworkButton.displayName = 'NetworkButton'

@@ -6,11 +6,19 @@ import { Token } from 'sushi/currency'
 
 export const TokenNetworkIcon = () => {
   return (
-    <div className="flex items-center gap-3.5">
+    <div className="flex items-center gap-3.5 w-full">
       <Badge
-        className="border border-slate-50 dark:border-slate-900 rounded-full z-[11]"
+        className="border border-slate-50 dark:border-slate-900 rounded-[4px] z-[11]"
         position="bottom-right"
-        badgeContent={<NetworkIcon chainId={1} width={16} height={16} />}
+        badgeContent={
+          <NetworkIcon
+            type="square"
+            className="rounded-[3px]"
+            chainId={1}
+            width={14}
+            height={14}
+          />
+        }
       >
         <Currency.Icon
           disableLink

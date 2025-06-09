@@ -26,7 +26,7 @@ export const SearchItem = () => {
     <>
       <div
         className={classNames(
-          'grid col-span-4 grid-cols-[30px_auto_auto_auto] py-2 pr-2 rounded-lg',
+          'grid col-span-4 grid-cols-[30px_200px_auto_auto] py-2 pr-2 rounded-lg',
           isHovered && 'bg-blue-500/10',
         )}
         onMouseEnter={() => setIsHovered(true)}
@@ -60,12 +60,12 @@ export const SearchItem = () => {
           </div>
         ) : (
           <>
-            <div className="mx-auto flex flex-col items-end text-slate-900 dark:text-[#FFF5FA]">
+            <div className="mx-auto flex flex-col w-full items-end text-slate-900 dark:text-[#FFF5FA]">
               <span>{formatUSD(0.87)}</span>
               <span className="font-medium text-red">-5.5%</span>
             </div>
 
-            <div className="ml-auto flex flex-col items-end text-slate-900 dark:text-[#FFF5FA]">
+            <div className="ml-auto w-full flex flex-col items-end text-slate-900 dark:text-[#FFF5FA]">
               <span>{formatUSD(16232.5)}</span>
               <span className="font-medium text-muted-foreground">
                 {formatNumber(82.2)} SUSHI
@@ -89,7 +89,13 @@ export const SearchItem = () => {
                     Bridge From
                   </span>
                   <div className="flex items-center gap-1 font-medium text-muted-foreground">
-                    <NetworkIcon chainId={1} width={16} height={16} />
+                    <NetworkIcon
+                      type="square"
+                      className="rounded-[3px]"
+                      chainId={1}
+                      width={16}
+                      height={16}
+                    />
                     <span className="text-xs">Ethereum</span>
                   </div>
                 </div>
