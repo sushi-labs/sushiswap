@@ -102,3 +102,11 @@ div[data-section-name="extendLeftTradingLine"] {
 .chart-page.unselectable.on-widget .chart-container-border {
   background-color: var(--background-color) !important;
 }
+
+:root {
+  --tv-color-popup-element-text-active: #000000;
+}
+
+.theme-dark:root {
+  --tv-color-popup-element-text-active: #ffffff;
+}

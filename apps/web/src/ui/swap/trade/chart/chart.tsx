@@ -66,6 +66,7 @@ export const Chart = (props: Partial<ChartingLibraryWidgetOptions>) => {
         'show_hide_button_in_legend',
         'show_symbol_logo_for_compare_studies',
         'show_symbol_logo_in_legend',
+        'symbol_search_hot_key',
       ],
 
       enabled_features: [
@@ -110,9 +111,9 @@ export const Chart = (props: Partial<ChartingLibraryWidgetOptions>) => {
             '#b670fd',
             '#ac5bfc',
             '#a147fc',
-            '#9732fc',
+            '#4217ff', // toolbar btn color
             '#8209fb',
-            '#7708e6',
+            '#4217ff', // active left item
             '#6c08d1',
             '#6207bc',
             '#5706a7',
@@ -124,23 +125,23 @@ export const Chart = (props: Partial<ChartingLibraryWidgetOptions>) => {
           // Color that overrides grey
           color2: [
             '#f2edf7',
-            '#e6dcef',
-            '#d9cae7',
-            '#ccb9df',
-            '#bfa7d7',
+            '#0000000a', // candles menu active row bg
+            '#ffffffd', // search input border
+            '#ffffffd',
+            '#ffffffd',
             '#b396d0',
             '#a684c8',
             '#9972c0',
             '#8c61b8',
-            '#804fb0',
-            '#662ca0',
+            '#535263',
+            '#535263', // popup headers
             '#5e2893',
             '#552585',
             '#4d2178',
             '#441d6b',
-            '#3c1a5d',
+            '#0000000a', // candles menu hover row bg
             '#331650',
-            '#2b1243',
+            '#000000', // search input text
             '#220f35',
           ],
           // Color that overrides red
@@ -176,7 +177,7 @@ export const Chart = (props: Partial<ChartingLibraryWidgetOptions>) => {
             '#a2eecb',
             '#95ecc3',
             '#88e9bc',
-            '#7be7b4',
+            '#22c55e', // confirmation modal btn bg positive
             '#60e2a5',
             '#58cf97',
             '#50bc8a',
@@ -253,7 +254,7 @@ export const Chart = (props: Partial<ChartingLibraryWidgetOptions>) => {
             '#636300',
             '#4f4f00',
           ],
-          white: '#f2e6ff',
+          white: '#ffffff',
           black: '#421b50',
         },
         dark: {
@@ -278,6 +279,7 @@ export const Chart = (props: Partial<ChartingLibraryWidgetOptions>) => {
             '#571a00',
             '#451500',
           ],
+
           color2: [
             '#f8eeee',
             '#f5ebff', // candles menu active row bg
