@@ -1,5 +1,6 @@
 'use client'
 
+import { useIsSmScreen } from '@sushiswap/hooks'
 import { Container } from '@sushiswap/ui'
 import Script from 'next/script'
 import type {
@@ -11,6 +12,7 @@ import type { NonStandardChainId } from 'src/config'
 import { useSkaleEuropaFaucet } from 'src/lib/hooks'
 import { useHeaderNetworkSelector } from 'src/lib/wagmi/components/header-network-selector'
 import { Chart } from 'src/ui/swap/trade/chart/chart'
+import { MobileChart } from 'src/ui/swap/trade/chart/mobile-chart'
 import {
   CHAIN_IDS_BY_TRADE_MODE,
   type TradeMode,
@@ -51,6 +53,9 @@ export default function TradePage() {
   useHeaderNetworkSelector(chainIdsByTradeMode[tradeMode])
   useSkaleEuropaFaucet()
   const [isScriptReady, setIsScriptReady] = useState(false)
+  const isMobile = useIsSmScreen()
+
+  console.log(isMobile)
 
   return (
     <>
@@ -76,7 +81,13 @@ export default function TradePage() {
               <div className="flex flex-col-reverse w-full gap-4 md:flex-row">
                 <div className="flex w-full flex-col gap-4 md:w-1/2 lg:w-[calc(100%-480px)]">
                   <div className="w-full md:h-[648px] flex">
-                    {isScriptReady && <Chart {...defaultWidgetProps} />}
+                    {isScriptReady ? (
+                      isMobile ? (
+                        <MobileChart {...defaultWidgetProps} />
+                      ) : (
+                        <Chart {...defaultWidgetProps} />
+                      )
+                    ) : null}
                   </div>
                   <div className="w-full md:h-[320px]">
                     <TradeTableTabs />

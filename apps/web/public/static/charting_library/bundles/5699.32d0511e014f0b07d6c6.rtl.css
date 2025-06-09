@@ -734,7 +734,8 @@ html.theme-dark .group-BfVZxb4b {
   );
   content: "";
   display: block;
-  height: 1px;
+  height: .33px;
+  width: 42%;
   margin: 0 8px 6px;
 }
 html.theme-dark .group-BfVZxb4b + .group-BfVZxb4b:before {

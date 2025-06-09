@@ -10,13 +10,14 @@ import { widget } from 'public/static/charting_library/charting_library.esm'
 import { useEffect, useRef } from 'react'
 import { Native } from 'sushi/currency'
 
+import { useIsSmScreen } from '@sushiswap/hooks'
 import { Rate } from './rate'
 
 export const Chart = (props: Partial<ChartingLibraryWidgetOptions>) => {
   const chartContainerRef = useRef<HTMLDivElement>(
     null,
   ) as React.MutableRefObject<HTMLInputElement>
-
+  const isMobile = useIsSmScreen()
   const { theme } = useTheme()
 
   useEffect(() => {
@@ -52,10 +53,13 @@ export const Chart = (props: Partial<ChartingLibraryWidgetOptions>) => {
       locale: props.locale as LanguageCode,
       disabled_features: [
         // 'use_localstorage_for_settings',
-        'header_settings',
-        'header_fullscreen_button',
-        'header_screenshot',
-        'header_saveload',
+
+        ...(isMobile ? ['legend_widget' as const] : []),
+
+        'header_settings' as const,
+        'header_fullscreen_button' as const,
+        'header_screenshot' as const,
+        'header_saveload' as const,
         'header_undo_redo',
         'header_symbol_search',
         'header_undo_redo',
@@ -84,7 +88,8 @@ export const Chart = (props: Partial<ChartingLibraryWidgetOptions>) => {
       ],
 
       enabled_features: [
-        'study_templates',
+        ...(isMobile ? [] : ['study_templates' as const]),
+
         'hide_unresolved_symbols_in_legend',
         'hide_main_series_symbol_from_indicator_legend',
       ],
@@ -97,7 +102,13 @@ export const Chart = (props: Partial<ChartingLibraryWidgetOptions>) => {
       custom_css_url: '/static/chart.css',
       theme: theme === 'dark' ? 'dark' : 'light',
       overrides: {
-        'paneProperties.background': theme === 'dark' ? '#0C0C23' : '#F3F2F4',
+        'paneProperties.background': isMobile
+          ? theme === 'dark'
+            ? '#15152b'
+            : '#ffffff'
+          : theme === 'dark'
+            ? '#0C0C23'
+            : '#F3F2F4',
         'paneProperties.vertGridProperties.color':
           theme === 'dark' ? '#2C2C2E' : '#E5E7EB',
         'paneProperties.horzGridProperties.color':
@@ -456,7 +467,7 @@ export const Chart = (props: Partial<ChartingLibraryWidgetOptions>) => {
     return () => {
       tvWidget.remove()
     }
-  }, [props, chartContainerRef, theme])
+  }, [props, chartContainerRef, theme, isMobile])
 
   const input0 = Native.onChain(1)
   const input1 = Native.onChain(43114)
@@ -471,7 +482,7 @@ export const Chart = (props: Partial<ChartingLibraryWidgetOptions>) => {
   return (
     <div className="flex flex-col flex-grow md:p-5 md:gap-3 rounded-xl">
       <script src="/tradingview/charting_library/bundles" />
-      <div className="flex items-center justify-between w-full">
+      <div className="flex flex-col items-start justify-between w-full md:items-center md:flex-row">
         <div>token select</div>
         <div>
           {/* <Rate price={price} /> */}
@@ -490,7 +501,7 @@ export const Chart = (props: Partial<ChartingLibraryWidgetOptions>) => {
         </div>
       </div>
       <div className="flex-grow">
-        <div ref={chartContainerRef} className={'md:h-[590px]'} />
+        <div ref={chartContainerRef} className={'md:h-[590px] h-full'} />
       </div>
     </div>
   )
