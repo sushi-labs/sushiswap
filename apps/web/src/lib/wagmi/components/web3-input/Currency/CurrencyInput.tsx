@@ -63,6 +63,7 @@ interface CurrencyInputProps {
   onNetworkChange?: (network: number) => void
   showQuickSelect?: boolean
   hideInputAndPricing?: boolean
+  isLimit?: boolean
 }
 
 const CurrencyInput: FC<CurrencyInputProps> = ({
@@ -95,6 +96,7 @@ const CurrencyInput: FC<CurrencyInputProps> = ({
   onNetworkChange,
   showQuickSelect,
   hideInputAndPricing,
+  isLimit,
 }) => {
   const isMounted = useIsMounted()
 
@@ -182,6 +184,7 @@ const CurrencyInput: FC<CurrencyInputProps> = ({
           selectedNetwork={selectedNetwork}
           type={type === 'INPUT' ? 'sell' : 'buy'}
           onNetworkSelect={onNetworkChange}
+          isLimit={isLimit}
         >
           <Button
             data-state={currencyLoading ? 'inactive' : 'active'}
@@ -283,6 +286,7 @@ const CurrencyInput: FC<CurrencyInputProps> = ({
     showQuickSelect,
     hideInputAndPricing,
     type,
+    isLimit,
   ])
 
   return (

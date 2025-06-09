@@ -1,5 +1,6 @@
 'use client'
 
+import { InformationCircleIcon } from '@heroicons/react-v1/solid'
 import { MagnifyingGlassIcon } from '@heroicons/react/24/solid'
 import {
   Dialog,
@@ -42,6 +43,7 @@ interface TokenSelectorV2Props {
   onNetworkSelect?: (network: number) => void
   isBrowse?: boolean
   type: TokenSelectorV2Type
+  isLimit?: boolean
 }
 
 export const TokenSelectorV2: FC<TokenSelectorV2Props> = ({
@@ -58,6 +60,7 @@ export const TokenSelectorV2: FC<TokenSelectorV2Props> = ({
   onNetworkSelect,
   isBrowse,
   type,
+  isLimit,
 }) => {
   const { address } = useAccount()
 
@@ -65,6 +68,7 @@ export const TokenSelectorV2: FC<TokenSelectorV2Props> = ({
   const [open, setOpen] = useState(false)
   const [currencyInfo, showCurrencyInfo] = useState<Currency | false>(false)
   console.log({ hideSearch, networks, selectedNetwork })
+  const [showLimitInfo, setShowLimitInfo] = useState(false)
   // Clear the query when the dialog is closed
   useEffect(() => {
     if (!open) {
@@ -97,9 +101,12 @@ export const TokenSelectorV2: FC<TokenSelectorV2Props> = ({
 
       if (onNetworkSelect) {
         onNetworkSelect(network)
+        if (isLimit) {
+          setShowLimitInfo(true)
+        }
       }
     },
-    [onNetworkSelect, currencyInfo],
+    [onNetworkSelect, currencyInfo, isLimit],
   )
 
   return (
@@ -123,12 +130,24 @@ export const TokenSelectorV2: FC<TokenSelectorV2Props> = ({
               {isBrowse ? 'Browse Tokens' : 'Select Token'}
             </DialogTitle>
           </DialogHeader>
-          {type === 'buy' ? (
+          {type === 'buy' || isLimit ? (
             <div className="flex flex-col gap-2">
               <p className="text-xs text-slate-450 dark:text-slate-500">
-                Chains
+                {isLimit ? 'Supported Chains' : 'Chains'}
               </p>
-              <ChainOptionsSelector size="lg" />
+              {isLimit && showLimitInfo ? (
+                <div className="bg-skyblue/5 p-2 rounded-xl text-xs text-skyblue flex items-center gap-1">
+                  <InformationCircleIcon width={16} height={16} />
+                  <p>
+                    Sushi currently support limit orders only for same-chain
+                    swaps.
+                  </p>
+                </div>
+              ) : null}
+              <ChainOptionsSelector
+                onNetworkSelect={_onNetworkSelect}
+                size="lg"
+              />
             </div>
           ) : null}
           <div className="flex gap-2 relative">
@@ -141,7 +160,7 @@ export const TokenSelectorV2: FC<TokenSelectorV2Props> = ({
               onValueChange={setQuery}
               className="py-7 placeholder:text-slate-450 !dark:text-slate-500 placeholder:dark:text-slate-450 dark:!bg-slate-900 !bg-gray-100"
             />
-            {type !== 'buy' ? (
+            {type !== 'buy' && !isLimit ? (
               <div className="absolute top-1/2 -translate-y-1/2 right-2">
                 <NetworkMenu className="bg-slate-50 border !rounded-md !px-2 border-black/10 dark:bg-slate-800 dark:border-white/10" />
               </div>
