@@ -21,6 +21,10 @@ type SushiDayBuckets {
 
 type Query {
   sushiDayBuckets(chainId: SushiSwapChainId!): SushiDayBuckets!
+  bladePools(chainId: BladeChainId!): [BladePool!]!
+  bladePool(address: Bytes!, chainId: BladeChainId!): BladePool!
+  bladePoolPairsChart(address: Bytes!, chainId: BladeChainId!, duration: BladePoolPairsChartDuration!): [BladePoolPairStats!]!
+  bladePoolTxSourcesChart(address: Bytes!, chainId: BladeChainId!, duration: BladePoolPairsChartDuration!): [BladePoolTxSourcesStats!]!
   exploreTokens(chainId: SushiSwapChainId!): [ExploreToken!]!
   exploreTokenChart(chainId: SushiSwapChainId!, address: Bytes!, duration: ExploreTokenChartDuration!): [OHLC!]!
   exploreTokenInfo(chainId: SushiSwapChainId!, address: Bytes!): ExploreTokenInfo
@@ -58,6 +62,104 @@ type Query {
   v3Mints(address: Bytes!, chainId: SushiSwapV3ChainId!): [V3Mint!]!
   v3Collects(address: Bytes!, chainId: SushiSwapV3ChainId!): [V3Collect!]!
   v3Transactions(address: Bytes!, chainId: SushiSwapV3ChainId!): [V3Transaction!]!
+}
+
+type BladePoolToken {
+  token: Token!
+  liquidityUSD: Float!
+  weight: Float!
+  targetWeight: Float
+}
+
+enum BladePoolAbi {
+  ClipperPackedVerifiedExchange
+  ClipperApproximateCaravelExchange
+  ClipperVerifiedCaravelExchange
+  ClipperCaravelExchange
+  ClipperVerifiedExchange
+  ClipperDirectExchangeV0
+  ClipperDirectExchangeV1
+  ClipperPackedExchange
+  ClipperPackedOracleVerifiedExchange
+}
+
+enum BladePoolVaultType {
+  PROTOCOL_DEPOSIT
+  FEE_SPLIT
+  FARM
+}
+
+enum BladePoolFarmVaultAbi {
+  LinearVestingVault
+  SplitFeeFarm
+}
+
+type BladePoolVault {
+  id: ID!
+  address: Bytes!
+  type: BladePoolVaultType!
+  name: String
+  farm: BladePoolFarmVault
+  protocolDeposit: BladePoolProtocolDepositVault
+  createdAt: Int!
+}
+
+type BladePoolFarmVault {
+  rewardToken: Token!
+  farmingHelper: Bytes!
+  abi: BladePoolFarmVaultAbi!
+}
+
+type BladePoolProtocolDepositVault {
+  transferHelper: Bytes!
+}
+
+type BladePool {
+  id: ID!
+  address: Bytes!
+  chainId: Int!
+  abi: BladePoolAbi!
+  tokens: [BladePoolToken!]!
+  liquidityUSD: Float!
+  liquidityUSDChange1d: Float!
+  volumeUSD: Float!
+  volumeUSD1d: Float!
+  volumeUSDChange1d: Float!
+  volumeUSD1w: Float!
+  volumeUSDChange1w: Float!
+  feeUSD1d: Float!
+  feeApr1d: Float!
+  totalApr1d: Float!
+  isDeprecated: Boolean!
+  newPoolAddress: Bytes
+  vaults: [BladePoolVault!]!
+}
+
+type BladePoolPairStats {
+  token0: Token!
+  token1: Token!
+  volumeUSD: Float!
+  txCount: Int!
+}
+
+enum BladePoolPairsChartDuration {
+  DAY
+  WEEK
+  MONTH
+  ALL
+}
+
+type BladePoolTxSourcesStats {
+  source: String!
+  volumeUSD: Float!
+  txCount: Int!
+}
+
+enum BladePoolTxSourcesChartDuration {
+  DAY
+  WEEK
+  MONTH
+  ALL
 }
 
 type ExploreToken {
