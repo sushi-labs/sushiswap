@@ -75,10 +75,10 @@ export default function TradePage() {
           </main>
         )}
         {tradeView === 'advanced' && (
-          <main className="lg:p-4 pt-9 md:mb-[86px] animate-slide bg-white dark:bg-background md:bg-background">
+          <main className="lg:p-4 md:p-2 pt-9 md:mb-[86px] animate-slide bg-white dark:bg-background md:bg-background">
             <Container maxWidth="screen-2xl" className="px-4">
               <div className="flex flex-col-reverse w-full gap-4 md:flex-row">
-                <div className="flex w-full flex-col gap-4 md:w-1/2 lg:w-[calc(100%-480px)]">
+                <div className="flex w-full flex-col gap-4 md:w-[calc(100%-480px)]">
                   <div className="w-full md:h-[648px] flex flex-col md:p-5 md:gap-3">
                     {isScriptReady ? (
                       isMdScreen ? (
@@ -97,7 +97,7 @@ export default function TradePage() {
                     <TradeTableTabs />
                   </div>
                 </div>
-                <div className="flex w-full flex-col gap-4 md:w-[480px]">
+                <div className="flex w-full flex-col gap-4 md:min-w-[480px]">
                   <Search />
                   <TradeWidget />
                   <FavoriteRecentTabView />
