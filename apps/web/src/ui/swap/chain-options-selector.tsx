@@ -41,7 +41,7 @@ export const ChainOptionsSelector = ({
     const container = containerRef.current
     if (!container) return
 
-    const gapPx = 6
+    const gapPx = 4
     const iconWidth = size === 'sm' ? 26 : 34
     const slotWidth = iconWidth + gapPx
 
@@ -157,7 +157,7 @@ export const NetworkButton = forwardRef<
     ref={ref}
     {...props}
     type="button"
-    className="border border-black/10 dark:border-white/10 rounded-md p-1 flex items-center justify-center"
+    className="flex items-center justify-center p-1 border rounded-md border-black/10 dark:border-white/10"
   >
     <NetworkIcon
       type="square"
