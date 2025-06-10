@@ -48,17 +48,17 @@ export const Favorite = () => {
           <thead className="sticky top-0 z-20 bg-slate-50 dark:bg-slate-900 md:dark:bg-slate-800">
             <tr className="text-xs text-slate-700 dark:text-pink-100">
               <th />
-              <th className="text-left font-medium">Token</th>
-              <th className="text-left font-medium hidden md:table-cell">
+              <th className="font-medium text-left">Token</th>
+              <th className="hidden font-medium text-left md:table-cell">
                 Price
               </th>
-              <th className="text-left font-medium hidden md:table-cell">
+              <th className="hidden font-medium text-left md:table-cell">
                 24h%
               </th>
-              <th className="font-medium text-left table-cell md:hidden">
+              <th className="table-cell font-medium text-left md:hidden">
                 Price/24%
               </th>
-              <th className="text-right font-medium">Holdings</th>
+              <th className="font-medium text-right">Holdings</th>
             </tr>
           </thead>
 
@@ -67,7 +67,7 @@ export const Favorite = () => {
           ))}
         </table>
       ) : null}
-      <div className="flex items-center justify-center w-full flex-col gap-4 mt-8">
+      <div className="flex flex-col items-center justify-center w-full gap-4 mt-8">
         <TokenSelectorV2
           selected={undefined}
           chainId={1}
@@ -82,7 +82,7 @@ export const Favorite = () => {
           </Button>
         </TokenSelectorV2>
         {pinnedTokensArray?.length === 0 ? (
-          <p className="italic text-sm text-muted-foreground dark:text-pink-200">
+          <p className="text-sm italic text-muted-foreground dark:text-pink-200">
             You haven&apos;t selected any favorite tokens.
           </p>
         ) : null}
@@ -106,15 +106,15 @@ const FavoriteItem = ({ currencyId }: { currencyId: ID }) => {
         </span>
       </td>
       <td className="hidden md:table-cell">
-        <span className="font-medium text-green">+5.5%</span>
+        <span className="font-medium text-[#1DA67D]">+5.5%</span>
       </td>
 
-      <td className="table-cell md:hidden text-left">
+      <td className="table-cell text-left md:hidden">
         <div className="flex flex-col items-start">
           <span className="text-slate-900 dark:text-pink-100">
             {formatUSD(0.87)}
           </span>
-          <span className="font-medium text-green">+5.5%</span>
+          <span className="font-medium text-[#1DA67D]">+5.5%</span>
         </div>
       </td>
       <td className="">

@@ -27,7 +27,7 @@ export const Recent = () => {
   // if(recents.length === 0) {
   // return (
 
-  // 		<p className="italic text-sm text-muted-foreground mt-8 dark:text-pink-200">
+  // 		<p className="mt-8 text-sm italic text-muted-foreground dark:text-pink-200">
   // 			You haven&apos;t traded any tokens so far.
   // 		</p>
   // );
@@ -35,16 +35,16 @@ export const Recent = () => {
 
   return (
     <div className="grid grid-cols-3 col-span-3 gap-0">
-      <div className="sticky grid col-span-5 grid-cols-5 top-0 z-20 bg-white md:bg-slate-50 dark:bg-slate-900 md:dark:bg-slate-800 text-xs text-slate-700 dark:text-pink-100">
-        <div className="font-medium w-full col-span-3 pl-2">Token Pair</div>
-        <div className="font-medium text-left w-full whitespace-nowrap">
+      <div className="sticky top-0 z-20 grid grid-cols-5 col-span-5 text-xs bg-white md:bg-slate-50 dark:bg-slate-900 md:dark:bg-slate-800 text-slate-700 dark:text-pink-100">
+        <div className="w-full col-span-3 pl-2 font-medium">Token Pair</div>
+        <div className="w-full font-medium text-left whitespace-nowrap">
           Amount Traded
         </div>
-        <div className="font-medium pr-2 col-span-1 w-full text-right">
+        <div className="w-full col-span-1 pr-2 font-medium text-right">
           <TooltipProvider>
             <Tooltip delayDuration={0}>
               <TooltipTrigger asChild>
-                <span className="decoration-dotted cursor-default underline">
+                <span className="underline cursor-default decoration-dotted">
                   PnL
                 </span>
               </TooltipTrigger>
@@ -62,7 +62,7 @@ export const Recent = () => {
           </TooltipProvider>
         </div>
       </div>
-      <div className="grid grid-cols-5 col-span-5 gap-2 w-full">
+      <div className="grid w-full grid-cols-5 col-span-5 gap-2">
         <RecentItem />
         <RecentItem />
         <RecentItem />
@@ -94,7 +94,7 @@ const RecentItem = () => {
           isHovered ? 'bg-blue-550/10' : '',
         )}
       >
-        <div className="flex items-center gap-2 w-full col-span-3">
+        <div className="flex items-center w-full col-span-3 gap-2">
           <Currency.IconList iconWidth={32} iconHeight={32}>
             <Currency.Icon
               disableLink
@@ -126,7 +126,7 @@ const RecentItem = () => {
             />
           </Currency.IconList>
 
-          <span className="text-slate-900 text-sm font-medium dark:text-pink-100">
+          <span className="text-sm font-medium text-slate-900 dark:text-pink-100">
             ETH/USDC
           </span>
 
@@ -146,19 +146,19 @@ const RecentItem = () => {
         ) : isHovered && !isMd ? null : (
           <>
             <div className="text-left pl-0.5">
-              <span className="text-slate-900 font-medium dark:text-pink-100">
+              <span className="font-medium text-slate-900 dark:text-pink-100">
                 {formatUSD(0.87)}
               </span>
             </div>
-            <div className="ml-auto col-span-1 w-full text-right">
-              <span className="font-medium text-green">+5.5%</span>
+            <div className="w-full col-span-1 ml-auto text-right">
+              <span className="font-medium text-[#1DA67D]">+5.5%</span>
             </div>
           </>
         )}
         {isHovered && !isMd ? (
           <div className="col-span-5 mt-2">
             <Collapsible open={isHovered}>
-              <div className="grid col-span-5 grid-cols-5 gap-2 w-full">
+              <div className="grid w-full grid-cols-5 col-span-5 gap-2">
                 <ActionButtons />
               </div>
             </Collapsible>
@@ -171,7 +171,7 @@ const RecentItem = () => {
 
 const ActionButtons = () => {
   return (
-    <div className="flex items-center w-full gap-2 col-span-5 md:col-span-2 justify-end">
+    <div className="flex items-center justify-end w-full col-span-5 gap-2 md:col-span-2">
       <Button
         size="xs"
         className="text-slate-50 w-full md:w-fit !rounded-full bg-green-500 font-semibold hover:bg-green-500 active:bg-green-500/95 focus:bg-green-500"

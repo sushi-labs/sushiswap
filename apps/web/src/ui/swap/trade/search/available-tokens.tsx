@@ -23,9 +23,11 @@ export const AvailableTokens = () => {
   }
 
   return (
-    <div className="flex flex-col gap-2 w-full">
-      <h4 className="hidden md:block">Available</h4>
-      <div className="flex gap-2 items-center whitespace-nowrap md:grid md:grid-cols-3 md:gap-2 hide-scrollbar overflow-x-auto">
+    <div className="flex flex-col w-full gap-2">
+      <h4 className="hidden md:block text-[#535263] font-medium dark:text-[#E4DDEC] text-sm">
+        Available
+      </h4>
+      <div className="flex items-center gap-2 overflow-x-auto whitespace-nowrap md:grid md:grid-cols-3 md:gap-2 hide-scrollbar">
         {isLoading ? (
           new Array(6)
             .fill(null)
@@ -36,7 +38,7 @@ export const AvailableTokens = () => {
               />
             ))
         ) : isError ? (
-          <div className="text-center text-red text-sm pt-4">
+          <div className="pt-4 text-sm text-center text-red">
             Could Not Fetch Wallet Holdings
           </div>
         ) : !firstFiveTokens.length ? (
@@ -97,7 +99,7 @@ const TokenOption = ({ token }: { token: PortfolioWalletToken }) => {
         />
       </Badge>
 
-      <div className="flex gap-1 items-start">
+      <div className="flex items-start gap-1">
         <span>{formatNumber(token.amount, 2)}</span>
         <span>{token.symbol}</span>
       </div>

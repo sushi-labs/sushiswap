@@ -205,5 +205,7 @@ export function TokenSelectorStatesV2({
 }
 
 const Title = () => (
-  <p className="mb-2 mt-4 text-xs text-slate-450 dark:text-slate-500">Tokens</p>
+  <p className="mt-4 mb-2 text-xs font-medium text-slate-450 dark:text-slate-500">
+    Tokens
+  </p>
 )

@@ -33,6 +33,7 @@ export const ChainOptionsSelector = ({
   onNetworkSelect?: (network: number) => void
 }) => {
   const iconSize = size === 'sm' ? 16 : 24
+  const paddingPx = size === 'sm' ? 4 : 8
 
   const containerRef = useRef<HTMLDivElement>(null)
   const [visibleCount, setVisibleCount] = useState(0)
@@ -41,9 +42,9 @@ export const ChainOptionsSelector = ({
     const container = containerRef.current
     if (!container) return
 
-    const gapPx = 4
+    const gapPx = size === 'sm' ? 4 : 6
     const iconWidth = size === 'sm' ? 26 : 34
-    const slotWidth = iconWidth + gapPx
+    const slotWidth = iconWidth + gapPx + paddingPx
 
     const containerWidth = container.clientWidth - 6
     const rawFit = Math.floor(containerWidth / slotWidth)
@@ -53,7 +54,7 @@ export const ChainOptionsSelector = ({
       rawFit < networks.length && rawFit > 0 ? rawFit - 1 : rawFit
 
     setVisibleCount(fitCount)
-  }, [size])
+  }, [size, paddingPx])
 
   useLayoutEffect(() => {
     if (!containerRef.current) return
@@ -94,9 +95,17 @@ export const ChainOptionsSelector = ({
                 onClick={() => onNetworkSelect?.(chainId)}
                 iconSize={iconSize}
                 chainId={chainId}
+                size={size}
               />
             </TooltipTrigger>
-            <TooltipContent className="dark:border-[#FFFFFF14] font-normal !rounded-md bg-[#e9eff5] backdrop-blur-[20px] border-[#00000014] dark:bg-[#151c34]">
+            <TooltipContent
+              className={classNames(
+                ' font-normal !rounded-md ',
+                size === 'sm'
+                  ? 'border-[#00000014] dark:bg-[#151c34] backdrop-blur-[20px] dark:border-[#FFFFFF14] bg-[#e9eff5] '
+                  : 'border-black/5 dark:border-white/5 !rounded-md bg-white/20 dark:bg-black/20',
+              )}
+            >
               {EvmChainKey[chainId].toLocaleUpperCase()}
             </TooltipContent>
           </Tooltip>
@@ -108,10 +117,10 @@ export const ChainOptionsSelector = ({
             <button
               type="button"
               className={classNames(
-                'border border-black/10  dark:border-white/10 rounded-md p-1 flex items-center justify-center',
+                'border border-black/10 dark:border-white/10 rounded-md p-1 flex items-center justify-center',
                 size === 'sm'
                   ? 'w-[26px] h-[26px] min-h-[26px] min-w-[26px]'
-                  : 'w-[34px] h-[34px] min-h-[34px] min-w-[34px]',
+                  : 'w-[41px] h-[41px] min-h-[41px] min-w-[41px]',
               )}
             >
               <EllipsisHorizontalIcon
@@ -132,7 +141,11 @@ export const ChainOptionsSelector = ({
                   key={chainId}
                   onClick={() => onNetworkSelect?.(chainId)}
                 >
-                  <NetworkButton iconSize={iconSize} chainId={chainId} />
+                  <NetworkButton
+                    iconSize={iconSize}
+                    chainId={chainId}
+                    size={size}
+                  />
                   <span className="ml-2">
                     {EvmChainKey[chainId].toLocaleUpperCase()}
                   </span>
@@ -151,13 +164,17 @@ export const NetworkButton = forwardRef<
   {
     chainId: number
     iconSize: number
+    size?: 'sm' | 'lg'
   } & React.ButtonHTMLAttributes<HTMLButtonElement>
->(({ chainId, iconSize, ...props }, ref) => (
+>(({ chainId, iconSize, size = 'sm', ...props }, ref) => (
   <button
     ref={ref}
     {...props}
     type="button"
-    className="flex items-center justify-center p-1 border rounded-md border-black/10 dark:border-white/10"
+    className={classNames(
+      'flex items-center justify-center p-1 border rounded-md border-black/10 dark:border-white/10',
+      size === 'sm' ? 'p-1' : 'p-2',
+    )}
   >
     <NetworkIcon
       type="square"

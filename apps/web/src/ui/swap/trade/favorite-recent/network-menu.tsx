@@ -22,7 +22,7 @@ export const NetworkMenu = ({ className }: { className?: string }) => {
         <Button
           variant="ghost"
           className={classNames(
-            'flex items-center font-medium !gap-1',
+            'flex items-center font-medium !gap-1 !px-2 !pl-4',
             className,
           )}
         >
