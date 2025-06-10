@@ -132,7 +132,11 @@ export const ChainOptionsSelector = ({
                   key={chainId}
                   onClick={() => onNetworkSelect?.(chainId)}
                 >
-                  <NetworkButton iconSize={iconSize} chainId={chainId} />
+                  <NetworkButton
+                    iconSize={iconSize}
+                    chainId={chainId}
+                    className="border-none"
+                  />
                   <span className="ml-2">
                     {EvmChainKey[chainId].toLocaleUpperCase()}
                   </span>
@@ -152,12 +156,15 @@ export const NetworkButton = forwardRef<
     chainId: number
     iconSize: number
   } & React.ButtonHTMLAttributes<HTMLButtonElement>
->(({ chainId, iconSize, ...props }, ref) => (
+>(({ chainId, iconSize, className, ...props }, ref) => (
   <button
     ref={ref}
     {...props}
     type="button"
-    className="flex items-center justify-center p-1 border rounded-md border-black/10 dark:border-white/10"
+    className={classNames(
+      'flex items-center justify-center p-1 border rounded-md border-black/10 dark:border-white/10',
+      className,
+    )}
   >
     <NetworkIcon
       type="square"
