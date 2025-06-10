@@ -50,15 +50,11 @@ export const PercentageInputs: FC<PercentageInputs> = memo(
 
     if (loading || !isMounted) {
       return (
-        <div className="w-[30px] flex items-center">
+        <div className="w-[130px] gap-2 flex items-center">
           {Array(3)
             .fill(null)
             .map((_, idx) => (
-              <SkeletonText
-                fontSize="sm"
-                className="w-full rounded-full"
-                key={idx}
-              />
+              <SkeletonText className="w-full rounded-full" key={idx} />
             ))}
         </div>
       )

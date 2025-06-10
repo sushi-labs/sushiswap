@@ -13,6 +13,7 @@ type BalancePanel = Pick<
   account: string | undefined
   balance: Amount<Type> | null | undefined
   type: 'INPUT' | 'OUTPUT'
+  symbol?: string
 }
 
 const MIN_NATIVE_CURRENCY_FOR_GAS = 10n ** 16n // .01 ETH
@@ -24,6 +25,7 @@ export const BalancePanel: FC<BalancePanel> = memo(function BalancePanel({
   disableMaxButton,
   loading,
   type,
+  symbol,
 }) {
   const isMounted = useIsMounted()
   const balanceStr = balance ? `${balance?.toSignificant(6)}` : `0`
@@ -68,7 +70,7 @@ export const BalancePanel: FC<BalancePanel> = memo(function BalancePanel({
       )}
       disabled={disableMaxButton}
     >
-      Balance: {balanceStr} {balance?.currency?.symbol}
+      Balance: {balanceStr} {symbol || balance?.currency?.symbol}
     </button>
   )
 })

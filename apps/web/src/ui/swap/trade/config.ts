@@ -5,7 +5,14 @@ import {
 } from 'src/config'
 import type { ChainId } from 'sushi/chain'
 
-export const TRADE_MODES = ['swap', 'limit', 'dca', 'cross-chain-swap'] as const
+export const TRADE_MODES = [
+  'swap',
+  'limit',
+  'dca',
+  //@DEV temp taking out cross chain swap for now to show full UI
+  // "cross-chain-swap",
+  'fiat',
+] as const
 
 export type TradeMode = (typeof TRADE_MODES)[number]
 
@@ -16,7 +23,9 @@ export const CHAIN_IDS_BY_TRADE_MODE: Record<TradeMode, readonly ChainId[]> = {
   swap: SUPPORTED_CHAIN_IDS,
   limit: TWAP_SUPPORTED_CHAIN_IDS,
   dca: TWAP_SUPPORTED_CHAIN_IDS,
-  'cross-chain-swap': XSWAP_SUPPORTED_CHAIN_IDS,
+  //@DEV temp taking out cross chain swap for now to show full UI
+  // "cross-chain-swap": XSWAP_SUPPORTED_CHAIN_IDS,
+  fiat: SUPPORTED_CHAIN_IDS,
 }
 
 export const isSupportedTradeModeOnChainId = (

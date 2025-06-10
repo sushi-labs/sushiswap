@@ -15,6 +15,7 @@ export const config = {
     '/:chainId/limit/:path*',
     '/:chainId/dca/:path*',
     '/:chainId/cross-chain-swap/:path*',
+    '/:chainId/fiat/:path*',
     '/:chainId/explore/:path*',
     '/:chainId/pool/:path*',
     '/:chainId/token/:path*',
@@ -42,7 +43,8 @@ export async function middleware(req: NextRequest) {
     pathname === '/swap' ||
     pathname === '/limit' ||
     pathname === '/dca' ||
-    pathname === '/cross-chain-swap'
+    pathname === '/cross-chain-swap' ||
+    pathname === '/fiat'
   ) {
     const path = ['/explore', '/pools'].includes(pathname)
       ? 'explore/pools'
