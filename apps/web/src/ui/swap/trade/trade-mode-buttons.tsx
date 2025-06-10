@@ -104,6 +104,7 @@ const TradeModeOptionButton = (item: TradeModeOption) => {
       variant={item.active ? 'secondary' : 'ghost'}
       onClick={item.onClick}
       href={item.href}
+      className={item.active ? '!bg-[#0000001F] dark:!bg-[#FFFFFF1F]' : ''}
     >
       {item.name}
     </Button>

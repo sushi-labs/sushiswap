@@ -161,7 +161,7 @@ export const LimitPriceInputV2 = () => {
   return (
     <div
       className={classNames(
-        'relative overflow-hidden flex flex-col gap-2 border border-accent bg-gray-100 dark:bg-slate-900 rounded-xl',
+        'relative overflow-hidden flex flex-col gap-2 border border-white/10 dark:border-black/10 bg-gray-100 dark:bg-slate-900 rounded-xl',
       )}
     >
       <div className="flex justify-between items-center py-3 px-5">

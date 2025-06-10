@@ -20,7 +20,7 @@ export const TwapToken0Input = () => {
       id="swap-from"
       type="INPUT"
       className={classNames(
-        'border border-accent p-3 bg-gray-100 dark:bg-slate-900 rounded-xl',
+        'border border-white/10 dark:border-black/10 p-3 bg-gray-100 dark:bg-slate-900 rounded-xl',
       )}
       chainId={chainId}
       onSelect={setToken0}
@@ -29,7 +29,7 @@ export const TwapToken0Input = () => {
       currency={token0}
       currencyLoading={isLoading}
       allowNative={isWNativeSupported(chainId)}
-      label="Sell"
+      label={isLimit ? 'Sell' : 'Allocate'}
       isLimit={isLimit}
     />
   )

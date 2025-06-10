@@ -85,7 +85,7 @@ export const DCAToken1Input = () => {
   return (
     <div
       className={
-        'relative space-y-4 border border-accent p-3 bg-gray-100 dark:bg-slate-900 rounded-xl'
+        'relative space-y-4 border border-white/10 dark:border-black/10 p-3 bg-gray-100 dark:bg-slate-900 rounded-xl'
       }
     >
       <div className="flex justify-between items-end gap-4">

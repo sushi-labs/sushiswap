@@ -58,7 +58,9 @@ const DCATradesInput = () => {
   return (
     <div className="flex-1 flex flex-col gap-1 whitespace-nowrap">
       <div className="flex justify-between items-center">
-        <span className="text-sm text-muted-foreground">Over</span>
+        <span className="text-sm font-medium text-slate-900 dark:text-pink-100">
+          No. of Orders
+        </span>
         <Explainer>
           The total number of individual trades that will be scheduled as part
           of your order.
@@ -67,7 +69,7 @@ const DCATradesInput = () => {
 
       <div
         className={classNames(
-          'px-3 py-4 overflow-hidden border border-accent bg-gray-100 dark:bg-slate-900 rounded-xl',
+          'px-3 py-4 overflow-hidden border border-white/10 dark:border-black/10 bg-gray-100 dark:bg-slate-900 rounded-xl',
         )}
       >
         <TextField
@@ -139,7 +141,9 @@ const DCAIntervalInput = () => {
   return (
     <div className="flex-1 flex flex-col gap-1 whitespace-nowrap">
       <div className="flex justify-between items-center">
-        <span className="text-sm text-muted-foreground">Every</span>
+        <span className="text-sm font-medium text-slate-900 dark:text-pink-100">
+          Every
+        </span>
         <Explainer>
           The estimated time that will elapse between each trade in your order.
           Note that as this time includes an allowance of two minutes for bidder
@@ -153,7 +157,7 @@ const DCAIntervalInput = () => {
           minFillDelayError || maxFillDelayError
             ? '!bg-red-500/20 !dark:bg-red-900/30'
             : '',
-          'px-3 py-2 overflow-hidden border border-accent bg-gray-100 dark:bg-slate-900 rounded-xl flex justify-between items-center',
+          'px-3 py-2 overflow-hidden border border-white/10 dark:border-black/10 bg-gray-100 dark:bg-slate-900 rounded-xl flex justify-between items-center',
         )}
       >
         <TextField
