@@ -64,6 +64,7 @@ interface CurrencyInputProps {
   showQuickSelect?: boolean
   hideInputAndPricing?: boolean
   isLimit?: boolean
+  hidePercentageInputs?: boolean
 }
 
 const CurrencyInput: FC<CurrencyInputProps> = ({
@@ -97,6 +98,7 @@ const CurrencyInput: FC<CurrencyInputProps> = ({
   showQuickSelect,
   hideInputAndPricing,
   isLimit,
+  hidePercentageInputs,
 }) => {
   const isMounted = useIsMounted()
 
@@ -308,7 +310,7 @@ const CurrencyInput: FC<CurrencyInputProps> = ({
           <span />
         )}
         <div className="flex items-center gap-4 justify-end">
-          {type === 'INPUT' ? (
+          {type === 'INPUT' && !hidePercentageInputs ? (
             <PercentageInputs
               loading={isBalanceLoading}
               chainId={chainId}
