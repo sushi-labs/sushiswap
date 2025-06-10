@@ -79,7 +79,7 @@ export default function TradePage() {
             <Container maxWidth="screen-2xl" className="px-4">
               <div className="flex flex-col-reverse w-full gap-4 md:flex-row">
                 <div className="flex w-full flex-col gap-4 md:w-[calc(100%-480px)]">
-                  <div className="w-full md:h-[648px] flex flex-col md:p-5 md:gap-3">
+                  <div className="w-full md:h-[654px] flex flex-col md:p-5 md:gap-3">
                     {isScriptReady ? (
                       isMdScreen ? (
                         <>
@@ -93,11 +93,11 @@ export default function TradePage() {
                       <SkeletonBox className="w-full h-[36px]" />
                     )}
                   </div>
-                  <div className="w-full md:h-[320px] pt-12 lg:pt-0">
+                  <div className="w-full md:h-[320px] pt-0 md:pt-4">
                     <TradeTableTabs />
                   </div>
                 </div>
-                <div className="flex w-full flex-col gap-4 md:min-w-[480px]">
+                <div className="flex w-full flex-col gap-4 md:min-w-[480px] md:w-[480px]">
                   <Search />
                   <TradeWidget />
                   <FavoriteRecentTabView />

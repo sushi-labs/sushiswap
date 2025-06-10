@@ -14,7 +14,7 @@ export const TradeTableFilters = () => {
   const ALL_CHAINS_IN_TABLE = [1, 43114]
 
   return (
-    <div className="flex items-center w-full justify-between xl:justify-end gap-3 px-5 pt-3 pb-1 md:px-3 xl:px-0 md:pt-0 md:pb-0 bg-[#F9FAFB] xl:!bg-background md:bg-white md:dark:bg-slate-800 dark:bg-background">
+    <div className="flex items-center w-full justify-between xl:justify-end gap-3 px-5 pt-3 pb-1 md:px-3 xl:px-0 md:pt-0 md:pb-0 bg-[#F9FAFB] xl:!bg-background md:bg-white md:dark:bg-slate-800 dark:bg-background  overflow-x-auto hide-scrollbar">
       <div className="flex items-center gap-2">
         <span className="text-sm whitespace-nowrap dark:text-slate-500">
           Show Current Pair Only
@@ -31,10 +31,6 @@ export const TradeTableFilters = () => {
         <div className="flex items-center gap-2">
           {ALL_CHAINS_IN_TABLE.map((chainId) => {
             const isSelected = chainsToShow.includes(chainId)
-            console.log(`Chain ${chainId} selection state:`, {
-              isSelected,
-              isDarkMode,
-            })
 
             return (
               <Button
@@ -47,7 +43,7 @@ export const TradeTableFilters = () => {
                     const newSelection = prev.includes(chainId)
                       ? prev.filter((id) => id !== chainId)
                       : [...prev, chainId]
-                    console.log(`Chain selection updated:`, newSelection)
+
                     return newSelection
                   })
                 }}

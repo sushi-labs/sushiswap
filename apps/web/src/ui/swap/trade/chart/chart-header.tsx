@@ -6,6 +6,7 @@ import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import { useMemo } from 'react'
 import type { Type } from 'sushi/currency'
 
+import { useBreakpoint } from '@sushiswap/hooks'
 import { useState } from 'react'
 import { TokenSelectorV2 } from 'src/lib/wagmi/components/token-selector/token-selector-v2'
 import { USDC } from 'sushi/currency'
@@ -14,6 +15,7 @@ import { Rate } from './rate'
 export const ChartHeader = () => {
   const [token, setToken] = useState<Type>(Native.onChain(43114))
   const [isTokenLoading, _setIsTokenLoading] = useState(false)
+  const { isMd: isMdScreen } = useBreakpoint('md')
 
   const input0 = token
   const input1 = USDC[43114]
@@ -27,6 +29,7 @@ export const ChartHeader = () => {
         onSelect={(token) => {
           setToken(token)
         }}
+        variant={isMdScreen ? 'default' : 'semi-opaque'}
       >
         <Button
           data-state={isTokenLoading ? 'inactive' : 'active'}
@@ -72,7 +75,7 @@ export const ChartHeader = () => {
         </Button>
       </TokenSelectorV2>
     )
-  }, [token, isTokenLoading])
+  }, [token, isTokenLoading, isMdScreen])
 
   return (
     <div className="flex flex-col items-start justify-between w-full gap-4 lg:items-center md:flex-col lg:flex-row lg:gap-0">

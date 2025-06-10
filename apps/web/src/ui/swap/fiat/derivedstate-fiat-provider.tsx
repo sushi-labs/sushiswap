@@ -39,12 +39,15 @@ export type FiatCurrency = {
   code: string
 }
 
+export type FiatPaymentType = 'debit' | 'credit' | 'apple-pay'
+
 interface State {
   mutate: {
     setToken0(token0: FiatCurrency): void
     setToken1(token1: Type | string): void
     setTokens(token0: FiatCurrency | string, token1: Type | string): void
     setSwapAmount(swapAmount: string): void
+    setPaymentType(type: null | FiatPaymentType): void
   }
   state: {
     token0: FiatCurrency | undefined
@@ -52,6 +55,7 @@ interface State {
     chainId: EvmChainId
     swapAmountString: string
     recipient: string | undefined
+    paymentType: FiatPaymentType | null
   }
   isLoading: boolean
   isToken1Loading: boolean
@@ -84,6 +88,7 @@ const DerivedStateFiatProvider: FC<DerivedStateFiatProviderProps> = ({
   const [localFiatCache, setLocalFiatCache] = useState<
     Map<string, FiatCurrency>
   >(new Map())
+  const [paymentType, _setPaymentType] = useState<FiatPaymentType | null>(null)
 
   const chainId =
     _chainId && isSupportedChainId(+_chainId)
@@ -119,6 +124,21 @@ const DerivedStateFiatProvider: FC<DerivedStateFiatProviderProps> = ({
       return params.toString()
     },
     [defaultedParams],
+  )
+
+  // Update the URL with a new token0
+  const setPaymentType = useCallback<(_type: null | FiatPaymentType) => void>(
+    (_type) => {
+      // If entity is provided, parse it to a string
+
+      if (typeof _type === 'string') {
+        push(
+          `${pathname}?${createQueryString([{ name: 'paymentType', value: _type }])}`,
+        )
+      }
+      _setPaymentType(_type)
+    },
+    [createQueryString, pathname, push],
   )
 
   // Update the URL with a new token0
@@ -220,6 +240,7 @@ const DerivedStateFiatProvider: FC<DerivedStateFiatProviderProps> = ({
             setToken1,
             setTokens,
             setSwapAmount,
+            setPaymentType,
           },
           state: {
             recipient: address ?? '',
@@ -227,6 +248,7 @@ const DerivedStateFiatProvider: FC<DerivedStateFiatProviderProps> = ({
             swapAmountString,
             token0: _token0,
             token1: _token1,
+            paymentType,
           },
           isLoading: token1Loading,
 
@@ -243,6 +265,8 @@ const DerivedStateFiatProvider: FC<DerivedStateFiatProviderProps> = ({
         token0,
         token1,
         token1Loading,
+        paymentType,
+        setPaymentType,
       ])}
     >
       {children}

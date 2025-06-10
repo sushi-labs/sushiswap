@@ -34,7 +34,7 @@ export const TradeTableTabs = () => {
       className="-mx-5 md:mx-0"
     >
       <div className="flex flex-col items-start justify-between xl:items-center xl:flex-row">
-        <div className="w-full p-3 bg-white border-b rounded-t-lg xl:px-0 md:border-none xl:!bg-background dark:bg-background md:dark:bg-slate-800 border-accent">
+        <div className="w-full p-3 bg-white border-b rounded-t-lg xl:px-0 md:border-none xl:!bg-background dark:bg-background md:dark:bg-slate-800 border-accent overflow-x-auto hide-scrollbar">
           <TabsList className="!px-2.5 w-full md:!px-0 gap-2 md:!pb-0 !pb-6 !justify-start bg-white xl:!bg-transparent dark:bg-background md:dark:bg-slate-800 !border-none rounded-none shadow-none md:rounded-lg md:border-none md:mx-0 xl:rounded-lg !rounded-b-none">
             {TABS.map((tab) => (
               <TabsTrigger

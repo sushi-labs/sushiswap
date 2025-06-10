@@ -5,7 +5,6 @@ import { QuickSelectOverlay } from 'src/lib/wagmi/components/token-selector/quic
 import { EdgeProvider, useEdgeConfig } from 'src/providers/edge-config-provider'
 // import { DerivedstateCrossChainSwapProvider } from "src/ui/swap/cross-chain/derivedstate-cross-chain-swap-provider";
 import { DerivedstateSimpleSwapProvider } from 'src/ui/swap/simple/derivedstate-simple-swap-provider'
-import { DerivedStateFiatProvider } from '../fiat/derivedstate-fiat-provider'
 import { SimpleSwapSettingsOverlay } from '../simple/simple-swap-settings-overlay'
 import { DerivedStateTwapProvider } from '../twap/derivedstate-twap-provider'
 import { useDerivedStateSimpleTrade } from './derivedstate-simple-trade-provider'
@@ -72,13 +71,13 @@ export const TradeWidget = () => {
 							</DerivedstateCrossChainSwapProvider>
 						)} */}
             {tradeMode === 'fiat' && (
-              <DerivedStateFiatProvider>
+              <>
                 <div className="flex items-center justify-between">
                   <TradeModeButtons />
                   <SimpleSwapSettingsOverlay />
                 </div>
                 <FiatWidget animated={tradeModeChanged} />
-              </DerivedStateFiatProvider>
+              </>
             )}
           </div>
         </Collapsible>
