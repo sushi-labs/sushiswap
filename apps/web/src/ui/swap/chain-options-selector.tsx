@@ -96,7 +96,7 @@ export const ChainOptionsSelector = ({
                 chainId={chainId}
               />
             </TooltipTrigger>
-            <TooltipContent className="border-black/5 dark:border-white/5 !rounded-md bg-white/20 dark:bg-black/20">
+            <TooltipContent className="dark:border-[#FFFFFF14] font-normal !rounded-md bg-[#e9eff5] backdrop-blur-[20px] border-[#00000014] dark:bg-[#151c34]">
               {EvmChainKey[chainId].toLocaleUpperCase()}
             </TooltipContent>
           </Tooltip>
@@ -117,7 +117,7 @@ export const ChainOptionsSelector = ({
               <EllipsisHorizontalIcon
                 width={iconSize}
                 height={iconSize}
-                className="text-slate-500 dark:text-slate-400"
+                className="text-[#0C0C23] dark:text-[#FFF5FA]"
               />
             </button>
           </DropdownMenuTrigger>
