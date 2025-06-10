@@ -1,13 +1,13 @@
 'use client'
 
 import { useBreakpoint, useIsSmScreen } from '@sushiswap/hooks'
-import { Container } from '@sushiswap/ui'
+import { Container, Loader, SkeletonBox } from '@sushiswap/ui'
 import Script from 'next/script'
 import type {
   ChartingLibraryWidgetOptions,
   ResolutionString,
 } from 'public/static/charting_library/charting_library'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import type { NonStandardChainId } from 'src/config'
 import { useSkaleEuropaFaucet } from 'src/lib/hooks'
 import { useHeaderNetworkSelector } from 'src/lib/wagmi/components/header-network-selector'
@@ -56,14 +56,12 @@ export default function TradePage() {
   const [isScriptReady, setIsScriptReady] = useState(false)
   const { isMd: isMdScreen } = useBreakpoint('md')
 
-  console.log('isMdScreen', isMdScreen)
-
   return (
     <>
       <Script
         src="/static/datafeeds/udf/dist/bundle.js"
         strategy="lazyOnload"
-        onReady={() => {
+        onLoad={() => {
           setIsScriptReady(true)
         }}
       />
@@ -91,7 +89,9 @@ export default function TradePage() {
                       ) : (
                         <MobileChart {...defaultWidgetProps} />
                       )
-                    ) : null}
+                    ) : isMdScreen ? null : (
+                      <SkeletonBox className="w-full h-[36px]" />
+                    )}
                   </div>
                   <div className="w-full md:h-[320px]">
                     <TradeTableTabs />

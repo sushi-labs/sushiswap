@@ -18,11 +18,8 @@ export const Chart = (props: Partial<ChartingLibraryWidgetOptions>) => {
   const { isMd: isMdScreen } = useBreakpoint('md')
   const { theme } = useTheme()
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
-    console.log('theme', theme)
-
-    console.log('TradingView chart ready, setting up interval widget quicks')
-
     const intervalQuicks = ['1D', '2D', '3D', '1W']
     localStorage.setItem(
       'tradingview.IntervalWidget.quicks',
@@ -465,7 +462,7 @@ export const Chart = (props: Partial<ChartingLibraryWidgetOptions>) => {
     return () => {
       tvWidget.remove()
     }
-  }, [props, chartContainerRef, theme, isMdScreen])
+  }, [props.symbol, chartContainerRef, theme, isMdScreen])
 
   return (
     <div className="flex flex-col flex-grow rounded-xl">

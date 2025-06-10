@@ -70,5 +70,25 @@ div[data-section-name="extendLeftTradingLine"] {
   background-color: var(--background-color) !important;
 }
 
+ :root {  
+  --tv-color-popup-element-text-active: #ffffff;
+  --tv-color-popup-element-background-active: #4217ff;
+  
+  --themed-color-background-selected: #4217ff;
+  --themed-color-background-special-secondary: #4217ff;
 
+  --tv-color-toolbar-button-text: #535263;
+
+}
+
+.theme-dark:root {
+  --tv-color-popup-element-text-active: #ffffff;
+  --tv-color-popup-element-background-active: #3b83f6;
+
+  --themed-color-background-selected: #3b83f6;
+  --themed-color-background-special-secondary: #3b83f6;
+
+  --tv-color-toolbar-button-text: #FFF5FA;
+}
+ 
 
