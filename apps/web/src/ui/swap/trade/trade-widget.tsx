@@ -20,7 +20,7 @@ import { Wrapper } from './wrapper'
 //@DEV temp taking out cross chain swap for now to show full UI
 export const TradeWidget = () => {
   const {
-    state: { tradeMode, tradeModeChanged },
+    state: { tradeMode, tradeModeChanged, tradeView },
   } = useDerivedStateSimpleTrade()
 
   const tradeEdge = useEdgeConfig<TradeEdgeConfig>()
@@ -38,7 +38,10 @@ export const TradeWidget = () => {
                   <TradeModeButtons />
                   <SimpleSwapSettingsOverlay />
                 </div>
-                <SwapWidget animated={tradeModeChanged} />
+                <SwapWidget
+                  isAdvanced={tradeView === 'advanced'}
+                  animated={tradeModeChanged}
+                />
               </DerivedstateSimpleSwapProvider>
             )}
             {tradeMode === 'limit' && (

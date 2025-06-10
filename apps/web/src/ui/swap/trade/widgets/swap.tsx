@@ -9,7 +9,10 @@ import { SimpleSwapTradeButton } from 'src/ui/swap/simple/simple-swap-trade-butt
 import { SimpleSwapTradeStats } from 'src/ui/swap/simple/simple-swap-trade-stats'
 import { SwapMaintenanceMessage } from 'src/ui/swap/simple/swap-maintenance-message'
 
-export const SwapWidget: FC<{ animated: boolean }> = ({ animated }) => {
+export const SwapWidget: FC<{ animated: boolean; isAdvanced?: boolean }> = ({
+  animated,
+  isAdvanced,
+}) => {
   return (
     <div
       className={classNames('flex flex-col gap-4', {
@@ -23,7 +26,7 @@ export const SwapWidget: FC<{ animated: boolean }> = ({ animated }) => {
         <SimpleSwapToken1Input />
         <SimpleSwapTradeButton />
       </div>
-      <SimpleSwapTradeStats />
+      {isAdvanced ? null : <SimpleSwapTradeStats />}
       <SimpleSwapBanner className="xl:hidden" />
       <SimpleSwapTokenNotFoundDialog />
     </div>
