@@ -29,36 +29,48 @@ export const TradeTableFilters = () => {
           Chains:
         </span>
         <div className="flex items-center gap-2">
-          {ALL_CHAINS_IN_TABLE.map((chainId) => (
-            <Button
-              key={chainId}
-              asChild
-              type="button"
-              onClick={() =>
-                setChainsToShow((prev) =>
-                  prev.includes(chainId)
-                    ? prev.filter((id) => id !== chainId)
-                    : [...prev, chainId],
-                )
-              }
-              className={classNames(
-                'dark:border-[#222137] !p-2 border-[#F5F5F5] border !rounded-lg overflow-hidden',
-              )}
-              variant={
-                chainsToShow.includes(chainId) && isDarkMode
-                  ? 'quaternary'
-                  : chainsToShow.includes(chainId)
-                    ? 'quinary'
-                    : 'ghost'
-              }
-            >
-              <NetworkIcon
-                type="square"
-                chainId={chainId}
-                className="rounded-[4px] w-5 aspect-1"
-              />
-            </Button>
-          ))}
+          {ALL_CHAINS_IN_TABLE.map((chainId) => {
+            const isSelected = chainsToShow.includes(chainId)
+            console.log(`Chain ${chainId} selection state:`, {
+              isSelected,
+              isDarkMode,
+            })
+
+            return (
+              <Button
+                key={chainId}
+                asChild
+                type="button"
+                onClick={() => {
+                  console.log(`Toggling chain ${chainId}`)
+                  setChainsToShow((prev) => {
+                    const newSelection = prev.includes(chainId)
+                      ? prev.filter((id) => id !== chainId)
+                      : [...prev, chainId]
+                    console.log(`Chain selection updated:`, newSelection)
+                    return newSelection
+                  })
+                }}
+                className={classNames(
+                  'dark:border-[#222137] !p-2 border-[#F5F5F5] lg:!border-[#00000014] dark:lg:!border-[#FFFFFF14] border !rounded-lg overflow-hidden',
+                  !isSelected && 'lg:bg-white dark:lg:bg-slate-800',
+                )}
+                variant={
+                  isSelected && isDarkMode
+                    ? 'quaternary'
+                    : isSelected
+                      ? 'quinary'
+                      : 'ghost'
+                }
+              >
+                <NetworkIcon
+                  type="square"
+                  chainId={chainId}
+                  className="rounded-[4px] w-5 aspect-1"
+                />
+              </Button>
+            )
+          })}
         </div>
       </div>
     </div>

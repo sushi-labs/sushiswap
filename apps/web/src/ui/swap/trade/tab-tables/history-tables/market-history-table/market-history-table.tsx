@@ -1,6 +1,8 @@
 import { Loader } from '@sushiswap/ui'
 import { DataTable } from '@sushiswap/ui'
 import { Card } from '@sushiswap/ui'
+import { useMemo } from 'react'
+import { useState } from 'react'
 import InfiniteScroll from 'react-infinite-scroll-component'
 import { Native } from 'sushi/currency'
 import { MobileCard } from '../mobile-card/mobile-card'
@@ -8,10 +10,10 @@ import {
   BUY_COLUMN,
   CHAIN_COLUMN,
   DATE_COLUMN,
-  PRICE_USD_COLUMN,
   SELL_COLUMN,
   TX_HASH_COLUMN,
   VALUE_PNL_COLUMN,
+  getPriceUsdColumn,
 } from './market-history-columns'
 
 export interface MarketTrade {
@@ -78,18 +80,27 @@ export const MOCK_DATA: MarketTrade[] = [
   },
 ]
 
-export const COLUMNS = [
-  BUY_COLUMN,
-  SELL_COLUMN,
-  CHAIN_COLUMN,
-  VALUE_PNL_COLUMN,
-  PRICE_USD_COLUMN,
-  TX_HASH_COLUMN,
-  DATE_COLUMN,
-]
-
 export const MarketTable = () => {
   const data = MOCK_DATA
+  const [showInUsd, setShowInUsd] = useState(true)
+
+  const priceCol = useMemo(
+    () => getPriceUsdColumn(showInUsd, setShowInUsd),
+    [showInUsd],
+  )
+
+  const COLUMNS = useMemo(
+    () => [
+      BUY_COLUMN,
+      SELL_COLUMN,
+      CHAIN_COLUMN,
+      VALUE_PNL_COLUMN,
+      priceCol,
+      TX_HASH_COLUMN,
+      DATE_COLUMN,
+    ],
+    [priceCol],
+  )
 
   return (
     <InfiniteScroll

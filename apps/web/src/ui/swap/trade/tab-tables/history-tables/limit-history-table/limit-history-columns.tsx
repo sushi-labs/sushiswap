@@ -117,19 +117,32 @@ export const VALUE_PNL_COLUMN: ColumnDef<LimitOrderHistory> = {
   ),
 }
 
-export const PRICE_USD_COLUMN: ColumnDef<LimitOrderHistory> = {
+export const getPriceUsdColumn = (
+  showInUsd: boolean,
+  setShowInUsd: React.Dispatch<React.SetStateAction<boolean>>,
+): ColumnDef<LimitOrderHistory> => ({
   id: 'priceUsd',
   enableSorting: false,
-
   header: () => (
     <TooltipProvider>
       <Tooltip>
         <TooltipTrigger asChild>
-          <div className="flex items-start gap-1">
+          <div
+            onClick={(e) => {
+              e.stopPropagation()
+              setShowInUsd((prev) => !prev)
+            }}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.stopPropagation()
+              }
+            }}
+            className="flex items-start gap-1 cursor-pointer select-none"
+          >
             <span>Price</span>
             <span className="inline-flex items-center dark:text-skyblue text-blue font-normal gap-[1px] border-b border-dashed border-current">
               <DollarCircledIcon className="w-3 h-3" />
-              <span>USD</span>
+              <span>{showInUsd ? 'USD' : 'Token'}</span>
             </span>
           </div>
         </TooltipTrigger>
@@ -140,8 +153,18 @@ export const PRICE_USD_COLUMN: ColumnDef<LimitOrderHistory> = {
     </TooltipProvider>
   ),
   accessorFn: (row) => row.priceUsd,
-  cell: ({ row }) => <span>{formatUSD(row.original.priceUsd)}</span>,
-}
+  cell: ({ row }) => {
+    const tokenPrice =
+      row.original.sellAmount && row.original.buyAmount
+        ? row.original.sellAmount / row.original.buyAmount
+        : 0
+    return showInUsd ? (
+      <span>{formatUSD(row.original.priceUsd)}</span>
+    ) : (
+      <span>{`${tokenPrice.toFixed(4)} ${row.original.sellToken.symbol}`}</span>
+    )
+  },
+})
 
 export const FILLED_COLUMN: ColumnDef<LimitOrderHistory> = {
   id: 'filled',

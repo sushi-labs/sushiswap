@@ -16,7 +16,11 @@ import type { ChartingLibraryWidgetOptions } from 'public/static/charting_librar
 import { Chart } from './chart'
 import { ChartHeader } from './chart-header'
 
-export const MobileChart = (props: Partial<ChartingLibraryWidgetOptions>) => {
+export const MobileChart = ({
+  widgetProps,
+}: {
+  widgetProps: Partial<ChartingLibraryWidgetOptions>
+}) => {
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -33,7 +37,7 @@ export const MobileChart = (props: Partial<ChartingLibraryWidgetOptions>) => {
             <IconButton variant={'ghost'} icon={XMarkIcon} name="Close" />
           </DialogClose>
         </DialogHeader>
-        <Chart {...props} />
+        <Chart widgetProps={widgetProps} />
       </DialogContent>
     </Dialog>
   )

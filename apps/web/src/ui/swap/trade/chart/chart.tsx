@@ -11,14 +11,17 @@ import { widget } from 'public/static/charting_library/charting_library.esm'
 import { useEffect, useRef } from 'react'
 import { ChartHeader } from './chart-header'
 
-export const Chart = (props: Partial<ChartingLibraryWidgetOptions>) => {
+export const Chart = ({
+  widgetProps,
+}: {
+  widgetProps: Partial<ChartingLibraryWidgetOptions>
+}) => {
   const chartContainerRef = useRef<HTMLDivElement>(
     null,
   ) as React.MutableRefObject<HTMLInputElement>
   const { isMd: isMdScreen } = useBreakpoint('md')
   const { theme } = useTheme()
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
     const intervalQuicks = ['1D', '2D', '3D', '1W']
     localStorage.setItem(
@@ -27,7 +30,7 @@ export const Chart = (props: Partial<ChartingLibraryWidgetOptions>) => {
     )
 
     const widgetOptions: ChartingLibraryWidgetOptions = {
-      symbol: props.symbol,
+      symbol: widgetProps.symbol,
       datafeed: new (window as any).Datafeeds.UDFCompatibleDatafeed(
         'https://demo_feed.tradingview.com',
         undefined,
@@ -36,10 +39,10 @@ export const Chart = (props: Partial<ChartingLibraryWidgetOptions>) => {
           expectedOrder: 'latestFirst',
         },
       ),
-      interval: props.interval as ResolutionString,
+      interval: widgetProps.interval as ResolutionString,
       container: chartContainerRef.current,
-      library_path: props.library_path,
-      locale: props.locale as LanguageCode,
+      library_path: widgetProps.library_path,
+      locale: widgetProps.locale as LanguageCode,
       disabled_features: [
         // 'use_localstorage_for_settings',
 
@@ -82,12 +85,12 @@ export const Chart = (props: Partial<ChartingLibraryWidgetOptions>) => {
         'hide_unresolved_symbols_in_legend',
         'hide_main_series_symbol_from_indicator_legend',
       ],
-      charts_storage_url: props.charts_storage_url,
-      charts_storage_api_version: props.charts_storage_api_version,
-      client_id: props.client_id,
-      user_id: props.user_id,
-      fullscreen: props.fullscreen,
-      autosize: props.autosize,
+      charts_storage_url: widgetProps.charts_storage_url,
+      charts_storage_api_version: widgetProps.charts_storage_api_version,
+      client_id: widgetProps.client_id,
+      user_id: widgetProps.user_id,
+      fullscreen: widgetProps.fullscreen,
+      autosize: widgetProps.autosize,
       custom_css_url: '/static/chart.css',
       theme: theme === 'dark' ? 'dark' : 'light',
       overrides: {
@@ -462,7 +465,7 @@ export const Chart = (props: Partial<ChartingLibraryWidgetOptions>) => {
     return () => {
       tvWidget.remove()
     }
-  }, [props.symbol, chartContainerRef, theme, isMdScreen])
+  }, [widgetProps, chartContainerRef, theme, isMdScreen])
 
   return (
     <div className="flex flex-col flex-grow rounded-xl">

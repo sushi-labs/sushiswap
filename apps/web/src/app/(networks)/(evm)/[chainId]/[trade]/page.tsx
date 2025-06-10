@@ -34,19 +34,6 @@ const chainIdsByTradeMode: Record<
   swap: null,
 }
 
-const defaultWidgetProps: Partial<ChartingLibraryWidgetOptions> = {
-  symbol: 'AAPL',
-  interval: '1D' as ResolutionString,
-  library_path: '/static/charting_library/',
-  locale: 'en',
-  charts_storage_url: 'https://saveload.tradingview.com',
-  charts_storage_api_version: '1.1',
-  client_id: 'tradingview.com',
-  user_id: 'public_user_id',
-  fullscreen: false,
-  autosize: true,
-}
-
 export default function TradePage() {
   const {
     state: { tradeMode, tradeView },
@@ -55,6 +42,19 @@ export default function TradePage() {
   useSkaleEuropaFaucet()
   const [isScriptReady, setIsScriptReady] = useState(false)
   const { isMd: isMdScreen } = useBreakpoint('md')
+
+  const defaultWidgetProps: Partial<ChartingLibraryWidgetOptions> = {
+    symbol: 'AAPL',
+    interval: '1D' as ResolutionString,
+    library_path: '/static/charting_library/',
+    locale: 'en',
+    charts_storage_url: 'https://saveload.tradingview.com',
+    charts_storage_api_version: '1.1',
+    client_id: 'tradingview.com',
+    user_id: 'public_user_id',
+    fullscreen: false,
+    autosize: true,
+  }
 
   return (
     <>
@@ -84,16 +84,16 @@ export default function TradePage() {
                       isMdScreen ? (
                         <>
                           <ChartHeader />
-                          <Chart {...defaultWidgetProps} />
+                          <Chart widgetProps={defaultWidgetProps} />
                         </>
                       ) : (
-                        <MobileChart {...defaultWidgetProps} />
+                        <MobileChart widgetProps={defaultWidgetProps} />
                       )
                     ) : isMdScreen ? null : (
                       <SkeletonBox className="w-full h-[36px]" />
                     )}
                   </div>
-                  <div className="w-full md:h-[320px]">
+                  <div className="w-full md:h-[320px] pt-12 lg:pt-0">
                     <TradeTableTabs />
                   </div>
                 </div>

@@ -1,7 +1,6 @@
 'use client'
 
 import { Card, DataTable, Loader } from '@sushiswap/ui'
-import type { ColumnDef } from '@tanstack/react-table'
 import React from 'react'
 import InfiniteScroll from 'react-infinite-scroll-component'
 import { Native } from 'sushi/currency'
@@ -11,10 +10,10 @@ import {
   CHAIN_COLUMN,
   DATE_COLUMN,
   FILLED_COLUMN,
-  PRICE_USD_COLUMN,
   SELL_COLUMN,
   STATUS_COLUMN,
   VALUE_PNL_COLUMN,
+  getPriceUsdColumn,
 } from './limit-history-columns'
 
 export type LimitOrderStatus = 'Completed' | 'Cancelled' | 'Pending'
@@ -80,30 +79,42 @@ const MOCK_DATA: LimitOrderHistory[] = [
   },
 ]
 
-const COLUMNS: ColumnDef<LimitOrderHistory>[] = [
-  DATE_COLUMN,
-  BUY_COLUMN,
-  SELL_COLUMN,
-  CHAIN_COLUMN,
-  VALUE_PNL_COLUMN,
-  PRICE_USD_COLUMN,
-  FILLED_COLUMN,
-  STATUS_COLUMN,
-]
-
-const MOBILE_COLUMNS: ColumnDef<LimitOrderHistory>[] = [
-  BUY_COLUMN,
-  SELL_COLUMN,
-  PRICE_USD_COLUMN,
-  VALUE_PNL_COLUMN,
-  FILLED_COLUMN,
-  STATUS_COLUMN,
-  DATE_COLUMN,
-  CHAIN_COLUMN,
-]
-
 export const LimitOrdersHistoryTable = () => {
   const data = MOCK_DATA
+  const [showInUsd, setShowInUsd] = React.useState(true)
+
+  const priceColumn = React.useMemo(
+    () => getPriceUsdColumn(showInUsd, setShowInUsd),
+    [showInUsd],
+  )
+
+  const COLUMNS = React.useMemo(
+    () => [
+      DATE_COLUMN,
+      BUY_COLUMN,
+      SELL_COLUMN,
+      CHAIN_COLUMN,
+      VALUE_PNL_COLUMN,
+      priceColumn,
+      FILLED_COLUMN,
+      STATUS_COLUMN,
+    ],
+    [priceColumn],
+  )
+
+  const MOBILE_COLUMNS = React.useMemo(
+    () => [
+      BUY_COLUMN,
+      SELL_COLUMN,
+      priceColumn,
+      VALUE_PNL_COLUMN,
+      FILLED_COLUMN,
+      STATUS_COLUMN,
+      DATE_COLUMN,
+      CHAIN_COLUMN,
+    ],
+    [priceColumn],
+  )
 
   return (
     <InfiniteScroll

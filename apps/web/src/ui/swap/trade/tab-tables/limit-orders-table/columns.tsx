@@ -117,21 +117,35 @@ export const VALUE_PNL_COLUMN: ColumnDef<LimitOrder> = {
     </div>
   ),
 }
-export const PRICE_USD_COLUMN: ColumnDef<LimitOrder> = {
+
+export const getPriceColumn = (
+  showInUsd: boolean,
+  setShowInUsd: React.Dispatch<React.SetStateAction<boolean>>,
+): ColumnDef<LimitOrder> => ({
   id: 'priceUsd',
   header: () => (
     <TooltipProvider>
       <Tooltip>
         <TooltipTrigger asChild>
-          <span className="flex items-center gap-1">
+          <span
+            onClick={(e) => {
+              e.stopPropagation()
+              setShowInUsd((prev) => !prev)
+            }}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.stopPropagation()
+              }
+            }}
+            className="flex items-center gap-1 cursor-pointer select-none"
+          >
             <span>Price</span>
             <span className="inline-flex items-center dark:text-skyblue text-blue font-normal gap-[1px] border-b border-dashed border-current pb-[1px]">
               <DollarCircledIcon />
-              <span>USD</span>
+              <span>{showInUsd ? 'USD' : 'Token'}</span>
             </span>
           </span>
         </TooltipTrigger>
-
         <TooltipContent side="bottom">
           <p>Toggle to view price in USD or token pair unit.</p>
         </TooltipContent>
@@ -140,12 +154,17 @@ export const PRICE_USD_COLUMN: ColumnDef<LimitOrder> = {
   ),
   enableSorting: false,
   accessorFn: (row) => row.priceUsd,
-  cell: ({ row }) => (
-    <div className="flex items-center gap-2">
-      <span>{formatUSD(row.original.priceUsd)}</span>
-    </div>
-  ),
-}
+  cell: ({ row }) => {
+    const tokenPrice = row.original.sellAmount / row.original.buyAmount
+    return (
+      <span>
+        {showInUsd
+          ? formatUSD(row.original.priceUsd)
+          : `${tokenPrice.toFixed(4)} ${row.original.sellToken.symbol}`}
+      </span>
+    )
+  },
+})
 
 export const FILLED_COLUMN: ColumnDef<LimitOrder> = {
   id: 'filled',

@@ -2,13 +2,12 @@
 
 import { Card, DataTable, Loader, Slot } from '@sushiswap/ui'
 import type { ColumnDef, Row } from '@tanstack/react-table'
-import { type ReactNode, useState } from 'react'
+import { type ReactNode, useMemo, useState } from 'react'
 import { useCallback } from 'react'
 import InfiniteScroll from 'react-infinite-scroll-component'
 import { Native } from 'sushi/currency'
 import { MobileCard } from '../mobile-card/mobile-card'
 import {
-  AVG_PRICE_USD_COLUMN,
   CHAIN_COLUMN,
   FILLED_COLUMN,
   ORDERS_COLUMN,
@@ -16,6 +15,7 @@ import {
   SIZE_COLUMN,
   STATUS_COLUMN,
   VALUE_COLUMN,
+  getAvgPriceColumn,
   makeActionColumn,
 } from './dca-history-columns'
 import { DCAOrderDetailsModal } from './order-details-modal'
@@ -62,40 +62,50 @@ const MOCK_DATA: DCAOrderSummary[] = [
   },
 ]
 
-const COLUMNS: ColumnDef<DCAOrderSummary>[] = [
-  ORDER_ID_COLUMN,
-  FILLED_COLUMN,
-  SIZE_COLUMN,
-  CHAIN_COLUMN,
-  VALUE_COLUMN,
-  AVG_PRICE_USD_COLUMN,
-  ORDERS_COLUMN,
-  STATUS_COLUMN,
-]
-
 export const DCAOrdersHistoryTable = () => {
   const data = MOCK_DATA
   const [_selectedRow, setSelectedRow] = useState<DCAOrderSummary | null>(null)
   const [isOpen, setIsOpen] = useState(false)
+  const [showInUsd, setShowInUsd] = useState(true)
 
-  const openDetails = (row: DCAOrderSummary) => {
-    setSelectedRow(row)
-    setIsOpen(true)
-  }
+  const avgPriceColumn = useMemo(
+    () => getAvgPriceColumn(showInUsd, setShowInUsd),
+    [showInUsd],
+  )
 
-  const MOBILE_ACTION_COLUMN = makeActionColumn(openDetails)
+  const COLUMNS: ColumnDef<DCAOrderSummary>[] = useMemo(
+    () => [
+      ORDER_ID_COLUMN,
+      FILLED_COLUMN,
+      SIZE_COLUMN,
+      CHAIN_COLUMN,
+      VALUE_COLUMN,
+      avgPriceColumn,
+      ORDERS_COLUMN,
+      STATUS_COLUMN,
+    ],
+    [avgPriceColumn],
+  )
 
-  const MOBILE_COLUMNS: ColumnDef<DCAOrderSummary>[] = [
-    FILLED_COLUMN,
-    SIZE_COLUMN,
-    AVG_PRICE_USD_COLUMN,
-    VALUE_COLUMN,
-    CHAIN_COLUMN,
-    ORDERS_COLUMN,
-    STATUS_COLUMN,
-    MOBILE_ACTION_COLUMN,
-    ORDER_ID_COLUMN,
-  ]
+  const MOBILE_ACTION_COLUMN = useMemo(
+    () => makeActionColumn(setSelectedRow),
+    [],
+  )
+
+  const MOBILE_COLUMNS: ColumnDef<DCAOrderSummary>[] = useMemo(
+    () => [
+      FILLED_COLUMN,
+      SIZE_COLUMN,
+      avgPriceColumn,
+      VALUE_COLUMN,
+      CHAIN_COLUMN,
+      ORDERS_COLUMN,
+      STATUS_COLUMN,
+      MOBILE_ACTION_COLUMN,
+      ORDER_ID_COLUMN,
+    ],
+    [avgPriceColumn, MOBILE_ACTION_COLUMN],
+  )
 
   const rowRenderer = useCallback(
     (row: Row<DCAOrderSummary>, rowNode: ReactNode) => (
