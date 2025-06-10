@@ -35,7 +35,7 @@ export const SearchItem = () => {
         <FavoriteButton />
         <TokenNetworkIcon />
         {isHovered ? (
-          <div className="col-span-4 md:col-span-2 gap-2 mt-3 md:mt-0 md:ml-auto items-center flex px-8 md:px-0">
+          <div className="flex items-center col-span-4 gap-2 px-8 mt-3 md:col-span-2 md:mt-0 md:ml-auto md:px-0">
             <Button
               size="xs"
               className="text-slate-50 w-full md:w-fit !rounded-full bg-green-500 font-semibold hover:bg-green-500 active:bg-green-500/95 focus:bg-green-500"
@@ -82,16 +82,16 @@ export const SearchItem = () => {
               'grid col-span-4 grid-cols-[30px_auto_auto_auto] border border-black/5 dark:border-white/5 py-3 px-4 rounded-lg bg-skyblue/10',
             )}
           >
-            <div className="flex w-full col-span-4 flex-col gap-4">
-              <div className="flex gap-2 items-end">
-                <div className="flex items-start flex-col gap-2 h-full justify-between pb-1">
+            <div className="flex flex-col w-full col-span-4 gap-4">
+              <div className="flex items-end gap-2">
+                <div className="flex flex-col items-start justify-between h-full gap-2 pb-1">
                   <span className="text-slate-450 dark:text-slate-500 text-[10px]">
                     Bridge From
                   </span>
                   <div className="flex items-center gap-1 font-medium text-muted-foreground">
                     <NetworkIcon
                       type="square"
-                      className="rounded-[3px]"
+                      className="rounded-[3px] border border-[#E8E7EB] dark:border-[#222137]"
                       chainId={1}
                       width={16}
                       height={16}
@@ -99,14 +99,14 @@ export const SearchItem = () => {
                     <span className="text-xs">Ethereum</span>
                   </div>
                 </div>
-                <div className="ml-10 mr-3 pb-1">
+                <div className="pb-1 ml-10 mr-3">
                   <ArrowRightIcon
                     width={16}
                     height={16}
                     className="text-slate-450 dark:text-slate-500"
                   />
                 </div>
-                <div className="flex items-start flex-col gap-2 h-full w-full justify-between">
+                <div className="flex flex-col items-start justify-between w-full h-full gap-2">
                   <span className="text-slate-450 dark:text-slate-500 text-[10px]">
                     Bridge To
                   </span>
