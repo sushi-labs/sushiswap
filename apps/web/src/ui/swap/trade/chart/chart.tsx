@@ -13,9 +13,7 @@ import { ChartHeader } from './chart-header'
 
 export const Chart = ({
   widgetProps,
-}: {
-  widgetProps: Partial<ChartingLibraryWidgetOptions>
-}) => {
+}: { widgetProps: Partial<ChartingLibraryWidgetOptions> }) => {
   const chartContainerRef = useRef<HTMLDivElement>(
     null,
   ) as React.MutableRefObject<HTMLInputElement>
@@ -471,7 +469,10 @@ export const Chart = ({
     <div className="flex flex-col flex-grow rounded-xl">
       <script src="/tradingview/charting_library/bundles" />
       <div className="flex-grow">
-        <div ref={chartContainerRef} className={'md:h-[590px] h-full'} />
+        <div
+          ref={chartContainerRef}
+          className={'lg:h-[580px] md:h-[530px] h-full'}
+        />
       </div>
     </div>
   )
