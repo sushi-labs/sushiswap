@@ -472,6 +472,7 @@ export const Chart = ({
     chartContainerRef,
     theme,
     isMdScreen,
+    isMounted,
     widgetProps.symbol,
   ])
 
