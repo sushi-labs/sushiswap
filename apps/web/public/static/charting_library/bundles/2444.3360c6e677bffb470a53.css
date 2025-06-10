@@ -1,0 +1,21 @@
+.footer-dwINHZFL {
+  align-items: center;
+  background-color: var(--themed-color-bg, #f9f9f9);
+  border-radius: 0 0 6px 6px;
+  box-sizing: border-box;
+  color: var(--themed-color-default-gray, #707070);
+  cursor: default;
+  display: flex;
+  flex: 0 0 auto;
+  font-size: 13px;
+  justify-content: center;
+  line-height: 17px;
+  max-height: 65px;
+  min-height: 40px;
+  padding: 9px 20px;
+  text-align: center;
+}
+html.theme-dark .footer-dwINHZFL {
+  background-color: var(--themed-color-bg, #303030);
+  color: var(--themed-color-default-gray, #8c8c8c);
+}

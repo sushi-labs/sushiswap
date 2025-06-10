@@ -2,7 +2,7 @@
 
 import { Card, DataTable, Loader } from '@sushiswap/ui'
 import type { ColumnDef } from '@tanstack/react-table'
-import React from 'react'
+import React, { useMemo, useState } from 'react'
 import InfiniteScroll from 'react-infinite-scroll-component'
 import { Native } from 'sushi/currency'
 import { MobileCard } from '../history-tables/mobile-card/mobile-card'
@@ -11,10 +11,10 @@ import {
   BUY_COLUMN,
   CHAIN_COLUMN,
   FILLED_COLUMN,
-  PRICE_USD_COLUMN,
   SELL_COLUMN,
   TIME_COLUMN,
   VALUE_PNL_COLUMN,
+  getPriceColumn,
 } from './columns'
 
 export interface LimitOrder {
@@ -35,17 +35,6 @@ export interface LimitOrder {
   timestamp: number
   priceUsd: number
 }
-
-export const LIMIT_ORDER_COLUMNS: ColumnDef<LimitOrder>[] = [
-  BUY_COLUMN,
-  SELL_COLUMN,
-  CHAIN_COLUMN,
-  VALUE_PNL_COLUMN,
-  PRICE_USD_COLUMN,
-  FILLED_COLUMN,
-  TIME_COLUMN,
-  ACTION_COLUMN,
-]
 
 export const LIMIT_ORDER_MOCK_DATA: LimitOrder[] = [
   {
@@ -87,6 +76,27 @@ export const LIMIT_ORDER_MOCK_DATA: LimitOrder[] = [
 ]
 
 export const LimitOrdersTable = () => {
+  const [showInUsd, setShowInUsd] = useState(true)
+
+  const priceCol = useMemo(
+    () => getPriceColumn(showInUsd, setShowInUsd),
+    [showInUsd],
+  )
+
+  const LIMIT_ORDER_COLUMNS: ColumnDef<LimitOrder>[] = useMemo(
+    () => [
+      BUY_COLUMN,
+      SELL_COLUMN,
+      CHAIN_COLUMN,
+      VALUE_PNL_COLUMN,
+      priceCol,
+      FILLED_COLUMN,
+      TIME_COLUMN,
+      ACTION_COLUMN,
+    ],
+    [priceCol],
+  )
+
   const data = LIMIT_ORDER_MOCK_DATA
 
   return (

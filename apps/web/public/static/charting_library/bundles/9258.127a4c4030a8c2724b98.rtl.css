@@ -1,0 +1,8 @@
+.separator-Pf4rIzEt {
+  background-color: var(--themed-color-divider, #ebebeb);
+  height: 1px;
+  margin: 8px 0;
+}
+html.theme-dark .separator-Pf4rIzEt {
+  background-color: var(--themed-color-divider, #4a4a4a);
+}

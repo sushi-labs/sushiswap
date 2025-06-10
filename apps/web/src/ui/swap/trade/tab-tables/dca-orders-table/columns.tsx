@@ -85,17 +85,31 @@ export const SPENT_COLUMN: ColumnDef<DCAOrder> = {
   ),
 }
 
-export const AVG_PRICE_USD_COLUMN: ColumnDef<DCAOrder> = {
+export const getAvgPriceColumn = (
+  showInUsd: boolean,
+  setShowInUsd: React.Dispatch<React.SetStateAction<boolean>>,
+): ColumnDef<DCAOrder> => ({
   id: 'avgPriceUsd',
   header: () => (
     <TooltipProvider>
       <Tooltip>
         <TooltipTrigger asChild>
-          <div className="flex items-center gap-1">
+          <div
+            className="flex items-center gap-1 cursor-pointer select-none"
+            onClick={(e) => {
+              e.stopPropagation()
+              setShowInUsd((prev) => !prev)
+            }}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.stopPropagation()
+              }
+            }}
+          >
             <span>Avg. Price</span>
             <span className="inline-flex items-center dark:text-skyblue text-blue font-normal gap-[1px] border-b border-dashed border-current pb-[1px]">
               <DollarCircledIcon />
-              <span>USD</span>
+              <span>{showInUsd ? 'USD' : 'Token'}</span>
             </span>
           </div>
         </TooltipTrigger>
@@ -106,9 +120,14 @@ export const AVG_PRICE_USD_COLUMN: ColumnDef<DCAOrder> = {
     </TooltipProvider>
   ),
   enableSorting: false,
-  accessorFn: (row) => row.avgPriceUsd,
-  cell: ({ row }) => <span>{formatUSD(row.original.avgPriceUsd)}</span>,
-}
+  accessorFn: (row) => (showInUsd ? row.avgPriceUsd : row.avgPriceTokenUnit),
+  cell: ({ row }) =>
+    showInUsd ? (
+      <span>{formatUSD(row.original.avgPriceUsd)}</span>
+    ) : (
+      <span>{`${row.original.avgPriceTokenUnit} ${row.original.token.symbol}`}</span>
+    ),
+})
 
 export const EXPIRES_COLUMN: ColumnDef<DCAOrder> = {
   id: 'expires',

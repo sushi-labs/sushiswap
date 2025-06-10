@@ -1,0 +1,22 @@
+.emojiWrap-R2CTpmHr {
+  align-items: center;
+  display: inline-flex;
+  min-width: var(--tv-leading-emoji-size, 18px);
+}
+.emoji-R2CTpmHr,
+.emojiWrap-R2CTpmHr {
+  width: var(--tv-leading-emoji-size, 18px);
+}
+.emoji-R2CTpmHr {
+  height: var(--tv-leading-emoji-size, 18px);
+  position: absolute;
+}
+.tooltipEmoji-R2CTpmHr {
+  display: block;
+  position: absolute;
+}
+.tooltipEmojiWrap-R2CTpmHr {
+  align-items: center;
+  display: inline-flex;
+  min-width: 12px;
+}

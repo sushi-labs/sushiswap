@@ -1,10 +1,19 @@
 'use client'
 
-import { Container } from '@sushiswap/ui'
-import React from 'react'
+import { useBreakpoint, useIsSmScreen } from '@sushiswap/hooks'
+import { Container, Loader, SkeletonBox } from '@sushiswap/ui'
+import Script from 'next/script'
+import type {
+  ChartingLibraryWidgetOptions,
+  ResolutionString,
+} from 'public/static/charting_library/charting_library'
+import React, { useEffect, useState } from 'react'
 import type { NonStandardChainId } from 'src/config'
 import { useSkaleEuropaFaucet } from 'src/lib/hooks'
 import { useHeaderNetworkSelector } from 'src/lib/wagmi/components/header-network-selector'
+import { Chart } from 'src/ui/swap/trade/chart/chart'
+import { ChartHeader } from 'src/ui/swap/trade/chart/chart-header'
+import { MobileChart } from 'src/ui/swap/trade/chart/mobile-chart'
 import {
   CHAIN_IDS_BY_TRADE_MODE,
   type TradeMode,
@@ -31,38 +40,73 @@ export default function TradePage() {
   } = useDerivedStateSimpleTrade()
   useHeaderNetworkSelector(chainIdsByTradeMode[tradeMode])
   useSkaleEuropaFaucet()
+  const [isScriptReady, setIsScriptReady] = useState(false)
+  const { isMd: isMdScreen } = useBreakpoint('md')
+
+  const defaultWidgetProps: Partial<ChartingLibraryWidgetOptions> = {
+    symbol: 'AAPL',
+    interval: '1D' as ResolutionString,
+    library_path: '/static/charting_library/',
+    locale: 'en',
+    charts_storage_url: 'https://saveload.tradingview.com',
+    charts_storage_api_version: '1.1',
+    client_id: 'tradingview.com',
+    user_id: 'public_user_id',
+    fullscreen: false,
+    autosize: true,
+  }
 
   return (
-    <div className="bg-white dark:bg-background md:bg-background">
-      <TradeViewSwitch />
-      {tradeView === 'simple' && (
-        <main className="lg:p-4 mt-16 mb-[86px] animate-slide">
-          <Container maxWidth="lg" className="px-4">
-            <TradeWidget />
-          </Container>
-        </main>
-      )}
-      {tradeView === 'advanced' && (
-        <main className="lg:p-4 pt-9 md:mb-[86px] animate-slide bg-white dark:bg-background md:bg-background">
-          <Container maxWidth="screen-2xl" className="px-4">
-            <div className="flex flex-col-reverse w-full gap-4 md:flex-row">
-              <div className="flex w-full flex-col gap-4 md:w-[calc(100%-480px)]">
-                <div className="w-full md:h-[648px] rounded-xl border">
-                  chart
+    <>
+      <Script
+        src="/static/datafeeds/udf/dist/bundle.js"
+        strategy="lazyOnload"
+        onLoad={() => {
+          setIsScriptReady(true)
+        }}
+      />
+      <div className="bg-white dark:bg-background md:bg-background">
+        <TradeViewSwitch />
+        {tradeView === 'simple' && (
+          <main className="lg:p-4 mt-16 mb-[86px] animate-slide">
+            <Container maxWidth="lg" className="px-4">
+              <TradeWidget />
+            </Container>
+          </main>
+        )}
+        {tradeView === 'advanced' && (
+          <main className="lg:p-4 pt-9 md:mb-[86px] animate-slide bg-white dark:bg-background md:bg-background">
+            <Container maxWidth="screen-2xl" className="px-4">
+              <div className="flex flex-col-reverse w-full gap-4 md:flex-row">
+                <div className="flex w-full flex-col gap-4 md:w-1/2 lg:w-[calc(100%-480px)]">
+                  <div className="w-full md:h-[648px] flex flex-col md:p-5 md:gap-3">
+                    {isScriptReady ? (
+                      isMdScreen ? (
+                        <>
+                          <ChartHeader />
+                          <Chart widgetProps={defaultWidgetProps} />
+                        </>
+                      ) : (
+                        <MobileChart widgetProps={defaultWidgetProps} />
+                      )
+                    ) : isMdScreen ? null : (
+                      <SkeletonBox className="w-full h-[36px]" />
+                    )}
+                  </div>
+                  <div className="w-full md:h-[320px] pt-12 lg:pt-0">
+                    <TradeTableTabs />
+                  </div>
                 </div>
-                <div className="w-full md:h-[320px]">
-                  <TradeTableTabs />
+                <div className="flex w-full flex-col gap-4 md:w-[480px]">
+                  <Search />
+                  <TradeWidget />
+                  <FavoriteRecentTabView />
                 </div>
               </div>
-              <div className="flex w-full flex-col gap-4 md:min-w-[480px]">
-                <Search />
-                <TradeWidget />
-                <FavoriteRecentTabView />
-              </div>
-            </div>
-          </Container>
-        </main>
-      )}
-    </div>
+            </Container>
+          </main>
+        )}
+      </div>
+    </>
   )
 }

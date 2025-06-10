@@ -80,18 +80,32 @@ export const VALUE_COLUMN: ColumnDef<DCAOrderSummary> = {
   cell: ({ row }) => <span>{formatUSD(row.original.valueUsd)}</span>,
 }
 
-export const AVG_PRICE_USD_COLUMN: ColumnDef<DCAOrderSummary> = {
+export const getAvgPriceColumn = (
+  showInUsd: boolean,
+  setShowInUsd: React.Dispatch<React.SetStateAction<boolean>>,
+): ColumnDef<DCAOrderSummary> => ({
   id: 'avgPriceUsd',
   enableSorting: false,
   header: () => (
     <TooltipProvider>
       <Tooltip>
         <TooltipTrigger asChild>
-          <div className="flex items-center gap-1">
+          <div
+            className="flex items-center gap-1 cursor-pointer select-none"
+            onClick={(e) => {
+              e.stopPropagation()
+              setShowInUsd((prev) => !prev)
+            }}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.stopPropagation()
+              }
+            }}
+          >
             <span>Avg. Price</span>
             <span className="inline-flex items-center dark:text-skyblue text-blue font-normal gap-[1px] border-b border-dashed border-current pb-[1px]">
               <DollarCircledIcon />
-              <span>USD</span>
+              <span>{showInUsd ? 'USD' : 'Token'}</span>
             </span>
           </div>
         </TooltipTrigger>
@@ -102,8 +116,19 @@ export const AVG_PRICE_USD_COLUMN: ColumnDef<DCAOrderSummary> = {
     </TooltipProvider>
   ),
   accessorFn: (row) => row.avgPriceUsd,
-  cell: ({ row }) => <span>{formatUSD(row.original.avgPriceUsd)}</span>,
-}
+  cell: ({ row }) => {
+    const tokenPrice =
+      row.original.sizeAmount && row.original.filledAmount
+        ? row.original.sizeAmount / row.original.filledAmount
+        : 0
+
+    return showInUsd ? (
+      <span>{formatUSD(row.original.avgPriceUsd)}</span>
+    ) : (
+      <span>{`${tokenPrice.toFixed(4)} ${row.original.sizeToken.symbol}`}</span>
+    )
+  },
+})
 
 export const ORDERS_COLUMN: ColumnDef<DCAOrderSummary> = {
   id: 'orders',
@@ -124,7 +149,7 @@ export const ORDERS_COLUMN: ColumnDef<DCAOrderSummary> = {
 
 export const STATUS_COLUMN: ColumnDef<DCAOrderSummary> = {
   id: 'status',
-  header: 'Status',
+  header: () => <div className="text-right">Status</div>,
   enableSorting: false,
   accessorFn: (row) => row.status,
   cell: ({ row }) => (

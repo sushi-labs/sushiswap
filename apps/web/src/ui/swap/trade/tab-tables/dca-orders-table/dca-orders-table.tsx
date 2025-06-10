@@ -2,18 +2,18 @@
 
 import { Card, DataTable, Loader } from '@sushiswap/ui'
 import type { ColumnDef } from '@tanstack/react-table'
-import React from 'react'
+import React, { useState, useMemo } from 'react'
 import InfiniteScroll from 'react-infinite-scroll-component'
 import { Native } from 'sushi/currency'
 import { MobileCard } from '../history-tables/mobile-card/mobile-card'
 import {
   ACTION_COLUMN,
-  AVG_PRICE_USD_COLUMN,
   CHAIN_COLUMN,
   EXPIRES_COLUMN,
   FILLED_COLUMN,
   SIZE_COLUMN,
   SPENT_COLUMN,
+  getAvgPriceColumn,
 } from './columns'
 
 export interface DCAOrder {
@@ -38,6 +38,7 @@ export interface DCAOrder {
   date: number
   txHash: string
   orderId: string
+  avgPriceTokenUnit: number
 }
 
 const MOCK_DATA: DCAOrder[] = [
@@ -63,6 +64,7 @@ const MOCK_DATA: DCAOrder[] = [
     date: 1741737600000,
     txHash: '0xf84D7537c997837b32E5aA643949e2cF53D190fD',
     orderId: '001',
+    avgPriceTokenUnit: 2_000,
   },
   {
     id: '2',
@@ -86,30 +88,28 @@ const MOCK_DATA: DCAOrder[] = [
     date: 1741737600000,
     txHash: '0xf84D7537c997837b32E5aA643949e2cF53D190fD',
     orderId: '002',
+    avgPriceTokenUnit: 240,
   },
 ]
 
-const COLUMNS: ColumnDef<DCAOrder>[] = [
-  FILLED_COLUMN,
-  SIZE_COLUMN,
-  CHAIN_COLUMN,
-  SPENT_COLUMN,
-  AVG_PRICE_USD_COLUMN,
-  EXPIRES_COLUMN,
-  ACTION_COLUMN,
-]
-
-const MOBILE_COLUMNS: ColumnDef<DCAOrder>[] = [
-  FILLED_COLUMN,
-  SIZE_COLUMN,
-  CHAIN_COLUMN,
-  SPENT_COLUMN,
-  AVG_PRICE_USD_COLUMN,
-  EXPIRES_COLUMN,
-  ACTION_COLUMN,
-]
-
 export const DCAOrdersTable = () => {
+  const [showInUsd, setShowInUsd] = useState(true)
+
+  const avgPriceCol = useMemo(
+    () => getAvgPriceColumn(showInUsd, setShowInUsd),
+    [showInUsd],
+  )
+
+  const COLUMNS: ColumnDef<DCAOrder>[] = [
+    FILLED_COLUMN,
+    SIZE_COLUMN,
+    CHAIN_COLUMN,
+    SPENT_COLUMN,
+    avgPriceCol,
+    EXPIRES_COLUMN,
+    ACTION_COLUMN,
+  ]
+
   const data = MOCK_DATA
 
   return (
@@ -136,7 +136,7 @@ export const DCAOrdersTable = () => {
       <Card className="p-5 space-y-6 border-accent !shadow-none border bg-slate-50 dark:bg-slate-800 md:hidden">
         {data.map((row) => (
           <div key={row.id} className="pb-6 border-b last:border-b-0 last:pb-0">
-            <MobileCard row={row} columns={MOBILE_COLUMNS} />
+            <MobileCard row={row} columns={COLUMNS} />
           </div>
         ))}
       </Card>
