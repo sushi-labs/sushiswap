@@ -44,7 +44,7 @@ export const ChainOptionsSelector = ({
 
     const gapPx = size === 'sm' ? 4 : 6
     const iconWidth = size === 'sm' ? 26 : 34
-    const slotWidth = iconWidth + gapPx + paddingPx
+    const slotWidth = iconWidth + gapPx + (size === 'lg' ? paddingPx : 0)
 
     const containerWidth = container.clientWidth - 6
     const rawFit = Math.floor(containerWidth / slotWidth)
@@ -145,6 +145,7 @@ export const ChainOptionsSelector = ({
                     iconSize={iconSize}
                     chainId={chainId}
                     size={size}
+                    className="border-none"
                   />
                   <span className="ml-2">
                     {EvmChainKey[chainId].toLocaleUpperCase()}
@@ -166,7 +167,7 @@ export const NetworkButton = forwardRef<
     iconSize: number
     size?: 'sm' | 'lg'
   } & React.ButtonHTMLAttributes<HTMLButtonElement>
->(({ chainId, iconSize, size = 'sm', ...props }, ref) => (
+>(({ chainId, iconSize, size = 'sm', className, ...props }, ref) => (
   <button
     ref={ref}
     {...props}
@@ -174,6 +175,7 @@ export const NetworkButton = forwardRef<
     className={classNames(
       'flex items-center justify-center p-1 border rounded-md border-black/10 dark:border-white/10',
       size === 'sm' ? 'p-1' : 'p-2',
+      className,
     )}
   >
     <NetworkIcon

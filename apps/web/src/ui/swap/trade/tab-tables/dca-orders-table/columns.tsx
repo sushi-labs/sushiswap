@@ -113,7 +113,10 @@ export const getAvgPriceColumn = (
             </span>
           </div>
         </TooltipTrigger>
-        <TooltipContent side="bottom">
+        <TooltipContent
+          side="top"
+          className="dark:bg-black/10 bg-white/10 py-4 px-5 !text-slate-900 dark:!text-pink-100 text-xs"
+        >
           <p>Toggle to view price in USD or token pair unit.</p>
         </TooltipContent>
       </Tooltip>
@@ -121,12 +124,58 @@ export const getAvgPriceColumn = (
   ),
   enableSorting: false,
   accessorFn: (row) => (showInUsd ? row.avgPriceUsd : row.avgPriceTokenUnit),
-  cell: ({ row }) =>
-    showInUsd ? (
-      <span>{formatUSD(row.original.avgPriceUsd)}</span>
-    ) : (
-      <span>{`${row.original.avgPriceTokenUnit} ${row.original.token.symbol}`}</span>
-    ),
+  cell: ({ row }) => {
+    return (
+      <TooltipProvider delayDuration={0}>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            {showInUsd ? (
+              <span>{formatUSD(row.original.avgPriceUsd)}</span>
+            ) : (
+              <span>{`${row.original.avgPriceTokenUnit} ${row.original.token.symbol}`}</span>
+            )}
+          </TooltipTrigger>
+          <TooltipContent
+            side="bottom"
+            className="dark:bg-black/10 bg-white/10 py-4 px-5 grid grid-cols-2 w-[270px] text-xs gap-2"
+          >
+            <div className="grid grid-cols-2 col-span-2 gap-2 w-full">
+              <div className="font-medium text-black dark:text-pink-100">
+                Created
+              </div>
+              <div className="text-slate-700 dark:text-pink-200">
+                {format(new Date(row.original.date), 'MM/dd/yy h:mm a')}
+              </div>
+            </div>
+            <div className="grid grid-cols-2 col-span-2 gap-2 w-full">
+              <div className="font-medium text-black dark:text-pink-100">
+                Frequency
+              </div>
+              <div className="text-slate-700 dark:text-pink-200">
+                Every 5 Minutes
+              </div>
+            </div>
+            <div className="grid grid-cols-2 col-span-2 gap-2 w-full">
+              <div className="font-medium text-black dark:text-pink-100">
+                Duration
+              </div>
+              <div className="text-slate-700 dark:text-pink-200">
+                25 Minutes
+              </div>
+            </div>
+            <div className="grid grid-cols-2 col-span-2 gap-2 w-full">
+              <div className="font-medium text-black dark:text-pink-100">
+                Each Order Size
+              </div>
+              <div className="text-slate-700 dark:text-pink-200">
+                1,600 USDT
+              </div>
+            </div>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+    )
+  },
 })
 
 export const EXPIRES_COLUMN: ColumnDef<DCAOrder> = {

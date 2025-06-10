@@ -89,8 +89,14 @@ export const VALUE_PNL_COLUMN: ColumnDef<LimitOrderHistory> = {
             Value / PnL
           </span>
         </TooltipTrigger>
-        <TooltipContent side="bottom">
-          <p>Lorem ipsum dolor sit amet</p>
+        <TooltipContent
+          side="top"
+          className="dark:bg-black/10 bg-white/10 py-4 px-5 !text-slate-900 dark:!text-pink-100 text-xs max-w-[250px]"
+        >
+          <p>
+            Profit or loss calculated as the difference in USD value of the
+            asset on the day it was bought and the day it was sold.
+          </p>
         </TooltipContent>
       </Tooltip>
     </TooltipProvider>
@@ -104,7 +110,7 @@ export const VALUE_PNL_COLUMN: ColumnDef<LimitOrderHistory> = {
       <span
         className={
           row.original.pnlUsd > 0
-            ? 'text-xs text-green'
+            ? 'text-xs text-green-500'
             : row.original.pnlUsd < 0
               ? 'text-xs text-red'
               : 'text-xs text-muted-foreground'
@@ -146,7 +152,10 @@ export const getPriceUsdColumn = (
             </span>
           </div>
         </TooltipTrigger>
-        <TooltipContent side="bottom">
+        <TooltipContent
+          side="top"
+          className="dark:bg-black/10 bg-white/10 py-4 px-5 !text-slate-900 dark:!text-pink-100 text-xs"
+        >
           <p>Toggle to view price in USD or token pair unit.</p>
         </TooltipContent>
       </Tooltip>
@@ -194,7 +203,7 @@ export const STATUS_COLUMN: ColumnDef<LimitOrderHistory> = {
   cell: ({ row }) => {
     const color =
       row.original.status === 'Completed'
-        ? 'text-green'
+        ? 'text-green-500'
         : row.original.status === 'Cancelled'
           ? 'text-orange-400'
           : 'text-muted-foreground'

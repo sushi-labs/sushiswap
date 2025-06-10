@@ -56,10 +56,14 @@ const DCATradesInput = () => {
   }, [amountInPerChunk, token0PriceUSD])
 
   return (
-    <div className="flex-1 flex flex-col gap-1 whitespace-nowrap">
-      <div className="flex justify-between items-center">
+    <div className="flex flex-col flex-1 gap-1 whitespace-nowrap">
+      <div className="flex items-center justify-between">
         <span className="text-sm text-muted-foreground">Over</span>
-        <Explainer>
+        <Explainer
+          iconProps={{
+            className: 'text-[#7B7A87]',
+          }}
+        >
           The total number of individual trades that will be scheduled as part
           of your order.
         </Explainer>
@@ -137,10 +141,14 @@ const DCAIntervalInput = () => {
   const { minFillDelayError, maxFillDelayError } = useTwapTradeErrors()
 
   return (
-    <div className="flex-1 flex flex-col gap-1 whitespace-nowrap">
-      <div className="flex justify-between items-center">
+    <div className="flex flex-col flex-1 gap-1 whitespace-nowrap">
+      <div className="flex items-center justify-between">
         <span className="text-sm text-muted-foreground">Every</span>
-        <Explainer>
+        <Explainer
+          iconProps={{
+            className: 'text-[#7B7A87]',
+          }}
+        >
           The estimated time that will elapse between each trade in your order.
           Note that as this time includes an allowance of two minutes for bidder
           auction and block settlement, which cannot be predicted exactly,
