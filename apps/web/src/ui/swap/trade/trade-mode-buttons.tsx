@@ -1,16 +1,6 @@
 'use client'
 
-import {
-  Button,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-  HoverCard,
-  HoverCardContent,
-  HoverCardTrigger,
-} from '@sushiswap/ui'
-import { ShuffleIcon } from '@sushiswap/ui/icons/ShuffleIcon'
+import { Button } from '@sushiswap/ui'
 import { createContext, useContext, useMemo } from 'react'
 import { TRADE_MODES, type TradeMode } from './config'
 

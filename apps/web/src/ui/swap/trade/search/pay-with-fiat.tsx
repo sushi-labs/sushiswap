@@ -9,39 +9,53 @@ import {
   classNames,
 } from '@sushiswap/ui'
 import { AppleIcon } from '@sushiswap/ui/icons/AppleIcon'
-import { useContext, useEffect, useState } from 'react'
+import { type ReactNode, useContext, useEffect } from 'react'
+import {
+  type FiatPaymentType,
+  useDerivedStateFiat,
+} from '../../fiat/derivedstate-fiat-provider'
 import { TradeModeContext } from '../trade-mode-buttons'
 
-const OPTIONS = {
-  debit: {
+const OPTIONS: {
+  label: string
+  icon: ReactNode
+  paymentType: FiatPaymentType
+}[] = [
+  {
     label: 'Debit Card',
     icon: <CreditCardIcon width={18} height={18} />,
+    paymentType: 'debit',
   },
-  credit: {
+  {
     label: 'Credit Card',
     icon: <CreditCardIcon width={18} height={18} />,
+    paymentType: 'credit',
   },
-  'apple-pay': {
+  {
     label: 'Apple Pay',
     icon: <AppleIcon width={18} height={18} />,
+    paymentType: 'apple-pay',
   },
-}
+]
 
 export const PayWithFiat = () => {
   const context = useContext(TradeModeContext)
-  const [value, setValue] = useState<null | string>(null)
   const tradeMode = context.tradeMode
+  const {
+    state: { paymentType },
+    mutate: { setPaymentType },
+  } = useDerivedStateFiat()
 
-  const handleClick = (option: string) => {
-    setValue(option)
+  const handleClick = (option: FiatPaymentType) => {
+    setPaymentType(option)
     context.switchTradeMode('fiat')
   }
 
   useEffect(() => {
     if (tradeMode !== 'fiat') {
-      setValue(null)
+      setPaymentType(null)
     }
-  }, [tradeMode])
+  }, [tradeMode, setPaymentType])
 
   return (
     <DropdownMenu>
@@ -52,12 +66,14 @@ export const PayWithFiat = () => {
           className={classNames('!rounded-full md:overflow-hidden')}
         >
           <div className="flex items-center gap-0.5">
-            {value === 'Apple Pay' ? (
+            {paymentType === 'apple-pay' ? (
               <AppleIcon width={18} height={18} />
             ) : (
               <CreditCardIcon width={18} height={18} />
             )}
-            {value === null ? 'Pay with Fiat' : value}
+            {paymentType === null
+              ? 'Pay with Fiat'
+              : OPTIONS.find((i) => i.paymentType === paymentType)?.label}
             <ChevronDownIcon width={16} height={16} />
           </div>
         </Button>
@@ -67,10 +83,10 @@ export const PayWithFiat = () => {
         className="overflow-y-auto hide-scrollbar !bg-slate-50 dark:!bg-slate-900 !backdrop-blur-none"
       >
         <DropdownMenuGroup className="font-medium min-w-[200px]">
-          {Object.values(OPTIONS).map((i, idx) => (
+          {OPTIONS.map((i, idx) => (
             <DropdownMenuItem
               key={idx}
-              onClick={() => handleClick(i.label)}
+              onClick={() => handleClick(i.paymentType)}
               className="flex items-center gap-2"
             >
               {i.icon}

@@ -31,10 +31,6 @@ export const TradeTableFilters = () => {
         <div className="flex items-center gap-2">
           {ALL_CHAINS_IN_TABLE.map((chainId) => {
             const isSelected = chainsToShow.includes(chainId)
-            console.log(`Chain ${chainId} selection state:`, {
-              isSelected,
-              isDarkMode,
-            })
 
             return (
               <Button
@@ -47,7 +43,7 @@ export const TradeTableFilters = () => {
                     const newSelection = prev.includes(chainId)
                       ? prev.filter((id) => id !== chainId)
                       : [...prev, chainId]
-                    console.log(`Chain selection updated:`, newSelection)
+
                     return newSelection
                   })
                 }}

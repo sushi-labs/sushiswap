@@ -66,7 +66,7 @@ export async function middleware(req: NextRequest) {
   }
 
   const networkNameMatch = pathname.match(
-    /([\w-]+)(?=\/swap|\/limit|\/dca|\/cross-chain-swap|\/explore|\/pool|\/token|\/positions|\/rewards|\/migrate|\/tradingview)/,
+    /([\w-]+)(?=\/fiat|\/swap|\/limit|\/dca|\/cross-chain-swap|\/explore|\/pool|\/token|\/positions|\/rewards|\/migrate|\/tradingview)/,
   )
   if (networkNameMatch?.length) {
     const { chainId, networkName } = getEvmChainInfo(networkNameMatch[0])
