@@ -27,6 +27,10 @@ export const Chart = ({
       JSON.stringify(intervalQuicks),
     )
 
+    localStorage.removeItem('tradingview.chartproperties')
+    localStorage.removeItem('tradingview.chartproperties.mainSeriesProperties')
+    localStorage.removeItem('tradingview.sessions')
+
     const widgetOptions: ChartingLibraryWidgetOptions = {
       symbol: widgetProps.symbol,
       datafeed: new (window as any).Datafeeds.UDFCompatibleDatafeed(
