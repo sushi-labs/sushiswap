@@ -24,6 +24,7 @@ export const SimpleSwapToken0Input = () => {
       loading={isLoading}
       currencyLoading={isLoading}
       allowNative={isWNativeSupported(chainId)}
+      hidePercentageInputs={true}
       label="Sell"
     />
   )

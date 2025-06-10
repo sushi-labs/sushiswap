@@ -61,10 +61,11 @@ export const Favorite = () => {
               <th className="font-medium text-right">Holdings</th>
             </tr>
           </thead>
-
-          {pinnedTokensArray?.map((i, idx) => (
-            <FavoriteItem currencyId={i.currencyId as ID} key={idx} />
-          ))}
+          <tbody>
+            {pinnedTokensArray?.map((i, idx) => (
+              <FavoriteItem currencyId={i.currencyId as ID} key={idx} />
+            ))}
+          </tbody>
         </table>
       ) : null}
       <div className="flex flex-col items-center justify-center w-full gap-4 mt-8">

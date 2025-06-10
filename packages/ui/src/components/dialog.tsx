@@ -110,6 +110,7 @@ interface DialogContentProps
   extends React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content>,
     VariantProps<typeof dialogVariants> {
   hideClose?: boolean
+  overlayClassName?: string
 }
 
 const DialogContent = React.forwardRef<
@@ -117,11 +118,18 @@ const DialogContent = React.forwardRef<
   DialogContentProps
 >(
   (
-    { className, hideClose: _hideClose = false, variant, children, ...props },
+    {
+      className,
+      hideClose: _hideClose = false,
+      variant,
+      overlayClassName,
+      children,
+      ...props
+    },
     ref,
   ) => (
     <DialogPortal>
-      <DialogOverlay variant={variant} />
+      <DialogOverlay variant={variant} className={overlayClassName ?? ''} />
       <DialogPrimitive.Content
         ref={ref}
         className={dialogVariants({ variant, className })}
