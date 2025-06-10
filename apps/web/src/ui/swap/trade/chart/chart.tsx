@@ -20,12 +20,17 @@ export const Chart = ({
   const { isMd: isMdScreen } = useBreakpoint('md')
   const { theme } = useTheme()
 
+  console.log('theme', theme)
+
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
     const intervalQuicks = ['1D', '2D', '3D', '1W']
     localStorage.setItem(
       'tradingview.IntervalWidget.quicks',
       JSON.stringify(intervalQuicks),
     )
+
+    theme && localStorage.setItem('tradingview.current_theme.name', theme)
 
     const widgetOptions: ChartingLibraryWidgetOptions = {
       symbol: widgetProps.symbol,
@@ -42,7 +47,7 @@ export const Chart = ({
       library_path: widgetProps.library_path,
       locale: widgetProps.locale as LanguageCode,
       disabled_features: [
-        'use_localstorage_for_settings',
+        // 'use_localstorage_for_settings',
         ...(!isMdScreen ? ['legend_widget' as const] : []),
         'header_settings' as const,
         'header_fullscreen_button' as const,
