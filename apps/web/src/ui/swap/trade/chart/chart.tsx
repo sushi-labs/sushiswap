@@ -23,13 +23,14 @@ export const Chart = ({
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
+    if (!theme) return
     const intervalQuicks = ['1D', '2D', '3D', '1W']
     localStorage.setItem(
       'tradingview.IntervalWidget.quicks',
       JSON.stringify(intervalQuicks),
     )
 
-    theme && localStorage.setItem('tradingview.current_theme.name', theme)
+    localStorage.setItem('tradingview.current_theme.name', theme)
 
     const widgetOptions: ChartingLibraryWidgetOptions = {
       symbol: widgetProps.symbol,
@@ -46,7 +47,7 @@ export const Chart = ({
       library_path: widgetProps.library_path,
       locale: widgetProps.locale as LanguageCode,
       disabled_features: [
-        // 'use_localstorage_for_settings',
+        'use_localstorage_for_settings',
         ...(!isMdScreen ? ['legend_widget' as const] : []),
         'header_settings' as const,
         'header_fullscreen_button' as const,
@@ -470,15 +471,7 @@ export const Chart = ({
     chartContainerRef,
     theme,
     isMdScreen,
-    widgetProps.client_id,
-    widgetProps.autosize,
-    widgetProps.charts_storage_api_version,
-    widgetProps.charts_storage_url,
-    widgetProps.fullscreen,
-    widgetProps.interval,
-    widgetProps.library_path,
-    widgetProps.locale,
-    widgetProps.user_id,
+    widgetProps.symbol,
   ])
 
   return (
