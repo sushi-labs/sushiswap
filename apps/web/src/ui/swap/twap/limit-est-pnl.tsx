@@ -14,11 +14,13 @@ export const LimitEstPnl = () => {
         <span className="text-slate-900 dark:text-pink-100">Est. PnL</span>
         <Explainer
           iconProps={{
-            className: 'text-[#7B7A87]',
+            className: 'text-slate-450 dark:text-slate-500',
           }}
         >
-          Profit or loss calculated as the difference in USD value of the asset
-          on the day it was bought and the day it was sold.
+          <p className="dark:bg-black/10 bg-white/10 !text-slate-900 dark:!text-pink-100 text-xs">
+            Profit or loss calculated as the difference in USD value of the
+            asset on the day it was bought and the day it was sold.
+          </p>
         </Explainer>
       </div>
       <div

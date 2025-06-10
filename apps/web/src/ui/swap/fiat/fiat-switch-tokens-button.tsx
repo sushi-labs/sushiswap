@@ -8,7 +8,7 @@ export const FiatSwitchTokensButton = () => {
       <button
         disabled
         type="button"
-        className="hover:shadow-sm cursor-not-allowed transition-border z-10 group bg-background p-2 border border-accent transition-all rounded-full"
+        className="hover:shadow-sm cursor-not-allowed transition-border z-10 group bg-background p-2 border border-slate-50 dark:border-slate-800 transition-all rounded-full"
       >
         <div>
           <ArrowsUpDownIcon

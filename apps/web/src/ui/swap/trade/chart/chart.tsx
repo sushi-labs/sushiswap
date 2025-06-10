@@ -9,7 +9,6 @@ import type {
 } from 'public/static/charting_library/charting_library'
 import { widget } from 'public/static/charting_library/charting_library.esm'
 import { useEffect, useRef } from 'react'
-import { ChartHeader } from './chart-header'
 
 export const Chart = ({
   widgetProps,
@@ -466,7 +465,21 @@ export const Chart = ({
     return () => {
       tvWidget.remove()
     }
-  }, [widgetProps.symbol, chartContainerRef, theme, isMdScreen])
+  }, [
+    widgetProps.symbol,
+    chartContainerRef,
+    theme,
+    isMdScreen,
+    widgetProps.client_id,
+    widgetProps.autosize,
+    widgetProps.charts_storage_api_version,
+    widgetProps.charts_storage_url,
+    widgetProps.fullscreen,
+    widgetProps.interval,
+    widgetProps.library_path,
+    widgetProps.locale,
+    widgetProps.user_id,
+  ])
 
   return (
     <div className="flex flex-col flex-grow rounded-xl">

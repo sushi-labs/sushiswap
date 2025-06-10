@@ -19,7 +19,7 @@ export const TwapToken1Input = () => {
       id="swap-to"
       type="OUTPUT"
       disabled
-      className="border border-accent p-3 bg-gray-100 dark:bg-slate-900 rounded-xl"
+      className="border border-white/10 dark:border-black/10 p-3 bg-gray-100 dark:bg-slate-900 rounded-xl"
       value={amountOut?.toSignificant() ?? ''}
       chainId={chainId}
       onSelect={setToken1}
