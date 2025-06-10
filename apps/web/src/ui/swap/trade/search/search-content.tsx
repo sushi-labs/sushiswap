@@ -30,7 +30,7 @@ export const SearchContent = () => {
             variant="ghost"
             size="xxs"
             onClick={clearSearchValue}
-            className="!rounded-full p-[1px] dark:text-muted-foreground dark:border-muted-foreground text-slate-700 dark:!bg-slate-900 !bg-gray-100 border-slate-700 absolute right-3 top-1/2 -translate-y-1/2 border"
+            className="!rounded-full p-[1px] dark:text-muted-foreground dark:border-muted-foreground text-[#535263] dark:!bg-slate-900 !bg-gray-100 border-slate-700 absolute right-3 top-1/2 -translate-y-1/2 border"
             icon={() => <XIcon width={16} height={16} />}
             name="Clear Search"
           />
@@ -40,10 +40,10 @@ export const SearchContent = () => {
         <div className="overflow-y-auto hide-scrollbar text-xs max-h-[calc(100vh-220px)] md:max-h-[250px] grid grid-cols-[30px_auto_auto_auto] gap-2">
           {/* TODO: loading state */}
           {/* TODO: error state */}
-          <div className="sticky grid grid-cols-[30px_190px_auto_auto] col-span-4 top-0 z-10 bg-white md:bg-slate-50 dark:bg-slate-900 md:dark:bg-slate-800 text-xs text-slate-700 dark:text-pink-100">
+          <div className="sticky font-medium grid grid-cols-[30px_190px_auto_auto] col-span-4 top-0 z-10 bg-white md:bg-slate-50 dark:bg-slate-900 md:dark:bg-slate-800 text-xs text-[#535263] dark:text-[#E4DDEC]">
             <div />
-            <div className="mr-auto w-full">Token</div>
-            <div className="text-right ml-auto w-full">Price</div>
+            <div className="w-full mr-auto">Token</div>
+            <div className="w-full ml-auto text-right">Price</div>
             <div className="ml-auto w-full text-right pr-1.5">Holdings</div>
           </div>
 
