@@ -115,6 +115,7 @@ export const TokenSelectorV2: FC<TokenSelectorV2Props> = ({
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent
+        overlayClassName="!h-[calc(100%-56px)] !inset-y-[56px]"
         aria-describedby={undefined}
         className={classNames(
           'h-[80vh] !flex !flex-col md:!flex-row w-fit !p-0 md:min-w-[565px]',
