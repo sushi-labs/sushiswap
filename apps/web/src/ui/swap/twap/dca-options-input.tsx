@@ -61,15 +61,21 @@ const DCATradesInput = () => {
         <span className="text-sm font-medium text-slate-900 dark:text-pink-100">
           No. of Orders
         </span>
-        <Explainer>
-          The total number of individual trades that will be scheduled as part
-          of your order.
+        <Explainer
+          iconProps={{
+            className: 'text-slate-450 dark:text-slate-500',
+          }}
+        >
+          <p className="dark:bg-black/10 bg-white/10 !text-slate-900 dark:!text-pink-100 text-xs">
+            The total number of individual trades that will be scheduled as part
+            of your order.
+          </p>
         </Explainer>
       </div>
 
       <div
         className={classNames(
-          'px-3 py-4 overflow-hidden border border-white/10 dark:border-black/10 bg-gray-100 dark:bg-slate-900 rounded-xl',
+          'px-3 py-4 overflow-hidden flex justify-between border border-white/10 dark:border-black/10 bg-gray-100 dark:bg-slate-900 rounded-xl',
         )}
       >
         <TextField
@@ -81,6 +87,7 @@ const DCATradesInput = () => {
           value={chunks}
           className={'!h-[20px] !min-h-[5px] !px-0 !py-1 !text-lg font-medium'}
         />
+        <div>Orders</div>
       </div>
       {!isLoading ? (
         <span
@@ -144,11 +151,17 @@ const DCAIntervalInput = () => {
         <span className="text-sm font-medium text-slate-900 dark:text-pink-100">
           Every
         </span>
-        <Explainer>
-          The estimated time that will elapse between each trade in your order.
-          Note that as this time includes an allowance of two minutes for bidder
-          auction and block settlement, which cannot be predicted exactly,
-          actual time may vary.
+        <Explainer
+          iconProps={{
+            className: 'text-slate-450 dark:text-slate-500',
+          }}
+        >
+          <p className="dark:bg-black/10 bg-white/10 !text-slate-900 dark:!text-pink-100 text-xs">
+            The estimated time that will elapse between each trade in your
+            order. Note that as this time includes an allowance of two minutes
+            for bidder auction and block settlement, which cannot be predicted
+            exactly, actual time may vary.
+          </p>
         </Explainer>
       </div>
 

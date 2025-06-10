@@ -9,7 +9,6 @@ import type {
 } from 'public/static/charting_library/charting_library'
 import { widget } from 'public/static/charting_library/charting_library.esm'
 import { useEffect, useRef } from 'react'
-import { ChartHeader } from './chart-header'
 
 export const Chart = ({
   widgetProps,
@@ -42,10 +41,8 @@ export const Chart = ({
       library_path: widgetProps.library_path,
       locale: widgetProps.locale as LanguageCode,
       disabled_features: [
-        // 'use_localstorage_for_settings',
-
+        'use_localstorage_for_settings',
         ...(!isMdScreen ? ['legend_widget' as const] : []),
-
         'header_settings' as const,
         'header_fullscreen_button' as const,
         'header_screenshot' as const,
@@ -463,7 +460,21 @@ export const Chart = ({
     return () => {
       tvWidget.remove()
     }
-  }, [widgetProps, chartContainerRef, theme, isMdScreen])
+  }, [
+    widgetProps.symbol,
+    chartContainerRef,
+    theme,
+    isMdScreen,
+    widgetProps.client_id,
+    widgetProps.autosize,
+    widgetProps.charts_storage_api_version,
+    widgetProps.charts_storage_url,
+    widgetProps.fullscreen,
+    widgetProps.interval,
+    widgetProps.library_path,
+    widgetProps.locale,
+    widgetProps.user_id,
+  ])
 
   return (
     <div className="flex flex-col flex-grow rounded-xl">

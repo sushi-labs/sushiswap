@@ -1,6 +1,6 @@
 'use client'
 
-import { useBreakpoint, useIsSmScreen } from '@sushiswap/hooks'
+import { useBreakpoint, useIsMounted, useIsSmScreen } from '@sushiswap/hooks'
 import { Container, Loader, SkeletonBox } from '@sushiswap/ui'
 import Script from 'next/script'
 import type {
@@ -42,6 +42,7 @@ export default function TradePage() {
   useSkaleEuropaFaucet()
   const [isScriptReady, setIsScriptReady] = useState(false)
   const { isMd: isMdScreen } = useBreakpoint('md')
+  const hasMounted = useIsMounted()
 
   const defaultWidgetProps: Partial<ChartingLibraryWidgetOptions> = {
     symbol: 'AAPL',
@@ -80,7 +81,7 @@ export default function TradePage() {
               <div className="flex flex-col-reverse w-full gap-4 md:flex-row">
                 <div className="flex w-full flex-col gap-4 md:w-[calc(100%-480px)]">
                   <div className="w-full md:h-[654px] flex flex-col md:p-5 md:gap-3">
-                    {isScriptReady ? (
+                    {hasMounted && isScriptReady ? (
                       isMdScreen ? (
                         <>
                           <ChartHeader />
@@ -89,9 +90,9 @@ export default function TradePage() {
                       ) : (
                         <MobileChart widgetProps={defaultWidgetProps} />
                       )
-                    ) : isMdScreen ? null : (
+                    ) : !isMdScreen && hasMounted ? (
                       <SkeletonBox className="w-full h-[36px]" />
-                    )}
+                    ) : null}
                   </div>
                   <div className="w-full md:h-[320px] pt-0 md:pt-4">
                     <TradeTableTabs />
