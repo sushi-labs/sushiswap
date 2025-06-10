@@ -2,11 +2,10 @@
 
 import { XMarkIcon } from '@heroicons/react/24/outline'
 
-import { Button, DialogClose, DialogPrimitive, IconButton } from '@sushiswap/ui'
+import { Button, DialogClose, IconButton } from '@sushiswap/ui'
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
