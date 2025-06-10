@@ -44,6 +44,7 @@ interface TokenSelectorV2Props {
   isBrowse?: boolean
   type: TokenSelectorV2Type
   isLimit?: boolean
+  variant?: string
 }
 
 export const TokenSelectorV2: FC<TokenSelectorV2Props> = ({
@@ -61,6 +62,7 @@ export const TokenSelectorV2: FC<TokenSelectorV2Props> = ({
   isBrowse,
   type,
   isLimit,
+  variant,
 }) => {
   const { address } = useAccount()
 
@@ -117,6 +119,7 @@ export const TokenSelectorV2: FC<TokenSelectorV2Props> = ({
         className={classNames(
           'h-[80vh] !flex !flex-col md:!flex-row w-fit !p-0 md:min-w-[565px]',
         )}
+        variant={variant ?? undefined}
       >
         <div className="flex flex-col w-full gap-4 overflow-y-auto hide-scrollbar overflow-x-hidden relative p-6">
           {currencyInfo ? (

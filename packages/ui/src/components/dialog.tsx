@@ -66,7 +66,7 @@ const dialogCloseVariants = cva('', {
     variant: {
       default: 'absolute top-6 right-6',
       opaque: 'hidden',
-      'semi-opaque': 'absolute top-6 left-6',
+      'semi-opaque': 'absolute top-6 right-6',
     },
   },
   defaultVariants: {

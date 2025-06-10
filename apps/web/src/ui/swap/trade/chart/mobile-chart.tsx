@@ -18,9 +18,7 @@ import { ChartHeader } from './chart-header'
 
 export const MobileChart = ({
   widgetProps,
-}: {
-  widgetProps: Partial<ChartingLibraryWidgetOptions>
-}) => {
+}: { widgetProps: Partial<ChartingLibraryWidgetOptions> }) => {
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -29,7 +27,11 @@ export const MobileChart = ({
           Price Chart
         </Button>
       </DialogTrigger>
-      <DialogContent className="h-screen !p-4 !flex flex-col" hideClose>
+      <DialogContent
+        variant="semi-opaque"
+        className="h-screen !p-4 !flex flex-col"
+        hideClose
+      >
         <DialogHeader className="h-fit">
           <ChartHeader />
           <DialogTitle />
