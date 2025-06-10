@@ -109,7 +109,10 @@ export const getAvgPriceColumn = (
             </span>
           </div>
         </TooltipTrigger>
-        <TooltipContent side="bottom">
+        <TooltipContent
+          side="top"
+          className="dark:bg-black/10 bg-white/10 py-4 px-5 !text-slate-900 dark:!text-pink-100 text-xs"
+        >
           <p>Toggle to view price in USD or token pair unit.</p>
         </TooltipContent>
       </Tooltip>

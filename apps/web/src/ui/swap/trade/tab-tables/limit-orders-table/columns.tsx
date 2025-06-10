@@ -87,10 +87,13 @@ export const VALUE_PNL_COLUMN: ColumnDef<LimitOrder> = {
             Value / Est. PnL
           </span>
         </TooltipTrigger>
-        <TooltipContent side="bottom">
+        <TooltipContent
+          side="top"
+          className="dark:bg-black/10 bg-white/10 py-4 px-5 !text-slate-900 dark:!text-pink-100 text-xs max-w-[250px]"
+        >
           <p>
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam,
-            quos.
+            Profit or loss calculated as the difference in USD value of the
+            asset on the day it was bought and the day it was sold.
           </p>
         </TooltipContent>
       </Tooltip>
@@ -105,7 +108,7 @@ export const VALUE_PNL_COLUMN: ColumnDef<LimitOrder> = {
       <span
         className={
           row.original.pnlPercent > 0
-            ? 'text-xs text-green'
+            ? 'text-xs text-green-500'
             : row.original.pnlPercent < 0
               ? 'text-xs text-red'
               : 'text-xs text-muted-foreground'
@@ -146,7 +149,10 @@ export const getPriceColumn = (
             </span>
           </span>
         </TooltipTrigger>
-        <TooltipContent side="bottom">
+        <TooltipContent
+          side="top"
+          className="dark:bg-black/10 bg-white/10 py-4 px-5 !text-slate-900 dark:!text-pink-100 text-xs"
+        >
           <p>Toggle to view price in USD or token pair unit.</p>
         </TooltipContent>
       </Tooltip>
@@ -177,7 +183,7 @@ export const FILLED_COLUMN: ColumnDef<LimitOrder> = {
         {formatNumber(row.original.filledAmount)}/
         {formatNumber(row.original.totalAmount)} {row.original.buyToken.symbol}
       </span>
-      <Chip className="dark:!bg-[#222137] !bg-[#E8E7EB] !p-2 dark:text-slate-500 text-slate-450">
+      <Chip className="dark:!bg-slate-750 !bg-[#0000000A] !p-2 dark:text-slate-500 text-slate-700">
         {formatPercent(row.original.filledPercent)}
       </Chip>
     </div>
