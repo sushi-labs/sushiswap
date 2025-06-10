@@ -192,14 +192,3 @@ html[class="dark"] *.scroll::-webkit-scrollbar-thumb {
   color: #fff !important;
 }
 
-/* @media (max-width: 768px) {
-  :root {
-    --tv-color-pane-background:  #ffffff;
-    --tv-color-platform-background: #ffffff;
-  }
-
-  .theme-dark:root {
-    --tv-color-pane-background: #15152b;
-    --tv-color-platform-background: #15152b;
-  }
-} */
