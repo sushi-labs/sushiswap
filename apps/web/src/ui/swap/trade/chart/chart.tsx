@@ -1,6 +1,6 @@
 'use client'
 
-import { useBreakpoint } from '@sushiswap/hooks'
+import { useBreakpoint, useIsMounted } from '@sushiswap/hooks'
 import { useTheme } from 'next-themes'
 import type {
   ChartingLibraryWidgetOptions,
@@ -18,12 +18,13 @@ export const Chart = ({
   ) as React.MutableRefObject<HTMLInputElement>
   const { isMd: isMdScreen } = useBreakpoint('md')
   const { theme } = useTheme()
+  const isMounted = useIsMounted()
 
   console.log('theme', theme)
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
-    if (!theme) return
+    if (!isMounted || !theme) return
     const intervalQuicks = ['1D', '2D', '3D', '1W']
     localStorage.setItem(
       'tradingview.IntervalWidget.quicks',
