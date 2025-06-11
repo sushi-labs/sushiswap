@@ -48,7 +48,7 @@ export const Chart = ({
       library_path: widgetProps.library_path,
       locale: widgetProps.locale as LanguageCode,
       disabled_features: [
-        'use_localstorage_for_settings',
+        // 'use_localstorage_for_settings',
         ...(!isMdScreen ? ['legend_widget' as const] : []),
         'header_settings' as const,
         'header_fullscreen_button' as const,
