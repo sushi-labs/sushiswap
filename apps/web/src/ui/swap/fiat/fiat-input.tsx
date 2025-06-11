@@ -68,7 +68,7 @@ export const FiatInput = () => {
           currency={undefined}
           disableMaxButton={true}
           balance={undefined}
-          symbol={fiat?.code}
+          symbol={fiat?.symbol}
           type={'INPUT'}
         />
       </div>
