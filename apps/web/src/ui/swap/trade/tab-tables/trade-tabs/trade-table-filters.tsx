@@ -38,7 +38,6 @@ export const TradeTableFilters = () => {
                 asChild
                 type="button"
                 onClick={() => {
-                  console.log(`Toggling chain ${chainId}`)
                   setChainsToShow((prev) => {
                     const newSelection = prev.includes(chainId)
                       ? prev.filter((id) => id !== chainId)
