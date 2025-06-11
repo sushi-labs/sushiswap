@@ -17,21 +17,21 @@ export const Chart = ({
     null,
   ) as React.MutableRefObject<HTMLInputElement>
   const { isMd: isMdScreen } = useBreakpoint('md')
-  const { theme } = useTheme()
+  const { resolvedTheme } = useTheme()
   const isMounted = useIsMounted()
 
-  console.log('theme', theme)
+  console.log('resolvedTheme', resolvedTheme)
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
-    if (!isMounted || !theme) return
+    if (!isMounted || !resolvedTheme) return
     const intervalQuicks = ['1D', '2D', '3D', '1W']
     localStorage.setItem(
       'tradingview.IntervalWidget.quicks',
       JSON.stringify(intervalQuicks),
     )
 
-    localStorage.setItem('tradingview.current_theme.name', theme)
+    localStorage.setItem('tradingview.current_theme.name', resolvedTheme)
 
     const widgetOptions: ChartingLibraryWidgetOptions = {
       symbol: widgetProps.symbol,
@@ -94,21 +94,23 @@ export const Chart = ({
       fullscreen: widgetProps.fullscreen,
       autosize: widgetProps.autosize,
       custom_css_url: '/static/chart.css',
-      theme: theme === 'dark' ? 'dark' : 'light',
+      theme: resolvedTheme === 'dark' ? 'dark' : 'light',
       overrides: {
         'paneProperties.background': !isMdScreen
-          ? theme === 'dark'
+          ? resolvedTheme === 'dark'
             ? '#15152b'
             : '#ffffff'
-          : theme === 'dark'
+          : resolvedTheme === 'dark'
             ? '#0C0C23'
             : '#F3F2F4',
         'paneProperties.vertGridProperties.color':
-          theme === 'dark' ? '#2C2C2E' : '#E5E7EB',
+          resolvedTheme === 'dark' ? '#2C2C2E' : '#E5E7EB',
         'paneProperties.horzGridProperties.color':
-          theme === 'dark' ? '#2C2C2E' : '#E5E7EB',
-        'scalesProperties.textColor': theme === 'dark' ? '#9CA3AF' : '#374151',
-        'scalesProperties.lineColor': theme === 'dark' ? '#3F3F46' : '#D1D5DB',
+          resolvedTheme === 'dark' ? '#2C2C2E' : '#E5E7EB',
+        'scalesProperties.textColor':
+          resolvedTheme === 'dark' ? '#9CA3AF' : '#374151',
+        'scalesProperties.lineColor':
+          resolvedTheme === 'dark' ? '#3F3F46' : '#D1D5DB',
         'mainSeriesProperties.candleStyle.upColor': '#1ca67d',
         'mainSeriesProperties.candleStyle.downColor': '#de5852',
         'mainSeriesProperties.candleStyle.borderUpColor': '#1ca67d',
@@ -317,11 +319,11 @@ export const Chart = ({
             '#15152B', // tooltip background
             '#ffffff0a', // tooltip row bg hover
             '#15152B', // modal background
-            isMdScreen && theme === 'dark'
+            isMdScreen && resolvedTheme === 'dark'
               ? '#0C0C23'
-              : isMdScreen && theme === 'light'
+              : isMdScreen && resolvedTheme === 'light'
                 ? '#F3F2F4'
-                : !isMdScreen && theme === 'dark'
+                : !isMdScreen && resolvedTheme === 'dark'
                   ? '#15152b'
                   : '#ffffff',
             '#381212',
@@ -470,7 +472,7 @@ export const Chart = ({
   }, [
     widgetProps.symbol,
     chartContainerRef,
-    theme,
+    resolvedTheme,
     isMdScreen,
     isMounted,
     widgetProps.symbol,
