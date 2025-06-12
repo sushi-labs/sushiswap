@@ -9,8 +9,6 @@ import {
   DialogTitle,
   DialogTrigger,
   List,
-  SkeletonCircle,
-  SkeletonText,
   TextField,
   classNames,
 } from '@sushiswap/ui'
@@ -18,20 +16,14 @@ import {
   type CSSProperties,
   type ReactNode,
   useCallback,
-  useEffect,
   useMemo,
   useState,
 } from 'react'
 import AutoSizer from 'react-virtualized-auto-sizer'
 import { FixedSizeList } from 'react-window'
-import {
-  COMMON_TOKENS,
-  DEFAULT_TOKEN_LIST,
-} from '~kadena/_common/constants/token-list'
+import { COMMON_TOKENS } from '~kadena/_common/constants/token-list'
 import { useBaseTokens } from '~kadena/_common/lib/hooks/use-base-tokens'
-import { useCustomTokens } from '~kadena/_common/lib/hooks/use-custom-tokens'
 import { useSortedTokenList } from '~kadena/_common/lib/hooks/use-sorted-token-list'
-import { useTokenWithCache } from '~kadena/_common/lib/hooks/use-token-with-cache'
 import { formatUnitsForInput } from '~kadena/_common/lib/utils/formatters'
 import type {
   KadenaToken,
@@ -50,19 +42,12 @@ export const TokenSelector = ({
 }) => {
   const [open, setOpen] = useState(false)
   const [query, setQuery] = useState('')
-  const { data: queryToken, isLoading: isQueryTokenLoading } =
-    useTokenWithCache({
-      address: query,
-      enabled: true,
-      keepPreviousData: false,
-    })
-  const { customTokens, addOrRemoveToken, hasToken } = useCustomTokens()
   const { data: baseTokens } = useBaseTokens()
 
   const baseTokenMap = useMemo(() => {
     if (!baseTokens) return undefined
     const tokenMap: Record<string, KadenaToken> = {}
-    baseTokens.forEach((token) => {
+    baseTokens?.forEach((token) => {
       tokenMap[token.tokenAddress] = token
     })
     return tokenMap
@@ -70,7 +55,7 @@ export const TokenSelector = ({
 
   const { data: sortedTokens } = useSortedTokenList({
     tokenMap: baseTokenMap,
-    customTokenMap: customTokens,
+    customTokenMap: {},
     balanceMap: {},
     query: query,
   })
@@ -83,7 +68,6 @@ export const TokenSelector = ({
     [onSelect],
   )
 
-  // @TODO: remove this ignore during integration
   const Row = useCallback(
     ({ index, style }: { index: number; style: CSSProperties }) => {
       return (
@@ -92,15 +76,13 @@ export const TokenSelector = ({
           token={sortedTokens?.[index]}
           selectToken={_onSelect}
           key={sortedTokens?.[index]?.tokenAddress}
-          hasToken={hasToken}
-          addOrRemoveToken={addOrRemoveToken}
           isSelected={
             sortedTokens?.[index]?.tokenAddress === selected?.tokenAddress
           }
         />
       )
     },
-    [selected, _onSelect, sortedTokens, addOrRemoveToken, hasToken],
+    [selected, _onSelect, sortedTokens],
   )
 
   return (
@@ -133,53 +115,47 @@ export const TokenSelector = ({
           ))}
         </div>
         <List.Control className="relative flex flex-1 flex-col flex-grow gap-3 px-1 py-0.5 min-h-[128px]">
-          <div
-            data-state={isQueryTokenLoading ? 'active' : 'inactive'}
-            className={classNames(
-              'data-[state=active]:block data-[state=active]:flex-1 data-[state=inactive]:hidden',
-              'py-0.5 h-[64px] -mb-3',
-            )}
-          >
-            <div className="flex items-center w-full h-full px-3 rounded-lg">
-              <div className="flex items-center justify-between flex-grow gap-2 rounded">
-                <div className="flex flex-row items-center flex-grow gap-4">
-                  <SkeletonCircle radius={40} />
-                  <div className="flex flex-col items-start">
-                    <SkeletonText className="w-full min-w-[100px]" />
-                    <SkeletonText
-                      fontSize="sm"
-                      className="w-full min-w-[60px]"
-                    />
-                  </div>
-                </div>
+          {/* <div
+						// data-state={isQueryTokenLoading ? "active" : "inactive"}
+						data-state={"inactive"}
+						className={classNames(
+							"data-[state=active]:block data-[state=active]:flex-1 data-[state=inactive]:hidden",
+							"py-0.5 h-[64px] -mb-3"
+						)}>
+						<div className="flex items-center w-full h-full px-3 rounded-lg">
+							<div className="flex items-center justify-between flex-grow gap-2 rounded">
+								<div className="flex flex-row items-center flex-grow gap-4">
+									<SkeletonCircle radius={40} />
+									<div className="flex flex-col items-start">
+										<SkeletonText className="w-full min-w-[100px]" />
+										<SkeletonText fontSize="sm" className="w-full min-w-[60px]" />
+									</div>
+								</div>
 
-                <div className="flex flex-col w-full">
-                  <SkeletonText className="w-[80px]" />
-                  <SkeletonText
-                    fontSize="sm"
-                    align="right"
-                    className="w-[40px]"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
+								<div className="flex flex-col w-full">
+									<SkeletonText className="w-[80px]" />
+									<SkeletonText fontSize="sm" align="right" className="w-[40px]" />
+								</div>
+							</div>
+						</div>
+					</div> */}
           <div
-            data-state={isQueryTokenLoading ? 'inactive' : 'active'}
+            // data-state={isQueryTokenLoading ? "inactive" : "active"}
+            data-state={'active'}
             className={classNames(
               'data-[state=active]:block data-[state=active]:flex-1 data-[state=inactive]:hidden',
             )}
           >
-            {queryToken && (
-              <TokenButton
-                token={queryToken}
-                selectToken={_onSelect}
-                key={queryToken.tokenAddress}
-                hasToken={hasToken}
-                addOrRemoveToken={addOrRemoveToken}
-                isSelected={queryToken.tokenAddress === selected?.tokenAddress}
-              />
-            )}
+            {/* {queryToken && (
+							<TokenButton
+								token={queryToken}
+								selectToken={_onSelect}
+								key={queryToken.tokenAddress}
+								hasToken={hasToken}
+								addOrRemoveToken={addOrRemoveToken}
+								isSelected={queryToken.tokenAddress === selected?.tokenAddress}
+							/>
+						)} */}
             <AutoSizer disableWidth>
               {({ height }: { height: number }) => (
                 <FixedSizeList
@@ -194,16 +170,16 @@ export const TokenSelector = ({
                 </FixedSizeList>
               )}
             </AutoSizer>
-            {sortedTokens?.length === 0 && !queryToken && (
+            {sortedTokens?.length === 0 && (
               <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                 <div className="flex flex-col items-center justify-center gap-1">
                   <span className="flex items-center text-xs text-gray-500 dark:text-slate-500">
-                    No tokens found on
+                    Token not found on list for
                     <span className="ml-1 font-medium">KADENA</span>.
                   </span>
-                  <span className="text-xs text-gray-500 dark:text-slate-500">
-                    Did you try searching with the token address?
-                  </span>
+                  {/* <span className="text-xs text-gray-500 dark:text-slate-500">
+										Did you try searching with the token address?
+									</span> */}
                 </div>
               </div>
             )}
@@ -218,24 +194,14 @@ const TokenButton = ({
   style,
   token,
   selectToken,
-  hasToken,
-  addOrRemoveToken,
   isSelected,
 }: {
   style?: CSSProperties
   token?: KadenaToken | TokenWithBalance
   selectToken: (_token: KadenaToken) => void
-  hasToken?: (currency: KadenaToken) => boolean
   isSelected: boolean
-  addOrRemoveToken?: (type: 'add' | 'remove', currency: KadenaToken[]) => void
 }) => {
   if (!token) return null
-  const isOnDefaultList = useMemo(
-    () => DEFAULT_TOKEN_LIST.some((t) => t.tokenName === token.tokenName),
-    [token],
-  )
-  const isNew = !hasToken?.(token)
-  const isCustomAdded = hasToken?.(token)
 
   return (
     <div
@@ -292,29 +258,27 @@ const TokenButton = ({
           </div>
         ) : null}
       </Button>
-      {isNew && !isOnDefaultList ? (
-        <Button
-          onClick={() => {
-            addOrRemoveToken?.('add', [token])
-          }}
-          className="z-[1]"
-          size="xs"
-        >
-          Import
-        </Button>
-      ) : null}
-      {isCustomAdded && !isOnDefaultList ? (
-        <Button
-          className="z-[1]"
-          onClick={() => {
-            addOrRemoveToken?.('remove', [token])
-          }}
-          variant="destructive"
-          size="xs"
-        >
-          Remove
-        </Button>
-      ) : null}
+      {/* {isNew && !isOnDefaultList ? (
+				<Button
+					onClick={() => {
+						addOrRemoveToken?.("add", [token]);
+					}}
+					className="z-[1]"
+					size="xs">
+					Import
+				</Button>
+			) : null}
+			{isCustomAdded && !isOnDefaultList ? (
+				<Button
+					className="z-[1]"
+					onClick={() => {
+						addOrRemoveToken?.("remove", [token]);
+					}}
+					variant="destructive"
+					size="xs">
+					Remove
+				</Button>
+			) : null} */}
     </div>
   )
 }

@@ -17,6 +17,7 @@ export interface KadenaToken {
   tokenName: string
   tokenInfo?: TokenInfo
   validated?: boolean
+  isNative?: boolean
 }
 
 export type TokenWithBalance = KadenaToken & { balance: string }

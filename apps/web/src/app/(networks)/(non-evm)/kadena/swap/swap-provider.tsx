@@ -45,7 +45,7 @@ const SwapContext = createContext<
 function swapReducer(_state: State, action: Action) {
   switch (action.type) {
     case 'setToken0': {
-      if (_state.token1.tokenAddress === action.value.tokenAddress) {
+      if (_state.token1?.tokenAddress === action.value.tokenAddress) {
         //if token1 is the same as the new token0, swap them
         return {
           ..._state,
@@ -58,7 +58,7 @@ function swapReducer(_state: State, action: Action) {
       return { ..._state, token0: action.value, amountIn: '', amountOut: '' }
     }
     case 'setToken1': {
-      if (_state.token0.tokenAddress === action.value.tokenAddress) {
+      if (_state.token0?.tokenAddress === action.value.tokenAddress) {
         //if token0 is the same as the new token1, swap them
         return {
           ..._state,

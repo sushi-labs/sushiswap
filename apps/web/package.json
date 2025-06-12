@@ -106,6 +106,7 @@
     "tronweb": "5.3.2",
     "viem": "catalog:web3",
     "wagmi": "catalog:web3",
+    "yaml": "2.8.0",
     "zod": "3.23.8"
   },
   "devDependencies": {

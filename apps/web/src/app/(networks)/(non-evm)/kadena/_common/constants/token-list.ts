@@ -265,21 +265,31 @@ export const KADENA_TOKENS: KadenaToken[] = [
       'https://kdswapassets.blob.core.windows.net/public/tokens/teckel.png',
     validated: true,
   },
+  {
+    tokenAddress: 'n_b742b4e9c600892af545afb408326e82a6c0c6ed.zUSD',
+    tokenSymbol: 'zUSD',
+    tokenDecimals: 18,
+    tokenName: 'zUSD',
+    tokenImage:
+      'https://raw.githubusercontent.com/Mercatus-Kadena/kadena_tokens/refs/heads/main/img/zUSD.svg',
+    validated: true,
+  },
 ]
 
-export const DEFAULT_TOKEN_LIST = KADENA_TOKENS.slice(0, -1)
+export const DEFAULT_TOKEN_LIST = KADENA_TOKENS
 
 export const STABLE_TOKENS = DEFAULT_TOKEN_LIST.filter(
   (token) =>
     token.tokenSymbol === 'USDT' ||
     token.tokenSymbol === 'TUSD' ||
-    token.tokenSymbol === 'USDC',
+    token.tokenSymbol === 'USDC' ||
+    token.tokenSymbol === 'zUSD',
 )
 
 export const COMMON_TOKENS = DEFAULT_TOKEN_LIST.filter(
   (token) =>
-    token.tokenSymbol === 'KADENA' ||
-    token.tokenSymbol === 'USDC' ||
+    token.tokenSymbol === 'KDA' ||
+    token.tokenSymbol === 'zUSD' ||
     token.tokenSymbol === 'USDT' ||
     token.tokenSymbol === 'WETH',
 )

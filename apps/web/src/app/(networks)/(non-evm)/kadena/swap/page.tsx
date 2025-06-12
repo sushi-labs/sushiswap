@@ -25,7 +25,7 @@ export default function SwapSimplePage() {
   const [invert, setInvert] = useState(false)
   const { token0, token1 } = useSwapState()
 
-  const [isLoading, setIsLoading] = useState(true)
+  const [isLoading, setIsLoading] = useState(false)
 
   useEffect(() => {
     setTimeout(() => setIsLoading(false), 1200)
