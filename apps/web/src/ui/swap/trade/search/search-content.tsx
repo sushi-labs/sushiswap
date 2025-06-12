@@ -1,6 +1,8 @@
 import { XIcon } from '@heroicons/react-v1/solid'
 import { MagnifyingGlassIcon } from '@heroicons/react/24/outline'
 import { Collapsible, IconButton, TextField, classNames } from '@sushiswap/ui'
+import { type ChangeEvent, useEffect } from 'react'
+import { useAccount } from 'wagmi'
 import { SearchItem } from './search-item'
 import { useSearchContext } from './search-provider'
 
@@ -9,6 +11,19 @@ export const SearchContent = () => {
     state: { searchValue },
     mutate: { setSearchValue, clearSearchValue },
   } = useSearchContext()
+  const { address } = useAccount()
+
+  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+    if (!address) return
+    const value = e.target.value
+    setSearchValue(value)
+  }
+
+  useEffect(() => {
+    if (!address) {
+      setSearchValue('')
+    }
+  }, [address, setSearchValue])
 
   return (
     <div className="flex flex-col gap-3">
@@ -17,7 +32,7 @@ export const SearchContent = () => {
           icon={MagnifyingGlassIcon}
           iconProps={{ widths: 15 }}
           value={searchValue}
-          onChange={(e) => setSearchValue(e.target.value)}
+          onChange={handleInputChange}
           type="text"
           variant="naked"
           placeholder="Search by name or address"
