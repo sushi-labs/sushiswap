@@ -92,3 +92,17 @@ div[data-section-name="extendLeftTradingLine"] {
 }
  
 
+
+/* Default (light mode) */
+.common-tooltip__body-EJBD96zX {
+  background-color: #ffffff !important;
+  color: #000000 !important;
+}
+
+/* Dark mode override */
+@media (prefers-color-scheme: dark) {
+  .common-tooltip__body-EJBD96zX {
+    background-color: #000000 !important;
+    color: #ffffff !important;
+  }
+}
