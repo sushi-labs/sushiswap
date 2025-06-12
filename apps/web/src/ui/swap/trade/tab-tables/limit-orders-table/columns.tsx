@@ -140,7 +140,7 @@ export const getPriceColumn = (
                 e.stopPropagation()
               }
             }}
-            className="flex items-center gap-1 cursor-pointer select-none min-w-[90px]"
+            className="flex items-center gap-1 cursor-pointer select-none min-w-[93px]"
           >
             <span>Price</span>
             <span className="inline-flex items-center dark:text-skyblue text-blue font-normal gap-[1px] border-b border-dashed border-current pb-[1px]">
