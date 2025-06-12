@@ -79,7 +79,7 @@ export default function TradePage() {
           <main className="lg:p-4 md:p-2 pt-9 md:mb-[86px] animate-slide bg-white dark:bg-background md:bg-background">
             <Container maxWidth="screen-2xl" className="px-4">
               <div className="flex flex-col-reverse w-full gap-4 md:flex-row">
-                <div className="flex w-full flex-col gap-4 md:w-[calc(100%-480px)]">
+                <div className="flex w-full flex-col gap-4 md:min-w-[calc(100%-480px)] md:w-full">
                   <div className="w-full md:h-[654px] flex flex-col md:p-5 md:gap-3">
                     {hasMounted && isScriptReady ? (
                       isMdScreen ? (
