@@ -128,7 +128,7 @@ export const DCAOrdersTable = () => {
           columns={COLUMNS}
           data={data}
           loading={false}
-          className="border-none"
+          className="border-none [&_td]:h-[100px]"
           pagination
         />
       </Card>

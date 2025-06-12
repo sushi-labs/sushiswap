@@ -115,7 +115,7 @@ export const LimitOrdersTable = () => {
           columns={LIMIT_ORDER_COLUMNS}
           data={data}
           loading={false}
-          className="border-none"
+          className="border-none [&_td]:h-[92px]"
           pagination={true}
         />
       </Card>

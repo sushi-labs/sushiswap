@@ -118,7 +118,7 @@ export const MarketTable = () => {
           columns={COLUMNS}
           data={data}
           loading={false}
-          className="border-none"
+          className="border-none [&_td]:h-[92px]"
           pagination
         />
       </Card>
