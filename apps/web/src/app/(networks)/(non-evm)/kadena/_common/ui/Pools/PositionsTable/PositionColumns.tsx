@@ -12,17 +12,19 @@ export const POSITION_NAME_COLUMN: ColumnDef<IPositionRowData, unknown> = {
   header: 'Name',
   cell: (props) => <PositionNameCell data={props.row.original} />,
   meta: {
-    skeleton: (
-      <div className="flex items-center w-full gap-2">
-        <div className="flex items-center">
-          <SkeletonCircle radius={ICON_SIZE} />
-          <SkeletonCircle radius={ICON_SIZE} className="-ml-[12px]" />
+    body: {
+      skeleton: (
+        <div className="flex items-center w-full gap-2">
+          <div className="flex items-center">
+            <SkeletonCircle radius={ICON_SIZE} />
+            <SkeletonCircle radius={ICON_SIZE} className="-ml-[12px]" />
+          </div>
+          <div className="flex flex-col w-full">
+            <SkeletonText fontSize="lg" />
+          </div>
         </div>
-        <div className="flex flex-col w-full">
-          <SkeletonText fontSize="lg" />
-        </div>
-      </div>
-    ),
+      ),
+    },
   },
 }
 
@@ -31,13 +33,15 @@ export const VALUE_COLUMN: ColumnDef<IPositionRowData, unknown> = {
   header: 'Value',
   cell: (props) => <PositionValueCell data={props.row.original} />,
   meta: {
-    skeleton: (
-      <div className="flex items-center w-full gap-2">
-        <div className="flex flex-col w-full">
-          <SkeletonText fontSize="lg" />
+    body: {
+      skeleton: (
+        <div className="flex items-center w-full gap-2">
+          <div className="flex flex-col w-full">
+            <SkeletonText fontSize="lg" />
+          </div>
         </div>
-      </div>
-    ),
+      ),
+    },
   },
 }
 
@@ -46,13 +50,15 @@ export const SIZE_COLUMN: ColumnDef<IPositionRowData, unknown> = {
   header: 'Size',
   cell: (props) => <PositionSizeCell data={props.row.original} />,
   meta: {
-    skeleton: (
-      <div className="flex items-center w-full gap-2">
-        <div className="flex flex-col w-full">
-          <SkeletonText fontSize="lg" />
+    body: {
+      skeleton: (
+        <div className="flex items-center w-full gap-2">
+          <div className="flex flex-col w-full">
+            <SkeletonText fontSize="lg" />
+          </div>
         </div>
-      </div>
-    ),
+      ),
+    },
   },
 }
 export const APR_COLUMN: ColumnDef<IPositionRowData, unknown> = {
@@ -60,12 +66,14 @@ export const APR_COLUMN: ColumnDef<IPositionRowData, unknown> = {
   header: 'APR',
   cell: (props) => <PositionAprCell data={props.row.original} />,
   meta: {
-    skeleton: (
-      <div className="flex items-center w-full gap-2">
-        <div className="flex flex-col w-full">
-          <SkeletonText fontSize="lg" />
+    body: {
+      skeleton: (
+        <div className="flex items-center w-full gap-2">
+          <div className="flex flex-col w-full">
+            <SkeletonText fontSize="lg" />
+          </div>
         </div>
-      </div>
-    ),
+      ),
+    },
   },
 }

@@ -10,7 +10,9 @@ export const MAKER_COLUMN: ColumnDef<PoolTransaction> = {
   accessorFn: (row) => row.maker,
   cell: (props) => truncateText(props.getValue() as string),
   meta: {
-    skeleton: <SkeletonText fontSize="lg" />,
+    body: {
+      skeleton: <SkeletonText fontSize="lg" />,
+    },
   },
 }
 
@@ -20,7 +22,9 @@ export const AMOUNT_USD_COLUMN: ColumnDef<PoolTransaction> = {
   accessorFn: (row) => row.amountUsd,
   cell: (props) => formatUSD(props.row.original.amountUsd),
   meta: {
-    skeleton: <SkeletonText fontSize="lg" />,
+    body: {
+      skeleton: <SkeletonText fontSize="lg" />,
+    },
   },
 }
 
@@ -39,7 +43,9 @@ export const TIMESTAMP_COLUMN: ColumnDef<PoolTransaction> = {
     })
   },
   meta: {
-    skeleton: <SkeletonText fontSize="lg" />,
+    body: {
+      skeleton: <SkeletonText fontSize="lg" />,
+    },
   },
 }
 
