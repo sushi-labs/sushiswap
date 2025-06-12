@@ -20,9 +20,20 @@ const tailwindConfig = {
           '0%': { transform: 'translateX(0)' },
           '100%': { transform: 'translateX(-833px)' },
         },
+        slide: {
+          '0%': {
+            opacity: 0,
+            transform: 'translateY(-60px)',
+          },
+          '100%': {
+            opacity: 1,
+            transform: 'translateY(0)',
+          },
+        },
       },
       animation: {
         marquee: 'marquee 5s linear infinite',
+        slide: 'slide .5s',
       },
     },
   },

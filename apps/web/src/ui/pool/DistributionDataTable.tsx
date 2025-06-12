@@ -12,13 +12,12 @@ import {
 import type { ColumnDef } from '@tanstack/react-table'
 import format from 'date-fns/format'
 import { type FC, useMemo } from 'react'
-import type { AngleRewardsPool } from 'src/lib/hooks/react-query'
-
+import type { RewardCampaign } from 'src/lib/hooks/react-query'
 import { rewardPerDay } from '../../lib/functions'
 
 interface DistributionDataTableProps {
   isLoading: boolean
-  data?: AngleRewardsPool['distributionData']
+  data?: RewardCampaign[]
 }
 
 const COLUMNS = [
@@ -26,12 +25,13 @@ const COLUMNS = [
     id: 'reward',
     header: 'Reward (per day)',
     cell: (props) => {
-      const { startTimestamp, endTimestamp, amount, token } = props.row.original
+      const { startTimestamp, endTimestamp, amount, rewardToken } =
+        props.row.original
       const _reward = rewardPerDay({
         start: startTimestamp,
         end: endTimestamp,
         amount,
-        token,
+        token: rewardToken,
       })
       if (!_reward) return <>n/a</>
 
@@ -43,9 +43,13 @@ const COLUMNS = [
       )
     },
     meta: {
-      skeleton: <SkeletonText fontSize="lg" />,
-      headerDescription:
-        'The amount of tokens that gets distributed per day to everyone that provided liquidity to this pool.',
+      body: {
+        skeleton: <SkeletonText fontSize="lg" />,
+      },
+      header: {
+        description:
+          'The amount of tokens that gets distributed per day to everyone that provided liquidity to this pool.',
+      },
     },
   },
   {
@@ -70,7 +74,9 @@ const COLUMNS = [
       )
     },
     meta: {
-      skeleton: <SkeletonText fontSize="lg" />,
+      body: {
+        skeleton: <SkeletonText fontSize="lg" />,
+      },
     },
   },
   {
@@ -95,23 +101,29 @@ const COLUMNS = [
       )
     },
     meta: {
-      skeleton: <SkeletonText fontSize="lg" />,
+      body: {
+        skeleton: <SkeletonText fontSize="lg" />,
+      },
     },
   },
   {
     id: 'oorIncentivized',
     header: 'In-range only',
     cell: (props) => {
-      const { isOutOfRangeIncentivized } = props.row.original
+      const { isOutOfRangeIncentivized } = props.row.original.params
       if (isOutOfRangeIncentivized) return <></>
       return <CheckIcon width={20} height={20} className="text-green" />
     },
     meta: {
-      skeleton: <SkeletonText fontSize="lg" />,
-      headerDescription: 'Only rewards in-range positions',
+      body: {
+        skeleton: <SkeletonText fontSize="lg" />,
+      },
+      header: {
+        description: 'Only rewards in-range positions',
+      },
     },
   },
-] satisfies ColumnDef<AngleRewardsPool['distributionData'][0], unknown>[]
+] satisfies ColumnDef<RewardCampaign, unknown>[]
 
 export const DistributionDataTable: FC<DistributionDataTableProps> = ({
   isLoading,

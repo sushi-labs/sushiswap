@@ -1,8 +1,8 @@
-import { kadenaConfig } from './config';
-import { getKdaPrice } from './getKdaPrice';
-import { getPair } from './getPair';
-import { kadenaService } from './service';
-import { simulateTransaction } from './simulateTransaction';
+import { kadenaConfig } from './config'
+import { getKdaPrice } from './getKdaPrice'
+import { getPair } from './getPair'
+import { kadenaService } from './service'
+import { simulateTransaction } from './simulateTransaction'
 
 export const getKadenaNetworkConfig = () => {
   return {
@@ -37,4 +37,4 @@ export {
   kadenaConfig,
   kadenaService,
   simulateTransaction,
-};
+}

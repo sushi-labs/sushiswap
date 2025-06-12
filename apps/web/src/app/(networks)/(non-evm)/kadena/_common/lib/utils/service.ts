@@ -1,7 +1,4 @@
-import {
-  getKadenaNodeUrl,
-  validateKadenaAddress,
-} from './index';
+import { getKadenaNodeUrl, validateKadenaAddress } from './index'
 
 export class KadenaService {
   private nodeUrl: string

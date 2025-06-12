@@ -1,4 +1,4 @@
-import { simulateTransaction } from './simulateTransaction';
+import { simulateTransaction } from './simulateTransaction'
 
 /**
  * Gets a pair from the kdswap-exchange module

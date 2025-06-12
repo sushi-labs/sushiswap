@@ -1,7 +1,7 @@
-import { createHash } from 'node:crypto';
+import { createHash } from 'node:crypto'
 
-import { kadenaConfig } from './config';
-import { getKadenaNodeUrl } from './index';
+import { kadenaConfig } from './config'
+import { getKadenaNodeUrl } from './index'
 
 interface SimulateTransactionParams {
   code: string

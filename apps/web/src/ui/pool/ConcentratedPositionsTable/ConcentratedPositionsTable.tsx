@@ -7,6 +7,7 @@ import {
   CardHeader,
   CardTitle,
   DataTable,
+  DialogTrigger,
   LinkInternal,
 } from '@sushiswap/ui'
 import { Slot } from '@sushiswap/ui'
@@ -20,10 +21,11 @@ import React, {
 } from 'react'
 import { useConcentratedLiquidityPositions } from 'src/lib/wagmi/hooks/positions/hooks/useConcentratedLiquidityPositions'
 import type { ConcentratedLiquidityPositionWithV3Pool } from 'src/lib/wagmi/hooks/positions/types'
+import { Checker } from 'src/lib/wagmi/systems/Checker'
 import { type EvmChainId, EvmChainKey } from 'sushi'
 import { isSushiSwapV3ChainId } from 'sushi/config'
 import { useAccount } from 'wagmi'
-import { ConcentratedLiquidityCollectAllWidget } from '../ConcentratedLiquidityCollectAllWidget'
+import { ConcentratedLiquidityCollectAllDialog } from '../ConcentratedLiquidityCollectAllDialog'
 import { usePoolFilters } from '../PoolsFiltersProvider'
 import {
   NAME_COLUMN_V3,
@@ -45,7 +47,6 @@ interface ConcentratedPositionsTableProps {
   chainId: EvmChainId
   poolAddress?: string
   onRowClick?(row: ConcentratedLiquidityPositionWithV3Pool): void
-  hideNewSmartPositionButton?: boolean
   hideNewPositionButton?: boolean
   hideClosedPositions?: boolean
   hideCollectAllButton?: boolean
@@ -58,7 +59,6 @@ export const ConcentratedPositionsTable: FC<
   chainId,
   onRowClick,
   poolAddress,
-  hideNewSmartPositionButton = true,
   hideNewPositionButton = false,
   hideClosedPositions = true,
   hideCollectAllButton = false,
@@ -124,7 +124,7 @@ export const ConcentratedPositionsTable: FC<
     <Card>
       <CardHeader>
         <CardTitle>
-          <div className="flex items-center justify-between gap-4 flex-wrap">
+          <div className="flex flex-wrap items-center justify-between gap-4">
             <span className="flex-grow whitespace-nowrap">
               My Positions{' '}
               <span className="text-gray-400 dark:text-slate-500">
@@ -132,28 +132,29 @@ export const ConcentratedPositionsTable: FC<
               </span>
             </span>
             {!hideCollectAllButton ? (
-              <ConcentratedLiquidityCollectAllWidget
+              <ConcentratedLiquidityCollectAllDialog
                 positions={_positions}
                 account={address}
                 chainId={chainId}
-              />
-            ) : null}
-            {!hideNewSmartPositionButton ? (
-              <LinkInternal
-                shallow={true}
-                href={`/${EvmChainKey[chainId]}/pool/v3/${poolAddress}/smart`}
-                className="basis-full md:basis-[unset]"
               >
-                <Button
-                  icon={PlusIcon}
-                  asChild
-                  size="sm"
-                  variant="outline"
-                  className="w-full"
-                >
-                  Create smart position
-                </Button>
-              </LinkInternal>
+                {({ amounts }) => (
+                  <div>
+                    <Checker.Connect size="sm">
+                      <Checker.Network size="sm" chainId={chainId}>
+                        <DialogTrigger asChild>
+                          <Button
+                            size="sm"
+                            disabled={!amounts.length}
+                            testId="claim-fees-all"
+                          >
+                            Claim Fees
+                          </Button>
+                        </DialogTrigger>
+                      </Checker.Network>
+                    </Checker.Connect>
+                  </div>
+                )}
+              </ConcentratedLiquidityCollectAllDialog>
             ) : null}
             {!hideNewPositionButton ? (
               <LinkInternal

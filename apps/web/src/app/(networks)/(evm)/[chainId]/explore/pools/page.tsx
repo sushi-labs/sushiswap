@@ -4,7 +4,6 @@ import { notFound } from 'next/navigation'
 import React from 'react'
 import { POOL_SUPPORTED_NETWORKS } from 'src/config'
 import { PoolsTable } from 'src/ui/pool/PoolsTable'
-import { TableFiltersSmartPoolsOnly } from 'src/ui/pool/TableFilterSmartPoolsOnly'
 import { TableFiltersFarmsOnly } from 'src/ui/pool/TableFiltersFarmsOnly'
 import { TableFiltersNetwork } from 'src/ui/pool/TableFiltersNetwork'
 import { TableFiltersPoolType } from 'src/ui/pool/TableFiltersPoolType'
@@ -34,7 +33,6 @@ export default async function PoolsPage(props: {
           className="lg:hidden block"
         />
         <TableFiltersFarmsOnly />
-        <TableFiltersSmartPoolsOnly />
         <TableFiltersResetButton />
       </div>
       <PoolsTable chainId={chainId} />

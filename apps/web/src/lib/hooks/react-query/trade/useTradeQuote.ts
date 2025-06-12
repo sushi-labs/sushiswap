@@ -1,18 +1,12 @@
-import {
-  SwapEventName,
-  sendAnalyticsEvent,
-  useTrace,
-} from '@sushiswap/telemetry'
 import { useQuery } from '@tanstack/react-query'
 import { useCallback, useMemo } from 'react'
 import { API_BASE_URL } from 'src/lib/swap/api-base-url'
 import { slippageAmount } from 'sushi/calculate'
-import { isRouteProcessor6ChainId, isWNativeSupported } from 'sushi/config'
+import { isRouteProcessor7ChainId, isWNativeSupported } from 'sushi/config'
 import { Amount, Native, Price, type Type } from 'sushi/currency'
 import { Fraction, Percent, ZERO } from 'sushi/math'
 import { isLsd, isStable, isWrapOrUnwrap } from 'sushi/router'
-import { type Address, type Hex, stringify, zeroAddress } from 'viem'
-import { useAccount } from 'wagmi'
+import { stringify, zeroAddress } from 'viem'
 import { usePrices } from '~evm/_common/ui/price-provider/price-provider/use-prices'
 import { apiAdapter02To01 } from './apiAdapter'
 import type { UseTradeParams, UseTradeQuerySelect } from './types'
@@ -46,7 +40,7 @@ export const useTradeQuoteQuery = (
       },
     ],
     queryFn: async () => {
-      const params = new URL(`${API_BASE_URL}/quote/v6/${chainId}`)
+      const params = new URL(`${API_BASE_URL}/quote/v7/${chainId}`)
       params.searchParams.set('referrer', 'sushi')
       params.searchParams.set(
         'tokenIn',
@@ -130,7 +124,7 @@ export const useTradeQuote = (variables: UseTradeParams) => {
   const select: UseTradeQuerySelect = useCallback(
     (data) => {
       if (
-        isRouteProcessor6ChainId(chainId) &&
+        isRouteProcessor7ChainId(chainId) &&
         data &&
         amount &&
         data.route &&

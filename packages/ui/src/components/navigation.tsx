@@ -69,12 +69,12 @@ const SUPPORT_NAVIGATION_LINKS: NavigationElementDropdown['items'] = [
 ]
 
 const navigationContainerVariants = cva(
-  'px-4 sticky flex items-center flex-grow gap-4 top-0 z-50 min-h-[56px] max-h-[56px] h-[56px]',
+  'px-4 flex items-center flex-grow gap-4 top-0 z-50 min-h-[56px] max-h-[56px] h-[56px]',
   {
     variants: {
       variant: {
         default:
-          'bg-gray-100 dark:bg-slate-900 border-b border-gray-200 dark:border-slate-800',
+          'bg-gray-100 dark:bg-slate-900 border-b border-gray-200 dark:border-slate-800 black:bg-background black:border-accent',
         transparent: '',
       },
     },
@@ -104,12 +104,17 @@ const NavigationContainer: React.FC<NavContainerProps> = ({
   )
 }
 
-export type NavigationElementShow = 'mobile' | 'desktop' | 'everywhere'
+export type NavigationElementShow =
+  | 'mobile'
+  | 'desktop'
+  | 'everywhere'
+  | 'never'
 
 const navigationElementShowMap: Record<NavigationElementShow, string> = {
   mobile: 'md:hidden block',
   desktop: 'md:block hidden',
   everywhere: '',
+  never: 'hidden',
 }
 
 export enum NavigationElementType {

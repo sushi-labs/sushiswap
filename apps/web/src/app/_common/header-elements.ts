@@ -34,6 +34,11 @@ export const EXPLORE_NAVIGATION_LINKS = (
       ] as const)
     : []),
   {
+    title: 'Claim',
+    href: '/claim',
+    description: 'Claim your fees and rewards.',
+  },
+  {
     title: 'Stake',
     href: '/stake',
     description: 'Earn protocol fees by staking SUSHI.',

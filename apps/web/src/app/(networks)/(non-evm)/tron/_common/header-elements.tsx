@@ -6,33 +6,32 @@ import {
   NavigationMenuItem,
   NavigationMenuTrigger,
   OnramperButton,
-} from "@sushiswap/ui";
-import React from "react";
-import { EXPLORE_NAVIGATION_LINKS } from "src/app/_common/header-elements";
+} from '@sushiswap/ui'
+import React from 'react'
+import { EXPLORE_NAVIGATION_LINKS } from 'src/app/_common/header-elements'
 
 export const headerElements: NavigationElement[] = [
   {
-    title: "Explore",
+    title: 'Explore',
     items: EXPLORE_NAVIGATION_LINKS(),
-    show: "mobile",
+    show: 'mobile',
     type: NavigationElementType.Dropdown,
   },
   {
-    show: "desktop",
+    show: 'desktop',
     type: NavigationElementType.Custom,
     item: (
       <NavigationMenuItem className={NavigationElementType.Custom}>
         <NavigationMenuTrigger>Trade</NavigationMenuTrigger>
         <NavigationMenuContent>
-          <ul className='w-[400px] gap-3 p-4'>
-            <NavigationListItem
-              title={"Swap"}
-              href={"/tron/swap"}
-            >
+          <ul className="w-[400px] gap-3 p-4">
+            <NavigationListItem title={'Swap'} href={'/tron/swap'}>
               The easiest way to trade.
             </NavigationListItem>
             <OnramperButton>
-              <NavigationListItem title={"Buy Crypto"}>Onramp with fiat.</NavigationListItem>
+              <NavigationListItem title={'Buy Crypto'}>
+                Onramp with fiat.
+              </NavigationListItem>
             </OnramperButton>
           </ul>
         </NavigationMenuContent>
@@ -40,21 +39,21 @@ export const headerElements: NavigationElement[] = [
     ),
   },
   {
-    title: "Explore",
+    title: 'Explore',
     href: `/tron/explore/pools`,
-    show: "desktop",
+    show: 'desktop',
     type: NavigationElementType.Single,
   },
   {
-    title: "Pool",
+    title: 'Pool',
     href: `/tron/pool`,
-    show: "desktop",
+    show: 'desktop',
     type: NavigationElementType.Single,
   },
   {
-    title: "Stake",
-    href: "/stake",
-    show: "desktop",
+    title: 'Stake',
+    href: '/stake',
+    show: 'desktop',
     type: NavigationElementType.Single,
   },
   // {
@@ -63,4 +62,4 @@ export const headerElements: NavigationElement[] = [
   //   show: 'desktop',
   //   type: NavigationElementType.Dropdown,
   // },
-];
+]
