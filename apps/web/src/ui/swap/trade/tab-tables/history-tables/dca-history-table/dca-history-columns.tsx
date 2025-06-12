@@ -128,7 +128,7 @@ export const getAvgPriceColumn = (
     return showInUsd ? (
       <span>{formatUSD(row.original.avgPriceUsd)}</span>
     ) : (
-      <span>{`${tokenPrice.toFixed(4)} ${row.original.sizeToken.symbol}`}</span>
+      <span className="whitespace-nowrap">{`${tokenPrice} ${row.original.sizeToken.symbol}`}</span>
     )
   },
 })

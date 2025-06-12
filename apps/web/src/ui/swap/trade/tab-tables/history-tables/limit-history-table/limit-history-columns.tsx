@@ -105,7 +105,7 @@ export const VALUE_PNL_COLUMN: ColumnDef<LimitOrderHistory> = {
 
   accessorFn: (row) => row.valueUsd,
   cell: ({ row }) => (
-    <div className="flex items-center gap-1 md:flex-col ">
+    <div className="flex items-start gap-1 md:flex-col ">
       <span>{formatUSD(row.original.valueUsd)}</span>
       <span
         className={
@@ -170,7 +170,7 @@ export const getPriceUsdColumn = (
     return showInUsd ? (
       <span>{formatUSD(row.original.priceUsd)}</span>
     ) : (
-      <span>{`${tokenPrice.toFixed(4)} ${row.original.sellToken.symbol}`}</span>
+      <span className="whitespace-nowrap">{`${tokenPrice.toFixed(4)} ${row.original.sellToken.symbol}`}</span>
     )
   },
 })

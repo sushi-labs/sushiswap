@@ -103,7 +103,7 @@ export const VALUE_PNL_COLUMN: ColumnDef<LimitOrder> = {
   accessorFn: (row) => row.valueUSD,
   sortingFn: ({ original: a }, { original: b }) => a.valueUSD - b.valueUSD,
   cell: ({ row }) => (
-    <div className="flex items-center gap-1 md:flex-col ">
+    <div className="flex items-start gap-1 md:flex-col ">
       <span>{formatUSD(row.original.valueUSD)}</span>
       <span
         className={
@@ -163,7 +163,7 @@ export const getPriceColumn = (
   cell: ({ row }) => {
     const tokenPrice = row.original.sellAmount / row.original.buyAmount
     return (
-      <span>
+      <span className="whitespace-nowrap">
         {showInUsd
           ? formatUSD(row.original.priceUsd)
           : `${tokenPrice.toFixed(4)} ${row.original.sellToken.symbol}`}
