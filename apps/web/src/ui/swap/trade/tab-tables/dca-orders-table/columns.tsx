@@ -95,7 +95,7 @@ export const getAvgPriceColumn = (
       <Tooltip>
         <TooltipTrigger asChild>
           <div
-            className="flex items-center gap-1 cursor-pointer select-none"
+            className="flex items-center gap-1 cursor-pointer select-none w-[100px]"
             onClick={(e) => {
               e.stopPropagation()
               setShowInUsd((prev) => !prev)

@@ -144,7 +144,7 @@ export const getPriceUsdColumn = (
                 e.stopPropagation()
               }
             }}
-            className="flex items-start gap-1 cursor-pointer select-none"
+            className="flex items-start gap-1 cursor-pointer select-none min-w-[100px]"
           >
             <span>Price</span>
             <span className="inline-flex items-center dark:text-skyblue text-blue font-normal gap-[1px] border-b border-dashed border-current">

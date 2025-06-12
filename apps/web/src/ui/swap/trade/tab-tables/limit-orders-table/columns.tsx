@@ -140,7 +140,7 @@ export const getPriceColumn = (
                 e.stopPropagation()
               }
             }}
-            className="flex items-center gap-1 cursor-pointer select-none"
+            className="flex items-center gap-1 cursor-pointer select-none min-w-[90px]"
           >
             <span>Price</span>
             <span className="inline-flex items-center dark:text-skyblue text-blue font-normal gap-[1px] border-b border-dashed border-current pb-[1px]">
@@ -166,7 +166,7 @@ export const getPriceColumn = (
       <span className="whitespace-nowrap">
         {showInUsd
           ? formatUSD(row.original.priceUsd)
-          : `${tokenPrice.toFixed(4)} ${row.original.sellToken.symbol}`}
+          : `${tokenPrice.toFixed(2)} ${row.original.sellToken.symbol}`}
       </span>
     )
   },
