@@ -14,14 +14,16 @@ import {
   warningSeverity,
   warningSeverityClassName,
 } from '~kadena/_common/lib/utils/warning-severity'
+import { useKadena } from '~kadena/kadena-wallet-provider'
 import { useSwapState } from '~kadena/swap/swap-provider'
 import { SwapRoutesDialog } from './SwapRoutesDialog'
 
 export const SwapStats = () => {
   const { token0, token1, amountOut, amountIn, priceImpactPercentage, route } =
     useSwapState()
-  const address =
-    'abf594a764e49a90a98cddf30872d8497e37399684c1d8e2b8e96fd865728cc2'
+  const { activeAccount } = useKadena()
+  const address = activeAccount?.accountName ?? ''
+
   const [isPriceLoading, setisPriceLoading] = useState(true)
   const KDAPrice = '0.123'
 

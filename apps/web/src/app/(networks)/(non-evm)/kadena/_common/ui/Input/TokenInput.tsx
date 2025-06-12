@@ -5,9 +5,11 @@ import {
   TextField,
   classNames,
 } from '@sushiswap/ui'
-import { useEffect, useMemo, useState } from 'react'
-import { formatUnitsForInput } from '~kadena/_common/lib/utils/formatters'
+import { useMemo } from 'react'
+import { useKdaPrice } from '~kadena/_common/lib/hooks/use-kda-price'
+import { useTokenBalances } from '~kadena/_common/lib/hooks/use-token-balances'
 import type { KadenaToken } from '~kadena/_common/types/token-type'
+import { useKadena } from '~kadena/kadena-wallet-provider'
 import { Icon } from '../General/Icon'
 import { TokenSelector } from '../General/TokenSelector'
 import { DollarAmountDisplay } from '../Shared/DollarAmountDisplay'
@@ -43,29 +45,29 @@ export const TokenInput = ({
   label,
   theme = 'default',
 }: TokenInputProps) => {
-  const tokenBalance: string = '1.23'
-  const [isInitialLoadingTokenBalance, setIsInitialLoadingTokenBalance] =
-    useState(true)
+  const { activeAccount } = useKadena()
 
-  const usdValue: string = '1.23'
-  const [isUSDValueLoading, setIsUSDValueLoading] = useState(true)
+  const { data, isLoading: isLoadingTokenBalance } = useTokenBalances({
+    account: activeAccount?.accountName ?? '',
+    tokenAddresses: currency ? [currency.tokenAddress] : [],
+  })
+  const { data: priceData, isLoading: isLoadingKdaPrice } = useKdaPrice()
 
-  useEffect(() => {
-    setTimeout(() => {
-      setIsUSDValueLoading(false)
-      setIsInitialLoadingTokenBalance(false)
-    }, 1000)
-  }, [])
+  const tokenBalance = data?.balanceMap[currency?.tokenAddress ?? ''] ?? 0
+
+  //@DEV @TODO: get way to find price of token not just KDA
+  const usdValue = currency?.tokenAddress === 'coin' ? priceData?.priceUsd : 0
 
   const usdAmount = amount
     ? (Number(amount) * (usdValue ? Number(usdValue) : 0)).toString(10)
     : '0.00'
 
+  const isLoading = isLoadingKdaPrice || isLoadingTokenBalance
   const currencyLoading = false
-  const isLoading = false
   const fetching = false
 
-  const insufficientBalance = false
+  const insufficientBalance =
+    type === 'input' && Number(amount) > (tokenBalance ?? 0)
   const _error = insufficientBalance ? 'Exceeds Balance' : undefined
 
   const selector = useMemo(() => {
@@ -178,27 +180,23 @@ export const TokenInput = ({
       </div>
       <div className="flex flex-row items-center justify-between h-[36px]">
         <DollarAmountDisplay
-          isLoading={amount !== '' && isUSDValueLoading}
+          isLoading={amount !== '' && isLoadingKdaPrice}
           error={undefined}
           value={usdAmount}
         />
         <TokenBalanceDisplay
-          amount={Number(tokenBalance ?? 0)}
-          isLoading={isInitialLoadingTokenBalance}
+          amount={tokenBalance ?? 0}
+          isLoading={isLoadingTokenBalance}
           type={type}
-          decimals={currency?.tokenDecimals ?? 0}
+          // zero decimals b/c number comes back formatted
+          decimals={0}
           maxAmount={() => {
             if (type === 'output') return
-            if (tokenBalance === '0') {
+            if (tokenBalance === 0) {
               setAmount('')
               return
             }
-            setAmount(
-              formatUnitsForInput(
-                tokenBalance ?? '0',
-                currency?.tokenDecimals ?? 0,
-              ),
-            )
+            setAmount(String(tokenBalance))
           }}
         />
       </div>
