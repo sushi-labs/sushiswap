@@ -4,7 +4,7 @@ import { getPoolTransactionsQuery } from '~kadena/_common/lib/graphql/queries/ge
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   const { searchParams } = new URL(req.url)
   const { id: pairId } = await params
