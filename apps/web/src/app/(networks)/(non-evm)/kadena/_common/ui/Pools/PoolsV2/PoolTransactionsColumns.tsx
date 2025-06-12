@@ -1,39 +1,14 @@
 import { SkeletonText } from '@sushiswap/ui'
 import type { ColumnDef } from '@tanstack/react-table'
 import { formatUSD } from 'sushi/format'
+import { truncateText } from '~kadena/_common/lib/utils/formatters'
 import type { PoolTransaction } from '~kadena/_common/types/get-pool-by-id'
 
 export const MAKER_COLUMN: ColumnDef<PoolTransaction> = {
   id: 'maker',
   header: 'Maker',
   accessorFn: (row) => row.maker,
-  cell: (props) => props.getValue(),
-  meta: {
-    skeleton: <SkeletonText fontSize="lg" />,
-  },
-}
-
-export const AMOUNT_IN_COLUMN: ColumnDef<PoolTransaction> = {
-  id: 'amountIn',
-  header: 'Amount In',
-  accessorFn: (row) =>
-    Number(row.amount0In) > 0
-      ? `${row.amount0In} Token0`
-      : `${row.amount1In} Token1`,
-  cell: (props) => props.getValue(),
-  meta: {
-    skeleton: <SkeletonText fontSize="lg" />,
-  },
-}
-
-export const AMOUNT_OUT_COLUMN: ColumnDef<PoolTransaction> = {
-  id: 'amountOut',
-  header: 'Amount Out',
-  accessorFn: (row) =>
-    Number(row.amount0Out) > 0
-      ? `${row.amount0Out} Token0`
-      : `${row.amount1Out} Token1`,
-  cell: (props) => props.getValue(),
+  cell: (props) => truncateText(props.getValue() as string),
   meta: {
     skeleton: <SkeletonText fontSize="lg" />,
   },
@@ -66,4 +41,23 @@ export const TIMESTAMP_COLUMN: ColumnDef<PoolTransaction> = {
   meta: {
     skeleton: <SkeletonText fontSize="lg" />,
   },
+}
+
+export function createAmountColumn({
+  accessorKey,
+  header,
+  tokenSymbol,
+}: {
+  accessorKey: keyof PoolTransaction
+  header: string
+  tokenSymbol: string
+}): ColumnDef<PoolTransaction, unknown> {
+  return {
+    accessorKey,
+    header,
+    cell: ({ row }) => {
+      const value = row.getValue(accessorKey) as string
+      return `${Number.parseFloat(value).toFixed(4)} ${tokenSymbol}`
+    },
+  }
 }

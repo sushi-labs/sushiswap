@@ -1,1 +1,5 @@
-export const GRAPHQL_ENDPOINT = 'https://api.mainnet.kadindexer.io/v0'
+const IS_TESTNET = true
+const TEST_GRAPHQL_ENDPOINT = 'http://38.23.32.124:3001/graphql'
+export const GRAPHQL_ENDPOINT = IS_TESTNET
+  ? TEST_GRAPHQL_ENDPOINT
+  : 'https://api.mainnet.kadindexer.io/v0'
