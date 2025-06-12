@@ -14,6 +14,7 @@ import React, {
   type SetStateAction,
 } from 'react'
 import { formatNumber, formatUSD } from 'sushi/format'
+import { useKdaPrice } from '~kadena/_common/lib/hooks/use-kda-price'
 import { useNativeTokenBalance } from '~kadena/_common/lib/hooks/use-native-token-balance'
 import { truncateText } from '~kadena/_common/lib/utils/formatters'
 import { getChainwebAddressLink } from '~kadena/_common/lib/utils/kadena-helpers'
@@ -33,6 +34,7 @@ export const DefaultView = ({ setView }: DefaultViewProps) => {
       account: activeAccount?.accountName ?? '',
       enabled: true,
     })
+  const { data: priceData, isLoading: isLoadingKdaPrice } = useKdaPrice()
 
   useEffect(() => {
     setTimeout(() => {
@@ -40,9 +42,10 @@ export const DefaultView = ({ setView }: DefaultViewProps) => {
     }, 1000)
   }, [])
 
-  const price = '0.68'
+  const price = priceData?.priceUsd ?? 0
 
-  const isLoading = isLoadingNativeTokenBalance || isLoadingPrice
+  const isLoading =
+    isLoadingNativeTokenBalance || isLoadingPrice || isLoadingKdaPrice
 
   return (
     <div className="flex flex-col w-full gap-8 p-4">
@@ -118,7 +121,7 @@ export const DefaultView = ({ setView }: DefaultViewProps) => {
           <SkeletonText className="!w-12 mx-auto" />
         ) : (
           <p className="font-medium text-slate-400">
-            {formatUSD(Number(price) * data?.balance)}
+            {formatUSD(price * data?.balance)}
           </p>
         )}
       </div>
