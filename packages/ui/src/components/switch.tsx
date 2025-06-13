@@ -24,7 +24,7 @@ const Switch = React.forwardRef<
       className={classNames(
         'pointer-events-none transition-colors block h-5 w-5 rounded-full ring-0 transition-transform data-[state=checked]:translate-x-5 data-[state=unchecked]:translate-x-0',
         'data-[state=unchecked]:bg-gray-50 data-[state=checked]:bg-white',
-        'dark:data-[state=unchecked]:bg-slate-900 dark:data-[state=checked]:bg-white',
+        'dark:data-[state=unchecked]:bg-slate-50 dark:data-[state=checked]:bg-white',
         'black:data-[state=unchecked]:bg-black black:data-[state=checked]:bg-white',
       )}
     />

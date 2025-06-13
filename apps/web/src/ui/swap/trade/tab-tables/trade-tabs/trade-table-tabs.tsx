@@ -40,7 +40,7 @@ export const TradeTableTabs = () => {
               <TabsTrigger
                 key={tab.value}
                 value={tab.value}
-                className="!bg-transparent xl:!bg-background !border-none !shadow-none !px-0"
+                className="!bg-transparent xl:!bg-background !border-none !shadow-none !px-0 focus-visible:!ring-0 focus-visible:!ring-offset-0 !ring-transparent"
               >
                 <Button
                   key={tab.value}

@@ -41,7 +41,7 @@ export const HistoryTable = () => {
             <TabsTrigger
               key={tab.value}
               value={tab.value}
-              className="!bg-transparent border-none !px-0 !shadow-none"
+              className="!bg-transparent border-none !px-0 !shadow-none focus-visible:!ring-0 focus-visible:!ring-offset-0 !ring-transparent"
             >
               <Button
                 size="sm"
