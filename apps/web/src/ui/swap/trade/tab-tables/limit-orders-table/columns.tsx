@@ -21,7 +21,7 @@ export const BUY_COLUMN: ColumnDef<LimitOrder> = {
   accessorFn: (row) => row,
   enableSorting: false,
   cell: ({ row }) => (
-    <div className="flex items-center gap-1 md:gap-2 whitespace-nowrap">
+    <div className="flex items-center gap-1 md:gap-2 whitespace-nowrap min-w-[130px]">
       <Currency.Icon
         disableLink
         currency={row.original.buyToken}

@@ -35,7 +35,7 @@ export const BUY_COLUMN: ColumnDef<LimitOrderHistory> = {
 
   accessorFn: (row) => row.buyAmount,
   cell: ({ row }) => (
-    <div className="flex items-center gap-2 whitespace-nowrap">
+    <div className="w-full min-w-[150px] flex items-center gap-2 whitespace-nowrap">
       <Currency.Icon currency={row.original.buyToken} width={18} height={18} />
       <span>
         {formatNumber(row.original.buyAmount)} {row.original.buyToken.symbol}

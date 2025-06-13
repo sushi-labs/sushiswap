@@ -15,7 +15,9 @@ export const ORDER_ID_COLUMN: ColumnDef<DCAOrderSummary> = {
   header: 'Order ID',
   enableSorting: false,
   accessorFn: (row) => row.orderId,
-  cell: ({ row }) => <span>{row.original.orderId}</span>,
+  cell: ({ row }) => (
+    <div className="w-full min-w-[150px]">{row.original.orderId}</div>
+  ),
 }
 
 export const FILLED_COLUMN: ColumnDef<DCAOrderSummary> = {
