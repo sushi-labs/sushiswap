@@ -24,11 +24,13 @@ import { FixedSizeList } from 'react-window'
 import { COMMON_TOKENS } from '~kadena/_common/constants/token-list'
 import { useBaseTokens } from '~kadena/_common/lib/hooks/use-base-tokens'
 import { useSortedTokenList } from '~kadena/_common/lib/hooks/use-sorted-token-list'
-import { formatUnitsForInput } from '~kadena/_common/lib/utils/formatters'
+import { useTokenBalances } from '~kadena/_common/lib/hooks/use-token-balances'
+import { formatNumberWithMaxDecimals } from '~kadena/_common/lib/utils/formatters'
 import type {
   KadenaToken,
   TokenWithBalance,
 } from '~kadena/_common/types/token-type'
+import { useKadena } from '../../../kadena-wallet-provider'
 import { Icon } from './Icon'
 
 export const TokenSelector = ({
@@ -43,6 +45,21 @@ export const TokenSelector = ({
   const [open, setOpen] = useState(false)
   const [query, setQuery] = useState('')
   const { data: baseTokens } = useBaseTokens()
+  const { activeAccount } = useKadena()
+
+  const tokenArray = useMemo(() => {
+    if (!baseTokens) return []
+    const tokens = []
+    for (const token of baseTokens) {
+      tokens.push(token.tokenAddress)
+    }
+    return tokens
+  }, [baseTokens])
+
+  const { data: tokenBalances } = useTokenBalances({
+    account: activeAccount?.accountName ?? '',
+    tokenAddresses: tokenArray,
+  })
 
   const baseTokenMap = useMemo(() => {
     if (!baseTokens) return undefined
@@ -56,7 +73,7 @@ export const TokenSelector = ({
   const { data: sortedTokens } = useSortedTokenList({
     tokenMap: baseTokenMap,
     customTokenMap: {},
-    balanceMap: {},
+    balanceMap: tokenBalances?.balanceMap,
     query: query,
   })
 
@@ -250,10 +267,9 @@ const TokenButton = ({
                 'text-right text-gray-900 dark:text-slate-50 truncate',
               )}
             >
-              {formatUnitsForInput(
-                (token as TokenWithBalance)?.balance,
-                token?.tokenDecimals,
-              ) ?? '0'}
+              {formatNumberWithMaxDecimals(
+                (token as TokenWithBalance)?.balance ?? '0',
+              )}
             </span>
           </div>
         ) : null}

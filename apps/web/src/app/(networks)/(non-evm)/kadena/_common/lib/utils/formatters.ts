@@ -15,9 +15,9 @@ export const hashStringToColor = (str: string) => {
   const r = (hash & 0xff0000) >> 16
   const g = (hash & 0x00ff00) >> 8
   const b = hash & 0x0000ff
-  return `#${r.toString(16).padStart(2, '0')}${g
+  return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b
     .toString(16)
-    .padStart(2, '0')}${b.toString(16).padStart(2, '0')}`
+    .padStart(2, '0')}`
 }
 
 const _djb2 = (str: string) => {
@@ -72,4 +72,25 @@ export const formatUnitsForInput = (
   return toBigNumber(
     Number.parseFloat(val.toFixed(decimals)).toString(),
   ).toString(10)
+}
+
+export const formatNumberWithMaxDecimals = (
+  value: string | number,
+  maxDecimal = 3,
+): string => {
+  if (typeof value === 'string') value = Number(value)
+
+  let negative = false
+  if (value < 0) {
+    negative = true
+    value = Math.abs(value)
+  }
+
+  if (value > 999_000_000_000_000) return '>999t'
+  if (value === 0) return '0.00'
+  if (value < 0.0001) return value.toFixed(6)
+  if (value < 0.001) return value.toFixed(4)
+  if (value < 0.01) return value.toFixed(3)
+
+  return `${negative ? '-' : ''}${Number(Number(value).toFixed(maxDecimal))}`
 }

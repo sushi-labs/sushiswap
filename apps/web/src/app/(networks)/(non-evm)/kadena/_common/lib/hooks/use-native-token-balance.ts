@@ -14,10 +14,7 @@ type NativeTokenBalanceResponse = {
 export const useNativeTokenBalance = ({
   account,
   enabled = true,
-}: {
-  account: string
-  enabled: boolean
-}) => {
+}: { account: string; enabled: boolean }) => {
   return useQuery({
     queryKey: ['kadena-native-balance', account],
     queryFn: async (): Promise<NativeTokenBalanceResponse> => {
