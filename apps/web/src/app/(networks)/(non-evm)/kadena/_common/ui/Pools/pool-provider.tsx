@@ -41,6 +41,7 @@ type Action =
   | { type: 'setMutexLocked'; value: boolean }
   | { type: 'setRateOfToken0ToToken1'; value: number | undefined }
   | { type: 'setRateOfToken1ToToken0'; value: number | undefined }
+  | { type: 'setIsLoadingPool'; value: boolean }
 
 type Dispatch = {
   setToken0(token: KadenaToken): void
@@ -58,6 +59,7 @@ type Dispatch = {
   setMutexLocked(mutexLocked: boolean): void
   setRateOfToken0ToToken1(rate: number | undefined): void
   setRateOfToken1ToToken0(rate: number | undefined): void
+  setIsLoadingPool(isLoading: boolean): void
 }
 
 type State = {
@@ -74,6 +76,7 @@ type State = {
   mutexLocked: boolean
   rateOfToken0ToToken1?: number
   rateOfToken1ToToken0?: number
+  isLoadingPool: boolean
 }
 
 type PoolProviderProps = { children: React.ReactNode }
@@ -156,6 +159,9 @@ function poolReducer(_state: State, action: Action) {
     case 'setRateOfToken1ToToken0': {
       return { ..._state, rateOfToken1ToToken0: action.value }
     }
+    case 'setIsLoadingPool': {
+      return { ..._state, isLoadingPool: action.value }
+    }
   }
 }
 
@@ -174,8 +180,9 @@ const PoolProvider: FC<PoolProviderProps> = ({ children }) => {
     mutexLocked: false,
     rateOfToken0ToToken1: undefined,
     rateOfToken1ToToken0: undefined,
+    isLoadingPool: false,
   })
-  const { data } = usePoolFromTokens({
+  const { data, isLoading } = usePoolFromTokens({
     token0: state?.token0?.tokenAddress,
     token1: state?.token1?.tokenAddress,
   })
@@ -204,9 +211,15 @@ const PoolProvider: FC<PoolProviderProps> = ({ children }) => {
         dispatch({ type: 'setRateOfToken0ToToken1', value }),
       setRateOfToken1ToToken0: (value: number | undefined) =>
         dispatch({ type: 'setRateOfToken1ToToken0', value }),
+      setIsLoadingPool: (value: boolean) =>
+        dispatch({ type: 'setIsLoadingPool', value }),
     }),
     [],
   )
+
+  useEffect(() => {
+    dispatchWithAction.setIsLoadingPool(isLoading)
+  }, [isLoading, dispatchWithAction])
 
   useEffect(() => {
     if (data) {

@@ -32,10 +32,14 @@ export type PoolByIdResponse = {
   token0: {
     id: string
     name: string
+    chainId: string
+    address: string
   }
   token1: {
     id: string
     name: string
+    chainId: string
+    address: string
   }
   reserve0: string
   reserve1: string

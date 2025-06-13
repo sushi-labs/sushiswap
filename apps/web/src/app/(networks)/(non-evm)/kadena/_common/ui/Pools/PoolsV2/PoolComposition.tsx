@@ -14,19 +14,16 @@ import {
 import { type FC, type ReactNode, forwardRef, useMemo } from 'react'
 import { formatUSD } from 'sushi/format'
 import type { PoolByIdResponse } from '~kadena/_common/types/get-pool-by-id'
+import type { KadenaToken } from '~kadena/_common/types/token-type'
 import { Icon } from '../../General/Icon'
+import { usePoolState } from '../pool-provider'
 
 interface PoolCompositionProps {
   pool: PoolByIdResponse | undefined
 }
 
 export const PoolComposition: FC<PoolCompositionProps> = ({ pool }) => {
-  const token0Name = pool?.token0?.name === 'coin' ? 'KDA' : pool?.token0?.name
-  const token1Name = pool?.token1?.name === 'coin' ? 'KDA' : pool?.token1?.name
-  const token0Symbol =
-    token0Name === 'coin' ? 'KDA' : token0Name?.slice(0, 3).toUpperCase()
-  const token1Symbol =
-    token1Name === 'coin' ? 'KDA' : token1Name?.slice(0, 3).toUpperCase()
+  const { token0, token1 } = usePoolState()
 
   const token0Price = '.32'
   const token1Price = '.32'
@@ -50,21 +47,13 @@ export const PoolComposition: FC<PoolCompositionProps> = ({ pool }) => {
           <CardCurrencyAmountItem
             isLoading={isLoading}
             amount={pool?.reserve0}
-            currency={{
-              logoUrl: '',
-              symbol: token0Symbol ?? '',
-              name: token0Name ?? '',
-            }}
+            currency={token0}
             fiatValue={formatUSD(reserve0USD)}
           />
           <CardCurrencyAmountItem
             isLoading={isLoading}
             amount={pool?.reserve1}
-            currency={{
-              logoUrl: '',
-              symbol: token1Symbol ?? '',
-              name: token1Name ?? '',
-            }}
+            currency={token1}
             fiatValue={formatUSD(reserve1USD)}
           />
         </CardGroup>
@@ -136,11 +125,7 @@ interface CardCurrencyAmountItemProps
   extends React.HTMLAttributes<HTMLDivElement> {
   isLoading?: boolean
   amount?: string
-  currency: {
-    name: string
-    symbol: string
-    logoUrl: string
-  }
+  currency?: KadenaToken
   fiatValue?: string
   unwrap?: boolean
 }
@@ -153,7 +138,7 @@ export const CardCurrencyAmountItem = forwardRef<
     { unwrap = true, isLoading, amount, currency, fiatValue, ...props },
     ref,
   ) => {
-    if (isLoading) {
+    if (isLoading || !currency) {
       return <CardItem ref={ref} skeleton />
     }
 
@@ -163,17 +148,8 @@ export const CardCurrencyAmountItem = forwardRef<
         <CardItem
           title={
             <div className="flex items-center gap-2 font-medium text-muted-foreground">
-              <Icon
-                currency={{
-                  tokenSymbol: currency.symbol,
-                  tokenName: currency.symbol,
-                  tokenImage: '',
-                }}
-                height={18}
-                width={18}
-                fontSize={9}
-              />
-              {currency.symbol}
+              <Icon currency={currency} height={18} width={18} fontSize={9} />
+              {currency.tokenSymbol}
             </div>
           }
           ref={ref}

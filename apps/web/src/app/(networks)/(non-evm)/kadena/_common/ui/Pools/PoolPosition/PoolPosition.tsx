@@ -10,6 +10,7 @@ import {
 import { useEffect, useMemo, useState } from 'react'
 import { formatUSD } from 'sushi/format'
 import { PAIR_DECIMALS } from '~kadena/_common/constants/pair-decimals'
+import type { KadenaToken } from '~kadena/_common/types/token-type'
 import {
   formatUnitsForInput,
   parseUnits,
@@ -33,8 +34,8 @@ export const PoolPosition = ({
   token1,
   isLoading,
 }: {
-  token0: TempToken | undefined
-  token1: TempToken | undefined
+  token0: KadenaToken | undefined
+  token1: KadenaToken | undefined
   isLoading: boolean
 }) => {
   const token0StakedInUsd = 0

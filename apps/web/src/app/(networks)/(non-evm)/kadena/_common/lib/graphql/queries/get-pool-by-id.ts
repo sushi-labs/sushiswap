@@ -13,8 +13,8 @@ export const getPoolById = ({
         pool(id: $poolId) {
           id
           address
-          token0 { id name }
-          token1 { id name }
+          token0 { id name chainId address }
+          token1 { id name chainId address }
           reserve0
           reserve1
           totalSupply
