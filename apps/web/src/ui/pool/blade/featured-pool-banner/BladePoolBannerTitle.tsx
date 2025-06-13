@@ -8,7 +8,7 @@ export function BladePoolBannerTitle(props: SVGProps<SVGSVGElement>) {
       viewBox="0 0 312 71"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
-      className='h-auto w-full'
+      className="h-auto w-full"
       role="img"
       aria-labelledby={titleId}
       aria-describedby={subtitleId}

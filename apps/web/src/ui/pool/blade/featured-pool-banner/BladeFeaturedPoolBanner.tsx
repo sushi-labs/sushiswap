@@ -1,5 +1,5 @@
 import type { BladePool } from '@sushiswap/graph-client/data-api'
-import { Badge, Currency, classNames } from '@sushiswap/ui'
+import { Badge, Button, Currency, classNames } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import Link from 'next/link'
 import type { FC } from 'react'
@@ -100,7 +100,7 @@ export const BladeFeaturedPoolBanner: FC<BladeFeaturedPoolBannerProps> = ({
             <div className="space-y-1">
               <div className="font-medium text-white opacity-60">APR</div>
               <div className="bg-gradient-to-r from-[#B0F1FF] to-[#E292E2] bg-clip-text font-semibold text-lg text-transparent">
-                {formatPercent(pool.feeApr1d)}
+                {formatPercent(pool.totalApr1d)}
               </div>
             </div>
           </div>
@@ -128,15 +128,12 @@ function VisitBladePoolButton({
   const link = `/${ChainKey[chainId as keyof typeof ChainKey]}/pool/blade/${address}`
   return (
     <Link href={link}>
-      <button
-        type="button"
-        className={classNames([
-          'inline-flex cursor-pointer items-center justify-center gap-2 whitespace-nowrap font-medium ring-blue ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
-          'rounded-lg bg-[#3B7EF6] bg-[linear-gradient(96deg,_#C3F1FB_2.28%,_#FFC9F1_207.36%)] px-4 py-3.5 text-neutral-950 hover:opacity-90',
-        ])}
+      <Button
+        variant="blank"
+        className="rounded-lg bg-[#3B7EF6] bg-[linear-gradient(96deg,_#C3F1FB_2%,_#FFC9F1_207%)] px-4 py-3.5 text-neutral-950 hover:opacity-90"
       >
         Visit Blade Pool
-      </button>
+      </Button>
     </Link>
   )
 }

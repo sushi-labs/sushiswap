@@ -1,0 +1,1 @@
+export { BladeHighlightsTabs } from './BladeHighlightsTabs'

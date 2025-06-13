@@ -25,6 +25,7 @@ type Query {
   bladePool(address: Bytes!, chainId: BladeChainId!): BladePool!
   bladePoolPairsChart(address: Bytes!, chainId: BladeChainId!, duration: BladePoolPairsChartDuration!): [BladePoolPairStats!]!
   bladePoolTxSourcesChart(address: Bytes!, chainId: BladeChainId!, duration: BladePoolPairsChartDuration!): [BladePoolTxSourcesStats!]!
+  bladePoolBuckets(address: Bytes!, chainId: BladeChainId!): PoolBuckets!
   exploreTokens(chainId: SushiSwapChainId!): [ExploreToken!]!
   exploreTokenChart(chainId: SushiSwapChainId!, address: Bytes!, duration: ExploreTokenChartDuration!): [OHLC!]!
   exploreTokenInfo(chainId: SushiSwapChainId!, address: Bytes!): ExploreTokenInfo
@@ -66,6 +67,7 @@ type Query {
 
 type BladePoolToken {
   token: Token!
+  liquidity: Float!
   liquidityUSD: Float!
   weight: Float!
   targetWeight: Float

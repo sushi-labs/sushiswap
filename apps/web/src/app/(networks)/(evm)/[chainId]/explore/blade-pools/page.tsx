@@ -1,8 +1,8 @@
 import { getBladePools } from '@sushiswap/graph-client/data-api'
 import { Container } from '@sushiswap/ui'
 import { notFound } from 'next/navigation'
-import { BladePoolsTable } from 'src/ui/pool/blade/BladePoolsTable'
 import { BladeFeaturedPoolBanner } from 'src/ui/pool/blade/featured-pool-banner'
+import { BladePoolsTable } from 'src/ui/pool/blade/pools-table/BladePoolsTable'
 import type { EvmChainId } from 'sushi/chain'
 import { isBladeChainId } from 'sushi/config'
 

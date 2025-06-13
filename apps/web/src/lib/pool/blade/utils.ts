@@ -1,6 +1,7 @@
 import type { BladeChainId, BladePool } from '@sushiswap/graph-client/data-api'
 import { Token } from 'sushi/currency'
 import { BLADE_STABLES } from './stables'
+import type { BladePoolAsset } from './types'
 
 export type BladePoolTokensGrouped = {
   tokens: Token[]
@@ -31,6 +32,56 @@ export function getPoolTokensGrouped(pool: BladePool): BladePoolTokensGrouped {
     },
     { tokens: [], stablecoinUsdTokens: [] },
   )
+}
+
+export function getPoolAssets(
+  pool: BladePool,
+  options?: {
+    showStableCoins?: boolean
+  },
+): BladePoolAsset[] {
+  const { showStableCoins = true } = options ?? {}
+  const chainId = pool.chainId as BladeChainId
+  const stablecoinSet = new Set<string>(
+    BLADE_STABLES[chainId]?.map((s) => s.address.toLowerCase()) || [],
+  )
+
+  const assets: BladePoolAsset[] = []
+  const stablecoinAssetMap = new Map<'USD', BladePoolAsset>()
+
+  for (const { token: tokenData, ...rest } of pool.tokens) {
+    if (
+      !showStableCoins &&
+      stablecoinSet.has(tokenData.address.toLowerCase())
+    ) {
+      let stablecoinAsset = stablecoinAssetMap.get('USD')
+      if (!stablecoinAsset) {
+        stablecoinAsset = {
+          ...rest,
+          stablecoin: 'USD',
+        }
+      } else {
+        stablecoinAsset.liquidityUSD += rest.liquidityUSD
+        stablecoinAsset.targetWeight += rest.targetWeight
+        stablecoinAsset.weight += rest.weight
+      }
+      stablecoinAssetMap.set('USD', stablecoinAsset)
+    } else {
+      const token = new Token({
+        chainId,
+        address: tokenData.address,
+        decimals: tokenData.decimals,
+        symbol: tokenData.symbol,
+        name: tokenData.name,
+      })
+      assets.push({
+        ...rest,
+        token,
+      })
+    }
+  }
+
+  return [...assets, ...stablecoinAssetMap.values()]
 }
 
 type GetPoolNameOptions = {

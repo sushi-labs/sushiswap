@@ -11,7 +11,7 @@ import {
   getPoolTokensGrouped,
 } from 'src/lib/pool/blade'
 import { formatPercent, formatUSD } from 'sushi/format'
-import { CurrencyFiatIcon } from './CurrencyFiatIcon'
+import { CurrencyFiatIcon } from '../CurrencyFiatIcon'
 
 export type BladePoolsTableMeta = {
   showStableCoins: boolean
@@ -178,14 +178,13 @@ export const VOLUME_1D_COLUMN: ColumnDef<BladePool, unknown> = {
 }
 
 export const APR_COLUMN: ColumnDef<BladePool, unknown> = {
-  id: 'feeApr1d',
+  id: 'totalApr1d',
   header: 'APR',
-  accessorFn: (row) => row.feeApr1d,
   cell: (props) => (
     <span
       className={classNames('underline decoration-dotted underline-offset-2')}
     >
-      {formatPercent(props.row.original.feeApr1d)}
+      {formatPercent(props.row.original.totalApr1d)}
     </span>
   ),
   meta: {

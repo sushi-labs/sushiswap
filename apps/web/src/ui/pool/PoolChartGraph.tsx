@@ -1,6 +1,10 @@
 'use client'
 
-import type { V2Pool, V3Pool } from '@sushiswap/graph-client/data-api'
+import type {
+  BladePool,
+  V2Pool,
+  V3Pool,
+} from '@sushiswap/graph-client/data-api'
 import {
   CardContent,
   CardDescription,
@@ -23,6 +27,7 @@ import * as echarts from 'echarts/core'
 import { CanvasRenderer } from 'echarts/renderers'
 import { type FC, useCallback, useMemo } from 'react'
 import { usePoolGraphData } from 'src/lib/hooks'
+import type { BLADE_PROTOCOL } from 'src/lib/pool/blade'
 import type { SushiSwapProtocol } from 'sushi'
 import { formatUSD } from 'sushi/format'
 import tailwindConfig from 'tailwind.config.js'
@@ -33,8 +38,8 @@ import { PoolChartType } from './PoolChartTypes'
 interface PoolChartProps {
   chart: PoolChartType.Volume | PoolChartType.Fees | PoolChartType.TVL
   period: PoolChartPeriod
-  pool: V2Pool | V3Pool
-  protocol: SushiSwapProtocol
+  pool: V2Pool | V3Pool | BladePool
+  protocol: SushiSwapProtocol | typeof BLADE_PROTOCOL
 }
 
 const tailwind = resolveConfig(tailwindConfig)
@@ -63,6 +68,7 @@ export const PoolChartGraph: FC<PoolChartProps> = ({
     chainId: pool.chainId,
     protocol,
   })
+  console.log(buckets)
 
   const [xData, yData]: [number[], number[]] = useMemo(() => {
     const data =
@@ -90,6 +96,8 @@ export const PoolChartGraph: FC<PoolChartProps> = ({
 
     return [x.reverse(), y.reverse()]
   }, [chart, period, buckets])
+
+  const poolSwapFee = 'swapFee' in pool ? pool.swapFee : undefined
   // Transient update for performance
   const onMouseOver = useCallback(
     ({ name, value }: { name: number; value: number }) => {
@@ -101,8 +109,8 @@ export const PoolChartGraph: FC<PoolChartProps> = ({
       }
 
       if (valueNodes[1]) {
-        if (chart === PoolChartType.Volume) {
-          valueNodes[1].innerHTML = formatUSD(value * Number(pool.swapFee))
+        if (chart === PoolChartType.Volume && poolSwapFee !== undefined) {
+          valueNodes[1].innerHTML = formatUSD(value * Number(poolSwapFee))
         }
       }
 
@@ -117,7 +125,7 @@ export const PoolChartGraph: FC<PoolChartProps> = ({
         )
       }
     },
-    [period, chart, pool?.swapFee],
+    [period, chart, poolSwapFee],
   )
 
   const DEFAULT_OPTION = useMemo<EChartOption>(
@@ -231,7 +239,7 @@ export const PoolChartGraph: FC<PoolChartProps> = ({
       <CardHeader>
         <CardTitle className="h-[22px]">
           <span className="hoveredItemValue">{formatUSD(defaultValue)}</span>{' '}
-          {chart === PoolChartType.Volume && (
+          {chart === PoolChartType.Volume && 'swapFee' in pool && (
             <span className="text-sm font-medium text-gray-600 dark:text-slate-300">
               <span className="text-xs top-[-2px] relative">•</span>{' '}
               <span className="hoveredItemValue">
