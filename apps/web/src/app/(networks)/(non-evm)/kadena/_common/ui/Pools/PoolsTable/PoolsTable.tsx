@@ -36,7 +36,7 @@ const COLUMNS = [
 ] satisfies ColumnDef<Pool, unknown>[]
 
 export const PoolsTable = () => {
-  const { tokenSymbols, farmsOnly } = usePoolFilters()
+  const { tokenSymbols } = usePoolFilters()
 
   const [sorting, setSorting] = useState<SortingState>([
     { id: 'liquidityUSD', desc: true },
@@ -69,15 +69,10 @@ export const PoolsTable = () => {
     return `/kadena/pool/${row.id}`
   }, [])
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   const filtered = useMemo(() => {
     if (!data?.pools) return [] as Pool[]
 
     return data.pools.filter((pool) => {
-      // if (farmsOnly) {
-      //   if (!pool.isIncentivized) return false
-      // }
-
       if (tokenSymbols.length) {
         if (
           !tokenSymbols.every((symbol) => {
@@ -96,7 +91,7 @@ export const PoolsTable = () => {
 
       return true
     })
-  }, [farmsOnly, tokenSymbols, data?.pools])
+  }, [tokenSymbols, data?.pools])
 
   const state: Partial<TableState> = useMemo(() => {
     return {
@@ -134,7 +129,6 @@ export const PoolsTable = () => {
         columns={COLUMNS}
         data={pageRows ?? ([] as unknown as Pool[])}
         pagination={true}
-        externalLink={true}
         onPaginationChange={setPaginationState}
       />
     </Card>

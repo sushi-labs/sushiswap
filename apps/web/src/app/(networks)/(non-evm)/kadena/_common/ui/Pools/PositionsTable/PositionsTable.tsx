@@ -10,7 +10,7 @@ import {
   LinkInternal,
 } from '@sushiswap/ui'
 import type { PaginationState } from '@tanstack/react-table'
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { usePoolFilters } from 'src/ui/pool'
 import { useMyPositions } from '~kadena/_common/lib/hooks/use-my-positions'
 import type { KadenaToken } from '~kadena/_common/types/token-type'
@@ -42,43 +42,6 @@ export type IPositionRowData = {
   valueUsd: string
 }
 
-export const MOCK_TOKEN_1: KadenaToken = {
-  tokenAddress:
-    'abf594a764e49a90a98cddf30872d8497e37399684c1d8e2b8e96fd865728cc2',
-  tokenSymbol: 'TKN1',
-  tokenDecimals: 12,
-  tokenName: 'Token1',
-  tokenImage: '',
-  validated: true,
-}
-
-export const MOCK_TOKEN_2: KadenaToken = {
-  tokenAddress:
-    'abf594a764e49a90a98cddf30872d8497e37399684c1d8e2b8e96fd865728cc2',
-  tokenSymbol: 'TKN2',
-  tokenDecimals: 12,
-  tokenName: 'Token2',
-  tokenImage: '',
-  validated: true,
-}
-
-export const POOLS: {
-  token0: KadenaToken
-  token1: KadenaToken
-  pairAddress: string
-  reserve0: string
-  reserve1: string
-}[] = [
-  {
-    token0: MOCK_TOKEN_1,
-    token1: MOCK_TOKEN_2,
-    pairAddress:
-      'abf594a764e49a90a98cddf30872d8497e37399684c1d8e2b8e96fd865728cc2',
-    reserve0: 'reserve0',
-    reserve1: 'reserve1',
-  },
-]
-
 export const PositionsTable = ({
   hideNewPositionButton,
 }: PositionsTableProps) => {
@@ -88,14 +51,25 @@ export const PositionsTable = ({
   })
   const { tokenSymbols } = usePoolFilters()
 
-  const { data: positions, isLoading } = useMyPositions()
-  console.log('positions', positions)
+  const { data, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } =
+    useMyPositions()
 
-  const filteredData = useMemo(() => {
-    if (!positions) return []
-    if (!tokenSymbols.length) return positions
+  const positions = data?.positions ?? []
+
+  const start = paginationState.pageIndex * paginationState.pageSize
+  const end = start + paginationState.pageSize
+
+  useEffect(() => {
+    if (end > positions.length && hasNextPage && !isFetchingNextPage) {
+      fetchNextPage()
+    }
+  }, [end, positions.length, hasNextPage, isFetchingNextPage, fetchNextPage])
+
+  const filteredPositions = useMemo(() => {
+    if (!positions.length || !tokenSymbols.length) return positions
+
     const queries = tokenSymbols.map((symbol) =>
-      symbol.toLowerCase()?.replaceAll(' ', ''),
+      symbol.toLowerCase().replaceAll(' ', ''),
     )
 
     return positions.filter((pool) => {
@@ -104,7 +78,6 @@ export const PositionsTable = ({
         pool.pair.reserve0,
         pool.pair.reserve1,
       ]
-
       return poolValues.some((value) =>
         queries.some((query) =>
           typeof value === 'string'
@@ -115,6 +88,8 @@ export const PositionsTable = ({
     })
   }, [tokenSymbols, positions])
 
+  const paginatedFilteredData = filteredPositions.slice(start, end)
+
   return (
     <Card>
       <CardHeader>
@@ -123,7 +98,7 @@ export const PositionsTable = ({
             <span>
               My Positions{' '}
               <span className="text-gray-400 dark:text-slate-500">
-                ({filteredData.length})
+                ({paginatedFilteredData.length})
               </span>
             </span>
             <div className="flex gap-4">
@@ -140,29 +115,27 @@ export const PositionsTable = ({
       </CardHeader>
       <DataTable
         loading={isLoading}
-        data={
-          filteredData?.map((pool) => ({
-            token0: {
-              address: pool?.pair.reserve0.name,
-              symbol: pool?.pair.reserve0.symbol,
-              name: pool?.pair.reserve0.name,
-            },
-            token1: {
-              address: pool?.pair.reserve1.name,
-              symbol: pool?.pair.reserve1.symbol,
-              name: pool?.pair.reserve1.name,
-            },
-            poolId: pool?.id,
-            reserve0: pool?.pair.reserve0.amount,
-            reserve1: pool?.pair.reserve1.amount,
-            apr24h: pool?.apr24h,
-            valueUsd: pool?.valueUsd,
-          })) ?? []
-        }
+        data={paginatedFilteredData.map((pool) => ({
+          token0: {
+            address: pool?.pair.reserve0.name,
+            symbol: pool?.pair.reserve0.symbol,
+            name: pool?.pair.reserve0.name,
+          },
+          token1: {
+            address: pool?.pair.reserve1.name,
+            symbol: pool?.pair.reserve1.symbol,
+            name: pool?.pair.reserve1.name,
+          },
+          poolId: pool?.id,
+          reserve0: pool?.pair.reserve0.amount,
+          reserve1: pool?.pair.reserve1.amount,
+          apr24h: pool?.apr24h,
+          valueUsd: pool?.valueUsd,
+        }))}
         columns={[POSITION_NAME_COLUMN, VALUE_COLUMN, APR_COLUMN]}
-        linkFormatter={(data: IPositionRowData) => {
-          return `/kadena/pool/${data?.poolId}/add`
-        }}
+        linkFormatter={(data: IPositionRowData) =>
+          `/kadena/pool/${data.poolId}/add`
+        }
         externalLink={false}
         pagination={true}
         state={{

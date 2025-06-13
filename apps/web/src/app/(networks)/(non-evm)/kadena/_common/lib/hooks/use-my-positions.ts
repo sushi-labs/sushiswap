@@ -1,25 +1,53 @@
-import { useQuery } from '@tanstack/react-query'
-import type {
-  WalletPosition,
-  WalletPositionsResponse,
-} from '~kadena/_common/types/get-positions'
+import { useInfiniteQuery } from '@tanstack/react-query'
+import type { WalletPosition } from '~kadena/_common/types/get-positions'
 import { useKadena } from '~kadena/kadena-wallet-provider'
 
-export const useMyPositions = () => {
-  const { activeAccount } = useKadena()
+interface WalletPositionsApiResponse {
+  success: boolean
+  data: {
+    positions: WalletPosition[]
+    pageInfo: {
+      endCursor: string
+      hasNextPage: boolean
+    }
+    totalCount: number
+  }
+}
 
-  return useQuery({
-    queryKey: ['wallet-positions', activeAccount?.accountName],
-    enabled: !!activeAccount?.accountName,
-    queryFn: async (): Promise<WalletPosition[]> => {
-      const res = await fetch(
-        `/kadena/api/positions?walletAddress=${activeAccount?.accountName}`,
-      )
-      const json = (await res.json()) as WalletPositionsResponse
-      console.log('positions json', json)
-      if (!json.success) throw new Error('Failed to fetch wallet positions')
+export const useMyPositions = (pageSize = 10) => {
+  const { activeAccount } = useKadena()
+  const walletAddress = activeAccount?.accountName
+
+  return useInfiniteQuery({
+    queryKey: ['kadena-wallet-positions', walletAddress],
+    queryFn: async ({ pageParam = null }) => {
+      const url = new URL('/kadena/api/positions', window.location.origin)
+      url.searchParams.set('walletAddress', walletAddress!)
+      url.searchParams.set('first', String(pageSize))
+      if (pageParam) url.searchParams.set('after', pageParam)
+
+      const res = await fetch(url.toString())
+      const json: WalletPositionsApiResponse = await res.json()
+
+      if (!json.success) {
+        console.error('Failed to fetch wallet positions:', json)
+        throw new Error('Failed to fetch wallet positions')
+      }
+
       return json.data
     },
-    staleTime: 1000 * 60,
+    getNextPageParam: (lastPage: WalletPositionsApiResponse['data']) => {
+      const nextParam = lastPage.pageInfo.hasNextPage
+        ? lastPage.pageInfo.endCursor
+        : undefined
+      return nextParam
+    },
+    select: (data) => {
+      const flat = data.pages.flatMap((p) => p.positions)
+      return { ...data, positions: flat }
+    },
+    initialPageParam: null,
+    staleTime: 60 * 1000,
+    enabled: !!walletAddress,
   })
 }

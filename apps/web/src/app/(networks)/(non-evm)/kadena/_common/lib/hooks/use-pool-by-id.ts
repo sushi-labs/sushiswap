@@ -15,7 +15,7 @@ export const usePoolById = ({
   const { poolByIdChartTimeFrame } = usePoolState()
 
   return useQuery({
-    queryKey: ['pool-by-id', poolId, timeFrame, first],
+    queryKey: ['kadena-pool-by-id', poolId, timeFrame, first],
     queryFn: async (): Promise<PoolByIdResponse> => {
       const res = await fetch(
         `/kadena/api/pools/${poolId}?timeFrame=${poolByIdChartTimeFrame}&first=${first}`,

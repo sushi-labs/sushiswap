@@ -15,7 +15,7 @@ type PirceDataResponse = {
 
 export const useKdaPrice = () => {
   return useQuery({
-    queryKey: ['kda-rpice'],
+    queryKey: ['kadena-kda-price'],
     queryFn: async () => {
       const res = await fetch(
         `https://api.diadata.org/v1/assetQuotation/Kadena/0x0000000000000000000000000000000000000000`,
