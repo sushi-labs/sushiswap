@@ -1,4 +1,5 @@
 import { type ComponentProps, useEffect } from 'react'
+import { Decimal } from 'sushi/math'
 import { TokenInput } from '~kadena/_common/ui/Input/TokenInput'
 import { usePoolDispatch, usePoolState } from '../pool-provider'
 
@@ -34,8 +35,9 @@ export const AmountInToken1 = ({
       return
     }
     if (pairExists && rateOfToken0 && token0) {
-      const amountFormatted =
-        rateOfToken0 * Number.parseFloat(amountInToken1 || '0')
+      const amountFormatted = new Decimal(rateOfToken0).mul(
+        Number.parseFloat(amountInToken1 || '0'),
+      )
       if (amountFormatted) {
         setAmountInToken0(String(amountFormatted))
       } else {

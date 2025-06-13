@@ -1,5 +1,9 @@
 import { useKadenaWallet } from '@kadena/wallet-adapter-react'
 import {
+  SlippageToleranceStorageKey,
+  useSlippageTolerance,
+} from '@sushiswap/hooks'
+import {
   createFailedToast,
   createInfoToast,
   createSuccessToast,
@@ -38,6 +42,11 @@ export const AddButton = ({
     usePoolDispatch()
   const { activeAccount, currentWallet } = useKadena()
   const { client } = useKadenaWallet()
+  const [slippageTolerance] = useSlippageTolerance(
+    SlippageToleranceStorageKey.RemoveLiquidity,
+  )
+  const slippage =
+    slippageTolerance === 'AUTO' ? 0.005 : Number(slippageTolerance) / 100
 
   const address = activeAccount?.accountName ?? ''
 
@@ -53,8 +62,14 @@ export const AddButton = ({
       return
     try {
       setIsTxnPending(true)
-      const minAmountToken0 = (Number(amountInToken0) * (1 - 0.01)).toString()
-      const minAmountToken1 = (Number(amountInToken1) * (1 - 0.01)).toString()
+      const minAmountToken0 = (
+        Number(amountInToken0) *
+        (1 - slippage)
+      ).toString()
+      const minAmountToken1 = (
+        Number(amountInToken1) *
+        (1 - slippage)
+      ).toString()
 
       let poolAddress = poolId
 
@@ -188,6 +203,14 @@ export const AddButton = ({
     })
     await queryClient.invalidateQueries({
       queryKey: ['kadena-token-balances', address, [token1?.tokenAddress]],
+    })
+    await queryClient.invalidateQueries({
+      queryKey: [
+        'kadena-lp-balance',
+        address,
+        token0?.tokenAddress,
+        token1?.tokenAddress,
+      ],
     })
   }
 

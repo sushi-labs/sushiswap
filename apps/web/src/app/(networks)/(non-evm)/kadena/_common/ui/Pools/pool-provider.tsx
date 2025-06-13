@@ -16,7 +16,6 @@ import {
 } from '~kadena/_common/constants/token-list'
 import { usePoolFromTokens } from '~kadena/_common/lib/hooks/pools/use-pool-from-tokens'
 import type { KadenaToken } from '~kadena/_common/types/token-type'
-import { ReserveHelper } from './ReserveHelper'
 
 type InputFieldType = 'token0' | 'token1'
 
@@ -223,6 +222,7 @@ const PoolProvider: FC<PoolProviderProps> = ({ children }) => {
 
   useEffect(() => {
     if (data) {
+      console.log('Pool data:', data)
       dispatchWithAction.setPoolId(data?.poolData?.poolAddress ?? undefined)
       dispatchWithAction.setReserve0(data?.poolData?.reserve0 ?? 0)
       dispatchWithAction.setReserve1(data?.poolData?.reserve1 ?? 0)
@@ -242,7 +242,6 @@ const PoolProvider: FC<PoolProviderProps> = ({ children }) => {
         return { state, dispatch: dispatchWithAction }
       }, [state, dispatchWithAction])}
     >
-      <ReserveHelper />
       {children}
     </PoolContext.Provider>
   )

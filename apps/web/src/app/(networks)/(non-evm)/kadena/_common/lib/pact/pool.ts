@@ -1,5 +1,4 @@
 import { Pact } from '@kadena/client'
-import { kadenaClient } from '~kadena/_common/constants/client'
 import { KADENA_CONTRACT } from '~kadena/_common/constants/contracts'
 import { formatPactDecimal } from '../utils/formatters'
 
@@ -101,6 +100,97 @@ export const buildAddLiquidityTxn = ({
         `${poolAddress}`,
         {
           decimal: amountInToken1.toString(),
+        },
+      ),
+    ])
+    .addData('ks', {
+      keys: [pubKey],
+      pred: 'keys-all',
+    })
+    .setMeta({
+      chainId: String(chainId),
+      gasLimit: 80300,
+      gasPrice: 0.0000001,
+      senderAccount: signerAddress,
+    })
+    .setNetworkId(networkId)
+    .createTransaction()
+  return tx
+}
+
+export const buildGetLpBalanceTx = (
+  account: string,
+  token0Address: string,
+  token1Address: string,
+  chainId: number,
+  networkId: string,
+) => {
+  const pactCmd = `(${KADENA_CONTRACT}-tokens.get-balance "${token0Address}:${token1Address}" "${account}")`
+  const tx = Pact.builder
+    .execution(pactCmd)
+    .setMeta({
+      chainId: String(chainId),
+    })
+    .setNetworkId(networkId)
+    .createTransaction()
+  return tx
+}
+
+export const buildRemoveLiquidityTxn = ({
+  token0Address,
+  token1Address,
+  lpToRemove,
+  minAmountOutToken0,
+  minAmountOutToken1,
+  pairAddress,
+  signerAddress,
+  chainId,
+  networkId,
+}: {
+  token0Address: string
+  token1Address: string
+  lpToRemove: number
+  minAmountOutToken0: number
+  minAmountOutToken1: number
+  pairAddress: string
+  signerAddress: string
+  chainId: number
+  networkId: string
+}) => {
+  console.log({
+    token0Address,
+    token1Address,
+    lpToRemove,
+    minAmountOutToken0,
+    minAmountOutToken1,
+    pairAddress,
+    signerAddress,
+    chainId,
+    networkId,
+  })
+  const pubKey = signerAddress.split('k:')[1]
+  const tx = Pact.builder
+    .execution(
+      `(
+			${KADENA_CONTRACT}.remove-liquidity 
+			${token0Address}
+			${token1Address} 
+			${formatPactDecimal(lpToRemove)} 
+			${formatPactDecimal(minAmountOutToken0)} 
+			${formatPactDecimal(minAmountOutToken1)} 
+			"${signerAddress}" 
+			"${signerAddress}" 
+			(read-keyset "ks"))`,
+    )
+    .addSigner(pubKey, (signFor) => [
+      signFor('coin.GAS'),
+      signFor(
+        `${KADENA_CONTRACT}-tokens.TRANSFER`,
+        `${token0Address}:${token1Address}`,
+        signerAddress,
+        pairAddress,
+        {
+          decimal: formatPactDecimal(lpToRemove),
         },
       ),
     ])

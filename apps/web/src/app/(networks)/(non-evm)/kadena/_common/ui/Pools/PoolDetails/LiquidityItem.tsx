@@ -12,14 +12,13 @@ export const LiquidityItem = ({
 }: {
   isLoading: boolean
   token: TempToken | KadenaToken | undefined
-  amount: string
+  amount: number
   usdAmount: string
 }) => {
   if (isLoading || !token) {
     return <CardItem skeleton={true} />
   }
 
-  const _amount = '0.234'
   return (
     <CardItem
       title={
@@ -30,7 +29,7 @@ export const LiquidityItem = ({
       }
     >
       <span className="flex gap-1 font-semibold">
-        {+amount > 0 ? _amount : 0}{' '}
+        {amount}{' '}
         <span className="font-normal text-gray-400 dark:text-slate-600">
           {formatUSD(usdAmount)}
         </span>

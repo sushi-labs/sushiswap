@@ -5,36 +5,36 @@ import { type FC, createContext, useContext, useMemo, useReducer } from 'react'
 type Action =
   | { type: 'setPercentage'; value: number }
   | { type: 'setIsTxnPending'; value: boolean }
-  | { type: 'setAmountToken0PerLP'; value: string }
-  | { type: 'setAmountToken1PerLP'; value: string }
-  | { type: 'setTotalSupplyLP'; value: string }
-  | { type: 'setLPBalance'; value: string }
-  | { type: 'setLPToRemove'; value: string }
-  | { type: 'setMinAmountToken0'; value: string }
-  | { type: 'setMinAmountToken1'; value: string }
+  | { type: 'setAmountToken0PerLP'; value: number }
+  | { type: 'setAmountToken1PerLP'; value: number }
+  | { type: 'setTotalSupplyLP'; value: number }
+  | { type: 'setLPBalance'; value: number }
+  | { type: 'setLPToRemove'; value: number }
+  | { type: 'setMinAmountToken0'; value: number }
+  | { type: 'setMinAmountToken1'; value: number }
 
 type Dispatch = {
   setIsTxnPending(isPending: boolean): void
   setPercentage(percentage: number): void
-  setAmountToken0PerLP(amount: string): void
-  setAmountToken1PerLP(amount: string): void
-  setTotalSupplyLP(amount: string): void
-  setLPBalance(amount: string): void
-  setLPToRemove(amount: string): void
-  setMinAmountToken0(amount: string): void
-  setMinAmountToken1(amount: string): void
+  setAmountToken0PerLP(amount: number): void
+  setAmountToken1PerLP(amount: number): void
+  setTotalSupplyLP(amount: number): void
+  setLPBalance(amount: number): void
+  setLPToRemove(amount: number): void
+  setMinAmountToken0(amount: number): void
+  setMinAmountToken1(amount: number): void
 }
 
 type State = {
   percentage: number
   isTxnPending: boolean
-  amountToken0PerLP: string
-  amountToken1PerLP: string
-  totalSupplyLP: string
-  lpBalance: string
-  lpToRemove: string
-  minAmountToken0: string
-  minAmountToken1: string
+  amountToken0PerLP: number
+  amountToken1PerLP: number
+  totalSupplyLP: number
+  lpBalance: number
+  lpToRemove: number
+  minAmountToken0: number
+  minAmountToken1: number
 }
 
 type RemoveProviderProps = { children: React.ReactNode }
@@ -79,13 +79,13 @@ const RemoveProvider: FC<RemoveProviderProps> = ({ children }) => {
   const [state, dispatch] = useReducer(removeReducer, {
     percentage: 0, //0-100
     isTxnPending: false,
-    amountToken0PerLP: '', //will be formatted, will not be in wei amount
-    amountToken1PerLP: '', //will be formatted, will not be in wei amount
-    totalSupplyLP: '', //will be in wei
-    lpBalance: '', //will be in wei
-    lpToRemove: '', //will be in wei
-    minAmountToken0: '', //will be in wei
-    minAmountToken1: '', //will be in wei
+    amountToken0PerLP: 0,
+    amountToken1PerLP: 0,
+    totalSupplyLP: 0,
+    lpBalance: 0,
+    lpToRemove: 0,
+    minAmountToken0: 0,
+    minAmountToken1: 0,
   })
 
   const dispatchWithAction = useMemo(
@@ -94,19 +94,19 @@ const RemoveProvider: FC<RemoveProviderProps> = ({ children }) => {
         dispatch({ type: 'setPercentage', value }),
       setIsTxnPending: (value: boolean) =>
         dispatch({ type: 'setIsTxnPending', value }),
-      setAmountToken0PerLP: (value: string) =>
+      setAmountToken0PerLP: (value: number) =>
         dispatch({ type: 'setAmountToken0PerLP', value }),
-      setAmountToken1PerLP: (value: string) =>
+      setAmountToken1PerLP: (value: number) =>
         dispatch({ type: 'setAmountToken1PerLP', value }),
-      setTotalSupplyLP: (value: string) =>
+      setTotalSupplyLP: (value: number) =>
         dispatch({ type: 'setTotalSupplyLP', value }),
-      setLPBalance: (value: string) =>
+      setLPBalance: (value: number) =>
         dispatch({ type: 'setLPBalance', value }),
-      setLPToRemove: (value: string) =>
+      setLPToRemove: (value: number) =>
         dispatch({ type: 'setLPToRemove', value }),
-      setMinAmountToken0: (value: string) =>
+      setMinAmountToken0: (value: number) =>
         dispatch({ type: 'setMinAmountToken0', value }),
-      setMinAmountToken1: (value: string) =>
+      setMinAmountToken1: (value: number) =>
         dispatch({ type: 'setMinAmountToken1', value }),
     }),
     [],

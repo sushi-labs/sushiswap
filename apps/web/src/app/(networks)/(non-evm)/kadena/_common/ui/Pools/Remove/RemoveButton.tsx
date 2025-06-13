@@ -1,3 +1,4 @@
+import { useKadenaWallet } from '@kadena/wallet-adapter-react'
 import {
   createFailedToast,
   createInfoToast,
@@ -5,7 +6,14 @@ import {
 } from '@sushiswap/notifications'
 import { Button, type ButtonProps } from '@sushiswap/ui'
 import { useQueryClient } from '@tanstack/react-query'
+import { useParams } from 'next/navigation'
 import { useMemo } from 'react'
+import { kadenaClient } from '~kadena/_common/constants/client'
+import {
+  KADENA_CHAIN_ID,
+  KADENA_NETWORK_ID,
+} from '~kadena/_common/constants/network'
+import { buildRemoveLiquidityTxn } from '~kadena/_common/lib/pact/pool'
 import { formatUnitsForInput } from '~kadena/_common/lib/utils/formatters'
 import { getChainwebTxnLink } from '~kadena/_common/lib/utils/kadena-helpers'
 import { WalletConnector } from '~kadena/_common/ui/WalletConnector/WalletConnector'
@@ -13,13 +21,10 @@ import { useKadena } from '~kadena/kadena-wallet-provider'
 import { usePoolState } from '../pool-provider'
 import { useRemoveLiqDispatch, useRemoveLiqState } from './pool-remove-provider'
 
-export const ROUTER_CONTRACT = 'TG61TbGhkx757ATfceRbnSHD3kHzQ7tk97'
-const PAIR_DECIMALS = 18
-
 export const RemoveButton = (props: ButtonProps) => {
   const queryClient = useQueryClient()
-  const address =
-    'abf594a764e49a90a98cddf30872d8497e37399684c1d8e2b8e96fd865728cc2'
+  const params = useParams()
+  const _poolId = params?.id as string
   const { isConnected } = useKadena()
   const {
     percentage,
@@ -30,8 +35,10 @@ export const RemoveButton = (props: ButtonProps) => {
   } = useRemoveLiqState()
   const { setIsTxnPending, setPercentage } = useRemoveLiqDispatch()
   const { token0, token1, poolId } = usePoolState()
-  const allowanceAmount = '.72'
-  // const refetch = () => {}
+  const { activeAccount, currentWallet } = useKadena()
+  const { client } = useKadenaWallet()
+
+  const address = activeAccount?.accountName ?? ''
 
   const removeLiquidity = async () => {
     if (
@@ -41,18 +48,37 @@ export const RemoveButton = (props: ButtonProps) => {
       !token1 ||
       !lpToRemove ||
       !minAmountToken0 ||
-      !minAmountToken1
+      !minAmountToken1 ||
+      !currentWallet ||
+      !poolId
     ) {
       return
     }
     try {
       setIsTxnPending(true)
 
-      const txId =
-        'abf594a764e49a90a98cddf30872d8497e37399684c1d8e2b8e96fd865728cc2'
-
+      const tx = buildRemoveLiquidityTxn({
+        token0Address: token0.tokenAddress,
+        token1Address: token1.tokenAddress,
+        lpToRemove: Number(lpToRemove),
+        minAmountOutToken0: Number(minAmountToken0),
+        minAmountOutToken1: Number(minAmountToken1),
+        pairAddress: poolId,
+        signerAddress: address,
+        chainId: KADENA_CHAIN_ID,
+        networkId: KADENA_NETWORK_ID,
+      })
+      const signedTxn = await client.signTransaction(currentWallet, tx)
+      const preflightResult = await kadenaClient.preflight(signedTxn)
+      if (preflightResult.result.status === 'failure') {
+        throw new Error(
+          preflightResult.result.error?.message || 'Preflight failed',
+        )
+      }
+      const res = await kadenaClient.submit(signedTxn)
+      const txId = res.requestKey
       createInfoToast({
-        summary: `Removing liquidity from the ${token0.tokenSymbol}/${token1.tokenSymbol} pair.`,
+        summary: 'Remove liquidity initiated...',
         type: 'swap',
         account: address as string,
         chainId: 1,
@@ -61,11 +87,14 @@ export const RemoveButton = (props: ButtonProps) => {
         txHash: txId,
         href: getChainwebTxnLink(txId),
       })
+      const result = await kadenaClient.pollOne(res)
 
-      await new Promise((resolve) => setTimeout(resolve, 1800))
+      if (result.result.status === 'failure') {
+        throw new Error(result.result.error?.message || 'Transaction failed')
+      }
 
       createSuccessToast({
-        summary: 'Successfully removed liquidity!',
+        summary: 'Removed liquidity successfully',
         txHash: txId,
         type: 'swap',
         account: address as string,
@@ -74,7 +103,8 @@ export const RemoveButton = (props: ButtonProps) => {
         timestamp: Date.now(),
         href: getChainwebTxnLink(txId),
       })
-      onSuccess()
+
+      await onSuccess()
     } catch (error) {
       const errorMessage =
         typeof error === 'string'
@@ -95,22 +125,30 @@ export const RemoveButton = (props: ButtonProps) => {
     }
   }
 
-  const onSuccess = () => {
+  const onSuccess = async () => {
     setPercentage(0)
     setIsTxnPending(false)
-    queryClient.invalidateQueries({
+    await queryClient.invalidateQueries({
+      queryKey: ['kadena-pool-from-tokens', token0, token1],
+    })
+    await queryClient.invalidateQueries({
+      queryKey: ['kadena-token-balances', address, [token0?.tokenAddress]],
+    })
+    await queryClient.invalidateQueries({
+      queryKey: ['kadena-token-balances', address, [token1?.tokenAddress]],
+    })
+    await queryClient.invalidateQueries({
       queryKey: [
-        'useTokenBalance',
-        { accountAddress: address, tokenAddress: poolId },
+        'kadena-lp-balance',
+        address,
+        token0?.tokenAddress,
+        token1?.tokenAddress,
       ],
     })
+    await queryClient.invalidateQueries({
+      queryKey: ['kadena-pool-by-id', _poolId, undefined, 4],
+    })
   }
-
-  const allowanceFormatted = formatUnitsForInput(
-    allowanceAmount ?? '0',
-    token0?.tokenDecimals ?? 18,
-  )
-
   const buttonText = useMemo(() => {
     if (isTxnPending) {
       return 'Removing'
@@ -118,38 +156,12 @@ export const RemoveButton = (props: ButtonProps) => {
     if (percentage === 0) {
       return 'Enter Amount'
     }
-    if (
-      allowanceAmount &&
-      Number(formatUnitsForInput(lpToRemove, PAIR_DECIMALS)) >
-        Number(allowanceFormatted)
-    ) {
-      return 'Approve'
-    }
     return 'Remove'
-  }, [percentage, isTxnPending, allowanceFormatted, lpToRemove])
+  }, [percentage, isTxnPending])
 
   if (!isConnected) {
     return <WalletConnector fullWidth {...props} />
   }
-
-  // if (buttonText === 'Approve') {
-  //   return (
-  //     <ApproveToken
-  //       tokenToApprove={{
-  //         address: pairAddress as string,
-  //         decimals: PAIR_DECIMALS,
-  //         symbol: 'SLP',
-  //         name: 'SushiSwap LP',
-  //       }}
-  //       amount={formatUnitsForInput(lpToRemove, PAIR_DECIMALS)}
-  //       spenderAddress={ROUTER_CONTRACT}
-  //       onSuccess={async () => {
-  //         await refetch()
-  //       }}
-  //       buttonProps={props}
-  //     />
-  //   )
-  // }
 
   return (
     <Button

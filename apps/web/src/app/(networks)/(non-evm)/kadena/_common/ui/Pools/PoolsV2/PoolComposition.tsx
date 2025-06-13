@@ -1,6 +1,5 @@
 'use client'
 
-import type { V2Pool } from '@sushiswap/graph-client/data-api'
 import {
   Card,
   CardContent,
@@ -11,27 +10,26 @@ import {
   CardTitle,
   SkeletonText,
 } from '@sushiswap/ui'
-import { type FC, type ReactNode, forwardRef, useMemo } from 'react'
+import { type ReactNode, forwardRef } from 'react'
 import { formatUSD } from 'sushi/format'
-import type { PoolByIdResponse } from '~kadena/_common/types/get-pool-by-id'
+import { useKdaPrice } from '~kadena/_common/lib/hooks/use-kda-price'
 import type { KadenaToken } from '~kadena/_common/types/token-type'
 import { Icon } from '../../General/Icon'
 import { usePoolState } from '../pool-provider'
 
-interface PoolCompositionProps {
-  pool: PoolByIdResponse | undefined
-}
+export const PoolComposition = () => {
+  const { token0, token1, reserve0, reserve1 } = usePoolState()
+  const { data: priceData, isLoading: isLoadingPrice } = useKdaPrice()
+  const token0Price =
+    token0?.tokenAddress === 'coin' ? priceData?.priceUsd || 0 : 0
+  const token1Price =
+    token1?.tokenAddress === 'coin' ? priceData?.priceUsd || 0 : 0
 
-export const PoolComposition: FC<PoolCompositionProps> = ({ pool }) => {
-  const { token0, token1 } = usePoolState()
-
-  const token0Price = '.32'
-  const token1Price = '.32'
-  const reserve0USD = Number(pool?.reserve0) * Number(token0Price)
-  const reserve1USD = Number(pool?.reserve1) * Number(token1Price)
+  const reserve0USD = Number(reserve0) * Number(token0Price)
+  const reserve1USD = Number(reserve1) * Number(token1Price)
   const reserveUSD = reserve0USD + reserve1USD
 
-  const isLoading = !reserve0USD || !reserve1USD || !reserveUSD
+  const isLoading = isLoadingPrice
 
   return (
     <Card>
@@ -46,13 +44,13 @@ export const PoolComposition: FC<PoolCompositionProps> = ({ pool }) => {
           <CardLabel>Tokens</CardLabel>
           <CardCurrencyAmountItem
             isLoading={isLoading}
-            amount={pool?.reserve0}
+            amount={reserve0}
             currency={token0}
             fiatValue={formatUSD(reserve0USD)}
           />
           <CardCurrencyAmountItem
             isLoading={isLoading}
-            amount={pool?.reserve1}
+            amount={reserve1}
             currency={token1}
             fiatValue={formatUSD(reserve1USD)}
           />
@@ -124,7 +122,7 @@ CardItem.displayName = 'CardItem'
 interface CardCurrencyAmountItemProps
   extends React.HTMLAttributes<HTMLDivElement> {
   isLoading?: boolean
-  amount?: string
+  amount?: number
   currency?: KadenaToken
   fiatValue?: string
   unwrap?: boolean
@@ -143,7 +141,6 @@ export const CardCurrencyAmountItem = forwardRef<
     }
 
     if (amount) {
-      console.log('currency', currency)
       return (
         <CardItem
           title={

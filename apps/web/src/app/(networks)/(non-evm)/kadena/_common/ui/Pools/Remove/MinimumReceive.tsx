@@ -3,42 +3,24 @@ import {
   useSlippageTolerance,
 } from '@sushiswap/hooks'
 import { Card, CardGroup, CardLabel } from '@sushiswap/ui'
-import { useEffect, useMemo, useState } from 'react'
-import { PAIR_DECIMALS } from '~kadena/_common/constants/pair-decimals'
-import {
-  formatUnitsForInput,
-  parseUnits,
-  removeDecimals,
-  toBigNumber,
-} from '~tron/_common/lib/utils/formatters'
+import { useEffect, useMemo } from 'react'
+import { Decimal } from 'sushi/math'
+import { useKdaPrice } from '~kadena/_common/lib/hooks/use-kda-price'
 import { LiquidityItem } from '../PoolDetails/LiquidityItem'
 import { usePoolState } from '../pool-provider'
 import { useRemoveLiqDispatch, useRemoveLiqState } from './pool-remove-provider'
 
 export const MinimumReceive = () => {
-  const {
-    percentage,
-    lpBalance,
-    totalSupplyLP,
-    amountToken0PerLP,
-    amountToken1PerLP,
-  } = useRemoveLiqState()
+  const { percentage, lpBalance, totalSupplyLP } = useRemoveLiqState()
   const { setLPToRemove, setMinAmountToken0, setMinAmountToken1 } =
     useRemoveLiqDispatch()
-  const { token0, token1 } = usePoolState()
+  const { token0, token1, reserve0, reserve1 } = usePoolState()
+  const { data: priceData, isLoading: isLoadingPrice } = useKdaPrice()
 
-  const token0Price = '3.93'
-  const token1Price = '2.7'
-
-  const [isLoadingToken0Price, setIsLoadingToken0Price] = useState(true)
-  const [isLoadingToken1Price, setIsLoadingToken1Price] = useState(true)
-
-  useEffect(() => {
-    if (token0Price) {
-      setIsLoadingToken0Price(false)
-      setIsLoadingToken1Price(false)
-    }
-  }, [])
+  const token0Price =
+    token0?.tokenAddress === 'coin' ? priceData?.priceUsd || 0 : 0
+  const token1Price =
+    token1?.tokenAddress === 'coin' ? priceData?.priceUsd || 0 : 0
 
   const [slippageTolerance] = useSlippageTolerance(
     SlippageToleranceStorageKey.RemoveLiquidity,
@@ -46,12 +28,10 @@ export const MinimumReceive = () => {
   const slippage =
     slippageTolerance === 'AUTO' ? 0.005 : Number(slippageTolerance) / 100
 
-  const lpTokenAmountBeingRemoved = useMemo(() => {
-    if (!lpBalance) return '0'
-    const lpBalanceBN = toBigNumber(lpBalance)
-    const percentageBN = toBigNumber(percentage).div(100)
-    //will be in wei
-    return removeDecimals(lpBalanceBN.times(percentageBN))
+  const lpTokenAmountBeingRemoved: number = useMemo(() => {
+    if (!lpBalance) return 0
+    const _percentage = new Decimal(percentage).div(100)
+    return _percentage.mul(lpBalance).toNumber()
   }, [lpBalance, percentage])
 
   useEffect(() => {
@@ -60,64 +40,43 @@ export const MinimumReceive = () => {
     }
   }, [lpTokenAmountBeingRemoved, setLPToRemove])
 
-  const amountToken0 = useMemo(() => {
-    if (!lpTokenAmountBeingRemoved || !amountToken0PerLP) return '0'
-    const formattedLP = formatUnitsForInput(
-      lpTokenAmountBeingRemoved,
-      PAIR_DECIMALS,
-    )
-    const lpTokenAmountBeingRemovedBN = toBigNumber(formattedLP)
-    const amountToken0PerLPBN = toBigNumber(amountToken0PerLP)
-    return String(lpTokenAmountBeingRemovedBN.times(amountToken0PerLPBN))
-  }, [lpTokenAmountBeingRemoved, amountToken0PerLP])
+  const amountToken0: number = useMemo(() => {
+    if (!lpTokenAmountBeingRemoved || !reserve0) return 0
+    const fraction = new Decimal(lpTokenAmountBeingRemoved).div(totalSupplyLP)
+    return fraction.mul(reserve0).toNumber()
+  }, [lpTokenAmountBeingRemoved, reserve0, totalSupplyLP])
 
-  const amountToken1 = useMemo(() => {
-    if (!lpTokenAmountBeingRemoved || !amountToken1PerLP) return '0'
-    const formattedLP = formatUnitsForInput(
-      lpTokenAmountBeingRemoved,
-      PAIR_DECIMALS,
-    )
-    const lpTokenAmountBeingRemovedBN = toBigNumber(formattedLP)
-    const amountToken1PerLPBN = toBigNumber(amountToken1PerLP)
-    return String(lpTokenAmountBeingRemovedBN.times(amountToken1PerLPBN))
-  }, [lpTokenAmountBeingRemoved, amountToken1PerLP])
+  const amountToken1: number = useMemo(() => {
+    if (!lpTokenAmountBeingRemoved || !reserve1) return 0
+    const fraction = new Decimal(lpTokenAmountBeingRemoved).div(totalSupplyLP)
+    return fraction.mul(reserve1).toNumber()
+  }, [lpTokenAmountBeingRemoved, reserve1, totalSupplyLP])
 
-  const minAmountToken0 = useMemo(() => {
-    if (!amountToken0) return ''
-    const output = Number(amountToken0) * (1 - slippage)
-    return output.toString()
+  const minAmountToken0: number = useMemo(() => {
+    if (!amountToken0) return 0
+    const output = new Decimal(amountToken0).mul(1 - slippage)
+    return output.toNumber()
   }, [amountToken0, slippage])
 
   useEffect(() => {
     if (minAmountToken0) {
-      const parsedAmount = parseUnits(
-        minAmountToken0,
-        token0?.tokenDecimals ?? 18,
-      )
-
-      setMinAmountToken0(parsedAmount)
+      setMinAmountToken0(minAmountToken0)
     }
-  }, [minAmountToken0, setMinAmountToken0, token0?.tokenDecimals])
+  }, [minAmountToken0, setMinAmountToken0])
 
-  const minAmountToken1 = useMemo(() => {
-    if (!amountToken1) return ''
-    const output = Number(amountToken1) * (1 - slippage)
-    return output.toString()
+  const minAmountToken1: number = useMemo(() => {
+    if (!amountToken1) return 0
+    const output = new Decimal(amountToken1).mul(1 - slippage)
+    return output.toNumber()
   }, [amountToken1, slippage])
 
   useEffect(() => {
     if (minAmountToken1) {
-      const parsedAmount = parseUnits(
-        minAmountToken1,
-        token1?.tokenDecimals ?? 18,
-      )
-
-      setMinAmountToken1(parsedAmount)
+      setMinAmountToken1(minAmountToken1)
     }
-  }, [minAmountToken1, setMinAmountToken1, token1?.tokenDecimals])
+  }, [minAmountToken1, setMinAmountToken1])
 
-  const isLoading =
-    !totalSupplyLP || isLoadingToken0Price || isLoadingToken1Price
+  const isLoading = isLoadingPrice
 
   return (
     <Card variant="outline" className="p-6">
@@ -126,18 +85,14 @@ export const MinimumReceive = () => {
         <LiquidityItem
           isLoading={isLoading}
           token={token0}
-          amount={String(
-            parseUnits(minAmountToken0, token0?.tokenDecimals ?? 18),
-          )}
-          usdAmount={String(Number(token0Price) * Number(minAmountToken0))}
+          amount={minAmountToken0}
+          usdAmount={String(token0Price * minAmountToken0)}
         />
         <LiquidityItem
           isLoading={isLoading}
           token={token1}
-          amount={String(
-            parseUnits(minAmountToken1, token1?.tokenDecimals ?? 18),
-          )}
-          usdAmount={String(Number(token1Price) * Number(minAmountToken1))}
+          amount={minAmountToken1}
+          usdAmount={String(token1Price * minAmountToken1)}
         />
       </CardGroup>
     </Card>

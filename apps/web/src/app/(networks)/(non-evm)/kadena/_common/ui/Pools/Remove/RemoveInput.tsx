@@ -4,7 +4,7 @@ import { useRemoveLiqDispatch, useRemoveLiqState } from './pool-remove-provider'
 const PercentageOptions = [25, 50, 75, 100]
 
 export const RemoveInput = () => {
-  const { percentage, lpBalance } = useRemoveLiqState()
+  const { percentage, lpBalance, isTxnPending } = useRemoveLiqState()
   const { setPercentage } = useRemoveLiqDispatch()
 
   const noLpToken = Number(lpBalance) <= 0
@@ -24,6 +24,7 @@ export const RemoveInput = () => {
               <Button
                 key={option}
                 variant="secondary"
+                disabled={isTxnPending}
                 onClick={() => {
                   if (noLpToken) return
                   setPercentage(option)
@@ -41,7 +42,7 @@ export const RemoveInput = () => {
           min="1"
           max="100"
           className="w-full h-1 bg-gray-200 rounded-lg appearance-none cursor-pointer range-lg dark:bg-gray-700"
-          disabled={noLpToken}
+          disabled={noLpToken || isTxnPending}
         />
       </Card>
     </>
