@@ -85,7 +85,7 @@ export default function TradePage() {
                       isMdScreen ? (
                         <>
                           <ChartHeader />
-                          {/* <Chart widgetProps={defaultWidgetProps} /> */}
+                          <Chart widgetProps={defaultWidgetProps} />
                         </>
                       ) : (
                         <MobileChart widgetProps={defaultWidgetProps} />
