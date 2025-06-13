@@ -53,7 +53,7 @@ export const TradeTableTabs = () => {
                         : 'quinary'
                       : 'ghost'
                   }
-                  className="select-none !gap-1"
+                  className={'select-none !gap-1'}
                 >
                   {tab.label}
                 </Button>

@@ -36,7 +36,7 @@ export const TokenNetworkIcon = () => {
         />
       </Badge>
       <div className="flex flex-col items-start">
-        <div className="text-sm font-semibold dark:text-pink-100">SUSHI</div>
+        <div className="text-xs font-semibold dark:text-pink-100">SUSHI</div>
         <LinkExternal
           href="https://etherscan.io/token/0x6b3595068778dd592e39a122f4f5a5cf09c90fe2"
           className="text-xs flex items-center gap-0.5 !text-muted-foreground dark:text-pink-200"

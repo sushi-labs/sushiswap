@@ -107,8 +107,8 @@ const RecentItem = () => {
                   decimals: 18,
                 })
               }
-              width={32}
-              height={32}
+              width={24}
+              height={24}
             />
             <Currency.Icon
               disableLink
@@ -121,22 +121,34 @@ const RecentItem = () => {
                   decimals: 6,
                 })
               }
-              width={32}
-              height={32}
+              width={24}
+              height={24}
             />
           </Currency.IconList>
 
-          <span className="text-sm font-medium text-slate-900 dark:text-pink-100">
+          <span className="text-xs font-medium text-slate-900 dark:text-pink-100">
             ETH/USDC
           </span>
 
           {isHovered ? (
             <div className="flex items-center">
-              <span>(</span>
-              <NetworkIcon chainId={1} width={16} height={16} />
+              <span className="pr-0.5">(</span>
+              <NetworkIcon
+                type="square"
+                chainId={1}
+                width={16}
+                height={16}
+                className="rounded-[3px]"
+              />
               <ArrowRightIcon className="w-3 h-3 mx-1 text-slate-500" />
-              <NetworkIcon chainId={56} width={16} height={16} />
-              <span>)</span>
+              <NetworkIcon
+                type="square"
+                chainId={56}
+                width={16}
+                height={16}
+                className="rounded-[3px]"
+              />
+              <span className="pl-0.5">)</span>
             </div>
           ) : null}
         </div>

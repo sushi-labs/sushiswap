@@ -183,7 +183,7 @@ export const FILLED_COLUMN: ColumnDef<LimitOrder> = {
         {formatNumber(row.original.filledAmount)}/
         {formatNumber(row.original.totalAmount)} {row.original.buyToken.symbol}
       </span>
-      <Chip className="dark:!bg-slate-750 !bg-[#0000000A] !p-2 dark:text-slate-500 text-slate-700">
+      <Chip className="dark:!bg-slate-750 !bg-slate-200 !p-2 dark:text-slate-500 text-slate-450 !h-[28px]">
         {formatPercent(row.original.filledPercent)}
       </Chip>
     </div>

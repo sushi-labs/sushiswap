@@ -5,6 +5,7 @@ import {
   TabsContent,
   TabsList,
   TabsTrigger,
+  classNames,
 } from '@sushiswap/ui'
 import { useState } from 'react'
 import { DCAOrdersHistoryTable } from './dca-history-table/dca-history-table'
@@ -46,6 +47,11 @@ export const HistoryTable = () => {
                 size="sm"
                 asChild
                 variant={tab.value === currentTab ? 'secondary' : 'ghost'}
+                className={classNames(
+                  tab.value === currentTab
+                    ? '!bg-slate-200 dark:!bg-slate-750'
+                    : '',
+                )}
               >
                 {tab.label}
               </Button>
