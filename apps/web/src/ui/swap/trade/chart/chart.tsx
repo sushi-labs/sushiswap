@@ -480,13 +480,13 @@ export const Chart = ({
 
   return (
     <div className="flex flex-col flex-grow rounded-xl">
-      {/* <script src="/tradingview/charting_library/bundles" />
+      <script src="/tradingview/charting_library/bundles" />
       <div className="flex-grow">
         <div
           ref={chartContainerRef}
           className={'lg:h-[580px] md:h-[530px] h-full'}
         />
-      </div> */}
+      </div>
     </div>
   )
 }
