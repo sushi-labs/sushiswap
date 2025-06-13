@@ -3,7 +3,7 @@ import type { DexMetrics } from '~kadena/_common/types/get-dex-metrics'
 
 export const useDexMetrics = () => {
   return useQuery({
-    queryKey: ['dex-metrics'],
+    queryKey: ['kadena-dex-metrics'],
     queryFn: async (): Promise<DexMetrics> => {
       const res = await fetch('/kadena/api/metrics')
       const data = await res.json()

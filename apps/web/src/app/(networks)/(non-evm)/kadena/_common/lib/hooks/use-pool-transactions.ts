@@ -29,7 +29,7 @@ export const usePoolTransactions = ({
   pageSize?: number
 }) => {
   return useInfiniteQuery({
-    queryKey: ['pool-transactions', pairId, type],
+    queryKey: ['kadena-pool-transactions', pairId, type],
     queryFn: async ({ pageParam = null }) => {
       const url = new URL(
         `/kadena/api/pools/${pairId}/transactions`,
