@@ -11,7 +11,7 @@ import {
   WidgetTitle,
 } from '@sushiswap/ui'
 import { AmountInToken0 } from '../Add/AmountInToken0'
-import { AmountInToken1 } from '../Add/AmountIntToken1'
+import { AmountInToken1 } from '../Add/AmountInToken1'
 import { Plus } from '../Add/Plus'
 import { ReviewAddDialog } from '../Add/ReviewAddDialog'
 

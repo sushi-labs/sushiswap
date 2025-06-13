@@ -13,14 +13,12 @@ export const Rate = ({
   isLoading: boolean
 }) => {
   const [showToken0First, setShowToken0First] = useState<boolean>(false)
-  const { token0, token1 } = usePoolState()
+  const { token0, token1, rateOfToken0ToToken1, rateOfToken1ToToken0 } =
+    usePoolState()
 
   const handleToggleRate = () => {
     setShowToken0First(!showToken0First)
   }
-
-  const rateOfToken1 = '2.34'
-  const rateOfToken2 = '.0039'
 
   return (
     <div className="flex items-center gap-1">
@@ -31,7 +29,7 @@ export const Rate = ({
         onClick={handleToggleRate}
       >
         1 {showToken0First ? token0?.tokenSymbol : token1?.tokenSymbol} ={' '}
-        {showToken0First ? rateOfToken1 : rateOfToken2}
+        {showToken0First ? rateOfToken0ToToken1 : rateOfToken1ToToken0}
         {showToken0First ? token1?.tokenSymbol : token0?.tokenSymbol}
       </Button>
       {isLoading ? (

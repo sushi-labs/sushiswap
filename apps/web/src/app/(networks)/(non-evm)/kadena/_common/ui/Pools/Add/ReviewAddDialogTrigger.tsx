@@ -1,70 +1,42 @@
 import { Button, type ButtonProps, DialogTrigger } from '@sushiswap/ui'
-import { useEffect, useMemo, useState } from 'react'
-import { formatUnitsForInput } from '~kadena/_common/lib/utils/formatters'
-// import { ApproveToken } from '~tron/_common/ui/Shared/ApproveToken'
-// import { ROUTER_CONTRACT } from '../Remove/RemoveButton'
+import { useMemo } from 'react'
+import { useTokenBalances } from '~kadena/_common/lib/hooks/use-token-balances'
+import { useKadena } from '~kadena/kadena-wallet-provider'
 import { usePoolState } from '../pool-provider'
 
 export const ReviewAddDialogTrigger = (props: ButtonProps) => {
-  const { token0, token1, isTxnPending, amountInToken0, amountInToken1 } =
-    usePoolState()
+  const {
+    token0,
+    token1,
+    isTxnPending,
+    amountInToken0,
+    amountInToken1,
+    poolId,
+  } = usePoolState()
+  const { activeAccount } = useKadena()
+  const { data: tokenBalances, isLoading: isLoadingTokenBalance } =
+    useTokenBalances({
+      account: activeAccount?.accountName ?? '',
+      tokenAddresses:
+        token0 && token1 ? [token0?.tokenAddress, token1?.tokenAddress] : [],
+    })
+  const balanceMap = tokenBalances?.balanceMap ?? undefined
+  const poolExists = Boolean(poolId)
 
-  const token0Balance = '1.2'
-  const token1Balance = '2.4'
-  const [isLoadingToken0Balance, setIsLoadingToken0Balance] = useState(true)
-  const [isLoadingToken1Balance, setIsLoadingToken1Balance] = useState(true)
-
-  useEffect(() => {
-    setIsLoadingToken0Balance(true)
-    setIsLoadingToken1Balance(true)
-  }, [])
-
-  const token0AllowanceAmount = '2.4'
-  const token1AllowanceAmount = '3.6'
-  // const refetchToken0Allowance = async () => {}
-  // const refetchToken1Allowance = async () => {}
+  const token0Balance =
+    token0 && balanceMap ? balanceMap[token0?.tokenAddress] : 0
+  const token1Balance =
+    token1 && balanceMap ? balanceMap[token1?.tokenAddress] : 0
 
   const hasInsufficientToken0Balance = useMemo(() => {
-    if (isLoadingToken0Balance) return true
-    return (
-      Number(
-        formatUnitsForInput(token0Balance ?? '0', token0?.tokenDecimals ?? 18),
-      ) < Number(amountInToken0)
-    )
-  }, [token0, amountInToken0, isLoadingToken0Balance])
+    if (isLoadingTokenBalance) return true
+    return token0Balance < Number(amountInToken0)
+  }, [amountInToken0, isLoadingTokenBalance, token0Balance])
 
   const hasInsufficientToken1Balance = useMemo(() => {
-    if (isLoadingToken1Balance) return true
-    return (
-      Number(
-        formatUnitsForInput(token1Balance ?? '0', token1?.tokenDecimals ?? 18),
-      ) < Number(amountInToken1)
-    )
-  }, [token1, amountInToken1, isLoadingToken1Balance])
-
-  const token0AllowanceFormatted = formatUnitsForInput(
-    token0AllowanceAmount ?? '0',
-    token0?.tokenDecimals ?? 18,
-  )
-
-  const token1AllowanceFormatted = formatUnitsForInput(
-    token1AllowanceAmount ?? '0',
-    token1?.tokenDecimals ?? 18,
-  )
-
-  const hasInsufficientToken0Allowance = useMemo(() => {
-    return (
-      !!token1AllowanceAmount &&
-      Number(token0AllowanceFormatted) < Number(amountInToken0)
-    )
-  }, [token0AllowanceFormatted, amountInToken0])
-
-  const hasInsufficientToken1Allowance = useMemo(() => {
-    return (
-      !!token1AllowanceAmount &&
-      Number(token1AllowanceFormatted) < Number(amountInToken1)
-    )
-  }, [token1AllowanceFormatted, amountInToken1])
+    if (isLoadingTokenBalance) return true
+    return token1Balance < Number(amountInToken1)
+  }, [amountInToken1, isLoadingTokenBalance, token1Balance])
 
   const invalidAmount = useMemo(() => {
     return (
@@ -77,6 +49,9 @@ export const ReviewAddDialogTrigger = (props: ButtonProps) => {
 
   const buttonText = useMemo(() => {
     if (isTxnPending) {
+      if (!poolExists) {
+        return 'Creating Pool'
+      }
       return 'Adding Liquidity'
     }
     if (invalidAmount) {
@@ -88,52 +63,20 @@ export const ReviewAddDialogTrigger = (props: ButtonProps) => {
     if (hasInsufficientToken1Balance) {
       return `Insufficient ${token1?.tokenSymbol} Balance`
     }
-    if (hasInsufficientToken0Allowance) {
-      return `Approve ${token0?.tokenSymbol} Token`
-    }
-    if (hasInsufficientToken1Allowance) {
-      return `Approve ${token1?.tokenSymbol} Token`
-    }
 
+    if (!poolExists) {
+      return 'Create Pool'
+    }
     return 'Add Liquidity'
   }, [
     hasInsufficientToken0Balance,
     hasInsufficientToken1Balance,
-    hasInsufficientToken0Allowance,
-    hasInsufficientToken1Allowance,
     invalidAmount,
     token0,
     token1,
     isTxnPending,
+    poolExists,
   ])
-
-  // if (buttonText === `Approve ${token0?.tokenSymbol} Token`) {
-  //   return (
-  //     <ApproveToken
-  //       tokenToApprove={token0!}
-  //       amount={amountInToken0}
-  //       spenderAddress={ROUTER_CONTRACT}
-  //       onSuccess={async () => {
-  //         await refetchToken0Allowance()
-  //       }}
-  //       buttonProps={props}
-  //     />
-  //   )
-  // }
-
-  // if (buttonText === `Approve ${token1?.tokenSymbol} Token`) {
-  //   return (
-  //     <ApproveToken
-  //       tokenToApprove={token1!}
-  //       amount={amountInToken1}
-  //       spenderAddress={ROUTER_CONTRACT}
-  //       onSuccess={async () => {
-  //         await refetchToken1Allowance()
-  //       }}
-  //       buttonProps={props}
-  //     />
-  //   )
-  // }
 
   return (
     <DialogTrigger

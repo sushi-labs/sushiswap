@@ -10,8 +10,8 @@ export const getChainwebAddressLink = (address: string) => {
 
 export const getChainwebTxnLink = (txnHash: string) => {
   if (IS_TESTNET) {
-    return `https://explorer.chainweb.com/testnet/txDetail/${txnHash}`
+    return `https://explorer.chainweb.com/testnet/txdetail/${txnHash}`
   } else {
-    return `https://explorer.chainweb.com/mainnet/txDetail/${txnHash}`
+    return `https://explorer.chainweb.com/mainnet/txdetail/${txnHash}`
   }
 }

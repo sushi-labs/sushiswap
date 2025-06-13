@@ -94,3 +94,11 @@ export const formatNumberWithMaxDecimals = (
 
   return `${negative ? '-' : ''}${Number(Number(value).toFixed(maxDecimal))}`
 }
+
+export const formatPactDecimal = (value: number): string => {
+  // If it's already a decimal (has fractional part), return as-is
+  if (!Number.isInteger(value)) return value.toString()
+
+  // If it's an integer, append `.0`
+  return `${value}.0`
+}

@@ -1,3 +1,4 @@
+import { useKadenaWallet } from '@kadena/wallet-adapter-react'
 import {
   createFailedToast,
   createInfoToast,
@@ -5,33 +6,130 @@ import {
 } from '@sushiswap/notifications'
 import { Button, type ButtonProps } from '@sushiswap/ui'
 import { useQueryClient } from '@tanstack/react-query'
+import { useMemo } from 'react'
+import { kadenaClient } from '~kadena/_common/constants/client'
+import {
+  KADENA_CHAIN_ID,
+  KADENA_NETWORK_ID,
+} from '~kadena/_common/constants/network'
+import { buildAddLiquidityTxn } from '~kadena/_common/lib/pact/pool'
 import { getChainwebTxnLink } from '~kadena/_common/lib/utils/kadena-helpers'
+import { useKadena } from '~kadena/kadena-wallet-provider'
 import { usePoolDispatch, usePoolState } from '../pool-provider'
 
 export const AddButton = ({
   closeModal,
   buttonProps,
-}: { closeModal: () => void; buttonProps?: ButtonProps }) => {
+}: {
+  closeModal: () => void
+  buttonProps?: ButtonProps
+}) => {
   const queryClient = useQueryClient()
 
-  const { token0, token1, isTxnPending, amountInToken0, amountInToken1 } =
-    usePoolState()
+  const {
+    token0,
+    token1,
+    isTxnPending,
+    amountInToken0,
+    amountInToken1,
+    poolId,
+  } = usePoolState()
   const { setIsTxnPending, setAmountInToken0, setAmountInToken1 } =
     usePoolDispatch()
-  const address =
-    'abf594a764e49a90a98cddf30872d8497e37399684c1d8e2b8e96fd865728cc2'
+  const { activeAccount, currentWallet } = useKadena()
+  const { client } = useKadenaWallet()
+
+  const address = activeAccount?.accountName ?? ''
 
   const addLiquidity = async () => {
-    if (!token0 || !token1 || !amountInToken0 || !amountInToken1 || !address)
+    if (
+      !token0 ||
+      !token1 ||
+      !amountInToken0 ||
+      !amountInToken1 ||
+      !address ||
+      !currentWallet
+    )
       return
     try {
       setIsTxnPending(true)
+      const minAmountToken0 = (Number(amountInToken0) * (1 - 0.01)).toString()
+      const minAmountToken1 = (Number(amountInToken1) * (1 - 0.01)).toString()
 
-      const txId =
-        'abf594a764e49a90a98cddf30872d8497e37399684c1d8e2b8e96fd865728cc2'
+      let poolAddress = poolId
 
+      if (!poolAddress) {
+        const initTxn = buildAddLiquidityTxn({
+          token0Address: token0.tokenAddress,
+          token1Address: token1.tokenAddress,
+          amountInToken0: Number(amountInToken0),
+          amountInToken1: Number(amountInToken1),
+          minAmountInToken0: Number(minAmountToken0),
+          minAmountInToken1: Number(minAmountToken1),
+          poolAddress: poolAddress,
+          signerAddress: address,
+          chainId: KADENA_CHAIN_ID,
+          networkId: KADENA_NETWORK_ID,
+        })
+        const signedTxn = await client.signTransaction(currentWallet, initTxn)
+        const preflightResult = await kadenaClient.preflight(signedTxn)
+        if (preflightResult.result.status !== 'success') {
+          throw new Error(
+            preflightResult.result.error?.message || 'Preflight failed',
+          )
+        }
+        const res = await kadenaClient.submit(signedTxn)
+        const txId = res.requestKey
+        createInfoToast({
+          summary: 'Creating a pool initiated...',
+          type: 'swap',
+          account: address as string,
+          chainId: 1,
+          groupTimestamp: Date.now(),
+          timestamp: Date.now(),
+          txHash: txId,
+          href: getChainwebTxnLink(txId),
+        })
+        const result = await kadenaClient.pollOne(res)
+        if (result.result.status === 'failure') {
+          throw new Error(result.result.error?.message || 'Transaction failed')
+        }
+        createSuccessToast({
+          summary: 'Created a pool successfully! Continue to add liquidity.',
+          txHash: txId,
+          type: 'swap',
+          account: address as string,
+          chainId: 1,
+          groupTimestamp: Date.now(),
+          timestamp: Date.now(),
+          href: getChainwebTxnLink(txId),
+        })
+        poolAddress = preflightResult.result.data?.account
+      }
+
+      const tx = buildAddLiquidityTxn({
+        token0Address: token0.tokenAddress,
+        token1Address: token1.tokenAddress,
+        amountInToken0: Number(amountInToken0),
+        amountInToken1: Number(amountInToken1),
+        minAmountInToken0: Number(minAmountToken0),
+        minAmountInToken1: Number(minAmountToken1),
+        poolAddress: poolAddress,
+        signerAddress: address,
+        chainId: KADENA_CHAIN_ID,
+        networkId: KADENA_NETWORK_ID,
+      })
+      const signedTxn = await client.signTransaction(currentWallet, tx)
+      const preflightResult = await kadenaClient.preflight(signedTxn)
+      if (preflightResult.result.status === 'failure') {
+        throw new Error(
+          preflightResult.result.error?.message || 'Preflight failed',
+        )
+      }
+      const res = await kadenaClient.submit(signedTxn)
+      const txId = res.requestKey
       createInfoToast({
-        summary: 'Add liquidity initiated...',
+        summary: 'Adding liquidity initiated...',
         type: 'swap',
         account: address as string,
         chainId: 1,
@@ -40,12 +138,14 @@ export const AddButton = ({
         txHash: txId,
         href: getChainwebTxnLink(txId),
       })
+      const result = await kadenaClient.pollOne(res)
 
-      await new Promise((resolve) => setTimeout(resolve, 1800))
+      if (result.result.status === 'failure') {
+        throw new Error(result.result.error?.message || 'Transaction failed')
+      }
 
-      //create success toast
       createSuccessToast({
-        summary: 'Add liquidity successful',
+        summary: 'Added liquidity successfully',
         txHash: txId,
         type: 'swap',
         account: address as string,
@@ -55,14 +155,13 @@ export const AddButton = ({
         href: getChainwebTxnLink(txId),
       })
 
-      onSuccess()
+      await onSuccess()
     } catch (error) {
       const errorMessage =
         typeof error === 'string'
           ? error
           : ((error as Error)?.message ??
             'An error occurred while trying to add liquidity')
-      //create error toast
       createFailedToast({
         summary: errorMessage,
         type: 'swap',
@@ -76,24 +175,28 @@ export const AddButton = ({
     }
   }
 
-  const onSuccess = () => {
+  const onSuccess = async () => {
     setIsTxnPending(false)
     setAmountInToken0('')
     setAmountInToken1('')
     closeModal()
-    queryClient.invalidateQueries({
-      queryKey: [
-        'useTokenBalance',
-        { accountAddress: address, tokenAddress: token0?.tokenAddress },
-      ],
+    await queryClient.invalidateQueries({
+      queryKey: ['kadena-pool-from-tokens', token0, token1],
     })
-    queryClient.invalidateQueries({
-      queryKey: [
-        'useTokenBalance',
-        { accountAddress: address, tokenAddress: token1?.tokenAddress },
-      ],
+    await queryClient.invalidateQueries({
+      queryKey: ['kadena-token-balances', address, [token0?.tokenAddress]],
+    })
+    await queryClient.invalidateQueries({
+      queryKey: ['kadena-token-balances', address, [token1?.tokenAddress]],
     })
   }
+
+  const btnText = useMemo(() => {
+    if (isTxnPending && poolId) return 'Adding Liquidity'
+    if (isTxnPending && !poolId) return 'Creating Pool'
+    if (!poolId) return 'Create Pool'
+    return 'Add Liquidity'
+  }, [isTxnPending, poolId])
 
   return (
     <Button
@@ -102,7 +205,7 @@ export const AddButton = ({
       onClick={addLiquidity}
       {...buttonProps}
     >
-      {isTxnPending ? 'Adding Liquidity' : 'Add Liquidity'}
+      {btnText}
     </Button>
   )
 }

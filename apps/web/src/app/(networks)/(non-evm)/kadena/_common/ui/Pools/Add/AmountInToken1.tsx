@@ -1,5 +1,4 @@
 import { type ComponentProps, useEffect } from 'react'
-import { formatUnitsForInput } from '~kadena/_common/lib/utils/formatters'
 import { TokenInput } from '~kadena/_common/ui/Input/TokenInput'
 import { usePoolDispatch, usePoolState } from '../pool-provider'
 
@@ -10,14 +9,22 @@ export const AmountInToken1 = ({
   theme?: ComponentProps<typeof TokenInput>['theme']
   disabled?: boolean
 }) => {
-  const { token0, token1, amountInToken1, poolId, inputField } = usePoolState()
+  const {
+    token0,
+    token1,
+    amountInToken1,
+    poolId,
+    rateOfToken0ToToken1,
+    inputField,
+  } = usePoolState()
   const { setToken1, setAmountInToken1, setAmountInToken0, setInputField } =
     usePoolDispatch()
 
-  const pairExists = !!poolId
+  const pairExists = Boolean(poolId)
 
-  const rateOfToken0 = '0.234'
+  const rateOfToken0 = rateOfToken0ToToken1 ?? 0
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: rateOfToken0 will be defined when the pool exists
   useEffect(() => {
     if (inputField === 'token0') {
       return
@@ -27,12 +34,10 @@ export const AmountInToken1 = ({
       return
     }
     if (pairExists && rateOfToken0 && token0) {
-      const amountFormatted = formatUnitsForInput(
-        rateOfToken0,
-        token0?.tokenDecimals,
-      )
+      const amountFormatted =
+        rateOfToken0 * Number.parseFloat(amountInToken1 || '0')
       if (amountFormatted) {
-        setAmountInToken0(amountFormatted)
+        setAmountInToken0(String(amountFormatted))
       } else {
         setAmountInToken0('')
       }

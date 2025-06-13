@@ -1,12 +1,20 @@
 'use client'
 
-import { type FC, createContext, useContext, useMemo, useReducer } from 'react'
+import {
+  type FC,
+  createContext,
+  useContext,
+  useEffect,
+  useMemo,
+  useReducer,
+} from 'react'
 import { PoolChartPeriod } from 'src/ui/pool/PoolChartPeriods'
 import {
   DEFAULT_TOKEN_LIST,
   KADENA,
   STABLE_TOKENS,
 } from '~kadena/_common/constants/token-list'
+import { usePoolFromTokens } from '~kadena/_common/lib/hooks/pools/use-pool-from-tokens'
 import type { KadenaToken } from '~kadena/_common/types/token-type'
 import { ReserveHelper } from './ReserveHelper'
 
@@ -25,11 +33,14 @@ type Action =
   | { type: 'setIsTxnPending'; value: boolean }
   | { type: 'setAmountInToken0'; value: string }
   | { type: 'setAmountInToken1'; value: string }
-  | { type: 'setPoolId'; value: string | undefined | null }
-  | { type: 'setReserve0'; value: string }
-  | { type: 'setReserve1'; value: string }
+  | { type: 'setPoolId'; value: string | undefined }
+  | { type: 'setReserve0'; value: number }
+  | { type: 'setReserve1'; value: number }
   | { type: 'setInputField'; value: InputFieldType }
   | { type: 'setPoolByIdChartTimeFrame'; value: PoolByIdChartTimeFrame }
+  | { type: 'setMutexLocked'; value: boolean }
+  | { type: 'setRateOfToken0ToToken1'; value: number | undefined }
+  | { type: 'setRateOfToken1ToToken0'; value: number | undefined }
 
 type Dispatch = {
   setToken0(token: KadenaToken): void
@@ -37,13 +48,16 @@ type Dispatch = {
   setIsTxnPending(isPending: boolean): void
   setAmountInToken0(amount: string): void
   setAmountInToken1(amount: string): void
-  setPoolId(poolId: string | undefined | null): void
-  setReserve0(reserve0: string): void
-  setReserve1(reserve1: string): void
+  setPoolId(poolId: string | undefined): void
+  setReserve0(reserve0: number): void
+  setReserve1(reserve1: number): void
   setInputField(inputField: InputFieldType): void
   setPoolByIdChartTimeFrame(
     poolByIdChartTimeFrame: PoolByIdChartTimeFrame,
   ): void
+  setMutexLocked(mutexLocked: boolean): void
+  setRateOfToken0ToToken1(rate: number | undefined): void
+  setRateOfToken1ToToken0(rate: number | undefined): void
 }
 
 type State = {
@@ -52,11 +66,14 @@ type State = {
   isTxnPending: boolean
   amountInToken0: string
   amountInToken1: string
-  poolId: string | undefined | null
-  reserve0: string
-  reserve1: string
+  poolId: string | undefined
+  reserve0: number | undefined
+  reserve1: number | undefined
   inputField: 'token0' | 'token1'
   poolByIdChartTimeFrame: PoolByIdChartTimeFrame
+  mutexLocked: boolean
+  rateOfToken0ToToken1?: number
+  rateOfToken1ToToken0?: number
 }
 
 type PoolProviderProps = { children: React.ReactNode }
@@ -130,6 +147,15 @@ function poolReducer(_state: State, action: Action) {
     case 'setPoolByIdChartTimeFrame': {
       return { ..._state, poolByIdChartTimeFrame: action.value }
     }
+    case 'setMutexLocked': {
+      return { ..._state, mutexLocked: action.value }
+    }
+    case 'setRateOfToken0ToToken1': {
+      return { ..._state, rateOfToken0ToToken1: action.value }
+    }
+    case 'setRateOfToken1ToToken0': {
+      return { ..._state, rateOfToken1ToToken0: action.value }
+    }
   }
 }
 
@@ -141,10 +167,17 @@ const PoolProvider: FC<PoolProviderProps> = ({ children }) => {
     amountInToken0: '',
     amountInToken1: '',
     poolId: undefined,
-    reserve0: '',
-    reserve1: '',
+    reserve0: undefined,
+    reserve1: undefined,
     inputField: 'token0',
     poolByIdChartTimeFrame: PoolChartPeriod.Day,
+    mutexLocked: false,
+    rateOfToken0ToToken1: undefined,
+    rateOfToken1ToToken0: undefined,
+  })
+  const { data } = usePoolFromTokens({
+    token0: state?.token0?.tokenAddress,
+    token1: state?.token1?.tokenAddress,
   })
 
   const dispatchWithAction = useMemo(
@@ -157,17 +190,38 @@ const PoolProvider: FC<PoolProviderProps> = ({ children }) => {
         dispatch({ type: 'setAmountInToken0', value }),
       setAmountInToken1: (value: string) =>
         dispatch({ type: 'setAmountInToken1', value }),
-      setPoolId: (value: string | undefined | null) =>
+      setPoolId: (value: string | undefined) =>
         dispatch({ type: 'setPoolId', value }),
-      setReserve0: (value: string) => dispatch({ type: 'setReserve0', value }),
-      setReserve1: (value: string) => dispatch({ type: 'setReserve1', value }),
+      setReserve0: (value: number) => dispatch({ type: 'setReserve0', value }),
+      setReserve1: (value: number) => dispatch({ type: 'setReserve1', value }),
       setInputField: (value: InputFieldType) =>
         dispatch({ type: 'setInputField', value }),
       setPoolByIdChartTimeFrame: (value: PoolByIdChartTimeFrame) =>
         dispatch({ type: 'setPoolByIdChartTimeFrame', value }),
+      setMutexLocked: (value: boolean) =>
+        dispatch({ type: 'setMutexLocked', value }),
+      setRateOfToken0ToToken1: (value: number | undefined) =>
+        dispatch({ type: 'setRateOfToken0ToToken1', value }),
+      setRateOfToken1ToToken0: (value: number | undefined) =>
+        dispatch({ type: 'setRateOfToken1ToToken0', value }),
     }),
     [],
   )
+
+  useEffect(() => {
+    if (data) {
+      dispatchWithAction.setPoolId(data?.poolData?.poolAddress ?? undefined)
+      dispatchWithAction.setReserve0(data?.poolData?.reserve0 ?? 0)
+      dispatchWithAction.setReserve1(data?.poolData?.reserve1 ?? 0)
+      dispatchWithAction.setMutexLocked(data?.poolData?.mutexLocked ?? false)
+      dispatchWithAction.setRateOfToken0ToToken1(
+        data?.poolData?.rateOfToken0ToToken1,
+      )
+      dispatchWithAction.setRateOfToken1ToToken0(
+        data?.poolData?.rateOfToken1ToToken0,
+      )
+    }
+  }, [data, dispatchWithAction])
 
   return (
     <PoolContext.Provider

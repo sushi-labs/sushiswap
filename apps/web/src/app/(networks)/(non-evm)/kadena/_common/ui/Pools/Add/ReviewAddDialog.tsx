@@ -7,8 +7,9 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@sushiswap/ui'
-import { useEffect, useRef, useState } from 'react'
+import { useRef } from 'react'
 import { formatUSD } from 'sushi/format'
+import { useKdaPrice } from '~kadena/_common/lib/hooks/use-kda-price'
 import { formatUnits } from '~kadena/_common/lib/utils/formatters'
 import { useKadena } from '~kadena/kadena-wallet-provider'
 import { Icon } from '../../General/Icon'
@@ -18,23 +19,16 @@ import { AddButton } from './AddButton'
 import { ReviewAddDialogTrigger } from './ReviewAddDialogTrigger'
 
 export const ReviewAddDialog = (props: ButtonProps) => {
-  const { token0, token1, amountInToken0, amountInToken1 } = usePoolState()
+  const { token0, token1, amountInToken0, amountInToken1, poolId } =
+    usePoolState()
   const closeBtnRef = useRef<HTMLButtonElement>(null)
+  const { data: priceData, isLoading } = useKdaPrice()
+  const kdaPrice = priceData?.priceUsd ?? 0
 
   const { isConnected } = useKadena()
 
-  const token0Price = '3.93'
-  const token1Price = '2.7'
-
-  const [isLoadingToken0Price, setIsLoadingToken0Price] = useState(true)
-  const [isLoadingToken1Price, setIsLoadingToken1Price] = useState(true)
-
-  useEffect(() => {
-    setTimeout(() => {
-      setIsLoadingToken0Price(false)
-      setIsLoadingToken1Price(false)
-    }, 1800)
-  }, [])
+  const token0Price = token0?.tokenAddress === 'coin' ? kdaPrice : 0
+  const token1Price = token1?.tokenAddress === 'coin' ? kdaPrice : 0
 
   const closeModal = () => {
     closeBtnRef?.current?.click()
@@ -53,6 +47,13 @@ export const ReviewAddDialog = (props: ButtonProps) => {
           <DialogTitle>Add liquidity</DialogTitle>
           <DialogDescription>
             Please review your entered details.
+            {!poolId ? (
+              <>
+                <br />
+                Creating a pool will require 2 transactions to be submitted
+                on-chain.
+              </>
+            ) : null}
           </DialogDescription>
         </DialogHeader>
         <div className="max-w-[504px] mx-auto w-full">
@@ -67,7 +68,7 @@ export const ReviewAddDialog = (props: ButtonProps) => {
                       <div>{formatUnits(amountInToken0, 0, 12)}</div>{' '}
                       <div>{token0?.tokenSymbol}</div>
                     </div>
-                    {isLoadingToken0Price ? (
+                    {isLoading ? (
                       <SkeletonBox className="h-3 w-[40px] rounded-sm" />
                     ) : (
                       <div className="text-[12px] opacity-60">
@@ -82,11 +83,10 @@ export const ReviewAddDialog = (props: ButtonProps) => {
                   <div className="flex flex-col items-end">
                     <div className="flex items-center gap-1">
                       <Icon currency={token1} width={16} height={16} />
-                      {/* show max 12 decimals so nothing is cut off */}
                       <div>{formatUnits(amountInToken1, 0, 12)}</div>{' '}
                       <div>{token1?.tokenSymbol}</div>
                     </div>
-                    {isLoadingToken1Price ? (
+                    {isLoading ? (
                       <SkeletonBox className="h-3 w-[40px] rounded-sm" />
                     ) : (
                       <div className="text-[12px] opacity-60">

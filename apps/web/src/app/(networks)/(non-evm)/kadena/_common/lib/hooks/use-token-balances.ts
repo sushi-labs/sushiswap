@@ -18,7 +18,6 @@ export const useTokenBalances = ({
   account: string
   tokenAddresses: string[]
 }) => {
-  //@DEV - ADD BACK NETWORKID BEFORE COMMITTING
   return useQuery({
     queryKey: ['kadena-token-balances', account, tokenAddresses],
     queryFn: async (): Promise<NativeTokenBalanceResponse> => {

@@ -1,25 +1,12 @@
 'use client'
 import { Button, FormSection, SelectIcon } from '@sushiswap/ui'
-import { useEffect } from 'react'
 import { Icon } from '../../General/Icon'
 import { TokenSelector } from '../../General/TokenSelector'
 import { usePoolDispatch, usePoolState } from '../pool-provider'
 
 export const SelectTokensForm = () => {
   const { token0, token1 } = usePoolState()
-  const { setToken0, setToken1, setPoolId } = usePoolDispatch()
-
-  const _pairAddress =
-    'abf594a764e49a90a98cddf30872d8497e37399684c1d8e2b8e96fd865728cc2'
-  const isContract = true
-
-  useEffect(() => {
-    if (isContract && _pairAddress) {
-      setPoolId(_pairAddress)
-    } else {
-      setPoolId(undefined)
-    }
-  }, [setPoolId])
+  const { setToken0, setToken1 } = usePoolDispatch()
 
   return (
     <FormSection
