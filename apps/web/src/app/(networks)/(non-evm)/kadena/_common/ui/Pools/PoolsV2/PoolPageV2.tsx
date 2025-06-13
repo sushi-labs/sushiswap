@@ -22,7 +22,7 @@ export const PoolPageV2: FC<PoolPageV2> = ({ pool }) => {
           <PoolChartV2 pool={pool} />
         </div>
         <div className="flex flex-col gap-6">
-          <PoolComposition pool={pool} />
+          <PoolComposition />
           <PoolStats pool={pool} />
         </div>
       </div>
