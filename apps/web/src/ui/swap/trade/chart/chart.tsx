@@ -20,8 +20,6 @@ export const Chart = ({
   const { resolvedTheme } = useTheme()
   const isMounted = useIsMounted()
 
-  console.log('resolvedTheme', resolvedTheme)
-
   // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
     if (!isMounted || !resolvedTheme) return
