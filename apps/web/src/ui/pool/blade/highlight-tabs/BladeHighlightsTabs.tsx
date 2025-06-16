@@ -31,7 +31,10 @@ export const BladeHighlightsTabs: FC<BladeHighlightsTabsProps> = ({ pool }) => {
   }
 
   return (
-    <div className="relative flex w-full flex-col items-center gap-8 lg:gap-[54px]">
+    <div
+      className="relative flex w-full flex-col items-center gap-8 lg:gap-[54px] scroll-m-20"
+      id="highlights"
+    >
       <TabNavigation activeTab={activeTab} setActiveTab={setActiveTab} />
       {renderTabContent()}
       <div className="-left-[300px] pointer-events-none absolute top-0 hidden h-[410px] w-[590px] flex-shrink-0 rounded-[590px] bg-[#D1B6ED] opacity-20 blur-[100px] lg:block dark:opacity-10" />

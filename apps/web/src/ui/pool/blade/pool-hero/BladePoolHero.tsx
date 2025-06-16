@@ -175,8 +175,9 @@ export const BladePoolHero: FC<BladePoolHeroProps> = ({ pool }) => {
           </div>
         </div>
 
-        <div className="flex w-full flex-col items-center gap-2 sm:w-auto sm:flex-row sm:gap-3">
+        <div className="flex w-full flex-col items-center gap-2 max-w-xs sm:w-auto sm:flex-row sm:gap-3">
           <Link
+            className="w-full"
             href={`/${ChainKey[pool.chainId]}/pool/blade/${pool.address}/add`}
           >
             <Button
@@ -189,6 +190,15 @@ export const BladePoolHero: FC<BladePoolHeroProps> = ({ pool }) => {
           <Button
             variant="blank"
             className="w-full rounded-lg bg-white/10 px-4 py-2 font-medium text-sm text-white hover:bg-white/20 sm:w-auto sm:px-6"
+            onClick={() => {
+              const highlights = document.getElementById('highlights')
+              if (highlights) {
+                highlights.scrollIntoView({
+                  behavior: 'smooth',
+                  block: 'start',
+                })
+              }
+            }}
           >
             Read More
           </Button>
