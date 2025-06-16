@@ -26,16 +26,18 @@ const TabItem: FC<TabItemProps> = ({ label, isActive, onClick }) => {
       className={classNames(
         'flex flex-row items-center justify-center transition-all duration-200 gap-1 rounded-[1000px] px-3 py-2 shadow-[0px_10px_20px_0px_rgba(0,0,0,0.05)] dark:shadow-[0px_10px_20px_0px_rgba(0,0,0,0.3)] bg-white dark:bg-gray-800 sm:w-full sm:gap-2.5 sm:p-2 sm:shadow-none md:w-[302px] md:p-3',
         isActive
-          ? 'sm:bg-[#3D657C0A] sm:dark:bg-[#3D657C0A]'
-          : 'opacity-70 hover:opacity-100',
+          ? 'sm:bg-[#3D657C0A] sm:dark:bg-[#3D657C1F]'
+          : 'sm:dark:bg-transparent sm:bg-transparent opacity-70 hover:opacity-100',
       )}
     >
-      <div className="h-3 w-3 sm:h-5 sm:w-5">
+      <div
+        className={classNames(
+          'h-3 w-3 sm:h-5 sm:w-5',
+          !isActive && 'sm:hidden',
+        )}
+      >
         <TabCheckIcon
-          className={classNames(
-            'h-full w-full',
-            isActive ? 'block' : 'block sm:hidden',
-          )}
+          className={classNames('h-full w-full')}
           color={isActive ? '#1AC87F' : '#9CA3AF'}
         />
       </div>
