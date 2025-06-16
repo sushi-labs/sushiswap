@@ -32,7 +32,10 @@ interface BladeRemoveSectionProps {
 
 export const BladeRemoveSection: FC<BladeRemoveSectionProps> = withCheckerRoot(
   ({ pool }) => {
-    const poolAssets = getPoolAssets(pool)
+    const poolAssets = useMemo(
+      () => getPoolAssets(pool).filter((asset) => asset.targetWeight > 0),
+      [pool],
+    )
     const client = usePublicClient()
     const { address, chain } = useAccount()
 

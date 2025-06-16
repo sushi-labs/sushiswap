@@ -1,11 +1,11 @@
 import type { BladeChainId, BladePool } from '@sushiswap/graph-client/data-api'
-import { Token } from 'sushi/currency'
+import { Native, Token, type Type } from 'sushi/currency'
 import { BLADE_STABLES } from './stables'
 import type { BladePoolAsset } from './types'
 
 export type BladePoolTokensGrouped = {
-  tokens: Token[]
-  stablecoinUsdTokens: Token[]
+  tokens: Type[]
+  stablecoinUsdTokens: Type[]
 }
 
 export function getPoolTokensGrouped(pool: BladePool): BladePoolTokensGrouped {
@@ -16,13 +16,19 @@ export function getPoolTokensGrouped(pool: BladePool): BladePoolTokensGrouped {
 
   return pool.tokens.reduce<BladePoolTokensGrouped>(
     (acc, tokenData) => {
-      const token = new Token({
-        chainId,
-        address: tokenData.token.address,
-        decimals: tokenData.token.decimals,
-        symbol: tokenData.token.symbol,
-        name: tokenData.token.name,
-      })
+      if (tokenData.targetWeight === 0) return acc
+      const token =
+        tokenData.token.address.toLowerCase() ===
+        Native.onChain(chainId).wrapped.address.toLowerCase()
+          ? Native.onChain(chainId)
+          : new Token({
+              chainId,
+              address: tokenData.token.address,
+              decimals: tokenData.token.decimals,
+              symbol: tokenData.token.symbol,
+              name: tokenData.token.name,
+            })
+
       if (stablecoinSet.has(tokenData.token.address.toLowerCase())) {
         acc.stablecoinUsdTokens.push(token)
       } else {
@@ -67,13 +73,17 @@ export function getPoolAssets(
       }
       stablecoinAssetMap.set('USD', stablecoinAsset)
     } else {
-      const token = new Token({
-        chainId,
-        address: tokenData.address,
-        decimals: tokenData.decimals,
-        symbol: tokenData.symbol,
-        name: tokenData.name,
-      })
+      const token =
+        tokenData.address.toLowerCase() ===
+        Native.onChain(chainId).wrapped.address.toLowerCase()
+          ? Native.onChain(chainId)
+          : new Token({
+              chainId,
+              address: tokenData.address,
+              decimals: tokenData.decimals,
+              symbol: tokenData.symbol,
+              name: tokenData.name,
+            })
       assets.push({
         ...rest,
         token,

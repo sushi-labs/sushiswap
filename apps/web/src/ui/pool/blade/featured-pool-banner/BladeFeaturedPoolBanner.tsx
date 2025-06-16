@@ -57,7 +57,7 @@ export const BladeFeaturedPoolBanner: FC<BladeFeaturedPoolBannerProps> = ({
                 <Currency.IconList iconWidth={51} iconHeight={51}>
                   {tokens.map((token) => (
                     <Currency.Icon
-                      key={token.address}
+                      key={token.wrapped.address}
                       disableLink
                       currency={token}
                     />
@@ -67,7 +67,7 @@ export const BladeFeaturedPoolBanner: FC<BladeFeaturedPoolBannerProps> = ({
                   ) : (
                     stablecoinUsdTokens.map((token) => (
                       <Currency.Icon
-                        key={token.address}
+                        key={token.wrapped.address}
                         disableLink
                         currency={token}
                       />

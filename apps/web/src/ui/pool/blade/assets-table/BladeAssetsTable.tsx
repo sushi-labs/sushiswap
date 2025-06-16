@@ -27,7 +27,9 @@ export const BladeAssetsTable: FC<BladeAssetsTableProps> = ({ pool }) => {
   const [showStableCoins, setShowStableCoins] = useState(false)
 
   const data = useMemo(() => {
-    return getPoolAssets(pool, { showStableCoins })
+    return getPoolAssets(pool, { showStableCoins }).filter(
+      (asset) => asset.targetWeight > 0,
+    )
   }, [pool, showStableCoins])
 
   const state: Partial<TableState> = useMemo(

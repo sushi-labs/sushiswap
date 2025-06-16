@@ -62,7 +62,7 @@ export const BladePoolHero: FC<BladePoolHeroProps> = ({ pool }) => {
                 <Currency.IconList iconWidth={35} iconHeight={35}>
                   {tokens.map((token) => (
                     <Currency.Icon
-                      key={token.address}
+                      key={token.wrapped.address}
                       disableLink
                       currency={token}
                     />
@@ -72,7 +72,7 @@ export const BladePoolHero: FC<BladePoolHeroProps> = ({ pool }) => {
                   ) : (
                     stablecoinUsdTokens.map((token) => (
                       <Currency.Icon
-                        key={token.address}
+                        key={token.wrapped.address}
                         disableLink
                         currency={token}
                       />

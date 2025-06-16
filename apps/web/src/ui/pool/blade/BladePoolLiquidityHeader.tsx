@@ -73,13 +73,19 @@ export const BladePoolLiquidityHeader: FC<PoolHeader> = ({
                   >
                     <Currency.IconList iconWidth={36} iconHeight={36}>
                       {tokens.map((token) => (
-                        <Currency.Icon key={token.address} currency={token} />
+                        <Currency.Icon
+                          key={token.wrapped.address}
+                          currency={token}
+                        />
                       ))}
                       {hasStablecoin && !showStableCoins ? (
                         <CurrencyFiatIcon width={36} height={36} />
                       ) : (
                         stablecoinUsdTokens.map((token) => (
-                          <Currency.Icon key={token.address} currency={token} />
+                          <Currency.Icon
+                            key={token.wrapped.address}
+                            currency={token}
+                          />
                         ))
                       )}
                     </Currency.IconList>

@@ -66,7 +66,9 @@ const PoolPositionConnected: FC<PoolPositionProps> = ({ pool }) => {
   }, [vestingDeposit?.balance, poolTotalSupply, pool.liquidityUSD])
 
   const assets = useMemo(() => {
-    return getPoolAssets(pool, { showStableCoins })
+    return getPoolAssets(pool, { showStableCoins }).filter(
+      (asset) => asset.targetWeight > 0,
+    )
   }, [pool, showStableCoins])
 
   const { stablecoinUsdTokens } = useMemo(() => {
@@ -142,7 +144,6 @@ const PoolPositionConnected: FC<PoolPositionProps> = ({ pool }) => {
             {assets.map((asset, index) => {
               const percentage = asset.weight * 100
               const assetValue = positionValue * asset.weight
-              if (asset.targetWeight === 0) return null
 
               return (
                 <div key={index} className="flex items-center justify-between">

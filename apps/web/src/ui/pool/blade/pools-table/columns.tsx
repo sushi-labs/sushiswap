@@ -35,14 +35,18 @@ export const NAME_COLUMN_POOL: ColumnDef<BladePool, unknown> = {
         <div className="flex min-w-[54px]">
           <Currency.IconList iconWidth={26} iconHeight={26}>
             {tokens.map((token) => (
-              <Currency.Icon key={token.address} disableLink currency={token} />
+              <Currency.Icon
+                key={token.wrapped.address}
+                disableLink
+                currency={token}
+              />
             ))}
             {hasStablecoin && !showStableCoins ? (
               <CurrencyFiatIcon />
             ) : (
               stablecoinUsdTokens.map((token) => (
                 <Currency.Icon
-                  key={token.address}
+                  key={token.wrapped.address}
                   disableLink
                   currency={token}
                 />
