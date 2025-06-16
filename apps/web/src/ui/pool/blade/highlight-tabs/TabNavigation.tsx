@@ -25,7 +25,9 @@ const TabItem: FC<TabItemProps> = ({ label, isActive, onClick }) => {
       onClick={onClick}
       className={classNames(
         'flex flex-row items-center justify-center transition-all duration-200 gap-1 rounded-[1000px] px-3 py-2 shadow-[0px_10px_20px_0px_rgba(0,0,0,0.05)] dark:shadow-[0px_10px_20px_0px_rgba(0,0,0,0.3)] bg-white dark:bg-gray-800 sm:w-full sm:gap-2.5 sm:p-2 sm:shadow-none md:w-[302px] md:p-3',
-        isActive ? 'sm:bg-[#3D657C0A]' : 'opacity-70 hover:opacity-100',
+        isActive
+          ? 'sm:bg-[#3D657C0A] sm:dark:bg-[#3D657C0A]'
+          : 'opacity-70 hover:opacity-100',
       )}
     >
       <div className="h-3 w-3 sm:h-5 sm:w-5">
