@@ -5,7 +5,7 @@ import { graphql } from '../../graphql.js'
 import { SUSHI_REQUEST_HEADERS } from '../../request-headers.js'
 
 // TODO-BLADE: remove this once blade in prod
-const SUSHI_DATA_API_HOST = 'http://data-api-180-merge.data-gcp.sushi.com'
+const SUSHI_DATA_API_HOST = 'https://data-api-180-merge.data-gcp.sushi.com'
 
 export const BladePoolsQuery = graphql(
   `

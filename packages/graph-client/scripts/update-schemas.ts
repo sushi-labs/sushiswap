@@ -7,7 +7,7 @@ const schemas = {
     'https://api.studio.thegraph.com/query/32073/bentobox-ethereum/v0.0.1',
   strapi: 'https://sushi-strapi-cms.herokuapp.com/graphql',
   furo: 'https://api.studio.thegraph.com/query/32073/furo-ethereum/v0.0.1',
-  'data-api': 'http://data-api-180-merge.data-gcp.sushi.com/graphql',
+  'data-api': 'https://data-api-180-merge.data-gcp.sushi.com/graphql',
 } as const satisfies Record<string, string>
 
 async function updateSchema(schema: keyof typeof schemas) {
