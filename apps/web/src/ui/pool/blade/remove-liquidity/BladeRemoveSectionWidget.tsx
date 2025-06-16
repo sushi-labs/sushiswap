@@ -125,7 +125,7 @@ export const BladeRemoveSectionWidget: FC<BladeRemoveSectionWidgetProps> = ({
                       height={18}
                     />
                     <span className="text-sm font-medium text-gray-500">
-                      {tokenData.currency.symbol}
+                      {tokenData.currency.wrapped.symbol}
                     </span>
                   </div>
 
