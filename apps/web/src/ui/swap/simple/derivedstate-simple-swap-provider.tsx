@@ -160,9 +160,7 @@ const DerivedstateSimpleSwapProvider: FC<
       // Push new route
       else {
         push(
-          `${pathname}?${createQueryString([
-            { name: 'token0', value: token0 },
-          ])}`,
+          `${pathname}?${createQueryString([{ name: 'token0', value: token0 }])}`,
         )
       }
     },
@@ -196,9 +194,7 @@ const DerivedstateSimpleSwapProvider: FC<
       // Push new route
       else {
         push(
-          `${pathname}?${createQueryString([
-            { name: 'token1', value: token1 },
-          ])}`,
+          `${pathname}?${createQueryString([{ name: 'token1', value: token1 }])}`,
         )
       }
     },
@@ -235,9 +231,7 @@ const DerivedstateSimpleSwapProvider: FC<
   const setSwapAmount = useCallback<(value: string) => void>(
     (value) => {
       push(
-        `${pathname}?${createQueryString([
-          { name: 'swapAmount', value: value },
-        ])}`,
+        `${pathname}?${createQueryString([{ name: 'swapAmount', value: value }])}`,
       )
     },
     [createQueryString, pathname, push],

@@ -1,6 +1,7 @@
 'use client'
 
 import { useBreakpoint, useIsMounted } from '@sushiswap/hooks'
+import { classNames } from '@sushiswap/ui'
 import { useTheme } from 'next-themes'
 import type {
   ChartingLibraryWidgetOptions,
@@ -8,7 +9,10 @@ import type {
   ResolutionString,
 } from 'public/static/charting_library/charting_library'
 import { widget } from 'public/static/charting_library/charting_library.esm'
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
+import { useChartContext } from './chart-provider'
+import Datafeed from './datafeed'
+import { registerNoDataSetter } from './datafeed'
 
 export const Chart = ({
   widgetProps,
@@ -19,11 +23,21 @@ export const Chart = ({
   const { isMd: isMdScreen } = useBreakpoint('md')
   const { resolvedTheme } = useTheme()
   const isMounted = useIsMounted()
+  const {
+    state: { token0 },
+  } = useChartContext()
+  const [hasNoData, setHasNoData] = useState(false)
+
+  useEffect(() => {
+    registerNoDataSetter((hasNoData) => {
+      setHasNoData(hasNoData)
+    })
+  }, [])
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
     if (!isMounted || !resolvedTheme) return
-    const intervalQuicks = ['1D', '2D', '3D', '1W']
+    const intervalQuicks = [15, 60, 240, '1D']
     localStorage.setItem(
       'tradingview.IntervalWidget.quicks',
       JSON.stringify(intervalQuicks),
@@ -32,15 +46,8 @@ export const Chart = ({
     localStorage.setItem('tradingview.current_theme.name', resolvedTheme)
 
     const widgetOptions: ChartingLibraryWidgetOptions = {
-      symbol: widgetProps.symbol,
-      datafeed: new (window as any).Datafeeds.UDFCompatibleDatafeed(
-        'https://demo_feed.tradingview.com',
-        undefined,
-        {
-          maxResponseLength: 1000,
-          expectedOrder: 'latestFirst',
-        },
-      ),
+      symbol: `${token0.chainId}-${token0.wrapped.address}-${token0.name}-${token0.symbol}`,
+      datafeed: Datafeed,
       interval: widgetProps.interval as ResolutionString,
       container: chartContainerRef.current,
       library_path: widgetProps.library_path,
@@ -77,6 +84,7 @@ export const Chart = ({
         'show_symbol_logo_for_compare_studies',
         'show_symbol_logo_in_legend',
         'symbol_search_hot_key',
+        'header_compare',
       ],
 
       enabled_features: [
@@ -467,23 +475,28 @@ export const Chart = ({
     return () => {
       tvWidget.remove()
     }
-  }, [
-    widgetProps.symbol,
-    chartContainerRef,
-    resolvedTheme,
-    isMdScreen,
-    isMounted,
-    widgetProps.symbol,
-  ])
+  }, [chartContainerRef, resolvedTheme, isMdScreen, isMounted, token0])
 
   return (
     <div className="flex flex-col flex-grow rounded-xl">
       <script src="/tradingview/charting_library/bundles" />
+
       <div className="flex-grow">
         <div
           ref={chartContainerRef}
-          className={'lg:h-[580px] md:h-[530px] h-full'}
+          className={classNames(
+            'lg:h-[580px] md:h-[530px] h-full',
+            hasNoData ? 'hidden' : 'flex',
+          )}
         />
+        <div
+          className={classNames(
+            'lg:h-[580px] md:h-[530px] h-full bg-slate-50 dark:bg-slate-800 dark:text-pink-200 rounded-xl text-muted-foreground items-center justify-center italic text-sm',
+            hasNoData ? 'flex' : 'hidden',
+          )}
+        >
+          No price chart available
+        </div>
       </div>
     </div>
   )

@@ -1,59 +1,35 @@
-import { Native } from 'sushi/currency'
-
+import { useBreakpoint } from '@sushiswap/hooks'
 import { Badge, Button, Currency, SelectIcon } from '@sushiswap/ui'
 import { classNames } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import { useMemo } from 'react'
-import type { Type } from 'sushi/currency'
-
-import { useBreakpoint } from '@sushiswap/hooks'
-import { useSearchParams } from 'next/navigation'
-import { useState } from 'react'
 import { TokenSelectorV2 } from 'src/lib/wagmi/components/token-selector/token-selector-v2'
-import { useTokenWithCache } from 'src/lib/wagmi/hooks/tokens/useTokenWithCache'
 import { USDC } from 'sushi/currency'
-import type { Address } from 'viem'
-import { isAddress } from 'viem/utils'
-import { useChainId } from 'wagmi'
+import { useChartContext } from './chart-provider'
 import { Rate } from './rate'
 
 export const ChartHeader = () => {
-  const [token, setToken] = useState<Type>(Native.onChain(43114))
-  const [isTokenLoading, _setIsTokenLoading] = useState(false)
   const { isMd: isMdScreen } = useBreakpoint('md')
-  const connectedChainId = useChainId()
-  const searchParams = useSearchParams()
-  const _token0 = searchParams.get('token0')
-  const token0 =
-    _token0 && _token0 === 'NATIVE'
-      ? Native.onChain(connectedChainId).wrapped.address
-      : _token0
-        ? _token0
-        : token.wrapped.address
-
-  const { data: token0FromCache } = useTokenWithCache({
-    chainId: connectedChainId,
-    address: token0 as Address,
-    enabled: isAddress(token0, { strict: false }),
-    keepPreviousData: false,
-  })
-
-  const input0 = token0FromCache ?? Native.onChain(connectedChainId)
-  const input1 = USDC[43114]
+  const {
+    state: { token0, isLoading, chainId },
+    mutate: { setToken0 },
+  } = useChartContext()
+  const input0 = token0
+  const input1 = chainId in USDC ? USDC[chainId as keyof typeof USDC] : USDC[1]
 
   const selector = useMemo(() => {
     return (
       <TokenSelectorV2
         type="buy"
         selected={input0}
-        chainId={connectedChainId}
+        chainId={chainId}
         onSelect={(token) => {
-          setToken(token)
+          setToken0(token)
         }}
         variant={isMdScreen ? 'default' : 'semi-opaque'}
       >
         <Button
-          data-state={isTokenLoading ? 'inactive' : 'active'}
+          data-state={isLoading ? 'inactive' : 'active'}
           size="lg"
           variant={input0 ? 'secondary' : 'default'}
           id={'swap-to'}
@@ -96,7 +72,7 @@ export const ChartHeader = () => {
         </Button>
       </TokenSelectorV2>
     )
-  }, [input0, isTokenLoading, isMdScreen, connectedChainId])
+  }, [input0, isLoading, isMdScreen, chainId, setToken0])
 
   return (
     <div className="flex flex-col items-start justify-between w-full gap-4 lg:items-center md:flex-col lg:flex-row lg:gap-0">

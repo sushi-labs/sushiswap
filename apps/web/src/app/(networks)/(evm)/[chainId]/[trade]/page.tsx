@@ -13,6 +13,7 @@ import { useSkaleEuropaFaucet } from 'src/lib/hooks'
 import { useHeaderNetworkSelector } from 'src/lib/wagmi/components/header-network-selector'
 import { Chart } from 'src/ui/swap/trade/chart/chart'
 import { ChartHeader } from 'src/ui/swap/trade/chart/chart-header'
+import { ChartProvider } from 'src/ui/swap/trade/chart/chart-provider'
 import { MobileChart } from 'src/ui/swap/trade/chart/mobile-chart'
 import {
   CHAIN_IDS_BY_TRADE_MODE,
@@ -40,12 +41,10 @@ export default function TradePage() {
   } = useDerivedStateSimpleTrade()
   useHeaderNetworkSelector(chainIdsByTradeMode[tradeMode])
   useSkaleEuropaFaucet()
-  const [isScriptReady, setIsScriptReady] = useState(false)
   const { isMd: isMdScreen } = useBreakpoint('md')
   const hasMounted = useIsMounted()
 
   const defaultWidgetProps: Partial<ChartingLibraryWidgetOptions> = {
-    symbol: 'AAPL',
     interval: '1D' as ResolutionString,
     library_path: '/static/charting_library/',
     locale: 'en',
@@ -59,13 +58,6 @@ export default function TradePage() {
 
   return (
     <>
-      <Script
-        src="/static/datafeeds/udf/dist/bundle.js"
-        strategy="lazyOnload"
-        onReady={() => {
-          setIsScriptReady(true)
-        }}
-      />
       <div className="bg-white dark:bg-background md:bg-background">
         <TradeViewSwitch />
         {tradeView === 'simple' && (
@@ -81,18 +73,20 @@ export default function TradePage() {
               <div className="flex flex-col-reverse w-full gap-4 md:flex-row">
                 <div className="flex w-full flex-col gap-4 md:min-w-[calc(100%-480px)] md:w-full">
                   <div className="w-full md:h-[654px] flex flex-col md:p-5 md:gap-3">
-                    {hasMounted && isScriptReady ? (
-                      isMdScreen ? (
-                        <>
-                          <ChartHeader />
-                          <Chart widgetProps={defaultWidgetProps} />
-                        </>
-                      ) : (
-                        <MobileChart widgetProps={defaultWidgetProps} />
-                      )
-                    ) : !isMdScreen && hasMounted ? (
-                      <SkeletonBox className="w-full h-[36px]" />
-                    ) : null}
+                    <ChartProvider>
+                      {hasMounted ? (
+                        isMdScreen ? (
+                          <>
+                            <ChartHeader />
+                            <Chart widgetProps={defaultWidgetProps} />
+                          </>
+                        ) : (
+                          <MobileChart widgetProps={defaultWidgetProps} />
+                        )
+                      ) : !isMdScreen && hasMounted ? (
+                        <SkeletonBox className="w-full h-[36px]" />
+                      ) : null}
+                    </ChartProvider>
                   </div>
                   <div className="w-full md:h-[320px] pt-0 md:pt-4">
                     <TradeTableTabs />
