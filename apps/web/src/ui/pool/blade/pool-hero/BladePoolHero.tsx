@@ -4,9 +4,10 @@ import type { BladePool } from '@sushiswap/graph-client/data-api'
 import { Badge, Button, Currency, LinkExternal } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import { SushiIcon } from '@sushiswap/ui/icons/SushiIcon'
+import Link from 'next/link'
 import { type FC, Fragment, useMemo, useState } from 'react'
 import { getPoolTokensGrouped } from 'src/lib/pool/blade'
-import { EvmChain } from 'sushi'
+import { ChainKey, EvmChain } from 'sushi'
 import { formatPercent, formatUSD } from 'sushi/format'
 import { shortenAddress } from 'sushi/format'
 import { CurrencyFiatIcon } from '../CurrencyFiatIcon'
@@ -175,12 +176,16 @@ export const BladePoolHero: FC<BladePoolHeroProps> = ({ pool }) => {
         </div>
 
         <div className="flex w-full flex-col items-center gap-2 sm:w-auto sm:flex-row sm:gap-3">
-          <Button
-            variant="blank"
-            className="w-full rounded-lg bg-[#3B7EF6] bg-[linear-gradient(276deg,_#C3F1FB_2%,_#FFC9F1_142%)] px-4 py-2 font-medium text-[#12172B] text-sm hover:opacity-90 sm:w-auto sm:px-6"
+          <Link
+            href={`/${ChainKey[pool.chainId]}/pool/blade/${pool.address}/add`}
           >
-            Deposit Now
-          </Button>
+            <Button
+              variant="blank"
+              className="w-full rounded-lg bg-[#3B7EF6] bg-[linear-gradient(276deg,_#C3F1FB_2%,_#FFC9F1_142%)] px-4 py-2 font-medium text-[#12172B] text-sm hover:opacity-90 sm:w-auto sm:px-6"
+            >
+              Deposit Now
+            </Button>
+          </Link>
           <Button
             variant="blank"
             className="w-full rounded-lg bg-white/10 px-4 py-2 font-medium text-sm text-white hover:bg-white/20 sm:w-auto sm:px-6"
