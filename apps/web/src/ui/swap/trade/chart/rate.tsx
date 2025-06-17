@@ -1,5 +1,6 @@
 'use client'
 
+import { SkeletonBox } from '@sushiswap/ui'
 import { ArrowsLeftRightIcon } from '@sushiswap/ui/icons/ArrowsLeftRight'
 import { useState } from 'react'
 
@@ -12,9 +13,10 @@ type Token = {
 interface RateProps {
   token0: Token
   token1: Token
+  isLoading?: boolean
 }
 
-export const Rate: React.FC<RateProps> = ({ token0, token1 }) => {
+export const Rate: React.FC<RateProps> = ({ token0, token1, isLoading }) => {
   const [flipped, setFlipped] = useState(false)
 
   const base = flipped ? token1 : token0
@@ -23,10 +25,14 @@ export const Rate: React.FC<RateProps> = ({ token0, token1 }) => {
   // const rate = base.usdPrice / quote.usdPrice;
 
   return (
-    <div className="flex items-center flex-wrap text-sm font-medium text-[#0F172A] dark:text-white">
-      <div className="mr-1">
-        1 {base.symbol} = ${base.usdPrice.toFixed(2)}
-      </div>
+    <div className="flex items-center xl:flex-wrap text-sm font-medium text-[#0F172A] dark:text-white">
+      {isLoading ? (
+        <SkeletonBox className="h-4 w-20 rounded-md mr-1" />
+      ) : (
+        <div className="mr-1">
+          1 {base.symbol} = ${base.usdPrice.toFixed(2)}
+        </div>
+      )}
       <button
         type="button"
         onClick={() => setFlipped(!flipped)}

@@ -5,17 +5,24 @@ import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import { useMemo } from 'react'
 import { TokenSelectorV2 } from 'src/lib/wagmi/components/token-selector/token-selector-v2'
 import { USDC } from 'sushi/currency'
+import { usePrice } from '~evm/_common/ui/price-provider/price-provider/use-price'
 import { useChartContext } from './chart-provider'
 import { Rate } from './rate'
 
 export const ChartHeader = () => {
   const { isMd: isMdScreen } = useBreakpoint('md')
   const {
-    state: { token0, isLoading, chainId },
+    state: { token0, chainId },
     mutate: { setToken0 },
   } = useChartContext()
   const input0 = token0
   const input1 = chainId in USDC ? USDC[chainId as keyof typeof USDC] : USDC[1]
+
+  const { data: price, isLoading: isPriceLoading } = usePrice({
+    chainId: token0?.chainId,
+    address: token0?.wrapped?.address,
+    enabled: !!token0,
+  })
 
   const selector = useMemo(() => {
     return (
@@ -29,14 +36,13 @@ export const ChartHeader = () => {
         variant={isMdScreen ? 'default' : 'semi-opaque'}
       >
         <Button
-          data-state={isLoading ? 'inactive' : 'active'}
           size="lg"
           variant={input0 ? 'secondary' : 'default'}
           id={'swap-to'}
           type="button"
           className={classNames(
             input0 ? 'pl-2 pr-3' : '',
-            '!rounded-full !min-h-[40px] !h-[40px] data-[state=inactive]:hidden data-[state=active]:flex bg-slate-200 dark:bg-slate-750',
+            '!rounded-full !min-h-[40px] !h-[40px] bg-slate-200 dark:bg-slate-750',
           )}
         >
           {input0 ? (
@@ -72,7 +78,7 @@ export const ChartHeader = () => {
         </Button>
       </TokenSelectorV2>
     )
-  }, [input0, isLoading, isMdScreen, chainId, setToken0])
+  }, [input0, isMdScreen, chainId, setToken0])
 
   return (
     <div className="flex flex-col items-start justify-between w-full gap-4 lg:items-center md:flex-col lg:flex-row lg:gap-0">
@@ -82,13 +88,14 @@ export const ChartHeader = () => {
           token0={{
             symbol: input0?.symbol ?? '',
             amount: 1,
-            usdPrice: 21,
+            usdPrice: price ?? 0,
           }}
           token1={{
             symbol: input1?.symbol ?? '',
             amount: 1,
             usdPrice: 1,
           }}
+          isLoading={isPriceLoading}
         />
       </div>
     </div>
