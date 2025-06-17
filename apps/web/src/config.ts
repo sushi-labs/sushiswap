@@ -242,6 +242,7 @@ export const isZapSupportedChainId = (
   ZAP_SUPPORTED_CHAIN_IDS.includes(chainId as ZapSupportedChainId)
 
 export const XSWAP_SUPPORTED_CHAIN_IDS = [
+  ChainId.APE,
   ChainId.ARBITRUM,
   ChainId.AVALANCHE,
   ChainId.BSC,
