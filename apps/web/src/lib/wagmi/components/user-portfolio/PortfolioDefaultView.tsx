@@ -36,7 +36,7 @@ enum PortfolioTab {
   Tokens = 'Tokens',
   Positions = 'Positions',
   Claimable = 'Claimable',
-  History = 'History',
+  // History = 'History',
 }
 
 interface PortfolioDefaultProps {
@@ -63,8 +63,8 @@ export const PortfolioDefaultView: FC<PortfolioDefaultProps> = ({
         return <PortfolioPositions />
       case PortfolioTab.Claimable:
         return <PortfolioClaimables />
-      case PortfolioTab.History:
-        return <PortfolioHistory />
+      // case PortfolioTab.History:
+      // return <PortfolioHistory />
     }
   }, [tab])
 
@@ -143,7 +143,6 @@ export const PortfolioDefaultView: FC<PortfolioDefaultProps> = ({
             />
           </div>
         </div>
-        <HeaderNetworkSelector networks={SUPPORTED_NETWORKS} hideNetworkName />
       </div>
       <div className="flex px-5 gap-x-2">
         {Object.values(PortfolioTab).map((_tab) => (

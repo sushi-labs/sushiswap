@@ -17,19 +17,28 @@ export const config = {
     '/:chainId/cross-chain-swap/:path*',
     '/:chainId/explore/:path*',
     '/:chainId/pool/:path*',
+    '/:chainId/token/:path*',
     '/:chainId/positions/:path*',
     '/:chainId/migrate',
     '/:chainId/rewards',
+    '/portal/:path*',
   ],
 }
 
 export async function middleware(req: NextRequest) {
   const { pathname, searchParams, search } = req.nextUrl
 
+  if (pathname === 'portal' || pathname.startsWith('/portal/')) {
+    const portalMiddleware = (await import('./app/portal/middleware'))
+      .portalMiddleware
+    return portalMiddleware(req)
+  }
+
   if (
     pathname === '/explore' ||
     pathname === '/pools' ||
     pathname === '/pool' ||
+    pathname === '/token' ||
     pathname === '/swap' ||
     pathname === '/limit' ||
     pathname === '/dca' ||
@@ -54,7 +63,7 @@ export async function middleware(req: NextRequest) {
   }
 
   const networkNameMatch = pathname.match(
-    /([\w-]+)(?=\/swap|\/limit|\/dca|\/cross-chain-swap|\/explore|\/pool|\/positions|\/rewards|\/migrate)/,
+    /([\w-]+)(?=\/swap|\/limit|\/dca|\/cross-chain-swap|\/explore|\/pool|\/token|\/positions|\/rewards|\/migrate)/,
   )
   if (networkNameMatch?.length) {
     const { chainId, networkName } = getEvmChainInfo(networkNameMatch[0])

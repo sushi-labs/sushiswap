@@ -61,7 +61,7 @@ test.beforeEach(async ({ page, next }) => {
       })
     })
   } catch (error) {
-    console.error('error mockking token api', error)
+    console.error('error mocking token api', error)
   }
 
   await page.route('http://localhost:3000/api/**/*', async (route) => {

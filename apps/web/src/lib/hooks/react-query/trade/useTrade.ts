@@ -6,11 +6,12 @@ import {
 import { useQuery } from '@tanstack/react-query'
 import { useCallback, useMemo } from 'react'
 import { API_BASE_URL } from 'src/lib/swap/api-base-url'
+import { getFeeString } from 'src/lib/swap/fee'
 import { slippageAmount } from 'sushi/calculate'
 import {
-  TOKEN_CHOMPER_ADDRESS,
-  isRouteProcessor6ChainId,
-  isTokenChomperChainId,
+  UI_FEE_COLLECTOR_ADDRESS,
+  isRouteProcessor7ChainId,
+  isUIFeeCollectorChainId,
   isWNativeSupported,
 } from 'sushi/config'
 import { Amount, Native, Price, type Type } from 'sushi/currency'
@@ -55,7 +56,7 @@ export const useTradeQuery = (
       },
     ],
     queryFn: async () => {
-      const params = new URL(`${API_BASE_URL}/swap/v6/${chainId}`)
+      const params = new URL(`${API_BASE_URL}/swap/v7/${chainId}`)
       params.searchParams.set('referrer', 'sushi')
       params.searchParams.set(
         'tokenIn',
@@ -79,8 +80,8 @@ export const useTradeQuery = (
       recipient && params.searchParams.set('recipient', `${recipient}`)
       params.searchParams.set(
         'feeReceiver',
-        isTokenChomperChainId(chainId)
-          ? TOKEN_CHOMPER_ADDRESS[chainId]
+        isUIFeeCollectorChainId(chainId)
+          ? UI_FEE_COLLECTOR_ADDRESS[chainId]
           : '0xFF64C2d5e23e9c48e8b42a23dc70055EEC9ea098',
       )
       params.searchParams.set('fee', '0.0025')
@@ -156,7 +157,7 @@ export const useTrade = (variables: UseTradeParams) => {
   const select: UseTradeQuerySelect = useCallback(
     (data) => {
       if (
-        isRouteProcessor6ChainId(chainId) &&
+        isRouteProcessor7ChainId(chainId) &&
         data &&
         amount &&
         data.route &&
@@ -221,15 +222,12 @@ export const useTrade = (variables: UseTradeParams) => {
             nativePrice && gasSpent
               ? gasSpent.multiply(nativePrice.asFraction).toSignificant(4)
               : undefined,
-          fee:
-            !isWrapOrUnwrap({ fromToken, toToken }) &&
-            !isStable({ fromToken, toToken }) &&
-            !isLsd({ fromToken, toToken })
-              ? `${tokenOutPrice ? '$' : ''}${minAmountOut
-                  .multiply(new Percent(25, 10000))
-                  .multiply(tokenOutPrice ? tokenOutPrice.asFraction : 1)
-                  .toSignificant(4)} ${!tokenOutPrice ? toToken.symbol : ''}`
-              : '$0',
+          fee: getFeeString({
+            fromToken,
+            toToken,
+            tokenOutPrice,
+            minAmountOut,
+          }),
           route: data.route,
           tx: data?.tx
             ? {

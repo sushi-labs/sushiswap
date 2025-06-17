@@ -1,21 +1,20 @@
 import type { VariablesOf } from 'gql.tada'
 
-import type { PoolHasSteerVaults } from '@sushiswap/steer-sdk'
-import { request, type RequestOptions } from 'src/lib/request.js'
+import { type RequestOptions, request } from 'src/lib/request.js'
 import {
-  EvmChainId,
-  ChefType,
-  RewarderType,
-  SushiSwapProtocol,
+  type ChefType,
+  type EvmChainId,
   type PoolBase,
   type PoolHistory1D,
   type PoolV3,
   type PoolWithAprs,
   type PoolWithIncentives,
+  type RewarderType,
+  SushiSwapProtocol,
 } from 'sushi'
 import { isSushiSwapV3ChainId } from 'sushi/config'
-import { SUSHI_DATA_API_HOST } from '../../data-api-host.js'
 import type { Address } from 'viem'
+import { SUSHI_DATA_API_HOST } from '../../data-api-host.js'
 import { graphql } from '../../graphql.js'
 import { SUSHI_REQUEST_HEADERS } from '../../request-headers.js'
 
@@ -67,8 +66,6 @@ export const V3PoolQuery = graphql(
       txCount1dChange
       liquidityUSD1dChange
       incentiveApr
-      hadSmartPool
-      hasSmartPool
       isIncentivized
       wasIncentivized
       incentives {
@@ -89,7 +86,6 @@ export const V3PoolQuery = graphql(
         rewarderAddress
         rewarderType
       }
-      vaults
     }
   }
 `,
@@ -174,8 +170,6 @@ export async function getV3Pool(
         incentiveApr: pool.incentiveApr,
         isIncentivized: pool.isIncentivized,
         wasIncentivized: pool.wasIncentivized,
-        hasEnabledSteerVault: pool.hasSmartPool,
-        hadEnabledSteerVault: pool.hadSmartPool,
 
         incentives: incentives.map((incentive) => ({
           id: incentive.id as `${string}:0x${string}`,
@@ -196,8 +190,8 @@ export async function getV3Pool(
           rewarderAddress: incentive.rewarderAddress as Address,
           rewarderType: incentive.rewarderType as RewarderType,
         })),
-      } satisfies PoolHasSteerVaults<
-        PoolWithAprs<PoolWithIncentives<PoolHistory1D<PoolV3<PoolBase>>>>
+      } satisfies PoolWithAprs<
+        PoolWithIncentives<PoolHistory1D<PoolV3<PoolBase>>>
       >
     }
   } catch (error) {

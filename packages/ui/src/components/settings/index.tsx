@@ -92,7 +92,11 @@ export const SettingsOverlay: FC<SettingsOverlayProps> = ({
                       className="!rounded-full -mr-1.5 !bg-opacity-50"
                       iconPosition="end"
                       variant={
-                        Number(slippageTolerance) > 2 ? 'warning' : 'secondary'
+                        Number(slippageTolerance) > 20
+                          ? 'destructive'
+                          : Number(slippageTolerance) > 2
+                            ? 'warning'
+                            : 'secondary'
                       }
                       size="xs"
                       asChild

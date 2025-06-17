@@ -1,11 +1,11 @@
 import type { VariablesOf } from 'gql.tada'
 
-import { request, type RequestOptions } from 'src/lib/request.js'
-import { graphql } from '../graphql.js'
-import { ImageFieldsFragment } from 'src/subgraphs/strapi/fragments/image-fields.js'
-import { AuthorFieldsFragment } from 'src/subgraphs/strapi/fragments/author-fields.js'
+import { type RequestOptions, request } from 'src/lib/request.js'
 import { STRAPI_GRAPHQL_URL } from 'src/subgraphs/strapi/constants.js'
+import { AuthorFieldsFragment } from 'src/subgraphs/strapi/fragments/author-fields.js'
+import { ImageFieldsFragment } from 'src/subgraphs/strapi/fragments/image-fields.js'
 import { transformImage } from 'src/subgraphs/strapi/transforms/transform-image.js'
+import { graphql } from '../graphql.js'
 
 export const StrapiAcademyArticlesQuery = graphql(
   `query AcademyArticles($filters: ArticleFiltersInput, $pagination: PaginationArg, $publicationState: PublicationState = LIVE, $sort: [String] = ["publishedAt:desc"]) {
@@ -133,7 +133,7 @@ export async function getAcademyArticles(
       id: topic.id,
       name: topic.attributes.name,
     })),
-    difficulty: article.attributes.difficulty.data
+    difficulty: article.attributes.difficulty?.data
       ? {
           id: article.attributes.difficulty.data.id,
           name: article.attributes.difficulty.data.attributes.name,

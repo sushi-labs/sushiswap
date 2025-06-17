@@ -23,7 +23,6 @@ type PoolHeader = {
   apy?: {
     fees: number | undefined
     rewards: number | undefined
-    vault?: number
   }
   priceRange?: string
   hasEnabledStrategies?: boolean
@@ -67,11 +66,11 @@ export const PoolHeader: FC<PoolHeader> = ({
         <div className="flex flex-col gap-4">
           <LinkInternal
             href={backUrl}
-            className="text-blue hover:underline text-sm"
+            className="text-sm text-blue hover:underline"
           >
             ← Back
           </LinkInternal>
-          <div className="flex justify-between flex-wrap gap-6">
+          <div className="flex flex-wrap justify-between gap-6">
             <div className="relative flex items-center gap-3 max-w-[100vh]">
               <Currency.IconList iconWidth={36} iconHeight={36}>
                 <Currency.Icon currency={token0} />
@@ -133,36 +132,33 @@ export const PoolHeader: FC<PoolHeader> = ({
         <div className="flex flex-wrap items-center gap-y-5 gap-x-[32px] text-secondary-foreground mb-8 mt-1.5">
           {apy ? (
             <div className="flex items-center gap-1.5">
-              <span className="tracking-tighter font-semibold">APR</span>
+              <span className="font-semibold tracking-tighter">APR</span>
 
-              <APRHoverCard pool={pool} smartPoolAPR={apy.vault}>
+              <APRHoverCard pool={pool}>
                 <span className="underline decoration-dotted underline-offset-2">
-                  {formatPercent(
-                    ((typeof apy.vault === 'number' ? apy.vault : apy.fees) ||
-                      0) + (apy.rewards || 0),
-                  )}
+                  {formatPercent((apy.fees || 0) + (apy.rewards || 0))}
                 </span>
               </APRHoverCard>
             </div>
           ) : null}
           {priceRange ? (
             <div className="flex items-center gap-1.5">
-              <span className="tracking-tighter font-semibold">
+              <span className="font-semibold tracking-tighter">
                 Price Range
               </span>
               {priceRange}
             </div>
           ) : null}
           <div className="flex items-center gap-1.5">
-            <span className="tracking-tighter font-semibold">Fee</span>
+            <span className="font-semibold tracking-tighter">Fee</span>
             {pool.swapFee * 100}%
           </div>
           <div className="flex items-center gap-1.5">
-            <span className="tracking-tighter font-semibold">Network</span>
+            <span className="font-semibold tracking-tighter">Network</span>
             {EvmChain.from(pool.chainId)?.name}
           </div>
           <div className="flex items-center gap-1.5">
-            <span className="tracking-tighter font-semibold">
+            <span className="font-semibold tracking-tighter">
               {token0.symbol}
             </span>
             <LinkExternal
@@ -183,7 +179,7 @@ export const PoolHeader: FC<PoolHeader> = ({
             </LinkExternal>
           </div>
           <div className="flex items-center gap-1.5">
-            <span className="tracking-tighter font-semibold">
+            <span className="font-semibold tracking-tighter">
               {token1.symbol}
             </span>
             <LinkExternal

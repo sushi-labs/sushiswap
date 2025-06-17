@@ -1,4 +1,3 @@
-import type { SteerVault } from '@sushiswap/steer-sdk'
 import {
   Card,
   CardContent,
@@ -16,7 +15,7 @@ import {
 } from 'src/lib/swap/warningSeverity'
 import { useTotalSupply } from 'src/lib/wagmi/hooks/tokens/useTotalSupply'
 import type { EvmChainId } from 'sushi/chain'
-import { Amount, Token, type Type } from 'sushi/currency'
+import { Amount, type Type } from 'sushi/currency'
 import { formatUSD } from 'sushi/format'
 import { Percent, ZERO } from 'sushi/math'
 import { SushiSwapV2Pool } from 'sushi/pool'
@@ -35,7 +34,7 @@ const getAmountUSD = (
 interface ZapInfoCardProps {
   zapResponse?: ZapResponse
   inputCurrencyAmount: Amount<Type> | undefined
-  pool: SushiSwapV2Pool | SteerVault | null
+  pool: SushiSwapV2Pool | null
   tokenRatios?: { token0: number; token1: number }
 }
 
@@ -55,12 +54,7 @@ export const ZapInfoCard: FC<ZapInfoCardProps> = ({
         ? undefined
         : pool instanceof SushiSwapV2Pool
           ? pool.liquidityToken
-          : new Token({
-              address: pool.address,
-              chainId: pool.chainId,
-              decimals: 18,
-              symbol: 'STEER LP',
-            }),
+          : undefined,
     [pool],
   )
 
@@ -99,15 +93,8 @@ export const ZapInfoCard: FC<ZapInfoCardProps> = ({
       inputCurrencyPrice,
     )
 
-    const reserve0USD =
-      pool instanceof SushiSwapV2Pool
-        ? getAmountUSD(pool.reserve0, token0Price)
-        : pool.reserve0USD
-
-    const reserve1USD =
-      pool instanceof SushiSwapV2Pool
-        ? getAmountUSD(pool.reserve1, token1Price)
-        : pool.reserve1USD
+    const reserve0USD = getAmountUSD(pool.reserve0, token0Price)
+    const reserve1USD = getAmountUSD(pool.reserve1, token1Price)
 
     const amountOutUSD =
       !reserve0USD || !reserve1USD || !totalSupply
@@ -134,7 +121,7 @@ export const ZapInfoCard: FC<ZapInfoCardProps> = ({
         <Collapsible open>
           <Card variant="outline">
             <CardContent className="!pt-3 !pb-3 !px-5">
-              <div className="flex justify-between items-center gap-2">
+              <div className="flex items-center justify-between gap-2">
                 <span className="font-medium">Price impact</span>
                 <span
                   className={classNames(
@@ -157,7 +144,7 @@ export const ZapInfoCard: FC<ZapInfoCardProps> = ({
                   )}
                 </span>
               </div>
-              <div className="flex justify-between items-center gap-2">
+              <div className="flex items-center justify-between gap-2">
                 <span className="font-medium">Route</span>
                 {pool && inputCurrencyAmount ? (
                   <ZapRouteDialog
@@ -165,13 +152,13 @@ export const ZapInfoCard: FC<ZapInfoCardProps> = ({
                     pool={pool}
                     tokenRatios={tokenRatios}
                   >
-                    <span className="underline font-medium">View Route</span>
+                    <span className="font-medium underline">View Route</span>
                   </ZapRouteDialog>
                 ) : (
                   <SkeletonBox className="h-4 py-0.5 w-[80px]" />
                 )}
               </div>
-              <div className="flex justify-between items-center gap-2">
+              <div className="flex items-center justify-between gap-2">
                 <span className="font-medium">Est. Received</span>
                 <div className="flex items-center gap-2">
                   {typeof amountOut !== 'undefined' ? (
@@ -188,7 +175,7 @@ export const ZapInfoCard: FC<ZapInfoCardProps> = ({
                   )}
                 </div>
               </div>
-              <div className="flex justify-between items-center gap-2">
+              <div className="flex items-center justify-between gap-2">
                 <span className="font-medium">Fee (0.25%)</span>
                 {typeof feeAmountUSD !== 'undefined' ? (
                   `$${feeAmountUSD.toFixed(5)}`

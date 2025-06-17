@@ -1,6 +1,6 @@
 import {
   SUSHISWAP_V3_FACTORY_ADDRESS,
-  SUSHISWAP_V3_POSTIION_MANAGER,
+  SUSHISWAP_V3_POSITION_MANAGER,
   type SushiSwapV3ChainId,
 } from 'sushi/config'
 import { createClient } from 'viem'
@@ -102,7 +102,7 @@ export const getPosition = async ({
   const [result, fees] = await Promise.all([
     readContract(client, {
       abi: abiShard,
-      address: SUSHISWAP_V3_POSTIION_MANAGER[chainId],
+      address: SUSHISWAP_V3_POSITION_MANAGER[chainId],
       functionName: 'positions',
       args: [tokenId],
     }),

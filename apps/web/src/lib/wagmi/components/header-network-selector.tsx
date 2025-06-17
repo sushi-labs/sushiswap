@@ -1,3 +1,5 @@
+'use client'
+
 import { createErrorToast } from '@sushiswap/notifications'
 import { Button } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
@@ -12,14 +14,18 @@ import {
   type NetworkSelectorOnSelectCallback,
 } from './network-selector'
 
+type SupportedNetworks = readonly (EvmChainId | NonStandardChainId)[]
+
 export const HeaderNetworkSelector: FC<{
-  networks: readonly (EvmChainId | NonStandardChainId)[]
+  networks: SupportedNetworks
+  supportedNetworks?: SupportedNetworks
   selectedNetwork?: EvmChainId | NonStandardChainId
   onChange?(network: EvmChainId | NonStandardChainId): void
   hideNetworkName?: boolean
   className?: string
 }> = ({
   networks,
+  supportedNetworks,
   selectedNetwork,
   onChange,
   className,
@@ -60,6 +66,7 @@ export const HeaderNetworkSelector: FC<{
   return (
     <NetworkSelector
       selected={selectedNetwork ?? chainId}
+      supportedNetworks={supportedNetworks}
       onSelect={onSwitchNetwork}
       networks={networks}
     >

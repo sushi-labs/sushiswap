@@ -9,7 +9,7 @@ export const revalidate = 3600
 
 export default async function Page() {
   return (
-    <div className="w-full flex items-center flex-col pb-40">
+    <div className="w-full flex items-center flex-col pb-40 animate-slide">
       <div className="w-full bg-[linear-gradient(104deg,rgba(9,147,236,0.20)0%,rgba(243,56,195,0.20)100%)] dark:bg-[linear-gradient(0deg,rgba(0,0,0,0.20)0%,rgba(0,0,0,0.20)100%),linear-gradient(104deg,rgba(9,147,236,0.20)0%,rgba(243,56,195,0.20)100%)] pt-12 md:pt-20 pb-[72px] md:pb-24">
         <div className="flex flex-col items-center space-y-8 md:space-y-16 p-5">
           <div className="space-y-4 flex flex-col items-center">

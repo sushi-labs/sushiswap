@@ -1,13 +1,12 @@
-import { writeFileSync } from 'fs'
+import { writeFileSync } from 'node:fs'
 import type { introspection } from '../src/subgraphs/data-api/data-api-env'
 import { getChainIdsByFeature } from '../src/subgraphs/data-api/queries/features/chain-ids-by-feature'
 
 const features: introspection['types']['ChainIdFeature']['enumValues'][] = [
-  // 'SushiSwapChainId',
+  'SushiSwapChainId',
   // 'SushiSwapV2ChainId',
   // 'SushiSwapV3ChainId',
   'PoolChainId',
-  'SmartPoolChainId',
   'TokenListChainId',
   'TrendingTokensChainId',
 ] as const
@@ -46,5 +45,5 @@ res.forEach((content, i) => {
 
 writeFileSync(
   `${path}/index.ts`,
-  res.map((_, i) => `export * from './${features[i]}'`).join('\n'),
+  res.map((_, i) => `export * from './${features[i]}.js'`).join('\n'),
 )

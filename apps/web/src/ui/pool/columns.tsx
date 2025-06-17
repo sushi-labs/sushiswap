@@ -1,12 +1,11 @@
 import type { Pool } from '@sushiswap/graph-client/data-api'
-import type { PoolHasSteerVaults } from '@sushiswap/steer-sdk'
 import {
   Badge,
   Currency,
   FormattedNumber,
+  SkeletonBox,
   Tooltip,
   TooltipContent,
-  TooltipPrimitive,
   TooltipProvider,
   TooltipTrigger,
   classNames,
@@ -16,7 +15,7 @@ import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import type { ColumnDef } from '@tanstack/react-table'
 import formatDistance from 'date-fns/formatDistance'
 import React, { useMemo } from 'react'
-import type { AngleRewardsPool } from 'src/lib/hooks/react-query'
+import type { ClaimableRewards } from 'src/lib/hooks/react-query'
 import type { ConcentratedLiquidityPositionWithV3Pool } from 'src/lib/wagmi/hooks/positions/types'
 import type {
   MaybeNestedPool,
@@ -28,6 +27,7 @@ import type {
   SushiPositionWithPool,
   SushiSwapProtocol,
 } from 'sushi'
+import type { SushiSwapV3ChainId } from 'sushi/config'
 import { Token } from 'sushi/currency'
 import {
   formatNumber,
@@ -38,6 +38,13 @@ import {
 import { unnestPool } from 'sushi/types'
 import { APRHoverCard } from './APRHoverCard'
 import { APRWithRewardsHoverCard } from './APRWithRewardsHoverCard'
+import { ClaimableFeesActionCell } from './ClaimableFeesActionCell'
+import { ClaimableFeesAmountCell } from './ClaimableFeesAmountCell'
+import { ClaimableFeesChainCell } from './ClaimableFeesChainCell'
+import type { ClaimableFees } from './ClaimableFeesTab'
+import { ClaimableRewardsActionCell } from './ClaimableRewardsActionCell'
+import { ClaimableRewardsAmountCell } from './ClaimableRewardsAmountCell'
+import { ClaimableRewardsChainCell } from './ClaimableRewardsChainCell'
 import { ConcentratedLiquidityPositionAPRCell } from './ConcentratedLiquidityPositionAPRCell'
 import { PoolNameCell, ProtocolBadge } from './PoolNameCell'
 import { PoolNameCellV3 } from './PoolNameCellV3'
@@ -52,85 +59,113 @@ import {
   type useTransactionsV3,
 } from './PoolTransactionsV3'
 import { PriceRangeCell } from './PriceRangeCell'
-import { RewardsV3ClaimableCell } from './RewardsV3ClaimableCell'
-import { RewardsV3NameCell } from './RewardsV3NameCell'
 
-export const REWARDS_V3_NAME_COLUMN: ColumnDef<AngleRewardsPool, unknown> = {
-  id: 'poolName',
-  header: 'Pool',
-  cell: (props) => <RewardsV3NameCell {...props.row} />,
+export const REWARDS_CHAIN_COLUMN: ColumnDef<ClaimableRewards, unknown> = {
+  id: 'chain',
+  header: 'Chain',
+  cell: (props) => <ClaimableRewardsChainCell {...props.row} />,
+  size: 300,
   meta: {
-    skeleton: (
-      <div className="flex items-center w-full gap-2">
-        <div className="flex items-center">
-          <SkeletonCircle radius={40} />
-          <SkeletonCircle radius={40} className="-ml-[12px]" />
+    body: {
+      skeleton: (
+        <div className="flex gap-2 items-center w-full">
+          <SkeletonCircle radius={18} />
+          <div className="w-28">
+            <SkeletonText fontSize="sm" />
+          </div>
         </div>
-        <div className="flex flex-col w-full">
-          <SkeletonText fontSize="lg" />
-        </div>
-      </div>
-    ),
-  },
-}
-
-export const REWARDS_V3_POSITION_SIZE_COLUMN: ColumnDef<
-  AngleRewardsPool,
-  unknown
-> = {
-  id: 'positionSize',
-  header: 'Position Size',
-  accessorFn: (row) => row.userTVL ?? 0,
-  cell: (props) => `$${formatNumber(props.row.original.userTVL || 0)}`,
-  meta: {
-    skeleton: <SkeletonText fontSize="lg" />,
-  },
-}
-
-export const REWARDS_V3_APR_COLUMN: ColumnDef<AngleRewardsPool, unknown> = {
-  id: 'apr',
-  header: 'APR',
-  accessorFn: (row) => row.meanAPR ?? 0,
-  cell: (props) => (
-    <TooltipProvider>
-      <Tooltip delayDuration={0}>
-        <TooltipTrigger asChild>
-          <span className="underline decoration-dotted underline-offset-2 flex items-center justify-end gap-1 text-sm text-gray-900 dark:text-slate-50">
-            {formatPercent((props.row.original.meanAPR ?? 0) / 100)}
-          </span>
-        </TooltipTrigger>
-        <TooltipPrimitive.Portal>
-          <TooltipPrimitive.Content
-            sideOffset={4}
-            className={classNames(
-              'border border-accent max-h-[var(--radix-popper-available-height)] z-50 w-72 bg-white/50 dark:bg-slate-800/50 paper rounded-xl p-4 shadow-md outline-none animate-in data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2',
-            )}
-            {...props}
-          >
-            The APR displayed is algorithmic and subject to change..
-          </TooltipPrimitive.Content>
-        </TooltipPrimitive.Portal>
-      </Tooltip>
-    </TooltipProvider>
-  ),
-  meta: {
-    skeleton: <SkeletonText fontSize="lg" />,
-  },
-}
-
-export const REWARDS_V3_CLAIMABLE_COLUMN: ColumnDef<AngleRewardsPool, unknown> =
-  {
-    id: 'claimable',
-    header: 'Claimable',
-    accessorFn: (row) => row.userTVL ?? 0,
-    cell: (props) => <RewardsV3ClaimableCell {...props.row} />,
-    meta: {
-      skeleton: <SkeletonText fontSize="lg" />,
+      ),
     },
-  }
+  },
+}
+
+export const REWARDS_AMOUNT_COLUMN: ColumnDef<ClaimableRewards, unknown> = {
+  id: 'amount',
+  header: 'Rewards Amount',
+  cell: (props) => <ClaimableRewardsAmountCell {...props.row} />,
+  size: 300,
+  meta: {
+    body: {
+      skeleton: (
+        <div className="w-24">
+          <SkeletonText fontSize="sm" />
+        </div>
+      ),
+    },
+  },
+}
+
+export const REWARDS_ACTION_COLUMN: ColumnDef<ClaimableRewards, unknown> = {
+  id: 'action',
+  header: 'Action',
+  cell: (props) => <ClaimableRewardsActionCell {...props.row} />,
+  size: 280,
+  meta: {
+    body: {
+      skeleton: (
+        <div className="flex gap-3 w-[280px]">
+          <SkeletonBox className="h-10 w-full" />
+          <SkeletonBox className="h-10 w-full" />
+        </div>
+      ),
+    },
+  },
+}
+
+export const FEES_CHAIN_COLUMN: ColumnDef<ClaimableFees, unknown> = {
+  id: 'chain',
+  header: 'Chain',
+  cell: (props) => <ClaimableFeesChainCell {...props.row} />,
+  size: 300,
+  meta: {
+    body: {
+      skeleton: (
+        <div className="flex gap-2 items-center w-full">
+          <SkeletonCircle radius={18} />
+          <div className="w-28">
+            <SkeletonText fontSize="sm" />
+          </div>
+        </div>
+      ),
+    },
+  },
+}
+
+export const FEES_AMOUNT_COLUMN: ColumnDef<ClaimableFees, unknown> = {
+  id: 'amount',
+  header: 'Fees Amount',
+  cell: (props) => <ClaimableFeesAmountCell {...props.row} />,
+  size: 300,
+  meta: {
+    body: {
+      skeleton: (
+        <div className="w-24">
+          <SkeletonText fontSize="sm" />
+        </div>
+      ),
+    },
+  },
+}
+
+export const FEES_ACTION_COLUMN: ColumnDef<ClaimableFees, unknown> = {
+  id: 'action',
+  header: 'Action',
+  cell: (props) => <ClaimableFeesActionCell {...props.row} />,
+  size: 280,
+  meta: {
+    body: {
+      skeleton: (
+        <div className="flex gap-3 w-[280px]">
+          <SkeletonBox className="h-10 w-full" />
+          <SkeletonBox className="h-10 w-full" />
+        </div>
+      ),
+    },
+  },
+}
 
 export const NAME_COLUMN_POOL: ColumnDef<
-  MaybeNestedPool<PoolHasSteerVaults<PoolIfIncentivized<PoolBase, true>, true>>,
+  MaybeNestedPool<PoolIfIncentivized<PoolBase, true>>,
   unknown
 > = {
   id: 'name',
@@ -138,17 +173,19 @@ export const NAME_COLUMN_POOL: ColumnDef<
 
   cell: (props) => <PoolNameCell pool={unnestPool(props.row.original)} />,
   meta: {
-    skeleton: (
-      <div className="flex items-center w-full gap-2">
-        <div className="flex items-center">
-          <SkeletonCircle radius={26} />
-          <SkeletonCircle radius={26} className="-ml-[12px]" />
+    body: {
+      skeleton: (
+        <div className="flex items-center w-full gap-2">
+          <div className="flex items-center">
+            <SkeletonCircle radius={26} />
+            <SkeletonCircle radius={26} className="-ml-[12px]" />
+          </div>
+          <div className="flex flex-col w-full">
+            <SkeletonText fontSize="lg" />
+          </div>
         </div>
-        <div className="flex flex-col w-full">
-          <SkeletonText fontSize="lg" />
-        </div>
-      </div>
-    ),
+      ),
+    },
   },
   size: 300,
 }
@@ -196,7 +233,7 @@ export const EXPLORE_NAME_COLUMN_POOL: ColumnDef<Pool, unknown> = {
           ) : null}
         </div>
         <div className="flex flex-col gap-0.5">
-          <span className="flex items-center gap-1 text-sm font-medium text-gray-900 dark:text-slate-50 whitespace-nowrap pr-2">
+          <span className="flex items-center gap-1 pr-2 text-sm font-medium text-gray-900 dark:text-slate-50 whitespace-nowrap">
             {props.row.original.name}
           </span>
           <div className="flex gap-1">
@@ -240,20 +277,6 @@ export const EXPLORE_NAME_COLUMN_POOL: ColumnDef<Pool, unknown> = {
                 </Tooltip>
               </TooltipProvider>
             )}
-            {props.row.original.isSmartPool && (
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <div className="bg-[#F2E9D6] dark:bg-yellow/60 text-[10px] px-2 rounded-full">
-                      💡
-                    </div>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>Smart Pool available</p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-            )}
           </div>
         </div>
       </div>
@@ -261,17 +284,19 @@ export const EXPLORE_NAME_COLUMN_POOL: ColumnDef<Pool, unknown> = {
   },
   size: 300,
   meta: {
-    skeleton: (
-      <div className="flex items-center w-full gap-2">
-        <div className="flex items-center">
-          <SkeletonCircle radius={30} />
-          <SkeletonCircle radius={30} className="-ml-[10px]" />
+    body: {
+      skeleton: (
+        <div className="flex items-center w-full gap-2">
+          <div className="flex items-center">
+            <SkeletonCircle radius={30} />
+            <SkeletonCircle radius={30} className="-ml-[10px]" />
+          </div>
+          <div className="flex flex-col w-full min-w-[120px]">
+            <SkeletonText fontSize="lg" />
+          </div>
         </div>
-        <div className="flex flex-col w-full min-w-[120px]">
-          <SkeletonText fontSize="lg" />
-        </div>
-      </div>
-    ),
+      ),
+    },
   },
 }
 
@@ -304,7 +329,9 @@ export const TVL_COLUMN: ColumnDef<Pool, unknown> = {
     </div>
   ),
   meta: {
-    skeleton: <SkeletonText fontSize="lg" />,
+    body: {
+      skeleton: <SkeletonText fontSize="lg" />,
+    },
   },
 }
 
@@ -337,7 +364,9 @@ export const VOLUME_1D_COLUMN: ColumnDef<Pool, unknown> = {
     </div>
   ),
   meta: {
-    skeleton: <SkeletonText fontSize="lg" />,
+    body: {
+      skeleton: <SkeletonText fontSize="lg" />,
+    },
   },
 }
 
@@ -370,7 +399,9 @@ export const VOLUME_1W_COLUMN: ColumnDef<Pool, unknown> = {
     </div>
   ),
   meta: {
-    skeleton: <SkeletonText fontSize="lg" />,
+    body: {
+      skeleton: <SkeletonText fontSize="lg" />,
+    },
   },
 }
 
@@ -382,7 +413,9 @@ export const TRANSACTIONS_1D_COLUMN: ColumnDef<Pool, unknown> = {
     rowA.txCount1d - rowB.txCount1d,
   cell: (props) => props.row.original.txCount1d,
   meta: {
-    skeleton: <SkeletonText fontSize="lg" />,
+    body: {
+      skeleton: <SkeletonText fontSize="lg" />,
+    },
   },
 }
 
@@ -392,7 +425,7 @@ export const APR_WITH_REWARDS_COLUMN: ColumnDef<Pool, unknown> = {
   accessorFn: (row) => row.totalApr1d,
   cell: (props) => (
     <APRWithRewardsHoverCard pool={props.row.original}>
-      <div className="flex gap-1 items-center">
+      <div className="flex items-center gap-1">
         <span
           className={classNames(
             'underline decoration-dotted underline-offset-2',
@@ -412,7 +445,9 @@ export const APR_WITH_REWARDS_COLUMN: ColumnDef<Pool, unknown> = {
     </APRWithRewardsHoverCard>
   ),
   meta: {
-    skeleton: <SkeletonText fontSize="lg" />,
+    body: {
+      skeleton: <SkeletonText fontSize="lg" />,
+    },
     disableLink: true,
   },
 }
@@ -431,7 +466,9 @@ export const APR_COLUMN = {
     </APRHoverCard>
   ),
   meta: {
-    skeleton: <SkeletonText fontSize="lg" />,
+    body: {
+      skeleton: <SkeletonText fontSize="lg" />,
+    },
   },
 } as const satisfies ColumnDef<
   MaybeNestedPool<PoolWithIncentives<PoolWithAprs>>,
@@ -455,7 +492,9 @@ export const VALUE_COLUMN = {
     </span>
   ),
   meta: {
-    skeleton: <SkeletonText fontSize="lg" />,
+    body: {
+      skeleton: <SkeletonText fontSize="lg" />,
+    },
   },
 } as const satisfies ColumnDef<
   SushiPositionWithPool<PoolBase, SushiPositionStaked>,
@@ -470,17 +509,19 @@ export const NAME_COLUMN_V3: ColumnDef<
   header: 'Name',
   cell: (props) => <PoolNameCellV3 {...props.row} />,
   meta: {
-    skeleton: (
-      <div className="flex items-center w-full gap-2">
-        <div className="flex items-center">
-          <SkeletonCircle radius={26} />
-          <SkeletonCircle radius={26} className="-ml-[12px]" />
+    body: {
+      skeleton: (
+        <div className="flex items-center w-full gap-2">
+          <div className="flex items-center">
+            <SkeletonCircle radius={26} />
+            <SkeletonCircle radius={26} className="-ml-[12px]" />
+          </div>
+          <div className="flex flex-col w-full">
+            <SkeletonText fontSize="lg" />
+          </div>
         </div>
-        <div className="flex flex-col w-full">
-          <SkeletonText fontSize="lg" />
-        </div>
-      </div>
-    ),
+      ),
+    },
   },
 }
 
@@ -492,7 +533,9 @@ export const PRICE_RANGE_COLUMN: ColumnDef<
   header: 'Price Range',
   cell: (props) => <PriceRangeCell {...props.row} />,
   meta: {
-    skeleton: <SkeletonText fontSize="lg" />,
+    body: {
+      skeleton: <SkeletonText fontSize="lg" />,
+    },
   },
 }
 
@@ -504,7 +547,9 @@ export const CLIQ_APR_COLUMN: ColumnDef<
   header: 'Price Range',
   cell: (props) => <ConcentratedLiquidityPositionAPRCell {...props.row} />,
   meta: {
-    skeleton: <SkeletonText fontSize="lg" />,
+    body: {
+      skeleton: <SkeletonText fontSize="lg" />,
+    },
   },
 }
 
@@ -517,7 +562,9 @@ export const POSITION_SIZE_CELL: ColumnDef<
   header: 'Position Size',
   cell: (props) => formatUSD(props.row.original.position.positionUSD),
   meta: {
-    skeleton: <SkeletonText fontSize="lg" />,
+    body: {
+      skeleton: <SkeletonText fontSize="lg" />,
+    },
   },
 }
 
@@ -530,7 +577,9 @@ export const POSITION_UNCLAIMED_CELL: ColumnDef<
   header: 'Unclaimed fees',
   cell: (props) => formatUSD(props.row.original.position.unclaimedUSD),
   meta: {
-    skeleton: <SkeletonText fontSize="lg" />,
+    body: {
+      skeleton: <SkeletonText fontSize="lg" />,
+    },
   },
 }
 
@@ -539,7 +588,9 @@ export const TX_SENDER_V2_COLUMN: ColumnDef<Transaction, unknown> = {
   header: 'Maker',
   cell: (props) => shortenAddress(props.row.original.sender),
   meta: {
-    skeleton: <SkeletonText fontSize="lg" />,
+    body: {
+      skeleton: <SkeletonText fontSize="lg" />,
+    },
   },
 }
 
@@ -576,7 +627,9 @@ export const TX_AMOUNT_IN_V2_COLUMN = (
     }
   },
   meta: {
-    skeleton: <SkeletonText fontSize="lg" />,
+    body: {
+      skeleton: <SkeletonText fontSize="lg" />,
+    },
   },
 })
 
@@ -613,7 +666,9 @@ export const TX_AMOUNT_OUT_V2_COLUMN = (
     }
   },
   meta: {
-    skeleton: <SkeletonText fontSize="lg" />,
+    body: {
+      skeleton: <SkeletonText fontSize="lg" />,
+    },
   },
 })
 
@@ -622,7 +677,9 @@ export const TX_AMOUNT_USD_V2_COLUMN: ColumnDef<Transaction, unknown> = {
   header: 'Amount (USD)',
   cell: (props) => formatUSD(props.row.original.amountUSD),
   meta: {
-    skeleton: <SkeletonText fontSize="lg" />,
+    body: {
+      skeleton: <SkeletonText fontSize="lg" />,
+    },
   },
 }
 
@@ -634,7 +691,9 @@ export const TX_CREATED_TIME_V2_COLUMN: ColumnDef<Transaction, unknown> = {
       addSuffix: true,
     }),
   meta: {
-    skeleton: <SkeletonText fontSize="lg" />,
+    body: {
+      skeleton: <SkeletonText fontSize="lg" />,
+    },
   },
 }
 
@@ -643,7 +702,9 @@ export const TX_TYPE_COLUMN: ColumnDef<Transaction, unknown> = {
   header: 'Type',
   cell: (props) => TransactionType[props.row.original.type],
   meta: {
-    skeleton: <SkeletonText fontSize="lg" />,
+    body: {
+      skeleton: <SkeletonText fontSize="lg" />,
+    },
   },
 }
 
@@ -652,7 +713,9 @@ export const TX_ORIGIN_V3_COLUMN: ColumnDef<TransactionV3, unknown> = {
   header: 'Maker',
   cell: (props) => shortenAddress(props.row.original.origin),
   meta: {
-    skeleton: <SkeletonText fontSize="lg" />,
+    body: {
+      skeleton: <SkeletonText fontSize="lg" />,
+    },
   },
 }
 
@@ -693,7 +756,9 @@ export const TX_AMOUNT_IN_V3_COLUMN = (
     }
   },
   meta: {
-    skeleton: <SkeletonText fontSize="lg" />,
+    body: {
+      skeleton: <SkeletonText fontSize="lg" />,
+    },
   },
 })
 
@@ -734,7 +799,9 @@ export const TX_AMOUNT_OUT_V3_COLUMN = (
     }
   },
   meta: {
-    skeleton: <SkeletonText fontSize="lg" />,
+    body: {
+      skeleton: <SkeletonText fontSize="lg" />,
+    },
   },
 })
 
@@ -743,7 +810,9 @@ export const TX_AMOUNT_USD_V3_COLUMN: ColumnDef<TransactionV3, unknown> = {
   header: 'Amount (USD)',
   cell: (props) => formatUSD(props.row.original.amountUSD),
   meta: {
-    skeleton: <SkeletonText fontSize="lg" />,
+    body: {
+      skeleton: <SkeletonText fontSize="lg" />,
+    },
   },
 }
 
@@ -755,6 +824,8 @@ export const TX_TIME_V3_COLUMN: ColumnDef<TransactionV3, unknown> = {
       addSuffix: true,
     }),
   meta: {
-    skeleton: <SkeletonText fontSize="lg" />,
+    body: {
+      skeleton: <SkeletonText fontSize="lg" />,
+    },
   },
 }

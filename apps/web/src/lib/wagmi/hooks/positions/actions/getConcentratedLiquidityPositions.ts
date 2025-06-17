@@ -1,38 +1,66 @@
 import { readContracts } from '@wagmi/core/actions'
-import type { ChainId } from 'sushi/chain'
+import { SUSHISWAP_V3_POSITION_HELPER } from 'src/config'
 import {
   SUSHISWAP_V3_FACTORY_ADDRESS,
-  SUSHISWAP_V3_INIT_CODE_HASH,
-  SUSHISWAP_V3_POSTIION_MANAGER,
+  SUSHISWAP_V3_POSITION_MANAGER,
   type SushiSwapV3ChainId,
 } from 'sushi/config'
-import { computeSushiSwapV3PoolAddress } from 'sushi/pool/sushiswap-v3'
-import { erc20Abi } from 'viem'
+import { computeSushiSwapV3PoolAddress } from 'sushi/pool'
 import type { PublicWagmiConfig } from '../../../config/public'
-import type { ConcentratedLiquidityPosition } from '../types'
-import { getConcentratedLiquidityPositionFees } from './getConcentratedLiquidityPositionFees'
-import { getConcentratedLiquidityPositionsFromTokenIds } from './getConcentratedLiquidityPositionsFromTokenIds'
 
 const abiShard = [
   {
     inputs: [
       {
+        internalType: 'contract INonfungiblePositionManager',
+        name: 'positionManager',
+        type: 'address',
+      },
+      {
         internalType: 'address',
-        name: 'owner',
+        name: 'user',
         type: 'address',
       },
       {
         internalType: 'uint256',
-        name: 'index',
+        name: 'skip',
+        type: 'uint256',
+      },
+      {
+        internalType: 'uint256',
+        name: 'first',
         type: 'uint256',
       },
     ],
-    name: 'tokenOfOwnerByIndex',
+    name: 'getUserPositions',
     outputs: [
       {
-        internalType: 'uint256',
+        components: [
+          { internalType: 'uint256', name: 'tokenId', type: 'uint256' },
+          { internalType: 'uint96', name: 'nonce', type: 'uint96' },
+          { internalType: 'address', name: 'operator', type: 'address' },
+          { internalType: 'address', name: 'token0', type: 'address' },
+          { internalType: 'address', name: 'token1', type: 'address' },
+          { internalType: 'uint24', name: 'fee', type: 'uint24' },
+          { internalType: 'int24', name: 'tickLower', type: 'int24' },
+          { internalType: 'int24', name: 'tickUpper', type: 'int24' },
+          { internalType: 'uint128', name: 'liquidity', type: 'uint128' },
+          {
+            internalType: 'uint256',
+            name: 'feeGrowthInside0LastX128',
+            type: 'uint256',
+          },
+          {
+            internalType: 'uint256',
+            name: 'feeGrowthInside1LastX128',
+            type: 'uint256',
+          },
+          { internalType: 'uint128', name: 'tokensOwed0', type: 'uint128' },
+          { internalType: 'uint128', name: 'tokensOwed1', type: 'uint128' },
+        ],
+        internalType: 'struct Position[]',
         name: '',
-        type: 'uint256',
+        type: 'tuple[]',
       },
     ],
     stateMutability: 'view',
@@ -40,89 +68,88 @@ const abiShard = [
   },
 ] as const
 
+const BATCH_SIZE = 25
+const MAX_ENTRIES = 100
+
 export const getConcentratedLiquidityPositions = async ({
   account,
   chainIds,
   config,
 }: {
   account: `0x${string}` | undefined
-  chainIds: SushiSwapV3ChainId[]
+  chainIds: readonly SushiSwapV3ChainId[]
   config: PublicWagmiConfig
 }) => {
-  if (!account) return undefined
+  if (!account) return []
 
-  const result = await readContracts(config, {
-    contracts: chainIds.map(
-      (el) =>
-        ({
-          address: SUSHISWAP_V3_POSTIION_MANAGER[el],
-          abi: erc20Abi,
-          chainId: el,
-          functionName: 'balanceOf' as const,
-          args: [account],
-        }) as const,
-    ),
-  })
+  const results = (
+    await Promise.allSettled(
+      chainIds.map(async (chainId) => {
+        const pages = []
+        let skip = 0
+        let totalFetched = 0
 
-  // we don't expect any account balance to ever exceed the bounds of max safe int
-  const accountBalances = result.reduce<Record<ChainId, number>>(
-    (acc, el, i) => {
-      if (el.result && el.result > 0n) {
-        acc[chainIds[i]] = Number(el.result)
-      }
-      return acc
-    },
-    {} as Record<ChainId, number>,
-  )
+        while (true) {
+          const [res] = await readContracts(config, {
+            contracts: [
+              {
+                address: SUSHISWAP_V3_POSITION_HELPER[chainId],
+                abi: abiShard,
+                chainId,
+                functionName: 'getUserPositions',
+                args: [
+                  SUSHISWAP_V3_POSITION_MANAGER[chainId],
+                  account,
+                  BigInt(skip),
+                  BigInt(BATCH_SIZE),
+                ],
+              } as const,
+            ],
+          })
 
-  const tokenIdsArgs: [SushiSwapV3ChainId, `0x${string}`, number][] = []
-  Object.entries(accountBalances).forEach(([k, v]) => {
-    for (let i = 0; i < v; i++) {
-      tokenIdsArgs.push([+k as SushiSwapV3ChainId, account, i])
+          const batch = res?.result
+          if (!batch?.length) break
+
+          for (const position of batch) {
+            pages.push({ chainId, position })
+            totalFetched++
+            if (totalFetched >= MAX_ENTRIES) break
+          }
+
+          if (batch.length < BATCH_SIZE || totalFetched >= MAX_ENTRIES) break
+          skip += BATCH_SIZE
+        }
+
+        return pages
+      }),
+    )
+  ).flatMap((r) => (r.status === 'fulfilled' ? r.value : []))
+
+  return results.map(({ position, chainId }) => {
+    return {
+      id: position.tokenId.toString(),
+      address: computeSushiSwapV3PoolAddress({
+        factoryAddress: SUSHISWAP_V3_FACTORY_ADDRESS[chainId],
+        tokenA: position.token0,
+        tokenB: position.token1,
+        fee: position.fee,
+        chainId,
+      }),
+      chainId,
+      tokenId: position.tokenId,
+      fee: position.fee,
+      fees: [position.tokensOwed0, position.tokensOwed1],
+      feeGrowthInside0LastX128: position.feeGrowthInside0LastX128,
+      feeGrowthInside1LastX128: position.feeGrowthInside1LastX128,
+      liquidity: position.liquidity,
+      nonce: position.nonce,
+      operator: position.operator,
+      tickLower: position.tickLower,
+      tickUpper: position.tickUpper,
+      token0: position.token0,
+      token1: position.token1,
+      tokensOwed0: position.tokensOwed0,
+      tokensOwed1: position.tokensOwed1,
     }
   })
-
-  const tokenIdResults = await readContracts(config, {
-    contracts: tokenIdsArgs.map(
-      ([_chainId, account, index]) =>
-        ({
-          chainId: _chainId,
-          address: SUSHISWAP_V3_POSTIION_MANAGER[_chainId],
-          abi: abiShard,
-          functionName: 'tokenOfOwnerByIndex' as const,
-          args: [account, BigInt(index)],
-        }) as const,
-    ),
-  })
-
-  const tokenIds = tokenIdResults
-    .map((el, i) => {
-      if (!el.result) return undefined
-
-      return {
-        chainId: tokenIdsArgs[i][0],
-        tokenId: el.result,
-      }
-    })
-    .filter((el): el is NonNullable<typeof el> => el !== undefined)
-
-  const positions = await getConcentratedLiquidityPositionsFromTokenIds({
-    tokenIds,
-    config,
-  })
-  const fees = await getConcentratedLiquidityPositionFees({ tokenIds, config })
-
-  return positions.filter(Boolean).map((el, i) => ({
-    ...el,
-    address: computeSushiSwapV3PoolAddress({
-      factoryAddress: SUSHISWAP_V3_FACTORY_ADDRESS[el.chainId],
-      tokenA: el.token0,
-      tokenB: el.token1,
-      fee: el.fee,
-      initCodeHashManualOverride:
-        SUSHISWAP_V3_INIT_CODE_HASH[el.chainId as SushiSwapV3ChainId],
-      chainId: el.chainId,
-    }),
-    fees: fees ? fees[i] : undefined,
-  })) as ConcentratedLiquidityPosition[]
 }

@@ -115,24 +115,29 @@ const FormItem = React.forwardRef<
 FormItem.displayName = 'FormItem'
 
 const FormLabel = React.forwardRef<
-  React.ElementRef<typeof LabelPrimitive.Root>,
+  React.ComponentRef<typeof LabelPrimitive.Root>,
   React.ComponentPropsWithoutRef<typeof LabelPrimitive.Root>
 >(({ className, ...props }, ref) => {
   const { error, formItemId } = useFormField()
 
   return (
-    <Label
-      ref={ref}
-      className={classNames(error && 'text-destructive', className)}
-      htmlFor={formItemId}
-      {...props}
-    />
+    <div className="flex w-full justify-between space-x-4 items-center">
+      <Label
+        ref={ref}
+        className={classNames(error && 'text-destructive', className)}
+        htmlFor={formItemId}
+        {...props}
+      />
+      <span className="text-sm text-red-500 text-end leading-none">
+        {error ? error.message : ''}
+      </span>
+    </div>
   )
 })
 FormLabel.displayName = 'FormLabel'
 
 const FormControl = React.forwardRef<
-  React.ElementRef<typeof Slot>,
+  React.ComponentRef<typeof Slot>,
   React.ComponentPropsWithoutRef<typeof Slot>
 >(({ ...props }, ref) => {
   const { error, formItemId, formDescriptionId, formMessageId } = useFormField()
@@ -212,6 +217,21 @@ const FormError = React.forwardRef<
 })
 FormError.displayName = 'FormError'
 
+function formClassnames(
+  {
+    isDirty = false,
+    isError = false,
+  }: { isDirty?: boolean; isError?: boolean },
+  ...rest: classNames.ArgumentArray
+) {
+  return classNames(
+    ...rest,
+    '!border border-transparent',
+    isDirty && '!border-blue-500 border-opacity-40',
+    isError && '!border-red-500 border-opacity-40',
+  )
+}
+
 export {
   Form,
   FormControl,
@@ -224,4 +244,5 @@ export {
   FormSection,
   useForm,
   useFormField,
+  formClassnames,
 }

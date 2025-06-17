@@ -1,6 +1,29 @@
-import { SkeletonChart, SkeletonText } from '@sushiswap/ui'
+import {
+  SkeletonBox,
+  SkeletonChartLoadingStateMask,
+  SkeletonChartXAxe,
+  SkeletonText,
+} from '@sushiswap/ui'
 import type { FC } from 'react'
 import { type ChainId, EvmChain } from 'sushi/chain'
+
+export function SkeletonChart({ type }: { type: 'area' | 'bar' }) {
+  const height = 400
+
+  return (
+    <div className="relative flex flex-row">
+      <svg
+        width="100%"
+        height={height}
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+      >
+        <SkeletonChartLoadingStateMask type={type} height={height - 40} />
+        <SkeletonChartXAxe height={height - 32} />
+      </svg>
+    </div>
+  )
+}
 
 export const GlobalStatsLoading: FC<{ chainId: ChainId }> = ({ chainId }) => {
   return (
@@ -8,22 +31,20 @@ export const GlobalStatsLoading: FC<{ chainId: ChainId }> = ({ chainId }) => {
       <div>
         <div className="flex flex-col gap-3">
           <span className="text-sm text-muted-foreground">
-            {EvmChain.from(chainId)?.name} TVL
+            {EvmChain.from(chainId)?.name} T0
           </span>
-          <SkeletonText fontSize="3xl" className="!w-36" />
-          <SkeletonText fontSize="sm" className="!w-40" />
+          <SkeletonBox className="!w-36 h-[36px]" />
+          <SkeletonBox className="!w-40 h-[20px]" />
         </div>
-        <SkeletonChart type="area" height={400} />
+        <SkeletonChart type="area" />
       </div>
       <div>
         <div className="flex flex-col gap-3">
-          <span className="text-sm text-muted-foreground">
-            {EvmChain.from(chainId)?.name} Volume
-          </span>
-          <SkeletonText fontSize="3xl" className="!w-36" />
-          <SkeletonText fontSize="sm" className="!w-40" />
+          <span className="text-sm text-muted-foreground">Volume</span>
+          <SkeletonBox className="!w-36 h-[36px]" />
+          <SkeletonBox className="!w-40 h-[20px]" />
         </div>
-        <SkeletonChart type="bar" height={400} />
+        <SkeletonChart type="bar" />
       </div>
     </div>
   )

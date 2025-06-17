@@ -1,6 +1,6 @@
 'use client'
 
-import { Container } from '@sushiswap/ui'
+import { Container, LinkExternal, Message } from '@sushiswap/ui'
 import { notFound } from 'next/navigation'
 import React, { use } from 'react'
 import { POOL_SUPPORTED_NETWORKS } from 'src/config'
@@ -23,6 +23,15 @@ export default function MyPositionsPage(props: {
 
   return (
     <Container maxWidth="7xl" className="px-4">
+      <Message size="sm" variant="info" className="mb-4 text-center">
+        Smart Pools are no longer supported in our app. To manage your Smart
+        Pool positions, please visit:{' '}
+        <LinkExternal href="https://app.steer.finance/profile">
+          <span className="text-slate-300">
+            https://app.steer.finance/profile
+          </span>
+        </LinkExternal>
+      </Message>
       <div className="flex flex-col sm:flex-row gap-3 mb-4">
         <TableFiltersSearchToken />
         <TableFiltersNetwork

@@ -15,11 +15,17 @@ import { Connect } from './Connect'
 import { Custom, type CustomProps } from './Custom'
 import { Guard, type GuardProps } from './Guard'
 import { Network, type NetworkProps } from './Network'
+import { PartialRoute, type PartialRouteProps } from './PartialRoute'
 import { type ProviderProps, CheckerProvider as Root } from './Provider'
 import {
   RevokeApproveERC20,
   type RevokeApproveERC20Props,
 } from './RevokeApproveERC20'
+import {
+  SLIPPAGE_WARNING_THRESHOLD,
+  Slippage,
+  type SlippageProps,
+} from './Slippage'
 import { Success, type SuccessProps } from './Success'
 
 export type CheckerProps = {
@@ -34,6 +40,8 @@ export type CheckerProps = {
   Connect: ComponentType<ButtonProps>
   Success: FC<SuccessProps>
   Root: FC<ProviderProps>
+  PartialRoute: FC<PartialRouteProps>
+  Slippage: FC<SlippageProps>
 }
 
 export const Checker: CheckerProps = {
@@ -48,4 +56,8 @@ export const Checker: CheckerProps = {
   RevokeApproveERC20,
   Success,
   Root,
+  PartialRoute,
+  Slippage,
 }
+
+export { SLIPPAGE_WARNING_THRESHOLD }

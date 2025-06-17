@@ -27,7 +27,7 @@ jobs:
     timeout-minutes: 15
     strategy:
       matrix:
-        block-number: [68431498]
+        block-number: [71015789]
         chain-id: [137]
     steps:
       - name: Clone repository
@@ -55,6 +55,10 @@ jobs:
           NEXT_PUBLIC_TRON_PRO_API_KEY: ${{ secrets.NEXT_PUBLIC_TRON_PRO_API_KEY }}
           BITQUERY_API_KEY: ${{ secrets.BITQUERY_API_KEY }}
           BITQUERY_BEARER_TOKEN: ${{ secrets.BITQUERY_BEARER_TOKEN }}
+          # Portal
+          AUTH_SESSION_SECRET: p1jPq93q2T6Kmxrva3+WR93xSWLLSa584Qen005+4ts= # Random string, separate from Prod
+          ZITADEL_ISSUER: https://zitadel.styro.sushi.com
+          ZITADEL_SA_TOKEN: ""
 
       - name: Upload test results
         if: always()

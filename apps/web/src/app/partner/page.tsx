@@ -47,7 +47,7 @@ const STEPS = [
 export default async function PartnerPage() {
   return (
     <>
-      <Container maxWidth="5xl" className="px-4 pb-20">
+      <Container maxWidth="5xl" className="px-4 pb-20 animate-slide">
         <div className="flex flex-col justify-center pt-20">
           <div className="flex flex-col">
             <h1 className={typographyVariants({ variant: 'h1' })}>

@@ -2,7 +2,7 @@
 
 import { XMarkIcon } from '@heroicons/react/20/solid'
 import type { Banner } from '@sushiswap/graph-client/strapi'
-import { LinkExternal, classNames } from '@sushiswap/ui'
+import { classNames } from '@sushiswap/ui'
 import type { RequestCookie } from 'next/dist/compiled/@edge-runtime/cookies'
 import Image from 'next/legacy/image'
 import { type MouseEventHandler, useCallback, useMemo, useState } from 'react'
@@ -11,7 +11,8 @@ import { getOptimizedMedia } from 'src/app/(cms)/lib/media'
 export function StrapiBannerContent({
   banner,
   cookie: _cookie,
-}: { banner: Banner; cookie: RequestCookie | undefined }) {
+  className,
+}: { banner: Banner; cookie: RequestCookie | undefined; className?: string }) {
   const [cookie, setCookie] = useState<RequestCookie | undefined>(_cookie)
   const [isImageLoading, setImageLoading] = useState(true)
 
@@ -20,7 +21,7 @@ export function StrapiBannerContent({
   }, [cookie])
 
   const onHide = useCallback(
-    (event: Parameters<MouseEventHandler<HTMLDivElement>>[0]) => {
+    (event: Parameters<MouseEventHandler<SVGSVGElement>>[0]) => {
       event.preventDefault()
 
       const newHiddenBannerIds = [...hiddenBannerIds, banner.id]
@@ -44,12 +45,24 @@ export function StrapiBannerContent({
   const image = banner.image.attributes
 
   return (
-    <div className="rounded-xl w-full relative">
-      <LinkExternal href={banner.link}>
-        {/* biome-ignore lint/a11y/useKeyWithClickEvents: stupid */}
-        <div className="absolute z-10 right-0 top-0 p-2" onClick={onHide}>
-          <XMarkIcon width={20} height={20} className="text-white" />
-        </div>
+    <a
+      href={banner.link}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="text-white"
+    >
+      <div
+        className={classNames(
+          'rounded-xl relative p-6 bg-secondary min-w-[360px] overflow-hidden',
+          className,
+        )}
+      >
+        <XMarkIcon
+          width={20}
+          height={20}
+          className={'absolute top-[10px] right-[10px] cursor-pointer z-[1]'}
+          onClick={onHide}
+        />
         <Image
           src={getOptimizedMedia({
             metadata: image.provider_metadata,
@@ -57,15 +70,14 @@ export function StrapiBannerContent({
             height: image.height,
           })}
           alt={image.alternativeText || ''}
-          width={image.width}
-          height={image.height}
+          layout="fill"
           onLoad={() => setImageLoading(false)}
           className={classNames(
-            'rounded-xl absolute bg-secondary',
+            '-z-10 object-cover object-left',
             isImageLoading && 'animate-pulse',
           )}
         />
-      </LinkExternal>
-    </div>
+      </div>
+    </a>
   )
 }

@@ -458,35 +458,41 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> =
                   guardWhen={+percentage <= 0}
                   guardText="Enter amount"
                 >
-                  <Checker.ApproveERC20WithPermit
+                  <Checker.Slippage
                     fullWidth
-                    id="approve-remove-liquidity-slp"
-                    chainId={_pool.chainId}
-                    amount={amountToRemove}
-                    contract={
-                      getSushiSwapRouterContractConfig(
-                        _pool.chainId as SushiSwapV2ChainId,
-                      ).address
-                    }
-                    permitInfo={REMOVE_V2_LIQUIDITY_PERMIT_INFO}
-                    tag={APPROVE_TAG_REMOVE_LEGACY}
-                    ttlStorageKey={TTLStorageKey.RemoveLiquidity}
+                    text="Continue With High Slippage"
+                    slippageTolerance={slippageTolerance}
                   >
-                    <Checker.Success tag={APPROVE_TAG_REMOVE_LEGACY}>
-                      <Button
-                        fullWidth
-                        onClick={() => send?.()}
-                        disabled={!approved || isWritePending || !send}
-                        testId="remove-liquidity"
-                      >
-                        {isWritePending ? (
-                          <Dots>Confirm transaction</Dots>
-                        ) : (
-                          'Remove Liquidity'
-                        )}
-                      </Button>
-                    </Checker.Success>
-                  </Checker.ApproveERC20WithPermit>
+                    <Checker.ApproveERC20WithPermit
+                      fullWidth
+                      id="approve-remove-liquidity-slp"
+                      chainId={_pool.chainId}
+                      amount={amountToRemove}
+                      contract={
+                        getSushiSwapRouterContractConfig(
+                          _pool.chainId as SushiSwapV2ChainId,
+                        ).address
+                      }
+                      permitInfo={REMOVE_V2_LIQUIDITY_PERMIT_INFO}
+                      tag={APPROVE_TAG_REMOVE_LEGACY}
+                      ttlStorageKey={TTLStorageKey.RemoveLiquidity}
+                    >
+                      <Checker.Success tag={APPROVE_TAG_REMOVE_LEGACY}>
+                        <Button
+                          fullWidth
+                          onClick={() => send?.()}
+                          disabled={!approved || isWritePending || !send}
+                          testId="remove-liquidity"
+                        >
+                          {isWritePending ? (
+                            <Dots>Confirm transaction</Dots>
+                          ) : (
+                            'Remove Liquidity'
+                          )}
+                        </Button>
+                      </Checker.Success>
+                    </Checker.ApproveERC20WithPermit>
+                  </Checker.Slippage>
                 </Checker.Guard>
               </Checker.Network>
             </Checker.Guard>
