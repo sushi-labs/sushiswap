@@ -1,13 +1,11 @@
 'use client'
 
-import { useBreakpoint, useIsMounted, useIsSmScreen } from '@sushiswap/hooks'
-import { Container, Loader, SkeletonBox } from '@sushiswap/ui'
-import Script from 'next/script'
+import { useBreakpoint, useIsMounted } from '@sushiswap/hooks'
+import { Container, SkeletonBox } from '@sushiswap/ui'
 import type {
   ChartingLibraryWidgetOptions,
   ResolutionString,
 } from 'public/static/charting_library/charting_library'
-import React, { useEffect, useState } from 'react'
 import type { NonStandardChainId } from 'src/config'
 import { useSkaleEuropaFaucet } from 'src/lib/hooks'
 import { useHeaderNetworkSelector } from 'src/lib/wagmi/components/header-network-selector'
