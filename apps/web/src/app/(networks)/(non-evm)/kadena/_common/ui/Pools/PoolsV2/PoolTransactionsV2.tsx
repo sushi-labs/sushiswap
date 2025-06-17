@@ -64,8 +64,8 @@ export const PoolTransactionsV2: FC<PoolTransactionsV2Props> = ({ pool }) => {
     return getChainwebTxnLink(row.maker)
   }, [])
 
-  const token0Symbol = pool?.token0.name ?? 'Token0'
-  const token1Symbol = pool?.token1.name ?? 'Token1'
+  const token0Symbol = pool?.token0?.name ?? 'Token0'
+  const token1Symbol = pool?.token1?.name ?? 'Token1'
 
   const COLUMNS = useMemo(() => {
     if (type === TransactionType.SWAP) {
