@@ -21,7 +21,7 @@ export const PoolHeader = ({ poolId }: { poolId: string }) => {
   const router = useRouter()
 
   const { data: baseTokens } = useBaseTokens()
-  console.log(baseTokens)
+
   const { data: pool, isLoading: isLoadingPoolById } = usePoolById({
     poolId,
     first: 10,

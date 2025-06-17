@@ -13,6 +13,7 @@ import { formatUSD } from 'sushi/format'
 import { useLpBalance } from '~kadena/_common/lib/hooks/pools/use-lp-balance'
 import { useTokenPrice } from '~kadena/_common/lib/hooks/use-token-price'
 import { useKadena } from '~kadena/kadena-wallet-provider'
+import { WalletConnector } from '../../WalletConnector/WalletConnector'
 import { LiquidityItem } from '../PoolDetails/LiquidityItem'
 import {
   useRemoveLiqDispatch,
@@ -36,6 +37,7 @@ export const PoolPosition = () => {
   const { totalSupplyLP, lpBalance } = useRemoveLiqState()
   const { setLPBalance } = useRemoveLiqDispatch()
   const { activeAccount } = useKadena()
+  const address = activeAccount?.accountName || ''
 
   const { data: priceUsd0, isLoading: isLoadingPrice0 } = useTokenPrice({
     token: token0,
@@ -45,14 +47,14 @@ export const PoolPosition = () => {
   })
 
   const { data, isLoading } = useLpBalance({
-    account: activeAccount?.accountName || '',
+    account: address,
     token0Address: token0?.tokenAddress,
     token1Address: token1?.tokenAddress,
   })
 
   useEffect(() => {
     if (data?.balance !== undefined) {
-      setLPBalance(data.balance)
+      setLPBalance(data?.balance)
     }
   }, [data, setLPBalance])
 
@@ -81,39 +83,49 @@ export const PoolPosition = () => {
     <Card>
       <CardHeader>
         <CardTitle>My Position</CardTitle>
-        <CardDescription>
-          <span className="text-sm text-right text-gray-900 dark:text-slate-50">
-            {loading ? (
-              <div className="w-28">
-                <SkeletonText fontSize="sm" />
-              </div>
-            ) : (
-              formatUSD(
-                token0StakedInUsd +
-                  token1StakedInUsd +
-                  token0UnstakedInUsd +
-                  token1UnstakedInUsd,
-              )
-            )}
-          </span>
-        </CardDescription>
+        {!address ? null : (
+          <CardDescription>
+            <span className="text-sm text-right text-gray-900 dark:text-slate-50">
+              {loading ? (
+                <div className="w-28">
+                  <SkeletonText fontSize="sm" />
+                </div>
+              ) : (
+                formatUSD(
+                  token0StakedInUsd +
+                    token1StakedInUsd +
+                    token0UnstakedInUsd +
+                    token1UnstakedInUsd,
+                )
+              )}
+            </span>
+          </CardDescription>
+        )}
       </CardHeader>
-      <CardContent>
-        <CardGroup>
-          <LiquidityItem
-            isLoading={loading}
-            token={token0}
-            amount={amountToken0}
-            usdAmount={String(token0UnstakedInUsd)}
-          />
-          <LiquidityItem
-            isLoading={loading}
-            token={token1}
-            amount={amountToken1}
-            usdAmount={String(token1UnstakedInUsd)}
-          />
-        </CardGroup>
-      </CardContent>
+      {!address ? (
+        <CardContent>
+          <CardGroup>
+            <WalletConnector fullWidth variant="secondary" />
+          </CardGroup>
+        </CardContent>
+      ) : (
+        <CardContent>
+          <CardGroup>
+            <LiquidityItem
+              isLoading={loading}
+              token={token0}
+              amount={amountToken0}
+              usdAmount={String(token0UnstakedInUsd)}
+            />
+            <LiquidityItem
+              isLoading={loading}
+              token={token1}
+              amount={amountToken1}
+              usdAmount={String(token1UnstakedInUsd)}
+            />
+          </CardGroup>
+        </CardContent>
+      )}
     </Card>
   )
 }
