@@ -131,12 +131,12 @@ const PoolPositionConnected: FC<PoolPositionProps> = ({ pool }) => {
           {lockedPositionValue > 0 && (
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <div className="flex flex-col">
-                  <span className="text-sm font-normal text-gray-500">
+                <div className="flex flex-col text-gray-500">
+                  <span className="text-sm font-normal">
                     Locked Position Value
                   </span>
                   {vestingDeposit?.lockedUntil && !canUnlock && (
-                    <span className="text-xs text-gray-700 dark:text-gray-300">
+                    <span className="text-xs font-normal">
                       Unlocks {vestingDeposit.lockedUntil.toLocaleString()}
                     </span>
                   )}

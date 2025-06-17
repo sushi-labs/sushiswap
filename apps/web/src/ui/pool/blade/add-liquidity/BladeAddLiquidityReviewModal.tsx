@@ -20,7 +20,9 @@ import {
   useBladeDepositRequest,
   useBladeDepositTransaction,
 } from 'src/lib/pool/blade/useBladeDeposit'
+import { useUnlockDeposit } from 'src/lib/pool/blade/useUnlockDeposit'
 import { useTotalSupply } from 'src/lib/wagmi/hooks/tokens/useTotalSupply'
+import { Checker } from 'src/lib/wagmi/systems/Checker'
 import { useApproved } from 'src/lib/wagmi/systems/Checker/Provider'
 import { formatUSD } from 'sushi'
 import { ChainKey } from 'sushi/chain'
@@ -48,11 +50,32 @@ export const BladeAddLiquidityReviewModal: FC<
   const { address } = useAccount()
   const { approved } = useApproved(APPROVE_TAG_ADD_LEGACY)
   const client = usePublicClient()
-  const { liquidityToken } = useBladePoolPosition()
+  const { liquidityToken, vestingDeposit } = useBladePoolPosition()
   const poolTotalSupply = useTotalSupply(liquidityToken)
 
   const { refetchChain: refetchBalances } = useRefetchBalances()
   const { data: prices } = usePrices({ chainId })
+
+  const hasLockedPosition = useMemo(() => {
+    return Boolean(vestingDeposit?.balance && vestingDeposit.balance > 0n)
+  }, [vestingDeposit?.balance])
+
+  const canUnlockPosition = useMemo(() => {
+    if (!vestingDeposit?.balance || !vestingDeposit.lockedUntil) return false
+    return (
+      vestingDeposit.balance > 0n && new Date() >= vestingDeposit.lockedUntil
+    )
+  }, [vestingDeposit?.balance, vestingDeposit?.lockedUntil])
+
+  const { write: unlockDeposit, isPending: isUnlockingDeposit } =
+    useUnlockDeposit({
+      pool,
+      enabled: canUnlockPosition,
+      onSuccess: () => {
+        // Re-trigger RFQ after unlock
+        handleRfqCall()
+      },
+    })
 
   const {
     mutate,
@@ -162,11 +185,22 @@ export const BladeAddLiquidityReviewModal: FC<
     hash: transactionMutation.data,
   })
 
-  let lockTime: string | undefined
+  let lockTime:
+    | {
+        message: string
+        seconds: number
+      }
+    | undefined
   if (rfqResponse && 'lock_time' in rfqResponse) {
-    lockTime = `${rfqResponse.lock_time} ${rfqResponse.lock_time === 1 ? 'minute' : 'minutes'}`
+    lockTime = {
+      message: `${rfqResponse.lock_time} ${rfqResponse.lock_time === 1 ? 'minute' : 'minutes'}`,
+      seconds: rfqResponse.lock_time * 60,
+    }
   } else if (rfqResponse && 'n_days' in rfqResponse) {
-    lockTime = `${rfqResponse.n_days} ${rfqResponse.n_days === 1 ? 'day' : 'days'}`
+    lockTime = {
+      message: `${rfqResponse.n_days} ${rfqResponse.n_days === 1 ? 'day' : 'days'}`,
+      seconds: rfqResponse.n_days * 24 * 60 * 60,
+    }
   }
 
   return (
@@ -252,13 +286,13 @@ export const BladeAddLiquidityReviewModal: FC<
                     </div>
                   ) : null}
 
-                  {lockTime ? (
+                  {lockTime?.message ? (
                     <div className="flex justify-between items-center">
                       <span className="text-sm text-gray-400 dark:text-slate-400">
                         Lock time
                       </span>
                       <span className="text-sm font-semibold text-gray-900 dark:text-slate-50">
-                        {lockTime}
+                        {lockTime.message}
                       </span>
                     </div>
                   ) : null}
@@ -266,30 +300,45 @@ export const BladeAddLiquidityReviewModal: FC<
               ) : null}
 
               <DialogFooter>
-                <Button
-                  size="xl"
-                  disabled={
-                    rfqLoading ||
-                    !!rfqError ||
-                    !rfqResponse ||
-                    transactionMutation.isPending ||
-                    !approved
+                <Checker.Custom
+                  showChildren={!hasLockedPosition || !lockTime?.seconds}
+                  onClick={unlockDeposit!}
+                  buttonText={
+                    canUnlockPosition
+                      ? 'Unlock position'
+                      : 'Wait for position to unlock'
                   }
-                  loading={transactionMutation.isPending}
+                  loading={isUnlockingDeposit}
+                  disabled={
+                    !canUnlockPosition || !unlockDeposit || isUnlockingDeposit
+                  }
                   fullWidth
-                  onClick={() => handleConfirmTransaction(confirm)}
-                  testId="confirm-add-blade-liquidity"
                 >
-                  {transactionMutation.isPending ? (
-                    <Dots>Confirm transaction</Dots>
-                  ) : rfqError ? (
-                    'Try again'
-                  ) : rfqLoading ? (
-                    <Dots>Getting quote</Dots>
-                  ) : (
-                    'Confirm'
-                  )}
-                </Button>
+                  <Button
+                    size="xl"
+                    disabled={
+                      rfqLoading ||
+                      !!rfqError ||
+                      !rfqResponse ||
+                      transactionMutation.isPending ||
+                      !approved
+                    }
+                    loading={transactionMutation.isPending}
+                    fullWidth
+                    onClick={() => handleConfirmTransaction(confirm)}
+                    testId="confirm-add-blade-liquidity"
+                  >
+                    {transactionMutation.isPending ? (
+                      <Dots>Confirm transaction</Dots>
+                    ) : rfqError ? (
+                      'Try again'
+                    ) : rfqLoading ? (
+                      <Dots>Getting quote</Dots>
+                    ) : (
+                      'Confirm'
+                    )}
+                  </Button>
+                </Checker.Custom>
               </DialogFooter>
             </DialogContent>
           </>
