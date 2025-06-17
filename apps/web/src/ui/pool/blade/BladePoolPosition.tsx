@@ -8,8 +8,10 @@ import { formatPercent, formatUSD } from 'sushi/format'
 
 import type { BladePool } from '@sushiswap/graph-client/data-api'
 import { getPoolAssets, getPoolTokensGrouped } from 'src/lib/pool/blade'
+import { useUnlockDeposit } from 'src/lib/pool/blade/useUnlockDeposit'
 import { ConnectButton } from 'src/lib/wagmi/components/connect-button'
 import { useTotalSupply } from 'src/lib/wagmi/hooks/tokens/useTotalSupply'
+import { Checker } from 'src/lib/wagmi/systems/Checker'
 import { useAccount } from 'wagmi'
 import { useBladePoolPosition } from './BladePoolPositionProvider'
 import { CurrencyFiatIcon } from './CurrencyFiatIcon'
@@ -36,6 +38,18 @@ const PoolPositionConnected: FC<PoolPositionProps> = ({ pool }) => {
   const { balance, vestingDeposit, liquidityToken, isLoading } =
     useBladePoolPosition()
   const poolTotalSupply = useTotalSupply(liquidityToken)
+
+  const canUnlock = useMemo(() => {
+    if (!vestingDeposit?.balance || !vestingDeposit.lockedUntil) return false
+    return (
+      vestingDeposit.balance > 0n && new Date() >= vestingDeposit.lockedUntil
+    )
+  }, [vestingDeposit?.balance, vestingDeposit?.lockedUntil])
+
+  const { write: unlockDeposit, isPending: isUnlocking } = useUnlockDeposit({
+    pool,
+    enabled: canUnlock,
+  })
 
   const positionValue = useMemo(() => {
     if (
@@ -115,24 +129,43 @@ const PoolPositionConnected: FC<PoolPositionProps> = ({ pool }) => {
           </div>
 
           {lockedPositionValue > 0 && (
-            <div className="flex items-center justify-between">
-              <div className="flex flex-col">
-                <span className="text-sm font-normal text-gray-500">
-                  Locked Position Value
-                </span>
-                {vestingDeposit?.lockedUntil && (
-                  <span className="text-xs text-gray-400">
-                    Unlocks {vestingDeposit.lockedUntil.toLocaleString()}
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <div className="flex flex-col">
+                  <span className="text-sm font-normal text-gray-500">
+                    Locked Position Value
                   </span>
+                  {vestingDeposit?.lockedUntil && !canUnlock && (
+                    <span className="text-xs text-gray-700 dark:text-gray-300">
+                      Unlocks {vestingDeposit.lockedUntil.toLocaleString()}
+                    </span>
+                  )}
+                </div>
+                <span className="text-sm font-normal text-gray-700 dark:text-gray-300">
+                  {isLoading ? (
+                    <SkeletonText className="w-16" />
+                  ) : (
+                    formatUSD(lockedPositionValue)
+                  )}
+                </span>
+              </div>
+
+              <div className="flex justify-end">
+                {canUnlock && (
+                  <Checker.Connect size="sm">
+                    <Checker.Network size="sm" chainId={pool.chainId}>
+                      <Button
+                        onClick={() => unlockDeposit?.()}
+                        disabled={!unlockDeposit || isUnlocking}
+                        loading={isUnlocking}
+                        size="sm"
+                      >
+                        Unlock Position
+                      </Button>
+                    </Checker.Network>
+                  </Checker.Connect>
                 )}
               </div>
-              <span className="text-sm font-normal text-gray-700 dark:text-gray-300">
-                {isLoading ? (
-                  <SkeletonText className="w-16" />
-                ) : (
-                  formatUSD(lockedPositionValue)
-                )}
-              </span>
             </div>
           )}
         </div>
