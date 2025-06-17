@@ -13,23 +13,31 @@ type PirceDataResponse = {
   Signature: string
 }
 
+export const getKdaPrice = async (): Promise<{
+  priceUsd: number
+  priceYesterdayUsd: number
+  percentageChange: number
+}> => {
+  const res = await fetch(
+    `https://api.diadata.org/v1/assetQuotation/Kadena/0x0000000000000000000000000000000000000000`,
+  )
+  const data = (await res.json()) as PirceDataResponse
+  const percentageChange =
+    ((data?.Price - data?.PriceYesterday) / data?.PriceYesterday) * 100
+  return {
+    priceUsd: data?.Price ?? 0,
+    priceYesterdayUsd: data?.PriceYesterday ?? 0,
+    percentageChange: Number.isNaN(percentageChange) ? 0 : percentageChange,
+  }
+}
+
 export const useKdaPrice = () => {
   return useQuery({
     queryKey: ['kadena-kda-price'],
     queryFn: async () => {
-      const res = await fetch(
-        `https://api.diadata.org/v1/assetQuotation/Kadena/0x0000000000000000000000000000000000000000`,
-      )
-      const data = (await res.json()) as PirceDataResponse
+      const data = await getKdaPrice()
 
-      const percentageChange =
-        ((data?.Price - data?.PriceYesterday) / data?.PriceYesterday) * 100
-
-      return {
-        priceUsd: data?.Price ?? 0,
-        priceYesterdayUsd: data?.PriceYesterday ?? 0,
-        percentageChange: Number.isNaN(percentageChange) ? 0 : percentageChange,
-      }
+      return data
     },
     staleTime: 60 * 1000,
     gcTime: 5 * 60 * 1000,

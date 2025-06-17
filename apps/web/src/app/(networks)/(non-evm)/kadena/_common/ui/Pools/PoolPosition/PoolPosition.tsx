@@ -11,7 +11,7 @@ import { useEffect, useMemo } from 'react'
 import { Decimal } from 'sushi'
 import { formatUSD } from 'sushi/format'
 import { useLpBalance } from '~kadena/_common/lib/hooks/pools/use-lp-balance'
-import { useKdaPrice } from '~kadena/_common/lib/hooks/use-kda-price'
+import { useTokenPrice } from '~kadena/_common/lib/hooks/use-token-price'
 import { useKadena } from '~kadena/kadena-wallet-provider'
 import { LiquidityItem } from '../PoolDetails/LiquidityItem'
 import {
@@ -37,7 +37,13 @@ export const PoolPosition = () => {
   const { setLPBalance } = useRemoveLiqDispatch()
   const { activeAccount } = useKadena()
 
-  const { data: priceData, isLoading: isLoadingPrice } = useKdaPrice()
+  const { data: priceUsd0, isLoading: isLoadingPrice0 } = useTokenPrice({
+    token: token0,
+  })
+  const { data: priceUsd1, isLoading: isLoadingPrice1 } = useTokenPrice({
+    token: token1,
+  })
+
   const { data, isLoading } = useLpBalance({
     account: activeAccount?.accountName || '',
     token0Address: token0?.tokenAddress,
@@ -50,10 +56,8 @@ export const PoolPosition = () => {
     }
   }, [data, setLPBalance])
 
-  const token0Price =
-    token0?.tokenAddress === 'coin' ? priceData?.priceUsd || 0 : 0
-  const token1Price =
-    token1?.tokenAddress === 'coin' ? priceData?.priceUsd || 0 : 0
+  const token0Price = priceUsd0 ?? 0
+  const token1Price = priceUsd1 ?? 0
 
   const amountToken0: number = useMemo(() => {
     if (!lpBalance || !reserve0) return 0
@@ -67,7 +71,8 @@ export const PoolPosition = () => {
     return fraction.mul(reserve1).toNumber()
   }, [lpBalance, reserve1, totalSupplyLP])
 
-  const loading = isLoading || isLoadingPrice || isLoadingPool
+  const loading =
+    isLoading || isLoadingPrice0 || isLoadingPrice1 || isLoadingPool
 
   const token0UnstakedInUsd = Number(token0Price) * Number(amountToken0)
   const token1UnstakedInUsd = Number(token1Price) * Number(amountToken1)

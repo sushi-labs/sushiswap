@@ -9,7 +9,7 @@ import {
 } from '@sushiswap/ui'
 import { useRef } from 'react'
 import { formatUSD } from 'sushi/format'
-import { useKdaPrice } from '~kadena/_common/lib/hooks/use-kda-price'
+import { useTokenPrice } from '~kadena/_common/lib/hooks/use-token-price'
 import { formatUnits } from '~kadena/_common/lib/utils/formatters'
 import { useKadena } from '~kadena/kadena-wallet-provider'
 import { Icon } from '../../General/Icon'
@@ -22,13 +22,19 @@ export const ReviewAddDialog = (props: ButtonProps) => {
   const { token0, token1, amountInToken0, amountInToken1, poolId } =
     usePoolState()
   const closeBtnRef = useRef<HTMLButtonElement>(null)
-  const { data: priceData, isLoading } = useKdaPrice()
-  const kdaPrice = priceData?.priceUsd ?? 0
-
   const { isConnected } = useKadena()
 
-  const token0Price = token0?.tokenAddress === 'coin' ? kdaPrice : 0
-  const token1Price = token1?.tokenAddress === 'coin' ? kdaPrice : 0
+  const { data: priceUsd0, isLoading: isLoadingPrice0 } = useTokenPrice({
+    token: token0,
+  })
+  const { data: priceUsd1, isLoading: isLoadingPrice1 } = useTokenPrice({
+    token: token1,
+  })
+
+  const isLoading = isLoadingPrice0 || isLoadingPrice1
+
+  const token0Price = priceUsd0 ?? 0
+  const token1Price = priceUsd1 ?? 0
 
   const closeModal = () => {
     closeBtnRef?.current?.click()
