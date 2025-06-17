@@ -1,7 +1,7 @@
 import { useSwapDispatch, useSwapState } from '~kadena/swap/swap-provider'
 import { TokenInput } from '../Input/TokenInput'
 
-export const AmountOut = () => {
+export const AmountOut = ({ isLoading = false }: { isLoading?: boolean }) => {
   const { token1, amountOut } = useSwapState()
   const { setToken1, setAmountOut } = useSwapDispatch()
 
@@ -14,6 +14,7 @@ export const AmountOut = () => {
       currency={token1}
       setToken={setToken1}
       label="Buy"
+      isLoadingAmount={isLoading}
     />
   )
 }

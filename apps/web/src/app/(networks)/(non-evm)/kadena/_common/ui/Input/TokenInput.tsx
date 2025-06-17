@@ -31,6 +31,7 @@ type TokenInputProps = {
   hideIcon?: boolean
   label?: string
   theme?: keyof typeof themes
+  isLoadingAmount?: boolean
 }
 
 export const TokenInput = ({
@@ -44,6 +45,7 @@ export const TokenInput = ({
   hideIcon,
   label,
   theme = 'default',
+  isLoadingAmount = false,
 }: TokenInputProps) => {
   const { activeAccount } = useKadena()
 
@@ -136,22 +138,26 @@ export const TokenInput = ({
           data-state={isLoading ? 'inactive' : 'active'}
           className="data-[state=inactive]:hidden data-[state=active]:flex flex-1 items-center"
         >
-          <TextField
-            testdata-id={`${id}-input`}
-            type="number"
-            variant="naked"
-            disabled={type === 'output'}
-            onValueChange={(e) => {
-              if (type === 'output') return
-              const value = e
+          {isLoadingAmount ? (
+            <SkeletonBox className="w-1/3 h-[32px] rounded-lg" />
+          ) : (
+            <TextField
+              testdata-id={`${id}-input`}
+              type="number"
+              variant="naked"
+              disabled={type === 'output'}
+              onValueChange={(e) => {
+                if (type === 'output') return
+                const value = e
 
-              setAmount(value)
-            }}
-            value={amount}
-            readOnly={type === 'output'}
-            data-state={isLoading ? 'inactive' : 'active'}
-            className={classNames('p-0 py-1 !text-3xl font-medium')}
-          />
+                setAmount(value)
+              }}
+              value={amount}
+              readOnly={type === 'output'}
+              data-state={isLoading ? 'inactive' : 'active'}
+              className={classNames('p-0 py-1 !text-3xl font-medium')}
+            />
+          )}
         </div>
 
         {selector}

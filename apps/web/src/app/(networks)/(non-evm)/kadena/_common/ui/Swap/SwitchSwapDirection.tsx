@@ -9,7 +9,7 @@ export const SwitchSwapDirection = () => {
       <button
         onClick={swapTokens}
         type="button"
-        className="hover:shadow-sm transition-border z-10 group bg-background p-2 border border-accent transition-all rounded-full cursor-pointer"
+        className="z-10 p-2 transition-all border rounded-full cursor-pointer hover:shadow-sm transition-border group bg-background border-accent"
       >
         <div className="transition-transform rotate-0 group-hover:rotate-180">
           <ArrowsUpDownIcon strokeWidth={3} className="w-3 h-3 text-blue" />
