@@ -1,4 +1,4 @@
-import { SkeletonChartLoadingStateMask, SkeletonText } from '@sushiswap/ui'
+import { SkeletonBox, SkeletonText } from '@sushiswap/ui'
 
 export const GlobalStatsLoading = () => {
   return (
@@ -9,7 +9,7 @@ export const GlobalStatsLoading = () => {
           <SkeletonText fontSize="3xl" className="!w-36" />
           <SkeletonText fontSize="sm" className="!w-40" />
         </div>
-        <SkeletonChartLoadingStateMask type="area" height={400} />
+        <SkeletonBox className="h-[380px] mt-3 w-full" />
       </div>
       <div>
         <div className="flex flex-col gap-3">
@@ -17,7 +17,7 @@ export const GlobalStatsLoading = () => {
           <SkeletonText fontSize="3xl" className="!w-36" />
           <SkeletonText fontSize="sm" className="!w-40" />
         </div>
-        <SkeletonChartLoadingStateMask type="bar" height={400} />
+        <SkeletonBox className="h-[380px] mt-3 w-full" />
       </div>
     </div>
   )

@@ -95,7 +95,7 @@ export const VolumeChart: FC<VolumeChartProps> = ({ data }) => {
           name: 'Volume',
           type: 'bar',
           data: volumeSeries,
-          itemStyle: { color: '#3B7EF6', barBorderRadius: [0, 0, 2, 2] },
+          itemStyle: { color: '#3B7EF6', borderRadius: [0, 0, 2, 2] },
         },
       ],
     }),

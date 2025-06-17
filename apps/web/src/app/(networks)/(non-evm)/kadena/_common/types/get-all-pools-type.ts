@@ -1,6 +1,8 @@
 type TokenRef = {
   id: string
   name: string
+  address: string
+  chainId: string
 }
 
 export type Pool = {
