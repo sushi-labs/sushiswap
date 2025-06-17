@@ -31,7 +31,7 @@ export default function AddRemoveLiqPage(props: {
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
         <div className="flex flex-col gap-6">
           <Manage />
-          <PoolComposition />
+          <PoolComposition pool={data} />
         </div>
         <div className="flex flex-col gap-6">
           <PoolPosition />

@@ -11,13 +11,19 @@ import {
   SkeletonText,
 } from '@sushiswap/ui'
 import { type ReactNode, forwardRef } from 'react'
+import type { FC } from 'react'
 import { formatUSD } from 'sushi/format'
 import { useTokenPrice } from '~kadena/_common/lib/hooks/use-token-price'
+import type { PoolByIdResponse } from '~kadena/_common/types/get-pool-by-id'
 import type { KadenaToken } from '~kadena/_common/types/token-type'
 import { Icon } from '../../General/Icon'
 import { usePoolState } from '../pool-provider'
 
-export const PoolComposition = () => {
+interface PoolComposition {
+  pool: PoolByIdResponse | undefined
+}
+
+export const PoolComposition: FC<PoolComposition> = ({ pool }) => {
   const { token0, token1, reserve0, reserve1 } = usePoolState()
 
   const { data: priceUsd0, isLoading: isLoadingPrice0 } = useTokenPrice({
@@ -32,9 +38,10 @@ export const PoolComposition = () => {
   const token0Price = priceUsd0 ?? 0
   const token1Price = priceUsd1 ?? 0
 
-  const reserve0USD = Number(reserve0) * Number(token0Price)
-  const reserve1USD = Number(reserve1) * Number(token1Price)
-  const reserveUSD = reserve0USD + reserve1USD
+  const reserve0USD = Number(pool?.reserve0) * Number(token0Price)
+  const reserve1USD = Number(pool?.reserve1) * Number(token1Price)
+  const backUpTotal = reserve0USD + reserve1USD
+  const reserveUSD = pool?.tvlUsd || backUpTotal
 
   return (
     <Card>
@@ -49,13 +56,13 @@ export const PoolComposition = () => {
           <CardLabel>Tokens</CardLabel>
           <CardCurrencyAmountItem
             isLoading={isLoading}
-            amount={reserve0}
+            amount={Number(pool?.reserve0) || reserve0}
             currency={token0}
             fiatValue={formatUSD(reserve0USD)}
           />
           <CardCurrencyAmountItem
             isLoading={isLoading}
-            amount={reserve1}
+            amount={Number(pool?.reserve1) || reserve1}
             currency={token1}
             fiatValue={formatUSD(reserve1USD)}
           />

@@ -16,6 +16,16 @@ interface PoolStats {
   pool: PoolByIdResponse | undefined
 }
 
+const getTextColor = (value: number) => {
+  if (value === 0) return 'text-gray-500'
+  return value > 0 ? 'text-green' : 'text-red'
+}
+
+const getChangeSign = (value: number) => {
+  if (value === 0) return ''
+  return value > 0 ? '+' : '-'
+}
+
 export const PoolStats: FC<PoolStats> = ({ pool }) => {
   return (
     <Card>
@@ -24,78 +34,50 @@ export const PoolStats: FC<PoolStats> = ({ pool }) => {
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-1 gap-3">
-          <div>
-            <CardLabel>Liquidity</CardLabel>
-            {pool ? (
-              <div className="text-xl font-semibold">
-                {formatUSD(pool.tvlUsd ?? 0)}{' '}
-                <span
-                  className={classNames(
-                    'text-xs',
-                    pool.tvlChange24h > 0 ? 'text-green' : 'text-red',
-                  )}
-                >
-                  {pool.tvlChange24h > 0 ? '+' : '-'}
-                  {formatPercent(Math.abs(pool.tvlChange24h))}
-                </span>
-              </div>
-            ) : null}
-          </div>
-          <div>
-            <CardLabel>Volume (24h)</CardLabel>
-            {pool ? (
-              <div className="text-xl font-semibold">
-                {formatUSD(pool.volume24hUsd ?? 0)}{' '}
-                <span
-                  className={classNames(
-                    'text-xs',
-                    pool.volumeChange24h > 0 ? 'text-green' : 'text-red',
-                  )}
-                >
-                  {pool.volumeChange24h > 0 ? '+' : '-'}
-                  {formatPercent(Math.abs(pool.volumeChange24h))}
-                </span>
-              </div>
-            ) : null}
-          </div>
-          <div>
-            <CardLabel>Fees (24h)</CardLabel>
-            {pool ? (
-              <div className="text-xl font-semibold">
-                {formatUSD(pool.fees24hUsd ?? 0)}{' '}
-                <span
-                  className={classNames(
-                    'text-xs',
-                    pool.feesChange24h > 0 ? 'text-green' : 'text-red',
-                  )}
-                >
-                  {pool.feesChange24h > 0 ? '+' : '-'}
-                  {formatPercent(Math.abs(pool.feesChange24h))}
-                </span>
-              </div>
-            ) : null}
-          </div>
-          <div>
-            <CardLabel>Transactions (24h)</CardLabel>
-            {pool ? (
-              <div className="text-xl font-semibold">
-                {formatNumber(pool.transactionCount24h).replace('.00', '')}{' '}
-                <span
-                  className={classNames(
-                    'text-xs',
-                    pool.transactionCountChange24h > 0
-                      ? 'text-green'
-                      : 'text-red',
-                  )}
-                >
-                  {pool.transactionCountChange24h > 0 ? '+' : '-'}
-                  {formatPercent(Math.abs(pool.transactionCountChange24h))}
-                </span>
-              </div>
-            ) : null}
-          </div>
+          <Item
+            label="Liquidity"
+            value={formatUSD(pool?.tvlUsd ?? 0)}
+            change={pool?.tvlChange24h ?? 0}
+          />
+          <Item
+            label="Volume (24h)"
+            value={formatUSD(pool?.volume24hUsd ?? 0)}
+            change={pool?.volumeChange24h ?? 0}
+          />
+          <Item
+            label="Fees (24h)"
+            value={formatUSD(pool?.fees24hUsd ?? 0)}
+            change={pool?.feesChange24h ?? 0}
+          />
+          <Item
+            label="Transactions (24h)"
+            value={formatNumber(pool?.transactionCount24h ?? 0).replace(
+              '.00',
+              '',
+            )}
+            change={pool?.transactionCountChange24h ?? 0}
+          />
         </div>
       </CardContent>
     </Card>
+  )
+}
+
+const Item = ({
+  label,
+  value,
+  change,
+}: { label: string; value: number | string; change: number }) => {
+  return (
+    <div>
+      <CardLabel>{label}</CardLabel>
+      <div className="text-xl font-semibold">
+        {value}{' '}
+        <span className={classNames('text-xs', getTextColor(change))}>
+          {getChangeSign(change)}
+          {formatPercent(Math.abs(change))}
+        </span>
+      </div>
+    </div>
   )
 }
