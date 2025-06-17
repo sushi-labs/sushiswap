@@ -1,6 +1,9 @@
 'use client'
 import { ArrowTrendingUpIcon } from '@heroicons/react/20/solid'
-import { SlippageToleranceStorageKey } from '@sushiswap/hooks'
+import {
+  SlippageToleranceStorageKey,
+  useSlippageTolerance,
+} from '@sushiswap/hooks'
 import {
   Button,
   Container,
@@ -10,8 +13,9 @@ import {
   SkeletonText,
   typographyVariants,
 } from '@sushiswap/ui'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { formatUSD } from 'sushi/format'
+import { useSimulateSwap } from '~kadena/_common/lib/hooks/use-simulate-swap'
 import { AmountIn } from '~kadena/_common/ui/Swap/AmountIn'
 import { AmountOut } from '~kadena/_common/ui/Swap/AmountOut'
 import { SimpleSwapBanner } from '~kadena/_common/ui/Swap/Banner/SwapBanner'
@@ -19,17 +23,31 @@ import { ReviewSwapDialog } from '~kadena/_common/ui/Swap/ReviewSwapDialog'
 import { SwapStats } from '~kadena/_common/ui/Swap/SwapStats'
 import { SwitchSwapDirection } from '~kadena/_common/ui/Swap/SwitchSwapDirection'
 import { SwitchSwapType } from '~kadena/_common/ui/Swap/SwitchSwapType'
+import { useKadena } from '~kadena/kadena-wallet-provider'
 import { useSwapState } from './swap-provider'
 
 export default function SwapSimplePage() {
   const [invert, setInvert] = useState(false)
-  const { token0, token1 } = useSwapState()
+  const { token0, token1, amountIn, amountOut, isSwapIn } = useSwapState()
+  const { activeAccount } = useKadena()
+  const [slippageTolerance] = useSlippageTolerance(
+    SlippageToleranceStorageKey.Swap,
+  )
 
-  const [isLoading, setIsLoading] = useState(false)
+  const slippage =
+    slippageTolerance === 'AUTO' ? 0.005 : Number(slippageTolerance) / 100
 
-  useEffect(() => {
-    setTimeout(() => setIsLoading(false), 1200)
-  }, [])
+  const { data, isLoading: isSimulating } = useSimulateSwap({
+    token0Address: token0?.tokenAddress,
+    token1Address: token1?.tokenAddress,
+    amountIn: Number(amountIn),
+    amountOut: Number(amountOut),
+    isSwapIn,
+    signerAddress: activeAccount?.accountName,
+    slippage,
+  })
+
+  console.log('useSimulateSwap data', data)
 
   const token0FiatPrice = '2.34'
   const token1FiatPrice = '.72'
@@ -39,7 +57,7 @@ export default function SwapSimplePage() {
       <div className="flex flex-col gap-4">
         <div className="flex flex-col items-start gap-2 mt-2 mb-4 sm:mt-10">
           <h1 className={typographyVariants({ variant: 'h1' })}>Trade</h1>
-          {isLoading || !token0 || !token1 ? (
+          {!token0 || !token1 ? (
             <SkeletonText fontSize="sm" className="w-2/4" />
           ) : (
             <Button
@@ -75,11 +93,11 @@ export default function SwapSimplePage() {
             modules={[SettingsModule.SlippageTolerance]}
           />
         </div>
-        <AmountIn />
+        <AmountIn isLoading={isSimulating && !isSwapIn} />
         <SwitchSwapDirection />
         <div className="flex flex-col">
-          <AmountOut />
-          <ReviewSwapDialog />
+          <AmountOut isLoading={isSimulating && isSwapIn} />
+          <ReviewSwapDialog simulatedSwap={data} />
         </div>
         <SwapStats />
         <SimpleSwapBanner />

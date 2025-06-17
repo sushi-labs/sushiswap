@@ -1,3 +1,4 @@
+import type { ICommandResult } from '@kadena/client'
 import {
   SlippageToleranceStorageKey,
   useSlippageTolerance,
@@ -27,21 +28,19 @@ import { useSwapDispatch, useSwapState } from '../../..//swap/swap-provider'
 import { ReviewSwapDialogTrigger } from './ReviewSwapDialogTrigger'
 import { SwapButton } from './SwapButton'
 
-export const ReviewSwapDialog = () => {
+export const ReviewSwapDialog = ({
+  simulatedSwap,
+}: {
+  simulatedSwap: ICommandResult | null
+}) => {
   const { token0, token1, amountIn, amountOut } = useSwapState()
-  const { isConnected } = useKadena()
+  const { isConnected, activeAccount } = useKadena()
+  const address = activeAccount?.accountName ?? ''
   const { setRoute, setPriceImpactPercentage } = useSwapDispatch()
-  const address =
-    'abf594a764e49a90a98cddf30872d8497e37399684c1d8e2b8e96fd865728cc2'
 
   const [slippageTolerance] = useSlippageTolerance(
     SlippageToleranceStorageKey.Swap,
   )
-
-  const minOutput = '0.123'
-
-  // @TODO: replace w hook
-  const networkFeeInKDA = '0.123'
 
   const routeData = {
     pairs: ['pair1', 'pair2'],
@@ -69,7 +68,12 @@ export const ReviewSwapDialog = () => {
     return warningSeverityClassName(warningSeverity(priceImpactPercentage))
   }, [priceImpactPercentage])
 
-  const swapType = 'Swap'
+  const networkFeeInKDA = (simulatedSwap?.gas ?? 0) * 0.0000001
+
+  const minReceived =
+    simulatedSwap?.result && 'data' in simulatedSwap.result
+      ? (simulatedSwap.result.data?.[1]?.amount ?? 0)
+      : 0
 
   return (
     <DialogProvider>
@@ -89,8 +93,7 @@ export const ReviewSwapDialog = () => {
                   Buy {amountOut} {token1?.tokenSymbol}
                 </DialogTitle>
                 <DialogDescription>
-                  {swapType}
-                  {amountIn} {token0?.tokenSymbol}
+                  Swap {amountIn} {token0?.tokenSymbol}
                 </DialogDescription>
               </DialogHeader>
               <div className="flex flex-col gap-4">
@@ -116,11 +119,11 @@ export const ReviewSwapDialog = () => {
                       }%)`}
                       subtitle="The minimum amount you are guaranteed to receive."
                     >
-                      {minOutput} {token1?.tokenSymbol}
+                      {minReceived} {token1?.tokenSymbol}
                     </List.KeyValue>
 
                     <List.KeyValue title="Network fee">
-                      <>{networkFeeInKDA ?? '0'} KDA</>
+                      <>{networkFeeInKDA.toFixed(6) ?? '0'} KDA</>
                     </List.KeyValue>
                   </List.Control>
                 </List>
