@@ -28,7 +28,6 @@ export const useMyPositions = (pageSize = 10) => {
 
       const res = await fetch(url.toString())
       const json: WalletPositionsApiResponse = await res.json()
-
       if (!json.success) {
         console.error('Failed to fetch wallet positions:', json)
         throw new Error('Failed to fetch wallet positions')

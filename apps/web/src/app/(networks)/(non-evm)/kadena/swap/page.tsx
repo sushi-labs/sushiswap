@@ -19,6 +19,7 @@ import { useSimulateSwap } from '~kadena/_common/lib/hooks/use-simulate-swap'
 import { AmountIn } from '~kadena/_common/ui/Swap/AmountIn'
 import { AmountOut } from '~kadena/_common/ui/Swap/AmountOut'
 import { SimpleSwapBanner } from '~kadena/_common/ui/Swap/Banner/SwapBanner'
+import { Rate } from '~kadena/_common/ui/Swap/Rate'
 import { ReviewSwapDialog } from '~kadena/_common/ui/Swap/ReviewSwapDialog'
 import { SwapStats } from '~kadena/_common/ui/Swap/SwapStats'
 import { SwitchSwapDirection } from '~kadena/_common/ui/Swap/SwitchSwapDirection'
@@ -52,6 +53,7 @@ export default function SwapSimplePage() {
   const token0FiatPrice = '2.34'
   const token1FiatPrice = '.72'
   const price = '1.8'
+
   return (
     <Container maxWidth="lg" className="px-4">
       <div className="flex flex-col gap-4">
@@ -80,8 +82,8 @@ export default function SwapSimplePage() {
               </span>
             </Button>
           )}{' '}
+          <Rate />
         </div>
-
         <div className="flex items-center justify-between">
           <SwitchSwapType />
           <SettingsOverlay

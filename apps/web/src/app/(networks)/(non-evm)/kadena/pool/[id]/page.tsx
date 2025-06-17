@@ -15,8 +15,6 @@ export default function PoolByIdPage(props: {
     first: 10,
   })
 
-  console.log('usePoolById data', pool)
-
   return (
     <Container maxWidth="5xl" className="px-2 sm:px-4">
       <PoolPageV2 pool={pool} />

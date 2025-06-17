@@ -5,7 +5,7 @@ import {
 import { Card, CardGroup, CardLabel } from '@sushiswap/ui'
 import { useEffect, useMemo } from 'react'
 import { Decimal } from 'sushi/math'
-import { useKdaPrice } from '~kadena/_common/lib/hooks/use-kda-price'
+import { useTokenPrice } from '~kadena/_common/lib/hooks/use-token-price'
 import { LiquidityItem } from '../PoolDetails/LiquidityItem'
 import { usePoolState } from '../pool-provider'
 import { useRemoveLiqDispatch, useRemoveLiqState } from './pool-remove-provider'
@@ -15,12 +15,17 @@ export const MinimumReceive = () => {
   const { setLPToRemove, setMinAmountToken0, setMinAmountToken1 } =
     useRemoveLiqDispatch()
   const { token0, token1, reserve0, reserve1 } = usePoolState()
-  const { data: priceData, isLoading: isLoadingPrice } = useKdaPrice()
+  const { data: priceUsd0, isLoading: isLoadingPrice0 } = useTokenPrice({
+    token: token0,
+  })
+  const { data: priceUsd1, isLoading: isLoadingPrice1 } = useTokenPrice({
+    token: token1,
+  })
 
-  const token0Price =
-    token0?.tokenAddress === 'coin' ? priceData?.priceUsd || 0 : 0
-  const token1Price =
-    token1?.tokenAddress === 'coin' ? priceData?.priceUsd || 0 : 0
+  const token0Price = priceUsd0 ?? 0
+  const token1Price = priceUsd1 ?? 0
+
+  const isLoading = isLoadingPrice0 || isLoadingPrice1
 
   const [slippageTolerance] = useSlippageTolerance(
     SlippageToleranceStorageKey.RemoveLiquidity,
@@ -75,8 +80,6 @@ export const MinimumReceive = () => {
       setMinAmountToken1(minAmountToken1)
     }
   }, [minAmountToken1, setMinAmountToken1])
-
-  const isLoading = isLoadingPrice
 
   return (
     <Card variant="outline" className="p-6">

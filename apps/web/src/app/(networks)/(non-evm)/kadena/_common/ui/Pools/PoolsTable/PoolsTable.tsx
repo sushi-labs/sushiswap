@@ -48,7 +48,10 @@ export const PoolsTable = () => {
   })
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } =
-    useAllPools({ first: 10, orderBy: 'TVL_USD_DESC' })
+    useAllPools({
+      first: 10,
+      orderBy: 'TVL_USD_DESC',
+    })
 
   const start = paginationState.pageIndex * paginationState.pageSize
   const end = start + paginationState.pageSize

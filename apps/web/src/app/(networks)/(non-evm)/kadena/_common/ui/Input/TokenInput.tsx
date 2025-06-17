@@ -6,8 +6,8 @@ import {
   classNames,
 } from '@sushiswap/ui'
 import { useMemo } from 'react'
-import { useKdaPrice } from '~kadena/_common/lib/hooks/use-kda-price'
 import { useTokenBalances } from '~kadena/_common/lib/hooks/use-token-balances'
+import { useTokenPrice } from '~kadena/_common/lib/hooks/use-token-price'
 import type { KadenaToken } from '~kadena/_common/types/token-type'
 import { useKadena } from '~kadena/kadena-wallet-provider'
 import { Icon } from '../General/Icon'
@@ -53,18 +53,19 @@ export const TokenInput = ({
     account: activeAccount?.accountName ?? '',
     tokenAddresses: currency ? [currency.tokenAddress] : [],
   })
-  const { data: priceData, isLoading: isLoadingKdaPrice } = useKdaPrice()
+  const { data: priceUsd, isLoading: isLoadingPrice } = useTokenPrice({
+    token: currency,
+  })
 
   const tokenBalance = data?.balanceMap[currency?.tokenAddress ?? ''] ?? 0
 
-  //@DEV @TODO: get way to find price of token not just KDA
-  const usdValue = currency?.tokenAddress === 'coin' ? priceData?.priceUsd : 0
+  const usdValue = priceUsd ?? 0
 
   const usdAmount = amount
     ? (Number(amount) * (usdValue ? Number(usdValue) : 0)).toString(10)
     : '0.00'
 
-  const isLoading = isLoadingKdaPrice || isLoadingTokenBalance
+  const isLoading = isLoadingPrice || isLoadingTokenBalance
   const currencyLoading = false
   const fetching = false
 
@@ -186,7 +187,7 @@ export const TokenInput = ({
       </div>
       <div className="flex flex-row items-center justify-between h-[36px]">
         <DollarAmountDisplay
-          isLoading={amount !== '' && isLoadingKdaPrice}
+          isLoading={amount !== '' && isLoadingPrice}
           error={undefined}
           value={usdAmount}
         />

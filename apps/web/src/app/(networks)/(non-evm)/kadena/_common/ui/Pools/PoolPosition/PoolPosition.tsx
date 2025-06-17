@@ -11,8 +11,9 @@ import { useEffect, useMemo } from 'react'
 import { Decimal } from 'sushi'
 import { formatUSD } from 'sushi/format'
 import { useLpBalance } from '~kadena/_common/lib/hooks/pools/use-lp-balance'
-import { useKdaPrice } from '~kadena/_common/lib/hooks/use-kda-price'
+import { useTokenPrice } from '~kadena/_common/lib/hooks/use-token-price'
 import { useKadena } from '~kadena/kadena-wallet-provider'
+import { WalletConnector } from '../../WalletConnector/WalletConnector'
 import { LiquidityItem } from '../PoolDetails/LiquidityItem'
 import {
   useRemoveLiqDispatch,
@@ -36,24 +37,29 @@ export const PoolPosition = () => {
   const { totalSupplyLP, lpBalance } = useRemoveLiqState()
   const { setLPBalance } = useRemoveLiqDispatch()
   const { activeAccount } = useKadena()
+  const address = activeAccount?.accountName || ''
 
-  const { data: priceData, isLoading: isLoadingPrice } = useKdaPrice()
+  const { data: priceUsd0, isLoading: isLoadingPrice0 } = useTokenPrice({
+    token: token0,
+  })
+  const { data: priceUsd1, isLoading: isLoadingPrice1 } = useTokenPrice({
+    token: token1,
+  })
+
   const { data, isLoading } = useLpBalance({
-    account: activeAccount?.accountName || '',
+    account: address,
     token0Address: token0?.tokenAddress,
     token1Address: token1?.tokenAddress,
   })
 
   useEffect(() => {
     if (data?.balance !== undefined) {
-      setLPBalance(data.balance)
+      setLPBalance(data?.balance)
     }
   }, [data, setLPBalance])
 
-  const token0Price =
-    token0?.tokenAddress === 'coin' ? priceData?.priceUsd || 0 : 0
-  const token1Price =
-    token1?.tokenAddress === 'coin' ? priceData?.priceUsd || 0 : 0
+  const token0Price = priceUsd0 ?? 0
+  const token1Price = priceUsd1 ?? 0
 
   const amountToken0: number = useMemo(() => {
     if (!lpBalance || !reserve0) return 0
@@ -67,7 +73,8 @@ export const PoolPosition = () => {
     return fraction.mul(reserve1).toNumber()
   }, [lpBalance, reserve1, totalSupplyLP])
 
-  const loading = isLoading || isLoadingPrice || isLoadingPool
+  const loading =
+    isLoading || isLoadingPrice0 || isLoadingPrice1 || isLoadingPool
 
   const token0UnstakedInUsd = Number(token0Price) * Number(amountToken0)
   const token1UnstakedInUsd = Number(token1Price) * Number(amountToken1)
@@ -76,39 +83,49 @@ export const PoolPosition = () => {
     <Card>
       <CardHeader>
         <CardTitle>My Position</CardTitle>
-        <CardDescription>
-          <span className="text-sm text-right text-gray-900 dark:text-slate-50">
-            {loading ? (
-              <div className="w-28">
-                <SkeletonText fontSize="sm" />
-              </div>
-            ) : (
-              formatUSD(
-                token0StakedInUsd +
-                  token1StakedInUsd +
-                  token0UnstakedInUsd +
-                  token1UnstakedInUsd,
-              )
-            )}
-          </span>
-        </CardDescription>
+        {!address ? null : (
+          <CardDescription>
+            <span className="text-sm text-right text-gray-900 dark:text-slate-50">
+              {loading ? (
+                <div className="w-28">
+                  <SkeletonText fontSize="sm" />
+                </div>
+              ) : (
+                formatUSD(
+                  token0StakedInUsd +
+                    token1StakedInUsd +
+                    token0UnstakedInUsd +
+                    token1UnstakedInUsd,
+                )
+              )}
+            </span>
+          </CardDescription>
+        )}
       </CardHeader>
-      <CardContent>
-        <CardGroup>
-          <LiquidityItem
-            isLoading={loading}
-            token={token0}
-            amount={amountToken0}
-            usdAmount={String(token0UnstakedInUsd)}
-          />
-          <LiquidityItem
-            isLoading={loading}
-            token={token1}
-            amount={amountToken1}
-            usdAmount={String(token1UnstakedInUsd)}
-          />
-        </CardGroup>
-      </CardContent>
+      {!address ? (
+        <CardContent>
+          <CardGroup>
+            <WalletConnector fullWidth variant="secondary" />
+          </CardGroup>
+        </CardContent>
+      ) : (
+        <CardContent>
+          <CardGroup>
+            <LiquidityItem
+              isLoading={loading}
+              token={token0}
+              amount={amountToken0}
+              usdAmount={String(token0UnstakedInUsd)}
+            />
+            <LiquidityItem
+              isLoading={loading}
+              token={token1}
+              amount={amountToken1}
+              usdAmount={String(token1UnstakedInUsd)}
+            />
+          </CardGroup>
+        </CardContent>
+      )}
     </Card>
   )
 }

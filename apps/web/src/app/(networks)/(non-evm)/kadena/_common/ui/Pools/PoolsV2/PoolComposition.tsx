@@ -12,24 +12,29 @@ import {
 } from '@sushiswap/ui'
 import { type ReactNode, forwardRef } from 'react'
 import { formatUSD } from 'sushi/format'
-import { useKdaPrice } from '~kadena/_common/lib/hooks/use-kda-price'
+import { useTokenPrice } from '~kadena/_common/lib/hooks/use-token-price'
 import type { KadenaToken } from '~kadena/_common/types/token-type'
 import { Icon } from '../../General/Icon'
 import { usePoolState } from '../pool-provider'
 
 export const PoolComposition = () => {
   const { token0, token1, reserve0, reserve1 } = usePoolState()
-  const { data: priceData, isLoading: isLoadingPrice } = useKdaPrice()
-  const token0Price =
-    token0?.tokenAddress === 'coin' ? priceData?.priceUsd || 0 : 0
-  const token1Price =
-    token1?.tokenAddress === 'coin' ? priceData?.priceUsd || 0 : 0
+
+  const { data: priceUsd0, isLoading: isLoadingPrice0 } = useTokenPrice({
+    token: token0,
+  })
+  const { data: priceUsd1, isLoading: isLoadingPrice1 } = useTokenPrice({
+    token: token1,
+  })
+
+  const isLoading = isLoadingPrice0 || isLoadingPrice1
+
+  const token0Price = priceUsd0 ?? 0
+  const token1Price = priceUsd1 ?? 0
 
   const reserve0USD = Number(reserve0) * Number(token0Price)
   const reserve1USD = Number(reserve1) * Number(token1Price)
   const reserveUSD = reserve0USD + reserve1USD
-
-  const isLoading = isLoadingPrice
 
   return (
     <Card>

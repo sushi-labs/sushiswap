@@ -1,19 +1,16 @@
 'use client'
 
-import type { PoolChainId } from '@sushiswap/graph-client/data-api'
-import type { FC } from 'react'
+import { useIsMounted } from '@sushiswap/hooks'
 import { useDexMetrics } from '~kadena/_common/lib/hooks/use-dex-metrics'
 import { GlobalStatsLoading } from './GlobalStatsLoading'
 import { TVLChart } from './TVLChart'
 import { VolumeChart } from './VolumeChart'
-export const GlobalStatsCharts: FC = () => {
-  return <_GlobalStatsCharts chainId={1} />
-}
 
-const _GlobalStatsCharts: FC<{ chainId: PoolChainId }> = () => {
+export const GlobalStatsCharts = () => {
   const { data: dexMetrics, isLoading } = useDexMetrics()
+  const isMounted = useIsMounted()
 
-  if (isLoading) {
+  if (isLoading || !isMounted) {
     return <GlobalStatsLoading />
   }
 

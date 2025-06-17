@@ -8,17 +8,11 @@ import {
   SkeletonText,
 } from '@sushiswap/ui'
 import format from 'date-fns/format'
-import { type FC, useCallback, useEffect, useMemo, useState } from 'react'
+import { type FC, useCallback, useMemo } from 'react'
 
+import * as echarts from 'echarts'
 import ReactEchartsCore from 'echarts-for-react/lib/core'
 import type { EChartsOption } from 'echarts-for-react/lib/types'
-// import 'echarts/lib/chart/bar'
-// import 'echarts/lib/chart/line'
-// import 'echarts/lib/component/tooltip'
-// import 'echarts/lib/component/visualMap'
-// import echarts from 'echarts/lib/echarts'
-// import 'echarts/lib/visual/seriesColor'
-import * as echarts from 'echarts/core'
 import { PoolChartPeriod, chartPeriods } from 'src/ui/pool/PoolChartPeriods'
 import { PoolChartType } from 'src/ui/pool/PoolChartTypes'
 import { formatUSD } from 'sushi/format'
@@ -35,12 +29,9 @@ interface PoolChartProps {
 const tailwind = resolveConfig(tailwindConfig)
 
 export const PoolChartGraph: FC<PoolChartProps> = ({ chart, period, pool }) => {
-  const [isLoading, setIsLoading] = useState(true)
+  //@DEV TODO isLoadingPool
+  const isLoading = !pool
   const isError = false
-
-  useEffect(() => {
-    setTimeout(() => setIsLoading(false), 1000)
-  }, [])
 
   const [xData, yData]: [number[], number[]] = useMemo(() => {
     if (!pool?.charts) return [[], []]
