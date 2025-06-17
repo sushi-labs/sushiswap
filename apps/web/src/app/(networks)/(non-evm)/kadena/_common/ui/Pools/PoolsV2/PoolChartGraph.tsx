@@ -38,9 +38,10 @@ export const PoolChartGraph: FC<PoolChartProps> = ({ chart, period, pool }) => {
 
     const chartData =
       pool.charts[chart.toLowerCase() as keyof typeof pool.charts] ?? []
+    console.log('chartData', chartData)
     const cutoff = Date.now() - chartPeriods[period]
 
-    const [x, y] = chartData.reduce<[number[], number[]]>(
+    const [x, y] = chartData.reverse().reduce<[number[], number[]]>(
       (acc, point) => {
         const timestampMs = new Date(point.timestamp).getTime()
         if (timestampMs >= cutoff) {
@@ -57,7 +58,7 @@ export const PoolChartGraph: FC<PoolChartProps> = ({ chart, period, pool }) => {
 
   // Transient update for performance
   const onMouseOver = useCallback(
-    ({ name, value }: { name: number; value: number }) => {
+    ({ name, value }: { name: string; value: number }) => {
       const valueNodes = document.getElementsByClassName('hoveredItemValue')
       const nameNodes = document.getElementsByClassName('hoveredItemName')
 
@@ -73,7 +74,7 @@ export const PoolChartGraph: FC<PoolChartProps> = ({ chart, period, pool }) => {
 
       if (nameNodes[0]) {
         nameNodes[0].innerHTML = format(
-          new Date(name * 1000),
+          new Date(Number.parseInt(name)),
           `dd MMM yyyy${chartPeriods[period] < chartPeriods[PoolChartPeriod.Week] ? ' p' : ''}`,
         )
       }
@@ -102,7 +103,7 @@ export const PoolChartGraph: FC<PoolChartProps> = ({ chart, period, pool }) => {
         formatter: (params: any) => {
           onMouseOver({ name: params[0].name, value: params[0].value })
 
-          const date = new Date(Number(params[0].name * 1000))
+          const date = new Date(Number(params?.[0]?.name))
           return `<div class="flex flex-col gap-0.5 paper bg-white/50 dark:bg-slate-800/50 px-3 py-2 rounded-xl overflow-hidden shadow-lg">
             <span class="text-sm dark:text-slate-50 text-gray-900 font-medium">${formatUSD(
               params[0].value,
@@ -182,8 +183,7 @@ export const PoolChartGraph: FC<PoolChartProps> = ({ chart, period, pool }) => {
   const defaultValue = yData[yData.length - 1] || 0
 
   // TODO: Get swap fee from pool
-  // @ts-ignore
-  const swapFee = pool?.swapFee || 0.003
+  const swapFee = 0.003 //constant
   const noData = !yData.length && !isLoading && !isError
   return (
     <>
