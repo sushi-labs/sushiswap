@@ -46,8 +46,6 @@ export const PoolNameCell = ({ data }: { data: Pool }) => {
     }
   }, [data.token1])
 
-  const mockSwapFee = 0.001
-
   return (
     <div className="flex items-center gap-5">
       <div className="flex min-w-[54px]">
@@ -81,7 +79,7 @@ export const PoolNameCell = ({ data }: { data: Pool }) => {
             <Tooltip>
               <TooltipTrigger asChild>
                 <div className="bg-gray-200 text-gray-700 dark:bg-slate-800 dark:text-slate-300 text-[10px] px-2 rounded-full">
-                  {formatNumber(mockSwapFee * 100)}%
+                  {formatNumber(0.003 * 100)}%
                 </div>
               </TooltipTrigger>
               <TooltipContent>

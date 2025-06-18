@@ -42,7 +42,7 @@ export const useLpBalance = ({
         preflight: false,
         signatureVerification: false,
       })
-      console.log(res)
+
       if (res.result.status !== 'success') {
         throw new Error(res.result.error?.message || 'Failed to fetch balances')
       }

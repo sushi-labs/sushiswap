@@ -12,6 +12,7 @@ import {
 } from '@sushiswap/ui'
 import { type ReactNode, forwardRef } from 'react'
 import type { FC } from 'react'
+import { formatNumber } from 'sushi'
 import { formatUSD } from 'sushi/format'
 import { useTokenPrice } from '~kadena/_common/lib/hooks/use-token-price'
 import type { PoolByIdResponse } from '~kadena/_common/types/get-pool-by-id'
@@ -56,13 +57,13 @@ export const PoolComposition: FC<PoolComposition> = ({ pool }) => {
           <CardLabel>Tokens</CardLabel>
           <CardCurrencyAmountItem
             isLoading={isLoading}
-            amount={Number(pool?.reserve0) || reserve0}
+            amount={formatNumber(pool?.reserve0 ?? reserve0 ?? 0)}
             currency={token0}
             fiatValue={formatUSD(reserve0USD)}
           />
           <CardCurrencyAmountItem
             isLoading={isLoading}
-            amount={Number(pool?.reserve1) || reserve1}
+            amount={formatNumber(pool?.reserve1 ?? reserve1 ?? 0)}
             currency={token1}
             fiatValue={formatUSD(reserve1USD)}
           />
@@ -134,7 +135,7 @@ CardItem.displayName = 'CardItem'
 interface CardCurrencyAmountItemProps
   extends React.HTMLAttributes<HTMLDivElement> {
   isLoading?: boolean
-  amount?: number
+  amount?: string
   currency?: KadenaToken
   fiatValue?: string
   unwrap?: boolean

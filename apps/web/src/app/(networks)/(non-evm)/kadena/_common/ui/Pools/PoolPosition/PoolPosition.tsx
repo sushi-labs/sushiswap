@@ -8,7 +8,7 @@ import {
   SkeletonText,
 } from '@sushiswap/ui'
 import { useEffect, useMemo } from 'react'
-import { Decimal } from 'sushi'
+import { Decimal, formatNumber } from 'sushi'
 import { formatUSD } from 'sushi/format'
 import { useLpBalance } from '~kadena/_common/lib/hooks/pools/use-lp-balance'
 import { useTokenPrice } from '~kadena/_common/lib/hooks/use-token-price'
@@ -114,13 +114,13 @@ export const PoolPosition = () => {
             <LiquidityItem
               isLoading={loading}
               token={token0}
-              amount={amountToken0}
+              amount={formatNumber(amountToken0 ?? 0)}
               usdAmount={String(token0UnstakedInUsd)}
             />
             <LiquidityItem
               isLoading={loading}
               token={token1}
-              amount={amountToken1}
+              amount={formatNumber(amountToken1 ?? 0)}
               usdAmount={String(token1UnstakedInUsd)}
             />
           </CardGroup>

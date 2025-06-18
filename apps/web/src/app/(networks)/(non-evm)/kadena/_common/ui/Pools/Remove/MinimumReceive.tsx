@@ -4,8 +4,10 @@ import {
 } from '@sushiswap/hooks'
 import { Card, CardGroup, CardLabel } from '@sushiswap/ui'
 import { useEffect, useMemo } from 'react'
+import { formatNumber } from 'sushi'
 import { Decimal } from 'sushi/math'
 import { useTokenPrice } from '~kadena/_common/lib/hooks/use-token-price'
+import { formatToMaxDecimals } from '~kadena/_common/lib/utils/formatters'
 import { LiquidityItem } from '../PoolDetails/LiquidityItem'
 import { usePoolState } from '../pool-provider'
 import { useRemoveLiqDispatch, useRemoveLiqState } from './pool-remove-provider'
@@ -64,10 +66,14 @@ export const MinimumReceive = () => {
   }, [amountToken0, slippage])
 
   useEffect(() => {
-    if (minAmountToken0) {
-      setMinAmountToken0(minAmountToken0)
+    if (minAmountToken0 && token0) {
+      setMinAmountToken0(
+        Number.parseInt(
+          formatToMaxDecimals(minAmountToken0, token0?.tokenDecimals),
+        ),
+      )
     }
-  }, [minAmountToken0, setMinAmountToken0])
+  }, [minAmountToken0, setMinAmountToken0, token0])
 
   const minAmountToken1: number = useMemo(() => {
     if (!amountToken1) return 0
@@ -76,10 +82,14 @@ export const MinimumReceive = () => {
   }, [amountToken1, slippage])
 
   useEffect(() => {
-    if (minAmountToken1) {
-      setMinAmountToken1(minAmountToken1)
+    if (minAmountToken1 && token1) {
+      setMinAmountToken1(
+        Number.parseInt(
+          formatToMaxDecimals(minAmountToken1, token1?.tokenDecimals),
+        ),
+      )
     }
-  }, [minAmountToken1, setMinAmountToken1])
+  }, [minAmountToken1, setMinAmountToken1, token1])
 
   return (
     <Card variant="outline" className="p-6">
@@ -88,13 +98,13 @@ export const MinimumReceive = () => {
         <LiquidityItem
           isLoading={isLoading}
           token={token0}
-          amount={minAmountToken0}
+          amount={formatNumber(minAmountToken0)}
           usdAmount={String(token0Price * minAmountToken0)}
         />
         <LiquidityItem
           isLoading={isLoading}
           token={token1}
-          amount={minAmountToken1}
+          amount={formatNumber(minAmountToken1)}
           usdAmount={String(token1Price * minAmountToken1)}
         />
       </CardGroup>
