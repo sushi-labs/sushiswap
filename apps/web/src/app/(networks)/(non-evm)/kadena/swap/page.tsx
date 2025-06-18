@@ -12,6 +12,7 @@ import {
 } from '@sushiswap/ui'
 import { useMemo } from 'react'
 import { useSimulateSwap } from '~kadena/_common/lib/hooks/use-simulate-swap'
+import { ChainIdOperatorBanner } from '~kadena/_common/ui/Shared/chain-id-operator-banner'
 import { AmountIn } from '~kadena/_common/ui/Swap/AmountIn'
 import { AmountOut } from '~kadena/_common/ui/Swap/AmountOut'
 import { SimpleSwapBanner } from '~kadena/_common/ui/Swap/Banner/SwapBanner'

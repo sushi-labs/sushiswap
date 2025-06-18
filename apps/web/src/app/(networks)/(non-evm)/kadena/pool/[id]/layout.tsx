@@ -1,5 +1,6 @@
 import { Container } from '@sushiswap/ui'
 import { PoolHeader } from '~kadena/_common/ui/Pools/PoolDetails/PoolHeader'
+import { ChainIdOperatorBanner } from '~kadena/_common/ui/Shared/chain-id-operator-banner'
 import { Header } from '~kadena/header'
 import Providers from './add/providers'
 
@@ -15,7 +16,8 @@ export default async function PoolLayout(props: {
 
   return (
     <Providers>
-      <Header className="mb-16" />
+      <Header className="mb-[56px]" />
+      <ChainIdOperatorBanner />
       <Container maxWidth="5xl" className="px-4 py-4">
         <PoolHeader poolId={poolId} />
       </Container>
