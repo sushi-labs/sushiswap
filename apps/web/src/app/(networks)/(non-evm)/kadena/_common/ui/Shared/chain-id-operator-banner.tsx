@@ -22,12 +22,12 @@ export const ChainIdOperatorBanner = ({
   return (
     <div
       className={classNames(
-        'relative flex justify-center w-full p-3 bg-gradient-to-r from-[#4A9079] backdrop-blur-sm dark:from-[#4A9079]/80 to-[#4A9079]/40 dark:to-[#4A9079]/30 animate-slide',
+        'relative flex justify-center w-full transition-all p-3 bg-gradient-to-br from-[#4A9079] backdrop-blur-sm dark:from-[#4A9079]/80 to-[#4A9079]/40 dark:to-[#4A9079]/30 animate-slide',
         className,
       )}
     >
       <div className="flex items-center gap-3 font-medium">
-        <span className="text-transparent bg-gradient-to-r from-black to-black/80 bg-clip-text dark:from-white dark:to-white/80">
+        <span className="text-transparent bg-gradient-to-r from-black/80 to-black bg-clip-text dark:from-white/80 dark:to-white">
           SushiSwap on Kadena <br className="block xs:hidden" /> Operates on
           Chain: {KADENA_CHAIN_ID}
         </span>
