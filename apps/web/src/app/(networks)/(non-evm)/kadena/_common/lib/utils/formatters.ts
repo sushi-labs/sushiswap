@@ -102,3 +102,17 @@ export const formatPactDecimal = (value: number): string => {
   // If it's an integer, append `.0`
   return `${value}.0`
 }
+
+export function formatDecimals(
+  amount: number | string,
+  decimals: number,
+): string {
+  const parsedAmount =
+    typeof amount === 'string' ? Number.parseFloat(amount) : amount
+
+  if (parsedAmount < 1e-6) {
+    return parsedAmount.toFixed(decimals).replace(/\.?0+$/, '') // Remove trailing zeros
+  }
+
+  return amount.toString()
+}

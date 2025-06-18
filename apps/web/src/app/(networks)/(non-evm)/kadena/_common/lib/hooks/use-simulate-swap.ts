@@ -28,20 +28,6 @@ export const useSimulateSwap = ({
 }: UseSimulateSwapParams) => {
   const { setAmountOut, setMinAmountOut, setGas } = useSwapDispatch()
 
-  console.log('queryKey', [
-    'kadena-simulate-swap',
-    token0Address,
-    token1Address,
-    amountIn ?? null,
-    amountOut,
-    signerAddress,
-  ])
-
-  console.log(
-    'enabled',
-    !!token0Address && !!token1Address && !!signerAddress && !!amountIn,
-  )
-
   const query = useQuery({
     queryKey: [
       'kadena-simulate-swap',
@@ -95,7 +81,7 @@ export const useSimulateSwap = ({
       if (res.result.status === 'failure') {
         throw new Error(res.result.error?.message || 'Simulation failed')
       }
-      console.log(res)
+
       const gas: number = res?.gas ?? 0
       setGas(gas)
 
