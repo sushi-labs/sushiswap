@@ -59,6 +59,9 @@ function swapReducer(_state: State, action: Action) {
           token0: action.value,
           amountIn: '',
           amountOut: '',
+          minAmountOut: '',
+          gas: 0,
+          priceImpactPercentage: 0,
         }
       }
       return {
@@ -66,6 +69,9 @@ function swapReducer(_state: State, action: Action) {
         token0: action.value,
         amountIn: '',
         amountOut: '',
+        minAmountOut: '',
+        gas: 0,
+        priceImpactPercentage: 0,
       }
     }
     case 'setToken1': {
@@ -77,6 +83,9 @@ function swapReducer(_state: State, action: Action) {
           token1: action.value,
           amountIn: '',
           amountOut: '',
+          minAmountOut: '',
+          gas: 0,
+          priceImpactPercentage: 0,
         }
       }
       return { ..._state, token1: action.value }
@@ -88,6 +97,9 @@ function swapReducer(_state: State, action: Action) {
         token1: _state.token0,
         amountIn: '',
         amountOut: '',
+        minAmountOut: '',
+        gas: 0,
+        priceImpactPercentage: 0,
       }
     }
     case 'setIsTxnPending': {
