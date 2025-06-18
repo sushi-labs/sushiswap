@@ -12,7 +12,7 @@ import { buildSwapTxn } from '../pact/swap'
 interface UseSimulateSwapParams {
   token0Address?: string
   token1Address?: string
-  amountIn?: number
+  amountIn?: number | null
   amountOut?: number
   slippage: number
   signerAddress?: string
@@ -23,28 +23,38 @@ export const useSimulateSwap = ({
   token1Address,
   amountIn,
   amountOut,
-  slippage = 0.005,
+  slippage,
   signerAddress,
 }: UseSimulateSwapParams) => {
   const { setAmountOut, setMinAmountOut, setGas } = useSwapDispatch()
 
-  const shouldSimulate =
-    !!token0Address && !!token1Address && !!signerAddress && amountIn !== null
-
-  const queryKey = [
-    'simulate-swap',
+  console.log('queryKey', [
+    'kadena-simulate-swap',
     token0Address,
     token1Address,
-    amountIn,
+    amountIn ?? null,
     amountOut,
     signerAddress,
-  ]
+  ])
+
+  console.log(
+    'enabled',
+    !!token0Address && !!token1Address && !!signerAddress && !!amountIn,
+  )
 
   const query = useQuery({
-    queryKey,
-    enabled: shouldSimulate && !!signerAddress,
+    queryKey: [
+      'kadena-simulate-swap',
+      token0Address,
+      token1Address,
+      amountIn ?? null,
+      amountOut,
+      signerAddress,
+    ],
+    enabled:
+      !!token0Address && !!token1Address && !!signerAddress && !!amountIn,
     refetchInterval: 60 * 1000,
-    retry: false,
+    staleTime: 0,
     queryFn: async () => {
       const getPoolAddressTx = buildGetPoolAddress(
         token0Address!,
@@ -70,7 +80,7 @@ export const useSimulateSwap = ({
       const tx = buildSwapTxn({
         token0Address: token0Address!,
         token1Address: token1Address!,
-        amountIn,
+        amountIn: amountIn ?? 0,
         amountOut,
         signerAddress: signerAddress!,
         poolAddress,

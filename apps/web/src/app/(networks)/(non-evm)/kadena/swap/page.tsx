@@ -10,6 +10,7 @@ import {
   SettingsOverlay,
   typographyVariants,
 } from '@sushiswap/ui'
+import { useMemo } from 'react'
 import { useSimulateSwap } from '~kadena/_common/lib/hooks/use-simulate-swap'
 import { AmountIn } from '~kadena/_common/ui/Swap/AmountIn'
 import { AmountOut } from '~kadena/_common/ui/Swap/AmountOut'
@@ -32,10 +33,16 @@ export default function SwapSimplePage() {
   const slippage =
     slippageTolerance === 'AUTO' ? 0.005 : Number(slippageTolerance) / 100
   const debouncedAmountIn = useDebounce(amountIn, 250)
-  useSimulateSwap({
+
+  const parsedAmountIn = useMemo(() => {
+    const parsed = Number.parseFloat(debouncedAmountIn)
+    return Number.isNaN(parsed) ? null : parsed
+  }, [debouncedAmountIn])
+
+  const { isLoading } = useSimulateSwap({
     token0Address: token0?.tokenAddress,
     token1Address: token1?.tokenAddress,
-    amountIn: Number(debouncedAmountIn),
+    amountIn: parsedAmountIn,
     signerAddress: activeAccount?.accountName,
     slippage,
   })
@@ -61,7 +68,7 @@ export default function SwapSimplePage() {
         <AmountIn />
         <SwitchSwapDirection />
         <div className="flex flex-col">
-          <AmountOut />
+          <AmountOut isLoading={isLoading} />
           <ReviewSwapDialog />
         </div>
         <SwapStats />
