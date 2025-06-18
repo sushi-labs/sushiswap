@@ -14,6 +14,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@sushiswap/ui'
+import Link from 'next/link'
 import type React from 'react'
 import { useState } from 'react'
 import { EXPLORE_NAVIGATION_LINKS } from 'src/app/_common/header-elements'
@@ -63,17 +64,29 @@ export const HeaderElements = () => {
       ),
     },
     {
-      title: 'Explore',
-      href: `/kadena/explore/pools`,
+      href: '/kadena/explore/pools',
       show: 'desktop',
-      type: NavigationElementType.Single,
+      type: NavigationElementType.Custom,
+      item: (
+        <Link
+          href="/kadena/explore/pools"
+          className="px-4 py-2 text-sm font-medium"
+        >
+          Explore
+        </Link>
+      ),
     },
     {
-      title: 'Pool',
-      href: `/kadena/pool`,
+      href: '/kadena/pool',
       show: 'desktop',
-      type: NavigationElementType.Single,
+      type: NavigationElementType.Custom,
+      item: (
+        <Link href="/kadena/pool" className="px-4 py-2 text-sm font-medium">
+          Pool
+        </Link>
+      ),
     },
+
     {
       show: 'desktop',
       type: NavigationElementType.Custom,
