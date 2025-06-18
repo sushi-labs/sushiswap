@@ -31,21 +31,22 @@ export const AmountIn = () => {
     ) {
       return 0
     }
-    const k = new Decimal(data?.poolData?.reserve0).mul(
-      data?.poolData?.reserve1,
-    )
-    const newReserveX = new Decimal(data?.poolData?.reserve0).plus(
-      debouncedAmountIn,
-    )
-    const newReserveY = k.div(newReserveX)
-    const receivedTokenY = new Decimal(data?.poolData?.reserve1).minus(
-      newReserveY,
-    )
-    const priceImpact = receivedTokenY.div(newReserveY).mul(100)
-    if (Number(priceImpact) > 100) {
-      return 100
+
+    const parsedAmountIn = Number.parseFloat(debouncedAmountIn)
+    if (Number.isNaN(parsedAmountIn)) {
+      return 0
     }
-    return priceImpact.toNumber()
+
+    const reserve0 = new Decimal(data.poolData.reserve0)
+    const reserve1 = new Decimal(data.poolData.reserve1)
+    const k = reserve0.mul(reserve1)
+
+    const newReserveX = reserve0.plus(parsedAmountIn)
+    const newReserveY = k.div(newReserveX)
+    const receivedTokenY = reserve1.minus(newReserveY)
+
+    const priceImpact = receivedTokenY.div(newReserveY).mul(100)
+    return priceImpact.greaterThan(100) ? 100 : priceImpact.toNumber()
   }, [data?.poolData?.reserve0, data?.poolData?.reserve1, debouncedAmountIn])
 
   //priceImpactPercentage
