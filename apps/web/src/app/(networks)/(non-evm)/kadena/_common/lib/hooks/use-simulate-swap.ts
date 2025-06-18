@@ -5,13 +5,15 @@ import {
   KADENA_CHAIN_ID,
   KADENA_NETWORK_ID,
 } from '~kadena/_common/constants/network'
+import type { KadenaToken } from '~kadena/_common/types/token-type'
 import { useSwapDispatch } from '~kadena/swap/swap-provider'
 import { buildGetPoolAddress } from '../pact/pool'
 import { buildSwapTxn } from '../pact/swap'
+import { formatToMaxDecimals } from '../utils/formatters'
 
 interface UseSimulateSwapParams {
-  token0Address?: string
-  token1Address?: string
+  token0?: KadenaToken
+  token1?: KadenaToken
   amountIn?: number | null
   amountOut?: number
   slippage: number
@@ -19,8 +21,8 @@ interface UseSimulateSwapParams {
 }
 
 export const useSimulateSwap = ({
-  token0Address,
-  token1Address,
+  token0,
+  token1,
   amountIn,
   amountOut,
   slippage,
@@ -31,14 +33,13 @@ export const useSimulateSwap = ({
   const query = useQuery({
     queryKey: [
       'kadena-simulate-swap',
-      token0Address,
-      token1Address,
+      token0?.tokenAddress,
+      token1?.tokenAddress,
       amountIn ?? null,
       amountOut,
       signerAddress,
     ],
-    enabled:
-      !!token0Address && !!token1Address && !!signerAddress && !!amountIn,
+    enabled: !!token0 && !!token1 && !!signerAddress && !!amountIn,
     refetchInterval: 60 * 1000,
     staleTime: 0,
     retry: false,
@@ -46,13 +47,13 @@ export const useSimulateSwap = ({
       if (!amountIn) {
         return
       }
-      if (!token0Address || !token1Address || !signerAddress) {
+      if (!token0?.tokenAddress || !token1?.tokenAddress || !signerAddress) {
         return
       }
 
       const getPoolAddressTx = buildGetPoolAddress(
-        token0Address,
-        token1Address,
+        token0?.tokenAddress,
+        token1?.tokenAddress,
         KADENA_CHAIN_ID,
         KADENA_NETWORK_ID,
       )
@@ -72,8 +73,8 @@ export const useSimulateSwap = ({
       const poolAddress = getPoolAddressRes.result.data.account
 
       const tx = buildSwapTxn({
-        token0Address: token0Address,
-        token1Address: token1Address,
+        token0Address: token0?.tokenAddress,
+        token1Address: token1?.tokenAddress,
         amountIn: amountIn ?? 0,
         amountOut,
         signerAddress: signerAddress,
@@ -101,7 +102,7 @@ export const useSimulateSwap = ({
       setMinAmountOut(minAmountOut)
       const formatted = _amountOut?.toString() ?? null
 
-      setAmountOut(formatted)
+      setAmountOut(formatToMaxDecimals(formatted, token1?.tokenDecimals))
 
       return {
         data: res,

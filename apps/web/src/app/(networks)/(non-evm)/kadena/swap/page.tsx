@@ -41,8 +41,8 @@ export default function SwapSimplePage() {
   }, [debouncedAmountIn])
 
   const { isLoading } = useSimulateSwap({
-    token0Address: token0?.tokenAddress,
-    token1Address: token1?.tokenAddress,
+    token0: token0,
+    token1: token1,
     amountIn: parsedAmountIn,
     signerAddress: activeAccount?.accountName,
     slippage,

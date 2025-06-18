@@ -1,3 +1,4 @@
+import { Decimal } from 'sushi'
 import TronWeb from 'tronweb'
 
 export const truncateText = (str: string | `0x${string}`, n = 5): string => {
@@ -103,16 +104,17 @@ export const formatPactDecimal = (value: number): string => {
   return `${value}.0`
 }
 
-export function formatDecimals(
-  amount: number | string,
-  decimals: number,
+export function formatToMaxDecimals(
+  amount: string | number,
+  maxDecimals: number,
 ): string {
-  const parsedAmount =
-    typeof amount === 'string' ? Number.parseFloat(amount) : amount
+  try {
+    const value = new Decimal(amount)
 
-  if (parsedAmount < 1e-6) {
-    return parsedAmount.toFixed(decimals).replace(/\.?0+$/, '') // Remove trailing zeros
+    const truncated = value.toDecimalPlaces(maxDecimals, Decimal.ROUND_DOWN)
+
+    return truncated.toFixed().replace(/\.?0+$/, '')
+  } catch {
+    return '0'
   }
-
-  return amount.toString()
 }
