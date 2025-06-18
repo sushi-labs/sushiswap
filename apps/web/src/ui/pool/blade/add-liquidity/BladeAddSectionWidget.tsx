@@ -1,8 +1,6 @@
 import { Cog6ToothIcon } from '@heroicons/react/24/outline'
-import { MinusCircleIcon } from '@heroicons/react/24/outline'
 import { PlusIcon } from '@heroicons/react/24/solid'
 import {
-  Button,
   IconButton,
   WidgetAction,
   WidgetDescription,
@@ -10,10 +8,11 @@ import {
   WidgetTitle,
 } from '@sushiswap/ui'
 import { Widget, WidgetHeader } from '@sushiswap/ui'
-import React, { type FC, type ReactNode } from 'react'
+import React, { type FC, type ReactNode, useMemo } from 'react'
+import { NativeAddress } from 'src/lib/constants'
 import { Web3Input } from 'src/lib/wagmi/components/web3-input'
 import type { EvmChainId } from 'sushi/chain'
-import type { Token, Type } from 'sushi/currency'
+import type { Type } from 'sushi/currency'
 
 interface TokenInput {
   token: Type | undefined
@@ -67,21 +66,53 @@ export const BladeAddSectionWidget: FC<BladeAddSectionWidgetProps> = ({
   onRemoveToken,
   children,
 }) => {
+  const hasNativeToken = inputs.some((input) => input.token?.isNative)
+
+  const selectedTokens = useMemo(
+    () => inputs.map((input) => input.token?.wrapped.address).filter(Boolean),
+    [inputs],
+  )
+
+  const hasUnselectedTokens = useMemo(
+    () =>
+      availableTokens.some(
+        (token) => !selectedTokens.includes(token.wrapped.address),
+      ),
+    [availableTokens, selectedTokens],
+  )
+
+  const shouldShowAddButton = useMemo(
+    () =>
+      inputs.length < availableTokens.length &&
+      hasUnselectedTokens &&
+      !hasNativeToken,
+    [
+      inputs.length,
+      availableTokens.length,
+      hasUnselectedTokens,
+      hasNativeToken,
+    ],
+  )
+
   const getTokenOptionsForInput = (inputIndex: number) => {
-    const selectedTokens = inputs
-      .map((input, index) =>
-        index !== inputIndex ? input.token?.wrapped.address : null,
-      )
-      .filter(Boolean)
+    const selectedTokenAddresses = inputs
+      .filter((input, index) => index !== inputIndex && input.token)
+      .map((input) => input.token!.wrapped.address)
 
     return availableTokens
-      .filter((token) => !selectedTokens.includes(token.wrapped.address))
+      .filter(
+        (token) => !selectedTokenAddresses.includes(token.wrapped.address),
+      )
       .reduce(
         (acc, token) => {
           acc[token.wrapped.address] = token.wrapped
+          // Only include native tokens if there's only one input (single asset mode)
+          if (token.isNative && inputs.length === 1) {
+            acc[NativeAddress] = token
+          }
           return acc
         },
-        {} as Record<string, Token>,
+        {} as Record<string, Type>,
       )
   }
 
@@ -105,6 +136,7 @@ export const BladeAddSectionWidget: FC<BladeAddSectionWidgetProps> = ({
         {inputs.map((input, index) => (
           <div key={index} className="relative">
             <Web3Input.Currency
+              allowNative
               type="INPUT"
               className="border border-accent px-3 py-1.5 !rounded-xl"
               loading={false}
@@ -115,20 +147,22 @@ export const BladeAddSectionWidget: FC<BladeAddSectionWidgetProps> = ({
               currencies={getTokenOptionsForInput(index)}
               chainId={chainId}
             />
-            {index === inputs.length - 1 && inputs.length > 1 && (
-              <div className="absolute left-1/2 transform -translate-x-1/2 -translate-y-1/2 bottom-[-30px] z-10">
-                <button
-                  onClick={() => onRemoveToken(index)}
-                  className="bg-neutral-100 dark:bg-neutral-800 relative rounded-full flex flex-row items-center justify-center pl-2 pr-3 py-2 gap-[7.8px] text-black dark:text-white hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors"
-                  type="button"
-                >
-                  <RemoveIcon />
-                  <span className="font-['Inter'] font-medium text-[14px] leading-[14px] whitespace-nowrap">
-                    Remove
-                  </span>
-                </button>
-              </div>
-            )}
+            {index === inputs.length - 1 &&
+              inputs.length > 1 &&
+              !hasNativeToken && (
+                <div className="absolute left-1/2 transform -translate-x-1/2 -translate-y-1/2 bottom-[-30px] z-10">
+                  <button
+                    onClick={() => onRemoveToken(index)}
+                    className="bg-neutral-100 dark:bg-neutral-800 relative rounded-full flex flex-row items-center justify-center pl-2 pr-3 py-2 gap-[7.8px] text-black dark:text-white hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors"
+                    type="button"
+                  >
+                    <RemoveIcon />
+                    <span className="font-['Inter'] font-medium text-[14px] leading-[14px] whitespace-nowrap">
+                      Remove
+                    </span>
+                  </button>
+                </div>
+              )}
             {index !== inputs.length - 1 && (
               <div className="absolute left-1/2 transform -translate-x-1/2 -bottom-6 z-10">
                 <div className="p-1 bg-white dark:bg-slate-900 border border-accent rounded-full">
@@ -140,33 +174,27 @@ export const BladeAddSectionWidget: FC<BladeAddSectionWidgetProps> = ({
                 </div>
               </div>
             )}
+            {hasNativeToken && (
+              <p className="text-sm text-center text-muted-foreground pt-2 pb-4">
+                {input.token?.symbol ?? 'Native token'} can only be deposited as
+                a single asset
+              </p>
+            )}
           </div>
         ))}
 
-        <div className="flex justify-center mt-6">
-          {(() => {
-            const selectedTokens = inputs
-              .map((input) => input.token?.wrapped.address)
-              .filter(Boolean)
-            const hasUnselectedTokens = availableTokens.some(
-              (token) => !selectedTokens.includes(token.wrapped.address),
-            )
-
-            return (
-              inputs.length < availableTokens.length &&
-              hasUnselectedTokens && (
-                <button
-                  onClick={onAddToken}
-                  className="flex items-center gap-2 text-blue-500 hover:text-blue-600 font-medium transition-colors"
-                  type="button"
-                >
-                  <PlusIcon width={16} height={16} />
-                  Add Another Asset
-                </button>
-              )
-            )
-          })()}
-        </div>
+        {shouldShowAddButton && (
+          <div className="flex justify-center mt-6">
+            <button
+              onClick={onAddToken}
+              className="flex items-center gap-2 text-blue-500 hover:text-blue-600 font-medium transition-colors"
+              type="button"
+            >
+              <PlusIcon width={16} height={16} />
+              Add Another Asset
+            </button>
+          </div>
+        )}
       </div>
       <WidgetFooter>{children}</WidgetFooter>
     </Widget>
