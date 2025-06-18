@@ -4,7 +4,6 @@ import { notFound } from 'next/navigation'
 import { GRAPHQL_ENDPOINT } from '~kadena/_common/lib/graphql/endpoint'
 import { getPoolById } from '~kadena/_common/lib/graphql/queries/get-pool-by-id'
 import { PoolHeader } from '~kadena/_common/ui/Pools/PoolDetails/PoolHeader'
-import { ChainIdOperatorBanner } from '~kadena/_common/ui/Shared/chain-id-operator-banner'
 import { Header } from '~kadena/header'
 import Providers from './add/providers'
 
@@ -32,7 +31,6 @@ export default async function PoolLayout(props: {
   return (
     <Providers>
       <Header className="mb-[56px]" />
-      <ChainIdOperatorBanner />
       <Container maxWidth="5xl" className="px-4 py-4">
         <PoolHeader poolId={poolId} />
       </Container>

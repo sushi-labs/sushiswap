@@ -1,6 +1,5 @@
 import { Container } from '@sushiswap/ui'
 import { PoolsFiltersProvider } from 'src/ui/pool'
-import { ChainIdOperatorBanner } from '~kadena/_common/ui/Shared/chain-id-operator-banner'
 import { Header } from '../header'
 import { Hero } from './hero'
 import { NavigationItems } from './navigation-items'
@@ -11,7 +10,6 @@ export default function PositionsLayout({
   return (
     <>
       <Header className="mb-[56px]" />
-      <ChainIdOperatorBanner />
       <main className="flex flex-col h-full flex-1">
         <Container maxWidth="7xl" className="px-4 py-16">
           <Hero />

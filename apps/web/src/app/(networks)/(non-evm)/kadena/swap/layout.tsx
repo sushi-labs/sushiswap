@@ -14,8 +14,6 @@ export default function SwapLayout({
   return (
     <Providers>
       <Header />
-
-      <ChainIdOperatorBanner className="mt-[56px]" />
       <main className="lg:p-4 mt-16 mb-[86px]">{children}</main>
     </Providers>
   )

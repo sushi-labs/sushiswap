@@ -22,7 +22,7 @@ export const ChainIdOperatorBanner = ({
   return (
     <div
       className={classNames(
-        'relative flex justify-center w-full p-3 bg-gradient-to-r from-[#4A9079] dark:from-[#4A9079]/80 to-[#4A9079]/40 dark:to-[#4A9079]/30 animate-slide',
+        'relative flex justify-center w-full p-3 bg-gradient-to-r from-[#4A9079] backdrop-blur-sm dark:from-[#4A9079]/80 to-[#4A9079]/40 dark:to-[#4A9079]/30 animate-slide',
         className,
       )}
     >

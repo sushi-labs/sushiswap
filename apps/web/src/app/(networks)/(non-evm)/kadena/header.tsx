@@ -7,6 +7,7 @@ import React, { type FC, Suspense } from 'react'
 import { NonStandardChainId, SUPPORTED_NETWORKS } from 'src/config'
 import { HeaderNetworkSelector } from 'src/lib/wagmi/components/header-network-selector'
 import { HeaderElements } from './_common/header-elements'
+import { ChainIdOperatorBanner } from './_common/ui/Shared/chain-id-operator-banner'
 import { WalletConnector } from './_common/ui/WalletConnector/WalletConnector'
 
 export const Header: FC<{ className?: string }> = ({ className }) => {
@@ -43,6 +44,7 @@ export const Header: FC<{ className?: string }> = ({ className }) => {
           }
         />
       </div>
+      <ChainIdOperatorBanner className="top-[56px] fixed z-[19]" />
     </div>
   )
 }

@@ -1,7 +1,6 @@
 import { Container } from '@sushiswap/ui'
 import { PoolsFiltersProvider } from 'src/ui/pool'
 import { GlobalStatsCharts } from '~kadena/_common/ui/Pools/Explore/GlobalStatsChart'
-import { ChainIdOperatorBanner } from '~kadena/_common/ui/Shared/chain-id-operator-banner'
 import { Header } from '../header'
 
 export const metadata = {
@@ -14,7 +13,6 @@ export default function PoolLayout({
   return (
     <>
       <Header className="mb-[56px]" />
-      <ChainIdOperatorBanner />
       <main className="flex flex-col flex-1 h-full">
         <Container maxWidth="7xl" className="px-4 py-4">
           <GlobalStatsCharts />
