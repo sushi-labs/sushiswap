@@ -1,4 +1,8 @@
 import { Container } from '@sushiswap/ui'
+import { unstable_cache } from 'next/cache'
+import { notFound } from 'next/navigation'
+import { GRAPHQL_ENDPOINT } from '~kadena/_common/lib/graphql/endpoint'
+import { getPoolById } from '~kadena/_common/lib/graphql/queries/get-pool-by-id'
 import { PoolHeader } from '~kadena/_common/ui/Pools/PoolDetails/PoolHeader'
 import { ChainIdOperatorBanner } from '~kadena/_common/ui/Shared/chain-id-operator-banner'
 import { Header } from '~kadena/header'
@@ -14,6 +18,17 @@ export default async function PoolLayout(props: {
 
   const poolId = params.id
 
+  const pool = await unstable_cache(
+    async () => _getPool({ poolId }),
+    ['kadena', 'pool', `kadena:${poolId}`],
+    {
+      revalidate: 60 * 15,
+    },
+  )()
+  if (!pool) {
+    return notFound()
+  }
+
   return (
     <Providers>
       <Header className="mb-[56px]" />
@@ -28,4 +43,41 @@ export default async function PoolLayout(props: {
       </section>
     </Providers>
   )
+}
+
+const _getPool = async ({ poolId }: { poolId: string }) => {
+  if (!poolId) {
+    return false
+  }
+  try {
+    const query = getPoolById({
+      poolId,
+      timeFrame: 'DAY',
+      first: 1,
+    })
+
+    const res = await fetch(GRAPHQL_ENDPOINT, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-API-KEY': process.env.KADINDEXER_API_KEY ?? '',
+      },
+      body: query,
+      next: { revalidate: 60 },
+    })
+
+    if (!res.ok) {
+      throw new Error('Failed to fetch pool details')
+    }
+
+    const result = await res.json()
+
+    const pool = result?.data?.pool
+    if (pool) {
+      return true
+    }
+    return false
+  } catch (_error) {
+    return false
+  }
 }
