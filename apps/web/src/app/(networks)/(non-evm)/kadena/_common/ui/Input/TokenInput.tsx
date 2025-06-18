@@ -142,6 +142,7 @@ export const TokenInput = ({
             <SkeletonBox className="w-1/3 h-[32px] rounded-lg" />
           ) : (
             <TextField
+              maxDecimals={currency?.tokenDecimals}
               testdata-id={`${id}-input`}
               type="number"
               variant="naked"
