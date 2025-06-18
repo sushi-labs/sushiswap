@@ -157,6 +157,7 @@ export const BladeAddSection: FC<{ pool: BladePool }> = ({ pool }) => {
                             pool={pool}
                             chainId={chainId}
                             validInputs={validInputs}
+                            depositPermission={depositPermission}
                             onSuccess={() => {
                               setInputs([{ token: undefined, amount: '' }])
                             }}

@@ -17,6 +17,8 @@ import { Currency } from '@sushiswap/ui'
 import { type FC, type ReactNode, useCallback, useEffect, useMemo } from 'react'
 import { APPROVE_TAG_ADD_LEGACY } from 'src/lib/constants'
 import {
+  type RfqAllowDepositResponse,
+  type useBladeAllowDeposit,
   useBladeDepositRequest,
   useBladeDepositTransaction,
 } from 'src/lib/pool/blade/useBladeDeposit'
@@ -40,13 +42,21 @@ interface BladeAddLiquidityReviewModalProps {
   pool: BladePool
   chainId: BladeChainId
   validInputs: Array<{ token: Type; amount: string }>
+  depositPermission: RfqAllowDepositResponse
   children: ReactNode
   onSuccess: () => void
 }
 
 export const BladeAddLiquidityReviewModal: FC<
   BladeAddLiquidityReviewModalProps
-> = ({ pool, chainId, validInputs, children, onSuccess: _onSuccess }) => {
+> = ({
+  pool,
+  chainId,
+  validInputs,
+  depositPermission,
+  children,
+  onSuccess: _onSuccess,
+}) => {
   const { address } = useAccount()
   const { approved } = useApproved(APPROVE_TAG_ADD_LEGACY)
   const client = usePublicClient()
@@ -83,7 +93,9 @@ export const BladeAddLiquidityReviewModal: FC<
     isPending: rfqLoading,
     error: rfqError,
   } = useBladeDepositRequest()
-  const transactionMutation = useBladeDepositTransaction()
+  const transactionMutation = useBladeDepositTransaction({
+    pool,
+  })
 
   useEffect(() => {
     if (transactionMutation.data && validInputs.length > 0) {
@@ -134,11 +146,20 @@ export const BladeAddLiquidityReviewModal: FC<
   const handleRfqCall = useCallback(async () => {
     if (!address || validInputs.length === 0) return
 
+    const minLockDays =
+      depositPermission && 'min_days_to_lock' in depositPermission
+        ? depositPermission.min_days_to_lock
+        : 0
+    const minLockTime =
+      depositPermission && 'min_lock_time' in depositPermission
+        ? depositPermission.min_lock_time
+        : 0
+
     mutate({
       pool_address: pool.address,
       sender: address,
-      days_to_lock: 1,
-      lock_time: 0,
+      days_to_lock: minLockDays,
+      lock_time: minLockTime,
       deposit: validInputs.reduce(
         (acc, input) => {
           const parsedAmount = tryParseAmount(input.amount, input.token)
@@ -150,7 +171,7 @@ export const BladeAddLiquidityReviewModal: FC<
       ),
       chain_id: chainId,
     })
-  }, [address, validInputs, pool.address, chainId, mutate])
+  }, [address, validInputs, pool.address, chainId, mutate, depositPermission])
 
   const handleConfirmTransaction = useCallback(
     async (confirm: () => void) => {

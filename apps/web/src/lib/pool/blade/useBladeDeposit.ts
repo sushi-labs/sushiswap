@@ -25,12 +25,17 @@ interface RfqAllowDepositPayload {
   pool_address: string
 }
 
-interface RfqAllowDepositResponse {
+export type RfqAllowDepositResponse = {
   allow: boolean
   usd_limit: number
-  min_lock_time?: number
-  min_days_to_lock?: number
-}
+} & (
+  | {
+      min_lock_time: number
+    }
+  | {
+      min_days_to_lock: number
+    }
+)
 
 interface RfqDepositPayload {
   sender: string
