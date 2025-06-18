@@ -3,6 +3,9 @@ import { useBreakpoint } from '@sushiswap/hooks'
 import {
   Collapsible,
   Currency,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
   Tooltip,
   TooltipContent,
   TooltipProvider,
@@ -41,25 +44,24 @@ export const Recent = () => {
           Amount Traded
         </div>
         <div className="w-full col-span-1 pr-2 font-medium text-right">
-          <TooltipProvider>
-            <Tooltip delayDuration={0}>
-              <TooltipTrigger asChild>
-                <span className="underline cursor-default decoration-dotted">
-                  PnL
-                </span>
-              </TooltipTrigger>
-              <TooltipContent
-                side="left"
-                sideOffset={8}
-                className="border-black/5 dark:border-white/10 !rounded-md bg-white/20 dark:bg-black/20"
-              >
-                <div className="max-w-[250px] px-1 py-2 text-black dark:text-pink-100 text-sm">
-                  Profit or loss calculated as the difference in USD value of
-                  the asset on the day it was bought and the day it was sold.
-                </div>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
+          <Popover>
+            <PopoverTrigger asChild>
+              <span className="underline cursor-pointer decoration-dotted">
+                PnL
+              </span>
+            </PopoverTrigger>
+
+            <PopoverContent
+              side="left"
+              sideOffset={8}
+              className="border-black/5 dark:border-white/10 !rounded-md bg-white/20 dark:bg-black/20"
+            >
+              <div className="max-w-[250px] px-1 py-2 text-black dark:text-pink-100 text-sm">
+                Profit or loss calculated as the difference in USD value of the
+                asset on the day it was bought and the day it was sold.
+              </div>
+            </PopoverContent>
+          </Popover>
         </div>
       </div>
       <div className="grid w-full grid-cols-5 col-span-5 gap-2">

@@ -11,6 +11,7 @@ import { DollarCircledIcon } from '@sushiswap/ui/icons/DollarCircled'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import type { ColumnDef } from '@tanstack/react-table'
 import { format } from 'date-fns'
+import { TooltipDrawer } from 'src/ui/common/tooltip-drawer'
 import { formatUSD } from 'sushi/format'
 import { formatPercent } from 'sushi/format'
 import { formatNumber } from 'sushi/format'
@@ -82,24 +83,20 @@ export const CHAIN_COLUMN: ColumnDef<LimitOrderHistory> = {
 export const VALUE_PNL_COLUMN: ColumnDef<LimitOrderHistory> = {
   id: 'valueUsd',
   header: () => (
-    <TooltipProvider>
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <span className="border-b border-dotted border-muted-foreground">
-            Value / PnL
-          </span>
-        </TooltipTrigger>
-        <TooltipContent
-          side="top"
-          className="dark:bg-black/10 bg-white/10 py-4 px-5 !text-slate-900 dark:!text-pink-100 text-xs max-w-[250px]"
-        >
-          <p>
-            Profit or loss calculated as the difference in USD value of the
-            asset on the day it was bought and the day it was sold.
-          </p>
-        </TooltipContent>
-      </Tooltip>
-    </TooltipProvider>
+    <TooltipDrawer
+      trigger={
+        <span className="border-b border-dotted border-muted-foreground">
+          Value / PnL
+        </span>
+      }
+      content={
+        <p>
+          Profit or loss calculated as the difference in USD value of the asset
+          on the day it was bought and the day it was sold.
+        </p>
+      }
+      dialogTitle="Value / PnL"
+    />
   ),
   enableSorting: false,
 
