@@ -12,9 +12,10 @@ type Action =
   | { type: 'setIsTxnPending'; value: boolean }
   | { type: 'setAmountIn'; value: string }
   | { type: 'setAmountOut'; value: string }
+  | { type: 'setMinAmountOut'; value: string }
   | { type: 'setRoute'; value: string[] }
   | { type: 'setPriceImpactPercentage'; value: number }
-  | { type: 'setIsSwapIn'; value: boolean }
+  | { type: 'setGas'; value: number }
 
 type Dispatch = {
   swapTokens(): void
@@ -23,9 +24,10 @@ type Dispatch = {
   setIsTxnPending(isPending: boolean): void
   setAmountIn(amount: string): void
   setAmountOut(amount: string): void
+  setMinAmountOut(amount: string): void
   setPriceImpactPercentage(priceImpactPercentage: number): void
   setRoute(route: string[]): void
-  setIsSwapIn(isSwapIn: boolean): void
+  setGas(gas: number): void
 }
 
 type State = {
@@ -34,9 +36,10 @@ type State = {
   isTxnPending: boolean
   amountIn: string
   amountOut: string
+  minAmountOut: string
   priceImpactPercentage: number
   route: string[]
-  isSwapIn: boolean
+  gas: number
 }
 
 type SwapProviderProps = { children: React.ReactNode }
@@ -102,8 +105,11 @@ function swapReducer(_state: State, action: Action) {
     case 'setRoute': {
       return { ..._state, route: action.value }
     }
-    case 'setIsSwapIn': {
-      return { ..._state, isSwapIn: action.value }
+    case 'setMinAmountOut': {
+      return { ..._state, minAmountOut: action.value }
+    }
+    case 'setGas': {
+      return { ..._state, gas: action.value }
     }
     // default: {
     // 	throw new Error(`Unhandled action type: ${action.type}`);
@@ -120,7 +126,8 @@ const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
     amountOut: '',
     priceImpactPercentage: 0,
     route: [],
-    isSwapIn: true,
+    minAmountOut: '',
+    gas: 0,
   })
 
   const dispatchWithAction = useMemo(
@@ -136,7 +143,9 @@ const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
       setPriceImpactPercentage: (value: number) =>
         dispatch({ type: 'setPriceImpactPercentage', value }),
       setRoute: (value: string[]) => dispatch({ type: 'setRoute', value }),
-      setIsSwapIn: (value: boolean) => dispatch({ type: 'setIsSwapIn', value }),
+      setMinAmountOut: (value: string) =>
+        dispatch({ type: 'setMinAmountOut', value }),
+      setGas: (value: number) => dispatch({ type: 'setGas', value }),
     }),
     [],
   )

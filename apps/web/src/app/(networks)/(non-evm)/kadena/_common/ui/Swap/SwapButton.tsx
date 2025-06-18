@@ -23,7 +23,7 @@ export const SwapButton = ({ closeModal }: { closeModal: () => void }) => {
   const { activeAccount, currentWallet } = useKadena()
   const { client } = useKadenaWallet()
   const queryClient = useQueryClient()
-  const { token0, token1, amountIn, amountOut, isSwapIn, isTxnPending } =
+  const { token0, token1, amountIn, amountOut, isTxnPending, minAmountOut } =
     useSwapState()
   const {
     setIsTxnPending,
@@ -31,11 +31,7 @@ export const SwapButton = ({ closeModal }: { closeModal: () => void }) => {
     setAmountOut,
     setPriceImpactPercentage,
   } = useSwapDispatch()
-  const [slippageTolerance] = useSlippageTolerance(
-    SlippageToleranceStorageKey.Swap,
-  )
-  const _slippage =
-    slippageTolerance === 'AUTO' ? 0.005 : Number(slippageTolerance) / 100
+
   const address = activeAccount?.accountName ?? ''
 
   const swapToken = async () => {
@@ -72,15 +68,16 @@ export const SwapButton = ({ closeModal }: { closeModal: () => void }) => {
       }
 
       const poolAddress = getPoolAddressRes.result.data.account
+      // console.log("poolAddress", poolAddress);
 
       const tx = buildSwapTxn({
         token0Address: token0.tokenAddress,
         token1Address: token1.tokenAddress,
         amountIn: Number(amountIn),
-        amountOut: Number(amountOut),
-        isSwapIn,
+        amountOut: Number(minAmountOut),
         signerAddress: address,
         poolAddress,
+        isSimulate: false,
       })
 
       const signed = await client.signTransaction(currentWallet, tx)
@@ -93,9 +90,9 @@ export const SwapButton = ({ closeModal }: { closeModal: () => void }) => {
       const txId = submitRes.requestKey
 
       createInfoToast({
-        summary: isSwapIn ? 'Swap initiated...' : 'Swap initiated...',
+        summary: 'Swap initiated...',
         type: 'swap',
-        account: address!,
+        account: address,
         chainId: 1,
         groupTimestamp: Date.now(),
         timestamp: Date.now(),
@@ -120,7 +117,7 @@ export const SwapButton = ({ closeModal }: { closeModal: () => void }) => {
         href: getChainwebTxnLink(txId),
       })
 
-      await onSuccess?.()
+      await onSuccess()
     } catch (err) {
       createFailedToast({
         summary:
@@ -139,21 +136,21 @@ export const SwapButton = ({ closeModal }: { closeModal: () => void }) => {
     }
   }
 
-  const onSuccess = () => {
+  const onSuccess = async () => {
     setAmountIn('')
     setAmountOut('')
     setPriceImpactPercentage(0)
     setIsTxnPending(false)
     closeModal()
 
-    queryClient.invalidateQueries({
+    await queryClient.invalidateQueries({
       queryKey: [
         'useTokenBalance',
         { accountAddress: address, tokenAddress: token0?.tokenAddress },
       ],
     })
 
-    queryClient.invalidateQueries({
+    await queryClient.invalidateQueries({
       queryKey: [
         'useTokenBalance',
         { accountAddress: address, tokenAddress: token1?.tokenAddress },

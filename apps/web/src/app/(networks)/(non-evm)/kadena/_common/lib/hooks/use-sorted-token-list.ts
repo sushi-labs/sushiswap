@@ -60,8 +60,8 @@ export const useSortedTokenList = ({
           )
         })
         filteredSortedTokens.sort((a, b) => {
-          const aBalance = (a as unknown as TokenWithBalance).balance
-          const bBalance = (b as unknown as TokenWithBalance).balance
+          const aBalance = Number((a as unknown as TokenWithBalance).balance)
+          const bBalance = Number((b as unknown as TokenWithBalance).balance)
           if (aBalance === bBalance) {
             return 0
           }

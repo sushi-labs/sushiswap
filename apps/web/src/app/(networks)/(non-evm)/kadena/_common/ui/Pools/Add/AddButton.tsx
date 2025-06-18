@@ -136,6 +136,7 @@ export const AddButton = ({
       })
       const signedTxn = await client.signTransaction(currentWallet, tx)
       const preflightResult = await kadenaClient.preflight(signedTxn)
+      // console.log(preflightResult);
       if (preflightResult.result.status === 'failure') {
         throw new Error(
           preflightResult.result.error?.message || 'Preflight failed',

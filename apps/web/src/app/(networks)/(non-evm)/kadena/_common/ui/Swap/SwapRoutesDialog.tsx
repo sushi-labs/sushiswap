@@ -8,12 +8,12 @@ import {
   ScrollArea,
 } from '@sushiswap/ui'
 import type { FC, ReactNode } from 'react'
-import { KADENA } from '~kadena/_common/constants/token-list'
+import type { KadenaToken } from '~kadena/_common/types/token-type'
 import { useSwapState } from '~kadena/swap/swap-provider'
 import { Icon } from '../General/Icon'
 
 export const SwapRoutesDialog: FC<{ children: ReactNode }> = ({ children }) => {
-  const { route } = useSwapState()
+  const { route, token0, token1 } = useSwapState()
 
   return (
     <Dialog>
@@ -29,9 +29,14 @@ export const SwapRoutesDialog: FC<{ children: ReactNode }> = ({ children }) => {
         <ScrollArea className="border bg-secondary border-accent rounded-xl">
           <div className="flex flex-col max-h-[300px] divide-y divide-accent">
             <div className="flex items-center justify-between w-full gap-3 p-3 bg-secondary">
-              {route?.map((_, idx) => (
-                <SwapItem key={idx} />
-              ))}
+              {route?.length ? (
+                <>
+                  <SwapItem token={token0} />
+                  <SwapItem token={token1} />
+                </>
+              ) : (
+                'No route found'
+              )}
             </div>
           </div>
         </ScrollArea>
@@ -40,11 +45,11 @@ export const SwapRoutesDialog: FC<{ children: ReactNode }> = ({ children }) => {
   )
 }
 
-const SwapItem = () => {
+const SwapItem = ({ token }: { token?: KadenaToken }) => {
   return (
     <div className="flex items-center gap-2">
-      <Icon width={16} height={16} currency={KADENA} />
-      <span className="text-sm font-medium">{KADENA?.tokenSymbol}</span>
+      <Icon width={16} height={16} currency={token} />
+      <span className="text-sm font-medium">{token?.tokenSymbol}</span>
     </div>
   )
 }

@@ -1,14 +1,13 @@
 import { Transition } from '@headlessui/react'
-import {
-  SlippageToleranceStorageKey,
-  useSlippageTolerance,
-} from '@sushiswap/hooks'
 import { classNames } from '@sushiswap/ui'
 import { SkeletonBox } from '@sushiswap/ui'
 import Link from 'next/link'
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo } from 'react'
+import { Decimal } from 'sushi'
 import { formatPercent, formatUSD } from 'sushi/format'
-import { toBigNumber, truncateText } from '~kadena/_common/lib/utils/formatters'
+import { KADENA } from '~kadena/_common/constants/token-list'
+import { useTokenPrice } from '~kadena/_common/lib/hooks/use-token-price'
+import { truncateText } from '~kadena/_common/lib/utils/formatters'
 import { getChainwebAddressLink } from '~kadena/_common/lib/utils/kadena-helpers'
 import {
   warningSeverity,
@@ -19,63 +18,42 @@ import { useSwapState } from '~kadena/swap/swap-provider'
 import { SwapRoutesDialog } from './SwapRoutesDialog'
 
 export const SwapStats = () => {
-  const { token0, token1, amountOut, amountIn, priceImpactPercentage, route } =
-    useSwapState()
+  const {
+    token1,
+    amountOut,
+    minAmountOut,
+    gas,
+    amountIn,
+    priceImpactPercentage,
+    route,
+  } = useSwapState()
   const { activeAccount } = useKadena()
   const address = activeAccount?.accountName ?? ''
 
-  const [isPriceLoading, setisPriceLoading] = useState(true)
-  const KDAPrice = '0.123'
+  const { data, isLoading: isPriceLoading } = useTokenPrice({
+    token: KADENA,
+  })
+  const KDAPrice = data ?? 0
 
-  useEffect(() => {
-    setTimeout(() => {
-      setisPriceLoading(false)
-      setIsNetworkFeeLoading(false)
-    }, 1000)
-  }, [])
-
-  const [slippageTolerance] = useSlippageTolerance(
-    SlippageToleranceStorageKey.Swap,
-  )
-
-  const swapType = 'swap'
-
-  const slippage =
-    slippageTolerance === 'AUTO' ? 0.005 : Number(slippageTolerance) / 100
-
-  const minOutput = useMemo(() => {
-    if (!amountOut) return ''
-    if (
-      (token0?.tokenSymbol === 'WKDA' && token1?.tokenSymbol === 'KDA') ||
-      (token0?.tokenSymbol === 'KDA' && token1?.tokenSymbol === 'WKDA')
-    ) {
-      return amountIn
-    }
-
-    const output = Number(amountOut) * (1 - slippage)
-    return output
-  }, [amountOut, slippage, token0, token1, amountIn])
-
-  const [isNetworkFeeLoading, setIsNetworkFeeLoading] = useState(true)
-  const networkFeeInKDA = '0.24'
+  const networkFeeInKDA = gas
 
   const isLoading =
     priceImpactPercentage === undefined ||
-    (priceImpactPercentage === 0 && swapType === 'swap') ||
+    priceImpactPercentage === 0 ||
     amountOut === '' ||
     amountOut === '' ||
-    isPriceLoading ||
-    isNetworkFeeLoading
+    isPriceLoading
 
   const severityColor = useMemo(() => {
     return warningSeverityClassName(warningSeverity(priceImpactPercentage))
   }, [priceImpactPercentage])
 
   const networkFee = useMemo(() => {
-    const fee = toBigNumber(networkFeeInKDA ?? '0')
-    const feeInUsd = fee.multipliedBy(KDAPrice).toString()
-    return { feeInUsd, feeInToken: networkFeeInKDA }
-  }, [])
+    const fee = new Decimal(networkFeeInKDA)
+    const feeInUsd = fee.mul(KDAPrice).mul(0.0000001).toString()
+    const feeInToken = fee.mul(0.0000001).toString()
+    return { feeInUsd, feeInToken }
+  }, [KDAPrice, networkFeeInKDA])
 
   return (
     <Transition
@@ -128,7 +106,7 @@ export const SwapStats = () => {
             {isLoading ? (
               <SkeletonBox className="h-4 py-0.5 w-[120px] rounded-md" />
             ) : (
-              `${minOutput} ${token1?.tokenSymbol}`
+              `${minAmountOut} ${token1?.tokenSymbol}`
             )}
           </span>
         </div>

@@ -14,7 +14,7 @@ import {
 import { List } from '@sushiswap/ui'
 import { DialogContent, classNames } from '@sushiswap/ui'
 import Link from 'next/link'
-import { useEffect, useMemo } from 'react'
+import { useMemo } from 'react'
 import { formatPercent } from 'sushi/format'
 import { truncateText } from '~kadena/_common/lib/utils/formatters'
 import { getChainwebAddressLink } from '~kadena/_common/lib/utils/kadena-helpers'
@@ -24,56 +24,32 @@ import {
 } from '~kadena/_common/lib/utils/warning-severity'
 import { WalletConnector } from '~kadena/_common/ui/WalletConnector/WalletConnector'
 import { useKadena } from '~kadena/kadena-wallet-provider'
-import { useSwapDispatch, useSwapState } from '../../..//swap/swap-provider'
+import { useSwapState } from '../../..//swap/swap-provider'
 import { ReviewSwapDialogTrigger } from './ReviewSwapDialogTrigger'
 import { SwapButton } from './SwapButton'
 
-export const ReviewSwapDialog = ({
-  simulatedSwap,
-}: {
-  simulatedSwap: ICommandResult | null
-}) => {
-  const { token0, token1, amountIn, amountOut } = useSwapState()
+export const ReviewSwapDialog = () => {
+  const {
+    token0,
+    token1,
+    amountIn,
+    amountOut,
+    minAmountOut,
+    gas,
+    priceImpactPercentage,
+  } = useSwapState()
   const { isConnected, activeAccount } = useKadena()
   const address = activeAccount?.accountName ?? ''
-  const { setRoute, setPriceImpactPercentage } = useSwapDispatch()
 
   const [slippageTolerance] = useSlippageTolerance(
     SlippageToleranceStorageKey.Swap,
   )
 
-  const routeData = {
-    pairs: ['pair1', 'pair2'],
-    route: ['route1', 'route2'],
-  }
-
-  const [priceImpactPercentage0, priceImpactPercentage1] = [3, 6]
-
-  const _priceImpactPercentage =
-    (priceImpactPercentage0 ?? 0) + (priceImpactPercentage1 ?? 0)
-  const priceImpactPercentage =
-    _priceImpactPercentage > 100 ? 100 : _priceImpactPercentage
-
-  useEffect(() => {
-    setTimeout(() => {
-      setRoute(routeData.route)
-    }, 1000)
-  }, [setRoute])
-
-  useEffect(() => {
-    setPriceImpactPercentage(priceImpactPercentage ?? 0)
-  }, [priceImpactPercentage, setPriceImpactPercentage])
-
   const severityClass = useMemo(() => {
     return warningSeverityClassName(warningSeverity(priceImpactPercentage))
   }, [priceImpactPercentage])
 
-  const networkFeeInKDA = (simulatedSwap?.gas ?? 0) * 0.0000001
-
-  const minReceived =
-    simulatedSwap?.result && 'data' in simulatedSwap.result
-      ? (simulatedSwap.result.data?.[1]?.amount ?? 0)
-      : 0
+  const networkFeeInKDA = (gas ?? 0) * 0.0000001
 
   return (
     <DialogProvider>
@@ -119,7 +95,7 @@ export const ReviewSwapDialog = ({
                       }%)`}
                       subtitle="The minimum amount you are guaranteed to receive."
                     >
-                      {minReceived} {token1?.tokenSymbol}
+                      {minAmountOut} {token1?.tokenSymbol}
                     </List.KeyValue>
 
                     <List.KeyValue title="Network fee">

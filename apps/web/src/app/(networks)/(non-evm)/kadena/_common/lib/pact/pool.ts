@@ -56,7 +56,11 @@ export const buildAddLiquidityTxn = ({
   const _poolAddress = poolAddress
   const pubKey = signerAddress.split('k:')[1]
   if (!_poolAddress) {
+    //@DEV keep here for now until resolved
+    // const openCommand = `(${KADENA_CONTRACT}.set-pair-open-date "${token0Address}:${token1Address}" (at 'block-time (chain-data)))`;
+
     const pactCmd = `(${KADENA_CONTRACT}.create-pair ${token0Address} ${token1Address} "")`
+    // const fullCommand = `${openCommand} ${pactCmd}`;
     const tx = Pact.builder
       .execution(pactCmd)
       .setMeta({
@@ -65,7 +69,10 @@ export const buildAddLiquidityTxn = ({
         gasPrice: 0.0000001,
         senderAccount: signerAddress,
       })
-      .addSigner(pubKey, (signFor) => [signFor('coin.GAS')])
+      .addSigner(pubKey, (signFor) => [
+        signFor('coin.GAS'),
+        signFor(`${KADENA_CONTRACT}.GOVERNANCE`),
+      ])
       .setNetworkId(networkId)
       .createTransaction()
     return tx

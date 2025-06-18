@@ -7,51 +7,40 @@ import {
 import { formatPactDecimal } from '../utils/formatters'
 
 interface BuildSwapTxnParams {
-  isSwapIn: boolean
   token0Address: string
   token1Address: string
   amountIn?: number
   amountOut?: number
   signerAddress: string
   poolAddress: string
+  isSimulate: boolean
 }
 
 export const buildSwapTxn = ({
-  isSwapIn,
   token0Address,
   token1Address,
   amountIn = 0,
   amountOut = 0,
   signerAddress,
   poolAddress,
+  isSimulate,
 }: BuildSwapTxnParams): IPartialPactCommand => {
   const pubKey = signerAddress.replace(/^k:/, '')
 
-  const pactCmd = isSwapIn
-    ? `(${KADENA_CONTRACT}.swap-exact-in
-        ${formatPactDecimal(amountIn)}
-        0.0
-        [${token0Address} ${token1Address}]
-        "${signerAddress}"
-        "${signerAddress}"
-        (read-keyset "ks")
-      )`
-    : `(${KADENA_CONTRACT}.swap-exact-out
-        ${formatPactDecimal(amountOut)}
-        0.0
-        [${token0Address} ${token1Address}]
-        "${signerAddress}"
-        "${signerAddress}"
-        (read-keyset "ks")
-      )`
-
-  const inputTokenModule = token0Address.includes('.') ? token0Address : `coin`
+  const pactCmd = `(${KADENA_CONTRACT}.swap-exact-in
+      ${formatPactDecimal(amountIn)}
+      ${formatPactDecimal(isSimulate ? 0 : amountOut)}
+      [${token0Address} ${token1Address}]
+      "${signerAddress}"
+      "${signerAddress}"
+      (read-keyset "ks")
+    )`
 
   return Pact.builder
     .execution(pactCmd)
     .addSigner(pubKey, (signFor) => [
       signFor('coin.GAS'),
-      signFor(`${inputTokenModule}.TRANSFER`, `k:${pubKey}`, poolAddress, {
+      signFor(`${token0Address}.TRANSFER`, `k:${pubKey}`, poolAddress, {
         decimal: formatPactDecimal(amountIn),
       }),
     ])

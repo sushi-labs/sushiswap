@@ -13,9 +13,7 @@ export const ReviewSwapDialogTrigger = () => {
     token1,
     priceImpactPercentage,
     route,
-    amountOut,
   } = useSwapState()
-  const allowanceAmount = '1'
 
   const { activeAccount } = useKadena()
 
@@ -29,24 +27,13 @@ export const ReviewSwapDialogTrigger = () => {
 
   const token0Balance =
     token0 && balanceMap ? balanceMap[token0?.tokenAddress] : 0
-  // const token1Balance =
-  //   token1 && balanceMap ? balanceMap[token1?.tokenAddress] : 0
 
   const hasInsufficientToken0Balance = useMemo(() => {
     if (isLoadingTokenBalance) return true
     return token0Balance < Number(amountIn)
   }, [amountIn, isLoadingTokenBalance, token0Balance])
 
-  // const hasInsufficientToken1Balance = useMemo(() => {
-  //   if (isLoadingTokenBalance) return true
-  //   return token1Balance < Number(amountOut)
-  // }, [amountOut, isLoadingTokenBalance, token1Balance])
-
-  const swapType = 'swap'
-
-  const noRoutes = swapType === 'swap' && route?.length === 0
-
-  const allowanceFormatted = '0.123'
+  const noRoutes = route?.length === 0
 
   const insufficientLiquidity = priceImpactPercentage >= 100
 
@@ -54,7 +41,7 @@ export const ReviewSwapDialogTrigger = () => {
     if (isTxnPending) {
       return 'Swapping'
     }
-    if (!amountIn || amountIn === '0' || !amountOut || amountOut === '0') {
+    if (!amountIn || amountIn === '0') {
       return 'Enter Amount'
     }
     if (hasInsufficientToken0Balance) {
@@ -66,13 +53,6 @@ export const ReviewSwapDialogTrigger = () => {
     if (insufficientLiquidity) {
       return 'Insufficient Liquidity'
     }
-    if (
-      allowanceAmount &&
-      Number(amountIn) > Number(allowanceFormatted) &&
-      swapType === 'swap'
-    ) {
-      return 'Approve'
-    }
     return 'Swap'
   }, [
     amountIn,
@@ -80,7 +60,6 @@ export const ReviewSwapDialogTrigger = () => {
     noRoutes,
     insufficientLiquidity,
     isTxnPending,
-    amountOut,
   ])
 
   const userConfirmationNeeded = useMemo(() => {
@@ -108,7 +87,18 @@ export const ReviewSwapDialogTrigger = () => {
           }
           asChild
         >
-          <Button size="xl" fullWidth disabled={isTxnPending}>
+          <Button
+            size="xl"
+            fullWidth
+            disabled={
+              insufficientLiquidity ||
+              (userConfirmationNeeded && !isChecked) ||
+              !amountIn ||
+              hasInsufficientToken0Balance ||
+              noRoutes ||
+              isTxnPending
+            }
+          >
             {buttonText}
           </Button>
         </DialogTrigger>
