@@ -11,6 +11,7 @@ import {
 import { Button, type ButtonProps } from '@sushiswap/ui'
 import { useQueryClient } from '@tanstack/react-query'
 import { useMemo } from 'react'
+import { Decimal } from 'sushi'
 import { kadenaClient } from '~kadena/_common/constants/client'
 import {
   KADENA_CHAIN_ID,
@@ -62,14 +63,13 @@ export const AddButton = ({
       return
     try {
       setIsTxnPending(true)
-      const minAmountToken0 = (
-        Number(amountInToken0) *
-        (1 - slippage)
-      ).toString()
-      const minAmountToken1 = (
-        Number(amountInToken1) *
-        (1 - slippage)
-      ).toString()
+      const minAmountToken0 = new Decimal(amountInToken0)
+        .mul(new Decimal(1).minus(slippage))
+        .toString()
+
+      const minAmountToken1 = new Decimal(amountInToken1)
+        .mul(new Decimal(1).minus(slippage))
+        .toString()
 
       let poolAddress = poolId
 
@@ -88,7 +88,7 @@ export const AddButton = ({
         })
         const signedTxn = await client.signTransaction(currentWallet, initTxn)
         const preflightResult = await kadenaClient.preflight(signedTxn)
-        console.log('preflightResult', preflightResult)
+        // console.log("preflightResult", preflightResult);
 
         if (preflightResult.result.status !== 'success') {
           throw new Error(
@@ -96,7 +96,7 @@ export const AddButton = ({
           )
         }
         const res = await kadenaClient.submit(signedTxn)
-        console.log('add liquidity res', res)
+        // console.log("add liquidity res", res);
         const txId = res.requestKey
         createInfoToast({
           summary: 'Creating a pool initiated...',
@@ -108,7 +108,9 @@ export const AddButton = ({
           txHash: txId,
           href: getChainwebTxnLink(txId),
         })
-        const result = await kadenaClient.pollOne(res)
+        const result = await kadenaClient.pollOne(res, {
+          confirmationDepth: 2,
+        })
         if (result.result.status === 'failure') {
           throw new Error(result.result.error?.message || 'Transaction failed')
         }
@@ -139,7 +141,7 @@ export const AddButton = ({
       })
       const signedTxn = await client.signTransaction(currentWallet, tx)
       const preflightResult = await kadenaClient.preflight(signedTxn)
-      console.log('preflightResult', preflightResult)
+      // console.log("preflightResult", preflightResult);
 
       if (preflightResult.result.status === 'failure') {
         throw new Error(
@@ -148,7 +150,7 @@ export const AddButton = ({
       }
       const res = await kadenaClient.submit(signedTxn)
 
-      console.log('add liquidity res', res)
+      // console.log("add liquidity res", res);
 
       const txId = res.requestKey
       createInfoToast({

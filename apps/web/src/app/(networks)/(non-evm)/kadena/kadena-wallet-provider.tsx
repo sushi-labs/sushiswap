@@ -57,7 +57,6 @@ export const KadenaWalletProvider = ({
         setIsConnecting(true)
       }
       try {
-        console.log(walletAdapterName)
         const accountInfo = await client.connect(walletAdapterName)
         setActiveAccount(accountInfo)
         setCurrentWallet(walletAdapterName)
