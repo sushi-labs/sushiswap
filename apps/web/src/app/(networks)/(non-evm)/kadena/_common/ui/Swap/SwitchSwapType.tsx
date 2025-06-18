@@ -107,7 +107,7 @@ export const SwitchSwapType = () => {
               </div>
             </TooltipTrigger>
             <TooltipContent>
-              <p>Coming Soon</p>
+              <p className="dark:!text-yellow-200">Coming Soon</p>
             </TooltipContent>
           </Tooltip>
         </div>
