@@ -31,9 +31,9 @@ export async function GET(req: Request): Promise<NextResponse> {
     return NextResponse.json({
       success: true,
       data: {
-        pools: poolsData.edges.map((edge: any) => edge.node),
-        pageInfo: poolsData.pageInfo,
-        totalCount: poolsData.totalCount,
+        pools: poolsData?.edges?.map((edge: any) => edge?.node),
+        pageInfo: poolsData?.pageInfo,
+        totalCount: poolsData?.totalCount,
       },
     })
   } catch (error) {

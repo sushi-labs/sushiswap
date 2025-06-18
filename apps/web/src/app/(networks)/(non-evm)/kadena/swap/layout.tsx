@@ -1,4 +1,4 @@
-// import { SidebarContainer, SidebarProvider } from '~kadena/_common/ui/sidebar'
+import { ChainIdOperatorBanner } from '~kadena/_common/ui/Shared/chain-id-operator-banner'
 import { Header } from '~kadena/header'
 import { Providers } from './providers'
 
@@ -13,12 +13,10 @@ export default function SwapLayout({
 }: { children: React.ReactNode }) {
   return (
     <Providers>
-      {/* <SidebarProvider> */}
       <Header />
-      {/* <SidebarContainer> */}
+
+      <ChainIdOperatorBanner className="mt-[56px]" />
       <main className="lg:p-4 mt-16 mb-[86px]">{children}</main>
-      {/* </SidebarContainer> */}
-      {/* </SidebarProvider> */}
     </Providers>
   )
 }
