@@ -95,7 +95,11 @@ const RecentItem = () => {
         )}
       >
         <div className="flex items-center w-full col-span-3 gap-2">
-          <Currency.IconList iconWidth={32} iconHeight={32}>
+          <Currency.IconList
+            iconWidth={24}
+            iconHeight={24}
+            className="border-none"
+          >
             <Currency.Icon
               disableLink
               currency={

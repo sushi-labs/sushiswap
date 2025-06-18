@@ -1,5 +1,4 @@
 import { Button } from '@sushiswap/ui'
-import { useTheme } from 'next-themes'
 import { useMemo, useState } from 'react'
 import { Wrapper } from '../wrapper'
 import { Favorite } from './favorite'
@@ -13,8 +12,6 @@ enum FavoriteRecentTab {
 
 export const FavoriteRecentTabView = () => {
   const [tab, setTab] = useState<FavoriteRecentTab>(FavoriteRecentTab.Favorite)
-
-  const { theme } = useTheme()
 
   const handleTabChange = (tab: FavoriteRecentTab) => {
     setTab(tab)
@@ -38,13 +35,7 @@ export const FavoriteRecentTabView = () => {
               key={_tab}
               asChild
               size="sm"
-              variant={
-                _tab === tab && theme === 'dark'
-                  ? 'quaternary'
-                  : _tab === tab
-                    ? 'quinary'
-                    : 'ghost'
-              }
+              variant={_tab === tab ? 'tertiary' : 'ghost'}
               onClick={() => {
                 handleTabChange(_tab)
               }}

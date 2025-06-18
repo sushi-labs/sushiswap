@@ -1,7 +1,6 @@
 'use client'
 
 import { Button, Tabs, TabsContent, TabsList, TabsTrigger } from '@sushiswap/ui'
-import { useTheme } from 'next-themes'
 import { useState } from 'react'
 import { DCAOrdersTable } from '../dca-orders-table/dca-orders-table'
 import { HistoryTable } from '../history-tables/history-table'
@@ -25,7 +24,6 @@ export const TABS = [
 
 export const TradeTableTabs = () => {
   const [currentTab, setCurrentTab] = useState(TABS[0].value)
-  const { theme } = useTheme()
 
   return (
     <Tabs
@@ -46,13 +44,7 @@ export const TradeTableTabs = () => {
                   key={tab.value}
                   asChild
                   size="sm"
-                  variant={
-                    currentTab === tab.value
-                      ? theme === 'dark'
-                        ? 'quaternary'
-                        : 'quinary'
-                      : 'ghost'
-                  }
+                  variant={currentTab === tab.value ? 'tertiary' : 'ghost'}
                   className={'select-none !gap-1'}
                 >
                   {tab.label}

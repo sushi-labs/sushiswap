@@ -1,7 +1,7 @@
 'use client'
 
 import { useBreakpoint, useIsMounted } from '@sushiswap/hooks'
-import { Container, SkeletonBox } from '@sushiswap/ui'
+import { Container, SkeletonBox, classNames } from '@sushiswap/ui'
 import type {
   ChartingLibraryWidgetOptions,
   ResolutionString,
@@ -56,7 +56,12 @@ export default function TradePage() {
 
   return (
     <>
-      <div className="bg-white dark:bg-background md:bg-background">
+      <div
+        className={classNames(
+          'dark:bg-background md:bg-background',
+          tradeView === 'advanced' ? 'bg-white' : '',
+        )}
+      >
         <TradeViewSwitch />
         {tradeView === 'simple' && (
           <main className="lg:p-4 mt-16 mb-[86px] animate-slide">
