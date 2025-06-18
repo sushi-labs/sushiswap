@@ -88,12 +88,15 @@ export const AddButton = ({
         })
         const signedTxn = await client.signTransaction(currentWallet, initTxn)
         const preflightResult = await kadenaClient.preflight(signedTxn)
+        console.log('preflightResult', preflightResult)
+
         if (preflightResult.result.status !== 'success') {
           throw new Error(
             preflightResult.result.error?.message || 'Preflight failed',
           )
         }
         const res = await kadenaClient.submit(signedTxn)
+        console.log('add liquidity res', res)
         const txId = res.requestKey
         createInfoToast({
           summary: 'Creating a pool initiated...',
@@ -136,13 +139,17 @@ export const AddButton = ({
       })
       const signedTxn = await client.signTransaction(currentWallet, tx)
       const preflightResult = await kadenaClient.preflight(signedTxn)
-      // console.log(preflightResult);
+      console.log('preflightResult', preflightResult)
+
       if (preflightResult.result.status === 'failure') {
         throw new Error(
           preflightResult.result.error?.message || 'Preflight failed',
         )
       }
       const res = await kadenaClient.submit(signedTxn)
+
+      console.log('add liquidity res', res)
+
       const txId = res.requestKey
       createInfoToast({
         summary: 'Adding liquidity initiated...',

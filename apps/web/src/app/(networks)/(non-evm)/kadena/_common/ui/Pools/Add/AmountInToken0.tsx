@@ -27,22 +27,22 @@ export const AmountInToken0 = ({
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: rateOfToken1 will be defined when the pool exists
   useEffect(() => {
-    if (inputField === 'token1') {
-      return
-    }
+    if (inputField === 'token1') return
+
     if (pairExists && amountInToken0 === '') {
       setAmountInToken1('')
       return
     }
+
     if (pairExists && rateOfToken1 && token1) {
-      const amountFormatted = new Decimal(rateOfToken1).mul(
-        Number.parseFloat(amountInToken0 || '0'),
-      )
-      if (amountFormatted) {
-        setAmountInToken1(String(amountFormatted))
-      } else {
+      const parsedAmount = Number.parseFloat(amountInToken0)
+      if (Number.isNaN(parsedAmount)) {
         setAmountInToken1('')
+        return
       }
+
+      const amountFormatted = new Decimal(rateOfToken1).mul(parsedAmount)
+      setAmountInToken1(String(amountFormatted))
     }
   }, [amountInToken0, pairExists, token1, inputField, setAmountInToken1])
 
