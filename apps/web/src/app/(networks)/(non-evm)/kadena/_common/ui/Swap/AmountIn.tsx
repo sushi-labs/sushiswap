@@ -36,18 +36,31 @@ export const AmountIn = () => {
     if (Number.isNaN(parsedAmountIn)) {
       return 0
     }
+    const amtIn = new Decimal(parsedAmountIn)
+    const r0 = new Decimal(data?.poolData?.reserve0)
+    const r1 = new Decimal(data?.poolData?.reserve1)
+    const isInputToken0 = token0?.tokenAddress === data?.poolData?.token0
 
-    const reserve0 = new Decimal(data.poolData.reserve0)
-    const reserve1 = new Decimal(data.poolData.reserve1)
-    const k = reserve0.mul(reserve1)
+    const reserveIn = isInputToken0 ? r0 : r1
+    const reserveOut = isInputToken0 ? r1 : r0
 
-    const newReserveX = reserve0.plus(parsedAmountIn)
-    const newReserveY = k.div(newReserveX)
-    const receivedTokenY = reserve1.minus(newReserveY)
+    if (amtIn.lte(0) || r0.lte(0) || r1.lte(0)) return 0
 
-    const priceImpact = receivedTokenY.div(newReserveY).mul(100)
-    return priceImpact.greaterThan(100) ? 100 : priceImpact.toNumber()
-  }, [data?.poolData?.reserve0, data?.poolData?.reserve1, debouncedAmountIn])
+    // amountIn with 0.3% fee
+    const amountInWithFee = amtIn.mul(0.997)
+    const numerator = amountInWithFee.mul(reserveOut)
+    const denominator = reserveIn.add(amountInWithFee)
+    const amountOut = numerator.div(denominator)
+
+    const idealAmountOut = amtIn.mul(reserveOut).div(reserveIn)
+    const priceImpact = idealAmountOut
+      .sub(amountOut)
+      .div(idealAmountOut)
+      .mul(100)
+      .toNumber()
+
+    return priceImpact
+  }, [data, debouncedAmountIn, token0])
 
   //priceImpactPercentage
   useEffect(() => {

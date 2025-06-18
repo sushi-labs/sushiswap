@@ -28,20 +28,6 @@ export const useSimulateSwap = ({
 }: UseSimulateSwapParams) => {
   const { setAmountOut, setMinAmountOut, setGas } = useSwapDispatch()
 
-  console.log('queryKey', [
-    'kadena-simulate-swap',
-    token0Address,
-    token1Address,
-    amountIn ?? null,
-    amountOut,
-    signerAddress,
-  ])
-
-  console.log(
-    'enabled',
-    !!token0Address && !!token1Address && !!signerAddress && !!amountIn,
-  )
-
   const query = useQuery({
     queryKey: [
       'kadena-simulate-swap',
@@ -55,10 +41,18 @@ export const useSimulateSwap = ({
       !!token0Address && !!token1Address && !!signerAddress && !!amountIn,
     refetchInterval: 60 * 1000,
     staleTime: 0,
+    retry: false,
     queryFn: async () => {
+      if (!amountIn) {
+        return
+      }
+      if (!token0Address || !token1Address || !signerAddress) {
+        return
+      }
+
       const getPoolAddressTx = buildGetPoolAddress(
-        token0Address!,
-        token1Address!,
+        token0Address,
+        token1Address,
         KADENA_CHAIN_ID,
         KADENA_NETWORK_ID,
       )
@@ -78,11 +72,11 @@ export const useSimulateSwap = ({
       const poolAddress = getPoolAddressRes.result.data.account
 
       const tx = buildSwapTxn({
-        token0Address: token0Address!,
-        token1Address: token1Address!,
+        token0Address: token0Address,
+        token1Address: token1Address,
         amountIn: amountIn ?? 0,
         amountOut,
-        signerAddress: signerAddress!,
+        signerAddress: signerAddress,
         poolAddress,
         isSimulate: true,
       })
@@ -92,10 +86,13 @@ export const useSimulateSwap = ({
         signatureVerification: false,
       })
 
+      // console.log(res);
       if (res.result.status === 'failure') {
+        setGas(0)
+        setAmountOut('')
+        setMinAmountOut('')
         throw new Error(res.result.error?.message || 'Simulation failed')
       }
-      console.log(res)
       const gas: number = res?.gas ?? 0
       setGas(gas)
 
