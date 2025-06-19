@@ -13,7 +13,6 @@ export default function PoolByIdPage(props: { params: Promise<{ id: string }> })
 		poolId,
 		first: 1,
 	});
-	console.log(pool);
 
 	return (
 		<Container maxWidth="5xl" className="px-2 sm:px-4">
