@@ -69,7 +69,7 @@ export const PoolsTable = () => {
   }, [data?.pools, fetchNextPage, end, hasNextPage, isFetchingNextPage])
 
   const rowLink = useCallback((row: Pool) => {
-    return `/kadena/pool/${row.id}`
+    return `/kadena/pool/${encodeURIComponent(row.id)}`
   }, [])
 
   const filtered = useMemo(() => {
