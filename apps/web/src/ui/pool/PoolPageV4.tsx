@@ -42,7 +42,7 @@ const Pool: FC<{ pool: V4Pool }> = ({ pool }) => {
         currency1: pool.token1.address,
         feeAmount: Number(parseUnits(pool.lpFee.toString(), 6)),
         tickSpacing: pool.tickSpacing,
-        hooks: {
+        hookData: {
           address: pool.hooks,
           hooksRegistration: decodeHooksRegistration(pool.hooksRegistration),
         },

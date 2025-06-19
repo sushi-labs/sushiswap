@@ -154,7 +154,7 @@ export class SushiSwapV4Pool {
       currency1: this.currency1,
       feeAmount: this.fee,
       tickSpacing: this.tickSpacing,
-      hooks: this.hooks,
+      hookData: this.hooks,
     })
     this.id = getPoolId(this.poolKey)
   }
