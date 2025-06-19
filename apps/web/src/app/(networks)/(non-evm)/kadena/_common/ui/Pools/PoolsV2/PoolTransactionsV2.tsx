@@ -19,6 +19,7 @@ import type {
   PoolByIdResponse,
   PoolTransaction,
 } from '~kadena/_common/types/get-pool-by-id'
+import { usePoolState } from '../pool-provider'
 import {
   AMOUNT_USD_COLUMN,
   MAKER_COLUMN,
@@ -37,6 +38,8 @@ export const PoolTransactionsV2: FC<PoolTransactionsV2Props> = ({ pool }) => {
     pageIndex: 0,
     pageSize: 10,
   })
+
+  const { token0, token1 } = usePoolState()
 
   const { data, isLoading, hasNextPage, fetchNextPage, isFetchingNextPage } =
     usePoolTransactions({
@@ -64,8 +67,8 @@ export const PoolTransactionsV2: FC<PoolTransactionsV2Props> = ({ pool }) => {
     return getChainwebTxnLink(row.maker)
   }, [])
 
-  const token0Symbol = pool?.token0?.name ?? 'Token0'
-  const token1Symbol = pool?.token1?.name ?? 'Token1'
+  const token0Symbol = token0?.tokenSymbol ?? pool?.token0?.name ?? 'Token0'
+  const token1Symbol = token1?.tokenSymbol ?? pool?.token1?.name ?? 'Token1'
 
   const COLUMNS = useMemo(() => {
     if (type === TransactionType.SWAP) {
