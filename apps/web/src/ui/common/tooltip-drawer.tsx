@@ -1,4 +1,4 @@
-import { useBreakpoint } from '@sushiswap/hooks'
+import { useBreakpoint, useIsMounted } from '@sushiswap/hooks'
 import {
   Dialog,
   DialogContent,

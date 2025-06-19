@@ -37,7 +37,7 @@ export const Chart = ({
   // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
     if (!isMounted || !resolvedTheme) return
-    const intervalQuicks = [15, 60, 240, '1D']
+    const intervalQuicks = [60, 240, 720, '1D']
     localStorage.setItem(
       'tradingview.IntervalWidget.quicks',
       JSON.stringify(intervalQuicks),

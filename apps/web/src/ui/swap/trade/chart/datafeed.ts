@@ -1,4 +1,7 @@
-import { getTokenPriceChart } from '@sushiswap/graph-client/data-api'
+import {
+  type GetTokenPriceChartV2,
+  getTokenPriceChartV2,
+} from '@sushiswap/graph-client/data-api'
 import type {
   Bar,
   DatafeedErrorCallback,
@@ -31,7 +34,7 @@ type ConfigurationData = {
 }
 
 const configurationData: ConfigurationData = {
-  supported_resolutions: [15, 60, 240, '1D'] as ResolutionString[],
+  supported_resolutions: [60, 240, 720, '1D'] as ResolutionString[],
   exchanges: [],
   symbols_types: [
     {
@@ -103,7 +106,7 @@ export default {
       }
 
     // console.log("[resolveSymbol]: Symbol resolved", symbolName);
-    onSymbolResolvedCallback(symbolInfo)
+    setTimeout(() => onSymbolResolvedCallback(symbolInfo))
   },
 
   getBars: async (
@@ -118,19 +121,67 @@ export default {
     const chainId = symbolInfo.chainId
     const address = symbolInfo.address
     try {
-      const timeframe: Record<string, 'YEAR' | 'DAY' | 'WEEK' | 'MONTH'> = {
-        15: 'DAY',
-        60: 'MONTH',
-        240: 'MONTH',
-        '1D': 'YEAR',
+      const timeframe: Record<string, GetTokenPriceChartV2['interval']> = {
+        60: 'HOURLY',
+        240: 'HOURLY',
+        720: 'HOURLY',
+        '1D': 'DAILY',
+      }
+      const interval = timeframe[resolution]
+
+      const earliestAllowedTimestamp = 1518147224 //9 February 2018
+
+      let _from = from
+
+      let maxDays = 7 //default 10 days
+
+      switch (resolution) {
+        case '60':
+          maxDays = 7
+          break
+        case '240':
+          maxDays = 20
+          break
+        case '720':
+          maxDays = 31
+          break
+        case '1D':
+          maxDays = 120
+          break
+        default:
+          break
       }
 
-      const data = await getTokenPriceChart({
-        chainId: Number(chainId) as Parameters<
-          typeof getTokenPriceChart
-        >[0]['chainId'],
+      const maxSeconds = maxDays * 24 * 60 * 60 //DAILY max range is 180 days, HOURLY max range is 31 days
+
+      let _to = to
+      if (_to - _from > maxSeconds) {
+        // If the requested range exceeds the maximum allowed, adjust it
+        // _to = _from + maxSeconds;
+        _from = _to - maxSeconds // Adjust _from to fit the max range
+        if (_from < earliestAllowedTimestamp) {
+          _from = earliestAllowedTimestamp
+        }
+      }
+
+      const now = Math.floor(Date.now() / 1000)
+      if (_to > now) {
+        _to = now - 10 // Ensure _to does not exceed the current time
+      }
+
+      if (_to < _from) {
+        throw new Error(
+          `Invalid time range: _to is less than _from, ${_to} < ${_from}`,
+        )
+      }
+      // If _to is less than _from, return no dat
+
+      const data = await getTokenPriceChartV2({
+        chainId: Number(chainId) as GetTokenPriceChartV2['chainId'],
         address: address as Address,
-        duration: timeframe[resolution] ?? 'YEAR',
+        interval: interval,
+        from: _from,
+        to: _to,
       })
 
       if (!data || !data.length) {
@@ -144,7 +195,7 @@ export default {
       }
 
       const formattedBars: Bar[] = data
-        .filter((b) => b.timestamp >= from && b.timestamp <= to)
+        .filter((b) => b.timestamp >= _from && b.timestamp <= _to)
         .map((b) => ({
           time: b.timestamp * 1000,
           open: b.open,
@@ -170,7 +221,7 @@ export default {
         noData: formattedBars?.length === 0,
       })
     } catch (error: unknown) {
-      // console.log("[getBars]: Get error", error);
+      console.log('[getBars]: Get error', error)
       const _error = error instanceof Error ? error.message : String(error)
       onError(_error)
     }
