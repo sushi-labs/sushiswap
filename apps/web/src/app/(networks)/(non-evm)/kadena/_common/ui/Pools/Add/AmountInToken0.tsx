@@ -18,6 +18,7 @@ export const AmountInToken0 = ({
     poolId,
     rateOfToken1ToToken0,
     inputField,
+    isTxnPending,
   } = usePoolState()
   const { setToken0, setAmountInToken0, setAmountInToken1, setInputField } =
     usePoolDispatch()
@@ -62,6 +63,7 @@ export const AmountInToken0 = ({
       setAmount={setAmount}
       currency={token0}
       setToken={disabled ? undefined : setToken0}
+      isTxnPending={isTxnPending}
     />
   )
 }

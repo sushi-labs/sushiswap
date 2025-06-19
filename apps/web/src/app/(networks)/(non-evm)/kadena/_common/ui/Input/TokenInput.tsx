@@ -32,6 +32,7 @@ type TokenInputProps = {
   label?: string
   theme?: keyof typeof themes
   isLoadingAmount?: boolean
+  isTxnPending?: boolean
 }
 
 export const TokenInput = ({
@@ -46,6 +47,7 @@ export const TokenInput = ({
   label,
   theme = 'default',
   isLoadingAmount = false,
+  isTxnPending = false,
 }: TokenInputProps) => {
   const { activeAccount } = useKadena()
 
@@ -146,7 +148,7 @@ export const TokenInput = ({
               testdata-id={`${id}-input`}
               type="number"
               variant="naked"
-              disabled={type === 'output'}
+              disabled={type === 'output' || isTxnPending}
               onValueChange={(e) => {
                 if (type === 'output') return
                 const value = e
