@@ -134,7 +134,7 @@ export const PositionsTable = ({
         }))}
         columns={[POSITION_NAME_COLUMN, VALUE_COLUMN, APR_COLUMN]}
         linkFormatter={(data: IPositionRowData) =>
-          `/kadena/pool/${data.poolId}/add`
+          `/kadena/pool/${encodeURIComponent(data.poolId)}/add`
         }
         externalLink={false}
         pagination={true}
