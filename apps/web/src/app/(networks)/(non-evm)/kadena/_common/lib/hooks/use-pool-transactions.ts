@@ -1,4 +1,4 @@
-import { useInfiniteQuery } from '@tanstack/react-query'
+import { useQuery } from '@tanstack/react-query'
 import type { PoolTransaction } from '~kadena/_common/types/get-pool-by-id'
 
 export enum TransactionType {
@@ -11,10 +11,6 @@ interface PoolTransactionsApiResponse {
   success: boolean
   data: {
     transactions: PoolTransaction[]
-    pageInfo: {
-      endCursor: string
-      hasNextPage: boolean
-    }
     totalCount: number
   }
 }
@@ -28,16 +24,15 @@ export const usePoolTransactions = ({
   type: TransactionType
   pageSize?: number
 }) => {
-  return useInfiniteQuery({
-    queryKey: ['kadena-pool-transactions', pairId, type],
-    queryFn: async ({ pageParam = null }) => {
+  return useQuery({
+    queryKey: ['kadena-pool-transactions', pairId, type, pageSize],
+    queryFn: async () => {
       const url = new URL(
         `/kadena/api/pools/${pairId}/transactions`,
         window.location.origin,
       )
       url.searchParams.set('type', type)
       url.searchParams.set('first', String(pageSize))
-      if (pageParam) url.searchParams.set('after', String(pageParam))
 
       const res = await fetch(url.toString())
       const json: PoolTransactionsApiResponse = await res.json()
@@ -49,18 +44,7 @@ export const usePoolTransactions = ({
 
       return json.data
     },
-    select: (data) => {
-      const flat = data.pages.flatMap((p) => p.transactions)
-      return { ...data, transactions: flat }
-    },
-    getNextPageParam: (lastPage: PoolTransactionsApiResponse['data']) => {
-      const nextParam = lastPage.pageInfo.hasNextPage
-        ? lastPage.pageInfo.endCursor
-        : undefined
-      return nextParam
-    },
-    initialPageParam: null,
-    staleTime: 60 * 1000,
     enabled: !!pairId,
+    staleTime: 60 * 1000,
   })
 }

@@ -39,29 +39,15 @@ export const PoolTransactionsV2: FC<PoolTransactionsV2Props> = ({ pool }) => {
     pageSize: 10,
   })
 
+  console.log('paginationState', paginationState)
+
   const { token0, token1 } = usePoolState()
 
-  const { data, isLoading, hasNextPage, fetchNextPage, isFetchingNextPage } =
-    usePoolTransactions({
-      pairId: pool?.id,
-      type: type,
-      pageSize: paginationState.pageSize,
-    })
-
-  const start = paginationState.pageIndex * paginationState.pageSize
-  const end = start + paginationState.pageSize
-  const pageRows = data?.transactions.slice(start, end)
-
-  useEffect(() => {
-    if (
-      data?.transactions &&
-      end > data?.transactions?.length &&
-      hasNextPage &&
-      !isFetchingNextPage
-    ) {
-      fetchNextPage()
-    }
-  }, [data?.transactions, fetchNextPage, end, hasNextPage, isFetchingNextPage])
+  const { data, isLoading } = usePoolTransactions({
+    pairId: pool?.id,
+    type: type,
+    pageSize: 100,
+  })
 
   const rowLink = useCallback((row: PoolTransaction) => {
     return getChainwebTxnLink(row.maker)
@@ -150,7 +136,7 @@ export const PoolTransactionsV2: FC<PoolTransactionsV2Props> = ({ pool }) => {
         <DataTable
           loading={isLoading}
           columns={COLUMNS}
-          data={pageRows ?? ([] as unknown as PoolTransaction[])}
+          data={data?.transactions ?? ([] as unknown as PoolTransaction[])}
           linkFormatter={rowLink}
           pagination={true}
           externalLink={true}
