@@ -12,7 +12,6 @@ export default async function PoolLayout(props: {
   params: Promise<{ id: string }>
 }) {
   const params = await props.params
-
   const { children } = props
 
   const poolId = decodeURIComponent(params.id)
@@ -49,7 +48,7 @@ const _getPool = async ({ poolId }: { poolId: string }) => {
   }
   try {
     const query = getPoolById({
-      poolId,
+      poolId: decodeURIComponent(poolId),
       timeFrame: 'DAY',
       first: 1,
     })
