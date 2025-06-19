@@ -1,5 +1,5 @@
 export const getPoolTransactionsQuery = `
-query PoolTransactions($pairId: Int!, $type: PoolTransactionType, $first: Int!, $after: String) {
+query PoolTransactions($pairId: String!, $type: PoolTransactionType, $first: Int!, $after: String) {
   poolTransactions(pairId: $pairId, type: $type, first: $first, after: $after) {
     totalCount
     pageInfo {
@@ -24,4 +24,4 @@ query PoolTransactions($pairId: Int!, $type: PoolTransactionType, $first: Int!, 
     }
   }
 }
-`
+`;
