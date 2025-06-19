@@ -1,33 +1,19 @@
-import { SkeletonText } from '@sushiswap/ui'
-import { useEffect, useState } from 'react'
-import { formatPercent } from 'sushi/format'
-import type { IPositionRowData } from './PositionsTable'
+import { formatPercent } from "sushi/format";
+import { WalletPosition } from "~kadena/_common/types/get-positions";
 
-// biome-ignore lint/correctness/noUnusedVariables: <explanation>
-export const PositionSizeCell = ({ data }: { data: IPositionRowData }) => {
-  const [isLoading, setIsLoading] = useState(true)
+export const PositionSizeCell = ({ data }: { data: WalletPosition }) => {
+	const totalSupply = Number(data?.pair?.totalSupply ?? 0);
+	const ownedSupply = Number(data?.liquidity ?? 0);
 
-  useEffect(() => {
-    setTimeout(() => {
-      setIsLoading(false)
-    }, 1200)
-  }, [])
+	const ownedPercent = totalSupply > 0 && ownedSupply > 0 ? ownedSupply / totalSupply : 0;
 
-  const ownership = {
-    ownership: '.12',
-    ownedSupply: '2.4',
-  }
-  if (isLoading || ownership === undefined) {
-    return <SkeletonText fontSize="lg" />
-  }
-
-  return (
-    <div className="flex items-center gap-1">
-      <div className="flex flex-col gap-0.5">
-        <span className="flex items-center gap-1 text-sm font-medium text-gray-900 dark:text-slate-50">
-          {formatPercent(ownership?.ownership)}
-        </span>
-      </div>
-    </div>
-  )
-}
+	return (
+		<div className="flex items-center gap-1">
+			<div className="flex flex-col gap-0.5">
+				<span className="flex items-center gap-1 text-sm font-medium text-gray-900 dark:text-slate-50">
+					{formatPercent(ownedPercent)}
+				</span>
+			</div>
+		</div>
+	);
+};

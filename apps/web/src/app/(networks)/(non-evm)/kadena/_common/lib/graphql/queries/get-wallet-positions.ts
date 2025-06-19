@@ -10,6 +10,20 @@ export const getWalletPositionsQuery = `
                 id
                 reserve0
                 reserve1
+                token0 {
+                  address
+                  chainId
+                  id
+                  name
+                }
+                token1 {
+                  address
+                  chainId
+                  id
+                  name
+                }
+                tvlUsd
+                totalSupply
               }
               liquidity
               valueUsd
@@ -23,4 +37,4 @@ export const getWalletPositionsQuery = `
           totalCount
         }
       }
-    `
+    `;
