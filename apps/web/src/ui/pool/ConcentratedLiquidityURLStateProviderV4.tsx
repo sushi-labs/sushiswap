@@ -52,7 +52,6 @@ type State = Omit<
   tickSpacing: number
   setTickSpacing: (value: number) => void
   hook: Address | undefined
-  setHook: (value: Address | undefined) => void
   hookData: HookData | undefined
   setHookData: (value: HookData | undefined) => void
 }
@@ -97,7 +96,7 @@ const _ConcentratedLiquidityURLStateProviderV4: FC<
   const pathname = usePathname()
   const searchParams = useSearchParams()
 
-  const [hookData, setHookData] = useState<HookData | undefined>(undefined)
+  const [hookData, _setHookData] = useState<HookData | undefined>(undefined)
 
   const state = useMemo(() => {
     const { hook, tickSpacing } = queryParamsSchema.parse({
@@ -140,6 +139,11 @@ const _ConcentratedLiquidityURLStateProviderV4: FC<
       void push(`${pathname}?${_searchParams.toString()}`, { scroll: false })
     }
 
+    const setHookData = (hookData: HookData | undefined) => {
+      setHook(hookData?.address)
+      _setHookData(hookData)
+    }
+
     return {
       ...baseState,
       chainId: baseState.chainId as SushiSwapV4ChainId,
@@ -148,9 +152,8 @@ const _ConcentratedLiquidityURLStateProviderV4: FC<
       tickSpacing,
       setTickSpacing,
       hook,
-      setHook,
       hookData: hookData,
-      setHookData: (value: HookData | undefined) => setHookData(value),
+      setHookData,
     }
   }, [baseState, searchParams, push, pathname, hookData])
 
@@ -182,6 +185,7 @@ export const useDerivedPoolKey = () => {
       feeAmount === DYNAMIC_FEE_FLAG
         ? feeAmount
         : getLpFeeFromTotalFee(feeAmount)
+
     return getPoolKey({
       chainId,
       currency0: token0,

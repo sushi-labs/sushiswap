@@ -27,28 +27,11 @@ import {
 import { ContractIcon } from '@sushiswap/ui/icons/ContractIcon'
 import React, { useEffect, useState, useMemo } from 'react'
 import type { HooksRegistration } from 'src/lib/pool/v4'
-import { decodeHooksRegistration } from 'src/lib/pool/v4/sdk/utils/decodeHooksRegistration'
+import { useHookRegistration } from 'src/lib/pool/v4/use-hook-registration'
 import { shortenAddress } from 'sushi/format'
 import { zeroAddress } from 'viem'
 import { isAddress } from 'viem/utils'
-import { useReadContract } from 'wagmi'
 import { useConcentratedLiquidityURLStateV4 } from './ConcentratedLiquidityURLStateProviderV4'
-
-const abiShard = [
-  {
-    type: 'function',
-    name: 'getHooksRegistrationBitmap',
-    inputs: [],
-    outputs: [
-      {
-        name: '',
-        type: 'uint16',
-        internalType: 'uint16',
-      },
-    ],
-    stateMutability: 'pure',
-  },
-] as const
 
 export const AddHookModal = () => {
   return (
@@ -59,7 +42,7 @@ export const AddHookModal = () => {
 }
 
 const _AddHookModal = () => {
-  const { chainId, hook, setHook, hookData, setHookData } =
+  const { chainId, hook, hookData, setHookData } =
     useConcentratedLiquidityURLStateV4()
 
   const [localValue, setLocalValue] = useState(hook ?? '')
@@ -68,67 +51,49 @@ const _AddHookModal = () => {
     data: hooksRegistration,
     isLoading: isHooksRegistrationLoading,
     isError: isHooksResgistrationError,
-  } = useReadContract({
-    chainId,
-    address: isAddress(localValue, { strict: false }) ? localValue : undefined,
-    abi: abiShard,
-    functionName: 'getHooksRegistrationBitmap',
-    args: [],
-    query: {
-      staleTime: Number.POSITIVE_INFINITY,
-      enabled: isAddress(localValue, { strict: false }),
-    },
-  })
+  } = useHookRegistration({ chainId, hook: localValue })
 
-  const decodedHooksRegistration = useMemo(
-    () =>
-      hooksRegistration
-        ? decodeHooksRegistration(hooksRegistration)
-        : undefined,
-    [hooksRegistration],
-  )
-
-  // sync w/ hook from URL
   useEffect(() => {
     if (
-      decodedHooksRegistration &&
+      hooksRegistration &&
       hook &&
       isAddress(hook) &&
       hookData?.address !== hook
     ) {
       setHookData({
         address: hook,
-        hooksRegistration: decodedHooksRegistration,
+        hooksRegistration: hooksRegistration,
       })
     }
-  }, [hook, decodedHooksRegistration, hookData, setHookData])
+  }, [hook, hooksRegistration, hookData, setHookData])
 
   const isError =
     (localValue && !isAddress(localValue)) || isHooksResgistrationError
 
   const onConfirm = () => {
     if (isAddress(localValue)) {
-      setHook(localValue)
+      setHookData({
+        address: localValue,
+        hooksRegistration: hooksRegistration,
+      })
     }
   }
 
   const onRemove = () => {
-    setHook(undefined)
+    setLocalValue('')
     setHookData(undefined)
   }
 
   const { setOpen: setOpenConfirmDialog } = useDialog(DialogType.Confirm)
 
   const { hooksRegistrationInfo, hasDangerous } = useMemo(() => {
-    if (!decodedHooksRegistration) {
+    if (!hooksRegistration) {
       return {
         hooksRegistrationInfo: [],
         hasDangerous: false,
       }
     }
-    const hooksRegistrationInfo = getHooksRegistrationInfo(
-      decodedHooksRegistration,
-    )
+    const hooksRegistrationInfo = getHooksRegistrationInfo(hooksRegistration)
 
     return {
       hooksRegistrationInfo,
@@ -136,7 +101,7 @@ const _AddHookModal = () => {
         ({ isDangerous }) => isDangerous,
       ),
     }
-  }, [decodedHooksRegistration])
+  }, [hooksRegistration])
 
   return (
     <>
