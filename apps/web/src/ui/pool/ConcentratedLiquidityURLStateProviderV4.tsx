@@ -22,6 +22,8 @@ import {
   SushiSwapV3FeeAmount,
   TICK_SPACINGS as V3_TICK_SPACINGS,
 } from 'sushi/config'
+import type { Address } from 'sushi/types'
+import { sz } from 'sushi/validate'
 import { z } from 'zod'
 import {
   ConcentratedLiquidityURLStateProvider,
@@ -29,11 +31,15 @@ import {
 } from './ConcentratedLiquidityURLStateProviderV3'
 
 const queryParamsSchema = z.object({
-  tickSpacing: z.coerce
-    .number()
-    .int()
-    .default(V3_TICK_SPACINGS[SushiSwapV3FeeAmount.MEDIUM]),
-  hook: z.string().default(''),
+  tickSpacing: z.preprocess((v) => {
+    if (typeof v !== 'string') return undefined
+    const int = Number.parseInt(v ?? '', 10)
+    return int || undefined
+  }, z.number().int().default(V3_TICK_SPACINGS[SushiSwapV3FeeAmount.MEDIUM])),
+  hook: z.preprocess(
+    (v) => (v === null ? undefined : v),
+    sz.address().optional(),
+  ),
 })
 
 type State = Omit<
@@ -45,10 +51,10 @@ type State = Omit<
   setFeeAmount: (value: number) => void
   tickSpacing: number
   setTickSpacing: (value: number) => void
-  hookString: string
-  setHookString: (value: string) => void
-  hooks: HookData | undefined
-  setHooks: (value: HookData) => void
+  hook: Address | undefined
+  setHook: (value: Address | undefined) => void
+  hookData: HookData | undefined
+  setHookData: (value: HookData | undefined) => void
 }
 
 export const ConcentratedLiquidityUrlStateContextV4 = createContext<State>(
@@ -94,9 +100,9 @@ const _ConcentratedLiquidityURLStateProviderV4: FC<
   const [hookData, setHookData] = useState<HookData | undefined>(undefined)
 
   const state = useMemo(() => {
-    const { hook: hookString, tickSpacing } = queryParamsSchema.parse({
-      fromCurrency: searchParams.get('hook'),
-      toCurrency: searchParams.get('tickSpacing'),
+    const { hook, tickSpacing } = queryParamsSchema.parse({
+      hook: searchParams.get('hook'),
+      tickSpacing: searchParams.get('tickSpacing'),
     })
 
     const setTickSpacing = (tickSpacing: number) => {
@@ -122,11 +128,15 @@ const _ConcentratedLiquidityURLStateProviderV4: FC<
       void push(`${pathname}?${_searchParams.toString()}`, { scroll: false })
     }
 
-    const setHookString = (hook: string) => {
+    const setHook = (hook: Address | undefined) => {
       const _searchParams = new URLSearchParams(
         Array.from(searchParams.entries()),
       )
-      _searchParams.set('hook', hook)
+      if (typeof hook === 'undefined') {
+        _searchParams.delete('hook')
+      } else {
+        _searchParams.set('hook', hook)
+      }
       void push(`${pathname}?${_searchParams.toString()}`, { scroll: false })
     }
 
@@ -137,10 +147,10 @@ const _ConcentratedLiquidityURLStateProviderV4: FC<
       setFeeAmount,
       tickSpacing,
       setTickSpacing,
-      hookString,
-      setHookString,
-      hooks: hookData,
-      setHooks: (value: HookData) => setHookData(value),
+      hook,
+      setHook,
+      hookData: hookData,
+      setHookData: (value: HookData | undefined) => setHookData(value),
     }
   }, [baseState, searchParams, push, pathname, hookData])
 
@@ -163,7 +173,7 @@ export const useConcentratedLiquidityURLStateV4 = () => {
 }
 
 export const useDerivedPoolKey = () => {
-  const { chainId, token0, token1, feeAmount, tickSpacing, hooks } =
+  const { chainId, token0, token1, feeAmount, tickSpacing, hookData } =
     useConcentratedLiquidityURLStateV4()
 
   return useMemo(() => {
@@ -178,7 +188,7 @@ export const useDerivedPoolKey = () => {
       currency1: token1,
       feeAmount: Number(lpFeeAmount),
       tickSpacing,
-      hooks,
+      hookData,
     })
-  }, [chainId, token0, token1, feeAmount, tickSpacing, hooks])
+  }, [chainId, token0, token1, feeAmount, tickSpacing, hookData])
 }

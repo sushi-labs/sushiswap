@@ -15,7 +15,6 @@ import {
 } from 'src/ui/pool/ConcentratedLiquidityURLStateProviderV4'
 import { ConcentratedLiquidityWidgetV4 } from 'src/ui/pool/ConcentratedLiquidityWidgetV4'
 import { SelectFeeConcentratedWidgetV4 } from 'src/ui/pool/SelectFeeConcentratedWidgetV4'
-import { SelectHookWidget } from 'src/ui/pool/SelectHookWidget'
 import { SelectNetworkWidget } from 'src/ui/pool/SelectNetworkWidget'
 import { SelectPricesWidgetV4 } from 'src/ui/pool/SelectPricesWidgetV4'
 import { SelectTokensWidget } from 'src/ui/pool/SelectTokensWidget'
@@ -51,10 +50,6 @@ const _Add: FC = () => {
     tokensLoading,
     tokenId,
     switchTokens,
-    hookString,
-    setHookString,
-    hooks,
-    setHooks,
   } = useConcentratedLiquidityURLStateV4()
 
   const poolKey = useDerivedPoolKey()
@@ -84,13 +79,7 @@ const _Add: FC = () => {
         setToken0={setToken0}
         setToken1={setToken1}
         includeNative={isWNativeSupported(chainId)}
-      />
-      <SelectHookWidget
-        chainId={chainId}
-        hookString={hookString}
-        setHookString={setHookString}
-        hooks={hooks}
-        setHooks={setHooks}
+        protocol={'SUSHISWAP_V4'}
       />
       <SelectFeeConcentratedWidgetV4
         chainId={chainId}

@@ -12,14 +12,14 @@ export function getPoolKey({
   currency1,
   feeAmount,
   tickSpacing,
-  hooks,
+  hookData,
 }: {
   chainId: SushiSwapV4ChainId
   currency0: Type | Address
   currency1: Type | Address
   feeAmount: number
   tickSpacing: number
-  hooks?: HookData
+  hookData?: HookData
 }) {
   return {
     currency0:
@@ -34,12 +34,12 @@ export function getPoolKey({
         : currency1.isNative
           ? zeroAddress
           : currency1.wrapped.address,
-    hooks: hooks?.address ?? zeroAddress,
+    hooks: hookData?.address ?? zeroAddress,
     poolManager: SUSHISWAP_V4_CL_POOL_MANAGER[chainId],
     fee: feeAmount,
     parameters: {
       tickSpacing,
-      hooksRegistration: hooks?.hooksRegistration,
+      hooksRegistration: hookData?.hooksRegistration,
     },
   } satisfies PoolKey
 }
