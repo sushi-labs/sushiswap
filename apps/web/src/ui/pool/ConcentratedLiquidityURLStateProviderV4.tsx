@@ -42,6 +42,11 @@ const queryParamsSchema = z.object({
   ),
 })
 
+export type FeeData = {
+  feeAmount: number
+  tickSpacing: number
+}
+
 type State = Omit<
   ReturnType<typeof useConcentratedLiquidityURLState>,
   'chainId' | 'feeAmount' | 'setFeeAmount'
@@ -51,6 +56,7 @@ type State = Omit<
   setFeeAmount: (value: number) => void
   tickSpacing: number
   setTickSpacing: (value: number) => void
+  setFeeData: (feeData: FeeData) => void
   hook: Address | undefined
   hookData: HookData | undefined
   setHookData: (value: HookData | undefined) => void
@@ -112,18 +118,12 @@ const _ConcentratedLiquidityURLStateProviderV4: FC<
       void push(`${pathname}?${_searchParams.toString()}`, { scroll: false })
     }
 
-    const setFeeAmount = (feeAmount: number) => {
+    const setFeeData = ({ feeAmount, tickSpacing }: FeeData) => {
       const _searchParams = new URLSearchParams(
         Array.from(searchParams.entries()),
       )
       _searchParams.set('feeAmount', feeAmount.toString())
-      feeAmount in V3_TICK_SPACINGS &&
-        _searchParams.set(
-          'tickSpacing',
-          V3_TICK_SPACINGS[
-            feeAmount as keyof typeof V3_TICK_SPACINGS
-          ].toString(),
-        )
+      _searchParams.set('tickSpacing', tickSpacing.toString())
       void push(`${pathname}?${_searchParams.toString()}`, { scroll: false })
     }
 
@@ -148,7 +148,7 @@ const _ConcentratedLiquidityURLStateProviderV4: FC<
       ...baseState,
       chainId: baseState.chainId as SushiSwapV4ChainId,
       feeAmount: baseState.feeAmount as number,
-      setFeeAmount,
+      setFeeData,
       tickSpacing,
       setTickSpacing,
       hook,

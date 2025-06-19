@@ -47,6 +47,7 @@ const _Add: FC = () => {
     setFeeAmount,
     tickSpacing,
     setTickSpacing,
+    setFeeData,
     tokensLoading,
     tokenId,
     switchTokens,
@@ -87,6 +88,7 @@ const _Add: FC = () => {
         setFeeAmount={setFeeAmount}
         tickSpacing={tickSpacing}
         setTickSpacing={setTickSpacing}
+        setFeeData={setFeeData}
         token0={token0}
         token1={token1}
       />

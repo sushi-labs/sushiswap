@@ -28,6 +28,7 @@ export const queryParamsSchema = z.object({
   feeAmount: z.coerce
     .number()
     .int()
+    .gte(0)
     .default(SushiSwapV3FeeAmount.MEDIUM)
     .transform((fee) => fee as SushiSwapV3FeeAmount),
   tokenId: z.coerce
