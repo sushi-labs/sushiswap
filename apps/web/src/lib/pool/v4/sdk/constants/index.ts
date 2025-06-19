@@ -1,7 +1,6 @@
 export * from './actions'
 export * from './actionsAbiParameters'
 export * from './binPool'
-export * from './binStep'
 export * from './fee'
 export * from './hooks'
 export * from './tickSpacing'
