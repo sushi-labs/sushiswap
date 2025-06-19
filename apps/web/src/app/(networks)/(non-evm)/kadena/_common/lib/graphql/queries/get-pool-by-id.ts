@@ -1,14 +1,14 @@
 export const getPoolById = ({
-	poolId,
-	timeFrame = "DAY",
-	first = 10,
+  poolId,
+  timeFrame = 'DAY',
+  first = 10,
 }: {
-	poolId: string;
-	timeFrame?: string;
-	first?: number;
+  poolId: string
+  timeFrame?: string
+  first?: number
 }) => {
-	return JSON.stringify({
-		query: `
+  return JSON.stringify({
+    query: `
       query GetPoolDetails($poolId: ID!, $timeFrame: TimeFrame = DAY, $first: Int = 10) {
         pool(id: $poolId) {
           id
@@ -56,10 +56,10 @@ export const getPoolById = ({
         }
       }
     `,
-		variables: {
-			poolId,
-			timeFrame,
-			first,
-		},
-	});
-};
+    variables: {
+      poolId,
+      timeFrame,
+      first,
+    },
+  })
+}

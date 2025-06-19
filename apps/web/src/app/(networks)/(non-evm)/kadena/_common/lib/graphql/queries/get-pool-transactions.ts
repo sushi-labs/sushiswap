@@ -24,4 +24,4 @@ query PoolTransactions($pairId: String!, $type: PoolTransactionType, $first: Int
     }
   }
 }
-`;
+`
