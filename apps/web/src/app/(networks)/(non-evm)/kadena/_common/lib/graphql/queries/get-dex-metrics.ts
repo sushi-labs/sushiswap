@@ -1,6 +1,8 @@
-export const getDexMetricsQuery = ({ protocolAddress }: { protocolAddress: string }) => {
-	return JSON.stringify({
-		query: `
+export const getDexMetricsQuery = ({
+  protocolAddress,
+}: { protocolAddress: string }) => {
+  return JSON.stringify({
+    query: `
       query GetDexMetrics($protocolAddress: String!) {
         dexMetrics(protocolAddress: $protocolAddress) {
           totalPools
@@ -17,8 +19,8 @@ export const getDexMetricsQuery = ({ protocolAddress }: { protocolAddress: strin
         }
       }
     `,
-		variables: {
-			protocolAddress,
-		},
-	});
-};
+    variables: {
+      protocolAddress,
+    },
+  })
+}
