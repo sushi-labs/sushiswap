@@ -242,7 +242,7 @@ export const SelectFeeConcentratedWidgetV4: FC<SelectFeeConcentratedWidgetV4> =
               ),
             )}
           </div>
-          <CustomFees
+          <CustomFeeInput
             setFeeAmount={setFeeAmount}
             setTickSpacing={setTickSpacing}
             tickSpacing={tickSpacing}
@@ -256,7 +256,7 @@ export const SelectFeeConcentratedWidgetV4: FC<SelectFeeConcentratedWidgetV4> =
     )
   })
 
-interface CustomFees
+interface CustomFeeInput
   extends Pick<
     SelectFeeConcentratedWidgetV4,
     | 'feeAmount'
@@ -269,7 +269,7 @@ interface CustomFees
   setEnabled: (enabled: boolean) => void
 }
 
-const CustomFees: FC<CustomFees> = ({
+const CustomFeeInput: FC<CustomFeeInput> = ({
   feeAmount,
   setFeeAmount,
   tickSpacing,
@@ -348,11 +348,11 @@ const CustomFees: FC<CustomFees> = ({
       testdata-id={`fee-option-custom`}
       className="!h-[unset] !w-[unset] !p-6 !text-left !items-start !justify-start cursor-pointer dark:data-[state=on]:bg-secondary border border-accent"
     >
-      <div className="flex w-full flex-col gap-2.5">
+      <div className="flex w-full flex-col gap-2">
         <span className="text-muted-foreground font-medium">Custom</span>
         <div className="flex flex-col gap-5 sm:flex-row">
           <Card className="flex-1" as="div">
-            <CardHeader>
+            <CardHeader className="!pb-4">
               <CardTitle>Fee Tier</CardTitle>
             </CardHeader>
             <CardContent>
@@ -367,7 +367,7 @@ const CustomFees: FC<CustomFees> = ({
                   disabled={!enabled}
                   placeholder={'0.3%'}
                   maxDecimals={2}
-                  className="text-xl font-semibold"
+                  className="text-xl font-semibold !py-0 !min-h-[20px] !h-[20px]"
                   onClick={onEnable}
                 />
                 <div className="flex gap-1">
@@ -412,7 +412,7 @@ const CustomFees: FC<CustomFees> = ({
             </CardContent>
           </Card>
           <Card className="flex-1">
-            <CardHeader>
+            <CardHeader className="!pb-4">
               <CardTitle>Tick Spacing</CardTitle>
             </CardHeader>
             <CardContent>
@@ -426,7 +426,7 @@ const CustomFees: FC<CustomFees> = ({
                   disabled={!enabled}
                   placeholder={'1'}
                   maxDecimals={0}
-                  className="text-xl font-semibold"
+                  className="text-xl font-semibold !py-0 !min-h-[20px] !h-[20px]"
                   onClick={onEnable}
                 />
                 <div className="flex gap-1">
