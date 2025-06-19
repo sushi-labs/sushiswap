@@ -126,7 +126,7 @@ export const PositionsTable = ({
             symbol: pool?.pair.reserve1.symbol,
             name: pool?.pair.reserve1.name,
           },
-          poolId: pool?.id,
+          poolId: pool?.pair.id,
           reserve0: pool?.pair.reserve0.amount,
           reserve1: pool?.pair.reserve1.amount,
           apr24h: pool?.apr24h,
