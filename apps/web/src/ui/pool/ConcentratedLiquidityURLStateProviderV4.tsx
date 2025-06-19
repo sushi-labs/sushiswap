@@ -18,11 +18,23 @@ import {
 } from 'src/lib/pool/v4'
 import { getPoolKey } from 'src/lib/pool/v4/sdk/utils/getPoolKey'
 import type { EvmChainId } from 'sushi/chain'
-import { TICK_SPACINGS as V3_TICK_SPACINGS } from 'sushi/config'
+import {
+  SushiSwapV3FeeAmount,
+  TICK_SPACINGS as V3_TICK_SPACINGS,
+} from 'sushi/config'
+import { z } from 'zod'
 import {
   ConcentratedLiquidityURLStateProvider,
   useConcentratedLiquidityURLState,
 } from './ConcentratedLiquidityURLStateProviderV3'
+
+const queryParamsSchema = z.object({
+  tickSpacing: z.coerce
+    .number()
+    .int()
+    .default(V3_TICK_SPACINGS[SushiSwapV3FeeAmount.MEDIUM]),
+  hook: z.string().default(''),
+})
 
 type State = Omit<
   ReturnType<typeof useConcentratedLiquidityURLState>,
@@ -82,8 +94,10 @@ const _ConcentratedLiquidityURLStateProviderV4: FC<
   const [hookData, setHookData] = useState<HookData | undefined>(undefined)
 
   const state = useMemo(() => {
-    // todo: validate
-    const tickSpacing = Number(searchParams.get('tickSpacing') ?? '0')
+    const { hook: hookString, tickSpacing } = queryParamsSchema.parse({
+      fromCurrency: searchParams.get('hook'),
+      toCurrency: searchParams.get('tickSpacing'),
+    })
 
     const setTickSpacing = (tickSpacing: number) => {
       const _searchParams = new URLSearchParams(
@@ -107,8 +121,6 @@ const _ConcentratedLiquidityURLStateProviderV4: FC<
         )
       void push(`${pathname}?${_searchParams.toString()}`, { scroll: false })
     }
-
-    const hookString = searchParams.get('hook') ?? ''
 
     const setHookString = (hook: string) => {
       const _searchParams = new URLSearchParams(
