@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server'
+import { KADENA_CONTRACT } from '~kadena/_common/constants/contracts'
 import { GRAPHQL_ENDPOINT } from '~kadena/_common/lib/graphql/endpoint'
 import { getDexMetricsQuery } from '~kadena/_common/lib/graphql/queries/get-dex-metrics'
 
@@ -10,7 +11,7 @@ export async function GET(): Promise<NextResponse> {
         'Content-Type': 'application/json',
         'X-API-KEY': process.env.KADINDEXER_API_KEY ?? '',
       },
-      body: getDexMetricsQuery,
+      body: getDexMetricsQuery({ protocolAddress: KADENA_CONTRACT }),
       next: { revalidate: 60 },
     })
 
