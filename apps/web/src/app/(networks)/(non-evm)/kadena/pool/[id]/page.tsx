@@ -10,6 +10,7 @@ export default function PoolByIdPage(props: {
 }) {
   const params = use(props.params)
   const poolId = params.id
+
   const { data: pool } = usePoolById({
     poolId,
     first: 10,

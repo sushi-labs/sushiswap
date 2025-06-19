@@ -50,9 +50,15 @@ export const PoolsTable = () => {
 		}
 	}, [data?.pools, fetchNextPage, end, hasNextPage, isFetchingNextPage]);
 
+<<<<<<< HEAD
 	const rowLink = useCallback((row: Pool) => {
 		return `/kadena/pool/${row.id}`;
 	}, []);
+=======
+  const rowLink = useCallback((row: Pool) => {
+    return `/kadena/pool/${encodeURIComponent(row.id)}`
+  }, [])
+>>>>>>> 0e5b0fa4fc7bb968a4017888749e47617dffa741
 
 	const filtered = useMemo(() => {
 		if (!data?.pools) return [] as Pool[];

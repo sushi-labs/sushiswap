@@ -14,7 +14,7 @@ export default async function PoolLayout(props: {
 	const params = await props.params;
 	const { children } = props;
 
-	const poolId = params.id;
+	const poolId = decodeURIComponent(params.id);
 
 	const pool = await unstable_cache(
 		async () => _getPool({ poolId }),
