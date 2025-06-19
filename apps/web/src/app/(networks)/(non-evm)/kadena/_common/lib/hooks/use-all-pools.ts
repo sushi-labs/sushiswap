@@ -41,6 +41,7 @@ export const useAllPools = ({
       return {
         ...data,
         pools: flat,
+        count: data.pages[0].totalCount,
       }
     },
     initialPageParam: null,

@@ -5,6 +5,7 @@ import {
   CardHeader,
   CardTitle,
   DataTable,
+  Loader,
   SkeletonText,
 } from '@sushiswap/ui'
 import type {
@@ -14,6 +15,7 @@ import type {
   TableState,
 } from '@tanstack/react-table'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import InfiniteScroll from 'react-infinite-scroll-component'
 import { usePoolFilters } from 'src/ui/pool'
 import { useAllPools } from '~kadena/_common/lib/hooks/use-all-pools'
 import type { Pool } from '~kadena/_common/types/get-all-pools-type'
@@ -42,31 +44,10 @@ export const PoolsTable = () => {
     { id: 'liquidityUSD', desc: true },
   ])
 
-  const [paginationState, setPaginationState] = useState<PaginationState>({
-    pageIndex: 0,
-    pageSize: 10,
+  const { data, fetchNextPage, hasNextPage, isLoading } = useAllPools({
+    first: 10,
+    orderBy: 'TVL_USD_DESC',
   })
-
-  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } =
-    useAllPools({
-      first: 10,
-      orderBy: 'TVL_USD_DESC',
-    })
-
-  const start = paginationState.pageIndex * paginationState.pageSize
-  const end = start + paginationState.pageSize
-  const pageRows = data?.pools.slice(start, end)
-
-  useEffect(() => {
-    if (
-      data?.pools &&
-      end > data?.pools?.length &&
-      hasNextPage &&
-      !isFetchingNextPage
-    ) {
-      fetchNextPage()
-    }
-  }, [data?.pools, fetchNextPage, end, hasNextPage, isFetchingNextPage])
 
   const rowLink = useCallback((row: Pool) => {
     return `/kadena/pool/${encodeURIComponent(row.id)}`
@@ -107,33 +88,42 @@ export const PoolsTable = () => {
   }, [sorting, filtered])
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>
-          {isLoading ? (
-            <div className="!w-28 !h-[18px]">
-              <SkeletonText />
-            </div>
-          ) : (
-            <span>
-              Pools{' '}
-              <span className="text-gray-400 dark:text-slate-500">
-                ({filtered.length})
+    <InfiniteScroll
+      dataLength={data?.pools.length ?? 0}
+      next={fetchNextPage}
+      hasMore={hasNextPage}
+      loader={
+        <div className="flex justify-center w-full py-4">
+          <Loader size={16} />
+        </div>
+      }
+    >
+      <Card>
+        <CardHeader>
+          <CardTitle>
+            {isLoading ? (
+              <div className="!w-28 !h-[18px]">
+                <SkeletonText />
+              </div>
+            ) : (
+              <span>
+                Pools{' '}
+                <span className="text-gray-400 dark:text-slate-500">
+                  ({filtered.length})
+                </span>
               </span>
-            </span>
-          )}
-        </CardTitle>
-      </CardHeader>
-      <DataTable
-        state={state}
-        onSortingChange={setSorting}
-        loading={isLoading}
-        linkFormatter={rowLink}
-        columns={COLUMNS}
-        data={pageRows ?? ([] as unknown as Pool[])}
-        pagination={true}
-        onPaginationChange={setPaginationState}
-      />
-    </Card>
+            )}
+          </CardTitle>
+        </CardHeader>
+        <DataTable
+          state={state}
+          onSortingChange={setSorting}
+          loading={isLoading}
+          linkFormatter={rowLink}
+          columns={COLUMNS}
+          data={filtered}
+        />
+      </Card>
+    </InfiniteScroll>
   )
 }
