@@ -9,7 +9,7 @@ import type {
   ResolutionString,
 } from 'public/static/charting_library/charting_library'
 import { widget } from 'public/static/charting_library/charting_library.esm'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useChartContext } from './chart-provider'
 import Datafeed from './datafeed'
 import { registerNoDataSetter } from './datafeed'
@@ -33,6 +33,8 @@ export const Chart = ({
       setHasNoData(hasNoData)
     })
   }, [])
+
+  const memoizedToken0 = useMemo(() => token0, [token0])
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
@@ -475,7 +477,7 @@ export const Chart = ({
     return () => {
       tvWidget.remove()
     }
-  }, [chartContainerRef, resolvedTheme, isMdScreen, isMounted, token0])
+  }, [chartContainerRef, resolvedTheme, isMdScreen, isMounted, memoizedToken0])
 
   return (
     <div className="flex flex-col flex-grow rounded-xl">

@@ -100,8 +100,8 @@ const DerivedStateFiatProvider: FC<DerivedStateFiatProviderProps> = ({
   const defaultedParams = useMemo(() => {
     const params = new URLSearchParams(searchParams)
 
-    if (!params.has('token0')) {
-      params.set('token0', 'US')
+    if (!params.has('fiatIn')) {
+      params.set('fiatIn', 'US')
     }
     if (!params.has('token1')) {
       params.set('token1', getQuoteCurrency(chainId))
@@ -152,7 +152,7 @@ const DerivedStateFiatProvider: FC<DerivedStateFiatProviderProps> = ({
       }
 
       push(
-        `${pathname}?${createQueryString([{ name: 'token0', value: token0 }])}`,
+        `${pathname}?${createQueryString([{ name: 'fiatIn', value: token0 }])}`,
       )
     },
     [createQueryString, localFiatCache, pathname, push],
@@ -186,7 +186,7 @@ const DerivedStateFiatProvider: FC<DerivedStateFiatProviderProps> = ({
 
       push(
         `${pathname}?${createQueryString([
-          { name: 'token0', value: token0 },
+          { name: 'fiatIn', value: token0 },
           { name: 'token1', value: token1 },
         ])}`,
       )
@@ -204,7 +204,7 @@ const DerivedStateFiatProvider: FC<DerivedStateFiatProviderProps> = ({
     [createQueryString, pathname, push],
   )
 
-  const token0Param = defaultedParams.get('token0') as string
+  const token0Param = defaultedParams.get('fiatIn') as string
   const token1Param = defaultedParams.get('token1') as string
 
   const token0FromLocalCache = localFiatCache.get(token0Param)

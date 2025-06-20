@@ -1,5 +1,6 @@
 'use client'
 
+import { useIsMounted, useLocalStorage } from '@sushiswap/hooks'
 import { useParams, usePathname, useSearchParams } from 'next/navigation'
 import {
   type FC,
@@ -58,15 +59,25 @@ const ChartProvider: FC<ChartProviderProps> = ({ children }) => {
     new Map(),
   )
   const pathname = usePathname()
+  const [storedValue, setValue] = useLocalStorage('chart-token', '')
+  const isMounted = useIsMounted()
 
   const defaultedParams = useMemo(() => {
     const params = new URLSearchParams(searchParams)
 
     if (!params.has('token0')) {
+      if (storedValue) {
+        if (isMounted) params.set('token0', storedValue)
+        return params
+      }
       params.set('token0', getDefaultCurrency(chainId))
     }
+    if (params.get('token0')) {
+      if (isMounted) setValue(params.get('token0') as string)
+    }
+
     return params
-  }, [chainId, searchParams])
+  }, [chainId, searchParams, storedValue, setValue, isMounted])
 
   const token0Param = defaultedParams.get('token0') as string
   const token0FromLocalCache = localTokenCache.get(token0Param)
@@ -106,7 +117,9 @@ const ChartProvider: FC<ChartProviderProps> = ({ children }) => {
   const setToken0 = useCallback<(_token0: string | Type) => void>(
     (_token0) => {
       // If entity is provided, parse it to a string
+
       const token0 = getTokenAsString(_token0)
+      setValue(token0)
 
       if (typeof _token0 !== 'string') {
         setLocalTokenCache(localTokenCache.set(token0, _token0))
@@ -116,7 +129,7 @@ const ChartProvider: FC<ChartProviderProps> = ({ children }) => {
         `${pathname}?${createQueryString([{ name: 'token0', value: token0 }])}`,
       )
     },
-    [createQueryString, localTokenCache, pathname, push],
+    [createQueryString, localTokenCache, pathname, push, setValue],
   )
 
   return (
