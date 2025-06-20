@@ -118,5 +118,10 @@ export function createAmountColumn({
         </span>
       )
     },
+    meta: {
+      body: {
+        skeleton: <SkeletonText fontSize="lg" />,
+      },
+    },
   }
 }
