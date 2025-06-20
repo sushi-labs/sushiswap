@@ -1,4 +1,4 @@
-import { SkeletonText } from '@sushiswap/ui'
+import { FormattedNumber, SkeletonText } from '@sushiswap/ui'
 import type { ColumnDef } from '@tanstack/react-table'
 import { formatUSD } from 'sushi/format'
 import { truncateText } from '~kadena/_common/lib/utils/formatters'
@@ -63,7 +63,13 @@ export function createAmountColumn({
     header,
     cell: ({ row }) => {
       const value = row.getValue(accessorKey) as string
-      return `${Number.parseFloat(value).toFixed(4)} ${tokenSymbol}`
+
+      return (
+        <span>
+          <FormattedNumber number={Number.parseFloat(value).toPrecision(2)} />{' '}
+          {tokenSymbol}
+        </span>
+      )
     },
   }
 }

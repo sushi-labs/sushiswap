@@ -31,13 +31,17 @@ interface PoolTransactionsV2Props {
   pool: PoolByIdResponse | undefined
 }
 
+const initialPaginationState: PaginationState = {
+  pageIndex: 0,
+  pageSize: 10,
+}
+
 export const PoolTransactionsV2: FC<PoolTransactionsV2Props> = ({ pool }) => {
   const [type, setType] = useState<TransactionType>(TransactionType.SWAP)
 
-  const [paginationState, setPaginationState] = useState<PaginationState>({
-    pageIndex: 0,
-    pageSize: 10,
-  })
+  const [paginationState, setPaginationState] = useState<PaginationState>(
+    initialPaginationState,
+  )
 
   console.log('paginationState', paginationState)
 
@@ -76,9 +80,9 @@ export const PoolTransactionsV2: FC<PoolTransactionsV2Props> = ({ pool }) => {
     }
 
     const accessor0 =
-      type === TransactionType.ADD_LIQUIDITY ? 'amount0In' : 'amount0Out'
+      type === TransactionType.ADD_LIQUIDITY ? 'amount0In' : 'amount0In'
     const accessor1 =
-      type === TransactionType.ADD_LIQUIDITY ? 'amount1In' : 'amount1Out'
+      type === TransactionType.ADD_LIQUIDITY ? 'amount1In' : 'amount0Out'
 
     return [
       MAKER_COLUMN,
@@ -108,7 +112,10 @@ export const PoolTransactionsV2: FC<PoolTransactionsV2Props> = ({ pool }) => {
                 variant="outline"
                 size="xs"
                 pressed={type === TransactionType.SWAP}
-                onClick={() => setType(TransactionType.SWAP)}
+                onClick={() => {
+                  setType(TransactionType.SWAP)
+                  setPaginationState(initialPaginationState)
+                }}
               >
                 Swaps
               </Toggle>
@@ -116,7 +123,10 @@ export const PoolTransactionsV2: FC<PoolTransactionsV2Props> = ({ pool }) => {
                 variant="outline"
                 size="xs"
                 pressed={type === TransactionType.ADD_LIQUIDITY}
-                onClick={() => setType(TransactionType.ADD_LIQUIDITY)}
+                onClick={() => {
+                  setType(TransactionType.ADD_LIQUIDITY)
+                  setPaginationState(initialPaginationState)
+                }}
               >
                 Add
               </Toggle>
@@ -124,7 +134,10 @@ export const PoolTransactionsV2: FC<PoolTransactionsV2Props> = ({ pool }) => {
                 variant="outline"
                 size="xs"
                 pressed={type === TransactionType.REMOVE_LIQUIDITY}
-                onClick={() => setType(TransactionType.REMOVE_LIQUIDITY)}
+                onClick={() => {
+                  setType(TransactionType.REMOVE_LIQUIDITY)
+                  setPaginationState(initialPaginationState)
+                }}
               >
                 Remove
               </Toggle>
