@@ -1,7 +1,6 @@
 'use client'
 import {
   SlippageToleranceStorageKey,
-  useDebounce,
   useSlippageTolerance,
 } from '@sushiswap/hooks'
 import {
@@ -12,7 +11,6 @@ import {
 } from '@sushiswap/ui'
 import { useMemo } from 'react'
 import { useSimulateSwap } from '~kadena/_common/lib/hooks/use-simulate-swap'
-import { ChainIdOperatorBanner } from '~kadena/_common/ui/Shared/chain-id-operator-banner'
 import { AmountIn } from '~kadena/_common/ui/Swap/AmountIn'
 import { AmountOut } from '~kadena/_common/ui/Swap/AmountOut'
 import { SimpleSwapBanner } from '~kadena/_common/ui/Swap/Banner/SwapBanner'
@@ -33,12 +31,11 @@ export default function SwapSimplePage() {
 
   const slippage =
     slippageTolerance === 'AUTO' ? 0.005 : Number(slippageTolerance) / 100
-  const debouncedAmountIn = useDebounce(amountIn, 250)
 
   const parsedAmountIn = useMemo(() => {
-    const parsed = Number.parseFloat(debouncedAmountIn)
+    const parsed = Number.parseFloat(amountIn)
     return Number.isNaN(parsed) ? null : parsed
-  }, [debouncedAmountIn])
+  }, [amountIn])
 
   const { isLoading } = useSimulateSwap({
     token0: token0,

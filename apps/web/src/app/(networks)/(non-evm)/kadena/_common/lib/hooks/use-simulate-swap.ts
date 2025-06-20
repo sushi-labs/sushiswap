@@ -40,9 +40,10 @@ export const useSimulateSwap = ({
       signerAddress,
     ],
     enabled: !!token0 && !!token1 && !!signerAddress && !!amountIn,
-    refetchInterval: 60 * 1000,
+    refetchInterval: 20 * 1000,
     staleTime: 0,
     retry: false,
+
     queryFn: async () => {
       if (!amountIn) {
         return
@@ -100,6 +101,7 @@ export const useSimulateSwap = ({
       const _amountOut: number = res?.result?.data?.[1]?.amount ?? 0
       const minAmountOut = new Decimal(_amountOut).mul(1 - slippage).toString()
       setMinAmountOut(minAmountOut)
+
       const formatted = _amountOut?.toString() ?? null
 
       setAmountOut(formatToMaxDecimals(formatted, token1?.tokenDecimals))
