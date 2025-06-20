@@ -8,13 +8,17 @@ import {
   CardTitle,
   DataTable,
   LinkInternal,
+  Loader,
 } from '@sushiswap/ui'
-import type { PaginationState } from '@tanstack/react-table'
-import { useEffect, useMemo, useState } from 'react'
+import type { TableState } from '@tanstack/react-table'
+import { useMemo } from 'react'
 import { usePoolFilters } from 'src/ui/pool'
 import { useMyPositions } from '~kadena/_common/lib/hooks/use-my-positions'
 
+import InfiniteScroll from 'react-infinite-scroll-component'
 import type { WalletPosition } from '~kadena/_common/types/get-positions'
+import { useKadena } from '~kadena/kadena-wallet-provider'
+import { WalletConnector } from '../../WalletConnector/WalletConnector'
 import {
   APR_COLUMN,
   POSITION_NAME_COLUMN,
@@ -28,25 +32,12 @@ type PositionsTableProps = {
 export const PositionsTable = ({
   hideNewPositionButton,
 }: PositionsTableProps) => {
-  const [paginationState, setPaginationState] = useState<PaginationState>({
-    pageIndex: 0,
-    pageSize: 10,
-  })
   const { tokenSymbols } = usePoolFilters()
+  const { isConnected } = useKadena()
 
-  const { data, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } =
-    useMyPositions()
+  const { data, isLoading, fetchNextPage, hasNextPage } = useMyPositions()
 
   const positions = data?.positions ?? []
-
-  const start = paginationState.pageIndex * paginationState.pageSize
-  const end = start + paginationState.pageSize
-
-  useEffect(() => {
-    if (end > positions.length && hasNextPage && !isFetchingNextPage) {
-      fetchNextPage()
-    }
-  }, [end, positions.length, hasNextPage, isFetchingNextPage, fetchNextPage])
 
   const filteredPositions = useMemo(() => {
     if (!positions.length || !tokenSymbols.length) return positions
@@ -69,45 +60,62 @@ export const PositionsTable = ({
     })
   }, [tokenSymbols, positions])
 
-  const paginatedFilteredData = filteredPositions.slice(start, end)
+  const state: Partial<TableState> = useMemo(() => {
+    return {
+      // sorting,
+      pagination: {
+        pageIndex: 0,
+        pageSize: filteredPositions?.length,
+      },
+    }
+  }, [filteredPositions])
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>
-          <div className="flex flex-wrap items-center justify-between gap-4">
-            <span>
-              My Positions{' '}
-              <span className="text-gray-400 dark:text-slate-500">
-                ({paginatedFilteredData?.length})
+    <InfiniteScroll
+      dataLength={data?.positions.length ?? 0}
+      next={fetchNextPage}
+      hasMore={hasNextPage}
+      loader={
+        <div className="flex justify-center w-full py-4">
+          <Loader size={16} />
+        </div>
+      }
+    >
+      <Card>
+        <CardHeader>
+          <CardTitle>
+            <div className="flex flex-wrap items-center justify-between gap-4">
+              <span>
+                My Positions{' '}
+                <span className="text-gray-400 dark:text-slate-500">
+                  ({data?.pages?.[0]?.totalCount ?? 0})
+                </span>
               </span>
-            </span>
-            <div className="flex gap-4">
-              {!hideNewPositionButton ? (
-                <LinkInternal shallow={true} href={`/kadena/pool/add`}>
-                  <Button icon={PlusIcon} asChild size="sm">
-                    Create position
-                  </Button>
-                </LinkInternal>
-              ) : null}
+              <div className="flex gap-4">
+                {!isConnected ? (
+                  <WalletConnector />
+                ) : !hideNewPositionButton ? (
+                  <LinkInternal shallow={true} href={`/kadena/pool/add`}>
+                    <Button icon={PlusIcon} asChild size="sm">
+                      Create position
+                    </Button>
+                  </LinkInternal>
+                ) : null}
+              </div>
             </div>
-          </div>
-        </CardTitle>
-      </CardHeader>
-      <DataTable
-        loading={isLoading}
-        data={paginatedFilteredData}
-        columns={[POSITION_NAME_COLUMN, VALUE_COLUMN, APR_COLUMN]}
-        linkFormatter={(data: WalletPosition) =>
-          `/kadena/pool/${encodeURIComponent(data.pairId)}/add`
-        }
-        externalLink={false}
-        pagination={true}
-        state={{
-          pagination: paginationState,
-        }}
-        onPaginationChange={setPaginationState}
-      />
-    </Card>
+          </CardTitle>
+        </CardHeader>
+        <DataTable
+          loading={isLoading}
+          data={filteredPositions}
+          columns={[POSITION_NAME_COLUMN, VALUE_COLUMN, APR_COLUMN]}
+          linkFormatter={(data: WalletPosition) =>
+            `/kadena/pool/${encodeURIComponent(data.pairId)}/add`
+          }
+          externalLink={false}
+          state={state}
+        />
+      </Card>
+    </InfiniteScroll>
   )
 }

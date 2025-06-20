@@ -15,15 +15,11 @@ export async function GET(req: Request): Promise<NextResponse> {
     })
   }
 
-  const query = JSON.stringify({
-    query: getWalletPositionsQuery,
-    variables: {
-      walletAddress,
-      first,
-      after,
-    },
+  const query = getWalletPositionsQuery({
+    walletAddress,
+    first,
+    after,
   })
-
   try {
     const res = await fetch(GRAPHQL_ENDPOINT, {
       method: 'POST',
@@ -43,7 +39,7 @@ export async function GET(req: Request): Promise<NextResponse> {
     return NextResponse.json({
       success: true,
       data: {
-        positions: connection?.edges?.map((edge: any) => edge.node) ?? [],
+        positions: connection?.edges?.map((edge: any) => edge?.node) ?? [],
         pageInfo: connection?.pageInfo ?? {},
         totalCount: connection?.totalCount ?? 0,
       },

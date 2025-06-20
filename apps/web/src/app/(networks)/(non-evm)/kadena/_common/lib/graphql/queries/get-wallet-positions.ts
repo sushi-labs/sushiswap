@@ -1,6 +1,16 @@
-export const getWalletPositionsQuery = `
-      query GetWalletPositions($walletAddress: String!) {
-        liquidityPositions(walletAddress: $walletAddress, orderBy: VALUE_USD_DESC, first: 10) {
+export const getWalletPositionsQuery = ({
+  walletAddress,
+  first = 10,
+  after = null,
+}: {
+  walletAddress: string
+  first?: number
+  after?: string | null
+}) => {
+  return JSON.stringify({
+    query: `
+      query GetWalletPositions($walletAddress: String!, $first: Int = 10, $after: String) {
+        liquidityPositions(walletAddress: $walletAddress, orderBy: VALUE_USD_DESC, first: $first, after: $after) {
           edges {
             node {
               id
@@ -37,4 +47,11 @@ export const getWalletPositionsQuery = `
           totalCount
         }
       }
-    `
+    `,
+    variables: {
+      walletAddress,
+      first,
+      after,
+    },
+  })
+}

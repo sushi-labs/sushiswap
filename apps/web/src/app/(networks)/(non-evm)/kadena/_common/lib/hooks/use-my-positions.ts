@@ -24,6 +24,14 @@ export const useMyPositions = (pageSize = 10) => {
       const url = new URL('/kadena/api/positions', window.location.origin)
       url.searchParams.set('walletAddress', walletAddress!)
       url.searchParams.set('first', String(pageSize))
+      // console.log(
+      // 	"Fetching wallet positions for:",
+      // 	walletAddress,
+      // 	"with page size:",
+      // 	pageSize,
+      // 	"and pageParam:",
+      // 	pageParam
+      // );
       if (pageParam) url.searchParams.set('after', pageParam)
 
       const res = await fetch(url.toString())
@@ -39,8 +47,10 @@ export const useMyPositions = (pageSize = 10) => {
       const nextParam = lastPage.pageInfo.hasNextPage
         ? lastPage.pageInfo.endCursor
         : undefined
+
       return nextParam
     },
+
     select: (data) => {
       const flat = data.pages.flatMap((p) => p.positions)
       return { ...data, positions: flat }
