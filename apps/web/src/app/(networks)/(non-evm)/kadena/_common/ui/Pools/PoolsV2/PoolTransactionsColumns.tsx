@@ -52,17 +52,64 @@ export const TIMESTAMP_COLUMN: ColumnDef<PoolTransaction> = {
 export function createAmountColumn({
   accessorKey,
   header,
-  tokenSymbol,
+  token0Symbol,
+  token1Symbol,
 }: {
   accessorKey: keyof PoolTransaction
   header: string
-  tokenSymbol: string
+  token0Symbol: string
+  token1Symbol: string
 }): ColumnDef<PoolTransaction, unknown> {
   return {
     accessorKey,
     header,
     cell: ({ row }) => {
-      const value = row.getValue(accessorKey) as string
+      let value = row.getValue(accessorKey) as string
+
+      let tokenSymbol = ''
+
+      //SWAP
+      if (row.original.transactionType === 'SWAP') {
+        if (value === '0' && accessorKey === 'amount0In') {
+          tokenSymbol = token1Symbol
+          value = row.original.amount1In
+        } else if (accessorKey === 'amount0In' && value !== '0') {
+          tokenSymbol = token0Symbol
+        }
+
+        if (value === '0' && accessorKey === 'amount1Out') {
+          tokenSymbol = token0Symbol
+          value = row.original.amount0Out
+        } else if (accessorKey === 'amount1Out' && value !== '0') {
+          tokenSymbol = token1Symbol
+        }
+      }
+
+      //REMOVE_LIQUIDITY
+      if (row.original.transactionType === 'REMOVE_LIQUIDITY') {
+        tokenSymbol = token1Symbol
+        if (value === '0' && accessorKey === 'amount0In') {
+          tokenSymbol = token0Symbol
+          value = row.original.amount1Out
+        }
+
+        if (value === '0' && accessorKey === 'amount1Out') {
+          value = row.original.amount1In
+        }
+      }
+
+      //ADD_LIQUIDITY
+      if (row.original.transactionType === 'ADD_LIQUIDITY') {
+        tokenSymbol = token0Symbol
+        if (accessorKey === 'amount0In') {
+          value = row.original.amount1Out
+        }
+
+        value = row.original.amount1In
+        if (accessorKey === 'amount1In') {
+          tokenSymbol = token1Symbol
+        }
+      }
 
       return (
         <span>

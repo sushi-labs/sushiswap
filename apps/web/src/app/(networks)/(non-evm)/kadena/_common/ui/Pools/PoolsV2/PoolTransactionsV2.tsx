@@ -9,7 +9,7 @@ import {
   Toggle,
 } from '@sushiswap/ui'
 import type { PaginationState } from '@tanstack/react-table'
-import { type FC, useCallback, useEffect, useMemo, useState } from 'react'
+import { type FC, useCallback, useMemo, useState } from 'react'
 import {
   TransactionType,
   usePoolTransactions,
@@ -43,7 +43,7 @@ export const PoolTransactionsV2: FC<PoolTransactionsV2Props> = ({ pool }) => {
     initialPaginationState,
   )
 
-  console.log('paginationState', paginationState)
+  // console.log('paginationState', paginationState)
 
   const { token0, token1 } = usePoolState()
 
@@ -67,34 +67,36 @@ export const PoolTransactionsV2: FC<PoolTransactionsV2Props> = ({ pool }) => {
         createAmountColumn({
           accessorKey: 'amount0In',
           header: 'Amount In',
-          tokenSymbol: token0Symbol,
+          token0Symbol: token0Symbol,
+          token1Symbol: token1Symbol,
         }),
         createAmountColumn({
           accessorKey: 'amount1Out',
           header: 'Amount Out',
-          tokenSymbol: token1Symbol,
+          token0Symbol: token0Symbol,
+          token1Symbol: token1Symbol,
         }),
         AMOUNT_USD_COLUMN,
         TIMESTAMP_COLUMN,
       ]
     }
 
-    const accessor0 =
-      type === TransactionType.ADD_LIQUIDITY ? 'amount0In' : 'amount0In'
     const accessor1 =
       type === TransactionType.ADD_LIQUIDITY ? 'amount1In' : 'amount0Out'
 
     return [
       MAKER_COLUMN,
       createAmountColumn({
-        accessorKey: accessor0,
+        accessorKey: 'amount0In',
         header: 'Token 0',
-        tokenSymbol: token0Symbol,
+        token0Symbol: token0Symbol,
+        token1Symbol: token1Symbol,
       }),
       createAmountColumn({
         accessorKey: accessor1,
         header: 'Token 1',
-        tokenSymbol: token1Symbol,
+        token0Symbol: token0Symbol,
+        token1Symbol: token1Symbol,
       }),
       AMOUNT_USD_COLUMN,
       TIMESTAMP_COLUMN,
