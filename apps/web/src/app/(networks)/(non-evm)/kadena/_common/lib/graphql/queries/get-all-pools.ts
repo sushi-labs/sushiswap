@@ -22,6 +22,7 @@ export const getAllPools = ({
               volume7dUsd
               transactionCount24h
               apr24h
+              fees24hUsd
             }
           }
           pageInfo {

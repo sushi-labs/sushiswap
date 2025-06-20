@@ -15,6 +15,7 @@ export type Pool = {
   volume7dUsd: number
   transactionCount24h: number
   apr24h: number
+  fees24hUsd: number
 }
 
 export type KadenaPoolsApiResponse = {
