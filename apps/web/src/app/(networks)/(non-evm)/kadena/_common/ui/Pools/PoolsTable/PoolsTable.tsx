@@ -49,7 +49,8 @@ export const PoolsTable = () => {
     orderBy: 'TVL_USD_DESC',
   })
 
-  const rowLink = useCallback((row: Pool) => {
+  const rowLink = useCallback((row: Pool | undefined) => {
+    if (!row) return ''
     return `/kadena/pool/${encodeURIComponent(row.id)}`
   }, [])
 
