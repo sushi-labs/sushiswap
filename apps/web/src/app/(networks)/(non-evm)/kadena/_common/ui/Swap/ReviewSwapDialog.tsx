@@ -16,6 +16,7 @@ import { DialogContent, classNames } from '@sushiswap/ui'
 import Link from 'next/link'
 import { useMemo } from 'react'
 import { formatPercent } from 'sushi/format'
+import { GAS_PRICE } from '~kadena/_common/constants/gas'
 import { truncateText } from '~kadena/_common/lib/utils/formatters'
 import { getChainwebAddressLink } from '~kadena/_common/lib/utils/kadena-helpers'
 import {
@@ -49,7 +50,7 @@ export const ReviewSwapDialog = () => {
     return warningSeverityClassName(warningSeverity(priceImpactPercentage))
   }, [priceImpactPercentage])
 
-  const networkFeeInKDA = (gas ?? 0) * 0.0000001
+  const networkFeeInKDA = (gas ?? 0) * GAS_PRICE
 
   return (
     <DialogProvider>

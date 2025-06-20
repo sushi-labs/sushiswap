@@ -1,5 +1,6 @@
 import { Pact } from '@kadena/client'
 import { KADENA_CONTRACT } from '~kadena/_common/constants/contracts'
+import { GAS_LIMIT, GAS_PRICE } from '~kadena/_common/constants/gas'
 import { formatPactDecimal } from '../utils/formatters'
 
 export const buildGetPoolExists = (
@@ -65,8 +66,8 @@ export const buildAddLiquidityTxn = ({
       .execution(pactCmd)
       .setMeta({
         chainId: String(chainId),
-        gasLimit: 80300,
-        gasPrice: 0.0000001,
+        gasLimit: GAS_LIMIT,
+        gasPrice: GAS_PRICE,
         senderAccount: signerAddress,
       })
       .addSigner(pubKey, (signFor) => [
@@ -116,8 +117,8 @@ export const buildAddLiquidityTxn = ({
     })
     .setMeta({
       chainId: String(chainId),
-      gasLimit: 80300,
-      gasPrice: 0.0000001,
+      gasLimit: GAS_LIMIT,
+      gasPrice: GAS_PRICE,
       senderAccount: signerAddress,
     })
     .setNetworkId(networkId)
@@ -164,17 +165,17 @@ export const buildRemoveLiquidityTxn = ({
   chainId: number
   networkId: string
 }) => {
-  console.log({
-    token0Address,
-    token1Address,
-    lpToRemove,
-    minAmountOutToken0,
-    minAmountOutToken1,
-    pairAddress,
-    signerAddress,
-    chainId,
-    networkId,
-  })
+  // console.log({
+  //   token0Address,
+  //   token1Address,
+  //   lpToRemove,
+  //   minAmountOutToken0,
+  //   minAmountOutToken1,
+  //   pairAddress,
+  //   signerAddress,
+  //   chainId,
+  //   networkId,
+  // })
   const pubKey = signerAddress.split('k:')[1]
   const tx = Pact.builder
     .execution(
@@ -207,8 +208,8 @@ export const buildRemoveLiquidityTxn = ({
     })
     .setMeta({
       chainId: String(chainId),
-      gasLimit: 80300,
-      gasPrice: 0.0000001,
+      gasLimit: GAS_LIMIT,
+      gasPrice: GAS_PRICE,
       senderAccount: signerAddress,
     })
     .setNetworkId(networkId)

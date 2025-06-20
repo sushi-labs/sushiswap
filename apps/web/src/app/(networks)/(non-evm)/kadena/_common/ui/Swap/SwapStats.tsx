@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { useMemo } from 'react'
 import { Decimal } from 'sushi'
 import { formatPercent, formatUSD } from 'sushi/format'
+import { GAS_PRICE } from '~kadena/_common/constants/gas'
 import { KADENA } from '~kadena/_common/constants/token-list'
 import { useTokenPrice } from '~kadena/_common/lib/hooks/use-token-price'
 import { truncateText } from '~kadena/_common/lib/utils/formatters'
@@ -50,8 +51,8 @@ export const SwapStats = () => {
 
   const networkFee = useMemo(() => {
     const fee = new Decimal(networkFeeInKDA)
-    const feeInUsd = fee.mul(KDAPrice).mul(0.0000001).toString()
-    const feeInToken = fee.mul(0.0000001).toString()
+    const feeInUsd = fee.mul(KDAPrice).mul(GAS_PRICE).toString()
+    const feeInToken = fee.mul(GAS_PRICE).toString()
     return { feeInUsd, feeInToken }
   }, [KDAPrice, networkFeeInKDA])
 

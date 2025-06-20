@@ -1,5 +1,6 @@
 import { type IPartialPactCommand, Pact } from '@kadena/client'
 import { KADENA_CONTRACT } from '~kadena/_common/constants/contracts'
+import { GAS_LIMIT, GAS_PRICE } from '~kadena/_common/constants/gas'
 import {
   KADENA_CHAIN_ID,
   KADENA_NETWORK_ID,
@@ -46,8 +47,8 @@ export const buildSwapTxn = ({
     ])
     .setMeta({
       chainId: String(KADENA_CHAIN_ID),
-      gasLimit: 80300,
-      gasPrice: 0.0000001,
+      gasLimit: GAS_LIMIT,
+      gasPrice: GAS_PRICE,
       senderAccount: signerAddress,
     })
     .addData('ks', { keys: [pubKey], pred: 'keys-all' })
