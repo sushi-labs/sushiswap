@@ -70,6 +70,9 @@ export const PositionsTable = ({
     }
   }, [filteredPositions])
 
+  const totalCount = data?.pages?.[0]?.totalCount ?? 0
+  const filteredCount = filteredPositions?.length
+
   return (
     <InfiniteScroll
       dataLength={data?.positions.length ?? 0}
@@ -88,7 +91,7 @@ export const PositionsTable = ({
               <span>
                 My Positions{' '}
                 <span className="text-gray-400 dark:text-slate-500">
-                  ({data?.pages?.[0]?.totalCount ?? 0})
+                  ({filteredCount < totalCount ? filteredCount : totalCount})
                 </span>
               </span>
               <div className="flex gap-4">
