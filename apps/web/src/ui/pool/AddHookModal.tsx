@@ -86,20 +86,18 @@ const _AddHookModal = () => {
 
   const { setOpen: setOpenConfirmDialog } = useDialog(DialogType.Confirm)
 
-  const { hooksRegistrationInfo, hasDangerous } = useMemo(() => {
+  const { hooksRegistrationInfo, isDangerous } = useMemo(() => {
     if (!hooksRegistration) {
       return {
         hooksRegistrationInfo: [],
-        hasDangerous: false,
+        isDangerous: false,
       }
     }
     const hooksRegistrationInfo = getHooksRegistrationInfo(hooksRegistration)
 
     return {
       hooksRegistrationInfo,
-      hasDangerous: hooksRegistrationInfo.some(
-        ({ isDangerous }) => isDangerous,
-      ),
+      isDangerous: hooksRegistrationInfo.some(({ isDangerous }) => isDangerous),
     }
   }, [hooksRegistration])
 
@@ -114,11 +112,23 @@ const _AddHookModal = () => {
                   <Button
                     size="sm"
                     variant="secondary"
-                    className="!pl-2.5 !pr-1 flex items-center !gap-1"
+                    className="!pl-2.5 !pr-1 !gap-0"
                     icon={ContractIcon}
                     onClick={() => setOpenConfirmDialog(true)}
                   >
-                    <span className="font-medium">{shortenAddress(hook)}</span>
+                    <span className="font-medium pl-2 pr-1">
+                      {shortenAddress(hook)}
+                    </span>
+                    {isDangerous ? (
+                      <IconButton
+                        className="text-red"
+                        variant="ghost"
+                        size="xs"
+                        icon={ExclamationTriangleIcon}
+                        description="Risky Hook"
+                        name="alert"
+                      />
+                    ) : null}
                     <ClipboardController hideTooltip>
                       {({ setCopied, isCopied }) => (
                         <IconButton
@@ -196,7 +206,7 @@ const _AddHookModal = () => {
       </DialogReview>
       <DialogCustom dialogType={DialogType.Confirm}>
         <DialogContent>
-          {hasDangerous ? (
+          {isDangerous ? (
             <DialogHeader>
               <div>
                 <ExclamationTriangleIcon
@@ -285,17 +295,29 @@ const _AddHookModal = () => {
           </div>
 
           <DialogFooter>
-            <DialogClose asChild>
-              <Button
-                fullWidth
-                variant={hasDangerous ? 'destructive' : 'default'}
-                size="xl"
-                disabled={isError}
-                onClick={onConfirm}
-              >
-                Confirm
-              </Button>
-            </DialogClose>
+            <div className="flex flex-col gap-3 w-full">
+              <DialogClose asChild>
+                <Button
+                  fullWidth
+                  variant={isDangerous ? 'destructive' : 'default'}
+                  size="xl"
+                  disabled={isError}
+                  onClick={onConfirm}
+                >
+                  Confirm
+                </Button>
+              </DialogClose>
+              <DialogClose asChild>
+                <Button
+                  fullWidth
+                  variant={'secondary'}
+                  size="xl"
+                  onClick={onRemove}
+                >
+                  Remove
+                </Button>
+              </DialogClose>
+            </div>
           </DialogFooter>
         </DialogContent>
       </DialogCustom>
