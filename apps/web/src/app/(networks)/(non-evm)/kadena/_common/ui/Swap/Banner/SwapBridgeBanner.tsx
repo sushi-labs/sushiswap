@@ -21,7 +21,7 @@ export const SimpleSwapBridgeBanner: FC<{ className?: string }> = ({
 
   return !hideBanner && isMounted ? (
     <Link
-      href={'https://houdiniswap.com/?tokenIn=ETH&tokenOut=KDA'}
+      href={'https://kinesisbridge.xyz'}
       target="_blank"
       rel="noopener noreferrer"
     >
@@ -51,12 +51,12 @@ export const SimpleSwapBridgeBanner: FC<{ className?: string }> = ({
               type="naked"
             />
             <div className="flex items-center text-black">
-              <span className="font-semibold">Swap to Kadena</span>
+              <span className="font-semibold">Bridge to Kadena</span>
               <ArrowUpRightIcon width={20} height={20} className="text-black" />
             </div>
           </div>
           <span className="text-xs text-black">
-            Move your tokens to Kadena.
+            Move your tokens to Kadena to swap.
           </span>
         </div>
         <Image
