@@ -67,7 +67,6 @@ export function createAmountColumn({
     header,
     cell: ({ row }) => {
       let value = row.getValue(accessorKey) as string
-
       let tokenSymbol = ''
 
       //SWAP
@@ -104,11 +103,11 @@ export function createAmountColumn({
       if (row.original.transactionType === 'ADD_LIQUIDITY') {
         tokenSymbol = token0Symbol
         if (accessorKey === 'amount0In') {
-          value = row.original.amount1Out
+          value = row.original.amount0In
         }
 
-        value = row.original.amount1In
         if (accessorKey === 'amount1In') {
+          value = row.original.amount1In
           tokenSymbol = token1Symbol
         }
       }
