@@ -13,11 +13,16 @@ import { type FC, useCallback, useMemo } from 'react'
 import * as echarts from 'echarts'
 import ReactEchartsCore from 'echarts-for-react/lib/core'
 import type { EChartsOption } from 'echarts-for-react/lib/types'
-import { PoolChartPeriod, chartPeriods } from 'src/ui/pool/PoolChartPeriods'
+import {
+  PoolChartPeriod,
+  PoolChartPeriodToTimeFrame,
+  chartPeriods,
+} from 'src/ui/pool/PoolChartPeriods'
 import { PoolChartType } from 'src/ui/pool/PoolChartTypes'
 import { formatUSD } from 'sushi/format'
 import tailwindConfig from 'tailwind.config.js'
 import resolveConfig from 'tailwindcss/resolveConfig'
+import { usePoolCharts } from '~kadena/_common/lib/hooks/pools/use-pool-charts'
 import type { PoolByIdResponse } from '~kadena/_common/types/get-pool-by-id'
 
 interface PoolChartProps {
@@ -29,19 +34,19 @@ interface PoolChartProps {
 const tailwind = resolveConfig(tailwindConfig)
 
 export const PoolChartGraph: FC<PoolChartProps> = ({ chart, period, pool }) => {
-  //@DEV TODO isLoadingPool
-  const isLoading = !pool
-  const isError = false
+  const { data, isLoading, isError } = usePoolCharts({
+    poolId: pool?.id,
+    timeFrame: PoolChartPeriodToTimeFrame[period],
+  })
 
   const [xData, yData]: [number[], number[]] = useMemo(() => {
-    if (!pool?.charts) return [[], []]
+    if (!data?.charts) return [[], []]
 
     const chartData =
-      pool.charts[chart.toLowerCase() as keyof typeof pool.charts] ?? []
-    // console.log('chartData', chartData)
+      data.charts[chart.toLowerCase() as keyof typeof data.charts] ?? []
     const cutoff = Date.now() - chartPeriods[period]
 
-    const [x, y] = chartData.reverse().reduce<[number[], number[]]>(
+    const [x, y] = chartData.reduce<[number[], number[]]>(
       (acc, point) => {
         const timestampMs = new Date(point.timestamp).getTime()
         if (timestampMs >= cutoff) {
@@ -53,8 +58,8 @@ export const PoolChartGraph: FC<PoolChartProps> = ({ chart, period, pool }) => {
       [[], []],
     )
 
-    return [x.reverse(), y.reverse()]
-  }, [chart, period, pool])
+    return [x, y]
+  }, [data, chart, period])
 
   // Transient update for performance
   const onMouseOver = useCallback(

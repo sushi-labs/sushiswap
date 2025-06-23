@@ -41,7 +41,7 @@ export const TIMESTAMP_COLUMN: ColumnDef<PoolTransaction> = {
       hour: '2-digit',
       minute: '2-digit',
     })
-    console.log('Formatted timestamp:', formattedDate)
+
     return <span className="whitespace-nowrap">{formattedDate}</span>
   },
   meta: {
