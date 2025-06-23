@@ -54,7 +54,7 @@ export const PoolTransactionsV2: FC<PoolTransactionsV2Props> = ({ pool }) => {
   })
 
   const rowLink = useCallback((row: PoolTransaction) => {
-    return getChainwebTxnLink(row.maker)
+    return getChainwebTxnLink(row.requestkey)
   }, [])
 
   const token0Symbol = token0?.tokenSymbol ?? pool?.token0?.name ?? 'Token0'

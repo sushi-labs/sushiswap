@@ -34,13 +34,15 @@ export const TIMESTAMP_COLUMN: ColumnDef<PoolTransaction> = {
   accessorFn: (row) => row.timestamp,
   cell: (props) => {
     const date = new Date(props.row.original.timestamp)
-    return date.toLocaleString('en-US', {
+    const formattedDate = date.toLocaleString('en-US', {
       year: 'numeric',
       month: 'short',
       day: '2-digit',
       hour: '2-digit',
       minute: '2-digit',
     })
+    console.log('Formatted timestamp:', formattedDate)
+    return <span className="whitespace-nowrap">{formattedDate}</span>
   },
   meta: {
     body: {

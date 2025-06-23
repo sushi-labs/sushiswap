@@ -13,6 +13,7 @@ export type PoolTransaction = {
   amountUsd: string
   timestamp: string
   transactionType: string
+  requestkey: string
 }
 
 export type PoolTransactions = {
