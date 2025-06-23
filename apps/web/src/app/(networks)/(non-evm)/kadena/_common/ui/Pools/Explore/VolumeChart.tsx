@@ -1,5 +1,6 @@
 'use client'
 
+import { addDays, differenceInDays } from 'date-fns'
 import format from 'date-fns/format'
 import ReactECharts from 'echarts-for-react'
 import type { EChartsOption } from 'echarts-for-react/lib/types'
@@ -18,11 +19,41 @@ export const VolumeChart: FC<VolumeChartProps> = ({ data }) => {
 
   const [volumeSeries, totalVolume] = useMemo(() => {
     if (!data) return [[], 0]
-    const last30 = [...data.volumeHistory]
-      .filter((d) => d.value > 0)
-      .sort(
+
+    const last30 = data?.volumeHistory
+      ?.sort(
         (a, b) =>
           new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime(),
+      )
+      .reduce(
+        (acc, curr, idx) => {
+          const prev = idx !== 0 ? acc[acc.length - 1] : undefined
+          const currDate = new Date(curr.timestamp) //  timestamps are ISO strings
+
+          if (prev) {
+            const prevDate = prev
+              ? new Date(prev.timestamp)
+              : new Date(curr.timestamp)
+            const daysDiff = differenceInDays(currDate, prevDate)
+
+            // Fill in missing days
+            for (let i = 1; i < daysDiff; i++) {
+              const missingDate = addDays(prevDate, i)
+              acc.push({
+                timestamp: `${missingDate.toISOString().split('T')?.[0]}T00:00:00.000Z`,
+                value: 0,
+              })
+            }
+          }
+
+          acc.push({
+            timestamp: `${currDate.toISOString().split('T')?.[0]}T00:00:00.000Z`,
+            value: curr.value,
+          })
+
+          return acc
+        },
+        [] as { timestamp: string; value: number }[],
       )
       .slice(-30)
 
@@ -73,7 +104,7 @@ export const VolumeChart: FC<VolumeChartProps> = ({ data }) => {
                 ? `{max|${label}}`
                 : label
           },
-          padding: [0, 10, 0, 10],
+          padding: [0, 30, 0, 0],
           rich: {
             min: { padding: [0, 10, 0, 50] },
             max: { padding: [0, 50, 0, 10] },
