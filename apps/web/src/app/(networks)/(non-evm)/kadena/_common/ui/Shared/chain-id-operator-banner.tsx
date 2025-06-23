@@ -27,9 +27,14 @@ export const ChainIdOperatorBanner = ({
       )}
     >
       <div className="flex items-center gap-3 font-medium">
-        <span className="text-transparent bg-gradient-to-r from-black/80 to-black bg-clip-text dark:from-white/80 dark:to-white">
-          SushiSwap on Kadena <br className="block xs:hidden" /> Operates on
-          Chain: {KADENA_CHAIN_ID}
+        <span className="text-black/80 dark:text-white/80">
+          <span className="font-bold">SushiSwap</span> on{' '}
+          <span className="font-bold">Kadena</span>{' '}
+          <br className="block xs:hidden" /> Operates on{' '}
+          <span className="dark:text-yellow-300 text-[#f3e035] bg-blend-color">
+            Chain
+          </span>{' '}
+          - {KADENA_CHAIN_ID}
         </span>
       </div>
       <Button
