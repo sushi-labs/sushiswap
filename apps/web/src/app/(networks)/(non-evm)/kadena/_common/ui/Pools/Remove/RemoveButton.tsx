@@ -77,7 +77,7 @@ export const RemoveButton = (props: ButtonProps) => {
       const res = await kadenaClient.submit(signedTxn)
       const txId = res.requestKey
       createInfoToast({
-        summary: 'Remove liquidity initiated...',
+        summary: 'Removing liquidity initiated...',
         type: 'swap',
         account: address as string,
         chainId: 1,
@@ -150,12 +150,12 @@ export const RemoveButton = (props: ButtonProps) => {
   }
   const buttonText = useMemo(() => {
     if (isTxnPending) {
-      return 'Removing'
+      return 'Removing Liquidity'
     }
     if (percentage === 0) {
       return 'Enter Amount'
     }
-    return 'Remove'
+    return 'Remove Liquidity'
   }, [percentage, isTxnPending])
 
   if (!isConnected) {
