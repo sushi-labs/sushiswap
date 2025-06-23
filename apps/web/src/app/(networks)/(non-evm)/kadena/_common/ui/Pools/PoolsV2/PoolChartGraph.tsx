@@ -207,10 +207,7 @@ export const PoolChartGraph: FC<PoolChartProps> = ({ chart, period, pool }) => {
             <div className="text-sm h-[1ch] w-full" />
           ) : (
             <div className="text-sm text-gray-500 dark:text-slate-500 hoveredItemName">
-              {format(
-                new Date(xData[xData.length - 1] * 1000),
-                'dd MMM yyyy HH:mm',
-              )}
+              {format(new Date(xData[xData.length - 1]), 'dd MMM yyyy HH:mm')}
             </div>
           )}
         </CardDescription>
