@@ -1,6 +1,7 @@
 'use client'
 
 import { useIsMounted } from '@sushiswap/hooks'
+import { addDays, differenceInDays, parseISO } from 'date-fns'
 import format from 'date-fns/format'
 import ReactEcharts from 'echarts-for-react'
 import type { EChartsOption } from 'echarts-for-react/lib/types'
@@ -20,14 +21,44 @@ export const TVLChart: FC<TVLChartProps> = ({ data }) => {
 
   const [tvlSeries, latestTvl, latestDate] = useMemo(() => {
     if (!data) return [[], 0, 0]
-    const sorted = [...data.tvlHistory]
-      .filter((d) => d.value > 0)
-      .sort(
+
+    const filled = data?.tvlHistory
+      ?.sort(
         (a, b) =>
           new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime(),
       )
+      .reduce(
+        (acc, curr, idx) => {
+          const prev = idx !== 0 ? acc[acc.length - 1] : undefined
+          const currDate = new Date(curr.timestamp) //  timestamps are ISO strings
 
-    const series = sorted.map((d) => [new Date(d.timestamp).getTime(), d.value])
+          if (prev) {
+            const prevDate = prev
+              ? new Date(prev.timestamp)
+              : new Date(curr.timestamp)
+            const daysDiff = differenceInDays(currDate, prevDate)
+
+            // Fill in missing days
+            for (let i = 1; i < daysDiff; i++) {
+              const missingDate = addDays(prevDate, i)
+              acc.push({
+                timestamp: `${missingDate.toISOString().split('T')?.[0]}T00:00:00.000Z`,
+                value: prev.value,
+              })
+            }
+          }
+
+          acc.push({
+            timestamp: `${currDate.toISOString().split('T')?.[0]}T00:00:00.000Z`,
+            value: curr.value,
+          })
+
+          return acc
+        },
+        [] as { timestamp: string; value: number }[],
+      )
+
+    const series = filled.map((d) => [new Date(d.timestamp).getTime(), d.value])
     const last = series.at(-1) ?? [Date.now(), 0]
 
     return [series, last[1] as number, last[0] as number]
@@ -79,7 +110,7 @@ export const TVLChart: FC<TVLChartProps> = ({ data }) => {
                 ? `{max|${label}}`
                 : label
           },
-          padding: [0, 10, 0, 10],
+          padding: [0, 0, 0, 60],
           rich: {
             min: { padding: [0, 10, 0, 50] },
             max: { padding: [0, 50, 0, 10] },

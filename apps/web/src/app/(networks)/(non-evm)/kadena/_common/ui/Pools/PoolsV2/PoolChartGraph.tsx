@@ -5,6 +5,7 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
+  SkeletonBox,
   SkeletonText,
 } from '@sushiswap/ui'
 import format from 'date-fns/format'
@@ -194,16 +195,21 @@ export const PoolChartGraph: FC<PoolChartProps> = ({ chart, period, pool }) => {
     <>
       <CardHeader>
         <CardTitle>
-          <span className="hoveredItemValue">{formatUSD(defaultValue)}</span>{' '}
-          {chart === PoolChartType.Volume && (
-            <span className="text-sm font-medium text-gray-600 dark:text-slate-300">
-              <span className="text-xs top-[-2px] relative">•</span>{' '}
-              <span className="hoveredItemValue">
-                {formatUSD(defaultValue * Number(swapFee))}
-              </span>{' '}
-              earned
-            </span>
-          )}
+          {isLoading ? (
+            <SkeletonText fontSize="sm" className="max-w-[120px]" />
+          ) : (
+            <span className="hoveredItemValue">{formatUSD(defaultValue)}</span>
+          )}{' '}
+          {chart === PoolChartType.Volume &&
+            (isLoading ? null : (
+              <span className="text-sm font-medium text-gray-600 dark:text-slate-300">
+                <span className="text-xs top-[-2px] relative">•</span>{' '}
+                <span className="hoveredItemValue">
+                  {formatUSD(defaultValue * Number(swapFee))}
+                </span>{' '}
+                earned
+              </span>
+            ))}
         </CardTitle>
         <CardDescription>
           {isLoading ? (
@@ -218,15 +224,17 @@ export const PoolChartGraph: FC<PoolChartProps> = ({ chart, period, pool }) => {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        {noData || (isError && !isLoading) ? (
-          <div className="flex h-[400px] w-full items-center justify-center text-primary font-medium">
+        {isLoading ? (
+          <SkeletonBox className="h-[360px]" />
+        ) : noData || (isError && !isLoading) ? (
+          <div className="flex h-[395px] w-full items-center justify-center text-primary font-medium">
             No data available
           </div>
         ) : (
           <ReactEchartsCore
             echarts={echarts}
             option={DEFAULT_OPTION}
-            style={{ height: 400 }}
+            style={{ height: 380 }}
           />
         )}
       </CardContent>
