@@ -18,9 +18,6 @@ export const TVLChart: FC<TVLChartProps> = ({ data }) => {
   const isMounted = useIsMounted()
   const { resolvedTheme } = useTheme()
 
-  /* -------------------------------------------------------------------- */
-  /*  Prepare data for ECharts                                             */
-  /* -------------------------------------------------------------------- */
   const [tvlSeries, latestTvl, latestDate] = useMemo(() => {
     if (!data) return [[], 0, 0]
     const sorted = [...data.tvlHistory]
@@ -36,9 +33,6 @@ export const TVLChart: FC<TVLChartProps> = ({ data }) => {
     return [series, last[1] as number, last[0] as number]
   }, [data])
 
-  /* -------------------------------------------------------------------- */
-  /*  Tooltip handlers (DOM mutation keeps current CSS animation-free)    */
-  /* -------------------------------------------------------------------- */
   const onMouseOver = useCallback((params: { data: number[] }[]) => {
     const tvlNode = document.getElementById('hoveredTVL')
     const dateNode = document.getElementById('hoveredTVLDate')
@@ -60,9 +54,6 @@ export const TVLChart: FC<TVLChartProps> = ({ data }) => {
       dateNode.innerHTML = format(new Date(latestDate), 'dd MMM yyyy HH:mm aa')
   }, [latestTvl, latestDate])
 
-  /* -------------------------------------------------------------------- */
-  /*  ECharts option                                                      */
-  /* -------------------------------------------------------------------- */
   const option: EChartsOption = useMemo(
     () => ({
       tooltip: { trigger: 'axis', formatter: onMouseOver },
@@ -111,9 +102,6 @@ export const TVLChart: FC<TVLChartProps> = ({ data }) => {
     [onMouseOver, tvlSeries, resolvedTheme],
   )
 
-  /* -------------------------------------------------------------------- */
-  /*  Render                                                              */
-  /* -------------------------------------------------------------------- */
   return (
     <div>
       <div className="flex flex-col gap-3">

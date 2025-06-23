@@ -16,9 +16,6 @@ interface VolumeChartProps {
 export const VolumeChart: FC<VolumeChartProps> = ({ data }) => {
   const { resolvedTheme } = useTheme()
 
-  /* ------------------------------------------------------------------ */
-  /*  Prep last-30-days series & totals                                 */
-  /* ------------------------------------------------------------------ */
   const [volumeSeries, totalVolume] = useMemo(() => {
     if (!data) return [[], 0]
     const last30 = [...data.volumeHistory]
@@ -36,9 +33,6 @@ export const VolumeChart: FC<VolumeChartProps> = ({ data }) => {
     return [series, total]
   }, [data])
 
-  /* ------------------------------------------------------------------ */
-  /*  Tooltip DOM updates                                               */
-  /* ------------------------------------------------------------------ */
   const onMouseOver = useCallback((params: { data: number[] }[]) => {
     const volNode = document.getElementById('hoveredVolume')
     const dateNode = document.getElementById('hoveredVolumeDate')
@@ -59,9 +53,6 @@ export const VolumeChart: FC<VolumeChartProps> = ({ data }) => {
     if (dateNode) dateNode.innerHTML = 'Past month'
   }, [totalVolume])
 
-  /* ------------------------------------------------------------------ */
-  /*  ECharts option                                                    */
-  /* ------------------------------------------------------------------ */
   const option: EChartsOption = useMemo(
     () => ({
       tooltip: { trigger: 'axis', formatter: onMouseOver },
@@ -102,23 +93,25 @@ export const VolumeChart: FC<VolumeChartProps> = ({ data }) => {
     [onMouseOver, resolvedTheme, volumeSeries],
   )
 
-  /* ------------------------------------------------------------------ */
-  /*  Render                                                            */
-  /* ------------------------------------------------------------------ */
   return (
     <div>
       <div className="flex flex-col gap-3">
         <span className="text-sm text-muted-foreground">Kadena Volume</span>
-
-        <div className="text-3xl font-medium">
-          <span id="hoveredVolume">{formatUSD(totalVolume)}</span>
+        <div className="flex justify-between">
+          <div className="flex flex-col gap-3">
+            <div className="text-3xl font-medium">
+              <span id="hoveredVolume">{formatUSD(totalVolume)}</span>
+            </div>
+            <div>
+              <span
+                id="hoveredVolumeDate"
+                className="text-sm text-gray-500 dark:text-slate-500"
+              >
+                Past month
+              </span>
+            </div>
+          </div>
         </div>
-        <span
-          id="hoveredVolumeDate"
-          className="text-sm text-gray-500 dark:text-slate-500"
-        >
-          Past month
-        </span>
       </div>
 
       <ReactECharts
