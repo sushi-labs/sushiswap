@@ -39,7 +39,7 @@ export const AddButton = ({
     amountInToken1,
     poolId,
   } = usePoolState()
-  const { setIsTxnPending, setAmountInToken0, setAmountInToken1 } =
+  const { setIsTxnPending, setAmountInToken0, setAmountInToken1, setPoolId } =
     usePoolDispatch()
   const { activeAccount, currentWallet } = useKadena()
   const { client } = useKadenaWallet()
@@ -125,6 +125,7 @@ export const AddButton = ({
           href: getChainwebTxnLink(txId),
         })
         poolAddress = preflightResult.result.data?.account
+        setPoolId(poolAddress)
       }
 
       const tx = buildAddLiquidityTxn({
