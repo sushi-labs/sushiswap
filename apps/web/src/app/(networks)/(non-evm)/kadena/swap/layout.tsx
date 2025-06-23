@@ -1,4 +1,3 @@
-import { ChainIdOperatorBanner } from '~kadena/_common/ui/Shared/chain-id-operator-banner'
 import { Header } from '~kadena/header'
 import { Providers } from './providers'
 
