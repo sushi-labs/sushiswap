@@ -18,7 +18,6 @@ export const SimpleSwapBridgeBanner: FC<{ className?: string }> = ({
     'hide-bridge-banner-kadena',
     false,
   )
-
   return !hideBanner && isMounted ? (
     <Link
       href={'https://kinesisbridge.xyz'}
