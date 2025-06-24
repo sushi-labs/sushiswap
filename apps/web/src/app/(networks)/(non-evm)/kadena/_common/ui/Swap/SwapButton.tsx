@@ -68,7 +68,6 @@ export const SwapButton = ({ closeModal }: { closeModal: () => void }) => {
       }
 
       const poolAddress = getPoolAddressRes.result.data.account
-      // console.log("poolAddress", poolAddress);
 
       const tx = buildSwapTxn({
         token0Address: token0.tokenAddress,

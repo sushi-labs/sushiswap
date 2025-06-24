@@ -68,7 +68,7 @@ export const REWARDS_CHAIN_COLUMN: ColumnDef<ClaimableRewards, unknown> = {
   meta: {
     body: {
       skeleton: (
-        <div className="flex gap-2 items-center w-full">
+        <div className="flex items-center w-full gap-2">
           <SkeletonCircle radius={18} />
           <div className="w-28">
             <SkeletonText fontSize="sm" />
@@ -104,8 +104,8 @@ export const REWARDS_ACTION_COLUMN: ColumnDef<ClaimableRewards, unknown> = {
     body: {
       skeleton: (
         <div className="flex gap-3 w-[280px]">
-          <SkeletonBox className="h-10 w-full" />
-          <SkeletonBox className="h-10 w-full" />
+          <SkeletonBox className="w-full h-10" />
+          <SkeletonBox className="w-full h-10" />
         </div>
       ),
     },
@@ -120,7 +120,7 @@ export const FEES_CHAIN_COLUMN: ColumnDef<ClaimableFees, unknown> = {
   meta: {
     body: {
       skeleton: (
-        <div className="flex gap-2 items-center w-full">
+        <div className="flex items-center w-full gap-2">
           <SkeletonCircle radius={18} />
           <div className="w-28">
             <SkeletonText fontSize="sm" />
@@ -156,8 +156,8 @@ export const FEES_ACTION_COLUMN: ColumnDef<ClaimableFees, unknown> = {
     body: {
       skeleton: (
         <div className="flex gap-3 w-[280px]">
-          <SkeletonBox className="h-10 w-full" />
-          <SkeletonBox className="h-10 w-full" />
+          <SkeletonBox className="w-full h-10" />
+          <SkeletonBox className="w-full h-10" />
         </div>
       ),
     },
