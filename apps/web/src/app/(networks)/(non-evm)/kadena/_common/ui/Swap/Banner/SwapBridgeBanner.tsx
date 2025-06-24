@@ -20,7 +20,7 @@ export const SimpleSwapBridgeBanner: FC<{ className?: string }> = ({
   )
   return !hideBanner && isMounted ? (
     <Link
-      href={'https://kinesisbridge.xyz'}
+      href={'https://kinesisbridge.xyz/bridge'}
       target="_blank"
       rel="noopener noreferrer"
     >
