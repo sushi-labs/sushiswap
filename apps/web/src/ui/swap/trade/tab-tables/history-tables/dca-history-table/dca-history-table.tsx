@@ -1,12 +1,11 @@
-'use client'
+"use client"
 
-import { Card, DataTable, Loader, Slot } from '@sushiswap/ui'
-import type { ColumnDef, Row } from '@tanstack/react-table'
-import { type ReactNode, useMemo, useState } from 'react'
-import { useCallback } from 'react'
-import InfiniteScroll from 'react-infinite-scroll-component'
-import { Native } from 'sushi/currency'
-import { MobileCard } from '../mobile-card/mobile-card'
+import { Card, DataTable, Loader, Slot } from "@sushiswap/ui";
+import type { ColumnDef, PaginationState, Row } from "@tanstack/react-table";
+import { type ReactNode, useMemo, useState } from "react";
+import { useCallback } from "react";
+import InfiniteScroll from "react-infinite-scroll-component";
+import { MobileCard } from "../mobile-card/mobile-card";
 import {
   CHAIN_COLUMN,
   FILLED_COLUMN,
@@ -17,63 +16,34 @@ import {
   VALUE_COLUMN,
   getAvgPriceColumn,
   makeActionColumn,
-} from './dca-history-columns'
-import { DCAOrderDetailsModal } from './order-details-modal'
-
-export interface DCAOrderSummary {
-  id: string
-  orderId: string
-  filledToken: ReturnType<typeof Native.onChain>
-  filledAmount: number
-  sizeToken: ReturnType<typeof Native.onChain>
-  sizeAmount: number
-  chain: {
-    id: number
-    name: string
-  }
-  valueUsd: number
-  avgPriceUsd: number
-  ordersCount: number
-  frequency: string
-  status: 'Completed' | 'Cancelled' | 'Active'
-  statusDate: number
-  txHash: string
-}
-
-const MOCK_DATA: DCAOrderSummary[] = [
-  {
-    id: 'row-1',
-    orderId: '001',
-    filledToken: Native.onChain(42161),
-    filledAmount: 10,
-    sizeToken: Native.onChain(43114),
-    sizeAmount: 19_000,
-    chain: {
-      id: 43114,
-      name: 'Avalanche',
-    },
-    valueUsd: 19_000,
-    avgPriceUsd: 1_900,
-    ordersCount: 5,
-    frequency: 'Every 5 minutes',
-    status: 'Completed',
-    statusDate: 1736122860000,
-    txHash: '0x1234567890abcdef',
-  },
-]
+} from "./dca-history-columns"
+import { DCAOrderDetailsModal } from "./order-details-modal"
+import { getTwapDcaOrders, TwapOrder } from "src/lib/hooks/react-query/twap"
+import { useTradeTablesContext } from "../../trade-tables-context"
+import { OrderStatus } from "@orbs-network/twap-sdk"
 
 export const DCAOrdersHistoryTable = () => {
-  const data = MOCK_DATA
-  const [_selectedRow, setSelectedRow] = useState<DCAOrderSummary | null>(null)
+  const { orders, ordersLoading } = useTradeTablesContext()
+  const [paginationState, setPaginationState] = useState<PaginationState>({
+    pageIndex: 0,
+    pageSize: 10,
+  })
+  const [selectedRowId, setSelectedRowId] = useState<number | null>(null)
   const [isOpen, setIsOpen] = useState(false)
   const [showInUsd, setShowInUsd] = useState(true)
 
+  const data = useMemo(() => {
+    return getTwapDcaOrders(orders).filter(
+      (order) => order.status !== OrderStatus.Open
+    )
+  }, [orders])
+
   const avgPriceColumn = useMemo(
     () => getAvgPriceColumn(showInUsd, setShowInUsd),
-    [showInUsd],
+    [showInUsd]
   )
 
-  const COLUMNS: ColumnDef<DCAOrderSummary>[] = useMemo(
+  const COLUMNS: ColumnDef<TwapOrder>[] = useMemo(
     () => [
       ORDER_ID_COLUMN,
       FILLED_COLUMN,
@@ -84,15 +54,15 @@ export const DCAOrdersHistoryTable = () => {
       ORDERS_COLUMN,
       STATUS_COLUMN,
     ],
-    [avgPriceColumn],
+    [avgPriceColumn]
   )
 
   const MOBILE_ACTION_COLUMN = useMemo(
-    () => makeActionColumn(setSelectedRow),
-    [],
+    () => makeActionColumn(setSelectedRowId),
+    []
   )
 
-  const MOBILE_COLUMNS: ColumnDef<DCAOrderSummary>[] = useMemo(
+  const MOBILE_COLUMNS: ColumnDef<TwapOrder>[] = useMemo(
     () => [
       FILLED_COLUMN,
       SIZE_COLUMN,
@@ -104,27 +74,35 @@ export const DCAOrdersHistoryTable = () => {
       MOBILE_ACTION_COLUMN,
       ORDER_ID_COLUMN,
     ],
-    [avgPriceColumn, MOBILE_ACTION_COLUMN],
+    [avgPriceColumn, MOBILE_ACTION_COLUMN]
   )
 
   const rowRenderer = useCallback(
-    (row: Row<DCAOrderSummary>, rowNode: ReactNode) => (
+    (row: Row<TwapOrder>, rowNode: ReactNode) => (
       <Slot
         className="cursor-pointer hover:bg-accent"
         onClick={() => {
-          setSelectedRow(row.original)
+          setSelectedRowId(row.original.id)
           setIsOpen(true)
         }}
       >
         {rowNode}
       </Slot>
     ),
-    [],
+    []
   )
+
+  const selectedOrder = useMemo(() => {
+    return data.find((order) => order.id === selectedRowId)
+  }, [data, selectedRowId])
 
   return (
     <>
-      <DCAOrderDetailsModal isOpen={isOpen} onOpenChange={setIsOpen} />
+      <DCAOrderDetailsModal
+        isOpen={isOpen}
+        onOpenChange={setIsOpen}
+        order={selectedOrder}
+      />
       <InfiniteScroll
         dataLength={data.length}
         next={() => {}}
@@ -139,10 +117,14 @@ export const DCAOrdersHistoryTable = () => {
           <DataTable
             columns={COLUMNS}
             data={data}
-            loading={false}
+            loading={ordersLoading}
             rowRenderer={rowRenderer}
             pagination
             className="!border-none [&_td]:h-[92px]"
+            state={{
+              pagination: paginationState,
+            }}
+            onPaginationChange={setPaginationState}
           />
         </Card>
 

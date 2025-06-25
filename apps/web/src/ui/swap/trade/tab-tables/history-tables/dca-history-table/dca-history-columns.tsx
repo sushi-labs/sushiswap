@@ -1,92 +1,112 @@
-import { Button, TooltipContent } from '@sushiswap/ui'
-import { TooltipTrigger } from '@sushiswap/ui'
-import { Tooltip } from '@sushiswap/ui'
-import { TooltipProvider } from '@sushiswap/ui'
-import { DollarCircledIcon } from '@sushiswap/ui/icons/DollarCircled'
-import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
-import type { ColumnDef } from '@tanstack/react-table'
-import { format } from 'date-fns'
-import { Currency } from 'node_modules/@sushiswap/ui/dist/components/currency'
-import { formatNumber, formatUSD } from 'sushi/format'
-import type { DCAOrderSummary } from './dca-history-table'
+import { OrderStatus } from "@orbs-network/twap-sdk";
+import { Button, TooltipContent } from "@sushiswap/ui";
+import { TooltipTrigger } from "@sushiswap/ui";
+import { Tooltip } from "@sushiswap/ui";
+import { TooltipProvider } from "@sushiswap/ui";
+import { DollarCircledIcon } from "@sushiswap/ui/icons/DollarCircled";
+import { NetworkIcon } from "@sushiswap/ui/icons/NetworkIcon";
+import type { ColumnDef } from "@tanstack/react-table";
+import { format } from "date-fns";
+import { Currency } from "node_modules/@sushiswap/ui/dist/components/currency";
+import { TwapOrder, useParsedOrder } from "src/lib/hooks/react-query/twap";
+import { fillDelayText } from "src/lib/swap/twap";
+import { formatNumber, formatUSD } from "sushi/format";
 
-export const ORDER_ID_COLUMN: ColumnDef<DCAOrderSummary> = {
-  id: 'orderId',
-  header: 'Order ID',
+export const ORDER_ID_COLUMN: ColumnDef<TwapOrder> = {
+  id: "orderId",
+  header: "Order ID",
   enableSorting: false,
-  accessorFn: (row) => row.orderId,
-  cell: ({ row }) => (
-    <div className="w-full min-w-[150px]">{row.original.orderId}</div>
-  ),
-}
+  accessorFn: (row) => row.id,
+  cell: ({ row }) => <div>{row.original.id}</div>,
+};
 
-export const FILLED_COLUMN: ColumnDef<DCAOrderSummary> = {
-  id: 'filled',
-  header: 'Filled',
+export const FILLED_COLUMN: ColumnDef<TwapOrder> = {
+  id: "filled",
+  header: "Filled",
   enableSorting: false,
-  accessorFn: (row) => row.filledAmount,
-  cell: ({ row }) => (
-    <div className="flex items-center gap-2 whitespace-nowrap">
-      <Currency.Icon
-        currency={row.original.filledToken}
-        width={24}
-        height={24}
-      />
-      <span>
-        {formatNumber(row.original.filledAmount)}{' '}
-        {row.original.filledToken.symbol}
-      </span>
-    </div>
-  ),
-}
+  accessorFn: (row) => {
+    const { buyTokenFilledAmount } = useParsedOrder(row);
 
-export const SIZE_COLUMN: ColumnDef<DCAOrderSummary> = {
-  id: 'size',
-  header: 'Size',
-  enableSorting: false,
-  accessorFn: (row) => row.sizeAmount,
-  cell: ({ row }) => (
-    <div className="flex items-center gap-2 whitespace-nowrap">
-      <Currency.Icon currency={row.original.sizeToken} width={24} height={24} />
-      <span>
-        {formatNumber(row.original.sizeAmount)} {row.original.sizeToken.symbol}
-      </span>
-    </div>
-  ),
-}
-
-export const CHAIN_COLUMN: ColumnDef<DCAOrderSummary> = {
-  id: 'chain',
-  header: 'Chain',
-  enableSorting: false,
-  accessorFn: (row) => row.chain.id,
-  cell: ({ row }) => (
-    <div className="flex items-center gap-1 md:gap-2">
-      <div className="dark:border-[#222137] border-[#F5F5F5] border rounded-[4px] overflow-hidden">
-        <NetworkIcon
-          type="square"
-          chainId={row.original.chain.id}
-          className="w-3 h-3 md:w-5 md:h-5"
-        />
+    return buyTokenFilledAmount;
+  },
+  cell: ({ row }) => {
+    const { buyToken, buyTokenFilledAmount } = useParsedOrder(row.original);
+    if (!buyToken) return null;
+    return (
+      <div className="flex items-center gap-2 whitespace-nowrap">
+        <Currency.Icon currency={buyToken} width={24} height={24} />
+        <span>
+          {formatNumber(buyTokenFilledAmount)} {buyToken.symbol}
+        </span>
       </div>
-      <span className="block text-xs md:hidden">{row.original.chain.name}</span>
-    </div>
-  ),
-}
+    );
+  },
+};
 
-export const VALUE_COLUMN: ColumnDef<DCAOrderSummary> = {
-  id: 'valueUsd',
-  header: 'Value',
+export const SIZE_COLUMN: ColumnDef<TwapOrder> = {
+  id: "size",
+  header: "Size",
   enableSorting: false,
-  accessorFn: (row) => row.valueUsd,
-  cell: ({ row }) => <span>{formatUSD(row.original.valueUsd)}</span>,
-}
+  accessorFn: (row) => {
+    const { sellTokenTotalAmount } = useParsedOrder(row);
+    return sellTokenTotalAmount;
+  },
+  cell: ({ row }) => {
+    const { sellToken, sellTokenTotalAmount } = useParsedOrder(row.original);
+    if (!sellToken) return null;
+    return (
+      <div className="flex items-center gap-2 whitespace-nowrap">
+        <Currency.Icon currency={sellToken} width={24} height={24} />
+        <span>
+          {formatNumber(sellTokenTotalAmount)} {sellToken.symbol}
+        </span>
+      </div>
+    );
+  },
+};
+
+export const CHAIN_COLUMN: ColumnDef<TwapOrder> = {
+  id: "chain",
+  header: "Chain",
+  enableSorting: false,
+  accessorFn: (row) => row.chainId,
+  cell: ({ row }) => {
+    const { chainInfo } = useParsedOrder(row.original);
+    return (
+      <div className="flex items-center gap-1 md:gap-2">
+        <div className="dark:border-[#222137] border-[#F5F5F5] border rounded-[4px] overflow-hidden">
+          <NetworkIcon
+            type="square"
+            chainId={chainInfo.id}
+            className="w-3 h-3 md:w-5 md:h-5"
+          />
+        </div>
+        <span className="block text-xs md:hidden">{chainInfo.name}</span>
+      </div>
+    );
+  },
+};
+
+export const VALUE_COLUMN: ColumnDef<TwapOrder> = {
+  id: "valueUsd",
+  header: "Value",
+  enableSorting: false,
+  accessorFn: (row) => {
+    const { sellTokenTotalUsdValue } = useParsedOrder(row);
+
+    return sellTokenTotalUsdValue;
+  },
+  cell: ({ row }) => {
+    const { sellTokenTotalUsdValue } = useParsedOrder(row.original);
+    return <span>{formatUSD(sellTokenTotalUsdValue)}</span>;
+  },
+};
 
 export const getAvgPriceColumn = (
   showInUsd: boolean,
-  setShowInUsd: React.Dispatch<React.SetStateAction<boolean>>,
-): ColumnDef<DCAOrderSummary> => ({
-  id: 'avgPriceUsd',
+  setShowInUsd: React.Dispatch<React.SetStateAction<boolean>>
+): ColumnDef<TwapOrder> => ({
+  id: "avgPriceUsd",
   enableSorting: false,
   header: () => (
     <TooltipProvider>
@@ -95,19 +115,19 @@ export const getAvgPriceColumn = (
           <div
             className="flex items-center gap-1 cursor-pointer select-none min-w-[110px]"
             onClick={(e) => {
-              e.stopPropagation()
-              setShowInUsd((prev) => !prev)
+              e.stopPropagation();
+              setShowInUsd((prev) => !prev);
             }}
             onKeyDown={(e) => {
-              if (e.key === 'Enter' || e.key === ' ') {
-                e.stopPropagation()
+              if (e.key === "Enter" || e.key === " ") {
+                e.stopPropagation();
               }
             }}
           >
             <span>Avg. Price</span>
             <span className="inline-flex items-center dark:text-skyblue text-blue font-normal gap-[1px] border-b border-dashed border-current pb-[1px]">
               <DollarCircledIcon />
-              <span>{showInUsd ? 'USD' : 'Token'}</span>
+              <span>{showInUsd ? "USD" : "Token"}</span>
             </span>
           </div>
         </TooltipTrigger>
@@ -120,56 +140,79 @@ export const getAvgPriceColumn = (
       </Tooltip>
     </TooltipProvider>
   ),
-  accessorFn: (row) => row.avgPriceUsd,
+  accessorFn: (row) => {
+    const { usdPerChunk } = useParsedOrder(row);
+
+    return usdPerChunk;
+  },
   cell: ({ row }) => {
-    const tokenPrice =
-      row.original.sizeAmount && row.original.filledAmount
-        ? row.original.sizeAmount / row.original.filledAmount
-        : 0
+    const { avgBuyTokenAmountPerChunk, avgBuyTokenUsdPerChunk, buyToken } = useParsedOrder(
+      row.original
+    );
 
     return showInUsd ? (
-      <span>{formatUSD(row.original.avgPriceUsd)}</span>
+      <span>{!avgBuyTokenUsdPerChunk ? "N/A" : formatUSD(avgBuyTokenUsdPerChunk)}</span>
     ) : (
-      <span className="whitespace-nowrap">{`${tokenPrice} ${row.original.sizeToken.symbol}`}</span>
-    )
+      <span className="whitespace-nowrap">{!avgBuyTokenAmountPerChunk ? "N/A" : `${formatNumber(
+        avgBuyTokenAmountPerChunk
+      )} ${buyToken?.symbol}`}</span>
+    );
   },
-})
+});
 
-export const ORDERS_COLUMN: ColumnDef<DCAOrderSummary> = {
-  id: 'orders',
-  header: 'Orders',
+export const ORDERS_COLUMN: ColumnDef<TwapOrder> = {
+  id: "orders",
+  header: "Orders",
   enableSorting: false,
-  accessorFn: (row) => row.ordersCount,
-  cell: ({ row }) => (
-    <div className="flex flex-col">
-      <span className="whitespace-nowrap">
-        {row.original.ordersCount} Orders
-      </span>
-      <span className="text-xs dark:text-slate-500 text-slate-450 whitespace-nowrap">
-        {row.original.frequency}
-      </span>
-    </div>
-  ),
-}
+  accessorFn: (row) => {
+    const { chunksCountTotal } = useParsedOrder(row);
 
-export const STATUS_COLUMN: ColumnDef<DCAOrderSummary> = {
-  id: 'status',
+    return chunksCountTotal;
+  },
+  cell: ({ row }) => {
+    const { chunksCountTotal, fillIntervalMs } = useParsedOrder(row.original);
+
+    return (
+      <div className="flex flex-col">
+        <span className="whitespace-nowrap">{chunksCountTotal} Orders</span>
+        <span className="text-xs dark:text-slate-500 text-slate-450 whitespace-nowrap">
+          Every {fillDelayText(fillIntervalMs)}
+        </span>
+      </div>
+    );
+  },
+};
+
+export const STATUS_COLUMN: ColumnDef<TwapOrder> = {
+  id: "status",
   header: () => <div className="text-right">Status</div>,
   enableSorting: false,
   accessorFn: (row) => row.status,
-  cell: ({ row }) => (
-    <div className="flex flex-col">
-      <span className="whitespace-nowrap">{row.original.status} On</span>
-      <span className="text-xs dark:text-slate-500 text-slate-450 whitespace-nowrap">
-        {format(new Date(row.original.statusDate), 'MM/dd/yy h:mm a')}
-      </span>
-    </div>
-  ),
-}
+  cell: ({ row }) => {
+    const { fullyFilledAtTimestamp, status, deadlineTimestamp } =
+      useParsedOrder(row.original);
+    const date =
+      status === OrderStatus.Completed
+        ? fullyFilledAtTimestamp
+        : deadlineTimestamp;
+    return (
+      <div className="flex flex-col">
+        <span className="whitespace-nowrap">
+          <span className="capitalize">{status.toLocaleLowerCase()} On</span>
+        </span>
+        {date && (
+          <span className="text-xs dark:text-slate-500 text-slate-450 whitespace-nowrap">
+            {format(new Date(date), "dd/MM/yy h:mm a")}
+          </span>
+        )}
+      </div>
+    );
+  },
+};
 
-export const ACTION_COLUMN: ColumnDef<DCAOrderSummary> = {
-  id: 'action',
-  header: 'Action',
+export const ACTION_COLUMN: ColumnDef<TwapOrder> = {
+  id: "action",
+  header: "Action",
   enableSorting: false,
   accessorFn: (row) => row.id,
   cell: () => (
@@ -177,26 +220,26 @@ export const ACTION_COLUMN: ColumnDef<DCAOrderSummary> = {
       View Orders
     </Button>
   ),
-}
+};
 
 export function makeActionColumn(
-  onView: (row: DCAOrderSummary) => void,
-): ColumnDef<DCAOrderSummary> {
+  onView: (id: number) => void
+): ColumnDef<TwapOrder> {
   return {
-    id: 'action',
-    header: 'Action',
+    id: "action",
+    header: "Action",
     enableSorting: false,
     cell: ({ row }) => (
       <Button
         className="w-full"
         variant="tradePrimary"
         onClick={(e) => {
-          e.stopPropagation()
-          onView(row.original)
+          e.stopPropagation();
+          onView(row.original.id);
         }}
       >
         View Orders
       </Button>
     ),
-  }
+  };
 }

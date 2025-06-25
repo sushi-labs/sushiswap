@@ -1,103 +1,55 @@
-'use client'
+"use client";
 
-import { Card, DataTable, Loader } from '@sushiswap/ui'
-import type { ColumnDef } from '@tanstack/react-table'
-import React, { useMemo, useState } from 'react'
-import InfiniteScroll from 'react-infinite-scroll-component'
-import { Native } from 'sushi/currency'
-import { MobileCard } from '../history-tables/mobile-card/mobile-card'
+import { Card, DataTable, Loader } from "@sushiswap/ui";
+import type { ColumnDef } from "@tanstack/react-table";
+import React, { useMemo, useState } from "react";
+import InfiniteScroll from "react-infinite-scroll-component";
+import { MobileCard } from "../history-tables/mobile-card/mobile-card";
 import {
   ACTION_COLUMN,
   BUY_COLUMN,
   CHAIN_COLUMN,
-  FILLED_COLUMN,
   SELL_COLUMN,
   TIME_COLUMN,
   VALUE_PNL_COLUMN,
   getPriceColumn,
-} from './columns'
-
-export interface LimitOrder {
-  id: string
-  chain: {
-    id: number
-    name: string
-  }
-  buyToken: ReturnType<typeof Native.onChain>
-  buyAmount: number
-  sellToken: ReturnType<typeof Native.onChain>
-  sellAmount: number
-  valueUSD: number
-  pnlPercent: number
-  filledAmount: number
-  totalAmount: number
-  filledPercent: number
-  timestamp: number
-  priceUsd: number
-}
-
-export const LIMIT_ORDER_MOCK_DATA: LimitOrder[] = [
-  {
-    id: '1',
-    chain: {
-      id: 1,
-      name: 'Ethereum',
-    },
-    buyToken: Native.onChain(1),
-    buyAmount: 0.42,
-    sellToken: Native.onChain(43114),
-    sellAmount: 1200,
-    valueUSD: 1200,
-    pnlPercent: 6.4,
-    filledAmount: 0.0,
-    totalAmount: 21,
-    filledPercent: 0,
-    timestamp: 1741737600000,
-    priceUsd: 0.84,
-  },
-  {
-    id: '2',
-    chain: {
-      id: 56,
-      name: 'Binance Smart Chain',
-    },
-    buyToken: Native.onChain(56),
-    buyAmount: 10,
-    sellToken: Native.onChain(1),
-    sellAmount: 32,
-    valueUSD: 950,
-    pnlPercent: -3.2,
-    filledAmount: 5,
-    totalAmount: 10,
-    filledPercent: 0.5,
-    timestamp: 1739644800000,
-    priceUsd: 1.2,
-  },
-]
+} from "./columns";
+import { getTwapLimitOrders, TwapOrder } from "src/lib/hooks/react-query/twap";
+import { useTradeTablesContext } from "../trade-tables-context";
+import { OrderStatus } from "@orbs-network/twap-sdk";
+import { PaginationState } from "@tanstack/react-table";
 
 export const LimitOrdersTable = () => {
-  const [showInUsd, setShowInUsd] = useState(true)
+  const [showInUsd, setShowInUsd] = useState(true);
+  const [paginationState, setPaginationState] = useState<PaginationState>({
+    pageIndex: 0,
+    pageSize: 10,
+  });
 
   const priceCol = useMemo(
     () => getPriceColumn(showInUsd, setShowInUsd),
-    [showInUsd],
-  )
+    [showInUsd]
+  );
 
-  const LIMIT_ORDER_COLUMNS: ColumnDef<LimitOrder>[] = useMemo(
+  const LIMIT_ORDER_COLUMNS: ColumnDef<TwapOrder>[] = useMemo(
     () => [
       BUY_COLUMN,
       SELL_COLUMN,
       CHAIN_COLUMN,
       VALUE_PNL_COLUMN,
       priceCol,
-      FILLED_COLUMN,
       TIME_COLUMN,
       ACTION_COLUMN,
     ],
-    [priceCol],
-  )
+    [priceCol]
+  );
 
-  const data = LIMIT_ORDER_MOCK_DATA
+  const { orders, ordersLoading } = useTradeTablesContext();
+  const data = useMemo(() => {
+    return getTwapLimitOrders(orders).filter(
+      (it) => it.status === OrderStatus.Open
+    );
+  }, [orders]);
 
   return (
     <InfiniteScroll
@@ -114,9 +66,13 @@ export const LimitOrdersTable = () => {
         <DataTable
           columns={LIMIT_ORDER_COLUMNS}
           data={data}
-          loading={false}
+          loading={ordersLoading}
           className="border-none [&_td]:h-[92px]"
           pagination={true}
+          state={{
+            pagination: paginationState,
+          }}
+          onPaginationChange={setPaginationState}
         />
       </Card>
 
@@ -128,5 +84,5 @@ export const LimitOrdersTable = () => {
         ))}
       </Card>
     </InfiniteScroll>
-  )
-}
+  );
+};

@@ -1,86 +1,97 @@
-import { XMarkIcon } from '@heroicons/react/24/solid'
-import { useBreakpoint } from '@sushiswap/hooks'
+import { XMarkIcon } from "@heroicons/react/24/solid";
+import { useBreakpoint } from "@sushiswap/hooks";
 import {
   Button,
   Chip,
   Currency,
+  Loader,
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from '@sushiswap/ui'
-import { DollarCircledIcon } from '@sushiswap/ui/icons/DollarCircled'
-import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
-import type { ColumnDef } from '@tanstack/react-table'
-import { format } from 'date-fns'
-import { TooltipDrawer } from 'src/ui/common/tooltip-drawer'
-import { formatNumber, formatPercent, formatUSD } from 'sushi/format'
-import type { LimitOrder } from './limit-orders-table'
+} from "@sushiswap/ui";
+import { DollarCircledIcon } from "@sushiswap/ui/icons/DollarCircled";
+import { NetworkIcon } from "@sushiswap/ui/icons/NetworkIcon";
+import type { ColumnDef } from "@tanstack/react-table";
+import { format } from "date-fns";
+import { TwapSupportedChainId } from "src/config";
+import {
+  TwapOrder,
+  useCancelOrder,
+  useParsedOrder,
+} from "src/lib/hooks/react-query/twap";
+import { TooltipDrawer } from "src/ui/common/tooltip-drawer";
+import { formatNumber, formatPercent, formatUSD } from "sushi/format";
 
-export const BUY_COLUMN: ColumnDef<LimitOrder> = {
-  id: 'buy',
-  header: 'Buy',
-  accessorFn: (row) => row,
-  enableSorting: false,
-  cell: ({ row }) => (
-    <div className="flex items-center gap-1 md:gap-2 whitespace-nowrap min-w-[130px]">
-      <Currency.Icon
-        disableLink
-        currency={row.original.buyToken}
-        width={24}
-        height={24}
-      />{' '}
-      <span>
-        {formatNumber(row.original.buyAmount)} {row.original.buyToken.symbol}
-      </span>
-    </div>
-  ),
-}
-
-export const SELL_COLUMN: ColumnDef<LimitOrder> = {
-  id: 'sell',
-  header: 'Sell',
+export const BUY_COLUMN: ColumnDef<TwapOrder> = {
+  id: "buy",
+  header: "Buy",
   accessorFn: (row) => row,
   enableSorting: false,
   cell: ({ row }) => {
+    const { buyToken, buyTokenExpectedAmount } = useParsedOrder(row.original);
+    if (!buyToken) return null;
     return (
-      <div className="flex items-center gap-1 md:gap-2 whitespace-nowrap">
+      <div className="flex items-center gap-1 md:gap-2 min-w-[130px]">
+        <Currency.Icon disableLink currency={buyToken} width={24} height={24} />{" "}
+        <span>
+          {!buyTokenExpectedAmount
+            ? "-"
+            : `${formatNumber(buyTokenExpectedAmount)} ${buyToken.symbol}`}
+        </span>
+      </div>
+    );
+  },
+};
+
+export const SELL_COLUMN: ColumnDef<TwapOrder> = {
+  id: "sell",
+  header: "Sell",
+  accessorFn: (row) => row,
+  enableSorting: false,
+  cell: ({ row }) => {
+    const { sellToken, sellTokenTotalAmount } = useParsedOrder(row.original);
+    if (!sellToken) return null;
+    return (
+      <div className="flex items-center gap-1 md:gap-2">
         <Currency.Icon
           disableLink
-          currency={row.original.sellToken}
+          currency={sellToken}
           width={24}
           height={24}
         />
         <span>
-          {formatNumber(row.original.sellAmount)}{' '}
-          {row.original.sellToken.symbol}
+          {formatNumber(sellTokenTotalAmount)} {sellToken.symbol}
         </span>
       </div>
-    )
+    );
   },
-}
+};
 
-export const CHAIN_COLUMN: ColumnDef<LimitOrder> = {
-  id: 'chain',
-  header: 'Chain',
+export const CHAIN_COLUMN: ColumnDef<TwapOrder> = {
+  id: "chain",
+  header: "Chain",
   enableSorting: false,
-  accessorFn: (row) => row.chain.id,
-  cell: ({ row }) => (
-    <div className="flex items-center gap-1 md:gap-2">
-      <div className="dark:border-[#222137] border-[#F5F5F5] border rounded-[4px] overflow-hidden">
-        <NetworkIcon
-          type="square"
-          chainId={row.original.chain.id}
-          className="w-3 h-3 md:w-5 md:h-5"
-        />
+  accessorFn: (row) => row.chainId,
+  cell: ({ row }) => {
+    const { chainInfo } = useParsedOrder(row.original);
+    return (
+      <div className="flex items-center gap-1 md:gap-2">
+        <div className="dark:border-[#222137] border-[#F5F5F5] border rounded-[4px] overflow-hidden">
+          <NetworkIcon
+            type="square"
+            chainId={chainInfo.id}
+            className="w-3 h-3 md:w-5 md:h-5"
+          />
+        </div>
+        <span className="block text-xs md:hidden">{chainInfo.name}</span>
       </div>
-      <span className="block text-xs md:hidden">{row.original.chain.name}</span>
-    </div>
-  ),
-}
+    );
+  },
+};
 
-export const VALUE_PNL_COLUMN: ColumnDef<LimitOrder> = {
-  id: 'valueUsd',
+export const VALUE_PNL_COLUMN: ColumnDef<TwapOrder> = {
+  id: "valueUsd",
   header: () => {
     return (
       <TooltipDrawer
@@ -97,47 +108,58 @@ export const VALUE_PNL_COLUMN: ColumnDef<LimitOrder> = {
         }
         dialogTitle="Estimated PnL"
       />
-    )
+    );
   },
   enableSorting: false,
-  accessorFn: (row) => row.valueUSD,
-  sortingFn: ({ original: a }, { original: b }) => a.valueUSD - b.valueUSD,
-  cell: ({ row }) => (
-    <div className="flex items-start gap-1 md:flex-col ">
-      <span>{formatUSD(row.original.valueUSD)}</span>
-      <span
-        className={
-          row.original.pnlPercent > 0
-            ? 'text-xs text-green-500'
-            : row.original.pnlPercent < 0
-              ? 'text-xs text-red'
-              : 'text-xs text-muted-foreground'
-        }
-      >
-        {row.original.pnlPercent > 0 ? '+' : ''}
-        {formatPercent(row.original.pnlPercent)}
-      </span>
-    </div>
-  ),
-}
+  accessorFn: (row) => row.tradeDollarValueIn,
+  sortingFn: ({ original: a }, { original: b }) =>
+    Number(a.tradeDollarValueIn) - Number(b.tradeDollarValueIn),
+  cell: ({ row }) => {
+    const { profitAndLoss, sellTokenTotalUsdValue } = useParsedOrder(
+      row.original
+    );
+
+    return (
+      <div className="flex items-start gap-1 md:flex-col ">
+        <span>{formatUSD(sellTokenTotalUsdValue)}</span>
+        {profitAndLoss === null ? (
+          <span className="text-xs text-muted-foreground">N/A</span>
+        ) : (
+          <span
+            className={
+              profitAndLoss > 0
+                ? "text-xs text-green-500"
+                : profitAndLoss < 0
+                ? "text-xs text-red"
+                : "text-xs text-muted-foreground"
+            }
+          >
+            {profitAndLoss > 0 ? "+" : ""}
+            {formatUSD(profitAndLoss)}
+          </span>
+        )}
+      </div>
+    );
+  },
+};
 
 export const getPriceColumn = (
   showInUsd: boolean,
-  setShowInUsd: React.Dispatch<React.SetStateAction<boolean>>,
-): ColumnDef<LimitOrder> => ({
-  id: 'priceUsd',
+  setShowInUsd: React.Dispatch<React.SetStateAction<boolean>>
+): ColumnDef<TwapOrder> => ({
+  id: "priceUsd",
   header: () => (
     <TooltipProvider>
       <Tooltip>
         <TooltipTrigger asChild>
           <span
             onClick={(e) => {
-              e.stopPropagation()
-              setShowInUsd((prev) => !prev)
+              e.stopPropagation();
+              setShowInUsd((prev) => !prev);
             }}
             onKeyDown={(e) => {
-              if (e.key === 'Enter' || e.key === ' ') {
-                e.stopPropagation()
+              if (e.key === "Enter" || e.key === " ") {
+                e.stopPropagation();
               }
             }}
             className="flex items-center gap-1 cursor-pointer select-none min-w-[93px]"
@@ -145,7 +167,7 @@ export const getPriceColumn = (
             <span>Price</span>
             <span className="inline-flex items-center dark:text-skyblue text-blue font-normal gap-[1px] border-b border-dashed border-current pb-[1px]">
               <DollarCircledIcon />
-              <span>{showInUsd ? 'USD' : 'Token'}</span>
+              <span>{showInUsd ? "USD" : "Token"}</span>
             </span>
           </span>
         </TooltipTrigger>
@@ -159,67 +181,97 @@ export const getPriceColumn = (
     </TooltipProvider>
   ),
   enableSorting: false,
-  accessorFn: (row) => row.priceUsd,
-  cell: ({ row }) => {
-    const tokenPrice = row.original.sellAmount / row.original.buyAmount
-    return (
-      <span className="whitespace-nowrap">
-        {showInUsd
-          ? formatUSD(row.original.priceUsd)
-          : `${tokenPrice.toFixed(2)} ${row.original.sellToken.symbol}`}
-      </span>
-    )
+  accessorFn: (row) => {
+    const { usdPerChunk } = useParsedOrder(row);
+
+    return usdPerChunk;
   },
-})
+  cell: ({ row }) => {
+    const { sellToken, usdPerChunk, sellTokenAmountPerChunk } = useParsedOrder(
+      row.original
+    );
 
-export const FILLED_COLUMN: ColumnDef<LimitOrder> = {
-  id: 'filled',
-  header: 'Filled',
-  enableSorting: false,
-  accessorFn: (row) => row.filledPercent,
-  cell: ({ row }) => (
-    <div className="flex items-center gap-2 whitespace-nowrap">
+    if (!sellToken) return null;
+
+    return (
       <span>
-        {formatNumber(row.original.filledAmount)}/
-        {formatNumber(row.original.totalAmount)} {row.original.buyToken.symbol}
+        {showInUsd
+          ? formatUSD(usdPerChunk)
+          : `${formatNumber(sellTokenAmountPerChunk)} ${sellToken.symbol}`}
       </span>
-      <Chip className="dark:!bg-slate-750 !bg-slate-200 !p-2 dark:text-slate-500 text-slate-450 !h-[28px]">
-        {formatPercent(row.original.filledPercent)}
-      </Chip>
-    </div>
-  ),
-}
+    );
+  },
+});
 
-export const TIME_COLUMN: ColumnDef<LimitOrder> = {
-  id: 'time',
-  header: 'Time',
+export const FILLED_COLUMN: ColumnDef<TwapOrder> = {
+  id: "filled",
+  header: "Filled",
   enableSorting: false,
-  accessorFn: (row) => row.timestamp,
-  cell: ({ row }) => format(new Date(row.original.timestamp), 'yyyy/MM/dd'),
-}
+  accessorFn: (row) => {
+    const { filledPercentage } = useParsedOrder(row);
+    return filledPercentage;
+  },
+  cell: ({ row }) => {
+    const {
+      filledPercentage,
+      buyToken,
+      buyTokenFilledAmount,
+      buyTokenExpectedAmount,
+    } = useParsedOrder(row.original);
+    if (!buyToken) return null;
+    return (
+      <div className="flex items-center gap-2">
+        <span>
+          {formatNumber(buyTokenFilledAmount)}/
+          {formatNumber(buyTokenExpectedAmount)} {buyToken.symbol}
+        </span>
+        <Chip className="dark:!bg-slate-750 !bg-slate-200 !p-2 dark:text-slate-500 text-slate-450 !h-[28px]">
+          {formatPercent(filledPercentage / 100)}
+        </Chip>
+      </div>
+    );
+  },
+};
 
-export const ACTION_COLUMN: ColumnDef<LimitOrder> = {
-  id: 'action',
-  header: () => <span className="hidden text-right md:block">Action</span>,
+export const TIME_COLUMN: ColumnDef<TwapOrder> = {
+  id: "time",
+  header: "Time",
+  enableSorting: false,
+  accessorFn: (row) => row.createdAt,
+  cell: ({ row }) => format(new Date(row.original.createdAt), "dd/MM/yy"),
+};
+
+export const ACTION_COLUMN: ColumnDef<TwapOrder> = {
+  id: "action",
+  header: () => <span className="hidden md:text-right md:block">Action</span>,
   enableSorting: false,
   accessorFn: (row) => row.id,
-  cell: () => (
-    <>
-      <XMarkIcon
-        className="hidden w-4 h-4 ml-auto cursor-pointer text-red md:block"
-        aria-label="Cancel order"
-      />
-      <Button className="w-full md:hidden" variant="destructive" asChild>
-        <span>Cancel</span>
-      </Button>{' '}
-    </>
-  ),
-}
+  cell: (row) => {
+    const { write, isWritePending } = useCancelOrder(
+      row.row.original.chainId as TwapSupportedChainId,
+      row.row.original
+    );
 
-export const EXPIRES_COLUMN: ColumnDef<LimitOrder> = {
-  id: 'expires',
-  header: 'Expires',
+    return (
+      <div className="flex items-center justify-end">
+        {isWritePending ? (
+          <Loader size={18} />
+        ) : (
+          <XMarkIcon
+            className="hidden w-4 h-4 ml-auto cursor-pointer text-red md:block"
+            aria-label="Cancel order"
+            onClick={() => write?.()}
+          />
+        )}
+      </div>
+    );
+  },
+};
+
+export const EXPIRES_COLUMN: ColumnDef<TwapOrder> = {
+  id: "expires",
+  header: "Expires",
   enableSorting: false,
-  accessorFn: (row) => row.timestamp,
-  cell: ({ row }) => format(new Date(row.original.timestamp), 'yyyy/MM/dd'),
-}
+  accessorFn: (row) => row.deadline,
+  cell: ({ row }) => format(new Date(row.original.deadline), "dd/MM/yy HH:mm"),
+};
