@@ -200,7 +200,7 @@ export const SelectFeeConcentratedWidgetV3: FC<SelectFeeConcentratedWidgetV3> =
                       <CardTitle>
                         <span className="flex flex-wrap items-center gap-2">
                           <span>{option.value / 10000}% Fees</span>
-                          {tvlDistribution.get(option.value) && (
+                          {tvlDistribution.get(option.value) ? (
                             <Chip variant="secondary">
                               {isLoading ? (
                                 <Dots />
@@ -210,7 +210,7 @@ export const SelectFeeConcentratedWidgetV3: FC<SelectFeeConcentratedWidgetV3> =
                                 )?.toFixed(0)}% Selected`
                               )}
                             </Chip>
-                          )}
+                          ) : null}
                         </span>
                       </CardTitle>
                       <CardDescription>{option.subtitle}</CardDescription>
