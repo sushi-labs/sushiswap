@@ -17,6 +17,9 @@ import {
   DialogTrigger,
   DialogType,
   Dots,
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
   IconButton,
   List,
   Message,
@@ -120,14 +123,28 @@ const _AddHookModal = () => {
                       {shortenAddress(hook)}
                     </span>
                     {isDangerous ? (
-                      <IconButton
-                        className="text-red"
-                        variant="ghost"
-                        size="xs"
-                        icon={ExclamationTriangleIcon}
-                        description="Risky Hook"
-                        name="alert"
-                      />
+                      <HoverCard>
+                        <HoverCardTrigger asChild>
+                          <IconButton
+                            className="text-red"
+                            variant="ghost"
+                            size="xs"
+                            icon={ExclamationTriangleIcon}
+                            name="alert"
+                          />
+                        </HoverCardTrigger>
+                        <HoverCardContent className="!p-5 !w-[340px] !whitespace-normal !text-left">
+                          <div className="text-red flex flex-col gap-2">
+                            <span className="font-semibold">
+                              High risk hook detected
+                            </span>
+                            <span>
+                              This hook may result in your funds being locked or
+                              prevent you from collecting fees.
+                            </span>
+                          </div>
+                        </HoverCardContent>
+                      </HoverCard>
                     ) : null}
                     <ClipboardController hideTooltip>
                       {({ setCopied, isCopied }) => (
