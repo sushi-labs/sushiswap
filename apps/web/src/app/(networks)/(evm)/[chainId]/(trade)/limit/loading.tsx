@@ -4,7 +4,7 @@ import React from 'react'
 export default function SwapLimitLoading() {
   return (
     <Container maxWidth="lg" className="px-4">
-      <div className="flex flex-col gap-4 p-6 pt-0 bg-[rgba(255,255,255,0.8)] dark:bg-[rgba(15,23,42,0.8)] rounded-3xl">
+      <div className="flex flex-col gap-4 p-6 pt-0 pb-16 bg-[rgba(255,255,255,0.8)] dark:bg-[rgba(15,23,42,0.8)] rounded-3xl">
         <div className="flex flex-col gap-2 mb-4 sm:mt-10 mt-2">
           <SkeletonBox className="h-[36px] w-[140px] md:h-[53px] rounded-xl" />
           <SkeletonBox className="h-[20px] w-[280px] rounded-xl" />
