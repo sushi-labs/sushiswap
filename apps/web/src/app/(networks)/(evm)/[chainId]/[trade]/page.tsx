@@ -19,6 +19,7 @@ import {
 } from 'src/ui/swap/trade/config'
 import { useDerivedStateSimpleTrade } from 'src/ui/swap/trade/derivedstate-simple-trade-provider'
 import { FavoriteRecentTabView } from 'src/ui/swap/trade/favorite-recent/favorite-recent-tab-view'
+import { NetworkProvider } from 'src/ui/swap/trade/favorite-recent/network-provider'
 import { Search } from 'src/ui/swap/trade/search/search'
 import { TradeTableTabs } from 'src/ui/swap/trade/tab-tables/trade-tabs/trade-table-tabs'
 import { TradeViewSwitch } from 'src/ui/swap/trade/trade-view-switch'
@@ -96,9 +97,11 @@ export default function TradePage() {
                   </div>
                 </div>
                 <div className="flex w-full flex-col gap-4 md:min-w-[480px] md:w-[480px]">
-                  <Search />
-                  <TradeWidget />
-                  <FavoriteRecentTabView />
+                  <NetworkProvider>
+                    <Search />
+                    <TradeWidget />
+                    <FavoriteRecentTabView />
+                  </NetworkProvider>
                 </div>
               </div>
             </Container>

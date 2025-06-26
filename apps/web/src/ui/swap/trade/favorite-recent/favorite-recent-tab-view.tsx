@@ -3,6 +3,7 @@ import { useMemo, useState } from 'react'
 import { Wrapper } from '../wrapper'
 import { Favorite } from './favorite'
 import { NetworkMenu } from './network-menu'
+import { useNetworkContext } from './network-provider'
 import { Recent } from './recent'
 
 enum FavoriteRecentTab {
@@ -12,6 +13,10 @@ enum FavoriteRecentTab {
 
 export const FavoriteRecentTabView = () => {
   const [tab, setTab] = useState<FavoriteRecentTab>(FavoriteRecentTab.Favorite)
+  const {
+    state: { selectedNetwork },
+    mutate: { setSelectedNetwork },
+  } = useNetworkContext()
 
   const handleTabChange = (tab: FavoriteRecentTab) => {
     setTab(tab)
@@ -45,7 +50,11 @@ export const FavoriteRecentTabView = () => {
             </Button>
           ))}
         </div>
-        <NetworkMenu className="!px-1" />
+        <NetworkMenu
+          selectedNetwork={selectedNetwork}
+          onNetworkSelect={setSelectedNetwork}
+          className="!px-1"
+        />
       </div>
       <div className="mt-4 max-h-[500px] overflow-y-auto hide-scrollbar">
         {content}

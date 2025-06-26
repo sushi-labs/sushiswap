@@ -50,7 +50,11 @@ export const RecentDialog = () => {
           </DialogClose>
         </div>
         <div className="mt-4 max-h-[calc(100vh-200px)] overflow-y-auto hide-scrollbar">
-          <Recent />
+          <Recent
+            onClose={() => {
+              setIsOpen(false)
+            }}
+          />
         </div>
       </DialogContent>
     </Dialog>
