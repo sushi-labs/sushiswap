@@ -1,4 +1,5 @@
 import { ArrowRightIcon } from '@heroicons/react-v1/solid'
+import type { RecentSwap } from '@sushiswap/graph-client/data-api'
 import { useBreakpoint } from '@sushiswap/hooks'
 import {
   Collapsible,
@@ -6,35 +7,62 @@ import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
+  SkeletonBox,
+  SkeletonCircle,
   classNames,
 } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import { useState } from 'react'
+import { getChangeSign, getTextColor } from 'src/lib/helpers'
+import {
+  TempChainIds,
+  type TempTokenListV2ChainId,
+  useRecentSwaps,
+} from 'src/lib/hooks/react-query/recent-swaps/useRecentsSwaps'
+import { useCreateQuery } from 'src/lib/hooks/useCreateQuery'
 import { ConnectButton } from 'src/lib/wagmi/components/connect-button'
 import { formatUSD } from 'sushi'
+import type { EvmChainId } from 'sushi/chain'
 import { Token } from 'sushi/currency'
 import { useAccount } from 'wagmi'
+import { useNetworkContext } from './network-provider'
 
-export const Recent = () => {
+export const Recent = ({ onClose }: { onClose?: () => void }) => {
   const { address } = useAccount()
+  const {
+    state: { selectedNetwork },
+  } = useNetworkContext()
+  const {
+    data: recentSwaps,
+    isLoading,
+    isError,
+  } = useRecentSwaps({
+    walletAddress: address,
+    chainIds: selectedNetwork
+      ? ([selectedNetwork] as unknown as TempTokenListV2ChainId)
+      : TempChainIds,
+  })
 
   if (!address) {
     return <ConnectButton className="w-full" variant="secondary" />
   }
 
-  // if(recents.length === 0) {
-  // return (
+  if (!isLoading && isError) {
+    return (
+      <p className="my-8 text-center text-sm italic text-red-500">
+        An error occurred while fetching recent swaps. Please try again.
+      </p>
+    )
+  }
 
-  // 		<p className="mt-8 text-sm italic text-muted-foreground dark:text-pink-200">
-  // 			You haven&apos;t traded any tokens so far.
-  // 		</p>
-  // );
-  // }
+  if (recentSwaps?.length === 0 && !isLoading && !isError) {
+    return (
+      <p className="my-8 text-sm italic text-center text-muted-foreground dark:text-pink-200">
+        You haven&apos;t traded any tokens so far.
+      </p>
+    )
+  }
 
   return (
     <div className="grid grid-cols-3 col-span-3 gap-0">
@@ -65,26 +93,29 @@ export const Recent = () => {
         </div>
       </div>
       <div className="grid w-full grid-cols-5 col-span-5 gap-2">
-        <RecentItem />
-        <RecentItem />
-        <RecentItem />
-        <RecentItem />
-        <RecentItem />
-        <RecentItem />
-        <RecentItem />
-        <RecentItem />
-        <RecentItem />
-        <RecentItem />
-        <RecentItem />
-        <RecentItem />
+        {isLoading
+          ? Array(3)
+              .fill(null)
+              .map((_, index) => <RecentSwapSkeleton key={index} />)
+          : recentSwaps?.map((recentSwap, idx) => (
+              <RecentItem
+                onClose={onClose}
+                key={`${idx}_${recentSwap?.time}`}
+                recentSwap={recentSwap}
+              />
+            ))}
       </div>
     </div>
   )
 }
 
-const RecentItem = () => {
+const RecentItem = ({
+  recentSwap,
+  onClose,
+}: { recentSwap: RecentSwap; onClose?: () => void }) => {
   const [isHovered, setIsHovered] = useState(false)
   const { isMd } = useBreakpoint('md')
+  const { tokenIn, tokenOut } = recentSwap
 
   return (
     <>
@@ -106,11 +137,12 @@ const RecentItem = () => {
               disableLink
               currency={
                 new Token({
-                  address: '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2',
-                  name: 'Wrapped Ethereum',
-                  symbol: 'ETH',
-                  chainId: 1,
-                  decimals: 18,
+                  address: tokenIn.address,
+                  name: tokenIn.name,
+                  symbol: tokenIn.symbol,
+                  chainId: tokenIn.chainId as EvmChainId,
+                  decimals: tokenIn.decimals,
+                  approved: tokenIn.approved,
                 })
               }
               width={24}
@@ -120,11 +152,12 @@ const RecentItem = () => {
               disableLink
               currency={
                 new Token({
-                  address: '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48',
-                  name: 'USD Coin',
-                  symbol: 'USDC',
-                  chainId: 1,
-                  decimals: 6,
+                  address: tokenOut.address,
+                  name: tokenOut.name,
+                  symbol: tokenOut.symbol,
+                  chainId: tokenOut.chainId as EvmChainId,
+                  decimals: tokenOut.decimals,
+                  approved: tokenOut.approved,
                 })
               }
               width={24}
@@ -133,7 +166,7 @@ const RecentItem = () => {
           </Currency.IconList>
 
           <span className="text-xs font-medium text-slate-900 dark:text-pink-100">
-            ETH/USDC
+            {tokenIn.symbol}/{tokenOut.symbol}
           </span>
 
           {isHovered ? (
@@ -141,7 +174,7 @@ const RecentItem = () => {
               <span className="pr-0.5">(</span>
               <NetworkIcon
                 type="square"
-                chainId={1}
+                chainId={tokenIn.chainId as EvmChainId}
                 width={16}
                 height={16}
                 className="rounded-[3px]"
@@ -149,7 +182,7 @@ const RecentItem = () => {
               <ArrowRightIcon className="w-3 h-3 mx-1 text-slate-500" />
               <NetworkIcon
                 type="square"
-                chainId={56}
+                chainId={tokenOut.chainId as EvmChainId}
                 width={16}
                 height={16}
                 className="rounded-[3px]"
@@ -160,16 +193,24 @@ const RecentItem = () => {
         </div>
 
         {isHovered && isMd ? (
-          <ActionButtons />
+          <ActionButtons onClose={onClose} recentSwap={recentSwap} />
         ) : isHovered && !isMd ? null : (
           <>
             <div className="text-left pl-0.5">
               <span className="font-medium text-slate-900 dark:text-pink-100">
-                {formatUSD(0.87)}
+                {formatUSD(recentSwap?.amountOutUSD)}
               </span>
             </div>
             <div className="w-full col-span-1 ml-auto text-right">
-              <span className="font-medium text-[#1DA67D]">+5.5%</span>
+              <span
+                className={classNames(
+                  'font-medium',
+                  getTextColor(recentSwap?.totalPnl),
+                )}
+              >
+                {getChangeSign(recentSwap?.totalPnl)}
+                {formatUSD(recentSwap?.totalPnl)}
+              </span>
             </div>
           </>
         )}
@@ -177,7 +218,7 @@ const RecentItem = () => {
           <div className="col-span-5 mt-2">
             <Collapsible open={isHovered}>
               <div className="grid w-full grid-cols-5 col-span-5 gap-2">
-                <ActionButtons />
+                <ActionButtons onClose={onClose} recentSwap={recentSwap} />
               </div>
             </Collapsible>
           </div>
@@ -187,22 +228,76 @@ const RecentItem = () => {
   )
 }
 
-const ActionButtons = () => {
+const ActionButtons = ({
+  recentSwap,
+  onClose,
+}: { recentSwap: RecentSwap; onClose?: () => void }) => {
+  const { createQuery } = useCreateQuery()
   return (
     <div className="flex items-center justify-end w-full col-span-5 gap-2 md:col-span-2">
       <Button
+        onClick={() => {
+          createQuery([
+            {
+              name: 'token0',
+              value: recentSwap.tokenIn.address,
+            },
+            {
+              name: 'chainId0',
+              value: String(recentSwap.tokenIn.chainId),
+            },
+          ])
+          onClose?.() // Close the dialog if provided
+        }}
         size="xs"
         className="text-slate-50 w-full md:w-fit !rounded-full bg-green-500 font-semibold hover:bg-green-500 active:bg-green-500/95 focus:bg-green-500"
       >
-        BUY ETH
+        BUY {recentSwap.tokenIn.symbol}
       </Button>
 
       <Button
+        onClick={() => {
+          createQuery([
+            {
+              name: 'token1',
+              value: recentSwap.tokenIn.address,
+            },
+            {
+              name: 'chainId1',
+              value: String(recentSwap.tokenIn.chainId),
+            },
+          ])
+          onClose?.() // Close the dialog if provided
+        }}
         size="xs"
         className="text-slate-50 w-full md:w-fit bg-red-100 !rounded-full font-semibold hover:bg-red-100 active:bg-red-100/95 focus:bg-red-500"
       >
-        SELL ETH
+        SELL {recentSwap.tokenIn.symbol}
       </Button>
+    </div>
+  )
+}
+
+const RecentSwapSkeleton = () => {
+  return (
+    <div
+      className={classNames(
+        'text-xs grid col-span-5 grid-cols-5 p-2 transition-colors rounded-md items-center',
+      )}
+    >
+      <div className="flex items-center w-full col-span-3 gap-2">
+        <Currency.IconList
+          iconWidth={24}
+          iconHeight={24}
+          className="border-none"
+        >
+          <SkeletonCircle radius={24} />
+          <SkeletonCircle radius={24} />
+        </Currency.IconList>
+        <SkeletonBox className="w-12 h-4 rounded-md" />
+      </div>
+      <SkeletonBox className="w-12 h-4 rounded-md" />
+      <SkeletonBox className="w-10 h-4 rounded-md col-span-1 ml-auto" />
     </div>
   )
 }

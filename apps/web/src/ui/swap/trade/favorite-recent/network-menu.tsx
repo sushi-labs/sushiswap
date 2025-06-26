@@ -9,13 +9,18 @@ import {
   classNames,
 } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
-import { useState } from 'react'
 import { SUPPORTED_CHAIN_IDS } from 'src/config'
 import { type EvmChainId, EvmChainKey } from 'sushi'
 
-export const NetworkMenu = ({ className }: { className?: string }) => {
-  //TODO: bring this out to a context or global state
-  const [tempNetworkState, setTempNetworkState] = useState<null | number>(null)
+export const NetworkMenu = ({
+  className,
+  selectedNetwork,
+  onNetworkSelect,
+}: {
+  className?: string
+  selectedNetwork?: null | number
+  onNetworkSelect?(val: number | null): void
+}) => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -26,10 +31,10 @@ export const NetworkMenu = ({ className }: { className?: string }) => {
             className,
           )}
         >
-          {tempNetworkState === null ? (
+          {selectedNetwork === null || !selectedNetwork ? (
             'All Networks'
           ) : (
-            <NetworkItem chainId={tempNetworkState} />
+            <NetworkItem chainId={selectedNetwork} />
           )}
           <ChevronDownIcon width={16} height={16} />
         </Button>
@@ -39,13 +44,13 @@ export const NetworkMenu = ({ className }: { className?: string }) => {
         className="max-h-[205px] overflow-y-auto hide-scrollbar !bg-slate-50 dark:!bg-slate-900 !backdrop-blur-none"
       >
         <DropdownMenuGroup className="font-medium">
-          <DropdownMenuItem onClick={() => setTempNetworkState(null)}>
+          <DropdownMenuItem onClick={() => onNetworkSelect?.(null)}>
             <div>All Networks</div>
           </DropdownMenuItem>
           {SUPPORTED_CHAIN_IDS.map((chainId) => (
             <DropdownMenuItem
               key={chainId}
-              onClick={() => setTempNetworkState(chainId)}
+              onClick={() => onNetworkSelect?.(chainId)}
             >
               <NetworkItem chainId={chainId} />
             </DropdownMenuItem>
