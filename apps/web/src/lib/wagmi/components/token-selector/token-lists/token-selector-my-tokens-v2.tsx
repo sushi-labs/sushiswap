@@ -1,42 +1,44 @@
-import type { TokenListChainId } from '@sushiswap/graph-client/data-api'
-
+import {
+  type TokenListChainId,
+  isTokenListV2ChainId,
+} from '@sushiswap/graph-client/data-api'
+import { TempChainIds } from 'src/lib/hooks/react-query/recent-swaps/useRecentsSwaps'
 import type { Type } from 'sushi/currency'
 import { useAccount } from 'wagmi'
-import { usePrices } from '~evm/_common/ui/price-provider/price-provider/use-prices'
-import { useMyTokens } from '../hooks/use-my-tokens'
-
-import { TokenSelectorCurrencyList } from './common/token-selector-currency-list'
-import { TokenSelectorCurrencyListLoadingV2 } from './common/token-selector-currency-list-v2'
+import { useMyTokensV2 } from '../hooks/use-my-tokens-v2'
+import {
+  TokenSelectorCurrencyListLoadingV2,
+  TokenSelectorCurrencyListV2,
+} from './common/token-selector-currency-list-v2'
 
 interface TokenSelectorMyTokens {
-  chainId: TokenListChainId
+  chainId?: TokenListChainId
   onSelect(currency: Type): void
   onShowInfo(currency: Type | false): void
   selected: Type | undefined
   includeNative?: boolean
+  showChainOptions: boolean
 }
 
 function Shell({ children }: { children: React.ReactNode }) {
   return <div className="flex-1 flex flex-col">{children}</div>
 }
 
-export function TokenSelectorMyTokens({
+export function TokenSelectorMyTokensV2({
   chainId,
   onSelect,
   onShowInfo,
   selected,
   includeNative,
+  showChainOptions,
 }: TokenSelectorMyTokens) {
   const { address } = useAccount()
 
-  const { data, isError, isLoading } = useMyTokens({
-    chainId,
+  const { data, isError, isLoading } = useMyTokensV2({
+    chainIds:
+      chainId && isTokenListV2ChainId(chainId) ? [chainId] : TempChainIds,
     account: address,
     includeNative,
-  })
-
-  const { data: pricesMap } = usePrices({
-    chainId,
   })
 
   if (isLoading)
@@ -66,16 +68,16 @@ export function TokenSelectorMyTokens({
 
   return (
     <Shell>
-      <TokenSelectorCurrencyList
+      <TokenSelectorCurrencyListV2
         id="trending"
         selected={selected}
         onSelect={onSelect}
         onShowInfo={onShowInfo}
+        showChainOptions={showChainOptions}
         // pin={{}}
         currencies={data.tokens}
-        chainId={chainId}
         balancesMap={data.balanceMap}
-        pricesMap={pricesMap}
+        pricesMap={data.priceMap}
         isBalanceLoading={!data.balanceMap}
       />
     </Shell>

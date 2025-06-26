@@ -1,12 +1,9 @@
 import React, { type FC, memo, useMemo } from 'react'
-import { NativeAddress } from 'src/lib/constants'
-import type { ChainId } from 'sushi/chain'
-import { type Amount, Native, type Type } from 'sushi/currency'
+import type { Amount, Type } from 'sushi/currency'
 import { useAccount } from 'wagmi'
 
 import type { Token } from 'sushi/currency'
 import type { Address } from 'viem'
-import type { PriceMap } from '~evm/_common/ui/price-provider/price-provider/use-prices'
 import { TokenSelectorImportRow } from './token-selector-import-row'
 import {
   TokenSelectorRowLoadingV2,
@@ -16,7 +13,6 @@ import {
 interface TokenSelectorCurrencyListV2Props {
   id: string
   currencies: Readonly<Type[]> | undefined
-  chainId: ChainId
   onSelect(currency: Type): void
   pin?: {
     isPinned: (currencyId: string) => boolean
@@ -24,7 +20,7 @@ interface TokenSelectorCurrencyListV2Props {
   }
   selected: Type | undefined
   balancesMap: Map<string, Amount<Type>> | undefined
-  pricesMap: PriceMap | undefined
+  pricesMap: Map<string, number> | undefined
   isBalanceLoading: boolean
   importConfig?: {
     onImport: (currency: Token) => void
@@ -54,14 +50,8 @@ export const TokenSelectorCurrencyListV2: FC<TokenSelectorCurrencyListV2Props> =
       return currencies.map((currency) => ({
         account: address,
         currency,
-        balance: balancesMap?.get(
-          currency.isNative ? NativeAddress : currency.address,
-        ),
-        price: pricesMap?.getFraction(
-          currency.isNative
-            ? Native.onChain(currency.chainId).wrapped.address
-            : currency.address,
-        ),
+        balance: balancesMap?.get(currency.id),
+        price: pricesMap?.get(currency.id),
         showWarning: currency.approved === false,
         onSelect: () => onSelect(currency),
         pin: pin
