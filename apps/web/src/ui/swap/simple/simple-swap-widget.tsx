@@ -1,3 +1,4 @@
+import { Card } from '@sushiswap/ui'
 import { SwapModeButtons } from '../swap-mode-buttons'
 import { SimpleSwapBanner } from './simple-swap-banner'
 import { SimpleSwapHeader } from './simple-swap-header'
@@ -12,7 +13,7 @@ import { SwapMaintenanceMessage } from './swap-maintenance-message'
 
 export const SimpleSwapWidget = () => {
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-4 p-6 pt-0 bg-[rgba(255,255,255,0.8)] dark:bg-[rgba(15,23,42,0.8)] rounded-3xl">
       <SimpleSwapHeader />
       <div className="flex items-center justify-between">
         <SwapModeButtons />
