@@ -1,7 +1,15 @@
 import { XIcon } from '@heroicons/react-v1/solid'
 import { MagnifyingGlassIcon } from '@heroicons/react/24/outline'
-import { Collapsible, IconButton, TextField, classNames } from '@sushiswap/ui'
+import {
+  Collapsible,
+  IconButton,
+  SkeletonBox,
+  TextField,
+  classNames,
+} from '@sushiswap/ui'
 import { type ChangeEvent, useEffect } from 'react'
+import { TempChainIds } from 'src/lib/hooks/react-query/recent-swaps/useRecentsSwaps'
+import { useSearchTokens } from 'src/lib/hooks/react-query/search-tokens/useSearchTokens'
 import { useAccount } from 'wagmi'
 import { SearchItem } from './search-item'
 import { useSearchContext } from './search-provider'
@@ -11,7 +19,19 @@ export const SearchContent = () => {
     state: { searchValue },
     mutate: { setSearchValue, clearSearchValue },
   } = useSearchContext()
+
   const { address } = useAccount()
+
+  const {
+    data: tokens = [],
+    isLoading,
+    isError,
+  } = useSearchTokens({
+    walletAddress: address,
+    chainIds: TempChainIds,
+    search: searchValue,
+    first: 20,
+  })
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (!address) return
@@ -53,8 +73,6 @@ export const SearchContent = () => {
       </div>
       <Collapsible open={!!searchValue}>
         <div className="overflow-y-auto hide-scrollbar text-xs max-h-[calc(100vh-220px)] md:max-h-[250px] grid grid-cols-[30px_auto_auto_auto] gap-2">
-          {/* TODO: loading state */}
-          {/* TODO: error state */}
           <div className="sticky font-medium grid grid-cols-[30px_190px_auto_auto] col-span-4 top-0 z-10 bg-white md:bg-slate-50 dark:bg-slate-900 md:dark:bg-slate-800 text-xs text-[#535263] dark:text-[#E4DDEC]">
             <div />
             <div className="w-full mr-auto">Token</div>
@@ -62,10 +80,31 @@ export const SearchContent = () => {
             <div className="ml-auto w-full text-right pr-1.5">Holdings</div>
           </div>
 
-          <SearchItem />
-          <SearchItem />
-          <SearchItem />
-          <SearchItem />
+          {isLoading &&
+            Array.from({ length: 4 }).map((_, i) => (
+              <SkeletonBox key={i} className="h-10 col-span-4" />
+            ))}
+
+          {isError && (
+            <div className="col-span-4 py-4 text-center">
+              Shoot! Something went wrong :(
+            </div>
+          )}
+
+          {!isLoading &&
+            !isError &&
+            tokens.map((token) => (
+              <SearchItem
+                key={`search-token-${token.chainId}-${token.address}`}
+                token={token}
+              />
+            ))}
+
+          {!isLoading && !isError && tokens.length === 0 && searchValue && (
+            <div className="col-span-4 py-4 text-center">
+              No results for “{searchValue}”
+            </div>
+          )}
         </div>
       </Collapsible>
     </div>
