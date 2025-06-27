@@ -1,10 +1,18 @@
+'use client'
+
 import { Loader } from '@sushiswap/ui'
 import { DataTable } from '@sushiswap/ui'
 import { Card } from '@sushiswap/ui'
+import type { PaginationState } from '@tanstack/react-table'
 import { useMemo } from 'react'
 import { useState } from 'react'
-import InfiniteScroll from 'react-infinite-scroll-component'
-import { Native } from 'sushi/currency'
+import {
+  TempChainIds,
+  useRecentSwaps,
+} from 'src/lib/hooks/react-query/recent-swaps/useRecentsSwaps'
+import { type EvmChainId, EvmChainKey } from 'sushi/chain'
+import { Token } from 'sushi/currency'
+import { useAccount } from 'wagmi'
 import { MobileCard } from '../mobile-card/mobile-card'
 import {
   BUY_COLUMN,
@@ -18,9 +26,9 @@ import {
 
 export interface MarketTrade {
   id: string
-  buyToken: ReturnType<typeof Native.onChain>
+  buyToken: Token
   buyAmount: number
-  sellToken: ReturnType<typeof Native.onChain>
+  sellToken: Token
   sellAmount: number
   chainFrom: {
     id: number
@@ -37,52 +45,22 @@ export interface MarketTrade {
   timestamp: number
 }
 
-export const MOCK_DATA: MarketTrade[] = [
-  {
-    id: '1',
-    buyToken: Native.onChain(1),
-    buyAmount: 0.5,
-    sellToken: Native.onChain(43114),
-    sellAmount: 850,
-    chainFrom: {
-      id: 1,
-      name: 'Ethereum',
-    },
-    chainTo: {
-      id: 43114,
-      name: 'Avalanche',
-    },
-    valueUsd: 850,
-    pnlPercent: 190.8 / 850,
-    priceUsd: 1900,
-    txHash: '0x855f13a0d9e3cbe1c0e3255f50Fe',
-    timestamp: 1736122860000,
-  },
-  {
-    id: '2',
-    buyToken: Native.onChain(1),
-    buyAmount: 0.5,
-    sellToken: Native.onChain(43114),
-    sellAmount: 850,
-    chainFrom: {
-      id: 1,
-      name: 'Ethereum',
-    },
-    chainTo: {
-      id: 43114,
-      name: 'Avalanche',
-    },
-    valueUsd: 850,
-    pnlPercent: -10.9 / 850,
-    priceUsd: 1900,
-    txHash: '0x855f13a0d9e3cbe1c0e3255f50Fe',
-    timestamp: 1736122860000,
-  },
-]
-
 export const MarketTable = () => {
-  const data = MOCK_DATA
+  const [paginationState, setPaginationState] = useState<PaginationState>({
+    pageIndex: 0,
+    pageSize: 10,
+  })
+
   const [showInUsd, setShowInUsd] = useState(true)
+
+  const { address } = useAccount()
+
+  const { data: recentSwaps } = useRecentSwaps({
+    walletAddress: address,
+    chainIds: TempChainIds,
+  })
+
+  console.log('recentSwaps', recentSwaps)
 
   const priceCol = useMemo(
     () => getPriceUsdColumn(showInUsd, setShowInUsd),
@@ -102,34 +80,89 @@ export const MarketTable = () => {
     [priceCol],
   )
 
-  return (
-    <InfiniteScroll
-      dataLength={data.length}
-      next={() => {}}
-      hasMore={false}
-      loader={
-        <div className="flex justify-center w-full py-4">
-          <Loader size={16} />
-        </div>
+  const rowData = useMemo(() => {
+    if (!recentSwaps) return []
+
+    return recentSwaps.map((swap, i) => {
+      const {
+        tokenIn,
+        tokenOut,
+        amountIn,
+        amountInUSD,
+        amountOut,
+        amountOutUSD,
+        totalPnl,
+        time,
+      } = swap
+
+      const txHash = '-'
+      return {
+        id: `${txHash}-${i}`,
+        buyToken: new Token({
+          // @TODO: remove type cast once chainId is typed
+          chainId: tokenOut.chainId as EvmChainId,
+          address: tokenOut.address,
+          decimals: tokenOut.decimals,
+          symbol: tokenOut.symbol,
+          name: tokenOut.name,
+          approved: tokenOut.approved,
+        }),
+        buyAmount: amountOut,
+        sellToken: new Token({
+          // @TODO: remove type cast once chainId is typed
+          chainId: tokenIn.chainId as EvmChainId,
+          address: tokenIn.address,
+          decimals: tokenIn.decimals,
+          symbol: tokenIn.symbol,
+          name: tokenIn.name,
+          approved: tokenIn.approved,
+        }),
+        sellAmount: amountIn,
+        chainFrom: {
+          // @TODO: remove type cast once chainId is typed
+          id: tokenIn.chainId as EvmChainId,
+          name: EvmChainKey[tokenIn.chainId as EvmChainId],
+        },
+        chainTo: {
+          // @TODO: remove type cast once chainId is typed
+          id: tokenOut.chainId as EvmChainId,
+          name: EvmChainKey[tokenOut.chainId as EvmChainId],
+        },
+        valueUsd: amountOutUSD,
+        pnlPercent: amountInUSD ? totalPnl / amountInUSD : 0,
+        priceUsd: amountOut ? amountOutUSD / amountOut : 0,
+        txHash,
+        timestamp: time * 1000,
       }
-    >
+    })
+  }, [recentSwaps])
+
+  const tableState = { sorting: [] }
+
+  return (
+    <>
       <Card className="hidden overflow-hidden border-none bg-slate-50 dark:bg-slate-800 md:block">
         <DataTable
           columns={COLUMNS}
-          data={data}
+          data={rowData}
           loading={false}
           className="border-none [&_td]:h-[92px]"
-          pagination
+          pagination={true}
+          state={{
+            ...tableState,
+            ...paginationState,
+          }}
+          onPaginationChange={setPaginationState}
         />
       </Card>
 
       <Card className="p-5 space-y-6 border-none bg-slate-50 dark:bg-slate-800 md:hidden">
-        {data.map((row) => (
+        {rowData.map((row) => (
           <div key={row.id} className="pb-6 border-b last:border-b-0 last:pb-0">
             <MobileCard row={row} columns={COLUMNS} />
           </div>
         ))}
       </Card>
-    </InfiniteScroll>
+    </>
   )
 }

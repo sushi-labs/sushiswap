@@ -169,7 +169,7 @@ export const getPriceUsdColumn = (
     return showInUsd ? (
       <span>{formatUSD(row.original.priceUsd)}</span>
     ) : (
-      <span className="whitespace-nowrap">{`${tokenPrice} ${row.original.sellToken.symbol}`}</span>
+      <span className="whitespace-nowrap">{`${tokenPrice.toPrecision(2)} ${row.original.sellToken.symbol}`}</span>
     )
   },
 })

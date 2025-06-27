@@ -50,7 +50,7 @@ export const Recent = ({ onClose }: { onClose?: () => void }) => {
 
   if (!isLoading && isError) {
     return (
-      <p className="my-8 text-center text-sm italic text-red-500">
+      <p className="my-8 text-sm italic text-center text-red-500">
         An error occurred while fetching recent swaps. Please try again.
       </p>
     )
@@ -297,7 +297,7 @@ const RecentSwapSkeleton = () => {
         <SkeletonBox className="w-12 h-4 rounded-md" />
       </div>
       <SkeletonBox className="w-12 h-4 rounded-md" />
-      <SkeletonBox className="w-10 h-4 rounded-md col-span-1 ml-auto" />
+      <SkeletonBox className="w-10 h-4 col-span-1 ml-auto rounded-md" />
     </div>
   )
 }
