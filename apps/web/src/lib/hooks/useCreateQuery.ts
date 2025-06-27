@@ -7,9 +7,13 @@ export const useCreateQuery = () => {
   const pathname = usePathname()
   const searchParams = useSearchParams()
 
-  const push = useCallback((path: string) => {
+  const push = useCallback((path: string, hardPush?: boolean) => {
     const newUrl = new URL(`${window.location.origin}${path}`).toString()
-    window.history.pushState({}, '', newUrl)
+    if (hardPush) {
+      window.location.replace(newUrl)
+    } else {
+      window.history.pushState({}, '', newUrl)
+    }
   }, [])
 
   const defaultedParams = useMemo(() => {
@@ -34,8 +38,15 @@ export const useCreateQuery = () => {
   )
 
   const createQuery = useCallback(
-    (values: { name: string; value: string | null }[]) => {
-      push(`${pathname}?${createQueryString(values)}`)
+    (
+      values: { name: string; value: string | null }[],
+      newPathname?: string,
+      hardPush?: boolean,
+    ) => {
+      push(
+        `${newPathname ? newPathname : pathname}?${createQueryString(values)}`,
+        hardPush,
+      )
     },
     [createQueryString, pathname, push],
   )

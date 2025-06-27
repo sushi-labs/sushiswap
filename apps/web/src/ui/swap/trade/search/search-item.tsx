@@ -1,8 +1,13 @@
 import type { SearchToken } from '@sushiswap/graph-client/data-api'
 import { Button, Collapsible, classNames } from '@sushiswap/ui'
 import { useState } from 'react'
+import { getChangeSign, getTextColor } from 'src/lib/helpers'
 import { useCreateQuery } from 'src/lib/hooks/useCreateQuery'
+import { getNetworkKey } from 'src/lib/network'
+import type { ChainId, EvmChainId } from 'sushi/chain'
 import { formatNumber, formatPercent, formatUSD } from 'sushi/format'
+import { formatUnits } from 'viem'
+import { useChainId, useSwitchChain } from 'wagmi'
 import { FavoriteButton } from '../favorite-button'
 import { TokenNetworkIcon } from '../token-network-icon'
 import { SearchItemBridgeView } from './search-item-bridge-view'
@@ -23,9 +28,9 @@ export const SearchItem = ({ token }: { token: SearchToken }) => {
   }
 
   const priceUsd = token.priceUSD ?? 0
-  const balance = token.balance ?? 0
+  const balance = formatUnits(BigInt(token.balance ?? '0'), token.decimals)
   const balanceUsd = token.balanceUSD ?? 0
-  const price24h = token.priceChange1d ?? 0
+  const price24h = (token.priceChange1d ?? 0) / 100
 
   return (
     <>
@@ -58,15 +63,11 @@ export const SearchItem = ({ token }: { token: SearchToken }) => {
               <span>{formatUSD(priceUsd)}</span>
               <span
                 className={classNames(
-                  'font-medium text-xs',
-                  price24h > 0
-                    ? 'text-green'
-                    : price24h < 0
-                      ? 'text-red'
-                      : 'text-muted-foreground',
+                  'font-medium text-xs ',
+                  getTextColor(price24h, 'text-muted-foreground'),
                 )}
               >
-                {`${price24h > 0 ? '+' : ''}${formatPercent(price24h)}`}
+                {`${getChangeSign(price24h)}${formatPercent(price24h)}`}
               </span>
             </div>
 
@@ -96,20 +97,27 @@ const ActionButtons = ({
   onClose,
 }: { token: SearchToken; onClose?: () => void }) => {
   const { createQuery } = useCreateQuery()
+  const { switchChainAsync } = useSwitchChain()
+  const chainId = useChainId()
   return (
     <div className="flex items-center justify-end w-full col-span-5 gap-2 md:col-span-2">
       <Button
-        onClick={() => {
-          createQuery([
-            {
-              name: 'token0',
-              value: token.address,
-            },
-            {
-              name: 'chainId0',
-              value: String(token.chainId),
-            },
-          ])
+        onClick={async () => {
+          await switchChainAsync({ chainId: token?.chainId as EvmChainId })
+          createQuery(
+            [
+              {
+                name: 'token0',
+                value: token.address,
+              },
+              {
+                name: 'chainId0',
+                value: String(token.chainId),
+              },
+            ],
+            `/${getNetworkKey(token?.chainId as ChainId)}/swap/advanced`,
+            chainId !== token.chainId,
+          )
           onClose?.()
         }}
         size="xs"
