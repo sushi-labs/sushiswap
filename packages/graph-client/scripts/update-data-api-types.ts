@@ -8,6 +8,7 @@ const features: introspection['types']['ChainIdFeature']['enumValues'][] = [
   // 'SushiSwapV3ChainId',
   'PoolChainId',
   'TokenListChainId',
+  'TokenListV2ChainId',
   'TrendingTokensChainId',
 ] as const
 

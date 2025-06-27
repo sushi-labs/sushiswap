@@ -1,6 +1,5 @@
 import {
   ArrowTopRightOnSquareIcon,
-  CheckCircleIcon,
   ExclamationCircleIcon,
 } from '@heroicons/react/20/solid'
 import { InformationCircleIcon } from '@heroicons/react/24/outline'
@@ -26,15 +25,13 @@ import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import type React from 'react'
 import { type CSSProperties, type FC, memo, useCallback, useState } from 'react'
 import { NativeAddress } from 'src/lib/constants'
-import {
-  ChainOptionsSelector,
-  NetworkButton,
-} from 'src/ui/swap/chain-options-selector'
+import { NetworkButton } from 'src/ui/swap/chain-options-selector'
 import { FavoriteButton } from 'src/ui/swap/trade/favorite-button'
+import { formatUSD } from 'sushi'
 import { EvmChain } from 'sushi/chain'
 import type { Amount, Type } from 'sushi/currency'
-import { type Fraction, ZERO } from 'sushi/math'
-import { zeroAddress } from 'viem'
+import { ZERO } from 'sushi/math'
+import { formatUnits, zeroAddress } from 'viem'
 
 export interface TokenSelectorRowV2 {
   account?: `0x${string}`
@@ -44,7 +41,7 @@ export interface TokenSelectorRowV2 {
   onSelect(currency: Type): void
   balance?: Amount<Type> | undefined
   showWarning: boolean
-  price?: Fraction
+  price?: number
   pin?: {
     isPinned: boolean
     onPin(): void
@@ -230,8 +227,16 @@ export const TokenSelectorRowV2: FC<TokenSelectorRowV2> = memo(
                         {balance?.toSignificant(6)}
                       </span>
                       <span className="text-sm font-medium text-right text-gray-500 dark:text-slate-400">
-                        {price
-                          ? `$${balance?.multiply(price).toFixed(2)}`
+                        {price && balance
+                          ? formatUSD(
+                              price *
+                                Number(
+                                  formatUnits(
+                                    balance.quotient,
+                                    currency?.decimals,
+                                  ),
+                                ),
+                            )
                           : '-'}
                       </span>
                     </div>

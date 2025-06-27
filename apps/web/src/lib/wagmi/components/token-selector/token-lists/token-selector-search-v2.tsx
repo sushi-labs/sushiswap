@@ -1,20 +1,26 @@
-import type { TokenListChainId } from '@sushiswap/graph-client/data-api'
+import {
+  type TokenListV2ChainId,
+  isTokenListV2ChainId,
+} from '@sushiswap/graph-client/data-api'
 import { useCustomTokens } from '@sushiswap/hooks'
 import { useMemo } from 'react'
 import InfiniteScroll from 'react-infinite-scroll-component'
+import { TempChainIds } from 'src/lib/hooks/react-query/recent-swaps/useRecentsSwaps'
 import type { Type } from 'sushi/currency'
 import type { Address } from 'viem'
-import { usePrices } from '~evm/_common/ui/price-provider/price-provider/use-prices'
-import { useSearchTokens } from '../hooks/use-search-tokens'
-import { TokenSelectorCurrencyList } from './common/token-selector-currency-list'
-import { TokenSelectorCurrencyListLoadingV2 } from './common/token-selector-currency-list-v2'
+import { useSearchTokensV2 } from '../hooks/use-search-tokens-v2'
+import {
+  TokenSelectorCurrencyListLoadingV2,
+  TokenSelectorCurrencyListV2,
+} from './common/token-selector-currency-list-v2'
 
 interface TokenSelectorSearch {
-  chainId: TokenListChainId
+  chainId?: TokenListV2ChainId
   search: string
   onSelect(currency: Type): void
   onShowInfo(currency: Type | false): void
   selected: Type | undefined
+  showChainOptions: boolean
 }
 
 function Shell({ children }: { children: React.ReactNode }) {
@@ -24,23 +30,30 @@ function Shell({ children }: { children: React.ReactNode }) {
 const emptyMap = new Map()
 const pageSize = 20
 
-export function TokenSelectorSearch({
+export function TokenSelectorSearchV2({
   chainId,
   search,
   selected,
   onSelect,
   onShowInfo,
+  showChainOptions,
 }: TokenSelectorSearch) {
-  const { data, isError, isLoading, fetchNextPage, hasMore } = useSearchTokens({
-    chainId,
-    search,
-    pagination: {
-      initialPage: 0,
-      pageSize,
-    },
-  })
+  const { data, isError, isLoading, fetchNextPage, hasMore } =
+    useSearchTokensV2({
+      chainIds:
+        chainId && isTokenListV2ChainId(chainId)
+          ? [chainId]
+          : chainId && !isTokenListV2ChainId(chainId)
+            ? []
+            : TempChainIds,
+      search,
+      pagination: {
+        initialPage: 0,
+        pageSize,
+      },
+    })
 
-  const { data: pricesMap } = usePrices({ chainId })
+  // const { data: pricesMap } = usePrices({ chainId });
 
   const { data: _customTokens, mutate } = useCustomTokens()
   const customTokens = useMemo(
@@ -104,16 +117,16 @@ export function TokenSelectorSearch({
         className="!overflow-visible"
       >
         <div>
-          <TokenSelectorCurrencyList
+          <TokenSelectorCurrencyListV2
             id="trending"
             selected={selected}
             onSelect={onSelect}
             onShowInfo={onShowInfo}
             // pin={{}}
+            showChainOptions={showChainOptions}
             currencies={data}
-            chainId={chainId}
             balancesMap={emptyMap}
-            pricesMap={pricesMap}
+            pricesMap={emptyMap}
             isBalanceLoading={false}
             importConfig={{
               importableSet,

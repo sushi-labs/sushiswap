@@ -2,6 +2,7 @@
 
 import { InformationCircleIcon } from '@heroicons/react-v1/solid'
 import { MagnifyingGlassIcon } from '@heroicons/react/24/solid'
+import type { TokenListV2ChainId } from '@sushiswap/graph-client/data-api'
 import {
   Dialog,
   DialogContent,
@@ -51,11 +52,14 @@ export const TokenSelectorV2: FC<TokenSelectorV2Props> = ({
   includeNative = true,
   selected,
   onSelect,
+  // biome-ignore lint/correctness/noUnusedVariables: will remove once all props are for sure not going to be used
   chainId,
   children,
   currencies: _currencies,
   hidePinnedTokens,
+  // biome-ignore lint/correctness/noUnusedVariables: will remove once all props are for sure not going to be used
   hideSearch,
+  // biome-ignore lint/correctness/noUnusedVariables: will remove once all props are for sure not going to be used
   networks,
   selectedNetwork,
   onNetworkSelect,
@@ -65,11 +69,15 @@ export const TokenSelectorV2: FC<TokenSelectorV2Props> = ({
   variant,
 }) => {
   const { address } = useAccount()
+  //@dev using `number | null` for now until types decalred
+  const [_selectedNetwork, setSelectedNetwork] = useState<number | null>(
+    selectedNetwork ?? null,
+  )
 
   const [query, setQuery] = useState('')
   const [open, setOpen] = useState(false)
   const [currencyInfo, showCurrencyInfo] = useState<Currency | false>(false)
-  console.log({ hideSearch, networks, selectedNetwork })
+
   const [showLimitInfo, setShowLimitInfo] = useState(false)
   // Clear the query when the dialog is closed
   useEffect(() => {
@@ -100,7 +108,7 @@ export const TokenSelectorV2: FC<TokenSelectorV2Props> = ({
       if (currencyInfo) {
         showCurrencyInfo(false)
       }
-
+      setSelectedNetwork(network)
       if (onNetworkSelect) {
         onNetworkSelect(network)
         if (isLimit) {
@@ -117,7 +125,7 @@ export const TokenSelectorV2: FC<TokenSelectorV2Props> = ({
       <DialogContent
         aria-describedby={undefined}
         className={classNames(
-          'h-[80vh] !flex !flex-col md:!flex-row w-fit !p-0 md:min-w-[565px]',
+          'h-[80vh] !flex !flex-col md:!flex-row w-fit !p-0 md:min-w-[580px]',
         )}
         variant={variant ?? undefined}
       >
@@ -165,7 +173,11 @@ export const TokenSelectorV2: FC<TokenSelectorV2Props> = ({
             />
             {type !== 'buy' && !isLimit ? (
               <div className="absolute -translate-y-1/2 top-1/2 right-2">
-                <NetworkMenu className="bg-slate-50 border !rounded-md !px-2 border-black/10 dark:bg-slate-800 dark:border-white/10" />
+                <NetworkMenu
+                  selectedNetwork={_selectedNetwork}
+                  onNetworkSelect={_onNetworkSelect}
+                  className="bg-slate-50 border !rounded-md !px-2 border-black/10 dark:bg-slate-800 dark:border-white/10"
+                />
               </div>
             ) : null}
           </div>
@@ -175,7 +187,7 @@ export const TokenSelectorV2: FC<TokenSelectorV2Props> = ({
           >
             <TokenSelectorStatesV2
               selected={selected}
-              chainId={chainId}
+              selectedNetwork={_selectedNetwork as TokenListV2ChainId}
               account={address}
               onSelect={_onSelect}
               currencies={currencies}

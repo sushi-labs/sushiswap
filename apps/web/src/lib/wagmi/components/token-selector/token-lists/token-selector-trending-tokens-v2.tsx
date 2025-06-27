@@ -1,15 +1,23 @@
-import type { TrendingTokensChainId } from '@sushiswap/graph-client/data-api'
+import {
+  type TrendingTokensChainId,
+  isTrendingTokensChainId,
+} from '@sushiswap/graph-client/data-api'
+import { TempChainIds } from 'src/lib/hooks/react-query/recent-swaps/useRecentsSwaps'
 import type { Type } from 'sushi/currency'
 import { usePrices } from '~evm/_common/ui/price-provider/price-provider/use-prices'
 import { useTrendingTokens } from '../hooks/use-trending-tokens'
-import { TokenSelectorCurrencyList } from './common/token-selector-currency-list'
-import { TokenSelectorCurrencyListLoadingV2 } from './common/token-selector-currency-list-v2'
+import { useTrendingTokensV2 } from '../hooks/use-trending-tokens-v2'
+import {
+  TokenSelectorCurrencyListLoadingV2,
+  TokenSelectorCurrencyListV2,
+} from './common/token-selector-currency-list-v2'
 
-interface TokenSelectorTrendingTokens {
-  chainId: TrendingTokensChainId
+interface TokenSelectorTrendingTokensV2 {
+  chainId?: TrendingTokensChainId
   onSelect(currency: Type): void
   onShowInfo(currency: Type | false): void
   selected: Type | undefined
+  showChainOptions: boolean
 }
 
 function Shell({ children }: { children: React.ReactNode }) {
@@ -18,15 +26,20 @@ function Shell({ children }: { children: React.ReactNode }) {
 
 const emptyMap = new Map()
 
-export function TokenSelectorTrendingTokens({
+export function TokenSelectorTrendingTokensV2({
   chainId,
   onSelect,
   onShowInfo,
   selected,
-}: TokenSelectorTrendingTokens) {
-  const { data, isError, isLoading } = useTrendingTokens({ chainId })
+  showChainOptions,
+}: TokenSelectorTrendingTokensV2) {
+  const { data, isError, isLoading } = useTrendingTokensV2({
+    chainIds:
+      chainId && isTrendingTokensChainId(chainId) ? [chainId] : TempChainIds,
+    // chainIds: TempChainIds,
+  })
 
-  const { data: pricesMap } = usePrices({ chainId })
+  // const { data: pricesMap } = usePrices({ chainId })
 
   if (isLoading)
     return (
@@ -53,16 +66,16 @@ export function TokenSelectorTrendingTokens({
 
   return (
     <Shell>
-      <TokenSelectorCurrencyList
+      <TokenSelectorCurrencyListV2
         id="trending"
         selected={selected}
         onSelect={onSelect}
         onShowInfo={onShowInfo}
+        showChainOptions={showChainOptions}
         // pin={{}}
         currencies={data}
-        chainId={chainId}
         balancesMap={emptyMap}
-        pricesMap={pricesMap}
+        pricesMap={emptyMap}
         isBalanceLoading={false}
       />
     </Shell>

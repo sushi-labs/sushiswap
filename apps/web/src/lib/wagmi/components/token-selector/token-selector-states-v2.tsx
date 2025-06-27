@@ -1,27 +1,27 @@
 'use client'
 
-import type { EvmChainId } from 'sushi/chain'
 import type { Type } from 'sushi/currency'
 
 import {
-  isTokenListChainId,
+  type TokenListV2ChainId,
+  isTokenListV2ChainId,
   isTrendingTokensChainId,
 } from '@sushiswap/graph-client/data-api'
-import { EVM_DEFAULT_BASES } from 'sushi/config'
+import { TempChainIds } from 'src/lib/hooks/react-query/recent-swaps/useRecentsSwaps'
 import type { Address } from 'viem'
-import { useMyTokens } from './hooks/use-my-tokens'
-import { useSearchTokens } from './hooks/use-search-tokens'
-import { useTrendingTokens } from './hooks/use-trending-tokens'
-import { TokenSelectorChipBar } from './token-lists/token-selector-chip-bar'
-import { TokenSelectorCustomList } from './token-lists/token-selector-custom-list'
-import { TokenSelectorMyTokens } from './token-lists/token-selector-my-tokens'
-import { TokenSelectorSearch } from './token-lists/token-selector-search'
-import { TokenSelectorTrendingTokens } from './token-lists/token-selector-trending-tokens'
+import { useMyTokensV2 } from './hooks/use-my-tokens-v2'
+import { useSearchTokensV2 } from './hooks/use-search-tokens-v2'
+import { useTrendingTokensV2 } from './hooks/use-trending-tokens-v2'
+import { TokenSelectorChipBarV2 } from './token-lists/token-selector-chip-bar-v2'
+import { TokenSelectorCustomListV2 } from './token-lists/token-selector-custom-list-v2'
+import { TokenSelectorMyTokensV2 } from './token-lists/token-selector-my-tokens-v2'
+import { TokenSelectorSearchV2 } from './token-lists/token-selector-search-v2'
+import { TokenSelectorTrendingTokensV2 } from './token-lists/token-selector-trending-tokens-v2'
 import type { TokenSelectorV2Type } from './token-selector-v2'
 
 interface TokenSelectorStates {
   selected: Type | undefined
-  chainId: EvmChainId
+  selectedNetwork?: TokenListV2ChainId
   account?: Address
   onSelect(currency: Type): void
   onShowInfo(currency: Type | false): void
@@ -34,7 +34,7 @@ interface TokenSelectorStates {
 
 export function TokenSelectorStatesV2({
   selected,
-  chainId,
+  selectedNetwork,
   account,
   onSelect,
   onShowInfo,
@@ -45,30 +45,36 @@ export function TokenSelectorStatesV2({
   type,
 }: TokenSelectorStates) {
   // Ensure that the user's tokens are loaded
-  useMyTokens({
-    chainId: isTokenListChainId(chainId) ? chainId : undefined,
+  useMyTokensV2({
+    chainIds:
+      selectedNetwork && isTokenListV2ChainId(selectedNetwork)
+        ? [selectedNetwork]
+        : TempChainIds,
     account,
     includeNative,
   })
 
   // Ensure that the trending tokens are loaded
-  useTrendingTokens({
-    chainId: isTrendingTokensChainId(chainId) ? chainId : undefined,
+  useTrendingTokensV2({
+    chainIds:
+      selectedNetwork && isTrendingTokensChainId(selectedNetwork)
+        ? [selectedNetwork]
+        : TempChainIds,
   })
 
   // Ensure that the search list is loaded if it's the first thing the user sees
-  useSearchTokens({
-    chainId:
-      isTokenListChainId(chainId) && !isTrendingTokensChainId(chainId)
-        ? chainId
-        : undefined,
+  useSearchTokensV2({
+    chainIds:
+      selectedNetwork && isTokenListV2ChainId(selectedNetwork)
+        ? [selectedNetwork]
+        : TempChainIds,
     search: '',
   })
 
   if (currencies) {
     return (
-      <TokenSelectorCustomList
-        chainId={chainId}
+      <TokenSelectorCustomListV2
+        chainId={selectedNetwork}
         account={account}
         currencies={currencies}
         onSelect={onSelect}
@@ -81,12 +87,12 @@ export function TokenSelectorStatesV2({
     )
   }
 
-  if (search && isTokenListChainId(chainId)) {
+  if (search) {
     return (
       <>
         <Title />
-        <TokenSelectorSearch
-          chainId={chainId}
+        <TokenSelectorSearchV2
+          chainId={selectedNetwork}
           onSelect={onSelect}
           onShowInfo={onShowInfo}
           search={search}
@@ -97,20 +103,25 @@ export function TokenSelectorStatesV2({
     )
   }
 
-  if (!isTokenListChainId(chainId) && isTrendingTokensChainId(chainId)) {
+  if (
+    selectedNetwork &&
+    !isTokenListV2ChainId(selectedNetwork) &&
+    isTrendingTokensChainId(selectedNetwork)
+  ) {
     return (
       <>
         {type !== 'buy' ? (
-          <TokenSelectorChipBar
-            chainId={chainId}
+          <TokenSelectorChipBarV2
+            chainIds={selectedNetwork ? [selectedNetwork] : TempChainIds}
             onSelect={onSelect}
             includeNative={includeNative}
             showPinnedTokens={!hidePinnedTokens}
           />
         ) : null}
         <Title />
-        <TokenSelectorTrendingTokens
-          chainId={chainId}
+
+        <TokenSelectorTrendingTokensV2
+          chainId={selectedNetwork}
           onSelect={onSelect}
           onShowInfo={onShowInfo}
           selected={selected}
@@ -120,21 +131,26 @@ export function TokenSelectorStatesV2({
     )
   }
 
-  if (isTokenListChainId(chainId) && !isTrendingTokensChainId(chainId)) {
+  if (
+    selectedNetwork &&
+    isTokenListV2ChainId(selectedNetwork) &&
+    !isTrendingTokensChainId(selectedNetwork)
+  ) {
     return (
       <>
         {type !== 'buy' ? (
-          <TokenSelectorChipBar
-            chainId={chainId}
+          <TokenSelectorChipBarV2
+            chainIds={selectedNetwork ? [selectedNetwork] : TempChainIds}
             onSelect={onSelect}
             includeNative={includeNative}
             showPinnedTokens={!hidePinnedTokens}
           />
         ) : null}
         <Title />
+
         {account ? (
-          <TokenSelectorMyTokens
-            chainId={chainId}
+          <TokenSelectorMyTokensV2
+            chainId={selectedNetwork}
             onSelect={onSelect}
             onShowInfo={onShowInfo}
             selected={selected}
@@ -142,8 +158,8 @@ export function TokenSelectorStatesV2({
           />
         ) : null}
 
-        <TokenSelectorSearch
-          chainId={chainId}
+        <TokenSelectorSearchV2
+          chainId={selectedNetwork}
           onSelect={onSelect}
           onShowInfo={onShowInfo}
           selected={selected}
@@ -154,53 +170,37 @@ export function TokenSelectorStatesV2({
     )
   }
 
-  if (isTokenListChainId(chainId) && isTrendingTokensChainId(chainId)) {
-    return (
-      <>
-        {type !== 'buy' ? (
-          <TokenSelectorChipBar
-            chainId={chainId}
-            onSelect={onSelect}
-            includeNative={includeNative}
-            showPinnedTokens={!hidePinnedTokens}
-          />
-        ) : null}
-        <Title />
+  return (
+    <>
+      {type !== 'buy' ? (
+        <TokenSelectorChipBarV2
+          chainIds={selectedNetwork ? [selectedNetwork] : TempChainIds}
+          onSelect={onSelect}
+          includeNative={includeNative}
+          showPinnedTokens={!hidePinnedTokens}
+        />
+      ) : null}
+      <Title />
 
-        {account ? (
-          <TokenSelectorMyTokens
-            chainId={chainId}
-            onSelect={onSelect}
-            onShowInfo={onShowInfo}
-            selected={selected}
-            includeNative={includeNative}
-            showChainOptions={type === 'sell'}
-          />
-        ) : null}
-
-        <TokenSelectorTrendingTokens
-          chainId={chainId}
+      {account ? (
+        <TokenSelectorMyTokensV2
+          chainId={selectedNetwork}
           onSelect={onSelect}
           onShowInfo={onShowInfo}
           selected={selected}
+          includeNative={includeNative}
           showChainOptions={type === 'sell'}
         />
-      </>
-    )
-  }
+      ) : null}
 
-  return (
-    <TokenSelectorCustomList
-      chainId={chainId}
-      account={account}
-      currencies={EVM_DEFAULT_BASES[chainId]}
-      onSelect={onSelect}
-      selected={selected}
-      search={search}
-      includeNative={includeNative}
-      onShowInfo={onShowInfo}
-      showChainOptions={false}
-    />
+      <TokenSelectorTrendingTokensV2
+        chainId={selectedNetwork}
+        onSelect={onSelect}
+        onShowInfo={onShowInfo}
+        selected={selected}
+        showChainOptions={type === 'sell'}
+      />
+    </>
   )
 }
 

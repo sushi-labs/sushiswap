@@ -1,26 +1,26 @@
-import { isTokenListChainId } from '@sushiswap/graph-client/data-api'
+import { isTokenListV2ChainId } from '@sushiswap/graph-client/data-api'
 import { List } from '@sushiswap/ui'
 import { useMemo } from 'react'
+import { TempChainIds } from 'src/lib/hooks/react-query/recent-swaps/useRecentsSwaps'
 import type { Address } from 'sushi'
 import type { EvmChainId } from 'sushi/chain'
 import type { Type } from 'sushi/currency'
-import { usePrices } from '~evm/_common/ui/price-provider/price-provider/use-prices'
-import { useMyTokens } from '../hooks/use-my-tokens'
-import { TokenSelectorCurrencyList } from './common/token-selector-currency-list'
+import { useMyTokensV2 } from '../hooks/use-my-tokens-v2'
 import { TokenSelectorCurrencyListV2 } from './common/token-selector-currency-list-v2'
 
-interface TokenSelectorCustomList {
+interface TokenSelectorCustomListV2 {
   currencies: Readonly<Type[]>
-  chainId: EvmChainId
+  chainId?: EvmChainId
   account?: Address
   selected: Type | undefined
   onSelect(currency: Type): void
   search?: string
   includeNative?: boolean
   onShowInfo(currency: Type | false): void
+  showChainOptions: boolean
 }
 
-export function TokenSelectorCustomList({
+export function TokenSelectorCustomListV2({
   currencies,
   chainId,
   account,
@@ -29,18 +29,16 @@ export function TokenSelectorCustomList({
   search,
   includeNative,
   onShowInfo,
-}: TokenSelectorCustomList) {
+  showChainOptions,
+}: TokenSelectorCustomListV2) {
   const {
-    data: { balanceMap },
+    data: { balanceMap, priceMap },
     isLoading,
-  } = useMyTokens({
-    chainId: isTokenListChainId(chainId) ? chainId : undefined,
+  } = useMyTokensV2({
+    chainIds:
+      chainId && isTokenListV2ChainId(chainId) ? [chainId] : TempChainIds,
     account,
     includeNative,
-  })
-
-  const { data: pricesMap } = usePrices({
-    chainId,
   })
 
   const filteredCurrencies = useMemo(() => {
@@ -62,14 +60,14 @@ export function TokenSelectorCustomList({
     <div className="flex flex-1 flex-col">
       <List.Control className="flex flex-1">
         <div className="flex-1 block">
-          <TokenSelectorCurrencyList
+          <TokenSelectorCurrencyListV2
+            showChainOptions={showChainOptions}
             id="trending"
             selected={selected}
             onSelect={onSelect}
             currencies={filteredCurrencies}
-            chainId={chainId}
             balancesMap={balanceMap}
-            pricesMap={pricesMap}
+            pricesMap={priceMap}
             isBalanceLoading={isLoading}
             onShowInfo={onShowInfo}
           />
