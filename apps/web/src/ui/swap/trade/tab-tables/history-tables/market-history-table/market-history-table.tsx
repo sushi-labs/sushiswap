@@ -60,8 +60,6 @@ export const MarketTable = () => {
     chainIds: TempChainIds,
   })
 
-  console.log('recentSwaps', recentSwaps)
-
   const priceCol = useMemo(
     () => getPriceUsdColumn(showInUsd, setShowInUsd),
     [showInUsd],
