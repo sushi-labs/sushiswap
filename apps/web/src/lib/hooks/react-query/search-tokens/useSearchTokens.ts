@@ -2,16 +2,18 @@ import {
   type TokenListV2ChainId,
   getSearchTokens,
 } from '@sushiswap/graph-client/data-api'
-import { useQuery } from '@tanstack/react-query'
+import { useInfiniteQuery } from '@tanstack/react-query'
 import type { Address } from 'viem'
+
+type TokenListEntry = NonNullable<
+  Awaited<ReturnType<typeof getSearchTokens>>
+>[number]
 
 interface UseSearchTokens {
   walletAddress: Address | undefined
   chainIds: TokenListV2ChainId[] | undefined
   search?: string
   first?: number
-  skip?: number
-  // tokens?: { address: string; chainId: TokenListV2ChainId }[];
   tokens?: { address: Address; chainId: unknown }[]
 }
 
@@ -20,34 +22,41 @@ export const useSearchTokens = ({
   chainIds,
   search,
   first = 30,
-  skip,
   tokens = [],
 }: UseSearchTokens) => {
-  return useQuery({
+  const result = useInfiniteQuery<TokenListEntry[], unknown>({
     queryKey: [
       'useSearchTokens',
       walletAddress,
       chainIds,
       search,
       first,
-      skip,
       tokens,
     ],
-    queryFn: async () => {
+    enabled: !!walletAddress && !!chainIds && !!search,
+    initialPageParam: 0,
+    getNextPageParam: (lastPage, allPages) => {
+      return lastPage.length < first ? undefined : allPages.length * first
+    },
+    queryFn: async ({ pageParam = 0 }) => {
       if (!walletAddress || !chainIds) return []
 
+      const skip = pageParam as number
       const data = await getSearchTokens({
         walletAddress,
-        chainIds: chainIds,
+        chainIds,
         search,
         first,
         skip,
         tokens,
       })
 
-      return data ?? []
+      return Array.isArray(data) ? data : []
     },
-    refetchInterval: 60_000,
-    enabled: !!walletAddress && !!chainIds && !!search,
   })
+
+  return {
+    ...result,
+    data: result.data?.pages.flat() ?? [],
+  }
 }

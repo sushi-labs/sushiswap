@@ -3,12 +3,14 @@ import { MagnifyingGlassIcon } from '@heroicons/react/24/outline'
 import {
   Collapsible,
   IconButton,
+  Loader,
   SkeletonBox,
   SkeletonCircle,
   TextField,
   classNames,
 } from '@sushiswap/ui'
-import { type ChangeEvent, useEffect } from 'react'
+import { type ChangeEvent, useEffect, useState } from 'react'
+import InfiniteScroll from 'react-infinite-scroll-component'
 import { TempChainIds } from 'src/lib/hooks/react-query/recent-swaps/useRecentsSwaps'
 import { useSearchTokens } from 'src/lib/hooks/react-query/search-tokens/useSearchTokens'
 import { useAccount } from 'wagmi'
@@ -16,6 +18,7 @@ import { SearchItem } from './search-item'
 import { useSearchContext } from './search-provider'
 
 export const SearchContent = () => {
+  const [open, setOpen] = useState(false)
   const {
     state: { searchValue },
     mutate: { setSearchValue, clearSearchValue },
@@ -24,15 +27,26 @@ export const SearchContent = () => {
   const { address } = useAccount()
 
   const {
-    data: tokens = [],
+    data: tokens,
     isLoading,
     isError,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
   } = useSearchTokens({
     walletAddress: address,
     chainIds: TempChainIds,
     search: searchValue,
-    first: 20,
+    first: 10,
   })
+
+  useEffect(() => {
+    if (searchValue) {
+      setOpen(true)
+    }
+  }, [searchValue])
+
+  console.log('hasNextPage', hasNextPage)
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (!address) return
@@ -45,6 +59,13 @@ export const SearchContent = () => {
       setSearchValue('')
     }
   }, [address, setSearchValue])
+
+  console.log({
+    scrollTarget: document.getElementById('token-scroll-container'),
+    hasNextPage,
+    isFetchingNextPage,
+    tokensLength: tokens.length,
+  })
 
   return (
     <div className="flex flex-col gap-3">
@@ -72,69 +93,48 @@ export const SearchContent = () => {
           />
         ) : null}
       </div>
-      <Collapsible open={!!searchValue}>
-        <div className="overflow-y-auto hide-scrollbar text-xs max-h-[calc(100vh-220px)] md:max-h-[250px] grid grid-cols-[30px_auto_auto_auto] gap-2">
-          <div className="sticky font-medium grid grid-cols-[30px_190px_auto_auto] col-span-4 top-0 z-10 bg-white md:bg-slate-50 dark:bg-slate-900 md:dark:bg-slate-800 text-xs text-[#535263] dark:text-[#E4DDEC]">
-            <div />
-            <div className="w-full mr-auto">Token</div>
-            <div className="w-full ml-auto text-right">Price</div>
-            <div className="ml-auto w-full text-right pr-1.5">Holdings</div>
-          </div>
 
-          {isLoading &&
-            Array.from({ length: 4 }).map((_, i) => (
-              <div
-                key={`search-item-skeleton-${i}`}
-                className="grid col-span-4 grid-cols-[30px_200px_auto_auto] py-2 h-[50px] pr-2 rounded-lg animate-pulse"
-              >
-                <div className="flex items-center justify-center">
-                  <SkeletonBox className="w-4 h-4 rounded-full" />
-                </div>
-
-                <div className="flex items-center gap-3.5 w-full">
-                  <div className="relative">
-                    <SkeletonCircle radius={32} />
-                    <SkeletonBox className="w-4 h-4 rounded-sm absolute -bottom-[15%] -right-[25%]" />
-                  </div>
-                  <div className="flex flex-col gap-1">
-                    <SkeletonBox className="w-12 h-3 rounded" />
-                    <SkeletonBox className="w-20 h-2 rounded" />
-                  </div>
-                </div>
-
-                <div className="flex flex-col items-end justify-center w-[80px] ml-auto">
-                  <SkeletonBox className="w-12 h-3 mb-1 rounded" />
-                  <SkeletonBox className="w-10 h-2 rounded" />
-                </div>
-
-                <div className="flex flex-col items-end justify-center w-[109px] ml-auto">
-                  <SkeletonBox className="h-3 mb-1 rounded w-14" />
-                  <SkeletonBox className="w-16 h-2 rounded" />
-                </div>
-              </div>
-            ))}
-
-          {isError && (
-            <div className="col-span-4 py-4 text-center">
-              Shoot! Something went wrong :(
+      <Collapsible open={!!searchValue} className="!overflow-auto">
+        <InfiniteScroll
+          key={open ? 'scroll-open' : 'scroll-closed'}
+          height={250}
+          dataLength={tokens.length}
+          next={fetchNextPage}
+          hasMore={hasNextPage}
+          loader={
+            <div className="flex justify-center w-full py-4">
+              <Loader size={16} />
             </div>
-          )}
+          }
+        >
+          <div className="text-xs grid grid-cols-[30px_auto_auto_auto] gap-2">
+            <div className="sticky font-medium grid grid-cols-[30px_190px_auto_auto] col-span-4 top-0 z-20 bg-white md:bg-slate-50 dark:bg-slate-900 md:dark:bg-slate-800 text-xs text-[#535263] dark:text-[#E4DDEC]">
+              <div />
+              <div className="w-full mr-auto">Token</div>
+              <div className="w-full ml-auto text-right">Price</div>
+              <div className="ml-auto w-full text-right pr-1.5">Holdings</div>
+            </div>
 
-          {!isLoading &&
-            !isError &&
-            tokens.map((token) => (
+            {tokens.map((token) => (
               <SearchItem
                 key={`search-token-${token.chainId}-${token.address}`}
                 token={token}
               />
             ))}
+          </div>
+        </InfiniteScroll>
 
-          {!isLoading && !isError && tokens.length === 0 && searchValue && (
-            <div className="col-span-4 py-4 text-center">
-              No results for “{searchValue}”
-            </div>
-          )}
-        </div>
+        {!isLoading && !isError && tokens.length === 0 && searchValue && (
+          <div className="col-span-4 py-4 text-center">
+            No results for “{searchValue}”
+          </div>
+        )}
+
+        {isError && (
+          <div className="col-span-4 py-4 text-center">
+            Shoot! Something went wrong :(
+          </div>
+        )}
       </Collapsible>
     </div>
   )
