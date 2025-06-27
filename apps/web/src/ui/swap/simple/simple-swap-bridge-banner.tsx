@@ -19,6 +19,11 @@ const BridgeInfo = {
     ),
     textColor: 'text-white',
   },
+  [ChainId.KATANA]: {
+    url: 'https://app.katana.network', // TODO
+    background: <div className="absolute inset-0 -z-10 bg-black/50" />,
+    textColor: 'text-white',
+  },
 } as const
 
 export const SimpleSwapBridgeBanner: FC<{ className?: string }> = ({
