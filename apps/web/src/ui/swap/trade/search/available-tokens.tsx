@@ -2,13 +2,16 @@ import type { PortfolioWalletToken } from '@sushiswap/graph-client/data-api'
 import { Badge, Button, Currency, SkeletonBox, classNames } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import { useMemo } from 'react'
+import { useCreateQuery } from 'src/lib/hooks/useCreateQuery'
+import { getNetworkKey } from 'src/lib/network'
 import { usePortfolioWallet } from 'src/lib/wagmi/components/user-portfolio/hooks/use-portfolio-wallet'
 import { Connect } from 'src/lib/wagmi/systems/Checker/Connect'
-import type { EvmChainId } from 'sushi'
+import type { ChainId, EvmChainId } from 'sushi'
 import { Native, Token } from 'sushi/currency'
 import { formatNumber } from 'sushi/format'
-import { useAccount } from 'wagmi'
+import { useAccount, useChainId, useSwitchChain } from 'wagmi'
 import { PayWithFiat } from './pay-with-fiat'
+
 export const AvailableTokens = () => {
   const { address } = useAccount()
   const { data, isError, isLoading } = usePortfolioWallet({ address })
@@ -60,9 +63,22 @@ export const AvailableTokens = () => {
 
 const TokenOption = ({ token }: { token: PortfolioWalletToken }) => {
   const isNative = !token.id.startsWith('0x')
-  //TODO: select logic with provider
+  const { createQuery } = useCreateQuery()
+  const { switchChainAsync } = useSwitchChain()
+  const chainId = useChainId()
   return (
     <Button
+      onClick={async () => {
+        await switchChainAsync({ chainId: token?.chainId as EvmChainId })
+        createQuery(
+          [
+            { name: 'token0', value: isNative ? 'NATIVE' : token.id },
+            { name: 'chainId0', value: String(token.chainId) },
+          ],
+          `/${getNetworkKey(token?.chainId as ChainId)}/swap/advanced`,
+          chainId !== token.chainId,
+        )
+      }}
       variant={'secondary'}
       id={`token-option-${token.chainId}-${token.id}`}
       type="button"

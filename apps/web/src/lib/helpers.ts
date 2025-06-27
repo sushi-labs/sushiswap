@@ -1,5 +1,5 @@
-export const getTextColor = (value: number) => {
-  if (value === 0) return ''
+export const getTextColor = (value: number, fallbackColor?: string) => {
+  if (value === 0) return fallbackColor ?? ''
   return value > 0 ? 'text-green-500' : 'text-red'
 }
 
