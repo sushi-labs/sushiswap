@@ -34,6 +34,6 @@ export const useSearchTokens = ({
       return data ?? []
     },
     refetchInterval: 60_000,
-    enabled: !!walletAddress && !!chainIds,
+    enabled: !!walletAddress && !!chainIds && !!search,
   })
 }
