@@ -6,16 +6,28 @@ import { SushiWithTextIcon } from '@sushiswap/ui/icons/SushiWithTextIcon'
 import React, { type FC } from 'react'
 import { type NonStandardChainId, SUPPORTED_NETWORKS } from 'src/config'
 import { WagmiHeaderComponents } from 'src/lib/wagmi/components/wagmi-header-components'
-import type { ChainId, EvmChainId } from 'sushi/chain'
+import { ChainId, type EvmChainId } from 'sushi/chain'
 import { useChainId } from 'wagmi'
-import { headerElements } from '../../_common/header-elements'
+import { Header as _Header } from '~evm/[chainId]/header'
+import { headerElements } from '~evm/_common/header-elements'
 
 interface HeaderProps {
   chainId?: ChainId
   supportedNetworks?: readonly (EvmChainId | NonStandardChainId)[]
 }
 
-export const Header: FC<HeaderProps> = ({
+export const Header: FC<HeaderProps> = ({ chainId, supportedNetworks }) => {
+  return chainId === ChainId.KATANA ? (
+    <TransparentHeader
+      chainId={chainId}
+      supportedNetworks={supportedNetworks}
+    />
+  ) : (
+    <_Header chainId={chainId} supportedNetworks={supportedNetworks} />
+  )
+}
+
+const TransparentHeader: FC<HeaderProps> = ({
   chainId: _chainId,
   supportedNetworks,
 }) => {

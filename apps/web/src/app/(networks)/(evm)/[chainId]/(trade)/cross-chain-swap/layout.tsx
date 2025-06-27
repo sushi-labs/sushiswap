@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { XSWAP_SUPPORTED_CHAIN_IDS, isXSwapSupportedChainId } from 'src/config'
 import type { EvmChainId } from 'sushi/chain'
-import { Header } from '../header'
+import { Header } from '~evm/[chainId]/header'
 import { Providers } from './providers'
 
 export const metadata: Metadata = {
