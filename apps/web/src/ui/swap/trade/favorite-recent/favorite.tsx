@@ -4,16 +4,51 @@ import { useCallback, useMemo } from 'react'
 import { ConnectButton } from 'src/lib/wagmi/components/connect-button'
 import { TokenSelectorV2 } from 'src/lib/wagmi/components/token-selector/token-selector-v2'
 import { formatUSD } from 'sushi'
-import type { ID } from 'sushi'
+import type { Address, ID } from 'sushi'
 import type { Type } from 'sushi/currency'
 import { formatNumber } from 'sushi/format'
 import { useAccount } from 'wagmi'
 import { FavoriteButton } from '../favorite-button'
 import { TokenNetworkIcon } from '../token-network-icon'
+// import { useSearchTokens } from "src/lib/hooks/react-query/search-tokens/useSearchTokens";
+// import { NativeAddress } from "src/lib/constants";
+// import { TokenListV2ChainId } from "@sushiswap/graph-client/data-api";
 
 export const Favorite = () => {
   const { address } = useAccount()
   const { data: _pinnedTokens } = usePinnedTokens()
+
+  //@DEV commented out until the backend is fixed
+  // const { tokens, uniqueChainIds } = useMemo(() => {
+  // 	const tokens = Object.values(_pinnedTokens)
+  // 		.flat()
+  // 		.map((i) => {
+  // 			const currencyId = i;
+  // 			const chainId = currencyId?.split(":")[0];
+  // 			const _contractAddress = currencyId?.split(":")[1];
+  // 			const contractAddress = _contractAddress === "NATIVE" ? NativeAddress : _contractAddress;
+
+  // 			return {
+  // 				// chainId: Number(chainId) as TokenListV2ChainId,
+  // 				chainId: Number(chainId) as unknown,
+  // 				address: contractAddress as Address,
+  // 			};
+  // 		});
+  // 	const uniqueChainIds = Array.from(new Set(tokens.map((token) => Number(token.chainId))));
+
+  // 	return { tokens, uniqueChainIds };
+  // }, [_pinnedTokens]);
+
+  // const {
+  // 	data: favorites,
+  // 	isLoading,
+  // 	isError,
+  // } = useSearchTokens({
+  // 	walletAddress: address,
+  // 	chainIds: uniqueChainIds as TokenListV2ChainId[],
+  // 	search: "",
+  // 	tokens: tokens,
+  // });
 
   const pinnedTokensArray = useMemo(() => {
     return Object.values(_pinnedTokens)

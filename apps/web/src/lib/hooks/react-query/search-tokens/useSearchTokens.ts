@@ -1,14 +1,18 @@
-import { getSearchTokens } from '@sushiswap/graph-client/data-api'
+import {
+  type TokenListV2ChainId,
+  getSearchTokens,
+} from '@sushiswap/graph-client/data-api'
 import { useQuery } from '@tanstack/react-query'
 import type { Address } from 'viem'
-import type { TempTokenListV2ChainId } from '../recent-swaps/useRecentsSwaps'
 
 interface UseSearchTokens {
   walletAddress: Address | undefined
-  chainIds: TempTokenListV2ChainId | undefined
+  chainIds: TokenListV2ChainId[] | undefined
   search?: string
   first?: number
   skip?: number
+  // tokens?: { address: string; chainId: TokenListV2ChainId }[];
+  tokens?: { address: Address; chainId: unknown }[]
 }
 
 export const useSearchTokens = ({
@@ -17,18 +21,28 @@ export const useSearchTokens = ({
   search,
   first = 30,
   skip,
+  tokens = [],
 }: UseSearchTokens) => {
   return useQuery({
-    queryKey: ['useSearchTokens', walletAddress, chainIds, search, first, skip],
+    queryKey: [
+      'useSearchTokens',
+      walletAddress,
+      chainIds,
+      search,
+      first,
+      skip,
+      tokens,
+    ],
     queryFn: async () => {
       if (!walletAddress || !chainIds) return []
 
       const data = await getSearchTokens({
         walletAddress,
-        chainIds,
+        chainIds: chainIds,
         search,
         first,
         skip,
+        tokens,
       })
 
       return data ?? []

@@ -7,7 +7,7 @@ import type { ID } from 'sushi'
 interface FavoriteButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   className?: string
-  currencyId?: ID
+  currencyId: ID
 }
 
 export const FavoriteButton: FC<FavoriteButtonProps> = ({
