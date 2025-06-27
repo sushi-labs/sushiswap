@@ -4,6 +4,7 @@ import {
   Collapsible,
   IconButton,
   SkeletonBox,
+  SkeletonCircle,
   TextField,
   classNames,
 } from '@sushiswap/ui'
@@ -82,7 +83,35 @@ export const SearchContent = () => {
 
           {isLoading &&
             Array.from({ length: 4 }).map((_, i) => (
-              <SkeletonBox key={i} className="h-10 col-span-4" />
+              <div
+                key={`search-item-skeleton-${i}`}
+                className="grid col-span-4 grid-cols-[30px_200px_auto_auto] py-2 h-[50px] pr-2 rounded-lg animate-pulse"
+              >
+                <div className="flex items-center justify-center">
+                  <SkeletonBox className="w-4 h-4 rounded-full" />
+                </div>
+
+                <div className="flex items-center gap-3.5 w-full">
+                  <div className="relative">
+                    <SkeletonCircle radius={32} />
+                    <SkeletonBox className="w-4 h-4 rounded-sm absolute -bottom-[15%] -right-[25%]" />
+                  </div>
+                  <div className="flex flex-col gap-1">
+                    <SkeletonBox className="w-12 h-3 rounded" />
+                    <SkeletonBox className="w-20 h-2 rounded" />
+                  </div>
+                </div>
+
+                <div className="flex flex-col items-end justify-center w-[80px] ml-auto">
+                  <SkeletonBox className="w-12 h-3 mb-1 rounded" />
+                  <SkeletonBox className="w-10 h-2 rounded" />
+                </div>
+
+                <div className="flex flex-col items-end justify-center w-[109px] ml-auto">
+                  <SkeletonBox className="h-3 mb-1 rounded w-14" />
+                  <SkeletonBox className="w-16 h-2 rounded" />
+                </div>
+              </div>
             ))}
 
           {isError && (
