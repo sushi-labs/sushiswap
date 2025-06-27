@@ -36,6 +36,7 @@ export const SlippageTolerance: FC<{
 }> = ({ options, className, showAutoSelector = true }) => {
   const [slippageTolerance, setSlippageTolerance] = useSlippageTolerance(
     options?.storageKey,
+    options?.defaultValue,
   )
 
   const onChange = useCallback(
