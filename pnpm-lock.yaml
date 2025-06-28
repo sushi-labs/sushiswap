@@ -237,8 +237,8 @@ importers:
         specifier: 4.0.7
         version: 4.0.7(encoding@0.1.13)
       '@orbs-network/twap-sdk':
-        specifier: 3.1.21
-        version: 3.1.21
+        specifier: 3.1.51
+        version: 3.1.51
       '@pontem/wallet-adapter-plugin':
         specifier: 0.2.1
         version: 0.2.1
@@ -3421,11 +3421,11 @@ packages:
     resolution: {integrity: sha512-3giAOQvZiH5F9bMlMiv8+GSPMeqg0dbaeo58/0SlA9sxSqZhnUtxzX9/2FzyhS9sWQf5S0GJE0AKBrFqjpeYcg==}
     engines: {node: '>=8.0.0'}
 
-  '@orbs-network/twap-sdk@3.1.21':
-    resolution: {integrity: sha512-CQ2VVAeiIP80KSEjbhzIoFdsoKpClmr3RcPVXQ8jITSR6AVkzjaG0wUfB5NwK4aS1XavpPNxtWa11bIvf6HkOA==}
+  '@orbs-network/twap-sdk@3.1.51':
+    resolution: {integrity: sha512-Oi5b9Dbm7ht60r18VaMswkeJFtzCvpP7pz4xXNn5CQFile9zxHz5LKIncsOfNa/PkNGSuDW7mu+JR984AJk1/w==}
 
-  '@orbs-network/twap@2.7.6':
-    resolution: {integrity: sha512-+GvikzcwIC4rSBYQVPzpe1AVSJzpINWHGYtddf8bs7Kq/0M39UuqOEEmQdHJAejfQ+OQAP25FOhGPXTEXl7jzA==}
+  '@orbs-network/twap@2.7.10':
+    resolution: {integrity: sha512-py2tgIu+T+10egxtadooqdcAuh7X2nlNi5O91reIzjnMnv/MN/oeKjG0Gn2XtZMUzLsh3Di24hkFPH0++/x51w==}
 
   '@parcel/watcher-android-arm64@2.3.0':
     resolution: {integrity: sha512-f4o9eA3dgk0XRT3XhB0UWpWpLnKgrh1IwNJKJ7UJek7eTYccQ8LR7XUWFKqw6aEq5KUNlCcGvSzKqSX/vtWVVA==}
@@ -5725,7 +5725,7 @@ packages:
 
   '@walletconnect/sign-client@2.11.0':
     resolution: {integrity: sha512-H2ukscibBS+6WrzQWh+WyVBqO5z4F5et12JcwobdwgHnJSlqIoZxqnUYYWNCI5rUR5UKsKWaUyto4AE9N5dw4Q==}
-    deprecated: 'Reliability and performance improvements. See: https://github.com/WalletConnect/walletconnect-monorepo/releases'
+    deprecated: Reliability and performance greatly improved - please see https://github.com/WalletConnect/walletconnect-monorepo/releases
 
   '@walletconnect/sign-client@2.16.1':
     resolution: {integrity: sha512-s2Tx2n2duxt+sHtuWXrN9yZVaHaYqcEcjwlTD+55/vs5NUPlISf+fFmZLwSeX1kUlrSBrAuxPUcqQuRTKcjLOA==}
@@ -15542,12 +15542,12 @@ snapshots:
   '@opentelemetry/api@1.9.0':
     optional: true
 
-  '@orbs-network/twap-sdk@3.1.21':
+  '@orbs-network/twap-sdk@3.1.51':
     dependencies:
-      '@orbs-network/twap': 2.7.6
+      '@orbs-network/twap': 2.7.10
       bignumber.js: 9.1.1
 
-  '@orbs-network/twap@2.7.6': {}
+  '@orbs-network/twap@2.7.10': {}
 
   '@parcel/watcher-android-arm64@2.3.0':
     optional: true
@@ -18145,7 +18145,7 @@ snapshots:
       '@typescript-eslint/parser': 7.18.0(eslint@9.18.0(jiti@1.21.6))(typescript@5.7.2)
       eslint-config-prettier: 9.1.0(eslint@9.18.0(jiti@1.21.6))
       eslint-import-resolver-alias: 1.1.2(eslint-plugin-import@2.31.0)
-      eslint-import-resolver-typescript: 3.6.3(@typescript-eslint/parser@7.18.0(eslint@9.18.0(jiti@1.21.6))(typescript@5.7.2))(eslint-import-resolver-node@0.3.9)(eslint-plugin-import@2.31.0)(eslint@9.18.0(jiti@1.21.6))
+      eslint-import-resolver-typescript: 3.6.3(@typescript-eslint/parser@7.18.0(eslint@9.18.0(jiti@1.21.6))(typescript@5.7.2))(eslint-plugin-import@2.31.0)(eslint@9.18.0(jiti@1.21.6))
       eslint-plugin-eslint-comments: 3.2.0(eslint@9.18.0(jiti@1.21.6))
       eslint-plugin-import: 2.31.0(@typescript-eslint/parser@7.18.0(eslint@9.18.0(jiti@1.21.6))(typescript@5.7.2))(eslint-import-resolver-typescript@3.6.3)(eslint@9.18.0(jiti@1.21.6))
       eslint-plugin-jest: 27.9.0(@typescript-eslint/eslint-plugin@7.18.0(@typescript-eslint/parser@7.18.0(eslint@9.18.0(jiti@1.21.6))(typescript@5.7.2))(eslint@9.18.0(jiti@1.21.6))(typescript@5.7.2))(eslint@9.18.0(jiti@1.21.6))(jest@29.7.0(@types/node@20.14.14)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@types/node@20.14.14)(typescript@5.7.2)))(typescript@5.7.2)
@@ -21089,6 +21089,25 @@ snapshots:
       - eslint-import-resolver-webpack
       - supports-color
 
+  eslint-import-resolver-typescript@3.6.3(@typescript-eslint/parser@7.18.0(eslint@9.18.0(jiti@1.21.6))(typescript@5.7.2))(eslint-plugin-import@2.31.0)(eslint@9.18.0(jiti@1.21.6)):
+    dependencies:
+      '@nolyfill/is-core-module': 1.0.39
+      debug: 4.4.0
+      enhanced-resolve: 5.17.1
+      eslint: 9.18.0(jiti@1.21.6)
+      eslint-module-utils: 2.12.0(@typescript-eslint/parser@7.18.0(eslint@9.18.0(jiti@1.21.6))(typescript@5.7.2))(eslint-import-resolver-typescript@3.6.3)(eslint@9.18.0(jiti@1.21.6))
+      fast-glob: 3.3.2
+      get-tsconfig: 4.7.6
+      is-bun-module: 1.2.1
+      is-glob: 4.0.3
+    optionalDependencies:
+      eslint-plugin-import: 2.31.0(@typescript-eslint/parser@7.18.0(eslint@9.18.0(jiti@1.21.6))(typescript@5.7.2))(eslint-import-resolver-typescript@3.6.3)(eslint@9.18.0(jiti@1.21.6))
+    transitivePeerDependencies:
+      - '@typescript-eslint/parser'
+      - eslint-import-resolver-node
+      - eslint-import-resolver-webpack
+      - supports-color
+
   eslint-mdx@3.1.5(eslint@9.18.0(jiti@1.21.6)):
     dependencies:
       acorn: 8.14.0
@@ -21118,6 +21137,16 @@ snapshots:
       eslint: 9.18.0(jiti@1.21.6)
       eslint-import-resolver-node: 0.3.9
       eslint-import-resolver-typescript: 3.6.3(@typescript-eslint/parser@7.18.0(eslint@9.18.0(jiti@1.21.6))(typescript@5.7.2))(eslint-import-resolver-node@0.3.9)(eslint-plugin-import@2.31.0)(eslint@9.18.0(jiti@1.21.6))
+    transitivePeerDependencies:
+      - supports-color
+
+  eslint-module-utils@2.12.0(@typescript-eslint/parser@7.18.0(eslint@9.18.0(jiti@1.21.6))(typescript@5.7.2))(eslint-import-resolver-typescript@3.6.3)(eslint@9.18.0(jiti@1.21.6)):
+    dependencies:
+      debug: 3.2.7
+    optionalDependencies:
+      '@typescript-eslint/parser': 7.18.0(eslint@9.18.0(jiti@1.21.6))(typescript@5.7.2)
+      eslint: 9.18.0(jiti@1.21.6)
+      eslint-import-resolver-typescript: 3.6.3(@typescript-eslint/parser@7.18.0(eslint@9.18.0(jiti@1.21.6))(typescript@5.7.2))(eslint-plugin-import@2.31.0)(eslint@9.18.0(jiti@1.21.6))
     transitivePeerDependencies:
       - supports-color
 

@@ -51,6 +51,7 @@ import {
   useDerivedStateTwap,
   useTwapTrade,
 } from './derivedstate-twap-provider'
+import { usePrice } from '~evm/_common/ui/price-provider/price-provider/use-price'
 
 export const TwapTradeReviewDialog: FC<{
   children: ReactNode
@@ -71,6 +72,10 @@ export const TwapTradeReviewDialog: FC<{
   } = useDerivedStateTwap()
 
   const [acceptDisclaimer, setAcceptDisclaimer] = useState(true)
+  const srcTokenUsdPrice = usePrice({
+    chainId,
+    address: token0?.wrapped.address,
+  }).data;
 
   const { approved } = useApproved(APPROVE_TAG_SWAP)
   const { address } = useAccount()
@@ -78,7 +83,6 @@ export const TwapTradeReviewDialog: FC<{
   const client = usePublicClient()
 
   const { addCreatedOrder } = usePersistedOrdersStore({
-    chainId,
     account: address,
   })
 
@@ -107,11 +111,13 @@ export const TwapTradeReviewDialog: FC<{
               if (!orderId) return
 
               addCreatedOrder(
+                chainId,
                 orderId,
                 hash,
                 trade.params.map((param) => param.toString()),
                 trade.amountIn.currency.wrapped,
                 trade.minAmountOut.currency,
+                srcTokenUsdPrice ?? 0,
               )
             }
           })

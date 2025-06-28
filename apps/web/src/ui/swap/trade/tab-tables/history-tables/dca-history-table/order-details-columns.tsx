@@ -4,77 +4,81 @@ import {
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from '@sushiswap/ui'
-import { DollarCircledIcon } from '@sushiswap/ui/icons/DollarCircled'
-import type { ColumnDef } from '@tanstack/react-table'
-import { format } from 'date-fns'
-import type { Native } from 'sushi/currency'
-import { formatUSD, shortenHash } from 'sushi/format'
-import { formatNumber } from 'sushi/format'
+} from "@sushiswap/ui"
+import { DollarCircledIcon } from "@sushiswap/ui/icons/DollarCircled"
+import type { ColumnDef } from "@tanstack/react-table"
+import { format } from "date-fns"
+import { TwapFill } from "src/lib/hooks/react-query/twap"
+import { formatUSD, shortenHash } from "sushi/format"
+import { formatNumber } from "sushi/format"
 
-export type DCAOrderDetails = {
-  id: string
-  orderId: string
-  date: number
-  buyAmount: number
-  sellAmount: number
-  sellToken: Native
-  buyToken: Native
-  priceUsd: number
-  valueUsd: number
-  txHash: string
-}
-
-export const DATE_COLUMN: ColumnDef<DCAOrderDetails> = {
-  id: 'date',
-  header: 'Date',
+export const DATE_COLUMN: ColumnDef<TwapFill> = {
+  id: "date",
+  header: "Date",
   enableSorting: false,
-  accessorFn: (row) => row.date,
-  cell: ({ row }) => format(new Date(row.original.date), 'MM/dd/yy h:mm a'),
+  accessorFn: (row) => row,
+  cell: ({ row }) =>
+    format(new Date(row.original.timestamp), "MM/dd/yy h:mm a"),
 }
 
-export const BUY_COLUMN: ColumnDef<DCAOrderDetails> = {
-  id: 'buy',
-  header: 'Buy',
+export const BUY_COLUMN: ColumnDef<TwapFill> = {
+  id: "buy",
+  header: "Buy",
   enableSorting: false,
 
   accessorFn: (row) => row.buyAmount,
-  cell: ({ row }) => (
-    <div className="flex items-center gap-2">
-      <Currency.Icon currency={row.original.buyToken} width={18} height={18} />
-      <span>
-        {formatNumber(row.original.buyAmount)} {row.original.buyToken.symbol}
-      </span>
-    </div>
-  ),
+  cell: ({ row }) => {
+    if (!row.original.buyToken) return null
+    return (
+      <div className="flex items-center gap-2">
+        <Currency.Icon
+          currency={row.original?.buyToken}
+          width={18}
+          height={18}
+        />
+        <span>
+          {formatNumber(row.original.buyAmount, 4)}{" "}
+          {row.original.buyToken?.symbol}
+        </span>
+      </div>
+    )
+  },
 }
 
-export const SELL_COLUMN: ColumnDef<DCAOrderDetails> = {
-  id: 'sell',
-  header: 'Sell',
+export const SELL_COLUMN: ColumnDef<TwapFill> = {
+  id: "sell",
+  header: "Sell",
   enableSorting: false,
 
   accessorFn: (row) => row.sellAmount,
-  cell: ({ row }) => (
-    <div className="flex items-center gap-2">
-      <Currency.Icon currency={row.original.sellToken} width={18} height={18} />
-      <span>
-        {formatNumber(row.original.sellAmount)} {row.original.sellToken.symbol}
-      </span>
-    </div>
-  ),
+  cell: ({ row }) => {
+    if (!row.original.sellToken) return null
+    return (
+      <div className="flex items-center gap-2">
+        <Currency.Icon
+          currency={row.original.sellToken}
+          width={18}
+          height={18}
+        />
+        <span>
+          {formatNumber(row.original.sellAmount, 4)}{" "}
+          {row.original.sellToken.symbol}
+        </span>
+      </div>
+    )
+  },
 }
 
-export const VALUE_COLUMN: ColumnDef<DCAOrderDetails> = {
-  id: 'valueUsd',
-  header: 'Value',
+export const VALUE_COLUMN: ColumnDef<TwapFill> = {
+  id: "valueUsd",
+  header: "Value",
   enableSorting: false,
-  accessorFn: (row) => row.valueUsd,
-  cell: ({ row }) => <span>{formatUSD(row.original.valueUsd)}</span>,
+  accessorFn: (row) => "",
+  cell: ({ row }) => <span>{formatUSD(row.original.buyAmountUsd)}</span>,
 }
 
-export const PRICE_USD_COLUMN: ColumnDef<DCAOrderDetails> = {
-  id: 'priceUsd',
+export const PRICE_USD_COLUMN: ColumnDef<TwapFill> = {
+  id: "priceUsd",
   enableSorting: false,
 
   header: () => (
@@ -98,23 +102,27 @@ export const PRICE_USD_COLUMN: ColumnDef<DCAOrderDetails> = {
       </Tooltip>
     </TooltipProvider>
   ),
-  accessorFn: (row) => row.priceUsd,
-  cell: ({ row }) => <span>{formatUSD(row.original.priceUsd)}</span>,
+  accessorFn: (row) => "",
+  cell: ({ row }) => <span>{formatUSD(row.original.sellAmountUsd)}</span>,
 }
 
-export const TX_HASH_COLUMN: ColumnDef<DCAOrderDetails> = {
-  id: 'txHash',
-  header: 'Tx Hash',
+export const TX_HASH_COLUMN: ColumnDef<TwapFill> = {
+  id: "txHash",
+  header: "Tx Hash",
   enableSorting: false,
   accessorFn: (row) => row.txHash,
-  cell: ({ row }) => (
-    <a
-      href={`https://etherscan.io/tx/${row.original.txHash}`}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="dark:text-skyblue hover:underline"
-    >
-      {shortenHash(row.original.txHash)}
-    </a>
-  ),
+  cell: ({ row }) => {
+    if (!row.original.txHash) return null
+
+    return (
+      <a
+        href={row.original.explorerUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="hover:underline text-blue"
+      >
+        {shortenHash(row.original.txHash)}
+      </a>
+    )
+  },
 }
