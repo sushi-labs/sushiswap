@@ -9,7 +9,7 @@ export default function SimpleSwapLoading({ chainId }: { chainId: ChainId }) {
         className={classNames(
           'flex flex-col gap-4',
           chainId === ChainId.KATANA &&
-            'p-6 pt-0 pb-10 bg-[rgba(255,255,255,0.8)] dark:bg-[rgba(15,23,42,0.8)] rounded-3xl',
+            'p-6 pt-0 pb-10 bg-[rgba(255,255,255,0.8)] dark:bg-[rgba(15,23,42,0.8)] rounded-3xl backdrop-blur-2xl',
         )}
       >
         <div className="flex flex-col gap-2 mb-4 sm:mt-10 mt-2">
