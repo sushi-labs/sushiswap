@@ -31,14 +31,14 @@ const BridgeInfo = {
 export const SimpleSwapBridgeBanner: FC<{ className?: string }> = ({
   className,
 }) => {
-  const [hideBanner, setHideBanner] = useLocalStorage(
-    'hide-bridge-banner',
-    false,
-  )
-
   const {
     state: { chainId },
   } = useDerivedStateSimpleSwap()
+
+  const [hideBanner, setHideBanner] = useLocalStorage(
+    `hide-bridge-banner-${chainId}`,
+    false,
+  )
 
   return chainId in BridgeInfo && !hideBanner ? (
     <a
