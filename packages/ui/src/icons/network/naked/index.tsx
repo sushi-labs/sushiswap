@@ -25,6 +25,7 @@ import { HaqqNaked } from './HaqqNaked'
 import { HarmonyNaked } from './HarmonyNaked'
 import { HecoNaked } from './HecoNaked'
 import { HemiNaked } from './HemiNaked'
+import { KatanaNaked } from './KatanaNaked'
 import { KavaNaked } from './KavaNaked'
 import { LineaNaked } from './LineaNaked'
 import { MantaNaked } from './MantaNaked'
@@ -74,6 +75,7 @@ export * from './HaqqNaked'
 export * from './HarmonyNaked'
 export * from './HecoNaked'
 export * from './HemiNaked'
+export * from './KatanaNaked'
 export * from './KavaNaked'
 export * from './LineaNaked'
 export * from './MantaNaked'
@@ -147,6 +149,7 @@ export const NETWORK_NAKED_ICON: Partial<
   [ChainId.APE]: ApeNaked,
   [ChainId.SONIC]: SonicNaked,
   [ChainId.HEMI]: HemiNaked,
+  [ChainId.KATANA]: KatanaNaked,
   aptos: AptosNaked,
   tron: TronNaked,
 }
