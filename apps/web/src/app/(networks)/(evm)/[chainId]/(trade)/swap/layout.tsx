@@ -1,10 +1,8 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
-import { Suspense } from 'react'
 import { isSupportedChainId } from 'src/config'
 import type { ChainId } from 'sushi/chain'
-import SimpleSwapLoading from './_loading'
-import { Header } from './header'
+import { Header } from '../header'
 import { Providers } from './providers'
 
 export const metadata: Metadata = {
@@ -28,11 +26,7 @@ export default async function SwapLayout(props: {
   return (
     <Providers>
       <Header chainId={chainId} />
-      <main className="lg:p-4 mt-16 mb-[86px]">
-        <Suspense fallback={<SimpleSwapLoading chainId={chainId} />}>
-          {children}
-        </Suspense>
-      </main>
+      <main className="lg:p-4 mt-16 mb-[86px]">{children}</main>
     </Providers>
   )
 }

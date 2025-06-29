@@ -1,18 +1,10 @@
 import { Container, SkeletonBox } from '@sushiswap/ui'
 import React from 'react'
-import { ChainId } from 'sushi/chain'
 
-export default function SimpleSwapLoading({ chainId }: { chainId: ChainId }) {
+export default function SimpleSwapLoading() {
   return (
-    <Container
-      maxWidth="lg"
-      className={
-        chainId === ChainId.KATANA
-          ? '!max-w-[33rem] p-6 pt-0 pb-10 bg-[rgba(255,255,255,0.8)] dark:bg-[rgba(15,23,42,0.8)] rounded-3xl backdrop-blur-2xl'
-          : 'px-4'
-      }
-    >
-      <div className="flex flex-col gap-4">
+    <Container maxWidth="lg" className="px-4">
+      <div className="flex flex-col gap-4 p-6 pt-0 pb-10 bg-[rgba(255,255,255,0.8)] dark:bg-[rgba(15,23,42,0.8)] rounded-3xl backdrop-blur-2xl">
         <div className="flex flex-col gap-2 mb-4 sm:mt-10 mt-2">
           <SkeletonBox className="w-[140px] h-[36px] md:h-[53px] rounded-xl" />
           <SkeletonBox className="h-[20px] w-[280px] rounded-xl" />
