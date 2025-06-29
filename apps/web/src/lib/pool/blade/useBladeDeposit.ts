@@ -13,6 +13,7 @@ import type {
   ContractFunctionArgs,
   ContractFunctionName,
 } from 'viem'
+import { parseUnits } from 'viem'
 import {
   useBlockNumber,
   useWaitForTransactionReceipt,
@@ -135,7 +136,11 @@ function clipperPackedTransmitAndDeposit({
       abi,
       functionName,
       args: [packedInput, packedConfig, byte32(r), byte32(s)],
-      ...(nativeAmount ? { value: BigInt(nativeAmount.amount) } : {}),
+      ...(nativeAmount
+        ? {
+            value: parseUnits(nativeAmount.amount, nativeAmount.token.decimals),
+          }
+        : {}),
     } as any
     return variables
   }
@@ -189,7 +194,7 @@ function clipperTransmitAndDeposit({
           BigInt(deposit.good_until),
           deposit.signature,
         ],
-        value: BigInt(nativeAmount.amount),
+        value: parseUnits(nativeAmount.amount, nativeAmount.token.decimals),
       }
       return variables
     } else {
@@ -268,7 +273,7 @@ function clipperTransmitAndDeposit({
         deposit.signature,
       ] as const,
       // TODO: Use deposit amount from API
-      value: BigInt(nativeAmount.amount),
+      value: parseUnits(nativeAmount.amount, nativeAmount.token.decimals),
     }
     return variables
   } else {
@@ -371,7 +376,7 @@ function bladeTransmitAndDeposit({
           deposit.signature,
           deposit.extra_data,
         ],
-        value: BigInt(nativeAmount.amount),
+        value: parseUnits(nativeAmount.amount, nativeAmount.token.decimals),
       }
       return variables
     } else {
@@ -443,7 +448,7 @@ function bladeTransmitAndDeposit({
         deposit.signature,
         deposit.extra_data,
       ] as const,
-      value: BigInt(nativeAmount.amount),
+      value: parseUnits(nativeAmount.amount, nativeAmount.token.decimals),
     }
     return variables
   } else {
@@ -534,7 +539,11 @@ function bladePackedTransmitAndDeposit({
         byte32(s),
         deposit.extra_data,
       ],
-      ...(nativeAmount ? { value: BigInt(nativeAmount.amount) } : {}),
+      ...(nativeAmount
+        ? {
+            value: parseUnits(nativeAmount.amount, nativeAmount.token.decimals),
+          }
+        : {}),
     }
     // @ts-expect-error TODO: Review why it's producing a complex union type
     return variables
