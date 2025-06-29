@@ -28,7 +28,7 @@ export default async function PoolPage(props: {
     async () => getBladePool({ chainId, address }),
     ['blade', 'pool', `${chainId}:${address}`],
     {
-      revalidate: 60 * 15,
+      revalidate: 15,
     },
   )()
 

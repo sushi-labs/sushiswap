@@ -22,7 +22,7 @@ export async function generateMetadata(props: {
     async () => getBladePool({ chainId, address }),
     ['blade', 'pool', `${chainId}:${address}`],
     {
-      revalidate: 60 * 15,
+      revalidate: 15,
     },
   )()
 
@@ -56,7 +56,7 @@ export default async function Layout(props: {
     async () => getBladePool({ chainId, address }),
     ['blade', 'pool', `${chainId}:${address}`],
     {
-      revalidate: 60 * 15,
+      revalidate: 15,
     },
   )()
 
