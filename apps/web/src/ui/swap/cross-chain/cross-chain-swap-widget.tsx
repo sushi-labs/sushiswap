@@ -11,8 +11,7 @@ import { CrossChainSwapTradeStats } from './cross-chain-swap-trade-stats'
 
 export const CrossChainSwapWidget = () => {
   return (
-    <div className="flex flex-col gap-4 p-6 pt-0 bg-[rgba(255,255,255,0.8)] dark:bg-[rgba(15,23,42,0.8)] rounded-3xl backdrop-blur-2xl">
-      <CrossChainSwapHeader />
+    <div className="flex flex-col gap-4 p-6 bg-[rgba(255,255,255,0.8)] dark:bg-[rgba(15,23,42,0.8)] rounded-3xl backdrop-blur-2xl">
       <div className="flex items-center justify-between">
         <SwapModeButtons />
         <CrossChainSwapSettingsOverlay />
@@ -23,8 +22,8 @@ export const CrossChainSwapWidget = () => {
       <div className="flex flex-col">
         <CrossChainSwapToken1Input />
         <CrossChainSwapTradeButton />
+        <CrossChainSwapTradeStats />
       </div>
-      <CrossChainSwapTradeStats />
       <CrossChainSwapTokenNotFoundDialog />
     </div>
   )
