@@ -18,7 +18,6 @@ import { type FC, type ReactNode, useCallback, useEffect, useMemo } from 'react'
 import { APPROVE_TAG_ADD_LEGACY } from 'src/lib/constants'
 import {
   type RfqAllowDepositResponse,
-  type useBladeAllowDeposit,
   useBladeDepositRequest,
   useBladeDepositTransaction,
 } from 'src/lib/pool/blade/useBladeDeposit'
@@ -42,7 +41,7 @@ interface BladeAddLiquidityReviewModalProps {
   pool: BladePool
   chainId: BladeChainId
   validInputs: Array<{ token: Type; amount: string }>
-  depositPermission: RfqAllowDepositResponse
+  depositPermission: RfqAllowDepositResponse | undefined
   children: ReactNode
   onSuccess: () => void
 }
@@ -170,21 +169,25 @@ export const BladeAddLiquidityReviewModal: FC<
         {} as Record<string, string>,
       ),
       chain_id: chainId,
+      single_asset: depositPermission?.feature_single_asset_deposit,
     })
   }, [address, validInputs, pool.address, chainId, mutate, depositPermission])
 
   const handleConfirmTransaction = useCallback(
     async (confirm: () => void) => {
-      if (!rfqResponse) return
+      if (!rfqResponse || !address) return
 
       try {
-        await transactionMutation.mutateAsync(rfqResponse)
+        await transactionMutation.mutateAsync({
+          deposit: rfqResponse,
+          amounts: validInputs,
+        })
         confirm()
       } catch (error) {
         console.error('Transaction failed:', error)
       }
     },
-    [rfqResponse, transactionMutation],
+    [rfqResponse, transactionMutation, validInputs, address],
   )
 
   const estimatedValue = useMemo(() => {
@@ -242,7 +245,6 @@ export const BladeAddLiquidityReviewModal: FC<
                 </DialogHeader>
               </div>
 
-              {/* Deposit amounts display */}
               <div className="flex flex-col gap-3 p-4 bg-white rounded-xl dark:bg-secondary border border-accent">
                 <div className="flex flex-col gap-4">
                   {validInputs.map((input, index) => {
@@ -286,7 +288,6 @@ export const BladeAddLiquidityReviewModal: FC<
 
               {rfqResponse || rfqError ? (
                 <div className="flex flex-col gap-3 p-4 bg-white rounded-xl dark:bg-secondary border border-accent">
-                  {/* Show error if RFQ fails */}
                   {rfqError && (
                     <div className="p-4 bg-red-50 dark:bg-red-900/20 rounded-lg">
                       <span className="text-red-600 dark:text-red-400">
@@ -295,7 +296,6 @@ export const BladeAddLiquidityReviewModal: FC<
                     </div>
                   )}
 
-                  {/* Show estimated value when RFQ succeeds */}
                   {rfqResponse ? (
                     <div className="flex justify-between items-center">
                       <span className="text-sm text-gray-400 dark:text-slate-400">

@@ -83,6 +83,8 @@ enum BladePoolAbi {
   ClipperDirectExchangeV1
   ClipperPackedExchange
   ClipperPackedOracleVerifiedExchange
+  BladeVerifiedExchange
+  BladeApproximateExchange
 }
 
 enum BladePoolVaultType {
