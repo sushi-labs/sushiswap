@@ -11,7 +11,7 @@ import { TwapTradeButton } from './twap-trade-button'
 
 export const DCAWidget = () => {
   return (
-    <div className="flex flex-col gap-4 p-6 bg-[rgba(255,255,255,0.8)] dark:bg-[rgba(15,23,42,0.8)] rounded-3xl backdrop-blur-2xl">
+    <div className="flex flex-col gap-4 p-6 bg-[rgba(255,255,255,0.8)] dark:bg-[rgba(8,12,21,0.8)] rounded-3xl backdrop-blur-2xl">
       <div className="flex items-center justify-between">
         <SwapModeButtons />
       </div>
