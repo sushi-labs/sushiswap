@@ -1,7 +1,7 @@
 'use client'
 
+import { ArrowUpRightIcon } from '@heroicons/react/20/solid'
 import { XMarkIcon } from '@heroicons/react/24/solid'
-import { ArrowUpRightIcon } from '@heroicons/react/24/solid'
 import { useLocalStorage } from '@sushiswap/hooks'
 import { classNames } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
@@ -19,19 +19,26 @@ const BridgeInfo = {
     ),
     textColor: 'text-white',
   },
+  [ChainId.KATANA]: {
+    url: 'https://app.katana.network', // TODO
+    background: (
+      <div className="absolute inset-0 -z-10 bg-black/50 backdrop-blur" />
+    ),
+    textColor: 'text-white',
+  },
 } as const
 
 export const SimpleSwapBridgeBanner: FC<{ className?: string }> = ({
   className,
 }) => {
-  const [hideBanner, setHideBanner] = useLocalStorage(
-    'hide-bridge-banner',
-    false,
-  )
-
   const {
     state: { chainId },
   } = useDerivedStateSimpleSwap()
+
+  const [hideBanner, setHideBanner] = useLocalStorage(
+    `hide-bridge-banner-${chainId}`,
+    false,
+  )
 
   return chainId in BridgeInfo && !hideBanner ? (
     <a

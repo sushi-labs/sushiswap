@@ -1,9 +1,11 @@
 import type { VariablesOf } from 'gql.tada'
 
 import { type RequestOptions, request } from 'src/lib/request.js'
-import { SUSHI_DATA_API_HOST } from 'sushi/config/subgraph'
+// import { SUSHI_DATA_API_HOST } from 'sushi/config/subgraph'
 import { graphql } from '../../graphql.js'
 import { SUSHI_REQUEST_HEADERS } from '../../request-headers.js'
+
+const SUSHI_DATA_API_HOST = 'https://data-api-180-merge.data-gcp.sushi.com'
 
 export const ChainIdsByFeatureQuery = graphql(
   `
