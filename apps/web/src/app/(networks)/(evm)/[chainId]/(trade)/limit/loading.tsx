@@ -5,7 +5,7 @@ import { OrbsBanner } from 'src/ui/swap/twap/orbs-banner'
 export default function SwapLimitLoading() {
   return (
     <Container maxWidth="lg" className="px-4">
-      <div className="flex flex-col gap-4 p-6 bg-[rgba(255,255,255,0.8)] dark:bg-[rgba(8,12,21,0.8)] rounded-3xl backdrop-blur-2xl">
+      <div className="flex flex-col gap-4 p-6 bg-[rgba(255,255,255,0.8)] dark:bg-[rgba(25,32,49,0.8)] rounded-3xl backdrop-blur-2xl">
         <div className="flex gap-2">
           <SkeletonBox className="shrink-0 h-[36px] w-[61px] rounded-xl" />
           <SkeletonBox className="shrink-0 h-[36px] w-[56px] rounded-xl" />

@@ -12,7 +12,7 @@ import { SwapMaintenanceMessage } from './swap-maintenance-message'
 export const SimpleSwapWidget = () => {
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex flex-col gap-4 p-6 bg-[rgba(255,255,255,0.8)] dark:bg-[rgba(8,12,21,0.8)] rounded-3xl backdrop-blur-2xl">
+      <div className="flex flex-col gap-4 p-6 bg-[rgba(255,255,255,0.8)] dark:bg-[rgba(25,32,49,0.8)] rounded-3xl backdrop-blur-2xl">
         <div className="flex items-center justify-between">
           <SwapModeButtons />
           <SimpleSwapSettingsOverlay />
