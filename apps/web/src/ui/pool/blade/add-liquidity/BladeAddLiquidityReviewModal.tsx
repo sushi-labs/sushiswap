@@ -169,7 +169,9 @@ export const BladeAddLiquidityReviewModal: FC<
         {} as Record<string, string>,
       ),
       chain_id: chainId,
-      single_asset: depositPermission?.feature_single_asset_deposit,
+      single_asset:
+        depositPermission?.feature_single_asset_deposit &&
+        validInputs.length === 1,
     })
   }, [address, validInputs, pool.address, chainId, mutate, depositPermission])
 

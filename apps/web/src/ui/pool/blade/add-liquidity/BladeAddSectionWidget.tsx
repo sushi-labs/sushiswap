@@ -7,7 +7,7 @@ import {
   WidgetFooter,
   WidgetTitle,
 } from '@sushiswap/ui'
-import { Widget, WidgetHeader } from '@sushiswap/ui'
+import { Widget, WidgetHeader, classNames } from '@sushiswap/ui'
 import React, { type FC, type ReactNode, useMemo } from 'react'
 import { NativeAddress } from 'src/lib/constants'
 import { Web3Input } from 'src/lib/wagmi/components/web3-input'
@@ -196,7 +196,9 @@ export const BladeAddSectionWidget: FC<BladeAddSectionWidgetProps> = ({
           </div>
         )}
       </div>
-      <WidgetFooter>{children}</WidgetFooter>
+      <WidgetFooter className={classNames(inputs.length > 1 && 'mt-8')}>
+        {children}
+      </WidgetFooter>
     </Widget>
   )
 }
