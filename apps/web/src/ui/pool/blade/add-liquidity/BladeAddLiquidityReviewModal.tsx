@@ -1,6 +1,8 @@
 import type { BladePool } from '@sushiswap/graph-client/data-api'
 import { createErrorToast, createToast } from '@sushiswap/notifications'
 import {
+  Button,
+  Currency,
   DialogConfirm,
   DialogContent,
   DialogDescription,
@@ -10,10 +12,8 @@ import {
   DialogReview,
   DialogTitle,
   DialogTrigger,
+  Dots,
 } from '@sushiswap/ui'
-import { Button } from '@sushiswap/ui'
-import { Dots } from '@sushiswap/ui'
-import { Currency } from '@sushiswap/ui'
 import { type FC, type ReactNode, useCallback, useEffect, useMemo } from 'react'
 import { APPROVE_TAG_ADD_LEGACY } from 'src/lib/constants'
 import {
