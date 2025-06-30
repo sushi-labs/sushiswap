@@ -36,8 +36,6 @@ export const SearchItem = ({ token }: { token: SearchToken }) => {
     (bridge) => bridge.chainId !== token.chainId,
   )
 
-  console.log('filteredBridgeInfo', filteredBridgeInfo)
-
   return (
     <>
       <div
