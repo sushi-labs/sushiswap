@@ -17,7 +17,7 @@ import { useDerivedStateSimpleSwap } from './derivedstate-simple-swap-provider'
 export const SimpleSwapHeader = () => {
   const [invert, setInvert] = useState(false)
   const {
-    state: { chainId, token0, token1 },
+    state: { chainId0: chainId, token0, token1 },
     isLoading,
   } = useDerivedStateSimpleSwap()
 

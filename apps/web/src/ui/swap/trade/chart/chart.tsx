@@ -33,12 +33,12 @@ export const Chart = ({
   useEffect(() => {
     if (!tvWidgetRef.current) return
 
-    const symbol = `${token0.chainId}-${token0.wrapped.address}-${token0.name}-${token0.symbol}`
-    const interval = widgetProps.interval as ResolutionString
+    // const symbol = `${token0.chainId}-${token0.wrapped.address}-${token0.name}-${token0.symbol}`;
+    // const interval = widgetProps.interval as ResolutionString;
 
-    tvWidgetRef.current.setSymbol(symbol, interval, () => {
-      console.log('Symbol updated')
-    })
+    // tvWidgetRef?.current?.setSymbol(symbol, interval, () => {
+    //   console.log('Symbol updated')
+    // })
   }, [token0])
 
   useEffect(() => {
@@ -46,6 +46,8 @@ export const Chart = ({
       setHasNoData(hasNoData)
     })
   }, [])
+
+  const memoizedToken0 = useMemo(() => token0, [token0])
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
@@ -470,13 +472,7 @@ export const Chart = ({
       tvWidget.remove()
       tvWidgetRef.current = null
     }
-  }, [
-    chartContainerRef,
-    resolvedTheme,
-    isMdScreen,
-    isMounted,
-    tvWidgetRef.current,
-  ])
+  }, [chartContainerRef, resolvedTheme, isMdScreen, isMounted, memoizedToken0])
 
   return (
     <div className="flex flex-col flex-grow rounded-xl">

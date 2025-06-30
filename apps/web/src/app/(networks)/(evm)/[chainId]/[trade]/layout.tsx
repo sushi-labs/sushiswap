@@ -17,7 +17,7 @@ export const metadata: Metadata = {
 
 export default async function TradeLayout(props: {
   children: React.ReactNode
-  params: Promise<{ chainId: string; trade: string }>
+  params: Promise<{ chainId: string; chainId0: string; trade: string }>
 }) {
   const params = await props.params
   const { children } = props

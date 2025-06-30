@@ -110,7 +110,7 @@ export const TokenSelectorV2: FC<TokenSelectorV2Props> = ({
       }
       setSelectedNetwork(network)
       if (onNetworkSelect) {
-        onNetworkSelect(network)
+        // onNetworkSelect(network)
         if (isLimit) {
           setShowLimitInfo(true)
         }

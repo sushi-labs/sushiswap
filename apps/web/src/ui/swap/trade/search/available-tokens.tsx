@@ -65,7 +65,6 @@ const TokenOption = ({ token }: { token: PortfolioWalletToken }) => {
   const isNative = !token.id.startsWith('0x')
   const { createQuery } = useCreateQuery()
   const { switchChainAsync } = useSwitchChain()
-  const chainId = useChainId()
   return (
     <Button
       onClick={async () => {
@@ -76,7 +75,6 @@ const TokenOption = ({ token }: { token: PortfolioWalletToken }) => {
             { name: 'chainId0', value: String(token.chainId) },
           ],
           `/${getNetworkKey(token?.chainId as ChainId)}/swap/advanced`,
-          chainId !== token.chainId,
         )
       }}
       variant={'secondary'}

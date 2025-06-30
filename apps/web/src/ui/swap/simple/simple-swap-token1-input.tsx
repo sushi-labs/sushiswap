@@ -10,7 +10,7 @@ import {
 
 export const SimpleSwapToken1Input = () => {
   const {
-    state: { chainId, token1 },
+    state: { chainId1: chainId, token1 },
     mutate: { setToken1 },
     isToken1Loading: tokenLoading,
   } = useDerivedStateSimpleSwap()

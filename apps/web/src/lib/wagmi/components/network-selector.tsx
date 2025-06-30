@@ -54,6 +54,11 @@ const NetworkSelector = <T extends number | string>({
     (_network: string, close: () => void) => {
       const network = (isChainId(+_network) ? +_network : _network) as T
       const pathSegments = pathname.split('/')
+
+      if (isNonStandardChainId(network.toString())) {
+        push(`/${network}/swap`, { scroll: false })
+        return
+      }
       if (
         isEvmNetworkNameKey(pathSegments[1]) ||
         isChainId(+pathSegments[1]) ||
@@ -66,10 +71,7 @@ const NetworkSelector = <T extends number | string>({
           ),
           { scroll: false },
         )
-      } else if (isNonStandardChainId(network.toString())) {
-        push(`/${network}/swap`, { scroll: false })
       }
-
       onSelect(network, close)
     },
     [push, pathname, onSelect],

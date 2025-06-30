@@ -6,7 +6,7 @@ import { useDerivedStateSimpleSwap } from './derivedstate-simple-swap-provider'
 
 export const SimpleSwapToken0Input = () => {
   const {
-    state: { swapAmountString, chainId, token0 },
+    state: { swapAmountString, chainId0: chainId, token0 },
     mutate: { setSwapAmount, setToken0 },
     isToken0Loading: isLoading,
   } = useDerivedStateSimpleSwap()

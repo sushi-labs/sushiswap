@@ -13,16 +13,18 @@ import {
   useMemo,
   useState,
 } from 'react'
-import { isXSwapSupportedChainId } from 'src/config'
+// import { isXSwapSupportedChainId } from "src/config";
 import { useCrossChainTradeRoutes as _useCrossChainTradeRoutes } from 'src/lib/hooks/react-query'
+import { useCreateQuery } from 'src/lib/hooks/useCreateQuery'
 import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
-import { replaceNetworkSlug } from 'src/lib/network'
+import { getNetworkKey, replaceNetworkSlug } from 'src/lib/network'
 import type {
   CrossChainRoute,
   CrossChainRouteOrder,
 } from 'src/lib/swap/cross-chain'
 import { useTokenWithCache } from 'src/lib/wagmi/hooks/tokens/useTokenWithCache'
-import { ChainKey, EvmChainId } from 'sushi/chain'
+import { ChainNetworkNameKey } from 'sushi'
+import { ChainKey, EvmChainId, isEvmChainId } from 'sushi/chain'
 import { defaultCurrency } from 'sushi/config'
 import { defaultQuoteCurrency } from 'sushi/config'
 import {
@@ -34,7 +36,7 @@ import {
 } from 'sushi/currency'
 import { Percent } from 'sushi/math'
 import { type Address, isAddress, zeroAddress } from 'viem'
-import { useAccount } from 'wagmi'
+import { useAccount, useSwitchChain } from 'wagmi'
 
 const getTokenAsString = (token: Type | string) =>
   typeof token === 'string'
@@ -102,15 +104,24 @@ const DerivedstateCrossChainSwapProvider: FC<
   const pathname = usePathname()
   const searchParams = useSearchParams()
   const [tradeId, setTradeId] = useState(nanoid())
-  const [chainId, setChainId] = useState<number>(defaultChainId)
+  const [_chainId, setChainId] = useState<number>(defaultChainId)
   const [selectedBridge, setSelectedBridge] = useState<string | undefined>(
     undefined,
   )
   const [routeOrder, setRouteOrder] = useState<CrossChainRouteOrder>('CHEAPEST')
-
-  const chainId0 = isXSwapSupportedChainId(chainId)
-    ? chainId
-    : EvmChainId.ETHEREUM
+  const { switchChainAsync } = useSwitchChain()
+  const { createQuery } = useCreateQuery()
+  const networkNameFromPath = pathname.split('/')[1]
+  const chainIdFromPath =
+    ChainNetworkNameKey[networkNameFromPath as keyof typeof ChainNetworkNameKey]
+  //@dev check is xswap chain? isXSwapSupportedChainId
+  const chainId0 = (
+    Number(searchParams.get('chainId0')) !== 0
+      ? Number(searchParams.get('chainId0'))
+      : chainIdFromPath
+        ? chainIdFromPath
+        : EvmChainId.ETHEREUM
+  ) as EvmChainId
 
   // Get the searchParams and complete with defaults.
   // This handles the case where some params might not be provided by the user
@@ -120,9 +131,9 @@ const DerivedstateCrossChainSwapProvider: FC<
     if (!params.has('chainId1'))
       params.set(
         'chainId1',
-        chainId0 === EvmChainId.ARBITRUM
-          ? EvmChainId.ETHEREUM.toString()
-          : EvmChainId.ARBITRUM.toString(),
+        chainId0 === EvmChainId.ETHEREUM
+          ? EvmChainId.ARBITRUM.toString()
+          : EvmChainId.ETHEREUM.toString(),
       )
     if (!params.has('token0'))
       params.set('token0', getDefaultCurrency(chainId0))
@@ -150,8 +161,9 @@ const DerivedstateCrossChainSwapProvider: FC<
   )
 
   // Switch token0 and token1
-  const switchTokens = useCallback(() => {
+  const switchTokens = useCallback(async () => {
     const params = new URLSearchParams(defaultedParams)
+    const _chainId0 = params.get('chainId0') ?? EvmChainId.ETHEREUM.toString()
     const chainId1 = params.get('chainId1')
     const token0 = params.get('token0')
     const token1 = params.get('token1')
@@ -163,72 +175,82 @@ const DerivedstateCrossChainSwapProvider: FC<
     history.pushState(
       null,
       '',
-      `${replaceNetworkSlug(
-        Number(chainId1) as EvmChainId,
-        pathname,
-      )}?${createQueryString([
-        { name: 'swapAmount', value: null },
-        { name: 'token0', value: token1 as string },
-        { name: 'token1', value: token0 as string },
-        { name: 'chainId1', value: chainId0.toString() },
-      ])}`,
+      `${replaceNetworkSlug(Number(chainId1) as EvmChainId, pathname)}?${createQueryString(
+        [
+          { name: 'swapAmount', value: null },
+          { name: 'token0', value: token1 as string },
+          { name: 'token1', value: token0 as string },
+          { name: 'chainId1', value: _chainId0.toString() },
+          { name: 'chainId0', value: chainId1 },
+        ],
+      )}`,
     )
+    if (isEvmChainId(Number(chainId1))) {
+      await switchChainAsync({ chainId: Number(chainId1) as EvmChainId })
+    }
 
     setChainId(Number(chainId1))
-  }, [pathname, defaultedParams, chainId0, createQueryString])
+  }, [pathname, defaultedParams, createQueryString, switchChainAsync])
 
   // Update the URL with new from chainId
   const setChainId0 = useCallback(
-    (chainId: number) => {
-      if (defaultedParams.get('chainId1') === chainId.toString()) {
-        switchTokens()
-      } else {
-        history.pushState(
-          null,
-          '',
-          `${replaceNetworkSlug(
-            chainId as EvmChainId,
-            pathname,
-          )}?${createQueryString([
+    async (chainId: number) => {
+      await switchChainAsync({ chainId: chainId as EvmChainId })
+      history.pushState(
+        null,
+        '',
+        `${replaceNetworkSlug(chainId as EvmChainId, pathname)}?${createQueryString(
+          [
             { name: 'swapAmount', value: null },
             { name: 'token0', value: getDefaultCurrency(chainId0) },
-          ])}`,
-        )
+            { name: 'chainId0', value: chainId.toString() },
+          ],
+        )}`,
+      )
 
-        setChainId(chainId)
-      }
+      setChainId(chainId)
     },
-    [createQueryString, defaultedParams, pathname, switchTokens, chainId0],
+    [createQueryString, pathname, chainId0, switchChainAsync],
   )
 
   // Update the URL with new to chainId
   const setChainId1 = useCallback(
     (chainId: number) => {
-      if (chainId0 === chainId) {
-        switchTokens()
-      } else {
-        push(
-          `${pathname}?${createQueryString([
-            { name: 'swapAmount', value: null },
-            { name: 'chainId1', value: chainId.toString() },
-            { name: 'token1', value: getQuoteCurrency(chainId) },
-          ])}`,
-        )
-      }
+      push(
+        `${pathname}?${createQueryString([
+          { name: 'swapAmount', value: null },
+          { name: 'chainId1', value: chainId.toString() },
+          { name: 'token1', value: getQuoteCurrency(chainId) },
+        ])}`,
+      )
     },
-    [createQueryString, pathname, push, switchTokens, chainId0],
+    [createQueryString, pathname, push],
   )
 
   // Update the URL with a new token0
   const setToken0 = useCallback(
-    (_token0: string | Type) => {
+    async (_token0: string | Type) => {
       // If entity is provided, parse it to a string
       const token0 = getTokenAsString(_token0)
-      push(
-        `${pathname}?${createQueryString([{ name: 'token0', value: token0 }])}`,
-      )
+      if (typeof _token0 !== 'string') {
+        const _chainId = _token0.chainId.toString()
+        if (isEvmChainId(Number(_chainId))) {
+          await switchChainAsync({ chainId: Number(_chainId) as EvmChainId })
+        }
+        createQuery(
+          [
+            { name: 'token0', value: token0 },
+            { name: 'chainId0', value: _chainId },
+          ],
+          replaceNetworkSlug(Number(_chainId) as EvmChainId, pathname),
+        )
+      } else {
+        push(
+          `${pathname}?${createQueryString([{ name: 'token0', value: token0 }])}`,
+        )
+      }
     },
-    [createQueryString, pathname, push],
+    [createQueryString, pathname, push, switchChainAsync, createQuery],
   )
 
   // Update the URL with a new token1
@@ -236,11 +258,19 @@ const DerivedstateCrossChainSwapProvider: FC<
     (_token1: string | Type) => {
       // If entity is provided, parse it to a string
       const token1 = getTokenAsString(_token1)
-      push(
-        `${pathname}?${createQueryString([{ name: 'token1', value: token1 }])}`,
-      )
+      if (typeof _token1 !== 'string') {
+        const _chainId = _token1.chainId.toString()
+        createQuery([
+          { name: 'token1', value: token1 },
+          { name: 'chainId1', value: _chainId },
+        ])
+      } else {
+        push(
+          `${pathname}?${createQueryString([{ name: 'token1', value: token1 }])}`,
+        )
+      }
     },
-    [createQueryString, pathname, push],
+    [createQueryString, pathname, push, createQuery],
   )
 
   // Update the URL with both tokens
@@ -264,9 +294,7 @@ const DerivedstateCrossChainSwapProvider: FC<
   const setSwapAmount = useCallback(
     (swapAmount: string) => {
       push(
-        `${pathname}?${createQueryString([
-          { name: 'swapAmount', value: swapAmount },
-        ])}`,
+        `${pathname}?${createQueryString([{ name: 'swapAmount', value: swapAmount }])}`,
       )
     },
     [createQueryString, pathname, push],
@@ -277,7 +305,7 @@ const DerivedstateCrossChainSwapProvider: FC<
 
   // Derive token0
   const { data: token0, isInitialLoading: token0Loading } = useTokenWithCache({
-    chainId: chainId0,
+    chainId: chainId0 as EvmChainId,
     address: defaultedParams.get('token0') as Address,
     enabled: isAddress(defaultedParams.get('token0') as string, {
       strict: false,

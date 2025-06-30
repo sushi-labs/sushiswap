@@ -228,9 +228,9 @@ const CurrencyInput: FC<CurrencyInputProps> = ({
                   </div>
                   <div className="flex flex-col items-start">
                     <span className="text-xl leading-5">{currency.symbol}</span>
-                    <span className="text-xs leading-3 text-muted-foreground">
-                      {EvmChain.from(currency.chainId)?.name}
-                    </span>
+                    {/* <span className="text-xs leading-3 text-muted-foreground">
+											{EvmChain.from(currency.chainId)?.name}
+										</span> */}
                   </div>
                   <SelectPrimitive.Icon asChild>
                     <ChevronRightIcon strokeWidth={2} width={16} height={16} />
