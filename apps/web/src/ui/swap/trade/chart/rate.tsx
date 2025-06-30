@@ -22,12 +22,10 @@ export const Rate: React.FC<RateProps> = ({ token0, token1, isLoading }) => {
   const base = flipped ? token1 : token0
   const quote = flipped ? token0 : token1
 
-  // const rate = base.usdPrice / quote.usdPrice;
-
   return (
     <div className="flex items-center xl:flex-wrap text-sm font-medium text-[#0F172A] dark:text-white">
       {isLoading ? (
-        <SkeletonBox className="h-4 w-20 rounded-md mr-1" />
+        <SkeletonBox className="w-20 h-4 mr-1 rounded-md" />
       ) : (
         <div className="mr-1">
           1 {base.symbol} = ${base.usdPrice.toFixed(2)}
@@ -36,7 +34,7 @@ export const Rate: React.FC<RateProps> = ({ token0, token1, isLoading }) => {
       <button
         type="button"
         onClick={() => setFlipped(!flipped)}
-        className="transition hover:opacity-75 text-blue dark:text-skyblue flex items-center gap-1"
+        className="flex items-center gap-1 transition hover:opacity-75 text-blue dark:text-skyblue"
       >
         <ArrowsLeftRightIcon width={18} />
         Switch To {quote.symbol}
