@@ -10,9 +10,12 @@ import {
   useState,
 } from 'react'
 import { useTrade, useTradeQuote } from 'src/lib/hooks/react-query'
+import { useCreateQuery } from 'src/lib/hooks/useCreateQuery'
 import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
+import { getNetworkKey, replaceNetworkSlug } from 'src/lib/network'
 import { useTokenWithCache } from 'src/lib/wagmi/hooks/tokens/useTokenWithCache'
-import { EvmChainId } from 'sushi/chain'
+import { ChainNetworkNameKey, EvmChainId } from 'sushi'
+import { isEvmChainId } from 'sushi/chain'
 import {
   defaultCurrency,
   defaultQuoteCurrency,
@@ -21,7 +24,7 @@ import {
 import { type Amount, Native, type Type, tryParseAmount } from 'sushi/currency'
 import { type Percent, ZERO } from 'sushi/math'
 import { type Address, isAddress } from 'viem'
-import { useAccount, useGasPrice } from 'wagmi'
+import { useAccount, useGasPrice, useSwitchChain } from 'wagmi'
 import { type SupportedChainId, isSupportedChainId } from '../../../config'
 import { useCarbonOffset } from '../../../lib/swap/useCarbonOffset'
 
@@ -50,7 +53,8 @@ interface State {
   state: {
     token0: Type | undefined
     token1: Type | undefined
-    chainId: EvmChainId
+    chainId0: EvmChainId
+    chainId1: EvmChainId
     swapAmountString: string
     swapAmount: Amount<Type> | undefined
     recipient: string | undefined
@@ -88,25 +92,38 @@ const DerivedstateSimpleSwapProvider: FC<
   const [localTokenCache, setLocalTokenCache] = useState<Map<string, Type>>(
     new Map(),
   )
+  const { switchChainAsync } = useSwitchChain()
+  const { createQuery } = useCreateQuery()
+  // const chainId =
+  // 	_chainId && isSupportedChainId(+_chainId) ? (+_chainId as SupportedChainId) : EvmChainId.ETHEREUM;
+  const networkNameFromPath = pathname.split('/')[1]
+  const chainIdFromPath =
+    ChainNetworkNameKey[networkNameFromPath as keyof typeof ChainNetworkNameKey]
 
-  const chainId =
-    _chainId && isSupportedChainId(+_chainId)
-      ? (+_chainId as SupportedChainId)
-      : EvmChainId.ETHEREUM
+  const chainId0 =
+    Number(searchParams.get('chainId0')) !== 0
+      ? Number(searchParams.get('chainId0'))
+      : chainIdFromPath
+        ? chainIdFromPath
+        : EvmChainId.ETHEREUM
 
   // Get the searchParams and complete with defaults.
   // This handles the case where some params might not be provided by the user
   const defaultedParams = useMemo(() => {
     const params = new URLSearchParams(searchParams)
 
+    if (!params.has('chainId1')) params.set('chainId1', chainId0.toString())
+
     if (!params.has('token0')) {
-      params.set('token0', getDefaultCurrency(chainId))
+      params.set('token0', getDefaultCurrency(chainId0))
     }
     if (!params.has('token1')) {
-      params.set('token1', getQuoteCurrency(chainId))
+      params.set('token1', getQuoteCurrency(Number(params.get('chainId1'))))
     }
     return params
-  }, [chainId, searchParams])
+  }, [chainId0, searchParams])
+
+  const chainId1 = Number(defaultedParams.get('chainId1')) as EvmChainId
 
   // Get a new searchParams string by merging the current
   // searchParams with a provided key/value pair
@@ -127,27 +144,33 @@ const DerivedstateSimpleSwapProvider: FC<
 
   // Switch token0 and token1
   const switchTokens = useCallback(() => {
-    // console.log('switchTokens', {
-    //   token0: defaultedParams.get('token1'),
-    //   token1: defaultedParams.get('token0'),
-    // })
+    const params = new URLSearchParams(defaultedParams)
+    const chainId1 = params.get('chainId1')
     push(
-      `${pathname}?${createQueryString([
+      `${
+        chainId1
+          ? replaceNetworkSlug(Number(chainId1) as EvmChainId, pathname)
+          : pathname
+      }?${createQueryString([
         { name: 'swapAmount', value: null },
         { name: 'token0', value: defaultedParams.get('token1') as string },
         { name: 'token1', value: defaultedParams.get('token0') as string },
+        { name: 'chainId0', value: defaultedParams.get('chainId1') as string },
+        { name: 'chainId1', value: defaultedParams.get('chainId0') as string },
       ])}`,
     )
   }, [createQueryString, defaultedParams, pathname, push])
 
   // Update the URL with a new token0
   const setToken0 = useCallback<(_token0: string | Type) => void>(
-    (_token0) => {
+    async (_token0) => {
+      let chainId0 = ''
       // If entity is provided, parse it to a string
       const token0 = getTokenAsString(_token0)
 
       if (typeof _token0 !== 'string') {
         setLocalTokenCache(localTokenCache.set(token0, _token0))
+        chainId0 = _token0.chainId.toString()
       }
 
       // Switch tokens if the new token0 is the same as the current token1
@@ -155,13 +178,23 @@ const DerivedstateSimpleSwapProvider: FC<
         defaultedParams.get('token1')?.toLowerCase() === token0.toLowerCase()
       ) {
         switchTokens()
-      }
-
-      // Push new route
-      else {
-        push(
-          `${pathname}?${createQueryString([{ name: 'token0', value: token0 }])}`,
-        )
+      } else {
+        if (chainId0) {
+          if (isEvmChainId(Number(chainId0))) {
+            await switchChainAsync({ chainId: Number(chainId0) as EvmChainId })
+          }
+          createQuery(
+            [
+              { name: 'token0', value: token0 },
+              { name: 'chainId0', value: chainId0 },
+            ],
+            replaceNetworkSlug(Number(chainId0) as EvmChainId, pathname),
+          )
+        } else {
+          push(
+            `${pathname}?${createQueryString([{ name: 'token0', value: token0 }])}`,
+          )
+        }
       }
     },
     [
@@ -171,17 +204,21 @@ const DerivedstateSimpleSwapProvider: FC<
       pathname,
       push,
       switchTokens,
+      createQuery,
+      switchChainAsync,
     ],
   )
 
   // Update the URL with a new token1
   const setToken1 = useCallback<(_token1: string | Type) => void>(
-    (_token1) => {
+    async (_token1) => {
       // If entity is provided, parse it to a string
+      let chainId1 = ''
       const token1 = getTokenAsString(_token1)
 
       if (typeof _token1 !== 'string') {
         setLocalTokenCache(localTokenCache.set(token1, _token1))
+        chainId1 = _token1.chainId.toString()
       }
 
       // Switch tokens if the new token0 is the same as the current token1
@@ -189,13 +226,17 @@ const DerivedstateSimpleSwapProvider: FC<
         defaultedParams.get('token0')?.toLowerCase() === token1.toLowerCase()
       ) {
         switchTokens()
-      }
-
-      // Push new route
-      else {
-        push(
-          `${pathname}?${createQueryString([{ name: 'token1', value: token1 }])}`,
-        )
+      } else {
+        if (chainId1) {
+          createQuery([
+            { name: 'token1', value: token1 },
+            { name: 'chainId1', value: chainId1 },
+          ])
+        } else {
+          push(
+            `${pathname}?${createQueryString([{ name: 'token1', value: token1 }])}`,
+          )
+        }
       }
     },
     [
@@ -205,6 +246,7 @@ const DerivedstateSimpleSwapProvider: FC<
       pathname,
       push,
       switchTokens,
+      createQuery,
     ],
   )
 
@@ -246,7 +288,7 @@ const DerivedstateSimpleSwapProvider: FC<
   // Derive token0
   const { data: token0FromCache, isInitialLoading: token0Loading } =
     useTokenWithCache({
-      chainId,
+      chainId: chainId0 as EvmChainId,
       address: token0Param as Address,
       enabled:
         isAddress(token0Param, { strict: false }) && !token0FromLocalCache,
@@ -256,7 +298,7 @@ const DerivedstateSimpleSwapProvider: FC<
   // Derive token1
   const { data: token1FromCache, isInitialLoading: token1Loading } =
     useTokenWithCache({
-      chainId,
+      chainId: chainId1 as EvmChainId,
       address: token1Param as Address,
       enabled:
         isAddress(token1Param, { strict: false }) && !token1FromLocalCache,
@@ -272,13 +314,13 @@ const DerivedstateSimpleSwapProvider: FC<
         const swapAmountString = defaultedParams.get('swapAmount') || ''
         const _token0 =
           defaultedParams.get('token0') === 'NATIVE' &&
-          isWNativeSupported(chainId)
-            ? Native.onChain(chainId)
+          isWNativeSupported(chainId0 as EvmChainId)
+            ? Native.onChain(chainId0 as EvmChainId)
             : token0
         const _token1 =
           defaultedParams.get('token1') === 'NATIVE' &&
-          isWNativeSupported(chainId)
-            ? Native.onChain(chainId)
+          isWNativeSupported(chainId1)
+            ? Native.onChain(chainId1)
             : token1
 
         return {
@@ -292,7 +334,8 @@ const DerivedstateSimpleSwapProvider: FC<
           },
           state: {
             recipient: address ?? '',
-            chainId,
+            chainId0: chainId0 as EvmChainId,
+            chainId1: chainId1 as EvmChainId,
             swapAmountString,
             swapAmount: tryParseAmount(swapAmountString, _token0),
             token0: _token0,
@@ -305,7 +348,8 @@ const DerivedstateSimpleSwapProvider: FC<
         }
       }, [
         address,
-        chainId,
+        chainId0,
+        chainId1,
         defaultedParams,
         setSwapAmount,
         setToken0,
@@ -337,15 +381,15 @@ const useDerivedStateSimpleSwap = () => {
 
 const useSimpleSwapTrade = (enabled = true) => {
   const {
-    state: { token0, chainId, swapAmount, token1, recipient },
+    state: { token0, chainId0, swapAmount, token1, recipient },
   } = useDerivedStateSimpleSwap()
 
   const [slippagePercent] = useSlippageTolerance()
   const [carbonOffset] = useCarbonOffset()
-  const { data: gasPrice } = useGasPrice({ chainId })
+  const { data: gasPrice } = useGasPrice({ chainId: chainId0 })
 
   const trade = useTrade({
-    chainId,
+    chainId: chainId0,
     fromToken: token0,
     toToken: token1,
     amount: swapAmount,
@@ -361,15 +405,15 @@ const useSimpleSwapTrade = (enabled = true) => {
 
 const useSimpleSwapTradeQuote = () => {
   const {
-    state: { token0, chainId, swapAmount, token1, recipient },
+    state: { token0, chainId0, swapAmount, token1, recipient },
   } = useDerivedStateSimpleSwap()
 
   const [slippagePercent] = useSlippageTolerance()
   const [carbonOffset] = useCarbonOffset()
-  const { data: gasPrice } = useGasPrice({ chainId })
+  const { data: gasPrice } = useGasPrice({ chainId: chainId0 })
 
   const quote = useTradeQuote({
-    chainId,
+    chainId: chainId0,
     fromToken: token0,
     toToken: token1,
     amount: swapAmount,

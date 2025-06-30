@@ -48,7 +48,7 @@ const _SimpleSwapTradeButton: FC<SimpleSwapTradeButtonProps> = ({
   const [checked, setChecked] = useState(false)
 
   const {
-    state: { swapAmount, swapAmountString, chainId, token0, token1 },
+    state: { swapAmount, swapAmountString, chainId0: chainId, token0, token1 },
     mutate: { setSwapAmount },
   } = useDerivedStateSimpleSwap()
 

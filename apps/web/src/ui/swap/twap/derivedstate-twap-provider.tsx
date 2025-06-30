@@ -90,7 +90,7 @@ const _DerivedStateTwapProvider: FC<DerivedStateTwapProviderProps> = ({
   const derivedStateSimpleSwap = useDerivedStateSimpleSwap()
 
   const { data: prices, isLoading: _isPricesLoading } = usePrices({
-    chainId: derivedStateSimpleSwap.state.chainId,
+    chainId: derivedStateSimpleSwap.state.chainId0,
   })
 
   const [isLimitPriceInverted, setIsLimitPriceInverted] =
@@ -149,8 +149,8 @@ const _DerivedStateTwapProvider: FC<DerivedStateTwapProviderProps> = ({
         const { state, mutate, isLoading, isToken0Loading, isToken1Loading } =
           derivedStateSimpleSwap
 
-        const chainId = isTwapSupportedChainId(state.chainId)
-          ? state.chainId
+        const chainId = isTwapSupportedChainId(state.chainId0)
+          ? state.chainId0
           : ChainId.ETHEREUM
 
         const sdk = TwapSDK.onNetwork(chainId)

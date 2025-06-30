@@ -23,7 +23,7 @@ export const SimpleSwapTradeStats: FC = () => {
   const { address } = useAccount()
   const isMounted = useIsMounted()
   const {
-    state: { chainId, swapAmountString, recipient },
+    state: { chainId0: chainId, swapAmountString, recipient },
   } = useDerivedStateSimpleSwap()
   const { isLoading, data: quote } = useSimpleSwapTradeQuote()
   const loading = Boolean(isLoading && !quote)
@@ -65,9 +65,7 @@ export const SimpleSwapTradeStats: FC = () => {
             {loading || !quote?.amountOut ? (
               <SkeletonBox className="h-4 py-0.5 w-[120px]" />
             ) : (
-              `${quote?.amountOut?.toSignificant(6) ?? '0.00'} ${
-                quote?.amountOut?.currency?.symbol ?? ''
-              }`
+              `${quote?.amountOut?.toSignificant(6) ?? '0.00'} ${quote?.amountOut?.currency?.symbol ?? ''}`
             )}
           </span>
         </div>
@@ -80,9 +78,7 @@ export const SimpleSwapTradeStats: FC = () => {
             {loading || !quote?.minAmountOut ? (
               <SkeletonBox className="h-4 py-0.5 w-[100px]" />
             ) : (
-              `${quote?.minAmountOut?.toSignificant(6) ?? '0.00'} ${
-                quote?.amountOut?.currency?.symbol ?? ''
-              }`
+              `${quote?.minAmountOut?.toSignificant(6) ?? '0.00'} ${quote?.amountOut?.currency?.symbol ?? ''}`
             )}
           </span>
         </div>

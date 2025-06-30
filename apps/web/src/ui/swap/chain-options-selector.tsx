@@ -20,11 +20,14 @@ import {
   useRef,
   useState,
 } from 'react'
-import { XSWAP_SUPPORTED_CHAIN_IDS, getSortedChainIds } from 'src/config'
+import {
+  SUPPORTED_CHAIN_IDS,
+  XSWAP_SUPPORTED_CHAIN_IDS,
+  getSortedChainIds,
+} from 'src/config'
+import { useIsCrossChain } from 'src/lib/hooks/useIsCrossChain'
 import { EvmChainKey } from 'sushi'
 import type { EvmChainId } from 'sushi/chain'
-
-const defaultNetworks = getSortedChainIds(XSWAP_SUPPORTED_CHAIN_IDS)
 
 export const ChainOptionsSelector = ({
   size = 'sm',
@@ -35,6 +38,10 @@ export const ChainOptionsSelector = ({
   networks?: number[]
   onNetworkSelect?: (network: number) => void
 }) => {
+  const { isCrossChain } = useIsCrossChain()
+  const defaultNetworks = isCrossChain
+    ? getSortedChainIds(XSWAP_SUPPORTED_CHAIN_IDS)
+    : getSortedChainIds(SUPPORTED_CHAIN_IDS)
   const iconSize = size === 'sm' ? 16 : 24
   const _networks = networks ?? defaultNetworks
 

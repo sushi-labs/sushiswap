@@ -102,7 +102,6 @@ export const TokenSelectorRowV2: FC<TokenSelectorRowV2> = memo(
             onMouseLeave={() => setIsHovered(false)}
             className={classNames(
               className,
-              selected ? 'bg-secondary' : '',
               `group flex items-center w-full hover:bg-blue/10 focus:bg-bg-blue/20 dark:hover:bg-skyblue/10 dark:focus:bg-bg-skyblue/20 h-full rounded-lg px-3 token-${currency?.symbol}`,
             )}
           >

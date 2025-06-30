@@ -1,5 +1,3 @@
-import { classNames } from '@sushiswap/ui'
-import type { FC } from 'react'
 import { CrossChainSwapMaintenanceMessage } from 'src/ui/swap/cross-chain/cross-chain-swap-maintenance-message'
 import { CrossChainSwapSwitchTokensButton } from 'src/ui/swap/cross-chain/cross-chain-swap-switch-tokens-button'
 import { CrossChainSwapTokenNotFoundDialog } from 'src/ui/swap/cross-chain/cross-chain-swap-token-not-found-dialog'
@@ -9,15 +7,11 @@ import { CrossChainSwapTradeButton } from 'src/ui/swap/cross-chain/cross-chain-s
 import { CrossChainSwapTradeStats } from 'src/ui/swap/cross-chain/cross-chain-swap-trade-stats'
 import { SimpleSwapBanner } from 'src/ui/swap/simple/simple-swap-banner'
 
-export const CrossChainSwapWidget: FC<{ animated: boolean }> = ({
-  animated,
-}) => {
+export const CrossChainSwapWidget = ({
+  isAdvanced,
+}: { isAdvanced?: boolean }) => {
   return (
-    <div
-      className={classNames('flex flex-col gap-4', {
-        'animate-slide-secondary': animated,
-      })}
-    >
+    <>
       <CrossChainSwapMaintenanceMessage />
       <CrossChainSwapToken0Input />
       <CrossChainSwapSwitchTokensButton />
@@ -25,9 +19,9 @@ export const CrossChainSwapWidget: FC<{ animated: boolean }> = ({
         <CrossChainSwapToken1Input />
         <CrossChainSwapTradeButton />
       </div>
-      <CrossChainSwapTradeStats />
+      {isAdvanced ? null : <CrossChainSwapTradeStats />}
       <SimpleSwapBanner className="xl:hidden" />
       <CrossChainSwapTokenNotFoundDialog />
-    </div>
+    </>
   )
 }

@@ -89,7 +89,7 @@ const _SimpleSwapTradeReviewDialog: FC<{
   }: { error: Error | null; isSuccess: boolean }): ReactNode
 }> = ({ children }) => {
   const {
-    state: { token0, token1, chainId, swapAmount, recipient },
+    state: { token0, token1, chainId0: chainId, swapAmount, recipient },
     mutate: { setSwapAmount },
   } = useDerivedStateSimpleSwap()
 
@@ -159,27 +159,17 @@ const _SimpleSwapTradeReviewDialog: FC<{
           summary: {
             pending: `${
               isWrap ? 'Wrapping' : isUnwrap ? 'Unwrapping' : 'Swapping'
-            } ${trade.amountIn?.toSignificant(6)} ${
+            } ${trade.amountIn?.toSignificant(6)} ${trade.amountIn?.currency.symbol} ${
+              isWrap ? 'to' : isUnwrap ? 'to' : 'for'
+            } ${trade.amountOut?.toSignificant(6)} ${trade.amountOut?.currency.symbol}`,
+            completed: `${isWrap ? 'Wrap' : isUnwrap ? 'Unwrap' : 'Swap'} ${trade.amountIn?.toSignificant(
+              6,
+            )} ${trade.amountIn?.currency.symbol} ${
+              isWrap ? 'to' : isUnwrap ? 'to' : 'for'
+            } ${trade.amountOut?.toSignificant(6)} ${trade.amountOut?.currency.symbol}`,
+            failed: `Something went wrong when trying to ${isWrap ? 'wrap' : isUnwrap ? 'unwrap' : 'swap'} ${
               trade.amountIn?.currency.symbol
-            } ${
-              isWrap ? 'to' : isUnwrap ? 'to' : 'for'
-            } ${trade.amountOut?.toSignificant(6)} ${
-              trade.amountOut?.currency.symbol
-            }`,
-            completed: `${
-              isWrap ? 'Wrap' : isUnwrap ? 'Unwrap' : 'Swap'
-            } ${trade.amountIn?.toSignificant(6)} ${
-              trade.amountIn?.currency.symbol
-            } ${
-              isWrap ? 'to' : isUnwrap ? 'to' : 'for'
-            } ${trade.amountOut?.toSignificant(6)} ${
-              trade.amountOut?.currency.symbol
-            }`,
-            failed: `Something went wrong when trying to ${
-              isWrap ? 'wrap' : isUnwrap ? 'unwrap' : 'swap'
-            } ${trade.amountIn?.currency.symbol} ${
-              isWrap ? 'to' : isUnwrap ? 'to' : 'for'
-            } ${trade.amountOut?.currency.symbol}`,
+            } ${isWrap ? 'to' : isUnwrap ? 'to' : 'for'} ${trade.amountOut?.currency.symbol}`,
           },
           timestamp: ts,
           groupTimestamp: ts,
@@ -355,9 +345,7 @@ const _SimpleSwapTradeReviewDialog: FC<{
                                 : trade.priceImpact?.greaterThan(ZERO)
                                   ? '-'
                                   : ''
-                            }${Math.abs(
-                              Number(trade.priceImpact?.toFixed(2)),
-                            )}%`
+                            }${Math.abs(Number(trade.priceImpact?.toFixed(2)))}%`
                           ) : (
                             '-'
                           )}
@@ -388,9 +376,7 @@ const _SimpleSwapTradeReviewDialog: FC<{
                               className="w-1/2"
                             />
                           ) : trade?.amountOut ? (
-                            `${trade?.amountOut?.toSignificant(6)} ${
-                              token1?.symbol
-                            }`
+                            `${trade?.amountOut?.toSignificant(6)} ${token1?.symbol}`
                           ) : (
                             '-'
                           )}
@@ -406,9 +392,7 @@ const _SimpleSwapTradeReviewDialog: FC<{
                               className="w-1/2"
                             />
                           ) : trade?.minAmountOut ? (
-                            `${trade?.minAmountOut?.toSignificant(6)} ${
-                              token1?.symbol
-                            }`
+                            `${trade?.minAmountOut?.toSignificant(6)} ${token1?.symbol}`
                           ) : (
                             '-'
                           )}

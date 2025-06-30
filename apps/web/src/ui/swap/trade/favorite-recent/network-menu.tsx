@@ -9,7 +9,12 @@ import {
   classNames,
 } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
-import { SUPPORTED_CHAIN_IDS } from 'src/config'
+import {
+  SUPPORTED_CHAIN_IDS,
+  XSWAP_SUPPORTED_CHAIN_IDS,
+  getSortedChainIds,
+} from 'src/config'
+import { useIsCrossChain } from 'src/lib/hooks/useIsCrossChain'
 import { type EvmChainId, EvmChainKey } from 'sushi'
 
 export const NetworkMenu = ({
@@ -21,6 +26,10 @@ export const NetworkMenu = ({
   selectedNetwork?: null | number
   onNetworkSelect?(val: number | null): void
 }) => {
+  const { isCrossChain } = useIsCrossChain()
+  const networks = isCrossChain
+    ? getSortedChainIds(XSWAP_SUPPORTED_CHAIN_IDS)
+    : getSortedChainIds(SUPPORTED_CHAIN_IDS)
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -47,7 +56,7 @@ export const NetworkMenu = ({
           <DropdownMenuItem onClick={() => onNetworkSelect?.(null)}>
             <div>All Networks</div>
           </DropdownMenuItem>
-          {SUPPORTED_CHAIN_IDS.map((chainId) => (
+          {networks.map((chainId) => (
             <DropdownMenuItem
               key={chainId}
               onClick={() => onNetworkSelect?.(chainId)}

@@ -4,6 +4,7 @@ import { ChevronDownIcon } from '@heroicons/react/24/outline'
 import { createErrorToast } from '@sushiswap/notifications'
 import { Button } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
+import { useSearchParams } from 'next/navigation'
 import React, {
   createContext,
   type Dispatch,
@@ -94,6 +95,14 @@ export const HeaderNetworkSelector: FC<{
     [propsSupportedNetworks, contextSupportedNetworks],
   )
 
+  const searchParams = useSearchParams()
+  const chainId0 = searchParams.get('chainId0')
+  const network = chainId0
+    ? chainId0
+    : selectedNetwork
+      ? selectedNetwork
+      : chainId
+
   const onSwitchNetwork = useCallback<NetworkSelectorOnSelectCallback>(
     async (el, close) => {
       console.debug('onSwitchNetwork', el)
@@ -138,11 +147,7 @@ export const HeaderNetworkSelector: FC<{
         iconPosition="end"
       >
         <Suspense fallback={null}>
-          <NetworkIcon
-            chainId={selectedNetwork ?? chainId}
-            width={20}
-            height={20}
-          />
+          <NetworkIcon chainId={network} width={20} height={20} />
           {hideNetworkName ? null : (
             <div className="hidden xl:block">
               {getNetworkName(selectedNetwork ?? chainId)}

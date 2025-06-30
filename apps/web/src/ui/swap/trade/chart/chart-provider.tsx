@@ -10,12 +10,16 @@ import {
   useMemo,
   useState,
 } from 'react'
-import { type SupportedChainId, isSupportedChainId } from 'src/config'
+// import { type SupportedChainId, isSupportedChainId } from "src/config";
+import { useCreateQuery } from 'src/lib/hooks/useCreateQuery'
+import { getNetworkKey } from 'src/lib/network'
 import { useTokenWithCache } from 'src/lib/wagmi/hooks/tokens/useTokenWithCache'
-import { EvmChainId } from 'sushi/chain'
+import { type ChainId, ChainNetworkNameKey, EvmChainId } from 'sushi'
+import { isEvmChainId } from 'sushi/chain'
 import { defaultCurrency, isWNativeSupported } from 'sushi/config'
 import { Native, type Type } from 'sushi/currency'
 import { type Address, isAddress } from 'viem'
+import { useSwitchChain } from 'wagmi'
 
 const getTokenAsString = (token: Type | string) =>
   typeof token === 'string'
@@ -49,10 +53,10 @@ interface ChartProviderProps {
  */
 const ChartProvider: FC<ChartProviderProps> = ({ children }) => {
   const { chainId: _chainId } = useParams()
-  const chainId =
-    _chainId && isSupportedChainId(+_chainId)
-      ? (+_chainId as SupportedChainId)
-      : EvmChainId.ETHEREUM
+  // const chainId =
+  //   _chainId && isSupportedChainId(+_chainId)
+  //     ? (+_chainId as SupportedChainId)
+  //     : EvmChainId.ETHEREUM
 
   const searchParams = useSearchParams()
   const [localTokenCache, setLocalTokenCache] = useState<Map<string, Type>>(
@@ -61,6 +65,20 @@ const ChartProvider: FC<ChartProviderProps> = ({ children }) => {
   const pathname = usePathname()
   const [storedValue, setValue] = useLocalStorage('chart-token', '')
   const isMounted = useIsMounted()
+  const { switchChainAsync } = useSwitchChain()
+  const { createQuery } = useCreateQuery()
+
+  const networkNameFromPath = pathname.split('/')[1]
+  const chainIdFromPath =
+    ChainNetworkNameKey[networkNameFromPath as keyof typeof ChainNetworkNameKey]
+
+  const chainId = (
+    Number(searchParams.get('chainId0')) !== 0
+      ? Number(searchParams.get('chainId0'))
+      : chainIdFromPath
+        ? chainIdFromPath
+        : EvmChainId.ETHEREUM
+  ) as EvmChainId
 
   const defaultedParams = useMemo(() => {
     const params = new URLSearchParams(searchParams)
@@ -115,21 +133,43 @@ const ChartProvider: FC<ChartProviderProps> = ({ children }) => {
   )
 
   const setToken0 = useCallback<(_token0: string | Type) => void>(
-    (_token0) => {
+    async (_token0) => {
       // If entity is provided, parse it to a string
-
+      let _chainId = ''
       const token0 = getTokenAsString(_token0)
       setValue(token0)
 
       if (typeof _token0 !== 'string') {
         setLocalTokenCache(localTokenCache.set(token0, _token0))
+        _chainId = _token0.chainId.toString()
       }
 
-      push(
-        `${pathname}?${createQueryString([{ name: 'token0', value: token0 }])}`,
-      )
+      if (_chainId) {
+        if (isEvmChainId(Number(_chainId))) {
+          await switchChainAsync({ chainId: Number(_chainId) as EvmChainId })
+        }
+        createQuery(
+          [
+            { name: 'token0', value: token0 },
+            { name: 'chainId0', value: _chainId },
+          ],
+          `/${getNetworkKey(Number(_chainId) as ChainId)}/swap/advanced`,
+        )
+      } else {
+        push(
+          `${pathname}?${createQueryString([{ name: 'token0', value: token0 }])}`,
+        )
+      }
     },
-    [createQueryString, localTokenCache, pathname, push, setValue],
+    [
+      createQueryString,
+      localTokenCache,
+      pathname,
+      push,
+      setValue,
+      createQuery,
+      switchChainAsync,
+    ],
   )
 
   return (
