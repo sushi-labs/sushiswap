@@ -74,11 +74,11 @@ export function TokenSelectorMyTokensV2({
         onSelect={onSelect}
         onShowInfo={onShowInfo}
         showChainOptions={showChainOptions}
-        // pin={{}}
         currencies={data.tokens}
         balancesMap={data.balanceMap}
-        pricesMap={data.priceMap}
+        priceMap={data.priceMap}
         isBalanceLoading={!data.balanceMap}
+        bridgeInfoMap={data.bridgeInfoMap}
       />
     </Shell>
   )

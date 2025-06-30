@@ -16,6 +16,7 @@ export const TrendingTokensV2Query = graphql(
 				decimals
 				approved
 				chainId
+				priceUSD
 			}
 		}
 	`,

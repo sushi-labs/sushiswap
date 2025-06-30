@@ -38,7 +38,7 @@ export function TokenSelectorSearchV2({
   onShowInfo,
   showChainOptions,
 }: TokenSelectorSearch) {
-  const { data, isError, isLoading, fetchNextPage, hasMore } =
+  const { data, priceMap, isError, isLoading, fetchNextPage, hasMore } =
     useSearchTokensV2({
       chainIds:
         chainId && isTokenListV2ChainId(chainId)
@@ -122,11 +122,11 @@ export function TokenSelectorSearchV2({
             selected={selected}
             onSelect={onSelect}
             onShowInfo={onShowInfo}
-            // pin={{}}
             showChainOptions={showChainOptions}
             currencies={data}
             balancesMap={emptyMap}
-            pricesMap={emptyMap}
+            priceMap={priceMap}
+            bridgeInfoMap={emptyMap}
             isBalanceLoading={false}
             importConfig={{
               importableSet,

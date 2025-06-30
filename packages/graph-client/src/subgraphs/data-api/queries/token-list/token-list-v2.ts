@@ -28,6 +28,7 @@ export const TokenListV2Query = graphql(
 				decimals
 				name
 				symbol
+				priceUSD
 			}
 		}
 	`,

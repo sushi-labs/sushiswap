@@ -16,9 +16,20 @@ export function useTrendingTokensV2({ chainIds }: UseTrendingTokens) {
     queryFn: async () => {
       if (!chainIds) throw new Error('chainIds are required')
 
-      return getTrendingTokensV2({
+      const priceMap: Map<string, number> = new Map<string, number>()
+      const trendingTokens = await getTrendingTokensV2({
         chainIds,
       })
+      if (trendingTokens?.length) {
+        trendingTokens?.forEach((token) => {
+          priceMap.set(token.id, token.priceUSD)
+        })
+      }
+
+      return {
+        trendingTokens,
+        priceMap: priceMap,
+      }
     },
     enabled: Boolean(chainIds && chainIds.length > 0),
     // 1 hour
@@ -28,7 +39,8 @@ export function useTrendingTokensV2({ chainIds }: UseTrendingTokens) {
   return useMemo(() => {
     return {
       ...query,
-      data: query.data?.map((token) => new Token(token)),
+      data: query.data?.trendingTokens?.map((token) => new Token(token)),
+      priceMap: query.data?.priceMap,
     }
   }, [query])
 }

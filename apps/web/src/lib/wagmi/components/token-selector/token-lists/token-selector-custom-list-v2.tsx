@@ -32,7 +32,7 @@ export function TokenSelectorCustomListV2({
   showChainOptions,
 }: TokenSelectorCustomListV2) {
   const {
-    data: { balanceMap, priceMap },
+    data: { balanceMap, priceMap, bridgeInfoMap },
     isLoading,
   } = useMyTokensV2({
     chainIds:
@@ -67,9 +67,10 @@ export function TokenSelectorCustomListV2({
             onSelect={onSelect}
             currencies={filteredCurrencies}
             balancesMap={balanceMap}
-            pricesMap={priceMap}
+            priceMap={priceMap}
             isBalanceLoading={isLoading}
             onShowInfo={onShowInfo}
+            bridgeInfoMap={bridgeInfoMap}
           />
         </div>
       </List.Control>

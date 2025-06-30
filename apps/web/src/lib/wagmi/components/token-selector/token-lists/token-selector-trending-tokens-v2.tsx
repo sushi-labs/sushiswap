@@ -4,8 +4,6 @@ import {
 } from '@sushiswap/graph-client/data-api'
 import { TempChainIds } from 'src/lib/hooks/react-query/recent-swaps/useRecentsSwaps'
 import type { Type } from 'sushi/currency'
-import { usePrices } from '~evm/_common/ui/price-provider/price-provider/use-prices'
-import { useTrendingTokens } from '../hooks/use-trending-tokens'
 import { useTrendingTokensV2 } from '../hooks/use-trending-tokens-v2'
 import {
   TokenSelectorCurrencyListLoadingV2,
@@ -33,13 +31,11 @@ export function TokenSelectorTrendingTokensV2({
   selected,
   showChainOptions,
 }: TokenSelectorTrendingTokensV2) {
-  const { data, isError, isLoading } = useTrendingTokensV2({
+  const { data, priceMap, isError, isLoading } = useTrendingTokensV2({
     chainIds:
       chainId && isTrendingTokensChainId(chainId) ? [chainId] : TempChainIds,
     // chainIds: TempChainIds,
   })
-
-  // const { data: pricesMap } = usePrices({ chainId })
 
   if (isLoading)
     return (
@@ -72,11 +68,11 @@ export function TokenSelectorTrendingTokensV2({
         onSelect={onSelect}
         onShowInfo={onShowInfo}
         showChainOptions={showChainOptions}
-        // pin={{}}
         currencies={data}
         balancesMap={emptyMap}
-        pricesMap={emptyMap}
+        priceMap={priceMap}
         isBalanceLoading={false}
+        bridgeInfoMap={emptyMap} // No bridge info for trending tokens
       />
     </Shell>
   )

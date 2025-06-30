@@ -11,7 +11,7 @@ import { useSearchTokens } from 'src/lib/hooks/react-query/search-tokens/useSear
 import { ConnectButton } from 'src/lib/wagmi/components/connect-button'
 import { TokenSelectorV2 } from 'src/lib/wagmi/components/token-selector/token-selector-v2'
 import { formatUSD } from 'sushi'
-import type { Address, ID } from 'sushi'
+import type { Address } from 'sushi'
 import type { Type } from 'sushi/currency'
 import { formatNumber, formatPercent } from 'sushi/format'
 import { useAccount } from 'wagmi'
@@ -75,7 +75,7 @@ export const Favorite = () => {
               <FavoriteSkeleton key={idx} />
             ))}
         </div>
-      ) : !isError ? (
+      ) : isError ? (
         <div className="text-center text-sm text-red mt-4">
           An error occurred loading favorites
         </div>

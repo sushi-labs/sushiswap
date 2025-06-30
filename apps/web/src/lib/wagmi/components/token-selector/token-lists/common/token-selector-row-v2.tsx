@@ -42,14 +42,11 @@ export interface TokenSelectorRowV2 {
   balance?: Amount<Type> | undefined
   showWarning: boolean
   price?: number
-  pin?: {
-    isPinned: boolean
-    onPin(): void
-  }
   selected: boolean
   isBalanceLoading: boolean
   onShowInfo: () => void
   showChainOptions: boolean
+  bridgeInfo?: { address: string; chainId: unknown; decimals: number }[] | null
 }
 
 export const TokenSelectorRowV2: FC<TokenSelectorRowV2> = memo(
@@ -60,26 +57,18 @@ export const TokenSelectorRowV2: FC<TokenSelectorRowV2> = memo(
     style,
     className,
     onSelect,
-    pin,
     selected,
     isBalanceLoading,
     showWarning,
     onShowInfo,
     showChainOptions,
+    bridgeInfo,
   }) {
     const [isHovered, setIsHovered] = useState(false)
 
     const onClick = useCallback(() => {
       onSelect(currency)
     }, [currency, onSelect])
-
-    const onPin = useCallback(
-      (e: React.MouseEvent | React.KeyboardEvent) => {
-        e.stopPropagation()
-        pin?.onPin()
-      },
-      [pin],
-    )
 
     const showInfo = useCallback(
       (e: React.MouseEvent | React.KeyboardEvent) => {
@@ -118,11 +107,7 @@ export const TokenSelectorRowV2: FC<TokenSelectorRowV2> = memo(
             )}
           >
             <div className="flex items-center justify-between flex-grow gap-2 rounded cursor-pointer">
-              <FavoriteButton
-                currencyId={currency?.id}
-                onClick={onPin}
-                className="!px-0.5"
-              />
+              <FavoriteButton currencyId={currency?.id} className="!px-0.5" />
               <div className="flex flex-row items-center flex-grow gap-4">
                 <div className="w-10 h-10">
                   <Badge
@@ -198,13 +183,15 @@ export const TokenSelectorRowV2: FC<TokenSelectorRowV2> = memo(
               </div>
 
               <div className="flex items-center gap-4">
-                {isHovered && showChainOptions ? (
+                {isHovered && showChainOptions && bridgeInfo?.length ? (
                   <div className="flex gap-1 items-center">
-                    <NetworkButton chainId={137} iconSize={16} />
-                    <NetworkButton chainId={8453} iconSize={16} />
-                    <NetworkButton chainId={10} iconSize={16} />
-                    <NetworkButton chainId={43114} iconSize={16} />
-                    <NetworkButton chainId={56} iconSize={16} />
+                    {bridgeInfo.map((info) => (
+                      <NetworkButton
+                        key={`${info.chainId}-${info.address}`}
+                        chainId={info.chainId as number}
+                        iconSize={16}
+                      />
+                    ))}
                   </div>
                 ) : isBalanceLoading ? (
                   <div className="flex flex-col min-w-[60px]">

@@ -14,13 +14,15 @@ interface TokenSelectorCurrencyListV2Props {
   id: string
   currencies: Readonly<Type[]> | undefined
   onSelect(currency: Type): void
-  pin?: {
-    isPinned: (currencyId: string) => boolean
-    onPin: (currencyId: string) => void
-  }
   selected: Type | undefined
   balancesMap: Map<string, Amount<Type>> | undefined
-  pricesMap: Map<string, number> | undefined
+  priceMap: Map<string, number> | undefined
+  bridgeInfoMap:
+    | Map<
+        string,
+        { address: string; chainId: unknown; decimals: number }[] | null
+      >
+    | undefined
   isBalanceLoading: boolean
   importConfig?: {
     onImport: (currency: Token) => void
@@ -35,13 +37,13 @@ export const TokenSelectorCurrencyListV2: FC<TokenSelectorCurrencyListV2Props> =
     onSelect,
     currencies,
     selected,
-    pin,
-    pricesMap,
+    priceMap,
     balancesMap,
     isBalanceLoading,
     importConfig,
     onShowInfo,
     showChainOptions,
+    bridgeInfoMap,
   }) {
     const { address } = useAccount()
     const rowData = useMemo<TokenSelectorRowV2[]>(() => {
@@ -51,15 +53,9 @@ export const TokenSelectorCurrencyListV2: FC<TokenSelectorCurrencyListV2Props> =
         account: address,
         currency,
         balance: balancesMap?.get(currency.id),
-        price: pricesMap?.get(currency.id),
+        price: priceMap?.get(currency.id),
         showWarning: currency.approved === false,
         onSelect: () => onSelect(currency),
-        pin: pin
-          ? {
-              onPin: () => pin?.onPin(currency.id),
-              isPinned: pin.isPinned(currency.id),
-            }
-          : undefined,
         selected: selected
           ? (currency.isNative === true && selected.isNative === true) ||
             (selected.isToken &&
@@ -69,6 +65,7 @@ export const TokenSelectorCurrencyListV2: FC<TokenSelectorCurrencyListV2Props> =
         isBalanceLoading,
         onShowInfo: () => onShowInfo(currency),
         showChainOptions,
+        bridgeInfo: bridgeInfoMap?.get(currency.id) ?? null,
       }))
     }, [
       isBalanceLoading,
@@ -76,11 +73,11 @@ export const TokenSelectorCurrencyListV2: FC<TokenSelectorCurrencyListV2Props> =
       balancesMap,
       currencies,
       onSelect,
-      pricesMap,
+      priceMap,
       selected,
-      pin,
       onShowInfo,
       showChainOptions,
+      bridgeInfoMap,
     ])
 
     if (!importConfig) {

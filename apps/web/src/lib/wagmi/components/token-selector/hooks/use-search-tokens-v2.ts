@@ -19,7 +19,7 @@ type UseSearchTokensV2 = {
     initialPage: number
   }
 }
-
+let priceMap: Map<string, number> | undefined = undefined
 export function useSearchTokensV2({
   chainIds,
   search,
@@ -56,6 +56,14 @@ export function useSearchTokensV2({
         search,
         customTokens,
       })
+      if (result?.length) {
+        if (!priceMap) {
+          priceMap = new Map<string, number>()
+        }
+        result.forEach((token) => {
+          priceMap!.set(token.id, token.priceUSD)
+        })
+      }
       return result
     },
     enabled: !!chainIds && chainIds.length > 0,
@@ -79,6 +87,7 @@ export function useSearchTokensV2({
             approved: token.approved,
           }),
       ),
+      priceMap: priceMap,
       hasMore:
         query.data?.pages[query.data.pages.length - 1].length ===
         pagination.pageSize,

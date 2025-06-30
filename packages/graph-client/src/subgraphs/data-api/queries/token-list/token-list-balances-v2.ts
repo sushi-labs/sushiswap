@@ -32,6 +32,11 @@ export const TokenListBalancesV2Query = graphql(
 					priceChange1d
 					priceUSD
 					symbol
+					bridgeInfo {
+						address
+						chainId
+						decimals
+					}
 				}
 			}
 		}

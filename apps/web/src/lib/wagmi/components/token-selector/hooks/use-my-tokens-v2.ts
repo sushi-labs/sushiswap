@@ -57,14 +57,23 @@ export function useMyTokensV2({
     let tokens: Type[] | undefined = []
     let balanceMap: Map<string, Amount<Type>> | undefined = undefined
     let priceMap: Map<string, number> | undefined = undefined
+    // let bridgeInfoMap: Map<string, { address: string; chainId: TokenListV2ChainId; decimals: number }> | undefined = undefined;
+    let bridgeInfoMap:
+      | Map<
+          string,
+          { address: string; chainId: unknown; decimals: number }[] | null
+        >
+      | undefined = undefined
 
     if (query.data) {
       tokens = []
       balanceMap = new Map()
       priceMap = new Map()
+      bridgeInfoMap = new Map()
 
       query.data.forEach((token) => {
         let _token: Type
+        // token.
 
         if (token.address === NativeAddress) {
           _token = Native.onChain(token.chainId as TokenListV2ChainId)
@@ -81,7 +90,8 @@ export function useMyTokensV2({
 
         tokens!.push(_token)
         balanceMap!.set(_token.id, Amount.fromRawAmount(_token, token.balance))
-        priceMap!.set(_token.id, token.priceUSD ?? 0)
+        priceMap!.set(_token.id, token.priceUSD)
+        bridgeInfoMap!.set(_token.id, token?.bridgeInfo ?? null)
       })
     }
 
@@ -91,6 +101,7 @@ export function useMyTokensV2({
         tokens,
         balanceMap,
         priceMap,
+        bridgeInfoMap,
       },
     }
   }, [query])
