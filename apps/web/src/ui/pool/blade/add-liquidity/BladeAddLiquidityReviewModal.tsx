@@ -61,7 +61,6 @@ export const BladeAddLiquidityReviewModal: FC<
   const client = usePublicClient()
   const { liquidityToken, vestingDeposit } = useBladePoolPosition()
   const poolTotalSupply = useTotalSupply(liquidityToken)
-
   const { refetchChain: refetchBalances } = useRefetchBalances()
   const { data: prices } = usePrices({ chainId })
 
