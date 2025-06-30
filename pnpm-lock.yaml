@@ -34,8 +34,8 @@ catalogs:
       specifier: 2.13.5
       version: 2.13.5
     sushi:
-      specifier: 5.1.13
-      version: 5.1.13
+      specifier: 5.1.18
+      version: 5.1.18
     viem:
       specifier: 2.21.55
       version: 2.21.55
@@ -123,7 +123,7 @@ importers:
         version: 19.0.0(react@19.0.0)
       sushi:
         specifier: catalog:web3
-        version: 5.1.13(typescript@5.7.2)(viem@2.21.55(bufferutil@4.0.8)(typescript@5.7.2)(utf-8-validate@6.0.3)(zod@3.23.8))(zod@3.23.8)
+        version: 5.1.18(typescript@5.7.2)(viem@2.21.55(bufferutil@4.0.8)(typescript@5.7.2)(utf-8-validate@6.0.3)(zod@3.23.8))(zod@3.23.8)
     devDependencies:
       '@storybook/addon-a11y':
         specifier: 8.4.7
@@ -424,7 +424,7 @@ importers:
         version: 2.3.3
       sushi:
         specifier: catalog:web3
-        version: 5.1.13(typescript@5.7.2)(viem@2.21.55(bufferutil@4.0.8)(typescript@5.7.2)(utf-8-validate@5.0.10)(zod@3.23.8))(zod@3.23.8)
+        version: 5.1.18(typescript@5.7.2)(viem@2.21.55(bufferutil@4.0.8)(typescript@5.7.2)(utf-8-validate@5.0.10)(zod@3.23.8))(zod@3.23.8)
       tiny-invariant:
         specifier: 1.3.1
         version: 1.3.1
@@ -609,7 +609,7 @@ importers:
         version: 1.0.0
       sushi:
         specifier: catalog:web3
-        version: 5.1.13(typescript@5.7.2)(viem@2.21.55(bufferutil@4.0.8)(typescript@5.7.2)(utf-8-validate@6.0.3)(zod@3.23.8))(zod@3.23.8)
+        version: 5.1.18(typescript@5.7.2)(viem@2.21.55(bufferutil@4.0.8)(typescript@5.7.2)(utf-8-validate@6.0.3)(zod@3.23.8))(zod@3.23.8)
       viem:
         specifier: catalog:web3
         version: 2.21.55(bufferutil@4.0.8)(typescript@5.7.2)(utf-8-validate@6.0.3)(zod@3.23.8)
@@ -671,7 +671,7 @@ importers:
         version: 19.0.0(react@19.0.0)
       sushi:
         specifier: catalog:web3
-        version: 5.1.13(typescript@5.7.2)(viem@2.21.55(bufferutil@4.0.8)(typescript@5.7.2)(utf-8-validate@6.0.3)(zod@3.23.8))(zod@3.23.8)
+        version: 5.1.18(typescript@5.7.2)(viem@2.21.55(bufferutil@4.0.8)(typescript@5.7.2)(utf-8-validate@6.0.3)(zod@3.23.8))(zod@3.23.8)
       tailwindcss:
         specifier: catalog:ui
         version: 3.3.2(ts-node@10.9.2(@types/node@22.10.6)(typescript@5.7.2))
@@ -717,7 +717,7 @@ importers:
         version: 19.0.2(@types/react@19.0.1)
       sushi:
         specifier: catalog:web3
-        version: 5.1.13(typescript@5.7.2)(viem@2.21.55(bufferutil@4.0.8)(typescript@5.7.2)(utf-8-validate@6.0.3)(zod@3.23.8))(zod@3.23.8)
+        version: 5.1.18(typescript@5.7.2)(viem@2.21.55(bufferutil@4.0.8)(typescript@5.7.2)(utf-8-validate@6.0.3)(zod@3.23.8))(zod@3.23.8)
       typescript:
         specifier: 5.7.2
         version: 5.7.2
@@ -936,7 +936,7 @@ importers:
         version: 19.0.0(react@19.0.0)
       sushi:
         specifier: catalog:web3
-        version: 5.1.13(typescript@5.7.2)(viem@2.21.55(bufferutil@4.0.8)(typescript@5.7.2)(utf-8-validate@5.0.10)(zod@3.23.8))(zod@3.23.8)
+        version: 5.1.18(typescript@5.7.2)(viem@2.21.55(bufferutil@4.0.8)(typescript@5.7.2)(utf-8-validate@5.0.10)(zod@3.23.8))(zod@3.23.8)
       tailwindcss:
         specifier: catalog:ui
         version: 3.3.2(ts-node@10.9.2(@types/node@22.10.6)(typescript@5.7.2))
@@ -11195,8 +11195,8 @@ packages:
     resolution: {integrity: sha512-ot0WnXS9fgdkgIcePe6RHNk1WA8+muPa6cSjeR3V8K27q9BB1rTE3R1p7Hv0z1ZyAc8s6Vvv8DIyWf681MAt0w==}
     engines: {node: '>= 0.4'}
 
-  sushi@5.1.13:
-    resolution: {integrity: sha512-7Vs6TiTc6z8FFZin/pZlKUHOMv5s9D1zHlK5ivwzD0xdo4Udafc26vdKGlgPMYekKnUJ2Xj2C0vpKYs0uYcM0A==}
+  sushi@5.1.18:
+    resolution: {integrity: sha512-V+WhyO2HgCXQx//HdyKGFJWG5BW7hmWpt/MbuSW4tSYTD+khDHwXnOZP2avKtUm4beDCWeu3Ll01ikVxEnWQAg==}
     peerDependencies:
       typescript: 5.7.2
       viem: '*'
@@ -26161,7 +26161,7 @@ snapshots:
 
   supports-preserve-symlinks-flag@1.0.0: {}
 
-  sushi@5.1.13(typescript@5.7.2)(viem@2.21.55(bufferutil@4.0.8)(typescript@5.7.2)(utf-8-validate@5.0.10)(zod@3.23.8))(zod@3.23.8):
+  sushi@5.1.18(typescript@5.7.2)(viem@2.21.55(bufferutil@4.0.8)(typescript@5.7.2)(utf-8-validate@5.0.10)(zod@3.23.8))(zod@3.23.8):
     dependencies:
       '@uniswap/token-lists': 1.0.0-beta.33
       big.js: 6.1.1
@@ -26175,7 +26175,7 @@ snapshots:
       viem: 2.21.55(bufferutil@4.0.8)(typescript@5.7.2)(utf-8-validate@5.0.10)(zod@3.23.8)
       zod: 3.23.8
 
-  sushi@5.1.13(typescript@5.7.2)(viem@2.21.55(bufferutil@4.0.8)(typescript@5.7.2)(utf-8-validate@6.0.3)(zod@3.23.8))(zod@3.23.8):
+  sushi@5.1.18(typescript@5.7.2)(viem@2.21.55(bufferutil@4.0.8)(typescript@5.7.2)(utf-8-validate@6.0.3)(zod@3.23.8))(zod@3.23.8):
     dependencies:
       '@uniswap/token-lists': 1.0.0-beta.33
       big.js: 6.1.1
