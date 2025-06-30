@@ -13,7 +13,7 @@ import type {
   ContractFunctionArgs,
   ContractFunctionName,
 } from 'viem'
-import { parseUnits } from 'viem'
+import { parseUnits, zeroAddress } from 'viem'
 import {
   useBlockNumber,
   useWaitForTransactionReceipt,
@@ -123,7 +123,8 @@ function clipperPackedTransmitAndDeposit({
         typeof mutability
       >
 
-    const packedInput = packAddressAndAmount(deposit.amount, deposit.token)
+    const tokenAddress = nativeAmount ? zeroAddress : deposit.token
+    const packedInput = packAddressAndAmount(deposit.amount, tokenAddress)
     const packedConfig = packRfqConfig(
       deposit.pool_tokens,
       deposit.good_until,
@@ -158,6 +159,7 @@ function clipperTransmitAndDeposit({
   const nativeAmount = amounts.find((amount) => amount.token.isNative)
 
   if (deposit.amount && deposit.token) {
+    const tokenAddress = nativeAmount ? zeroAddress : deposit.token
     if (nativeAmount) {
       const mutability = 'payable' as const
       const functionName =
@@ -185,7 +187,7 @@ function clipperTransmitAndDeposit({
         functionName,
         args: [
           deposit.sender,
-          deposit.token,
+          tokenAddress,
           BigInt(deposit.amount),
           BigInt(
             'lock_time' in deposit ? deposit.lock_time : (deposit.n_days ?? 0),
@@ -223,7 +225,7 @@ function clipperTransmitAndDeposit({
         abi,
         functionName,
         args: [
-          deposit.token,
+          tokenAddress,
           BigInt(deposit.amount),
           BigInt(
             'lock_time' in deposit ? deposit.lock_time : (deposit.n_days ?? 0),
@@ -343,6 +345,7 @@ function bladeTransmitAndDeposit({
   const nativeAmount = amounts.find((amount) => amount.token.isNative)
 
   if (deposit.amount && deposit.token) {
+    const tokenAddress = nativeAmount ? zeroAddress : deposit.token
     if (nativeAmount) {
       const mutability = 'payable' as const
       const functionName =
@@ -366,7 +369,7 @@ function bladeTransmitAndDeposit({
         functionName,
         args: [
           deposit.sender,
-          deposit.token,
+          tokenAddress,
           BigInt(deposit.amount),
           BigInt(
             'lock_time' in deposit ? deposit.lock_time : (deposit.n_days ?? 0),
@@ -401,7 +404,7 @@ function bladeTransmitAndDeposit({
         abi,
         functionName,
         args: [
-          deposit.token,
+          tokenAddress,
           BigInt(deposit.amount),
           BigInt(
             'lock_time' in deposit ? deposit.lock_time : (deposit.n_days ?? 0),
@@ -503,6 +506,7 @@ function bladePackedTransmitAndDeposit({
 
   // Handle single asset deposits using packed format
   if (deposit.amount && deposit.token) {
+    const tokenAddress = nativeAmount ? zeroAddress : deposit.token
     const mutability = 'payable' as const
     const functionName =
       'packedTransmitAndDepositSingleAsset' as const satisfies ContractFunctionName<
@@ -510,7 +514,7 @@ function bladePackedTransmitAndDeposit({
         typeof mutability
       >
 
-    const packedInput = packAddressAndAmount(deposit.amount, deposit.token)
+    const packedInput = packAddressAndAmount(deposit.amount, tokenAddress)
     const packedConfig = packRfqConfig(
       deposit.pool_tokens,
       deposit.good_until,
@@ -545,6 +549,7 @@ function bladePackedTransmitAndDeposit({
           }
         : {}),
     }
+    console.log({ variables })
     // @ts-expect-error TODO: Review why it's producing a complex union type
     return variables
   }
