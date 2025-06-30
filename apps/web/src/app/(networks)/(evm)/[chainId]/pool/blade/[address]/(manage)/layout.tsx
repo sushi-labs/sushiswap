@@ -26,7 +26,7 @@ export default async function Layout(props: {
     async () => getBladePool({ chainId, address }),
     ['v2', 'pool', `${chainId}:${address}`],
     {
-      revalidate: 60 * 15,
+      revalidate: 15,
     },
   )()
 
