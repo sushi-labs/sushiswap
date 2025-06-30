@@ -4,8 +4,6 @@ import {
   Collapsible,
   IconButton,
   Loader,
-  SkeletonBox,
-  SkeletonCircle,
   TextField,
   classNames,
 } from '@sushiswap/ui'
@@ -32,7 +30,6 @@ export const SearchContent = () => {
     isError,
     fetchNextPage,
     hasNextPage,
-    isFetchingNextPage,
   } = useSearchTokens({
     walletAddress: address,
     chainIds: TempChainIds,
@@ -46,8 +43,6 @@ export const SearchContent = () => {
     }
   }, [searchValue])
 
-  console.log('hasNextPage', hasNextPage)
-
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (!address) return
     const value = e.target.value
@@ -59,13 +54,6 @@ export const SearchContent = () => {
       setSearchValue('')
     }
   }, [address, setSearchValue])
-
-  console.log({
-    scrollTarget: document.getElementById('token-scroll-container'),
-    hasNextPage,
-    isFetchingNextPage,
-    tokensLength: tokens.length,
-  })
 
   return (
     <div className="flex flex-col gap-3">

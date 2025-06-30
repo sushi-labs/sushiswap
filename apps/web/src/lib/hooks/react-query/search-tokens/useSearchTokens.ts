@@ -50,6 +50,7 @@ export const useSearchTokens = ({
         skip,
         tokens,
       })
+      console.debug({ data })
 
       return Array.isArray(data) ? data : []
     },
