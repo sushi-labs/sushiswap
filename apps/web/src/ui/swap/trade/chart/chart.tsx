@@ -27,6 +27,19 @@ export const Chart = ({
     state: { token0 },
   } = useChartContext()
   const [hasNoData, setHasNoData] = useState(false)
+  const tvWidgetRef = useRef<any>(null)
+
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+  useEffect(() => {
+    if (!tvWidgetRef.current) return
+
+    const symbol = `${token0.chainId}-${token0.wrapped.address}-${token0.name}-${token0.symbol}`
+    const interval = widgetProps.interval as ResolutionString
+
+    tvWidgetRef.current.setSymbol(symbol, interval, () => {
+      console.log('Symbol updated')
+    })
+  }, [token0])
 
   useEffect(() => {
     registerNoDataSetter((hasNoData) => {
@@ -34,11 +47,9 @@ export const Chart = ({
     })
   }, [])
 
-  const memoizedToken0 = useMemo(() => token0, [token0])
-
   // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
-    if (!isMounted || !resolvedTheme) return
+    if (!isMounted || !resolvedTheme || tvWidgetRef.current) return
     const intervalQuicks = [60, 240, 720, '1D']
     localStorage.setItem(
       'tradingview.IntervalWidget.quicks',
@@ -453,11 +464,19 @@ export const Chart = ({
     }
 
     const tvWidget = new widget(widgetOptions)
+    tvWidgetRef.current = tvWidget
 
     return () => {
       tvWidget.remove()
+      tvWidgetRef.current = null
     }
-  }, [chartContainerRef, resolvedTheme, isMdScreen, isMounted, memoizedToken0])
+  }, [
+    chartContainerRef,
+    resolvedTheme,
+    isMdScreen,
+    isMounted,
+    tvWidgetRef.current,
+  ])
 
   return (
     <div className="flex flex-col flex-grow rounded-xl">
