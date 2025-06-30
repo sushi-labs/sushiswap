@@ -68,7 +68,6 @@ export const PoolChartGraph: FC<PoolChartProps> = ({
     chainId: pool.chainId,
     protocol,
   })
-  console.log(buckets)
 
   const [xData, yData]: [number[], number[]] = useMemo(() => {
     const data =
