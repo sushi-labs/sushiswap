@@ -10,6 +10,16 @@ export type BladePoolTokensGrouped = {
 
 export const BLADE_STABLES: Record<BladeChainId, Token[]> = {
   ...STABLES,
+  [EvmChainId.KATANA]: [
+    ...STABLES[EvmChainId.KATANA],
+    new Token({
+      address: '0x62d6a123e8d19d06d68cf0d2294f9a3a0362c6b3',
+      chainId: EvmChainId.KATANA,
+      decimals: 18,
+      symbol: 'vbUSDS',
+      name: 'Vault Bridge USDS',
+    }),
+  ],
   [EvmChainId.POLYGON]: [
     ...STABLES[EvmChainId.POLYGON],
     new Token({
