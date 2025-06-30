@@ -31,18 +31,12 @@ export default async function Layout(props: {
   //   },
   // )()
 
-  const headersList = await headers()
-  const referer = headersList.get('referer')
   return (
     <section className="flex flex-1 flex-col">
       <div className="h-full border-accent border-t bg-gray-50 py-10 dark:bg-white/[0.02]">
         <Container maxWidth="7xl" className="px-4 pb-10">
           <LinkInternal
-            href={
-              referer?.includes('/pool')
-                ? referer?.toString()
-                : `/${ChainKey[chainId]}/explore/blade-pools`
-            }
+            href={`/${ChainKey[chainId]}/explore/blade-pools`}
             className="text-blue text-sm hover:underline"
           >
             ← Back
