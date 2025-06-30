@@ -1,7 +1,6 @@
 import { getBladePool, isBladeChainId } from '@sushiswap/graph-client/data-api'
 import { Container } from '@sushiswap/ui'
 import { unstable_cache } from 'next/cache'
-import { headers } from 'next/headers'
 import { notFound } from 'next/navigation'
 import type React from 'react'
 import { BladePoolLiquidityHeader } from 'src/ui/pool/blade/BladePoolLiquidityHeader'
@@ -31,17 +30,11 @@ export default async function Layout(props: {
     },
   )()
 
-  const headersList = await headers()
-  const referer = headersList.get('referer')
   return (
     <>
       <Container maxWidth="5xl" className="pt-10 px-4">
         <BladePoolLiquidityHeader
-          backUrl={
-            referer?.includes('/pool')
-              ? referer?.toString()
-              : `/${ChainKey[chainId]}/pool/blade/${address}`
-          }
+          backUrl={`/${ChainKey[chainId]}/pool/blade/${address}`}
           address={pool.address}
           pool={pool}
         />
