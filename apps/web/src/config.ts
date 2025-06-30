@@ -257,6 +257,7 @@ export const XSWAP_SUPPORTED_CHAIN_IDS = [
   // ChainId.FUSE,
   ChainId.FANTOM,
   ChainId.GNOSIS,
+  ChainId.KATANA,
   ChainId.LINEA,
   ChainId.MANTLE,
   ChainId.METIS,
