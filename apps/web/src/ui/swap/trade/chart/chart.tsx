@@ -55,7 +55,6 @@ export const Chart = ({
       library_path: widgetProps.library_path,
       locale: widgetProps.locale as LanguageCode,
       disabled_features: [
-        // 'use_localstorage_for_settings',
         ...(!isMdScreen ? ['legend_widget' as const] : []),
         'header_settings' as const,
         'header_fullscreen_button' as const,
@@ -127,7 +126,6 @@ export const Chart = ({
         'mainSeriesProperties.candleStyle.wickDownColor': '#de5852',
       },
       custom_themes: {
-        // The new palette for the light theme
         light: {
           // Color that overrides blue
           color1: [
@@ -455,24 +453,6 @@ export const Chart = ({
     }
 
     const tvWidget = new widget(widgetOptions)
-
-    tvWidget.onChartReady(() => {
-      // tvWidget.headerReady().then(() => {
-      //   const button = tvWidget.createButton()
-      //   button.setAttribute('title', 'Click to show a notification popup')
-      //   button.classList.add('apply-common-tooltip')
-      //   button.addEventListener('click', () =>
-      //     tvWidget.showNoticeDialog({
-      //       title: 'Notification',
-      //       body: 'TradingView Charting Library API works correctly',
-      //       callback: () => {
-      //         console.log('Noticed!')
-      //       },
-      //     }),
-      //   )
-      //   button.innerHTML = 'Check API'
-      // })
-    })
 
     return () => {
       tvWidget.remove()
