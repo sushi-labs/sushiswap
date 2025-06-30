@@ -47,15 +47,17 @@ export const SearchItem = ({ token }: { token: SearchToken }) => {
         {isHovered ? (
           <div className="flex items-center col-span-4 gap-2 px-8 mt-3 md:col-span-2 md:mt-0 md:ml-auto md:px-0">
             <ActionButtons token={token} />
-            <Button
-              onClick={() => {
-                toggleBridgeView('open')
-              }}
-              size="xs"
-              className="text-slate-50 w-full md:w-fit !rounded-full bg-blue font-semibold"
-            >
-              Bridge
-            </Button>
+            {token.bridgeInfo?.length > 0 ? (
+              <Button
+                onClick={() => {
+                  toggleBridgeView('open')
+                }}
+                size="xs"
+                className="text-slate-50 w-full md:w-fit !rounded-full bg-blue font-semibold"
+              >
+                Bridge
+              </Button>
+            ) : null}
           </div>
         ) : (
           <>

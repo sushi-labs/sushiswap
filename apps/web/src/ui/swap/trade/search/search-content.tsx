@@ -4,6 +4,8 @@ import {
   Collapsible,
   IconButton,
   Loader,
+  SkeletonBox,
+  SkeletonCircle,
   TextField,
   classNames,
 } from '@sushiswap/ui'
@@ -95,35 +97,82 @@ export const SearchContent = () => {
             </div>
           }
         >
-          <div className="text-xs grid grid-cols-[30px_auto_auto_auto] gap-2">
-            <div className="sticky font-medium grid grid-cols-[30px_190px_auto_auto] col-span-4 top-0 z-20 bg-white md:bg-slate-50 dark:bg-slate-900 md:dark:bg-slate-800 text-xs text-[#535263] dark:text-[#E4DDEC]">
-              <div />
-              <div className="w-full mr-auto">Token</div>
-              <div className="w-full ml-auto text-right">Price</div>
-              <div className="ml-auto w-full text-right pr-1.5">Holdings</div>
+          {isLoading ? (
+            <div className="flex flex-col gap-2">
+              {Array(5)
+                .fill(null)
+                .map((_, idx) => (
+                  <SearchSkeleton key={idx} />
+                ))}
             </div>
+          ) : isError ? (
+            <div className="text-center text-sm text-red mt-8">
+              An error occurred loading search results
+            </div>
+          ) : tokens.length === 0 ? (
+            <div className="text-center font-medium text-sm mt-8">
+              No results for “{searchValue}”
+            </div>
+          ) : (
+            <div className="text-xs grid grid-cols-[30px_auto_auto_auto] gap-2">
+              <div className="sticky font-medium grid grid-cols-[30px_190px_auto_auto] col-span-4 top-0 z-[19] bg-white md:bg-slate-50 dark:bg-slate-900 md:dark:bg-slate-800 text-xs text-[#535263] dark:text-[#E4DDEC]">
+                <div />
+                <div className="w-full mr-auto">Token</div>
+                <div className="w-full ml-auto text-right">Price</div>
+                <div className="ml-auto w-full text-right pr-1.5">Holdings</div>
+              </div>
 
-            {tokens.map((token) => (
-              <SearchItem
-                key={`search-token-${token.chainId}-${token.address}`}
-                token={token}
-              />
-            ))}
-          </div>
+              {tokens?.map((token) => (
+                <SearchItem
+                  key={`search-token-${token.chainId}-${token.address}`}
+                  token={token}
+                />
+              ))}
+            </div>
+          )}
         </InfiniteScroll>
-
-        {!isLoading && !isError && tokens.length === 0 && searchValue && (
-          <div className="col-span-4 py-4 text-center">
-            No results for “{searchValue}”
-          </div>
-        )}
-
-        {isError && (
-          <div className="col-span-4 py-4 text-center">
-            Shoot! Something went wrong :(
-          </div>
-        )}
       </Collapsible>
+    </div>
+  )
+}
+
+const SearchSkeleton = () => {
+  return (
+    <div className="text-xs flex items-center gap-2 justify-between">
+      <div className="max-w-[25px] py-3 md:py-4">
+        <SkeletonBox className="w-3 h-3 rounded-sm" />
+      </div>
+      <div className="flex items-center gap-3.5">
+        <div className="relative">
+          <SkeletonCircle radius={32} />
+          <SkeletonBox className="w-3 h-3 rounded-sm absolute -right-[3%] -bottom-[3%]" />
+        </div>
+        <div className="flex flex-col items-start gap-0.5">
+          <SkeletonBox className="w-10 h-3 rounded-sm" />
+          <SkeletonBox className="w-24 h-3 rounded-sm" />
+        </div>
+      </div>
+
+      <div className="block mx-auto">
+        <div className="flex flex-col items-end gap-0.5">
+          <span className="text-slate-900 dark:text-pink-100">
+            <SkeletonBox className="w-10 h-3 rounded-sm" />
+          </span>
+          <span className={classNames('font-medium')}>
+            <SkeletonBox className="w-8 h-3 rounded-sm" />
+          </span>
+        </div>
+      </div>
+      <div>
+        <div className="flex flex-col gap-0.5 items-end ml-auto">
+          <span className="text-slate-900 dark:text-pink-100 !font-medium">
+            <SkeletonBox className="w-12 md:w-16 h-3 rounded-sm" />
+          </span>
+          <span className="text-muted-foreground">
+            <SkeletonBox className="w-16 md:w-20 h-3 rounded-sm" />
+          </span>
+        </div>
+      </div>
     </div>
   )
 }

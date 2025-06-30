@@ -2,6 +2,8 @@ import { ArrowRightIcon } from '@heroicons/react-v1/solid'
 import type { SearchToken } from '@sushiswap/graph-client/data-api'
 import { Button, classNames } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
+import { useMemo } from 'react'
+import { useCreateQuery } from 'src/lib/hooks/useCreateQuery'
 import { type EvmChainId, evmChains } from 'sushi/chain'
 import { ChainOptionsSelector } from '../../chain-options-selector'
 
@@ -12,6 +14,26 @@ export const SearchItemBridgeView = ({
   token: SearchToken
   toggleBridgeView: (view: 'open' | 'close') => void
 }) => {
+  const { createQuery } = useCreateQuery()
+  const bridgeOptions = useMemo(() => {
+    return token?.bridgeInfo?.map((bridge) => bridge.chainId as number) ?? []
+  }, [token])
+
+  const onNetworkSelect = (chainId: number) => {
+    //@DEV @TODO finish network selection logic
+    const tokenOnNewChain = token.bridgeInfo?.find(
+      (bridge) => bridge.chainId === chainId,
+    )?.address
+    if (!tokenOnNewChain) {
+      console.error('Token not found on the selected chain')
+      return
+    }
+    createQuery([
+      { name: 'chainId1', value: String(chainId) },
+      { name: 'token1', value: String(tokenOnNewChain) },
+    ])
+  }
+
   return (
     <div
       className={classNames(
@@ -28,13 +50,11 @@ export const SearchItemBridgeView = ({
               <NetworkIcon
                 type="square"
                 className="rounded-[3px] border border-[#E8E7EB] dark:border-[#222137]"
-                // @TODO: fix this once we have the correct type
                 chainId={token.chainId as EvmChainId}
                 width={16}
                 height={16}
               />
               <span className="text-xs">
-                {/* @TODO: fix this once we have the correct type */}
                 {evmChains[token.chainId as EvmChainId].name}
               </span>
             </div>
@@ -50,7 +70,10 @@ export const SearchItemBridgeView = ({
             <span className="text-slate-450 dark:text-slate-500 text-[10px]">
               Bridge To
             </span>
-            <ChainOptionsSelector />
+            <ChainOptionsSelector
+              onNetworkSelect={onNetworkSelect}
+              networks={bridgeOptions}
+            />
           </div>
         </div>
         <div className="flex items-center gap-3">

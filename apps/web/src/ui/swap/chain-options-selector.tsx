@@ -22,17 +22,21 @@ import {
 } from 'react'
 import { XSWAP_SUPPORTED_CHAIN_IDS, getSortedChainIds } from 'src/config'
 import { EvmChainKey } from 'sushi'
+import type { EvmChainId } from 'sushi/chain'
 
-const networks = getSortedChainIds(XSWAP_SUPPORTED_CHAIN_IDS)
+const defaultNetworks = getSortedChainIds(XSWAP_SUPPORTED_CHAIN_IDS)
 
 export const ChainOptionsSelector = ({
   size = 'sm',
+  networks,
   onNetworkSelect,
 }: {
   size?: 'sm' | 'lg'
+  networks?: number[]
   onNetworkSelect?: (network: number) => void
 }) => {
   const iconSize = size === 'sm' ? 16 : 24
+  const _networks = networks ?? defaultNetworks
 
   const containerRef = useRef<HTMLDivElement>(null)
   const [visibleCount, setVisibleCount] = useState(0)
@@ -50,10 +54,10 @@ export const ChainOptionsSelector = ({
 
     // reserve one slot for the overflow-menu button if we actually have overflow
     const fitCount =
-      rawFit < networks.length && rawFit > 0 ? rawFit - 1 : rawFit
+      rawFit < _networks.length && rawFit > 0 ? rawFit - 1 : rawFit
 
     setVisibleCount(fitCount)
-  }, [size])
+  }, [size, _networks])
 
   useLayoutEffect(() => {
     if (!containerRef.current) return
@@ -73,13 +77,13 @@ export const ChainOptionsSelector = ({
   }, [measure])
 
   const { visible, overflow } = useMemo(() => {
-    const visible = networks.slice(0, visibleCount)
-    const overflow = networks.slice(visibleCount)
+    const visible = _networks.slice(0, visibleCount)
+    const overflow = _networks.slice(visibleCount)
     return {
       visible,
       overflow,
     }
-  }, [visibleCount])
+  }, [visibleCount, _networks])
 
   return (
     <div
@@ -97,7 +101,7 @@ export const ChainOptionsSelector = ({
               />
             </TooltipTrigger>
             <TooltipContent className="border-black/5 dark:border-white/5 !rounded-md bg-white/20 dark:bg-black/20">
-              {EvmChainKey[chainId].toLocaleUpperCase()}
+              {EvmChainKey[chainId as EvmChainId].toLocaleUpperCase()}
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>
@@ -138,7 +142,7 @@ export const ChainOptionsSelector = ({
                     className="border-none"
                   />
                   <span className="ml-2">
-                    {EvmChainKey[chainId].toLocaleUpperCase()}
+                    {EvmChainKey[chainId as EvmChainId].toLocaleUpperCase()}
                   </span>
                 </DropdownMenuItem>
               ))}
