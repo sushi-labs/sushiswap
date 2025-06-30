@@ -825,7 +825,7 @@ export const publicTransports = {
     `https://lb.drpc.org/ogrpc?network=sonic&dkey=${drpcId}`,
   ),
   [EvmChainId.HEMI]: http('https://rpc.hemi.network/rpc'),
-  [EvmChainId.KATANA]: http('https://rpc.hemi.network/rpc'),
+  [EvmChainId.KATANA]: http('https://rpc.katana.network'),
   /* Testnets */ // TODO: add testnet transports
   [EvmChainId.ARBITRUM_TESTNET]: http('https://sepolia-rollup.arbitrum.io/rpc'),
   [EvmChainId.AVALANCHE_TESTNET]: http(
