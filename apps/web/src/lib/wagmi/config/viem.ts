@@ -676,7 +676,7 @@ export const katana = {
   },
   rpcUrls: {
     default: {
-      http: ['https://rpc.katanarpc.com'],
+      http: ['https://rpc.katana.network'],
     },
   },
   blockExplorers: {

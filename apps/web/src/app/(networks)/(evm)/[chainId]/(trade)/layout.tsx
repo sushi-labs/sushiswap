@@ -8,7 +8,7 @@ export default async function TradeLayout(props: {
 }) {
   const params = await props.params
   const { children } = props
-  const chainId = +(await params.chainId) as ChainId
+  const chainId = +params.chainId as ChainId
   return (
     <Providers>
       {chainId === ChainId.KATANA ? <KatanaBackground /> : null}
