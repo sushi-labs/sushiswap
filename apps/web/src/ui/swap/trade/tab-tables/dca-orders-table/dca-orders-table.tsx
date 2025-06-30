@@ -5,7 +5,7 @@ import type { ColumnDef } from '@tanstack/react-table'
 import React, { useState, useMemo } from 'react'
 import InfiniteScroll from 'react-infinite-scroll-component'
 import { Native } from 'sushi/currency'
-import { MobileCard } from '../history-tables/mobile-card/mobile-card'
+import { MobileDataCard } from '../history-tables/mobile-data-card/mobile-data-card'
 import {
   ACTION_COLUMN,
   CHAIN_COLUMN,
@@ -136,7 +136,7 @@ export const DCAOrdersTable = () => {
       <Card className="p-5 space-y-6 border-accent !shadow-none border bg-slate-50 dark:bg-slate-800 md:hidden">
         {data.map((row) => (
           <div key={row.id} className="pb-6 border-b last:border-b-0 last:pb-0">
-            <MobileCard row={row} columns={COLUMNS} />
+            <MobileDataCard row={row} columns={COLUMNS} />
           </div>
         ))}
       </Card>

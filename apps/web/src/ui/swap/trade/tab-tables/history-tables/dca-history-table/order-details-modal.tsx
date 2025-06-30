@@ -13,7 +13,7 @@ import {
 import type { ColumnDef } from '@tanstack/react-table'
 import InfiniteScroll from 'react-infinite-scroll-component'
 import { Native } from 'sushi/currency'
-import { MobileCard } from '../mobile-card/mobile-card'
+import { MobileDataCard } from '../mobile-data-card/mobile-data-card'
 import type { DCAOrderDetails } from './order-details-columns'
 import {
   BUY_COLUMN,
@@ -160,7 +160,7 @@ export const DCAOrderDetailsModal = ({
               <div className="md:hidden">
                 {MOCK_DATA.map((row) => (
                   <div key={row.id} className="pb-6">
-                    <MobileCard
+                    <MobileDataCard
                       row={row}
                       columns={COLUMNS}
                       className="p-5 border rounded-xl dark:border-[#222137] border-[#F5F5F5]"

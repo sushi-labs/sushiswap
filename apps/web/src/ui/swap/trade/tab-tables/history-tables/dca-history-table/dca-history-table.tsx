@@ -6,7 +6,7 @@ import { type ReactNode, useMemo, useState } from 'react'
 import { useCallback } from 'react'
 import InfiniteScroll from 'react-infinite-scroll-component'
 import { Native } from 'sushi/currency'
-import { MobileCard } from '../mobile-card/mobile-card'
+import { MobileDataCard } from '../mobile-data-card/mobile-data-card'
 import {
   CHAIN_COLUMN,
   FILLED_COLUMN,
@@ -152,7 +152,7 @@ export const DCAOrdersHistoryTable = () => {
               key={row.id}
               className="pb-6 border-b last:border-b-0 last:pb-0"
             >
-              <MobileCard row={row} columns={MOBILE_COLUMNS} />
+              <MobileDataCard row={row} columns={MOBILE_COLUMNS} />
             </div>
           ))}
         </Card>

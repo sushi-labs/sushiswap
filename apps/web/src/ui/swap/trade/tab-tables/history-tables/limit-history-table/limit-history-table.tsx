@@ -4,7 +4,7 @@ import { Card, DataTable, Loader } from '@sushiswap/ui'
 import React from 'react'
 import InfiniteScroll from 'react-infinite-scroll-component'
 import { Native } from 'sushi/currency'
-import { MobileCard } from '../mobile-card/mobile-card'
+import { MobileDataCard } from '../mobile-data-card/mobile-data-card'
 import {
   BUY_COLUMN,
   CHAIN_COLUMN,
@@ -140,7 +140,7 @@ export const LimitOrdersHistoryTable = () => {
       <Card className="p-5 space-y-6 border-none bg-slate-50 dark:bg-slate-800 md:hidden">
         {data.map((row) => (
           <div key={row.id} className="pb-6 border-b last:border-b-0 last:pb-0">
-            <MobileCard row={row} columns={MOBILE_COLUMNS} />
+            <MobileDataCard row={row} columns={MOBILE_COLUMNS} />
           </div>
         ))}
       </Card>

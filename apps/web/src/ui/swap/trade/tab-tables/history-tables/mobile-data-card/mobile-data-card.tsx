@@ -38,17 +38,17 @@ function renderColValue<T>(col: ColumnDef<T>, row: T): React.ReactNode {
   return (row as any)[col.id as keyof T]
 }
 
-type MobileCardProps<T extends object> = {
+type MobileDataCardProps<T extends object> = {
   row: T
   columns: ColumnDef<T>[]
   className?: string
 }
 
-export const MobileCard = <T extends object>({
+export const MobileDataCard = <T extends object>({
   row,
   columns,
   className,
-}: MobileCardProps<T>) => {
+}: MobileDataCardProps<T>) => {
   const chainCol = columns.find((c) => CHAIN_IDS.includes(String(c.id)))
   const orderCol = columns.find((c) => ORDER_IDS.includes(String(c.id)))
   const actionCol = columns.find((c) => ACTION_IDS.includes(String(c.id)))

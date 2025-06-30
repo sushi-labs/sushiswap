@@ -13,7 +13,7 @@ import {
 import { type EvmChainId, EvmChainKey } from 'sushi/chain'
 import { Token } from 'sushi/currency'
 import { useAccount } from 'wagmi'
-import { MobileCard } from '../mobile-card/mobile-card'
+import { MobileDataCard } from '../mobile-data-card/mobile-data-card'
 import {
   BUY_COLUMN,
   CHAIN_COLUMN,
@@ -157,7 +157,7 @@ export const MarketTable = () => {
       <Card className="p-5 space-y-6 border-none bg-slate-50 dark:bg-slate-800 md:hidden">
         {rowData.map((row) => (
           <div key={row.id} className="pb-6 border-b last:border-b-0 last:pb-0">
-            <MobileCard row={row} columns={COLUMNS} />
+            <MobileDataCard row={row} columns={COLUMNS} />
           </div>
         ))}
       </Card>
