@@ -89,6 +89,7 @@ export const useTradeQuery = (
       if (source !== undefined) params.searchParams.set('source', `${source}`)
       if (process.env.NEXT_PUBLIC_APP_ENV === 'test')
         params.searchParams.set('simulate', 'false')
+      else params.searchParams.set('simulate', 'true')
 
       const res = await fetch(params.toString())
       const json = await res.json()
