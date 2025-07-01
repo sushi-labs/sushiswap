@@ -10,34 +10,38 @@ import type { ReactNode } from 'react'
 
 //@DEV these will change when api is ready, placeholder for now to prepare the UI
 export type TransactionType =
-  | 'add-liquidity'
-  | 'remove-liquidity'
+  | 'addLiquidity'
+  | 'removeLiquidity'
   | 'market'
   | 'dca'
+  | 'swap'
+  | 'xswap'
   | 'limit'
-  | 'reward-claimed'
+  | 'claimRewards'
   | 'product'
 
 //@DEV these will change when api is ready, placeholder for now to prepare the UI
 const TITLE: Record<TransactionType, string> = {
-  'add-liquidity': 'Added Liquidity',
-  'remove-liquidity': 'Removed Liquidity',
+  addLiquidity: 'Added Liquidity',
+  removeLiquidity: 'Removed Liquidity',
   market: 'Market Order Completed',
+  swap: 'Market Order Completed',
+  xswap: 'Market Order Completed',
   dca: 'DCA Order Completed',
   limit: 'Limit Order Completed',
-  'reward-claimed': 'Rewards Claimed',
+  claimRewards: 'Rewards Claimed',
   product: 'New Feature Available!',
 }
 
 const ICONS: Record<TransactionType, ReactNode> = {
-  'add-liquidity': <ArrowDownTrayIcon width={14} height={14} strokeWidth={2} />,
-  'remove-liquidity': (
-    <ArrowUpTrayIcon width={14} height={14} strokeWidth={2} />
-  ),
+  addLiquidity: <ArrowDownTrayIcon width={14} height={14} strokeWidth={2} />,
+  removeLiquidity: <ArrowUpTrayIcon width={14} height={14} strokeWidth={2} />,
+  xswap: <ArrowsRightLeftIcon width={14} height={14} strokeWidth={2} />,
+  swap: <ArrowsRightLeftIcon width={14} height={14} strokeWidth={2} />,
   market: <ArrowsRightLeftIcon width={14} height={14} strokeWidth={2} />,
   dca: <ArrowsRightLeftIcon width={14} height={14} strokeWidth={2} />,
   limit: <ArrowsRightLeftIcon width={14} height={14} strokeWidth={2} />,
-  'reward-claimed': <CoinIcon width={14} height={14} strokeWidth={2} />,
+  claimRewards: <CoinIcon width={14} height={14} strokeWidth={2} />,
   product: <StarIcon width={14} height={14} strokeWidth={2} />,
 }
 
@@ -46,18 +50,26 @@ export const InboxItem = ({
   details,
   date,
   isRead,
+  markAsRead,
 }: {
   type: TransactionType
   details: string
   date: string
-  isRead?: boolean
+  isRead: boolean
+  markAsRead: () => Promise<void>
 }) => {
   const isProduct = type === 'product'
   return (
-    <div
+    <button
+      type="button"
+      onClick={async () => {
+        if (!isRead) {
+          await markAsRead()
+        }
+      }}
       className={classNames(
-        'flex w-full items-center hover:bg-muted px-1 py-2 gap-x-3 whitespace-nowrap',
-        isRead ? 'opacity-70' : '',
+        'flex w-full items-center px-1 py-2 gap-x-3 whitespace-nowrap',
+        isRead ? 'opacity-70 cursor-default' : 'hover:bg-muted',
       )}
     >
       <div className="shrink-0 relative rounded-full">
@@ -76,12 +88,12 @@ export const InboxItem = ({
         </div>
       </div>
       <div className="flex text-xs font-medium text-[#6B7280] w-full justify-between items-center gap-x-3">
-        <div className="flex flex-col whitespace-normal">
+        <div className="flex flex-col text-left whitespace-normal items-start">
           <div className="text-sm text-muted-foreground">{TITLE[type]}</div>
           <div className="">{details}</div>
         </div>
         <div className="flex-[1_0_20%] flex flex-col text-right">{date}</div>
       </div>
-    </div>
+    </button>
   )
 }

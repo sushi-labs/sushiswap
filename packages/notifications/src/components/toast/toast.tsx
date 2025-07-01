@@ -42,6 +42,7 @@ export const createToast = (props: PromiseNotification) => {
           autoClose: 8000,
         },
       )
+      addNotification(props)
     })
     .catch((e) => {
       console.error(e)
@@ -75,7 +76,7 @@ export const createToast = (props: PromiseNotification) => {
     },
   )
 
-  return addNotification(props)
+  // return addNotification(props)
 }
 
 export const createErrorToast = (
@@ -119,7 +120,8 @@ export const createFailedToast = (props: ResolvedNotification) => {
     autoClose: 8000,
   })
 
-  return addNotification(props)
+  // return addNotification(props);
+  return
 }
 
 export const createInfoToast = (props: ResolvedNotification) => {
@@ -130,5 +132,6 @@ export const createInfoToast = (props: ResolvedNotification) => {
     autoClose: 8000,
   })
 
-  return addNotification(props)
+  // return addNotification(props);
+  return
 }

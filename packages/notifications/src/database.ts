@@ -4,7 +4,7 @@ import type { ResolvedNotification } from './types'
 
 interface NotificationDatabase extends DBSchema {
   notifications: {
-    value: ResolvedNotification
+    value: ResolvedNotification & { isRead: boolean; id: string }
     key: number
     indexes: { 'by-account': string }
   }
