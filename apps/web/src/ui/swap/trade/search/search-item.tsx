@@ -7,7 +7,7 @@ import { getNetworkKey } from 'src/lib/network'
 import type { ChainId, EvmChainId } from 'sushi/chain'
 import { formatNumber, formatPercent, formatUSD } from 'sushi/format'
 import { formatUnits } from 'viem'
-import { useChainId, useSwitchChain } from 'wagmi'
+import { useSwitchChain } from 'wagmi'
 import { FavoriteButton } from '../favorite-button'
 import { TokenNetworkIcon } from '../token-network-icon'
 import { SearchItemBridgeView } from './search-item-bridge-view'
@@ -104,7 +104,6 @@ const ActionButtons = ({
 }: { token: SearchToken; onClose?: () => void }) => {
   const { createQuery } = useCreateQuery()
   const { switchChainAsync } = useSwitchChain()
-  const chainId = useChainId()
   return (
     <div className="flex items-center justify-end w-full col-span-5 gap-2 md:col-span-2">
       <Button
@@ -122,7 +121,6 @@ const ActionButtons = ({
               },
             ],
             `/${getNetworkKey(token?.chainId as ChainId)}/swap/advanced`,
-            chainId !== token.chainId,
           )
           onClose?.()
         }}
