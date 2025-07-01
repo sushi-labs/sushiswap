@@ -102,6 +102,7 @@ export const ChainOptionsSelector = ({
           <Tooltip delayDuration={0}>
             <TooltipTrigger asChild>
               <NetworkButton
+                tabIndex={-1}
                 onClick={() => onNetworkSelect?.(chainId)}
                 iconSize={iconSize}
                 chainId={chainId}
