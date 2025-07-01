@@ -14,6 +14,7 @@ import {
 import { Button } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import { useState } from 'react'
+import { NativeAddress } from 'src/lib/constants'
 import { getChangeSign, getTextColor } from 'src/lib/helpers'
 import {
   TempChainIds,
@@ -233,6 +234,8 @@ const ActionButtons = ({
   onClose,
 }: { recentSwap: RecentSwap; onClose?: () => void }) => {
   const { createQuery } = useCreateQuery()
+
+  console.log('recentSwap', recentSwap)
   return (
     <div className="flex items-center justify-end w-full col-span-5 gap-2 md:col-span-2">
       <Button
@@ -240,7 +243,10 @@ const ActionButtons = ({
           createQuery([
             {
               name: 'token0',
-              value: recentSwap.tokenIn.address,
+              value:
+                recentSwap.tokenIn.address === NativeAddress
+                  ? 'NATIVE'
+                  : recentSwap.tokenIn.address,
             },
             {
               name: 'chainId0',
@@ -260,7 +266,10 @@ const ActionButtons = ({
           createQuery([
             {
               name: 'token1',
-              value: recentSwap.tokenIn.address,
+              value:
+                recentSwap.tokenIn.address === NativeAddress
+                  ? 'NATIVE'
+                  : recentSwap.tokenIn.address,
             },
             {
               name: 'chainId1',
