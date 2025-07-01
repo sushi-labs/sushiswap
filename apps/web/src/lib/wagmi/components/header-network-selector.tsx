@@ -98,7 +98,7 @@ export const HeaderNetworkSelector: FC<{
   const searchParams = useSearchParams()
   const chainId0 = searchParams.get('chainId0')
   const network = chainId0
-    ? chainId0
+    ? (Number(chainId0) as EvmChainId)
     : selectedNetwork
       ? selectedNetwork
       : chainId
@@ -134,7 +134,7 @@ export const HeaderNetworkSelector: FC<{
 
   return (
     <NetworkSelector
-      selected={selectedNetwork ?? chainId}
+      selected={network}
       supportedNetworks={supportedNetworks}
       onSelect={onSwitchNetwork}
       networks={networks}
@@ -149,9 +149,7 @@ export const HeaderNetworkSelector: FC<{
         <Suspense fallback={null}>
           <NetworkIcon chainId={network} width={20} height={20} />
           {hideNetworkName ? null : (
-            <div className="hidden xl:block">
-              {getNetworkName(selectedNetwork ?? chainId)}
-            </div>
+            <div className="hidden xl:block">{getNetworkName(network)}</div>
           )}
         </Suspense>
       </Button>
