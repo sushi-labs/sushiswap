@@ -13,6 +13,7 @@ import {
 } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
+import { useSearchParams } from 'next/navigation'
 import { useState } from 'react'
 import { NativeAddress } from 'src/lib/constants'
 import { getChangeSign, getTextColor } from 'src/lib/helpers'
@@ -22,11 +23,12 @@ import {
   useRecentSwaps,
 } from 'src/lib/hooks/react-query/recent-swaps/useRecentsSwaps'
 import { useCreateQuery } from 'src/lib/hooks/useCreateQuery'
+import { getNetworkKey } from 'src/lib/network'
 import { ConnectButton } from 'src/lib/wagmi/components/connect-button'
 import { formatUSD } from 'sushi'
-import type { EvmChainId } from 'sushi/chain'
+import type { ChainId, EvmChainId } from 'sushi/chain'
 import { Native, Token } from 'sushi/currency'
-import { useAccount } from 'wagmi'
+import { useAccount, useSwitchChain } from 'wagmi'
 import { useNetworkContext } from './network-provider'
 
 export const Recent = ({ onClose }: { onClose?: () => void }) => {
@@ -239,26 +241,113 @@ const ActionButtons = ({
   onClose,
 }: { recentSwap: RecentSwap; onClose?: () => void }) => {
   const { createQuery } = useCreateQuery()
+  const { switchChainAsync } = useSwitchChain()
+
+  const searchParams = useSearchParams()
+  const token0 = searchParams.get('token0')
+  const chainId0 = searchParams.get('chainId0')
+  const token1 = searchParams.get('token1')
+  const chainId1 = searchParams.get('chainId1')
+
+  //@DEV TODO make these reusable
+  const handleBuyToken = async () => {
+    const token = recentSwap.tokenIn
+    const tokenAddress =
+      token.address === NativeAddress ? 'NATIVE' : token.address
+
+    await switchChainAsync({ chainId: token?.chainId as EvmChainId })
+    if (tokenAddress === token1 && chainId1 === String(token.chainId)) {
+      createQuery(
+        [
+          {
+            name: 'swapAmount',
+            value: null,
+          },
+          {
+            name: 'token0',
+            value: token1,
+          },
+          {
+            name: 'chainId0',
+            value: chainId1,
+          },
+          {
+            name: 'token1',
+            value: token0,
+          },
+          {
+            name: 'chainId1',
+            value: chainId0,
+          },
+        ],
+        `/${getNetworkKey(token?.chainId as ChainId)}/swap/advanced`,
+      )
+    } else {
+      createQuery(
+        [
+          {
+            name: 'token0',
+            value: tokenAddress,
+          },
+          {
+            name: 'chainId0',
+            value: String(token.chainId),
+          },
+        ],
+        `/${getNetworkKey(token?.chainId as ChainId)}/swap/advanced`,
+      )
+    }
+    onClose?.()
+  }
+  const handleSellToken = async () => {
+    const token = recentSwap.tokenIn
+    const tokenAddress =
+      token.address === NativeAddress ? 'NATIVE' : token.address
+    if (tokenAddress === token0 && chainId0 === String(token.chainId)) {
+      createQuery(
+        [
+          {
+            name: 'swapAmount',
+            value: null,
+          },
+          {
+            name: 'token0',
+            value: token1,
+          },
+          {
+            name: 'chainId0',
+            value: chainId1,
+          },
+          {
+            name: 'token1',
+            value: token0,
+          },
+          {
+            name: 'chainId1',
+            value: chainId0,
+          },
+        ],
+        `/${getNetworkKey(Number(chainId1) as ChainId)}/swap/advanced`,
+      )
+    } else {
+      createQuery([
+        {
+          name: 'token1',
+          value: tokenAddress,
+        },
+        {
+          name: 'chainId1',
+          value: String(token.chainId),
+        },
+      ])
+    }
+    onClose?.()
+  }
 
   return (
     <div className="flex items-center justify-end w-full col-span-5 gap-2 md:col-span-2">
       <Button
-        onClick={() => {
-          createQuery([
-            {
-              name: 'token0',
-              value:
-                recentSwap.tokenIn.address === NativeAddress
-                  ? 'NATIVE'
-                  : recentSwap.tokenIn.address,
-            },
-            {
-              name: 'chainId0',
-              value: String(recentSwap.tokenIn.chainId),
-            },
-          ])
-          onClose?.() // Close the dialog if provided
-        }}
+        onClick={handleBuyToken}
         size="xs"
         className="text-slate-50 w-full md:w-fit !rounded-full bg-green-500 font-semibold hover:bg-green-500 active:bg-green-500/95 focus:bg-green-500"
       >
@@ -266,22 +355,7 @@ const ActionButtons = ({
       </Button>
 
       <Button
-        onClick={() => {
-          createQuery([
-            {
-              name: 'token1',
-              value:
-                recentSwap.tokenIn.address === NativeAddress
-                  ? 'NATIVE'
-                  : recentSwap.tokenIn.address,
-            },
-            {
-              name: 'chainId1',
-              value: String(recentSwap.tokenIn.chainId),
-            },
-          ])
-          onClose?.() // Close the dialog if provided
-        }}
+        onClick={handleSellToken}
         size="xs"
         className="text-slate-50 w-full md:w-fit bg-red-100 !rounded-full font-semibold hover:bg-red-100 active:bg-red-100/95 focus:bg-red-500"
       >
