@@ -235,7 +235,6 @@ const ActionButtons = ({
 }: { recentSwap: RecentSwap; onClose?: () => void }) => {
   const { createQuery } = useCreateQuery()
 
-  console.log('recentSwap', recentSwap)
   return (
     <div className="flex items-center justify-end w-full col-span-5 gap-2 md:col-span-2">
       <Button
