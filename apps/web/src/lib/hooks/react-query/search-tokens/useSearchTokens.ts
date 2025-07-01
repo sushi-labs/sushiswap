@@ -33,7 +33,7 @@ export const useSearchTokens = ({
       first,
       tokens,
     ],
-    enabled: !!walletAddress && !!chainIds && !!search,
+    enabled: !!walletAddress && !!chainIds && (!!search || tokens.length > 0),
     initialPageParam: 0,
     getNextPageParam: (lastPage, allPages) => {
       return lastPage.length < first ? undefined : allPages.length * first
@@ -50,7 +50,6 @@ export const useSearchTokens = ({
         skip,
         tokens,
       })
-      console.debug({ data })
 
       return Array.isArray(data) ? data : []
     },

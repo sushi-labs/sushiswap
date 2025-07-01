@@ -5,5 +5,6 @@ export const getTextColor = (value: number, fallbackColor?: string) => {
 
 export const getChangeSign = (value: number) => {
   if (value === 0) return ''
-  return value > 0 ? '+' : '-'
+  //formatPercent will add the negative sign
+  return value > 0 ? '+' : ''
 }

@@ -14,6 +14,7 @@ import { formatUSD } from 'sushi'
 import type { Address } from 'sushi'
 import type { Type } from 'sushi/currency'
 import { formatNumber, formatPercent } from 'sushi/format'
+import { formatUnits } from 'viem'
 import { useAccount } from 'wagmi'
 import { FavoriteButton } from '../favorite-button'
 import { TokenNetworkIcon } from '../token-network-icon'
@@ -150,7 +151,7 @@ const FavoriteItem = ({ token }: { token: SearchToken }) => {
           )}
         >
           {getChangeSign(token.priceChange1d)}
-          {formatPercent(token.priceChange1d * 100)}
+          {formatPercent(token.priceChange1d / 100)}
         </span>
       </td>
 
@@ -166,7 +167,7 @@ const FavoriteItem = ({ token }: { token: SearchToken }) => {
             )}
           >
             {getChangeSign(token.priceChange1d)}
-            {formatPercent(token.priceChange1d * 100)}
+            {formatPercent(token.priceChange1d / 100)}
           </span>
         </div>
       </td>
@@ -176,7 +177,8 @@ const FavoriteItem = ({ token }: { token: SearchToken }) => {
             {formatUSD(token.balanceUSD)}
           </span>
           <span className="text-muted-foreground">
-            {formatNumber(token.balance)} {token.symbol}
+            {formatNumber(formatUnits(BigInt(token.balance), token.decimals))}{' '}
+            {token.symbol}
           </span>
         </div>
       </td>
