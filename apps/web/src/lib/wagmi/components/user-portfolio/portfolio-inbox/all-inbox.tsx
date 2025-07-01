@@ -1,49 +1,70 @@
-import { InboxItem } from './inbox-item'
+import { useNotifications } from '@sushiswap/notifications'
+import { useMemo } from 'react'
+import { useAccount } from 'wagmi'
+import { InboxItem, type TransactionType } from './inbox-item'
+
+export const ALLOWED_TYPES: TransactionType[] = [
+  'addLiquidity',
+  'removeLiquidity',
+  'market',
+  'dca',
+  'swap',
+  'xswap',
+  'limit',
+  'claimRewards',
+  'product',
+]
 
 export const AllInbox = () => {
   // @ DEV use PortfolioInfoRowSkeleton for loading state
+  const { address } = useAccount()
+  const { groupedNotifications, markAsRead } = useNotifications({
+    account: address,
+  })
+
+  const notifications = useMemo(() => {
+    if (!groupedNotifications) return []
+    return Object.entries(groupedNotifications)
+      .flatMap(
+        ([, groupNotifications]) =>
+          groupNotifications[groupNotifications.length - 1],
+      )
+      .sort((a, b) => b.timestamp - a.timestamp)
+      .filter((notification) =>
+        ALLOWED_TYPES.includes(notification.type as TransactionType),
+      )
+  }, [groupedNotifications])
+
   return (
     <div className="flex flex-col gap-4">
-      {/* <div className="text-center text-sm italic text-muted-foreground">You haven&apos;t received any notifications so far.</div> */}
-      <InboxItem
-        type="add-liquidity"
-        details="Added 0.5 ETH and 1,123 USDC"
-        date="2025-01-08"
-      />
-      <InboxItem
-        type="remove-liquidity"
-        details="Removed 0.2 ETH and 1,123 USDC"
-        date="2025-01-08"
-      />
-      <InboxItem
-        type="dca"
-        details="1.085 ETH for 1,666.11 USDC"
-        date="2025-01-08"
-      />
-      <InboxItem
-        isRead={true}
-        type="market"
-        details="1.085 ETH for 1,666.11 USDC"
-        date="2025-01-08"
-      />
-      <InboxItem
-        isRead={true}
-        type="product"
-        details="Give Sushi's new swap update a try."
-        date="2025-01-08"
-      />
-      <InboxItem
-        isRead={true}
-        type="reward-claimed"
-        details="Claimed 435 SUSHI"
-        date="2025-01-08"
-      />
-      <InboxItem
-        isRead={true}
-        type="limit"
-        details="1.085 ETH for 1,666.11 USDC"
-        date="2025-01-08"
-      />
+      {!notifications.length ? (
+        <div className="text-center text-sm italic text-muted-foreground">
+          You haven&apos;t received any notifications so far.
+        </div>
+      ) : (
+        <>
+          <InboxItem
+            type="product"
+            details="Give Sushi's new swap update a try."
+            date={new Date(Date.now()).toLocaleDateString()}
+            isRead={false}
+            //need to figure out how to give a mass product notification to all users
+            markAsRead={async () => {}}
+          />
+          {notifications.map((notification) => (
+            <InboxItem
+              key={notification.id}
+              type={notification.type as TransactionType}
+              details={notification.summary}
+              date={new Date(notification.timestamp).toLocaleDateString()}
+              isRead={notification.isRead}
+              markAsRead={async () =>
+                await markAsRead({ account: address, ids: notification.id })
+              }
+            />
+          ))}
+        </>
+      )}
     </div>
   )
 }

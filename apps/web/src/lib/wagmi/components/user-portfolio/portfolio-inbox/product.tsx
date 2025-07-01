@@ -8,7 +8,11 @@ export const Product = () => {
       <InboxItem
         type="product"
         details="Give Sushi's new swap update a try."
-        date="2025-01-08"
+        date={new Date(Date.now()).toLocaleDateString()}
+        isRead={false}
+        markAsRead={async () => {
+          // Implement mark as read logic here
+        }}
       />
     </div>
   )
