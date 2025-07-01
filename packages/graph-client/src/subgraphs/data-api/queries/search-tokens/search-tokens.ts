@@ -5,7 +5,7 @@ import { SUSHI_REQUEST_HEADERS } from '../../request-headers.js'
 
 export const SearchTokensQuery = graphql(`
 	query SearchTokens(
-		$walletAddress: Bytes!
+		$account: Bytes!
 		$chainIds: [TokenListV2ChainId!]!
 		$first: Int = 50
 		$skip: Int
@@ -13,7 +13,7 @@ export const SearchTokensQuery = graphql(`
 		$tokens: [MultiChainTokenInput!]
 	) {
 		searchTokens(
-			account: $walletAddress
+			account: $account
 			chainIds: $chainIds
 			first: $first
 			skip: $skip

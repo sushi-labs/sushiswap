@@ -43,7 +43,7 @@ export const useSearchTokens = ({
 
       const skip = pageParam as number
       const data = await getSearchTokens({
-        walletAddress,
+        account: walletAddress,
         chainIds,
         search,
         first,

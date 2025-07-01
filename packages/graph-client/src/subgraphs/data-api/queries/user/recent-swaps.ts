@@ -7,8 +7,8 @@ import { SUSHI_REQUEST_HEADERS } from '../../request-headers.js'
 
 export const RecentSwapsQuery = graphql(
   `
-		query RecentSwaps($walletAddress: Bytes!, $chainIds: [TokenListV2ChainId!]!) {
-			recentSwaps(account: $walletAddress, chainIds: $chainIds) {
+		query RecentSwaps($account: Bytes!, $chainIds: [TokenListV2ChainId!]!) {
+			recentSwaps(account: $account, chainIds: $chainIds) {
 				amountIn
 				amountInUSD
 				amountOut

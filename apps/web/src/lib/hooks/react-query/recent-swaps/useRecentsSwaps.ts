@@ -18,7 +18,7 @@ export const useRecentSwaps = ({ walletAddress, chainIds }: UseRecentSwaps) => {
       if (!chainIds || !walletAddress) return []
 
       const data = await getRecentSwaps({
-        walletAddress,
+        account: walletAddress,
         chainIds: chainIds,
       })
 
