@@ -25,7 +25,7 @@ import { useCreateQuery } from 'src/lib/hooks/useCreateQuery'
 import { ConnectButton } from 'src/lib/wagmi/components/connect-button'
 import { formatUSD } from 'sushi'
 import type { EvmChainId } from 'sushi/chain'
-import { Token } from 'sushi/currency'
+import { Native, Token } from 'sushi/currency'
 import { useAccount } from 'wagmi'
 import { useNetworkContext } from './network-provider'
 
@@ -137,14 +137,17 @@ const RecentItem = ({
             <Currency.Icon
               disableLink
               currency={
-                new Token({
-                  address: tokenIn.address,
-                  name: tokenIn.name,
-                  symbol: tokenIn.symbol,
-                  chainId: tokenIn.chainId as EvmChainId,
-                  decimals: tokenIn.decimals,
-                  approved: tokenIn.approved,
-                })
+                tokenIn.address === NativeAddress
+                  ? // @TODO remove typecast once chainId type is resolved
+                    Native.onChain(tokenIn.chainId as EvmChainId)
+                  : new Token({
+                      address: tokenIn.address,
+                      name: tokenIn.name,
+                      symbol: tokenIn.symbol,
+                      chainId: tokenIn.chainId as EvmChainId,
+                      decimals: tokenIn.decimals,
+                      approved: tokenIn.approved,
+                    })
               }
               width={24}
               height={24}
@@ -152,14 +155,16 @@ const RecentItem = ({
             <Currency.Icon
               disableLink
               currency={
-                new Token({
-                  address: tokenOut.address,
-                  name: tokenOut.name,
-                  symbol: tokenOut.symbol,
-                  chainId: tokenOut.chainId as EvmChainId,
-                  decimals: tokenOut.decimals,
-                  approved: tokenOut.approved,
-                })
+                tokenOut.address === NativeAddress
+                  ? Native.onChain(tokenOut.chainId as EvmChainId)
+                  : new Token({
+                      address: tokenOut.address,
+                      name: tokenOut.name,
+                      symbol: tokenOut.symbol,
+                      chainId: tokenOut.chainId as EvmChainId,
+                      decimals: tokenOut.decimals,
+                      approved: tokenOut.approved,
+                    })
               }
               width={24}
               height={24}
