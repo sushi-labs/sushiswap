@@ -22,10 +22,12 @@ import {
 } from 'react'
 import {
   SUPPORTED_CHAIN_IDS,
+  TWAP_SUPPORTED_CHAIN_IDS,
   XSWAP_SUPPORTED_CHAIN_IDS,
   getSortedChainIds,
 } from 'src/config'
 import { useIsCrossChain } from 'src/lib/hooks/useIsCrossChain'
+import { useTradeMode } from 'src/lib/hooks/useTradeMode'
 import { EvmChainKey } from 'sushi'
 import type { EvmChainId } from 'sushi/chain'
 
@@ -39,9 +41,17 @@ export const ChainOptionsSelector = ({
   onNetworkSelect?: (network: number) => void
 }) => {
   const { isCrossChain } = useIsCrossChain()
-  const defaultNetworks = isCrossChain
-    ? getSortedChainIds(XSWAP_SUPPORTED_CHAIN_IDS)
-    : getSortedChainIds(SUPPORTED_CHAIN_IDS)
+  const { tradeMode } = useTradeMode()
+
+  const defaultNetworks =
+    tradeMode === 'dca' || tradeMode === 'limit'
+      ? getSortedChainIds(TWAP_SUPPORTED_CHAIN_IDS)
+      : tradeMode === 'fiat'
+        ? getSortedChainIds(SUPPORTED_CHAIN_IDS)
+        : isCrossChain
+          ? getSortedChainIds(XSWAP_SUPPORTED_CHAIN_IDS)
+          : getSortedChainIds(SUPPORTED_CHAIN_IDS)
+
   const iconSize = size === 'sm' ? 16 : 24
   const _networks = networks ?? defaultNetworks
 
@@ -93,10 +103,7 @@ export const ChainOptionsSelector = ({
   }, [visibleCount, _networks])
 
   return (
-    <div
-      className="flex items-center justify-between gap-x-1.5 w-full"
-      ref={containerRef}
-    >
+    <div className="flex items-center gap-x-1.5 w-full" ref={containerRef}>
       {visible.map((chainId) => (
         <TooltipProvider key={chainId}>
           <Tooltip delayDuration={0}>

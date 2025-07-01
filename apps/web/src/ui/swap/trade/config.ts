@@ -20,7 +20,7 @@ const isSupportedTradeMode = (mode: string): mode is TradeMode =>
   TRADE_MODES.includes(mode as TradeMode)
 
 export const CHAIN_IDS_BY_TRADE_MODE: Record<TradeMode, readonly ChainId[]> = {
-  swap: SUPPORTED_CHAIN_IDS,
+  swap: [...SUPPORTED_CHAIN_IDS, ...XSWAP_SUPPORTED_CHAIN_IDS],
   limit: TWAP_SUPPORTED_CHAIN_IDS,
   dca: TWAP_SUPPORTED_CHAIN_IDS,
   //@DEV temp taking out cross chain swap for now to show full UI

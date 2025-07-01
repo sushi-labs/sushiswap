@@ -11,10 +11,12 @@ import {
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import {
   SUPPORTED_CHAIN_IDS,
+  TWAP_SUPPORTED_CHAIN_IDS,
   XSWAP_SUPPORTED_CHAIN_IDS,
   getSortedChainIds,
 } from 'src/config'
 import { useIsCrossChain } from 'src/lib/hooks/useIsCrossChain'
+import { useTradeMode } from 'src/lib/hooks/useTradeMode'
 import { type EvmChainId, EvmChainKey } from 'sushi'
 
 export const NetworkMenu = ({
@@ -27,9 +29,16 @@ export const NetworkMenu = ({
   onNetworkSelect?(val: number | null): void
 }) => {
   const { isCrossChain } = useIsCrossChain()
-  const networks = isCrossChain
-    ? getSortedChainIds(XSWAP_SUPPORTED_CHAIN_IDS)
-    : getSortedChainIds(SUPPORTED_CHAIN_IDS)
+  const { tradeMode } = useTradeMode()
+
+  const networks =
+    tradeMode === 'dca' || tradeMode === 'limit'
+      ? getSortedChainIds(TWAP_SUPPORTED_CHAIN_IDS)
+      : tradeMode === 'fiat'
+        ? getSortedChainIds(SUPPORTED_CHAIN_IDS)
+        : isCrossChain
+          ? getSortedChainIds(XSWAP_SUPPORTED_CHAIN_IDS)
+          : getSortedChainIds(SUPPORTED_CHAIN_IDS)
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>

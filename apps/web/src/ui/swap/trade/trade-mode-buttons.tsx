@@ -1,7 +1,9 @@
 'use client'
 
 import { Button } from '@sushiswap/ui'
+import { usePathname } from 'next/navigation'
 import { createContext, useContext, useMemo } from 'react'
+import { useTradeMode } from 'src/lib/hooks/useTradeMode'
 import { TRADE_MODES, type TradeMode } from './config'
 
 interface ContextState {
@@ -35,6 +37,8 @@ const OPTION_NAMES: Record<TradeMode, string> = {
 const useTradeModeOptions = (): TradeModeOption[] => {
   const context = useContext(TradeModeContext)
   const modes = context.supportedTradeModes ?? [...TRADE_MODES]
+
+  const { tradeMode } = useTradeMode()
   if (context.tradeMode === 'fiat') {
     //only return swap and fiat
     return modes
@@ -42,7 +46,7 @@ const useTradeModeOptions = (): TradeModeOption[] => {
       .map((item) => ({
         mode: item,
         name: item === 'swap' ? 'Swap' : OPTION_NAMES[item],
-        active: item === context.tradeMode,
+        active: item === tradeMode,
         onClick: () => context.switchTradeMode(item),
       }))
   }
@@ -52,11 +56,11 @@ const useTradeModeOptions = (): TradeModeOption[] => {
       return {
         mode: item,
         name: OPTION_NAMES[item],
-        active: item === context.tradeMode,
+        active: item === tradeMode,
         onClick: () => context.switchTradeMode(item),
       }
     })
-  }, [modes, context])
+  }, [modes, context, tradeMode])
 }
 
 const TradeModeOptionButton = (item: TradeModeOption) => {
