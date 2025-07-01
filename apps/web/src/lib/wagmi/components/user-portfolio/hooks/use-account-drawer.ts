@@ -1,5 +1,6 @@
-import { usePathname, useRouter, useSearchParams } from 'next/navigation'
-import { useCallback, useEffect, useState } from 'react'
+import { useSearchParams } from 'next/navigation'
+import { useEffect, useState } from 'react'
+import { useCreateQuery } from 'src/lib/hooks/useCreateQuery'
 
 export const useAccountDrawer = () => {
   const [isOpen, setIsOpen] = useState(false)
@@ -7,19 +8,7 @@ export const useAccountDrawer = () => {
   const isAccountDrawerOpen = searchParams.get('accountDrawer') === 'true'
   const accountTab = searchParams.get('accountTab')
   const subAccountTab = searchParams.get('subAccountTab')
-  const router = useRouter()
-  const pathname = usePathname()
-
-  const createQueryString = useCallback(
-    (pairs: { name: string; value: string }[]) => {
-      const params = new URLSearchParams(searchParams.toString())
-      for (const { name, value } of pairs) {
-        params.set(name, value)
-      }
-      return params.toString()
-    },
-    [searchParams],
-  )
+  const { createQuery } = useCreateQuery()
 
   useEffect(() => {
     if (isAccountDrawerOpen) {
@@ -41,8 +30,7 @@ export const useAccountDrawer = () => {
         : queryArray.push(params)
     }
     queryArray.push({ name: 'accountDrawer', value: state ? 'true' : 'false' })
-
-    router.replace(`${pathname}?${createQueryString(queryArray)}`)
+    createQuery(queryArray)
 
     setIsOpen(state)
   }
