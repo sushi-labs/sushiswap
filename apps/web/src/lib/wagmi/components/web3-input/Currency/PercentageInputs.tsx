@@ -3,6 +3,7 @@ import { type FC, memo, useCallback } from 'react'
 import { Amount, Native, type Type } from 'sushi/currency'
 
 import { useIsMounted } from '@sushiswap/hooks'
+import { Fraction } from 'sushi/math'
 import type { CurrencyInputProps } from './CurrencyInput'
 
 type PercentageInputs = Pick<
@@ -17,9 +18,9 @@ type PercentageInputs = Pick<
 const MIN_NATIVE_CURRENCY_FOR_GAS = 10n ** 16n // .01 ETH
 
 const PERCENT_OPTIONS = [
-  { label: '25%', value: '0.25' },
-  { label: '50%', value: '0.5' },
-  { label: 'MAX', value: '1' },
+  { label: '25%', value: new Fraction(1, 4) }, // Use Fraction to ensure correct division
+  { label: '50%', value: new Fraction(1, 2) }, // Use Fraction to ensure correct division
+  { label: 'MAX', value: new Fraction(1, 1) }, // Use Fraction to ensure correct division
 ]
 
 export const PercentageInputs: FC<PercentageInputs> = memo(
@@ -27,7 +28,7 @@ export const PercentageInputs: FC<PercentageInputs> = memo(
     const isMounted = useIsMounted()
 
     const onClick = useCallback(
-      (value: string) => {
+      (value: Fraction) => {
         if (onChange && balance?.greaterThan(0)) {
           if (
             balance.currency.isNative &&
@@ -38,9 +39,18 @@ export const PercentageInputs: FC<PercentageInputs> = memo(
               MIN_NATIVE_CURRENCY_FOR_GAS,
             )
             const amount = balance.multiply(value)
-            onChange(amount.subtract(hundred).toFixed())
+
+            const amountWithGas = amount.subtract(hundred)
+
+            if (amountWithGas?.greaterThan(0)) {
+              onChange(amountWithGas.toFixed())
+            } else {
+              // If the amount after subtracting gas is not greater than 0, set to empty
+              onChange('')
+            }
           } else {
             const amount = balance.multiply(value)
+
             onChange(amount?.greaterThan(0) ? amount.toFixed() : '')
           }
         }
@@ -64,8 +74,8 @@ export const PercentageInputs: FC<PercentageInputs> = memo(
       <div className="flex items-center gap-2">
         {PERCENT_OPTIONS.map((option) => (
           <Button
-            id={`${id}-percent-button${option.value}`}
-            testdata-id={`${id}-percent-button-${option.value}`}
+            id={`${id}-percent-button${option.value.toFixed(1)}`}
+            testdata-id={`${id}-percent-button-${option.value.toFixed(1)}`}
             type="button"
             variant="secondary"
             size="xs"
@@ -74,7 +84,7 @@ export const PercentageInputs: FC<PercentageInputs> = memo(
               '!text-xs !font-medium !rounded-full text-slate-900 dark:text-slate-50 !min-h-[22px] !h-[22px] !bg-[#0000001F] dark:!bg-[#FFFFFF1F]',
             )}
             disabled={disableMaxButton}
-            key={`${id}-percent-button${option.value}`}
+            key={`${id}-percent-button${option.value.toFixed(1)}`}
           >
             {option.label}
           </Button>

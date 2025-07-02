@@ -12,7 +12,7 @@ import {
 import { useTrade, useTradeQuote } from 'src/lib/hooks/react-query'
 import { useCreateQuery } from 'src/lib/hooks/useCreateQuery'
 import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
-import { getNetworkKey, replaceNetworkSlug } from 'src/lib/network'
+import { replaceNetworkSlug } from 'src/lib/network'
 import { useTokenWithCache } from 'src/lib/wagmi/hooks/tokens/useTokenWithCache'
 import { ChainNetworkNameKey, EvmChainId } from 'sushi'
 import { isEvmChainId } from 'sushi/chain'
@@ -25,7 +25,6 @@ import { type Amount, Native, type Type, tryParseAmount } from 'sushi/currency'
 import { type Percent, ZERO } from 'sushi/math'
 import { type Address, isAddress } from 'viem'
 import { useAccount, useGasPrice, useSwitchChain } from 'wagmi'
-import { type SupportedChainId, isSupportedChainId } from '../../../config'
 import { useCarbonOffset } from '../../../lib/swap/useCarbonOffset'
 
 const getTokenAsString = (token: Type | string) =>

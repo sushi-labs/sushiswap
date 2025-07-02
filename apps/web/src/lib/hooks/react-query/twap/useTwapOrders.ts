@@ -247,7 +247,6 @@ const useTwapOrdersQuery = ({
             ),
           } satisfies TwapOrder
         })
-        console.log({ orders })
         return orders.sort((a, b) => b.createdAt - a.createdAt)
       },
       refetchInterval: 20_000,
