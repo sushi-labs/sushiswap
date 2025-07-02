@@ -494,7 +494,7 @@ const useTwapTradeErrors = () => {
       amountInPerChunk && token0PriceUSD
         ? sdk.getMinTradeSizeError(
             amountInPerChunk.toExact(),
-            +token0PriceUSD.toFixed(6),
+            token0PriceUSD.toFixed(6),
             sdk.config.minChunkSizeUsd,
           ).isError
         : false
