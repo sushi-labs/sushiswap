@@ -131,23 +131,23 @@ export const TokenSelectorRowV2: FC<TokenSelectorRowV2> = memo(
               <div className="flex flex-row items-center flex-grow gap-4">
                 <div className="w-10 h-10">
                   <Badge
-                    className="dark:border-white/10 border-black/10 border rounded-[4px] z-[11]"
+                    className="dark:border-white/10 border-black/10 border rounded-[4px] z-[11] !right-[5%] -bottom-[5%]"
                     position="bottom-right"
                     badgeContent={
                       <NetworkIcon
                         type="square"
                         className="rounded-[3px]"
                         chainId={currency.chainId}
-                        width={18}
-                        height={18}
+                        width={14}
+                        height={14}
                       />
                     }
                   >
                     <Currency.Icon
                       disableLink
                       currency={currency}
-                      width={40}
-                      height={40}
+                      width={32}
+                      height={32}
                     />
                   </Badge>
                 </div>

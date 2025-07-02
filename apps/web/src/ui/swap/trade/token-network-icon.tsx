@@ -9,15 +9,15 @@ export const TokenNetworkIcon = ({ token }: { token: SearchToken }) => {
   return (
     <div className="flex items-center gap-3.5 w-full">
       <Badge
-        className="border border-slate-50 dark:border-slate-900 rounded-[4px] z-[11]"
+        className="border border-slate-50 dark:border-slate-900 rounded-[4px] z-[11] -right-[17%] bottom-[2%]"
         position="bottom-right"
         badgeContent={
           <NetworkIcon
             type="square"
             className="rounded-[3px]"
             chainId={token?.chainId as EvmChainId}
-            width={14}
-            height={14}
+            width={15}
+            height={15}
           />
         }
       >
@@ -33,7 +33,7 @@ export const TokenNetworkIcon = ({ token }: { token: SearchToken }) => {
             })
           }
           width={32}
-          height={32}
+          height={34}
         />
       </Badge>
       <div className="flex flex-col items-start">

@@ -47,31 +47,31 @@ export const DCAToken1Input = () => {
           id={'swap-to'}
           type="button"
           className={classNames(
-            token ? 'pl-2 pr-3 text-xl' : '',
-            '!rounded-full data-[state=inactive]:hidden data-[state=active]:flex bg-slate-200 dark:bg-slate-750',
+            token ? 'pl-1.5 pr-3 text-xl' : '',
+            '!rounded-full h-[48px] data-[state=inactive]:hidden data-[state=active]:flex bg-slate-200 dark:bg-slate-750',
           )}
         >
           {token ? (
             <>
-              <div className="w-[28px] h-[28px] mr-0.5">
+              <div className="w-[37px] h-[37px] mr-0.5">
                 <Badge
-                  className="dark:border-[#222137] border-[#F5F5F5] border rounded-[4px] z-[11]"
+                  className="dark:border-[#222137] border-[#F5F5F5] border rounded-[4px] z-[11] !-right-[15%] -bottom-[0%]"
                   position="bottom-right"
                   badgeContent={
                     <NetworkIcon
                       type="square"
                       className="rounded-[3px]"
                       chainId={token.chainId}
-                      width={14}
-                      height={14}
+                      width={15}
+                      height={15}
                     />
                   }
                 >
                   <Currency.Icon
                     disableLink
                     currency={token}
-                    width={28}
-                    height={28}
+                    width={37}
+                    height={37}
                   />
                 </Badge>
               </div>

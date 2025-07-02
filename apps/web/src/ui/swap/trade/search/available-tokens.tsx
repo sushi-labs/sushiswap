@@ -9,7 +9,7 @@ import { Connect } from 'src/lib/wagmi/systems/Checker/Connect'
 import type { ChainId, EvmChainId } from 'sushi'
 import { Native, Token } from 'sushi/currency'
 import { formatNumber } from 'sushi/format'
-import { useAccount, useChainId, useSwitchChain } from 'wagmi'
+import { useAccount, useSwitchChain } from 'wagmi'
 import { PayWithFiat } from './pay-with-fiat'
 
 export const AvailableTokens = () => {
@@ -30,7 +30,7 @@ export const AvailableTokens = () => {
       <h4 className="hidden md:block text-[#535263] font-medium dark:text-[#E4DDEC] text-sm">
         Available
       </h4>
-      <div className="flex items-center gap-2 overflow-x-auto whitespace-nowrap md:grid md:grid-cols-3 md:gap-2 hide-scrollbar">
+      <div className="flex items-center  gap-2 overflow-x-auto whitespace-nowrap md:flex md:flex-wrap md:gap-3 hide-scrollbar">
         {isLoading ? (
           new Array(6)
             .fill(null)
@@ -81,11 +81,11 @@ const TokenOption = ({ token }: { token: PortfolioWalletToken }) => {
       id={`token-option-${token.chainId}-${token.id}`}
       type="button"
       className={classNames(
-        '!rounded-full focus-visible:!ring-0 focus-visible:!ring-offset-0 !ring-transparent',
+        '!rounded-full flex w-fit !justify-start !pl-2 focus-visible:!ring-0 focus-visible:!ring-offset-0 !ring-transparent',
       )}
     >
       <Badge
-        className="border border-slate-50 dark:border-slate-900 rounded-[4px] z-[11]"
+        className="border border-slate-50 dark:border-slate-900 rounded-[4px] z-[11] -bottom-[2%]"
         position="bottom-right"
         badgeContent={
           <NetworkIcon

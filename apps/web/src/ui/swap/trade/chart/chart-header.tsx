@@ -41,31 +41,31 @@ export const ChartHeader = () => {
           id={'swap-to'}
           type="button"
           className={classNames(
-            input0 ? 'pl-2 pr-3' : '',
-            '!rounded-full !min-h-[40px] !h-[40px] bg-slate-200 dark:bg-slate-750',
+            input0 ? 'pl-1.5 pr-3' : '',
+            '!rounded-full h-[47px] bg-slate-200 dark:bg-slate-750',
           )}
         >
           {input0 ? (
             <>
-              <div className="w-[23px] h-[23px] mr-0.5">
+              <div className="w-[37px] h-[37px] mr-0.5">
                 <Badge
-                  className="dark:border-[#222137] border-[#F5F5F5] border rounded-[4px] z-[11]"
+                  className="dark:border-[#222137] border-[#F5F5F5] border rounded-[4px] z-[11] !-right-[15%] -bottom-[0%]"
                   position="bottom-right"
                   badgeContent={
                     <NetworkIcon
                       type="square"
                       className="rounded-[3px]"
                       chainId={input0.chainId}
-                      width={12}
-                      height={12}
+                      width={15}
+                      height={15}
                     />
                   }
                 >
                   <Currency.Icon
                     disableLink
                     currency={input0}
-                    width={23}
-                    height={23}
+                    width={37}
+                    height={37}
                   />
                 </Badge>
               </div>

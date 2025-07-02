@@ -195,34 +195,34 @@ const CurrencyInput: FC<CurrencyInputProps> = ({
             id={id}
             type="button"
             className={classNames(
-              currency ? 'pl-2 pr-3' : '',
+              currency ? 'pl-1.5 pr-3' : '',
               networks ? '!h-11' : '',
               currencyClassName,
-              '!rounded-full data-[state=inactive]:hidden data-[state=active]:flex bg-slate-200 dark:bg-slate-750',
+              '!rounded-full h-[48px] data-[state=inactive]:hidden data-[state=active]:flex bg-slate-200 dark:bg-slate-750',
             )}
           >
             {currency ? (
               networks ? (
                 <>
-                  <div className="w-[28px] h-[28px] mr-1.5">
+                  <div className="w-[37px] h-[37px] mr-0.5">
                     <Badge
-                      className="dark:border-[#222137] border-[#F5F5F5] border rounded-[4px] z-[11]"
+                      className="dark:border-[#222137] border-[#F5F5F5] border rounded-[4px] z-[11] !-right-[15%] -bottom-[0%]"
                       position="bottom-right"
                       badgeContent={
                         <NetworkIcon
                           type="square"
                           className="rounded-[3px]"
                           chainId={currency.chainId}
-                          width={16}
-                          height={16}
+                          width={15}
+                          height={15}
                         />
                       }
                     >
                       <Currency.Icon
                         disableLink
                         currency={currency}
-                        width={28}
-                        height={28}
+                        width={37}
+                        height={37}
                       />
                     </Badge>
                   </div>
@@ -238,25 +238,25 @@ const CurrencyInput: FC<CurrencyInputProps> = ({
                 </>
               ) : (
                 <>
-                  <div className="w-[28px] h-[28px] mr-0.5">
+                  <div className="w-[37px] h-[37px] mr-0.5">
                     <Badge
-                      className="dark:border-[#222137] border-[#F5F5F5] border rounded-[4px] z-[11]"
+                      className="dark:border-[#222137] border-[#F5F5F5] border rounded-[4px] z-[11] !-right-[15%] -bottom-[0%]"
                       position="bottom-right"
                       badgeContent={
                         <NetworkIcon
                           type="square"
                           className="rounded-[3px]"
                           chainId={currency.chainId}
-                          width={16}
-                          height={16}
+                          width={15}
+                          height={15}
                         />
                       }
                     >
                       <Currency.Icon
                         disableLink
                         currency={currency}
-                        width={28}
-                        height={28}
+                        width={37}
+                        height={37}
                       />
                     </Badge>
                   </div>
