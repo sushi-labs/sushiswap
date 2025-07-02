@@ -2,6 +2,7 @@
 
 import { useBreakpoint, useIsMounted } from '@sushiswap/hooks'
 import { Container, SkeletonBox, classNames } from '@sushiswap/ui'
+import { usePathname } from 'next/navigation'
 import type {
   ChartingLibraryWidgetOptions,
   ResolutionString,
@@ -35,6 +36,8 @@ const chainIdsByTradeMode: Record<
 }
 
 export default function TradePage() {
+  const pathname = usePathname()
+  const isKatana = pathname.includes('/katana')
   const {
     state: { tradeMode, tradeView },
   } = useDerivedStateSimpleTrade()
@@ -60,7 +63,11 @@ export default function TradePage() {
       <div
         className={classNames(
           'dark:bg-background md:bg-background',
-          tradeView === 'advanced' ? 'bg-white' : '',
+          isKatana
+            ? '!bg-transparent'
+            : tradeView === 'advanced'
+              ? 'bg-white'
+              : '',
         )}
       >
         <TradeViewSwitch />
@@ -72,7 +79,12 @@ export default function TradePage() {
           </main>
         )}
         {tradeView === 'advanced' && (
-          <main className="lg:p-4 md:p-2 pt-9 md:mb-[86px] animate-slide bg-white dark:bg-background md:bg-background">
+          <main
+            className={classNames(
+              'lg:p-4 md:p-2 pt-9 md:mb-[86px] animate-slide bg-white dark:bg-background md:bg-background',
+              isKatana ? '!bg-transparent' : '',
+            )}
+          >
             <Container maxWidth="screen-2xl" className="px-4">
               <div className="flex flex-col-reverse w-full gap-4 md:flex-row">
                 <div className="flex w-full flex-col gap-4 md:min-w-[calc(100%-480px)] md:w-full">
