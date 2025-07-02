@@ -33,10 +33,6 @@ export const SearchItem = ({ token }: { token: SearchToken }) => {
   const balanceUsd = token.balanceUSD ?? 0
   const price24h = (token.priceChange1d ?? 0) / 100
 
-  const filteredBridgeInfo = token.bridgeInfo?.filter(
-    (bridge) => bridge.chainId !== token.chainId,
-  )
-
   return (
     <>
       <div
@@ -52,7 +48,7 @@ export const SearchItem = ({ token }: { token: SearchToken }) => {
         {isHovered ? (
           <div className="flex items-center col-span-4 gap-2 px-8 mt-3 md:col-span-2 md:mt-0 md:ml-auto md:px-0">
             <ActionButtons token={token} />
-            {filteredBridgeInfo?.length > 0 ? (
+            {token?.bridgeInfo?.length > 0 ? (
               <Button
                 onClick={() => {
                   toggleBridgeView('open')

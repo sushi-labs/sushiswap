@@ -4,7 +4,8 @@ import { Button, classNames } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import { useMemo } from 'react'
 import { useCreateQuery } from 'src/lib/hooks/useCreateQuery'
-import { type EvmChainId, evmChains } from 'sushi/chain'
+import { getNetworkKey } from 'src/lib/network'
+import { type ChainId, type EvmChainId, evmChains } from 'sushi/chain'
 import { ChainOptionsSelector } from '../../chain-options-selector'
 
 export const SearchItemBridgeView = ({
@@ -20,7 +21,6 @@ export const SearchItemBridgeView = ({
   }, [token])
 
   const onNetworkSelect = (chainId: number) => {
-    //@DEV @TODO finish network selection logic
     const tokenOnNewChain = token.bridgeInfo?.find(
       (bridge) => bridge.chainId === chainId,
     )?.address
@@ -28,10 +28,13 @@ export const SearchItemBridgeView = ({
       console.error('Token not found on the selected chain')
       return
     }
-    createQuery([
-      { name: 'chainId1', value: String(chainId) },
-      { name: 'token1', value: String(tokenOnNewChain) },
-    ])
+    createQuery(
+      [
+        { name: 'chainId1', value: String(chainId) },
+        { name: 'token1', value: String(tokenOnNewChain) },
+      ],
+      `/${getNetworkKey(Number(chainId) as ChainId)}/swap/advanced`,
+    )
   }
 
   return (
