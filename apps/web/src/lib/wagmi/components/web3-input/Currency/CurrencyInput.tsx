@@ -21,7 +21,7 @@ import {
   useState,
   useTransition,
 } from 'react'
-import { EvmChain, type EvmChainId } from 'sushi/chain'
+import type { EvmChainId } from 'sushi/chain'
 import { type Token, type Type, tryParseAmount } from 'sushi/currency'
 import type { Percent } from 'sushi/math'
 import { useAccount } from 'wagmi'

@@ -212,7 +212,6 @@ const DerivedstateSimpleSwapProvider: FC<
   const setToken1 = useCallback<(_token1: string | Type) => void>(
     async (_token1) => {
       // If entity is provided, parse it to a string
-      console.log('setToken1', _token1)
       let chainId1 = ''
       const token1 = getTokenAsString(_token1)
 

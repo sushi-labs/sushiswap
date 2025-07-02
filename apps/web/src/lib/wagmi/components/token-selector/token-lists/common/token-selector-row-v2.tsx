@@ -32,13 +32,14 @@ import {
   useState,
 } from 'react'
 import { NativeAddress } from 'src/lib/constants'
-import { useCreateQuery } from 'src/lib/hooks/useCreateQuery'
 import { useNetworkOptions } from 'src/lib/hooks/useNetworkOptions'
 import { NetworkButton } from 'src/ui/swap/chain-options-selector'
 import { FavoriteButton } from 'src/ui/swap/trade/favorite-button'
 import { formatUSD } from 'sushi'
+import type { EvmChainId } from 'sushi'
 import { EvmChain } from 'sushi/chain'
 import type { Amount, Type } from 'sushi/currency'
+import { Token } from 'sushi/currency'
 import { ZERO } from 'sushi/math'
 import { formatUnits, zeroAddress } from 'viem'
 
@@ -74,11 +75,13 @@ export const TokenSelectorRowV2: FC<TokenSelectorRowV2> = memo(
     bridgeInfo,
   }) {
     const [isHovered, setIsHovered] = useState(false)
-    const { createQuery } = useCreateQuery()
 
-    const onClick = useCallback(() => {
-      onSelect(currency)
-    }, [currency, onSelect])
+    const onClick = useCallback(
+      (newCurrency: Type) => {
+        onSelect(newCurrency)
+      },
+      [onSelect],
+    )
 
     const showInfo = useCallback(
       (e: React.MouseEvent | React.KeyboardEvent) => {
@@ -114,8 +117,8 @@ export const TokenSelectorRowV2: FC<TokenSelectorRowV2> = memo(
                 ? zeroAddress
                 : currency.wrapped.address.toLowerCase()
             }`}
-            onClick={onClick}
-            onKeyDown={onClick}
+            onClick={() => onClick(currency)}
+            onKeyDown={() => onClick(currency)}
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
             className={classNames(
@@ -209,16 +212,15 @@ export const TokenSelectorRowV2: FC<TokenSelectorRowV2> = memo(
                         iconSize={16}
                         onClick={(e) => {
                           e.stopPropagation()
-                          createQuery([
-                            {
-                              name: 'token1',
-                              value: info.address,
-                            },
-                            {
-                              name: 'chainId1',
-                              value: String(info.chainId),
-                            },
-                          ])
+                          onClick(
+                            new Token({
+                              address: info.address as `0x${string}`,
+                              chainId: info.chainId as EvmChainId,
+                              decimals: info.decimals,
+                              symbol: currency.symbol,
+                              name: currency.name,
+                            }),
+                          )
                         }}
                       />
                     ))}

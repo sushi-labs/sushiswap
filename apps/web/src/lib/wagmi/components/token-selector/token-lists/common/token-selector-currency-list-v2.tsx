@@ -55,7 +55,7 @@ export const TokenSelectorCurrencyListV2: FC<TokenSelectorCurrencyListV2Props> =
         balance: balancesMap?.get(currency.id),
         price: priceMap?.get(currency.id),
         showWarning: currency.approved === false,
-        onSelect: () => onSelect(currency),
+        onSelect,
         selected: selected
           ? (currency.isNative === true && selected.isNative === true) ||
             (selected.isToken &&
