@@ -551,7 +551,7 @@ export const curtis = {
       blockCreated: 6661339,
     },
   },
-}
+} as const
 
 export const apeChain = {
   id: 33139,
@@ -619,13 +619,71 @@ export const hemi = {
     symbol: 'ETH',
   },
   rpcUrls: {
-    default: { http: ['https://9277255a.rpc.hemi.network/rpc'] },
+    default: { http: ['https://rpc.hemi.network/rpc'] },
   },
   blockExplorers: {
     default: {
       name: 'Hemi Explorer',
       url: 'https://explorer.hemi.xyz',
       apiUrl: 'https://explorer.hemi.xyz/api',
+    },
+  },
+  testnet: false,
+  contracts: {
+    multicall3: {
+      address: '0xcA11bde05977b3631167028862bE2a173976CA11',
+      blockCreated: 0,
+    },
+  },
+} as const
+
+export const tatara = {
+  id: 129399,
+  name: 'Tatara',
+  nativeCurrency: {
+    decimals: 18,
+    name: 'Ether',
+    symbol: 'ETH',
+  },
+  rpcUrls: {
+    default: {
+      http: ['https://rpc.tatara.katanarpc.com'],
+    },
+  },
+  blockExplorers: {
+    default: {
+      name: 'Tatara Explorer',
+      url: 'https://explorer.tatara.katana.network',
+      apiUrl: 'https://explorer.tatara.katana.network/api',
+    },
+  },
+  testnet: true,
+  contracts: {
+    multicall3: {
+      address: '0xcA11bde05977b3631167028862bE2a173976CA11',
+      blockCreated: 0,
+    },
+  },
+} as const
+
+export const katana = {
+  id: 747474,
+  name: 'Katana',
+  nativeCurrency: {
+    decimals: 18,
+    name: 'Ether',
+    symbol: 'ETH',
+  },
+  rpcUrls: {
+    default: {
+      http: ['https://rpc.katana.network'],
+    },
+  },
+  blockExplorers: {
+    default: {
+      name: 'Katana Explorer',
+      url: 'https://explorer.katanarpc.com',
+      apiUrl: 'https://explorer.katanarpc.com/api',
     },
   },
   testnet: false,
@@ -766,7 +824,8 @@ export const publicTransports = {
   [EvmChainId.SONIC]: http(
     `https://lb.drpc.org/ogrpc?network=sonic&dkey=${drpcId}`,
   ),
-  [EvmChainId.HEMI]: http('https://9277255a.rpc.hemi.network/rpc'),
+  [EvmChainId.HEMI]: http('https://rpc.hemi.network/rpc'),
+  [EvmChainId.KATANA]: http('https://rpc.katana.network'),
   /* Testnets */ // TODO: add testnet transports
   [EvmChainId.ARBITRUM_TESTNET]: http('https://sepolia-rollup.arbitrum.io/rpc'),
   [EvmChainId.AVALANCHE_TESTNET]: http(
@@ -778,6 +837,7 @@ export const publicTransports = {
   [EvmChainId.SEPOLIA]: http('https://sepolia.drpc.org'),
   [EvmChainId.GÖRLI]: http('https://eth-goerli.api.onfinality.io/public'),
   [EvmChainId.CURTIS]: http('https://curtis.rpc.caldera.xyz/http'),
+  [EvmChainId.TATARA]: http('https://rpc.tatara.katanarpc.com'),
 } as const satisfies Record<EvmChainId, Transport>
 
 export const publicChains = [
@@ -827,6 +887,7 @@ export const publicChains = [
   apeChain as unknown as Omit<typeof mainnet, 'id'> & { id: 33139 },
   sonic,
   hemi,
+  katana,
   /* Testnets */
   arbitrumSepolia,
   avalancheFuji,
@@ -835,7 +896,8 @@ export const publicChains = [
   goerli,
   polygonMumbai,
   sepolia,
-  curtis as unknown as Omit<typeof mainnet, 'id'> & { id: 33111 },
+  curtis,
+  tatara,
 ] as const satisfies Readonly<Chain[]>
 
 export const publicClientConfig = {
@@ -1023,6 +1085,10 @@ export const publicClientConfig = {
     chain: hemi,
     transport: publicTransports[EvmChainId.HEMI],
   },
+  [EvmChainId.KATANA]: {
+    chain: katana,
+    transport: publicTransports[EvmChainId.KATANA],
+  },
   /* Testnets */
   [EvmChainId.ARBITRUM_TESTNET]: {
     chain: arbitrumSepolia,
@@ -1053,8 +1119,12 @@ export const publicClientConfig = {
     transport: publicTransports[EvmChainId.SEPOLIA],
   },
   [EvmChainId.CURTIS]: {
-    chain: curtis as unknown as typeof mainnet & { id: 33111 },
+    chain: curtis,
     transport: publicTransports[EvmChainId.CURTIS],
+  },
+  [EvmChainId.TATARA]: {
+    chain: tatara,
+    transport: publicTransports[EvmChainId.TATARA],
   },
 } as const satisfies Record<
   EvmChainId,
