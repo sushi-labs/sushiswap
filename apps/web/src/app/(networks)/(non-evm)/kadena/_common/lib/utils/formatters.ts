@@ -1,4 +1,4 @@
-import { Decimal } from 'sushi'
+import { Decimal, withoutScientificNotation } from 'sushi'
 import TronWeb from 'tronweb'
 
 export const truncateText = (str: string | `0x${string}`, n = 5): string => {
@@ -97,11 +97,8 @@ export const formatNumberWithMaxDecimals = (
 }
 
 export const formatPactDecimal = (value: number): string => {
-  // If it's already a decimal (has fractional part), return as-is
-  if (!Number.isInteger(value)) return value.toString()
-
-  // If it's an integer, append `.0`
-  return `${value}.0`
+  const dec = new Decimal(value)
+  return dec.toFixed(dec.dp() > 0 ? dec.dp() : 1)
 }
 
 export function formatToMaxDecimals(
@@ -109,11 +106,17 @@ export function formatToMaxDecimals(
   maxDecimals: number,
 ): string {
   try {
-    const value = new Decimal(amount)
+    const normalized =
+      typeof amount === 'string'
+        ? withoutScientificNotation(amount)
+        : String(amount)
 
+    if (!normalized) return '0'
+
+    const value = new Decimal(normalized)
     const truncated = value.toDecimalPlaces(maxDecimals, Decimal.ROUND_DOWN)
 
-    return truncated.toFixed().replace(/\.?0+$/, '')
+    return truncated.toFixed(maxDecimals).replace(/\.?0+$/, '')
   } catch {
     return '0'
   }
