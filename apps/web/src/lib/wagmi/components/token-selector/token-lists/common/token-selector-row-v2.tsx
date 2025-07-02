@@ -32,6 +32,7 @@ import {
   useState,
 } from 'react'
 import { NativeAddress } from 'src/lib/constants'
+import { useCreateQuery } from 'src/lib/hooks/useCreateQuery'
 import { useNetworkOptions } from 'src/lib/hooks/useNetworkOptions'
 import { NetworkButton } from 'src/ui/swap/chain-options-selector'
 import { FavoriteButton } from 'src/ui/swap/trade/favorite-button'
@@ -73,6 +74,7 @@ export const TokenSelectorRowV2: FC<TokenSelectorRowV2> = memo(
     bridgeInfo,
   }) {
     const [isHovered, setIsHovered] = useState(false)
+    const { createQuery } = useCreateQuery()
 
     const onClick = useCallback(() => {
       onSelect(currency)
@@ -205,6 +207,19 @@ export const TokenSelectorRowV2: FC<TokenSelectorRowV2> = memo(
                         key={`${info.chainId}-${info.address}`}
                         chainId={info.chainId as number}
                         iconSize={16}
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          createQuery([
+                            {
+                              name: 'token1',
+                              value: info.address,
+                            },
+                            {
+                              name: 'chainId1',
+                              value: String(info.chainId),
+                            },
+                          ])
+                        }}
                       />
                     ))}
                   </div>
