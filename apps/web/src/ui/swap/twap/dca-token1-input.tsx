@@ -10,6 +10,7 @@ import {
 } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import { useMemo } from 'react'
+import { useTradeMode } from 'src/lib/hooks/useTradeMode'
 import { QuickSelect } from 'src/lib/wagmi/components/token-selector/quick-select/quick-select'
 import { TokenSelectorV2 } from 'src/lib/wagmi/components/token-selector/token-selector-v2'
 import { BalancePanel } from 'src/lib/wagmi/components/web3-input/Currency/BalancePanel'
@@ -23,6 +24,8 @@ export const DCAToken1Input = () => {
     mutate: { setToken1: onSelect },
     isToken1Loading: isTokenLoading,
   } = useDerivedStateTwap()
+  const { tradeMode } = useTradeMode()
+  const isTwap = tradeMode === 'limit' || tradeMode === 'dca'
 
   const { address } = useAccount()
 
@@ -35,6 +38,7 @@ export const DCAToken1Input = () => {
         selected={token}
         chainId={chainId}
         onSelect={onSelect}
+        isTwap={isTwap}
       >
         <Button
           data-state={isTokenLoading ? 'inactive' : 'active'}
@@ -80,7 +84,7 @@ export const DCAToken1Input = () => {
         </Button>
       </TokenSelectorV2>
     )
-  }, [isTokenLoading, onSelect, token, chainId])
+  }, [isTokenLoading, onSelect, token, chainId, isTwap])
 
   return (
     <div

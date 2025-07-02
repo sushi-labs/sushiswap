@@ -28,7 +28,7 @@ import { useAccount } from 'wagmi'
 import { CurrencyInfo } from './currency-info'
 import { TokenSelectorStatesV2 } from './token-selector-states-v2'
 
-export type TokenSelectorV2Type = 'buy' | 'sell' | 'browse'
+export type TokenSelectorV2Type = 'buy' | 'sell'
 
 interface TokenSelectorV2Props {
   selected: Type | undefined
@@ -44,7 +44,7 @@ interface TokenSelectorV2Props {
   onNetworkSelect?: (network: number) => void
   isBrowse?: boolean
   type: TokenSelectorV2Type
-  isLimit?: boolean
+  isTwap?: boolean
   variant?: string
 }
 
@@ -65,7 +65,7 @@ export const TokenSelectorV2: FC<TokenSelectorV2Props> = ({
   onNetworkSelect,
   isBrowse,
   type,
-  isLimit,
+  isTwap,
   variant,
 }) => {
   const { address } = useAccount()
@@ -111,12 +111,12 @@ export const TokenSelectorV2: FC<TokenSelectorV2Props> = ({
       setSelectedNetwork(network)
       if (onNetworkSelect) {
         // onNetworkSelect(network)
-        if (isLimit) {
+        if (isTwap) {
           setShowLimitInfo(true)
         }
       }
     },
-    [onNetworkSelect, currencyInfo, isLimit],
+    [onNetworkSelect, currencyInfo, isTwap],
   )
 
   return (
@@ -141,12 +141,12 @@ export const TokenSelectorV2: FC<TokenSelectorV2Props> = ({
               {isBrowse ? 'Browse Tokens' : 'Select Token'}
             </DialogTitle>
           </DialogHeader>
-          {type === 'buy' || isLimit ? (
+          {type === 'sell' || isTwap ? (
             <div className="flex flex-col gap-2">
               <p className="text-xs text-slate-450 dark:text-slate-500">
-                {isLimit ? 'Supported Chains' : 'Chains'}
+                {isTwap ? 'Supported Chains' : 'Chains'}
               </p>
-              {isLimit && showLimitInfo ? (
+              {isTwap && showLimitInfo ? (
                 <div className="flex items-center gap-1 p-2 text-xs bg-skyblue/5 rounded-xl text-skyblue">
                   <InformationCircleIcon width={16} height={16} />
                   <p>
@@ -171,7 +171,7 @@ export const TokenSelectorV2: FC<TokenSelectorV2Props> = ({
               onValueChange={setQuery}
               className="py-7 placeholder:text-slate-450 !dark:text-slate-500 placeholder:dark:text-slate-450 dark:!bg-slate-900 !bg-gray-100"
             />
-            {type !== 'buy' && !isLimit ? (
+            {type === 'buy' && !isTwap ? (
               <div className="absolute -translate-y-1/2 top-1/2 right-2">
                 <NetworkMenu
                   selectedNetwork={_selectedNetwork}

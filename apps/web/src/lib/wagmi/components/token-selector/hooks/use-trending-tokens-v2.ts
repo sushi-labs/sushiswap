@@ -7,7 +7,7 @@ import { useMemo } from 'react'
 import { Token } from 'sushi/currency'
 
 type UseTrendingTokens = {
-  chainIds: TrendingTokensChainId[] | undefined
+  chainIds: TrendingTokensChainId[]
 }
 
 export function useTrendingTokensV2({ chainIds }: UseTrendingTokens) {

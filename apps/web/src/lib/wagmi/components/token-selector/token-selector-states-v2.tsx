@@ -4,10 +4,12 @@ import type { Type } from 'sushi/currency'
 
 import {
   type TokenListV2ChainId,
+  type TrendingTokensChainId,
   isTokenListV2ChainId,
   isTrendingTokensChainId,
 } from '@sushiswap/graph-client/data-api'
-import { TempChainIds } from 'src/lib/hooks/react-query/recent-swaps/useRecentsSwaps'
+import { classNames } from '@sushiswap/ui'
+import { useNetworkOptions } from 'src/lib/hooks/useNetworkOptions'
 import type { Address } from 'viem'
 import { useMyTokensV2 } from './hooks/use-my-tokens-v2'
 import { useSearchTokensV2 } from './hooks/use-search-tokens-v2'
@@ -44,12 +46,13 @@ export function TokenSelectorStatesV2({
   search,
   type,
 }: TokenSelectorStates) {
+  const { networkOptions } = useNetworkOptions()
   // Ensure that the user's tokens are loaded
   useMyTokensV2({
     chainIds:
       selectedNetwork && isTokenListV2ChainId(selectedNetwork)
         ? [selectedNetwork]
-        : TempChainIds,
+        : networkOptions.filter(isTokenListV2ChainId),
     account,
     includeNative,
   })
@@ -59,7 +62,9 @@ export function TokenSelectorStatesV2({
     chainIds:
       selectedNetwork && isTrendingTokensChainId(selectedNetwork)
         ? [selectedNetwork]
-        : TempChainIds,
+        : (networkOptions.filter(
+            isTrendingTokensChainId,
+          ) as TrendingTokensChainId[]),
   })
 
   // Ensure that the search list is loaded if it's the first thing the user sees
@@ -67,7 +72,7 @@ export function TokenSelectorStatesV2({
     chainIds:
       selectedNetwork && isTokenListV2ChainId(selectedNetwork)
         ? [selectedNetwork]
-        : TempChainIds,
+        : networkOptions.filter(isTokenListV2ChainId),
     search: '',
   })
 
@@ -82,7 +87,7 @@ export function TokenSelectorStatesV2({
         search={search}
         includeNative={includeNative}
         onShowInfo={onShowInfo}
-        showChainOptions={type === 'sell'}
+        showChainOptions={type === 'buy'}
       />
     )
   }
@@ -110,9 +115,9 @@ export function TokenSelectorStatesV2({
   ) {
     return (
       <>
-        {type !== 'buy' ? (
+        {type === 'buy' ? (
           <TokenSelectorChipBarV2
-            chainIds={selectedNetwork ? [selectedNetwork] : TempChainIds}
+            chainIds={selectedNetwork ? [selectedNetwork] : networkOptions}
             onSelect={onSelect}
             includeNative={includeNative}
             showPinnedTokens={!hidePinnedTokens}
@@ -125,7 +130,7 @@ export function TokenSelectorStatesV2({
           onSelect={onSelect}
           onShowInfo={onShowInfo}
           selected={selected}
-          showChainOptions={type === 'sell'}
+          showChainOptions={type === 'buy'}
         />
       </>
     )
@@ -138,9 +143,9 @@ export function TokenSelectorStatesV2({
   ) {
     return (
       <>
-        {type !== 'buy' ? (
+        {type === 'buy' ? (
           <TokenSelectorChipBarV2
-            chainIds={selectedNetwork ? [selectedNetwork] : TempChainIds}
+            chainIds={selectedNetwork ? [selectedNetwork] : networkOptions}
             onSelect={onSelect}
             includeNative={includeNative}
             showPinnedTokens={!hidePinnedTokens}
@@ -154,7 +159,7 @@ export function TokenSelectorStatesV2({
             onSelect={onSelect}
             onShowInfo={onShowInfo}
             selected={selected}
-            showChainOptions={type === 'sell'}
+            showChainOptions={type === 'buy'}
           />
         ) : null}
 
@@ -164,7 +169,7 @@ export function TokenSelectorStatesV2({
           onShowInfo={onShowInfo}
           selected={selected}
           search={''}
-          showChainOptions={type === 'sell'}
+          showChainOptions={type === 'buy'}
         />
       </>
     )
@@ -172,15 +177,15 @@ export function TokenSelectorStatesV2({
 
   return (
     <>
-      {type !== 'buy' ? (
+      {type === 'buy' ? (
         <TokenSelectorChipBarV2
-          chainIds={selectedNetwork ? [selectedNetwork] : TempChainIds}
+          chainIds={selectedNetwork ? [selectedNetwork] : networkOptions}
           onSelect={onSelect}
           includeNative={includeNative}
           showPinnedTokens={!hidePinnedTokens}
         />
       ) : null}
-      <Title />
+      <Title className={type === 'sell' ? '!mt-0' : ''} />
 
       {account ? (
         <TokenSelectorMyTokensV2
@@ -189,7 +194,7 @@ export function TokenSelectorStatesV2({
           onShowInfo={onShowInfo}
           selected={selected}
           includeNative={includeNative}
-          showChainOptions={type === 'sell'}
+          showChainOptions={type === 'buy'}
         />
       ) : null}
 
@@ -198,14 +203,19 @@ export function TokenSelectorStatesV2({
         onSelect={onSelect}
         onShowInfo={onShowInfo}
         selected={selected}
-        showChainOptions={type === 'sell'}
+        showChainOptions={type === 'buy'}
       />
     </>
   )
 }
 
-const Title = () => (
-  <p className="mt-4 mb-2 text-xs font-medium text-slate-450 dark:text-slate-500">
+const Title = ({ className }: { className?: string }) => (
+  <p
+    className={classNames(
+      'mt-4 mb-2 text-xs font-medium text-slate-450 dark:text-slate-500',
+      className ?? '',
+    )}
+  >
     Tokens
   </p>
 )

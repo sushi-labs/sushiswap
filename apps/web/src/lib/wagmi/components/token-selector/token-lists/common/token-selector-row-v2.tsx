@@ -23,8 +23,16 @@ import { Badge } from '@sushiswap/ui'
 import { Currency } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import type React from 'react'
-import { type CSSProperties, type FC, memo, useCallback, useState } from 'react'
+import {
+  type CSSProperties,
+  type FC,
+  memo,
+  useCallback,
+  useMemo,
+  useState,
+} from 'react'
 import { NativeAddress } from 'src/lib/constants'
+import { useNetworkOptions } from 'src/lib/hooks/useNetworkOptions'
 import { NetworkButton } from 'src/ui/swap/chain-options-selector'
 import { FavoriteButton } from 'src/ui/swap/trade/favorite-button'
 import { formatUSD } from 'sushi'
@@ -77,6 +85,14 @@ export const TokenSelectorRowV2: FC<TokenSelectorRowV2> = memo(
       },
       [onShowInfo],
     )
+    const { networkOptions } = useNetworkOptions()
+
+    const filteredBridgeInfo = useMemo(() => {
+      if (!bridgeInfo) return []
+      return bridgeInfo.filter((info) =>
+        networkOptions.some((option) => option === info.chainId),
+      )
+    }, [bridgeInfo, networkOptions])
 
     return (
       <TraceEvent
@@ -182,9 +198,9 @@ export const TokenSelectorRowV2: FC<TokenSelectorRowV2> = memo(
               </div>
 
               <div className="flex items-center gap-4">
-                {isHovered && showChainOptions && bridgeInfo?.length ? (
+                {isHovered && showChainOptions && filteredBridgeInfo?.length ? (
                   <div className="flex gap-1 items-center">
-                    {bridgeInfo.map((info) => (
+                    {filteredBridgeInfo?.map((info) => (
                       <NetworkButton
                         key={`${info.chainId}-${info.address}`}
                         chainId={info.chainId as number}

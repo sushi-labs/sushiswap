@@ -1,7 +1,7 @@
 'use client'
 
 import { classNames } from '@sushiswap/ui'
-import { usePathname } from 'next/navigation'
+import { useTradeMode } from 'src/lib/hooks/useTradeMode'
 import { Web3Input } from 'src/lib/wagmi/components/web3-input'
 import { isWNativeSupported } from 'sushi/config'
 import { useDerivedStateTwap } from './derivedstate-twap-provider'
@@ -12,8 +12,8 @@ export const TwapToken0Input = () => {
     mutate: { setSwapAmount, setToken0 },
     isToken0Loading: isLoading,
   } = useDerivedStateTwap()
-  const pathname = usePathname()
-  const isLimit = pathname.includes('limit')
+  const { tradeMode } = useTradeMode()
+  const isTwap = tradeMode === 'limit' || tradeMode === 'dca'
 
   return (
     <Web3Input.Currency
@@ -29,8 +29,8 @@ export const TwapToken0Input = () => {
       currency={token0}
       currencyLoading={isLoading}
       allowNative={isWNativeSupported(chainId)}
-      label={isLimit ? 'Sell' : 'Allocate'}
-      isLimit={isLimit}
+      label={tradeMode === 'limit' ? 'Sell' : 'Allocate'}
+      isTwap={isTwap}
     />
   )
 }
