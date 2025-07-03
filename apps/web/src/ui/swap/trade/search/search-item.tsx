@@ -1,14 +1,12 @@
 import type { SearchToken } from '@sushiswap/graph-client/data-api'
 import { Button, Collapsible, classNames } from '@sushiswap/ui'
-import { useSearchParams } from 'next/navigation'
 import { useState } from 'react'
 import { getChangeSign, getTextColor } from 'src/lib/helpers'
-import { useCreateQuery } from 'src/lib/hooks/useCreateQuery'
-import { getNetworkKey } from 'src/lib/network'
-import type { ChainId, EvmChainId } from 'sushi/chain'
+import { useSwapTokenSelect } from 'src/lib/hooks/useTokenSelect'
+import type { EvmChainId } from 'sushi/chain'
+import { Token } from 'sushi/currency'
 import { formatNumber, formatPercent, formatUSD } from 'sushi/format'
 import { formatUnits } from 'viem'
-import { useSwitchChain } from 'wagmi'
 import { FavoriteButton } from '../favorite-button'
 import { TokenNetworkIcon } from '../token-network-icon'
 import { SearchItemBridgeView } from './search-item-bridge-view'
@@ -99,107 +97,23 @@ const ActionButtons = ({
   token,
   onClose,
 }: { token: SearchToken; onClose?: () => void }) => {
-  const { createQuery } = useCreateQuery()
-  const { switchChainAsync } = useSwitchChain()
-
-  const searchParams = useSearchParams()
-  const token0 = searchParams.get('token0')
-  const chainId0 = searchParams.get('chainId0')
-  const token1 = searchParams.get('token1')
-  const chainId1 = searchParams.get('chainId1')
-
-  //@DEV TODO make these reusable
-  const handleBuyToken = async () => {
-    await switchChainAsync({ chainId: token?.chainId as EvmChainId })
-    if (token.address === token1 && chainId1 === String(token.chainId)) {
-      createQuery(
-        [
-          {
-            name: 'swapAmount',
-            value: null,
-          },
-          {
-            name: 'token0',
-            value: token1,
-          },
-          {
-            name: 'chainId0',
-            value: chainId1,
-          },
-          {
-            name: 'token1',
-            value: token0,
-          },
-          {
-            name: 'chainId1',
-            value: chainId0,
-          },
-        ],
-        `/${getNetworkKey(token?.chainId as ChainId)}/swap/advanced`,
-      )
-    } else {
-      createQuery(
-        [
-          {
-            name: 'token0',
-            value: token.address,
-          },
-          {
-            name: 'chainId0',
-            value: String(token.chainId),
-          },
-        ],
-        `/${getNetworkKey(token?.chainId as ChainId)}/swap/advanced`,
-      )
-    }
-    onClose?.()
-  }
-  const handleSellToken = async () => {
-    if (token.address === token0 && chainId0 === String(token.chainId)) {
-      createQuery(
-        [
-          {
-            name: 'swapAmount',
-            value: null,
-          },
-          {
-            name: 'token0',
-            value: token1,
-          },
-          {
-            name: 'chainId0',
-            value: chainId1,
-          },
-          {
-            name: 'token1',
-            value: token0,
-          },
-          {
-            name: 'chainId1',
-            value: chainId0,
-          },
-        ],
-        `/${getNetworkKey(Number(chainId1) as ChainId)}/swap/advanced`,
-      )
-    } else {
-      createQuery([
-        {
-          name: 'token1',
-          value: token.address,
-        },
-        {
-          name: 'chainId1',
-          value: String(token.chainId),
-        },
-      ])
-    }
-    onClose?.()
-  }
+  const { handleTokenInput, handleTokenOutput } = useSwapTokenSelect()
 
   return (
     <div className="flex items-center justify-end w-full col-span-5 gap-2 md:col-span-2">
       <Button
-        onClick={handleBuyToken}
+        onClick={async () => {
+          await handleTokenOutput({
+            token: new Token({
+              chainId: token.chainId as EvmChainId,
+              address: token.address,
+              decimals: token.decimals,
+              symbol: token.symbol,
+              name: token.name,
+            }),
+          })
+          onClose?.()
+        }}
         size="xs"
         className="text-slate-50 w-full md:w-fit !rounded-full bg-green-500 font-semibold hover:bg-green-500 active:bg-green-500/95 focus:bg-green-500"
       >
@@ -207,7 +121,18 @@ const ActionButtons = ({
       </Button>
 
       <Button
-        onClick={handleSellToken}
+        onClick={async () => {
+          await handleTokenInput({
+            token: new Token({
+              chainId: token.chainId as EvmChainId,
+              address: token.address,
+              decimals: token.decimals,
+              symbol: token.symbol,
+              name: token.name,
+            }),
+          })
+          onClose?.()
+        }}
         size="xs"
         className="text-slate-50 w-full md:w-fit bg-red-100 !rounded-full font-semibold hover:bg-red-100 active:bg-red-100/95 focus:bg-red-500"
       >

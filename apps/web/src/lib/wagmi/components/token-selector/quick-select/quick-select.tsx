@@ -6,13 +6,10 @@ import {
   classNames,
 } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
-import { usePathname } from 'next/navigation'
 import { useEffect, useState } from 'react'
-import { useCreateQuery } from 'src/lib/hooks/useCreateQuery'
-import { replaceNetworkSlug } from 'src/lib/network'
-import type { EvmChainId } from 'sushi'
+import { useSwapTokenSelect } from 'src/lib/hooks/useTokenSelect'
 import type { Currency } from 'sushi/currency'
-import { useAccount, useSwitchChain } from 'wagmi'
+import { useAccount } from 'wagmi'
 import { useQuickSelectTokens } from '../hooks/use-quick-select-tokens'
 import { useQuickSelectContext } from './quick-select-provider'
 
@@ -56,9 +53,7 @@ const QuickSelectItem = ({
     mutate: { onValueChange },
   } = useQuickSelectContext()
   const mainCurrency = currencies[0]
-  const { createQuery } = useCreateQuery()
-  const { switchChainAsync } = useSwitchChain()
-  const pathname = usePathname()
+  const { handleTokenInput, handleTokenOutput } = useSwapTokenSelect()
 
   const isSelected = isOpen && selectedSymbol === mainCurrency?.symbol
 
@@ -95,31 +90,19 @@ const QuickSelectItem = ({
   }, [isSelected])
 
   const onSelectToken = async (currency: Currency) => {
-    console.log('Selected token:', currency)
     setExpanded(false)
     setTimeout(() => {
       onValueChange(false, currency?.symbol ?? undefined)
-      const newPathname = replaceNetworkSlug(
-        Number(currency.chainId) as EvmChainId,
-        pathname,
-      )
-      createQuery(
-        [
-          {
-            name: type === 'INPUT' ? 'token0' : 'token1',
-            value: currency.isNative ? 'NATIVE' : currency?.wrapped.address,
-          },
-          {
-            name: type === 'INPUT' ? 'chainId0' : 'chainId1',
-            value: currency.chainId.toString(),
-          },
-        ],
-        type === 'INPUT' ? newPathname : undefined,
-      )
+      if (type === 'INPUT') {
+        handleTokenInput({
+          token: currency,
+        })
+      } else {
+        handleTokenOutput({
+          token: currency,
+        })
+      }
     }, 300)
-    if (type === 'INPUT') {
-      await switchChainAsync({ chainId: currency.chainId })
-    }
   }
 
   return (
