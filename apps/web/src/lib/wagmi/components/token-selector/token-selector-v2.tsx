@@ -158,6 +158,7 @@ export const TokenSelectorV2: FC<TokenSelectorV2Props> = ({
               <ChainOptionsSelector
                 onNetworkSelect={_onNetworkSelect}
                 size="lg"
+                selectedNetwork={_selectedNetwork as EvmChainId}
               />
             </div>
           ) : null}

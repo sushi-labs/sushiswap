@@ -28,10 +28,12 @@ export const ChainOptionsSelector = ({
   size = 'sm',
   networks,
   onNetworkSelect,
+  selectedNetwork,
 }: {
   size?: 'sm' | 'lg'
   networks?: number[]
   onNetworkSelect?: (network: number) => void
+  selectedNetwork?: number
 }) => {
   const { networkOptions: defaultNetworks } = useNetworkOptions()
 
@@ -96,6 +98,9 @@ export const ChainOptionsSelector = ({
                 onClick={() => onNetworkSelect?.(chainId)}
                 iconSize={iconSize}
                 chainId={chainId}
+                className={classNames(
+                  selectedNetwork === chainId && 'bg-blue/10',
+                )}
               />
             </TooltipTrigger>
             <TooltipContent className="border-black/5 dark:border-white/5 !rounded-md bg-white/20 dark:bg-black/20">
@@ -130,14 +135,17 @@ export const ChainOptionsSelector = ({
             <DropdownMenuGroup>
               {overflow.map((chainId) => (
                 <DropdownMenuItem
-                  className="pr-10"
                   key={chainId}
                   onClick={() => onNetworkSelect?.(chainId)}
+                  className={classNames(
+                    'pr-10',
+                    selectedNetwork === chainId && 'bg-blue/10',
+                  )}
                 >
                   <NetworkButton
                     iconSize={iconSize}
                     chainId={chainId}
-                    className="border-none"
+                    className={'border-none'}
                   />
                   <span className="ml-2">
                     {EvmChainKey[chainId as EvmChainId].toLocaleUpperCase()}

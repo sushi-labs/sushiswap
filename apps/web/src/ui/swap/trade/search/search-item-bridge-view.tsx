@@ -2,11 +2,14 @@ import { ArrowRightIcon } from '@heroicons/react-v1/solid'
 import type { SearchToken } from '@sushiswap/graph-client/data-api'
 import { Button, classNames } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import { useCreateQuery } from 'src/lib/hooks/useCreateQuery'
+import { useSwapTokenSelect } from 'src/lib/hooks/useTokenSelect'
 import { getNetworkKey } from 'src/lib/network'
 import { type ChainId, type EvmChainId, evmChains } from 'sushi/chain'
+import { Token } from 'sushi/currency'
 import { ChainOptionsSelector } from '../../chain-options-selector'
+import { useSearchContext } from './search-provider'
 
 export const SearchItemBridgeView = ({
   token,
@@ -15,26 +18,44 @@ export const SearchItemBridgeView = ({
   token: SearchToken
   toggleBridgeView: (view: 'open' | 'close') => void
 }) => {
-  const { createQuery } = useCreateQuery()
+  const {
+    mutate: { setSearchValue },
+  } = useSearchContext()
+  const [selectedNetwork, setSelectedNetwork] = useState<number | undefined>(
+    undefined,
+  )
+  const { handleTokenOutput } = useSwapTokenSelect()
   const bridgeOptions = useMemo(() => {
     return token?.bridgeInfo?.map((bridge) => bridge.chainId as number) ?? []
   }, [token])
 
   const onNetworkSelect = (chainId: number) => {
+    setSelectedNetwork(chainId)
+  }
+
+  const onConfirm = () => {
+    const chainId = selectedNetwork
+    if (!chainId) return
     const tokenOnNewChain = token.bridgeInfo?.find(
       (bridge) => bridge.chainId === chainId,
-    )?.address
+    )
     if (!tokenOnNewChain) {
       console.error('Token not found on the selected chain')
       return
     }
-    createQuery(
-      [
-        { name: 'chainId1', value: String(chainId) },
-        { name: 'token1', value: String(tokenOnNewChain) },
-      ],
-      `/${getNetworkKey(Number(chainId) as ChainId)}/swap/advanced`,
-    )
+    const _token = new Token({
+      chainId: chainId as EvmChainId,
+      address: tokenOnNewChain.address,
+      decimals: tokenOnNewChain.decimals,
+      symbol: token.symbol,
+      name: token.name,
+    })
+    setSearchValue('')
+    handleTokenOutput({
+      token: _token,
+    })
+    toggleBridgeView('close')
+    setSelectedNetwork(undefined)
   }
 
   return (
@@ -74,6 +95,7 @@ export const SearchItemBridgeView = ({
               Bridge To
             </span>
             <ChainOptionsSelector
+              selectedNetwork={selectedNetwork}
               onNetworkSelect={onNetworkSelect}
               networks={bridgeOptions}
             />
@@ -84,15 +106,14 @@ export const SearchItemBridgeView = ({
             className="w-1/2"
             size="sm"
             variant="secondary"
-            onClick={() => toggleBridgeView('close')}
+            onClick={() => {
+              toggleBridgeView('close')
+              setSelectedNetwork(undefined)
+            }}
           >
             Close
           </Button>
-          <Button
-            className="w-full"
-            size="sm"
-            onClick={() => toggleBridgeView('close')}
-          >
+          <Button className="w-full" size="sm" onClick={onConfirm}>
             Confirm
           </Button>
         </div>
