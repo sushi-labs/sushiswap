@@ -35,7 +35,7 @@ export const FILLED_COLUMN: ColumnDef<TwapOrder> = {
     return (
       <div className="flex items-center gap-1 md:gap-2 whitespace-nowrap min-w-[130px]">
         <Currency.Icon disableLink currency={buyToken} width={24} height={24} />{' '}
-        <span>
+        <span className="whitespace-nowrap">
           {formatNumber(buyTokenFilledAmount)} {buyToken.symbol}
         </span>
       </div>
@@ -97,7 +97,7 @@ export const SPENT_COLUMN: ColumnDef<TwapOrder> = {
     return (
       <div className="flex flex-col gap-1">
         <div className="flex items-center gap-2 whitespace-nowrap">
-          <span>
+          <span className="whitespace-nowrap">
             {formatNumber(sellTokenFilledAmount)} {sellToken.symbol}
           </span>
           <Chip className="dark:!bg-slate-750 !bg-slate-200 !p-2 dark:text-slate-500 text-slate-450 !h-[20px]">
