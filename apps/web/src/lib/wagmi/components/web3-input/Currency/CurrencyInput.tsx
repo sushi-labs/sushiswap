@@ -170,7 +170,7 @@ const CurrencyInput: FC<CurrencyInputProps> = ({
         className={classNames(
           'flex items-center gap-2',
           hideInputAndPricing && 'justify-between w-full sm:w-fit',
-          showQuickSelect && '!justify-end !w-fit',
+          showQuickSelect && '!justify-end !sm:w-fit',
         )}
       >
         {showQuickSelect ? <QuickSelect type={type} /> : null}
