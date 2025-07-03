@@ -1,6 +1,5 @@
 'use client'
 
-import { useTradeMode } from 'src/lib/hooks/useTradeMode'
 import { Web3Input } from 'src/lib/wagmi/components/web3-input'
 import { isWNativeSupported } from 'sushi/config'
 import { useDerivedStateTwap } from './derivedstate-twap-provider'
@@ -11,8 +10,6 @@ export const TwapToken1Input = () => {
     mutate: { setToken1 },
     isToken1Loading: isLoading,
   } = useDerivedStateTwap()
-  const { tradeMode } = useTradeMode()
-  const isTwap = tradeMode === 'limit' || tradeMode === 'dca'
 
   return (
     <Web3Input.Currency
@@ -29,7 +26,8 @@ export const TwapToken1Input = () => {
       allowNative={isWNativeSupported(chainId)}
       label="Buy"
       showQuickSelect={true}
-      isTwap={isTwap}
+      isTwap={true}
+      selectedNetwork={chainId}
     />
   )
 }

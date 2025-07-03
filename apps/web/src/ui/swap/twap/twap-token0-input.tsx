@@ -13,7 +13,6 @@ export const TwapToken0Input = () => {
     isToken0Loading: isLoading,
   } = useDerivedStateTwap()
   const { tradeMode } = useTradeMode()
-  const isTwap = tradeMode === 'limit' || tradeMode === 'dca'
 
   return (
     <Web3Input.Currency
@@ -30,7 +29,8 @@ export const TwapToken0Input = () => {
       currencyLoading={isLoading}
       allowNative={isWNativeSupported(chainId)}
       label={tradeMode === 'limit' ? 'Sell' : 'Allocate'}
-      isTwap={isTwap}
+      isTwap={true}
+      selectedNetwork={chainId}
     />
   )
 }

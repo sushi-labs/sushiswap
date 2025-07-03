@@ -12,6 +12,7 @@ import {
   TextField,
   classNames,
 } from '@sushiswap/ui'
+import { useParams } from 'next/navigation'
 import React, {
   type FC,
   type ReactNode,
@@ -24,7 +25,7 @@ import { ChainOptionsSelector } from 'src/ui/swap/chain-options-selector'
 import { NetworkMenu } from 'src/ui/swap/trade/favorite-recent/network-menu'
 import type { EvmChainId } from 'sushi/chain'
 import type { Currency, Token, Type } from 'sushi/currency'
-import { useAccount } from 'wagmi'
+import { useAccount, useChainId } from 'wagmi'
 import { CurrencyInfo } from './currency-info'
 import { TokenSelectorStatesV2 } from './token-selector-states-v2'
 
