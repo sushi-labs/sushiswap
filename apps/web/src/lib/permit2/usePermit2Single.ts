@@ -1,20 +1,12 @@
 'use client'
 
-import type { TTLStorageKey } from '@sushiswap/hooks'
 import { createErrorToast } from '@sushiswap/notifications'
 import { useCallback, useMemo, useState } from 'react'
 import { permit2Abi_allowance } from 'sushi/abi'
-import type { EvmChainId } from 'sushi/chain'
 import type { Amount, Type } from 'sushi/currency'
-import {
-  type Address,
-  UserRejectedRequestError,
-  hexToSignature,
-  zeroAddress,
-} from 'viem'
+import { type Address, UserRejectedRequestError, zeroAddress } from 'viem'
 import { useAccount, useReadContract, useSignTypedData } from 'wagmi'
 import { ApprovalState } from '../wagmi/hooks/approvals/hooks/useTokenApproval'
-import { useTransactionDeadline } from '../wagmi/hooks/utils/hooks/useTransactionDeadline'
 import {
   useApprovedActions,
   useSignature,
@@ -25,21 +17,21 @@ import type { Permit2Signature } from './types'
 import { generatePermitTypedData } from './utils'
 
 interface UsePermit2Params {
+  chainId: Permit2ChainId
   spender: Address | undefined
   amount: Amount<Type> | undefined
-  enabled?: boolean
-  ttlStorageKey: TTLStorageKey
   tag: string
+  enabled?: boolean
 }
 
-export const usePermit2 = ({
+export const usePermit2Single = ({
+  chainId,
   amount,
   spender,
-  enabled = true,
-  ttlStorageKey,
   tag,
+  enabled = true,
 }: UsePermit2Params) => {
-  const { address, chainId } = useAccount()
+  const { address } = useAccount()
 
   const [pending, setPending] = useState(false)
 
@@ -47,16 +39,10 @@ export const usePermit2 = ({
   const { setSignature } = useApprovedActions(tag)
   const { signTypedDataAsync } = useSignTypedData()
 
-  const { data: transactionDeadline } = useTransactionDeadline({
-    chainId: chainId as EvmChainId,
-    storageKey: ttlStorageKey,
-    enabled,
-  })
-
   const { data: permit2Allowance, isLoading: isPermit2AllowanceLoading } =
     useReadContract({
-      chainId: chainId as Permit2ChainId,
-      address: PERMIT2_ADDRESS[chainId as Permit2ChainId],
+      chainId,
+      address: PERMIT2_ADDRESS[chainId],
       abi: permit2Abi_allowance,
       functionName: 'allowance',
       args: [
@@ -76,14 +62,7 @@ export const usePermit2 = ({
     })
 
   const onPermit = useCallback(async () => {
-    if (
-      !amount ||
-      !transactionDeadline ||
-      !chainId ||
-      !spender ||
-      !permit2Allowance
-    )
-      return
+    if (!amount || !chainId || !spender || !permit2Allowance) return
 
     const [, , nonce] = permit2Allowance
 
@@ -97,7 +76,7 @@ export const usePermit2 = ({
       values: message,
     } = AllowanceTransfer.getPermitData(
       permit,
-      PERMIT2_ADDRESS[chainId as Permit2ChainId],
+      PERMIT2_ADDRESS[chainId],
       chainId,
     )
 
@@ -123,7 +102,6 @@ export const usePermit2 = ({
     }
   }, [
     amount,
-    transactionDeadline,
     chainId,
     spender,
     address,
@@ -133,7 +111,6 @@ export const usePermit2 = ({
   ])
 
   const isSignatureDataValid =
-    transactionDeadline &&
     amount &&
     signature?.details?.token === amount.currency.wrapped.address &&
     BigInt(signature?.details?.amount) === amount.quotient &&

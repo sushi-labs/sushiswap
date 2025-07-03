@@ -1,18 +1,15 @@
 import type { TTLStorageKey } from '@sushiswap/hooks'
-import {
-  Button,
-  type ButtonProps,
-  HoverCardTrigger,
-  classNames,
-} from '@sushiswap/ui'
+import { Button, type ButtonProps, classNames } from '@sushiswap/ui'
 import React, { useEffect, useState, type FC } from 'react'
 import { PERMIT2_ADDRESS, type Permit2ChainId } from 'src/lib/permit2/config'
-import { usePermit2 } from 'src/lib/permit2/usePermit2'
+import { usePermit2Approve } from 'src/lib/permit2/usePermit2Approve'
+import { usePermit2Single } from 'src/lib/permit2/usePermit2Single'
 import type { Amount, Type } from 'sushi/currency'
 import type { Address } from 'viem/accounts'
 import { useAccount, useBytecode } from 'wagmi'
 import { ApprovalState } from '../../hooks/approvals/hooks/useTokenApproval'
 import { ApproveERC20 } from './ApproveERC20'
+import { useApprovedActions } from './Provider'
 
 enum ApprovalType {
   Signature = 'signature',
@@ -36,13 +33,18 @@ const ApproveERC20Permit2: FC<ApproveERC20Permit2Props> = ({
 }) => {
   return (
     <ApproveERC20 {...props} contract={PERMIT2_ADDRESS[chainId]}>
-      <_ApproveERC20Permit2 ttlStorageKey={ttlStorageKey} {...props} />
+      <_ApproveERC20Permit2
+        ttlStorageKey={ttlStorageKey}
+        chainId={chainId}
+        {...props}
+      />
     </ApproveERC20>
   )
 }
 
-const _ApproveERC20Permit2: FC<Omit<ApproveERC20Permit2Props, 'chainId'>> = ({
+const _ApproveERC20Permit2: FC<ApproveERC20Permit2Props> = ({
   id,
+  chainId,
   amount,
   contract,
   children,
@@ -69,16 +71,30 @@ const _ApproveERC20Permit2: FC<Omit<ApproveERC20Permit2Props, 'chainId'>> = ({
     if (bytecode) setApprovalType(ApprovalType.Transaction)
   }, [bytecode])
 
-  const [permitState, { write: onPermit }] = usePermit2({
+  const { setSignature } = useApprovedActions(tag)
+
+  const [approvalState, { write: onApprove }] = usePermit2Approve({
+    chainId,
+    amount,
+    spender: contract,
+    enabled: enabled,
+  })
+
+  useEffect(() => {
+    // reset signature when approved via tx
+    if (approvalState === ApprovalState.APPROVED) setSignature(undefined)
+  }, [approvalState, setSignature])
+
+  const [permitState, { write: onPermit }] = usePermit2Single({
+    chainId,
     amount,
     spender: contract,
     enabled: enabled && approvalType === ApprovalType.Signature,
-    ttlStorageKey,
     tag,
   })
 
   const state =
-    approvalType === ApprovalType.Signature ? permitState : permitState //todo
+    approvalType === ApprovalType.Signature ? permitState : approvalState
 
   if (state === ApprovalState.APPROVED || !enabled) {
     return <>{children}</>
@@ -91,18 +107,15 @@ const _ApproveERC20Permit2: FC<Omit<ApproveERC20Permit2Props, 'chainId'>> = ({
   ].includes(state)
 
   const disabled =
-    state !== ApprovalState.NOT_APPROVED || !onPermit /* && !onApprove*/
+    state !== ApprovalState.NOT_APPROVED || (!onPermit && !onApprove)
 
   return (
     <Button
       disabled={disabled}
       className={classNames(className, 'group relative')}
       loading={loading}
-      onClick={
-        () =>
-          approvalType === ApprovalType.Signature
-            ? onPermit?.()
-            : onPermit?.() /*onApprove?.()*/
+      onClick={() =>
+        approvalType === ApprovalType.Signature ? onPermit?.() : onApprove?.()
       }
       fullWidth={fullWidth}
       size={size}
