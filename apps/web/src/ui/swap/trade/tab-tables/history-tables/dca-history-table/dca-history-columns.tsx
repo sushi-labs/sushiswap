@@ -190,7 +190,7 @@ export const STATUS_COLUMN: ColumnDef<TwapOrder> = {
   id: 'status',
   header: () => <div className="text-right">Status</div>,
   enableSorting: false,
-  accessorFn: (row) => row.status,
+  accessorFn: (row) => row?.status,
   cell: ({ row }) => {
     const { fullyFilledAtTimestamp, status, deadlineTimestamp } =
       useParsedOrder(row.original)
