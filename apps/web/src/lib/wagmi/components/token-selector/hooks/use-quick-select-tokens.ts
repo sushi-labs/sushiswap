@@ -48,7 +48,10 @@ const getDefaultTokens = (chainIds: EvmChainId[]) => {
   return orderedTokensBySymbolPriority
 }
 
-const getFourMostSwappedTokens = (recentSwaps: RecentSwaps): ID[] => {
+const getMostSwappedTokens = (
+  recentSwaps: RecentSwaps,
+  optionCount: number,
+): ID[] => {
   if (!recentSwaps || recentSwaps.length === 0) return []
 
   const tokenOutCounts = new Map<ID, number>()
@@ -65,7 +68,7 @@ const getFourMostSwappedTokens = (recentSwaps: RecentSwaps): ID[] => {
     ([, countA], [, countB]) => countB - countA,
   )
 
-  return sortedTokens.slice(0, 4).map(([symbol]) => symbol)
+  return sortedTokens.slice(0, optionCount).map(([symbol]) => symbol)
 }
 
 const getAllOptionsForTokens = (
@@ -146,7 +149,7 @@ export const useQuickSelectTokens = ({
       )
     })
     if (filteredSwaps.length === 0) return []
-    const fourMostSwapped = getFourMostSwappedTokens(filteredSwaps)
+    const fourMostSwapped = getMostSwappedTokens(filteredSwaps, optionCount)
     return fourMostSwapped?.map((token) => {
       const [chainId, address] = token.split(':')
       const chainIdNumber = Number(chainId) as EvmChainId
@@ -155,7 +158,7 @@ export const useQuickSelectTokens = ({
         address: address as Address,
       }
     })
-  }, [recentSwaps, defaultTokens])
+  }, [recentSwaps, defaultTokens, optionCount])
 
   const { data: search, isLoading: isSearchLoading } = useSearchTokens({
     walletAddress: account,
