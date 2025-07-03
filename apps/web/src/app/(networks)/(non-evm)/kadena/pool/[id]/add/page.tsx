@@ -16,7 +16,7 @@ export default function AddRemoveLiqPage(props: {
   const { setTotalSupplyLP } = useRemoveLiqDispatch()
   const { data } = usePoolById({
     poolId,
-    first: 4,
+    first: 1,
   })
 
   useEffect(() => {
