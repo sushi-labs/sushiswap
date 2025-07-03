@@ -101,12 +101,15 @@ export const usePoolFromTokens = ({
       const namespace1 = poolData.leg1.token.refName.namespace || ''
       const name1 = poolData.leg1.token.refName.name
 
+      const _token0 = `${namespace0 ? `${namespace0}.` : ''}${name0}`
+      const _token1 = `${namespace1 ? `${namespace1}.` : ''}${name1}`
+
       return {
         exists: true,
         poolData: {
           poolAddress: poolData.account,
-          token0: `${namespace0 ? `${namespace0}.` : ''}${name0}`,
-          token1: `${namespace1 ? `${namespace1}.` : ''}${name1}`,
+          token0: _token0,
+          token1: _token1,
           reserve0: reserve0,
           reserve1: reserve1,
           mutexLocked: poolData['mutex-locked'],
