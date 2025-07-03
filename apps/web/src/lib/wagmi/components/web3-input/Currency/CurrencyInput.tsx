@@ -170,9 +170,10 @@ const CurrencyInput: FC<CurrencyInputProps> = ({
         className={classNames(
           'flex items-center gap-2',
           hideInputAndPricing && 'justify-between w-full sm:w-fit',
+          showQuickSelect && '!justify-end !w-fit',
         )}
       >
-        {showQuickSelect ? <QuickSelect /> : null}
+        {showQuickSelect ? <QuickSelect type={type} /> : null}
 
         <TokenSelectorV2
           currencies={currencies}
@@ -206,7 +207,7 @@ const CurrencyInput: FC<CurrencyInputProps> = ({
                 <>
                   <div className="w-[37px] h-[37px] mr-0.5">
                     <Badge
-                      className="dark:border-[#222137] border-[#F5F5F5] border rounded-[4px] z-[11] !-right-[15%] -bottom-[0%]"
+                      className="dark:border-[#222137] border-[#F5F5F5] border rounded-[4px] z-[11] !-right-[15%] bottom-[3%]"
                       position="bottom-right"
                       badgeContent={
                         <NetworkIcon
@@ -240,7 +241,7 @@ const CurrencyInput: FC<CurrencyInputProps> = ({
                 <>
                   <div className="w-[37px] h-[37px] mr-0.5">
                     <Badge
-                      className="dark:border-[#222137] border-[#F5F5F5] border rounded-[4px] z-[11] !-right-[15%] -bottom-[0%]"
+                      className="dark:border-[#222137] border-[#F5F5F5] border rounded-[4px] z-[11] !-right-[15%] bottom-[3%]"
                       position="bottom-right"
                       badgeContent={
                         <NetworkIcon

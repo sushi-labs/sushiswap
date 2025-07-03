@@ -49,7 +49,7 @@ export const ChartHeader = () => {
             <>
               <div className="w-[37px] h-[37px] mr-0.5">
                 <Badge
-                  className="dark:border-[#222137] border-[#F5F5F5] border rounded-[4px] z-[11] !-right-[15%] -bottom-[0%]"
+                  className="dark:border-[#222137] border-[#F5F5F5] border rounded-[4px] z-[11] !-right-[15%] bottom-[3%]"
                   position="bottom-right"
                   badgeContent={
                     <NetworkIcon

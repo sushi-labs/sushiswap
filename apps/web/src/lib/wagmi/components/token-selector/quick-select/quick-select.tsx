@@ -1,12 +1,17 @@
 import { useIsSmScreen } from '@sushiswap/hooks'
 import { Badge, Currency as CurrencyComp, classNames } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
+import { usePathname } from 'next/navigation'
 import { useEffect, useState } from 'react'
+import { useCreateQuery } from 'src/lib/hooks/useCreateQuery'
+import { replaceNetworkSlug } from 'src/lib/network'
+import type { EvmChainId } from 'sushi'
 import type { Currency } from 'sushi/currency'
+import { useSwitchChain } from 'wagmi'
 import { useChipTokens } from '../hooks/use-chip-tokens'
 import { useQuickSelectContext } from './quick-select-provider'
 
-export const QuickSelect = () => {
+export const QuickSelect = ({ type }: { type: 'INPUT' | 'OUTPUT' }) => {
   //@TODO: use default list of USDC/USDT/ETH/DAI for fresh user or most often used assets for common user
   const _tokens = useChipTokens({ chainId: [1, 137, 56, 10] })
   //@DEV mock list for now for ui development
@@ -22,19 +27,25 @@ export const QuickSelect = () => {
 
   return (
     <div className="flex items-center gap-x-2">
-      {usdc && <QuickSelectItem currencies={usdc} />}
-      {usdt && <QuickSelectItem currencies={usdt} />}
-      {dai && <QuickSelectItem currencies={dai} />}
+      {usdc && <QuickSelectItem type={type} currencies={usdc} />}
+      {usdt && <QuickSelectItem type={type} currencies={usdt} />}
+      {dai && <QuickSelectItem type={type} currencies={dai} />}
     </div>
   )
 }
 
-const QuickSelectItem = ({ currencies }: { currencies: Currency[] }) => {
+const QuickSelectItem = ({
+  currencies,
+  type,
+}: { currencies: Currency[]; type: 'INPUT' | 'OUTPUT' }) => {
   const {
     state: { isOpen, selectedSymbol },
     mutate: { onValueChange },
   } = useQuickSelectContext()
   const mainCurrency = currencies[0]
+  const { createQuery } = useCreateQuery()
+  const { switchChainAsync } = useSwitchChain()
+  const pathname = usePathname()
 
   const isSelected = isOpen && selectedSymbol === mainCurrency?.symbol
 
@@ -70,13 +81,33 @@ const QuickSelectItem = ({ currencies }: { currencies: Currency[] }) => {
     }
   }, [isSelected])
 
-  const onSelectToken = (currency: Currency) => {
+  const onSelectToken = async (currency: Currency) => {
     console.log('Selected token:', currency)
     setExpanded(false)
     setTimeout(() => {
       onValueChange(false, '')
     }, 300)
     // onValueChange(false, currency?.symbol ?? undefined);
+    if (type === 'INPUT') {
+      await switchChainAsync({ chainId: currency.chainId })
+    }
+    const newPathname = replaceNetworkSlug(
+      Number(currency.chainId) as EvmChainId,
+      pathname,
+    )
+    createQuery(
+      [
+        {
+          name: type === 'INPUT' ? 'token0' : 'token1',
+          value: currency.isNative ? 'NATIVE' : currency?.wrapped.address,
+        },
+        {
+          name: type === 'INPUT' ? 'chainId0' : 'chainId1',
+          value: currency.chainId.toString(),
+        },
+      ],
+      type === 'INPUT' ? newPathname : undefined,
+    )
   }
 
   return (
@@ -181,15 +212,15 @@ const TokenChainItem = ({
       onClick={() => onSelectToken(currency)}
     >
       <Badge
-        className="z-[11]"
+        className="z-[11] bottom-[3%] -right-[15%]"
         position="bottom-right"
         badgeContent={
           <NetworkIcon
             type="square"
             className="rounded-sm"
             chainId={currency.chainId}
-            width={16}
-            height={16}
+            width={14}
+            height={14}
           />
         }
       >

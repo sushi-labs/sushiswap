@@ -55,7 +55,7 @@ export const DCAToken1Input = () => {
             <>
               <div className="w-[37px] h-[37px] mr-0.5">
                 <Badge
-                  className="dark:border-[#222137] border-[#F5F5F5] border rounded-[4px] z-[11] !-right-[15%] -bottom-[0%]"
+                  className="dark:border-[#222137] border-[#F5F5F5] border rounded-[4px] z-[11] !-right-[15%] bottom-[3%]"
                   position="bottom-right"
                   badgeContent={
                     <NetworkIcon
@@ -105,8 +105,8 @@ export const DCAToken1Input = () => {
           type={'OUTPUT'}
         />
       </div>
-      <div className="flex justify-end items-center gap-4">
-        <QuickSelect />
+      <div className="flex justify-end items-center w-fit ml-auto gap-4">
+        <QuickSelect type="OUTPUT" />
         {selector}
         {isTokenLoading ? (
           <div className="flex items-center h-[44px] w-full">
