@@ -12,15 +12,16 @@ import { formatUSD } from 'sushi/format'
 import { useTokenPrice } from '~kadena/_common/lib/hooks/use-token-price'
 import { formatUnits } from '~kadena/_common/lib/utils/formatters'
 import { useKadena } from '~kadena/kadena-wallet-provider'
+import { usePoolState } from '../../../../pool/pool-provider'
 import { Icon } from '../../General/Icon'
 import { WalletConnector } from '../../WalletConnector/WalletConnector'
-import { usePoolState } from '../pool-provider'
 import { AddButton } from './AddButton'
 import { ReviewAddDialogTrigger } from './ReviewAddDialogTrigger'
 
 export const ReviewAddDialog = (props: ButtonProps) => {
   const { token0, token1, amountInToken0, amountInToken1, poolId } =
     usePoolState()
+  console.log('poolId', poolId)
   const closeBtnRef = useRef<HTMLButtonElement>(null)
   const { isConnected } = useKadena()
 

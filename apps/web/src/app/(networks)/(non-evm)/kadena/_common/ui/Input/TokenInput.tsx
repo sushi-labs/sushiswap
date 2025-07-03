@@ -6,6 +6,7 @@ import {
   classNames,
 } from '@sushiswap/ui'
 import { useMemo } from 'react'
+import { withoutScientificNotation } from 'sushi'
 import { useTokenBalances } from '~kadena/_common/lib/hooks/use-token-balances'
 import { useTokenPrice } from '~kadena/_common/lib/hooks/use-token-price'
 import type { KadenaToken } from '~kadena/_common/types/token-type'
@@ -206,7 +207,7 @@ export const TokenInput = ({
               setAmount('')
               return
             }
-            setAmount(String(tokenBalance))
+            setAmount(withoutScientificNotation(String(tokenBalance)) ?? '')
           }}
         />
       </div>

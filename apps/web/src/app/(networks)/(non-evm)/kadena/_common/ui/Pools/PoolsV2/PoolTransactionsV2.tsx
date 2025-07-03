@@ -19,7 +19,7 @@ import type {
   PoolByIdResponse,
   PoolTransaction,
 } from '~kadena/_common/types/get-pool-by-id'
-import { usePoolState } from '../pool-provider'
+import { usePoolState } from '../../../../pool/pool-provider'
 import {
   AMOUNT_USD_COLUMN,
   MAKER_COLUMN,

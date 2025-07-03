@@ -1,7 +1,7 @@
 import { Button, SkeletonBox } from '@sushiswap/ui'
 import { useState } from 'react'
 import { formatUSD } from 'sushi/format'
-import { usePoolState } from '../pool-provider'
+import { usePoolState } from '../../../../pool/pool-provider'
 
 export const Rate = ({
   token0Price,

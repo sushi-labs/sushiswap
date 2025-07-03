@@ -2,7 +2,7 @@ import { type ComponentProps, useEffect } from 'react'
 import { Decimal } from 'sushi/math'
 import { formatToMaxDecimals } from '~kadena/_common/lib/utils/formatters'
 import { TokenInput } from '~kadena/_common/ui/Input/TokenInput'
-import { usePoolDispatch, usePoolState } from '../pool-provider'
+import { usePoolDispatch, usePoolState } from '../../../../pool/pool-provider'
 
 export const AmountInToken0 = ({
   theme = 'default',
@@ -26,7 +26,6 @@ export const AmountInToken0 = ({
   const pairExists = Boolean(poolId)
 
   const rateOfToken1 = rateOfToken1ToToken0 ?? 0
-
   // biome-ignore lint/correctness/useExhaustiveDependencies: rateOfToken1 will be defined when the pool exists
   useEffect(() => {
     if (inputField === 'token1') return

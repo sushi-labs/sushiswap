@@ -72,6 +72,8 @@ export const usePoolFromTokens = ({
       }
       const poolData = res1?.result?.data as PoolDataRes
 
+      console.log({ poolData })
+
       let reserve0 = 0
       if (
         typeof poolData.leg0.reserve === 'object' &&
@@ -92,9 +94,6 @@ export const usePoolFromTokens = ({
         reserve1 = poolData.leg1.reserve
       }
 
-      const rateOfToken0ToToken1 = reserve0 / reserve1
-      const rateOfToken1ToToken0 = reserve1 / reserve0
-
       const namespace0 = poolData.leg0.token.refName.namespace || ''
       const name0 = poolData.leg0.token.refName.name
 
@@ -104,17 +103,42 @@ export const usePoolFromTokens = ({
       const _token0 = `${namespace0 ? `${namespace0}.` : ''}${name0}`
       const _token1 = `${namespace1 ? `${namespace1}.` : ''}${name1}`
 
+      const rate0to1 = reserve0 / reserve1
+      const rate1to0 = reserve1 / reserve0
+
+      let finalToken0 = _token0
+      let finalToken1 = _token1
+      let finalReserve0 = reserve0
+      let finalReserve1 = reserve1
+      let finalRate0to1 = rate0to1
+      let finalRate1to0 = rate1to0
+
+      if (token0 !== _token0 || token1 !== _token1) {
+        if (token0 === _token1 && token1 === _token0) {
+          finalToken0 = _token1
+          finalToken1 = _token0
+          finalReserve0 = reserve1
+          finalReserve1 = reserve0
+          finalRate0to1 = rate1to0
+          finalRate1to0 = rate0to1
+        } else {
+          console.warn(
+            'UI token order does not match contract token order and no inverse match found.',
+          )
+        }
+      }
+
       return {
         exists: true,
         poolData: {
           poolAddress: poolData.account,
-          token0: _token0,
-          token1: _token1,
-          reserve0: reserve0,
-          reserve1: reserve1,
+          token0: finalToken0,
+          token1: finalToken1,
+          reserve0: finalReserve0,
+          reserve1: finalReserve1,
           mutexLocked: poolData['mutex-locked'],
-          rateOfToken0ToToken1,
-          rateOfToken1ToToken0,
+          rateOfToken0ToToken1: finalRate0to1,
+          rateOfToken1ToToken0: finalRate1to0,
         },
       }
     },

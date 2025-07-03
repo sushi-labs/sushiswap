@@ -8,8 +8,8 @@ import { formatNumber } from 'sushi'
 import { Decimal } from 'sushi/math'
 import { useTokenPrice } from '~kadena/_common/lib/hooks/use-token-price'
 import { formatToMaxDecimals } from '~kadena/_common/lib/utils/formatters'
+import { usePoolState } from '../../../../pool/pool-provider'
 import { LiquidityItem } from '../PoolDetails/LiquidityItem'
-import { usePoolState } from '../pool-provider'
 import { useRemoveLiqDispatch, useRemoveLiqState } from './pool-remove-provider'
 
 export const MinimumReceive = () => {

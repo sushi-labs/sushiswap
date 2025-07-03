@@ -20,7 +20,7 @@ import {
 import { buildAddLiquidityTxn } from '~kadena/_common/lib/pact/pool'
 import { getChainwebTxnLink } from '~kadena/_common/lib/utils/kadena-helpers'
 import { useKadena } from '~kadena/kadena-wallet-provider'
-import { usePoolDispatch, usePoolState } from '../pool-provider'
+import { usePoolDispatch, usePoolState } from '../../../../pool/pool-provider'
 
 export const AddButton = ({
   closeModal,

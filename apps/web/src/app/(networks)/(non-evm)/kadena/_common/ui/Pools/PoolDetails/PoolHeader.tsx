@@ -21,7 +21,7 @@ import { usePoolById } from '~kadena/_common/lib/hooks/use-pool-by-id'
 import { useTokenPrecision } from '~kadena/_common/lib/hooks/use-token-precision'
 import { getChainwebAddressLink } from '~kadena/_common/lib/utils/kadena-helpers'
 import { Icon } from '~kadena/_common/ui/General/Icon'
-import { usePoolDispatch, usePoolState } from '../pool-provider'
+import { usePoolDispatch, usePoolState } from '../../../../pool/pool-provider'
 
 export const PoolHeader = ({ poolId }: { poolId: string }) => {
   const router = useRouter()

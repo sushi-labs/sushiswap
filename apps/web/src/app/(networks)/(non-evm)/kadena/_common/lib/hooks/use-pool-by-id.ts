@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { PoolChartPeriod } from 'src/ui/pool/PoolChartPeriods'
 import type { PoolByIdResponse } from '~kadena/_common/types/get-pool-by-id'
-import { usePoolState } from '~kadena/_common/ui/Pools/pool-provider'
+import { usePoolState } from '~kadena/pool/pool-provider'
 
 export const usePoolById = ({
   poolId,

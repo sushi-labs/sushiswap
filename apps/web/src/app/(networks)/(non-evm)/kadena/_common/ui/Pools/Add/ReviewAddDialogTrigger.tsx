@@ -2,7 +2,7 @@ import { Button, type ButtonProps, DialogTrigger } from '@sushiswap/ui'
 import { useMemo } from 'react'
 import { useTokenBalances } from '~kadena/_common/lib/hooks/use-token-balances'
 import { useKadena } from '~kadena/kadena-wallet-provider'
-import { usePoolState } from '../pool-provider'
+import { usePoolState } from '../../../../pool/pool-provider'
 
 export const ReviewAddDialogTrigger = (props: ButtonProps) => {
   const {

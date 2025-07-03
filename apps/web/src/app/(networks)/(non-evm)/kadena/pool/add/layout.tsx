@@ -1,8 +1,8 @@
 import { Container, typographyVariants } from '@sushiswap/ui'
 import type { Metadata } from 'next'
 import { BackButton } from 'src/ui/pool/BackButton'
-import { PoolProvider } from '~kadena/_common/ui/Pools/pool-provider'
 import { Header } from '~kadena/header'
+import { PoolProvider } from '~kadena/pool/pool-provider'
 
 export const metadata: Metadata = {
   title: 'Pool 💦',

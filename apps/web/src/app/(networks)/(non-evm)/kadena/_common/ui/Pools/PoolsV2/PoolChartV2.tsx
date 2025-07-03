@@ -6,7 +6,7 @@ import React, { type FC, useState } from 'react'
 import { PoolChartPeriod, PoolChartPeriods } from 'src/ui/pool/PoolChartPeriods'
 import { PoolChartType, PoolChartTypes } from 'src/ui/pool/PoolChartTypes'
 import type { PoolByIdResponse } from '~kadena/_common/types/get-pool-by-id'
-import { usePoolDispatch, usePoolState } from '../pool-provider'
+import { usePoolDispatch, usePoolState } from '../../../../pool/pool-provider'
 import { PoolChartGraph } from './PoolChartGraph'
 
 const charts = [

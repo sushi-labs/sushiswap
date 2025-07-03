@@ -1,8 +1,8 @@
 'use client'
 import { Button, FormSection, SelectIcon } from '@sushiswap/ui'
+import { usePoolDispatch, usePoolState } from '../../../../pool/pool-provider'
 import { Icon } from '../../General/Icon'
 import { TokenSelector } from '../../General/TokenSelector'
-import { usePoolDispatch, usePoolState } from '../pool-provider'
 
 export const SelectTokensForm = () => {
   const { token0, token1 } = usePoolState()

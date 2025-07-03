@@ -13,13 +13,13 @@ import { formatUSD } from 'sushi/format'
 import { useLpBalance } from '~kadena/_common/lib/hooks/pools/use-lp-balance'
 import { useTokenPrice } from '~kadena/_common/lib/hooks/use-token-price'
 import { useKadena } from '~kadena/kadena-wallet-provider'
+import { usePoolState } from '../../../../pool/pool-provider'
 import { WalletConnector } from '../../WalletConnector/WalletConnector'
 import { LiquidityItem } from '../PoolDetails/LiquidityItem'
 import {
   useRemoveLiqDispatch,
   useRemoveLiqState,
 } from '../Remove/pool-remove-provider'
-import { usePoolState } from '../pool-provider'
 
 export type TempToken = {
   tokenName: string

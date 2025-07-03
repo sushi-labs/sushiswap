@@ -17,7 +17,7 @@ import { buildRemoveLiquidityTxn } from '~kadena/_common/lib/pact/pool'
 import { getChainwebTxnLink } from '~kadena/_common/lib/utils/kadena-helpers'
 import { WalletConnector } from '~kadena/_common/ui/WalletConnector/WalletConnector'
 import { useKadena } from '~kadena/kadena-wallet-provider'
-import { usePoolState } from '../pool-provider'
+import { usePoolState } from '../../../../pool/pool-provider'
 import { useRemoveLiqDispatch, useRemoveLiqState } from './pool-remove-provider'
 
 export const RemoveButton = (props: ButtonProps) => {

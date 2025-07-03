@@ -17,8 +17,8 @@ import { formatUSD } from 'sushi/format'
 import { useTokenPrice } from '~kadena/_common/lib/hooks/use-token-price'
 import type { PoolByIdResponse } from '~kadena/_common/types/get-pool-by-id'
 import type { KadenaToken } from '~kadena/_common/types/token-type'
+import { usePoolState } from '../../../../pool/pool-provider'
 import { Icon } from '../../General/Icon'
-import { usePoolState } from '../pool-provider'
 
 interface PoolComposition {
   pool: PoolByIdResponse | undefined

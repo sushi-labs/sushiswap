@@ -2,7 +2,7 @@ import { type ComponentProps, useEffect } from 'react'
 import { Decimal } from 'sushi/math'
 import { formatToMaxDecimals } from '~kadena/_common/lib/utils/formatters'
 import { TokenInput } from '~kadena/_common/ui/Input/TokenInput'
-import { usePoolDispatch, usePoolState } from '../pool-provider'
+import { usePoolDispatch, usePoolState } from '../../../../pool/pool-provider'
 
 export const AmountInToken1 = ({
   theme = 'default',
@@ -16,6 +16,7 @@ export const AmountInToken1 = ({
     token1,
     amountInToken1,
     poolId,
+
     rateOfToken0ToToken1,
     inputField,
     isTxnPending,
@@ -37,9 +38,15 @@ export const AmountInToken1 = ({
       return
     }
     if (pairExists && rateOfToken0 && token0) {
-      const amountFormatted = new Decimal(rateOfToken0).mul(
-        Number.parseFloat(amountInToken1 || '0'),
-      )
+      const parsedAmount = Number.parseFloat(amountInToken1)
+
+      if (Number.isNaN(parsedAmount)) {
+        setAmountInToken0('')
+        return
+      }
+
+      const amountFormatted = new Decimal(rateOfToken0).mul(parsedAmount)
+
       if (amountFormatted) {
         setAmountInToken0(
           formatToMaxDecimals(amountFormatted, token0?.tokenDecimals),
