@@ -160,6 +160,7 @@ export const TokenSelectorV2: FC<TokenSelectorV2Props> = ({
                 onNetworkSelect={_onNetworkSelect}
                 size="lg"
                 selectedNetwork={_selectedNetwork as EvmChainId}
+                canShowMessage={true}
               />
             </div>
           ) : null}

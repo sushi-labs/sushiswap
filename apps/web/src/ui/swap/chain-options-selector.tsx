@@ -34,11 +34,13 @@ export const ChainOptionsSelector = ({
   networks,
   onNetworkSelect,
   selectedNetwork,
+  canShowMessage,
 }: {
   size?: 'sm' | 'lg'
   networks?: number[]
   onNetworkSelect?: (network: number) => void
   selectedNetwork?: number
+  canShowMessage?: boolean
 }) => {
   const { networkOptions: defaultNetworks } = useNetworkOptions()
   const { tradeMode } = useTradeMode()
@@ -95,7 +97,9 @@ export const ChainOptionsSelector = ({
     }
   }, [visibleCount, _networks])
 
-  const showMessage = isTwap && chainId !== selectedNetwork
+  const showMessage = Boolean(
+    isTwap && chainId !== selectedNetwork && canShowMessage,
+  )
 
   return (
     <div
@@ -129,7 +133,8 @@ export const ChainOptionsSelector = ({
                   iconSize={iconSize}
                   chainId={chainId}
                   className={classNames(
-                    selectedNetwork === chainId && 'bg-blue/10',
+                    selectedNetwork === chainId &&
+                      'bg-blue/10 dark:border-blue border-blue',
                   )}
                 />
               </TooltipTrigger>
@@ -145,7 +150,7 @@ export const ChainOptionsSelector = ({
               <button
                 type="button"
                 className={classNames(
-                  'border border-black/10  dark:border-white/10 rounded-md p-1 flex items-center justify-center',
+                  'border border-black/10 dark:border-white/10 rounded-md p-1 flex items-center justify-center',
                   size === 'sm'
                     ? 'w-[26px] h-[26px] min-h-[26px] min-w-[26px]'
                     : 'w-[34px] h-[34px] min-h-[34px] min-w-[34px]',
@@ -169,7 +174,8 @@ export const ChainOptionsSelector = ({
                     onClick={() => onNetworkSelect?.(chainId)}
                     className={classNames(
                       'pr-10',
-                      selectedNetwork === chainId && 'bg-blue/10',
+                      selectedNetwork === chainId &&
+                        'bg-blue/10 border-blue dark:border-blue',
                     )}
                   >
                     <NetworkButton
