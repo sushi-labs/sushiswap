@@ -95,20 +95,18 @@ export const usePoolFromTokens = ({
       const rateOfToken0ToToken1 = reserve0 / reserve1
       const rateOfToken1ToToken0 = reserve1 / reserve0
 
+      const namespace0 = poolData.leg0.token.refName.namespace || ''
+      const name0 = poolData.leg0.token.refName.name
+
+      const namespace1 = poolData.leg1.token.refName.namespace || ''
+      const name1 = poolData.leg1.token.refName.name
+
       return {
         exists: true,
         poolData: {
           poolAddress: poolData.account,
-          token0: `${poolData.leg0.token.refName.name}${
-            poolData.leg0.token.refName.namespace
-              ? `.${poolData.leg0.token.refName.namespace}`
-              : ''
-          }`,
-          token1: `${poolData.leg1.token.refName.name}${
-            poolData.leg1.token.refName.namespace
-              ? `.${poolData.leg1.token.refName.namespace}`
-              : ''
-          }`,
+          token0: `${namespace0 ? `${namespace0}.` : ''}${name0}`,
+          token1: `${namespace1 ? `${namespace1}.` : ''}${name1}`,
           reserve0: reserve0,
           reserve1: reserve1,
           mutexLocked: poolData['mutex-locked'],
