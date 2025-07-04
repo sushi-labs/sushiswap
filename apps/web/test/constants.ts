@@ -52,7 +52,7 @@ export const localHttpUrl = `http://127.0.0.1:${anvilPort}/${testParallelIndex}`
 export const localWsUrl = `ws://127.0.0.1:${anvilPort}/${testParallelIndex}`
 
 // Assume 100MATIC for Polygon, 1PROBABLY_ETH for the rest
-export const nativeAmounts: Partial<Record<ChainId, Amount<Native>>> = {
+export const nativeAmounts: Partial<Record<ChainId, Amount<EvmNative>>> = {
   [ChainId.POLYGON]: new Amount(EvmNative.fromChainId(ChainId.POLYGON), 1e20),
 }
 export const nativeAmount =
