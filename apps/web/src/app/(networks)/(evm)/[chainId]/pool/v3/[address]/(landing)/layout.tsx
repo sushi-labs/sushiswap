@@ -4,8 +4,7 @@ import { unstable_cache } from 'next/cache'
 import { headers } from 'next/headers'
 import { notFound } from 'next/navigation'
 import { PoolHeader } from 'src/ui/pool/PoolHeader'
-import { ChainKey, type EvmChainId } from 'sushi/chain'
-import { isSushiSwapV3ChainId } from 'sushi/config'
+import { getEvmChainById, isSushiSwapV3ChainId } from 'sushi/evm'
 import { isAddress } from 'viem'
 
 export default async function Layout(props: {
@@ -17,7 +16,7 @@ export default async function Layout(props: {
   const { children } = props
 
   const { chainId: _chainId, address } = params
-  const chainId = +_chainId as EvmChainId
+  const chainId = +_chainId
 
   if (
     !isSushiSwapV3ChainId(chainId) ||
@@ -43,7 +42,7 @@ export default async function Layout(props: {
           backUrl={
             referer?.includes('/pool')
               ? referer?.toString()
-              : `/${ChainKey[chainId]}/explore/pools`
+              : `/${getEvmChainById(chainId).key}/explore/pools`
           }
           address={address}
           pool={pool}

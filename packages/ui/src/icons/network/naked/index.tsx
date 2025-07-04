@@ -1,4 +1,4 @@
-import { ChainId } from 'sushi/chain'
+import { ChainId } from 'sushi'
 
 import type { IconComponent } from '../../../types'
 import { ApeNaked } from './ApeNaked'
@@ -112,19 +112,11 @@ export const NETWORK_NAKED_ICON: Partial<
   [ChainId.AVALANCHE]: AvalancheNaked,
   [ChainId.HARMONY]: HarmonyNaked,
   [ChainId.CELO]: CeloNaked,
-  [ChainId.MOONRIVER]: MoonriverNaked,
-  [ChainId.FUSE]: FuseNaked,
-  [ChainId.TELOS]: TelosNaked,
-  [ChainId.MOONBEAM]: MoonbeamNaked,
   [ChainId.OPTIMISM]: OptimismNaked,
   [ChainId.KAVA]: KavaNaked,
   [ChainId.METIS]: MetisNaked,
   [ChainId.ARBITRUM_NOVA]: ArbitrumNovaNaked,
-  [ChainId.HECO]: HecoNaked,
-  [ChainId.OKEX]: OkexNaked,
-  [ChainId.PALM]: PalmNaked,
   [ChainId.BOBA]: BobaNaked,
-  [ChainId.BOBA_AVAX]: BobaAvaxNaked,
   [ChainId.BOBA_BNB]: BobaBNBNaked,
   [ChainId.BTTC]: BttcNaked,
   [ChainId.POLYGON_ZKEVM]: PolygonZKNaked,
@@ -150,6 +142,6 @@ export const NETWORK_NAKED_ICON: Partial<
   [ChainId.SONIC]: SonicNaked,
   [ChainId.HEMI]: HemiNaked,
   [ChainId.KATANA]: KatanaNaked,
-  aptos: AptosNaked,
-  tron: TronNaked,
+  [ChainId.APTOS]: AptosNaked,
+  [ChainId.TRON]: TronNaked,
 }

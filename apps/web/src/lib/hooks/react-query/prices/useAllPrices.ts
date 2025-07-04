@@ -1,8 +1,11 @@
 import { useQuery } from '@tanstack/react-query'
 import ms from 'ms'
-import { type ChainId, LowercaseMap } from 'sushi'
-import { withoutScientificNotation } from 'sushi/format'
-import { Fraction } from 'sushi/math'
+import {
+  type ChainId,
+  Fraction,
+  LowercaseMap,
+  withoutScientificNotation,
+} from 'sushi'
 import { type Address, parseUnits } from 'viem'
 
 const hydrate = (data: Record<Address, number>) => {
@@ -16,10 +19,10 @@ const hydrate = (data: Record<Address, number>) => {
       if (typeof price !== 'undefined') {
         priceMap.set(
           address as Address,
-          new Fraction(
-            parseUnits(price, 18).toString(),
-            parseUnits('1', 18).toString(),
-          ),
+          new Fraction({
+            numerator: parseUnits(price, 18).toString(),
+            denominator: parseUnits('1', 18).toString(),
+          }),
         )
       }
     })

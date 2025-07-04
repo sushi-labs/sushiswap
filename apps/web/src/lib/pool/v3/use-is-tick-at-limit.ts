@@ -1,8 +1,12 @@
 'use client'
 
 import { useMemo } from 'react'
-import { type SushiSwapV3FeeAmount, TICK_SPACINGS } from 'sushi/config'
-import { TickMath, nearestUsableTick } from 'sushi/pool/sushiswap-v3'
+import {
+  type SushiSwapV3FeeAmount,
+  TICK_SPACINGS,
+  TickMath,
+  nearestUsableTick,
+} from 'sushi/evm'
 import { Bound } from '../../constants'
 
 export function useIsTickAtLimit(

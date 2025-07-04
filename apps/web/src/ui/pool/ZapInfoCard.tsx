@@ -14,26 +14,23 @@ import {
   warningSeverityClassName,
 } from 'src/lib/swap/warningSeverity'
 import { useTotalSupply } from 'src/lib/wagmi/hooks/tokens/useTotalSupply'
-import type { EvmChainId } from 'sushi/chain'
-import { Amount, type Type } from 'sushi/currency'
-import { formatUSD } from 'sushi/format'
-import { Percent, ZERO } from 'sushi/math'
-import { SushiSwapV2Pool } from 'sushi/pool'
+import { Amount, Percent, ZERO, formatUSD } from 'sushi'
+import { type EvmChainId, type EvmCurrency, SushiSwapV2Pool } from 'sushi/evm'
 import { usePrices } from '~evm/_common/ui/price-provider/price-provider/use-prices'
 import { ZapRouteDialog } from './ZapRouteDialog'
 
 const getAmountUSD = (
-  amount: Amount<Type> | undefined,
+  amount: Amount<EvmCurrency> | undefined,
   price: number | undefined,
 ) => {
   if (typeof amount === 'undefined' || typeof price === 'undefined')
     return undefined
-  return (price * Number(amount.quotient)) / 10 ** amount.currency.decimals
+  return (price * Number(amount.amount)) / 10 ** amount.currency.decimals
 }
 
 interface ZapInfoCardProps {
   zapResponse?: ZapResponse
-  inputCurrencyAmount: Amount<Type> | undefined
+  inputCurrencyAmount: Amount<EvmCurrency> | undefined
   pool: SushiSwapV2Pool | null
   tokenRatios?: { token0: number; token1: number }
 }
@@ -75,20 +72,17 @@ export const ZapInfoCard: FC<ZapInfoCardProps> = ({
       }
     }
 
-    const amountOut = Amount.fromRawAmount(outputToken, zapResponse.amountOut)
+    const amountOut = new Amount(outputToken, zapResponse.amountOut)
 
     const inputCurrencyPrice = prices?.get(
-      inputCurrencyAmount.currency.wrapped.address,
+      inputCurrencyAmount.currency.wrap().address,
     )
     const token0Price = prices?.get(pool.token0.address)
     const token1Price = prices?.get(pool.token1.address)
 
     const feeAmountUSD = getAmountUSD(
       zapResponse.feeAmount && zapResponse.feeAmount.length > 0
-        ? Amount.fromRawAmount(
-            inputCurrencyAmount.currency,
-            zapResponse.feeAmount[0],
-          )
+        ? new Amount(inputCurrencyAmount.currency, zapResponse.feeAmount[0])
         : undefined,
       inputCurrencyPrice,
     )
@@ -99,12 +93,15 @@ export const ZapInfoCard: FC<ZapInfoCardProps> = ({
     const amountOutUSD =
       !reserve0USD || !reserve1USD || !totalSupply
         ? undefined
-        : ((reserve0USD + reserve1USD) * Number(amountOut.quotient)) /
-          Number(totalSupply.quotient)
+        : ((reserve0USD + reserve1USD) * Number(amountOut.amount)) /
+          Number(totalSupply.amount)
 
     const priceImpact =
       typeof zapResponse.priceImpact === 'number'
-        ? new Percent(zapResponse.priceImpact, 10_000n)
+        ? new Percent({
+            numerator: zapResponse.priceImpact,
+            denominator: 10_000n,
+          })
         : undefined
 
     return {
@@ -131,12 +128,12 @@ export const ZapInfoCard: FC<ZapInfoCardProps> = ({
                 >
                   {priceImpact ? (
                     `${
-                      priceImpact.lessThan(ZERO)
+                      priceImpact.lt(ZERO)
                         ? '+'
-                        : priceImpact.greaterThan(ZERO)
+                        : priceImpact.gt(ZERO)
                           ? '-'
                           : ''
-                    }${Math.abs(Number(priceImpact.toFixed(2)))}%`
+                    }${Math.abs(Number((priceImpact.toNumber() * 100).toFixed(2)))}%`
                   ) : !zapResponse ? (
                     <SkeletonBox className="h-4 py-0.5 w-[40px]" />
                   ) : (
@@ -163,7 +160,8 @@ export const ZapInfoCard: FC<ZapInfoCardProps> = ({
                 <div className="flex items-center gap-2">
                   {typeof amountOut !== 'undefined' ? (
                     <span>
-                      <FormattedNumber number={amountOut.toExact()} /> LP Tokens
+                      <FormattedNumber number={amountOut.toString()} /> LP
+                      Tokens
                     </span>
                   ) : (
                     <SkeletonBox className="h-4 py-0.5 w-[40px]" />

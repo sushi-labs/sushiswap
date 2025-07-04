@@ -1,19 +1,20 @@
 import { test } from 'next/experimental/testmode/playwright.js'
 import {
+  EvmNative,
+  type EvmToken,
+  Fee,
   SushiSwapV3FeeAmount,
   isSushiSwapV2ChainId,
   isSushiSwapV3ChainId,
-} from 'sushi/config'
-import { Native, type Token } from 'sushi/currency'
-import { Fee } from 'sushi/dex'
+} from 'sushi/evm'
 import { chainId } from 'test/constants'
 import { createERC20 } from 'test/erc20'
 import { PoolPage } from 'test/helpers/pool'
 import { interceptAnvil } from 'test/intercept-anvil'
 
-const NATIVE_TOKEN = Native.onChain(chainId)
+const NATIVE_TOKEN = EvmNative.fromChainId(chainId)
 
-let FAKE_TOKEN: Token
+let FAKE_TOKEN: EvmToken
 const BASE_URL = 'http://localhost:3000'
 
 test.beforeAll(async () => {
@@ -96,7 +97,7 @@ test.describe('V3', () => {
 
     await poolPage.mockPoolApi(
       next,
-      poolPage.nativeToken.wrapped,
+      poolPage.nativeToken.wrap(),
       FAKE_TOKEN,
       SushiSwapV3FeeAmount.HIGH,
       'SUSHISWAP_V3',
@@ -139,7 +140,7 @@ test.describe('V2', () => {
 
     await poolPage.mockPoolApi(
       next,
-      poolPage.nativeToken.wrapped,
+      poolPage.nativeToken.wrap(),
       FAKE_TOKEN,
       Fee.DEFAULT,
       'SUSHISWAP_V2',

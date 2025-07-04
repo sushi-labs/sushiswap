@@ -1,4 +1,4 @@
-import { ChainId } from 'sushi/chain'
+import { ChainId } from 'sushi'
 
 import type { IconComponent } from '../../../types'
 import { ApeCircle } from './ApeCircle'
@@ -113,19 +113,11 @@ export const NETWORK_CIRCLE_ICON: Partial<
   [ChainId.AVALANCHE]: AvalancheCircle,
   [ChainId.HARMONY]: HarmonyCircle,
   [ChainId.CELO]: CeloCircle,
-  [ChainId.MOONRIVER]: MoonriverCircle,
-  [ChainId.FUSE]: FuseCircle,
-  [ChainId.TELOS]: TelosCircle,
-  [ChainId.MOONBEAM]: MoonbeamCircle,
   [ChainId.OPTIMISM]: OptimismCircle,
   [ChainId.METIS]: MetisCircle,
   [ChainId.KAVA]: KavaCircle,
   [ChainId.ARBITRUM_NOVA]: ArbitrumNovaCircle,
-  [ChainId.HECO]: HecoCircle,
-  [ChainId.OKEX]: OkexCircle,
-  [ChainId.PALM]: PalmCircle,
   [ChainId.BOBA]: BobaCircle,
-  [ChainId.BOBA_AVAX]: BobaAvaxCircle,
   [ChainId.BOBA_BNB]: BobaBNBCircle,
   [ChainId.BTTC]: BttcCircle,
   [ChainId.POLYGON_ZKEVM]: PolygonZKCircle,
@@ -151,6 +143,6 @@ export const NETWORK_CIRCLE_ICON: Partial<
   [ChainId.SONIC]: SonicCircle,
   [ChainId.HEMI]: HemiCircle,
   [ChainId.KATANA]: KatanaCircle,
-  aptos: AptosCircle,
-  tron: TronCircle,
+  [ChainId.APTOS]: AptosCircle,
+  [ChainId.TRON]: TronCircle,
 }

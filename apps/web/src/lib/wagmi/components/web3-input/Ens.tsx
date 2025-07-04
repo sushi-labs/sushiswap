@@ -2,7 +2,7 @@
 
 import { TextField, type TextFieldProps } from '@sushiswap/ui'
 import { type ForwardedRef, forwardRef, useEffect } from 'react'
-import { ChainId } from 'sushi/chain'
+import { EvmChainId } from 'sushi/evm'
 import { useEnsAddress } from 'wagmi'
 
 function Component(
@@ -11,7 +11,7 @@ function Component(
 ) {
   const { data } = useEnsAddress({
     name: `${props.value}`,
-    chainId: ChainId.ETHEREUM,
+    chainId: EvmChainId.ETHEREUM,
     query: {
       enabled: Boolean(
         props.value &&

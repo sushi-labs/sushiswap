@@ -1,6 +1,5 @@
-import type { Amount, Type } from 'sushi/currency'
-import { type Fraction, Percent } from 'sushi/math'
-import { isLsd, isStable, isWrapOrUnwrap } from 'sushi/router'
+import { type Amount, type Fraction, Percent } from 'sushi'
+import { type EvmCurrency, isLsd, isStable, isWrapOrUnwrap } from 'sushi/evm'
 
 export const getFeeString = ({
   fromToken,
@@ -8,17 +7,17 @@ export const getFeeString = ({
   tokenOutPrice,
   minAmountOut,
 }: {
-  fromToken: Type
-  toToken: Type
+  fromToken: EvmCurrency
+  toToken: EvmCurrency
   tokenOutPrice: Fraction | undefined
-  minAmountOut: Amount<Type>
+  minAmountOut: Amount<EvmCurrency>
 }) => {
-  return !isWrapOrUnwrap({ fromToken, toToken }) &&
-    !isStable({ fromToken, toToken }) &&
-    !isLsd({ fromToken, toToken })
+  return !isWrapOrUnwrap({ from: fromToken, to: toToken }) &&
+    !(isStable(fromToken) && isStable(toToken)) &&
+    !(isLsd(fromToken) && isLsd(toToken))
     ? `${tokenOutPrice ? '$' : ''}${minAmountOut
-        .multiply(new Percent(25, 10000))
-        .multiply(tokenOutPrice ? tokenOutPrice.asFraction : 1)
+        .mul(new Percent({ numerator: 25, denominator: 10000 }))
+        .mul(tokenOutPrice ? tokenOutPrice.asFraction : 1n)
         .toSignificant(4)}${!tokenOutPrice ? ` ${toToken.symbol}` : ''}`
     : '$0'
 }

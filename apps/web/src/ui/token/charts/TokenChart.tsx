@@ -18,15 +18,18 @@ import {
   TooltipTrigger,
 } from '@sushiswap/ui'
 import { type FC, useMemo, useState } from 'react'
-import { EvmChain } from 'sushi/chain'
-import { type SerializedToken, Token } from 'sushi/currency'
-import { shortenAddress } from 'sushi/format'
+import {
+  EvmToken,
+  type SerializedEvmToken,
+  getEvmChainById,
+  shortenEvmAddress,
+} from 'sushi/evm'
 import { PriceChart } from './PriceChart'
 
 type ChartType = 'Price' // | 'Volume' | 'TVL'
 
 interface TokenChartProps {
-  token: SerializedToken
+  token: SerializedEvmToken
 }
 
 export const TokenChart: FC<TokenChartProps> = ({ token }) => {
@@ -37,7 +40,7 @@ export const TokenChart: FC<TokenChartProps> = ({ token }) => {
       <div className="flex items-start justify-between">
         <div className="flex gap-2">
           <Currency.Icon
-            currency={useMemo(() => new Token(token), [token])}
+            currency={useMemo(() => new EvmToken(token), [token])}
             width={36}
             height={36}
           />
@@ -64,9 +67,9 @@ export const TokenChart: FC<TokenChartProps> = ({ token }) => {
               </ClipboardController>
               <LinkExternal
                 className="font-medium"
-                href={EvmChain.from(token.chainId)?.getTokenUrl(token.address)}
+                href={getEvmChainById(token.chainId).getTokenUrl(token.address)}
               >
-                {shortenAddress(token.address)}
+                {shortenEvmAddress(token.address)}
               </LinkExternal>
             </div>
           </div>
