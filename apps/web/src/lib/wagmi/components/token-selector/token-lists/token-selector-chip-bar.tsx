@@ -55,7 +55,10 @@ export function TokenSelectorChipBar({
               variant="secondary"
               className="group"
               key={token.id}
-              onClick={() => onSelect(token)}
+              onClick={() => {
+                console.log(token)
+                onSelect(token)
+              }}
             >
               <Currency.Icon
                 width={20}
