@@ -8,14 +8,15 @@ import { type EvmChainId, getEvmChainById, shortenHash } from 'sushi/evm'
 import type { Hex } from 'viem'
 import { PortfolioInfoRow } from '../PortfolioInfoRow'
 
-
 export const PortfolioReceiveTransaction: FC<{ tx: PortfolioTransaction }> = ({
   tx,
 }) => {
   return (
     <PortfolioInfoRow
       chainId={tx.chainId as EvmChainId}
-      href={getEvmChainById(tx.chainId as EvmChainId).getTransactionUrl(tx.txHash as Hex)}
+      href={getEvmChainById(tx.chainId as EvmChainId).getTransactionUrl(
+        tx.txHash as Hex,
+      )}
       externalLink
       icon={
         <div className="p-1.5 bg-[#64748B] rounded-full w-7 h-7">
