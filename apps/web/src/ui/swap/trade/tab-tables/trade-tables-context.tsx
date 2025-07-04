@@ -7,11 +7,7 @@ import {
   useMemo,
   useState,
 } from 'react'
-import {
-  TWAP_SUPPORTED_CHAIN_IDS,
-  type TwapSupportedChainId,
-  isTwapSupportedChainId,
-} from 'src/config'
+import { type TwapSupportedChainId, isTwapSupportedChainId } from 'src/config'
 import { type TwapOrder, useTwapOrders } from 'src/lib/hooks/react-query/twap'
 import type { Type } from 'sushi/currency'
 import { useAccount } from 'wagmi'
@@ -80,8 +76,6 @@ const Content = ({ children }: { children: React.ReactNode }) => {
     loadingChains,
   } = useTwapOrders({
     chainIds,
-    // account: "0xFa7768aDDb25AA83BfA5c257A443D1c730178c7c",//test account for limit orders, address = 0xb1ed8BCAD1EaC8a1DF0764700472391800D12946
-    // account: '0x95E01700953A9EA0F3BF379Be9435b483cB0E356', //test account for dca orders address = 0xb1ed8BCAD1EaC8a1DF0764700472391800D12946
     account: address,
     enabled: true,
   })

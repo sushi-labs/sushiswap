@@ -238,7 +238,7 @@ export const TIME_COLUMN: ColumnDef<TwapOrder> = {
   header: 'Time',
   enableSorting: false,
   accessorFn: (row) => row.createdAt,
-  cell: ({ row }) => format(new Date(row.original.createdAt), 'dd/MM/yy'),
+  cell: ({ row }) => format(new Date(row.original.createdAt), 'yyyy/MM/dd'),
 }
 
 export const ACTION_COLUMN: ColumnDef<TwapOrder> = {

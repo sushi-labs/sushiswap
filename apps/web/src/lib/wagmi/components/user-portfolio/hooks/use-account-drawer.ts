@@ -13,6 +13,8 @@ export const useAccountDrawer = () => {
   useEffect(() => {
     if (isAccountDrawerOpen) {
       setIsOpen(true)
+    } else {
+      setIsOpen(false)
     }
   }, [isAccountDrawerOpen])
 

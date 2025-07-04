@@ -1,4 +1,7 @@
-import { getRecentSwaps } from '@sushiswap/graph-client/data-api'
+import {
+  type TokenListV2ChainId,
+  getRecentSwaps,
+} from '@sushiswap/graph-client/data-api'
 import { useQuery } from '@tanstack/react-query'
 import type { Address } from 'viem'
 
@@ -8,7 +11,7 @@ export const TempChainIds: TempTokenListV2ChainId = [1, 8453, 42161, 137]
 
 interface UseRecentSwaps {
   walletAddress: Address | undefined
-  chainIds: TempTokenListV2ChainId | undefined
+  chainIds: TokenListV2ChainId[] | undefined
 }
 
 export const useRecentSwaps = ({ walletAddress, chainIds }: UseRecentSwaps) => {

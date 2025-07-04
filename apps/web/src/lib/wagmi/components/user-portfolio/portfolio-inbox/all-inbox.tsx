@@ -16,7 +16,6 @@ export const ALLOWED_TYPES: TransactionType[] = [
 ]
 
 export const AllInbox = () => {
-  // @ DEV use PortfolioInfoRowSkeleton for loading state
   const { address } = useAccount()
   const { groupedNotifications, markAsRead } = useNotifications({
     account: address,
@@ -51,9 +50,9 @@ export const AllInbox = () => {
             //need to figure out how to give a mass product notification to all users
             markAsRead={async () => {}}
           />
-          {notifications.map((notification) => (
+          {notifications.map((notification, idx) => (
             <InboxItem
-              key={notification.id}
+              key={`all-inbox-${idx}`}
               type={notification.type as TransactionType}
               details={notification.summary}
               date={new Date(notification.timestamp).toLocaleDateString()}

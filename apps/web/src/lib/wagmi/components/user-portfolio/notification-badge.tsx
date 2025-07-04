@@ -5,13 +5,15 @@ const sizeVariants = {
   default: 'h-5 min-w-[20px] text-xs px-1.5',
 }
 
+export type NotificationBadgeSize = keyof typeof sizeVariants
+
 export const NotificationBadge = ({
   notificationCount,
   className,
   size = 'default',
 }: {
   notificationCount: number
-  size?: keyof typeof sizeVariants
+  size?: NotificationBadgeSize
   className?: string
 }) => {
   if (notificationCount === 0) return null

@@ -63,6 +63,7 @@ const Content = () => {
 
   return (
     <Tabs
+      id="trade-table"
       defaultValue={tabs[0].value}
       onValueChange={(value) => setCurrentTab(value as TABS)}
       className="-mx-5 md:mx-0"

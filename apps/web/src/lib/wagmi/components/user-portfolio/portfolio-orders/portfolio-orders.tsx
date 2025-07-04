@@ -6,7 +6,7 @@ import {
   SelectItem,
   SelectTrigger,
 } from '@sushiswap/ui'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useAccountDrawer } from '../hooks/use-account-drawer'
 import { ActiveOrders } from './active-orders'
 import { CompletedOrders } from './completed-orders'
@@ -27,6 +27,7 @@ export const PortfolioOrders = () => {
     CompletedOrderType.All,
   )
   const { handleAccountDrawer, subAccountTab } = useAccountDrawer()
+  const scrollRef = useRef<HTMLDivElement>(null)
 
   const handleTabChange = (newTab: OrdersTab) => {
     setTab(newTab)
@@ -50,6 +51,14 @@ export const PortfolioOrders = () => {
         return <CompletedOrders filter={completedOrderFilter} />
     }
   }, [tab, completedOrderFilter])
+
+  // biome-ignore lint/correctness/useExhaustiveDependencies: need this to run only when completedOrderFilter changes
+  useEffect(() => {
+    scrollRef?.current?.scrollTo({
+      top: 0,
+      behavior: 'smooth',
+    })
+  }, [completedOrderFilter])
 
   return (
     <div className="flex flex-col gap-y-5 min-h-0">
@@ -100,7 +109,10 @@ export const PortfolioOrders = () => {
         ) : null}
       </div>
 
-      <div className="flex flex-col gap-y-5 px-5 overflow-y-auto hide-scrollbar">
+      <div
+        ref={scrollRef}
+        className="flex flex-col gap-y-5 px-5 overflow-y-auto hide-scrollbar"
+      >
         {content}
       </div>
     </div>

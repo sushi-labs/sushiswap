@@ -5,7 +5,6 @@ import { ALLOWED_TYPES } from './all-inbox'
 import { InboxItem, type TransactionType } from './inbox-item'
 
 export const Transactions = () => {
-  // @ DEV use PortfolioInfoRowSkeleton for loading state
   const { address } = useAccount()
   const { ungroupedNotifications, markAsRead } = useNotifications({
     account: address,
@@ -27,9 +26,9 @@ export const Transactions = () => {
           You haven&apos;t received any notifications so far.
         </div>
       ) : (
-        notifications.map((notification) => (
+        notifications.map((notification, idx) => (
           <InboxItem
-            key={notification.id}
+            key={`txns-${idx}`}
             type={notification.type as TransactionType}
             details={notification.summary}
             date={new Date(notification.timestamp).toLocaleDateString()}
