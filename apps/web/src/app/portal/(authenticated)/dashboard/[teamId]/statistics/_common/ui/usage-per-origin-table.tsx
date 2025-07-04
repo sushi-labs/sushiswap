@@ -51,7 +51,7 @@ const columns = [
             trailingZeroDisplay: 'stripIfInteger',
           })}
         </span>
-      ) 
+      )
     },
     meta: {
       header: {
