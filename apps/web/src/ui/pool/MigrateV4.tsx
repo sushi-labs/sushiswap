@@ -2,7 +2,7 @@
 
 import { SwitchHorizontalIcon } from '@heroicons/react-v1/solid'
 import { Cog6ToothIcon } from '@heroicons/react/24/outline'
-import type { V2Pool } from '@sushiswap/graph-client/data-api'
+import type { V2Pool, V3Pool } from '@sushiswap/graph-client/data-api'
 import { SlippageToleranceStorageKey, TTLStorageKey } from '@sushiswap/hooks'
 import {
   Card,
@@ -20,7 +20,6 @@ import {
   DialogDescription,
   DialogFooter,
   DialogHeader,
-  DialogProvider,
   DialogReview,
   DialogTitle,
   DialogTrigger,
@@ -35,14 +34,27 @@ import {
 import { Button } from '@sushiswap/ui'
 import React, { type FC, useMemo, useState } from 'react'
 import { APPROVE_TAG_MIGRATE, Bound, Field } from 'src/lib/constants'
-import { useTokenAmountDollarValues, useV2Pool } from 'src/lib/hooks'
+import { isSushiSwapV2Pool } from 'src/lib/functions'
+import { getTokensFromPool, useTokenAmountDollarValues } from 'src/lib/hooks'
 import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
+import {
+  type HookData,
+  type SushiSwapV4ChainId,
+  SushiSwapV4Pool,
+  SushiSwapV4Position,
+  getPoolKey,
+} from 'src/lib/pool/v4'
 import {
   V3MigrateContractConfig,
   useV3Migrate,
 } from 'src/lib/wagmi/hooks/migrate/hooks/useV3Migrate'
-import type { V3MigrateChainId } from 'src/lib/wagmi/hooks/migrate/types'
+import { useV4Migrate } from 'src/lib/wagmi/hooks/migrate/hooks/useV4Migrate'
+import type {
+  V3MigrateChainId,
+  V4MigrateChainId,
+} from 'src/lib/wagmi/hooks/migrate/types'
 import { useSushiSwapV2Pool } from 'src/lib/wagmi/hooks/pools/hooks/useSushiSwapV2Pools'
+import type { ConcentratedLiquidityPositionV3 } from 'src/lib/wagmi/hooks/positions/types'
 import { useTotalSupply } from 'src/lib/wagmi/hooks/tokens/useTotalSupply'
 import {
   getDefaultTTL,
@@ -53,345 +65,409 @@ import {
   useApproved,
   withCheckerRoot,
 } from 'src/lib/wagmi/systems/Checker/Provider'
-import { EvmChain } from 'sushi/chain'
-import {
-  type SushiSwapV2ChainId,
-  type SushiSwapV3ChainId,
-  SushiSwapV3FeeAmount,
-} from 'sushi/config'
+import { ChainKey, EvmChain } from 'sushi/chain'
+import { type SushiSwapV2ChainId, SushiSwapV3FeeAmount } from 'sushi/config'
 import { Amount, Price, tryParseAmount, unwrapToken } from 'sushi/currency'
 import { formatUSD } from 'sushi/format'
 import { type Fraction, ZERO } from 'sushi/math'
-import {
-  Position,
-  SushiSwapV3Pool,
-  TickMath,
-  priceToClosestTick,
-} from 'sushi/pool/sushiswap-v3'
-import type { Address } from 'viem'
+import { TickMath, priceToClosestTick } from 'sushi/pool/sushiswap-v3'
+import { SushiSwapProtocol } from 'sushi/types'
+import { type Address, zeroAddress, zeroHash } from 'viem'
 import { useAccount, useWaitForTransactionReceipt } from 'wagmi'
-import { useConcentratedDerivedMintInfo } from './ConcentratedLiquidityProvider'
+import { useConcentratedDerivedMintInfoV4 } from './ConcentratedLiquidityProviderV4'
+import type { FeeData } from './ConcentratedLiquidityURLStateProviderV4'
 import { usePoolPosition } from './PoolPositionProvider'
-import { SelectFeeConcentratedWidgetV3 } from './SelectFeeConcentratedWidgetV3'
-import { SelectPricesWidgetV3 } from './SelectPricesWidgetV3'
+import { SelectFeeConcentratedWidgetV4 } from './SelectFeeConcentratedWidgetV4'
+import { SelectPricesWidgetV4 } from './SelectPricesWidgetV4'
 
-export const MigrateTab: FC<{ pool: V2Pool }> = withCheckerRoot(({ pool }) => {
-  const { address } = useAccount()
-  const [feeAmount, setFeeAmount] = useState<SushiSwapV3FeeAmount>(
-    SushiSwapV3FeeAmount.LOWEST,
-  )
-  const [invertPrice, setInvertPrice] = useState(false)
-  const [invertTokens, setInvertTokens] = useState(false)
-  const [slippageTolerance] = useSlippageTolerance(
-    SlippageToleranceStorageKey.AddLiquidity,
-  )
+interface MigrateV2PositionParams {
+  pool: V2Pool
+}
 
-  const {
-    data: { token0: _token0, token1: _token1, liquidityToken },
-  } = useV2Pool(pool)
+interface MigrateV3PositionParams {
+  pool: V3Pool
+  position: ConcentratedLiquidityPositionV3 | undefined
+}
 
-  const {
-    value0: _value0,
-    value1: _value1,
-    underlying0: _underlying0,
-    underlying1: _underlying1,
-    isLoading,
-    balance,
-  } = usePoolPosition()
+export const MigrateV4: FC<MigrateV2PositionParams | MigrateV3PositionParams> =
+  withCheckerRoot((params) => {
+    const { pool } = params
+    const { address } = useAccount()
+    const [feeAmount, setFeeAmount] = useState<number>(
+      SushiSwapV3FeeAmount.LOWEST,
+    )
+    const [hookData, _setHookData] = useState<undefined | HookData>(undefined)
+    const [tickSpacing, setTickSpacing] = useState<number>(60)
+    const [invertPrice, setInvertPrice] = useState(false)
+    const [invertTokens, setInvertTokens] = useState(false)
+    const [slippageTolerance] = useSlippageTolerance(
+      SlippageToleranceStorageKey.AddLiquidity,
+    )
 
-  const [token0, token1, value0, value1, underlying0, underlying1] = useMemo(
-    () =>
-      invertTokens
-        ? [_token1, _token0, _value1, _value0, _underlying1, _underlying0]
-        : [_token0, _token1, _value0, _value1, _underlying0, _underlying1],
-    [
-      invertTokens,
-      _token0,
-      _token1,
-      _value0,
-      _value1,
-      _underlying0,
-      _underlying1,
-    ],
-  )
+    const setFeeData = ({ feeAmount, tickSpacing }: FeeData) => {
+      setFeeAmount(feeAmount)
+      setTickSpacing(tickSpacing)
+    }
 
-  const { data: pair } = useSushiSwapV2Pool(
-    pool.chainId as SushiSwapV2ChainId,
-    token0,
-    token1,
-  )
-  const totalSupply = useTotalSupply(liquidityToken)
+    const {
+      token0: _token0,
+      token1: _token1,
+      liquidityToken,
+    } = useMemo(() => {
+      if (!pool)
+        return {
+          token0: undefined,
+          token1: undefined,
+          liquidityToken: undefined,
+        }
 
-  // this is just getLiquidityValue with the fee off, but for the passed pair
-  const token0Value = useMemo(
-    () =>
-      token0 && pair?.[1] && totalSupply && balance
-        ? Amount.fromRawAmount(
-            token0?.wrapped,
-            (balance.quotient *
-              (token0.wrapped.equals(pair[1].token0)
-                ? pair[1].reserve0.quotient
-                : pair[1].reserve1.quotient)) /
-              totalSupply.quotient,
-          )
-        : undefined,
-    [token0, pair, totalSupply, balance],
-  )
+      return getTokensFromPool(pool)
+    }, [pool])
 
-  const token1Value = useMemo(
-    () =>
-      token1 && pair?.[1]?.reserve1 && totalSupply && balance
-        ? Amount.fromRawAmount(
-            token1?.wrapped,
-            (balance.quotient *
-              (token1.wrapped.equals(pair[1].token1)
-                ? pair[1].reserve1.quotient
-                : pair[1].reserve0.quotient)) /
-              totalSupply.quotient,
-          )
-        : undefined,
-    [token1, pair, totalSupply, balance],
-  )
+    const {
+      value0: _value0,
+      value1: _value1,
+      underlying0: _underlying0,
+      underlying1: _underlying1,
+      isLoading,
+      balance,
+    } = usePoolPosition()
 
-  const {
-    ticks,
-    invalidRange,
-    pool: v3Pool,
-    parsedAmounts,
-    pricesAtTicks,
-    ticksAtLimit,
-    price,
-    noLiquidity,
-    outOfRange,
-  } = useConcentratedDerivedMintInfo({
-    chainId: pool.chainId as SushiSwapV3ChainId,
-    account: address,
-    token0,
-    token1,
-    baseToken: token0,
-    feeAmount,
-    existingPosition: undefined,
-  })
+    const [token0, token1, value0, value1, underlying0, underlying1] = useMemo(
+      () =>
+        invertTokens
+          ? ([
+              _token1,
+              _token0,
+              _value1,
+              _value0,
+              _underlying1,
+              _underlying0,
+            ] as const)
+          : ([
+              _token0,
+              _token1,
+              _value0,
+              _value1,
+              _underlying0,
+              _underlying1,
+            ] as const),
+      [
+        invertTokens,
+        _token0,
+        _token1,
+        _value0,
+        _value1,
+        _underlying0,
+        _underlying1,
+      ],
+    )
 
-  const v3Address =
-    token0 && token1 && feeAmount
-      ? SushiSwapV3Pool.getAddress(token0.wrapped, token1.wrapped, feeAmount)
-      : undefined
-  const v3SpotPrice = useMemo(
-    () => (v3Pool ? v3Pool?.token0Price : undefined),
-    [v3Pool],
-  )
-  const v2SpotPrice = useMemo(
-    () =>
-      _token0 && _token1 && pair?.[1]?.reserve0 && pair?.[1]?.reserve1
-        ? new Price(
-            _token0.wrapped,
-            _token1.wrapped,
-            pair[1].reserve0.quotient,
-            pair[1].reserve1.quotient,
-          )
-        : undefined,
-    [_token0, _token1, pair],
-  )
-
-  let priceDifferenceFraction: Fraction | undefined =
-    v2SpotPrice && v3SpotPrice
-      ? v3SpotPrice.divide(v2SpotPrice).subtract(1).multiply(100)
-      : undefined
-  if (priceDifferenceFraction?.lessThan(ZERO)) {
-    priceDifferenceFraction = priceDifferenceFraction.multiply(-1)
-  }
-
-  const largePriceDifference =
-    priceDifferenceFraction && !priceDifferenceFraction?.lessThan(2n)
-
-  const { [Bound.LOWER]: tickLower, [Bound.UPPER]: tickUpper } = ticks
-
-  // the v3 tick is either the pool's tickCurrent, or the tick closest to the v2 spot price
-  const tick =
-    v3Pool?.tickCurrent ??
-    (v2SpotPrice ? priceToClosestTick(v2SpotPrice) : undefined)
-  // the price is either the current v3 price, or the price at the tick
-  const sqrtPrice =
-    v3Pool?.sqrtRatioX96 ??
-    (tick ? TickMath.getSqrtRatioAtTick(tick) : undefined)
-
-  const position = useMemo(
-    () =>
-      typeof tickLower === 'number' &&
-      typeof tickUpper === 'number' &&
-      !invalidRange &&
-      token0 &&
-      token1 &&
-      token0Value &&
-      token1Value &&
-      sqrtPrice &&
-      tick
-        ? Position.fromAmounts({
-            pool:
-              v3Pool ??
-              new SushiSwapV3Pool(
-                token0.wrapped,
-                token1.wrapped,
-                feeAmount,
-                sqrtPrice,
-                0,
-                tick,
-                [],
-              ),
-            tickLower,
-            tickUpper,
-            amount0: token0.wrapped.sortsBefore(token1.wrapped)
-              ? token0Value.quotient
-              : token1Value.quotient,
-            amount1: token0.wrapped.sortsBefore(token1.wrapped)
-              ? token1Value.quotient
-              : token0Value.quotient,
-            useFullPrecision: true, // we want full precision for the theoretical position
-          })
-        : undefined,
-    [
-      feeAmount,
-      invalidRange,
-      sqrtPrice,
-      tick,
-      tickLower,
-      tickUpper,
+    const { data: pair } = useSushiSwapV2Pool(
+      pool.chainId as SushiSwapV2ChainId,
       token0,
-      token0Value,
       token1,
-      token1Value,
-      v3Pool,
-    ],
-  )
+    )
+    const totalSupply = useTotalSupply(liquidityToken)
 
-  const { amount0: v3Amount0Min, amount1: v3Amount1Min } = useMemo(
-    () =>
-      position
-        ? position.mintAmountsWithSlippage(slippageTolerance)
-        : { amount0: undefined, amount1: undefined },
-    [position, slippageTolerance],
-  )
+    // this is just getLiquidityValue with the fee off, but for the passed pair
+    const token0Value = useMemo(
+      () =>
+        token0 && pair?.[1] && totalSupply && balance
+          ? Amount.fromRawAmount(
+              token0?.wrapped,
+              (balance.quotient *
+                (token0.wrapped.equals(pair[1].token0)
+                  ? pair[1].reserve0.quotient
+                  : pair[1].reserve1.quotient)) /
+                totalSupply.quotient,
+            )
+          : undefined,
+      [token0, pair, totalSupply, balance],
+    )
 
-  const [positionAmount0, positionAmount1] = useMemo(
-    () =>
-      invertTokens
-        ? [position?.amount1, position?.amount0]
-        : [position?.amount0, position?.amount1],
-    [invertTokens, position?.amount0, position?.amount1],
-  )
+    const token1Value = useMemo(
+      () =>
+        token1 && pair?.[1]?.reserve1 && totalSupply && balance
+          ? Amount.fromRawAmount(
+              token1?.wrapped,
+              (balance.quotient *
+                (token1.wrapped.equals(pair[1].token1)
+                  ? pair[1].reserve1.quotient
+                  : pair[1].reserve0.quotient)) /
+                totalSupply.quotient,
+            )
+          : undefined,
+      [token1, pair, totalSupply, balance],
+    )
 
-  const refund0 = useMemo(
-    () =>
-      positionAmount0 &&
-      token0 &&
-      token0Value &&
-      Amount.fromRawAmount(
-        token0,
-        token0Value.quotient - positionAmount0.quotient,
-      ),
-    [positionAmount0, token0, token0Value],
-  )
+    const poolKey = useMemo(() => {
+      return token0 && token1
+        ? getPoolKey({
+            chainId: pool.chainId as SushiSwapV4ChainId,
+            currency0: token0,
+            currency1: token1,
+            feeAmount,
+            tickSpacing,
+            hookData,
+          })
+        : undefined
+    }, [pool.chainId, token0, token1, feeAmount, tickSpacing, hookData])
 
-  const refund1 = useMemo(
-    () =>
-      positionAmount1 &&
-      token1 &&
-      token1Value &&
-      Amount.fromRawAmount(
-        token1,
-        token1Value.quotient - positionAmount1.quotient,
-      ),
-    [positionAmount1, token1, token1Value],
-  )
-
-  const [v3FiatValue0, v3FiatValue1, refund0FiatValue, refund1FiatValue] =
-    useTokenAmountDollarValues({
-      chainId: pool.chainId as SushiSwapV3ChainId,
-      amounts: [positionAmount0, positionAmount1, refund0, refund1],
+    const {
+      ticks,
+      invalidRange,
+      pool: v4Pool,
+      parsedAmounts,
+      pricesAtTicks,
+      ticksAtLimit,
+      price,
+      noLiquidity,
+      outOfRange,
+    } = useConcentratedDerivedMintInfoV4({
+      chainId: pool.chainId as SushiSwapV4ChainId,
+      account: address,
+      currency0: token0,
+      currency1: token1,
+      baseCurrency: token0,
+      poolKey,
+      existingPosition: undefined,
     })
 
-  const { [Field.CURRENCY_A]: input0, [Field.CURRENCY_B]: _input1 } =
-    parsedAmounts
-  const { [Bound.LOWER]: priceLower, [Bound.UPPER]: priceUpper } = pricesAtTicks
+    const v4SpotPrice = useMemo(
+      () => (v4Pool ? v4Pool?.token0Price : undefined),
+      [v4Pool],
+    )
+    const v2SpotPrice = useMemo(
+      () =>
+        _token0 && _token1 && pair?.[1]?.reserve0 && pair?.[1]?.reserve1
+          ? new Price(
+              _token0.wrapped,
+              _token1.wrapped,
+              pair[1].reserve0.quotient,
+              pair[1].reserve1.quotient,
+            )
+          : undefined,
+      [_token0, _token1, pair],
+    )
 
-  const isSorted =
-    token0 && token1 && token0.wrapped.sortsBefore(token1.wrapped)
-  const leftPrice = useMemo(
-    () => (isSorted ? priceLower : priceUpper?.invert()),
-    [isSorted, priceLower, priceUpper],
-  )
-  const rightPrice = useMemo(
-    () => (isSorted ? priceUpper : priceLower?.invert()),
-    [isSorted, priceLower, priceUpper],
-  )
-  const midPrice = useMemo(
-    () => (isSorted ? price : price?.invert()),
-    [isSorted, price],
-  )
-  const isFullRange = Boolean(
-    ticksAtLimit[Bound.LOWER] && ticksAtLimit[Bound.UPPER],
-  )
+    let priceDifferenceFraction: Fraction | undefined =
+      v2SpotPrice && v4SpotPrice
+        ? v4SpotPrice.divide(v2SpotPrice).subtract(1).multiply(100)
+        : undefined
+    if (priceDifferenceFraction?.lessThan(ZERO)) {
+      priceDifferenceFraction = priceDifferenceFraction.multiply(-1)
+    }
 
-  const fiatAmounts = useMemo(
-    () => [tryParseAmount('1', token0), tryParseAmount('1', token1)],
-    [token0, token1],
-  )
-  const fiatAmountsAsNumber = useTokenAmountDollarValues({
-    chainId: pool.chainId,
-    amounts: fiatAmounts,
-  })
+    const largePriceDifference =
+      priceDifferenceFraction && !priceDifferenceFraction?.lessThan(2n)
 
-  const { approved: approvedMigrate } = useApproved(APPROVE_TAG_MIGRATE)
-  const { data: deadline } = useTransactionDeadline({
-    storageKey: TTLStorageKey.AddLiquidity,
-    chainId: pool.chainId,
-  })
+    const { [Bound.LOWER]: tickLower, [Bound.UPPER]: tickUpper } = ticks
 
-  const {
-    write: writeMigrate,
-    isError,
-    isPending: isMigrateLoading,
-    data: hash,
-  } = useV3Migrate({
-    account: address,
-    args: {
-      pair: pool.address as Address,
-      liquidityToMigrate: balance,
-      percentageToMigrate: 100,
-      token0: _token0?.wrapped,
-      token1: _token1?.wrapped,
-      fee: feeAmount,
-      tickLower: tickLower,
-      tickUpper: tickUpper,
-      amount0Min: v3Amount0Min,
-      amount1Min: v3Amount1Min,
-      recipient: address,
-      deadline,
-      refundAsETH: true,
-      sqrtPrice,
-      noLiquidity,
-    },
-    chainId: pool.chainId as V3MigrateChainId,
-    enabled: approvedMigrate,
-  })
+    // the v4 tick is either the pool's tickCurrent, or the tick closest to the v2 spot price
+    const tick =
+      v4Pool?.tickCurrent ??
+      (v2SpotPrice ? priceToClosestTick(v2SpotPrice) : undefined)
+    // the price is either the current v4 price, or the price at the tick
+    const sqrtPrice =
+      v4Pool?.sqrtRatioX96 ??
+      (tick ? TickMath.getSqrtRatioAtTick(tick) : undefined)
 
-  const { status } = useWaitForTransactionReceipt({
-    chainId: pool.chainId as SushiSwapV3ChainId,
-    hash,
-  })
+    const position = useMemo(
+      () =>
+        typeof tickLower === 'number' &&
+        typeof tickUpper === 'number' &&
+        !invalidRange &&
+        token0 &&
+        token1 &&
+        token0Value &&
+        token1Value &&
+        sqrtPrice &&
+        tick
+          ? SushiSwapV4Position.fromAmounts({
+              pool:
+                v4Pool ??
+                new SushiSwapV4Pool({
+                  currencyA: token0,
+                  currencyB: token1,
+                  fee: feeAmount,
+                  sqrtRatioX96: sqrtPrice,
+                  liquidity: 0n,
+                  tickCurrent: tick,
+                  tickSpacing: tickSpacing,
+                  hooks: hookData,
+                }),
+              tickLower,
+              tickUpper,
+              amount0: token0.wrapped.sortsBefore(token1.wrapped)
+                ? token0Value.quotient
+                : token1Value.quotient,
+              amount1: token0.wrapped.sortsBefore(token1.wrapped)
+                ? token1Value.quotient
+                : token0Value.quotient,
+              useFullPrecision: true, // we want full precision for the theoretical position
+            })
+          : undefined,
+      [
+        feeAmount,
+        invalidRange,
+        sqrtPrice,
+        tick,
+        tickLower,
+        tickUpper,
+        token0,
+        token0Value,
+        token1,
+        token1Value,
+        v4Pool,
+        tickSpacing,
+        hookData,
+      ],
+    )
 
-  return (
-    <DialogProvider>
-      <Card>
-        <CardHeader>
-          <CardTitle>Migrate position</CardTitle>
-          <CardDescription>
-            Migrate your V2 position to a concentrated liquidity position to
-            improve your capital efficiency.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
+    const { amount0: v4Amount0Min, amount1: v4Amount1Min } = useMemo(
+      () =>
+        position
+          ? position.mintAmountsWithSlippage(slippageTolerance)
+          : { amount0: undefined, amount1: undefined },
+      [position, slippageTolerance],
+    )
+
+    const liquidityMin = useMemo(
+      () =>
+        position
+          ? slippageTolerance.multiply(position.liquidity).quotient
+          : undefined,
+      [position, slippageTolerance],
+    )
+
+    const [positionAmount0, positionAmount1] = useMemo(
+      () =>
+        invertTokens
+          ? [position?.amount1, position?.amount0]
+          : [position?.amount0, position?.amount1],
+      [invertTokens, position?.amount0, position?.amount1],
+    )
+
+    const refund0 = useMemo(
+      () =>
+        positionAmount0 &&
+        token0 &&
+        token0Value &&
+        Amount.fromRawAmount(
+          token0,
+          token0Value.quotient - positionAmount0.quotient,
+        ),
+      [positionAmount0, token0, token0Value],
+    )
+
+    const refund1 = useMemo(
+      () =>
+        positionAmount1 &&
+        token1 &&
+        token1Value &&
+        Amount.fromRawAmount(
+          token1,
+          token1Value.quotient - positionAmount1.quotient,
+        ),
+      [positionAmount1, token1, token1Value],
+    )
+
+    const [v4FiatValue0, v4FiatValue1, refund0FiatValue, refund1FiatValue] =
+      useTokenAmountDollarValues({
+        chainId: pool.chainId,
+        amounts: [positionAmount0, positionAmount1, refund0, refund1],
+      })
+
+    const { [Field.CURRENCY_A]: input0, [Field.CURRENCY_B]: _input1 } =
+      parsedAmounts
+    const { [Bound.LOWER]: priceLower, [Bound.UPPER]: priceUpper } =
+      pricesAtTicks
+
+    const isSorted =
+      token0 && token1 && token0.wrapped.sortsBefore(token1.wrapped)
+    const leftPrice = useMemo(
+      () => (isSorted ? priceLower : priceUpper?.invert()),
+      [isSorted, priceLower, priceUpper],
+    )
+    const rightPrice = useMemo(
+      () => (isSorted ? priceUpper : priceLower?.invert()),
+      [isSorted, priceLower, priceUpper],
+    )
+    const midPrice = useMemo(
+      () => (isSorted ? price : price?.invert()),
+      [isSorted, price],
+    )
+    const isFullRange = Boolean(
+      ticksAtLimit[Bound.LOWER] && ticksAtLimit[Bound.UPPER],
+    )
+
+    const fiatAmounts = useMemo(
+      () => [tryParseAmount('1', token0), tryParseAmount('1', token1)],
+      [token0, token1],
+    )
+    const fiatAmountsAsNumber = useTokenAmountDollarValues({
+      chainId: pool.chainId,
+      amounts: fiatAmounts,
+    })
+
+    const { approved: approvedMigrate } = useApproved(APPROVE_TAG_MIGRATE)
+    const { data: deadline } = useTransactionDeadline({
+      storageKey: TTLStorageKey.AddLiquidity,
+      chainId: pool.chainId,
+    })
+
+    const {
+      write: writeMigrate,
+      isError,
+      isPending: isMigrateLoading,
+      data: hash,
+    } = useV4Migrate({
+      account: address,
+      args: {
+        poolKey,
+        tickLower: tickLower,
+        tickUpper: tickUpper,
+        amount0Min: v4Amount0Min,
+        amount1Min: v4Amount1Min,
+        recipient: address,
+        deadline,
+        sqrtPrice,
+        noLiquidity,
+        liquidityMin, // TODO: CHECK
+        hookData: zeroHash, // TODO
+        ...(pool.protocol === SushiSwapProtocol.SUSHISWAP_V2
+          ? {
+              protocol: SushiSwapProtocol.SUSHISWAP_V2,
+              pair: pool.address,
+              liquidityToMigrate: balance,
+              percentageToMigrate: 100,
+              refundAsETH: true,
+            }
+          : {
+              protocol: SushiSwapProtocol.SUSHISWAP_V3,
+              tokenId: (params as MigrateV3PositionParams).position!.tokenId,
+              liquidityToMigrate: (params as MigrateV3PositionParams).position!
+                .liquidity,
+              collectFee: true,
+            }),
+      },
+      chainId: pool.chainId as V4MigrateChainId,
+      enabled: Boolean(
+        approvedMigrate &&
+          (pool.protocol !== SushiSwapProtocol.SUSHISWAP_V3 ||
+            (params as MigrateV3PositionParams).position),
+      ),
+    })
+
+    const { status } = useWaitForTransactionReceipt({
+      chainId: pool.chainId,
+      hash,
+    })
+
+    return (
+      <>
+        <CardContent className="items-center">
           <div className="flex flex-col gap-6 md:flex-row">
             <CardGroup>
               <CardLabel>V2 Price</CardLabel>
@@ -415,9 +491,9 @@ export const MigrateTab: FC<{ pool: V2Pool }> = withCheckerRoot(({ pool }) => {
                 <></>
               )}
             </CardGroup>
-            {v3SpotPrice ? (
+            {v4SpotPrice ? (
               <CardGroup>
-                <CardLabel>V3 Price</CardLabel>
+                <CardLabel>V4 Price</CardLabel>
                 {token0 && token1 && pool ? (
                   <div>
                     <Button
@@ -428,10 +504,10 @@ export const MigrateTab: FC<{ pool: V2Pool }> = withCheckerRoot(({ pool }) => {
                     >
                       1 {invertPrice ? _token1!.symbol : _token0!.symbol} ={' '}
                       {invertPrice
-                        ? `${v3SpotPrice?.invert()?.toSignificant(6)} ${
+                        ? `${v4SpotPrice?.invert()?.toSignificant(6)} ${
                             _token0!.symbol
                           }`
-                        : `${v3SpotPrice?.toSignificant(6)} ${_token1!.symbol}`}
+                        : `${v4SpotPrice?.toSignificant(6)} ${_token1!.symbol}`}
                     </Button>
                   </div>
                 ) : (
@@ -458,20 +534,23 @@ export const MigrateTab: FC<{ pool: V2Pool }> = withCheckerRoot(({ pool }) => {
           <Separator />
         </div>
         <CardContent className="!pb-0">
-          <SelectFeeConcentratedWidgetV3
+          <SelectFeeConcentratedWidgetV4
+            chainId={pool.chainId as SushiSwapV4ChainId}
             setFeeAmount={setFeeAmount}
+            setTickSpacing={setTickSpacing}
+            setFeeData={setFeeData}
             feeAmount={feeAmount}
+            tickSpacing={tickSpacing}
             token0={token0}
             token1={token1}
           />
           <Separator />
           <div className="flex flex-col gap-6">
-            <SelectPricesWidgetV3
-              chainId={pool.chainId as SushiSwapV3ChainId}
+            <SelectPricesWidgetV4
+              chainId={pool.chainId as SushiSwapV4ChainId}
+              poolKey={poolKey}
               token0={token0}
               token1={token1}
-              poolAddress={v3Address}
-              feeAmount={feeAmount}
               tokenId={undefined}
               showStartPrice={false}
               switchTokens={() => setInvertTokens((prev) => !prev)}
@@ -490,13 +569,13 @@ export const MigrateTab: FC<{ pool: V2Pool }> = withCheckerRoot(({ pool }) => {
               ) : null}
               {largePriceDifference ? (
                 <Message variant="warning" size="sm">
-                  You should only deposit liquidity into SushiSwap V3 at a price
+                  You should only deposit liquidity into SushiSwap V4 at a price
                   you believe is correct. <br />
                   If the price seems incorrect, you can either make a swap to
                   move the price or wait for someone else to do so.
                 </Message>
               ) : null}
-            </SelectPricesWidgetV3>
+            </SelectPricesWidgetV4>
           </div>
         </CardContent>
         <CardContent className="pt-0">
@@ -517,11 +596,11 @@ export const MigrateTab: FC<{ pool: V2Pool }> = withCheckerRoot(({ pool }) => {
                     <CardLabel>Tokens</CardLabel>
                     <CardCurrencyAmountItem
                       amount={positionAmount0}
-                      fiatValue={formatUSD(v3FiatValue0)}
+                      fiatValue={formatUSD(v4FiatValue0)}
                     />
                     <CardCurrencyAmountItem
                       amount={positionAmount1}
-                      fiatValue={formatUSD(v3FiatValue1)}
+                      fiatValue={formatUSD(v4FiatValue1)}
                     />
                   </CardGroup>
                 </CardContent>
@@ -530,7 +609,7 @@ export const MigrateTab: FC<{ pool: V2Pool }> = withCheckerRoot(({ pool }) => {
                 <CardHeader>
                   <CardTitle>Refunded tokens</CardTitle>
                   <CardDescription>
-                    Sometimes you get a refund as the token ratio on a V3
+                    Sometimes you get a refund as the token ratio on a V4
                     position is not always 50:50
                   </CardDescription>
                 </CardHeader>
@@ -634,7 +713,7 @@ export const MigrateTab: FC<{ pool: V2Pool }> = withCheckerRoot(({ pool }) => {
                                       </div>
                                       <DialogDescription>
                                         {token0?.symbol}/{token1?.symbol} •
-                                        SushiSwap V3 • {feeAmount / 10000}%
+                                        SushiSwap V4 • {feeAmount / 10000}%
                                       </DialogDescription>
                                     </DialogHeader>
                                     <div className="flex flex-col gap-4">
@@ -734,7 +813,7 @@ export const MigrateTab: FC<{ pool: V2Pool }> = withCheckerRoot(({ pool }) => {
                                                   }
                                                 </div>
                                                 <span className="text-xs font-normal text-gray-600 dark:text-slate-400">
-                                                  {formatUSD(v3FiatValue0)}
+                                                  {formatUSD(v4FiatValue0)}
                                                 </span>
                                               </div>
                                             </List.KeyValue>
@@ -764,7 +843,7 @@ export const MigrateTab: FC<{ pool: V2Pool }> = withCheckerRoot(({ pool }) => {
                                                   }
                                                 </div>
                                                 <span className="text-xs font-normal text-gray-600 dark:text-slate-400">
-                                                  {formatUSD(v3FiatValue1)}
+                                                  {formatUSD(v4FiatValue1)}
                                                 </span>
                                               </div>
                                             </List.KeyValue>
@@ -867,18 +946,17 @@ export const MigrateTab: FC<{ pool: V2Pool }> = withCheckerRoot(({ pool }) => {
             </div>
           </div>
         </CardContent>
-      </Card>
-      {pool && token0 && token1 ? (
-        <DialogConfirm
-          chainId={pool.chainId as SushiSwapV3ChainId}
-          status={status}
-          testId="migrate-confirmation-modal"
-          successMessage={`Successfully migrated your ${token0.symbol}/${token1.symbol} position`}
-          buttonText="Go to pool"
-          buttonLink={`/pools/${pool.chainId}:${v3Address}?activeTab=myPositions`}
-          txHash={hash}
-        />
-      ) : null}
-    </DialogProvider>
-  )
-})
+        {token0 && token1 ? (
+          <DialogConfirm
+            chainId={pool.chainId}
+            status={status}
+            testId="migrate-confirmation-modal"
+            successMessage={`Successfully migrated your ${token0.symbol}/${token1.symbol} position`}
+            buttonText="Go to positions"
+            buttonLink={`/${ChainKey[pool.chainId]}/pool`}
+            txHash={hash}
+          />
+        ) : null}
+      </>
+    )
+  })

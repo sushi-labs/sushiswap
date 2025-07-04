@@ -1,40 +1,40 @@
-import { type V2Pool, getV2Pool } from '@sushiswap/graph-client/data-api'
+import { type V3Pool, getV3Pool } from '@sushiswap/graph-client/data-api'
 import { unstable_cache } from 'next/cache'
 import { notFound } from 'next/navigation'
 import { PoolPositionProvider } from 'src/ui/pool'
 import { ConcentratedLiquidityProvider } from 'src/ui/pool/ConcentratedLiquidityProvider'
-import { MigrateV2Page } from 'src/ui/pool/MigrateV2Page'
+import { MigrateV3Page } from 'src/ui/pool/MigrateV3Page'
 import type { EvmChainId } from 'sushi/chain'
-import { isSushiSwapV2ChainId } from 'sushi/config'
+import { isSushiSwapV3ChainId } from 'sushi/config'
 import { isAddress } from 'viem'
 
-export default async function MigrateV2PoolPage(props: {
-  params: Promise<{ chainId: string; address: string }>
+export default async function MigrateV3PoolPage(props: {
+  params: Promise<{ chainId: string; address: string; position: string }>
 }) {
   const params = await props.params
-  const { chainId: _chainId, address } = params
+  const { chainId: _chainId, address, position } = params
   const chainId = +_chainId as EvmChainId
 
   if (
-    !isSushiSwapV2ChainId(chainId) ||
+    !isSushiSwapV3ChainId(chainId) ||
     !isAddress(address, { strict: false })
   ) {
     return notFound()
   }
 
   const pool = (await unstable_cache(
-    async () => getV2Pool({ chainId, address }),
-    ['v2', 'pool', `${chainId}:${address}`],
+    async () => getV3Pool({ chainId, address }),
+    ['v3', 'pool', `${chainId}:${address}`],
     {
       revalidate: 60 * 15,
     },
-  )()) as V2Pool
+  )()) as V3Pool
 
   return (
     <div className="flex flex-col gap-6">
       <PoolPositionProvider pool={pool}>
         <ConcentratedLiquidityProvider>
-          <MigrateV2Page pool={pool} />
+          <MigrateV3Page pool={pool} tokenId={position} />
         </ConcentratedLiquidityProvider>
       </PoolPositionProvider>
     </div>

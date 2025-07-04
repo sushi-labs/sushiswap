@@ -113,7 +113,6 @@ export class SushiSwapV4Pool {
     tickCurrent,
     ticks = NO_TICK_DATA_PROVIDER_DEFAULT,
     tickSpacing,
-    dynamic,
     hooks,
   }: {
     poolType?: PoolType
@@ -125,7 +124,6 @@ export class SushiSwapV4Pool {
     tickCurrent: number
     ticks?: TickDataProvider | (Tick | TickConstructorArgs)[]
     tickSpacing: number
-    dynamic?: boolean
     hooks?: HookData
   }) {
     invariant(
@@ -146,7 +144,7 @@ export class SushiSwapV4Pool {
       : ticks
     this.tickSpacing = tickSpacing
     this.poolType = poolType
-    this.dynamic = dynamic
+    this.dynamic = fee === DYNAMIC_FEE_FLAG
     this.hooks = hooks
     this.poolKey = getPoolKey({
       chainId: this.chainId,

@@ -1,5 +1,5 @@
 import { ChainId } from 'sushi/chain'
-import type { V3MigrateChainId } from './types'
+import type { V3MigrateChainId, V4MigrateChainId } from './types'
 
 export const V3MigrateAddress = {
   [ChainId.ARBITRUM_NOVA]: '0xFB7eF66a7e61224DD6FcD0D7d9C3be5C8B049b9f',
@@ -22,3 +22,11 @@ export const V3MigrateAddress = {
 export const V3MigrateChainIds = Object.keys(V3MigrateAddress).map(
   (el) => +el as V3MigrateChainId,
 ) as V3MigrateChainId[]
+
+export const V4MigrateAddress = {
+  [ChainId.POLYGON]: '0x4728a8D6805549b3A0ae656Bf51D320Efe1F04c3',
+}
+
+export const V4MigrateChainIds = Object.keys(V4MigrateAddress).map(
+  (el) => +el as V4MigrateChainId,
+) as V4MigrateChainId[]
