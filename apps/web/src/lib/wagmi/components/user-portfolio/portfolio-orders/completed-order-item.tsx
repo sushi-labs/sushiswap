@@ -126,11 +126,13 @@ const TwapItem = ({ order }: { order: TwapOrder }) => {
       <div className="grid grid-cols-2 gap-2">
         <div className="flex flex-col gap-3">
           <Item title="Bought">
-            <Currency.Icon
-              currency={parsedOrder.buyToken!}
-              width={24}
-              height={24}
-            />
+            {parsedOrder.buyToken ? (
+              <Currency.Icon
+                currency={parsedOrder.buyToken}
+                width={24}
+                height={24}
+              />
+            ) : null}
             {formatNumber(parsedOrder.buyTokenExpectedAmount)}{' '}
             {parsedOrder.buyToken?.symbol}
           </Item>
@@ -153,11 +155,13 @@ const TwapItem = ({ order }: { order: TwapOrder }) => {
         </div>
         <div className="flex flex-col gap-3">
           <Item title="Sold">
-            <Currency.Icon
-              currency={parsedOrder.sellToken!}
-              width={24}
-              height={24}
-            />
+            {parsedOrder.sellToken ? (
+              <Currency.Icon
+                currency={parsedOrder.sellToken}
+                width={24}
+                height={24}
+              />
+            ) : null}
             {formatNumber(parsedOrder.sellTokenTotalAmount)}{' '}
             {parsedOrder.sellToken?.symbol}
           </Item>

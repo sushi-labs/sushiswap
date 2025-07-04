@@ -75,9 +75,10 @@ const Content = ({ children }: { children: React.ReactNode }) => {
     isLoading: ordersLoading,
     loadingChains,
   } = useTwapOrders({
-    chainIds,
-    account: address,
-    enabled: true,
+    chainIds: chainIds.filter((chainId) => isTwapSupportedChainId(chainId)),
+    // account: address,
+    account: '0x95E01700953A9EA0F3BF379Be9435b483cB0E356',
+    enabled: Boolean(address),
   })
 
   useEffect(() => {

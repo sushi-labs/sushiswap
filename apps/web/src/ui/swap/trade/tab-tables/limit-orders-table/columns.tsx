@@ -1,7 +1,5 @@
 import { XMarkIcon } from '@heroicons/react/24/solid'
-import { useBreakpoint } from '@sushiswap/hooks'
 import {
-  Button,
   Chip,
   Currency,
   Loader,
@@ -35,9 +33,7 @@ export const BUY_COLUMN: ColumnDef<TwapOrder> = {
       <div className="flex items-center gap-1 md:gap-2 min-w-[130px]">
         <Currency.Icon disableLink currency={buyToken} width={24} height={24} />{' '}
         <span className="whitespace-nowrap">
-          {!buyTokenExpectedAmount
-            ? '-'
-            : `${formatNumber(buyTokenExpectedAmount)} ${buyToken.symbol}`}
+          {formatNumber(buyTokenExpectedAmount)} ${buyToken.symbol}
         </span>
       </div>
     )
