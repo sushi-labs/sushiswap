@@ -19,7 +19,7 @@ const BridgeInfo = {
     ),
     textColor: 'text-white',
   },
-  [ChainId.KATANA]: {
+  [EvmChainId.KATANA]: {
     url: 'https://app.katana.network', // TODO
     background: (
       <div className="absolute inset-0 -z-10 bg-black/50 backdrop-blur" />

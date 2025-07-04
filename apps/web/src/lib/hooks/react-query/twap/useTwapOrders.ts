@@ -12,8 +12,7 @@ import { useCallback, useMemo } from 'react'
 import type { TwapSupportedChainId } from 'src/config'
 import { TwapSDK } from 'src/lib/swap/twap'
 import { twapAbi_status } from 'src/lib/swap/twap/abi'
-import type { Token, Type } from 'sushi/currency'
-import type { Address } from 'sushi/types'
+import type { EvmAddress, EvmCurrency, EvmToken } from 'sushi/evm'
 import { useConfig } from 'wagmi'
 
 export type TwapOrder = Order & {
@@ -23,7 +22,7 @@ export type TwapOrder = Order & {
 
 interface TwapOrdersStoreParams {
   chainId: TwapSupportedChainId
-  account: Address | undefined
+  account: EvmAddress | undefined
 }
 
 export const usePersistedOrdersStore = ({
@@ -51,8 +50,8 @@ export const usePersistedOrdersStore = ({
       orderId: number,
       txHash: string,
       params: string[],
-      srcToken: Token,
-      dstToken: Type,
+      srcToken: EvmToken,
+      dstToken: EvmCurrency,
     ) => {
       if (!account) return
 
@@ -61,7 +60,8 @@ export const usePersistedOrdersStore = ({
       const order = buildOrder({
         srcAmount: params[3],
         srcTokenAddress: srcToken.address,
-        dstTokenAddress: dstToken.isToken ? dstToken.address : zeroAddress,
+        dstTokenAddress:
+          dstToken.type === 'token' ? dstToken.address : zeroAddress,
         srcAmountPerChunk: params[4],
         deadline: Number(params[6]) * 1000,
         dstMinAmountPerChunk: params[5],
@@ -154,7 +154,7 @@ export const usePersistedOrdersStore = ({
 
 interface TwapOrdersQueryParams {
   chainId: TwapSupportedChainId
-  account: Address | undefined
+  account: EvmAddress | undefined
   enabled?: boolean
 }
 
@@ -193,7 +193,7 @@ const useTwapOrdersQuery = ({
         contracts: sdkOrders.map((order) => {
           return {
             abi: twapAbi_status,
-            address: order.twapAddress as Address,
+            address: order.twapAddress as EvmAddress,
             functionName: 'status',
             args: [order.id],
           }

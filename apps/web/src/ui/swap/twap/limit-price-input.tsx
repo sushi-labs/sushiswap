@@ -14,7 +14,7 @@ import {
   classNames,
 } from '@sushiswap/ui'
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { Amount, Price } from 'sushi/currency'
+import { Amount, Price } from 'sushi'
 import { parseUnits } from 'viem/utils'
 import { useDerivedStateTwap } from './derivedstate-twap-provider'
 
@@ -80,16 +80,16 @@ export const LimitPriceInput = () => {
     } else {
       const priceAdjustmentPercentage = PRICE_OPTIONS[priceOptionIndex].value
 
-      const oneUnitOfBaseCurrency = Amount.fromRawAmount(
-        marketPrice.baseCurrency,
-        parseUnits('1', marketPrice.baseCurrency.decimals),
+      const oneUnitOfBaseCurrency = new Amount(
+        marketPrice.base,
+        parseUnits('1', marketPrice.base.decimals),
       )
 
       const limitPrice = new Price({
         baseAmount: oneUnitOfBaseCurrency,
-        quoteAmount: Amount.fromRawAmount(
-          marketPrice.quoteCurrency,
-          (marketPrice.quote(oneUnitOfBaseCurrency).quotient *
+        quoteAmount: new Amount(
+          marketPrice.quote,
+          (marketPrice.getQuote(oneUnitOfBaseCurrency).amount *
             BigInt(100 + priceAdjustmentPercentage)) /
             100n,
         ),
@@ -108,12 +108,12 @@ export const LimitPriceInput = () => {
     if (!marketPrice || !limitPrice || typeof priceOptionIndex !== 'undefined')
       return undefined
 
-    const oneUnitOfBaseCurrency = Amount.fromRawAmount(
-      marketPrice.baseCurrency,
-      parseUnits('1', marketPrice.baseCurrency.decimals),
+    const oneUnitOfBaseCurrency = new Amount(
+      marketPrice.base,
+      parseUnits('1', marketPrice.base.decimals),
     )
-    const marketAmount = marketPrice.quote(oneUnitOfBaseCurrency).quotient
-    const limitAmount = limitPrice.quote(oneUnitOfBaseCurrency).quotient
+    const marketAmount = marketPrice.getQuote(oneUnitOfBaseCurrency).amount
+    const limitAmount = limitPrice.getQuote(oneUnitOfBaseCurrency).amount
 
     const [from, to] = isLimitPriceInverted
       ? [marketAmount, limitAmount]
