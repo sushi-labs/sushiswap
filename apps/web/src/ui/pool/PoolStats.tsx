@@ -10,7 +10,7 @@ import {
   classNames,
 } from '@sushiswap/ui'
 import type { FC } from 'react'
-import { formatNumber, formatPercent, formatUSD } from 'sushi/format'
+import { formatNumber, formatPercent, formatUSD } from 'sushi'
 
 interface PoolStats {
   pool: V2Pool

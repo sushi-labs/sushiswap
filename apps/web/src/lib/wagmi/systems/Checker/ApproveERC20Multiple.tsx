@@ -2,14 +2,15 @@
 
 import type { ButtonProps } from '@sushiswap/ui'
 import type { FC } from 'react'
-import type { Amount, Type } from 'sushi/currency'
+import type { Amount } from 'sushi'
+import type { EvmCurrency } from 'sushi/evm'
 
 import type { Address } from 'viem'
 import { ApproveERC20 } from './ApproveERC20'
 
 interface ApproveERC20MultipleProps extends ButtonProps {
   id: string
-  amounts: { amount: Amount<Type>; contract: Address }[]
+  amounts: { amount: Amount<EvmCurrency>; contract: Address }[]
   enabled?: boolean
   index?: number
 }

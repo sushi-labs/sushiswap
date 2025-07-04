@@ -8,15 +8,14 @@ import {
 } from '@sushiswap/ui'
 import { type FC, useMemo } from 'react'
 import { SushiSwapV2PoolState } from 'src/lib/wagmi/hooks/pools/hooks/useSushiSwapV2Pools'
-import type { SushiSwapV2Pool } from 'sushi'
-import type { Amount, Type } from 'sushi/currency'
-import { formatPercent } from 'sushi/format'
+import { type Amount, formatPercent } from 'sushi'
+import type { EvmCurrency, SushiSwapV2Pool } from 'sushi/evm'
 
 interface AddSectionPoolShareCardV2 {
   pool: SushiSwapV2Pool | null
   poolState: SushiSwapV2PoolState
-  input0: Amount<Type> | undefined
-  input1: Amount<Type> | undefined
+  input0: Amount<EvmCurrency> | undefined
+  input1: Amount<EvmCurrency> | undefined
 }
 
 export const AddSectionPoolShareCardV2: FC<AddSectionPoolShareCardV2> = ({
@@ -32,12 +31,12 @@ export const AddSectionPoolShareCardV2: FC<AddSectionPoolShareCardV2> = ({
     if (!pool || !input0 || !input1) return [undefined, undefined]
 
     return [
-      input0.currency.wrapped.id === pool.token0.id
-        ? input0.wrapped
-        : input1.wrapped,
-      input1.currency.wrapped.id === pool.token1.id
-        ? input1.wrapped
-        : input0.wrapped,
+      input0.currency.wrap().id === pool.token0.id
+        ? input0.wrap()
+        : input1.wrap(),
+      input1.currency.wrap().id === pool.token1.id
+        ? input1.wrap()
+        : input0.wrap(),
     ]
   }, [pool, poolState, input0, input1])
 
@@ -45,19 +44,19 @@ export const AddSectionPoolShareCardV2: FC<AddSectionPoolShareCardV2> = ({
     if (
       !token0Input ||
       !token1Input ||
-      token0Input?.equalTo(0) ||
-      token1Input?.equalTo(0)
+      token0Input?.eq(0n) ||
+      token1Input?.eq(0n)
     )
       return [undefined, undefined]
 
     const token1Per0 = token1Input
-      .divide(token0Input)
-      .multiply(10n ** BigInt(token0Input.currency.decimals))
+      .divToFraction(token0Input)
+      .mul(10n ** BigInt(token0Input.currency.decimals))
       .toSignificant(6)
 
     const token0Per1 = token0Input
-      .divide(token1Input)
-      .multiply(10n ** BigInt(token1Input.currency.decimals))
+      .divToFraction(token1Input)
+      .mul(10n ** BigInt(token1Input.currency.decimals))
       .toSignificant(6)
 
     return [token1Per0, token0Per1]
@@ -66,11 +65,11 @@ export const AddSectionPoolShareCardV2: FC<AddSectionPoolShareCardV2> = ({
   const poolShare = useMemo(() => {
     if (poolState === SushiSwapV2PoolState.NOT_EXISTS) return 1
 
-    if (!pool || !token0Input || token0Input.equalTo(0)) return 0
+    if (!pool || !token0Input || token0Input.eq(0n)) return 0
 
     return (
-      Number(token0Input.quotient) /
-      (Number(pool.reserve0.quotient) + Number(token0Input.quotient))
+      Number(token0Input.amount) /
+      (Number(pool.reserve0.amount) + Number(token0Input.amount))
     )
   }, [poolState, pool, token0Input])
 

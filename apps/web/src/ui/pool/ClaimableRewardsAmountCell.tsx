@@ -10,7 +10,7 @@ import {
 import type { Row } from '@tanstack/react-table'
 import { type FC, useMemo } from 'react'
 import type { ClaimableRewards } from 'src/lib/hooks/react-query'
-import { formatUSD } from 'sushi/format'
+import { formatUSD } from 'sushi'
 
 export const ClaimableRewardsAmountCell: FC<Row<ClaimableRewards>> = ({
   original,
@@ -41,10 +41,10 @@ export const ClaimableRewardsAmountCell: FC<Row<ClaimableRewards>> = ({
                   </div>
 
                   <span className="font-semibold text-muted-foreground">
-                    {original.rewardAmountsUSD[amount.currency.wrapped.address]
+                    {original.rewardAmountsUSD[amount.currency.wrap().address]
                       ? formatUSD(
                           original.rewardAmountsUSD[
-                            amount.currency.wrapped.address
+                            amount.currency.wrap().address
                           ],
                         )
                       : '-'}

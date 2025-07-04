@@ -7,8 +7,8 @@ import {
 } from '@sushiswap/telemetry'
 import type { SendTransactionReturnType } from '@wagmi/core'
 import { useCallback, useMemo } from 'react'
-import type { SushiSwapV3FeeAmount } from 'sushi/config'
-import type { Amount, Token, Type } from 'sushi/currency'
+import type { Amount } from 'sushi'
+import type { EvmCurrency, EvmToken, SushiSwapV3FeeAmount } from 'sushi/evm'
 import {
   type Address,
   UserRejectedRequestError,
@@ -32,10 +32,10 @@ interface UseV3Migrate {
   enabled?: boolean
   args: {
     pair: Address
-    liquidityToMigrate: Amount<Type> | null | undefined
+    liquidityToMigrate: Amount<EvmCurrency> | null | undefined
     percentageToMigrate: number
-    token0: Token | undefined
-    token1: Token | undefined
+    token0: EvmToken | undefined
+    token1: EvmToken | undefined
     fee: SushiSwapV3FeeAmount
     tickLower: number | undefined
     tickUpper: number | undefined
@@ -106,7 +106,7 @@ export const useV3Migrate = ({
                   args: [
                     {
                       pair: args.pair,
-                      liquidityToMigrate: args.liquidityToMigrate.quotient,
+                      liquidityToMigrate: args.liquidityToMigrate.amount,
                       percentageToMigrate: args.percentageToMigrate,
                       token0: args.token0.address,
                       token1: args.token1.address,
@@ -136,7 +136,7 @@ export const useV3Migrate = ({
           args: [
             {
               pair: args.pair,
-              liquidityToMigrate: args.liquidityToMigrate.quotient,
+              liquidityToMigrate: args.liquidityToMigrate.amount,
               percentageToMigrate: args.percentageToMigrate,
               token0: args.token0.address,
               token1: args.token1.address,

@@ -2,21 +2,16 @@ import { getV3Pool } from '@sushiswap/graph-client/data-api'
 import { unstable_cache } from 'next/cache'
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next/types'
-import type { EvmChainId } from 'sushi/chain'
-import { isSushiSwapV3ChainId } from 'sushi/config'
-import { isAddress } from 'viem'
+import { type EvmChainId, isEvmAddress, isSushiSwapV3ChainId } from 'sushi/evm'
 
 export async function generateMetadata(props: {
   params: Promise<{ chainId: string; address: string }>
 }): Promise<Metadata> {
   const params = await props.params
   const { chainId: _chainId, address } = params
-  const chainId = +_chainId as EvmChainId
+  const chainId = +_chainId
 
-  if (
-    !isSushiSwapV3ChainId(chainId) ||
-    !isAddress(address, { strict: false })
-  ) {
+  if (!isSushiSwapV3ChainId(chainId) || !isEvmAddress(address)) {
     return {}
   }
 
@@ -48,10 +43,7 @@ export default async function Layout(props: {
   const { chainId: _chainId, address } = params
   const chainId = +_chainId as EvmChainId
 
-  if (
-    !isSushiSwapV3ChainId(chainId) ||
-    !isAddress(address, { strict: false })
-  ) {
+  if (!isSushiSwapV3ChainId(chainId) || !isEvmAddress(address)) {
     return notFound()
   }
 

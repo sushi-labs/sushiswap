@@ -1,13 +1,13 @@
 'use client'
 
 import { useMemo } from 'react'
-import { ChefType } from 'sushi'
-import type { ChainId } from 'sushi/chain'
 import {
+  ChefType,
+  type EvmChainId,
   MASTERCHEF_ADDRESS,
   MASTERCHEF_V2_ADDRESS,
   MINICHEF_ADDRESS,
-} from 'sushi/config'
+} from 'sushi/evm'
 import type { Address } from 'viem'
 
 export const _getMasterChefContractConfig = (
@@ -36,7 +36,7 @@ export const getMiniChefContractConfig = (
 }
 
 export const getMasterChefContractConfig = (
-  chainId: ChainId,
+  chainId: EvmChainId,
   chef: Omit<ChefType, 'Merkl'>,
 ) => {
   if (chef === ChefType.MasterChefV1)
@@ -54,7 +54,7 @@ export const getMasterChefContractConfig = (
 }
 
 export function useMasterChefContract(
-  chainId: ChainId | undefined,
+  chainId: EvmChainId | undefined,
   chef: Omit<ChefType, 'Merkl'>,
 ) {
   return useMemo(() => {

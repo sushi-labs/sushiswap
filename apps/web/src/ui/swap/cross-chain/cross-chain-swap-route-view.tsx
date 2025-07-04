@@ -9,9 +9,13 @@ import type {
   CrossChainStep,
   CrossChainToolDetails,
 } from 'src/lib/swap/cross-chain/types'
-import { EvmChain } from 'sushi/chain'
-import { Amount, Native, Token, type Type } from 'sushi/currency'
-import { formatNumber } from 'sushi/format'
+import { Amount, formatNumber } from 'sushi'
+import {
+  type EvmCurrency,
+  EvmNative,
+  EvmToken,
+  getEvmChainById,
+} from 'sushi/evm'
 import { zeroAddress } from 'viem'
 
 interface CrossChainSwapRouteViewProps {
@@ -41,10 +45,10 @@ export const CrossChainSwapRouteView: FC<CrossChainSwapRouteViewProps> = ({
             label="From"
             amount={useMemo(
               () =>
-                Amount.fromRawAmount(
+                new Amount(
                   step.action.fromToken.address === zeroAddress
-                    ? Native.onChain(step.action.fromToken.chainId)
-                    : new Token(step.action.fromToken),
+                    ? EvmNative.fromChainId(step.action.fromToken.chainId)
+                    : new EvmToken(step.action.fromToken),
                   step.action.fromAmount,
                 ),
               [step],
@@ -63,10 +67,10 @@ export const CrossChainSwapRouteView: FC<CrossChainSwapRouteViewProps> = ({
             label="To"
             amount={useMemo(
               () =>
-                Amount.fromRawAmount(
+                new Amount(
                   step.action.toToken.address === zeroAddress
-                    ? Native.onChain(step.action.toToken.chainId)
-                    : new Token(step.action.toToken),
+                    ? EvmNative.fromChainId(step.action.toToken.chainId)
+                    : new EvmToken(step.action.toToken),
                   step.estimate.toAmount,
                 ),
               [step],
@@ -121,10 +125,10 @@ const VerticalDivider: FC<{ className?: string; count: number }> = ({
 
 const SendAction: FC<{
   label: 'From' | 'To'
-  amount: Amount<Type>
+  amount: Amount<EvmCurrency>
 }> = ({ label, amount }) => {
   const chain = useMemo(
-    () => EvmChain.fromChainId(amount.currency.chainId)?.name?.toUpperCase(),
+    () => getEvmChainById(amount.currency.chainId)?.name?.toUpperCase(),
     [amount],
   )
 
@@ -152,25 +156,25 @@ const SwapAction: FC<{
   const { fromAmount, toAmount, chain, isWrap, isUnwrap } = useMemo(() => {
     const fromToken =
       action.fromToken.address === zeroAddress
-        ? Native.onChain(action.fromToken.chainId)
-        : new Token(action.fromToken)
+        ? EvmNative.fromChainId(action.fromToken.chainId)
+        : new EvmToken(action.fromToken)
 
     const toToken =
       action.toToken.address === zeroAddress
-        ? Native.onChain(action.toToken.chainId)
-        : new Token(action.toToken)
+        ? EvmNative.fromChainId(action.toToken.chainId)
+        : new EvmToken(action.toToken)
 
-    const chain = EvmChain.fromChainId(
+    const chain = getEvmChainById(
       label === 'From' ? fromToken.chainId : toToken.chainId,
     )?.name?.toUpperCase()
 
     return {
-      fromAmount: Amount.fromRawAmount(fromToken, action.fromAmount),
-      toAmount: Amount.fromRawAmount(toToken, estimate.toAmount),
+      fromAmount: new Amount(fromToken, action.fromAmount),
+      toAmount: new Amount(toToken, estimate.toAmount),
       label,
       chain,
-      isWrap: fromToken.isNative && fromToken.wrapped.equals(toToken),
-      isUnwrap: toToken.isNative && toToken.wrapped.equals(fromToken),
+      isWrap: fromToken.type === 'native' && fromToken.wrap().isSame(toToken),
+      isUnwrap: toToken.type === 'native' && toToken.wrap().isSame(fromToken),
     }
   }, [
     action.fromToken,
@@ -198,10 +202,10 @@ const SwapAction: FC<{
           <>Unwrap {fromAmount.currency.symbol}</>
         ) : (
           <>
-            Swap {formatNumber(fromAmount.toExact())}{' '}
+            Swap {formatNumber(fromAmount.toString())}{' '}
             {fromAmount.currency.symbol}
             {' -> '}
-            {formatNumber(toAmount.toExact())} {toAmount.currency.symbol}
+            {formatNumber(toAmount.toString())} {toAmount.currency.symbol}
           </>
         )}
       </span>

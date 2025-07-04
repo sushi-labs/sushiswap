@@ -14,19 +14,18 @@ import {
   SkeletonText,
 } from '@sushiswap/ui'
 import { useMemo } from 'react'
-import type { Amount, Type } from 'sushi/currency'
-import { formatNumber } from 'sushi/format'
-// import { BoostVotingPowerModal } from './BoostVotingPowerModal'
+import { type Amount, formatNumber } from 'sushi'
+import type { EvmCurrency } from 'sushi/evm'
 import { useVotingPower } from './VotingPowerProvider'
 
 export const VotingPowerCard = () => {
   const { votingPower, balances, isConnected, isLoading } = useVotingPower()
 
-  const nonZeroBalances: Amount<Type>[] = useMemo(
+  const nonZeroBalances: Amount<EvmCurrency>[] = useMemo(
     () =>
       !balances
         ? []
-        : Object.values(balances).filter((amount) => amount?.greaterThan(0)),
+        : Object.values(balances).filter((amount) => amount?.gt(0n)),
     [balances],
   )
 

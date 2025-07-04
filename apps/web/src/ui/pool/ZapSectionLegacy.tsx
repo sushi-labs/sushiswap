@@ -31,14 +31,14 @@ import {
   CheckerProvider,
   useApproved,
 } from 'src/lib/wagmi/systems/Checker/Provider'
+import { Amount, Percent } from 'sushi'
 import {
+  type EvmCurrency,
   type SushiSwapV2ChainId,
+  type SushiSwapV2Pool,
   defaultCurrency,
   isWNativeSupported,
-} from 'sushi/config'
-import { Amount, type Type, tryParseAmount } from 'sushi/currency'
-import { Percent } from 'sushi/math'
-import type { SushiSwapV2Pool } from 'sushi/pool'
+} from 'sushi/evm'
 import type { SendTransactionReturnType } from 'viem'
 import {
   useAccount,
@@ -82,18 +82,18 @@ const _ZapSectionLegacy: FC<ZapSectionLegacyProps> = ({
   )
 
   const [inputAmount, setInputAmount] = useState('')
-  const [inputCurrency, _setInputCurrency] = useState<Type>(
+  const [inputCurrency, _setInputCurrency] = useState<EvmCurrency>(
     defaultCurrency[chainId as keyof typeof defaultCurrency],
   )
-  const setInputCurrency = useCallback((currency: Type) => {
+  const setInputCurrency = useCallback((currency: EvmCurrency) => {
     _setInputCurrency(currency)
     setInputAmount('')
   }, [])
 
   const parsedInputAmount = useMemo(
     () =>
-      tryParseAmount(inputAmount, inputCurrency) ||
-      Amount.fromRawAmount(inputCurrency, 0),
+      Amount.fromHuman(inputCurrency, inputAmount) ||
+      new Amount(inputCurrency, 0),
     [inputAmount, inputCurrency],
   )
 
@@ -105,8 +105,9 @@ const _ZapSectionLegacy: FC<ZapSectionLegacyProps> = ({
   } = useZap({
     chainId,
     fromAddress: address,
-    tokenIn: inputCurrency.isNative ? NativeAddress : inputCurrency.address,
-    amountIn: parsedInputAmount?.quotient?.toString(),
+    tokenIn:
+      inputCurrency.type === 'native' ? NativeAddress : inputCurrency.address,
+    amountIn: parsedInputAmount?.amount.toString(),
     tokenOut: pool?.liquidityToken.address,
     slippage: slippageTolerance,
   })
@@ -210,14 +211,17 @@ const _ZapSectionLegacy: FC<ZapSectionLegacyProps> = ({
   const showPriceImpactWarning = useMemo(() => {
     const priceImpactSeverity = warningSeverity(
       typeof zapResponse?.priceImpact === 'number'
-        ? new Percent(zapResponse.priceImpact, 10_000n)
+        ? new Percent({
+            numerator: zapResponse.priceImpact,
+            denominator: 10_000n,
+          })
         : undefined,
     )
     return priceImpactSeverity > 3
   }, [zapResponse?.priceImpact])
 
   const showSlippageWarning = useMemo(() => {
-    return !slippageTolerance.lessThan(SLIPPAGE_WARNING_THRESHOLD)
+    return !slippageTolerance.lt(SLIPPAGE_WARNING_THRESHOLD)
   }, [slippageTolerance])
 
   return (
