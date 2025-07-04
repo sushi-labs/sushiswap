@@ -7,8 +7,8 @@ import {
 } from '@sushiswap/ui'
 import type { FC } from 'react'
 import React from 'react'
-import type { EvmChainId } from 'sushi/chain'
-import { formatUSD } from 'sushi/format'
+import { formatUSD } from 'sushi'
+import type { EvmChainId } from 'sushi/evm'
 import { PortfolioInfoRow } from '../PortfolioInfoRow'
 
 interface PortfolioFuroClaimablesProps {

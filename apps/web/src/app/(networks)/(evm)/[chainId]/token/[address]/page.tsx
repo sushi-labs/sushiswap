@@ -10,8 +10,7 @@ import { unstable_cache } from 'next/cache'
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next/types'
 import { TokenPage as _TokenPage } from 'src/ui/token/TokenPage'
-import type { EvmChainId } from 'sushi'
-import { Token } from 'sushi/currency'
+import { type EvmChainId, EvmToken } from 'sushi/evm'
 import { type Address, isAddress } from 'viem'
 
 async function getTokenData(chainId: SushiSwapChainId, address: Address) {
@@ -25,7 +24,7 @@ async function getTokenData(chainId: SushiSwapChainId, address: Address) {
   }
 
   return {
-    token: new Token(tokenListResult.value[0]),
+    token: new EvmToken(tokenListResult.value[0]),
     tokenInfo:
       tokenInfoResult.status === 'fulfilled' ? tokenInfoResult.value : null,
   }
@@ -88,9 +87,7 @@ export default async function TokenPage(props: {
   return (
     <_TokenPage
       token={
-        token && typeof token.serialize === 'function'
-          ? token.serialize()
-          : token
+        token && typeof token.toJSON === 'function' ? token.toJSON() : token
       }
       tokenInfo={tokenInfo}
     />

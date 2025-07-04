@@ -22,8 +22,11 @@ import React, {
 import { useConcentratedLiquidityPositions } from 'src/lib/wagmi/hooks/positions/hooks/useConcentratedLiquidityPositions'
 import type { ConcentratedLiquidityPositionWithV3Pool } from 'src/lib/wagmi/hooks/positions/types'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
-import { type EvmChainId, EvmChainKey } from 'sushi'
-import { isSushiSwapV3ChainId } from 'sushi/config'
+import {
+  type EvmChainId,
+  getEvmChainById,
+  isSushiSwapV3ChainId,
+} from 'sushi/evm'
 import { useAccount } from 'wagmi'
 import { ConcentratedLiquidityCollectAllDialog } from '../ConcentratedLiquidityCollectAllDialog'
 import { usePoolFilters } from '../PoolsFiltersProvider'
@@ -159,7 +162,7 @@ export const ConcentratedPositionsTable: FC<
             {!hideNewPositionButton ? (
               <LinkInternal
                 shallow={true}
-                href={`/${EvmChainKey[chainId]}/pool/v3/${poolAddress}/create`}
+                href={`/${getEvmChainById(chainId).key}/pool/v3/${poolAddress}/create`}
                 className="basis-full md:basis-[unset]"
               >
                 <Button icon={PlusIcon} asChild size="sm" className="w-full">
@@ -175,7 +178,7 @@ export const ConcentratedPositionsTable: FC<
         testId="concentrated-positions"
         loading={isInitialLoading}
         linkFormatter={(row) =>
-          `/${EvmChainKey[row.chainId]}/pool/v3/${row.address}/${row.tokenId}`
+          `/${getEvmChainById(chainId).key}/pool/v3/${row.address}/${row.tokenId}`
         }
         rowRenderer={rowRenderer}
         columns={COLUMNS}

@@ -32,7 +32,7 @@ const PartialRoute: FC<PartialRouteProps> = ({
         size={size}
         {...props}
         onClick={() =>
-          trade.amountIn && setSwapAmount(trade.amountIn?.toExact())
+          trade.amountIn && setSwapAmount(trade.amountIn?.toString())
         }
       >
         Accept New Input and Swap

@@ -1,16 +1,17 @@
 import { useMemo } from 'react'
-import type { EvmChainId } from 'sushi'
-import { nativeAddress } from 'sushi/config'
-import { Amount, type Type } from 'sushi/currency'
+import { Amount } from 'sushi'
+import { type EvmChainId, type EvmCurrency, nativeAddress } from 'sushi/evm'
 import type { Address } from 'viem'
 import { useBalances } from './use-balances'
 
-type Args = [Type | undefined] | [EvmChainId | undefined, Address | undefined]
+type Args =
+  | [EvmCurrency | undefined]
+  | [EvmChainId | undefined, Address | undefined]
 type Return = Omit<ReturnType<typeof useBalances>, 'data'> & {
   data: bigint | undefined
 }
 
-export function useBalance(currency: Type | undefined): Return
+export function useBalance(currency: EvmCurrency | undefined): Return
 export function useBalance(
   chainId: EvmChainId | undefined,
   tokenAddress: Address | undefined,
@@ -27,7 +28,7 @@ export function useBalance(arg1: Args[0], arg2?: Args[1]) {
     }
 
     let address: Address
-    if (arg1.isNative) {
+    if (arg1.type === 'native') {
       address = nativeAddress
     } else {
       address = arg1.address
@@ -48,7 +49,7 @@ export function useBalance(arg1: Args[0], arg2?: Args[1]) {
   }, [tokenAddress, result])
 }
 
-export function useAmountBalance(currency: Type | undefined) {
+export function useAmountBalance(currency: EvmCurrency | undefined) {
   const result = useBalance(currency)
 
   return useMemo(() => {
@@ -59,7 +60,7 @@ export function useAmountBalance(currency: Type | undefined) {
       }
     }
 
-    const amount = Amount.fromRawAmount(currency, result.data)
+    const amount = new Amount(currency, result.data)
 
     return {
       ...result,

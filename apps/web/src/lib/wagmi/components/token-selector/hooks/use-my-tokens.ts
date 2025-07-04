@@ -6,7 +6,8 @@ import { useCustomTokens } from '@sushiswap/hooks'
 import { useQuery } from '@tanstack/react-query'
 import { useMemo } from 'react'
 import { NativeAddress } from 'src/lib/constants'
-import { Amount, Native, Token, type Type } from 'sushi/currency'
+import { Amount } from 'sushi'
+import { type EvmCurrency, EvmNative, EvmToken } from 'sushi/evm'
 import type { Address } from 'viem'
 
 interface UseMyTokens {
@@ -44,27 +45,30 @@ export function useMyTokens({ chainId, account, includeNative }: UseMyTokens) {
   })
 
   return useMemo(() => {
-    let tokens: Type[] | undefined = []
-    let balanceMap: Map<Address, Amount<Type>> | undefined = undefined
+    let tokens: EvmCurrency<{ approved: boolean }>[] | undefined = []
+    let balanceMap: Map<Address, Amount<EvmCurrency>> | undefined = undefined
 
     if (query.data) {
       tokens = []
       balanceMap = new Map()
 
       query.data.forEach((token) => {
-        let _token: Type
+        let _token: EvmCurrency<{ approved: boolean }>
         let address: Address
 
         if (token.address === NativeAddress) {
-          _token = Native.onChain(chainId!)
+          _token = EvmNative.fromChainId(chainId!)
           address = NativeAddress
         } else {
-          _token = new Token(token)
+          _token = new EvmToken({
+            ...token,
+            metadata: { approved: token.approved },
+          })
           address = _token.address
         }
 
         tokens!.push(_token)
-        balanceMap!.set(address, Amount.fromRawAmount(_token, token.balance))
+        balanceMap!.set(address, new Amount(_token, token.balance))
       })
     }
 

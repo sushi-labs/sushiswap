@@ -2,7 +2,7 @@
 
 import { useLocalStorage } from '@sushiswap/hooks'
 import React, { type FC } from 'react'
-import { ChainId } from 'sushi/chain'
+import { EvmChainId } from 'sushi/evm'
 
 import { NetworkIcon } from '../../icons/NetworkIcon'
 import { Label } from '../label'
@@ -37,7 +37,7 @@ export const CarbonOffset: FC = () => {
         Only available on{' '}
         <NetworkIcon
           type="naked"
-          chainId={ChainId.POLYGON}
+          chainId={EvmChainId.POLYGON}
           width={16}
           height={16}
         />{' '}

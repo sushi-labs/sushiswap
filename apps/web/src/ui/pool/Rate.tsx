@@ -8,7 +8,8 @@ import {
   useCallback,
   useState,
 } from 'react'
-import type { Price, Type } from 'sushi/currency'
+import type { Price } from 'sushi'
+import type { EvmCurrency } from 'sushi/evm'
 import { usePrices } from '~evm/_common/ui/price-provider/price-provider/use-prices'
 
 interface RenderPayload {
@@ -19,24 +20,18 @@ interface RenderPayload {
 }
 
 interface Rate {
-  price: Price<Type, Type> | undefined
+  price: Price<EvmCurrency, EvmCurrency> | undefined
   children?: (payload: RenderPayload) => ReactNode
 }
 
 export const Rate: FC<Rate> = ({ children, price }) => {
   const [invert, setInvert] = useState(false)
   const { data: prices } = usePrices({
-    chainId: invert
-      ? price?.quoteCurrency.chainId
-      : price?.baseCurrency.chainId,
+    chainId: invert ? price?.quote.chainId : price?.base.chainId,
   })
   const usdPrice = price
     ? prices
-        ?.get(
-          invert
-            ? price.quoteCurrency.wrapped.address
-            : price.baseCurrency.wrapped.address,
-        )
+        ?.get(invert ? price.quote.wrap().address : price.base.wrap().address)
         ?.toFixed(2)
     : undefined
 
@@ -44,14 +39,13 @@ export const Rate: FC<Rate> = ({ children, price }) => {
     <>
       {invert ? (
         <>
-          1 {price?.invert().baseCurrency.symbol} ={' '}
-          {price?.invert().toSignificant(6)}{' '}
-          {price?.invert().quoteCurrency.symbol}
+          1 {price?.invert().base.symbol} = {price?.invert().toSignificant(6)}{' '}
+          {price?.invert().quote.symbol}
         </>
       ) : (
         <>
-          1 {price?.baseCurrency.symbol} = {price?.toSignificant(6)}{' '}
-          {price?.quoteCurrency.symbol}
+          1 {price?.base.symbol} = {price?.toSignificant(6)}{' '}
+          {price?.quote.symbol}
         </>
       )}
     </>

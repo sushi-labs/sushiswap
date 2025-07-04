@@ -13,15 +13,16 @@ import {
   useTokenAmountDollarValues,
   useUnderlyingTokenBalanceFromPool,
 } from 'src/lib/hooks'
-import { Amount, type Type } from 'sushi/currency'
+import { Amount } from 'sushi'
+import type { EvmCurrency } from 'sushi/evm'
 import { useAmountBalance } from '~evm/_common/ui/balance-provider/use-balance'
 
 interface PoolPositionContext {
-  balance: Amount<Type> | null | undefined
+  balance: Amount<EvmCurrency> | null | undefined
   value0: number
   value1: number
-  underlying0: Amount<Type> | undefined
-  underlying1: Amount<Type> | undefined
+  underlying0: Amount<EvmCurrency> | undefined
+  underlying1: Amount<EvmCurrency> | undefined
   isLoading: boolean
   isError: boolean
 }
@@ -45,13 +46,11 @@ export const PoolPositionProvider: FC<{
 
     return {
       liquidityToken,
-      reserve0:
-        token0 && pool ? Amount.fromRawAmount(token0, pool.reserve0) : null,
-      reserve1:
-        token1 && pool ? Amount.fromRawAmount(token1, pool.reserve1) : null,
+      reserve0: token0 && pool ? new Amount(token0, pool.reserve0) : null,
+      reserve1: token1 && pool ? new Amount(token1, pool.reserve1) : null,
       totalSupply:
         liquidityToken && pool
-          ? Amount.fromRawAmount(liquidityToken, pool.liquidity)
+          ? new Amount(liquidityToken, pool.liquidity)
           : null,
     }
   }, [pool])

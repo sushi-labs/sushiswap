@@ -1,13 +1,13 @@
 import { type TTLStorageKey, useTTL } from '@sushiswap/hooks'
 import { useQuery } from '@tanstack/react-query'
-import { type EvmChainId, evmChainsL2 } from 'sushi/chain'
+import { type EvmChainId, getEvmChainById } from 'sushi/evm'
 import { useCurrentBlockTimestamp } from '../../block/useCurrentBlockTimestamp'
 
 const L2_TTL = 5n
 const TTL = 30n
 
 export const getDefaultTTL = (chainId: EvmChainId) => {
-  return evmChainsL2[chainId] ? L2_TTL : TTL
+  return getEvmChainById(chainId).parentChainId ? L2_TTL : TTL
 }
 
 interface UseTransactionDeadline {

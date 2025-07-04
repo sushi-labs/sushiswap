@@ -9,7 +9,7 @@ import {
 } from '@sushiswap/ui'
 import type { Row } from '@tanstack/react-table'
 import { type FC, useMemo } from 'react'
-import { formatUSD } from 'sushi/format'
+import { formatUSD } from 'sushi'
 import type { ClaimableFees } from './ClaimableFeesTab'
 
 export const ClaimableFeesAmountCell: FC<Row<ClaimableFees>> = ({

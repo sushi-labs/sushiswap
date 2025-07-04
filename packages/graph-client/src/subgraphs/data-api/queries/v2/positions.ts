@@ -3,11 +3,12 @@ import { type RequestOptions, request } from 'src/lib/request.js'
 import {
   type ChefType,
   type EvmChainId,
+  type EvmID,
   type RewarderType,
   SushiSwapProtocol,
-} from 'sushi'
-import { isSushiSwapV2ChainId } from 'sushi/config'
-import { SUSHI_DATA_API_HOST } from 'sushi/config/subgraph'
+  isSushiSwapV2ChainId,
+} from 'sushi/evm'
+import { SUSHI_DATA_API_HOST } from 'sushi/evm'
 import { type Address, getAddress } from 'viem'
 import { graphql } from '../../graphql.js'
 
@@ -96,12 +97,12 @@ export async function getV2Positions(
       const incentives = p.pool.incentives
         .filter((i) => i !== null)
         .map((incentive) => ({
-          id: incentive.id as `${string}:0x${string}`,
+          id: incentive.id as EvmID,
           chainId,
           chefType: incentive.chefType as ChefType,
           apr: incentive.apr,
           rewardToken: {
-            id: incentive.rewardToken.id as `${string}:0x${string}`,
+            id: incentive.rewardToken.id as EvmID,
             address: incentive.rewardToken.address as Address,
             chainId,
             decimals: incentive.rewardToken.decimals,
@@ -116,7 +117,7 @@ export async function getV2Positions(
         }))
 
       const pool = {
-        id: p.pool.id as `${string}:0x${string}`,
+        id: p.pool.id as EvmID,
         address: p.pool.address as Address,
         chainId,
         name: `${p.pool.token0.symbol}-${p.pool.token1.symbol}`,
@@ -126,7 +127,7 @@ export async function getV2Positions(
         liquidityUSD: p.pool.liquidityUSD,
 
         token0: {
-          id: p.pool.token0.id as `${string}:0x${string}`,
+          id: p.pool.token0.id as EvmID,
           address: p.pool.token0.address as Address,
           chainId,
           decimals: p.pool.token0.decimals,
@@ -134,7 +135,7 @@ export async function getV2Positions(
           symbol: p.pool.token0.symbol,
         },
         token1: {
-          id: p.pool.token1.id as `${string}:0x${string}`,
+          id: p.pool.token1.id as EvmID,
           address: p.pool.token1.address as Address,
           chainId,
           decimals: p.pool.token1.decimals,

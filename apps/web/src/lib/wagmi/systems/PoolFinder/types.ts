@@ -1,7 +1,9 @@
 import type { ReactElement } from 'react'
-import type { SushiSwapV2ChainId } from 'sushi/config'
-import type { Type } from 'sushi/currency'
-import type { SushiSwapV2Pool } from 'sushi/pool/sushiswap-v2'
+import type {
+  EvmCurrency,
+  SushiSwapV2ChainId,
+  SushiSwapV2Pool,
+} from 'sushi/evm'
 import type { SushiSwapV2PoolState } from '../../hooks/pools/hooks/useSushiSwapV2Pools'
 
 export type ComponentsWrapperProps<T> = {
@@ -13,8 +15,8 @@ export type ComponentsWrapperProps<T> = {
 }
 
 interface PoolFinderProps {
-  token0: Type | undefined
-  token1: Type | undefined
+  token0: EvmCurrency | undefined
+  token1: EvmCurrency | undefined
   index?: number
   dispatch?(payload: PoolExistenceStateAction): void
   enabled: boolean
@@ -22,8 +24,8 @@ interface PoolFinderProps {
 
 export interface SushiSwapV2PoolFinderProps extends PoolFinderProps {
   chainId: SushiSwapV2ChainId
-  token0: Type | undefined
-  token1: Type | undefined
+  token0: EvmCurrency | undefined
+  token1: EvmCurrency | undefined
   index?: number
   dispatch?(payload: PoolExistenceStateAction): void
   enabled: boolean

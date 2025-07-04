@@ -1,7 +1,6 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { isSupportedChainId } from 'src/config'
-import type { ChainId } from 'sushi/chain'
 import { Header } from '../header'
 import { Providers } from './providers'
 
@@ -17,9 +16,9 @@ export default async function SwapLayout(props: {
 }) {
   const params = await props.params
   const { children } = props
-  const chainId = +params.chainId as ChainId
+  const chainId = +params.chainId
 
-  if (!isSupportedChainId) {
+  if (!isSupportedChainId(chainId)) {
     return notFound()
   }
 

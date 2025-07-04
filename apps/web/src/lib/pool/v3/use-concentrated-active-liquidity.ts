@@ -2,12 +2,12 @@
 
 import { useMemo } from 'react'
 import {
+  type EvmCurrency,
   type SushiSwapV3ChainId,
   type SushiSwapV3FeeAmount,
   TICK_SPACINGS,
-} from 'sushi/config'
-import type { Type } from 'sushi/currency'
-import { tickToPrice } from 'sushi/pool/sushiswap-v3'
+  tickToPrice,
+} from 'sushi/evm'
 
 import { useConcentratedLiquidityPool } from 'src/lib/wagmi/hooks/pools/hooks/useConcentratedLiquidityPool'
 import computeSurroundingTicks from '../../functions'
@@ -38,8 +38,8 @@ const useAllV3Ticks = ({
   chainId,
 }: {
   chainId: SushiSwapV3ChainId
-  token0: Type | undefined
-  token1: Type | undefined
+  token0: EvmCurrency | undefined
+  token1: EvmCurrency | undefined
   feeAmount: SushiSwapV3FeeAmount | undefined
 }) => {
   // TODO: Add subgraph support
@@ -54,8 +54,8 @@ export const useConcentratedActiveLiquidity = ({
   enabled = true,
 }: {
   chainId: SushiSwapV3ChainId
-  token0: Type | undefined
-  token1: Type | undefined
+  token0: EvmCurrency | undefined
+  token1: EvmCurrency | undefined
   feeAmount: SushiSwapV3FeeAmount | undefined
   enabled?: boolean
 }) => {
@@ -98,8 +98,8 @@ export const useConcentratedActiveLiquidity = ({
       }
     }
 
-    const _token0 = token0.wrapped
-    const _token1 = token1.wrapped
+    const _token0 = token0.wrap()
+    const _token1 = token1.wrap()
 
     // find where the active tick would be to partition the array
     // if the active tick is initialized, the pivot will be an element
@@ -124,9 +124,9 @@ export const useConcentratedActiveLiquidity = ({
         Number(ticks[pivot].tickIdx) === activeTick
           ? ticks[pivot].liquidityNet
           : 0n,
-      price0: tickToPrice(_token0, _token1, activeTick).toFixed(
-        PRICE_FIXED_DIGITS,
-      ),
+      price0: tickToPrice(_token0, _token1, activeTick).toString({
+        fixed: PRICE_FIXED_DIGITS,
+      }),
     }
 
     const subsequentTicks = computeSurroundingTicks(

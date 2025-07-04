@@ -8,7 +8,7 @@ import {
   SkeletonText,
 } from '@sushiswap/ui'
 import { type FC, useMemo } from 'react'
-import { formatUSD } from 'sushi/format'
+import { formatUSD } from 'sushi'
 import { useNetwork } from '~aptos/_common/lib/common/use-network'
 import { useStablePrice } from '~aptos/_common/lib/common/use-stable-price'
 import { useTokenBalance } from '~aptos/_common/lib/common/use-token-balances'

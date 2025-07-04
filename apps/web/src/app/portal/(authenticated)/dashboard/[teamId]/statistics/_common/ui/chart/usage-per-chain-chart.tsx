@@ -3,7 +3,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { useMemo, useState } from 'react'
 import { useStyroClient } from 'src/app/portal/_common/ui/auth-provider/auth-provider'
-import { EvmChain } from 'sushi/chain'
+import { type ChainId, getChainById } from 'sushi'
 import type { Timeframe } from '../constants'
 import { BaseChart, type BaseChartBase } from './base-chart'
 
@@ -33,7 +33,8 @@ export function UsagePerChainChart({ teamId }: { teamId: string }) {
   const formatted = useMemo(
     () =>
       data?.team.usagePerChain.data.map((item) => ({
-        name: EvmChain.from(item.chainId)?.name || String(item.chainId),
+        name:
+          getChainById(item.chainId as ChainId).name || String(item.chainId),
         data: item.data,
       })) || [],
     [data],

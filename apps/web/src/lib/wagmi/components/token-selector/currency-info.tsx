@@ -24,25 +24,24 @@ import {
   useCoinGeckoTokenInfo,
   useTokenSecurity,
 } from 'src/lib/hooks/react-query'
-import { EvmChain } from 'sushi/chain'
-import type { Type } from 'sushi/currency'
-import { formatNumber, formatUSD, shortenAddress } from 'sushi/format'
+import { formatNumber, formatUSD } from 'sushi'
+import { type EvmCurrency, getEvmChainById, shortenEvmAddress } from 'sushi/evm'
 import { TokenSecurityView } from '../token-security-view'
 
 interface CurrencyInfoProps {
-  currency: Type
+  currency: EvmCurrency
   onBack: () => void
 }
 
 export const CurrencyInfo: FC<CurrencyInfoProps> = ({ currency, onBack }) => {
   const { data: tokenSecurity, isLoading: isTokenSecurityLoading } =
     useTokenSecurity({
-      currency: currency.wrapped,
+      currency: currency.wrap(),
     })
 
   const { data: coinGeckoInfo, isLoading: isCoinGeckoInfoLoading } =
     useCoinGeckoTokenInfo({
-      token: currency.wrapped,
+      token: currency.wrap(),
     })
 
   return (
@@ -63,7 +62,7 @@ export const CurrencyInfo: FC<CurrencyInfoProps> = ({ currency, onBack }) => {
             <div className="flex gap-1 items-center">
               <span className="text-xl font-medium">{currency.symbol}</span>
               <span className="text-muted-foreground text-base font-normal">
-                {EvmChain.from(currency.chainId)?.name}
+                {getEvmChainById(currency.chainId).name}
               </span>
             </div>
           </DialogTitle>
@@ -197,11 +196,11 @@ export const CurrencyInfo: FC<CurrencyInfoProps> = ({ currency, onBack }) => {
               <span className="flex gap-1 items-center">
                 <LinkExternal
                   className="font-medium"
-                  href={EvmChain.from(currency.chainId)?.getTokenUrl(
-                    currency.wrapped.address,
+                  href={getEvmChainById(currency.chainId).getTokenUrl(
+                    currency.wrap().address,
                   )}
                 >
-                  {shortenAddress(currency.wrapped.address)}
+                  {shortenEvmAddress(currency.wrap().address)}
                 </LinkExternal>
                 <ClipboardController hideTooltip>
                   {({ setCopied }) => (
@@ -210,7 +209,7 @@ export const CurrencyInfo: FC<CurrencyInfoProps> = ({ currency, onBack }) => {
                         <TooltipTrigger asChild>
                           <DocumentDuplicateIcon
                             className="h-4 w-4 cursor-pointer"
-                            onClick={() => setCopied(currency.wrapped.address)}
+                            onClick={() => setCopied(currency.wrap().address)}
                           />
                         </TooltipTrigger>
                         <TooltipContent side="bottom">
@@ -230,7 +229,7 @@ export const CurrencyInfo: FC<CurrencyInfoProps> = ({ currency, onBack }) => {
               <span className="font-medium">Security Info</span>
             </div>
             <TokenSecurityView
-              token={currency.wrapped}
+              token={currency.wrap()}
               isTokenSecurityLoading={isTokenSecurityLoading}
               tokenSecurity={tokenSecurity}
             />

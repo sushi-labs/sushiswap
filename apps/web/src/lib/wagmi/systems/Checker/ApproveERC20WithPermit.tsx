@@ -2,6 +2,7 @@
 
 import { ChevronDownIcon } from '@heroicons/react/20/solid'
 import { InformationCircleIcon } from '@heroicons/react/24/solid'
+import type { TTLStorageKey } from '@sushiswap/hooks'
 import {
   CardDescription,
   CardHeader,
@@ -20,10 +21,8 @@ import {
   SelectPrimitive,
 } from '@sushiswap/ui'
 import { type FC, useEffect, useState } from 'react'
-import type { Amount, Type } from 'sushi/currency'
-
-import type { TTLStorageKey } from '@sushiswap/hooks'
-import { ChainId } from 'sushi/chain'
+import type { Amount } from 'sushi'
+import { EvmChainId, type EvmCurrency } from 'sushi/evm'
 import type { Address } from 'viem'
 import { useAccount, useBytecode } from 'wagmi'
 import {
@@ -46,8 +45,8 @@ enum ApprovalType {
 
 interface ApproveERC20WithPermitProps extends ButtonProps {
   id: string
-  chainId: ChainId
-  amount: Amount<Type> | undefined
+  chainId: EvmChainId
+  amount: Amount<EvmCurrency> | undefined
   contract: Address | undefined
   enabled?: boolean
   permitInfo: PermitInfo
@@ -55,7 +54,7 @@ interface ApproveERC20WithPermitProps extends ButtonProps {
   tag: string
 }
 
-const PERMIT_DISABLED_CHAIN_IDS = [ChainId.HARMONY]
+const PERMIT_DISABLED_CHAIN_IDS = [EvmChainId.HARMONY]
 
 const isPermitSupportedChainId = (chainId: number) =>
   !PERMIT_DISABLED_CHAIN_IDS.includes(

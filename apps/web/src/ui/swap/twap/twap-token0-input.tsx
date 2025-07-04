@@ -2,7 +2,7 @@
 
 import { classNames } from '@sushiswap/ui'
 import { Web3Input } from 'src/lib/wagmi/components/web3-input'
-import { isWNativeSupported } from 'sushi/config'
+import { isWNativeSupported } from 'sushi/evm'
 import {
   useDerivedStateTwap,
   useTwapTradeErrors,

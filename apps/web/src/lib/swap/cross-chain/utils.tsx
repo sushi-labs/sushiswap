@@ -1,5 +1,10 @@
-import type { ChainId } from 'sushi/chain'
-import { Amount, Native, Token, type Type } from 'sushi/currency'
+import { Amount, Native } from 'sushi'
+import {
+  type EvmChainId,
+  type EvmCurrency,
+  EvmNative,
+  EvmToken,
+} from 'sushi/evm'
 import { zeroAddress } from 'viem'
 import type { CrossChainStep } from './types'
 
@@ -32,14 +37,14 @@ export const getCrossChainStepBreakdown = (step?: CrossChainStep) => {
 }
 
 interface FeeBreakdown {
-  amount: Amount<Type>
+  amount: Amount<EvmCurrency>
   amountUSD: number
 }
 
 export interface FeesBreakdown {
-  gas: Map<ChainId, FeeBreakdown>
-  protocol: Map<ChainId, FeeBreakdown>
-  ui: Map<ChainId, FeeBreakdown>
+  gas: Map<EvmChainId, FeeBreakdown>
+  protocol: Map<EvmChainId, FeeBreakdown>
+  ui: Map<EvmChainId, FeeBreakdown>
 }
 
 enum FeeType {
@@ -98,18 +103,18 @@ const getFeesBreakdown = (steps: CrossChainStep[], feeType: FeeType) => {
 
     const token =
       fees[0].token.address === zeroAddress
-        ? Native.onChain(fees[0].token.chainId)
-        : new Token(fees[0].token)
+        ? EvmNative.fromChainId(fees[0].token.chainId)
+        : new EvmToken(fees[0].token)
 
     const { amount, amountUSD } = fees.reduce(
       (acc, feeCost) => {
-        const amount = Amount.fromRawAmount(token, feeCost.amount)
+        const amount = new Amount(token, feeCost.amount)
 
         acc.amount = acc.amount.add(amount)
         acc.amountUSD += +feeCost.amountUSD
         return acc
       },
-      { amount: Amount.fromRawAmount(token, 0), amountUSD: 0 },
+      { amount: new Amount(token, 0), amountUSD: 0 },
     )
 
     const feeByChainId = feesByChainId.get(amount.currency.chainId)
@@ -120,5 +125,5 @@ const getFeesBreakdown = (steps: CrossChainStep[], feeType: FeeType) => {
     })
 
     return feesByChainId
-  }, new Map<ChainId, FeeBreakdown>())
+  }, new Map<EvmChainId, FeeBreakdown>())
 }
