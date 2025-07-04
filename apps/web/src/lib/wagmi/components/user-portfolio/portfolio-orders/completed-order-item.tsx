@@ -10,7 +10,12 @@ import { type TwapOrder, useParsedOrder } from 'src/lib/hooks/react-query/twap'
 import { evmChains } from 'sushi'
 import type { EvmChainId } from 'sushi/chain'
 import { Native, Token } from 'sushi/currency'
-import { formatNumber, formatPercent, formatUSD } from 'sushi/format'
+import {
+  formatNumber,
+  formatPercent,
+  formatUSD,
+  shortenHash,
+} from 'sushi/format'
 import { getNetworkName } from '../../../../network'
 import type { OrderItemType } from './completed-orders'
 
@@ -168,7 +173,7 @@ const TwapItem = ({ order }: { order: TwapOrder }) => {
           <Item title="Price USD">{formatUSD(2603.98)}</Item>
           <Item title="TX Hash">
             <LinkExternal href={parsedOrder.transactionExplorerUrl}>
-              {truncateHash(parsedOrder.transactionHash)}
+              {shortenHash(parsedOrder.transactionHash)}
             </LinkExternal>
           </Item>
           <Item title="Status">
@@ -179,9 +184,7 @@ const TwapItem = ({ order }: { order: TwapOrder }) => {
     </>
   )
 }
-const truncateHash = (hash: string) => {
-  return `${hash.slice(0, 6)}...${hash.slice(-4)}`
-}
+
 const Item = ({ title, children }: { title: string; children: ReactNode }) => {
   return (
     <div className="flex flex-col gap-1">

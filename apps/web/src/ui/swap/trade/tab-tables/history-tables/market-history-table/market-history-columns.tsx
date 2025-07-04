@@ -1,6 +1,7 @@
 import { ArrowSmallRightIcon } from '@heroicons/react/24/outline'
 import {
   Currency,
+  LinkExternal,
   Tooltip,
   TooltipContent,
   TooltipProvider,
@@ -10,8 +11,13 @@ import { DollarCircledIcon } from '@sushiswap/ui/icons/DollarCircled'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import type { ColumnDef } from '@tanstack/react-table'
 import { format } from 'date-fns'
-import { Icon } from 'node_modules/@sushiswap/ui/dist/components/currency/Icon'
+import { NativeAddress } from 'src/lib/constants'
+import { getNetworkName } from 'src/lib/network'
 import { TooltipDrawer } from 'src/ui/common/tooltip-drawer'
+import { evmChains } from 'sushi'
+import type { EvmChainId } from 'sushi/chain'
+import { Native } from 'sushi/currency'
+import { Token } from 'sushi/currency'
 import { shortenHash } from 'sushi/format'
 import { formatNumber } from 'sushi/format'
 import { formatUSD } from 'sushi/format'
@@ -21,64 +27,98 @@ export const BUY_COLUMN: ColumnDef<MarketTrade> = {
   id: 'buy',
   header: 'Buy',
   enableSorting: false,
-  accessorFn: (row) => row.buyAmount,
-  cell: ({ row }) => (
-    <div className="w-full min-w-[150px] flex items-center gap-1 md:gap-2 whitespace-nowrap">
-      <Currency.Icon currency={row.original.buyToken} width={24} height={24} />
-      <span>
-        {formatNumber(row.original.buyAmount)} {row.original.buyToken.symbol}
-      </span>
-    </div>
-  ),
+  accessorFn: (row) => row.amountOut,
+  cell: ({ row }) => {
+    const token =
+      row.original.tokenOut.address === NativeAddress
+        ? Native.onChain(row.original.tokenOut.chainId as EvmChainId)
+        : new Token({
+            chainId: row.original.tokenOut.chainId as EvmChainId,
+            address: row.original.tokenOut.address,
+            decimals: row.original.tokenOut.decimals,
+            symbol: row.original.tokenOut.symbol,
+            name: row.original.tokenOut.name,
+          })
+
+    return (
+      <div className="w-full min-w-[150px] flex items-center gap-1 md:gap-2 whitespace-nowrap">
+        <Currency.Icon currency={token} width={24} height={24} />
+        <span>
+          {formatNumber(row.original.amountOut)} {token.symbol}
+        </span>
+      </div>
+    )
+  },
 }
 
 export const SELL_COLUMN: ColumnDef<MarketTrade> = {
   id: 'sell',
   header: 'Sell',
   enableSorting: false,
-  accessorFn: (row) => row.sellAmount,
-  cell: ({ row }) => (
-    <div className="flex items-center gap-1 md:gap-2 whitespace-nowrap">
-      <Icon currency={row.original.sellToken} width={24} height={24} />
-      <span>
-        {formatNumber(row.original.sellAmount)} {row.original.sellToken.symbol}
-      </span>
-    </div>
-  ),
+  accessorFn: (row) => row.amountIn,
+  cell: ({ row }) => {
+    const token =
+      row.original.tokenIn.address === NativeAddress
+        ? Native.onChain(row.original.tokenIn.chainId as EvmChainId)
+        : new Token({
+            chainId: row.original.tokenIn.chainId as EvmChainId,
+            address: row.original.tokenIn.address,
+            decimals: row.original.tokenIn.decimals,
+            symbol: row.original.tokenIn.symbol,
+            name: row.original.tokenIn.name,
+          })
+    return (
+      <div className="flex items-center gap-1 md:gap-2 whitespace-nowrap">
+        <Currency.Icon currency={token} width={24} height={24} />
+        <span>
+          {formatNumber(row.original.amountIn)} {token.symbol}
+        </span>
+      </div>
+    )
+  },
 }
 
 export const CHAIN_COLUMN: ColumnDef<MarketTrade> = {
   id: 'chain',
   header: 'Chain',
   enableSorting: false,
-  accessorFn: (row) => `${row.chainFrom}-${row.chainTo}`,
-  cell: ({ row }) => (
-    <div className="flex items-center gap-2">
-      <div className="flex items-center gap-1 md:gap-2">
-        <div className="dark:border-[#222137] border-[#F5F5F5] border rounded-[4px] overflow-hidden">
-          <NetworkIcon
-            type="square"
-            chainId={row.original.chainFrom.id}
-            className="w-3 h-3 md:w-5 md:h-5"
-          />
+  accessorFn: (row) => `${row.tokenIn.chainId}-${row.tokenOut.chainId}`,
+  cell: ({ row }) => {
+    const isCrossChain =
+      row.original.tokenIn.chainId !== row.original.tokenOut.chainId
+
+    return (
+      <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1 md:gap-2">
+          <div className="dark:border-[#222137] border-[#F5F5F5] border rounded-[4px] overflow-hidden">
+            <NetworkIcon
+              type="square"
+              chainId={row.original.tokenIn.chainId as EvmChainId}
+              className="w-3 h-3 md:w-5 md:h-5"
+            />
+          </div>
+          <span className="block text-xs md:hidden">
+            {getNetworkName(row.original.tokenIn.chainId as EvmChainId)}
+          </span>
+          {isCrossChain ? (
+            <>
+              <ArrowSmallRightIcon className="w-3 h-3 dark:text-slate-500 text-slate-450" />
+              <div className="dark:border-[#222137] border-[#F5F5F5] border rounded-[4px] overflow-hidden">
+                <NetworkIcon
+                  type="square"
+                  chainId={row.original.tokenOut.chainId as EvmChainId}
+                  className="w-3 h-3 md:w-5 md:h-5"
+                />
+              </div>
+              <span className="block text-xs md:hidden">
+                {getNetworkName(row.original.tokenOut.chainId as EvmChainId)}
+              </span>
+            </>
+          ) : null}
         </div>
-        <span className="block text-xs md:hidden">
-          {row.original.chainFrom.name}
-        </span>
-        <ArrowSmallRightIcon className="w-3 h-3 dark:text-slate-500 text-slate-450" />
-        <div className="dark:border-[#222137] border-[#F5F5F5] border rounded-[4px] overflow-hidden">
-          <NetworkIcon
-            type="square"
-            chainId={row.original.chainTo.id}
-            className="w-3 h-3 md:w-5 md:h-5"
-          />
-        </div>
-        <span className="block text-xs md:hidden">
-          {row.original.chainTo.name}
-        </span>
       </div>
-    </div>
-  ),
+    )
+  },
 }
 
 export const VALUE_PNL_COLUMN: ColumnDef<MarketTrade> = {
@@ -100,22 +140,23 @@ export const VALUE_PNL_COLUMN: ColumnDef<MarketTrade> = {
     />
   ),
   enableSorting: false,
-  accessorFn: (row) => row.valueUsd,
-  sortingFn: ({ original: a }, { original: b }) => a.valueUsd - b.valueUsd,
+  accessorFn: (row) => row.amountOutUSD,
+  sortingFn: ({ original: a }, { original: b }) =>
+    a.amountOutUSD - b.amountOutUSD,
   cell: ({ row }) => (
     <div className="flex flex-col">
-      <span>{formatUSD(row.original.valueUsd)}</span>
+      <span>{formatUSD(row.original.amountOutUSD)}</span>
       <span
         className={
-          row.original.pnlPercent > 0
+          row.original.totalPnl > 0
             ? 'text-xs text-green-500'
-            : row.original.pnlPercent < 0
+            : row.original.totalPnl < 0
               ? 'text-xs text-red'
               : 'text-xs text-muted-foreground'
         }
       >
-        {row.original.pnlPercent > 0 ? '+' : ''}
-        {formatUSD(row.original.valueUsd * row.original.pnlPercent)}
+        {row.original.totalPnl > 0 ? '+' : ''}
+        {formatUSD(row.original.totalPnl)}
       </span>
     </div>
   ),
@@ -159,17 +200,14 @@ export const getPriceUsdColumn = (
       </Tooltip>
     </TooltipProvider>
   ),
-  accessorFn: (row) => row.priceUsd,
+  accessorFn: (row) => row.amountOutUSD,
   cell: ({ row }) => {
-    const tokenPrice =
-      row.original.sellAmount && row.original.buyAmount
-        ? row.original.sellAmount / row.original.buyAmount
-        : 0
-
     return showInUsd ? (
-      <span>{formatUSD(row.original.priceUsd)}</span>
+      <span>{formatUSD(row.original.amountOutUSD)}</span>
     ) : (
-      <span className="whitespace-nowrap">{`${tokenPrice.toPrecision(2)} ${row.original.sellToken.symbol}`}</span>
+      <span className="whitespace-nowrap">{`${formatNumber(row.original.amountOut)} ${
+        row.original.tokenOut.symbol
+      }`}</span>
     )
   },
 })
@@ -178,16 +216,13 @@ export const TX_HASH_COLUMN: ColumnDef<MarketTrade> = {
   id: 'txHash',
   header: 'Tx Hash',
   enableSorting: false,
-  accessorFn: (row) => row.txHash,
+  // accessorFn: (row) => row.txHash,
   cell: ({ row }) => (
-    <a
-      href={`https://etherscan.io/tx/${row.original.txHash}`}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="dark:text-skyblue hover:underline text-blue"
+    <LinkExternal
+      href={evmChains[row.original.tokenIn.chainId as EvmChainId]?.getTxUrl('')}
     >
-      {shortenHash(row.original.txHash)}
-    </a>
+      -{/* {shortenHash(row.original.txHash)} */}
+    </LinkExternal>
   ),
 }
 
@@ -195,10 +230,10 @@ export const DATE_COLUMN: ColumnDef<MarketTrade> = {
   id: 'timestamp',
   header: () => <span className="md:text-right md:block">Date</span>,
   enableSorting: false,
-  accessorFn: (row) => row.timestamp,
+  accessorFn: (row) => row.time,
   cell: ({ row }) => (
     <span className="whitespace-nowrap">
-      {format(new Date(row.original.timestamp), 'MM/dd/yy h:mm a')}
+      {format(new Date(row.original.time * 1000), 'MM/dd/yy h:mm a')}
     </span>
   ),
 }

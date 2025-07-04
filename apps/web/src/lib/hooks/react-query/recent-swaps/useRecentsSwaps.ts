@@ -27,7 +27,7 @@ export const useRecentSwaps = ({ walletAddress, chainIds }: UseRecentSwaps) => {
 
       if (!data) return []
 
-      return data
+      return data.sort((a, b) => b.time - a.time)
     },
     refetchInterval: 60000,
     enabled: !!walletAddress && !!chainIds,

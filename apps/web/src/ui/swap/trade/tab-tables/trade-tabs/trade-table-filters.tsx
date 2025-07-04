@@ -1,9 +1,21 @@
-import { Button, Loader, classNames } from '@sushiswap/ui'
+import { CheckCircleIcon } from '@heroicons/react-v1/solid'
+import { EllipsisHorizontalIcon } from '@heroicons/react/24/outline'
+import {
+  Button,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  classNames,
+} from '@sushiswap/ui'
 import { Switch } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import { useTheme } from 'next-themes'
-import { useState } from 'react'
-import { TWAP_SUPPORTED_CHAIN_IDS } from 'src/config'
+import { useSearchParams } from 'next/navigation'
+import { SUPPORTED_CHAIN_IDS, TWAP_SUPPORTED_CHAIN_IDS } from 'src/config'
+import { EvmChainKey } from 'sushi'
+import type { EvmChainId } from 'sushi/chain'
 import { useTradeTablesContext } from '../trade-tables-context'
 
 export const TradeTableFilters = () => {
@@ -13,10 +25,24 @@ export const TradeTableFilters = () => {
     onChainChange,
     setShowCurrentPairOnly,
     showCurrentPairOnly,
-    isChainLoadingCallback,
   } = useTradeTablesContext()
 
+  const searchParams = useSearchParams()
+  const isMarketHistoryTabSelected =
+    searchParams.get('history-table-tab') === 'market'
+  const networkOptions = isMarketHistoryTabSelected
+    ? SUPPORTED_CHAIN_IDS
+    : TWAP_SUPPORTED_CHAIN_IDS
+
   const isDarkMode = theme === 'dark'
+
+  const firstThreeChainIds = networkOptions.slice(
+    0,
+    isMarketHistoryTabSelected ? 2 : 3,
+  )
+  const remainingChainIds = networkOptions.slice(
+    isMarketHistoryTabSelected ? 2 : 3,
+  )
 
   return (
     <div className="flex items-center w-full justify-between xl:justify-end gap-3 px-5 pt-3 pb-1 md:px-3 xl:px-0 md:pt-0 md:pb-0 bg-[#F9FAFB] xl:!bg-background md:bg-white md:dark:bg-slate-800 dark:bg-background  overflow-x-auto hide-scrollbar">
@@ -34,17 +60,14 @@ export const TradeTableFilters = () => {
           Chains:
         </span>
         <div className="flex items-center gap-2">
-          {TWAP_SUPPORTED_CHAIN_IDS.map((chainId) => {
+          {firstThreeChainIds.map((chainId) => {
             const isSelected = chainIds.includes(chainId)
-            const isLoading = isChainLoadingCallback(chainId)
-
             return (
               <Button
                 key={chainId}
                 asChild
                 type="button"
                 onClick={() => {
-                  if (isLoading) return
                   onChainChange(chainId)
                 }}
                 className={classNames(
@@ -59,21 +82,66 @@ export const TradeTableFilters = () => {
                       : 'ghost'
                 }
               >
-                {isLoading && (
-                  <div
-                    className={`absolute top-[50%] left-[50%] -translate-x-1/2 -translate-y-1/2`}
-                  >
-                    <Loader size={16} />
-                  </div>
-                )}
                 <NetworkIcon
                   type="square"
                   chainId={chainId}
-                  className={`rounded-[4px] w-5 aspect-1 ${isLoading ? 'opacity-0' : ''}`}
+                  className={`rounded-[4px] w-5 aspect-1 `}
                 />
               </Button>
             )
           })}
+          {remainingChainIds.length > 0 ? (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button
+                  type="button"
+                  className={classNames(
+                    'border border-black/10 dark:border-white/10 rounded-lg p-2 flex items-center justify-center',
+                  )}
+                >
+                  <EllipsisHorizontalIcon
+                    width={24}
+                    height={24}
+                    className="text-slate-500 dark:text-slate-400"
+                  />
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent
+                align="end"
+                className="max-h-[195px] overflow-y-auto hide-scrollbar !bg-slate-50 dark:!bg-slate-900 !backdrop-blur-none"
+              >
+                <DropdownMenuGroup className="">
+                  {remainingChainIds.map((chainId) => {
+                    const isSelected = chainIds.includes(chainId)
+                    return (
+                      <DropdownMenuItem
+                        key={chainId}
+                        onClick={(e) => {
+                          e.preventDefault()
+                          onChainChange(chainId)
+                        }}
+                        className={classNames('pr-10 my-1')}
+                      >
+                        <NetworkIcon
+                          type="square"
+                          chainId={chainId}
+                          className={`rounded-[4px] w-5 h-5`}
+                        />
+                        <span className="ml-2">
+                          {EvmChainKey[
+                            chainId as EvmChainId
+                          ].toLocaleUpperCase()}
+                        </span>
+                        {isSelected && (
+                          <CheckCircleIcon className="w-5 h-5 ml-1 text-blue/50 dark:text-skyblue/50" />
+                        )}
+                      </DropdownMenuItem>
+                    )
+                  })}
+                </DropdownMenuGroup>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          ) : null}
         </div>
       </div>
     </div>

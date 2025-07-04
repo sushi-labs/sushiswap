@@ -105,14 +105,20 @@ export const DCAOrdersTable = () => {
         </Card>
 
         <Card className="p-5 space-y-6 border-accent !shadow-none border bg-slate-50 dark:bg-slate-800 md:hidden">
-          {data.map((row) => (
-            <div
-              key={row.id}
-              className="pb-6 border-b last:border-b-0 last:pb-0"
-            >
-              <MobileDataCard row={row} columns={COLUMNS} />
-            </div>
-          ))}
+          {!data?.length ? (
+            <p className="text-sm italic text-center text-muted-foreground dark:text-pink-200 h-52 flex items-center justify-center">
+              No Active DCA Orders
+            </p>
+          ) : (
+            data?.map((row) => (
+              <div
+                key={row.id}
+                className="pb-6 border-b last:border-b-0 last:pb-0"
+              >
+                <MobileDataCard row={row} columns={COLUMNS} />
+              </div>
+            ))
+          )}
         </Card>
       </InfiniteScroll>
     </>

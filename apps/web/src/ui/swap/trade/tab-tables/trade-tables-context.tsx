@@ -1,4 +1,5 @@
 import { eqIgnoreCase } from '@orbs-network/twap-sdk'
+import { useSearchParams } from 'next/navigation'
 import {
   createContext,
   useCallback,
@@ -7,8 +8,14 @@ import {
   useMemo,
   useState,
 } from 'react'
-import { type TwapSupportedChainId, isTwapSupportedChainId } from 'src/config'
+import {
+  SUPPORTED_CHAIN_IDS,
+  TWAP_SUPPORTED_CHAIN_IDS,
+  type TwapSupportedChainId,
+  isTwapSupportedChainId,
+} from 'src/config'
 import { type TwapOrder, useTwapOrders } from 'src/lib/hooks/react-query/twap'
+import type { EvmChainId } from 'sushi/chain'
 import type { Type } from 'sushi/currency'
 import { useAccount } from 'wagmi'
 import {
@@ -31,12 +38,12 @@ const filterByPair = (orders?: TwapOrder[], token0?: Type, token1?: Type) => {
 }
 
 type TradeTablesContextType = {
-  chainIds: TwapSupportedChainId[]
+  chainIds: EvmChainId[]
   currentTab: TABS
   orders: TwapOrder[]
   ordersLoading: boolean
   showCurrentPairOnly: boolean
-  onChainChange: (chainId: TwapSupportedChainId) => void
+  onChainChange: (chainId: EvmChainId) => void
   setCurrentTab: (currentTab: TABS) => void
   setShowCurrentPairOnly: (show: boolean) => void
   isChainLoadingCallback: (chainId: TwapSupportedChainId) => boolean
@@ -62,10 +69,14 @@ export const TradeTablesProvider = ({
 }
 
 const Content = ({ children }: { children: React.ReactNode }) => {
-  const { chainId: accountChainId, address } = useAccount()
+  const { address } = useAccount()
   const [showCurrentPairOnly, setShowCurrentPair] = useState(false)
-  const [chainIds, setChainIds] = useState<TwapSupportedChainId[]>([])
+  const [chainIds, setChainIds] = useState<EvmChainId[]>([])
   const [currentTab, setCurrentTab] = useState(TABS.LIMIT_ORDERS)
+  const searchParams = useSearchParams()
+  const isMarketHistoryTabSelected =
+    searchParams.get('history-table-tab') === 'market'
+
   const {
     state: { token0, token1 },
   } = useDerivedStateSimpleSwap()
@@ -76,18 +87,19 @@ const Content = ({ children }: { children: React.ReactNode }) => {
     loadingChains,
   } = useTwapOrders({
     chainIds: chainIds.filter((chainId) => isTwapSupportedChainId(chainId)),
-    // account: address,
-    account: '0x95E01700953A9EA0F3BF379Be9435b483cB0E356',
+    account: address,
     enabled: Boolean(address),
   })
 
   useEffect(() => {
-    if (accountChainId && isTwapSupportedChainId(accountChainId)) {
-      setChainIds([accountChainId])
+    if (isMarketHistoryTabSelected) {
+      setChainIds(SUPPORTED_CHAIN_IDS.map((chainId) => chainId))
+    } else {
+      setChainIds(TWAP_SUPPORTED_CHAIN_IDS.map((chainId) => chainId))
     }
-  }, [accountChainId])
+  }, [isMarketHistoryTabSelected])
 
-  const onChainChange = useCallback((chainId: TwapSupportedChainId) => {
+  const onChainChange = useCallback((chainId: EvmChainId) => {
     setChainIds((prev) => {
       if (prev.includes(chainId)) {
         return prev.filter((id) => id !== chainId)
