@@ -3,6 +3,8 @@ import {
   Chip,
   Currency,
   Loader,
+  SkeletonBox,
+  SkeletonCircle,
   Tooltip,
   TooltipContent,
   TooltipProvider,
@@ -38,6 +40,16 @@ export const BUY_COLUMN: ColumnDef<TwapOrder> = {
       </div>
     )
   },
+  meta: {
+    body: {
+      skeleton: (
+        <div className="flex items-center gap-1">
+          <SkeletonCircle radius={24} className="w-6 h-6" />
+          <SkeletonBox className="w-[60px] h-4 rounded-sm" />
+        </div>
+      ),
+    },
+  },
 }
 
 export const SELL_COLUMN: ColumnDef<TwapOrder> = {
@@ -62,6 +74,16 @@ export const SELL_COLUMN: ColumnDef<TwapOrder> = {
       </div>
     )
   },
+  meta: {
+    body: {
+      skeleton: (
+        <div className="flex items-center gap-1">
+          <SkeletonCircle radius={24} className="w-6 h-6" />
+          <SkeletonBox className="w-[60px] h-4 rounded-sm" />
+        </div>
+      ),
+    },
+  },
 }
 
 export const CHAIN_COLUMN: ColumnDef<TwapOrder> = {
@@ -83,6 +105,11 @@ export const CHAIN_COLUMN: ColumnDef<TwapOrder> = {
         <span className="block text-xs md:hidden">{chainInfo.name}</span>
       </div>
     )
+  },
+  meta: {
+    body: {
+      skeleton: <SkeletonBox className="w-5 h-5 rounded-sm" />,
+    },
   },
 }
 
@@ -136,6 +163,16 @@ export const VALUE_PNL_COLUMN: ColumnDef<TwapOrder> = {
         )}
       </div>
     )
+  },
+  meta: {
+    body: {
+      skeleton: (
+        <div className="flex flex-col gap-1">
+          <SkeletonBox className="w-[60px] h-4 rounded-sm" />
+          <SkeletonBox className="w-[50px] h-3 rounded-sm" />
+        </div>
+      ),
+    },
   },
 }
 
@@ -197,37 +234,39 @@ export const getPriceColumn = (
       </span>
     )
   },
+  meta: {
+    body: {
+      skeleton: <SkeletonBox className="w-[60px] h-4 rounded-sm" />,
+    },
+  },
 })
 
-export const FILLED_COLUMN: ColumnDef<TwapOrder> = {
-  id: 'filled',
-  header: 'Filled',
-  enableSorting: false,
-  accessorFn: (row) => {
-    const { filledPercentage } = useParsedOrder(row)
-    return filledPercentage
-  },
-  cell: ({ row }) => {
-    const {
-      filledPercentage,
-      buyToken,
-      buyTokenFilledAmount,
-      buyTokenExpectedAmount,
-    } = useParsedOrder(row.original)
-    if (!buyToken) return null
-    return (
-      <div className="flex items-center gap-2">
-        <span>
-          {formatNumber(buyTokenFilledAmount)}/
-          {formatNumber(buyTokenExpectedAmount)} {buyToken.symbol}
-        </span>
-        <Chip className="dark:!bg-slate-750 !bg-slate-200 !p-2 dark:text-slate-500 text-slate-450 !h-[28px]">
-          {formatPercent(filledPercentage / 100)}
-        </Chip>
-      </div>
-    )
-  },
-}
+// export const FILLED_COLUMN: ColumnDef<TwapOrder> = {
+// 	id: "filled",
+// 	header: "Filled",
+// 	enableSorting: false,
+// 	accessorFn: (row) => {
+// 		const { filledPercentage } = useParsedOrder(row);
+// 		return filledPercentage;
+// 	},
+// 	cell: ({ row }) => {
+// 		const { filledPercentage, buyToken, buyTokenFilledAmount, buyTokenExpectedAmount } = useParsedOrder(
+// 			row.original
+// 		);
+// 		if (!buyToken) return null;
+// 		return (
+// 			<div className="flex items-center gap-2">
+// 				<span>
+// 					{formatNumber(buyTokenFilledAmount)}/{formatNumber(buyTokenExpectedAmount)} {buyToken.symbol}
+// 				</span>
+// 				<Chip className="dark:!bg-slate-750 !bg-slate-200 !p-2 dark:text-slate-500 text-slate-450 !h-[28px]">
+// 					{formatPercent(filledPercentage / 100)}
+// 				</Chip>
+// 			</div>
+// 		);
+// 	},
+
+// };
 
 export const TIME_COLUMN: ColumnDef<TwapOrder> = {
   id: 'time',
@@ -235,6 +274,11 @@ export const TIME_COLUMN: ColumnDef<TwapOrder> = {
   enableSorting: false,
   accessorFn: (row) => row.createdAt,
   cell: ({ row }) => format(new Date(row.original.createdAt), 'yyyy/MM/dd'),
+  meta: {
+    body: {
+      skeleton: <SkeletonBox className="w-[60px] h-4 rounded-sm" />,
+    },
+  },
 }
 
 export const ACTION_COLUMN: ColumnDef<TwapOrder> = {
@@ -263,6 +307,12 @@ export const ACTION_COLUMN: ColumnDef<TwapOrder> = {
         )}
       </div>
     )
+  },
+
+  meta: {
+    body: {
+      skeleton: <SkeletonBox className="w-5 h-5 rounded-sm ml-auto" />,
+    },
   },
 }
 
