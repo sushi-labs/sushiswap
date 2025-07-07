@@ -23,13 +23,23 @@ import { Badge } from '@sushiswap/ui'
 import { Currency } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import type React from 'react'
-import { type CSSProperties, type FC, memo, useCallback, useState } from 'react'
+import {
+  type CSSProperties,
+  type FC,
+  memo,
+  useCallback,
+  useMemo,
+  useState,
+} from 'react'
 import { NativeAddress } from 'src/lib/constants'
+import { useNetworkOptions } from 'src/lib/hooks/useNetworkOptions'
 import { NetworkButton } from 'src/ui/swap/chain-options-selector'
 import { FavoriteButton } from 'src/ui/swap/trade/favorite-button'
 import { formatUSD } from 'sushi'
+import type { EvmChainId } from 'sushi'
 import { EvmChain } from 'sushi/chain'
 import type { Amount, Type } from 'sushi/currency'
+import { Token } from 'sushi/currency'
 import { ZERO } from 'sushi/math'
 import { formatUnits, zeroAddress } from 'viem'
 
@@ -66,9 +76,12 @@ export const TokenSelectorRowV2: FC<TokenSelectorRowV2> = memo(
   }) {
     const [isHovered, setIsHovered] = useState(false)
 
-    const onClick = useCallback(() => {
-      onSelect(currency)
-    }, [currency, onSelect])
+    const onClick = useCallback(
+      (newCurrency: Type) => {
+        onSelect(newCurrency)
+      },
+      [onSelect],
+    )
 
     const showInfo = useCallback(
       (e: React.MouseEvent | React.KeyboardEvent) => {
@@ -77,6 +90,14 @@ export const TokenSelectorRowV2: FC<TokenSelectorRowV2> = memo(
       },
       [onShowInfo],
     )
+    const { networkOptions } = useNetworkOptions()
+
+    const filteredBridgeInfo = useMemo(() => {
+      if (!bridgeInfo) return []
+      return bridgeInfo.filter((info) =>
+        networkOptions.some((option) => option === info.chainId),
+      )
+    }, [bridgeInfo, networkOptions])
 
     return (
       <TraceEvent
@@ -96,8 +117,8 @@ export const TokenSelectorRowV2: FC<TokenSelectorRowV2> = memo(
                 ? zeroAddress
                 : currency.wrapped.address.toLowerCase()
             }`}
-            onClick={onClick}
-            onKeyDown={onClick}
+            onClick={() => onClick(currency)}
+            onKeyDown={() => onClick(currency)}
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
             className={classNames(
@@ -106,27 +127,30 @@ export const TokenSelectorRowV2: FC<TokenSelectorRowV2> = memo(
             )}
           >
             <div className="flex items-center justify-between flex-grow gap-2 rounded cursor-pointer">
-              <FavoriteButton currencyId={currency?.id} className="!px-0.5" />
+              <FavoriteButton
+                currencyId={`${currency?.id}:${currency?.symbol}`}
+                className="!px-0.5"
+              />
               <div className="flex flex-row items-center flex-grow gap-4">
                 <div className="w-10 h-10">
                   <Badge
-                    className="dark:border-white/10 border-black/10 border rounded-[4px] z-[11]"
+                    className="dark:border-white/10 border-black/10 border rounded-[4px] z-[11] !right-[5%] -bottom-[5%]"
                     position="bottom-right"
                     badgeContent={
                       <NetworkIcon
                         type="square"
                         className="rounded-[3px]"
                         chainId={currency.chainId}
-                        width={18}
-                        height={18}
+                        width={14}
+                        height={14}
                       />
                     }
                   >
                     <Currency.Icon
                       disableLink
                       currency={currency}
-                      width={40}
-                      height={40}
+                      width={32}
+                      height={32}
                     />
                   </Badge>
                 </div>
@@ -182,13 +206,25 @@ export const TokenSelectorRowV2: FC<TokenSelectorRowV2> = memo(
               </div>
 
               <div className="flex items-center gap-4">
-                {isHovered && showChainOptions && bridgeInfo?.length ? (
+                {isHovered && showChainOptions && filteredBridgeInfo?.length ? (
                   <div className="flex gap-1 items-center">
-                    {bridgeInfo.map((info) => (
+                    {filteredBridgeInfo?.map((info) => (
                       <NetworkButton
                         key={`${info.chainId}-${info.address}`}
                         chainId={info.chainId as number}
                         iconSize={16}
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          onClick(
+                            new Token({
+                              address: info.address as `0x${string}`,
+                              chainId: info.chainId as EvmChainId,
+                              decimals: info.decimals,
+                              symbol: currency.symbol,
+                              name: currency.name,
+                            }),
+                          )
+                        }}
                       />
                     ))}
                   </div>

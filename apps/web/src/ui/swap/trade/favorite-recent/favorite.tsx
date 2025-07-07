@@ -1,66 +1,41 @@
-import type {
-  SearchToken,
-  TokenListV2ChainId,
-} from '@sushiswap/graph-client/data-api'
-import { usePinnedTokens } from '@sushiswap/hooks'
+import type { SearchToken } from '@sushiswap/graph-client/data-api'
+import { type PinnedTokenId, usePinnedTokens } from '@sushiswap/hooks'
 import { Button, SkeletonBox, SkeletonCircle, classNames } from '@sushiswap/ui'
-import { useCallback, useMemo } from 'react'
-import { NativeAddress } from 'src/lib/constants'
+import { useCallback } from 'react'
 import { getChangeSign, getTextColor } from 'src/lib/helpers'
-import { useSearchTokens } from 'src/lib/hooks/react-query/search-tokens/useSearchTokens'
+import { useFavorites } from 'src/lib/hooks/useFavorites'
+import { getNetworkKey } from 'src/lib/network'
 import { ConnectButton } from 'src/lib/wagmi/components/connect-button'
 import { TokenSelectorV2 } from 'src/lib/wagmi/components/token-selector/token-selector-v2'
 import { formatUSD } from 'sushi'
-import type { Address } from 'sushi'
+import type { EvmChainId } from 'sushi/chain'
 import type { Type } from 'sushi/currency'
+import { WNATIVE } from 'sushi/currency'
 import { formatNumber, formatPercent } from 'sushi/format'
-import { formatUnits } from 'viem'
+import { getAddress } from 'viem'
 import { useAccount } from 'wagmi'
 import { FavoriteButton } from '../favorite-button'
 import { TokenNetworkIcon } from '../token-network-icon'
+import { useNetworkContext } from './network-provider'
 
 export const Favorite = () => {
   const { address } = useAccount()
-  const { data: _pinnedTokens } = usePinnedTokens()
-
-  const { tokens, uniqueChainIds } = useMemo(() => {
-    const tokens = Object.values(_pinnedTokens)
-      .flat()
-      .map((i) => {
-        const currencyId = i
-        const chainId = currencyId?.split(':')[0]
-        const _contractAddress = currencyId?.split(':')[1]
-        const contractAddress =
-          _contractAddress === 'NATIVE' ? NativeAddress : _contractAddress
-
-        return {
-          // chainId: Number(chainId) as TokenListV2ChainId,
-          chainId: Number(chainId) as unknown,
-          address: contractAddress as Address,
-        }
-      })
-    const uniqueChainIds = Array.from(
-      new Set(tokens.map((token) => Number(token.chainId))),
-    )
-
-    return { tokens, uniqueChainIds }
-  }, [_pinnedTokens])
-
+  const { favorites, isLoading, isError } = useFavorites()
   const {
-    data: favorites,
-    isLoading,
-    isError,
-  } = useSearchTokens({
-    walletAddress: address,
-    chainIds: uniqueChainIds as TokenListV2ChainId[],
-    search: '',
-    tokens: tokens,
-  })
+    state: { selectedNetwork },
+  } = useNetworkContext()
 
-  const onSelect = useCallback((token: Type) => {
-    // Handle token selection
-    console.log('Selected token:', token)
-  }, [])
+  const { hasToken, mutate } = usePinnedTokens()
+
+  const onSelect = useCallback(
+    (_token: Type) => {
+      const currencyId: PinnedTokenId = `${_token?.id}:${_token?.symbol}`
+      const isOnList = !currencyId ? false : hasToken(currencyId)
+      if (!currencyId) return
+      mutate(isOnList ? 'remove' : 'add', currencyId)
+    },
+    [hasToken, mutate],
+  )
 
   if (!address) {
     return <ConnectButton className="w-full" variant="secondary" />
@@ -105,10 +80,13 @@ export const Favorite = () => {
           </tbody>
         </table>
       ) : null}
-      <div className="flex flex-col items-center justify-center w-full gap-4 mt-8">
+      <div className="flex flex-col items-center justify-center w-full gap-4 mt-6">
         <TokenSelectorV2
           selected={undefined}
           chainId={1}
+          selectedNetwork={
+            selectedNetwork ? (selectedNetwork as EvmChainId) : undefined
+          }
           onSelect={onSelect}
           includeNative={true}
           hidePinnedTokens={false}
@@ -121,7 +99,11 @@ export const Favorite = () => {
         </TokenSelectorV2>
         {!isLoading && !isError && favorites?.length === 0 ? (
           <p className="text-sm italic text-muted-foreground dark:text-pink-200">
-            You haven&apos;t selected any favorite tokens.
+            You haven&apos;t selected any favorite tokens{' '}
+            {selectedNetwork
+              ? `on ${getNetworkKey(selectedNetwork as EvmChainId)}`
+              : ''}
+            .
           </p>
         ) : null}
       </div>
@@ -130,10 +112,17 @@ export const Favorite = () => {
 }
 
 const FavoriteItem = ({ token }: { token: SearchToken }) => {
+  const wrappedAddress = WNATIVE[Number(token.chainId) as EvmChainId].address
   return (
     <tr className="text-xs">
-      <td className="max-w-[25px] py-3 md:py-4">
-        <FavoriteButton currencyId={`${token.chainId}:${token.address}`} />
+      <td className="max-w-[35px] py-3 md:py-4">
+        <FavoriteButton
+          currencyId={`${token.chainId}:${
+            token.address === wrappedAddress
+              ? 'NATIVE'
+              : getAddress(token.address)
+          }:${token.symbol}`}
+        />
       </td>
       <td>
         <TokenNetworkIcon token={token} />
@@ -177,8 +166,7 @@ const FavoriteItem = ({ token }: { token: SearchToken }) => {
             {formatUSD(token.balanceUSD)}
           </span>
           <span className="text-muted-foreground">
-            {formatNumber(formatUnits(BigInt(token.balance), token.decimals))}{' '}
-            {token.symbol}
+            {formatNumber(token.balance)} {token.symbol}
           </span>
         </div>
       </td>

@@ -1,13 +1,12 @@
 import { StarIcon } from '@heroicons/react-v1/solid'
-import { usePinnedTokens } from '@sushiswap/hooks'
+import { type PinnedTokenId, usePinnedTokens } from '@sushiswap/hooks'
 import { classNames } from '@sushiswap/ui'
 import type { FC } from 'react'
-import type { ID } from 'sushi'
 
 interface FavoriteButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   className?: string
-  currencyId: ID
+  currencyId: PinnedTokenId
 }
 
 export const FavoriteButton: FC<FavoriteButtonProps> = ({

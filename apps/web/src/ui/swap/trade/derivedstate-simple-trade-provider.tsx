@@ -1,15 +1,17 @@
 'use client'
 
-import { useParams, usePathname } from 'next/navigation'
+import { useParams, usePathname, useSearchParams } from 'next/navigation'
 import {
   type FC,
   createContext,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
   useState,
 } from 'react'
 import { type SupportedChainId, isSupportedChainId } from 'src/config'
+import { useCreateQuery } from 'src/lib/hooks/useCreateQuery'
 import { EvmChainId } from 'sushi/chain'
 import { EvmChainKey } from 'sushi/chain'
 import {
@@ -47,15 +49,6 @@ const resolveViewModeFromPathname = (pathname: string): TradeView => {
     : 'simple'
 }
 
-const createUrl = (
-  chainId: EvmChainId,
-  view: TradeView,
-  mode: TradeMode,
-): string => {
-  const newPath = `/${EvmChainKey[chainId]}/${mode}${view !== 'simple' ? `/${view}` : ''}`
-  return new URL(`${window.location.origin}${newPath}`).toString()
-}
-
 /* Parses the URL and provides the tradeMode and chainId globally.
  * URL example:
  * /swap || /limit || /dca ...
@@ -65,8 +58,11 @@ const DerivedstateSimpleTradeProvider: FC<
 > = ({ children }) => {
   const pathname = usePathname()
   const { chainId: _chainId, trade } = useParams()
-  const chainId =
-    _chainId && isSupportedChainId(+_chainId)
+  const searchParams = useSearchParams()
+  const chainId0 = searchParams.get('chainId0')
+  const chainId = chainId0
+    ? (Number(chainId0) as EvmChainId)
+    : _chainId
       ? (+_chainId as SupportedChainId)
       : EvmChainId.ETHEREUM
   const [tradeMode, _setTradeMode] = useState<TradeMode>(trade as TradeMode)
@@ -74,6 +70,8 @@ const DerivedstateSimpleTradeProvider: FC<
     resolveViewModeFromPathname(pathname),
   )
   const [tradeModeChanged, _setTradeModeChanged] = useState<boolean>(false)
+
+  const { createQuery } = useCreateQuery()
 
   const setTradeView = useCallback(
     (view: TradeView) => {
@@ -83,22 +81,31 @@ const DerivedstateSimpleTradeProvider: FC<
 
       _setTradeView(view)
       _setTradeModeChanged(false)
-      window.history.pushState({}, '', createUrl(chainId, view, tradeMode))
+      // window.history.pushState({}, "", createUrl(chainId, view, tradeMode));
+      createQuery(
+        [],
+        `/${pathname?.split('/')[1]}/${tradeMode}${view !== 'simple' ? `/${view}` : ''}`,
+      )
     },
-    [chainId, tradeView, tradeMode],
+    [tradeView, tradeMode, pathname, createQuery],
   )
 
   const setTradeMode = useCallback(
     (trade: TradeMode) => {
-      if (trade === tradeMode) {
-        return
-      }
-
       _setTradeMode(trade)
       _setTradeModeChanged(true)
-      window.history.pushState({}, '', createUrl(chainId, tradeView, trade))
+      const params = []
+      if (trade === 'limit' || trade === 'dca') {
+        params.push({ name: 'token1', value: null })
+        params.push({ name: 'chainId1', value: null })
+      }
+
+      createQuery(
+        params,
+        `/${pathname?.split('/')[1]}/${trade}${tradeView !== 'simple' ? `/${tradeView}` : ''}`,
+      )
     },
-    [chainId, tradeView, tradeMode],
+    [tradeView, pathname, createQuery],
   )
 
   return (

@@ -69,9 +69,10 @@ export const DISABLED_CHAIN_IDS = [
   ChainId.HARMONY,
   ChainId.POLYGON_ZKEVM,
   ChainId.FUSE,
+  ChainId.TATARA,
 ] as const
 
-export const NEW_CHAIN_IDS = [ChainId.HEMI] as const
+export const NEW_CHAIN_IDS = [ChainId.KATANA] as const
 
 export const PREFERRED_CHAINID_ORDER = [
   ...NEW_CHAIN_IDS,
@@ -85,6 +86,7 @@ export const PREFERRED_CHAINID_ORDER = [
   ChainId.SCROLL,
   ChainId.BLAST,
   ChainId.OPTIMISM,
+  ChainId.KATANA,
   NonStandardChainId.APTOS,
   ChainId.LINEA,
   ChainId.MANTLE,
@@ -242,6 +244,7 @@ export const isZapSupportedChainId = (
   ZAP_SUPPORTED_CHAIN_IDS.includes(chainId as ZapSupportedChainId)
 
 export const XSWAP_SUPPORTED_CHAIN_IDS = [
+  ChainId.APE,
   ChainId.ARBITRUM,
   ChainId.AVALANCHE,
   ChainId.BSC,
@@ -254,6 +257,7 @@ export const XSWAP_SUPPORTED_CHAIN_IDS = [
   // ChainId.FUSE,
   ChainId.FANTOM,
   ChainId.GNOSIS,
+  ChainId.KATANA,
   ChainId.LINEA,
   ChainId.MANTLE,
   ChainId.METIS,
@@ -265,6 +269,7 @@ export const XSWAP_SUPPORTED_CHAIN_IDS = [
   // ChainId.POLYGON_ZKEVM,
   ChainId.ROOTSTOCK,
   ChainId.SCROLL,
+  ChainId.SONIC,
   ChainId.TAIKO,
   ChainId.ZKSYNC_ERA,
 ] as const
@@ -299,11 +304,13 @@ export const SUSHISWAP_V3_POSITION_HELPER: Record<SushiSwapV3ChainId, Address> =
     [ChainId.SCROLL]: '0x34026A9b9Cb6DF84880C4B2f778F5965F5679c16',
     [ChainId.FILECOIN]: '0xc85C59A05EC888aa055Ec3b3A7263d173cc6E111',
     [ChainId.ZETACHAIN]: '0x34026A9b9Cb6DF84880C4B2f778F5965F5679c16',
-    [ChainId.BLAST]: '0x34026A9b9Cb6DF84880C4B2f778F5965F5679c16',
+    [ChainId.BLAST]: '0xc85C59A05EC888aa055Ec3b3A7263d173cc6E111',
     [ChainId.SKALE_EUROPA]: '0x4f6086BC5bd944080EFA6Eb54f11E2b6229e7333',
     [ChainId.ROOTSTOCK]: '0x34026A9b9Cb6DF84880C4B2f778F5965F5679c16',
     [ChainId.SONIC]: '0x34026A9b9Cb6DF84880C4B2f778F5965F5679c16',
     [ChainId.HEMI]: '0x34026A9b9Cb6DF84880C4B2f778F5965F5679c16',
+    [ChainId.KATANA]: '0xc85C59A05EC888aa055Ec3b3A7263d173cc6E111',
+    [ChainId.TATARA]: '0x34026A9b9Cb6DF84880C4B2f778F5965F5679c16',
     // DEPRECATED
     // [ChainId.FUSE]: '0x34026A9b9Cb6DF84880C4B2f778F5965F5679c16',
     // [ChainId.MOONBEAM]: '0x34026A9b9Cb6DF84880C4B2f778F5965F5679c16',

@@ -46,6 +46,7 @@ import {
   useWaitForTransactionReceipt,
 } from 'wagmi'
 import type { SendTransactionReturnType } from 'wagmi/actions'
+import { usePrice } from '~evm/_common/ui/price-provider/price-provider/use-price'
 import {
   type UseTwapTradeReturn,
   useDerivedStateTwap,
@@ -71,6 +72,10 @@ export const TwapTradeReviewDialog: FC<{
   } = useDerivedStateTwap()
 
   const [acceptDisclaimer, setAcceptDisclaimer] = useState(true)
+  const srcTokenUsdPrice = usePrice({
+    chainId,
+    address: token0?.wrapped.address,
+  }).data
 
   const { approved } = useApproved(APPROVE_TAG_SWAP)
   const { address } = useAccount()
@@ -78,7 +83,6 @@ export const TwapTradeReviewDialog: FC<{
   const client = usePublicClient()
 
   const { addCreatedOrder } = usePersistedOrdersStore({
-    chainId,
     account: address,
   })
 
@@ -107,11 +111,13 @@ export const TwapTradeReviewDialog: FC<{
               if (!orderId) return
 
               addCreatedOrder(
+                chainId,
                 orderId,
                 hash,
                 trade.params.map((param) => param.toString()),
                 trade.amountIn.currency.wrapped,
                 trade.minAmountOut.currency,
+                srcTokenUsdPrice ?? 0,
               )
             }
           })
@@ -134,7 +140,15 @@ export const TwapTradeReviewDialog: FC<{
         setSwapAmount('')
       }
     },
-    [setSwapAmount, trade, chainId, client, address, addCreatedOrder],
+    [
+      setSwapAmount,
+      srcTokenUsdPrice,
+      trade,
+      chainId,
+      client,
+      address,
+      addCreatedOrder,
+    ],
   )
 
   const onSwapError = useCallback((e: Error) => {
@@ -196,7 +210,9 @@ export const TwapTradeReviewDialog: FC<{
                   ) : isLimitOrder ? (
                     `Receive at least ${trade.minAmountOut?.toSignificant(6)} ${token1?.symbol}`
                   ) : (
-                    `Every ${fillDelayText(trade.fillDelay)} over ${trade.chunks} order${trade.chunks > 1 ? 's' : ''}`
+                    `Every ${fillDelayText(trade.fillDelay)} over ${trade.chunks} order${
+                      trade.chunks > 1 ? 's' : ''
+                    }`
                   )}
                 </DialogDescription>
               </DialogHeader>
@@ -279,7 +295,9 @@ export const TwapTradeReviewDialog: FC<{
                             formatDistanceStrict(
                               0,
                               getTimeDurationMs(trade.fillDelay),
-                              { roundingMethod: 'floor' },
+                              {
+                                roundingMethod: 'floor',
+                              },
                             )
                           ) : (
                             <SkeletonText />

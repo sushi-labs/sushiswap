@@ -22,7 +22,7 @@ import { ConnectButton } from '../connect-button'
 import { PortfolioDefaultView } from './PortfolioDefaultView'
 import { PortfolioSettingsView } from './PortfolioSettingsView'
 import { useAccountDrawer } from './hooks/use-account-drawer'
-import { NotificationBadge } from './notification-badge'
+import { TwapOrdersBadge } from './twap-orders-badge'
 
 export enum PortfolioView {
   Default = 'Default',
@@ -129,7 +129,7 @@ export const UserPortfolio = () => {
             <JazzIcon diameter={20} address={address} />
           )}
           <span className="hidden sm:block">{shortenAddress(address)}</span>
-          <NotificationBadge notificationCount={3} />
+          <TwapOrdersBadge type="all-active" />
         </Button>
       }
       content={content}

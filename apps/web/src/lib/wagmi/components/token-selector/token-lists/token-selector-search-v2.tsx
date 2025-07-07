@@ -6,6 +6,7 @@ import { useCustomTokens } from '@sushiswap/hooks'
 import { useMemo } from 'react'
 import InfiniteScroll from 'react-infinite-scroll-component'
 import { TempChainIds } from 'src/lib/hooks/react-query/recent-swaps/useRecentsSwaps'
+import { useNetworkOptions } from 'src/lib/hooks/useNetworkOptions'
 import type { Type } from 'sushi/currency'
 import type { Address } from 'viem'
 import { useSearchTokensV2 } from '../hooks/use-search-tokens-v2'
@@ -38,6 +39,7 @@ export function TokenSelectorSearchV2({
   onShowInfo,
   showChainOptions,
 }: TokenSelectorSearch) {
+  const { networkOptions } = useNetworkOptions()
   const { data, priceMap, isError, isLoading, fetchNextPage, hasMore } =
     useSearchTokensV2({
       chainIds:
@@ -45,7 +47,7 @@ export function TokenSelectorSearchV2({
           ? [chainId]
           : chainId && !isTokenListV2ChainId(chainId)
             ? []
-            : TempChainIds,
+            : networkOptions.filter(isTokenListV2ChainId),
       search,
       pagination: {
         initialPage: 0,

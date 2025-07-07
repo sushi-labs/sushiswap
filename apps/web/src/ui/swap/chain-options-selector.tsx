@@ -1,5 +1,7 @@
+import { InformationCircleIcon } from '@heroicons/react-v1/solid'
 import { EllipsisHorizontalIcon } from '@heroicons/react/24/outline'
 import {
+  Collapsible,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuGroup,
@@ -12,6 +14,7 @@ import {
   classNames,
 } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
+import { useParams, useSearchParams } from 'next/navigation'
 import {
   forwardRef,
   useCallback,
@@ -20,28 +23,30 @@ import {
   useRef,
   useState,
 } from 'react'
-import {
-  SUPPORTED_CHAIN_IDS,
-  XSWAP_SUPPORTED_CHAIN_IDS,
-  getSortedChainIds,
-} from 'src/config'
-import { useIsCrossChain } from 'src/lib/hooks/useIsCrossChain'
+import { useNetworkOptions } from 'src/lib/hooks/useNetworkOptions'
+import { useTradeMode } from 'src/lib/hooks/useTradeMode'
 import { EvmChainKey } from 'sushi'
 import type { EvmChainId } from 'sushi/chain'
+import { useChainId } from 'wagmi'
 
 export const ChainOptionsSelector = ({
   size = 'sm',
   networks,
   onNetworkSelect,
+  selectedNetwork,
+  canShowMessage,
 }: {
   size?: 'sm' | 'lg'
   networks?: number[]
   onNetworkSelect?: (network: number) => void
+  selectedNetwork?: number
+  canShowMessage?: boolean
 }) => {
-  const { isCrossChain } = useIsCrossChain()
-  const defaultNetworks = isCrossChain
-    ? getSortedChainIds(XSWAP_SUPPORTED_CHAIN_IDS)
-    : getSortedChainIds(SUPPORTED_CHAIN_IDS)
+  const { networkOptions: defaultNetworks } = useNetworkOptions()
+  const { tradeMode } = useTradeMode()
+  const isTwap = tradeMode === 'limit' || tradeMode === 'dca'
+  const chainId = useChainId()
+
   const iconSize = size === 'sm' ? 16 : 24
   const _networks = networks ?? defaultNetworks
 
@@ -92,72 +97,102 @@ export const ChainOptionsSelector = ({
     }
   }, [visibleCount, _networks])
 
+  const showMessage = Boolean(
+    isTwap && chainId !== selectedNetwork && canShowMessage,
+  )
+
   return (
     <div
-      className="flex items-center justify-between gap-x-1.5 w-full"
-      ref={containerRef}
+      className={classNames(
+        'flex flex-col  w-full',
+        showMessage ? 'gap-y-2' : 'gap-y-0',
+      )}
     >
-      {visible.map((chainId) => (
-        <TooltipProvider key={chainId}>
-          <Tooltip delayDuration={0}>
-            <TooltipTrigger asChild>
-              <NetworkButton
-                tabIndex={-1}
-                onClick={() => onNetworkSelect?.(chainId)}
-                iconSize={iconSize}
-                chainId={chainId}
-              />
-            </TooltipTrigger>
-            <TooltipContent className="border-black/5 dark:border-white/5 !rounded-md bg-white/20 dark:bg-black/20">
-              {EvmChainKey[chainId as EvmChainId].toLocaleUpperCase()}
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
-      ))}
-      {overflow.length > 0 ? (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <button
-              type="button"
-              className={classNames(
-                'border border-black/10  dark:border-white/10 rounded-md p-1 flex items-center justify-center',
-                size === 'sm'
-                  ? 'w-[26px] h-[26px] min-h-[26px] min-w-[26px]'
-                  : 'w-[34px] h-[34px] min-h-[34px] min-w-[34px]',
-              )}
-            >
-              <EllipsisHorizontalIcon
-                width={iconSize}
-                height={iconSize}
-                className="text-slate-500 dark:text-slate-400"
-              />
-            </button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent
-            align="end"
-            className="max-h-[195px] overflow-y-auto hide-scrollbar !bg-slate-50 dark:!bg-slate-900 !backdrop-blur-none"
-          >
-            <DropdownMenuGroup>
-              {overflow.map((chainId) => (
-                <DropdownMenuItem
-                  className="pr-10"
-                  key={chainId}
+      <Collapsible open={showMessage}>
+        <div className="text-xs bg-skyblue/[3%] rounded-xl p-3 text-skyblue flex items-center gap-2">
+          <InformationCircleIcon
+            width={16}
+            height={16}
+            className="text-skyblue"
+          />
+          <p>
+            Sushi currently only supports{' '}
+            {tradeMode === 'dca' ? 'DCA' : 'limit'} orders for same-chain swaps.
+          </p>
+        </div>
+      </Collapsible>
+
+      <div className="flex items-center gap-x-1.5 w-full" ref={containerRef}>
+        {visible.map((chainId) => (
+          <TooltipProvider key={chainId}>
+            <Tooltip delayDuration={0}>
+              <TooltipTrigger asChild>
+                <NetworkButton
+                  tabIndex={-1}
                   onClick={() => onNetworkSelect?.(chainId)}
-                >
-                  <NetworkButton
-                    iconSize={iconSize}
-                    chainId={chainId}
-                    className="border-none"
-                  />
-                  <span className="ml-2">
-                    {EvmChainKey[chainId as EvmChainId].toLocaleUpperCase()}
-                  </span>
-                </DropdownMenuItem>
-              ))}
-            </DropdownMenuGroup>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      ) : null}
+                  iconSize={iconSize}
+                  chainId={chainId}
+                  className={classNames(
+                    selectedNetwork === chainId &&
+                      'bg-blue/10 dark:border-blue border-blue',
+                  )}
+                />
+              </TooltipTrigger>
+              <TooltipContent className="border-black/5 dark:border-white/5 !rounded-md bg-white/20 dark:bg-black/20">
+                {EvmChainKey[chainId as EvmChainId].toLocaleUpperCase()}
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        ))}
+        {overflow.length > 0 ? (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button
+                type="button"
+                className={classNames(
+                  'border border-black/10 dark:border-white/10 rounded-md p-1 flex items-center justify-center',
+                  size === 'sm'
+                    ? 'w-[26px] h-[26px] min-h-[26px] min-w-[26px]'
+                    : 'w-[34px] h-[34px] min-h-[34px] min-w-[34px]',
+                )}
+              >
+                <EllipsisHorizontalIcon
+                  width={iconSize}
+                  height={iconSize}
+                  className="text-slate-500 dark:text-slate-400"
+                />
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent
+              align="end"
+              className="max-h-[195px] overflow-y-auto hide-scrollbar !bg-slate-50 dark:!bg-slate-900 !backdrop-blur-none"
+            >
+              <DropdownMenuGroup>
+                {overflow.map((chainId) => (
+                  <DropdownMenuItem
+                    key={chainId}
+                    onClick={() => onNetworkSelect?.(chainId)}
+                    className={classNames(
+                      'pr-10',
+                      selectedNetwork === chainId &&
+                        'bg-blue/10 border-blue dark:border-blue',
+                    )}
+                  >
+                    <NetworkButton
+                      iconSize={iconSize}
+                      chainId={chainId}
+                      className={'border-none'}
+                    />
+                    <span className="ml-2">
+                      {EvmChainKey[chainId as EvmChainId].toLocaleUpperCase()}
+                    </span>
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuGroup>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        ) : null}
+      </div>
     </div>
   )
 }

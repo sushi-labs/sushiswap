@@ -171,7 +171,7 @@ html[class="dark"] *.scroll::-webkit-scrollbar-thumb {
 }
 
 .Toastify__close-button {
-  top: 17px !important;
+  top: 13px !important;
   right: 17px !important;
 }
 

@@ -8,6 +8,7 @@ import {
   classNames,
 } from '@sushiswap/ui'
 import { useState } from 'react'
+import { useCreateQuery } from 'src/lib/hooks/useCreateQuery'
 import { DCAOrdersHistoryTable } from './dca-history-table/dca-history-table'
 import { LimitOrdersHistoryTable } from './limit-history-table/limit-history-table'
 import { MarketTable } from './market-history-table/market-history-table'
@@ -29,8 +30,9 @@ export const TABS = [
 
 export const HistoryTable = () => {
   const [currentTab, setCurrentTab] = useState(TABS[0].value)
+  const { createQuery } = useCreateQuery()
   return (
-    <Card className="overflow-hidden border-none !shadow-none md:p-3 xl:bg-slate-50 dark:md:bg-slate-800 rounded-t-none xl:rounded-lg">
+    <Card className="overflow-hidden border-none !shadow-none md:p-3 xl:bg-red-white dark:md:bg-slate-800 rounded-t-none xl:rounded-lg">
       <Tabs
         defaultValue={TABS[0].value}
         onValueChange={setCurrentTab}
@@ -42,6 +44,14 @@ export const HistoryTable = () => {
               key={tab.value}
               value={tab.value}
               className="!bg-transparent border-none !px-0 !shadow-none focus-visible:!ring-0 focus-visible:!ring-offset-0 !ring-transparent"
+              onClick={() => {
+                createQuery([
+                  {
+                    name: 'history-table-tab',
+                    value: tab.value,
+                  },
+                ])
+              }}
             >
               <Button
                 size="sm"

@@ -1,7 +1,11 @@
 import { ArrowUpRightIcon } from '@heroicons/react/24/outline'
+import { OrderStatus } from '@orbs-network/twap-sdk'
 import {
   Chip,
   Currency,
+  LinkExternal,
+  SkeletonBox,
+  SkeletonCircle,
   Tooltip,
   TooltipContent,
   TooltipProvider,
@@ -11,82 +15,131 @@ import { DollarCircledIcon } from '@sushiswap/ui/icons/DollarCircled'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import type { ColumnDef } from '@tanstack/react-table'
 import { format } from 'date-fns'
+import { type TwapOrder, useParsedOrder } from 'src/lib/hooks/react-query/twap'
 import { TooltipDrawer } from 'src/ui/common/tooltip-drawer'
+import { evmChains } from 'sushi'
+import type { ChainId } from 'sushi/chain'
 import { formatUSD } from 'sushi/format'
 import { formatPercent } from 'sushi/format'
 import { formatNumber } from 'sushi/format'
-import type { LimitOrderHistory } from './limit-history-table'
 
-export const DATE_COLUMN: ColumnDef<LimitOrderHistory> = {
+export const DATE_COLUMN: ColumnDef<TwapOrder> = {
   id: 'date',
   header: 'Date',
   enableSorting: false,
-  accessorFn: (row) => row.timestamp,
+  accessorFn: (row) => row.createdAt,
   cell: ({ row }) => (
     <span className="whitespace-nowrap">
-      {format(new Date(row.original.timestamp), 'MM/dd/yy h:mm a')}
+      {format(new Date(row.original.createdAt), 'dd/MM/yy h:mm aa')}
     </span>
   ),
+  meta: {
+    body: {
+      skeleton: <SkeletonBox className="w-[60px] h-4 rounded-sm" />,
+    },
+  },
 }
 
-export const BUY_COLUMN: ColumnDef<LimitOrderHistory> = {
+export const BUY_COLUMN: ColumnDef<TwapOrder> = {
   id: 'buy',
   header: 'Buy',
   enableSorting: false,
 
-  accessorFn: (row) => row.buyAmount,
-  cell: ({ row }) => (
-    <div className="w-full min-w-[150px] flex items-center gap-2 whitespace-nowrap">
-      <Currency.Icon currency={row.original.buyToken} width={18} height={18} />
-      <span>
-        {formatNumber(row.original.buyAmount)} {row.original.buyToken.symbol}
-      </span>
-    </div>
-  ),
+  accessorFn: (row) => {
+    const { buyTokenExpectedAmount } = useParsedOrder(row)
+    return buyTokenExpectedAmount
+  },
+  cell: ({ row }) => {
+    const { buyToken, buyTokenExpectedAmount } = useParsedOrder(row.original)
+    if (!buyToken) return null
+    return (
+      <div className="flex items-center gap-2">
+        <Currency.Icon currency={buyToken} width={18} height={18} />
+        <span className="whitespace-nowrap">
+          {formatNumber(buyTokenExpectedAmount)} {buyToken.symbol}
+        </span>
+      </div>
+    )
+  },
+  meta: {
+    body: {
+      skeleton: (
+        <div className="flex items-center gap-1">
+          <SkeletonCircle radius={24} className="w-6 h-6" />
+          <SkeletonBox className="w-[60px] h-4 rounded-sm" />
+        </div>
+      ),
+    },
+  },
 }
 
-export const SELL_COLUMN: ColumnDef<LimitOrderHistory> = {
+export const SELL_COLUMN: ColumnDef<TwapOrder> = {
   id: 'sell',
   header: 'Sell',
   enableSorting: false,
 
-  accessorFn: (row) => row.sellAmount,
-  cell: ({ row }) => (
-    <div className="flex items-center gap-2 whitespace-nowrap">
-      <Currency.Icon currency={row.original.sellToken} width={18} height={18} />
-      <span>
-        {formatNumber(row.original.sellAmount)} {row.original.sellToken.symbol}
-      </span>
-    </div>
-  ),
+  accessorFn: (row) => {
+    const { sellTokenTotalAmount } = useParsedOrder(row)
+    return sellTokenTotalAmount
+  },
+  cell: ({ row }) => {
+    const { sellToken, sellTokenTotalAmount } = useParsedOrder(row.original)
+    if (!sellToken) return null
+    return (
+      <div className="flex items-center gap-2">
+        <Currency.Icon currency={sellToken} width={18} height={18} />
+        <span className="whitespace-nowrap">
+          {formatNumber(sellTokenTotalAmount)} {sellToken.symbol}
+        </span>
+      </div>
+    )
+  },
+  meta: {
+    body: {
+      skeleton: (
+        <div className="flex items-center gap-1">
+          <SkeletonCircle radius={24} className="w-6 h-6" />
+          <SkeletonBox className="w-[60px] h-4 rounded-sm" />
+        </div>
+      ),
+    },
+  },
 }
 
-export const CHAIN_COLUMN: ColumnDef<LimitOrderHistory> = {
+export const CHAIN_COLUMN: ColumnDef<TwapOrder> = {
   id: 'chain',
   header: 'Chain',
   enableSorting: false,
-  accessorFn: (row) => row.chain.id,
-  cell: ({ row }) => (
-    <div className="flex items-center gap-1 md:gap-2">
-      <div className="dark:border-[#222137] border-[#F5F5F5] border rounded-[4px] overflow-hidden">
-        <NetworkIcon
-          type="square"
-          chainId={row.original.chain.id}
-          className="w-3 h-3 md:w-5 md:h-5"
-        />
+  accessorFn: (row) => row.chainId,
+  cell: ({ row }) => {
+    const { chainInfo } = useParsedOrder(row.original)
+    return (
+      <div className="flex items-center gap-1 md:gap-2">
+        <div className="dark:border-[#222137] border-[#F5F5F5] border rounded-[4px] overflow-hidden">
+          <NetworkIcon
+            type="square"
+            chainId={chainInfo.id}
+            className="w-3 h-3 md:w-5 md:h-5"
+          />
+        </div>
+        <span className="block text-xs md:hidden">{chainInfo.name}</span>
       </div>
-      <span className="block text-xs md:hidden">{row.original.chain.name}</span>
-    </div>
-  ),
+    )
+  },
+  meta: {
+    body: {
+      skeleton: <SkeletonBox className="w-5 h-5 rounded-sm" />,
+    },
+  },
 }
 
-export const VALUE_PNL_COLUMN: ColumnDef<LimitOrderHistory> = {
+export const VALUE_PNL_COLUMN: ColumnDef<TwapOrder> = {
   id: 'valueUsd',
   header: () => (
     <TooltipDrawer
       trigger={
         <span className="border-b border-dotted border-muted-foreground">
-          Value / PnL
+          Value / Est. PnL
         </span>
       }
       content={
@@ -95,35 +148,63 @@ export const VALUE_PNL_COLUMN: ColumnDef<LimitOrderHistory> = {
           on the day it was bought and the day it was sold.
         </p>
       }
-      dialogTitle="Value / PnL"
+      dialogTitle="Value / Est. PnL"
     />
   ),
   enableSorting: false,
 
-  accessorFn: (row) => row.valueUsd,
-  cell: ({ row }) => (
-    <div className="flex items-start gap-1 md:flex-col ">
-      <span>{formatUSD(row.original.valueUsd)}</span>
-      <span
-        className={
-          row.original.pnlUsd > 0
-            ? 'text-xs text-green-500'
-            : row.original.pnlUsd < 0
-              ? 'text-xs text-red'
-              : 'text-xs text-muted-foreground'
-        }
-      >
-        {row.original.pnlUsd > 0 ? '+' : ''}
-        {formatUSD(row.original.pnlUsd)}
-      </span>
-    </div>
-  ),
+  accessorFn: (row) => {
+    const { sellTokenTotalUsdValue } = useParsedOrder(row)
+    return sellTokenTotalUsdValue
+  },
+  cell: ({ row }) => {
+    const { sellTokenTotalUsdValue, profitAndLoss } = useParsedOrder(
+      row.original,
+    )
+    return (
+      <div className="flex items-center md:items-start gap-1 md:flex-col">
+        {sellTokenTotalUsdValue ? (
+          <>
+            <span>{formatUSD(sellTokenTotalUsdValue)}</span>
+            {profitAndLoss === null ? (
+              <span className="text-xs text-muted-foreground">N/A</span>
+            ) : (
+              <span
+                className={
+                  profitAndLoss > 0
+                    ? 'text-xs text-green-500'
+                    : profitAndLoss < 0
+                      ? 'text-xs text-red'
+                      : 'text-xs text-muted-foreground'
+                }
+              >
+                {profitAndLoss > 0 ? '+' : ''}
+                {formatUSD(profitAndLoss)}
+              </span>
+            )}
+          </>
+        ) : (
+          <span>N/A</span>
+        )}
+      </div>
+    )
+  },
+  meta: {
+    body: {
+      skeleton: (
+        <div className="flex flex-col gap-1">
+          <SkeletonBox className="w-[60px] h-4 rounded-sm" />
+          <SkeletonBox className="w-[50px] h-3 rounded-sm" />
+        </div>
+      ),
+    },
+  },
 }
 
 export const getPriceUsdColumn = (
   showInUsd: boolean,
   setShowInUsd: React.Dispatch<React.SetStateAction<boolean>>,
-): ColumnDef<LimitOrderHistory> => ({
+): ColumnDef<TwapOrder> => ({
   id: 'priceUsd',
   enableSorting: false,
   header: () => (
@@ -158,57 +239,95 @@ export const getPriceUsdColumn = (
       </Tooltip>
     </TooltipProvider>
   ),
-  accessorFn: (row) => row.priceUsd,
+  accessorFn: (row) => {
+    const { usdPerChunk } = useParsedOrder(row)
+    return usdPerChunk
+  },
   cell: ({ row }) => {
-    const tokenPrice =
-      row.original.sellAmount && row.original.buyAmount
-        ? row.original.sellAmount / row.original.buyAmount
-        : 0
-    return showInUsd ? (
-      <span>{formatUSD(row.original.priceUsd)}</span>
-    ) : (
-      <span className="whitespace-nowrap">{`${tokenPrice.toFixed(4)} ${row.original.sellToken.symbol}`}</span>
+    const { sellToken, usdPerChunk, sellTokenAmountPerChunk } = useParsedOrder(
+      row.original,
     )
+
+    if (!usdPerChunk) {
+      return <span>N/A</span>
+    }
+
+    return showInUsd ? (
+      <span>{formatUSD(usdPerChunk)}</span>
+    ) : (
+      <span className="">{`${sellTokenAmountPerChunk.toFixed(4)} ${sellToken?.symbol}`}</span>
+    )
+  },
+  meta: {
+    body: {
+      skeleton: <SkeletonBox className="w-[60px] h-4 rounded-sm" />,
+    },
   },
 })
 
-export const FILLED_COLUMN: ColumnDef<LimitOrderHistory> = {
+export const FILLED_COLUMN: ColumnDef<TwapOrder> = {
   id: 'filled',
   header: 'Filled',
   enableSorting: false,
 
-  accessorFn: (row) => row.filledPercent,
-  cell: ({ row }) => (
-    <div className="flex items-center gap-2 whitespace-nowrap">
-      <span>
-        {formatNumber(row.original.filledAmount)}/
-        {formatNumber(row.original.totalAmount)} {row.original.buyToken.symbol}
-      </span>
-      <Chip className="dark:!bg-slate-750 !bg-slate-200 !p-2 dark:text-slate-500 text-slate-450 !h-[20px]">
-        {formatPercent(row.original.filledPercent)}
-      </Chip>
-    </div>
-  ),
+  accessorFn: (row) => {
+    const { filledPercentage } = useParsedOrder(row)
+    return filledPercentage
+  },
+  cell: ({ row }) => {
+    const {
+      buyToken,
+      buyTokenFilledAmount,
+      filledPercentage,
+      buyTokenExpectedAmount,
+    } = useParsedOrder(row.original)
+
+    if (!buyToken) return null
+
+    return (
+      <div className="flex items-center gap-2">
+        <span>
+          {formatNumber(buyTokenFilledAmount)} /{' '}
+          {formatNumber(Number(buyTokenExpectedAmount))} {buyToken.symbol}
+        </span>
+        <Chip className="dark:!bg-slate-750 !bg-slate-200 !p-2 dark:text-slate-500 text-slate-450 !h-[20px]">
+          {formatPercent(filledPercentage / 100)}
+        </Chip>
+      </div>
+    )
+  },
 }
 
 /** Status column */
-export const STATUS_COLUMN: ColumnDef<LimitOrderHistory> = {
+export const STATUS_COLUMN: ColumnDef<TwapOrder> = {
   id: 'status',
   header: () => <span className="md:text-right md:block">Status</span>,
   enableSorting: false,
   accessorFn: (row) => row.status,
   cell: ({ row }) => {
     const color =
-      row.original.status === 'Completed'
+      row.original.status === OrderStatus.Completed
         ? 'text-green-500'
-        : row.original.status === 'Cancelled'
+        : row.original.status === OrderStatus.Canceled
           ? 'text-orange-400'
           : 'text-muted-foreground'
+    const chainId = row.original.chainId
+    const txnHash = row.original.txHash
     return (
-      <span className={`${color} inline-flex items-center gap-1`}>
-        {row.original.status}
-        <ArrowUpRightIcon className="w-3.5 h-3.5" />
-      </span>
+      <div className="w-full flex md:justify-end">
+        <LinkExternal
+          href={evmChains[chainId as ChainId]?.getTxUrl(txnHash)}
+          className={`${color} flex items-center gap-1 w-full justify-end text-[14px]`}
+        >
+          {`${row.original.status?.slice(0, 1).toUpperCase()}${row.original.status?.slice(1).toLowerCase()}`}
+          <ArrowUpRightIcon className="w-[12px] h-[12px]" />
+        </LinkExternal>
+      </div>
     )
+  },
+  meta: {
+    body: {
+      skeleton: <SkeletonBox className="w-[60px] h-4 rounded-sm ml-auto" />,
+    },
   },
 }

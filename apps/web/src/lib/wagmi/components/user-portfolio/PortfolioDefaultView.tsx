@@ -31,10 +31,10 @@ import { useAccount, useDisconnect } from 'wagmi'
 import type { GetEnsNameReturnType } from 'wagmi/actions'
 import { PortfolioView } from '.'
 import { useAccountDrawer } from './hooks/use-account-drawer'
-import { NotificationBadge } from './notification-badge'
 import { PortfolioAssets } from './portfolio-assets/portfolio-assets'
 import { PortfolioInbox } from './portfolio-inbox/portfolio-inbox'
 import { PortfolioOrders } from './portfolio-orders/portfolio-orders'
+import { TwapOrdersBadge } from './twap-orders-badge'
 
 enum PortfolioTab {
   Assets = 'Assets',
@@ -189,7 +189,7 @@ export const PortfolioDefaultView: FC<PortfolioDefaultProps> = ({
           >
             {_tab}
             {_tab === PortfolioTab.Orders ? (
-              <NotificationBadge notificationCount={3} size="sm" />
+              <TwapOrdersBadge type="all-active" size="sm" />
             ) : null}
           </Button>
         ))}

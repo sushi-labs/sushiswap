@@ -34,8 +34,8 @@ catalogs:
       specifier: 2.13.5
       version: 2.13.5
     sushi:
-      specifier: 5.0.37
-      version: 5.0.37
+      specifier: 5.1.20
+      version: 5.1.20
     viem:
       specifier: 2.21.55
       version: 2.21.55
@@ -123,7 +123,7 @@ importers:
         version: 19.0.0(react@19.0.0)
       sushi:
         specifier: catalog:web3
-        version: 5.0.37(typescript@5.7.2)(viem@2.21.55(bufferutil@4.0.8)(typescript@5.7.2)(utf-8-validate@6.0.3)(zod@3.23.8))(zod@3.23.8)
+        version: 5.1.20(typescript@5.7.2)(viem@2.21.55(bufferutil@4.0.8)(typescript@5.7.2)(utf-8-validate@6.0.3)(zod@3.23.8))(zod@3.23.8)
     devDependencies:
       '@storybook/addon-a11y':
         specifier: 8.4.7
@@ -237,8 +237,8 @@ importers:
         specifier: 4.0.7
         version: 4.0.7(encoding@0.1.13)
       '@orbs-network/twap-sdk':
-        specifier: 3.1.21
-        version: 3.1.21
+        specifier: 3.1.51
+        version: 3.1.51
       '@pontem/wallet-adapter-plugin':
         specifier: 0.2.1
         version: 0.2.1
@@ -424,7 +424,7 @@ importers:
         version: 2.3.3
       sushi:
         specifier: catalog:web3
-        version: 5.0.37(typescript@5.7.2)(viem@2.21.55(bufferutil@4.0.8)(typescript@5.7.2)(utf-8-validate@5.0.10)(zod@3.23.8))(zod@3.23.8)
+        version: 5.1.20(typescript@5.7.2)(viem@2.21.55(bufferutil@4.0.8)(typescript@5.7.2)(utf-8-validate@5.0.10)(zod@3.23.8))(zod@3.23.8)
       tiny-invariant:
         specifier: 1.3.1
         version: 1.3.1
@@ -609,7 +609,7 @@ importers:
         version: 1.0.0
       sushi:
         specifier: catalog:web3
-        version: 5.0.37(typescript@5.7.2)(viem@2.21.55(bufferutil@4.0.8)(typescript@5.7.2)(utf-8-validate@6.0.3)(zod@3.23.8))(zod@3.23.8)
+        version: 5.1.20(typescript@5.7.2)(viem@2.21.55(bufferutil@4.0.8)(typescript@5.7.2)(utf-8-validate@6.0.3)(zod@3.23.8))(zod@3.23.8)
       viem:
         specifier: catalog:web3
         version: 2.21.55(bufferutil@4.0.8)(typescript@5.7.2)(utf-8-validate@6.0.3)(zod@3.23.8)
@@ -671,7 +671,7 @@ importers:
         version: 19.0.0(react@19.0.0)
       sushi:
         specifier: catalog:web3
-        version: 5.0.37(typescript@5.7.2)(viem@2.21.55(bufferutil@4.0.8)(typescript@5.7.2)(utf-8-validate@6.0.3)(zod@3.23.8))(zod@3.23.8)
+        version: 5.1.20(typescript@5.7.2)(viem@2.21.55(bufferutil@4.0.8)(typescript@5.7.2)(utf-8-validate@6.0.3)(zod@3.23.8))(zod@3.23.8)
       tailwindcss:
         specifier: catalog:ui
         version: 3.3.2(ts-node@10.9.2(@types/node@22.10.6)(typescript@5.7.2))
@@ -717,7 +717,7 @@ importers:
         version: 19.0.2(@types/react@19.0.1)
       sushi:
         specifier: catalog:web3
-        version: 5.0.37(typescript@5.7.2)(viem@2.21.55(bufferutil@4.0.8)(typescript@5.7.2)(utf-8-validate@6.0.3)(zod@3.23.8))(zod@3.23.8)
+        version: 5.1.20(typescript@5.7.2)(viem@2.21.55(bufferutil@4.0.8)(typescript@5.7.2)(utf-8-validate@6.0.3)(zod@3.23.8))(zod@3.23.8)
       typescript:
         specifier: 5.7.2
         version: 5.7.2
@@ -936,7 +936,7 @@ importers:
         version: 19.0.0(react@19.0.0)
       sushi:
         specifier: catalog:web3
-        version: 5.0.37(typescript@5.7.2)(viem@2.21.55(bufferutil@4.0.8)(typescript@5.7.2)(utf-8-validate@5.0.10)(zod@3.23.8))(zod@3.23.8)
+        version: 5.1.20(typescript@5.7.2)(viem@2.21.55(bufferutil@4.0.8)(typescript@5.7.2)(utf-8-validate@5.0.10)(zod@3.23.8))(zod@3.23.8)
       tailwindcss:
         specifier: catalog:ui
         version: 3.3.2(ts-node@10.9.2(@types/node@22.10.6)(typescript@5.7.2))
@@ -3421,11 +3421,11 @@ packages:
     resolution: {integrity: sha512-3giAOQvZiH5F9bMlMiv8+GSPMeqg0dbaeo58/0SlA9sxSqZhnUtxzX9/2FzyhS9sWQf5S0GJE0AKBrFqjpeYcg==}
     engines: {node: '>=8.0.0'}
 
-  '@orbs-network/twap-sdk@3.1.21':
-    resolution: {integrity: sha512-CQ2VVAeiIP80KSEjbhzIoFdsoKpClmr3RcPVXQ8jITSR6AVkzjaG0wUfB5NwK4aS1XavpPNxtWa11bIvf6HkOA==}
+  '@orbs-network/twap-sdk@3.1.51':
+    resolution: {integrity: sha512-Oi5b9Dbm7ht60r18VaMswkeJFtzCvpP7pz4xXNn5CQFile9zxHz5LKIncsOfNa/PkNGSuDW7mu+JR984AJk1/w==}
 
-  '@orbs-network/twap@2.7.6':
-    resolution: {integrity: sha512-+GvikzcwIC4rSBYQVPzpe1AVSJzpINWHGYtddf8bs7Kq/0M39UuqOEEmQdHJAejfQ+OQAP25FOhGPXTEXl7jzA==}
+  '@orbs-network/twap@2.7.10':
+    resolution: {integrity: sha512-py2tgIu+T+10egxtadooqdcAuh7X2nlNi5O91reIzjnMnv/MN/oeKjG0Gn2XtZMUzLsh3Di24hkFPH0++/x51w==}
 
   '@parcel/watcher-android-arm64@2.3.0':
     resolution: {integrity: sha512-f4o9eA3dgk0XRT3XhB0UWpWpLnKgrh1IwNJKJ7UJek7eTYccQ8LR7XUWFKqw6aEq5KUNlCcGvSzKqSX/vtWVVA==}
@@ -11213,8 +11213,8 @@ packages:
     resolution: {integrity: sha512-ot0WnXS9fgdkgIcePe6RHNk1WA8+muPa6cSjeR3V8K27q9BB1rTE3R1p7Hv0z1ZyAc8s6Vvv8DIyWf681MAt0w==}
     engines: {node: '>= 0.4'}
 
-  sushi@5.0.37:
-    resolution: {integrity: sha512-wAXKPgjEB7BLPWeUtlk/wJHbESqnbzbKRmfGeLTsPjC8ugV++Z4Zqf/INXX/eg+1BwGsdKr3mYy6sXOhdHgIEQ==}
+  sushi@5.1.20:
+    resolution: {integrity: sha512-MwSNpENiHJINgU3wyM5A4NK7eD+hFFq9lOWIdzG/fkbGZKqcYDDxkqwD8DMffxd0xphigV/LR4ng3BbdNkqj8A==}
     peerDependencies:
       typescript: 5.7.2
       viem: '*'
@@ -15542,12 +15542,12 @@ snapshots:
   '@opentelemetry/api@1.9.0':
     optional: true
 
-  '@orbs-network/twap-sdk@3.1.21':
+  '@orbs-network/twap-sdk@3.1.51':
     dependencies:
-      '@orbs-network/twap': 2.7.6
+      '@orbs-network/twap': 2.7.10
       bignumber.js: 9.1.1
 
-  '@orbs-network/twap@2.7.6': {}
+  '@orbs-network/twap@2.7.10': {}
 
   '@parcel/watcher-android-arm64@2.3.0':
     optional: true
@@ -26156,7 +26156,7 @@ snapshots:
 
   supports-preserve-symlinks-flag@1.0.0: {}
 
-  sushi@5.0.37(typescript@5.7.2)(viem@2.21.55(bufferutil@4.0.8)(typescript@5.7.2)(utf-8-validate@5.0.10)(zod@3.23.8))(zod@3.23.8):
+  sushi@5.1.20(typescript@5.7.2)(viem@2.21.55(bufferutil@4.0.8)(typescript@5.7.2)(utf-8-validate@5.0.10)(zod@3.23.8))(zod@3.23.8):
     dependencies:
       '@uniswap/token-lists': 1.0.0-beta.33
       big.js: 6.1.1
@@ -26170,7 +26170,7 @@ snapshots:
       viem: 2.21.55(bufferutil@4.0.8)(typescript@5.7.2)(utf-8-validate@5.0.10)(zod@3.23.8)
       zod: 3.23.8
 
-  sushi@5.0.37(typescript@5.7.2)(viem@2.21.55(bufferutil@4.0.8)(typescript@5.7.2)(utf-8-validate@6.0.3)(zod@3.23.8))(zod@3.23.8):
+  sushi@5.1.20(typescript@5.7.2)(viem@2.21.55(bufferutil@4.0.8)(typescript@5.7.2)(utf-8-validate@6.0.3)(zod@3.23.8))(zod@3.23.8):
     dependencies:
       '@uniswap/token-lists': 1.0.0-beta.33
       big.js: 6.1.1

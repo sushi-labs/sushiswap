@@ -25,6 +25,7 @@ import { HaqqSquare } from './HaqqSquare'
 import { HarmonySquare } from './HarmonySquare'
 import { HecoSquare } from './HecoSquare'
 import { HemiSquare } from './HemiSquare'
+import { KatanaSquare } from './KatanaSquare'
 import { KavaSquare } from './KavaSquare'
 import { LineaSquare } from './LineaSquare'
 import { MantaSquare } from './MantaSquare'
@@ -98,6 +99,7 @@ export * from './TronSquare'
 export * from './ZKLinkSquare'
 export * from './ZKSyncSquare'
 export * from './ZetaChainSquare'
+export * from './KatanaSquare'
 
 export const NETWORK_SQUARE_ICON: Partial<
   Record<ChainId | string, IconComponent>
@@ -148,6 +150,7 @@ export const NETWORK_SQUARE_ICON: Partial<
   [ChainId.APE]: ApeSquare,
   [ChainId.SONIC]: SonicSquare,
   [ChainId.HEMI]: HemiSquare,
+  [ChainId.KATANA]: KatanaSquare,
   aptos: AptosSquare,
   tron: TronSquare,
 }

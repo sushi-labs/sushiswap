@@ -1,78 +1,120 @@
 'use client'
 
+import { OrderStatus } from '@orbs-network/twap-sdk'
 import { Button, Tabs, TabsContent, TabsList, TabsTrigger } from '@sushiswap/ui'
-import { useState } from 'react'
+import { useMemo } from 'react'
+import {
+  getTwapDcaOrders,
+  getTwapLimitOrders,
+} from 'src/lib/hooks/react-query/twap'
+import { useCreateQuery } from 'src/lib/hooks/useCreateQuery'
 import { DCAOrdersTable } from '../dca-orders-table/dca-orders-table'
 import { HistoryTable } from '../history-tables/history-table'
 import { LimitOrdersTable } from '../limit-orders-table/limit-orders-table'
+import {
+  TABS,
+  TradeTablesProvider,
+  useTradeTablesContext,
+} from '../trade-tables-context'
 import { TradeTableFilters } from './trade-table-filters'
 
-export const TABS = [
-  {
-    label: 'Limit Orders (2)',
-    value: 'limit-orders',
-  },
-  {
-    label: 'DCA Orders',
-    value: 'dca-orders',
-  },
-  {
-    label: 'History',
-    value: 'history',
-  },
-]
+const useTabs = () => {
+  const { orders, setCurrentTab, currentTab } = useTradeTablesContext()
+
+  const tabs = useMemo(() => {
+    const openLimitOrdersCount = getTwapLimitOrders(orders).filter(
+      (order) => order.status === OrderStatus.Open,
+    ).length
+    const openDcaOrdersCount = getTwapDcaOrders(orders).filter(
+      (order) => order.status === OrderStatus.Open,
+    ).length
+
+    return [
+      {
+        label: `Limit Orders ${openLimitOrdersCount > 0 ? `(${openLimitOrdersCount})` : ''}`,
+        value: TABS.LIMIT_ORDERS,
+        component: <LimitOrdersTable />,
+      },
+      {
+        label: `DCA Orders ${openDcaOrdersCount > 0 ? `(${openDcaOrdersCount})` : ''}`,
+        value: TABS.DCA_ORDERS,
+        component: <DCAOrdersTable />,
+      },
+      {
+        label: 'History',
+        value: TABS.HISTORY,
+        component: <HistoryTable />,
+      },
+    ]
+  }, [orders])
+
+  return { tabs, setCurrentTab, currentTab }
+}
 
 export const TradeTableTabs = () => {
-  const [currentTab, setCurrentTab] = useState(TABS[0].value)
+  return (
+    <TradeTablesProvider>
+      <Content />
+    </TradeTablesProvider>
+  )
+}
 
+const Content = () => {
+  const { tabs, setCurrentTab, currentTab } = useTabs()
+  const { createQuery } = useCreateQuery()
   return (
     <Tabs
-      defaultValue={TABS[0].value}
-      onValueChange={setCurrentTab}
+      id="trade-table"
+      defaultValue={tabs[0].value}
+      onValueChange={(value) => setCurrentTab(value as TABS)}
       className="-mx-5 md:mx-0"
     >
-      <div className="flex flex-col items-start justify-between xl:items-center xl:flex-row">
-        <div className="w-full p-3 bg-white border-b rounded-t-lg xl:px-0 md:border-none xl:!bg-background dark:bg-background md:dark:bg-slate-800 border-accent overflow-x-auto hide-scrollbar">
-          <TabsList className="!px-2.5 w-full md:!px-0 gap-2 md:!pb-0 !pb-6 !justify-start bg-white xl:!bg-transparent dark:bg-background md:dark:bg-slate-800 !border-none rounded-none shadow-none md:rounded-lg md:border-none md:mx-0 xl:rounded-lg !rounded-b-none">
-            {TABS.map((tab) => (
-              <TabsTrigger
+      <div className="flex flex-col xl:pb-2 items-start justify-between xl:items-center xl:flex-row overflow-x-auto hide-scrollbar">
+        <TabsList className="md:border-none !border-t-transparent border-b pb-4 md:pb-0 !px-5 md:!px-3 !md:border-b-none !h-fit rounded-b-none xl:!bg-background bg-white dark:bg-slate-900 !justify-start md:dark:bg-slate-800 w-full xl:w-fit gap-2">
+          {tabs.map((tab) => (
+            <TabsTrigger
+              key={tab.value}
+              value={tab.value}
+              className="!bg-transparent !border-none !shadow-none !px-0  focus-visible:!ring-0 focus-visible:!ring-offset-0 !ring-transparent"
+              onClick={() => {
+                createQuery([
+                  {
+                    name: 'table-tab',
+                    value: tab.value,
+                  },
+                  {
+                    name: 'history-table-tab',
+                    value: tab.value === 'history' ? 'market' : null,
+                  },
+                ])
+              }}
+            >
+              <Button
                 key={tab.value}
-                value={tab.value}
-                className="!bg-transparent xl:!bg-background !border-none !shadow-none !px-0 focus-visible:!ring-0 focus-visible:!ring-offset-0 !ring-transparent"
+                asChild
+                size="sm"
+                variant={currentTab === tab.value ? 'tertiary' : 'ghost'}
+                className={'select-none !gap-1'}
               >
-                <Button
-                  key={tab.value}
-                  asChild
-                  size="sm"
-                  variant={currentTab === tab.value ? 'tertiary' : 'ghost'}
-                  className={'select-none !gap-1'}
-                >
-                  {tab.label}
-                </Button>
-              </TabsTrigger>
-            ))}
-          </TabsList>
-        </div>
+                {tab.label}
+              </Button>
+            </TabsTrigger>
+          ))}
+        </TabsList>
+
         <TradeTableFilters />
       </div>
-      <TabsContent
-        value={TABS[0].value}
-        className="px-5 !mt-0 !pt-2 md:!pt-0 xl:!pt-2 bg-[#F9FAFB] dark:bg-slate-900 md:px-0 pb-[86px] md:bg-white xl:bg-transparent md:pb-0 rounded-b-xl"
-      >
-        <LimitOrdersTable />
-      </TabsContent>
-      <TabsContent
-        value={TABS[1].value}
-        className="px-5 !mt-0 !pt-2 md:!pt-0 xl:!pt-2 bg-[#F9FAFB] dark:bg-slate-900 md:px-0 pb-[86px] md:bg-white xl:bg-transparent md:pb-0 rounded-b-xl"
-      >
-        <DCAOrdersTable />
-      </TabsContent>
-      <TabsContent
-        value={TABS[2].value}
-        className="px-5 !mt-0 !pt-2 md:!pt-0 xl:!pt-2 bg-[#F9FAFB] dark:bg-slate-900 md:px-0 pb-[86px] md:bg-white xl:bg-transparent md:pb-0 rounded-b-xl"
-      >
-        <HistoryTable />
-      </TabsContent>
+      {tabs.map((tab) => {
+        return (
+          <TabsContent
+            key={tab.value}
+            value={tab.value}
+            className="px-5 !mt-0 !pt-2 md:!pt-0 xl:!pt-2 bg-[#F9FAFB] dark:bg-slate-900 md:px-0 pb-[86px] md:bg-white xl:bg-transparent md:pb-0 rounded-b-xl"
+          >
+            {tab.component}
+          </TabsContent>
+        )
+      })}
     </Tabs>
   )
 }

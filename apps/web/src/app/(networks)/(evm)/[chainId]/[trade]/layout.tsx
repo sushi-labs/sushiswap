@@ -5,8 +5,9 @@ import {
   type TradeMode,
   isSupportedTradeModeOnChainId,
 } from 'src/ui/swap/trade/config'
-import type { ChainId } from 'sushi/chain'
-import { Header } from '~evm/[chainId]/header'
+import type { ChainId as ChainIdType } from 'sushi/chain'
+import { Header } from '../header'
+import { KatanaBackground } from './katana-background'
 import { Providers } from './providers'
 
 export const metadata: Metadata = {
@@ -17,11 +18,16 @@ export const metadata: Metadata = {
 
 export default async function TradeLayout(props: {
   children: React.ReactNode
-  params: Promise<{ chainId: string; chainId0: string; trade: string }>
+  params: Promise<{
+    chainId: string
+    chainId0: string
+    trade: string
+    tradeView?: string
+  }>
 }) {
   const params = await props.params
   const { children } = props
-  const chainId = +params.chainId as ChainId
+  const chainId = +params.chainId as ChainIdType
   const trade = params.trade as TradeMode
 
   if (!isSupportedTradeModeOnChainId(trade, chainId)) {
@@ -31,6 +37,7 @@ export default async function TradeLayout(props: {
   return (
     <Providers>
       <Header chainId={chainId} />
+      <KatanaBackground chainId={chainId} />
       {children}
       <SimpleSwapBanner className="hidden xl:flex" />
     </Providers>

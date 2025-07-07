@@ -90,7 +90,7 @@ export function TokenSelectorChipBarV2({
                   variant="ghost"
                   onClick={(e) => {
                     e.stopPropagation()
-                    mutate('remove', token.id)
+                    mutate('remove', `${token.id}:${token.symbol}`)
                   }}
                 />
               )}

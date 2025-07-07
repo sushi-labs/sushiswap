@@ -1,18 +1,20 @@
 'use client'
 
-import { Loader } from '@sushiswap/ui'
-import { DataTable } from '@sushiswap/ui'
+import {
+  type RecentSwap,
+  isTokenListV2ChainId,
+} from '@sushiswap/graph-client/data-api'
+import { DataTable, SkeletonBox } from '@sushiswap/ui'
 import { Card } from '@sushiswap/ui'
 import type { PaginationState } from '@tanstack/react-table'
+import { useSearchParams } from 'next/navigation'
 import { useMemo } from 'react'
 import { useState } from 'react'
-import {
-  TempChainIds,
-  useRecentSwaps,
-} from 'src/lib/hooks/react-query/recent-swaps/useRecentsSwaps'
-import { type EvmChainId, EvmChainKey } from 'sushi/chain'
-import { Token } from 'sushi/currency'
+import { NativeAddress } from 'src/lib/constants'
+import { useRecentSwaps } from 'src/lib/hooks/react-query/recent-swaps/useRecentsSwaps'
+import { useDerivedStateSimpleSwap } from 'src/ui/swap/simple/derivedstate-simple-swap-provider'
 import { useAccount } from 'wagmi'
+import { useTradeTablesContext } from '../../trade-tables-context'
 import { MobileDataCard } from '../mobile-data-card/mobile-data-card'
 import {
   BUY_COLUMN,
@@ -24,41 +26,53 @@ import {
   getPriceUsdColumn,
 } from './market-history-columns'
 
-export interface MarketTrade {
-  id: string
-  buyToken: Token
-  buyAmount: number
-  sellToken: Token
-  sellAmount: number
-  chainFrom: {
-    id: number
-    name: string
-  }
-  chainTo: {
-    id: number
-    name: string
-  }
-  valueUsd: number
-  pnlPercent: number
-  priceUsd: number
-  txHash: string
-  timestamp: number
-}
-
+export type MarketTrade = RecentSwap
 export const MarketTable = () => {
+  const { chainIds, showCurrentPairOnly } = useTradeTablesContext()
   const [paginationState, setPaginationState] = useState<PaginationState>({
     pageIndex: 0,
     pageSize: 10,
   })
+  const {
+    state: { token0: _token0, token1: _token1 },
+  } = useDerivedStateSimpleSwap()
+  const searchParams = useSearchParams()
+
+  const token0Address =
+    searchParams.get('token0') ||
+    (_token0?.isNative ? 'NATIVE' : _token0?.wrapped?.address)
+  const token1Address =
+    searchParams.get('token1') ||
+    (_token1?.isNative ? 'NATIVE' : _token1?.wrapped?.address)
 
   const [showInUsd, setShowInUsd] = useState(true)
 
   const { address } = useAccount()
 
-  const { data: recentSwaps } = useRecentSwaps({
+  const { data: _recentSwaps, isLoading } = useRecentSwaps({
     walletAddress: address,
-    chainIds: TempChainIds,
+    chainIds: chainIds.filter((chainId) => isTokenListV2ChainId(chainId)),
   })
+
+  const recentSwaps = useMemo(() => {
+    if (!_recentSwaps) return []
+    if (showCurrentPairOnly && token0Address && token1Address) {
+      return _recentSwaps.filter((swap) => {
+        const { tokenIn, tokenOut } = swap
+        const tokenInAddress =
+          tokenIn.address === NativeAddress ? 'NATIVE' : tokenIn.address
+        const tokenOutAddress =
+          tokenOut.address === NativeAddress ? 'NATIVE' : tokenOut.address
+        return (
+          (tokenInAddress.toLowerCase() === token0Address.toLowerCase() &&
+            tokenOutAddress.toLowerCase() === token1Address.toLowerCase()) ||
+          (tokenInAddress.toLowerCase() === token1Address.toLowerCase() &&
+            tokenOutAddress.toLowerCase() === token0Address.toLowerCase())
+        )
+      })
+    }
+    return _recentSwaps
+  }, [_recentSwaps, showCurrentPairOnly, token0Address, token1Address])
 
   const priceCol = useMemo(
     () => getPriceUsdColumn(showInUsd, setShowInUsd),
@@ -81,69 +95,18 @@ export const MarketTable = () => {
   const rowData = useMemo(() => {
     if (!recentSwaps) return []
 
-    return recentSwaps.map((swap, i) => {
-      const {
-        tokenIn,
-        tokenOut,
-        amountIn,
-        amountInUSD,
-        amountOut,
-        amountOutUSD,
-        totalPnl,
-        time,
-      } = swap
-
-      const txHash = '-'
-      return {
-        id: `${txHash}-${i}`,
-        buyToken: new Token({
-          // @TODO: remove type cast once chainId is typed
-          chainId: tokenOut.chainId as EvmChainId,
-          address: tokenOut.address,
-          decimals: tokenOut.decimals,
-          symbol: tokenOut.symbol,
-          name: tokenOut.name,
-          approved: tokenOut.approved,
-        }),
-        buyAmount: amountOut,
-        sellToken: new Token({
-          // @TODO: remove type cast once chainId is typed
-          chainId: tokenIn.chainId as EvmChainId,
-          address: tokenIn.address,
-          decimals: tokenIn.decimals,
-          symbol: tokenIn.symbol,
-          name: tokenIn.name,
-          approved: tokenIn.approved,
-        }),
-        sellAmount: amountIn,
-        chainFrom: {
-          // @TODO: remove type cast once chainId is typed
-          id: tokenIn.chainId as EvmChainId,
-          name: EvmChainKey[tokenIn.chainId as EvmChainId],
-        },
-        chainTo: {
-          // @TODO: remove type cast once chainId is typed
-          id: tokenOut.chainId as EvmChainId,
-          name: EvmChainKey[tokenOut.chainId as EvmChainId],
-        },
-        valueUsd: amountOutUSD,
-        pnlPercent: amountInUSD ? totalPnl / amountInUSD : 0,
-        priceUsd: amountOut ? amountOutUSD / amountOut : 0,
-        txHash,
-        timestamp: time * 1000,
-      }
-    })
+    return recentSwaps
   }, [recentSwaps])
 
   const tableState = { sorting: [] }
 
   return (
     <>
-      <Card className="hidden overflow-hidden border-none bg-slate-50 dark:bg-slate-800 md:block">
+      <Card className="hidden overflow-hidden !border-none bg-slate-50 dark:bg-slate-800 md:block">
         <DataTable
           columns={COLUMNS}
           data={rowData}
-          loading={false}
+          loading={isLoading}
           className="border-none [&_td]:h-[92px]"
           pagination={true}
           state={{
@@ -155,11 +118,22 @@ export const MarketTable = () => {
       </Card>
 
       <Card className="p-5 space-y-6 border-none bg-slate-50 dark:bg-slate-800 md:hidden">
-        {rowData.map((row) => (
-          <div key={row.id} className="pb-6 border-b last:border-b-0 last:pb-0">
-            <MobileDataCard row={row} columns={COLUMNS} />
-          </div>
-        ))}
+        {isLoading ? (
+          <SkeletonBox className="w-full h-52" />
+        ) : !rowData?.length ? (
+          <p className="text-sm italic text-center text-muted-foreground dark:text-pink-200 h-52 flex items-center justify-center">
+            No Past Market Orders
+          </p>
+        ) : (
+          rowData?.map((row, idx) => (
+            <div
+              key={`history-row-${idx}`}
+              className="pb-6 border-b last:border-b-0 last:pb-0"
+            >
+              <MobileDataCard row={row} columns={COLUMNS} />
+            </div>
+          ))
+        )}
       </Card>
     </>
   )

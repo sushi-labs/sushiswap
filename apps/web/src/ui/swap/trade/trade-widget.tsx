@@ -1,6 +1,7 @@
 'use client'
 
 import { Collapsible } from '@sushiswap/ui'
+import { usePathname } from 'next/navigation'
 import { QuickSelectOverlay } from 'src/lib/wagmi/components/token-selector/quick-select/quick-select-overlay'
 import { EdgeProvider, useEdgeConfig } from 'src/providers/edge-config-provider'
 import { DerivedstateSimpleSwapProvider } from 'src/ui/swap/simple/derivedstate-simple-swap-provider'
@@ -17,8 +18,14 @@ import { Wrapper } from './wrapper'
 
 export const TradeWidget = () => {
   const {
-    state: { tradeMode, tradeModeChanged, chainId, tradeView },
+    state: { tradeModeChanged, chainId, tradeView },
   } = useDerivedStateSimpleTrade()
+  const pathname = usePathname()
+  const tradeMode = pathname.split('/')?.[2] as
+    | 'swap'
+    | 'limit'
+    | 'dca'
+    | 'fiat'
 
   const tradeEdge = useEdgeConfig<TradeEdgeConfig>()
   const modeEdge = sliceEdgeConfig(tradeEdge, tradeMode)

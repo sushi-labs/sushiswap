@@ -1,8 +1,9 @@
 import {
-  type TokenListChainId,
+  type TokenListV2ChainId,
   isTokenListV2ChainId,
 } from '@sushiswap/graph-client/data-api'
-import { TempChainIds } from 'src/lib/hooks/react-query/recent-swaps/useRecentsSwaps'
+
+import { useNetworkOptions } from 'src/lib/hooks/useNetworkOptions'
 import type { Type } from 'sushi/currency'
 import { useAccount } from 'wagmi'
 import { useMyTokensV2 } from '../hooks/use-my-tokens-v2'
@@ -12,7 +13,7 @@ import {
 } from './common/token-selector-currency-list-v2'
 
 interface TokenSelectorMyTokens {
-  chainId?: TokenListChainId
+  chainId?: TokenListV2ChainId
   onSelect(currency: Type): void
   onShowInfo(currency: Type | false): void
   selected: Type | undefined
@@ -33,10 +34,11 @@ export function TokenSelectorMyTokensV2({
   showChainOptions,
 }: TokenSelectorMyTokens) {
   const { address } = useAccount()
-
+  const { networkOptions } = useNetworkOptions()
   const { data, isError, isLoading } = useMyTokensV2({
-    chainIds:
-      chainId && isTokenListV2ChainId(chainId) ? [chainId] : TempChainIds,
+    chainIds: (chainId && isTokenListV2ChainId(chainId)
+      ? [chainId]
+      : networkOptions.filter(isTokenListV2ChainId)) as TokenListV2ChainId[],
     account: address,
     includeNative,
   })

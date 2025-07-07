@@ -3,6 +3,7 @@ import {
   isTrendingTokensChainId,
 } from '@sushiswap/graph-client/data-api'
 import { TempChainIds } from 'src/lib/hooks/react-query/recent-swaps/useRecentsSwaps'
+import { useNetworkOptions } from 'src/lib/hooks/useNetworkOptions'
 import type { Type } from 'sushi/currency'
 import { useTrendingTokensV2 } from '../hooks/use-trending-tokens-v2'
 import {
@@ -31,9 +32,13 @@ export function TokenSelectorTrendingTokensV2({
   selected,
   showChainOptions,
 }: TokenSelectorTrendingTokensV2) {
+  const { networkOptions } = useNetworkOptions()
   const { data, priceMap, isError, isLoading } = useTrendingTokensV2({
-    chainIds:
-      chainId && isTrendingTokensChainId(chainId) ? [chainId] : TempChainIds,
+    chainIds: (chainId && isTrendingTokensChainId(chainId)
+      ? [chainId]
+      : networkOptions.filter(
+          isTrendingTokensChainId,
+        )) as TrendingTokensChainId[],
     // chainIds: TempChainIds,
   })
 

@@ -1,9 +1,16 @@
 'use client'
 
-import { Card, DataTable, Loader } from '@sushiswap/ui'
-import React from 'react'
+import { OrderStatus } from '@orbs-network/twap-sdk'
+import { Card, DataTable, Loader, SkeletonBox } from '@sushiswap/ui'
+import type { ColumnDef } from '@tanstack/react-table'
+import type { PaginationState } from '@tanstack/react-table'
+import React, { useMemo, useState } from 'react'
 import InfiniteScroll from 'react-infinite-scroll-component'
-import { Native } from 'sushi/currency'
+import {
+  type TwapOrder,
+  getTwapLimitOrders,
+} from 'src/lib/hooks/react-query/twap'
+import { useTradeTablesContext } from '../../trade-tables-context'
 import { MobileDataCard } from '../mobile-data-card/mobile-data-card'
 import {
   BUY_COLUMN,
@@ -16,79 +23,25 @@ import {
   getPriceUsdColumn,
 } from './limit-history-columns'
 
-export type LimitOrderStatus = 'Completed' | 'Cancelled' | 'Pending'
-
-export interface LimitOrderHistory {
-  id: string
-  timestamp: number
-  buyToken: ReturnType<typeof Native.onChain>
-  buyAmount: number
-  sellToken: ReturnType<typeof Native.onChain>
-  sellAmount: number
-  chain: {
-    id: number
-    name: string
-  }
-  valueUsd: number
-  pnlUsd: number
-  priceUsd: number
-  filledAmount: number
-  totalAmount: number
-  filledPercent: number
-  status: LimitOrderStatus
-}
-
-const MOCK_DATA: LimitOrderHistory[] = [
-  {
-    id: '1',
-    timestamp: 1736122860000,
-    buyToken: Native.onChain(1),
-    buyAmount: 21,
-    sellToken: Native.onChain(1),
-    sellAmount: 0.01,
-    chain: {
-      id: 1,
-      name: 'Ethereum',
-    },
-    valueUsd: 100.23,
-    pnlUsd: +19.8,
-    priceUsd: 0.86,
-    filledAmount: 21,
-    totalAmount: 21,
-    filledPercent: 1,
-    status: 'Completed',
-  },
-  {
-    id: '2',
-    timestamp: 1736122860000,
-    buyToken: Native.onChain(1),
-    buyAmount: 21,
-    sellToken: Native.onChain(1),
-    sellAmount: 0.01,
-    chain: {
-      id: 137,
-      name: 'Polygon',
-    },
-    valueUsd: 100.23,
-    pnlUsd: +19.8,
-    priceUsd: 0.86,
-    filledAmount: 10,
-    totalAmount: 21,
-    filledPercent: 45,
-    status: 'Cancelled',
-  },
-]
-
 export const LimitOrdersHistoryTable = () => {
-  const data = MOCK_DATA
   const [showInUsd, setShowInUsd] = React.useState(true)
+  const { orders, ordersLoading } = useTradeTablesContext()
+  const [paginationState, setPaginationState] = useState<PaginationState>({
+    pageIndex: 0,
+    pageSize: 10,
+  })
+  const data = useMemo(() => {
+    return getTwapLimitOrders(orders).filter(
+      (order) => order.status !== OrderStatus.Open,
+    )
+  }, [orders])
 
   const priceColumn = React.useMemo(
     () => getPriceUsdColumn(showInUsd, setShowInUsd),
     [showInUsd],
   )
 
-  const COLUMNS = React.useMemo(
+  const COLUMNS: ColumnDef<TwapOrder>[] = React.useMemo(
     () => [
       DATE_COLUMN,
       BUY_COLUMN,
@@ -96,19 +49,17 @@ export const LimitOrdersHistoryTable = () => {
       CHAIN_COLUMN,
       VALUE_PNL_COLUMN,
       priceColumn,
-      FILLED_COLUMN,
       STATUS_COLUMN,
     ],
     [priceColumn],
   )
 
-  const MOBILE_COLUMNS = React.useMemo(
+  const MOBILE_COLUMNS: ColumnDef<TwapOrder>[] = React.useMemo(
     () => [
       BUY_COLUMN,
       SELL_COLUMN,
       priceColumn,
       VALUE_PNL_COLUMN,
-      FILLED_COLUMN,
       STATUS_COLUMN,
       DATE_COLUMN,
       CHAIN_COLUMN,
@@ -131,18 +82,33 @@ export const LimitOrdersHistoryTable = () => {
         <DataTable
           columns={COLUMNS}
           data={data}
-          loading={false}
+          loading={ordersLoading}
           className="border-none [&_td]:h-[96px]"
           pagination
+          state={{
+            pagination: paginationState,
+          }}
+          onPaginationChange={setPaginationState}
         />
       </Card>
 
       <Card className="p-5 space-y-6 border-none bg-slate-50 dark:bg-slate-800 md:hidden">
-        {data.map((row) => (
-          <div key={row.id} className="pb-6 border-b last:border-b-0 last:pb-0">
-            <MobileDataCard row={row} columns={MOBILE_COLUMNS} />
-          </div>
-        ))}
+        {ordersLoading ? (
+          <SkeletonBox className="w-full h-52" />
+        ) : !data?.length ? (
+          <p className="text-sm italic text-center text-muted-foreground dark:text-pink-200 h-52 flex items-center justify-center">
+            No Past Limit Orders
+          </p>
+        ) : (
+          data?.map((row) => (
+            <div
+              key={row.id}
+              className="pb-6 border-b last:border-b-0 last:pb-0"
+            >
+              <MobileDataCard row={row} columns={MOBILE_COLUMNS} />
+            </div>
+          ))
+        )}
       </Card>
     </InfiniteScroll>
   )

@@ -2,6 +2,7 @@
 
 import { useBreakpoint, useIsMounted } from '@sushiswap/hooks'
 import { Container, SkeletonBox, classNames } from '@sushiswap/ui'
+import { usePathname } from 'next/navigation'
 import type {
   ChartingLibraryWidgetOptions,
   ResolutionString,
@@ -42,6 +43,8 @@ export default function TradePage() {
   useSkaleEuropaFaucet()
   const { isMd: isMdScreen } = useBreakpoint('md')
   const hasMounted = useIsMounted()
+  const pathname = usePathname()
+  const isKatana = pathname.includes('katana')
 
   const defaultWidgetProps: Partial<ChartingLibraryWidgetOptions> = {
     interval: '1D' as ResolutionString,
@@ -60,7 +63,11 @@ export default function TradePage() {
       <div
         className={classNames(
           'dark:bg-background md:bg-background',
-          tradeView === 'advanced' ? 'bg-white' : '',
+          isKatana
+            ? '!bg-transparent'
+            : tradeView === 'advanced'
+              ? 'bg-white'
+              : '',
         )}
       >
         <TradeViewSwitch />
