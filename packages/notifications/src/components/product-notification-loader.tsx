@@ -60,4 +60,15 @@ const PRODUCT_NOTIFICATIONS: NotificationType[] = [
     href: '/chains/y',
     chainId: 1,
   },
+  {
+    isRead: false,
+    id: 'product-z-chain',
+    type: 'product',
+    account: '__product__',
+    summary: 'SushiSwap now supports Z chain!',
+    timestamp: Date.parse('2025-07-01T00:00:00Z'),
+    groupTimestamp: Date.parse('2025-07-01T00:00:00Z'),
+    href: '/chains/z',
+    chainId: 1,
+  },
 ]
