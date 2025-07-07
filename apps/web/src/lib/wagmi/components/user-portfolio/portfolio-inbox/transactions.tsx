@@ -7,23 +7,23 @@ import { InboxItem, type TransactionType } from './inbox-item'
 export const Transactions = () => {
   // @ DEV use PortfolioInfoRowSkeleton for loading state
   const { address } = useAccount()
-  const { ungroupedNotifications, markAsRead } = useNotifications({
+  const { transactionNotifications, markAsRead } = useNotifications({
     account: address,
   })
 
   const notifications = useMemo(() => {
-    if (!ungroupedNotifications) return []
-    return ungroupedNotifications
+    if (!transactionNotifications) return []
+    return transactionNotifications
       .sort((a, b) => b.timestamp - a.timestamp)
       .filter((notification) =>
         ALLOWED_TYPES.includes(notification.type as TransactionType),
       )
-  }, [ungroupedNotifications])
+  }, [transactionNotifications])
 
   return (
     <div className="flex flex-col gap-4">
       {!notifications.length ? (
-        <div className="text-center text-sm italic text-muted-foreground">
+        <div className="text-sm italic text-center text-muted-foreground">
           You haven&apos;t received any notifications so far.
         </div>
       ) : (
