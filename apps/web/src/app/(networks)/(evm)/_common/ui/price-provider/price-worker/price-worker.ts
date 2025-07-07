@@ -1,5 +1,5 @@
 import { SUSHI_DATA_API_HOST } from 'src/lib/constants'
-import type { EvmChainId } from 'sushi'
+import type { EvmChainId } from 'sushi/evm'
 import { UPDATE_INTERVAL } from '../config'
 import {
   type PriceWorkerPostMessage,

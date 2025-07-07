@@ -33,17 +33,17 @@ import {
   getDefaultTTL,
   useTransactionDeadline,
 } from 'src/lib/wagmi/hooks/utils/hooks/useTransactionDeadline'
-import { EvmChain, type EvmChainId } from 'sushi/chain'
+import { Amount } from 'sushi'
 import {
-  SUSHISWAP_V3_POSITION_MANAGER,
-  type SushiSwapV3FeeAmount,
-  isSushiSwapV3ChainId,
-} from 'sushi/config'
-import { type Amount, type Type, tryParseAmount } from 'sushi/currency'
-import {
+  type EvmChainId,
+  type EvmCurrency,
   NonfungiblePositionManager,
   type Position,
-} from 'sushi/pool/sushiswap-v3'
+  SUSHISWAP_V3_POSITION_MANAGER,
+  type SushiSwapV3FeeAmount,
+  getEvmChainById,
+  isSushiSwapV3ChainId,
+} from 'sushi/evm'
 import {
   type Hex,
   type SendTransactionReturnType,
@@ -67,10 +67,10 @@ interface AddSectionReviewModalConcentratedProps
   > {
   chainId: EvmChainId
   feeAmount: SushiSwapV3FeeAmount | undefined
-  token0: Type | undefined
-  token1: Type | undefined
-  input0: Amount<Type> | undefined
-  input1: Amount<Type> | undefined
+  token0: EvmCurrency | undefined
+  token1: EvmCurrency | undefined
+  input0: Amount<EvmCurrency> | undefined
+  input1: Amount<EvmCurrency> | undefined
   existingPosition: Position | undefined
   tokenId: number | string | undefined
   children: ReactNode
@@ -111,8 +111,7 @@ export const AddSectionReviewModalConcentrated: FC<
 
   const trace = useTrace()
 
-  const isSorted =
-    token0 && token1 && token0.wrapped.sortsBefore(token1.wrapped)
+  const isSorted = token0 && token1 && token0.wrap().sortsBefore(token1.wrap())
   const leftPrice = useMemo(
     () => (isSorted ? priceLower : priceUpper?.invert()),
     [isSorted, priceLower, priceUpper],
@@ -132,15 +131,18 @@ export const AddSectionReviewModalConcentrated: FC<
   const [minPriceDiff, maxPriceDiff] = useMemo(() => {
     if (!midPrice || !token0 || !token1 || !leftPrice || !rightPrice)
       return [0, 0]
-    const min = +leftPrice?.toFixed(4)
-    const cur = +midPrice?.toFixed(4)
-    const max = +rightPrice?.toFixed(4)
+    const min = +leftPrice?.toString({ fixed: 4 })
+    const cur = +midPrice?.toString({ fixed: 4 })
+    const max = +rightPrice?.toString({ fixed: 4 })
 
     return [((min - cur) / cur) * 100, ((max - cur) / cur) * 100]
   }, [leftPrice, midPrice, rightPrice, token0, token1])
 
   const fiatAmounts = useMemo(
-    () => [tryParseAmount('1', token0), tryParseAmount('1', token1)],
+    () =>
+      token0 && token1
+        ? [Amount.fromHuman(token0, '1'), Amount.fromHuman(token1, '1')]
+        : [],
     [token0, token1],
   )
   const fiatAmountsAsNumber = useTokenAmountDollarValues({
@@ -164,10 +166,12 @@ export const AddSectionReviewModalConcentrated: FC<
         txHash: hash,
         source: LiquiditySource.V3,
         label: [token0.symbol, token1.symbol].join('/'),
-        token0_address: token0.isNative ? NativeAddress : token0.address,
-        token0_amount: input0?.quotient,
-        token1_address: token1.isNative ? NativeAddress : token1.address,
-        token1_amount: input1?.quotient,
+        token0_address:
+          token0.type === 'native' ? NativeAddress : token0.address,
+        token0_amount: input0?.amount,
+        token1_address:
+          token1.type === 'native' ? NativeAddress : token1.address,
+        token1_amount: input1?.amount,
         create_pool: noLiquidity,
         ...trace,
       })
@@ -232,11 +236,12 @@ export const AddSectionReviewModalConcentrated: FC<
     )
       return undefined
 
-    const useNative = token0.isNative
-      ? token0
-      : token1.isNative
-        ? token1
-        : undefined
+    const useNative =
+      token0.type === 'native'
+        ? token0
+        : token1.type === 'native'
+          ? token1
+          : undefined
     const { calldata, value } =
       hasExistingPosition && tokenId
         ? NonfungiblePositionManager.addCallParameters(position, {
@@ -348,7 +353,7 @@ export const AddSectionReviewModalConcentrated: FC<
                 <List className="!pt-0">
                   <List.Control>
                     <List.KeyValue flex title="Network">
-                      {EvmChain.from(chainId)?.name}
+                      {getEvmChainById(chainId).name}
                     </List.KeyValue>
                     {feeAmount && (
                       <List.KeyValue title="Fee Tier">{`${

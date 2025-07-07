@@ -1,5 +1,6 @@
 import { getTopNonEvmPools } from '@sushiswap/graph-client/data-api'
 import { useQuery } from '@tanstack/react-query'
+import { MvmChainId } from 'sushi/mvm'
 import { type SupportedNetwork, chains } from '~aptos/_common/config/chains'
 import { useNetwork } from '~aptos/_common/lib/common/use-network'
 import { type PoolExtended, usePoolsExtended } from './use-pools-extended'
@@ -74,7 +75,7 @@ const userPositionPoolsQueryFn = async ({
           return tokenAddress === poolAddress
         })
       })
-      const pools = await getTopNonEvmPools({ chainId: 'aptos' })
+      const pools = await getTopNonEvmPools({ chainId: MvmChainId.APTOS })
       const userPositionsWithApr = userPositions.map((pool) => {
         const foundPool = pools?.find(
           (_pool) =>

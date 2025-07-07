@@ -3,8 +3,7 @@ import { unstable_cache } from 'next/cache'
 import { notFound } from 'next/navigation'
 
 import { PoolPageV2 } from 'src/ui/pool/PoolPageV2'
-import type { EvmChainId } from 'sushi'
-import { isSushiSwapV2ChainId } from 'sushi/config'
+import { type EvmChainId, isSushiSwapV2ChainId } from 'sushi/evm'
 import { isAddress } from 'viem'
 
 export default async function PoolPage(props: {

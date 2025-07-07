@@ -8,7 +8,6 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-  LinkExternal,
   LinkInternal,
   Tabs,
   TabsContent,
@@ -17,9 +16,7 @@ import {
 } from '@sushiswap/ui'
 import type { FC } from 'react'
 import { useRewardCampaigns } from 'src/lib/hooks/react-query'
-import { ChainKey } from 'sushi/chain'
-import { isMerklChainId } from 'sushi/config'
-import { Native } from 'sushi/currency'
+import { EvmNative, getEvmChainById, isMerklChainId } from 'sushi/evm'
 import { DistributionDataTable } from './DistributionDataTable'
 
 interface PoolRewardDistributionsCardParams {
@@ -45,16 +42,16 @@ export const PoolRewardDistributionsCard: FC<
           Anyone can add distributions to this pool.{' '}
           {pool.token0 && pool.token1 ? (
             <LinkInternal
-              href={`/${ChainKey[pool.chainId]}/pool/incentivize?chainId=${
+              href={`/${getEvmChainById(pool.chainId).key}/pool/incentivize?chainId=${
                 pool.chainId
               }&fromCurrency=${
                 pool.token0.address ===
-                Native.onChain(pool.chainId).wrapped.address
+                EvmNative.fromChainId(pool.chainId).wrap().address
                   ? 'NATIVE'
                   : pool.token0.address
               }&toCurrency=${
                 pool.token1.address ===
-                Native.onChain(pool.chainId).wrapped.address
+                EvmNative.fromChainId(pool.chainId).wrap().address
                   ? 'NATIVE'
                   : pool.token1.address
               }&feeAmount=${pool.swapFee * 10_000 * 100}`}

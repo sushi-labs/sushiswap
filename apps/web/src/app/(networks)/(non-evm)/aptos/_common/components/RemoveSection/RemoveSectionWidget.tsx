@@ -17,8 +17,8 @@ import {
   WidgetTitle,
 } from '@sushiswap/ui'
 import type { FC, ReactNode } from 'react'
-import { DEFAULT_SLIPPAGE } from 'sushi/config'
-import { formatUSD } from 'sushi/format'
+import { formatUSD } from 'sushi'
+import { DEFAULT_SLIPPAGE } from 'sushi/evm'
 import { CardCurrencyAmountItem } from '~aptos/_common/components/CardCurrencyAmountItem'
 import { useStablePrice } from '~aptos/_common/lib/common/use-stable-price'
 import type { Token as TokenType } from '~aptos/_common/lib/types/token'

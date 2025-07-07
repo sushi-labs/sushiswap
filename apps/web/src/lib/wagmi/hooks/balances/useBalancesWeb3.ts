@@ -1,17 +1,22 @@
 import { useQuery } from '@tanstack/react-query'
 import { useEffect } from 'react'
-import type { EvmChainId } from 'sushi/chain'
-import { Amount, Native, type Token, type Type } from 'sushi/currency'
+import {
+  type EvmChainId,
+  type EvmCurrency,
+  EvmNative,
+  type EvmToken,
+} from 'sushi/evm'
 import { type Address, erc20Abi, isAddress, zeroAddress } from 'viem'
 
 import { getBalance, readContracts } from '@wagmi/core'
+import { Amount } from 'sushi'
 import { type Config, serialize, useBalance, useConfig } from 'wagmi'
 import type { GetBalanceReturnType } from 'wagmi/actions'
 import { useWatchByInterval } from '../watch/useWatchByInterval'
 
 interface QueryBalanceParams {
   chainId: EvmChainId | undefined
-  currencies: (Type | undefined)[]
+  currencies: (EvmCurrency | undefined)[]
   account: Address | undefined
   nativeBalance?: GetBalanceReturnType
   config: Config
@@ -35,12 +40,12 @@ export const queryFnUseBalances = async ({
   }
 
   const [validatedTokens, validatedTokenAddresses] = currencies.reduce<
-    [Token[], Address[]]
+    [EvmToken[], Address[]]
   >(
     (acc, currencies) => {
-      if (chainId && currencies && isAddress(currencies.wrapped.address)) {
-        acc[0].push(currencies.wrapped)
-        acc[1].push(currencies.wrapped.address as Address)
+      if (chainId && currencies && isAddress(currencies.wrap().address)) {
+        acc[0].push(currencies.wrap())
+        acc[1].push(currencies.wrap().address)
       }
 
       return acc
@@ -61,28 +66,25 @@ export const queryFnUseBalances = async ({
     ),
   })
 
-  const _data = data.reduce<Record<string, Amount<Type>>>((acc, _cur, i) => {
-    const amount = data[i].result
-    if (typeof amount === 'bigint') {
-      acc[validatedTokens[i].address] = Amount.fromRawAmount(
-        validatedTokens[i],
-        amount,
-      )
-    }
-    return acc
-  }, {})
-
-  _data[zeroAddress] = Amount.fromRawAmount(
-    Native.onChain(chainId),
-    native.value,
+  const _data = data.reduce<Record<string, Amount<EvmCurrency>>>(
+    (acc, _cur, i) => {
+      const amount = data[i].result
+      if (typeof amount === 'bigint') {
+        acc[validatedTokens[i].address] = new Amount(validatedTokens[i], amount)
+      }
+      return acc
+    },
+    {},
   )
+
+  _data[zeroAddress] = new Amount(EvmNative.fromChainId(chainId), native.value)
 
   return _data
 }
 
 interface UseBalanceParams {
   chainId: EvmChainId | undefined
-  currencies: (Type | undefined)[]
+  currencies: (EvmCurrency | undefined)[]
   account: Address | undefined
   enabled?: boolean
 }

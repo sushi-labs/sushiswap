@@ -5,7 +5,7 @@ import {
 import { Accordion, SkeletonCircle, SkeletonText } from '@sushiswap/ui'
 import { useQuery } from '@tanstack/react-query'
 import React, { useMemo } from 'react'
-import { formatUSD } from 'sushi/format'
+import { formatUSD } from 'sushi'
 import type { Address } from 'viem'
 import { useAccount } from 'wagmi'
 import { PortfolioFarmClaimables } from './PortfolioFarmClaimables'

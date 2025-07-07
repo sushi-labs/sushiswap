@@ -3,7 +3,7 @@
 import type { V2Pool } from '@sushiswap/graph-client/data-api'
 import { Card } from '@sushiswap/ui'
 import React, { type FC, useState } from 'react'
-import { SushiSwapProtocol } from 'sushi'
+import { SushiSwapProtocol } from 'sushi/evm'
 import { PoolChartGraph } from './PoolChartGraph'
 import { PoolChartPeriod, PoolChartPeriods } from './PoolChartPeriods'
 import { PoolChartType, PoolChartTypes } from './PoolChartTypes'

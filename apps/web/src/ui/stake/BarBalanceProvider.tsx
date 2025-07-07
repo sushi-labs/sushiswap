@@ -7,14 +7,14 @@ import {
   useContext,
   useMemo,
 } from 'react'
-import { ChainId } from 'sushi/chain'
-import { Amount, SUSHI, type Type, XSUSHI } from 'sushi/currency'
+import { Amount } from 'sushi'
+import { EvmChainId, type EvmCurrency, SUSHI, XSUSHI } from 'sushi/evm'
 import { useAccount } from 'wagmi'
 import { useAmountBalance } from '~evm/_common/ui/balance-provider/use-balance'
 
 interface BarBalanceContext {
-  sushiBalance: Amount<Type>
-  xSushiBalance: Amount<Type>
+  sushiBalance: Amount<EvmCurrency>
+  xSushiBalance: Amount<EvmCurrency>
   isConnected: boolean
   isLoading: boolean
   isError: boolean
@@ -32,22 +32,22 @@ export const BarBalanceProvider: FC<{
     data: sushiBalance,
     isLoading: isSushiBalanceLoading,
     isError: isSushiBalanceError,
-  } = useAmountBalance(SUSHI[ChainId.ETHEREUM])
+  } = useAmountBalance(SUSHI[EvmChainId.ETHEREUM])
 
   const {
     data: xSushiBalance,
     isLoading: isXSushiBalanceLoading,
     isError: isXSushiBalanceError,
-  } = useAmountBalance(XSUSHI[ChainId.ETHEREUM])
+  } = useAmountBalance(XSUSHI[EvmChainId.ETHEREUM])
 
   return (
     <Context.Provider
       value={useMemo(
         () => ({
           sushiBalance:
-            sushiBalance ?? Amount.fromRawAmount(SUSHI[ChainId.ETHEREUM], 0),
+            sushiBalance ?? new Amount(SUSHI[EvmChainId.ETHEREUM], 0),
           xSushiBalance:
-            xSushiBalance ?? Amount.fromRawAmount(XSUSHI[ChainId.ETHEREUM], 0),
+            xSushiBalance ?? new Amount(XSUSHI[EvmChainId.ETHEREUM], 0),
           isConnected,
           isLoading:
             isConnected && (isSushiBalanceLoading || isXSushiBalanceLoading),

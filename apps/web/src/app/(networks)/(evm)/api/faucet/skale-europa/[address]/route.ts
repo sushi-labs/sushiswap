@@ -8,7 +8,7 @@ import {
 } from '@wagmi/core'
 import { type NextRequest, NextResponse } from 'next/server'
 import { publicWagmiConfig } from 'src/lib/wagmi/config/public'
-import { ChainId } from 'sushi/chain'
+import { EvmChainId } from 'sushi/evm'
 import { type Hex, getAddress } from 'viem'
 import { privateKeyToAccount } from 'viem/accounts'
 import { z } from 'zod'
@@ -51,7 +51,7 @@ export async function GET(
     const { address } = schema.parse(params)
 
     const balance = await getBalance(config, {
-      chainId: ChainId.SKALE_EUROPA,
+      chainId: EvmChainId.SKALE_EUROPA,
       address,
     })
 
@@ -59,7 +59,7 @@ export async function GET(
       throw new Error('User balance exceeds limit')
 
     const tx = await trySendTransaction(config, {
-      chainId: ChainId.SKALE_EUROPA,
+      chainId: EvmChainId.SKALE_EUROPA,
       account,
       to: address,
       value: DISTRIBUTION_AMOUNT,

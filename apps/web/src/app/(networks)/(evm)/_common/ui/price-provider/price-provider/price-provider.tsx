@@ -9,7 +9,7 @@ import {
   useReducer,
   useState,
 } from 'react'
-import type { ChainId } from 'sushi'
+import type { EvmChainId } from 'sushi/evm'
 import {
   type PriceWorker,
   PriceWorkerPostMessageType,
@@ -102,7 +102,7 @@ export function PriceProvider({ children }: PriceProviderContextProps) {
   }, [])
 
   const incrementChainId = useCallback(
-    (chainId: ChainId) => {
+    (chainId: EvmChainId) => {
       if (worker) {
         worker.postMessage({
           type: PriceWorkerPostMessageType.IncrementChainId,
@@ -114,7 +114,7 @@ export function PriceProvider({ children }: PriceProviderContextProps) {
   )
 
   const decrementChainId = useCallback(
-    (chainId: ChainId) => {
+    (chainId: EvmChainId) => {
       if (worker) {
         worker.postMessage({
           type: PriceWorkerPostMessageType.DecrementChainId,

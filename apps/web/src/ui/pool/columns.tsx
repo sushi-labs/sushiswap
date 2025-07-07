@@ -17,25 +17,21 @@ import formatDistance from 'date-fns/formatDistance'
 import React, { useMemo } from 'react'
 import type { ClaimableRewards } from 'src/lib/hooks/react-query'
 import type { ConcentratedLiquidityPositionWithV3Pool } from 'src/lib/wagmi/hooks/positions/types'
-import type {
-  MaybeNestedPool,
-  PoolBase,
-  PoolIfIncentivized,
-  PoolWithAprs,
-  PoolWithIncentives,
-  SushiPositionStaked,
-  SushiPositionWithPool,
-  SushiSwapProtocol,
-} from 'sushi'
-import type { SushiSwapV3ChainId } from 'sushi/config'
-import { Token } from 'sushi/currency'
+import { formatNumber, formatPercent, formatUSD } from 'sushi'
 import {
-  formatNumber,
-  formatPercent,
-  formatUSD,
-  shortenAddress,
-} from 'sushi/format'
-import { unnestPool } from 'sushi/types'
+  EvmToken,
+  type MaybeNestedPool,
+  type PoolBase,
+  type PoolIfIncentivized,
+  type PoolWithAprs,
+  type PoolWithIncentives,
+  type SushiPositionStaked,
+  type SushiPositionWithPool,
+  type SushiSwapProtocol,
+  SushiSwapV3ChainId,
+  shortenEvmAddress,
+  unnestPool,
+} from 'sushi/evm'
 import { APRHoverCard } from './APRHoverCard'
 import { APRWithRewardsHoverCard } from './APRWithRewardsHoverCard'
 import { ClaimableFeesActionCell } from './ClaimableFeesActionCell'
@@ -196,12 +192,16 @@ export const EXPLORE_NAME_COLUMN_POOL: ColumnDef<Pool, unknown> = {
   cell: (props) => {
     const [token0, token1] = useMemo(
       () => [
-        new Token({
+        new EvmToken({
+          name: '',
+          symbol: '',
           chainId: props.row.original.chainId,
           address: props.row.original.token0Address,
           decimals: 0,
         }),
-        new Token({
+        new EvmToken({
+          name: '',
+          symbol: '',
           chainId: props.row.original.chainId,
           address: props.row.original.token1Address,
           decimals: 0,
@@ -586,7 +586,7 @@ export const POSITION_UNCLAIMED_CELL: ColumnDef<
 export const TX_SENDER_V2_COLUMN: ColumnDef<Transaction, unknown> = {
   id: 'sender',
   header: 'Maker',
-  cell: (props) => shortenAddress(props.row.original.sender),
+  cell: (props) => shortenEvmAddress(props.row.original.sender),
   meta: {
     body: {
       skeleton: <SkeletonText fontSize="lg" />,
@@ -711,7 +711,7 @@ export const TX_TYPE_COLUMN: ColumnDef<Transaction, unknown> = {
 export const TX_ORIGIN_V3_COLUMN: ColumnDef<TransactionV3, unknown> = {
   id: 'sender',
   header: 'Maker',
-  cell: (props) => shortenAddress(props.row.original.origin),
+  cell: (props) => shortenEvmAddress(props.row.original.origin),
   meta: {
     body: {
       skeleton: <SkeletonText fontSize="lg" />,

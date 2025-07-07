@@ -1,5 +1,5 @@
 import type { FC } from 'react'
-import type { Token } from 'sushi/currency'
+import type { EvmToken } from 'sushi/evm'
 import { SimpleSwapSettingsOverlay } from '../simple/simple-swap-settings-overlay'
 import { SwapMaintenanceMessage } from '../simple/swap-maintenance-message'
 import { DerivedstateSwapWidgetProvider } from './derivedstate-swap-widget-provider'
@@ -10,7 +10,7 @@ import { SwapWidgetToken1Input } from './swap-widget-token1-input'
 import { SwapWidgetTradeButton } from './swap-widget-trade-button'
 
 interface SwapWidgetProps {
-  token1: Token
+  token1: EvmToken
 }
 
 export const SwapWidget: FC<SwapWidgetProps> = ({ token1 }) => {

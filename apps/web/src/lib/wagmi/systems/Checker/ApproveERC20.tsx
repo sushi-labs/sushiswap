@@ -20,9 +20,10 @@ import {
   SelectPrimitive,
 } from '@sushiswap/ui'
 import { type FC, useState } from 'react'
-import type { Amount, Type } from 'sushi/currency'
-
+import type { Amount } from 'sushi'
+import type { EvmCurrency } from 'sushi/evm'
 import type { Address } from 'viem'
+
 import {
   ApprovalState,
   useTokenApproval,
@@ -31,7 +32,7 @@ import { RevokeApproveERC20 } from './RevokeApproveERC20'
 
 interface ApproveERC20Props extends ButtonProps {
   id: string
-  amount: Amount<Type> | undefined
+  amount: Amount<EvmCurrency> | undefined
   contract: Address | undefined
   enabled?: boolean
 }
