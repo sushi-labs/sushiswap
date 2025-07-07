@@ -41,7 +41,9 @@ export const SearchItem = ({ token }: { token: SearchToken }) => {
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       >
-        <FavoriteButton currencyId={`${token.chainId}:${token.address}`} />
+        <FavoriteButton
+          currencyId={`${token.chainId}:${token.address}:${token?.symbol}`}
+        />
         <TokenNetworkIcon token={token} />
         {isHovered ? (
           <div className="flex items-center col-span-4 gap-2 px-8 mt-3 md:col-span-2 md:mt-0 md:ml-auto md:px-0">

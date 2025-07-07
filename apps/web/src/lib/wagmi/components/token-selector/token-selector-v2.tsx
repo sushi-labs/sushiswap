@@ -120,6 +120,10 @@ export const TokenSelectorV2: FC<TokenSelectorV2Props> = ({
     [onNetworkSelect, currencyInfo, isTwap],
   )
 
+  useEffect(() => {
+    setSelectedNetwork(selectedNetwork ?? null)
+  }, [selectedNetwork])
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>{children}</DialogTrigger>
