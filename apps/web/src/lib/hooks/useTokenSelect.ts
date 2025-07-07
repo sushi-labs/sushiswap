@@ -3,6 +3,7 @@ import type { ChainId } from 'sushi'
 import type { EvmChainId } from 'sushi/chain'
 import type { Type } from 'sushi/currency'
 import { useSwitchChain } from 'wagmi'
+import { NativeAddress } from '../constants'
 import { getNetworkKey } from '../network'
 import { useCreateQuery } from './useCreateQuery'
 
@@ -20,7 +21,10 @@ export const useSwapTokenSelect = () => {
 
   const handleTokenInput = async ({ token }: { token: Type }) => {
     await switchChainAsync({ chainId: token?.chainId as EvmChainId })
-    const tokenAddress = token.isNative ? 'NATIVE' : token.wrapped.address
+    const tokenAddress =
+      token.isNative || token.address.toLowerCase() === NativeAddress
+        ? 'NATIVE'
+        : token.wrapped.address
     if (tokenAddress === token1 && chainId1 === String(token.chainId)) {
       createQuery(
         [
@@ -64,7 +68,10 @@ export const useSwapTokenSelect = () => {
     }
   }
   const handleTokenOutput = async ({ token }: { token: Type }) => {
-    const tokenAddress = token.isNative ? 'NATIVE' : token.wrapped.address
+    const tokenAddress =
+      token.isNative || token.address.toLowerCase() === NativeAddress
+        ? 'NATIVE'
+        : token.wrapped.address
     if (tokenAddress === token0 && chainId0 === String(token.chainId)) {
       await switchChainAsync({ chainId: Number(chainId1) as EvmChainId })
       createQuery(
