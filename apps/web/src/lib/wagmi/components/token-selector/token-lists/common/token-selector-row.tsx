@@ -111,7 +111,7 @@ export const TokenSelectorRow: FC<TokenSelectorRow> = memo(
           >
             <div className="flex items-center justify-between flex-grow gap-2 rounded cursor-pointer">
               <FavoriteButton
-                currencyId={currency?.id}
+                currencyId={`${currency?.id}:${currency?.symbol}`}
                 onClick={onPin}
                 className="!px-0.5"
               />
