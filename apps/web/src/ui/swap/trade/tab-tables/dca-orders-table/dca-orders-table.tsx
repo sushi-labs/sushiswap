@@ -38,6 +38,7 @@ export const DCAOrdersTable = () => {
       (order) => order.status === OrderStatus.Open,
     )
   }, [orders])
+
   const avgPriceCol = useMemo(
     () => getAvgPriceColumn(showInUsd, setShowInUsd),
     [showInUsd],

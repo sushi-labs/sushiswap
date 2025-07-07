@@ -4,6 +4,8 @@ import {
   Chip,
   Currency,
   Loader,
+  SkeletonBox,
+  SkeletonCircle,
   Tooltip,
   TooltipContent,
   TooltipProvider,
@@ -41,6 +43,16 @@ export const FILLED_COLUMN: ColumnDef<TwapOrder> = {
       </div>
     )
   },
+  meta: {
+    body: {
+      skeleton: (
+        <div className="flex items-center gap-1">
+          <SkeletonCircle radius={24} className="w-6 h-6" />
+          <SkeletonBox className="w-[60px] h-4 rounded-sm" />
+        </div>
+      ),
+    },
+  },
 }
 
 export const SIZE_COLUMN: ColumnDef<TwapOrder> = {
@@ -73,6 +85,19 @@ export const SIZE_COLUMN: ColumnDef<TwapOrder> = {
         </div>
       </div>
     )
+  },
+  meta: {
+    body: {
+      skeleton: (
+        <div className="flex items-center gap-1">
+          <SkeletonCircle radius={24} className="w-6 h-6" />
+          <div className="flex flex-col gap-1">
+            <SkeletonBox className="w-[60px] h-4 rounded-sm" />
+            <SkeletonBox className="w-[40px] h-3 rounded-sm" />
+          </div>
+        </div>
+      ),
+    },
   },
 }
 
@@ -109,6 +134,16 @@ export const SPENT_COLUMN: ColumnDef<TwapOrder> = {
         </span>
       </div>
     )
+  },
+  meta: {
+    body: {
+      skeleton: (
+        <div className="flex flex-col gap-1">
+          <SkeletonBox className="w-[50px] h-4 rounded-sm" />
+          <SkeletonBox className="w-[65px] h-3 rounded-sm" />
+        </div>
+      ),
+    },
   },
 }
 
@@ -225,6 +260,11 @@ export const getAvgPriceColumn = (
       </TooltipProvider>
     )
   },
+  meta: {
+    body: {
+      skeleton: <SkeletonBox className="w-5 h-5 rounded-sm" />,
+    },
+  },
 })
 
 export const EXPIRES_COLUMN: ColumnDef<TwapOrder> = {
@@ -240,6 +280,11 @@ export const EXPIRES_COLUMN: ColumnDef<TwapOrder> = {
 
     const formattedDate = format(new Date(deadlineTimestamp), 'dd/MM/yy h:mm a')
     return <span className="whitespace-nowrap">{formattedDate}</span>
+  },
+  meta: {
+    body: {
+      skeleton: <SkeletonBox className="w-[70px] h-4 rounded-sm" />,
+    },
   },
 }
 
@@ -262,6 +307,11 @@ export const CHAIN_COLUMN: ColumnDef<TwapOrder> = {
         <span className="block text-xs md:hidden">{chainInfo.name}</span>
       </div>
     )
+  },
+  meta: {
+    body: {
+      skeleton: <SkeletonBox className="w-5 h-5 rounded-sm" />,
+    },
   },
 }
 
@@ -292,5 +342,10 @@ export const ACTION_COLUMN: ColumnDef<TwapOrder> = {
         )}
       </div>
     )
+  },
+  meta: {
+    body: {
+      skeleton: <SkeletonBox className="w-5 h-5 rounded-sm ml-auto" />,
+    },
   },
 }
