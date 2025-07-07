@@ -1,5 +1,3 @@
-'use client'
-
 import type { V2Pool } from '@sushiswap/graph-client/data-api'
 import {
   Card,
