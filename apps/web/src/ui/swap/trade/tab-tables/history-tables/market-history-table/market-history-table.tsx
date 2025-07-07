@@ -4,21 +4,15 @@ import {
   type RecentSwap,
   isTokenListV2ChainId,
 } from '@sushiswap/graph-client/data-api'
-import { Loader } from '@sushiswap/ui'
-import { DataTable } from '@sushiswap/ui'
+import { DataTable, SkeletonBox } from '@sushiswap/ui'
 import { Card } from '@sushiswap/ui'
 import type { PaginationState } from '@tanstack/react-table'
 import { useSearchParams } from 'next/navigation'
 import { useMemo } from 'react'
 import { useState } from 'react'
 import { NativeAddress } from 'src/lib/constants'
-import {
-  TempChainIds,
-  useRecentSwaps,
-} from 'src/lib/hooks/react-query/recent-swaps/useRecentsSwaps'
+import { useRecentSwaps } from 'src/lib/hooks/react-query/recent-swaps/useRecentsSwaps'
 import { useDerivedStateSimpleSwap } from 'src/ui/swap/simple/derivedstate-simple-swap-provider'
-import { type EvmChainId, EvmChainKey } from 'sushi/chain'
-import { Token } from 'sushi/currency'
 import { useAccount } from 'wagmi'
 import { useTradeTablesContext } from '../../trade-tables-context'
 import { MobileDataCard } from '../mobile-data-card/mobile-data-card'
@@ -124,7 +118,9 @@ export const MarketTable = () => {
       </Card>
 
       <Card className="p-5 space-y-6 border-none bg-slate-50 dark:bg-slate-800 md:hidden">
-        {!rowData?.length ? (
+        {isLoading ? (
+          <SkeletonBox className="w-full h-52" />
+        ) : !rowData?.length ? (
           <p className="text-sm italic text-center text-muted-foreground dark:text-pink-200 h-52 flex items-center justify-center">
             No Past Market Orders
           </p>

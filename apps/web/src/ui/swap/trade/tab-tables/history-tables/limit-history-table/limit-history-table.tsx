@@ -1,7 +1,7 @@
 'use client'
 
 import { OrderStatus } from '@orbs-network/twap-sdk'
-import { Card, DataTable, Loader } from '@sushiswap/ui'
+import { Card, DataTable, Loader, SkeletonBox } from '@sushiswap/ui'
 import type { ColumnDef } from '@tanstack/react-table'
 import type { PaginationState } from '@tanstack/react-table'
 import React, { useMemo, useState } from 'react'
@@ -93,7 +93,9 @@ export const LimitOrdersHistoryTable = () => {
       </Card>
 
       <Card className="p-5 space-y-6 border-none bg-slate-50 dark:bg-slate-800 md:hidden">
-        {!data?.length ? (
+        {ordersLoading ? (
+          <SkeletonBox className="w-full h-52" />
+        ) : !data?.length ? (
           <p className="text-sm italic text-center text-muted-foreground dark:text-pink-200 h-52 flex items-center justify-center">
             No Past Limit Orders
           </p>

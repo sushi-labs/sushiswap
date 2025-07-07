@@ -1,5 +1,10 @@
 import { OrderStatus } from '@orbs-network/twap-sdk'
-import { Button, TooltipContent } from '@sushiswap/ui'
+import {
+  Button,
+  SkeletonBox,
+  SkeletonCircle,
+  TooltipContent,
+} from '@sushiswap/ui'
 import { TooltipTrigger } from '@sushiswap/ui'
 import { Tooltip } from '@sushiswap/ui'
 import { TooltipProvider } from '@sushiswap/ui'
@@ -18,6 +23,11 @@ export const ORDER_ID_COLUMN: ColumnDef<TwapOrder> = {
   enableSorting: false,
   accessorFn: (row) => row.id,
   cell: ({ row }) => <div>{row.original.id}</div>,
+  meta: {
+    body: {
+      skeleton: <SkeletonBox className="w-[60px] h-4 rounded-sm" />,
+    },
+  },
 }
 
 export const FILLED_COLUMN: ColumnDef<TwapOrder> = {
@@ -41,6 +51,16 @@ export const FILLED_COLUMN: ColumnDef<TwapOrder> = {
       </div>
     )
   },
+  meta: {
+    body: {
+      skeleton: (
+        <div className="flex items-center gap-1">
+          <SkeletonCircle radius={24} className="w-6 h-6" />
+          <SkeletonBox className="w-[60px] h-4 rounded-sm" />
+        </div>
+      ),
+    },
+  },
 }
 
 export const SIZE_COLUMN: ColumnDef<TwapOrder> = {
@@ -62,6 +82,16 @@ export const SIZE_COLUMN: ColumnDef<TwapOrder> = {
         </span>
       </div>
     )
+  },
+  meta: {
+    body: {
+      skeleton: (
+        <div className="flex items-center gap-1">
+          <SkeletonCircle radius={24} className="w-6 h-6" />
+          <SkeletonBox className="w-[60px] h-4 rounded-sm" />
+        </div>
+      ),
+    },
   },
 }
 
@@ -85,6 +115,11 @@ export const CHAIN_COLUMN: ColumnDef<TwapOrder> = {
       </div>
     )
   },
+  meta: {
+    body: {
+      skeleton: <SkeletonBox className="w-5 h-5 rounded-sm" />,
+    },
+  },
 }
 
 export const VALUE_COLUMN: ColumnDef<TwapOrder> = {
@@ -99,6 +134,11 @@ export const VALUE_COLUMN: ColumnDef<TwapOrder> = {
   cell: ({ row }) => {
     const { sellTokenTotalUsdValue } = useParsedOrder(row.original)
     return <span>{formatUSD(sellTokenTotalUsdValue)}</span>
+  },
+  meta: {
+    body: {
+      skeleton: <SkeletonBox className="w-[60px] h-4 rounded-sm" />,
+    },
   },
 }
 
@@ -161,6 +201,11 @@ export const getAvgPriceColumn = (
       </span>
     )
   },
+  meta: {
+    body: {
+      skeleton: <SkeletonBox className="w-[60px] h-4 rounded-sm" />,
+    },
+  },
 })
 
 export const ORDERS_COLUMN: ColumnDef<TwapOrder> = {
@@ -183,6 +228,16 @@ export const ORDERS_COLUMN: ColumnDef<TwapOrder> = {
         </span>
       </div>
     )
+  },
+  meta: {
+    body: {
+      skeleton: (
+        <div className="flex flex-col gap-1">
+          <SkeletonBox className="w-[50px] h-4 rounded-sm" />
+          <SkeletonBox className="w-[65px] h-3 rounded-sm" />
+        </div>
+      ),
+    },
   },
 }
 
@@ -210,6 +265,16 @@ export const STATUS_COLUMN: ColumnDef<TwapOrder> = {
         )}
       </div>
     )
+  },
+  meta: {
+    body: {
+      skeleton: (
+        <div className="flex flex-col gap-1 items-end">
+          <SkeletonBox className="w-[50px] h-4 rounded-sm" />
+          <SkeletonBox className="w-[65px] h-3 rounded-sm" />
+        </div>
+      ),
+    },
   },
 }
 

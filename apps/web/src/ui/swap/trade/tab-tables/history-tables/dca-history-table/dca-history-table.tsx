@@ -1,7 +1,7 @@
 'use client'
 
 import { OrderStatus } from '@orbs-network/twap-sdk'
-import { Card, DataTable, Loader, Slot } from '@sushiswap/ui'
+import { Card, DataTable, Loader, SkeletonBox, Slot } from '@sushiswap/ui'
 import type { ColumnDef, PaginationState, Row } from '@tanstack/react-table'
 import { type ReactNode, useMemo, useState } from 'react'
 import { useCallback } from 'react'
@@ -31,6 +31,7 @@ export const DCAOrdersHistoryTable = () => {
     pageIndex: 0,
     pageSize: 10,
   })
+
   const [selectedRowId, setSelectedRowId] = useState<number | null>(null)
   const [isOpen, setIsOpen] = useState(false)
   const [showInUsd, setShowInUsd] = useState(true)
@@ -132,7 +133,9 @@ export const DCAOrdersHistoryTable = () => {
         </Card>
 
         <Card className="p-5 space-y-6 border-none bg-slate-50 dark:bg-slate-800 md:hidden">
-          {!data?.length ? (
+          {ordersLoading ? (
+            <SkeletonBox className="w-full h-52" />
+          ) : !data?.length ? (
             <p className="text-sm italic text-center text-muted-foreground dark:text-pink-200 h-52 flex items-center justify-center">
               No Past DCA Orders
             </p>

@@ -4,6 +4,8 @@ import {
   Chip,
   Currency,
   LinkExternal,
+  SkeletonBox,
+  SkeletonCircle,
   Tooltip,
   TooltipContent,
   TooltipProvider,
@@ -31,6 +33,11 @@ export const DATE_COLUMN: ColumnDef<TwapOrder> = {
       {format(new Date(row.original.createdAt), 'dd/MM/yy h:mm aa')}
     </span>
   ),
+  meta: {
+    body: {
+      skeleton: <SkeletonBox className="w-[60px] h-4 rounded-sm" />,
+    },
+  },
 }
 
 export const BUY_COLUMN: ColumnDef<TwapOrder> = {
@@ -53,6 +60,16 @@ export const BUY_COLUMN: ColumnDef<TwapOrder> = {
         </span>
       </div>
     )
+  },
+  meta: {
+    body: {
+      skeleton: (
+        <div className="flex items-center gap-1">
+          <SkeletonCircle radius={24} className="w-6 h-6" />
+          <SkeletonBox className="w-[60px] h-4 rounded-sm" />
+        </div>
+      ),
+    },
   },
 }
 
@@ -77,6 +94,16 @@ export const SELL_COLUMN: ColumnDef<TwapOrder> = {
       </div>
     )
   },
+  meta: {
+    body: {
+      skeleton: (
+        <div className="flex items-center gap-1">
+          <SkeletonCircle radius={24} className="w-6 h-6" />
+          <SkeletonBox className="w-[60px] h-4 rounded-sm" />
+        </div>
+      ),
+    },
+  },
 }
 
 export const CHAIN_COLUMN: ColumnDef<TwapOrder> = {
@@ -98,6 +125,11 @@ export const CHAIN_COLUMN: ColumnDef<TwapOrder> = {
         <span className="block text-xs md:hidden">{chainInfo.name}</span>
       </div>
     )
+  },
+  meta: {
+    body: {
+      skeleton: <SkeletonBox className="w-5 h-5 rounded-sm" />,
+    },
   },
 }
 
@@ -157,6 +189,16 @@ export const VALUE_PNL_COLUMN: ColumnDef<TwapOrder> = {
       </div>
     )
   },
+  meta: {
+    body: {
+      skeleton: (
+        <div className="flex flex-col gap-1">
+          <SkeletonBox className="w-[60px] h-4 rounded-sm" />
+          <SkeletonBox className="w-[50px] h-3 rounded-sm" />
+        </div>
+      ),
+    },
+  },
 }
 
 export const getPriceUsdColumn = (
@@ -215,6 +257,11 @@ export const getPriceUsdColumn = (
     ) : (
       <span className="">{`${sellTokenAmountPerChunk.toFixed(4)} ${sellToken?.symbol}`}</span>
     )
+  },
+  meta: {
+    body: {
+      skeleton: <SkeletonBox className="w-[60px] h-4 rounded-sm" />,
+    },
   },
 })
 
@@ -277,5 +324,10 @@ export const STATUS_COLUMN: ColumnDef<TwapOrder> = {
         </LinkExternal>
       </div>
     )
+  },
+  meta: {
+    body: {
+      skeleton: <SkeletonBox className="w-[60px] h-4 rounded-sm ml-auto" />,
+    },
   },
 }
