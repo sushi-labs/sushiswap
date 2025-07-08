@@ -22,6 +22,7 @@ export const TooltipDrawer = ({
 }) => {
   const { isMd: isMdScreen } = useBreakpoint('md')
   const [isOpen, setIsOpen] = useState(false)
+  const isMounted = useIsMounted()
 
   useEffect(() => {
     if (isMdScreen && isOpen) {
@@ -29,7 +30,7 @@ export const TooltipDrawer = ({
     }
   }, [isMdScreen, isOpen])
 
-  if (isMdScreen) {
+  if (isMdScreen && isMounted) {
     return (
       <TooltipProvider>
         <Tooltip delayDuration={0}>
