@@ -27,7 +27,7 @@ export default async function Layout(props: {
   }
 
   const pool = (await unstable_cache(
-    async () => getV3Pool({ chainId, address }),
+    async () => getV3Pool({ chainId, address }, { retries: 3 }),
     ['v3', 'pool', `${chainId}:${address}`],
     {
       revalidate: 60 * 15,

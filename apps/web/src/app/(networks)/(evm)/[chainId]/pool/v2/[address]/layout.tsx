@@ -22,7 +22,7 @@ export async function generateMetadata(props: {
   }
 
   const pool = await unstable_cache(
-    async () => getV2Pool({ chainId, address }),
+    async () => getV2Pool({ chainId, address }, { retries: 3 }),
     ['v2', 'pool', `${chainId}:${address}`],
     {
       revalidate: 60 * 15,
@@ -57,7 +57,7 @@ export default async function Layout(props: {
   }
 
   const pool = await unstable_cache(
-    async () => getV2Pool({ chainId, address }),
+    async () => getV2Pool({ chainId, address }, { retries: 3 }),
     ['v2', 'pool', `${chainId}:${address}`],
     {
       revalidate: 60 * 15,
