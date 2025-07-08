@@ -12,7 +12,6 @@ import {
   TextField,
   classNames,
 } from '@sushiswap/ui'
-import { useParams } from 'next/navigation'
 import React, {
   type FC,
   type ReactNode,
@@ -21,11 +20,12 @@ import React, {
   useMemo,
   useState,
 } from 'react'
+import { SUPPORTED_CHAIN_IDS } from 'src/config'
 import { ChainOptionsSelector } from 'src/ui/swap/chain-options-selector'
 import { NetworkMenu } from 'src/ui/swap/trade/favorite-recent/network-menu'
 import type { EvmChainId } from 'sushi/chain'
 import type { Currency, Token, Type } from 'sushi/currency'
-import { useAccount, useChainId } from 'wagmi'
+import { useAccount } from 'wagmi'
 import { CurrencyInfo } from './currency-info'
 import { TokenSelectorStatesV2 } from './token-selector-states-v2'
 
@@ -183,6 +183,7 @@ export const TokenSelectorV2: FC<TokenSelectorV2Props> = ({
                 <NetworkMenu
                   selectedNetwork={_selectedNetwork}
                   onNetworkSelect={_onNetworkSelect}
+                  networkOptions={isBrowse ? SUPPORTED_CHAIN_IDS : undefined}
                   className="bg-slate-50 border !rounded-md !px-2 border-black/10 dark:bg-slate-800 dark:border-white/10"
                 />
               </div>
