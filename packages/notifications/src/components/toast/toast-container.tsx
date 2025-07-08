@@ -32,7 +32,7 @@ export const ToastContainer: FC<ToastContainer> = ({ className }) => {
   return (
     <ToastifyContainer
       toastClassName={() =>
-        'bg-[#FFFFFF24] dark:bg-[#00000024] border dark:border-[#FFFFFF14] border-[#00000014] flex flex-col backdrop-blur-md rounded-xl  text-[color:var(--color)] pointer-events-auto'
+        'bg-[#FFFFFF24] dark:bg-[#00000024] border dark:border-[#FFFFFF14] border-[#00000014] flex flex-col backdrop-blur-md rounded-xl text-[color:var(--color)] pointer-events-auto'
       }
       className={className}
       position={!breakpoint.isSm ? 'bottom-center' : 'top-right'}

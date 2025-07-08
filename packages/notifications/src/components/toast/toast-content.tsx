@@ -27,7 +27,7 @@ export const ToastContent: FC<ToastContent> = ({
       <div className="flex flex-col gap-1 overflow-hidden">
         {!code ? (
           <>
-            <span className="font-medium text-sm text-muted-foreground black:text-accent-foreground mb-1 max-w-[250px]">
+            <span className="font-medium text-sm text-muted-foreground black:text-accent-foreground mb-1 !max-w-[200px]">
               {summary}
             </span>
             <span className="font-medium text-xs text-muted-foreground">
