@@ -237,7 +237,7 @@ importers:
         specifier: 4.0.7
         version: 4.0.7(encoding@0.1.13)
       '@orbs-network/twap-sdk':
-        specifier: ^4.0.25
+        specifier: 4.0.25
         version: 4.0.25
       '@pontem/wallet-adapter-plugin':
         specifier: 0.2.1
