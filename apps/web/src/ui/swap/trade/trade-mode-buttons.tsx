@@ -2,6 +2,8 @@
 
 import { Button } from '@sushiswap/ui'
 import { createContext, useContext, useMemo } from 'react'
+import { isTwapSupportedChainId } from 'src/config'
+import { useCurrentChainId } from 'src/lib/hooks/useCurrentChainId'
 import { useTradeMode } from 'src/lib/hooks/useTradeMode'
 import { TRADE_MODES, type TradeMode } from './config'
 
@@ -35,7 +37,7 @@ const OPTION_NAMES: Record<TradeMode, string> = {
 
 const useTradeModeOptions = (): TradeModeOption[] => {
   const context = useContext(TradeModeContext)
-  const modes = context.supportedTradeModes ?? [...TRADE_MODES]
+  const modes = [...TRADE_MODES]
 
   const { tradeMode } = useTradeMode()
   if (context.tradeMode === 'fiat') {
@@ -59,16 +61,26 @@ const useTradeModeOptions = (): TradeModeOption[] => {
         onClick: () => context.switchTradeMode(item),
       }
     })
-  }, [modes, context, tradeMode])
+  }, [context, tradeMode, modes.length, modes.slice])
 }
 
 const TradeModeOptionButton = (item: TradeModeOption) => {
+  const { chainId } = useCurrentChainId()
+
+  const isDisabled = useMemo(() => {
+    if (item.mode === 'limit' || item.mode === 'dca') {
+      return !isTwapSupportedChainId(chainId)
+    }
+    return false
+  }, [chainId, item])
+
   return (
     <Button
       size="sm"
       variant={item.active ? 'secondary' : 'ghost'}
       onClick={item.onClick}
       href={item.href}
+      disabled={isDisabled}
       className={item.active ? '!bg-[#0000001F] dark:!bg-[#FFFFFF1F]' : ''}
     >
       {item.name}
