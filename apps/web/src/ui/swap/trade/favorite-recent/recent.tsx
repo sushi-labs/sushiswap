@@ -1,5 +1,10 @@
 import { ArrowRightIcon } from '@heroicons/react-v1/solid'
-import type { RecentSwap } from '@sushiswap/graph-client/data-api'
+import {
+  type RecentSwap,
+  type TokenListV2ChainId,
+  TokenListV2ChainIds,
+  isTokenListV2ChainId,
+} from '@sushiswap/graph-client/data-api'
 import { useBreakpoint } from '@sushiswap/hooks'
 import {
   Collapsible,
@@ -13,23 +18,21 @@ import {
 } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
-import { useSearchParams } from 'next/navigation'
 import { useState } from 'react'
 import { NativeAddress } from 'src/lib/constants'
-import { getChangeSign, getTextColor } from 'src/lib/helpers'
 import {
-  TempChainIds,
-  type TempTokenListV2ChainId,
-  useRecentSwaps,
-} from 'src/lib/hooks/react-query/recent-swaps/useRecentsSwaps'
-import { useCreateQuery } from 'src/lib/hooks/useCreateQuery'
+  captializeFirstLetter,
+  getChangeSign,
+  getTextColor,
+} from 'src/lib/helpers'
+import { useRecentSwaps } from 'src/lib/hooks/react-query/recent-swaps/useRecentsSwaps'
 import { useSwapTokenSelect } from 'src/lib/hooks/useTokenSelect'
 import { getNetworkKey } from 'src/lib/network'
 import { ConnectButton } from 'src/lib/wagmi/components/connect-button'
 import { formatUSD } from 'sushi'
-import type { ChainId, EvmChainId } from 'sushi/chain'
+import type { EvmChainId } from 'sushi/chain'
 import { Native, Token } from 'sushi/currency'
-import { useAccount, useSwitchChain } from 'wagmi'
+import { useAccount } from 'wagmi'
 import { useNetworkContext } from './network-provider'
 
 export const Recent = ({ onClose }: { onClose?: () => void }) => {
@@ -44,8 +47,8 @@ export const Recent = ({ onClose }: { onClose?: () => void }) => {
   } = useRecentSwaps({
     walletAddress: address,
     chainIds: selectedNetwork
-      ? ([selectedNetwork] as unknown as TempTokenListV2ChainId)
-      : TempChainIds,
+      ? [selectedNetwork as TokenListV2ChainId]
+      : TokenListV2ChainIds.map((i) => i),
   })
 
   if (!address) {
@@ -63,14 +66,18 @@ export const Recent = ({ onClose }: { onClose?: () => void }) => {
   if (recentSwaps?.length === 0 && !isLoading && !isError) {
     return (
       <p className="my-8 text-sm italic text-center text-muted-foreground dark:text-pink-200">
-        You haven&apos;t traded any tokens so far.
+        You haven&apos;t traded any tokens so far
+        {selectedNetwork
+          ? ` on ${captializeFirstLetter(getNetworkKey(selectedNetwork))}`
+          : ''}
+        .
       </p>
     )
   }
 
   return (
     <div className="grid grid-cols-3 col-span-3 gap-0">
-      <div className="sticky top-0 z-20 grid grid-cols-5 col-span-5 text-xs bg-white md:bg-slate-50 dark:bg-slate-900 md:dark:bg-slate-800 text-slate-700 dark:text-pink-100">
+      <div className="sticky top-0 z-[19  ] grid grid-cols-5 col-span-5 text-xs bg-white md:bg-slate-50 dark:bg-slate-900 md:dark:bg-slate-800 text-slate-700 dark:text-pink-100">
         <div className="w-full col-span-3 pl-2 font-medium">Token Pair</div>
         <div className="w-full font-medium text-left whitespace-nowrap">
           Amount Traded

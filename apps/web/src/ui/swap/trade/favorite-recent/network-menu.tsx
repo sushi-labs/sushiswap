@@ -9,6 +9,7 @@ import {
   classNames,
 } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
+import { captializeFirstLetter } from 'src/lib/helpers'
 import { useNetworkOptions } from 'src/lib/hooks/useNetworkOptions'
 import { type EvmChainId, EvmChainKey } from 'sushi'
 
@@ -16,12 +17,16 @@ export const NetworkMenu = ({
   className,
   selectedNetwork,
   onNetworkSelect,
+  networkOptions,
 }: {
   className?: string
   selectedNetwork?: null | number
   onNetworkSelect?(val: number | null): void
+  networkOptions?: number[]
 }) => {
-  const { networkOptions: networks } = useNetworkOptions()
+  const { networkOptions: _networks } = useNetworkOptions()
+
+  const networks = networkOptions ?? _networks
 
   return (
     <DropdownMenu>
@@ -49,7 +54,7 @@ export const NetworkMenu = ({
           <DropdownMenuItem onClick={() => onNetworkSelect?.(null)}>
             <div>All Networks</div>
           </DropdownMenuItem>
-          {networks.map((chainId) => (
+          {networks?.map((chainId) => (
             <DropdownMenuItem
               key={chainId}
               onClick={() => onNetworkSelect?.(chainId)}
@@ -68,8 +73,7 @@ const NetworkItem = ({ chainId }: { chainId: number }) => {
   return (
     <div className="flex items-center gap-1 text-muted-foreground dark:text-pink-200">
       <NetworkIcon chainId={chainId} width={16} height={16} />
-      {/* TODO: make a util for this */}
-      <div>{`${chainName.slice(0, 1).toUpperCase()}${chainName.slice(1)}`}</div>
+      <div>{captializeFirstLetter(chainName)}</div>
     </div>
   )
 }

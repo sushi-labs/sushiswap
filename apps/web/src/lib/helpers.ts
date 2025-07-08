@@ -8,3 +8,7 @@ export const getChangeSign = (value: number) => {
   //formatPercent will add the negative sign
   return value > 0 ? '+' : ''
 }
+
+export const captializeFirstLetter = (string: string) => {
+  return string.charAt(0).toUpperCase() + string.slice(1)
+}

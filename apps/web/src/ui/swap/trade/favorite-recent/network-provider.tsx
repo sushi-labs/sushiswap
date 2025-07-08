@@ -8,14 +8,14 @@ import {
   useMemo,
   useState,
 } from 'react'
+import type { ChainId } from 'sushi/chain'
 
-//TODO use chainId types instead of number when available
 interface State {
   mutate: {
-    setSelectedNetwork(value: number): void
+    setSelectedNetwork(value: ChainId): void
   }
   state: {
-    selectedNetwork: null | number
+    selectedNetwork: null | ChainId
   }
 }
 
@@ -26,9 +26,9 @@ interface NetworkProviderProps {
 }
 
 const NetworkProvider: FC<NetworkProviderProps> = ({ children }) => {
-  const [selectedNetwork, _setSelectedNetwork] = useState<null | number>(null)
+  const [selectedNetwork, _setSelectedNetwork] = useState<null | ChainId>(null)
 
-  const setSelectedNetwork = useCallback((value: number | null) => {
+  const setSelectedNetwork = useCallback((value: ChainId | null) => {
     _setSelectedNetwork(value)
   }, [])
 

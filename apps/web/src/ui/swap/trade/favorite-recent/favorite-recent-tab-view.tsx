@@ -1,5 +1,7 @@
+import { TokenListV2ChainIds } from '@sushiswap/graph-client/data-api'
 import { Button } from '@sushiswap/ui'
 import { useMemo, useState } from 'react'
+import { SUPPORTED_CHAIN_IDS } from 'src/config'
 import { Wrapper } from '../wrapper'
 import { Favorite } from './favorite'
 import { NetworkMenu } from './network-menu'
@@ -54,6 +56,11 @@ export const FavoriteRecentTabView = () => {
           selectedNetwork={selectedNetwork}
           onNetworkSelect={setSelectedNetwork}
           className="!px-1"
+          networkOptions={
+            tab === FavoriteRecentTab.Recent
+              ? TokenListV2ChainIds.map((i) => i)
+              : SUPPORTED_CHAIN_IDS
+          }
         />
       </div>
       <div className="mt-4 max-h-[500px] overflow-y-auto hide-scrollbar">

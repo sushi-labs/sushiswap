@@ -57,7 +57,7 @@ export const Favorite = () => {
         </div>
       ) : favorites?.length !== 0 ? (
         <table className="w-full">
-          <thead className="sticky top-0 z-20 bg-slate-50 dark:bg-slate-900 md:dark:bg-slate-800">
+          <thead className="sticky top-0 z-[19] bg-slate-50 dark:bg-slate-900 md:dark:bg-slate-800">
             <tr className="text-xs text-slate-700 dark:text-pink-100">
               <th />
               <th className="font-medium text-left">Token</th>
