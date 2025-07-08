@@ -1,8 +1,1 @@
-blank_issues_enabled: false
-contact_links:
-  - name: Ask Question
-    url: https://github.com/sushiswap/sushiswap/discussions/new?category=q-a
-    about: Ask questions and discuss with other community members
-  - name: Request Feature
-    url: https://github.com/sushiswap/sushiswap/discussions/new?category=ideas
-    about: Requests features or brainstorm ideas for new functionality
+blank_issues_enabled: true
