@@ -16,7 +16,11 @@ import { getNetworkKey } from 'src/lib/network'
 import { useTokenWithCache } from 'src/lib/wagmi/hooks/tokens/useTokenWithCache'
 import { type ChainId, ChainNetworkNameKey, EvmChainId } from 'sushi'
 import { isEvmChainId } from 'sushi/chain'
-import { defaultCurrency, isWNativeSupported } from 'sushi/config'
+import {
+  defaultCurrency,
+  defaultQuoteCurrency,
+  isWNativeSupported,
+} from 'sushi/config'
 import { Native, type Type } from 'sushi/currency'
 import { type Address, isAddress } from 'viem'
 import { useSwitchChain } from 'wagmi'
@@ -152,6 +156,7 @@ const ChartProvider: FC<ChartProviderProps> = ({ children }) => {
           [
             { name: 'token0', value: token0 },
             { name: 'chainId0', value: _chainId },
+            { name: 'swapAmount', value: null },
           ],
           `/${getNetworkKey(Number(_chainId) as ChainId)}/swap/advanced`,
         )
