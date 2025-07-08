@@ -148,7 +148,7 @@ const _TwapOrdersDialog: FC<{
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </DialogTitle>
-                <List className="min-h-[420px]">
+                <List className="min-h-[420px] max-h-[75vh] overflow-y-auto">
                   <div className="flex flex-col gap-4">
                     {isOrdersLoading ? (
                       <List.Control className="px-4 py-3">

@@ -218,6 +218,7 @@ export const TWAP_SUPPORTED_CHAIN_IDS = [
   ChainId.ARBITRUM,
   ChainId.BASE,
   ChainId.ETHEREUM,
+  ChainId.KATANA,
 ] as const
 
 export type TwapSupportedChainId = (typeof TWAP_SUPPORTED_CHAIN_IDS)[number]
