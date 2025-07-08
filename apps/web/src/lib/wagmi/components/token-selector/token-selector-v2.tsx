@@ -79,7 +79,6 @@ export const TokenSelectorV2: FC<TokenSelectorV2Props> = ({
   const [open, setOpen] = useState(false)
   const [currencyInfo, showCurrencyInfo] = useState<Currency | false>(false)
 
-  const [showLimitInfo, setShowLimitInfo] = useState(false)
   // Clear the query when the dialog is closed
   useEffect(() => {
     if (!open) {
@@ -112,12 +111,9 @@ export const TokenSelectorV2: FC<TokenSelectorV2Props> = ({
       setSelectedNetwork(network)
       if (onNetworkSelect) {
         // onNetworkSelect(network)
-        if (isTwap) {
-          setShowLimitInfo(true)
-        }
       }
     },
-    [onNetworkSelect, currencyInfo, isTwap],
+    [onNetworkSelect, currencyInfo],
   )
 
   useEffect(() => {
@@ -151,15 +147,7 @@ export const TokenSelectorV2: FC<TokenSelectorV2Props> = ({
               <p className="text-xs text-slate-450 dark:text-slate-500">
                 {isTwap ? 'Supported Chains' : 'Chains'}
               </p>
-              {isTwap && showLimitInfo ? (
-                <div className="flex items-center gap-1 p-2 text-xs bg-skyblue/5 rounded-xl text-skyblue">
-                  <InformationCircleIcon width={16} height={16} />
-                  <p>
-                    Sushi currently support limit orders only for same-chain
-                    swaps.
-                  </p>
-                </div>
-              ) : null}
+
               <ChainOptionsSelector
                 onNetworkSelect={_onNetworkSelect}
                 size="lg"

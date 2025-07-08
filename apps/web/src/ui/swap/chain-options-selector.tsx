@@ -14,7 +14,6 @@ import {
   classNames,
 } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
-import { useParams, useSearchParams } from 'next/navigation'
 import {
   forwardRef,
   useCallback,
@@ -23,11 +22,11 @@ import {
   useRef,
   useState,
 } from 'react'
+import { useCurrentChainId } from 'src/lib/hooks/useCurrentChainId'
 import { useNetworkOptions } from 'src/lib/hooks/useNetworkOptions'
 import { useTradeMode } from 'src/lib/hooks/useTradeMode'
 import { EvmChainKey } from 'sushi'
 import type { EvmChainId } from 'sushi/chain'
-import { useChainId } from 'wagmi'
 
 export const ChainOptionsSelector = ({
   size = 'sm',
@@ -45,7 +44,7 @@ export const ChainOptionsSelector = ({
   const { networkOptions: defaultNetworks } = useNetworkOptions()
   const { tradeMode } = useTradeMode()
   const isTwap = tradeMode === 'limit' || tradeMode === 'dca'
-  const chainId = useChainId()
+  const { chainId } = useCurrentChainId()
 
   const iconSize = size === 'sm' ? 16 : 24
   const _networks = networks ?? defaultNetworks
