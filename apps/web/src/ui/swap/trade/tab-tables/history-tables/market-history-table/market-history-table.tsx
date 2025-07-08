@@ -108,7 +108,6 @@ export const MarketTable = () => {
           className="border-none [&_td]:h-[92px]"
           pagination={true}
           state={{
-            sorting: [],
             pagination: paginationState,
           }}
           onPaginationChange={setPaginationState}
