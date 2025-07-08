@@ -81,7 +81,7 @@ export const ActiveOrders = () => {
   if (!activeDCAOrders && !activeLimitOrders) {
     return (
       <p className="text-sm italic text-center text-muted-foreground dark:text-pink-200">
-        You don&apos;t have any active Limit or DCA order
+        You don&apos;t have any active Limit or DCA orders.
       </p>
     )
   }
