@@ -74,7 +74,7 @@ export async function addNotification(
       timestamp: notification.timestamp,
       groupTimestamp: notification.groupTimestamp,
       isRead: false,
-      id: 'id' in notification ? (notification.id ?? nanoid()) : nanoid(),
+      id: 'id' in notification ? notification.id : nanoid(),
     })
   }
 
