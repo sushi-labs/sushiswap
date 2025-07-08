@@ -31,7 +31,7 @@ export const SearchItemBridgeView = ({
     setSelectedNetwork(chainId)
   }
 
-  const onConfirm = () => {
+  const onConfirm = async () => {
     const chainId = selectedNetwork
     if (!chainId) return
     const tokenOnNewChain = token.bridgeInfo?.find(
@@ -49,7 +49,7 @@ export const SearchItemBridgeView = ({
       name: token.name,
     })
     setSearchValue('')
-    handleTokenOutput({
+    await handleTokenOutput({
       token: _token,
     })
     toggleBridgeView('close')

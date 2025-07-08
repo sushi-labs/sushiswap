@@ -55,6 +55,10 @@ export const useSwapTokenSelect = () => {
       createQuery(
         [
           {
+            name: 'swapAmount',
+            value: null,
+          },
+          {
             name: 'token0',
             value: tokenAddress,
           },

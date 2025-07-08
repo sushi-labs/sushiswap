@@ -3,6 +3,7 @@ import { Badge, Button, Currency, SkeletonBox, classNames } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import { useMemo } from 'react'
 import { useCreateQuery } from 'src/lib/hooks/useCreateQuery'
+import { useSwapTokenSelect } from 'src/lib/hooks/useTokenSelect'
 import { getNetworkKey } from 'src/lib/network'
 import { usePortfolioWallet } from 'src/lib/wagmi/components/user-portfolio/hooks/use-portfolio-wallet'
 import { Connect } from 'src/lib/wagmi/systems/Checker/Connect'
@@ -62,20 +63,26 @@ export const AvailableTokens = () => {
 }
 
 const TokenOption = ({ token }: { token: PortfolioWalletToken }) => {
-  const isNative = !token.id.startsWith('0x')
-  const { createQuery } = useCreateQuery()
-  const { switchChainAsync } = useSwitchChain()
+  const isNative = !token?.id?.startsWith('0x')
+
+  const { handleTokenInput } = useSwapTokenSelect()
+  const _token = useMemo(
+    () =>
+      isNative
+        ? Native.onChain(token.chainId as EvmChainId)
+        : new Token({
+            address: token.id,
+            name: token.name,
+            symbol: token.symbol,
+            chainId: token.chainId as EvmChainId,
+            decimals: token.decimals,
+          }),
+    [token, isNative],
+  )
   return (
     <Button
       onClick={async () => {
-        await switchChainAsync({ chainId: token?.chainId as EvmChainId })
-        createQuery(
-          [
-            { name: 'token0', value: isNative ? 'NATIVE' : token.id },
-            { name: 'chainId0', value: String(token.chainId) },
-          ],
-          `/${getNetworkKey(token?.chainId as ChainId)}/swap/advanced`,
-        )
+        await handleTokenInput({ token: _token })
       }}
       variant={'secondary'}
       id={`token-option-${token.chainId}-${token.id}`}
@@ -97,22 +104,7 @@ const TokenOption = ({ token }: { token: PortfolioWalletToken }) => {
           />
         }
       >
-        <Currency.Icon
-          disableLink
-          currency={
-            isNative
-              ? Native.onChain(token.chainId as EvmChainId)
-              : new Token({
-                  address: token.id,
-                  name: token.name,
-                  symbol: token.symbol,
-                  chainId: token.chainId as EvmChainId,
-                  decimals: token.decimals,
-                })
-          }
-          width={24}
-          height={24}
-        />
+        <Currency.Icon disableLink currency={_token} width={24} height={24} />
       </Badge>
 
       <div className="flex items-start gap-1">
