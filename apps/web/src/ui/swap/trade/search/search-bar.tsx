@@ -9,18 +9,22 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@sushiswap/ui'
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { SearchContent } from './search-content'
+import { useSearchContext } from './search-provider'
 
 export const SearchBar = () => {
   const { isMd } = useBreakpoint('md')
-  const [isOpen, setIsOpen] = useState(false)
+  const {
+    state: { isOpen },
+    mutate: { setIsOpen },
+  } = useSearchContext()
 
   useEffect(() => {
     if (isMd && isOpen) {
       setIsOpen(false)
     }
-  }, [isMd, isOpen])
+  }, [isMd, isOpen, setIsOpen])
 
   return (
     <>

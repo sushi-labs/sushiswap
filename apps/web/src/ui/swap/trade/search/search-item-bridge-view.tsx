@@ -3,10 +3,8 @@ import type { SearchToken } from '@sushiswap/graph-client/data-api'
 import { Button, classNames } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import { useMemo, useState } from 'react'
-import { useCreateQuery } from 'src/lib/hooks/useCreateQuery'
 import { useSwapTokenSelect } from 'src/lib/hooks/useTokenSelect'
-import { getNetworkKey } from 'src/lib/network'
-import { type ChainId, type EvmChainId, evmChains } from 'sushi/chain'
+import { type EvmChainId, evmChains } from 'sushi/chain'
 import { Token } from 'sushi/currency'
 import { ChainOptionsSelector } from '../../chain-options-selector'
 import { useSearchContext } from './search-provider'
@@ -19,7 +17,7 @@ export const SearchItemBridgeView = ({
   toggleBridgeView: (view: 'open' | 'close') => void
 }) => {
   const {
-    mutate: { setSearchValue },
+    mutate: { setSearchValue, setIsOpen },
   } = useSearchContext()
   const [selectedNetwork, setSelectedNetwork] = useState<number | undefined>(
     undefined,
@@ -56,6 +54,7 @@ export const SearchItemBridgeView = ({
     })
     toggleBridgeView('close')
     setSelectedNetwork(undefined)
+    setIsOpen(false)
   }
 
   return (

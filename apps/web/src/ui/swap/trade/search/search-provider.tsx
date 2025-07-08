@@ -14,10 +14,12 @@ interface State {
   mutate: {
     setSearchValue(value: string): void
     clearSearchValue(): void
+    setIsOpen(value: boolean): void
   }
   state: {
     searchValue: string
     debouncedSearchValue: string
+    isOpen: boolean
   }
 }
 
@@ -29,6 +31,7 @@ interface SearchProviderProps {
 
 const SearchProvider: FC<SearchProviderProps> = ({ children }) => {
   const [searchValue, _setSearchValue] = useState<string>('')
+  const [isOpen, setIsOpen] = useState<boolean>(false)
   const debouncedSearchValue = useDebounce(searchValue, 200)
 
   const setSearchValue = useCallback((value: string) => {
@@ -46,13 +49,21 @@ const SearchProvider: FC<SearchProviderProps> = ({ children }) => {
           mutate: {
             setSearchValue,
             clearSearchValue,
+            setIsOpen,
           },
           state: {
             searchValue,
             debouncedSearchValue,
+            isOpen,
           },
         }
-      }, [searchValue, setSearchValue, debouncedSearchValue, clearSearchValue])}
+      }, [
+        searchValue,
+        setSearchValue,
+        debouncedSearchValue,
+        clearSearchValue,
+        isOpen,
+      ])}
     >
       {children}
     </SearchContext.Provider>
