@@ -98,8 +98,6 @@ export const MarketTable = () => {
     return recentSwaps
   }, [recentSwaps])
 
-  const tableState = { sorting: [] }
-
   return (
     <>
       <Card className="hidden overflow-hidden !border-none bg-slate-50 dark:bg-slate-800 md:block">
@@ -110,8 +108,8 @@ export const MarketTable = () => {
           className="border-none [&_td]:h-[92px]"
           pagination={true}
           state={{
-            ...tableState,
-            ...paginationState,
+            sorting: [],
+            pagination: paginationState,
           }}
           onPaginationChange={setPaginationState}
         />
