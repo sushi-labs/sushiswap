@@ -12,6 +12,7 @@ import {
   SUPPORTED_CHAIN_IDS,
   TWAP_SUPPORTED_CHAIN_IDS,
   type TwapSupportedChainId,
+  getSortedChainIds,
   isTwapSupportedChainId,
 } from 'src/config'
 import { type TwapOrder, useTwapOrders } from 'src/lib/hooks/react-query/twap'
@@ -93,9 +94,13 @@ const Content = ({ children }: { children: React.ReactNode }) => {
 
   useEffect(() => {
     if (isMarketHistoryTabSelected) {
-      setChainIds(SUPPORTED_CHAIN_IDS.map((chainId) => chainId))
+      setChainIds(
+        getSortedChainIds(SUPPORTED_CHAIN_IDS.map((chainId) => chainId)),
+      )
     } else {
-      setChainIds(TWAP_SUPPORTED_CHAIN_IDS.map((chainId) => chainId))
+      setChainIds(
+        getSortedChainIds(TWAP_SUPPORTED_CHAIN_IDS.map((chainId) => chainId)),
+      )
     }
   }, [isMarketHistoryTabSelected])
 

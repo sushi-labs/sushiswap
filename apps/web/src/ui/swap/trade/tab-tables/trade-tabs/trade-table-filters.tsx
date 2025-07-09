@@ -36,13 +36,8 @@ export const TradeTableFilters = () => {
 
   const isDarkMode = theme === 'dark'
 
-  const firstThreeChainIds = networkOptions.slice(
-    0,
-    isMarketHistoryTabSelected ? 2 : 3,
-  )
-  const remainingChainIds = networkOptions.slice(
-    isMarketHistoryTabSelected ? 2 : 3,
-  )
+  const firstThreeChainIds = networkOptions.slice(0, 2)
+  const remainingChainIds = networkOptions.slice(2)
 
   return (
     <div className="flex items-center w-full justify-between xl:justify-end gap-3 px-5 pt-3 pb-1 md:px-3 xl:px-0 md:pt-0 md:pb-0 bg-[#F9FAFB] xl:!bg-background md:bg-white md:dark:bg-slate-800 dark:bg-background  overflow-x-auto hide-scrollbar">
