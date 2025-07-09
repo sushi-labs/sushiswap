@@ -25,8 +25,8 @@ import {
 import { useCurrentChainId } from 'src/lib/hooks/useCurrentChainId'
 import { useNetworkOptions } from 'src/lib/hooks/useNetworkOptions'
 import { useTradeMode } from 'src/lib/hooks/useTradeMode'
-import { EvmChainKey } from 'sushi'
-import type { EvmChainId } from 'sushi/chain'
+import { getNetworkName } from 'src/lib/network'
+import type { ChainId } from 'sushi/chain'
 
 export const ChainOptionsSelector = ({
   size = 'sm',
@@ -138,7 +138,7 @@ export const ChainOptionsSelector = ({
                 />
               </TooltipTrigger>
               <TooltipContent className="border-black/5 dark:border-white/5 !rounded-md bg-white/20 dark:bg-black/20">
-                {EvmChainKey[chainId as EvmChainId].toLocaleUpperCase()}
+                {getNetworkName(chainId as ChainId)}
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
@@ -183,7 +183,7 @@ export const ChainOptionsSelector = ({
                       className={'border-none'}
                     />
                     <span className="ml-2">
-                      {EvmChainKey[chainId as EvmChainId].toLocaleUpperCase()}
+                      {getNetworkName(chainId as ChainId)}
                     </span>
                   </DropdownMenuItem>
                 ))}

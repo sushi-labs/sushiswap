@@ -9,9 +9,9 @@ import {
   classNames,
 } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
-import { captializeFirstLetter } from 'src/lib/helpers'
 import { useNetworkOptions } from 'src/lib/hooks/useNetworkOptions'
-import { type EvmChainId, EvmChainKey } from 'sushi'
+import { getNetworkName } from 'src/lib/network'
+import type { EvmChainId } from 'sushi'
 
 export const NetworkMenu = ({
   className,
@@ -69,11 +69,10 @@ export const NetworkMenu = ({
 }
 
 const NetworkItem = ({ chainId }: { chainId: number }) => {
-  const chainName = EvmChainKey[chainId as EvmChainId]
   return (
     <div className="flex items-center gap-1 text-muted-foreground dark:text-pink-200">
       <NetworkIcon chainId={chainId} width={16} height={16} />
-      <div>{captializeFirstLetter(chainName)}</div>
+      <div>{getNetworkName(chainId as EvmChainId)}</div>
     </div>
   )
 }

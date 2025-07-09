@@ -14,7 +14,7 @@ import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import { useTheme } from 'next-themes'
 import { useSearchParams } from 'next/navigation'
 import { SUPPORTED_CHAIN_IDS, TWAP_SUPPORTED_CHAIN_IDS } from 'src/config'
-import { EvmChainKey } from 'sushi'
+import { getNetworkName } from 'src/lib/network'
 import type { EvmChainId } from 'sushi/chain'
 import { useTradeTablesContext } from '../trade-tables-context'
 
@@ -123,9 +123,7 @@ export const TradeTableFilters = () => {
                           className={`rounded-[4px] w-5 h-5`}
                         />
                         <span className="ml-2">
-                          {EvmChainKey[
-                            chainId as EvmChainId
-                          ].toLocaleUpperCase()}
+                          {getNetworkName(chainId as EvmChainId)}
                         </span>
                         {isSelected && (
                           <CheckCircleIcon className="w-5 h-5 ml-1 text-blue/50 dark:text-skyblue/50" />
