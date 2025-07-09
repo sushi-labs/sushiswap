@@ -47,10 +47,10 @@ import {
   useSendTransaction,
 } from 'wagmi'
 import { useRefetchBalances } from '~evm/_common/ui/balance-provider/use-refetch-balances'
-import { isZapRouteNotFoundError, useZap } from '../../lib/hooks'
+import { isZapRouteNotFoundError, useV2Zap } from '../../lib/hooks'
 import { PriceImpactWarning, SlippageWarning } from '../common'
 import { ToggleZapCard } from './ToggleZapCard'
-import { ZapInfoCard } from './ZapInfoCard'
+import { V2ZapInfoCard } from './V2ZapInfoCard'
 
 interface ZapSectionLegacyProps {
   chainId: SushiSwapV2ChainId
@@ -102,7 +102,7 @@ const _ZapSectionLegacy: FC<ZapSectionLegacyProps> = ({
     isLoading: isZapLoading,
     isError: isZapError,
     error: zapError,
-  } = useZap({
+  } = useV2Zap({
     chainId,
     fromAddress: address,
     tokenIn: inputCurrency.isNative ? NativeAddress : inputCurrency.address,
@@ -332,7 +332,7 @@ const _ZapSectionLegacy: FC<ZapSectionLegacyProps> = ({
               setChecked={setChecked}
             />
           )}
-          <ZapInfoCard
+          <V2ZapInfoCard
             zapResponse={zapResponse}
             inputCurrencyAmount={parsedInputAmount}
             pool={pool}

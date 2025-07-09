@@ -44,24 +44,24 @@ const zapResponseSchema = z.object({
   route: z.array(routeSchema).optional(),
 })
 
-export type ZapResponse = z.infer<typeof zapResponseSchema>
+export type V2ZapResponse = z.infer<typeof zapResponseSchema>
 
-type UseZapParams = {
+type UseV2ZapParams = {
   chainId: EvmChainId
-  fromAddress?: Address
+  fromAddress: Address | undefined
   receiver?: Address
   amountIn: string | string[]
   tokenIn: Address | Address[]
-  tokenOut?: Address | Address[]
-  slippage?: Percent
-  query?: Omit<UseQueryOptions<ZapResponse>, 'queryKey' | 'queryFn'>
+  tokenOut: (Address | Address[]) | undefined
+  slippage: Percent
+  query?: Omit<UseQueryOptions<V2ZapResponse>, 'queryKey' | 'queryFn'>
 }
 
-export const useZap = ({ query, ...params }: UseZapParams) => {
-  return useQuery<ZapResponse>({
-    queryKey: ['zap', params],
+export const useV2Zap = ({ query, ...params }: UseV2ZapParams) => {
+  return useQuery<V2ZapResponse>({
+    queryKey: ['v2-zap', params],
     queryFn: async () => {
-      const url = new URL('/api/zap', window.location.origin)
+      const url = new URL('/api/zap/v2', window.location.origin)
 
       const { slippage, ..._params } = params
 
@@ -88,7 +88,7 @@ export const useZap = ({ query, ...params }: UseZapParams) => {
 
       if (!response.ok) {
         const json = await response.json()
-        throw new Error(json.message)
+        throw new Error(json.error)
       }
 
       const parsed = zapResponseSchema.parse(await response.json())
@@ -112,6 +112,6 @@ export const useZap = ({ query, ...params }: UseZapParams) => {
   })
 }
 
-export const isZapRouteNotFoundError = (error: Error) => {
-  return error.message.includes('Could not build shortcuts')
+export const isZapRouteNotFoundError = (e: Error) => {
+  return e.message === 'Not Found'
 }
