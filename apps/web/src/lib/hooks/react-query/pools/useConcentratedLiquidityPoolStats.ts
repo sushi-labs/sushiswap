@@ -16,7 +16,7 @@ export const useConcentratedLiquidityPoolStats = ({
   enabled = true,
 }: UseConcentratedLiquidityPoolStats) => {
   return useQuery({
-    queryKey: ['useConcentratedLiquidityPoolStats'],
+    queryKey: ['useConcentratedLiquidityPoolStats', { address, chainId }],
     queryFn: async () => {
       if (!chainId || !address) return undefined
 
