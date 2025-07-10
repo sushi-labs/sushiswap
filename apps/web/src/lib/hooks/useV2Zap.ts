@@ -2,13 +2,14 @@ import { type UseQueryOptions, useQuery } from '@tanstack/react-query'
 import { isZapSupportedChainId } from 'src/config'
 import type { EvmChainId } from 'sushi/chain'
 import type { Percent } from 'sushi/math'
+import { sz } from 'sushi/validate'
 import type { Address, Hex } from 'viem'
 import { z } from 'zod'
 
 const txSchema = z.object({
-  data: z.string().transform((data) => data as Hex),
-  to: z.string().transform((to) => to as Address),
-  from: z.string().transform((from) => from as Address),
+  data: sz.hex(),
+  to: sz.address(),
+  from: sz.address(),
   value: z.string().transform((value) => BigInt(value)),
 })
 
