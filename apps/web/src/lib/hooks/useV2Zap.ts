@@ -112,6 +112,6 @@ export const useV2Zap = ({ query, ...params }: UseV2ZapParams) => {
   })
 }
 
-export const isZapRouteNotFoundError = (e: Error) => {
-  return e.message === 'Not Found'
+export const isZapRouteNotFoundError = (error: Error) => {
+  return error.message === 'Not Found'
 }
