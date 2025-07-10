@@ -54,6 +54,7 @@ import { SelectNetworkWidget } from 'src/ui/pool/SelectNetworkWidget'
 import { SelectTokensWidget } from 'src/ui/pool/SelectTokensWidget'
 import { Amount } from 'sushi'
 import {
+  type EvmAddress,
   EvmChainId,
   type EvmCurrency,
   type EvmToken,
@@ -105,7 +106,7 @@ const Incentivize = withCheckerRoot(() => {
   const [startDate, setStartDate] = useState<Date | null>()
   const [endDate, setEndDate] = useState<Date | null>()
   const [rewardToken, setRewardToken] = useState<EvmCurrency>()
-  const [blacklist, setBlacklist] = useState<string[]>([])
+  const [blacklist, setBlacklist] = useState<EvmAddress[]>([])
   const [distro1, setDistro1] = useState<number[]>([0])
   const [distro2, setDistro2] = useState<number[]>([0])
   const [distro3, setDistro3] = useState<number[]>([100])
@@ -155,11 +156,10 @@ const Incentivize = withCheckerRoot(() => {
       amount[0] && v3Address && rewardToken && numHours && startDate
         ? [
             {
-              uniV3Pool: v3Address as Address,
-              rewardToken: rewardToken.wrap().address as Address,
+              uniV3Pool: v3Address,
+              rewardToken: rewardToken.wrap().address,
               amount: amount[0].amount,
-              positionWrappers:
-                blacklist.length > 0 ? (blacklist as Address[]) : [],
+              positionWrappers: blacklist.length > 0 ? blacklist : [],
               wrapperTypes: blacklist.length > 0 ? [3] : [],
               propToken0: customize ? distro1[0] * 100 : 2000,
               propToken1: customize ? distro2[0] * 100 : 2000,
@@ -472,7 +472,7 @@ const Incentivize = withCheckerRoot(() => {
               <ChipInput
                 delimiters={[',', ' ', ';', ':']}
                 values={blacklist}
-                onValueChange={setBlacklist}
+                onValueChange={(value) => setBlacklist(value as EvmAddress[])}
                 placeholder="Address"
               />
               <p

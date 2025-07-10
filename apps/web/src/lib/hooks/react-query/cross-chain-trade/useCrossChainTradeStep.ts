@@ -39,7 +39,7 @@ export const useCrossChainTradeStep = ({
       const options = {
         method: 'POST',
         headers: {
-          'Content-EvmCurrency': 'application/json',
+          'Content-Type': 'application/json',
         },
         body: stringify(step),
       }
