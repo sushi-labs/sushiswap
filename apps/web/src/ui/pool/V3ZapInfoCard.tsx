@@ -161,7 +161,7 @@ export const V3ZapInfoCard: FC<V3ZapInfoCardProps> = ({
               <div className="flex items-center justify-between gap-2">
                 <span className="font-medium">Est. Received</span>
                 <div className="flex items-center gap-2">
-                  1 SushiSwap V3 NFT
+                  1 SushiSwap V3 NFT{' '}
                   {typeof amountOutUSD !== 'undefined' ? (
                     `(${formatUSD(amountOutUSD)})`
                   ) : (
