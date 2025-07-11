@@ -6,5 +6,8 @@ export const TWAP_CONFIG: Record<TwapSupportedChainId, Config> = {
   [ChainId.ETHEREUM]: Configs.SushiEth,
   [ChainId.ARBITRUM]: Configs.SushiArb,
   [ChainId.BASE]: Configs.SushiBase,
-  [ChainId.KATANA]: Configs.SushiKatana,
+  [ChainId.KATANA]: {
+    ...Configs.SushiKatana,
+    minChunkSizeUsd: 5
+  },
 }
