@@ -24,9 +24,9 @@ export const Hero: FC<{ chainId: EvmChainId }> = ({ chainId }) => {
       <span className="text-5xl font-bold">Manage Liquidity Positions</span>
       <div className="flex justify-between flex-wrap gap-6">
         <span className="text-xl w-[720px] text-muted-foreground">
-          You can adjust and claim rewards for your liquidity positions on the
-          connected network. For V2 pools, you can migrate to increase capital
-          efficiency.
+          Adjust or claim liquidity rewards.
+          <br />
+          <span className="text-base">On V2? Migrate for efficiency.</span>
         </span>
         <div className="flex flex-col w-full sm:w-[unset] gap-4">
           <div className="flex items-center w-full">
