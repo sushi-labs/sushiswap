@@ -2,16 +2,13 @@ import {
   type Order,
   OrderStatus,
   buildOrder,
-  getOrderFillDelay,
-  parseOrderStatus,
+  getOrderFillDelayMillis,
   zeroAddress,
 } from '@orbs-network/twap-sdk'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
-import { multicall } from '@wagmi/core'
 import { useCallback, useMemo } from 'react'
 import type { TwapSupportedChainId } from 'src/config'
 import { TwapSDK } from 'src/lib/swap/twap'
-import { twapAbi_status } from 'src/lib/swap/twap/abi'
 import type { Token, Type } from 'sushi/currency'
 import type { Address } from 'sushi/types'
 import { useConfig } from 'wagmi'
@@ -74,6 +71,8 @@ export const usePersistedOrdersStore = ({
         maker: account,
         exchange: sdk.config.exchangeAddress,
         twapAddress: sdk.config.twapAddress,
+        chainId,
+        status: OrderStatus.Open,
       })
 
       const orders = getCreatedOrders()
@@ -85,8 +84,8 @@ export const usePersistedOrdersStore = ({
         const _order = {
           ...order,
           status: OrderStatus.Open,
-          fillDelayMs: getOrderFillDelay(
-            order.fillDelay,
+          fillDelayMs: getOrderFillDelayMillis(
+            order,
             TwapSDK.onNetwork(chainId).config,
           ),
         }
@@ -189,25 +188,10 @@ const useTwapOrdersQuery = ({
         }
       })
 
-      const multicallResponse = await multicall(config, {
-        contracts: sdkOrders.map((order) => {
-          return {
-            abi: twapAbi_status,
-            address: order.twapAddress as Address,
-            functionName: 'status',
-            args: [order.id],
-          }
-        }),
-      })
-
-      const statuses = multicallResponse.map((it) => {
-        return it.result as number
-      })
-
       const canceledOrders = new Set(getCancelledOrderIds())
 
-      const orders = sdkOrders.map((order, index) => {
-        let status = parseOrderStatus(order.progress, statuses?.[index])
+      const orders = sdkOrders.map((order) => {
+        let status = order.status
         if (canceledOrders.has(order.id)) {
           if (status !== OrderStatus.Canceled) {
             // console.log(`Cancelled added: ${order.id}`)
@@ -222,8 +206,8 @@ const useTwapOrdersQuery = ({
           ...order,
           status,
           progress: status === OrderStatus.Completed ? 100 : order.progress,
-          fillDelayMs: getOrderFillDelay(
-            order.fillDelay,
+          fillDelayMs: getOrderFillDelayMillis(
+            order,
             TwapSDK.onNetwork(chainId).config,
           ),
         } satisfies TwapOrder

@@ -88,7 +88,7 @@ export const useZap = ({ query, ...params }: UseZapParams) => {
 
       if (!response.ok) {
         const json = await response.json()
-        throw new Error(json.message)
+        throw new Error(json.error)
       }
 
       const parsed = zapResponseSchema.parse(await response.json())
@@ -113,5 +113,5 @@ export const useZap = ({ query, ...params }: UseZapParams) => {
 }
 
 export const isZapRouteNotFoundError = (error: Error) => {
-  return error.message.includes('Could not build shortcuts')
+  return error.message === 'Not Found'
 }
