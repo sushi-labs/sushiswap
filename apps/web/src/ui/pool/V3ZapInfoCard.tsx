@@ -8,17 +8,17 @@ import {
 } from '@sushiswap/ui'
 import { EnsoIcon } from '@sushiswap/ui/icons/EnsoIcon'
 import { type FC, useMemo } from 'react'
-import type { ZapResponse } from 'src/lib/hooks'
+import type { V3ZapResponse } from 'src/lib/hooks'
 import {
   warningSeverity,
   warningSeverityClassName,
 } from 'src/lib/swap/warningSeverity'
-import { useTotalSupply } from 'src/lib/wagmi/hooks/tokens/useTotalSupply'
 import type { EvmChainId } from 'sushi/chain'
-import { Amount, type Type } from 'sushi/currency'
+import { SUSHISWAP_V3_POSITION_MANAGER } from 'sushi/config'
+import type { Amount, Type } from 'sushi/currency'
 import { formatUSD } from 'sushi/format'
-import { Percent, ZERO } from 'sushi/math'
-import { SushiSwapV2Pool } from 'sushi/pool'
+import { Fraction, type Percent, ZERO } from 'sushi/math'
+import { Position, type SushiSwapV3Pool } from 'sushi/pool'
 import { usePrices } from '~evm/_common/ui/price-provider/price-provider/use-prices'
 import { ZapRouteDialog } from './ZapRouteDialog'
 
@@ -31,14 +31,14 @@ const getAmountUSD = (
   return (price * Number(amount.quotient)) / 10 ** amount.currency.decimals
 }
 
-interface ZapInfoCardProps {
-  zapResponse?: ZapResponse
+interface V3ZapInfoCardProps {
+  zapResponse?: V3ZapResponse
   inputCurrencyAmount: Amount<Type> | undefined
-  pool: SushiSwapV2Pool | null
+  pool: SushiSwapV3Pool | null
   tokenRatios?: { token0: number; token1: number }
 }
 
-export const ZapInfoCard: FC<ZapInfoCardProps> = ({
+export const V3ZapInfoCard: FC<V3ZapInfoCardProps> = ({
   zapResponse,
   inputCurrencyAmount,
   pool,
@@ -48,24 +48,14 @@ export const ZapInfoCard: FC<ZapInfoCardProps> = ({
     chainId: pool?.chainId as EvmChainId | undefined,
   })
 
-  const outputToken = useMemo(
-    () =>
-      !pool
-        ? undefined
-        : pool instanceof SushiSwapV2Pool
-          ? pool.liquidityToken
-          : undefined,
-    [pool],
-  )
-
-  const totalSupply = useTotalSupply(outputToken)
-
-  const { amountOut, amountOutUSD, priceImpact, feeAmountUSD } = useMemo(() => {
+  const { amountOutUSD, priceImpact, feeAmountUSD } = useMemo(() => {
     if (
       typeof inputCurrencyAmount === 'undefined' ||
       typeof zapResponse === 'undefined' ||
-      typeof outputToken === 'undefined' ||
-      pool === null
+      pool === null ||
+      typeof zapResponse.amountsOut[
+        SUSHISWAP_V3_POSITION_MANAGER[pool.chainId].toLowerCase()
+      ] === 'undefined'
     ) {
       return {
         outputAmount: undefined,
@@ -75,8 +65,6 @@ export const ZapInfoCard: FC<ZapInfoCardProps> = ({
       }
     }
 
-    const amountOut = Amount.fromRawAmount(outputToken, zapResponse.amountOut)
-
     const inputCurrencyPrice = prices?.get(
       inputCurrencyAmount.currency.wrapped.address,
     )
@@ -84,36 +72,48 @@ export const ZapInfoCard: FC<ZapInfoCardProps> = ({
     const token1Price = prices?.get(pool.token1.address)
 
     const feeAmountUSD = getAmountUSD(
-      zapResponse.feeAmount && zapResponse.feeAmount.length > 0
-        ? Amount.fromRawAmount(
-            inputCurrencyAmount.currency,
-            zapResponse.feeAmount[0],
-          )
-        : undefined,
+      inputCurrencyAmount.multiply(new Fraction(25, 10000)),
       inputCurrencyPrice,
     )
 
-    const reserve0USD = getAmountUSD(pool.reserve0, token0Price)
-    const reserve1USD = getAmountUSD(pool.reserve1, token1Price)
+    const liquidity =
+      zapResponse.amountsOut[
+        SUSHISWAP_V3_POSITION_MANAGER[pool.chainId].toLowerCase()
+      ]!
+
+    const depositAction = (
+      zapResponse.bundle[4]?.action === 'depositclmm'
+        ? zapResponse.bundle[4]
+        : zapResponse.bundle.find(({ action }) => action === 'depositclmm')
+    ) as Extract<(typeof zapResponse.bundle)[number], { action: 'depositclmm' }>
+
+    const position = new Position({
+      pool,
+      liquidity: liquidity,
+      tickLower: depositAction.args.ticks[0],
+      tickUpper: depositAction.args.ticks[1],
+    })
+
+    const amount0USD = getAmountUSD(position.amount0, token0Price)
+    const amount1USD = getAmountUSD(position.amount1, token1Price)
 
     const amountOutUSD =
-      !reserve0USD || !reserve1USD || !totalSupply
+      typeof amount0USD === 'undefined' && typeof amount1USD === 'undefined'
         ? undefined
-        : ((reserve0USD + reserve1USD) * Number(amountOut.quotient)) /
-          Number(totalSupply.quotient)
+        : Number(amount0USD) + Number(amount1USD)
+    const priceImpact = undefined as Percent | undefined
 
-    const priceImpact =
-      typeof zapResponse.priceImpact === 'number'
-        ? new Percent(zapResponse.priceImpact, 10_000n)
-        : undefined
+    // const priceImpact =
+    //   typeof zapResponse.priceImpact === 'number'
+    //     ? new Percent(zapResponse.priceImpact, 10_000n)
+    //     : undefined
 
     return {
-      amountOut,
       amountOutUSD,
       priceImpact,
       feeAmountUSD,
     }
-  }, [zapResponse, prices, inputCurrencyAmount, pool, outputToken, totalSupply])
+  }, [zapResponse, prices, inputCurrencyAmount, pool])
 
   return (
     <>
@@ -161,13 +161,7 @@ export const ZapInfoCard: FC<ZapInfoCardProps> = ({
               <div className="flex items-center justify-between gap-2">
                 <span className="font-medium">Est. Received</span>
                 <div className="flex items-center gap-2">
-                  {typeof amountOut !== 'undefined' ? (
-                    <span>
-                      <FormattedNumber number={amountOut.toExact()} /> LP Tokens
-                    </span>
-                  ) : (
-                    <SkeletonBox className="h-4 py-0.5 w-[40px]" />
-                  )}
+                  1 SushiSwap V3 NFT{' '}
                   {typeof amountOutUSD !== 'undefined' ? (
                     `(${formatUSD(amountOutUSD)})`
                   ) : (
