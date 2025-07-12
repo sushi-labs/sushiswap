@@ -1,4 +1,5 @@
 @import "@fontsource-variable/inter/index.css";
+@import "@fontsource-variable/orbitron/index.css";
 @import "react-datepicker/dist/react-datepicker.css";
 @import "./date-picker.css";
 
@@ -11,6 +12,7 @@
     --font-sans: "Inter Variable", -apple-system, BlinkMacSystemFont, "Segoe UI",
       "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans",
       "Helvetica Neue", sans-serif;
+    --font-orbitron: "Orbitron Variable", var(--font-sans);
 
     --background-color: #f4f5f6;
     --color: #000;
