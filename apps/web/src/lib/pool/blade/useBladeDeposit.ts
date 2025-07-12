@@ -580,7 +580,7 @@ const depositWriteVariablesMap: Record<
   ClipperPackedExchange: clipperPackedTransmitAndDeposit,
   ClipperPackedOracleVerifiedExchange: clipperPackedTransmitAndDeposit,
   BladeVerifiedExchange: bladePackedTransmitAndDeposit,
-  BladeApproximateExchange: bladeTransmitAndDeposit,
+  BladeApproximateCaravelExchange: bladeTransmitAndDeposit,
 }
 
 export const useBladeAllowDeposit = ({
@@ -653,8 +653,12 @@ export const useBladeAllowDeposit = ({
   return query
 }
 
-export const useBladeDepositRequest = () => {
-  return useMutation({
+export const useBladeDepositRequest = ({
+  onError,
+}: {
+  onError?: (e: Error) => void
+} = {}) => {
+  const mutation = useMutation({
     mutationFn: async (
       payload: RfqDepositPayload,
     ): Promise<RfqDepositResponse> => {
@@ -673,7 +677,30 @@ export const useBladeDepositRequest = () => {
 
       return response.json()
     },
+    onError,
   })
+
+  useEffect(() => {
+    if (mutation.isSuccess && mutation.data) {
+      const now = Date.now()
+      const goodUntil = mutation.data.good_until * 1000
+      const remainingTime = goodUntil - now
+
+      if (remainingTime > 0) {
+        const timerId = setTimeout(() => {
+          mutation.reset()
+        }, remainingTime)
+
+        return () => {
+          clearTimeout(timerId)
+        }
+      } else {
+        mutation.reset()
+      }
+    }
+  }, [mutation.isSuccess, mutation.data, mutation.reset])
+
+  return mutation
 }
 
 export const useBladeDepositTransaction = ({
@@ -682,7 +709,7 @@ export const useBladeDepositTransaction = ({
   onError,
 }: {
   pool: BladePool
-  onSuccess?: (hash: string) => void
+  onSuccess?: (hash: `0x${string}`) => void
   onError?: (error: Error) => void
 }) => {
   const {
@@ -694,12 +721,8 @@ export const useBladeDepositTransaction = ({
     reset,
   } = useWriteContract({
     mutation: {
-      onSuccess: (hash) => {
-        onSuccess?.(hash)
-      },
-      onError: (error) => {
-        onError?.(error as Error)
-      },
+      onSuccess,
+      onError,
     },
   })
 

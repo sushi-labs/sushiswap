@@ -11,7 +11,10 @@ import { Checker } from 'src/lib/wagmi/systems/Checker'
 import { CheckerProvider } from 'src/lib/wagmi/systems/Checker/Provider'
 import { type Type, tryParseAmount } from 'sushi/currency'
 import { useAccount } from 'wagmi'
-import { BladeAddLiquidityReviewModal } from './BladeAddLiquidityReviewModal'
+import {
+  BladeAddLiquidityReviewModal,
+  BladeAddLiquidityReviewModalTrigger,
+} from './BladeAddLiquidityReviewModal'
 import { BladeAddSectionWidget } from './BladeAddSectionWidget'
 
 interface TokenInput {
@@ -126,55 +129,57 @@ export const BladeAddSection: FC<{ pool: BladePool }> = ({ pool }) => {
                 guardWhen={!userAllowed}
                 guardText="Deposits not allowed for this account"
               >
-                <Checker.Network fullWidth chainId={chainId}>
-                  <Checker.Amounts
-                    fullWidth
-                    chainId={chainId}
-                    amounts={parsedInputs}
-                  >
-                    {Array.from(validInputMap.entries()).reduce(
-                      (acc, [token, amount]) => {
-                        const parsedAmount = tryParseAmount(amount, token)
-                        if (!parsedAmount) return acc
+                <BladeAddLiquidityReviewModal
+                  pool={pool}
+                  chainId={chainId}
+                  validInputs={validInputs}
+                  depositPermission={depositPermission}
+                  onSuccess={() => {
+                    setInputs([{ token: undefined, amount: '' }])
+                  }}
+                >
+                  <Checker.Network fullWidth chainId={chainId}>
+                    <Checker.Amounts
+                      fullWidth
+                      chainId={chainId}
+                      amounts={parsedInputs}
+                    >
+                      {Array.from(validInputMap.entries()).reduce(
+                        (acc, [token, amount]) => {
+                          const parsedAmount = tryParseAmount(amount, token)
+                          if (!parsedAmount) return acc
 
-                        const approveChecker = (
-                          <Checker.ApproveERC20
-                            key={token.wrapped.address}
-                            fullWidth
-                            id={`approve-token-${token.wrapped.address}`}
-                            className="whitespace-nowrap"
-                            amount={parsedAmount}
-                            contract={pool.address}
-                          >
-                            {acc}
-                          </Checker.ApproveERC20>
-                        )
-                        return approveChecker
-                      },
-                      (
-                        <Checker.Success tag={APPROVE_TAG_ADD_LEGACY}>
-                          <BladeAddLiquidityReviewModal
-                            pool={pool}
-                            chainId={chainId}
-                            validInputs={validInputs}
-                            depositPermission={depositPermission}
-                            onSuccess={() => {
-                              setInputs([{ token: undefined, amount: '' }])
-                            }}
-                          >
-                            <Button
-                              size="xl"
+                          const approveChecker = (
+                            <Checker.ApproveERC20
+                              key={token.wrapped.address}
                               fullWidth
-                              disabled={validInputs.length === 0}
+                              id={`approve-token-${token.wrapped.address}`}
+                              className="whitespace-nowrap"
+                              amount={parsedAmount}
+                              contract={pool.address}
                             >
-                              Add Liquidity
-                            </Button>
-                          </BladeAddLiquidityReviewModal>
-                        </Checker.Success>
-                      ) as React.ReactNode,
-                    )}
-                  </Checker.Amounts>
-                </Checker.Network>
+                              {acc}
+                            </Checker.ApproveERC20>
+                          )
+                          return approveChecker
+                        },
+                        (
+                          <Checker.Success tag={APPROVE_TAG_ADD_LEGACY}>
+                            <BladeAddLiquidityReviewModalTrigger>
+                              <Button
+                                size="xl"
+                                fullWidth
+                                disabled={validInputs.length === 0}
+                              >
+                                Add Liquidity
+                              </Button>
+                            </BladeAddLiquidityReviewModalTrigger>
+                          </Checker.Success>
+                        ) as React.ReactNode,
+                      )}
+                    </Checker.Amounts>
+                  </Checker.Network>
+                </BladeAddLiquidityReviewModal>
               </Checker.Guard>
             </Checker.Guard>
           </Checker.Guard>

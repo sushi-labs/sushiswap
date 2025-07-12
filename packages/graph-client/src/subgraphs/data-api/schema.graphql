@@ -84,7 +84,7 @@ enum BladePoolAbi {
   ClipperPackedExchange
   ClipperPackedOracleVerifiedExchange
   BladeVerifiedExchange
-  BladeApproximateExchange
+  BladeApproximateCaravelExchange
 }
 
 enum BladePoolVaultType {
@@ -135,6 +135,7 @@ type BladePool {
   feeApr1d: Float!
   totalApr1d: Float!
   isDeprecated: Boolean!
+  isSingleAssetWithdrawEnabled: Boolean!
   newPoolAddress: Bytes
   vaults: [BladePoolVault!]!
 }

@@ -36,6 +36,7 @@ export const BladePoolsQuery = graphql(
         totalApr1d
         feeUSD1d
         isDeprecated
+        isSingleAssetWithdrawEnabled
         newPoolAddress
         abi
     }
@@ -72,6 +73,7 @@ export const BladePoolQuery = graphql(
         totalApr1d
         feeUSD1d
         isDeprecated
+        isSingleAssetWithdrawEnabled
         newPoolAddress
         abi
     }

@@ -14,7 +14,14 @@ import {
   DialogTrigger,
   Dots,
 } from '@sushiswap/ui'
-import { type FC, type ReactNode, useCallback, useEffect, useMemo } from 'react'
+import {
+  type FC,
+  type ReactNode,
+  createContext,
+  useCallback,
+  useContext,
+  useMemo,
+} from 'react'
 import { APPROVE_TAG_ADD_LEGACY } from 'src/lib/constants'
 import {
   type RfqAllowDepositResponse,
@@ -22,6 +29,7 @@ import {
   useBladeDepositTransaction,
 } from 'src/lib/pool/blade/useBladeDeposit'
 import { useUnlockDeposit } from 'src/lib/pool/blade/useUnlockDeposit'
+import { isUserRejectedError } from 'src/lib/wagmi/errors'
 import { useTotalSupply } from 'src/lib/wagmi/hooks/tokens/useTotalSupply'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
 import { useApproved } from 'src/lib/wagmi/systems/Checker/Provider'
@@ -29,7 +37,6 @@ import { formatUSD } from 'sushi'
 import { ChainKey } from 'sushi/chain'
 import type { BladeChainId } from 'sushi/config'
 import { type Type, tryParseAmount } from 'sushi/currency'
-import { UserRejectedRequestError } from 'viem'
 import { usePublicClient } from 'wagmi'
 import { useAccount } from 'wagmi'
 import { useWaitForTransactionReceipt } from 'wagmi'
@@ -37,6 +44,23 @@ import { useRefetchBalances } from '~evm/_common/ui/balance-provider/use-refetch
 import { usePrices } from '~evm/_common/ui/price-provider/price-provider/use-prices'
 import { useBladePoolPosition } from '../BladePoolPositionProvider'
 
+interface BladeAddLiquidityReviewModalContextType {
+  onClick: () => void
+}
+
+const BladeAddLiquidityReviewModalContext = createContext<
+  BladeAddLiquidityReviewModalContextType | undefined
+>(undefined)
+
+export const useBladeAddLiquidityReviewModal = () => {
+  const context = useContext(BladeAddLiquidityReviewModalContext)
+  if (!context) {
+    throw new Error(
+      'Hook must be used within a BladeAddLiquidityReviewModalProvider',
+    )
+  }
+  return context
+}
 interface BladeAddLiquidityReviewModalProps {
   pool: BladePool
   chainId: BladeChainId
@@ -85,23 +109,11 @@ export const BladeAddLiquidityReviewModal: FC<
       },
     })
 
-  const {
-    mutate,
-    data: rfqResponse,
-    isPending: rfqLoading,
-    error: rfqError,
-  } = useBladeDepositRequest()
-  const transactionMutation = useBladeDepositTransaction({
-    pool,
-  })
-
-  useEffect(() => {
-    if (transactionMutation.data && validInputs.length > 0) {
+  const onSuccess = useCallback(
+    (hash: `0x${string}`) => {
       _onSuccess()
 
-      const receipt = client.waitForTransactionReceipt({
-        hash: transactionMutation.data,
-      })
+      const receipt = client.waitForTransactionReceipt({ hash })
       receipt.then(() => {
         refetchBalances(chainId)
       })
@@ -111,7 +123,7 @@ export const BladeAddLiquidityReviewModal: FC<
         account: address,
         type: 'mint',
         chainId,
-        txHash: transactionMutation.data,
+        txHash: hash,
         promise: receipt,
         summary: {
           pending: `Adding liquidity to the Blade pool`,
@@ -121,25 +133,28 @@ export const BladeAddLiquidityReviewModal: FC<
         timestamp: ts,
         groupTimestamp: ts,
       })
-    }
-  }, [
-    transactionMutation.data,
-    validInputs,
-    _onSuccess,
-    chainId,
-    address,
-    client,
-    refetchBalances,
-  ])
+    },
+    [refetchBalances, _onSuccess, address, chainId, client],
+  )
 
-  useEffect(() => {
-    if (
-      transactionMutation.error &&
-      !(transactionMutation.error.cause instanceof UserRejectedRequestError)
-    ) {
-      createErrorToast(transactionMutation.error?.message, true)
+  const onTransactionError = useCallback((e: Error) => {
+    if (!isUserRejectedError(e)) {
+      createErrorToast(e?.message, true)
     }
-  }, [transactionMutation.error])
+  }, [])
+
+  const onDepositRequestError = useCallback((e: Error) => {
+    createErrorToast(e?.message, true)
+  }, [])
+
+  const depositRequest = useBladeDepositRequest({
+    onError: onDepositRequestError,
+  })
+  const transactionMutation = useBladeDepositTransaction({
+    pool,
+    onSuccess,
+    onError: onTransactionError,
+  })
 
   const handleRfqCall = useCallback(async () => {
     if (!address || validInputs.length === 0) return
@@ -153,7 +168,7 @@ export const BladeAddLiquidityReviewModal: FC<
         ? depositPermission.min_lock_time
         : 0
 
-    mutate({
+    depositRequest.mutate({
       pool_address: pool.address,
       sender: address,
       days_to_lock: minLockDays,
@@ -172,28 +187,32 @@ export const BladeAddLiquidityReviewModal: FC<
         depositPermission?.feature_single_asset_deposit &&
         validInputs.length === 1,
     })
-  }, [address, validInputs, pool.address, chainId, mutate, depositPermission])
+  }, [
+    address,
+    validInputs,
+    pool.address,
+    chainId,
+    depositRequest,
+    depositPermission,
+  ])
 
   const handleConfirmTransaction = useCallback(
     async (confirm: () => void) => {
-      if (!rfqResponse || !address) return
-
+      if (!depositRequest.data || !address) return
       try {
         await transactionMutation.mutateAsync({
-          deposit: rfqResponse,
+          deposit: depositRequest.data,
           amounts: validInputs,
         })
         confirm()
-      } catch (error) {
-        console.error('Transaction failed:', error)
-      }
+      } catch {}
     },
-    [rfqResponse, transactionMutation, validInputs, address],
+    [depositRequest.data, address, transactionMutation, validInputs],
   )
 
   const estimatedValue = useMemo(() => {
-    if (!rfqResponse?.pool_tokens) return 0
-    const estimatedPoolTokens = Number(rfqResponse.pool_tokens)
+    if (!depositRequest.data?.pool_tokens) return 0
+    const estimatedPoolTokens = Number(depositRequest.data.pool_tokens)
     const poolProportion =
       poolTotalSupply?.quotient && poolTotalSupply.quotient > 0
         ? estimatedPoolTokens /
@@ -203,7 +222,7 @@ export const BladeAddLiquidityReviewModal: FC<
       ? pool.liquidityUSD * poolProportion
       : 0
     return estimatedValue
-  }, [rfqResponse, pool.liquidityUSD, poolTotalSupply])
+  }, [depositRequest.data, pool.liquidityUSD, poolTotalSupply])
 
   const { status } = useWaitForTransactionReceipt({
     chainId,
@@ -216,15 +235,15 @@ export const BladeAddLiquidityReviewModal: FC<
         seconds: number
       }
     | undefined
-  if (rfqResponse && 'lock_time' in rfqResponse) {
+  if (depositRequest.data && 'lock_time' in depositRequest.data) {
     lockTime = {
-      message: `${rfqResponse.lock_time} ${rfqResponse.lock_time === 1 ? 'minute' : 'minutes'}`,
-      seconds: rfqResponse.lock_time * 60,
+      message: `${depositRequest.data.lock_time} ${depositRequest.data.lock_time === 1 ? 'minute' : 'minutes'}`,
+      seconds: depositRequest.data.lock_time * 60,
     }
-  } else if (rfqResponse && 'n_days' in rfqResponse) {
+  } else if (depositRequest.data && 'n_days' in depositRequest.data) {
     lockTime = {
-      message: `${rfqResponse.n_days} ${rfqResponse.n_days === 1 ? 'day' : 'days'}`,
-      seconds: rfqResponse.n_days * 24 * 60 * 60,
+      message: `${depositRequest.data.n_days} ${depositRequest.data.n_days === 1 ? 'day' : 'days'}`,
+      seconds: depositRequest.data.n_days * 24 * 60 * 60,
     }
   }
 
@@ -233,9 +252,11 @@ export const BladeAddLiquidityReviewModal: FC<
       <DialogReview>
         {({ confirm }) => (
           <>
-            <DialogTrigger asChild onClick={handleRfqCall}>
+            <BladeAddLiquidityReviewModalContext.Provider
+              value={{ onClick: handleRfqCall }}
+            >
               {children}
-            </DialogTrigger>
+            </BladeAddLiquidityReviewModalContext.Provider>
             <DialogContent>
               <div className="flex justify-between">
                 <DialogHeader>
@@ -263,15 +284,20 @@ export const BladeAddLiquidityReviewModal: FC<
                         key={index}
                         className="flex items-center justify-between"
                       >
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-3">
                           <Currency.Icon
                             currency={input.token}
                             width={18}
                             height={18}
                           />
-                          <span className="text-sm text-gray-500 dark:text-slate-400 font-medium">
-                            {input.token.symbol}
-                          </span>
+                          <div>
+                            <div className="font-semibold text-sm text-gray-900 dark:text-slate-50">
+                              {input.token.symbol}
+                            </div>
+                            <div className="text-sm text-muted-foreground">
+                              {input.token.name}
+                            </div>
+                          </div>
                         </div>
                         <div className="flex flex-col items-end">
                           <span className="text-sm text-gray-900 dark:text-slate-50 font-semibold">
@@ -287,26 +313,16 @@ export const BladeAddLiquidityReviewModal: FC<
                 </div>
               </div>
 
-              {rfqResponse || rfqError ? (
+              {depositRequest.data ? (
                 <div className="flex flex-col gap-3 p-4 bg-white rounded-xl dark:bg-secondary border border-accent">
-                  {rfqError && (
-                    <div className="p-4 bg-red-50 dark:bg-red-900/20 rounded-lg">
-                      <span className="text-red-600 dark:text-red-400">
-                        {rfqError.message}
-                      </span>
-                    </div>
-                  )}
-
-                  {rfqResponse ? (
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm text-gray-400 dark:text-slate-400">
-                        Estimated Value
-                      </span>
-                      <span className="text-sm font-semibold text-gray-900 dark:text-slate-50">
-                        {formatUSD(estimatedValue || 0)}
-                      </span>
-                    </div>
-                  ) : null}
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-gray-400 dark:text-slate-400">
+                      Estimated Value
+                    </span>
+                    <span className="text-sm font-semibold text-gray-900 dark:text-slate-50">
+                      {formatUSD(estimatedValue || 0)}
+                    </span>
+                  </div>
 
                   {lockTime?.message ? (
                     <div className="flex justify-between items-center">
@@ -336,30 +352,14 @@ export const BladeAddLiquidityReviewModal: FC<
                   }
                   fullWidth
                 >
-                  <Button
-                    size="xl"
-                    disabled={
-                      rfqLoading ||
-                      !!rfqError ||
-                      !rfqResponse ||
-                      transactionMutation.isPending ||
-                      !approved
-                    }
-                    loading={transactionMutation.isPending}
-                    fullWidth
-                    onClick={() => handleConfirmTransaction(confirm)}
-                    testId="confirm-add-blade-liquidity"
-                  >
-                    {transactionMutation.isPending ? (
-                      <Dots>Confirm transaction</Dots>
-                    ) : rfqError ? (
-                      'Try again'
-                    ) : rfqLoading ? (
-                      <Dots>Getting quote</Dots>
-                    ) : (
-                      'Confirm'
-                    )}
-                  </Button>
+                  <AddLiquidityButton
+                    depositRequest={depositRequest}
+                    handleRfqCall={handleRfqCall}
+                    transactionMutation={transactionMutation}
+                    handleConfirmTransaction={handleConfirmTransaction}
+                    approved={approved}
+                    confirm={confirm}
+                  />
                 </Checker.Custom>
               </DialogFooter>
             </DialogContent>
@@ -376,5 +376,61 @@ export const BladeAddLiquidityReviewModal: FC<
         txHash={transactionMutation.data}
       />
     </DialogProvider>
+  )
+}
+
+const AddLiquidityButton: FC<{
+  depositRequest: ReturnType<typeof useBladeDepositRequest>
+  handleRfqCall: () => void
+  transactionMutation: ReturnType<typeof useBladeDepositTransaction>
+  handleConfirmTransaction: (confirm: () => void) => Promise<void>
+  approved: boolean
+  confirm: () => void
+}> = ({
+  depositRequest,
+  handleRfqCall,
+  transactionMutation,
+  handleConfirmTransaction,
+  approved,
+  confirm,
+}) => {
+  if (!depositRequest.data) {
+    return (
+      <Button
+        size="xl"
+        fullWidth
+        onClick={handleRfqCall}
+        disabled={depositRequest.isPending}
+      >
+        {depositRequest.isPending ? <Dots>Getting quote</Dots> : 'Get quote'}
+      </Button>
+    )
+  }
+
+  return (
+    <Button
+      size="xl"
+      disabled={transactionMutation.isPending || !approved}
+      loading={transactionMutation.isPending}
+      fullWidth
+      onClick={() => handleConfirmTransaction(confirm)}
+    >
+      {transactionMutation.isPending ? (
+        <Dots>Confirm transaction</Dots>
+      ) : (
+        'Confirm'
+      )}
+    </Button>
+  )
+}
+
+export const BladeAddLiquidityReviewModalTrigger: FC<{
+  children: ReactNode
+}> = ({ children }) => {
+  const { onClick } = useBladeAddLiquidityReviewModal()
+  return (
+    <DialogTrigger asChild onClick={onClick}>
+      {children}
+    </DialogTrigger>
   )
 }

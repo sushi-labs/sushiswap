@@ -1,19 +1,10 @@
 'use client'
 
-import {
-  Card,
-  CardGroup,
-  CardLabel,
-  Currency,
-  Message,
-  WidgetDescription,
-  WidgetFooter,
-} from '@sushiswap/ui'
+import { Card, Message, WidgetDescription, WidgetFooter } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui'
 import { Widget, WidgetHeader, WidgetTitle } from '@sushiswap/ui'
 import React, { type FC, type ReactNode } from 'react'
 import type { BladeChainId } from 'sushi/config'
-import type { Type } from 'sushi/currency'
 import { formatUSD } from 'sushi/format'
 import { ZERO } from 'sushi/math'
 import { useBladePoolPosition } from '../BladePoolPositionProvider'
@@ -21,7 +12,7 @@ import { useBladePoolPosition } from '../BladePoolPositionProvider'
 interface BladeRemoveSectionWidgetProps {
   chainId: BladeChainId
   percentage: string
-  tokensMinimum: Array<{ usdValue: number; currency: Type }>
+  totalUsdValue: number
   setPercentage(percentage: string): void
   children: ReactNode
 }
@@ -29,10 +20,12 @@ interface BladeRemoveSectionWidgetProps {
 export const BladeRemoveSectionWidget: FC<BladeRemoveSectionWidgetProps> = ({
   percentage,
   setPercentage,
-  tokensMinimum,
+  totalUsdValue,
   children,
 }) => {
   const { balance } = useBladePoolPosition()
+
+  const estimatedValue = totalUsdValue * (Number(percentage) / 100)
 
   return (
     <Widget id="removeLiquidity" variant="empty">
@@ -110,37 +103,16 @@ export const BladeRemoveSectionWidget: FC<BladeRemoveSectionWidgetProps> = ({
               />
             </div>
           </Card>
-          <Card variant="outline" className="p-6">
-            <CardGroup>
-              <CardLabel>You&apos;ll receive at least:</CardLabel>
-              {tokensMinimum.map((tokenData, index) => (
-                <div
-                  className="flex items-center gap-2 justify-between"
-                  key={index}
-                >
-                  <div className="flex items-center gap-2">
-                    <Currency.Icon
-                      currency={tokenData.currency}
-                      width={18}
-                      height={18}
-                    />
-                    <span className="text-sm font-medium text-gray-500">
-                      {tokenData.currency.wrapped.symbol}
-                    </span>
-                  </div>
 
-                  <span className="text-sm font-normal text-gray-400">
-                    {formatUSD(tokenData.usdValue)}
-                  </span>
-                </div>
-              ))}
-              {tokensMinimum.length === 0 && (
-                <div className="text-sm text-muted-foreground py-2">
-                  No tokens to receive
-                </div>
-              )}
-            </CardGroup>
-          </Card>
+          {/* Simple estimated value display matching Figma */}
+          <div className="flex items-center justify-between px-1">
+            <span className="text-sm text-muted-foreground">
+              Estimated Value
+            </span>
+            <span className="text-lg font-semibold text-gray-900 dark:text-slate-50">
+              {formatUSD(estimatedValue)}
+            </span>
+          </div>
         </div>
         <WidgetFooter>{children}</WidgetFooter>
       </div>
