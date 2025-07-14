@@ -10,32 +10,32 @@ import { Rate } from './rate'
 export const ChartHeader = () => {
   const { isMd: isMdScreen } = useBreakpoint('md')
   const {
-    state: { token0, chainId },
-    mutate: { setToken0 },
+    state: { token1, chainId },
+    mutate: { setToken1 },
   } = useChartContext()
 
   const selector = useMemo(() => {
     return (
       <TokenSelectorV2
         type="buy"
-        selected={token0}
+        selected={token1}
         chainId={chainId}
         onSelect={(token) => {
-          setToken0(token)
+          setToken1(token)
         }}
         variant={isMdScreen ? 'default' : 'semi-opaque'}
       >
         <Button
           size="lg"
-          variant={token0 ? 'secondary' : 'default'}
+          variant={token1 ? 'secondary' : 'default'}
           id={'swap-to'}
           type="button"
           className={classNames(
-            token0 ? 'pl-1.5 pr-3' : '',
+            token1 ? 'pl-1.5 pr-3' : '',
             '!rounded-full h-[47px] bg-slate-200 dark:bg-slate-750',
           )}
         >
-          {token0 ? (
+          {token1 ? (
             <>
               <div className="w-[37px] h-[37px] mr-0.5">
                 <Badge
@@ -45,7 +45,7 @@ export const ChartHeader = () => {
                     <NetworkIcon
                       type="square"
                       className="rounded-[3px]"
-                      chainId={token0.chainId}
+                      chainId={token1.chainId}
                       width={15}
                       height={15}
                     />
@@ -53,13 +53,13 @@ export const ChartHeader = () => {
                 >
                   <Currency.Icon
                     disableLink
-                    currency={token0}
+                    currency={token1}
                     width={37}
                     height={37}
                   />
                 </Badge>
               </div>
-              {token0.symbol}
+              {token1.symbol}
               <SelectIcon />
             </>
           ) : (
@@ -68,7 +68,7 @@ export const ChartHeader = () => {
         </Button>
       </TokenSelectorV2>
     )
-  }, [token0, isMdScreen, chainId, setToken0])
+  }, [token1, isMdScreen, chainId, setToken1])
 
   return (
     <div className="flex flex-col items-start justify-between w-full gap-4 lg:items-center md:flex-col lg:flex-row lg:gap-0">

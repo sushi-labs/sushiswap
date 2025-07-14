@@ -9,13 +9,13 @@ import { useChartContext } from './chart-provider'
 
 export const Rate = () => {
   const {
-    state: { token0 },
+    state: { token1 },
   } = useChartContext()
 
-  const { data: price0, isLoading: isPrice0Loading } = usePrice({
-    chainId: token0?.chainId,
-    address: token0?.wrapped?.address,
-    enabled: !!token0,
+  const { data: price1, isLoading: isPrice0Loading } = usePrice({
+    chainId: token1?.chainId,
+    address: token1?.wrapped?.address,
+    enabled: !!token1,
   })
 
   // const [flipped, setFlipped] = useState(false);
@@ -31,7 +31,7 @@ export const Rate = () => {
         <SkeletonBox className="w-20 h-4 mr-1 rounded-md" />
       ) : (
         <div className="mr-1">
-          1 {token0.symbol} = {formatUSD(price0 ?? 0)}
+          1 {token1.symbol} = {formatUSD(price1 ?? 0)}
         </div>
       )}
       {/* <button

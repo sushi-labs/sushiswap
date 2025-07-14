@@ -24,7 +24,7 @@ export const Chart = ({
   const { resolvedTheme } = useTheme()
   const isMounted = useIsMounted()
   const {
-    state: { token0 },
+    state: { token1 },
   } = useChartContext()
   const [hasNoData, setHasNoData] = useState(false)
   const tvWidgetRef = useRef<any>(null)
@@ -33,13 +33,13 @@ export const Chart = ({
   useEffect(() => {
     if (!tvWidgetRef.current) return
 
-    // const symbol = `${token0.chainId}-${token0.wrapped.address}-${token0.name}-${token0.symbol}`;
+    // const symbol = `${token1.chainId}-${token1.wrapped.address}-${token1.name}-${token1.symbol}`;
     // const interval = widgetProps.interval as ResolutionString;
 
     // tvWidgetRef?.current?.setSymbol(symbol, interval, () => {
     //   console.log('Symbol updated')
     // })
-  }, [token0])
+  }, [token1])
 
   useEffect(() => {
     registerNoDataSetter((hasNoData) => {
@@ -47,7 +47,7 @@ export const Chart = ({
     })
   }, [])
 
-  const memoizedToken0 = useMemo(() => token0, [token0])
+  const memoizedToken0 = useMemo(() => token1, [token1])
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
@@ -61,7 +61,7 @@ export const Chart = ({
     localStorage.setItem('tradingview.current_theme.name', resolvedTheme)
 
     const widgetOptions: ChartingLibraryWidgetOptions = {
-      symbol: `${token0.chainId}-${token0.wrapped.address}-${token0.name}-${token0.symbol}`,
+      symbol: `${token1.chainId}-${token1.wrapped.address}-${token1.name}-${token1.symbol}`,
       datafeed: Datafeed,
       interval: widgetProps.interval as ResolutionString,
       container: chartContainerRef.current,
