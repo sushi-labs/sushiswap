@@ -82,21 +82,21 @@ export const useMasterChefWithdraw = ({
           data = {
             abi: masterChefV1Abi_withdraw,
             functionName: 'withdraw',
-            args: [BigInt(pid), BigInt(amount.toString())],
+            args: [BigInt(pid), BigInt(amount.amount.toString())],
           }
           break
         case ChefType.MasterChefV2:
           data = {
             abi: masterChefV2Abi_withdraw,
             functionName: 'withdraw',
-            args: [BigInt(pid), BigInt(amount.toString()), address],
+            args: [BigInt(pid), BigInt(amount.amount.toString()), address],
           }
           break
         case ChefType.MiniChef:
           data = {
             abi: miniChefV2Abi_withdrawAndHarvest,
             functionName: 'withdrawAndHarvest',
-            args: [BigInt(pid), BigInt(amount.toString()), address],
+            args: [BigInt(pid), BigInt(amount.amount.toString()), address],
           }
       }
 

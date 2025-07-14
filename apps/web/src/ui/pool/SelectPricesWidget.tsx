@@ -197,7 +197,7 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
     (multiplier: Fraction) => {
       if (!price) return
       const newPriceLower = price.asFraction.mul(price.scalar).div(multiplier)
-      const newPriceUpper = price.asFraction.mul(price.scalar).div(multiplier)
+      const newPriceUpper = price.asFraction.mul(price.scalar).mul(multiplier)
       setWeightLockedCurrencyBase(undefined)
       if (invertPrice) {
         onLeftRangeInput(newPriceUpper.invert().toString({ fixed: 6 }))
