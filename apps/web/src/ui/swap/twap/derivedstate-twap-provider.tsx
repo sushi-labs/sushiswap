@@ -472,6 +472,8 @@ const useTwapTradeErrors = () => {
   const {
     state: {
       chainId,
+      token0,
+      token1,
       amountInPerChunk,
       fillDelay,
       token0PriceUSD,
@@ -498,13 +500,27 @@ const useTwapTradeErrors = () => {
             sdk.config.minChunkSizeUsd,
           ).isError
         : false
+    const minTradeSizeAmount =
+      amountInPerChunk && token0PriceUSD
+        ? sdk.getMinTradeSizeError(
+            amountInPerChunk.toExact(),
+            token0PriceUSD.toFixed(6),
+            sdk.config.minChunkSizeUsd,
+          ).value
+        : 0
+    const chainMismatchError =
+      token0 && token1 ? token0.chainId !== token1.chainId : false
 
     return {
       minFillDelayError,
       maxFillDelayError,
       minTradeSizeError,
+      chainMismatchError,
+      minTradeSizeAmount,
     }
   }, [
+    token0,
+    token1,
     chainId,
     isLimitOrder,
     fillDelay,

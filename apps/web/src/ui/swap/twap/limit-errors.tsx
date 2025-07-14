@@ -1,29 +1,31 @@
 import { Collapsible } from '@sushiswap/ui'
 import { useMemo } from 'react'
+import { getNetworkName } from 'src/lib/network'
+import { formatUSD } from 'sushi'
 import {
   useDerivedStateTwap,
   useTwapTradeErrors,
 } from './derivedstate-twap-provider'
 import { ErrorMessage } from './error-message'
 export const LimitErrors = () => {
-  const { minTradeSizeError, minFillDelayError, maxFillDelayError } =
-    useTwapTradeErrors()
   const {
-    state: { token0, token1, percentDiff, isLimitPriceInverted },
+    minTradeSizeError,
+    minFillDelayError,
+    maxFillDelayError,
+    chainMismatchError,
+    minTradeSizeAmount,
+  } = useTwapTradeErrors()
+  const {
+    state: { chainId },
   } = useDerivedStateTwap()
 
   const errorMessages = useMemo(() => {
     const messages: { title: string; detail?: string }[] = []
-    if (typeof percentDiff !== 'undefined' && percentDiff < 0) {
-      messages.push({
-        title: `Selling ${!isLimitPriceInverted ? token0?.symbol : token1?.symbol} below market price`,
-        detail: `Your limit price is ${percentDiff.toFixed(
-          2,
-        )}% lower than market. Adjust you limit price to proceed.`,
-      })
-    }
     if (minTradeSizeError) {
-      messages.push({ title: 'Inadequate Trade Size' })
+      messages.push({
+        title: 'Inadequate Trade Size',
+        detail: `Minimum trade amount on ${getNetworkName(chainId)} is ${formatUSD(minTradeSizeAmount)}`,
+      })
     }
     if (minFillDelayError) {
       messages.push({ title: 'Trade Interval Below Limit' })
@@ -31,15 +33,20 @@ export const LimitErrors = () => {
     if (maxFillDelayError) {
       messages.push({ title: 'Trade Interval Exceeds Limit' })
     }
+    if (chainMismatchError) {
+      messages.push({
+        title: 'Chain Mismatch',
+        detail: 'Tokens must be on the same chain to trade.',
+      })
+    }
     return messages
   }, [
-    percentDiff,
-    isLimitPriceInverted,
-    token0,
-    token1,
     minTradeSizeError,
     minFillDelayError,
     maxFillDelayError,
+    chainMismatchError,
+    minTradeSizeAmount,
+    chainId,
   ])
 
   if (!errorMessages?.length) return null
