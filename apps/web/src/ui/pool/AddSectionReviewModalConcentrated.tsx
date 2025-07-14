@@ -19,6 +19,7 @@ import {
   DialogReview,
   DialogTitle,
   Dots,
+  FormattedNumber,
   IconButton,
   List,
   SettingsModule,
@@ -40,6 +41,7 @@ import {
   isSushiSwapV3ChainId,
 } from 'sushi/config'
 import { type Amount, type Type, tryParseAmount } from 'sushi/currency'
+import { formatPercent, formatUSD } from 'sushi/format'
 import {
   NonfungiblePositionManager,
   type Position,
@@ -125,9 +127,11 @@ export const AddSectionReviewModalConcentrated: FC<
     () => (isSorted ? price : price?.invert()),
     [isSorted, price],
   )
-  const isFullRange = Boolean(
-    ticksAtLimit[Bound.LOWER] && ticksAtLimit[Bound.UPPER],
-  )
+  const [isLeftAtLimit, isRightAtLimit] = useMemo(() => {
+    return isSorted
+      ? [ticksAtLimit[Bound.LOWER], ticksAtLimit[Bound.UPPER]]
+      : [[ticksAtLimit[Bound.UPPER], ticksAtLimit[Bound.LOWER]]]
+  }, [isSorted, ticksAtLimit])
 
   const [minPriceDiff, maxPriceDiff] = useMemo(() => {
     if (!midPrice || !token0 || !token1 || !leftPrice || !rightPrice)
@@ -136,7 +140,7 @@ export const AddSectionReviewModalConcentrated: FC<
     const cur = +midPrice?.toFixed(4)
     const max = +rightPrice?.toFixed(4)
 
-    return [((min - cur) / cur) * 100, ((max - cur) / cur) * 100]
+    return [(min - cur) / cur, (max - cur) / cur]
   }, [leftPrice, midPrice, rightPrice, token0, token1])
 
   const fiatAmounts = useMemo(
@@ -365,18 +369,25 @@ export const AddSectionReviewModalConcentrated: FC<
                       subtitle={`Your position will be 100% composed of ${input0?.currency.symbol} at this price`}
                     >
                       <div className="flex flex-col gap-1">
-                        {isFullRange ? '0' : leftPrice?.toSignificant(6)}{' '}
-                        {token1?.symbol}
-                        {isFullRange ? (
+                        <span>
+                          {isLeftAtLimit ? (
+                            '0'
+                          ) : (
+                            <FormattedNumber
+                              number={leftPrice?.toSignificant(6)}
+                            />
+                          )}{' '}
+                          {token1?.symbol}
+                        </span>
+                        {isLeftAtLimit ? (
                           ''
                         ) : (
                           <span className="text-xs text-gray-500 dark:text-slate-400 text-slate-600">
-                            $
-                            {(
+                            {formatUSD(
                               fiatAmountsAsNumber[0] *
-                              (1 + +(minPriceDiff || 0) / 100)
-                            ).toFixed(2)}{' '}
-                            ({minPriceDiff.toFixed(2)}%)
+                                (1 + +(minPriceDiff || 0)),
+                            )}{' '}
+                            ({formatPercent(minPriceDiff)})
                           </span>
                         )}
                       </div>
@@ -391,9 +402,14 @@ export const AddSectionReviewModalConcentrated: FC<
                       }
                     >
                       <div className="flex flex-col gap-1">
-                        {midPrice?.toSignificant(6)} {token1?.symbol}
+                        <span>
+                          <FormattedNumber
+                            number={midPrice?.toSignificant(6)}
+                          />{' '}
+                          {token1?.symbol}
+                        </span>
                         <span className="text-xs text-gray-500 dark:text-slate-400 text-slate-600">
-                          ${fiatAmountsAsNumber[0].toFixed(2)}
+                          {formatUSD(fiatAmountsAsNumber[0])}
                         </span>
                       </div>
                     </List.KeyValue>
@@ -403,18 +419,25 @@ export const AddSectionReviewModalConcentrated: FC<
                       subtitle={`Your position will be 100% composed of ${token1?.symbol} at this price`}
                     >
                       <div className="flex flex-col gap-1">
-                        {isFullRange ? '∞' : rightPrice?.toSignificant(6)}{' '}
-                        {token1?.symbol}
-                        {isFullRange ? (
+                        <span>
+                          {isRightAtLimit ? (
+                            '∞'
+                          ) : (
+                            <FormattedNumber
+                              number={rightPrice?.toSignificant(6)}
+                            />
+                          )}{' '}
+                          {token1?.symbol}
+                        </span>
+                        {isRightAtLimit ? (
                           ''
                         ) : (
                           <span className="text-xs text-gray-500 dark:text-slate-400 text-slate-600">
-                            $
-                            {(
+                            {formatUSD(
                               fiatAmountsAsNumber[0] *
-                              (1 + +(maxPriceDiff || 0) / 100)
-                            ).toFixed(2)}{' '}
-                            ({maxPriceDiff.toFixed(2)}%)
+                                (1 + +(maxPriceDiff || 0)),
+                            )}{' '}
+                            ({formatPercent(maxPriceDiff)})
                           </span>
                         )}{' '}
                       </div>
