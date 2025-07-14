@@ -54,7 +54,9 @@ export const LimitEstPnl = () => {
               : 'text-slate-900 dark:text-pink-100',
         )}
       >
-        {pnl === '0' ? '-' : `${Number.parseFloat(pnl) > 0 ? '+' : ''} ${pnl}%`}
+        {pnl === '0'
+          ? '-'
+          : `${Number.parseFloat(pnl) > 0 ? '+' : '-'} ${pnl}%`}
       </div>
     </div>
   )
