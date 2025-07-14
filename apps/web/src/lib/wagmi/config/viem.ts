@@ -695,6 +695,35 @@ export const katana = {
   },
 } as const
 
+export const hyperEvm = {
+  id: 999,
+  name: 'HyperEVM',
+  nativeCurrency: {
+    decimals: 18,
+    name: 'Hyperliquid',
+    symbol: 'HYPE',
+  },
+  rpcUrls: {
+    default: {
+      http: ['https://rpc.hyperliquid.xyz/evm'],
+    },
+  },
+  blockExplorers: {
+    default: {
+      name: 'HyperEVM Explorer',
+      url: 'https://hyperevmscan.io',
+      apiUrl: 'https://api.hyperevmscan.io/api',
+    },
+  },
+  testnet: false,
+  contracts: {
+    multicall3: {
+      address: '0xcA11bde05977b3631167028862bE2a173976CA11',
+      blockCreated: 13051,
+    },
+  },
+} as const
+
 const drpcId = process.env['DRPC_ID'] || process.env['NEXT_PUBLIC_DRPC_ID']
 
 export const publicTransports = {
@@ -826,6 +855,9 @@ export const publicTransports = {
   ),
   [EvmChainId.HEMI]: http('https://rpc.hemi.network/rpc'),
   [EvmChainId.KATANA]: http('https://rpc.katana.network'),
+  [EvmChainId.HYPEREVM]: http(
+    `https://lb.drpc.org/ogrpc?network=hyperliquid&dkey=${drpcId}`,
+  ),
   /* Testnets */ // TODO: add testnet transports
   [EvmChainId.ARBITRUM_TESTNET]: http('https://sepolia-rollup.arbitrum.io/rpc'),
   [EvmChainId.AVALANCHE_TESTNET]: http(
@@ -851,7 +883,7 @@ export const publicChains = [
   bsc,
   bttc,
   blast,
-  celo as unknown as Omit<typeof mainnet, 'id'> & { id: 42220 },
+  celo,
   cronos,
   fantom,
   fuse,
@@ -872,7 +904,7 @@ export const publicChains = [
   palm,
   okc,
   heco,
-  zkSync as unknown as Omit<typeof mainnet, 'id'> & { id: 324 },
+  zkSync,
   linea,
   base,
   scroll,
@@ -884,10 +916,11 @@ export const publicChains = [
   mode,
   taiko,
   zkLinkNova,
-  apeChain as unknown as Omit<typeof mainnet, 'id'> & { id: 33139 },
+  apeChain,
   sonic,
   hemi,
   katana,
+  hyperEvm,
   /* Testnets */
   arbitrumSepolia,
   avalancheFuji,
@@ -1088,6 +1121,10 @@ export const publicClientConfig = {
   [EvmChainId.KATANA]: {
     chain: katana,
     transport: publicTransports[EvmChainId.KATANA],
+  },
+  [EvmChainId.HYPEREVM]: {
+    chain: hyperEvm,
+    transport: publicTransports[EvmChainId.HYPEREVM],
   },
   /* Testnets */
   [EvmChainId.ARBITRUM_TESTNET]: {
