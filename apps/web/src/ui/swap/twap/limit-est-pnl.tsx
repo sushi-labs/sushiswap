@@ -1,12 +1,34 @@
 import { Explainer, classNames } from '@sushiswap/ui'
+import { useMemo } from 'react'
 import { useDerivedStateTwap } from './derivedstate-twap-provider'
 
 export const LimitEstPnl = () => {
-  //@DEV only using priceDiff as place holder for now to present UI
   const {
-    state: { percentDiff },
+    state: {
+      amountInPerChunk,
+      amountOut,
+      chunks,
+      token0PriceUSD,
+      token1PriceUSD,
+    },
   } = useDerivedStateTwap()
-  const priceDiff = (percentDiff || 0) / 2
+
+  const pnl = useMemo(() => {
+    if (!amountInPerChunk || !amountOut || !token0PriceUSD || !token1PriceUSD) {
+      return '0'
+    }
+    const totalInUSD = amountInPerChunk
+      ?.multiply(token0PriceUSD)
+      ?.multiply(chunks || 1)
+      .toExact()
+    const totalOutUSD = amountOut?.multiply(token1PriceUSD).toExact()
+
+    const _pnl =
+      ((Number.parseFloat(totalOutUSD) - Number.parseFloat(totalInUSD)) /
+        Number.parseFloat(totalInUSD)) *
+      100
+    return _pnl.toFixed(2)
+  }, [amountInPerChunk, amountOut, token0PriceUSD, token1PriceUSD, chunks])
 
   return (
     <div className="flex items-center gap-3 font-medium whitespace-nowrap">
@@ -25,16 +47,14 @@ export const LimitEstPnl = () => {
       </div>
       <div
         className={classNames(
-          priceDiff > 0
+          Number.parseFloat(pnl) > 0
             ? 'text-[#1DA67D]'
-            : priceDiff < 0
+            : Number.parseFloat(pnl) < 0
               ? 'text-red'
               : 'text-slate-900 dark:text-pink-100',
         )}
       >
-        {priceDiff === 0
-          ? '-'
-          : `${priceDiff > 0 ? '+' : ''} ${priceDiff.toFixed(2)}%`}
+        {pnl === '0' ? '-' : `${Number.parseFloat(pnl) > 0 ? '+' : ''} ${pnl}%`}
       </div>
     </div>
   )
