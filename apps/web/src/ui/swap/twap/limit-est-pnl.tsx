@@ -23,10 +23,7 @@ export const LimitEstPnl = () => {
       .toExact()
     const totalOutUSD = amountOut?.multiply(token1PriceUSD).toExact()
 
-    const _pnl =
-      ((Number.parseFloat(totalOutUSD) - Number.parseFloat(totalInUSD)) /
-        Number.parseFloat(totalInUSD)) *
-      100
+    const _pnl = Number.parseFloat(totalOutUSD) - Number.parseFloat(totalInUSD)
     return _pnl.toFixed(2)
   }, [amountInPerChunk, amountOut, token0PriceUSD, token1PriceUSD, chunks])
 
@@ -54,9 +51,9 @@ export const LimitEstPnl = () => {
               : 'text-slate-900 dark:text-pink-100',
         )}
       >
-        {pnl === '0'
+        {pnl === '0.00'
           ? '-'
-          : `${Number.parseFloat(pnl) > 0 ? '+' : '-'} ${pnl}%`}
+          : `${Number.parseFloat(pnl) > 0 ? '+' : ''}$${pnl}`}
       </div>
     </div>
   )

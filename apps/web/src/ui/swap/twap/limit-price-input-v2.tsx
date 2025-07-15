@@ -1,36 +1,29 @@
 'use client'
 
-import {
-  Currency,
-  SkeletonBox,
-  SkeletonCircle,
-  SkeletonText,
-  TextField,
-  classNames,
-} from '@sushiswap/ui'
+import { Button, SkeletonBox, TextField, classNames } from '@sushiswap/ui'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Amount, Price } from 'sushi/currency'
 import { parseUnits } from 'viem/utils'
 import { useDerivedStateTwap } from './derivedstate-twap-provider'
 
-const PRICE_OPTIONS = [
-  {
-    label: 'Market',
-    value: 0,
-  },
-  {
-    label: '+1%',
-    value: 1,
-  },
-  {
-    label: '+5%',
-    value: 5,
-  },
-  {
-    label: '+10%',
-    value: 10,
-  },
-]
+// const PRICE_OPTIONS = [
+// 	{
+// 		label: "Market",
+// 		value: 0,
+// 	},
+// 	{
+// 		label: "+1%",
+// 		value: 1,
+// 	},
+// 	{
+// 		label: "+5%",
+// 		value: 5,
+// 	},
+// 	{
+// 		label: "+10%",
+// 		value: 10,
+// 	},
+// ];
 
 export const LimitPriceInputV2 = () => {
   const {
@@ -41,7 +34,8 @@ export const LimitPriceInputV2 = () => {
       marketPrice,
       limitPrice,
       isLimitPriceInverted,
-      limitPriceString,
+      token0PriceUSD,
+      token1PriceUSD,
     },
     mutate: { setIsLimitPriceInverted, setLimitPrice, setPercentDiff },
     isToken0Loading,
@@ -51,6 +45,9 @@ export const LimitPriceInputV2 = () => {
   const [priceOptionIndex, setPriceOptionIndex] = useState<number | undefined>(
     0,
   )
+  const [marketPriceLimitString, setMarketPriceLimitString] =
+    useState<string>('')
+  const [marketUsdAmount, setMarketUsdAmount] = useState<string>('')
 
   useEffect(() => {
     // reset priceOptionIndex && isLimitPriceInverted on token change
@@ -62,43 +59,53 @@ export const LimitPriceInputV2 = () => {
 
   useEffect(() => {
     // update limitPrice based on selected price option & current market price
-    if (typeof priceOptionIndex === 'undefined' || !marketPrice) {
+    if (
+      typeof priceOptionIndex === 'undefined' ||
+      !marketPrice ||
+      !token1PriceUSD ||
+      !token0PriceUSD
+    ) {
       return
     }
+    setLimitPrice(
+      (isLimitPriceInverted
+        ? marketPrice.invert()
+        : marketPrice
+      ).toSignificant(),
+    )
+    setMarketPriceLimitString(
+      (isLimitPriceInverted
+        ? marketPrice.invert()
+        : marketPrice
+      ).toSignificant(),
+    )
+    setMarketUsdAmount(
+      (isLimitPriceInverted ? token0PriceUSD : token1PriceUSD).toSignificant(6),
+    )
+  }, [
+    marketPrice,
+    priceOptionIndex,
+    isLimitPriceInverted,
+    setLimitPrice,
+    token0PriceUSD,
+    token1PriceUSD,
+  ])
 
-    if (priceOptionIndex === 0) {
-      setLimitPrice(
-        (isLimitPriceInverted
-          ? marketPrice.invert()
-          : marketPrice
-        ).toSignificant(),
-      )
-    } else {
-      const priceAdjustmentPercentage = PRICE_OPTIONS[priceOptionIndex].value
+  const { marketAmount, limitAmount } = useMemo(() => {
+    if (!marketPrice || !limitPrice)
+      return { marketAmount: 0n, limitAmount: 0n }
+    const oneUnitOfBaseCurrency = Amount.fromRawAmount(
+      marketPrice.baseCurrency,
+      parseUnits('1', marketPrice.baseCurrency.decimals),
+    )
+    const marketAmount = marketPrice.quote(oneUnitOfBaseCurrency).quotient
+    const limitAmount = limitPrice.quote(oneUnitOfBaseCurrency).quotient
+    return { marketAmount, limitAmount }
+  }, [marketPrice, limitPrice])
 
-      const oneUnitOfBaseCurrency = Amount.fromRawAmount(
-        marketPrice.baseCurrency,
-        parseUnits('1', marketPrice.baseCurrency.decimals),
-      )
-
-      const limitPrice = new Price({
-        baseAmount: oneUnitOfBaseCurrency,
-        quoteAmount: Amount.fromRawAmount(
-          marketPrice.quoteCurrency,
-          (marketPrice.quote(oneUnitOfBaseCurrency).quotient *
-            BigInt(100 + priceAdjustmentPercentage)) /
-            100n,
-        ),
-      })
-
-      setLimitPrice(
-        (isLimitPriceInverted
-          ? limitPrice.invert()
-          : limitPrice
-        ).toSignificant(),
-      )
-    }
-  }, [marketPrice, priceOptionIndex, isLimitPriceInverted, setLimitPrice])
+  const [from, to] = isLimitPriceInverted
+    ? [marketAmount, limitAmount]
+    : [limitAmount, marketAmount]
 
   useEffect(() => {
     if (
@@ -110,144 +117,167 @@ export const LimitPriceInputV2 = () => {
       return
     }
 
-    const oneUnitOfBaseCurrency = Amount.fromRawAmount(
-      marketPrice.baseCurrency,
-      parseUnits('1', marketPrice.baseCurrency.decimals),
-    )
-    const marketAmount = marketPrice.quote(oneUnitOfBaseCurrency).quotient
-    const limitAmount = limitPrice.quote(oneUnitOfBaseCurrency).quotient
-
-    const [from, to] = isLimitPriceInverted
-      ? [marketAmount, limitAmount]
-      : [limitAmount, marketAmount]
-
-    const diff = (from * 10_000n) / to - 10_000n
+    const diff = (to * 10_000n) / from - 10_000n
     const value = Number(diff) / 100
     setPercentDiff(value)
-  }, [
-    priceOptionIndex,
-    marketPrice,
-    limitPrice,
-    isLimitPriceInverted,
-    setPercentDiff,
-  ])
+  }, [priceOptionIndex, marketPrice, limitPrice, setPercentDiff, from, to])
 
   const onInputChange = useCallback(
     (value: string) => {
+      if (!token0PriceUSD || !token1PriceUSD || !marketPrice) return
       setPriceOptionIndex(undefined)
-      setLimitPrice(value)
-    },
-    [setLimitPrice],
-  )
+      setMarketUsdAmount(value)
+      const currentPrice = (
+        isLimitPriceInverted ? token0PriceUSD : token1PriceUSD
+      ).toSignificant(10)
+      const priceDiffReg =
+        Number.parseInt(
+          (
+            ((Number.parseFloat(value) - Number.parseFloat(currentPrice)) /
+              Number.parseFloat(currentPrice)) *
+            10_000_000
+          ).toFixed(0),
+        ) || 1
+      const priceDiffInverse =
+        Number.parseInt(
+          (
+            ((Number.parseFloat(currentPrice) - Number.parseFloat(value)) /
+              Number.parseFloat(value)) *
+            10_000_000
+          ).toFixed(0),
+        ) || 1
 
-  const onInvert = useCallback(() => {
-    setPriceOptionIndex(0)
-    setIsLimitPriceInverted((inverted) => !inverted)
-  }, [setIsLimitPriceInverted])
+      const priceDiff = !isLimitPriceInverted ? priceDiffInverse : priceDiffReg
+
+      const oneUnitOfBaseCurrency = Amount.fromRawAmount(
+        marketPrice.baseCurrency,
+        parseUnits('1', marketPrice.baseCurrency.decimals),
+      )
+
+      const limitPrice = new Price({
+        baseAmount: oneUnitOfBaseCurrency,
+        quoteAmount: Amount.fromRawAmount(
+          marketPrice.quoteCurrency,
+          (marketPrice.quote(oneUnitOfBaseCurrency).quotient *
+            BigInt(10_000_000 + priceDiff)) /
+            10_000_000n,
+        ),
+      })
+
+      setLimitPrice(
+        (isLimitPriceInverted
+          ? limitPrice.invert()
+          : limitPrice
+        ).toSignificant(),
+      )
+    },
+    [
+      setLimitPrice,
+      isLimitPriceInverted,
+      marketPrice,
+      token0PriceUSD,
+      token1PriceUSD,
+    ],
+  )
 
   const [_token0, _token1] = isLimitPriceInverted
     ? [token1, token0]
     : [token0, token1]
 
-  const handlePriceOptionChange = useCallback(() => {
-    if (typeof percentDiff !== 'undefined') {
-      setPriceOptionIndex(0)
-      return
-    }
-    const currentIndex = priceOptionIndex ?? 0
-    setPriceOptionIndex((currentIndex + 1) % PRICE_OPTIONS.length)
-  }, [priceOptionIndex, percentDiff])
-
   return (
     <div
       className={classNames(
-        'relative overflow-hidden flex flex-col gap-2 border border-white/10 dark:border-black/10 bg-gray-100 dark:bg-slate-900 rounded-xl',
+        'relative overflow-hidden flex pt-3 pb-2 px-3 flex-col gap-4 border border-white/10 dark:border-black/10 bg-gray-100 dark:bg-slate-900 rounded-xl',
       )}
     >
-      <div className="flex justify-between items-center py-3 px-5">
-        <button
-          type="button"
-          onClick={onInvert}
-          onKeyDown={onInvert}
-          className="flex items-center gap-2 whitespace-nowrap text-xs"
+      <div className="text-muted-foreground text-xs">Price</div>
+
+      <div className="flex items-center justify-between gap-2">
+        <div
+          data-state={isLoading ? 'inactive' : 'active'}
+          className="data-[state=inactive]:hidden data-[state=active]:flex gap-2 items-center w-fit"
         >
-          <span className="text-muted-foreground">Price</span>
-          {_token0 ? (
-            <>
-              <Currency.Icon currency={_token0} width={16} height={16} />
-              <span className="font-medium text-slate-900 dark:text-slate-50">
-                {_token0.name}
-              </span>
-            </>
-          ) : (
-            <>
-              <SkeletonCircle radius={16} />
-              <span className="w-8">
-                <SkeletonText fontSize="xs" />
-              </span>
-            </>
-          )}
-        </button>
-      </div>
-      <div className="flex flex-col gap-2 px-3 py-2">
-        <div className="flex items-center gap-4">
-          <div
-            data-state={isLoading ? 'active' : 'inactive'}
-            className={classNames(
-              'data-[state=inactive]:hidden data-[state=active]:flex',
-              'gap-4 items-center justify-between flex-grow h-[40px]',
-            )}
-          >
-            <SkeletonBox className="w-2/3 h-[32px] rounded-lg" />
-            {isToken0Loading ? (
-              <SkeletonBox className="w-1/3 h-[32px] rounded-lg" />
-            ) : null}
-          </div>
-          <div
-            data-state={isLoading ? 'inactive' : 'active'}
-            className="data-[state=inactive]:hidden data-[state=active]:flex flex-1 items-center"
-          >
+          <div className="flex items-center w-fit">
+            <p className="dark:text-slate-50 mr-0.5 text-3xl font-medium text-gray-900">
+              $
+            </p>
             <TextField
               type="number"
               variant="naked"
               onValueChange={onInputChange}
-              value={limitPriceString}
+              value={marketUsdAmount}
               maxDecimals={_token1?.decimals}
               data-state={isLoading ? 'inactive' : 'active'}
-              className={'p-0 py-1 !text-3xl font-medium'}
+              className={'p-0 py-1 !text-3xl font-medium max-w-[260px]'}
             />
-            {typeof percentDiff !== 'undefined' ? (
-              <span
-                className={classNames(
-                  'ml-2 text-sm font-medium',
-                  percentDiff > 0 ? 'text-slate-450' : 'text-red',
-                )}
-              >
-                {`(${percentDiff > 0 ? '+' : ''}${percentDiff.toFixed(2)}%)`}
-              </span>
-            ) : null}
           </div>
-          {_token1 ? (
-            <div className="flex items-center gap-2 font-medium">
-              <button
-                type="button"
-                className="text-blue dark:text-skyblue text-sm px-2 flex items-center"
-                onClick={handlePriceOptionChange}
-                onKeyDown={handlePriceOptionChange}
-              >
-                {PRICE_OPTIONS[priceOptionIndex ?? 0].label}
-              </button>
-              <div className="flex items-center gap-1">
-                <Currency.Icon
-                  disableLink
-                  currency={_token1}
-                  width={20}
-                  height={20}
-                />
-                <span>{_token1.symbol}</span>
-              </div>
+          {typeof percentDiff !== 'undefined' ? (
+            <div
+              className={classNames(
+                'w-full text-sm font-medium',
+                percentDiff > 0 ? 'text-slate-450' : 'text-red',
+              )}
+            >
+              {`(${percentDiff > 0 ? '+' : ''}${percentDiff.toFixed(2)}%)`}
             </div>
           ) : null}
+        </div>
+      </div>
+
+      <div className="flex items-center gap-4 justify-between">
+        <div className="text-sm font-medium text-muted-foreground">
+          {marketPriceLimitString} {_token1?.symbol} per {_token0?.symbol}
+        </div>
+        <div
+          data-state={isLoading ? 'active' : 'inactive'}
+          className={classNames(
+            'data-[state=inactive]:hidden data-[state=active]:flex',
+            'gap-4 items-center justify-between flex-grow h-[40px]',
+          )}
+        >
+          <SkeletonBox className="w-2/3 h-[32px] rounded-lg" />
+          {isToken0Loading ? (
+            <SkeletonBox className="w-1/3 h-[32px] rounded-lg" />
+          ) : null}
+        </div>
+        <div
+          data-state={isLoading ? 'active' : 'inactive'}
+          className="data-[state=inactive]:flex data-[state=active]:hidden items-center gap-1"
+        >
+          <Button
+            onClick={() => {
+              setPriceOptionIndex(0)
+              if (isLimitPriceInverted) return
+              setIsLimitPriceInverted(!isLimitPriceInverted)
+            }}
+            size="xs"
+            className={classNames(
+              '!px-2 !rounded-xl',
+              isLimitPriceInverted
+                ? 'dark:border-skyblue border-blue border'
+                : '',
+            )}
+            variant={isLimitPriceInverted ? 'tertiary' : 'secondary'}
+          >
+            {token0?.symbol}
+          </Button>
+          <Button
+            onClick={() => {
+              setPriceOptionIndex(0)
+              if (!isLimitPriceInverted) return
+              setIsLimitPriceInverted(!isLimitPriceInverted)
+            }}
+            size="xs"
+            className={classNames(
+              '!px-2 !rounded-xl',
+              isLimitPriceInverted
+                ? ''
+                : 'dark:border-skyblue border-blue border',
+            )}
+            variant={isLimitPriceInverted ? 'secondary' : 'tertiary'}
+          >
+            {token1?.symbol}
+          </Button>
         </div>
       </div>
     </div>

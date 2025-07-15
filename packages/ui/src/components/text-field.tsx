@@ -166,8 +166,8 @@ const Component = <T extends InputType>(
           hasIcon: Icon ? 'yes' : 'no',
           hasUnit: unit ? 'yes' : 'no',
           className: classNames(
-            className,
             'flex-grow flex-1 !outline-none !ring-0',
+            className,
           ),
         })}
         ref={ref}
