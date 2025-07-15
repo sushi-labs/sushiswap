@@ -60,10 +60,6 @@ export const isSwapApiEnabledChainId = (
   SWAP_API_SUPPORTED_CHAIN_IDS.includes(chainId as SwapApiEnabledChainId)
 
 export const DISABLED_CHAIN_IDS = [
-  ChainId.BOBA_AVAX,
-  ChainId.PALM,
-  ChainId.HECO,
-  ChainId.OKEX,
   ChainId.MOONBEAM,
   ChainId.MOONRIVER,
   ChainId.HARMONY,
