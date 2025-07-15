@@ -63,6 +63,7 @@ import {
   warningSeverity,
   warningSeverityClassName,
 } from '../../../lib/swap/warningSeverity'
+import { useDerivedStateSimpleTrade } from '../trade/derivedstate-simple-trade-provider'
 import {
   useDerivedStateSimpleSwap,
   useSimpleSwapTrade,
@@ -92,6 +93,9 @@ const _SimpleSwapTradeReviewDialog: FC<{
     state: { token0, token1, chainId0: chainId, swapAmount, recipient },
     mutate: { setSwapAmount },
   } = useDerivedStateSimpleSwap()
+  const {
+    state: { tradeView },
+  } = useDerivedStateSimpleTrade()
 
   const { approved } = useApproved(APPROVE_TAG_SWAP)
   const [slippagePercent] = useSlippageTolerance()
@@ -492,18 +496,20 @@ const _SimpleSwapTradeReviewDialog: FC<{
           </>
         )}
       </DialogReview>
-      <DialogConfirm
-        chainId={chainId}
-        status={status}
-        testId="make-another-swap"
-        buttonText="Make another swap"
-        txHash={data}
-        successMessage={`You ${
-          isWrap ? 'wrapped' : isUnwrap ? 'unwrapped' : 'sold'
-        } ${tradeRef.current?.amountIn?.toSignificant(6)} ${token0?.symbol} ${
-          isWrap ? 'to' : isUnwrap ? 'to' : 'for'
-        } ${tradeRef.current?.amountOut?.toSignificant(6)} ${token1?.symbol}`}
-      />
+      {tradeView === 'advanced' ? null : (
+        <DialogConfirm
+          chainId={chainId}
+          status={status}
+          testId="make-another-swap"
+          buttonText="Make another swap"
+          txHash={data}
+          successMessage={`You ${
+            isWrap ? 'wrapped' : isUnwrap ? 'unwrapped' : 'sold'
+          } ${tradeRef.current?.amountIn?.toSignificant(6)} ${token0?.symbol} ${
+            isWrap ? 'to' : isUnwrap ? 'to' : 'for'
+          } ${tradeRef.current?.amountOut?.toSignificant(6)} ${token1?.symbol}`}
+        />
+      )}
     </Trace>
   )
 }
