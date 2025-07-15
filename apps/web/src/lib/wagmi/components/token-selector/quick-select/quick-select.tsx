@@ -1,4 +1,4 @@
-import { useIsSmScreen } from '@sushiswap/hooks'
+import { useIsSmScreen, useMediaQuery } from '@sushiswap/hooks'
 import {
   Badge,
   Currency as CurrencyComp,
@@ -13,13 +13,14 @@ import { useAccount } from 'wagmi'
 import { useQuickSelectTokens } from '../hooks/use-quick-select-tokens'
 import { useQuickSelectContext } from './quick-select-provider'
 
-export const QuickSelect = ({
-  type,
-  optionCount = 4,
-}: {
-  type: 'INPUT' | 'OUTPUT'
-  optionCount?: 1 | 2 | 3 | 4
-}) => {
+export const QuickSelect = ({ type }: { type: 'INPUT' | 'OUTPUT' }) => {
+  const isSmScreen = useIsSmScreen()
+  const isXs = useMediaQuery({
+    query: `(max-width: 400px)`,
+  })
+
+  const optionCount = isXs ? 2 : isSmScreen ? 3 : 4
+
   const { address } = useAccount()
   const { quickSelectTokens, isLoading } = useQuickSelectTokens({
     account: address,

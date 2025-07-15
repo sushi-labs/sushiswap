@@ -1,7 +1,7 @@
 'use client'
 
 import { ChevronRightIcon } from '@heroicons/react/24/outline'
-import { useIsMounted, useIsSmScreen } from '@sushiswap/hooks'
+import { useIsMounted } from '@sushiswap/hooks'
 import {
   Badge,
   Button,
@@ -101,7 +101,6 @@ const CurrencyInput: FC<CurrencyInputProps> = ({
   hidePercentageInputs,
 }) => {
   const isMounted = useIsMounted()
-  const isSmScreen = useIsSmScreen()
 
   const [localValue, setLocalValue] = useState<string>('')
   const { address } = useAccount()
@@ -174,9 +173,7 @@ const CurrencyInput: FC<CurrencyInputProps> = ({
           showQuickSelect && '!justify-end !sm:w-fit',
         )}
       >
-        {showQuickSelect ? (
-          <QuickSelect type={type} optionCount={isSmScreen ? 3 : 4} />
-        ) : null}
+        {showQuickSelect ? <QuickSelect type={type} /> : null}
 
         <TokenSelectorV2
           currencies={currencies}
@@ -295,7 +292,6 @@ const CurrencyInput: FC<CurrencyInputProps> = ({
     hideInputAndPricing,
     type,
     isTwap,
-    isSmScreen,
   ])
 
   return (

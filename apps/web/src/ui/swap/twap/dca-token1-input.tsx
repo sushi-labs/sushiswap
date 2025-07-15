@@ -1,6 +1,5 @@
 'use client'
 
-import { useIsSmScreen } from '@sushiswap/hooks'
 import {
   Badge,
   Button,
@@ -24,8 +23,6 @@ export const DCAToken1Input = () => {
     mutate: { setToken1: onSelect },
     isToken1Loading: isTokenLoading,
   } = useDerivedStateTwap()
-  const isSmScreen = useIsSmScreen()
-
   const { address } = useAccount()
 
   const { data: balance, isLoading: isBalanceLoading } = useAmountBalance(token)
@@ -106,7 +103,7 @@ export const DCAToken1Input = () => {
         />
       </div>
       <div className="flex justify-end items-center w-fit ml-auto gap-4">
-        <QuickSelect type="OUTPUT" optionCount={isSmScreen ? 3 : 4} />
+        <QuickSelect type="OUTPUT" />
         {selector}
         {isTokenLoading ? (
           <div className="flex items-center h-[44px] w-full">

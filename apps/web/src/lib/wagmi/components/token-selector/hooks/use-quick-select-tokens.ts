@@ -182,7 +182,7 @@ export const useQuickSelectTokens = ({
         0,
         optionCount - quickSelectBasedOnSwaps.length,
       )
-      return [...remainingTokens, ...quickSelectBasedOnSwaps]
+      return [...quickSelectBasedOnSwaps, ...remainingTokens]
     }
     if (quickSelectBasedOnSwaps.length === optionCount) {
       return quickSelectBasedOnSwaps
