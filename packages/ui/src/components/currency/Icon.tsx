@@ -11,13 +11,13 @@ const BnbLogo = 'bnb.svg'
 const EthereumLogo = 'ethereum.svg'
 const FtmLogo = 'ftm.svg'
 const OneLogo = 'one.svg'
-const HtLogo = 'ht.svg'
+// const HtLogo = 'ht.svg'
 const MaticLogo = 'matic.svg'
 const GlmrLogo = 'glmr.svg'
-const OktLogo = 'okt.svg'
+// const OktLogo = 'okt.svg'
 const xDaiLogo = 'xdai.svg'
 const CeloLogo = 'celo.svg'
-const PalmLogo = 'plam.svg'
+// const PalmLogo = 'plam.svg'
 const MovrLogo = 'movr.svg'
 const FuseLogo = 'fuse.svg'
 const TelosLogo = 'telos.svg'
@@ -35,6 +35,7 @@ const BitcoinLogo = 'bitcoin.svg'
 const MntLogo = 'mntl.svg'
 const ApeLogo = 'ape.svg'
 const SonicLogo = 'sonic.svg'
+const HypeLogo = 'hype.svg'
 
 const LOGO: Record<number, string> = {
   [ChainId.ETHEREUM]: EthereumLogo,
@@ -44,24 +45,24 @@ const LOGO: Record<number, string> = {
   // [ChainId.ROPSTEN]: EthereumLogo,
   // [ChainId.GÖRLI]: EthereumLogo,
   [ChainId.FANTOM]: FtmLogo,
-  [ChainId.FANTOM_TESTNET]: FtmLogo,
+  // [ChainId.FANTOM_TESTNET]: FtmLogo,
   [ChainId.POLYGON]: MaticLogo,
-  [ChainId.POLYGON_TESTNET]: MaticLogo,
+  // [ChainId.POLYGON_TESTNET]: MaticLogo,
   [ChainId.GNOSIS]: xDaiLogo,
   [ChainId.BSC]: BnbLogo,
-  [ChainId.BSC_TESTNET]: BnbLogo,
+  // [ChainId.BSC_TESTNET]: BnbLogo,
   [ChainId.AVALANCHE]: AvaxLogo,
-  [ChainId.AVALANCHE_TESTNET]: AvaxLogo,
-  [ChainId.HECO]: HtLogo,
+  // [ChainId.AVALANCHE_TESTNET]: AvaxLogo,
+  // [ChainId.HECO]: HtLogo,
   // [ChainId.HECO_TESTNET]: HtLogo,
   [ChainId.HARMONY]: OneLogo,
   // [ChainId.HARMONY_TESTNET]: OneLogo,
-  [ChainId.OKEX]: OktLogo,
+  // [ChainId.OKEX]: OktLogo,
   // [ChainId.OKEX_TESTNET]: OktLogo,
   [ChainId.ARBITRUM]: EthereumLogo,
-  [ChainId.ARBITRUM_TESTNET]: EthereumLogo,
+  // [ChainId.ARBITRUM_TESTNET]: EthereumLogo,
   [ChainId.CELO]: CeloLogo,
-  [ChainId.PALM]: PalmLogo,
+  // [ChainId.PALM]: PalmLogo,
   [ChainId.MOONRIVER]: MovrLogo,
   [ChainId.FUSE]: FuseLogo,
   [ChainId.TELOS]: TelosLogo,
@@ -71,7 +72,7 @@ const LOGO: Record<number, string> = {
   [ChainId.ARBITRUM_NOVA]: EthereumLogo,
   [ChainId.METIS]: MetisLogo,
   [ChainId.BOBA]: EthereumLogo,
-  [ChainId.BOBA_AVAX]: BobaLogo,
+  // [ChainId.BOBA_AVAX]: BobaLogo,
   [ChainId.BOBA_BNB]: BobaLogo,
   [ChainId.BTTC]: BttcLogo,
   [ChainId.POLYGON_ZKEVM]: EthereumLogo,
@@ -96,6 +97,7 @@ const LOGO: Record<number, string> = {
   [ChainId.SONIC]: SonicLogo,
   [ChainId.HEMI]: EthereumLogo,
   [ChainId.KATANA]: EthereumLogo,
+  [ChainId.HYPEREVM]: HypeLogo,
 }
 
 // function djb2(str: string) {
