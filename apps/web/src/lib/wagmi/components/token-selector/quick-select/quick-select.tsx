@@ -142,7 +142,7 @@ const QuickSelectItem = ({
         onClick={select}
         className={classNames('opacity-80', isSelected && '!opacity-100')}
       >
-        <div className="rounded-full p-1">
+        <div className="rounded-full p-0.5 sm:p-1">
           <CurrencyComp.Icon
             disableLink
             currency={mainCurrency}

@@ -1,7 +1,7 @@
 'use client'
 
 import { ChevronRightIcon } from '@heroicons/react/24/outline'
-import { useIsMounted } from '@sushiswap/hooks'
+import { useIsMounted, useIsSmScreen } from '@sushiswap/hooks'
 import {
   Badge,
   Button,
@@ -101,6 +101,7 @@ const CurrencyInput: FC<CurrencyInputProps> = ({
   hidePercentageInputs,
 }) => {
   const isMounted = useIsMounted()
+  const isSmScreen = useIsSmScreen()
 
   const [localValue, setLocalValue] = useState<string>('')
   const { address } = useAccount()
@@ -168,12 +169,14 @@ const CurrencyInput: FC<CurrencyInputProps> = ({
     return (
       <div
         className={classNames(
-          'flex items-center gap-2',
+          'flex items-center gap-1 md:gap-2',
           hideInputAndPricing && 'justify-between w-full sm:w-fit',
           showQuickSelect && '!justify-end !sm:w-fit',
         )}
       >
-        {showQuickSelect ? <QuickSelect type={type} /> : null}
+        {showQuickSelect ? (
+          <QuickSelect type={type} optionCount={isSmScreen ? 3 : 4} />
+        ) : null}
 
         <TokenSelectorV2
           currencies={currencies}
@@ -228,7 +231,9 @@ const CurrencyInput: FC<CurrencyInputProps> = ({
                     </Badge>
                   </div>
                   <div className="flex flex-col items-start">
-                    <span className="text-xl leading-5">{currency.symbol}</span>
+                    <span className="text-sm md:text-xl leading-5">
+                      {currency.symbol}
+                    </span>
                     {/* <span className="text-xs leading-3 text-muted-foreground">
 											{EvmChain.from(currency.chainId)?.name}
 										</span> */}
@@ -261,7 +266,7 @@ const CurrencyInput: FC<CurrencyInputProps> = ({
                       />
                     </Badge>
                   </div>
-                  <span className="text-xl">{currency.symbol}</span>
+                  <span className="text-sm md:text-xl">{currency.symbol}</span>
                   <SelectIcon />
                 </>
               )
@@ -290,6 +295,7 @@ const CurrencyInput: FC<CurrencyInputProps> = ({
     hideInputAndPricing,
     type,
     isTwap,
+    isSmScreen,
   ])
 
   return (
@@ -335,7 +341,7 @@ const CurrencyInput: FC<CurrencyInputProps> = ({
           />
         </div>
       </div>
-      <div className="relative flex items-center gap-4 mt-1">
+      <div className="relative flex items-center gap-2 md:gap-4 mt-1">
         {hideInputAndPricing ? null : (
           <div className="w-full">
             <div

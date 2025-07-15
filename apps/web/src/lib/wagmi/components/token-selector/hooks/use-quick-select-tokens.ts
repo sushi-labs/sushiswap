@@ -136,8 +136,8 @@ export const useQuickSelectTokens = ({
   )
 
   const defaultTokens = useMemo(() => {
-    return getDefaultTokens(firstTenChainIds)
-  }, [firstTenChainIds])
+    return getDefaultTokens(firstTenChainIds).slice(0, optionCount)
+  }, [firstTenChainIds, optionCount])
 
   const mostSwappedTokens = useMemo(() => {
     if (!recentSwaps || recentSwaps.length === 0) return []
