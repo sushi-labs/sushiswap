@@ -47,6 +47,7 @@ import {
 } from 'wagmi'
 import type { SendTransactionReturnType } from 'wagmi/actions'
 import { usePrice } from '~evm/_common/ui/price-provider/price-provider/use-price'
+import { useDerivedStateSimpleTrade } from '../trade/derivedstate-simple-trade-provider'
 import {
   type UseTwapTradeReturn,
   useDerivedStateTwap,
@@ -70,6 +71,9 @@ export const TwapTradeReviewDialog: FC<{
     },
     mutate: { setSwapAmount },
   } = useDerivedStateTwap()
+  const {
+    state: { tradeView },
+  } = useDerivedStateSimpleTrade()
 
   const [acceptDisclaimer, setAcceptDisclaimer] = useState(true)
   const srcTokenUsdPrice = usePrice({
@@ -389,14 +393,16 @@ export const TwapTradeReviewDialog: FC<{
           </>
         )}
       </DialogReview>
-      <DialogConfirm
-        chainId={chainId}
-        status={status}
-        testId="place-another-order"
-        buttonText="Place another order"
-        txHash={data}
-        successMessage={`Your ${tradeRef.current?.isLimitOrder ? 'limit' : 'DCA'} order was placed`}
-      />
+      {tradeView === 'advanced' ? null : (
+        <DialogConfirm
+          chainId={chainId}
+          status={status}
+          testId="place-another-order"
+          buttonText="Place another order"
+          txHash={data}
+          successMessage={`Your ${tradeRef.current?.isLimitOrder ? 'limit' : 'DCA'} order was placed`}
+        />
+      )}
     </DialogProvider>
   )
 }
