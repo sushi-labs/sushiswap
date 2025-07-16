@@ -42,6 +42,7 @@ export const OnramperButton: FC<{
 
   const onClick = useCallback(() => {
     sendAnalyticsEvent(InterfaceEventName.FIAT_ONRAMP_WIDGET_OPENED)
+
     if (chainId === -3) setDefaultCrypto('kda_kadena')
     setOpen(true)
   }, [chainId, setDefaultCrypto, setOpen])
