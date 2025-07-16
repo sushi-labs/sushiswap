@@ -1,3 +1,4 @@
+import { checkBotId } from 'botid/server'
 import { type NextRequest, NextResponse } from 'next/server'
 import { ChainKey, getEvmChainInfo } from 'sushi/chain'
 import { isSushiSwapChainId } from 'sushi/config'
@@ -32,6 +33,22 @@ export async function middleware(req: NextRequest) {
     const portalMiddleware = (await import('./app/portal/middleware'))
       .portalMiddleware
     return portalMiddleware(req)
+  }
+
+  // --- Bot check only for /pool/v2 and /pool/v3 paths ---
+  const isBotSensitivePoolRoute = /^\/[^/]+\/pool\/v(2|3)\/[^/]+$/.test(
+    pathname,
+  )
+
+  if (isBotSensitivePoolRoute && typeof process.env.VERCEL !== 'undefined') {
+    const botResult = await checkBotId()
+    console.log('botResult', botResult)
+    if (botResult.isBot) {
+      return NextResponse.json(
+        { error: 'Bot is not allowed to access this endpoint' },
+        { status: 401 },
+      )
+    }
   }
 
   if (

@@ -1,6 +1,7 @@
 import '@sushiswap/ui/index.css'
 
 import { ToastContainer } from '@sushiswap/notifications'
+import { BotIdClient } from 'botid/client'
 import type { Metadata } from 'next'
 import { Inter, Roboto_Mono } from 'next/font/google'
 import type React from 'react'
@@ -55,6 +56,7 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <head>
+        <BotIdClient protect={[{ path: '/*', method: '*' }]} />
         <link rel="manifest" href="/site.webmanifest?v=1" />
         <link
           rel="mask-icon"
