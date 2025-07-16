@@ -1,84 +1,92 @@
-import type { VariablesOf } from 'gql.tada'
+import type { ResultOf, VariablesOf } from 'gql.tada'
 import { type RequestOptions, request } from 'src/lib/request.js'
 // import { SUSHI_DATA_API_HOST } from 'sushi/config/subgraph'
 import { graphql } from '../../graphql.js'
 import { SUSHI_REQUEST_HEADERS } from '../../request-headers.js'
+import type { BladeChainId } from '../../types/BladeChainId.js'
 
 // TODO-BLADE: remove this once blade in prod
 const SUSHI_DATA_API_HOST = 'https://data-api-180-merge.data-gcp.sushi.com'
+
+export const BladePoolFragment = graphql(
+  `
+  fragment BladePoolFragment on BladePool @_unmask {
+    id
+    address
+    tokens {
+      liquidityUSD
+      weight
+      targetWeight
+      token {
+        id
+        address
+        name
+        symbol
+        decimals
+      }
+    }
+    liquidity
+    liquidityUSD
+    liquidityUSDChange1d
+    volumeUSD
+    volumeUSD1d
+    volumeUSDChange1d
+    volumeUSD1w
+    volumeUSDChange1w
+    feeApr1d
+    totalApr1d
+    feeUSD1d
+    isDeprecated
+    isSingleAssetWithdrawEnabled
+    newPoolAddress
+    abi
+  }
+`,
+)
+
+type BladePoolFragmentType = ResultOf<typeof BladePoolFragment>
+
+export function enhanceBladePool(
+  pool: BladePoolFragmentType,
+  chainId: BladeChainId,
+): Omit<BladePoolFragmentType, 'liquidity'> & {
+  chainId: BladeChainId
+  liquidity: bigint
+} {
+  return {
+    ...pool,
+    chainId,
+    liquidity: BigInt(pool.liquidity),
+    tokens: pool.tokens.map((token) => ({
+      ...token,
+      token: {
+        ...token.token,
+        chainId,
+      },
+    })),
+  }
+}
 
 export const BladePoolsQuery = graphql(
   `
   query BladePoolPairs($chainId: BladeChainId!) {
     bladePools(chainId: $chainId) {
-        id
-        address
-        tokens {
-            liquidityUSD
-            weight
-            targetWeight
-            token {
-                id
-                address
-                name
-                symbol
-                decimals
-            }
-        }
-        liquidityUSD
-        liquidityUSDChange1d
-        volumeUSD
-        volumeUSD1d
-        volumeUSDChange1d
-        volumeUSD1w
-        volumeUSDChange1w
-        feeApr1d
-        totalApr1d
-        feeUSD1d
-        isDeprecated
-        isSingleAssetWithdrawEnabled
-        newPoolAddress
-        abi
+        ...BladePoolFragment
     }
   }
 `,
+  [BladePoolFragment],
 )
 
 export const BladePoolQuery = graphql(
   `
   query BladePool($address: Bytes!, $chainId: BladeChainId!) {
     bladePool(address: $address, chainId: $chainId) {
-        id
-        address
-        tokens {
-            liquidityUSD
-            weight
-            targetWeight
-            token {
-                id
-                address
-                name
-                symbol
-                decimals
-            }
-        }
-        liquidityUSD
-        liquidityUSDChange1d
-        volumeUSD
-        volumeUSD1d
-        volumeUSDChange1d
-        volumeUSD1w
-        volumeUSDChange1w
-        feeApr1d
-        totalApr1d
-        feeUSD1d
-        isDeprecated
-        isSingleAssetWithdrawEnabled
-        newPoolAddress
-        abi
+        ...BladePoolFragment
     }
   }
 `,
+  [BladePoolFragment],
 )
 
 export const BladePoolPairsChartQuery = graphql(
@@ -143,17 +151,9 @@ export async function getBladePools(
       options,
     )
     if (result) {
-      return result.bladePools.map((pool) => ({
-        ...pool,
-        chainId: variables.chainId,
-        tokens: pool.tokens.map((token) => ({
-          ...token,
-          token: {
-            ...token.token,
-            chainId: variables.chainId,
-          },
-        })),
-      }))
+      return result.bladePools.map((pool) =>
+        enhanceBladePool(pool, variables.chainId),
+      )
     }
   } catch (error) {
     console.error('getBladePools error', error)
@@ -176,17 +176,7 @@ export async function getBladePool(
     options,
   )
   if (result) {
-    return {
-      ...result.bladePool,
-      chainId: variables.chainId,
-      tokens: result.bladePool.tokens.map((token) => ({
-        ...token,
-        token: {
-          ...token.token,
-          chainId: variables.chainId,
-        },
-      })),
-    }
+    return enhanceBladePool(result.bladePool, variables.chainId)
   }
   throw new Error('Invalid response')
 }

@@ -171,8 +171,8 @@ export function BladePoolBannerTitle(props: SVGProps<SVGSVGElement>) {
           y2="14.5"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#C3F1FB" />
-          <stop offset="1" stop-color="#C3F1FB" />
+          <stop stopColor="#C3F1FB" />
+          <stop offset="1" stopColor="#C3F1FB" />
         </linearGradient>
         <linearGradient
           id="paint1_linear_1153_1849"
@@ -182,8 +182,8 @@ export function BladePoolBannerTitle(props: SVGProps<SVGSVGElement>) {
           y2="14.5"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#C3F1FB" />
-          <stop offset="1" stop-color="#C3F1FB" />
+          <stop stopColor="#C3F1FB" />
+          <stop offset="1" stopColor="#C3F1FB" />
         </linearGradient>
         <linearGradient
           id="paint2_linear_1153_1849"
@@ -193,8 +193,8 @@ export function BladePoolBannerTitle(props: SVGProps<SVGSVGElement>) {
           y2="14.5"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#C3F1FB" />
-          <stop offset="1" stop-color="#C3F1FB" />
+          <stop stopColor="#C3F1FB" />
+          <stop offset="1" stopColor="#C3F1FB" />
         </linearGradient>
         <linearGradient
           id="paint3_linear_1153_1849"
@@ -204,8 +204,8 @@ export function BladePoolBannerTitle(props: SVGProps<SVGSVGElement>) {
           y2="14.5"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#C3F1FB" />
-          <stop offset="1" stop-color="#C3F1FB" />
+          <stop stopColor="#C3F1FB" />
+          <stop offset="1" stopColor="#C3F1FB" />
         </linearGradient>
         <linearGradient
           id="paint4_linear_1153_1849"
@@ -215,8 +215,8 @@ export function BladePoolBannerTitle(props: SVGProps<SVGSVGElement>) {
           y2="14.5"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#C3F1FB" />
-          <stop offset="1" stop-color="#C3F1FB" />
+          <stop stopColor="#C3F1FB" />
+          <stop offset="1" stopColor="#C3F1FB" />
         </linearGradient>
         <linearGradient
           id="paint5_linear_1153_1849"
@@ -226,8 +226,8 @@ export function BladePoolBannerTitle(props: SVGProps<SVGSVGElement>) {
           y2="14.5"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#C3F1FB" />
-          <stop offset="1" stop-color="#C3F1FB" />
+          <stop stopColor="#C3F1FB" />
+          <stop offset="1" stopColor="#C3F1FB" />
         </linearGradient>
         <linearGradient
           id="paint6_linear_1153_1849"
@@ -237,8 +237,8 @@ export function BladePoolBannerTitle(props: SVGProps<SVGSVGElement>) {
           y2="14.5"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#C3F1FB" />
-          <stop offset="1" stop-color="#C3F1FB" />
+          <stop stopColor="#C3F1FB" />
+          <stop offset="1" stopColor="#C3F1FB" />
         </linearGradient>
         <linearGradient
           id="paint7_linear_1153_1849"
@@ -248,8 +248,8 @@ export function BladePoolBannerTitle(props: SVGProps<SVGSVGElement>) {
           y2="135.733"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#C3F1FB" />
-          <stop offset="1" stop-color="#FFC9F1" />
+          <stop stopColor="#C3F1FB" />
+          <stop offset="1" stopColor="#FFC9F1" />
         </linearGradient>
         <linearGradient
           id="paint8_linear_1153_1849"
@@ -259,8 +259,8 @@ export function BladePoolBannerTitle(props: SVGProps<SVGSVGElement>) {
           y2="135.733"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#C3F1FB" />
-          <stop offset="1" stop-color="#FFC9F1" />
+          <stop stopColor="#C3F1FB" />
+          <stop offset="1" stopColor="#FFC9F1" />
         </linearGradient>
         <linearGradient
           id="paint9_linear_1153_1849"
@@ -270,8 +270,8 @@ export function BladePoolBannerTitle(props: SVGProps<SVGSVGElement>) {
           y2="135.733"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#C3F1FB" />
-          <stop offset="1" stop-color="#FFC9F1" />
+          <stop stopColor="#C3F1FB" />
+          <stop offset="1" stopColor="#FFC9F1" />
         </linearGradient>
         <linearGradient
           id="paint10_linear_1153_1849"
@@ -281,8 +281,8 @@ export function BladePoolBannerTitle(props: SVGProps<SVGSVGElement>) {
           y2="135.733"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#C3F1FB" />
-          <stop offset="1" stop-color="#FFC9F1" />
+          <stop stopColor="#C3F1FB" />
+          <stop offset="1" stopColor="#FFC9F1" />
         </linearGradient>
         <linearGradient
           id="paint11_linear_1153_1849"
@@ -292,8 +292,8 @@ export function BladePoolBannerTitle(props: SVGProps<SVGSVGElement>) {
           y2="135.733"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#C3F1FB" />
-          <stop offset="1" stop-color="#FFC9F1" />
+          <stop stopColor="#C3F1FB" />
+          <stop offset="1" stopColor="#FFC9F1" />
         </linearGradient>
         <linearGradient
           id="paint12_linear_1153_1849"
@@ -303,8 +303,8 @@ export function BladePoolBannerTitle(props: SVGProps<SVGSVGElement>) {
           y2="362.055"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#C3F1FB" />
-          <stop offset="1" stop-color="#FFC9F1" />
+          <stop stopColor="#C3F1FB" />
+          <stop offset="1" stopColor="#FFC9F1" />
         </linearGradient>
         <linearGradient
           id="paint13_linear_1153_1849"
@@ -314,8 +314,8 @@ export function BladePoolBannerTitle(props: SVGProps<SVGSVGElement>) {
           y2="362.055"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#C3F1FB" />
-          <stop offset="1" stop-color="#FFC9F1" />
+          <stop stopColor="#C3F1FB" />
+          <stop offset="1" stopColor="#FFC9F1" />
         </linearGradient>
         <linearGradient
           id="paint14_linear_1153_1849"
@@ -325,8 +325,8 @@ export function BladePoolBannerTitle(props: SVGProps<SVGSVGElement>) {
           y2="362.055"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#C3F1FB" />
-          <stop offset="1" stop-color="#FFC9F1" />
+          <stop stopColor="#C3F1FB" />
+          <stop offset="1" stopColor="#FFC9F1" />
         </linearGradient>
         <linearGradient
           id="paint15_linear_1153_1849"
@@ -336,8 +336,8 @@ export function BladePoolBannerTitle(props: SVGProps<SVGSVGElement>) {
           y2="362.055"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#C3F1FB" />
-          <stop offset="1" stop-color="#FFC9F1" />
+          <stop stopColor="#C3F1FB" />
+          <stop offset="1" stopColor="#FFC9F1" />
         </linearGradient>
         <linearGradient
           id="paint16_linear_1153_1849"
@@ -347,8 +347,8 @@ export function BladePoolBannerTitle(props: SVGProps<SVGSVGElement>) {
           y2="362.055"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#C3F1FB" />
-          <stop offset="1" stop-color="#FFC9F1" />
+          <stop stopColor="#C3F1FB" />
+          <stop offset="1" stopColor="#FFC9F1" />
         </linearGradient>
         <linearGradient
           id="paint17_linear_1153_1849"
@@ -358,8 +358,8 @@ export function BladePoolBannerTitle(props: SVGProps<SVGSVGElement>) {
           y2="362.055"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#C3F1FB" />
-          <stop offset="1" stop-color="#FFC9F1" />
+          <stop stopColor="#C3F1FB" />
+          <stop offset="1" stopColor="#FFC9F1" />
         </linearGradient>
         <linearGradient
           id="paint18_linear_1153_1849"
@@ -369,8 +369,8 @@ export function BladePoolBannerTitle(props: SVGProps<SVGSVGElement>) {
           y2="362.055"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#C3F1FB" />
-          <stop offset="1" stop-color="#FFC9F1" />
+          <stop stopColor="#C3F1FB" />
+          <stop offset="1" stopColor="#FFC9F1" />
         </linearGradient>
         <linearGradient
           id="paint19_linear_1153_1849"
@@ -380,8 +380,8 @@ export function BladePoolBannerTitle(props: SVGProps<SVGSVGElement>) {
           y2="362.055"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#C3F1FB" />
-          <stop offset="1" stop-color="#FFC9F1" />
+          <stop stopColor="#C3F1FB" />
+          <stop offset="1" stopColor="#FFC9F1" />
         </linearGradient>
         <linearGradient
           id="paint20_linear_1153_1849"
@@ -391,8 +391,8 @@ export function BladePoolBannerTitle(props: SVGProps<SVGSVGElement>) {
           y2="362.055"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#C3F1FB" />
-          <stop offset="1" stop-color="#FFC9F1" />
+          <stop stopColor="#C3F1FB" />
+          <stop offset="1" stopColor="#FFC9F1" />
         </linearGradient>
         <linearGradient
           id="paint21_linear_1153_1849"
@@ -402,8 +402,8 @@ export function BladePoolBannerTitle(props: SVGProps<SVGSVGElement>) {
           y2="362.055"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#C3F1FB" />
-          <stop offset="1" stop-color="#FFC9F1" />
+          <stop stopColor="#C3F1FB" />
+          <stop offset="1" stopColor="#FFC9F1" />
         </linearGradient>
         <linearGradient
           id="paint22_linear_1153_1849"
@@ -413,8 +413,8 @@ export function BladePoolBannerTitle(props: SVGProps<SVGSVGElement>) {
           y2="362.055"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#C3F1FB" />
-          <stop offset="1" stop-color="#FFC9F1" />
+          <stop stopColor="#C3F1FB" />
+          <stop offset="1" stopColor="#FFC9F1" />
         </linearGradient>
         <linearGradient
           id="paint23_linear_1153_1849"
@@ -424,8 +424,8 @@ export function BladePoolBannerTitle(props: SVGProps<SVGSVGElement>) {
           y2="362.055"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#C3F1FB" />
-          <stop offset="1" stop-color="#FFC9F1" />
+          <stop stopColor="#C3F1FB" />
+          <stop offset="1" stopColor="#FFC9F1" />
         </linearGradient>
         <linearGradient
           id="paint24_linear_1153_1849"
@@ -435,8 +435,8 @@ export function BladePoolBannerTitle(props: SVGProps<SVGSVGElement>) {
           y2="362.055"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#C3F1FB" />
-          <stop offset="1" stop-color="#FFC9F1" />
+          <stop stopColor="#C3F1FB" />
+          <stop offset="1" stopColor="#FFC9F1" />
         </linearGradient>
         <linearGradient
           id="paint25_linear_1153_1849"
@@ -446,8 +446,8 @@ export function BladePoolBannerTitle(props: SVGProps<SVGSVGElement>) {
           y2="362.055"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#C3F1FB" />
-          <stop offset="1" stop-color="#FFC9F1" />
+          <stop stopColor="#C3F1FB" />
+          <stop offset="1" stopColor="#FFC9F1" />
         </linearGradient>
         <linearGradient
           id="paint26_linear_1153_1849"
@@ -457,8 +457,8 @@ export function BladePoolBannerTitle(props: SVGProps<SVGSVGElement>) {
           y2="362.055"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#C3F1FB" />
-          <stop offset="1" stop-color="#FFC9F1" />
+          <stop stopColor="#C3F1FB" />
+          <stop offset="1" stopColor="#FFC9F1" />
         </linearGradient>
         <linearGradient
           id="paint27_linear_1153_1849"
@@ -468,8 +468,8 @@ export function BladePoolBannerTitle(props: SVGProps<SVGSVGElement>) {
           y2="362.055"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#C3F1FB" />
-          <stop offset="1" stop-color="#FFC9F1" />
+          <stop stopColor="#C3F1FB" />
+          <stop offset="1" stopColor="#FFC9F1" />
         </linearGradient>
         <linearGradient
           id="paint28_linear_1153_1849"
@@ -479,8 +479,8 @@ export function BladePoolBannerTitle(props: SVGProps<SVGSVGElement>) {
           y2="362.055"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#C3F1FB" />
-          <stop offset="1" stop-color="#FFC9F1" />
+          <stop stopColor="#C3F1FB" />
+          <stop offset="1" stopColor="#FFC9F1" />
         </linearGradient>
         <linearGradient
           id="paint29_linear_1153_1849"
@@ -490,8 +490,8 @@ export function BladePoolBannerTitle(props: SVGProps<SVGSVGElement>) {
           y2="362.055"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#C3F1FB" />
-          <stop offset="1" stop-color="#FFC9F1" />
+          <stop stopColor="#C3F1FB" />
+          <stop offset="1" stopColor="#FFC9F1" />
         </linearGradient>
         <linearGradient
           id="paint30_linear_1153_1849"
@@ -501,8 +501,8 @@ export function BladePoolBannerTitle(props: SVGProps<SVGSVGElement>) {
           y2="362.055"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#C3F1FB" />
-          <stop offset="1" stop-color="#FFC9F1" />
+          <stop stopColor="#C3F1FB" />
+          <stop offset="1" stopColor="#FFC9F1" />
         </linearGradient>
         <linearGradient
           id="paint31_linear_1153_1849"
@@ -512,8 +512,8 @@ export function BladePoolBannerTitle(props: SVGProps<SVGSVGElement>) {
           y2="362.055"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#C3F1FB" />
-          <stop offset="1" stop-color="#FFC9F1" />
+          <stop stopColor="#C3F1FB" />
+          <stop offset="1" stopColor="#FFC9F1" />
         </linearGradient>
         <linearGradient
           id="paint32_linear_1153_1849"
@@ -523,8 +523,8 @@ export function BladePoolBannerTitle(props: SVGProps<SVGSVGElement>) {
           y2="362.055"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#C3F1FB" />
-          <stop offset="1" stop-color="#FFC9F1" />
+          <stop stopColor="#C3F1FB" />
+          <stop offset="1" stopColor="#FFC9F1" />
         </linearGradient>
         <linearGradient
           id="paint33_linear_1153_1849"
@@ -534,8 +534,8 @@ export function BladePoolBannerTitle(props: SVGProps<SVGSVGElement>) {
           y2="362.055"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#C3F1FB" />
-          <stop offset="1" stop-color="#FFC9F1" />
+          <stop stopColor="#C3F1FB" />
+          <stop offset="1" stopColor="#FFC9F1" />
         </linearGradient>
         <linearGradient
           id="paint34_linear_1153_1849"
@@ -545,8 +545,8 @@ export function BladePoolBannerTitle(props: SVGProps<SVGSVGElement>) {
           y2="362.055"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#C3F1FB" />
-          <stop offset="1" stop-color="#FFC9F1" />
+          <stop stopColor="#C3F1FB" />
+          <stop offset="1" stopColor="#FFC9F1" />
         </linearGradient>
         <linearGradient
           id="paint35_linear_1153_1849"
@@ -556,8 +556,8 @@ export function BladePoolBannerTitle(props: SVGProps<SVGSVGElement>) {
           y2="362.055"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#C3F1FB" />
-          <stop offset="1" stop-color="#FFC9F1" />
+          <stop stopColor="#C3F1FB" />
+          <stop offset="1" stopColor="#FFC9F1" />
         </linearGradient>
       </defs>
     </svg>

@@ -43,8 +43,8 @@ export function BladeLetterBgIcon(props: SVGProps<SVGSVGElement>) {
           y2="470.136"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#C3F1FB" />
-          <stop offset="1" stop-color="#FFC9F1" />
+          <stop stopColor="#C3F1FB" />
+          <stop offset="1" stopColor="#FFC9F1" />
         </linearGradient>
         <linearGradient
           id="paint1_linear_1089_18975"
@@ -54,8 +54,8 @@ export function BladeLetterBgIcon(props: SVGProps<SVGSVGElement>) {
           y2="639.854"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#C3F1FB" />
-          <stop offset="1" stop-color="#FFC9F1" />
+          <stop stopColor="#C3F1FB" />
+          <stop offset="1" stopColor="#FFC9F1" />
         </linearGradient>
         <linearGradient
           id="paint2_linear_1089_18975"
@@ -65,8 +65,8 @@ export function BladeLetterBgIcon(props: SVGProps<SVGSVGElement>) {
           y2="563.174"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#C3F1FB" />
-          <stop offset="1" stop-color="#FFC9F1" />
+          <stop stopColor="#C3F1FB" />
+          <stop offset="1" stopColor="#FFC9F1" />
         </linearGradient>
       </defs>
     </svg>

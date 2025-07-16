@@ -26,6 +26,7 @@ type Query {
   bladePoolPairsChart(address: Bytes!, chainId: BladeChainId!, duration: BladePoolPairsChartDuration!): [BladePoolPairStats!]!
   bladePoolTxSourcesChart(address: Bytes!, chainId: BladeChainId!, duration: BladePoolPairsChartDuration!): [BladePoolTxSourcesStats!]!
   bladePoolBuckets(address: Bytes!, chainId: BladeChainId!): PoolBuckets!
+  bladePositions(user: Bytes!, chainId: BladeChainId!): [BladePosition!]!
   exploreTokens(chainId: SushiSwapChainId!): [ExploreToken!]!
   exploreTokenChart(chainId: SushiSwapChainId!, address: Bytes!, duration: ExploreTokenChartDuration!): [OHLC!]!
   exploreTokenInfo(chainId: SushiSwapChainId!, address: Bytes!): ExploreTokenInfo
@@ -124,6 +125,7 @@ type BladePool {
   chainId: Int!
   abi: BladePoolAbi!
   tokens: [BladePoolToken!]!
+  liquidity: BigInt!
   liquidityUSD: Float!
   liquidityUSDChange1d: Float!
   volumeUSD: Float!
@@ -165,6 +167,13 @@ enum BladePoolTxSourcesChartDuration {
   WEEK
   MONTH
   ALL
+}
+
+type BladePosition {
+  user: Bytes!
+  stakedBalance: BigInt!
+  unstakedBalance: BigInt!
+  pool: BladePool!
 }
 
 type ExploreToken {

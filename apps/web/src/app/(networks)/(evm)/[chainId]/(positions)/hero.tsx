@@ -14,6 +14,7 @@ import type { FC } from 'react'
 import { ChainKey, EvmChainId } from 'sushi/chain'
 import {
   type SushiSwapV3ChainId,
+  isBladeChainId,
   isSushiSwapV2ChainId,
   isSushiSwapV3ChainId,
 } from 'sushi/config'
@@ -37,11 +38,13 @@ export const Hero: FC<{ chainId: EvmChainId }> = ({ chainId }) => {
             >
               <LinkInternal
                 href={
-                  isSushiSwapV3ChainId(chainId as SushiSwapV3ChainId)
-                    ? `/${ChainKey[chainId]}/pool/v3/add`
-                    : isSushiSwapV2ChainId(chainId as SushiSwapV3ChainId)
-                      ? `/${ChainKey[chainId]}/pool/v2/add`
-                      : `/${ChainKey[EvmChainId.ETHEREUM]}/pool/v3/add`
+                  isBladeChainId(chainId)
+                    ? `/${ChainKey[chainId]}/pool/blade/add`
+                    : isSushiSwapV3ChainId(chainId as SushiSwapV3ChainId)
+                      ? `/${ChainKey[chainId]}/pool/v3/add`
+                      : isSushiSwapV2ChainId(chainId as SushiSwapV3ChainId)
+                        ? `/${ChainKey[chainId]}/pool/v2/add`
+                        : `/${ChainKey[EvmChainId.ETHEREUM]}/pool/v3/add`
                 }
               >
                 I want to create a position
@@ -55,6 +58,22 @@ export const Hero: FC<{ chainId: EvmChainId }> = ({ chainId }) => {
               </DropdownMenuTrigger>
               <DropdownMenuContent className="w-80">
                 <DropdownMenuGroup>
+                  <DropdownMenuItem disabled={!isBladeChainId(chainId)} asChild>
+                    <LinkInternal
+                      href={`/${ChainKey[chainId]}/explore/blade-pools`}
+                      className="flex flex-col !items-start gap-1 cursor-pointer"
+                    >
+                      <div className="flex items-center gap-1 font-medium leading-none">
+                        Blade Position
+                        <Chip variant="secondary">
+                          {isBladeChainId(chainId) ? 'New 🔥' : 'Unavailable'}
+                        </Chip>
+                      </div>
+                      <p className="text-sm leading-snug text-muted-foreground">
+                        Provide liquidity to a Blade liquidity pool.
+                      </p>
+                    </LinkInternal>
+                  </DropdownMenuItem>
                   <DropdownMenuItem
                     disabled={!isSushiSwapV3ChainId(chainId)}
                     asChild

@@ -10,7 +10,7 @@ export function BladeBadgeIcon(props: SVGProps<SVGSVGElement>) {
       xmlns="http://www.w3.org/2000/svg"
       {...props}
     >
-      <rect width="25" height="16" rx="8" fill="#D9D9D9" fill-opacity="0.2" />
+      <rect width="25" height="16" rx="8" fill="#D9D9D9" fillOpacity="0.2" />
       <path
         d="M18.7153 4.77734L17.2074 6.58712H4.58545L6.09335 4.77734H18.7153Z"
         fill="url(#paint0_linear_1153_1802)"
@@ -32,8 +32,8 @@ export function BladeBadgeIcon(props: SVGProps<SVGSVGElement>) {
           y2="21.3145"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#C3F1FB" />
-          <stop offset="1" stop-color="#FFC9F1" />
+          <stop stopColor="#C3F1FB" />
+          <stop offset="1" stopColor="#FFC9F1" />
         </linearGradient>
         <linearGradient
           id="paint1_linear_1153_1802"
@@ -43,8 +43,8 @@ export function BladeBadgeIcon(props: SVGProps<SVGSVGElement>) {
           y2="25.1688"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#C3F1FB" />
-          <stop offset="1" stop-color="#FFC9F1" />
+          <stop stopColor="#C3F1FB" />
+          <stop offset="1" stopColor="#FFC9F1" />
         </linearGradient>
         <linearGradient
           id="paint2_linear_1153_1802"
@@ -54,8 +54,8 @@ export function BladeBadgeIcon(props: SVGProps<SVGSVGElement>) {
           y2="26.1992"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#C3F1FB" />
-          <stop offset="1" stop-color="#FFC9F1" />
+          <stop stopColor="#C3F1FB" />
+          <stop offset="1" stopColor="#FFC9F1" />
         </linearGradient>
       </defs>
     </svg>
