@@ -21,7 +21,7 @@ import { ReviewAddDialogTrigger } from './ReviewAddDialogTrigger'
 export const ReviewAddDialog = (props: ButtonProps) => {
   const { token0, token1, amountInToken0, amountInToken1, poolId } =
     usePoolState()
-  console.log('poolId', poolId)
+
   const closeBtnRef = useRef<HTMLButtonElement>(null)
   const { isConnected } = useKadena()
 

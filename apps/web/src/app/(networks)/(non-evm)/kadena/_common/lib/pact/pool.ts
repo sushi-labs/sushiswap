@@ -144,6 +144,23 @@ export const buildGetLpBalanceTx = (
   return tx
 }
 
+export const buildGetTotalLpSupply = (
+  token0Address: string,
+  token1Address: string,
+  chainId: number,
+  networkId: string,
+) => {
+  const pactCmd = `(${KADENA_CONTRACT}-tokens.total-supply "${token0Address}:${token1Address}")`
+  const tx = Pact.builder
+    .execution(pactCmd)
+    .setMeta({
+      chainId: String(chainId),
+    })
+    .setNetworkId(networkId)
+    .createTransaction()
+  return tx
+}
+
 export const buildRemoveLiquidityTxn = ({
   token0Address,
   token1Address,

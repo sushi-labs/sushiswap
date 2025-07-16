@@ -4,7 +4,11 @@ import {
   KADENA_CHAIN_ID,
   KADENA_NETWORK_ID,
 } from '~kadena/_common/constants/network'
-import { buildGetPoolAddress, buildGetPoolExists } from '../../pact/pool'
+import {
+  buildGetPoolAddress,
+  buildGetPoolExists,
+  buildGetTotalLpSupply,
+} from '../../pact/pool'
 
 type PoolAddressResponse = {
   exists: boolean
@@ -17,6 +21,7 @@ type PoolAddressResponse = {
     mutexLocked: boolean
     rateOfToken0ToToken1: number
     rateOfToken1ToToken0: number
+    totalSupplyLp: number
   }
 }
 
@@ -45,7 +50,6 @@ export const usePoolFromTokens = ({
         preflight: false,
         signatureVerification: false,
       })
-
       if (res.result.status !== 'success') {
         throw new Error(res.result.error?.message || 'Failed to fetch balances')
       }
@@ -72,7 +76,31 @@ export const usePoolFromTokens = ({
       }
       const poolData = res1?.result?.data as PoolDataRes
 
-      console.log({ poolData })
+      const tx2 = buildGetTotalLpSupply(
+        token0,
+        token1,
+        KADENA_CHAIN_ID,
+        KADENA_NETWORK_ID,
+      )
+      const res2 = await kadenaClient.local(tx2, {
+        preflight: false,
+        signatureVerification: false,
+      })
+      if (res2.result.status !== 'success') {
+        throw new Error(
+          res2.result.error?.message || 'Failed to fetch total lp balance',
+        )
+      }
+
+      let totalSupplyLp = 0
+      if (
+        typeof res2.result.data === 'object' &&
+        'decimal' in res2.result.data
+      ) {
+        totalSupplyLp = Number.parseFloat(res2.result.data.decimal)
+      } else {
+        totalSupplyLp = res2.result.data
+      }
 
       let reserve0 = 0
       if (
@@ -139,6 +167,7 @@ export const usePoolFromTokens = ({
           mutexLocked: poolData['mutex-locked'],
           rateOfToken0ToToken1: finalRate0to1,
           rateOfToken1ToToken0: finalRate1to0,
+          totalSupplyLp,
         },
       }
     },

@@ -13,18 +13,10 @@ export default function AddRemoveLiqPage(props: {
 }) {
   const params = use(props.params)
   const poolId = params?.id
-  const { setTotalSupplyLP } = useRemoveLiqDispatch()
   const { data } = usePoolById({
     poolId,
-    first: 4,
+    first: 1,
   })
-
-  useEffect(() => {
-    if (data?.totalSupply !== undefined) {
-      //@DEV look here first and use an onchain call to get the total supply if something is wrong with remove/add liquidity
-      setTotalSupplyLP(Number(data?.totalSupply))
-    }
-  }, [data, setTotalSupplyLP])
 
   return (
     <Container maxWidth="5xl" className="px-2 sm:px-4">

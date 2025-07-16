@@ -7,7 +7,6 @@ type Action =
   | { type: 'setIsTxnPending'; value: boolean }
   | { type: 'setAmountToken0PerLP'; value: number }
   | { type: 'setAmountToken1PerLP'; value: number }
-  | { type: 'setTotalSupplyLP'; value: number }
   | { type: 'setLPBalance'; value: number }
   | { type: 'setLPToRemove'; value: number }
   | { type: 'setMinAmountToken0'; value: number }
@@ -18,7 +17,6 @@ type Dispatch = {
   setPercentage(percentage: number): void
   setAmountToken0PerLP(amount: number): void
   setAmountToken1PerLP(amount: number): void
-  setTotalSupplyLP(amount: number): void
   setLPBalance(amount: number): void
   setLPToRemove(amount: number): void
   setMinAmountToken0(amount: number): void
@@ -30,7 +28,6 @@ type State = {
   isTxnPending: boolean
   amountToken0PerLP: number
   amountToken1PerLP: number
-  totalSupplyLP: number
   lpBalance: number
   lpToRemove: number
   minAmountToken0: number
@@ -57,9 +54,6 @@ function removeReducer(_state: State, action: Action) {
     case 'setAmountToken1PerLP': {
       return { ..._state, amountToken1PerLP: action.value }
     }
-    case 'setTotalSupplyLP': {
-      return { ..._state, totalSupplyLP: action.value }
-    }
     case 'setLPBalance': {
       return { ..._state, lpBalance: action.value }
     }
@@ -81,7 +75,6 @@ const RemoveProvider: FC<RemoveProviderProps> = ({ children }) => {
     isTxnPending: false,
     amountToken0PerLP: 0,
     amountToken1PerLP: 0,
-    totalSupplyLP: 0,
     lpBalance: 0,
     lpToRemove: 0,
     minAmountToken0: 0,
@@ -98,8 +91,6 @@ const RemoveProvider: FC<RemoveProviderProps> = ({ children }) => {
         dispatch({ type: 'setAmountToken0PerLP', value }),
       setAmountToken1PerLP: (value: number) =>
         dispatch({ type: 'setAmountToken1PerLP', value }),
-      setTotalSupplyLP: (value: number) =>
-        dispatch({ type: 'setTotalSupplyLP', value }),
       setLPBalance: (value: number) =>
         dispatch({ type: 'setLPBalance', value }),
       setLPToRemove: (value: number) =>

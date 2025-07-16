@@ -41,6 +41,7 @@ type Action =
   | { type: 'setRateOfToken0ToToken1'; value: number | undefined }
   | { type: 'setRateOfToken1ToToken0'; value: number | undefined }
   | { type: 'setIsLoadingPool'; value: boolean }
+  | { type: 'setTotalSupplyLP'; value: number }
 
 type Dispatch = {
   setToken0(token: KadenaToken): void
@@ -59,6 +60,7 @@ type Dispatch = {
   setRateOfToken0ToToken1(rate: number | undefined): void
   setRateOfToken1ToToken0(rate: number | undefined): void
   setIsLoadingPool(isLoading: boolean): void
+  setTotalSupplyLP(totalSupplyLP: number): void
 }
 
 type State = {
@@ -76,6 +78,7 @@ type State = {
   rateOfToken0ToToken1?: number
   rateOfToken1ToToken0?: number
   isLoadingPool: boolean
+  totalSupplyLP: number
 }
 
 type PoolProviderProps = { children: React.ReactNode }
@@ -161,6 +164,9 @@ function poolReducer(_state: State, action: Action) {
     case 'setIsLoadingPool': {
       return { ..._state, isLoadingPool: action.value }
     }
+    case 'setTotalSupplyLP': {
+      return { ..._state, totalSupplyLP: action.value }
+    }
   }
 }
 
@@ -180,6 +186,7 @@ const PoolProvider: FC<PoolProviderProps> = ({ children }) => {
     rateOfToken0ToToken1: undefined,
     rateOfToken1ToToken0: undefined,
     isLoadingPool: false,
+    totalSupplyLP: 0,
   })
   const { data, isLoading } = usePoolFromTokens({
     token0: state?.token0?.tokenAddress,
@@ -212,6 +219,8 @@ const PoolProvider: FC<PoolProviderProps> = ({ children }) => {
         dispatch({ type: 'setRateOfToken1ToToken0', value }),
       setIsLoadingPool: (value: boolean) =>
         dispatch({ type: 'setIsLoadingPool', value }),
+      setTotalSupplyLP: (value: number) =>
+        dispatch({ type: 'setTotalSupplyLP', value }),
     }),
     [],
   )
@@ -222,7 +231,6 @@ const PoolProvider: FC<PoolProviderProps> = ({ children }) => {
 
   useEffect(() => {
     if (data) {
-      console.log('data.poolData', data.poolData)
       dispatchWithAction.setPoolId(data?.poolData?.poolAddress ?? undefined)
       dispatchWithAction.setReserve0(data?.poolData?.reserve0 ?? 0)
       dispatchWithAction.setReserve1(data?.poolData?.reserve1 ?? 0)
@@ -233,6 +241,7 @@ const PoolProvider: FC<PoolProviderProps> = ({ children }) => {
       dispatchWithAction.setRateOfToken1ToToken0(
         data?.poolData?.rateOfToken1ToToken0,
       )
+      dispatchWithAction.setTotalSupplyLP(data?.poolData?.totalSupplyLp ?? 0)
     }
   }, [data, dispatchWithAction])
 

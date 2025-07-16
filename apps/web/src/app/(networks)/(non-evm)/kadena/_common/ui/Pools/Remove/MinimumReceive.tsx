@@ -13,10 +13,10 @@ import { LiquidityItem } from '../PoolDetails/LiquidityItem'
 import { useRemoveLiqDispatch, useRemoveLiqState } from './pool-remove-provider'
 
 export const MinimumReceive = () => {
-  const { percentage, lpBalance, totalSupplyLP } = useRemoveLiqState()
+  const { percentage, lpBalance } = useRemoveLiqState()
   const { setLPToRemove, setMinAmountToken0, setMinAmountToken1 } =
     useRemoveLiqDispatch()
-  const { token0, token1, reserve0, reserve1 } = usePoolState()
+  const { token0, token1, reserve0, reserve1, totalSupplyLP } = usePoolState()
   const { data: priceUsd0, isLoading: isLoadingPrice0 } = useTokenPrice({
     token: token0,
   })

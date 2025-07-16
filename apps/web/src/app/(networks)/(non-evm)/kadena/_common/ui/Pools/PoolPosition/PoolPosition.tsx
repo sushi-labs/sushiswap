@@ -33,8 +33,9 @@ export type TempToken = {
 export const PoolPosition = () => {
   const token0StakedInUsd = 0
   const token1StakedInUsd = 0
-  const { reserve0, reserve1, token0, token1, isLoadingPool } = usePoolState()
-  const { totalSupplyLP, lpBalance } = useRemoveLiqState()
+  const { reserve0, reserve1, token0, token1, isLoadingPool, totalSupplyLP } =
+    usePoolState()
+  const { lpBalance } = useRemoveLiqState()
   const { setLPBalance } = useRemoveLiqDispatch()
   const { activeAccount } = useKadena()
   const address = activeAccount?.accountName || ''
