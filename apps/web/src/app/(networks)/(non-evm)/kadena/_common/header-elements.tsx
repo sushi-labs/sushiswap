@@ -53,7 +53,7 @@ export const HeaderElements = () => {
               <NavigationListItem title="Swap" href="/kadena/swap">
                 The easiest way to trade.
               </NavigationListItem>
-              <OnramperButton>
+              <OnramperButton chainId={-3}>
                 <NavigationListItem title="Buy Crypto">
                   Onramp with fiat.
                 </NavigationListItem>
