@@ -25,6 +25,7 @@ import { HaqqNaked } from './HaqqNaked'
 import { HarmonyNaked } from './HarmonyNaked'
 import { HecoNaked } from './HecoNaked'
 import { HemiNaked } from './HemiNaked'
+import { HyperEVMNaked } from './HyperEVMNaked'
 import { KatanaNaked } from './KatanaNaked'
 import { KavaNaked } from './KavaNaked'
 import { LineaNaked } from './LineaNaked'
@@ -75,6 +76,7 @@ export * from './HaqqNaked'
 export * from './HarmonyNaked'
 export * from './HecoNaked'
 export * from './HemiNaked'
+export * from './HyperEVMNaked'
 export * from './KatanaNaked'
 export * from './KavaNaked'
 export * from './LineaNaked'
@@ -120,11 +122,7 @@ export const NETWORK_NAKED_ICON: Partial<
   [ChainId.KAVA]: KavaNaked,
   [ChainId.METIS]: MetisNaked,
   [ChainId.ARBITRUM_NOVA]: ArbitrumNovaNaked,
-  [ChainId.HECO]: HecoNaked,
-  [ChainId.OKEX]: OkexNaked,
-  [ChainId.PALM]: PalmNaked,
   [ChainId.BOBA]: BobaNaked,
-  [ChainId.BOBA_AVAX]: BobaAvaxNaked,
   [ChainId.BOBA_BNB]: BobaBNBNaked,
   [ChainId.BTTC]: BttcNaked,
   [ChainId.POLYGON_ZKEVM]: PolygonZKNaked,
@@ -150,6 +148,7 @@ export const NETWORK_NAKED_ICON: Partial<
   [ChainId.SONIC]: SonicNaked,
   [ChainId.HEMI]: HemiNaked,
   [ChainId.KATANA]: KatanaNaked,
+  [ChainId.HYPEREVM]: HyperEVMNaked,
   aptos: AptosNaked,
   tron: TronNaked,
 }
