@@ -7,7 +7,8 @@ import { isBladeChainId } from 'sushi/config'
 import { graphql } from '../../graphql.js'
 
 // TODO-BLADE: remove this once blade in prod
-const SUSHI_DATA_API_HOST = 'https://data-api-180-merge.data-gcp.sushi.com'
+const SUSHI_DATA_API_HOST =
+  'https://data-api-staging.data-gcp.sushi.com/graphql'
 
 export const BladePoolBucketsQuery = graphql(
   `

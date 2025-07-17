@@ -5,7 +5,8 @@ import { type RequestOptions, request } from 'src/lib/request.js'
 import { graphql } from '../../graphql.js'
 import { SUSHI_REQUEST_HEADERS } from '../../request-headers.js'
 
-const SUSHI_DATA_API_HOST = 'https://data-api-180-merge.data-gcp.sushi.com'
+const SUSHI_DATA_API_HOST =
+  'https://data-api-staging.data-gcp.sushi.com/graphql'
 
 export const ChainIdsByFeatureQuery = graphql(
   `
