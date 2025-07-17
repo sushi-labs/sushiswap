@@ -102,10 +102,7 @@ export const V2ZapInfoCard: FC<V2ZapInfoCardProps> = ({
         : ((reserve0USD + reserve1USD) * Number(amountOut.quotient)) /
           Number(totalSupply.quotient)
 
-    const priceImpact =
-      typeof zapResponse.priceImpact === 'number'
-        ? new Percent(zapResponse.priceImpact, 10_000n)
-        : undefined
+    const priceImpact = new Percent(zapResponse.priceImpact, 10_000n)
 
     return {
       amountOut,

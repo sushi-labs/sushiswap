@@ -45,7 +45,10 @@ const zapResponseSchema = z.object({
   route: z.array(routeSchema).optional(),
 })
 
-export type V2ZapResponse = z.infer<typeof zapResponseSchema>
+export type V2ZapResponse = Omit<
+  z.infer<typeof zapResponseSchema>,
+  'priceImpact'
+> & { priceImpact: number }
 
 type UseV2ZapParams = {
   chainId: EvmChainId
@@ -94,9 +97,11 @@ export const useV2Zap = ({ query, ...params }: UseV2ZapParams) => {
 
       const parsed = zapResponseSchema.parse(await response.json())
 
-      if (parsed.priceImpact === null) throw new Error('priceImpact is NULL')
+      const { priceImpact } = parsed
 
-      return parsed
+      if (priceImpact === null) throw new Error('priceImpact is NULL')
+
+      return { ...parsed, priceImpact }
     },
     staleTime: query?.staleTime ?? 1000 * 60 * 1, // 1 minutes
     enabled:

@@ -5,11 +5,12 @@ import {
   type SushiSwapV3ChainId,
 } from 'sushi/config'
 import type { Amount, Type } from 'sushi/currency'
-import type { Percent } from 'sushi/math'
-import { type SushiSwapV3Pool, TickMath } from 'sushi/pool/sushiswap-v3'
+import { Fraction, type Percent } from 'sushi/math'
+import { Position, type SushiSwapV3Pool } from 'sushi/pool/sushiswap-v3'
 import { sz } from 'sushi/validate'
-import { type Address, type Hex, stringify } from 'viem'
+import { type Address, stringify } from 'viem'
 import { z } from 'zod'
+import { usePrices } from '~evm/_common/ui/price-provider/price-provider/use-prices'
 import { NativeAddress } from '../constants'
 
 const txSchema = z.object({
@@ -76,7 +77,9 @@ const zapResponseSchema = z.object({
   bundle: z.array(bundleSchema),
 })
 
-export type V3ZapResponse = z.infer<typeof zapResponseSchema>
+export type V3ZapResponse = z.infer<typeof zapResponseSchema> & {
+  priceImpact: number
+}
 
 type UseV3ZapParams = {
   chainId: SushiSwapV3ChainId
@@ -90,8 +93,10 @@ type UseV3ZapParams = {
 }
 
 export const useV3Zap = ({ query, ...params }: UseV3ZapParams) => {
+  const { data: prices } = usePrices({ chainId: params.chainId })
+
   return useQuery<V3ZapResponse>({
-    queryKey: ['v3-zap', params],
+    queryKey: ['v3-zap', params, prices],
     queryKeyHashFn: stringify,
     queryFn: async () => {
       const url = new URL('/api/zap/v3', window.location.origin)
@@ -99,7 +104,7 @@ export const useV3Zap = ({ query, ...params }: UseV3ZapParams) => {
       const { chainId, sender, receiver, amountIn, slippage, ticks, pool } =
         params
 
-      if (!sender || !pool || !ticks) throw new Error(null as never)
+      if (!sender || !pool || !ticks || !prices) throw new Error(null as never)
 
       url.searchParams.set('chainId', `${chainId}`)
       url.searchParams.set('sender', `${sender}`)
@@ -131,7 +136,62 @@ export const useV3Zap = ({ query, ...params }: UseV3ZapParams) => {
 
       const parsed = zapResponseSchema.parse(await response.json())
 
-      return parsed
+      const liquidity =
+        parsed.amountsOut[
+          SUSHISWAP_V3_POSITION_MANAGER[params.chainId].toLowerCase()
+        ]
+
+      if (!liquidity || liquidity === 0n)
+        throw new Error('Liquidity is zero or missing')
+
+      const inputCurrencyPrice = prices.get(amountIn.currency.wrapped.address)
+      const token0Price = prices?.get(pool.token0.address)
+      const token1Price = prices?.get(pool.token1.address)
+
+      const position = new Position({
+        pool,
+        liquidity,
+        tickLower: ticks[0],
+        tickUpper: ticks[1],
+      })
+
+      const amount0USD = token0Price
+        ? token0Price * Number(position.amount0.toSignificant())
+        : undefined
+      const amount1USD = token1Price
+        ? token1Price * Number(position.amount1.toSignificant())
+        : undefined
+
+      const amountOutUSD =
+        typeof amount0USD !== 'undefined' && typeof amount1USD !== 'undefined'
+          ? amount0USD + amount1USD
+          : undefined
+
+      let priceImpact: number | null = null // BIPS
+
+      if (
+        typeof amountOutUSD !== 'undefined' &&
+        typeof inputCurrencyPrice !== 'undefined'
+      ) {
+        const inputUSD = inputCurrencyPrice
+          ? inputCurrencyPrice *
+            Number(
+              amountIn
+                .multiply(new Fraction(10_000 - 25, 10_000))
+                .toSignificant(),
+            )
+          : undefined
+
+        if (typeof inputUSD !== 'undefined' && inputUSD > 0) {
+          priceImpact = Math.round(
+            ((inputUSD - amountOutUSD) / inputUSD) * 10_000,
+          )
+        }
+      }
+
+      if (priceImpact === null) throw new Error('priceImpact is NULL')
+
+      return { ...parsed, priceImpact }
     },
     staleTime: query?.staleTime ?? 1000 * 60 * 1, // 1 minutes
     enabled:
@@ -141,6 +201,7 @@ export const useV3Zap = ({ query, ...params }: UseV3ZapParams) => {
           typeof params.sender !== 'undefined' &&
           typeof params.pool !== 'undefined' &&
           typeof params.ticks !== 'undefined' &&
+          typeof prices !== 'undefined' &&
           params.amountIn.greaterThan(0n),
       ),
     ...query,

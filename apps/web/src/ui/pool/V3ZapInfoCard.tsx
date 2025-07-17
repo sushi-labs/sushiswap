@@ -100,24 +100,7 @@ export const V3ZapInfoCard: FC<V3ZapInfoCardProps> = ({
       typeof amount0USD === 'undefined' && typeof amount1USD === 'undefined'
         ? undefined
         : Number(amount0USD) + Number(amount1USD)
-    let priceImpact: Percent | undefined = undefined
-
-    if (
-      typeof amountOutUSD !== 'undefined' &&
-      typeof inputCurrencyAmount !== 'undefined' &&
-      typeof inputCurrencyPrice !== 'undefined'
-    ) {
-      const inputUSD = getAmountUSD(
-        inputCurrencyAmount.multiply(new Fraction(10_000 - 25, 10_000)),
-        inputCurrencyPrice,
-      )
-      if (typeof inputUSD !== 'undefined' && inputUSD > 0) {
-        const _priceImpactBps = Math.round(
-          ((inputUSD - amountOutUSD) / inputUSD) * 10_000,
-        )
-        priceImpact = new Percent(_priceImpactBps, 10_000)
-      }
-    }
+    const priceImpact = new Percent(zapResponse.priceImpact, 10_000n)
 
     return {
       amountOutUSD,
