@@ -46,7 +46,7 @@ export default async function PoolPage(props: {
         </h3>
         <BladeAssetsTable pool={pool} />
         <BladePoolChart pool={pool} />
-        <div className="flex flex-col gap-4 lg:flex-row">
+        <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
           <BladePoolPairsChart
             poolAddress={pool.address}
             chainId={pool.chainId}
