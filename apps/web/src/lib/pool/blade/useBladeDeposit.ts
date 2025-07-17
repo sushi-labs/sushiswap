@@ -549,8 +549,6 @@ function bladePackedTransmitAndDeposit({
           }
         : {}),
     }
-    console.log({ variables })
-    // @ts-expect-error TODO: Review why it's producing a complex union type
     return variables
   }
 
