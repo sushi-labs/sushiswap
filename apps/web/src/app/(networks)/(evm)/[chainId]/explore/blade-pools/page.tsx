@@ -3,8 +3,12 @@ import { Container } from '@sushiswap/ui'
 import { notFound } from 'next/navigation'
 import { BladeFeaturedPoolBanner } from 'src/ui/pool/blade/featured-pool-banner'
 import { BladePoolsTable } from 'src/ui/pool/blade/pools-table/BladePoolsTable'
-import type { EvmChainId } from 'sushi/chain'
-import { isBladeChainId } from 'sushi/config'
+import { EvmChainId } from 'sushi/chain'
+import { type BladeChainId, isBladeChainId } from 'sushi/config'
+
+const EXCLUDED_POOLS: Partial<Record<BladeChainId, string[]>> = {
+  [EvmChainId.KATANA]: ['0x2e32c76b4f50698f96fdd8ff4af0bd5d45f9399d'],
+}
 
 export default async function BladePoolsPage(props: {
   params: Promise<{ chainId: string }>
@@ -17,7 +21,11 @@ export default async function BladePoolsPage(props: {
   }
 
   const pools = await getBladePools({ chainId })
-  const activePools = pools.filter((pool) => !pool.isDeprecated)
+  const activePools = pools.filter(
+    (pool) =>
+      !pool.isDeprecated &&
+      !EXCLUDED_POOLS[chainId]?.includes(pool.address.toLowerCase()),
+  )
 
   const featuredPool =
     activePools.length > 0
