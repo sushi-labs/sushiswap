@@ -81,8 +81,8 @@ export const BladePoolsTable: FC<BladePoolsTableProps> = ({
   return (
     <Card>
       <CardHeader>
-        <div className="flex w-full items-center justify-between">
-          <div className="flex items-center gap-2">
+        <div className="flex w-full items-center justify-between flex-wrap gap-2 xs:gap-0">
+          <div className="flex items-center gap-2 shrink-0">
             <CardTitle>
               Blade Pools{' '}
               {pools?.length ? (
@@ -92,7 +92,7 @@ export const BladePoolsTable: FC<BladePoolsTableProps> = ({
               ) : null}
             </CardTitle>
           </div>
-          <div className="flex min-w-[220px] items-center justify-end gap-3">
+          <div className="flex items-center gap-3">
             <span className="text-center text-muted-foreground text-sm">
               Show stablecoin types
             </span>
