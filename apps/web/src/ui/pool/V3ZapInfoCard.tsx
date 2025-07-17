@@ -2,7 +2,6 @@ import {
   Card,
   CardContent,
   Collapsible,
-  FormattedNumber,
   SkeletonBox,
   classNames,
 } from '@sushiswap/ui'
@@ -17,7 +16,7 @@ import type { EvmChainId } from 'sushi/chain'
 import { SUSHISWAP_V3_POSITION_MANAGER } from 'sushi/config'
 import type { Amount, Type } from 'sushi/currency'
 import { formatUSD } from 'sushi/format'
-import { Fraction, type Percent, ZERO } from 'sushi/math'
+import { Fraction, Percent, ZERO } from 'sushi/math'
 import { Position, type SushiSwapV3Pool } from 'sushi/pool'
 import { usePrices } from '~evm/_common/ui/price-provider/price-provider/use-prices'
 import { ZapRouteDialog } from './ZapRouteDialog'
@@ -101,12 +100,24 @@ export const V3ZapInfoCard: FC<V3ZapInfoCardProps> = ({
       typeof amount0USD === 'undefined' && typeof amount1USD === 'undefined'
         ? undefined
         : Number(amount0USD) + Number(amount1USD)
-    const priceImpact = undefined as Percent | undefined
+    let priceImpact: Percent | undefined = undefined
 
-    // const priceImpact =
-    //   typeof zapResponse.priceImpact === 'number'
-    //     ? new Percent(zapResponse.priceImpact, 10_000n)
-    //     : undefined
+    if (
+      typeof amountOutUSD !== 'undefined' &&
+      typeof inputCurrencyAmount !== 'undefined' &&
+      typeof inputCurrencyPrice !== 'undefined'
+    ) {
+      const inputUSD = getAmountUSD(
+        inputCurrencyAmount.multiply(new Fraction(10_000 - 25, 10_000)),
+        inputCurrencyPrice,
+      )
+      if (typeof inputUSD !== 'undefined' && inputUSD > 0) {
+        const _priceImpactBps = Math.round(
+          ((inputUSD - amountOutUSD) / inputUSD) * 10_000,
+        )
+        priceImpact = new Percent(_priceImpactBps, 10_000)
+      }
+    }
 
     return {
       amountOutUSD,
