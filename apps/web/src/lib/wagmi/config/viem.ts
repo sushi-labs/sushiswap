@@ -268,13 +268,10 @@ export const publicTransports = {
   [EvmChainId.HYPEREVM]: http(
     `https://lb.drpc.org/ogrpc?network=hyperliquid&dkey=${drpcId}`,
   ),
-  /* Testnets */ // TODO: add testnet transports
+  /* Testnets */
   [EvmChainId.ARBITRUM_SEPOLIA]: http('https://sepolia-rollup.arbitrum.io/rpc'),
-  [EvmChainId.BSC_TESTNET]: http('https://bsc-testnet.public.blastapi.io'),
-  [EvmChainId.FANTOM_TESTNET]: http('https://rpc.testnet.fantom.network'),
   // [EvmChainId.POLYGON_TESTNET]: http('https://rpc.ankr.com/polygon_mumbai'),
   [EvmChainId.SEPOLIA]: http('https://sepolia.drpc.org'),
-  [EvmChainId.CURTIS]: http('https://curtis.rpc.caldera.xyz/http'),
   [EvmChainId.TATARA]: http('https://rpc.tatara.katanarpc.com'),
 } as const satisfies Record<EvmChainId, Transport>
 
