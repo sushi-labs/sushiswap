@@ -1,6 +1,7 @@
 'use client'
 
 import { cookieToInitialState } from '@wagmi/core'
+import { Porto } from 'porto'
 import { createProductionConfig } from './production'
 import type { PublicWagmiConfig } from './public'
 import { createTestConfig } from './test'
@@ -28,6 +29,7 @@ export const getWagmiConfig = () => {
   }
 
   if (!wagmiConfigSingleton) {
+    Porto.create()
     wagmiConfigSingleton = createWagmiConfig()
   }
 
