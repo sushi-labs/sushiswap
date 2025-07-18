@@ -797,7 +797,7 @@ const _CrossChainSwapTradeReviewDialog: FC<{
                           </div>
                         </List.KeyValue>
                         <List.KeyValue
-                          title={`Min. received after slippage (${slippagePercent.toString()})`}
+                          title={`Min. received after slippage (${slippagePercent.toPercentString()})`}
                           subtitle="The minimum amount you are guaranteed to receive."
                         >
                           <div className="flex flex-col gap-0.5">

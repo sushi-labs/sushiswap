@@ -35,8 +35,8 @@ export const StakeSectionWidget = ({
       parsedInput && totalSupply && sushiBalance
         ? parsedInput
             .mul(totalSupply)
-            .divToFraction(sushiBalance)
-            .toString({ fixed: 0 })
+            .div(sushiBalance.amount)
+            .toString()
         : '',
     [parsedInput, totalSupply, sushiBalance],
   )

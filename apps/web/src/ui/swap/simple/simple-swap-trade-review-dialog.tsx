@@ -380,7 +380,7 @@ const _SimpleSwapTradeReviewDialog: FC<{
                         Certain tokens incur a fee upon purchase or sale. Sushiswap does not collect any of these fees."
                       >
                         <span className="text-right text-yellow">
-                          {trade.tokenTax.toString()}
+                          {trade.tokenTax.toPercentString()}
                         </span>
                       </List.KeyValue>
                     )}
@@ -405,7 +405,7 @@ const _SimpleSwapTradeReviewDialog: FC<{
                           )}
                         </List.KeyValue>
                         <List.KeyValue
-                          title={`Min. received after slippage (${slippagePercent.toString()})`}
+                          title={`Min. received after slippage (${slippagePercent.toPercentString()})`}
                           subtitle="The minimum amount you are guaranteed to receive."
                         >
                           {isSwapQueryFetching ? (

@@ -33,10 +33,7 @@ export const UnstakeSectionWidget = ({
   const sushiAmount = useMemo(
     () =>
       parsedInput && totalSupply && sushiBalance
-        ? parsedInput
-            .mul(sushiBalance)
-            .divToFraction(totalSupply)
-            .toString({ fixed: 0 })
+        ? parsedInput.mul(sushiBalance).div(totalSupply.amount).toString()
         : '',
     [parsedInput, totalSupply, sushiBalance],
   )
