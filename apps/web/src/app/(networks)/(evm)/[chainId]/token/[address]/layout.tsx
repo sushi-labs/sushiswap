@@ -3,7 +3,7 @@ import {
   isSushiSwapChainId,
 } from '@sushiswap/graph-client/data-api'
 import { notFound } from 'next/navigation'
-import type { EvmChainId } from 'sushi/chain'
+import type { EvmChainId } from 'sushi/evm'
 import { Header } from '../../header'
 import { Providers } from './providers'
 

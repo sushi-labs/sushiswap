@@ -1,7 +1,11 @@
 import { useEffect, useMemo } from 'react'
-import { type EvmChainId, type ID, LowercaseMap } from 'sushi'
-import { nativeAddress } from 'sushi/config'
-import { Amount, type Type } from 'sushi/currency'
+import { Amount, LowercaseMap } from 'sushi'
+import {
+  type EvmChainId,
+  type EvmCurrency,
+  type EvmID,
+  nativeAddress,
+} from 'sushi/evm'
 import type { Address } from 'viem'
 import { useBalanceProvider } from './balance-provider'
 import { isBalanceStaleWhileRevalidate } from './utils'
@@ -92,14 +96,16 @@ export function useBalances(
 
 export function useAmountBalances(
   chainId: EvmChainId | undefined,
-  _currencies: (Type | undefined)[] | undefined,
+  _currencies: (EvmCurrency | undefined)[] | undefined,
 ) {
   const currencies = useMemo(() => {
     if (!_currencies) {
       return undefined
     }
 
-    return _currencies.filter((currency) => currency !== undefined) as Type[]
+    return _currencies.filter(
+      (currency) => currency !== undefined,
+    ) as EvmCurrency[]
   }, [_currencies])
 
   const tokenAddresses = useMemo(() => {
@@ -114,7 +120,7 @@ export function useAmountBalances(
         )
       }
 
-      if (currency.isNative) {
+      if (currency.type === 'native') {
         return nativeAddress
       }
 
@@ -132,22 +138,23 @@ export function useAmountBalances(
       }
     }
 
-    const amountMap = new LowercaseMap<ID, Amount<Type>>()
+    const amountMap = new LowercaseMap<EvmID<true>, Amount<EvmCurrency>>()
 
     currencies.forEach((currency) => {
-      const address = currency.isNative ? nativeAddress : currency.address
+      const address =
+        currency.type === 'native' ? nativeAddress : currency.address
       const amount = result.data.get(address)
 
       if (amount === undefined) {
         return
       }
 
-      amountMap.set(currency.id, Amount.fromRawAmount(currency, amount))
+      amountMap.set(currency.id, new Amount(currency, amount))
     })
 
     return {
       ...result,
-      data: amountMap as ReadonlyMap<ID, Amount<Type>>,
+      data: amountMap as ReadonlyMap<EvmID<true>, Amount<EvmCurrency>>,
     }
   }, [currencies, result])
 }

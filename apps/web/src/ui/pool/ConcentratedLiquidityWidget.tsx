@@ -6,13 +6,13 @@ import { DialogTrigger, FormSection, Message, classNames } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui'
 import { type FC, Fragment, useCallback, useMemo } from 'react'
 import {
+  type EvmCurrency,
+  type Position,
   SUSHISWAP_V3_POSITION_MANAGER,
   type SushiSwapV3ChainId,
   type SushiSwapV3FeeAmount,
   isWNativeSupported,
-} from 'sushi/config'
-import type { Type } from 'sushi/currency'
-import type { Position } from 'sushi/pool/sushiswap-v3'
+} from 'sushi/evm'
 
 import { SlippageToleranceStorageKey } from '@sushiswap/hooks'
 import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
@@ -30,11 +30,11 @@ import {
 interface ConcentratedLiquidityWidget {
   chainId: SushiSwapV3ChainId
   account: string | undefined
-  token0: Type | undefined
-  token1: Type | undefined
+  token0: EvmCurrency | undefined
+  token1: EvmCurrency | undefined
   feeAmount: SushiSwapV3FeeAmount | undefined
-  setToken0?(token: Type): void
-  setToken1?(token: Type): void
+  setToken0?(token: EvmCurrency): void
+  setToken1?(token: EvmCurrency): void
   tokensLoading: boolean
   tokenId: number | string | undefined
   existingPosition: Position | undefined

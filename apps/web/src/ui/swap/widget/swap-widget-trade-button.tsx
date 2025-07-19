@@ -8,9 +8,8 @@ import type React from 'react'
 import { type FC, useMemo } from 'react'
 import type { UseTradeReturn } from 'src/lib/hooks/react-query'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
-import { EvmChainKey } from 'sushi/chain'
-import { Native } from 'sushi/currency'
-import { ZERO } from 'sushi/math'
+import { ZERO } from 'sushi'
+import { EvmNative, getEvmChainById } from 'sushi/evm'
 import { warningSeverity } from '../../../lib/swap/warningSeverity'
 import { useIsSwapMaintenance } from '../simple/use-is-swap-maintenance'
 import {
@@ -37,7 +36,7 @@ const PartialRouteChecker: FC<PartialRouteCheckerProps> = ({
         size="xl"
         fullWidth
         onClick={() =>
-          trade.amountIn && setSwapAmount(trade.amountIn?.toExact())
+          trade.amountIn && setSwapAmount(trade.amountIn?.toString())
         }
       >
         Accept New Input and Swap
@@ -64,11 +63,11 @@ export const SwapWidgetTradeButton = () => {
   } = useDerivedStateSwapWidget()
 
   const isWrap =
-    token0?.isNative &&
-    token1?.wrapped.address === Native.onChain(chainId).wrapped.address
+    token0?.type === 'native' &&
+    token1?.wrap().address === EvmNative.fromChainId(chainId).wrap().address
   const isUnwrap =
-    token1?.isNative &&
-    token0?.wrapped.address === Native.onChain(chainId).wrapped.address
+    token1?.type === 'native' &&
+    token0?.wrap().address === EvmNative.fromChainId(chainId).wrap().address
 
   const showPriceImpactWarning = useMemo(() => {
     const priceImpactSeverity = warningSeverity(quote?.priceImpact)
@@ -76,14 +75,14 @@ export const SwapWidgetTradeButton = () => {
   }, [quote?.priceImpact])
 
   const url = useMemo(() => {
-    const base = `/${EvmChainKey[chainId]}/swap`
+    const base = `/${getEvmChainById(chainId).key}/swap`
     const params = new URLSearchParams()
 
     if (token0) {
-      params.set('token0', token0.isNative ? 'NATIVE' : token0.address)
+      params.set('token0', token0.type === 'native' ? 'NATIVE' : token0.address)
     }
     if (token1) {
-      params.set('token1', token1.isNative ? 'NATIVE' : token1.address)
+      params.set('token1', token1.type === 'native' ? 'NATIVE' : token1.address)
     }
     if (swapAmountString) {
       params.set('swapAmount', swapAmountString)
@@ -100,7 +99,7 @@ export const SwapWidgetTradeButton = () => {
             size="xl"
             disabled={Boolean(
               error ||
-                !quote?.amountOut?.greaterThan(ZERO) ||
+                !quote?.amountOut?.gt(ZERO) ||
                 quote?.route?.status === 'NoWay' ||
                 +swapAmountString === 0 ||
                 showPriceImpactWarning,

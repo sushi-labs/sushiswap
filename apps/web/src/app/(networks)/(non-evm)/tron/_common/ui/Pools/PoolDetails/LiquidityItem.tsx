@@ -1,5 +1,5 @@
 import { CardItem } from '@sushiswap/ui'
-import { formatUSD } from 'sushi/format'
+import { formatUSD } from 'sushi'
 import { formatUnits } from '~tron/_common/lib/utils/formatters'
 import type { IToken } from '~tron/_common/types/token-type'
 import { Icon } from '~tron/_common/ui/General/Icon'

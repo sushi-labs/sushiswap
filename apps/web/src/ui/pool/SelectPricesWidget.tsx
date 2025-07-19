@@ -40,25 +40,22 @@ import React, {
 import { Bound, Field } from 'src/lib/constants'
 import { useTokenAmountDollarValues } from 'src/lib/hooks'
 import {
+  type EvmAddress,
+  type EvmCurrency,
   type SushiSwapV3ChainId,
   type SushiSwapV3FeeAmount,
   TICK_SPACINGS,
-} from 'sushi/config'
-import { type Type, tryParseAmount } from 'sushi/currency'
-import {
   getCapitalEfficiency,
   getTokenRatio,
   tickToPrice,
-} from 'sushi/pool/sushiswap-v3'
+} from 'sushi/evm'
 
 import { RadioGroup } from '@headlessui/react'
 import { LockClosedIcon, LockOpenIcon } from '@heroicons/react/24/solid'
 import { ExclamationTriangleIcon } from '@heroicons/react/24/solid'
 import { useConcentratedLiquidityPoolStats } from 'src/lib/hooks/react-query'
 import { useConcentratedLiquidityPositionsFromTokenId } from 'src/lib/wagmi/hooks/positions/hooks/useConcentratedPositionsFromTokenId'
-import type { Address } from 'sushi'
-import { formatPercent } from 'sushi/format'
-import { Fraction } from 'sushi/math'
+import { Amount, Fraction, formatPercent } from 'sushi'
 import { useAccount } from 'wagmi'
 import {
   useConcentratedDerivedMintInfo,
@@ -100,9 +97,9 @@ const YIELD_RATE_OPTIONS = [
 
 interface SelectPricesWidget {
   chainId: SushiSwapV3ChainId
-  token0: Type | undefined
-  token1: Type | undefined
-  poolAddress: Address | undefined
+  token0: EvmCurrency | undefined
+  token1: EvmCurrency | undefined
+  poolAddress: EvmAddress | undefined
   feeAmount: SushiSwapV3FeeAmount | undefined
   switchTokens?(): void
   tokenId: string | undefined
@@ -199,19 +196,15 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
   const setPriceRange = useCallback(
     (multiplier: Fraction) => {
       if (!price) return
-      const newPriceLower = price.asFraction
-        .multiply(price.scalar)
-        .divide(multiplier)
-      const newPriceUpper = price.asFraction
-        .multiply(price.scalar)
-        .multiply(multiplier)
+      const newPriceLower = price.asFraction.mul(price.scalar).div(multiplier)
+      const newPriceUpper = price.asFraction.mul(price.scalar).mul(multiplier)
       setWeightLockedCurrencyBase(undefined)
       if (invertPrice) {
-        onLeftRangeInput(newPriceUpper.invert().toFixed(6))
-        onRightRangeInput(newPriceLower.invert().toFixed(6))
+        onLeftRangeInput(newPriceUpper.invert().toString({ fixed: 6 }))
+        onRightRangeInput(newPriceLower.invert().toString({ fixed: 6 }))
       } else {
-        onLeftRangeInput(newPriceLower.toFixed(6))
-        onRightRangeInput(newPriceUpper.toFixed(6))
+        onLeftRangeInput(newPriceLower.toString({ fixed: 6 }))
+        onRightRangeInput(newPriceUpper.toString({ fixed: 6 }))
       }
     },
     [
@@ -236,11 +229,11 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
             TICK_SPACINGS[feeAmount]
 
           const newRightPrice = tickToPrice(
-            token0.wrapped,
-            token1.wrapped,
+            token0.wrap(),
+            token1.wrap(),
             current + (invertPrice ? 1 : 0) * TICK_SPACINGS[feeAmount],
           )
-          onRightRangeInput(newRightPrice.toFixed(18))
+          onRightRangeInput(newRightPrice.toString({ fixed: 18 }))
           break
         }
         case 'right': {
@@ -249,11 +242,11 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
             TICK_SPACINGS[feeAmount]
 
           const newLeftPrice = tickToPrice(
-            token0.wrapped,
-            token1.wrapped,
+            token0.wrap(),
+            token1.wrap(),
             current + (invertPrice ? -1 : 0) * TICK_SPACINGS[feeAmount],
           )
-          onLeftRangeInput(newLeftPrice.toFixed(18))
+          onLeftRangeInput(newLeftPrice.toString({ fixed: 18 }))
           break
         }
       }
@@ -343,17 +336,20 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
       {
         label: '×÷2',
         value: PriceRange.BPS_20000,
-        onClick: () => setPriceRange(new Fraction(20000, 10000)),
+        onClick: () =>
+          setPriceRange(new Fraction({ numerator: 20000, denominator: 10000 })),
       },
       {
         label: '×÷1.2',
         value: PriceRange.BPS_12000,
-        onClick: () => setPriceRange(new Fraction(12000, 10000)),
+        onClick: () =>
+          setPriceRange(new Fraction({ numerator: 12000, denominator: 10000 })),
       },
       {
         label: '×÷1.01',
         value: PriceRange.BPS_10100,
-        onClick: () => setPriceRange(new Fraction(10100, 10000)),
+        onClick: () =>
+          setPriceRange(new Fraction({ numerator: 10100, denominator: 10000 })),
       },
       {
         label: 'Single Sided (Left)',
@@ -374,8 +370,7 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
     ],
   )
 
-  const isSorted =
-    token0 && token1 && token0.wrapped.sortsBefore(token1.wrapped)
+  const isSorted = token0 && token1 && token0.wrap().sortsBefore(token1.wrap())
   const leftPrice = useMemo(
     () => (isSorted ? priceLower : priceUpper?.invert()),
     [isSorted, priceLower, priceUpper],
@@ -386,7 +381,10 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
   )
 
   const fiatAmounts = useMemo(
-    () => [tryParseAmount('1', token0), tryParseAmount('1', token1)],
+    () =>
+      token0 && token1
+        ? [Amount.fromHuman(token0, '1'), Amount.fromHuman(token1, '1')]
+        : [],
     [token0, token1],
   )
   const fiatAmountsAsNumber = useTokenAmountDollarValues({
@@ -465,8 +463,8 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
 
   const poolFish = new URL('https://poolfish.xyz/calculators/sushi')
   poolFish.searchParams.append('network', `${chainId}`)
-  if (token0) poolFish.searchParams.append('token0', token0.wrapped.address)
-  if (token1) poolFish.searchParams.append('token1', token1.wrapped.address)
+  if (token0) poolFish.searchParams.append('token0', token0.wrap().address)
+  if (token1) poolFish.searchParams.append('token1', token1.wrap().address)
   if (feeAmount) poolFish.searchParams.append('feeTier', `${feeAmount}`)
 
   const tokenToggle = useMemo(
@@ -601,7 +599,7 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
                   <div className="flex items-baseline gap-1.5">
                     {invert ? token1.symbol : token0.symbol} ={' '}
                     {pool
-                      .priceOf(invert ? token1.wrapped : token0.wrapped)
+                      .priceOf(invert ? token1.wrap() : token0.wrap())
                       ?.toSignificant(4)}{' '}
                     {invert ? token0.symbol : token1.symbol}
                     <span className="text-xs font-normal">
@@ -874,8 +872,8 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
 
 interface PriceBlockProps {
   id?: string
-  token0: Type | undefined
-  token1: Type | undefined
+  token0: EvmCurrency | undefined
+  token1: EvmCurrency | undefined
   label: string
   value: string
   decrement(): string

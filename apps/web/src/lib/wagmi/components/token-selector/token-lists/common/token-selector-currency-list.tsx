@@ -1,10 +1,9 @@
 import React, { type FC, memo, useMemo } from 'react'
 import { NativeAddress } from 'src/lib/constants'
-import type { ChainId } from 'sushi/chain'
-import { type Amount, Native, type Type } from 'sushi/currency'
+import type { Amount, ChainId } from 'sushi'
+import { type EvmCurrency, EvmNative, type EvmToken } from 'sushi/evm'
 import { useAccount } from 'wagmi'
 
-import type { Token } from 'sushi/currency'
 import type { Address } from 'viem'
 import type { PriceMap } from '~evm/_common/ui/price-provider/price-provider/use-prices'
 import { TokenSelectorImportRow } from './token-selector-import-row'
@@ -12,22 +11,22 @@ import { TokenSelectorRow, TokenSelectorRowLoading } from './token-selector-row'
 
 interface TokenSelectorCurrencyListProps {
   id: string
-  currencies: Readonly<Type[]> | undefined
+  currencies: Readonly<EvmCurrency<{ approved?: boolean }>[]> | undefined
   chainId: ChainId
-  onSelect(currency: Type): void
+  onSelect(currency: EvmCurrency): void
   pin?: {
     isPinned: (currencyId: string) => boolean
     onPin: (currencyId: string) => void
   }
-  selected: Type | undefined
-  balancesMap: Map<string, Amount<Type>> | undefined
+  selected: EvmCurrency | undefined
+  balancesMap: Map<string, Amount<EvmCurrency>> | undefined
   pricesMap: PriceMap | undefined
   isBalanceLoading: boolean
   importConfig?: {
-    onImport: (currency: Token) => void
+    onImport: (currency: EvmToken) => void
     importableSet: Set<Address>
   }
-  onShowInfo(currency: Type | false): void
+  onShowInfo(currency: EvmCurrency | false): void
 }
 
 export const TokenSelectorCurrencyList: FC<TokenSelectorCurrencyListProps> =
@@ -50,14 +49,15 @@ export const TokenSelectorCurrencyList: FC<TokenSelectorCurrencyListProps> =
         account: address,
         currency,
         balance: balancesMap?.get(
-          currency.isNative ? NativeAddress : currency.address,
+          currency.type === 'native' ? NativeAddress : currency.address,
         ),
         price: pricesMap?.getFraction(
-          currency.isNative
-            ? Native.onChain(currency.chainId).wrapped.address
+          currency.type === 'native'
+            ? EvmNative.fromChainId(currency.chainId).wrap().address
             : currency.address,
         ),
-        showWarning: currency.approved === false,
+        showWarning:
+          currency.type === 'token' && currency.metadata.approved === false,
         onSelect: () => onSelect(currency),
         pin: pin
           ? {
@@ -66,10 +66,10 @@ export const TokenSelectorCurrencyList: FC<TokenSelectorCurrencyListProps> =
             }
           : undefined,
         selected: selected
-          ? (currency.isNative === true && selected.isNative === true) ||
-            (selected.isToken &&
-              currency.isToken &&
-              currency.wrapped.address === selected.wrapped.address)
+          ? (currency.type === 'native' && selected.type === 'native') ||
+            (selected.type === 'token' &&
+              currency.type === 'token' &&
+              currency.wrap().address === selected.wrap().address)
           : false,
         isBalanceLoading,
         onShowInfo: () => onShowInfo(currency),
@@ -96,14 +96,14 @@ export const TokenSelectorCurrencyList: FC<TokenSelectorCurrencyListProps> =
 
     return rowData.map((rowData) => {
       if (
-        !rowData.currency.isNative &&
+        rowData.currency.type === 'token' &&
         importableSet?.has(rowData.currency.address.toLowerCase() as Address)
       ) {
         return (
           <TokenSelectorImportRow
             key={rowData.currency.id}
             currency={rowData.currency}
-            onImport={() => onImport(rowData.currency as Token)}
+            onImport={() => onImport(rowData.currency as EvmToken)}
           />
         )
       }

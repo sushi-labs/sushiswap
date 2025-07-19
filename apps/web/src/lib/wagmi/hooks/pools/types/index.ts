@@ -1,7 +1,10 @@
-import type { ChainId } from 'sushi/chain'
-import type { Type } from 'sushi/currency'
-import type { TradeType } from 'sushi/dex'
-import type { SushiSwapV2Pool, SushiSwapV3Pool } from 'sushi/pool'
+import type {
+  EvmChainId,
+  EvmCurrency,
+  SushiSwapV2Pool,
+  SushiSwapV3Pool,
+  TradeType,
+} from 'sushi/evm'
 import type { PublicWagmiConfig } from '../../../config/public'
 
 export enum PoolType {
@@ -9,9 +12,9 @@ export enum PoolType {
 }
 
 export interface UsePoolsParams {
-  chainId: ChainId
-  currencyA: Type | undefined
-  currencyB: Type | undefined
+  chainId: EvmChainId
+  currencyA: EvmCurrency | undefined
+  currencyB: EvmCurrency | undefined
   tradeType?: TradeType
   enabled?: boolean
   withBentoPools?: boolean

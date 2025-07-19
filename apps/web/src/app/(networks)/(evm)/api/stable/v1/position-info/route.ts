@@ -3,14 +3,15 @@ import { Ratelimit } from '@upstash/ratelimit'
 import { ipAddress } from '@vercel/functions'
 import { type NextRequest, NextResponse } from 'next/server'
 import { rateLimit } from 'src/lib/rate-limit'
-import { Position, formatPercent } from 'sushi'
-import type { EvmChainId } from 'sushi/chain'
+import { formatPercent } from 'sushi'
 import {
+  type EvmChainId,
+  EvmToken,
+  Position,
   type SushiSwapV3ChainId,
   type SushiSwapV3FeeAmount,
   isSushiSwapV3ChainId,
-} from 'sushi/config'
-import { Token } from 'sushi/currency'
+} from 'sushi/evm'
 import { getAddress } from 'viem'
 import { z } from 'zod'
 import { CORS } from '../../cors'
@@ -81,8 +82,8 @@ export async function GET(request: NextRequest) {
     const [{ pool, poolAddress }, prices] = await Promise.all([
       getPool({
         chainId: args.chainId,
-        token0: new Token(token0),
-        token1: new Token(token1),
+        token0: new EvmToken(token0),
+        token1: new EvmToken(token1),
         feeAmount: position.fee as SushiSwapV3FeeAmount,
       }),
       getPrices({ chainId: args.chainId }),
@@ -98,8 +99,8 @@ export async function GET(request: NextRequest) {
     const token0PriceUSD = prices[getAddress(token0.address)] || 0
     const token1PriceUSD = prices[getAddress(token1.address)] || 0
 
-    const amount0USD = Number(amount0.toFixed(token0.decimals)) * token0PriceUSD
-    const amount1USD = Number(amount1.toFixed(token1.decimals)) * token1PriceUSD
+    const amount0USD = Number(amount0.toString()) * token0PriceUSD
+    const amount1USD = Number(amount1.toString()) * token1PriceUSD
 
     const positionValueUSD = amount0USD + amount1USD
 
@@ -133,11 +134,11 @@ export async function GET(request: NextRequest) {
       },
       poolFeeAmount: formatPercent(position.fee / 1000000),
       position: {
-        amount0: String(amount0.quotient),
-        amount0Formatted: Number(amount0.quotient) / 10 ** token0.decimals,
+        amount0: String(amount0.amount),
+        amount0Formatted: Number(amount0.amount) / 10 ** token0.decimals,
         amount0USD: amount0USD,
-        amount1: String(amount1.quotient),
-        amount1Formatted: Number(amount1.quotient) / 10 ** token1.decimals,
+        amount1: String(amount1.amount),
+        amount1Formatted: Number(amount1.amount) / 10 ** token1.decimals,
         amount1USD: amount1USD,
       },
       fees: {

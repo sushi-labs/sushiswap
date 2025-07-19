@@ -1,4 +1,4 @@
-import { type Native, Token, type Type } from 'sushi/currency'
+import { type EvmCurrency, type EvmNative, EvmToken } from 'sushi/evm'
 import type z from 'zod'
 import type {
   tokenValidator as tokenValidator01,
@@ -10,15 +10,15 @@ type token1 = z.infer<typeof tokenValidator01>
 export type swapApi1 = z.infer<typeof tradeValidator01>
 export type swapApi2 = z.infer<typeof tradeValidator02>
 
-function getApi1Token(token: Token | Native): token1 {
-  if (token instanceof Token)
+function getApi1Token(token: EvmToken | EvmNative): token1 {
+  if (token instanceof EvmToken)
     return {
       chainId: token.chainId,
       decimals: token.decimals,
       symbol: token.symbol as string,
       name: token.name as string,
-      isNative: token.isNative,
-      isToken: token.isToken,
+      isNative: false,
+      isToken: true,
       address: token.address,
       tokenId: token.id,
     }
@@ -28,14 +28,14 @@ function getApi1Token(token: Token | Native): token1 {
       decimals: token.decimals,
       symbol: token.symbol,
       name: token.name,
-      isNative: token.isNative,
-      isToken: token.isToken,
+      isNative: true,
+      isToken: false,
       tokenId: token.id,
     }
 }
 
-function getApi1TokenAddr(token: Token | Native): string {
-  return token instanceof Token
+function getApi1TokenAddr(token: EvmCurrency): string {
+  return token instanceof EvmToken
     ? token.address
     : '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE'
 }
@@ -43,8 +43,8 @@ function getApi1TokenAddr(token: Token | Native): string {
 // converts API 2 to API 1 response
 export function apiAdapter02To01(
   res: swapApi2,
-  fromToken: Type,
-  toToken: Type,
+  fromToken: EvmCurrency,
+  toToken: EvmCurrency,
   to: string | undefined,
 ): swapApi1 {
   if (res.status === 'NoWay') {

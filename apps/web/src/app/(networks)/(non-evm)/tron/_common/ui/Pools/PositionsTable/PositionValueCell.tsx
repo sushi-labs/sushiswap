@@ -1,5 +1,5 @@
 import { SkeletonText } from '@sushiswap/ui'
-import { formatUSD } from 'sushi/format'
+import { formatUSD } from 'sushi'
 import { useLPUsdValue } from '~tron/_common/lib/hooks/useLPUsdValue'
 import { usePoolOwnership } from '~tron/_common/lib/hooks/usePoolOwnership'
 import type { IPositionRowData } from './PositionsTable'

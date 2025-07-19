@@ -24,8 +24,7 @@ import {
 import { Dots } from '@sushiswap/ui'
 import React, { type FC, memo, useCallback, useMemo } from 'react'
 import { usePoolsByTokenPair } from 'src/lib/hooks/usePoolsByTokenPair'
-import { SushiSwapV3FeeAmount } from 'sushi/config'
-import type { Type } from 'sushi/currency'
+import { type EvmCurrency, SushiSwapV3FeeAmount } from 'sushi/evm'
 
 export const FEE_OPTIONS = [
   {
@@ -49,8 +48,8 @@ export const FEE_OPTIONS = [
 interface SelectFeeConcentratedWidget {
   feeAmount: SushiSwapV3FeeAmount | undefined
   setFeeAmount: (fee: SushiSwapV3FeeAmount) => void
-  token0: Type | undefined
-  token1: Type | undefined
+  token0: EvmCurrency | undefined
+  token1: EvmCurrency | undefined
   title?: string
   disableIfNotExists?: boolean
 }
@@ -79,8 +78,8 @@ export const SelectFeeConcentratedWidget: FC<SelectFeeConcentratedWidget> =
       [_setFeeAmount, trace, token0?.chainId, token0?.symbol, token1?.symbol],
     )
     const { data: pools, isLoading } = usePoolsByTokenPair(
-      token0?.wrapped.id,
-      token1?.wrapped.id,
+      token0?.wrap().id,
+      token1?.wrap().id,
     )
 
     const tvlDistribution = useMemo(() => {
@@ -170,13 +169,13 @@ export const SelectFeeConcentratedWidget: FC<SelectFeeConcentratedWidget> =
                             href={`/pool/add?chainId=${
                               token0.chainId
                             }&feeAmount=${option.value}&fromCurrency=${
-                              token0.isNative
+                              token0.type === 'native'
                                 ? 'NATIVE'
-                                : token0.wrapped.address
+                                : token0.wrap().address
                             }&toCurrency=${
-                              token1.isNative
+                              token1.type === 'native'
                                 ? 'NATIVE'
-                                : token1.wrapped.address
+                                : token1.wrap().address
                             }`}
                           >
                             Create Pool

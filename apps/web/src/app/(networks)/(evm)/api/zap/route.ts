@@ -1,6 +1,6 @@
 import type { NextRequest } from 'next/server'
 import { type ZapSupportedChainId, isZapSupportedChainId } from 'src/config'
-import { UI_FEE_COLLECTOR_ADDRESS, isUIFeeCollectorChainId } from 'sushi/config'
+import { UI_FEE_COLLECTOR_ADDRESS, isUIFeeCollectorChainId } from 'sushi/evm'
 import { getAddress } from 'viem/utils'
 import { z } from 'zod'
 

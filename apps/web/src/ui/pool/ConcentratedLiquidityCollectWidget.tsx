@@ -12,20 +12,26 @@ import { Button } from '@sushiswap/ui'
 import { type FC, useMemo, useState } from 'react'
 import type { ConcentratedLiquidityPosition } from 'src/lib/wagmi/hooks/positions/types'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
-import type { Address, EvmChainId, Position } from 'sushi'
-import { Amount, Native, type Type, unwrapToken } from 'sushi/currency'
-import { formatUSD } from 'sushi/format'
+import { Amount, formatUSD } from 'sushi'
+import {
+  type EvmAddress,
+  type EvmChainId,
+  type EvmCurrency,
+  EvmNative,
+  type Position,
+  unwrapEvmToken,
+} from 'sushi/evm'
 import { ConcentratedLiquidityCollectButton } from './ConcentratedLiquidityCollectButton'
 
 interface ConcentratedLiquidityCollectWidget {
   position: Position | undefined
   positionDetails: ConcentratedLiquidityPosition | undefined
-  token0: Type | undefined
-  token1: Type | undefined
+  token0: EvmCurrency | undefined
+  token1: EvmCurrency | undefined
   chainId: EvmChainId
   isLoading: boolean
-  address: Address | undefined
-  amounts: undefined[] | Amount<Type>[]
+  address: EvmAddress | undefined
+  amounts: undefined[] | Amount<EvmCurrency>[]
   fiatValuesAmounts: number[]
 }
 
@@ -43,30 +49,30 @@ export const ConcentratedLiquidityCollectWidget: FC<
   fiatValuesAmounts,
 }) => {
   const [receiveWrapped, setReceiveWrapped] = useState(false)
-  const nativeToken = useMemo(() => Native.onChain(chainId), [chainId])
+  const nativeToken = useMemo(() => EvmNative.fromChainId(chainId), [chainId])
 
   const positionHasNativeToken = useMemo(() => {
     if (!nativeToken || !token0 || !token1) return false
     return (
-      token0.isNative ||
-      token1.isNative ||
-      token0.address === nativeToken?.wrapped?.address ||
-      token1.address === nativeToken?.wrapped?.address
+      token0.type === 'native' ||
+      token1.type === 'native' ||
+      token0.address === nativeToken.wrap().address ||
+      token1.address === nativeToken.wrap().address
     )
   }, [token0, token1, nativeToken])
 
   const expectedAmount0 = useMemo(() => {
     const expectedToken0 =
-      !token0 || receiveWrapped ? token0?.wrapped : unwrapToken(token0)
+      !token0 || receiveWrapped ? token0?.wrap() : unwrapEvmToken(token0)
     if (amounts[0] === undefined || !expectedToken0) return undefined
-    return Amount.fromRawAmount(expectedToken0, amounts[0].quotient)
+    return new Amount(expectedToken0, amounts[0].amount)
   }, [token0, receiveWrapped, amounts])
 
   const expectedAmount1 = useMemo(() => {
     const expectedToken1 =
-      !token1 || receiveWrapped ? token1?.wrapped : unwrapToken(token1)
+      !token1 || receiveWrapped ? token1?.wrap() : unwrapEvmToken(token1)
     if (amounts[1] === undefined || !expectedToken1) return undefined
-    return Amount.fromRawAmount(expectedToken1, amounts[1].quotient)
+    return new Amount(expectedToken1, amounts[1].amount)
   }, [token1, receiveWrapped, amounts])
 
   return (
@@ -90,7 +96,7 @@ export const ConcentratedLiquidityCollectWidget: FC<
         {positionHasNativeToken ? (
           <div className="flex items-center justify-between">
             <span className="text-sm text-muted-foreground">
-              {`Receive ${nativeToken.wrapped.symbol} instead of ${nativeToken.symbol}`}
+              {`Receive ${nativeToken.wrap().symbol} instead of ${nativeToken.symbol}`}
             </span>
             <Switch
               checked={receiveWrapped}

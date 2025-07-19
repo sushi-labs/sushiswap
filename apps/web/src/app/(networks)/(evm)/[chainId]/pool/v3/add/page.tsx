@@ -13,13 +13,14 @@ import { SelectFeeConcentratedWidget } from 'src/ui/pool/SelectFeeConcentratedWi
 import { SelectNetworkWidget } from 'src/ui/pool/SelectNetworkWidget'
 import { SelectPricesWidget } from 'src/ui/pool/SelectPricesWidget'
 import { SelectTokensWidget } from 'src/ui/pool/SelectTokensWidget'
-import { ChainKey, computeSushiSwapV3PoolAddress } from 'sushi'
 import {
   SUSHISWAP_V3_FACTORY_ADDRESS,
   SUSHISWAP_V3_SUPPORTED_CHAIN_IDS,
   type SushiSwapV3ChainId,
+  computeSushiSwapV3PoolAddress,
+  getEvmChainById,
   isWNativeSupported,
-} from 'sushi/config'
+} from 'sushi/evm'
 import { useAccount } from 'wagmi'
 
 export default function Page(props: { params: Promise<{ chainId: string }> }) {
@@ -62,11 +63,11 @@ const _Add: FC = () => {
 
   const poolAddress = useMemo(
     () =>
-      token0 && token1 && feeAmount && chainId
+      token0 && token1 && feeAmount
         ? computeSushiSwapV3PoolAddress({
             factoryAddress: SUSHISWAP_V3_FACTORY_ADDRESS[chainId],
-            tokenA: token0.wrapped,
-            tokenB: token1.wrapped,
+            tokenA: token0.wrap(),
+            tokenB: token1.wrap(),
             fee: feeAmount,
           })
         : undefined,
@@ -77,7 +78,9 @@ const _Add: FC = () => {
     <>
       <SelectNetworkWidget
         selectedNetwork={chainId}
-        onSelect={(chainId) => router.push(`/${ChainKey[chainId]}/pool/v3/add`)}
+        onSelect={(chainId) =>
+          router.push(`/${getEvmChainById(chainId).key}/pool/v3/add`)
+        }
         networks={SUSHISWAP_V3_SUPPORTED_CHAIN_IDS}
       />
       <SelectTokensWidget
@@ -114,7 +117,7 @@ const _Add: FC = () => {
         tokensLoading={tokensLoading}
         existingPosition={position ?? undefined}
         tokenId={tokenId}
-        successLink={`/${ChainKey[chainId]}/pool/v3/${poolAddress}/${tokenId ?? 'positions'}`}
+        successLink={`/${getEvmChainById(chainId).key}/pool/v3/${poolAddress}/${tokenId ?? 'positions'}`}
       />
     </>
   )

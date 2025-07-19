@@ -1,16 +1,32 @@
 'use client'
 
 import { useMemo } from 'react'
-import type { EvmChainId } from 'sushi'
-import { Native, Token } from 'sushi/currency'
+import { getChainIdAddressFromId } from 'sushi'
+import {
+  type EvmAddress,
+  type EvmChainId,
+  type EvmID,
+  EvmNative,
+  EvmToken,
+} from 'sushi/evm'
 
 export const getTokensFromPool = (pool: {
-  id: string
-  token0: { address: string; name: string; decimals: number; symbol: string }
-  token1: { address: string; name: string; decimals: number; symbol: string }
+  id: EvmID | EvmAddress
+  token0: {
+    address: EvmAddress
+    name: string
+    decimals: number
+    symbol: string
+  }
+  token1: {
+    address: EvmAddress
+    name: string
+    decimals: number
+    symbol: string
+  }
   chainId: EvmChainId
 }) => {
-  const _token0 = new Token({
+  const _token0 = new EvmToken({
     address: pool.token0.address,
     name: pool.token0.name,
     decimals: Number(pool.token0.decimals),
@@ -18,7 +34,7 @@ export const getTokensFromPool = (pool: {
     chainId: pool.chainId,
   })
 
-  const _token1 = new Token({
+  const _token1 = new EvmToken({
     address: pool.token1.address,
     name: pool.token1.name,
     decimals: Number(pool.token1.decimals),
@@ -27,14 +43,18 @@ export const getTokensFromPool = (pool: {
   })
 
   const [token0, token1, liquidityToken] = [
-    _token0.wrapped.address === Native.onChain(_token0.chainId).wrapped.address
-      ? Native.onChain(_token0.chainId)
+    _token0.wrap().address ===
+    EvmNative.fromChainId(_token0.chainId).wrap().address
+      ? EvmNative.fromChainId(_token0.chainId)
       : _token0,
-    _token1.wrapped.address === Native.onChain(_token1.chainId).wrapped.address
-      ? Native.onChain(_token1.chainId)
+    _token1.wrap().address ===
+    EvmNative.fromChainId(_token1.chainId).wrap().address
+      ? EvmNative.fromChainId(_token1.chainId)
       : _token1,
-    new Token({
-      address: pool.id.includes(':') ? pool.id.split(':')[1] : pool.id,
+    new EvmToken({
+      address: pool.id.includes(':')
+        ? getChainIdAddressFromId(pool.id as EvmID).address
+        : (pool.id as EvmAddress),
       name: 'SLP Token',
       decimals: 18,
       symbol: 'SLP',
@@ -50,9 +70,19 @@ export const getTokensFromPool = (pool: {
 }
 
 export const useTokensFromPool = (pool: {
-  id: string
-  token0: { address: string; name: string; decimals: number; symbol: string }
-  token1: { address: string; name: string; decimals: number; symbol: string }
+  id: EvmID | EvmAddress
+  token0: {
+    address: EvmAddress
+    name: string
+    decimals: number
+    symbol: string
+  }
+  token1: {
+    address: EvmAddress
+    name: string
+    decimals: number
+    symbol: string
+  }
   chainId: EvmChainId
 }) => {
   return useMemo(() => {
