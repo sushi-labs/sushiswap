@@ -2,8 +2,7 @@
 
 import { createErrorToast, createToast } from '@sushiswap/notifications'
 import { useCallback, useMemo, useState } from 'react'
-import { erc20Abi_approve } from 'sushi/abi'
-import type { Token } from 'sushi/currency'
+import { type EvmToken, erc20Abi_approve } from 'sushi/evm'
 import {
   type Address,
   ContractFunctionZeroDataError,
@@ -21,7 +20,7 @@ import {
 interface UseTokenRevokeApproval {
   account: Address | undefined
   spender: Address | undefined
-  token: Omit<Token, 'wrapped'> | undefined
+  token: Omit<EvmToken, 'wrapped'> | undefined
   enabled?: boolean
 }
 

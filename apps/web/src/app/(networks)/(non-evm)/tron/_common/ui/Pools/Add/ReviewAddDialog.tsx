@@ -9,7 +9,7 @@ import {
 } from '@sushiswap/ui'
 import { useWallet } from '@tronweb3/tronwallet-adapter-react-hooks'
 import { useRef } from 'react'
-import { formatUSD } from 'sushi/format'
+import { formatUSD } from 'sushi'
 import { useStablePrice } from '~tron/_common/lib/hooks/useStablePrice'
 import { formatUnits } from '~tron/_common/lib/utils/formatters'
 import { Icon } from '../../General/Icon'

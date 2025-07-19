@@ -1,7 +1,7 @@
 import type { VariablesOf } from 'gql.tada'
 
 import { type RequestOptions, request } from 'src/lib/request.js'
-import { SUSHI_DATA_API_HOST } from 'sushi/config/subgraph'
+import { SUSHI_DATA_API_HOST } from 'sushi/evm'
 import { graphql } from '../../graphql.js'
 
 export const PortfolioWalletQuery = graphql(

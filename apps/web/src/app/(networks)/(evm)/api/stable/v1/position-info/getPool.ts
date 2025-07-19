@@ -1,11 +1,12 @@
 import { publicClientConfig } from 'src/lib/wagmi/config/viem'
-import { SushiSwapV3Pool, computeSushiSwapV3PoolAddress } from 'sushi'
 import {
+  type EvmToken,
   SUSHISWAP_V3_FACTORY_ADDRESS,
   type SushiSwapV3ChainId,
   type SushiSwapV3FeeAmount,
-} from 'sushi/config'
-import type { Token } from 'sushi/currency'
+  SushiSwapV3Pool,
+  computeSushiSwapV3PoolAddress,
+} from 'sushi/evm'
 import { type Address, createClient } from 'viem'
 import { multicall } from 'viem/actions'
 
@@ -56,8 +57,8 @@ export const getPool = async ({
   feeAmount,
   chainId,
 }: {
-  token0: Token
-  token1: Token
+  token0: EvmToken
+  token1: EvmToken
   feeAmount: SushiSwapV3FeeAmount
   chainId: SushiSwapV3ChainId
 }) => {

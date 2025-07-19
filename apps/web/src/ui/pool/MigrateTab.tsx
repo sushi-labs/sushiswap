@@ -53,21 +53,18 @@ import {
   useApproved,
   withCheckerRoot,
 } from 'src/lib/wagmi/systems/Checker/Provider'
-import { EvmChain } from 'sushi/chain'
+import { Amount, type Fraction, Price, ZERO, formatUSD } from 'sushi'
 import {
+  Position,
   type SushiSwapV2ChainId,
   type SushiSwapV3ChainId,
   SushiSwapV3FeeAmount,
-} from 'sushi/config'
-import { Amount, Price, tryParseAmount, unwrapToken } from 'sushi/currency'
-import { formatUSD } from 'sushi/format'
-import { type Fraction, ZERO } from 'sushi/math'
-import {
-  Position,
   SushiSwapV3Pool,
   TickMath,
+  getEvmChainById,
   priceToClosestTick,
-} from 'sushi/pool/sushiswap-v3'
+  unwrapEvmToken,
+} from 'sushi/evm'
 import type { Address } from 'viem'
 import { useAccount, useWaitForTransactionReceipt } from 'wagmi'
 import { useConcentratedDerivedMintInfo } from './ConcentratedLiquidityProvider'
@@ -126,13 +123,13 @@ export const MigrateTab: FC<{ pool: V2Pool }> = withCheckerRoot(({ pool }) => {
   const token0Value = useMemo(
     () =>
       token0 && pair?.[1] && totalSupply && balance
-        ? Amount.fromRawAmount(
-            token0?.wrapped,
-            (balance.quotient *
-              (token0.wrapped.equals(pair[1].token0)
-                ? pair[1].reserve0.quotient
-                : pair[1].reserve1.quotient)) /
-              totalSupply.quotient,
+        ? new Amount(
+            token0?.wrap(),
+            (balance.amount *
+              (token0.wrap().isSame(pair[1].token0)
+                ? pair[1].reserve0.amount
+                : pair[1].reserve1.amount)) /
+              totalSupply.amount,
           )
         : undefined,
     [token0, pair, totalSupply, balance],
@@ -141,13 +138,13 @@ export const MigrateTab: FC<{ pool: V2Pool }> = withCheckerRoot(({ pool }) => {
   const token1Value = useMemo(
     () =>
       token1 && pair?.[1]?.reserve1 && totalSupply && balance
-        ? Amount.fromRawAmount(
-            token1?.wrapped,
-            (balance.quotient *
-              (token1.wrapped.equals(pair[1].token1)
-                ? pair[1].reserve1.quotient
-                : pair[1].reserve0.quotient)) /
-              totalSupply.quotient,
+        ? new Amount(
+            token1?.wrap(),
+            (balance.amount *
+              (token1.wrap().isSame(pair[1].token1)
+                ? pair[1].reserve1.amount
+                : pair[1].reserve0.amount)) /
+              totalSupply.amount,
           )
         : undefined,
     [token1, pair, totalSupply, balance],
@@ -175,7 +172,7 @@ export const MigrateTab: FC<{ pool: V2Pool }> = withCheckerRoot(({ pool }) => {
 
   const v3Address =
     token0 && token1 && feeAmount
-      ? SushiSwapV3Pool.getAddress(token0.wrapped, token1.wrapped, feeAmount)
+      ? SushiSwapV3Pool.getAddress(token0.wrap(), token1.wrap(), feeAmount)
       : undefined
   const v3SpotPrice = useMemo(
     () => (v3Pool ? v3Pool?.token0Price : undefined),
@@ -184,26 +181,26 @@ export const MigrateTab: FC<{ pool: V2Pool }> = withCheckerRoot(({ pool }) => {
   const v2SpotPrice = useMemo(
     () =>
       _token0 && _token1 && pair?.[1]?.reserve0 && pair?.[1]?.reserve1
-        ? new Price(
-            _token0.wrapped,
-            _token1.wrapped,
-            pair[1].reserve0.quotient,
-            pair[1].reserve1.quotient,
-          )
+        ? new Price({
+            base: _token0.wrap(),
+            quote: _token1.wrap(),
+            denominator: pair[1].reserve0.amount,
+            numerator: pair[1].reserve1.amount,
+          })
         : undefined,
     [_token0, _token1, pair],
   )
 
   let priceDifferenceFraction: Fraction | undefined =
     v2SpotPrice && v3SpotPrice
-      ? v3SpotPrice.divide(v2SpotPrice).subtract(1).multiply(100)
+      ? v3SpotPrice.div(v2SpotPrice).sub(1).mul(100)
       : undefined
-  if (priceDifferenceFraction?.lessThan(ZERO)) {
-    priceDifferenceFraction = priceDifferenceFraction.multiply(-1)
+  if (priceDifferenceFraction?.lt(ZERO)) {
+    priceDifferenceFraction = priceDifferenceFraction.mul(-1)
   }
 
   const largePriceDifference =
-    priceDifferenceFraction && !priceDifferenceFraction?.lessThan(2n)
+    priceDifferenceFraction && !priceDifferenceFraction?.lt(2n)
 
   const { [Bound.LOWER]: tickLower, [Bound.UPPER]: tickUpper } = ticks
 
@@ -231,8 +228,8 @@ export const MigrateTab: FC<{ pool: V2Pool }> = withCheckerRoot(({ pool }) => {
             pool:
               v3Pool ??
               new SushiSwapV3Pool(
-                token0.wrapped,
-                token1.wrapped,
+                token0.wrap(),
+                token1.wrap(),
                 feeAmount,
                 sqrtPrice,
                 0,
@@ -241,12 +238,12 @@ export const MigrateTab: FC<{ pool: V2Pool }> = withCheckerRoot(({ pool }) => {
               ),
             tickLower,
             tickUpper,
-            amount0: token0.wrapped.sortsBefore(token1.wrapped)
-              ? token0Value.quotient
-              : token1Value.quotient,
-            amount1: token0.wrapped.sortsBefore(token1.wrapped)
-              ? token1Value.quotient
-              : token0Value.quotient,
+            amount0: token0.wrap().sortsBefore(token1.wrap())
+              ? token0Value.amount
+              : token1Value.amount,
+            amount1: token0.wrap().sortsBefore(token1.wrap())
+              ? token1Value.amount
+              : token0Value.amount,
             useFullPrecision: true, // we want full precision for the theoretical position
           })
         : undefined,
@@ -286,10 +283,7 @@ export const MigrateTab: FC<{ pool: V2Pool }> = withCheckerRoot(({ pool }) => {
       positionAmount0 &&
       token0 &&
       token0Value &&
-      Amount.fromRawAmount(
-        token0,
-        token0Value.quotient - positionAmount0.quotient,
-      ),
+      new Amount(token0, token0Value.amount - positionAmount0.amount),
     [positionAmount0, token0, token0Value],
   )
 
@@ -298,10 +292,7 @@ export const MigrateTab: FC<{ pool: V2Pool }> = withCheckerRoot(({ pool }) => {
       positionAmount1 &&
       token1 &&
       token1Value &&
-      Amount.fromRawAmount(
-        token1,
-        token1Value.quotient - positionAmount1.quotient,
-      ),
+      new Amount(token1, token1Value.amount - positionAmount1.amount),
     [positionAmount1, token1, token1Value],
   )
 
@@ -315,8 +306,7 @@ export const MigrateTab: FC<{ pool: V2Pool }> = withCheckerRoot(({ pool }) => {
     parsedAmounts
   const { [Bound.LOWER]: priceLower, [Bound.UPPER]: priceUpper } = pricesAtTicks
 
-  const isSorted =
-    token0 && token1 && token0.wrapped.sortsBefore(token1.wrapped)
+  const isSorted = token0 && token1 && token0.wrap().sortsBefore(token1.wrap())
   const leftPrice = useMemo(
     () => (isSorted ? priceLower : priceUpper?.invert()),
     [isSorted, priceLower, priceUpper],
@@ -334,7 +324,10 @@ export const MigrateTab: FC<{ pool: V2Pool }> = withCheckerRoot(({ pool }) => {
   )
 
   const fiatAmounts = useMemo(
-    () => [tryParseAmount('1', token0), tryParseAmount('1', token1)],
+    () =>
+      token0 && token1
+        ? [Amount.fromHuman(token0, '1'), Amount.fromHuman(token1, '1')]
+        : [],
     [token0, token1],
   )
   const fiatAmountsAsNumber = useTokenAmountDollarValues({
@@ -359,8 +352,8 @@ export const MigrateTab: FC<{ pool: V2Pool }> = withCheckerRoot(({ pool }) => {
       pair: pool.address as Address,
       liquidityToMigrate: balance,
       percentageToMigrate: 100,
-      token0: _token0?.wrapped,
-      token1: _token1?.wrapped,
+      token0: _token0?.wrap(),
+      token1: _token1?.wrap(),
       fee: feeAmount,
       tickLower: tickLower,
       tickUpper: tickUpper,
@@ -557,15 +550,15 @@ export const MigrateTab: FC<{ pool: V2Pool }> = withCheckerRoot(({ pool }) => {
                   >
                     <Checker.Guard
                       size="default"
-                      guardWhen={!balance?.greaterThan(ZERO)}
+                      guardWhen={!balance?.gt(ZERO)}
                       guardText="Not enough balance"
                     >
                       <Checker.Guard
                         size="default"
                         guardWhen={Boolean(
                           !position ||
-                            positionAmount0?.equalTo(ZERO) ||
-                            positionAmount1?.equalTo(ZERO),
+                            positionAmount0?.eq(ZERO) ||
+                            positionAmount1?.eq(ZERO),
                         )}
                         guardText="Enter valid range"
                       >
@@ -641,7 +634,7 @@ export const MigrateTab: FC<{ pool: V2Pool }> = withCheckerRoot(({ pool }) => {
                                       <List className="!pt-0">
                                         <List.Control>
                                           <List.KeyValue flex title="Network">
-                                            {EvmChain.from(pool.chainId)?.name}
+                                            {getEvmChainById(pool.chainId).name}
                                           </List.KeyValue>
                                           {feeAmount && (
                                             <List.KeyValue title="Fee Tier">{`${
@@ -718,7 +711,7 @@ export const MigrateTab: FC<{ pool: V2Pool }> = withCheckerRoot(({ pool }) => {
                                               <div className="flex flex-col gap-0.5">
                                                 <div className="flex items-center gap-2">
                                                   <Currency.Icon
-                                                    currency={unwrapToken(
+                                                    currency={unwrapEvmToken(
                                                       positionAmount0.currency,
                                                     )}
                                                     width={18}
@@ -728,7 +721,7 @@ export const MigrateTab: FC<{ pool: V2Pool }> = withCheckerRoot(({ pool }) => {
                                                     6,
                                                   )}{' '}
                                                   {
-                                                    unwrapToken(
+                                                    unwrapEvmToken(
                                                       positionAmount0.currency,
                                                     ).symbol
                                                   }
@@ -748,7 +741,7 @@ export const MigrateTab: FC<{ pool: V2Pool }> = withCheckerRoot(({ pool }) => {
                                               <div className="flex flex-col gap-0.5">
                                                 <div className="flex items-center gap-2">
                                                   <Currency.Icon
-                                                    currency={unwrapToken(
+                                                    currency={unwrapEvmToken(
                                                       positionAmount1.currency,
                                                     )}
                                                     width={18}
@@ -758,7 +751,7 @@ export const MigrateTab: FC<{ pool: V2Pool }> = withCheckerRoot(({ pool }) => {
                                                     6,
                                                   )}{' '}
                                                   {
-                                                    unwrapToken(
+                                                    unwrapEvmToken(
                                                       positionAmount1.currency,
                                                     ).symbol
                                                   }
@@ -782,7 +775,7 @@ export const MigrateTab: FC<{ pool: V2Pool }> = withCheckerRoot(({ pool }) => {
                                               <div className="flex flex-col gap-0.5">
                                                 <div className="flex items-center gap-2">
                                                   <Currency.Icon
-                                                    currency={unwrapToken(
+                                                    currency={unwrapEvmToken(
                                                       token0Value.currency,
                                                     )}
                                                     width={18}
@@ -791,7 +784,7 @@ export const MigrateTab: FC<{ pool: V2Pool }> = withCheckerRoot(({ pool }) => {
                                                   {refund0?.toSignificant(6) ??
                                                     '0.00'}{' '}
                                                   {
-                                                    unwrapToken(
+                                                    unwrapEvmToken(
                                                       token0Value.currency,
                                                     ).symbol
                                                   }
@@ -811,7 +804,7 @@ export const MigrateTab: FC<{ pool: V2Pool }> = withCheckerRoot(({ pool }) => {
                                               <div className="flex flex-col gap-0.5">
                                                 <div className="flex items-center gap-2">
                                                   <Currency.Icon
-                                                    currency={unwrapToken(
+                                                    currency={unwrapEvmToken(
                                                       token1Value.currency,
                                                     )}
                                                     width={18}
@@ -820,7 +813,7 @@ export const MigrateTab: FC<{ pool: V2Pool }> = withCheckerRoot(({ pool }) => {
                                                   {refund1?.toSignificant(6) ??
                                                     '0.00'}{' '}
                                                   {
-                                                    unwrapToken(
+                                                    unwrapEvmToken(
                                                       token1Value.currency,
                                                     ).symbol
                                                   }

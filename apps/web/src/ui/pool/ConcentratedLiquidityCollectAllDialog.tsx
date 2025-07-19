@@ -20,13 +20,17 @@ import { Currency } from '@sushiswap/ui'
 import type React from 'react'
 import { type FC, type ReactNode, useCallback, useMemo, useState } from 'react'
 import type { ConcentratedLiquidityPositionWithV3Pool } from 'src/lib/wagmi/hooks/positions/types'
-import { EvmChain, type EvmChainId } from 'sushi/chain'
+import { Amount } from 'sushi'
 import {
+  type EvmChainId,
+  type EvmCurrency,
+  EvmNative,
+  NonfungiblePositionManager,
   SUSHISWAP_V3_POSITION_MANAGER,
+  getEvmChainById,
   isSushiSwapV3ChainId,
-} from 'sushi/config'
-import { Amount, Native, type Type, unwrapToken } from 'sushi/currency'
-import { NonfungiblePositionManager } from 'sushi/pool/sushiswap-v3'
+  unwrapEvmToken,
+} from 'sushi/evm'
 import {
   type Hex,
   type SendTransactionReturnType,
@@ -48,7 +52,7 @@ interface ConcentratedLiquidityCollectAllDialog {
   account: `0x${string}` | undefined
   children?:
     | React.ReactNode
-    | ((args: { amounts: Amount<Type>[] }) => ReactNode)
+    | ((args: { amounts: Amount<EvmCurrency>[] }) => ReactNode)
 }
 
 export const ConcentratedLiquidityCollectAllDialog: FC<
@@ -76,16 +80,14 @@ const _ConcentratedLiquidityCollectAllDialog: FC<
   const { refetchChain: refetchBalances } = useRefetchBalances()
   const [receiveWrapped, setReceiveWrapped] = useState(false)
 
-  const nativeToken = useMemo(() => Native.onChain(chainId), [chainId])
+  const nativeToken = useMemo(() => EvmNative.fromChainId(chainId), [chainId])
 
   const hasNativeToken = useMemo(() => {
     return positions.some(({ pool: { token0, token1 } }) => {
       if (!token0 || !token1 || !nativeToken) return false
       return (
-        token0.isNative ||
-        token1.isNative ||
-        token0.address === nativeToken.wrapped?.address ||
-        token1.address === nativeToken.wrapped?.address
+        token0.address === nativeToken.wrap()?.address ||
+        token1.address === nativeToken.wrap()?.address
       )
     })
   }, [positions, nativeToken])
@@ -96,16 +98,16 @@ const _ConcentratedLiquidityCollectAllDialog: FC<
       if (!token0 || !token1 || !position?.fees || !account) return []
 
       const expectedToken0 = receiveWrapped
-        ? token0.wrapped
-        : unwrapToken(token0)
+        ? token0.wrap()
+        : unwrapEvmToken(token0)
       const expectedToken1 = receiveWrapped
-        ? token1.wrapped
-        : unwrapToken(token1)
+        ? token1.wrap()
+        : unwrapEvmToken(token1)
 
-      const feeValue0 = Amount.fromRawAmount(expectedToken0, position.fees[0])
-      const feeValue1 = Amount.fromRawAmount(expectedToken1, position.fees[1])
+      const feeValue0 = new Amount(expectedToken0, position.fees[0])
+      const feeValue1 = new Amount(expectedToken1, position.fees[1])
 
-      if (feeValue0.equalTo(0n) && feeValue1.equalTo(0n)) return []
+      if (feeValue0.eq(0n) && feeValue1.eq(0n)) return []
 
       return [
         {
@@ -119,12 +121,12 @@ const _ConcentratedLiquidityCollectAllDialog: FC<
   }, [positions, receiveWrapped, account])
 
   const aggregatedAmounts = useMemo(() => {
-    const aggregatedAmounts = new Map<string, Amount<Type>>()
+    const aggregatedAmounts = new Map<string, Amount<EvmCurrency>>()
 
     positionsToCollect.forEach((position) => {
       const { expectedCurrencyOwed0, expectedCurrencyOwed1 } = position
 
-      if (expectedCurrencyOwed0.greaterThan(0n)) {
+      if (expectedCurrencyOwed0.gt(0n)) {
         const existing = aggregatedAmounts.get(
           expectedCurrencyOwed0.currency.id,
         )
@@ -136,7 +138,7 @@ const _ConcentratedLiquidityCollectAllDialog: FC<
         )
       }
 
-      if (expectedCurrencyOwed1.greaterThan(0n)) {
+      if (expectedCurrencyOwed1.gt(0n)) {
         const existing = aggregatedAmounts.get(
           expectedCurrencyOwed1.currency.id,
         )
@@ -256,7 +258,7 @@ const _ConcentratedLiquidityCollectAllDialog: FC<
               <DialogHeader>
                 <DialogTitle>Claim V3 Fees</DialogTitle>
                 <DialogDescription>
-                  On {EvmChain.from(chainId)?.name}
+                  On {getEvmChainById(chainId).name}
                 </DialogDescription>
               </DialogHeader>
               <div className="flex flex-col gap-4">
@@ -303,7 +305,7 @@ const _ConcentratedLiquidityCollectAllDialog: FC<
                 {hasNativeToken && (
                   <div className="flex items-center justify-between mb-1">
                     <span className="text-gray-500 dark:text-slate-400 text-sm">
-                      Receive {nativeToken?.wrapped.symbol} instead of{' '}
+                      Receive {nativeToken?.wrap().symbol} instead of{' '}
                       {nativeToken?.symbol}
                     </span>
                     <Switch

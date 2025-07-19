@@ -23,8 +23,7 @@ import React, {
   useState,
 } from 'react'
 import { useTokens } from 'src/lib/hooks'
-import { EvmChainKey } from 'sushi/chain'
-import type { SushiSwapChainId } from 'sushi/config'
+import { type SushiSwapChainId, getEvmChainById } from 'sushi/evm'
 import { useTokenFilters } from './TokensFiltersProvider'
 import {
   FDV_COLUMN,
@@ -130,7 +129,7 @@ export const TokensTable: FC<TokensTableProps> = ({ chainId, onRowClick }) => {
         onSortingChange={setSorting}
         loading={isLoading}
         linkFormatter={(row) =>
-          `/${EvmChainKey[row.token.chainId]}/token/${row.token.address}`
+          `/${getEvmChainById(row.token.chainId).key}/token/${row.token.address}`
         }
         rowRenderer={rowRenderer}
         columns={COLUMNS}

@@ -1,3 +1,4 @@
+import type { V2Position } from '@sushiswap/graph-client/data-api'
 import { Card, CardHeader, CardTitle, DataTable, Slot } from '@sushiswap/ui'
 import type {
   DisplayColumnDef,
@@ -6,9 +7,7 @@ import type {
 } from '@tanstack/react-table'
 import { type FC, type ReactNode, useCallback, useMemo, useState } from 'react'
 import { useSushiV2UserPositions } from 'src/lib/hooks'
-
-import type { V2Position } from '@sushiswap/graph-client/data-api'
-import type { SushiSwapV2ChainId } from 'sushi/config'
+import type { SushiSwapV2ChainId } from 'sushi/evm'
 import { useAccount } from 'wagmi'
 import { APR_COLUMN, NAME_COLUMN_POOL, VALUE_COLUMN } from './columns'
 

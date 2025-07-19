@@ -1,15 +1,15 @@
-import { Fraction, Percent } from 'sushi'
-import type { Amount, Type } from 'sushi/currency'
+import { type Amount, Fraction, Percent } from 'sushi'
+import type { EvmCurrency } from 'sushi/evm'
 import { type Hex, decodeErrorResult } from 'viem'
 
-const MAX_TOKEN_TAX = new Percent(1_000, 10_000) // 10%
+const MAX_TOKEN_TAX = new Percent({ numerator: 1_000, denominator: 10_000 }) // 10%
 
 export const getTokenTax = ({
   data,
   expectedAmountOut,
 }: {
   data: Hex
-  expectedAmountOut: Amount<Type>
+  expectedAmountOut: Amount<EvmCurrency>
 }) => {
   let amountOut: bigint | undefined = undefined
 
@@ -33,16 +33,18 @@ export const getTokenTax = ({
   } catch (_) {}
 
   if (amountOut) {
-    const amountReceivedFraction = new Fraction(
-      amountOut,
-      expectedAmountOut.quotient,
-    )
-    const amountReceivedPercent = new Percent(
-      Math.ceil(Math.round(+amountReceivedFraction.toFixed(3) * 10_000)),
-      10_000,
-    )
-    const tax = new Percent(1).subtract(amountReceivedPercent)
-    if (tax.lessThan(MAX_TOKEN_TAX) || tax.equalTo(MAX_TOKEN_TAX)) {
+    const amountReceivedFraction = new Fraction({
+      numerator: amountOut,
+      denominator: expectedAmountOut.amount,
+    })
+    const amountReceivedPercent = new Percent({
+      numerator: Math.ceil(
+        Math.round(+amountReceivedFraction.toString({ fixed: 3 }) * 10_000),
+      ),
+      denominator: 10_000,
+    })
+    const tax = new Percent(1).sub(amountReceivedPercent)
+    if (tax.lte(MAX_TOKEN_TAX)) {
       return tax
     }
   }

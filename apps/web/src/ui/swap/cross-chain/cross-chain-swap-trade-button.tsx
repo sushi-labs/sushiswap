@@ -8,7 +8,7 @@ import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
 import { SLIPPAGE_WARNING_THRESHOLD } from 'src/lib/wagmi/systems/Checker/Slippage'
 import { PriceImpactWarning, SlippageWarning } from 'src/ui/common'
-import { ZERO } from 'sushi/math'
+import { ZERO } from 'sushi'
 import { warningSeverity } from '../../../lib/swap/warningSeverity'
 import { CrossChainSwapTradeReviewDialog } from './cross-chain-swap-trade-review-dialog'
 import {
@@ -32,7 +32,7 @@ export const CrossChainSwapTradeButton: FC = () => {
   }, [route?.priceImpact])
 
   const showSlippageWarning = useMemo(() => {
-    return !slippagePercent.lessThan(SLIPPAGE_WARNING_THRESHOLD)
+    return !slippagePercent.lt(SLIPPAGE_WARNING_THRESHOLD)
   }, [slippagePercent])
 
   // Reset
@@ -67,7 +67,7 @@ export const CrossChainSwapTradeButton: FC = () => {
                       <DialogTrigger asChild>
                         <Button
                           disabled={Boolean(
-                            !route?.amountOut?.greaterThan(ZERO) ||
+                            !route?.amountOut?.gt(ZERO) ||
                               isError ||
                               +swapAmountString === 0 ||
                               (!checked && showPriceImpactWarning),

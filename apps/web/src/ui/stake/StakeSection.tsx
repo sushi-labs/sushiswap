@@ -9,9 +9,8 @@ import {
   CheckerProvider,
   useApproved,
 } from 'src/lib/wagmi/systems/Checker/Provider'
-import { ChainId } from 'sushi/chain'
-import { SUSHI, XSUSHI_ADDRESS, tryParseAmount } from 'sushi/currency'
-import { ZERO } from 'sushi/math'
+import { Amount, ZERO } from 'sushi'
+import { EvmChainId, SUSHI, XSUSHI_ADDRESS } from 'sushi/evm'
 import { StakeSectionWidget } from './StakeSectionWidget'
 
 const _StakeSection = () => {
@@ -20,12 +19,12 @@ const _StakeSection = () => {
   const [input, setInput] = useState('')
 
   const parsedInput = useMemo(() => {
-    return tryParseAmount(input, SUSHI[ChainId.ETHEREUM])
+    return Amount.fromHuman(SUSHI[EvmChainId.ETHEREUM], input)
   }, [input])
 
   const { write, isPending: isWritePending } = useBarDeposit({
     amount: parsedInput,
-    enabled: Boolean(approved && parsedInput?.greaterThan(ZERO)),
+    enabled: Boolean(approved && parsedInput?.gt(ZERO)),
   })
 
   return (
@@ -38,7 +37,7 @@ const _StakeSection = () => {
         <Checker.Network
           size="xl"
           fullWidth
-          chainId={ChainId.ETHEREUM}
+          chainId={EvmChainId.ETHEREUM}
           hoverCardContent={
             <span className="text-xs text-muted-foreground text-center w-full">
               {`Sushi Bar is only available on Ethereum Mainnet. You are
@@ -49,7 +48,7 @@ const _StakeSection = () => {
           <Checker.Amounts
             size="xl"
             fullWidth
-            chainId={ChainId.ETHEREUM}
+            chainId={EvmChainId.ETHEREUM}
             amount={parsedInput}
           >
             <Checker.ApproveERC20
@@ -58,7 +57,7 @@ const _StakeSection = () => {
               className="whitespace-nowrap"
               fullWidth
               amount={parsedInput}
-              contract={XSUSHI_ADDRESS[ChainId.ETHEREUM]}
+              contract={XSUSHI_ADDRESS[EvmChainId.ETHEREUM]}
             >
               <Checker.Success tag={APPROVE_TAG_STAKE}>
                 <Button

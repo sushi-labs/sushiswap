@@ -3,21 +3,20 @@ import { useMemo, useState } from 'react'
 import { useBarWithdraw } from 'src/lib/wagmi/hooks/bar/useBarWithdaw'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
 import { CheckerProvider } from 'src/lib/wagmi/systems/Checker/Provider'
-import { ChainId } from 'sushi/chain'
-import { XSUSHI, tryParseAmount } from 'sushi/currency'
-import { ZERO } from 'sushi/math'
+import { Amount, ZERO } from 'sushi'
+import { EvmChainId, XSUSHI } from 'sushi/evm'
 import { UnstakeSectionWidget } from './UnstakeSectionWidget'
 
 const _UnstakeSection = () => {
   const [input, setInput] = useState('')
 
   const parsedInput = useMemo(() => {
-    return tryParseAmount(input, XSUSHI[ChainId.ETHEREUM])
+    return Amount.fromHuman(XSUSHI[EvmChainId.ETHEREUM], input)
   }, [input])
 
   const { write, isPending: isWritePending } = useBarWithdraw({
     amount: parsedInput,
-    enabled: Boolean(parsedInput?.greaterThan(ZERO)),
+    enabled: Boolean(parsedInput.gt(ZERO)),
   })
 
   return (
@@ -30,7 +29,7 @@ const _UnstakeSection = () => {
         <Checker.Network
           size="xl"
           fullWidth
-          chainId={ChainId.ETHEREUM}
+          chainId={EvmChainId.ETHEREUM}
           hoverCardContent={
             <span className="text-xs text-muted-foreground text-center w-full">
               {`Sushi Bar is only available on Ethereum Mainnet. You are
@@ -41,7 +40,7 @@ const _UnstakeSection = () => {
           <Checker.Amounts
             size="xl"
             fullWidth
-            chainId={ChainId.ETHEREUM}
+            chainId={EvmChainId.ETHEREUM}
             amount={parsedInput}
           >
             <Button

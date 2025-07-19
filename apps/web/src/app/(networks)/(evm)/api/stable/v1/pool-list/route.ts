@@ -7,15 +7,14 @@ import { Ratelimit } from '@upstash/ratelimit'
 import { ipAddress } from '@vercel/functions'
 import { type NextRequest, NextResponse } from 'next/server'
 import { rateLimit } from 'src/lib/rate-limit'
-import { SushiSwapProtocol } from 'sushi'
-import type { ChainId } from 'sushi/chain'
+import { SushiSwapProtocol } from 'sushi/evm'
 import { z } from 'zod'
 import { CORS } from '../../cors'
 
 const schema = z.object({
   chainId: z.coerce
     .number()
-    .refine((chainId) => isPoolChainId(chainId as ChainId), {
+    .refine((chainId) => isPoolChainId(chainId), {
       message: 'Invalid chainId',
     })
     .transform((chainId) => {

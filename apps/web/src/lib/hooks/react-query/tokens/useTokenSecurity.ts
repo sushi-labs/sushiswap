@@ -3,8 +3,7 @@ import {
   isTokenScannerChainId,
 } from '@sushiswap/graph-client/de.fi'
 import { keepPreviousData, useQuery } from '@tanstack/react-query'
-import { isTokenSecurityChainId } from 'sushi/config'
-import type { Token } from 'sushi/currency'
+import { type EvmToken, isTokenSecurityChainId } from 'sushi/evm'
 import { z } from 'zod'
 
 const bit = z
@@ -178,7 +177,7 @@ export const TokenSecurityMessage: Record<keyof TokenSecurity, string> = {
   trust_list: 'Whether or not this token is a famous and trustworthy one.',
 }
 
-const fetchGoPlusResponse = async (currency: Token) => {
+const fetchGoPlusResponse = async (currency: EvmToken) => {
   const url = new URL(
     `https://api.gopluslabs.io/api/v1/token_security/${currency.chainId}`,
   )
@@ -214,7 +213,7 @@ enum DeFiScannerIssue {
   AIRDROP = '10004',
 }
 
-const fetchDeFiResponse = async (currency: Token) => {
+const fetchDeFiResponse = async (currency: EvmToken) => {
   const url = new URL('/api/token-scanner', window.location.origin)
   url.searchParams.set('chainId', `${currency.chainId}`)
   url.searchParams.set('address', `${currency.address}`)
@@ -270,7 +269,7 @@ const fetchDeFiResponse = async (currency: Token) => {
   } as TokenSecurity
 }
 
-const fetchTokenSecurityQueryFn = async (currency: Token | undefined) => {
+const fetchTokenSecurityQueryFn = async (currency: EvmToken | undefined) => {
   if (!currency) {
     throw new Error()
   }
@@ -337,7 +336,7 @@ export const useTokenSecurity = ({
   enabled = true,
 }: {
   enabled?: boolean
-  currency: Token | undefined
+  currency: EvmToken | undefined
 }) => {
   return useQuery({
     queryKey: ['useTokenSecurity', currency?.id],
