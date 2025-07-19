@@ -519,7 +519,6 @@ export class PoolPage extends BaseActions {
                     name: tokenA.name,
                     symbol: tokenA.symbol,
                     decimals: tokenA.decimals,
-                    chainId: tokenA.chainId,
                   },
                   token1: {
                     id: `${tokenB.chainId}:${tokenB.address}`.toLowerCase(),
@@ -527,7 +526,6 @@ export class PoolPage extends BaseActions {
                     name: tokenB.name,
                     symbol: tokenB.symbol,
                     decimals: tokenB.decimals,
-                    chainId: tokenB.chainId,
                   },
                   source: 'SUBGRAPH',
                   reserve0: '97138000822798992',
@@ -610,12 +608,12 @@ export class PoolPage extends BaseActions {
               data: {
                 tokenListBalances: [
                   {
-                    ...tokenA,
+                    ...tokenA.toJSON(),
                     approved: true,
                     balance: '10000000000000000000000',
                   },
                   {
-                    ...tokenB,
+                    ...tokenB.toJSON(),
                     approved: true,
                     balance: '10000000000000000000000',
                   },

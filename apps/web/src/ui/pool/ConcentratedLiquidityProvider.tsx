@@ -320,7 +320,7 @@ export function useConcentratedDerivedMintInfo({
           invertPrice ? token0 : token1,
           startPriceTypedValue,
         )
-        if (parsedQuoteAmount) {
+        if (parsedQuoteAmount.amount) {
           const baseAmount = Amount.fromHuman(
             invertPrice ? token1 : token0,
             '1',
