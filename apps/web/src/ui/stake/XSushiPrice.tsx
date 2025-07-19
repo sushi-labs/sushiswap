@@ -2,61 +2,51 @@ import { ArrowTrendingUpIcon } from '@heroicons/react/20/solid'
 import { Button, SkeletonText } from '@sushiswap/ui'
 import { useMemo, useState } from 'react'
 import { useTokenAmountDollarValues } from 'src/lib/hooks'
-import { ChainId } from 'sushi/chain'
-import {
-  type Amount,
-  Price,
-  SUSHI,
-  SUSHI_ADDRESS,
-  type Type,
-  tryParseAmount,
-} from 'sushi/currency'
-import { formatUSD } from 'sushi/format'
+import { Amount, Price, formatUSD } from 'sushi'
+import { EvmChainId, type EvmCurrency, SUSHI, SUSHI_ADDRESS } from 'sushi/evm'
 import { usePrices } from '~evm/_common/ui/price-provider/price-provider/use-prices'
 
 export const XSushiPrice = ({
   totalSupply,
   sushiBalance,
 }: {
-  totalSupply: Amount<Type> | undefined
-  sushiBalance: Amount<Type> | undefined
+  totalSupply: Amount<EvmCurrency> | undefined
+  sushiBalance: Amount<EvmCurrency> | undefined
 }) => {
   const [invert, setInvert] = useState(true)
 
   const amounts = useMemo(() => {
-    return [tryParseAmount('1', SUSHI[ChainId.ETHEREUM])]
+    return [Amount.fromHuman(SUSHI[EvmChainId.ETHEREUM], '1')]
   }, [])
 
   const [sushiFiatPrice] = useTokenAmountDollarValues({
-    chainId: ChainId.ETHEREUM,
+    chainId: EvmChainId.ETHEREUM,
     amounts,
   })
 
   const xSushiFiatPrice = useMemo(
     () =>
       sushiFiatPrice && sushiBalance && totalSupply
-        ? sushiFiatPrice * Number(sushiBalance.quotient / totalSupply.quotient)
+        ? sushiFiatPrice * Number(sushiBalance.amount / totalSupply.amount)
         : 0,
     [sushiBalance, totalSupply, sushiFiatPrice],
   )
 
   const { data: prices, isLoading: isPricesLoading } = usePrices({
-    chainId: ChainId.ETHEREUM,
+    chainId: EvmChainId.ETHEREUM,
   })
 
   const price = useMemo(() => {
-    const _sushiPrice = prices?.getFraction(SUSHI_ADDRESS[ChainId.ETHEREUM])
+    const _sushiPrice = prices?.getFraction(SUSHI_ADDRESS[EvmChainId.ETHEREUM])
 
     const sushiPrice =
       _sushiPrice !== undefined
-        ? tryParseAmount('1', SUSHI[ChainId.ETHEREUM])?.multiply(_sushiPrice)
+        ? Amount.fromHuman(SUSHI[EvmChainId.ETHEREUM], '1')?.mul(_sushiPrice)
         : undefined
 
     const xSushiPrice =
       sushiPrice && totalSupply && sushiBalance
-        ? sushiPrice
-            .multiply(sushiBalance.quotient)
-            .divide(totalSupply.quotient)
+        ? sushiPrice.mul(sushiBalance.amount).div(totalSupply.amount)
         : undefined
 
     let price

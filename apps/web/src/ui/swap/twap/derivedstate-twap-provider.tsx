@@ -18,10 +18,8 @@ import { type TwapSupportedChainId, isTwapSupportedChainId } from 'src/config'
 import { getFeeString } from 'src/lib/swap/fee'
 import { TwapExpiryTimeDurations, TwapSDK } from 'src/lib/swap/twap'
 import { twapAbi_ask } from 'src/lib/swap/twap/abi'
-import { ChainId, type EvmChainId } from 'sushi/chain'
-import { Amount, Price, type Type, tryParseAmount } from 'sushi/currency'
-import type { Fraction } from 'sushi/math'
-import { sz } from 'sushi/validate'
+import { Amount, type Fraction, Price, sz } from 'sushi'
+import { EvmChainId, type EvmCurrency } from 'sushi/evm'
 import { type Hex, encodeFunctionData } from 'viem'
 import type { Address } from 'viem/accounts'
 import { parseUnits } from 'viem/utils'
@@ -40,17 +38,17 @@ type State = DerivedStateSimpleSwapState & {
     isLimitOrder: boolean
     isLimitPriceInverted: boolean
     limitPriceString: string
-    limitPrice: Price<Type, Type> | undefined
-    marketPrice: Price<Type, Type> | undefined
+    limitPrice: Price<EvmCurrency, EvmCurrency> | undefined
+    marketPrice: Price<EvmCurrency, EvmCurrency> | undefined
     token0PriceUSD: Fraction | undefined
     token1PriceUSD: Fraction | undefined
     expiry: TimeDuration
     chunks: number
     fillDelay: TimeDuration
     deadline: number
-    amountOut: Amount<Type> | undefined
-    minAmountOut: Amount<Type> | undefined
-    amountInPerChunk: Amount<Type> | undefined
+    amountOut: Amount<EvmCurrency> | undefined
+    minAmountOut: Amount<EvmCurrency> | undefined
+    amountInPerChunk: Amount<EvmCurrency> | undefined
   }
   mutate: DerivedStateSimpleSwapState['mutate'] & {
     setIsLimitPriceInverted: Dispatch<SetStateAction<boolean>>
@@ -111,22 +109,19 @@ const _DerivedStateTwapProvider: FC<DerivedStateTwapProviderProps> = ({
 
     if (!token0 || !token1) return [undefined, undefined, undefined]
 
-    const token0PriceFraction = prices?.getFraction(token0.wrapped.address)
-    const token1PriceFraction = prices?.getFraction(token1.wrapped.address)
+    const token0PriceFraction = prices?.getFraction(token0.wrap().address)
+    const token1PriceFraction = prices?.getFraction(token1.wrap().address)
 
     if (token0PriceFraction && token1PriceFraction) {
-      const token0OverToken1 = token0PriceFraction.divide(token1PriceFraction)
-      const quoteRaw = token0OverToken1.multiply(
+      const token0OverToken1 = token0PriceFraction.div(token1PriceFraction)
+      const quoteRaw = token0OverToken1.mul(
         parseUnits('1', token1.decimals),
       ).quotient
 
       return [
         new Price({
-          baseAmount: Amount.fromRawAmount(
-            token0,
-            parseUnits('1', token0.decimals),
-          ),
-          quoteAmount: Amount.fromRawAmount(token1, quoteRaw),
+          baseAmount: new Amount(token0, parseUnits('1', token0.decimals)),
+          quoteAmount: new Amount(token1, quoteRaw),
         }),
         token0PriceFraction,
         token1PriceFraction,
@@ -148,7 +143,7 @@ const _DerivedStateTwapProvider: FC<DerivedStateTwapProviderProps> = ({
 
         const chainId = isTwapSupportedChainId(state.chainId)
           ? state.chainId
-          : ChainId.ETHEREUM
+          : EvmChainId.ETHEREUM
 
         const sdk = TwapSDK.onNetwork(chainId)
 
@@ -162,10 +157,10 @@ const _DerivedStateTwapProvider: FC<DerivedStateTwapProviderProps> = ({
 
         const amountInPerChunk =
           state.swapAmount && chunks
-            ? Amount.fromRawAmount(
+            ? new Amount(
                 state.swapAmount.currency,
                 sdk.getSrcTokenChunkAmount(
-                  state.swapAmount.quotient.toString(),
+                  state.swapAmount.amount.toString(),
                   chunks,
                 ),
               )
@@ -179,13 +174,12 @@ const _DerivedStateTwapProvider: FC<DerivedStateTwapProviderProps> = ({
             : [undefined, undefined]
 
         const baseAmount = baseCurrency
-          ? Amount.fromRawAmount(
-              baseCurrency,
-              parseUnits('1', baseCurrency.decimals),
-            )
+          ? new Amount(baseCurrency, parseUnits('1', baseCurrency.decimals))
           : undefined
 
-        const quoteAmount = tryParseAmount(limitPriceString, quoteCurrency)
+        const quoteAmount = quoteCurrency
+          ? Amount.fromHuman(quoteCurrency, limitPriceString)
+          : undefined
 
         const _limitPrice =
           baseAmount && quoteAmount
@@ -199,10 +193,10 @@ const _DerivedStateTwapProvider: FC<DerivedStateTwapProviderProps> = ({
         const orderPrice = isLimitOrder ? limitPrice : marketPrice
 
         const orderPriceOfOneToken0 = orderPrice
-          ? orderPrice.quote(
-              Amount.fromRawAmount(
-                orderPrice.baseCurrency,
-                parseUnits('1', orderPrice.baseCurrency.decimals),
+          ? orderPrice.getQuote(
+              new Amount(
+                orderPrice.base,
+                parseUnits('1', orderPrice.base.decimals),
               ),
             )
           : undefined
@@ -210,22 +204,22 @@ const _DerivedStateTwapProvider: FC<DerivedStateTwapProviderProps> = ({
         const destTokenAmount =
           state.swapAmount && orderPriceOfOneToken0
             ? sdk.getDestTokenAmount(
-                state.swapAmount.quotient.toString(),
-                orderPriceOfOneToken0.quotient.toString(),
+                state.swapAmount.amount.toString(),
+                orderPriceOfOneToken0.amount.toString(),
                 state.swapAmount.currency.decimals,
               )
             : undefined
 
         const amountOut =
           state.token1 && destTokenAmount
-            ? Amount.fromRawAmount(state.token1, destTokenAmount)
+            ? new Amount(state.token1, destTokenAmount)
             : undefined
 
         const destMinAmount =
           state.token0 && amountInPerChunk && orderPriceOfOneToken0
             ? sdk.getDestTokenMinAmount(
-                amountInPerChunk.quotient.toString(),
-                orderPriceOfOneToken0.quotient.toString(),
+                amountInPerChunk.amount.toString(),
+                orderPriceOfOneToken0.amount.toString(),
                 !isLimitOrder,
                 state.token0.decimals,
               )
@@ -233,7 +227,7 @@ const _DerivedStateTwapProvider: FC<DerivedStateTwapProviderProps> = ({
 
         const minAmountOut =
           state.token1 && destMinAmount
-            ? Amount.fromRawAmount(state.token1, destMinAmount)
+            ? new Amount(state.token1, destMinAmount)
             : undefined
 
         return {
@@ -300,9 +294,9 @@ const bigIntValidator = z.preprocess(
 )
 
 const prepareOrderArgsValidator = z.tuple([
-  sz.address(), // 0: exchange
-  sz.address(), // 1: srcToken
-  sz.address(), // 2: dstToken
+  sz.evm.address(), // 0: exchange
+  sz.evm.address(), // 1: srcToken
+  sz.evm.address(), // 2: dstToken
   bigIntValidator, // 3: srcAmount
   bigIntValidator, // 4: srcBidAmount
   bigIntValidator, // 5: dstMinAmount
@@ -323,14 +317,14 @@ const prepareOrderArgsValidator = z.tuple([
 
 export interface UseTwapTradeReturn {
   isLimitOrder: boolean | undefined
-  limitPrice: Price<Type, Type> | undefined
-  marketPrice: Price<Type, Type> | undefined
-  amountIn: Amount<Type> | undefined
+  limitPrice: Price<EvmCurrency, EvmCurrency> | undefined
+  marketPrice: Price<EvmCurrency, EvmCurrency> | undefined
+  amountIn: Amount<EvmCurrency> | undefined
   chunks: number | undefined
   fillDelay: TimeDuration | undefined
-  amountInPerChunk: Amount<Type> | undefined
-  amountOut: Amount<Type> | undefined
-  minAmountOut: Amount<Type> | undefined
+  amountInPerChunk: Amount<EvmCurrency> | undefined
+  amountOut: Amount<EvmCurrency> | undefined
+  minAmountOut: Amount<EvmCurrency> | undefined
   tx:
     | {
         chainId: EvmChainId
@@ -375,13 +369,13 @@ const useTwapTrade = () => {
       return { data: undefined, error: undefined }
 
     const sdkParams = TwapSDK.onNetwork(chainId).getAskParams({
-      destTokenMinAmount: minAmountOut.quotient.toString(),
-      srcChunkAmount: amountInPerChunk.quotient.toString(),
+      destTokenMinAmount: minAmountOut.amount.toString(),
+      srcChunkAmount: amountInPerChunk.amount.toString(),
       deadline,
       fillDelay,
-      srcAmount: swapAmount.quotient.toString(),
-      srcTokenAddress: token0.wrapped.address,
-      destTokenAddress: token1.isToken ? token1.address : zeroAddress,
+      srcAmount: swapAmount.amount.toString(),
+      srcTokenAddress: token0.wrap().address,
+      destTokenAddress: token1.type === 'token' ? token1.address : zeroAddress,
     })
 
     const {
@@ -487,8 +481,8 @@ const useTwapTradeErrors = () => {
     const minTradeSizeError =
       amountInPerChunk && token0PriceUSD
         ? sdk.getMinTradeSizeError(
-            amountInPerChunk.toExact(),
-            token0PriceUSD.toFixed(6),
+            amountInPerChunk.toString(),
+            token0PriceUSD.toString({ fixed: 6 }),
             sdk.config.minChunkSizeUsd,
           ).isError
         : false

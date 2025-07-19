@@ -6,8 +6,8 @@ import { Container } from '@sushiswap/ui'
 import { motion } from 'framer-motion'
 import React, { type FC, useEffect, useState } from 'react'
 import { CurrencyInput } from 'src/lib/wagmi/components/web3-input/Currency'
-import { ChainId } from 'sushi/chain'
-import { Native, SUSHI } from 'sushi/currency'
+import { ChainId } from 'sushi'
+import { EvmNative, SUSHI } from 'sushi/evm'
 
 const TITLES = ['Whenever', 'Wherever', 'Whoever']
 const VALUES = [
@@ -91,7 +91,7 @@ export const Hero: FC = () => {
                 type="INPUT"
                 className="p-3 bg-white dark:bg-slate-800 rounded-xl"
                 value={valueIndex >= 0 ? VALUES[valueIndex].value0 : ''}
-                currency={Native.onChain(ChainId.ETHEREUM)}
+                currency={EvmNative.fromChainId(ChainId.ETHEREUM)}
                 chainId={ChainId.ETHEREUM}
                 disabled={true}
               />

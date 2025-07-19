@@ -1,6 +1,6 @@
 import { SkeletonText } from '@sushiswap/ui'
 import { useMemo } from 'react'
-import { formatPercent } from 'sushi/format'
+import { formatPercent } from 'sushi'
 import { FEE_PERCENTAGE } from '~tron/_common/constants/fee-percentage'
 import { useLPUsdValue } from '~tron/_common/lib/hooks/useLPUsdValue'
 import { useDayVolumeUSD } from '~tron/_common/lib/hooks/useOneDayApr'

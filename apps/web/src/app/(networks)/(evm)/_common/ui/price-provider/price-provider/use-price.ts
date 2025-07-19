@@ -1,7 +1,7 @@
 'use client'
 
 import { useMemo } from 'react'
-import type { EvmChainId } from 'sushi/chain'
+import type { EvmChainId } from 'sushi/evm'
 import type { Address } from 'viem'
 import { usePrices } from './use-prices'
 

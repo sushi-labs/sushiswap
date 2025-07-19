@@ -1,6 +1,11 @@
 import { useQuery } from '@tanstack/react-query'
-import { MERKL_SUPPORTED_CHAIN_IDS, type MerklChainId } from 'sushi/config'
-import { Amount, Token, type Type } from 'sushi/currency'
+import { Amount } from 'sushi'
+import {
+  type EvmCurrency,
+  EvmToken,
+  MERKL_SUPPORTED_CHAIN_IDS,
+  type MerklChainId,
+} from 'sushi/evm'
 import type { Hex } from 'viem'
 import type { Address } from 'viem/accounts'
 import { useAllPrices } from '../prices'
@@ -14,7 +19,7 @@ interface UseClaimableRewardsParams {
 
 export type ClaimableRewards = {
   chainId: MerklChainId
-  rewardAmounts: Record<string, Amount<Type>>
+  rewardAmounts: Record<string, Amount<EvmCurrency>>
   rewardAmountsUSD: Record<string, number>
   totalRewardsUSD: number
   claimArgs: [Address[], Address[], bigint[], Hex[][]]
@@ -53,7 +58,7 @@ export const useClaimableRewards = ({
 
         if (rewards.length === 0) return accum
 
-        const rewardAmounts = {} as Record<string, Amount<Type>>
+        const rewardAmounts = {} as Record<string, Amount<EvmCurrency>>
 
         const claimArgs = {
           users: [] as Address[],
@@ -76,12 +81,12 @@ export const useClaimableRewards = ({
 
           if (currentValue) {
             const amount = currentValue.add(
-              Amount.fromRawAmount(currentValue.currency, unclaimed),
+              new Amount(currentValue.currency, unclaimed),
             )
             rewardAmounts[reward.token.address] = amount
           } else {
-            const token = new Token(reward.token)
-            const amount = Amount.fromRawAmount(token, unclaimed)
+            const token = new EvmToken(reward.token)
+            const amount = new Amount(token, unclaimed)
             rewardAmounts[reward.token.address] = amount
           }
         })
@@ -92,18 +97,18 @@ export const useClaimableRewards = ({
           (prev, [key, amount]) => {
             const price = prices
               ?.get(chain.id)
-              ?.get(amount.currency.wrapped.address.toLowerCase())
+              ?.get(amount.currency.wrap().address.toLowerCase())
 
             if (!price) {
               return prev
             }
 
             const _amountUSD = Number(
-              Number(amount.toExact()) * Number(price.toFixed(10)),
+              Number(amount.toString()) * Number(price.toString({ fixed: 10 })),
             )
 
             const amountUSD =
-              Number.isNaN(price) || +price.toFixed(10) < 0.000001
+              Number.isNaN(price) || +price.toString({ fixed: 10 }) < 0.000001
                 ? 0
                 : _amountUSD
 

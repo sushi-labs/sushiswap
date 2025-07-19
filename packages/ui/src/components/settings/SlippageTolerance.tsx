@@ -7,7 +7,7 @@ import {
 import classNames from 'classnames'
 import React, { type FC, useCallback } from 'react'
 
-import { DEFAULT_SLIPPAGE } from 'sushi/config'
+import { DEFAULT_SLIPPAGE } from 'sushi/evm'
 import { Collapsible } from '../animation'
 import { CardDescription, CardHeader, CardTitle } from '../card'
 import {

@@ -19,7 +19,7 @@ import {
 } from '@sushiswap/ui'
 import format from 'date-fns/format'
 import { useMemo } from 'react'
-import { formatNumber } from 'sushi/format'
+import { formatNumber } from 'sushi'
 
 import type { EChartOption } from 'echarts'
 import ReactEchartsCore from 'echarts-for-react/lib/core'

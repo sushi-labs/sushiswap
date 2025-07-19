@@ -1,4 +1,4 @@
-import type { ChainId } from 'sushi/chain'
+import type { ChainId } from 'sushi'
 
 export class FetchError extends Error {
   public override name: string

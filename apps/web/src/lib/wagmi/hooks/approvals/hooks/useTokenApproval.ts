@@ -3,10 +3,9 @@
 import { createErrorToast, createToast } from '@sushiswap/notifications'
 import { InterfaceEventName, sendAnalyticsEvent } from '@sushiswap/telemetry'
 import { useCallback, useMemo, useState } from 'react'
-import { erc20Abi_approve } from 'sushi/abi'
-import type { Amount, Type } from 'sushi/currency'
+import type { Amount } from 'sushi'
+import { type EvmAddress, type EvmCurrency, erc20Abi_approve } from 'sushi/evm'
 import {
-  type Address,
   ContractFunctionZeroDataError,
   type SendTransactionReturnType,
   UserRejectedRequestError,
@@ -35,8 +34,8 @@ export enum ApprovalState {
 }
 
 interface UseTokenApprovalParams {
-  spender: Address | undefined
-  amount: Amount<Type> | undefined
+  spender: EvmAddress | undefined
+  amount: Amount<EvmCurrency> | undefined
   approveMax?: boolean
   enabled?: boolean
 }
@@ -55,11 +54,11 @@ export const useTokenApproval = ({
     isLoading: isAllowanceLoading,
     refetch,
   } = useTokenAllowance({
-    token: amount?.currency?.wrapped,
+    token: amount?.currency?.wrap(),
     owner: address,
     spender,
     chainId: amount?.currency.chainId,
-    enabled: Boolean(amount?.currency?.isToken && enabled),
+    enabled: Boolean(amount?.currency?.type === 'token' && enabled),
   })
 
   const [fallback, setFallback] = useState(false)
@@ -75,11 +74,11 @@ export const useTokenApproval = ({
   >({
     chainId: amount?.currency.chainId,
     abi: erc20Abi_approve,
-    address: amount?.currency?.wrapped?.address as Address,
+    address: amount?.currency.wrap().address,
     functionName: 'approve',
     args: [
-      spender as Address,
-      approveMax ? maxUint256 : amount ? amount.quotient : 0n,
+      spender as EvmAddress,
+      approveMax ? maxUint256 : amount ? amount.amount : 0n,
     ],
     scopeKey: 'approve-std',
     query: {
@@ -104,12 +103,9 @@ export const useTokenApproval = ({
   >({
     chainId: amount?.currency.chainId,
     abi: old_erc20Abi_approve,
-    address: amount?.currency?.wrapped?.address as Address,
+    address: amount?.currency.wrap().address,
     functionName: 'approve',
-    args: [
-      spender as Address,
-      approveMax ? maxUint256 : amount ? amount.quotient : 0n,
-    ],
+    args: [spender, approveMax ? maxUint256 : amount ? amount.amount : 0n],
     scopeKey: 'approve-fallback',
     query: {
       enabled: simulationEnabled && fallback,
@@ -126,7 +122,7 @@ export const useTokenApproval = ({
 
       sendAnalyticsEvent(InterfaceEventName.APPROVE_TOKEN_TXN_SUBMITTED, {
         chain_id: amount.currency.chainId,
-        token_address: amount.currency.wrapped.address,
+        token_address: amount.currency.wrap().address,
         token_symbol: amount.currency.symbol,
       })
       setPending(true)
@@ -189,14 +185,14 @@ export const useTokenApproval = ({
 
   return useMemo<[ApprovalState, { write: undefined | (() => void) }]>(() => {
     let state = ApprovalState.UNKNOWN
-    if (amount?.currency.isNative) state = ApprovalState.APPROVED
-    else if (allowance && amount && allowance.greaterThan(amount))
+    if (amount?.currency.type === 'native') state = ApprovalState.APPROVED
+    else if (allowance && amount && allowance.gt(amount))
       state = ApprovalState.APPROVED
-    else if (allowance && amount && allowance.equalTo(amount))
+    else if (allowance && amount && allowance.eq(amount))
       state = ApprovalState.APPROVED
     else if (pending) state = ApprovalState.PENDING
     else if (isAllowanceLoading) state = ApprovalState.LOADING
-    else if (allowance && amount && allowance.lessThan(amount))
+    else if (allowance && amount && allowance.lt(amount))
       state = ApprovalState.NOT_APPROVED
 
     return [state, { write }]

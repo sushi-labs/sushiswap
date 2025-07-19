@@ -1,8 +1,8 @@
 import type { PortfolioWalletToken } from '@sushiswap/graph-client/data-api'
 import { FormattedNumber, classNames } from '@sushiswap/ui'
 import React, { type FC } from 'react'
-import type { EvmChainId } from 'sushi/chain'
-import { formatPercent, formatUSD } from 'sushi/format'
+import { formatPercent, formatUSD } from 'sushi'
+import type { EvmChainId } from 'sushi/evm'
 import { PortfolioInfoRow } from '../PortfolioInfoRow'
 
 interface PortfolioTokensListProps {

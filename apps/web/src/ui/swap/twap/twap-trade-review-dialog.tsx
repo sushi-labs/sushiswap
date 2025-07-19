@@ -34,9 +34,8 @@ import {
 } from 'src/lib/swap/twap'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
 import { useApproved } from 'src/lib/wagmi/systems/Checker/Provider'
-import { EvmChain } from 'sushi/chain'
-import { formatUSD, shortenAddress } from 'sushi/format'
-import { ZERO } from 'sushi/math'
+import { ZERO, formatUSD } from 'sushi'
+import { getEvmChainById, shortenEvmAddress } from 'sushi/evm'
 import { UserRejectedRequestError } from 'viem'
 import {
   useAccount,
@@ -110,7 +109,7 @@ export const TwapTradeReviewDialog: FC<{
                 orderId,
                 hash,
                 trade.params.map((param) => param.toString()),
-                trade.amountIn.currency.wrapped,
+                trade.amountIn.currency.wrap(),
                 trade.minAmountOut.currency,
               )
             }
@@ -204,7 +203,7 @@ export const TwapTradeReviewDialog: FC<{
                 <List className="!pt-0">
                   <List.Control>
                     <List.KeyValue title="Network">
-                      {EvmChain.from(chainId)?.name}
+                      {getEvmChainById(chainId).name}
                     </List.KeyValue>
                     {isLimitOrder ? (
                       <>
@@ -218,14 +217,18 @@ export const TwapTradeReviewDialog: FC<{
                         >
                           {limitPrice ? (
                             <span className="flex items-baseline gap-1 whitespace-nowrap scroll hide-scrollbar">
-                              1 {limitPrice.baseCurrency.symbol} =
+                              1 {limitPrice.base.symbol} =
                               <FormattedNumber
                                 number={limitPrice.toSignificant()}
                               />{' '}
-                              {limitPrice.quoteCurrency.symbol}{' '}
+                              {limitPrice.quote.symbol}{' '}
                               {token0PriceUSD ? (
                                 <span className="text-muted-foreground">
-                                  ({formatUSD(token0PriceUSD.toFixed(6))})
+                                  (
+                                  {formatUSD(
+                                    token0PriceUSD.toString({ fixed: 6 }),
+                                  )}
+                                  )
                                 </span>
                               ) : null}
                             </span>
@@ -247,7 +250,7 @@ export const TwapTradeReviewDialog: FC<{
                           {trade?.amountIn ? (
                             <span>
                               <FormattedNumber
-                                number={trade.amountIn.toExact()}
+                                number={trade.amountIn.toString()}
                               />{' '}
                               {trade.amountIn.currency.symbol}
                             </span>
@@ -266,7 +269,7 @@ export const TwapTradeReviewDialog: FC<{
                           {trade?.amountInPerChunk ? (
                             <span>
                               <FormattedNumber
-                                number={trade.amountInPerChunk.toExact()}
+                                number={trade.amountInPerChunk.toString()}
                               />{' '}
                               {trade.amountInPerChunk.currency.symbol}
                             </span>
@@ -303,14 +306,12 @@ export const TwapTradeReviewDialog: FC<{
                         <Button variant="link" size="sm" asChild>
                           <a
                             target="_blank"
-                            href={
-                              EvmChain.fromChainId(chainId)?.getAccountUrl(
-                                recipient,
-                              ) ?? '#'
-                            }
+                            href={getEvmChainById(chainId).getAccountUrl(
+                              recipient,
+                            )}
                             rel="noreferrer"
                           >
-                            {shortenAddress(recipient)}
+                            {shortenEvmAddress(recipient)}
                           </a>
                         </Button>
                       ) : null}
@@ -353,8 +354,7 @@ export const TwapTradeReviewDialog: FC<{
                         isEstGasError ||
                           isWritePending ||
                           Boolean(
-                            !sendTransactionAsync &&
-                              swapAmount?.greaterThan(ZERO),
+                            !sendTransactionAsync && swapAmount?.gt(ZERO),
                           ),
                       )}
                       color={isEstGasError ? 'red' : 'blue'}

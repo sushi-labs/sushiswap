@@ -2,16 +2,15 @@
 
 import { Button, type ButtonProps } from '@sushiswap/ui'
 import { type FC, useMemo } from 'react'
-import type { EvmChainId } from 'sushi/chain'
-import type { Amount, Type } from 'sushi/currency'
-import { ZERO } from 'sushi/math'
+import { type Amount, ZERO } from 'sushi'
+import type { EvmChainId, EvmCurrency } from 'sushi/evm'
 import { useAmountBalances } from '~evm/_common/ui/balance-provider/use-balances'
 
 type AmountsProps = ButtonProps & {
   chainId: EvmChainId | undefined
 } & (
-    | { amounts: (Amount<Type> | undefined)[]; amount?: undefined }
-    | { amounts?: undefined; amount: Amount<Type> | undefined }
+    | { amounts: (Amount<EvmCurrency> | undefined)[]; amount?: undefined }
+    | { amounts?: undefined; amount: Amount<EvmCurrency> | undefined }
   )
 
 const Amounts: FC<AmountsProps> = ({
@@ -30,7 +29,7 @@ const Amounts: FC<AmountsProps> = ({
   }, [_amounts, amount])
 
   const amountsAreDefined = useMemo(
-    () => amounts.every((el) => el?.greaterThan(ZERO)),
+    () => amounts.every((el) => el?.gt(ZERO)),
     [amounts],
   )
   const currencies = useMemo(
@@ -43,7 +42,7 @@ const Amounts: FC<AmountsProps> = ({
   const sufficientBalance = useMemo(() => {
     return amounts?.every((amount) => {
       if (!amount) return true
-      return !balances?.get(amount.currency.id)?.lessThan(amount)
+      return !balances?.get(amount.currency.id)?.lt(amount)
     })
   }, [amounts, balances])
 

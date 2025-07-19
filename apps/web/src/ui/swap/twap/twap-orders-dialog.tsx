@@ -41,10 +41,14 @@ import type { TwapSupportedChainId } from 'src/config'
 import { type TwapOrder, useTwapOrders } from 'src/lib/hooks/react-query/twap'
 import { fillDelayText } from 'src/lib/swap/twap'
 import { useTokenWithCache } from 'src/lib/wagmi/hooks/tokens/useTokenWithCache'
-import { shortenAddress, shortenHash } from 'sushi'
-import { EvmChain } from 'sushi/chain'
-import { Amount, Native } from 'sushi/currency'
-import type { Address } from 'viem'
+import { Amount } from 'sushi'
+import {
+  EvmNative,
+  getEvmChainById,
+  shortenEvmAddress,
+  shortenHash,
+} from 'sushi/evm'
+import type { Address, Hex } from 'viem'
 import { useAccount } from 'wagmi'
 import { useDerivedStateTwap } from './derivedstate-twap-provider'
 import { TwapCancelOrderButton } from './twap-cancel-order-button'
@@ -204,7 +208,9 @@ const TwapOrderDialogContent = ({
 
   const token1 = useMemo(
     () =>
-      order.dstTokenAddress === zeroAddress ? Native.onChain(chainId) : _token1,
+      order.dstTokenAddress === zeroAddress
+        ? EvmNative.fromChainId(chainId)
+        : _token1,
     [order, chainId, _token1],
   )
 
@@ -218,20 +224,18 @@ const TwapOrderDialogContent = ({
     limitPrice,
   } = useMemo(() => {
     return {
-      srcAmount: token0
-        ? Amount.fromRawAmount(token0, order.srcAmount)
-        : undefined,
+      srcAmount: token0 ? new Amount(token0, order.srcAmount) : undefined,
       srcChunkAmount: token0
-        ? Amount.fromRawAmount(token0, order.srcAmountPerChunk)
+        ? new Amount(token0, order.srcAmountPerChunk)
         : undefined,
       srcFilledAmount: token0
-        ? Amount.fromRawAmount(token0, order.filledSrcAmount)
+        ? new Amount(token0, order.filledSrcAmount)
         : undefined,
       dstFilledAmount: token1
-        ? Amount.fromRawAmount(token1, order.filledDstAmount)
+        ? new Amount(token1, order.filledDstAmount)
         : undefined,
       dstMinAmountOut: token1
-        ? Amount.fromRawAmount(token1, order.dstMinAmount)
+        ? new Amount(token1, order.dstMinAmount)
         : undefined,
       executionPrice:
         token0 && token1
@@ -397,21 +401,19 @@ const TwapOrderDialogContent = ({
                   {address ? (
                     <List.KeyValue className="!p-0" title="Recipient">
                       <a
-                        href={EvmChain.fromChainId(chainId)?.getAccountUrl(
-                          address,
-                        )}
+                        href={getEvmChainById(chainId).getAccountUrl(address)}
                         className="text-muted-foreground hover:underline"
                         target="_blank"
                         rel="noopener noreferrer"
                       >
-                        {shortenAddress(address)}
+                        {shortenEvmAddress(address)}
                       </a>
                     </List.KeyValue>
                   ) : null}
                   <List.KeyValue className="!p-0" title="Transaction Hash">
                     <a
-                      href={EvmChain.fromChainId(chainId)?.getTxUrl(
-                        order.txHash,
+                      href={getEvmChainById(chainId).getTransactionUrl(
+                        order.txHash as Hex,
                       )}
                       className="text-muted-foreground hover:underline"
                       target="_blank"
@@ -450,7 +452,9 @@ const TwapOrderCard = ({
 
   const token1 = useMemo(
     () =>
-      order.dstTokenAddress === zeroAddress ? Native.onChain(chainId) : _token1,
+      order.dstTokenAddress === zeroAddress
+        ? EvmNative.fromChainId(chainId)
+        : _token1,
     [order, chainId, _token1],
   )
 

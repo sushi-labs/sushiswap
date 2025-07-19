@@ -2,9 +2,13 @@ import { useCustomTokens } from '@sushiswap/hooks'
 import { useQuery } from '@tanstack/react-query'
 import { useMemo } from 'react'
 import { useAllPrices } from 'src/lib/hooks/react-query'
-import type { SushiSwapV3ChainId } from 'sushi/config'
-import { Amount, type Token } from 'sushi/currency'
-import { Position, type SushiSwapV3Pool } from 'sushi/pool/sushiswap-v3'
+import { Amount } from 'sushi'
+import {
+  type EvmToken,
+  Position,
+  type SushiSwapV3ChainId,
+  type SushiSwapV3Pool,
+} from 'sushi/evm'
 import type { Address } from 'viem'
 import { useConfig } from 'wagmi'
 import { usePrices } from '~evm/_common/ui/price-provider/price-provider/use-prices'
@@ -18,8 +22,8 @@ import type { ConcentratedLiquidityPosition } from '../types'
 
 interface UseConcentratedLiquidityPositionsData
   extends Omit<ConcentratedLiquidityPosition, 'token0' | 'token1'> {
-  token0: Token
-  token1: Token
+  token0: EvmToken
+  token1: EvmToken
   pool: SushiSwapV3Pool
   position: {
     position: Position
@@ -41,8 +45,8 @@ const getPoolKey = ({
   fee,
 }: {
   chainId: SushiSwapV3ChainId
-  token0: Token
-  token1: Token
+  token0: EvmToken
+  token1: EvmToken
   fee: number
 }) =>
   `${chainId}:${token0.address.toLowerCase()}:${token1.address.toLowerCase()}:${fee}`
@@ -138,8 +142,8 @@ export const useConcentratedLiquidityPositions = ({
       ).filter((position) =>
         Boolean(position.token0 && position.token1),
       ) as (Omit<ConcentratedLiquidityPosition, 'token0' | 'token1'> & {
-        token0: Token
-        token1: Token
+        token0: EvmToken
+        token1: EvmToken
       })[]
 
       const poolKeys = new Map(
@@ -187,13 +191,15 @@ export const useConcentratedLiquidityPositions = ({
             tickUpper,
           })
 
-          const amountToUsd = (amount: Amount<Token>) => {
-            const _price = prices?.get(chainId)?.get(amount.currency.address)
+          const amountToUsd = (amount: Amount<EvmToken>) => {
+            const __price = prices?.get(chainId)?.get(amount.currency.address)
+            const _price =
+              typeof __price === 'number'
+                ? __price.toFixed(10)
+                : __price?.toNumber().toFixed(10)
 
-            if (!amount?.greaterThan(0n) || !_price) return 0
-            const price = Number(
-              Number(amount.toExact()) * Number(_price.toFixed(10)),
-            )
+            if (!amount?.gt(0n) || !_price) return 0
+            const price = Number(Number(amount.toString()) * Number(__price))
             if (Number.isNaN(price) || price < 0.000001) {
               return 0
             }
@@ -204,8 +210,8 @@ export const useConcentratedLiquidityPositions = ({
           const positionUSD =
             amountToUsd(position.amount0) + amountToUsd(position.amount1)
           const unclaimedUSD =
-            amountToUsd(Amount.fromRawAmount(pool.token0, fees?.[0] || 0)) +
-            amountToUsd(Amount.fromRawAmount(pool.token1, fees?.[1] || 0))
+            amountToUsd(new Amount(pool.token0, fees?.[0] || 0)) +
+            amountToUsd(new Amount(pool.token1, fees?.[1] || 0))
 
           return {
             ..._position,

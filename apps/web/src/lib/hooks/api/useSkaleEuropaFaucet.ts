@@ -2,7 +2,7 @@
 
 import { useQuery } from '@tanstack/react-query'
 import { createConfig, getBalance } from '@wagmi/core'
-import { ChainId } from 'sushi/chain'
+import { EvmChainId } from 'sushi/evm'
 import type { Address } from 'viem'
 import { useAccount } from 'wagmi'
 import { publicWagmiConfig } from '../../wagmi/config/public'
@@ -18,7 +18,7 @@ export const useSkaleEuropaFaucet = () => {
       const config = createConfig(publicWagmiConfig)
 
       const balance = await getBalance(config, {
-        chainId: ChainId.SKALE_EUROPA,
+        chainId: EvmChainId.SKALE_EUROPA,
         address: address as Address,
       })
 
@@ -35,6 +35,6 @@ export const useSkaleEuropaFaucet = () => {
       return true
     },
     staleTime: Number.POSITIVE_INFINITY,
-    enabled: Boolean(chainId === ChainId.SKALE_EUROPA && address),
+    enabled: Boolean(chainId === EvmChainId.SKALE_EUROPA && address),
   })
 }

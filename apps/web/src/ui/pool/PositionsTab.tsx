@@ -13,8 +13,7 @@ import {
 import type React from 'react'
 import { type FC, useState } from 'react'
 
-import { ChainKey } from 'sushi/chain'
-import type { SushiSwapChainId } from 'sushi/config'
+import { type SushiSwapChainId, getEvmChainById } from 'sushi/evm'
 import { ConcentratedPositionsTable } from './ConcentratedPositionsTable/ConcentratedPositionsTable'
 import { PositionsTable } from './PositionsTable'
 
@@ -102,7 +101,7 @@ export const PositionsTab: FC<{ chainId: SushiSwapChainId }> = ({
           <PositionsTable
             chainId={chainId}
             rowLink={(row) =>
-              `/${ChainKey[chainId]}/pool/v2/${row.pool.address}/add`
+              `/${getEvmChainById(chainId).key}/pool/v2/${row.pool.address}/add`
             }
           />
         </TabsContent>

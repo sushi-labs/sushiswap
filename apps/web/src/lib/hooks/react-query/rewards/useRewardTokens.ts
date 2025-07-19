@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
-import type { EvmChainId } from 'sushi/chain'
-import { Amount, Token } from 'sushi/currency'
+import { Amount } from 'sushi'
+import { type EvmChainId, EvmToken } from 'sushi/evm'
 import { merklRewardsTokensValidator } from './validator'
 
 interface UseAngleRewardTokensParams {
@@ -24,17 +24,15 @@ export const useRewardTokens = ({ chainId }: UseAngleRewardTokensParams) => {
             el.decimals && el.symbol !== 'aglaMerkl' && el.isTest !== true,
         )
         .map((el) => {
-          const token = new Token({
+          const token = new EvmToken({
             chainId,
             address: el.address,
-            symbol: el.symbol,
+            symbol: el.symbol || '',
+            name: '',
             decimals: el.decimals!,
           })
           return {
-            minimumAmountPerHour: Amount.fromRawAmount(
-              token,
-              el.minimumAmountPerHour,
-            ),
+            minimumAmountPerHour: new Amount(token, el.minimumAmountPerHour),
             token,
           }
         })

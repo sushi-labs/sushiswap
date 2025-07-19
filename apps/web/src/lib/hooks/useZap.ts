@@ -1,7 +1,7 @@
 import { type UseQueryOptions, useQuery } from '@tanstack/react-query'
 import { isZapSupportedChainId } from 'src/config'
-import type { EvmChainId } from 'sushi/chain'
-import type { Percent } from 'sushi/math'
+import type { Percent } from 'sushi'
+import type { EvmChainId } from 'sushi/evm'
 import type { Address, Hex } from 'viem'
 import { z } from 'zod'
 
@@ -76,7 +76,10 @@ export const useZap = ({ query, ...params }: UseZapParams) => {
       })
 
       if (slippage) {
-        url.searchParams.set('slippage', slippage.multiply(100n).toFixed(0))
+        url.searchParams.set(
+          'slippage',
+          slippage.mul(100n).toString({ fixed: 0 }),
+        )
       }
 
       const response = await fetch(url.toString(), {

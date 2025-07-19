@@ -11,14 +11,19 @@ import {
   typographyVariants,
 } from '@sushiswap/ui'
 import React, { type FC, useMemo } from 'react'
-import { EvmChain, EvmChainKey } from 'sushi/chain'
-import { Token, unwrapToken } from 'sushi/currency'
-import { formatPercent, shortenAddress } from 'sushi/format'
+import { formatPercent } from 'sushi'
+import {
+  type EvmAddress,
+  EvmToken,
+  getEvmChainById,
+  shortenEvmAddress,
+  unwrapEvmToken,
+} from 'sushi/evm'
 import { APRHoverCard } from './APRHoverCard'
 
 type PoolHeader = {
   backUrl: string
-  address: string
+  address: EvmAddress
   pool: V2Pool | V3Pool
   apy?: {
     fees: number | undefined
@@ -41,20 +46,22 @@ export const PoolHeader: FC<PoolHeader> = ({
     if (!pool) return [undefined, undefined]
 
     return [
-      unwrapToken(
-        new Token({
+      unwrapEvmToken(
+        new EvmToken({
           chainId: pool.chainId,
           address: pool.token0.address,
           decimals: pool.token0.decimals,
           symbol: pool.token0.symbol,
+          name: pool.token0.name,
         }),
       ),
-      unwrapToken(
-        new Token({
+      unwrapEvmToken(
+        new EvmToken({
           chainId: pool.chainId,
           address: pool.token1.address,
           decimals: pool.token1.decimals,
           symbol: pool.token1.symbol,
+          name: pool.token1.name,
         }),
       ),
     ]
@@ -86,7 +93,7 @@ export const PoolHeader: FC<PoolHeader> = ({
                 })}
               >
                 <LinkExternal
-                  href={EvmChain.from(pool.chainId)?.getAccountUrl(address)}
+                  href={getEvmChainById(pool.chainId).getAccountUrl(address)}
                 >
                   {token0.symbol}/{token1.symbol}
                 </LinkExternal>
@@ -113,11 +120,11 @@ export const PoolHeader: FC<PoolHeader> = ({
                 <LinkInternal
                   href={
                     pool.protocol === 'SUSHISWAP_V2'
-                      ? `/${EvmChainKey[pool.chainId]}/pool/v2/${
+                      ? `/${getEvmChainById(pool.chainId).key}/pool/v2/${
                           pool.address
                         }/add`
                       : pool.protocol === 'SUSHISWAP_V3'
-                        ? `/${EvmChainKey[pool.chainId]}/pool/v3/${
+                        ? `/${getEvmChainById(pool.chainId).key}/pool/v3/${
                             pool.address
                           }/positions`
                         : ''
@@ -155,7 +162,7 @@ export const PoolHeader: FC<PoolHeader> = ({
           </div>
           <div className="flex items-center gap-1.5">
             <span className="font-semibold tracking-tighter">Network</span>
-            {EvmChain.from(pool.chainId)?.name}
+            {getEvmChainById(pool.chainId).name}
           </div>
           <div className="flex items-center gap-1.5">
             <span className="font-semibold tracking-tighter">
@@ -163,8 +170,8 @@ export const PoolHeader: FC<PoolHeader> = ({
             </span>
             <LinkExternal
               target="_blank"
-              href={EvmChain.from(pool.chainId)?.getTokenUrl(
-                token0.wrapped.address,
+              href={getEvmChainById(pool.chainId).getTokenUrl(
+                token0.wrap().address,
               )}
             >
               <Button
@@ -173,7 +180,7 @@ export const PoolHeader: FC<PoolHeader> = ({
                 size="sm"
                 className="!font-medium !text-secondary-foreground"
               >
-                {shortenAddress(token0.wrapped.address, 4)}
+                {shortenEvmAddress(token0.wrap().address, 4)}
                 <ArrowTopRightOnSquareIcon className="w-3 h-3" />
               </Button>
             </LinkExternal>
@@ -184,8 +191,8 @@ export const PoolHeader: FC<PoolHeader> = ({
             </span>
             <LinkExternal
               target="_blank"
-              href={EvmChain.from(pool.chainId)?.getTokenUrl(
-                token1.wrapped.address,
+              href={getEvmChainById(pool.chainId).getTokenUrl(
+                token1.wrap().address,
               )}
             >
               <Button
@@ -194,7 +201,7 @@ export const PoolHeader: FC<PoolHeader> = ({
                 size="sm"
                 className="!font-medium !text-secondary-foreground"
               >
-                {shortenAddress(token1.wrapped.address, 4)}
+                {shortenEvmAddress(token1.wrap().address, 4)}
                 <ArrowTopRightOnSquareIcon className="w-3 h-3" />
               </Button>
             </LinkExternal>

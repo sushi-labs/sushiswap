@@ -11,32 +11,32 @@ import {
   createContext,
   useCallback,
   useContext,
-  useEffect,
   useMemo,
   useState,
 } from 'react'
 import { useTrade, useTradeQuote } from 'src/lib/hooks/react-query'
 import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
 import { useTokenWithCache } from 'src/lib/wagmi/hooks/tokens/useTokenWithCache'
-import { EvmChainId } from 'sushi/chain'
+import { Amount, Native, type Percent, ZERO } from 'sushi'
 import {
+  EvmChainId,
+  type EvmCurrency,
+  EvmNative,
   defaultCurrency,
   defaultQuoteCurrency,
   isWNativeSupported,
-} from 'sushi/config'
-import { type Amount, Native, type Type, tryParseAmount } from 'sushi/currency'
-import { type Percent, ZERO } from 'sushi/math'
+} from 'sushi/evm'
 import { type Address, isAddress } from 'viem'
 import { useAccount, useGasPrice } from 'wagmi'
 import { type SupportedChainId, isSupportedChainId } from '../../../config'
 import { useCarbonOffset } from '../../../lib/swap/useCarbonOffset'
 
-const getTokenAsString = (token: Type | string) =>
+const getTokenAsString = (token: EvmCurrency | string) =>
   typeof token === 'string'
     ? token
-    : token.isNative
+    : token.type === 'native'
       ? 'NATIVE'
-      : token.wrapped.address
+      : token.wrap().address
 const getDefaultCurrency = (chainId: number) =>
   getTokenAsString(defaultCurrency[chainId as keyof typeof defaultCurrency])
 const getQuoteCurrency = (chainId: number) =>
@@ -46,20 +46,20 @@ const getQuoteCurrency = (chainId: number) =>
 
 interface State {
   mutate: {
-    setToken0(token0: Type | string): void
-    setToken1(token1: Type | string): void
-    setTokens(token0: Type | string, token1: Type | string): void
+    setToken0(token0: EvmCurrency | string): void
+    setToken1(token1: EvmCurrency | string): void
+    setTokens(token0: EvmCurrency | string, token1: EvmCurrency | string): void
     setSwapAmount(swapAmount: string): void
     switchTokens(): void
     setTokenTax(tax: Percent | false | undefined): void
   }
   state: {
-    token0: Type | undefined
-    token1: Type | undefined
+    token0: EvmCurrency | undefined
+    token1: EvmCurrency | undefined
     chainId: EvmChainId
     swapAmountString: string
-    swapAmount: Amount<Type> | undefined
-    recipient: string | undefined
+    swapAmount: Amount<EvmCurrency> | undefined
+    recipient: Address | undefined
     tokenTax: Percent | false | undefined
   }
   isLoading: boolean
@@ -88,9 +88,9 @@ const DerivedstateSimpleSwapProvider: FC<
   const [tokenTax, setTokenTax] = useState<Percent | false | undefined>(
     undefined,
   )
-  const [localTokenCache, setLocalTokenCache] = useState<Map<string, Type>>(
-    new Map(),
-  )
+  const [localTokenCache, setLocalTokenCache] = useState<
+    Map<string, EvmCurrency>
+  >(new Map())
 
   const chainId =
     _chainId && isSupportedChainId(+_chainId)
@@ -145,7 +145,7 @@ const DerivedstateSimpleSwapProvider: FC<
   }, [createQueryString, defaultedParams, pathname, push])
 
   // Update the URL with a new token0
-  const setToken0 = useCallback<(_token0: string | Type) => void>(
+  const setToken0 = useCallback<(_token0: string | EvmCurrency) => void>(
     (_token0) => {
       // If entity is provided, parse it to a string
       const token0 = getTokenAsString(_token0)
@@ -182,7 +182,7 @@ const DerivedstateSimpleSwapProvider: FC<
   )
 
   // Update the URL with a new token1
-  const setToken1 = useCallback<(_token1: string | Type) => void>(
+  const setToken1 = useCallback<(_token1: string | EvmCurrency) => void>(
     (_token1) => {
       // If entity is provided, parse it to a string
       const token1 = getTokenAsString(_token1)
@@ -220,7 +220,7 @@ const DerivedstateSimpleSwapProvider: FC<
 
   // Update the URL with both tokens
   const setTokens = useCallback<
-    (_token0: string | Type, _token1: string | Type) => void
+    (_token0: string | EvmCurrency, _token1: string | EvmCurrency) => void
   >(
     (_token0, _token1) => {
       // If entity is provided, parse it to a string
@@ -287,12 +287,12 @@ const DerivedstateSimpleSwapProvider: FC<
         const _token0 =
           defaultedParams.get('token0') === 'NATIVE' &&
           isWNativeSupported(chainId)
-            ? Native.onChain(chainId)
+            ? EvmNative.fromChainId(chainId)
             : token0
         const _token1 =
           defaultedParams.get('token1') === 'NATIVE' &&
           isWNativeSupported(chainId)
-            ? Native.onChain(chainId)
+            ? EvmNative.fromChainId(chainId)
             : token1
 
         return {
@@ -305,10 +305,12 @@ const DerivedstateSimpleSwapProvider: FC<
             setTokenTax,
           },
           state: {
-            recipient: address ?? '',
+            recipient: address,
             chainId,
             swapAmountString,
-            swapAmount: tryParseAmount(swapAmountString, _token0),
+            swapAmount: _token0
+              ? Amount.fromHuman(_token0, swapAmountString)
+              : undefined,
             token0: _token0,
             token1: _token1,
             tokenTax,
@@ -363,10 +365,10 @@ const useSimpleSwapTrade = (enabled = true) => {
     fromToken: token0,
     toToken: token1,
     amount: swapAmount,
-    slippagePercentage: slippagePercent.toFixed(2),
+    slippagePercentage: slippagePercent.toString({ fixed: 2 }),
     gasPrice,
     recipient: recipient as Address,
-    enabled: Boolean(enabled && swapAmount?.greaterThan(ZERO)),
+    enabled: Boolean(enabled && swapAmount?.gt(ZERO)),
     carbonOffset,
   })
 
@@ -387,10 +389,10 @@ const useSimpleSwapTradeQuote = () => {
     fromToken: token0,
     toToken: token1,
     amount: swapAmount,
-    slippagePercentage: slippagePercent.toFixed(2),
+    slippagePercentage: slippagePercent.toString({ fixed: 2 }),
     gasPrice,
     recipient: recipient as Address,
-    enabled: Boolean(swapAmount?.greaterThan(ZERO)),
+    enabled: Boolean(swapAmount?.gt(ZERO)),
     carbonOffset,
   })
 
