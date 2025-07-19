@@ -3,11 +3,10 @@ import { buildClientSchema, getIntrospectionQuery, printSchema } from 'graphql'
 import fs from 'node:fs'
 
 const schemas = {
-  bentobox:
-    'https://api.studio.thegraph.com/query/32073/bentobox-ethereum/v0.0.1',
-  strapi: 'https://sushi-strapi-cms.herokuapp.com/graphql',
-  furo: 'https://api.studio.thegraph.com/query/32073/furo-ethereum/v0.0.1',
-  'data-api': 'https://data-api-staging.data-gcp.sushi.com/graphql/graphql',
+  bentobox: 'api.studio.thegraph.com/query/32073/bentobox-ethereum/v0.0.1',
+  strapi: 'sushi-strapi-cms.herokuapp.com/graphql',
+  furo: 'api.studio.thegraph.com/query/32073/furo-ethereum/v0.0.1',
+  'data-api': 'production.data-gcp.sushi.com/graphql',
 } as const satisfies Record<string, string>
 
 async function updateSchema(schema: keyof typeof schemas) {
@@ -15,7 +14,7 @@ async function updateSchema(schema: keyof typeof schemas) {
   const url = schemas[schema]
 
   try {
-    const res = await fetch(url, {
+    const res = await fetch(`https://${url}/`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

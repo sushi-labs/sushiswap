@@ -3,12 +3,8 @@ import type { VariablesOf } from 'gql.tada'
 import { type RequestOptions, request } from 'src/lib/request.js'
 import type { EvmChainId } from 'sushi'
 import { isBladeChainId } from 'sushi/config'
-// import { SUSHI_DATA_API_HOST } from 'sushi/config/subgraph'
+import { SUSHI_DATA_API_HOST } from 'sushi/config/subgraph'
 import { graphql } from '../../graphql.js'
-
-// TODO-BLADE: remove this once blade in prod
-const SUSHI_DATA_API_HOST =
-  'https://data-api-staging.data-gcp.sushi.com/graphql'
 
 export const BladePoolBucketsQuery = graphql(
   `
