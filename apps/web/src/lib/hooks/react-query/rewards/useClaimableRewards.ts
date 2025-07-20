@@ -3,7 +3,7 @@ import { MERKL_SUPPORTED_CHAIN_IDS, type MerklChainId } from 'sushi/config'
 import { Amount, Token, type Type } from 'sushi/currency'
 import type { Hex } from 'viem'
 import type { Address } from 'viem/accounts'
-import { useAllPrices } from '../prices'
+import { useMultiChainPrices } from '~evm/_common/ui/price-provider/price-provider/use-multi-chain-prices'
 import { merklRewardsValidator } from './validator'
 
 interface UseClaimableRewardsParams {
@@ -27,7 +27,10 @@ export const useClaimableRewards = ({
   account,
   enabled = true,
 }: UseClaimableRewardsParams) => {
-  const { data: prices } = useAllPrices()
+  const { data: prices, isLoading: isPricesLoading } = useMultiChainPrices({
+    chainIds,
+    enabled,
+  })
 
   return useQuery({
     queryKey: ['claimableMerklRewards', { account }],
@@ -136,6 +139,6 @@ export const useClaimableRewards = ({
     },
     staleTime: 15000, // 15 seconds
     gcTime: 60000, // 1min
-    enabled: Boolean(enabled && account && prices),
+    enabled: Boolean(enabled && account && !isPricesLoading),
   })
 }
