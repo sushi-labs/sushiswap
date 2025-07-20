@@ -3,7 +3,6 @@ import { MERKL_SUPPORTED_CHAIN_IDS, type MerklChainId } from 'sushi/config'
 import { Amount, Token, type Type } from 'sushi/currency'
 import type { Hex } from 'viem'
 import type { Address } from 'viem/accounts'
-import { useMultiChainPrices } from '~evm/_common/ui/price-provider/price-provider/use-multi-chain-prices'
 import { merklRewardsValidator } from './validator'
 
 interface UseClaimableRewardsParams {
@@ -27,11 +26,6 @@ export const useClaimableRewards = ({
   account,
   enabled = true,
 }: UseClaimableRewardsParams) => {
-  const { data: prices, isLoading: isPricesLoading } = useMultiChainPrices({
-    chainIds,
-    enabled,
-  })
-
   return useQuery({
     queryKey: ['claimableMerklRewards', { account }],
     queryFn: async () => {
@@ -57,6 +51,7 @@ export const useClaimableRewards = ({
         if (rewards.length === 0) return accum
 
         const rewardAmounts = {} as Record<string, Amount<Type>>
+        const prices = {} as Record<string, number | undefined>
 
         const claimArgs = {
           users: [] as Address[],
@@ -86,6 +81,7 @@ export const useClaimableRewards = ({
             const token = new Token(reward.token)
             const amount = Amount.fromRawAmount(token, unclaimed)
             rewardAmounts[reward.token.address] = amount
+            prices[reward.token.address] = reward.token.price
           }
         })
 
@@ -93,17 +89,13 @@ export const useClaimableRewards = ({
 
         const rewardAmountsUSD = Object.entries(rewardAmounts).reduce(
           (prev, [key, amount]) => {
-            const price = prices
-              ?.get(chain.id)
-              ?.get(amount.currency.wrapped.address.toLowerCase())
+            const price = prices[key]
 
-            if (!price) {
+            if (typeof price === 'undefined') {
               return prev
             }
 
-            const _amountUSD = Number(
-              Number(amount.toExact()) * Number(price.toFixed(10)),
-            )
+            const _amountUSD = Number(amount.toExact()) * price
 
             const amountUSD =
               Number.isNaN(price) || +price.toFixed(10) < 0.000001
@@ -139,6 +131,6 @@ export const useClaimableRewards = ({
     },
     staleTime: 15000, // 15 seconds
     gcTime: 60000, // 1min
-    enabled: Boolean(enabled && account && !isPricesLoading),
+    enabled: Boolean(enabled && account),
   })
 }

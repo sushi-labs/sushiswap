@@ -30,6 +30,7 @@ const merklRewardValidator = z.object({
         chainId: z.number().transform((chainId) => chainId as EvmChainId),
         symbol: z.string(),
         decimals: z.number(),
+        price: z.coerce.number().optional(),
       }),
     }),
   ),
