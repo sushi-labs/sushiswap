@@ -18,7 +18,7 @@ import { useAccount, usePublicClient, useSendTransaction } from 'wagmi'
 import { useRefetchBalances } from '~evm/_common/ui/balance-provider/use-refetch-balances'
 import { BarSectionWidget } from './BarSectionWidget'
 
-const SLIPPAGE = '0.0001' // TODO: 0
+const SLIPPAGE = '0'
 
 export const BarSection = withCheckerRoot(
   ({
