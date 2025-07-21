@@ -18,9 +18,11 @@ interface HeaderProps {
 }
 
 export const Header: FC<HeaderProps> = ({ chainId, supportedNetworks }) => {
-  const {
-    state: { tradeView },
-  } = useDerivedStateSimpleTrade()
+  const { state } = useDerivedStateSimpleTrade()
+  console.log('state', state)
+
+  const tradeView = state?.tradeView
+
   return chainId === ChainId.KATANA && tradeView === 'simple' ? (
     <TransparentHeader
       chainId={chainId}
@@ -40,13 +42,13 @@ const TransparentHeader: FC<HeaderProps> = ({
 
   return (
     <div className="w-full h-[56px] z-20">
-      <div className="fixed w-full flex z-20">
-        <div className="hidden lg:flex justify-between items-center px-1 h-14 flex-shrink-0 border-transparent border-b">
+      <div className="flex fixed z-20 w-full">
+        <div className="hidden flex-shrink-0 justify-between items-center px-1 h-14 border-b border-transparent lg:flex">
           <SushiNavigationDropdown className="!px-2">
             <SushiWithTextIcon width={90} />
           </SushiNavigationDropdown>
         </div>
-        <div className="flex lg:hidden justify-between items-center pl-4 border-transparent border-b">
+        <div className="flex justify-between items-center pl-4 border-b border-transparent lg:hidden">
           <SushiNavigationDropdown>
             <SushiIcon width={24} height={24} />
           </SushiNavigationDropdown>
@@ -74,17 +76,17 @@ const _Header: FC<HeaderProps> = ({ chainId: _chainId, supportedNetworks }) => {
 
   return (
     <div className="w-full h-[56px] z-20">
-      <div className="fixed w-full flex z-20">
+      <div className="flex fixed z-20 w-full">
         <div
           className={classNames(
-            'hidden lg:flex justify-between items-center px-1 h-14 flex-shrink-0 bg-gray-100 dark:bg-slate-900 border-gray-200 dark:border-slate-800 border-b',
+            'hidden flex-shrink-0 justify-between items-center px-1 h-14 bg-gray-100 border-b border-gray-200 lg:flex dark:bg-slate-900 dark:border-slate-800',
           )}
         >
           <SushiNavigationDropdown className="!px-2">
             <SushiWithTextIcon width={90} />
           </SushiNavigationDropdown>
         </div>
-        <div className="flex lg:hidden justify-between items-center pl-4 bg-gray-100 dark:bg-slate-900 border-b border-gray-200 dark:border-slate-800">
+        <div className="flex justify-between items-center pl-4 bg-gray-100 border-b border-gray-200 lg:hidden dark:bg-slate-900 dark:border-slate-800">
           <SushiNavigationDropdown>
             <SushiIcon width={24} height={24} />
           </SushiNavigationDropdown>
