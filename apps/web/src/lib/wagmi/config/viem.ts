@@ -8,25 +8,25 @@ import {
 } from 'viem'
 import {
   // zkSyncTestnet,
-  curtis as _curtis,
+  // curtis as _curtis,
   fuse as _fuse, // missing multicall
   haqqMainnet as _haqq,
   zkLinkNova as _zkLinkNova, // missing multicall
   arbitrum,
   // arbitrumGoerli,
   arbitrumNova,
-  arbitrumSepolia,
+  // arbitrumSepolia,
   // aurora,
   // auroraGoerli,
   avalanche,
-  avalancheFuji,
+  // avalancheFuji,
   //  avalancheFuji,
   base,
   boba,
   // bronos,
   // bronosTestnet,
   bsc,
-  bscTestnet,
+  // bscTestnet,
   // bscTestnet,
   // canto,
   celo,
@@ -37,12 +37,12 @@ import {
   // evmos,
   //  evmosTestnet,
   fantom,
-  fantomTestnet,
+  // fantomTestnet,
   // fantomTestnet,
   // filecoinTestnet,
   foundry,
   gnosis,
-  goerli,
+  // goerli,
   // gnosisChiado,
   hardhat,
   harmonyOne,
@@ -58,11 +58,11 @@ import {
   mode,
   moonbeam,
   moonriver,
-  okc,
+  // okc,
   optimism,
   //  optimismGoerli,
   polygon,
-  polygonMumbai,
+  // polygonMumbai,
   polygonZkEvm,
   rootstock,
   scroll,
@@ -101,7 +101,7 @@ export {
   // filecoinTestnet,
   foundry,
   gnosis,
-  goerli,
+  // goerli,
   // gnosisChiado,
   hardhat,
   // iotex,
@@ -116,7 +116,7 @@ export {
   mode,
   moonbeam,
   moonriver,
-  okc,
+  // okc,
   optimism,
   //  optimismGoerli,
   polygon,
@@ -190,103 +190,6 @@ export const kava = {
     multicall3: {
       address: '0x1578f6d2D3168acF41b506AA666A521994F6BAB6' as Address,
       blockCreated: 1176602,
-    },
-  },
-} as const
-
-export const heco = {
-  id: EvmChainId.HECO,
-  name: 'Huobi ECO Chain',
-  network: 'huobieco',
-  nativeCurrency: { name: 'Huobi Token', symbol: 'HT', decimals: 18 },
-  rpcUrls: {
-    default: {
-      http: ['https://http-mainnet.hecochain.com'],
-    },
-    public: {
-      http: ['https://http-mainnet.hecochain.com'],
-    },
-  },
-  blockExplorers: {
-    etherscan: {
-      name: 'HecoInfo',
-      url: 'https://www.hecoinfo.com/',
-    },
-    default: {
-      name: 'Heco Explorer',
-      url: 'https://www.hecoinfo.com/',
-    },
-  },
-  contracts: {
-    multicall3: {
-      address: '0xcA11bde05977b3631167028862bE2a173976CA11' as Address,
-      blockCreated: 14413501,
-    },
-  },
-} as const
-
-export const palm = {
-  id: EvmChainId.PALM,
-  name: 'Palm',
-  network: 'palm',
-  nativeCurrency: { name: 'Palm', symbol: 'PALM', decimals: 18 },
-  rpcUrls: {
-    default: {
-      http: [
-        'https://palm-mainnet.infura.io/v3/3a961d6501e54add9a41aa53f15de99b',
-      ],
-    },
-    public: {
-      http: [
-        'https://palm-mainnet.infura.io/v3/3a961d6501e54add9a41aa53f15de99b',
-      ],
-    },
-  },
-  blockExplorers: {
-    etherscan: {
-      name: 'Palm Explorer',
-      url: 'https://explorer.palm.io/',
-    },
-    default: {
-      name: 'Palm Explorer',
-      url: 'https://explorer.palm.io/',
-    },
-  },
-  contracts: {
-    multicall3: {
-      address: '0x80C7DD17B01855a6D2347444a0FCC36136a314de' as Address,
-      blockCreated: 8005532,
-    },
-  },
-} as const
-
-export const bobaAvax = {
-  id: EvmChainId.BOBA_AVAX,
-  name: 'Boba Avax',
-  network: 'boba-avax',
-  nativeCurrency: { name: 'Boba', symbol: 'BOBA', decimals: 18 },
-  rpcUrls: {
-    default: {
-      http: ['https://avax.boba.network'],
-    },
-    public: {
-      http: ['https://avax.boba.network'],
-    },
-  },
-  blockExplorers: {
-    etherscan: {
-      name: 'Boba Avalanche Mainnet Explorer',
-      url: 'https://blockexplorer.avax.boba.network/',
-    },
-    default: {
-      name: 'Boba Avalanche Mainnet Explorer',
-      url: 'https://blockexplorer.avax.boba.network/',
-    },
-  },
-  contracts: {
-    multicall3: {
-      address: '0x2c46217Fae90D302d1Fb5467ADA504bC2A84f448' as Address,
-      blockCreated: 3652,
     },
   },
 } as const
@@ -543,16 +446,6 @@ export const skaleEuropa = {
   },
 } as const
 
-export const curtis = {
-  ..._curtis,
-  contracts: {
-    multicall3: {
-      address: '0xc454132B017b55b427f45078E335549A7124f5f7',
-      blockCreated: 6661339,
-    },
-  },
-} as const
-
 export const apeChain = {
   id: 33139,
   name: 'Ape Chain',
@@ -695,6 +588,35 @@ export const katana = {
   },
 } as const
 
+export const hyperEvm = {
+  id: 999,
+  name: 'HyperEVM',
+  nativeCurrency: {
+    decimals: 18,
+    name: 'Hyperliquid',
+    symbol: 'HYPE',
+  },
+  rpcUrls: {
+    default: {
+      http: ['https://rpc.hyperliquid.xyz/evm'],
+    },
+  },
+  blockExplorers: {
+    default: {
+      name: 'HyperEVM Explorer',
+      url: 'https://hyperevmscan.io',
+      apiUrl: 'https://api.hyperevmscan.io/api',
+    },
+  },
+  testnet: false,
+  contracts: {
+    multicall3: {
+      address: '0xcA11bde05977b3631167028862bE2a173976CA11',
+      blockCreated: 13051,
+    },
+  },
+} as const
+
 const drpcId = process.env['DRPC_ID'] || process.env['NEXT_PUBLIC_DRPC_ID']
 
 export const publicTransports = {
@@ -710,7 +632,6 @@ export const publicTransports = {
   [EvmChainId.BOBA]: http(
     `https://lb.drpc.org/ogrpc?network=boba-eth&dkey=${drpcId}`,
   ),
-  [EvmChainId.BOBA_AVAX]: http('https://avax.boba.network'),
   [EvmChainId.BOBA_BNB]: http(
     `https://lb.drpc.org/ogrpc?network=boba-bnb&dkey=${drpcId}`,
   ),
@@ -769,11 +690,6 @@ export const publicTransports = {
   [EvmChainId.TELOS]: http(
     `https://lb.drpc.org/ogrpc?network=telos&dkey=${drpcId}`,
   ),
-  [EvmChainId.PALM]: http(palm.rpcUrls.default.http[0]),
-  [EvmChainId.OKEX]: http(okc.rpcUrls.default.http[0]),
-  [EvmChainId.HECO]: http(
-    `https://lb.drpc.org/ogrpc?network=heco&dkey=${drpcId}`,
-  ),
   [EvmChainId.ZKSYNC_ERA]: http(
     `https://lb.drpc.org/ogrpc?network=zksync&dkey=${drpcId}`,
   ),
@@ -826,17 +742,11 @@ export const publicTransports = {
   ),
   [EvmChainId.HEMI]: http('https://rpc.hemi.network/rpc'),
   [EvmChainId.KATANA]: http('https://rpc.katana.network'),
-  /* Testnets */ // TODO: add testnet transports
-  [EvmChainId.ARBITRUM_TESTNET]: http('https://sepolia-rollup.arbitrum.io/rpc'),
-  [EvmChainId.AVALANCHE_TESTNET]: http(
-    'https://api.avax-test.network/ext/bc/C/rpc',
+  [EvmChainId.HYPEREVM]: http(
+    `https://lb.drpc.org/ogrpc?network=hyperliquid&dkey=${drpcId}`,
   ),
-  [EvmChainId.BSC_TESTNET]: http('https://bsc-testnet.public.blastapi.io'),
-  [EvmChainId.FANTOM_TESTNET]: http('https://rpc.testnet.fantom.network'),
-  [EvmChainId.POLYGON_TESTNET]: http('https://rpc.ankr.com/polygon_mumbai'),
+  /* Testnets */ // TODO: add testnet transports
   [EvmChainId.SEPOLIA]: http('https://sepolia.drpc.org'),
-  [EvmChainId.GÖRLI]: http('https://eth-goerli.api.onfinality.io/public'),
-  [EvmChainId.CURTIS]: http('https://curtis.rpc.caldera.xyz/http'),
   [EvmChainId.TATARA]: http('https://rpc.tatara.katanarpc.com'),
 } as const satisfies Record<EvmChainId, Transport>
 
@@ -846,7 +756,6 @@ export const publicChains = [
   arbitrum,
   avalanche,
   boba,
-  bobaAvax,
   bobaBnb,
   bsc,
   bttc,
@@ -869,9 +778,6 @@ export const publicChains = [
   haqq,
   core,
   telos,
-  palm,
-  okc,
-  heco,
   zkSync as unknown as Omit<typeof mainnet, 'id'> & { id: 324 },
   linea,
   base,
@@ -888,15 +794,9 @@ export const publicChains = [
   sonic,
   hemi,
   katana,
+  hyperEvm,
   /* Testnets */
-  arbitrumSepolia,
-  avalancheFuji,
-  bscTestnet,
-  fantomTestnet,
-  goerli,
-  polygonMumbai,
   sepolia,
-  curtis,
   tatara,
 ] as const satisfies Readonly<Chain[]>
 
@@ -916,10 +816,6 @@ export const publicClientConfig = {
   [EvmChainId.BOBA]: {
     chain: boba,
     transport: publicTransports[EvmChainId.BOBA],
-  },
-  [EvmChainId.BOBA_AVAX]: {
-    chain: bobaAvax,
-    transport: publicTransports[EvmChainId.BOBA_AVAX],
   },
   [EvmChainId.BOBA_BNB]: {
     chain: bobaBnb,
@@ -1001,18 +897,6 @@ export const publicClientConfig = {
     chain: telos,
     transport: publicTransports[EvmChainId.TELOS],
   },
-  [EvmChainId.PALM]: {
-    chain: palm,
-    transport: publicTransports[EvmChainId.PALM],
-  },
-  [EvmChainId.OKEX]: {
-    chain: okc,
-    transport: publicTransports[EvmChainId.OKEX],
-  },
-  [EvmChainId.HECO]: {
-    chain: heco,
-    transport: publicTransports[EvmChainId.HECO],
-  },
   [EvmChainId.ZKSYNC_ERA]: {
     chain: zkSync as unknown as typeof mainnet & { id: 324 },
     transport: publicTransports[EvmChainId.ZKSYNC_ERA],
@@ -1089,38 +973,14 @@ export const publicClientConfig = {
     chain: katana,
     transport: publicTransports[EvmChainId.KATANA],
   },
+  [EvmChainId.HYPEREVM]: {
+    chain: hyperEvm,
+    transport: publicTransports[EvmChainId.HYPEREVM],
+  },
   /* Testnets */
-  [EvmChainId.ARBITRUM_TESTNET]: {
-    chain: arbitrumSepolia,
-    transport: publicTransports[EvmChainId.ARBITRUM_TESTNET],
-  },
-  [EvmChainId.AVALANCHE_TESTNET]: {
-    chain: avalancheFuji,
-    transport: publicTransports[EvmChainId.AVALANCHE_TESTNET],
-  },
-  [EvmChainId.BSC_TESTNET]: {
-    chain: bscTestnet,
-    transport: publicTransports[EvmChainId.BSC_TESTNET],
-  },
-  [EvmChainId.FANTOM_TESTNET]: {
-    chain: fantomTestnet,
-    transport: publicTransports[EvmChainId.FANTOM_TESTNET],
-  },
-  [EvmChainId.GÖRLI]: {
-    chain: goerli,
-    transport: publicTransports[EvmChainId.GÖRLI],
-  },
-  [EvmChainId.POLYGON_TESTNET]: {
-    chain: polygonMumbai,
-    transport: publicTransports[EvmChainId.POLYGON_TESTNET],
-  },
   [EvmChainId.SEPOLIA]: {
     chain: sepolia,
     transport: publicTransports[EvmChainId.SEPOLIA],
-  },
-  [EvmChainId.CURTIS]: {
-    chain: curtis,
-    transport: publicTransports[EvmChainId.CURTIS],
   },
   [EvmChainId.TATARA]: {
     chain: tatara,

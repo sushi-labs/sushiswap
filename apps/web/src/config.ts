@@ -60,16 +60,13 @@ export const isSwapApiEnabledChainId = (
   SWAP_API_SUPPORTED_CHAIN_IDS.includes(chainId as SwapApiEnabledChainId)
 
 export const DISABLED_CHAIN_IDS = [
-  ChainId.BOBA_AVAX,
-  ChainId.PALM,
-  ChainId.HECO,
-  ChainId.OKEX,
   ChainId.MOONBEAM,
   ChainId.MOONRIVER,
   ChainId.HARMONY,
   ChainId.POLYGON_ZKEVM,
   ChainId.FUSE,
   ChainId.TATARA,
+  ChainId.HYPEREVM,
 ] as const
 
 export const NEW_CHAIN_IDS = [ChainId.KATANA] as const
@@ -83,6 +80,7 @@ export const PREFERRED_CHAINID_ORDER = [
   ChainId.BASE,
   ChainId.AVALANCHE,
   ChainId.POLYGON,
+  ChainId.HYPEREVM,
   ChainId.SCROLL,
   ChainId.BLAST,
   ChainId.OPTIMISM,
@@ -258,6 +256,7 @@ export const XSWAP_SUPPORTED_CHAIN_IDS = [
   // ChainId.FUSE,
   ChainId.FANTOM,
   ChainId.GNOSIS,
+  ChainId.HYPEREVM,
   ChainId.KATANA,
   ChainId.LINEA,
   ChainId.MANTLE,

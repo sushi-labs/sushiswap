@@ -9,12 +9,12 @@ import {
 } from '@sushiswap/ui'
 import type { ColumnDef, PaginationState } from '@tanstack/react-table'
 import React, { type FC, useMemo, useState } from 'react'
-import { useAllPrices } from 'src/lib/hooks/react-query'
 import { useConcentratedLiquidityPositions } from 'src/lib/wagmi/hooks/positions/hooks/useConcentratedLiquidityPositions'
 import type { ConcentratedLiquidityPositionWithV3Pool } from 'src/lib/wagmi/hooks/positions/types'
 import { type SushiSwapV3ChainId, SushiSwapV3ChainIds } from 'sushi/config'
 import { Amount, type Type } from 'sushi/currency'
 import { useAccount } from 'wagmi'
+import { useMultiChainPrices } from '~evm/_common/ui/price-provider/price-provider/use-multi-chain-prices'
 import {
   FEES_ACTION_COLUMN,
   FEES_AMOUNT_COLUMN,
@@ -48,7 +48,10 @@ export const ClaimableFeesTab: FC = () => {
     pageSize: 10,
   })
 
-  const { data: prices, isLoading: isPricesLoading } = useAllPrices()
+  const { data: prices, isLoading: isPricesLoading } = useMultiChainPrices({
+    chainIds: SushiSwapV3ChainIds,
+    enabled: Boolean(address),
+  })
 
   const isLoading = isPositionsLoading || isPricesLoading
 
