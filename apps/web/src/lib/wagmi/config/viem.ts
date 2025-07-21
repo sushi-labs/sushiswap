@@ -21,7 +21,7 @@ import {
   avalanche,
   // avalancheFuji,
   //  avalancheFuji,
-  base,
+  basePreconf as base,
   boba,
   // bronos,
   // bronosTestnet,
