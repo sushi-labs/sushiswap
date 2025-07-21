@@ -8,40 +8,38 @@ import {
   WidgetHeader,
   WidgetTitle,
 } from '@sushiswap/ui'
-import { type ReactNode, useMemo } from 'react'
+import type { ReactNode } from 'react'
 import { Web3Input } from 'src/lib/wagmi/components/web3-input'
 import { ChainId } from 'sushi/chain'
-import { type Amount, SUSHI, type Type, XSUSHI } from 'sushi/currency'
+import { type Amount, SUSHI, type Type } from 'sushi/currency'
 import { useSushiBar } from './SushiBarProvider'
 import { XSushiPrice } from './XSushiPrice'
 
-interface StakeSectionWidgetProps {
+interface BarSectionWidgetProps {
   input: string
-  parsedInput: Amount<Type> | undefined
+  amountOut: Amount<Type> | undefined
+  inputToken: Type
+  outputToken: Type
   onInput(value: string): void
   children: ReactNode
 }
 
-export const StakeSectionWidget = ({
+export const BarSectionWidget = ({
   input,
-  parsedInput,
+  amountOut,
+  inputToken,
+  outputToken,
   onInput,
   children,
-}: StakeSectionWidgetProps) => {
+}: BarSectionWidgetProps) => {
   const { totalSupply, sushiBalance } = useSushiBar()
-
-  const xSushiAmount = useMemo(
-    () =>
-      parsedInput && totalSupply && sushiBalance
-        ? parsedInput.multiply(totalSupply).divide(sushiBalance).toExact()
-        : '',
-    [parsedInput, totalSupply, sushiBalance],
-  )
 
   return (
     <Widget id="stakeSushi" variant="empty">
       <WidgetHeader>
-        <WidgetTitle>Stake</WidgetTitle>
+        <WidgetTitle>
+          {inputToken.equals(SUSHI[ChainId.ETHEREUM]) ? 'Stake' : 'Unstake'}
+        </WidgetTitle>
         <WidgetDescription>
           <XSushiPrice totalSupply={totalSupply} sushiBalance={sushiBalance} />
         </WidgetDescription>
@@ -53,7 +51,7 @@ export const StakeSectionWidget = ({
           loading={false}
           value={input}
           onChange={onInput}
-          currency={SUSHI[ChainId.ETHEREUM]}
+          currency={inputToken}
           chainId={ChainId.ETHEREUM}
         />
         <div className="flex items-center justify-center mt-[-24px] mb-[-24px] z-10">
@@ -66,10 +64,11 @@ export const StakeSectionWidget = ({
           </div>
         </div>
         <Web3Input.Currency
-          type="INPUT"
+          type="OUTPUT"
           className="border border-accent px-3 py-1.5 !rounded-xl"
-          value={xSushiAmount}
-          currency={XSUSHI[ChainId.ETHEREUM]}
+          loading={Boolean(!amountOut && input)}
+          value={amountOut?.toSignificant() ?? ''}
+          currency={outputToken}
           chainId={ChainId.ETHEREUM}
           disabled
           disableInsufficientBalanceError

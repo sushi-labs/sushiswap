@@ -18,6 +18,7 @@ export interface UseTradeParams {
   amount: Amount<Type> | undefined
   gasPrice?: bigint | null | undefined
   slippagePercentage: string
+  onlyPools?: Address[]
   recipient: Address | undefined
   source?: RouterLiquiditySource
   enabled: boolean

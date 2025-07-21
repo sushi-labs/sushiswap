@@ -34,6 +34,7 @@ export const useTradeQuery = (
     slippagePercentage,
     recipient,
     source,
+    onlyPools,
     enabled,
   }: UseTradeParams,
   select: UseTradeQuerySelect,
@@ -53,6 +54,7 @@ export const useTradeQuery = (
         address,
         recipient,
         source,
+        onlyPools,
       },
     ],
     queryFn: async () => {
@@ -90,6 +92,10 @@ export const useTradeQuery = (
       if (process.env.NEXT_PUBLIC_APP_ENV === 'test')
         params.searchParams.set('simulate', 'false')
       else params.searchParams.set('simulate', 'true')
+      if (onlyPools)
+        onlyPools.forEach((pool) =>
+          params.searchParams.append('onlyPools', pool),
+        )
 
       const res = await fetch(params.toString())
       const json = await res.json()
