@@ -35,9 +35,11 @@ export default async function ExploreLayout(props: {
     <>
       <Header chainId={chainId} supportedNetworks={POOL_SUPPORTED_NETWORKS} />
       <main className="flex flex-col flex-1 h-full animate-slide">
-        <Container maxWidth="7xl" className="px-4 py-4">
-          {/* <GlobalStatsCharts chainId={chainId} /> */}
-          <div className="flex gap-3 justify-between">
+        <Container maxWidth="screen-3xl" className="px-4 py-4">
+          <h2 className="pb-4 text-lg font-semibold md:pb-8 md:text-4xl">
+            Explore Pool
+          </h2>
+          <div className="flex flex-col gap-3 justify-between lg:flex-row">
             <Statistics />
             <Trending />
           </div>

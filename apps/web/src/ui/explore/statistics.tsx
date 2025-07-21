@@ -19,7 +19,7 @@ const StatisticsHeader = () => {
       <div className="flex gap-2">
         <Button
           variant="outline"
-          className="rounded-xl border- !bg-[#00000005] dark:!bg-[#FFFFFF05]"
+          className="rounded-xl border-dashed !bg-[#00000005] dark:!bg-[#FFFFFF05]"
         >
           <span>V2</span>
         </Button>
@@ -37,17 +37,17 @@ const StatisticsHeader = () => {
 const StatisticsContent = () => {
   return (
     <div className="flex flex-col gap-2">
-      <div className="flex flex-col gap-1">
+      <div className="flex gap-3 justify-between items-center lg:flex-col lg:items-start lg:justify-normal">
         <span className="text-muted-foreground">TVL (7d%)</span>
-        <div className="">
-          <p className="text-[1.75rem] font-semibold">$3.3b</p>
+        <div className="flex gap-2 justify-between items-center lg:flex-col lg:items-start lg:justify-normal lg:gap-2">
+          <p className="text-base lg:text-[1.75rem] font-semibold">$3.3b</p>
           <p className="text-sm text-red-500">-1.2%</p>
         </div>
       </div>
-      <div className="flex flex-col gap-1">
+      <div className="flex gap-3 justify-between items-center lg:flex-col lg:items-start lg:justify-normal">
         <span className="text-muted-foreground">Volume (7d%)</span>
-        <div className="">
-          <p className="text-[1.75rem] font-semibold">$23.62m </p>
+        <div className="flex gap-2 justify-between items-center lg:flex-col lg:items-start lg:justify-normal lg:gap-2">
+          <p className="text-base lg:text-[1.75rem] font-semibold">$23.62m </p>
           <p className="text-sm text-green-500">+1.69%</p>
         </div>
       </div>
