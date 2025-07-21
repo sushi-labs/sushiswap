@@ -9,7 +9,7 @@ import { AvalancheSquare } from './AvalancheSquare'
 import { BaseSquare } from './BaseSquare'
 import { BinanceSquare } from './BinanceSquare'
 import { BlastSquare } from './BlastSquare'
-import { BobaAvaxSquare } from './BobaAvaxSquare'
+// import { BobaAvaxSquare } from "./BobaAvaxSquare";
 import { BobaBNBSquare } from './BobaBNBSquare'
 import { BobaSquare } from './BobaSquare'
 import { BttcSquare } from './BttcSquare'
@@ -23,7 +23,7 @@ import { FuseSquare } from './FuseSquare'
 import { GnosisSquare } from './GnosisSquare'
 import { HaqqSquare } from './HaqqSquare'
 import { HarmonySquare } from './HarmonySquare'
-import { HecoSquare } from './HecoSquare'
+// import { HecoSquare } from "./HecoSquare";
 import { HemiSquare } from './HemiSquare'
 import { KatanaSquare } from './KatanaSquare'
 import { KavaSquare } from './KavaSquare'
@@ -34,9 +34,9 @@ import { MetisSquare } from './MetisSquare'
 import { ModeSquare } from './ModeSquare'
 import { MoonbeamSquare } from './MoonbeamSquare'
 import { MoonriverSquare } from './MoonriverSquare'
-import { OkexSquare } from './OkexSquare'
+// import { OkexSquare } from "./OkexSquare";
 import { OptimismSquare } from './OptimismSquare'
-import { PalmSquare } from './PalmSquare'
+// import { PalmSquare } from "./PalmSquare";
 import { PolygonSquare } from './PolygonSquare'
 import { PolygonZKSquare } from './PolygonZKSquare'
 import { RootstockSquare } from './RootstockSquare'
@@ -101,6 +101,11 @@ export * from './ZKSyncSquare'
 export * from './ZetaChainSquare'
 export * from './KatanaSquare'
 
+// [ChainId.HECO]: HecoSquare,// currently not exported from sushi/chain
+// [ChainId.OKEX]: OkexSquare,// currently not exported from sushi/chain
+// [ChainId.PALM]: PalmSquare,// currently not exported from sushi/chain
+// [ChainId.BOBA_AVAX]: BobaAvaxSquare,// currently not exported from sushi/chain
+
 export const NETWORK_SQUARE_ICON: Partial<
   Record<ChainId | string, IconComponent>
 > = {
@@ -121,11 +126,8 @@ export const NETWORK_SQUARE_ICON: Partial<
   [ChainId.METIS]: MetisSquare,
   [ChainId.KAVA]: KavaSquare,
   [ChainId.ARBITRUM_NOVA]: ArbitrumNovaSquare,
-  [ChainId.HECO]: HecoSquare,
-  [ChainId.OKEX]: OkexSquare,
-  [ChainId.PALM]: PalmSquare,
+
   [ChainId.BOBA]: BobaSquare,
-  [ChainId.BOBA_AVAX]: BobaAvaxSquare,
   [ChainId.BOBA_BNB]: BobaBNBSquare,
   [ChainId.BTTC]: BttcSquare,
   [ChainId.POLYGON_ZKEVM]: PolygonZKSquare,
