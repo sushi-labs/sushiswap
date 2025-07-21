@@ -19,7 +19,6 @@ interface HeaderProps {
 
 export const Header: FC<HeaderProps> = ({ chainId, supportedNetworks }) => {
   const { state } = useDerivedStateSimpleTrade()
-  console.log('state', state)
 
   const tradeView = state?.tradeView
 
