@@ -13,7 +13,7 @@ import {
 
 export const ExploreHeader = ({ chainId }: { chainId: EvmChainId }) => {
   return (
-    <div className="flex justify-between items-center pb-4 md:pb-8">
+    <div className="flex flex-col md:flex-row justify-between md:items-center gap-4 pb-4 md:py-8">
       <h2 className="text-lg font-semibold md:text-4xl">Explore Pool</h2>
       <AddLiquidityPopover chainId={chainId} />
     </div>
@@ -24,10 +24,15 @@ const AddLiquidityPopover = ({ chainId }: { chainId: EvmChainId }) => {
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button variant="default">
-          <PlusIcon className="w-4 h-4" />
-          <span>Add Liquidity</span>
-          <ChevronDownIcon className="w-4 h-4" />
+        <Button variant="default" size="lg">
+          <div className="flex items-center justify-between w-full">
+            <div className="w-5 block md:hidden" />
+            <div className="flex items-center gap-2 mr-4">
+              <PlusIcon className="w-4 h-4" />
+              <span>Add Liquidity</span>
+            </div>
+            <ChevronDownIcon className="w-5 h-5" />
+          </div>
         </Button>
       </PopoverTrigger>
       <PopoverContent
@@ -44,10 +49,7 @@ const AddLiquidityPopover = ({ chainId }: { chainId: EvmChainId }) => {
 export const AddLiquidityLink = ({
   chainId,
   version,
-}: {
-  chainId: EvmChainId
-  version: 'v2' | 'v3'
-}) => {
+}: { chainId: EvmChainId; version: 'v2' | 'v3' }) => {
   const fallbackChain = EvmChainId.ETHEREUM
 
   const href =

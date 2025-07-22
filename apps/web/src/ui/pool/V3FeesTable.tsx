@@ -79,8 +79,8 @@ const NAME_COLUMN_POOL: ColumnDef<V3Pool, unknown> = {
         <div className="flex gap-1">
           <TooltipProvider>
             <Tooltip>
-              <TooltipTrigger asChild>
-                {ProtocolBadge['SUSHISWAP_V3']}
+              <TooltipTrigger>
+                <ProtocolBadge protocol={'SUSHISWAP_V3'} />
               </TooltipTrigger>
               <TooltipContent>
                 <p>Protocol version</p>

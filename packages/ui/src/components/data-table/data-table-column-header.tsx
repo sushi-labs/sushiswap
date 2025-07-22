@@ -53,12 +53,14 @@ export function DataTableColumnHeader<TData, TValue>({
     if (typeof title === 'string') {
       if (description) {
         return (
-          <span className="underline decoration-dotted underline-offset-2">
+          <span className="underline decoration-dotted underline-offset-2 dark:text-slate-500 text-slate-450">
             {title}
           </span>
         )
       } else {
-        return <span>{title}</span>
+        return (
+          <span className="dark:text-slate-500 text-slate-450">{title}</span>
+        )
       }
     }
 
@@ -89,7 +91,7 @@ export function DataTableColumnHeader<TData, TValue>({
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
-                <div className="flex flex-row gap-2 ui-items-center">
+                <div className="flex flex-row gap-2 ui-items-center dark:text-slate-500 text-slate-450">
                   {Title}
                   {header.column.getIsSorted() === 'desc' ? (
                     <CaretDownIcon className="ml-2 h-4 w-4" />
@@ -105,7 +107,12 @@ export function DataTableColumnHeader<TData, TValue>({
           </TooltipProvider>
         </Button>
       ) : (
-        <Button onClick={onClick} variant="ghost" size="xs">
+        <Button
+          onClick={onClick}
+          variant="ghost"
+          size="xs"
+          className="dark:!text-slate-500 !text-slate-450"
+        >
           {Title}
           {header.column.getIsSorted() === 'desc' ? (
             <CaretDownIcon className="ml-2 h-4 w-4" />
