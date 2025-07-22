@@ -36,7 +36,7 @@ export const TrendingItem = ({
   return (
     <div className="flex justify-between items-center p-3 w-full rounded-lg bg-background">
       <div className="flex gap-5 items-center whitespace-nowrap basis-1/2">
-        <div className="rounded-lg dark:bg-slate-800 dark:border-[#222137] w-8 flex items-center justify-center text-xs font-medium aspect-1 border">
+        <div className="rounded-lg dark:bg-slate-800 bg-slate-50 dark:border-[#222137] w-8 flex items-center justify-center text-xs font-medium aspect-1 border">
           {position}
         </div>
         <div className="flex gap-2 items-center">
