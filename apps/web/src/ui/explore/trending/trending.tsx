@@ -193,7 +193,7 @@ const TrendingMobile = ({ pools }: { pools: typeof POOLS }) => {
   return (
     <div className="flex gap-2 items-center py-5 lg:hidden">
       <span className="text-sm font-medium">Trending:</span>
-      <div className="flex overflow-x-auto gap-2 snap-x">
+      <div className="flex overflow-x-auto gap-2 snap-x hide-scrollbar">
         {pools.map((pool, idx) => {
           return (
             <TrendingItemMobile
