@@ -1,8 +1,16 @@
 import { Currency } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
+import Link from 'next/link'
 import { NativeAddress } from 'src/lib/constants'
-import type { ChainId, EvmChainId } from 'sushi/chain'
+import { type ChainId, ChainKey, EvmChainId } from 'sushi/chain'
+import {
+  type SushiSwapV2ChainId,
+  type SushiSwapV3ChainId,
+  isSushiSwapV2ChainId,
+  isSushiSwapV3ChainId,
+} from 'sushi/config'
 import { Native, Token } from 'sushi/currency'
+import type { POOLS } from './trending'
 
 type TokenType = {
   symbol: string
@@ -14,27 +22,29 @@ type TokenType = {
 }
 
 export const TrendingItem = ({
+  pool,
   position,
-  chainId,
-  token0,
-  token1,
-  fee,
-  tvl,
-  volume,
-  apr,
-}: {
-  position: number
-  chainId: ChainId
-  token0: TokenType
-  token1: TokenType
-  fee: string
-  tvl: string
-  volume: string
-  apr: string
-}) => {
+}: { pool: (typeof POOLS)[0]; position: number }) => {
+  const { address, chainId, token0, token1, fee, tvl, volume, apr, version } =
+    pool
   const pairName = `${token0.symbol}-${token1.symbol}`
+
+  const fallbackChain = EvmChainId.ETHEREUM
+
+  const href =
+    version === 'v3'
+      ? isSushiSwapV3ChainId(chainId as SushiSwapV3ChainId)
+        ? `/${ChainKey[chainId]}/pool/v3/${address}`
+        : `/${ChainKey[fallbackChain]}/pool/v3/${address}`
+      : isSushiSwapV2ChainId(chainId as SushiSwapV2ChainId)
+        ? `/${ChainKey[chainId]}/pool/v2/${address}`
+        : `/${ChainKey[fallbackChain]}/pool/v2/${address}`
+
   return (
-    <div className="flex justify-between items-center p-3 w-full rounded-lg bg-background">
+    <Link
+      className="flex justify-between items-center p-3 w-full rounded-lg bg-background"
+      href={href}
+    >
       <div className="flex gap-5 items-center whitespace-nowrap basis-1/2">
         <div className="rounded-lg dark:bg-slate-800 bg-slate-50 dark:border-[#222137] w-8 flex items-center justify-center text-xs font-medium aspect-1 border">
           {position}
@@ -118,7 +128,7 @@ export const TrendingItem = ({
           <div className="text-sm font-medium">{apr}</div>
         </div>
       </div>
-    </div>
+    </Link>
   )
 }
 
