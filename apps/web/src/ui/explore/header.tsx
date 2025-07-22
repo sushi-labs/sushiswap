@@ -62,11 +62,9 @@ export const AddLiquidityLink = ({
   return (
     <Link
       href={href}
-      className="block p-2 text-sm rounded-lg transition-colors text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-900"
+      className="block p-2 transition-colors text-smrounded-lg text-slate-900 dark:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-900"
     >
-      <div className="font-medium">
-        Add Liquidity To {version.toUpperCase()}
-      </div>
+      <div>Add Liquidity To {version.toUpperCase()}</div>
     </Link>
   )
 }
