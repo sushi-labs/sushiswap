@@ -22,9 +22,11 @@ export default async function PoolsPage(props: {
   }
 
   return (
-    <Container maxWidth="7xl" className="px-4">
-      <div className="flex items-center justify-between gap-3 mb-4">
-        <h3>All Pools</h3>
+    <Container maxWidth="7xl" className="px-4 max-w-[1696px]">
+      <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
+        <h3 className="font-[600] md:text-lg text-slate-900 dark:text-pink-10">
+          All Pools
+        </h3>
         <div className="flex gap-3 flex-wrap">
           <TableFiltersSearchToken />
           <TableFiltersPoolType />
@@ -32,11 +34,10 @@ export default async function PoolsPage(props: {
             network={chainId}
             supportedNetworks={POOL_SUPPORTED_NETWORKS}
             unsupportedNetworkHref="/ethereum/explore/pools"
-            className="lg:hidden block"
           />
+          <TableFiltersFarmsOnly />
+          <TableFiltersResetButton />
         </div>
-        {/* <TableFiltersFarmsOnly /> */}
-        <TableFiltersResetButton />
       </div>
       <PoolsTableV2 chainId={chainId} />
     </Container>

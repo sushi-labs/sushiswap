@@ -240,11 +240,9 @@ export const EXPLORE_NAME_COLUMN_POOL: ColumnDef<Pool, unknown> = {
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  {
-                    ProtocolBadge[
-                      props.row.original.protocol as SushiSwapProtocol
-                    ]
-                  }
+                  <ProtocolBadge
+                    protocol={props.row.original.protocol as SushiSwapProtocol}
+                  />
                 </TooltipTrigger>
                 <TooltipContent>
                   <p>Protocol version</p>

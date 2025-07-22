@@ -4,13 +4,11 @@ import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import type React from 'react'
 import { POOL_SUPPORTED_NETWORKS } from 'src/config'
-import { GlobalStatsCharts } from 'src/ui/explore/global-stats-charts'
 import { Statistics } from 'src/ui/explore/statistics'
 import { Trending } from 'src/ui/explore/trending/trending'
 import { PoolsFiltersProvider } from 'src/ui/pool'
 import type { ChainId } from 'sushi/chain'
 import { Header } from '../../header'
-import { NavigationItems } from '../navigation-items'
 
 export const metadata: Metadata = {
   title: 'Pools',
@@ -34,8 +32,8 @@ export default async function ExploreLayout(props: {
   return (
     <>
       <Header chainId={chainId} supportedNetworks={POOL_SUPPORTED_NETWORKS} />
-      <main className="flex flex-col flex-1 h-full animate-slide">
-        <Container maxWidth="screen-3xl" className="px-4 py-4">
+      <main className="flex flex-col md:gap-4 flex-1 h-full animate-slide">
+        <Container maxWidth="1696px" className="px-4 py-4 max-w-[1696px]">
           <h2 className="pb-4 text-lg font-semibold md:pb-8 md:text-4xl">
             Explore Pool
           </h2>
@@ -44,11 +42,8 @@ export default async function ExploreLayout(props: {
             <Trending />
           </div>
         </Container>
-        <Container maxWidth="7xl" className="flex gap-2 px-4 pb-4">
-          <NavigationItems chainId={chainId} />
-        </Container>
         <section className="flex flex-col flex-1">
-          <div className="bg-gray-50 dark:bg-white/[0.02] border-t border-accent pt-4 pb-10 min-h-screen">
+          <div>
             <PoolsFiltersProvider>{children}</PoolsFiltersProvider>
           </div>
         </section>

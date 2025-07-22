@@ -1,209 +1,44 @@
 'use client'
 
-import {
-  ArrowDownRightIcon,
-  EllipsisHorizontalIcon,
-  GiftIcon,
-  MinusIcon,
-  PlusIcon,
-} from '@heroicons/react/24/outline'
 import { Slot } from '@radix-ui/react-slot'
 import type {
   GetPools,
   PoolChainId,
   Pools,
 } from '@sushiswap/graph-client/data-api'
-import {
-  Button,
-  Card,
-  CardHeader,
-  CardTitle,
-  Chip,
-  DataTable,
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-  Loader,
-  SkeletonText,
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '@sushiswap/ui'
-import type {
-  ColumnDef,
-  Row,
-  SortingState,
-  TableState,
-} from '@tanstack/react-table'
-import Link from 'next/link'
+import { Card, DataTable, Loader } from '@sushiswap/ui'
+import type { Row, SortingState, TableState } from '@tanstack/react-table'
 import { type FC, type ReactNode, useCallback, useMemo, useState } from 'react'
 import InfiniteScroll from 'react-infinite-scroll-component'
 import { usePoolsInfinite } from 'src/lib/hooks'
 import { ChainKey } from 'sushi/chain'
-import { isMerklChainId } from 'sushi/config'
-import { Native } from 'sushi/currency'
 import { SushiSwapProtocol } from 'sushi/types'
 import { usePoolFilters } from './PoolsFiltersProvider'
 import {
+  ACTION_COLUMN,
+  APR_SPARKLINE_COLUMN,
   APR_WITH_REWARDS_COLUMN,
-  EXPLORE_NAME_COLUMN_POOL,
-  TRANSACTIONS_1D_COLUMN,
+  CHAIN_COLUMN,
+  POOL_COLUMN,
+  POOL_TYPE_COLUMN,
   TVL_COLUMN,
   VOLUME_1D_COLUMN,
   VOLUME_1W_COLUMN,
-} from './columns'
+  VOL_TVL_COLUMN,
+} from './columns-v2'
 
 const COLUMNS = [
-  EXPLORE_NAME_COLUMN_POOL,
-  TVL_COLUMN,
+  CHAIN_COLUMN,
+  POOL_COLUMN,
+  POOL_TYPE_COLUMN,
   VOLUME_1D_COLUMN,
   VOLUME_1W_COLUMN,
-  TRANSACTIONS_1D_COLUMN,
+  TVL_COLUMN,
+  VOL_TVL_COLUMN,
   APR_WITH_REWARDS_COLUMN,
-  {
-    id: 'actions',
-    cell: ({ row }) =>
-      row.original.protocol === 'SUSHISWAP_V3' ? (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button icon={EllipsisHorizontalIcon} variant="ghost" size="sm">
-              <span className="sr-only">Open menu</span>
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-fit">
-            <DropdownMenuLabel>
-              {row.original.name}
-              <Chip variant="blue" className="ml-2">
-                SushiSwap V3
-              </Chip>
-            </DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuGroup>
-              <DropdownMenuItem asChild>
-                <Link
-                  onClick={(e) => e.stopPropagation()}
-                  shallow={true}
-                  className="flex items-center"
-                  href={`/${ChainKey[row.original.chainId]}/pool/v3/${row.original.address}`}
-                >
-                  <ArrowDownRightIcon width={16} height={16} className="mr-2" />
-                  Pool details
-                </Link>
-              </DropdownMenuItem>
-              <DropdownMenuItem asChild>
-                <Link
-                  onClick={(e) => e.stopPropagation()}
-                  shallow={true}
-                  className="flex items-center"
-                  href={`/${ChainKey[row.original.chainId]}/pool/v3/${row.original.address}/create`}
-                >
-                  <PlusIcon width={16} height={16} className="mr-2" />
-                  Create position
-                </Link>
-              </DropdownMenuItem>
-            </DropdownMenuGroup>
-            <DropdownMenuSeparator />
-            <DropdownMenuGroup>
-              <TooltipProvider>
-                <Tooltip delayDuration={0}>
-                  <TooltipTrigger
-                    asChild={isMerklChainId(row.original.chainId)}
-                  >
-                    <DropdownMenuItem
-                      asChild
-                      disabled={!isMerklChainId(row.original.chainId)}
-                    >
-                      <Link
-                        onClick={(e) => e.stopPropagation()}
-                        shallow={true}
-                        className="flex items-center"
-                        href={`/${ChainKey[row.original.chainId]}/pool/incentivize?fromCurrency=${
-                          row.original.token0Address ===
-                          Native.onChain(row.original.chainId).wrapped.address
-                            ? 'NATIVE'
-                            : row.original.token0Address
-                        }&toCurrency=${
-                          row.original.token1Address ===
-                          Native.onChain(row.original.chainId).wrapped.address
-                            ? 'NATIVE'
-                            : row.original.token1Address
-                        }&feeAmount=${row.original.swapFee * 10_000 * 100}`}
-                      >
-                        <GiftIcon width={16} height={16} className="mr-2" />
-                        Add incentive
-                      </Link>
-                    </DropdownMenuItem>
-                  </TooltipTrigger>
-                  <TooltipContent side="left" className="max-w-[240px]">
-                    <p>
-                      {!isMerklChainId(row.original.chainId)
-                        ? 'Not available on this network'
-                        : 'Add rewards to a pool to incentivize liquidity providers joining in.'}
-                    </p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-            </DropdownMenuGroup>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      ) : (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button icon={EllipsisHorizontalIcon} variant="ghost" size="sm">
-              <span className="sr-only">Open menu</span>
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-fit">
-            <DropdownMenuLabel>
-              {row.original.name}
-              {row.original.protocol === 'SUSHISWAP_V2' && (
-                <Chip variant="pink" className="ml-2">
-                  SushiSwap V2
-                </Chip>
-              )}
-            </DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuGroup>
-              <DropdownMenuItem asChild>
-                <Link
-                  onClick={(e) => e.stopPropagation()}
-                  shallow={true}
-                  className="flex items-center"
-                  href={`/${ChainKey[row.original.chainId]}/pool/v2/${row.original.address}/add`}
-                >
-                  <PlusIcon width={16} height={16} className="mr-2" />
-                  Add liquidity
-                </Link>
-              </DropdownMenuItem>
-              <DropdownMenuItem asChild>
-                <Link
-                  onClick={(e) => e.stopPropagation()}
-                  shallow={true}
-                  className="flex items-center"
-                  href={`/${ChainKey[row.original.chainId]}/pool/v2/${row.original.address}/remove`}
-                >
-                  <MinusIcon width={16} height={16} className="mr-2" />
-                  Remove liquidity
-                </Link>
-              </DropdownMenuItem>
-            </DropdownMenuGroup>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      ),
-    size: 80,
-    meta: {
-      disableLink: true,
-      body: {
-        skeleton: <SkeletonText fontSize="lg" />,
-      },
-    },
-  } satisfies ColumnDef<Pools[number], unknown>,
-] as ColumnDef<Pools[number], unknown>[]
+  APR_SPARKLINE_COLUMN,
+  ACTION_COLUMN,
+]
 
 interface PoolsTableV2Props {
   chainId: PoolChainId
@@ -284,23 +119,7 @@ export const PoolsTableV2: FC<PoolsTableV2Props> = ({
         </div>
       }
     >
-      <Card>
-        {/* <CardHeader>
-          <CardTitle>
-            {isLoading ? (
-              <div className="!w-28 !h-[18px]">
-                <SkeletonText />
-              </div>
-            ) : (
-              <span>
-                Pools{' '}
-                <span className="text-gray-400 dark:text-slate-500">
-                  ({count ?? 0})
-                </span>
-              </span>
-            )}
-          </CardTitle>
-        </CardHeader> */}
+      <Card className="!border-0 md:!border overflow-hidden">
         <DataTable
           state={state}
           onSortingChange={setSorting}
@@ -313,6 +132,7 @@ export const PoolsTableV2: FC<PoolsTableV2Props> = ({
           rowRenderer={rowRenderer}
           columns={COLUMNS}
           data={data}
+          className="border-t-0"
         />
       </Card>
     </InfiniteScroll>

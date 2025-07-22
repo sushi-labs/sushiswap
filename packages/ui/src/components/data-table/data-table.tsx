@@ -46,6 +46,9 @@ declare module '@tanstack/react-table' {
       className?: string
       description?: string
     }
+    tableHead?: {
+      className?: string
+    }
     disableLink?: boolean
   }
 }
@@ -121,20 +124,23 @@ export function DataTable<TData, TValue>({
   return (
     <div
       className={classNames(
-        'space-y-4 border-t border-secondary black:border-white/[0.1]',
+        'space-y-4 border-t rounded-xl border-secondary black:border-white/[0.1]',
         className,
       )}
     >
       {toolbar ? toolbar(table) : null}
       <Table
-        className={
-          pagination ? 'border-b border-secondary black:border-white/[0.1]' : ''
-        }
+        className={classNames(
+          pagination
+            ? 'border-b border-secondary  black:border-white/[0.1]'
+            : '',
+          'dark:bg-slate-800 bg-slate-50 rounded-xl',
+        )}
       >
         {showColumnHeaders ? (
-          <TableHeader>
+          <TableHeader className="pb-4 pt-8">
             {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
+              <TableRow key={headerGroup.id} className="hover:bg-transparent">
                 {headerGroup.headers.map((header) => {
                   return (
                     <TableHead
@@ -142,6 +148,7 @@ export function DataTable<TData, TValue>({
                       key={header.id}
                       className={classNames(
                         header.column.getCanSort() ? 'px-2' : 'px-4',
+                        header.column.columnDef.meta?.tableHead?.className,
                       )}
                     >
                       {header.isPlaceholder ? null : (
