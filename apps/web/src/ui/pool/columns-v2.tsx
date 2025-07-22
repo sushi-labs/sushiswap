@@ -209,8 +209,8 @@ export const POOL_TYPE_COLUMN: ColumnDef<Pool, unknown> = {
                 showFullName={true}
               />
               <p className="text-sm text-slate-900 dark:text-pink-100 font-normal">
-                The traditional pool type with a fixed fee of .30% that utilizes
-                a constant product formula to ensure a 50/50 composition of each
+                Classic liquidity pools have a fixed fee of 0.30% that utilize a
+                constant product formula to ensure a 50/50 composition of each
                 asset in the pool.
               </p>
               <Link href={'#'} rel="noreferrer noopener" target="_blank">

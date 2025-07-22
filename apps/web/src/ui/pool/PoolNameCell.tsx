@@ -29,7 +29,7 @@ export const ProtocolBadge = ({
   if (protocol === SushiSwapProtocol.SUSHISWAP_V2) {
     return (
       <div className="whitespace-nowrap bg-[#F338C31A] text-[#F338C3] text-xs px-2.5 py-1 w-fit font-medium rounded-full">
-        {showFullName ? 'V2 AMM Pool' : 'V2'}
+        {showFullName ? 'V2 Classic Liquidity Pool' : 'V2'}
       </div>
     )
   }
