@@ -1,3 +1,6 @@
+'use client'
+
+import { useMediaQuery } from '@sushiswap/hooks'
 import { Wrapper } from 'src/ui/swap/trade/wrapper'
 import { ChainId } from 'sushi/chain'
 import { TrendingItem, TrendingItemMobile } from './trending-item'
@@ -153,13 +156,16 @@ export const Trending = () => {
 }
 
 const TrendingDesktop = ({ pools }: { pools: typeof POOLS }) => {
+  const isNarrow = useMediaQuery({ query: '(max-width: 1480px)' })
+  const visiblePools = isNarrow ? pools.slice(0, 3) : pools
+
   return (
-    <Wrapper className="border basis-2/3 border-accent !p-5 gap-5 flex-col hidden lg:flex">
+    <Wrapper className="border basis-2/3 border-accent !p-5 gap-5  flex-col hidden lg:flex">
       <div>
         <span className="text-lg font-semibold">Trending</span>
       </div>
       <div className="grid grid-rows-3 grid-flow-col gap-2">
-        {pools.map((pool, idx) => (
+        {visiblePools.map((pool, idx) => (
           <TrendingItem
             key={`${pool.token0.symbol}-${pool.token1.symbol}-${idx}`}
             {...pool}

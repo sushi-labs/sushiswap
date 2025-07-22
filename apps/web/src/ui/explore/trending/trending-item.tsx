@@ -104,15 +104,17 @@ export const TrendingItem = ({
 
       <div className="flex justify-between pr-3 mx-auto basis-1/2">
         <div className="flex flex-col">
-          <div className="text-xs dark:text-slate-450">TVL</div>
+          <div className="text-xs dark:text-slate-450 text-slate-450">TVL</div>
           <div className="text-sm font-medium">{tvl}</div>
         </div>
         <div className="text-sm font-medium">
-          <div className="text-xs dark:text-slate-450">1d vol</div>
+          <div className="text-xs dark:text-slate-450 text-slate-450">
+            1d vol
+          </div>
           <div className="text-sm font-medium">{volume}</div>
         </div>
         <div className="text-sm font-medium">
-          <div className="text-xs dark:text-slate-450">APR</div>
+          <div className="text-xs dark:text-slate-450 text-slate-450">APR</div>
           <div className="text-sm font-medium">{apr}</div>
         </div>
       </div>
