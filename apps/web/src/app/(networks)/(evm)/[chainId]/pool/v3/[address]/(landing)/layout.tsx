@@ -38,7 +38,7 @@ export default async function Layout(props: {
   const referer = headersList.get('referer')
   return (
     <>
-      <Container maxWidth="5xl" className="pt-10 px-4">
+      <Container maxWidth="5xl" className="px-4 pt-10">
         <PoolHeader
           backUrl={
             referer?.includes('/pool')
@@ -48,7 +48,6 @@ export default async function Layout(props: {
           address={address}
           pool={pool}
           apy={{ rewards: pool.incentiveApr, fees: pool.feeApr1d }}
-          showAddLiquidityButton
         />
       </Container>
       <section className="flex flex-col flex-1 mt-4">

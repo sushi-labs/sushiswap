@@ -190,7 +190,7 @@ export const TrendingItemMobile = ({
             height={24}
           />
         </Currency.IconList>
-        <div className="border-background dark:bg-[] border rounded-[4px] overflow-hidden  z-10 absolute -bottom-[1px] -right-1.5">
+        <div className="border-background border rounded-[4px] overflow-hidden  z-10 absolute -bottom-[1px] -right-1.5">
           <NetworkIcon
             type="square"
             chainId={chainId}

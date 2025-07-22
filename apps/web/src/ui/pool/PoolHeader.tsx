@@ -10,6 +10,7 @@ import {
   classNames,
   typographyVariants,
 } from '@sushiswap/ui'
+import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import React, { type FC, useMemo } from 'react'
 import { EvmChain, EvmChainKey } from 'sushi/chain'
 import { Token, unwrapToken } from 'sushi/currency'
@@ -68,14 +69,23 @@ export const PoolHeader: FC<PoolHeader> = ({
             href={backUrl}
             className="text-sm text-blue hover:underline"
           >
-            ← Back
+            ← Pools
           </LinkInternal>
-          <div className="flex flex-wrap justify-between gap-6">
+          <div className="flex flex-wrap gap-6 justify-between">
             <div className="relative flex items-center gap-3 max-w-[100vh]">
-              <Currency.IconList iconWidth={36} iconHeight={36}>
-                <Currency.Icon currency={token0} />
-                <Currency.Icon currency={token1} />
-              </Currency.IconList>
+              <div className="relative">
+                <Currency.IconList iconWidth={36} iconHeight={36}>
+                  <Currency.Icon currency={token0} />
+                  <Currency.Icon currency={token1} />
+                </Currency.IconList>
+                <div className="border-[#E8E7EB] dark:border-[#222137] border rounded-[4px] overflow-hidden z-10 absolute bottom-[1px] -right-1.5">
+                  <NetworkIcon
+                    type="square"
+                    chainId={pool.chainId}
+                    className="w-3 h-3 lg:w-4 lg:h-4"
+                  />
+                </div>
+              </div>
               <Button
                 asChild
                 variant="link"
@@ -86,6 +96,7 @@ export const PoolHeader: FC<PoolHeader> = ({
                 })}
               >
                 <LinkExternal
+                  className="text-gray-900 dark:text-slate-50"
                   href={EvmChain.from(pool.chainId)?.getAccountUrl(address)}
                 >
                   {token0.symbol}/{token1.symbol}
@@ -94,11 +105,11 @@ export const PoolHeader: FC<PoolHeader> = ({
               <div
                 className={classNames(
                   pool.protocol === 'SUSHISWAP_V3'
-                    ? 'bg-blue/20 text-blue'
+                    ? 'text-blue'
                     : pool.protocol === 'SUSHISWAP_V2'
-                      ? 'bg-pink/20 text-pink'
+                      ? 'text-pink'
                       : 'bg-green/20 text-green',
-                  'text-sm px-2 py-1 font-semibold rounded-full mt-0.5',
+                  'text-sm px-2 py-1 font-semibold rounded-full mt-0.5 bg-[#0000001F] dark:bg-[#FFFFFF1F]',
                 )}
               >
                 {pool.protocol === 'SUSHISWAP_V3'
@@ -129,7 +140,7 @@ export const PoolHeader: FC<PoolHeader> = ({
             ) : null}
           </div>
         </div>
-        <div className="flex flex-wrap items-center gap-y-5 gap-x-[32px] text-secondary-foreground mb-8 mt-1.5">
+        {/* <div className="flex flex-wrap items-center gap-y-5 gap-x-[32px] text-secondary-foreground mb-8 mt-1.5">
           {apy ? (
             <div className="flex items-center gap-1.5">
               <span className="font-semibold tracking-tighter">APR</span>
@@ -199,7 +210,7 @@ export const PoolHeader: FC<PoolHeader> = ({
               </Button>
             </LinkExternal>
           </div>
-        </div>
+        </div> */}
       </div>
     )
 
