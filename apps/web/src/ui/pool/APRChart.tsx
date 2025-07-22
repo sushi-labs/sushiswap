@@ -50,7 +50,6 @@ export const chartPeriods: Record<PoolChartPeriod, number> = {
 }
 
 export const MOCK_APR_BUCKETS = {
-  // generate 7 days of data
   [PoolChartPeriod.SevenDay]: [
     { date: 1752259200, apr: 12.1 }, // 2025‑07‑11
     { date: 1752345600, apr: 11.8 }, // 2025‑07‑12
