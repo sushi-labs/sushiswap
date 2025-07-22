@@ -23,6 +23,7 @@ import { useConcentratedLiquidityPoolStats } from 'src/lib/hooks/react-query'
 import { useConcentratedLiquidityPoolReserves } from 'src/lib/wagmi/hooks/pools/hooks/useConcentratedLiquidityPoolReserves'
 import { ChainKey } from 'sushi'
 import { formatUSD } from 'sushi/format'
+import { APRChart } from './APRChart'
 import { ConcentratedLiquidityProvider } from './ConcentratedLiquidityProvider'
 import { PoolRewardDistributionsCard } from './PoolRewardDistributionsCard'
 import { PoolTransactionsV3 } from './PoolTransactionsV3'
@@ -53,6 +54,7 @@ const Pool: FC<{ pool: V3Pool }> = ({ pool }) => {
 
   return (
     <Container maxWidth="5xl" className="flex flex-col gap-4 px-4">
+      <APRChart />
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
         <StatisticsChartsV3 address={address} chainId={chainId} pool={pool} />
         <div className="flex flex-col gap-6">
@@ -82,7 +84,7 @@ const Pool: FC<{ pool: V3Pool }> = ({ pool }) => {
           <Card>
             <CardHeader>
               <CardTitle>
-                <div className="flex flex-col justify-between md:flex-row gap-y-4">
+                <div className="flex flex-col gap-y-4 justify-between md:flex-row">
                   Statistics
                 </div>
               </CardTitle>

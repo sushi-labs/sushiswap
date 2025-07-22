@@ -27,7 +27,7 @@ const StatisticsHeader = () => {
           className={classNames(
             'rounded-xl border-dashed !bg-[#00000005] dark:!bg-[#FFFFFF05]',
             version === 'v2' &&
-              '!bg-[#F338C31A] border-[#F338C3] !border-solid',
+              '!bg-[#F338C31A] border-[#F338C3] text-[#F338C3] !border-solid',
           )}
           onClick={() => setVersion('v2')}
         >
@@ -38,7 +38,7 @@ const StatisticsHeader = () => {
           className={classNames(
             'rounded-xl border-dashed !bg-[#00000005] dark:!bg-[#FFFFFF05]',
             version === 'v3' &&
-              '!bg-[#3B7EF61A] border-[#3B7EF6] !border-solid',
+              '!bg-[#3B7EF61A] border-[#3B7EF6] text-[#3B7EF6] !border-solid',
           )}
           onClick={() => setVersion('v3')}
         >
