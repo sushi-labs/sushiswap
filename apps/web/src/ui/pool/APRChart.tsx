@@ -237,7 +237,7 @@ export const APRChart = () => {
     PoolChartPeriod.SevenDay,
   )
   const [isLoading, setIsLoading] = useState(true)
-  const [isError, setIsError] = useState(false)
+  const isError = false
 
   useEffect(() => setIsLoading(false), [])
 
