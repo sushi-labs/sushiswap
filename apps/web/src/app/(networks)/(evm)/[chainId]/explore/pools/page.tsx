@@ -23,8 +23,8 @@ export default async function PoolsPage(props: {
 
   return (
     <Container maxWidth="7xl" className="px-4 max-w-[1696px]">
-      <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
-        <h3 className="font-[600] md:text-lg text-slate-900 dark:text-pink-10">
+      <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
+        <h3 className="font-[600] md:text-lg text-slate-900 dark:text-pink-100">
           All Pools
         </h3>
         <div className="flex gap-3 flex-wrap">
