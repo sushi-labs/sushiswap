@@ -1,4 +1,8 @@
+'use client'
+
 import { Button } from '@sushiswap/ui'
+import { classNames } from '@sushiswap/ui'
+import { useState } from 'react'
 import { Wrapper } from '../swap/trade/wrapper'
 
 export const Statistics = () => {
@@ -11,6 +15,7 @@ export const Statistics = () => {
 }
 
 const StatisticsHeader = () => {
+  const [version, setVersion] = useState<'v2' | 'v3'>('v2')
   return (
     <div className="flex justify-between items-center w-full">
       <div>
@@ -19,13 +24,23 @@ const StatisticsHeader = () => {
       <div className="flex gap-2">
         <Button
           variant="outline"
-          className="rounded-xl border-dashed !bg-[#00000005] dark:!bg-[#FFFFFF05]"
+          className={classNames(
+            'rounded-xl border-dashed !bg-[#00000005] dark:!bg-[#FFFFFF05]',
+            version === 'v2' &&
+              '!bg-[#F338C31A] border-[#F338C3] !border-solid',
+          )}
+          onClick={() => setVersion('v2')}
         >
           <span>V2</span>
         </Button>
         <Button
           variant="outline"
-          className="rounded-xl border-dashed !bg-[#00000005] dark:!bg-[#FFFFFF05]"
+          className={classNames(
+            'rounded-xl border-dashed !bg-[#00000005] dark:!bg-[#FFFFFF05]',
+            version === 'v3' &&
+              '!bg-[#3B7EF61A] border-[#3B7EF6] !border-solid',
+          )}
+          onClick={() => setVersion('v3')}
         >
           <span>V3</span>
         </Button>

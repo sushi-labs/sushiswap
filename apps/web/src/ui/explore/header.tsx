@@ -60,10 +60,7 @@ export const AddLiquidityLink = ({
         : `/${ChainKey[fallbackChain]}/pool/v2/add`
 
   return (
-    <Link
-      href={href}
-      className="block p-2 transition-colors text-smrounded-lg text-slate-900 dark:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-900"
-    >
+    <Link href={href} className="block p-2 text-slate-900 dark:text-slate-100">
       <div>Add Liquidity To {version.toUpperCase()}</div>
     </Link>
   )
