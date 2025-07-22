@@ -1,9 +1,14 @@
+'use client'
+
+import { useMediaQuery } from '@sushiswap/hooks'
 import { Wrapper } from 'src/ui/swap/trade/wrapper'
 import { ChainId } from 'sushi/chain'
 import { TrendingItem, TrendingItemMobile } from './trending-item'
 
-const POOLS = [
+export const POOLS = [
   {
+    version: 'v3',
+    address: '0xfa6e8e97ececdc36302eca534f63439b1e79487b',
     chainId: ChainId.ETHEREUM,
     token0: {
       name: 'USDC',
@@ -27,6 +32,8 @@ const POOLS = [
     apr: '14%',
   },
   {
+    version: 'v2',
+    address: '0x397ff1542f962076d0bfe58ea045ffa2d347aca0',
     chainId: ChainId.ETHEREUM,
     token0: {
       name: 'Wrapped Ether',
@@ -50,6 +57,8 @@ const POOLS = [
     apr: '11%',
   },
   {
+    version: 'v2',
+    address: '0xaaf5110db6e744ff70fb339de037b990a20bdace',
     chainId: ChainId.ETHEREUM,
     token0: {
       name: 'DAI Stablecoin',
@@ -73,6 +82,8 @@ const POOLS = [
     apr: '8%',
   },
   {
+    version: 'v2',
+    address: '0xceff51756c56ceffca006cd410b03ffc46dd3a58',
     chainId: ChainId.ETHEREUM,
     token0: {
       name: 'Wrapped Bitcoin',
@@ -96,6 +107,8 @@ const POOLS = [
     apr: '10%',
   },
   {
+    version: 'v2',
+    address: '0x795065dcc9f64b5614c407a6efdc400da6221fb0',
     chainId: ChainId.ETHEREUM,
     token0: {
       name: 'SushiToken',
@@ -119,6 +132,8 @@ const POOLS = [
     apr: '16%',
   },
   {
+    version: 'v2',
+    address: '0x055cedfe14bce33f985c41d9a1934b7654611aac',
     chainId: ChainId.ETHEREUM,
     token0: {
       name: 'USDT',
@@ -153,16 +168,19 @@ export const Trending = () => {
 }
 
 const TrendingDesktop = ({ pools }: { pools: typeof POOLS }) => {
+  const isNarrow = useMediaQuery({ query: '(max-width: 1480px)' })
+  const visiblePools = isNarrow ? pools.slice(0, 3) : pools
+
   return (
-    <Wrapper className="border basis-2/3 border-accent !p-5 gap-5 flex-col hidden lg:flex">
+    <Wrapper className="border basis-2/3 border-accent !p-5 gap-5  flex-col hidden lg:flex">
       <div>
         <span className="text-lg font-semibold">Trending</span>
       </div>
       <div className="grid grid-rows-3 grid-flow-col gap-2">
-        {pools.map((pool, idx) => (
+        {visiblePools.map((pool, idx) => (
           <TrendingItem
             key={`${pool.token0.symbol}-${pool.token1.symbol}-${idx}`}
-            {...pool}
+            pool={pool}
             position={idx + 1}
           />
         ))}
