@@ -20,6 +20,7 @@ import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import { useQuery } from '@tanstack/react-query'
 import type { SendTransactionReturnType } from '@wagmi/core'
 import { useRouter } from 'next/navigation'
+import type { GetServicesErc20DepositsConfig200Response } from 'node_modules/@sushiswap/styro-client/dist/generated'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { useStyroClient } from 'src/app/portal/_common/ui/auth-provider/auth-provider'
 import { getNetworkName } from 'src/lib/network'
@@ -48,29 +49,31 @@ function useErc20BillingServiceConfig() {
     queryKey: ['portal-getServicesErc20DepositsConfig'],
     queryFn: async () => {
       const response = await client.getServicesErc20DepositsConfig()
-
       return response
     },
-    select: (response) => ({
-      chainIds: response.data.chains.map(
-        (chain) => chain.chainId as EvmChainId,
-      ),
-      configs: response.data.chains.map((chain) => ({
-        ...chain,
-        chainId: chain.chainId as EvmChainId,
-        stables: chain.stables.reduce(
-          (acc, token) => {
-            acc[token.address.toLowerCase() as Address] = new Token({
-              ...token,
-              chainId: chain.chainId as EvmChainId,
-            })
-
-            return acc
-          },
-          {} as Record<Address, Token>,
+    select: useCallback(
+      (response: GetServicesErc20DepositsConfig200Response) => ({
+        chainIds: response.data.chains.map(
+          (chain) => chain.chainId as EvmChainId,
         ),
-      })),
-    }),
+        configs: response.data.chains.map((chain) => ({
+          ...chain,
+          chainId: chain.chainId as EvmChainId,
+          stables: chain.stables.reduce(
+            (acc, token) => {
+              acc[token.address.toLowerCase() as Address] = new Token({
+                ...token,
+                chainId: chain.chainId as EvmChainId,
+              })
+
+              return acc
+            },
+            {} as Record<Address, Token>,
+          ),
+        })),
+      }),
+      [],
+    ),
   })
 }
 
