@@ -2,7 +2,7 @@ import { Currency } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import Link from 'next/link'
 import { NativeAddress } from 'src/lib/constants'
-import { type ChainId, ChainKey, EvmChainId } from 'sushi/chain'
+import { type ChainId, ChainKey, type EvmChainId } from 'sushi/chain'
 import {
   type SushiSwapV2ChainId,
   type SushiSwapV3ChainId,
@@ -12,33 +12,17 @@ import {
 import { Native, Token } from 'sushi/currency'
 import type { POOLS } from './trending'
 
-type TokenType = {
-  symbol: string
-  name: string
-  decimals: number
-  chainId: unknown
-  approved: boolean
-  address: `0x${string}`
-}
-
 export const TrendingItem = ({
   pool,
   position,
-}: { pool: (typeof POOLS)[0]; position: number }) => {
-  const { address, chainId, token0, token1, fee, tvl, volume, apr, version } =
-    pool
+  href,
+}: {
+  pool: (typeof POOLS)[0]
+  position: number
+  href: string
+}) => {
+  const { chainId, token0, token1, fee, tvl, volume, apr } = pool
   const pairName = `${token0.symbol}-${token1.symbol}`
-
-  const fallbackChain = EvmChainId.ETHEREUM
-
-  const href =
-    version === 'v3'
-      ? isSushiSwapV3ChainId(chainId as SushiSwapV3ChainId)
-        ? `/${ChainKey[chainId]}/pool/v3/${address}`
-        : `/${ChainKey[fallbackChain]}/pool/v3/${address}`
-      : isSushiSwapV2ChainId(chainId as SushiSwapV2ChainId)
-        ? `/${ChainKey[chainId]}/pool/v2/${address}`
-        : `/${ChainKey[fallbackChain]}/pool/v2/${address}`
 
   return (
     <Link
@@ -133,21 +117,15 @@ export const TrendingItem = ({
 }
 
 export const TrendingItemMobile = ({
+  pool,
   position,
-  chainId,
-  token0,
-  token1,
-  fee,
-}: {
-  position: number
-  chainId: ChainId
-  token0: TokenType
-  token1: TokenType
-  fee: string
-}) => {
+  href,
+}: { pool: (typeof POOLS)[0]; position: number; href: string }) => {
+  const { chainId, token0, token1, fee, version } = pool
   const pairName = `${token0.symbol}-${token1.symbol}`
   return (
-    <div
+    <Link
+      href={href}
       key={`${token0.symbol}-${token1.symbol}-${position}`}
       className="shrink-0 min-w-[160px] p-2 dark:bg-slate-750 bg-slate-200 rounded-full flex items-center gap-2"
     >
@@ -199,9 +177,10 @@ export const TrendingItemMobile = ({
         </div>
       </div>
       <div className="flex text-sm font-medium leading-5">
-        <div>{pairName}-V3-</div>
-        <div>{fee}</div>
+        <div>
+          {pairName}-{version}-{fee}
+        </div>
       </div>
-    </div>
+    </Link>
   )
 }

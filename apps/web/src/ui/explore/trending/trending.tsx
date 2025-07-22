@@ -2,7 +2,13 @@
 
 import { useMediaQuery } from '@sushiswap/hooks'
 import { Wrapper } from 'src/ui/swap/trade/wrapper'
-import { ChainId } from 'sushi/chain'
+import { ChainId, ChainKey, EvmChainId } from 'sushi/chain'
+import {
+  type SushiSwapV2ChainId,
+  type SushiSwapV3ChainId,
+  isSushiSwapV2ChainId,
+  isSushiSwapV3ChainId,
+} from 'sushi/config'
 import { TrendingItem, TrendingItemMobile } from './trending-item'
 
 export const POOLS = [
@@ -177,13 +183,27 @@ const TrendingDesktop = ({ pools }: { pools: typeof POOLS }) => {
         <span className="text-lg font-semibold">Trending</span>
       </div>
       <div className="grid grid-rows-3 grid-flow-col gap-2">
-        {visiblePools.map((pool, idx) => (
-          <TrendingItem
-            key={`${pool.token0.symbol}-${pool.token1.symbol}-${idx}`}
-            pool={pool}
-            position={idx + 1}
-          />
-        ))}
+        {visiblePools.map((pool, idx) => {
+          const fallbackChain = EvmChainId.ETHEREUM
+
+          const href =
+            pool.version === 'v3'
+              ? isSushiSwapV3ChainId(pool.chainId as SushiSwapV3ChainId)
+                ? `/${ChainKey[pool.chainId]}/pool/v3/${pool.address}`
+                : `/${ChainKey[fallbackChain]}/pool/v3/${pool.address}`
+              : isSushiSwapV2ChainId(pool.chainId as SushiSwapV2ChainId)
+                ? `/${ChainKey[pool.chainId]}/pool/v2/${pool.address}`
+                : `/${ChainKey[fallbackChain]}/pool/v2/${pool.address}`
+
+          return (
+            <TrendingItem
+              key={`${pool.token0.symbol}-${pool.token1.symbol}-${idx}`}
+              pool={pool}
+              position={idx + 1}
+              href={href}
+            />
+          )
+        })}
       </div>
     </Wrapper>
   )
@@ -195,11 +215,22 @@ const TrendingMobile = ({ pools }: { pools: typeof POOLS }) => {
       <span className="text-sm font-medium">Trending:</span>
       <div className="flex overflow-x-auto gap-2 snap-x">
         {pools.map((pool, idx) => {
+          const fallbackChain = EvmChainId.ETHEREUM
+
+          const href =
+            pool.version === 'v3'
+              ? isSushiSwapV3ChainId(pool.chainId as SushiSwapV3ChainId)
+                ? `/${ChainKey[pool.chainId]}/pool/v3/${pool.address}`
+                : `/${ChainKey[fallbackChain]}/pool/v3/${pool.address}`
+              : isSushiSwapV2ChainId(pool.chainId as SushiSwapV2ChainId)
+                ? `/${ChainKey[pool.chainId]}/pool/v2/${pool.address}`
+                : `/${ChainKey[fallbackChain]}/pool/v2/${pool.address}`
           return (
             <TrendingItemMobile
               key={`${pool.token0.symbol}-${pool.token1.symbol}-${idx}`}
-              {...pool}
+              pool={pool}
               position={idx + 1}
+              href={href}
             />
           )
         })}
