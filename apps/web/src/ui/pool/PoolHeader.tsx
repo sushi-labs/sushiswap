@@ -34,8 +34,8 @@ export const PoolHeader: FC<PoolHeader> = ({
   backUrl,
   address,
   pool,
-  apy,
-  priceRange,
+  // apy,
+  // priceRange,
   showAddLiquidityButton = false,
 }) => {
   const [token0, token1] = useMemo(() => {
@@ -124,13 +124,9 @@ export const PoolHeader: FC<PoolHeader> = ({
                 <LinkInternal
                   href={
                     pool.protocol === 'SUSHISWAP_V2'
-                      ? `/${EvmChainKey[pool.chainId]}/pool/v2/${
-                          pool.address
-                        }/add`
+                      ? `/${EvmChainKey[pool.chainId]}/pool/v2/${pool.address}/add`
                       : pool.protocol === 'SUSHISWAP_V3'
-                        ? `/${EvmChainKey[pool.chainId]}/pool/v3/${
-                            pool.address
-                          }/positions`
+                        ? `/${EvmChainKey[pool.chainId]}/pool/v3/${pool.address}/positions`
                         : ''
                   }
                 >
