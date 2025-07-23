@@ -139,7 +139,7 @@ export async function GET(request: NextRequest) {
       action: 'slippage',
       args: {
         amountOut: { useOutputOfCallAt: 4 },
-        bps: 200,
+        bps: slippage,
       },
     },
   ]
