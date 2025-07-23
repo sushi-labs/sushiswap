@@ -14,6 +14,11 @@ const toggleVariants = cva(
         default: 'bg-transparent',
         outline:
           'bg-transparent !border border-accent hover:bg-secondary hover:text-accent-foreground',
+        trade2: classNames(
+          'h-8 font-medium rounded-md data-[state=on]:!text-blue dark:data-[state=on]:!text-skyblue bg-transparent text-slate-900 dark:text-slate-100',
+          'hover:ui-bg-secondary',
+          'data-[state=on]:!bg-blue/20 dark:data-[state=on]:!bg-skyblue/20',
+        ),
       },
       size: {
         xs: 'h-[26px] px-2 text-xs rounded-md',

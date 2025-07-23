@@ -1,3 +1,5 @@
+'use client'
+
 import {
   Button,
   Card,
@@ -26,6 +28,7 @@ import type { FC, MouseEventHandler, ReactNode } from 'react'
 import { Native } from 'sushi/currency'
 import tailwindConfig from 'tailwind.config'
 import resolveConfig from 'tailwindcss/resolveConfig'
+import { Wrapper } from '../swap/trade/wrapper'
 
 echarts.use([
   CanvasRenderer,
@@ -310,12 +313,10 @@ export const APRChart = () => {
           ? (tailwind.theme?.colors?.skyblue as Record<string, string>)['500']
           : (tailwind.theme?.colors?.blue as Record<string, string>)['500'],
       ],
-      /* ─────────────────────────────────────────────── */
       xAxis: [
         {
           type: 'time',
           show: true,
-
           boundaryGap: false,
           splitNumber:
             period === PoolChartPeriod.SevenDay
@@ -326,7 +327,7 @@ export const APRChart = () => {
                   ? 4
                   : period === PoolChartPeriod.All
                     ? 6
-                    : 5, // fallback
+                    : 5,
           axisLabel: {
             formatter: (value: number) => formatLabel(new Date(value), period),
             color: (tailwind.theme?.colors?.slate as Record<string, string>)[
@@ -354,23 +355,21 @@ export const APRChart = () => {
           max: Math.max(...yData) + 1,
         },
       ],
-      /* ─────────────────────────────────────────────── */
       series: [
         {
           type: 'line',
           showSymbol: false,
           smooth: true,
           lineStyle: { width: 2 },
-          data: xData.map((x, i) => [x * 1000, yData[i]]), // must be [ms, value]
+          data: xData.map((x, i) => [x * 1000, yData[i]]),
         },
       ],
     }),
     [xData, yData, onMouseOver, period, isDark],
   )
 
-  console.log('period', period)
   return (
-    <Card>
+    <Wrapper className="!p-0" enableBorder>
       <CardHeader>
         <CardTitle className="">
           <div className="flex justify-between items-center">
@@ -454,7 +453,7 @@ export const APRChart = () => {
           />
         )}
       </CardContent>
-    </Card>
+    </Wrapper>
   )
 }
 
