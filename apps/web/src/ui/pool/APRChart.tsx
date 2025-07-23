@@ -19,6 +19,7 @@ import {
 } from 'echarts/components'
 import * as echarts from 'echarts/core'
 import { CanvasRenderer } from 'echarts/renderers'
+import { useTheme } from 'next-themes'
 import { useEffect, useMemo, useState } from 'react'
 import { useCallback } from 'react'
 import type { FC, MouseEventHandler, ReactNode } from 'react'
@@ -237,6 +238,8 @@ export const APRChart = () => {
   )
   const [isLoading, setIsLoading] = useState(true)
   const isError = false
+  const { theme } = useTheme()
+  const isDark = theme === 'dark'
 
   useEffect(() => setIsLoading(false), [])
 
@@ -302,7 +305,11 @@ export const APRChart = () => {
         },
       },
       grid: { top: 0, left: 0, right: 0, bottom: 40 },
-      color: [(tailwind.theme?.colors?.blue as Record<string, string>)['500']],
+      color: [
+        isDark
+          ? (tailwind.theme?.colors?.skyblue as Record<string, string>)['500']
+          : (tailwind.theme?.colors?.blue as Record<string, string>)['500'],
+      ],
       /* ─────────────────────────────────────────────── */
       xAxis: [
         {
@@ -358,7 +365,7 @@ export const APRChart = () => {
         },
       ],
     }),
-    [xData, yData, onMouseOver, period],
+    [xData, yData, onMouseOver, period, isDark],
   )
 
   console.log('period', period)
