@@ -3,7 +3,7 @@ import { Container } from '@sushiswap/ui'
 import { notFound } from 'next/navigation'
 import React from 'react'
 import { POOL_SUPPORTED_NETWORKS } from 'src/config'
-import { PoolsTable } from 'src/ui/pool/PoolsTable'
+import { PoolsTableV2 } from 'src/ui/pool/PoolsTableV2'
 import { TableFiltersFarmsOnly } from 'src/ui/pool/TableFiltersFarmsOnly'
 import { TableFiltersNetwork } from 'src/ui/pool/TableFiltersNetwork'
 import { TableFiltersPoolType } from 'src/ui/pool/TableFiltersPoolType'
@@ -22,20 +22,24 @@ export default async function PoolsPage(props: {
   }
 
   return (
-    <Container maxWidth="7xl" className="px-4">
-      <div className="flex flex-wrap gap-3 mb-4">
-        <TableFiltersSearchToken />
-        <TableFiltersPoolType />
-        <TableFiltersNetwork
-          network={chainId}
-          supportedNetworks={POOL_SUPPORTED_NETWORKS}
-          unsupportedNetworkHref="/ethereum/explore/pools"
-          className="lg:hidden block"
-        />
-        <TableFiltersFarmsOnly />
-        <TableFiltersResetButton />
+    <Container maxWidth="7xl" className="px-4 max-w-[1696px]">
+      <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
+        <h3 className="font-[600] md:text-lg text-slate-900 dark:text-pink-100">
+          All Pools
+        </h3>
+        <div className="flex gap-3 flex-wrap">
+          <TableFiltersSearchToken />
+          <TableFiltersPoolType />
+          <TableFiltersNetwork
+            network={chainId}
+            supportedNetworks={POOL_SUPPORTED_NETWORKS}
+            unsupportedNetworkHref="/ethereum/explore/pools"
+          />
+          <TableFiltersFarmsOnly />
+          <TableFiltersResetButton />
+        </div>
       </div>
-      <PoolsTable chainId={chainId} />
+      <PoolsTableV2 chainId={chainId} />
     </Container>
   )
 }

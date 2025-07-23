@@ -127,7 +127,7 @@ export const TrendingItemMobile = ({
     <Link
       href={href}
       key={`${token0.symbol}-${token1.symbol}-${position}`}
-      className="shrink-0 min-w-[160px] p-2 dark:bg-slate-750 bg-slate-200 rounded-full flex items-center gap-2"
+      className="shrink-0 min-w-[160px] p-2 dark:bg-slate-750 bg-slate-200 rounded-full flex items-center gap-2 snap-start"
     >
       <div className="relative">
         <Currency.IconList iconWidth={24} iconHeight={24} className="!border-0">

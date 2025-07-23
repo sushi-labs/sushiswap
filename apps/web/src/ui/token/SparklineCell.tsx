@@ -35,8 +35,8 @@ export const SparklineCell: FC<SparklineCellProps> = ({
       <polyline
         fill="none"
         points={points}
-        className={isPositive ? 'stroke-green' : 'stroke-red'}
-        strokeWidth={1}
+        className={isPositive ? 'stroke-[#10B981]' : 'stroke-red-100'}
+        strokeWidth={2}
       />
     </svg>
   )

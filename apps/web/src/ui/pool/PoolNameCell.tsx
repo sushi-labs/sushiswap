@@ -19,17 +19,28 @@ import {
 } from 'sushi'
 import { formatNumber } from 'sushi/format'
 
-export const ProtocolBadge: Record<SushiSwapProtocol, JSX.Element> = {
-  [SushiSwapProtocol.SUSHISWAP_V2]: (
-    <div className="whitespace-nowrap bg-pink/20 text-pink text-[10px] px-2 rounded-full">
-      V2
-    </div>
-  ),
-  [SushiSwapProtocol.SUSHISWAP_V3]: (
-    <div className="whitespace-nowrap bg-blue/20 text-blue text-[10px] px-2 rounded-full">
-      V3
-    </div>
-  ),
+export const ProtocolBadge = ({
+  protocol,
+  showFullName,
+}: {
+  protocol: SushiSwapProtocol
+  showFullName?: boolean
+}) => {
+  if (protocol === SushiSwapProtocol.SUSHISWAP_V2) {
+    return (
+      <div className="whitespace-nowrap bg-[#F338C31A] text-[#F338C3] text-xs px-2.5 py-1 w-fit font-medium rounded-full">
+        {showFullName ? 'V2 Classic Liquidity Pool' : 'V2'}
+      </div>
+    )
+  }
+
+  if (protocol === SushiSwapProtocol.SUSHISWAP_V3) {
+    return (
+      <div className="whitespace-nowrap bg-[#3B7EF61A] text-[#3B7EF6] text-xs px-2.5 py-1 w-fit font-medium rounded-full">
+        {showFullName ? 'V3 Concentrated Liquidity Pool' : 'V3'}
+      </div>
+    )
+  }
 }
 
 export const PoolNameCell: FC<{
@@ -73,8 +84,8 @@ export const PoolNameCell: FC<{
         <div className="flex gap-1">
           <TooltipProvider>
             <Tooltip>
-              <TooltipTrigger asChild>
-                {ProtocolBadge[pool.protocol]}
+              <TooltipTrigger>
+                <ProtocolBadge protocol={pool.protocol} />
               </TooltipTrigger>
               <TooltipContent>
                 <p>Protocol version</p>
