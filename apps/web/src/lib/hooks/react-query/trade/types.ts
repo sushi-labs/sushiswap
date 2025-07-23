@@ -17,6 +17,7 @@ export interface UseTradeParams {
   toToken: Type | undefined
   amount: Amount<Type> | undefined
   gasPrice?: bigint | null | undefined
+  fee?: number
   slippagePercentage: string
   onlyPools?: Address[]
   recipient: Address | undefined

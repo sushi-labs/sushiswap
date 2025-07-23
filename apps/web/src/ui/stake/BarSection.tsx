@@ -89,6 +89,7 @@ export const BarSection = withCheckerRoot(
       enabled: Boolean(parsedInput?.greaterThan(0) && useQuote),
       carbonOffset: false,
       onlyPools: [XSUSHI[ChainId.ETHEREUM].address],
+      fee: 0,
     })
 
     const { data: trade } = useTrade({
@@ -101,6 +102,7 @@ export const BarSection = withCheckerRoot(
       enabled: Boolean(parsedInput?.greaterThan(0) && !useQuote),
       carbonOffset: false,
       onlyPools: [XSUSHI[ChainId.ETHEREUM].address],
+      fee: 0,
     })
 
     const amountOut = (useQuote ? quote : trade)?.amountOut

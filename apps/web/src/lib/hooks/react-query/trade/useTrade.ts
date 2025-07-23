@@ -31,6 +31,7 @@ export const useTradeQuery = (
     toToken,
     amount,
     gasPrice = 50n,
+    fee = 0.0025,
     slippagePercentage,
     recipient,
     source,
@@ -49,6 +50,7 @@ export const useTradeQuery = (
         currencyA: fromToken,
         currencyB: toToken,
         amount,
+        fee,
         slippagePercentage,
         gasPrice,
         address,
@@ -80,14 +82,16 @@ export const useTradeQuery = (
       params.searchParams.set('maxSlippage', `${+slippagePercentage / 100}`)
       params.searchParams.set('sender', `${address}`)
       recipient && params.searchParams.set('recipient', `${recipient}`)
-      params.searchParams.set(
-        'feeReceiver',
-        isUIFeeCollectorChainId(chainId)
-          ? UI_FEE_COLLECTOR_ADDRESS[chainId]
-          : '0xFF64C2d5e23e9c48e8b42a23dc70055EEC9ea098',
-      )
-      params.searchParams.set('fee', '0.0025')
-      params.searchParams.set('feeBy', 'output')
+      params.searchParams.set('fee', `${fee}`)
+      if (fee > 0) {
+        params.searchParams.set('feeBy', 'output')
+        params.searchParams.set(
+          'feeReceiver',
+          isUIFeeCollectorChainId(chainId)
+            ? UI_FEE_COLLECTOR_ADDRESS[chainId]
+            : '0xFF64C2d5e23e9c48e8b42a23dc70055EEC9ea098',
+        )
+      }
       if (source !== undefined) params.searchParams.set('source', `${source}`)
       if (process.env.NEXT_PUBLIC_APP_ENV === 'test')
         params.searchParams.set('simulate', 'false')

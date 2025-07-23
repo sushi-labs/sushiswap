@@ -19,6 +19,7 @@ export const useTradeQuoteQuery = (
     toToken,
     amount,
     gasPrice = 50n,
+    fee = 0.0025,
     slippagePercentage,
     recipient,
     source,
@@ -35,6 +36,7 @@ export const useTradeQuoteQuery = (
         currencyA: fromToken,
         currencyB: toToken,
         amount,
+        fee,
         slippagePercentage,
         gasPrice,
         source,
@@ -62,7 +64,7 @@ export const useTradeQuoteQuery = (
       )
       params.searchParams.set('amount', `${amount?.quotient.toString()}`)
       params.searchParams.set('maxSlippage', `${+slippagePercentage / 100}`)
-      params.searchParams.set('fee', '0.0025')
+      params.searchParams.set('fee', `${fee}`)
       params.searchParams.set('feeBy', 'output')
       if (onlyPools)
         onlyPools.forEach((pool) =>
