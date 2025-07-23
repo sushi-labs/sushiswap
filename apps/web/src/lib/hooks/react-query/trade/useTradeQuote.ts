@@ -22,6 +22,7 @@ export const useTradeQuoteQuery = (
     slippagePercentage,
     recipient,
     source,
+    onlyPools,
     enabled,
   }: UseTradeParams,
   select: UseTradeQuerySelect,
@@ -37,6 +38,7 @@ export const useTradeQuoteQuery = (
         slippagePercentage,
         gasPrice,
         source,
+        onlyPools,
       },
     ],
     queryFn: async () => {
@@ -62,6 +64,10 @@ export const useTradeQuoteQuery = (
       params.searchParams.set('maxSlippage', `${+slippagePercentage / 100}`)
       params.searchParams.set('fee', '0.0025')
       params.searchParams.set('feeBy', 'output')
+      if (onlyPools)
+        onlyPools.forEach((pool) =>
+          params.searchParams.append('onlyPools', pool),
+        )
 
       const res = await fetch(params.toString())
       const json = await res.json()
