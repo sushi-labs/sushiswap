@@ -9,12 +9,12 @@ import {
 import { type FC, type ReactNode, useMemo } from 'react'
 import { Token, type Type } from 'sushi/currency'
 import { formatPercent } from 'sushi/format'
-import { SushiSwapV2Pool } from 'sushi/pool'
+import type { SushiSwapV2Pool, SushiSwapV3Pool } from 'sushi/pool'
 
 interface ZapRouteDialogProps {
   children: ReactNode
   inputCurrency: Type
-  pool: SushiSwapV2Pool
+  pool: SushiSwapV2Pool | SushiSwapV3Pool
   tokenRatios?: { token0: number; token1: number }
 }
 
@@ -57,11 +57,7 @@ export const ZapRouteDialog: FC<ZapRouteDialogProps> = ({
               </div>
               <div className="flex flex-col items-center">
                 <div className="text-sm font-medium truncate">
-                  {pool instanceof SushiSwapV2Pool
-                    ? '50%'
-                    : tokenRatios
-                      ? `${formatPercent(tokenRatios.token0)}`
-                      : '-%'}
+                  {tokenRatios ? `${formatPercent(tokenRatios.token0)}` : '50%'}
                 </div>
                 <span className="text-[10px] font-medium text-muted-foreground truncate">
                   SushiSwap
@@ -93,11 +89,7 @@ export const ZapRouteDialog: FC<ZapRouteDialogProps> = ({
               </div>
               <div className="flex flex-col items-center">
                 <div className="text-sm font-medium truncate">
-                  {pool instanceof SushiSwapV2Pool
-                    ? '50%'
-                    : tokenRatios
-                      ? `${formatPercent(tokenRatios.token1)}`
-                      : '-%'}
+                  {tokenRatios ? `${formatPercent(tokenRatios.token1)}` : '50%'}
                 </div>
                 <span className="text-[10px] font-medium text-muted-foreground truncate">
                   SushiSwap

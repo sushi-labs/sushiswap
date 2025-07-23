@@ -8,7 +8,7 @@ import {
 } from '@sushiswap/ui'
 import { EnsoIcon } from '@sushiswap/ui/icons/EnsoIcon'
 import { type FC, useMemo } from 'react'
-import type { ZapResponse } from 'src/lib/hooks'
+import type { V2ZapResponse } from 'src/lib/hooks'
 import {
   warningSeverity,
   warningSeverityClassName,
@@ -18,7 +18,7 @@ import type { EvmChainId } from 'sushi/chain'
 import { Amount, type Type } from 'sushi/currency'
 import { formatUSD } from 'sushi/format'
 import { Percent, ZERO } from 'sushi/math'
-import { SushiSwapV2Pool } from 'sushi/pool'
+import { SushiSwapV2Pool, type SushiSwapV3Pool } from 'sushi/pool'
 import { usePrices } from '~evm/_common/ui/price-provider/price-provider/use-prices'
 import { ZapRouteDialog } from './ZapRouteDialog'
 
@@ -31,14 +31,14 @@ const getAmountUSD = (
   return (price * Number(amount.quotient)) / 10 ** amount.currency.decimals
 }
 
-interface ZapInfoCardProps {
-  zapResponse?: ZapResponse
+interface V2ZapInfoCardProps {
+  zapResponse?: V2ZapResponse
   inputCurrencyAmount: Amount<Type> | undefined
   pool: SushiSwapV2Pool | null
   tokenRatios?: { token0: number; token1: number }
 }
 
-export const ZapInfoCard: FC<ZapInfoCardProps> = ({
+export const V2ZapInfoCard: FC<V2ZapInfoCardProps> = ({
   zapResponse,
   inputCurrencyAmount,
   pool,
@@ -102,10 +102,7 @@ export const ZapInfoCard: FC<ZapInfoCardProps> = ({
         : ((reserve0USD + reserve1USD) * Number(amountOut.quotient)) /
           Number(totalSupply.quotient)
 
-    const priceImpact =
-      typeof zapResponse.priceImpact === 'number'
-        ? new Percent(zapResponse.priceImpact, 10_000n)
-        : undefined
+    const priceImpact = new Percent(zapResponse.priceImpact, 10_000n)
 
     return {
       amountOut,
