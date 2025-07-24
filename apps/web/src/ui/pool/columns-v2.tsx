@@ -1,4 +1,4 @@
-import { ArrowUpIcon } from '@heroicons/react-v1/solid'
+import { ArrowUpIcon, PlusIcon } from '@heroicons/react-v1/solid'
 import { ArrowDownTrayIcon } from '@heroicons/react/20/solid'
 import type { Pool } from '@sushiswap/graph-client/data-api'
 import {
@@ -33,7 +33,7 @@ export const CHAIN_COLUMN: ColumnDef<Pool, unknown> = {
     <span className="font-[600] text-slate-450 dark:text-slate-500">Chain</span>
   ),
   cell: (props) => (
-    <div className="px-2">
+    <div className="px-2 md:min-w-[70px]">
       <NetworkIcon
         type="square"
         chainId={props.row.original.chainId}
@@ -87,7 +87,7 @@ export const POOL_COLUMN: ColumnDef<Pool, unknown> = {
           <TooltipProvider>
             <Tooltip delayDuration={0}>
               <TooltipTrigger asChild>
-                <div className="flex items-start gap-1 flex-col py-2">
+                <div className="flex items-start gap-1 flex-col py-2 md:py-4 max-w-[160px]">
                   <div className="flex items-center">
                     <Currency.Icon
                       width={24}
@@ -203,7 +203,7 @@ export const POOL_TYPE_COLUMN: ColumnDef<Pool, unknown> = {
       switch (props.row.original.protocol) {
         case 'SUSHISWAP_V2':
           return (
-            <div className="flex flex-col gap-2 max-w-[275px]">
+            <div className="flex flex-col gap-2 md:max-w-[275px]">
               <ProtocolBadge
                 protocol={props.row.original.protocol as SushiSwapProtocol}
                 showFullName={true}
@@ -264,7 +264,7 @@ export const POOL_TYPE_COLUMN: ColumnDef<Pool, unknown> = {
     }, [props.row.original.protocol])
 
     return (
-      <div className="flex items-center gap-1">
+      <div className="flex items-center gap-1 md:w-[230px]">
         <TooltipProvider>
           <Tooltip delayDuration={0}>
             <TooltipTrigger>
@@ -348,7 +348,7 @@ export const VOLUME_1D_COLUMN: ColumnDef<Pool, unknown> = {
   sortingFn: ({ original: rowA }, { original: rowB }) =>
     rowA.volumeUSD1d - rowB.volumeUSD1d,
   cell: (props) => (
-    <div className="flex flex-col">
+    <div className="flex flex-col w-[150px]">
       <span>
         {formatUSD(props.row.original.volumeUSD1d).includes('NaN')
           ? '$0.00'
@@ -389,7 +389,7 @@ export const VOLUME_1W_COLUMN: ColumnDef<Pool, unknown> = {
   sortingFn: ({ original: rowA }, { original: rowB }) =>
     Number(rowA.volumeUSD1w) - Number(rowB.volumeUSD1w),
   cell: (props) => (
-    <div className="flex flex-col">
+    <div className="flex flex-col w-[160px]">
       <span>
         {formatUSD(props.row.original.volumeUSD1w).includes('NaN')
           ? '$0.00'
@@ -430,7 +430,7 @@ export const TVL_COLUMN: ColumnDef<Pool, unknown> = {
   sortingFn: ({ original: rowA }, { original: rowB }) =>
     rowA.liquidityUSD - rowB.liquidityUSD,
   cell: (props) => (
-    <div className="flex flex-col">
+    <div className="flex flex-col w-[160px]">
       <span>
         {formatUSD(props.row.original.liquidityUSD).includes('NaN')
           ? '$0.00'
@@ -474,7 +474,7 @@ export const VOL_TVL_COLUMN: ColumnDef<Pool, unknown> = {
     const volTvl =
       props.row.original.volumeUSD1d / props.row.original.liquidityUSD
     return (
-      <span className="ml-3">
+      <span className="flex items-center justify-center w-[150px]">
         {Number.isNaN(volTvl) ? '0' : formatNumber(volTvl)}
       </span>
     )
@@ -485,7 +485,7 @@ export const VOL_TVL_COLUMN: ColumnDef<Pool, unknown> = {
       className: 'bg-skyblue/[3%] h-full dark:bg-blue/[3%]',
     },
     header: {
-      className: 'h-[60px] mt-4',
+      className: 'h-[60px] mt-4 flex items-center justify-center',
     },
     tableHead: {
       className: 'bg-skyblue/[3%] dark:bg-blue/[3%]',
@@ -505,7 +505,7 @@ export const APR_WITH_REWARDS_COLUMN: ColumnDef<Pool, unknown> = {
     const hasIncentives = props.row.original.incentives.length > 0
     if (!hasIncentives) {
       return (
-        <div className="flex flex-col">
+        <div className="flex flex-col pl-7 w-[150px]">
           <span>
             {Number.isNaN(props.row.original.totalApr1d)
               ? '0%'
@@ -531,7 +531,7 @@ export const APR_WITH_REWARDS_COLUMN: ColumnDef<Pool, unknown> = {
         dialogContentClassName="max-w-none"
         side="right"
         trigger={
-          <div className="flex flex-col cursor-pointer">
+          <div className="flex flex-col cursor-pointer pl-7 w-[150px]">
             <div className="flex items-center gap-1">
               <span className="underline decoration-dotted underline-offset-2">
                 {Number.isNaN(props.row.original.totalApr1d)
@@ -605,7 +605,7 @@ export const APR_WITH_REWARDS_COLUMN: ColumnDef<Pool, unknown> = {
       className: 'bg-skyblue/[3%] h-full dark:bg-blue/[3%]',
     },
     header: {
-      className: 'h-[60px] mt-4',
+      className: 'h-[60px] mt-4 flex items-center justify-center',
     },
     tableHead: {
       className: 'bg-skyblue/[3%] dark:bg-blue/[3%]',
@@ -653,13 +653,14 @@ export const ACTION_COLUMN: ColumnDef<Pool, unknown> = {
         href={`/${ChainKey[props.row.original.chainId]}/pool/${poolType}/${props.row.original.address}/${
           poolType === 'v2' ? 'add' : 'create'
         }`}
+        className="pr-6"
       >
         <Button
           className="!gap-1 !w-[100px] !h-[36px] !rounded-lg"
           variant="tertiary"
         >
           <div className="flex items-center gap-1">
-            <ArrowDownTrayIcon className="w-[14px] max-w-[14px] h-[14px] max-h-[14px]" />
+            <PlusIcon className="w-[14px] max-w-[14px] h-[14px] max-h-[14px]" />
             <span>Add</span>
           </div>
         </Button>

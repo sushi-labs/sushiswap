@@ -137,7 +137,8 @@ const ChipInput: FC<ChipInputProps> = ({
       className={textFieldVariants({
         variant,
         size,
-        className: 'relative gap-2 flex-wrap !h-[unset]',
+        className:
+          'relative gap-2 flex-wrap !h-[unset] !bg-slate-200 dark:!bg-slate-750',
       })}
     >
       {Icon ? <Icon {...iconProps} className={buttonIconVariants()} /> : null}
@@ -162,8 +163,8 @@ const ChipInput: FC<ChipInputProps> = ({
           onKeyDown={onKeyDown}
           onKeyUp={onKeyUp}
           className={classNames(
-            className,
             'flex flex-grow bg-transparent truncate !outline-none !ring-0',
+            className,
           )}
           ref={ref}
           {...props}

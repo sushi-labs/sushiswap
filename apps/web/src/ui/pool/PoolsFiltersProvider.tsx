@@ -2,7 +2,6 @@
 
 import { useRouter } from 'next/navigation'
 import {
-  type Dispatch,
   type FC,
   type ReactNode,
   type SetStateAction,
@@ -14,9 +13,12 @@ import {
 import type { SushiSwapProtocol } from 'sushi'
 import { z } from 'zod'
 
+import { POOL_SUPPORTED_NETWORKS } from 'src/config'
 import { parseArgs } from 'src/lib/functions'
+import { isEvmChainId } from 'sushi'
+import type { ChainId } from 'sushi/chain'
 import { useTypedSearchParams } from '../../lib/hooks'
-import { POOL_TYPES } from './TableFiltersPoolType'
+import { POOL_TYPES } from './TableFiltersPoolTypeV2'
 
 export const poolFiltersSchema = z.object({
   tokenSymbols: z.coerce.string().transform((symbols) => {
@@ -32,9 +34,30 @@ export const poolFiltersSchema = z.object({
   farmsOnly: z
     .string()
     .transform((bool) => (bool ? bool === 'true' : undefined)),
+  tvlRangeMin: z
+    .string()
+    .transform((val) => (val ? Number.parseFloat(val) : undefined))
+    .optional(),
+  tvlRangeMax: z
+    .string()
+    .transform((val) => (val ? Number.parseFloat(val) : undefined))
+    .optional(),
+  networks: z
+    .string()
+    .transform((networks) => {
+      if (!networks) return DEFAULT_POOL_NETWORKS
+      return networks.split(',').map((network) => {
+        return +network as ChainId
+      })
+    })
+    .optional(),
 })
 
 export type PoolFilters = z.infer<typeof poolFiltersSchema>
+
+export const DEFAULT_POOL_NETWORKS = POOL_SUPPORTED_NETWORKS.filter(
+  (network) => typeof network === 'number' && isEvmChainId(network),
+)
 
 type SetFilters = {
   (next: SetStateAction<PoolFilters>): void
@@ -75,6 +98,9 @@ const DEFAULT_STATE = {
   tokenSymbols: [],
   protocols: POOL_TYPES,
   farmsOnly: false,
+  tvlRangeMin: undefined,
+  tvlRangeMax: undefined,
+  networks: DEFAULT_POOL_NETWORKS,
 }
 
 const PoolsFiltersUrlProvider: FC<PoolsFiltersProviderProps> = ({
@@ -85,11 +111,21 @@ const PoolsFiltersUrlProvider: FC<PoolsFiltersProviderProps> = ({
   const urlFilters = useTypedSearchParams(poolFiltersSchema.partial())
 
   const state = useMemo(() => {
-    const { tokenSymbols, protocols, farmsOnly } = urlFilters
+    const {
+      tokenSymbols,
+      protocols,
+      farmsOnly,
+      tvlRangeMin,
+      tvlRangeMax,
+      networks,
+    } = urlFilters
     const state: PoolFilters = {
       tokenSymbols: tokenSymbols ? tokenSymbols : DEFAULT_STATE.tokenSymbols,
       protocols: protocols ? protocols : DEFAULT_STATE.protocols,
       farmsOnly: farmsOnly ? farmsOnly : DEFAULT_STATE.farmsOnly,
+      tvlRangeMin: tvlRangeMin ?? DEFAULT_STATE.tvlRangeMin,
+      tvlRangeMax: tvlRangeMax ?? DEFAULT_STATE.tvlRangeMax,
+      networks: networks ? networks : DEFAULT_STATE.networks,
     }
     return state
   }, [urlFilters])
