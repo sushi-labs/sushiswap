@@ -36,6 +36,7 @@ export const TableFiltersSearchToken: FC = () => {
         onValueChange={onValueChange}
         placeholder="Search"
         maxValues={3}
+        className="w-[250px] md:w-[300px] !bg-slate-200 dark:!bg-slate-750"
       />
     </div>
   )
