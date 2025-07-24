@@ -131,7 +131,7 @@ function Deposit({
     chainId: amount.currency.chainId as 1,
     args: [treasury, amount.quotient],
     dataSuffix: encodePacked(
-      ['int128'],
+      ['uint128'],
       [BigInt(`0x${teamId.replaceAll('-', '')}`)],
     ),
   })
@@ -245,6 +245,7 @@ function DepositTab({
           currencies={activeConfig?.stables}
           currencyClassName="!rounded-xl"
           className="rounded-xl !px-3 py-2 bg-muted"
+          disableInsufficientBalanceError
           loading={isLoading}
         />
         <div className="flex justify-between px-3 text-sm py-2 rounded-xl bg-muted">
