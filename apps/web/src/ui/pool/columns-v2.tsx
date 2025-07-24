@@ -1,4 +1,4 @@
-import { ArrowUpIcon } from '@heroicons/react-v1/solid'
+import { ArrowUpIcon, PlusIcon } from '@heroicons/react-v1/solid'
 import { ArrowDownTrayIcon } from '@heroicons/react/20/solid'
 import type { Pool } from '@sushiswap/graph-client/data-api'
 import {
@@ -660,7 +660,7 @@ export const ACTION_COLUMN: ColumnDef<Pool, unknown> = {
           variant="tertiary"
         >
           <div className="flex items-center gap-1">
-            <ArrowDownTrayIcon className="w-[14px] max-w-[14px] h-[14px] max-h-[14px]" />
+            <PlusIcon className="w-[14px] max-w-[14px] h-[14px] max-h-[14px]" />
             <span>Add</span>
           </div>
         </Button>
