@@ -285,9 +285,9 @@ export const APRChart = () => {
       case PoolChartPeriod.ThirtyDay:
         return format(date, 'd MMM') // 5 Jul
       case PoolChartPeriod.ThreeMonth:
-        return format(date, 'MMM yy') // Jul 25
+        return format(date, "MMM ''yy") // Jul 25
       case PoolChartPeriod.All:
-        return format(date, "MMM yy'") // Jan 25
+        return format(date, "MMM ''yy") // Jan 25
       default:
         return ''
     }

@@ -3,6 +3,7 @@ import { Card } from '@sushiswap/ui'
 import React, { type FC, useMemo, useState } from 'react'
 import { type Address, SushiSwapProtocol } from 'sushi'
 import type { SushiSwapV3ChainId } from 'sushi/config'
+import { Wrapper } from '../swap/trade/wrapper'
 import { LiquidityDepthWidget } from './LiquidityDepthWidget'
 import { PoolChartGraph } from './PoolChartGraph'
 import { PoolChartPeriod, PoolChartPeriods } from './PoolChartPeriods'
@@ -38,22 +39,18 @@ export const StatisticsChartsV3: FC<Charts> = ({ address, chainId, pool }) => {
   }, [chart])
 
   return (
-    <Card>
-      <div className="border-b border-accent px-6 py-4 flex flex-wrap items-center justify-between gap-4">
-        <div className="flex mx-auto">
-          <PoolChartTypes
-            charts={statisticsChart}
-            selectedChart={chart}
-            setChart={setChart}
-          />
-        </div>
-        <div className="flex mx-auto">
-          <PoolChartPeriods
-            periods={periods}
-            selectedPeriod={period}
-            setPeriod={setPeriod}
-          />
-        </div>
+    <Wrapper enableBorder className="!p-0">
+      <div className="flex flex-col flex-wrap gap-4 px-6 py-4 border-b md:items-center md:justify-between border-accent md:flex-row">
+        <PoolChartTypes
+          charts={statisticsChart}
+          selectedChart={chart}
+          setChart={setChart}
+        />
+        <PoolChartPeriods
+          periods={periods}
+          selectedPeriod={period}
+          setPeriod={setPeriod}
+        />
       </div>
       {chart === PoolChartType.Depth ? (
         <LiquidityDepthWidget chainId={chainId} address={address} />
@@ -65,6 +62,6 @@ export const StatisticsChartsV3: FC<Charts> = ({ address, chainId, pool }) => {
           protocol={SushiSwapProtocol.SUSHISWAP_V3}
         />
       )}
-    </Card>
+    </Wrapper>
   )
 }

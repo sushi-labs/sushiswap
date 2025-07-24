@@ -53,11 +53,14 @@ const Pool: FC<{ pool: V3Pool }> = ({ pool }) => {
   const fiatValues = useTokenAmountDollarValues({ chainId, amounts: reserves })
 
   return (
-    <Container maxWidth="5xl" className="flex flex-col gap-4 px-4">
-      <APRChart />
-      <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-        <StatisticsChartsV3 address={address} chainId={chainId} pool={pool} />
-        <div className="flex flex-col gap-6">
+    <Container maxWidth="screen-3xl" className="flex flex-col gap-4 px-4">
+      <div className="flex flex-col gap-6 md:flex-row">
+        <div className="flex-[3_3_0%] min-w-0 flex flex-col gap-6">
+          <APRChart />
+
+          <StatisticsChartsV3 address={address} chainId={chainId} pool={pool} />
+        </div>
+        <div className="flex-[1_1_0%] min-w-0 flex flex-col gap-6">
           <Card>
             <CardHeader>
               <CardTitle>Pool Liquidity</CardTitle>

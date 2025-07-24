@@ -38,7 +38,7 @@ export default async function Layout(props: {
   const referer = headersList.get('referer')
   return (
     <>
-      <Container maxWidth="5xl" className="px-4 pt-10">
+      <Container maxWidth="screen-3xl" className="px-4 pt-10">
         <PoolHeader
           backUrl={
             referer?.includes('/pool')
