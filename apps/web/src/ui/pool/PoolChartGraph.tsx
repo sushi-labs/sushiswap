@@ -1,15 +1,7 @@
 'use client'
 
 import type { V2Pool, V3Pool } from '@sushiswap/graph-client/data-api'
-import {
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-  SkeletonBox,
-  SkeletonText,
-  classNames,
-} from '@sushiswap/ui'
+import { CardContent, SkeletonBox, classNames } from '@sushiswap/ui'
 import format from 'date-fns/format'
 import type { EChartOption } from 'echarts'
 import ReactEchartsCore from 'echarts-for-react/lib/core'
@@ -281,38 +273,8 @@ export const PoolChartGraph: FC<PoolChartProps> = ({
     [xData, chart, yData, onMouseOver, period, isDark],
   )
 
-  const defaultValue = yData[yData.length - 1] || 0
-
   return (
     <>
-      <CardHeader>
-        <CardTitle className="h-[22px]">
-          <span className="hoveredItemValue">{formatUSD(defaultValue)}</span>{' '}
-          {chart === PoolChartType.Volume && (
-            <span className="text-sm font-medium text-gray-600 dark:text-slate-300">
-              <span className="text-xs top-[-2px] relative">•</span>{' '}
-              <span className="hoveredItemValue">
-                {formatUSD(defaultValue * Number(pool?.swapFee))}
-              </span>{' '}
-              earned
-            </span>
-          )}
-        </CardTitle>
-        <CardDescription>
-          {isLoading ? (
-            <SkeletonText fontSize="sm" />
-          ) : isError || !xData.length ? (
-            <div className="text-sm h-[1ch] w-full" />
-          ) : (
-            <div className="text-sm text-gray-500 dark:text-slate-500 hoveredItemName">
-              {format(
-                new Date(xData[xData.length - 1] * 1000),
-                'dd MMM yyyy HH:mm',
-              )}
-            </div>
-          )}
-        </CardDescription>
-      </CardHeader>
       <CardContent>
         {isLoading ? (
           <SkeletonBox

@@ -34,8 +34,6 @@ export const PoolHeader: FC<PoolHeader> = ({
   backUrl,
   address,
   pool,
-  apy,
-  priceRange,
   showAddLiquidityButton = false,
 }) => {
   const [token0, token1] = useMemo(() => {

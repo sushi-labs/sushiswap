@@ -2,20 +2,20 @@
 
 import type { V2Pool } from '@sushiswap/graph-client/data-api'
 import {
-  Card,
   CardContent,
   CardCurrencyAmountItem,
   CardDescription,
   CardGroup,
   CardHeader,
-  CardLabel,
   CardTitle,
-  SkeletonText,
+  Switch,
+  classNames,
 } from '@sushiswap/ui'
 import { type FC, useMemo } from 'react'
 import { useTokenAmountDollarValues } from 'src/lib/hooks'
 import { Amount, Token } from 'sushi/currency'
 import { formatUSD } from 'sushi/format'
+import { Wrapper } from '../swap/trade/wrapper'
 
 interface PoolCompositionProps {
   pool: V2Pool
@@ -51,22 +51,39 @@ export const PoolComposition: FC<PoolCompositionProps> = ({ pool }) => {
 
   const isLoading = fiatValues.length !== amounts.length
 
-  const [reserve0USD, reserve1USD, reserveUSD] = useMemo(() => {
-    if (isLoading) return [0, 0, 0]
-    return [fiatValues[0], fiatValues[1], fiatValues[0] + fiatValues[1]]
+  const [reserve0USD, reserve1USD] = useMemo(() => {
+    if (isLoading) return [0, 0]
+    return [fiatValues[0], fiatValues[1]]
   }, [fiatValues, isLoading])
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Pool Liquidity</CardTitle>
-        <CardDescription>
-          {isLoading ? <SkeletonText /> : <>{formatUSD(reserveUSD)}</>}
+    <Wrapper enableBorder className="!p-3 flex flex-col gap-5">
+      <CardHeader className="!p-0 flex !flex-row justify-between items-center md:flex-col gap-1">
+        <CardTitle className="text-slate-900">TVL</CardTitle>
+
+        <CardDescription className="!mt-0 font-bold md:font-medium text-sm  md:!text-2xl flex items-center">
+          {formatUSD(fiatValues[0] + fiatValues[1])}{' '}
+          <span
+            className={classNames(
+              'text-sm md:text-base font-medium',
+              pool?.liquidityUSD1dChange && pool?.liquidityUSD1dChange > 0
+                ? 'text-green'
+                : 'text-red',
+            )}
+          >
+            ({pool?.liquidityUSD1dChange.toFixed(2)}%)
+          </span>
         </CardDescription>
       </CardHeader>
-      <CardContent>
-        <CardGroup>
-          <CardLabel>Tokens</CardLabel>
+
+      <CardContent className="!p-0">
+        <CardGroup className="md:!gap-6">
+          <div className="hidden justify-between items-center md:flex">
+            <span className="text-base text-gray-500 md:flex-row dark:text-slate-500">
+              Show stablecoin types
+            </span>
+            <Switch />
+          </div>
           <CardCurrencyAmountItem
             isLoading={isLoading}
             amount={amounts[0]}
@@ -79,6 +96,6 @@ export const PoolComposition: FC<PoolCompositionProps> = ({ pool }) => {
           />
         </CardGroup>
       </CardContent>
-    </Card>
+    </Wrapper>
   )
 }

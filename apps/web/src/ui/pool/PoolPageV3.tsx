@@ -8,24 +8,28 @@ import {
   CardDescription,
   CardGroup,
   CardHeader,
+  CardItem,
   CardLabel,
   CardTitle,
   Container,
-  LinkInternal,
-  Message,
+  Currency,
   Separator,
   SkeletonText,
+  Switch,
   classNames,
 } from '@sushiswap/ui'
 import type { FC } from 'react'
 import { useTokenAmountDollarValues } from 'src/lib/hooks'
 import { useConcentratedLiquidityPoolStats } from 'src/lib/hooks/react-query'
 import { useConcentratedLiquidityPoolReserves } from 'src/lib/wagmi/hooks/pools/hooks/useConcentratedLiquidityPoolReserves'
-import { ChainKey } from 'sushi'
+import { Native, unwrapToken } from 'sushi/currency'
 import { formatUSD } from 'sushi/format'
 import { Wrapper } from '../swap/trade/wrapper'
 import { APRChart } from './APRChart'
 import { ConcentratedLiquidityProvider } from './ConcentratedLiquidityProvider'
+import { Pool24HVolume } from './Pool24HVolume'
+import { PoolAPR } from './PoolAPR'
+import { PoolPrice } from './PoolPrice'
 import { PoolRewardDistributionsCard } from './PoolRewardDistributionsCard'
 import { PoolTransactionsV3 } from './PoolTransactionsV3'
 import { StatisticsChartsV3 } from './StatisticsChartV3'
@@ -57,21 +61,24 @@ const Pool: FC<{ pool: V3Pool }> = ({ pool }) => {
   console.log('reserves', reserves)
   return (
     <Container maxWidth="screen-3xl" className="flex flex-col gap-4 px-4">
-      <div className="flex flex-col gap-6 md:flex-row">
+      <div className="flex flex-col-reverse gap-6 md:flex-row">
         <div className="flex-[3_3_0%] min-w-0 flex flex-col gap-6">
           <APRChart />
 
           <StatisticsChartsV3 address={address} chainId={chainId} pool={pool} />
         </div>
         <div className="flex-[1_1_0%] min-w-0 flex flex-col gap-6">
-          <Wrapper enableBorder className="!p-0">
-            <CardHeader className="!px-5 flex flex-col gap-1">
-              <CardTitle>TVL</CardTitle>
-              <CardDescription className="!mt-0 font-medium !text-2xl flex items-center">
+          <PoolAPR />
+
+          <Wrapper enableBorder className="!p-3 flex flex-col gap-5">
+            <CardHeader className="!p-0 flex !flex-row justify-between items-center md:flex-col gap-1">
+              <CardTitle className="text-slate-900">TVL</CardTitle>
+
+              <CardDescription className="!mt-0 font-bold md:font-medium text-sm  md:!text-2xl flex items-center">
                 {formatUSD(fiatValues[0] + fiatValues[1])}{' '}
                 <span
                   className={classNames(
-                    'text-base',
+                    'text-sm md:text-base font-medium',
                     poolStats?.liquidityUSD1dChange &&
                       poolStats?.liquidityUSD1dChange > 0
                       ? 'text-green'
@@ -82,8 +89,15 @@ const Pool: FC<{ pool: V3Pool }> = ({ pool }) => {
                 </span>
               </CardDescription>
             </CardHeader>
-            <CardContent className="!px-5">
-              <CardGroup className="!gap-6">
+
+            <CardContent className="!p-0">
+              <CardGroup className="md:!gap-6">
+                <div className="hidden justify-between items-center md:flex">
+                  <span className="text-base text-gray-500 md:flex-row dark:text-slate-500">
+                    Show stablecoin types
+                  </span>
+                  <Switch />
+                </div>
                 <CardCurrencyAmountItem
                   isLoading={isReservesLoading}
                   amount={reserves?.[0]}
@@ -97,60 +111,8 @@ const Pool: FC<{ pool: V3Pool }> = ({ pool }) => {
               </CardGroup>
             </CardContent>
           </Wrapper>
-          <Wrapper enableBorder className="!p-0">
-            <CardHeader className="!px-5 !pb-3">
-              <CardTitle>
-                <div className="flex flex-col gap-y-4 justify-between md:flex-row">
-                  24H Volume
-                </div>
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="!p-5 !pt-0">
-              <div className="grid grid-cols-1 gap-3">
-                <div>
-                  {poolStats ? (
-                    <div className="flex gap-2 items-center text-2xl font-semibold">
-                      {formatUSD(poolStats.volumeUSD1d ?? 0)}{' '}
-                      <span
-                        className={classNames(
-                          'text-base',
-                          poolStats['volumeUSD1dChange'] > 0
-                            ? 'text-green'
-                            : 'text-red',
-                        )}
-                      >
-                        ({poolStats['volumeUSD1dChange'].toFixed(2)}
-                        %)
-                      </span>
-                    </div>
-                  ) : (
-                    <SkeletonText />
-                  )}
-                </div>
-                {/* <div>
-                  <CardLabel>Fees (24h)</CardLabel>
-                  {poolStats ? (
-                    <div className="text-xl font-semibold">
-                      {formatUSD(poolStats.feesUSD1d ?? 0)}{' '}
-                      <span
-                        className={classNames(
-                          'text-xs',
-                          poolStats['feesUSD1dChange'] > 0
-                            ? 'text-green'
-                            : 'text-red',
-                        )}
-                      >
-                        ({poolStats['feesUSD1dChange'].toFixed(2)}
-                        %)
-                      </span>
-                    </div>
-                  ) : (
-                    <SkeletonText />
-                  )}
-                </div> */}
-              </div>
-            </CardContent>
-          </Wrapper>
+          <Pool24HVolume pool={pool} />
+          <PoolPrice pool={pool} />
         </div>
       </div>
       <div className="py-4">

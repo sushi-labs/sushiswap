@@ -184,7 +184,7 @@ const CardItem = React.forwardRef<HTMLDivElement, CardItemProps>(
           )}
         </div>
         <div className="flex justify-end">
-          <span className="flex justify-end w-full text-sm font-medium text-right text-gray-900 truncate dark:text-slate-50">
+          <span className="flex justify-end w-full text-sm font-medium text-right text-gray-900 whitespace-nowrap dark:text-slate-50">
             {children}
           </span>
         </div>
@@ -216,7 +216,7 @@ const CardCurrencyAmountItem = React.forwardRef<
     return (
       <CardItem
         title={
-          <div className="flex gap-2 items-center font-medium text-muted-foreground">
+          <div className="flex gap-2 items-center font-medium text-slate-900 dark:text-slate-50">
             <Currency.Icon currency={currency} width={18} height={18} />{' '}
             {currency.symbol}
           </div>

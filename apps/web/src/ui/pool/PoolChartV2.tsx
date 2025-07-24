@@ -1,7 +1,6 @@
 'use client'
 
 import type { V2Pool } from '@sushiswap/graph-client/data-api'
-import { Card } from '@sushiswap/ui'
 import React, { type FC, useState } from 'react'
 import { SushiSwapProtocol } from 'sushi'
 import { Wrapper } from '../swap/trade/wrapper'
