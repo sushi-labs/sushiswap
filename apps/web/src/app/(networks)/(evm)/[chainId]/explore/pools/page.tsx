@@ -2,13 +2,12 @@ import { isPoolChainId } from '@sushiswap/graph-client/data-api'
 import { Container } from '@sushiswap/ui'
 import { notFound } from 'next/navigation'
 import React from 'react'
-import { POOL_SUPPORTED_NETWORKS } from 'src/config'
 import { PoolsTableV2 } from 'src/ui/pool/PoolsTableV2'
-import { TableFiltersFarmsOnly } from 'src/ui/pool/TableFiltersFarmsOnly'
-import { TableFiltersNetwork } from 'src/ui/pool/TableFiltersNetwork'
-import { TableFiltersPoolType } from 'src/ui/pool/TableFiltersPoolType'
-import { TableFiltersResetButton } from 'src/ui/pool/TableFiltersResetButton'
+import { TableFiltersAPR } from 'src/ui/pool/TableFiltersAPR'
+import { TableFiltersNetworkV2 } from 'src/ui/pool/TableFiltersNetworkV2'
+import { TableFiltersPoolTypeV2 } from 'src/ui/pool/TableFiltersPoolTypeV2'
 import { TableFiltersSearchToken } from 'src/ui/pool/TableFiltersSearchToken'
+import { TableFiltersTVL } from 'src/ui/pool/TableFiltersTVL'
 import type { ChainId } from 'sushi/chain'
 
 export default async function PoolsPage(props: {
@@ -29,14 +28,10 @@ export default async function PoolsPage(props: {
         </h3>
         <div className="flex gap-3 flex-wrap">
           <TableFiltersSearchToken />
-          <TableFiltersPoolType />
-          <TableFiltersNetwork
-            network={chainId}
-            supportedNetworks={POOL_SUPPORTED_NETWORKS}
-            unsupportedNetworkHref="/ethereum/explore/pools"
-          />
-          <TableFiltersFarmsOnly />
-          <TableFiltersResetButton />
+          <TableFiltersPoolTypeV2 />
+          <TableFiltersTVL />
+          <TableFiltersAPR />
+          <TableFiltersNetworkV2 />
         </div>
       </div>
       <PoolsTableV2 chainId={chainId} />
