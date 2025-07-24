@@ -109,7 +109,7 @@ const Pool: FC<{ pool: V3Pool }> = ({ pool }) => {
               <div className="grid grid-cols-1 gap-3">
                 <div>
                   {poolStats ? (
-                    <div className="flex gap-1 items-center text-2xl font-semibold">
+                    <div className="flex gap-2 items-center text-2xl font-semibold">
                       {formatUSD(poolStats.volumeUSD1d ?? 0)}{' '}
                       <span
                         className={classNames(
