@@ -378,7 +378,7 @@ export const APRChart = () => {
                 APR
               </span>
               <div className="hidden gap-1 items-center md:flex">
-                <span className="text-base md:text-[1.75rem] font-medium underline decoration-dotted underline-offset-4">
+                <span className="text-base md:text-[1.75rem] font-medium underline decoration-dotted underline-offset-4 text-slate-900 dark:text-slate-100">
                   12.3%
                 </span>
                 <Currency.IconList
