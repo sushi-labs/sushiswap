@@ -21,6 +21,7 @@ import {
 } from 'echarts/components'
 import * as echarts from 'echarts/core'
 import { CanvasRenderer } from 'echarts/renderers'
+import { useTheme } from 'next-themes'
 import { type FC, useCallback, useMemo } from 'react'
 import { usePoolGraphData } from 'src/lib/hooks'
 import type { SushiSwapProtocol } from 'sushi'
@@ -54,6 +55,8 @@ export const PoolChartGraph: FC<PoolChartProps> = ({
   pool,
   protocol,
 }) => {
+  const { theme } = useTheme()
+  const isDark = theme === 'dark'
   const {
     data: buckets,
     isInitialLoading: isLoading,
@@ -120,6 +123,24 @@ export const PoolChartGraph: FC<PoolChartProps> = ({
     [period, chart, pool?.swapFee],
   )
 
+  const formatLabel = (date: Date, period: PoolChartPeriod): string => {
+    switch (period) {
+      case PoolChartPeriod.Day: // 1D
+        return format(date, 'HH:mm') // 14:04
+      case PoolChartPeriod.Week: // 1W
+        return format(date, 'EEE') // Mon, Tue
+      case PoolChartPeriod.Month: // 1M
+        return format(date, 'd MMM') // 5 Jul
+      case PoolChartPeriod.Year: // 1Y
+        return format(date, 'MMM') // Jul
+      case PoolChartPeriod.All: // All
+        return format(date, "MMM ''yy") // Jan '24
+      default:
+        return ''
+    }
+  }
+
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   const DEFAULT_OPTION = useMemo<EChartOption>(
     () => ({
       tooltip: {
@@ -139,14 +160,18 @@ export const PoolChartGraph: FC<PoolChartProps> = ({
           },
         },
         formatter: (params: any) => {
-          onMouseOver({ name: params[0].name, value: params[0].value })
+          const [timestamp, value] = Array.isArray(params[0].value)
+            ? params[0].value
+            : [params[0].name, params[0].value]
 
-          const date = new Date(Number(params[0].name * 1000))
+          onMouseOver({ name: timestamp, value })
+
+          const date = new Date(timestamp)
           return `<div class="flex flex-col gap-0.5 paper bg-white/50 dark:bg-slate-800/50 px-3 py-2 rounded-xl overflow-hidden shadow-lg">
-            <span class="text-sm dark:text-slate-50 text-gray-900 font-medium">${formatUSD(
-              params[0].value,
+            <span class="text-sm font-medium text-gray-900 dark:text-slate-50">${formatUSD(
+              value,
             )}</span>
-            <span class="text-xs text-gray-500 dark:text-slate-400 font-medium">${
+            <span class="text-xs font-medium text-gray-500 dark:text-slate-400">${
               date instanceof Date && !Number.isNaN(date?.getTime())
                 ? format(
                     date,
@@ -165,12 +190,16 @@ export const PoolChartGraph: FC<PoolChartProps> = ({
       toolbox: {
         show: false,
       },
-      color: [(tailwind.theme?.colors?.blue as Record<string, string>)['500']],
+      color: [
+        isDark
+          ? (tailwind.theme?.colors?.skyblue as Record<string, string>)['500']
+          : (tailwind.theme?.colors?.blue as Record<string, string>)['500'],
+      ],
       grid: {
         top: 0,
-        left: 0,
+        left: period === PoolChartPeriod.All ? 18 : 7,
         right: 0,
-        bottom: 0,
+        bottom: 40,
       },
       // dataZoom: {
       //   show: false,
@@ -184,11 +213,35 @@ export const PoolChartGraph: FC<PoolChartProps> = ({
       // },
       xAxis: [
         {
-          show: false,
-          type: 'category',
-          data: xData,
+          type: 'time',
+          boundaryGap: false,
+          axisLabel: {
+            formatter: (value: number) => formatLabel(new Date(value), period),
+            hideOverlap: true,
+            color: (tailwind.theme?.colors?.slate as Record<string, string>)[
+              '450'
+            ],
+            fontWeight: 600,
+            align: 'right',
+          },
+          axisLine: { show: false },
+          axisTick: { show: false },
+          splitLine: { show: false },
+          splitNumber:
+            period === PoolChartPeriod.Day
+              ? 6
+              : period === PoolChartPeriod.Week
+                ? 6
+                : period === PoolChartPeriod.Month
+                  ? 6
+                  : period === PoolChartPeriod.Year
+                    ? 6
+                    : 8,
+          min: xData[0] * 1000,
+          max: xData[xData.length - 1] * 1000,
         },
       ],
+
       yAxis: [
         {
           show: false,
@@ -213,15 +266,19 @@ export const PoolChartGraph: FC<PoolChartProps> = ({
           },
           areaStyle: {
             // @ts-ignore
-            color: tailwind.theme.colors.blue['500'],
+            color: isDark
+              ? (tailwind.theme?.colors?.skyblue as Record<string, string>)[
+                  '500'
+                ]
+              : (tailwind.theme?.colors?.blue as Record<string, string>)['500'],
           },
           animationEasing: 'elasticOut',
           animationDelayUpdate: (idx: number) => Math.min(idx, 150),
-          data: yData,
+          data: xData.map((x, i) => [x * 1000, yData[i]]),
         },
       ],
     }),
-    [xData, chart, yData, onMouseOver, period],
+    [xData, chart, yData, onMouseOver, period, isDark],
   )
 
   const defaultValue = yData[yData.length - 1] || 0
@@ -260,7 +317,7 @@ export const PoolChartGraph: FC<PoolChartProps> = ({
         {isLoading ? (
           <SkeletonBox
             className={classNames(
-              'h-[400px] w-full dark:via-slate-800 dark:to-slate-900',
+              'w-full h-[400px] dark:via-slate-800 dark:to-slate-900',
             )}
           />
         ) : isError ? (

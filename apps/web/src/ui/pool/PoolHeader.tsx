@@ -67,14 +67,18 @@ export const PoolHeader: FC<PoolHeader> = ({
         <div className="flex flex-col gap-4">
           <LinkInternal
             href={backUrl}
-            className="text-sm text-blue hover:underline"
+            className="text-sm text-blue dark:text-skyblue hover:underline"
           >
             ← Pools
           </LinkInternal>
           <div className="flex flex-wrap gap-6 justify-between">
             <div className="relative flex items-center gap-3 max-w-[100vh]">
               <div className="relative">
-                <Currency.IconList iconWidth={36} iconHeight={36}>
+                <Currency.IconList
+                  iconWidth={36}
+                  iconHeight={36}
+                  className="border-[#FFFFFF14]"
+                >
                   <Currency.Icon currency={token0} />
                   <Currency.Icon currency={token1} />
                 </Currency.IconList>

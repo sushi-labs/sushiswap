@@ -1,3 +1,5 @@
+'use client'
+
 import {
   Button,
   Card,
@@ -19,12 +21,14 @@ import {
 } from 'echarts/components'
 import * as echarts from 'echarts/core'
 import { CanvasRenderer } from 'echarts/renderers'
+import { useTheme } from 'next-themes'
 import { useEffect, useMemo, useState } from 'react'
 import { useCallback } from 'react'
 import type { FC, MouseEventHandler, ReactNode } from 'react'
 import { Native } from 'sushi/currency'
 import tailwindConfig from 'tailwind.config'
 import resolveConfig from 'tailwindcss/resolveConfig'
+import { Wrapper } from '../swap/trade/wrapper'
 
 echarts.use([
   CanvasRenderer,
@@ -237,6 +241,8 @@ export const APRChart = () => {
   )
   const [isLoading, setIsLoading] = useState(true)
   const isError = false
+  const { theme } = useTheme()
+  const isDark = theme === 'dark'
 
   useEffect(() => setIsLoading(false), [])
 
@@ -279,9 +285,9 @@ export const APRChart = () => {
       case PoolChartPeriod.ThirtyDay:
         return format(date, 'd MMM') // 5 Jul
       case PoolChartPeriod.ThreeMonth:
-        return format(date, 'MMM yy') // Jul 25
+        return format(date, "MMM ''yy") // Jul 25
       case PoolChartPeriod.All:
-        return format(date, "MMM yy'") // Jan 25
+        return format(date, "MMM ''yy") // Jan 25
       default:
         return ''
     }
@@ -302,13 +308,15 @@ export const APRChart = () => {
         },
       },
       grid: { top: 0, left: 0, right: 0, bottom: 40 },
-      color: [(tailwind.theme?.colors?.blue as Record<string, string>)['500']],
-      /* ─────────────────────────────────────────────── */
+      color: [
+        isDark
+          ? (tailwind.theme?.colors?.skyblue as Record<string, string>)['500']
+          : (tailwind.theme?.colors?.blue as Record<string, string>)['500'],
+      ],
       xAxis: [
         {
           type: 'time',
           show: true,
-
           boundaryGap: false,
           splitNumber:
             period === PoolChartPeriod.SevenDay
@@ -319,7 +327,7 @@ export const APRChart = () => {
                   ? 4
                   : period === PoolChartPeriod.All
                     ? 6
-                    : 5, // fallback
+                    : 5,
           axisLabel: {
             formatter: (value: number) => formatLabel(new Date(value), period),
             color: (tailwind.theme?.colors?.slate as Record<string, string>)[
@@ -347,23 +355,21 @@ export const APRChart = () => {
           max: Math.max(...yData) + 1,
         },
       ],
-      /* ─────────────────────────────────────────────── */
       series: [
         {
           type: 'line',
           showSymbol: false,
           smooth: true,
           lineStyle: { width: 2 },
-          data: xData.map((x, i) => [x * 1000, yData[i]]), // must be [ms, value]
+          data: xData.map((x, i) => [x * 1000, yData[i]]),
         },
       ],
     }),
-    [xData, yData, onMouseOver, period],
+    [xData, yData, onMouseOver, period, isDark],
   )
 
-  console.log('period', period)
   return (
-    <Card>
+    <Wrapper className="!p-0" enableBorder>
       <CardHeader>
         <CardTitle className="">
           <div className="flex justify-between items-center">
@@ -372,7 +378,7 @@ export const APRChart = () => {
                 APR
               </span>
               <div className="hidden gap-1 items-center md:flex">
-                <span className="text-base md:text-[1.75rem] font-medium underline decoration-dotted underline-offset-4">
+                <span className="text-base md:text-[1.75rem] font-medium underline decoration-dotted underline-offset-4 text-slate-900 dark:text-slate-100">
                   12.3%
                 </span>
                 <Currency.IconList
@@ -447,7 +453,7 @@ export const APRChart = () => {
           />
         )}
       </CardContent>
-    </Card>
+    </Wrapper>
   )
 }
 

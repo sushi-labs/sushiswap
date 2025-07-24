@@ -20,9 +20,10 @@ function PoolChartTypes<C extends string>({
   setChart,
 }: PoolChartTypesProps<C>) {
   return (
-    <div className="flex items-center gap-1">
+    <div className="flex gap-1 items-center">
       {charts.map((chart) => (
         <Toggle
+          variant="trade2"
           size="xs"
           pressed={chart === selectedChart}
           onClick={() => setChart(chart)}

@@ -3,6 +3,7 @@ import { PoolTransactionsV2 } from 'src/ui/pool/PoolTransactionsV2'
 
 import type { V2Pool } from '@sushiswap/graph-client/data-api'
 import type { FC } from 'react'
+import { APRChart } from './APRChart'
 import { PoolChartV2 } from './PoolChartV2'
 import { PoolComposition } from './PoolComposition'
 import { PoolRewards } from './PoolRewards'
@@ -15,18 +16,20 @@ interface PoolPageV2 {
 
 export const PoolPageV2: FC<PoolPageV2> = ({ pool }) => {
   return (
-    <Container maxWidth="5xl" className="flex flex-col gap-4 px-4">
+    <Container maxWidth="screen-3xl" className="flex flex-col gap-4 px-4">
       {/* <UnknownTokenAlert pool={pool} /> */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div>
+      <div className="flex flex-col gap-6 w-full md:flex-row">
+        <div className="flex-[3_3_0%] min-w-0 flex flex-col gap-6">
+          <APRChart />
           <PoolChartV2 pool={pool} />
         </div>
-        <div className="flex flex-col gap-6">
+        <div className="flex-[1_1_0%] min-w-0 flex flex-col gap-6">
           <PoolComposition pool={pool} />
           <PoolStats pool={pool} />
           {pool.isIncentivized ? <PoolRewards pool={pool} /> : null}
         </div>
       </div>
+
       <div className="py-4">
         <Separator />
       </div>

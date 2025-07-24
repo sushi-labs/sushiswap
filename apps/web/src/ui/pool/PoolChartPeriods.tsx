@@ -29,9 +29,10 @@ const PoolChartPeriods: FC<PoolChartPeriodsProps> = ({
   setPeriod,
 }) => {
   return (
-    <div className="flex items-center gap-1">
+    <div className="flex gap-1 items-center">
       {periods.map((period) => (
         <Toggle
+          variant="trade2"
           size="xs"
           pressed={period === selectedPeriod}
           onClick={() => setPeriod(period)}

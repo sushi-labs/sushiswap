@@ -78,7 +78,7 @@ const CardTitle = React.forwardRef<
   <h3
     ref={ref}
     className={classNames(
-      'text-lg font-semibold leading-none tracking-tight',
+      'text-sm font-medium tracking-tight leading-none text-gray-500 dark:text-slate-500',
       className,
     )}
     {...props}
@@ -92,7 +92,10 @@ const CardDescription = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <div
     ref={ref}
-    className={classNames('text-sm text-muted-foreground', className)}
+    className={classNames(
+      'text-sm text-slate-900 dark:text-slate-100',
+      className,
+    )}
     {...props}
   />
 ))
@@ -117,7 +120,7 @@ const CardLabel = React.forwardRef<
   <span
     ref={ref}
     className={classNames(
-      'font-normal text-xs',
+      'text-xs font-normal',
       'text-gray-400',
       'dark:text-slate-600',
       'black:text-muted-foreground',
@@ -213,7 +216,7 @@ const CardCurrencyAmountItem = React.forwardRef<
     return (
       <CardItem
         title={
-          <div className="font-medium flex items-center gap-2 text-muted-foreground">
+          <div className="flex gap-2 items-center font-medium text-muted-foreground">
             <Currency.Icon currency={currency} width={18} height={18} />{' '}
             {currency.symbol}
           </div>
@@ -223,9 +226,7 @@ const CardCurrencyAmountItem = React.forwardRef<
       >
         <span className="flex gap-1 font-semibold">
           {amount.toSignificant(6)}{' '}
-          <span className="font-normal text-gray-400 dark:text-slate-600">
-            {fiatValue}
-          </span>
+          <span className="font-normal text-muted-foreground">{fiatValue}</span>
         </span>
       </CardItem>
     )
@@ -241,7 +242,7 @@ const CardContent = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <div
     ref={ref}
-    className={classNames('p-6 pt-0 flex flex-col gap-6', className)}
+    className={classNames('flex flex-col gap-6 p-6 pt-0', className)}
     {...props}
   />
 ))
@@ -253,7 +254,7 @@ const CardFooter = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <div
     ref={ref}
-    className={classNames(' flex items-center p-6 pt-0', className)}
+    className={classNames('flex items-center p-6 pt-0', className)}
     {...props}
   />
 ))

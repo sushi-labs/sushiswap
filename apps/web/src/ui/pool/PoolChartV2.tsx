@@ -4,6 +4,7 @@ import type { V2Pool } from '@sushiswap/graph-client/data-api'
 import { Card } from '@sushiswap/ui'
 import React, { type FC, useState } from 'react'
 import { SushiSwapProtocol } from 'sushi'
+import { Wrapper } from '../swap/trade/wrapper'
 import { PoolChartGraph } from './PoolChartGraph'
 import { PoolChartPeriod, PoolChartPeriods } from './PoolChartPeriods'
 import { PoolChartType, PoolChartTypes } from './PoolChartTypes'
@@ -30,16 +31,16 @@ const PoolChartV2: FC<PoolChartV2Props> = ({ pool }) => {
   const [period, setPeriod] = useState<PoolChartPeriod>(PoolChartPeriod.Month)
 
   return (
-    <Card>
-      <div className="border-b border-accent px-6 py-4 flex flex-wrap items-center justify-between gap-4">
-        <div className="flex mx-auto">
+    <Wrapper className="!p-0" enableBorder>
+      <div className="flex flex-col flex-wrap gap-4 px-6 py-4 border-b md:items-center md:justify-between border-accent md:flex-row">
+        <div className="flex">
           <PoolChartTypes
             charts={charts}
             selectedChart={chart}
             setChart={setChart}
           />
         </div>
-        <div className="flex mx-auto">
+        <div className="flex">
           <PoolChartPeriods
             periods={periods}
             selectedPeriod={period}
@@ -53,7 +54,7 @@ const PoolChartV2: FC<PoolChartV2Props> = ({ pool }) => {
         pool={pool}
         protocol={SushiSwapProtocol.SUSHISWAP_V2}
       />
-    </Card>
+    </Wrapper>
   )
 }
 
