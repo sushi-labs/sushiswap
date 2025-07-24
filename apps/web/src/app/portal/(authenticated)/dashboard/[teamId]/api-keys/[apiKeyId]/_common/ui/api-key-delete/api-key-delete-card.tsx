@@ -16,7 +16,7 @@ interface ApiKeyDeleteCard {
 
 export async function ApiKeyDeleteCard({ teamId, apiKeyId }: ApiKeyDeleteCard) {
   return (
-    <Card className="w-full min-w-[470px]">
+    <Card className="w-full md:min-w-[470px]">
       <CardHeader className="rounded-t-xl">
         <CardTitle>Delete API Key</CardTitle>
         <CardDescription>Permanently delete the key</CardDescription>

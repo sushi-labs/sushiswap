@@ -13,7 +13,7 @@ export default async function Page({
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-row gap-6 w-full">
+      <div className="flex flex-col lg:flex-row gap-6 w-full">
         <TotalRequestsCard teamId={teamId} />
         <SuccessRateCard teamId={teamId} />
         <ActiveKeyCountCard teamId={teamId} />

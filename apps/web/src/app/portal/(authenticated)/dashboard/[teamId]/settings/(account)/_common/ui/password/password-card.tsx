@@ -87,7 +87,7 @@ export function PasswordCard() {
   const isPending = form.formState.isSubmitting
 
   return (
-    <Card className="w-full min-w-[470px]">
+    <Card className="h-min">
       <CardHeader className="rounded-t-xl">
         <CardTitle>Password</CardTitle>
         <CardDescription>Change or create your password</CardDescription>

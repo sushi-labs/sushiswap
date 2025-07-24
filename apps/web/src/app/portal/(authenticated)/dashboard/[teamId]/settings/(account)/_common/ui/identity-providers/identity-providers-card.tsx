@@ -40,7 +40,7 @@ export async function IdentityProvidersCard({ teamId }: IdentityProvidersCard) {
   )
 
   return (
-    <Card className="w-full min-w-[470px]">
+    <Card className="h-min">
       <CardHeader>
         <CardTitle>Identity Providers</CardTitle>
         <CardDescription>Connect supported identity providers</CardDescription>

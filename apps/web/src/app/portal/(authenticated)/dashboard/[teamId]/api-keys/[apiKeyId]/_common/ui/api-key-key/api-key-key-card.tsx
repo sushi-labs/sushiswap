@@ -22,7 +22,7 @@ export async function ApiKeyKeyCard({ teamId, apiKeyId }: ApiKeyResetCard) {
   })
 
   return (
-    <Card className="w-full min-w-[470px]">
+    <Card className="w-full md:min-w-[470px]">
       <CardHeader className="rounded-t-xl">
         <CardTitle>API Key</CardTitle>
         <CardDescription>View or reset the key</CardDescription>

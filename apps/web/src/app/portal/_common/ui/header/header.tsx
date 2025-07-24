@@ -15,7 +15,7 @@ export async function Header() {
   return (
     <div className="flex z-20">
       <Navigation
-        className="!pl-0 lg:!pl-4 !z-[unset]"
+        className="pl-4 !z-[unset]"
         hideSushiDropdown
         leftElements={[
           {

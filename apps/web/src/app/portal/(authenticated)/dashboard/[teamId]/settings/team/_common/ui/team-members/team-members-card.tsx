@@ -13,7 +13,7 @@ export async function TeamMembersCard({ teamId }: { teamId: string }) {
   const response = await client.getTeamsTeamIdMembers({ teamId })
 
   return (
-    <Card className="w-full min-w-[470px] h-min">
+    <Card className="h-min">
       <CardHeader className="rounded-t-xl">
         <CardTitle>Team Members</CardTitle>
         <CardDescription>Explore and manage members</CardDescription>
