@@ -60,7 +60,7 @@ const Pool: FC<{ pool: V3Pool }> = ({ pool }) => {
   return (
     <Container maxWidth="screen-3xl" className="flex flex-col gap-4 px-4">
       <div className="flex flex-col-reverse gap-6 md:flex-row">
-        <div className="flex-[3_3_0%] min-w-0 flex flex-col gap-6">
+        <div className="min-[1230px]:flex-[3_3_0%] min-[1230px]:flex-[2_2_0%] min-w-0 flex flex-col gap-6">
           <APRChart />
 
           <StatisticsChartsV3 address={address} chainId={chainId} pool={pool} />
