@@ -298,7 +298,7 @@ const PoolTransactionsV2: FC<PoolTransactionsV2Props> = ({
               <span className="text-lg font-semibold text-slate-900 dark:text-slate-100">
                 Transactions
               </span>
-              <span className="flex gap-2 items-center">
+              <span className="flex gap-2 items-center text-muted-foreground">
                 Filter By Your Address
                 <Switch />
               </span>
