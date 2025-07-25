@@ -6,6 +6,7 @@ import {
   CardHeader,
   CardTitle,
   DataTable,
+  Switch,
   Toggle,
 } from '@sushiswap/ui'
 import { useQuery } from '@tanstack/react-query'
@@ -247,34 +248,47 @@ const PoolTransactionsV3: FC<PoolTransactionsV3Props> = ({
     return data ?? []
   }, [data])
 
+  const toggleClass =
+    'data-[state=on]:!border-blue data-[state=on]:!bg-[#4217FF14] dark:data-[state=on]:!bg-[#3DB1FF14] dark:data-[state=on]:!border-skyblue border border-accent'
   return (
-    <Card>
+    <Card className="dark:!bg-[#15152B] !bg-slate-50">
       <CardHeader>
         <CardTitle>
           <div className="flex flex-col gap-y-4 justify-between md:flex-row">
-            Transactions
+            <div className="flex gap-5 items-center">
+              <span className="text-lg font-semibold text-slate-900 dark:text-slate-100">
+                Transactions
+              </span>
+              <span className="flex gap-2 items-center text-muted-foreground">
+                Filter By Your Address
+                <Switch />
+              </span>
+            </div>{' '}
             <div className="flex gap-1 items-center">
               <Toggle
-                variant="outline"
+                variant="trade2"
                 size="xs"
                 pressed={type === TransactionTypeV3.Swap}
                 onClick={() => setType(TransactionTypeV3.Swap)}
+                className={toggleClass}
               >
                 Swaps
               </Toggle>
               <Toggle
-                variant="outline"
+                variant="trade2"
                 size="xs"
                 pressed={type === TransactionTypeV3.Mint}
                 onClick={() => setType(TransactionTypeV3.Mint)}
+                className={toggleClass}
               >
                 Add
               </Toggle>
               <Toggle
-                variant="outline"
+                variant="trade2"
                 size="xs"
                 pressed={type === TransactionTypeV3.Burn}
                 onClick={() => setType(TransactionTypeV3.Burn)}
+                className={toggleClass}
               >
                 Remove
               </Toggle>

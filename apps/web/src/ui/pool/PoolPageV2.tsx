@@ -1,9 +1,11 @@
-import { Container, Separator } from '@sushiswap/ui'
+import { Container, LinkInternal, classNames } from '@sushiswap/ui'
 import { PoolTransactionsV2 } from 'src/ui/pool/PoolTransactionsV2'
 
 import type { V2Pool } from '@sushiswap/graph-client/data-api'
 import type { FC } from 'react'
+import { ChainKey, address } from 'sushi'
 import { APRChart } from './APRChart'
+import { ManagePositionButton } from './ManagePositionButton'
 import { Pool24HVolume } from './Pool24HVolume'
 import { PoolAPR } from './PoolAPR'
 import { PoolChartV2 } from './PoolChartV2'
@@ -27,6 +29,9 @@ export const PoolPageV2: FC<PoolPageV2> = ({ pool }) => {
           <PoolChartV2 pool={pool} />
         </div>
         <div className="flex-[1_1_0%] min-[1230px]:flex-[1_1_0%] min-w-0 flex flex-col gap-6">
+          <ManagePositionButton
+            href={`/${ChainKey[pool.chainId]}/pool/v2/${pool.address}/add`}
+          />
           <PoolAPR />
           <PoolComposition pool={pool} />
           <Pool24HVolume pool={pool} />

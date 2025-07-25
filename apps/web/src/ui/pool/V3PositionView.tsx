@@ -202,7 +202,7 @@ const Component: FC<{ chainId: string; address: string; position: string }> = ({
   return (
     <>
       <div className="flex flex-col gap-6">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
           <div>
             <Card>
               <CardHeader>
@@ -402,7 +402,7 @@ const Component: FC<{ chainId: string; address: string; position: string }> = ({
                   <div
                     className={classNames(
                       !inRange ? 'bg-yellow/10' : 'bg-green/10',
-                      'px-2 py-1 flex items-center gap-1 rounded-full',
+                      'flex gap-1 items-center px-2 py-1 rounded-full',
                     )}
                   >
                     <div
@@ -459,7 +459,7 @@ const Component: FC<{ chainId: string; address: string; position: string }> = ({
                         </>
                       }
                     >
-                      <div className="flex items-center gap-1">
+                      <div className="flex gap-1 items-center">
                         <Toggle
                           pressed={invert}
                           onClick={() => setInvert(true)}
@@ -483,7 +483,7 @@ const Component: FC<{ chainId: string; address: string; position: string }> = ({
                   )}
                 </CardGroup>
                 <div className="grid grid-cols-2 gap-3">
-                  <div className="border border-accent p-4 flex flex-col gap-3 rounded-xl">
+                  <div className="flex flex-col gap-3 p-4 rounded-xl border border-accent">
                     <div className="flex">
                       <div className="gap-1 px-2 py-1 text-xs font-medium rounded-full bg-pink/10 text-pink">
                         Min Price
@@ -506,7 +506,7 @@ const Component: FC<{ chainId: string; address: string; position: string }> = ({
                               {unwrapToken(currencyQuote)?.symbol}{' '}
                               <HoverCard closeDelay={0} openDelay={0}>
                                 <HoverCardTrigger asChild>
-                                  <span className="text-sm underline decoration-dotted underline-offset-2 text-muted-foreground font-normal">
+                                  <span className="text-sm font-normal underline decoration-dotted underline-offset-2 text-muted-foreground">
                                     (
                                     {formatPercent(
                                       priceLower
@@ -564,9 +564,9 @@ const Component: FC<{ chainId: string; address: string; position: string }> = ({
                       </span>
                     )}
                   </div>
-                  <div className="border border-accent p-4 flex flex-col gap-3 rounded-xl">
+                  <div className="flex flex-col gap-3 p-4 rounded-xl border border-accent">
                     <div className="flex">
-                      <div className="flex items-center gap-1 px-2 py-1 text-xs font-medium rounded-full bg-blue/10 text-blue">
+                      <div className="flex gap-1 items-center px-2 py-1 text-xs font-medium rounded-full bg-blue/10 text-blue">
                         Max Price
                       </div>
                     </div>
@@ -587,7 +587,7 @@ const Component: FC<{ chainId: string; address: string; position: string }> = ({
                               {unwrapToken(currencyQuote)?.symbol}{' '}
                               <HoverCard closeDelay={0} openDelay={0}>
                                 <HoverCardTrigger asChild>
-                                  <span className="text-sm underline decoration-dotted underline-offset-2 text-muted-foreground font-normal">
+                                  <span className="text-sm font-normal underline decoration-dotted underline-offset-2 text-muted-foreground">
                                     (
                                     {formatPercent(
                                       priceUpper
