@@ -1,5 +1,6 @@
 'use client'
 
+import { PlusIcon } from '@heroicons/react-v1/solid'
 import { ArrowTopRightOnSquareIcon } from '@heroicons/react/20/solid'
 import type { V2Pool, V3Pool } from '@sushiswap/graph-client/data-api'
 import {
@@ -9,6 +10,7 @@ import {
   LinkInternal,
   classNames,
   typographyVariants,
+  useBreakpoint,
 } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import React, { type FC, useMemo } from 'react'
@@ -16,6 +18,7 @@ import { EvmChain, EvmChainKey } from 'sushi/chain'
 import { Token, unwrapToken } from 'sushi/currency'
 import { formatPercent, shortenAddress } from 'sushi/format'
 import { APRHoverCard } from './APRHoverCard'
+import { AddLiquidityDialog } from './add-liquidity/add-liquidity-dialog'
 
 type PoolHeader = {
   backUrl: string
@@ -38,6 +41,7 @@ export const PoolHeader: FC<PoolHeader> = ({
   // priceRange,
   showAddLiquidityButton = false,
 }) => {
+  const { isMd } = useBreakpoint('md')
   const [token0, token1] = useMemo(() => {
     if (!pool) return [undefined, undefined]
 
@@ -71,7 +75,7 @@ export const PoolHeader: FC<PoolHeader> = ({
           >
             ← Pools
           </LinkInternal>
-          <div className="flex flex-wrap gap-6 justify-between">
+          <div className="flex flex-wrap gap-4 justify-between items-center">
             <div className="relative flex items-center gap-3 max-w-[100vh]">
               <div className="relative">
                 <Currency.IconList
@@ -96,7 +100,7 @@ export const PoolHeader: FC<PoolHeader> = ({
                 className={typographyVariants({
                   variant: 'h1',
                   className:
-                    'sm:!text2-xl sm:!text-4xl !font-bold text-gray-900 dark:text-slate-50 truncate overflow-x-auto',
+                    'md:!text2-xl md:!text-4xl !font-bold text-gray-900 dark:text-slate-50 truncate overflow-x-auto',
                 })}
               >
                 <LinkExternal
@@ -123,20 +127,22 @@ export const PoolHeader: FC<PoolHeader> = ({
                     : 'UNKNOWN'}
               </div>
             </div>
-            {showAddLiquidityButton ? (
-              <Button asChild>
-                <LinkInternal
-                  href={
-                    pool.protocol === 'SUSHISWAP_V2'
-                      ? `/${EvmChainKey[pool.chainId]}/pool/v2/${pool.address}/add`
-                      : pool.protocol === 'SUSHISWAP_V3'
-                        ? `/${EvmChainKey[pool.chainId]}/pool/v3/${pool.address}/positions`
-                        : ''
-                  }
-                >
-                  Add Liquidity
-                </LinkInternal>
-              </Button>
+            {showAddLiquidityButton && !isMd ? (
+              <AddLiquidityDialog
+                poolType={pool.protocol}
+                hidePoolTypeToggle={true}
+                hideTokenSelectors={true}
+                token0={token0}
+                token1={token1}
+                trigger={
+                  <Button
+                    size="sm"
+                    className="w-fit !p-2 !h-[32px] !min-h-[32px]"
+                  >
+                    <PlusIcon className="w-4 h-4" />
+                  </Button>
+                }
+              />
             ) : null}
           </div>
         </div>
