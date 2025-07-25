@@ -195,20 +195,11 @@ export function usePaginatedTransactions(
     first: 100,
   })
 
-  console.log({
-    allTransactions,
-  })
-
   const [page, setPage] = useState(1)
 
   const paginatedData = useMemo(() => {
     return allTransactions.slice(0, page * PAGE_SIZE)
   }, [allTransactions, page])
-
-  console.log({
-    page,
-    paginatedData,
-  })
 
   const hasNextPage = paginatedData.length < allTransactions.length
 
