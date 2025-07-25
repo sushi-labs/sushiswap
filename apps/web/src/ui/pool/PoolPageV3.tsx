@@ -2,19 +2,16 @@
 
 import type { V3Pool } from '@sushiswap/graph-client/data-api'
 import {
+  Button,
   Card,
   CardContent,
   CardCurrencyAmountItem,
   CardDescription,
   CardGroup,
   CardHeader,
-  CardItem,
-  CardLabel,
   CardTitle,
   Container,
-  Currency,
-  Separator,
-  SkeletonText,
+  LinkInternal,
   Switch,
   classNames,
 } from '@sushiswap/ui'
@@ -22,10 +19,13 @@ import type { FC } from 'react'
 import { useTokenAmountDollarValues } from 'src/lib/hooks'
 import { useConcentratedLiquidityPoolStats } from 'src/lib/hooks/react-query'
 import { useConcentratedLiquidityPoolReserves } from 'src/lib/wagmi/hooks/pools/hooks/useConcentratedLiquidityPoolReserves'
+import { useConcentratedLiquidityPositions } from 'src/lib/wagmi/hooks/positions/hooks/useConcentratedLiquidityPositions'
+import { ChainKey } from 'sushi'
 import { formatUSD } from 'sushi/format'
 import { Wrapper } from '../swap/trade/wrapper'
 import { APRChart } from './APRChart'
 import { ConcentratedLiquidityProvider } from './ConcentratedLiquidityProvider'
+import { ManagePositionButton } from './ManagePositionButton'
 import { Pool24HVolume } from './Pool24HVolume'
 import { PoolAPR } from './PoolAPR'
 import { PoolPrice } from './PoolPrice'
@@ -56,17 +56,26 @@ const Pool: FC<{ pool: V3Pool }> = ({ pool }) => {
     })
   const fiatValues = useTokenAmountDollarValues({ chainId, amounts: reserves })
 
+  const { data: positions } = useConcentratedLiquidityPositions({
+    account: address,
+    chainIds: [chainId],
+  })
+
   return (
     <Container maxWidth="screen-3xl" className="flex flex-col gap-4 px-4">
       <div className="flex flex-col-reverse gap-6 md:flex-row">
         <div className="min-[1230px]:flex-[3_3_0%] min-[1230px]:flex-[2_2_0%] min-w-0 flex flex-col gap-6">
           <APRChart />
-
           <StatisticsChartsV3 address={address} chainId={chainId} pool={pool} />
         </div>
         <div className="flex-[1_1_0%] min-w-0 flex flex-col gap-6">
+          {positions?.length ? (
+            <ManagePositionButton
+              href={`/${ChainKey[pool.chainId]}/pool/v3/${pool.address}/positions`}
+              positionCount={positions?.length}
+            />
+          ) : null}
           <PoolAPR />
-
           <Wrapper enableBorder className="!p-3 flex flex-col gap-5">
             <CardHeader className="!p-0 flex !flex-row justify-between items-center md:flex-col gap-1">
               <CardTitle className="text-slate-900">TVL</CardTitle>
