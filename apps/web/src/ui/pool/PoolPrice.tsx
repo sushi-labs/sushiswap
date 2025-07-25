@@ -1,14 +1,17 @@
+'use client'
+
 import type { V2Pool, V3Pool } from '@sushiswap/graph-client/data-api'
 import {
   CardContent,
-  CardDescription,
   CardGroup,
   CardHeader,
   CardItem,
   CardTitle,
   Currency,
 } from '@sushiswap/ui'
+import { Decimal } from 'sushi'
 import { Token } from 'sushi/currency'
+import { usePrice } from '~evm/_common/ui/price-provider/price-provider/use-price'
 import { Wrapper } from '../swap/trade/wrapper'
 
 export const PoolPrice = ({
@@ -18,6 +21,28 @@ export const PoolPrice = ({
 }) => {
   const reserveToken0 = pool.token0
   const reserveToken1 = pool.token1
+
+  const { data: price0 } = usePrice({
+    chainId: pool.chainId,
+    address: reserveToken0.address,
+  })
+
+  const { data: price1 } = usePrice({
+    chainId: pool.chainId,
+    address: reserveToken1.address,
+  })
+
+  const reserve1To2 = price1
+    ? price0
+      ? new Decimal(price1).div(price0).toFixed(2)
+      : '0.00'
+    : '0.00'
+  const reserve2To1 = price0
+    ? price1
+      ? new Decimal(price0).div(price1).toFixed(2)
+      : '0.00'
+    : '0.00'
+
   return (
     <Wrapper enableBorder className="!p-3 flex flex-col gap-5">
       <CardHeader className="!p-0 flex flex-col gap-1">
@@ -43,8 +68,10 @@ export const PoolPrice = ({
               }
             >
               <span className="flex gap-1 font-medium">
-                1 USDT = 0.99 USDC.e{' '}
-                <span className="font-normal text-muted-foreground">0.99</span>
+                1 {reserveToken0.symbol} = {reserve1To2} {reserveToken1.symbol}{' '}
+                <span className="font-normal text-muted-foreground">
+                  ${price0?.toFixed(2) ?? '0.00'}
+                </span>
               </span>
             </CardItem>
           ) : null}
@@ -66,8 +93,10 @@ export const PoolPrice = ({
               }
             >
               <span className="flex gap-1 font-medium">
-                1 USDC.e = 1.01 USDT{' '}
-                <span className="font-normal text-muted-foreground">1.01</span>
+                1 {reserveToken1.symbol} = {reserve2To1} {reserveToken0.symbol}{' '}
+                <span className="font-normal text-muted-foreground">
+                  ${price1?.toFixed(2) ?? '0.00'}
+                </span>
               </span>
             </CardItem>
           ) : null}

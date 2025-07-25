@@ -258,13 +258,6 @@ const PoolTransactionsV2: FC<PoolTransactionsV2Props> = ({
   const { data, isLoading, fetchNextPage, hasNextPage } =
     usePaginatedTransactions(pool, poolAddress, opts)
 
-  console.log({
-    data,
-    isLoading,
-    fetchNextPage,
-    hasNextPage,
-  })
-
   const _data = useMemo(() => {
     return data ?? []
   }, [data])
@@ -285,7 +278,7 @@ const PoolTransactionsV2: FC<PoolTransactionsV2Props> = ({
       <CardHeader>
         <CardTitle>
           <div className="flex flex-col gap-y-4 justify-between md:flex-row">
-            <div className="flex gap-5 items-center">
+            <div className="flex gap-5 justify-between items-center md:justify-start">
               <span className="text-lg font-semibold text-slate-900 dark:text-slate-100">
                 Transactions
               </span>

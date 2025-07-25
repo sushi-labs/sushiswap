@@ -63,12 +63,12 @@ const Pool: FC<{ pool: V3Pool }> = ({ pool }) => {
 
   return (
     <Container maxWidth="screen-3xl" className="flex flex-col gap-4 px-4">
-      <div className="flex flex-col-reverse gap-6 md:flex-row">
-        <div className="min-[1230px]:flex-[3_3_0%] min-[1230px]:flex-[2_2_0%] min-w-0 flex flex-col gap-6">
+      <div className="flex flex-col-reverse gap-6 lg:flex-row">
+        <div className="flex-[2_2_0%] min-[1230px]:flex-[3_3_0%] min-w-0 flex flex-col gap-6">
           <APRChart />
           <StatisticsChartsV3 address={address} chainId={chainId} pool={pool} />
         </div>
-        <div className="flex-[1_1_0%] min-w-0 flex flex-col gap-6">
+        <div className="flex-[1_1_0%] min-[1230px]:flex-[1_1_0%] min-w-0 flex flex-col gap-6">
           {positions?.length ? (
             <ManagePositionButton
               href={`/${ChainKey[pool.chainId]}/pool/v3/${pool.address}/positions`}
@@ -77,14 +77,14 @@ const Pool: FC<{ pool: V3Pool }> = ({ pool }) => {
           ) : null}
           <PoolAPR />
           <Wrapper enableBorder className="!p-3 flex flex-col gap-5">
-            <CardHeader className="!p-0 flex !flex-row justify-between items-center md:flex-col gap-1">
+            <CardHeader className="!p-0 flex !flex-row justify-between items-center lg:flex-col gap-1">
               <CardTitle className="text-slate-900">TVL</CardTitle>
 
-              <CardDescription className="!mt-0 font-bold md:font-medium text-sm  md:!text-2xl flex items-center">
+              <CardDescription className="!mt-0 font-bold lg:font-medium text-sm  lg:!text-2xl flex items-center">
                 {formatUSD(fiatValues[0] + fiatValues[1])}{' '}
                 <span
                   className={classNames(
-                    'text-sm md:text-base font-medium',
+                    'text-sm lg:text-base font-medium',
                     poolStats?.liquidityUSD1dChange &&
                       poolStats?.liquidityUSD1dChange > 0
                       ? 'text-green'
@@ -97,9 +97,9 @@ const Pool: FC<{ pool: V3Pool }> = ({ pool }) => {
             </CardHeader>
 
             <CardContent className="!p-0">
-              <CardGroup className="md:!gap-6">
-                <div className="hidden justify-between items-center md:flex">
-                  <span className="text-base text-gray-500 md:flex-row dark:text-slate-500">
+              <CardGroup className="lg:!gap-6">
+                <div className="hidden justify-between items-center lg:flex">
+                  <span className="text-base text-gray-500 lg:flex-row dark:text-slate-500">
                     Show stablecoin types
                   </span>
                   <Switch />
