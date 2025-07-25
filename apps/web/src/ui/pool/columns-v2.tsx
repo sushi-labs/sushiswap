@@ -1,10 +1,8 @@
 import { ArrowUpIcon, PlusIcon } from '@heroicons/react-v1/solid'
-import { ArrowDownTrayIcon } from '@heroicons/react/20/solid'
 import type { Pool } from '@sushiswap/graph-client/data-api'
 import {
   Button,
   Currency,
-  LinkInternal,
   SkeletonBox,
   Tooltip,
   TooltipContent,
@@ -19,13 +17,13 @@ import Link from 'next/link'
 import React, { useMemo } from 'react'
 import { getTextColor } from 'src/lib/helpers'
 import type { SushiSwapProtocol } from 'sushi'
-import { ChainKey } from 'sushi/chain'
 import { Token } from 'sushi/currency'
 import { formatNumber, formatPercent, formatUSD } from 'sushi/format'
 import { usePrices } from '~evm/_common/ui/price-provider/price-provider/use-prices'
 import { TooltipDrawer } from '../common/tooltip-drawer'
 import { SparklineCell } from '../token/SparklineCell'
 import { ProtocolBadge } from './PoolNameCell'
+import { AddLiquidityDialog } from './add-liquidity/add-liquidity-dialog'
 
 export const CHAIN_COLUMN: ColumnDef<Pool, unknown> = {
   id: 'chain',
@@ -644,27 +642,44 @@ export const APR_SPARKLINE_COLUMN: ColumnDef<Pool, unknown> = {
 export const ACTION_COLUMN: ColumnDef<Pool, unknown> = {
   id: 'action',
   cell: (props) => {
-    const poolType =
-      (props.row.original.protocol as SushiSwapProtocol) === 'SUSHISWAP_V2'
-        ? 'v2'
-        : 'v3'
+    const poolType = props.row.original.protocol as SushiSwapProtocol
+
+    const [token0, token1] = useMemo(
+      () => [
+        new Token({
+          chainId: props.row.original.chainId,
+          address: props.row.original.token0Address,
+          symbol: props.row.original.name?.split(' /')[0] ?? '',
+          decimals: 18,
+        }),
+        new Token({
+          chainId: props.row.original.chainId,
+          address: props.row.original.token1Address,
+          symbol: props.row.original.name?.split('/ ')[1] ?? '',
+          decimals: 0,
+        }),
+      ],
+      [props.row.original],
+    )
     return (
-      <LinkInternal
-        href={`/${ChainKey[props.row.original.chainId]}/pool/${poolType}/${props.row.original.address}/${
-          poolType === 'v2' ? 'add' : 'create'
-        }`}
-        className="pr-6"
-      >
-        <Button
-          className="!gap-1 !w-[100px] !h-[36px] !rounded-lg"
-          variant="tertiary"
-        >
-          <div className="flex items-center gap-1">
-            <PlusIcon className="w-[14px] max-w-[14px] h-[14px] max-h-[14px]" />
-            <span>Add</span>
-          </div>
-        </Button>
-      </LinkInternal>
+      <AddLiquidityDialog
+        poolType={poolType}
+        token0={token0}
+        token1={token1}
+        hidePoolTypeToggle={true}
+        hideTokenSelectors={true}
+        trigger={
+          <Button
+            className="!gap-1 !w-[100px] !h-[36px] !rounded-lg"
+            variant="tertiary"
+          >
+            <div className="flex items-center gap-1">
+              <PlusIcon className="w-[14px] max-w-[14px] h-[14px] max-h-[14px]" />
+              <span>Add</span>
+            </div>
+          </Button>
+        }
+      />
     )
   },
   meta: {

@@ -26,10 +26,10 @@ export const ToggleZapCard: FC<ToggleZapCardProps> = ({
   )
 
   return (
-    <Card className="bg-gradient-to-r from-blue/20 to-pink/20">
+    <Card className="bg-gradient-to-r from-[#4217FF]/[0.08] to-[#3DB1FF]/[0.08]">
       <CardHeader>
         <CardTitle className="flex items-center justify-between">
-          <span className="text-base tracking-tighter saturate-200 flex items-center gap-2 bg-gradient-to-r from-blue to-pink bg-clip-text text-transparent">
+          <span className="text-base tracking-tighter saturate-200 flex items-center gap-2 bg-gradient-to-r from-[#4217FF] to-[#3DB1FF] bg-clip-text text-transparent">
             Zap Mode
           </span>
           <Switch

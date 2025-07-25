@@ -3,24 +3,25 @@
 import { ChevronDownIcon, PlusIcon } from '@heroicons/react-v1/solid'
 import { Button, Popover, PopoverContent, PopoverTrigger } from '@sushiswap/ui'
 import Link from 'next/link'
-import { ChainKey, EvmChainId } from 'sushi'
+import { ChainKey, EvmChainId, SushiSwapProtocol } from 'sushi'
 import {
   type SushiSwapV2ChainId,
   type SushiSwapV3ChainId,
   isSushiSwapV2ChainId,
   isSushiSwapV3ChainId,
 } from 'sushi/config'
+import { AddLiquidityDialog } from '../pool/add-liquidity/add-liquidity-dialog'
 
-export const ExploreHeader = ({ chainId }: { chainId: EvmChainId }) => {
+export const ExploreHeader = () => {
   return (
     <div className="flex flex-col md:flex-row justify-between md:items-center gap-4 pb-4 md:py-8">
       <h2 className="text-lg font-semibold md:text-4xl">Explore Pool</h2>
-      <AddLiquidityPopover chainId={chainId} />
+      <AddLiquidityPopover />
     </div>
   )
 }
 
-const AddLiquidityPopover = ({ chainId }: { chainId: EvmChainId }) => {
+const AddLiquidityPopover = () => {
   return (
     <Popover>
       <PopoverTrigger asChild>
@@ -36,11 +37,25 @@ const AddLiquidityPopover = ({ chainId }: { chainId: EvmChainId }) => {
         </Button>
       </PopoverTrigger>
       <PopoverContent
-        className="!w-[201px] dark:bg-[#15152B] bg-slate-50 !p-2"
+        className="w-[95vw] md:max-w-[201px] md:!w-[201px] dark:bg-[#15152B] bg-slate-50 !p-2"
         onOpenAutoFocus={(e) => e.preventDefault()}
       >
-        <AddLiquidityLink chainId={chainId} version="v2" />
-        <AddLiquidityLink chainId={chainId} version="v3" />
+        <AddLiquidityDialog
+          poolType={SushiSwapProtocol.SUSHISWAP_V2}
+          trigger={
+            <Button variant="ghost" className="w-full">
+              <span className="md:mr-auto">Add Liquidity to V2</span>
+            </Button>
+          }
+        />
+        <AddLiquidityDialog
+          poolType={SushiSwapProtocol.SUSHISWAP_V3}
+          trigger={
+            <Button variant="ghost" className="w-full">
+              <span className="md:mr-auto">Add Liquidity to V3</span>
+            </Button>
+          }
+        />
       </PopoverContent>
     </Popover>
   )
