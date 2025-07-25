@@ -57,8 +57,6 @@ const Pool: FC<{ pool: V3Pool }> = ({ pool }) => {
     })
   const fiatValues = useTokenAmountDollarValues({ chainId, amounts: reserves })
 
-  console.log('poolStats', poolStats)
-  console.log('reserves', reserves)
   return (
     <Container maxWidth="screen-3xl" className="flex flex-col gap-4 px-4">
       <div className="flex flex-col-reverse gap-6 md:flex-row">
@@ -115,9 +113,7 @@ const Pool: FC<{ pool: V3Pool }> = ({ pool }) => {
           <PoolPrice pool={pool} />
         </div>
       </div>
-      <div className="py-4">
-        <Separator />
-      </div>
+
       <PoolRewardDistributionsCard pool={pool} />
       <PoolTransactionsV3 pool={pool} poolAddress={address} />
     </Container>

@@ -251,9 +251,9 @@ const PoolTransactionsV3: FC<PoolTransactionsV3Props> = ({
     <Card>
       <CardHeader>
         <CardTitle>
-          <div className="flex flex-col md:flex-row justify-between gap-y-4">
+          <div className="flex flex-col gap-y-4 justify-between md:flex-row">
             Transactions
-            <div className="flex items-center gap-1">
+            <div className="flex gap-1 items-center">
               <Toggle
                 variant="outline"
                 size="xs"
@@ -296,6 +296,7 @@ const PoolTransactionsV3: FC<PoolTransactionsV3Props> = ({
           state={{
             pagination: paginationState,
           }}
+          className="!text-slate-900 dark:!text-[#FFF5FA] !px-6 !border-t-0"
         />
       </CardContent>
     </Card>

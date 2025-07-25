@@ -6,6 +6,7 @@ import {
   CardHeader,
   CardTitle,
   DataTable,
+  Loader,
   Switch,
   Toggle,
 } from '@sushiswap/ui'
@@ -23,6 +24,7 @@ import {
 } from '@sushiswap/graph-client/data-api'
 import type { Address } from 'viem'
 
+import InfiniteScroll from 'react-infinite-scroll-component'
 import {
   TX_AMOUNT_IN_V2_COLUMN,
   TX_AMOUNT_OUT_V2_COLUMN,
@@ -269,6 +271,16 @@ const PoolTransactionsV2: FC<PoolTransactionsV2Props> = ({
         </CardTitle>
       </CardHeader>
       <CardContent className="!px-0">
+        {/* <InfiniteScroll
+      dataLength={data.length}
+      next={fetchNextPage}
+      hasMore={data.length < (count ?? 0)}
+      loader={
+        <div className="flex justify-center py-4 w-full">
+          <Loader size={16} />
+        </div>
+      }
+    > */}
         <DataTable
           linkFormatter={(row) =>
             EvmChain.from(row.chainId)?.getTxUrl(row.txHash) ?? ''
@@ -276,14 +288,14 @@ const PoolTransactionsV2: FC<PoolTransactionsV2Props> = ({
           loading={isLoading}
           columns={COLUMNS}
           data={_data}
-          pagination={true}
           externalLink={true}
           onPaginationChange={setPaginationState}
           state={{
             pagination: paginationState,
           }}
-          className="!text-slate-900 dark:!text-[#FFF5FA]"
+          className="!text-slate-900 dark:!text-[#FFF5FA] !px-6 !border-t-0"
         />
+        {/* </InfiniteScroll> */}
       </CardContent>
     </Card>
   )
