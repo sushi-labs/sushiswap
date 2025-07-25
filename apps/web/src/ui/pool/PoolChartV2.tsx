@@ -31,7 +31,7 @@ const PoolChartV2: FC<PoolChartV2Props> = ({ pool }) => {
 
   return (
     <Wrapper className="!p-0" enableBorder>
-      <div className="flex flex-col flex-wrap gap-4 px-6 py-4 border-b md:items-center md:justify-between border-accent md:flex-row">
+      <div className="flex flex-col flex-wrap gap-4 px-6 py-4 border-b lg:items-center lg:justify-between border-accent lg:flex-row">
         <div className="flex">
           <PoolChartTypes
             charts={charts}

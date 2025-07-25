@@ -8,8 +8,7 @@ import {
   CardTitle,
   Currency,
 } from '@sushiswap/ui'
-import { useConcentratedLiquidityPoolReserves } from 'src/lib/wagmi/hooks/pools/hooks/useConcentratedLiquidityPoolReserves'
-import { type Amount, Token, unwrapToken } from 'sushi/currency'
+import { Token } from 'sushi/currency'
 import { Wrapper } from '../swap/trade/wrapper'
 
 export const PoolPrice = ({
@@ -25,7 +24,7 @@ export const PoolPrice = ({
         <CardTitle>Price</CardTitle>
       </CardHeader>
       <CardContent className="!p-0">
-        <CardGroup className="md:!gap-6">
+        <CardGroup className="lg:!gap-6">
           {reserveToken0 ? (
             <CardItem
               title={

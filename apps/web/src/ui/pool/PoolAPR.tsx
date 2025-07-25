@@ -12,22 +12,22 @@ import { Wrapper } from '../swap/trade/wrapper'
 export const PoolAPR = () => {
   return (
     <Wrapper enableBorder className="!p-3">
-      <CardHeader className="!p-0 !pb-5 flex justify-between items-center !flex-row md:flex-col gap-1">
+      <CardHeader className="!p-0 !pb-5 flex justify-between items-center !flex-row lg:flex-col gap-1">
         <CardTitle className="text-slate-900 dark:text-slate-100">
           Total APR
         </CardTitle>
-        <CardDescription className="!mt-0 font-bold md:font-medium text-sm md:!text-2xl flex items-center">
+        <CardDescription className="!mt-0 font-bold lg:font-medium text-sm lg:!text-2xl flex items-center">
           11.5%
         </CardDescription>
       </CardHeader>
       <CardContent className="!p-0">
-        <CardGroup className="!gap-3 md:!gap-6">
+        <CardGroup className="!gap-3 lg:!gap-6">
           <div className="flex flex-col gap-1">
             <div className="flex justify-between items-center text-sm font-medium text-slate-900 dark:text-slate-100">
               <span>Fee APR (Full Range)</span>
               <span>11.5%</span>
             </div>
-            <span className="hidden text-sm md:block text-slate-450 dark:text-slate-500">
+            <span className="hidden text-sm lg:block text-slate-450 dark:text-slate-500">
               Liquidity Pool fees from swap transactions
             </span>
           </div>
@@ -43,7 +43,7 @@ export const PoolAPR = () => {
               </span>
               <span>2.5%</span>
             </div>
-            <span className="hidden text-sm md:block text-slate-450 dark:text-slate-500">
+            <span className="hidden text-sm lg:block text-slate-450 dark:text-slate-500">
               Boosted rewards{' '}
             </span>
           </div>

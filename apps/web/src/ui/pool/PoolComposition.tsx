@@ -58,14 +58,14 @@ export const PoolComposition: FC<PoolCompositionProps> = ({ pool }) => {
 
   return (
     <Wrapper enableBorder className="!p-3 flex flex-col gap-5">
-      <CardHeader className="!p-0 flex !flex-row justify-between items-center md:flex-col gap-1">
+      <CardHeader className="!p-0 flex !flex-row justify-between items-center lg:flex-col gap-1">
         <CardTitle className="text-slate-900">TVL</CardTitle>
 
-        <CardDescription className="!mt-0 font-bold md:font-medium text-sm  md:!text-2xl flex items-center">
+        <CardDescription className="!mt-0 font-bold lg:font-medium text-sm  lg:!text-2xl flex items-center">
           {formatUSD(fiatValues[0] + fiatValues[1])}{' '}
           <span
             className={classNames(
-              'text-sm md:text-base font-medium',
+              'text-sm lg:text-base font-medium',
               pool?.liquidityUSD1dChange && pool?.liquidityUSD1dChange > 0
                 ? 'text-green'
                 : 'text-red',
@@ -77,9 +77,9 @@ export const PoolComposition: FC<PoolCompositionProps> = ({ pool }) => {
       </CardHeader>
 
       <CardContent className="!p-0">
-        <CardGroup className="md:!gap-6">
-          <div className="hidden justify-between items-center md:flex">
-            <span className="text-base text-gray-500 md:flex-row dark:text-slate-500">
+        <CardGroup className="lg:!gap-6">
+          <div className="hidden justify-between items-center lg:flex">
+            <span className="text-base text-gray-500 lg:flex-row dark:text-slate-500">
               Show stablecoin types
             </span>
             <Switch />

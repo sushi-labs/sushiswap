@@ -377,8 +377,8 @@ export const APRChart = () => {
               <span className="text-sm !font-medium text-muted-foreground">
                 APR
               </span>
-              <div className="hidden gap-1 items-center md:flex">
-                <span className="text-base md:text-[1.75rem] font-medium underline decoration-dotted underline-offset-4 text-slate-900 dark:text-slate-100">
+              <div className="hidden gap-1 items-center lg:flex">
+                <span className="text-base lg:text-[1.75rem] font-medium underline decoration-dotted underline-offset-4 text-slate-900 dark:text-slate-100">
                   12.3%
                 </span>
                 <Currency.IconList
@@ -425,8 +425,8 @@ export const APRChart = () => {
         </CardTitle>
       </CardHeader>
       <CardContent className="!pb-2">
-        <div className="flex gap-1 items-center md:hidden">
-          <span className="text-base md:text-[1.75rem] font-medium underline decoration-dotted underline-offset-4">
+        <div className="flex gap-1 items-center lg:hidden">
+          <span className="text-base lg:text-[1.75rem] font-medium underline decoration-dotted underline-offset-4">
             12.3%
           </span>
           <Currency.IconList

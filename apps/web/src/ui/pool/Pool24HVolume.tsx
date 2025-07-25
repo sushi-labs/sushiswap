@@ -21,7 +21,7 @@ export const Pool24HVolume = ({
     >
       <CardHeader className="!p-0">
         <CardTitle>
-          <div className="flex flex-col gap-y-4 justify-between md:flex-row">
+          <div className="flex flex-col gap-y-4 justify-between lg:flex-row">
             24H Volume
           </div>
         </CardTitle>
@@ -30,11 +30,11 @@ export const Pool24HVolume = ({
         <div className="grid grid-cols-1 gap-3">
           <div>
             {pool ? (
-              <div className="flex gap-2 items-center text-sm font-bold md:font-medium md:text-2xl">
+              <div className="flex gap-2 items-center text-sm font-bold lg:font-medium lg:text-2xl">
                 {formatUSD(pool.volumeUSD1d ?? 0)}{' '}
                 <span
                   className={classNames(
-                    'text-sm md:text-base font-medium',
+                    'text-sm lg:text-base font-medium',
                     pool['volumeUSD1dChange'] > 0 ? 'text-green' : 'text-red',
                   )}
                 >

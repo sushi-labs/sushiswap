@@ -6,6 +6,7 @@ import {
   CardHeader,
   CardTitle,
   DataTable,
+  Switch,
   Toggle,
 } from '@sushiswap/ui'
 import { useQuery } from '@tanstack/react-query'
@@ -219,34 +220,47 @@ const PoolTransactionsV2: FC<PoolTransactionsV2Props> = ({
     return data ?? []
   }, [data])
 
+  const toggleClass =
+    'data-[state=on]:!border-blue data-[state=on]:!bg-[#4217FF14] dark:data-[state=on]:!bg-[#3DB1FF14] dark:data-[state=on]:!border-skyblue border border-accent'
   return (
-    <Card>
+    <Card className="dark:!bg-[#15152B] !bg-slate-50">
       <CardHeader>
         <CardTitle>
-          <div className="flex flex-col md:flex-row justify-between gap-y-4">
-            Transactions
-            <div className="flex items-center gap-1">
+          <div className="flex flex-col gap-y-4 justify-between md:flex-row">
+            <div className="flex gap-5 items-center">
+              <span className="text-lg font-semibold text-slate-900 dark:text-slate-100">
+                Transactions
+              </span>
+              <span className="flex gap-2 items-center">
+                Filter By Your Address
+                <Switch />
+              </span>
+            </div>
+            <div className="flex gap-1 items-center">
               <Toggle
-                variant="outline"
+                variant="trade2"
                 size="xs"
                 pressed={type === TransactionType.Swap}
                 onClick={() => setType(TransactionType.Swap)}
+                className={toggleClass}
               >
                 Swaps
               </Toggle>
               <Toggle
-                variant="outline"
+                variant="trade2"
                 size="xs"
                 pressed={type === TransactionType.Mint}
                 onClick={() => setType(TransactionType.Mint)}
+                className={toggleClass}
               >
                 Add
               </Toggle>
               <Toggle
-                variant="outline"
+                variant="trade2"
                 size="xs"
                 pressed={type === TransactionType.Burn}
                 onClick={() => setType(TransactionType.Burn)}
+                className={toggleClass}
               >
                 Remove
               </Toggle>
@@ -268,6 +282,7 @@ const PoolTransactionsV2: FC<PoolTransactionsV2Props> = ({
           state={{
             pagination: paginationState,
           }}
+          className="!text-slate-900 dark:!text-[#FFF5FA]"
         />
       </CardContent>
     </Card>

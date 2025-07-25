@@ -53,14 +53,12 @@ export function DataTableColumnHeader<TData, TValue>({
     if (typeof title === 'string') {
       if (description) {
         return (
-          <span className="underline decoration-dotted underline-offset-2 dark:text-slate-500 text-slate-450">
+          <span className="underline decoration-dotted underline-offset-2 text-muted-foreground">
             {title}
           </span>
         )
       } else {
-        return (
-          <span className="dark:text-slate-500 text-slate-450">{title}</span>
-        )
+        return <span className="text-muted-foreground">{title}</span>
       }
     }
 
@@ -94,11 +92,11 @@ export function DataTableColumnHeader<TData, TValue>({
                 <div className="flex flex-row gap-2 ui-items-center dark:text-slate-500 text-slate-450">
                   {Title}
                   {header.column.getIsSorted() === 'desc' ? (
-                    <CaretDownIcon className="ml-2 h-4 w-4" />
+                    <CaretDownIcon className="ml-2 w-4 h-4" />
                   ) : header.column.getIsSorted() === 'asc' ? (
-                    <CaretUpIcon className="ml-2 h-4 w-4" />
+                    <CaretUpIcon className="ml-2 w-4 h-4" />
                   ) : (
-                    <CaretSortIcon className="ml-2 h-4 w-4" />
+                    <CaretSortIcon className="ml-2 w-4 h-4" />
                   )}
                 </div>
               </TooltipTrigger>
@@ -115,11 +113,11 @@ export function DataTableColumnHeader<TData, TValue>({
         >
           {Title}
           {header.column.getIsSorted() === 'desc' ? (
-            <CaretDownIcon className="ml-2 h-4 w-4" />
+            <CaretDownIcon className="ml-2 w-4 h-4" />
           ) : header.column.getIsSorted() === 'asc' ? (
-            <CaretUpIcon className="ml-2 h-4 w-4" />
+            <CaretUpIcon className="ml-2 w-4 h-4" />
           ) : (
-            <CaretSortIcon className="ml-2 h-4 w-4" />
+            <CaretSortIcon className="ml-2 w-4 h-4" />
           )}
         </Button>
       )}
