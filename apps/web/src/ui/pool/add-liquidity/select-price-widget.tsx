@@ -779,87 +779,95 @@ export const SelectPriceWidget: FC<SelectPriceWidget> = ({
                     </TooltipProvider>
                   </div>
                 </div>
-                <div className="flex flex-wrap items-start justify-between gap-1 flex-col sm:flex-row sm:items-center">
-                  <span>
-                    <span className="mr-1">Capital Efficiency</span>
-                    <Explainer iconProps={{ className: 'inline mb-0.5' }}>
-                      For example, 2x capital efficiency means one unit of
-                      liquidity in a concentrated liquidity position would
-                      require a 2x capital in a full range position.
-                      <br />
-                      <br />
-                      The narrower the price range, the higher the capital
-                      efficiency.
-                    </Explainer>
-                  </span>
-                  <div className="flex flex-grow items-center justify-end">
-                    {capitalEfficiency &&
-                    Number.isFinite(capitalEfficiency) &&
-                    capitalEfficiency >= 0 ? (
-                      <>{capitalEfficiency.toFixed(2)}x</>
-                    ) : (
-                      '-'
-                    )}
+                {noLiquidity ? null : (
+                  <div className="flex flex-wrap items-start justify-between gap-1 flex-col sm:flex-row sm:items-center">
+                    <span>
+                      <span className="mr-1">Capital Efficiency</span>
+                      <Explainer iconProps={{ className: 'inline mb-0.5' }}>
+                        For example, 2x capital efficiency means one unit of
+                        liquidity in a concentrated liquidity position would
+                        require a 2x capital in a full range position.
+                        <br />
+                        <br />
+                        The narrower the price range, the higher the capital
+                        efficiency.
+                      </Explainer>
+                    </span>
+                    <div className="flex flex-grow items-center justify-end">
+                      {capitalEfficiency &&
+                      Number.isFinite(capitalEfficiency) &&
+                      capitalEfficiency >= 0 ? (
+                        <>{capitalEfficiency.toFixed(2)}x</>
+                      ) : (
+                        '-'
+                      )}
+                    </div>
                   </div>
-                </div>
-                <div className="flex flex-wrap items-start justify-between gap-1 flex-col  sm:flex-row sm:items-center">
-                  <span>
-                    <TooltipProvider>
-                      <Tooltip delayDuration={0}>
-                        <TooltipTrigger asChild>
-                          <span className="mr-1">
-                            <span className="underline decoration-dotted">
-                              {yieldRate === YieldRatePeriod.DAILY
-                                ? 'Daily Rate'
-                                : yieldRate === YieldRatePeriod.MONTHLY
-                                  ? 'Monthly Rate'
-                                  : 'APR'}
-                            </span>{' '}
-                            (when in-range, excl. IL)
-                          </span>
-                        </TooltipTrigger>
-                        <TooltipContent className="!bg-secondary !p-0.5 !backdrop-blur-md">
-                          <RadioGroup value={yieldRate} onChange={setYieldRate}>
-                            <div className="flex gap-1 items-center">
-                              {YIELD_RATE_OPTIONS.map(({ value, label }) => (
-                                <RadioGroup.Option
-                                  value={value}
-                                  key={value}
-                                  as={Toggle}
-                                  size="sm"
-                                  pressed={yieldRate === value}
-                                >
-                                  {label}
-                                </RadioGroup.Option>
-                              ))}
-                            </div>
-                          </RadioGroup>
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
-                    <Explainer iconProps={{ className: 'inline mb-0.5' }}>
-                      Estimated returns based on yesterday 24hr trade fees.
-                      <br />
-                      <br />
-                      This value does not include the risk of divergence loss
-                      (IL), and assumes the position is “in-range” all the time.
-                    </Explainer>
-                  </span>
-                  <div className="flex flex-grow items-center justify-end">
-                    {!apr || !sanitizedCE ? (
-                      <span className="text-muted-foreground">
-                        Not enough data
-                      </span>
-                    ) : (
-                      <span>
+                )}
+                {noLiquidity ? null : (
+                  <div className="flex flex-wrap items-start justify-between gap-1 flex-col  sm:flex-row sm:items-center">
+                    <span>
+                      <TooltipProvider>
+                        <Tooltip delayDuration={0}>
+                          <TooltipTrigger asChild>
+                            <span className="mr-1">
+                              <span className="underline decoration-dotted">
+                                {yieldRate === YieldRatePeriod.DAILY
+                                  ? 'Daily Rate'
+                                  : yieldRate === YieldRatePeriod.MONTHLY
+                                    ? 'Monthly Rate'
+                                    : 'APR'}
+                              </span>{' '}
+                              (when in-range, excl. IL)
+                            </span>
+                          </TooltipTrigger>
+                          <TooltipContent className="!bg-secondary !p-0.5 !backdrop-blur-md">
+                            <RadioGroup
+                              value={yieldRate}
+                              onChange={setYieldRate}
+                            >
+                              <div className="flex gap-1 items-center">
+                                {YIELD_RATE_OPTIONS.map(({ value, label }) => (
+                                  <RadioGroup.Option
+                                    value={value}
+                                    key={value}
+                                    as={Toggle}
+                                    size="sm"
+                                    pressed={yieldRate === value}
+                                  >
+                                    {label}
+                                  </RadioGroup.Option>
+                                ))}
+                              </div>
+                            </RadioGroup>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                      <Explainer iconProps={{ className: 'inline mb-0.5' }}>
+                        Estimated returns based on yesterday 24hr trade fees.
+                        <br />
+                        <br />
+                        This value does not include the risk of divergence loss
+                        (IL), and assumes the position is “in-range” all the
+                        time.
+                      </Explainer>
+                    </span>
+                    <div className="flex flex-grow items-center justify-end">
+                      {!apr || !sanitizedCE ? (
                         <span className="text-muted-foreground">
-                          {formatPercent(apr)} * {sanitizedCE.toFixed(2)} =
-                        </span>{' '}
-                        {formatPercent(apr * sanitizedCE)}
-                      </span>
-                    )}
+                          Not enough data
+                        </span>
+                      ) : (
+                        <span>
+                          <span className="text-muted-foreground">
+                            {formatPercent(apr)} * {sanitizedCE.toFixed(2)} =
+                          </span>{' '}
+                          {formatPercent(apr * sanitizedCE)}
+                        </span>
+                      )}
+                    </div>
                   </div>
-                </div>
+                )}
               </CardDescription>
             </CardHeader>
           </Card>
