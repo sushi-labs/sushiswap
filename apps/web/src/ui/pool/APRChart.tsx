@@ -47,9 +47,9 @@ export enum PoolChartPeriod {
 }
 
 export const chartPeriods: Record<PoolChartPeriod, number> = {
-  [PoolChartPeriod.SevenDay]: 86400 * 1000 * 7, // 7 days
-  [PoolChartPeriod.ThirtyDay]: 86400 * 1000 * 30, // 30 days
-  [PoolChartPeriod.ThreeMonth]: 86400 * 1000 * 90, // 3 months (approx)
+  [PoolChartPeriod.SevenDay]: 86400 * 1000 * 7,
+  [PoolChartPeriod.ThirtyDay]: 86400 * 1000 * 30,
+  [PoolChartPeriod.ThreeMonth]: 86400 * 1000 * 90,
   [PoolChartPeriod.All]: Number.POSITIVE_INFINITY,
 }
 
@@ -281,13 +281,13 @@ export const APRChart = () => {
   const formatLabel = (date: Date, period: PoolChartPeriod): string => {
     switch (period) {
       case PoolChartPeriod.SevenDay:
-        return format(date, 'EEE') // Mon, Tue, Wed...
+        return format(date, 'EEE')
       case PoolChartPeriod.ThirtyDay:
-        return format(date, 'd MMM') // 5 Jul
+        return format(date, 'd MMM')
       case PoolChartPeriod.ThreeMonth:
-        return format(date, "MMM ''yy") // Jul 25
+        return format(date, "MMM ''yy")
       case PoolChartPeriod.All:
-        return format(date, "MMM ''yy") // Jan 25
+        return format(date, "MMM ''yy")
       default:
         return ''
     }
@@ -378,7 +378,7 @@ export const APRChart = () => {
                 APR
               </span>
               <div className="hidden gap-1 items-center lg:flex">
-                <span className="text-base lg:text-[1.75rem] font-medium underline decoration-dotted underline-offset-4 text-slate-900 dark:text-slate-100">
+                <span className="text-base lg:text-[1.75rem] font-medium underline decoration-dotted underline-offset-[5px] text-slate-900 dark:text-slate-100">
                   12.3%
                 </span>
                 <Currency.IconList

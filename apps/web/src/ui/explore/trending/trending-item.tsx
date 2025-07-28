@@ -1,14 +1,8 @@
-import { Currency } from '@sushiswap/ui'
+import { Currency, classNames } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import Link from 'next/link'
 import { NativeAddress } from 'src/lib/constants'
-import { type ChainId, ChainKey, type EvmChainId } from 'sushi/chain'
-import {
-  type SushiSwapV2ChainId,
-  type SushiSwapV3ChainId,
-  isSushiSwapV2ChainId,
-  isSushiSwapV3ChainId,
-} from 'sushi/config'
+import type { EvmChainId } from 'sushi/chain'
 import { Native, Token } from 'sushi/currency'
 import type { POOLS } from './trending'
 
@@ -87,8 +81,15 @@ export const TrendingItem = ({
           <div className="flex flex-col font-medium">
             <div className="text-sm">{pairName}</div>
             <div className="flex gap-2 items-center">
-              <div className="text-xs p-1 px-2 rounded-lg bg-[#3B7EF61A] text-[#3B7EF6] leading-3">
-                V3
+              <div
+                className={classNames(
+                  'text-xs p-1 px-2 rounded-lg leading-3',
+                  pool.version === 'v2'
+                    ? 'bg-[#F338C31A] text-[#F338C3]'
+                    : 'bg-[#3B7EF61A] text-[#3B7EF6]',
+                )}
+              >
+                {pool.version.toUpperCase()}
               </div>
               <div className="text-xs text-muted-foreground">{fee}</div>
             </div>

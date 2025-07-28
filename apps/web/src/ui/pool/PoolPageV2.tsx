@@ -78,7 +78,7 @@ export const PoolPageV2: FC<PoolPageV2> = ({ pool }) => {
               href={`/${ChainKey[pool.chainId]}/pool/v2/${pool.address}/add`}
             />
           </div>
-          <PoolAPR />
+          <PoolAPR version="v2" pool={pool} />
           <PoolComposition pool={pool} />
           <Pool24HVolume pool={pool} />
           <PoolPrice pool={pool} />

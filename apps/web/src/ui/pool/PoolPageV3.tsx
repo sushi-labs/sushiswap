@@ -75,7 +75,7 @@ const Pool: FC<{ pool: V3Pool }> = ({ pool }) => {
               positionCount={positions?.length}
             />
           ) : null}
-          <PoolAPR />
+          <PoolAPR version="v3" pool={pool} />
           <Wrapper enableBorder className="!p-3 flex flex-col gap-5">
             <CardHeader className="!p-0 flex !flex-row justify-between items-center lg:flex-col gap-1">
               <CardTitle className="text-slate-900">TVL</CardTitle>
