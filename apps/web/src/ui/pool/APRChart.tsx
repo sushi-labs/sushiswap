@@ -298,14 +298,51 @@ export const APRChart = () => {
     () => ({
       tooltip: {
         trigger: 'axis',
+        extraCssText:
+          'z-index: 1000; padding: 0 !important; box-shadow: none !important',
+        responsive: true,
+        // @ts-ignore
         backgroundColor: 'transparent',
-        borderWidth: 0,
-        extraCssText: 'z-index:1000;padding:0;box-shadow:none',
-        axisPointer: { lineStyle: { type: 'dashed' } },
-        formatter: (p: any) => {
-          onMouseOver({ name: p[0].name, value: p[0].value })
-          return ''
+        textStyle: {
+          fontSize: 12,
+          fontWeight: 600,
         },
+        axisPointer: {
+          lineStyle: {
+            type: 'dashed',
+          },
+        },
+        formatter: (params: any) => {
+          const [timestamp, value] = Array.isArray(params[0].value)
+            ? params[0].value
+            : [params[0].name, params[0].value]
+
+          onMouseOver({
+            name: timestamp,
+            value: typeof value === 'number' ? value : Number(value) || 0,
+          })
+
+          const date = new Date(timestamp)
+          return `<div class="flex flex-col gap-0.5 paper bg-white/50 dark:bg-slate-800/50 px-3 py-2 rounded-xl overflow-hidden shadow-lg">
+            <span class="text-sm font-medium text-gray-900 dark:text-slate-50">${
+              value
+            }%</span>
+            <span class="text-xs font-medium text-gray-500 dark:text-slate-400">${
+              date instanceof Date && !Number.isNaN(date?.getTime())
+                ? format(
+                    date,
+                    `dd MMM yyyy${
+                      chartPeriods[period] <
+                      chartPeriods[PoolChartPeriod.SevenDay]
+                        ? ' p'
+                        : ''
+                    }`,
+                  )
+                : ''
+            }</span>
+          </div>`
+        },
+        borderWidth: 0,
       },
       grid: { top: 0, left: 0, right: 0, bottom: 40 },
       color: [
