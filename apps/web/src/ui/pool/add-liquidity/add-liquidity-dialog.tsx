@@ -11,6 +11,7 @@ import { type ReactNode, useMemo, useState } from 'react'
 import { SushiSwapProtocol } from 'sushi'
 import type { Type } from 'sushi/currency'
 import { AddLiquidityV2 } from './add-liquidity-v2'
+import { AddLiquidityV3 } from './add-liquidity-v3'
 
 export const AddLiquidityDialog = ({
   poolType,
@@ -41,9 +42,21 @@ export const AddLiquidityDialog = ({
         )
 
       case 'SUSHISWAP_V3':
-        return <div>V3 Content</div>
+        return (
+          <AddLiquidityV3
+            hideTokenSelectors={hideTokenSelectors}
+            initToken0={token0}
+            initToken1={token1}
+          />
+        )
       default:
-        return <AddLiquidityV2 />
+        return (
+          <AddLiquidityV2
+            hideTokenSelectors={hideTokenSelectors}
+            initToken0={token0}
+            initToken1={token1}
+          />
+        )
     }
   }, [type, token0, token1, hideTokenSelectors])
 
