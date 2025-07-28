@@ -424,7 +424,7 @@ export const APRChart = () => {
           </div>
         </CardTitle>
       </CardHeader>
-      <CardContent className="!pb-2">
+      <CardContent className="!pb-0">
         <div className="flex gap-1 items-center lg:hidden">
           <span className="text-base lg:text-[1.75rem] font-medium underline decoration-dotted underline-offset-4">
             12.3%
