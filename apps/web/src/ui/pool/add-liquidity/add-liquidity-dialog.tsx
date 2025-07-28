@@ -67,7 +67,7 @@ export const AddLiquidityDialog = ({
         aria-describedby={undefined}
         className="!px-3 border-t border-[#EBEBEB] rounded-t-none md:rounded-t-2xl !bg-slate-50 dark:border-[#FFFFFF14] dark:!bg-slate-800 w-full !max-w-full md:!max-w-[900px] max-h-[100vh] overflow-y-auto hide-scrollbar"
       >
-        <div className="flex flex-col items-start w-full gap-6 px-4">
+        <div className="flex flex-col items-start w-full gap-6 md:px-4">
           <DialogTitle className="mt-4 md:mt-1 !font-medium">
             <div className="flex items-center gap-4">
               <span>Create New Position</span>
@@ -84,7 +84,7 @@ export const AddLiquidityDialog = ({
             </div>
           )}
         </div>
-        <div className="px-4 ">{content}</div>
+        <div className="md:px-4">{content}</div>
       </DialogContent>
     </Dialog>
   )

@@ -11,9 +11,7 @@ import {
   ConcentratedLiquidityURLStateProvider,
   useConcentratedLiquidityURLState,
 } from 'src/ui/pool/ConcentratedLiquidityURLStateProvider'
-import { ConcentratedLiquidityWidget } from 'src/ui/pool/ConcentratedLiquidityWidget'
-import { SelectPricesWidget } from 'src/ui/pool/SelectPricesWidget'
-import { ChainKey, computeSushiSwapV3PoolAddress } from 'sushi'
+import { computeSushiSwapV3PoolAddress } from 'sushi'
 import {
   SUSHISWAP_V3_FACTORY_ADDRESS,
   SUSHISWAP_V3_SUPPORTED_CHAIN_IDS,
@@ -22,8 +20,10 @@ import {
 } from 'sushi/config'
 import type { Type } from 'sushi/currency'
 import { useAccount } from 'wagmi'
+import { ConcentratedLiquidityWidget } from './conentrated-liquidity-widget'
 import { DoesNotExistMessage } from './does-not-exist-message'
 import { SelectFeeConcentratedWidget } from './select-fee-concentrated-widget'
+import { SelectPriceWidget } from './select-price-widget'
 import { SelectTokensWidgetV2 } from './select-tokens-widget-v2'
 
 export const AddLiquidityV3 = ({
@@ -121,6 +121,14 @@ const _Add = ({
     }
   }, [initToken0, initToken1, setToken0, setToken1])
 
+  const nextStep = () => {
+    if (step === 0) {
+      if (token0 && token1 && feeAmount) {
+        setStep(1)
+      }
+    }
+  }
+
   return (
     <div
       className={classNames(
@@ -159,26 +167,26 @@ const _Add = ({
             token1={token1}
             token0={token0}
           />
-          {!poolExists && token0 && token1 ? (
+          {!poolExists && token0 && token1 && feeAmount ? (
             <>
               <Collapsible open={!poolExists} className="w-full">
                 <DoesNotExistMessage />
               </Collapsible>
             </>
           ) : null}
-          <Button onClick={() => setStep(1)}>Next</Button>
+          <Button onClick={nextStep}>Next</Button>
         </>
       ) : null}
       {step === 1 ? (
         <>
-          {!poolExists && token0 && token1 ? (
+          {!poolExists && token0 && token1 && feeAmount ? (
             <>
               <Collapsible open={!poolExists} className="w-full">
                 <DoesNotExistMessage />
               </Collapsible>
             </>
           ) : null}
-          <SelectPricesWidget
+          <SelectPriceWidget
             chainId={chainId}
             token0={token0}
             token1={token1}
@@ -198,7 +206,7 @@ const _Add = ({
             tokensLoading={tokensLoading}
             existingPosition={position ?? undefined}
             tokenId={tokenId}
-            successLink={`/${ChainKey[chainId]}/pool/v3/${poolAddress}/${tokenId ?? 'positions'}`}
+            // successLink={`/${ChainKey[chainId]}/pool/v3/${poolAddress}/${tokenId ?? "positions"}`}
           />
         </>
       ) : null}
