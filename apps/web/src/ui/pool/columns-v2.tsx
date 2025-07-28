@@ -122,7 +122,7 @@ export const POOL_COLUMN: ColumnDef<Pool, unknown> = {
                     Token Price
                   </p>
                   <div className="flex items-start gap-2 min-w-[250px] text-sm flex-col">
-                    <div className="flex items-center w-full justify-between">
+                    <div className="flex justify-between items-center w-full">
                       <div className="flex items-center">
                         <Currency.Icon
                           width={20}
@@ -134,14 +134,14 @@ export const POOL_COLUMN: ColumnDef<Pool, unknown> = {
                           {token0.symbol}
                         </div>
                       </div>
-                      <div className="flex items-center gap-1">
+                      <div className="flex gap-1 items-center">
                         {formatUSD(priceMap?.get(token0.address) ?? 0)}
                         <span className={classNames(getTextColor(12))}>
                           todo%
                         </span>
                       </div>
                     </div>
-                    <div className="flex items-center w-full justify-between">
+                    <div className="flex justify-between items-center w-full">
                       <div className="flex items-center">
                         <Currency.Icon
                           width={20}
@@ -153,7 +153,7 @@ export const POOL_COLUMN: ColumnDef<Pool, unknown> = {
                           {token1.symbol}
                         </div>
                       </div>
-                      <div className="flex items-center gap-1">
+                      <div className="flex gap-1 items-center">
                         {formatUSD(priceMap?.get(token1.address) ?? 0)}
                         <span className={classNames(getTextColor(12))}>
                           todo%
@@ -173,12 +173,12 @@ export const POOL_COLUMN: ColumnDef<Pool, unknown> = {
   meta: {
     body: {
       skeleton: (
-        <div className="flex flex-col w-full gap-1 py-2">
-          <div className="flex items-center gap-1">
+        <div className="flex flex-col gap-1 py-2 w-full">
+          <div className="flex gap-1 items-center">
             <SkeletonCircle radius={24} />
             <SkeletonText fontSize="default" className="max-w-[50px]" />
           </div>
-          <div className="flex items-center gap-1">
+          <div className="flex gap-1 items-center">
             <SkeletonCircle radius={24} />
             <SkeletonText fontSize="default" className="max-w-[50px]" />
           </div>
@@ -206,7 +206,7 @@ export const POOL_TYPE_COLUMN: ColumnDef<Pool, unknown> = {
                 protocol={props.row.original.protocol as SushiSwapProtocol}
                 showFullName={true}
               />
-              <p className="text-sm text-slate-900 dark:text-pink-100 font-normal">
+              <p className="text-sm font-normal text-slate-900 dark:text-pink-100">
                 Classic liquidity pools have a fixed fee of 0.30% that utilize a
                 constant product formula to ensure a 50/50 composition of each
                 asset in the pool.
@@ -233,7 +233,7 @@ export const POOL_TYPE_COLUMN: ColumnDef<Pool, unknown> = {
                 protocol={props.row.original.protocol as SushiSwapProtocol}
                 showFullName={true}
               />
-              <p className="text-sm text-slate-900 dark:text-pink-100 font-normal">
+              <p className="text-sm font-normal text-slate-900 dark:text-pink-100">
                 Concentrated liquidity pools maximize capital efficiency by
                 focusing liquidity within a set price range around the current
                 pair price. If a user's position moves out of this range, it
@@ -295,7 +295,7 @@ export const POOL_TYPE_COLUMN: ColumnDef<Pool, unknown> = {
                 <div className="bg-[#F4F5F6] w-fit text-muted-foreground dark:bg-[#1E293B] dark:text-pink-200 text-xs px-2.5 py-1 rounded-full">
                   {formatNumber(props.row.original.swapFee * 100)}% Fee Tier
                 </div>
-                <p className="text-sm text-slate-900 dark:text-pink-100 font-normal">
+                <p className="text-sm font-normal text-slate-900 dark:text-pink-100">
                   A fee tier is the percentage of the liquidity provider fee
                   that is applied to swaps in a liquidity pool.
                 </p>
@@ -530,7 +530,7 @@ export const APR_WITH_REWARDS_COLUMN: ColumnDef<Pool, unknown> = {
         side="right"
         trigger={
           <div className="flex flex-col cursor-pointer pl-7 w-[150px]">
-            <div className="flex items-center gap-1">
+            <div className="flex gap-1 items-center">
               <span className="underline decoration-dotted underline-offset-2">
                 {Number.isNaN(props.row.original.totalApr1d)
                   ? '0%'
@@ -567,15 +567,15 @@ export const APR_WITH_REWARDS_COLUMN: ColumnDef<Pool, unknown> = {
                   : formatPercent(props.row.original.totalApr1d)}
               </p>
             </div>
-            <div className="flex items-center justify-between gap-2">
+            <div className="flex gap-2 justify-between items-center">
               <p>Fee APR</p>
               <p className="font-medium">
                 {formatPercent(props.row.original.feeApr1d)}
               </p>
             </div>
             <p>Liquidity Pool fees from swap transactions</p>
-            <div className="flex items-center justify-between gap-2">
-              <div className="flex items-center gap-2">
+            <div className="flex gap-2 justify-between items-center">
+              <div className="flex gap-2 items-center">
                 <p>Rewards APR</p>
                 {props.row.original.incentives.map((incentive) => (
                   <Currency.Icon
@@ -673,7 +673,7 @@ export const ACTION_COLUMN: ColumnDef<Pool, unknown> = {
             className="!gap-1 !w-[100px] !h-[36px] !rounded-lg"
             variant="tertiary"
           >
-            <div className="flex items-center gap-1">
+            <div className="flex gap-1 items-center">
               <PlusIcon className="w-[14px] max-w-[14px] h-[14px] max-h-[14px]" />
               <span>Add</span>
             </div>

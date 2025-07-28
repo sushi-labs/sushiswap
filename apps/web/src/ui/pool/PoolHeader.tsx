@@ -116,15 +116,19 @@ export const PoolHeader: FC<PoolHeader> = ({
                     ? 'text-blue'
                     : pool.protocol === 'SUSHISWAP_V2'
                       ? 'text-pink'
-                      : 'bg-green/20 text-green',
+                      : '',
                   'text-sm px-2 py-1 font-semibold rounded-full mt-0.5 bg-[#0000001F] dark:bg-[#FFFFFF1F]',
                 )}
               >
-                {pool.protocol === 'SUSHISWAP_V3'
-                  ? 'V3'
-                  : pool.protocol === 'SUSHISWAP_V2'
-                    ? 'V2'
-                    : 'UNKNOWN'}
+                {pool.protocol === 'SUSHISWAP_V3' ? (
+                  'V3'
+                ) : pool.protocol === 'SUSHISWAP_V2' ? (
+                  'V2'
+                ) : (
+                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#4217FF] to-[#3DB1FF]">
+                    Blade
+                  </span>
+                )}
               </div>
             </div>
             {showAddLiquidityButton && !isMd ? (

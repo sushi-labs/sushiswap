@@ -22,13 +22,6 @@ export const PoolAPR = ({
   const incentivesApr = pool?.incentiveApr?.toFixed(2)
   const incentives = pool?.incentives
 
-  console.log({
-    pool,
-    totalApr,
-    feeApr,
-    incentivesApr,
-    incentives,
-  })
   return (
     <Wrapper enableBorder className="!p-3">
       <CardHeader className="!p-0 !pb-5 flex justify-between items-center !flex-row lg:flex-col gap-1">

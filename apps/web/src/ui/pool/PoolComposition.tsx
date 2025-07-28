@@ -78,12 +78,6 @@ export const PoolComposition: FC<PoolCompositionProps> = ({ pool }) => {
 
       <CardContent className="!p-0">
         <CardGroup className="lg:!gap-6">
-          <div className="hidden justify-between items-center lg:flex">
-            <span className="text-base text-gray-500 lg:flex-row dark:text-slate-500">
-              Show stablecoin types
-            </span>
-            <Switch />
-          </div>
           <CardCurrencyAmountItem
             isLoading={isLoading}
             amount={amounts[0]}

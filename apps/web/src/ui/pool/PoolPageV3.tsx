@@ -2,8 +2,6 @@
 
 import type { V3Pool } from '@sushiswap/graph-client/data-api'
 import {
-  Button,
-  Card,
   CardContent,
   CardCurrencyAmountItem,
   CardDescription,
@@ -11,7 +9,6 @@ import {
   CardHeader,
   CardTitle,
   Container,
-  LinkInternal,
   Switch,
   classNames,
 } from '@sushiswap/ui'
@@ -29,8 +26,8 @@ import { ManagePositionButton } from './ManagePositionButton'
 import { Pool24HVolume } from './Pool24HVolume'
 import { PoolAPR } from './PoolAPR'
 import { PoolPrice } from './PoolPrice'
-import { PoolRewardDistributionsCard } from './PoolRewardDistributionsCard'
 import { PoolTransactionsV3 } from './PoolTransactionsV3'
+import { PoolsBladeSection } from './PoolsBladeSection'
 import { StatisticsChartsV3 } from './StatisticsChartV3'
 
 const PoolPageV3: FC<{ pool: V3Pool }> = ({ pool }) => {
@@ -61,11 +58,13 @@ const Pool: FC<{ pool: V3Pool }> = ({ pool }) => {
     chainIds: [chainId],
   })
 
+  const isBlade = false
   return (
     <Container maxWidth="screen-3xl" className="flex flex-col gap-4 px-4">
       <div className="flex flex-col-reverse gap-6 lg:flex-row">
         <div className="flex-[2_2_0%] min-[1230px]:flex-[3_3_0%] min-w-0 flex flex-col gap-6">
           <APRChart />
+          <PoolsBladeSection />
           <StatisticsChartsV3 address={address} chainId={chainId} pool={pool} />
         </div>
         <div className="flex-[1_1_0%] min-[1230px]:flex-[1_1_0%] min-w-0 flex flex-col gap-6">
@@ -98,12 +97,14 @@ const Pool: FC<{ pool: V3Pool }> = ({ pool }) => {
 
             <CardContent className="!p-0">
               <CardGroup className="lg:!gap-6">
-                <div className="hidden justify-between items-center lg:flex">
-                  <span className="text-base text-gray-500 lg:flex-row dark:text-slate-500">
-                    Show stablecoin types
-                  </span>
-                  <Switch />
-                </div>
+                {isBlade && (
+                  <div className="hidden justify-between items-center lg:flex">
+                    <span className="text-base text-gray-500 lg:flex-row dark:text-slate-500">
+                      Show stablecoin types
+                    </span>
+                    <Switch />
+                  </div>
+                )}
                 <CardCurrencyAmountItem
                   isLoading={isReservesLoading}
                   amount={reserves?.[0]}
