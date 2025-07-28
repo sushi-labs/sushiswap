@@ -10,7 +10,7 @@ import Image from 'next/image'
 export const PoolsBladeSection = () => {
   return (
     <div className="flex flex-col gap-8 justify-between items-center xl:gap-12 md:pl-8 xl:pl-12 md:flex-row">
-      <div className="flex flex-col gap-12 w-full md:w-1/2 xl:w-[36%]">
+      <div className="flex flex-col gap-12 w-full md:w-1/2 2xl:w-[36%]">
         <div className="flex flex-col gap-6">
           <div className="flex flex-col text-[1.75rem] leading-9 xl:leading-9 font-bold text-center md:gap-2 md:leading-6 md:text-2xl xl:text-4xl md:text-left">
             <span>Forget APY</span>
@@ -21,12 +21,12 @@ export const PoolsBladeSection = () => {
             smart trades, not by charging fees while disguising your losses as
             "impermanent."
           </p>
-          <div className="rounded-full flex items-center gap-2 w-fit px-4 py-2 text-muted-foreground bg-[#F4F5F6] dark:bg-[#1E293B]">
+          <div className="rounded-full flex items-center gap-2 w-fit px-4 py-2 text-[#3D657C] dark:text-muted-foreground bg-[#3D657C0A] dark:bg-[#1E293B]">
             <span className="text-sm font-medium">
               How Blade Generates Superior APY?
             </span>
             <div className="rounded-full bg-[#22485D] p-1 w-[22px] aspect-1">
-              <ChevronRightIcon />
+              <ChevronRightIcon className="text-[#F2F4F6] dark:text-inherit" />
             </div>
           </div>
         </div>
@@ -37,11 +37,21 @@ export const PoolsBladeSection = () => {
         width={607}
         height={429}
         loader={({ src }) => src}
-        className="hidden w-1/2 md:block"
+        className="hidden dark:md:block"
       />
+
+      <Image
+        src="/blade-chart-light.png"
+        alt="blade-chart"
+        width={607}
+        height={429}
+        loader={({ src }) => src}
+        className="hidden md:block dark:hidden"
+      />
+
       <div className="relative md:hidden">
         <Image
-          src="/blades.svg"
+          src="/blade-chart-mobile.svg"
           alt="blade-chart"
           width={315}
           height={241}
