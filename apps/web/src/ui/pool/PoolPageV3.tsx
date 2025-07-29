@@ -1,6 +1,8 @@
 'use client'
 
+import { PlusIcon } from '@heroicons/react-v1/solid'
 import type { V3Pool } from '@sushiswap/graph-client/data-api'
+import { useBreakpoint } from '@sushiswap/hooks'
 import {
   CardContent,
   CardCurrencyAmountItem,
@@ -11,12 +13,14 @@ import {
   Container,
   classNames,
 } from '@sushiswap/ui'
-import type { FC } from 'react'
+import { type FC, useMemo } from 'react'
 import { useTokenAmountDollarValues } from 'src/lib/hooks'
 import { useConcentratedLiquidityPoolStats } from 'src/lib/hooks/react-query'
 import { useConcentratedLiquidityPoolReserves } from 'src/lib/wagmi/hooks/pools/hooks/useConcentratedLiquidityPoolReserves'
 import { useConcentratedLiquidityPositions } from 'src/lib/wagmi/hooks/positions/hooks/useConcentratedLiquidityPositions'
-import { ChainKey } from 'sushi'
+import { ChainKey, SushiSwapProtocol } from 'sushi'
+import { unwrapToken } from 'sushi/currency'
+import { Token } from 'sushi/currency'
 import { formatUSD } from 'sushi/format'
 import { Wrapper } from '../swap/trade/wrapper'
 import { APRChart } from './APRChart'
@@ -27,6 +31,7 @@ import { PoolAPR } from './PoolAPR'
 import { PoolPrice } from './PoolPrice'
 import { PoolTransactionsV3 } from './PoolTransactionsV3'
 import { StatisticsChartsV3 } from './StatisticsChartV3'
+import { AddLiquidityDialog } from './add-liquidity/add-liquidity-dialog'
 
 const PoolPageV3: FC<{ pool: V3Pool }> = ({ pool }) => {
   return (
@@ -38,7 +43,7 @@ const PoolPageV3: FC<{ pool: V3Pool }> = ({ pool }) => {
 
 const Pool: FC<{ pool: V3Pool }> = ({ pool }) => {
   const { chainId, address } = pool
-
+  const { isMd } = useBreakpoint('md')
   const { data: poolStats } = useConcentratedLiquidityPoolStats({
     chainId,
     address,
@@ -56,6 +61,31 @@ const Pool: FC<{ pool: V3Pool }> = ({ pool }) => {
     chainIds: [chainId],
   })
 
+  const [token0, token1] = useMemo(() => {
+    if (!pool) return [undefined, undefined]
+
+    return [
+      unwrapToken(
+        new Token({
+          chainId: pool.token0.chainId,
+          address: pool.token0.address,
+          decimals: pool.token0.decimals,
+          symbol: pool.token0.symbol,
+          name: pool.token0.name,
+        }),
+      ),
+      unwrapToken(
+        new Token({
+          chainId: pool.token1.chainId,
+          address: pool.token1.address,
+          decimals: pool.token1.decimals,
+          symbol: pool.token1.symbol,
+          name: pool.token1.name,
+        }),
+      ),
+    ]
+  }, [pool])
+
   return (
     <Container maxWidth="screen-3xl" className="flex flex-col gap-4 px-4">
       <div className="flex flex-col-reverse gap-6 lg:flex-row">
@@ -64,12 +94,30 @@ const Pool: FC<{ pool: V3Pool }> = ({ pool }) => {
           <StatisticsChartsV3 address={address} chainId={chainId} pool={pool} />
         </div>
         <div className="flex-[1_1_0%] min-[1230px]:flex-[1_1_0%] min-w-0 flex flex-col gap-6">
-          {positions?.length ? (
-            <ManagePositionButton
-              href={`/${ChainKey[pool.chainId]}/pool/v3/${pool.address}/positions`}
-              positionCount={positions?.length}
-            />
-          ) : null}
+          <div className="flex flex-col gap-3">
+            {isMd ? (
+              <AddLiquidityDialog
+                poolType={SushiSwapProtocol.SUSHISWAP_V3}
+                hidePoolTypeToggle={true}
+                hideTokenSelectors={true}
+                token0={token0}
+                token1={token1}
+                initFeeAmount={pool.swapFee * 1000000}
+                trigger={
+                  <Button size="lg" className="w-full h-[52px]">
+                    <PlusIcon className="w-4 h-4" />
+                    <span>Add Liquidity</span>
+                  </Button>
+                }
+              />
+            ) : null}
+            {positions?.length ? (
+              <ManagePositionButton
+                href={`/${ChainKey[pool.chainId]}/pool/v3/${pool.address}/positions`}
+                positionCount={positions?.length}
+              />
+            ) : null}
+          </div>
           <PoolAPR version="v3" pool={pool} />
           <Wrapper enableBorder className="!p-3 flex flex-col gap-5">
             <CardHeader className="!p-0 flex !flex-row justify-between items-center lg:flex-col gap-1">
