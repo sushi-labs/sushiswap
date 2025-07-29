@@ -59,7 +59,7 @@ export const FunButton: FC<FunButtonProps> = ({
   ])
 
   const { beginCheckout } = useFunkitCheckout({
-    config: checkoutConfig
+    config: checkoutConfig,
   })
 
   const handleClick = useCallback(
