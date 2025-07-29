@@ -27,10 +27,10 @@ export const SliderPriceInput: FC<SliderPriceInputProps> = ({
         min={price ? price / 2 : 0}
         max={price ? price * 1.5 : 1}
         step={fivePercentOfPrice}
-        className="w-full bg-[#0000001A] dark:bg-[#FFFFFF14] rounded-full h-[22px]"
-        trackClassName="bg-[#0000001A] dark:bg-[#FFFFFF14] rounded-full h-[22px]"
-        thumbClassName="bg-blue dark:bg-skyblue h-7 w-7 border border-4 border-slate-200 dark:border-slate-750"
-        rangeClassName="bg-[#4217FF14] dark:bg-[#3DB1FF14] rounded-full"
+        className="w-full !bg-[#0000001A] dark:!bg-[#FFFFFF14] rounded-full h-[22px]"
+        trackClassName="!bg-[#0000001A] dark:!bg-[#FFFFFF14] rounded-full h-[22px]"
+        thumbClassName="!bg-blue dark:!bg-skyblue h-7 w-7 border border-4 !border-slate-200 dark:!border-slate-750"
+        rangeClassName="!bg-[#4217FF14] dark:!bg-[#3DB1FF14] rounded-full"
       />
     </div>
   )

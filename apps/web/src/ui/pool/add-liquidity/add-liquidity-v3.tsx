@@ -3,6 +3,7 @@
 import { ArrowLeftIcon } from '@heroicons/react-v1/solid'
 import { Button, Collapsible, classNames } from '@sushiswap/ui'
 import { useEffect, useMemo, useState } from 'react'
+import { useCreateQuery } from 'src/lib/hooks/useCreateQuery'
 import { useCurrentChainId } from 'src/lib/hooks/useCurrentChainId'
 import { usePoolsByTokenPair } from 'src/lib/hooks/usePoolsByTokenPair'
 import { useConcentratedPositionInfo } from 'src/lib/wagmi/hooks/positions/hooks/useConcentratedPositionInfo'
@@ -18,6 +19,7 @@ import {
   type SushiSwapV3ChainId,
   isWNativeSupported,
 } from 'sushi/config'
+import type { SushiSwapV3FeeAmount } from 'sushi/config'
 import type { Type } from 'sushi/currency'
 import { useAccount } from 'wagmi'
 import { ConcentratedLiquidityWidget } from './conentrated-liquidity-widget'
@@ -30,10 +32,12 @@ export const AddLiquidityV3 = ({
   initToken0,
   initToken1,
   hideTokenSelectors,
+  feeAmount,
 }: {
   initToken0?: Type
   initToken1?: Type
   hideTokenSelectors?: boolean
+  feeAmount?: SushiSwapV3FeeAmount
 }) => {
   const { chainId } = useCurrentChainId() as { chainId: SushiSwapV3ChainId }
 
@@ -44,6 +48,7 @@ export const AddLiquidityV3 = ({
           initToken0={initToken0}
           initToken1={initToken1}
           hideTokenSelectors={hideTokenSelectors}
+          initFeeAmount={feeAmount}
         />
       </ConcentratedLiquidityProvider>
     </ConcentratedLiquidityURLStateProvider>
@@ -54,13 +59,16 @@ const _Add = ({
   initToken0,
   initToken1,
   hideTokenSelectors,
+  initFeeAmount,
 }: {
   initToken0?: Type
   initToken1?: Type
   hideTokenSelectors?: boolean
+  initFeeAmount?: SushiSwapV3FeeAmount
 }) => {
   const [step, setStep] = useState(0)
   const { address } = useAccount()
+  const { createQuery } = useCreateQuery()
   const {
     chainId,
     token0,
@@ -111,15 +119,27 @@ const _Add = ({
         : undefined,
     [chainId, feeAmount, token0, token1],
   )
+
   const hasSteps = !initToken0 && !initToken1
 
   useEffect(() => {
     if (initToken0 && initToken1) {
       setStep(1)
-      setToken0(initToken0)
-      setToken1(initToken1)
     }
-  }, [initToken0, initToken1, setToken0, setToken1])
+    if (initFeeAmount && initToken0 && initToken1) {
+      createQuery([
+        {
+          name: 'fromCurrency',
+          value: initToken0.isNative ? 'NATIVE' : initToken0.address,
+        },
+        {
+          name: 'toCurrency',
+          value: initToken1.isNative ? 'NATIVE' : initToken1.address,
+        },
+        { name: 'feeAmount', value: initFeeAmount.toString() },
+      ])
+    }
+  }, [initToken0, initToken1, initFeeAmount, createQuery])
 
   const nextStep = () => {
     if (step === 0) {
@@ -200,8 +220,8 @@ const _Add = ({
             account={address}
             token0={token0}
             token1={token1}
-            setToken0={setToken0}
-            setToken1={setToken1}
+            setToken0={initToken0 ? undefined : setToken0}
+            setToken1={initToken1 ? undefined : setToken1}
             feeAmount={feeAmount}
             tokensLoading={tokensLoading}
             existingPosition={position ?? undefined}

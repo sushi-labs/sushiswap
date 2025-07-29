@@ -9,6 +9,7 @@ import {
 } from '@sushiswap/ui'
 import { type ReactNode, useMemo, useState } from 'react'
 import { SushiSwapProtocol } from 'sushi'
+import type { SushiSwapV3FeeAmount } from 'sushi/config'
 import type { Type } from 'sushi/currency'
 import { AddLiquidityV2 } from './add-liquidity-v2'
 import { AddLiquidityV3 } from './add-liquidity-v3'
@@ -20,6 +21,7 @@ export const AddLiquidityDialog = ({
   hideTokenSelectors,
   token0,
   token1,
+  initFeeAmount,
 }: {
   poolType: SushiSwapProtocol
   trigger: ReactNode
@@ -27,6 +29,7 @@ export const AddLiquidityDialog = ({
   hideTokenSelectors?: boolean
   token0?: Type
   token1?: Type
+  initFeeAmount?: SushiSwapV3FeeAmount
 }) => {
   const [type, setType] = useState<SushiSwapProtocol>(poolType)
 
@@ -47,6 +50,7 @@ export const AddLiquidityDialog = ({
             hideTokenSelectors={hideTokenSelectors}
             initToken0={token0}
             initToken1={token1}
+            feeAmount={initFeeAmount}
           />
         )
       default:
@@ -58,7 +62,7 @@ export const AddLiquidityDialog = ({
           />
         )
     }
-  }, [type, token0, token1, hideTokenSelectors])
+  }, [type, token0, token1, hideTokenSelectors, initFeeAmount])
 
   return (
     <Dialog>
