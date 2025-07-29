@@ -123,7 +123,12 @@ const Pool: FC<{ pool: V3Pool }> = ({ pool }) => {
         </div>
       </div>
 
-      <PoolTransactionsV3 pool={pool} poolAddress={address} />
+      <div className="flex gap-6 lg:flex-row">
+        <div className="flex-[2_2_0%] min-[1230px]:flex-[3_3_0%] min-w-0">
+          <PoolTransactionsV3 pool={pool} poolAddress={address} />
+        </div>
+        <div className="flex-[1_1_0%] min-[1230px]:flex-[1_1_0%] min-w-0 lg:block hidden" />
+      </div>
     </Container>
   )
 }

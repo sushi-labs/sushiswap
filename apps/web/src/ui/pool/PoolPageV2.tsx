@@ -86,7 +86,12 @@ export const PoolPageV2: FC<PoolPageV2> = ({ pool }) => {
         </div>
       </div>
 
-      <PoolTransactionsV2 pool={pool} poolAddress={pool.address} />
+      <div className="flex gap-6 lg:flex-row">
+        <div className="flex-[2_2_0%] min-[1230px]:flex-[3_3_0%] min-w-0">
+          <PoolTransactionsV2 pool={pool} poolAddress={pool.address} />
+        </div>
+        <div className="flex-[1_1_0%] min-[1230px]:flex-[1_1_0%] min-w-0 lg:block hidden" />
+      </div>
     </Container>
   )
 }
