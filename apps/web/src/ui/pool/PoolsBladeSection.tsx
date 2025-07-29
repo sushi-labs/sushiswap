@@ -21,7 +21,7 @@ export const PoolsBladeSection = () => {
             smart trades, not by charging fees while disguising your losses as
             "impermanent."
           </p>
-          <div className="rounded-full flex items-center gap-2 w-fit px-4 py-2 text-[#3D657C] dark:text-muted-foreground bg-[#3D657C0A] dark:bg-[#1E293B]">
+          <div className="rounded-full flex mx-auto lg:mx-0 items-center gap-2 w-fit px-4 py-2 text-[#3D657C] dark:text-muted-foreground bg-[#3D657C0A] dark:bg-[#1E293B]">
             <span className="text-sm font-medium">
               How Blade Generates Superior APY?
             </span>
@@ -49,7 +49,7 @@ export const PoolsBladeSection = () => {
         className="hidden md:block dark:hidden"
       />
 
-      <div className="relative md:hidden">
+      <div className="relative w-full md:hidden">
         <Image
           src="/blade-chart-mobile.svg"
           alt="blade-chart"
