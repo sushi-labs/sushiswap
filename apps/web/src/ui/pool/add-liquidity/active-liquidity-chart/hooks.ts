@@ -5,7 +5,7 @@ import {
 } from 'src/lib/pool/v3'
 import type { SushiSwapV3ChainId, SushiSwapV3FeeAmount } from 'sushi/config'
 import type { Type } from 'sushi/currency'
-import type { ChartEntry } from './types'
+import type { ChartEntry } from '../active-liquidity-chart/types'
 
 interface UseDensityChartData {
   chainId: SushiSwapV3ChainId

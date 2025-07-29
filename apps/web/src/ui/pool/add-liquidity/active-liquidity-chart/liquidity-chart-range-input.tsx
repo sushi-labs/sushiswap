@@ -6,7 +6,7 @@ import { Bound } from 'src/lib/constants'
 import type { SushiSwapV3ChainId, SushiSwapV3FeeAmount } from 'sushi/config'
 import type { Price, Token, Type } from 'sushi/currency'
 import { getPriceRangeWithTokenRatio } from 'sushi/pool/sushiswap-v3'
-import { ActiveLiquidityChart } from '../active-liquidity-chart/active-liquidity-chart'
+import { ActiveLiquidityChart } from './active-liquidity-chart'
 import { useDensityChartData } from './hooks'
 import type { HandleType, ZoomLevels } from './types'
 
@@ -258,8 +258,9 @@ export const LiquidityChartRangeInput = ({
             data={{
               series: data,
               current: price,
-              min: 0,
-              max: brushDomain?.[1] || 1,
+              min: price / 2, //todo: when have data lowest token price
+              // max: brushDomain?.[1] || 1, //todo: when have data highest token price
+              max: price * 2, //todo: when have data highest token price
             }}
             disableBrushInteraction={false}
             brushDomain={brushDomain}

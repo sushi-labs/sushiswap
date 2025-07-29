@@ -1,6 +1,6 @@
 import type { ScaleLinear } from 'd3'
 
-import type { ChartEntry } from '../liquidity-chart-range-input/types'
+import type { ChartEntry } from './types'
 
 export const HorizontalArea = ({
   series,

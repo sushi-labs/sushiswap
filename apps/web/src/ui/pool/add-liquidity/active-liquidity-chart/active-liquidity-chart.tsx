@@ -7,9 +7,9 @@ import { Button } from '@sushiswap/ui'
 import { max as getMax, scaleLinear, scaleTime } from 'd3'
 import { useTheme } from 'next-themes'
 import { type ReactNode, useEffect, useMemo, useRef, useState } from 'react'
-import type { ChartEntry } from '../liquidity-chart-range-input/types'
 import { AxisBottomTime } from './axis-bottom-time'
 import { Sparkline } from './svg'
+import type { ChartEntry } from './types'
 
 const xAccessor = (d: ChartEntry) => d.activeLiquidity
 const yAccessor = (d: ChartEntry) => d.price0
