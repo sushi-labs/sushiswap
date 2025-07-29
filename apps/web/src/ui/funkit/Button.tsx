@@ -21,7 +21,6 @@ type FunButtonProps = {
   targetAssetAmount: number
   targetAssetTicker?: string
   targetAssetIcon?: string
-  buttonText?: string
 } & ButtonProps &
   Omit<HTMLAttributes<HTMLButtonElement>, keyof ButtonProps | 'onClick'>
 
