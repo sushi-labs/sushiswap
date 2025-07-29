@@ -1,28 +1,28 @@
 'use client'
-import { Button, Container, useBreakpoint } from '@sushiswap/ui'
-import { PoolTransactionsV2 } from 'src/ui/pool/PoolTransactionsV2'
-
 import { PlusIcon } from '@heroicons/react-v1/solid'
 import type { V2Pool } from '@sushiswap/graph-client/data-api'
+import { Button, Container, useBreakpoint } from '@sushiswap/ui'
 import { type FC, useMemo } from 'react'
-import { ChainKey, SushiSwapProtocol, address } from 'sushi'
-import { Native, Token, unwrapToken } from 'sushi/currency'
+import { PoolTransactionsV2 } from 'src/ui/pool/PoolTransactionsV2'
+import { ChainKey, SushiSwapProtocol, formatUSD } from 'sushi'
+import { Token, unwrapToken } from 'sushi/currency'
 import { APRChart } from './APRChart'
 import { ManagePositionButton } from './ManagePositionButton'
 import { Pool24HVolume } from './Pool24HVolume'
 import { PoolAPR } from './PoolAPR'
 import { PoolChartV2 } from './PoolChartV2'
-import { PoolComposition } from './PoolComposition'
+import { PoolCompositionBlade } from './PoolCompositionBlade'
 import { PoolPrice } from './PoolPrice'
 import { PoolRewards } from './PoolRewards'
+import { PoolsBladeSection } from './PoolsBladeSection'
 import { AddLiquidityDialog } from './add-liquidity/add-liquidity-dialog'
 // import { UnknownTokenAlert } from './UnknownTokenAlert'
 
-interface PoolPageV2 {
+interface PoolPageBlade {
   pool: Awaited<V2Pool>
 }
 
-export const PoolPageV2: FC<PoolPageV2> = ({ pool }) => {
+export const PoolPageBlade: FC<PoolPageBlade> = ({ pool }) => {
   const [token0, token1] = useMemo(() => {
     if (!pool) return [undefined, undefined]
 
@@ -55,6 +55,7 @@ export const PoolPageV2: FC<PoolPageV2> = ({ pool }) => {
       <div className="flex flex-col-reverse gap-6 w-full lg:flex-row">
         <div className="flex-[2_2_0%] min-[1230px]:flex-[3_3_0%] min-w-0 flex flex-col gap-6">
           <APRChart />
+          <PoolsBladeSection />
           <PoolChartV2 pool={pool} />
         </div>
         <div className="flex-[1_1_0%] min-[1230px]:flex-[1_1_0%] min-w-0 flex flex-col gap-6">
@@ -79,7 +80,7 @@ export const PoolPageV2: FC<PoolPageV2> = ({ pool }) => {
             />
           </div>
           <PoolAPR version="v2" pool={pool} />
-          <PoolComposition pool={pool} />
+          <PoolCompositionBlade pool={pool} />
           <Pool24HVolume pool={pool} />
           <PoolPrice pool={pool} />
           {pool.isIncentivized ? <PoolRewards pool={pool} /> : null}

@@ -176,7 +176,7 @@ function useTransactionsV2(
   })
 }
 
-export function usePaginatedTransactions(
+function usePaginatedTransactions(
   pool: V2Pool | undefined | null,
   poolAddress: Address,
   opts: {

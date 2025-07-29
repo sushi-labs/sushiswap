@@ -6,12 +6,13 @@ import {
   CardHeader,
   CardTitle,
   DataTable,
+  Loader,
   Switch,
   Toggle,
 } from '@sushiswap/ui'
 import { useQuery } from '@tanstack/react-query'
-import type { PaginationState } from '@tanstack/react-table'
-import { type FC, useMemo, useState } from 'react'
+import type { TableState } from '@tanstack/react-table'
+import { type FC, useCallback, useMemo, useState } from 'react'
 import { EvmChain, type EvmChainId } from 'sushi/chain'
 import { type SushiSwapV3ChainId, isSushiSwapV3ChainId } from 'sushi/config'
 
@@ -23,6 +24,7 @@ import {
 } from '@sushiswap/graph-client/data-api'
 
 import type { V3Pool } from '@sushiswap/graph-client/data-api'
+import InfiniteScroll from 'react-infinite-scroll-component'
 import type { Address } from 'viem'
 import {
   TX_AMOUNT_IN_V3_COLUMN,
@@ -200,6 +202,51 @@ function useTransactionsV3(
   })
 }
 
+function usePaginatedTransactions(
+  pool: V3Pool | undefined | null,
+  poolAddress: Address,
+  opts: {
+    type: TransactionTypeV3 | 'All' | undefined
+    refetchInterval?: number
+  },
+) {
+  const PAGE_SIZE = 10
+
+  const {
+    data: allTransactions = [],
+    isLoading,
+    isError,
+  } = useTransactionsV3(pool, poolAddress, {
+    ...opts,
+    first: 100,
+  })
+
+  const [page, setPage] = useState(1)
+
+  const paginatedData = useMemo(() => {
+    return allTransactions.slice(0, page * PAGE_SIZE)
+  }, [allTransactions, page])
+
+  const hasNextPage = paginatedData.length < allTransactions.length
+
+  const fetchNextPage = useCallback(() => {
+    if (hasNextPage) {
+      setTimeout(() => {
+        setPage((prev) => prev + 1)
+      }, 500)
+    }
+  }, [hasNextPage])
+
+  return {
+    data: paginatedData,
+    isLoading,
+    isError,
+    fetchNextPage,
+    hasNextPage,
+    resetPagination: () => setPage(1),
+  }
+}
+
 type TransactionV3 = NonNullable<
   ReturnType<typeof useTransactionsV3>['data']
 >[0]
@@ -216,10 +263,6 @@ const PoolTransactionsV3: FC<PoolTransactionsV3Props> = ({
   const [type, setType] = useState<
     Parameters<typeof useTransactionsV3>['2']['type']
   >(TransactionTypeV3.Swap)
-  const [paginationState, setPaginationState] = useState<PaginationState>({
-    pageIndex: 0,
-    pageSize: 10,
-  })
 
   const COLUMNS = useMemo(() => {
     return [
@@ -235,18 +278,26 @@ const PoolTransactionsV3: FC<PoolTransactionsV3Props> = ({
     () =>
       ({
         refetchInterval: 60_000,
-        first:
-          paginationState.pageSize === 0 ? paginationState.pageIndex + 1 : 100,
         type,
       }) as const,
-    [paginationState.pageIndex, paginationState.pageSize, type],
+    [type],
   )
 
-  const { data, isLoading } = useTransactionsV3(pool, poolAddress, opts)
+  const { data, isLoading, fetchNextPage, hasNextPage } =
+    usePaginatedTransactions(pool, poolAddress, opts)
 
   const _data = useMemo(() => {
     return data ?? []
   }, [data])
+
+  const state: Partial<TableState> = useMemo(() => {
+    return {
+      pagination: {
+        pageIndex: 0,
+        pageSize: _data.length,
+      },
+    }
+  }, [_data.length])
 
   const toggleClass =
     'data-[state=on]:!border-blue data-[state=on]:!bg-[#4217FF14] dark:data-[state=on]:!bg-[#3DB1FF14] dark:data-[state=on]:!border-skyblue border border-accent'
@@ -297,21 +348,29 @@ const PoolTransactionsV3: FC<PoolTransactionsV3Props> = ({
         </CardTitle>
       </CardHeader>
       <CardContent className="!px-0">
-        <DataTable
-          linkFormatter={(row) =>
-            EvmChain.from(row.pool.chainId)?.getTxUrl(row.transaction.id) ?? ''
+        <InfiniteScroll
+          dataLength={_data.length}
+          next={fetchNextPage}
+          hasMore={hasNextPage}
+          loader={
+            <div className="flex justify-center py-4 w-full">
+              <Loader size={16} />
+            </div>
           }
-          loading={isLoading}
-          columns={COLUMNS}
-          data={_data}
-          pagination={true}
-          externalLink={true}
-          onPaginationChange={setPaginationState}
-          state={{
-            pagination: paginationState,
-          }}
-          className="!text-slate-900 dark:!text-[#FFF5FA] !px-6 !border-t-0"
-        />
+        >
+          <DataTable
+            state={state}
+            linkFormatter={(row) =>
+              EvmChain.from(row.pool.chainId)?.getTxUrl(row.transaction.id) ??
+              ''
+            }
+            loading={isLoading}
+            columns={COLUMNS}
+            data={_data}
+            externalLink={true}
+            className="!text-slate-900 dark:!text-[#FFF5FA] !px-6 !border-t-0"
+          />
+        </InfiniteScroll>
       </CardContent>
     </Card>
   )

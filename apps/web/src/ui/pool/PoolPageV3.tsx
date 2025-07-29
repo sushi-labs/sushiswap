@@ -4,8 +4,6 @@ import { PlusIcon } from '@heroicons/react-v1/solid'
 import type { V3Pool } from '@sushiswap/graph-client/data-api'
 import { useBreakpoint } from '@sushiswap/hooks'
 import {
-  Button,
-  Card,
   CardContent,
   CardCurrencyAmountItem,
   CardDescription,
@@ -13,8 +11,6 @@ import {
   CardHeader,
   CardTitle,
   Container,
-  LinkInternal,
-  Switch,
   classNames,
 } from '@sushiswap/ui'
 import { type FC, useMemo } from 'react'
@@ -33,7 +29,6 @@ import { ManagePositionButton } from './ManagePositionButton'
 import { Pool24HVolume } from './Pool24HVolume'
 import { PoolAPR } from './PoolAPR'
 import { PoolPrice } from './PoolPrice'
-import { PoolRewardDistributionsCard } from './PoolRewardDistributionsCard'
 import { PoolTransactionsV3 } from './PoolTransactionsV3'
 import { StatisticsChartsV3 } from './StatisticsChartV3'
 import { AddLiquidityDialog } from './add-liquidity/add-liquidity-dialog'
@@ -146,12 +141,6 @@ const Pool: FC<{ pool: V3Pool }> = ({ pool }) => {
 
             <CardContent className="!p-0">
               <CardGroup className="lg:!gap-6">
-                <div className="hidden justify-between items-center lg:flex">
-                  <span className="text-base text-gray-500 lg:flex-row dark:text-slate-500">
-                    Show stablecoin types
-                  </span>
-                  <Switch />
-                </div>
                 <CardCurrencyAmountItem
                   isLoading={isReservesLoading}
                   amount={reserves?.[0]}
@@ -166,12 +155,16 @@ const Pool: FC<{ pool: V3Pool }> = ({ pool }) => {
             </CardContent>
           </Wrapper>
           <Pool24HVolume pool={pool} />
-          <PoolPrice pool={pool} />
+          <PoolPrice pool={pool} showRate />
         </div>
       </div>
 
-      <PoolRewardDistributionsCard pool={pool} />
-      <PoolTransactionsV3 pool={pool} poolAddress={address} />
+      <div className="flex gap-6 lg:flex-row">
+        <div className="flex-[2_2_0%] min-[1230px]:flex-[3_3_0%] min-w-0">
+          <PoolTransactionsV3 pool={pool} poolAddress={address} />
+        </div>
+        <div className="flex-[1_1_0%] min-[1230px]:flex-[1_1_0%] min-w-0 lg:block hidden" />
+      </div>
     </Container>
   )
 }

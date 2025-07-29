@@ -17,11 +17,13 @@ import { Amount, Token } from 'sushi/currency'
 import { formatUSD } from 'sushi/format'
 import { Wrapper } from '../swap/trade/wrapper'
 
-interface PoolCompositionProps {
+interface PoolCompositionBladeProps {
   pool: V2Pool
 }
 
-export const PoolComposition: FC<PoolCompositionProps> = ({ pool }) => {
+export const PoolCompositionBlade: FC<PoolCompositionBladeProps> = ({
+  pool,
+}) => {
   const amounts = useMemo(() => {
     const token0 = new Token({
       chainId: pool.chainId,
@@ -78,6 +80,12 @@ export const PoolComposition: FC<PoolCompositionProps> = ({ pool }) => {
 
       <CardContent className="!p-0">
         <CardGroup className="lg:!gap-6">
+          <div className="hidden justify-between items-center lg:flex">
+            <span className="text-base text-gray-500 lg:flex-row dark:text-slate-500">
+              Show stablecoin types
+            </span>
+            <Switch />
+          </div>
           <CardCurrencyAmountItem
             isLoading={isLoading}
             amount={amounts[0]}

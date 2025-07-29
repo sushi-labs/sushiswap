@@ -117,16 +117,16 @@ export const PoolChartGraph: FC<PoolChartProps> = ({
 
   const formatLabel = (date: Date, period: PoolChartPeriod): string => {
     switch (period) {
-      case PoolChartPeriod.Day: // 1D
-        return format(date, 'HH:mm') // 14:04
-      case PoolChartPeriod.Week: // 1W
-        return format(date, 'EEE') // Mon, Tue
-      case PoolChartPeriod.Month: // 1M
-        return format(date, 'd MMM') // 5 Jul
-      case PoolChartPeriod.Year: // 1Y
-        return format(date, 'MMM') // Jul
-      case PoolChartPeriod.All: // All
-        return format(date, "MMM ''yy") // Jan '24
+      case PoolChartPeriod.Day:
+        return format(date, 'HH:mm')
+      case PoolChartPeriod.Week:
+        return format(date, 'EEE')
+      case PoolChartPeriod.Month:
+        return format(date, 'd MMM')
+      case PoolChartPeriod.Year:
+        return format(date, 'MMM')
+      case PoolChartPeriod.All:
+        return format(date, "MMM ''yy")
       default:
         return ''
     }
@@ -275,11 +275,11 @@ export const PoolChartGraph: FC<PoolChartProps> = ({
 
   return (
     <>
-      <CardContent>
+      <CardContent className="!pb-0">
         {isLoading ? (
           <SkeletonBox
             className={classNames(
-              'w-full h-[400px] dark:via-slate-800 dark:to-slate-900',
+              'mb-6 w-full h-[400px] dark:via-slate-800 dark:to-slate-900',
             )}
           />
         ) : isError ? (

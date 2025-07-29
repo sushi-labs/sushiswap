@@ -8,6 +8,7 @@ import {
   CardItem,
   CardTitle,
   Currency,
+  classNames,
 } from '@sushiswap/ui'
 import { Decimal } from 'sushi'
 import { Token } from 'sushi/currency'
@@ -16,8 +17,10 @@ import { Wrapper } from '../swap/trade/wrapper'
 
 export const PoolPrice = ({
   pool,
+  showRate = false,
 }: {
   pool: V2Pool | V3Pool
+  showRate?: boolean
 }) => {
   const reserveToken0 = pool.token0
   const reserveToken1 = pool.token1
@@ -68,8 +71,16 @@ export const PoolPrice = ({
               }
             >
               <span className="flex gap-1 font-medium">
-                1 {reserveToken0.symbol} = {reserve1To2} {reserveToken1.symbol}{' '}
-                <span className="font-normal text-muted-foreground">
+                {showRate
+                  ? `1 ${reserveToken0.symbol} = ${reserve1To2} ${reserveToken1.symbol}`
+                  : null}
+                <span
+                  className={classNames(
+                    'font-normal text-muted-foreground',
+                    !showRate &&
+                      '!text-slate-900 dark:!text-slate-50 !font-medium',
+                  )}
+                >
                   ${price0?.toFixed(2) ?? '0.00'}
                 </span>
               </span>
@@ -93,8 +104,16 @@ export const PoolPrice = ({
               }
             >
               <span className="flex gap-1 font-medium">
-                1 {reserveToken1.symbol} = {reserve2To1} {reserveToken0.symbol}{' '}
-                <span className="font-normal text-muted-foreground">
+                {showRate
+                  ? `1 ${reserveToken1.symbol} = ${reserve2To1} ${reserveToken0.symbol}`
+                  : null}
+                <span
+                  className={classNames(
+                    'font-normal text-muted-foreground',
+                    !showRate &&
+                      '!text-slate-900 dark:!text-slate-50 !font-medium',
+                  )}
+                >
                   ${price1?.toFixed(2) ?? '0.00'}
                 </span>
               </span>
