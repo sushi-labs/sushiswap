@@ -4,6 +4,7 @@ import { PlusIcon } from '@heroicons/react-v1/solid'
 import type { V3Pool } from '@sushiswap/graph-client/data-api'
 import { useBreakpoint } from '@sushiswap/hooks'
 import {
+  Button,
   CardContent,
   CardCurrencyAmountItem,
   CardDescription,
