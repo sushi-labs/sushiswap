@@ -26,7 +26,6 @@ import { Pool24HVolume } from './Pool24HVolume'
 import { PoolAPR } from './PoolAPR'
 import { PoolPrice } from './PoolPrice'
 import { PoolTransactionsV3 } from './PoolTransactionsV3'
-import { PoolsBladeSection } from './PoolsBladeSection'
 import { StatisticsChartsV3 } from './StatisticsChartV3'
 
 const PoolPageV3: FC<{ pool: V3Pool }> = ({ pool }) => {
@@ -62,7 +61,6 @@ const Pool: FC<{ pool: V3Pool }> = ({ pool }) => {
       <div className="flex flex-col-reverse gap-6 lg:flex-row">
         <div className="flex-[2_2_0%] min-[1230px]:flex-[3_3_0%] min-w-0 flex flex-col gap-6">
           <APRChart />
-          <PoolsBladeSection />
           <StatisticsChartsV3 address={address} chainId={chainId} pool={pool} />
         </div>
         <div className="flex-[1_1_0%] min-[1230px]:flex-[1_1_0%] min-w-0 flex flex-col gap-6">
