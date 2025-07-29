@@ -9,7 +9,6 @@ import {
   CardHeader,
   CardTitle,
   Container,
-  Switch,
   classNames,
 } from '@sushiswap/ui'
 import type { FC } from 'react'
@@ -58,7 +57,6 @@ const Pool: FC<{ pool: V3Pool }> = ({ pool }) => {
     chainIds: [chainId],
   })
 
-  const isBlade = false
   return (
     <Container maxWidth="screen-3xl" className="flex flex-col gap-4 px-4">
       <div className="flex flex-col-reverse gap-6 lg:flex-row">
@@ -97,14 +95,6 @@ const Pool: FC<{ pool: V3Pool }> = ({ pool }) => {
 
             <CardContent className="!p-0">
               <CardGroup className="lg:!gap-6">
-                {isBlade && (
-                  <div className="hidden justify-between items-center lg:flex">
-                    <span className="text-base text-gray-500 lg:flex-row dark:text-slate-500">
-                      Show stablecoin types
-                    </span>
-                    <Switch />
-                  </div>
-                )}
                 <CardCurrencyAmountItem
                   isLoading={isReservesLoading}
                   amount={reserves?.[0]}
@@ -119,7 +109,7 @@ const Pool: FC<{ pool: V3Pool }> = ({ pool }) => {
             </CardContent>
           </Wrapper>
           <Pool24HVolume pool={pool} />
-          <PoolPrice pool={pool} />
+          <PoolPrice pool={pool} showRate />
         </div>
       </div>
 
