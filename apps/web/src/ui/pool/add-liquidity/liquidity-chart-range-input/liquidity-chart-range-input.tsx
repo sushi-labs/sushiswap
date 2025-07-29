@@ -3,12 +3,10 @@ import { SkeletonBox } from '@sushiswap/ui'
 import { format } from 'd3'
 import React, { type FC, type ReactNode, useCallback, useMemo } from 'react'
 import { Bound } from 'src/lib/constants'
-import { type SushiSwapV3ChainId, SushiSwapV3FeeAmount } from 'sushi/config'
+import type { SushiSwapV3ChainId, SushiSwapV3FeeAmount } from 'sushi/config'
 import type { Price, Token, Type } from 'sushi/currency'
 import { getPriceRangeWithTokenRatio } from 'sushi/pool/sushiswap-v3'
-import colors from 'tailwindcss/colors'
-
-import { Chart } from './chart'
+import { ActiveLiquidityChart } from '../active-liquidity-chart/active-liquidity-chart'
 import { useDensityChartData } from './hooks'
 import type { HandleType, ZoomLevels } from './types'
 
@@ -17,32 +15,32 @@ const brushKeyToFieldKey: Record<HandleType, 'LOWER' | 'UPPER'> = {
   w: 'UPPER',
 }
 
-const ZOOM_LEVELS: Record<SushiSwapV3FeeAmount, ZoomLevels> = {
-  [SushiSwapV3FeeAmount.LOWEST]: {
-    initialMin: 0.999,
-    initialMax: 1.001,
-    min: 0.00001,
-    max: 1.5,
-  },
-  [SushiSwapV3FeeAmount.LOW]: {
-    initialMin: 0.999,
-    initialMax: 1.001,
-    min: 0.00001,
-    max: 1.5,
-  },
-  [SushiSwapV3FeeAmount.MEDIUM]: {
-    initialMin: 0.5,
-    initialMax: 2,
-    min: 0.00001,
-    max: 20,
-  },
-  [SushiSwapV3FeeAmount.HIGH]: {
-    initialMin: 0.5,
-    initialMax: 2,
-    min: 0.00001,
-    max: 20,
-  },
-}
+// const ZOOM_LEVELS: Record<SushiSwapV3FeeAmount, ZoomLevels> = {
+//   [SushiSwapV3FeeAmount.LOWEST]: {
+//     initialMin: 0.999,
+//     initialMax: 1.001,
+//     min: 0.00001,
+//     max: 1.5,
+//   },
+//   [SushiSwapV3FeeAmount.LOW]: {
+//     initialMin: 0.999,
+//     initialMax: 1.001,
+//     min: 0.00001,
+//     max: 1.5,
+//   },
+//   [SushiSwapV3FeeAmount.MEDIUM]: {
+//     initialMin: 0.5,
+//     initialMax: 2,
+//     min: 0.00001,
+//     max: 20,
+//   },
+//   [SushiSwapV3FeeAmount.HIGH]: {
+//     initialMin: 0.5,
+//     initialMax: 2,
+//     min: 0.00001,
+//     max: 20,
+//   },
+// }
 
 interface InfoBoxProps {
   message?: ReactNode
@@ -68,7 +66,7 @@ export const LiquidityChartRangeInput = ({
   currencyB,
   feeAmount,
   ticksAtLimit,
-  priceRange,
+  // priceRange,
   price,
   priceLower,
   priceUpper,
@@ -76,7 +74,8 @@ export const LiquidityChartRangeInput = ({
   onLeftRangeInput,
   onRightRangeInput,
   interactive,
-  hideBrushes = false,
+
+  // hideBrushes = false,
   tokenToggle,
 }: {
   chainId: SushiSwapV3ChainId
@@ -84,7 +83,7 @@ export const LiquidityChartRangeInput = ({
   currencyB: Type | undefined
   feeAmount?: SushiSwapV3FeeAmount
   ticksAtLimit: { [_bound in Bound]?: boolean | undefined }
-  priceRange: number | undefined
+  // priceRange: number | undefined
   price: number | undefined
   priceLower?: Price<Token, Token>
   priceUpper?: Price<Token, Token>
@@ -92,7 +91,7 @@ export const LiquidityChartRangeInput = ({
   onLeftRangeInput: (typedValue: string) => void
   onRightRangeInput: (typedValue: string) => void
   interactive: boolean
-  hideBrushes?: boolean
+  // hideBrushes?: boolean;
   tokenToggle?: ReactNode
 }) => {
   const isSorted =
@@ -153,7 +152,7 @@ export const LiquidityChartRangeInput = ({
       : undefined
   }, [isSorted, priceLower, priceUpper])
 
-  const brushLabelValue = useCallback(
+  const _brushLabelValue = useCallback(
     (d: 'w' | 'e', x: number) => {
       if (!price) return ''
 
@@ -181,7 +180,7 @@ export const LiquidityChartRangeInput = ({
    * If user locked a desired token weight, we need to compute a correct price range when user is brushing.
    * Note that when brushing, the `range` given from the brush event is NOT necessarily equal to what is displayed on the screen.
    */
-  const getNewRangeWhenBrushing = useCallback(
+  const _getNewRangeWhenBrushing = useCallback(
     (
       range: [number, number],
       movingHandle: HandleType | undefined,
@@ -254,30 +253,42 @@ export const LiquidityChartRangeInput = ({
         </div>
       ) : (
         <div className="relative items-center justify-center">
-          <Chart
-            data={{ series: data, current: price }}
-            dimensions={{ width: 400, height: 300 }}
-            margins={{ top: 10, right: 2, bottom: 20, left: 0 }}
-            styles={{
-              area: {
-                selection: colors.blue['500'],
-              },
-              brush: {
-                handle: {
-                  west: colors.blue['600'],
-                  east: colors.blue['600'],
-                },
-              },
-            }}
-            interactive={interactive}
-            brushLabels={brushLabelValue}
-            brushDomain={brushDomain}
-            onBrushDomainChange={onBrushDomainChangeEnded}
-            getNewRangeWhenBrushing={getNewRangeWhenBrushing}
-            zoomLevels={ZOOM_LEVELS[feeAmount ?? SushiSwapV3FeeAmount.MEDIUM]}
-            priceRange={priceRange}
-            hideBrushes={hideBrushes}
+          <ActiveLiquidityChart
             tokenToggle={tokenToggle}
+            data={{
+              series: data,
+              current: price,
+              min: 0,
+              max: brushDomain?.[1] || 1,
+            }}
+            disableBrushInteraction={false}
+            brushDomain={brushDomain}
+            dimensions={{
+              width: 452 + 64,
+              height: 164,
+              contentWidth: 68,
+              axisLabelPaneWidth: 64,
+            }}
+            onBrushDomainChange={(
+              domain: [number, number],
+              mode?: string,
+            ): void => {
+              // You can zoom out far enough to set an invalid range, so we prevent that here.
+              if (domain[0] < 0) {
+                return
+              }
+              onBrushDomainChangeEnded(domain, mode)
+              // While scrolling we receive updates to the range because the yScale changes,
+              // but we can filter them out because they have an undefined "mode".
+              // The initial range suggestion also comes with an undefined "mode", so we allow that here.
+              // const rejectAutoRangeSuggestion =
+              //   minPrice !== undefined && maxPrice !== undefined && minPrice >= 0 && maxPrice >= 0
+              // if (!mode && rejectAutoRangeSuggestion) {
+              //   return
+              // }
+              // setMinPrice(domain[0])
+              // setMaxPrice(domain[1])
+            }}
           />
         </div>
       )}

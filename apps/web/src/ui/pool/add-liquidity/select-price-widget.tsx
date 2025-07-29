@@ -245,6 +245,7 @@ export const SelectPriceWidget: FC<SelectPriceWidget> = ({
             token1.wrapped,
             current + (invertPrice ? -1 : 0) * TICK_SPACINGS[feeAmount],
           )
+          console.log(newLeftPrice.toFixed(18))
           onLeftRangeInput(newLeftPrice.toFixed(18))
           break
         }
@@ -553,36 +554,36 @@ export const SelectPriceWidget: FC<SelectPriceWidget> = ({
       <div className="rounded-xl flex flex-col md:px-4 gap-8">
         {isMounted && showStartPrice && token0 && token1 && (
           <div className="flex flex-col gap-3">
-            {/* {!noLiquidity && ( */}
-            <LiquidityChartRangeInput
-              chainId={chainId}
-              currencyA={token0}
-              currencyB={token1}
-              feeAmount={feeAmount}
-              ticksAtLimit={ticksAtLimit}
-              priceRange={priceRange}
-              price={
-                price
-                  ? Number.parseFloat(
-                      (invertPrice ? price.invert() : price).toSignificant(8),
-                    )
-                  : undefined
-              }
-              priceLower={priceLower}
-              priceUpper={priceUpper}
-              weightLockedCurrencyBase={weightLockedCurrencyBase}
-              onLeftRangeInput={(input) => {
-                setPriceRangeSelector(undefined)
-                onLeftRangeInput(input)
-              }}
-              onRightRangeInput={(input) => {
-                setPriceRangeSelector(undefined)
-                onRightRangeInput(input)
-              }}
-              interactive={!hasExistingPosition}
-              tokenToggle={tokenToggle}
-            />
-            {/* )} */}
+            {!noLiquidity && (
+              <LiquidityChartRangeInput
+                chainId={chainId}
+                currencyA={token0}
+                currencyB={token1}
+                feeAmount={feeAmount}
+                ticksAtLimit={ticksAtLimit}
+                priceRange={priceRange}
+                price={
+                  price
+                    ? Number.parseFloat(
+                        (invertPrice ? price.invert() : price).toSignificant(8),
+                      )
+                    : undefined
+                }
+                priceLower={priceLower}
+                priceUpper={priceUpper}
+                weightLockedCurrencyBase={weightLockedCurrencyBase}
+                onLeftRangeInput={(input) => {
+                  setPriceRangeSelector(undefined)
+                  onLeftRangeInput(input)
+                }}
+                onRightRangeInput={(input) => {
+                  setPriceRangeSelector(undefined)
+                  onRightRangeInput(input)
+                }}
+                interactive={!hasExistingPosition}
+                tokenToggle={tokenToggle}
+              />
+            )}
           </div>
         )}
         <div className="flex flex-col gap-3">

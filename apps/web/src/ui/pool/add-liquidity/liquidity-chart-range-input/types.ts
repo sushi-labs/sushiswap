@@ -3,6 +3,10 @@ import type { ReactNode } from 'react'
 export interface ChartEntry {
   activeLiquidity: number
   price0: number
+  price1?: number // Optional if not used
+  tick?: number
+  amount0Locked?: number
+  amount1Locked?: number
 }
 
 interface Dimensions {

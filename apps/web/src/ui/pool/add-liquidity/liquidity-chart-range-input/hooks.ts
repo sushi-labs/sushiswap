@@ -41,6 +41,8 @@ export function useDensityChartData({
       const chartEntry = {
         activeLiquidity: Number.parseFloat(t.liquidityActive.toString()),
         price0: Number.parseFloat(t.price0),
+        price1: Number.parseFloat(t.price1),
+        tick: t.tick,
       }
 
       if (chartEntry.activeLiquidity > 0) {

@@ -202,6 +202,7 @@ export default function computeSurroundingTicks(
       tick,
       liquidityNet: sortedTickData[i].liquidityNet,
       price0: tickToPrice(token0, token1, tick).toFixed(PRICE_FIXED_DIGITS),
+      price1: tickToPrice(token1, token0, tick).toFixed(PRICE_FIXED_DIGITS),
     }
 
     // Update the active liquidity.
