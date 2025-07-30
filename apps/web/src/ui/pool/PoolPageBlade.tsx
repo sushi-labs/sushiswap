@@ -50,15 +50,18 @@ export const PoolPageBlade: FC<PoolPageBlade> = ({ pool }) => {
   const { isMd } = useBreakpoint('md')
 
   return (
-    <Container maxWidth="screen-3xl" className="flex flex-col gap-4 px-4">
+    <Container
+      maxWidth="screen-3xl"
+      className="flex flex-col gap-4 px-4 lg:gap-6"
+    >
       {/* <UnknownTokenAlert pool={pool} /> */}
-      <div className="flex flex-col-reverse gap-6 w-full md:gap-10 lg:flex-row">
-        <div className="flex-[2_2_0%] min-[1230px]:flex-[3_3_0%] min-w-0 flex flex-col gap-6">
+      <div className="flex flex-col-reverse gap-4 w-full lg:gap-10 lg:flex-row">
+        <div className="flex-[2_2_0%] min-[1230px]:flex-[3_3_0%] min-w-0 flex flex-col gap-4 lg:gap-6">
           <APRChart />
           <PoolsBladeSection />
           <PoolChartV2 pool={pool} />
         </div>
-        <div className="flex-[1_1_0%] min-[1230px]:flex-[1_1_0%] min-w-0 flex flex-col gap-6">
+        <div className="flex-[1_1_0%] min-[1230px]:flex-[1_1_0%] min-w-0 flex flex-col gap-4 lg:gap-6">
           <div className="flex flex-col gap-3">
             {isMd ? (
               <AddLiquidityDialog
@@ -87,7 +90,7 @@ export const PoolPageBlade: FC<PoolPageBlade> = ({ pool }) => {
         </div>
       </div>
 
-      <div className="flex gap-6 md:gap-10 lg:flex-row">
+      <div className="flex gap-6 lg:gap-10 lg:flex-row">
         <div className="flex-[2_2_0%] min-[1230px]:flex-[3_3_0%] min-w-0">
           <PoolTransactionsV2 pool={pool} poolAddress={pool.address} />
         </div>

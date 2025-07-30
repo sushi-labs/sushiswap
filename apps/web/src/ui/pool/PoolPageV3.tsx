@@ -88,13 +88,16 @@ const Pool: FC<{ pool: V3Pool }> = ({ pool }) => {
   }, [pool])
 
   return (
-    <Container maxWidth="screen-3xl" className="flex flex-col gap-4 px-4">
-      <div className="flex flex-col-reverse gap-6 w-full md:gap-10 lg:flex-row">
-        <div className="flex-[2_2_0%] min-[1230px]:flex-[3_3_0%] min-w-0 flex flex-col gap-6">
+    <Container
+      maxWidth="screen-3xl"
+      className="flex flex-col gap-4 px-4 lg:gap-6"
+    >
+      <div className="flex flex-col-reverse gap-4 w-full lg:gap-10 lg:flex-row">
+        <div className="flex-[2_2_0%] min-[1230px]:flex-[3_3_0%] min-w-0 flex flex-col gap-4 lg:gap-6">
           <APRChart />
           <StatisticsChartsV3 address={address} chainId={chainId} pool={pool} />
         </div>
-        <div className="flex-[1_1_0%] min-[1230px]:flex-[1_1_0%] h-fit min-w-0 flex flex-col gap-6">
+        <div className="flex-[1_1_0%] min-[1230px]:flex-[1_1_0%] h-fit min-w-0 flex flex-col gap-4 lg:gap-6">
           <div
             className={classNames(
               'flex flex-col gap-3',
@@ -165,7 +168,7 @@ const Pool: FC<{ pool: V3Pool }> = ({ pool }) => {
         </div>
       </div>
 
-      <div className="flex gap-6 md:gap-10 lg:flex-row">
+      <div className="flex gap-6 lg:gap-10 lg:flex-row">
         <div className="flex-[2_2_0%] min-[1230px]:flex-[3_3_0%] min-w-0">
           <PoolTransactionsV3 pool={pool} poolAddress={address} />
         </div>
