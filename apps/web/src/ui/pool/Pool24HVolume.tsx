@@ -13,7 +13,7 @@ export const Pool24HVolume = ({ pool }: { pool: V2Pool | V3Pool }) => {
   return (
     <Wrapper
       enableBorder
-      className="!p-4 flex justify-between items-center lg:items-start gap-2 !lg:flex-col"
+      className="!p-4 flex justify-between items-center lg:items-start gap-2 lg:!flex-col"
     >
       <CardHeader className="!p-0">
         <CardTitle>

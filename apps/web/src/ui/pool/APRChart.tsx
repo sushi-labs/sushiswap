@@ -237,7 +237,7 @@ const tailwind = resolveConfig(tailwindConfig)
 
 export const APRChart = () => {
   const [period, setPeriod] = useState<PoolChartPeriod>(
-    PoolChartPeriod.SevenDay,
+    PoolChartPeriod.ThirtyDay,
   )
   const [isLoading, setIsLoading] = useState(true)
   const isError = false
@@ -404,6 +404,7 @@ export const APRChart = () => {
         <CardTitle className="">
           <div className="flex justify-between items-center">
             <div className="flex flex-col gap-1">
+              {/* @DEV TODO use APRHoverCard component instead */}
               <span className="text-sm !font-medium text-muted-foreground">
                 APR
               </span>

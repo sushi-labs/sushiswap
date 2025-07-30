@@ -18,10 +18,7 @@ import { Wrapper } from '../swap/trade/wrapper'
 export const PoolPrice = ({
   pool,
   showRate = false,
-}: {
-  pool: V2Pool | V3Pool
-  showRate?: boolean
-}) => {
+}: { pool: V2Pool | V3Pool; showRate?: boolean }) => {
   const reserveToken0 = pool.token0
   const reserveToken1 = pool.token1
 
@@ -47,7 +44,7 @@ export const PoolPrice = ({
     : '0.00'
 
   return (
-    <Wrapper enableBorder className="!p-3 flex flex-col gap-5">
+    <Wrapper enableBorder className="!p-4 flex flex-col gap-5">
       <CardHeader className="!p-0 flex flex-col gap-1">
         <CardTitle>Price</CardTitle>
       </CardHeader>
@@ -55,6 +52,7 @@ export const PoolPrice = ({
         <CardGroup className="lg:!gap-6">
           {reserveToken0 ? (
             <CardItem
+              className="!text-sm"
               title={
                 <div className="flex gap-2 items-center font-medium text-muted-foreground">
                   <Currency.Icon
