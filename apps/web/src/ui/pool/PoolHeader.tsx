@@ -83,7 +83,7 @@ export const PoolHeader: FC<PoolHeader> = ({
                   <Currency.Icon currency={token0} />
                   <Currency.Icon currency={token1} />
                 </Currency.IconList>
-                <div className="border-[#E8E7EB] dark:border-[#222137] border rounded-[4px] overflow-hidden z-10 absolute bottom-[1px] -right-1.5">
+                <div className="border-[#E8E7EB] dark:border-[#222137] border rounded-[4px] overflow-hidden z-10 absolute bottom-[1px] -right-1">
                   <NetworkIcon
                     type="square"
                     chainId={pool.chainId}
@@ -110,7 +110,7 @@ export const PoolHeader: FC<PoolHeader> = ({
               <div
                 className={classNames(
                   pool.protocol === 'SUSHISWAP_V3'
-                    ? 'text-blue'
+                    ? 'text-blue dark:text-skyblue'
                     : pool.protocol === 'SUSHISWAP_V2'
                       ? 'text-pink'
                       : '',
