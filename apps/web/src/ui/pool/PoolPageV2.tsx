@@ -52,7 +52,7 @@ export const PoolPageV2: FC<PoolPageV2> = ({ pool }) => {
   return (
     <Container maxWidth="screen-3xl" className="flex flex-col gap-4 px-4">
       {/* <UnknownTokenAlert pool={pool} /> */}
-      <div className="flex flex-col-reverse gap-6 w-full lg:flex-row">
+      <div className="flex flex-col-reverse gap-6 w-full md:gap-10 lg:flex-row">
         <div className="flex-[2_2_0%] min-[1230px]:flex-[3_3_0%] min-w-0 flex flex-col gap-6">
           <APRChart />
           <PoolChartV2 pool={pool} />
@@ -86,7 +86,7 @@ export const PoolPageV2: FC<PoolPageV2> = ({ pool }) => {
         </div>
       </div>
 
-      <div className="flex gap-6 lg:flex-row">
+      <div className="flex gap-6 md:gap-10 lg:flex-row">
         <div className="flex-[2_2_0%] min-[1230px]:flex-[3_3_0%] min-w-0">
           <PoolTransactionsV2 pool={pool} poolAddress={pool.address} />
         </div>
