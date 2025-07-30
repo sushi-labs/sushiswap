@@ -22,7 +22,7 @@ export const PoolAPR = ({
   return (
     <Wrapper enableBorder className="!p-3">
       <CardHeader className="!p-0 !pb-5 flex justify-between items-center !flex-row lg:flex-col gap-1">
-        <CardTitle className="text-slate-900 dark:text-slate-100">
+        <CardTitle className="text-slate-900 dark:lg:!text-slate-500 dark:!text-slate-100">
           Total APR
         </CardTitle>
         <CardDescription className="!mt-0 font-bold lg:font-medium text-sm lg:!text-2xl flex items-center">
