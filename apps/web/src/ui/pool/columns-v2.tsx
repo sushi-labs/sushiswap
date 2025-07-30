@@ -263,7 +263,7 @@ export const POOL_TYPE_COLUMN: ColumnDef<Pool, unknown> = {
     }, [props.row.original.protocol])
 
     return (
-      <div className="flex items-center gap-1 md:w-[230px]">
+      <div className="flex items-center gap-1 md:w-[180px]">
         <TooltipProvider>
           <Tooltip delayDuration={0}>
             <TooltipTrigger>
@@ -347,7 +347,7 @@ export const VOLUME_1D_COLUMN: ColumnDef<Pool, unknown> = {
   sortingFn: ({ original: rowA }, { original: rowB }) =>
     rowA.volumeUSD1d - rowB.volumeUSD1d,
   cell: (props) => (
-    <div className="flex flex-col w-[150px]">
+    <div className="flex flex-col w-[130px]">
       <span>
         {formatUSD(props.row.original.volumeUSD1d).includes('NaN')
           ? '$0.00'
@@ -388,7 +388,7 @@ export const VOLUME_1W_COLUMN: ColumnDef<Pool, unknown> = {
   sortingFn: ({ original: rowA }, { original: rowB }) =>
     Number(rowA.volumeUSD1w) - Number(rowB.volumeUSD1w),
   cell: (props) => (
-    <div className="flex flex-col w-[160px]">
+    <div className="flex flex-col w-[130px]">
       <span>
         {formatUSD(props.row.original.volumeUSD1w).includes('NaN')
           ? '$0.00'
@@ -429,7 +429,7 @@ export const TVL_COLUMN: ColumnDef<Pool, unknown> = {
   sortingFn: ({ original: rowA }, { original: rowB }) =>
     rowA.liquidityUSD - rowB.liquidityUSD,
   cell: (props) => (
-    <div className="flex flex-col w-[160px]">
+    <div className="flex flex-col w-[130px]">
       <span>
         {formatUSD(props.row.original.liquidityUSD).includes('NaN')
           ? '$0.00'
@@ -473,7 +473,7 @@ export const VOL_TVL_COLUMN: ColumnDef<Pool, unknown> = {
     const volTvl =
       props.row.original.volumeUSD1d / props.row.original.liquidityUSD
     return (
-      <span className="flex items-center justify-center w-[150px]">
+      <span className="flex items-center justify-center w-[130px]">
         {Number.isNaN(volTvl) ? '0' : formatNumber(volTvl)}
       </span>
     )
@@ -504,7 +504,7 @@ export const APR_WITH_REWARDS_COLUMN: ColumnDef<Pool, unknown> = {
     const hasIncentives = props.row.original.incentives.length > 0
     if (!hasIncentives) {
       return (
-        <div className="flex flex-col pl-7 w-[150px]">
+        <div className="flex flex-col pl-7 w-[130px]">
           <span>
             {Number.isNaN(props.row.original.totalApr1d)
               ? '0%'
@@ -530,7 +530,7 @@ export const APR_WITH_REWARDS_COLUMN: ColumnDef<Pool, unknown> = {
         dialogContentClassName="max-w-none"
         side="right"
         trigger={
-          <div className="flex flex-col cursor-pointer pl-7 w-[150px]">
+          <div className="flex flex-col cursor-pointer pl-7 w-[130px]">
             <div className="flex gap-1 items-center">
               <span className="underline decoration-dotted underline-offset-2">
                 {Number.isNaN(props.row.original.totalApr1d)
