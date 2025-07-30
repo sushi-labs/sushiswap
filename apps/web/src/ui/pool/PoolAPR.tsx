@@ -20,8 +20,8 @@ export const PoolAPR = ({
   const incentives = pool?.incentives
 
   return (
-    <Wrapper enableBorder className="!p-3">
-      <CardHeader className="!p-0 !pb-5 flex justify-between items-center !flex-row lg:flex-col gap-1">
+    <Wrapper enableBorder className="!p-4">
+      <CardHeader className="!p-0 !pb-5 flex justify-between items-center lg:items-start !flex-row lg:!flex-col gap-2">
         <CardTitle className="text-slate-900 dark:lg:!text-slate-500 dark:!text-slate-100">
           Total APR
         </CardTitle>

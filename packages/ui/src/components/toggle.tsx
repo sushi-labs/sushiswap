@@ -17,7 +17,7 @@ const toggleVariants = cva(
         trade2: classNames(
           'h-8 font-medium rounded-md data-[state=on]:!text-blue dark:data-[state=on]:!text-skyblue bg-transparent text-slate-900 dark:text-slate-100',
           'hover:ui-bg-secondary',
-          'data-[state=on]:!bg-blue/20 dark:data-[state=on]:!bg-skyblue/20',
+          'data-[state=on]:!bg-blue/10 dark:data-[state=on]:!bg-skyblue/10',
         ),
       },
       size: {

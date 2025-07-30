@@ -84,7 +84,7 @@ export const PoolPageV2: FC<PoolPageV2> = ({ pool }) => {
           <PoolAPR version="v2" pool={pool} />
           <PoolComposition pool={pool} />
           <Pool24HVolume pool={pool} />
-          <PoolPrice pool={pool} />
+          <PoolPrice pool={pool} showRate />
           {pool.isIncentivized ? <PoolRewards pool={pool} /> : null}
         </div>
       </div>

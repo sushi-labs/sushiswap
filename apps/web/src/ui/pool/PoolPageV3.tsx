@@ -128,8 +128,8 @@ const Pool: FC<{ pool: V3Pool }> = ({ pool }) => {
             ) : null}
           </div>
           <PoolAPR version="v3" pool={pool} />
-          <Wrapper enableBorder className="!p-3 flex flex-col gap-5">
-            <CardHeader className="!p-0 flex !flex-row justify-between items-center lg:flex-col gap-1">
+          <Wrapper enableBorder className="!p-4 flex flex-col gap-5">
+            <CardHeader className="!p-0 flex !flex-row justify-between items-center lg:items-start lg:!flex-col gap-2">
               <CardTitle className="text-slate-900 dark:lg:!text-slate-500 dark:!text-slate-100">
                 TVL
               </CardTitle>
