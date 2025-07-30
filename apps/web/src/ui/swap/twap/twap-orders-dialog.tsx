@@ -41,7 +41,7 @@ import type { TwapSupportedChainId } from 'src/config'
 import { type TwapOrder, useTwapOrders } from 'src/lib/hooks/react-query/twap'
 import { fillDelayText } from 'src/lib/swap/twap'
 import { useTokenWithCache } from 'src/lib/wagmi/hooks/tokens/useTokenWithCache'
-import { shortenAddress, shortenHash } from 'sushi'
+import { shortenAddress, shortenHash, withoutScientificNotation } from 'sushi'
 import { EvmChain } from 'sushi/chain'
 import { Amount, Native } from 'sushi/currency'
 import type { Address } from 'viem'
@@ -217,22 +217,33 @@ const TwapOrderDialogContent = ({
     executionPrice,
     limitPrice,
   } = useMemo(() => {
+    const srcAmount = withoutScientificNotation(order.srcAmount)
+    const srcAmountPerChunk = withoutScientificNotation(order.srcAmountPerChunk)
+    const filledSrcAmount = withoutScientificNotation(order.filledSrcAmount)
+    const filledDstAmount = withoutScientificNotation(order.filledDstAmount)
+    const dstMinAmount = withoutScientificNotation(order.dstMinAmount)
+
     return {
-      srcAmount: token0
-        ? Amount.fromRawAmount(token0, order.srcAmount)
-        : undefined,
-      srcChunkAmount: token0
-        ? Amount.fromRawAmount(token0, order.srcAmountPerChunk)
-        : undefined,
-      srcFilledAmount: token0
-        ? Amount.fromRawAmount(token0, order.filledSrcAmount)
-        : undefined,
-      dstFilledAmount: token1
-        ? Amount.fromRawAmount(token1, order.filledDstAmount)
-        : undefined,
-      dstMinAmountOut: token1
-        ? Amount.fromRawAmount(token1, order.dstMinAmount)
-        : undefined,
+      srcAmount:
+        token0 && srcAmount
+          ? Amount.fromRawAmount(token0, srcAmount)
+          : undefined,
+      srcChunkAmount:
+        token0 && srcAmountPerChunk
+          ? Amount.fromRawAmount(token0, srcAmountPerChunk)
+          : undefined,
+      srcFilledAmount:
+        token0 && filledSrcAmount
+          ? Amount.fromRawAmount(token0, filledSrcAmount)
+          : undefined,
+      dstFilledAmount:
+        token1 && filledDstAmount
+          ? Amount.fromRawAmount(token1, filledDstAmount)
+          : undefined,
+      dstMinAmountOut:
+        token1 && dstMinAmount
+          ? Amount.fromRawAmount(token1, dstMinAmount)
+          : undefined,
       executionPrice:
         token0 && token1
           ? getOrderExcecutionRate(order, token0.decimals, token1.decimals)
