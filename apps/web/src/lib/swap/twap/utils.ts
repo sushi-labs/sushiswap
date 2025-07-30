@@ -18,16 +18,16 @@ export const fillDelayText = (_value?: number | TimeDuration) => {
   const arr: string[] = []
 
   if (days) {
-    arr.push(`${days} days`)
+    arr.push(`${days} day${days !== 1 ? 's' : ''}`)
   }
   if (hours) {
-    arr.push(`${hours} hours`)
+    arr.push(`${hours} hour${hours !== 1 ? 's' : ''}`)
   }
   if (minutes) {
-    arr.push(`${minutes} minutes`)
+    arr.push(`${minutes} minute${minutes !== 1 ? 's' : ''}`)
   }
   if (seconds) {
-    arr.push(`${seconds} seconds`)
+    arr.push(`${seconds} second${seconds !== 1 ? 's' : ''}`)
   }
 
   return arr.join(' ')
