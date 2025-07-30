@@ -60,7 +60,7 @@ export const PoolPageV2: FC<PoolPageV2> = ({ pool }) => {
           <APRChart />
           <PoolChartV2 pool={pool} />
         </div>
-        <div className="flex-[1_1_0%] min-[1230px]:flex-[1_1_0%] min-w-0 flex flex-col gap-4 lg:gap-6">
+        <div className="flex-[1_1_0%] min-[1230px]:flex-[1_1_0%] min-w-0 flex flex-col gap-3">
           <div className="flex flex-col gap-3">
             {isMd ? (
               <AddLiquidityDialog
