@@ -36,7 +36,7 @@ export const PoolAPR = ({
               <span>Fee APR {version === 'v3' ? '(Full Range)' : ''}</span>
               <span>{feeApr}%</span>
             </div>
-            <span className="hidden text-sm lg:block text-slate-450 dark:text-slate-500">
+            <span className="hidden text-sm md:block text-slate-450 dark:text-slate-500">
               Liquidity Pool fees from swap transactions
             </span>
           </div>

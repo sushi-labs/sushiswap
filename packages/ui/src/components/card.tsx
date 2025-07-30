@@ -200,40 +200,57 @@ interface CardCurrencyAmountItemProps
   amount?: Amount<Type>
   fiatValue?: string
   unwrap?: boolean
+  amountClassName?: string
 }
 
 const CardCurrencyAmountItem = React.forwardRef<
   HTMLDivElement,
   CardCurrencyAmountItemProps
->(({ unwrap = true, isLoading, amount, fiatValue, ...props }, ref) => {
-  if (isLoading) {
-    return <CardItem ref={ref} skeleton />
-  }
+>(
+  (
+    {
+      unwrap = true,
+      isLoading,
+      amount,
+      fiatValue,
+      amountClassName = '',
+      ...props
+    },
+    ref,
+  ) => {
+    if (isLoading) {
+      return <CardItem ref={ref} skeleton />
+    }
 
-  if (amount) {
-    const currency = unwrap ? unwrapToken(amount?.currency) : amount?.currency
+    if (amount) {
+      const currency = unwrap ? unwrapToken(amount?.currency) : amount?.currency
 
-    return (
-      <CardItem
-        title={
-          <div className="flex gap-2 items-center font-medium text-slate-900 dark:text-slate-50">
-            <Currency.Icon currency={currency} width={18} height={18} />{' '}
-            {currency.symbol}
-          </div>
-        }
-        ref={ref}
-        {...props}
-      >
-        <span className="flex gap-1 font-semibold">
-          {amount.toSignificant(6)}{' '}
-          <span className="font-normal text-muted-foreground">{fiatValue}</span>
-        </span>
-      </CardItem>
-    )
-  }
+      return (
+        <CardItem
+          title={
+            <div className="flex gap-2 items-center font-medium text-slate-900 dark:text-slate-50">
+              <Currency.Icon currency={currency} width={18} height={18} />{' '}
+              {currency.symbol}
+            </div>
+          }
+          ref={ref}
+          {...props}
+        >
+          <span
+            className={classNames('flex gap-1 font-semibold', amountClassName)}
+          >
+            {amount.toSignificant(6)}{' '}
+            <span className="font-normal text-muted-foreground">
+              {fiatValue}
+            </span>
+          </span>
+        </CardItem>
+      )
+    }
 
-  return null
-})
+    return null
+  },
+)
 CardCurrencyAmountItem.displayName = 'CardCurrencyAmountItem'
 
 const CardContent = React.forwardRef<

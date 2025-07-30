@@ -154,11 +154,13 @@ const Pool: FC<{ pool: V3Pool }> = ({ pool }) => {
                   isLoading={isReservesLoading}
                   amount={reserves?.[0]}
                   fiatValue={formatUSD(fiatValues[0])}
+                  amountClassName="!font-medium"
                 />
                 <CardCurrencyAmountItem
                   isLoading={isReservesLoading}
                   amount={reserves?.[1]}
                   fiatValue={formatUSD(fiatValues[1])}
+                  amountClassName="!font-medium"
                 />
               </CardGroup>
             </CardContent>

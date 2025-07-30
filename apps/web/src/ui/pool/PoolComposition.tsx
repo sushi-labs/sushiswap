@@ -82,11 +82,13 @@ export const PoolComposition: FC<PoolCompositionProps> = ({ pool }) => {
             isLoading={isLoading}
             amount={amounts[0]}
             fiatValue={formatUSD(reserve0USD)}
+            amountClassName="!font-medium"
           />
           <CardCurrencyAmountItem
             isLoading={isLoading}
             amount={amounts[1]}
             fiatValue={formatUSD(reserve1USD)}
+            amountClassName="!font-medium"
           />
         </CardGroup>
       </CardContent>
