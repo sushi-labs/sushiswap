@@ -68,7 +68,7 @@ export const PoolHeader: FC<PoolHeader> = ({
         <div className="flex flex-col gap-4">
           <LinkInternal
             href={backUrl}
-            className="text-sm text-blue dark:text-skyblue hover:underline"
+            className="text-sm w-fit text-blue dark:text-skyblue hover:underline"
           >
             ← Pools
           </LinkInternal>
