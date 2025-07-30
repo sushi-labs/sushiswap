@@ -7,6 +7,7 @@ import {
   DialogTrigger,
 } from '@sushiswap/ui'
 import { type FC, type ReactNode, useMemo } from 'react'
+import { isSushiSwapV2Pool } from 'src/lib/functions'
 import { Token, type Type } from 'sushi/currency'
 import { formatPercent } from 'sushi/format'
 import type { SushiSwapV2Pool, SushiSwapV3Pool } from 'sushi/pool'
@@ -141,7 +142,8 @@ export const ZapRouteDialog: FC<ZapRouteDialogProps> = ({
               <div className="flex flex-col items-center">
                 <div className="text-sm font-medium truncate">100%</div>
                 <span className="text-[10px] font-medium text-muted-foreground truncate">
-                  Deposit to SushiSwap V2
+                  Deposit to SushiSwap{' '}
+                  {isSushiSwapV2Pool(pool as SushiSwapV2Pool) ? 'V2' : 'V3'}
                 </span>
               </div>
               <div className="flex items-center justify-end gap-1">
