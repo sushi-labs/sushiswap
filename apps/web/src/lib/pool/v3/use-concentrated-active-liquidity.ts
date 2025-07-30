@@ -20,6 +20,7 @@ export interface TickProcessed {
   liquidityActive: bigint
   liquidityNet: bigint
   price0: string
+  price1: string
 }
 
 const getActiveTick = (
@@ -125,6 +126,9 @@ export const useConcentratedActiveLiquidity = ({
           ? ticks[pivot].liquidityNet
           : 0n,
       price0: tickToPrice(_token0, _token1, activeTick).toFixed(
+        PRICE_FIXED_DIGITS,
+      ),
+      price1: tickToPrice(_token1, _token0, activeTick).toFixed(
         PRICE_FIXED_DIGITS,
       ),
     }

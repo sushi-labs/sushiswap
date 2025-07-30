@@ -13,10 +13,7 @@ import { Wrapper } from '../swap/trade/wrapper'
 export const PoolAPR = ({
   version,
   pool,
-}: {
-  version: 'v2' | 'v3'
-  pool: V2Pool | V3Pool
-}) => {
+}: { version: 'v2' | 'v3'; pool: V2Pool | V3Pool }) => {
   const totalApr = pool?.totalApr1d?.toFixed(2)
   const feeApr = pool?.feeApr1d?.toFixed(2)
   const incentivesApr = pool?.incentiveApr?.toFixed(2)

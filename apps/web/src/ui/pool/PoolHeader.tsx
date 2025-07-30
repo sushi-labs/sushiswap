@@ -1,7 +1,6 @@
 'use client'
 
 import { PlusIcon } from '@heroicons/react-v1/solid'
-import { ArrowTopRightOnSquareIcon } from '@heroicons/react/20/solid'
 import type { V2Pool, V3Pool } from '@sushiswap/graph-client/data-api'
 import {
   Button,
@@ -14,10 +13,8 @@ import {
 } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import React, { type FC, useMemo } from 'react'
-import { EvmChain, EvmChainKey } from 'sushi/chain'
+import { EvmChain } from 'sushi/chain'
 import { Token, unwrapToken } from 'sushi/currency'
-import { formatPercent, shortenAddress } from 'sushi/format'
-import { APRHoverCard } from './APRHoverCard'
 import { AddLiquidityDialog } from './add-liquidity/add-liquidity-dialog'
 
 type PoolHeader = {
@@ -138,6 +135,7 @@ export const PoolHeader: FC<PoolHeader> = ({
                 hideTokenSelectors={true}
                 token0={token0}
                 token1={token1}
+                initFeeAmount={pool?.swapFee * 1_000_000}
                 trigger={
                   <Button
                     size="sm"

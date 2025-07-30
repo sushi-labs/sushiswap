@@ -1,3 +1,4 @@
+import { useIsMounted } from '@sushiswap/hooks'
 import { Currency, classNames } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import Link from 'next/link'
@@ -17,6 +18,9 @@ export const TrendingItem = ({
 }) => {
   const { chainId, token0, token1, fee, tvl, volume, apr } = pool
   const pairName = `${token0.symbol}-${token1.symbol}`
+  const isMounted = useIsMounted()
+
+  if (!isMounted) return null
 
   return (
     <Link
@@ -121,7 +125,11 @@ export const TrendingItemMobile = ({
   pool,
   position,
   href,
-}: { pool: (typeof POOLS)[0]; position: number; href: string }) => {
+}: {
+  pool: (typeof POOLS)[0]
+  position: number
+  href: string
+}) => {
   const { chainId, token0, token1, fee, version } = pool
   const pairName = `${token0.symbol}-${token1.symbol}`
   return (

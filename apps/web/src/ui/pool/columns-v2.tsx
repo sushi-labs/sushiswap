@@ -16,8 +16,9 @@ import type { ColumnDef } from '@tanstack/react-table'
 import Link from 'next/link'
 import React, { useMemo } from 'react'
 import { getTextColor } from 'src/lib/helpers'
+
 import type { SushiSwapProtocol } from 'sushi'
-import { Token } from 'sushi/currency'
+import { Token, unwrapToken } from 'sushi/currency'
 import { formatNumber, formatPercent, formatUSD } from 'sushi/format'
 import { usePrices } from '~evm/_common/ui/price-provider/price-provider/use-prices'
 import { TooltipDrawer } from '../common/tooltip-drawer'
@@ -643,24 +644,29 @@ export const ACTION_COLUMN: ColumnDef<Pool, unknown> = {
   id: 'action',
   cell: (props) => {
     const poolType = props.row.original.protocol as SushiSwapProtocol
-
+    //@DEV need decimals from token0 and token1
     const [token0, token1] = useMemo(
       () => [
-        new Token({
-          chainId: props.row.original.chainId,
-          address: props.row.original.token0Address,
-          symbol: props.row.original.name?.split(' /')[0] ?? '',
-          decimals: 18,
-        }),
-        new Token({
-          chainId: props.row.original.chainId,
-          address: props.row.original.token1Address,
-          symbol: props.row.original.name?.split('/ ')[1] ?? '',
-          decimals: 0,
-        }),
+        unwrapToken(
+          new Token({
+            chainId: props.row.original.chainId,
+            address: props.row.original.token0Address,
+            symbol: props.row.original.name?.split(' /')[0] ?? '',
+            decimals: 18,
+          }),
+        ),
+        unwrapToken(
+          new Token({
+            chainId: props.row.original.chainId,
+            address: props.row.original.token1Address,
+            symbol: props.row.original.name?.split('/ ')[1] ?? '',
+            decimals: 18,
+          }),
+        ),
       ],
       [props.row.original],
     )
+
     return (
       <AddLiquidityDialog
         poolType={poolType}
@@ -668,6 +674,7 @@ export const ACTION_COLUMN: ColumnDef<Pool, unknown> = {
         token1={token1}
         hidePoolTypeToggle={true}
         hideTokenSelectors={true}
+        initFeeAmount={props.row.original.swapFee * 1_000_000}
         trigger={
           <Button
             className="!gap-1 !w-[100px] !h-[36px] !rounded-lg"

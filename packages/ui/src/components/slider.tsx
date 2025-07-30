@@ -7,38 +7,68 @@ import classNames from 'classnames'
 
 const Slider = React.forwardRef<
   React.ElementRef<typeof SliderPrimitive.Root>,
-  React.ComponentPropsWithoutRef<typeof SliderPrimitive.Root>
->(({ className, ...props }, ref) => (
-  <SliderPrimitive.Root
-    ref={ref}
-    className={classNames(
-      'relative flex w-full touch-none select-none items-center',
-      className,
-    )}
-    {...props}
-  >
-    <SliderPrimitive.Track className="relative h-2 w-full grow overflow-hidden rounded-full bg-secondary black:bg-white/[0.04]">
-      <SliderPrimitive.Range className="absolute h-full bg-primary" />
-    </SliderPrimitive.Track>
-    {props.defaultValue ? (
-      props.defaultValue.map((_el, i) => (
-        <SliderPrimitive.Thumb
-          key={i}
-          className="block h-5 w-5 rounded-full border-2 border-primary bg-blue hover:ring-4 ring-offset-background ring-accent transition-colors focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50"
+  React.ComponentPropsWithoutRef<typeof SliderPrimitive.Root> & {
+    trackClassName?: string
+    rangeClassName?: string
+    thumbClassName?: string
+  }
+>(
+  (
+    { className, trackClassName, rangeClassName, thumbClassName, ...props },
+    ref,
+  ) => (
+    <SliderPrimitive.Root
+      ref={ref}
+      className={classNames(
+        'relative flex w-full touch-none select-none items-center',
+        className,
+      )}
+      {...props}
+    >
+      <SliderPrimitive.Track
+        className={classNames(
+          'relative h-2 w-full grow overflow-hidden rounded-full bg-secondary black:bg-white/[0.04]',
+          trackClassName ?? '',
+        )}
+      >
+        <SliderPrimitive.Range
+          className={classNames(
+            'absolute h-full bg-primary',
+            rangeClassName ?? '',
+          )}
         />
-      ))
-    ) : props.value ? (
-      props.value.map((_el, i) => (
+      </SliderPrimitive.Track>
+      {props.defaultValue ? (
+        props.defaultValue.map((_el, i) => (
+          <SliderPrimitive.Thumb
+            key={i}
+            className={classNames(
+              'block h-5 w-5 rounded-full border-2 border-primary bg-blue hover:ring-4 ring-offset-background ring-accent transition-colors focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50',
+              thumbClassName ?? '',
+            )}
+          />
+        ))
+      ) : props.value ? (
+        props.value.map((_el, i) => (
+          <SliderPrimitive.Thumb
+            key={i}
+            className={classNames(
+              'block h-5 w-5 rounded-full border-2 border-primary bg-blue hover:ring-4 ring-offset-background ring-accent transition-colors disabled:pointer-events-none disabled:opacity-50',
+              thumbClassName ?? '',
+            )}
+          />
+        ))
+      ) : (
         <SliderPrimitive.Thumb
-          key={i}
-          className="block h-5 w-5 rounded-full border-2 border-primary bg-blue hover:ring-4 ring-offset-background ring-accent transition-colors disabled:pointer-events-none disabled:opacity-50"
+          className={classNames(
+            'block h-5 w-5 rounded-full border-2 border-primary bg-blue hover:ring-4 ring-offset-background ring-accent transition-colors disabled:pointer-events-none disabled:opacity-50',
+            thumbClassName ?? '',
+          )}
         />
-      ))
-    ) : (
-      <SliderPrimitive.Thumb className="block h-5 w-5 rounded-full border-2 border-primary bg-blue hover:ring-4 ring-offset-background ring-accent transition-colors disabled:pointer-events-none disabled:opacity-50" />
-    )}
-  </SliderPrimitive.Root>
-))
+      )}
+    </SliderPrimitive.Root>
+  ),
+)
 Slider.displayName = SliderPrimitive.Root.displayName
 
 export { Slider }
