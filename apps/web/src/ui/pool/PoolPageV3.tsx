@@ -97,7 +97,7 @@ const Pool: FC<{ pool: V3Pool }> = ({ pool }) => {
           <APRChart />
           <StatisticsChartsV3 address={address} chainId={chainId} pool={pool} />
         </div>
-        <div className="flex-[1_1_0%] min-[1230px]:flex-[1_1_0%] h-fit min-w-0 flex flex-col gap-4 lg:gap-6">
+        <div className="flex-[1_1_0%] min-[1230px]:flex-[1_1_0%] h-fit min-w-0 flex flex-col gap-3">
           <div
             className={classNames(
               'flex flex-col gap-3',
@@ -154,11 +154,13 @@ const Pool: FC<{ pool: V3Pool }> = ({ pool }) => {
                   isLoading={isReservesLoading}
                   amount={reserves?.[0]}
                   fiatValue={formatUSD(fiatValues[0])}
+                  amountClassName="!font-medium"
                 />
                 <CardCurrencyAmountItem
                   isLoading={isReservesLoading}
                   amount={reserves?.[1]}
                   fiatValue={formatUSD(fiatValues[1])}
+                  amountClassName="!font-medium"
                 />
               </CardGroup>
             </CardContent>
