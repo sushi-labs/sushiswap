@@ -8,6 +8,17 @@ const bundleAnalyzer = withBundleAnalyzer({
 /** @type {import('next').NextConfig} */
 const nextConfig = bundleAnalyzer({
   ...defaultNextConfig,
+  images: {
+    ...defaultNextConfig.images,
+    remotePatterns: [
+      // Support Sushi's Cloudinary CDN
+      {
+        protocol: 'https',
+        hostname: 'res.cloudinary.com',
+        pathname: '/sushi-cdn/image/*',
+      },
+    ],
+  },
   experimental: {
     ...defaultNextConfig.experimental,
     testProxy: process.env.NEXT_PUBLIC_APP_ENV === 'test',
@@ -40,6 +51,11 @@ const nextConfig = bundleAnalyzer({
         source: '/aptos',
         permanent: true,
         destination: '/aptos/swap',
+      },
+      {
+        source: '/stellar',
+        permanent: true,
+        destination: '/stellar/swap',
       },
       {
         source: '/tron',

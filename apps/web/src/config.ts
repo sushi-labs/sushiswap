@@ -10,6 +10,7 @@ import type { Address } from 'sushi/types'
 
 export const NonStandardChainId = {
   APTOS: 'aptos',
+  STELLAR: 'stellar',
   TRON: 'tron',
 } as const
 
@@ -37,6 +38,16 @@ export const NonStandardChain = {
     },
     shortName: 'aptos',
     chainId: 'aptos',
+  },
+  [NonStandardChainId.STELLAR]: {
+    name: 'Stellar',
+    nativeCurrency: {
+      name: 'Stellar',
+      symbol: 'XLM',
+      decimals: 7,
+    },
+    shortName: 'stellar',
+    chainId: 'stellar',
   },
   [NonStandardChainId.TRON]: {
     name: 'Tron',
@@ -72,7 +83,10 @@ export const DISABLED_CHAIN_IDS = [
   ChainId.TATARA,
 ] as const
 
-export const NEW_CHAIN_IDS = [ChainId.KATANA] as const
+export const NEW_CHAIN_IDS = [
+  NonStandardChainId.STELLAR,
+  ChainId.KATANA,
+] as const
 
 export const PREFERRED_CHAINID_ORDER = [
   ...NEW_CHAIN_IDS,
@@ -180,6 +194,7 @@ const UNSORTED_SUPPORTED_NETWORKS = [
   ...SUPPORTED_CHAIN_IDS,
   NonStandardChainId.APTOS,
   NonStandardChainId.TRON,
+  NonStandardChainId.STELLAR,
 ].filter(
   (c) => !DISABLED_CHAIN_IDS.includes(c as (typeof DISABLED_CHAIN_IDS)[number]),
 )
@@ -199,6 +214,7 @@ const UNSORTED_POOL_SUPPORTED_NETWORKS = [
   ...PoolChainIds,
   NonStandardChainId.APTOS,
   NonStandardChainId.TRON,
+  NonStandardChainId.STELLAR,
 ].filter(
   (c) => !DISABLED_CHAIN_IDS.includes(c as (typeof DISABLED_CHAIN_IDS)[number]),
 )
