@@ -3,7 +3,7 @@ import Image from 'next/image'
 
 export const PoolsBladeSection = () => {
   return (
-    <div className="flex flex-col gap-8 justify-between items-center border border-[#EBEBEB] dark:border-none p-4 rounded-xl bg-slate-50 dark:bg-transparent xl:gap-12 md:pl-12 xl:pl-12 md:flex-row">
+    <div className="flex flex-col gap-8 justify-between items-center border border-[#EBEBEB] dark:border-none md:p-4 rounded-xl bg-slate-50 dark:bg-transparent xl:gap-12 md:pl-12 xl:pl-12 md:flex-row">
       <div className="flex flex-col gap-12 w-full md:w-1/2 2xl:w-[37%]">
         <div className="flex flex-col gap-6">
           <div className="flex flex-col text-[1.75rem] leading-9 xl:!leading-10 font-bold text-center md:gap-2 md:leading-6 md:text-2xl xl:text-4xl md:text-left">

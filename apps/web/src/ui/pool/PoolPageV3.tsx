@@ -94,8 +94,13 @@ const Pool: FC<{ pool: V3Pool }> = ({ pool }) => {
           <APRChart />
           <StatisticsChartsV3 address={address} chainId={chainId} pool={pool} />
         </div>
-        <div className="flex-[1_1_0%] min-[1230px]:flex-[1_1_0%] min-w-0 flex flex-col gap-6">
-          <div className="flex flex-col gap-3">
+        <div className="flex-[1_1_0%] min-[1230px]:flex-[1_1_0%] h-fit min-w-0 flex flex-col gap-6">
+          <div
+            className={classNames(
+              'flex flex-col gap-3',
+              !isMd && !positions?.length && 'hidden',
+            )}
+          >
             {isMd ? (
               <AddLiquidityDialog
                 poolType={SushiSwapProtocol.SUSHISWAP_V3}
