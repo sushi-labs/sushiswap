@@ -35,6 +35,7 @@ import { isZapSupportedChainId } from 'src/config'
 import { useV3Zap } from 'src/lib/hooks'
 import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
 import { isZapRouteNotFoundError } from 'src/lib/hooks/useV2Zap'
+import { warningSeverity } from 'src/lib/swap/warningSeverity'
 import { Web3Input } from 'src/lib/wagmi/components/web3-input'
 import { useConcentratedPositionOwner } from 'src/lib/wagmi/hooks/positions/hooks/useConcentratedPositionOwner'
 import {
@@ -45,6 +46,7 @@ import {
   useApproved,
   withCheckerRoot,
 } from 'src/lib/wagmi/systems/Checker/Provider'
+import { Percent } from 'sushi/math'
 import type { SendTransactionReturnType } from 'viem'
 import {
   useAccount,
@@ -574,16 +576,14 @@ const ZapWidgetContent = withCheckerRoot(
 
     const [checked, setChecked] = useState(false)
 
-    const showPriceImpactWarning = false
-
-    // const showPriceImpactWarning = useMemo(() => {
-    //   const priceImpactSeverity = warningSeverity(
-    //     typeof zapResponse?.priceImpact === 'number'
-    //       ? new Percent(zapResponse.priceImpact, 10_000n)
-    //       : undefined,
-    //   )
-    //   return priceImpactSeverity > 3
-    // }, [zapResponse?.priceImpact])
+    const showPriceImpactWarning = useMemo(() => {
+      const priceImpactSeverity = warningSeverity(
+        typeof zapResponse?.priceImpact === 'number'
+          ? new Percent(zapResponse.priceImpact, 10_000n)
+          : undefined,
+      )
+      return priceImpactSeverity > 3
+    }, [zapResponse?.priceImpact])
 
     const showSlippageWarning = useMemo(() => {
       return !slippageTolerance.lessThan(SLIPPAGE_WARNING_THRESHOLD)
