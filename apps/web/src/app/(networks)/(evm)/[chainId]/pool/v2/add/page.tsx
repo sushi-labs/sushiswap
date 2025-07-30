@@ -25,7 +25,7 @@ import {
   NativeAddress,
 } from 'src/lib/constants'
 import { isSushiSwapV2Pool } from 'src/lib/functions'
-import { isZapRouteNotFoundError, useV2Zap } from 'src/lib/hooks'
+import { useV2Zap } from 'src/lib/hooks'
 import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
 import { warningSeverity } from 'src/lib/swap/warningSeverity'
 import { Web3Input } from 'src/lib/wagmi/components/web3-input'
@@ -460,9 +460,9 @@ const _ZapWidget: FC<ZapWidgetProps> = ({
                       loading={isZapLoading || isWritePending}
                       disabled={!preparedTx}
                     >
-                      {zapError && isZapRouteNotFoundError(zapError) ? (
+                      {isZapError ? (
                         'No route found'
-                      ) : isZapError || isEstGasError ? (
+                      ) : isEstGasError ? (
                         'Shoot! Something went wrong :('
                       ) : isWritePending ? (
                         <Dots>Confirm Transaction</Dots>
@@ -487,6 +487,7 @@ const _ZapWidget: FC<ZapWidgetProps> = ({
       )}
       <V2ZapInfoCard
         zapResponse={zapResponse}
+        isZapError={isZapError}
         inputCurrencyAmount={parsedInputAmount}
         pool={pool}
       />

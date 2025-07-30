@@ -34,7 +34,6 @@ import { ZapEventName, sendAnalyticsEvent } from '@sushiswap/telemetry'
 import { isZapSupportedChainId } from 'src/config'
 import { useV3Zap } from 'src/lib/hooks'
 import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
-import { isZapRouteNotFoundError } from 'src/lib/hooks/useV2Zap'
 import { warningSeverity } from 'src/lib/swap/warningSeverity'
 import { Web3Input } from 'src/lib/wagmi/components/web3-input'
 import { useConcentratedPositionOwner } from 'src/lib/wagmi/hooks/positions/hooks/useConcentratedPositionOwner'
@@ -652,9 +651,9 @@ const ZapWidgetContent = withCheckerRoot(
                         loading={isZapLoading || isWritePending}
                         disabled={!preparedTx}
                       >
-                        {zapError && isZapRouteNotFoundError(zapError) ? (
+                        {isZapError ? (
                           'No route found'
-                        ) : isZapError || isEstGasError ? (
+                        ) : isEstGasError ? (
                           'Shoot! Something went wrong :('
                         ) : isWritePending ? (
                           <Dots>Confirm Transaction</Dots>
@@ -679,6 +678,7 @@ const ZapWidgetContent = withCheckerRoot(
         )}
         <V3ZapInfoCard
           zapResponse={zapResponse}
+          isZapError={isZapError}
           inputCurrencyAmount={parsedInputAmount}
           pool={pool || null}
         />

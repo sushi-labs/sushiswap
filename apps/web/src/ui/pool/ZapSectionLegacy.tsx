@@ -47,7 +47,7 @@ import {
   useSendTransaction,
 } from 'wagmi'
 import { useRefetchBalances } from '~evm/_common/ui/balance-provider/use-refetch-balances'
-import { isZapRouteNotFoundError, useV2Zap } from '../../lib/hooks'
+import { useV2Zap } from '../../lib/hooks'
 import { PriceImpactWarning, SlippageWarning } from '../common'
 import { ToggleZapCard } from './ToggleZapCard'
 import { V2ZapInfoCard } from './V2ZapInfoCard'
@@ -307,9 +307,9 @@ const _ZapSectionLegacy: FC<ZapSectionLegacyProps> = ({
                           loading={isZapLoading || isWritePending}
                           disabled={!preparedTx}
                         >
-                          {zapError && isZapRouteNotFoundError(zapError) ? (
+                          {isZapError ? (
                             'No route found'
-                          ) : isZapError || isEstGasError ? (
+                          ) : isEstGasError ? (
                             'Shoot! Something went wrong :('
                           ) : isWritePending ? (
                             <Dots>Confirm Transaction</Dots>
@@ -334,6 +334,7 @@ const _ZapSectionLegacy: FC<ZapSectionLegacyProps> = ({
           )}
           <V2ZapInfoCard
             zapResponse={zapResponse}
+            isZapError={isZapError}
             inputCurrencyAmount={parsedInputAmount}
             pool={pool}
           />

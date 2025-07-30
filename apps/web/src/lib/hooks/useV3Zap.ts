@@ -144,9 +144,11 @@ export const useV3Zap = ({ query, ...params }: UseV3ZapParams) => {
       if (!liquidity || liquidity === 0n)
         throw new Error('Liquidity is zero or missing')
 
-      const inputCurrencyPrice = prices.get(amountIn.currency.wrapped.address)
-      const token0Price = prices?.get(pool.token0.address)
-      const token1Price = prices?.get(pool.token1.address)
+      const inputCurrencyPrice = prices.getFraction(
+        amountIn.currency.wrapped.address,
+      )
+      const token0Price = prices.getFraction(pool.token0.address)
+      const token1Price = prices.getFraction(pool.token1.address)
 
       const position = new Position({
         pool,
@@ -156,10 +158,10 @@ export const useV3Zap = ({ query, ...params }: UseV3ZapParams) => {
       })
 
       const amount0USD = token0Price
-        ? token0Price * Number(position.amount0.toSignificant())
+        ? +position.amount0.multiply(token0Price).toExact()
         : undefined
       const amount1USD = token1Price
-        ? token1Price * Number(position.amount1.toSignificant())
+        ? +position.amount1.multiply(token1Price).toExact()
         : undefined
 
       const amountOutUSD =
@@ -173,16 +175,12 @@ export const useV3Zap = ({ query, ...params }: UseV3ZapParams) => {
         typeof amountOutUSD !== 'undefined' &&
         typeof inputCurrencyPrice !== 'undefined'
       ) {
-        const inputUSD = inputCurrencyPrice
-          ? inputCurrencyPrice *
-            Number(
-              amountIn
-                .multiply(new Fraction(10_000 - 25, 10_000))
-                .toSignificant(),
-            )
-          : undefined
+        const inputUSD = +amountIn
+          .multiply(new Fraction(10_000 - 25, 10_000))
+          .multiply(inputCurrencyPrice)
+          .toExact()
 
-        if (typeof inputUSD !== 'undefined' && inputUSD > 0) {
+        if (inputUSD > 0) {
           priceImpact = Math.round(
             ((inputUSD - amountOutUSD) / inputUSD) * 10_000,
           )
@@ -198,10 +196,10 @@ export const useV3Zap = ({ query, ...params }: UseV3ZapParams) => {
       query?.enabled !== false &&
       Boolean(
         isZapSupportedChainId(params.chainId) &&
-          typeof params.sender !== 'undefined' &&
-          typeof params.pool !== 'undefined' &&
-          typeof params.ticks !== 'undefined' &&
-          typeof prices !== 'undefined' &&
+          params.sender &&
+          params.pool &&
+          params.ticks &&
+          prices &&
           params.amountIn.greaterThan(0n),
       ),
     ...query,
