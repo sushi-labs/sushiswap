@@ -9,15 +9,11 @@ import {
 import { formatUSD } from 'sushi/format'
 import { Wrapper } from '../swap/trade/wrapper'
 
-export const Pool24HVolume = ({
-  pool,
-}: {
-  pool: V2Pool | V3Pool
-}) => {
+export const Pool24HVolume = ({ pool }: { pool: V2Pool | V3Pool }) => {
   return (
     <Wrapper
       enableBorder
-      className="!p-3 flex justify-between items-center !flex-row"
+      className="!p-4 flex justify-between items-center lg:items-start gap-2 !lg:flex-col"
     >
       <CardHeader className="!p-0">
         <CardTitle>
