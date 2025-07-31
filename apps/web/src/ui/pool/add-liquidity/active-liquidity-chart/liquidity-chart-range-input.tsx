@@ -266,7 +266,7 @@ export const LiquidityChartRangeInput = ({
             brushDomain={brushDomain}
             dimensions={{
               width: 452 + 64,
-              height: 164,
+              height: 124,
               contentWidth: 68,
               axisLabelPaneWidth: 64,
             }}
