@@ -41,8 +41,9 @@ import type { TwapSupportedChainId } from 'src/config'
 import { type TwapOrder, useTwapOrders } from 'src/lib/hooks/react-query/twap'
 import { fillDelayText } from 'src/lib/swap/twap'
 import { useTokenWithCache } from 'src/lib/wagmi/hooks/tokens/useTokenWithCache'
-import { Amount } from 'sushi'
+import { Amount, withoutScientificNotation } from 'sushi'
 import {
+  type EvmCurrency,
   EvmNative,
   getEvmChainById,
   shortenEvmAddress,
@@ -186,6 +187,15 @@ const _TwapOrdersDialog: FC<{
   )
 }
 
+function parseOrderAmount(
+  currency: EvmCurrency | undefined,
+  orderAmount: string,
+): Amount<EvmCurrency> | undefined {
+  const amount = withoutScientificNotation(orderAmount)
+  if (!currency || !amount) return undefined
+  return new Amount(currency, amount)
+}
+
 const TwapOrderDialogContent = ({
   chainId,
   order,
@@ -224,19 +234,11 @@ const TwapOrderDialogContent = ({
     limitPrice,
   } = useMemo(() => {
     return {
-      srcAmount: token0 ? new Amount(token0, order.srcAmount) : undefined,
-      srcChunkAmount: token0
-        ? new Amount(token0, order.srcAmountPerChunk)
-        : undefined,
-      srcFilledAmount: token0
-        ? new Amount(token0, order.filledSrcAmount)
-        : undefined,
-      dstFilledAmount: token1
-        ? new Amount(token1, order.filledDstAmount)
-        : undefined,
-      dstMinAmountOut: token1
-        ? new Amount(token1, order.dstMinAmount)
-        : undefined,
+      srcAmount: parseOrderAmount(token0, order.srcAmount),
+      srcChunkAmount: parseOrderAmount(token0, order.srcAmountPerChunk),
+      srcFilledAmount: parseOrderAmount(token0, order.filledSrcAmount),
+      dstFilledAmount: parseOrderAmount(token1, order.filledDstAmount),
+      dstMinAmountOut: parseOrderAmount(token1, order.dstMinAmount),
       executionPrice:
         token0 && token1
           ? getOrderExcecutionRate(order, token0.decimals, token1.decimals)

@@ -8,7 +8,6 @@ import {
 } from 'sushi/evm'
 import type { Hex } from 'viem'
 import type { Address } from 'viem/accounts'
-import { useAllPrices } from '../prices'
 import { merklRewardsValidator } from './validator'
 
 interface UseClaimableRewardsParams {
@@ -32,8 +31,6 @@ export const useClaimableRewards = ({
   account,
   enabled = true,
 }: UseClaimableRewardsParams) => {
-  const { data: prices } = useAllPrices()
-
   return useQuery({
     queryKey: ['claimableMerklRewards', { account }],
     queryFn: async () => {
@@ -59,6 +56,7 @@ export const useClaimableRewards = ({
         if (rewards.length === 0) return accum
 
         const rewardAmounts = {} as Record<string, Amount<EvmCurrency>>
+        const prices = {} as Record<string, number | undefined>
 
         const claimArgs = {
           users: [] as Address[],
@@ -85,9 +83,10 @@ export const useClaimableRewards = ({
             )
             rewardAmounts[reward.token.address] = amount
           } else {
-            const token = new EvmToken(reward.token)
+            const token = new EvmToken({ ...reward.token, name: '' })
             const amount = new Amount(token, unclaimed)
             rewardAmounts[reward.token.address] = amount
+            prices[reward.token.address] = reward.token.price
           }
         })
 
@@ -95,20 +94,16 @@ export const useClaimableRewards = ({
 
         const rewardAmountsUSD = Object.entries(rewardAmounts).reduce(
           (prev, [key, amount]) => {
-            const price = prices
-              ?.get(chain.id)
-              ?.get(amount.currency.wrap().address.toLowerCase())
+            const price = prices[key]
 
-            if (!price) {
+            if (typeof price === 'undefined') {
               return prev
             }
 
-            const _amountUSD = Number(
-              Number(amount.toString()) * Number(price.toString({ fixed: 10 })),
-            )
+            const _amountUSD = Number(amount.toString()) * price
 
             const amountUSD =
-              Number.isNaN(price) || +price.toString({ fixed: 10 }) < 0.000001
+              Number.isNaN(price) || +price.toFixed(10) < 0.000001
                 ? 0
                 : _amountUSD
 
@@ -141,6 +136,6 @@ export const useClaimableRewards = ({
     },
     staleTime: 15000, // 15 seconds
     gcTime: 60000, // 1min
-    enabled: Boolean(enabled && account && prices),
+    enabled: Boolean(enabled && account),
   })
 }

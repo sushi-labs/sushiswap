@@ -9,7 +9,7 @@ catalog:
 
 catalogs:
   web3:
-    "sushi": 0.0.0-canary-20250718214236
+    "sushi": 6.0.0
     "wagmi": 2.15.6
     "@wagmi/core": 2.17.3
     "viem": 2.31.4

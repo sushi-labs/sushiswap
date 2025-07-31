@@ -19,7 +19,7 @@ export async function getChainIdsByFeature(
   variables: GetChainIdsByFeature,
   options?: RequestOptions,
 ) {
-  const url = `https://data-api-184-merge.data-gcp.sushi.com/graphql`
+  const url = `https://data-api-staging.data-gcp.sushi.com/graphql`
   // const url = `${SUSHI_DATA_API_HOST}/graphql`
   const result = await request(
     {

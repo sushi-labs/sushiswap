@@ -11,7 +11,7 @@ import {
 } from 'sushi/evm'
 import type { Address } from 'viem'
 import { useConfig } from 'wagmi'
-import { usePrices } from '~evm/_common/ui/price-provider/price-provider/use-prices'
+import { useMultiChainPrices } from '~evm/_common/ui/price-provider/price-provider/use-multi-chain-prices'
 import { getConcentratedLiquidityPools } from '../../pools/actions/getConcentratedLiquidityPool'
 import {
   getTokenWithCacheQueryFn,
@@ -59,32 +59,13 @@ export const useConcentratedLiquidityPositions = ({
   const { data: customTokens, hasToken } = useCustomTokens()
 
   const {
-    data: allPrices,
-    isError: isAllPricesError,
-    isLoading: isAllPricesInitialLoading,
-  } = useAllPrices({
-    enabled: chainIds.length > 1,
+    data: prices,
+    isError: isPriceError,
+    isLoading: isPriceInitialLoading,
+  } = useMultiChainPrices({
+    chainIds,
+    enabled: Boolean(account),
   })
-  const {
-    data: chainPrices,
-    isError: isChainPricesError,
-    isLoading: isChainPricesInitialLoading,
-  } = usePrices({
-    chainId: chainIds?.length === 1 ? chainIds[0] : undefined,
-  })
-
-  const prices = useMemo(() => {
-    if (chainIds.length > 1) {
-      return allPrices
-    }
-
-    if (chainIds.length === 1 && chainPrices) {
-      return new Map([[chainIds[0], chainPrices]])
-    }
-  }, [allPrices, chainPrices, chainIds])
-  const isPriceInitialLoading =
-    isAllPricesInitialLoading || isChainPricesInitialLoading
-  const isPriceError = isAllPricesError || isChainPricesError
 
   const config = useConfig()
 
@@ -192,14 +173,12 @@ export const useConcentratedLiquidityPositions = ({
           })
 
           const amountToUsd = (amount: Amount<EvmToken>) => {
-            const __price = prices?.get(chainId)?.get(amount.currency.address)
-            const _price =
-              typeof __price === 'number'
-                ? __price.toFixed(10)
-                : __price?.toNumber().toFixed(10)
+            const _price = prices?.get(chainId)?.get(amount.currency.address)
 
             if (!amount?.gt(0n) || !_price) return 0
-            const price = Number(Number(amount.toString()) * Number(__price))
+            const price = Number(
+              Number(amount.toString()) * Number(_price.toFixed(10)),
+            )
             if (Number.isNaN(price) || price < 0.000001) {
               return 0
             }
@@ -230,7 +209,10 @@ export const useConcentratedLiquidityPositions = ({
     },
     refetchInterval: Number.POSITIVE_INFINITY,
     enabled: Boolean(
-      account && chainIds && enabled && (prices || isPriceError),
+      account &&
+        chainIds &&
+        enabled &&
+        (!isPriceInitialLoading || isPriceError),
     ),
   })
 
