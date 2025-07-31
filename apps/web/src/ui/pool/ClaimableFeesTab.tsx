@@ -128,11 +128,11 @@ export const ClaimableFeesTab: FC = () => {
             }
 
             const _amountUSD = Number(
-              Number(amount.toString()) * Number(price.toString({ fixed: 10 })),
+              Number(amount.toString()) * Number(price.toFixed()),
             )
 
             const amountUSD =
-              Number.isNaN(price) || +price.toString({ fixed: 10 }) < 0.000001
+              Number.isNaN(price) || +price.toFixed(10) < 0.000001
                 ? 0
                 : _amountUSD
 
