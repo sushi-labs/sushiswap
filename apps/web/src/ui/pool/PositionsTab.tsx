@@ -11,12 +11,19 @@ import {
   TabsTrigger,
 } from '@sushiswap/ui'
 import type React from 'react'
-import { type FC, useState } from 'react'
+import { type FC, useMemo, useState } from 'react'
 
+import { BladeIcon } from '@sushiswap/ui/icons/BladeIcon'
 import { ChainKey } from 'sushi/chain'
-import type { SushiSwapChainId } from 'sushi/config'
+import {
+  type BladeChainId,
+  type SushiSwapChainId,
+  isBladeChainId,
+  isSushiSwapChainId,
+} from 'sushi/config'
 import { ConcentratedPositionsTable } from './ConcentratedPositionsTable/ConcentratedPositionsTable'
 import { PositionsTable } from './PositionsTable'
+import { BladePositionsTable } from './blade/BladePositionsTable'
 
 const ITEMS: { id: string; value: string; children: React.ReactNode }[] = [
   {
@@ -45,11 +52,33 @@ const ITEMS: { id: string; value: string; children: React.ReactNode }[] = [
   },
 ]
 
-export const PositionsTab: FC<{ chainId: SushiSwapChainId }> = ({
+export const PositionsTab: FC<{ chainId: SushiSwapChainId | BladeChainId }> = ({
   chainId,
 }) => {
   const [tab, setTab] = useState('v3')
   const [hideClosedPositions, setHideClosedPositions] = useState(true)
+
+  const items = useMemo(() => {
+    if (isBladeChainId(chainId)) {
+      return [
+        ...ITEMS,
+        {
+          id: 'blade',
+          value: 'blade',
+          children: (
+            <div className="flex items-center gap-2">
+              <span>
+                <BladeIcon className="h-3.5" />
+              </span>
+              <span>Blade</span>
+            </div>
+          ),
+        },
+      ]
+    }
+    return ITEMS
+  }, [chainId])
+
   return (
     <div className="flex flex-col gap-4">
       <Tabs value={tab} onValueChange={setTab} defaultValue="v3">
@@ -60,7 +89,7 @@ export const PositionsTab: FC<{ chainId: SushiSwapChainId }> = ({
                 <SelectValue placeholder="Pool type" />
               </SelectTrigger>
               <SelectContent>
-                {ITEMS.map((item) => (
+                {items.map((item) => (
                   <SelectItem key={item.value} value={item.value}>
                     {item.children}
                   </SelectItem>
@@ -69,7 +98,7 @@ export const PositionsTab: FC<{ chainId: SushiSwapChainId }> = ({
             </Select>
           </div>
           <TabsList className="hidden sm:inline-flex">
-            {ITEMS.map((item) => (
+            {items.map((item) => (
               <TabsTrigger
                 key={item.value}
                 value={item.value}
@@ -91,6 +120,11 @@ export const PositionsTab: FC<{ chainId: SushiSwapChainId }> = ({
             </div>
           ) : null}
         </div>
+        {isBladeChainId(chainId) && (
+          <TabsContent value="blade">
+            <BladePositionsTable chainId={chainId} />
+          </TabsContent>
+        )}
         <TabsContent value="v3">
           <ConcentratedPositionsTable
             chainId={chainId}
@@ -99,12 +133,14 @@ export const PositionsTab: FC<{ chainId: SushiSwapChainId }> = ({
           />
         </TabsContent>
         <TabsContent value="v2">
-          <PositionsTable
-            chainId={chainId}
-            rowLink={(row) =>
-              `/${ChainKey[chainId]}/pool/v2/${row.pool.address}/add`
-            }
-          />
+          {isSushiSwapChainId(chainId) && (
+            <PositionsTable
+              chainId={chainId}
+              rowLink={(row) =>
+                `/${ChainKey[chainId]}/pool/v2/${row.pool.address}/add`
+              }
+            />
+          )}
         </TabsContent>
       </Tabs>
     </div>
