@@ -65,9 +65,10 @@ export const PoolPageBlade: FC<PoolPageBlade> = ({ pool }) => {
           <div className="flex flex-col gap-3">
             {isMd ? (
               <AddLiquidityDialog
-                poolType={SushiSwapProtocol.SUSHISWAP_V2}
+                // @ts-expect-error - ok until we have a blade pool type
+                poolType={'BLADE'}
                 hidePoolTypeToggle={true}
-                hideTokenSelectors={true}
+                hideTokenSelectors={false}
                 token0={token0}
                 token1={token1}
                 trigger={

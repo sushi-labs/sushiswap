@@ -471,11 +471,11 @@ export const APRChart = () => {
         {isLoading ? (
           <SkeletonBox
             className={classNames(
-              'w-full h-[400px] dark:via-slate-800 dark:to-slate-900',
+              'w-full h-[134px] !mb-4 dark:via-slate-800 dark:to-slate-900',
             )}
           />
         ) : isError ? (
-          <div className="h-[400px] w-full" />
+          <div className="h-[134px] !mb-4 w-full" />
         ) : (
           <ReactEchartsCore
             echarts={echarts}

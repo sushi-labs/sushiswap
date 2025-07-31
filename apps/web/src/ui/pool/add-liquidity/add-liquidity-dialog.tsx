@@ -11,6 +11,7 @@ import { type ReactNode, useMemo, useState } from 'react'
 import { SushiSwapProtocol } from 'sushi'
 import type { SushiSwapV3FeeAmount } from 'sushi/config'
 import type { Type } from 'sushi/currency'
+import { AddLiquidityBlade } from './add-liquidity-blade'
 import { AddLiquidityV2 } from './add-liquidity-v2'
 import { AddLiquidityV3 } from './add-liquidity-v3'
 
@@ -53,6 +54,14 @@ export const AddLiquidityDialog = ({
             feeAmount={initFeeAmount}
           />
         )
+      // @ts-expect-error - ok until we have a blade pool type
+      case 'BLADE':
+        return (
+          <AddLiquidityBlade
+            hideTokenSelectors={hideTokenSelectors}
+            initToken0={token0}
+          />
+        )
       default:
         return (
           <AddLiquidityV2
@@ -71,9 +80,9 @@ export const AddLiquidityDialog = ({
         aria-describedby={undefined}
         className="!px-3 border-t border-[#EBEBEB] rounded-t-none md:rounded-t-2xl !bg-slate-50 dark:border-[#FFFFFF14] dark:!bg-slate-800 w-full !max-w-full md:!max-w-[900px] max-h-[100dvh] overflow-y-auto hide-scrollbar"
       >
-        <div className="flex flex-col items-start w-full gap-6 md:px-4">
+        <div className="flex flex-col gap-6 items-start w-full md:px-4">
           <DialogTitle className="mt-4 md:mt-1 !font-medium">
-            <div className="flex items-center gap-4">
+            <div className="flex gap-4 items-center">
               <span>Create New Position</span>
               {hidePoolTypeToggle ? null : (
                 <span className="hidden md:flex">
@@ -83,7 +92,7 @@ export const AddLiquidityDialog = ({
             </div>
           </DialogTitle>
           {hidePoolTypeToggle ? null : (
-            <div className="md:hidden flex w-full">
+            <div className="flex w-full md:hidden">
               <ProtocolToggle poolType={type} setType={setType} />
             </div>
           )}
