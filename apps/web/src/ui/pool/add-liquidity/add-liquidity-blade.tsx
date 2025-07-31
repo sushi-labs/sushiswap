@@ -249,6 +249,11 @@ export const AddLiquidityBlade = ({
               dollarValue={estimatedValue}
               isLoading={isAnyPriceLoading}
             />
+
+            <div className="px-4 py-2 text-sm font-medium text-blue dark:text-skyblue bg-[#4217FF14] dark:bg-[#3DB1FF14] rounded-lg">
+              💡 For high value deposits, it might be more profitable if you
+              deposit with multiple assets.
+            </div>
           </div>
         )
       }}
@@ -532,7 +537,7 @@ const AddLiquidityWidget: FC<AddLiquidityWidgetProps> = ({
             className="w-4 h-4 dark:text-skyblue text-blue"
           />
           <span className="font-semibold text-blue dark:text-skyblue">
-            Depost Multiple Assets
+            Deposit Multiple Assets
           </span>
         </button>
       )}

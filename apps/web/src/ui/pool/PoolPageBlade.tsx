@@ -79,9 +79,9 @@ export const PoolPageBlade: FC<PoolPageBlade> = ({ pool }) => {
                 }
               />
             ) : null}
-            <ManagePositionButton
+            {/* <ManagePositionButton
               href={`/${ChainKey[pool.chainId]}/pool/v2/${pool.address}/add`}
-            />
+            /> */}
           </div>
           <PoolAPR version="v2" pool={pool} />
           <PoolCompositionBlade pool={pool} />
