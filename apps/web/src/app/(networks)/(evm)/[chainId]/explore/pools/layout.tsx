@@ -6,7 +6,6 @@ import type React from 'react'
 import { POOL_SUPPORTED_NETWORKS } from 'src/config'
 import { GlobalStatsCharts } from 'src/ui/explore/global-stats-charts'
 import { PoolsFiltersProvider } from 'src/ui/pool'
-import type { ChainId } from 'sushi/chain'
 import { Header } from '../../header'
 import { NavigationItems } from '../navigation-items'
 
@@ -23,7 +22,7 @@ export default async function ExploreLayout(props: {
 
   const { children } = props
 
-  const chainId = +params.chainId as ChainId
+  const chainId = +params.chainId
 
   if (!isPoolChainId(chainId)) {
     return notFound()

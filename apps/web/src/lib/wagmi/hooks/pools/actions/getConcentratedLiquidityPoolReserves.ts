@@ -1,7 +1,8 @@
 import type { V3Pool } from '@sushiswap/graph-client/data-api'
 import { getBalance } from '@wagmi/core'
 import type { PublicWagmiConfig } from 'src/lib/wagmi/config/public'
-import { Amount, Token } from 'sushi/currency'
+import { Amount } from 'sushi'
+import { EvmToken } from 'sushi/evm'
 
 export const getConcentratedLiquidityPoolReserves = async ({
   pool,
@@ -24,7 +25,7 @@ export const getConcentratedLiquidityPoolReserves = async ({
   ])
 
   return [
-    Amount.fromRawAmount(new Token(pool.token0), balance1.value),
-    Amount.fromRawAmount(new Token(pool.token1), balance2.value),
+    new Amount(new EvmToken(pool.token0), balance1.value),
+    new Amount(new EvmToken(pool.token1), balance2.value),
   ]
 }

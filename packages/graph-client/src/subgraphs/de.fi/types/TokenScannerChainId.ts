@@ -1,4 +1,4 @@
-import type { ChainId } from 'sushi/chain'
+import type { ChainId } from 'sushi'
 
 export const TokenScannerChainIds = [
   1, 56, 137, 250, 42161, 43114, 25, 10, 8453, 59144,

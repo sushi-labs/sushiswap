@@ -1,4 +1,4 @@
-import type { EvmChainId } from 'sushi'
+import type { EvmChainId } from 'sushi/evm'
 
 export enum PriceWorkerPostMessageType {
   Initialize = 'Initialize',

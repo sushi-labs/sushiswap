@@ -8,16 +8,15 @@ import {
 } from '@sushiswap/telemetry'
 import { type FC, type ReactElement, useCallback, useMemo } from 'react'
 import type { ConcentratedLiquidityPosition } from 'src/lib/wagmi/hooks/positions/types'
-import type { EvmChainId } from 'sushi/chain'
+import { Amount } from 'sushi'
 import {
-  SUSHISWAP_V3_POSITION_MANAGER,
-  isSushiSwapV3ChainId,
-} from 'sushi/config'
-import { Amount, type Type } from 'sushi/currency'
-import {
+  type EvmCurrency,
   NonfungiblePositionManager,
   type Position,
-} from 'sushi/pool/sushiswap-v3'
+  SUSHISWAP_V3_POSITION_MANAGER,
+  isSushiSwapV3ChainId,
+} from 'sushi/evm'
+import type { EvmChainId } from 'sushi/evm'
 import {
   type Hex,
   type SendTransactionReturnType,
@@ -35,8 +34,8 @@ import { useRefetchBalances } from '~evm/_common/ui/balance-provider/use-refetch
 interface ConcentratedLiquidityCollectButton {
   positionDetails: ConcentratedLiquidityPosition | undefined
   position: Position | undefined
-  token0: Type | undefined
-  token1: Type | undefined
+  token0: EvmCurrency | undefined
+  token1: EvmCurrency | undefined
   account: `0x${string}` | undefined
   chainId: EvmChainId
   children(
@@ -73,17 +72,17 @@ export const ConcentratedLiquidityCollectButton: FC<
       isSushiSwapV3ChainId(chainId)
     ) {
       const feeValue0 = positionDetails.fees
-        ? Amount.fromRawAmount(token0, positionDetails.fees[0])
+        ? new Amount(token0, positionDetails.fees[0])
         : undefined
       const feeValue1 = positionDetails.fees
-        ? Amount.fromRawAmount(token1, positionDetails.fees[1])
+        ? new Amount(token1, positionDetails.fees[1])
         : undefined
 
       const { calldata, value } =
         NonfungiblePositionManager.collectCallParameters({
           tokenId: positionDetails.tokenId.toString(),
-          expectedCurrencyOwed0: feeValue0 ?? Amount.fromRawAmount(token0, 0),
-          expectedCurrencyOwed1: feeValue1 ?? Amount.fromRawAmount(token1, 0),
+          expectedCurrencyOwed0: feeValue0 ?? new Amount(token0, 0),
+          expectedCurrencyOwed1: feeValue1 ?? new Amount(token1, 0),
           recipient: account,
         })
 

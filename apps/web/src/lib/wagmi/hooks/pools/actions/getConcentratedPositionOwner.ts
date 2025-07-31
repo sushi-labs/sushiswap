@@ -1,7 +1,7 @@
 import {
   SUSHISWAP_V3_POSITION_MANAGER,
   type SushiSwapV3ChainId,
-} from 'sushi/config'
+} from 'sushi/evm'
 import { readContracts } from 'wagmi/actions'
 import type { PublicWagmiConfig } from '../../../config/public'
 

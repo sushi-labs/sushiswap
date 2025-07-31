@@ -4,8 +4,8 @@ import {
   SUSHISWAP_V3_FACTORY_ADDRESS,
   SUSHISWAP_V3_POSITION_MANAGER,
   type SushiSwapV3ChainId,
-} from 'sushi/config'
-import { computeSushiSwapV3PoolAddress } from 'sushi/pool/sushiswap-v3'
+  computeSushiSwapV3PoolAddress,
+} from 'sushi/evm'
 import type { PublicWagmiConfig } from '../../../config/public'
 import type { ConcentratedLiquidityPosition } from '../types'
 

@@ -1,17 +1,17 @@
 import { type UseQueryOptions, useQuery } from '@tanstack/react-query'
-import { Amount, Native, Token, type Type } from 'sushi/currency'
-import { Percent } from 'sushi/math'
+import { Amount, Percent } from 'sushi'
+import { type EvmCurrency, EvmNative, EvmToken } from 'sushi/evm'
 import { zeroAddress } from 'viem'
 import { stringify } from 'viem/utils'
 import { crossChainStepSchema } from '../../../swap/cross-chain/schema'
 import type { CrossChainStep } from '../../../swap/cross-chain/types'
 
 export interface UseCrossChainTradeStepReturn extends CrossChainStep {
-  tokenIn: Type
-  tokenOut: Type
-  amountIn?: Amount<Type>
-  amountOut?: Amount<Type>
-  amountOutMin?: Amount<Type>
+  tokenIn: EvmCurrency
+  tokenOut: EvmCurrency
+  amountIn?: Amount<EvmCurrency>
+  amountOut?: Amount<EvmCurrency>
+  amountOutMin?: Amount<EvmCurrency>
   priceImpact?: Percent
 }
 
@@ -56,41 +56,32 @@ export const useCrossChainTradeStep = ({
 
       const tokenIn =
         parsedStep.action.fromToken.address === zeroAddress
-          ? Native.onChain(parsedStep.action.fromToken.chainId)
-          : new Token(parsedStep.action.fromToken)
+          ? EvmNative.fromChainId(parsedStep.action.fromToken.chainId)
+          : new EvmToken(parsedStep.action.fromToken)
 
       const tokenOut =
         parsedStep.action.toToken.address === zeroAddress
-          ? Native.onChain(parsedStep.action.toToken.chainId)
-          : new Token(parsedStep.action.toToken)
+          ? EvmNative.fromChainId(parsedStep.action.toToken.chainId)
+          : new EvmToken(parsedStep.action.toToken)
 
-      const amountIn = Amount.fromRawAmount(
-        tokenIn,
-        parsedStep.action.fromAmount,
-      )
-      const amountOut = Amount.fromRawAmount(
-        tokenOut,
-        parsedStep.estimate.toAmount,
-      )
-      const amountOutMin = Amount.fromRawAmount(
-        tokenOut,
-        parsedStep.estimate.toAmountMin,
-      )
+      const amountIn = new Amount(tokenIn, parsedStep.action.fromAmount)
+      const amountOut = new Amount(tokenOut, parsedStep.estimate.toAmount)
+      const amountOutMin = new Amount(tokenOut, parsedStep.estimate.toAmountMin)
 
       const fromAmountUSD =
         (Number(parsedStep.action.fromToken.priceUSD) *
-          Number(amountIn.quotient)) /
+          Number(amountIn.amount)) /
         10 ** tokenIn.decimals
 
       const toAmountUSD =
         (Number(parsedStep.action.toToken.priceUSD) *
-          Number(amountOut.quotient)) /
+          Number(amountOut.amount)) /
         10 ** tokenOut.decimals
 
-      const priceImpact = new Percent(
-        Math.floor((fromAmountUSD / toAmountUSD - 1) * 10_000),
-        10_000,
-      )
+      const priceImpact = new Percent({
+        numerator: Math.floor((fromAmountUSD / toAmountUSD - 1) * 10_000),
+        denominator: 10_000,
+      })
 
       return {
         ...parsedStep,

@@ -10,15 +10,15 @@ import {
 } from '@sushiswap/ui'
 import { type FC, useMemo } from 'react'
 import type { FeesBreakdown } from 'src/lib/swap/cross-chain'
-import type { ChainId } from 'sushi/chain'
-import { formatNumber, formatUSD } from 'sushi/format'
+import { formatNumber, formatUSD } from 'sushi'
+import type { EvmChainId } from 'sushi/evm'
 
 interface CrossChainSwapFeesHoverCardProps {
   feesBreakdown: FeesBreakdown
   gasFeesUSD: number
   protocolFeesUSD: number
-  chainId0: ChainId
-  chainId1: ChainId
+  chainId0: EvmChainId
+  chainId1: EvmChainId
   children: React.ReactNode
 }
 
@@ -37,7 +37,7 @@ export const CrossChainSwapFeesHoverCard: FC<
                   <span>
                     <span className="text-primary">
                       {formatNumber(
-                        feesBreakdown.gas.get(chainId0)!.amount.toExact(),
+                        feesBreakdown.gas.get(chainId0)!.amount.toString(),
                       )}{' '}
                       {feesBreakdown.gas.get(chainId0)!.amount.currency.symbol}
                     </span>{' '}
@@ -48,7 +48,7 @@ export const CrossChainSwapFeesHoverCard: FC<
                   <span>
                     <span className="text-primary">
                       {formatNumber(
-                        feesBreakdown.gas.get(chainId1)!.amount.toExact(),
+                        feesBreakdown.gas.get(chainId1)!.amount.toString(),
                       )}{' '}
                       {feesBreakdown.gas.get(chainId1)!.amount.currency.symbol}
                     </span>{' '}
@@ -66,7 +66,7 @@ export const CrossChainSwapFeesHoverCard: FC<
                   <span>
                     <span className="text-primary">
                       {formatNumber(
-                        feesBreakdown.protocol.get(chainId0)!.amount.toExact(),
+                        feesBreakdown.protocol.get(chainId0)!.amount.toString(),
                       )}{' '}
                       {
                         feesBreakdown.protocol.get(chainId0)!.amount.currency
@@ -82,7 +82,7 @@ export const CrossChainSwapFeesHoverCard: FC<
                   <span>
                     <span className="text-primary">
                       {formatNumber(
-                        feesBreakdown.protocol.get(chainId1)!.amount.toExact(),
+                        feesBreakdown.protocol.get(chainId1)!.amount.toString(),
                       )}{' '}
                       {
                         feesBreakdown.protocol.get(chainId1)!.amount.currency

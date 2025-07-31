@@ -2,8 +2,8 @@ import type { VariablesOf } from 'gql.tada'
 
 import { type RequestOptions, request } from 'src/lib/request.js'
 import type { ChainIdVariable } from 'src/lib/types/chainId.js'
-import { type ChainId, getIdFromChainIdAddress } from 'sushi'
-import { SUSHI_DATA_API_HOST } from 'sushi/config/subgraph'
+import type { ChainId } from 'sushi'
+import { SUSHI_DATA_API_HOST } from 'sushi/evm'
 import { graphql } from '../../graphql.js'
 import { SUSHI_REQUEST_HEADERS } from '../../request-headers.js'
 
@@ -42,7 +42,7 @@ export async function getTokenList(
 
   if (result) {
     return result.tokenList.map((token) => ({
-      id: getIdFromChainIdAddress(variables.chainId, token.address),
+      id: `${variables.chainId}:${token.address}`,
       chainId: variables.chainId,
       ...token,
     }))

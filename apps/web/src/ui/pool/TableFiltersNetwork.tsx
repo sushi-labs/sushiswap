@@ -20,15 +20,15 @@ import { CheckIcon } from '@sushiswap/ui/icons/CheckIcon'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import { usePathname, useRouter } from 'next/navigation'
 import React, { type FC, useCallback, useState } from 'react'
-import { type NonStandardChainId, SUPPORTED_NETWORKS } from 'src/config'
+import { SUPPORTED_NETWORKS } from 'src/config'
 import { getNetworkName, replaceNetworkSlug } from 'src/lib/network'
-import { type ChainId, isChainId } from 'sushi/chain'
+import { type ChainId, isChainId } from 'sushi'
 
 export const TableFiltersNetwork: FC<{
-  network: ChainId | NonStandardChainId
-  supportedNetworks?: readonly (ChainId | NonStandardChainId)[]
+  network: ChainId
+  supportedNetworks?: readonly ChainId[]
   unsupportedNetworkHref?: string
-  onSelect?: ((network: ChainId | NonStandardChainId) => void) | null
+  onSelect?: ((network: ChainId) => void) | null
   className?: string
 }> = ({
   network,
@@ -44,23 +44,19 @@ export const TableFiltersNetwork: FC<{
 
   const onSelect = useCallback(
     (value: string) => {
-      const _network = value.split('__')[1]
+      const chainId = +value.split('__')[1]
 
-      const network = isChainId(+_network)
-        ? (+_network as ChainId)
-        : (_network as NonStandardChainId)
-
+      if (!isChainId(chainId)) return
       if (_onSelect === null) return
-      if (typeof _onSelect === 'function') return _onSelect(network)
+      if (typeof _onSelect === 'function') return _onSelect(chainId)
 
-      push(replaceNetworkSlug(network, pathname), { scroll: false })
+      push(replaceNetworkSlug(chainId, pathname), { scroll: false })
     },
     [pathname, push, _onSelect],
   )
 
   const isSupportedNetwork = useCallback(
-    (network: ChainId | NonStandardChainId) =>
-      supportedNetworks.includes(network),
+    (network: ChainId) => supportedNetworks.includes(network),
     [supportedNetworks],
   )
 
