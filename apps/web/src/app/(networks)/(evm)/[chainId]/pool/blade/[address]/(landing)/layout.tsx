@@ -51,7 +51,7 @@ export default async function Layout(props: {
             ...pool,
             // @ts-expect-errorun
             // okay until we have a blade pool type
-            protocol: 'blade',
+            protocol: 'BLADE',
           }}
           apy={{ rewards: pool?.incentiveApr, fees: pool?.feeApr1d }}
           showAddLiquidityButton={true}

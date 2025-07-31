@@ -132,7 +132,8 @@ export const PoolHeader: FC<PoolHeader> = ({
               <AddLiquidityDialog
                 poolType={pool.protocol}
                 hidePoolTypeToggle={true}
-                hideTokenSelectors={true}
+                // @ts-expect-error - ok until we have a blade pool type
+                hideTokenSelectors={pool.protocol !== 'BLADE'}
                 token0={token0}
                 token1={token1}
                 initFeeAmount={pool?.swapFee * 1_000_000}
