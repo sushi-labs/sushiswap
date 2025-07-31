@@ -47,10 +47,10 @@ import {
   useSendTransaction,
 } from 'wagmi'
 import { useRefetchBalances } from '~evm/_common/ui/balance-provider/use-refetch-balances'
-import { isZapRouteNotFoundError, useZap } from '../../lib/hooks'
+import { useV2Zap } from '../../lib/hooks'
 import { PriceImpactWarning, SlippageWarning } from '../common'
 import { ToggleZapCard } from './ToggleZapCard'
-import { ZapInfoCard } from './ZapInfoCard'
+import { V2ZapInfoCard } from './V2ZapInfoCard'
 
 interface ZapSectionLegacyProps {
   chainId: SushiSwapV2ChainId
@@ -102,7 +102,7 @@ const _ZapSectionLegacy: FC<ZapSectionLegacyProps> = ({
     isLoading: isZapLoading,
     isError: isZapError,
     error: zapError,
-  } = useZap({
+  } = useV2Zap({
     chainId,
     fromAddress: address,
     tokenIn: inputCurrency.isNative ? NativeAddress : inputCurrency.address,
@@ -307,9 +307,9 @@ const _ZapSectionLegacy: FC<ZapSectionLegacyProps> = ({
                           loading={isZapLoading || isWritePending}
                           disabled={!preparedTx}
                         >
-                          {zapError && isZapRouteNotFoundError(zapError) ? (
+                          {isZapError ? (
                             'No route found'
-                          ) : isZapError || isEstGasError ? (
+                          ) : isEstGasError ? (
                             'Shoot! Something went wrong :('
                           ) : isWritePending ? (
                             <Dots>Confirm Transaction</Dots>
@@ -332,8 +332,9 @@ const _ZapSectionLegacy: FC<ZapSectionLegacyProps> = ({
               setChecked={setChecked}
             />
           )}
-          <ZapInfoCard
+          <V2ZapInfoCard
             zapResponse={zapResponse}
+            isZapError={isZapError}
             inputCurrencyAmount={parsedInputAmount}
             pool={pool}
           />
