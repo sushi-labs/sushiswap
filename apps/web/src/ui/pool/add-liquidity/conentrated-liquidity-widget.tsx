@@ -129,11 +129,11 @@ export const ConcentratedLiquidityWidget: FC<ConcentratedLiquidityWidget> = ({
   const { [Bound.LOWER]: tickLower, [Bound.UPPER]: tickUpper } = ticks
 
   return (
-    <div className={classNames('flex flex-col gap-8')}>
+    <div className={classNames('flex flex-col gap-4')}>
       <p className="font-medium text-slate-900 dark:text-pink-100 text-base">
         Deposit Tokens
       </p>
-      <div className={classNames('flex flex-col gap-4 md:px-4')}>
+      <div className={classNames('flex flex-col gap-2 md:px-4')}>
         {!!existingPosition && !isOwner && !isOwnerLoading ? (
           <Message size="sm" variant="destructive">
             You are not the owner of this LP position. You will not be able to
@@ -198,7 +198,7 @@ export const ConcentratedLiquidityWidget: FC<ConcentratedLiquidityWidget> = ({
               </button>
             </div>
           )}
-          <div className="relative mb-4">
+          <div className="relative mb-2">
             {!depositADisabled && depositBDisabled ? null : (
               <Web3Input.Currency
                 id="add-liquidity-token1"

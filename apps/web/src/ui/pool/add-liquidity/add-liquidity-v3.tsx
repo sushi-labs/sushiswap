@@ -152,7 +152,7 @@ const _Add = ({
   return (
     <div
       className={classNames(
-        'flex flex-col gap-5',
+        'flex flex-col gap-4',
         hideTokenSelectors ? 'mt-4' : '',
       )}
     >

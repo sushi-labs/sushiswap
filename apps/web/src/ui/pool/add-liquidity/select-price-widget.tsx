@@ -525,21 +525,21 @@ export const SelectPriceWidget: FC<SelectPriceWidget> = ({
   return (
     <div
       className={classNames(
-        'flex flex-col gap-3 md:gap-6',
+        'flex flex-col gap-2',
         !token0 || !token1 ? 'opacity-40' : '',
       )}
     >
-      <div className="flex flex-col gap-3">
+      <div className="flex flex-col gap-1">
         <p className="font-medium text-slate-900 dark:text-pink-100 text-base">
           Select Price Range
         </p>
-        <p className="text-sm dark:text-pink-200 text-muted-foreground hidden md:block mb-8">
+        <p className="text-sm dark:text-pink-200 text-muted-foreground hidden md:block mb-2">
           Focus liquidity in a specific range to increase efficiency and fees,
           but it requires active monitoring. Or, use a full range to stay active
           across all prices for simplicity, but risk higher impermanent loss.
         </p>
       </div>
-      <div className="rounded-xl flex flex-col md:px-4 gap-8">
+      <div className="rounded-xl flex flex-col md:px-4 gap-2">
         {isMounted && showStartPrice && token0 && token1 && (
           <div className="flex flex-col gap-3">
             {!noLiquidity && (
@@ -671,17 +671,17 @@ export const SelectPriceWidget: FC<SelectPriceWidget> = ({
               />
             )}
           </div>
-          <div>
-            {noLiquidity && (
+          {noLiquidity && (
+            <div>
               <ConcentratedInitialPrice
                 token0={token0!}
                 token1={token1!}
                 onStartPriceInput={onStartPriceInput}
                 startingPrice={startPriceTypedValue}
               />
-            )}
-          </div>
-          <div className="flex flex-col gap-2 sm:flex-row">
+            </div>
+          )}
+          <div className="flex flex-col gap-3 sm:flex-row">
             <PriceBlock
               id={'min-price'}
               token0={token0}
