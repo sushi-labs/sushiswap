@@ -130,7 +130,71 @@ export const TokenSelectorV2: FC<TokenSelectorV2Props> = ({
         )}
         variant={variant ?? undefined}
       >
-        token select woo
+        <div className="flex overflow-y-auto overflow-x-hidden relative flex-col gap-4 p-6 w-full hide-scrollbar">
+          {currencyInfo ? (
+            <CurrencyInfo
+              currency={currencyInfo}
+              onBack={() => showCurrencyInfo(false)}
+            />
+          ) : null}
+          <DialogHeader className="!text-left mb-4">
+            <DialogTitle>
+              {isBrowse ? 'Browse Tokens' : 'Select Token'}
+            </DialogTitle>
+          </DialogHeader>
+          {type === 'sell' || isTwap ? (
+            <div className="flex flex-col gap-2">
+              <p className="text-xs text-slate-450 dark:text-slate-500">
+                {isTwap ? 'Supported Chains' : 'Chains'}
+              </p>
+
+              <ChainOptionsSelector
+                onNetworkSelect={_onNetworkSelect}
+                size="lg"
+                selectedNetwork={_selectedNetwork as EvmChainId}
+                canShowMessage={true}
+              />
+            </div>
+          ) : null}
+          <div className="flex relative gap-2">
+            <TextField
+              placeholder="Search by token or address"
+              icon={MagnifyingGlassIcon}
+              type="text"
+              testdata-id={`token-selector-address-input`}
+              value={query}
+              onValueChange={setQuery}
+              className="py-7 placeholder:text-slate-450 !dark:text-slate-500 placeholder:dark:text-slate-450 dark:!bg-slate-900 !bg-gray-100"
+            />
+            {type === 'buy' && !isTwap ? (
+              <div className="absolute right-2 top-1/2 -translate-y-1/2">
+                <NetworkMenu
+                  selectedNetwork={_selectedNetwork}
+                  onNetworkSelect={_onNetworkSelect}
+                  networkOptions={isBrowse ? SUPPORTED_CHAIN_IDS : undefined}
+                  className="bg-slate-50 border !rounded-md !px-2 border-black/10 dark:bg-slate-800 dark:border-white/10"
+                />
+              </div>
+            ) : null}
+          </div>
+          <div
+            id="token-list-container"
+            className="flex flex-1 flex-col flex-grow px-1 py-0.5 hide-scrollbar overflow-y-scroll"
+          >
+            <TokenSelectorStatesV2
+              selected={selected}
+              selectedNetwork={_selectedNetwork as TokenListV2ChainId}
+              account={address}
+              onSelect={_onSelect}
+              currencies={currencies}
+              includeNative={includeNative}
+              hidePinnedTokens={hidePinnedTokens}
+              search={query}
+              onShowInfo={showCurrencyInfo}
+              type={type}
+            />
+          </div>
+        </div>
       </DialogContent>
     </Dialog>
   )

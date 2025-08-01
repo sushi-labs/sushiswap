@@ -4,10 +4,8 @@ import type { V2Pool } from '@sushiswap/graph-client/data-api'
 import { Button, Container, useBreakpoint } from '@sushiswap/ui'
 import { type FC, useMemo } from 'react'
 import { PoolTransactionsV2 } from 'src/ui/pool/PoolTransactionsV2'
-import { ChainKey, SushiSwapProtocol } from 'sushi'
 import { Token, unwrapToken } from 'sushi/currency'
 import { APRChart } from './APRChart'
-import { ManagePositionButton } from './ManagePositionButton'
 import { Pool24HVolume } from './Pool24HVolume'
 import { PoolAPR } from './PoolAPR'
 import { PoolChartV2 } from './PoolChartV2'
@@ -16,7 +14,6 @@ import { PoolPrice } from './PoolPrice'
 import { PoolRewards } from './PoolRewards'
 import { PoolsBladeSection } from './PoolsBladeSection'
 import { AddLiquidityDialog } from './add-liquidity/add-liquidity-dialog'
-// import { UnknownTokenAlert } from './UnknownTokenAlert'
 
 interface PoolPageBlade {
   pool: Awaited<V2Pool>

@@ -54,14 +54,13 @@ export const AddLiquidityDialog = ({
             feeAmount={initFeeAmount}
           />
         )
-      // @ts-expect-error - ok until we have a blade pool type
-      case 'BLADE':
-        return (
-          <AddLiquidityBlade
-            hideTokenSelectors={hideTokenSelectors}
-            initToken0={token0}
-          />
-        )
+      // case 'BLADE':
+      //   return (
+      //     <AddLiquidityBlade
+      //       hideTokenSelectors={hideTokenSelectors}
+      //       initToken0={token0}
+      //     />
+      //   )
       default:
         return (
           <AddLiquidityV2
