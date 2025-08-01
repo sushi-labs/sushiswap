@@ -22,7 +22,7 @@ function TeamSwitcherEntry(
       },
 ) {
   const baseClassNames = classNames(
-    'px-4 py-3 w-full font-medium rounded-xl',
+    'px-2 py-2 sm:px-4 sm:py-3 w-full font-medium rounded-xl',
     'flex flex-row justify-between items-center',
     'hover:bg-accent',
   )
@@ -90,7 +90,7 @@ export function TeamSwitcher({ currentTeam }: TeamSwitcher) {
         <div ref={ref} className="w-full">
           <div
             className={classNames(
-              'px-5 py-3 space-x-3 w-full',
+              'px-3 py-1.5 sm:px-5 sm:py-3 space-x-1.5 sm:space-x-3 w-full',
               'border border-accent bg-background',
               'cursor-pointer rounded-xl ',
               'font-medium flex flex-row justify-between items-center select-none',
@@ -106,7 +106,7 @@ export function TeamSwitcher({ currentTeam }: TeamSwitcher) {
               height={20}
               className={classNames(
                 open && 'rotate-180',
-                'duration-200 flex-shrink-0',
+                'duration-200 flex-shrink-0 scale-75 sm:scale-100',
               )}
             />
           </div>
@@ -139,7 +139,7 @@ export function TeamSwitcher({ currentTeam }: TeamSwitcher) {
             ))}
             <Separator />
             <CreateTeamDialog>
-              <div className="px-4 py-2 flex flex-row justify-between w-full hover:bg-accent rounded-xl cursor-pointer">
+              <div className="px-2 sm:px-4 py-1.5 sm:py-2 flex flex-row justify-between w-full hover:bg-accent rounded-xl cursor-pointer">
                 <span className="text-sm">Create team</span>
                 <PlusIcon width={20} height={20} />
               </div>

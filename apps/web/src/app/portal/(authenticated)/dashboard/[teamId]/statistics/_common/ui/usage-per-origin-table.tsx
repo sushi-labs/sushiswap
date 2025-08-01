@@ -93,7 +93,7 @@ export function UsagePerOriginTable({ teamId }: UsagePerIpTable) {
   return (
     <Card>
       <CardHeader>
-        <div className="flex !flex-row justify-between w-full">
+        <div className="flex flex-col sm:!flex-row justify-between w-full gap-y-4">
           <div className="space-y-1.5">
             <CardTitle>Usage per Origin</CardTitle>
             <CardDescription>Request count by request origin</CardDescription>
@@ -102,7 +102,7 @@ export function UsagePerOriginTable({ teamId }: UsagePerIpTable) {
             onValueChange={(t) => setTimeframe(t as Timeframe)}
             value={timeframe}
           >
-            <SelectTrigger className="max-w-[160px]">
+            <SelectTrigger className="sm:max-w-[160px]">
               <SelectValue />
             </SelectTrigger>
 

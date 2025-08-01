@@ -29,11 +29,13 @@ export async function TeamApiKeyCard({ teamId }: { teamId: string }) {
   })
 
   return (
-    <Card className="w-full min-w-[470px] h-min">
-      <CardHeader className="!space-y-0 !flex-row items-center justify-between">
+    <Card className="h-min">
+      <CardHeader className="!space-y-0 !flex-row items-center justify-between space-x-4">
         <div className="space-y-1.5">
           <CardTitle>API Keys</CardTitle>
-          <CardDescription>View, manage and delete keys</CardDescription>
+          <CardDescription className="hidden xs:block">
+            View, manage and delete keys
+          </CardDescription>
         </div>
         <CheckerRoleServer
           teamId={teamId}
