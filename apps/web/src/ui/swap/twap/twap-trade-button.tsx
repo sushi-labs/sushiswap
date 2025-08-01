@@ -14,7 +14,7 @@ import type { ApproveERC20Props } from 'src/lib/wagmi/systems/Checker/ApproveERC
 import { withCheckerRoot } from 'src/lib/wagmi/systems/Checker/Provider'
 import { erc20Abi_allowance } from 'sushi/abi'
 import { Amount, type Type } from 'sushi/currency'
-import type { Address } from 'viem'
+import { type Address, maxUint256 } from 'viem'
 import { useAccount, useConfig } from 'wagmi'
 import {
   useDerivedStateTwap,
@@ -129,7 +129,7 @@ const ERC20ApproveChecker: FC<ApproveERC20Props> = ({ children, ...props }) => {
   })
 
   const amountToApprove = useMemo(() => {
-    if (amount?.currency.isNative) return amount
+    if (amount?.currency.isNative || allowance === maxUint256) return amount
     if (typeof amount === 'undefined' || typeof allowance === 'undefined')
       return undefined
     return amount.add(Amount.fromRawAmount(amount.currency, allowance))
