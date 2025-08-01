@@ -7,6 +7,7 @@ import { type FC, useCallback, useEffect, useMemo, useState } from 'react'
 import { APPROVE_TAG_ADD_LEGACY } from 'src/lib/constants'
 import { isSushiSwapV2Pool } from 'src/lib/functions'
 import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
+import { Web3Input } from 'src/lib/wagmi/components/web3-input'
 import { CurrencyInputBlade } from 'src/lib/wagmi/components/web3-input/Currency/CurrencyInputBlade'
 import { SushiSwapV2PoolState } from 'src/lib/wagmi/hooks/pools/hooks/useSushiSwapV2Pools'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
@@ -46,7 +47,6 @@ export const AddLiquidityBlade = ({
     }
   }, [chainId, initToken0])
 
-  // helpers: append/replace/remove
   const appendToken = useCallback((token?: Type) => {
     if (!token) return
     setTokens((prev) => {
@@ -60,13 +60,11 @@ export const AddLiquidityBlade = ({
     if (!token) return
     setTokens((prev) => {
       if (index < 0 || index >= prev.length) return prev
-      // prevent duplicates when replacing
       if (prev.some((t, i) => i !== index && t.id === token.id)) return prev
       const next = [...prev]
       next[index] = token
       return next
     })
-    // when a token changes, clear its input value
     setInputs((prev) => {
       const next = { ...prev }
       Object.keys(next).forEach((k) => {
@@ -81,7 +79,7 @@ export const AddLiquidityBlade = ({
       if (index < 0 || index >= prev.length) return prev
       const removed = prev[index]
       const next = prev.toSpliced(index, 1)
-      // drop its input as well
+
       setInputs((prevInputs) => {
         const { [removed.id]: _omitted, ...rest } = prevInputs
         return rest
@@ -90,16 +88,13 @@ export const AddLiquidityBlade = ({
     })
   }, [])
 
-  // ---- inputs per token ----
   const [inputs, setInputs] = useState<Record<string, string>>({})
   const updateInput = useCallback((tokenId: string, value: string) => {
     setInputs((prev) => ({ ...prev, [tokenId]: value }))
   }, [])
 
-  // ---- which field is independent (now by index) ----
   const [independendField, setIndependendField] = useState<number>(0)
 
-  // ---- prices: up to 5 (fixed hook count keeps order stable) ----
   const t0 = tokens[0]
   const t1 = tokens[1]
   const t2 = tokens[2]
@@ -160,7 +155,6 @@ export const AddLiquidityBlade = ({
     return total.toFixed(2)
   }, [tokens, inputs, priceFor])
 
-  // ---- pool-finder still uses first two tokens ----
   const tokenA = t0
   const tokenB = t1
 
@@ -227,20 +221,16 @@ export const AddLiquidityBlade = ({
                 pool={pool}
                 poolState={poolState}
                 title={title}
-                // ✨ new multi-token API
                 tokens={tokens}
                 setTokens={setTokens}
                 maxTokens={5}
-                // data-entry
                 inputs={inputs}
                 updateInput={updateInput}
                 independendField={independendField}
                 setIndependendField={setIndependendField}
-                // optional helpers if you want to use them in the widget UI
                 appendToken={appendToken}
                 replaceTokenAt={replaceTokenAt}
                 removeTokenAt={removeTokenAt}
-                // ui
                 hideTokenSelectors={hideTokenSelectors}
               />
             </div>
@@ -271,13 +261,11 @@ export type AddLiquidityWidgetProps = {
   setTokens: React.Dispatch<React.SetStateAction<Type[]>>
   maxTokens?: number
 
-  // input management
   inputs: Record<string, string>
   updateInput: (tokenId: string, value: string) => void
   independendField: number
   setIndependendField: React.Dispatch<React.SetStateAction<number>>
 
-  // optional helpers (useful for + Add button or rows)
   appendToken?: (token?: Type) => void
   replaceTokenAt?: (index: number, token?: Type) => void
   removeTokenAt?: (index: number) => void
@@ -301,7 +289,6 @@ const AddLiquidityWidget: FC<AddLiquidityWidgetProps> = ({
     SlippageToleranceStorageKey.AddLiquidity,
   )
 
-  // Pair-only semantics (V2): first two tokens are the “pair”
   const token0 = tokens[0]
   const token1 = tokens[1]
 
@@ -318,7 +305,6 @@ const AddLiquidityWidget: FC<AddLiquidityWidgetProps> = ({
     return tryParseAmount(input1, token1) || Amount.fromRawAmount(token1, 0)
   }, [token1, input1])
 
-  // // Helpers to modify the token list
   // const appendToken = useCallback(
   //   (t?: Type) => {
   //     if (!t) return
@@ -357,7 +343,6 @@ const AddLiquidityWidget: FC<AddLiquidityWidgetProps> = ({
   //       const removed = prev[index]
   //       const next = prev.toSpliced(index, 1)
   //       if (removed?.id) updateInput(removed.id, '')
-  //       // If you remove 0 or 1, you may want to reset independendField
   //       if (index === 0 || index === 1) setIndependendField(null)
   //       return next
   //     })
@@ -365,90 +350,89 @@ const AddLiquidityWidget: FC<AddLiquidityWidgetProps> = ({
   //   [setTokens, updateInput, setIndependendField],
   // )
 
-  const getTokenKey = (t?: Type): string => {
-    if (!t) return ''
-    return t.isNative
-      ? `native:${t.chainId}`
-      : `${t.chainId}:${t.wrapped.address.toLowerCase()}`
-  }
+  // const getTokenKey = (t?: Type): string => {
+  //   if (!t) return ''
+  //   return t.isNative
+  //     ? `native:${t.chainId}`
+  //     : `${t.chainId}:${t.wrapped.address.toLowerCase()}`
+  // }
 
-  const currencies: Type[] = useMemo(() => {
-    console.log(
-      '[AddLiquidityBlade] Building currencies array for Blade add-liquidity',
-    )
-    const tokens = [
-      new Token({
-        chainId,
-        address: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2',
-        decimals: 18,
-        symbol: 'WETH',
-        name: 'Wrapped Ether',
-        logoUrl:
-          'https://assets.coingecko.com/coins/images/2518/large/weth.png',
-        approved: true,
-      }),
-      new Token({
-        chainId,
-        address: '0x7d1afa7b718fb893db30a3abc0cfc608aacfebb0',
-        decimals: 18,
-        symbol: 'MATIC',
-        name: 'Polygon',
-        logoUrl:
-          'https://assets.coingecko.com/coins/images/4713/large/matic-token-icon.png',
-        approved: true,
-      }),
-      new Token({
-        chainId,
-        address: '0xdAC17F958D2ee523a2206206994597C13D831ec7',
-        decimals: 6,
-        symbol: 'USDT',
-        name: 'Tether USD',
-        logoUrl:
-          'https://assets.coingecko.com/coins/images/325/large/Tether-logo.png',
-        approved: true,
-      }),
-      new Token({
-        chainId,
-        address: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
-        decimals: 6,
-        symbol: 'USDC',
-        name: 'USD Coin',
-        logoUrl:
-          'https://assets.coingecko.com/coins/images/6319/large/USD_Coin_icon.png',
-        approved: true,
-      }),
-      new Token({
-        chainId,
-        address: '0x6B175474E89094C44Da98b954EedeAC495271d0F',
-        decimals: 18,
-        symbol: 'DAI',
-        name: 'Dai Stablecoin',
-        logoUrl:
-          'https://assets.coingecko.com/coins/images/9956/large/4943.png',
-        approved: true,
-      }),
-    ]
-    console.log(
-      '[AddLiquidityBlade] Currencies array built:',
-      tokens.map((t) => t.symbol).join(', '),
-    )
-    return tokens
-  }, [chainId])
+  // const currencies: Type[] = useMemo(() => {
+  //   console.log(
+  //     '[AddLiquidityBlade] Building currencies array for Blade add-liquidity',
+  //   )
+  //   const tokens = [
+  //     new Token({
+  //       chainId,
+  //       address: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2',
+  //       decimals: 18,
+  //       symbol: 'WETH',
+  //       name: 'Wrapped Ether',
+  //       logoUrl:
+  //         'https://assets.coingecko.com/coins/images/2518/large/weth.png',
+  //       approved: true,
+  //     }),
+  //     new Token({
+  //       chainId,
+  //       address: '0x7d1afa7b718fb893db30a3abc0cfc608aacfebb0',
+  //       decimals: 18,
+  //       symbol: 'MATIC',
+  //       name: 'Polygon',
+  //       logoUrl:
+  //         'https://assets.coingecko.com/coins/images/4713/large/matic-token-icon.png',
+  //       approved: true,
+  //     }),
+  //     new Token({
+  //       chainId,
+  //       address: '0xdAC17F958D2ee523a2206206994597C13D831ec7',
+  //       decimals: 6,
+  //       symbol: 'USDT',
+  //       name: 'Tether USD',
+  //       logoUrl:
+  //         'https://assets.coingecko.com/coins/images/325/large/Tether-logo.png',
+  //       approved: true,
+  //     }),
+  //     new Token({
+  //       chainId,
+  //       address: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
+  //       decimals: 6,
+  //       symbol: 'USDC',
+  //       name: 'USD Coin',
+  //       logoUrl:
+  //         'https://assets.coingecko.com/coins/images/6319/large/USD_Coin_icon.png',
+  //       approved: true,
+  //     }),
+  //     new Token({
+  //       chainId,
+  //       address: '0x6B175474E89094C44Da98b954EedeAC495271d0F',
+  //       decimals: 18,
+  //       symbol: 'DAI',
+  //       name: 'Dai Stablecoin',
+  //       logoUrl:
+  //         'https://assets.coingecko.com/coins/images/9956/large/4943.png',
+  //       approved: true,
+  //     }),
+  //   ]
+  //   console.log(
+  //     '[AddLiquidityBlade] Currencies array built:',
+  //     tokens.map((t) => t.symbol).join(', '),
+  //   )
+  //   return tokens
+  // }, [chainId])
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
-  const tokenOptionsByIndex = useMemo(() => {
-    const selectedKeys = new Set(tokens.map(getTokenKey))
+  // const tokenOptionsByIndex = useMemo(() => {
+  //   const selectedKeys = new Set(tokens.map(getTokenKey))
 
-    return tokens.map((_) => {
-      return Object.fromEntries(
-        Object.entries(currencies).filter(
-          ([_, token]) => !selectedKeys.has(getTokenKey(token)),
-        ),
-      )
-    })
-  }, [tokens, currencies])
+  //   return tokens.map((_) => {
+  //     return Object.fromEntries(
+  //       Object.entries(currencies).filter(
+  //         ([_, token]) => !selectedKeys.has(getTokenKey(token)),
+  //       ),
+  //     )
+  //   })
+  // }, [tokens, currencies])
 
-  // Render a row for each token
   const renderRow = (t: Type, i: number) => {
     const value = inputs[t.id] ?? ''
     const isPair0 = i === 0
@@ -477,12 +461,11 @@ const AddLiquidityWidget: FC<AddLiquidityWidgetProps> = ({
               ✕
             </button>
           )} */}
-          <CurrencyInputBlade
+          <Web3Input.Currency
             id={`add-liquidity-token-${i}`}
             type="INPUT"
             className="flex-1 p-4 bg-gray-100 rounded-xl dark:bg-slate-900"
-            // @ts-expect-error - ok until we have real tokens
-            currencies={tokenOptionsByIndex[i]}
+            // currencies={tokenOptionsByIndex[i]}
             chainId={chainId}
             value={value}
             onChange={onChange}
@@ -586,7 +569,6 @@ const AddLiquidityWidget: FC<AddLiquidityWidgetProps> = ({
                             input0={parsedInput0}
                             input1={parsedInput1}
                             onSuccess={() => {
-                              // Clear only amounts for tokens that exist
                               if (token0) updateInput(token0.id, '')
                               if (token1) updateInput(token1.id, '')
                             }}
