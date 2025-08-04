@@ -420,7 +420,7 @@ const AddLiquidityWidget: FC<AddLiquidityWidgetProps> = ({
   //   return tokens
   // }, [chainId])
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+  //// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   // const tokenOptionsByIndex = useMemo(() => {
   //   const selectedKeys = new Set(tokens.map(getTokenKey))
 

@@ -7,6 +7,7 @@ import {
   CardDescription,
   CardHeader,
   Explainer,
+  Message,
   Tooltip,
   TooltipContent,
   TooltipProvider,
@@ -31,6 +32,7 @@ import {
 } from 'sushi/pool/sushiswap-v3'
 
 import { RadioGroup } from '@headlessui/react'
+import { InformationCircleIcon } from '@heroicons/react-v1/solid'
 import { LockClosedIcon, LockOpenIcon } from '@heroicons/react/24/solid'
 import { ExclamationTriangleIcon } from '@heroicons/react/24/solid'
 import { useConcentratedLiquidityPoolStats } from 'src/lib/hooks/react-query'
@@ -120,8 +122,10 @@ export const SelectPriceWidget: FC<SelectPriceWidget> = ({
     noLiquidity,
     isLoading,
     leftBoundInput,
+    outOfRange,
     rightBoundInput,
     parsedAmounts,
+    invalidRange,
     dependentField,
   } = useConcentratedDerivedMintInfo({
     chainId,
@@ -733,7 +737,24 @@ export const SelectPriceWidget: FC<SelectPriceWidget> = ({
               price={price}
             />
           </div>
-
+          {outOfRange ? (
+            <Message size="sm" variant="info">
+              <div className="flex items-center gap-1">
+                <InformationCircleIcon className="w-3 h-3" /> Your position will
+                not earn fees or be used in trades until the market price moves
+                into your range.
+              </div>
+            </Message>
+          ) : null}
+          {invalidRange ? (
+            <Message size="sm" variant="info">
+              <div className="flex items-center gap-1">
+                <InformationCircleIcon className="w-3 h-3" /> Invalid range
+                selected. The minimum price must be lower than the maximum
+                price.
+              </div>
+            </Message>
+          ) : null}
           <Card className="dark:bg-slate-800">
             <CardHeader>
               <CardDescription className="flex flex-col gap-3 !text-accent-foreground">
