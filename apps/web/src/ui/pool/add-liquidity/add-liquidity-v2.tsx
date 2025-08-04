@@ -188,6 +188,10 @@ export const AddLiquidityV2 = ({
     >
       {({ pool: [poolState, pool] }) => {
         const doesNotExist = poolState === SushiSwapV2PoolState.NOT_EXISTS
+        if (doesNotExist) {
+          setIsZapModeEnabled(false)
+        }
+
         const title =
           !token0 || !token1 ? (
             'Select Tokens'
@@ -270,7 +274,7 @@ export const AddLiquidityV2 = ({
                   />
                 ) : (
                   <AddLiquidityWidget
-                    chainId={chainId}
+                    chainId={token0?.chainId ?? token1?.chainId ?? chainId}
                     pool={pool}
                     poolState={poolState}
                     title={title}
@@ -474,6 +478,8 @@ const _ZapWidget: FC<ZapWidgetProps> = ({
         type="INPUT"
         className="p-4 bg-gray-100 rounded-xl dark:bg-slate-900"
         chainId={chainId}
+        networks={[chainId]}
+        selectedNetwork={chainId}
         value={inputAmount}
         onChange={setInputAmount}
         onSelect={setInputCurrency}
