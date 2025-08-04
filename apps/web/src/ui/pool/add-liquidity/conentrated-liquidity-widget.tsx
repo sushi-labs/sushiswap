@@ -1,10 +1,9 @@
 'use client'
 
-import { Transition } from '@headlessui/react'
-import { LockClosedIcon, PlusIcon } from '@heroicons/react-v1/solid'
-import { DialogTrigger, FormSection, Message, classNames } from '@sushiswap/ui'
+import { InformationCircleIcon, PlusIcon } from '@heroicons/react-v1/solid'
+import { DialogTrigger, Message, classNames } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui'
-import { type FC, Fragment, useCallback, useMemo } from 'react'
+import { type FC, useCallback, useMemo } from 'react'
 import {
   SUSHISWAP_V3_POSITION_MANAGER,
   type SushiSwapV3ChainId,
@@ -74,7 +73,6 @@ export const ConcentratedLiquidityWidget: FC<ConcentratedLiquidityWidget> = ({
     dependentField,
     noLiquidity,
     parsedAmounts,
-    outOfRange,
     invalidRange,
     price,
     pricesAtTicks,
@@ -135,25 +133,16 @@ export const ConcentratedLiquidityWidget: FC<ConcentratedLiquidityWidget> = ({
       </p>
       <div className={classNames('flex flex-col gap-2 md:px-4')}>
         {!!existingPosition && !isOwner && !isOwnerLoading ? (
-          <Message size="sm" variant="destructive">
-            You are not the owner of this LP position. You will not be able to
-            withdraw the liquidity from this position unless you own the
-            following address: {owner}
-          </Message>
-        ) : null}
-        {outOfRange ? (
-          <Message size="sm" variant="warning">
-            Your position will not earn fees or be used in trades until the
-            market price moves into your range.
+          <Message size="sm" variant="info">
+            <div className="flex items-center gap-1">
+              <InformationCircleIcon className="w-3 h-3" /> You are not the
+              owner of this LP position. You will not be able to withdraw the
+              liquidity from this position unless you own the following address:{' '}
+              {owner}
+            </div>
           </Message>
         ) : null}
 
-        {invalidRange ? (
-          <Message size="sm" variant="warning">
-            Invalid range selected. The minimum price must be lower than the
-            maximum price.
-          </Message>
-        ) : null}
         <div
           className={classNames(
             !isPoolLoading &&

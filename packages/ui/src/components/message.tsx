@@ -8,7 +8,7 @@ import { IconButton } from './iconbutton'
 const messageVariants = cva('relative', {
   variants: {
     variant: {
-      info: 'bg-blue/10 text-blue',
+      info: 'bg-blue/10 text-blue dark:text-skyblue dark:bg-skyblue/10',
       destructive: 'bg-red/10 text-red',
       warning: 'bg-yellow/10 dark:text-yellow text-amber-900',
       muted: 'bg-secondary',
@@ -16,7 +16,7 @@ const messageVariants = cva('relative', {
     },
     size: {
       xs: 'p-6 text-xs rounded-lg',
-      sm: 'p-6 text-sm rounded-lg',
+      sm: 'p-3 text-sm rounded-lg',
       default: 'p-6 rounded-xl',
     },
     hasClose: {

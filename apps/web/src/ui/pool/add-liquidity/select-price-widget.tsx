@@ -7,6 +7,7 @@ import {
   CardDescription,
   CardHeader,
   Explainer,
+  Message,
   Tooltip,
   TooltipContent,
   TooltipProvider,
@@ -31,6 +32,7 @@ import {
 } from 'sushi/pool/sushiswap-v3'
 
 import { RadioGroup } from '@headlessui/react'
+import { InformationCircleIcon } from '@heroicons/react-v1/solid'
 import { LockClosedIcon, LockOpenIcon } from '@heroicons/react/24/solid'
 import { ExclamationTriangleIcon } from '@heroicons/react/24/solid'
 import { useConcentratedLiquidityPoolStats } from 'src/lib/hooks/react-query'
@@ -103,7 +105,7 @@ export const SelectPriceWidget: FC<SelectPriceWidget> = ({
 }) => {
   const isMounted = useIsMounted()
   const { address } = useAccount()
-  const [invert, _setInvert] = useState(false)
+  const [invert, setInvert] = useState(false)
   const [yieldRate, setYieldRate] = useState<YieldRatePeriod>(
     YieldRatePeriod.ANNUALLY,
   )
@@ -120,8 +122,10 @@ export const SelectPriceWidget: FC<SelectPriceWidget> = ({
     noLiquidity,
     isLoading,
     leftBoundInput,
+    outOfRange,
     rightBoundInput,
     parsedAmounts,
+    invalidRange,
     dependentField,
   } = useConcentratedDerivedMintInfo({
     chainId,
@@ -470,8 +474,8 @@ export const SelectPriceWidget: FC<SelectPriceWidget> = ({
               <SkeletonText fontSize="xs" />
             ) : (
               <div
-                // onClick={() => setInvert((prev) => !prev)}
-                // onKeyDown={() => setInvert((prev) => !prev)}
+                onClick={() => setInvert((prev) => !prev)}
+                onKeyDown={() => setInvert((prev) => !prev)}
                 className="cursor-pointer flex items-center gap-1.5"
               >
                 <div className="flex items-baseline gap-1.5">
@@ -539,6 +543,7 @@ export const SelectPriceWidget: FC<SelectPriceWidget> = ({
           across all prices for simplicity, but risk higher impermanent loss.
         </p>
       </div>
+
       <div className="rounded-xl flex flex-col md:px-4 gap-2">
         {isMounted && showStartPrice && token0 && token1 && (
           <div className="flex flex-col gap-3">
@@ -678,6 +683,7 @@ export const SelectPriceWidget: FC<SelectPriceWidget> = ({
                 token1={token1!}
                 onStartPriceInput={onStartPriceInput}
                 startingPrice={startPriceTypedValue}
+                handleSwitchTokens={handleSwitchTokens}
               />
             </div>
           )}
@@ -733,7 +739,24 @@ export const SelectPriceWidget: FC<SelectPriceWidget> = ({
               price={price}
             />
           </div>
-
+          {outOfRange ? (
+            <Message size="sm" variant="info">
+              <div className="flex items-center gap-1">
+                <InformationCircleIcon className="w-3 h-3" /> Your position will
+                not earn fees or be used in trades until the market price moves
+                into your range.
+              </div>
+            </Message>
+          ) : null}
+          {invalidRange ? (
+            <Message size="sm" variant="info">
+              <div className="flex items-center gap-1">
+                <InformationCircleIcon className="w-3 h-3" /> Invalid range
+                selected. The minimum price must be lower than the maximum
+                price.
+              </div>
+            </Message>
+          ) : null}
           <Card className="dark:bg-slate-800">
             <CardHeader>
               <CardDescription className="flex flex-col gap-3 !text-accent-foreground">

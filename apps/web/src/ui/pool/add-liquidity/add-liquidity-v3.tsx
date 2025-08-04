@@ -2,6 +2,7 @@
 
 import { ArrowLeftIcon } from '@heroicons/react-v1/solid'
 import { Button, Collapsible, classNames } from '@sushiswap/ui'
+import { useSearchParams } from 'next/navigation'
 import { useEffect, useMemo, useState } from 'react'
 import { useCreateQuery } from 'src/lib/hooks/useCreateQuery'
 import { useCurrentChainId } from 'src/lib/hooks/useCurrentChainId'
@@ -69,6 +70,7 @@ const _Add = ({
   const [step, setStep] = useState(0)
   const { address } = useAccount()
   const { createQuery } = useCreateQuery()
+  const [isFirstMount, setIsFirstMount] = useState(true)
   const {
     chainId,
     token0,
@@ -126,7 +128,9 @@ const _Add = ({
     if (initToken0 && initToken1) {
       setStep(1)
     }
-    if (initFeeAmount && initToken0 && initToken1) {
+    if (initFeeAmount && initToken0 && initToken1 && isFirstMount) {
+      if (!isFirstMount) return
+      setIsFirstMount(false)
       createQuery([
         {
           name: 'fromCurrency',
@@ -139,7 +143,7 @@ const _Add = ({
         { name: 'feeAmount', value: initFeeAmount.toString() },
       ])
     }
-  }, [initToken0, initToken1, initFeeAmount, createQuery])
+  }, [initToken0, initToken1, initFeeAmount, createQuery, isFirstMount])
 
   const nextStep = () => {
     if (step === 0) {
