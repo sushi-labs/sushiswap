@@ -1,6 +1,5 @@
 'use client'
 
-import { InformationCircleIcon } from '@heroicons/react-v1/solid'
 import { MagnifyingGlassIcon } from '@heroicons/react/24/solid'
 import type { TokenListV2ChainId } from '@sushiswap/graph-client/data-api'
 import {
@@ -60,7 +59,6 @@ export const TokenSelectorV2: FC<TokenSelectorV2Props> = ({
   hidePinnedTokens,
   // biome-ignore lint/correctness/noUnusedVariables: will remove once all props are for sure not going to be used
   hideSearch,
-  // biome-ignore lint/correctness/noUnusedVariables: will remove once all props are for sure not going to be used
   networks,
   selectedNetwork,
   onNetworkSelect,
