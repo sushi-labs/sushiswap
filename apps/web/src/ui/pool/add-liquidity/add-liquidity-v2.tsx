@@ -234,7 +234,7 @@ export const AddLiquidityV2 = ({
             {doesNotExist && token0 && token1 ? (
               <>
                 <Collapsible open={doesNotExist} className="w-full">
-                  <DoesNotExistMessage />
+                  <DoesNotExistMessage type="SUSHISWAP_V2" />
                 </Collapsible>
                 <Collapsible open={doesNotExist} className="w-full">
                   <div className="flex flex-col gap-4">

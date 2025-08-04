@@ -194,7 +194,7 @@ const _Add = ({
           {!poolExists && token0 && token1 && feeAmount ? (
             <>
               <Collapsible open={!poolExists} className="w-full">
-                <DoesNotExistMessage />
+                <DoesNotExistMessage type="SUSHISWAP_V3" />
               </Collapsible>
             </>
           ) : null}
@@ -206,7 +206,7 @@ const _Add = ({
           {!poolExists && token0 && token1 && feeAmount ? (
             <>
               <Collapsible open={!poolExists} className="w-full">
-                <DoesNotExistMessage />
+                <DoesNotExistMessage type="SUSHISWAP_V3" />
               </Collapsible>
             </>
           ) : null}
