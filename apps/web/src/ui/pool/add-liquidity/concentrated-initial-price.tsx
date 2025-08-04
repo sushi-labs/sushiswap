@@ -7,11 +7,13 @@ export const ConcentratedInitialPrice = ({
   token1,
   startingPrice,
   onStartPriceInput,
+  handleSwitchTokens,
 }: {
   token0: Type
   token1: Type
   startingPrice: string
   onStartPriceInput: (value: string) => void
+  handleSwitchTokens: () => void
 }) => {
   const spanRef = useRef<HTMLSpanElement>(null)
   const [inputWidth, setInputWidth] = useState(1)
@@ -38,7 +40,10 @@ export const ConcentratedInitialPrice = ({
             <Button
               variant="outline"
               size="xs"
-              onClick={() => setRateDirection('token1')}
+              onClick={() => {
+                setRateDirection('token0')
+                handleSwitchTokens()
+              }}
               className={
                 rateDirection === 'token1'
                   ? '!bg-[#00000014] dark:!bg-[#ffffff14]'
@@ -48,7 +53,10 @@ export const ConcentratedInitialPrice = ({
               {token0?.symbol}
             </Button>
             <Button
-              onClick={() => setRateDirection('token0')}
+              onClick={() => {
+                setRateDirection('token1')
+                handleSwitchTokens()
+              }}
               variant="outline"
               size="xs"
               className={
@@ -64,7 +72,6 @@ export const ConcentratedInitialPrice = ({
         <div className="flex md:items-end justify-between flex-col md:flex-row gap-2">
           <div className="flex gap-2 items-end">
             <div className="dark:text-pink-100 text-3xl text-black">
-              {/* {rateDirection === 'token0' ? token0Per1 : token1Per0} */}
               <div className="relative inline-block">
                 <TextField
                   type="number"
@@ -83,9 +90,7 @@ export const ConcentratedInitialPrice = ({
               </div>
             </div>
             <div className="text-sm text-slate-700 dark:text-pink-200 pl-[19px]">
-              {rateDirection === 'token0'
-                ? `${token0?.symbol} per ${token1?.symbol}`
-                : `${token1?.symbol} per ${token0?.symbol}`}
+              {`${token1?.symbol} per ${token0?.symbol}`}
             </div>
           </div>
           <div className="text-blue dark:text-skyblue font-semibold text-base">
