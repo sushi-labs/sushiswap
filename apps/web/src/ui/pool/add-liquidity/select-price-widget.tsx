@@ -105,7 +105,7 @@ export const SelectPriceWidget: FC<SelectPriceWidget> = ({
 }) => {
   const isMounted = useIsMounted()
   const { address } = useAccount()
-  const [invert, _setInvert] = useState(false)
+  const [invert, setInvert] = useState(false)
   const [yieldRate, setYieldRate] = useState<YieldRatePeriod>(
     YieldRatePeriod.ANNUALLY,
   )
@@ -474,8 +474,8 @@ export const SelectPriceWidget: FC<SelectPriceWidget> = ({
               <SkeletonText fontSize="xs" />
             ) : (
               <div
-                // onClick={() => setInvert((prev) => !prev)}
-                // onKeyDown={() => setInvert((prev) => !prev)}
+                onClick={() => setInvert((prev) => !prev)}
+                onKeyDown={() => setInvert((prev) => !prev)}
                 className="cursor-pointer flex items-center gap-1.5"
               >
                 <div className="flex items-baseline gap-1.5">
@@ -543,6 +543,7 @@ export const SelectPriceWidget: FC<SelectPriceWidget> = ({
           across all prices for simplicity, but risk higher impermanent loss.
         </p>
       </div>
+
       <div className="rounded-xl flex flex-col md:px-4 gap-2">
         {isMounted && showStartPrice && token0 && token1 && (
           <div className="flex flex-col gap-3">
