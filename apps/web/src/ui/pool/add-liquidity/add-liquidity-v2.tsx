@@ -113,25 +113,38 @@ export const AddLiquidityV2 = ({
   const [independendField, setIndependendField] = useState(0)
 
   const _setToken0 = useCallback(
-    (token: Type | undefined) => {
+    (token: Type | undefined): void => {
       if (token?.id === token1?.id) return
+
       setIndependendField(1)
       setTypedAmounts((prev) => ({ ...prev, input0: '' }))
+
+      if (token && token1 && token.chainId !== token1.chainId) {
+        setToken1(undefined)
+        setTypedAmounts((prev) => ({ ...prev, input1: '' }))
+      }
+
       setToken0(token)
     },
     [token1],
   )
 
   const _setToken1 = useCallback(
-    (token: Type | undefined) => {
+    (token: Type | undefined): void => {
       if (token?.id === token0?.id) return
+
       setIndependendField(0)
       setTypedAmounts((prev) => ({ ...prev, input1: '' }))
+
+      if (token && token0 && token.chainId !== token0.chainId) {
+        setToken0(undefined)
+        setTypedAmounts((prev) => ({ ...prev, input0: '' }))
+      }
+
       setToken1(token)
     },
     [token0],
   )
-
   const { data: price0, isLoading: isPrice0Loading } = usePrice({
     chainId: token0?.chainId,
     address: token0?.wrapped?.address,
@@ -201,7 +214,7 @@ export const AddLiquidityV2 = ({
           >
             {hideTokenSelectors ? null : (
               <>
-                <p className="font-medium text-slate-900 dark:text-pink-100 text-base">
+                <p className="text-base font-medium text-slate-900 dark:text-pink-100">
                   Select A Pool
                 </p>
                 <SelectTokensWidgetV2
@@ -221,7 +234,7 @@ export const AddLiquidityV2 = ({
                 </Collapsible>
                 <Collapsible open={doesNotExist} className="w-full">
                   <div className="flex flex-col gap-4">
-                    <p className="font-medium text-slate-900 dark:text-pink-100 text-base">
+                    <p className="text-base font-medium text-slate-900 dark:text-pink-100">
                       Set Price
                     </p>
                     <InitialPrice
@@ -236,7 +249,7 @@ export const AddLiquidityV2 = ({
             ) : null}
             <div>
               {hideTokenSelectors ? null : (
-                <p className="font-medium text-slate-900 dark:text-pink-100 text-base pb-2">
+                <p className="pb-2 text-base font-medium text-slate-900 dark:text-pink-100">
                   Deposit
                 </p>
               )}
@@ -459,7 +472,7 @@ const _ZapWidget: FC<ZapWidgetProps> = ({
       <Web3Input.Currency
         id="zap-liquidity-token"
         type="INPUT"
-        className="p-4 bg-gray-100 dark:bg-slate-900 rounded-xl"
+        className="p-4 bg-gray-100 rounded-xl dark:bg-slate-900"
         chainId={chainId}
         value={inputAmount}
         onChange={setInputAmount}
@@ -677,7 +690,7 @@ const AddLiquidityWidget: FC<AddLiquidityWidgetProps> = ({
         <Web3Input.Currency
           id="add-liquidity-token0"
           type="INPUT"
-          className="p-4 bg-gray-100 dark:bg-slate-900 rounded-xl"
+          className="p-4 bg-gray-100 rounded-xl dark:bg-slate-900"
           chainId={chainId}
           value={input0}
           onChange={onChangeToken0TypedAmount}
@@ -695,7 +708,7 @@ const AddLiquidityWidget: FC<AddLiquidityWidgetProps> = ({
         <div className="left-0 right-0 mt-[-24px] mb-[-24px] flex items-center justify-center">
           <button
             type="button"
-            className="z-10 p-2 bg-gray-100 rounded-full dark:bg-slate-900 border border-slate-50 dark:border-slate-800"
+            className="z-10 p-2 bg-gray-100 rounded-full border dark:bg-slate-900 border-slate-50 dark:border-slate-800"
           >
             <PlusIcon
               strokeWidth={3}
@@ -706,7 +719,7 @@ const AddLiquidityWidget: FC<AddLiquidityWidgetProps> = ({
         <Web3Input.Currency
           id="add-liquidity-token1"
           type="INPUT"
-          className="p-4 bg-gray-100 dark:bg-slate-900 rounded-xl"
+          className="p-4 bg-gray-100 rounded-xl dark:bg-slate-900"
           chainId={chainId}
           value={input1}
           onChange={onChangeToken1TypedAmount}

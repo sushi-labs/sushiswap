@@ -228,7 +228,7 @@ const CurrencyInput: FC<CurrencyInputProps> = ({
                     </Badge>
                   </div>
                   <div className="flex flex-col items-start">
-                    <span className="text-sm md:text-xl leading-5">
+                    <span className="text-sm leading-5 md:text-xl">
                       {currency.symbol}
                     </span>
                     {/* <span className="text-xs leading-3 text-muted-foreground">
@@ -298,7 +298,7 @@ const CurrencyInput: FC<CurrencyInputProps> = ({
     <div
       className={classNames(
         _error ? '!bg-red-500/20 !dark:bg-red-900/30' : '',
-        'relative overflow-hidden',
+        'overflow-hidden relative',
         className,
       )}
     >
@@ -306,13 +306,13 @@ const CurrencyInput: FC<CurrencyInputProps> = ({
         data-state={fetching ? 'active' : 'inactive'}
         className="transition-all data-[state=inactive]:hidden data-[state=active]:block absolute inset-0 overflow-hidden p-4 before:absolute before:inset-0 before:-translate-x-full before:animate-[shimmer_.5s_infinite] before:bg-gradient-to-r before:from-transparent dark:before:via-slate-50/10 before:via-gray-900/[0.07] before:to-transparent"
       />
-      <div className="flex items-center justify-between">
+      <div className="flex justify-between items-center">
         {label ? (
           <span className="text-sm text-muted-foreground">{label}</span>
         ) : (
           <span />
         )}
-        <div className="flex items-center gap-4 justify-end">
+        <div className="flex gap-4 justify-end items-center">
           {type === 'INPUT' && !hidePercentageInputs ? (
             <PercentageInputs
               loading={isBalanceLoading}
@@ -337,7 +337,7 @@ const CurrencyInput: FC<CurrencyInputProps> = ({
           />
         </div>
       </div>
-      <div className="relative flex items-center gap-2 md:gap-4 mt-1">
+      <div className="flex relative gap-2 items-center mt-1 md:gap-4">
         {hideInputAndPricing ? null : (
           <div className="w-full">
             <div
@@ -391,7 +391,7 @@ const CurrencyInput: FC<CurrencyInputProps> = ({
             id={`${id}-button`}
             className={classNames(
               currencyClassName,
-              'flex items-center gap-1 text-xl py-2 pl-2 pr-2 rounded-full font-medium whitespace-nowrap',
+              'flex gap-1 items-center py-2 pr-2 pl-2 text-xl font-medium whitespace-nowrap rounded-full',
             )}
           >
             {currency ? (
