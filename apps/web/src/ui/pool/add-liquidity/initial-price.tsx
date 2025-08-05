@@ -35,7 +35,7 @@ export const InitialPrice = ({
       token0Input?.equalTo(0) ||
       token1Input?.equalTo(0)
     ) {
-      return [undefined, undefined]
+      return [0, 0]
     }
 
     const token1Per0 = token1Input
@@ -65,7 +65,7 @@ export const InitialPrice = ({
               onClick={() => setRateDirection('token1')}
               className={
                 rateDirection === 'token1'
-                  ? 'bg-[#00000014] dark:bg-[#ffffff14]'
+                  ? '!bg-[#00000014] dark:!bg-[#ffffff14]'
                   : ''
               }
             >
@@ -77,7 +77,7 @@ export const InitialPrice = ({
               size="xs"
               className={
                 rateDirection === 'token0'
-                  ? 'bg-[#00000014] dark:bg-[#ffffff14]'
+                  ? '!bg-[#00000014] dark:!bg-[#ffffff14]'
                   : ''
               }
             >

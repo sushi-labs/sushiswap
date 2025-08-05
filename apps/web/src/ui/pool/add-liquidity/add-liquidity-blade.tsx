@@ -196,7 +196,7 @@ export const AddLiquidityBlade = ({
             {doesNotExist ? (
               <>
                 <Collapsible open className="w-full">
-                  <DoesNotExistMessage />
+                  <DoesNotExistMessage type="BLADE" />
                 </Collapsible>
                 <Collapsible open className="w-full">
                   <div className="flex flex-col gap-4">
