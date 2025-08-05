@@ -235,6 +235,8 @@ export const ZAP_SUPPORTED_CHAIN_IDS = [
   ChainId.ARBITRUM,
   ChainId.AVALANCHE,
   ChainId.KATANA,
+  ChainId.SONIC,
+  ChainId.LINEA,
 ] as const
 
 export type ZapSupportedChainId = (typeof ZAP_SUPPORTED_CHAIN_IDS)[number]
