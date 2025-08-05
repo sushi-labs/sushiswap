@@ -13,7 +13,7 @@ export default function SwapLayout({
   return (
     <Providers>
       <Header />
-      <main className="lg:p-4 mt-16 mb-[86px]">{children}</main>
+      <main className="lg:p-4 mt-20 mb-[86px]">{children}</main>
     </Providers>
   )
 }
