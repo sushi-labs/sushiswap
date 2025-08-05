@@ -1,4 +1,4 @@
-import { IS_TESTNET } from '~stellar/_common/constants/constants'
+import { IS_TESTNET } from '~stellar/_common/lib/constants'
 
 export const getStellarAddressLink = (address: string) => {
   if (IS_TESTNET) {

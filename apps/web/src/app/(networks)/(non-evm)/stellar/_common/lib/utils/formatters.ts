@@ -1,13 +1,25 @@
-import { DEFAULT_DECIMALS_PRECISION } from '~stellar/_common/constants/constants'
+import { DEFAULT_DECIMALS_PRECISION } from '~stellar/_common/lib/constants'
 
 /**
- * Abbreviates a wallet address to be more compact, showing the first 6 and the last 4 characters. This assumes passing an Ethereum hex address, however it supports any string.
- * @param address The wallet address
- * @returns An obfuscated address 0xABCD..........1234
+ * Abbreviates a wallet address to be more compact, showing the first 6 and the last 4 characters. This works with stellar address strings.
+ * @param address The wallet address string
+ * @returns An obfuscated address GABCD...1234
  */
 export const formatAddress = (address: string | undefined | null): string => {
   if (!address) return ''
-  return address.substring(0, 6) + '...' + address.substring(address.length - 4)
+  return `${address.substring(0, 6)}...${address.substring(address.length - 4)}`
+}
+
+/**
+ * Formats XLM value from stroops (smallest unit) to human-readable XLM amount
+ * @param value The value in stroops (bigint)
+ * @param decimals Number of decimal places to show (default: 4)
+ * @returns A formatted XLM string
+ */
+export const formatXLM = (value: bigint, decimals = 2) => {
+  // Convert stroops to XLM (1 XLM = 10^7 stroops)
+  const xlmValue = Number(value) / 10000000
+  return formatDecimal(xlmValue, decimals)
 }
 
 /**

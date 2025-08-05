@@ -1,0 +1,23 @@
+{
+  "name": "@sushiswap/stellar",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Stellar contract bindings for SushiSwap",
+  "type": "module",
+  "exports": {
+    "./xlm": {
+      "types": "./dist/xlm/index.d.ts",
+      "import": "./dist/xlm/index.js",
+      "require": "./dist/xlm/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc"
+  },
+  "dependencies": {
+    "@stellar/stellar-sdk": "^13.3.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0"
+  }
+}

@@ -7,6 +7,7 @@ import {
   allowAllModules,
 } from '@creit.tech/stellar-wallets-kit'
 import { createContext, useContext, useEffect, useState } from 'react'
+import { NETWORK_PASSPHRASE } from './_common/lib/constants'
 
 interface StellarWalletContextType {
   stellarWalletKit: StellarWalletsKit | null
@@ -26,20 +27,20 @@ const StellarWalletContext = createContext<StellarWalletContextType>({
   signTransaction: async () => '',
 })
 
+// TODO: preserved the connected state between page navigation
 export function Providers({ children }: { children: React.ReactNode }) {
   const [stellarWalletKit, setStellarWalletKit] =
     useState<StellarWalletsKit | null>(null)
   const [wallets, setWallets] = useState<ISupportedWallet[]>([])
   const [connectedAddress, setConnectedAddress] = useState<string | null>(null)
 
-  // TODO: update accordingly
-  const preferredNetwork = WalletNetwork.TESTNET
+  const PREFERRED_NETWORK = WalletNetwork.TESTNET // TODO: update accordingly
 
   useEffect(() => {
     const setup = async () => {
       // Note: This should only be called once any time a user is connected to Stellar
       const kit: StellarWalletsKit = new StellarWalletsKit({
-        network: preferredNetwork,
+        network: PREFERRED_NETWORK,
         modules: allowAllModules(),
       })
       // Get/Set wallets
@@ -52,9 +53,12 @@ export function Providers({ children }: { children: React.ReactNode }) {
 
     setup()
 
-    // TODO: teardown
-    return () => {}
-  }, [])
+    return () => {
+      setStellarWalletKit(null)
+      setWallets([])
+      setConnectedAddress(null)
+    }
+  }, [PREFERRED_NETWORK])
 
   /**
    * Connects to a Stellar wallet
@@ -70,7 +74,6 @@ export function Providers({ children }: { children: React.ReactNode }) {
 
     // Get/Set address
     const { address } = await stellarWalletKit.getAddress()
-    console.log(`Connected with ${address}`)
     setConnectedAddress(address)
   }
 
@@ -97,7 +100,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
 
     const { signedTxXdr } = await stellarWalletKit.signTransaction(xdr, {
       address: connectedAddress,
-      networkPassphrase: preferredNetwork,
+      networkPassphrase: PREFERRED_NETWORK,
     })
 
     return signedTxXdr

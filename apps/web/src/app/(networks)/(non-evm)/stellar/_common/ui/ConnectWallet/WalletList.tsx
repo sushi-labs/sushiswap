@@ -2,11 +2,10 @@ import { List, SelectIcon } from '@sushiswap/ui'
 import { useStellarWallet } from '../../../providers'
 
 export const WalletList = () => {
-  const { wallets, connectWallet, connectedAddress } = useStellarWallet()
+  const { wallets, connectWallet } = useStellarWallet()
 
   const handleConnectWallet = async (walletId: string) => {
-    const resp = await connectWallet(walletId)
-    console.log({ walletId, resp, connectedAddress })
+    await connectWallet(walletId)
   }
 
   return (

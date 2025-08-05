@@ -23,8 +23,6 @@ export const DefaultView = ({ setView }: DefaultViewProps) => {
   const { connectedAddress, disconnectWallet } = useStellarWallet()
   const { data, isLoading: isLoadingBalance } = useXlmBalance()
 
-  console.log({ data })
-
   return (
     <div className="flex flex-col gap-8 p-4 w-full">
       <div className="flex justify-between gap-2 w-full">
@@ -85,7 +83,7 @@ export const DefaultView = ({ setView }: DefaultViewProps) => {
         </div>
       </div>
       <div className="flex flex-col gap-2 justify-center items-center">
-        {isLoadingBalance || data?.balance === undefined ? (
+        {isLoadingBalance ? (
           <div className="flex items-center gap-2">
             <SkeletonText className="!w-24 mx-auto !h-7" />
             <span className="text-3xl font-medium h-7">XLM</span>

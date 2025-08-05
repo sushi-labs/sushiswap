@@ -8,7 +8,7 @@ import {
 } from '@sushiswap/ui'
 import { JazzIcon } from '@sushiswap/ui/icons/JazzIcon'
 import { useEffect, useState } from 'react'
-import { IS_TESTNET } from '~stellar/_common/constants/constants'
+import { IS_TESTNET } from '~stellar/_common/lib/constants'
 import { formatAddress } from '~stellar/_common/lib/utils/formatters'
 import { useStellarWallet } from '~stellar/providers'
 import { DefaultView } from './DefaultView'
