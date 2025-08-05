@@ -31,17 +31,17 @@ function BaseCookieDialog({
         <DialogTitle>Cookie Policy</DialogTitle>
       </VisuallyHidden>
       <div>
-        Sushi Labs and our third-party service providers may use cookies as set
-        forth in our{' '}
-        <LinkExternal href="/legal/cookie-policy">Cookie Policy</LinkExternal>,
-        which process your personal data. You may manage your cookie preferences
-        below. Even if you reject all cookies, you hereby consent to the
-        collection of your personal data by us and our service providers as you
-        use our services, through technologies other than cookies, as described
-        in our{' '}
+        By clicking on “Accept all cookies”, you consent to the storage of
+        cookies on your device and the associated processing of your personal
+        data by Sushi Labs and our partners to improve website navigation,
+        analyse website usage and conduct surveys. You can revoke your consent
+        at any time via the “Manage cookie preferences” button.
+        <br />
+        For further information on our data processing and cookies, please visit
+        our
         <LinkExternal href="/legal/privacy-policy">Privacy Policy</LinkExternal>
-        , including when such collection may be considered an interception of
-        communications by third parties.
+        and our
+        <LinkExternal href="/legal/cookie-policy">Cookie Policy</LinkExternal>.
       </div>
       <Separator />
       <div className="flex md:flex-row flex-col w-full gap-3">
