@@ -19,6 +19,8 @@ export type TransactionType =
   | 'limit'
   | 'claimRewards'
   | 'product'
+  | 'mint'
+  | 'burn'
 
 //@DEV these will change when api is ready, placeholder for now to prepare the UI
 const TITLE: Record<TransactionType, string> = {
@@ -31,6 +33,8 @@ const TITLE: Record<TransactionType, string> = {
   limit: 'Limit Order Completed',
   claimRewards: 'Rewards Claimed',
   product: 'New Feature Available!',
+  mint: 'Liquidity Added',
+  burn: 'Liquidity Removed',
 }
 
 const ICONS: Record<TransactionType, ReactNode> = {
@@ -43,6 +47,8 @@ const ICONS: Record<TransactionType, ReactNode> = {
   limit: <ArrowsRightLeftIcon width={14} height={14} strokeWidth={2} />,
   claimRewards: <CoinIcon width={14} height={14} strokeWidth={2} />,
   product: <StarIcon width={14} height={14} strokeWidth={2} />,
+  mint: <ArrowDownTrayIcon width={14} height={14} strokeWidth={2} />,
+  burn: <ArrowUpTrayIcon width={14} height={14} strokeWidth={2} />,
 }
 
 export const InboxItem = ({

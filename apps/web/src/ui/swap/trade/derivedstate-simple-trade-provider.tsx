@@ -81,10 +81,9 @@ const DerivedstateSimpleTradeProvider: FC<
 
       _setTradeView(view)
       _setTradeModeChanged(false)
-      // window.history.pushState({}, "", createUrl(chainId, view, tradeMode));
       createQuery(
         [],
-        `/${pathname?.split('/')[1]}/${tradeMode}${view !== 'simple' ? `/${view}` : ''}`,
+        `/${pathname?.split('/')[1]}/${tradeMode || 'swap'}${view !== 'simple' ? `/${view}` : ''}`,
       )
     },
     [tradeView, tradeMode, pathname, createQuery],

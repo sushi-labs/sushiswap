@@ -13,6 +13,8 @@ export const ALLOWED_TYPES: TransactionType[] = [
   'limit',
   'claimRewards',
   'product',
+  'mint',
+  'burn',
 ]
 
 export const AllInbox = () => {
