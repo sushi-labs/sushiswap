@@ -59,9 +59,8 @@ import {
 import { useRefetchBalances } from '~evm/_common/ui/balance-provider/use-refetch-balances'
 import { usePrice } from '~evm/_common/ui/price-provider/price-provider/use-price'
 import { useCurrentChainId } from '../../../lib/hooks/useCurrentChainId'
-import { AddLiquidityButtonV2 } from '../AddLiquidityButtonV2'
-import { AddSectionReviewModalLegacy } from '../AddSectionReviewModalLegacy'
 import { ToggleZapCard } from '../ToggleZapCard'
+import { AddLiquidityV2Button } from './add-liquidity-v2-button'
 import { DoesNotExistMessage } from './does-not-exist-message'
 import { EstimatedValue } from './estimated-value'
 import { InitialPrice } from './initial-price'
@@ -795,7 +794,7 @@ const AddLiquidityWidget: FC<AddLiquidityWidgetProps> = ({
                               </Button>
                             </AddSectionReviewModalLegacy> */}
                             {title === 'Add Liquidity' ? (
-                              <AddLiquidityButtonV2
+                              <AddLiquidityV2Button
                                 poolState={poolState as SushiSwapV2PoolState}
                                 chainId={chainId}
                                 token0={token0}

@@ -259,7 +259,7 @@ function useWriteWithoutNative({
   return { ...rest, write }
 }
 
-interface AddLiquidityButtonV2Props {
+interface AddLiquidityV2ButtonProps {
   poolState: SushiSwapV2PoolState
   chainId: SushiSwapV2ChainId
   token0: Type | undefined
@@ -269,7 +269,7 @@ interface AddLiquidityButtonV2Props {
   onSuccess: () => void
 }
 
-export const AddLiquidityButtonV2: FC<AddLiquidityButtonV2Props> = ({
+export const AddLiquidityV2Button: FC<AddLiquidityV2ButtonProps> = ({
   poolState,
   chainId,
   token0,
