@@ -26,7 +26,7 @@ export const SimpleSwapBridgeBanner: FC<{ className?: string }> = ({
     >
       <div
         className={classNames(
-          'rounded-xl relative p-6 bg-[#E9E9EB] overflow-hidden',
+          'rounded-xl flex items-center justify-between relative p-6 bg-[#E9E9EB] overflow-hidden',
           className,
         )}
       >
@@ -63,7 +63,6 @@ export const SimpleSwapBridgeBanner: FC<{ className?: string }> = ({
           alt="Kadena Bridge Banner Cube"
           width={119}
           height={119}
-          className="absolute -translate-y-1/2 top-1/2 right-3"
         />
       </div>
     </Link>
