@@ -2,7 +2,6 @@
 
 import { ArrowLeftIcon } from '@heroicons/react-v1/solid'
 import { Button, Collapsible, classNames } from '@sushiswap/ui'
-import { useSearchParams } from 'next/navigation'
 import { useEffect, useMemo, useState } from 'react'
 import { useCreateQuery } from 'src/lib/hooks/useCreateQuery'
 import { useCurrentChainId } from 'src/lib/hooks/useCurrentChainId'
@@ -14,6 +13,7 @@ import {
   useConcentratedLiquidityURLState,
 } from 'src/ui/pool/ConcentratedLiquidityURLStateProvider'
 import { computeSushiSwapV3PoolAddress } from 'sushi'
+import { ChainKey } from 'sushi/chain'
 import {
   SUSHISWAP_V3_FACTORY_ADDRESS,
   SUSHISWAP_V3_SUPPORTED_CHAIN_IDS,
@@ -91,12 +91,13 @@ const _Add = ({
     tokenId,
     token1,
   })
-  const { data: pools } = usePoolsByTokenPair(
+  const { data: pools, isLoading: isLoadingPools } = usePoolsByTokenPair(
     token0?.wrapped.id,
     token1?.wrapped.id,
   )
 
   const poolExists = useMemo(() => {
+    if (isLoadingPools) return true
     return pools?.some((pool) => {
       return (
         (pool.swapFee === feeAmount / 1000000 &&
@@ -107,7 +108,7 @@ const _Add = ({
           pool.token1.id.toLowerCase() === token0?.wrapped.id.toLowerCase())
       )
     })
-  }, [feeAmount, pools, token0, token1])
+  }, [feeAmount, pools, token0, token1, isLoadingPools])
 
   const poolAddress = useMemo(
     () =>
@@ -230,7 +231,7 @@ const _Add = ({
             tokensLoading={tokensLoading}
             existingPosition={position ?? undefined}
             tokenId={tokenId}
-            // successLink={`/${ChainKey[chainId]}/pool/v3/${poolAddress}/${tokenId ?? "positions"}`}
+            successLink={`/${ChainKey[chainId]}/pool/v3/${poolAddress}/${tokenId ?? 'positions'}`}
           />
         </>
       ) : null}

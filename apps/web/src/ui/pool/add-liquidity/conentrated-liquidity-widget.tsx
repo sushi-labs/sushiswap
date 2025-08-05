@@ -1,9 +1,13 @@
 'use client'
 
 import { InformationCircleIcon, PlusIcon } from '@heroicons/react-v1/solid'
-import { DialogTrigger, Message, classNames } from '@sushiswap/ui'
-import { Button } from '@sushiswap/ui'
+import { SlippageToleranceStorageKey } from '@sushiswap/hooks'
+import { Message, classNames } from '@sushiswap/ui'
 import { type FC, useCallback, useMemo } from 'react'
+import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
+import { Web3Input } from 'src/lib/wagmi/components/web3-input'
+import { useConcentratedPositionOwner } from 'src/lib/wagmi/hooks/positions/hooks/useConcentratedPositionOwner'
+import { Checker } from 'src/lib/wagmi/systems/Checker'
 import {
   SUSHISWAP_V3_POSITION_MANAGER,
   type SushiSwapV3ChainId,
@@ -12,19 +16,13 @@ import {
 } from 'sushi/config'
 import type { Type } from 'sushi/currency'
 import type { Position } from 'sushi/pool/sushiswap-v3'
-
-import { SlippageToleranceStorageKey } from '@sushiswap/hooks'
-import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
-import { Web3Input } from 'src/lib/wagmi/components/web3-input'
-import { useConcentratedPositionOwner } from 'src/lib/wagmi/hooks/positions/hooks/useConcentratedPositionOwner'
-import { Checker } from 'src/lib/wagmi/systems/Checker'
 import { Bound, Field } from '../../../lib/constants'
-import { AddSectionReviewModalConcentrated } from '../AddSectionReviewModalConcentrated'
 import {
   useConcentratedDerivedMintInfo,
   useConcentratedMintActionHandlers,
   useConcentratedMintState,
 } from '../ConcentratedLiquidityProvider'
+import { AddLiquidityV3Button } from './add-liquidity-v3-button'
 import { EstimatedValue } from './estimated-value'
 
 interface ConcentratedLiquidityWidget {
@@ -228,9 +226,8 @@ export const ConcentratedLiquidityWidget: FC<ConcentratedLiquidityWidget> = ({
                       contract={SUSHISWAP_V3_POSITION_MANAGER[chainId]}
                       enabled={!depositBDisabled}
                     >
-                      <AddSectionReviewModalConcentrated
+                      <AddLiquidityV3Button
                         chainId={chainId}
-                        feeAmount={feeAmount}
                         token0={token0}
                         token1={token1}
                         input0={parsedAmounts[Field.CURRENCY_A]}
@@ -247,17 +244,7 @@ export const ConcentratedLiquidityWidget: FC<ConcentratedLiquidityWidget> = ({
                           _onFieldBInput('')
                         }}
                         successLink={successLink}
-                      >
-                        <DialogTrigger asChild>
-                          <Button
-                            fullWidth
-                            size="xl"
-                            testId="add-liquidity-preview"
-                          >
-                            Preview
-                          </Button>
-                        </DialogTrigger>
-                      </AddSectionReviewModalConcentrated>
+                      />
                     </Checker.ApproveERC20>
                   </Checker.ApproveERC20>
                 </Checker.Slippage>
