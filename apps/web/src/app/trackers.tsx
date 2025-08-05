@@ -12,7 +12,9 @@ export function Trackers() {
 
   return (
     <>
-      <VercelAnalytics />
+      <VercelAnalytics
+        beforeSend={(event) => (analyiticsEnabled ? event : null)}
+      />
       <GoogleAnalytics enabled={analyiticsEnabled} />
       <GoogleTagManager enabled={analyiticsEnabled} />
       <HotJar enabled={analyiticsEnabled} />
