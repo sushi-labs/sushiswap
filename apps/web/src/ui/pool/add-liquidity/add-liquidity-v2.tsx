@@ -15,7 +15,7 @@ import {
   useMemo,
   useState,
 } from 'react'
-import { DISABLED_CHAIN_IDS, isZapSupportedChainId } from 'src/config'
+import { isZapSupportedChainId } from 'src/config'
 import {
   APPROVE_TAG_ADD_LEGACY,
   APPROVE_TAG_ZAP_LEGACY,
@@ -37,13 +37,10 @@ import {
 } from 'src/lib/wagmi/systems/Checker/Provider'
 import { PoolFinder } from 'src/lib/wagmi/systems/PoolFinder/PoolFinder'
 import { PriceImpactWarning, SlippageWarning } from 'src/ui/common'
-import { AddSectionReviewModalLegacy } from 'src/ui/pool/AddSectionReviewModalLegacy'
-import { ToggleZapCard } from 'src/ui/pool/ToggleZapCard'
 import { ZapInfoCard } from 'src/ui/pool/ZapInfoCard'
-import { EVM_TESTNET_CHAIN_IDS, type EvmChainId } from 'sushi/chain'
+import type { EvmChainId } from 'sushi/chain'
 import {
   SUSHISWAP_V2_ROUTER_ADDRESS,
-  SUSHISWAP_V2_SUPPORTED_CHAIN_IDS,
   defaultCurrency,
   isSushiSwapV2ChainId,
   isWNativeSupported,
@@ -62,6 +59,9 @@ import {
 import { useRefetchBalances } from '~evm/_common/ui/balance-provider/use-refetch-balances'
 import { usePrice } from '~evm/_common/ui/price-provider/price-provider/use-price'
 import { useCurrentChainId } from '../../../lib/hooks/useCurrentChainId'
+import { AddLiquidityButtonV2 } from '../AddLiquidityButtonV2'
+import { AddSectionReviewModalLegacy } from '../AddSectionReviewModalLegacy'
+import { ToggleZapCard } from '../ToggleZapCard'
 import { DoesNotExistMessage } from './does-not-exist-message'
 import { EstimatedValue } from './estimated-value'
 import { InitialPrice } from './initial-price'
@@ -773,7 +773,7 @@ const AddLiquidityWidget: FC<AddLiquidityWidgetProps> = ({
                           contract={SUSHISWAP_V2_ROUTER_ADDRESS[chainId]}
                         >
                           <Checker.Success tag={APPROVE_TAG_ADD_LEGACY}>
-                            <AddSectionReviewModalLegacy
+                            {/* <AddSectionReviewModalLegacy
                               poolAddress={pool?.liquidityToken.address}
                               poolState={poolState as SushiSwapV2PoolState}
                               chainId={chainId}
@@ -793,7 +793,29 @@ const AddLiquidityWidget: FC<AddLiquidityWidgetProps> = ({
                               >
                                 {title}
                               </Button>
-                            </AddSectionReviewModalLegacy>
+                            </AddSectionReviewModalLegacy> */}
+                            {title === 'Add Liquidity' ? (
+                              <AddLiquidityButtonV2
+                                poolState={poolState as SushiSwapV2PoolState}
+                                chainId={chainId}
+                                token0={token0}
+                                token1={token1}
+                                input0={parsedInput0}
+                                input1={parsedInput1}
+                                onSuccess={() => {
+                                  setTypedAmounts({ input0: '', input1: '' })
+                                }}
+                              />
+                            ) : (
+                              <Button
+                                size="xl"
+                                fullWidth
+                                className="!mt-10"
+                                testId="add-liquidity"
+                              >
+                                {title}
+                              </Button>
+                            )}
                           </Checker.Success>
                         </Checker.ApproveERC20>
                       </Checker.ApproveERC20>
