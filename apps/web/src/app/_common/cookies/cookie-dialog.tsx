@@ -94,7 +94,7 @@ function ManageCookieDialog({
           </div>
           <Separator />
           <div>
-            <span>Performance Cookies</span>
+            <span>Analytical Cookies</span>
             <Switch
               checked={cookieSet.has('performance')}
               onCheckedChange={(enabled) =>
