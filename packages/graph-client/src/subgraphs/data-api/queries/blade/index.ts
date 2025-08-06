@@ -1,1 +1,1 @@
-export * from "./buckets.js";
+export * from './buckets.js'
