@@ -16,7 +16,7 @@ export function UserDetailsCard() {
   const session = useSession(true)
 
   return (
-    <Card className="w-full min-w-[470px]">
+    <Card className="h-min">
       <CardHeader className="rounded-t-xl">
         <CardTitle>User Details</CardTitle>
         <CardDescription>Useful when requesting support</CardDescription>

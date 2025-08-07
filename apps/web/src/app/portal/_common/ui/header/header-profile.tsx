@@ -27,7 +27,7 @@ export function HeaderProfile() {
 
   return (
     <div className="rounded-xl flex flex-row whitespace-nowrap items-center overflow-hidden bg-secondary">
-      <span className="pl-3 py-2 pr-2 text-sm bg-secondary bg-opacity-50 h-full flex items-center">
+      <span className="hidden pl-3 py-2 pr-2 text-sm bg-secondary bg-opacity-50 h-full sm:flex items-center">
         {session.user.email.email}
       </span>
       <div

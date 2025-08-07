@@ -7,6 +7,7 @@ import {
   CardHeader,
   CardTitle,
   Separator,
+  classNames,
   typographyVariants,
 } from '@sushiswap/ui'
 import Link from 'next/link'
@@ -44,7 +45,7 @@ function EnterpriseCard() {
         <CardContent className="!pt-6 !gap-2">
           {enterpriseFeatures.map((feature) => (
             <div key={feature} className="flex items-center space-x-4">
-              <CheckIcon width={16} height={16} />
+              <CheckIcon width={16} height={16} className="shrink-0" />
               <span className="text-slate-400 text-sm md:whitespace-nowrap">
                 {feature}
               </span>
@@ -61,8 +62,13 @@ export default async function Page() {
   const response = await client.getPlans()
 
   return (
-    <div className="flex flex-col items-center w-full space-y-20">
-      <span className={typographyVariants({ variant: 'h1' })}>
+    <div className="flex flex-col items-center w-full space-y-16 lg:space-y-20">
+      <span
+        className={classNames(
+          typographyVariants({ variant: 'h1' }),
+          'whitespace-nowrap',
+        )}
+      >
         Plans & Pricing
       </span>
       <div className="flex flex-col items-center space-y-12">
