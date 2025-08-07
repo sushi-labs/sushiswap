@@ -50,7 +50,7 @@ export const useLpBalance = ({
 
       return {
         chainId: KADENA_CHAIN_ID,
-        balance: balance,
+        balance: Number.parseFloat(balance.toString()),
       }
     },
     enabled: !!account && !!token0Address && !!token1Address,

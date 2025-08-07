@@ -1,4 +1,4 @@
-import { type IPartialPactCommand, Pact } from '@kadena/client'
+import { type ChainId, Pact } from '@kadena/client'
 import { KADENA_CONTRACT } from '~kadena/_common/constants/contracts'
 import { GAS_LIMIT, GAS_PRICE } from '~kadena/_common/constants/gas'
 import {
@@ -25,7 +25,7 @@ export const buildSwapTxn = ({
   signerAddress,
   poolAddress,
   isSimulate,
-}: BuildSwapTxnParams): IPartialPactCommand => {
+}: BuildSwapTxnParams) => {
   const pubKey = signerAddress.replace(/^k:/, '')
 
   const pactCmd = `(${KADENA_CONTRACT}.swap-exact-in
@@ -46,7 +46,7 @@ export const buildSwapTxn = ({
       }),
     ])
     .setMeta({
-      chainId: String(KADENA_CHAIN_ID),
+      chainId: String(KADENA_CHAIN_ID) as ChainId,
       gasLimit: GAS_LIMIT,
       gasPrice: GAS_PRICE,
       senderAccount: signerAddress,

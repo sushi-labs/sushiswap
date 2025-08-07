@@ -38,7 +38,7 @@ export const useTokenInfo = ({
           res.result.error?.message || 'Failed to fetch token info',
         )
       }
-
+      //@ts-expect-error - type mismatch, but we know this is correct
       const { name, symbol, decimals } = res.result.data
       return { name, symbol, decimals }
     },

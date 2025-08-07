@@ -39,7 +39,7 @@ export async function getTokenDetails({
   }
 
   console.log('getTokenDetails', res.result.data)
-
+  //@ts-expect-error - type mismatch, but we know this is correct
   const { name, symbol, decimals } = res.result.data
 
   return {

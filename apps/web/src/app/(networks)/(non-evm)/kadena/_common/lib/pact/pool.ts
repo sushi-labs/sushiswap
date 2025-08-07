@@ -1,4 +1,4 @@
-import { Pact } from '@kadena/client'
+import { type ChainId, Pact } from '@kadena/client'
 import { KADENA_CONTRACT } from '~kadena/_common/constants/contracts'
 import { GAS_LIMIT, GAS_PRICE } from '~kadena/_common/constants/gas'
 import { formatPactDecimal } from '../utils/formatters'
@@ -12,7 +12,7 @@ export const buildGetPoolExists = (
   const pactCode = `(${KADENA_CONTRACT}.pair-exists ${token0} ${token1})`
   return Pact.builder
     .execution(pactCode)
-    .setMeta({ chainId: String(chainId) })
+    .setMeta({ chainId: String(chainId) as ChainId })
     .setNetworkId(networkId)
     .createTransaction()
 }
@@ -26,7 +26,7 @@ export const buildGetPoolAddress = (
   const pactCode = `(${KADENA_CONTRACT}.get-pair ${token0} ${token1})`
   return Pact.builder
     .execution(pactCode)
-    .setMeta({ chainId: String(chainId) })
+    .setMeta({ chainId: String(chainId) as ChainId })
     .setNetworkId(networkId)
     .createTransaction()
 }
@@ -65,7 +65,7 @@ export const buildAddLiquidityTxn = ({
     const tx = Pact.builder
       .execution(pactCmd)
       .setMeta({
-        chainId: String(chainId),
+        chainId: String(chainId) as ChainId,
         gasLimit: GAS_LIMIT,
         gasPrice: GAS_PRICE,
         senderAccount: signerAddress,
@@ -116,7 +116,7 @@ export const buildAddLiquidityTxn = ({
       pred: 'keys-all',
     })
     .setMeta({
-      chainId: String(chainId),
+      chainId: String(chainId) as ChainId,
       gasLimit: GAS_LIMIT,
       gasPrice: GAS_PRICE,
       senderAccount: signerAddress,
@@ -137,7 +137,7 @@ export const buildGetLpBalanceTx = (
   const tx = Pact.builder
     .execution(pactCmd)
     .setMeta({
-      chainId: String(chainId),
+      chainId: String(chainId) as ChainId,
     })
     .setNetworkId(networkId)
     .createTransaction()
@@ -154,7 +154,7 @@ export const buildGetTotalLpSupply = (
   const tx = Pact.builder
     .execution(pactCmd)
     .setMeta({
-      chainId: String(chainId),
+      chainId: String(chainId) as ChainId,
     })
     .setNetworkId(networkId)
     .createTransaction()
@@ -224,7 +224,7 @@ export const buildRemoveLiquidityTxn = ({
       pred: 'keys-all',
     })
     .setMeta({
-      chainId: String(chainId),
+      chainId: String(chainId) as ChainId,
       gasLimit: GAS_LIMIT,
       gasPrice: GAS_PRICE,
       senderAccount: signerAddress,

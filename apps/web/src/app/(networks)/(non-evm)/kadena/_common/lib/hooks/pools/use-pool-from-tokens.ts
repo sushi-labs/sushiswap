@@ -99,7 +99,7 @@ export const usePoolFromTokens = ({
       ) {
         totalSupplyLp = Number.parseFloat(res2.result.data.decimal)
       } else {
-        totalSupplyLp = res2.result.data
+        totalSupplyLp = Number.parseFloat(res2.result.data.toString())
       }
 
       let reserve0 = 0
