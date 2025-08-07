@@ -16,59 +16,48 @@ import {
   useBreakpoint,
 } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
+import { USDIcon } from '@sushiswap/ui/icons/USD'
 import React, { type FC, useMemo } from 'react'
 import { SushiSwapProtocol } from 'sushi'
 import { EvmChain } from 'sushi/chain'
 import { Token, unwrapToken } from 'sushi/currency'
 import { AddLiquidityDialog } from './add-liquidity/add-liquidity-dialog'
 
-type PoolHeader = {
+type PoolHeaderBlade = {
   backUrl: string
   address: string
-  pool: V2Pool | V3Pool
-  apy?: {
-    fees: number | undefined
-    rewards: number | undefined
-  }
+  pool: BladePool
+
   priceRange?: string
   hasEnabledStrategies?: boolean
   showAddLiquidityButton?: boolean
 }
 
-export const PoolHeader: FC<PoolHeader> = ({
+export const PoolHeaderBlade: FC<PoolHeaderBlade> = ({
   backUrl,
   address,
   pool,
-  // apy,
   // priceRange,
-  showAddLiquidityButton = false,
+  // showAddLiquidityButton = false,
 }) => {
   console.log('pool', pool)
-  const { isMd } = useBreakpoint('md')
-  const [token0, token1] = useMemo(() => {
+  // const { isMd } = useBreakpoint('md')
+  const [token0] = useMemo(() => {
     if (!pool) return [undefined, undefined]
 
     return [
       unwrapToken(
         new Token({
           chainId: pool.chainId,
-          address: pool.token0.address,
-          decimals: pool.token0.decimals,
-          symbol: pool.token0.symbol,
-        }),
-      ),
-      unwrapToken(
-        new Token({
-          chainId: pool.chainId,
-          address: pool.token1.address,
-          decimals: pool.token1.decimals,
-          symbol: pool.token1.symbol,
+          address: pool.tokens[0].address,
+          decimals: pool.tokens[0].decimals,
+          symbol: pool.tokens[0].symbol,
         }),
       ),
     ]
   }, [pool])
 
-  if (pool && token0 && token1)
+  if (pool && token0)
     return (
       <div className="flex flex-col gap-6">
         <div className="flex flex-col gap-4">
@@ -87,7 +76,7 @@ export const PoolHeader: FC<PoolHeader> = ({
                   className="border-[#FFFFFF14]"
                 >
                   <Currency.Icon currency={token0} />
-                  <Currency.Icon currency={token1} />
+                  <USDIcon className="w-9 h-9" />
                 </Currency.IconList>
                 <div className="border-[#E8E7EB] dark:border-[#222137] border rounded-[4px] overflow-hidden z-10 absolute bottom-[1px] -right-1">
                   <NetworkIcon
@@ -110,7 +99,7 @@ export const PoolHeader: FC<PoolHeader> = ({
                   className="text-gray-900 dark:text-slate-50"
                   href={EvmChain.from(pool.chainId)?.getAccountUrl(address)}
                 >
-                  {token0.symbol}/{token1.symbol}
+                  {token0.symbol}/USD
                 </LinkExternal>
               </Button>
               <div
@@ -134,11 +123,12 @@ export const PoolHeader: FC<PoolHeader> = ({
                 )}
               </div>
             </div>
-            {showAddLiquidityButton && !isMd ? (
+            {/* {showAddLiquidityButton && !isMd ? (
               <AddLiquidityDialog
-                poolType={pool.protocol}
+              // @TODO: remove typecast once we have a blade pool type
+                poolType={pool.protocol as SushiSwapProtocol}
                 hidePoolTypeToggle={true}
-                // @ts-expect-error - ok until we have a blade pool type
+                // @TODO: remove typecast once we have a blade pool type
                 hideTokenSelectors={pool.protocol !== 'BLADE'}
                 token0={token0}
                 token1={token1}
@@ -152,7 +142,7 @@ export const PoolHeader: FC<PoolHeader> = ({
                   </Button>
                 }
               />
-            ) : null}
+            ) : null} */}
           </div>
         </div>
         {/* <div className="flex flex-wrap items-center gap-y-5 gap-x-[32px] text-secondary-foreground mb-8 mt-1.5">
