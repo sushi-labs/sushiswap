@@ -18,6 +18,7 @@ import { type Amount, Token, type Type } from 'sushi/currency'
 import { formatUSD } from 'sushi/format'
 import { Percent, ZERO } from 'sushi/math'
 import { Position, type SushiSwapV3Pool } from 'sushi/pool'
+import { useAccount } from 'wagmi'
 import { usePrices } from '~evm/_common/ui/price-provider/price-provider/use-prices'
 import { ZapRouteDialog } from './ZapRouteDialog'
 
@@ -31,6 +32,7 @@ interface V3ZapInfoCardProps {
 
 export const V3ZapInfoCard: FC<V3ZapInfoCardProps> = memo(
   ({ zapResponse, isZapError, inputCurrencyAmount, pool, tokenRatios }) => {
+    const { isConnected } = useAccount()
     const { data: prices } = usePrices({
       chainId: pool?.chainId,
     })
@@ -116,7 +118,10 @@ export const V3ZapInfoCard: FC<V3ZapInfoCardProps> = memo(
     return (
       <>
         <Collapsible
-          open={Boolean(inputCurrencyAmount?.greaterThan(0)) && !isZapError}
+          open={
+            Boolean(isConnected && inputCurrencyAmount?.greaterThan(0)) &&
+            !isZapError
+          }
         >
           <Card variant="outline">
             <CardContent className="!pt-3 !pb-3 !px-5">
