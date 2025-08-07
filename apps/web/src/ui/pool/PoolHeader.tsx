@@ -43,7 +43,6 @@ export const PoolHeader: FC<PoolHeader> = ({
   // priceRange,
   showAddLiquidityButton = false,
 }) => {
-  console.log('pool', pool)
   const { isMd } = useBreakpoint('md')
   const [token0, token1] = useMemo(() => {
     if (!pool) return [undefined, undefined]

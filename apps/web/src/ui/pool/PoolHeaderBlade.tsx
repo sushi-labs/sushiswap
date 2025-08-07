@@ -40,7 +40,6 @@ export const PoolHeaderBlade: FC<PoolHeaderBlade> = ({
   // priceRange,
   // showAddLiquidityButton = false,
 }) => {
-  console.log('pool', pool)
   // const { isMd } = useBreakpoint('md')
   const [token0] = useMemo(() => {
     if (!pool) return [undefined, undefined]

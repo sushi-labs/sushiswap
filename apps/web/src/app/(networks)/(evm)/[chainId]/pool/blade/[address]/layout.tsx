@@ -9,7 +9,6 @@ import { isAddress } from 'viem'
 export async function generateMetadata(props: {
   params: Promise<{ chainId: string; address: string }>
 }): Promise<Metadata> {
-  console.log('generateMetadata')
   const params = await props.params
   const { chainId: _chainId, address } = params
   const chainId = +_chainId as EvmChainId
@@ -49,21 +48,6 @@ export default async function Layout(props: {
   if (!isBladeChainId(chainId) || !isAddress(address, { strict: false })) {
     return notFound()
   }
-
-  const pool = await unstable_cache(
-    async () => getBladePool({ chainId, address }, { retries: 3 }),
-    ['blade', 'pool', `${chainId}:${address}`],
-    {
-      revalidate: 60 * 15,
-    },
-  )()
-
-  console.log('blade pool', pool)
-
-  // // Rockstar C&D
-  // if (!pool || pool.id === '42161:0x0a4f9962e24893a4a7567e52c1ce37d5482365de') {
-  //   return notFound()
-  // }
 
   return <>{children}</>
 }

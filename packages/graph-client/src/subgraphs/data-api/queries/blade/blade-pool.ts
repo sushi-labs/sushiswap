@@ -27,7 +27,6 @@ export const BladePoolQuery = graphql(
         id
         name
         symbol
-        __typename
       }
     }
     liquidity
@@ -48,7 +47,6 @@ export const BladePoolQuery = graphql(
       id
       newPoolAddress
       oldPoolAddress
-      __typename
     }
     vaults {
       address
@@ -63,7 +61,6 @@ export const BladePoolQuery = graphql(
         transferHelper
       }
       type
-     __typename 
     }
   }
 }
@@ -116,25 +113,18 @@ export async function getBladePool(
       }
     })
 
-    const name = tokens.map((t) => t.symbol).join('-')
-
     return {
       id: pool.id as `${string}:0x${string}`,
       address: pool.address as Address,
       chainId,
-      name,
       protocol: 'BLADE',
       liquidity: BigInt(pool.liquidity.toString()),
       liquidityUSD: pool.liquidityUSD,
       volumeUSD: pool.volumeUSD,
       volumeUSD1d: pool.volumeUSD1d,
       feeApr1d: pool.feeApr1d,
-
       totalApr1d: pool.totalApr1d,
-      // Fill required fields with fallback values if not supported in Blade
-
       tokens,
-
       feesUSD: pool.feeUSD1d,
       txCount: 0,
       txCount1d: 0,
@@ -166,7 +156,6 @@ export type BladePoolToken = {
     decimals: number
     name: string
     symbol: string
-    __typename: 'Token'
   }
 }
 
@@ -183,7 +172,6 @@ type TokenWithLiquidity = {
 
 export type BladePoolVault =
   | {
-      __typename: 'BladePoolVault'
       id: `${string}`
       address: Address
       createdAt: number
@@ -195,7 +183,6 @@ export type BladePoolVault =
       }
     }
   | {
-      __typename: 'BladePoolVault'
       id: `${string}`
       address: Address
       createdAt: number
@@ -212,7 +199,6 @@ export type BladePool = {
   id: `${string}:0x${string}`
   address: Address
   chainId: EvmChainId
-  name: string
   protocol: string
   liquidity: bigint
   liquidityUSD: number
@@ -226,7 +212,6 @@ export type BladePool = {
   isDeprecated: boolean
   isSingleAssetWithdrawEnabled: boolean
   tokens: TokenWithLiquidity[]
-
   feesUSD: number
   txCount: number
   txCount1d: number
@@ -250,7 +235,6 @@ export type BladePoolAbi =
 
 export type BladePoolLpTransfer = {
   id: string
-  // Add more fields if you use them
 }
 
 export type BladePoolQuery = {

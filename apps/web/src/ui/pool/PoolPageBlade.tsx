@@ -47,7 +47,7 @@ export const PoolPageBlade: FC<PoolPageBlade> = ({ pool }) => {
       {/* <UnknownTokenAlert pool={pool} /> */}
       <div className="flex flex-col-reverse gap-4 w-full lg:gap-10 lg:flex-row">
         <div className="flex-[2_2_0%] min-[1230px]:flex-[3_3_0%] min-w-0 flex flex-col gap-4 lg:gap-6">
-          <APRChart />
+          <APRChart pool={pool} />
           <PoolChartBlade />
         </div>
         <div className="flex-[1_1_0%] min-[1230px]:flex-[1_1_0%] min-w-0 flex flex-col gap-3">
