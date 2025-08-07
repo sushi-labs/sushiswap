@@ -28,7 +28,13 @@ export const WalletListView = ({
             )}
             className="flex items-center justify-start w-full min-w-[180px] text-left"
             key={adapter.name}
-            title={adapter.name === 'Ecko' ? 'eckoWALLET' : adapter.name}
+            title={
+              adapter.name === 'Ecko'
+                ? 'eckoWALLET'
+                : adapter.name === 'Snap'
+                  ? 'MetaMask'
+                  : adapter.name
+            }
             onClick={() => {
               adapter.detected
                 ? handleConnect(adapter.name)
