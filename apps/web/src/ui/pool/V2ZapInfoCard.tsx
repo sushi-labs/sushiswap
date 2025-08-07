@@ -20,6 +20,7 @@ import { Amount, type Type } from 'sushi/currency'
 import { formatUSD } from 'sushi/format'
 import { Percent, ZERO } from 'sushi/math'
 import { SushiSwapV2Pool } from 'sushi/pool'
+import { useAccount } from 'wagmi'
 import { usePrices } from '~evm/_common/ui/price-provider/price-provider/use-prices'
 import { ZapRouteDialog } from './ZapRouteDialog'
 
@@ -33,6 +34,7 @@ interface V2ZapInfoCardProps {
 
 export const V2ZapInfoCard: FC<V2ZapInfoCardProps> = memo(
   ({ zapResponse, isZapError, inputCurrencyAmount, pool, tokenRatios }) => {
+    const { isConnected } = useAccount()
     const { data: prices } = usePrices({
       chainId: pool?.chainId as EvmChainId | undefined,
     })
@@ -119,7 +121,9 @@ export const V2ZapInfoCard: FC<V2ZapInfoCardProps> = memo(
     return (
       <>
         <Collapsible
-          open={Boolean(inputCurrencyAmount?.greaterThan(0) && !isZapError)}
+          open={Boolean(
+            isConnected && inputCurrencyAmount?.greaterThan(0) && !isZapError,
+          )}
         >
           <Card variant="outline">
             <CardContent className="!pt-3 !pb-3 !px-5">
@@ -165,11 +169,10 @@ export const V2ZapInfoCard: FC<V2ZapInfoCardProps> = memo(
                 {isLoading ? (
                   <SkeletonBox className="h-4 py-0.5 w-[80px]" />
                 ) : (
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center justify-end flex-wrap gap-x-2">
                     {typeof amountOut !== 'undefined' ? (
                       <span>
-                        <FormattedNumber number={amountOut.toExact()} /> LP
-                        Tokens
+                        <FormattedNumber number={amountOut.toExact()} /> SLP
                       </span>
                     ) : (
                       <SkeletonBox className="h-4 py-0.5 w-[40px]" />
