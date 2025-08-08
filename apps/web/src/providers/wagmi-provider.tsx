@@ -73,7 +73,9 @@ export const WagmiProvider: FC<{
   const theme = forcedTheme || resolvedTheme
 
   const rainbowKitTheme = useMemo(() => {
-    if (!isMounted) return lightTheme
+    if (!isMounted) {
+      return lightTheme
+    }
 
     if (theme === 'dark') {
       return darkTheme

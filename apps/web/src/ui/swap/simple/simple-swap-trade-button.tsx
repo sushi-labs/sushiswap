@@ -1,8 +1,6 @@
 'use client'
 
-import { DialogTrigger, Message } from '@sushiswap/ui'
-import { Button } from '@sushiswap/ui'
-import type React from 'react'
+import { Button, DialogTrigger } from '@sushiswap/ui'
 import { type FC, useEffect, useMemo, useState } from 'react'
 import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
