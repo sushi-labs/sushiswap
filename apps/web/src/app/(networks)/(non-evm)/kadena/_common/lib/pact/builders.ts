@@ -1,4 +1,4 @@
-import { Pact } from '@kadena/client'
+import { type ChainId, Pact } from '@kadena/client'
 
 export const buildGetBalanceTx = (
   account: string,
@@ -9,7 +9,7 @@ export const buildGetBalanceTx = (
     Pact.builder
       // @ts-expect-error
       .execution(Pact.modules.coin['get-balance'](account))
-      .setMeta({ chainId: String(chainId) })
+      .setMeta({ chainId: String(chainId) as ChainId })
       .setNetworkId(networkId)
       .createTransaction()
   )
@@ -22,7 +22,7 @@ export const buildGetTokenMetaTx = (
 ) => {
   return Pact.builder
     .execution(`(${tokenContract}.get-meta)`)
-    .setMeta({ chainId: String(chainId) })
+    .setMeta({ chainId: String(chainId) as ChainId })
     .setNetworkId(networkId)
     .createTransaction()
 }
@@ -34,7 +34,7 @@ export const buildGetTokenPrecision = (
 ) => {
   return Pact.builder
     .execution(`(${tokenContract}.precision)`)
-    .setMeta({ chainId: String(chainId) })
+    .setMeta({ chainId: String(chainId) as ChainId })
     .setNetworkId(networkId)
     .createTransaction()
 }
@@ -83,7 +83,10 @@ export const buildGetTokenBalanceTx = (
 
   return Pact.builder
     .execution(tokenNames)
-    .setMeta({ chainId: String(chainId), gasLimit: estimatedGasLimit })
+    .setMeta({
+      chainId: String(chainId) as ChainId,
+      gasLimit: estimatedGasLimit,
+    })
     .setNetworkId(networkId)
     .createTransaction()
 }

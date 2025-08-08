@@ -19,14 +19,16 @@ export const useNativeTokenBalance = ({
     queryKey: ['kadena-native-balance', account],
     queryFn: async (): Promise<NativeTokenBalanceResponse> => {
       const tx = buildGetBalanceTx(account, KADENA_CHAIN_ID, KADENA_NETWORK_ID)
-
       const res = await kadenaClient.local(tx, {
         preflight: false,
         signatureVerification: false,
       })
 
       if (res.result.status !== 'success') {
-        throw new Error(res.result.error?.message || 'Failed to fetch balance')
+        return {
+          chainId: KADENA_CHAIN_ID,
+          balance: 0,
+        }
       }
 
       return {

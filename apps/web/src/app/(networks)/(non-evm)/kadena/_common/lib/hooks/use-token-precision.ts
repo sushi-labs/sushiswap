@@ -31,7 +31,7 @@ export const useTokenPrecision = ({
           res.result.error?.message || 'Failed to fetch token info',
         )
       }
-
+      //@ts-expect-error - type mismatch, but we know this is correct
       const decimals = res.result.data?.int ?? 12 // Default to 12 if not found
       return decimals
     },

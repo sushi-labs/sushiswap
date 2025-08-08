@@ -30,7 +30,7 @@ export const ChainIdOperatorBanner = ({
         <span className="text-black/80 dark:text-white/80">
           <span className="font-bold">SushiSwap</span> on{' '}
           <span className="font-bold">Kadena</span>{' '}
-          <br className="block xs:hidden" /> Operates on{' '}
+          <br className="block sm:hidden" /> Operates on{' '}
           <span className="dark:text-yellow-300 text-[#f3e035] bg-blend-color">
             Chain
           </span>{' '}

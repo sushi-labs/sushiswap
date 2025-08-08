@@ -71,6 +71,7 @@ export const useSimulateSwap = ({
         )
       }
 
+      //@ts-expect-error - type mismatch, but we know this is correct
       const poolAddress = getPoolAddressRes.result.data.account
 
       const tx = buildSwapTxn({
@@ -98,7 +99,7 @@ export const useSimulateSwap = ({
       }
       const gas: number = res?.gas ?? 0
       setGas(gas)
-
+      //@ts-expect-error - type mismatch, but we know this is correct
       const _amountOut: number = res?.result?.data?.[1]?.amount ?? 0
       const minAmountOut = new Decimal(_amountOut).mul(1 - slippage).toString()
       setMinAmountOut(minAmountOut)

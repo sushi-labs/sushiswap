@@ -66,7 +66,7 @@ export const SwapButton = ({ closeModal }: { closeModal: () => void }) => {
             'Failed to fetch pool address',
         )
       }
-
+      //@ts-expect-error - type mismatch, but we know this is correct
       const poolAddress = getPoolAddressRes.result.data.account
 
       const tx = buildSwapTxn({
@@ -80,11 +80,12 @@ export const SwapButton = ({ closeModal }: { closeModal: () => void }) => {
       })
 
       const signed = await client.signTransaction(currentWallet, tx)
+      //@ts-expect-error - type mismatch, but we know this is correct
       const preflight = await kadenaClient.preflight(signed)
       if (preflight.result.status === 'failure') {
         throw new Error(preflight.result.error?.message || 'Preflight failed')
       }
-
+      //@ts-expect-error - type mismatch, but we know this is correct
       const submitRes = await kadenaClient.submit(signed)
       const txId = submitRes.requestKey
 

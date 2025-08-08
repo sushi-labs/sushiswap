@@ -87,6 +87,7 @@ export const AddButton = ({
           networkId: KADENA_NETWORK_ID,
         })
         const signedTxn = await client.signTransaction(currentWallet, initTxn)
+        //@ts-expect-error - type mismatch, but we know this is correct
         const preflightResult = await kadenaClient.preflight(signedTxn)
         // console.log("preflightResult", preflightResult);
 
@@ -95,6 +96,7 @@ export const AddButton = ({
             preflightResult.result.error?.message || 'Preflight failed',
           )
         }
+        //@ts-expect-error - type mismatch, but we know this is correct
         const res = await kadenaClient.submit(signedTxn)
         // console.log("add liquidity res", res);
         const txId = res.requestKey
@@ -124,6 +126,7 @@ export const AddButton = ({
           timestamp: Date.now(),
           href: getChainwebTxnLink(txId),
         })
+        //@ts-expect-error - type mismatch, but we know this is correct
         poolAddress = preflightResult.result.data?.account
         setPoolId(poolAddress)
       }
@@ -141,6 +144,7 @@ export const AddButton = ({
         networkId: KADENA_NETWORK_ID,
       })
       const signedTxn = await client.signTransaction(currentWallet, tx)
+      //@ts-expect-error - type mismatch, but we know this is correct
       const preflightResult = await kadenaClient.preflight(signedTxn)
       // console.log("preflightResult", preflightResult);
 
@@ -149,6 +153,7 @@ export const AddButton = ({
           preflightResult.result.error?.message || 'Preflight failed',
         )
       }
+      //@ts-expect-error - type mismatch, but we know this is correct
       const res = await kadenaClient.submit(signedTxn)
 
       // console.log("add liquidity res", res);

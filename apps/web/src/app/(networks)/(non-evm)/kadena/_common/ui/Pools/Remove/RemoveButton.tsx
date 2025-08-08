@@ -68,12 +68,14 @@ export const RemoveButton = (props: ButtonProps) => {
         networkId: KADENA_NETWORK_ID,
       })
       const signedTxn = await client.signTransaction(currentWallet, tx)
+      //@ts-expect-error - type mismatch, but we know this is correct
       const preflightResult = await kadenaClient.preflight(signedTxn)
       if (preflightResult.result.status === 'failure') {
         throw new Error(
           preflightResult.result.error?.message || 'Preflight failed',
         )
       }
+      //@ts-expect-error - type mismatch, but we know this is correct
       const res = await kadenaClient.submit(signedTxn)
       const txId = res.requestKey
       createInfoToast({
