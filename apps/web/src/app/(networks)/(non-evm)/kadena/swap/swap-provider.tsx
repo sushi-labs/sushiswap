@@ -1,7 +1,7 @@
 'use client'
 
 import { type FC, createContext, useContext, useMemo, useReducer } from 'react'
-import { BABENA, KADENA } from '~kadena/_common/constants/token-list'
+import { KADENA, STABLE_TOKENS } from '~kadena/_common/constants/token-list'
 import type { KadenaToken } from '~kadena/_common/types/token-type'
 
 // @TODO: Connected and Connecting will be replaced by wallet hook
@@ -132,7 +132,7 @@ function swapReducer(_state: State, action: Action) {
 const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
   const [state, dispatch] = useReducer(swapReducer, {
     token0: KADENA,
-    token1: BABENA,
+    token1: STABLE_TOKENS[0],
     isTxnPending: false,
     amountIn: '',
     amountOut: '',
