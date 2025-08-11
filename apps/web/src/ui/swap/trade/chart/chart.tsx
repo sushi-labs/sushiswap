@@ -63,7 +63,10 @@ export const Chart = ({
     const widgetOptions: ChartingLibraryWidgetOptions = {
       symbol: `${token1.chainId}-${token1.wrapped.address}-${token1.name}-${token1.symbol}`,
       datafeed: Datafeed,
-      interval: widgetProps.interval as ResolutionString,
+      interval:
+        (localStorage.getItem(
+          'tradingview.chart.lastUsedTimeBasedResolution',
+        ) as ResolutionString) || (widgetProps.interval as ResolutionString),
       container: chartContainerRef.current,
       library_path: widgetProps.library_path,
       locale: widgetProps.locale as LanguageCode,
