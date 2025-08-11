@@ -39,7 +39,7 @@ export async function GET(req: Request): Promise<NextResponse> {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'X-API-KEY': process.env.KADINDEXER_API_KEY ?? '',
+        'X-API-KEY': process.env.KADENA_INDEXER_API_KEY ?? '',
       },
       body: query,
       next: { revalidate: 60 },
