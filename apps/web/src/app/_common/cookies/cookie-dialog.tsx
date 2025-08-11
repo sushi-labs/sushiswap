@@ -188,8 +188,8 @@ function ManageCookieDialog({
   )
 }
 
-export function CookieDialog() {
-  const [open, setOpen] = useState(true)
+export function CookieDialog({ defaultOpen }: { defaultOpen: boolean }) {
+  const [open, setOpen] = useState(defaultOpen)
   const [page, setPage] = useState<'base' | 'manage'>('base')
 
   const isMounted = useIsMounted()
@@ -266,6 +266,7 @@ export function CookieDialog() {
       >
         Cookie Preferences
       </DialogTrigger>
+
       {page === 'base' ? (
         <BaseCookieDialog onAction={onBaseAction} />
       ) : (
