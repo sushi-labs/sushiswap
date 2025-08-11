@@ -80,7 +80,7 @@ export const DISABLED_CHAIN_IDS = [
   ChainId.HYPEREVM,
 ] as const
 
-export const NEW_CHAIN_IDS = [ChainId.KATANA] as const
+export const NEW_CHAIN_IDS = [ChainId.KATANA, 'kadena'] as const
 
 export const PREFERRED_CHAINID_ORDER = [
   ...NEW_CHAIN_IDS,
