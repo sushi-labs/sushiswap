@@ -41,9 +41,9 @@ import type { TwapSupportedChainId } from 'src/config'
 import { type TwapOrder, useTwapOrders } from 'src/lib/hooks/react-query/twap'
 import { fillDelayText } from 'src/lib/swap/twap'
 import { useTokenWithCache } from 'src/lib/wagmi/hooks/tokens/useTokenWithCache'
-import { shortenAddress, shortenHash } from 'sushi'
+import { shortenAddress, shortenHash, withoutScientificNotation } from 'sushi'
 import { EvmChain } from 'sushi/chain'
-import { Amount, Native } from 'sushi/currency'
+import { Amount, Native, type Type } from 'sushi/currency'
 import type { Address } from 'viem'
 import { useAccount } from 'wagmi'
 import { useDerivedStateTwap } from './derivedstate-twap-provider'
@@ -148,7 +148,7 @@ const _TwapOrdersDialog: FC<{
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </DialogTitle>
-                <List className="min-h-[420px]">
+                <List className="min-h-[420px] max-h-[75vh] overflow-y-auto">
                   <div className="flex flex-col gap-4">
                     {isOrdersLoading ? (
                       <List.Control className="px-4 py-3">
@@ -180,6 +180,15 @@ const _TwapOrdersDialog: FC<{
       )}
     </DialogReview>
   )
+}
+
+function parseOrderAmount(
+  currency: Type | undefined,
+  orderAmount: string,
+): Amount<Type> | undefined {
+  const amount = withoutScientificNotation(orderAmount)
+  if (!currency || !amount) return undefined
+  return Amount.fromRawAmount(currency, amount)
 }
 
 const TwapOrderDialogContent = ({
@@ -218,21 +227,11 @@ const TwapOrderDialogContent = ({
     limitPrice,
   } = useMemo(() => {
     return {
-      srcAmount: token0
-        ? Amount.fromRawAmount(token0, order.srcAmount)
-        : undefined,
-      srcChunkAmount: token0
-        ? Amount.fromRawAmount(token0, order.srcAmountPerChunk)
-        : undefined,
-      srcFilledAmount: token0
-        ? Amount.fromRawAmount(token0, order.filledSrcAmount)
-        : undefined,
-      dstFilledAmount: token1
-        ? Amount.fromRawAmount(token1, order.filledDstAmount)
-        : undefined,
-      dstMinAmountOut: token1
-        ? Amount.fromRawAmount(token1, order.dstMinAmount)
-        : undefined,
+      srcAmount: parseOrderAmount(token0, order.srcAmount),
+      srcChunkAmount: parseOrderAmount(token0, order.srcAmountPerChunk),
+      srcFilledAmount: parseOrderAmount(token0, order.filledSrcAmount),
+      dstFilledAmount: parseOrderAmount(token1, order.filledDstAmount),
+      dstMinAmountOut: parseOrderAmount(token1, order.dstMinAmount),
       executionPrice:
         token0 && token1
           ? getOrderExcecutionRate(order, token0.decimals, token1.decimals)

@@ -25,7 +25,9 @@ import { HaqqCircle } from './HaqqCircle'
 import { HarmonyCircle } from './HarmonyCircle'
 import { HecoCircle } from './HecoCircle'
 import { HemiCircle } from './HemiCircle'
+import { HyperEVMCircle } from './HyperEVMCircle'
 import { KadenaCircle } from './KadenaCircle'
+import { KatanaCircle } from './KatanaCircle'
 import { KavaCircle } from './KavaCircle'
 import { LineaCircle } from './LineaCircle'
 import { MantaCircle } from './MantaCircle'
@@ -75,6 +77,8 @@ export * from './HaqqCircle'
 export * from './HarmonyCircle'
 export * from './HecoCircle'
 export * from './HemiCircle'
+export * from './HyperEVMCircle'
+export * from './KatanaCircle'
 export * from './KavaCircle'
 export * from './LineaCircle'
 export * from './MantaCircle'
@@ -120,11 +124,7 @@ export const NETWORK_CIRCLE_ICON: Partial<
   [ChainId.METIS]: MetisCircle,
   [ChainId.KAVA]: KavaCircle,
   [ChainId.ARBITRUM_NOVA]: ArbitrumNovaCircle,
-  [ChainId.HECO]: HecoCircle,
-  [ChainId.OKEX]: OkexCircle,
-  [ChainId.PALM]: PalmCircle,
   [ChainId.BOBA]: BobaCircle,
-  [ChainId.BOBA_AVAX]: BobaAvaxCircle,
   [ChainId.BOBA_BNB]: BobaBNBCircle,
   [ChainId.BTTC]: BttcCircle,
   [ChainId.POLYGON_ZKEVM]: PolygonZKCircle,
@@ -149,6 +149,8 @@ export const NETWORK_CIRCLE_ICON: Partial<
   [ChainId.APE]: ApeCircle,
   [ChainId.SONIC]: SonicCircle,
   [ChainId.HEMI]: HemiCircle,
+  [ChainId.KATANA]: KatanaCircle,
+  [ChainId.HYPEREVM]: HyperEVMCircle,
   kadena: KadenaCircle,
   aptos: AptosCircle,
   tron: TronCircle,
