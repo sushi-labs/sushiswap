@@ -188,8 +188,8 @@ function ManageCookieDialog({
   )
 }
 
-export function CookieDialog({ open: _open }: { open: boolean }) {
-  const [open, setOpen] = useState(_open)
+export function CookieDialog() {
+  const [open, setOpen] = useState(true)
   const [page, setPage] = useState<'base' | 'manage'>('base')
 
   const isMounted = useIsMounted()
