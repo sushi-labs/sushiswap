@@ -575,8 +575,8 @@ export const katana = {
   blockExplorers: {
     default: {
       name: 'Katana Explorer',
-      url: 'https://explorer.katanarpc.com',
-      apiUrl: 'https://explorer.katanarpc.com/api',
+      url: 'https://katanascan.com',
+      apiUrl: 'https://api.katanascan.com/api',
     },
   },
   testnet: false,
