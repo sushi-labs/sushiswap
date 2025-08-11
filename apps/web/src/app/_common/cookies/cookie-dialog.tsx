@@ -1,9 +1,11 @@
 'use client'
 
+import { ChevronDownIcon } from '@heroicons/react/24/solid'
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden'
 import { useIsMounted } from '@sushiswap/hooks'
 import {
   Button,
+  Collapsible,
   Dialog,
   DialogContent,
   DialogFooter,
@@ -57,7 +59,13 @@ function BaseCookieDialog({
   )
 }
 
-const cookieTypes = ['essential', 'functional', 'performance'] as const
+const cookieTypes = [
+  'essential',
+  'functional',
+  'analytical',
+  'google',
+  'hotjar',
+] as const
 
 export type CookieType = (typeof cookieTypes)[number]
 
@@ -78,6 +86,7 @@ function ManageCookieDialog({
   cookieSet,
   onAction,
 }: { cookieSet: Set<CookieType>; onAction: (action: ManageAction) => void }) {
+  const [isAnalyticsOpen, setIsAnalyticsOpen] = useState(false)
   return (
     <>
       <DialogContent
@@ -94,16 +103,6 @@ function ManageCookieDialog({
           </div>
           <Separator />
           <div>
-            <span>Analytical Cookies</span>
-            <Switch
-              checked={cookieSet.has('performance')}
-              onCheckedChange={(enabled) =>
-                onAction({ type: 'set', cookieType: 'performance', enabled })
-              }
-            />
-          </div>
-          <Separator />
-          <div>
             <span>Functional Cookies</span>
             <Switch
               checked={cookieSet.has('functional')}
@@ -111,6 +110,67 @@ function ManageCookieDialog({
                 onAction({ type: 'set', cookieType: 'functional', enabled })
               }
             />
+          </div>
+          <Separator />
+          <div>
+            <span>Analytical Cookies</span>
+            <Switch
+              checked={cookieSet.has('analytical')}
+              onCheckedChange={(enabled) =>
+                onAction({ type: 'set', cookieType: 'analytical', enabled })
+              }
+            />
+          </div>
+          <div>
+            <div className="flex flex-col gap-2">
+              <button
+                className="flex gap-1 items-center"
+                type="button"
+                onClick={() => setIsAnalyticsOpen(!isAnalyticsOpen)}
+              >
+                <ChevronDownIcon className="w-3 h-3" />
+                <span>Cookies(2)</span>
+              </button>
+              <Collapsible
+                open={isAnalyticsOpen}
+                className="flex flex-col gap-2 pl-4"
+              >
+                <div className="flex gap-1.5 items-center">
+                  <input
+                    type="checkbox"
+                    disabled={!cookieSet.has('analytical')}
+                    checked={
+                      cookieSet.has('analytical') && cookieSet.has('google')
+                    }
+                    onChange={(e) =>
+                      onAction({
+                        type: 'set',
+                        cookieType: 'google',
+                        enabled: e.currentTarget.checked,
+                      })
+                    }
+                  />
+                  Google
+                </div>
+                <div className="flex gap-1.5 items-center">
+                  <input
+                    type="checkbox"
+                    disabled={!cookieSet.has('analytical')}
+                    checked={
+                      cookieSet.has('analytical') && cookieSet.has('hotjar')
+                    }
+                    onChange={(e) =>
+                      onAction({
+                        type: 'set',
+                        cookieType: 'hotjar',
+                        enabled: e.currentTarget.checked,
+                      })
+                    }
+                  />
+                  HotJar
+                </div>
+              </Collapsible>
+            </div>
           </div>
         </div>
         <DialogFooter className="!justify-start flex flex-wrap gap-3">

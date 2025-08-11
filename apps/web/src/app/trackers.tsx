@@ -9,6 +9,8 @@ export function Trackers() {
   const enabledCookies = useEnabledCookies()
 
   const analyiticsEnabled = !!enabledCookies?.has('analytical')
+  const googleEnabled = analyiticsEnabled && !!enabledCookies?.has('google')
+  const hotjarEnabled = analyiticsEnabled && !!enabledCookies?.has('hotjar')
 
   return (
     <>
@@ -16,8 +18,8 @@ export function Trackers() {
         beforeSend={(event) => (analyiticsEnabled ? event : null)}
       />
       <GoogleAnalytics enabled={analyiticsEnabled} />
-      <GoogleTagManager enabled={analyiticsEnabled} />
-      <HotJar enabled={analyiticsEnabled} />
+      <GoogleTagManager enabled={googleEnabled} />
+      <HotJar enabled={hotjarEnabled} />
       <SpeedInsights />
     </>
   )
