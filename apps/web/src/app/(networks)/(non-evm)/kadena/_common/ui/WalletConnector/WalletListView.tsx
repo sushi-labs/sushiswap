@@ -1,11 +1,33 @@
+import { detectSnapProvider } from '@kadena/wallet-adapter-metamask-snap'
 import { List, SelectIcon } from '@sushiswap/ui'
 import Image from 'next/image'
+import { useMemo } from 'react'
 import { useKadena } from '~kadena/kadena-wallet-provider'
+import { useKadenaAdapterContext } from '~kadena/providers'
+import { KADENA_WALLET_ADAPTER_ICONS } from '../../../kadena-wallet-provider'
 
 export const WalletListView = ({
   isFullWidth = false,
 }: { isFullWidth?: boolean }) => {
   const { adapters, handleConnect } = useKadena()
+  const { refreshSnapAdapter } = useKadenaAdapterContext()
+
+  const _adapters = useMemo(() => {
+    const hasSnap = adapters.find((adapter) => adapter.name === 'Snap')
+    if (!hasSnap) {
+      return [
+        {
+          name: 'MetaMask ',
+          detected: false,
+          installUrl: '',
+          imageURI: KADENA_WALLET_ADAPTER_ICONS['Snap'],
+        },
+        ...adapters,
+      ]
+    }
+    return adapters
+  }, [adapters])
+
   return (
     <List
       className={`flex flex-col gap-1 !p-0 ${
@@ -15,7 +37,7 @@ export const WalletListView = ({
       }`}
     >
       <List.Control className="bg-gray-100">
-        {adapters.map((adapter) => (
+        {_adapters.map((adapter) => (
           <List.MenuItem
             icon={() => (
               <Image
@@ -35,10 +57,20 @@ export const WalletListView = ({
                   ? 'MetaMask'
                   : adapter.name
             }
-            onClick={() => {
-              adapter.detected
-                ? handleConnect(adapter.name)
-                : window.open(adapter.installUrl, '_blank')
+            onClick={async () => {
+              if (adapter.name === 'MetaMask ') {
+                await detectSnapProvider({ silent: false })
+                await refreshSnapAdapter()
+                //reload the page to ensure the snap is detected
+                window.location.reload()
+                return
+              }
+              console.log(adapter)
+              if (adapter.detected) {
+                await handleConnect(adapter.name)
+                return
+              }
+              window.open(adapter.installUrl, '_blank')
             }}
             hoverIcon={() => <SelectIcon className="-rotate-90" />}
           />

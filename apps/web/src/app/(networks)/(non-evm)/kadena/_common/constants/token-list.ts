@@ -31,6 +31,26 @@ export const KADENA_TOKENS: KadenaToken[] = [
     validated: true,
   },
   {
+    tokenAddress: 'n_e595727b657fbbb3b8e362a05a7bb8d12865c1ff.kb-ETH',
+    isNative: false,
+    tokenName: 'Kinesis Bridged ETH',
+    tokenSymbol: 'kb-ETH',
+    tokenDecimals: 18,
+    tokenImage:
+      'https://raw.githubusercontent.com/Mercatus-Kadena/kadena_tokens/refs/heads/main/img/kb-eth.svg',
+    validated: true,
+  },
+  {
+    tokenAddress: 'n_e595727b657fbbb3b8e362a05a7bb8d12865c1ff.kb-USDC',
+    isNative: false,
+    tokenName: 'Kinesis Bridged USDC',
+    tokenSymbol: 'kb-USDC',
+    tokenDecimals: 6,
+    tokenImage:
+      'https://raw.githubusercontent.com/Mercatus-Kadena/kadena_tokens/refs/heads/main/img/kb-usdc.svg',
+    validated: true,
+  },
+  {
     tokenAddress: 'arkade.token',
     isNative: false,
     tokenName: 'Arkade',
@@ -308,9 +328,12 @@ export const KADENA_TOKENS: KadenaToken[] = [
 export const DEFAULT_TOKEN_LIST = KADENA_TOKENS
 
 export const STABLE_TOKENS = DEFAULT_TOKEN_LIST.filter(
-  (token) => token.tokenSymbol === 'zUSD',
+  (token) => token.tokenSymbol === 'kb-USDC',
 )
 
 export const COMMON_TOKENS = DEFAULT_TOKEN_LIST.filter(
-  (token) => token.tokenSymbol === 'KDA' || token.tokenSymbol === 'zUSD',
+  (token) =>
+    token.tokenSymbol === 'KDA' ||
+    token.tokenSymbol === 'kb-USDC' ||
+    token.tokenSymbol === 'kb-ETH',
 )
