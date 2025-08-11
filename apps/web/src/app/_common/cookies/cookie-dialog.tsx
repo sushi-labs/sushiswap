@@ -260,19 +260,12 @@ export function CookieDialog({ open: _open }: { open: boolean }) {
 
   return (
     <Dialog open={open && isMounted} onOpenChange={setOpen}>
-      {
-        <DialogTrigger asChild>
-          <button
-            type="button"
-            onClick={() => setPage('manage')}
-            className="fixed bottom-3 right-3 z-50 text-xs underline text-muted-foreground"
-            aria-label="Open cookie preferences"
-          >
-            Cookie Preferences
-          </button>
-        </DialogTrigger>
-      }
-
+      <DialogTrigger
+        onClick={() => setPage('manage')}
+        className="fixed bottom-3 right-3 z-50 text-xs underline text-muted-foreground"
+      >
+        Cookie Preferences
+      </DialogTrigger>
       {page === 'base' ? (
         <BaseCookieDialog onAction={onBaseAction} />
       ) : (
