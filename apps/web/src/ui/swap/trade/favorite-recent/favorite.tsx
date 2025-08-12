@@ -3,6 +3,7 @@ import { type PinnedTokenId, usePinnedTokens } from '@sushiswap/hooks'
 import { Button, SkeletonBox, SkeletonCircle, classNames } from '@sushiswap/ui'
 import { useCallback } from 'react'
 import { getChangeSign, getTextColor } from 'src/lib/helpers'
+import { useCurrentChainId } from 'src/lib/hooks/useCurrentChainId'
 import { useFavorites } from 'src/lib/hooks/useFavorites'
 import { getNetworkKey } from 'src/lib/network'
 import { ConnectButton } from 'src/lib/wagmi/components/connect-button'
@@ -24,6 +25,7 @@ export const Favorite = () => {
   const {
     state: { selectedNetwork },
   } = useNetworkContext()
+  const { chainId } = useCurrentChainId()
 
   const { hasToken, mutate } = usePinnedTokens()
 
@@ -85,7 +87,11 @@ export const Favorite = () => {
           selected={undefined}
           chainId={1}
           selectedNetwork={
-            selectedNetwork ? (selectedNetwork as EvmChainId) : undefined
+            selectedNetwork
+              ? (selectedNetwork as EvmChainId)
+              : chainId
+                ? (chainId as EvmChainId)
+                : undefined
           }
           onSelect={onSelect}
           includeNative={true}
