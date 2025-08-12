@@ -18,8 +18,8 @@ import {
   isTwapSupportedChainId,
   isXSwapSupportedChainId,
 } from 'src/config'
+import { PathnameButton } from 'src/ui/pathname-button'
 import { ChainKey, type EvmChainId } from 'sushi/chain'
-import { PathnameButton } from '../pathname-button'
 
 const SwapModeButton = ({
   isSupported,
@@ -55,31 +55,21 @@ export const SwapModeButtons = () => {
   const { chainId: _chainId } = useParams()
   const chainId = +_chainId! as EvmChainId
 
+  console.log('chainId', _chainId)
+
   return (
     <div className="flex flex-wrap gap-1 md:gap-2">
-      <SwapModeButton
-        isSupported={isSupportedChainId(chainId)}
-        path={`/${ChainKey[chainId]}/swap`}
-      >
+      <SwapModeButton isSupported={true} path={`/kadena/swap`}>
         Swap
       </SwapModeButton>
-      <SwapModeButton
-        isSupported={isTwapSupportedChainId(chainId)}
-        path={`/${ChainKey[chainId]}/limit`}
-      >
+      <SwapModeButton isSupported={false} path={`/kadena/limit`}>
         Limit
       </SwapModeButton>
-      <SwapModeButton
-        isSupported={isTwapSupportedChainId(chainId)}
-        path={`/${ChainKey[chainId]}/dca`}
-      >
+      <SwapModeButton isSupported={false} path={`/kadena/dca`}>
         DCA
       </SwapModeButton>
       <HoverCard>
-        <SwapModeButton
-          isSupported={isXSwapSupportedChainId(chainId)}
-          path={`/${ChainKey[chainId]}/cross-chain-swap`}
-        >
+        <SwapModeButton isSupported={false} path={`/kadena/cross-chain-swap`}>
           <HoverCardTrigger asChild>
             <span className="flex gap-2 items-center text-transparent bg-clip-text bg-gradient-to-r saturate-200 from-blue to-pink">
               <ShuffleIcon
