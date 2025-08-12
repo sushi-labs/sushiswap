@@ -14,7 +14,7 @@ interface WalletPositionsApiResponse {
   }
 }
 
-export const useMyPositions = (pageSize = 10) => {
+export const useMyPositions = (pageSize = 50) => {
   const { activeAccount } = useKadena()
   const walletAddress = activeAccount?.accountName
 
