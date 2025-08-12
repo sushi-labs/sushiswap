@@ -1,5 +1,6 @@
 import { Button, DialogTrigger } from '@sushiswap/ui'
 import { useEffect, useMemo, useState } from 'react'
+import { MIN_GAS_FEE } from '~kadena/_common/constants/gas'
 import { usePoolFromTokens } from '~kadena/_common/lib/hooks/pools/use-pool-from-tokens'
 import { useTokenBalances } from '~kadena/_common/lib/hooks/use-token-balances'
 import { useKadena } from '~kadena/kadena-wallet-provider'
@@ -26,6 +27,17 @@ export const ReviewSwapDialogTrigger = () => {
         token0 && token1 ? [token0?.tokenAddress, token1?.tokenAddress] : [],
     })
   const balanceMap = tokenBalances?.balanceMap ?? undefined
+
+  const hasInsufficientGas = useMemo(() => {
+    if (isLoadingTokenBalance) return true
+
+    const kdaBalance = balanceMap?.['coin']
+
+    if (kdaBalance === undefined) return true
+
+    const insufficient = kdaBalance < MIN_GAS_FEE
+    return insufficient
+  }, [isLoadingTokenBalance, balanceMap])
 
   const token0Balance =
     token0 && balanceMap ? balanceMap[token0?.tokenAddress] : 0
@@ -55,7 +67,10 @@ export const ReviewSwapDialogTrigger = () => {
       return 'Enter Amount'
     }
     if (hasInsufficientToken0Balance) {
-      return 'Insufficient Balance'
+      return 'Insufficient Balance on Chain 2'
+    }
+    if (hasInsufficientGas) {
+      return 'Insufficient Gas Balance on Chain 2'
     }
     if (noRoutes) {
       return 'No Routes Found'
@@ -70,6 +85,7 @@ export const ReviewSwapDialogTrigger = () => {
     noRoutes,
     insufficientLiquidity,
     isTxnPending,
+    hasInsufficientGas,
   ])
 
   const userConfirmationNeeded = useMemo(() => {
