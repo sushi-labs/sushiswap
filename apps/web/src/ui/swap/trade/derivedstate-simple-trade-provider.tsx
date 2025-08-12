@@ -6,18 +6,12 @@ import {
   createContext,
   useCallback,
   useContext,
-  useEffect,
   useMemo,
   useState,
 } from 'react'
-import {
-  type SupportedChainId,
-  isSupportedChainId,
-  isTwapSupportedChainId,
-} from 'src/config'
+import type { SupportedChainId } from 'src/config'
 import { useCreateQuery } from 'src/lib/hooks/useCreateQuery'
 import { EvmChainId } from 'sushi/chain'
-import { EvmChainKey } from 'sushi/chain'
 import {
   TRADE_MODES,
   TRADE_VIEWS,

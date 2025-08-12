@@ -39,7 +39,6 @@ const getQuoteCurrency = (chainId: number) =>
   getTokenAsString(
     defaultQuoteCurrency[chainId as keyof typeof defaultQuoteCurrency],
   )
-// getTokenAsString(SUSHI[chainId as keyof typeof defaultQuoteCurrency]);
 
 interface State {
   mutate: {
