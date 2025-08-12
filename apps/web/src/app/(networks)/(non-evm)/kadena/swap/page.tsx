@@ -45,7 +45,7 @@ export default function SwapSimplePage() {
   })
 
   return (
-    <Container maxWidth="lg" className="px-4">
+    <Container maxWidth="lg">
       <div className="flex flex-col gap-4">
         <div className="flex flex-col gap-4 p-4 md:p-6 bg-[rgba(255,255,255,0.8)] dark:bg-[rgba(25,32,49,0.8)] rounded-3xl backdrop-blur-2xl">
           <div className="flex justify-between items-center">
@@ -66,8 +66,8 @@ export default function SwapSimplePage() {
             <ReviewSwapDialog />
           </div>
           <SwapStats />
-          <SimpleSwapBanner />
         </div>
+        <SimpleSwapBanner />
       </div>
     </Container>
   )
