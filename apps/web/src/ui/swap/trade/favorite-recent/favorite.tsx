@@ -5,13 +5,15 @@ import { useCallback } from 'react'
 import { getChangeSign, getTextColor } from 'src/lib/helpers'
 import { useCurrentChainId } from 'src/lib/hooks/useCurrentChainId'
 import { useFavorites } from 'src/lib/hooks/useFavorites'
+import { useSwapTokenSelect } from 'src/lib/hooks/useTokenSelect'
 import { getNetworkKey } from 'src/lib/network'
 import { ConnectButton } from 'src/lib/wagmi/components/connect-button'
 import { TokenSelectorV2 } from 'src/lib/wagmi/components/token-selector/token-selector-v2'
 import { formatUSD } from 'sushi'
 import type { EvmChainId } from 'sushi/chain'
 import type { Type } from 'sushi/currency'
-import { WNATIVE } from 'sushi/currency'
+import { WNATIVE, unwrapToken } from 'sushi/currency'
+import { Token } from 'sushi/currency'
 import { formatNumber, formatPercent } from 'sushi/format'
 import { getAddress } from 'viem'
 import { useAccount } from 'wagmi'
@@ -119,8 +121,35 @@ export const Favorite = () => {
 
 const FavoriteItem = ({ token }: { token: SearchToken }) => {
   const wrappedAddress = WNATIVE[Number(token.chainId) as EvmChainId].address
+  const { handleTokenOutput } = useSwapTokenSelect()
+
+  const selectToken = useCallback(
+    async (token: SearchToken) => {
+      await handleTokenOutput({
+        token: unwrapToken(
+          new Token({
+            chainId: token.chainId as EvmChainId,
+            address: token.address,
+            symbol: token.symbol,
+            name: token.name,
+            decimals: token.decimals,
+          }),
+        ),
+      })
+    },
+    [handleTokenOutput],
+  )
+
   return (
-    <tr className="text-xs">
+    <tr
+      className="text-xs cursor-pointer"
+      onClick={async () => await selectToken(token)}
+      onKeyDown={async (e) => {
+        if (e.key === 'Enter') {
+          await selectToken(token)
+        }
+      }}
+    >
       <td className="max-w-[35px] py-3 md:py-4">
         <FavoriteButton
           currencyId={`${token.chainId}:${
