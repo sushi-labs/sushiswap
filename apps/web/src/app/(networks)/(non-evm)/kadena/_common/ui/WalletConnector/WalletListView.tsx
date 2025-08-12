@@ -6,9 +6,7 @@ import { useKadena } from '~kadena/kadena-wallet-provider'
 import { useKadenaAdapterContext } from '~kadena/providers'
 import { KADENA_WALLET_ADAPTER_ICONS } from '../../../kadena-wallet-provider'
 
-export const WalletListView = ({
-  isFullWidth = false,
-}: { isFullWidth?: boolean }) => {
+export const WalletListView = () => {
   const { adapters, handleConnect } = useKadena()
   const { refreshSnapAdapter } = useKadenaAdapterContext()
 
@@ -29,14 +27,8 @@ export const WalletListView = ({
   }, [adapters])
 
   return (
-    <List
-      className={`flex flex-col gap-1 !p-0 ${
-        isFullWidth
-          ? '[width:calc(var(--radix-popover-trigger-width)_-_10px)]'
-          : ''
-      }`}
-    >
-      <List.Control className="bg-gray-100">
+    <List className={`flex flex-col gap-1 !bg-transparent !p-0`}>
+      <List.Control className="border-none !bg-transparent">
         {_adapters.map((adapter) => (
           <List.MenuItem
             icon={() => (

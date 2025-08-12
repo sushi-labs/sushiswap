@@ -84,7 +84,7 @@ export const ReviewSwapDialog = () => {
                       <span
                         style={{ color: severityClass }}
                         className={classNames(
-                          'text-gray-700 text-right dark:text-slate-400',
+                          'text-right text-gray-700 dark:text-slate-400',
                         )}
                       >
                         -{formatPercent(priceImpactPercentage / 100)}
@@ -112,7 +112,7 @@ export const ReviewSwapDialog = () => {
                           target="_blank"
                           href={getChainwebAddressLink(address)}
                           className={classNames(
-                            'flex items-center gap-2 cursor-pointer text-blue hover:underline hover:text-blue-700',
+                            'flex gap-2 items-center cursor-pointer text-blue hover:underline hover:text-blue-700',
                           )}
                           rel="noreferrer"
                         >
