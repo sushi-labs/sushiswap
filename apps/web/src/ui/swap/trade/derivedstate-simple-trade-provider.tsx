@@ -10,7 +10,11 @@ import {
   useMemo,
   useState,
 } from 'react'
-import { type SupportedChainId, isSupportedChainId } from 'src/config'
+import {
+  type SupportedChainId,
+  isSupportedChainId,
+  isTwapSupportedChainId,
+} from 'src/config'
 import { useCreateQuery } from 'src/lib/hooks/useCreateQuery'
 import { EvmChainId } from 'sushi/chain'
 import { EvmChainKey } from 'sushi/chain'
@@ -81,7 +85,6 @@ const DerivedstateSimpleTradeProvider: FC<
 
       _setTradeView(view)
       _setTradeModeChanged(false)
-      // window.history.pushState({}, "", createUrl(chainId, view, tradeMode));
       createQuery(
         [],
         `/${pathname?.split('/')[1]}/${tradeMode}${view !== 'simple' ? `/${view}` : ''}`,
@@ -94,14 +97,9 @@ const DerivedstateSimpleTradeProvider: FC<
     (trade: TradeMode) => {
       _setTradeMode(trade)
       _setTradeModeChanged(true)
-      const params = []
-      if (trade === 'limit' || trade === 'dca') {
-        params.push({ name: 'token1', value: null })
-        params.push({ name: 'chainId1', value: null })
-      }
 
       createQuery(
-        params,
+        [],
         `/${pathname?.split('/')[1]}/${trade}${tradeView !== 'simple' ? `/${tradeView}` : ''}`,
       )
     },
