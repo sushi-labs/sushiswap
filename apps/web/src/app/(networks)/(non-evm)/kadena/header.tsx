@@ -6,24 +6,24 @@ import { SushiWithTextIcon } from '@sushiswap/ui/icons/SushiWithTextIcon'
 import React, { type FC, Suspense } from 'react'
 import { NonStandardChainId, SUPPORTED_NETWORKS } from 'src/config'
 import { HeaderNetworkSelector } from 'src/lib/wagmi/components/header-network-selector'
-import { HeaderElements } from './_common/header-elements'
+import { headerElements } from './_common/header-elements'
 import { ChainIdOperatorBanner } from './_common/ui/Shared/chain-id-operator-banner'
 import { WalletConnector } from './_common/ui/WalletConnector/WalletConnector'
 
 export const Header: FC<{ className?: string }> = ({ className }) => {
   return (
-    <div className={classNames('w-full h-[56px] z-20', className)}>
-      <div className="fixed w-full flex z-20">
+    <div className={classNames('z-20 w-full h-[56px]', className)}>
+      <div className="flex fixed z-20 w-full">
         <div
           className={classNames(
-            'hidden lg:flex justify-between items-center px-1 h-14 flex-shrink-0 bg-gray-100 dark:bg-slate-900 border-gray-200 dark:border-slate-800 border-b',
+            'hidden flex-shrink-0 justify-between items-center px-1 h-14 bg-gray-100 border-b border-gray-200 lg:flex dark:bg-slate-900 dark:border-slate-800',
           )}
         >
           <SushiNavigationDropdown className="!px-2">
             <SushiWithTextIcon width={90} />
           </SushiNavigationDropdown>
         </div>
-        <div className="flex lg:hidden justify-between items-center pl-4 bg-gray-100 dark:bg-slate-900 border-b border-gray-200 dark:border-slate-800">
+        <div className="flex justify-between items-center pl-4 bg-gray-100 border-b border-gray-200 lg:hidden dark:bg-slate-900 dark:border-slate-800">
           <SushiNavigationDropdown>
             <SushiIcon width={24} height={24} />
           </SushiNavigationDropdown>
@@ -31,7 +31,7 @@ export const Header: FC<{ className?: string }> = ({ className }) => {
         <Navigation
           className="!pl-0 lg:!pl-4 !z-[unset]"
           hideSushiDropdown
-          leftElements={HeaderElements()}
+          leftElements={headerElements}
           rightElement={
             <Suspense>
               <HeaderNetworkSelector
