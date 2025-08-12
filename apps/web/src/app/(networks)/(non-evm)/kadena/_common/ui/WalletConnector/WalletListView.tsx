@@ -2,6 +2,7 @@ import { detectSnapProvider } from '@kadena/wallet-adapter-metamask-snap'
 import { List, SelectIcon } from '@sushiswap/ui'
 import Image from 'next/image'
 import { useMemo } from 'react'
+import { useIsMobile } from '~kadena/_common/lib/hooks/use-is-mobile'
 import { useKadena } from '~kadena/kadena-wallet-provider'
 import { useKadenaAdapterContext } from '~kadena/providers'
 import { KADENA_WALLET_ADAPTER_ICONS } from '../../../kadena-wallet-provider'
@@ -9,8 +10,13 @@ import { KADENA_WALLET_ADAPTER_ICONS } from '../../../kadena-wallet-provider'
 export const WalletListView = () => {
   const { adapters, handleConnect } = useKadena()
   const { refreshSnapAdapter } = useKadenaAdapterContext()
+  const { isMobile } = useIsMobile()
 
   const _adapters = useMemo(() => {
+    if (isMobile) {
+      return adapters.filter((adapter) => adapter.name !== 'Snap')
+    }
+
     const hasSnap = adapters.find((adapter) => adapter.name === 'Snap')
     if (!hasSnap) {
       return [
@@ -24,7 +30,7 @@ export const WalletListView = () => {
       ]
     }
     return adapters
-  }, [adapters])
+  }, [adapters, isMobile])
 
   return (
     <List className={`flex flex-col gap-1 !bg-transparent !p-0`}>
