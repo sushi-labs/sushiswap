@@ -1,3 +1,4 @@
+import { useIsSmScreen } from '@sushiswap/hooks'
 import {
   Button,
   type ButtonProps,
@@ -19,6 +20,7 @@ export type IProfileView = 'default' | 'settings'
 
 export const WalletConnector = (props: ButtonProps) => {
   const { isConnected, isConnecting, activeAccount } = useKadena()
+  const isSmallScreen = useIsSmScreen()
 
   const [view, setView] = useState<IProfileView>('default')
 
@@ -39,7 +41,13 @@ export const WalletConnector = (props: ButtonProps) => {
               </span>
             </>
           ) : (
-            <>{isConnecting ? 'Connecting' : 'Connect'} </>
+            <>
+              {isConnecting
+                ? 'Connecting'
+                : isSmallScreen
+                  ? 'Connect'
+                  : 'Connect Wallet'}{' '}
+            </>
           )}
         </Button>
         {IS_TESTNET && isConnected ? (
