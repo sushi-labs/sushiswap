@@ -1,5 +1,5 @@
 import { detectSnapProvider } from '@kadena/wallet-adapter-metamask-snap'
-import { List, SelectIcon } from '@sushiswap/ui'
+import { List, SelectIcon, classNames } from '@sushiswap/ui'
 import Image from 'next/image'
 import { useMemo } from 'react'
 import { useIsMobile } from '~kadena/_common/lib/hooks/use-is-mobile'
@@ -14,7 +14,16 @@ export const WalletListView = () => {
 
   const _adapters = useMemo(() => {
     if (isMobile) {
-      return adapters.filter((adapter) => adapter.name !== 'Snap')
+      const realAdapters = adapters.filter((adapter) => adapter.name !== 'Snap')
+      return [
+        {
+          name: 'MetaMask (Desktop Only)',
+          detected: false,
+          installUrl: '',
+          imageURI: KADENA_WALLET_ADAPTER_ICONS['Snap'],
+        },
+        ...realAdapters,
+      ]
     }
 
     const hasSnap = adapters.find((adapter) => adapter.name === 'Snap')
@@ -46,7 +55,9 @@ export const WalletListView = () => {
                 className="max-h-[25px]"
               />
             )}
-            className="flex items-center justify-start w-full min-w-[180px] text-left"
+            className={classNames(
+              'flex items-center justify-start w-full min-w-[180px] text-left',
+            )}
             key={adapter.name}
             title={
               adapter.name === 'Ecko'
@@ -55,6 +66,7 @@ export const WalletListView = () => {
                   ? 'MetaMask'
                   : adapter.name
             }
+            disabled={adapter.name === 'MetaMask (Desktop Only)'}
             onClick={async () => {
               if (adapter.name === 'MetaMask ') {
                 await detectSnapProvider({ silent: false })
