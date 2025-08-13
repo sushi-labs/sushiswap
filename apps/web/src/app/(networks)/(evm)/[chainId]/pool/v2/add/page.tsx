@@ -25,7 +25,7 @@ import {
   NativeAddress,
 } from 'src/lib/constants'
 import { isSushiSwapV2Pool } from 'src/lib/functions'
-import { isZapRouteNotFoundError, useZap } from 'src/lib/hooks'
+import { useV2Zap } from 'src/lib/hooks'
 import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
 import { warningSeverity } from 'src/lib/swap/warningSeverity'
 import { Web3Input } from 'src/lib/wagmi/components/web3-input'
@@ -45,7 +45,7 @@ import { AddSectionReviewModalLegacy } from 'src/ui/pool/AddSectionReviewModalLe
 import { SelectNetworkWidget } from 'src/ui/pool/SelectNetworkWidget'
 import { SelectTokensWidget } from 'src/ui/pool/SelectTokensWidget'
 import { ToggleZapCard } from 'src/ui/pool/ToggleZapCard'
-import { ZapInfoCard } from 'src/ui/pool/ZapInfoCard'
+import { V2ZapInfoCard } from 'src/ui/pool/V2ZapInfoCard'
 import { Amount, Percent, ZERO } from 'sushi'
 import {
   type EvmChainId,
@@ -286,7 +286,7 @@ const _ZapWidget: FC<ZapWidgetProps> = ({
     isLoading: isZapLoading,
     isError: isZapError,
     error: zapError,
-  } = useZap({
+  } = useV2Zap({
     chainId,
     fromAddress: address,
     tokenIn:
@@ -461,9 +461,9 @@ const _ZapWidget: FC<ZapWidgetProps> = ({
                       loading={isZapLoading || isWritePending}
                       disabled={!preparedTx}
                     >
-                      {zapError && isZapRouteNotFoundError(zapError) ? (
+                      {isZapError ? (
                         'No route found'
-                      ) : isZapError || isEstGasError ? (
+                      ) : isEstGasError ? (
                         'Shoot! Something went wrong :('
                       ) : isWritePending ? (
                         <Dots>Confirm Transaction</Dots>
@@ -486,8 +486,9 @@ const _ZapWidget: FC<ZapWidgetProps> = ({
           setChecked={setChecked}
         />
       )}
-      <ZapInfoCard
+      <V2ZapInfoCard
         zapResponse={zapResponse}
+        isZapError={isZapError}
         inputCurrencyAmount={parsedInputAmount}
         pool={pool}
       />
