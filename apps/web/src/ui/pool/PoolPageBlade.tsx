@@ -16,7 +16,7 @@ interface PoolPageBlade {
 
 export const PoolPageBlade: FC<PoolPageBlade> = ({ pool }) => {
   const { isMd } = useBreakpoint('md')
-  const [showStablesOnly, setShowStablesOnly] = useState(false)
+  const [showStableTypes, setShowStableTypes] = useState(false)
   return (
     <Container
       maxWidth="screen-3xl"
@@ -51,11 +51,11 @@ export const PoolPageBlade: FC<PoolPageBlade> = ({ pool }) => {
           {/* <PoolAPRBlade version="v2" pool={pool} /> */}
           <PoolCompositionBlade
             pool={pool}
-            showStablesOnly={showStablesOnly}
-            setShowStablesOnly={setShowStablesOnly}
+            showStableTypes={showStableTypes}
+            setShowStableTypes={setShowStableTypes}
           />
           <Pool24HVolume pool={pool} />
-          <BladePoolPrice pool={pool} showStablesOnly={showStablesOnly} />
+          <BladePoolPrice pool={pool} showStableTypes={showStableTypes} />
         </div>
       </div>
 

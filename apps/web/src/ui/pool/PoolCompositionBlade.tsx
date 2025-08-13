@@ -21,8 +21,8 @@ import { Wrapper } from '../swap/trade/wrapper'
 
 interface PoolCompositionBladeProps {
   pool: BladePool
-  showStablesOnly: boolean
-  setShowStablesOnly: (value: boolean) => void
+  showStableTypes: boolean
+  setShowStableTypes: (value: boolean) => void
 }
 
 type TokenEntry = {
@@ -33,8 +33,8 @@ type TokenEntry = {
 
 export const PoolCompositionBlade: FC<PoolCompositionBladeProps> = ({
   pool,
-  showStablesOnly,
-  setShowStablesOnly,
+  showStableTypes,
+  setShowStableTypes,
 }) => {
   const amounts = useMemo(() => {
     const stables = STABLES[pool.chainId] ?? []
@@ -58,7 +58,7 @@ export const PoolCompositionBlade: FC<PoolCompositionBladeProps> = ({
       }
     })
 
-    if (showStablesOnly) {
+    if (showStableTypes) {
       return parsed
     }
 
@@ -83,15 +83,15 @@ export const PoolCompositionBlade: FC<PoolCompositionBladeProps> = ({
       },
       ...(nonStable ? [nonStable] : []),
     ]
-  }, [pool, showStablesOnly])
+  }, [pool, showStableTypes])
 
   const tvl = useMemo(() => {
     return pool.tokens.reduce((acc, t) => acc + t.liquidityUSD, 0)
   }, [pool])
 
   return (
-    <Wrapper enableBorder className="!p-3 flex flex-col gap-5">
-      <CardHeader className="!p-0 flex !flex-row justify-between items-center lg:flex-col gap-1">
+    <Wrapper enableBorder className="!p-4 flex flex-col gap-5">
+      <CardHeader className="!p-0 flex !flex-row justify-between items-center lg:!items-start lg:!flex-col gap-2">
         <CardTitle className="text-slate-900 dark:lg:!text-slate-500 dark:!text-slate-100">
           TVL
         </CardTitle>
@@ -116,8 +116,8 @@ export const PoolCompositionBlade: FC<PoolCompositionBladeProps> = ({
               Show stablecoin types
             </span>
             <Switch
-              checked={showStablesOnly}
-              onCheckedChange={setShowStablesOnly}
+              checked={showStableTypes}
+              onCheckedChange={setShowStableTypes}
             />
           </div>
 
