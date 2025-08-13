@@ -1,14 +1,17 @@
 'use client'
 
+import { ChevronDownIcon } from '@heroicons/react/24/solid'
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden'
 import { useIsMounted } from '@sushiswap/hooks'
 import {
   Button,
+  Collapsible,
   Dialog,
   DialogContent,
   DialogFooter,
   DialogHeader,
   DialogTitle,
+  DialogTrigger,
   LinkExternal,
   Separator,
   Switch,
@@ -31,17 +34,17 @@ function BaseCookieDialog({
         <DialogTitle>Cookie Policy</DialogTitle>
       </VisuallyHidden>
       <div>
-        Sushi Labs and our third-party service providers may use cookies as set
-        forth in our{' '}
-        <LinkExternal href="/legal/cookie-policy">Cookie Policy</LinkExternal>,
-        which process your personal data. You may manage your cookie preferences
-        below. Even if you reject all cookies, you hereby consent to the
-        collection of your personal data by us and our service providers as you
-        use our services, through technologies other than cookies, as described
-        in our{' '}
+        By clicking on “Accept all cookies”, you consent to the storage of
+        cookies on your device and the associated processing of your personal
+        data by Sushi Labs and our partners to improve website navigation,
+        analyse website usage and conduct surveys. You can revoke your consent
+        at any time via the “Manage cookie preferences” button.
+        <br />
+        For further information on our data processing and cookies, please visit
+        our
         <LinkExternal href="/legal/privacy-policy">Privacy Policy</LinkExternal>
-        , including when such collection may be considered an interception of
-        communications by third parties.
+        and our
+        <LinkExternal href="/legal/cookie-policy">Cookie Policy</LinkExternal>.
       </div>
       <Separator />
       <div className="flex md:flex-row flex-col w-full gap-3">
@@ -57,7 +60,13 @@ function BaseCookieDialog({
   )
 }
 
-const cookieTypes = ['essential', 'functional', 'performance'] as const
+const cookieTypes = [
+  'essential',
+  'functional',
+  'analytical',
+  'google',
+  'hotjar',
+] as const
 
 export type CookieType = (typeof cookieTypes)[number]
 
@@ -78,6 +87,7 @@ function ManageCookieDialog({
   cookieSet,
   onAction,
 }: { cookieSet: Set<CookieType>; onAction: (action: ManageAction) => void }) {
+  const [isAnalyticsOpen, setIsAnalyticsOpen] = useState(false)
   return (
     <>
       <DialogContent
@@ -94,16 +104,6 @@ function ManageCookieDialog({
           </div>
           <Separator />
           <div>
-            <span>Performance Cookies</span>
-            <Switch
-              checked={cookieSet.has('performance')}
-              onCheckedChange={(enabled) =>
-                onAction({ type: 'set', cookieType: 'performance', enabled })
-              }
-            />
-          </div>
-          <Separator />
-          <div>
             <span>Functional Cookies</span>
             <Switch
               checked={cookieSet.has('functional')}
@@ -111,6 +111,67 @@ function ManageCookieDialog({
                 onAction({ type: 'set', cookieType: 'functional', enabled })
               }
             />
+          </div>
+          <Separator />
+          <div>
+            <span>Analytical Cookies</span>
+            <Switch
+              checked={cookieSet.has('analytical')}
+              onCheckedChange={(enabled) =>
+                onAction({ type: 'set', cookieType: 'analytical', enabled })
+              }
+            />
+          </div>
+          <div>
+            <div className="flex flex-col gap-2">
+              <button
+                className="flex gap-1 items-center"
+                type="button"
+                onClick={() => setIsAnalyticsOpen(!isAnalyticsOpen)}
+              >
+                <ChevronDownIcon className="w-3 h-3" />
+                <span>Cookies(2)</span>
+              </button>
+              <Collapsible
+                open={isAnalyticsOpen}
+                className="flex flex-col gap-2 pl-4"
+              >
+                <div className="flex gap-1.5 items-center">
+                  <input
+                    type="checkbox"
+                    disabled={!cookieSet.has('analytical')}
+                    checked={
+                      cookieSet.has('analytical') && cookieSet.has('google')
+                    }
+                    onChange={(e) =>
+                      onAction({
+                        type: 'set',
+                        cookieType: 'google',
+                        enabled: e.currentTarget.checked,
+                      })
+                    }
+                  />
+                  Google
+                </div>
+                <div className="flex gap-1.5 items-center">
+                  <input
+                    type="checkbox"
+                    disabled={!cookieSet.has('analytical')}
+                    checked={
+                      cookieSet.has('analytical') && cookieSet.has('hotjar')
+                    }
+                    onChange={(e) =>
+                      onAction({
+                        type: 'set',
+                        cookieType: 'hotjar',
+                        enabled: e.currentTarget.checked,
+                      })
+                    }
+                  />
+                  HotJar
+                </div>
+              </Collapsible>
+            </div>
           </div>
         </div>
         <DialogFooter className="!justify-start flex flex-wrap gap-3">
@@ -127,8 +188,8 @@ function ManageCookieDialog({
   )
 }
 
-export function CookieDialog({ open: _open }: { open: boolean }) {
-  const [open, setOpen] = useState(_open)
+export function CookieDialog({ defaultOpen }: { defaultOpen: boolean }) {
+  const [open, setOpen] = useState(defaultOpen)
   const [page, setPage] = useState<'base' | 'manage'>('base')
 
   const isMounted = useIsMounted()
@@ -199,6 +260,13 @@ export function CookieDialog({ open: _open }: { open: boolean }) {
 
   return (
     <Dialog open={open && isMounted} onOpenChange={setOpen}>
+      <DialogTrigger
+        onClick={() => setPage('manage')}
+        className="fixed bottom-5 right-8 z-50 text-xs underline text-muted-foreground"
+      >
+        Cookie Preferences
+      </DialogTrigger>
+
       {page === 'base' ? (
         <BaseCookieDialog onAction={onBaseAction} />
       ) : (

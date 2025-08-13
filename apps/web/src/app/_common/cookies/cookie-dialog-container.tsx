@@ -14,9 +14,5 @@ async function _CookieDialogContainer() {
   const cookiez = await cookies()
   const cookiesConfirmed = cookiez.has('accepted-cookies')
 
-  if (cookiesConfirmed) {
-    return null
-  }
-
-  return <CookieDialog open={true} />
+  return <CookieDialog defaultOpen={cookiesConfirmed} />
 }
