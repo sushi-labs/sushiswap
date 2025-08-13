@@ -182,7 +182,7 @@ const _DerivedStateTwapProvider: FC<DerivedStateTwapProviderProps> = ({
           : undefined
 
         const _limitPrice =
-          baseAmount && quoteAmount
+          baseAmount?.amount && quoteAmount?.amount
             ? new Price({ baseAmount, quoteAmount })
             : undefined
 
