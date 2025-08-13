@@ -21,6 +21,8 @@ import { Wrapper } from '../swap/trade/wrapper'
 
 interface PoolCompositionBladeProps {
   pool: BladePool
+  showStablesOnly: boolean
+  setShowStablesOnly: (value: boolean) => void
 }
 
 type TokenEntry = {
@@ -31,9 +33,9 @@ type TokenEntry = {
 
 export const PoolCompositionBlade: FC<PoolCompositionBladeProps> = ({
   pool,
+  showStablesOnly,
+  setShowStablesOnly,
 }) => {
-  const [showStablesOnly, setShowStablesOnly] = useState(false)
-
   const amounts = useMemo(() => {
     const stables = STABLES[pool.chainId] ?? []
 

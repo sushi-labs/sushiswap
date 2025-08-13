@@ -1,11 +1,7 @@
 'use client'
 
 import { PlusIcon } from '@heroicons/react-v1/solid'
-import type {
-  BladePool,
-  V2Pool,
-  V3Pool,
-} from '@sushiswap/graph-client/data-api'
+import type { BladePool } from '@sushiswap/graph-client/data-api'
 import {
   Button,
   Currency,
@@ -18,7 +14,7 @@ import {
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import { USDIcon } from '@sushiswap/ui/icons/USD'
 import React, { type FC, useMemo } from 'react'
-import { SushiSwapProtocol } from 'sushi'
+import type { SushiSwapProtocol } from 'sushi'
 import { EvmChain } from 'sushi/chain'
 import { Token, unwrapToken } from 'sushi/currency'
 import { AddLiquidityDialog } from './add-liquidity/add-liquidity-dialog'
@@ -40,7 +36,7 @@ export const PoolHeaderBlade: FC<PoolHeaderBlade> = ({
   // priceRange,
   // showAddLiquidityButton = false,
 }) => {
-  // const { isMd } = useBreakpoint('md')
+  const { isMd } = useBreakpoint('md')
   const [token0] = useMemo(() => {
     if (!pool) return [undefined, undefined]
 
@@ -122,16 +118,12 @@ export const PoolHeaderBlade: FC<PoolHeaderBlade> = ({
                 )}
               </div>
             </div>
-            {/* {showAddLiquidityButton && !isMd ? (
+            {!isMd ? (
               <AddLiquidityDialog
-              // @TODO: remove typecast once we have a blade pool type
-                poolType={pool.protocol as SushiSwapProtocol}
-                hidePoolTypeToggle={true}
                 // @TODO: remove typecast once we have a blade pool type
-                hideTokenSelectors={pool.protocol !== 'BLADE'}
-                token0={token0}
-                token1={token1}
-                initFeeAmount={pool?.swapFee * 1_000_000}
+                poolType={'BLADE' as SushiSwapProtocol}
+                hidePoolTypeToggle={true}
+                hideTokenSelectors={false}
                 trigger={
                   <Button
                     size="sm"
@@ -141,7 +133,7 @@ export const PoolHeaderBlade: FC<PoolHeaderBlade> = ({
                   </Button>
                 }
               />
-            ) : null} */}
+            ) : null}
           </div>
         </div>
         {/* <div className="flex flex-wrap items-center gap-y-5 gap-x-[32px] text-secondary-foreground mb-8 mt-1.5">

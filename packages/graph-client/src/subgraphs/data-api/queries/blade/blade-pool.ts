@@ -10,61 +10,61 @@ import { SUSHI_REQUEST_HEADERS } from '../../request-headers.js'
 
 export const BladePoolQuery = graphql(
   `
-   query BladePool($address: Bytes!, $chainId: BladeChainId!) {
-    bladePool(address: $address, chainId: $chainId) {
-    id
-    address
-    chainId
-    abi
-    tokens {
-      liquidity
-      liquidityUSD
-      targetWeight
-      token {
-        address
-        chainId
-        decimals
-        id
-        name
-        symbol
-      }
-    }
-    liquidity
-    liquidityUSD
-    liquidityUSDChange1d
-    volumeUSD
-    volumeUSD1d
-    volumeUSDChange1d
-    volumeUSD1w
-    volumeUSDChange1w
-    feeUSD1d
-    feeApr1d
-    totalApr1d
-    isDeprecated
-    isSingleAssetWithdrawEnabled
-    newPoolAddress
-    lpTransfersFrom {
-      id
-      newPoolAddress
-      oldPoolAddress
-    }
-    vaults {
-      address
-      createdAt
-      farm {
-        abi
-        farmingHelper
-      }
-      id
-      name
-      protocolDeposit {
-        transferHelper
-      }
-      type
-    }
-  }
-}
-`,
+		query BladePool($address: Bytes!, $chainId: BladeChainId!) {
+			bladePool(address: $address, chainId: $chainId) {
+				id
+				address
+				chainId
+				abi
+				tokens {
+					liquidity
+					liquidityUSD
+					targetWeight
+					token {
+						address
+						chainId
+						decimals
+						id
+						name
+						symbol
+					}
+				}
+				liquidity
+				liquidityUSD
+				liquidityUSDChange1d
+				volumeUSD
+				volumeUSD1d
+				volumeUSDChange1d
+				volumeUSD1w
+				volumeUSDChange1w
+				feeUSD1d
+				feeApr1d
+				totalApr1d
+				isDeprecated
+				isSingleAssetWithdrawEnabled
+				newPoolAddress
+				lpTransfersFrom {
+					id
+					newPoolAddress
+					oldPoolAddress
+				}
+				vaults {
+					address
+					createdAt
+					farm {
+						abi
+						farmingHelper
+					}
+					id
+					name
+					protocolDeposit {
+						transferHelper
+					}
+					type
+				}
+			}
+		}
+	`,
 )
 
 export type GetBladePool = VariablesOf<typeof BladePoolQuery>
@@ -159,7 +159,7 @@ export type BladePoolToken = {
   }
 }
 
-type TokenWithLiquidity = {
+export type TokenWithLiquidity = {
   id: `${string}:0x${string}`
   address: Address
   chainId: EvmChainId
