@@ -262,7 +262,7 @@ export function CookieDialog({ defaultOpen }: { defaultOpen: boolean }) {
     <Dialog open={open && isMounted} onOpenChange={setOpen}>
       <DialogTrigger
         onClick={() => setPage('manage')}
-        className="fixed bottom-5 right-8 z-50 text-xs underline text-muted-foreground"
+        className="fixed bottom-5 right-8 text-xs underline text-muted-foreground"
       >
         Cookie Preferences
       </DialogTrigger>
