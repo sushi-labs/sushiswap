@@ -34,6 +34,7 @@ export const NEW_CHAIN_IDS = [EvmChainId.KATANA] as const
 export const PREFERRED_CHAINID_ORDER = [
   ...NEW_CHAIN_IDS,
   ChainId.ETHEREUM,
+  TvmChainId.TRON,
   ChainId.BSC,
   ChainId.ARBITRUM,
   ChainId.BASE,
@@ -44,6 +45,7 @@ export const PREFERRED_CHAINID_ORDER = [
   ChainId.BLAST,
   ChainId.OPTIMISM,
   ChainId.KATANA,
+  MvmChainId.APTOS,
   ChainId.LINEA,
   ChainId.MANTLE,
   ChainId.CORE,
