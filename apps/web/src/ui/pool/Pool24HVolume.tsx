@@ -1,4 +1,8 @@
-import type { V2Pool, V3Pool } from '@sushiswap/graph-client/data-api'
+import type {
+  BladePool,
+  V2Pool,
+  V3Pool,
+} from '@sushiswap/graph-client/data-api'
 import {
   CardContent,
   CardHeader,
@@ -9,7 +13,9 @@ import {
 import { formatUSD } from 'sushi/format'
 import { Wrapper } from '../swap/trade/wrapper'
 
-export const Pool24HVolume = ({ pool }: { pool: V2Pool | V3Pool }) => {
+export const Pool24HVolume = ({
+  pool,
+}: { pool: V2Pool | V3Pool | BladePool }) => {
   return (
     <Wrapper
       enableBorder

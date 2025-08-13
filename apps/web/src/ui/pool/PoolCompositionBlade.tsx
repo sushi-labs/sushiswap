@@ -1,6 +1,6 @@
 'use client'
 
-import type { V2Pool } from '@sushiswap/graph-client/data-api'
+import type { BladePool } from '@sushiswap/graph-client/data-api'
 import {
   CardContent,
   CardCurrencyAmountItem,
@@ -11,52 +11,81 @@ import {
   Switch,
   classNames,
 } from '@sushiswap/ui'
-import { type FC, useMemo } from 'react'
-import { useTokenAmountDollarValues } from 'src/lib/hooks'
+import { CardItem } from '@sushiswap/ui'
+import { USDIcon } from '@sushiswap/ui/icons/USD'
+import { type FC, useMemo, useState } from 'react'
+import { STABLES } from 'sushi/config'
 import { Amount, Token } from 'sushi/currency'
 import { formatUSD } from 'sushi/format'
 import { Wrapper } from '../swap/trade/wrapper'
 
 interface PoolCompositionBladeProps {
-  pool: V2Pool
+  pool: BladePool
+}
+
+type TokenEntry = {
+  token: Token
+  amount: Amount<Token>
+  fiatValue: number
 }
 
 export const PoolCompositionBlade: FC<PoolCompositionBladeProps> = ({
   pool,
 }) => {
+  const [showStablesOnly, setShowStablesOnly] = useState(false)
+
   const amounts = useMemo(() => {
-    const token0 = new Token({
-      chainId: pool.chainId,
-      address: pool.token0.address,
-      decimals: pool.token0.decimals,
-      symbol: pool.token0.symbol,
-      name: pool.token0.name,
+    const stables = STABLES[pool.chainId] ?? []
+
+    const parsed = pool.tokens.map((t: BladePool['tokens'][0]) => {
+      const token = new Token({
+        chainId: pool.chainId,
+        address: t.address,
+        decimals: t.decimals,
+        symbol: t.symbol,
+        name: t.name,
+      })
+
+      return {
+        token,
+        amount: Amount.fromRawAmount(
+          token,
+          BigInt(Math.floor(t.liquidityUSD * 10 ** t.decimals)),
+        ),
+        fiatValue: t.liquidityUSD,
+      }
     })
 
-    const token1 = new Token({
-      chainId: pool.chainId,
-      address: pool.token1.address,
-      decimals: pool.token1.decimals,
-      symbol: pool.token1.symbol,
-      name: pool.token1.name,
-    })
+    if (showStablesOnly) {
+      return parsed
+    }
+
+    const stablesOnly = parsed.filter(({ token }) =>
+      stables.some((s) => s.equals(token)),
+    )
+
+    const groupedUSD = stablesOnly.reduce(
+      (acc, curr) => acc + curr.fiatValue,
+      0,
+    )
+
+    const nonStable = parsed.find(
+      ({ token }) => !stables.some((s) => s.equals(token)),
+    )
+
     return [
-      Amount.fromRawAmount(token0, pool.reserve0),
-      Amount.fromRawAmount(token1, pool.reserve1),
+      {
+        isUSDGroup: true as const,
+        amount: groupedUSD.toFixed(2),
+        fiatValue: groupedUSD,
+      },
+      ...(nonStable ? [nonStable] : []),
     ]
+  }, [pool, showStablesOnly])
+
+  const tvl = useMemo(() => {
+    return pool.tokens.reduce((acc, t) => acc + t.liquidityUSD, 0)
   }, [pool])
-
-  const fiatValues = useTokenAmountDollarValues({
-    chainId: pool.chainId,
-    amounts,
-  })
-
-  const isLoading = fiatValues.length !== amounts.length
-
-  const [reserve0USD, reserve1USD] = useMemo(() => {
-    if (isLoading) return [0, 0]
-    return [fiatValues[0], fiatValues[1]]
-  }, [fiatValues, isLoading])
 
   return (
     <Wrapper enableBorder className="!p-3 flex flex-col gap-5">
@@ -66,13 +95,11 @@ export const PoolCompositionBlade: FC<PoolCompositionBladeProps> = ({
         </CardTitle>
 
         <CardDescription className="!mt-0 font-bold lg:font-medium text-sm  lg:!text-2xl flex items-center">
-          {formatUSD(fiatValues[0] + fiatValues[1])}{' '}
+          {formatUSD(tvl)}{' '}
           <span
             className={classNames(
               'text-sm lg:text-base font-medium',
-              pool?.liquidityUSD1dChange && pool?.liquidityUSD1dChange > 0
-                ? 'text-green'
-                : 'text-red',
+              pool?.liquidityUSD1dChange > 0 ? 'text-green' : 'text-red',
             )}
           >
             ({pool?.liquidityUSD1dChange.toFixed(2)}%)
@@ -86,22 +113,63 @@ export const PoolCompositionBlade: FC<PoolCompositionBladeProps> = ({
             <span className="text-base text-gray-500 lg:flex-row dark:text-slate-500">
               Show stablecoin types
             </span>
-            <Switch />
+            <Switch
+              checked={showStablesOnly}
+              onCheckedChange={setShowStablesOnly}
+            />
           </div>
-          <CardCurrencyAmountItem
-            isLoading={isLoading}
-            amount={amounts[0]}
-            fiatValue={formatUSD(reserve0USD)}
-            amountClassName="!font-medium"
-          />
-          <CardCurrencyAmountItem
-            isLoading={isLoading}
-            amount={amounts[1]}
-            fiatValue={formatUSD(reserve1USD)}
-            amountClassName="!font-medium"
-          />
+
+          {amounts.map((entry) => {
+            if ('isUSDGroup' in entry && entry.isUSDGroup) {
+              return (
+                <USDGroupedAmountItem
+                  key="usd-group"
+                  amount={entry.amount}
+                  fiatValue={entry.fiatValue}
+                />
+              )
+            }
+
+            const tokenEntry = entry as TokenEntry
+            return (
+              <CardCurrencyAmountItem
+                key={`${tokenEntry.token.chainId}:${tokenEntry.token.address}`}
+                isLoading={false}
+                amount={tokenEntry.amount}
+                fiatValue={formatUSD(tokenEntry.fiatValue)}
+                amountClassName="!font-medium"
+              />
+            )
+          })}
         </CardGroup>
       </CardContent>
     </Wrapper>
+  )
+}
+
+interface USDGroupedAmountItemProps {
+  amount: string
+  fiatValue: number
+}
+
+export const USDGroupedAmountItem: FC<USDGroupedAmountItemProps> = ({
+  amount,
+  fiatValue,
+}) => {
+  return (
+    <CardItem
+      title={
+        <div className="flex gap-2 items-center font-medium text-slate-900 dark:text-slate-50">
+          <USDIcon className="w-[18px] h-[18px]" /> USD
+        </div>
+      }
+    >
+      <span className="flex gap-1 font-semibold">
+        {amount}{' '}
+        <span className="font-normal text-muted-foreground">
+          {formatUSD(fiatValue)}
+        </span>
+      </span>
+    </CardItem>
   )
 }

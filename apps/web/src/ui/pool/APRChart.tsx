@@ -1,5 +1,10 @@
 'use client'
 
+import type {
+  BladePool,
+  V2Pool,
+  V3Pool,
+} from '@sushiswap/graph-client/data-api'
 import {
   Button,
   Card,
@@ -25,10 +30,13 @@ import { useTheme } from 'next-themes'
 import { useEffect, useMemo, useState } from 'react'
 import { useCallback } from 'react'
 import type { FC, MouseEventHandler, ReactNode } from 'react'
+import type { SushiSwapProtocol } from 'sushi'
 import { Native } from 'sushi/currency'
+import { formatPercent } from 'sushi/format'
 import tailwindConfig from 'tailwind.config'
 import resolveConfig from 'tailwindcss/resolveConfig'
 import { Wrapper } from '../swap/trade/wrapper'
+import { APRHoverCard } from './APRHoverCard'
 
 echarts.use([
   CanvasRenderer,
@@ -235,7 +243,7 @@ export const MOCK_APR_BUCKETS = {
 
 const tailwind = resolveConfig(tailwindConfig)
 
-export const APRChart = () => {
+export const APRChart = ({ pool }: { pool: BladePool | V2Pool | V3Pool }) => {
   const [period, setPeriod] = useState<PoolChartPeriod>(
     PoolChartPeriod.ThirtyDay,
   )
@@ -403,24 +411,39 @@ export const APRChart = () => {
       <CardHeader>
         <CardTitle className="">
           <div className="flex justify-between items-center">
-            <div className="flex flex-col gap-1">
-              {/* @DEV TODO use APRHoverCard component instead */}
-              <span className="text-sm !font-medium text-muted-foreground">
-                APR
-              </span>
-              <div className="hidden gap-1 items-center lg:flex">
-                <span className="text-base lg:text-[1.75rem] font-medium underline decoration-dotted underline-offset-[5px] text-slate-900 dark:text-slate-100">
-                  12.3%
+            <APRHoverCard
+              pool={{
+                isIncentivized: false,
+                address: pool.address,
+                chainId: pool.chainId,
+                id: pool.id,
+                protocol: pool.protocol as SushiSwapProtocol,
+                feeApr1d: pool.feeApr1d,
+                incentiveApr: 0,
+                wasIncentivized: false,
+              }}
+            >
+              <div className="flex flex-col gap-1">
+                {/* @DEV TODO use APRHoverCard component instead */}
+
+                <span className="text-sm !font-medium text-muted-foreground">
+                  APR
                 </span>
-                <Currency.IconList
-                  iconWidth={26}
-                  iconHeight={26}
-                  className="!border-none"
-                >
-                  <Currency.Icon currency={Native.onChain(1)} />
-                </Currency.IconList>
+                <div className="hidden gap-1 items-center lg:flex">
+                  <span className="text-base lg:text-[1.75rem] font-medium underline decoration-dotted underline-offset-[5px] text-slate-900 dark:text-slate-100">
+                    {formatPercent(pool.feeApr1d)}
+                  </span>
+                  <Currency.IconList
+                    iconWidth={26}
+                    iconHeight={26}
+                    className="!border-none"
+                  >
+                    <Currency.Icon currency={Native.onChain(1)} />
+                  </Currency.IconList>
+                </div>
               </div>
-            </div>
+            </APRHoverCard>
+
             <div className="flex gap-2">
               <div className="flex gap-2">
                 <ChartPeriodButton

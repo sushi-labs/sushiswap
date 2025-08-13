@@ -9,7 +9,6 @@ import { isAddress } from 'viem'
 export async function generateMetadata(props: {
   params: Promise<{ chainId: string; address: string }>
 }): Promise<Metadata> {
-  console.log('generateMetadata')
   const params = await props.params
   const { chainId: _chainId, address } = params
   const chainId = +_chainId as EvmChainId
