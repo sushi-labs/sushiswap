@@ -33,8 +33,6 @@ export const PoolHeaderBlade: FC<PoolHeaderBlade> = ({
   backUrl,
   address,
   pool,
-  // priceRange,
-  // showAddLiquidityButton = false,
 }) => {
   const { isMd } = useBreakpoint('md')
   const [token0] = useMemo(() => {
@@ -120,10 +118,9 @@ export const PoolHeaderBlade: FC<PoolHeaderBlade> = ({
             </div>
             {!isMd ? (
               <AddLiquidityDialog
-                // @TODO: remove typecast once we have a blade pool type
                 poolType={'BLADE' as SushiSwapProtocol}
                 hidePoolTypeToggle={true}
-                hideTokenSelectors={false}
+                bladePool={pool}
                 trigger={
                   <Button
                     size="sm"

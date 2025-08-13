@@ -49,7 +49,7 @@ interface CurrencyInputProps {
   type: 'INPUT' | 'OUTPUT'
   fetching?: boolean
   currencyLoading?: boolean
-  currencies?: Record<string, Token>
+  currencies?: Record<string, Type>
   allowNative?: boolean
   error?: string
   hidePinnedTokens?: boolean

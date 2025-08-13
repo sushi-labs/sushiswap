@@ -1,4 +1,5 @@
 'use client'
+import type { BladePool } from '@sushiswap/graph-client/data-api'
 import {
   Button,
   Dialog,
@@ -23,6 +24,7 @@ export const AddLiquidityDialog = ({
   token0,
   token1,
   initFeeAmount,
+  bladePool,
 }: {
   poolType: SushiSwapProtocol
   trigger: ReactNode
@@ -31,6 +33,7 @@ export const AddLiquidityDialog = ({
   token0?: Type
   token1?: Type
   initFeeAmount?: SushiSwapV3FeeAmount
+  bladePool?: BladePool
 }) => {
   const [type, setType] = useState<SushiSwapProtocol>(poolType)
 
@@ -56,12 +59,10 @@ export const AddLiquidityDialog = ({
         )
       // @ts-expect-error - ok until we have a blade pool type
       case 'BLADE':
-        return (
-          <AddLiquidityBlade
-            hideTokenSelectors={hideTokenSelectors}
-            initToken0={token0}
-          />
-        )
+        if (!bladePool) {
+          return null
+        }
+        return <AddLiquidityBlade bladePool={bladePool} />
       default:
         return (
           <AddLiquidityV2
@@ -71,7 +72,7 @@ export const AddLiquidityDialog = ({
           />
         )
     }
-  }, [type, token0, token1, hideTokenSelectors, initFeeAmount])
+  }, [type, token0, token1, hideTokenSelectors, initFeeAmount, bladePool])
 
   return (
     <Dialog>

@@ -35,7 +35,7 @@ interface TokenSelectorV2Props {
   chainId: EvmChainId
   onSelect(currency: Type): void
   children: ReactNode
-  currencies?: Record<string, Token>
+  currencies?: Record<string, Type>
   includeNative?: boolean
   hidePinnedTokens?: boolean
   hideSearch?: boolean
