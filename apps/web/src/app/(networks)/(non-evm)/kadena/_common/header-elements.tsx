@@ -4,9 +4,12 @@ import {
   NavigationListItem,
   NavigationMenuContent,
   NavigationMenuItem,
+  NavigationMenuLink,
   NavigationMenuTrigger,
   OnramperButton,
+  navigationMenuTriggerStyle,
 } from '@sushiswap/ui'
+import Link from 'next/link'
 import React from 'react'
 import { EXPLORE_NAVIGATION_LINKS } from 'src/app/_common/header-elements'
 
@@ -39,16 +42,29 @@ export const headerElements: NavigationElement[] = [
     ),
   },
   {
-    title: 'Explore',
-    href: `/kadena/explore/pools`,
     show: 'desktop',
-    type: NavigationElementType.Single,
+    type: NavigationElementType.Custom,
+    item: (
+      <NavigationMenuItem>
+        <Link
+          href={`/kadena/explore/pools`}
+          className={navigationMenuTriggerStyle}
+        >
+          Explore
+        </Link>
+      </NavigationMenuItem>
+    ),
   },
   {
-    title: 'Pool',
-    href: `/kadena/pool`,
     show: 'desktop',
-    type: NavigationElementType.Single,
+    type: NavigationElementType.Custom,
+    item: (
+      <NavigationMenuItem>
+        <Link href={`/kadena/pool`} className={navigationMenuTriggerStyle}>
+          Pool
+        </Link>
+      </NavigationMenuItem>
+    ),
   },
   {
     title: 'Stake',
