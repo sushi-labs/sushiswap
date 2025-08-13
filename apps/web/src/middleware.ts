@@ -68,11 +68,13 @@ export async function middleware(req: NextRequest) {
   if (networkNameMatch?.length) {
     let chain
 
-    const _chainId = Number.parseInt(networkNameMatch[0])
-    if (isChainId(_chainId)) {
-      chain = getChainById(_chainId)
-    } else if (isChainKey(networkNameMatch[0])) {
-      chain = getChainByKey(networkNameMatch[0])
+    {
+      const _chainId = Number.parseInt(networkNameMatch[0])
+      if (isChainId(_chainId)) {
+        chain = getChainById(_chainId)
+      } else if (isChainKey(networkNameMatch[0])) {
+        chain = getChainByKey(networkNameMatch[0])
+      }
     }
 
     if (!chain) return NextResponse.next()
@@ -115,7 +117,9 @@ export async function middleware(req: NextRequest) {
       }
     }
 
-    url.pathname = pathname.replace(chain.key, chain.chainId.toString())
+    if (chain.type === 'evm') {
+      url.pathname = pathname.replace(chain.key, chain.chainId.toString())
+    }
 
     return NextResponse.rewrite(url)
   }
