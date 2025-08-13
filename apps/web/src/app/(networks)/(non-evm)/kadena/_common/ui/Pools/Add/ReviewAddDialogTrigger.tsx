@@ -1,5 +1,6 @@
 import { Button, type ButtonProps, DialogTrigger } from '@sushiswap/ui'
 import { useMemo } from 'react'
+import { MIN_GAS_FEE } from '~kadena/_common/constants/gas'
 import { useTokenBalances } from '~kadena/_common/lib/hooks/use-token-balances'
 import { useKadena } from '~kadena/kadena-wallet-provider'
 import { usePoolState } from '../../../../pool/pool-provider'
@@ -21,6 +22,18 @@ export const ReviewAddDialogTrigger = (props: ButtonProps) => {
         token0 && token1 ? [token0?.tokenAddress, token1?.tokenAddress] : [],
     })
   const balanceMap = tokenBalances?.balanceMap ?? undefined
+
+  const hasInsufficientGas = useMemo(() => {
+    if (isLoadingTokenBalance) return true
+
+    const kdaBalance = balanceMap?.['coin']
+
+    if (kdaBalance === undefined) return true
+
+    const insufficient = kdaBalance < MIN_GAS_FEE
+    return insufficient
+  }, [isLoadingTokenBalance, balanceMap])
+
   const poolExists = Boolean(poolId)
 
   const token0Balance =
@@ -58,12 +71,14 @@ export const ReviewAddDialogTrigger = (props: ButtonProps) => {
       return 'Enter Amount'
     }
     if (hasInsufficientToken0Balance) {
-      return `Insufficient ${token0?.tokenSymbol} Balance`
+      return `Insufficient ${token0?.tokenSymbol} Balance on Chain 2`
     }
     if (hasInsufficientToken1Balance) {
-      return `Insufficient ${token1?.tokenSymbol} Balance`
+      return `Insufficient ${token1?.tokenSymbol} Balance on Chain 2`
     }
-
+    if (hasInsufficientGas) {
+      return 'Insufficient Gas Balance on Chain 2'
+    }
     if (!poolExists) {
       return 'Create Pool'
     }
@@ -76,6 +91,7 @@ export const ReviewAddDialogTrigger = (props: ButtonProps) => {
     token1,
     isTxnPending,
     poolExists,
+    hasInsufficientGas,
   ])
 
   return (

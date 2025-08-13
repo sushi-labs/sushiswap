@@ -9,10 +9,12 @@ import { useQueryClient } from '@tanstack/react-query'
 import { useParams } from 'next/navigation'
 import { useMemo } from 'react'
 import { kadenaClient } from '~kadena/_common/constants/client'
+import { MIN_GAS_FEE } from '~kadena/_common/constants/gas'
 import {
   KADENA_CHAIN_ID,
   KADENA_NETWORK_ID,
 } from '~kadena/_common/constants/network'
+import { useTokenBalances } from '~kadena/_common/lib/hooks/use-token-balances'
 import { buildRemoveLiquidityTxn } from '~kadena/_common/lib/pact/pool'
 import { getChainwebTxnLink } from '~kadena/_common/lib/utils/kadena-helpers'
 import { WalletConnector } from '~kadena/_common/ui/WalletConnector/WalletConnector'
@@ -36,6 +38,23 @@ export const RemoveButton = (props: ButtonProps) => {
   const { token0, token1, poolId } = usePoolState()
   const { activeAccount, currentWallet } = useKadena()
   const { client } = useKadenaWallet()
+  const { data: tokenBalances, isLoading: isLoadingTokenBalance } =
+    useTokenBalances({
+      account: activeAccount?.accountName ?? '',
+      tokenAddresses: ['coin'],
+    })
+  const balanceMap = tokenBalances?.balanceMap ?? undefined
+
+  const hasInsufficientGas = useMemo(() => {
+    if (isLoadingTokenBalance) return true
+
+    const kdaBalance = balanceMap?.['coin']
+
+    if (kdaBalance === undefined) return true
+
+    const insufficient = kdaBalance < MIN_GAS_FEE
+    return insufficient
+  }, [isLoadingTokenBalance, balanceMap])
 
   const address = activeAccount?.accountName ?? ''
 
@@ -157,8 +176,11 @@ export const RemoveButton = (props: ButtonProps) => {
     if (percentage === 0) {
       return 'Enter Amount'
     }
+    if (hasInsufficientGas) {
+      return 'Insufficient Gas Balance on Chain 2'
+    }
     return 'Remove Liquidity'
-  }, [percentage, isTxnPending])
+  }, [percentage, isTxnPending, hasInsufficientGas])
 
   if (!isConnected) {
     return <WalletConnector fullWidth {...props} />
