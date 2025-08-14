@@ -6,7 +6,7 @@ import { useStrapiBanner } from './strapi-banner-context-provider'
 export function StrapiBanner({ className }: { className?: string }) {
   const { banner, cookie } = useStrapiBanner()
 
-  if (!banner) return <></>
+  if (!banner) return null
 
   return (
     <StrapiBannerContent
