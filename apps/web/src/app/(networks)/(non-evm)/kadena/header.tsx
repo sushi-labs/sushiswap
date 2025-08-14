@@ -9,6 +9,7 @@ import { HeaderNetworkSelector } from 'src/lib/wagmi/components/header-network-s
 import { headerElements } from './_common/header-elements'
 import { ChainIdOperatorBanner } from './_common/ui/Shared/chain-id-operator-banner'
 import { WalletConnector } from './_common/ui/WalletConnector/WalletConnector'
+import { MobileMetamaskCompatibilityModal } from './_common/ui/mobile-metamask-compatibility-modal'
 
 export const Header: FC<{ className?: string }> = ({ className }) => {
   return (
@@ -45,6 +46,7 @@ export const Header: FC<{ className?: string }> = ({ className }) => {
         />
       </div>
       <ChainIdOperatorBanner className="top-[56px] fixed z-[19]" />
+      <MobileMetamaskCompatibilityModal />
     </div>
   )
 }
