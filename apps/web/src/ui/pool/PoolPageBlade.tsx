@@ -1,8 +1,8 @@
 'use client'
 import { PlusIcon } from '@heroicons/react-v1/solid'
 import type { BladePool } from '@sushiswap/graph-client/data-api'
-import { Button, Container, useBreakpoint } from '@sushiswap/ui'
-import { type FC, useMemo, useState } from 'react'
+import { Button, Container } from '@sushiswap/ui'
+import { type FC, useState } from 'react'
 import type { SushiSwapProtocol } from 'sushi'
 import { APRChart } from './APRChart'
 import { BladePoolPrice } from './BladePoolPrice'
@@ -16,7 +16,6 @@ interface PoolPageBlade {
 }
 
 export const PoolPageBlade: FC<PoolPageBlade> = ({ pool }) => {
-  const { isMd } = useBreakpoint('md')
   const [showStableTypes, setShowStableTypes] = useState(false)
 
   return (
@@ -32,7 +31,7 @@ export const PoolPageBlade: FC<PoolPageBlade> = ({ pool }) => {
         </div>
         <div className="flex-[1_1_0%] min-[1230px]:flex-[1_1_0%] min-w-0 flex flex-col gap-3">
           <div className="flex flex-col gap-3">
-            {isMd ? (
+            <span className="md:block hidden">
               <AddLiquidityDialog
                 poolType={'BLADE' as SushiSwapProtocol}
                 hidePoolTypeToggle={true}
@@ -44,7 +43,7 @@ export const PoolPageBlade: FC<PoolPageBlade> = ({ pool }) => {
                   </Button>
                 }
               />
-            ) : null}
+            </span>
             {/* <ManagePositionButton
               href={`/${ChainKey[pool.chainId]}/pool/v2/${pool.address}/add`}
             /> */}

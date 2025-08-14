@@ -9,7 +9,6 @@ import {
   LinkInternal,
   classNames,
   typographyVariants,
-  useBreakpoint,
 } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import { USDIcon } from '@sushiswap/ui/icons/USD'
@@ -34,7 +33,6 @@ export const PoolHeaderBlade: FC<PoolHeaderBlade> = ({
   address,
   pool,
 }) => {
-  const { isMd } = useBreakpoint('md')
   const [token0] = useMemo(() => {
     if (!pool) return [undefined, undefined]
 
@@ -116,7 +114,7 @@ export const PoolHeaderBlade: FC<PoolHeaderBlade> = ({
                 )}
               </div>
             </div>
-            {!isMd ? (
+            <span className="block md:hidden">
               <AddLiquidityDialog
                 poolType={'BLADE' as SushiSwapProtocol}
                 hidePoolTypeToggle={true}
@@ -130,7 +128,7 @@ export const PoolHeaderBlade: FC<PoolHeaderBlade> = ({
                   </Button>
                 }
               />
-            ) : null}
+            </span>
           </div>
         </div>
         {/* <div className="flex flex-wrap items-center gap-y-5 gap-x-[32px] text-secondary-foreground mb-8 mt-1.5">

@@ -9,13 +9,28 @@ const addressSchema = z
   .string()
   .refine((val) => isAddress(val), { message: 'Invalid address' })
 
-export const schema = z
+const DepositRecord = z
+  .record(
+    addressSchema,
+    z.string().regex(/^\d+$/, { message: 'Amount must be a numeric string' }),
+  )
+  .refine((r) => Object.keys(r).length > 0, {
+    message: 'deposit cannot be empty',
+  })
+
+const booleanStrict = z.union([
+  z.boolean(),
+  z.literal('true').transform(() => true),
+  z.literal('false').transform(() => false),
+])
+
+export const bladeDepositSchema = z
   .object({
     sender: addressSchema.describe(
       'The address of the user initiating the deposit transaction.',
     ),
     pool_address: addressSchema.describe('The address of the pool.'),
-    days_to_lock: z
+    days_to_lock: z.coerce
       .number()
       .int()
       .positive()
@@ -23,7 +38,7 @@ export const schema = z
       .describe(
         'Number of days to lock the deposit in the liquidity pool. Required unless pool is Katana.',
       ),
-    lock_time: z
+    lock_time: z.coerce
       .number()
       .int()
       .positive()
@@ -32,17 +47,21 @@ export const schema = z
         'Number of minutes to lock the deposit in the liquidity pool. Only supported by Katana.',
       ),
     deposit: z
-      .record(
-        addressSchema,
-        z
-          .string()
-          .regex(/^\d+$/, { message: 'Amount must be a numeric string' }),
-      )
-      .optional()
+      .preprocess((v) => {
+        if (typeof v === 'string') {
+          try {
+            return JSON.parse(v)
+          } catch {
+            // let Zod report the type mismatch below
+            return v
+          }
+        }
+        return v
+      }, DepositRecord.optional())
       .describe(
         'An object mapping token addresses to deposit amounts (machine-readable string). Required if single_asset is false.',
       ),
-    chain_id: z
+    chain_id: z.coerce
       .number()
       .refine((chainId) => isEvmChainId(chainId), {
         message: `chain_id must be a valid EvmChainId`,
@@ -61,8 +80,7 @@ export const schema = z
       .describe(
         'The total number of pool tokens the user wants to receive. Only valid for single-asset deposits.',
       ),
-    single_asset: z
-      .boolean()
+    single_asset: booleanStrict
       .default(false)
       .describe('Whether only one asset is being deposited.'),
     single_token: addressSchema
@@ -76,7 +94,7 @@ export const schema = z
 
     // days_to_lock / lock_time rules
     if (isKatana) {
-      if (!data.lock_time) {
+      if (data.lock_time === undefined) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           path: ['lock_time'],
@@ -84,7 +102,7 @@ export const schema = z
         })
       }
     } else {
-      if (!data.days_to_lock) {
+      if (data.days_to_lock === undefined) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           path: ['days_to_lock'],
@@ -94,6 +112,7 @@ export const schema = z
     }
 
     // deposit / single_token rules
+
     if (data.single_asset) {
       if (!data.single_token) {
         ctx.addIssue({
@@ -123,8 +142,7 @@ export async function GET(request: NextRequest) {
     )
   }
   const params = Object.fromEntries(request.nextUrl.searchParams.entries())
-
-  const { ...parsedParams } = schema.parse(params)
+  const { ...parsedParams } = bladeDepositSchema.parse(params)
 
   const url = new URL('https://blade-api.sushi.com/rfq/v2/deposit')
 
