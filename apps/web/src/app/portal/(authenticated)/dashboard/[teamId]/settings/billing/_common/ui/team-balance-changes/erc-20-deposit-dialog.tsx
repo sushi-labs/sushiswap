@@ -48,7 +48,9 @@ export function Erc20DepositDialog({
               className="whitespace-nowrap"
             >
               <LinkExternal
-                href={getEvmChainById(1).getTransactionUrl(erc20Deposit.txHash)}
+                href={getEvmChainById(
+                  erc20Deposit.chainId as EvmChainId,
+                ).getTransactionUrl(erc20Deposit.txHash)}
               >
                 {shortenHash(erc20Deposit.txHash)}
               </LinkExternal>
