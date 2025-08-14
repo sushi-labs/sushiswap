@@ -1,12 +1,20 @@
 import { PlusIcon } from '@heroicons/react-v1/solid'
 import type { BladePool } from '@sushiswap/graph-client/data-api'
+import { createErrorToast, createToast } from '@sushiswap/notifications'
 import { Button } from '@sushiswap/ui'
+import { waitForTransactionReceipt } from '@wagmi/core'
 import { type FC, Fragment, useMemo } from 'react'
 import { APPROVE_TAG_ADD_BLADE } from 'src/lib/constants'
 import { Web3Input } from 'src/lib/wagmi/components/web3-input'
-import { useBladeDepositParams } from 'src/lib/wagmi/hooks/pools/hooks/use-blade-deposit-params'
+import { getWagmiConfig } from 'src/lib/wagmi/config'
+import {
+  type BladeParamResponse,
+  type BladeParamResponseKatana,
+  useBladeDepositParams,
+} from 'src/lib/wagmi/hooks/pools/hooks/use-blade-deposit-params'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
 import { CheckerProvider } from 'src/lib/wagmi/systems/Checker/Provider'
+import { EvmChainId, gasMargin } from 'sushi'
 import { isBladeChainId } from 'sushi/config'
 import { type BladeChainId, isWNativeSupported } from 'sushi/config'
 import {
@@ -16,7 +24,14 @@ import {
   tryParseAmount,
   unwrapToken,
 } from 'sushi/currency'
-import { useAccount } from 'wagmi'
+import { UserRejectedRequestError, parseAbi } from 'viem'
+import {
+  useAccount,
+  useSimulateContract,
+  useWaitForTransactionReceipt,
+  useWriteContract,
+} from 'wagmi'
+import type { UseSimulateContractParameters } from 'wagmi'
 import type { IDExtended } from './add-liquidity-blade'
 
 type AddLiquidityWidgetBladeProps = {
@@ -35,6 +50,17 @@ type AddLiquidityWidgetBladeProps = {
   setIndependendField: React.Dispatch<React.SetStateAction<number>>
   replaceTokenAt: (index: number, token?: Type) => void
   removeTokenAt: (index: number) => void
+}
+
+const depositAbi = (chainId: BladeChainId) => {
+  if (chainId !== EvmChainId.KATANA) {
+    return parseAbi([
+      'function deposit(address sender, uint256[] depositAmounts, uint256 nDays, uint256 poolTokens, uint256 goodUntil, (uint8 v, bytes32 r, bytes32 s) theSignature) payable',
+    ])
+  }
+  return parseAbi([
+    'function deposit(address depositor, uint256[] depositAmounts, uint256 lockTime, uint256 poolTokens, uint256 goodUntil, (uint8 v, bytes32 r, bytes32 s) theSignature, bytes extraData) payable',
+  ])
 }
 
 export const AddLiquidityWidgetBlade: FC<AddLiquidityWidgetBladeProps> = ({
@@ -67,6 +93,133 @@ export const AddLiquidityWidgetBlade: FC<AddLiquidityWidgetBladeProps> = ({
       return tryParseAmount(value, token) || Amount.fromRawAmount(token, 0)
     })
   }, [tokens, inputs])
+
+  const nativeTotalAmount = useMemo(() => {
+    return parsedInputs.reduce((acc, curr) => {
+      if (curr.currency.isNative) {
+        return acc + curr.quotient
+      }
+      return acc
+    }, 0n)
+  }, [parsedInputs])
+
+  const prepare = useMemo(() => {
+    if (!depositParams) {
+      return undefined
+    }
+
+    const amounts = depositParams.deposit_amounts.map(
+      BigInt,
+    ) as readonly bigint[]
+    const sig = {
+      v: depositParams.signature.v,
+      r: depositParams.signature.r,
+      s: depositParams.signature.s,
+    } as const
+
+    let args
+    if (chainId === EvmChainId.KATANA) {
+      const _depositParams = depositParams as BladeParamResponseKatana
+      args = [
+        _depositParams.sender,
+        amounts,
+        BigInt(_depositParams.lock_time),
+        BigInt(_depositParams.pool_tokens),
+        BigInt(_depositParams.good_until),
+        sig,
+        _depositParams.extra_data,
+      ] as const
+    } else {
+      const _depositParams = depositParams as BladeParamResponse
+      args = [
+        _depositParams.sender,
+        amounts,
+        BigInt(_depositParams.n_days),
+        BigInt(_depositParams.pool_tokens),
+        BigInt(_depositParams.good_until),
+        sig,
+      ] as const
+    }
+    return {
+      account: depositParams.sender,
+      address: depositParams.clipper_exchange_address,
+      chainId,
+      abi: depositAbi(chainId),
+      functionName: 'deposit',
+      args,
+      value: nativeTotalAmount,
+    } as const satisfies UseSimulateContractParameters
+  }, [depositParams, nativeTotalAmount, chainId])
+
+  const {
+    data: simulation,
+    isLoading: isSimLoading,
+    error: simError,
+    //@ts-expect-error - prepare could have 6 or 7 args depending on chain
+  } = useSimulateContract({
+    ...(prepare as NonNullable<typeof prepare>),
+    chainId,
+    query: {
+      enabled: Boolean(prepare),
+    },
+  })
+
+  const { writeContractAsync, data: txnHash } = useWriteContract()
+
+  const { status } = useWaitForTransactionReceipt({ chainId, hash: txnHash })
+
+  const deposit = async () => {
+    if (!simulation) {
+      return createErrorToast(
+        simError?.message || 'Simulation failed. Please try again.',
+        true,
+      )
+    }
+    try {
+      const hash = await writeContractAsync({
+        ...simulation?.request,
+        gas: simulation?.request.gas
+          ? gasMargin(simulation.request.gas)
+          : undefined,
+      })
+
+      const receipt = waitForTransactionReceipt(getWagmiConfig(), {
+        chainId,
+        hash: hash,
+      })
+      const token = pool.tokens[0]
+      const ts = new Date().getTime()
+
+      for (const token of tokens) {
+        updateInput(token.id, '', true) // Clear input for the token being deposited
+      }
+      void createToast({
+        account: address,
+        type: 'addLiquidity',
+        chainId,
+        txHash: hash,
+        promise: receipt,
+        summary: {
+          pending: `Adding liquidity to the ${token.symbol}/USD pool`,
+          completed: `Successfully added liquidity to the ${token.symbol}/USD pool`,
+          failed: 'Something went wrong when adding liquidity',
+        },
+        timestamp: ts,
+        groupTimestamp: ts,
+      })
+    } catch (error: unknown) {
+      console.error('Error sending deposit transaction', error)
+      // Check if error has a 'cause' property and if it's a UserRejectedRequestError
+      const err = error as any
+      if (!(err?.cause instanceof UserRejectedRequestError)) {
+        createErrorToast(
+          (err?.message as string) ||
+            'Something went wrong when adding liquidity',
+          true,
+        )
+      }
+    }
+  }
 
   const allTokens = useMemo(() => {
     return pool.tokens.map((token) =>
@@ -184,16 +337,16 @@ export const AddLiquidityWidgetBlade: FC<AddLiquidityWidgetBladeProps> = ({
             onClick={() => {}}
           >
             <Checker.Network fullWidth chainId={chainId}>
-              <Checker.Amounts
-                fullWidth
-                chainId={chainId}
-                amounts={useMemo(() => parsedInputs, [parsedInputs])}
+              <Checker.Custom
+                showChildren={!error?.message}
+                buttonText={error?.message || ''}
+                disabled={Boolean(error?.message)}
+                onClick={() => {}}
               >
-                <Checker.Custom
-                  showChildren={!error?.message}
-                  buttonText={error?.message || ''}
-                  disabled={Boolean(error?.message)}
-                  onClick={() => {}}
+                <Checker.Amounts
+                  fullWidth
+                  chainId={chainId}
+                  amounts={useMemo(() => parsedInputs, [parsedInputs])}
                 >
                   {(!pool || isBladeChainId(pool.chainId)) &&
                     tokens.map((token, i) => {
@@ -213,13 +366,20 @@ export const AddLiquidityWidgetBlade: FC<AddLiquidityWidgetBladeProps> = ({
                           contract={pool.address}
                         >
                           <Checker.Success tag={APPROVE_TAG_ADD_BLADE}>
-                            {/* AddSectionReviewModalLegacy was wrapping here */}
                             {i === 0 ? ( // Only show button on first token row}
                               <Button
                                 size="xl"
                                 fullWidth
                                 testId="add-liquidity"
-                                disabled={isLoadingParams}
+                                loading={txnHash && status === 'pending'}
+                                disabled={
+                                  isLoadingParams ||
+                                  (txnHash && status === 'pending') ||
+                                  isSimLoading
+                                  // ||
+                                  // Boolean(simError)
+                                }
+                                onClick={deposit}
                               >
                                 Deposit
                               </Button>
@@ -228,8 +388,8 @@ export const AddLiquidityWidgetBlade: FC<AddLiquidityWidgetBladeProps> = ({
                         </Checker.ApproveERC20>
                       )
                     })}
-                </Checker.Custom>
-              </Checker.Amounts>
+                </Checker.Amounts>
+              </Checker.Custom>
             </Checker.Network>
           </Checker.Custom>
         </Checker.Connect>

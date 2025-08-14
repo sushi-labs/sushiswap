@@ -116,6 +116,7 @@ export async function getBladePool(
     return {
       id: pool.id as `${string}:0x${string}`,
       address: pool.address as Address,
+      abi: pool.abi,
       chainId,
       protocol: 'BLADE',
       liquidity: BigInt(pool.liquidity.toString()),
@@ -198,6 +199,7 @@ export type BladePoolVault =
 export type BladePool = {
   id: `${string}:0x${string}`
   address: Address
+  abi: BladePoolAbi
   chainId: EvmChainId
   protocol: string
   liquidity: bigint

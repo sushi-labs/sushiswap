@@ -3,7 +3,7 @@ import type { IDExtended } from 'src/ui/pool/add-liquidity/add-liquidity-blade'
 import { EvmChainId } from 'sushi'
 import type { BladeChainId } from 'sushi/config'
 import { type Type, tryParseAmount } from 'sushi/currency'
-import type { Address } from 'viem'
+import type { Address, Hex } from 'viem'
 import type { z } from 'zod'
 import { bladeDepositSchema } from '~evm/api/blade/deposit/route'
 
@@ -77,13 +77,17 @@ export const useBladeDepositParams = ({
       const validated = bladeDepositSchema.parse({
         sender,
         pool_address: poolAddress,
-        days_to_lock: chainId !== EvmChainId.KATANA ? 1 : undefined, //hardcode 1 for now
-        lock_time: chainId === EvmChainId.KATANA ? 1 : undefined, //hardcode 1 for now
-        // deposits: isSingleAsset ? undefined: deposits, commented out atm b/c return message says: single asset deposit is not available
+        days_to_lock: chainId !== EvmChainId.KATANA ? 1 : undefined, //hardcode 1 for now until UI figured out
+        lock_time: chainId === EvmChainId.KATANA ? 1 : undefined, //hardcode 1 for now until UI figured out
+        // commented out atm b/c return message says: single asset deposit is not available
+        // deposits: isSingleAsset ? undefined: deposits,
         deposit: deposit,
         chain_id: chainId,
-        // output_pool_tokens:  undefined, // commented out atm b/c return message says: single asset deposit is not available
-        // single_asset: isSingleAsset,// commented out atm b/c return message says: single asset deposit is not available
+        // commented out atm b/c return message says: single asset deposit is not available
+        // output_pool_tokens:  undefined,
+        // commented out atm b/c return message says: single asset deposit is not available
+        // single_asset: isSingleAsset,
+        // commented out atm b/c return message says: single asset deposit is not available
         // single_token: isSingleAsset ? Object.keys(deposits)[0] : undefined,
         single_asset: false, //hardcode false for now b/c single asset deposit is not available
         single_token: undefined, //hardcode false for now b/c single asset deposit is not available
@@ -101,7 +105,12 @@ export const useBladeDepositParams = ({
       }
 
       const data = await res.json()
-      return data
+
+      if (chainId === 747474) {
+        return data as BladeParamResponseKatana
+      } else {
+        return data as BladeParamResponse
+      }
     },
     staleTime: 30_000,
     refetchOnWindowFocus: false,
@@ -116,3 +125,31 @@ export const useBladeDepositParams = ({
     ),
   })
 }
+
+type BladeParamBase = {
+  sender: Address
+  pool_tokens: string
+  good_until: number
+  signature: {
+    v: number
+    r: Address
+    s: Address
+  }
+  clipper_exchange_address: Address
+  deposit_amounts: string[]
+}
+
+export type BladeParamResponse = BladeParamBase & {
+  n_days: number
+}
+
+export type BladeParamResponseKatana = BladeParamBase & {
+  extra_data: Hex
+  lock_time: number
+}
+
+/** Conditional type by chain id */
+export type BladeParamResponseFor<C extends BladeChainId> =
+  C extends typeof EvmChainId.KATANA
+    ? BladeParamResponseKatana
+    : BladeParamResponse
