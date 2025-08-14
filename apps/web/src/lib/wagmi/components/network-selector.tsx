@@ -16,8 +16,8 @@ import { usePathname, useRouter } from 'next/navigation'
 import React, { type ReactNode, useCallback, useMemo, useState } from 'react'
 import { NEW_CHAIN_IDS } from 'src/config'
 import { getNetworkName, replaceNetworkSlug } from 'src/lib/network'
-import { type ChainId, getChainById, isChainId } from 'sushi'
-import { isEvmChainId, isEvmChainKey } from 'sushi/evm'
+import { type ChainId, getChainById, isChainKey } from 'sushi'
+import { isEvmChainId } from 'sushi/evm'
 
 export type NetworkSelectorOnSelectCallback<T extends ChainId = ChainId> = (
   chainId: T,
@@ -50,7 +50,7 @@ const NetworkSelector = <T extends ChainId = ChainId>({
     (chainId: T, close: () => void) => {
       const pathSegments = pathname.split('/')
 
-      if (isEvmChainKey(pathSegments[1]) || isEvmChainId(+pathSegments[1])) {
+      if (isChainKey(pathSegments[1]) || isEvmChainId(+pathSegments[1])) {
         push(replaceNetworkSlug(chainId, pathname), {
           scroll: false,
         })
