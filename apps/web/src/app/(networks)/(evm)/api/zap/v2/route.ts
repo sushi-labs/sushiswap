@@ -1,7 +1,7 @@
 import type { NextRequest } from 'next/server'
 import { type ZapSupportedChainId, isZapSupportedChainId } from 'src/config'
+import { sz } from 'sushi'
 import { UI_FEE_COLLECTOR_ADDRESS, isUIFeeCollectorChainId } from 'sushi/evm'
-import { getAddress } from 'viem/utils'
 import { z } from 'zod'
 
 const schema = z.object({
@@ -11,24 +11,17 @@ const schema = z.object({
       message: 'chainId must exist in EnsoSupportedChainId',
     })
     .transform((chainId) => chainId as ZapSupportedChainId),
-  fromAddress: z.string().transform((from) => getAddress(from)),
+  fromAddress: sz.evm.address(),
   routingStrategy: z
     .enum(['ensowallet', 'router', 'delegate'])
     .default('router'),
-  receiver: z
-    .string()
-    .transform((receiver) => getAddress(receiver))
-    .optional(),
-  spender: z
-    .string()
-    .transform((spender) => getAddress(spender))
-    .optional(),
+  receiver: sz.evm.address().optional(),
+  spender: sz.evm.address().optional(),
   amountIn: z.union([z.string(), z.array(z.string())]),
-  amountOut: z.union([z.string(), z.array(z.string())]).optional(),
   minAmountOut: z.union([z.string(), z.array(z.string())]).optional(),
   slippage: z.string().optional(), // BIPS
-  tokenIn: z.union([z.string(), z.array(z.string())]).optional(),
-  tokenOut: z.union([z.string(), z.array(z.string())]).optional(),
+  tokenIn: z.union([z.string(), z.array(z.string())]),
+  tokenOut: z.union([z.string(), z.array(z.string())]),
   quote: z.boolean().optional(),
 })
 

@@ -49,7 +49,10 @@ export const useCrossChainTradeRoutes = ({
         toToken.type === 'native' ? zeroAddress : toToken.address,
       )
       url.searchParams.set('fromAmount', fromAmount.amount.toString())
-      url.searchParams.set('slippage', `${slippage.toNumber().toFixed(2)}`)
+      url.searchParams.set(
+        'slippage',
+        `${+slippage.toString({ fixed: 2 }) / 100}`,
+      )
       params.fromAddress &&
         url.searchParams.set('fromAddress', params.fromAddress)
       params.toAddress ||

@@ -26,6 +26,7 @@ export const DISABLED_CHAIN_IDS = [
   ChainId.HARMONY,
   ChainId.POLYGON_ZKEVM,
   ChainId.TATARA,
+  ChainId.HYPEREVM,
 ] as const
 
 export const NEW_CHAIN_IDS = [EvmChainId.KATANA] as const
@@ -33,6 +34,7 @@ export const NEW_CHAIN_IDS = [EvmChainId.KATANA] as const
 export const PREFERRED_CHAINID_ORDER = [
   ...NEW_CHAIN_IDS,
   ChainId.ETHEREUM,
+  TvmChainId.TRON,
   ChainId.BSC,
   ChainId.ARBITRUM,
   ChainId.BASE,
@@ -43,6 +45,7 @@ export const PREFERRED_CHAINID_ORDER = [
   ChainId.BLAST,
   ChainId.OPTIMISM,
   ChainId.KATANA,
+  MvmChainId.APTOS,
   ChainId.LINEA,
   ChainId.MANTLE,
   ChainId.CORE,
@@ -186,6 +189,9 @@ export const ZAP_SUPPORTED_CHAIN_IDS = [
   ChainId.BASE,
   ChainId.ARBITRUM,
   ChainId.AVALANCHE,
+  ChainId.KATANA,
+  ChainId.SONIC,
+  ChainId.LINEA,
 ] as const
 
 export type ZapSupportedChainId = (typeof ZAP_SUPPORTED_CHAIN_IDS)[number]
