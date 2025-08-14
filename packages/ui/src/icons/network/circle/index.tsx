@@ -26,6 +26,7 @@ import { HarmonyCircle } from './HarmonyCircle'
 import { HecoCircle } from './HecoCircle'
 import { HemiCircle } from './HemiCircle'
 import { HyperEVMCircle } from './HyperEVMCircle'
+import { KadenaCircle } from './KadenaCircle'
 import { KatanaCircle } from './KatanaCircle'
 import { KavaCircle } from './KavaCircle'
 import { LineaCircle } from './LineaCircle'
@@ -150,6 +151,7 @@ export const NETWORK_CIRCLE_ICON: Partial<
   [ChainId.HEMI]: HemiCircle,
   [ChainId.KATANA]: KatanaCircle,
   [ChainId.HYPEREVM]: HyperEVMCircle,
+  kadena: KadenaCircle,
   aptos: AptosCircle,
   tron: TronCircle,
 }

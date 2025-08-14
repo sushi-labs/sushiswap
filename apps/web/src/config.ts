@@ -11,6 +11,7 @@ import type { Address } from 'sushi/types'
 export const NonStandardChainId = {
   APTOS: 'aptos',
   TRON: 'tron',
+  KADENA: 'kadena',
 } as const
 
 export type NonStandardChainId =
@@ -48,6 +49,16 @@ export const NonStandardChain = {
     shortName: 'tron',
     chainId: 'tron',
   },
+  [NonStandardChainId.KADENA]: {
+    name: 'Kadena',
+    nativeCurrency: {
+      name: 'Kadena',
+      symbol: 'KDA',
+      decimals: 12,
+    },
+    shortName: 'kadena',
+    chainId: 'kadena',
+  },
 } as Record<NonStandardChainId, NonStandardChain>
 
 export const SWAP_API_SUPPORTED_CHAIN_IDS = EXTRACTOR_SUPPORTED_CHAIN_IDS
@@ -69,7 +80,7 @@ export const DISABLED_CHAIN_IDS = [
   ChainId.HYPEREVM,
 ] as const
 
-export const NEW_CHAIN_IDS = [ChainId.KATANA] as const
+export const NEW_CHAIN_IDS = [ChainId.KATANA, 'kadena'] as const
 
 export const PREFERRED_CHAINID_ORDER = [
   ...NEW_CHAIN_IDS,
@@ -178,6 +189,7 @@ const UNSORTED_SUPPORTED_NETWORKS = [
   ...SUPPORTED_CHAIN_IDS,
   NonStandardChainId.APTOS,
   NonStandardChainId.TRON,
+  NonStandardChainId.KADENA,
 ].filter(
   (c) => !DISABLED_CHAIN_IDS.includes(c as (typeof DISABLED_CHAIN_IDS)[number]),
 )
@@ -197,6 +209,7 @@ const UNSORTED_POOL_SUPPORTED_NETWORKS = [
   ...PoolChainIds,
   NonStandardChainId.APTOS,
   NonStandardChainId.TRON,
+  NonStandardChainId.KADENA,
 ].filter(
   (c) => !DISABLED_CHAIN_IDS.includes(c as (typeof DISABLED_CHAIN_IDS)[number]),
 )

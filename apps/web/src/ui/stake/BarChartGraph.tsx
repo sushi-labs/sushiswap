@@ -17,7 +17,7 @@ import { BarChartPeriod, chartPeriods } from './BarChartPeriods'
 import { BarChartType } from './BarChartTypes'
 
 import type { EChartOption } from 'echarts'
-import ReactEChartsCore from 'echarts-for-react/lib/core'
+import ReactEchartsCore from 'echarts-for-react/lib/core'
 import { LineChart } from 'echarts/charts'
 import { GridComponent, TooltipComponent } from 'echarts/components'
 import * as echarts from 'echarts/core'
@@ -78,9 +78,7 @@ export const BarChartGraph: FC<BarChartProps> = ({ chart, period }) => {
       if (nameNodes[0]) {
         nameNodes[0].innerHTML = format(
           new Date(name * 1000),
-          `dd MMM yyyy${
-            chartPeriods[period] < chartPeriods[BarChartPeriod.Week] ? ' p' : ''
-          }`,
+          `dd MMM yyyy${chartPeriods[period] < chartPeriods[BarChartPeriod.Week] ? ' p' : ''}`,
         )
       }
     },
@@ -119,11 +117,7 @@ export const BarChartGraph: FC<BarChartProps> = ({ chart, period }) => {
               date instanceof Date && !Number.isNaN(date?.getTime())
                 ? format(
                     date,
-                    `dd MMM yyyy${
-                      chartPeriods[period] < chartPeriods[BarChartPeriod.Week]
-                        ? ' p'
-                        : ''
-                    }`,
+                    `dd MMM yyyy${chartPeriods[period] < chartPeriods[BarChartPeriod.Week] ? ' p' : ''}`,
                   )
                 : ''
             }</span>
@@ -209,7 +203,7 @@ export const BarChartGraph: FC<BarChartProps> = ({ chart, period }) => {
             )}
           />
         ) : (
-          <ReactEChartsCore
+          <ReactEchartsCore
             echarts={echarts}
             option={DEFAULT_OPTION}
             style={{ height: 200 }}
