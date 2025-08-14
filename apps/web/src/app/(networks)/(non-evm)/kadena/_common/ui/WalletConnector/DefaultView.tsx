@@ -48,8 +48,8 @@ export const DefaultView = ({ setView }: DefaultViewProps) => {
     isLoadingNativeTokenBalance || isLoadingPrice || isLoadingKdaPrice
 
   return (
-    <div className="flex flex-col w-full gap-8 p-4">
-      <div className="flex justify-between w-full gap-2">
+    <div className="flex flex-col gap-8 p-4 w-full max-w-[280px]">
+      <div className="flex gap-2 justify-between w-full">
         <div className="text-sm font-semibold flex items-center gap-1.5 text-gray-700 dark:text-slate-200">
           {activeAccount?.accountName && (
             <JazzIcon diameter={16} address={activeAccount.accountName} />
@@ -66,7 +66,7 @@ export const DefaultView = ({ setView }: DefaultViewProps) => {
             )}
           </ClipboardController>
         </div>
-        <div className="flex items-center gap-1">
+        <div className="flex gap-1 items-center">
           <IconButton
             icon={Cog6ToothIcon}
             onClick={() => setView('settings')}
@@ -106,11 +106,11 @@ export const DefaultView = ({ setView }: DefaultViewProps) => {
           />
         </div>
       </div>
-      <div className="flex flex-col items-center justify-center gap-2">
+      <div className="flex flex-col gap-2 justify-center items-center">
         {isLoading || !price || data?.balance === undefined ? (
-          <div className="flex items-center gap-2">
+          <div className="flex gap-2 items-center">
             <SkeletonText className="!w-24 mx-auto !h-7" />
-            <span className="text-3xl font-medium h-7">KDA</span>
+            <span className="h-7 text-3xl font-medium">KDA</span>
           </div>
         ) : (
           <p className="text-3xl font-medium whitespace-nowrap">
@@ -125,6 +125,9 @@ export const DefaultView = ({ setView }: DefaultViewProps) => {
           </p>
         )}
       </div>
+      <p className="text-[10px] text-muted-foreground italic">
+        Note: All transactions and balances are on Chain 2.
+      </p>
     </div>
   )
 }

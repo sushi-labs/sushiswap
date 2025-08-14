@@ -22,25 +22,22 @@ export const ChainIdOperatorBanner = ({
   return (
     <div
       className={classNames(
-        'relative flex justify-center w-full transition-all p-3 bg-gradient-to-br from-[#4A9079] backdrop-blur-sm dark:from-[#4A9079]/80 to-[#4A9079]/40 dark:to-[#4A9079]/30 animate-slide',
+        'relative flex justify-center w-full transition-all p-3 bg-gradient-to-br from-[#3b82f6] backdrop-blur-sm dark:from-[#3b82f6]/80 to-[#3b82f6]/40 dark:to-[#3b82f6]/30 animate-slide',
         className,
       )}
     >
-      <div className="flex items-center gap-3 font-medium">
+      <div className="flex gap-3 items-center font-medium text-center">
         <span className="text-black/80 dark:text-white/80">
           <span className="font-bold">SushiSwap</span> on{' '}
           <span className="font-bold">Kadena</span>{' '}
           <br className="block sm:hidden" /> Operates on{' '}
-          <span className="dark:text-yellow-300 text-[#f3e035] bg-blend-color">
-            Chain
-          </span>{' '}
-          - {KADENA_CHAIN_ID}
+          <span className="bg-blend-color">Chain</span> {KADENA_CHAIN_ID}
         </span>
       </div>
       <Button
         onClick={handleCloseBanner}
         variant="ghost"
-        className="absolute -translate-y-1/2 right-2 md:right-4 top-1/2"
+        className="absolute right-2 top-1/2 -translate-y-1/2 md:right-4"
       >
         <XIcon width={15} height={15} />
       </Button>
