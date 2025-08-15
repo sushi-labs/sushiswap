@@ -8,6 +8,7 @@ import { APRChart } from './APRChart'
 import { BladePoolPrice } from './BladePoolPrice'
 import { Pool24HVolume } from './Pool24HVolume'
 import { PoolCompositionBlade } from './PoolCompositionBlade'
+import { PoolTransactionsBlade } from './PoolTransactionsBlade'
 import { AddLiquidityDialog } from './add-liquidity/add-liquidity-dialog'
 import { PoolChartBlade } from './pool-chart-blade'
 
@@ -31,7 +32,7 @@ export const PoolPageBlade: FC<PoolPageBlade> = ({ pool }) => {
         </div>
         <div className="flex-[1_1_0%] min-[1230px]:flex-[1_1_0%] min-w-0 flex flex-col gap-3">
           <div className="flex flex-col gap-3">
-            <span className="md:block hidden">
+            <span className="hidden md:block">
               <AddLiquidityDialog
                 poolType={'BLADE' as SushiSwapProtocol}
                 hidePoolTypeToggle={true}
@@ -61,7 +62,7 @@ export const PoolPageBlade: FC<PoolPageBlade> = ({ pool }) => {
 
       <div className="flex gap-6 lg:gap-10 lg:flex-row">
         <div className="flex-[2_2_0%] min-[1230px]:flex-[3_3_0%] min-w-0">
-          {/* <PoolTransactionsV2 pool={pool} poolAddress={pool.address} /> */}
+          <PoolTransactionsBlade pool={pool} poolAddress={pool.address} />
         </div>
         <div className="flex-[1_1_0%] min-[1230px]:flex-[1_1_0%] min-w-0 lg:block hidden" />
       </div>
