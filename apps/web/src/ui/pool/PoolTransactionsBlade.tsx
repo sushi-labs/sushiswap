@@ -24,6 +24,7 @@ import { EvmChain } from 'sushi/chain'
 import { isBladeChainId } from 'sushi/config'
 import type { Address } from 'viem'
 import { formatUnits } from 'viem'
+import { useAccount } from 'wagmi'
 import {
   TX_AMOUNT_IN_V2_COLUMN,
   TX_AMOUNT_OUT_V2_COLUMN,
@@ -32,6 +33,7 @@ import {
   TX_FEE_BLADE_COLUMN,
   TX_SENDER_V2_COLUMN,
 } from './columns'
+
 export enum TransactionType {
   Mint = 'Mint',
   Burn = 'Burn',
@@ -148,6 +150,7 @@ function usePaginatedTransactions(
   opts: {
     type: TransactionType | 'All' | undefined
     refetchInterval?: number
+    filterByAddress?: Address | undefined
   },
 ) {
   const PAGE_SIZE = 10
@@ -163,11 +166,17 @@ function usePaginatedTransactions(
 
   const [page, setPage] = useState(1)
 
-  const paginatedData = useMemo(() => {
-    return allTransactions.slice(0, page * PAGE_SIZE)
-  }, [allTransactions, page])
+  const filteredTransactions = useMemo(() => {
+    return opts.filterByAddress
+      ? allTransactions.filter((tx) => tx.sender === opts.filterByAddress)
+      : allTransactions
+  }, [allTransactions, opts.filterByAddress])
 
-  const hasNextPage = paginatedData.length < allTransactions.length
+  const paginatedData = useMemo(() => {
+    return filteredTransactions.slice(0, page * PAGE_SIZE)
+  }, [filteredTransactions, page])
+
+  const hasNextPage = paginatedData.length < filteredTransactions.length
 
   const fetchNextPage = useCallback(() => {
     if (hasNextPage) {
@@ -200,6 +209,8 @@ const PoolTransactionsBlade: FC<PoolTransactionsBladeProps> = ({
   pool,
   poolAddress,
 }) => {
+  const { address } = useAccount()
+  const [filterByAddress, setFilterByAddress] = useState(false)
   const [type, setType] = useState<
     Parameters<typeof useTransactionsBlade>['2']['type']
   >(TransactionType.Swap)
@@ -220,8 +231,9 @@ const PoolTransactionsBlade: FC<PoolTransactionsBladeProps> = ({
       ({
         refetchInterval: 60_000,
         type,
+        filterByAddress: filterByAddress ? address : undefined,
       }) as const,
-    [type],
+    [type, filterByAddress, address],
   )
 
   const { data, isLoading, fetchNextPage, hasNextPage } =
@@ -254,7 +266,10 @@ const PoolTransactionsBlade: FC<PoolTransactionsBladeProps> = ({
               </span>
               <span className="flex gap-2 items-center text-muted-foreground">
                 Filter By Your Address
-                <Switch />
+                <Switch
+                  checked={filterByAddress}
+                  onCheckedChange={setFilterByAddress}
+                />
               </span>
             </div>
             <div className="flex gap-1 items-center">
