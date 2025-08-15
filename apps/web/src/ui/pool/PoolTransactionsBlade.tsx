@@ -45,48 +45,6 @@ interface UseTransactionsV2Opts {
   skip?: number
 }
 
-// const fetchMints = async (address: Address, chainId: BladeChainId) => {
-//   const mints = await getBladeMints({
-//     chainId,
-//     address,
-//   })
-
-//   return mints.map((mint) => ({
-//     ...mint,
-//     mints: [mint],
-//     burns: [],
-//     swaps: [],
-//   }))
-// }
-
-// const fetchBurns = async (address: Address, chainId: BladeChainId) => {
-//   const burns = await getBladeBurns({
-//     chainId,
-//     address,
-//   })
-
-//   return burns.map((burn) => ({
-//     ...burn,
-//     mints: [],
-//     burns: [burn],
-//     swaps: [],
-//   }))
-// }
-
-// const fetchSwaps = async (address: Address, chainId: BladeChainId) => {
-//   const swaps = await getBladeSwaps({
-//     chainId,
-//     address,
-//   })
-
-//   return swaps.map((swap) => ({
-//     ...swap,
-//     mints: [],
-//     burns: [],
-//     swaps: [swap],
-//   }))
-// }
-
 export type TransactionBlade = {
   chainId: number
   txHash: string
