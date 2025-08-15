@@ -414,11 +414,11 @@ export const APRChart = ({ pool }: { pool: BladePool | V2Pool | V3Pool }) => {
             <APRHoverCard
               pool={{
                 isIncentivized: false,
-                address: pool.address,
-                chainId: pool.chainId,
-                id: pool.id,
-                protocol: pool.protocol as SushiSwapProtocol,
-                feeApr1d: pool.feeApr1d,
+                address: pool?.address,
+                chainId: pool?.chainId,
+                id: pool?.id,
+                protocol: pool?.protocol as SushiSwapProtocol,
+                feeApr1d: pool?.feeApr1d,
                 incentiveApr: 0,
                 wasIncentivized: false,
               }}
@@ -431,7 +431,7 @@ export const APRChart = ({ pool }: { pool: BladePool | V2Pool | V3Pool }) => {
                 </span>
                 <div className="hidden gap-1 items-center lg:flex">
                   <span className="text-base lg:text-[1.75rem] font-medium underline decoration-dotted underline-offset-[5px] text-slate-900 dark:text-slate-100">
-                    {formatPercent(pool.feeApr1d)}
+                    {formatPercent(pool?.feeApr1d)}
                   </span>
                   <Currency.IconList
                     iconWidth={26}
