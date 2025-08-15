@@ -157,6 +157,7 @@ export const VotingPowerProvider: FC<{
         ] as const,
       [],
     ),
+    allowFailure: false,
     query: {
       staleTime: 300000,
     },
@@ -180,11 +181,7 @@ export const VotingPowerProvider: FC<{
   })
 
   const weights = useMemo(() => {
-    if (
-      !contractData?.length ||
-      contractData.some((data) => data.status !== 'success')
-    )
-      return undefined
+    if (!contractData?.length || isContractDataError) return undefined
 
     const [
       sushiBalanceSLP,
@@ -194,13 +191,13 @@ export const VotingPowerProvider: FC<{
     ] = contractData
 
     const xsushiWeight = new Fraction({
-      numerator: sushiBalanceXSUSHI.result as bigint,
-      denominator: xsushiTotalSupply.result as bigint,
+      numerator: sushiBalanceXSUSHI,
+      denominator: xsushiTotalSupply,
     })
 
     const slpWeight = new Fraction({
-      numerator: (sushiBalanceSLP.result as bigint) * 2n,
-      denominator: slpTotalSupply.result as bigint,
+      numerator: sushiBalanceSLP * 2n,
+      denominator: slpTotalSupply,
     })
 
     return {
@@ -208,7 +205,7 @@ export const VotingPowerProvider: FC<{
       slp: slpWeight,
       xsushiPolygon: new Fraction({ numerator: 1, denominator: 1 }),
     }
-  }, [contractData])
+  }, [contractData, isContractDataError])
 
   const balances = useMemo(() => {
     const xSushiBalance = ethereumBalances?.get(XSUSHI[ChainId.ETHEREUM].id)
@@ -229,13 +226,7 @@ export const VotingPowerProvider: FC<{
         new Amount(SUSHI_ETH_SLP, userStakedSLP[0]),
       ) as Amount<EvmCurrency>,
       xsushiPolygon: Amount.fromHuman(
-        new EvmToken({
-          chainId: ChainId.POLYGON,
-          address: XSUSHI_ADDRESS[ChainId.POLYGON],
-          decimals: 18,
-          symbol: 'XSUSHI (Polygon)',
-          name: 'SushiBar',
-        }),
+        XSUSHI[ChainId.POLYGON],
         votingPowerData.vp_by_strategy[1].toString(),
       ),
     }
