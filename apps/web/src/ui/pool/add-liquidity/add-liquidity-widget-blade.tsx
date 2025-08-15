@@ -163,7 +163,7 @@ export const AddLiquidityWidgetBlade: FC<AddLiquidityWidgetBladeProps> = ({
       enabled: Boolean(prepare),
     },
   })
-
+  console.log(simError)
   const simErrorMessage = useMemo(() => {
     if (!simError) return undefined
     if (typeof simError === 'string') return simError
@@ -333,14 +333,14 @@ export const AddLiquidityWidgetBlade: FC<AddLiquidityWidgetBladeProps> = ({
       if (!pool || isBladeChainId(pool.chainId)) return []
       return tokens.map((token, i) => {
         const value = inputs[token.id] ?? ''
-        const amt =
+        const amount =
           tryParseAmount(value, token) ?? Amount.fromRawAmount(token, 0)
-        return { token, amt, i }
+        return { token, amount, i }
       })
     }, [pool, tokens, inputs])
 
     return tokensToApprove.reduceRight<React.ReactNode>(
-      (acc, { token, amt, i }) => {
+      (acc, { token, amount, i }) => {
         return (
           <Checker.ApproveERC20
             key={`${token.wrapped.address}-${i}-approve`}
@@ -348,7 +348,7 @@ export const AddLiquidityWidgetBlade: FC<AddLiquidityWidgetBladeProps> = ({
             className="whitespace-nowrap"
             fullWidth
             disabled={!depositParams || isLoadingParams || Boolean(simError)}
-            amount={amt}
+            amount={amount}
             contract={pool!.address}
           >
             {acc}
