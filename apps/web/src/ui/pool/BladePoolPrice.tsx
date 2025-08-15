@@ -25,7 +25,7 @@ export const BladePoolPrice: FC<{
   pool: BladePool
   showStableTypes: boolean
 }> = ({ pool, showStableTypes }) => {
-  const token0 = pool.tokens?.[0]
+  const token0 = pool?.tokens?.[0]
 
   return (
     <Wrapper enableBorder className="!p-4 flex flex-col gap-5">
@@ -36,7 +36,7 @@ export const BladePoolPrice: FC<{
         <CardGroup className="lg:!gap-6">
           {showStableTypes ? (
             <>
-              {pool.tokens?.map((token, idx) => (
+              {pool?.tokens?.map((token, idx) => (
                 <Item key={idx} token={token} />
               ))}
             </>
@@ -55,24 +55,24 @@ export const BladePoolPrice: FC<{
 const Item = ({ token }: { token: TokenWithLiquidity }) => {
   const _token = unwrapToken(
     new Token({
-      chainId: token.chainId as EvmChainId,
-      address: token.address,
-      decimals: token.decimals,
-      name: token.name,
-      symbol: token.symbol,
+      chainId: token?.chainId as EvmChainId,
+      address: token?.address,
+      decimals: token?.decimals,
+      name: token?.name,
+      symbol: token?.symbol,
     }),
   )
 
   const { data: price } = usePrice({
-    chainId: _token.chainId,
-    address: _token.wrapped.address,
+    chainId: _token?.chainId,
+    address: _token?.wrapped.address,
   })
   return (
     <CardItem
       title={
         <div className="flex gap-2 items-center font-medium text-muted-foreground">
           <Currency.Icon currency={_token} width={18} height={18} />
-          {_token.symbol}
+          {_token?.symbol}
         </div>
       }
     >

@@ -37,24 +37,24 @@ export const PoolCompositionBlade: FC<PoolCompositionBladeProps> = ({
   setShowStableTypes,
 }) => {
   const amounts = useMemo(() => {
-    const stables = STABLES[pool.chainId] ?? []
+    const stables = STABLES[pool?.chainId] ?? []
 
-    const parsed = pool.tokens.map((t: BladePool['tokens'][0]) => {
+    const parsed = pool?.tokens.map((t: BladePool['tokens'][0]) => {
       const token = new Token({
-        chainId: pool.chainId,
-        address: t.address,
-        decimals: t.decimals,
-        symbol: t.symbol,
-        name: t.name,
+        chainId: pool?.chainId,
+        address: t?.address,
+        decimals: t?.decimals,
+        symbol: t?.symbol,
+        name: t?.name,
       })
 
       return {
         token,
         amount: Amount.fromRawAmount(
           token,
-          BigInt(Math.floor(t.liquidityUSD * 10 ** t.decimals)),
+          BigInt(Math.floor(t?.liquidityUSD * 10 ** t?.decimals)),
         ),
-        fiatValue: t.liquidityUSD,
+        fiatValue: t?.liquidityUSD,
       }
     })
 
@@ -62,23 +62,23 @@ export const PoolCompositionBlade: FC<PoolCompositionBladeProps> = ({
       return parsed
     }
 
-    const stablesOnly = parsed.filter(({ token }) =>
+    const stablesOnly = parsed?.filter(({ token }) =>
       stables.some((s) => s.equals(token)),
     )
 
-    const groupedUSD = stablesOnly.reduce(
+    const groupedUSD = stablesOnly?.reduce(
       (acc, curr) => acc + curr.fiatValue,
       0,
     )
 
-    const nonStable = parsed.find(
+    const nonStable = parsed?.find(
       ({ token }) => !stables.some((s) => s.equals(token)),
     )
 
     return [
       {
         isUSDGroup: true as const,
-        amount: groupedUSD.toFixed(2),
+        amount: groupedUSD?.toFixed(2),
         fiatValue: groupedUSD,
       },
       ...(nonStable ? [nonStable] : []),
@@ -86,7 +86,7 @@ export const PoolCompositionBlade: FC<PoolCompositionBladeProps> = ({
   }, [pool, showStableTypes])
 
   const tvl = useMemo(() => {
-    return pool.tokens.reduce((acc, t) => acc + t.liquidityUSD, 0)
+    return pool?.tokens?.reduce((acc, t) => acc + t?.liquidityUSD, 0)
   }, [pool])
 
   return (
