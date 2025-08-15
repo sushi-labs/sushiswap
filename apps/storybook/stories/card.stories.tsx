@@ -15,8 +15,8 @@ import {
   CardTitle,
 } from '@sushiswap/ui'
 import * as React from 'react'
-import { ChainId } from 'sushi/chain'
-import { Amount, SUSHI, USDT } from 'sushi/currency'
+import { Amount, ChainId } from 'sushi'
+import { SUSHI, USDT } from 'sushi/evm'
 
 const variants: CardProps['variant'][] = ['default', 'outline']
 
@@ -53,10 +53,10 @@ export const Outline = {
           <CardGroup>
             <CardLabel>{"You'll"} receive collected fees</CardLabel>
             <CardCurrencyAmountItem
-              amount={Amount.fromRawAmount(SUSHI[ChainId.ETHEREUM], 100)}
+              amount={new Amount(SUSHI[ChainId.ETHEREUM], 100)}
             />
             <CardCurrencyAmountItem
-              amount={Amount.fromRawAmount(USDT[ChainId.ETHEREUM], 100)}
+              amount={new Amount(USDT[ChainId.ETHEREUM], 100)}
             />
           </CardGroup>
         </CardContent>
@@ -81,10 +81,10 @@ export const Default = {
           <CardGroup>
             <CardLabel>{"You'll"} receive collected fees</CardLabel>
             <CardCurrencyAmountItem
-              amount={Amount.fromRawAmount(SUSHI[ChainId.ETHEREUM], 100)}
+              amount={new Amount(SUSHI[ChainId.ETHEREUM], 100)}
             />
             <CardCurrencyAmountItem
-              amount={Amount.fromRawAmount(USDT[ChainId.ETHEREUM], 100)}
+              amount={new Amount(USDT[ChainId.ETHEREUM], 100)}
             />
           </CardGroup>
         </CardContent>

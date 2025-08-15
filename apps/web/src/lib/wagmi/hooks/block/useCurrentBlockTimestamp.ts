@@ -2,7 +2,7 @@
 
 import { useQueryClient } from '@tanstack/react-query'
 import { useEffect } from 'react'
-import { multicall3Abi_getCurrentBlockTimestamp } from 'sushi/abi'
+import { multicall3Abi_getCurrentBlockTimestamp } from 'sushi/evm'
 import { useBlockNumber, useReadContract } from 'wagmi'
 import {
   MULTICALL_3_ADDRESS,

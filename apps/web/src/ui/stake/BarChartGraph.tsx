@@ -10,7 +10,7 @@ import { CardDescription, CardTitle } from '@sushiswap/ui'
 import { SkeletonBox } from '@sushiswap/ui'
 import format from 'date-fns/format'
 import { type FC, useCallback, useMemo } from 'react'
-import { formatNumber, formatPercent } from 'sushi/format'
+import { formatNumber, formatPercent } from 'sushi'
 
 import { useBarChartData } from 'src/lib/stake'
 import { BarChartPeriod, chartPeriods } from './BarChartPeriods'

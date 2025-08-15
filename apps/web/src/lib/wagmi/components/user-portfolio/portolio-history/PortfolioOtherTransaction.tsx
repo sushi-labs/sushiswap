@@ -4,8 +4,8 @@ import { ClipboardController, FormattedNumber, IconButton } from '@sushiswap/ui'
 import { SushiLiteIcon } from '@sushiswap/ui/icons/SushiLiteIcon'
 import { format, fromUnixTime } from 'date-fns'
 import React, { type FC } from 'react'
-import { EvmChain, type EvmChainId } from 'sushi/chain'
-import { shortenHash } from 'sushi/format'
+import { type EvmChainId, getEvmChainById, shortenHash } from 'sushi/evm'
+import type { Hex } from 'viem'
 import { PortfolioInfoRow } from '../PortfolioInfoRow'
 
 export const PortfolioOtherTransaction: FC<{ tx: PortfolioTransaction }> = ({
@@ -14,7 +14,9 @@ export const PortfolioOtherTransaction: FC<{ tx: PortfolioTransaction }> = ({
   return (
     <PortfolioInfoRow
       chainId={tx.chainId as EvmChainId}
-      href={EvmChain.from(tx.chainId)?.getTxUrl(tx.txHash)}
+      href={getEvmChainById(tx.chainId as EvmChainId).getTransactionUrl(
+        tx.txHash as Hex,
+      )}
       externalLink
       icon={
         tx.projectName.toLowerCase().includes('sushi') ? (

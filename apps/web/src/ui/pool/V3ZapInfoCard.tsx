@@ -13,11 +13,14 @@ import {
   warningSeverity,
   warningSeverityClassName,
 } from 'src/lib/swap/warningSeverity'
-import { SUSHISWAP_V3_POSITION_MANAGER } from 'sushi/config'
-import { type Amount, Token, type Type } from 'sushi/currency'
-import { formatUSD } from 'sushi/format'
-import { Percent, ZERO } from 'sushi/math'
-import { Position, type SushiSwapV3Pool } from 'sushi/pool'
+import { type Amount, Percent, ZERO, formatUSD } from 'sushi'
+import {
+  type EvmCurrency,
+  EvmToken,
+  Position,
+  SUSHISWAP_V3_POSITION_MANAGER,
+  type SushiSwapV3Pool,
+} from 'sushi/evm'
 import { useAccount } from 'wagmi'
 import { usePrices } from '~evm/_common/ui/price-provider/price-provider/use-prices'
 import { ZapRouteDialog } from './ZapRouteDialog'
@@ -25,7 +28,7 @@ import { ZapRouteDialog } from './ZapRouteDialog'
 interface V3ZapInfoCardProps {
   zapResponse: V3ZapResponse | undefined
   isZapError: boolean
-  inputCurrencyAmount: Amount<Type> | undefined
+  inputCurrencyAmount: Amount<EvmCurrency> | undefined
   pool: SushiSwapV3Pool | null
   tokenRatios?: { token0: number; token1: number }
 }
@@ -58,16 +61,18 @@ export const V3ZapInfoCard: FC<V3ZapInfoCardProps> = memo(
       }
 
       const inputCurrencyPrice = prices.getFraction(
-        inputCurrencyAmount.currency.wrapped.address,
+        inputCurrencyAmount.currency.wrap().address,
       )
       const token0Price = prices.getFraction(pool.token0.address)
       const token1Price = prices.getFraction(pool.token1.address)
 
       const feeString = getFeeString({
-        fromToken: new Token({
+        fromToken: new EvmToken({
           chainId: pool.chainId,
           address: SUSHISWAP_V3_POSITION_MANAGER[pool.chainId],
           decimals: 1,
+          symbol: '',
+          name: '',
         }),
         toToken: inputCurrencyAmount.currency,
         tokenOutPrice: inputCurrencyPrice,
@@ -96,17 +101,20 @@ export const V3ZapInfoCard: FC<V3ZapInfoCardProps> = memo(
       })
 
       const amount0USD = token0Price
-        ? +position.amount0.multiply(token0Price).toExact()
+        ? +position.amount0.mul(token0Price).toString()
         : undefined
       const amount1USD = token1Price
-        ? +position.amount1.multiply(token1Price).toExact()
+        ? +position.amount1.mul(token1Price).toString()
         : undefined
 
       const amountOutUSD =
         typeof amount0USD === 'undefined' && typeof amount1USD === 'undefined'
           ? undefined
           : Number(amount0USD ?? 0) + Number(amount1USD ?? 0)
-      const priceImpact = new Percent(zapResponse.priceImpact, 10_000n)
+      const priceImpact = new Percent({
+        numerator: zapResponse.priceImpact,
+        denominator: 10_000n,
+      })
 
       return {
         amountOutUSD,
@@ -119,8 +127,7 @@ export const V3ZapInfoCard: FC<V3ZapInfoCardProps> = memo(
       <>
         <Collapsible
           open={
-            Boolean(isConnected && inputCurrencyAmount?.greaterThan(0)) &&
-            !isZapError
+            Boolean(isConnected && inputCurrencyAmount?.gt(ZERO)) && !isZapError
           }
         >
           <Card variant="outline">
@@ -135,12 +142,12 @@ export const V3ZapInfoCard: FC<V3ZapInfoCardProps> = memo(
                 >
                   {priceImpact ? (
                     `${
-                      priceImpact.lessThan(ZERO)
+                      priceImpact.lt(ZERO)
                         ? '+'
-                        : priceImpact.greaterThan(ZERO)
+                        : priceImpact.gt(ZERO)
                           ? '-'
                           : ''
-                    }${Math.abs(Number(priceImpact.toFixed(2)))}%`
+                    }${Math.abs(Number(priceImpact.toString({ fixed: 2 })))}%`
                   ) : !zapResponse ? (
                     <SkeletonBox className="h-4 py-0.5 w-[40px]" />
                   ) : (

@@ -1,15 +1,21 @@
 import { getV3BasePools } from '@sushiswap/graph-client/data-api'
 import { Card, Container } from '@sushiswap/ui'
 import { unstable_cache } from 'next/cache'
+import { notFound } from 'next/navigation'
 import { TableFiltersNetwork } from 'src/ui/pool/TableFiltersNetwork'
 import { V3FeesTable } from 'src/ui/pool/V3FeesTable'
-import { type SushiSwapV3ChainId, SushiSwapV3ChainIds } from 'sushi/config'
+import { SushiSwapV3ChainIds, isSushiSwapV3ChainId } from 'sushi/evm'
 
 export default async function Page(props: {
   params: Promise<{ chainId: string }>
 }) {
   const params = await props.params
-  const chainId = +params.chainId as SushiSwapV3ChainId
+  const chainId = +params.chainId
+
+  if (!isSushiSwapV3ChainId(chainId)) {
+    return notFound()
+  }
+
   const pools = await unstable_cache(
     async () => getV3BasePools({ chainId }),
     ['operational-v3-pools', params.chainId],

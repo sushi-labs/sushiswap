@@ -14,9 +14,12 @@ import {
 } from 'src/lib/wagmi/hooks/pools/hooks/useSushiSwapV2Pools'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
 import { CheckerProvider } from 'src/lib/wagmi/systems/Checker/Provider'
-import type { SushiSwapV2ChainId } from 'sushi/config'
-import { type Type, tryParseAmount } from 'sushi/currency'
-import type { SushiSwapV2Pool } from 'sushi/pool'
+import { Amount } from 'sushi'
+import type {
+  EvmCurrency,
+  SushiSwapV2ChainId,
+  SushiSwapV2Pool,
+} from 'sushi/evm'
 import { useTokensFromPool } from '../../lib/hooks'
 import { AddSectionReviewModalLegacy } from './AddSectionReviewModalLegacy'
 import { AddSectionWidget } from './AddSectionWidget'
@@ -56,8 +59,8 @@ export const AddSectionLegacy: FC<{ pool: V2Pool }> = ({ pool }) => {
 interface AddSectionLegacyProps {
   chainId: SushiSwapV2ChainId
   pool: SushiSwapV2Pool | null
-  token0: Type
-  token1: Type
+  token0: EvmCurrency
+  token1: EvmCurrency
   poolState: SushiSwapV2PoolState
   isFarm: boolean
   toggleZapMode(value: boolean): void
@@ -81,7 +84,10 @@ const _AddSectionLegacy: FC<AddSectionLegacyProps> = ({
   }>({ input0: '', input1: '' })
 
   const [parsedInput0, parsedInput1] = useMemo(() => {
-    return [tryParseAmount(input0, token0), tryParseAmount(input1, token1)]
+    return [
+      Amount.tryFromHuman(token0, input0),
+      Amount.tryFromHuman(token1, input1),
+    ]
   }, [input0, input1, token0, token1])
 
   const onChangeToken0TypedAmount = useCallback(
@@ -92,13 +98,18 @@ const _AddSectionLegacy: FC<AddSectionLegacyProps> = ({
           input0: value,
         }))
       } else if (token0 && pool) {
-        const parsedAmount = tryParseAmount(value, token0)
-        setTypedAmounts({
-          input0: value,
-          input1: parsedAmount
-            ? pool.priceOf(token0.wrapped).quote(parsedAmount.wrapped).toExact()
-            : '',
-        })
+        const parsedAmount = Amount.tryFromHuman(token0, value)
+        if (parsedAmount) {
+          setTypedAmounts({
+            input0: value,
+            input1: parsedAmount
+              ? pool
+                  .priceOf(token0.wrap())
+                  .getQuote(parsedAmount.wrap())
+                  .toString()
+              : '',
+          })
+        }
       }
     },
     [pool, poolState, token0],
@@ -112,13 +123,18 @@ const _AddSectionLegacy: FC<AddSectionLegacyProps> = ({
           input1: value,
         }))
       } else if (token1 && pool) {
-        const parsedAmount = tryParseAmount(value, token1)
-        setTypedAmounts({
-          input0: parsedAmount
-            ? pool.priceOf(token1.wrapped).quote(parsedAmount.wrapped).toExact()
-            : '',
-          input1: value,
-        })
+        const parsedAmount = Amount.tryFromHuman(token1, value)
+        if (parsedAmount) {
+          setTypedAmounts({
+            input0: parsedAmount
+              ? pool
+                  .priceOf(token1.wrap())
+                  .getQuote(parsedAmount.wrap())
+                  .toString()
+              : '',
+            input1: value,
+          })
+        }
       }
     },
     [pool, poolState, token1],

@@ -2,16 +2,15 @@ import { Button, List } from '@sushiswap/ui'
 import { Currency } from '@sushiswap/ui'
 import { type FC, useMemo } from 'react'
 import { useTokenAmountDollarValues } from 'src/lib/hooks'
-import type { BentoBoxChainId } from 'sushi/config'
-import { type Amount, Price, type Type } from 'sushi/currency'
-import { formatUSD } from 'sushi/format'
+import { type Amount, Price, formatUSD } from 'sushi'
+import type { EvmChainId, EvmCurrency } from 'sushi/evm'
 
 import { Rate } from './Rate'
 
 interface AddSectionReviewModal {
-  chainId: BentoBoxChainId
-  input0: Amount<Type> | undefined
-  input1: Amount<Type> | undefined
+  chainId: EvmChainId
+  input0: Amount<EvmCurrency> | undefined
+  input1: Amount<EvmCurrency> | undefined
 }
 
 export const AddSectionReviewModal: FC<AddSectionReviewModal> = ({

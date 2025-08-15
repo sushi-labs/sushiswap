@@ -11,17 +11,23 @@ import {
   classNames,
 } from '@sushiswap/ui'
 import type { FC } from 'react'
-import { EvmChainId } from 'sushi/chain'
-import { type Amount, LDO, type Token, type Type, USDT } from 'sushi/currency'
-import type { Address } from 'sushi/types'
+import type { Amount } from 'sushi'
+import {
+  type EvmAddress,
+  EvmChainId,
+  type EvmCurrency,
+  type EvmToken,
+  LDO,
+  USDT,
+} from 'sushi/evm'
 import { useAccount } from 'wagmi'
 import { useTokenAllowance } from '../../hooks/approvals/hooks/useTokenAllowance'
 import { useTokenRevokeApproval } from '../../hooks/approvals/hooks/useTokenRevokeApproval'
 
 interface RevokeApproveERC20Props extends ButtonProps {
   id: string
-  amount: Amount<Type> | undefined
-  contract: Address | undefined
+  amount: Amount<EvmCurrency> | undefined
+  contract: EvmAddress | undefined
   enabled?: boolean
 }
 
@@ -30,12 +36,12 @@ const RESET_APPROVAL_TOKENS = {
   [EvmChainId.ETHEREUM]: [USDT[EvmChainId.ETHEREUM], LDO[EvmChainId.ETHEREUM]],
 }
 
-const isResetApprovalToken = (token: Token) => {
+const isResetApprovalToken = (token: EvmToken) => {
   const tokensForChain =
     RESET_APPROVAL_TOKENS[token.chainId as keyof typeof RESET_APPROVAL_TOKENS]
   if (!tokensForChain) return false
 
-  return tokensForChain.some((_token) => _token.equals(token))
+  return tokensForChain.some((_token) => _token.isSame(token))
 }
 
 const RevokeApproveERC20: FC<RevokeApproveERC20Props> = ({
@@ -52,23 +58,23 @@ const RevokeApproveERC20: FC<RevokeApproveERC20Props> = ({
   const allowanceEnabled =
     enabled &&
     amount?.currency?.chainId &&
-    isResetApprovalToken(amount.currency.wrapped)
+    isResetApprovalToken(amount.currency.wrap())
 
   const { address } = useAccount()
 
   const { data: allowance, isLoading: isAllowanceLoading } = useTokenAllowance({
-    token: amount?.currency?.wrapped,
+    token: amount?.currency?.wrap(),
     owner: address,
     spender: contract,
     chainId: amount?.currency.chainId,
-    enabled: Boolean(amount?.currency?.isToken && allowanceEnabled),
+    enabled: Boolean(amount?.currency?.type === 'token' && allowanceEnabled),
   })
 
   const revokeEnabled =
     allowance &&
     amount &&
-    allowance.quotient < amount.quotient &&
-    allowance.quotient !== 0n
+    allowance.amount < amount.amount &&
+    allowance.amount !== 0n
 
   const {
     write,
@@ -77,7 +83,7 @@ const RevokeApproveERC20: FC<RevokeApproveERC20Props> = ({
   } = useTokenRevokeApproval({
     account: address,
     spender: contract,
-    token: amount?.currency?.wrapped,
+    token: amount?.currency?.wrap(),
     enabled: revokeEnabled,
   })
 

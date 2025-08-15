@@ -1,5 +1,5 @@
 import { test } from 'next/experimental/testmode/playwright.js'
-import { Native, USDC, USDT, WBTC } from 'sushi/currency'
+import { EvmNative, USDC, USDT, WBTC } from 'sushi/evm'
 import { chainId, nativeAmount } from 'test/constants'
 import { SwapPage } from 'test/helpers/swap'
 import {
@@ -10,8 +10,8 @@ import {
 
 const BASE_URL = 'http://localhost:3000'
 
-const native = Native.onChain(chainId)
-const wnative = native.wrapped
+const native = EvmNative.fromChainId(chainId)
+const wnative = native.wrap()
 
 const usdc = USDC[chainId]
 const usdt = USDT[chainId]

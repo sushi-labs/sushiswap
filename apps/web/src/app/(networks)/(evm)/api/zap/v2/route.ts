@@ -1,7 +1,7 @@
 import type { NextRequest } from 'next/server'
 import { type ZapSupportedChainId, isZapSupportedChainId } from 'src/config'
-import { UI_FEE_COLLECTOR_ADDRESS, isUIFeeCollectorChainId } from 'sushi/config'
-import { sz } from 'sushi/validate'
+import { sz } from 'sushi'
+import { UI_FEE_COLLECTOR_ADDRESS, isUIFeeCollectorChainId } from 'sushi/evm'
 import { z } from 'zod'
 
 const schema = z.object({
@@ -11,12 +11,12 @@ const schema = z.object({
       message: 'chainId must exist in EnsoSupportedChainId',
     })
     .transform((chainId) => chainId as ZapSupportedChainId),
-  fromAddress: sz.address(),
+  fromAddress: sz.evm.address(),
   routingStrategy: z
     .enum(['ensowallet', 'router', 'delegate'])
     .default('router'),
-  receiver: sz.address().optional(),
-  spender: sz.address().optional(),
+  receiver: sz.evm.address().optional(),
+  spender: sz.evm.address().optional(),
   amountIn: z.union([z.string(), z.array(z.string())]),
   minAmountOut: z.union([z.string(), z.array(z.string())]).optional(),
   slippage: z.string().optional(), // BIPS

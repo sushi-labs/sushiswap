@@ -18,22 +18,10 @@
         "name": "@0no-co/graphqlsp",
         "schemas": [
           {
-            "name": "bentobox",
-            "schema": "./src/subgraphs/bentobox/schema.graphql",
-            "tadaOutputLocation": "./src/subgraphs/bentobox/bentobox-env.d.ts",
-            "tadaTurboLocation": "./src/subgraphs/bentobox/bentobox-cache.d.ts"
-          },
-          {
             "name": "strapi",
             "schema": "./src/subgraphs/strapi/schema.graphql",
             "tadaOutputLocation": "./src/subgraphs/strapi/strapi-env.d.ts",
             "tadaTurboLocation": "./src/subgraphs/strapi/strapi-cache.d.ts"
-          },
-          {
-            "name": "furo",
-            "schema": "./src/subgraphs/furo/schema.graphql",
-            "tadaOutputLocation": "./src/subgraphs/furo/furo-env.d.ts",
-            "tadaTurboLocation": "./src/subgraphs/furo/furo-cache.d.ts"
           },
           {
             "name": "data-api",

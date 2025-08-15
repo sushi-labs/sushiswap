@@ -10,7 +10,7 @@ import {
   textFieldVariants,
 } from '@sushiswap/ui'
 import { type FC, Fragment, type ReactNode, useMemo } from 'react'
-import { formatUSD } from 'sushi/format'
+import { formatUSD } from 'sushi'
 import type { Token } from '~aptos/_common/lib/types/token'
 import { CurrencyIcon } from '~aptos/_common/ui/currency/currency-icon'
 import { CurrencyIconList } from '~aptos/_common/ui/currency/currency-icon-list'
