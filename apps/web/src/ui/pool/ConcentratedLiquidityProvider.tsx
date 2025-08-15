@@ -316,12 +316,12 @@ export function useConcentratedDerivedMintInfo({
     // if no liquidity use typed value
     if (noLiquidity) {
       if (token0 && token1) {
-        const parsedQuoteAmount = Amount.fromHuman(
+        const parsedQuoteAmount = Amount.tryFromHuman(
           invertPrice ? token0 : token1,
           startPriceTypedValue,
         )
-        if (parsedQuoteAmount.amount) {
-          const baseAmount = Amount.fromHuman(
+        if (parsedQuoteAmount?.amount) {
+          const baseAmount = Amount.tryFromHuman(
             invertPrice ? token1 : token0,
             '1',
           )
@@ -531,7 +531,7 @@ export function useConcentratedDerivedMintInfo({
   const independentAmount: Amount<EvmCurrency> | undefined = useMemo(
     () =>
       currencies[independentField]
-        ? Amount.fromHuman(currencies[independentField], typedValue)
+        ? Amount.tryFromHuman(currencies[independentField], typedValue)
         : undefined,
     [currencies, independentField, typedValue],
   )

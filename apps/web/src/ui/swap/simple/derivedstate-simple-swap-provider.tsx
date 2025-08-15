@@ -309,7 +309,7 @@ const DerivedstateSimpleSwapProvider: FC<
             chainId,
             swapAmountString,
             swapAmount: _token0
-              ? Amount.fromHuman(_token0, swapAmountString)
+              ? Amount.tryFromHuman(_token0, swapAmountString)
               : undefined,
             token0: _token0,
             token1: _token1,

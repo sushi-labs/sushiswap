@@ -317,7 +317,8 @@ const DerivedstateCrossChainSwapProvider: FC<
   )
 
   const swapAmount = useMemo(
-    () => (_token0 ? Amount.fromHuman(_token0, swapAmountString) : undefined),
+    () =>
+      _token0 ? Amount.tryFromHuman(_token0, swapAmountString) : undefined,
     [_token0, swapAmountString],
   )
 

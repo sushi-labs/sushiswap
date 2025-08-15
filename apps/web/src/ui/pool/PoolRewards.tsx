@@ -32,7 +32,7 @@ export const PoolRewards: FC<{ pool: V2Pool }> = ({ pool }) => {
         <CardGroup>
           <CardLabel>Tokens (per day)</CardLabel>
           {incentives.map((incentive, index) => {
-            const amount = Amount.fromHuman(
+            const amount = Amount.tryFromHuman(
               incentiveRewardToToken(pool.chainId, incentive),
               incentive.rewardPerDay.toString(),
             )

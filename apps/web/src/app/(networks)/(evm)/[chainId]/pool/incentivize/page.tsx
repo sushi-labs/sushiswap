@@ -113,7 +113,7 @@ const Incentivize = withCheckerRoot(() => {
   const totalDistro = distro1[0] + distro2[0] + distro3[0]
 
   const amount = useMemo(
-    () => (rewardToken ? [Amount.fromHuman(rewardToken, value)] : []),
+    () => (rewardToken ? [Amount.tryFromHuman(rewardToken, value)] : []),
     [value, rewardToken],
   )
   const { data: pool } = useConcentratedLiquidityPool({

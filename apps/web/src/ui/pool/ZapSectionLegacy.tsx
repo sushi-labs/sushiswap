@@ -92,7 +92,7 @@ const _ZapSectionLegacy: FC<ZapSectionLegacyProps> = ({
 
   const parsedInputAmount = useMemo(
     () =>
-      Amount.fromHuman(inputCurrency, inputAmount) ||
+      Amount.tryFromHuman(inputCurrency, inputAmount) ||
       new Amount(inputCurrency, 0),
     [inputAmount, inputCurrency],
   )

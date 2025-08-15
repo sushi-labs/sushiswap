@@ -67,7 +67,7 @@ export const V2ZapInfoCard: FC<V2ZapInfoCardProps> = memo(
         }
       }
 
-      const amountOut = Amount.fromHuman(outputToken, zapResponse.amountOut)
+      const amountOut = new Amount(outputToken, zapResponse.amountOut)
 
       const inputCurrencyPrice = prices.getFraction(
         inputCurrencyAmount.currency.wrap().address,

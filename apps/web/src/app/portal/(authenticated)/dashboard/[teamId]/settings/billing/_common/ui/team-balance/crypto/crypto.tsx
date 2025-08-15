@@ -193,7 +193,9 @@ function DepositTab({
 
   const amount = useMemo(
     () =>
-      isChainIdSupported && token ? Amount.fromHuman(token, value) : undefined,
+      isChainIdSupported && token
+        ? Amount.tryFromHuman(token, value)
+        : undefined,
     [isChainIdSupported, token, value],
   )
 

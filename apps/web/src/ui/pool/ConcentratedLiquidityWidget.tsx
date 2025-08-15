@@ -459,7 +459,9 @@ const ZapWidgetContent = withCheckerRoot(
     }, [])
 
     const parsedInputAmount = useMemo(
-      () => Amount.fromHuman(inputCurrency, inputAmount),
+      () =>
+        Amount.tryFromHuman(inputCurrency, inputAmount) ||
+        new Amount(inputCurrency, 0n),
       [inputAmount, inputCurrency],
     )
 

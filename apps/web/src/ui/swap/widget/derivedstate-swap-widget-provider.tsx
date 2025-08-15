@@ -95,7 +95,7 @@ const DerivedstateSwapWidgetProvider: FC<
             chainId,
             swapAmountString,
             swapAmount: token0
-              ? Amount.fromHuman(token0, swapAmountString)
+              ? Amount.tryFromHuman(token0, swapAmountString)
               : undefined,
             token0,
             token1,

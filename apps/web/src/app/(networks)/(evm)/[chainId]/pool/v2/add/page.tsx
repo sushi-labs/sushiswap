@@ -276,7 +276,7 @@ const _ZapWidget: FC<ZapWidgetProps> = ({
 
   const parsedInputAmount = useMemo(
     () =>
-      Amount.fromHuman(inputCurrency, inputAmount) ||
+      Amount.tryFromHuman(inputCurrency, inputAmount) ||
       new Amount(inputCurrency, 0),
     [inputAmount, inputCurrency],
   )
@@ -534,8 +534,8 @@ const AddLiquidityWidget: FC<AddLiquidityWidgetProps> = ({
     if (!token0 || !token1) return [undefined, undefined]
 
     return [
-      Amount.fromHuman(token0, input0) || new Amount(token0, 0),
-      Amount.fromHuman(token1, input1) || new Amount(token1, 0),
+      Amount.tryFromHuman(token0, input0) || new Amount(token0, 0),
+      Amount.tryFromHuman(token1, input1) || new Amount(token1, 0),
     ]
   }, [input0, input1, token0, token1])
 
@@ -597,29 +597,33 @@ const AddLiquidityWidget: FC<AddLiquidityWidgetProps> = ({
     // Includes !!pool
     if (pool?.reserve0.gt(0n) && pool.reserve1.gt(0n) && token0 && token1) {
       if (independendField === 0) {
-        const parsedAmount = Amount.fromHuman(token0, input0)
-        setTypedAmounts({
-          input0,
-          input1: parsedAmount
-            ? pool
-                .priceOf(token0.wrap())
-                .getQuote(parsedAmount.wrap())
-                .toString()
-            : '',
-        })
+        const parsedAmount = Amount.tryFromHuman(token0, input0)
+        if (parsedAmount) {
+          setTypedAmounts({
+            input0,
+            input1: parsedAmount
+              ? pool
+                  .priceOf(token0.wrap())
+                  .getQuote(parsedAmount.wrap())
+                  .toString()
+              : '',
+          })
+        }
       }
 
       if (independendField === 1) {
-        const parsedAmount = Amount.fromHuman(token1, input1)
-        setTypedAmounts({
-          input0: parsedAmount
-            ? pool
-                .priceOf(token1.wrap())
-                .getQuote(parsedAmount.wrap())
-                .toString()
-            : '',
-          input1,
-        })
+        const parsedAmount = Amount.tryFromHuman(token1, input1)
+        if (parsedAmount) {
+          setTypedAmounts({
+            input0: parsedAmount
+              ? pool
+                  .priceOf(token1.wrap())
+                  .getQuote(parsedAmount.wrap())
+                  .toString()
+              : '',
+            input1,
+          })
+        }
       }
     }
   }, [independendField, pool, input0, input1, token0, token1, setTypedAmounts])

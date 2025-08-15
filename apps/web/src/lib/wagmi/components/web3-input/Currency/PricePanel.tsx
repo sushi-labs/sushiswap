@@ -26,7 +26,7 @@ export const PricePanel: FC<PricePanel> = ({
   className,
 }) => {
   const parsedValue = useMemo(
-    () => (currency ? Amount.fromHuman(currency, value) : undefined),
+    () => (currency ? Amount.tryFromHuman(currency, value) : undefined),
     [currency, value],
   )
   const [big, portion] = (

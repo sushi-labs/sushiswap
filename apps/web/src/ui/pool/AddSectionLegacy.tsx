@@ -84,7 +84,10 @@ const _AddSectionLegacy: FC<AddSectionLegacyProps> = ({
   }>({ input0: '', input1: '' })
 
   const [parsedInput0, parsedInput1] = useMemo(() => {
-    return [Amount.fromHuman(token0, input0), Amount.fromHuman(token1, input1)]
+    return [
+      Amount.tryFromHuman(token0, input0),
+      Amount.tryFromHuman(token1, input1),
+    ]
   }, [input0, input1, token0, token1])
 
   const onChangeToken0TypedAmount = useCallback(
@@ -95,16 +98,18 @@ const _AddSectionLegacy: FC<AddSectionLegacyProps> = ({
           input0: value,
         }))
       } else if (token0 && pool) {
-        const parsedAmount = Amount.fromHuman(token0, value)
-        setTypedAmounts({
-          input0: value,
-          input1: parsedAmount
-            ? pool
-                .priceOf(token0.wrap())
-                .getQuote(parsedAmount.wrap())
-                .toString()
-            : '',
-        })
+        const parsedAmount = Amount.tryFromHuman(token0, value)
+        if (parsedAmount) {
+          setTypedAmounts({
+            input0: value,
+            input1: parsedAmount
+              ? pool
+                  .priceOf(token0.wrap())
+                  .getQuote(parsedAmount.wrap())
+                  .toString()
+              : '',
+          })
+        }
       }
     },
     [pool, poolState, token0],
@@ -118,16 +123,18 @@ const _AddSectionLegacy: FC<AddSectionLegacyProps> = ({
           input1: value,
         }))
       } else if (token1 && pool) {
-        const parsedAmount = Amount.fromHuman(token1, value)
-        setTypedAmounts({
-          input0: parsedAmount
-            ? pool
-                .priceOf(token1.wrap())
-                .getQuote(parsedAmount.wrap())
-                .toString()
-            : '',
-          input1: value,
-        })
+        const parsedAmount = Amount.tryFromHuman(token1, value)
+        if (parsedAmount) {
+          setTypedAmounts({
+            input0: parsedAmount
+              ? pool
+                  .priceOf(token1.wrap())
+                  .getQuote(parsedAmount.wrap())
+                  .toString()
+              : '',
+            input1: value,
+          })
+        }
       }
     },
     [pool, poolState, token1],

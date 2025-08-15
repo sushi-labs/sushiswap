@@ -110,7 +110,7 @@ const CurrencyInput: FC<CurrencyInputProps> = ({
   })
 
   const _value = useMemo(
-    () => currency && Amount.fromHuman(currency, value),
+    () => currency && Amount.tryFromHuman(currency, value),
     [value, currency],
   )
   const insufficientBalance =

@@ -19,7 +19,7 @@ const _StakeSection = () => {
   const [input, setInput] = useState('')
 
   const parsedInput = useMemo(() => {
-    return Amount.fromHuman(SUSHI[EvmChainId.ETHEREUM], input)
+    return Amount.tryFromHuman(SUSHI[EvmChainId.ETHEREUM], input)
   }, [input])
 
   const { write, isPending: isWritePending } = useBarDeposit({

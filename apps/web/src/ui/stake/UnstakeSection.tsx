@@ -11,12 +11,12 @@ const _UnstakeSection = () => {
   const [input, setInput] = useState('')
 
   const parsedInput = useMemo(() => {
-    return Amount.fromHuman(XSUSHI[EvmChainId.ETHEREUM], input)
+    return Amount.tryFromHuman(XSUSHI[EvmChainId.ETHEREUM], input)
   }, [input])
 
   const { write, isPending: isWritePending } = useBarWithdraw({
     amount: parsedInput,
-    enabled: Boolean(parsedInput.gt(ZERO)),
+    enabled: Boolean(parsedInput?.gt(ZERO)),
   })
 
   return (

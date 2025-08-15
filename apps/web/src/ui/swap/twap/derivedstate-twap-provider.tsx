@@ -178,7 +178,7 @@ const _DerivedStateTwapProvider: FC<DerivedStateTwapProviderProps> = ({
           : undefined
 
         const quoteAmount = quoteCurrency
-          ? Amount.fromHuman(quoteCurrency, limitPriceString)
+          ? Amount.tryFromHuman(quoteCurrency, limitPriceString)
           : undefined
 
         const _limitPrice =
