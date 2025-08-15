@@ -1,11 +1,14 @@
 'use client'
+import { XMarkIcon } from '@heroicons/react/24/outline'
 import type { BladePool } from '@sushiswap/graph-client/data-api'
 import {
   Button,
   Dialog,
   DialogContent,
+  DialogPrimitive,
   DialogTitle,
   DialogTrigger,
+  IconButton,
   classNames,
 } from '@sushiswap/ui'
 import { type ReactNode, useMemo, useState } from 'react'
@@ -78,9 +81,18 @@ export const AddLiquidityDialog = ({
     <Dialog>
       <DialogTrigger asChild>{trigger}</DialogTrigger>
       <DialogContent
+        hideClose
         aria-describedby={undefined}
         className="!px-3 border-t border-[#EBEBEB] rounded-t-none md:rounded-t-2xl !bg-slate-50 dark:border-[#FFFFFF14] dark:!bg-slate-800 w-full !max-w-full md:!max-w-[900px] max-h-[100dvh] overflow-y-auto hide-scrollbar"
       >
+        <DialogPrimitive.Close
+          asChild
+          className={'absolute top-6 right-6'}
+          id="add-liquidity-dialog-close"
+        >
+          <IconButton variant={'ghost'} icon={XMarkIcon} name="Close" />
+        </DialogPrimitive.Close>
+
         <div className="flex flex-col gap-6 items-start w-full md:px-4">
           <DialogTitle className="mt-4 md:mt-1 !font-medium">
             <div className="flex gap-4 items-center">

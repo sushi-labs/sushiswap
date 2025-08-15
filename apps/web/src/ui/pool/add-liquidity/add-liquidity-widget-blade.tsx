@@ -164,6 +164,26 @@ export const AddLiquidityWidgetBlade: FC<AddLiquidityWidgetBladeProps> = ({
     },
   })
 
+  const simErrorMessage = useMemo(() => {
+    if (!simError) return undefined
+    if (typeof simError === 'string') return simError
+    if (simError?.message) {
+      const clipperError = simError.message
+        .split('ClipperDirect: ')?.[1]
+        ?.split('\n')?.[0]
+      if (clipperError) {
+        return clipperError
+      }
+      const contractError = simError.message
+        .split('reason:')?.[1]
+        ?.split('\n')?.[1]
+      if (contractError) {
+        return contractError
+      }
+    }
+    return 'An error occurred during simulation'
+  }, [simError])
+
   const { writeContractAsync, data: txnHash } = useWriteContract()
 
   const { status } = useWaitForTransactionReceipt({ chainId, hash: txnHash })
@@ -193,6 +213,7 @@ export const AddLiquidityWidgetBlade: FC<AddLiquidityWidgetBladeProps> = ({
       for (const token of tokens) {
         updateInput(token.id, '', true) // Clear input for the token being deposited
       }
+
       void createToast({
         account: address,
         type: 'addLiquidity',
@@ -207,6 +228,12 @@ export const AddLiquidityWidgetBlade: FC<AddLiquidityWidgetBladeProps> = ({
         timestamp: ts,
         groupTimestamp: ts,
       })
+      const closeDialogBtn = document.getElementById(
+        'add-liquidity-dialog-close',
+      )
+      if (closeDialogBtn) {
+        closeDialogBtn.click() // Close the dialog after deposit
+      }
     } catch (error: unknown) {
       console.error('Error sending deposit transaction', error)
       // Check if error has a 'cause' property and if it's a UserRejectedRequestError
@@ -300,6 +327,38 @@ export const AddLiquidityWidgetBlade: FC<AddLiquidityWidgetBladeProps> = ({
     )
   }
 
+  const Approvals: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+    // Only include tokens that actually need a non-zero approval amount
+    const tokensToApprove = useMemo(() => {
+      if (!pool || isBladeChainId(pool.chainId)) return []
+      return tokens.map((token, i) => {
+        const value = inputs[token.id] ?? ''
+        const amt =
+          tryParseAmount(value, token) ?? Amount.fromRawAmount(token, 0)
+        return { token, amt, i }
+      })
+    }, [pool, tokens, inputs])
+
+    return tokensToApprove.reduceRight<React.ReactNode>(
+      (acc, { token, amt, i }) => {
+        return (
+          <Checker.ApproveERC20
+            key={`${token.wrapped.address}-${i}-approve`}
+            id={`approve-${i}`}
+            className="whitespace-nowrap"
+            fullWidth
+            disabled={!depositParams || isLoadingParams || Boolean(simError)}
+            amount={amt}
+            contract={pool!.address}
+          >
+            {acc}
+          </Checker.ApproveERC20>
+        )
+      },
+      children,
+    )
+  }
+
   return (
     <div className="flex flex-col gap-4 mb-10">
       {/* Dynamic token rows */}
@@ -339,56 +398,47 @@ export const AddLiquidityWidgetBlade: FC<AddLiquidityWidgetBladeProps> = ({
             <Checker.Network fullWidth chainId={chainId}>
               <Checker.Custom
                 showChildren={!error?.message}
-                buttonText={error?.message || ''}
+                buttonText={error?.message || 'Deposit Param Error'}
                 disabled={Boolean(error?.message)}
                 onClick={() => {}}
               >
-                <Checker.Amounts
-                  fullWidth
-                  chainId={chainId}
-                  amounts={useMemo(() => parsedInputs, [parsedInputs])}
+                <Checker.Custom
+                  showChildren={!simErrorMessage}
+                  buttonText={simErrorMessage || 'Simulation Error'}
+                  disabled={Boolean(simErrorMessage)}
+                  onClick={() => {}}
                 >
-                  {(!pool || isBladeChainId(pool.chainId)) &&
-                    tokens.map((token, i) => {
-                      const value = inputs[token.id] ?? ''
-                      const parsedInput =
-                        tryParseAmount(value, token) ||
-                        Amount.fromRawAmount(token, 0)
-
-                      return (
-                        <Checker.ApproveERC20
-                          key={`${token.wrapped.address}-${i}-approve`}
-                          id="approve-token-1"
-                          className="whitespace-nowrap"
+                  <Checker.Amounts
+                    fullWidth
+                    chainId={chainId}
+                    amounts={useMemo(() => parsedInputs, [parsedInputs])}
+                  >
+                    <Approvals>
+                      <Checker.Success tag={APPROVE_TAG_ADD_BLADE}>
+                        <Button
+                          size="xl"
                           fullWidth
-                          disabled={!depositParams || isLoadingParams}
-                          amount={parsedInput}
-                          contract={pool.address}
+                          testId="add-liquidity"
+                          loading={
+                            (txnHash && status === 'pending') ||
+                            isSimLoading ||
+                            isLoadingParams
+                          }
+                          disabled={
+                            !depositParams ||
+                            isLoadingParams ||
+                            (txnHash && status === 'pending') ||
+                            isSimLoading ||
+                            Boolean(simErrorMessage)
+                          }
+                          onClick={deposit}
                         >
-                          <Checker.Success tag={APPROVE_TAG_ADD_BLADE}>
-                            {i === 0 ? ( // Only show button on first token row}
-                              <Button
-                                size="xl"
-                                fullWidth
-                                testId="add-liquidity"
-                                loading={txnHash && status === 'pending'}
-                                disabled={
-                                  isLoadingParams ||
-                                  (txnHash && status === 'pending') ||
-                                  isSimLoading
-                                  // ||
-                                  // Boolean(simError)
-                                }
-                                onClick={deposit}
-                              >
-                                Deposit
-                              </Button>
-                            ) : null}
-                          </Checker.Success>
-                        </Checker.ApproveERC20>
-                      )
-                    })}
-                </Checker.Amounts>
+                          Deposit
+                        </Button>
+                      </Checker.Success>
+                    </Approvals>
+                  </Checker.Amounts>
+                </Checker.Custom>
               </Checker.Custom>
             </Checker.Network>
           </Checker.Custom>
