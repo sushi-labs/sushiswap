@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useEffect, useMemo } from 'react'
 import type { EvmChainId } from 'sushi'
 import { nativeAddress } from 'sushi/config'
 import { Amount, type Type } from 'sushi/currency'

@@ -23,7 +23,7 @@ export async function TeamPlanCard({ teamId }: { teamId: string }) {
     ])
 
   return (
-    <Card className="w-full min-w-[470px] h-min">
+    <Card className="w-full h-min">
       <CardHeader className="rounded-t-xl">
         <CardTitle>Plan</CardTitle>
         <CardDescription>The currently selected plan</CardDescription>
