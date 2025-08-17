@@ -1,13 +1,8 @@
 'use client'
 
-import { MagnifyingGlassIcon } from '@heroicons/react/24/outline'
 import { createErrorToast, createToast } from '@sushiswap/notifications'
-import { StyroClient } from '@sushiswap/styro-client'
 import {
   Button,
-  Card,
-  CardContent,
-  CardFooter,
   Dots,
   SkeletonBox,
   SkeletonText,
@@ -20,6 +15,7 @@ import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import { useQuery } from '@tanstack/react-query'
 import type { SendTransactionReturnType } from '@wagmi/core'
 import { useRouter } from 'next/navigation'
+import type { GetServicesErc20DepositsConfig200Response } from 'node_modules/@sushiswap/styro-client/dist/generated'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { useStyroClient } from 'src/app/portal/_common/ui/auth-provider/auth-provider'
 import { getNetworkName } from 'src/lib/network'
@@ -51,29 +47,31 @@ function useErc20BillingServiceConfig() {
     queryKey: ['portal-getServicesErc20DepositsConfig'],
     queryFn: async () => {
       const response = await client.getServicesErc20DepositsConfig()
-
       return response
     },
-    select: (response) => ({
-      chainIds: response.data.chains.map(
-        (chain) => chain.chainId as EvmChainId,
-      ),
-      configs: response.data.chains.map((chain) => ({
-        ...chain,
-        chainId: chain.chainId as EvmChainId,
-        stables: chain.stables.reduce(
-          (acc, token) => {
-            acc[token.address.toLowerCase() as Address] = new EvmToken({
-              ...token,
-              chainId: chain.chainId as EvmChainId,
-            })
-
-            return acc
-          },
-          {} as Record<Address, EvmToken>,
+    select: useCallback(
+      (response: GetServicesErc20DepositsConfig200Response) => ({
+        chainIds: response.data.chains.map(
+          (chain) => chain.chainId as EvmChainId,
         ),
-      })),
-    }),
+        configs: response.data.chains.map((chain) => ({
+          ...chain,
+          chainId: chain.chainId as EvmChainId,
+          stables: chain.stables.reduce(
+            (acc, token) => {
+              acc[token.address.toLowerCase() as Address] = new EvmToken({
+                ...token,
+                chainId: chain.chainId as EvmChainId,
+              })
+
+              return acc
+            },
+            {} as Record<Address, EvmToken>,
+          ),
+        })),
+      }),
+      [],
+    ),
   })
 }
 
@@ -131,7 +129,7 @@ function Deposit({
     chainId: amount.currency.chainId as 1,
     args: [treasury, amount.amount],
     dataSuffix: encodePacked(
-      ['int128'],
+      ['uint128'],
       [BigInt(`0x${teamId.replaceAll('-', '')}`)],
     ),
   })
@@ -247,6 +245,7 @@ function DepositTab({
           currencies={activeConfig?.stables}
           currencyClassName="!rounded-xl"
           className="rounded-xl !px-3 py-2 bg-muted"
+          disableInsufficientBalanceError
           loading={isLoading}
         />
         <div className="flex justify-between px-3 text-sm py-2 rounded-xl bg-muted">
