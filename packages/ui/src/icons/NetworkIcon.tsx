@@ -1,4 +1,4 @@
-import React, { type FC, useMemo } from 'react'
+import { type FC, useMemo } from 'react'
 
 import type { IconProps } from '../types'
 import { NETWORK_CIRCLE_ICON, NETWORK_NAKED_ICON } from './network'

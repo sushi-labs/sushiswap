@@ -11,6 +11,7 @@ interface PathnameButton extends Omit<ButtonProps, 'variant'> {
 const PathnameButton = forwardRef<HTMLButtonElement, PathnameButton>(
   ({ pathname, ...props }, ref) => {
     const _pathname = usePathname()
+
     return (
       <Button
         {...props}

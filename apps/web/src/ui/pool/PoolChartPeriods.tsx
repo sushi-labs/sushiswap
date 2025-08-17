@@ -1,12 +1,24 @@
 import { Toggle } from '@sushiswap/ui'
 import React, { type FC } from 'react'
+import type { PoolTimeFrame } from '~kadena/_common/lib/graphql/queries/get-pool-by-id-charts'
 
 export enum PoolChartPeriod {
   Day = '1D',
   Week = '1W',
   Month = '1M',
   Year = '1Y',
-  All = 'All',
+  All = 'ALL',
+}
+
+export const PoolChartPeriodToTimeFrame: Record<
+  PoolChartPeriod,
+  PoolTimeFrame
+> = {
+  [PoolChartPeriod.Day]: 'DAY',
+  [PoolChartPeriod.Week]: 'WEEK',
+  [PoolChartPeriod.Month]: 'MONTH',
+  [PoolChartPeriod.Year]: 'YEAR',
+  [PoolChartPeriod.All]: 'ALL',
 }
 
 export const chartPeriods: Record<PoolChartPeriod, number> = {
@@ -37,7 +49,7 @@ const PoolChartPeriods: FC<PoolChartPeriodsProps> = ({
           onClick={() => setPeriod(period)}
           key={period}
         >
-          {period}
+          {period === 'ALL' ? 'All' : period}
         </Toggle>
       ))}
     </div>
