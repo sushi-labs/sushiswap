@@ -11,6 +11,9 @@ const nextConfig = bundleAnalyzer({
   experimental: {
     ...defaultNextConfig.experimental,
     testProxy: process.env.NEXT_PUBLIC_APP_ENV === 'test',
+    reactCompiler: {
+      compilationMode: 'all',
+    },
   },
   async redirects() {
     return [
