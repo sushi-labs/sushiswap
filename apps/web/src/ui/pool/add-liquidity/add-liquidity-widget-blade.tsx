@@ -1,8 +1,9 @@
 import { PlusIcon } from '@heroicons/react-v1/solid'
 import type { BladePool } from '@sushiswap/graph-client/data-api'
 import { createErrorToast, createToast } from '@sushiswap/notifications'
-import { Button } from '@sushiswap/ui'
+import { Button, DateField } from '@sushiswap/ui'
 import { waitForTransactionReceipt } from '@wagmi/core'
+import { format } from 'date-fns'
 import { type FC, Fragment, useMemo } from 'react'
 import { APPROVE_TAG_ADD_BLADE } from 'src/lib/constants'
 import { Web3Input } from 'src/lib/wagmi/components/web3-input'
@@ -12,6 +13,7 @@ import {
   type BladeParamResponseKatana,
   useBladeDepositParams,
 } from 'src/lib/wagmi/hooks/pools/hooks/use-blade-deposit-params'
+import { useBladeVestingDeposits } from 'src/lib/wagmi/hooks/positions/hooks/use-blade-vesting-deposits'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
 import { CheckerProvider } from 'src/lib/wagmi/systems/Checker/Provider'
 import { EvmChainId, gasMargin } from 'sushi'
@@ -75,6 +77,19 @@ export const AddLiquidityWidgetBlade: FC<AddLiquidityWidgetBladeProps> = ({
   replaceTokenAt,
 }) => {
   const { address } = useAccount()
+  const {
+    data: vestingDesposits,
+    isLoading: isLoadingVestingDeposits,
+    refetch: refetchVestingDeposits,
+  } = useBladeVestingDeposits({
+    contractAddress: pool.address,
+    account: address,
+    chainId,
+  })
+  const lockedUntil = vestingDesposits?.[0]
+  const lockDurationIsOver = lockedUntil
+    ? Number(lockedUntil) * 1000 < Date.now()
+    : true
   const {
     data: depositParams,
     error,
@@ -163,7 +178,7 @@ export const AddLiquidityWidgetBlade: FC<AddLiquidityWidgetBladeProps> = ({
       enabled: Boolean(prepare),
     },
   })
-  console.log(simError)
+
   const simErrorMessage = useMemo(() => {
     if (!simError) return undefined
     if (typeof simError === 'string') return simError
@@ -213,7 +228,6 @@ export const AddLiquidityWidgetBlade: FC<AddLiquidityWidgetBladeProps> = ({
       for (const token of tokens) {
         updateInput(token.id, '', true) // Clear input for the token being deposited
       }
-
       void createToast({
         account: address,
         type: 'addLiquidity',
@@ -228,6 +242,7 @@ export const AddLiquidityWidgetBlade: FC<AddLiquidityWidgetBladeProps> = ({
         timestamp: ts,
         groupTimestamp: ts,
       })
+      await refetchVestingDeposits()
       const closeDialogBtn = document.getElementById(
         'add-liquidity-dialog-close',
       )
@@ -347,7 +362,12 @@ export const AddLiquidityWidgetBlade: FC<AddLiquidityWidgetBladeProps> = ({
             id={`approve-${i}`}
             className="whitespace-nowrap"
             fullWidth
-            disabled={!depositParams || isLoadingParams || Boolean(simError)}
+            disabled={
+              !depositParams ||
+              isLoadingParams ||
+              Boolean(simError) ||
+              isLoadingVestingDeposits
+            }
             amount={amount}
             contract={pool!.address}
           >
@@ -397,47 +417,67 @@ export const AddLiquidityWidgetBlade: FC<AddLiquidityWidgetBladeProps> = ({
           >
             <Checker.Network fullWidth chainId={chainId}>
               <Checker.Custom
-                showChildren={!error?.message}
-                buttonText={error?.message || 'Deposit Param Error'}
-                disabled={Boolean(error?.message)}
+                showChildren={!lockedUntil}
+                buttonText={
+                  lockDurationIsOver
+                    ? `Go to Portfolio page to claim and unlock liquidity`
+                    : `Locked until ${format(
+                        new Date(
+                          Number(
+                            (
+                              (lockedUntil || BigInt(0)) * BigInt(1000)
+                            ).toString(),
+                          ),
+                        ),
+                        'M/dd/yyyy h:mm a',
+                      )}. Cannot deposit until it's unlocked.`
+                }
+                disabled={Boolean(lockedUntil)}
                 onClick={() => {}}
               >
                 <Checker.Custom
-                  showChildren={!simErrorMessage}
-                  buttonText={simErrorMessage || 'Simulation Error'}
-                  disabled={Boolean(simErrorMessage)}
+                  showChildren={!error?.message}
+                  buttonText={error?.message || 'Deposit Param Error'}
+                  disabled={Boolean(error?.message)}
                   onClick={() => {}}
                 >
-                  <Checker.Amounts
-                    fullWidth
-                    chainId={chainId}
-                    amounts={useMemo(() => parsedInputs, [parsedInputs])}
+                  <Checker.Custom
+                    showChildren={!simErrorMessage}
+                    buttonText={simErrorMessage || 'Simulation Error'}
+                    disabled={Boolean(simErrorMessage)}
+                    onClick={() => {}}
                   >
-                    <Approvals>
-                      <Checker.Success tag={APPROVE_TAG_ADD_BLADE}>
-                        <Button
-                          size="xl"
-                          fullWidth
-                          testId="add-liquidity"
-                          loading={
-                            (txnHash && status === 'pending') ||
-                            isSimLoading ||
-                            isLoadingParams
-                          }
-                          disabled={
-                            !depositParams ||
-                            isLoadingParams ||
-                            (txnHash && status === 'pending') ||
-                            isSimLoading ||
-                            Boolean(simErrorMessage)
-                          }
-                          onClick={deposit}
-                        >
-                          Deposit
-                        </Button>
-                      </Checker.Success>
-                    </Approvals>
-                  </Checker.Amounts>
+                    <Checker.Amounts
+                      fullWidth
+                      chainId={chainId}
+                      amounts={useMemo(() => parsedInputs, [parsedInputs])}
+                    >
+                      <Approvals>
+                        <Checker.Success tag={APPROVE_TAG_ADD_BLADE}>
+                          <Button
+                            size="xl"
+                            fullWidth
+                            testId="add-liquidity"
+                            loading={
+                              (txnHash && status === 'pending') ||
+                              isSimLoading ||
+                              isLoadingParams
+                            }
+                            disabled={
+                              !depositParams ||
+                              isLoadingParams ||
+                              (txnHash && status === 'pending') ||
+                              isSimLoading ||
+                              Boolean(simErrorMessage)
+                            }
+                            onClick={deposit}
+                          >
+                            Deposit
+                          </Button>
+                        </Checker.Success>
+                      </Approvals>
+                    </Checker.Amounts>
+                  </Checker.Custom>
                 </Checker.Custom>
               </Checker.Custom>
             </Checker.Network>
