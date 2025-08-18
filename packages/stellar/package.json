@@ -5,10 +5,66 @@
   "description": "Stellar contract bindings for SushiSwap",
   "type": "module",
   "exports": {
+    ".": "./dist/index.js",
     "./xlm": {
       "types": "./dist/xlm/index.d.ts",
       "import": "./dist/xlm/index.js",
       "require": "./dist/xlm/index.js"
+    },
+    "./mock-pool": {
+      "types": "./dist/mock-pool/index.d.ts",
+      "import": "./dist/mock-pool/index.js",
+      "require": "./dist/mock-pool/index.js"
+    },
+    "./USDC": {
+      "types": "./dist/USDC/index.d.ts",
+      "import": "./dist/USDC/index.js",
+      "require": "./dist/USDC/index.js"
+    },
+    "./AQUA": {
+      "types": "./dist/AQUA/index.d.ts",
+      "import": "./dist/AQUA/index.js",
+      "require": "./dist/AQUA/index.js"
+    },
+    "./USDT": {
+      "types": "./dist/USDT/index.d.ts",
+      "import": "./dist/USDT/index.js",
+      "require": "./dist/USDT/index.js"
+    },
+    "./USDC2": {
+      "types": "./dist/USDC2/index.d.ts",
+      "import": "./dist/USDC2/index.js",
+      "require": "./dist/USDC2/index.js"
+    },
+    "./USDC3": {
+      "types": "./dist/USDC3/index.d.ts",
+      "import": "./dist/USDC3/index.js",
+      "require": "./dist/USDC3/index.js"
+    },
+    "./USDC4": {
+      "types": "./dist/USDC4/index.d.ts",
+      "import": "./dist/USDC4/index.js",
+      "require": "./dist/USDC4/index.js"
+    },
+    "./CARBON": {
+      "types": "./dist/CARBON/index.d.ts",
+      "import": "./dist/CARBON/index.js",
+      "require": "./dist/CARBON/index.js"
+    },
+    "./BLND": {
+      "types": "./dist/BLND/index.d.ts",
+      "import": "./dist/BLND/index.js",
+      "require": "./dist/BLND/index.js"
+    },
+    "./wETH": {
+      "types": "./dist/wETH/index.d.ts",
+      "import": "./dist/wETH/index.js",
+      "require": "./dist/wETH/index.js"
+    },
+    "./wBTC": {
+      "types": "./dist/wBTC/index.d.ts",
+      "import": "./dist/wBTC/index.js",
+      "require": "./dist/wBTC/index.js"
     }
   },
   "scripts": {

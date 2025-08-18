@@ -1,4 +1,5 @@
 import { DEFAULT_DECIMALS_PRECISION } from '~stellar/_common/lib/constants'
+import type { Token } from '../types/token.type'
 
 /**
  * Abbreviates a wallet address to be more compact, showing the first 6 and the last 4 characters. This works with stellar address strings.
@@ -11,15 +12,34 @@ export const formatAddress = (address: string | undefined | null): string => {
 }
 
 /**
- * Formats XLM value from stroops (smallest unit) to human-readable XLM amount
+ * Formats XLM value from stroops (smallest unit) to human-readable amount
  * @param value The value in stroops (bigint)
  * @param decimals Number of decimal places to show (default: 4)
- * @returns A formatted XLM string
+ * @returns A formatted string
  */
-export const formatXLM = (value: bigint, decimals = 2) => {
+export const formatXLM = (
+  value: bigint,
+  decimals = DEFAULT_DECIMALS_PRECISION,
+) => {
+  if (!value) return '0.00'
   // Convert stroops to XLM (1 XLM = 10^7 stroops)
   const xlmValue = Number(value) / 10000000
   return formatDecimal(xlmValue, decimals)
+}
+
+/**
+ * Formats token value from stroops (smallest unit) to human-readable amount
+ * @param value The value in stroops (bigint)
+ * @param decimals Number of decimal places to show (default: 4)
+ * @returns A formatted string
+ */
+export const formatTokenBalance = (
+  value: bigint,
+  token: Token,
+  decimals = DEFAULT_DECIMALS_PRECISION,
+) => {
+  const tokenValue = Number(value) / 10 ** token.decimals
+  return formatDecimal(tokenValue, decimals)
 }
 
 /**

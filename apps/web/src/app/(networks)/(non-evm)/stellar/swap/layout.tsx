@@ -1,5 +1,5 @@
 import { Header } from '../header'
-import { Providers } from '../providers'
+import { Providers } from './providers'
 
 export const metadata = {
   title: 'SushiSwap on Stellar',
@@ -13,7 +13,7 @@ export default function SwapLayout({
   return (
     <Providers>
       <Header />
-      <main className="lg:p-4 mt-16 mb-[86px] animate-slide">{children}</main>
+      <main className="lg:p-4 mt-16 mb-[86px] animate">{children}</main>
     </Providers>
   )
 }

@@ -7,7 +7,6 @@ import {
   allowAllModules,
 } from '@creit.tech/stellar-wallets-kit'
 import { createContext, useContext, useEffect, useState } from 'react'
-import { NETWORK_PASSPHRASE } from './_common/lib/constants'
 
 interface StellarWalletContextType {
   stellarWalletKit: StellarWalletsKit | null

@@ -8,6 +8,14 @@ export const getStellarAddressLink = (address: string) => {
   }
 }
 
+export const getStellarContractLink = (contractId: string) => {
+  if (IS_TESTNET) {
+    return `https://stellar.expert/explorer/testnet/contract/${contractId}`
+  } else {
+    return `https://stellar.expert/explorer/public/contract//${contractId}`
+  }
+}
+
 export const getStellarTxnLink = (txnHash: string) => {
   if (IS_TESTNET) {
     return `https://testnet.stellarchain.io/transactions/${txnHash}`

@@ -16,7 +16,7 @@ const XLMClient = new Client({
  * @param address The address to get the balance of
  * @returns The balance of the address
  */
-export async function getBalance(address: string): Promise<bigint> {
+export const getXlmBalance = async (address: string): Promise<bigint> => {
   const { result: balance } = await XLMClient.balance({
     id: address,
   })

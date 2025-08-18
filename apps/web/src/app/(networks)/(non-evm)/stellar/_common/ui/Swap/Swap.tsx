@@ -1,9 +1,5 @@
-import type React from 'react'
+import { SimpleSwapWidget } from './simple/simple-swap-widget'
 
-export const Swap: React.FC = () => {
-  return (
-    <div>
-      <p>Stellar swap coming soon</p>
-    </div>
-  )
+export const Swap = () => {
+  return <SimpleSwapWidget />
 }
