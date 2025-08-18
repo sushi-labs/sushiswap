@@ -344,15 +344,12 @@ export const AddLiquidityWidgetBlade: FC<AddLiquidityWidgetBladeProps> = ({
 
   const Approvals: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     // Only include tokens that actually need a non-zero approval amount
-    const tokensToApprove = useMemo(() => {
-      if (!pool || isBladeChainId(pool.chainId)) return []
-      return tokens.map((token, i) => {
-        const value = inputs[token.id] ?? ''
-        const amount =
-          tryParseAmount(value, token) ?? Amount.fromRawAmount(token, 0)
-        return { token, amount, i }
-      })
-    }, [pool, tokens, inputs])
+    const tokensToApprove = tokens.map((token, i) => {
+      const value = inputs[token.id] ?? ''
+      const amount =
+        tryParseAmount(value, token) ?? Amount.fromRawAmount(token, 0)
+      return { token, amount, i }
+    })
 
     return tokensToApprove.reduceRight<React.ReactNode>(
       (acc, { token, amount, i }) => {
