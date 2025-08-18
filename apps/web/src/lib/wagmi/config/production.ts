@@ -11,6 +11,7 @@ import {
   walletConnectWallet,
 } from '@rainbow-me/rainbowkit/wallets'
 import { gtagEvent } from '@sushiswap/ui'
+import { Porto } from 'porto'
 import { EvmChainId } from 'sushi/chain'
 import { http, cookieStorage, createConfig, createStorage } from 'wagmi'
 import type { Writeable } from 'zod'
@@ -103,6 +104,8 @@ export const createProductionConfig = () => {
   const storage = createStorage({
     storage: cookieStorage,
   })
+
+  Porto.unstable_create()
 
   return createConfig({
     ...publicWagmiConfig,
