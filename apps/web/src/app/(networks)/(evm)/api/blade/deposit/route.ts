@@ -2,9 +2,9 @@ import type { NextRequest } from 'next/server'
 import { bladeDepositSchema } from 'src/lib/wagmi/hooks/pools/hooks/use-blade-deposit-params'
 
 export async function GET(request: NextRequest) {
-  if (!process.env.BLADE_API_KEY) {
+  if (!process.env.BLADE_API_V2_KEY) {
     return Response.json(
-      { error: 'BLADE_API_KEY is not set' },
+      { error: 'BLADE_API_V2_KEY is not set' },
       {
         status: 500,
       },
@@ -20,7 +20,7 @@ export async function GET(request: NextRequest) {
     headers: {
       accept: 'application/json',
       'Content-Type': 'application/json',
-      'x-api-key': process.env.BLADE_API_KEY,
+      'x-api-key': process.env.BLADE_API_V2_KEY,
     },
     body: JSON.stringify({
       ...parsedParams,
