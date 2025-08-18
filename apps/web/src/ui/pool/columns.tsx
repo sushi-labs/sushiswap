@@ -48,6 +48,7 @@ import { ClaimableRewardsChainCell } from './ClaimableRewardsChainCell'
 import { ConcentratedLiquidityPositionAPRCell } from './ConcentratedLiquidityPositionAPRCell'
 import { PoolNameCell, ProtocolBadge } from './PoolNameCell'
 import { PoolNameCellV3 } from './PoolNameCellV3'
+import { TransactionBlade } from './PoolTransactionsBlade'
 import {
   type Transaction,
   TransactionType,
@@ -104,8 +105,8 @@ export const REWARDS_ACTION_COLUMN: ColumnDef<ClaimableRewards, unknown> = {
     body: {
       skeleton: (
         <div className="flex gap-3 w-[280px]">
-          <SkeletonBox className="h-10 w-full" />
-          <SkeletonBox className="h-10 w-full" />
+          <SkeletonBox className="w-full h-10" />
+          <SkeletonBox className="w-full h-10" />
         </div>
       ),
     },
@@ -156,8 +157,8 @@ export const FEES_ACTION_COLUMN: ColumnDef<ClaimableFees, unknown> = {
     body: {
       skeleton: (
         <div className="flex gap-3 w-[280px]">
-          <SkeletonBox className="h-10 w-full" />
-          <SkeletonBox className="h-10 w-full" />
+          <SkeletonBox className="w-full h-10" />
+          <SkeletonBox className="w-full h-10" />
         </div>
       ),
     },
@@ -175,7 +176,7 @@ export const NAME_COLUMN_POOL: ColumnDef<
   meta: {
     body: {
       skeleton: (
-        <div className="flex items-center w-full gap-2">
+        <div className="flex gap-2 items-center w-full">
           <div className="flex items-center">
             <SkeletonCircle radius={26} />
             <SkeletonCircle radius={26} className="-ml-[12px]" />
@@ -211,7 +212,7 @@ export const EXPLORE_NAME_COLUMN_POOL: ColumnDef<Pool, unknown> = {
     )
 
     return (
-      <div className="flex items-center gap-5">
+      <div className="flex gap-5 items-center">
         <div className="flex min-w-[54px]">
           {token0 && token1 ? (
             <Badge
@@ -233,7 +234,7 @@ export const EXPLORE_NAME_COLUMN_POOL: ColumnDef<Pool, unknown> = {
           ) : null}
         </div>
         <div className="flex flex-col gap-0.5">
-          <span className="flex items-center gap-1 pr-2 text-sm font-medium text-gray-900 dark:text-slate-50 whitespace-nowrap">
+          <span className="flex gap-1 items-center pr-2 text-sm font-medium text-gray-900 whitespace-nowrap dark:text-slate-50">
             {props.row.original.name}
           </span>
           <div className="flex gap-1">
@@ -284,7 +285,7 @@ export const EXPLORE_NAME_COLUMN_POOL: ColumnDef<Pool, unknown> = {
   meta: {
     body: {
       skeleton: (
-        <div className="flex items-center w-full gap-2">
+        <div className="flex gap-2 items-center w-full">
           <div className="flex items-center">
             <SkeletonCircle radius={30} />
             <SkeletonCircle radius={30} className="-ml-[10px]" />
@@ -423,7 +424,7 @@ export const APR_WITH_REWARDS_COLUMN: ColumnDef<Pool, unknown> = {
   accessorFn: (row) => row.totalApr1d,
   cell: (props) => (
     <APRWithRewardsHoverCard pool={props.row.original}>
-      <div className="flex items-center gap-1">
+      <div className="flex gap-1 items-center">
         <span
           className={classNames(
             'underline decoration-dotted underline-offset-2',
@@ -509,7 +510,7 @@ export const NAME_COLUMN_V3: ColumnDef<
   meta: {
     body: {
       skeleton: (
-        <div className="flex items-center w-full gap-2">
+        <div className="flex gap-2 items-center w-full">
           <div className="flex items-center">
             <SkeletonCircle radius={26} />
             <SkeletonCircle radius={26} className="-ml-[12px]" />
@@ -821,6 +822,21 @@ export const TX_TIME_V3_COLUMN: ColumnDef<TransactionV3, unknown> = {
     formatDistance(props.row.original.timestamp * 1000, new Date(), {
       addSuffix: true,
     }),
+  meta: {
+    body: {
+      skeleton: <SkeletonText fontSize="lg" />,
+    },
+  },
+}
+
+export const TX_FEE_BLADE_COLUMN: ColumnDef<{ feeUSD: number }, unknown> = {
+  id: 'fee',
+  header: 'Fees Inccured (USD)',
+  cell: (props) => (
+    <span className="text-green-500">
+      {formatUSD(props.row.original.feeUSD)}
+    </span>
+  ),
   meta: {
     body: {
       skeleton: <SkeletonText fontSize="lg" />,
