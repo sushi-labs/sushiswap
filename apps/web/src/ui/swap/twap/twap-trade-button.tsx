@@ -2,14 +2,20 @@
 
 import { type ButtonProps, DialogTrigger, classNames } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui'
-import React, { type FC } from 'react'
+import { useQuery } from '@tanstack/react-query'
+import { readContract } from '@wagmi/core'
+import React, { useEffect, useMemo, type FC } from 'react'
 import type { TwapSupportedChainId } from 'src/config'
 import { APPROVE_TAG_SWAP } from 'src/lib/constants'
 import { TwapSDK } from 'src/lib/swap/twap/TwapSDK'
 import { useWrapNative } from 'src/lib/wagmi/hooks/wnative/useWrapNative'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
-import type { Amount, Type } from 'sushi/currency'
-import type { Address } from 'viem'
+import type { ApproveERC20Props } from 'src/lib/wagmi/systems/Checker/ApproveERC20'
+import { withCheckerRoot } from 'src/lib/wagmi/systems/Checker/Provider'
+import { erc20Abi_allowance } from 'sushi/abi'
+import { Amount, type Type } from 'sushi/currency'
+import { type Address, maxUint256 } from 'viem'
+import { useAccount, useConfig } from 'wagmi'
 import {
   useDerivedStateTwap,
   useTwapTrade,
@@ -90,7 +96,53 @@ const TwapTradeChecker: FC<TwapTradeCheckerProps> = ({
   )
 }
 
-export const TwapTradeButton = () => {
+const ERC20ApproveChecker: FC<ApproveERC20Props> = ({ children, ...props }) => {
+  const { contract, amount, enabled = true } = props
+
+  const { address } = useAccount()
+
+  const config = useConfig()
+
+  // using useQuery over useReadContract to prevent unintended cache behavior w/ useTokenApproval
+  const { data: allowance } = useQuery({
+    queryKey: ['allowance', amount?.currency.id, address, contract],
+    queryFn: async () => {
+      if (!amount || !address || !contract) throw new Error()
+
+      return await readContract(config, {
+        abi: erc20Abi_allowance,
+        chainId: amount.currency.chainId,
+        address: amount.currency.wrapped.address,
+        functionName: 'allowance',
+        args: [address, contract],
+      })
+    },
+    enabled: Boolean(
+      enabled && amount?.currency.isToken && address && contract,
+    ),
+    staleTime: Number.POSITIVE_INFINITY,
+    gcTime: Number.POSITIVE_INFINITY,
+    refetchInterval: false,
+    refetchOnMount: false,
+    refetchOnReconnect: false,
+    refetchOnWindowFocus: false,
+  })
+
+  const amountToApprove = useMemo(() => {
+    if (amount?.currency.isNative || allowance === maxUint256) return amount
+    if (typeof amount === 'undefined' || typeof allowance === 'undefined')
+      return undefined
+    return amount.add(Amount.fromRawAmount(amount.currency, allowance))
+  }, [amount, allowance])
+
+  return (
+    <Checker.ApproveERC20 {...props} amount={amountToApprove}>
+      {children}
+    </Checker.ApproveERC20>
+  )
+}
+
+export const TwapTradeButton = withCheckerRoot(() => {
   const { data: maintenance } = useIsTwapMaintenance()
 
   const {
@@ -110,7 +162,7 @@ export const TwapTradeButton = () => {
             <TwapTradeChecker chainId={chainId}>
               <Checker.Amounts chainId={chainId} amount={swapAmount}>
                 <WrapNativeChecker amount={swapAmount}>
-                  <Checker.ApproveERC20
+                  <ERC20ApproveChecker
                     id="approve-erc20"
                     amount={swapAmount?.wrapped}
                     contract={
@@ -129,7 +181,7 @@ export const TwapTradeButton = () => {
                         </Button>
                       </DialogTrigger>
                     </Checker.Success>
-                  </Checker.ApproveERC20>
+                  </ERC20ApproveChecker>
                 </WrapNativeChecker>
               </Checker.Amounts>
             </TwapTradeChecker>
@@ -138,4 +190,4 @@ export const TwapTradeButton = () => {
       </Checker.Guard>
     </TwapTradeReviewDialog>
   )
-}
+})
