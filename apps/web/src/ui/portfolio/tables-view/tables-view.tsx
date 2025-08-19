@@ -4,6 +4,7 @@ import { Button, Tabs, TabsContent, TabsList, TabsTrigger } from '@sushiswap/ui'
 import { useMemo } from 'react'
 import { useCreateQuery } from 'src/lib/hooks/useCreateQuery'
 import { NotificationBadge } from 'src/lib/wagmi/components/user-portfolio/notification-badge'
+import { LPPositionsTable } from '../lp-positions-table/lp-positions-table'
 import {
   PORTFOLIO_TABLE_VIEW,
   TablesProvider,
@@ -39,7 +40,7 @@ const useTabs = () => {
         value: PORTFOLIO_TABLE_VIEW.ALL,
         component: (
           <>
-            <div>lp table</div>
+            <LPPositionsTable />
             <div>orders table</div>
           </>
         ),
@@ -48,7 +49,7 @@ const useTabs = () => {
         label: `LP Positions`,
         count: totalLPPositionsCount,
         value: PORTFOLIO_TABLE_VIEW.LP_POSITIONS,
-        component: <div>lp table</div>,
+        component: <LPPositionsTable />,
       },
       {
         label: `Open Orders`,
