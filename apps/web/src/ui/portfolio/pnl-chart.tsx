@@ -357,14 +357,26 @@ export const PnLChart = () => {
     <Wrapper className="!p-0" enableBorder>
       <CardHeader>
         <CardTitle className="">
-          <div className="flex justify-between items-center">
-            <div className="flex flex-col gap-1">
-              <span className="text-sm !font-medium text-[#666666]">PnL</span>
-              <span className="text-2xl !font-medium text-green-500">
+          <div className="flex flex-col gap-1 justify-between items-start md:items-center md:flex-row md:gap-0">
+            <div className="flex flex-col gap-1 w-full">
+              <span className="text-sm !font-medium text-[#666666] hidden md:block">
+                PnL
+              </span>
+              <div className="flex justify-between items-center w-full md:hidden">
+                <span className="text-sm !font-medium text-[#666666]">PnL</span>
+
+                <NetworkMenu
+                  triggerIcon={<PlusCircleIcon />}
+                  triggerText="Network"
+                  triggerVariant="secondary"
+                  className="!min-h-[36px] !h-[36px] text-primary border border-[#00000014] dark:border-[#FFFFFF14] border-dashed !bg-[#00000005] dark:!bg-[#FFFFFF05] hover:!bg-[#F338C31A]"
+                />
+              </div>
+              <span className="text-2xl !font-medium text-green-500 hidden md:block">
                 $3,898.09
               </span>
             </div>
-            <div className="flex gap-2 items-center">
+            <div className="flex flex-col-reverse gap-2 items-start md:items-center md:flex-row">
               <div className="flex gap-2">
                 <ChartPeriodButton
                   active={period === PnLChartPeriod.OneDay}
@@ -398,13 +410,18 @@ export const PnLChart = () => {
                 triggerIcon={<PlusCircleIcon />}
                 triggerText="Network"
                 triggerVariant="secondary"
-                className="!min-h-[36px] !h-[36px] text-primary border border-[#00000014] dark:border-[#FFFFFF14] border-dashed !bg-[#00000005] dark:!bg-[#FFFFFF05] hover:!bg-[#F338C31A]"
+                className="!min-h-[36px] !h-[36px] text-primary border border-[#00000014] dark:border-[#FFFFFF14] border-dashed !bg-[#00000005] dark:!bg-[#FFFFFF05] hover:!bg-[#F338C31A] hidden md:block"
               />
             </div>
           </div>
         </CardTitle>
       </CardHeader>
       <CardContent className="!pb-0">
+        <div className="flex gap-1 items-center md:hidden">
+          <span className="text-base text-green-500 md:text-[1.75rem] font-medium underline decoration-dotted underline-offset-4">
+            $3,898.09
+          </span>
+        </div>
         {isLoading ? (
           <SkeletonBox
             className={classNames(
