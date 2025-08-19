@@ -4,31 +4,18 @@ import { Button, DialogTrigger } from '@sushiswap/ui'
 import React, { useEffect, useMemo, useState } from 'react'
 import { PriceImpactWarning } from 'src/ui/common'
 import { useIsSwapMaintenance } from '~stellar/_common/lib/edge/use-is-swap-maintenance'
-import { useSwap } from '~stellar/_common/lib/hooks/use-swap'
 import { Checker } from '~stellar/_common/ui/checker'
 import { useSimpleSwapState } from './simple-swap-provider/simple-swap-provider'
 // import { SimpleSwapTradeReviewDialog } from './simple-swap-trade-review-dialog'
 
 export const SimpleSwapTradeButton = () => {
   const { data: maintenance } = useIsSwapMaintenance()
-  const { amount, token0 } = useSimpleSwapState()
+  const { amount, token0, error } = useSimpleSwapState()
   const [checked, setChecked] = useState<boolean>(false)
-  const {
-    mutateAsync,
-    isPending,
-    isError,
-    isSuccess,
-    data: swapAmounts,
-    error: swapError,
-  } = useSwap({
-    zeroForOne: true,
-  })
 
   // TODO: create warning severity helpers for stellar, mimic aptos
   const showPriceImpactWarning = false
-  // TODO: add to context and mimic aptos for setting these
   const noRouteFound = ''
-  const error = ''
 
   // Reset
   useEffect(() => {
@@ -83,9 +70,11 @@ export const SimpleSwapTradeButton = () => {
                     <Button
                       size="xl"
                       fullWidth
-                      onClick={() => mutateAsync()}
-                      disabled={isPending}
-                      loading={isPending}
+                      onClick={() =>
+                        alert(
+                          'This will open the pre-transaction review dialog.',
+                        )
+                      }
                     >
                       Swap
                     </Button>
@@ -103,19 +92,6 @@ export const SimpleSwapTradeButton = () => {
           checked={checked}
           setChecked={setChecked}
         />
-      )}
-      {isError && (
-        <div className="mt-4 text-red-500">
-          <div>Swap failed!</div>
-          <div>Message: {swapError.message}</div>
-        </div>
-      )}
-      {isSuccess && swapAmounts && (
-        <div className="mt-4 text-green-500">
-          <div>Swap successful!</div>
-          <div>Amount traded: {swapAmounts.amountIn}</div>
-          <div>Amount received: {swapAmounts.amountOut}</div>
-        </div>
       )}
       {/* </SimpleSwapTradeReviewDialog> */}
     </>

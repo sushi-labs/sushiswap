@@ -1,5 +1,5 @@
 import React from 'react'
-import { formatDecimal } from '~stellar/_common/lib/utils/formatters'
+import { formatTokenBalance } from '~stellar/_common/lib/utils/formatters'
 import {
   useSimpleSwapActions,
   useSimpleSwapState,
@@ -7,20 +7,19 @@ import {
 import { CurrencyInput } from '~stellar/_common/ui/currency/currency-input/currency-input'
 
 export const SimpleSwapToken1Input = () => {
-  const { token1, outputAmount } = useSimpleSwapState()
+  const { token1, outputAmount, isPriceFetching } = useSimpleSwapState()
+  const { setToken1 } = useSimpleSwapActions()
 
   const outputSwapTokenAmount = outputAmount
-    ? formatDecimal(Number(outputAmount), token1 ? token1.decimals : 7)
+    ? formatTokenBalance(outputAmount, token1, token1?.decimals ?? 7)
     : ''
-
-  const { setToken1 } = useSimpleSwapActions()
 
   return (
     <CurrencyInput
       id="swap-to"
       onSelect={setToken1}
       token={token1}
-      fetching={false}
+      fetching={isPriceFetching}
       disabled={true}
       type="OUTPUT"
       value={outputSwapTokenAmount}

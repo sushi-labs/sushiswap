@@ -48,6 +48,5 @@ export async function executeSwap({
     amount_specified: amountIn,
     sqrt_price_limit_x96: 0n,
   })
-  console.log('swap result', result)
   return handleResult(result)
 }

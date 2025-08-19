@@ -9,6 +9,7 @@ import { executeSwap } from '../soroban/pool-helpers'
 
 export const useSwap = ({ zeroForOne }: { zeroForOne: boolean }) => {
   const { amount, token0, token1 } = useSimpleSwapState()
+  // TODO:support checking swap without being connected
   const { connectedAddress } = useStellarWallet()
   const [slippageTolerance] = useSlippageTolerance()
 

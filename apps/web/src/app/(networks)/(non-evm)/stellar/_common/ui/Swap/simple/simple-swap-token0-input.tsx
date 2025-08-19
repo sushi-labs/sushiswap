@@ -5,55 +5,75 @@ import {
   useSimpleSwapState,
 } from '~stellar/_common/ui/Swap/simple/simple-swap-provider/simple-swap-provider'
 import { CurrencyInput } from '~stellar/_common/ui/currency/currency-input/currency-input'
+import { useStellarWallet } from '~stellar/providers'
 
 export const SimpleSwapToken0Input = () => {
-  const [, _startTransition] = useTransition()
-
+  const [, startTransition] = useTransition()
+  const { isConnected } = useStellarWallet()
   const { amount, token0 } = useSimpleSwapState()
-
   const {
     setAmount,
     setToken0,
-    // setOutputAmount,
-    // setPriceFetching,
-    // setSlippageAmount,
+    setOutputAmount,
+    setSlippageAmount,
+    setPriceFetching,
+    setError,
     // setBestRoutes,
     // setNoRouteFound,
   } = useSimpleSwapActions()
+  const {
+    mutateAsync: swapTokens,
+    isPending: isSwapPending,
+    isSuccess: isSwapSuccess,
+    data: swapAmounts,
+    isError: isSwapError,
+    error: swapError,
+  } = useSwap({
+    zeroForOne: true,
+  })
 
-  // useEffect(() => {
-  //   console.log('swapAmounts', swapAmounts)
-  //   console.log('amount', amount)
-  //   startTransition(() => {
-  //     // setOutputAmount('')
-  //     // setSlippageAmount(0)
-  //     // setNoRouteFound('')
-  //     // setPriceFetching(isPriceFetching)
-  //     if (Number(amount) > 0 && swapAmounts) {
-  //       if (swapAmounts.amountOut) {
-  //         setOutputAmount(String(swapAmounts.amountOut))
-  //         setSlippageAmount(Number(swapAmounts.amountOut))
-  //       }
-  //       // if (route?.route) {
-  //       //   setBestRoutes(route?.route)
-  //       //   setNoRouteFound('')
-  //       // } else if (!isPriceFetching) {
-  //       //   setBestRoutes([])
-  //       //   setNoRouteFound('No trade found')
-  //       // }
-  //     }
-  //   })
-  // }, [
-  //   amount,
-  //   swapAmounts,
-  //   // route,
-  //   // isPriceFetching,
-  //   setSlippageAmount,
-  //   // setBestRoutes,
-  //   // setNoRouteFound,
-  //   setOutputAmount,
-  //   // setPriceFetching,
-  // ])
+  useEffect(() => {
+    // TODO: allow to check swap amount without being connected
+    if (!isConnected) return
+    startTransition(async () => {
+      setOutputAmount(0n)
+      setSlippageAmount(0)
+      // setNoRouteFound('')
+      if (Number(amount) > 0) {
+        await swapTokens()
+        // if (route?.route) {
+        //   setBestRoutes(route?.route)
+        //   setNoRouteFound('')
+        // } else if (!isPriceFetching) {
+        //   setBestRoutes([])
+        //   setNoRouteFound('No trade found')
+        // }
+      }
+    })
+  }, [amount, swapTokens, isConnected, setOutputAmount, setSlippageAmount])
+
+  useEffect(() => {
+    if (isSwapPending) {
+      setPriceFetching(true)
+    } else {
+      setPriceFetching(false)
+    }
+  }, [isSwapPending, setPriceFetching])
+
+  useEffect(() => {
+    if (isSwapError) {
+      setError(swapError.message)
+    } else {
+      setError('')
+    }
+  }, [isSwapError, swapError, setError])
+
+  useEffect(() => {
+    if (isSwapSuccess) {
+      setOutputAmount(swapAmounts.amountOut)
+      setSlippageAmount(Number(swapAmounts.amountOut))
+    }
+  }, [isSwapSuccess, swapAmounts, setOutputAmount, setSlippageAmount])
 
   return (
     <CurrencyInput

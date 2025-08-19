@@ -19,14 +19,9 @@ export type IProfileView = 'default' | 'settings'
 
 export const ConnectWalletButton = (props: ButtonProps) => {
   const [view, setView] = useState<IProfileView>('default')
-  const [isConnected, setIsConnected] = useState(false)
-  const { connectedAddress } = useStellarWallet()
+  const { connectedAddress, isConnected } = useStellarWallet()
   // TODO: tap into Stellar Wallet Kit and expose variable from context hook
   const connecting = false
-
-  useEffect(() => {
-    setIsConnected(connectedAddress !== null)
-  }, [connectedAddress])
 
   return (
     <Popover>

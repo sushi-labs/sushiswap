@@ -23,7 +23,11 @@ type State = {
   token1: Token
   amount: string | null
   slippageAmount: number
-  outputAmount: string
+  outputAmount: bigint
+  error: string
+  isLoadingPrice: boolean
+  isPriceFetching: boolean
+  isTransactionPending: boolean
 }
 
 type SwapApi = {
@@ -32,7 +36,11 @@ type SwapApi = {
   swapTokens(): void
   setAmount(amount: string): void
   setSlippageAmount(amount: number): void
-  setOutputAmount(amount: string): void
+  setOutputAmount(amount: bigint): void
+  setError(value: string): void
+  setLoadingPrice(value: boolean): void
+  setPriceFetching(value: boolean): void
+  setIsTransactionPending(value: boolean): void
 }
 
 export const SimpleSwapStateContext = createContext<State>({} as State)
@@ -44,7 +52,11 @@ type Actions =
   | { type: 'swapTokens' }
   | { type: 'setAmount'; value: string }
   | { type: 'setSlippageAmount'; value: number }
-  | { type: 'setOutputAmount'; value: string }
+  | { type: 'setOutputAmount'; value: bigint }
+  | { type: 'setError'; value: string }
+  | { type: 'setLoadingPrice'; value: boolean }
+  | { type: 'setPriceFetching'; value: boolean }
+  | { type: 'setIsTransactionPending'; value: boolean }
 
 export const SimpleSwapProvider: FC<SimpleSwapProvider> = ({ children }) => {
   const [slippageTolerance] = useSlippageTolerance()
@@ -82,6 +94,14 @@ export const SimpleSwapProvider: FC<SimpleSwapProvider> = ({ children }) => {
         }
       case 'setOutputAmount':
         return { ...state, outputAmount: action.value }
+      case 'setError':
+        return { ...state, error: action.value }
+      case 'setLoadingPrice':
+        return { ...state, isLoadingPrice: action.value }
+      case 'setPriceFetching':
+        return { ...state, isPriceFetching: action.value }
+      case 'setIsTransactionPending':
+        return { ...state, isTransactionPending: action.value }
       default:
         return state
     }
@@ -92,7 +112,11 @@ export const SimpleSwapProvider: FC<SimpleSwapProvider> = ({ children }) => {
     token1: baseTokens[1],
     amount: '',
     slippageAmount: 0,
-    outputAmount: '',
+    outputAmount: 0n,
+    error: '',
+    isLoadingPrice: false,
+    isPriceFetching: false,
+    isTransactionPending: false,
   })
 
   const state = useMemo(() => {
@@ -126,8 +150,15 @@ export const SimpleSwapProvider: FC<SimpleSwapProvider> = ({ children }) => {
     const setAmount = (value: string) => dispatch({ type: 'setAmount', value })
     const setSlippageAmount = (value: number) =>
       dispatch({ type: 'setSlippageAmount', value })
-    const setOutputAmount = (value: string) =>
+    const setOutputAmount = (value: bigint) =>
       dispatch({ type: 'setOutputAmount', value })
+    const setError = (value: string) => dispatch({ type: 'setError', value })
+    const setLoadingPrice = (value: boolean) =>
+      dispatch({ type: 'setLoadingPrice', value })
+    const setPriceFetching = (value: boolean) =>
+      dispatch({ type: 'setPriceFetching', value })
+    const setIsTransactionPending = (value: boolean) =>
+      dispatch({ type: 'setIsTransactionPending', value })
 
     return {
       setToken0,
@@ -136,6 +167,10 @@ export const SimpleSwapProvider: FC<SimpleSwapProvider> = ({ children }) => {
       setAmount,
       setSlippageAmount,
       setOutputAmount,
+      setError,
+      setLoadingPrice,
+      setPriceFetching,
+      setIsTransactionPending,
     }
   }, [setToken0, setToken1])
 

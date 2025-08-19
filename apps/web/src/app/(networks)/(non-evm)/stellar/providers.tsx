@@ -11,6 +11,7 @@ import { createContext, useContext, useEffect, useState } from 'react'
 interface StellarWalletContextType {
   stellarWalletKit: StellarWalletsKit | null
   wallets: ISupportedWallet[]
+  isConnected: boolean
   connectedAddress: string | null
   connectWallet: (walletId: string) => Promise<void>
   disconnectWallet: () => Promise<void>
@@ -20,6 +21,7 @@ interface StellarWalletContextType {
 const StellarWalletContext = createContext<StellarWalletContextType>({
   stellarWalletKit: null,
   wallets: [],
+  isConnected: false,
   connectedAddress: null,
   connectWallet: async () => {},
   disconnectWallet: async () => {},
@@ -110,6 +112,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
       value={{
         stellarWalletKit,
         wallets,
+        isConnected: connectedAddress !== null,
         connectedAddress,
         signTransaction,
         connectWallet,
