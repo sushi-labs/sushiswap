@@ -33,7 +33,7 @@ if (typeof window !== 'undefined') {
 export const networks = {
   testnet: {
     networkPassphrase: 'Test SDF Network ; September 2015',
-    contractId: 'CD2I3BPMWKGC3D5C4J3GMJWEA66YP2IDD3XOQH4CCRHTY6BQ2JL4ENY7',
+    contractId: 'CCKVX4XBQO5ES5PFPB3QX7CRUFUV6WFD4E3BLUMNBOMGIFGLKCFFJVU4',
   },
 } as const
 
@@ -103,7 +103,7 @@ export interface SwapStepResult {
   amount_in: u256
   amount_out: u256
   fee_amount: u256
-  sqrt_ratio_next: /*TODO: SqrtPriecX96*/ u256
+  sqrt_ratio_next: u256
 }
 
 /**
