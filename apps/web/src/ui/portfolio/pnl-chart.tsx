@@ -366,7 +366,7 @@ export const PnLChart = () => {
                 <span className="text-sm !font-medium text-[#666666]">PnL</span>
 
                 <NetworkMenu
-                  triggerIcon={<PlusCircleIcon />}
+                  triggerIcon={<PlusCircleIcon className="w-1 aspect-1" />}
                   triggerText="Network"
                   triggerVariant="secondary"
                   className="!min-h-[36px] !h-[36px] text-primary border border-[#00000014] dark:border-[#FFFFFF14] border-dashed !bg-[#00000005] dark:!bg-[#FFFFFF05] hover:!bg-[#F338C31A]"
@@ -410,7 +410,7 @@ export const PnLChart = () => {
                 triggerIcon={<PlusCircleIcon />}
                 triggerText="Network"
                 triggerVariant="secondary"
-                className="!min-h-[36px] !h-[36px] text-primary border border-[#00000014] dark:border-[#FFFFFF14] border-dashed !bg-[#00000005] dark:!bg-[#FFFFFF05] hover:!bg-[#F338C31A] hidden md:block"
+                className="!min-h-[36px] !h-[36px] text-primary border border-[#00000014] dark:border-[#FFFFFF14] border-dashed !bg-[#00000005] dark:!bg-[#FFFFFF05] hover:!bg-[#F338C31A] hidden md:inline-flex"
               />
             </div>
           </div>
