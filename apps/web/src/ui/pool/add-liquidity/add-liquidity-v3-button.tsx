@@ -226,11 +226,9 @@ export const AddLiquidityV3Button: FC<AddLiquidityV3ButtonProps> = ({
   const send = useMemo(() => {
     if (!prepare || isSimulationError) return undefined
 
-    return async (confirm: () => void) => {
+    return async () => {
       try {
         await sendTransactionAsync(prepare)
-
-        confirm()
       } catch {}
     }
   }, [sendTransactionAsync, isSimulationError, prepare])
@@ -240,7 +238,7 @@ export const AddLiquidityV3Button: FC<AddLiquidityV3ButtonProps> = ({
       size="xl"
       fullWidth
       loading={!send || isWritePending}
-      onClick={() => send?.(confirm)}
+      onClick={() => send?.()}
       disabled={isSimulationError}
       testId="confirm-add-liquidity"
       type="button"

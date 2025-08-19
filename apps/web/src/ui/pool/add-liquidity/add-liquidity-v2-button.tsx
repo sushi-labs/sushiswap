@@ -139,7 +139,7 @@ function useWriteWithNative({
   const write = useMemo(() => {
     if (!writeContractAsync || !simulation) return undefined
 
-    return async (confirm: () => void) => {
+    return async () => {
       try {
         await writeContractAsync({
           ...simulation.request,
@@ -147,8 +147,6 @@ function useWriteWithNative({
             ? gasMargin(simulation.request.gas)
             : undefined,
         })
-
-        confirm()
       } catch {}
     }
   }, [writeContractAsync, simulation])
@@ -242,7 +240,7 @@ function useWriteWithoutNative({
   const write = useMemo(() => {
     if (!writeContractAsync || !simulation) return undefined
 
-    return async (confirm: () => void) => {
+    return async () => {
       try {
         await writeContractAsync({
           ...simulation.request,
@@ -250,8 +248,6 @@ function useWriteWithoutNative({
             ? gasMargin(simulation.request.gas)
             : undefined,
         })
-
-        confirm()
       } catch {}
     }
   }, [writeContractAsync, simulation])
@@ -418,7 +414,7 @@ export const AddLiquidityV2Button: FC<AddLiquidityV2ButtonProps> = ({
       disabled={isWritePending || !approved || !write}
       loading={Boolean(!write)}
       fullWidth
-      onClick={() => write?.(() => {})}
+      onClick={() => write?.()}
       testId="confirm-add-v2-liquidity"
     >
       {isWritePending ? <Dots>Confirm transaction</Dots> : 'Add Liquidity'}
