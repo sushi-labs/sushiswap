@@ -8,34 +8,35 @@ import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from "
 import { CheckIcon } from "@sushiswap/ui/icons/CheckIcon";
 import { NetworkIcon } from "@sushiswap/ui/icons/NetworkIcon";
 import { getNetworkName } from "src/lib/network";
-import type { ChainId } from "sushi/chain";
-import { PopoverDrawer } from "../common/popover-drawer";
-import { DEFAULT_POOL_NETWORKS, usePoolFilters, useSetPoolFilters } from "./PoolsFiltersProvider";
+import { PopoverDrawer } from "src/ui/common/popover-drawer";
+import { ChainId } from "sushi";
 
-export const TableFiltersNetworkV2 = () => {
-	const { networks } = usePoolFilters();
-	const setFilters = useSetPoolFilters();
-	const allSelected = networks?.length === DEFAULT_POOL_NETWORKS.length;
+//@dev these will come from lp holdings
+const PLACEHOLDER_NETWORKS: ChainId[] = [747474, 1, 56, 137, 42161, 8453]; // Example networks
+
+export const LPPositionsNetworkFilter = () => {
+	const networks = PLACEHOLDER_NETWORKS; // Placeholder for actual networks from LP holdings
+	// const { networks } = usePoolFilters();
+	// const setFilters = useSetPoolFilters();
+	const allSelected = networks?.length === PLACEHOLDER_NETWORKS.length;
 
 	const onSelect = (value: string) => {
-		const _network = value.split("__")[1];
-		const network = +_network as ChainId;
-
-		setFilters((prev) => {
-			const newNetworks = prev?.networks?.includes(network)
-				? prev.networks.filter((n) => n !== network)
-				: [...(prev?.networks ?? []), network];
-
-			return { ...prev, networks: newNetworks };
-		});
+		// const _network = value.split("__")[1];
+		// const network = +_network as ChainId;
+		// setFilters((prev) => {
+		//   const newNetworks = prev?.networks?.includes(network)
+		//     ? prev.networks.filter((n) => n !== network)
+		//     : [...(prev?.networks ?? []), network];
+		//   return { ...prev, networks: newNetworks };
+		// });
 	};
 
 	const clearAll = () => {
-		setFilters((prev) => ({ ...prev, networks: [DEFAULT_POOL_NETWORKS[0]] }));
+		// setFilters((prev) => ({ ...prev, networks: [DEFAULT_POOL_NETWORKS[0]] }));
 	};
 
 	const clearSelections = () => {
-		setFilters((prev) => ({ ...prev, networks: DEFAULT_POOL_NETWORKS }));
+		// setFilters((prev) => ({ ...prev, networks: DEFAULT_POOL_NETWORKS }));
 	};
 
 	return (
@@ -48,9 +49,9 @@ export const TableFiltersNetworkV2 = () => {
 					icon={PlusCircleIcon}
 					variant="outline"
 					role="combobox"
-					size="sm"
+					// size="sm"
 					className={classNames(
-						"border-dashed !bg-slate-200 dark:!bg-slate-750",
+						"border-dashed !bg-[#00000005]",
 						"hover:dark:!bg-skyblue/20 hover:!bg-blue/20 hover:!text-blue hover:dark:!text-skyblue",
 						!allSelected && networks && networks?.length > 0
 							? "!bg-blue/10 dark:!bg-skyblue/10 !text-blue dark:!text-skyblue !border-blue dark:!border-skyblue !border-1 !border-solid"
@@ -99,7 +100,7 @@ export const TableFiltersNetworkV2 = () => {
 					) : null}
 
 					<CommandGroup className="!overflow-x-hidden !overflow-y-scroll scroll max-h-[300px]">
-						{DEFAULT_POOL_NETWORKS.map((_network) => {
+						{PLACEHOLDER_NETWORKS.map((_network) => {
 							const name = getNetworkName(_network);
 							const isSelected = networks?.includes(_network);
 
