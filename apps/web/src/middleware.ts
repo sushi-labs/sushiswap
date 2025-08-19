@@ -10,6 +10,7 @@ export const config = {
     '/cross-chain-swap/:path*',
     '/pool',
     '/pools',
+    '/portfolio',
     '/explore',
     '/:chainId/swap/:path*',
     '/:chainId/limit/:path*',
@@ -22,6 +23,7 @@ export const config = {
     '/:chainId/positions/:path*',
     '/:chainId/migrate',
     '/:chainId/rewards',
+    '/:chainId/portfolio',
     '/:chainId/tradingview',
     '/portal/:path*',
   ],
@@ -45,7 +47,8 @@ export async function middleware(req: NextRequest) {
     pathname === '/limit' ||
     pathname === '/dca' ||
     pathname === '/cross-chain-swap' ||
-    pathname === '/fiat'
+    pathname === '/fiat' ||
+    pathname === '/portfolio'
   ) {
     const path = ['/explore', '/pools'].includes(pathname)
       ? 'explore/pools'
@@ -66,7 +69,7 @@ export async function middleware(req: NextRequest) {
   }
 
   const networkNameMatch = pathname.match(
-    /([\w-]+)(?=\/fiat|\/swap|\/limit|\/dca|\/cross-chain-swap|\/explore|\/pool|\/token|\/positions|\/rewards|\/migrate|\/tradingview)/,
+    /([\w-]+)(?=\/fiat|\/swap|\/limit|\/dca|\/cross-chain-swap|\/explore|\/pool|\/token|\/positions|\/rewards|\/migrate|\/portfolio|\/tradingview)/,
   )
   if (networkNameMatch?.length) {
     const { chainId, networkName } = getEvmChainInfo(networkNameMatch[0])
