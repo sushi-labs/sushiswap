@@ -1,3 +1,5 @@
+'use client'
+
 import { ChevronDownIcon } from '@heroicons/react-v1/solid'
 import {
   Button,
@@ -18,11 +20,17 @@ export const NetworkMenu = ({
   selectedNetwork,
   onNetworkSelect,
   networkOptions,
+  triggerVariant = 'ghost',
+  triggerIcon,
+  triggerText = 'All Networks',
 }: {
   className?: string
   selectedNetwork?: null | number
   onNetworkSelect?(val: number | null): void
   networkOptions?: number[]
+  triggerVariant?: 'networks' | 'ghost' | 'secondary'
+  triggerIcon?: React.ReactNode
+  triggerText?: string
 }) => {
   const { networkOptions: _networks } = useNetworkOptions()
 
@@ -32,14 +40,15 @@ export const NetworkMenu = ({
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button
-          variant="ghost"
+          variant={triggerVariant}
           className={classNames(
             'flex items-center font-medium !gap-1 !px-2 !pl-4',
             className,
           )}
         >
+          {triggerIcon}
           {selectedNetwork === null || !selectedNetwork ? (
-            'All Networks'
+            triggerText
           ) : (
             <NetworkItem chainId={selectedNetwork} />
           )}
@@ -70,7 +79,7 @@ export const NetworkMenu = ({
 
 const NetworkItem = ({ chainId }: { chainId: number }) => {
   return (
-    <div className="flex items-center gap-1 text-muted-foreground dark:text-pink-200">
+    <div className="flex gap-1 items-center text-muted-foreground dark:text-pink-200">
       <NetworkIcon chainId={chainId} width={16} height={16} />
       <div>{getNetworkName(chainId as EvmChainId)}</div>
     </div>
