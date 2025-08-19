@@ -1,6 +1,7 @@
 import { Card, DataTable } from '@sushiswap/ui'
 import type { SortingState, TableState } from '@tanstack/react-table'
 import { useMemo, useState } from 'react'
+import { Trending } from './trending'
 
 const data: any[] = []
 
@@ -30,8 +31,8 @@ export const LPPositionsTable = () => {
     //   }
     // >
     <Card className="overflow-hidden">
-      <div className="p-4 border-b">Trending Placeholder</div>
-      <div className="px-4 py-6 border-b gap-2 flex flex-col md:flex-row md:items-center justify-between">
+      <Trending />
+      <div className="px-4 py-6 border-b border-accent gap-2 flex flex-col md:flex-row md:items-center justify-between">
         <div>LP Pos Placeholder</div>
         <div>filters placeholder</div>
       </div>

@@ -39,10 +39,10 @@ const useTabs = () => {
         count: 0,
         value: PORTFOLIO_TABLE_VIEW.ALL,
         component: (
-          <>
+          <div className="flex flex-col gap-6">
             <LPPositionsTable />
             <div>orders table</div>
-          </>
+          </div>
         ),
       },
       {

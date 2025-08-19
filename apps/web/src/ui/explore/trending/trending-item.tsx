@@ -5,14 +5,14 @@ import Link from 'next/link'
 import { NativeAddress } from 'src/lib/constants'
 import type { EvmChainId } from 'sushi/chain'
 import { Native, Token } from 'sushi/currency'
-import type { POOLS } from './trending'
+import type { PLACEHOLDER_POOLS_DATA } from './trending'
 
 export const TrendingItem = ({
   pool,
   position,
   href,
 }: {
-  pool: (typeof POOLS)[0]
+  pool: (typeof PLACEHOLDER_POOLS_DATA)[0]
   position: number
   href: string
 }) => {
@@ -126,7 +126,7 @@ export const TrendingItemMobile = ({
   position,
   href,
 }: {
-  pool: (typeof POOLS)[0]
+  pool: (typeof PLACEHOLDER_POOLS_DATA)[0]
   position: number
   href: string
 }) => {
@@ -178,15 +178,11 @@ export const TrendingItemMobile = ({
           />
         </Currency.IconList>
         <div className="border-background border rounded-[4px] overflow-hidden  z-10 absolute -bottom-[1px] -right-1.5">
-          <NetworkIcon
-            type="square"
-            chainId={chainId}
-            className="w-3 h-3 lg:w-5 lg:h-5"
-          />
+          <NetworkIcon type="square" chainId={chainId} className="w-3 h-3" />
         </div>
       </div>
       <div className="flex text-sm font-medium leading-5">
-        <div>
+        <div className="uppercase">
           {pairName}-{version}-{fee}
         </div>
       </div>

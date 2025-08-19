@@ -11,7 +11,7 @@ import {
 } from 'sushi/config'
 import { TrendingItem, TrendingItemMobile } from './trending-item'
 
-export const POOLS = [
+export const PLACEHOLDER_POOLS_DATA = [
   {
     version: 'v3',
     address: '0xfa6e8e97ececdc36302eca534f63439b1e79487b',
@@ -167,13 +167,15 @@ export const POOLS = [
 export const Trending = () => {
   return (
     <>
-      <TrendingDesktop pools={POOLS} />
-      <TrendingMobile pools={POOLS} />
+      <TrendingDesktop pools={PLACEHOLDER_POOLS_DATA} />
+      <TrendingMobile pools={PLACEHOLDER_POOLS_DATA} />
     </>
   )
 }
 
-const TrendingDesktop = ({ pools }: { pools: typeof POOLS }) => {
+const TrendingDesktop = ({
+  pools,
+}: { pools: typeof PLACEHOLDER_POOLS_DATA }) => {
   const isNarrow = useMediaQuery({ query: '(max-width: 1480px)' })
   const visiblePools = isNarrow ? pools.slice(0, 3) : pools
 
@@ -209,7 +211,9 @@ const TrendingDesktop = ({ pools }: { pools: typeof POOLS }) => {
   )
 }
 
-const TrendingMobile = ({ pools }: { pools: typeof POOLS }) => {
+const TrendingMobile = ({
+  pools,
+}: { pools: typeof PLACEHOLDER_POOLS_DATA }) => {
   return (
     <div className="flex gap-2 items-center py-5 lg:hidden">
       <span className="text-sm font-medium">Trending:</span>
