@@ -2,30 +2,68 @@
 
 import { Transition } from '@headlessui/react'
 import { LockClosedIcon, PlusIcon } from '@heroicons/react-v1/solid'
-import { DialogTrigger, FormSection, Message, classNames } from '@sushiswap/ui'
+import {
+  DialogTrigger,
+  Dots,
+  FormSection,
+  Message,
+  classNames,
+} from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui'
-import { type FC, Fragment, useCallback, useMemo } from 'react'
+import {
+  type FC,
+  Fragment,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react'
 import {
   SUSHISWAP_V3_POSITION_MANAGER,
   type SushiSwapV3ChainId,
   type SushiSwapV3FeeAmount,
+  defaultCurrency,
   isWNativeSupported,
 } from 'sushi/config'
-import type { Type } from 'sushi/currency'
+import { Amount, type Type, tryParseAmount } from 'sushi/currency'
 import type { Position } from 'sushi/pool/sushiswap-v3'
 
 import { SlippageToleranceStorageKey } from '@sushiswap/hooks'
+import { createToast } from '@sushiswap/notifications'
+import { ZapEventName, sendAnalyticsEvent } from '@sushiswap/telemetry'
+import { isZapSupportedChainId } from 'src/config'
+import { useV3Zap } from 'src/lib/hooks'
 import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
+import { warningSeverity } from 'src/lib/swap/warningSeverity'
 import { Web3Input } from 'src/lib/wagmi/components/web3-input'
 import { useConcentratedPositionOwner } from 'src/lib/wagmi/hooks/positions/hooks/useConcentratedPositionOwner'
-import { Checker } from 'src/lib/wagmi/systems/Checker'
-import { Bound, Field } from '../../lib/constants'
+import {
+  Checker,
+  SLIPPAGE_WARNING_THRESHOLD,
+} from 'src/lib/wagmi/systems/Checker'
+import {
+  useApproved,
+  withCheckerRoot,
+} from 'src/lib/wagmi/systems/Checker/Provider'
+import { Percent } from 'sushi/math'
+import type { SendTransactionReturnType } from 'viem'
+import {
+  useAccount,
+  useEstimateGas,
+  usePublicClient,
+  useSendTransaction,
+} from 'wagmi'
+import { useRefetchBalances } from '~evm/_common/ui/balance-provider/use-refetch-balances'
+import { APPROVE_TAG_ZAP_LEGACY, Bound, Field } from '../../lib/constants'
+import { PriceImpactWarning, SlippageWarning } from '../common'
 import { AddSectionReviewModalConcentrated } from './AddSectionReviewModalConcentrated'
 import {
   useConcentratedDerivedMintInfo,
   useConcentratedMintActionHandlers,
   useConcentratedMintState,
 } from './ConcentratedLiquidityProvider'
+import { ToggleZapCard } from './ToggleZapCard'
+import { V3ZapInfoCard } from './V3ZapInfoCard'
 
 interface ConcentratedLiquidityWidget {
   chainId: SushiSwapV3ChainId
@@ -43,9 +81,117 @@ interface ConcentratedLiquidityWidget {
   withTitleAndDescription?: boolean
 }
 
-export const ConcentratedLiquidityWidget: FC<ConcentratedLiquidityWidget> = ({
+export const ConcentratedLiquidityWidget: FC<ConcentratedLiquidityWidget> = (
+  props,
+) => {
+  const {
+    chainId,
+    account,
+    feeAmount,
+    token0,
+    token1,
+    tokenId,
+    existingPosition,
+    withTitleAndDescription = true,
+  } = props
+
+  const [isZapModeEnabled, setIsZapModeEnabled] = useState(false)
+
+  const { data: owner, isInitialLoading: isOwnerLoading } =
+    useConcentratedPositionOwner({ chainId, tokenId })
+
+  const isOwner = owner === account
+
+  const derivedMintInfo = useConcentratedDerivedMintInfo({
+    chainId,
+    account,
+    token0,
+    token1,
+    baseToken: token0,
+    feeAmount,
+    existingPosition,
+  })
+
+  const { outOfRange, invalidRange, pool } = derivedMintInfo
+
+  const isZapSupported = Boolean(
+    isZapSupportedChainId(chainId) && !existingPosition && !tokenId && pool,
+  )
+
+  useEffect(() => {
+    if (isZapSupported) {
+      setIsZapModeEnabled(true)
+    } else {
+      setIsZapModeEnabled(false)
+    }
+  }, [isZapSupported])
+
+  const widget = (
+    <div className={classNames('flex flex-col gap-4')}>
+      {!!existingPosition && !isOwner && !isOwnerLoading ? (
+        <Message size="sm" variant="destructive">
+          You are not the owner of this LP position. You will not be able to
+          withdraw the liquidity from this position unless you own the following
+          address: {owner}
+        </Message>
+      ) : null}
+      {outOfRange ? (
+        <Message size="sm" variant="warning">
+          Your position will not earn fees or be used in trades until the market
+          price moves into your range.
+        </Message>
+      ) : null}
+
+      {invalidRange ? (
+        <Message size="sm" variant="warning">
+          Invalid range selected. The minimum price must be lower than the
+          maximum price.
+        </Message>
+      ) : null}
+
+      {isZapSupported ? (
+        <ToggleZapCard
+          checked={isZapModeEnabled}
+          onCheckedChange={setIsZapModeEnabled}
+        />
+      ) : null}
+
+      {isZapModeEnabled ? (
+        <ZapWidgetContent
+          {...props}
+          isLoading={isOwnerLoading || derivedMintInfo.isInitialLoading}
+          derivedMintInfo={derivedMintInfo}
+        />
+      ) : (
+        <WidgetContent
+          {...props}
+          isLoading={isOwnerLoading || derivedMintInfo.isInitialLoading}
+          derivedMintInfo={derivedMintInfo}
+        />
+      )}
+    </div>
+  )
+
+  if (withTitleAndDescription)
+    return (
+      <FormSection
+        title="Liquidity"
+        description="Depending on your range, the supplied tokens for this position will not always be a 50:50 ratio."
+      >
+        {widget}
+      </FormSection>
+    )
+
+  return widget
+}
+
+interface WidgetContentProps extends ConcentratedLiquidityWidget {
+  derivedMintInfo: ReturnType<typeof useConcentratedDerivedMintInfo>
+  isLoading: boolean
+}
+
+const WidgetContent: FC<WidgetContentProps> = ({
   chainId,
-  account,
   feeAmount,
   token0,
   token1,
@@ -56,42 +202,27 @@ export const ConcentratedLiquidityWidget: FC<ConcentratedLiquidityWidget> = ({
   existingPosition,
   onChange,
   successLink,
-  withTitleAndDescription = true,
+  derivedMintInfo: {
+    dependentField,
+    parsedAmounts,
+    noLiquidity,
+    depositADisabled,
+    depositBDisabled,
+    ticks,
+    invalidPool,
+    invalidRange,
+    position,
+    price,
+    ticksAtLimit,
+    pricesAtTicks,
+  },
+  isLoading,
 }) => {
   const [slippagePercent] = useSlippageTolerance(
     SlippageToleranceStorageKey.AddLiquidity,
   )
   const { onFieldAInput, onFieldBInput } = useConcentratedMintActionHandlers()
   const { independentField, typedValue } = useConcentratedMintState()
-  const { data: owner, isInitialLoading: isOwnerLoading } =
-    useConcentratedPositionOwner({ chainId, tokenId })
-
-  const isOwner = owner === account
-
-  const {
-    dependentField,
-    noLiquidity,
-    parsedAmounts,
-    outOfRange,
-    invalidRange,
-    price,
-    pricesAtTicks,
-    ticksAtLimit,
-    ticks,
-    depositADisabled,
-    depositBDisabled,
-    invalidPool,
-    position,
-    isInitialLoading: isPoolLoading,
-  } = useConcentratedDerivedMintInfo({
-    chainId,
-    account,
-    token0,
-    token1,
-    baseToken: token0,
-    feeAmount,
-    existingPosition,
-  })
 
   const formattedAmounts = {
     [independentField]: typedValue,
@@ -125,33 +256,342 @@ export const ConcentratedLiquidityWidget: FC<ConcentratedLiquidityWidget> = ({
     return amounts
   }, [depositADisabled, depositBDisabled, parsedAmounts])
   const { [Bound.LOWER]: tickLower, [Bound.UPPER]: tickUpper } = ticks
+  return (
+    <div
+      className={classNames(
+        !isLoading &&
+          (tickLower === undefined ||
+            tickUpper === undefined ||
+            invalidPool ||
+            invalidRange)
+          ? 'opacity-40 pointer-events-none'
+          : '',
+        'flex flex-col gap-4',
+      )}
+    >
+      <div className="relative">
+        {depositADisabled && !depositBDisabled ? (
+          <div className="bg-gray-200 dark:bg-slate-800 absolute inset-0 z-[1] rounded-xl flex items-center justify-center">
+            <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 px-10 text-sm font-medium text-center">
+              <LockClosedIcon
+                width={24}
+                height={24}
+                className="text-gray-400 dark:text-slate-400 text-slate-600"
+              />
+              <span className="dark:text-slate-400 text-slate-600">
+                The market price is outside your specified price range.
+                Single-asset deposit only.{' '}
+                <a
+                  // TODO
+                  href="https://www.sushi.com/academy"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="text-blue hover:text-blue-600"
+                >
+                  Learn More
+                </a>
+              </span>
+            </div>
+          </div>
+        ) : null}
+        <Web3Input.Currency
+          id="add-liquidity-token0"
+          type="INPUT"
+          className="p-3 bg-white dark:bg-secondary rounded-xl border border-accent"
+          chainId={chainId}
+          value={formattedAmounts[Field.CURRENCY_A]}
+          onChange={_onFieldAInput}
+          onSelect={setToken0}
+          currency={token0}
+          disabled={depositADisabled}
+          loading={tokensLoading || isLoading}
+          allowNative={isWNativeSupported(chainId)}
+        />
+      </div>
+      <div className="flex items-center justify-center mt-[-24px] mb-[-24px] z-10">
+        <div className="p-1 bg-white dark:bg-slate-900 border border-accent rounded-full">
+          <PlusIcon width={16} height={16} className="text-muted-foreground" />
+        </div>
+      </div>
+      <div className="relative">
+        <Transition
+          as={Fragment}
+          show={depositBDisabled && !depositADisabled}
+          enter="transition duration-300 origin-center ease-out"
+          enterFrom="transform opacity-0"
+          enterTo="transform opacity-100"
+          leave="transition duration-75 ease-out"
+          leaveFrom="transform opacity-100"
+          leaveTo="transform opacity-0"
+        >
+          <div className="bg-gray-200 dark:bg-slate-800 absolute inset-0 z-[1] rounded-xl flex items-center justify-center">
+            <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 px-10 text-sm font-medium text-center">
+              <LockClosedIcon
+                width={24}
+                height={24}
+                className="text-gray-400 dark:text-slate-400 text-slate-600"
+              />
+              <span className="dark:text-slate-400 text-slate-600">
+                The market price is outside your specified price range.
+                Single-asset deposit only.{' '}
+                <a
+                  // TODO
+                  href="https://www.sushi.com/academy"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="text-blue hover:text-blue-600"
+                >
+                  Learn More
+                </a>
+              </span>
+            </div>
+          </div>
+        </Transition>
+        <Web3Input.Currency
+          id="add-liquidity-token1"
+          type="INPUT"
+          className="p-3 bg-white dark:bg-secondary rounded-xl border border-accent"
+          chainId={chainId}
+          value={formattedAmounts[Field.CURRENCY_B]}
+          onChange={_onFieldBInput}
+          onSelect={setToken1}
+          currency={token1}
+          loading={tokensLoading || isLoading}
+          disabled={depositBDisabled}
+          allowNative={isWNativeSupported(chainId)}
+        />
+      </div>
 
-  const widget = (
-    <div className={classNames('flex flex-col gap-4')}>
-      {!!existingPosition && !isOwner && !isOwnerLoading ? (
-        <Message size="sm" variant="destructive">
-          You are not the owner of this LP position. You will not be able to
-          withdraw the liquidity from this position unless you own the following
-          address: {owner}
-        </Message>
-      ) : null}
-      {outOfRange ? (
-        <Message size="sm" variant="warning">
-          Your position will not earn fees or be used in trades until the market
-          price moves into your range.
-        </Message>
-      ) : null}
+      <Checker.Connect fullWidth>
+        <Checker.Network fullWidth chainId={chainId}>
+          <Checker.Amounts fullWidth chainId={chainId} amounts={amounts}>
+            <Checker.Slippage
+              fullWidth
+              slippageTolerance={slippagePercent}
+              text="Continue With High Slippage"
+            >
+              <Checker.ApproveERC20
+                fullWidth
+                id="approve-erc20-0"
+                amount={parsedAmounts[Field.CURRENCY_A]}
+                contract={SUSHISWAP_V3_POSITION_MANAGER[chainId]}
+                enabled={!depositADisabled}
+              >
+                <Checker.ApproveERC20
+                  fullWidth
+                  id="approve-erc20-1"
+                  amount={parsedAmounts[Field.CURRENCY_B]}
+                  contract={SUSHISWAP_V3_POSITION_MANAGER[chainId]}
+                  enabled={!depositBDisabled}
+                >
+                  <AddSectionReviewModalConcentrated
+                    chainId={chainId}
+                    feeAmount={feeAmount}
+                    token0={token0}
+                    token1={token1}
+                    input0={parsedAmounts[Field.CURRENCY_A]}
+                    input1={parsedAmounts[Field.CURRENCY_B]}
+                    position={position}
+                    noLiquidity={noLiquidity}
+                    price={price}
+                    pricesAtTicks={pricesAtTicks}
+                    ticksAtLimit={ticksAtLimit}
+                    tokenId={tokenId}
+                    existingPosition={existingPosition}
+                    onSuccess={() => {
+                      _onFieldAInput('')
+                      _onFieldBInput('')
+                    }}
+                    successLink={successLink}
+                  >
+                    <DialogTrigger asChild>
+                      <Button
+                        fullWidth
+                        size="xl"
+                        testId="add-liquidity-preview"
+                      >
+                        Preview
+                      </Button>
+                    </DialogTrigger>
+                  </AddSectionReviewModalConcentrated>
+                </Checker.ApproveERC20>
+              </Checker.ApproveERC20>
+            </Checker.Slippage>
+          </Checker.Amounts>
+        </Checker.Network>
+      </Checker.Connect>
+    </div>
+  )
+}
 
-      {invalidRange ? (
-        <Message size="sm" variant="warning">
-          Invalid range selected. The minimum price must be lower than the
-          maximum price.
-        </Message>
-      ) : null}
+const ZapWidgetContent = withCheckerRoot(
+  ({
+    chainId,
+    tokensLoading,
+    derivedMintInfo: {
+      ticks,
+      invalidPool,
+      invalidRange,
+      depositADisabled,
+      depositBDisabled,
+      pool,
+    },
+    isLoading,
+  }: WidgetContentProps) => {
+    const { [Bound.LOWER]: tickLower, [Bound.UPPER]: tickUpper } = ticks
+
+    const client = usePublicClient()
+
+    const { address, chain } = useAccount()
+
+    const [slippageTolerance] = useSlippageTolerance(
+      SlippageToleranceStorageKey.AddLiquidity,
+    )
+
+    const [inputAmount, setInputAmount] = useState('')
+    const [inputCurrency, _setInputCurrency] = useState<Type>(
+      defaultCurrency[chainId],
+    )
+
+    const setInputCurrency = useCallback((currency: Type) => {
+      _setInputCurrency(currency)
+      setInputAmount('')
+    }, [])
+
+    const parsedInputAmount = useMemo(
+      () =>
+        tryParseAmount(inputAmount, inputCurrency) ||
+        Amount.fromRawAmount(inputCurrency, 0),
+      [inputAmount, inputCurrency],
+    )
+
+    const {
+      data: zapResponse,
+      isLoading: isZapLoading,
+      isError: isZapError,
+      error: zapError,
+    } = useV3Zap({
+      chainId,
+      sender: address,
+      amountIn: parsedInputAmount,
+      slippage: slippageTolerance,
+      ticks: tickLower && tickUpper ? [tickLower, tickUpper] : undefined,
+      pool: pool || undefined,
+    })
+
+    useEffect(() => {
+      if (!zapError) return
+
+      sendAnalyticsEvent(ZapEventName.ZAP_ERROR, {
+        error: zapError.message,
+      })
+    }, [zapError])
+
+    const { approved } = useApproved(APPROVE_TAG_ZAP_LEGACY)
+
+    const {
+      data: estGas,
+      isError: isEstGasError,
+      error: estGasError,
+    } = useEstimateGas({
+      chainId,
+      account: address,
+      to: zapResponse?.tx.to,
+      data: zapResponse?.tx.data,
+      value: zapResponse?.tx.value,
+      query: {
+        enabled: Boolean(approved && address && zapResponse?.tx),
+      },
+    })
+
+    useEffect(() => {
+      if (!estGasError) return
+
+      sendAnalyticsEvent(ZapEventName.ZAP_ESTIMATE_GAS_CALL_FAILED, {
+        error: estGasError.message,
+      })
+    }, [estGasError])
+
+    const preparedTx = useMemo(() => {
+      return zapResponse && estGas
+        ? { ...zapResponse.tx, gas: estGas }
+        : undefined
+    }, [zapResponse, estGas])
+
+    const { refetchChain: refetchBalances } = useRefetchBalances()
+
+    const onSuccess = useCallback(
+      async (hash: SendTransactionReturnType) => {
+        if (!chain || !pool) return
+
+        setInputAmount('')
+
+        const promise = client.waitForTransactionReceipt({ hash })
+        promise.then(() => {
+          refetchBalances(chain.id)
+        })
+
+        sendAnalyticsEvent(ZapEventName.ZAP_SIGNED, {
+          txHash: hash,
+        })
+
+        const ts = new Date().getTime()
+        void createToast({
+          account: address,
+          type: 'mint',
+          chainId: chain.id,
+          txHash: hash,
+          promise: promise,
+          summary: {
+            pending: `Zapping into the ${pool.token0.symbol}/${pool.token1.symbol} pool`,
+            completed: `Successfully zapped into the ${pool.token0.symbol}/${pool.token1.symbol} pool`,
+            failed: `Something went wrong when zapping into the ${pool.token0.symbol}/${pool.token1.symbol} pool`,
+          },
+          timestamp: ts,
+          groupTimestamp: ts,
+        })
+
+        const receipt = await promise
+        if (receipt.status === 'success') {
+          sendAnalyticsEvent(ZapEventName.ZAP_TRANSACTION_COMPLETED, {
+            txHash: hash,
+            from: receipt.from,
+            chain_id: chain.id,
+          })
+        } else {
+          sendAnalyticsEvent(ZapEventName.ZAP_TRANSACTION_FAILED, {
+            txHash: hash,
+            from: receipt.from,
+            chain_id: chain.id,
+          })
+        }
+      },
+      [refetchBalances, client, chain, address, pool],
+    )
+
+    const { sendTransaction, isPending: isWritePending } = useSendTransaction({
+      mutation: { onSuccess },
+    })
+
+    const [checked, setChecked] = useState(false)
+
+    const showPriceImpactWarning = useMemo(() => {
+      const priceImpactSeverity = warningSeverity(
+        typeof zapResponse?.priceImpact === 'number'
+          ? new Percent(zapResponse.priceImpact, 10_000n)
+          : undefined,
+      )
+      return priceImpactSeverity > 3
+    }, [zapResponse?.priceImpact])
+
+    const showSlippageWarning = useMemo(() => {
+      return !slippageTolerance.lessThan(SLIPPAGE_WARNING_THRESHOLD)
+    }, [slippageTolerance])
+
+    return (
       <div
         className={classNames(
-          !isPoolLoading &&
-            !isOwnerLoading &&
+          !isLoading &&
             (tickLower === undefined ||
               tickUpper === undefined ||
               invalidPool ||
@@ -161,174 +601,88 @@ export const ConcentratedLiquidityWidget: FC<ConcentratedLiquidityWidget> = ({
           'flex flex-col gap-4',
         )}
       >
-        <div className="relative">
-          {depositADisabled && !depositBDisabled ? (
-            <div className="bg-gray-200 dark:bg-slate-800 absolute inset-0 z-[1] rounded-xl flex items-center justify-center">
-              <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 px-10 text-sm font-medium text-center">
-                <LockClosedIcon
-                  width={24}
-                  height={24}
-                  className="text-gray-400 dark:text-slate-400 text-slate-600"
-                />
-                <span className="dark:text-slate-400 text-slate-600">
-                  The market price is outside your specified price range.
-                  Single-asset deposit only.{' '}
-                  <a
-                    // TODO
-                    href="https://www.sushi.com/academy"
-                    target="_blank"
-                    rel="noreferrer"
-                    className="text-blue hover:text-blue-600"
-                  >
-                    Learn More
-                  </a>
-                </span>
-              </div>
-            </div>
-          ) : null}
-          <Web3Input.Currency
-            id="add-liquidity-token0"
-            type="INPUT"
-            className="p-3 bg-white dark:bg-secondary rounded-xl border border-accent"
-            chainId={chainId}
-            value={formattedAmounts[Field.CURRENCY_A]}
-            onChange={_onFieldAInput}
-            onSelect={setToken0}
-            currency={token0}
-            disabled={depositADisabled}
-            loading={tokensLoading || isOwnerLoading || isPoolLoading}
-            allowNative={isWNativeSupported(chainId)}
-          />
-        </div>
-        <div className="flex items-center justify-center mt-[-24px] mb-[-24px] z-10">
-          <div className="p-1 bg-white dark:bg-slate-900 border border-accent rounded-full">
-            <PlusIcon
-              width={16}
-              height={16}
-              className="text-muted-foreground"
-            />
-          </div>
-        </div>
-        <div className="relative">
-          <Transition
-            as={Fragment}
-            show={depositBDisabled && !depositADisabled}
-            enter="transition duration-300 origin-center ease-out"
-            enterFrom="transform opacity-0"
-            enterTo="transform opacity-100"
-            leave="transition duration-75 ease-out"
-            leaveFrom="transform opacity-100"
-            leaveTo="transform opacity-0"
-          >
-            <div className="bg-gray-200 dark:bg-slate-800 absolute inset-0 z-[1] rounded-xl flex items-center justify-center">
-              <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 px-10 text-sm font-medium text-center">
-                <LockClosedIcon
-                  width={24}
-                  height={24}
-                  className="text-gray-400 dark:text-slate-400 text-slate-600"
-                />
-                <span className="dark:text-slate-400 text-slate-600">
-                  The market price is outside your specified price range.
-                  Single-asset deposit only.{' '}
-                  <a
-                    // TODO
-                    href="https://www.sushi.com/academy"
-                    target="_blank"
-                    rel="noreferrer"
-                    className="text-blue hover:text-blue-600"
-                  >
-                    Learn More
-                  </a>
-                </span>
-              </div>
-            </div>
-          </Transition>
-          <Web3Input.Currency
-            id="add-liquidity-token1"
-            type="INPUT"
-            className="p-3 bg-white dark:bg-secondary rounded-xl border border-accent"
-            chainId={chainId}
-            value={formattedAmounts[Field.CURRENCY_B]}
-            onChange={_onFieldBInput}
-            onSelect={setToken1}
-            currency={token1}
-            loading={tokensLoading || isOwnerLoading || isPoolLoading}
-            disabled={depositBDisabled}
-            allowNative={isWNativeSupported(chainId)}
-          />
-        </div>
-
+        <Web3Input.Currency
+          id="zap-liquidity-token"
+          type="INPUT"
+          className="p-3 bg-white dark:bg-secondary rounded-xl border border-accent"
+          chainId={chainId}
+          value={inputAmount}
+          onChange={setInputAmount}
+          onSelect={setInputCurrency}
+          currency={inputCurrency}
+          disabled={depositADisabled && depositBDisabled}
+          loading={tokensLoading || isLoading}
+          allowNative={isWNativeSupported(chainId)}
+        />
         <Checker.Connect fullWidth>
           <Checker.Network fullWidth chainId={chainId}>
-            <Checker.Amounts fullWidth chainId={chainId} amounts={amounts}>
-              <Checker.Slippage
+            <Checker.Amounts
+              fullWidth
+              chainId={chainId}
+              amount={parsedInputAmount}
+            >
+              <Checker.Guard
+                guardWhen={!checked && showPriceImpactWarning}
+                guardText="Price impact too high"
+                variant="destructive"
+                size="xl"
                 fullWidth
-                slippageTolerance={slippagePercent}
-                text="Continue With High Slippage"
               >
-                <Checker.ApproveERC20
+                <Checker.Slippage
                   fullWidth
-                  id="approve-erc20-0"
-                  amount={parsedAmounts[Field.CURRENCY_A]}
-                  contract={SUSHISWAP_V3_POSITION_MANAGER[chainId]}
-                  enabled={!depositADisabled}
+                  text="Zap With High Slippage"
+                  slippageTolerance={slippageTolerance}
                 >
                   <Checker.ApproveERC20
+                    id="approve-token"
+                    className="whitespace-nowrap"
                     fullWidth
-                    id="approve-erc20-1"
-                    amount={parsedAmounts[Field.CURRENCY_B]}
-                    contract={SUSHISWAP_V3_POSITION_MANAGER[chainId]}
-                    enabled={!depositBDisabled}
+                    amount={parsedInputAmount}
+                    contract={zapResponse?.tx.to}
                   >
-                    <AddSectionReviewModalConcentrated
-                      chainId={chainId}
-                      feeAmount={feeAmount}
-                      token0={token0}
-                      token1={token1}
-                      input0={parsedAmounts[Field.CURRENCY_A]}
-                      input1={parsedAmounts[Field.CURRENCY_B]}
-                      position={position}
-                      noLiquidity={noLiquidity}
-                      price={price}
-                      pricesAtTicks={pricesAtTicks}
-                      ticksAtLimit={ticksAtLimit}
-                      tokenId={tokenId}
-                      existingPosition={existingPosition}
-                      onSuccess={() => {
-                        _onFieldAInput('')
-                        _onFieldBInput('')
-                      }}
-                      successLink={successLink}
-                    >
-                      <DialogTrigger asChild>
-                        <Button
-                          fullWidth
-                          size="xl"
-                          testId="add-liquidity-preview"
-                        >
-                          Preview
-                        </Button>
-                      </DialogTrigger>
-                    </AddSectionReviewModalConcentrated>
+                    <Checker.Success tag={APPROVE_TAG_ZAP_LEGACY}>
+                      <Button
+                        size="xl"
+                        fullWidth
+                        testId="zap-liquidity"
+                        onClick={() =>
+                          preparedTx && sendTransaction(preparedTx)
+                        }
+                        loading={isZapLoading || isWritePending}
+                        disabled={!preparedTx}
+                      >
+                        {isZapError ? (
+                          'No route found'
+                        ) : isEstGasError ? (
+                          'Shoot! Something went wrong :('
+                        ) : isWritePending ? (
+                          <Dots>Confirm Transaction</Dots>
+                        ) : (
+                          'Confirm Transaction'
+                        )}
+                      </Button>
+                    </Checker.Success>
                   </Checker.ApproveERC20>
-                </Checker.ApproveERC20>
-              </Checker.Slippage>
+                </Checker.Slippage>
+              </Checker.Guard>
             </Checker.Amounts>
           </Checker.Network>
         </Checker.Connect>
+        {showSlippageWarning && <SlippageWarning className="mt-4" />}
+        {showPriceImpactWarning && (
+          <PriceImpactWarning
+            className="mt-4"
+            checked={checked}
+            setChecked={setChecked}
+          />
+        )}
+        <V3ZapInfoCard
+          zapResponse={zapResponse}
+          isZapError={isZapError}
+          inputCurrencyAmount={parsedInputAmount}
+          pool={pool || null}
+        />
       </div>
-    </div>
-  )
-
-  if (withTitleAndDescription)
-    return (
-      <FormSection
-        title="Liquidity"
-        description="Depending on your range, the supplied tokens for this position will not always be a 50:50 ratio."
-      >
-        {widget}
-      </FormSection>
     )
-
-  return widget
-}
+  },
+)

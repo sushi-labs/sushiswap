@@ -1,13 +1,11 @@
 import { useCustomTokens } from '@sushiswap/hooks'
 import { useQuery } from '@tanstack/react-query'
-import { useMemo } from 'react'
-import { useAllPrices } from 'src/lib/hooks/react-query'
 import type { SushiSwapV3ChainId } from 'sushi/config'
 import { Amount, type Token } from 'sushi/currency'
 import { Position, type SushiSwapV3Pool } from 'sushi/pool/sushiswap-v3'
 import type { Address } from 'viem'
 import { useConfig } from 'wagmi'
-import { usePrices } from '~evm/_common/ui/price-provider/price-provider/use-prices'
+import { useMultiChainPrices } from '~evm/_common/ui/price-provider/price-provider/use-multi-chain-prices'
 import { getConcentratedLiquidityPools } from '../../pools/actions/getConcentratedLiquidityPool'
 import {
   getTokenWithCacheQueryFn,
@@ -55,32 +53,13 @@ export const useConcentratedLiquidityPositions = ({
   const { data: customTokens, hasToken } = useCustomTokens()
 
   const {
-    data: allPrices,
-    isError: isAllPricesError,
-    isLoading: isAllPricesInitialLoading,
-  } = useAllPrices({
-    enabled: chainIds.length > 1,
+    data: prices,
+    isError: isPriceError,
+    isLoading: isPriceInitialLoading,
+  } = useMultiChainPrices({
+    chainIds,
+    enabled: Boolean(account),
   })
-  const {
-    data: chainPrices,
-    isError: isChainPricesError,
-    isLoading: isChainPricesInitialLoading,
-  } = usePrices({
-    chainId: chainIds?.length === 1 ? chainIds[0] : undefined,
-  })
-
-  const prices = useMemo(() => {
-    if (chainIds.length > 1) {
-      return allPrices
-    }
-
-    if (chainIds.length === 1 && chainPrices) {
-      return new Map([[chainIds[0], chainPrices]])
-    }
-  }, [allPrices, chainPrices, chainIds])
-  const isPriceInitialLoading =
-    isAllPricesInitialLoading || isChainPricesInitialLoading
-  const isPriceError = isAllPricesError || isChainPricesError
 
   const config = useConfig()
 
@@ -224,7 +203,10 @@ export const useConcentratedLiquidityPositions = ({
     },
     refetchInterval: Number.POSITIVE_INFINITY,
     enabled: Boolean(
-      account && chainIds && enabled && (prices || isPriceError),
+      account &&
+        chainIds &&
+        enabled &&
+        (!isPriceInitialLoading || isPriceError),
     ),
   })
 

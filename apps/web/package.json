@@ -20,7 +20,6 @@
     "@aptos-labs/wallet-adapter-core": "3.10.0",
     "@aptos-labs/wallet-adapter-react": "2.3.1",
     "@cloudinary/url-gen": "1.11.2",
-    "@fuul/sdk": "4.11.1",
     "@headlessui/react": "2.2.0",
     "@heroicons/react": "2.0.13",
     "@heroicons/react-v1": "npm:@heroicons/react@v1",

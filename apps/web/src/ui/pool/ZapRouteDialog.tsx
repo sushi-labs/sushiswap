@@ -7,14 +7,15 @@ import {
   DialogTrigger,
 } from '@sushiswap/ui'
 import { type FC, type ReactNode, useMemo } from 'react'
+import { isSushiSwapV2Pool } from 'src/lib/functions'
 import { Token, type Type } from 'sushi/currency'
 import { formatPercent } from 'sushi/format'
-import { SushiSwapV2Pool } from 'sushi/pool'
+import type { SushiSwapV2Pool, SushiSwapV3Pool } from 'sushi/pool'
 
 interface ZapRouteDialogProps {
   children: ReactNode
   inputCurrency: Type
-  pool: SushiSwapV2Pool
+  pool: SushiSwapV2Pool | SushiSwapV3Pool
   tokenRatios?: { token0: number; token1: number }
 }
 
@@ -57,11 +58,7 @@ export const ZapRouteDialog: FC<ZapRouteDialogProps> = ({
               </div>
               <div className="flex flex-col items-center">
                 <div className="text-sm font-medium truncate">
-                  {pool instanceof SushiSwapV2Pool
-                    ? '50%'
-                    : tokenRatios
-                      ? `${formatPercent(tokenRatios.token0)}`
-                      : '-%'}
+                  {tokenRatios ? `${formatPercent(tokenRatios.token0)}` : '50%'}
                 </div>
                 <span className="text-[10px] font-medium text-muted-foreground truncate">
                   SushiSwap
@@ -93,11 +90,7 @@ export const ZapRouteDialog: FC<ZapRouteDialogProps> = ({
               </div>
               <div className="flex flex-col items-center">
                 <div className="text-sm font-medium truncate">
-                  {pool instanceof SushiSwapV2Pool
-                    ? '50%'
-                    : tokenRatios
-                      ? `${formatPercent(tokenRatios.token1)}`
-                      : '-%'}
+                  {tokenRatios ? `${formatPercent(tokenRatios.token1)}` : '50%'}
                 </div>
                 <span className="text-[10px] font-medium text-muted-foreground truncate">
                   SushiSwap
@@ -149,7 +142,8 @@ export const ZapRouteDialog: FC<ZapRouteDialogProps> = ({
               <div className="flex flex-col items-center">
                 <div className="text-sm font-medium truncate">100%</div>
                 <span className="text-[10px] font-medium text-muted-foreground truncate">
-                  Deposit to SushiSwap V2
+                  Deposit to SushiSwap{' '}
+                  {isSushiSwapV2Pool(pool as SushiSwapV2Pool) ? 'V2' : 'V3'}
                 </span>
               </div>
               <div className="flex items-center justify-end gap-1">
