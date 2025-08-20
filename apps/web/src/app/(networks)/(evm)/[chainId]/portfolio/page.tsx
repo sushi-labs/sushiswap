@@ -2,6 +2,7 @@ import { Container } from '@sushiswap/ui'
 import { PnLChart } from 'src/ui/portfolio/pnl-chart'
 import { PortfolioHeader } from 'src/ui/portfolio/portfolio-header'
 import { TablesView } from 'src/ui/portfolio/tables-view/tables-view'
+import { WalletHoldings } from 'src/ui/portfolio/wallet-holdings/wallet-holdings'
 //@dev keep this a SSR page
 export default function PortfolioPage() {
   return (
@@ -12,6 +13,7 @@ export default function PortfolioPage() {
       >
         <PortfolioHeader />
         <PnLChart />
+        <WalletHoldings />
         <TablesView />
       </Container>
     </main>
