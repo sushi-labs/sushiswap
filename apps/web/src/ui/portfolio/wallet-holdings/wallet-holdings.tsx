@@ -15,11 +15,12 @@ import {
 } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import type { SortingState, TableState } from '@tanstack/react-table'
-import { useMemo, useState } from 'react'
+import { useMemo, useRef, useState } from 'react'
 import { Wrapper } from 'src/ui/swap/trade/wrapper'
 import { type EvmChainId, evmChains } from 'sushi'
 import { type Native, Token } from 'sushi/currency'
 import { formatUSD } from 'sushi/format'
+import { useOverflow } from '../lp-positions-table/trending'
 import {
   AMOUNT_COLUMN,
   ASSETS_COLUMN,
@@ -82,12 +83,15 @@ export const WalletHoldings = () => {
     }
   }, [sorting])
 
+  const overflowRef = useRef<HTMLDivElement>(null)
+  const { hasOverflow } = useOverflow(overflowRef)
+
   return (
     <Wrapper className="!p-0" enableBorder>
-      <CardHeader className="!gap-2.5">
-        <CardTitle className="!text-primary flex justify-between items-center">
+      <CardHeader className="!gap-2.5 relative">
+        <CardTitle className="!text-primary flex justify-between items-start md:items-center flex-col md:flex-row gap-2 md:gap-0">
           <div className="flex gap-2 items-center">
-            <span className="font-semibold">Wallet: $32,123.23 </span>
+            <span className="font-semibold">Wallet: $32,123.23</span>
             <Button
               variant="default"
               className="!min-h-[32px] !h-[32px] !p-3 font-semibold"
@@ -112,7 +116,10 @@ export const WalletHoldings = () => {
             </div>{' '}
           </div>
         </CardTitle>
-        <div className="flex gap-2">
+        <div
+          className="flex overflow-x-auto gap-2 snap-x hide-scrollbar"
+          ref={overflowRef}
+        >
           <AssetItem
             chainId={1}
             selected={selectedChainId === 1}
@@ -131,6 +138,9 @@ export const WalletHoldings = () => {
             usdValue={3810}
             onSelect={(chainId) => setSelectedChainId(chainId)}
           />
+          {hasOverflow ? (
+            <div className="h-full z-10 w-20 bg-gradient-to-r absolute right-0 top-1/2 -translate-y-1/2 from-transparent to-85% to-white dark:to-slate-900" />
+          ) : null}
         </div>
       </CardHeader>
       <CardContent>

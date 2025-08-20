@@ -14,11 +14,11 @@ export const Trending = () => {
   const { hasOverflow } = useOverflow(overflowRef)
 
   return (
-    <div className="px-4 py-3 border-b border-accent flex gap-4 items-center relative">
-      <p className="font-medium text-sm">Trending:</p>
+    <div className="flex relative gap-4 items-center px-4 py-3 border-b border-accent">
+      <p className="text-sm font-medium">Trending:</p>
       <div
         ref={overflowRef}
-        className="flex overflow-x-auto gap-2 snap-x hide-scrollbar pr-4"
+        className="flex overflow-x-auto gap-2 pr-4 snap-x hide-scrollbar"
       >
         {PLACEHOLDER_POOLS_DATA.map((pool, idx) => {
           const fallbackChain = EvmChainId.ETHEREUM
@@ -49,7 +49,7 @@ export const Trending = () => {
   )
 }
 
-const useOverflow = (ref: React.RefObject<HTMLDivElement | null>) => {
+export const useOverflow = (ref: React.RefObject<HTMLDivElement | null>) => {
   const [hasOverflow, setHasOverflow] = useState(false)
 
   useEffect(() => {

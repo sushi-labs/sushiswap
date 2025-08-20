@@ -14,21 +14,20 @@ import type { PortfolioRow } from './wallet-holdings'
 
 export const CHAIN_COLUMN: ColumnDef<PortfolioRow> = {
   id: 'chain',
-  header: 'Chain',
+  header: () => (
+    <span className="text-slate-450 dark:text-slate-500">Chain</span>
+  ),
   enableSorting: false,
   accessorFn: (row) => row.chainId,
   cell: ({ row }) => (
-    <div className="flex gap-1 items-center md:gap-2">
-      <div className="dark:border-[#222137] border-[#F5F5F5] border rounded-[4px] overflow-hidden">
+    <div className="flex gap-1 md:gap-2">
+      <div className="dark:border-[#222137] ml-auto border-[#F5F5F5] border rounded-[4px] overflow-hidden">
         <NetworkIcon
           type="square"
           chainId={row.original.chainId}
-          className="w-3 h-3 md:w-5 md:h-5"
+          className="w-5 h-5"
         />
       </div>
-      <span className="block text-xs md:hidden">
-        {evmChains[row.original.chainId].name}
-      </span>
     </div>
   ),
   meta: {
@@ -41,7 +40,14 @@ export const CHAIN_COLUMN: ColumnDef<PortfolioRow> = {
 // assets
 export const ASSETS_COLUMN: ColumnDef<PortfolioRow> = {
   id: 'assets',
-  header: 'Assets',
+  header: () => (
+    <div className="flex gap-1 items-center">
+      <span className="text-slate-450 dark:text-slate-500">Assets</span>
+      <div className="px-2 py-1 text-xs rounded-lg bg-slate-200 dark:bg-slate-750 text-slate-450 dark:text-slate-500">
+        {formatPercent(1)}
+      </div>
+    </div>
+  ),
   enableSorting: false,
   accessorFn: (row) => row,
   cell: ({ row }) => {
@@ -77,7 +83,11 @@ export const ASSETS_COLUMN: ColumnDef<PortfolioRow> = {
 // price
 export const PRICE_COLUMN: ColumnDef<PortfolioRow> = {
   id: 'price',
-  header: 'Price',
+  header: () => (
+    <span className="font-semibold text-slate-450 dark:text-slate-500">
+      Price
+    </span>
+  ),
   accessorFn: (row) => row.price,
   sortingFn: ({ original: rowA }, { original: rowB }) =>
     rowA.price - rowB.price,
@@ -95,7 +105,11 @@ export const PRICE_COLUMN: ColumnDef<PortfolioRow> = {
 // amount
 export const AMOUNT_COLUMN: ColumnDef<PortfolioRow> = {
   id: 'amount',
-  header: 'Amount',
+  header: () => (
+    <span className="font-semibold text-slate-450 dark:text-slate-500">
+      Amount
+    </span>
+  ),
   accessorFn: (row) => row,
   sortingFn: ({ original: rowA }, { original: rowB }) =>
     rowA.amount - rowB.amount,
@@ -103,7 +117,7 @@ export const AMOUNT_COLUMN: ColumnDef<PortfolioRow> = {
     return (
       <div className="flex items-center gap-1 md:gap-2 min-w-[130px]">
         <span className="whitespace-nowrap">
-          {formatNumber(row.original.amount)}
+          {formatNumber(row.original.amount)} {row.original.token.symbol}
         </span>
       </div>
     )
@@ -123,7 +137,11 @@ export const AMOUNT_COLUMN: ColumnDef<PortfolioRow> = {
 // value
 export const VALUE_COLUMN: ColumnDef<PortfolioRow> = {
   id: 'value',
-  header: 'Value',
+  header: () => (
+    <span className="font-semibold text-slate-450 dark:text-slate-500">
+      Value
+    </span>
+  ),
   accessorFn: (row) => row.value,
   sortingFn: ({ original: rowA }, { original: rowB }) =>
     rowA.value - rowB.value,
@@ -141,7 +159,11 @@ export const VALUE_COLUMN: ColumnDef<PortfolioRow> = {
 // unpnl
 export const UPNL_COLUMN: ColumnDef<PortfolioRow> = {
   id: 'uPnL',
-  header: 'uPnL',
+  header: () => (
+    <span className="font-semibold text-slate-450 dark:text-slate-500">
+      uPnL
+    </span>
+  ),
   accessorFn: (row) => row.uPnL,
   sortingFn: ({ original: a }, { original: b }) =>
     Number(a.uPnL) - Number(b.uPnL),
@@ -179,7 +201,11 @@ export const UPNL_COLUMN: ColumnDef<PortfolioRow> = {
 
 export const LAST_30_DAY_COLUMN: ColumnDef<PortfolioRow> = {
   id: 'last30Days',
-  header: 'Last 30 Days',
+  header: () => (
+    <span className="font-semibold text-slate-450 dark:text-slate-500">
+      Last 30 Days
+    </span>
+  ),
   enableSorting: false,
   accessorFn: (row) => row.last30Days,
   cell: ({ row }) => {
