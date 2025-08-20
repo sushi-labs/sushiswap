@@ -1,15 +1,13 @@
 import React, { useEffect, useTransition } from 'react'
-import { useSwap } from '~stellar/_common/lib/hooks/use-swap'
+import { useQuote } from '~stellar/_common/lib/hooks/use-quote'
 import {
   useSimpleSwapActions,
   useSimpleSwapState,
 } from '~stellar/_common/ui/Swap/simple/simple-swap-provider/simple-swap-provider'
 import { CurrencyInput } from '~stellar/_common/ui/currency/currency-input/currency-input'
-import { useStellarWallet } from '~stellar/providers'
 
 export const SimpleSwapToken0Input = () => {
   const [, startTransition] = useTransition()
-  const { isConnected } = useStellarWallet()
   const { amount, token0 } = useSimpleSwapState()
   const {
     setAmount,
@@ -22,26 +20,24 @@ export const SimpleSwapToken0Input = () => {
     // setNoRouteFound,
   } = useSimpleSwapActions()
   const {
-    mutateAsync: swapTokens,
-    isPending: isSwapPending,
-    isSuccess: isSwapSuccess,
-    data: swapAmounts,
-    isError: isSwapError,
-    error: swapError,
-  } = useSwap({
+    mutateAsync: getQuote,
+    isPending: isQuotePending,
+    isSuccess: isQuoteSuccess,
+    data: quoteAmount,
+    isError: isQuoteError,
+    error: quoteError,
+  } = useQuote({
     zeroForOne: true,
   })
 
   useEffect(() => {
-    // TODO: allow to check swap amount without being connected
-    if (!isConnected) return
     startTransition(async () => {
       setOutputAmount(0n)
       setSlippageAmount(0)
       // setNoRouteFound('')
       if (Number(amount) > 0) {
-        const result = await swapTokens()
-        console.log('swap result', result)
+        const result = await getQuote()
+        console.log('quote result', result)
         // if (route?.route) {
         //   setBestRoutes(route?.route)
         //   setNoRouteFound('')
@@ -51,30 +47,30 @@ export const SimpleSwapToken0Input = () => {
         // }
       }
     })
-  }, [amount, swapTokens, isConnected, setOutputAmount, setSlippageAmount])
+  }, [amount, getQuote, setOutputAmount, setSlippageAmount])
 
   useEffect(() => {
-    if (isSwapPending) {
+    if (isQuotePending) {
       setPriceFetching(true)
     } else {
       setPriceFetching(false)
     }
-  }, [isSwapPending, setPriceFetching])
+  }, [isQuotePending, setPriceFetching])
 
   useEffect(() => {
-    if (isSwapError) {
-      setError(swapError.message)
+    if (isQuoteError) {
+      setError(quoteError.message)
     } else {
       setError('')
     }
-  }, [isSwapError, swapError, setError])
+  }, [isQuoteError, quoteError, setError])
 
   useEffect(() => {
-    if (isSwapSuccess) {
-      setOutputAmount(BigInt(Math.abs(Number(swapAmounts.amountOut))))
-      setSlippageAmount(Math.abs(Number(swapAmounts.amountOut)))
+    if (isQuoteSuccess) {
+      setOutputAmount(BigInt(Math.abs(Number(quoteAmount))))
+      setSlippageAmount(Math.abs(Number(quoteAmount)))
     }
-  }, [isSwapSuccess, swapAmounts, setOutputAmount, setSlippageAmount])
+  }, [isQuoteSuccess, quoteAmount, setOutputAmount, setSlippageAmount])
 
   return (
     <CurrencyInput
