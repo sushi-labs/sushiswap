@@ -40,7 +40,8 @@ export const SimpleSwapToken0Input = () => {
       setSlippageAmount(0)
       // setNoRouteFound('')
       if (Number(amount) > 0) {
-        await swapTokens()
+        const result = await swapTokens()
+        console.log('swap result', result)
         // if (route?.route) {
         //   setBestRoutes(route?.route)
         //   setNoRouteFound('')
@@ -70,8 +71,8 @@ export const SimpleSwapToken0Input = () => {
 
   useEffect(() => {
     if (isSwapSuccess) {
-      setOutputAmount(swapAmounts.amountOut)
-      setSlippageAmount(Number(swapAmounts.amountOut))
+      setOutputAmount(BigInt(Math.abs(Number(swapAmounts.amountOut))))
+      setSlippageAmount(Math.abs(Number(swapAmounts.amountOut)))
     }
   }, [isSwapSuccess, swapAmounts, setOutputAmount, setSlippageAmount])
 
