@@ -32,9 +32,10 @@ import { Native } from 'sushi/currency'
 import { formatPercent } from 'sushi/format'
 import tailwindConfig from 'tailwind.config'
 import resolveConfig from 'tailwindcss/resolveConfig'
-import { NetworkMenu } from '../swap/trade/favorite-recent/network-menu'
-import { Wrapper } from '../swap/trade/wrapper'
-import { LPPositionsNetworkFilter } from './lp-positions-table/lp-positions-network-filter'
+import { NetworkMenu } from '../../swap/trade/favorite-recent/network-menu'
+import { Wrapper } from '../../swap/trade/wrapper'
+import { LPPositionsNetworkFilter } from '../lp-positions-table/lp-positions-network-filter'
+import { PnlNetworkFilter } from './pnl-network-filter'
 
 echarts.use([
   CanvasRenderer,
@@ -366,7 +367,7 @@ export const PnLChart = () => {
               <div className="flex justify-between items-center w-full md:hidden">
                 <span className="text-sm !font-medium text-[#666666]">PnL</span>
 
-                <LPPositionsNetworkFilter />
+                <PnlNetworkFilter />
               </div>
               <span className="text-2xl !font-medium text-green-500 hidden md:block">
                 $3,898.09
@@ -403,7 +404,7 @@ export const PnLChart = () => {
                 </ChartPeriodButton>
               </div>
               <div className="hidden md:block">
-                <LPPositionsNetworkFilter />
+                <PnlNetworkFilter />
               </div>
             </div>
           </div>
