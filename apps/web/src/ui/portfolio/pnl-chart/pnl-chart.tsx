@@ -238,7 +238,7 @@ export const PnLChart = () => {
   const formatLabel = (date: Date, period: PnLChartPeriod): string => {
     switch (period) {
       case PnLChartPeriod.OneDay:
-        return format(date, 'HH:mm')
+        return format(date, 'h a')
       case PnLChartPeriod.SevenDay:
         return format(date, 'eee')
       case PnLChartPeriod.ThirtyDay:
