@@ -98,11 +98,11 @@ export const LPPositionsNetworkFilter = () => {
           </div>
 
           {allSelected ? (
-            <div className="mr-auto pl-1">
+            <div className="pl-1 mr-auto">
               <Button
                 variant="ghost"
                 size="xs"
-                className="text-blue dark:text-skyblue font-medium"
+                className="font-medium text-blue dark:text-skyblue"
                 onClick={clearAll}
               >
                 Clear All

@@ -34,6 +34,7 @@ import tailwindConfig from 'tailwind.config'
 import resolveConfig from 'tailwindcss/resolveConfig'
 import { NetworkMenu } from '../swap/trade/favorite-recent/network-menu'
 import { Wrapper } from '../swap/trade/wrapper'
+import { LPPositionsNetworkFilter } from './lp-positions-table/lp-positions-network-filter'
 
 echarts.use([
   CanvasRenderer,
@@ -356,7 +357,7 @@ export const PnLChart = () => {
   return (
     <Wrapper className="!p-0" enableBorder>
       <CardHeader>
-        <CardTitle className="">
+        <CardTitle className="!text-primary">
           <div className="flex flex-col gap-1 justify-between items-start md:items-center md:flex-row md:gap-0">
             <div className="flex flex-col gap-1 w-full">
               <span className="text-sm !font-medium text-[#666666] hidden md:block">
@@ -365,12 +366,7 @@ export const PnLChart = () => {
               <div className="flex justify-between items-center w-full md:hidden">
                 <span className="text-sm !font-medium text-[#666666]">PnL</span>
 
-                <NetworkMenu
-                  triggerIcon={<PlusCircleIcon className="w-1 aspect-1" />}
-                  triggerText="Network"
-                  triggerVariant="secondary"
-                  className="!min-h-[36px] !h-[36px] text-primary border border-[#00000014] dark:border-[#FFFFFF14] border-dashed !bg-[#00000005] dark:!bg-[#FFFFFF05] hover:!bg-[#F338C31A]"
-                />
+                <LPPositionsNetworkFilter />
               </div>
               <span className="text-2xl !font-medium text-green-500 hidden md:block">
                 $3,898.09
@@ -406,12 +402,9 @@ export const PnLChart = () => {
                   All
                 </ChartPeriodButton>
               </div>
-              <NetworkMenu
-                triggerIcon={<PlusCircleIcon />}
-                triggerText="Network"
-                triggerVariant="secondary"
-                className="!min-h-[36px] !h-[36px] text-primary border border-[#00000014] dark:border-[#FFFFFF14] border-dashed !bg-[#00000005] dark:!bg-[#FFFFFF05] hover:!bg-[#F338C31A] hidden md:inline-flex"
-              />
+              <div className="hidden md:block">
+                <LPPositionsNetworkFilter />
+              </div>
             </div>
           </div>
         </CardTitle>

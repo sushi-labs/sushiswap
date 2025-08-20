@@ -4,8 +4,8 @@ import { LPPositionsNetworkFilter } from './lp-positions-network-filter'
 
 export const LPPositionsTableFilters = () => {
   return (
-    <div className="flex items-center gap-2">
-      <div className="flex items-center gap-1">
+    <div className="flex gap-2 items-center">
+      <div className="flex gap-1 items-center">
         <ProtocolButton protocol={SushiSwapProtocol.SUSHISWAP_V2} />
         <ProtocolButton protocol={SushiSwapProtocol.SUSHISWAP_V3} />
         <ProtocolButton protocol="SUSHISWAP_V4" />
