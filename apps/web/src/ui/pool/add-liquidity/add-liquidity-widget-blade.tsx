@@ -1,7 +1,7 @@
 import { PlusIcon } from '@heroicons/react-v1/solid'
 import type { BladePool } from '@sushiswap/graph-client/data-api'
 import { createErrorToast, createToast } from '@sushiswap/notifications'
-import { Button, DateField } from '@sushiswap/ui'
+import { Button } from '@sushiswap/ui'
 import { waitForTransactionReceipt } from '@wagmi/core'
 import { format } from 'date-fns'
 import { type FC, Fragment, useMemo } from 'react'
@@ -17,7 +17,6 @@ import { useBladeVestingDeposits } from 'src/lib/wagmi/hooks/positions/hooks/use
 import { Checker } from 'src/lib/wagmi/systems/Checker'
 import { CheckerProvider } from 'src/lib/wagmi/systems/Checker/Provider'
 import { EvmChainId, gasMargin } from 'sushi'
-import { isBladeChainId } from 'sushi/config'
 import { type BladeChainId, isWNativeSupported } from 'sushi/config'
 import {
   Amount,
@@ -77,15 +76,12 @@ export const AddLiquidityWidgetBlade: FC<AddLiquidityWidgetBladeProps> = ({
   replaceTokenAt,
 }) => {
   const { address } = useAccount()
-  const {
-    data: vestingDesposits,
-    isLoading: isLoadingVestingDeposits,
-    refetch: refetchVestingDeposits,
-  } = useBladeVestingDeposits({
-    contractAddress: pool.address,
-    account: address,
-    chainId,
-  })
+  const { data: vestingDesposits, refetch: refetchVestingDeposits } =
+    useBladeVestingDeposits({
+      contractAddress: pool.address,
+      account: address,
+      chainId,
+    })
   const lockedUntil = vestingDesposits?.[0]
   const lockDurationIsOver = lockedUntil
     ? Number(lockedUntil) * 1000 < Date.now()
@@ -94,6 +90,7 @@ export const AddLiquidityWidgetBlade: FC<AddLiquidityWidgetBladeProps> = ({
     data: depositParams,
     error,
     isLoading: isLoadingParams,
+    refetch: refetchParams,
   } = useBladeDepositParams({
     sender: address,
     poolAddress: pool.address,
@@ -342,40 +339,6 @@ export const AddLiquidityWidgetBlade: FC<AddLiquidityWidgetBladeProps> = ({
     )
   }
 
-  const Approvals: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-    // Only include tokens that actually need a non-zero approval amount
-    const tokensToApprove = tokens.map((token, i) => {
-      const value = inputs[token.id] ?? ''
-      const amount =
-        tryParseAmount(value, token) ?? Amount.fromRawAmount(token, 0)
-      return { token, amount, i }
-    })
-
-    return tokensToApprove.reduceRight<React.ReactNode>(
-      (acc, { token, amount, i }) => {
-        return (
-          <Checker.ApproveERC20
-            key={`${token.wrapped.address}-${i}-approve`}
-            id={`approve-${i}`}
-            className="whitespace-nowrap"
-            fullWidth
-            disabled={
-              !depositParams ||
-              isLoadingParams ||
-              Boolean(simError) ||
-              isLoadingVestingDeposits
-            }
-            amount={amount}
-            contract={pool!.address}
-          >
-            {acc}
-          </Checker.ApproveERC20>
-        )
-      },
-      children,
-    )
-  }
-
   return (
     <div className="flex flex-col gap-4 mb-10">
       {/* Dynamic token rows */}
@@ -438,18 +401,33 @@ export const AddLiquidityWidgetBlade: FC<AddLiquidityWidgetBladeProps> = ({
                   disabled={Boolean(error?.message)}
                   onClick={() => {}}
                 >
-                  <Checker.Custom
-                    showChildren={!simErrorMessage}
-                    buttonText={simErrorMessage || 'Simulation Error'}
-                    disabled={Boolean(simErrorMessage)}
-                    onClick={() => {}}
+                  <Checker.Amounts
+                    fullWidth
+                    chainId={chainId}
+                    amounts={useMemo(() => parsedInputs, [parsedInputs])}
                   >
-                    <Checker.Amounts
-                      fullWidth
-                      chainId={chainId}
-                      amounts={useMemo(() => parsedInputs, [parsedInputs])}
+                    <Checker.TransferERC20Multiple
+                      id="add-liquidity-blade"
+                      amounts={parsedInputs
+                        .filter((i) => i.currency.isToken && i.greaterThan(0))
+                        .map((amount) => ({
+                          amount,
+                          sendTo: pool.address,
+                        }))}
+                      enabled={
+                        parsedInputs.filter(
+                          (i) => i.currency.isToken && i.greaterThan(0),
+                        ).length > 0
+                      }
+                      onSuccess={refetchParams}
+                      size="xl"
                     >
-                      <Approvals>
+                      <Checker.Custom
+                        showChildren={!simErrorMessage}
+                        buttonText={simErrorMessage || 'Simulation Error'}
+                        disabled={Boolean(simErrorMessage)}
+                        onClick={() => {}}
+                      >
                         <Checker.Success tag={APPROVE_TAG_ADD_BLADE}>
                           <Button
                             size="xl"
@@ -472,9 +450,9 @@ export const AddLiquidityWidgetBlade: FC<AddLiquidityWidgetBladeProps> = ({
                             Deposit
                           </Button>
                         </Checker.Success>
-                      </Approvals>
-                    </Checker.Amounts>
-                  </Checker.Custom>
+                      </Checker.Custom>
+                    </Checker.TransferERC20Multiple>
+                  </Checker.Amounts>
                 </Checker.Custom>
               </Checker.Custom>
             </Checker.Network>
