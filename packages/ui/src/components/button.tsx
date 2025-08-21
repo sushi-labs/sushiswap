@@ -30,7 +30,7 @@ const buttonVariants = cva(
         quinary:
           'bg-blue-500/10 text-blue-500 hover:bg-blue-500/20 focus:bg-blue-500/30',
         networks:
-          'bg-[#0000001F] dark:bg-[#FFFFFF1F] hover:bg-[#00000020] dark:hover:bg-[#FFFFFF20]',
+          'bg-[#0000001F] dark:bg-slate-750 dark:text-pink-100 hover:bg-[#00000020] dark:hover:bg-[#FFFFFF20]',
         ghost: 'hover:bg-secondary focus:bg-accent',
         link: 'text-blue hover:underline hover:text-blue-700 font-semibold !p-0 !h-[unset] !min-h-[unset]',
       },

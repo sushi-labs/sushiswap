@@ -28,10 +28,7 @@ export const DCAOrdersTable = () => {
   const [showInUsd, setShowInUsd] = useState(true)
   const [isOpen, setIsOpen] = useState(false)
   const [selectedOrderId, setSelectedRowId] = useState<number | null>(null)
-  const [paginationState, setPaginationState] = useState<PaginationState>({
-    pageIndex: 0,
-    pageSize: 10,
-  })
+
   const { orders, ordersLoading } = useTradeTablesContext()
   const data = useMemo(() => {
     return getTwapDcaOrders(orders).filter(
@@ -97,11 +94,7 @@ export const DCAOrdersTable = () => {
             loading={ordersLoading}
             className="border-none [&_td]:h-[92px]"
             rowRenderer={rowRenderer}
-            pagination
-            state={{
-              pagination: paginationState,
-            }}
-            onPaginationChange={setPaginationState}
+            pagination={false}
           />
         </Card>
 

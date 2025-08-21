@@ -3,10 +3,10 @@ const formatter = new Intl.NumberFormat('en-US', {
   currency: 'USD',
 })
 const totalUSD = 32123.23
-export const TotalLPPositions = () => {
+export const OpenOrdersTotal = () => {
   return (
-    <div className="font-semibold whitespace-nowrap">
-      LP Positions: {formatter.format(totalUSD)}
+    <div className="font-semibold">
+      Open Orders: {formatter.format(totalUSD)}
     </div>
   )
 }

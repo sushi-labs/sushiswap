@@ -3,7 +3,7 @@ import { SUSHI } from 'sushi/currency'
 
 export const TotalClaimableRewards = () => {
   return (
-    <div className="flex items-center py-1 px-2 rounded-lg gap-2 text-xs bg-gradient-to-r from-blue/[0.08] to-skyblue/[0.08]">
+    <div className="flex items-center py-1 px-2 rounded-lg gap-2 text-xs bg-gradient-to-r whitespace-nowrap from-blue/[0.08] to-skyblue/[0.08]">
       <p className="font-medium text-slate-450 dark:text-pink-200">
         Total Claimable Rewards:{' '}
       </p>

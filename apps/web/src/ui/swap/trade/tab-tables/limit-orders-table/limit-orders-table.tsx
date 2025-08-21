@@ -24,10 +24,6 @@ import {
 
 export const LimitOrdersTable = () => {
   const [showInUsd, setShowInUsd] = useState(true)
-  const [paginationState, setPaginationState] = useState<PaginationState>({
-    pageIndex: 0,
-    pageSize: 10,
-  })
 
   const priceCol = useMemo(
     () => getPriceColumn(showInUsd, setShowInUsd),
@@ -65,17 +61,13 @@ export const LimitOrdersTable = () => {
         </div>
       }
     >
-      <Card className="hidden overflow-hidden border-none bg-slate-50 dark:bg-slate-800 md:block !rounded-t-none xl:!rounded-lg px-2">
+      <Card className="hidden overflow-hidden border-none bg-slate-50 dark:bg-slate-800 md:block !rounded-t-none xl:!rounded-lg">
         <DataTable
           columns={LIMIT_ORDER_COLUMNS}
           data={data}
           loading={ordersLoading}
           className="border-none [&_td]:h-[92px]"
-          pagination={true}
-          state={{
-            pagination: paginationState,
-          }}
-          onPaginationChange={setPaginationState}
+          pagination={false}
         />
       </Card>
 

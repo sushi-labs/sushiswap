@@ -6,7 +6,6 @@ import {
 } from '@sushiswap/graph-client/data-api'
 import { DataTable, SkeletonBox } from '@sushiswap/ui'
 import { Card } from '@sushiswap/ui'
-import type { PaginationState } from '@tanstack/react-table'
 import { useSearchParams } from 'next/navigation'
 import { useMemo } from 'react'
 import { useState } from 'react'
@@ -29,10 +28,7 @@ import {
 export type MarketTrade = RecentSwap
 export const MarketTable = () => {
   const { chainIds, showCurrentPairOnly } = useTradeTablesContext()
-  const [paginationState, setPaginationState] = useState<PaginationState>({
-    pageIndex: 0,
-    pageSize: 10,
-  })
+
   const {
     state: { token0: _token0, token1: _token1 },
   } = useDerivedStateSimpleSwap()
@@ -106,11 +102,7 @@ export const MarketTable = () => {
           data={rowData}
           loading={isLoading}
           className="border-none [&_td]:h-[92px]"
-          pagination={true}
-          state={{
-            pagination: paginationState,
-          }}
-          onPaginationChange={setPaginationState}
+          pagination={false}
         />
       </Card>
 
