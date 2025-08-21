@@ -6,8 +6,7 @@ import {
 } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import type { ColumnDef } from '@tanstack/react-table'
-import { type EvmChainId, evmChains, formatNumber, formatUSD } from 'sushi'
-import type { Native } from 'sushi/currency'
+import { formatNumber, formatUSD } from 'sushi'
 import { formatPercent } from 'sushi/format'
 import { MiniChart } from './mini-chart'
 import type { PortfolioRow } from './wallet-holdings'
@@ -37,7 +36,6 @@ export const CHAIN_COLUMN: ColumnDef<PortfolioRow> = {
   },
 }
 
-// assets
 export const ASSETS_COLUMN: ColumnDef<PortfolioRow> = {
   id: 'assets',
   header: () => (
@@ -80,7 +78,6 @@ export const ASSETS_COLUMN: ColumnDef<PortfolioRow> = {
   },
 }
 
-// price
 export const PRICE_COLUMN: ColumnDef<PortfolioRow> = {
   id: 'price',
   header: () => (
@@ -102,7 +99,6 @@ export const PRICE_COLUMN: ColumnDef<PortfolioRow> = {
   },
 }
 
-// amount
 export const AMOUNT_COLUMN: ColumnDef<PortfolioRow> = {
   id: 'amount',
   header: () => (
@@ -134,7 +130,6 @@ export const AMOUNT_COLUMN: ColumnDef<PortfolioRow> = {
   },
 }
 
-// value
 export const VALUE_COLUMN: ColumnDef<PortfolioRow> = {
   id: 'value',
   header: () => (
@@ -156,7 +151,6 @@ export const VALUE_COLUMN: ColumnDef<PortfolioRow> = {
   },
 }
 
-// unpnl
 export const UPNL_COLUMN: ColumnDef<PortfolioRow> = {
   id: 'uPnL',
   header: () => (
@@ -196,8 +190,6 @@ export const UPNL_COLUMN: ColumnDef<PortfolioRow> = {
     },
   },
 }
-
-// last 30 day
 
 export const LAST_30_DAY_COLUMN: ColumnDef<PortfolioRow> = {
   id: 'last30Days',
