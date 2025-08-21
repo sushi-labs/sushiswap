@@ -93,6 +93,7 @@ export function DataTable<TData, TValue>({
     [],
   )
   const [sorting, setSorting] = React.useState<SortingState>([])
+  const [hoveredRowId, setHoveredRowId] = React.useState<string | null>(null)
 
   const table = useReactTable({
     data,
@@ -119,6 +120,9 @@ export function DataTable<TData, TValue>({
     getSortedRowModel: getSortedRowModel(),
     getFacetedRowModel: getFacetedRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),
+    meta: {
+      getIsRowHovered: (rowId: string) => rowId === hoveredRowId,
+    },
   })
 
   return (
@@ -192,6 +196,8 @@ export function DataTable<TData, TValue>({
                       ? testId(row.original, r)
                       : `${testId}-${r}-tr`
                   }
+                  onMouseEnter={() => setHoveredRowId(row.id)}
+                  onMouseLeave={() => setHoveredRowId(null)}
                 >
                   {row.getVisibleCells().map((cell, i) =>
                     linkFormatter &&

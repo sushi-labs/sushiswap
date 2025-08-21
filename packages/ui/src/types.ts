@@ -1,6 +1,14 @@
+import type { RowData } from '@tanstack/react-table'
 import type React from 'react'
 import type { ComponentType } from 'react'
 import type { FC, JSX } from 'react'
+
+declare module '@tanstack/react-table' {
+  // biome-ignore lint/correctness/noUnusedVariables: correct
+  interface TableMeta<TData extends RowData> {
+    getIsRowHovered: (rowId: string) => boolean
+  }
+}
 
 export enum AppType {
   Root = 'Explore Apps',
