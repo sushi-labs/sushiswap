@@ -5,6 +5,7 @@ import { useMemo } from 'react'
 import { useCreateQuery } from 'src/lib/hooks/useCreateQuery'
 import { NotificationBadge } from 'src/lib/wagmi/components/user-portfolio/notification-badge'
 import { LPPositionsTable } from '../lp-positions-table/lp-positions-table'
+import { OpenOrdersTable } from '../open-orders-table/open-orders-table'
 import {
   PORTFOLIO_TABLE_VIEW,
   TablesProvider,
@@ -41,7 +42,7 @@ const useTabs = () => {
         component: (
           <div className="flex flex-col gap-6">
             <LPPositionsTable />
-            <div>orders table</div>
+            <OpenOrdersTable />
           </div>
         ),
       },
@@ -55,7 +56,7 @@ const useTabs = () => {
         label: `Open Orders`,
         count: totalOpenOrdersCount,
         value: PORTFOLIO_TABLE_VIEW.OPEN_ORDERS,
-        component: <div>orders table</div>,
+        component: <OpenOrdersTable />,
       },
     ]
   }, [])

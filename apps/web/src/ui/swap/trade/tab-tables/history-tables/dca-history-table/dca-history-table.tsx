@@ -2,7 +2,7 @@
 
 import { OrderStatus } from '@orbs-network/twap-sdk'
 import { Card, DataTable, Loader, SkeletonBox, Slot } from '@sushiswap/ui'
-import type { ColumnDef, PaginationState, Row } from '@tanstack/react-table'
+import type { ColumnDef, Row } from '@tanstack/react-table'
 import { type ReactNode, useMemo, useState } from 'react'
 import { useCallback } from 'react'
 import InfiniteScroll from 'react-infinite-scroll-component'
@@ -27,10 +27,6 @@ import { DCAOrderDetailsModal } from './order-details-modal'
 
 export const DCAOrdersHistoryTable = () => {
   const { orders, ordersLoading } = useTradeTablesContext()
-  const [paginationState, setPaginationState] = useState<PaginationState>({
-    pageIndex: 0,
-    pageSize: 10,
-  })
 
   const [selectedRowId, setSelectedRowId] = useState<number | null>(null)
   const [isOpen, setIsOpen] = useState(false)
@@ -123,12 +119,8 @@ export const DCAOrdersHistoryTable = () => {
             data={data}
             loading={ordersLoading}
             rowRenderer={rowRenderer}
-            pagination
+            pagination={false}
             className="!border-none [&_td]:h-[92px]"
-            state={{
-              pagination: paginationState,
-            }}
-            onPaginationChange={setPaginationState}
           />
         </Card>
 

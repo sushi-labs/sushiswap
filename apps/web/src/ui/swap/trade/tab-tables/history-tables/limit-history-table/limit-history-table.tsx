@@ -3,8 +3,7 @@
 import { OrderStatus } from '@orbs-network/twap-sdk'
 import { Card, DataTable, Loader, SkeletonBox } from '@sushiswap/ui'
 import type { ColumnDef } from '@tanstack/react-table'
-import type { PaginationState } from '@tanstack/react-table'
-import React, { useMemo, useState } from 'react'
+import React, { useMemo } from 'react'
 import InfiniteScroll from 'react-infinite-scroll-component'
 import {
   type TwapOrder,
@@ -16,7 +15,6 @@ import {
   BUY_COLUMN,
   CHAIN_COLUMN,
   DATE_COLUMN,
-  FILLED_COLUMN,
   SELL_COLUMN,
   STATUS_COLUMN,
   VALUE_PNL_COLUMN,
@@ -26,10 +24,7 @@ import {
 export const LimitOrdersHistoryTable = () => {
   const [showInUsd, setShowInUsd] = React.useState(true)
   const { orders, ordersLoading } = useTradeTablesContext()
-  const [paginationState, setPaginationState] = useState<PaginationState>({
-    pageIndex: 0,
-    pageSize: 10,
-  })
+
   const data = useMemo(() => {
     return getTwapLimitOrders(orders).filter(
       (order) => order.status !== OrderStatus.Open,
@@ -84,11 +79,7 @@ export const LimitOrdersHistoryTable = () => {
           data={data}
           loading={ordersLoading}
           className="border-none [&_td]:h-[96px]"
-          pagination
-          state={{
-            pagination: paginationState,
-          }}
-          onPaginationChange={setPaginationState}
+          pagination={false}
         />
       </Card>
 

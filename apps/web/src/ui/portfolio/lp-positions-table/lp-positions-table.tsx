@@ -97,7 +97,7 @@ export const LPPositionsTable = () => {
     //     </div>
     //   }
     // >
-    <Card className="overflow-hidden">
+    <Card className="overflow-hidden dark:!bg-slate-800 !bg-slate-50">
       <Trending />
       <LPPositionsTableHeader />
       <DataTable
