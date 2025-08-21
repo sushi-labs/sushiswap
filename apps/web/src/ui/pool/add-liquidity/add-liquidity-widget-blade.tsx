@@ -8,12 +8,14 @@ import { type FC, Fragment, useMemo } from 'react'
 import { APPROVE_TAG_ADD_BLADE } from 'src/lib/constants'
 import { Web3Input } from 'src/lib/wagmi/components/web3-input'
 import { getWagmiConfig } from 'src/lib/wagmi/config'
+import { useBalancesWeb3 } from 'src/lib/wagmi/hooks/balances/useBalancesWeb3'
 import {
   type BladeParamResponse,
   type BladeParamResponseKatana,
   useBladeDepositParams,
 } from 'src/lib/wagmi/hooks/pools/hooks/use-blade-deposit-params'
 import { useBladeVestingDeposits } from 'src/lib/wagmi/hooks/positions/hooks/use-blade-vesting-deposits'
+import { useWrapNative } from 'src/lib/wagmi/hooks/wnative/useWrapNative'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
 import { CheckerProvider } from 'src/lib/wagmi/systems/Checker/Provider'
 import { EvmChainId, gasMargin } from 'sushi'
@@ -56,11 +58,11 @@ type AddLiquidityWidgetBladeProps = {
 const depositAbi = (chainId: BladeChainId) => {
   if (chainId !== EvmChainId.KATANA) {
     return parseAbi([
-      'function deposit(address sender, uint256[] depositAmounts, uint256 nDays, uint256 poolTokens, uint256 goodUntil, (uint8 v, bytes32 r, bytes32 s) theSignature) payable',
+      'function transmitAndDeposit(uint256[] depositAmounts, uint256 nDays, uint256 poolTokens, uint256 goodUntil, (uint8 v, bytes32 r, bytes32 s) theSignature)',
     ])
   }
   return parseAbi([
-    'function deposit(address depositor, uint256[] depositAmounts, uint256 lockTime, uint256 poolTokens, uint256 goodUntil, (uint8 v, bytes32 r, bytes32 s) theSignature, bytes extraData) payable',
+    'function transmitAndDeposit(uint256[] depositAmounts, uint256 lockTime, uint256 poolTokens, uint256 goodUntil, (uint8 v, bytes32 r, bytes32 s) theSignature, bytes extraData)',
   ])
 }
 
@@ -90,7 +92,7 @@ export const AddLiquidityWidgetBlade: FC<AddLiquidityWidgetBladeProps> = ({
     data: depositParams,
     error,
     isLoading: isLoadingParams,
-    refetch: refetchParams,
+    // refetch: refetchParams,
   } = useBladeDepositParams({
     sender: address,
     poolAddress: pool.address,
@@ -106,14 +108,37 @@ export const AddLiquidityWidgetBlade: FC<AddLiquidityWidgetBladeProps> = ({
     })
   }, [tokens, inputs])
 
-  const nativeTotalAmount = useMemo(() => {
-    return parsedInputs.reduce((acc, curr) => {
-      if (curr.currency.isNative) {
-        return acc + curr.quotient
-      }
-      return acc
-    }, 0n)
+  const parsedTokenInputs = useMemo(() => {
+    return tokens.map((token) => {
+      const value = inputs[token.id] ?? ''
+      const _token = new Token({
+        chainId: token.chainId,
+        address: token?.wrapped.address,
+        decimals: token?.decimals,
+        symbol: token.symbol,
+        name: token?.name,
+      })
+      return tryParseAmount(value, _token) || Amount.fromRawAmount(_token, 0)
+    })
+  }, [tokens, inputs])
+
+  const nativeToWrap = useMemo(() => {
+    return parsedInputs.find((i) => i.currency.isNative)
   }, [parsedInputs])
+
+  const { data: balances } = useBalancesWeb3({
+    chainId,
+    currencies: nativeToWrap ? [nativeToWrap.currency.wrapped] : [],
+    account: address,
+    enabled: Boolean(nativeToWrap),
+  })
+  const wrappedBalance =
+    nativeToWrap && balances?.[nativeToWrap?.currency?.wrapped?.address]
+
+  const wrapNative = useWrapNative({
+    amount: nativeToWrap,
+    enabled: Boolean(nativeToWrap),
+  })
 
   const prepare = useMemo(() => {
     if (!depositParams) {
@@ -133,7 +158,6 @@ export const AddLiquidityWidgetBlade: FC<AddLiquidityWidgetBladeProps> = ({
     if (chainId === EvmChainId.KATANA) {
       const _depositParams = depositParams as BladeParamResponseKatana
       args = [
-        _depositParams.sender,
         amounts,
         BigInt(_depositParams.lock_time),
         BigInt(_depositParams.pool_tokens),
@@ -144,7 +168,6 @@ export const AddLiquidityWidgetBlade: FC<AddLiquidityWidgetBladeProps> = ({
     } else {
       const _depositParams = depositParams as BladeParamResponse
       args = [
-        _depositParams.sender,
         amounts,
         BigInt(_depositParams.n_days),
         BigInt(_depositParams.pool_tokens),
@@ -157,11 +180,11 @@ export const AddLiquidityWidgetBlade: FC<AddLiquidityWidgetBladeProps> = ({
       address: depositParams.clipper_exchange_address,
       chainId,
       abi: depositAbi(chainId),
-      functionName: 'deposit',
+      functionName: 'transmitAndDeposit',
       args,
-      value: nativeTotalAmount,
+      value: 0n,
     } as const satisfies UseSimulateContractParameters
-  }, [depositParams, nativeTotalAmount, chainId])
+  }, [depositParams, chainId])
 
   const {
     data: simulation,
@@ -406,52 +429,62 @@ export const AddLiquidityWidgetBlade: FC<AddLiquidityWidgetBladeProps> = ({
                     chainId={chainId}
                     amounts={useMemo(() => parsedInputs, [parsedInputs])}
                   >
-                    <Checker.TransferERC20Multiple
-                      id="add-liquidity-blade"
-                      amounts={parsedInputs
-                        .filter((i) => i.currency.isToken && i.greaterThan(0))
-                        .map((amount) => ({
-                          amount,
-                          sendTo: pool.address,
-                        }))}
-                      enabled={
-                        parsedInputs.filter(
-                          (i) => i.currency.isToken && i.greaterThan(0),
-                        ).length > 0
+                    <Checker.Custom
+                      showChildren={
+                        !nativeToWrap ||
+                        wrapNative.status === 'success' ||
+                        wrappedBalance?.greaterThan(nativeToWrap || 0) ||
+                        wrappedBalance?.equalTo(nativeToWrap || 0)
                       }
-                      onSuccess={refetchParams}
-                      size="xl"
+                      buttonText={'Wrap Token'}
+                      disabled={wrapNative.status === 'pending'}
+                      loading={wrapNative.status === 'pending'}
+                      onClick={async () => {
+                        await wrapNative.write?.()
+                      }}
                     >
-                      <Checker.Custom
-                        showChildren={!simErrorMessage}
-                        buttonText={simErrorMessage || 'Simulation Error'}
-                        disabled={Boolean(simErrorMessage)}
-                        onClick={() => {}}
+                      <Checker.ApproveERC20Multiple
+                        fullWidth
+                        size="xl"
+                        id="approve-erc20-multiple"
+                        amounts={parsedTokenInputs.map((amount) => ({
+                          amount,
+                          contract: pool.address,
+                        }))}
+                        enabled={parsedTokenInputs.length > 0}
+                        // index={parsedInputs.length - 1}
                       >
-                        <Checker.Success tag={APPROVE_TAG_ADD_BLADE}>
-                          <Button
-                            size="xl"
-                            fullWidth
-                            testId="add-liquidity"
-                            loading={
-                              (txnHash && status === 'pending') ||
-                              isSimLoading ||
-                              isLoadingParams
-                            }
-                            disabled={
-                              !depositParams ||
-                              isLoadingParams ||
-                              (txnHash && status === 'pending') ||
-                              isSimLoading ||
-                              Boolean(simErrorMessage)
-                            }
-                            onClick={deposit}
-                          >
-                            Deposit
-                          </Button>
-                        </Checker.Success>
-                      </Checker.Custom>
-                    </Checker.TransferERC20Multiple>
+                        <Checker.Custom
+                          showChildren={!simErrorMessage}
+                          buttonText={simErrorMessage || 'Simulation Error'}
+                          disabled={Boolean(simErrorMessage)}
+                          onClick={() => {}}
+                        >
+                          <Checker.Success tag={APPROVE_TAG_ADD_BLADE}>
+                            <Button
+                              size="xl"
+                              fullWidth
+                              testId="add-liquidity"
+                              loading={
+                                (txnHash && status === 'pending') ||
+                                isSimLoading ||
+                                isLoadingParams
+                              }
+                              disabled={
+                                !depositParams ||
+                                isLoadingParams ||
+                                (txnHash && status === 'pending') ||
+                                isSimLoading ||
+                                Boolean(simErrorMessage)
+                              }
+                              onClick={deposit}
+                            >
+                              Deposit
+                            </Button>
+                          </Checker.Success>
+                        </Checker.Custom>
+                      </Checker.ApproveERC20Multiple>
+                    </Checker.Custom>
                   </Checker.Amounts>
                 </Checker.Custom>
               </Checker.Custom>
