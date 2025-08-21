@@ -1,25 +1,22 @@
 'use client'
 
-import {
-  type FC,
-  createContext,
-  useCallback,
-  useContext,
-  useMemo,
-  useState,
-} from 'react'
+import { type FC, createContext, useContext, useMemo, useState } from 'react'
 import type { Type } from 'sushi/currency'
+
+export type SendViewStep = 'send' | 'browseContacts' | 'editContact'
 
 interface State {
   mutate: {
     setToken0(token: Type | undefined): void
     setRecipientAddress(address: string): void
     setAmount(amount: string | undefined): void
+    goTo(step: SendViewStep): void
   }
   state: {
     token0: Type | undefined
     recipientAddress: string
     amount: string | undefined
+    currentStep: SendViewStep
   }
 }
 
@@ -42,20 +39,29 @@ const SendTokensProvider: FC<SendTokensProviderProps> = ({
     initialRecipientAddress,
   )
 
+  const [currentStep, setCurrentStep] = useState<SendViewStep>('send')
+
+  const goTo = (step: SendViewStep) => {
+    setCurrentStep(step)
+  }
+
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   const value = useMemo(() => {
     return {
       mutate: {
         setToken0,
         setRecipientAddress,
         setAmount,
+        goTo,
       },
       state: {
         token0,
         recipientAddress,
         amount,
+        currentStep,
       },
     }
-  }, [token0, recipientAddress, amount])
+  }, [token0, recipientAddress, amount, currentStep])
 
   return (
     <SendTokensContext.Provider value={value}>

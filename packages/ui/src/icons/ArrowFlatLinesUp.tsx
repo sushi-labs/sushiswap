@@ -1,5 +1,3 @@
-import React from 'react'
-
 import type { IconComponent } from '../types'
 
 export const ArrowFlatLinesUp: IconComponent = (props) => {

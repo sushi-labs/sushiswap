@@ -29,7 +29,10 @@ export const RecipientInput = ({
             }
             onChange={(e) => mutate.setRecipientAddress(e.target.value.trim())}
           />
-          <Button className="!bg-[#0000001F] !text-slate-900 dark:!text-slate-100 ">
+          <Button
+            className="!bg-[#0000001F] !text-slate-900 dark:!text-slate-100 "
+            onClick={() => mutate.goTo('browseContacts')}
+          >
             <IdentificationIcon className="w-5 h-5" />
             Browse Contact
           </Button>
