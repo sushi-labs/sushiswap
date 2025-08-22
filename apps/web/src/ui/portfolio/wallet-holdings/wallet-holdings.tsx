@@ -17,7 +17,6 @@ import {
   VALUE_COLUMN,
 } from './wallet-holdings-columns'
 import { WalletHoldingsHeader } from './wallet-holdings-header'
-import { WalletHoldingsSubHeader } from './wallet-holdings-sub-header'
 
 export type PortfolioRow = {
   chainId: EvmChainId
@@ -56,9 +55,10 @@ const data: PortfolioRow[] = [
 export const WalletHoldings = () => {
   const { mutate } = useSendTokens()
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
     mutate.setToken0(data[0].token)
-  }, [mutate])
+  }, [])
 
   const state: Partial<TableState> = useMemo(() => {
     return {
@@ -75,7 +75,6 @@ export const WalletHoldings = () => {
         <CardTitle className="!text-primary flex justify-between items-start md:items-center flex-col md:flex-row gap-2 md:gap-0">
           <WalletHoldingsHeader />
         </CardTitle>
-        <WalletHoldingsSubHeader />
       </CardHeader>
       <CardContent>
         <DataTable

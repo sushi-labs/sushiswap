@@ -24,20 +24,12 @@ const SendTokensContext = createContext<State>({} as State)
 
 interface SendTokensProviderProps {
   children: React.ReactNode
-  initialToken0?: Type
-  initialRecipientAddress?: string
 }
 
-const SendTokensProvider: FC<SendTokensProviderProps> = ({
-  children,
-  initialToken0,
-  initialRecipientAddress = '',
-}) => {
-  const [token0, setToken0] = useState<Type | undefined>(initialToken0)
+const SendTokensProvider: FC<SendTokensProviderProps> = ({ children }) => {
+  const [token0, setToken0] = useState<Type | undefined>(undefined)
   const [amount, setAmount] = useState<string | undefined>(undefined)
-  const [recipientAddress, setRecipientAddress] = useState(
-    initialRecipientAddress,
-  )
+  const [recipientAddress, setRecipientAddress] = useState('')
 
   const [currentStep, setCurrentStep] = useState<SendViewStep>('send')
 

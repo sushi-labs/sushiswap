@@ -1,4 +1,5 @@
 import {
+  Button,
   Currency,
   SkeletonBox,
   SkeletonCircle,
@@ -6,7 +7,12 @@ import {
 } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import type { ColumnDef } from '@tanstack/react-table'
+import Link from 'next/link'
+import { useRouter } from 'next/navigation'
+import { useSwapTokenSelect } from 'src/lib/hooks/useTokenSelect'
 import { formatNumber, formatUSD } from 'sushi'
+import { type EvmChainId, evmChains } from 'sushi/chain'
+import { Token, type Type } from 'sushi/currency'
 import { formatPercent } from 'sushi/format'
 import { MiniChart } from './mini-chart'
 import type { PortfolioRow } from './wallet-holdings'
@@ -200,7 +206,8 @@ export const LAST_30_DAY_COLUMN: ColumnDef<PortfolioRow> = {
   ),
   enableSorting: false,
   accessorFn: (row) => row.last30Days,
-  cell: ({ row }) => {
+  cell: ({ row, table }) => {
+    const isHovered = table.options.meta?.getIsRowHovered(row.id) ?? false
     const { last30Days, price } = row.original
 
     if (!last30Days) return null
@@ -208,7 +215,9 @@ export const LAST_30_DAY_COLUMN: ColumnDef<PortfolioRow> = {
     const xData = last30Days.map((p) => p.timestamp)
     const yData = last30Days.map((p) => p.price)
 
-    return (
+    return isHovered ? (
+      <ActionButtons token={row.original.token} onClose={() => {}} />
+    ) : (
       <MiniChart
         xData={xData}
         yData={yData}
@@ -227,4 +236,61 @@ export const LAST_30_DAY_COLUMN: ColumnDef<PortfolioRow> = {
       skeleton: <div className="w-[212px] h-[40px]" />,
     },
   },
+}
+
+const ActionButtons = ({
+  token,
+  // onClose,
+}: { token: Type; onClose?: () => void }) => {
+  // const { handleTokenInput, handleTokenOutput } = useSwapTokenSelect()
+  // const router = useRouter()
+
+  return (
+    <div className="flex col-span-5 gap-2 justify-center items-center md:col-span-2 w-[180px] relative z-40">
+      <Button
+        // onClick={async () => {
+        //   await handleTokenOutput({
+        //     token: new Token({
+        //       chainId: token.chainId as EvmChainId,
+        //       address: token.address,
+        //       decimals: token.decimals,
+        //       symbol: token.symbol,
+        //       name: token.name,
+        //     }),
+        //   })
+        //   onClose?.()
+        // }}
+        size="xs"
+        className="text-slate-50 w-full md:w-fit !rounded-full bg-green-500 font-semibold hover:bg-green-500 active:bg-green-500/95 focus:bg-green-500"
+      >
+        BUY
+      </Button>
+
+      <Button
+        // onClick={async () => {
+        //   await handleTokenInput({
+        //     token: new Token({
+        //       chainId: token.chainId as EvmChainId,
+        //       address: token.address,
+        //       decimals: token.decimals,
+        //       symbol: token.symbol,
+        //       name: token.name,
+        //     }),
+        //   })
+        //   onClose?.()
+        // }}
+        size="xs"
+        className="text-slate-50 w-full md:w-fit bg-red-100 !rounded-full font-semibold hover:bg-red-100 active:bg-red-100/95 focus:bg-red-500"
+      >
+        SELL
+      </Button>
+
+      <Link
+        href={`/${evmChains[token.chainId].name.toLowerCase()}/explore/pools?tokenSymbols=${token.symbol}`}
+        className="text-slate-50 w-full md:w-fit bg-blue-500 rounded-full font-semibold min-h-[26px] h-[26px] px-2 text-xs flex items-center justify-center"
+      >
+        EARN
+      </Link>
+    </div>
+  )
 }

@@ -1,3 +1,5 @@
+'use client'
+
 import { useEffect, useRef, useState } from 'react'
 import { TrendingItemMobile } from 'src/ui/explore/trending/trending-item'
 import { ChainKey, EvmChainId } from 'sushi/chain'

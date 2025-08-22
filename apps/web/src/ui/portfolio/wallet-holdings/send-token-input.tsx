@@ -1,13 +1,9 @@
 import { Web3Input } from 'src/lib/wagmi/components/web3-input'
+import type { EvmChainId } from 'sushi/chain'
 import { isWNativeSupported } from 'sushi/config'
-import type { Type } from 'sushi/currency'
 import { useSendTokens } from './send-token-provider'
 
-export const SendTokenInput = ({
-  currency,
-}: {
-  currency: Type | undefined
-}) => {
+export const SendTokenInput = () => {
   const { mutate, state } = useSendTokens()
   return (
     <Web3Input.Currency
@@ -15,10 +11,10 @@ export const SendTokenInput = ({
       type="INPUT"
       className="overflow-visible p-4 bg-gray-100 rounded-xl dark:bg-slate-900"
       value={state.amount ?? ''}
-      chainId={1}
+      chainId={state.token0?.chainId as EvmChainId}
       onSelect={mutate.setToken0}
       onChange={(value) => mutate.setAmount(value)}
-      currency={currency}
+      currency={state.token0}
       loading={false}
       fetching={false}
       currencyLoading={false}

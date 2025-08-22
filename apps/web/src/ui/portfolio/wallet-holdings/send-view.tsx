@@ -1,6 +1,7 @@
 import { XMarkIcon } from '@heroicons/react/24/outline'
 import { Button, DialogClose, DialogTitle, IconButton } from '@sushiswap/ui'
 import { useMemo } from 'react'
+import { Amount } from 'sushi/currency'
 import { isAddress } from 'viem'
 import { useAmountBalances } from '~evm/_common/ui/balance-provider/use-balances'
 import { RecentRecipients } from './recent-recipients'
@@ -12,7 +13,22 @@ import { VerifyContact } from './verify-contact'
 export const SendView = () => {
   const { state } = useSendTokens()
 
-  // const { data: balances } = useAmountBalances(state.token0?.chainId, [state.token0])
+  console.log('state', state)
+  // const { data: balances } = useAmountBalances(state.token0?.chainId, [
+  //   state.token0,
+  // ])
+
+  // console.log('balances', balances)
+
+  // const sufficientBalance = useMemo(() => {
+  //   if (!state.token0) return false
+  //   if (!state.amount) return true
+
+  //   const amount = Amount.fromRawAmount(state.token0, state.amount)
+  //   return !balances?.get(amount.currency.id)?.lessThan(amount)
+  // }, [balances, state.token0, state.amount])
+
+  // console.log('sufficientBalance', sufficientBalance)
 
   const isRecipientValid = useMemo(() => {
     if (!state.recipientAddress) return false
@@ -21,6 +37,9 @@ export const SendView = () => {
   }, [state.recipientAddress])
 
   const buttonText = useMemo(() => {
+    // if (!sufficientBalance) {
+    //   return 'Insufficient balance'
+    // }
     if (!state?.token0) {
       return 'Select a token'
     }
@@ -33,8 +52,15 @@ export const SendView = () => {
     if (!isRecipientValid) {
       return 'Invalid recipient'
     }
+
     return 'Send'
-  }, [state.token0, state.amount, state.recipientAddress, isRecipientValid])
+  }, [
+    state.token0,
+    state.amount,
+    state.recipientAddress,
+    isRecipientValid,
+    // sufficientBalance,
+  ])
 
   return (
     <>
@@ -48,7 +74,7 @@ export const SendView = () => {
       </div>
       <div>
         <div className="flex flex-col gap-3">
-          <SendTokenInput currency={state.token0} />
+          <SendTokenInput />
           <RecipientInput isRecipientValid={isRecipientValid} />
           <VerifyContact />
         </div>

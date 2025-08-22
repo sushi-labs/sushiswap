@@ -1,3 +1,5 @@
+'use client'
+
 import { Button, classNames } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import { useRef, useState } from 'react'
@@ -6,7 +8,7 @@ import type { EvmChainId } from 'sushi/chain'
 import { evmChains } from 'sushi/chain'
 import { useOverflow } from '../lp-positions-table/trending'
 
-export const WalletHoldingsSubHeader = () => {
+export const PortfolioSubHeader = () => {
   const overflowRef = useRef<HTMLDivElement>(null)
   const { hasOverflow } = useOverflow(overflowRef)
 
@@ -16,7 +18,7 @@ export const WalletHoldingsSubHeader = () => {
 
   return (
     <div
-      className="flex overflow-x-auto gap-2 snap-x hide-scrollbar"
+      className="flex overflow-x-auto gap-2 pt-5 snap-x hide-scrollbar"
       ref={overflowRef}
     >
       <AssetItem

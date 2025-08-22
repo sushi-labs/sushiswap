@@ -1,15 +1,12 @@
-import { NetworkMenu } from '../swap/trade/favorite-recent/network-menu'
+import { PortfolioSubHeader } from './wallet-holdings/portfolio-subheader'
 
 export function PortfolioHeader() {
   return (
-    <div className="flex gap-3 justify-between items-center md:justify-start">
+    <div className="flex flex-col gap-3 items-start md:justify-start">
       <span className="md:text-[32px] text-lg font-semibold">
         Portfolio Overview
       </span>
-      <NetworkMenu
-        triggerVariant="networks"
-        className="!min-h-[36px] !h-[36px]"
-      />
+      <PortfolioSubHeader />
     </div>
   )
 }

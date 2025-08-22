@@ -4,8 +4,8 @@ import { SendWidget } from './send-widget'
 export const WalletHoldingsHeader = () => {
   return (
     <>
-      <div className="flex gap-2 items-center">
-        <span className="font-semibold">Wallet: $32,123.23</span>
+      <div className="flex gap-3 items-center">
+        <span className="font-semibold">Wallet</span>
         <SendWidget />
       </div>
       <div className="flex gap-5">
