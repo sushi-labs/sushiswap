@@ -21,7 +21,7 @@ export const RecipientInput = ({
           <input
             type="text"
             placeholder="Enter Address..."
-            className="p-0 m-0 w-full font-medium bg-transparent border-none outline-none focus:ring-0 text-[20px]"
+            className="p-0 m-0 w-full font-medium bg-transparent border-none outline-none focus:ring-0 text-[20px] !text-slate-900 dark:!text-slate-100"
             value={
               isRecipientValid
                 ? shortenAddress(state.recipientAddress)
@@ -30,7 +30,7 @@ export const RecipientInput = ({
             onChange={(e) => mutate.setRecipientAddress(e.target.value.trim())}
           />
           <Button
-            className="!bg-[#0000001F] !text-slate-900 dark:!text-slate-100 "
+            className="!bg-[#0000001F] !text-slate-900 dark:!text-slate-100"
             onClick={() => mutate.goTo('browseContacts')}
           >
             <IdentificationIcon className="w-5 h-5" />

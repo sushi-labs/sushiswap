@@ -19,20 +19,20 @@ export const RecentRecipients = () => {
 
   return (
     <div className="overflow-x-hidden relative">
-      <div
-        ref={overflowRef}
-        className="flex gap-2.5 text-muted-foreground text-sm font-medium items-center"
-      >
+      <div className="flex gap-2.5 text-muted-foreground text-sm font-medium items-center">
         Recent:
-        <div className="flex gap-2.5 snap-x overflow-x-auto hide-scrollbar">
-          {RECENT_RECIPIENTS.map((address) => (
-            <RecentRecipientItem key={address} address={address} />
+        <div
+          ref={overflowRef}
+          className="flex gap-2.5 snap-x overflow-x-auto hide-scrollbar"
+        >
+          {RECENT_RECIPIENTS.map((address, idx) => (
+            <RecentRecipientItem key={`${address}-${idx}`} address={address} />
           ))}
         </div>
+        {hasOverflow ? (
+          <div className="h-full z-10 w-20 bg-gradient-to-r absolute right-0 top-1/2 -translate-y-1/2 from-transparent to-85% to-white dark:to-slate-900" />
+        ) : null}
       </div>
-      {hasOverflow ? (
-        <div className="h-full z-10 w-20 bg-gradient-to-r absolute right-0 top-1/2 -translate-y-1/2 from-transparent to-85% to-white dark:to-slate-900" />
-      ) : null}
     </div>
   )
 }

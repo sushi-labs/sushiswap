@@ -3,7 +3,7 @@ import { Button } from '@sushiswap/ui'
 
 export const VerifyContact = () => {
   return (
-    <div className="flex justify-between items-center">
+    <div className="flex justify-between items-center -mt-2 -mb-1">
       <span className="text-sm font-medium text-muted-foreground">
         This address is not in your contact. Please review carefully.
       </span>

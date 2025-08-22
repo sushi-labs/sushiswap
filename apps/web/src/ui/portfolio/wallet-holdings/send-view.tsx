@@ -2,6 +2,7 @@ import { XMarkIcon } from '@heroicons/react/24/outline'
 import { Button, DialogClose, DialogTitle, IconButton } from '@sushiswap/ui'
 import { useMemo } from 'react'
 import { isAddress } from 'viem'
+import { useAmountBalances } from '~evm/_common/ui/balance-provider/use-balances'
 import { RecentRecipients } from './recent-recipients'
 import { RecipientInput } from './recipient-input'
 import { SendTokenInput } from './send-token-input'
@@ -10,6 +11,8 @@ import { VerifyContact } from './verify-contact'
 
 export const SendView = () => {
   const { state } = useSendTokens()
+
+  // const { data: balances } = useAmountBalances(state.token0?.chainId, [state.token0])
 
   const isRecipientValid = useMemo(() => {
     if (!state.recipientAddress) return false
