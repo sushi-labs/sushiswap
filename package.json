@@ -40,7 +40,8 @@
       "graphql": "16.6.0",
       "typescript": "catalog:",
       "@types/react": "catalog:react",
-      "@types/react-dom": "catalog:react"
+      "@types/react-dom": "catalog:react",
+      "viem": "2.33.3"
     },
     "patchedDependencies": {
       "@aptos-labs/aptos-client@0.1.0": "patches/@aptos-labs__aptos-client@0.1.0.patch",
