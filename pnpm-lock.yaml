@@ -206,9 +206,6 @@ importers:
       '@cloudinary/url-gen':
         specifier: 1.11.2
         version: 1.11.2
-      '@fuul/sdk':
-        specifier: 4.11.1
-        version: 4.11.1
       '@headlessui/react':
         specifier: 2.2.0
         version: 2.2.0(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
@@ -2588,9 +2585,6 @@ packages:
 
   '@fontsource-variable/inter@5.0.1':
     resolution: {integrity: sha512-cqBEayOWZqERrWnwDUTyUsClZpN1Pv3w/1+NRxwKV4sRdy3RyyRL9DRIgauq8ySxNtJ5ZkNimxsZzCdoiR2Fcw==}
-
-  '@fuul/sdk@4.11.1':
-    resolution: {integrity: sha512-4YbzplgbOHyihllTNqzhv5XCYuA17Wutz498KSa7c59bKNoJ0Ia2r+or1DFhpjnxQMEyTBhmZjFcion11nM31Q==}
 
   '@gql.tada/cli-utils@1.3.9':
     resolution: {integrity: sha512-oRb7SG/+csx9CiypSJTI21KaLfulOUnhX1vxg4FXi2snub9XShkGR2XnnlJVTAOZXY9Vcxti1NutAElxdDkycA==}
@@ -14413,13 +14407,6 @@ snapshots:
 
   '@fontsource-variable/inter@5.0.1': {}
 
-  '@fuul/sdk@4.11.1':
-    dependencies:
-      axios: 1.7.7
-      nanoid: 4.0.0
-    transitivePeerDependencies:
-      - debug
-
   '@gql.tada/cli-utils@1.3.9(graphql@16.6.0)(svelte@4.2.17)(typescript@5.8.3)':
     dependencies:
       '@0no-co/graphqlsp': 1.12.3(graphql@16.6.0)(typescript@5.8.3)
@@ -17788,7 +17775,7 @@ snapshots:
   '@tronweb3/tronwallet-adapter-walletconnect@1.0.6(@types/react@19.0.1)(@upstash/redis@1.22.1(encoding@0.1.13))(bufferutil@4.0.8)(encoding@0.1.13)(immer@9.0.21)(react@19.0.0)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.23.8)':
     dependencies:
       '@tronweb3/tronwallet-abstract-adapter': 1.1.6
-      '@tronweb3/walletconnect-tron': 2.0.0(@upstash/redis@1.22.1(encoding@0.1.13))(bufferutil@4.0.8)(react@19.0.0)(utf-8-validate@5.0.10)
+      '@tronweb3/walletconnect-tron': 2.0.0(@upstash/redis@1.22.1(encoding@0.1.13))(bufferutil@4.0.8)(react@19.0.0)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.23.8)
       '@wagmi/core': 1.4.13(@types/react@19.0.1)(@upstash/redis@1.22.1(encoding@0.1.13))(bufferutil@4.0.8)(encoding@0.1.13)(immer@9.0.21)(react@19.0.0)(typescript@5.8.3)(utf-8-validate@5.0.10)(viem@0.3.50(bufferutil@4.0.8)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.23.8))(zod@3.23.8)
       '@walletconnect/sign-client': 2.17.0(@upstash/redis@1.22.1(encoding@0.1.13))(bufferutil@4.0.8)(utf-8-validate@5.0.10)
       '@walletconnect/types': 2.17.0(@upstash/redis@1.22.1(encoding@0.1.13))
@@ -17847,10 +17834,10 @@ snapshots:
       - utf-8-validate
       - zod
 
-  '@tronweb3/walletconnect-tron@2.0.0(@upstash/redis@1.22.1(encoding@0.1.13))(bufferutil@4.0.8)(react@19.0.0)(utf-8-validate@5.0.10)':
+  '@tronweb3/walletconnect-tron@2.0.0(@upstash/redis@1.22.1(encoding@0.1.13))(bufferutil@4.0.8)(react@19.0.0)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.23.8)':
     dependencies:
-      '@walletconnect/sign-client': 2.17.0(@upstash/redis@1.22.1(encoding@0.1.13))(bufferutil@4.0.8)(utf-8-validate@5.0.10)
-      '@walletconnect/utils': 2.17.0(@upstash/redis@1.22.1(encoding@0.1.13))
+      '@walletconnect/sign-client': 2.21.1(@upstash/redis@1.22.1(encoding@0.1.13))(bufferutil@4.0.8)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.23.8)
+      '@walletconnect/utils': 2.21.1(@upstash/redis@1.22.1(encoding@0.1.13))(bufferutil@4.0.8)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.23.8)
       '@web3modal/standalone': 2.4.3(react@19.0.0)
     transitivePeerDependencies:
       - '@azure/app-configuration'
@@ -17868,7 +17855,9 @@ snapshots:
       - bufferutil
       - react
       - supports-color
+      - typescript
       - utf-8-validate
+      - zod
 
   '@tryghost/content-api@1.11.17':
     dependencies:
