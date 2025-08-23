@@ -530,7 +530,7 @@ export function useConcentratedDerivedMintInfo({
   // amounts
   const independentAmount: Amount<EvmCurrency> | undefined = useMemo(
     () =>
-      currencies[independentField]
+      currencies[independentField] && typedValue
         ? Amount.tryFromHuman(currencies[independentField], typedValue)
         : undefined,
     [currencies, independentField, typedValue],
@@ -543,6 +543,7 @@ export function useConcentratedDerivedMintInfo({
       dependentField === Field.CURRENCY_B ? currencyB : currencyA
     if (
       independentAmount &&
+      independentAmount.amount > 0 &&
       wrappedIndependentAmount &&
       typeof tickLower === 'number' &&
       typeof tickUpper === 'number' &&

@@ -130,7 +130,8 @@ export function getPriceOrderingFromPositionForUI(position?: Position): {
     DAI[chainId as keyof typeof DAI],
     USDC[chainId as keyof typeof USDC],
     USDT[chainId as keyof typeof USDT],
-  ]
+  ].filter(Boolean)
+
   if (stables.some((stable) => stable.isSame(token0))) {
     return {
       priceLower: position.token0PriceUpper.invert(),
@@ -144,7 +145,8 @@ export function getPriceOrderingFromPositionForUI(position?: Position): {
   const bases = [
     EvmNative.fromChainId(chainId).wrap(),
     WBTC[chainId as keyof typeof WBTC],
-  ]
+  ].filter(Boolean)
+
   if (bases.some((base) => base.isSame(token1))) {
     return {
       priceLower: position.token0PriceUpper.invert(),
