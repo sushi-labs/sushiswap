@@ -1,13 +1,13 @@
 import { type UseQueryOptions, useQuery } from '@tanstack/react-query'
 import { isZapSupportedChainId } from 'src/config'
+import { type Amount, Fraction, type Percent, sz } from 'sushi'
 import {
+  type EvmCurrency,
+  Position,
   SUSHISWAP_V3_POSITION_MANAGER,
   type SushiSwapV3ChainId,
-} from 'sushi/config'
-import type { Amount, Type } from 'sushi/currency'
-import { Fraction, type Percent } from 'sushi/math'
-import { Position, type SushiSwapV3Pool } from 'sushi/pool/sushiswap-v3'
-import { sz } from 'sushi/validate'
+  type SushiSwapV3Pool,
+} from 'sushi/evm'
 import { type Address, stringify } from 'viem'
 import { z } from 'zod'
 import { usePrices } from '~evm/_common/ui/price-provider/price-provider/use-prices'
@@ -15,8 +15,8 @@ import { NativeAddress } from '../constants'
 
 const txSchema = z.object({
   data: sz.hex(),
-  to: sz.address(),
-  from: sz.address(),
+  to: sz.evm.address(),
+  from: sz.evm.address(),
   value: z.string().transform((value) => BigInt(value)),
 })
 
@@ -30,18 +30,18 @@ const bundleSchema = z.discriminatedUnion('action', [
     protocol: z.literal('enso'),
     action: z.literal('fee'),
     args: z.object({
-      token: sz.address(),
+      token: sz.evm.address(),
       amount: z.string(),
       bps: z.coerce.number(),
-      receiver: sz.address(),
+      receiver: sz.evm.address(),
     }),
   }),
   z.object({
     protocol: z.literal('enso'),
     action: z.literal('split'),
     args: z.object({
-      tokenIn: z.array(sz.address()),
-      tokenOut: z.array(sz.address()),
+      tokenIn: z.array(sz.evm.address()),
+      tokenOut: z.array(sz.evm.address()),
       amountIn: z.union([z.string(), outputOfCallSchema]),
     }),
   }),
@@ -57,9 +57,9 @@ const bundleSchema = z.discriminatedUnion('action', [
     protocol: z.literal('sushiswap-v3'),
     action: z.literal('depositclmm'),
     args: z.object({
-      tokenOut: z.array(sz.address()),
+      tokenOut: z.array(sz.evm.address()),
       ticks: z.tuple([z.coerce.number().int(), z.coerce.number().int()]),
-      tokenIn: z.array(sz.address()),
+      tokenIn: z.array(sz.evm.address()),
       poolFee: z.coerce.number().int(),
       amountIn: z.array(z.union([z.string(), outputOfCallSchema])),
     }),
@@ -70,7 +70,7 @@ const zapResponseSchema = z.object({
   createdAt: z.number(),
   tx: txSchema,
   amountsOut: z.record(
-    sz.address(),
+    sz.evm.address(),
     z.string().transform((value) => BigInt(value)),
   ),
   gas: z.string().transform((value) => BigInt(value)),
@@ -86,7 +86,7 @@ type UseV3ZapParams = {
   sender: Address | undefined
   receiver?: Address
   pool: SushiSwapV3Pool | undefined
-  amountIn: Amount<Type>
+  amountIn: Amount<EvmCurrency>
   slippage: Percent
   ticks: [number, number] | undefined
   query?: Omit<UseQueryOptions<V3ZapResponse>, 'queryKey' | 'queryFn'>
@@ -113,8 +113,11 @@ export const useV3Zap = ({ query, ...params }: UseV3ZapParams) => {
         amountIn.currency.isNative ? NativeAddress : amountIn.currency.address,
       )
       url.searchParams.set('tokenOut', SUSHISWAP_V3_POSITION_MANAGER[chainId])
-      url.searchParams.set('amountIn', amountIn.quotient.toString())
-      url.searchParams.set('slippage', slippage.multiply(100n).toFixed(0))
+      url.searchParams.set('amountIn', amountIn.amount.toString())
+      url.searchParams.set(
+        'slippage',
+        slippage.mul(100n).toString({ fixed: 0 }),
+      )
       url.searchParams.set('poolToken0', pool.token0.address)
       url.searchParams.set('poolToken1', pool.token1.address)
       url.searchParams.set('poolFeeTier', `${pool.fee}`)
@@ -145,7 +148,7 @@ export const useV3Zap = ({ query, ...params }: UseV3ZapParams) => {
         throw new Error('Liquidity is zero or missing')
 
       const inputCurrencyPrice = prices.getFraction(
-        amountIn.currency.wrapped.address,
+        amountIn.currency.wrap().address,
       )
       const token0Price = prices.getFraction(pool.token0.address)
       const token1Price = prices.getFraction(pool.token1.address)
@@ -158,10 +161,10 @@ export const useV3Zap = ({ query, ...params }: UseV3ZapParams) => {
       })
 
       const amount0USD = token0Price
-        ? +position.amount0.multiply(token0Price).toExact()
+        ? +position.amount0.mul(token0Price).toString()
         : undefined
       const amount1USD = token1Price
-        ? +position.amount1.multiply(token1Price).toExact()
+        ? +position.amount1.mul(token1Price).toString()
         : undefined
 
       const amountOutUSD =
@@ -176,9 +179,9 @@ export const useV3Zap = ({ query, ...params }: UseV3ZapParams) => {
         typeof inputCurrencyPrice !== 'undefined'
       ) {
         const inputUSD = +amountIn
-          .multiply(new Fraction(10_000 - 25, 10_000))
-          .multiply(inputCurrencyPrice)
-          .toExact()
+          .mul(new Fraction({ numerator: 10_000 - 25, denominator: 10_000 }))
+          .mul(inputCurrencyPrice)
+          .toString()
 
         if (inputUSD > 0) {
           priceImpact = Math.round(
@@ -200,7 +203,7 @@ export const useV3Zap = ({ query, ...params }: UseV3ZapParams) => {
           params.pool &&
           params.ticks &&
           prices &&
-          params.amountIn.greaterThan(0n),
+          params.amountIn.gt(0n),
       ),
     ...query,
   })

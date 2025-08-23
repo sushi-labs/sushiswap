@@ -1,10 +1,10 @@
 import { getV3BasePoolsByToken } from '@sushiswap/graph-client/data-api'
-import { isSushiSwapV3ChainId } from 'sushi/config'
-import { getChainIdAddressFromId } from 'sushi/format'
+import { getChainIdAddressFromId } from 'sushi'
+import { type EvmID, isSushiSwapV3ChainId } from 'sushi/evm'
 
 export const getV3PoolsByTokenPair = async (
-  tokenId0: string,
-  tokenId1: string,
+  tokenId0: EvmID,
+  tokenId1: EvmID,
 ) => {
   const { chainId: chainId0, address: address0 } =
     getChainIdAddressFromId(tokenId0)

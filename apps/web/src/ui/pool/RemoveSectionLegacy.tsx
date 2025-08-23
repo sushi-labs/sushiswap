@@ -21,10 +21,8 @@ import {
   useUnderlyingTokenBalanceFromPool,
 } from 'src/lib/hooks'
 import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
-import { gasMargin, slippageAmount } from 'sushi/calculate'
-import type { SushiSwapV2ChainId } from 'sushi/config'
-import { Amount, Native } from 'sushi/currency'
-import { Percent } from 'sushi/math'
+import { Amount, Percent, subtractSlippage } from 'sushi'
+import { EvmNative, type SushiSwapV2ChainId, addGasMargin } from 'sushi/evm'
 import { type SendTransactionReturnType, encodeFunctionData } from 'viem'
 
 import type { V2Pool } from '@sushiswap/graph-client/data-api'
@@ -90,7 +88,7 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> =
 
     const [percentage, setPercentage] = useState<string>('0')
     const percentToRemove = useMemo(
-      () => new Percent(percentage, 100),
+      () => new Percent({ numerator: percentage, denominator: 100 }),
       [percentage],
     )
     const percentToRemoveDebounced = useDebounce(percentToRemove, 300)
@@ -118,13 +116,13 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> =
     const currencyAToRemove = useMemo(
       () =>
         token0
-          ? percentToRemoveDebounced?.greaterThan('0') && underlying0
-            ? Amount.fromRawAmount(
+          ? percentToRemoveDebounced?.gt('0') && underlying0
+            ? new Amount(
                 token0,
-                percentToRemoveDebounced.multiply(underlying0.quotient)
-                  .quotient || '0',
+                percentToRemoveDebounced.mul(underlying0.amount).quotient ||
+                  '0',
               )
-            : Amount.fromRawAmount(token0, '0')
+            : new Amount(token0, '0')
           : undefined,
       [percentToRemoveDebounced, token0, underlying0],
     )
@@ -132,13 +130,13 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> =
     const currencyBToRemove = useMemo(
       () =>
         token1
-          ? percentToRemoveDebounced?.greaterThan('0') && underlying1
-            ? Amount.fromRawAmount(
+          ? percentToRemoveDebounced?.gt('0') && underlying1
+            ? new Amount(
                 token1,
-                percentToRemoveDebounced.multiply(underlying1.quotient)
-                  .quotient || '0',
+                percentToRemoveDebounced.mul(underlying1.amount).quotient ||
+                  '0',
               )
-            : Amount.fromRawAmount(token1, '0')
+            : new Amount(token1, '0')
           : undefined,
       [percentToRemoveDebounced, token1, underlying1],
     )
@@ -146,16 +144,10 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> =
     const [minAmount0, minAmount1] = useMemo(() => {
       return [
         currencyAToRemove
-          ? Amount.fromRawAmount(
-              currencyAToRemove.currency,
-              slippageAmount(currencyAToRemove, slippageTolerance)[0],
-            )
+          ? subtractSlippage(currencyAToRemove, slippageTolerance.toNumber())
           : undefined,
         currencyBToRemove
-          ? Amount.fromRawAmount(
-              currencyBToRemove.currency,
-              slippageAmount(currencyBToRemove, slippageTolerance)[0],
-            )
+          ? subtractSlippage(currencyBToRemove, slippageTolerance.toNumber())
           : undefined,
       ]
     }, [slippageTolerance, currencyAToRemove, currencyBToRemove])
@@ -166,10 +158,10 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> =
     const amountToRemove = useMemo(() => {
       return balance &&
         percentToRemoveDebounced &&
-        percentToRemoveDebounced.greaterThan('0')
-        ? Amount.fromRawAmount(
+        percentToRemoveDebounced.gt('0')
+        ? new Amount(
             balance.currency,
-            percentToRemoveDebounced.multiply(balance.quotient).quotient,
+            percentToRemoveDebounced.mul(balance.amount).quotient,
           )
         : undefined
     }, [balance, percentToRemoveDebounced])
@@ -250,12 +242,13 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> =
         }
 
         const token1IsNative =
-          Native.onChain(_pool.chainId).wrapped.address ===
-          pool.token1.wrapped.address
+          EvmNative.fromChainId(_pool.chainId).wrap().address ===
+          pool.token1.wrap().address
 
         const withNative =
           token1IsNative ||
-          Native.onChain(_pool.chainId).wrapped.address === pool.token0.address
+          EvmNative.fromChainId(_pool.chainId).wrap().address ===
+            pool.token0.address
 
         const config = (() => {
           if (signature?.message?.deadline) {
@@ -267,15 +260,15 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> =
                 ],
                 args: [
                   token1IsNative
-                    ? pool.token0.wrapped.address
-                    : pool.token1.wrapped.address,
-                  amountToRemove.quotient,
+                    ? pool.token0.wrap().address
+                    : pool.token1.wrap().address,
+                  amountToRemove.amount,
                   token1IsNative
-                    ? debouncedMinAmount0.quotient
-                    : debouncedMinAmount1.quotient,
+                    ? debouncedMinAmount0.amount
+                    : debouncedMinAmount1.amount,
                   token1IsNative
-                    ? debouncedMinAmount1.quotient
-                    : debouncedMinAmount0.quotient,
+                    ? debouncedMinAmount1.amount
+                    : debouncedMinAmount0.amount,
                   address,
                   signature.message.deadline,
                   false,
@@ -289,11 +282,11 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> =
             return {
               functionNames: ['removeLiquidityWithPermit'],
               args: [
-                pool.token0.wrapped.address,
-                pool.token1.wrapped.address,
-                amountToRemove.quotient,
-                debouncedMinAmount0.quotient,
-                debouncedMinAmount1.quotient,
+                pool.token0.wrap().address,
+                pool.token1.wrap().address,
+                amountToRemove.amount,
+                debouncedMinAmount0.amount,
+                debouncedMinAmount1.amount,
                 address,
                 signature.message.deadline,
                 false,
@@ -312,15 +305,15 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> =
               ],
               args: [
                 token1IsNative
-                  ? pool.token0.wrapped.address
-                  : pool.token1.wrapped.address,
-                amountToRemove.quotient,
+                  ? pool.token0.wrap().address
+                  : pool.token1.wrap().address,
+                amountToRemove.amount,
                 token1IsNative
-                  ? debouncedMinAmount0.quotient
-                  : debouncedMinAmount1.quotient,
+                  ? debouncedMinAmount0.amount
+                  : debouncedMinAmount1.amount,
                 token1IsNative
-                  ? debouncedMinAmount1.quotient
-                  : debouncedMinAmount0.quotient,
+                  ? debouncedMinAmount1.amount
+                  : debouncedMinAmount0.amount,
                 address,
                 deadline,
               ],
@@ -330,11 +323,11 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> =
           return {
             functionNames: ['removeLiquidity'],
             args: [
-              pool.token0.wrapped.address,
-              pool.token1.wrapped.address,
-              amountToRemove.quotient,
-              debouncedMinAmount0.quotient,
-              debouncedMinAmount1.quotient,
+              pool.token0.wrap().address,
+              pool.token1.wrap().address,
+              amountToRemove.amount,
+              debouncedMinAmount0.amount,
+              debouncedMinAmount1.amount,
               address,
               deadline,
             ],
@@ -347,7 +340,7 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> =
               const estimatedGas: bigint = await (
                 contract.estimateGas[methodName] as any
               )(config.args)
-              return gasMargin(estimatedGas)
+              return addGasMargin(estimatedGas)
             } catch (e) {
               console.error(e)
               return undefined

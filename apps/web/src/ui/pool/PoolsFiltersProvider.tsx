@@ -11,7 +11,7 @@ import {
   useMemo,
   useState,
 } from 'react'
-import type { SushiSwapProtocol } from 'sushi'
+import type { SushiSwapProtocol } from 'sushi/evm'
 import { z } from 'zod'
 
 import { parseArgs } from 'src/lib/functions'

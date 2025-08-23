@@ -6,11 +6,11 @@ import { useLocalStorage } from '@sushiswap/hooks'
 import { classNames } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import type { FC } from 'react'
-import { ChainId, EvmChain } from 'sushi/chain'
+import { EvmChainId, getEvmChainById } from 'sushi/evm'
 import { useDerivedStateSimpleSwap } from './derivedstate-simple-swap-provider'
 
 const BridgeInfo = {
-  [ChainId.SKALE_EUROPA]: {
+  [EvmChainId.SKALE_EUROPA]: {
     url: 'https://portal.skale.space/bridge',
     background: (
       <video autoPlay muted loop className="absolute inset-0 -z-10">
@@ -19,7 +19,7 @@ const BridgeInfo = {
     ),
     textColor: 'text-white',
   },
-  [ChainId.KATANA]: {
+  [EvmChainId.KATANA]: {
     url: 'https://app.katana.network', // TODO
     background: (
       <div className="absolute inset-0 -z-10 bg-black/50 backdrop-blur" />
@@ -68,13 +68,13 @@ export const SimpleSwapBridgeBanner: FC<{ className?: string }> = ({
             <NetworkIcon chainId={chainId} width={24} height={24} />
             <div className="flex items-center">
               <span className="font-semibold">
-                Bridge to {EvmChain.fromChainId(chainId)?.name}
+                Bridge to {getEvmChainById(chainId).name}
               </span>
               <ArrowUpRightIcon width={20} height={20} />
             </div>
           </div>
           <span className="text-xs">
-            Deposit your tokens to {EvmChain.fromChainId(chainId)?.name}.
+            Deposit your tokens to {getEvmChainById(chainId).name}.
           </span>
         </div>
       </div>

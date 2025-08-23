@@ -1,7 +1,7 @@
 'use client'
 
 import { mock } from '@wagmi/connectors'
-import type { ChainId } from 'sushi'
+import type { EvmChainId } from 'sushi/evm'
 import { http, type HttpTransport } from 'viem'
 import { privateKeyToAccount } from 'viem/accounts'
 import { createConfig } from 'wagmi'
@@ -40,7 +40,7 @@ export const createTestConfig = () => {
         acc[chain.id] = http(localHttpUrl)
         return acc
       },
-      {} as Record<ChainId, HttpTransport>,
+      {} as Record<EvmChainId, HttpTransport>,
     ),
     pollingInterval: 1_000,
     connectors: [mockConnector],

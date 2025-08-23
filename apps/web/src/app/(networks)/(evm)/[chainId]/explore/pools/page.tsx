@@ -9,13 +9,12 @@ import { TableFiltersNetwork } from 'src/ui/pool/TableFiltersNetwork'
 import { TableFiltersPoolType } from 'src/ui/pool/TableFiltersPoolType'
 import { TableFiltersResetButton } from 'src/ui/pool/TableFiltersResetButton'
 import { TableFiltersSearchToken } from 'src/ui/pool/TableFiltersSearchToken'
-import type { ChainId } from 'sushi/chain'
 
 export default async function PoolsPage(props: {
   params: Promise<{ chainId: string }>
 }) {
   const params = await props.params
-  const chainId = +params.chainId as ChainId
+  const chainId = +params.chainId
 
   if (!isPoolChainId(chainId)) {
     return notFound()

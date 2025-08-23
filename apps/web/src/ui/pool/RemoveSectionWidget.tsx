@@ -16,9 +16,8 @@ import { IconButton } from '@sushiswap/ui'
 import { SettingsModule, SettingsOverlay } from '@sushiswap/ui'
 import { Widget, WidgetHeader, WidgetTitle } from '@sushiswap/ui'
 import React, { type FC, type ReactNode } from 'react'
-import type { EvmChainId } from 'sushi/chain'
-import type { Amount, Type } from 'sushi/currency'
-import { ZERO } from 'sushi/math'
+import { type Amount, ZERO } from 'sushi'
+import type { EvmChainId, EvmCurrency } from 'sushi/evm'
 
 import { SlippageToleranceStorageKey, TTLStorageKey } from '@sushiswap/hooks'
 import { getDefaultTTL } from 'src/lib/wagmi/hooks/utils/hooks/useTransactionDeadline'
@@ -28,10 +27,10 @@ interface RemoveSectionWidgetProps {
   isFarm: boolean
   chainId: EvmChainId
   percentage: string
-  token0: Type
-  token1: Type
-  token0Minimum?: Amount<Type>
-  token1Minimum?: Amount<Type>
+  token0: EvmCurrency
+  token1: EvmCurrency
+  token0Minimum?: Amount<EvmCurrency>
+  token1Minimum?: Amount<EvmCurrency>
   setPercentage(percentage: string): void
   children: ReactNode
 }
@@ -79,15 +78,13 @@ export const RemoveSectionWidget: FC<RemoveSectionWidgetProps> = ({
           </SettingsOverlay>
         </WidgetAction>
       </WidgetHeader>
-      {balance?.equalTo(ZERO) ? (
+      {balance?.eq(ZERO) ? (
         <Message variant="warning" size="sm" className="mb-4">
           No LP tokens found. Are you sure you unstaked your LP tokens?
         </Message>
       ) : null}
       <div
-        className={
-          balance?.equalTo(ZERO) ? 'opacity-40 pointer-events-none' : ''
-        }
+        className={balance?.eq(ZERO) ? 'opacity-40 pointer-events-none' : ''}
       >
         <div className="flex flex-col gap-6">
           <Card variant="outline" className="p-6">

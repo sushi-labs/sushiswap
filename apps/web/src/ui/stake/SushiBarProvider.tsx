@@ -8,21 +8,21 @@ import {
   useMemo,
 } from 'react'
 import { useBarData } from 'src/lib/stake'
-import { ChainId } from 'sushi/chain'
+import { Amount } from 'sushi'
 import {
-  Amount,
+  EvmChainId,
+  type EvmCurrency,
   SUSHI,
   SUSHI_ADDRESS,
-  type Type,
   XSUSHI,
   XSUSHI_ADDRESS,
-} from 'sushi/currency'
+} from 'sushi/evm'
 import { erc20Abi } from 'viem'
 import { useReadContracts } from 'wagmi'
 
 interface SushiBarContext {
-  totalSupply: Amount<Type> | undefined
-  sushiBalance: Amount<Type> | undefined
+  totalSupply: Amount<EvmCurrency> | undefined
+  sushiBalance: Amount<EvmCurrency> | undefined
   apy: number | undefined
   isLoading: boolean
   isError: boolean
@@ -48,15 +48,15 @@ export const SushiBarProvider: FC<{
     allowFailure: false,
     contracts: [
       {
-        address: SUSHI_ADDRESS[ChainId.ETHEREUM],
+        address: SUSHI_ADDRESS[EvmChainId.ETHEREUM],
         abi: erc20Abi,
         functionName: 'balanceOf',
-        args: [XSUSHI_ADDRESS[ChainId.ETHEREUM]],
-        chainId: ChainId.ETHEREUM,
+        args: [XSUSHI_ADDRESS[EvmChainId.ETHEREUM]],
+        chainId: EvmChainId.ETHEREUM,
       },
       {
-        address: XSUSHI_ADDRESS[ChainId.ETHEREUM],
-        chainId: ChainId.ETHEREUM,
+        address: XSUSHI_ADDRESS[EvmChainId.ETHEREUM],
+        chainId: EvmChainId.ETHEREUM,
         abi: erc20Abi,
         functionName: 'totalSupply' as const,
       },
@@ -64,8 +64,8 @@ export const SushiBarProvider: FC<{
     query: {
       select(data) {
         return [
-          Amount.fromRawAmount(SUSHI[ChainId.ETHEREUM], data[0]),
-          Amount.fromRawAmount(XSUSHI[ChainId.ETHEREUM], data[1]),
+          new Amount(SUSHI[EvmChainId.ETHEREUM], data[0]),
+          new Amount(XSUSHI[EvmChainId.ETHEREUM], data[1]),
         ] as const
       },
       refetchInterval: 30000,

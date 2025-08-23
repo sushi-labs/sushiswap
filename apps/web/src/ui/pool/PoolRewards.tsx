@@ -13,7 +13,7 @@ import {
 } from '@sushiswap/ui'
 import type { FC } from 'react'
 import { incentiveRewardToToken } from 'src/lib/functions'
-import { tryParseAmount } from 'sushi/currency'
+import { Amount } from 'sushi'
 
 export const PoolRewards: FC<{ pool: V2Pool }> = ({ pool }) => {
   const incentives = pool.incentives.filter(
@@ -32,9 +32,9 @@ export const PoolRewards: FC<{ pool: V2Pool }> = ({ pool }) => {
         <CardGroup>
           <CardLabel>Tokens (per day)</CardLabel>
           {incentives.map((incentive, index) => {
-            const amount = tryParseAmount(
-              incentive.rewardPerDay.toString(),
+            const amount = Amount.tryFromHuman(
               incentiveRewardToToken(pool.chainId, incentive),
+              incentive.rewardPerDay.toString(),
             )
             return <CardCurrencyAmountItem key={index} amount={amount} />
           })}

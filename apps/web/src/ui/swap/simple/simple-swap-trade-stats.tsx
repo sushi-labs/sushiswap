@@ -4,10 +4,13 @@ import { useIsMounted } from '@sushiswap/hooks'
 import { Collapsible, Explainer, SkeletonBox, classNames } from '@sushiswap/ui'
 import React, { type FC } from 'react'
 import { AddressToEnsResolver } from 'src/lib/wagmi/components/account/AddressToEnsResolver'
-import { ChainId, EvmChain } from 'sushi/chain'
-import { Native } from 'sushi/currency'
-import { shortenAddress } from 'sushi/format'
-import { ZERO } from 'sushi/math'
+import { ZERO } from 'sushi'
+import {
+  EvmChainId,
+  EvmNative,
+  getEvmChainById,
+  shortenEvmAddress,
+} from 'sushi/evm'
 import { type Address, isAddress } from 'viem'
 import { useAccount } from 'wagmi'
 import {
@@ -47,12 +50,12 @@ export const SimpleSwapTradeStats: FC = () => {
               <SkeletonBox className="h-4 py-0.5 w-[40px]" />
             ) : quote?.priceImpact ? (
               `${
-                quote?.priceImpact?.lessThan(ZERO)
+                quote?.priceImpact?.lt(ZERO)
                   ? '+'
-                  : quote?.priceImpact?.greaterThan(ZERO)
+                  : quote?.priceImpact?.gt(ZERO)
                     ? '-'
                     : ''
-              }${Math.abs(Number(quote?.priceImpact?.toFixed(2)))}%`
+              }${Math.abs(Number(quote?.priceImpact?.toString({ fixed: 2 })))}%`
             ) : null}
           </span>
         </div>
@@ -105,12 +108,12 @@ export const SimpleSwapTradeStats: FC = () => {
             Network fee
           </span>
           <span className="text-sm font-semibold text-gray-700 text-right dark:text-slate-400">
-            {chainId === ChainId.SKALE_EUROPA ? (
+            {chainId === EvmChainId.SKALE_EUROPA ? (
               'FREE'
             ) : loading || !quote?.gasSpent || quote.gasSpent === '0' ? (
               <SkeletonBox className="h-4 py-0.5 w-[120px]" />
             ) : quote?.gasSpent ? (
-              `${quote.gasSpent} ${Native.onChain(chainId).symbol} ${
+              `${quote.gasSpent} ${EvmNative.fromChainId(chainId).symbol} ${
                 quote?.gasSpentUsd ? `($${quote.gasSpentUsd})` : ''
               }`
             ) : null}
@@ -138,7 +141,7 @@ export const SimpleSwapTradeStats: FC = () => {
             <span className="font-semibold text-gray-700 text-right dark:text-slate-400">
               <a
                 target="_blank"
-                href={EvmChain.from(chainId)?.getAccountUrl(recipient)}
+                href={getEvmChainById(chainId).getAccountUrl(recipient)}
                 className={classNames(
                   address !== recipient
                     ? 'text-yellow-600'
@@ -151,7 +154,9 @@ export const SimpleSwapTradeStats: FC = () => {
                   {({ isLoading, data }) => {
                     return (
                       <>
-                        {isLoading || !data ? shortenAddress(recipient) : data}
+                        {isLoading || !data
+                          ? shortenEvmAddress(recipient)
+                          : data}
                       </>
                     )
                   }}

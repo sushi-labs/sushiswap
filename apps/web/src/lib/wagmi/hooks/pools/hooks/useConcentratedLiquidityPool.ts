@@ -1,12 +1,15 @@
 import { useQuery } from '@tanstack/react-query'
-import type { SushiSwapV3ChainId, SushiSwapV3FeeAmount } from 'sushi/config'
-import type { Type } from 'sushi/currency'
+import type {
+  EvmCurrency,
+  SushiSwapV3ChainId,
+  SushiSwapV3FeeAmount,
+} from 'sushi/evm'
 import { useConfig } from 'wagmi'
 import { getConcentratedLiquidityPool } from '../actions/getConcentratedLiquidityPool'
 
 interface UseConcentratedLiquidityPool {
-  token0: Type | undefined
-  token1: Type | undefined
+  token0: EvmCurrency | undefined
+  token1: EvmCurrency | undefined
   chainId: SushiSwapV3ChainId
   feeAmount: SushiSwapV3FeeAmount | undefined
   enabled?: boolean

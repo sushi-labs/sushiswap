@@ -1,4 +1,4 @@
-import { ChainId } from 'sushi/chain'
+import { ChainId } from 'sushi'
 import { getAddress, isAddress } from 'viem'
 import { z } from 'zod'
 

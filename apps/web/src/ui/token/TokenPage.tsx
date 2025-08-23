@@ -5,18 +5,19 @@ import type {
   PoolChainId,
   TokenInfo as TokenInfoType,
 } from '@sushiswap/graph-client/data-api'
-import { useIsMounted, useMediaQuery } from '@sushiswap/hooks'
-import { Button, Container, LinkInternal, classNames } from '@sushiswap/ui'
+import { useIsMounted } from '@sushiswap/hooks'
+import { Button, Container, LinkInternal } from '@sushiswap/ui'
 import { AnimatePresence, motion } from 'framer-motion'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { type FC, useMemo } from 'react'
-import { EvmChainKey } from 'sushi/chain'
 import {
+  EvmToken,
   SUSHISWAP_SUPPORTED_CHAIN_IDS,
+  type SerializedEvmToken,
   type SushiSwapChainId,
-} from 'sushi/config'
-import { type SerializedToken, Token } from 'sushi/currency'
+  getEvmChainById,
+} from 'sushi/evm'
 import { PoolsFiltersProvider } from '../pool'
 import { PoolsTable } from '../pool/PoolsTable'
 import { TableFiltersFarmsOnly } from '../pool/TableFiltersFarmsOnly'
@@ -29,12 +30,12 @@ import { TokenInfo } from './TokenInfo'
 import { TokenChart } from './charts/TokenChart'
 
 interface TokenPageProps {
-  token: SerializedToken
+  token: SerializedEvmToken
   tokenInfo: TokenInfoType
 }
 
 export const TokenPage: FC<TokenPageProps> = ({ token: _token, tokenInfo }) => {
-  const token = useMemo(() => new Token(_token), [_token])
+  const token = useMemo(() => EvmToken.fromJSON(_token), [_token])
 
   const router = useRouter()
 
@@ -66,7 +67,7 @@ export const TokenPage: FC<TokenPageProps> = ({ token: _token, tokenInfo }) => {
                 }
               >
                 <LinkInternal
-                  href={`/${EvmChainKey[token.chainId]}/explore/tokens`}
+                  href={`/${getEvmChainById(token.chainId).key}/explore/tokens`}
                 >
                   Explore
                 </LinkInternal>
@@ -82,7 +83,7 @@ export const TokenPage: FC<TokenPageProps> = ({ token: _token, tokenInfo }) => {
                 className="hover:underline !inline capitalize whitespace-nowrap !font-medium !text-gray-900 dark:!text-slate-50"
               >
                 <LinkInternal
-                  href={`/${EvmChainKey[token.chainId]}/token/${token.address}`}
+                  href={`/${getEvmChainById(token.chainId).key}/token/${token.address}`}
                 >
                   {token.symbol}
                 </LinkInternal>
@@ -128,7 +129,7 @@ export const TokenPage: FC<TokenPageProps> = ({ token: _token, tokenInfo }) => {
                       unsupportedNetworkHref="/ethereum/explore/tokens"
                       onSelect={(network) =>
                         router.push(
-                          `/${EvmChainKey[network as SushiSwapChainId]}/explore/tokens`,
+                          `/${getEvmChainById(network as SushiSwapChainId).key}/explore/tokens`,
                         )
                       }
                       className="lg:hidden block"
@@ -150,7 +151,7 @@ export const TokenPage: FC<TokenPageProps> = ({ token: _token, tokenInfo }) => {
       </section>
       <div className="w-full bottom-0 index-x-0 fixed p-4 z-[500] min-[854px]:hidden">
         <Link
-          href={`/${EvmChainKey[token.chainId]}/swap?token1=${token.address}`}
+          href={`/${getEvmChainById(token.chainId).key}/swap?token1=${token.address}`}
         >
           <Button fullWidth size="xl">
             Swap

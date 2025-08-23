@@ -18,7 +18,7 @@ import {
   TWAP_MIN_FILL_DELAY,
   TwapSDK,
 } from 'src/lib/swap/twap'
-import { formatUSD } from 'sushi/format'
+import { formatUSD } from 'sushi'
 import {
   useDerivedStateTwap,
   useTwapTradeErrors,
@@ -52,7 +52,7 @@ const DCATradesInput = () => {
 
   const token0ChunkAmountUSD = useMemo(() => {
     if (!amountInPerChunk || !token0PriceUSD) return undefined
-    return amountInPerChunk.multiply(token0PriceUSD).toSignificant(6)
+    return amountInPerChunk.mul(token0PriceUSD).toSignificant(6)
   }, [amountInPerChunk, token0PriceUSD])
 
   return (
@@ -89,7 +89,7 @@ const DCATradesInput = () => {
           )}
         >
           {amountInPerChunk ? (
-            <FormattedNumber number={amountInPerChunk.toExact()} />
+            <FormattedNumber number={amountInPerChunk.toString()} />
           ) : (
             '0'
           )}{' '}
