@@ -27,7 +27,7 @@ import {
   isWNativeSupported,
   isWrapOrUnwrap,
 } from 'sushi/evm'
-import { type Address, type Hex, stringify, zeroAddress } from 'viem'
+import { type Hex, stringify, zeroAddress } from 'viem'
 import { useAccount } from 'wagmi'
 import { usePrices } from '~evm/_common/ui/price-provider/price-provider/use-prices'
 import { apiAdapter02To01 } from './apiAdapter'
@@ -169,6 +169,7 @@ export const useTrade = (variables: UseTradeParams) => {
 
   const select: UseTradeQuerySelect = useCallback(
     (data) => {
+      console.log(data)
       if (
         isRouteProcessor7ChainId(chainId) &&
         data &&
