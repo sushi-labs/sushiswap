@@ -8,25 +8,18 @@ import {
   classNames,
 } from '@sushiswap/ui'
 import { useMemo } from 'react'
-import { useFiatQuote } from 'src/lib/hooks/react-query/fiat/use-fiat-quote'
 import { BalancePanel } from 'src/lib/wagmi/components/web3-input/Currency/BalancePanel'
 import { useAccount } from 'wagmi'
 import { CurrencySelector } from './currency-selector'
-import { useDerivedStateFiat } from './derivedstate-fiat-provider'
+import { useDerivedStateFiat, useFiatTrade } from './derivedstate-fiat-provider'
 
 export const FiatInput = () => {
   const {
-    state: { chainId, token0: fiat, token1, swapAmountString, paymentType },
+    state: { chainId, token0: fiat, swapAmountString },
     mutate: { setToken0: onSelect, setSwapAmount },
   } = useDerivedStateFiat()
 
-  const { data, isLoading } = useFiatQuote({
-    countryCode: fiat?.code,
-    sourceCurrencyCode: fiat?.symbol || 'USD',
-    amount: swapAmountString ? Number(swapAmountString) : undefined,
-    destinationTokenSymbol: token1?.symbol,
-    paymentMethodType: paymentType === 'apple-pay' ? 'APPLE_PAY' : 'CARD',
-  })
+  const { data, isLoading } = useFiatTrade()
 
   const { address } = useAccount()
 

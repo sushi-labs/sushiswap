@@ -3,22 +3,15 @@
 import { type FunkitCheckoutConfig, useFunkitCheckout } from '@funkit/connect'
 import { ExternalLinkIcon } from '@heroicons/react-v1/solid'
 import { Button } from '@sushiswap/ui'
-import { useFiatQuote } from 'src/lib/hooks/react-query/fiat/use-fiat-quote'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
-import { useDerivedStateFiat } from './derivedstate-fiat-provider'
+import { useDerivedStateFiat, useFiatTrade } from './derivedstate-fiat-provider'
 
 export const FiatPurchaseButton = () => {
   const {
-    state: { swapAmountString, token0, token1, paymentType },
+    state: { swapAmountString, token1 },
   } = useDerivedStateFiat()
 
-  const { data, isLoading } = useFiatQuote({
-    countryCode: token0?.code,
-    sourceCurrencyCode: token0?.symbol || 'USD',
-    amount: swapAmountString ? Number(swapAmountString) : undefined,
-    destinationTokenSymbol: token1?.symbol,
-    paymentMethodType: paymentType === 'apple-pay' ? 'APPLE_PAY' : 'CARD',
-  })
+  const { data, isLoading } = useFiatTrade()
   const tokenAmount = data?.tokenAmount
 
   const { beginCheckout } = useFunkitCheckout({

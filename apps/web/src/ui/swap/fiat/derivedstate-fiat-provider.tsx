@@ -9,6 +9,7 @@ import {
   useMemo,
   useState,
 } from 'react'
+import { useFiatQuote } from 'src/lib/hooks/react-query/fiat/use-fiat-quote'
 import { useTokenWithCache } from 'src/lib/wagmi/hooks/tokens/useTokenWithCache'
 import { EvmChainId } from 'sushi/chain'
 import { defaultQuoteCurrency, isWNativeSupported } from 'sushi/config'
@@ -284,7 +285,23 @@ const useDerivedStateFiat = () => {
   return context
 }
 
-export { DerivedStateFiatProvider, useDerivedStateFiat }
+const useFiatTrade = () => {
+  const {
+    state: { token0: fiat, token1, swapAmountString, paymentType },
+  } = useDerivedStateFiat()
+
+  const fiatQuote = useFiatQuote({
+    countryCode: fiat?.code,
+    sourceCurrencyCode: fiat?.symbol || 'USD',
+    amount: swapAmountString ? Number(swapAmountString) : undefined,
+    destinationTokenSymbol: token1?.symbol,
+    paymentMethodType: paymentType === 'apple-pay' ? 'APPLE_PAY' : 'CARD',
+  })
+
+  return fiatQuote
+}
+
+export { DerivedStateFiatProvider, useDerivedStateFiat, useFiatTrade }
 
 const defaultFiatCurrency: FiatCurrency = {
   symbol: 'USD',

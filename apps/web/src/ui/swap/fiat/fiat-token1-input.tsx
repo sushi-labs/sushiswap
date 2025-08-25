@@ -1,24 +1,17 @@
 'use client'
 
-import { useFiatQuote } from 'src/lib/hooks/react-query/fiat/use-fiat-quote'
 import { Web3Input } from 'src/lib/wagmi/components/web3-input'
 import { isWNativeSupported } from 'sushi/config'
-import { useDerivedStateFiat } from './derivedstate-fiat-provider'
+import { useDerivedStateFiat, useFiatTrade } from './derivedstate-fiat-provider'
 
 export const FiatToken1Input = () => {
   const {
-    state: { chainId, token1, swapAmountString, token0, paymentType },
+    state: { chainId, token1 },
     mutate: { setToken1 },
     isToken1Loading: isLoading,
   } = useDerivedStateFiat()
 
-  const { data, isLoading: isLoadingTokenAmount } = useFiatQuote({
-    countryCode: token0?.code,
-    sourceCurrencyCode: token0?.symbol || 'USD',
-    amount: swapAmountString ? Number(swapAmountString) : undefined,
-    destinationTokenSymbol: token1?.symbol,
-    paymentMethodType: paymentType === 'apple-pay' ? 'APPLE_PAY' : 'CARD',
-  })
+  const { data, isLoading: isLoadingTokenAmount } = useFiatTrade()
   const tokenAmount = data?.tokenAmount
 
   return (
