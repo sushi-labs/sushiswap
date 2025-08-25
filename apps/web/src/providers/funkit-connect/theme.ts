@@ -1,3 +1,5 @@
+'use client'
+
 import { type ThemeOptions, darkTheme, lightTheme } from '@funkit/connect'
 
 const ACTION_COLOR = '#6C4BFF'

@@ -2,23 +2,24 @@
 
 import { FunkitProvider } from '@funkit/connect'
 import { useTheme } from 'next-themes'
-import type { FC, ReactNode } from 'react'
-import { useMemo } from 'react'
+import React, { type FC, type ReactNode } from 'react'
 import { sushiTheme } from './theme'
 
 export const FunkitConnectProvider: FC<{ children: ReactNode }> = ({
   children,
 }) => {
   const apiKey = process.env.NEXT_PUBLIC_FUNKIT_API_KEY
-  const { theme } = useTheme()
+  const { resolvedTheme } = useTheme()
 
-  const funkitTheme = useMemo(() => {
+  const funkitTheme = (theme: string | undefined) => {
+    console.log('theme', theme)
+
     if (!theme || theme === 'dark') {
       return sushiTheme.darkMode
     }
 
     return sushiTheme.lightMode
-  }, [theme])
+  }
 
   if (!apiKey) {
     console.warn(
@@ -28,7 +29,7 @@ export const FunkitConnectProvider: FC<{ children: ReactNode }> = ({
 
   return (
     <FunkitProvider
-      theme={funkitTheme}
+      theme={funkitTheme(resolvedTheme)}
       funkitConfig={{
         apiKey: apiKey || '',
         appName: 'Sushi',
