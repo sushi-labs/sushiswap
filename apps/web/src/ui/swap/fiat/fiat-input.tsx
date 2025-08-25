@@ -2,9 +2,11 @@
 
 import { Button, SelectIcon, TextField, classNames } from '@sushiswap/ui'
 import { useMemo } from 'react'
+import { usePortfolioWallet } from 'src/lib/wagmi/components/user-portfolio/hooks/use-portfolio-wallet'
 import { BalancePanel } from 'src/lib/wagmi/components/web3-input/Currency/BalancePanel'
 import { PricePanel } from 'src/lib/wagmi/components/web3-input/Currency/PricePanel'
 import { useAccount } from 'wagmi'
+import { useAmountBalance } from '~evm/_common/ui/balance-provider/use-balance'
 import { CurrencySelector } from './currency-selector'
 import { useDerivedStateFiat } from './derivedstate-fiat-provider'
 
@@ -16,7 +18,7 @@ export const FiatInput = () => {
 
   const { address } = useAccount()
 
-  // const { data: balance, isLoading: isBalanceLoading } = useAmountBalance(fiat);
+  // const { data, isError, isLoading } = usePortfolioWallet({ address })
 
   const selector = useMemo(() => {
     return (
