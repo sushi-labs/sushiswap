@@ -1,6 +1,5 @@
 import { Currency, SkeletonText } from '@sushiswap/ui'
 import type { ColumnDef } from '@tanstack/react-table'
-import { APRHoverCard } from 'src/ui/pool/APRHoverCard'
 import { formatUSD } from 'sushi'
 import { formatNumber, formatPercent } from 'sushi/format'
 import { PriceRangeCell } from './price-range-cell'
