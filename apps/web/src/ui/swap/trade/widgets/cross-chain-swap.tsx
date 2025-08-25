@@ -1,3 +1,5 @@
+'use client'
+
 import { CrossChainSwapMaintenanceMessage } from 'src/ui/swap/cross-chain/cross-chain-swap-maintenance-message'
 import { CrossChainSwapSwitchTokensButton } from 'src/ui/swap/cross-chain/cross-chain-swap-switch-tokens-button'
 import { CrossChainSwapTokenNotFoundDialog } from 'src/ui/swap/cross-chain/cross-chain-swap-token-not-found-dialog'
@@ -15,13 +17,15 @@ export const CrossChainSwapWidget = ({
       <CrossChainSwapMaintenanceMessage />
       <CrossChainSwapToken0Input />
       <CrossChainSwapSwitchTokensButton />
+
       <div className="flex flex-col">
         <CrossChainSwapToken1Input />
         <CrossChainSwapTradeButton />
+
+        {isAdvanced ? null : <CrossChainSwapTradeStats />}
+        <SimpleSwapBanner className="xl:hidden" />
+        <CrossChainSwapTokenNotFoundDialog />
       </div>
-      {isAdvanced ? null : <CrossChainSwapTradeStats />}
-      <SimpleSwapBanner className="xl:hidden" />
-      <CrossChainSwapTokenNotFoundDialog />
     </>
   )
 }

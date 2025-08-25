@@ -1,22 +1,34 @@
 'use client'
 
-import { Button, SelectIcon, TextField, classNames } from '@sushiswap/ui'
+import {
+  Button,
+  SelectIcon,
+  SkeletonText,
+  TextField,
+  classNames,
+} from '@sushiswap/ui'
 import { useMemo } from 'react'
+import { useFiatQuote } from 'src/lib/hooks/react-query/fiat/use-fiat-quote'
 import { BalancePanel } from 'src/lib/wagmi/components/web3-input/Currency/BalancePanel'
-import { PricePanel } from 'src/lib/wagmi/components/web3-input/Currency/PricePanel'
 import { useAccount } from 'wagmi'
 import { CurrencySelector } from './currency-selector'
 import { useDerivedStateFiat } from './derivedstate-fiat-provider'
 
 export const FiatInput = () => {
   const {
-    state: { chainId, token0: fiat, swapAmountString },
+    state: { chainId, token0: fiat, token1, swapAmountString, paymentType },
     mutate: { setToken0: onSelect, setSwapAmount },
   } = useDerivedStateFiat()
 
-  const { address } = useAccount()
+  const { data, isLoading } = useFiatQuote({
+    countryCode: fiat?.code,
+    sourceCurrencyCode: fiat?.symbol || 'USD',
+    amount: swapAmountString ? Number(swapAmountString) : undefined,
+    destinationTokenSymbol: token1?.symbol,
+    paymentMethodType: paymentType === 'apple-pay' ? 'APPLE_PAY' : 'CARD',
+  })
 
-  // const { data: balance, isLoading: isBalanceLoading } = useAmountBalance(fiat);
+  const { address } = useAccount()
 
   const selector = useMemo(() => {
     return (
@@ -62,7 +74,7 @@ export const FiatInput = () => {
         <span className="text-sm text-muted-foreground">Pay With Card</span>
         <BalancePanel
           id={'fiat-input'}
-          loading={false}
+          loading={isLoading}
           chainId={chainId}
           account={address}
           currency={undefined}
@@ -73,50 +85,28 @@ export const FiatInput = () => {
         />
       </div>
       <div className="flex justify-between items-center gap-2">
-        {/* {isTokenLoading ? (
-					<div className="flex items-center h-[44px] w-full">
-						<SkeletonBox className="w-32 h-8 rounded-lg" />
-					</div>
-				) : null} */}
-
         <div className="w-full flex flex-col">
-          {/* <div
-						data-state={"active"}
-						className={classNames(
-							"data-[state=inactive]:hidden data-[state=active]:flex",
-							"gap-4 items-center justify-between flex-grow"
-						)}>
-						<SkeletonBox className="w-2/3 h-[28px] rounded-lg" />
-					 {currencyLoading ? (
-                        <SkeletonBox className="w-1/3 h-[28px] rounded-lg" />
-                      ) : null}
-					</div> */}
-          <div
-            data-state={'active'}
-            className="data-[state=inactive]:hidden data-[state=active]:flex flex-1 items-center"
-          >
+          <div className="flex flex-1 items-center">
             <TextField
-              // testdata-id={`${id}-input`}
               type="number"
               variant="naked"
-              disabled={false}
+              disabled={!fiat || isLoading}
               onValueChange={setSwapAmount}
               value={swapAmountString}
-              // readOnly={disabled}
               maxDecimals={2}
               data-state={'active'}
               className={classNames('p-0 py-1 w-full !text-2xl font-medium')}
             />
           </div>
-
-          <PricePanel
-            value={'0'}
-            currency={undefined}
-            priceImpact={undefined}
-            error={undefined}
-            loading={false}
-            price={1}
-          />
+          {isLoading ? (
+            <div className="w-1/5 flex items-center">
+              <SkeletonText fontSize="sm" className="w-full" />
+            </div>
+          ) : (
+            <p className="font-medium text-sm flex items-baseline select-none text-gray-500 dark:text-slate-400">
+              {data?.sourceAmount ? `${data?.sourceAmount.toFixed(2)}` : '0.00'}
+            </p>
+          )}
         </div>
 
         {selector}

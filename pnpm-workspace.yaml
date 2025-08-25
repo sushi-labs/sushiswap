@@ -12,7 +12,7 @@ catalogs:
     "sushi": 5.1.30
     "wagmi": 2.12.10
     "@wagmi/core": 2.13.5
-    "viem": 2.21.55
+    "viem": 2.33.3
 
   react:
     "next": 15.1.4

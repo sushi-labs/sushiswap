@@ -23,7 +23,6 @@ import {
   DialogTitle,
   DialogType,
   List,
-  Message,
   SkeletonBox,
   SkeletonText,
   classNames,
@@ -134,7 +133,7 @@ const _SimpleSwapTradeReviewDialog: FC<{
       if (!trade || !chainId) return
 
       try {
-        const ts = new Date().getTime()
+        const ts = Date.now()
         const promise = client.waitForTransactionReceipt({
           hash,
         })
