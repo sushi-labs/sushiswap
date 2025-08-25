@@ -15,7 +15,7 @@ export const PnlNetworkFilter = () => {
       selectedNetworks={networks}
       setNetworks={setNetworks}
       defaultNetworks={PLACEHOLDER_NETWORKS}
-      className="!bg-[#00000005] dark:!bg-[#00000005]"
+      className="!bg-transparent"
     />
   )
 }

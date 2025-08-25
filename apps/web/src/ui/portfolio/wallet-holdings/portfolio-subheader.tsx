@@ -1,6 +1,7 @@
 'use client'
 
 import { Button, classNames } from '@sushiswap/ui'
+import { FourSquaresIcon } from '@sushiswap/ui/icons/FourSquaresIcon'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import { useRef, useState } from 'react'
 import { formatUSD } from 'sushi'
@@ -12,15 +13,37 @@ export const PortfolioSubHeader = () => {
   const overflowRef = useRef<HTMLDivElement>(null)
   const { hasOverflow } = useOverflow(overflowRef)
 
-  const [selectedChainId, setSelectedChainId] = useState<EvmChainId | null>(
-    null,
-  )
+  const [selectedChainId, setSelectedChainId] = useState<
+    EvmChainId | null | 'all'
+  >('all')
 
   return (
     <div
       className="flex overflow-x-auto gap-2 pt-5 snap-x hide-scrollbar"
       ref={overflowRef}
     >
+      <Button
+        key={`asset-item-all`}
+        variant={'secondary'}
+        type="button"
+        className={classNames(
+          '!rounded-xl gap-2.5 flex w-fit py-2 px-3 !justify-start !pl-2 focus-visible:!ring-0 focus-visible:!ring-offset-0 !ring-transparent dark:!bg-slate-750',
+          selectedChainId === 'all' &&
+            '!bg-[#4217FF14] dark:!bg-[#3DB1FF14] border border-blue dark:border-skyblue',
+        )}
+        onClick={() => setSelectedChainId('all')}
+      >
+        <FourSquaresIcon
+          width={16}
+          height={16}
+          className="ml-2 text-blue dark:text-white"
+        />
+
+        <div className="flex gap-1 items-start">
+          <span>All</span>
+          <span>{formatUSD(52526.96)}</span>
+        </div>
+      </Button>
       <AssetItem
         chainId={1}
         selected={selectedChainId === 1}
@@ -63,14 +86,15 @@ const AssetItem = ({
       variant={'secondary'}
       type="button"
       className={classNames(
-        '!rounded-xl gap-2.5 flex w-fit py-2 px-3 !justify-start !pl-2 focus-visible:!ring-0 focus-visible:!ring-offset-0 !ring-transparent',
-        selected && '!bg-[#4217FF14] border border-[#4217FF]',
+        '!rounded-xl gap-2.5 flex w-fit py-2 px-3 !justify-start !pl-2 focus-visible:!ring-0 focus-visible:!ring-offset-0 !ring-transparent dark:!bg-slate-750',
+        selected &&
+          '!bg-[#4217FF14] dark:!bg-[#3DB1FF14] border border-blue dark:border-skyblue',
       )}
       onClick={() => onSelect(chainId)}
     >
       <NetworkIcon
         type="square"
-        className="rounded-[4px] border border-slate-50 dark:border-slate-900"
+        className="rounded-[4px]"
         chainId={chainId}
         width={20}
         height={20}
