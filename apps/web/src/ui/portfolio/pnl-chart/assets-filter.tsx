@@ -72,13 +72,13 @@ const PLACEHOLDER_ASSETS = [
 export const AssetsFilter = () => {
   const [selectedNetwork, setSelectedNetwork] = useState<number | null>(null)
 
-  const clearAll = () => {
-    setSelectedNetwork(1)
-  }
+  // const clearAll = () => {
+  //   setSelectedNetwork(1)
+  // }
 
-  const clearSelections = () => {
-    setSelectedNetwork(1)
-  }
+  // const clearSelections = () => {
+  //   setSelectedNetwork(1)
+  // }
 
   const token = {
     price24hChange: 10,

@@ -27,6 +27,7 @@ import { useTheme } from 'next-themes'
 import { useEffect, useMemo, useState } from 'react'
 import { useCallback } from 'react'
 import type { FC, MouseEventHandler, ReactNode } from 'react'
+import { Divider } from 'src/ui/swap/cross-chain/cross-chain-swap-confirmation-dialog'
 import type { SushiSwapProtocol } from 'sushi'
 import { Native } from 'sushi/currency'
 import { formatPercent, formatUSD } from 'sushi/format'
@@ -383,9 +384,12 @@ export const PnLChart = () => {
 
   return (
     <Wrapper className="!p-0" enableBorder>
-      <CardHeader>
-        <AssetsFilter />
-        <CardTitle className="!text-primary">
+      <CardHeader className="!px-0">
+        <div className="px-4 pb-4">
+          <AssetsFilter />
+        </div>
+        <div className="h-[1px] bg-accent w-full" />
+        <CardTitle className="!text-primary px-4 pt-4">
           <div className="flex flex-col gap-1 justify-between items-start md:items-center md:flex-row md:gap-0">
             <div className="flex flex-col gap-1 w-full">
               <span className="text-2xl !font-medium hidden md:block">
