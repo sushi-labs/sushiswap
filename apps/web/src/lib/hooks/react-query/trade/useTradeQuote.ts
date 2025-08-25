@@ -3,6 +3,9 @@ import { useCallback, useMemo } from 'react'
 import { API_BASE_URL } from 'src/lib/swap/api-base-url'
 import { Amount, Fraction, Percent, Price, ZERO, subtractSlippage } from 'sushi'
 import {
+  type EvmAddress,
+  type EvmCurrency,
+  type EvmID,
   EvmNative,
   isLsd,
   isRouteProcessor7ChainId,
@@ -15,6 +18,29 @@ import { usePrices } from '~evm/_common/ui/price-provider/price-provider/use-pri
 import { apiAdapter02To01 } from './apiAdapter'
 import type { UseTradeParams, UseTradeQuerySelect } from './types'
 import { tradeValidator02 } from './validator02'
+
+const excludePoolsByToken: Partial<Record<EvmID<true>, EvmAddress[]>> = {
+  '1:0x9ea3b5b4ec044b70375236a281986106457b20ef': [
+    '0x7d7e813082ef6c143277c71786e5be626ec77b20',
+  ],
+}
+
+function applyPoolExclusion(
+  fromToken: EvmCurrency,
+  toToken: EvmCurrency,
+  searchParams: URLSearchParams,
+) {
+  if (excludePoolsByToken[fromToken.id] || excludePoolsByToken[toToken.id]) {
+    const excludePools = [
+      ...(excludePoolsByToken[fromToken.id] || []),
+      ...(excludePoolsByToken[toToken.id] || []),
+    ]
+
+    console.log(excludePools, fromToken.id, toToken.id)
+
+    searchParams.set('excludePools', excludePools.join(','))
+  }
+}
 
 export const useTradeQuoteQuery = (
   {
@@ -70,6 +96,8 @@ export const useTradeQuoteQuery = (
       params.searchParams.set('maxSlippage', `${+slippagePercentage / 100}`)
       params.searchParams.set('fee', '0.0025')
       params.searchParams.set('feeBy', 'output')
+
+      applyPoolExclusion(fromToken, toToken, params.searchParams)
 
       const res = await fetch(params.toString())
       const json = await res.json()
