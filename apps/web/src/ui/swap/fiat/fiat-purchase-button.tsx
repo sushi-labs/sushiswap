@@ -42,7 +42,7 @@ export const FiatPurchaseButton = () => {
       size="xl"
       fullWidth
       testId="swap"
-      onClick={() => beginCheckout()}
+      onClick={async () => await beginCheckout()}
       disabled={!swapAmountString || swapAmountString === '0' || isDisconnected}
       icon={!swapAmountString ? undefined : ExternalLinkIcon}
       iconPosition="end"
