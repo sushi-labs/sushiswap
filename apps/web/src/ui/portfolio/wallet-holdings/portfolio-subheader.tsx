@@ -19,7 +19,7 @@ export const PortfolioSubHeader = () => {
 
   return (
     <div
-      className="flex overflow-x-auto gap-2 pt-5 snap-x hide-scrollbar"
+      className="flex overflow-x-auto gap-2 pt-5 max-w-full snap-x hide-scrollbar"
       ref={overflowRef}
     >
       <Button
@@ -27,16 +27,22 @@ export const PortfolioSubHeader = () => {
         variant={'secondary'}
         type="button"
         className={classNames(
-          '!rounded-xl gap-2.5 flex w-fit py-2 px-3 !justify-start !pl-2 focus-visible:!ring-0 focus-visible:!ring-offset-0 !ring-transparent dark:!bg-slate-750',
-          selectedChainId === 'all' &&
-            '!bg-[#4217FF14] dark:!bg-[#3DB1FF14] border border-blue dark:border-skyblue',
+          '!rounded-xl gap-2.5 flex w-fit py-2 px-3 !justify-start !pl-2 focus-visible:!ring-0 focus-visible:!ring-offset-0 !ring-transparent',
+          selectedChainId === 'all'
+            ? '!bg-[#4217FF14] dark:!bg-[#3DB1FF14] border border-blue dark:border-skyblue'
+            : ' dark:!bg-slate-750',
         )}
         onClick={() => setSelectedChainId('all')}
       >
         <FourSquaresIcon
           width={16}
           height={16}
-          className="ml-2 text-blue dark:text-white"
+          className={classNames(
+            'ml-2  ',
+            selectedChainId === 'all'
+              ? 'text-blue dark:!text-skyblue'
+              : 'text-slate-900 dark:text-white',
+          )}
         />
 
         <div className="flex gap-1 items-start">
@@ -63,7 +69,7 @@ export const PortfolioSubHeader = () => {
         onSelect={(chainId) => setSelectedChainId(chainId)}
       />
       {hasOverflow ? (
-        <div className="h-full z-10 w-20 bg-gradient-to-r absolute right-0 top-1/2 -translate-y-1/2 from-transparent to-85% to-white dark:to-slate-900" />
+        <div className="h-full z-10 w-20 bg-gradient-to-r absolute right-0 top-1/2 -translate-y-1/2 from-transparent to-85% to-white dark:to-slate-900 hidden md:block" />
       ) : null}
     </div>
   )
@@ -86,9 +92,10 @@ const AssetItem = ({
       variant={'secondary'}
       type="button"
       className={classNames(
-        '!rounded-xl gap-2.5 flex w-fit py-2 px-3 !justify-start !pl-2 focus-visible:!ring-0 focus-visible:!ring-offset-0 !ring-transparent dark:!bg-slate-750',
-        selected &&
-          '!bg-[#4217FF14] dark:!bg-[#3DB1FF14] border border-blue dark:border-skyblue',
+        '!rounded-xl gap-2.5 flex w-fit py-2 px-3 !justify-start !pl-2 focus-visible:!ring-0 focus-visible:!ring-offset-0 !ring-transparent',
+        selected
+          ? '!bg-[#4217FF14] dark:!bg-[#3DB1FF14] border border-blue dark:border-skyblue'
+          : ' dark:!bg-slate-750',
       )}
       onClick={() => onSelect(chainId)}
     >

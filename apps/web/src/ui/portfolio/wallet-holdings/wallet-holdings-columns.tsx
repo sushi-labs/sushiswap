@@ -33,6 +33,9 @@ export const CHAIN_COLUMN: ColumnDef<PortfolioRow> = {
     body: {
       skeleton: <SkeletonBox className="w-5 h-5 rounded-sm" />,
     },
+    header: {
+      className: 'mt-[21.625px] mb-2',
+    },
   },
 }
 
@@ -75,6 +78,9 @@ export const ASSETS_COLUMN: ColumnDef<PortfolioRow> = {
         </div>
       ),
     },
+    header: {
+      className: 'mt-[21.625px] mb-2',
+    },
   },
 }
 
@@ -95,6 +101,9 @@ export const PRICE_COLUMN: ColumnDef<PortfolioRow> = {
   meta: {
     body: {
       skeleton: <SkeletonText fontSize="lg" />,
+    },
+    header: {
+      className: 'mt-[21.625px] mb-2',
     },
   },
 }
@@ -127,6 +136,9 @@ export const AMOUNT_COLUMN: ColumnDef<PortfolioRow> = {
         </div>
       ),
     },
+    header: {
+      className: 'mt-[21.625px] mb-2',
+    },
   },
 }
 
@@ -147,6 +159,9 @@ export const VALUE_COLUMN: ColumnDef<PortfolioRow> = {
   meta: {
     body: {
       skeleton: <SkeletonText fontSize="lg" />,
+    },
+    header: {
+      className: 'mt-[21.75px] mb-2',
     },
   },
 }
@@ -188,6 +203,9 @@ export const UPNL_COLUMN: ColumnDef<PortfolioRow> = {
         </div>
       ),
     },
+    header: {
+      className: 'mt-[21.625px] mb-2',
+    },
   },
 }
 
@@ -219,6 +237,9 @@ export const LAST_30_DAY_COLUMN: ColumnDef<PortfolioRow> = {
   meta: {
     body: {
       skeleton: <div className="w-[212px] h-[40px]" />,
+    },
+    header: {
+      className: 'mt-[21.625px] mb-2',
     },
   },
 }

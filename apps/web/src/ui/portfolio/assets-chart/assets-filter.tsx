@@ -1,7 +1,7 @@
 'use client'
 
-import { ChevronUpIcon, XIcon } from '@heroicons/react-v1/solid'
-import { Badge, Currency, classNames } from '@sushiswap/ui'
+import { ChevronDownIcon, XIcon } from '@heroicons/react-v1/solid'
+import { Badge, Currency, DialogClose, classNames } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui'
 import {
   Command,
@@ -87,13 +87,20 @@ export const AssetsFilter = ({
       align="start"
       popoverContentClassName="md:max-w-[370px] md:w-[370px] !p-0 !bg-[#FFFFFF] dark:!bg-slate-800"
       dialogContentClassName="max-w-none"
-      dialogTitle="Network Filter"
+      dialogTitle="Select Token"
+      dialogTitleClassName="!mt-0"
+      hideDialogClose
+      customDialogClose={
+        <DialogClose>
+          <XIcon width={20} height={20} />
+        </DialogClose>
+      }
       trigger={
-        <div className="flex gap-5 items-center">
+        <div className="flex gap-2 items-center md:gap-5">
           {' '}
           <Button
             iconPosition="end"
-            icon={ChevronUpIcon}
+            icon={ChevronDownIcon}
             variant="outline"
             role="combobox"
             size="sm"
@@ -139,7 +146,7 @@ export const AssetsFilter = ({
           </Button>
           {selectedToken && (
             <button
-              className="flex gap-1 items-center text-sm text-blue dark:text-skyblue"
+              className="flex gap-1 items-center text-sm font-medium text-blue dark:text-skyblue"
               type="button"
               onClick={(e) => {
                 e.stopPropagation()
@@ -153,13 +160,13 @@ export const AssetsFilter = ({
         </div>
       }
       content={
-        <Command className="flex items-center p-5">
+        <Command className="flex items-center md:p-5">
           <div className="w-full">
             <div className="mb-2 w-full h-[54px] justify-between pr-2 items-center rounded-md bg-slate-200 dark:bg-slate-900 dark:border-[#FFFFFF14] border-transparent border flex">
               <CommandInput
                 testdata-id="network-selector-input"
                 placeholder="Search"
-                className="!max-h-[39px] w-full dark:!bg-slate-900 !text-slate-450 dark:!text-slate-500"
+                className="!max-h-[39px] w-full dark:!bg-slate-900  placeholder:text-slate-450 dark:placeholder:text-slate-500"
               />
               <NetworkMenu
                 className="border !min-h-[36px] !h-[36px] border-slate-200 dark:border-slate-750 dark:!bg-slate-800"
