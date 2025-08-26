@@ -1,26 +1,24 @@
+import { Cog6ToothIcon } from '@heroicons/react/24/outline'
+import { type V2Pool, getV2Pool } from '@sushiswap/graph-client/data-api'
 import { SlippageToleranceStorageKey, TTLStorageKey } from '@sushiswap/hooks'
 import {
   Button,
   IconButton,
   SettingsModule,
   SettingsOverlay,
+  SkeletonBox,
   Tabs,
   TabsContent,
   TabsList,
   TabsTrigger,
 } from '@sushiswap/ui'
+import { useQuery } from '@tanstack/react-query'
 import { useSearchParams } from 'next/navigation'
 import { useEffect, useMemo, useState } from 'react'
 import { useCreateQuery } from 'src/lib/hooks/useCreateQuery'
 import { getDefaultTTL } from 'src/lib/wagmi/hooks/utils/hooks/useTransactionDeadline'
-
-import { Cog6ToothIcon } from '@heroicons/react/24/outline'
-import { useConcentratedPositionInfo } from 'src/lib/wagmi/hooks/positions/hooks/useConcentratedPositionInfo'
-import { useConcentratedLiquidityPositionsFromTokenId } from 'src/lib/wagmi/hooks/positions/hooks/useConcentratedPositionsFromTokenId'
-import { ConcentratedLiquidityProvider } from 'src/ui/pool/ConcentratedLiquidityProvider'
-import { ConcentratedLiquidityWidget } from 'src/ui/pool/ConcentratedLiquidityWidget'
-import { SushiSwapV3FeeAmount } from 'sushi/config'
-import { Native, SUSHI } from 'sushi/currency'
+import { PoolPositionProvider } from 'src/ui/pool'
+import { AddLiquidityV2 } from 'src/ui/pool/add-liquidity/add-liquidity-v2'
 import { RemoveLiquidity } from './remove-liquidity'
 
 type LPManageTabValueType = 'add' | 'remove'
@@ -31,7 +29,7 @@ const TABS = [
   { label: 'Remove Liquidity', value: 'remove' },
 ]
 
-export const V3Manage = ({ position }: { position: any }) => {
+export const V2Manage = ({ position }: { position: any }) => {
   const { createQuery } = useCreateQuery()
   const [currentTab, setCurrentTab] = useState<LPManageTabValueType>('add')
   const searchParams = useSearchParams()
@@ -39,56 +37,53 @@ export const V3Manage = ({ position }: { position: any }) => {
     | LPManageTabValueType
     | undefined
 
+  const { data: pool, isLoading } = useQuery<V2Pool | null>({
+    queryKey: ['v2-pool-testing'],
+    queryFn: async () => {
+      const result = await getV2Pool({
+        chainId: 137,
+        address: '0x55ff76bffc3cdd9d5fdbbc2ece4528ecce45047e',
+      })
+      return result
+    },
+  })
+
   useEffect(() => {
     if (manageTabParam && LPManageTabValues.includes(manageTabParam)) {
       setCurrentTab(manageTabParam)
     }
   }, [manageTabParam])
 
-  const { data: _position } = useConcentratedPositionInfo({
-    chainId: 1,
-    token0: SUSHI[1],
-    tokenId: '1942',
-    token1: Native.onChain(1),
-  })
-
-  const { data: positionDetails, isLoading: _isPositionDetailsLoading } =
-    useConcentratedLiquidityPositionsFromTokenId({
-      chainId: 1,
-      tokenId: '1942',
-    })
-
   const content = useMemo(() => {
     switch (currentTab) {
       case 'add':
         return (
-          <ConcentratedLiquidityWidget
-            withTitleAndDescription={false}
-            chainId={1}
-            account={'0x47Ef3bF350F70724F2fd34206990cdE9C3A6B6F0'}
-            token0={SUSHI[1]}
-            token1={Native.onChain(1)}
-            feeAmount={SushiSwapV3FeeAmount.MEDIUM}
-            // tokensLoading={token0Loading || token1Loading}
-            tokensLoading={false}
-            // existingPosition={position ?? undefined}
-            existingPosition={_position ?? undefined}
-            tokenId={'1942'}
+          <AddLiquidityV2
+            initToken0={position.token0}
+            initToken1={position.token1}
+            initChainId={position.chainId}
+            hideTokenSelectors={true}
+            hideEstimatedValue={true}
           />
         )
       case 'remove':
+        if (!pool || isLoading) {
+          return (
+            <div className="flex flex-col gap-3">
+              <SkeletonBox className="h-32" />
+              <SkeletonBox className="h-32" />
+              <SkeletonBox className="h-14" />
+            </div>
+          )
+        }
+
         return (
-          <RemoveLiquidity
-            token0={SUSHI[1]}
-            token1={Native.onChain(1)}
-            chainId={1}
-            account={'0x47Ef3bF350F70724F2fd34206990cdE9C3A6B6F0'}
-            position={_position ?? undefined}
-            positionDetails={positionDetails}
-          />
+          <PoolPositionProvider pool={pool}>
+            <RemoveLiquidity pool={pool} />
+          </PoolPositionProvider>
         )
     }
-  }, [currentTab, positionDetails, _position])
+  }, [currentTab, position, pool, isLoading])
 
   return (
     <Tabs
@@ -159,11 +154,8 @@ export const V3Manage = ({ position }: { position: any }) => {
           />
         </SettingsOverlay>
       </div>
-      <ConcentratedLiquidityProvider>
-        <TabsContent value={currentTab} className="pt-2">
-          {content}
-        </TabsContent>
-      </ConcentratedLiquidityProvider>
+
+      <TabsContent value={currentTab}>{content}</TabsContent>
     </Tabs>
   )
 }

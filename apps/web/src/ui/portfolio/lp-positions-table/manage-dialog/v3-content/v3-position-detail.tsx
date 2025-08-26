@@ -1,8 +1,8 @@
 import { PriceRangeSparklineCLMM } from '../../price-range-sparkline-clmm'
+import { Positions } from '../positions'
 import { CurrentPrice } from './current-price'
 import { Fees } from './fees'
 import { MinMaxPrices } from './min-max-prices'
-import { Positions } from './positions'
 import { Rewards } from './rewards'
 
 export const V3PositionDetail = ({ position }: { position: any }) => {

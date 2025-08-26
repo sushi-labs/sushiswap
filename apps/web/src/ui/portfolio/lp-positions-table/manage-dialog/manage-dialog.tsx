@@ -86,12 +86,7 @@ export const ManageDialog = ({
   const content = useMemo(() => {
     switch (data?.protocol) {
       case 'SUSHISWAP_V2':
-        return (
-          <V2Content
-            currentTab={currentTab}
-            // position={data}
-          />
-        )
+        return <V2Content currentTab={currentTab} position={data} />
       case 'SUSHISWAP_V3':
         return <V3Content currentTab={currentTab} position={data} />
 
