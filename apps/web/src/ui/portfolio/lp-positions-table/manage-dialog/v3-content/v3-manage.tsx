@@ -16,17 +16,20 @@ import { getDefaultTTL } from 'src/lib/wagmi/hooks/utils/hooks/useTransactionDea
 
 import { Cog6ToothIcon } from '@heroicons/react/24/outline'
 import { useConcentratedPositionInfo } from 'src/lib/wagmi/hooks/positions/hooks/useConcentratedPositionInfo'
+import { useConcentratedLiquidityPositionsFromTokenId } from 'src/lib/wagmi/hooks/positions/hooks/useConcentratedPositionsFromTokenId'
 import { ConcentratedLiquidityProvider } from 'src/ui/pool/ConcentratedLiquidityProvider'
+import { ConcentratedLiquidityRemoveWidget } from 'src/ui/pool/ConcentratedLiquidityRemoveWidget'
 import { ConcentratedLiquidityWidget } from 'src/ui/pool/ConcentratedLiquidityWidget'
 import { SushiSwapV3FeeAmount } from 'sushi/config'
 import { Native, SUSHI, WETH9 } from 'sushi/currency'
+import { RemoveLiquidity } from './remove-liquidity'
 
 type LPManageTabValueType = 'add' | 'remove'
 const LPManageTabValues: LPManageTabValueType[] = ['add', 'remove']
 
 const TABS = [
-  { label: 'Add', value: 'add' },
-  { label: 'Remove', value: 'remove' },
+  { label: 'Add Liquidity', value: 'add' },
+  { label: 'Remove Liquidity', value: 'remove' },
 ]
 
 export const V3Manage = ({ position }: { position: any }) => {
@@ -43,12 +46,18 @@ export const V3Manage = ({ position }: { position: any }) => {
     }
   }, [manageTabParam])
 
-  const { data: positionData } = useConcentratedPositionInfo({
+  const { data: _position } = useConcentratedPositionInfo({
     chainId: 1,
     token0: SUSHI[1],
     tokenId: '1942',
     token1: Native.onChain(1),
   })
+
+  const { data: positionDetails, isLoading: _isPositionDetailsLoading } =
+    useConcentratedLiquidityPositionsFromTokenId({
+      chainId: 1,
+      tokenId: '1942',
+    })
 
   const content = useMemo(() => {
     switch (currentTab) {
@@ -64,14 +73,23 @@ export const V3Manage = ({ position }: { position: any }) => {
             // tokensLoading={token0Loading || token1Loading}
             tokensLoading={false}
             // existingPosition={position ?? undefined}
-            existingPosition={positionData ?? undefined}
+            existingPosition={_position ?? undefined}
             tokenId={'1942'}
           />
         )
       case 'remove':
-        return <div>Remove Liquidity</div>
+        return (
+          <RemoveLiquidity
+            token0={SUSHI[1]}
+            token1={Native.onChain(1)}
+            chainId={1}
+            account={'0x47Ef3bF350F70724F2fd34206990cdE9C3A6B6F0'}
+            position={_position ?? undefined}
+            positionDetails={positionDetails}
+          />
+        )
     }
-  }, [currentTab, positionData])
+  }, [currentTab, positionDetails, _position])
 
   return (
     <Tabs
@@ -107,32 +125,40 @@ export const V3Manage = ({ position }: { position: any }) => {
             </TabsTrigger>
           ))}
         </TabsList>
-        {currentTab === 'add' ? (
-          <SettingsOverlay
-            options={{
-              slippageTolerance: {
-                storageKey: SlippageToleranceStorageKey.AddLiquidity,
-                title: 'Add Liquidity Slippage',
-              },
-              transactionDeadline: {
-                storageKey: TTLStorageKey.AddLiquidity,
-                defaultValue: getDefaultTTL(position.chainId).toString(),
-              },
-            }}
-            modules={[
-              SettingsModule.CustomTokens,
-              SettingsModule.SlippageTolerance,
-              SettingsModule.TransactionDeadline,
-            ]}
-          >
-            <IconButton
-              size="sm"
-              name="Settings"
-              icon={Cog6ToothIcon}
-              variant="networks"
-            />
-          </SettingsOverlay>
-        ) : null}
+
+        <SettingsOverlay
+          options={{
+            slippageTolerance: {
+              storageKey:
+                currentTab === 'add'
+                  ? SlippageToleranceStorageKey.AddLiquidity
+                  : SlippageToleranceStorageKey.RemoveLiquidity,
+              title:
+                currentTab === 'add'
+                  ? 'Add Liquidity Slippage'
+                  : 'Remove Liquidity Slippage',
+            },
+            transactionDeadline: {
+              storageKey:
+                currentTab === 'add'
+                  ? TTLStorageKey.AddLiquidity
+                  : TTLStorageKey.RemoveLiquidity,
+              defaultValue: getDefaultTTL(position.chainId).toString(),
+            },
+          }}
+          modules={[
+            SettingsModule.CustomTokens,
+            SettingsModule.SlippageTolerance,
+            SettingsModule.TransactionDeadline,
+          ]}
+        >
+          <IconButton
+            size="sm"
+            name="Settings"
+            icon={Cog6ToothIcon}
+            variant="networks"
+          />
+        </SettingsOverlay>
       </div>
       <ConcentratedLiquidityProvider>
         <TabsContent value={currentTab} className="pt-2">
