@@ -1,14 +1,12 @@
 'use client'
 
-import { PlusCircleIcon } from '@heroicons/react-v1/outline'
-import type { V2Pool, V3Pool } from '@sushiswap/graph-client/data-api'
+import { useIsSmScreen } from '@sushiswap/hooks'
 import {
   Button,
   Card,
   CardContent,
   CardHeader,
   CardTitle,
-  Currency,
   SkeletonBox,
   classNames,
 } from '@sushiswap/ui'
@@ -27,16 +25,11 @@ import { useTheme } from 'next-themes'
 import { useEffect, useMemo, useState } from 'react'
 import { useCallback } from 'react'
 import type { FC, MouseEventHandler, ReactNode } from 'react'
-import { Divider } from 'src/ui/swap/cross-chain/cross-chain-swap-confirmation-dialog'
-import type { SushiSwapProtocol } from 'sushi'
-import { Native, type Type } from 'sushi/currency'
-import { formatPercent, formatUSD } from 'sushi/format'
+import type { Type } from 'sushi/currency'
+import { formatUSD } from 'sushi/format'
 import tailwindConfig from 'tailwind.config'
 import resolveConfig from 'tailwindcss/resolveConfig'
-import { NetworkMenu } from '../../swap/trade/favorite-recent/network-menu'
 import { Wrapper } from '../../swap/trade/wrapper'
-import { LPPositionsNetworkFilter } from '../lp-positions-table/lp-positions-network-filter'
-import { PnlNetworkFilter } from '../wallet-holdings/pnl-network-filter'
 import { ActionButtons } from './action-buttons'
 import { AssetsFilter } from './assets-filter'
 
@@ -212,6 +205,7 @@ export const AssetsChart = () => {
   const isError = false
   const { theme } = useTheme()
   const isDark = theme === 'dark'
+  const isSmallScreen = useIsSmScreen()
 
   useEffect(() => setIsLoading(false), [])
 
@@ -310,7 +304,12 @@ export const AssetsChart = () => {
         },
         borderWidth: 0,
       },
-      grid: { top: 30, left: 90, right: 6, bottom: 70 },
+      grid: {
+        top: isSmallScreen ? 10 : 30,
+        left: isSmallScreen ? 65 : 90,
+        right: 6,
+        bottom: isSmallScreen ? 50 : 70,
+      },
       color: [
         isDark
           ? (tailwind.theme?.colors?.skyblue as Record<string, string>)['500']
@@ -323,13 +322,19 @@ export const AssetsChart = () => {
           boundaryGap: false,
           splitNumber:
             period === AssetsChartPeriod.OneDay
-              ? 6
+              ? isSmallScreen
+                ? 3
+                : 6
               : period === AssetsChartPeriod.SevenDay
                 ? 7
                 : period === AssetsChartPeriod.ThirtyDay
-                  ? 4
+                  ? isSmallScreen
+                    ? 1
+                    : 4
                   : period === AssetsChartPeriod.All
-                    ? 6
+                    ? isSmallScreen
+                      ? 3
+                      : 6
                     : 5,
           axisLabel: {
             formatter: (value: number) => formatLabel(new Date(value), period),
@@ -337,7 +342,8 @@ export const AssetsChart = () => {
               '450'
             ],
             fontWeight: 600,
-            margin: 40,
+            fontSize: isSmallScreen ? 12 : 14,
+            margin: isSmallScreen ? 20 : 40,
           },
           axisLine: {
             show: false,
@@ -364,7 +370,8 @@ export const AssetsChart = () => {
               '450'
             ],
             fontWeight: 600,
-            margin: 40,
+            fontSize: isSmallScreen ? 12 : 14,
+            margin: isSmallScreen ? 20 : 40,
           },
           splitLine: {
             show: false,
@@ -384,13 +391,13 @@ export const AssetsChart = () => {
         },
       ],
     }),
-    [xData, yData, onMouseOver, period, isDark],
+    [xData, yData, onMouseOver, period, isDark, isSmallScreen],
   )
 
   return (
     <Wrapper className="!p-0" enableBorder>
-      <CardHeader className="!px-0">
-        <div className="flex justify-between items-center px-6 pb-6">
+      <CardHeader className="!px-0 !p-4 md:p-6">
+        <div className="flex flex-col gap-4 justify-between px-6 pb-4 md:pb-6 md:gap-0 md:items-center md:flex-row">
           <AssetsFilter
             setSelectedToken={setSelectedToken}
             selectedToken={selectedToken}
@@ -398,9 +405,9 @@ export const AssetsChart = () => {
           {selectedToken && <ActionButtons token={selectedToken} />}
         </div>
         <div className="h-[1px] bg-accent w-full !mt-0" />
-        <CardTitle className="!text-primary px-6 pt-6">
-          <div className="flex flex-col gap-1 justify-between items-start md:items-center md:flex-row md:gap-0">
-            <div className="flex flex-col gap-1 w-full">
+        <CardTitle className="!text-primary px-6 pt-4 md:pt-6">
+          <div className="flex flex-col-reverse gap-1 justify-between items-start md:items-center md:flex-row md:gap-0">
+            <div className="flex flex-col gap-1 pt-6 w-full md:pt-0">
               <span className="text-2xl !font-medium">$52,526.96</span>
 
               <span className="!font-medium text-green-500">
@@ -442,11 +449,6 @@ export const AssetsChart = () => {
         </CardTitle>
       </CardHeader>
       <CardContent className="!pb-2">
-        <div className="flex gap-1 items-center md:hidden">
-          <span className="text-base text-green-500 md:text-[1.75rem] font-medium underline decoration-dotted underline-offset-4">
-            $3,898.09
-          </span>
-        </div>
         {isLoading ? (
           <SkeletonBox
             className={classNames(

@@ -14,18 +14,24 @@ import { type ReactNode, useState } from 'react'
 export const PopoverDrawer = ({
   trigger,
   dialogTitle,
+  hideDialogClose = false,
+  customDialogClose,
   content,
   popoverContentClassName,
   dialogContentClassName,
+  dialogTitleClassName,
   align,
   open,
   setOpen,
 }: {
   trigger: ReactNode
   dialogTitle: string
+  hideDialogClose?: boolean
+  customDialogClose?: ReactNode
   content: ReactNode
   popoverContentClassName?: string
   dialogContentClassName?: string
+  dialogTitleClassName?: string
   align?: 'center' | 'start' | 'end'
   open?: boolean
   setOpen?: (open: boolean) => void
@@ -67,10 +73,24 @@ export const PopoverDrawer = ({
       <DialogTrigger asChild>{trigger}</DialogTrigger>
       <DialogContent
         aria-describedby={undefined}
+        hideClose={hideDialogClose}
         variant="semi-opaque"
-        className="!px-3 border-t border-[#EBEBEB] !bg-slate-50 dark:border-[#FFFFFF14] dark:!bg-slate-800"
+        className={classNames(
+          '!px-3 border-t border-[#EBEBEB] !bg-slate-50 dark:border-[#FFFFFF14] dark:!bg-slate-800',
+        )}
       >
-        <DialogTitle className="mt-4 !font-medium">{dialogTitle}</DialogTitle>
+        <div
+          className={classNames(
+            !!customDialogClose && 'flex items-center justify-between',
+          )}
+        >
+          <DialogTitle
+            className={classNames('mt-4 !font-medium', dialogTitleClassName)}
+          >
+            {dialogTitle}
+          </DialogTitle>
+          {customDialogClose}
+        </div>
         <div
           className={classNames(
             'my-4 text-xs max-w-[75%]',

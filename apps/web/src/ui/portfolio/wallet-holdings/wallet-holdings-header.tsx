@@ -5,12 +5,18 @@ import { SendWidget } from './send-widget'
 export const WalletHoldingsHeader = () => {
   return (
     <>
-      <div className="flex gap-3 items-center">
-        <span className="font-semibold">Wallet</span>
-        <SendWidget />
+      <div className="flex gap-4 items-center">
+        <div className="flex gap-3 items-center">
+          <span className="font-semibold !text-base">Wallet</span>
+          <SendWidget />
+        </div>
+        <div className="flex gap-2 items-center md:hidden">
+          <span>Hide &lt; $1</span>
+          <Switch className="dark:data-[state=checked]:bg-skyblue" />
+        </div>
       </div>
       <div className="flex gap-5 text-muted-foreground">
-        <div className="flex gap-2 items-center">
+        <div className="hidden gap-2 items-center md:flex">
           <span>Hide &lt; $1</span>
           <Switch className="dark:data-[state=checked]:bg-skyblue" />
         </div>

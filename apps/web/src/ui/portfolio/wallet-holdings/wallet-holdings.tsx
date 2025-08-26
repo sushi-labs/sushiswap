@@ -70,13 +70,13 @@ export const WalletHoldings = () => {
   }, [])
 
   return (
-    <Wrapper className="!p-0" enableBorder>
+    <Wrapper className="!p-0 rounded-lg overflow-x-auto" enableBorder>
       <CardHeader className="!gap-2.5 relative">
-        <CardTitle className="!text-primary flex justify-between items-start md:items-center flex-col md:flex-row gap-2 md:gap-0">
+        <CardTitle className="!text-primary flex justify-between items-start md:items-center flex-col md:flex-row gap-3 md:gap-0">
           <WalletHoldingsHeader />
         </CardTitle>
       </CardHeader>
-      <CardContent>
+      <CardContent className="!p-0">
         <DataTable
           state={state}
           loading={false}
@@ -93,7 +93,7 @@ export const WalletHoldings = () => {
             LAST_30_DAY_COLUMN,
           ]}
           data={data}
-          className="border-t-0"
+          className="dark:border-[#FFFFFF14] border-[#EBEBEB] rounded-t-none"
         />
       </CardContent>
     </Wrapper>
