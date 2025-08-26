@@ -698,6 +698,13 @@ export const WNATIVE = {
     symbol: 'WBNB',
     name: 'Wrapped BNB',
   }),
+  [ChainId.BERA]: new Token({
+    chainId: ChainId.BERA,
+    address: WNATIVE_ADDRESS[ChainId.BERA],
+    decimals: 18,
+    symbol: 'WBERA',
+    name: 'Wrapped Bera',
+  }),
 } as const
 
 export const SUSHI = addressMapToTokenMap(
@@ -1237,4 +1244,20 @@ export const sFLR = new Token({
   decimals: 18,
   symbol: 'sFLR',
   name: 'Staked FLR',
+})
+
+export const USDe = new Token({
+  chainId: ChainId.BERA,
+  address: '0x5d3a1Ff2b6BAb83b63cd9AD0787074081a52ef34',
+  decimals: 18,
+  symbol: 'USDe',
+  name: 'USDe',
+})
+
+export const weETH = new Token({
+  chainId: ChainId.BERA,
+  address: '0x7DCC39B4d1C53CB31e1aBc0e358b43987FEF80f7',
+  decimals: 18,
+  symbol: 'weETH',
+  name: 'Wrapped eETH',
 })

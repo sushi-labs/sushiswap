@@ -36,6 +36,8 @@ import { JetSwapProvider } from './liquidity-providers/JetSwap.js'
 import { KimV4Provider } from './liquidity-providers/KimV4.js'
 import { KinetixV2Provider } from './liquidity-providers/KinetixV2.js'
 import { KinetixV3Provider } from './liquidity-providers/KinetixV3.js'
+import { KodiakV2Provider } from './liquidity-providers/KodiakV2.js'
+import { KodiakV3Provider } from './liquidity-providers/KodiakV3.js'
 import { KwikswapProvider } from './liquidity-providers/Kwikswap.js'
 import { LaserSwapV2Provider } from './liquidity-providers/LaserSwap.js'
 import {
@@ -50,6 +52,8 @@ import { MonoswapV2Provider } from './liquidity-providers/MonoSwapV2.js'
 import { MonoswapV3Provider } from './liquidity-providers/MonoSwapV3.js'
 import { NativeWrapProvider } from './liquidity-providers/NativeWrapProvider.js'
 import { NetSwapProvider } from './liquidity-providers/NetSwap.js'
+import { NileV2Provider } from './liquidity-providers/NileV2.js'
+import { NileV3Provider } from './liquidity-providers/NileV3.js'
 import { NineInchProvider } from './liquidity-providers/NineInch.js'
 import { PancakeSwapV2Provider } from './liquidity-providers/PancakeSwapV2.js'
 import { PancakeSwapV3Provider } from './liquidity-providers/PancakeSwapV3.js'
@@ -217,6 +221,8 @@ export class DataFetcher {
       KimV4Provider,
       KinetixV2Provider,
       KinetixV3Provider,
+      KodiakV2Provider,
+      KodiakV3Provider,
       KwikswapProvider,
       LaserSwapV2Provider,
       LynexV1Provider,
@@ -226,6 +232,8 @@ export class DataFetcher {
       MonoswapV3Provider,
       MSwapProvider,
       NetSwapProvider,
+      NileV2Provider,
+      NileV3Provider,
       NineInchProvider,
       PancakeSwapV2Provider,
       PancakeSwapV3Provider,
