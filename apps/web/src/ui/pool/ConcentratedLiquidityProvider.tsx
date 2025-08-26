@@ -610,15 +610,25 @@ export function useConcentratedDerivedMintInfo({
   }, [dependentAmount, independentAmount, independentField])
 
   // single deposit only if price is out of range
-  const deposit0Disabled = Boolean(
-    typeof tickUpper === 'number' &&
-      poolForPosition &&
-      poolForPosition.tickCurrent >= tickUpper,
+  const deposit0Disabled = useMemo(
+    () =>
+      Boolean(
+        typeof tickUpper === 'number' &&
+          poolForPosition &&
+          poolForPosition.sqrtRatioX96 >=
+            TickMath.getSqrtRatioAtTick(tickUpper),
+      ),
+    [tickUpper, poolForPosition],
   )
-  const deposit1Disabled = Boolean(
-    typeof tickLower === 'number' &&
-      poolForPosition &&
-      poolForPosition.tickCurrent <= tickLower,
+  const deposit1Disabled = useMemo(
+    () =>
+      Boolean(
+        typeof tickLower === 'number' &&
+          poolForPosition &&
+          poolForPosition.sqrtRatioX96 <=
+            TickMath.getSqrtRatioAtTick(tickLower),
+      ),
+    [tickLower, poolForPosition],
   )
 
   // sorted for token order
