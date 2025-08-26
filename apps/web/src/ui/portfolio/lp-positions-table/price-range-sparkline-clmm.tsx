@@ -20,7 +20,9 @@ const series = new Array(100).fill(0).map((_) => ({
   price0: Math.random() * 100,
 }))
 
-export const PriceRangeSparklineCLMM = () => {
+export const PriceRangeSparklineCLMM = ({
+  strokeWidth,
+}: { strokeWidth?: number }) => {
   const id = useId()
   const { theme } = useTheme()
   const isDarkMode = theme === 'dark'
@@ -119,6 +121,7 @@ export const PriceRangeSparklineCLMM = () => {
               containerWidth={width}
               lineStyle="solid"
               linePlacement="top"
+              strokeWidth={strokeWidth}
             />
             <HorizontalLine
               value={current}
@@ -127,6 +130,7 @@ export const PriceRangeSparklineCLMM = () => {
               containerWidth={width}
               lineStyle="dashed"
               linePlacement="center"
+              strokeWidth={strokeWidth}
             />
             <HorizontalLine
               value={brushDomain[0]}
@@ -135,6 +139,7 @@ export const PriceRangeSparklineCLMM = () => {
               containerWidth={width}
               lineStyle="solid"
               linePlacement="bottom"
+              strokeWidth={strokeWidth}
             />
           </g>
         </g>
@@ -150,6 +155,7 @@ export const HorizontalLine = ({
   containerWidth,
   lineStyle = 'dashed',
   linePlacement,
+  strokeWidth = 3,
 }: {
   value: number
   yScale: ScaleLinear<number, number>
@@ -157,6 +163,7 @@ export const HorizontalLine = ({
   containerWidth: number
   lineStyle: 'solid' | 'dashed'
   linePlacement: 'top' | 'bottom' | 'center'
+  strokeWidth?: number
 }) => {
   const lineStart = containerWidth - width
 
@@ -164,7 +171,8 @@ export const HorizontalLine = ({
     return null
   }
 
-  const strokeDasharray = lineStyle === 'dashed' ? '8' : 'none'
+  const strokeDasharray =
+    lineStyle === 'dashed' ? (strokeWidth * 1.5).toString() : 'none'
 
   return (
     <line
@@ -179,7 +187,7 @@ export const HorizontalLine = ({
               : 'red'
       }
       opacity={1}
-      strokeWidth={3}
+      strokeWidth={strokeWidth}
       fill="none"
       y1={yScale(value)}
       x1={lineStart}
