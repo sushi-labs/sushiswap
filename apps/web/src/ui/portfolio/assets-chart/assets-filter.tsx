@@ -1,8 +1,7 @@
 'use client'
 
 import { ChevronUpIcon, XIcon } from '@heroicons/react-v1/solid'
-import { PlusCircleIcon } from '@heroicons/react/24/outline'
-import { Currency, classNames } from '@sushiswap/ui'
+import { Badge, Currency, classNames } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui'
 import {
   Command,
@@ -11,14 +10,12 @@ import {
   CommandInput,
   CommandItem,
 } from '@sushiswap/ui'
-import { CheckIcon } from '@sushiswap/ui/icons/CheckIcon'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import { useState } from 'react'
-import { getNetworkName } from 'src/lib/network'
 import { PopoverDrawer } from 'src/ui/common/popover-drawer'
 import { NetworkMenu } from 'src/ui/swap/trade/favorite-recent/network-menu'
-import type { ChainId, EvmChainId } from 'sushi/chain'
-import { Token } from 'sushi/currency'
+import type { EvmChainId } from 'sushi/chain'
+import { Token, type Type } from 'sushi/currency'
 import { formatPercent, formatUSD } from 'sushi/format'
 
 const PLACEHOLDER_ASSETS = [
@@ -69,64 +66,91 @@ const PLACEHOLDER_ASSETS = [
   },
 ]
 
-export const AssetsFilter = () => {
+export const AssetsFilter = ({
+  setSelectedToken,
+  selectedToken,
+}: {
+  setSelectedToken: (token: Type | null) => void
+  selectedToken: Type | null
+}) => {
   const [selectedNetwork, setSelectedNetwork] = useState<number | null>(null)
-
-  // const clearAll = () => {
-  //   setSelectedNetwork(1)
-  // }
-
-  // const clearSelections = () => {
-  //   setSelectedNetwork(1)
-  // }
+  const [open, setOpen] = useState(false)
 
   const token = {
     price24hChange: 10,
   }
 
-  const selectedToken = false
   return (
     <PopoverDrawer
+      open={open}
+      setOpen={setOpen}
       align="start"
       popoverContentClassName="md:max-w-[370px] md:w-[370px] !p-0 !bg-[#FFFFFF] dark:!bg-slate-800"
       dialogContentClassName="max-w-none"
       dialogTitle="Network Filter"
       trigger={
-        <Button
-          iconPosition="end"
-          icon={ChevronUpIcon}
-          variant="outline"
-          role="combobox"
-          size="sm"
-          className={classNames(
-            'hover:dark:!bg-skyblue/20 hover:!bg-blue/20 hover:!text-blue hover:dark:!text-skyblue !gap-1 !w-fit !border-none !rounded-full',
-          )}
-        >
-          {selectedToken ? (
-            <>
-              {/* <span>Network: </span>
-              <div>{getNetworkName(selectedNetwork[0])}</div>
-              <div>
-                {selectedNetwork.length > 1
-                  ? ` +${selectedNetwork.length - 1}`
-                  : null}
+        <div className="flex gap-5 items-center">
+          {' '}
+          <Button
+            iconPosition="end"
+            icon={ChevronUpIcon}
+            variant="outline"
+            role="combobox"
+            size="sm"
+            className={classNames(
+              'hover:dark:!bg-skyblue/20 hover:!bg-blue/20 hover:!text-blue hover:dark:!text-skyblue !gap-1 !w-fit !border-none !rounded-full',
+            )}
+          >
+            {selectedToken ? (
+              <div className="flex gap-2.5 items-center">
+                <Badge
+                  className="border border-slate-200 dark:border-slate-750 rounded-[4px] z-[11] bottom-0 -right-1"
+                  position="bottom-right"
+                  badgeContent={
+                    <NetworkIcon
+                      type="square"
+                      className="rounded-[3px]"
+                      chainId={selectedToken?.chainId as EvmChainId}
+                      width={12}
+                      height={12}
+                    />
+                  }
+                >
+                  <Currency.Icon
+                    disableLink
+                    currency={
+                      new Token({
+                        address: selectedToken?.wrapped.address,
+                        name: selectedToken?.name,
+                        symbol: selectedToken?.symbol,
+                        chainId: selectedToken?.chainId as EvmChainId,
+                        decimals: selectedToken?.decimals,
+                      })
+                    }
+                    width={24}
+                    height={24}
+                  />
+                </Badge>
+                <span>{selectedToken.name}</span>
               </div>
-              <button
-                type="button"
-                onClick={(e) => {
-                  e.stopPropagation()
-                  clearSelections()
-                }}
-                className="py-2 px-0.5"
-              >
-                <XIcon className="w-4 h-4" />
-              </button> */}
-              tokens
-            </>
-          ) : (
-            <span>All Assets</span>
+            ) : (
+              <span>All Assets</span>
+            )}
+          </Button>
+          {selectedToken && (
+            <button
+              className="flex gap-1 items-center text-sm text-blue dark:text-skyblue"
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation()
+                setSelectedToken(null)
+              }}
+            >
+              Clear
+              <XIcon className="w-4 h-4" />
+            </button>
           )}
-        </Button>
+        </div>
       }
       content={
         <Command className="flex items-center p-5">
@@ -147,13 +171,22 @@ export const AssetsFilter = () => {
 
           <CommandGroup className="!overflow-x-hidden !overflow-y-scroll scroll max-h-[300px]">
             {PLACEHOLDER_ASSETS.map((asset) => {
-              const name = getNetworkName(asset.chainId as ChainId)
-
               return (
                 <CommandItem
-                  key={asset.chainId}
-                  value={`${name}__${asset.chainId}`}
-                  onSelect={() => {}}
+                  key={`${asset.currency.name}__${asset.chainId}`}
+                  value={`${asset.currency.name}__${asset.chainId}`}
+                  onSelect={() => {
+                    setSelectedToken(
+                      new Token({
+                        chainId: asset.chainId as EvmChainId,
+                        address: asset.currency.address,
+                        decimals: asset.currency.decimals,
+                        symbol: asset.currency.symbol,
+                        name: asset.currency.name,
+                      }),
+                    )
+                    setOpen(false)
+                  }}
                   className={classNames(
                     'py-2 pr-2 hover:bg-[#0000000A] cursor-pointer hover:dark:bg-[#FFFFFF0A] font-medium text-slate-900 dark:text-slate-200',
                   )}
@@ -191,16 +224,6 @@ export const AssetsFilter = () => {
                         </div>
                       </div>
                     </div>
-                    {/* {isSelected ? (
-                    <span className="absolute right-2 flex h-3.5 w-3.5 items-center justify-center bg-blue dark:bg-skyblu p-0.5 rounded-sm">
-                      <CheckIcon
-                        strokeWidth={3}
-                        width={16}
-                        height={16}
-                        className="text-slate-200 dark:text-slate-750"
-                      />
-                    </span>
-                  ) : null} */}
 
                     <div className="flex flex-col">
                       <div className="overflow-hidden text-sm font-medium overflow-ellipsis">

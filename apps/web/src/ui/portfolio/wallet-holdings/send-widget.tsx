@@ -1,12 +1,35 @@
 import { PaperAirplaneIcon } from '@heroicons/react-v1/solid'
-import { Button, Dialog, DialogContent, DialogTrigger } from '@sushiswap/ui'
+import {
+  Button,
+  Dialog,
+  DialogContent,
+  DialogTrigger,
+  classNames,
+} from '@sushiswap/ui'
+import { useEffect } from 'react'
+import type { Type } from 'sushi/currency'
 import { BrowseContactView } from './browse-contact-view'
 import { EditContactView } from './edit-contact-view'
 import { useSendTokens } from './send-token-provider'
 import { SendView } from './send-view'
 
-export const SendWidget = () => {
-  const { state } = useSendTokens()
+export const SendWidget = ({
+  triggerClassName,
+  hideTriggerIcon = false,
+  initialToken,
+}: {
+  triggerClassName?: string
+  hideTriggerIcon?: boolean
+  initialToken?: Type
+}) => {
+  const { state, mutate } = useSendTokens()
+
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+  useEffect(() => {
+    if (initialToken) {
+      mutate.setToken0(initialToken)
+    }
+  }, [initialToken])
 
   const isSendView = state.currentStep === 'send'
   const isBrowseView = state.currentStep === 'browseContacts'
@@ -17,10 +40,15 @@ export const SendWidget = () => {
       <DialogTrigger asChild>
         <Button
           variant="default"
-          className="!min-h-[32px] !h-[32px] !p-3 font-semibold"
+          className={classNames(
+            '!min-h-[32px] !h-[32px] !p-3 font-semibold',
+            triggerClassName,
+          )}
           size="sm"
         >
-          <PaperAirplaneIcon className="mb-1 w-4 h-4 rotate-45" />
+          {!hideTriggerIcon && (
+            <PaperAirplaneIcon className="mb-1 w-4 h-4 rotate-45" />
+          )}
           Send
         </Button>
       </DialogTrigger>

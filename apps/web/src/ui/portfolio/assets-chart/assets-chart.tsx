@@ -29,7 +29,7 @@ import { useCallback } from 'react'
 import type { FC, MouseEventHandler, ReactNode } from 'react'
 import { Divider } from 'src/ui/swap/cross-chain/cross-chain-swap-confirmation-dialog'
 import type { SushiSwapProtocol } from 'sushi'
-import { Native } from 'sushi/currency'
+import { Native, type Type } from 'sushi/currency'
 import { formatPercent, formatUSD } from 'sushi/format'
 import tailwindConfig from 'tailwind.config'
 import resolveConfig from 'tailwindcss/resolveConfig'
@@ -37,6 +37,7 @@ import { NetworkMenu } from '../../swap/trade/favorite-recent/network-menu'
 import { Wrapper } from '../../swap/trade/wrapper'
 import { LPPositionsNetworkFilter } from '../lp-positions-table/lp-positions-network-filter'
 import { PnlNetworkFilter } from '../wallet-holdings/pnl-network-filter'
+import { ActionButtons } from './action-buttons'
 import { AssetsFilter } from './assets-filter'
 
 echarts.use([
@@ -48,22 +49,22 @@ echarts.use([
   GridComponent,
 ])
 
-export enum PnLChartPeriod {
+export enum AssetsChartPeriod {
   OneDay = 'OneDay',
   SevenDay = 'SevenDay',
   ThirtyDay = 'ThirtyDay',
   All = 'All',
 }
 
-export const chartPeriods: Record<PnLChartPeriod, number> = {
-  [PnLChartPeriod.OneDay]: 86400 * 1000 * 1,
-  [PnLChartPeriod.SevenDay]: 86400 * 1000 * 7,
-  [PnLChartPeriod.ThirtyDay]: 86400 * 1000 * 30,
-  [PnLChartPeriod.All]: Number.POSITIVE_INFINITY,
+export const chartPeriods: Record<AssetsChartPeriod, number> = {
+  [AssetsChartPeriod.OneDay]: 86400 * 1000 * 1,
+  [AssetsChartPeriod.SevenDay]: 86400 * 1000 * 7,
+  [AssetsChartPeriod.ThirtyDay]: 86400 * 1000 * 30,
+  [AssetsChartPeriod.All]: Number.POSITIVE_INFINITY,
 }
 
 export const MOCK_USD_VALUE_BUCKETS = {
-  [PnLChartPeriod.OneDay]: [
+  [AssetsChartPeriod.OneDay]: [
     { date: 1757625600, usdValue: 9500 },
     { date: 1757632800, usdValue: 9680 },
     { date: 1757640000, usdValue: 9400 },
@@ -84,7 +85,7 @@ export const MOCK_USD_VALUE_BUCKETS = {
     { date: 1757784000, usdValue: 11740 },
     { date: 1757791200, usdValue: 11380 },
   ],
-  [PnLChartPeriod.SevenDay]: [
+  [AssetsChartPeriod.SevenDay]: [
     { date: 1757635200, usdValue: 1000 },
     { date: 1757721600, usdValue: 1010 },
     { date: 1757808000, usdValue: 1022 },
@@ -100,7 +101,7 @@ export const MOCK_USD_VALUE_BUCKETS = {
     { date: 1758672000, usdValue: 1146 },
     { date: 1758758400, usdValue: 1160 },
   ],
-  [PnLChartPeriod.ThirtyDay]: [
+  [AssetsChartPeriod.ThirtyDay]: [
     { date: 1752259200, usdValue: 1000 },
     { date: 1752345600, usdValue: 1012 },
     { date: 1752432000, usdValue: 1024 },
@@ -142,7 +143,7 @@ export const MOCK_USD_VALUE_BUCKETS = {
     { date: 1755542400, usdValue: 1536 },
     { date: 1755628800, usdValue: 1551 },
   ],
-  [PnLChartPeriod.All]: [
+  [AssetsChartPeriod.All]: [
     { date: 1752259200, usdValue: 1000 },
     { date: 1752518400, usdValue: 1036 },
     { date: 1752864000, usdValue: 1086 },
@@ -201,8 +202,12 @@ export const MOCK_USD_VALUE_BUCKETS = {
 
 const tailwind = resolveConfig(tailwindConfig)
 
-export const PnLChart = () => {
-  const [period, setPeriod] = useState<PnLChartPeriod>(PnLChartPeriod.OneDay)
+export const AssetsChart = () => {
+  const [selectedToken, setSelectedToken] = useState<Type | null>(null)
+
+  const [period, setPeriod] = useState<AssetsChartPeriod>(
+    AssetsChartPeriod.OneDay,
+  )
   const [isLoading, setIsLoading] = useState(true)
   const isError = false
   const { theme } = useTheme()
@@ -246,15 +251,15 @@ export const PnLChart = () => {
     [],
   )
 
-  const formatLabel = (date: Date, period: PnLChartPeriod): string => {
+  const formatLabel = (date: Date, period: AssetsChartPeriod): string => {
     switch (period) {
-      case PnLChartPeriod.OneDay:
+      case AssetsChartPeriod.OneDay:
         return format(date, 'h a')
-      case PnLChartPeriod.SevenDay:
+      case AssetsChartPeriod.SevenDay:
         return format(date, 'eee')
-      case PnLChartPeriod.ThirtyDay:
+      case AssetsChartPeriod.ThirtyDay:
         return format(date, 'MMM dd')
-      case PnLChartPeriod.All:
+      case AssetsChartPeriod.All:
         return format(date, "MMM ''yy")
       default:
         return ''
@@ -297,7 +302,7 @@ export const PnLChart = () => {
               date instanceof Date && !Number.isNaN(date?.getTime())
                 ? format(
                     date,
-                    `dd MMM yyyy${chartPeriods[period] < chartPeriods[PnLChartPeriod.OneDay] ? ' p' : ''}`,
+                    `dd MMM yyyy${chartPeriods[period] < chartPeriods[AssetsChartPeriod.OneDay] ? ' p' : ''}`,
                   )
                 : ''
             }</span>
@@ -317,13 +322,13 @@ export const PnLChart = () => {
           show: true,
           boundaryGap: false,
           splitNumber:
-            period === PnLChartPeriod.OneDay
+            period === AssetsChartPeriod.OneDay
               ? 6
-              : period === PnLChartPeriod.SevenDay
+              : period === AssetsChartPeriod.SevenDay
                 ? 7
-                : period === PnLChartPeriod.ThirtyDay
+                : period === AssetsChartPeriod.ThirtyDay
                   ? 4
-                  : period === PnLChartPeriod.All
+                  : period === AssetsChartPeriod.All
                     ? 6
                     : 5,
           axisLabel: {
@@ -385,47 +390,49 @@ export const PnLChart = () => {
   return (
     <Wrapper className="!p-0" enableBorder>
       <CardHeader className="!px-0">
-        <div className="px-4 pb-4">
-          <AssetsFilter />
+        <div className="flex justify-between items-center px-6 pb-6">
+          <AssetsFilter
+            setSelectedToken={setSelectedToken}
+            selectedToken={selectedToken}
+          />
+          {selectedToken && <ActionButtons token={selectedToken} />}
         </div>
-        <div className="h-[1px] bg-accent w-full" />
-        <CardTitle className="!text-primary px-4 pt-4">
+        <div className="h-[1px] bg-accent w-full !mt-0" />
+        <CardTitle className="!text-primary px-6 pt-6">
           <div className="flex flex-col gap-1 justify-between items-start md:items-center md:flex-row md:gap-0">
             <div className="flex flex-col gap-1 w-full">
-              <span className="text-2xl !font-medium hidden md:block">
-                $52,526.96
-              </span>
+              <span className="text-2xl !font-medium">$52,526.96</span>
 
-              <span className="!font-medium text-green-500 hidden md:block">
+              <span className="!font-medium text-green-500">
                 +5.6% ($2,785.43)
               </span>
             </div>
             <div className="flex flex-col-reverse gap-2 items-start md:items-center md:flex-row">
               <div className="flex gap-2">
                 <ChartPeriodButton
-                  active={period === PnLChartPeriod.OneDay}
-                  onClick={() => setPeriod(PnLChartPeriod.OneDay)}
+                  active={period === AssetsChartPeriod.OneDay}
+                  onClick={() => setPeriod(AssetsChartPeriod.OneDay)}
                 >
                   1d
                 </ChartPeriodButton>
 
                 <ChartPeriodButton
-                  active={period === PnLChartPeriod.SevenDay}
-                  onClick={() => setPeriod(PnLChartPeriod.SevenDay)}
+                  active={period === AssetsChartPeriod.SevenDay}
+                  onClick={() => setPeriod(AssetsChartPeriod.SevenDay)}
                 >
                   7d
                 </ChartPeriodButton>
 
                 <ChartPeriodButton
-                  active={period === PnLChartPeriod.ThirtyDay}
-                  onClick={() => setPeriod(PnLChartPeriod.ThirtyDay)}
+                  active={period === AssetsChartPeriod.ThirtyDay}
+                  onClick={() => setPeriod(AssetsChartPeriod.ThirtyDay)}
                 >
                   30d
                 </ChartPeriodButton>
 
                 <ChartPeriodButton
-                  active={period === PnLChartPeriod.All}
-                  onClick={() => setPeriod(PnLChartPeriod.All)}
+                  active={period === AssetsChartPeriod.All}
+                  onClick={() => setPeriod(AssetsChartPeriod.All)}
                 >
                   All
                 </ChartPeriodButton>
@@ -434,7 +441,7 @@ export const PnLChart = () => {
           </div>
         </CardTitle>
       </CardHeader>
-      <CardContent className="!pb-0">
+      <CardContent className="!pb-2">
         <div className="flex gap-1 items-center md:hidden">
           <span className="text-base text-green-500 md:text-[1.75rem] font-medium underline decoration-dotted underline-offset-4">
             $3,898.09

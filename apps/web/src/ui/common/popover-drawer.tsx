@@ -9,7 +9,7 @@ import {
   PopoverTrigger,
   classNames,
 } from '@sushiswap/ui'
-import { type ReactNode, useEffect, useState } from 'react'
+import { type ReactNode, useState } from 'react'
 
 export const PopoverDrawer = ({
   trigger,
@@ -18,6 +18,8 @@ export const PopoverDrawer = ({
   popoverContentClassName,
   dialogContentClassName,
   align,
+  open,
+  setOpen,
 }: {
   trigger: ReactNode
   dialogTitle: string
@@ -25,20 +27,27 @@ export const PopoverDrawer = ({
   popoverContentClassName?: string
   dialogContentClassName?: string
   align?: 'center' | 'start' | 'end'
+  open?: boolean
+  setOpen?: (open: boolean) => void
 }) => {
   const { isMd: isMdScreen } = useBreakpoint('md')
-  const [isOpen, setIsOpen] = useState(false)
   const isMounted = useIsMounted()
 
-  useEffect(() => {
-    if (isMdScreen && isOpen) {
-      setIsOpen(false)
+  const [internalOpen, setInternalOpen] = useState(false)
+  const isControlled = open !== undefined && setOpen !== undefined
+  const isOpen = isControlled ? open : internalOpen
+
+  const handleOpenChange = (next: boolean) => {
+    if (!isControlled) {
+      setInternalOpen(next)
+    } else {
+      setOpen(next)
     }
-  }, [isMdScreen, isOpen])
+  }
 
   if (isMdScreen && isMounted) {
     return (
-      <Popover>
+      <Popover open={isOpen} onOpenChange={handleOpenChange}>
         <PopoverTrigger asChild>{trigger}</PopoverTrigger>
         <PopoverContent
           align={align || 'end'}
@@ -54,12 +63,7 @@ export const PopoverDrawer = ({
   }
 
   return (
-    <Dialog
-      open={isOpen}
-      onOpenChange={(open) => {
-        setIsOpen(open)
-      }}
-    >
+    <Dialog open={isOpen} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>{trigger}</DialogTrigger>
       <DialogContent
         aria-describedby={undefined}
@@ -69,7 +73,7 @@ export const PopoverDrawer = ({
         <DialogTitle className="mt-4 !font-medium">{dialogTitle}</DialogTitle>
         <div
           className={classNames(
-            'my-4 text-xs max-w-[75%] ',
+            'my-4 text-xs max-w-[75%]',
             dialogContentClassName,
           )}
         >
