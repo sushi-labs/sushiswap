@@ -3,8 +3,10 @@ import type { LPTabValueType } from '../manage-dialog'
 
 export const V2Content = ({
   currentTab,
-  _position,
-}: { currentTab: LPTabValueType; position: any }) => {
+}: // position,
+{
+  currentTab: LPTabValueType // position: any
+}) => {
   const content = useMemo(() => {
     switch (currentTab) {
       case 'detail':
