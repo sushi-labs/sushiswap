@@ -14,7 +14,7 @@ import { Amount } from 'sushi/currency'
 export const Rewards = ({ position }: { position: any }) => {
   const amounts = [Amount.fromRawAmount(position.token0, 89000000000n)]
   return (
-    <Card>
+    <Card className="!bg-slate-50 dark:!bg-slate-800">
       <CardHeader className="!p-3 justify-between items-center !flex-row flex gap-2">
         <div>
           <CardTitle className="mb-1">Rewards</CardTitle>

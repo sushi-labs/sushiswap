@@ -12,7 +12,10 @@ import { useCreateQuery } from 'src/lib/hooks/useCreateQuery'
 import { formatUSD } from 'sushi'
 import { Amount } from 'sushi/currency'
 
-export const Positions = ({ position }: { position: any }) => {
+export const Positions = ({
+  position,
+  hideButtons,
+}: { position: any; hideButtons?: boolean }) => {
   const { createQuery } = useCreateQuery()
 
   const amounts = [
@@ -20,7 +23,7 @@ export const Positions = ({ position }: { position: any }) => {
     Amount.fromRawAmount(position.token1, 12344312432n),
   ]
   return (
-    <Card>
+    <Card className="!bg-slate-50 dark:!bg-slate-800">
       <CardHeader className="!p-3 flex !flex-col justify-between md:items-center md:!flex-row gap-2">
         <div>
           <CardTitle className="mb-1">Positions</CardTitle>
@@ -28,43 +31,45 @@ export const Positions = ({ position }: { position: any }) => {
             {formatUSD('49123')}
           </CardDescription>
         </div>
-        <div className="flex items-center gap-2">
-          <Button
-            onClick={() => {
-              createQuery([
-                {
-                  name: 'lpPosTab',
-                  value: 'manage',
-                },
-                {
-                  name: 'lpManageTab',
-                  value: 'add',
-                },
-              ])
-            }}
-            className="w-full md:w-fit"
-          >
-            Add Liquidity
-          </Button>
-          <Button
-            onClick={() => {
-              createQuery([
-                {
-                  name: 'lpPosTab',
-                  value: 'manage',
-                },
-                {
-                  name: 'lpManageTab',
-                  value: 'remove',
-                },
-              ])
-            }}
-            className="w-full md:w-fit"
-            variant="networks"
-          >
-            Remove Liquidity
-          </Button>
-        </div>
+        {hideButtons ? null : (
+          <div className="flex items-center gap-2">
+            <Button
+              onClick={() => {
+                createQuery([
+                  {
+                    name: 'lpPosTab',
+                    value: 'manage',
+                  },
+                  {
+                    name: 'lpManageTab',
+                    value: 'add',
+                  },
+                ])
+              }}
+              className="w-full md:w-fit"
+            >
+              Add Liquidity
+            </Button>
+            <Button
+              onClick={() => {
+                createQuery([
+                  {
+                    name: 'lpPosTab',
+                    value: 'manage',
+                  },
+                  {
+                    name: 'lpManageTab',
+                    value: 'remove',
+                  },
+                ])
+              }}
+              className="w-full md:w-fit"
+              variant="networks"
+            >
+              Remove Liquidity
+            </Button>
+          </div>
+        )}
       </CardHeader>
 
       <CardContent className="!p-3">

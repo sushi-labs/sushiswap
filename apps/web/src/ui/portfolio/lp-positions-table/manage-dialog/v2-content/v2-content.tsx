@@ -1,6 +1,7 @@
 import { useMemo } from 'react'
 import type { LPTabValueType } from '../manage-dialog'
 import { V2Manage } from './v2-manage'
+import { V2Migrate } from './v2-migrate'
 import { V2PositionDetail } from './v2-position-detail'
 
 export const V2Content = ({
@@ -14,7 +15,7 @@ export const V2Content = ({
       case 'manage':
         return <V2Manage position={position} />
       case 'migrate':
-        return <div>Migrate Content for V2</div>
+        return <V2Migrate position={position} />
     }
   }, [currentTab, position])
 

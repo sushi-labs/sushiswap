@@ -17,7 +17,7 @@ export const Fees = ({ position }: { position: any }) => {
     Amount.fromRawAmount(position.token1, 123432n),
   ]
   return (
-    <Card>
+    <Card className="!bg-slate-50 dark:!bg-slate-800">
       <CardHeader className="!p-3 justify-between items-center !flex-row flex gap-2">
         <div>
           <CardTitle className="mb-1">Fees</CardTitle>

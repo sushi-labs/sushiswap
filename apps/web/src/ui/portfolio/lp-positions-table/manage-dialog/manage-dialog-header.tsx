@@ -10,7 +10,10 @@ import { RangeBadge } from './range-badge'
 const token0 = SUSHI[1]
 const token1 = USDC[1]
 
-export const ManageDialogHeader = ({ data }: { data: any }) => {
+export const ManageDialogHeader = ({
+  data,
+  hideApr,
+}: { data: any; hideApr?: boolean }) => {
   return (
     <div className="flex gap-4 items-center">
       <div className="flex items-center gap-2">
@@ -43,28 +46,30 @@ export const ManageDialogHeader = ({ data }: { data: any }) => {
       {data?.protocol === 'SUSHISWAP_V3' ? (
         <RangeBadge range="IN_RANGE" />
       ) : null}
-      <div
-        className={
-          'bg-skyblue/10 font-medium dark:bg-blue/10 px-2 py-1 text-xs flex items-center gap-1 rounded-full'
-        }
-      >
-        <APRHoverCard pool={data}>
-          <div className="flex items-center gap-1">
-            <span>APR: </span>
-            <span className="underline decoration-dotted underline-offset-2">
-              {formatNumber(data.apr)}%
-            </span>
-            {data?.rewards?.map((i: any, idx: number) => (
-              <Currency.Icon
-                key={idx}
-                currency={i.token}
-                width={14}
-                height={14}
-              />
-            ))}
-          </div>
-        </APRHoverCard>
-      </div>
+      {hideApr ? null : (
+        <div
+          className={
+            'bg-skyblue/10 font-medium dark:bg-blue/10 px-2 py-1 text-xs flex items-center gap-1 rounded-full'
+          }
+        >
+          <APRHoverCard pool={data}>
+            <div className="flex items-center gap-1">
+              <span>APR: </span>
+              <span className="underline decoration-dotted underline-offset-2">
+                {formatNumber(data.apr)}%
+              </span>
+              {data?.rewards?.map((i: any, idx: number) => (
+                <Currency.Icon
+                  key={idx}
+                  currency={i.token}
+                  width={14}
+                  height={14}
+                />
+              ))}
+            </div>
+          </APRHoverCard>
+        </div>
+      )}
     </div>
   )
 }
