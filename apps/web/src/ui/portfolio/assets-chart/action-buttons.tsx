@@ -38,12 +38,14 @@ export const ActionButtons = ({
         hideTriggerIcon
         initialToken={token}
       />
-      <Link
-        href={`#`}
-        className={`bg-blue-500 ${baseBtnClasses} ${fixedWidth}`}
-      >
-        More
-      </Link>
+      {splitRows && (
+        <Link
+          href={`#`}
+          className={`bg-blue-500 ${baseBtnClasses} ${fixedWidth}`}
+        >
+          More
+        </Link>
+      )}
     </>
   )
 

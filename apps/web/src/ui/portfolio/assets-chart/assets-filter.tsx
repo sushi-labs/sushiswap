@@ -162,14 +162,14 @@ export const AssetsFilter = ({
       content={
         <Command className="flex items-center md:p-5">
           <div className="w-full">
-            <div className="mb-2 w-full h-[54px] justify-between pr-2 items-center rounded-md bg-slate-200 dark:bg-slate-900 dark:border-[#FFFFFF14] border-transparent border flex">
+            <div className="mb-2 w-full h-[54px] justify-between pr-2 items-center rounded-md bg-slate-100 dark:bg-slate-900 dark:border-[#FFFFFF14] border-transparent border flex">
               <CommandInput
                 testdata-id="network-selector-input"
                 placeholder="Search"
-                className="!max-h-[39px] w-full dark:!bg-slate-900  placeholder:text-slate-450 dark:placeholder:text-slate-500"
+                className="!max-h-[39px] w-full !bg-slate-100 dark:!bg-slate-900  placeholder:text-slate-450 dark:placeholder:text-slate-500"
               />
               <NetworkMenu
-                className="border !min-h-[36px] !h-[36px] border-slate-200 dark:border-slate-750 dark:!bg-slate-800"
+                className="border !min-h-[36px] !rounded-lg !h-[36px] !border-[#00000014] dark:border-slate-750 dark:!bg-slate-800 bg-slate-50"
                 selectedNetwork={selectedNetwork}
                 onNetworkSelect={setSelectedNetwork}
               />
