@@ -70,12 +70,19 @@ export const AddLiquidityV2 = ({
   initToken0,
   initToken1,
   hideTokenSelectors,
+  initChainId,
+  hideEstimatedValue,
 }: {
   initToken0?: Type
   initToken1?: Type
   hideTokenSelectors?: boolean
+  initChainId?: SushiSwapV2ChainId
+  hideEstimatedValue?: boolean
 }) => {
-  const { chainId } = useCurrentChainId() as { chainId: SushiSwapV2ChainId }
+  const { chainId: currentChainId } = useCurrentChainId() as {
+    chainId: SushiSwapV2ChainId
+  }
+  const chainId = initChainId ?? currentChainId
 
   const [isZapModeEnabled, setIsZapModeEnabled] = useState(false)
 
@@ -291,10 +298,12 @@ export const AddLiquidityV2 = ({
                 )}
               </div>
             </div>
-            <EstimatedValue
-              dollarValue={estimatedValue}
-              isLoading={isPrice0Loading || isPrice1Loading}
-            />
+            {hideEstimatedValue ? null : (
+              <EstimatedValue
+                dollarValue={estimatedValue}
+                isLoading={isPrice0Loading || isPrice1Loading}
+              />
+            )}
           </div>
         )
       }}

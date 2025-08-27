@@ -64,7 +64,10 @@ export const ConcentratedLiquidityWidget: FC<ConcentratedLiquidityWidget> = ({
   const { onFieldAInput, onFieldBInput } = useConcentratedMintActionHandlers()
   const { independentField, typedValue } = useConcentratedMintState()
   const { data: owner, isInitialLoading: isOwnerLoading } =
-    useConcentratedPositionOwner({ chainId, tokenId })
+    useConcentratedPositionOwner({
+      chainId,
+      tokenId,
+    })
 
   const isOwner = owner === account
 
@@ -168,7 +171,7 @@ export const ConcentratedLiquidityWidget: FC<ConcentratedLiquidityWidget> = ({
                 <LockClosedIcon
                   width={24}
                   height={24}
-                  className="text-gray-400 dark:text-slate-400 text-slate-600"
+                  className="text-gray-400 dark:text-slate-400"
                 />
                 <span className="dark:text-slate-400 text-slate-600">
                   The market price is outside your specified price range.
@@ -189,7 +192,7 @@ export const ConcentratedLiquidityWidget: FC<ConcentratedLiquidityWidget> = ({
           <Web3Input.Currency
             id="add-liquidity-token0"
             type="INPUT"
-            className="p-4 bg-white dark:bg-secondary rounded-xl"
+            className="p-4 bg-background dark:bg-background rounded-xl"
             chainId={chainId}
             value={formattedAmounts[Field.CURRENCY_A]}
             onChange={_onFieldAInput}
@@ -198,14 +201,15 @@ export const ConcentratedLiquidityWidget: FC<ConcentratedLiquidityWidget> = ({
             disabled={depositADisabled}
             loading={tokensLoading || isOwnerLoading || isPoolLoading}
             allowNative={isWNativeSupported(chainId)}
+            hidePercentageInputs={true}
           />
         </div>
         <div className="flex items-center justify-center mt-[-24px] mb-[-24px] z-10">
-          <div className="p-1 bg-white dark:bg-slate-900 border border-accent rounded-full">
+          <div className="p-1.5 bg-slate-200 dark:bg-slate-750 border borde-slate-50 dark:border-slate-800 rounded-full">
             <PlusIcon
               width={16}
               height={16}
-              className="text-muted-foreground"
+              className="text-blue dark:text-blue"
             />
           </div>
         </div>
@@ -225,7 +229,7 @@ export const ConcentratedLiquidityWidget: FC<ConcentratedLiquidityWidget> = ({
                 <LockClosedIcon
                   width={24}
                   height={24}
-                  className="text-gray-400 dark:text-slate-400 text-slate-600"
+                  className="text-gray-400 dark:text-slate-400"
                 />
                 <span className="dark:text-slate-400 text-slate-600">
                   The market price is outside your specified price range.
@@ -246,7 +250,7 @@ export const ConcentratedLiquidityWidget: FC<ConcentratedLiquidityWidget> = ({
           <Web3Input.Currency
             id="add-liquidity-token1"
             type="INPUT"
-            className="p-4 bg-white dark:bg-secondary rounded-xl"
+            className="p-4 bg-background dark:bg-background rounded-xl"
             chainId={chainId}
             value={formattedAmounts[Field.CURRENCY_B]}
             onChange={_onFieldBInput}
@@ -255,6 +259,7 @@ export const ConcentratedLiquidityWidget: FC<ConcentratedLiquidityWidget> = ({
             loading={tokensLoading || isOwnerLoading || isPoolLoading}
             disabled={depositBDisabled}
             allowNative={isWNativeSupported(chainId)}
+            hidePercentageInputs={true}
           />
         </div>
 

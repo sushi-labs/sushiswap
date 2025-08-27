@@ -33,7 +33,9 @@ const data: any[] = [
     chainId: 1,
     name: 'Sushi / USDC',
     token0Address: SUSHI[1].address,
+    token0: SUSHI[1],
     token1Address: USDC[1].address,
+    token1: USDC[1],
     protocol: 'SUSHISWAP_V2',
     swapFee: 0.0003,
     position: {
@@ -50,7 +52,9 @@ const data: any[] = [
     chainId: 42161,
     name: 'Sushi / USDC',
     token0Address: SUSHI[42161].address,
+    token0: SUSHI[42161],
     token1Address: USDC[42161].address,
+    token1: USDC[42161],
     protocol: 'SUSHISWAP_V3',
     swapFee: 0.001,
     position: {
