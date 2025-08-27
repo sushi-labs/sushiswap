@@ -53,7 +53,7 @@ export const TradeModal = ({ token, side }: TradeModalProps) => {
       </DialogTrigger>
       <DialogContent
         className={classNames(
-          '!flex flex-col md:h-auto h-[100dvh] !rounded-none',
+          '!flex flex-col md:h-auto h-[100dvh] !rounded-none md:!rounded-xl !bg-[#FDFCFD] !p-5',
         )}
         hideClose
       >
@@ -66,8 +66,8 @@ export const TradeModal = ({ token, side }: TradeModalProps) => {
         <QuickSelectProvider _isEnabled={!isSmallScreen}>
           <TradeWidget
             _tradeMode="swap"
-            wrapperClassName="!p-0"
-            tradeModeRowClassName="pt-2 pb-4"
+            wrapperClassName="!p-0 !bg-transparent !border-none !shadow-none -mb-7"
+            tradeModeRowClassName="pt-2 pb-4 md:pb-0 md:pt-0"
           />
         </QuickSelectProvider>
       </DialogContent>
