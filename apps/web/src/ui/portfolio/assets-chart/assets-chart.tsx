@@ -407,7 +407,7 @@ export const AssetsChart = () => {
         <div className="h-[1px] bg-accent w-full !mt-0" />
         <CardTitle className="!text-primary px-6 pt-4 md:pt-6">
           <div className="flex flex-col-reverse gap-1 justify-between items-start md:items-center md:flex-row md:gap-0">
-            <div className="flex flex-col gap-1 pt-6 w-full md:pt-0">
+            <div className="flex flex-col gap-1 pt-4 w-full md:pt-0">
               <span className="text-2xl !font-medium">$52,526.96</span>
 
               <span className="!font-medium text-green-500">

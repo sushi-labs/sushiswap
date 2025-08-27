@@ -54,7 +54,7 @@ export const SendWidget = ({
       </DialogTrigger>
       <DialogContent
         hideClose
-        className="!max-w-[641px] !rounded-none md:!rounded-xl md:h-auto h-[100dvh] !flex flex-col !p-5"
+        className="max-w-none md:!max-w-[641px] !rounded-none md:!rounded-xl md:h-auto h-[100dvh] !flex flex-col !p-5"
       >
         {isSendView && <SendView />}
         {isBrowseView && <BrowseContactView />}

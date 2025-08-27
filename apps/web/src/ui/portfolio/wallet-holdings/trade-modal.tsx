@@ -21,9 +21,14 @@ import type { Type } from 'sushi/currency'
 interface TradeModalProps {
   token: Type
   side: 'buy' | 'sell'
+  triggerClassName?: string
 }
 
-export const TradeModal = ({ token, side }: TradeModalProps) => {
+export const TradeModal = ({
+  token,
+  side,
+  triggerClassName = '',
+}: TradeModalProps) => {
   const { mutate } = useDerivedStateSimpleSwap()
   const isSmallScreen = useIsSmScreen()
 
@@ -39,7 +44,11 @@ export const TradeModal = ({ token, side }: TradeModalProps) => {
       <DialogTrigger asChild>
         <Button
           size="xs"
-          className={`w-full ${buttonClasses} md:w-[64px] h-[32px] min-h-[32px]`}
+          className={classNames(
+            `w-full md:w-[64px] h-[32px] min-h-[32px]`,
+            buttonClasses,
+            triggerClassName,
+          )}
           onClick={() => {
             if (isBuy) {
               mutate.setToken0(token)
@@ -53,7 +62,7 @@ export const TradeModal = ({ token, side }: TradeModalProps) => {
       </DialogTrigger>
       <DialogContent
         className={classNames(
-          '!flex flex-col md:h-auto h-[100dvh] !rounded-none md:!rounded-xl !bg-[#FDFCFD] !p-5',
+          '!flex flex-col md:h-auto h-[100dvh] !rounded-none md:!rounded-xl bg-[#FDFCFD] !p-5 max-w-none md:!max-w-[500px]',
         )}
         hideClose
       >
