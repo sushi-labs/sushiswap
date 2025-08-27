@@ -23,7 +23,7 @@ export const config = {
     '/:chainId/positions/:path*',
     '/:chainId/migrate',
     '/:chainId/rewards',
-    '/:chainId/portfolio',
+    '/:chainId/portfolio/:path*',
     '/:chainId/tradingview',
     '/portal/:path*',
   ],

@@ -396,7 +396,7 @@ export const AssetsChart = () => {
 
   return (
     <Wrapper className="!p-0" enableBorder>
-      <CardHeader className="!px-0 !p-4 md:p-6">
+      <CardHeader className="!px-0 !p-4 md:!py-6">
         <div className="flex flex-col gap-4 justify-between px-6 pb-4 md:pb-6 md:gap-0 md:items-center md:flex-row">
           <AssetsFilter
             setSelectedToken={setSelectedToken}

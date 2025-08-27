@@ -93,16 +93,31 @@ const DerivedstateSimpleTradeProvider: FC<
     (trade: TradeMode) => {
       _setTradeMode(trade)
       _setTradeModeChanged(true)
+
       const params = []
       if (trade === 'limit' || trade === 'dca') {
         params.push({ name: 'token1', value: null })
         params.push({ name: 'chainId1', value: null })
       }
 
-      createQuery(
-        params,
-        `/${pathname?.split('/')[1]}/${trade}${tradeView !== 'simple' ? `/${tradeView}` : ''}`,
+      const segments = pathname?.split('/').filter(Boolean) ?? []
+
+      const updatedSegments = [...segments]
+      const modeIndex = updatedSegments.findIndex((seg) =>
+        TRADE_MODES.includes(seg as TradeMode),
       )
+
+      if (modeIndex !== -1) {
+        updatedSegments[modeIndex] = trade
+      } else {
+        updatedSegments.push(trade)
+      }
+
+      const newPath = `/${updatedSegments.join('/')}${
+        tradeView !== 'simple' ? `/${tradeView}` : ''
+      }`
+
+      createQuery(params, newPath)
     },
     [tradeView, pathname, createQuery],
   )

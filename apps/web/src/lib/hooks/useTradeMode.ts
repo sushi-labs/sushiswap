@@ -1,14 +1,14 @@
 import { usePathname } from 'next/navigation'
+import type { TradeMode } from 'src/ui/swap/trade/config'
+import { TRADE_MODES } from 'src/ui/swap/trade/config'
 
-export const useTradeMode = (): {
-  tradeMode: 'swap' | 'limit' | 'dca' | 'fiat'
-} => {
+export const useTradeMode = (): { tradeMode: TradeMode } => {
   const pathname = usePathname()
-  const tradeMode = pathname.split('/')?.[2] as
-    | 'swap'
-    | 'limit'
-    | 'dca'
-    | 'fiat'
+  const segments = pathname.split('/').filter(Boolean)
 
-  return { tradeMode }
+  const tradeMode = segments.find((segment) =>
+    TRADE_MODES.includes(segment as TradeMode),
+  ) as TradeMode | undefined
+
+  return { tradeMode: tradeMode ?? 'swap' }
 }

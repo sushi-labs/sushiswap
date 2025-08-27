@@ -87,7 +87,6 @@ const EditField = ({
               className="p-0 m-0 w-full font-medium bg-transparent border-none outline-none focus:ring-0 text-[20px]"
               value={value}
               onChange={(e) => {
-                console.log(`[EditField] Input changed: ${e.target.value}`)
                 onChange(e.target.value)
               }}
             />

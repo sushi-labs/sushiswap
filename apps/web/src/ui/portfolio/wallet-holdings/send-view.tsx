@@ -13,7 +13,6 @@ import { VerifyContact } from './verify-contact'
 export const SendView = () => {
   const { state } = useSendTokens()
 
-  console.log('state', state)
   // const { data: balances } = useAmountBalances(state.token0?.chainId, [
   //   state.token0,
   // ])

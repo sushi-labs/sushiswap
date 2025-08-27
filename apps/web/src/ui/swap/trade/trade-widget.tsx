@@ -1,6 +1,6 @@
 'use client'
 
-import { Collapsible } from '@sushiswap/ui'
+import { Collapsible, classNames } from '@sushiswap/ui'
 import { usePathname } from 'next/navigation'
 import { QuickSelectOverlay } from 'src/lib/wagmi/components/token-selector/quick-select/quick-select-overlay'
 import { EdgeProvider, useEdgeConfig } from 'src/providers/edge-config-provider'
@@ -16,30 +16,39 @@ import { MarketWidget } from './widgets/market'
 import { DCAWidget, LimitWidget } from './widgets/twap'
 import { Wrapper } from './wrapper'
 
-export const TradeWidget = () => {
+export const TradeWidget = ({
+  _tradeMode,
+  wrapperClassName,
+}: {
+  _tradeMode?: 'swap' | 'limit' | 'dca' | 'fiat'
+  wrapperClassName?: string
+}) => {
   const {
     state: { tradeModeChanged, chainId, tradeView },
   } = useDerivedStateSimpleTrade()
   const pathname = usePathname()
-  const tradeMode = pathname.split('/')?.[2] as
-    | 'swap'
-    | 'limit'
-    | 'dca'
-    | 'fiat'
+  const tradeMode =
+    _tradeMode ||
+    (pathname.split('/')?.[2] as 'swap' | 'limit' | 'dca' | 'fiat')
 
   const tradeEdge = useEdgeConfig<TradeEdgeConfig>()
   const modeEdge = sliceEdgeConfig(tradeEdge, tradeMode)
 
   return (
     <EdgeProvider config={modeEdge}>
-      <Wrapper className="border relative md:border-none border-black/10">
+      <Wrapper
+        className={classNames(
+          'relative border md:border-none border-black/10',
+          wrapperClassName,
+        )}
+      >
         <QuickSelectOverlay />
         <Collapsible open={true} disabled={!tradeModeChanged}>
           <div className="flex flex-col gap-4">
             {tradeMode === 'swap' && (
               <DerivedstateCrossChainSwapProvider defaultChainId={chainId}>
                 <DerivedstateSimpleSwapProvider>
-                  <div className="flex items-center justify-between">
+                  <div className="flex justify-between items-center">
                     <TradeModeButtons />
                     <SimpleSwapSettingsOverlay />
                   </div>
@@ -52,7 +61,7 @@ export const TradeWidget = () => {
             )}
             {tradeMode === 'limit' && (
               <DerivedStateTwapProvider isLimitOrder>
-                <div className="flex items-center justify-between">
+                <div className="flex justify-between items-center">
                   <TradeModeButtons />
                   <SimpleSwapSettingsOverlay />
                 </div>
@@ -61,7 +70,7 @@ export const TradeWidget = () => {
             )}
             {tradeMode === 'dca' && (
               <DerivedStateTwapProvider>
-                <div className="flex items-center justify-between">
+                <div className="flex justify-between items-center">
                   <TradeModeButtons />
                   <SimpleSwapSettingsOverlay />
                 </div>
@@ -70,7 +79,7 @@ export const TradeWidget = () => {
             )}
             {tradeMode === 'fiat' && (
               <>
-                <div className="flex items-center justify-between">
+                <div className="flex justify-between items-center">
                   <TradeModeButtons />
                   <SimpleSwapSettingsOverlay />
                 </div>
