@@ -71,7 +71,7 @@ export const V2MigrateDialog = ({
   isOpen: boolean
   setIsOpen: (val: boolean) => void
 }) => {
-  const [step, setStep] = useState(1)
+  const [step, setStep] = useState(0)
   const [feeAmount, setFeeAmount] = useState<SushiSwapV3FeeAmount>(
     SushiSwapV3FeeAmount.LOWEST,
   )

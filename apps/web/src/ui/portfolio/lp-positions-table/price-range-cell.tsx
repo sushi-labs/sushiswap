@@ -21,6 +21,11 @@ export const PriceRangeCell = ({
           data={data}
           isOpen={isManageOpen}
           setIsOpen={setIsManageOpen}
+          triggerChildren={
+            <Button variant="networks" className="w-full !rounded-full">
+              Manage
+            </Button>
+          }
         />
       </div>
     )

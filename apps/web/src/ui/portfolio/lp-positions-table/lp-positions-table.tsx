@@ -1,6 +1,21 @@
-import { Card, DataTable } from '@sushiswap/ui'
-import type { SortingState, TableState } from '@tanstack/react-table'
-import { useMemo, useState } from 'react'
+import { useBreakpoint } from '@sushiswap/hooks'
+import {
+  Button,
+  Card,
+  DataTable,
+  Dialog,
+  DialogContent,
+  Slot,
+  classNames,
+} from '@sushiswap/ui'
+import type { Row, SortingState, TableState } from '@tanstack/react-table'
+import {
+  type ReactNode,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react'
 import { SUSHI, USDC } from 'sushi/currency'
 import {
   CHAIN_COLUMN,
@@ -15,6 +30,7 @@ import {
   REWARDS_COLUMN,
 } from './columns'
 import { LPPositionsTableHeader } from './lp-positions-table-header'
+import { ManageDialog } from './manage-dialog/manage-dialog'
 import { Trending } from './trending'
 
 const columns: any[] = [
@@ -77,8 +93,13 @@ const data: any[] = [
 ]
 
 export const LPPositionsTable = () => {
+  const [isMobileDrawerOpen, setIsMobileDrawerOpen] = useState(false)
+  const [isManageOpen, setIsManageOpen] = useState(false)
+  const [positionData, setPositionData] = useState<any>(null)
+  const { isMd: isMdScreen } = useBreakpoint('md')
+
   const [sorting, setSorting] = useState<SortingState>([
-    { id: 'size', desc: true },
+    { id: 'apr', desc: true },
   ])
   const state: Partial<TableState> = useMemo(() => {
     return {
@@ -90,35 +111,104 @@ export const LPPositionsTable = () => {
     }
   }, [sorting])
 
-  return (
-    // <InfiniteScroll
-    //   dataLength={data.length}
-    //   next={fetchNextPage}
-    //   hasMore={data.length < (count ?? 0)}
-    //   loader={
-    //     <div className="flex justify-center w-full py-4">
-    //       <Loader size={16} />
-    //     </div>
-    //   }
-    // >
-    <Card className="overflow-hidden dark:!bg-slate-800 !bg-slate-50">
-      <Trending />
-      <LPPositionsTableHeader />
-      <DataTable
-        state={state}
-        onSortingChange={setSorting}
-        loading={false}
-        // linkFormatter={(row) =>
-        //   `/${ChainKey[row.chainId]}/pool/${
-        //     row.protocol === SushiSwapProtocol.SUSHISWAP_V2 ? 'v2' : 'v3'
-        //   }/${row.address}`
-        // }
+  const rowRenderer = useCallback((row: Row<any>, rowNode: ReactNode) => {
+    return (
+      <Slot
+        key={`row-${row.id}`}
+        className="cursor-pointer"
+        onClick={() => {
+          setPositionData(row.original)
+          setIsMobileDrawerOpen(true)
+        }}
+      >
+        {rowNode}
+      </Slot>
+    )
+  }, [])
 
-        columns={columns}
-        data={data}
-        className="border-t-0"
-      />
-    </Card>
-    // </InfiniteScroll>
+  useEffect(() => {
+    if (!isMobileDrawerOpen) {
+      setPositionData(null)
+    }
+  }, [isMobileDrawerOpen])
+  useEffect(() => {
+    if (isMobileDrawerOpen && isMdScreen) {
+      setIsMobileDrawerOpen(false)
+      setIsManageOpen(false)
+    }
+  }, [isMdScreen, isMobileDrawerOpen])
+
+  return (
+    <>
+      {/* <InfiniteScroll
+		   dataLength={data.length}
+		   next={fetchNextPage}
+		   hasMore={data.length < (count ?? 0)}
+		   loader={
+		     <div className="flex justify-center w-full py-4">
+		       <Loader size={16} />
+		     </div>
+		   }
+		 > */}
+      <Card className="overflow-hidden dark:!bg-slate-800 !bg-slate-50">
+        <Trending />
+        <LPPositionsTableHeader />
+        <DataTable
+          state={state}
+          onSortingChange={setSorting}
+          loading={false}
+          rowRenderer={rowRenderer}
+          columns={columns}
+          data={data}
+          className="border-t-0"
+        />
+      </Card>
+      {/* </InfiniteScroll> */}
+      {positionData && (
+        <ManageDialog
+          data={positionData}
+          isOpen={isManageOpen}
+          setIsOpen={setIsManageOpen}
+        />
+      )}
+
+      <Dialog open={isMobileDrawerOpen} onOpenChange={setIsMobileDrawerOpen}>
+        <DialogContent
+          aria-describedby={undefined}
+          className="!px-1 border-t !max-w-full md:!max-w-[520px] border-[#EBEBEB] rounded-t-none md:rounded-t-2xl !bg-slate-50 dark:border-[#FFFFFF14] dark:!bg-slate-800 w-full  max-h-[100dvh] overflow-y-auto hide-scrollbar"
+        >
+          <div className="px-3 flex flex-col gap-4 w-full mt-14">
+            <div className="flex items-center gap-2">
+              {positionData?.protocol === 'SUSHISWAP_V3' ? (
+                <Button size="sm" className="w-full !rounded-full">
+                  Claim
+                </Button>
+              ) : null}
+
+              <Button
+                onClick={() => setIsManageOpen(true)}
+                size="sm"
+                variant="networks"
+                className="w-full !rounded-full"
+              >
+                Manage
+              </Button>
+            </div>
+            <Button
+              size="sm"
+              variant="networks"
+              className={classNames(
+                '!rounded-full',
+                positionData?.protocol === 'SUSHISWAP_V3'
+                  ? 'w-1/2 mx-auto'
+                  : 'w-full',
+              )}
+            >
+              More
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+    </>
   )
 }
