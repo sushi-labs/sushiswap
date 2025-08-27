@@ -78,13 +78,13 @@ const EditField = ({
   return (
     <div className="flex flex-col gap-3">
       <div className="flex flex-col gap-2">
-        <div className="flex flex-col gap-4 p-3 font-medium rounded-xl transition-colors duration-200 dark:bg-slate-800 bg-slate-100">
+        <div className="flex flex-col gap-4 p-3 font-medium rounded-xl transition-colors duration-200 dark:bg-slate-900 bg-slate-100">
           <span className="text-sm text-muted-foreground">{label}</span>
           <div className="flex gap-3 items-center">
             <input
               type="text"
               placeholder="Enter Address..."
-              className="p-0 m-0 w-full font-medium bg-transparent border-none outline-none focus:ring-0 text-[20px]"
+              className="p-0 m-0 w-full font-medium bg-transparent border-none outline-none focus:ring-0 text-[20px] !text-slate-900 dark:!text-slate-200 placeholder:text-slate-900 placeholder:dark:text-slate-200"
               value={value}
               onChange={(e) => {
                 onChange(e.target.value)

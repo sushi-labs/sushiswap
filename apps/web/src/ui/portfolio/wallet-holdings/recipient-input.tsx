@@ -15,13 +15,13 @@ export const RecipientInput = ({
         'overflow-hidden relative p-4 bg-gray-100 rounded-xl dark:bg-slate-900',
       )}
     >
-      <div className="flex flex-col gap-4 text-sm md:gap-2 text-muted-foreground">
+      <div className="flex flex-col gap-4 text-sm font-medium md:gap-2 text-muted-foreground">
         Recipient
         <div className="flex flex-col gap-4 justify-between w-full md:gap-0 md:flex-row">
           <input
             type="text"
             placeholder="Enter Address..."
-            className="p-0 m-0 w-full font-medium bg-transparent border-none outline-none focus:ring-0 text-[20px] !text-slate-900 dark:!text-slate-100"
+            className="p-0 m-0 w-full font-medium bg-transparent border-none outline-none focus:ring-0 text-[20px] !text-slate-900 dark:!text-slate-200 placeholder:text-slate-900 placeholder:dark:text-slate-200"
             value={
               isRecipientValid
                 ? shortenAddress(state.recipientAddress)

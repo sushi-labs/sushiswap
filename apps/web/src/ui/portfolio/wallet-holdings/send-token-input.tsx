@@ -21,6 +21,8 @@ export const SendTokenInput = () => {
       allowNative={isWNativeSupported(1)}
       label="Amount"
       showQuickSelect={false}
+      inputClassName="!text-slate-900 dark:!text-slate-200 placeholder:text-slate-900 placeholder:dark:text-slate-200"
+      labelClassName="font-medium"
     />
   )
 }

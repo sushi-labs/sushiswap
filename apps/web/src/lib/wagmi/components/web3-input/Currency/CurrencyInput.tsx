@@ -65,6 +65,8 @@ interface CurrencyInputProps {
   hideInputAndPricing?: boolean
   isTwap?: boolean
   hidePercentageInputs?: boolean
+  inputClassName?: string
+  labelClassName?: string
 }
 
 const CurrencyInput: FC<CurrencyInputProps> = ({
@@ -99,6 +101,8 @@ const CurrencyInput: FC<CurrencyInputProps> = ({
   hideInputAndPricing,
   isTwap,
   hidePercentageInputs,
+  inputClassName = '',
+  labelClassName = '',
 }) => {
   const isMounted = useIsMounted()
 
@@ -297,7 +301,7 @@ const CurrencyInput: FC<CurrencyInputProps> = ({
   return (
     <div
       className={classNames(
-        _error ? '!bg-red-500/20 !dark:bg-red-900/30' : '',
+        _error ? '!bg-red-500/20 !dark:bg-red-900/30':'',
         'overflow-hidden relative',
         className,
       )}
@@ -308,7 +312,14 @@ const CurrencyInput: FC<CurrencyInputProps> = ({
       />
       <div className="flex justify-between items-center">
         {label ? (
-          <span className="text-sm text-muted-foreground">{label}</span>
+          <span
+            className={classNames(
+              'text-sm text-muted-foreground',
+              labelClassName,
+            )}
+          >
+            {label}
+          </span>
         ) : (
           <span />
         )}
@@ -366,7 +377,10 @@ const CurrencyInput: FC<CurrencyInputProps> = ({
                 readOnly={disabled}
                 maxDecimals={currency?.decimals}
                 data-state={isLoading ? 'inactive' : 'active'}
-                className={classNames('p-0 py-1 w-full !text-2xl font-medium')}
+                className={classNames(
+                  'p-0 py-1 w-full !text-2xl font-medium',
+                  inputClassName,
+                )}
               />
             </div>
 
