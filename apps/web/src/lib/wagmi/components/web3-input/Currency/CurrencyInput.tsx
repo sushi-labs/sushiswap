@@ -301,7 +301,7 @@ const CurrencyInput: FC<CurrencyInputProps> = ({
   return (
     <div
       className={classNames(
-        _error ? '!bg-red-500/20 !dark:bg-red-900/30':'',
+        _error ? '!bg-red-500/20 !dark:bg-red-900/30' : '',
         'overflow-hidden relative',
         className,
       )}
