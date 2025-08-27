@@ -23,9 +23,15 @@ import { ChainKey, type EvmChainId } from 'sushi/chain'
 
 const SwapModeButton = ({
   isSupported,
+  notSupportedText = 'Not supported on this network',
   path,
   children,
-}: { isSupported: boolean; path: string; children: ReactNode }) => {
+}: {
+  isSupported: boolean
+  notSupportedText?: string
+  path: string
+  children: ReactNode
+}) => {
   return isSupported ? (
     <Link href={path}>
       <PathnameButton pathname={path} size="sm">
@@ -45,7 +51,7 @@ const SwapModeButton = ({
         </PathnameButton>
       </HoverCardTrigger>
       <HoverCardContent className="!px-3 !py-1.5 text-xs">
-        Not supported on this network
+        {notSupportedText}
       </HoverCardContent>
     </HoverCard>
   )
@@ -69,7 +75,11 @@ export const SwapModeButtons = () => {
         DCA
       </SwapModeButton>
       <HoverCard>
-        <SwapModeButton isSupported={false} path={`/kadena/cross-chain-swap`}>
+        <SwapModeButton
+          isSupported={false}
+          path={`/kadena/cross-chain-swap`}
+          notSupportedText="Coming soon"
+        >
           <HoverCardTrigger asChild>
             <span className="flex gap-2 items-center text-transparent bg-clip-text bg-gradient-to-r saturate-200 from-blue to-pink">
               <ShuffleIcon
