@@ -15,7 +15,7 @@ import { useSendTokens } from './send-token-provider'
 
 const CONTACTS = [
   {
-    name: 'Vitalik Buterin',
+    name: 'Vitalik',
     address: '0x1234567890123456789012345678901234567890',
   },
 ]
@@ -68,7 +68,7 @@ export const ContactItem = ({
 
   return (
     <div
-      className="flex justify-between items-center p-3 font-medium rounded-xl transition-colors duration-200 dark:bg-slate-800 bg-slate-100 hover:bg-slate-200 dark:hover:bg-slate-750"
+      className="flex justify-between items-center p-3 font-medium rounded-xl transition-colors duration-200 dark:bg-slate-900 bg-slate-100 hover:bg-slate-200 dark:hover:bg-slate-750"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
@@ -93,7 +93,7 @@ export const ContactItem = ({
               <CheckIcon className="w-6 cursor-pointer aspect-1 text-green" />
             ) : (
               <CopyIcon
-                className="w-6 cursor-pointer aspect-1"
+                className="w-6 text-black cursor-pointer aspect-1 dark:text-white"
                 onClick={() => setCopied(address)}
               />
             )

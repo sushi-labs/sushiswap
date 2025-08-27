@@ -52,7 +52,10 @@ export const SendWidget = ({
           Send
         </Button>
       </DialogTrigger>
-      <DialogContent hideClose className="!max-w-[641px]">
+      <DialogContent
+        hideClose
+        className="!max-w-[641px] !rounded-none md:h-auto h-[100dvh] !flex flex-col"
+      >
         {isSendView && <SendView />}
         {isBrowseView && <BrowseContactView />}
         {isEditView && <EditContactView />}

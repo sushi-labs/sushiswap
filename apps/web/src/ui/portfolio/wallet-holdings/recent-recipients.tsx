@@ -30,7 +30,7 @@ export const RecentRecipients = () => {
           ))}
         </div>
         {hasOverflow ? (
-          <div className="h-full z-10 w-20 bg-gradient-to-r absolute right-0 top-1/2 -translate-y-1/2 from-transparent to-85% to-white dark:to-slate-900" />
+          <div className="h-full z-10 w-20 bg-gradient-to-r absolute right-0 top-1/2 -translate-y-1/2 from-transparent to-85% to-white dark:to-slate-800" />
         ) : null}
       </div>
     </div>
@@ -45,7 +45,7 @@ export const RecentRecipientItem = ({
 }) => {
   return (
     <Button
-      className="!bg-[#0000001F] !text-slate-900 dark:!text-slate-100 !rounded-full text-sm w-fit !py-1 !px-3"
+      className="!bg-[#0000001F] dark:!bg-[#FFFFFF1F] !text-slate-900 dark:!text-slate-100 !rounded-full text-sm w-fit !py-1 !px-3"
       size="xs"
     >
       {address.startsWith('0x') ? shortenAddress(address) : address}

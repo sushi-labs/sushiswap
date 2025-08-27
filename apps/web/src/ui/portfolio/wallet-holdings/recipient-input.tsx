@@ -15,9 +15,9 @@ export const RecipientInput = ({
         'overflow-hidden relative p-4 bg-gray-100 rounded-xl dark:bg-slate-900',
       )}
     >
-      <div className="flex flex-col gap-2 text-sm text-muted-foreground">
+      <div className="flex flex-col gap-4 text-sm md:gap-2 text-muted-foreground">
         Recipient
-        <div className="flex justify-between w-full">
+        <div className="flex flex-col gap-4 justify-between w-full md:gap-0 md:flex-row">
           <input
             type="text"
             placeholder="Enter Address..."
@@ -30,11 +30,11 @@ export const RecipientInput = ({
             onChange={(e) => mutate.setRecipientAddress(e.target.value.trim())}
           />
           <Button
-            className="!bg-[#0000001F] !text-slate-900 dark:!text-slate-100"
+            className="!bg-[#0000001F] dark:!bg-[#FFFFFF1F] !text-slate-900 dark:!text-slate-100"
             onClick={() => mutate.goTo('browseContacts')}
           >
             <IdentificationIcon className="w-5 h-5" />
-            Browse Contact
+            View Contact
           </Button>
         </div>
       </div>
