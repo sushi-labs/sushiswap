@@ -10,6 +10,7 @@ import {
   DialogTitle,
   DialogTrigger,
   IconButton,
+  classNames,
 } from '@sushiswap/ui'
 import { useDerivedStateSimpleSwap } from 'src/ui/swap/simple/derivedstate-simple-swap-provider'
 import { TradeWidget } from 'src/ui/swap/trade/trade-widget'
@@ -47,14 +48,25 @@ export const TradeModal = ({ token, side }: TradeModalProps) => {
           {label}
         </Button>
       </DialogTrigger>
-      <DialogContent className="!pb-0" hideClose>
-        <DialogHeader className="flex !flex-row justify-between items-center w-full">
+      <DialogContent
+        className={classNames(
+          '!flex flex-col', // instead of grid
+          'md:h-auto h-[100dvh]', // remove 100dvh
+          '!rounded-none',
+        )}
+        hideClose
+      >
+        <DialogHeader className="flex !flex-row justify-between items-center w-full h-auto">
           <DialogTitle className="!text-[20px]">Trade</DialogTitle>
           <DialogClose>
             <IconButton variant={'ghost'} icon={XMarkIcon} name="Close" />
           </DialogClose>
         </DialogHeader>
-        <TradeWidget _tradeMode="swap" wrapperClassName="!p-0" />
+        <TradeWidget
+          _tradeMode="swap"
+          wrapperClassName="!p-0"
+          tradeModeRowClassName="pt-2 pb-4"
+        />
       </DialogContent>
     </Dialog>
   )

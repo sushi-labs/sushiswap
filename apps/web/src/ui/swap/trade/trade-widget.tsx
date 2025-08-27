@@ -18,10 +18,12 @@ import { Wrapper } from './wrapper'
 
 export const TradeWidget = ({
   _tradeMode,
-  wrapperClassName,
+  wrapperClassName = '',
+  tradeModeRowClassName = '',
 }: {
   _tradeMode?: 'swap' | 'limit' | 'dca' | 'fiat'
   wrapperClassName?: string
+  tradeModeRowClassName?: string
 }) => {
   const {
     state: { tradeModeChanged, chainId, tradeView },
@@ -48,7 +50,12 @@ export const TradeWidget = ({
             {tradeMode === 'swap' && (
               <DerivedstateCrossChainSwapProvider defaultChainId={chainId}>
                 <DerivedstateSimpleSwapProvider>
-                  <div className="flex justify-between items-center">
+                  <div
+                    className={classNames(
+                      'flex justify-between items-center',
+                      tradeModeRowClassName,
+                    )}
+                  >
                     <TradeModeButtons />
                     <SimpleSwapSettingsOverlay />
                   </div>
