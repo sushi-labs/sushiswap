@@ -87,7 +87,7 @@ export const WalletListView = () => {
                 window.location.reload()
                 return
               }
-              console.log(adapter)
+
               if (adapter.detected) {
                 await handleConnect(adapter.name)
                 return
