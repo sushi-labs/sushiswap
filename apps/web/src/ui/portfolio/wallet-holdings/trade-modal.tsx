@@ -53,7 +53,7 @@ export const TradeModal = ({ token, side }: TradeModalProps) => {
       </DialogTrigger>
       <DialogContent
         className={classNames(
-          '!flex flex-col md:h-auto h-[100dvh] !rounded-none md:!rounded-xl !bg-[#FDFCFD] !p-5',
+          '!flex flex-col md:h-auto h-[100dvh] !rounded-none md:!rounded-xl bg-[#FDFCFD] !p-5 max-w-none md:!max-w-[500px]',
         )}
         hideClose
       >
