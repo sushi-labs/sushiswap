@@ -3,7 +3,7 @@ import { List, SelectIcon, classNames } from '@sushiswap/ui'
 import Image from 'next/image'
 import { useMemo } from 'react'
 import { useIsMobile } from '~kadena/_common/lib/hooks/use-is-mobile'
-import { useKadena } from '~kadena/kadena-wallet-provider'
+import { ADAPTER_INSTALL_URLS, useKadena } from '~kadena/kadena-wallet-provider'
 import { useKadenaAdapterContext } from '~kadena/providers'
 import { KADENA_WALLET_ADAPTER_ICONS } from '../../../kadena-wallet-provider'
 
@@ -27,6 +27,8 @@ export const WalletListView = () => {
     }
 
     const hasSnap = adapters.find((adapter) => adapter.name === 'Snap')
+
+    const hasEcko = adapters.find((adapter) => adapter.name === 'Ecko')
     if (!hasSnap) {
       return [
         {
@@ -35,6 +37,16 @@ export const WalletListView = () => {
           installUrl: '',
           imageURI: KADENA_WALLET_ADAPTER_ICONS['Snap'],
         },
+        ...(!hasEcko
+          ? [
+              {
+                name: 'eckoWALLET',
+                detected: false,
+                installUrl: ADAPTER_INSTALL_URLS['Ecko'],
+                imageURI: KADENA_WALLET_ADAPTER_ICONS['Ecko'],
+              },
+            ]
+          : []),
         ...adapters,
       ]
     }
