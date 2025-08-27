@@ -68,6 +68,7 @@ interface DataTableProps<TData, TValue> {
   rowRenderer?: (row: Row<TData>, value: ReactNode) => ReactNode
   showColumnHeaders?: boolean
   className?: string
+  onRowClick?: (row: Row<TData>) => void
 }
 
 export function DataTable<TData, TValue>({
@@ -85,6 +86,7 @@ export function DataTable<TData, TValue>({
   rowRenderer,
   showColumnHeaders = true,
   className,
+  onRowClick,
 }: DataTableProps<TData, TValue>) {
   const [rowSelection, setRowSelection] = React.useState({})
   const [columnVisibility, setColumnVisibility] =
@@ -142,7 +144,7 @@ export function DataTable<TData, TValue>({
         )}
       >
         {showColumnHeaders ? (
-          <TableHeader className="pb-4 pt-8">
+          <TableHeader className="pt-8 pb-4">
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id} className="hover:bg-transparent">
                 {headerGroup.headers.map((header) => {
@@ -198,6 +200,7 @@ export function DataTable<TData, TValue>({
                   }
                   onMouseEnter={() => setHoveredRowId(row.id)}
                   onMouseLeave={() => setHoveredRowId(null)}
+                  onClick={() => onRowClick?.(row)}
                 >
                   {row.getVisibleCells().map((cell, i) =>
                     linkFormatter &&
