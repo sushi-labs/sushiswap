@@ -11,7 +11,7 @@ export const WalletListView = () => {
   const { adapters, handleConnect } = useKadena()
   const { refreshSnapAdapter } = useKadenaAdapterContext()
   const { isMobile } = useIsMobile()
-
+  console.log('adapters', adapters)
   const _adapters = useMemo(() => {
     if (isMobile) {
       const realAdapters = adapters.filter((adapter) => adapter.name !== 'Snap')
