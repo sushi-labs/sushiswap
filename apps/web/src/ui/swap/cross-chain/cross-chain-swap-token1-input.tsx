@@ -1,6 +1,7 @@
 'use client'
 
 import { XSWAP_SUPPORTED_CHAIN_IDS, getSortedChainIds } from 'src/config'
+import { useQuickSelectContext } from 'src/lib/wagmi/components/token-selector/quick-select/quick-select-provider'
 import { Web3Input } from 'src/lib/wagmi/components/web3-input'
 import { isWNativeSupported } from 'sushi/config'
 import {
@@ -22,12 +23,17 @@ export const CrossChainSwapToken1Input = () => {
     isFetching,
     data: route,
   } = useSelectedCrossChainTradeRoute()
+
+  const {
+    state: { isEnabled },
+  } = useQuickSelectContext()
+
   return (
     <Web3Input.Currency
       id="swap-to"
       type="OUTPUT"
       disabled
-      className="p-4 bg-gray-100 dark:bg-slate-900 rounded-xl overflow-visible"
+      className="overflow-visible p-4 bg-gray-100 rounded-xl dark:bg-slate-900"
       value={route?.amountOut?.toSignificant() ?? ''}
       chainId={chainId1}
       onSelect={setToken1}
@@ -41,7 +47,7 @@ export const CrossChainSwapToken1Input = () => {
       networks={networks}
       selectedNetwork={chainId1}
       onNetworkChange={setChainId1}
-      showQuickSelect={true}
+      showQuickSelect={isEnabled}
     />
   )
 }

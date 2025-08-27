@@ -1,5 +1,6 @@
 'use client'
 
+import { useQuickSelectContext } from 'src/lib/wagmi/components/token-selector/quick-select/quick-select-provider'
 import { Web3Input } from 'src/lib/wagmi/components/web3-input'
 import { isWNativeSupported } from 'sushi/config'
 import {
@@ -19,12 +20,17 @@ export const SimpleSwapToken1Input = () => {
     isFetching,
     data: quote,
   } = useSimpleSwapTradeQuote()
+
+  const {
+    state: { isEnabled },
+  } = useQuickSelectContext()
+
   return (
     <Web3Input.Currency
       id="swap-to"
       type="OUTPUT"
       disabled
-      className="p-4 bg-gray-100 dark:bg-slate-900 rounded-xl overflow-visible"
+      className="overflow-visible p-4 bg-gray-100 rounded-xl dark:bg-slate-900"
       value={quote?.amountOut?.toSignificant() ?? ''}
       chainId={chainId}
       onSelect={setToken1}
@@ -36,7 +42,7 @@ export const SimpleSwapToken1Input = () => {
       allowNative={isWNativeSupported(chainId)}
       label="Buy"
       // priceImpact={quote?.priceImpact}
-      showQuickSelect={true}
+      showQuickSelect={isEnabled}
     />
   )
 }

@@ -15,11 +15,9 @@ export const Providers = async ({
   return (
     <CheckerProvider>
       <EdgeProvider config={config}>
-        <QuickSelectProvider>
-          <DerivedstateSimpleSwapProvider>
-            <SendTokensProvider>{children}</SendTokensProvider>
-          </DerivedstateSimpleSwapProvider>
-        </QuickSelectProvider>
+        <DerivedstateSimpleSwapProvider>
+          <SendTokensProvider>{children}</SendTokensProvider>
+        </DerivedstateSimpleSwapProvider>
       </EdgeProvider>
     </CheckerProvider>
   )

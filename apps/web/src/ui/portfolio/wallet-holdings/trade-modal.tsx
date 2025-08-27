@@ -1,6 +1,7 @@
 'use client'
 
 import { XMarkIcon } from '@heroicons/react/24/outline'
+import { useIsSmScreen } from '@sushiswap/hooks'
 import {
   Button,
   Dialog,
@@ -12,6 +13,7 @@ import {
   IconButton,
   classNames,
 } from '@sushiswap/ui'
+import { QuickSelectProvider } from 'src/lib/wagmi/components/token-selector/quick-select/quick-select-provider'
 import { useDerivedStateSimpleSwap } from 'src/ui/swap/simple/derivedstate-simple-swap-provider'
 import { TradeWidget } from 'src/ui/swap/trade/trade-widget'
 import type { Type } from 'sushi/currency'
@@ -23,6 +25,7 @@ interface TradeModalProps {
 
 export const TradeModal = ({ token, side }: TradeModalProps) => {
   const { mutate } = useDerivedStateSimpleSwap()
+  const isSmallScreen = useIsSmScreen()
 
   const isBuy = side === 'buy'
   const label = isBuy ? 'BUY' : 'SELL'
@@ -50,9 +53,7 @@ export const TradeModal = ({ token, side }: TradeModalProps) => {
       </DialogTrigger>
       <DialogContent
         className={classNames(
-          '!flex flex-col', // instead of grid
-          'md:h-auto h-[100dvh]', // remove 100dvh
-          '!rounded-none',
+          '!flex flex-col md:h-auto h-[100dvh] !rounded-none',
         )}
         hideClose
       >
@@ -62,11 +63,13 @@ export const TradeModal = ({ token, side }: TradeModalProps) => {
             <IconButton variant={'ghost'} icon={XMarkIcon} name="Close" />
           </DialogClose>
         </DialogHeader>
-        <TradeWidget
-          _tradeMode="swap"
-          wrapperClassName="!p-0"
-          tradeModeRowClassName="pt-2 pb-4"
-        />
+        <QuickSelectProvider _isEnabled={!isSmallScreen}>
+          <TradeWidget
+            _tradeMode="swap"
+            wrapperClassName="!p-0"
+            tradeModeRowClassName="pt-2 pb-4"
+          />
+        </QuickSelectProvider>
       </DialogContent>
     </Dialog>
   )
