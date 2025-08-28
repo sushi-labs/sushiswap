@@ -25,7 +25,7 @@ import {
 } from './columns'
 
 export const DCAOrdersTable = ({
-  tableRowClassName,
+  tableRowClassName = '',
 }: {
   tableRowClassName?: string
 }) => {

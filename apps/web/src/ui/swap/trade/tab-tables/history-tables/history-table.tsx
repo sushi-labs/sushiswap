@@ -29,9 +29,9 @@ export const TABS = [
 ]
 
 export const HistoryTable = ({
-  tableRowClassName,
+  tableRowClassName = '',
 }: {
-  tableRowClassName: string
+  tableRowClassName?: string
 }) => {
   const [currentTab, setCurrentTab] = useState(TABS[0].value)
   const { createQuery } = useCreateQuery()

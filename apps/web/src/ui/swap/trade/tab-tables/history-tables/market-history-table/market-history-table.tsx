@@ -27,9 +27,9 @@ import {
 
 export type MarketTrade = RecentSwap
 export const MarketTable = ({
-  tableRowClassName,
+  tableRowClassName = '',
 }: {
-  tableRowClassName: string
+  tableRowClassName?: string
 }) => {
   const { chainIds, showCurrentPairOnly } = useTradeTablesContext()
 

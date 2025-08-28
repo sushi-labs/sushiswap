@@ -23,7 +23,7 @@ import {
 } from './columns'
 
 export const LimitOrdersTable = ({
-  tableRowClassName,
+  tableRowClassName = '',
 }: {
   tableRowClassName?: string
 }) => {

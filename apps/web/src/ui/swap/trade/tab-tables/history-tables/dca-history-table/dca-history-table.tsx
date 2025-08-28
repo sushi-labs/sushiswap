@@ -26,9 +26,9 @@ import {
 import { DCAOrderDetailsModal } from './order-details-modal'
 
 export const DCAOrdersHistoryTable = ({
-  tableRowClassName,
+  tableRowClassName = '',
 }: {
-  tableRowClassName: string
+  tableRowClassName?: string
 }) => {
   const { orders, ordersLoading } = useTradeTablesContext()
 

@@ -22,9 +22,9 @@ import {
 } from './limit-history-columns'
 
 export const LimitOrdersHistoryTable = ({
-  tableRowClassName,
+  tableRowClassName = '',
 }: {
-  tableRowClassName: string
+  tableRowClassName?: string
 }) => {
   const [showInUsd, setShowInUsd] = React.useState(true)
   const { orders, ordersLoading } = useTradeTablesContext()
