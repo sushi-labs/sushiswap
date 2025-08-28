@@ -50,7 +50,20 @@ export const WalletListView = () => {
         ...adapters,
       ]
     }
-    return adapters
+
+    return [
+      ...(!hasEcko
+        ? [
+            {
+              name: 'eckoWALLET',
+              detected: false,
+              installUrl: ADAPTER_INSTALL_URLS['Ecko'],
+              imageURI: KADENA_WALLET_ADAPTER_ICONS['Ecko'],
+            },
+          ]
+        : []),
+      ...adapters,
+    ]
   }, [adapters, isMobile])
 
   return (
