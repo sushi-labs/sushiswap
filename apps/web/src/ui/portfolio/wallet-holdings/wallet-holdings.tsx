@@ -148,6 +148,12 @@ export const WalletHoldings = () => {
     }
   }, [])
 
+  useEffect(() => {
+    if (!isSmallScreen) {
+      setOpenMenu(false)
+    }
+  }, [isSmallScreen])
+
   return (
     <>
       <Wrapper className="!p-0 rounded-lg overflow-x-auto" enableBorder>
@@ -192,7 +198,7 @@ export const WalletHoldings = () => {
             ]}
             data={data}
             className="rounded-t-none dark:!border-[#FFFFFF14] !border-[#00000014] !space-y-6"
-            tableRowClassName="dark:!border-[#FFFFFF14] !border-[#00000014]"
+            tableRowClassName="dark:!border-[#FFFFFF14] !border-[#00000014] cursor-pointer md:cursor-default"
             showAllToggle
           />
         </CardContent>
@@ -201,7 +207,7 @@ export const WalletHoldings = () => {
         <DialogTrigger asChild>
           <div className="hidden" />
         </DialogTrigger>
-        <DialogContent hideClose>
+        <DialogContent hideClose className="!max-w-full">
           <DialogHeader>
             <DialogTitle className="flex justify-end !mr-0">
               <DialogClose className="!ml-auto">

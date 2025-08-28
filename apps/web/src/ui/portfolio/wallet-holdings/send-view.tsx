@@ -80,6 +80,7 @@ export const SendView = () => {
       </div>
       <RecentRecipients />
       <Button
+        size="xl"
         variant={
           !isRecipientValid && state.recipientAddress
             ? 'destructive'

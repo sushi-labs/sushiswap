@@ -54,6 +54,7 @@ export const EditContactView = () => {
       />
 
       <Button
+        size="xl"
         variant={!isRecipientValid && address ? 'destructive' : 'default'}
         disabled={!(isRecipientValid && address) || !name || !address}
         onClick={() => {

@@ -7,6 +7,7 @@ import {
 } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import type { ColumnDef } from '@tanstack/react-table'
+import { useState } from 'react'
 import { formatNumber, formatUSD } from 'sushi'
 import { formatPercent } from 'sushi/format'
 import { ActionButtons } from '../assets-chart/action-buttons'
@@ -22,7 +23,7 @@ export const CHAIN_COLUMN: ColumnDef<PortfolioRow> = {
   accessorFn: (row) => row.chainId,
   cell: ({ row }) => (
     <div className="flex gap-1 md:gap-2">
-      <div className="dark:border-[#222137] ml-auto border-[#F5F5F5] border rounded-[4px] overflow-hidden">
+      <div className="dark:border-[#222137] border-[#F5F5F5] border rounded-[4px] overflow-hidden">
         <NetworkIcon
           type="square"
           chainId={row.original.chainId}
@@ -219,6 +220,7 @@ export const LAST_30_DAY_COLUMN: ColumnDef<PortfolioRow> = {
   enableSorting: false,
   accessorFn: (row) => row.last30Days,
   cell: ({ row, table }) => {
+    const [isModalOpen, setIsModalOpen] = useState(false)
     const isSmallScreen = useIsSmScreen()
 
     const isHovered = table.options.meta?.getIsRowHovered(row.id) ?? false
@@ -229,12 +231,14 @@ export const LAST_30_DAY_COLUMN: ColumnDef<PortfolioRow> = {
     const xData = last30Days.map((p) => p.timestamp)
     const yData = last30Days.map((p) => p.price)
 
-    return isHovered && !isSmallScreen ? (
+    return (isHovered || isModalOpen) && !isSmallScreen ? (
       <ActionButtons
         token={row.original.token}
         renderSendWidget={false}
         buttonClassName="!w-[92px]"
         className="!flex !flex-row"
+        setIsModalOpen={setIsModalOpen}
+        isModalOpen={isModalOpen}
       />
     ) : (
       <div className="!w-[292px] flex justify-center">

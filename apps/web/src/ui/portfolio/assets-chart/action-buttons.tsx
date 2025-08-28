@@ -11,6 +11,8 @@ interface ActionButtonsProps {
   renderSendWidget?: boolean
   className?: string
   buttonClassName?: string
+  setIsModalOpen?: (isOpen: boolean) => void
+  isModalOpen?: boolean
 }
 
 export const ActionButtons = ({
@@ -19,6 +21,8 @@ export const ActionButtons = ({
   renderSendWidget = true,
   className = '',
   buttonClassName = '',
+  setIsModalOpen,
+  isModalOpen,
 }: ActionButtonsProps) => {
   const baseBtnClasses =
     'text-slate-50 !rounded-full font-semibold min-h-[32px] h-[32px] px-2 text-xs flex items-center justify-center'
@@ -30,11 +34,15 @@ export const ActionButtons = ({
         token={token}
         side="buy"
         triggerClassName={classNames(fixedWidth, buttonClassName)}
+        setIsModalOpen={setIsModalOpen}
+        isModalOpen={isModalOpen}
       />
       <TradeModal
         token={token}
         side="sell"
         triggerClassName={classNames(fixedWidth, buttonClassName)}
+        setIsModalOpen={setIsModalOpen}
+        isModalOpen={isModalOpen}
       />
       <Link
         href={`/${evmChains[token.chainId].name.toLowerCase()}/explore/pools?tokenSymbols=${token.symbol}`}

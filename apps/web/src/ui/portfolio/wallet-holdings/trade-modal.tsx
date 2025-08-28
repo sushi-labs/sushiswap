@@ -13,6 +13,7 @@ import {
   IconButton,
   classNames,
 } from '@sushiswap/ui'
+import { useState } from 'react'
 import { QuickSelectProvider } from 'src/lib/wagmi/components/token-selector/quick-select/quick-select-provider'
 import { useDerivedStateSimpleSwap } from 'src/ui/swap/simple/derivedstate-simple-swap-provider'
 import { TradeWidget } from 'src/ui/swap/trade/trade-widget'
@@ -22,13 +23,21 @@ interface TradeModalProps {
   token: Type
   side: 'buy' | 'sell'
   triggerClassName?: string
+  setIsModalOpen?: (isOpen: boolean) => void
+  isModalOpen?: boolean
 }
 
 export const TradeModal = ({
   token,
   side,
   triggerClassName = '',
+  setIsModalOpen: externalSetIsModalOpen,
+  isModalOpen: externalIsModalOpen,
 }: TradeModalProps) => {
+  const [internalIsOpen, setInternalIsOpen] = useState(false)
+  const isOpen = externalIsModalOpen ?? internalIsOpen
+  const setIsOpen = externalSetIsModalOpen ?? setInternalIsOpen
+
   const { mutate } = useDerivedStateSimpleSwap()
   const isSmallScreen = useIsSmScreen()
 
@@ -40,7 +49,7 @@ export const TradeModal = ({
     : 'text-slate-50 !rounded-full font-semibold !bg-red-100/100 dark:!bg-[#EA3830]/100 dark:hover:!bg-[#EA3830]/90 dark:focus:!bg-[#EA3830]/90 dark:active:!bg-[#EA3830]/80 hover:!bg-red-100/90 focus:!bg-red-100/90 active:!bg-red-100/80'
 
   return (
-    <Dialog>
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
         <Button
           size="xs"
@@ -63,7 +72,7 @@ export const TradeModal = ({
       </DialogTrigger>
       <DialogContent
         className={classNames(
-          '!flex flex-col md:h-auto h-[100dvh] !rounded-none md:!rounded-xl bg-[#FDFCFD] !p-5 max-w-none md:!max-w-[500px]',
+          '!flex flex-col md:h-auto h-[100dvh] !rounded-none md:!rounded-xl bg-[#FDFCFD] !p-5 max-w-none md:!max-w-[500px] !pb-0',
         )}
         hideClose
       >
@@ -76,7 +85,7 @@ export const TradeModal = ({
         <QuickSelectProvider _isEnabled={!isSmallScreen}>
           <TradeWidget
             _tradeMode="swap"
-            wrapperClassName="!p-0 !bg-transparent !border-none !shadow-none -mb-7"
+            wrapperClassName="!p-0 !bg-transparent !border-none !shadow-none !pb-2"
             tradeModeRowClassName="pt-2 pb-4 md:pb-0 md:pt-0"
           />
         </QuickSelectProvider>

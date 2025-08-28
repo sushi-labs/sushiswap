@@ -1,4 +1,9 @@
-import { ArrowLeftIcon, CheckIcon, TrashIcon } from '@heroicons/react-v1/solid'
+import {
+  ArrowLeftIcon,
+  CheckIcon,
+  PlusCircleIcon,
+  TrashIcon,
+} from '@heroicons/react-v1/solid'
 import { XMarkIcon } from '@heroicons/react/24/outline'
 import {
   Button,
@@ -48,12 +53,13 @@ export const BrowseContactView = () => {
         ))}
       </div>
       <Button
+        size="xl"
         variant={'default'}
         onClick={() => {
           mutate.goTo('send')
         }}
       >
-        Save
+        <PlusCircleIcon className="w-5 h-5" /> Add Contact
       </Button>
     </>
   )
