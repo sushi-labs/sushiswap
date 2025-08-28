@@ -67,6 +67,65 @@ const data: PortfolioRow[] = [
         Math.round((Math.sin(i / 5) * 100 + Math.random() * 50) * 100) / 100,
     })),
   },
+  {
+    chainId: 1 as EvmChainId,
+    token: new Token({
+      chainId: 1,
+      address: '0x6B3595068778DD592e39A122f4f5a5cF09C90fE2', // SUSHI
+      decimals: 18,
+      symbol: 'SUSHI',
+      name: 'SushiToken',
+    }),
+    percentageOfPort: 0.2,
+    price: 1.12,
+    amount: 5000,
+    value: 5600,
+    uPnL: -50,
+    last30Days: Array.from({ length: 30 }, (_, i) => ({
+      timestamp: Math.floor(Date.now() / 1000) - (29 - i) * 86400,
+      price:
+        Math.round((Math.cos(i / 7) * 0.5 + 1 + Math.random() * 0.2) * 100) /
+        100,
+    })),
+  },
+  {
+    chainId: 1 as EvmChainId,
+    token: new Token({
+      chainId: 1,
+      address: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48', // USDC
+      decimals: 6,
+      symbol: 'USDC',
+      name: 'USD Coin',
+    }),
+    percentageOfPort: 0.2,
+    price: 1,
+    amount: 10000,
+    value: 10000,
+    uPnL: 0,
+    last30Days: Array.from({ length: 30 }, (_, i) => ({
+      timestamp: Math.floor(Date.now() / 1000) - (29 - i) * 86400,
+      price: 1 + Math.round(Math.random() * 2) / 100, // ~1 ±0.02
+    })),
+  },
+  {
+    chainId: 1 as EvmChainId,
+    token: new Token({
+      chainId: 1,
+      address: '0xdAC17F958D2ee523a2206206994597C13D831ec7', // USDT
+      decimals: 6,
+      symbol: 'USDT',
+      name: 'Tether USD',
+    }),
+    percentageOfPort: 0.1,
+    price: 1,
+    amount: 8000,
+    value: 8000,
+    uPnL: 10,
+    last30Days: Array.from({ length: 30 }, (_, i) => ({
+      timestamp: Math.floor(Date.now() / 1000) - (29 - i) * 86400,
+      price: 1 + Math.round(Math.random() * 3) / 100, // ~1 ±0.03
+    })),
+  },
 ]
 
 export const WalletHoldings = () => {
@@ -141,8 +200,9 @@ export const WalletHoldings = () => {
               LAST_30_DAY_COLUMN,
             ]}
             data={data}
-            className="rounded-t-none dark:!border-[#FFFFFF14] !border-[#00000014]"
+            className="rounded-t-none dark:!border-[#FFFFFF14] !border-[#00000014] !space-y-6"
             tableRowClassName="dark:!border-[#FFFFFF14] !border-[#00000014]"
+            showAllToggle
           />
         </CardContent>
       </Wrapper>

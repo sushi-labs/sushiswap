@@ -22,6 +22,7 @@ import {
 } from '@tanstack/react-table'
 import { default as React, type ReactNode } from 'react'
 
+import { ChevronDownIcon } from '@heroicons/react/24/outline'
 import classNames from 'classnames'
 import {
   Table,
@@ -69,6 +70,7 @@ interface DataTableProps<TData, TValue> {
   showColumnHeaders?: boolean
   className?: string
   tableRowClassName?: string
+  showAllToggle?: boolean
 }
 
 export function DataTable<TData, TValue>({
@@ -87,6 +89,7 @@ export function DataTable<TData, TValue>({
   showColumnHeaders = true,
   className,
   tableRowClassName,
+  showAllToggle,
 }: DataTableProps<TData, TValue>) {
   const [rowSelection, setRowSelection] = React.useState({})
   const [columnVisibility, setColumnVisibility] =
@@ -96,6 +99,8 @@ export function DataTable<TData, TValue>({
   )
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [hoveredRowId, setHoveredRowId] = React.useState<string | null>(null)
+
+  const [expanded, setExpanded] = React.useState(false)
 
   const table = useReactTable({
     data,
@@ -127,6 +132,10 @@ export function DataTable<TData, TValue>({
     },
   })
 
+  const visibleRows = table.getRowModel().rows
+  const rowsToShow =
+    showAllToggle && !expanded ? visibleRows.slice(0, 3) : visibleRows
+
   return (
     <div
       className={classNames(
@@ -138,8 +147,10 @@ export function DataTable<TData, TValue>({
       <Table
         className={classNames(
           pagination
-            ? 'border-b border-secondary  black:border-white/[0.1]'
-            : '',
+            ? 'border-b border-secondary black:border-white/[0.1]'
+            : showAllToggle
+              ? 'border-b dark:!border-[#FFFFFF14] !border-[#00000014]'
+              : '',
           'dark:bg-slate-800 bg-slate-50 rounded-xl',
         )}
       >
@@ -197,8 +208,8 @@ export function DataTable<TData, TValue>({
                   })}
                 </TableRow>
               ))
-          ) : table.getRowModel().rows?.length ? (
-            table.getRowModel().rows.map((row, r) => {
+          ) : rowsToShow?.length ? (
+            rowsToShow.map((row, r) => {
               const _row = (
                 <TableRow
                   key={r}
@@ -266,6 +277,18 @@ export function DataTable<TData, TValue>({
           <DataTablePagination table={table} />
         </div>
       ) : null}
+      {showAllToggle && visibleRows.length > 3 && (
+        <div className="flex justify-center pb-6">
+          <button
+            type="button"
+            onClick={() => setExpanded((prev) => !prev)}
+            className="flex gap-1 items-center text-sm font-medium text-slate-900 dark:text-slate-100"
+          >
+            {expanded ? 'Show Less' : 'Show All'}
+            <ChevronDownIcon width={16} height={16} />
+          </button>
+        </div>
+      )}
     </div>
   )
 }
