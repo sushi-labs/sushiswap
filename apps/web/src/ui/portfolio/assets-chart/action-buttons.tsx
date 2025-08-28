@@ -87,7 +87,7 @@ export const ActionButtons = ({
   ) : (
     <div
       className={classNames(
-        'grid relative grid-cols-2 col-span-2 gap-2 md:flex md:flex-row md:justify-center md:items-center md:col-span-2',
+        'grid relative z-10 grid-cols-2 col-span-2 gap-2 md:flex md:flex-row md:justify-center md:items-center md:col-span-2',
         className,
       )}
     >

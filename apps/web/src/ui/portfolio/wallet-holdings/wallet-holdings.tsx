@@ -160,11 +160,6 @@ export const WalletHoldings = () => {
           <DataTable
             state={state}
             loading={false}
-            linkFormatter={(row) => {
-              return isSmallScreen
-                ? ''
-                : `/${ChainKey[row.chainId]}/swap?token0=${row.token.address}`
-            }}
             rowRenderer={(row, value) => {
               if (!isSmallScreen) {
                 return value
@@ -172,10 +167,6 @@ export const WalletHoldings = () => {
               return (
                 <Slot
                   onClick={() => {
-                    console.log(
-                      '[WalletHoldings] Row clicked (small screen):',
-                      row.original.token,
-                    )
                     setSelectedToken(row.original.token)
                     setOpenMenu(true)
                   }}
