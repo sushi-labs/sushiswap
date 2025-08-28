@@ -19,6 +19,7 @@ export const PopoverDrawer = ({
   content,
   popoverContentClassName,
   dialogContentClassName,
+  dialogContentWrapperClassName,
   dialogTitleClassName,
   align,
   open,
@@ -31,6 +32,7 @@ export const PopoverDrawer = ({
   content: ReactNode
   popoverContentClassName?: string
   dialogContentClassName?: string
+  dialogContentWrapperClassName?: string
   dialogTitleClassName?: string
   align?: 'center' | 'start' | 'end'
   open?: boolean
@@ -77,6 +79,7 @@ export const PopoverDrawer = ({
         variant="semi-opaque"
         className={classNames(
           '!px-3 border-t border-[#EBEBEB] !bg-slate-50 dark:border-[#FFFFFF14] dark:!bg-slate-800',
+          dialogContentWrapperClassName,
         )}
       >
         <div

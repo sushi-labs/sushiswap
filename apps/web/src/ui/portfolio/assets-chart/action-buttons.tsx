@@ -34,7 +34,7 @@ export const ActionButtons = ({
   const secondRow = (
     <>
       <SendWidget
-        triggerClassName={`${fixedWidth} !min-h-[32px] !h-[32px] !p-2 text-xs !rounded-full bg-![#0000001F] dark:!bg-[#FFFFFF1F]`}
+        triggerClassName={`${fixedWidth} !min-h-[32px] !h-[32px] !p-2 text-xs !rounded-full !bg-[#0000001F] dark:!bg-[#FFFFFF1F] !text-slate-900 dark:!text-slate-100`}
         hideTriggerIcon
         initialToken={token}
       />
@@ -50,12 +50,12 @@ export const ActionButtons = ({
   )
 
   return splitRows ? (
-    <div className="flex relative z-40 flex-col gap-4">
+    <div className="flex relative flex-col gap-4">
       <div className="flex gap-2 justify-center">{firstRow}</div>
       <div className="flex gap-2 justify-center">{secondRow}</div>
     </div>
   ) : (
-    <div className="grid relative z-40 grid-cols-2 col-span-2 gap-2 md:flex md:flex-row md:justify-center md:items-center md:col-span-2">
+    <div className="grid relative grid-cols-2 col-span-2 gap-2 md:flex md:flex-row md:justify-center md:items-center md:col-span-2">
       {firstRow}
       {secondRow}
     </div>

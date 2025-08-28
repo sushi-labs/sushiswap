@@ -85,8 +85,9 @@ export const AssetsFilter = ({
       open={open}
       setOpen={setOpen}
       align="start"
-      popoverContentClassName="md:max-w-[370px] md:w-[370px] !p-0 !bg-[#FFFFFF] dark:!bg-slate-800"
-      dialogContentClassName="max-w-none"
+      popoverContentClassName="md:max-w-[370px] md:w-[370px] !p-0 !bg-[#FFFFFF] dark:!bg-slate-800  h-full"
+      dialogContentClassName="max-w-none h-[100dvh] !flex !flex-col"
+      dialogContentWrapperClassName="h-full md:h-auto"
       dialogTitle="Select Token"
       dialogTitleClassName="!mt-0"
       hideDialogClose
@@ -145,7 +146,9 @@ export const AssetsFilter = ({
             )}
           </Button>
           {selectedToken && (
-            <button
+            <Button
+              size="sm"
+              variant="ghost"
               className="flex gap-1 items-center text-sm font-medium text-blue dark:text-skyblue"
               type="button"
               onClick={(e) => {
@@ -155,7 +158,7 @@ export const AssetsFilter = ({
             >
               Clear
               <XIcon className="w-4 h-4" />
-            </button>
+            </Button>
           )}
         </div>
       }

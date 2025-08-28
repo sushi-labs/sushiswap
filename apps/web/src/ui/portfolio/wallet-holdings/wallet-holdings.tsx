@@ -92,7 +92,7 @@ export const WalletHoldings = () => {
   return (
     <>
       <Wrapper className="!p-0 rounded-lg overflow-x-auto" enableBorder>
-        <CardHeader className="!gap-2.5 relative">
+        <CardHeader className="!gap-2.5 relative !p-4">
           <CardTitle className="!text-primary flex justify-between items-start md:items-center flex-col md:flex-row gap-3 md:gap-0">
             <WalletHoldingsHeader />
           </CardTitle>

@@ -13,7 +13,7 @@ import {
 import format from 'date-fns/format'
 import type { EChartOption } from 'echarts'
 import ReactEchartsCore from 'echarts-for-react/lib/core'
-import { BarChart, LineChart } from 'echarts/charts'
+import { BarChart, LineChart, ScatterChart } from 'echarts/charts'
 import {
   GridComponent,
   ToolboxComponent,
@@ -34,6 +34,7 @@ import { ActionButtons } from './action-buttons'
 import { AssetsFilter } from './assets-filter'
 
 echarts.use([
+  ScatterChart,
   CanvasRenderer,
   BarChart,
   LineChart,
@@ -193,6 +194,13 @@ export const MOCK_USD_VALUE_BUCKETS = {
   ],
 }
 
+export const MOCK_TRANSACTIONS = [
+  { date: 1757640000, type: 'buy' },
+  { date: 1757719200, type: 'sell' },
+  { date: 1757748000, type: 'buy' },
+  { date: 1757784000, type: 'sell' },
+]
+
 const tailwind = resolveConfig(tailwindConfig)
 
 export const AssetsChart = () => {
@@ -259,6 +267,36 @@ export const AssetsChart = () => {
         return ''
     }
   }
+
+  const valueMap = new Map<number, number>()
+
+  MOCK_USD_VALUE_BUCKETS[period].forEach((d) => {
+    valueMap.set(d.date * 1000, d.usdValue)
+  })
+
+  const markerSeries = MOCK_TRANSACTIONS.map((tx) => {
+    const timestamp = tx.date * 1000
+    const value = valueMap.get(timestamp)
+
+    return {
+      value: [timestamp, value ?? null],
+      symbol: 'circle',
+      symbolSize: 20,
+      itemStyle: {
+        color: tx.type === 'buy' ? '#1DA67D' : '#EA3830',
+        opacity: 1,
+      },
+      label: {
+        show: true,
+        formatter: tx.type === 'buy' ? 'B' : 'S',
+        color: '#fff',
+        fontWeight: 700,
+        fontSize: 10,
+      },
+    }
+  }).filter((point) => point.value[1] !== null)
+
+  console.log('markerSeries:', markerSeries)
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   const option = useMemo<EChartOption>(
@@ -389,6 +427,11 @@ export const AssetsChart = () => {
           lineStyle: { width: 2 },
           data: xData.map((x, i) => [x * 1000, yData[i]]),
         },
+        {
+          type: 'scatter',
+          data: markerSeries,
+          z: 10,
+        },
       ],
     }),
     [xData, yData, onMouseOver, period, isDark, isSmallScreen],
@@ -396,8 +439,8 @@ export const AssetsChart = () => {
 
   return (
     <Wrapper className="!p-0" enableBorder>
-      <CardHeader className="!px-0 !p-4 md:!py-6">
-        <div className="flex flex-col gap-4 justify-between px-6 pb-4 md:pb-6 md:gap-0 md:items-center md:flex-row">
+      <CardHeader className="!px-0 !p-4 md:!py-4">
+        <div className="flex flex-col gap-4 justify-between px-4 pb-4 md:pb-4 md:gap-0 md:items-center md:flex-row">
           <AssetsFilter
             setSelectedToken={setSelectedToken}
             selectedToken={selectedToken}
@@ -405,7 +448,7 @@ export const AssetsChart = () => {
           {selectedToken && <ActionButtons token={selectedToken} />}
         </div>
         <div className="h-[1px] bg-accent w-full !mt-0" />
-        <CardTitle className="!text-primary px-6 pt-4 md:pt-6">
+        <CardTitle className="!text-primary px-4 pt-4 md:pt-4">
           <div className="flex flex-col-reverse gap-1 justify-between items-start md:items-center md:flex-row md:gap-0">
             <div className="flex flex-col gap-1 pt-4 w-full md:pt-0">
               <span className="text-2xl !font-medium">$52,526.96</span>
