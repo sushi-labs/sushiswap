@@ -364,7 +364,7 @@ export const V2MigrateDialog = ({
         <DialogTitle className="!font-medium mt-3">
           Migrate Position
         </DialogTitle>
-        <div className="flex flex-col gap-3 w-full mt-3">
+        <div className="flex flex-col gap-3 mt-3 w-full">
           <ManageDialogHeader hideApr={true} data={fakePosition} />
           {step === 0 ? (
             <>
@@ -379,7 +379,7 @@ export const V2MigrateDialog = ({
               <Button
                 size="xl"
                 onClick={() => setStep(1)}
-                className="w-full mt-4"
+                className="mt-4 w-full"
               >
                 Next
               </Button>
@@ -390,9 +390,9 @@ export const V2MigrateDialog = ({
               <button
                 onClick={() => setStep(0)}
                 type="button"
-                className="font-medium w-fit flex items-center text-blue dark:text-skyblue text-base"
+                className="flex items-center text-base font-medium w-fit text-blue dark:text-skyblue"
               >
-                <ArrowLeftIcon className="w-4 h-4 mr-2" />
+                <ArrowLeftIcon className="mr-2 w-4 h-4" />
                 Select Fee Tier
               </button>
               {poolExists ? (
@@ -402,10 +402,10 @@ export const V2MigrateDialog = ({
               )}
               {poolExists && token0 && token1 && pool ? (
                 <div className="flex flex-col gap-4 w-full">
-                  <div className="flex items-center justify-between w-full flex-wrap gap-2">
-                    <div className="flex items-center gap-2">
+                  <div className="flex flex-wrap gap-2 justify-between items-center w-full">
+                    <div className="flex gap-2 items-center">
                       <PriceBadge protocol={SushiSwapProtocol.SUSHISWAP_V2} />
-                      <div className="font-medium text-sm">
+                      <div className="text-sm font-medium">
                         {invertPrice
                           ? `${v2SpotPrice?.invert()?.toSignificant(6)} ${_token0!.symbol}`
                           : `${v2SpotPrice?.toSignificant(6)} ${_token1!.symbol}`}{' '}
@@ -427,10 +427,10 @@ export const V2MigrateDialog = ({
                       setInvertPrice={setInvertPrice}
                     />
                   </div>
-                  <div className="flex items-center justify-between flex-wrap gap-2 w-full">
-                    <div className="flex items-center gap-2">
+                  <div className="flex flex-wrap gap-2 justify-between items-center w-full">
+                    <div className="flex gap-2 items-center">
                       <PriceBadge protocol={SushiSwapProtocol.SUSHISWAP_V3} />
-                      <div className="font-medium text-sm">
+                      <div className="text-sm font-medium">
                         {invertPrice
                           ? `${v3SpotPrice?.invert()?.toSignificant(6)} ${_token0!.symbol}`
                           : `${v3SpotPrice?.toSignificant(6)} ${_token1!.symbol}`}{' '}
@@ -467,7 +467,7 @@ export const V2MigrateDialog = ({
               <Button
                 size="xl"
                 onClick={() => setStep(2)}
-                className="w-full mt-4"
+                className="mt-4 w-full"
               >
                 Next
               </Button>

@@ -12,7 +12,7 @@ export const PriceRangeCell = ({
   const [isManageOpen, setIsManageOpen] = useState(false)
   if (isHovered || isManageOpen) {
     return (
-      <div className="flex items-center justify-between gap-2 w-full">
+      <div className="flex gap-2 justify-between items-center w-full">
         {/* make claim into new comp */}
         {data.protocol === 'SUSHISWAP_V3' ? (
           <Button className="w-full !rounded-full">Claim</Button>
@@ -22,7 +22,10 @@ export const PriceRangeCell = ({
           isOpen={isManageOpen}
           setIsOpen={setIsManageOpen}
           triggerChildren={
-            <Button variant="networks" className="w-full !rounded-full">
+            <Button
+              variant="networks"
+              className="w-full !rounded-full dark:!bg-[#FFFFFF]/[.12] dark:hover:!bg-[#fff]/[.18] dark:active:!bg-[#fff]/[.24]"
+            >
               Manage
             </Button>
           }

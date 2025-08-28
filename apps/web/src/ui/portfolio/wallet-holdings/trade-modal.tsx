@@ -36,8 +36,8 @@ export const TradeModal = ({
   const label = isBuy ? 'Buy' : 'Sell'
 
   const buttonClasses = isBuy
-    ? 'text-slate-50 !rounded-full !bg-green-500 font-semibold hover:bg-green-500 active:bg-green-500/95 focus:bg-green-500'
-    : 'text-slate-50 !rounded-full dark:!bg-[#EA3830] !bg-red-100 font-semibold dark:hover:bg-[#EA3830] hover:bg-red-100 dark:active:bg-[#EA3830]/95 active:bg-red-100/95 dark:focus:bg-[#EA3830] focus:bg-red-100'
+    ? 'text-slate-50 !rounded-full font-semibold !bg-green-500/100 hover:!bg-green-500/90 focus:!bg-green-500/90 active:!bg-green-500/80'
+    : 'text-slate-50 !rounded-full font-semibold !bg-red-100/100 dark:!bg-[#EA3830]/100 dark:hover:!bg-[#EA3830]/90 dark:focus:!bg-[#EA3830]/90 dark:active:!bg-[#EA3830]/80 hover:!bg-red-100/90 focus:!bg-red-100/90 active:!bg-red-100/80'
 
   return (
     <Dialog>
@@ -46,6 +46,7 @@ export const TradeModal = ({
           size="xs"
           className={classNames(
             `w-full md:w-[64px] h-[32px] min-h-[32px]`,
+            'transition-all',
             buttonClasses,
             triggerClassName,
           )}

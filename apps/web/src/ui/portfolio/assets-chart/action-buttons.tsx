@@ -39,7 +39,7 @@ export const ActionButtons = ({
       <Link
         href={`/${evmChains[token.chainId].name.toLowerCase()}/explore/pools?tokenSymbols=${token.symbol}`}
         className={classNames(
-          'bg-blue-500',
+          '!bg-blue-500/100 hover:!bg-blue-500/90 focus:!bg-blue-500/90 active:!bg-blue-500/80',
           baseBtnClasses,
           fixedWidth,
           buttonClassName,

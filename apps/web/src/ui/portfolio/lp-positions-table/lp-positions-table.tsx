@@ -190,7 +190,7 @@ export const LPPositionsTable = () => {
                 onClick={() => setIsManageOpen(true)}
                 size="sm"
                 variant="networks"
-                className="w-full !rounded-full"
+                className="w-full !rounded-full dark:!bg-[#FFFFFF]/[.12] dark:hover:!bg-[#fff]/[.18] dark:active:!bg-[#fff]/[.24]"
               >
                 Manage
               </Button>
@@ -199,6 +199,7 @@ export const LPPositionsTable = () => {
               size="sm"
               variant="networks"
               className={classNames(
+                'dark:!bg-[#FFFFFF]/[.12] dark:hover:!bg-[#fff]/[.18] dark:active:!bg-[#fff]/[.24]',
                 '!rounded-full',
                 positionData?.protocol === 'SUSHISWAP_V3'
                   ? 'w-1/2 mx-auto'

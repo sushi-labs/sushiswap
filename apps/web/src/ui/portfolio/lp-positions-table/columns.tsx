@@ -17,7 +17,7 @@ export const POSITION_SIZE_COLUMN: ColumnDef<
         <div className="font-medium">
           {formatUSD(props?.row?.original?.position?.positionUSD)}
         </div>
-        <div className="text-xs font-normal text-muted-foreground dark:text-pink-200 whitespace-nowrap uppercase">
+        <div className="text-xs font-normal uppercase whitespace-nowrap text-muted-foreground dark:text-pink-200">
           {formatNumber(props?.row?.original?.position?.token0Size)}{' '}
           {props?.row?.original?.name?.split(' / ')[0]} +{' '}
           {formatNumber(props?.row?.original?.position?.token1Size)}{' '}
@@ -57,7 +57,7 @@ export const POSITION_UNCOLLECTED_COLUMN: ColumnDef<
         <div className="font-medium">
           {formatUSD(props?.row?.original?.position?.unclaimedUSD)}
         </div>
-        <div className="text-xs font-normal text-muted-foreground dark:text-pink-200 whitespace-nowrap uppercase">
+        <div className="text-xs font-normal uppercase whitespace-nowrap text-muted-foreground dark:text-pink-200">
           {formatNumber(props?.row?.original?.position?.unclaimedToken0)}{' '}
           {props?.row?.original?.name?.split(' / ')[0]} +{' '}
           {formatNumber(props?.row?.original?.position?.unclaimedToken1)}{' '}
@@ -97,7 +97,7 @@ export const REWARDS_COLUMN: ColumnDef<
         <div className="font-medium">
           {formatUSD(props?.row?.original?.totalRewardsUSD)}
         </div>
-        <div className="text-xs font-normal text-muted-foreground dark:text-pink-200 whitespace-nowrap uppercase flex items-center gap-1">
+        <div className="flex gap-1 items-center text-xs font-normal uppercase whitespace-nowrap text-muted-foreground dark:text-pink-200">
           {formatNumber(props?.row?.original?.rewards[0]?.amount)}{' '}
           {props?.row?.original?.rewards[0]?.token?.symbol}
           <Currency.Icon
