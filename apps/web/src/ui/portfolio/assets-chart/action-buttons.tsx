@@ -80,7 +80,7 @@ export const ActionButtons = ({
   )
 
   return splitRows ? (
-    <div className="flex relative flex-col gap-4">
+    <div className="flex relative z-10 flex-col gap-4">
       <div className="flex gap-2 justify-center">{firstRow}</div>
       <div className="flex gap-2 justify-center">{secondRow}</div>
     </div>
