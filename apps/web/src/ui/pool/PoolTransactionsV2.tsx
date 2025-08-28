@@ -25,6 +25,7 @@ import {
 import type { Address } from 'viem'
 
 import InfiniteScroll from 'react-infinite-scroll-component'
+import { useAccount } from 'wagmi'
 import {
   TX_AMOUNT_IN_V2_COLUMN,
   TX_AMOUNT_OUT_V2_COLUMN,
@@ -46,10 +47,15 @@ interface UseTransactionsV2Opts {
   skip?: number
 }
 
-const fetchMints = async (address: Address, chainId: SushiSwapV2ChainId) => {
+const fetchMints = async (
+  address: Address,
+  chainId: SushiSwapV2ChainId,
+  user?: Address,
+) => {
   const mints = await getSushiV2Mints({
     chainId,
     address,
+    user,
   })
 
   return mints.map((mint) => ({
@@ -60,10 +66,15 @@ const fetchMints = async (address: Address, chainId: SushiSwapV2ChainId) => {
   }))
 }
 
-const fetchBurns = async (address: Address, chainId: SushiSwapV2ChainId) => {
+const fetchBurns = async (
+  address: Address,
+  chainId: SushiSwapV2ChainId,
+  user?: Address,
+) => {
   const burns = await getSushiV2Burns({
     chainId,
     address,
+    user,
   })
 
   return burns.map((burn) => ({
@@ -74,10 +85,15 @@ const fetchBurns = async (address: Address, chainId: SushiSwapV2ChainId) => {
   }))
 }
 
-const fetchSwaps = async (address: Address, chainId: SushiSwapV2ChainId) => {
+const fetchSwaps = async (
+  address: Address,
+  chainId: SushiSwapV2ChainId,
+  user?: Address,
+) => {
   const swaps = await getSushiV2Swaps({
     chainId,
     address,
+    user,
   })
 
   return swaps.map((swap) => ({
@@ -94,9 +110,10 @@ function useTransactionsV2(
   pool: V2Pool | undefined | null,
   poolAddress: Address,
   opts: UseTransactionsV2Opts,
+  user?: Address,
 ) {
   return useQuery({
-    queryKey: ['poolTransactionsV2', poolAddress, pool?.chainId, opts],
+    queryKey: ['poolTransactionsV2', poolAddress, pool?.chainId, opts, user],
     queryFn: async () => {
       const chainId = pool?.chainId as EvmChainId
 
@@ -106,16 +123,16 @@ function useTransactionsV2(
 
       switch (opts.type) {
         case TransactionType.Burn:
-          transactions = await fetchBurns(poolAddress, chainId)
+          transactions = await fetchBurns(poolAddress, chainId, user)
           break
         case TransactionType.Mint:
-          transactions = await fetchMints(poolAddress, chainId)
+          transactions = await fetchMints(poolAddress, chainId, user)
           break
         case TransactionType.Swap:
-          transactions = await fetchSwaps(poolAddress, chainId)
+          transactions = await fetchSwaps(poolAddress, chainId, user)
           break
         default:
-          transactions = await fetchSwaps(poolAddress, chainId)
+          transactions = await fetchSwaps(poolAddress, chainId, user)
       }
 
       if (!transactions.length) return []
@@ -183,6 +200,7 @@ function usePaginatedTransactions(
     type: TransactionType | 'All' | undefined
     refetchInterval?: number
   },
+  address?: Address,
 ) {
   const PAGE_SIZE = 10
 
@@ -190,10 +208,15 @@ function usePaginatedTransactions(
     data: allTransactions = [],
     isLoading,
     isError,
-  } = useTransactionsV2(pool, poolAddress, {
-    ...opts,
-    first: 100,
-  })
+  } = useTransactionsV2(
+    pool,
+    poolAddress,
+    {
+      ...opts,
+      first: 100,
+    },
+    address,
+  )
 
   const [page, setPage] = useState(1)
 
@@ -232,6 +255,8 @@ const PoolTransactionsV2: FC<PoolTransactionsV2Props> = ({
   pool,
   poolAddress,
 }) => {
+  const { address } = useAccount()
+  const [filterByAddress, setFilterByAddress] = useState(false)
   const [type, setType] = useState<
     Parameters<typeof useTransactionsV2>['2']['type']
   >(TransactionType.Swap)
@@ -256,7 +281,12 @@ const PoolTransactionsV2: FC<PoolTransactionsV2Props> = ({
   )
 
   const { data, isLoading, fetchNextPage, hasNextPage } =
-    usePaginatedTransactions(pool, poolAddress, opts)
+    usePaginatedTransactions(
+      pool,
+      poolAddress,
+      opts,
+      filterByAddress ? address : undefined,
+    )
 
   const _data = useMemo(() => {
     return data ?? []
@@ -284,7 +314,10 @@ const PoolTransactionsV2: FC<PoolTransactionsV2Props> = ({
               </span>
               <span className="flex gap-2 items-center text-muted-foreground">
                 Filter By Your Address
-                <Switch />
+                <Switch
+                  checked={filterByAddress}
+                  onCheckedChange={setFilterByAddress}
+                />
               </span>
             </div>
             <div className="flex gap-1 items-center">

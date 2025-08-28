@@ -1,12 +1,11 @@
 import type { VariablesOf } from 'gql.tada'
 
 import { type RequestOptions, request } from 'src/lib/request.js'
-import { SUSHI_DATA_API_HOST } from 'sushi/config/subgraph'
 import { graphql } from '../../graphql.js'
 
 export const SushiV3SwapsQuery = graphql(`
-  query V3Swaps($address: Bytes!, $chainId: SushiSwapV3ChainId!) {
-    v3Swaps(address: $address, chainId: $chainId) {
+  query V3Swaps($address: Bytes!, $chainId: SushiSwapV3ChainId!, $user: Bytes) {
+    v3Swaps(address: $address, chainId: $chainId, user: $user) {
       id
       logIndex
       amountUSD
@@ -30,7 +29,8 @@ export async function getSushiV3Swaps(
   { ...variables }: GetSushiV3Swaps,
   options?: RequestOptions,
 ) {
-  const url = `${SUSHI_DATA_API_HOST}/graphql`
+  // const url = `${SUSHI_DATA_API_HOST}/graphql`
+  const url = 'https://data-api-181-merge.data-gcp.sushi.com/graphql'
 
   const result = await request(
     { url, document: SushiV3SwapsQuery, variables },

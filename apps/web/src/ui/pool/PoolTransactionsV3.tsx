@@ -26,6 +26,7 @@ import {
 import type { V3Pool } from '@sushiswap/graph-client/data-api'
 import InfiniteScroll from 'react-infinite-scroll-component'
 import type { Address } from 'viem'
+import { useAccount } from 'wagmi'
 import {
   TX_AMOUNT_IN_V3_COLUMN,
   TX_AMOUNT_OUT_V3_COLUMN,
@@ -48,10 +49,15 @@ interface UseTransactionsV3Opts {
   skip?: number
 }
 
-const fetchMints = async (address: Address, chainId: SushiSwapV3ChainId) => {
+const fetchMints = async (
+  address: Address,
+  chainId: SushiSwapV3ChainId,
+  user?: Address,
+) => {
   const mints = await getSushiV3Mints({
     address,
     chainId,
+    user,
   })
 
   return mints.map((mint) => ({
@@ -63,10 +69,15 @@ const fetchMints = async (address: Address, chainId: SushiSwapV3ChainId) => {
   }))
 }
 
-const fetchBurns = async (address: Address, chainId: SushiSwapV3ChainId) => {
+const fetchBurns = async (
+  address: Address,
+  chainId: SushiSwapV3ChainId,
+  user?: Address,
+) => {
   const burns = await getSushiV3Burns({
     chainId,
     address,
+    user,
   })
 
   return burns.map((burn) => ({
@@ -78,10 +89,15 @@ const fetchBurns = async (address: Address, chainId: SushiSwapV3ChainId) => {
   }))
 }
 
-const fetchSwaps = async (address: Address, chainId: SushiSwapV3ChainId) => {
+const fetchSwaps = async (
+  address: Address,
+  chainId: SushiSwapV3ChainId,
+  user?: Address,
+) => {
   const swaps = await getSushiV3Swaps({
     chainId,
     address,
+    user,
   })
 
   return swaps.map((swap) => ({
@@ -114,9 +130,10 @@ function useTransactionsV3(
   pool: V3Pool | undefined | null,
   poolAddress: Address,
   opts: UseTransactionsV3Opts,
+  user?: Address,
 ) {
   return useQuery({
-    queryKey: ['poolTransactionsV3', poolAddress, opts],
+    queryKey: ['poolTransactionsV3', poolAddress, opts, user],
     queryFn: async () => {
       const chainId = pool?.chainId as EvmChainId
 
@@ -126,19 +143,19 @@ function useTransactionsV3(
 
       switch (opts.type) {
         case TransactionTypeV3.Mint:
-          transactions = await fetchMints(poolAddress, chainId)
+          transactions = await fetchMints(poolAddress, chainId, user)
           break
         case TransactionTypeV3.Burn:
-          transactions = await fetchBurns(poolAddress, chainId)
+          transactions = await fetchBurns(poolAddress, chainId, user)
           break
         case TransactionTypeV3.Swap:
-          transactions = await fetchSwaps(poolAddress, chainId)
+          transactions = await fetchSwaps(poolAddress, chainId, user)
           break
         case TransactionTypeV3.Collect:
           transactions = await fetchCollects(poolAddress, chainId)
           break
         default:
-          transactions = await fetchSwaps(poolAddress, chainId)
+          transactions = await fetchSwaps(poolAddress, chainId, user)
       }
 
       if (!transactions.length) return []
@@ -209,6 +226,7 @@ function usePaginatedTransactions(
     type: TransactionTypeV3 | 'All' | undefined
     refetchInterval?: number
   },
+  user?: Address,
 ) {
   const PAGE_SIZE = 10
 
@@ -216,10 +234,15 @@ function usePaginatedTransactions(
     data: allTransactions = [],
     isLoading,
     isError,
-  } = useTransactionsV3(pool, poolAddress, {
-    ...opts,
-    first: 100,
-  })
+  } = useTransactionsV3(
+    pool,
+    poolAddress,
+    {
+      ...opts,
+      first: 100,
+    },
+    user,
+  )
 
   const [page, setPage] = useState(1)
 
@@ -260,6 +283,8 @@ const PoolTransactionsV3: FC<PoolTransactionsV3Props> = ({
   pool,
   poolAddress,
 }) => {
+  const { address } = useAccount()
+  const [filterByAddress, setFilterByAddress] = useState(false)
   const [type, setType] = useState<
     Parameters<typeof useTransactionsV3>['2']['type']
   >(TransactionTypeV3.Swap)
@@ -284,7 +309,12 @@ const PoolTransactionsV3: FC<PoolTransactionsV3Props> = ({
   )
 
   const { data, isLoading, fetchNextPage, hasNextPage } =
-    usePaginatedTransactions(pool, poolAddress, opts)
+    usePaginatedTransactions(
+      pool,
+      poolAddress,
+      opts,
+      filterByAddress ? address : undefined,
+    )
 
   const _data = useMemo(() => {
     return data ?? []
@@ -312,7 +342,10 @@ const PoolTransactionsV3: FC<PoolTransactionsV3Props> = ({
               </span>
               <span className="flex gap-2 items-center text-muted-foreground">
                 Filter By Your Address
-                <Switch />
+                <Switch
+                  checked={filterByAddress}
+                  onCheckedChange={setFilterByAddress}
+                />
               </span>
             </div>{' '}
             <div className="flex gap-1 items-center">

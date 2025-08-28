@@ -5,8 +5,8 @@ import { SUSHI_DATA_API_HOST } from 'sushi/config/subgraph'
 import { graphql } from '../../graphql.js'
 
 export const SushiV3MintsQuery = graphql(`
-query V3Mints($address: Bytes!, $chainId: SushiSwapV3ChainId!) {
-  v3Mints(address: $address, chainId: $chainId) {
+query V3Mints($address: Bytes!, $chainId: SushiSwapV3ChainId!, $user: Bytes) {
+  v3Mints(address: $address, chainId: $chainId, user: $user) {
     id
     logIndex
     amountUSD
