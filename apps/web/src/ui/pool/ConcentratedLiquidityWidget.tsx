@@ -24,6 +24,7 @@ import {
   SUSHISWAP_V3_POSITION_MANAGER,
   type SushiSwapV3ChainId,
   type SushiSwapV3FeeAmount,
+  TickMath,
   defaultCurrency,
   isWNativeSupported,
 } from 'sushi/evm'
@@ -112,6 +113,19 @@ export const ConcentratedLiquidityWidget: FC<ConcentratedLiquidityWidget> = (
     existingPosition,
   })
 
+  // An arbitrarily picked threshold to show a warning when the current price is close to the min or max tick
+  const extremeTickBound = useMemo(() => {
+    const tickCurrent = derivedMintInfo.pool?.tickCurrent
+    if (!tickCurrent) return undefined
+
+    const closeToMinTick =
+      tickCurrent <= TickMath.MIN_TICK + 1500 ? Bound.LOWER : undefined
+    const closeToMaxTick =
+      tickCurrent >= TickMath.MAX_TICK - 1500 ? Bound.UPPER : undefined
+
+    return closeToMinTick ?? closeToMaxTick ?? undefined
+  }, [derivedMintInfo.pool])
+
   const { outOfRange, invalidRange, pool } = derivedMintInfo
 
   const isZapSupported = Boolean(
@@ -154,6 +168,16 @@ export const ConcentratedLiquidityWidget: FC<ConcentratedLiquidityWidget> = (
           checked={isZapModeEnabled}
           onCheckedChange={setIsZapModeEnabled}
         />
+      ) : null}
+
+      {extremeTickBound ? (
+        <Message size="sm" variant="warning">
+          The pool's current price is close to the{' '}
+          {extremeTickBound === Bound.LOWER ? 'minimum' : 'maximum'} allowed by
+          the protocol. It might not reflect the true market price and could
+          lead to a loss of funds if liquidity is provided. Please double-check
+          if the price is accurate before proceeding.
+        </Message>
       ) : null}
 
       {isZapModeEnabled ? (
