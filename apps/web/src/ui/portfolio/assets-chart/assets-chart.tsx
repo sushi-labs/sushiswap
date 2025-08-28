@@ -268,33 +268,52 @@ export const AssetsChart = () => {
     }
   }
 
-  const valueMap = new Map<number, number>()
+  const markerSeries = useMemo(() => {
+    const valueMap = new Map<number, number>()
 
-  MOCK_USD_VALUE_BUCKETS[period].forEach((d) => {
-    valueMap.set(d.date * 1000, d.usdValue)
-  })
+    MOCK_USD_VALUE_BUCKETS[period].forEach((d) => {
+      valueMap.set(d.date * 1000, d.usdValue)
+    })
 
-  const markerSeries = MOCK_TRANSACTIONS.map((tx) => {
-    const timestamp = tx.date * 1000
-    const value = valueMap.get(timestamp)
-
-    return {
-      value: [timestamp, value ?? null],
-      symbol: 'circle',
-      symbolSize: 20,
-      itemStyle: {
-        color: tx.type === 'buy' ? '#1DA67D' : '#EA3830',
-        opacity: 1,
+    console.log(
+      'Calculating markerSeries with MOCK_TRANSACTIONS, valueMap, and isDark:',
+      {
+        MOCK_TRANSACTIONS,
+        valueMap: Array.from(valueMap.entries()),
+        isDark,
       },
-      label: {
-        show: true,
-        formatter: tx.type === 'buy' ? 'B' : 'S',
-        color: '#fff',
-        fontWeight: 700,
-        fontSize: 10,
-      },
-    }
-  }).filter((point) => point.value[1] !== null)
+    )
+    const result = MOCK_TRANSACTIONS.map((tx) => {
+      const timestamp = tx.date * 1000
+      const value = valueMap.get(timestamp)
+
+      return {
+        value: [timestamp, value ?? null],
+        symbol: 'circle',
+        symbolSize: 20,
+        itemStyle: {
+          color:
+            tx.type === 'buy'
+              ? isDark
+                ? '#1DA67D'
+                : '#1DA67D'
+              : isDark
+                ? '#EA3830'
+                : '#DE5852',
+          opacity: 1,
+        },
+        label: {
+          show: true,
+          formatter: tx.type === 'buy' ? 'B' : 'S',
+          color: '#fff',
+          fontWeight: 700,
+          fontSize: 10,
+        },
+      }
+    }).filter((point) => point.value[1] !== null)
+    console.log('markerSeries calculated:', result)
+    return result
+  }, [isDark, period])
 
   console.log('markerSeries:', markerSeries)
 
