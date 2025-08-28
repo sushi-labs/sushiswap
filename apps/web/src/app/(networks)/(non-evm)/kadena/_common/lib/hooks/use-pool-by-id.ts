@@ -25,6 +25,6 @@ export const usePoolById = ({
       return data.data
     },
     enabled: !!poolId,
-    staleTime: 20_000,
+    staleTime: (20 * 1000) / 6,
   })
 }
