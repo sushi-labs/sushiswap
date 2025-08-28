@@ -60,21 +60,31 @@ const useTabs = () => {
         label: `Limit Orders ${openLimitOrdersCount > 0 ? `(${openLimitOrdersCount})` : ''}`,
         value: TABS.LIMIT_ORDERS,
         component: (
-          <LimitOrdersTable tableRowClassName="dark:!border-[#FFFFFF14] !border-[#00000014]" />
+          <LimitOrdersTable
+            tableRowClassName="dark:!border-[#FFFFFF14] !border-[#00000014]"
+            mobileCardClassName="!border-none"
+          />
         ),
       },
       {
         label: `DCA Orders ${openDcaOrdersCount > 0 ? `(${openDcaOrdersCount})` : ''}`,
         value: TABS.DCA_ORDERS,
         component: (
-          <DCAOrdersTable tableRowClassName="dark:!border-[#FFFFFF14] !border-[#00000014]" />
+          <DCAOrdersTable
+            tableRowClassName="dark:!border-[#FFFFFF14] !border-[#00000014]"
+            mobileCardClassName="!border-none"
+          />
         ),
       },
       {
         label: 'History',
         value: TABS.HISTORY,
         component: (
-          <HistoryTable tableRowClassName="dark:!border-[#FFFFFF14] !border-[#00000014]" />
+          <HistoryTable
+            tableRowClassName="dark:!border-[#FFFFFF14] !border-[#00000014]"
+            tableHeaderClassName="[&]:dark:!bg-slate-800 [&]:!bg-slate-50"
+            mobileCardClassName="!rounded-t-none"
+          />
         ),
       },
     ]

@@ -1,3 +1,4 @@
+import { useIsSmScreen } from '@sushiswap/hooks'
 import {
   Currency,
   SkeletonBox,
@@ -8,6 +9,7 @@ import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import type { ColumnDef } from '@tanstack/react-table'
 import { formatNumber, formatUSD } from 'sushi'
 import { formatPercent } from 'sushi/format'
+import { ActionButtons } from '../assets-chart/action-buttons'
 import { MiniChart } from './mini-chart'
 import type { PortfolioRow } from './wallet-holdings'
 
@@ -212,13 +214,14 @@ export const UPNL_COLUMN: ColumnDef<PortfolioRow> = {
 export const LAST_30_DAY_COLUMN: ColumnDef<PortfolioRow> = {
   id: 'last30Days',
   header: () => (
-    <span className="font-semibold text-slate-450 dark:text-slate-500">
-      Last 30 Days
-    </span>
+    <span className="text-slate-450 dark:text-slate-500">Last 30 Days</span>
   ),
   enableSorting: false,
   accessorFn: (row) => row.last30Days,
-  cell: ({ row }) => {
+  cell: ({ row, table }) => {
+    const isSmallScreen = useIsSmScreen()
+
+    const isHovered = table.options.meta?.getIsRowHovered(row.id) ?? false
     const { last30Days, price } = row.original
 
     if (!last30Days) return null
@@ -226,12 +229,21 @@ export const LAST_30_DAY_COLUMN: ColumnDef<PortfolioRow> = {
     const xData = last30Days.map((p) => p.timestamp)
     const yData = last30Days.map((p) => p.price)
 
-    return (
-      <MiniChart
-        xData={xData}
-        yData={yData}
-        color={price > 0 ? '#1DA67D' : price < 0 ? '#DE5852' : '#94a3b8'}
+    return isHovered && !isSmallScreen ? (
+      <ActionButtons
+        token={row.original.token}
+        renderSendWidget={false}
+        buttonClassName="!w-[92px]"
+        className="!flex !flex-row"
       />
+    ) : (
+      <div className="!w-[292px] flex justify-center">
+        <MiniChart
+          xData={xData}
+          yData={yData}
+          color={price > 0 ? '#1DA67D' : price < 0 ? '#DE5852' : '#94a3b8'}
+        />
+      </div>
     )
   },
   meta: {

@@ -4,7 +4,7 @@ import {
   type RecentSwap,
   isTokenListV2ChainId,
 } from '@sushiswap/graph-client/data-api'
-import { DataTable, SkeletonBox } from '@sushiswap/ui'
+import { DataTable, SkeletonBox, classNames } from '@sushiswap/ui'
 import { Card } from '@sushiswap/ui'
 import { useSearchParams } from 'next/navigation'
 import { useMemo } from 'react'
@@ -28,8 +28,10 @@ import {
 export type MarketTrade = RecentSwap
 export const MarketTable = ({
   tableRowClassName = '',
+  mobileCardClassName = '',
 }: {
   tableRowClassName?: string
+  mobileCardClassName?: string
 }) => {
   const { chainIds, showCurrentPairOnly } = useTradeTablesContext()
 
@@ -111,7 +113,12 @@ export const MarketTable = ({
         />
       </Card>
 
-      <Card className="p-5 space-y-6 border-none bg-slate-50 dark:bg-slate-800 md:hidden">
+      <Card
+        className={classNames(
+          'p-5 space-y-6 border-none bg-slate-50 dark:bg-slate-800 md:hidden',
+          mobileCardClassName,
+        )}
+      >
         {isLoading ? (
           <SkeletonBox className="w-full h-52" />
         ) : !rowData?.length ? (

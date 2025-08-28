@@ -30,8 +30,12 @@ export const TABS = [
 
 export const HistoryTable = ({
   tableRowClassName = '',
+  tableHeaderClassName = '',
+  mobileCardClassName = '',
 }: {
   tableRowClassName?: string
+  tableHeaderClassName?: string
+  mobileCardClassName?: string
 }) => {
   const [currentTab, setCurrentTab] = useState(TABS[0].value)
   const { createQuery } = useCreateQuery()
@@ -40,9 +44,17 @@ export const HistoryTable = ({
       <Tabs
         defaultValue={TABS[0].value}
         onValueChange={setCurrentTab}
-        className="border-none bg-[#F9FAFB] dark:bg-slate-900 dark:md:!bg-slate-800 md:bg-white"
+        className={classNames(
+          'border-none bg-[#F9FAFB] dark:bg-slate-900 dark:md:!bg-slate-800 md:bg-white',
+          tableHeaderClassName,
+        )}
       >
-        <TabsList className="w-full gap-2 flex !bg-[#F9FAFB] md:!bg-white dark:!bg-slate-900 dark:md:!bg-slate-800 rounded-none md:rounded-lg !justify-start border-none">
+        <TabsList
+          className={classNames(
+            'w-full gap-2 flex !bg-[#F9FAFB] md:!bg-white dark:!bg-slate-900 dark:md:!bg-slate-800 rounded-none md:rounded-lg !justify-start border-none',
+            tableHeaderClassName,
+          )}
+        >
           {TABS.map((tab) => (
             <TabsTrigger
               key={tab.value}
@@ -72,25 +84,39 @@ export const HistoryTable = ({
             </TabsTrigger>
           ))}
         </TabsList>
-        <div className="py-2 bg-[#F9FAFB] md:bg-white dark:bg-slate-900 dark:md:!bg-slate-800" />
+        <div
+          className={classNames(
+            'py-2 bg-[#F9FAFB] md:bg-white dark:bg-slate-900 dark:md:!bg-slate-800',
+            tableHeaderClassName,
+          )}
+        />
 
         <TabsContent
           value={TABS[0].value}
           className="border border-accent md:border-none rounded-xl !mt-0"
         >
-          <MarketTable tableRowClassName={tableRowClassName} />
+          <MarketTable
+            tableRowClassName={tableRowClassName}
+            mobileCardClassName={mobileCardClassName}
+          />
         </TabsContent>
         <TabsContent
           value={TABS[1].value}
           className="border border-accent md:border-none rounded-xl !mt-0"
         >
-          <LimitOrdersHistoryTable tableRowClassName={tableRowClassName} />
+          <LimitOrdersHistoryTable
+            tableRowClassName={tableRowClassName}
+            mobileCardClassName={mobileCardClassName}
+          />
         </TabsContent>
         <TabsContent
           value={TABS[2].value}
           className="border border-accent md:border-none rounded-xl !mt-0"
         >
-          <DCAOrdersHistoryTable tableRowClassName={tableRowClassName} />
+          <DCAOrdersHistoryTable
+            tableRowClassName={tableRowClassName}
+            mobileCardClassName={mobileCardClassName}
+          />
         </TabsContent>
       </Tabs>
     </Card>

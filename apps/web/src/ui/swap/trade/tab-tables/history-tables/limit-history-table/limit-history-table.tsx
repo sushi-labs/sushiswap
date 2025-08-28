@@ -1,7 +1,7 @@
 'use client'
 
 import { OrderStatus } from '@orbs-network/twap-sdk'
-import { Card, DataTable, Loader, SkeletonBox } from '@sushiswap/ui'
+import { Card, DataTable, Loader, SkeletonBox, classNames } from '@sushiswap/ui'
 import type { ColumnDef } from '@tanstack/react-table'
 import React, { useMemo } from 'react'
 import InfiniteScroll from 'react-infinite-scroll-component'
@@ -23,8 +23,10 @@ import {
 
 export const LimitOrdersHistoryTable = ({
   tableRowClassName = '',
+  mobileCardClassName = '',
 }: {
   tableRowClassName?: string
+  mobileCardClassName?: string
 }) => {
   const [showInUsd, setShowInUsd] = React.useState(true)
   const { orders, ordersLoading } = useTradeTablesContext()
@@ -88,7 +90,12 @@ export const LimitOrdersHistoryTable = ({
         />
       </Card>
 
-      <Card className="p-5 space-y-6 border-none bg-slate-50 dark:bg-slate-800 md:hidden">
+      <Card
+        className={classNames(
+          'p-5 space-y-6 border-none bg-slate-50 dark:bg-slate-800 md:hidden',
+          mobileCardClassName,
+        )}
+      >
         {ordersLoading ? (
           <SkeletonBox className="w-full h-52" />
         ) : !data?.length ? (

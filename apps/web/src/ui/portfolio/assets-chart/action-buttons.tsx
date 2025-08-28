@@ -1,4 +1,4 @@
-import { Button } from '@sushiswap/ui'
+import { Button, classNames } from '@sushiswap/ui'
 import Link from 'next/link'
 import { evmChains } from 'sushi/chain'
 import type { Type } from 'sushi/currency'
@@ -8,11 +8,17 @@ import { TradeModal } from '../wallet-holdings/trade-modal'
 interface ActionButtonsProps {
   token: Type
   splitRows?: boolean
+  renderSendWidget?: boolean
+  className?: string
+  buttonClassName?: string
 }
 
 export const ActionButtons = ({
   token,
   splitRows = false,
+  renderSendWidget = true,
+  className = '',
+  buttonClassName = '',
 }: ActionButtonsProps) => {
   const baseBtnClasses =
     'text-slate-50 !rounded-full font-semibold min-h-[32px] h-[32px] px-2 text-xs flex items-center justify-center'
@@ -20,11 +26,24 @@ export const ActionButtons = ({
 
   const firstRow = (
     <>
-      <TradeModal token={token} side="buy" triggerClassName={fixedWidth} />
-      <TradeModal token={token} side="sell" triggerClassName={fixedWidth} />
+      <TradeModal
+        token={token}
+        side="buy"
+        triggerClassName={classNames(fixedWidth, buttonClassName)}
+      />
+      <TradeModal
+        token={token}
+        side="sell"
+        triggerClassName={classNames(fixedWidth, buttonClassName)}
+      />
       <Link
         href={`/${evmChains[token.chainId].name.toLowerCase()}/explore/pools?tokenSymbols=${token.symbol}`}
-        className={`bg-blue-500 ${baseBtnClasses} ${fixedWidth}`}
+        className={classNames(
+          'bg-blue-500',
+          baseBtnClasses,
+          fixedWidth,
+          buttonClassName,
+        )}
       >
         Earn
       </Link>
@@ -33,15 +52,26 @@ export const ActionButtons = ({
 
   const secondRow = (
     <>
-      <SendWidget
-        triggerClassName={`${fixedWidth} !min-h-[32px] !h-[32px] !p-2 text-xs !rounded-full !bg-[#0000001F] dark:!bg-[#FFFFFF1F] !text-slate-900 dark:!text-slate-100`}
-        hideTriggerIcon
-        initialToken={token}
-      />
+      {renderSendWidget && (
+        <SendWidget
+          triggerClassName={classNames(
+            fixedWidth,
+            '!min-h-[32px] !h-[32px] !p-2 text-xs !rounded-full !bg-[#0000001F] dark:!bg-[#FFFFFF1F] !text-slate-900 dark:!text-slate-100',
+            buttonClassName,
+          )}
+          hideTriggerIcon
+          initialToken={token}
+        />
+      )}
       {splitRows && (
         <Link
           href={`#`}
-          className={`bg-blue-500 ${baseBtnClasses} ${fixedWidth}`}
+          className={classNames(
+            'bg-blue-500',
+            baseBtnClasses,
+            fixedWidth,
+            buttonClassName,
+          )}
         >
           More
         </Link>
@@ -55,7 +85,12 @@ export const ActionButtons = ({
       <div className="flex gap-2 justify-center">{secondRow}</div>
     </div>
   ) : (
-    <div className="grid relative grid-cols-2 col-span-2 gap-2 md:flex md:flex-row md:justify-center md:items-center md:col-span-2">
+    <div
+      className={classNames(
+        'grid relative grid-cols-2 col-span-2 gap-2 md:flex md:flex-row md:justify-center md:items-center md:col-span-2',
+        className,
+      )}
+    >
       {firstRow}
       {secondRow}
     </div>

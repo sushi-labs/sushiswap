@@ -51,7 +51,7 @@ export function MiniChart({ xData, yData, color }: MiniChartProps) {
     <ReactEchartsCore
       echarts={echarts}
       option={option}
-      style={{ width: 180, height: 40 }}
+      style={{ width: 212, height: 40 }}
     />
   )
 }

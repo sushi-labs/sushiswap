@@ -33,11 +33,11 @@ export const TradeModal = ({
   const isSmallScreen = useIsSmScreen()
 
   const isBuy = side === 'buy'
-  const label = isBuy ? 'BUY' : 'SELL'
+  const label = isBuy ? 'Buy' : 'Sell'
 
   const buttonClasses = isBuy
     ? 'text-slate-50 !rounded-full !bg-green-500 font-semibold hover:bg-green-500 active:bg-green-500/95 focus:bg-green-500'
-    : 'text-slate-50 !rounded-full !bg-[#EA3830] font-semibold hover:bg-[#EA3830] active:bg-[#EA3830]/95 focus:bg-[#EA3830]'
+    : 'text-slate-50 !rounded-full dark:!bg-[#EA3830] !bg-red-100 font-semibold dark:hover:bg-[#EA3830] hover:bg-red-100 dark:active:bg-[#EA3830]/95 active:bg-red-100/95 dark:focus:bg-[#EA3830] focus:bg-red-100'
 
   return (
     <Dialog>
