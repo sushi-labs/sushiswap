@@ -68,7 +68,7 @@ interface DataTableProps<TData, TValue> {
   rowRenderer?: (row: Row<TData>, value: ReactNode) => ReactNode
   showColumnHeaders?: boolean
   className?: string
-  onRowClick?: (row: Row<TData>) => void
+  tableRowClassName?: string
 }
 
 export function DataTable<TData, TValue>({
@@ -86,7 +86,7 @@ export function DataTable<TData, TValue>({
   rowRenderer,
   showColumnHeaders = true,
   className,
-  onRowClick,
+  tableRowClassName,
 }: DataTableProps<TData, TValue>) {
   const [rowSelection, setRowSelection] = React.useState({})
   const [columnVisibility, setColumnVisibility] =
@@ -144,9 +144,15 @@ export function DataTable<TData, TValue>({
         )}
       >
         {showColumnHeaders ? (
-          <TableHeader className="pt-8 pb-4">
+          <TableHeader className={'pt-8 pb-4'}>
             {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id} className="hover:bg-transparent">
+              <TableRow
+                key={headerGroup.id}
+                className={classNames(
+                  'hover:bg-transparent',
+                  tableRowClassName,
+                )}
+              >
                 {headerGroup.headers.map((header) => {
                   return (
                     <TableHead
@@ -173,7 +179,11 @@ export function DataTable<TData, TValue>({
             Array.from({ length: 3 })
               .fill(null)
               .map((_, i) => (
-                <TableRow key={i} testdata-id="table-rows-loading">
+                <TableRow
+                  key={i}
+                  testdata-id="table-rows-loading"
+                  className={tableRowClassName}
+                >
                   {table.getVisibleFlatColumns().map((column, _i) => {
                     return (
                       <TableCell
@@ -200,7 +210,7 @@ export function DataTable<TData, TValue>({
                   }
                   onMouseEnter={() => setHoveredRowId(row.id)}
                   onMouseLeave={() => setHoveredRowId(null)}
-                  onClick={() => onRowClick?.(row)}
+                  className={tableRowClassName}
                 >
                   {row.getVisibleCells().map((cell, i) =>
                     linkFormatter &&
@@ -239,7 +249,7 @@ export function DataTable<TData, TValue>({
               return _row
             })
           ) : (
-            <TableRow>
+            <TableRow className={tableRowClassName}>
               <TableCell
                 testdata-id="table-no-results"
                 colSpan={columns.length}

@@ -22,7 +22,11 @@ import {
   getPriceColumn,
 } from './columns'
 
-export const LimitOrdersTable = () => {
+export const LimitOrdersTable = ({
+  tableRowClassName,
+}: {
+  tableRowClassName?: string
+}) => {
   const [showInUsd, setShowInUsd] = useState(true)
 
   const priceCol = useMemo(
@@ -56,7 +60,7 @@ export const LimitOrdersTable = () => {
       next={() => {}}
       hasMore={false}
       loader={
-        <div className="flex justify-center w-full py-4">
+        <div className="flex justify-center py-4 w-full">
           <Loader size={16} />
         </div>
       }
@@ -68,6 +72,7 @@ export const LimitOrdersTable = () => {
           loading={ordersLoading}
           className="border-none [&_td]:h-[92px]"
           pagination={false}
+          tableRowClassName={tableRowClassName}
         />
       </Card>
 
@@ -75,7 +80,7 @@ export const LimitOrdersTable = () => {
         {ordersLoading ? (
           <SkeletonBox className="w-full h-52" />
         ) : !data?.length ? (
-          <p className="text-sm italic text-center text-muted-foreground dark:text-pink-200 h-52 flex items-center justify-center">
+          <p className="flex justify-center items-center h-52 text-sm italic text-center text-muted-foreground dark:text-pink-200">
             No Active Limit Orders
           </p>
         ) : (

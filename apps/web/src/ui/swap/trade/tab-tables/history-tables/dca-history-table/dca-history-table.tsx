@@ -25,7 +25,11 @@ import {
 } from './dca-history-columns'
 import { DCAOrderDetailsModal } from './order-details-modal'
 
-export const DCAOrdersHistoryTable = () => {
+export const DCAOrdersHistoryTable = ({
+  tableRowClassName,
+}: {
+  tableRowClassName: string
+}) => {
   const { orders, ordersLoading } = useTradeTablesContext()
 
   const [selectedRowId, setSelectedRowId] = useState<number | null>(null)
@@ -108,7 +112,7 @@ export const DCAOrdersHistoryTable = () => {
         next={() => {}}
         hasMore={false}
         loader={
-          <div className="flex justify-center w-full py-4">
+          <div className="flex justify-center py-4 w-full">
             <Loader size={16} />
           </div>
         }
@@ -120,6 +124,7 @@ export const DCAOrdersHistoryTable = () => {
             loading={ordersLoading}
             rowRenderer={rowRenderer}
             pagination={false}
+            tableRowClassName={tableRowClassName}
             className="!border-none [&_td]:h-[92px]"
           />
         </Card>
@@ -128,7 +133,7 @@ export const DCAOrdersHistoryTable = () => {
           {ordersLoading ? (
             <SkeletonBox className="w-full h-52" />
           ) : !data?.length ? (
-            <p className="text-sm italic text-center text-muted-foreground dark:text-pink-200 h-52 flex items-center justify-center">
+            <p className="flex justify-center items-center h-52 text-sm italic text-center text-muted-foreground dark:text-pink-200">
               No Past DCA Orders
             </p>
           ) : (

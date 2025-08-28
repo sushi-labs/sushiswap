@@ -31,7 +31,7 @@ export const OpenOrdersTable = () => {
     //   next={fetchNextPage}
     //   hasMore={data.length < (count ?? 0)}
     //   loader={
-    //     <div className="flex justify-center w-full py-4">
+    //     <div className="flex justify-center py-4 w-full">
     //       <Loader size={16} />
     //     </div>
     //   }
@@ -59,17 +59,23 @@ const useTabs = () => {
       {
         label: `Limit Orders ${openLimitOrdersCount > 0 ? `(${openLimitOrdersCount})` : ''}`,
         value: TABS.LIMIT_ORDERS,
-        component: <LimitOrdersTable />,
+        component: (
+          <LimitOrdersTable tableRowClassName="dark:!border-[#FFFFFF14] !border-[#00000014]" />
+        ),
       },
       {
         label: `DCA Orders ${openDcaOrdersCount > 0 ? `(${openDcaOrdersCount})` : ''}`,
         value: TABS.DCA_ORDERS,
-        component: <DCAOrdersTable />,
+        component: (
+          <DCAOrdersTable tableRowClassName="dark:!border-[#FFFFFF14] !border-[#00000014]" />
+        ),
       },
       {
         label: 'History',
         value: TABS.HISTORY,
-        component: <HistoryTable />,
+        component: (
+          <HistoryTable tableRowClassName="dark:!border-[#FFFFFF14] !border-[#00000014]" />
+        ),
       },
     ]
   }, [orders])
@@ -95,7 +101,7 @@ const Content = () => {
       onValueChange={(value) => setCurrentTab(value as TABS)}
       // className="-mx-5 md:mx-0"
     >
-      <div className="flex flex-col items-start border-b border-accent gap-2 px-4 pb-4 justify-between md:items-center md:flex-row flex-wrap overflow-x-auto hide-scrollbar">
+      <div className="flex overflow-x-auto flex-col flex-wrap gap-2 justify-between items-start px-4 pb-4 border-b border-accent md:items-center md:flex-row hide-scrollbar">
         <TabsList className="border-none bg-transparent !px-0">
           {tabs.map((tab) => (
             <TabsTrigger

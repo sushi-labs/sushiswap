@@ -275,14 +275,6 @@ export const AssetsChart = () => {
       valueMap.set(d.date * 1000, d.usdValue)
     })
 
-    console.log(
-      'Calculating markerSeries with MOCK_TRANSACTIONS, valueMap, and isDark:',
-      {
-        MOCK_TRANSACTIONS,
-        valueMap: Array.from(valueMap.entries()),
-        isDark,
-      },
-    )
     const result = MOCK_TRANSACTIONS.map((tx) => {
       const timestamp = tx.date * 1000
       const value = valueMap.get(timestamp)
@@ -311,11 +303,8 @@ export const AssetsChart = () => {
         },
       }
     }).filter((point) => point.value[1] !== null)
-    console.log('markerSeries calculated:', result)
     return result
   }, [isDark, period])
-
-  console.log('markerSeries:', markerSeries)
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   const option = useMemo<EChartOption>(

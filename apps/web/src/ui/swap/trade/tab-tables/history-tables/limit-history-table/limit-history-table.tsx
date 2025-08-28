@@ -21,7 +21,11 @@ import {
   getPriceUsdColumn,
 } from './limit-history-columns'
 
-export const LimitOrdersHistoryTable = () => {
+export const LimitOrdersHistoryTable = ({
+  tableRowClassName,
+}: {
+  tableRowClassName: string
+}) => {
   const [showInUsd, setShowInUsd] = React.useState(true)
   const { orders, ordersLoading } = useTradeTablesContext()
 
@@ -68,7 +72,7 @@ export const LimitOrdersHistoryTable = () => {
       next={() => {}}
       hasMore={false}
       loader={
-        <div className="flex justify-center w-full py-4">
+        <div className="flex justify-center py-4 w-full">
           <Loader size={16} />
         </div>
       }
@@ -80,6 +84,7 @@ export const LimitOrdersHistoryTable = () => {
           loading={ordersLoading}
           className="border-none [&_td]:h-[96px]"
           pagination={false}
+          tableRowClassName={tableRowClassName}
         />
       </Card>
 
@@ -87,7 +92,7 @@ export const LimitOrdersHistoryTable = () => {
         {ordersLoading ? (
           <SkeletonBox className="w-full h-52" />
         ) : !data?.length ? (
-          <p className="text-sm italic text-center text-muted-foreground dark:text-pink-200 h-52 flex items-center justify-center">
+          <p className="flex justify-center items-center h-52 text-sm italic text-center text-muted-foreground dark:text-pink-200">
             No Past Limit Orders
           </p>
         ) : (

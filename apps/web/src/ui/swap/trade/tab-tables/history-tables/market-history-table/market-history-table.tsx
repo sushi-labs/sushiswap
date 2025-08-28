@@ -26,7 +26,11 @@ import {
 } from './market-history-columns'
 
 export type MarketTrade = RecentSwap
-export const MarketTable = () => {
+export const MarketTable = ({
+  tableRowClassName,
+}: {
+  tableRowClassName: string
+}) => {
   const { chainIds, showCurrentPairOnly } = useTradeTablesContext()
 
   const {
@@ -103,6 +107,7 @@ export const MarketTable = () => {
           loading={isLoading}
           className="border-none [&_td]:h-[92px]"
           pagination={false}
+          tableRowClassName={tableRowClassName}
         />
       </Card>
 
@@ -110,7 +115,7 @@ export const MarketTable = () => {
         {isLoading ? (
           <SkeletonBox className="w-full h-52" />
         ) : !rowData?.length ? (
-          <p className="text-sm italic text-center text-muted-foreground dark:text-pink-200 h-52 flex items-center justify-center">
+          <p className="flex justify-center items-center h-52 text-sm italic text-center text-muted-foreground dark:text-pink-200">
             No Past Market Orders
           </p>
         ) : (

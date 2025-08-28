@@ -141,7 +141,8 @@ export const WalletHoldings = () => {
               LAST_30_DAY_COLUMN,
             ]}
             data={data}
-            className="dark:border-[#FFFFFF14] border-[#EBEBEB] rounded-t-none"
+            className="rounded-t-none dark:!border-[#FFFFFF14] !border-[#00000014]"
+            tableRowClassName="dark:!border-[#FFFFFF14] !border-[#00000014]"
           />
         </CardContent>
       </Wrapper>

@@ -24,7 +24,11 @@ import {
   getAvgPriceColumn,
 } from './columns'
 
-export const DCAOrdersTable = () => {
+export const DCAOrdersTable = ({
+  tableRowClassName,
+}: {
+  tableRowClassName?: string
+}) => {
   const [showInUsd, setShowInUsd] = useState(true)
   const [isOpen, setIsOpen] = useState(false)
   const [selectedOrderId, setSelectedRowId] = useState<number | null>(null)
@@ -82,7 +86,7 @@ export const DCAOrdersTable = () => {
         next={() => {}}
         hasMore={false}
         loader={
-          <div className="flex justify-center w-full py-4">
+          <div className="flex justify-center py-4 w-full">
             <Loader size={16} />
           </div>
         }
@@ -95,6 +99,7 @@ export const DCAOrdersTable = () => {
             className="border-none [&_td]:h-[92px]"
             rowRenderer={rowRenderer}
             pagination={false}
+            tableRowClassName={tableRowClassName}
           />
         </Card>
 
@@ -102,7 +107,7 @@ export const DCAOrdersTable = () => {
           {ordersLoading ? (
             <SkeletonBox className="w-full h-52" />
           ) : !data?.length ? (
-            <p className="text-sm italic text-center text-muted-foreground dark:text-pink-200 h-52 flex items-center justify-center">
+            <p className="flex justify-center items-center h-52 text-sm italic text-center text-muted-foreground dark:text-pink-200">
               No Active DCA Orders
             </p>
           ) : (

@@ -145,7 +145,7 @@ export const LPPositionsTable = () => {
 		   next={fetchNextPage}
 		   hasMore={data.length < (count ?? 0)}
 		   loader={
-		     <div className="flex justify-center w-full py-4">
+		     <div className="flex justify-center py-4 w-full">
 		       <Loader size={16} />
 		     </div>
 		   }
@@ -160,7 +160,8 @@ export const LPPositionsTable = () => {
           rowRenderer={rowRenderer}
           columns={columns}
           data={data}
-          className="border-t-0"
+          className="border-t-0 dark:!border-[#FFFFFF14] !border-[#00000014]"
+          tableRowClassName="dark:!border-[#FFFFFF14] !border-[#00000014]"
         />
       </Card>
       {/* </InfiniteScroll> */}
@@ -177,8 +178,8 @@ export const LPPositionsTable = () => {
           aria-describedby={undefined}
           className="!px-1 border-t !max-w-full md:!max-w-[520px] border-[#EBEBEB] rounded-t-none md:rounded-t-2xl !bg-slate-50 dark:border-[#FFFFFF14] dark:!bg-slate-800 w-full  max-h-[100dvh] overflow-y-auto hide-scrollbar"
         >
-          <div className="px-3 flex flex-col gap-4 w-full mt-14">
-            <div className="flex items-center gap-2">
+          <div className="flex flex-col gap-4 px-3 mt-14 w-full">
+            <div className="flex gap-2 items-center">
               {positionData?.protocol === 'SUSHISWAP_V3' ? (
                 <Button size="sm" className="w-full !rounded-full">
                   Claim

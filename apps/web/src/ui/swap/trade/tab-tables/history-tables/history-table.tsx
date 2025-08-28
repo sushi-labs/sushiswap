@@ -28,7 +28,11 @@ export const TABS = [
   },
 ]
 
-export const HistoryTable = () => {
+export const HistoryTable = ({
+  tableRowClassName,
+}: {
+  tableRowClassName: string
+}) => {
   const [currentTab, setCurrentTab] = useState(TABS[0].value)
   const { createQuery } = useCreateQuery()
   return (
@@ -74,19 +78,19 @@ export const HistoryTable = () => {
           value={TABS[0].value}
           className="border border-accent md:border-none rounded-xl !mt-0"
         >
-          <MarketTable />
+          <MarketTable tableRowClassName={tableRowClassName} />
         </TabsContent>
         <TabsContent
           value={TABS[1].value}
           className="border border-accent md:border-none rounded-xl !mt-0"
         >
-          <LimitOrdersHistoryTable />
+          <LimitOrdersHistoryTable tableRowClassName={tableRowClassName} />
         </TabsContent>
         <TabsContent
           value={TABS[2].value}
           className="border border-accent md:border-none rounded-xl !mt-0"
         >
-          <DCAOrdersHistoryTable />
+          <DCAOrdersHistoryTable tableRowClassName={tableRowClassName} />
         </TabsContent>
       </Tabs>
     </Card>
