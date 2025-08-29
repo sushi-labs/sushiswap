@@ -38,7 +38,9 @@ export const MinimumReceive = () => {
   const lpTokenAmountBeingRemoved: number = useMemo(() => {
     if (!lpBalance) return 0
     const _percentage = new Decimal(percentage).div(100)
-    return _percentage.mul(lpBalance).toNumber()
+    const amount = _percentage.mul(lpBalance)
+
+    return Number(amount.toFixed(12))
   }, [lpBalance, percentage])
 
   useEffect(() => {
