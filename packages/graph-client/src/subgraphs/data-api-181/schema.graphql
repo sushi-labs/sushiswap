@@ -21,6 +21,15 @@ type SushiDayBuckets {
 
 type Query {
   sushiDayBuckets(chainId: SushiSwapChainId!): SushiDayBuckets!
+  bladePools(chainId: BladeChainId!): [BladePool!]!
+  bladePool(address: Bytes!, chainId: BladeChainId!): BladePool!
+  bladePoolPairsChart(address: Bytes!, chainId: BladeChainId!, duration: BladePoolPairsChartDuration!): [BladePoolPairStats!]!
+  bladePoolTxSourcesChart(address: Bytes!, chainId: BladeChainId!, duration: BladePoolPairsChartDuration!): [BladePoolTxSourcesStats!]!
+  bladePoolBuckets(address: Bytes!, chainId: BladeChainId!): PoolBuckets!
+  bladePositions(user: Bytes!, chainId: BladeChainId!): [BladePosition!]!
+  bladeMints(address: Bytes!, chainId: BladeChainId!, user: Bytes): [BladeMint!]!
+  bladeBurns(address: Bytes!, chainId: BladeChainId!, user: Bytes): [BladeBurn!]!
+  bladeSwaps(address: Bytes!, chainId: BladeChainId!, user: Bytes): [BladeSwap!]!
   exploreTokens(chainId: SushiSwapChainId!): [ExploreToken!]!
   exploreTokenChart(chainId: SushiSwapChainId!, address: Bytes!, duration: ExploreTokenChartDuration!): [OHLC!]!
   exploreTokenChartV2(chainId: SushiSwapChainId!, address: Bytes!, interval: ExploreTokenChartInterval!, from: Int!, to: Int!): [OHLC!]!
@@ -28,13 +37,16 @@ type Query {
   exploreTokenPools(chainId: PoolChainId!, address: Bytes!): Pools!
   pools(chainId: PoolChainId!, page: Int = 1, search: [String], protocols: [Protocol], onlyIncentivized: Boolean = false, orderBy: PoolsOrderBy = liquidityUSD, orderDirection: OrderDirection = desc): Pools!
   poolAddresses(chainId: PoolChainId!, protocols: [Protocol]): [Bytes!]!
-  topPools(chainId: String!): [TopPool!]!
+  topPools(chainId: ChainId!): [TopPool!]!
   v2Pool(address: Bytes!, chainId: SushiSwapV2ChainId!): V2Pool!
   v3Pool(address: Bytes!, chainId: SushiSwapV3ChainId!): V3Pool!
   v2PoolBuckets(address: Bytes!, chainId: SushiSwapV2ChainId!): PoolBuckets!
   v3PoolBuckets(address: Bytes!, chainId: SushiSwapV3ChainId!): PoolBuckets!
+  multiChainPools(chainIds: [PoolChainId!]!, page: Int = 1, search: [String], protocols: [Protocol], onlyIncentivized: Boolean = false, orderBy: PoolsOrderBy = liquidityUSD, orderDirection: OrderDirection = desc, minTvl: Float, maxTvl: Float): Pools!
   v3PoolsByTokens(token0: Bytes!, token1: Bytes!, chainId: SushiSwapV3ChainId!): [V3BasePool!]!
   v3Pools(chainId: SushiSwapV3ChainId!): [V3BasePool!]!
+  trendingPools: [TrendingPool!]!
+  explorePoolStatistics: ExplorePoolStatistics!
   portfolioWallet(id: ID!): PortfolioWallet!
   portfolioLiquidityPositions(id: ID!): PortfolioPositions!
   portfolioClaimables(id: ID!): PortfolioClaimables!
@@ -45,26 +57,164 @@ type Query {
   sushiBarHistory: SushiBarHistory!
   tokenList(chainId: TokenListChainId!, first: Int = 50, skip: Int, search: String, customTokens: [Bytes!]): [TokenListEntry!]!
   tokenListBalances(chainId: TokenListChainId!, account: Bytes!, includeNative: Boolean = true, customTokens: [Bytes!]): [TokenListEntryWithBalance!]!
-  tokenListV2(chainIds: [TokenListV2ChainId!]!, first: Int = 50, skip: Int, search: String, customTokens: [MultiChainTokenInput!]): [TokenListEntryV2!]!
-  tokenListBalancesV2(chainIds: [TokenListV2ChainId!]!, account: Bytes!, includeNative: Boolean = true, customTokens: [MultiChainTokenInput!]): TokenListBalancesV2Response!
-  recentSwaps(account: Bytes!, chainIds: [TokenListV2ChainId!]!): [SwapPnL!]!
-  quickSelectTokens(account: Bytes!, chainIds: [TokenListV2ChainId!]!): [QuickSelectToken!]!
-  searchTokens(account: Bytes!, first: Int = 50, skip: Int, chainIds: [TokenListV2ChainId!]!, search: String, tokens: [MultiChainTokenInput!]): [TokenListEntryWithBalanceV2!]!
   tokenAnalysis(chainId: Int!, address: Bytes!): TokenAnalysis!
   pendingTokens: [PendingToken!]!
   approvedCommunityTokens: [ApprovedToken!]!
   trendingTokens(chainId: TrendingTokensChainId!): [TrendingToken!]!
-  trendingTokensV2(chainIds: [TrendingTokensChainId!]!): [TrendingTokenV2!]!
   v2LiquidityPositions(user: Bytes!, chainId: SushiSwapV2ChainId!): [V2LiquidityPosition!]!
-  v2Swaps(address: Bytes!, chainId: SushiSwapV2ChainId!): [V2Swap!]!
-  v2Burns(address: Bytes!, chainId: SushiSwapV2ChainId!): [V2Burn!]!
-  v2Mints(address: Bytes!, chainId: SushiSwapV2ChainId!): [V2Mint!]!
-  v2Transactions(address: Bytes!, chainId: SushiSwapV2ChainId!): [V2Transaction!]!
-  v3Swaps(address: Bytes!, chainId: SushiSwapV3ChainId!): [V3Swap!]!
-  v3Burns(address: Bytes!, chainId: SushiSwapV3ChainId!): [V3Burn!]!
-  v3Mints(address: Bytes!, chainId: SushiSwapV3ChainId!): [V3Mint!]!
-  v3Collects(address: Bytes!, chainId: SushiSwapV3ChainId!): [V3Collect!]!
-  v3Transactions(address: Bytes!, chainId: SushiSwapV3ChainId!): [V3Transaction!]!
+  v2Swaps(address: Bytes!, chainId: SushiSwapV2ChainId!, user: Bytes): [V2Swap!]!
+  v2Burns(address: Bytes!, chainId: SushiSwapV2ChainId!, user: Bytes): [V2Burn!]!
+  v2Mints(address: Bytes!, chainId: SushiSwapV2ChainId!, user: Bytes): [V2Mint!]!
+  v2Transactions(address: Bytes!, chainId: SushiSwapV2ChainId!, user: Bytes): [V2Transaction!]!
+  v3Swaps(address: Bytes!, chainId: SushiSwapV3ChainId!, user: Bytes): [V3Swap!]!
+  v3Burns(address: Bytes!, chainId: SushiSwapV3ChainId!, user: Bytes): [V3Burn!]!
+  v3Mints(address: Bytes!, chainId: SushiSwapV3ChainId!, user: Bytes): [V3Mint!]!
+  v3Collects(address: Bytes!, chainId: SushiSwapV3ChainId!, user: Bytes): [V3Collect!]!
+  v3Transactions(address: Bytes!, chainId: SushiSwapV3ChainId!, user: Bytes): [V3Transaction!]!
+}
+
+type BladePoolToken {
+  token: Token!
+  liquidity: Float!
+  liquidityUSD: Float!
+  weight: Float!
+  targetWeight: Float
+}
+
+enum BladePoolAbi {
+  ClipperPackedVerifiedExchange
+  ClipperApproximateCaravelExchange
+  ClipperVerifiedCaravelExchange
+  ClipperCaravelExchange
+  ClipperVerifiedExchange
+  ClipperDirectExchangeV0
+  ClipperDirectExchangeV1
+  ClipperPackedExchange
+  ClipperPackedOracleVerifiedExchange
+  BladeVerifiedExchange
+  BladeApproximateCaravelExchange
+}
+
+enum BladePoolVaultType {
+  PROTOCOL_DEPOSIT
+  FEE_SPLIT
+  FARM
+}
+
+enum BladePoolFarmVaultAbi {
+  LinearVestingVault
+  SplitFeeFarm
+}
+
+type BladePoolVault {
+  id: ID!
+  address: Bytes!
+  type: BladePoolVaultType!
+  name: String
+  farm: BladePoolFarmVault
+  protocolDeposit: BladePoolProtocolDepositVault
+  createdAt: Int!
+}
+
+type BladePoolFarmVault {
+  rewardToken: Token!
+  farmingHelper: Bytes!
+  abi: BladePoolFarmVaultAbi!
+}
+
+type BladePoolProtocolDepositVault {
+  transferHelper: Bytes!
+}
+
+type BladePool {
+  id: ID!
+  address: Bytes!
+  chainId: Int!
+  abi: BladePoolAbi!
+  tokens: [BladePoolToken!]!
+  liquidity: BigInt!
+  liquidityUSD: Float!
+  liquidityUSDChange1d: Float!
+  volumeUSD: Float!
+  volumeUSD1d: Float!
+  volumeUSDChange1d: Float!
+  volumeUSD1w: Float!
+  volumeUSDChange1w: Float!
+  feeUSD1d: Float!
+  feeApr1d: Float!
+  totalApr1d: Float!
+  isDeprecated: Boolean!
+  isSingleAssetWithdrawEnabled: Boolean!
+  newPoolAddress: Bytes
+  lpTransfersFrom: [BladePoolLpTransfer!]!
+  vaults: [BladePoolVault!]!
+}
+
+type BladePoolLpTransfer {
+  id: ID!
+  oldPoolAddress: Bytes!
+  newPoolAddress: Bytes!
+}
+
+type BladePoolPairStats {
+  token0: Token!
+  token1: Token!
+  volumeUSD: Float!
+  txCount: Int!
+}
+
+enum BladePoolPairsChartDuration {
+  DAY
+  WEEK
+  MONTH
+  ALL
+}
+
+type BladePoolTxSourcesStats {
+  source: String!
+  volumeUSD: Float!
+  txCount: Int!
+}
+
+enum BladePoolTxSourcesChartDuration {
+  DAY
+  WEEK
+  MONTH
+  ALL
+}
+
+type BladePosition {
+  user: Bytes!
+  stakedBalance: BigInt!
+  unstakedBalance: BigInt!
+  pool: BladePool!
+}
+
+type BladeBurn {
+  txHash: Bytes!
+  user: Bytes!
+  timestamp: Int!
+  amountUSD: Float!
+}
+
+type BladeMint {
+  txHash: Bytes!
+  user: Bytes!
+  timestamp: Int!
+  amountUSD: Float!
+}
+
+type BladeSwap {
+  txHash: Bytes!
+  user: Bytes!
+  timestamp: Int!
+  amountInUSD: Float!
+  amountInRaw: BigInt!
+  inToken: Token!
+  amountOutUSD: Float!
+  amountOutRaw: BigInt!
+  outToken: Token!
+  feeUSD: Float!
 }
 
 type ExploreToken {
@@ -115,6 +265,8 @@ enum PoolsOrderBy {
   volumeUSD1w
   txCount1d
   totalApr1d
+  totalApr1w
+  volumeTvlRatio
 }
 
 enum OrderDirection {
@@ -255,11 +407,14 @@ type PoolBucket {
   liquidityUSD: Float!
   txCount: Int!
   feesUSD: Float!
+  token0Price: Float!
+  token1Price: Float!
+  apr: Float!
 }
 
 type TopPool {
   id: ID!
-  chainId: String!
+  chainId: ChainId!
   name: String!
   address: String!
   createdAt: String!
@@ -306,11 +461,43 @@ type Pool {
   feeUSD1d: Float!
   feeApr1d: Float!
   totalApr1d: Float!
+  totalApr1w: Float!
+  tvlVolumeRatio: Float!
+  percentageOfLiquidityInPoolToken0: Float!
+  percentageOfLiquidityInPoolToken1: Float!
   incentiveApr: Float!
   isIncentivized: Boolean!
   wasIncentivized: Boolean!
   incentives: [Incentive!]!
   source: String!
+}
+
+type TrendingPool {
+  id: ID!
+  chainId: Int!
+  name: String!
+  address: String!
+  swapFee: Float!
+  protocol: String!
+  token0: Token!
+  token1: Token!
+  liquidityUSD: Float!
+  volumeUSD1d: Float!
+  volumeUSD1w: Float!
+  totalApr1d: Float!
+}
+
+type PoolStatistics {
+  liquidityUSD: Float!
+  liquidityUSDChange1w: Float!
+  volumeUSD1w: Float!
+  volumeUSDChange1w: Float!
+}
+
+type ExplorePoolStatistics {
+  v2: PoolStatistics!
+  v3: PoolStatistics!
+  all: PoolStatistics!
 }
 
 type Pools {
@@ -524,9 +711,6 @@ scalar TokenListChainId
 """A field whose value is a trending token list chain ID"""
 scalar TrendingTokensChainId
 
-"""A field whose value is a token list v2 chain ID"""
-scalar TokenListV2ChainId
-
 enum ChainIdFeature {
   SushiSwapChainId
   SushiSwapV2ChainId
@@ -535,7 +719,6 @@ enum ChainIdFeature {
   BladeChainId
   TokenListChainId
   TrendingTokensChainId
-  TokenListV2ChainId
 }
 
 enum DataSource {
@@ -589,70 +772,6 @@ type TokenListEntryWithBalance {
   decimals: Int!
   balance: BigInt!
   approved: Boolean!
-}
-
-type TokenBridgeInfo {
-  chainId: TokenListV2ChainId!
-  decimals: Int!
-  address: Bytes!
-}
-
-type TokenListEntryV2 {
-  chainId: TokenListV2ChainId!
-  address: Bytes!
-  symbol: String!
-  name: String!
-  decimals: Int!
-  approved: Boolean!
-  priceUSD: Float
-}
-
-type TokenListEntryWithBalanceV2 {
-  address: Bytes!
-  symbol: String!
-  name: String!
-  chainId: TokenListV2ChainId!
-  decimals: Int!
-  balance: BigInt!
-  balanceUSD: Float!
-  priceUSD: Float!
-  priceChange1d: Float!
-  approved: Boolean!
-  bridgeInfo: [TokenBridgeInfo!]
-}
-
-type TokenListBalancesV2Response {
-  balances: [TokenListEntryWithBalanceV2!]!
-  apiResponseTime: Float!
-}
-
-type SwapPnL {
-  tokenIn: TokenListEntryV2!
-  tokenOut: TokenListEntryV2!
-  amountIn: Float!
-  amountOut: Float!
-  amountInUSD: Float!
-  amountOutUSD: Float!
-  time: Int!
-  unrealizedPnl: Float!
-  realizedPnl: Float!
-  deltaRealizedPnl: Float!
-  totalPnl: Float!
-  protocol: String!
-}
-
-type QuickSelectToken {
-  chainId: TokenListV2ChainId!
-  address: Bytes!
-  symbol: String!
-  name: String!
-  decimals: Int!
-  bridgeInfo: [TokenBridgeInfo!]
-}
-
-input MultiChainTokenInput {
-  chainId: TokenListV2ChainId!
-  address: Bytes!
 }
 
 type TokenValidationMetrics {
@@ -738,16 +857,6 @@ type TrendingToken {
   approved: Boolean!
 }
 
-type TrendingTokenV2 {
-  address: Bytes!
-  chainId: TrendingTokensChainId!
-  symbol: String!
-  name: String!
-  decimals: Int!
-  approved: Boolean!
-  priceUSD: Float
-}
-
 type V2LiquidityPosition {
   user: Bytes!
   stakedBalance: String!
@@ -781,6 +890,7 @@ type V2Swap {
   id: ID!
   logIndex: String
   amountUSD: String!
+  feesUSD: Float!
   amount1Out: String!
   amount0Out: String!
   amount1In: String!
@@ -838,6 +948,7 @@ type V3Swap {
   id: ID!
   logIndex: String
   amountUSD: String!
+  feesUSD: Float!
   amount1: String!
   amount0: String!
   origin: ID!

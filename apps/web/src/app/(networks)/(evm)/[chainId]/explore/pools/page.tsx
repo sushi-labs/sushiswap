@@ -22,11 +22,11 @@ export default async function PoolsPage(props: {
 
   return (
     <Container maxWidth="7xl" className="px-4 max-w-[1696px]">
-      <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
+      <div className="flex flex-wrap gap-3 justify-between items-center mb-6">
         <h3 className="font-[600] md:text-lg text-slate-900 dark:text-pink-100">
           All Pools
         </h3>
-        <div className="flex gap-3 flex-wrap">
+        <div className="flex flex-wrap gap-3">
           <TableFiltersSearchToken />
           <TableFiltersPoolTypeV2 />
           <TableFiltersTVL />
@@ -34,7 +34,7 @@ export default async function PoolsPage(props: {
           <TableFiltersNetworkV2 />
         </div>
       </div>
-      <PoolsTableV2 chainId={chainId} />
+      <PoolsTableV2 />
     </Container>
   )
 }

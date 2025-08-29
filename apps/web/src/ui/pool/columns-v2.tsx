@@ -1,5 +1,6 @@
 import { ArrowUpIcon, PlusIcon } from '@heroicons/react-v1/solid'
 import type { Pool } from '@sushiswap/graph-client/data-api'
+import type { MultiChainPool } from '@sushiswap/graph-client/data-api-181'
 import {
   Button,
   Currency,
@@ -17,7 +18,7 @@ import Link from 'next/link'
 import React, { useMemo } from 'react'
 import { getTextColor } from 'src/lib/helpers'
 
-import type { SushiSwapProtocol } from 'sushi'
+import type { EvmChainId, SushiSwapProtocol } from 'sushi'
 import { Token, unwrapToken } from 'sushi/currency'
 import { formatNumber, formatPercent, formatUSD } from 'sushi/format'
 import { usePrices } from '~evm/_common/ui/price-provider/price-provider/use-prices'
@@ -26,7 +27,7 @@ import { SparklineCell } from '../token/SparklineCell'
 import { ProtocolBadge } from './PoolNameCell'
 import { AddLiquidityDialog } from './add-liquidity/add-liquidity-dialog'
 
-export const CHAIN_COLUMN: ColumnDef<Pool, unknown> = {
+export const CHAIN_COLUMN: ColumnDef<MultiChainPool, unknown> = {
   id: 'chain',
   header: () => (
     <span className="font-[600] text-slate-450 dark:text-slate-500">Chain</span>
@@ -52,7 +53,7 @@ export const CHAIN_COLUMN: ColumnDef<Pool, unknown> = {
   },
 }
 
-export const POOL_COLUMN: ColumnDef<Pool, unknown> = {
+export const POOL_COLUMN: ColumnDef<MultiChainPool, unknown> = {
   id: 'pool',
   header: () => (
     <span className="font-[600] text-slate-450 dark:text-slate-500">Pool</span>
@@ -61,13 +62,13 @@ export const POOL_COLUMN: ColumnDef<Pool, unknown> = {
     const [token0, token1] = useMemo(
       () => [
         new Token({
-          chainId: props.row.original.chainId,
+          chainId: props.row.original.chainId as EvmChainId,
           address: props.row.original.token0Address,
           symbol: props.row.original.name?.split(' /')[0] ?? '',
           decimals: 0,
         }),
         new Token({
-          chainId: props.row.original.chainId,
+          chainId: props.row.original.chainId as EvmChainId,
           address: props.row.original.token1Address,
           symbol: props.row.original.name?.split('/ ')[1] ?? '',
           decimals: 0,
@@ -76,9 +77,27 @@ export const POOL_COLUMN: ColumnDef<Pool, unknown> = {
       [props.row.original],
     )
     const { data: priceMap } = usePrices({
-      chainId: props.row.original.chainId,
+      chainId: props.row.original.chainId as EvmChainId,
       enabled: Boolean(token0 && token1),
     })
+
+    const [formattedToken0Percent, formattedToken1Percent] = useMemo(() => {
+      const raw0 = formatPercent(
+        props.row.original.percentageOfLiquidityInPoolToken0,
+      )
+      const raw1 = formatPercent(
+        props.row.original.percentageOfLiquidityInPoolToken1,
+      )
+
+      const clean = (str: string) => {
+        return str.replace(/\.00%$/, '%')
+      }
+
+      return [clean(raw0), clean(raw1)]
+    }, [
+      props.row.original.percentageOfLiquidityInPoolToken0,
+      props.row.original.percentageOfLiquidityInPoolToken1,
+    ])
 
     return (
       <>
@@ -96,7 +115,7 @@ export const POOL_COLUMN: ColumnDef<Pool, unknown> = {
                     />
                     <div className="ml-1.5 mr-1">{token0.symbol}</div>
                     <div className="bg-slate-200 text-slate-450 dark:bg-slate-750 dark:text-slate-500 text-[12px] font-medium px-1.5 rounded-lg">
-                      {formatNumber(70)}%
+                      {formattedToken0Percent}
                     </div>
                   </div>
                   <div className="flex items-center">
@@ -108,7 +127,7 @@ export const POOL_COLUMN: ColumnDef<Pool, unknown> = {
                     />
                     <div className="ml-1.5 mr-1">{token1.symbol}</div>
                     <div className="bg-slate-200 text-slate-450 dark:bg-slate-750 dark:text-slate-500 text-[12px] font-medium px-1.5 rounded-lg">
-                      {formatNumber(30)}%
+                      {formattedToken1Percent}
                     </div>
                   </div>
                 </div>
@@ -137,9 +156,7 @@ export const POOL_COLUMN: ColumnDef<Pool, unknown> = {
                       </div>
                       <div className="flex gap-1 items-center">
                         {formatUSD(priceMap?.get(token0.address) ?? 0)}
-                        <span className={classNames(getTextColor(12))}>
-                          todo%
-                        </span>
+                        <span className={classNames(getTextColor(12))}>{}</span>
                       </div>
                     </div>
                     <div className="flex justify-between items-center w-full">
@@ -156,9 +173,9 @@ export const POOL_COLUMN: ColumnDef<Pool, unknown> = {
                       </div>
                       <div className="flex gap-1 items-center">
                         {formatUSD(priceMap?.get(token1.address) ?? 0)}
-                        <span className={classNames(getTextColor(12))}>
+                        {/* <span className={classNames(getTextColor(12))}>
                           todo%
-                        </span>
+                        </span> */}
                       </div>
                     </div>
                   </div>
@@ -192,7 +209,7 @@ export const POOL_COLUMN: ColumnDef<Pool, unknown> = {
   },
 }
 
-export const POOL_TYPE_COLUMN: ColumnDef<Pool, unknown> = {
+export const POOL_TYPE_COLUMN: ColumnDef<MultiChainPool, unknown> = {
   id: 'type',
   header: () => (
     <span className="font-[600] text-slate-450 dark:text-slate-500">Type</span>
@@ -336,7 +353,7 @@ export const POOL_TYPE_COLUMN: ColumnDef<Pool, unknown> = {
   },
 }
 
-export const VOLUME_1D_COLUMN: ColumnDef<Pool, unknown> = {
+export const VOLUME_1D_COLUMN: ColumnDef<MultiChainPool, unknown> = {
   id: 'volumeUSD1d',
   header: () => (
     <span className="font-[600]">
@@ -377,7 +394,7 @@ export const VOLUME_1D_COLUMN: ColumnDef<Pool, unknown> = {
   },
 }
 
-export const VOLUME_1W_COLUMN: ColumnDef<Pool, unknown> = {
+export const VOLUME_1W_COLUMN: ColumnDef<MultiChainPool, unknown> = {
   id: 'volumeUSD1w',
   header: () => (
     <span className="font-[600]">
@@ -418,7 +435,7 @@ export const VOLUME_1W_COLUMN: ColumnDef<Pool, unknown> = {
   },
 }
 
-export const TVL_COLUMN: ColumnDef<Pool, unknown> = {
+export const TVL_COLUMN: ColumnDef<MultiChainPool, unknown> = {
   id: 'liquidityUSD',
   header: () => (
     <span className="font-[600]">
@@ -459,22 +476,25 @@ export const TVL_COLUMN: ColumnDef<Pool, unknown> = {
   },
 }
 
-export const VOL_TVL_COLUMN: ColumnDef<Pool, unknown> = {
-  id: 'volTvl',
+export const VOL_TVL_COLUMN: ColumnDef<MultiChainPool, unknown> = {
+  id: 'volumeTvlRatio',
   header: () => (
     <span className="font-[600] px-2">
       Vol / TVL <span className="font-normal">(1d)</span>
     </span>
   ),
-  accessorFn: (row) => row.volumeUSD1d / row.liquidityUSD,
+  accessorFn: (row) => row.tvlVolumeRatio,
   sortingFn: ({ original: rowA }, { original: rowB }) =>
-    rowA.volumeUSD1d / rowA.liquidityUSD - rowB.volumeUSD1d / rowB.liquidityUSD,
+    rowA.tvlVolumeRatio - rowB.tvlVolumeRatio,
   cell: (props) => {
-    const volTvl =
-      props.row.original.volumeUSD1d / props.row.original.liquidityUSD
+    if (props.row.original.name === 'vbUSDC / vbUSDT') {
+      console.log('swag', props.row.original.tvlVolumeRatio)
+    }
     return (
       <span className="flex items-center justify-center w-[130px]">
-        {Number.isNaN(volTvl) ? '0' : formatNumber(volTvl)}
+        {Number.isNaN(props.row.original.tvlVolumeRatio)
+          ? '0'
+          : formatNumber(props.row.original.tvlVolumeRatio)}
       </span>
     )
   },
@@ -492,23 +512,23 @@ export const VOL_TVL_COLUMN: ColumnDef<Pool, unknown> = {
   },
 }
 
-export const APR_WITH_REWARDS_COLUMN: ColumnDef<Pool, unknown> = {
-  id: 'totalApr1d',
+export const APR_WITH_REWARDS_COLUMN: ColumnDef<MultiChainPool, unknown> = {
+  id: 'totalApr1w',
   header: () => (
     <span className="font-[600] px-2">
       APR <span className="font-normal">(7d%)</span>
     </span>
   ),
-  accessorFn: (row) => row.totalApr1d,
+  accessorFn: (row) => row.totalApr1w,
   cell: (props) => {
     const hasIncentives = props.row.original.incentives.length > 0
     if (!hasIncentives) {
       return (
         <div className="flex flex-col pl-7 w-[130px]">
           <span>
-            {Number.isNaN(props.row.original.totalApr1d)
+            {Number.isNaN(props.row.original.totalApr1w)
               ? '0%'
-              : formatPercent(props.row.original.totalApr1d)}
+              : formatPercent(props.row.original.totalApr1w)}
           </span>
           <span
             className={classNames(
@@ -533,9 +553,9 @@ export const APR_WITH_REWARDS_COLUMN: ColumnDef<Pool, unknown> = {
           <div className="flex flex-col cursor-pointer pl-7 w-[130px]">
             <div className="flex gap-1 items-center">
               <span className="underline decoration-dotted underline-offset-2">
-                {Number.isNaN(props.row.original.totalApr1d)
+                {Number.isNaN(props.row.original.totalApr1w)
                   ? '0%'
-                  : formatPercent(props.row.original.totalApr1d)}
+                  : formatPercent(props.row.original.totalApr1w)}
               </span>
               {props.row.original.incentives.map((incentive) => (
                 <Currency.Icon
@@ -546,16 +566,6 @@ export const APR_WITH_REWARDS_COLUMN: ColumnDef<Pool, unknown> = {
                 />
               ))}
             </div>
-            <span
-              className={classNames(
-                'text-xs',
-                // getTextColor(props.row.original.liquidityUSDChange1d, "text-muted-foreground")
-                getTextColor(-0.0163, 'text-muted-foreground'),
-              )}
-            >
-              {/* {props.row.original.liquidityUSDChange1d > 0 ? "+" : ""} */}
-              {formatPercent(-0.0163)}
-            </span>
           </div>
         }
         content={
@@ -563,9 +573,9 @@ export const APR_WITH_REWARDS_COLUMN: ColumnDef<Pool, unknown> = {
             <div className="flex flex-col gap-1 mb-2">
               <p>Total APR</p>
               <p className="text-xl font-medium">
-                {Number.isNaN(props.row.original.totalApr1d)
+                {Number.isNaN(props.row.original.totalApr1w)
                   ? '0%'
-                  : formatPercent(props.row.original.totalApr1d)}
+                  : formatPercent(props.row.original.totalApr1w)}
               </p>
             </div>
             <div className="flex gap-2 justify-between items-center">
@@ -588,7 +598,7 @@ export const APR_WITH_REWARDS_COLUMN: ColumnDef<Pool, unknown> = {
                 ))}
               </div>
               <p className="font-medium">
-                {formatPercent(props.row.original.feeApr1d)}
+                {formatPercent(props.row.original.incentiveApr)}
               </p>
             </div>
             <p>Boosted rewards</p>
@@ -613,7 +623,7 @@ export const APR_WITH_REWARDS_COLUMN: ColumnDef<Pool, unknown> = {
   },
 }
 
-export const APR_SPARKLINE_COLUMN: ColumnDef<Pool, unknown> = {
+export const APR_SPARKLINE_COLUMN: ColumnDef<MultiChainPool, unknown> = {
   id: 'aprSparkline',
   header: () => (
     <span className="font-[600] text-slate-450 dark:text-slate-500">
@@ -640,7 +650,7 @@ export const APR_SPARKLINE_COLUMN: ColumnDef<Pool, unknown> = {
     },
   },
 }
-export const ACTION_COLUMN: ColumnDef<Pool, unknown> = {
+export const ACTION_COLUMN: ColumnDef<MultiChainPool, unknown> = {
   id: 'action',
   cell: (props) => {
     const poolType = props.row.original.protocol as SushiSwapProtocol
@@ -649,7 +659,7 @@ export const ACTION_COLUMN: ColumnDef<Pool, unknown> = {
       () => [
         unwrapToken(
           new Token({
-            chainId: props.row.original.chainId,
+            chainId: props.row.original.chainId as EvmChainId,
             address: props.row.original.token0Address,
             symbol: props.row.original.name?.split(' /')[0] ?? '',
             decimals: 18,
@@ -657,7 +667,7 @@ export const ACTION_COLUMN: ColumnDef<Pool, unknown> = {
         ),
         unwrapToken(
           new Token({
-            chainId: props.row.original.chainId,
+            chainId: props.row.original.chainId as EvmChainId,
             address: props.row.original.token1Address,
             symbol: props.row.original.name?.split('/ ')[1] ?? '',
             decimals: 18,
