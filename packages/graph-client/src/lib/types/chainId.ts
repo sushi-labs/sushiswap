@@ -1,4 +1,4 @@
-import type { ChainId } from 'sushi/chain'
+import type { ChainId } from 'sushi'
 
 export type ChainIdVariable<T extends ChainId> = { chainId: Readonly<T> }
 

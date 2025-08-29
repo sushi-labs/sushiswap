@@ -19,7 +19,7 @@ import {
 } from '@sushiswap/ui'
 import format from 'date-fns/format'
 import { useMemo } from 'react'
-import { formatNumber } from 'sushi/format'
+import { formatNumber } from 'sushi'
 
 import type { EChartOption } from 'echarts'
 import ReactEchartsCore from 'echarts-for-react/lib/core'
@@ -290,7 +290,7 @@ export function BaseChart<EnabledTimeframes extends Timeframe[]>({
   return (
     <Card>
       <CardHeader>
-        <div className="flex !flex-row justify-between w-full">
+        <div className="flex flex-col sm:!flex-row justify-between w-full gap-y-4">
           <div className="space-y-1.5">
             <CardTitle>{title}</CardTitle>
             <CardDescription
@@ -301,7 +301,7 @@ export function BaseChart<EnabledTimeframes extends Timeframe[]>({
             </CardDescription>
           </div>
           <Select onValueChange={setTimeframe} value={selectedTimeframe}>
-            <SelectTrigger className="max-w-[200px]">
+            <SelectTrigger className="sm:max-w-[200px]">
               <SelectValue />
             </SelectTrigger>
 

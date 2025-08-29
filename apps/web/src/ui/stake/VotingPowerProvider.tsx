@@ -8,23 +8,18 @@ import {
   useContext,
   useMemo,
 } from 'react'
+import { Amount, ChainId, Fraction } from 'sushi'
 import {
+  type EvmCurrency,
+  EvmToken,
+  MASTERCHEF_ADDRESS,
+  SUSHI_ADDRESS,
+  XSUSHI,
+  XSUSHI_ADDRESS,
   erc20Abi_balanceOf,
   erc20Abi_totalSupply,
   masterChefV1Abi_userInfo,
-} from 'sushi/abi'
-import { ChainId } from 'sushi/chain'
-import { MASTERCHEF_ADDRESS } from 'sushi/config'
-import {
-  Amount,
-  SUSHI_ADDRESS,
-  Token,
-  type Type,
-  XSUSHI,
-  XSUSHI_ADDRESS,
-  tryParseAmount,
-} from 'sushi/currency'
-import { Fraction } from 'sushi/math'
+} from 'sushi/evm'
 import { useAccount, useReadContract, useReadContracts } from 'wagmi'
 import { useAmountBalances } from '~evm/_common/ui/balance-provider/use-balances'
 
@@ -49,7 +44,7 @@ const SnapshotStrategies = [
 
 const SUSHI_ETH_SLP_ADDRESS = '0x795065dCc9f64b5614C407a6EFDC400DA6221FB0'
 
-export const SUSHI_ETH_SLP = new Token({
+export const SUSHI_ETH_SLP = new EvmToken({
   chainId: ChainId.ETHEREUM,
   address: SUSHI_ETH_SLP_ADDRESS,
   decimals: 18,
@@ -61,9 +56,9 @@ interface VotingPowerContext {
   votingPower: number | undefined
   balances:
     | {
-        xsushi: Amount<Type>
-        slp: Amount<Type>
-        xsushiPolygon: Amount<Type>
+        xsushi: Amount<EvmCurrency>
+        slp: Amount<EvmCurrency>
+        xsushiPolygon: Amount<EvmCurrency>
       }
     | undefined
   weights:
@@ -162,6 +157,7 @@ export const VotingPowerProvider: FC<{
         ] as const,
       [],
     ),
+    allowFailure: false,
     query: {
       staleTime: 300000,
     },
@@ -185,11 +181,7 @@ export const VotingPowerProvider: FC<{
   })
 
   const weights = useMemo(() => {
-    if (
-      !contractData?.length ||
-      contractData.some((data) => data.status !== 'success')
-    )
-      return undefined
+    if (!contractData?.length || isContractDataError) return undefined
 
     const [
       sushiBalanceSLP,
@@ -198,22 +190,22 @@ export const VotingPowerProvider: FC<{
       xsushiTotalSupply,
     ] = contractData
 
-    const xsushiWeight = new Fraction(
-      sushiBalanceXSUSHI.result as bigint,
-      xsushiTotalSupply.result as bigint,
-    )
+    const xsushiWeight = new Fraction({
+      numerator: sushiBalanceXSUSHI,
+      denominator: xsushiTotalSupply,
+    })
 
-    const slpWeight = new Fraction(
-      (sushiBalanceSLP.result as bigint) * 2n,
-      slpTotalSupply.result as bigint,
-    )
+    const slpWeight = new Fraction({
+      numerator: sushiBalanceSLP * 2n,
+      denominator: slpTotalSupply,
+    })
 
     return {
       xsushi: xsushiWeight,
       slp: slpWeight,
-      xsushiPolygon: new Fraction(1, 1),
+      xsushiPolygon: new Fraction({ numerator: 1, denominator: 1 }),
     }
-  }, [contractData])
+  }, [contractData, isContractDataError])
 
   const balances = useMemo(() => {
     const xSushiBalance = ethereumBalances?.get(XSUSHI[ChainId.ETHEREUM].id)
@@ -231,18 +223,12 @@ export const VotingPowerProvider: FC<{
     return {
       xsushi: xSushiBalance,
       slp: slpBalance.add(
-        Amount.fromRawAmount(SUSHI_ETH_SLP, userStakedSLP[0]),
-      ) as Amount<Type>,
-      xsushiPolygon: tryParseAmount(
+        new Amount(SUSHI_ETH_SLP, userStakedSLP[0]),
+      ) as Amount<EvmCurrency>,
+      xsushiPolygon: Amount.fromHuman(
+        XSUSHI[ChainId.POLYGON],
         votingPowerData.vp_by_strategy[1].toString(),
-        new Token({
-          chainId: ChainId.POLYGON,
-          address: XSUSHI_ADDRESS[ChainId.POLYGON],
-          decimals: 18,
-          symbol: 'XSUSHI (Polygon)',
-          name: 'SushiBar',
-        }),
-      ) as Amount<Type>,
+      ),
     }
   }, [ethereumBalances, userStakedSLP, votingPowerData?.vp_by_strategy])
 

@@ -1,9 +1,11 @@
 import type { VariablesOf } from 'gql.tada'
 
 import { type RequestOptions, request } from 'src/lib/request.js'
-import type { EvmChainId } from 'sushi'
-import { isSushiSwapV2ChainId } from 'sushi/config'
-import { SUSHI_DATA_API_HOST } from 'sushi/config/subgraph'
+import {
+  type EvmChainId,
+  SUSHI_DATA_API_HOST,
+  isSushiSwapV2ChainId,
+} from 'sushi/evm'
 import { graphql } from '../../graphql.js'
 
 export const V2PoolBucketsQuery = graphql(

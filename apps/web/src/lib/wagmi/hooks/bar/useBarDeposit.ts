@@ -2,7 +2,13 @@
 
 import { createErrorToast, createToast } from '@sushiswap/notifications'
 import { useCallback, useMemo } from 'react'
-import { type Amount, type Token, XSUSHI_ADDRESS } from 'sushi/currency'
+import type { Amount } from 'sushi'
+import {
+  EvmChainId,
+  type EvmToken,
+  XSUSHI_ADDRESS,
+  xsushiAbi_enter,
+} from 'sushi/evm'
 import { UserRejectedRequestError } from 'viem'
 import {
   useAccount,
@@ -12,12 +18,10 @@ import {
 } from 'wagmi'
 import type { SendTransactionReturnType } from 'wagmi/actions'
 
-import { xsushiAbi_enter } from 'sushi/abi'
-import { ChainId } from 'sushi/chain'
 import { useRefetchBalances } from '~evm/_common/ui/balance-provider/use-refetch-balances'
 
 interface UseBarDepositParams {
-  amount?: Amount<Token>
+  amount?: Amount<EvmToken>
   enabled?: boolean
 }
 
@@ -33,14 +37,14 @@ export function useBarDeposit({ amount, enabled = true }: UseBarDepositParams) {
 
       const receipt = client.waitForTransactionReceipt({ hash: data })
       receipt.then(() => {
-        refetchBalances(ChainId.ETHEREUM)
+        refetchBalances(EvmChainId.ETHEREUM)
       })
 
       const ts = new Date().getTime()
       void createToast({
         account: address,
         type: 'enterBar',
-        chainId: ChainId.ETHEREUM,
+        chainId: EvmChainId.ETHEREUM,
         txHash: data,
         promise: receipt,
         summary: {
@@ -62,11 +66,11 @@ export function useBarDeposit({ amount, enabled = true }: UseBarDepositParams) {
   }, [])
 
   const { data: simulation } = useSimulateContract({
-    address: XSUSHI_ADDRESS[ChainId.ETHEREUM],
+    address: XSUSHI_ADDRESS[EvmChainId.ETHEREUM],
     abi: xsushiAbi_enter,
     functionName: 'enter',
-    chainId: ChainId.ETHEREUM,
-    args: amount ? [amount.quotient] : undefined,
+    chainId: EvmChainId.ETHEREUM,
+    args: amount ? [amount.amount] : undefined,
     query: { enabled },
   })
 

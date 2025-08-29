@@ -5,17 +5,16 @@ import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import type { Row } from '@tanstack/react-table'
 import { type FC, useMemo } from 'react'
 import type { ConcentratedLiquidityPositionWithV3Pool } from 'src/lib/wagmi/hooks/positions/types'
-import type { ChainId } from 'sushi/chain'
-import { type Type, unwrapToken } from 'sushi/currency'
-import { formatPercent } from 'sushi/format'
+import { formatPercent } from 'sushi'
+import { type EvmCurrency, unwrapEvmToken } from 'sushi/evm'
 
 export const PoolNameCellV3: FC<
   Row<ConcentratedLiquidityPositionWithV3Pool>
 > = ({ original }) => {
-  const [_token0, _token1]: Type[] = useMemo(
+  const [_token0, _token1]: [EvmCurrency, EvmCurrency] = useMemo(
     () => [
-      unwrapToken(original.pool.token0),
-      unwrapToken(original.pool.token1),
+      unwrapEvmToken(original.pool.token0),
+      unwrapEvmToken(original.pool.token1),
     ],
     [original],
   )
@@ -27,11 +26,7 @@ export const PoolNameCellV3: FC<
             className="border-2 border-slate-900 rounded-full z-[11]"
             position="bottom-right"
             badgeContent={
-              <NetworkIcon
-                chainId={original.chainId as ChainId}
-                width={14}
-                height={14}
-              />
+              <NetworkIcon chainId={original.chainId} width={14} height={14} />
             }
           >
             <Currency.IconList iconWidth={26} iconHeight={26}>

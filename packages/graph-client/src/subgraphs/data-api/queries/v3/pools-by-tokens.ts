@@ -1,9 +1,15 @@
 import type { VariablesOf } from 'gql.tada'
 
 import { type RequestOptions, request } from 'src/lib/request.js'
-import { type PoolBase, type PoolV3, SushiSwapProtocol } from 'sushi'
-import { isSushiSwapV3ChainId } from 'sushi/config'
-import { SUSHI_DATA_API_HOST } from 'sushi/config/subgraph'
+import {
+  type EvmID,
+  EvmToken,
+  type PoolBase,
+  type PoolV3,
+  SUSHI_DATA_API_HOST,
+  SushiSwapProtocol,
+  isSushiSwapV3ChainId,
+} from 'sushi/evm'
 import type { Address } from 'viem'
 import { graphql } from '../../graphql.js'
 
@@ -90,29 +96,27 @@ export async function getV3BasePoolsByToken(
     return result.v3PoolsByTokens.map(
       (pool) =>
         ({
-          id: pool.id as `${string}:0x${string}`,
+          id: pool.id as EvmID,
           address: pool.address as Address,
           chainId,
           name: pool.name,
           swapFee: pool.swapFee,
           protocol: SushiSwapProtocol.SUSHISWAP_V3,
           isProtocolFeeEnabled: pool.isProtocolFeeEnabled,
-          token0: {
-            id: pool.token0.id as `${string}:0x${string}`,
+          token0: new EvmToken({
             address: pool.token0.address as Address,
             chainId,
             decimals: pool.token0.decimals,
             name: pool.token0.name,
             symbol: pool.token0.symbol,
-          },
-          token1: {
-            id: pool.token1.id as `${string}:0x${string}`,
+          }),
+          token1: new EvmToken({
             address: pool.token1.address as Address,
             chainId,
             decimals: pool.token1.decimals,
             name: pool.token1.name,
             symbol: pool.token1.symbol,
-          },
+          }),
 
           reserve0: BigInt(pool.reserve0),
           reserve1: BigInt(pool.reserve1),

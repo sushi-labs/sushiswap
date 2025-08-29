@@ -5,7 +5,7 @@ import {
   SkeletonText,
 } from '@sushiswap/ui'
 import type { FC } from 'react'
-import { type ChainId, EvmChain } from 'sushi/chain'
+import { type EvmChainId, getEvmChainById } from 'sushi/evm'
 
 export function SkeletonChart({ type }: { type: 'area' | 'bar' }) {
   const height = 400
@@ -25,13 +25,15 @@ export function SkeletonChart({ type }: { type: 'area' | 'bar' }) {
   )
 }
 
-export const GlobalStatsLoading: FC<{ chainId: ChainId }> = ({ chainId }) => {
+export const GlobalStatsLoading: FC<{ chainId: EvmChainId }> = ({
+  chainId,
+}) => {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-20 gap-y-10">
       <div>
         <div className="flex flex-col gap-3">
           <span className="text-sm text-muted-foreground">
-            {EvmChain.from(chainId)?.name} T0
+            {getEvmChainById(chainId).name} T0
           </span>
           <SkeletonBox className="!w-36 h-[36px]" />
           <SkeletonBox className="!w-40 h-[20px]" />

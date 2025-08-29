@@ -8,14 +8,18 @@ import { useEnabledCookies } from './_common/cookies/use-enabled-cookies'
 export function Trackers() {
   const enabledCookies = useEnabledCookies()
 
-  const performanceEnabled = !!enabledCookies?.has('performance')
+  const analyiticsEnabled = !!enabledCookies?.has('analytical')
+  const googleEnabled = analyiticsEnabled && !!enabledCookies?.has('google')
+  const hotjarEnabled = analyiticsEnabled && !!enabledCookies?.has('hotjar')
 
   return (
     <>
-      <VercelAnalytics />
-      <GoogleAnalytics enabled={performanceEnabled} />
-      <GoogleTagManager enabled={performanceEnabled} />
-      <HotJar enabled={performanceEnabled} />
+      <VercelAnalytics
+        beforeSend={(event) => (analyiticsEnabled ? event : null)}
+      />
+      <GoogleAnalytics enabled={analyiticsEnabled} />
+      <GoogleTagManager enabled={googleEnabled} />
+      <HotJar enabled={hotjarEnabled} />
       <SpeedInsights />
     </>
   )

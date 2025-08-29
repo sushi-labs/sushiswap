@@ -1,18 +1,19 @@
 import { Currency } from '@sushiswap/ui'
 import type { FC } from 'react'
 import { PricePanel } from 'src/lib/wagmi/components/web3-input/Currency/PricePanel'
-import type { Amount, Type } from 'sushi/currency'
+import type { Amount } from 'sushi'
+import type { EvmCurrency } from 'sushi/evm'
 import { usePrice } from '~evm/_common/ui/price-provider/price-provider/use-price'
 
 interface AmountPanelProps {
-  amount?: Amount<Type>
+  amount?: Amount<EvmCurrency>
   label: string
 }
 
 export const AmountPanel: FC<AmountPanelProps> = ({ amount, label }) => {
   const { data: price, isLoading: isPriceLoading } = usePrice({
     chainId: amount?.currency?.chainId,
-    address: amount?.currency?.wrapped?.address,
+    address: amount?.currency?.wrap().address,
   })
 
   return (

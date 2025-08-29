@@ -1,5 +1,3 @@
-'use client'
-
 import type { V2Pool } from '@sushiswap/graph-client/data-api'
 import {
   Card,
@@ -10,7 +8,7 @@ import {
   classNames,
 } from '@sushiswap/ui'
 import type { FC } from 'react'
-import { formatNumber, formatPercent, formatUSD } from 'sushi/format'
+import { formatNumber, formatPercent, formatUSD } from 'sushi'
 
 interface PoolStats {
   pool: V2Pool

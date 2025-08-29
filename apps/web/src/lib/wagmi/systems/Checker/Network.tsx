@@ -4,7 +4,7 @@ import { InformationCircleIcon } from '@heroicons/react/24/solid'
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@sushiswap/ui'
 import { Button, type ButtonProps } from '@sushiswap/ui'
 import type { FC, ReactElement, ReactNode } from 'react'
-import { type EvmChainId, evmChainName } from 'sushi/chain'
+import { type EvmChainId, getEvmChainById } from 'sushi/evm'
 import { useAccount, useSwitchChain } from 'wagmi'
 
 interface NetworkProps extends ButtonProps {
@@ -40,7 +40,7 @@ const Network: FC<NetworkProps> = ({
       >
         {hideChainName
           ? 'Switch Network'
-          : `Switch to ${evmChainName[chainId]}`}
+          : `Switch to ${getEvmChainById(chainId).name}`}
       </Button>
     ) : (
       <HoverCard openDelay={0} closeDelay={0}>
@@ -53,7 +53,7 @@ const Network: FC<NetworkProps> = ({
         >
           {hideChainName
             ? 'Switch Network'
-            : `Switch to ${evmChainName[chainId]}`}
+            : `Switch to ${getEvmChainById(chainId).name}`}
           <HoverCardTrigger>
             <InformationCircleIcon width={16} height={16} />
           </HoverCardTrigger>

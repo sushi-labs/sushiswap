@@ -5,8 +5,8 @@ import { Button, typographyVariants } from '@sushiswap/ui'
 import { SkeletonText } from '@sushiswap/ui'
 import React, { useMemo, useState } from 'react'
 import { useTokenAmountDollarValues } from 'src/lib/hooks'
-import { Amount, Price, Token, tryParseAmount } from 'sushi/currency'
-import { formatUSD } from 'sushi/format'
+import { Amount, Price, formatUSD } from 'sushi'
+import { EvmToken } from 'sushi/evm'
 
 import { usePrices } from '~evm/_common/ui/price-provider/price-provider/use-prices'
 import { useDerivedStateCrossChainSwap } from './derivedstate-cross-chain-swap-provider'
@@ -19,7 +19,9 @@ export const CrossChainSwapHeader = () => {
   } = useDerivedStateCrossChainSwap()
 
   const amounts = useMemo(() => {
-    return [[tryParseAmount('1', token0)], [tryParseAmount('1', token1)]]
+    return token0 && token1
+      ? [[Amount.fromHuman(token0, '1')], [Amount.fromHuman(token1, '1')]]
+      : [[], []]
   }, [token0, token1])
 
   const [token0FiatPrice] = useTokenAmountDollarValues({
@@ -38,38 +40,36 @@ export const CrossChainSwapHeader = () => {
     if (!token0 || !token1) return '0.00'
 
     // To make sure both tokens have same chainId when creating the price entity
-    const dummy0 = new Token({
-      address: token0.wrapped.address,
+    const dummy0 = new EvmToken({
+      address: token0.wrap().address,
       chainId: 1,
       decimals: token0.decimals,
+      name: token0.name,
+      symbol: token0.symbol,
     })
-    const dummy1 = new Token({
-      address: token1.wrapped.address,
+    const dummy1 = new EvmToken({
+      address: token1.wrap().address,
       chainId: 1,
       decimals: token1.decimals,
+      name: token1.name,
+      symbol: token1.symbol,
     })
 
-    const _token0Price = prices0?.getFraction(token0.wrapped.address)
+    const _token0Price = prices0?.getFraction(token0.wrap().address)
     const token0Price = _token0Price
-      ? tryParseAmount('1', token0)?.multiply(_token0Price)
+      ? Amount.fromHuman(token0, '1')?.mul(_token0Price)
       : undefined
 
-    const _token1Price = prices1?.getFraction(token1.wrapped.address)
+    const _token1Price = prices1?.getFraction(token1.wrap().address)
     const token1Price = _token1Price
-      ? tryParseAmount('1', token1)?.multiply(_token1Price)
+      ? Amount.fromHuman(token1, '1')?.mul(_token1Price)
       : undefined
 
     let price
     if (token0Price && token1Price) {
       price = new Price({
-        baseAmount: Amount.fromRawAmount(
-          dummy0,
-          token0Price.quotient.toString(),
-        ),
-        quoteAmount: Amount.fromRawAmount(
-          dummy1,
-          token1Price.quotient.toString(),
-        ),
+        baseAmount: new Amount(dummy0, token0Price.amount.toString()),
+        quoteAmount: new Amount(dummy1, token1Price.amount.toString()),
       })
     }
 

@@ -2,7 +2,7 @@ import { isPromiseFulfilled } from 'sushi'
 import {
   EXTRACTOR_SUPPORTED_CHAIN_IDS,
   type ExtractorSupportedChainId,
-} from 'sushi/config'
+} from 'sushi/evm'
 
 export async function getAllPrices() {
   const results = await Promise.allSettled(

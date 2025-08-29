@@ -26,8 +26,7 @@ import React, {
   useState,
 } from 'react'
 import type { UseTradeReturn } from 'src/lib/hooks/react-query'
-import { ChainId } from 'sushi/chain'
-import { type Type, WETH9 } from 'sushi/currency'
+import { EvmChainId, type EvmCurrency, WETH9 } from 'sushi/evm'
 
 // const tokenFromRToken = (token: TradeLegType['tokenFrom']) => {
 //   if (
@@ -104,8 +103,8 @@ export const TradeRoutePathView: FC<{
 }
 
 interface ComplexRoutePathProps {
-  fromToken: Type
-  toToken: Type
+  fromToken: EvmCurrency
+  toToken: EvmCurrency
   poolType: 'Stable' | 'Classic' | 'Unknown'
   poolFee: number
   portion: number
@@ -144,8 +143,8 @@ export const ComplexRoutePath: FC<ComplexRoutePathProps> = ({
           height={16}
         />
         <span className="truncate">
-          {fromToken.equals(WETH9[ChainId.SKALE_EUROPA])
-            ? WETH9[ChainId.SKALE_EUROPA].symbol
+          {fromToken.isSame(WETH9[EvmChainId.SKALE_EUROPA])
+            ? WETH9[EvmChainId.SKALE_EUROPA].symbol
             : fromToken.symbol}
         </span>
       </div>
@@ -160,8 +159,8 @@ export const ComplexRoutePath: FC<ComplexRoutePathProps> = ({
       <div className="z-[1] font-medium col-span-4 text-sm flex items-center justify-end gap-2">
         <Currency.Icon disableLink currency={toToken} width={16} height={16} />
         <span className="text-sm truncate">
-          {toToken.equals(WETH9[ChainId.SKALE_EUROPA])
-            ? WETH9[ChainId.SKALE_EUROPA].symbol
+          {toToken.isSame(WETH9[EvmChainId.SKALE_EUROPA])
+            ? WETH9[EvmChainId.SKALE_EUROPA].symbol
             : toToken.symbol}
         </span>
       </div>
