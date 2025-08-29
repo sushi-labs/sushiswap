@@ -101,11 +101,11 @@ export const TableFiltersNetworkV2 = () => {
           </div>
 
           {allSelected ? (
-            <div className="mr-auto pl-1">
+            <div className="pl-1 mr-auto">
               <Button
                 variant="ghost"
                 size="xs"
-                className="text-blue dark:text-skyblue font-medium"
+                className="font-medium text-blue dark:text-skyblue"
                 onClick={clearAll}
               >
                 Clear All
@@ -167,8 +167,7 @@ export const TableFiltersNetworkV2 = () => {
     // 				"border-dashed !bg-slate-200 dark:!bg-slate-750",
     // 				"hover:dark:!bg-skyblue/20 hover:!bg-blue/20 hover:!text-blue hover:dark:!text-skyblue",
     // 				network
-    // 					? "!bg-blue/10 dark:!bg-skyblue/10 !text-blue dark:!text-skyblue !border-blue !border-1 !border-solid"
-    // 					: ""
+    // 					? "!bg-blue/10 dark:!bg-skyblue/10 !text-blue dark:!text-skyblue !border-blue !border-1 !border-solid"// :""
     // 			)}>
     // 			<span>Network</span>
     // 			{/* <Chip variant="secondary">{getNetworkName(network)}</Chip> */}

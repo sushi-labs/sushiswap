@@ -47,7 +47,7 @@ export const poolFiltersSchema = z.object({
     .transform((networks) => {
       if (!networks) return DEFAULT_POOL_NETWORKS
       return networks.split(',').map((network) => {
-        return +network as (typeof DEFAULT_POOL_NETWORKS)[number]
+        return +network as ChainId
       })
     })
     .optional(),
