@@ -10,6 +10,6 @@ export const useDexMetrics = () => {
       if (!data.success) throw new Error('Failed to fetch DEX metrics')
       return data.data
     },
-    staleTime: 60_000, // 1 min
+    staleTime: (60 * 1000) / 6,
   })
 }

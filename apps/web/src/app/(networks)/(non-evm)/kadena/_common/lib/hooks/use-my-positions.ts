@@ -56,7 +56,7 @@ export const useMyPositions = (pageSize = 50) => {
       return { ...data, positions: flat }
     },
     initialPageParam: null,
-    staleTime: 60 * 1000,
+    staleTime: (60 * 1000) / 6,
     enabled: !!walletAddress,
   })
 }

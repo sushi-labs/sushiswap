@@ -42,6 +42,6 @@ export const usePoolCharts = ({
       return json.data
     },
     enabled: !!poolId,
-    staleTime: 60 * 1000,
+    staleTime: (60 * 1000) / 6,
   })
 }

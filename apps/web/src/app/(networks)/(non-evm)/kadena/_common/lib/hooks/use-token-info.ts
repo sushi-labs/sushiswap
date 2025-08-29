@@ -43,7 +43,7 @@ export const useTokenInfo = ({
       return { name, symbol, decimals }
     },
     enabled: !!tokenContract && enabled,
-    staleTime: 5 * 60 * 1000,
-    gcTime: 10 * 60 * 1000,
+    staleTime: (30 * 1000) / 6,
+    gcTime: (10 * 60 * 1000) / 6,
   })
 }

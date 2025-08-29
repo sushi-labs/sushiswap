@@ -45,6 +45,6 @@ export const usePoolTransactions = ({
       return json.data
     },
     enabled: !!pairId,
-    staleTime: 60 * 1000,
+    staleTime: (60 * 1000) / 6,
   })
 }

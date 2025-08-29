@@ -37,7 +37,7 @@ export const useNativeTokenBalance = ({
       }
     },
     enabled: !!account && enabled,
-    staleTime: 60 * 1000,
-    gcTime: 5 * 60 * 1000,
+    staleTime: (60 * 1000) / 6,
+    gcTime: (5 * 60 * 1000) / 6,
   })
 }
