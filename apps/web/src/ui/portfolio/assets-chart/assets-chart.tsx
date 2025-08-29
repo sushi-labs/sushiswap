@@ -352,7 +352,7 @@ export const AssetsChart = () => {
       },
       grid: {
         top: isSmallScreen ? 10 : 30,
-        left: isSmallScreen ? 65 : 90,
+        left: isSmallScreen ? 65 : 99,
         right: 6,
         bottom: isSmallScreen ? 50 : 70,
       },
