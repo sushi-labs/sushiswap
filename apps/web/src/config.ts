@@ -27,6 +27,7 @@ export const DISABLED_CHAIN_IDS = [
   ChainId.POLYGON_ZKEVM,
   ChainId.TATARA,
   ChainId.HYPEREVM,
+  ChainId.BERACHAIN,
 ] as const
 
 export const NEW_CHAIN_IDS = [EvmChainId.KATANA] as const
@@ -41,6 +42,7 @@ export const PREFERRED_CHAINID_ORDER = [
   ChainId.AVALANCHE,
   ChainId.POLYGON,
   ChainId.HYPEREVM,
+  ChainId.BERACHAIN,
   ChainId.SCROLL,
   ChainId.BLAST,
   ChainId.OPTIMISM,
@@ -214,7 +216,8 @@ export const XSWAP_SUPPORTED_CHAIN_IDS = [
   // ChainId.FUSE,
   ChainId.FANTOM,
   ChainId.GNOSIS,
-  ChainId.HYPEREVM,
+  // ChainId.HYPEREVM,
+  // ChainId.BERACHAIN,
   ChainId.KATANA,
   ChainId.LINEA,
   ChainId.MANTLE,

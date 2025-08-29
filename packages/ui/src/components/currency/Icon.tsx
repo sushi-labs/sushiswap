@@ -31,6 +31,7 @@ const MntLogo = 'mntl.svg'
 const ApeLogo = 'ape.svg'
 const SonicLogo = 'sonic.svg'
 const HypeLogo = 'hype.svg'
+const BeraLogo = 'bera.svg'
 
 const LOGO: Record<number, string> = {
   [ChainId.ETHEREUM]: EthereumLogo,
@@ -85,6 +86,7 @@ const LOGO: Record<number, string> = {
   [ChainId.HEMI]: EthereumLogo,
   [ChainId.KATANA]: EthereumLogo,
   [ChainId.HYPEREVM]: HypeLogo,
+  [ChainId.BERACHAIN]: BeraLogo,
 }
 
 // function djb2(str: string) {
