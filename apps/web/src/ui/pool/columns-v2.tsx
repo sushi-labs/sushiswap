@@ -487,9 +487,6 @@ export const VOL_TVL_COLUMN: ColumnDef<MultiChainPool, unknown> = {
   sortingFn: ({ original: rowA }, { original: rowB }) =>
     rowA.tvlVolumeRatio - rowB.tvlVolumeRatio,
   cell: (props) => {
-    if (props.row.original.name === 'vbUSDC / vbUSDT') {
-      console.log('swag', props.row.original.tvlVolumeRatio)
-    }
     return (
       <span className="flex items-center justify-center w-[130px]">
         {Number.isNaN(props.row.original.tvlVolumeRatio)
@@ -529,16 +526,6 @@ export const APR_WITH_REWARDS_COLUMN: ColumnDef<MultiChainPool, unknown> = {
             {Number.isNaN(props.row.original.totalApr1w)
               ? '0%'
               : formatPercent(props.row.original.totalApr1w)}
-          </span>
-          <span
-            className={classNames(
-              'text-xs',
-              // getTextColor(props.row.original.liquidityUSDChange1d, "text-muted-foreground")
-              getTextColor(-0.0163, 'text-muted-foreground'),
-            )}
-          >
-            {/* {props.row.original.liquidityUSDChange1d > 0 ? "+" : ""} */}
-            {formatPercent(-0.0163)}
           </span>
         </div>
       )
