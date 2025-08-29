@@ -61,8 +61,6 @@ export const SwapModeButtons = () => {
   const { chainId: _chainId } = useParams()
   const chainId = +_chainId! as EvmChainId
 
-  console.log('chainId', _chainId)
-
   return (
     <div className="flex flex-wrap gap-1 md:gap-2">
       <SwapModeButton isSupported={true} path={`/kadena/swap`}>

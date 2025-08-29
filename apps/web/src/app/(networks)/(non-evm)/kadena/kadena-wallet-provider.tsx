@@ -1,4 +1,6 @@
+import { detectEckoProvider } from '@kadena/wallet-adapter-ecko'
 import { useKadenaWallet } from '@kadena/wallet-adapter-react'
+import { useLocalStorage } from '@sushiswap/hooks'
 import React, {
   createContext,
   useCallback,
@@ -6,6 +8,7 @@ import React, {
   useState,
   useMemo,
   type ReactNode,
+  useEffect,
 } from 'react'
 
 type WalletContextType = {
@@ -58,6 +61,11 @@ export const KadenaWalletProvider = ({
   const [activeAccount, setActiveAccount] = useState<any>(null)
   const [isConnected, setIsConnected] = useState(false)
   const [isConnecting, setIsConnecting] = useState(false)
+  const [lastWallet, setLastWallet] = useLocalStorage<string | null>(
+    'sushi.kadena.wallet',
+    null,
+  )
+  const [hasAttemptedAutoConnect, setHasAttemptedAutoConnect] = useState(false)
 
   const handleConnect = useCallback(
     async (walletAdapterName: string) => {
@@ -67,6 +75,7 @@ export const KadenaWalletProvider = ({
       }
       try {
         const accountInfo = await client.connect(walletAdapterName)
+        setLastWallet(walletAdapterName)
         setActiveAccount(accountInfo)
         setCurrentWallet(walletAdapterName)
         setIsConnected(true)
@@ -76,17 +85,39 @@ export const KadenaWalletProvider = ({
         setIsConnecting(false)
       }
     },
-    [client],
+    [setLastWallet, client],
   )
 
   const handleDisconnect = useCallback(async () => {
     if (currentWallet) {
       await client.disconnect(currentWallet)
+      setLastWallet(null)
       setActiveAccount(null)
       setCurrentWallet(null)
       setIsConnected(false)
     }
-  }, [client, currentWallet])
+  }, [client, currentWallet, setLastWallet])
+
+  //autoconnect start
+  const activeAdapters = client.getDetectedAdapters()
+  useEffect(() => {
+    const connectWallet = async () => {
+      try {
+        if (
+          lastWallet &&
+          activeAdapters.find((adapter) => adapter.name === lastWallet) &&
+          !hasAttemptedAutoConnect
+        ) {
+          setHasAttemptedAutoConnect(true)
+          await handleConnect(lastWallet)
+        }
+      } catch (error) {
+        console.log('Auto connect failed', error)
+      }
+    }
+    connectWallet()
+  }, [activeAdapters, lastWallet, hasAttemptedAutoConnect, handleConnect])
+  //autoconnect end
 
   const walletAdapters = client.getProviders().map((adapter) => ({
     name: adapter.name,
