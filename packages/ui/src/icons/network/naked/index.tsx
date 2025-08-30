@@ -7,6 +7,7 @@ import { ArbitrumNaked } from './ArbitrumNaked'
 import { ArbitrumNovaNaked } from './ArbitrumNovaNaked'
 import { AvalancheNaked } from './AvalancheNaked'
 import { BaseNaked } from './BaseNaked'
+import { BeraNaked } from './BeraNaked'
 import { BinanceNaked } from './BinanceNaked'
 import { BlastNaked } from './BlastNaked'
 import { BobaBNBNaked } from './BobaBNBNaked'
@@ -51,6 +52,7 @@ export * from './ArbitrumNaked'
 export * from './ArbitrumNovaNaked'
 export * from './AvalancheNaked'
 export * from './BaseNaked'
+export * from './BeraNaked'
 export * from './BinanceNaked'
 export * from './BlastNaked'
 export * from './BobaAvaxNaked'
@@ -138,6 +140,7 @@ export const NETWORK_NAKED_ICON: Partial<
   [ChainId.HEMI]: HemiNaked,
   [ChainId.KATANA]: KatanaNaked,
   [ChainId.HYPEREVM]: HyperEVMNaked,
+  [ChainId.BERACHAIN]: BeraNaked,
   [ChainId.APTOS]: AptosNaked,
   [ChainId.TRON]: TronNaked,
 }
