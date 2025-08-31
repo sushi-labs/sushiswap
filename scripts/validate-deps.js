@@ -6,7 +6,7 @@
  */
 
 import { execSync } from 'node:child_process'
-import { readdirSync, existsSync } from 'node:fs'
+import { existsSync, readdirSync } from 'node:fs'
 import { join } from 'node:path'
 
 // Packages that frequently cause instanceof failures due to peer dep mismatches
@@ -67,24 +67,24 @@ const pnpmDir = join(process.cwd(), 'node_modules', '.pnpm')
 if (existsSync(pnpmDir)) {
   const packageMap = new Map()
   const entries = readdirSync(pnpmDir, { withFileTypes: true })
-  
+
   for (const entry of entries) {
     if (!entry.isDirectory()) continue
-    
+
     // Parse package directory names (format: package@version_dependencies)
     const match = entry.name.match(/^(.+?)@([^_]+)_/)
     if (!match) continue
-    
+
     const [, packageName, version] = match
-    
+
     if (CRITICAL_PACKAGES.includes(packageName)) {
       if (!packageMap.has(packageName)) {
         packageMap.set(packageName, new Set())
       }
-      
+
       packageMap.get(packageName).add({
         version,
-        fullPath: entry.name
+        fullPath: entry.name,
       })
     }
   }
@@ -94,17 +94,21 @@ if (existsSync(pnpmDir)) {
     if (installations.size > 1) {
       hasPnpmDuplicates = true
       const installationArray = Array.from(installations)
-      
+
       console.error(`❌ Multiple ${packageName} installations in pnpm store:`)
       for (const installation of installationArray) {
         console.error(`   - ${installation.fullPath}`)
       }
-      console.error('   This causes instanceof failures! Different dependency combinations create separate installations.')
+      console.error(
+        '   This causes instanceof failures! Different dependency combinations create separate installations.',
+      )
     }
   }
-  
+
   if (hasPnpmDuplicates) {
-    console.error('\n💡 To fix: Add overrides to package.json to force consistent dependency versions')
+    console.error(
+      '\n💡 To fix: Add overrides to package.json to force consistent dependency versions',
+    )
     console.error('   Example: "utf-8-validate": "6.0.3" in pnpm.overrides')
     process.exit(1)
   }
