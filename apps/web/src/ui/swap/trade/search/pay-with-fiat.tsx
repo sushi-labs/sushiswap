@@ -61,6 +61,7 @@ export const PayWithFiat = () => {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button
+          disabled={true}
           variant={'secondary'}
           type="button"
           className={classNames(

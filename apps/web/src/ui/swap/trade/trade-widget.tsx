@@ -1,7 +1,7 @@
 'use client'
 
 import { Collapsible } from '@sushiswap/ui'
-import { usePathname } from 'next/navigation'
+import { useTradeMode } from 'src/lib/hooks/useTradeMode'
 import { QuickSelectOverlay } from 'src/lib/wagmi/components/token-selector/quick-select/quick-select-overlay'
 import { EdgeProvider, useEdgeConfig } from 'src/providers/edge-config-provider'
 import { DerivedstateSimpleSwapProvider } from 'src/ui/swap/simple/derivedstate-simple-swap-provider'
@@ -11,7 +11,7 @@ import { DerivedStateTwapProvider } from '../twap/derivedstate-twap-provider'
 import { useDerivedStateSimpleTrade } from './derivedstate-simple-trade-provider'
 import { type TradeEdgeConfig, sliceEdgeConfig } from './trade-edge-config'
 import { TradeModeButtons } from './trade-mode-buttons'
-import { FiatWidget } from './widgets/fiat'
+// import { FiatWidget } from './widgets/fiat'
 import { MarketWidget } from './widgets/market'
 import { DCAWidget, LimitWidget } from './widgets/twap'
 import { Wrapper } from './wrapper'
@@ -20,12 +20,7 @@ export const TradeWidget = () => {
   const {
     state: { tradeModeChanged, chainId, tradeView },
   } = useDerivedStateSimpleTrade()
-  const pathname = usePathname()
-  const tradeMode = pathname.split('/')?.[2] as
-    | 'swap'
-    | 'limit'
-    | 'dca'
-    | 'fiat'
+  const { tradeMode } = useTradeMode()
 
   const tradeEdge = useEdgeConfig<TradeEdgeConfig>()
   const modeEdge = sliceEdgeConfig(tradeEdge, tradeMode)
@@ -68,7 +63,7 @@ export const TradeWidget = () => {
                 <DCAWidget animated={tradeModeChanged} />
               </DerivedStateTwapProvider>
             )}
-            {tradeMode === 'fiat' && (
+            {/* {tradeMode === 'fiat' && (
               <>
                 <div className="flex items-center justify-between">
                   <TradeModeButtons />
@@ -76,7 +71,7 @@ export const TradeWidget = () => {
                 </div>
                 <FiatWidget animated={tradeModeChanged} />
               </>
-            )}
+            )} */}
           </div>
         </Collapsible>
       </Wrapper>

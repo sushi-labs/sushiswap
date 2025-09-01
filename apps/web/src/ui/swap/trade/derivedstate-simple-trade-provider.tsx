@@ -11,6 +11,7 @@ import {
 } from 'react'
 import type { SupportedChainId } from 'src/config'
 import { useCreateQuery } from 'src/lib/hooks/useCreateQuery'
+import { useTradeMode } from 'src/lib/hooks/useTradeMode'
 import { EvmChainId } from 'sushi/chain'
 import {
   TRADE_MODES,
@@ -55,7 +56,7 @@ const DerivedstateSimpleTradeProvider: FC<
   DerivedStateSimpleTradeProviderProps
 > = ({ children }) => {
   const pathname = usePathname()
-  const { chainId: _chainId, trade } = useParams()
+  const { chainId: _chainId } = useParams()
   const searchParams = useSearchParams()
   const chainId0 = searchParams.get('chainId0')
   const chainId = chainId0
@@ -63,7 +64,7 @@ const DerivedstateSimpleTradeProvider: FC<
     : _chainId
       ? (+_chainId as SupportedChainId)
       : EvmChainId.ETHEREUM
-  const [tradeMode, _setTradeMode] = useState<TradeMode>(trade as TradeMode)
+  const { tradeMode } = useTradeMode()
   const [tradeView, _setTradeView] = useState<TradeView>(
     resolveViewModeFromPathname(pathname),
   )
@@ -89,7 +90,7 @@ const DerivedstateSimpleTradeProvider: FC<
 
   const setTradeMode = useCallback(
     (trade: TradeMode) => {
-      _setTradeMode(trade)
+      // _setTradeMode(trade)
       _setTradeModeChanged(true)
 
       createQuery(
