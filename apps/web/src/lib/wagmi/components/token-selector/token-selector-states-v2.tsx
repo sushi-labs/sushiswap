@@ -160,6 +160,7 @@ export function TokenSelectorStatesV2({
             onShowInfo={onShowInfo}
             selected={selected}
             showChainOptions={type === 'buy'}
+            includeNative={includeNative}
           />
         ) : null}
 

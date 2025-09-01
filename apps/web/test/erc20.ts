@@ -77,11 +77,7 @@ export async function createERC20({
   })
 }
 
-export async function prepareERC20Balance({
-  chainId,
-}: {
-  chainId: number
-}) {
+export async function prepareERC20Balance({ chainId }: { chainId: number }) {
   let chain: Chain
   let usdcAddress: `0x${string}`
   let wethAddress: `0x${string}`
@@ -144,15 +140,9 @@ export async function prepareERC20Balance({
     args: [publicAddress],
   })
   console.log(
-    `${impersonatedAccount} gave ${publicAddress} ${formatUnits(
-      usdcBalance,
-      6,
-    )} USDC`,
+    `${impersonatedAccount} gave ${publicAddress} ${formatUnits(usdcBalance, 6)} USDC`,
   )
   console.log(
-    `${impersonatedAccount} gave ${publicAddress} ${formatUnits(
-      wethBalance,
-      18,
-    )} WETH`,
+    `${impersonatedAccount} gave ${publicAddress} ${formatUnits(wethBalance, 18)} WETH`,
   )
 }

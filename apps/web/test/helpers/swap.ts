@@ -69,9 +69,9 @@ export class SwapPage extends BaseActions {
 
     // If this text is duplicated elsewhere it could false positive
     const expectedText = new RegExp(
-      `(${inputCurrency.isNative ? 'Wrap' : 'Unwrap'} .* ${
-        inputCurrency.symbol
-      } to .* ${outputCurrency.symbol})`,
+      `(${inputCurrency.isNative ? 'Wrap' : 'Unwrap'} .* ${inputCurrency.symbol} to .* ${
+        outputCurrency.symbol
+      })`,
     )
     expect(this.page.getByText(expectedText)).toBeVisible()
 
@@ -201,12 +201,12 @@ export class SwapPage extends BaseActions {
     await tokenSelector.click()
 
     if (currency.isNative) {
-      const chipToSelect = this.page.locator(
-        `[testdata-id=token-selector-chip-${NativeAddress}]`,
+      const rowToSelect = this.page.locator(
+        `[testdata-id=token-selector-row-${NativeAddress}]`,
       )
-      await expect(chipToSelect).toBeVisible()
+      await expect(rowToSelect).toBeVisible()
 
-      await chipToSelect.click()
+      await rowToSelect.click()
       await expect(tokenSelector).toContainText(currency.symbol as string)
     } else {
       const tokenSearch = this.page.locator(
@@ -214,10 +214,10 @@ export class SwapPage extends BaseActions {
       )
       await expect(tokenSearch).toBeVisible()
       await expect(tokenSearch).toBeEnabled()
-      await tokenSearch.fill(currency.address)
+      await tokenSearch.fill(currency.wrapped.address)
 
       const tokenToSelect = this.page.locator(
-        `[testdata-id=token-selector-row-${currency.address.toLowerCase()}]`,
+        `[testdata-id=token-selector-row-${currency.wrapped.address.toLowerCase()}]`,
       )
       await expect(tokenToSelect).toBeVisible()
 

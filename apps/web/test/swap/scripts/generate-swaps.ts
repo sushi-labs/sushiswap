@@ -62,19 +62,11 @@ const getSwapApiResult = async ({
 
   params.searchParams.set(
     'tokenIn',
-    `${
-      fromToken?.isNative
-        ? '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE'
-        : fromToken?.wrapped.address
-    }`,
+    `${fromToken?.isNative ? '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE' : fromToken?.wrapped.address}`,
   )
   params.searchParams.set(
     'tokenOut',
-    `${
-      toToken?.isNative
-        ? '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE'
-        : toToken?.wrapped.address
-    }`,
+    `${toToken?.isNative ? '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE' : toToken?.wrapped.address}`,
   )
   params.searchParams.set('amount', `${amount?.quotient.toString()}`)
   params.searchParams.set('maxSlippage', `${Number(slippagePercentage) / 100}`)
