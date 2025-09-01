@@ -2,18 +2,16 @@ import { PoolChainIds } from '@sushiswap/graph-client/data-api'
 import { ChainId } from 'sushi'
 import {
   AGGREGATOR_ONLY_CHAIN_IDS,
-  EXTRACTOR_SUPPORTED_CHAIN_IDS,
   type EvmAddress,
   EvmChainId,
   type EvmTestnetChainId,
   SUSHISWAP_SUPPORTED_CHAIN_IDS,
+  SWAP_API_SUPPORTED_CHAIN_IDS,
   type SushiSwapV3ChainId,
   isEvmTestnetChainId,
 } from 'sushi/evm'
 import { MvmChainId } from 'sushi/mvm'
 import { TvmChainId } from 'sushi/tvm'
-
-export const SWAP_API_SUPPORTED_CHAIN_IDS = EXTRACTOR_SUPPORTED_CHAIN_IDS
 
 export type SwapApiEnabledChainId =
   (typeof SWAP_API_SUPPORTED_CHAIN_IDS)[number]
