@@ -35,6 +35,18 @@ const chainIdsByTradeMode: Record<
   swap: null,
 }
 
+const defaultWidgetProps: Partial<ChartingLibraryWidgetOptions> = {
+  interval: '1D' as ResolutionString,
+  library_path: '/static/charting_library/',
+  locale: 'en',
+  charts_storage_url: 'https://saveload.tradingview.com',
+  charts_storage_api_version: '1.1',
+  client_id: 'tradingview.com',
+  user_id: 'public_user_id',
+  fullscreen: false,
+  autosize: true,
+}
+
 export default function TradePage() {
   const {
     state: { tradeMode, tradeView },
@@ -45,18 +57,6 @@ export default function TradePage() {
   const hasMounted = useIsMounted()
   const pathname = usePathname()
   const isKatana = pathname.includes('katana')
-
-  const defaultWidgetProps: Partial<ChartingLibraryWidgetOptions> = {
-    interval: '1D' as ResolutionString,
-    library_path: '/static/charting_library/',
-    locale: 'en',
-    charts_storage_url: 'https://saveload.tradingview.com',
-    charts_storage_api_version: '1.1',
-    client_id: 'tradingview.com',
-    user_id: 'public_user_id',
-    fullscreen: false,
-    autosize: true,
-  }
 
   return (
     <>

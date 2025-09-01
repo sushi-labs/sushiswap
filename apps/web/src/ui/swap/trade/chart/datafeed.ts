@@ -44,6 +44,13 @@ const configurationData: ConfigurationData = {
   ],
 }
 
+const timeframe: Record<string, GetTokenPriceChartV2['interval']> = {
+  60: 'HOURLY',
+  240: 'HOURLY',
+  720: 'HOURLY',
+  '1D': 'DAILY',
+}
+
 export default {
   onReady: (callback: (config: ConfigurationData) => void): void => {
     // console.log("[onReady]: Method call");
@@ -121,12 +128,6 @@ export default {
     const chainId = symbolInfo.chainId
     const address = symbolInfo.address
     try {
-      const timeframe: Record<string, GetTokenPriceChartV2['interval']> = {
-        60: 'HOURLY',
-        240: 'HOURLY',
-        720: 'HOURLY',
-        '1D': 'DAILY',
-      }
       const interval = timeframe[resolution]
 
       const earliestAllowedTimestamp = 1518147224 //9 February 2018
@@ -228,18 +229,96 @@ export default {
   },
 
   subscribeBars: (
-    _symbolInfo: LibrarySymbolInfo,
-    _resolution: ResolutionString,
-    _onRealtimeCallback: (bar: Bar) => void,
-    _subscriberUID: string,
+    symbolInfo: LibrarySymbolInfo & { chainId: string; address: string },
+    resolution: ResolutionString,
+    onRealtimeCallback: (bar: Bar) => void,
+    subscriberUID: string,
     _onResetCacheNeededCallback: () => void,
   ): void => {
     // console.log("[subscribeBars]: Method call with subscriberUID:", subscriberUID);
     // Subscription logic here
+    const interval = resolutionToMs(resolution) // You can define your own interval here
+
+    const timer = setInterval(() => {
+      // Fetch and emit latest bar data
+      fetchLatestBar(symbolInfo, resolution).then((bar) => {
+        if (bar) onRealtimeCallback(bar)
+      })
+    }, interval)
+
+    // Save the timer ID to clear later
+    subscribers[subscriberUID] = timer
   },
 
-  unsubscribeBars: (_subscriberUID: string): void => {
+  unsubscribeBars: (subscriberUID: string): void => {
     // console.log("[unsubscribeBars]: Method call with subscriberUID:", subscriberUID);
     // Unsubscribe logic here
+    clearInterval(subscribers[subscriberUID])
+    delete subscribers[subscriberUID]
   },
+}
+
+const subscribers = {} as Record<string, NodeJS.Timeout>
+
+async function fetchLatestBar(
+  symbolInfo: LibrarySymbolInfo & { chainId: string; address: string },
+  resolution: ResolutionString,
+) {
+  const now = Math.floor(Date.now() / 1000) // current time in seconds
+  const seconds = resolutionToSeconds(resolution)
+  const from = now - seconds * 2 // look back 2 candles
+  const to = now - 10 // up to 10 seconds ago to not exceed the current time
+
+  const interval = timeframe[resolution]
+  const data = await getTokenPriceChartV2({
+    chainId: Number(symbolInfo.chainId) as GetTokenPriceChartV2['chainId'],
+    address: symbolInfo.address as Address,
+    interval: interval,
+    from: from,
+    to: to,
+  })
+
+  // const res = await fetch(url);
+  const bars = data
+
+  if (!bars || bars.length === 0) return null
+
+  const latestBar = bars[bars.length - 1]
+  return {
+    time: latestBar.timestamp * 1000, // convert to ms
+    open: latestBar.open,
+    high: latestBar.high,
+    low: latestBar.low,
+    close: latestBar.close,
+  }
+}
+
+const resolutionToMs = (resolution: ResolutionString) => {
+  switch (resolution) {
+    case '60':
+      return 30_000 // poll every 30s
+    case '240':
+      return 60_000 // poll every 1m
+    case '720':
+      return 120_000 // poll every 2m
+    case '1D':
+      return 300_000 // poll every 5m
+    default:
+      return 60_000 // default to 1m
+  }
+}
+
+const resolutionToSeconds = (resolution: ResolutionString) => {
+  switch (resolution) {
+    case '60':
+      return 3600 // 1h
+    case '240':
+      return 14400 // 4h
+    case '720':
+      return 43200 // 12h
+    case '1D':
+      return 86400 // 1d
+    default:
+      return 3600 //1h
+  }
 }

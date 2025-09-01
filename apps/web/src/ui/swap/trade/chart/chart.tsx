@@ -29,18 +29,6 @@ export const Chart = ({
   const [hasNoData, setHasNoData] = useState(false)
   const tvWidgetRef = useRef<any>(null)
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
-  useEffect(() => {
-    if (!tvWidgetRef.current) return
-
-    // const symbol = `${token1.chainId}-${token1.wrapped.address}-${token1.name}-${token1.symbol}`;
-    // const interval = widgetProps.interval as ResolutionString;
-
-    // tvWidgetRef?.current?.setSymbol(symbol, interval, () => {
-    //   console.log('Symbol updated')
-    // })
-  }, [token1])
-
   useEffect(() => {
     registerNoDataSetter((hasNoData) => {
       setHasNoData(hasNoData)
