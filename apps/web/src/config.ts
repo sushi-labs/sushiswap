@@ -23,6 +23,7 @@ export const isSwapApiEnabledChainId = (
   SWAP_API_SUPPORTED_CHAIN_IDS.includes(chainId as SwapApiEnabledChainId)
 
 export const DISABLED_CHAIN_IDS = [
+  ChainId.BOBA_BNB,
   ChainId.HARMONY,
   ChainId.POLYGON_ZKEVM,
   ChainId.TATARA,
