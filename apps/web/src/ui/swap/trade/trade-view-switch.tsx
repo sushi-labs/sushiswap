@@ -24,7 +24,7 @@ export const TradeViewSwitch = () => {
     <div className="relative flex justify-center w-full p-3 bg-gradient-to-r from-blue/10 to-skyblue/10 animate-slide">
       <div className="flex items-center gap-3 font-medium">
         <span className="text-transparent bg-gradient-to-r from-blue to-skyblue bg-clip-text">
-          Trade 2.0 Experience
+          Advanced Trading Experience
         </span>
         <Switch
           checked={tradeView === 'advanced'}
