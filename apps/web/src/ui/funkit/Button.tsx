@@ -13,7 +13,7 @@ import {
   useCallback,
   useMemo,
 } from 'react'
-import type { EvmChainId } from 'sushi/chain'
+import type { EvmChainId } from 'sushi/evm'
 
 type FunButtonProps = {
   targetChain?: EvmChainId

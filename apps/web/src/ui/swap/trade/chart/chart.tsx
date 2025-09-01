@@ -49,7 +49,7 @@ export const Chart = ({
     localStorage.setItem('tradingview.current_theme.name', resolvedTheme)
 
     const widgetOptions: ChartingLibraryWidgetOptions = {
-      symbol: `${token1.chainId}-${token1.wrapped.address}-${token1.name}-${token1.symbol}`,
+      symbol: `${token1.chainId}-${token1.wrap().address}-${token1.name}-${token1.symbol}`,
       datafeed: Datafeed,
       interval:
         (localStorage.getItem(

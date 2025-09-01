@@ -3,7 +3,7 @@ import {
   TWAP_SUPPORTED_CHAIN_IDS,
   XSWAP_SUPPORTED_CHAIN_IDS,
 } from 'src/config'
-import type { ChainId } from 'sushi/chain'
+import type { ChainId } from 'sushi'
 
 export const TRADE_MODES = [
   'swap',

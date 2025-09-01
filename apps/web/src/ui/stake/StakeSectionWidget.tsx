@@ -10,14 +10,14 @@ import {
 } from '@sushiswap/ui'
 import { type ReactNode, useMemo } from 'react'
 import { Web3Input } from 'src/lib/wagmi/components/web3-input'
-import { ChainId } from 'sushi/chain'
-import { type Amount, SUSHI, type Type, XSUSHI } from 'sushi/currency'
+import type { Amount } from 'sushi'
+import { EvmChainId, type EvmCurrency, SUSHI, XSUSHI } from 'sushi/evm'
 import { useSushiBar } from './SushiBarProvider'
 import { XSushiPrice } from './XSushiPrice'
 
 interface StakeSectionWidgetProps {
   input: string
-  parsedInput: Amount<Type> | undefined
+  parsedInput: Amount<EvmCurrency> | undefined
   onInput(value: string): void
   children: ReactNode
 }
@@ -33,7 +33,7 @@ export const StakeSectionWidget = ({
   const xSushiAmount = useMemo(
     () =>
       parsedInput && totalSupply && sushiBalance
-        ? parsedInput.multiply(totalSupply).divide(sushiBalance).toExact()
+        ? parsedInput.mul(totalSupply).div(sushiBalance.amount).toString()
         : '',
     [parsedInput, totalSupply, sushiBalance],
   )
@@ -53,8 +53,8 @@ export const StakeSectionWidget = ({
           loading={false}
           value={input}
           onChange={onInput}
-          currency={SUSHI[ChainId.ETHEREUM]}
-          chainId={ChainId.ETHEREUM}
+          currency={SUSHI[EvmChainId.ETHEREUM]}
+          chainId={EvmChainId.ETHEREUM}
         />
         <div className="flex items-center justify-center mt-[-24px] mb-[-24px] z-10">
           <div className="p-1 bg-white dark:bg-slate-900 border border-accent rounded-full">
@@ -69,8 +69,8 @@ export const StakeSectionWidget = ({
           type="INPUT"
           className="p-4 bg-white dark:bg-slate-800 rounded-xl"
           value={xSushiAmount}
-          currency={XSUSHI[ChainId.ETHEREUM]}
-          chainId={ChainId.ETHEREUM}
+          currency={XSUSHI[EvmChainId.ETHEREUM]}
+          chainId={EvmChainId.ETHEREUM}
           disabled
           disableInsufficientBalanceError
         />

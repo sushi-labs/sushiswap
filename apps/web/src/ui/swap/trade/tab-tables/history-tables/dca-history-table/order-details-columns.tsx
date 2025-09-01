@@ -9,8 +9,9 @@ import { DollarCircledIcon } from '@sushiswap/ui/icons/DollarCircled'
 import type { ColumnDef } from '@tanstack/react-table'
 import { format } from 'date-fns'
 import type { TwapFill } from 'src/lib/hooks/react-query/twap'
-import { formatUSD, shortenHash } from 'sushi/format'
-import { formatNumber } from 'sushi/format'
+import { formatUSD } from 'sushi'
+import { formatNumber } from 'sushi'
+import { shortenHash } from 'sushi/evm'
 
 export const DATE_COLUMN: ColumnDef<TwapFill> = {
   id: 'date',

@@ -1,6 +1,5 @@
 'use client'
 
-import { InformationCircleIcon } from '@heroicons/react-v1/solid'
 import { MagnifyingGlassIcon } from '@heroicons/react/24/solid'
 import type { TokenListV2ChainId } from '@sushiswap/graph-client/data-api'
 import {
@@ -23,8 +22,8 @@ import React, {
 import { SUPPORTED_CHAIN_IDS } from 'src/config'
 import { ChainOptionsSelector } from 'src/ui/swap/chain-options-selector'
 import { NetworkMenu } from 'src/ui/swap/trade/favorite-recent/network-menu'
-import type { EvmChainId } from 'sushi/chain'
-import type { Currency, Token, Type } from 'sushi/currency'
+import type { EvmChainId } from 'sushi/evm'
+import type { EvmCurrency, EvmToken } from 'sushi/evm'
 import { useAccount } from 'wagmi'
 import { CurrencyInfo } from './currency-info'
 import { TokenSelectorStatesV2 } from './token-selector-states-v2'
@@ -32,11 +31,11 @@ import { TokenSelectorStatesV2 } from './token-selector-states-v2'
 export type TokenSelectorV2Type = 'buy' | 'sell'
 
 interface TokenSelectorV2Props {
-  selected: Type | undefined
+  selected: EvmCurrency | undefined
   chainId: EvmChainId
-  onSelect(currency: Type): void
+  onSelect(currency: EvmCurrency): void
   children: ReactNode
-  currencies?: Record<string, Token>
+  currencies?: Record<string, EvmToken>
   includeNative?: boolean
   hidePinnedTokens?: boolean
   hideSearch?: boolean
@@ -77,7 +76,7 @@ export const TokenSelectorV2: FC<TokenSelectorV2Props> = ({
 
   const [query, setQuery] = useState('')
   const [open, setOpen] = useState(false)
-  const [currencyInfo, showCurrencyInfo] = useState<Currency | false>(false)
+  const [currencyInfo, showCurrencyInfo] = useState<EvmCurrency | false>(false)
 
   // Clear the query when the dialog is closed
   useEffect(() => {
@@ -93,7 +92,7 @@ export const TokenSelectorV2: FC<TokenSelectorV2Props> = ({
   }, [_currencies])
 
   const _onSelect = useCallback(
-    (currency: Type) => {
+    (currency: EvmCurrency) => {
       if (onSelect) {
         onSelect(currency)
       }

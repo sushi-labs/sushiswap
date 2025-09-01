@@ -15,7 +15,7 @@ import { useTheme } from 'next-themes'
 import { useSearchParams } from 'next/navigation'
 import { SUPPORTED_CHAIN_IDS, TWAP_SUPPORTED_CHAIN_IDS } from 'src/config'
 import { getNetworkName } from 'src/lib/network'
-import type { EvmChainId } from 'sushi/chain'
+import type { EvmChainId } from 'sushi/evm'
 import { useTradeTablesContext } from '../trade-tables-context'
 
 export const TradeTableFilters = () => {

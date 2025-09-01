@@ -7,7 +7,6 @@ import type {
   ChartingLibraryWidgetOptions,
   ResolutionString,
 } from 'public/static/charting_library/charting_library'
-import type { NonStandardChainId } from 'src/config'
 import { useSkaleEuropaFaucet } from 'src/lib/hooks'
 import { useHeaderNetworkSelector } from 'src/lib/wagmi/components/header-network-selector'
 import { Chart } from 'src/ui/swap/trade/chart/chart'
@@ -25,12 +24,9 @@ import { Search } from 'src/ui/swap/trade/search/search'
 import { TradeTableTabs } from 'src/ui/swap/trade/tab-tables/trade-tabs/trade-table-tabs'
 import { TradeViewSwitch } from 'src/ui/swap/trade/trade-view-switch'
 import { TradeWidget } from 'src/ui/swap/trade/trade-widget'
-import type { EvmChainId } from 'sushi/chain'
+import type { ChainId } from 'sushi'
 
-const chainIdsByTradeMode: Record<
-  TradeMode,
-  (EvmChainId | NonStandardChainId)[] | null
-> = {
+const chainIdsByTradeMode: Record<TradeMode, ChainId[] | null> = {
   ...(CHAIN_IDS_BY_TRADE_MODE as any),
   swap: null,
 }

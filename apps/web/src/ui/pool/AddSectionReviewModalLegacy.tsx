@@ -34,12 +34,13 @@ import {
   useTransactionDeadline,
 } from 'src/lib/wagmi/hooks/utils/hooks/useTransactionDeadline'
 import { useApproved } from 'src/lib/wagmi/systems/Checker/Provider'
-import { gasMargin, slippageAmount } from 'sushi/calculate'
-import { ChainKey } from 'sushi/chain'
-import type { SushiSwapV2ChainId } from 'sushi/config'
-import type { BentoBoxChainId } from 'sushi/config'
-import { Amount, type Type } from 'sushi/currency'
-import { ZERO } from 'sushi/math'
+import { type Amount, ZERO, subtractSlippage } from 'sushi'
+import {
+  type EvmCurrency,
+  type SushiSwapV2ChainId,
+  addGasMargin,
+  getEvmChainById,
+} from 'sushi/evm'
 import {
   type Address,
   type SendTransactionReturnType,
@@ -57,14 +58,14 @@ import { useRefetchBalances } from '~evm/_common/ui/balance-provider/use-refetch
 import { AddSectionReviewModal } from './AddSectionReviewModal'
 
 interface UseAddSushiSwapV2 {
-  token0: Type | undefined
-  token1: Type | undefined
+  token0: EvmCurrency | undefined
+  token1: EvmCurrency | undefined
   chainId: SushiSwapV2ChainId
-  input0: Amount<Type> | undefined
-  input1: Amount<Type> | undefined
+  input0: Amount<EvmCurrency> | undefined
+  input1: Amount<EvmCurrency> | undefined
   address: Address | undefined
-  minAmount0: Amount<Type> | undefined
-  minAmount1: Amount<Type> | undefined
+  minAmount0: Amount<EvmCurrency> | undefined
+  minAmount1: Amount<EvmCurrency> | undefined
   deadline: bigint | undefined
   mutation: {
     onSuccess: (data: SendTransactionReturnType) => void
@@ -98,23 +99,23 @@ function useWriteWithNative({
       return undefined
     }
 
-    if (minAmount0.equalTo(ZERO) || minAmount1.equalTo(ZERO)) {
+    if (minAmount0.eq(ZERO) || minAmount1.eq(ZERO)) {
       return undefined
     }
 
     // With native
-    if (!token0.isNative && !token1.isNative) {
+    if (token0.type === 'token' && token1.type === 'token') {
       return undefined
     }
 
     const value = BigInt(
-      (token1.isNative ? input1 : input0).quotient.toString(),
+      (token1.type === 'native' ? input1 : input0).amount.toString(),
     )
     const args = [
-      (token1.isNative ? token0 : token1).wrapped.address,
-      (token1.isNative ? input0 : input1).quotient,
-      (token1.isNative ? minAmount0 : minAmount1).quotient,
-      (token1.isNative ? minAmount1 : minAmount0).quotient,
+      (token1.type === 'native' ? token0 : token1).wrap().address,
+      (token1.type === 'native' ? input0 : input1).amount,
+      (token1.type === 'native' ? minAmount0 : minAmount1).amount,
+      (token1.type === 'native' ? minAmount1 : minAmount0).amount,
       address,
       deadline,
     ] as const
@@ -165,7 +166,7 @@ function useWriteWithNative({
         await writeContractAsync({
           ...simulation.request,
           gas: simulation.request.gas
-            ? gasMargin(simulation.request.gas)
+            ? addGasMargin(simulation.request.gas)
             : undefined,
         })
 
@@ -203,22 +204,22 @@ function useWriteWithoutNative({
       return undefined
     }
 
-    if (minAmount0.equalTo(ZERO) || minAmount1.equalTo(ZERO)) {
+    if (minAmount0.eq(ZERO) || minAmount1.eq(ZERO)) {
       return undefined
     }
 
     // No native
-    if (token0.isNative || token1.isNative) {
+    if (token0.type === 'native' || token1.type === 'native') {
       return undefined
     }
 
     const args = [
-      token0.wrapped.address,
-      token1.wrapped.address,
-      input0.quotient,
-      input1.quotient,
-      minAmount0.quotient,
-      minAmount1.quotient,
+      token0.wrap().address,
+      token1.wrap().address,
+      input0.amount,
+      input1.amount,
+      minAmount0.amount,
+      minAmount1.amount,
       address,
       deadline,
     ] as const
@@ -268,7 +269,7 @@ function useWriteWithoutNative({
         await writeContractAsync({
           ...simulation.request,
           gas: simulation.request.gas
-            ? gasMargin(simulation.request.gas)
+            ? addGasMargin(simulation.request.gas)
             : undefined,
         })
 
@@ -284,10 +285,10 @@ interface AddSectionReviewModalLegacyProps {
   poolState: SushiSwapV2PoolState
   poolAddress: Address | undefined
   chainId: SushiSwapV2ChainId
-  token0: Type | undefined
-  token1: Type | undefined
-  input0: Amount<Type> | undefined
-  input1: Amount<Type> | undefined
+  token0: EvmCurrency | undefined
+  token1: EvmCurrency | undefined
+  input0: Amount<EvmCurrency> | undefined
+  input1: Amount<EvmCurrency> | undefined
   children: ReactNode
   onSuccess: () => void
 }
@@ -331,10 +332,12 @@ export const AddSectionReviewModalLegacy: FC<
         address,
         source: LiquiditySource.V2,
         label: [token0.symbol, token1.symbol].join('/'),
-        token0_address: token0.isNative ? NativeAddress : token0.address,
-        token0_amount: input0?.quotient,
-        token1_address: token1.isNative ? NativeAddress : token1.address,
-        token1_amount: input1?.quotient,
+        token0_address:
+          token0.type === 'native' ? NativeAddress : token0.address,
+        token0_amount: input0?.amount,
+        token1_address:
+          token1.type === 'native' ? NativeAddress : token1.address,
+        token1_amount: input1?.amount,
         create_pool: poolState === SushiSwapV2PoolState.NOT_EXISTS,
         ...trace,
       })
@@ -386,18 +389,12 @@ export const AddSectionReviewModalLegacy: FC<
       input0
         ? poolState === SushiSwapV2PoolState.NOT_EXISTS
           ? input0
-          : Amount.fromRawAmount(
-              input0.currency,
-              slippageAmount(input0, slippageTolerance)[0],
-            )
+          : subtractSlippage(input0, slippageTolerance.toNumber())
         : undefined,
       input1
         ? poolState === SushiSwapV2PoolState.NOT_EXISTS
           ? input1
-          : Amount.fromRawAmount(
-              input1.currency,
-              slippageAmount(input1, slippageTolerance)[0],
-            )
+          : subtractSlippage(input1, slippageTolerance.toNumber())
         : undefined,
     ]
   }, [poolState, input0, input1, slippageTolerance])
@@ -481,7 +478,7 @@ export const AddSectionReviewModalLegacy: FC<
                 </SettingsOverlay>
               </div>
               <AddSectionReviewModal
-                chainId={chainId as BentoBoxChainId}
+                chainId={chainId}
                 input0={input0}
                 input1={input1}
               />
@@ -507,7 +504,7 @@ export const AddSectionReviewModalLegacy: FC<
         testId="incentivize-confirmation-modal"
         successMessage="Successfully added liquidity"
         buttonText="Go to pool"
-        buttonLink={`/${ChainKey[chainId]}/pool/v2/${poolAddress}`}
+        buttonLink={`/${getEvmChainById(chainId).key}/pool/v2/${poolAddress}`}
         txHash={data}
       />
     </DialogProvider>

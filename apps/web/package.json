@@ -20,9 +20,8 @@
     "@aptos-labs/wallet-adapter-core": "3.10.0",
     "@aptos-labs/wallet-adapter-react": "2.3.1",
     "@cloudinary/url-gen": "1.11.2",
-    "@funkit/api-base": "^1.9.13",
-    "@funkit/connect": "^6.0.4",
-    "@fuul/sdk": "4.11.1",
+    "@funkit/api-base": "1.9.13",
+    "@funkit/connect": "6.0.4",
     "@headlessui/react": "2.2.0",
     "@heroicons/react": "2.0.13",
     "@heroicons/react-v1": "npm:@heroicons/react@v1",
@@ -99,7 +98,7 @@
     "tronweb": "5.3.2",
     "viem": "catalog:web3",
     "wagmi": "catalog:web3",
-    "zod": "3.23.8"
+    "zod": "catalog:"
   },
   "devDependencies": {
     "@0xsquid/squid-types": "0.1.78",

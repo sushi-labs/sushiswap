@@ -1,5 +1,5 @@
 import { XMarkIcon } from '@heroicons/react/20/solid'
-import { usePinnedTokens } from '@sushiswap/hooks'
+import { type PinnedTokenId, usePinnedTokens } from '@sushiswap/hooks'
 import {
   BrowserEvent,
   InterfaceElementName,
@@ -15,13 +15,13 @@ import {
 } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import { NativeAddress } from 'src/lib/constants'
-import type { EvmChainId } from 'sushi/chain'
-import type { Type } from 'sushi/currency'
+import type { EvmChainId } from 'sushi/evm'
+import type { EvmCurrency } from 'sushi/evm'
 import { useChipTokens } from '../hooks/use-chip-tokens'
 
 interface TokenSelectorChipBarV2 {
   chainIds: EvmChainId[]
-  onSelect(currency: Type): void
+  onSelect(currency: EvmCurrency): void
   includeNative?: boolean
   showPinnedTokens?: boolean
 }
@@ -90,7 +90,10 @@ export function TokenSelectorChipBarV2({
                   variant="ghost"
                   onClick={(e) => {
                     e.stopPropagation()
-                    mutate('remove', `${token.id}:${token.symbol}`)
+                    mutate(
+                      'remove',
+                      `${token.id}:${token.symbol}` as PinnedTokenId,
+                    )
                   }}
                 />
               )}

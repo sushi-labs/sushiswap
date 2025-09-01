@@ -7,8 +7,8 @@ export const SimpleSwapBanner: FC<{ className?: string }> = ({ className }) => {
   return (
     <div
       className={classNames(
-        'flex flex-col gap-4 xl:fixed xl:right-8 xl:bottom-8 z-[1] relative',
-        className,
+        'flex flex-col gap-4 xl:fixed xl:right-8 xl:bottom-12',
+        className ?? '',
       )}
     >
       <StrapiBanner className="h-24 min-w-[360px]" />

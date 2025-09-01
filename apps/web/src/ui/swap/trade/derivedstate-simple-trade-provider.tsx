@@ -12,7 +12,7 @@ import {
 import type { SupportedChainId } from 'src/config'
 import { useCreateQuery } from 'src/lib/hooks/useCreateQuery'
 import { useTradeMode } from 'src/lib/hooks/useTradeMode'
-import { EvmChainId } from 'sushi/chain'
+import { EvmChainId } from 'sushi/evm'
 import {
   TRADE_MODES,
   TRADE_VIEWS,

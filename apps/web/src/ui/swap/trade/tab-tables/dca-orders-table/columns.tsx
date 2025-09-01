@@ -19,9 +19,9 @@ import type { TwapSupportedChainId } from 'src/config'
 import { type TwapOrder, useParsedOrder } from 'src/lib/hooks/react-query/twap'
 import { useCancelOrder } from 'src/lib/hooks/react-query/twap/useCancelOrder'
 import { fillDelayText } from 'src/lib/swap/twap'
-import { formatUSD } from 'sushi/format'
-import { formatPercent } from 'sushi/format'
-import { formatNumber } from 'sushi/format'
+import { formatUSD } from 'sushi'
+import { formatPercent } from 'sushi'
+import { formatNumber } from 'sushi'
 
 export const FILLED_COLUMN: ColumnDef<TwapOrder> = {
   id: 'filled',

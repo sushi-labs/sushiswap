@@ -3,6 +3,7 @@ import {
   ExclamationCircleIcon,
 } from '@heroicons/react/20/solid'
 import { InformationCircleIcon } from '@heroicons/react/24/outline'
+import type { PinnedTokenId } from '@sushiswap/hooks'
 import {
   BrowserEvent,
   InterfaceElementName,
@@ -35,21 +36,18 @@ import { NativeAddress } from 'src/lib/constants'
 import { useNetworkOptions } from 'src/lib/hooks/useNetworkOptions'
 import { NetworkButton } from 'src/ui/swap/chain-options-selector'
 import { FavoriteButton } from 'src/ui/swap/trade/favorite-button'
-import { formatUSD } from 'sushi'
-import type { EvmChainId } from 'sushi'
-import { EvmChain } from 'sushi/chain'
-import type { Amount, Type } from 'sushi/currency'
-import { Token } from 'sushi/currency'
-import { ZERO } from 'sushi/math'
+import { formatUSD, getChainById } from 'sushi'
+import { type Amount, ZERO } from 'sushi'
+import { type EvmChainId, type EvmCurrency, EvmToken } from 'sushi/evm'
 import { formatUnits, zeroAddress } from 'viem'
 
 export interface TokenSelectorRowV2 {
   account?: `0x${string}`
-  currency: Type
+  currency: EvmCurrency
   style?: CSSProperties
   className?: string
-  onSelect(currency: Type): void
-  balance?: Amount<Type> | undefined
+  onSelect(currency: EvmCurrency): void
+  balance?: Amount<EvmCurrency> | undefined
   showWarning: boolean
   price?: number
   selected: boolean
@@ -77,7 +75,7 @@ export const TokenSelectorRowV2: FC<TokenSelectorRowV2> = memo(
     const [isHovered, setIsHovered] = useState(false)
 
     const onClick = useCallback(
-      (newCurrency: Type) => {
+      (newCurrency: EvmCurrency) => {
         onSelect(newCurrency)
       },
       [onSelect],
@@ -106,7 +104,7 @@ export const TokenSelectorRowV2: FC<TokenSelectorRowV2> = memo(
         properties={{
           token_symbol: currency?.symbol,
           token_address: currency?.isNative ? NativeAddress : currency?.address,
-          total_balances_usd: balance?.quotient,
+          total_balances_usd: balance?.amount,
         }}
         element={InterfaceElementName.TOKEN_SELECTOR_ROW}
       >
@@ -115,7 +113,7 @@ export const TokenSelectorRowV2: FC<TokenSelectorRowV2> = memo(
             testdata-id={`token-selector-row-${
               currency.isNative
                 ? zeroAddress
-                : currency.wrapped.address.toLowerCase()
+                : currency.wrap().address.toLowerCase()
             }`}
             onClick={() => onClick(currency)}
             onKeyDown={() => onClick(currency)}
@@ -128,7 +126,9 @@ export const TokenSelectorRowV2: FC<TokenSelectorRowV2> = memo(
           >
             <div className="flex items-center justify-between flex-grow gap-2 rounded cursor-pointer">
               <FavoriteButton
-                currencyId={`${currency?.id}:${currency?.symbol}`}
+                currencyId={
+                  `${currency?.id}:${currency?.symbol}` as PinnedTokenId
+                }
                 className="!px-0.5"
               />
               <div className="flex flex-row items-center flex-grow gap-4">
@@ -191,8 +191,8 @@ export const TokenSelectorRowV2: FC<TokenSelectorRowV2> = memo(
                         <a
                           target="_blank"
                           rel="noopener noreferrer"
-                          href={EvmChain.from(currency.chainId)?.getTokenUrl(
-                            currency.wrapped.address,
+                          href={getChainById(currency.chainId)?.getTokenUrl(
+                            currency.wrap().address,
                           )}
                           className="text-blue hover:underline flex gap-1"
                         >
@@ -216,7 +216,7 @@ export const TokenSelectorRowV2: FC<TokenSelectorRowV2> = memo(
                         onClick={(e) => {
                           e.stopPropagation()
                           onClick(
-                            new Token({
+                            new EvmToken({
                               address: info.address as `0x${string}`,
                               chainId: info.chainId as EvmChainId,
                               decimals: info.decimals,
@@ -238,7 +238,7 @@ export const TokenSelectorRowV2: FC<TokenSelectorRowV2> = memo(
                     />
                   </div>
                 ) : (
-                  balance?.greaterThan(ZERO) && (
+                  balance?.gt(ZERO) && (
                     <div className="flex flex-col max-w-[140px]">
                       <span
                         className={classNames(
@@ -254,7 +254,7 @@ export const TokenSelectorRowV2: FC<TokenSelectorRowV2> = memo(
                               price *
                                 Number(
                                   formatUnits(
-                                    balance.quotient,
+                                    balance.amount,
                                     currency?.decimals,
                                   ),
                                 ),

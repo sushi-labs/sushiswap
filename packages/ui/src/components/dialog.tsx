@@ -15,7 +15,8 @@ import {
   useMemo,
   useState,
 } from 'react'
-import { type ChainId, EvmChain } from 'sushi/chain'
+import { type ChainId, getChainById } from 'sushi'
+
 import { CheckMarkIcon } from '../icons/CheckMarkIcon'
 import { FailedMarkIcon } from '../icons/FailedMarkIcon'
 import {
@@ -244,7 +245,7 @@ interface DialogConfirmProps extends DialogContentProps {
   successMessage: ReactNode
   buttonLink?: string
   buttonText?: string
-  txHash: string | undefined
+  txHash: `0x${string}` | undefined
   status: 'pending' | 'success' | 'error'
 }
 
@@ -279,7 +280,11 @@ const DialogConfirm: FC<DialogConfirmProps> = ({
                 Waiting for your{' '}
                 <a
                   target="_blank"
-                  href={txHash ? EvmChain.from(chainId)?.getTxUrl(txHash) : ''}
+                  href={
+                    txHash
+                      ? getChainById(chainId).getTransactionUrl(txHash)
+                      : ''
+                  }
                   className="cursor-pointer text-blue hover:underline"
                   rel="noreferrer"
                 >
@@ -290,7 +295,9 @@ const DialogConfirm: FC<DialogConfirmProps> = ({
             ) : status === 'success' ? (
               <a
                 target="_blank"
-                href={txHash ? EvmChain.from(chainId)?.getTxUrl(txHash) : ''}
+                href={
+                  txHash ? getChainById(chainId).getTransactionUrl(txHash) : ''
+                }
                 className="cursor-pointer text-blue hover:underline"
                 rel="noreferrer"
               >
@@ -299,7 +306,9 @@ const DialogConfirm: FC<DialogConfirmProps> = ({
             ) : (
               <a
                 target="_blank"
-                href={txHash ? EvmChain.from(chainId)?.getTxUrl(txHash) : ''}
+                href={
+                  txHash ? getChainById(chainId).getTransactionUrl(txHash) : ''
+                }
                 className="cursor-pointer text-blue hover:underline"
                 rel="noreferrer"
               >

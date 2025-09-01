@@ -8,8 +8,8 @@ import { usePinnedTokens } from '@sushiswap/hooks'
 import { useMemo } from 'react'
 import { useNetworkContext } from 'src/ui/swap/trade/favorite-recent/network-provider'
 import type { ChainId } from 'sushi'
-import type { EvmChainId } from 'sushi/chain'
-import { Native, WNATIVE } from 'sushi/currency'
+
+import { type EvmChainId, EvmNative } from 'sushi/evm'
 import type { Address } from 'viem'
 import { formatUnits } from 'viem/utils'
 import { useAccount } from 'wagmi'
@@ -70,9 +70,11 @@ export const useFavorites = () => {
       const natives = tokens
         .filter((token) => token.address === NativeAddress)
         .map((token) => ({
-          address: WNATIVE[token.chainId as EvmChainId].address,
+          address: EvmNative.fromChainId(token.chainId as EvmChainId).wrap()
+            .address,
           chainId: token.chainId as TokenListV2ChainId,
-          symbol: WNATIVE[token.chainId as EvmChainId].symbol,
+          symbol: EvmNative.fromChainId(token.chainId as EvmChainId).wrap()
+            .symbol,
         }))
 
       return { supportedTokens, uniqueChainIds, unsupportedTokens, natives }
@@ -111,7 +113,7 @@ export const useFavorites = () => {
       const balance =
         _nativeTokens?.balanceMap
           ?.get(`${token.chainId}:${token.address}`)
-          ?.toFixed(6) ?? '0'
+          ?.toString({ fixed: 6 }) ?? '0'
       const balanceUsd = priceUsd * Number(balance)
       favArr.push({
         chainId: token.chainId,
@@ -137,18 +139,18 @@ export const useFavorites = () => {
 
     nativesOnList.forEach((token) => {
       if (token.isNative) {
-        const _native = Native.onChain(token.chainId)
+        const _native = EvmNative.fromChainId(token.chainId)
         const priceUsd =
           _nativeTokens?.priceMap?.get(`${token.chainId}:NATIVE`) ?? 0
         const balance =
           _nativeTokens?.balanceMap
             ?.get(`${token.chainId}:NATIVE`)
-            ?.toFixed(6) ?? '0'
+            ?.toString({ fixed: 6 }) ?? '0'
         const balanceUsd = priceUsd * Number(balance)
         favArr.push({
           chainId: token.chainId,
-          address: _native.wrapped.address,
-          decimals: _native.wrapped.decimals,
+          address: _native.wrap().address,
+          decimals: _native.wrap().decimals,
           name: _native.name,
           symbol: _native.symbol,
           bridgeInfo: [],

@@ -3,7 +3,7 @@
 import { classNames } from '@sushiswap/ui'
 import { useTradeMode } from 'src/lib/hooks/useTradeMode'
 import { Web3Input } from 'src/lib/wagmi/components/web3-input'
-import { isWNativeSupported } from 'sushi/config'
+import { isWNativeSupported } from 'sushi/evm'
 import { useDerivedStateTwap } from './derivedstate-twap-provider'
 
 export const TwapToken0Input = () => {

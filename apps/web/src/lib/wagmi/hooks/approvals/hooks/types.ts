@@ -1,8 +1,7 @@
-import type { erc20Abi_approve } from 'sushi/abi'
-import type { Address } from 'sushi/types'
+import type { EvmAddress, erc20Abi_approve } from 'sushi/evm'
 
 export type ERC20ApproveABI = typeof erc20Abi_approve
-export type ERC20ApproveArgs = [Address, bigint]
+export type ERC20ApproveArgs = [EvmAddress, bigint]
 
 export const old_erc20Abi_approve = [
   {

@@ -2,9 +2,8 @@ import {
   type TrendingTokensChainId,
   isTrendingTokensChainId,
 } from '@sushiswap/graph-client/data-api'
-import { TempChainIds } from 'src/lib/hooks/react-query/recent-swaps/useRecentsSwaps'
 import { useNetworkOptions } from 'src/lib/hooks/useNetworkOptions'
-import type { Type } from 'sushi/currency'
+import type { EvmCurrency } from 'sushi/evm'
 import { useTrendingTokensV2 } from '../hooks/use-trending-tokens-v2'
 import {
   TokenSelectorCurrencyListLoadingV2,
@@ -13,9 +12,9 @@ import {
 
 interface TokenSelectorTrendingTokensV2 {
   chainId?: TrendingTokensChainId
-  onSelect(currency: Type): void
-  onShowInfo(currency: Type | false): void
-  selected: Type | undefined
+  onSelect(currency: EvmCurrency): void
+  onShowInfo(currency: EvmCurrency | false): void
+  selected: EvmCurrency | undefined
   showChainOptions: boolean
 }
 
@@ -39,7 +38,6 @@ export function TokenSelectorTrendingTokensV2({
       : networkOptions.filter(
           isTrendingTokensChainId,
         )) as TrendingTokensChainId[],
-    // chainIds: TempChainIds,
   })
 
   if (isLoading)

@@ -12,23 +12,24 @@ import {
 } from 'react'
 import { useCreateQuery } from 'src/lib/hooks/useCreateQuery'
 import { useTokenWithCache } from 'src/lib/wagmi/hooks/tokens/useTokenWithCache'
-import { ChainNetworkNameKey, EvmChainId } from 'sushi'
-import { defaultQuoteCurrency, isWNativeSupported } from 'sushi/config'
-import { Native, type Type } from 'sushi/currency'
+import { type ChainKey, getChainByKey } from 'sushi'
+import { EvmChainId } from 'sushi/evm'
+import { defaultQuoteCurrency, isWNativeSupported } from 'sushi/evm'
+import { type EvmCurrency, EvmNative } from 'sushi/evm'
 import { type Address, isAddress } from 'viem'
 
-const getTokenAsString = (token: Type | string) =>
+const getTokenAsString = (token: EvmCurrency | string) =>
   typeof token === 'string'
     ? token
     : token.isNative
       ? 'NATIVE'
-      : token.wrapped.address
+      : token.wrap().address
 const getDefaultCurrency = (chainId: number) =>
   getTokenAsString(
     defaultQuoteCurrency[chainId as keyof typeof defaultQuoteCurrency],
   )
 
-const isStable = (token: Type | undefined): boolean => {
+const isStable = (token: EvmCurrency | undefined): boolean => {
   if (!token || !token.symbol) return false
   const symbol = token.symbol.toLowerCase()
   return symbol.includes('usd') || symbol.includes('dai')
@@ -36,10 +37,10 @@ const isStable = (token: Type | undefined): boolean => {
 
 interface State {
   mutate: {
-    setToken1(token1: Type | string): void
+    setToken1(token1: EvmCurrency | string): void
   }
   state: {
-    token1: Type
+    token1: EvmCurrency
     chainId: EvmChainId
     isLoading: boolean
   }
@@ -59,17 +60,18 @@ const ChartProvider: FC<ChartProviderProps> = ({ children }) => {
   const { chainId: _chainId } = useParams()
 
   const searchParams = useSearchParams()
-  const [localTokenCache, setLocalTokenCache] = useState<Map<string, Type>>(
-    new Map(),
-  )
+  const [localTokenCache, setLocalTokenCache] = useState<
+    Map<string, EvmCurrency>
+  >(new Map())
   const pathname = usePathname()
   const [storedValue, setValue] = useLocalStorage('chart-token', '')
   const isMounted = useIsMounted()
   const { createQuery } = useCreateQuery()
 
   const networkNameFromPath = pathname.split('/')[1]
-  const chainIdFromPath =
-    ChainNetworkNameKey[networkNameFromPath as keyof typeof ChainNetworkNameKey]
+  const chainIdFromPath = getChainByKey(
+    networkNameFromPath as ChainKey,
+  )?.chainId
 
   const chainId0 = (
     Number(searchParams.get('chainId0')) !== 0
@@ -151,7 +153,7 @@ const ChartProvider: FC<ChartProviderProps> = ({ children }) => {
     [defaultedParams],
   )
 
-  const setToken1 = useCallback<(_token1: string | Type) => void>(
+  const setToken1 = useCallback<(_token1: string | EvmCurrency) => void>(
     async (_token1) => {
       // If entity is provided, parse it to a string
       let _chainId = ''
@@ -183,13 +185,13 @@ const ChartProvider: FC<ChartProviderProps> = ({ children }) => {
         const _token0 =
           defaultedParams.get('token0') === 'NATIVE' &&
           isWNativeSupported(chainId0 as EvmChainId)
-            ? Native.onChain(chainId0 as EvmChainId)
+            ? EvmNative.fromChainId(chainId0 as EvmChainId)
             : token0
 
         let _token1 =
           defaultedParams.get('token1') === 'NATIVE' &&
           isWNativeSupported(chainId1)
-            ? Native.onChain(chainId1)
+            ? EvmNative.fromChainId(chainId1)
             : token1
 
         if (isStable(_token1) && _token0 && !isStable(_token0)) {

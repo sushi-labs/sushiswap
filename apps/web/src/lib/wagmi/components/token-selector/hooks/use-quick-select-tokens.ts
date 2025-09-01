@@ -6,11 +6,13 @@ import { useMemo } from 'react'
 import { useRecentSwaps } from 'src/lib/hooks/react-query/recent-swaps/useRecentsSwaps'
 import { useSearchTokens } from 'src/lib/hooks/react-query/search-tokens/useSearchTokens'
 import { useNetworkOptions } from 'src/lib/hooks/useNetworkOptions'
-import type { EvmChainId } from 'sushi/chain'
-import { EVM_DEFAULT_BASES } from 'sushi/config'
-import type { Type } from 'sushi/currency'
-import { Token } from 'sushi/currency'
-import type { ID } from 'sushi/types'
+import {
+  EVM_DEFAULT_BASES,
+  type EvmChainId,
+  type EvmCurrency,
+  type EvmID,
+  EvmToken,
+} from 'sushi/evm'
 import type { Address } from 'viem'
 
 //  use default list of USDC/USDT/ETH/DAI for fresh user or most often used assets for common user
@@ -32,7 +34,7 @@ const getDefaultTokens = (chainIds: EvmChainId[]) => {
     .filter(Boolean)
 
   //group the tokens by symbol
-  const groupedTokens = new Map<string, Type[]>()
+  const groupedTokens = new Map<string, EvmCurrency[]>()
   tokensByChain.forEach((tokens) => {
     tokens?.forEach((token) => {
       if (!groupedTokens.has(token.symbol!)) {
@@ -43,7 +45,7 @@ const getDefaultTokens = (chainIds: EvmChainId[]) => {
   })
   const orderedTokensBySymbolPriority = symbolOrder
     .map((symbol) => groupedTokens.get(symbol))
-    .filter((tokens): tokens is Type[] => !!tokens)
+    .filter((tokens): tokens is EvmCurrency[] => !!tokens)
 
   return orderedTokensBySymbolPriority
 }
@@ -51,14 +53,15 @@ const getDefaultTokens = (chainIds: EvmChainId[]) => {
 const getMostSwappedTokens = (
   recentSwaps: RecentSwaps,
   optionCount: number,
-): ID[] => {
+): EvmID[] => {
   if (!recentSwaps || recentSwaps.length === 0) return []
 
-  const tokenOutCounts = new Map<ID, number>()
+  const tokenOutCounts = new Map<EvmID, number>()
 
   recentSwaps.forEach((swap) => {
     const _tokenOut = swap.tokenOut
-    const tokenOut: ID = `${_tokenOut.chainId}:${_tokenOut.address}`
+    const tokenOut: EvmID =
+      `${_tokenOut.chainId}:${_tokenOut?.address}` as EvmID
     if (tokenOut) {
       const currentCount = tokenOutCounts.get(tokenOut) || 0
       tokenOutCounts.set(tokenOut, currentCount + 1)
@@ -76,14 +79,14 @@ const getAllOptionsForTokens = (
   chainIds: EvmChainId[],
 ) => {
   if (!tokens || tokens.length === 0) return []
-  const groupedTokens = new Map<string, Type[]>()
+  const groupedTokens = new Map<string, EvmCurrency[]>()
   tokens?.forEach((token) => {
     if (!groupedTokens.has(token?.symbol)) {
       groupedTokens.set(token.symbol, [])
     }
     if (chainIds.includes(token.chainId as EvmChainId)) {
       groupedTokens.get(token.symbol)?.push(
-        new Token({
+        new EvmToken({
           chainId: token.chainId as EvmChainId,
           address: token.address as Address,
           decimals: token.decimals,
@@ -95,7 +98,7 @@ const getAllOptionsForTokens = (
     token?.bridgeInfo?.forEach((bridgeInfo) => {
       if (chainIds.includes(bridgeInfo.chainId as EvmChainId)) {
         groupedTokens.get(token.symbol)?.push(
-          new Token({
+          new EvmToken({
             chainId: bridgeInfo.chainId as EvmChainId,
             address: bridgeInfo.address as Address,
             decimals: bridgeInfo.decimals,
@@ -112,7 +115,7 @@ const getAllOptionsForTokens = (
         groupedTokens.get(symbol) ??
         groupedTokens.values().find((_, index) => idx === index),
     )
-    .filter((tokens): tokens is Type[] => !!tokens)
+    .filter((tokens): tokens is EvmCurrency[] => !!tokens)
 
   return orderedTokensBySymbolPriority
 }

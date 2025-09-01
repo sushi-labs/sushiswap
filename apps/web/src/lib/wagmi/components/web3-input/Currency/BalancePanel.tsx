@@ -1,6 +1,7 @@
 import { SkeletonText, classNames } from '@sushiswap/ui'
 import { type FC, memo, useCallback } from 'react'
-import { Amount, Native, type Type } from 'sushi/currency'
+import { Amount } from 'sushi'
+import { type EvmCurrency, EvmNative } from 'sushi/evm'
 
 import { useIsMounted } from '@sushiswap/hooks'
 import type { CurrencyInputProps } from './CurrencyInput'
@@ -11,7 +12,7 @@ type BalancePanel = Pick<
 > & {
   id?: string
   account: string | undefined
-  balance: Amount<Type> | null | undefined
+  balance: Amount<EvmCurrency> | null | undefined
   type: 'INPUT' | 'OUTPUT'
   symbol?: string
 }
@@ -31,18 +32,18 @@ export const BalancePanel: FC<BalancePanel> = memo(function BalancePanel({
   const balanceStr = balance ? `${balance?.toSignificant(6)}` : `0`
 
   const onClick = useCallback(() => {
-    if (onChange && balance?.greaterThan(0)) {
+    if (onChange && balance?.gt(0n)) {
       if (
-        balance.currency.isNative &&
-        balance.greaterThan(MIN_NATIVE_CURRENCY_FOR_GAS)
+        balance.currency.type === 'native' &&
+        balance.gt(MIN_NATIVE_CURRENCY_FOR_GAS)
       ) {
-        const hundred = Amount.fromRawAmount(
-          Native.onChain(balance.currency.chainId),
+        const hundred = new Amount(
+          EvmNative.fromChainId(balance.currency.chainId),
           MIN_NATIVE_CURRENCY_FOR_GAS,
         )
-        onChange(balance.subtract(hundred).toFixed())
+        onChange(balance.sub(hundred).toString())
       } else {
-        onChange(balance?.greaterThan(0) ? balance.toFixed() : '')
+        onChange(balance?.gt(0n) ? balance.toString() : '')
       }
     }
   }, [balance, onChange])

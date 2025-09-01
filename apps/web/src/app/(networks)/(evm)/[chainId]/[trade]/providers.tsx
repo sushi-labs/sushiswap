@@ -6,7 +6,6 @@ import { DerivedStateFiatProvider } from 'src/ui/swap/fiat/derivedstate-fiat-pro
 import { StrapiBannerProvider } from 'src/ui/swap/strapi-banner/strapi-banner-provider'
 import { SearchProvider } from 'src/ui/swap/trade/search/search-provider'
 import { getTradeEdgeConfig } from 'src/ui/swap/trade/trade-edge-config'
-import { FuulReferralProvider } from '~evm/_common/ui/fuul-referral-provider'
 
 export async function Providers({ children }: { children: React.ReactNode }) {
   const config = await getTradeEdgeConfig()
@@ -16,13 +15,11 @@ export async function Providers({ children }: { children: React.ReactNode }) {
       <EdgeProvider config={config}>
         <DerivedStateFiatProvider>
           <HeaderNetworkSelectorProvider>
-            <FuulReferralProvider>
-              <StrapiBannerProvider>
-                <QuickSelectProvider>
-                  <SearchProvider>{children}</SearchProvider>
-                </QuickSelectProvider>
-              </StrapiBannerProvider>
-            </FuulReferralProvider>
+            <StrapiBannerProvider>
+              <QuickSelectProvider>
+                <SearchProvider>{children}</SearchProvider>
+              </QuickSelectProvider>
+            </StrapiBannerProvider>
           </HeaderNetworkSelectorProvider>
         </DerivedStateFiatProvider>
       </EdgeProvider>

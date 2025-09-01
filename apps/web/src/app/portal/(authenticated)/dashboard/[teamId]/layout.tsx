@@ -40,10 +40,10 @@ export default async function Layout({
     <>
       <TeamCookieUpdater teamId={teamId} />
       <HydrationBoundary state={dehydrate(queryClient)}>
-        <div className="inline-flex flex-1 overflow-y-auto">
+        <div className="inline-flex flex-1 overflow-y-auto flex-col lg:flex-row">
           <DashboardSidebar team={teamResponse.data.team} />
           <div className="overflow-y-auto w-full [scrollbar-gutter:stable]">
-            <Container maxWidth="5xl" className="p-8">
+            <Container maxWidth="5xl" className="p-4 lg:p-8">
               {children}
             </Container>
           </div>

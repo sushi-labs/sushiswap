@@ -17,33 +17,32 @@ import {
 import { useCrossChainTradeRoutes as _useCrossChainTradeRoutes } from 'src/lib/hooks/react-query'
 import { useCreateQuery } from 'src/lib/hooks/useCreateQuery'
 import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
-import { getNetworkKey, replaceNetworkSlug } from 'src/lib/network'
+import { replaceNetworkSlug } from 'src/lib/network'
 import type {
   CrossChainRoute,
   CrossChainRouteOrder,
 } from 'src/lib/swap/cross-chain'
 import { useTokenWithCache } from 'src/lib/wagmi/hooks/tokens/useTokenWithCache'
-import { ChainNetworkNameKey } from 'sushi'
-import { ChainKey, EvmChainId, isEvmChainId } from 'sushi/chain'
-import { defaultCurrency } from 'sushi/config'
-import { defaultQuoteCurrency } from 'sushi/config'
+import { Amount, type ChainKey, Percent, getChainByKey } from 'sushi'
 import {
-  Amount,
-  Native,
-  Token,
-  type Type,
-  tryParseAmount,
-} from 'sushi/currency'
-import { Percent } from 'sushi/math'
+  EvmChainId,
+  type EvmCurrency,
+  EvmNative,
+  EvmToken,
+  defaultCurrency,
+  defaultQuoteCurrency,
+  getEvmChainById,
+  isEvmChainId,
+} from 'sushi/evm'
 import { type Address, isAddress, zeroAddress } from 'viem'
 import { useAccount, useSwitchChain } from 'wagmi'
 
-const getTokenAsString = (token: Type | string) =>
+const getTokenAsString = (token: EvmCurrency | string) =>
   typeof token === 'string'
     ? token
-    : token.isNative
+    : token.type === 'native'
       ? 'NATIVE'
-      : token.wrapped.address
+      : token.wrap().address
 const getDefaultCurrency = (chainId: number) =>
   getTokenAsString(defaultCurrency[chainId as keyof typeof defaultCurrency])
 const getQuoteCurrency = (chainId: number) =>
@@ -55,9 +54,9 @@ interface State {
   mutate: {
     setChainId0(chainId: number): void
     setChainId1(chainId: number): void
-    setToken0(token0: Type | string): void
-    setToken1(token1: Type | string): void
-    setTokens(token0: Type | string, token1: Type | string): void
+    setToken0(token0: EvmCurrency | string): void
+    setToken1(token1: EvmCurrency | string): void
+    setTokens(token0: EvmCurrency | string, token1: EvmCurrency | string): void
     setSwapAmount(swapAmount: string): void
     switchTokens(): void
     setTradeId: Dispatch<SetStateAction<string>>
@@ -66,12 +65,12 @@ interface State {
   }
   state: {
     tradeId: string
-    token0: Type | undefined
-    token1: Type | undefined
+    token0: EvmCurrency | undefined
+    token1: EvmCurrency | undefined
     chainId0: EvmChainId
     chainId1: EvmChainId
     swapAmountString: string
-    swapAmount: Amount<Type> | undefined
+    swapAmount: Amount<EvmCurrency> | undefined
     recipient: Address | undefined
     selectedBridge: string | undefined
     routeOrder: CrossChainRouteOrder
@@ -112,8 +111,9 @@ const DerivedstateCrossChainSwapProvider: FC<
   const { switchChainAsync } = useSwitchChain()
   const { createQuery } = useCreateQuery()
   const networkNameFromPath = pathname.split('/')[1]
-  const chainIdFromPath =
-    ChainNetworkNameKey[networkNameFromPath as keyof typeof ChainNetworkNameKey]
+  const chainIdFromPath = getChainByKey(
+    networkNameFromPath as ChainKey,
+  )?.chainId
   //@dev check is xswap chain? isXSwapSupportedChainId
   const chainId0 = (
     Number(searchParams.get('chainId0')) !== 0
@@ -164,12 +164,17 @@ const DerivedstateCrossChainSwapProvider: FC<
   const switchTokens = useCallback(async () => {
     const params = new URLSearchParams(defaultedParams)
     const _chainId0 = params.get('chainId0') ?? EvmChainId.ETHEREUM.toString()
-    const chainId1 = params.get('chainId1')
+    const chainId1 = +(params.get('chainId1') ?? EvmChainId.ARBITRUM.toString())
     const token0 = params.get('token0')
     const token1 = params.get('token1')
 
+    if (!isEvmChainId(chainId1)) {
+      console.error('Invalid chainId1:', chainId1)
+      return
+    }
+
     const pathSegments = pathname.split('/')
-    pathSegments[1] = ChainKey[Number(chainId1) as EvmChainId]
+    pathSegments[1] = getEvmChainById(chainId1).key
 
     // Can safely cast as defaultedParams are always defined
     history.pushState(
@@ -181,7 +186,7 @@ const DerivedstateCrossChainSwapProvider: FC<
           { name: 'token0', value: token1 as string },
           { name: 'token1', value: token0 as string },
           { name: 'chainId1', value: _chainId0.toString() },
-          { name: 'chainId0', value: chainId1 },
+          { name: 'chainId0', value: chainId1.toString() },
         ],
       )}`,
     )
@@ -229,7 +234,7 @@ const DerivedstateCrossChainSwapProvider: FC<
 
   // Update the URL with a new token0
   const setToken0 = useCallback(
-    async (_token0: string | Type) => {
+    async (_token0: string | EvmCurrency) => {
       // If entity is provided, parse it to a string
       const token0 = getTokenAsString(_token0)
       if (typeof _token0 !== 'string') {
@@ -255,7 +260,7 @@ const DerivedstateCrossChainSwapProvider: FC<
 
   // Update the URL with a new token1
   const setToken1 = useCallback(
-    (_token1: string | Type) => {
+    (_token1: string | EvmCurrency) => {
       // If entity is provided, parse it to a string
       const token1 = getTokenAsString(_token1)
       if (typeof _token1 !== 'string') {
@@ -275,7 +280,7 @@ const DerivedstateCrossChainSwapProvider: FC<
 
   // Update the URL with both tokens
   const setTokens = useCallback(
-    (_token0: string | Type, _token1: string | Type) => {
+    (_token0: string | EvmCurrency, _token1: string | EvmCurrency) => {
       // If entity is provided, parse it to a string
       const token0 = getTokenAsString(_token0)
       const token1 = getTokenAsString(_token1)
@@ -328,17 +333,18 @@ const DerivedstateCrossChainSwapProvider: FC<
   const [_token0, _token1] = useMemo(
     () => [
       defaultedParams.get('token0') === 'NATIVE'
-        ? Native.onChain(chainId0)
+        ? EvmNative.fromChainId(chainId0)
         : token0,
       defaultedParams.get('token1') === 'NATIVE'
-        ? Native.onChain(chainId1)
+        ? EvmNative.fromChainId(chainId1)
         : token1,
     ],
     [defaultedParams, chainId0, chainId1, token0, token1],
   )
 
   const swapAmount = useMemo(
-    () => tryParseAmount(swapAmountString, _token0),
+    () =>
+      _token0 ? Amount.tryFromHuman(_token0, swapAmountString) : undefined,
     [_token0, swapAmountString],
   )
 
@@ -447,11 +453,11 @@ const useCrossChainTradeRoutes = () => {
 }
 
 export interface UseSelectedCrossChainTradeRouteReturn extends CrossChainRoute {
-  tokenIn: Type
-  tokenOut: Type
-  amountIn?: Amount<Type>
-  amountOut?: Amount<Type>
-  amountOutMin?: Amount<Type>
+  tokenIn: EvmCurrency
+  tokenOut: EvmCurrency
+  amountIn?: Amount<EvmCurrency>
+  amountOut?: Amount<EvmCurrency>
+  amountOutMin?: Amount<EvmCurrency>
   priceImpact?: Percent
 }
 
@@ -472,30 +478,30 @@ const useSelectedCrossChainTradeRoute = () => {
 
       const tokenIn =
         route.fromToken.address === zeroAddress
-          ? Native.onChain(route.fromToken.chainId)
-          : new Token(route.fromToken)
+          ? EvmNative.fromChainId(route.fromToken.chainId)
+          : new EvmToken(route.fromToken)
 
       const tokenOut =
         route.toToken.address === zeroAddress
-          ? Native.onChain(route.toToken.chainId)
-          : new Token(route.toToken)
+          ? EvmNative.fromChainId(route.toToken.chainId)
+          : new EvmToken(route.toToken)
 
-      const amountIn = Amount.fromRawAmount(tokenIn, route.fromAmount)
-      const amountOut = Amount.fromRawAmount(tokenOut, route.toAmount)
-      const amountOutMin = Amount.fromRawAmount(tokenOut, route.toAmountMin)
+      const amountIn = new Amount(tokenIn, route.fromAmount)
+      const amountOut = new Amount(tokenOut, route.toAmount)
+      const amountOutMin = new Amount(tokenOut, route.toAmountMin)
 
       const fromAmountUSD =
-        (Number(route.fromToken.priceUSD) * Number(amountIn.quotient)) /
+        (Number(route.fromToken.priceUSD) * Number(amountIn.amount)) /
         10 ** tokenIn.decimals
 
       const toAmountUSD =
-        (Number(route.toToken.priceUSD) * Number(amountOut.quotient)) /
+        (Number(route.toToken.priceUSD) * Number(amountOut.amount)) /
         10 ** tokenOut.decimals
 
-      const priceImpact = new Percent(
-        Math.floor((fromAmountUSD / toAmountUSD - 1) * 10_000),
-        10_000,
-      )
+      const priceImpact = new Percent({
+        numerator: Math.floor((fromAmountUSD / toAmountUSD - 1) * 10_000),
+        denominator: 10_000,
+      })
 
       return {
         ...route,

@@ -30,8 +30,8 @@ import { useSwapTokenSelect } from 'src/lib/hooks/useTokenSelect'
 import { getNetworkKey } from 'src/lib/network'
 import { ConnectButton } from 'src/lib/wagmi/components/connect-button'
 import { formatUSD } from 'sushi'
-import type { EvmChainId } from 'sushi/chain'
-import { Native, Token } from 'sushi/currency'
+import type { EvmChainId } from 'sushi/evm'
+import { EvmNative, EvmToken } from 'sushi/evm'
 import { useAccount } from 'wagmi'
 import { useNetworkContext } from './network-provider'
 
@@ -149,14 +149,17 @@ const RecentItem = ({
               currency={
                 tokenIn.address === NativeAddress
                   ? // @TODO remove typecast once chainId type is resolved
-                    Native.onChain(tokenIn.chainId as EvmChainId)
-                  : new Token({
+                    EvmNative.fromChainId(tokenIn.chainId as EvmChainId)
+                  : new EvmToken({
                       address: tokenIn.address,
                       name: tokenIn.name,
                       symbol: tokenIn.symbol,
                       chainId: tokenIn.chainId as EvmChainId,
                       decimals: tokenIn.decimals,
-                      approved: tokenIn.approved,
+
+                      metadata: {
+                        approved: tokenIn.approved,
+                      },
                     })
               }
               width={24}
@@ -166,14 +169,16 @@ const RecentItem = ({
               disableLink
               currency={
                 tokenOut.address === NativeAddress
-                  ? Native.onChain(tokenOut.chainId as EvmChainId)
-                  : new Token({
+                  ? EvmNative.fromChainId(tokenOut.chainId as EvmChainId)
+                  : new EvmToken({
                       address: tokenOut.address,
                       name: tokenOut.name,
                       symbol: tokenOut.symbol,
                       chainId: tokenOut.chainId as EvmChainId,
                       decimals: tokenOut.decimals,
-                      approved: tokenOut.approved,
+                      metadata: {
+                        approved: tokenOut.approved,
+                      },
                     })
               }
               width={24}
@@ -255,7 +260,7 @@ const ActionButtons = ({
       <Button
         onClick={async () => {
           await handleTokenOutput({
-            token: new Token({
+            token: new EvmToken({
               chainId: recentSwap.tokenIn.chainId as EvmChainId,
               address: recentSwap.tokenIn.address,
               decimals: recentSwap.tokenIn.decimals,
@@ -274,7 +279,7 @@ const ActionButtons = ({
       <Button
         onClick={async () => {
           await handleTokenInput({
-            token: new Token({
+            token: new EvmToken({
               chainId: recentSwap.tokenIn.chainId as EvmChainId,
               address: recentSwap.tokenIn.address,
               decimals: recentSwap.tokenIn.decimals,

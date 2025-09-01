@@ -14,21 +14,17 @@ import {
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import { usePathname, useRouter } from 'next/navigation'
 import React, { type ReactNode, useCallback, useMemo, useState } from 'react'
-import {
-  NEW_CHAIN_IDS,
-  type NonStandardChainId,
-  isNonStandardChainId,
-} from 'src/config'
+import { NEW_CHAIN_IDS } from 'src/config'
 import { getNetworkName, replaceNetworkSlug } from 'src/lib/network'
-import { type EvmChainId, isChainId, isEvmNetworkNameKey } from 'sushi/chain'
+import { type ChainId, getChainById, isChainKey } from 'sushi'
+import { isEvmChainId } from 'sushi/evm'
 
-export type NetworkSelectorOnSelectCallback<
-  T extends number | string = EvmChainId | NonStandardChainId,
-> = (chainId: T, close: () => void) => void
+export type NetworkSelectorOnSelectCallback<T extends ChainId = ChainId> = (
+  chainId: T,
+  close: () => void,
+) => void
 
-export interface NetworkSelectorProps<
-  T extends number | string = EvmChainId | NonStandardChainId,
-> {
+export interface NetworkSelectorProps<T extends ChainId = ChainId> {
   networks: readonly T[]
   supportedNetworks?: readonly T[]
   selected: T
@@ -36,7 +32,7 @@ export interface NetworkSelectorProps<
   children: ReactNode
 }
 
-const NetworkSelector = <T extends number | string>({
+const NetworkSelector = <T extends ChainId = ChainId>({
   onSelect,
   networks = [],
   supportedNetworks = networks,
@@ -51,28 +47,18 @@ const NetworkSelector = <T extends number | string>({
   )
 
   const _onSelect = useCallback(
-    (_network: string, close: () => void) => {
-      const network = (isChainId(+_network) ? +_network : _network) as T
+    (chainId: T, close: () => void) => {
       const pathSegments = pathname.split('/')
 
-      if (isNonStandardChainId(network.toString())) {
-        push(`/${network}/swap`, { scroll: false })
-        return
+      if (isChainKey(pathSegments[1]) || isEvmChainId(+pathSegments[1])) {
+        push(replaceNetworkSlug(chainId, pathname), {
+          scroll: false,
+        })
+      } else {
+        push(`/${getChainById(chainId).key}/swap`, { scroll: false })
       }
-      if (
-        isEvmNetworkNameKey(pathSegments[1]) ||
-        isChainId(+pathSegments[1]) ||
-        isNonStandardChainId(pathSegments[1])
-      ) {
-        push(
-          replaceNetworkSlug(
-            network as EvmChainId | NonStandardChainId,
-            pathname,
-          ),
-          { scroll: false },
-        )
-      }
-      onSelect(network, close)
+
+      onSelect(chainId, close)
     },
     [push, pathname, onSelect],
   )
@@ -89,9 +75,7 @@ const NetworkSelector = <T extends number | string>({
           <CommandGroup className="!pr-0">
             {networks.map((network) => {
               const isSupported = supportedNetworksSet.has(network)
-              const name = getNetworkName(
-                network as EvmChainId | NonStandardChainId,
-              )
+              const name = getNetworkName(network)
 
               return (
                 <CommandItem
@@ -104,8 +88,8 @@ const NetworkSelector = <T extends number | string>({
                   key={network}
                   disabled={!isSupported}
                   onSelect={(value) => {
-                    const network = value.split('__')[1]
-                    _onSelect(network, () => setOpen(false))
+                    const network = Number.parseInt(value.split('__')[1])
+                    _onSelect(network as T, () => setOpen(false))
                   }}
                 >
                   <div className="flex items-center gap-2">

@@ -21,9 +21,8 @@ import {
   useState,
   useTransition,
 } from 'react'
-import type { EvmChainId } from 'sushi/chain'
-import { type Token, type Type, tryParseAmount } from 'sushi/currency'
-import type { Percent } from 'sushi/math'
+import { Amount, type Percent } from 'sushi'
+import type { EvmChainId, EvmCurrency, EvmToken } from 'sushi/evm'
 import { useAccount } from 'wagmi'
 import { useAmountBalance } from '~evm/_common/ui/balance-provider/use-balance'
 import { usePrice } from '~evm/_common/ui/price-provider/price-provider/use-price'
@@ -38,8 +37,8 @@ interface CurrencyInputProps {
   disabled?: boolean
   value: string
   onChange?(value: string): void
-  currency: Type | undefined
-  onSelect?(currency: Type): void
+  currency: EvmCurrency | undefined
+  onSelect?(currency: EvmCurrency): void
   chainId: EvmChainId
   currencyClassName?: string
   className?: string
@@ -49,7 +48,7 @@ interface CurrencyInputProps {
   type: 'INPUT' | 'OUTPUT'
   fetching?: boolean
   currencyLoading?: boolean
-  currencies?: Record<string, Token>
+  currencies?: Record<string, EvmToken>
   allowNative?: boolean
   error?: string
   hidePinnedTokens?: boolean
@@ -111,12 +110,12 @@ const CurrencyInput: FC<CurrencyInputProps> = ({
 
   const { data: price, isLoading: isPriceLoading } = usePrice({
     chainId: currency?.chainId,
-    address: currency?.wrapped?.address,
+    address: currency?.wrap().address,
     enabled: !hidePricing,
   })
 
   const _value = useMemo(
-    () => tryParseAmount(value, currency),
+    () => currency && Amount.tryFromHuman(currency, value),
     [value, currency],
   )
   const insufficientBalance =
@@ -124,7 +123,7 @@ const CurrencyInput: FC<CurrencyInputProps> = ({
     type === 'INPUT' &&
     balance &&
     _value &&
-    balance.lessThan(_value) &&
+    balance.lt(_value) &&
     !disableInsufficientBalanceError
 
   // If currency changes, trim input to decimals
@@ -231,9 +230,6 @@ const CurrencyInput: FC<CurrencyInputProps> = ({
                     <span className="text-sm md:text-xl leading-5">
                       {currency.symbol}
                     </span>
-                    {/* <span className="text-xs leading-3 text-muted-foreground">
-											{EvmChain.from(currency.chainId)?.name}
-										</span> */}
                   </div>
                   <SelectPrimitive.Icon asChild>
                     <ChevronRightIcon strokeWidth={2} width={16} height={16} />

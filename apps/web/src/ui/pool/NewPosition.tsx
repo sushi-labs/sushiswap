@@ -10,15 +10,18 @@ import {
 } from '@sushiswap/ui'
 import React, { type FC, useMemo, useState } from 'react'
 import { useConcentratedLiquidityPoolStats } from 'src/lib/hooks/react-query'
-import { type Address, ChainKey } from 'sushi'
-import type { SushiSwapV3ChainId } from 'sushi/config'
-import { unwrapToken } from 'sushi/currency'
+import { getChainById } from 'sushi'
+import {
+  type EvmAddress,
+  type SushiSwapV3ChainId,
+  unwrapEvmToken,
+} from 'sushi/evm'
 import { useAccount } from 'wagmi'
 import { ConcentratedLiquidityWidget } from './ConcentratedLiquidityWidget'
 import { SelectPricesWidget } from './SelectPricesWidget'
 
 interface NewPositionProps {
-  address: Address
+  address: EvmAddress
   chainId: SushiSwapV3ChainId
 }
 
@@ -33,8 +36,8 @@ export const NewPosition: FC<NewPositionProps> = ({ address, chainId }) => {
   })
   const [_token0, _token1] = useMemo(() => {
     const tokens = [
-      poolStats?.token0 ? unwrapToken(poolStats.token0) : undefined,
-      poolStats?.token1 ? unwrapToken(poolStats.token1) : undefined,
+      poolStats?.token0 ? unwrapEvmToken(poolStats.token0) : undefined,
+      poolStats?.token1 ? unwrapEvmToken(poolStats.token1) : undefined,
     ]
 
     return invertTokens ? tokens.reverse() : tokens
@@ -71,7 +74,7 @@ export const NewPosition: FC<NewPositionProps> = ({ address, chainId }) => {
             tokensLoading={false}
             existingPosition={undefined}
             tokenId={undefined}
-            successLink={`/${ChainKey[chainId]}/pool/v3/${address}/positions`}
+            successLink={`/${getChainById(chainId).key}/pool/v3/${address}/positions`}
           />
         </>
       </CardContent>

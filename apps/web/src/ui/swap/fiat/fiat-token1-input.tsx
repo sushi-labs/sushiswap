@@ -1,7 +1,7 @@
 'use client'
 
 import { Web3Input } from 'src/lib/wagmi/components/web3-input'
-import { isWNativeSupported } from 'sushi/config'
+import { isWNativeSupported } from 'sushi/evm'
 import { useDerivedStateFiat, useFiatTrade } from './derivedstate-fiat-provider'
 
 export const FiatToken1Input = () => {

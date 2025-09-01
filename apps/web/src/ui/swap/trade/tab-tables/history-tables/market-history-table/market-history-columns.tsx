@@ -16,12 +16,10 @@ import { format } from 'date-fns'
 import { NativeAddress } from 'src/lib/constants'
 import { getNetworkName } from 'src/lib/network'
 import { TooltipDrawer } from 'src/ui/common/tooltip-drawer'
-import { evmChains } from 'sushi'
-import type { EvmChainId } from 'sushi/chain'
-import { Native } from 'sushi/currency'
-import { Token } from 'sushi/currency'
-import { formatNumber } from 'sushi/format'
-import { formatUSD } from 'sushi/format'
+import { formatNumber, getChainById } from 'sushi'
+import { formatUSD } from 'sushi'
+import type { EvmChainId } from 'sushi/evm'
+import { EvmNative, EvmToken } from 'sushi/evm'
 import type { MarketTrade } from './market-history-table'
 
 export const BUY_COLUMN: ColumnDef<MarketTrade> = {
@@ -32,8 +30,8 @@ export const BUY_COLUMN: ColumnDef<MarketTrade> = {
   cell: ({ row }) => {
     const token =
       row.original.tokenOut.address === NativeAddress
-        ? Native.onChain(row.original.tokenOut.chainId as EvmChainId)
-        : new Token({
+        ? EvmNative.fromChainId(row.original.tokenOut.chainId as EvmChainId)
+        : new EvmToken({
             chainId: row.original.tokenOut.chainId as EvmChainId,
             address: row.original.tokenOut.address,
             decimals: row.original.tokenOut.decimals,
@@ -70,8 +68,8 @@ export const SELL_COLUMN: ColumnDef<MarketTrade> = {
   cell: ({ row }) => {
     const token =
       row.original.tokenIn.address === NativeAddress
-        ? Native.onChain(row.original.tokenIn.chainId as EvmChainId)
-        : new Token({
+        ? EvmNative.fromChainId(row.original.tokenIn.chainId as EvmChainId)
+        : new EvmToken({
             chainId: row.original.tokenIn.chainId as EvmChainId,
             address: row.original.tokenIn.address,
             decimals: row.original.tokenIn.decimals,
@@ -260,7 +258,9 @@ export const TX_HASH_COLUMN: ColumnDef<MarketTrade> = {
   // accessorFn: (row) => row.txHash,
   cell: ({ row }) => (
     <LinkExternal
-      href={evmChains[row.original.tokenIn.chainId as EvmChainId]?.getTxUrl('')}
+      href={getChainById(
+        row.original.tokenIn.chainId as EvmChainId,
+      )?.getTransactionUrl('0x')}
     >
       -{/* {shortenHash(row.original.txHash)} */}
     </LinkExternal>

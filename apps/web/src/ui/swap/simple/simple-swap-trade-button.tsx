@@ -6,9 +6,12 @@ import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
 import { SLIPPAGE_WARNING_THRESHOLD } from 'src/lib/wagmi/systems/Checker/Slippage'
 import { PriceImpactWarning, SlippageWarning } from 'src/ui/common'
-import { RED_SNWAPPER_ADDRESS, isRedSnwapperChainId } from 'sushi/config'
-import { Native } from 'sushi/currency'
-import { ZERO } from 'sushi/math'
+import { ZERO } from 'sushi'
+import {
+  EvmNative,
+  RED_SNWAPPER_ADDRESS,
+  isRedSnwapperChainId,
+} from 'sushi/evm'
 import { APPROVE_TAG_SWAP } from '../../../lib/constants'
 import { usePersistedSlippageError } from '../../../lib/hooks'
 import { warningSeverity } from '../../../lib/swap/warningSeverity'
@@ -51,11 +54,11 @@ const _SimpleSwapTradeButton: FC<SimpleSwapTradeButtonProps> = ({
   } = useDerivedStateSimpleSwap()
 
   const isWrap =
-    token0?.isNative &&
-    token1?.wrapped.address === Native.onChain(chainId).wrapped.address
+    token0?.type === 'native' &&
+    token1?.wrap().address === EvmNative.fromChainId(chainId).wrap().address
   const isUnwrap =
-    token1?.isNative &&
-    token0?.wrapped.address === Native.onChain(chainId).wrapped.address
+    token1?.type === 'native' &&
+    token0?.wrap().address === EvmNative.fromChainId(chainId).wrap().address
 
   const showPriceImpactWarning = useMemo(() => {
     const priceImpactSeverity = warningSeverity(quote?.priceImpact)
@@ -63,7 +66,7 @@ const _SimpleSwapTradeButton: FC<SimpleSwapTradeButtonProps> = ({
   }, [quote?.priceImpact])
 
   const showSlippageWarning = useMemo(() => {
-    return !slippagePercent.lessThan(SLIPPAGE_WARNING_THRESHOLD)
+    return !slippagePercent.lt(SLIPPAGE_WARNING_THRESHOLD)
   }, [slippagePercent])
 
   // Reset
@@ -104,7 +107,7 @@ const _SimpleSwapTradeButton: FC<SimpleSwapTradeButtonProps> = ({
                             disabled={Boolean(
                               isSlippageError ||
                                 error ||
-                                !quote?.amountOut?.greaterThan(ZERO) ||
+                                !quote?.amountOut?.gt(ZERO) ||
                                 quote?.route?.status === 'NoWay' ||
                                 +swapAmountString === 0 ||
                                 (!checked && showPriceImpactWarning),

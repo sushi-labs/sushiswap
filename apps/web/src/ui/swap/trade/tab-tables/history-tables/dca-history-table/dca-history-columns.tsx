@@ -15,7 +15,7 @@ import { format } from 'date-fns'
 import { Currency } from 'node_modules/@sushiswap/ui/dist/components/currency'
 import { type TwapOrder, useParsedOrder } from 'src/lib/hooks/react-query/twap'
 import { fillDelayText } from 'src/lib/swap/twap'
-import { formatNumber, formatUSD } from 'sushi/format'
+import { formatNumber, formatUSD } from 'sushi'
 
 export const ORDER_ID_COLUMN: ColumnDef<TwapOrder> = {
   id: 'orderId',

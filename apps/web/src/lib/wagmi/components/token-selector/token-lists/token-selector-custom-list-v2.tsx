@@ -2,21 +2,21 @@ import { isTokenListV2ChainId } from '@sushiswap/graph-client/data-api'
 import { List } from '@sushiswap/ui'
 import { useMemo } from 'react'
 import { TempChainIds } from 'src/lib/hooks/react-query/recent-swaps/useRecentsSwaps'
-import type { Address } from 'sushi'
-import type { EvmChainId } from 'sushi/chain'
-import type { Type } from 'sushi/currency'
+import type { EvmAddress } from 'sushi/evm'
+import type { EvmChainId } from 'sushi/evm'
+import type { EvmCurrency } from 'sushi/evm'
 import { useMyTokensV2 } from '../hooks/use-my-tokens-v2'
 import { TokenSelectorCurrencyListV2 } from './common/token-selector-currency-list-v2'
 
 interface TokenSelectorCustomListV2 {
-  currencies: Readonly<Type[]>
+  currencies: Readonly<EvmCurrency[]>
   chainId?: EvmChainId
-  account?: Address
-  selected: Type | undefined
-  onSelect(currency: Type): void
+  account?: EvmAddress
+  selected: EvmCurrency | undefined
+  onSelect(currency: EvmCurrency): void
   search?: string
   includeNative?: boolean
-  onShowInfo(currency: Type | false): void
+  onShowInfo(currency: EvmCurrency | false): void
   showChainOptions: boolean
 }
 

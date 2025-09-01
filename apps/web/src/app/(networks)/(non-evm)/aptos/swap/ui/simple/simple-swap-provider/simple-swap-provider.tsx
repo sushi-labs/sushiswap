@@ -10,7 +10,7 @@ import {
   useMemo,
   useReducer,
 } from 'react'
-import { DEFAULT_SLIPPAGE } from 'sushi/config'
+import { DEFAULT_SLIPPAGE } from 'sushi/evm'
 import { getBaseTokensWithoutKey } from '~aptos/_common/lib/common/use-base-tokens'
 import { useNetwork } from '~aptos/_common/lib/common/use-network'
 import type { Token } from '~aptos/_common/lib/types/token'

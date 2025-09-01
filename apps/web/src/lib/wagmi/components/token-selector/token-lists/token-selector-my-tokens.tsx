@@ -1,6 +1,6 @@
 import type { TokenListChainId } from '@sushiswap/graph-client/data-api'
-
-import type { Type } from 'sushi/currency'
+import { List } from '@sushiswap/ui'
+import type { EvmCurrency } from 'sushi/evm'
 import { useAccount } from 'wagmi'
 import { usePrices } from '~evm/_common/ui/price-provider/price-provider/use-prices'
 import { useMyTokens } from '../hooks/use-my-tokens'
@@ -10,9 +10,9 @@ import { TokenSelectorCurrencyListLoadingV2 } from './common/token-selector-curr
 
 interface TokenSelectorMyTokens {
   chainId: TokenListChainId
-  onSelect(currency: Type): void
-  onShowInfo(currency: Type | false): void
-  selected: Type | undefined
+  onSelect(currency: EvmCurrency): void
+  onShowInfo(currency: EvmCurrency | false): void
+  selected: EvmCurrency | undefined
   includeNative?: boolean
 }
 

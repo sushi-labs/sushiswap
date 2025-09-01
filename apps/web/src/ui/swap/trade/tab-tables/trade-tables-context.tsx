@@ -16,18 +16,22 @@ import {
   isTwapSupportedChainId,
 } from 'src/config'
 import { type TwapOrder, useTwapOrders } from 'src/lib/hooks/react-query/twap'
-import type { EvmChainId } from 'sushi/chain'
-import type { Type } from 'sushi/currency'
+import type { EvmChainId } from 'sushi/evm'
+import type { EvmCurrency } from 'sushi/evm'
 import { useAccount } from 'wagmi'
 import {
   DerivedstateSimpleSwapProvider,
   useDerivedStateSimpleSwap,
 } from '../../simple/derivedstate-simple-swap-provider'
 
-const filterByPair = (orders?: TwapOrder[], token0?: Type, token1?: Type) => {
+const filterByPair = (
+  orders?: TwapOrder[],
+  token0?: EvmCurrency,
+  token1?: EvmCurrency,
+) => {
   if (!orders || !token0 || !token1) return orders
-  const srcAddress = token0.wrapped.address
-  const dstAddress = token1.wrapped.address
+  const srcAddress = token0.wrap().address
+  const dstAddress = token1.wrap().address
   return orders.filter((order) => {
     return (
       (eqIgnoreCase(order?.srcTokenAddress, srcAddress) &&

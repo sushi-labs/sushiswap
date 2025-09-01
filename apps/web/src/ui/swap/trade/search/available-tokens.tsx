@@ -2,15 +2,14 @@ import type { PortfolioWalletToken } from '@sushiswap/graph-client/data-api'
 import { Badge, Button, Currency, SkeletonBox, classNames } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import { useMemo } from 'react'
-import { useCreateQuery } from 'src/lib/hooks/useCreateQuery'
 import { useSwapTokenSelect } from 'src/lib/hooks/useTokenSelect'
-import { getNetworkKey } from 'src/lib/network'
 import { usePortfolioWallet } from 'src/lib/wagmi/components/user-portfolio/hooks/use-portfolio-wallet'
 import { Connect } from 'src/lib/wagmi/systems/Checker/Connect'
-import type { ChainId, EvmChainId } from 'sushi'
-import { Native, Token } from 'sushi/currency'
-import { formatNumber } from 'sushi/format'
-import { useAccount, useSwitchChain } from 'wagmi'
+import { formatNumber } from 'sushi'
+import type { EvmChainId } from 'sushi/evm'
+import { EvmNative, EvmToken } from 'sushi/evm'
+import type { Address } from 'viem'
+import { useAccount } from 'wagmi'
 import { PayWithFiat } from './pay-with-fiat'
 
 export const AvailableTokens = () => {
@@ -69,9 +68,9 @@ const TokenOption = ({ token }: { token: PortfolioWalletToken }) => {
   const _token = useMemo(
     () =>
       isNative
-        ? Native.onChain(token.chainId as EvmChainId)
-        : new Token({
-            address: token.id,
+        ? EvmNative.fromChainId(token.chainId as EvmChainId)
+        : new EvmToken({
+            address: token.id as Address,
             name: token.name,
             symbol: token.symbol,
             chainId: token.chainId as EvmChainId,

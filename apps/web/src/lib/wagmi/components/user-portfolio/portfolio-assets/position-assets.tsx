@@ -1,6 +1,6 @@
 import { Accordion } from '@sushiswap/ui'
 import React, { useMemo } from 'react'
-import { formatUSD } from 'sushi/format'
+import { formatUSD } from 'sushi'
 import { useAccount } from 'wagmi'
 import { usePortfolioPositions } from '../hooks/use-portfolio-positions'
 import { NotificationBadge } from '../notification-badge'

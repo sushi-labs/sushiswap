@@ -1,7 +1,7 @@
 'use client'
 
 import { SkeletonBox } from '@sushiswap/ui'
-import { formatUSD } from 'sushi/format'
+import { formatUSD } from 'sushi'
 // import { ArrowsLeftRightIcon } from "@sushiswap/ui/icons/ArrowsLeftRight";
 // import { useState } from "react";
 import { usePrice } from '~evm/_common/ui/price-provider/price-provider/use-price'
@@ -14,7 +14,7 @@ export const Rate = () => {
 
   const { data: price1, isLoading: isPrice0Loading } = usePrice({
     chainId: token1?.chainId,
-    address: token1?.wrapped?.address,
+    address: token1?.wrap()?.address,
     enabled: !!token1,
   })
 

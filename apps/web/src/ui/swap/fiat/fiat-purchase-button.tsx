@@ -19,7 +19,7 @@ export const FiatPurchaseButton = () => {
       modalTitle: token1?.symbol ? `Buy ${token1.symbol}` : 'Buy',
       targetAssetAmount: Number(tokenAmount || 0),
       targetChain: Number(token1?.chainId),
-      targetAsset: token1?.wrapped.address || '',
+      targetAsset: token1?.wrap().address || '',
       targetAssetTicker: token1?.symbol || 'TOKEN',
       checkoutItemTitle: token1?.symbol || 'TOKEN',
       expirationTimestampMs: 30 * 60 * 1000,

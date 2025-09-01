@@ -1,7 +1,7 @@
 import { SkeletonText, classNames } from '@sushiswap/ui'
 import { WalletIcon } from '@sushiswap/ui/icons/WalletIcon'
 import React, { type FC, useMemo } from 'react'
-import { Fraction } from 'sushi/math'
+import { Fraction } from 'sushi'
 
 interface CurrencyInputBalancePanel {
   coinData: number
@@ -20,9 +20,10 @@ export const CurrencyInputBalancePanel: FC<CurrencyInputBalancePanel> = ({
 }) => {
   const balanceStr = useMemo(
     () =>
-      coinData
-        ? `${new Fraction(coinData, 10 ** decimals).toSignificant(6)}`
-        : '0',
+      (coinData
+        ? `${new Fraction({ numerator: coinData, denominator: 10 ** decimals }).toSignificant(6)}`
+        : '0.00'
+      ).split('.'),
     [coinData, decimals],
   )
 

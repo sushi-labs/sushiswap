@@ -1,7 +1,7 @@
 import type { PortfolioFarmClaim } from '@sushiswap/graph-client/data-api'
 import { Accordion } from '@sushiswap/ui'
 import React, { useMemo } from 'react'
-import { formatUSD } from 'sushi/format'
+import { formatUSD } from 'sushi'
 import { useAccount } from 'wagmi'
 import { usePortfolioClaimables } from '../hooks/use-portfolio-claimables'
 import { NotificationBadge } from '../notification-badge'

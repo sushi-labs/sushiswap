@@ -18,10 +18,10 @@ export const LimitEstPnl = () => {
       return '0'
     }
     const totalInUSD = amountInPerChunk
-      ?.multiply(token0PriceUSD)
-      ?.multiply(chunks || 1)
-      .toExact()
-    const totalOutUSD = amountOut?.multiply(token1PriceUSD).toExact()
+      ?.mul(token0PriceUSD)
+      ?.mul(BigInt(chunks) || 1n)
+      .amount.toString()
+    const totalOutUSD = amountOut?.mul(token1PriceUSD).amount.toString()
 
     const _pnl = Number.parseFloat(totalOutUSD) - Number.parseFloat(totalInUSD)
     return _pnl.toFixed(2)

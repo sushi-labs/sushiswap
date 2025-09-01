@@ -1,6 +1,6 @@
 'use client'
 
-import { DEFAULT_SLIPPAGE } from 'sushi/config'
+import { DEFAULT_SLIPPAGE } from 'sushi/evm'
 import { useLocalStorage } from './useLocalStorage'
 
 export enum SlippageToleranceStorageKey {

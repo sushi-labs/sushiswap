@@ -4,7 +4,7 @@ import {
 } from '@sushiswap/graph-client/data-api'
 import { useQuery } from '@tanstack/react-query'
 import { useMemo } from 'react'
-import { Token } from 'sushi/currency'
+import { EvmToken } from 'sushi/evm'
 
 type UseTrendingTokens = {
   chainIds: TrendingTokensChainId[]
@@ -39,7 +39,7 @@ export function useTrendingTokensV2({ chainIds }: UseTrendingTokens) {
   return useMemo(() => {
     return {
       ...query,
-      data: query.data?.trendingTokens?.map((token) => new Token(token)),
+      data: query.data?.trendingTokens?.map((token) => new EvmToken(token)),
       priceMap: query.data?.priceMap,
     }
   }, [query])

@@ -25,14 +25,14 @@ import { UnknownTokenIcon } from '@sushiswap/ui/icons/UnknownTokenIcon'
 import React, { useCallback } from 'react'
 import { useTokenSecurity } from 'src/lib/hooks/react-query'
 import { TokenSecurityView } from 'src/lib/wagmi/components/token-security-view'
-import { EvmChain } from 'sushi/chain'
 import {
+  type EvmToken,
   defaultCurrency,
   defaultQuoteCurrency,
+  getEvmChainById,
   isTokenSecurityChainId,
-} from 'sushi/config'
-import type { Token } from 'sushi/currency'
-import { shortenAddress } from 'sushi/format'
+  shortenEvmAddress,
+} from 'sushi/evm'
 import { useDerivedStateSimpleSwap } from './derivedstate-simple-swap-provider'
 
 export const SimpleSwapTokenNotFoundDialog = () => {
@@ -44,17 +44,21 @@ export const SimpleSwapTokenNotFoundDialog = () => {
   const { mutate: customTokensMutate, hasToken } = useCustomTokens()
 
   const token0NotInList = Boolean(
-    token0?.approved === false && token0.isToken && !hasToken(token0),
+    token0?.metadata.approved === false &&
+      token0.type === 'token' &&
+      !hasToken(token0),
   )
   const token1NotInList = Boolean(
-    token1?.approved === false && token1.isToken && !hasToken(token1),
+    token1?.metadata.approved === false &&
+      token1.type === 'token' &&
+      !hasToken(token1),
   )
 
   const onImport = useCallback(
-    ([token0, token1]: (Token | undefined)[]) => {
-      const _tokens: Token[] = []
-      if (token0?.approved === false) _tokens.push(token0)
-      if (token1?.approved === false) _tokens.push(token1)
+    ([token0, token1]: (EvmToken | undefined)[]) => {
+      const _tokens: EvmToken[] = []
+      if (token0?.metadata.approved === false) _tokens.push(token0)
+      if (token1?.metadata.approved === false) _tokens.push(token1)
 
       customTokensMutate('add', _tokens)
 
@@ -73,14 +77,16 @@ export const SimpleSwapTokenNotFoundDialog = () => {
 
   const { data: token0SecurityResponse, isLoading: isToken0SecurityLoading } =
     useTokenSecurity({
-      currency: token0NotInList && token0?.isToken ? token0 : undefined,
-      enabled: Boolean(token0NotInList && token0?.isToken),
+      currency:
+        token0NotInList && token0?.type === 'token' ? token0 : undefined,
+      enabled: Boolean(token0NotInList && token0?.type === 'token'),
     })
 
   const { data: token1SecurityResponse, isLoading: isToken1SecurityLoading } =
     useTokenSecurity({
-      currency: token1NotInList && token1?.isToken ? token1 : undefined,
-      enabled: Boolean(token1NotInList && token1?.isToken),
+      currency:
+        token1NotInList && token1?.type === 'token' ? token1 : undefined,
+      enabled: Boolean(token1NotInList && token1?.type === 'token'),
     })
 
   const isTokenSecurityLoading =
@@ -138,7 +144,7 @@ export const SimpleSwapTokenNotFoundDialog = () => {
           )}
         </DialogHeader>
         <div className="flex flex-col gap-4">
-          {token0 && token0NotInList && !token0?.isToken && (
+          {token0 && token0NotInList && token0?.type === 'native' && (
             <List>
               {token1NotInList ? <List.Label>Token 1</List.Label> : null}
               <List.Control>
@@ -146,21 +152,21 @@ export const SimpleSwapTokenNotFoundDialog = () => {
                   Could not retrieve token info for{' '}
                   <a
                     target="_blank"
-                    href={EvmChain.from(token0.chainId)?.getTokenUrl(
-                      token0.wrapped.address,
+                    href={getEvmChainById(token0.chainId)?.getTokenUrl(
+                      token0.wrap().address,
                     )}
                     className="text-blue font-medium"
                     rel="noreferrer"
                   >
-                    {shortenAddress(token0.wrapped.address)}
+                    {shortenEvmAddress(token0.wrap().address)}
                   </a>{' '}
                   are you sure this token is on{' '}
-                  {EvmChain.from(token0.chainId)?.name}?
+                  {getEvmChainById(token0.chainId).name}?
                 </p>
               </List.Control>
             </List>
           )}
-          {token0NotInList && token0?.isToken && (
+          {token0NotInList && token0?.type === 'token' && (
             <>
               <List>
                 {token1NotInList ? <List.Label>Token 1</List.Label> : null}
@@ -194,12 +200,12 @@ export const SimpleSwapTokenNotFoundDialog = () => {
                     </div>
                     <LinkExternal
                       target="_blank"
-                      href={EvmChain.from(token0.chainId)?.getTokenUrl(
+                      href={getEvmChainById(token0.chainId)?.getTokenUrl(
                         token0.address,
                       )}
                       className="font-medium"
                     >
-                      {shortenAddress(token0.address)}{' '}
+                      {shortenEvmAddress(token0.address)}{' '}
                     </LinkExternal>
                   </div>
                 </List.Control>
@@ -222,7 +228,7 @@ export const SimpleSwapTokenNotFoundDialog = () => {
               )}
             </>
           )}
-          {token1 && token1NotInList && !token1.isToken && (
+          {token1 && token1NotInList && token1.type === 'native' && (
             <List>
               {token0NotInList ? <List.Label>Token 2</List.Label> : null}
               <List.Control>
@@ -230,21 +236,21 @@ export const SimpleSwapTokenNotFoundDialog = () => {
                   Could not retrieve token info for{' '}
                   <a
                     target="_blank"
-                    href={EvmChain.from(token1.chainId)?.getTokenUrl(
-                      token1.wrapped.address,
+                    href={getEvmChainById(token1.chainId)?.getTokenUrl(
+                      token1.wrap().address,
                     )}
                     className="text-blue font-medium"
                     rel="noreferrer"
                   >
-                    {shortenAddress(token1.wrapped.address)}
+                    {shortenEvmAddress(token1.wrap().address)}
                   </a>{' '}
                   are you sure this token is on{' '}
-                  {EvmChain.from(token1.chainId)?.name}?
+                  {getEvmChainById(token1.chainId)?.name}?
                 </p>
               </List.Control>
             </List>
           )}
-          {token1NotInList && token1?.isToken && (
+          {token1NotInList && token1?.type === 'token' && (
             <>
               <List>
                 {token0NotInList ? <List.Label>Token 2</List.Label> : null}
@@ -278,12 +284,12 @@ export const SimpleSwapTokenNotFoundDialog = () => {
                     </div>
                     <LinkExternal
                       target="_blank"
-                      href={EvmChain.from(token1.chainId)?.getTokenUrl(
+                      href={getEvmChainById(token1.chainId)?.getTokenUrl(
                         token1.address,
                       )}
                       className="font-medium"
                     >
-                      {shortenAddress(token1.address)}{' '}
+                      {shortenEvmAddress(token1.address)}{' '}
                     </LinkExternal>
                   </div>
                 </List.Control>
@@ -331,8 +337,8 @@ export const SimpleSwapTokenNotFoundDialog = () => {
                 size="xl"
                 onClick={() =>
                   onImport([
-                    token0?.isToken ? token0 : undefined,
-                    token1?.isToken ? token1 : undefined,
+                    token0?.type === 'token' ? token0 : undefined,
+                    token1?.type === 'token' ? token1 : undefined,
                   ])
                 }
                 variant={isFoT || isRisky ? 'destructive' : 'default'}

@@ -4,17 +4,17 @@ import { Navigation, SushiNavigationDropdown, classNames } from '@sushiswap/ui'
 import { SushiIcon } from '@sushiswap/ui/icons/SushiIcon'
 import { SushiWithTextIcon } from '@sushiswap/ui/icons/SushiWithTextIcon'
 import React, { type FC } from 'react'
-import { type NonStandardChainId, SUPPORTED_NETWORKS } from 'src/config'
+import { SUPPORTED_NETWORKS } from 'src/config'
 import { WagmiHeaderComponents } from 'src/lib/wagmi/components/wagmi-header-components'
 import { useDerivedStateSimpleTrade } from 'src/ui/swap/trade/derivedstate-simple-trade-provider'
-import { ChainId, type EvmChainId } from 'sushi/chain'
-import type { ChainId as ChainIdType } from 'sushi/chain'
+import { ChainId } from 'sushi'
+
 import { useChainId } from 'wagmi'
 import { headerElements } from '../_common/header-elements'
 
 interface HeaderProps {
-  chainId?: ChainIdType
-  supportedNetworks?: readonly (EvmChainId | NonStandardChainId)[]
+  chainId?: ChainId
+  supportedNetworks?: readonly ChainId[]
 }
 
 export const Header: FC<HeaderProps> = ({ chainId, supportedNetworks }) => {
@@ -58,7 +58,7 @@ const TransparentHeader: FC<HeaderProps> = ({
           rightElement={
             <WagmiHeaderComponents
               networks={SUPPORTED_NETWORKS}
-              selectedNetwork={chainId as EvmChainId}
+              selectedNetwork={chainId}
               supportedNetworks={supportedNetworks}
             />
           }
@@ -96,7 +96,7 @@ const _Header: FC<HeaderProps> = ({ chainId: _chainId, supportedNetworks }) => {
           rightElement={
             <WagmiHeaderComponents
               networks={SUPPORTED_NETWORKS}
-              selectedNetwork={chainId as EvmChainId}
+              selectedNetwork={chainId}
               supportedNetworks={supportedNetworks}
             />
           }

@@ -6,9 +6,9 @@ import {
 import { useCustomTokens } from '@sushiswap/hooks'
 import { useInfiniteQuery } from '@tanstack/react-query'
 import { useMemo } from 'react'
-import { Token } from 'sushi/currency'
+import { EvmToken } from 'sushi/evm'
 
-import type { EvmChainId } from 'sushi/chain'
+import type { EvmChainId } from 'sushi/evm'
 
 type UseSearchTokensV2 = {
   chainIds: TokenListV2ChainId[] | undefined
@@ -78,13 +78,15 @@ export function useSearchTokensV2({
       ...query,
       data: query.data?.pages.flat().map(
         (token) =>
-          new Token({
+          new EvmToken({
             address: token.address,
             chainId: token.chainId as EvmChainId,
             decimals: token.decimals,
             name: token.name,
             symbol: token.symbol,
-            approved: token.approved,
+            metadata: {
+              approved: token.approved,
+            },
           }),
       ),
       priceMap: priceMap,

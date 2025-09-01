@@ -5,8 +5,8 @@ import {
 } from 'src/lib/hooks/react-query'
 import { API_BASE_URL } from 'src/lib/swap/api-base-url'
 import { publicClientConfig } from 'src/lib/wagmi/config/viem'
-import { ChainId } from 'sushi/chain'
-import { Amount, Native, USDC, USDT, WBTC } from 'sushi/currency'
+import { Amount } from 'sushi'
+import { EvmChainId, EvmNative, USDC, USDT, WBTC } from 'sushi/evm'
 import { createPublicClient, stringify } from 'viem'
 import { getBlockNumber } from 'viem/actions'
 import { isSwapApiEnabledChainId } from '../../../src/config'
@@ -62,13 +62,17 @@ const getSwapApiResult = async ({
 
   params.searchParams.set(
     'tokenIn',
-    `${fromToken?.isNative ? '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE' : fromToken?.wrapped.address}`,
+    `${
+      fromToken?.type === 'native'
+        ? '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE'
+        : fromToken?.wrap().address
+    }`,
   )
   params.searchParams.set(
     'tokenOut',
-    `${toToken?.isNative ? '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE' : toToken?.wrapped.address}`,
+    `${toToken?.type === 'native' ? '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE' : toToken?.wrap().address}`,
   )
-  params.searchParams.set('amount', `${amount?.quotient.toString()}`)
+  params.searchParams.set('amount', `${amount?.amount.toString()}`)
   params.searchParams.set('maxSlippage', `${Number(slippagePercentage) / 100}`)
   params.searchParams.set('sender', sender)
   params.searchParams.set('simulate', 'false')
@@ -83,68 +87,68 @@ const getSwapApiResult = async ({
 // !
 
 // Assume 100MATIC for Polygon, 1PROBABLY_ETH for the rest
-const nativeAmounts: Partial<Record<ChainId, Amount<Native>>> = {
-  [ChainId.POLYGON]: Amount.fromRawAmount(
-    Native.onChain(ChainId.POLYGON),
+const nativeAmounts: Partial<Record<EvmChainId, Amount<EvmNative>>> = {
+  [EvmChainId.POLYGON]: new Amount(
+    EvmNative.fromChainId(EvmChainId.POLYGON),
     1e20,
   ),
 }
 const nativeAmount =
-  nativeAmounts[chainId] || Amount.fromRawAmount(Native.onChain(chainId), 1e18)
+  nativeAmounts[chainId] || new Amount(EvmNative.fromChainId(chainId), 1e18)
 
 const trades: Record<string, TradeParams> = {}
 trades[`${chainId}-native-to-usdc`] = {
-  fromToken: Native.onChain(chainId),
+  fromToken: EvmNative.fromChainId(chainId),
   toToken: USDC[chainId as keyof typeof USDC],
   amount: nativeAmount,
   slippagePercentage: '0.5',
 }
 
 trades[`${chainId}-native-to-usdt`] = {
-  fromToken: Native.onChain(chainId),
+  fromToken: EvmNative.fromChainId(chainId),
   toToken: USDT[chainId as keyof typeof USDT],
   amount: nativeAmount,
   slippagePercentage: '0.5',
 }
 
 trades[`${chainId}-native-to-wbtc`] = {
-  fromToken: Native.onChain(chainId),
+  fromToken: EvmNative.fromChainId(chainId),
   toToken: WBTC[chainId as keyof typeof WBTC],
   amount: nativeAmount,
   slippagePercentage: '0.5',
 }
 
 trades[`${chainId}-unwrap`] = {
-  fromToken: Native.onChain(chainId).wrapped,
-  toToken: Native.onChain(chainId),
+  fromToken: EvmNative.fromChainId(chainId).wrap(),
+  toToken: EvmNative.fromChainId(chainId),
   amount: nativeAmount,
   slippagePercentage: '0.5',
 }
 
 trades[`${chainId}-usdc-to-native`] = {
   fromToken: USDC[chainId as keyof typeof USDC],
-  toToken: Native.onChain(chainId),
-  amount: Amount.fromRawAmount(USDC[chainId as keyof typeof USDC], 1e6),
+  toToken: EvmNative.fromChainId(chainId),
+  amount: new Amount(USDC[chainId as keyof typeof USDC], 1e6),
   slippagePercentage: '0.5',
 }
 
 trades[`${chainId}-usdc-to-usdt`] = {
   fromToken: USDC[chainId as keyof typeof USDC],
   toToken: USDT[chainId as keyof typeof USDT],
-  amount: Amount.fromRawAmount(USDC[chainId as keyof typeof USDC], 1e6),
+  amount: new Amount(USDC[chainId as keyof typeof USDC], 1e6),
   slippagePercentage: '0.5',
 }
 
 trades[`${chainId}-usdt-to-native`] = {
   fromToken: USDT[chainId as keyof typeof USDT],
-  toToken: Native.onChain(chainId),
-  amount: Amount.fromRawAmount(USDT[chainId as keyof typeof USDT], 1e6),
+  toToken: EvmNative.fromChainId(chainId),
+  amount: new Amount(USDT[chainId as keyof typeof USDT], 1e6),
   slippagePercentage: '0.5',
 }
 
 trades[`${chainId}-wrap`] = {
-  fromToken: Native.onChain(chainId),
-  toToken: Native.onChain(chainId).wrapped,
+  fromToken: EvmNative.fromChainId(chainId),
+  toToken: EvmNative.fromChainId(chainId).wrap(),
   amount: nativeAmount,
   slippagePercentage: '0.5',
 }

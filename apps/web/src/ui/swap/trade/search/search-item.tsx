@@ -1,11 +1,12 @@
 import type { SearchToken } from '@sushiswap/graph-client/data-api'
+import type { PinnedTokenId } from '@sushiswap/hooks'
 import { Button, Collapsible, classNames } from '@sushiswap/ui'
 import { useState } from 'react'
 import { getChangeSign, getTextColor } from 'src/lib/helpers'
 import { useSwapTokenSelect } from 'src/lib/hooks/useTokenSelect'
-import type { EvmChainId } from 'sushi/chain'
-import { Token } from 'sushi/currency'
-import { formatNumber, formatPercent, formatUSD } from 'sushi/format'
+import { formatNumber, formatPercent, formatUSD } from 'sushi'
+import type { EvmChainId } from 'sushi/evm'
+import { EvmToken } from 'sushi/evm'
 import { formatUnits } from 'viem'
 import { FavoriteButton } from '../favorite-button'
 import { TokenNetworkIcon } from '../token-network-icon'
@@ -42,7 +43,9 @@ export const SearchItem = ({ token }: { token: SearchToken }) => {
         onMouseLeave={() => setIsHovered(false)}
       >
         <FavoriteButton
-          currencyId={`${token.chainId}:${token.address}:${token?.symbol}`}
+          currencyId={
+            `${token.chainId}:${token.address}:${token?.symbol}` as PinnedTokenId
+          }
         />
         <TokenNetworkIcon token={token} />
         {isHovered ? (
@@ -106,7 +109,7 @@ const ActionButtons = ({
       <Button
         onClick={async () => {
           await handleTokenOutput({
-            token: new Token({
+            token: new EvmToken({
               chainId: token.chainId as EvmChainId,
               address: token.address,
               decimals: token.decimals,
@@ -125,7 +128,7 @@ const ActionButtons = ({
       <Button
         onClick={async () => {
           await handleTokenInput({
-            token: new Token({
+            token: new EvmToken({
               chainId: token.chainId as EvmChainId,
               address: token.address,
               decimals: token.decimals,

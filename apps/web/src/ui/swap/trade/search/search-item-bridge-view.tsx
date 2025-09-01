@@ -4,8 +4,9 @@ import { Button, classNames } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import { useMemo, useState } from 'react'
 import { useSwapTokenSelect } from 'src/lib/hooks/useTokenSelect'
-import { type EvmChainId, evmChains } from 'sushi/chain'
-import { Token } from 'sushi/currency'
+import { getChainById } from 'sushi'
+import type { EvmChainId } from 'sushi/evm'
+import { EvmToken } from 'sushi/evm'
 import { ChainOptionsSelector } from '../../chain-options-selector'
 import { useSearchContext } from './search-provider'
 
@@ -41,7 +42,7 @@ export const SearchItemBridgeView = ({
       console.error('Token not found on the selected chain')
       return
     }
-    const _token = new Token({
+    const _token = new EvmToken({
       chainId: chainId as EvmChainId,
       address: tokenOnNewChain.address,
       decimals: tokenOnNewChain.decimals,
@@ -78,7 +79,7 @@ export const SearchItemBridgeView = ({
                 height={16}
               />
               <span className="text-xs">
-                {evmChains[token.chainId as EvmChainId].name}
+                {getChainById(token.chainId as EvmChainId)?.name}
               </span>
             </div>
           </div>

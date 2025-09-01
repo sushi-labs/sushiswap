@@ -9,12 +9,12 @@ import { useSwapTokenSelect } from 'src/lib/hooks/useTokenSelect'
 import { getNetworkKey } from 'src/lib/network'
 import { ConnectButton } from 'src/lib/wagmi/components/connect-button'
 import { TokenSelectorV2 } from 'src/lib/wagmi/components/token-selector/token-selector-v2'
-import { formatUSD } from 'sushi'
-import type { EvmChainId } from 'sushi/chain'
-import type { Type } from 'sushi/currency'
-import { WNATIVE, unwrapToken } from 'sushi/currency'
-import { Token } from 'sushi/currency'
-import { formatNumber, formatPercent } from 'sushi/format'
+import { formatUSD, unwrapToken } from 'sushi'
+import { formatNumber, formatPercent } from 'sushi'
+import type { EvmChainId } from 'sushi/evm'
+import type { EvmCurrency } from 'sushi/evm'
+import { WNATIVE } from 'sushi/evm'
+import { EvmToken } from 'sushi/evm'
 import { getAddress } from 'viem'
 import { useAccount } from 'wagmi'
 import { FavoriteButton } from '../favorite-button'
@@ -32,8 +32,9 @@ export const Favorite = () => {
   const { hasToken, mutate } = usePinnedTokens()
 
   const onSelect = useCallback(
-    (_token: Type) => {
-      const currencyId: PinnedTokenId = `${_token?.id}:${_token?.symbol}`
+    (_token: EvmCurrency) => {
+      const currencyId: PinnedTokenId =
+        `${_token?.id}:${_token?.symbol}` as PinnedTokenId
       const isOnList = !currencyId ? false : hasToken(currencyId)
       if (!currencyId) return
       mutate(isOnList ? 'remove' : 'add', currencyId)
@@ -127,14 +128,14 @@ const FavoriteItem = ({ token }: { token: SearchToken }) => {
     async (token: SearchToken) => {
       await handleTokenOutput({
         token: unwrapToken(
-          new Token({
+          new EvmToken({
             chainId: token.chainId as EvmChainId,
             address: token.address,
             symbol: token.symbol,
             name: token.name,
             decimals: token.decimals,
           }),
-        ),
+        ) as EvmCurrency,
       })
     },
     [handleTokenOutput],
@@ -152,11 +153,11 @@ const FavoriteItem = ({ token }: { token: SearchToken }) => {
     >
       <td className="max-w-[35px] py-3 md:py-4">
         <FavoriteButton
-          currencyId={`${token.chainId}:${
-            token.address === wrappedAddress
-              ? 'NATIVE'
-              : getAddress(token.address)
-          }:${token.symbol}`}
+          currencyId={
+            `${token.chainId}:${token.address === wrappedAddress ? 'NATIVE' : getAddress(token.address)}:${
+              token.symbol
+            }` as PinnedTokenId
+          }
         />
       </td>
       <td>

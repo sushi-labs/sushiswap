@@ -4,7 +4,7 @@ import {
 } from '@sushiswap/graph-client/data-api'
 
 import { useNetworkOptions } from 'src/lib/hooks/useNetworkOptions'
-import type { Type } from 'sushi/currency'
+import type { EvmCurrency } from 'sushi/evm'
 import { useAccount } from 'wagmi'
 import { useMyTokensV2 } from '../hooks/use-my-tokens-v2'
 import {
@@ -14,9 +14,9 @@ import {
 
 interface TokenSelectorMyTokens {
   chainId?: TokenListV2ChainId
-  onSelect(currency: Type): void
-  onShowInfo(currency: Type | false): void
-  selected: Type | undefined
+  onSelect(currency: EvmCurrency): void
+  onShowInfo(currency: EvmCurrency | false): void
+  selected: EvmCurrency | undefined
   includeNative?: boolean
   showChainOptions: boolean
 }

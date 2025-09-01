@@ -29,7 +29,7 @@ export async function ApiKeyRateLimitCard({
   ])
 
   return (
-    <Card className="w-full min-w-[470px] h-min">
+    <Card className="w-full md:min-w-[470px] h-min">
       <CardHeader className="rounded-t-xl">
         <CardTitle>Rate Limit</CardTitle>
         <CardDescription>Change the key's rate limit settings</CardDescription>

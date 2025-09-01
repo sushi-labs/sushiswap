@@ -1,8 +1,9 @@
 import React, { type FC, memo, useMemo } from 'react'
-import type { Amount, Type } from 'sushi/currency'
+import type { Amount } from 'sushi'
+import type { EvmCurrency } from 'sushi/evm'
 import { useAccount } from 'wagmi'
 
-import type { Token } from 'sushi/currency'
+import type { EvmToken } from 'sushi/evm'
 import type { Address } from 'viem'
 import { TokenSelectorImportRow } from './token-selector-import-row'
 import {
@@ -12,10 +13,10 @@ import {
 
 interface TokenSelectorCurrencyListV2Props {
   id: string
-  currencies: Readonly<Type[]> | undefined
-  onSelect(currency: Type): void
-  selected: Type | undefined
-  balancesMap: Map<string, Amount<Type>> | undefined
+  currencies: Readonly<EvmCurrency[]> | undefined
+  onSelect(currency: EvmCurrency): void
+  selected: EvmCurrency | undefined
+  balancesMap: Map<string, Amount<EvmCurrency>> | undefined
   priceMap: Map<string, number> | undefined
   bridgeInfoMap:
     | Map<
@@ -25,10 +26,10 @@ interface TokenSelectorCurrencyListV2Props {
     | undefined
   isBalanceLoading: boolean
   importConfig?: {
-    onImport: (currency: Token) => void
+    onImport: (currency: EvmToken) => void
     importableSet: Set<Address>
   }
-  onShowInfo(currency: Type | false): void
+  onShowInfo(currency: EvmCurrency | false): void
   showChainOptions: boolean
 }
 
@@ -54,13 +55,14 @@ export const TokenSelectorCurrencyListV2: FC<TokenSelectorCurrencyListV2Props> =
         currency,
         balance: balancesMap?.get(currency.id),
         price: priceMap?.get(currency.id),
-        showWarning: currency.approved === false,
+        showWarning:
+          currency.type === 'token' && currency.metadata.approved === false,
         onSelect,
         selected: selected
           ? (currency.isNative === true && selected.isNative === true) ||
             (selected.isToken &&
               currency.isToken &&
-              currency.wrapped.address === selected.wrapped.address)
+              currency.wrap().address === selected.wrap().address)
           : false,
         isBalanceLoading,
         onShowInfo: () => onShowInfo(currency),
@@ -97,7 +99,7 @@ export const TokenSelectorCurrencyListV2: FC<TokenSelectorCurrencyListV2Props> =
           <TokenSelectorImportRow
             key={rowData.currency.id}
             currency={rowData.currency}
-            onImport={() => onImport(rowData.currency as Token)}
+            onImport={() => onImport(rowData.currency as EvmToken)}
           />
         )
       }

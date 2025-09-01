@@ -1,7 +1,7 @@
 import { useWallet } from '@aptos-labs/wallet-adapter-react'
 import { SkeletonText } from '@sushiswap/ui'
 import { type FC, useMemo } from 'react'
-import { formatPercent } from 'sushi/format'
+import { formatPercent } from 'sushi'
 import { formatNumberWithDecimals } from '~aptos/_common/lib/common/format-number-with-decimals'
 import { useNetwork } from '~aptos/_common/lib/common/use-network'
 import { useTokenBalance } from '~aptos/_common/lib/common/use-token-balances'

@@ -8,7 +8,7 @@ import {
 } from '@sushiswap/hooks'
 import { type FC, type ReactNode, useState } from 'react'
 
-import { DEFAULT_SLIPPAGE } from 'sushi/config'
+import { DEFAULT_SLIPPAGE } from 'sushi/evm'
 import { Button } from '../button'
 import {
   Dialog,

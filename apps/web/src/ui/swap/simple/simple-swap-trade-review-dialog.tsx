@@ -40,11 +40,14 @@ import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
 import { useApproved } from 'src/lib/wagmi/systems/Checker/Provider'
 import { SLIPPAGE_WARNING_THRESHOLD } from 'src/lib/wagmi/systems/Checker/Slippage'
 import { PriceImpactWarning, SlippageWarning } from 'src/ui/common'
-import { gasMargin } from 'sushi'
-import { ChainId, EvmChain } from 'sushi/chain'
-import { Native } from 'sushi/currency'
-import { shortenAddress } from 'sushi/format'
-import { ZERO } from 'sushi/math'
+import { ChainId, ZERO } from 'sushi'
+import {
+  EvmChain,
+  EvmNative,
+  addGasMargin,
+  getEvmChainById,
+  shortenEvmAddress,
+} from 'sushi/evm'
 import {
   type SendTransactionReturnType,
   UserRejectedRequestError,
@@ -119,11 +122,11 @@ const _SimpleSwapTradeReviewDialog: FC<{
   const { refetchChain: refetchBalances } = useRefetchBalances()
 
   const isWrap =
-    token0?.isNative &&
-    token1?.wrapped.address === Native.onChain(chainId).wrapped.address
+    token0?.type === 'native' &&
+    token1?.wrap().address === EvmNative.fromChainId(chainId).wrap().address
   const isUnwrap =
-    token1?.isNative &&
-    token0?.wrapped.address === Native.onChain(chainId).wrapped.address
+    token1?.type === 'native' &&
+    token0?.wrap().address === EvmNative.fromChainId(chainId).wrap().address
   const isSwap = !isWrap && !isUnwrap
 
   const trace = useTrace()
@@ -142,15 +145,17 @@ const _SimpleSwapTradeReviewDialog: FC<{
           ...trace,
           txHash: hash,
           chainId: chainId,
-          token0: tradeRef?.current?.amountIn?.currency?.isToken
-            ? tradeRef?.current?.amountIn?.currency?.address
-            : NativeAddress,
-          token1: tradeRef?.current?.amountOut?.currency?.isToken
-            ? tradeRef?.current?.amountOut?.currency?.address
-            : NativeAddress,
-          amountIn: tradeRef?.current?.amountIn?.quotient,
-          amountOut: tradeRef?.current?.amountOut?.quotient,
-          amountOutMin: tradeRef?.current?.minAmountOut?.quotient,
+          token0:
+            tradeRef?.current?.amountIn?.currency?.type === 'token'
+              ? tradeRef?.current?.amountIn?.currency?.address
+              : NativeAddress,
+          token1:
+            tradeRef?.current?.amountOut?.currency?.type === 'token'
+              ? tradeRef?.current?.amountOut?.currency?.address
+              : NativeAddress,
+          amountIn: tradeRef?.current?.amountIn?.amount,
+          amountOut: tradeRef?.current?.amountOut?.amount,
+          amountOutMin: tradeRef?.current?.minAmountOut?.amount,
         })
 
         void createToast({
@@ -193,12 +198,14 @@ const _SimpleSwapTradeReviewDialog: FC<{
               txHash: hash,
               from: receipt.from,
               chain_id: chainId,
-              token_from: trade?.amountIn?.currency.isToken
-                ? trade?.amountIn?.currency.address
-                : NativeAddress,
-              token_to: trade?.amountOut?.currency.isToken
-                ? trade?.amountOut?.currency.address
-                : NativeAddress,
+              token_from:
+                trade?.amountIn?.currency.type === 'token'
+                  ? trade?.amountIn?.currency.address
+                  : NativeAddress,
+              token_to:
+                trade?.amountOut?.currency.type === 'token'
+                  ? trade?.amountOut?.currency.address
+                  : NativeAddress,
               tx: stringify(trade?.tx),
             })
           }
@@ -228,12 +235,14 @@ const _SimpleSwapTradeReviewDialog: FC<{
       }
 
       sendAnalyticsEvent(SwapEventName.SWAP_ERROR, {
-        token_from: trade?.amountIn?.currency.isToken
-          ? trade?.amountIn?.currency.address
-          : NativeAddress,
-        token_to: trade?.amountOut?.currency.isToken
-          ? trade?.amountOut?.currency.address
-          : NativeAddress,
+        token_from:
+          trade?.amountIn?.currency.type === 'token'
+            ? trade?.amountIn?.currency.address
+            : NativeAddress,
+        token_to:
+          trade?.amountOut?.currency.type === 'token'
+            ? trade?.amountOut?.currency.address
+            : NativeAddress,
         tx: stringify(trade?.tx),
         error: e instanceof Error ? e.message : undefined,
       })
@@ -269,7 +278,7 @@ const _SimpleSwapTradeReviewDialog: FC<{
         to,
         data,
         value,
-        gas: gas ? gasMargin(BigInt(gas)) : undefined,
+        gas: gas ? addGasMargin(BigInt(gas)) : undefined,
       })
       confirm()
     }
@@ -289,7 +298,7 @@ const _SimpleSwapTradeReviewDialog: FC<{
   }, [trade?.priceImpact])
 
   const showSlippageWarning = useMemo(() => {
-    return !slippagePercent.lessThan(SLIPPAGE_WARNING_THRESHOLD)
+    return !slippagePercent.lt(SLIPPAGE_WARNING_THRESHOLD)
   }, [slippagePercent])
 
   return (
@@ -326,7 +335,7 @@ const _SimpleSwapTradeReviewDialog: FC<{
                 <List className="!pt-0">
                   <List.Control>
                     <List.KeyValue title="Network">
-                      {EvmChain.from(chainId)?.name}
+                      {getEvmChainById(chainId).name}
                     </List.KeyValue>
                     {isSwap && (
                       <List.KeyValue
@@ -343,12 +352,12 @@ const _SimpleSwapTradeReviewDialog: FC<{
                             <SkeletonBox className="h-4 py-0.5 w-[60px] rounded-md" />
                           ) : trade ? (
                             `${
-                              trade.priceImpact?.lessThan(ZERO)
+                              trade.priceImpact?.lt(ZERO)
                                 ? '+'
-                                : trade.priceImpact?.greaterThan(ZERO)
+                                : trade.priceImpact?.gt(ZERO)
                                   ? '-'
                                   : ''
-                            }${Math.abs(Number(trade.priceImpact?.toFixed(2)))}%`
+                            }${Math.abs(Number(trade.priceImpact?.toString({ fixed: 2 })))}%`
                           ) : (
                             '-'
                           )}
@@ -362,7 +371,7 @@ const _SimpleSwapTradeReviewDialog: FC<{
                         Certain tokens incur a fee upon purchase or sale. Sushiswap does not collect any of these fees."
                       >
                         <span className="text-right text-yellow">
-                          {trade.tokenTax.toPercentageString()}
+                          {trade.tokenTax.toPercentString()}
                         </span>
                       </List.KeyValue>
                     )}
@@ -385,7 +394,7 @@ const _SimpleSwapTradeReviewDialog: FC<{
                           )}
                         </List.KeyValue>
                         <List.KeyValue
-                          title={`Min. received after slippage (${slippagePercent.toPercentageString()})`}
+                          title={`Min. received after slippage (${slippagePercent.toPercentString()})`}
                           subtitle="The minimum amount you are guaranteed to receive."
                         >
                           {isSwapQueryFetching ? (
@@ -414,7 +423,7 @@ const _SimpleSwapTradeReviewDialog: FC<{
                           className="w-1/3"
                         />
                       ) : (
-                        `${trade.gasSpent} ${Native.onChain(chainId).symbol}`
+                        `${trade.gasSpent} ${EvmNative.fromChainId(chainId).symbol}`
                       )}
                     </List.KeyValue>
                   </List.Control>
@@ -427,13 +436,13 @@ const _SimpleSwapTradeReviewDialog: FC<{
                           <a
                             target="_blank"
                             href={
-                              EvmChain.fromChainId(chainId)?.getAccountUrl(
+                              getEvmChainById(chainId).getAccountUrl(
                                 recipient,
                               ) ?? '#'
                             }
                             rel="noreferrer"
                           >
-                            {shortenAddress(recipient)}
+                            {shortenEvmAddress(recipient)}
                           </a>
                         </Button>
                       </List.KeyValue>
@@ -448,12 +457,14 @@ const _SimpleSwapTradeReviewDialog: FC<{
                     element={InterfaceElementName.CONFIRM_SWAP_BUTTON}
                     name={SwapEventName.SWAP_SUBMITTED_BUTTON_CLICKED}
                     properties={{
-                      token_from: trade?.amountIn?.currency.isToken
-                        ? trade?.amountIn?.currency.address
-                        : NativeAddress,
-                      token_to: trade?.amountOut?.currency.isToken
-                        ? trade?.amountOut?.currency.address
-                        : NativeAddress,
+                      token_from:
+                        trade?.amountIn?.currency.type === 'token'
+                          ? trade?.amountIn?.currency.address
+                          : NativeAddress,
+                      token_to:
+                        trade?.amountOut?.currency.type === 'token'
+                          ? trade?.amountOut?.currency.address
+                          : NativeAddress,
                       ...trace,
                     }}
                   >
@@ -466,8 +477,7 @@ const _SimpleSwapTradeReviewDialog: FC<{
                         !!swapQueryError ||
                           isWritePending ||
                           Boolean(
-                            !sendTransactionAsync &&
-                              swapAmount?.greaterThan(ZERO),
+                            !sendTransactionAsync && swapAmount?.gt(ZERO),
                           ) ||
                           isSwapQueryError,
                       )}

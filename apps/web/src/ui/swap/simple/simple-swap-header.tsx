@@ -8,8 +8,7 @@ import {
   typographyVariants,
 } from '@sushiswap/ui'
 import React, { useMemo, useState } from 'react'
-import { Price, tryParseAmount } from 'sushi/currency'
-import { formatUSD } from 'sushi/format'
+import { Amount, Price, formatUSD } from 'sushi'
 import { usePrices } from '~evm/_common/ui/price-provider/price-provider/use-prices'
 import { useTokenAmountDollarValues } from '../../../lib/hooks'
 import { useDerivedStateSimpleSwap } from './derivedstate-simple-swap-provider'
@@ -22,7 +21,9 @@ export const SimpleSwapHeader = () => {
   } = useDerivedStateSimpleSwap()
 
   const amounts = useMemo(() => {
-    return [tryParseAmount('1', token0), tryParseAmount('1', token1)]
+    return token0 && token1
+      ? [Amount.fromHuman(token0, '1'), Amount.fromHuman(token1, '1')]
+      : []
   }, [token0, token1])
 
   const [token0FiatPrice, token1FiatPrice] = useTokenAmountDollarValues({
@@ -35,18 +36,18 @@ export const SimpleSwapHeader = () => {
   const price = useMemo(() => {
     if (!token0 || !token1) return '0.00'
 
-    const token0PriceFraction = prices?.getFraction(token0.wrapped.address)
+    const token0PriceFraction = prices?.getFraction(token0.wrap().address)
     const token0Price = token0PriceFraction
-      ? tryParseAmount('1', token0)?.multiply(token0PriceFraction)
+      ? Amount.fromHuman(token0, '1')?.mul(token0PriceFraction)
       : undefined
 
-    const token1PriceFraction = prices?.getFraction(token1.wrapped.address)
+    const token1PriceFraction = prices?.getFraction(token1.wrap().address)
     const token1Price = token1PriceFraction
-      ? tryParseAmount('1', token1)?.multiply(token1PriceFraction)
+      ? Amount.fromHuman(token1, '1')?.mul(token1PriceFraction)
       : undefined
 
     let price
-    if (token0Price?.quotient && token1Price?.quotient) {
+    if (token0Price?.amount && token1Price?.amount) {
       price = new Price({
         baseAmount: token0Price,
         quoteAmount: token1Price,

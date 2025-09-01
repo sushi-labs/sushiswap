@@ -11,7 +11,7 @@ import {
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import { useNetworkOptions } from 'src/lib/hooks/useNetworkOptions'
 import { getNetworkName } from 'src/lib/network'
-import type { EvmChainId } from 'sushi'
+import type { EvmChainId } from 'sushi/evm'
 
 export const NetworkMenu = ({
   className,

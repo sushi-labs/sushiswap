@@ -11,19 +11,18 @@ import {
 } from 'react'
 import { useFiatQuote } from 'src/lib/hooks/react-query/fiat/use-fiat-quote'
 import { useTokenWithCache } from 'src/lib/wagmi/hooks/tokens/useTokenWithCache'
-import { EvmChainId } from 'sushi/chain'
-import { defaultQuoteCurrency, isWNativeSupported } from 'sushi/config'
-import { Native, type Type } from 'sushi/currency'
+import { EvmChainId, defaultQuoteCurrency, isWNativeSupported } from 'sushi/evm'
+import { type EvmCurrency, EvmNative } from 'sushi/evm'
 import { type Address, isAddress } from 'viem'
 import { useAccount } from 'wagmi'
 import { type SupportedChainId, isSupportedChainId } from '../../../config'
 
-const getTokenAsString = (token: Type | string) =>
+const getTokenAsString = (token: EvmCurrency | string) =>
   typeof token === 'string'
     ? token
     : token.isNative
       ? 'NATIVE'
-      : token.wrapped.address
+      : token.wrap().address
 const getCurrencyAsString = (token: FiatCurrency | string) =>
   typeof token === 'string' ? token : token.code
 // const getDefaultCurrency = (chainId: number) =>
@@ -45,14 +44,14 @@ export type FiatPaymentType = 'debit' | 'credit' | 'apple-pay'
 interface State {
   mutate: {
     setToken0(token0: FiatCurrency): void
-    setToken1(token1: Type | string): void
-    setTokens(token0: FiatCurrency | string, token1: Type | string): void
+    setToken1(token1: EvmCurrency | string): void
+    setTokens(token0: FiatCurrency | string, token1: EvmCurrency | string): void
     setSwapAmount(swapAmount: string): void
     setPaymentType(type: null | FiatPaymentType): void
   }
   state: {
     token0: FiatCurrency | undefined
-    token1: Type | undefined
+    token1: EvmCurrency | undefined
     chainId: EvmChainId
     swapAmountString: string
     recipient: string | undefined
@@ -83,9 +82,9 @@ const DerivedStateFiatProvider: FC<DerivedStateFiatProviderProps> = ({
   const { address } = useAccount()
   const pathname = usePathname()
   const searchParams = useSearchParams()
-  const [localTokenCache, setLocalTokenCache] = useState<Map<string, Type>>(
-    new Map(),
-  )
+  const [localTokenCache, setLocalTokenCache] = useState<
+    Map<string, EvmCurrency>
+  >(new Map())
   const [localFiatCache, setLocalFiatCache] = useState<
     Map<string, FiatCurrency>
   >(new Map())
@@ -161,7 +160,7 @@ const DerivedStateFiatProvider: FC<DerivedStateFiatProviderProps> = ({
   )
 
   // Update the URL with a new token1
-  const setToken1 = useCallback<(_token1: string | Type) => void>(
+  const setToken1 = useCallback<(_token1: string | EvmCurrency) => void>(
     (_token1) => {
       // If entity is provided, parse it to a string
       const token1 = getTokenAsString(_token1)
@@ -179,7 +178,7 @@ const DerivedStateFiatProvider: FC<DerivedStateFiatProviderProps> = ({
 
   // Update the URL with both tokens
   const setTokens = useCallback<
-    (_token0: string | FiatCurrency, _token1: string | Type) => void
+    (_token0: string | FiatCurrency, _token1: string | EvmCurrency) => void
   >(
     (_token0, _token1) => {
       // If entity is provided, parse it to a string
@@ -233,7 +232,7 @@ const DerivedStateFiatProvider: FC<DerivedStateFiatProviderProps> = ({
         const _token1 =
           defaultedParams.get('token1') === 'NATIVE' &&
           isWNativeSupported(chainId)
-            ? Native.onChain(chainId)
+            ? EvmNative.fromChainId(chainId)
             : token1
 
         return {

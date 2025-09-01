@@ -8,7 +8,7 @@ import {
   CardTitle,
 } from '@sushiswap/ui'
 import type { FC } from 'react'
-import { formatUSD } from 'sushi/format'
+import { formatUSD } from 'sushi'
 
 import type { V2Pool } from '@sushiswap/graph-client/data-api'
 import { SkeletonText } from '@sushiswap/ui'

@@ -40,10 +40,10 @@ export const MarketTable = () => {
 
   const token0Address =
     searchParams.get('token0') ||
-    (_token0?.isNative ? 'NATIVE' : _token0?.wrapped?.address)
+    (_token0?.isNative ? 'NATIVE' : _token0?.wrap()?.address)
   const token1Address =
     searchParams.get('token1') ||
-    (_token1?.isNative ? 'NATIVE' : _token1?.wrapped?.address)
+    (_token1?.isNative ? 'NATIVE' : _token1?.wrap()?.address)
 
   const [showInUsd, setShowInUsd] = useState(true)
 

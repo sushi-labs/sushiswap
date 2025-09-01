@@ -5,8 +5,7 @@ import {
   warningSeverity,
   warningSeverityClassName,
 } from 'src/lib/swap/warningSeverity'
-import { tryParseAmount } from 'sushi/currency'
-import { ZERO } from 'sushi/math'
+import { Amount, ZERO } from 'sushi'
 import type { CurrencyInputProps } from './CurrencyInput'
 
 type PricePanel = Pick<
@@ -26,12 +25,12 @@ export const PricePanel: FC<PricePanel> = ({
   error,
 }) => {
   const parsedValue = useMemo(
-    () => tryParseAmount(value, currency),
+    () => (currency ? Amount.tryFromHuman(currency, value) : undefined),
     [currency, value],
   )
   const currencyValueStr =
     parsedValue && price
-      ? `${((price * Number(parsedValue.quotient)) / 10 ** parsedValue.currency.decimals).toFixed(2)}`
+      ? `${((price * Number(parsedValue.amount)) / 10 ** parsedValue.currency.decimals).toFixed(2)}`
       : '0.00'
 
   if (loading)
@@ -55,12 +54,8 @@ export const PricePanel: FC<PricePanel> = ({
             warningSeverityClassName(warningSeverity(priceImpact)),
           )}
         >
-          {priceImpact?.lessThan(ZERO)
-            ? '+'
-            : priceImpact?.greaterThan(ZERO)
-              ? '-'
-              : ''}
-          {Math.abs(Number(priceImpact?.toFixed(2)) || 0)}%
+          {priceImpact?.lt(ZERO) ? '+' : priceImpact?.gt(ZERO) ? '-' : ''}
+          {Math.abs(Number(priceImpact?.toString({ fixed: 2 })) || 0)}%
         </span>
       )}
     </p>

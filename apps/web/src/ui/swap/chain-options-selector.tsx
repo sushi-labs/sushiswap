@@ -26,7 +26,7 @@ import { useCurrentChainId } from 'src/lib/hooks/useCurrentChainId'
 import { useNetworkOptions } from 'src/lib/hooks/useNetworkOptions'
 import { useTradeMode } from 'src/lib/hooks/useTradeMode'
 import { getNetworkName } from 'src/lib/network'
-import type { ChainId } from 'sushi/chain'
+import type { ChainId } from 'sushi'
 
 export const ChainOptionsSelector = ({
   size = 'sm',

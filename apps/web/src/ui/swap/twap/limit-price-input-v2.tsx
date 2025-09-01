@@ -2,28 +2,9 @@
 
 import { Button, SkeletonBox, TextField, classNames } from '@sushiswap/ui'
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { Amount, Price } from 'sushi/currency'
+import { Amount, Price } from 'sushi'
 import { parseUnits } from 'viem/utils'
 import { useDerivedStateTwap } from './derivedstate-twap-provider'
-
-// const PRICE_OPTIONS = [
-// 	{
-// 		label: "Market",
-// 		value: 0,
-// 	},
-// 	{
-// 		label: "+1%",
-// 		value: 1,
-// 	},
-// 	{
-// 		label: "+5%",
-// 		value: 5,
-// 	},
-// 	{
-// 		label: "+10%",
-// 		value: 10,
-// 	},
-// ];
 
 export const LimitPriceInputV2 = () => {
   const {
@@ -94,12 +75,12 @@ export const LimitPriceInputV2 = () => {
   const { marketAmount, limitAmount } = useMemo(() => {
     if (!marketPrice || !limitPrice)
       return { marketAmount: 0n, limitAmount: 0n }
-    const oneUnitOfBaseCurrency = Amount.fromRawAmount(
-      marketPrice.baseCurrency,
-      parseUnits('1', marketPrice.baseCurrency.decimals),
+    const oneUnitOfBaseCurrency = new Amount(
+      marketPrice.base,
+      parseUnits('1', marketPrice.base.decimals),
     )
-    const marketAmount = marketPrice.quote(oneUnitOfBaseCurrency).quotient
-    const limitAmount = limitPrice.quote(oneUnitOfBaseCurrency).quotient
+    const marketAmount = marketPrice.getQuote(oneUnitOfBaseCurrency).amount
+    const limitAmount = limitPrice.getQuote(oneUnitOfBaseCurrency).amount
     return { marketAmount, limitAmount }
   }, [marketPrice, limitPrice])
 
@@ -149,16 +130,16 @@ export const LimitPriceInputV2 = () => {
 
       const priceDiff = !isLimitPriceInverted ? priceDiffInverse : priceDiffReg
 
-      const oneUnitOfBaseCurrency = Amount.fromRawAmount(
-        marketPrice.baseCurrency,
-        parseUnits('1', marketPrice.baseCurrency.decimals),
+      const oneUnitOfBaseCurrency = new Amount(
+        marketPrice.base,
+        parseUnits('1', marketPrice.base.decimals),
       )
 
       const limitPrice = new Price({
         baseAmount: oneUnitOfBaseCurrency,
-        quoteAmount: Amount.fromRawAmount(
-          marketPrice.quoteCurrency,
-          (marketPrice.quote(oneUnitOfBaseCurrency).quotient *
+        quoteAmount: new Amount(
+          marketPrice.quote,
+          (marketPrice.getQuote(oneUnitOfBaseCurrency).amount *
             BigInt(10_000_000 + priceDiff)) /
             10_000_000n,
         ),

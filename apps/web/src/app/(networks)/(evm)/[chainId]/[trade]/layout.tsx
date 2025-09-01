@@ -5,7 +5,7 @@ import {
   type TradeMode,
   isSupportedTradeModeOnChainId,
 } from 'src/ui/swap/trade/config'
-import type { ChainId as ChainIdType } from 'sushi/chain'
+import type { ChainId as ChainIdType } from 'sushi'
 import { Header } from '../header'
 import { KatanaBackground } from './katana-background'
 import { Providers } from './providers'

@@ -6,8 +6,8 @@ import { useCustomTokens } from '@sushiswap/hooks'
 import { useQuery } from '@tanstack/react-query'
 import { useMemo } from 'react'
 import { NativeAddress } from 'src/lib/constants'
-import { getIdFromChainIdAddress } from 'sushi'
-import { Amount, Native, Token, type Type } from 'sushi/currency'
+import { Amount } from 'sushi'
+import { type EvmCurrency, EvmNative, EvmToken } from 'sushi/evm'
 import type { Address } from 'viem'
 
 interface UseMyTokensV2 {
@@ -54,8 +54,8 @@ export function useMyTokensV2({
   })
 
   return useMemo(() => {
-    let tokens: Type[] | undefined = []
-    let balanceMap: Map<string, Amount<Type>> | undefined = undefined
+    let tokens: EvmCurrency[] | undefined = []
+    let balanceMap: Map<string, Amount<EvmCurrency>> | undefined = undefined
     let priceMap: Map<string, number> | undefined = undefined
     // let bridgeInfoMap: Map<string, { address: string; chainId: TokenListV2ChainId; decimals: number }> | undefined = undefined;
     let bridgeInfoMap:
@@ -72,24 +72,26 @@ export function useMyTokensV2({
       bridgeInfoMap = new Map()
 
       query.data.forEach((token) => {
-        let _token: Type
+        let _token: EvmCurrency
         // token.
 
         if (token.address === NativeAddress) {
-          _token = Native.onChain(token.chainId as TokenListV2ChainId)
+          _token = EvmNative.fromChainId(token.chainId as TokenListV2ChainId)
         } else {
-          _token = new Token({
+          _token = new EvmToken({
             chainId: token.chainId as TokenListV2ChainId,
             address: token.address,
             decimals: token.decimals,
             symbol: token.symbol,
             name: token.name,
-            approved: token.approved,
+            metadata: {
+              approved: token.approved,
+            },
           })
         }
 
         tokens!.push(_token)
-        balanceMap!.set(_token.id, Amount.fromRawAmount(_token, token.balance))
+        balanceMap!.set(_token.id, new Amount(_token, token.balance))
         priceMap!.set(_token.id, token.priceUSD)
         bridgeInfoMap!.set(_token.id, token?.bridgeInfo ?? null)
       })

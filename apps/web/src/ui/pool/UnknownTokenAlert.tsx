@@ -5,14 +5,16 @@ import { useCustomTokens } from '@sushiswap/hooks'
 import { Message } from '@sushiswap/ui'
 import { type FC, useMemo } from 'react'
 import { useTokenWithCache } from 'src/lib/wagmi/hooks/tokens/useTokenWithCache'
-import { shortenAddress } from 'sushi/format'
+import { shortenEvmAddress } from 'sushi/evm'
 
 interface UnknownTokenAlert {
   pool: V2Pool
 }
 
 const tokenName = (token: V2Pool['token0']) =>
-  token.name ? `${token.name} (${token.symbol})` : shortenAddress(token.address)
+  token.name
+    ? `${token.name} (${token.symbol})`
+    : shortenEvmAddress(token.address)
 
 export const UnknownTokenAlert: FC<UnknownTokenAlert> = ({ pool }) => {
   const { token0, token1 } = pool
@@ -30,12 +32,15 @@ export const UnknownTokenAlert: FC<UnknownTokenAlert> = ({ pool }) => {
   })
 
   const token0NotInList = useMemo(
-    () => Boolean(tokenFrom && !tokenFrom.approved && !hasToken(tokenFrom)),
+    () =>
+      Boolean(
+        tokenFrom && !tokenFrom.metadata.approved && !hasToken(tokenFrom),
+      ),
     [hasToken, tokenFrom],
   )
 
   const token1NotInList = useMemo(
-    () => Boolean(tokenTo && !tokenTo.approved && hasToken(tokenTo)),
+    () => Boolean(tokenTo && !tokenTo.metadata.approved && hasToken(tokenTo)),
     [hasToken, tokenTo],
   )
 

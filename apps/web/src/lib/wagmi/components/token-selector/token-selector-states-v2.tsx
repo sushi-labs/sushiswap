@@ -1,6 +1,6 @@
 'use client'
 
-import type { Type } from 'sushi/currency'
+import type { EvmCurrency } from 'sushi/evm'
 
 import {
   type TokenListV2ChainId,
@@ -22,12 +22,12 @@ import { TokenSelectorTrendingTokensV2 } from './token-lists/token-selector-tren
 import type { TokenSelectorV2Type } from './token-selector-v2'
 
 interface TokenSelectorStates {
-  selected: Type | undefined
+  selected: EvmCurrency | undefined
   selectedNetwork?: TokenListV2ChainId
   account?: Address
-  onSelect(currency: Type): void
-  onShowInfo(currency: Type | false): void
-  currencies?: Type[]
+  onSelect(currency: EvmCurrency): void
+  onShowInfo(currency: EvmCurrency | false): void
+  currencies?: EvmCurrency[]
   includeNative?: boolean
   hidePinnedTokens?: boolean
   search?: string

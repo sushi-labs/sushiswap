@@ -8,7 +8,7 @@ import {
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import { useEffect, useState } from 'react'
 import { useSwapTokenSelect } from 'src/lib/hooks/useTokenSelect'
-import type { Currency } from 'sushi/currency'
+import type { EvmCurrency } from 'sushi/evm'
 import { useAccount } from 'wagmi'
 import { useQuickSelectTokens } from '../hooks/use-quick-select-tokens'
 import { useQuickSelectContext } from './quick-select-provider'
@@ -48,7 +48,7 @@ export const QuickSelect = ({ type }: { type: 'INPUT' | 'OUTPUT' }) => {
 const QuickSelectItem = ({
   currencies,
   type,
-}: { currencies: Currency[]; type: 'INPUT' | 'OUTPUT' }) => {
+}: { currencies: EvmCurrency[]; type: 'INPUT' | 'OUTPUT' }) => {
   const {
     state: { isOpen, selectedSymbol },
     mutate: { onValueChange },
@@ -90,7 +90,7 @@ const QuickSelectItem = ({
     }
   }, [isSelected])
 
-  const onSelectToken = async (currency: Currency) => {
+  const onSelectToken = async (currency: EvmCurrency) => {
     setExpanded(false)
     setTimeout(() => {
       onValueChange(false, currency?.symbol ?? undefined)
@@ -119,7 +119,7 @@ const QuickSelectItem = ({
             {currencies?.map((currency, index) => {
               return (
                 <TokenChainItem
-                  key={currency?.wrapped.address + index}
+                  key={currency?.wrap().address + index}
                   currency={currency}
                   expanded={expanded}
                   index={index}
@@ -164,12 +164,12 @@ const TokenChainItem = ({
   expanded,
   onSelectToken,
 }: {
-  currency: Currency
+  currency: EvmCurrency
   className?: string
   index: number
   totalCurrencies: number
   expanded: boolean
-  onSelectToken: (currency: Currency) => void
+  onSelectToken: (currency: EvmCurrency) => void
 }) => {
   const isSm = useIsSmScreen()
   const radius = 50

@@ -17,11 +17,10 @@ import type { ColumnDef } from '@tanstack/react-table'
 import { format } from 'date-fns'
 import { type TwapOrder, useParsedOrder } from 'src/lib/hooks/react-query/twap'
 import { TooltipDrawer } from 'src/ui/common/tooltip-drawer'
-import { evmChains } from 'sushi'
-import type { ChainId } from 'sushi/chain'
-import { formatUSD } from 'sushi/format'
-import { formatPercent } from 'sushi/format'
-import { formatNumber } from 'sushi/format'
+import type { ChainId } from 'sushi'
+import { formatUSD, getChainById } from 'sushi'
+import { formatPercent } from 'sushi'
+import { formatNumber } from 'sushi'
 
 export const DATE_COLUMN: ColumnDef<TwapOrder> = {
   id: 'date',
@@ -312,11 +311,11 @@ export const STATUS_COLUMN: ColumnDef<TwapOrder> = {
           ? 'text-orange-400'
           : 'text-muted-foreground'
     const chainId = row.original.chainId
-    const txnHash = row.original.txHash
+    const txnHash = row.original.txHash as `0x${string}`
     return (
       <div className="w-full flex md:justify-end">
         <LinkExternal
-          href={evmChains[chainId as ChainId]?.getTxUrl(txnHash)}
+          href={getChainById(chainId as ChainId)?.getTransactionUrl(txnHash)}
           className={`${color} flex items-center gap-1 w-full justify-end text-[14px]`}
         >
           {`${row.original.status?.slice(0, 1).toUpperCase()}${row.original.status?.slice(1).toLowerCase()}`}

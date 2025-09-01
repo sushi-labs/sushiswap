@@ -8,7 +8,7 @@ import {
   useMemo,
   useState,
 } from 'react'
-import type { ChainId } from 'sushi/chain'
+import type { ChainId } from 'sushi'
 
 interface State {
   mutate: {

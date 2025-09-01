@@ -21,7 +21,7 @@ import {
   useParsedOrder,
 } from 'src/lib/hooks/react-query/twap'
 import { TooltipDrawer } from 'src/ui/common/tooltip-drawer'
-import { formatNumber, formatPercent, formatUSD } from 'sushi/format'
+import { formatNumber, formatUSD } from 'sushi'
 
 export const BUY_COLUMN: ColumnDef<TwapOrder> = {
   id: 'buy',

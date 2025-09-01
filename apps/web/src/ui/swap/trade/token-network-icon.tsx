@@ -2,8 +2,9 @@ import { ArrowUpIcon } from '@heroicons/react-v1/solid'
 import type { SearchToken } from '@sushiswap/graph-client/data-api'
 import { Badge, Currency, LinkExternal } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
-import { type EvmChainId, evmChains, shortenAddress } from 'sushi'
-import { Token } from 'sushi/currency'
+import { getChainById } from 'sushi'
+import { type EvmChainId, shortenEvmAddress } from 'sushi/evm'
+import { EvmToken } from 'sushi/evm'
 
 export const TokenNetworkIcon = ({ token }: { token: SearchToken }) => {
   return (
@@ -24,7 +25,7 @@ export const TokenNetworkIcon = ({ token }: { token: SearchToken }) => {
         <Currency.Icon
           disableLink
           currency={
-            new Token({
+            new EvmToken({
               address: token?.address,
               name: token?.name,
               symbol: token?.symbol,
@@ -41,12 +42,12 @@ export const TokenNetworkIcon = ({ token }: { token: SearchToken }) => {
           {token?.symbol}
         </div>
         <LinkExternal
-          href={evmChains[token?.chainId as EvmChainId].getTokenUrl(
+          href={getChainById(token?.chainId as EvmChainId).getTokenUrl(
             token?.address,
           )}
           className="text-xs flex items-center gap-0.5 !text-muted-foreground dark:text-pink-200"
         >
-          {shortenAddress(token?.address)}
+          {shortenEvmAddress(token?.address)}
           <ArrowUpIcon width={10} height={10} className="rotate-45" />
         </LinkExternal>
       </div>
