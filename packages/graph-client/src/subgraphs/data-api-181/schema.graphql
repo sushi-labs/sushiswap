@@ -460,6 +460,8 @@ type Pool {
   txCountChange1d: Float!
   feeUSD1d: Float!
   feeApr1d: Float!
+  feeApr1w: Float!
+  feeApr1wSparkLine: [Float!]!
   totalApr1d: Float!
   totalApr1w: Float!
   tvlVolumeRatio: Float!

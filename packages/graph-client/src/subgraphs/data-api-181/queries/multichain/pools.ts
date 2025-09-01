@@ -47,7 +47,9 @@ export const MultiChainPoolsQuery = graphql(`
         txCount1d
         txCountChange1d
         feeUSD1d
-        feeApr1d
+        feeApr1d,
+        feeApr1w
+        feeApr1wSparkLine
         totalApr1d
         totalApr1w
         tvlVolumeRatio
@@ -88,7 +90,7 @@ export async function getMultiChainPools(
   options?: RequestOptions,
 ) {
   // const url = `${SUSHI_DATA_API_HOST}/graphql`
-  const url = 'https://data-api-181-merge.data-gcp.sushi.com/graphql'
+  const url = 'https://data-api-feat-new-db-fields.data-gcp.sushi.com/graphql'
   try {
     const result = await request(
       {
