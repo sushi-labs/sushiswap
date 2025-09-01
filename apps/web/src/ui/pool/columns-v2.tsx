@@ -1,5 +1,4 @@
 import { ArrowUpIcon, PlusIcon } from '@heroicons/react-v1/solid'
-import type { Pool } from '@sushiswap/graph-client/data-api'
 import type { MultiChainPool } from '@sushiswap/graph-client/data-api-181'
 import {
   Button,
@@ -568,7 +567,7 @@ export const APR_WITH_REWARDS_COLUMN: ColumnDef<MultiChainPool, unknown> = {
             <div className="flex gap-2 justify-between items-center">
               <p>Fee APR</p>
               <p className="font-medium">
-                {formatPercent(props.row.original.feeApr1d)}
+                {formatPercent(props.row.original.feeApr1w)}
               </p>
             </div>
             <p>Liquidity Pool fees from swap transactions</p>
@@ -612,19 +611,21 @@ export const APR_WITH_REWARDS_COLUMN: ColumnDef<MultiChainPool, unknown> = {
 
 export const APR_SPARKLINE_COLUMN: ColumnDef<MultiChainPool, unknown> = {
   id: 'aprSparkline',
+  accessorFn: (row) => row.feeApr1wSparkLine,
   header: () => (
     <span className="font-[600] text-slate-450 dark:text-slate-500">
       APR Last 7d
     </span>
   ),
 
-  cell: () => {
-    const fakeSparklineData = useMemo(() => {
-      return Array.from({ length: 7 }, () => Math.random() * 10)
-    }, [])
+  cell: (props) => {
     return (
       <div className="px-10">
-        <SparklineCell data={fakeSparklineData} width={90} height={20} />
+        <SparklineCell
+          data={props.row.original.feeApr1wSparkLine}
+          width={90}
+          height={20}
+        />
       </div>
     )
   },
