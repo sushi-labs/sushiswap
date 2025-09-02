@@ -60,7 +60,9 @@ test('Wrap and unwrap on advanced swap page', async ({ page }) => {
   await swapPage.wrap(wnative, native, 'max')
 })
 
-test('swap Native to USDC, then USDC to NATIVE', async ({ page }) => {
+test('swap Native to USDC, then USDC to NATIVE on advanced swap page', async ({
+  page,
+}) => {
   const url = BASE_URL.concat(`/${getChainById(chainId).key}/swap/advanced`)
   const swapPage = new AdvancedSwapPage(page, chainId)
   await swapPage.goTo(url)
@@ -81,7 +83,9 @@ test('swap Native to USDC, then USDC to NATIVE', async ({ page }) => {
   })
 })
 
-test('Swap Native to USDC using Quick Select', async ({ page }) => {
+test('Swap Native to USDC using Quick Select on advanced swap page', async ({
+  page,
+}) => {
   test.slow()
   const url = BASE_URL.concat(`/${getChainById(chainId).key}/swap/advanced`)
   const swapPage = new AdvancedSwapPage(page, chainId)
@@ -97,7 +101,9 @@ test('Swap Native to USDC using Quick Select', async ({ page }) => {
   })
 })
 
-test('Swap Native to USDT using Quick Select', async ({ page }) => {
+test('Swap Native to USDT using Quick Select on advanced swap page', async ({
+  page,
+}) => {
   test.slow()
   const url = BASE_URL.concat(`/${getChainById(chainId).key}/swap/advanced`)
   const swapPage = new AdvancedSwapPage(page, chainId)
@@ -113,7 +119,9 @@ test('Swap Native to USDT using Quick Select', async ({ page }) => {
   })
 })
 
-test('swap Native to USDT, then USDT to NATIVE', async ({ page }) => {
+test('swap Native to USDT, then USDT to NATIVE on advanced swap page', async ({
+  page,
+}) => {
   const url = BASE_URL.concat(`/${getChainById(chainId).key}/swap/advanced`)
   const swapPage = new AdvancedSwapPage(page, chainId)
   await swapPage.goTo(url)
@@ -133,7 +141,7 @@ test('swap Native to USDT, then USDT to NATIVE', async ({ page }) => {
   })
 })
 
-test('Swap Native to WBTC', async ({ page }) => {
+test('Swap Native to WBTC on advanced swap page', async ({ page }) => {
   const url = BASE_URL.concat(`/${getChainById(chainId).key}/swap/advanced`)
   const swapPage = new AdvancedSwapPage(page, chainId)
   await swapPage.goTo(url)
