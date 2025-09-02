@@ -6,10 +6,13 @@ packages:
 
 catalog:
   "typescript": 5.8.3
+  "utf-8-validate": 6.0.3
+  "zod": 3.23.8
 
 catalogs:
   web3:
-    "sushi": 6.0.13
+    "abitype": 1.0.8
+    "sushi": 6.0.21
     "wagmi": 2.15.6
     "@wagmi/core": 2.17.3
     "viem": 2.31.4

@@ -96,7 +96,7 @@
     "tronweb": "5.3.2",
     "viem": "catalog:web3",
     "wagmi": "catalog:web3",
-    "zod": "3.23.8"
+    "zod": "catalog:"
   },
   "devDependencies": {
     "@0xsquid/squid-types": "0.1.78",

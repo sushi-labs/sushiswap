@@ -2,18 +2,16 @@ import { PoolChainIds } from '@sushiswap/graph-client/data-api'
 import { ChainId } from 'sushi'
 import {
   AGGREGATOR_ONLY_CHAIN_IDS,
-  EXTRACTOR_SUPPORTED_CHAIN_IDS,
   type EvmAddress,
   EvmChainId,
   type EvmTestnetChainId,
   SUSHISWAP_SUPPORTED_CHAIN_IDS,
+  SWAP_API_SUPPORTED_CHAIN_IDS,
   type SushiSwapV3ChainId,
   isEvmTestnetChainId,
 } from 'sushi/evm'
 import { MvmChainId } from 'sushi/mvm'
 import { TvmChainId } from 'sushi/tvm'
-
-export const SWAP_API_SUPPORTED_CHAIN_IDS = EXTRACTOR_SUPPORTED_CHAIN_IDS
 
 export type SwapApiEnabledChainId =
   (typeof SWAP_API_SUPPORTED_CHAIN_IDS)[number]
@@ -23,9 +21,11 @@ export const isSwapApiEnabledChainId = (
   SWAP_API_SUPPORTED_CHAIN_IDS.includes(chainId as SwapApiEnabledChainId)
 
 export const DISABLED_CHAIN_IDS = [
+  ChainId.BOBA_BNB,
   ChainId.HARMONY,
   ChainId.POLYGON_ZKEVM,
   ChainId.TATARA,
+  ChainId.BERACHAIN,
 ] as const
 
 export const NEW_CHAIN_IDS = [EvmChainId.KATANA] as const
@@ -40,6 +40,7 @@ export const PREFERRED_CHAINID_ORDER = [
   ChainId.AVALANCHE,
   ChainId.POLYGON,
   ChainId.HYPEREVM,
+  ChainId.BERACHAIN,
   ChainId.SCROLL,
   ChainId.BLAST,
   ChainId.OPTIMISM,
@@ -214,6 +215,7 @@ export const XSWAP_SUPPORTED_CHAIN_IDS = [
   ChainId.FANTOM,
   ChainId.GNOSIS,
   // ChainId.HYPEREVM,
+  // ChainId.BERACHAIN,
   ChainId.KATANA,
   ChainId.LINEA,
   ChainId.MANTLE,

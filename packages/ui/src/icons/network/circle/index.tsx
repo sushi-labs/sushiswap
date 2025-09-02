@@ -7,6 +7,7 @@ import { ArbitrumCircle } from './ArbitrumCircle'
 import { ArbitrumNovaCircle } from './ArbitrumNovaCircle'
 import { AvalancheCircle } from './AvalancheCircle'
 import { BaseCircle } from './BaseCircle'
+import { BeraCircle } from './BeraCircle'
 import { BinanceCircle } from './BinanceCircle'
 import { BlastCircle } from './BlastCircle'
 import { BobaBNBCircle } from './BobaBNBCircle'
@@ -50,6 +51,7 @@ export * from './ArbitrumCircle'
 export * from './ArbitrumNovaCircle'
 export * from './AvalancheCircle'
 export * from './BaseCircle'
+export * from './BeraCircle'
 export * from './BlastCircle'
 export * from './BinanceCircle'
 export * from './BobaAvaxCircle'
@@ -138,6 +140,7 @@ export const NETWORK_CIRCLE_ICON: Partial<
   [ChainId.HEMI]: HemiCircle,
   [ChainId.KATANA]: KatanaCircle,
   [ChainId.HYPEREVM]: HyperEVMCircle,
+  [ChainId.BERACHAIN]: BeraCircle,
   [ChainId.APTOS]: AptosCircle,
   [ChainId.TRON]: TronCircle,
 }
