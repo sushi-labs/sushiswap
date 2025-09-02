@@ -2,7 +2,7 @@
 
 import { LinkInternal } from '@sushiswap/ui'
 import { useSearchParams } from 'next/navigation'
-import { PathnameButton } from 'src/ui/pathname-button'
+import { PathnameButton } from 'src/app/_ui/pathname-button'
 import { type EvmChainId, getEvmChainById } from 'sushi/evm'
 
 export function NavigationItems({ chainId }: { chainId: EvmChainId }) {

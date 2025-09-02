@@ -11,7 +11,7 @@ import {
 } from '@sushiswap/ui'
 import type { PaginationState } from '@tanstack/react-table'
 import { useMemo, useState } from 'react'
-import { usePoolFilters } from 'src/ui/pool'
+import { usePoolFilters } from 'src/app/(networks)/_ui/PoolsFiltersProvider'
 import { useMyPositions } from '~tron/_common/lib/hooks/useMyPositions'
 import type { IMyPositionData } from '~tron/_common/types/get-pools-type'
 import type { IToken } from '~tron/_common/types/token-type'

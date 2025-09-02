@@ -1,7 +1,7 @@
 'use client'
 
 import { SplashController } from '@sushiswap/ui'
-import { SushiBarProvider } from 'src/ui/stake'
+import { SushiBarProvider } from './_ui'
 
 export function Providers({ children }: { children: React.ReactNode }) {
   return (

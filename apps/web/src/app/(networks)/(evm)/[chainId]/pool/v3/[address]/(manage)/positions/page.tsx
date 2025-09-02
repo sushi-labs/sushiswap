@@ -1,7 +1,7 @@
 import { type V3Pool, getV3Pool } from '@sushiswap/graph-client/data-api'
 import { unstable_cache } from 'next/cache'
 import { notFound } from 'next/navigation'
-import { PoolsFiltersProvider } from 'src/ui/pool'
+import { PoolsFiltersProvider } from 'src/app/(networks)/_ui/PoolsFiltersProvider'
 import { isEvmAddress, isSushiSwapV3ChainId } from 'sushi/evm'
 import { ManageV3PoolPositionsTable } from './table'
 

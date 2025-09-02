@@ -1,4 +1,4 @@
-import { ClaimableFeesTab } from 'src/ui/pool/ClaimableFeesTab'
+import { ClaimableFeesTab } from './_ui/ClaimableFeesTab'
 
 export default function FeesPage() {
   return <ClaimableFeesTab />

@@ -2,11 +2,11 @@ import { Container } from '@sushiswap/ui'
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import type React from 'react'
-import { GlobalStatsCharts } from 'src/ui/explore/global-stats-charts'
-import { TokensFiltersProvider } from 'src/ui/token/TokensFiltersProvider'
 import { SUSHISWAP_SUPPORTED_CHAIN_IDS, isSushiSwapChainId } from 'sushi/evm'
 import { Header } from '../../header'
+import { GlobalStatsCharts } from '../_ui/global-stats-charts'
 import { NavigationItems } from '../navigation-items'
+import { TokensFiltersProvider } from './_ui/TokensFiltersProvider'
 
 export const metadata: Metadata = {
   title: 'Tokens',

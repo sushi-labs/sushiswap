@@ -3,10 +3,10 @@ import { Container } from '@sushiswap/ui'
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import type React from 'react'
+import { PoolsFiltersProvider } from 'src/app/(networks)/_ui/PoolsFiltersProvider'
 import { POOL_SUPPORTED_NETWORKS } from 'src/config'
-import { GlobalStatsCharts } from 'src/ui/explore/global-stats-charts'
-import { PoolsFiltersProvider } from 'src/ui/pool'
 import { Header } from '../../header'
+import { GlobalStatsCharts } from '../_ui/global-stats-charts'
 import { NavigationItems } from '../navigation-items'
 
 export const metadata: Metadata = {
