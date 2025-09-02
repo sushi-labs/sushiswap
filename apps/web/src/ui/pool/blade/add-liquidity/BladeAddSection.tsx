@@ -23,7 +23,7 @@ interface TokenInput {
 }
 export const BladeAddSection: FC<{ pool: BladePool }> = ({ pool }) => {
   const availableTokens = useMemo(() => {
-    const assets = getPoolAssets(pool, { showStableCoins: true })
+    const assets = getPoolAssets(pool, { showStableTypes: true })
     return assets.flatMap((asset) => {
       if (asset.targetWeight === 0 || !('token' in asset)) return []
       return [asset.token]

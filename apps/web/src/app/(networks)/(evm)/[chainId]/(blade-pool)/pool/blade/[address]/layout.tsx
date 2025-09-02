@@ -1,8 +1,6 @@
-import { getBladePool } from '@sushiswap/graph-client/data-api'
-import { unstable_cache } from 'next/cache'
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next/types'
-import { getPoolName } from 'src/lib/pool/blade'
+import { getCachedBladePool, getPoolName } from 'src/lib/pool/blade'
 import type { EvmChainId } from 'sushi/chain'
 import { isBladeChainId } from 'sushi/config'
 import { isAddress } from 'viem'
@@ -18,19 +16,13 @@ export async function generateMetadata(props: {
     return {}
   }
 
-  const pool = await unstable_cache(
-    async () => getBladePool({ chainId, address }),
-    ['blade', 'pool', `${chainId}:${address}`],
-    {
-      revalidate: 15,
-    },
-  )()
+  const pool = await getCachedBladePool(chainId, address)
 
   if (!pool) {
     return {}
   }
 
-  const poolName = getPoolName(pool, { showStableCoins: false })
+  const poolName = getPoolName(pool, { showStableTypes: false })
 
   return {
     title: `BUY & SELL ${poolName}`,
@@ -52,13 +44,7 @@ export default async function Layout(props: {
     return notFound()
   }
 
-  const pool = await unstable_cache(
-    async () => getBladePool({ chainId, address }),
-    ['blade', 'pool', `${chainId}:${address}`],
-    {
-      revalidate: 15,
-    },
-  )()
+  const pool = await getCachedBladePool(chainId, address)
 
   if (!pool) {
     return notFound()

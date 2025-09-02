@@ -35,9 +35,10 @@ const _GlobalStatsCharts: FC<{ chainId: EvmChainId }> = async ({ chainId }) => {
     },
   )()
 
-  return !dayBuckets.v2.length &&
-    !dayBuckets.v3.length &&
-    !dayBuckets.blade?.length ? (
+  const isLoading =
+    !dayBuckets.v2.length && !dayBuckets.v3.length && !dayBuckets.blade?.length
+
+  return isLoading ? (
     <GlobalStatsLoading chainId={chainId} />
   ) : (
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-20 gap-y-10">

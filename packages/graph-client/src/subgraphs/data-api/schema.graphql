@@ -27,13 +27,17 @@ type Query {
   bladePoolTxSourcesChart(address: Bytes!, chainId: BladeChainId!, duration: BladePoolPairsChartDuration!): [BladePoolTxSourcesStats!]!
   bladePoolBuckets(address: Bytes!, chainId: BladeChainId!): PoolBuckets!
   bladePositions(user: Bytes!, chainId: BladeChainId!): [BladePosition!]!
+  bladeMints(address: Bytes!, chainId: BladeChainId!): [BladeMint!]!
+  bladeBurns(address: Bytes!, chainId: BladeChainId!): [BladeBurn!]!
+  bladeSwaps(address: Bytes!, chainId: BladeChainId!): [BladeSwap!]!
   exploreTokens(chainId: SushiSwapChainId!): [ExploreToken!]!
   exploreTokenChart(chainId: SushiSwapChainId!, address: Bytes!, duration: ExploreTokenChartDuration!): [OHLC!]!
+  exploreTokenChartV2(chainId: SushiSwapChainId!, address: Bytes!, interval: ExploreTokenChartInterval!, from: Int!, to: Int!): [OHLC!]!
   exploreTokenInfo(chainId: SushiSwapChainId!, address: Bytes!): ExploreTokenInfo
   exploreTokenPools(chainId: PoolChainId!, address: Bytes!): Pools!
   pools(chainId: PoolChainId!, page: Int = 1, search: [String], protocols: [Protocol], onlyIncentivized: Boolean = false, orderBy: PoolsOrderBy = liquidityUSD, orderDirection: OrderDirection = desc): Pools!
   poolAddresses(chainId: PoolChainId!, protocols: [Protocol]): [Bytes!]!
-  topPools(chainId: String!): [TopPool!]!
+  topPools(chainId: ChainId!): [TopPool!]!
   v2Pool(address: Bytes!, chainId: SushiSwapV2ChainId!): V2Pool!
   v3Pool(address: Bytes!, chainId: SushiSwapV3ChainId!): V3Pool!
   v2PoolBuckets(address: Bytes!, chainId: SushiSwapV2ChainId!): PoolBuckets!
@@ -139,7 +143,14 @@ type BladePool {
   isDeprecated: Boolean!
   isSingleAssetWithdrawEnabled: Boolean!
   newPoolAddress: Bytes
+  lpTransfersFrom: [BladePoolLpTransfer!]!
   vaults: [BladePoolVault!]!
+}
+
+type BladePoolLpTransfer {
+  id: ID!
+  oldPoolAddress: Bytes!
+  newPoolAddress: Bytes!
 }
 
 type BladePoolPairStats {
@@ -176,6 +187,33 @@ type BladePosition {
   pool: BladePool!
 }
 
+type BladeBurn {
+  txHash: Bytes!
+  user: Bytes!
+  timestamp: Int!
+  amountUSD: Float!
+}
+
+type BladeMint {
+  txHash: Bytes!
+  user: Bytes!
+  timestamp: Int!
+  amountUSD: Float!
+}
+
+type BladeSwap {
+  txHash: Bytes!
+  user: Bytes!
+  timestamp: Int!
+  amountInUSD: Float!
+  amountInRaw: BigInt!
+  inToken: Token!
+  amountOutUSD: Float!
+  amountOutRaw: BigInt!
+  outToken: Token!
+  feeUSD: Float!
+}
+
 type ExploreToken {
   address: Bytes!
   chainId: SushiSwapChainId!
@@ -203,6 +241,11 @@ enum ExploreTokenChartDuration {
   WEEK
   MONTH
   YEAR
+}
+
+enum ExploreTokenChartInterval {
+  DAILY
+  HOURLY
 }
 
 type OHLC {
@@ -363,7 +406,7 @@ type PoolBucket {
 
 type TopPool {
   id: ID!
-  chainId: String!
+  chainId: ChainId!
   name: String!
   address: String!
   createdAt: String!

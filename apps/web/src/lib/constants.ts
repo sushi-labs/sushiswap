@@ -30,3 +30,11 @@ export const APPROVE_TAG_SWAP = 'APPROVE_TAG_SWAP'
 export const APPROVE_TAG_ZAP_LEGACY = 'APPROVE_TAG_ZAP_LEGACY'
 
 export const NativeAddress = '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'
+
+export const BLADE_API_HOST =
+  process.env['BLADE_API_HOST'] ||
+  process.env['NEXT_PUBLIC_BLADE_API_HOST'] ||
+  'https://api.clipper.exchange'
+
+export const BLADE_API_KEY =
+  process.env['BLADE_API_KEY'] || process.env['NEXT_PUBLIC_BLADE_API_KEY']

@@ -49,7 +49,7 @@ export const BladePoolsTable: FC<BladePoolsTableProps> = ({
   const [sorting, setSorting] = useState<SortingState>([
     { id: 'liquidityUSD', desc: true },
   ])
-  const [showStableCoins, setShowStableCoins] = useState(true)
+  const [showStableTypes, setShowStableTypes] = useState(true)
 
   const state: Partial<TableState> = useMemo(
     () => ({
@@ -97,8 +97,8 @@ export const BladePoolsTable: FC<BladePoolsTableProps> = ({
               Show stablecoin types
             </span>
             <Switch
-              checked={showStableCoins}
-              onCheckedChange={setShowStableCoins}
+              checked={showStableTypes}
+              onCheckedChange={setShowStableTypes}
             />
           </div>
         </div>
@@ -121,7 +121,7 @@ export const BladePoolsTable: FC<BladePoolsTableProps> = ({
         rowRenderer={rowRenderer}
         columns={COLUMNS}
         data={pools ?? []}
-        meta={{ showStableCoins } satisfies BladePoolsTableMeta}
+        meta={{ showStableTypes } satisfies BladePoolsTableMeta}
       />
     </Card>
   )

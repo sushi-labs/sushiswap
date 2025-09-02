@@ -30,6 +30,6 @@ export const usePoolPairsChartData = ({
     placeholderData: keepPreviousData,
     staleTime: 60000,
     gcTime: 300000,
-    enabled: Boolean(poolAddress && chainId && enabled),
+    enabled,
   })
 }

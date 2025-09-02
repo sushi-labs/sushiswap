@@ -24,13 +24,13 @@ interface BladeAssetsTableProps {
 }
 
 export const BladeAssetsTable: FC<BladeAssetsTableProps> = ({ pool }) => {
-  const [showStableCoins, setShowStableCoins] = useState(false)
+  const [showStableTypes, setShowStableTypes] = useState(false)
 
   const data = useMemo(() => {
-    return getPoolAssets(pool, { showStableCoins }).filter(
+    return getPoolAssets(pool, { showStableTypes }).filter(
       (asset) => asset.targetWeight > 0,
     )
-  }, [pool, showStableCoins])
+  }, [pool, showStableTypes])
 
   const state: Partial<TableState> = useMemo(
     () => ({
@@ -52,8 +52,8 @@ export const BladeAssetsTable: FC<BladeAssetsTableProps> = ({ pool }) => {
               Show stablecoin types
             </span>
             <Switch
-              checked={showStableCoins}
-              onCheckedChange={setShowStableCoins}
+              checked={showStableTypes}
+              onCheckedChange={setShowStableTypes}
             />
           </div>
         </div>

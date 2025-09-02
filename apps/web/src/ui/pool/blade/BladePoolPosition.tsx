@@ -34,7 +34,7 @@ const PoolPositionDisconnected: FC = () => {
 }
 
 const PoolPositionConnected: FC<PoolPositionProps> = ({ pool }) => {
-  const [showStableCoins, setShowStableCoins] = useState(false)
+  const [showStableTypes, setShowStableTypes] = useState(false)
   const { balance, vestingDeposit, liquidityToken, isLoading } =
     useBladePoolPosition()
   const poolTotalSupply = useTotalSupply(liquidityToken)
@@ -80,10 +80,10 @@ const PoolPositionConnected: FC<PoolPositionProps> = ({ pool }) => {
   }, [vestingDeposit?.balance, poolTotalSupply, pool.liquidityUSD])
 
   const assets = useMemo(() => {
-    return getPoolAssets(pool, { showStableCoins }).filter(
+    return getPoolAssets(pool, { showStableTypes }).filter(
       (asset) => asset.targetWeight > 0,
     )
-  }, [pool, showStableCoins])
+  }, [pool, showStableTypes])
 
   const { stablecoinUsdTokens } = useMemo(() => {
     return getPoolTokensGrouped(pool)
@@ -227,7 +227,7 @@ const PoolPositionConnected: FC<PoolPositionProps> = ({ pool }) => {
 
           {hasStablecoins && (
             <Button
-              onClick={() => setShowStableCoins(!showStableCoins)}
+              onClick={() => setShowStableTypes(!showStableTypes)}
               variant="blank"
               className="!p-0 !h-auto !min-h-0 font-medium text-blue text-xs hover:text-blue-700"
             >

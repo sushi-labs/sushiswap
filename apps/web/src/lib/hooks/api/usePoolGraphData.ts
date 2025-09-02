@@ -24,6 +24,44 @@ interface UsePoolGraphDataParams {
   enabled?: boolean
 }
 
+const getPoolBuckets = async (
+  protocol: SushiSwapProtocol | typeof BLADE_PROTOCOL,
+  chainId: SushiSwapV2ChainId | SushiSwapV3ChainId | BladeChainId,
+  poolAddress: Address,
+) => {
+  if (
+    protocol === SushiSwapProtocol.SUSHISWAP_V2 &&
+    isSushiSwapV2ChainId(chainId)
+  ) {
+    return getV2PoolBuckets({
+      chainId,
+      address: poolAddress,
+    })
+  }
+
+  if (
+    protocol === SushiSwapProtocol.SUSHISWAP_V3 &&
+    isSushiSwapV3ChainId(chainId)
+  ) {
+    return getV3PoolBuckets({
+      chainId,
+      address: poolAddress,
+    })
+  }
+
+  if (protocol === BLADE_PROTOCOL && isBladeChainId(chainId)) {
+    return getBladePoolBuckets({
+      chainId,
+      address: poolAddress,
+    })
+  }
+
+  return {
+    dayBuckets: [],
+    hourBuckets: [],
+  }
+}
+
 export const usePoolGraphData = ({
   poolAddress,
   chainId,
@@ -33,29 +71,7 @@ export const usePoolGraphData = ({
   return useQuery({
     queryKey: ['usePoolGraphData', { poolAddress, chainId }],
     queryFn: async () => {
-      const buckets =
-        protocol === SushiSwapProtocol.SUSHISWAP_V2 &&
-        isSushiSwapV2ChainId(chainId)
-          ? await getV2PoolBuckets({
-              chainId,
-              address: poolAddress,
-            })
-          : protocol === SushiSwapProtocol.SUSHISWAP_V3 &&
-              isSushiSwapV3ChainId(chainId)
-            ? await getV3PoolBuckets({
-                chainId,
-                address: poolAddress,
-              })
-            : protocol === BLADE_PROTOCOL && isBladeChainId(chainId)
-              ? await getBladePoolBuckets({
-                  chainId,
-                  address: poolAddress,
-                })
-              : {
-                  dayBuckets: [],
-                  hourBuckets: [],
-                }
-      return buckets
+      return getPoolBuckets(protocol, chainId, poolAddress)
     },
     placeholderData: keepPreviousData,
     staleTime: 0,

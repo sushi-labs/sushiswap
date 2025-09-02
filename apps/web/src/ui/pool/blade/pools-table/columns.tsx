@@ -14,7 +14,7 @@ import { formatPercent, formatUSD } from 'sushi/format'
 import { CurrencyFiatIcon } from '../CurrencyFiatIcon'
 
 export type BladePoolsTableMeta = {
-  showStableCoins: boolean
+  showStableTypes: boolean
 }
 
 export const NAME_COLUMN_POOL: ColumnDef<BladePool, unknown> = {
@@ -22,10 +22,10 @@ export const NAME_COLUMN_POOL: ColumnDef<BladePool, unknown> = {
   header: 'Name',
   cell: (props) => {
     const meta = props.table.options.meta as BladePoolsTableMeta
-    const showStableCoins = meta?.showStableCoins ?? true
+    const showStableTypes = meta?.showStableTypes ?? true
     const groupedTokens = getPoolTokensGrouped(props.row.original)
     const poolName = getPoolNameFromGroupedTokens(groupedTokens, {
-      showStableCoins,
+      showStableTypes,
     })
     const { tokens, stablecoinUsdTokens } = groupedTokens
     const hasStablecoin = stablecoinUsdTokens.length > 0
@@ -41,7 +41,7 @@ export const NAME_COLUMN_POOL: ColumnDef<BladePool, unknown> = {
                 currency={token}
               />
             ))}
-            {hasStablecoin && !showStableCoins ? (
+            {hasStablecoin && !showStableTypes ? (
               <CurrencyFiatIcon />
             ) : (
               stablecoinUsdTokens.map((token) => (

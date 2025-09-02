@@ -6,6 +6,9 @@ import { BladePoolsTable } from 'src/ui/pool/blade/pools-table/BladePoolsTable'
 import { EvmChainId } from 'sushi/chain'
 import { type BladeChainId, isBladeChainId } from 'sushi/config'
 
+/**
+ * These pools have been created but won't have any liquidity yet.
+ */
 const EXCLUDED_POOLS: Partial<Record<BladeChainId, string[]>> = {
   [EvmChainId.KATANA]: ['0x2e32c76b4f50698f96fdd8ff4af0bd5d45f9399d'],
 }

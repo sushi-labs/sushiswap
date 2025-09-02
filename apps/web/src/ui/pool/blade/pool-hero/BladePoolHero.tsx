@@ -18,21 +18,22 @@ interface BladePoolHeroProps {
 }
 
 export const BladePoolHero: FC<BladePoolHeroProps> = ({ pool }) => {
-  const [showStableCoins, setShowStableCoins] = useState(false)
-  const groupedTokens = getPoolTokensGrouped(pool)
+  const [showStableTypes, setShowStableTypes] = useState(false)
+  const groupedTokens = useMemo(() => getPoolTokensGrouped(pool), [pool])
   const { tokens, stablecoinUsdTokens } = groupedTokens
   const hasStablecoin = stablecoinUsdTokens.length > 0
 
   const tokenSymbols = useMemo(
     () => [
       ...tokens.map((token) => token.symbol),
-      ...(hasStablecoin && !showStableCoins
+      ...(hasStablecoin && !showStableTypes
         ? ['USD']
         : stablecoinUsdTokens.map((token) => token.symbol)),
     ],
-    [tokens, hasStablecoin, showStableCoins, stablecoinUsdTokens],
+    [tokens, hasStablecoin, showStableTypes, stablecoinUsdTokens],
   )
   const baseApr = pool.totalApr1d
+  // TODO-BLADE: Get rewards APR
   const rewardsApr = 0
   const basisApr = baseApr + rewardsApr
 
@@ -58,7 +59,7 @@ export const BladePoolHero: FC<BladePoolHeroProps> = ({ pool }) => {
                     currency={token}
                   />
                 ))}
-                {hasStablecoin && !showStableCoins ? (
+                {hasStablecoin && !showStableTypes ? (
                   <CurrencyFiatIcon width={35} height={35} />
                 ) : (
                   stablecoinUsdTokens.map((token) => (
@@ -85,7 +86,7 @@ export const BladePoolHero: FC<BladePoolHeroProps> = ({ pool }) => {
               ))}
             </h1>
             <Button
-              onClick={() => setShowStableCoins(!showStableCoins)}
+              onClick={() => setShowStableTypes(!showStableTypes)}
               variant="blank"
               className="!p-0 !h-[unset] !min-h-[unset] font-medium text-blue dark:text-blue-400 text-sm hover:text-blue-700 dark:hover:text-blue-300 sm:text-base"
             >

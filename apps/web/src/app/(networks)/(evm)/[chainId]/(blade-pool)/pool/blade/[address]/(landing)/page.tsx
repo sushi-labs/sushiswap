@@ -1,7 +1,6 @@
-import { getBladePool } from '@sushiswap/graph-client/data-api'
 import { Container } from '@sushiswap/ui'
-import { unstable_cache } from 'next/cache'
 import { notFound } from 'next/navigation'
+import { getCachedBladePool } from 'src/lib/pool/blade'
 import { BladePoolChart } from 'src/ui/pool/blade/BladePoolChart'
 import { BladePoolSourcesChart } from 'src/ui/pool/blade/BladePoolSourcesChart'
 import { BladeAssetsTable } from 'src/ui/pool/blade/assets-table/BladeAssetsTable'
@@ -24,13 +23,7 @@ export default async function PoolPage(props: {
     return notFound()
   }
 
-  const pool = await unstable_cache(
-    async () => getBladePool({ chainId, address }),
-    ['blade', 'pool', `${chainId}:${address}`],
-    {
-      revalidate: 15,
-    },
-  )()
+  const pool = await getCachedBladePool(chainId, address)
 
   if (!pool) {
     return notFound()

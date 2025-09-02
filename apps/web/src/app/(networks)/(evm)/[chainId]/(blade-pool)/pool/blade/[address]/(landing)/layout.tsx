@@ -23,14 +23,6 @@ export default async function Layout(props: {
     return notFound()
   }
 
-  // const pool = await unstable_cache(
-  //   async () => getBladePool({ chainId, address }),
-  //   ['blade', 'pool', `${chainId}:${address}`],
-  //   {
-  //     revalidate: 60 * 15,
-  //   },
-  // )()
-
   return (
     <section className="flex flex-1 flex-col">
       <div className="h-full border-accent border-t bg-gray-50 py-10 dark:bg-white/[0.02]">

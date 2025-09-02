@@ -19,6 +19,22 @@ import {
   isSushiSwapV3ChainId,
 } from 'sushi/config'
 
+const getAddPositionHref = (chainId: EvmChainId) => {
+  if (isSushiSwapV3ChainId(chainId as SushiSwapV3ChainId)) {
+    return `/${ChainKey[chainId]}/pool/v3/add`
+  }
+
+  if (isSushiSwapV2ChainId(chainId as SushiSwapV3ChainId)) {
+    return `/${ChainKey[chainId]}/pool/v2/add`
+  }
+
+  if (isBladeChainId(chainId)) {
+    return `/${ChainKey[chainId]}/pool/blade/add`
+  }
+
+  return `/${ChainKey[EvmChainId.ETHEREUM]}/pool/v3/add`
+}
+
 export const Hero: FC<{ chainId: EvmChainId }> = ({ chainId }) => {
   return (
     <section className="flex flex-col gap-6">
@@ -36,17 +52,7 @@ export const Hero: FC<{ chainId: EvmChainId }> = ({ chainId }) => {
               size="sm"
               className="flex-1 w-full sm:flex-0 sm:w-[unset] rounded-r-none"
             >
-              <LinkInternal
-                href={
-                  isBladeChainId(chainId)
-                    ? `/${ChainKey[chainId]}/pool/blade/add`
-                    : isSushiSwapV3ChainId(chainId as SushiSwapV3ChainId)
-                      ? `/${ChainKey[chainId]}/pool/v3/add`
-                      : isSushiSwapV2ChainId(chainId as SushiSwapV3ChainId)
-                        ? `/${ChainKey[chainId]}/pool/v2/add`
-                        : `/${ChainKey[EvmChainId.ETHEREUM]}/pool/v3/add`
-                }
-              >
+              <LinkInternal href={getAddPositionHref(chainId)}>
                 I want to create a position
               </LinkInternal>
             </Button>

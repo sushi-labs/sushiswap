@@ -40,13 +40,20 @@ export function getPoolTokensGrouped(pool: BladePool): BladePoolTokensGrouped {
   )
 }
 
+/**
+ * Return the assets of a pool.
+ *
+ * If showStableTypes is true, then the assets will include the stablecoin assets.
+ * If showStableTypes is false, then the assets will not include the stablecoin assets
+ * and the stablecoin assets will be grouped under the USD asset.
+ */
 export function getPoolAssets(
   pool: BladePool,
   options?: {
-    showStableCoins?: boolean
+    showStableTypes?: boolean
   },
 ): BladePoolAsset[] {
-  const { showStableCoins = true } = options ?? {}
+  const { showStableTypes = true } = options ?? {}
   const chainId = pool.chainId as BladeChainId
   const stablecoinSet = new Set<string>(
     BLADE_STABLES[chainId]?.map((s) => s.address.toLowerCase()) || [],
@@ -57,7 +64,7 @@ export function getPoolAssets(
 
   for (const { token: tokenData, ...rest } of pool.tokens) {
     if (
-      !showStableCoins &&
+      !showStableTypes &&
       stablecoinSet.has(tokenData.address.toLowerCase())
     ) {
       let stablecoinAsset = stablecoinAssetMap.get('USD')
@@ -95,7 +102,7 @@ export function getPoolAssets(
 }
 
 type GetPoolNameOptions = {
-  showStableCoins?: boolean
+  showStableTypes?: boolean
 }
 
 export function getPoolNameFromGroupedTokens(
@@ -103,11 +110,11 @@ export function getPoolNameFromGroupedTokens(
   options?: GetPoolNameOptions,
 ): string {
   const { tokens, stablecoinUsdTokens } = groupedTokens
-  const { showStableCoins = true } = options ?? {}
+  const { showStableTypes = true } = options ?? {}
   const hasStablecoin = stablecoinUsdTokens.length > 0
   const poolName = [
     ...tokens.map((token) => token.symbol),
-    ...(hasStablecoin && !showStableCoins
+    ...(hasStablecoin && !showStableTypes
       ? ['USD']
       : stablecoinUsdTokens.map((token) => token.symbol)),
   ].join('/')

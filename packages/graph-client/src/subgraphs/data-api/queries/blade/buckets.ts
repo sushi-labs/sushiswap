@@ -50,12 +50,8 @@ export async function getBladePoolBuckets(
     )
     if (result.bladePoolBuckets) {
       return {
-        hourBuckets: result.bladePoolBuckets.hourBuckets.filter(
-          (b) => b !== null,
-        ),
-        dayBuckets: result.bladePoolBuckets.dayBuckets.filter(
-          (b) => b !== null,
-        ),
+        hourBuckets: result.bladePoolBuckets.hourBuckets,
+        dayBuckets: result.bladePoolBuckets.dayBuckets,
       }
     }
     throw new Error('Invalid response')

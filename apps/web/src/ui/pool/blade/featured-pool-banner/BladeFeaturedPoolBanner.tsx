@@ -1,4 +1,4 @@
-import type { BladePool } from '@sushiswap/graph-client/data-api'
+import type { BladeChainId, BladePool } from '@sushiswap/graph-client/data-api'
 import { Badge, Button, Currency, classNames } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import Link from 'next/link'
@@ -17,19 +17,19 @@ import { BladePoolBannerTitle } from './BladePoolBannerTitle'
 
 interface BladeFeaturedPoolBannerProps {
   pool: BladePool
-  showStableCoins?: boolean
+  showStableTypes?: boolean
 }
 
 export const BladeFeaturedPoolBanner: FC<BladeFeaturedPoolBannerProps> = ({
   pool,
-  showStableCoins = false,
+  showStableTypes = false,
 }) => {
   const groupedTokens = getPoolTokensGrouped(pool)
   const { tokens, stablecoinUsdTokens } = groupedTokens
   const hasStablecoin = stablecoinUsdTokens.length > 0
 
   const poolName = getPoolNameFromGroupedTokens(groupedTokens, {
-    showStableCoins,
+    showStableTypes,
   })
 
   return (
@@ -62,7 +62,7 @@ export const BladeFeaturedPoolBanner: FC<BladeFeaturedPoolBannerProps> = ({
                       currency={token}
                     />
                   ))}
-                  {hasStablecoin && !showStableCoins ? (
+                  {hasStablecoin && !showStableTypes ? (
                     <CurrencyFiatIcon width={51} height={51} />
                   ) : (
                     stablecoinUsdTokens.map((token) => (
@@ -121,11 +121,13 @@ export const BladeFeaturedPoolBanner: FC<BladeFeaturedPoolBannerProps> = ({
   )
 }
 
-function VisitBladePoolButton({
-  address,
-  chainId,
-}: { address: string; chainId: number }) {
-  const link = `/${ChainKey[chainId as keyof typeof ChainKey]}/pool/blade/${address}`
+interface VisitBladePoolButtonProps {
+  address: string
+  chainId: BladeChainId
+}
+
+function VisitBladePoolButton({ address, chainId }: VisitBladePoolButtonProps) {
+  const link = `/${ChainKey[chainId]}/pool/blade/${address}`
   return (
     <Link href={link}>
       <Button

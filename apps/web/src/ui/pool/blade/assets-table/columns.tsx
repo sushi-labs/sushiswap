@@ -8,7 +8,7 @@ import { formatPercent, formatUSD } from 'sushi/format'
 import { CurrencyFiatIcon } from '../CurrencyFiatIcon'
 
 export type BladePoolsTableMeta = {
-  showStableCoins: boolean
+  showStableTypes: boolean
 }
 
 export const NAME_COLUMN: ColumnDef<BladePoolAsset, unknown> = {

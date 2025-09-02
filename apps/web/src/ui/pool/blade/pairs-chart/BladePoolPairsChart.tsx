@@ -18,6 +18,20 @@ enum BladePairsChartType {
 }
 
 const pairsChartTypes = [BladePairsChartType.Volume, BladePairsChartType.Swaps]
+const periods = [
+  PoolChartPeriod.Day,
+  PoolChartPeriod.Week,
+  PoolChartPeriod.Month,
+  PoolChartPeriod.All,
+]
+const durationByPeriod = {
+  [PoolChartPeriod.Day]: 'DAY' as const,
+  [PoolChartPeriod.Week]: 'WEEK' as const,
+  [PoolChartPeriod.Month]: 'MONTH' as const,
+  [PoolChartPeriod.All]: 'ALL' as const,
+  // Year is not supported. Map it to Day.
+  [PoolChartPeriod.Year]: 'DAY' as const,
+} satisfies Record<PoolChartPeriod, string>
 
 export function BladePoolPairsChart({
   poolAddress,
@@ -32,35 +46,10 @@ export function BladePoolPairsChart({
   )
   const [period, setPeriod] = useState<PoolChartPeriod>(PoolChartPeriod.Day)
 
-  const duration = useMemo(() => {
-    switch (period) {
-      case PoolChartPeriod.Day:
-        return 'DAY'
-      case PoolChartPeriod.Week:
-        return 'WEEK'
-      case PoolChartPeriod.Month:
-        return 'MONTH'
-      case PoolChartPeriod.All:
-        return 'ALL'
-      default:
-        return 'DAY'
-    }
-  }, [period])
-
-  const periods = useMemo(
-    () => [
-      PoolChartPeriod.Day,
-      PoolChartPeriod.Week,
-      PoolChartPeriod.Month,
-      PoolChartPeriod.All,
-    ],
-    [],
-  )
-
   const { data, isLoading } = usePoolPairsChartData({
     poolAddress,
     chainId,
-    duration,
+    duration: durationByPeriod[period],
   })
 
   const { segmentNames, pairs, hasData } = useMemo(() => {

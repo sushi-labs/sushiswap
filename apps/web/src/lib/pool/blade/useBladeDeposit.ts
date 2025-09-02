@@ -1,9 +1,11 @@
 'use client'
 
 import type { BladePool } from '@sushiswap/graph-client/data-api'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQuery } from '@tanstack/react-query'
 import { useEffect } from 'react'
+import { BLADE_API_HOST, BLADE_API_KEY } from 'src/lib/constants'
 import type { PublicWagmiConfig } from 'src/lib/wagmi/config/public'
+import { useWatchByBlock } from 'src/lib/wagmi/hooks/watch/useWatchByBlock'
 import type { IsEqualMultiple } from 'src/types/utils'
 import type { BladeChainId } from 'sushi/config'
 import type { Type } from 'sushi/currency'
@@ -13,14 +15,11 @@ import type {
   ContractFunctionArgs,
   ContractFunctionName,
 } from 'viem'
-import { parseUnits, zeroAddress } from 'viem'
-import {
-  useBlockNumber,
-  useWaitForTransactionReceipt,
-  useWriteContract,
-} from 'wagmi'
+import { isAddress, isHash, parseUnits, zeroAddress } from 'viem'
+import { useWaitForTransactionReceipt, useWriteContract } from 'wagmi'
 import { useAccount } from 'wagmi'
 import type { WriteContractVariables } from 'wagmi/query'
+import { z } from 'zod'
 import { bladeApproximateExchangeAbi } from './abi/bladeApproximateExchange'
 import { bladeVerifiedExchangeAbi } from './abi/bladeVerifiedExchange'
 import type { clipperCaravelExchangeAbi } from './abi/clipperCaravelExchange'
@@ -29,13 +28,81 @@ import type { clipperDirectExchangeV0Abi } from './abi/clipperDirectExchangeV0'
 import { clipperDirectExchangeV1Abi } from './abi/clipperDirectExchangeV1'
 import { byte32, packAddressAndAmount, packRfqConfig } from './utils'
 
-const BLADE_API_HOST =
-  process.env['BLADE_API_HOST'] ||
-  process.env['NEXT_PUBLIC_BLADE_API_HOST'] ||
-  'https://api.clipper.exchange'
+function getAllowDepositQueryKey({
+  chainId,
+  poolAddress,
+  address,
+}: {
+  chainId: BladeChainId
+  poolAddress: string
+  address?: string
+}) {
+  return [
+    'blade',
+    'pool',
+    `${chainId}:${poolAddress}`,
+    'allow-deposit',
+    address,
+  ] as const
+}
 
-const BLADE_API_KEY =
-  process.env['BLADE_API_KEY'] || process.env['NEXT_PUBLIC_BLADE_API_KEY']
+const rfqAllowDepositResponseBaseSchema = z.object({
+  allow: z.boolean(),
+  usd_limit: z.number(),
+  feature_single_asset_deposit: z.boolean(),
+})
+
+const rfqAllowDepositResponseSchema = z.union([
+  rfqAllowDepositResponseBaseSchema.extend({
+    min_lock_time: z.number(),
+  }),
+  rfqAllowDepositResponseBaseSchema.extend({
+    min_days_to_lock: z.number(),
+  }),
+])
+
+const rfqDepositResponseBaseSchema = z.object({
+  sender: z.string().refine((address) => isAddress(address), {
+    message: 'sender does not conform to Address',
+  }),
+  pool_tokens: z.string(),
+  good_until: z.number(),
+  signature: z.object({
+    v: z.number(),
+    r: z.string().refine((hash) => isHash(hash), {
+      message: 'r does not conform to Hash',
+    }),
+    s: z.string().refine((hash) => isHash(hash), {
+      message: 's does not conform to Hash',
+    }),
+  }),
+  clipper_exchange_address: z.string().refine((address) => isAddress(address), {
+    message: 'clipper_exchange_address does not conform to Address',
+  }),
+  extra_data: z
+    .string()
+    .refine((hash) => isHash(hash), {
+      message: 'extra_data does not conform to Hash',
+    })
+    .optional(),
+  deposit_amounts: z.array(z.string()),
+  amount: z.string().optional(),
+  token: z
+    .string()
+    .refine((address) => isAddress(address), {
+      message: 'token does not conform to Address',
+    })
+    .optional(),
+})
+
+const rfqDepositResponseSchema = z.union([
+  rfqDepositResponseBaseSchema.extend({
+    lock_time: z.number(),
+  }),
+  rfqDepositResponseBaseSchema.extend({
+    n_days: z.number(),
+  }),
+])
 
 interface RfqAllowDepositPayload {
   sender: string
@@ -43,19 +110,9 @@ interface RfqAllowDepositPayload {
   pool_address: string
 }
 
-export type RfqAllowDepositResponse = {
-  allow: boolean
-  usd_limit: number
-  feature_single_asset_deposit: boolean
-} & (
-  | {
-      min_lock_time: number
-    }
-  | {
-      min_days_to_lock: number
-    }
-)
-
+export type RfqAllowDepositResponse = z.infer<
+  typeof rfqAllowDepositResponseSchema
+>
 interface RfqDepositPayload {
   sender: string
   deposit: { [address: string]: string }
@@ -66,28 +123,7 @@ interface RfqDepositPayload {
   days_to_lock?: number
 }
 
-type RfqDepositResponse = {
-  sender: `0x${string}`
-  pool_tokens: string
-  good_until: number
-  signature: {
-    v: number
-    r: `0x${string}`
-    s: `0x${string}`
-  }
-  clipper_exchange_address: `0x${string}`
-  extra_data?: `0x${string}`
-  deposit_amounts: string[]
-  amount?: string
-  token?: `0x${string}`
-} & (
-  | {
-      lock_time: number
-    }
-  | {
-      n_days: number
-    }
-)
+type RfqDepositResponse = z.infer<typeof rfqDepositResponseSchema>
 
 type AssertEqualContractFunctionArgs<
   T extends readonly Abi[],
@@ -142,11 +178,11 @@ function clipperPackedTransmitAndDeposit({
             value: parseUnits(nativeAmount.amount, nativeAmount.token.decimals),
           }
         : {}),
-    } as any
+    }
     return variables
   }
 
-  // For multi-asset dexposits, use regular non-packed function since packed version
+  // For multi-asset deposits, use regular non-packed function since packed version
   // doesn't support multi-asset deposits in this context
   return clipperTransmitAndDeposit({ deposit, amounts })
 }
@@ -591,16 +627,11 @@ export const useBladeAllowDeposit = ({
   enabled?: boolean
 }) => {
   const { address } = useAccount()
-  const queryClient = useQueryClient()
+
+  const queryKey = getAllowDepositQueryKey({ chainId, poolAddress, address })
 
   const query = useQuery({
-    queryKey: [
-      'blade',
-      'pool',
-      `${chainId}:${poolAddress}`,
-      'allow-deposit',
-      address,
-    ],
+    queryKey,
     queryFn: async (): Promise<RfqAllowDepositResponse> => {
       if (!address) throw new Error('No address provided')
 
@@ -621,32 +652,18 @@ export const useBladeAllowDeposit = ({
         throw new Error('Failed to check deposit permission')
       }
 
-      return response.json()
+      const responseData = await response.json()
+
+      return rfqAllowDepositResponseSchema.parse(responseData)
     },
     enabled: Boolean(enabled && address && chainId && poolAddress),
   })
 
-  const { data: blockNumber } = useBlockNumber({
+  useWatchByBlock({
     chainId,
-    watch: {
-      pollingInterval: 15_000,
-      poll: true,
-    },
+    key: queryKey,
+    modulo: 10,
   })
-
-  useEffect(() => {
-    if (blockNumber) {
-      queryClient.invalidateQueries({
-        queryKey: [
-          'blade',
-          'pool',
-          `${chainId}:${poolAddress}`,
-          'allow-deposit',
-          address,
-        ],
-      })
-    }
-  }, [blockNumber, queryClient, chainId, poolAddress, address])
 
   return query
 }
@@ -673,7 +690,8 @@ export const useBladeDepositRequest = ({
         throw new Error('Failed to create deposit signature')
       }
 
-      return response.json()
+      const responseData = await response.json()
+      return rfqDepositResponseSchema.parse(responseData)
     },
     onError,
   })

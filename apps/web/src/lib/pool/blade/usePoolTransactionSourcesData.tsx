@@ -36,6 +36,6 @@ export const usePoolTransactionSourcesData = ({
     placeholderData: keepPreviousData,
     staleTime: 60000,
     gcTime: 300000,
-    enabled: Boolean(poolAddress && chainId && enabled),
+    enabled,
   })
 }

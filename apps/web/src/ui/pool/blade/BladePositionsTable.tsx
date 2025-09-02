@@ -42,10 +42,18 @@ const NAME_COLUMN: ColumnDef<BladePosition, unknown> = {
     const showStablecoinTypes = meta?.showStablecoinTypes ?? false
     const pool = row.original.pool
 
-    const groupedTokens = getPoolTokensGrouped(row.original.pool)
-    const poolName = getPoolNameFromGroupedTokens(groupedTokens, {
-      showStableCoins: showStablecoinTypes,
-    })
+    const groupedTokens = useMemo(
+      () => getPoolTokensGrouped(row.original.pool),
+      [row.original.pool],
+    )
+    const poolName = useMemo(
+      () =>
+        getPoolNameFromGroupedTokens(groupedTokens, {
+          showStableTypes: showStablecoinTypes,
+        }),
+      [groupedTokens, showStablecoinTypes],
+    )
+
     const { tokens, stablecoinUsdTokens } = groupedTokens
     const hasStablecoin = stablecoinUsdTokens.length > 0
 

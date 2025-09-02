@@ -7,24 +7,22 @@ import {
 } from '@sushiswap/graph-client/data-api'
 import { skipToken, useQuery } from '@tanstack/react-query'
 
-export function useBladeUserPositions(
-  args: {
-    chainId: BladeChainId
-    user?: `0x${string}`
-  },
-  shouldFetch = true,
-) {
-  const user = args.user
+export function useBladeUserPositions(args: {
+  chainId: BladeChainId
+  user?: `0x${string}`
+  enabled?: boolean
+}) {
+  const { chainId, user, enabled } = args
   return useQuery<BladePositions>({
-    queryKey: ['blade', 'positions', args],
+    queryKey: ['blade', 'positions', { chainId, user }],
     queryFn: user
       ? () =>
           getBladePositions({
-            chainId: args.chainId,
+            chainId,
             user,
           })
       : skipToken,
 
-    enabled: Boolean(shouldFetch && args.chainId && user),
+    enabled: Boolean(enabled && chainId && user),
   })
 }

@@ -3,6 +3,7 @@
 import type { BladePool } from '@sushiswap/graph-client/data-api'
 import { useMutation } from '@tanstack/react-query'
 import { useEffect } from 'react'
+import { BLADE_API_HOST, BLADE_API_KEY } from 'src/lib/constants'
 import type { PublicWagmiConfig } from 'src/lib/wagmi/config/public'
 import type { IsEqualMultiple } from 'src/types/utils'
 import type { Type } from 'sushi/currency'
@@ -12,9 +13,10 @@ import type {
   ContractFunctionArgs,
   ContractFunctionName,
 } from 'viem'
-import { zeroAddress } from 'viem'
+import { isAddress, isHash, zeroAddress } from 'viem'
 import { useWaitForTransactionReceipt, useWriteContract } from 'wagmi'
 import type { WriteContractVariables } from 'wagmi/query'
+import { z } from 'zod'
 import { bladeApproximateExchangeAbi } from './abi/bladeApproximateExchange'
 import type { bladeVerifiedExchangeAbi } from './abi/bladeVerifiedExchange'
 import type { clipperCaravelExchangeAbi } from './abi/clipperCaravelExchange'
@@ -22,13 +24,29 @@ import type { clipperCommonPackedAbi } from './abi/clipperCommonPacked'
 import type { clipperDirectExchangeV0Abi } from './abi/clipperDirectExchangeV0'
 import { clipperDirectExchangeV1Abi } from './abi/clipperDirectExchangeV1'
 
-const BLADE_API_HOST =
-  process.env['BLADE_API_HOST'] ||
-  process.env['NEXT_PUBLIC_BLADE_API_HOST'] ||
-  'https://api.clipper.exchange'
-
-const BLADE_API_KEY =
-  process.env['BLADE_API_KEY'] || process.env['NEXT_PUBLIC_BLADE_API_KEY']
+const rfqWithdrawResponseSchema = z.object({
+  token_holder_address: z.string().refine((address) => isAddress(address), {
+    message: 'token_holder_address does not conform to Address',
+  }),
+  pool_token_amount_to_burn: z.string(),
+  asset_address: z.string().refine((address) => isAddress(address), {
+    message: 'asset_address does not conform to Address',
+  }),
+  asset_amount: z.string(),
+  good_until: z.number(),
+  signature: z.object({
+    v: z.number(),
+    r: z.string().refine((hash) => isHash(hash), {
+      message: 'r does not conform to Hash',
+    }),
+    s: z.string().refine((hash) => isHash(hash), {
+      message: 's does not conform to Hash',
+    }),
+  }),
+  extra_data: z.string().refine((hash) => isHash(hash), {
+    message: 'extra_data does not conform to Hash',
+  }),
+})
 
 export type RfqWithdrawPayload = {
   chain_id: number
@@ -38,19 +56,7 @@ export type RfqWithdrawPayload = {
   pool_address: string
 }
 
-export type RfqWithdrawResponse = {
-  token_holder_address: `0x${string}`
-  pool_token_amount_to_burn: string
-  asset_address: `0x${string}`
-  asset_amount: string
-  good_until: number
-  signature: {
-    v: number
-    r: `0x${string}`
-    s: `0x${string}`
-  }
-  extra_data: `0x${string}`
-}
+export type RfqWithdrawResponse = z.infer<typeof rfqWithdrawResponseSchema>
 
 type AssertEqualContractFunctionArgs<
   T extends readonly Abi[],
@@ -276,7 +282,9 @@ export const useBladeWithdrawRequest = ({
         throw new Error(`Error: ${response.statusText}`)
       }
 
-      return response.json()
+      const responseData = await response.json()
+
+      return rfqWithdrawResponseSchema.parse(responseData)
     },
     onError,
   })

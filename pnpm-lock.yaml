@@ -321,25 +321,25 @@ importers:
         specifier: 1.0.12
         version: 1.0.12(next@15.1.4(@babel/core@7.26.0)(@opentelemetry/api@1.9.0)(@playwright/test@1.45.0)(babel-plugin-macros@3.1.0)(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(react@19.0.0)(svelte@4.2.17)
       '@visx/chord':
-        specifier: ^3.12.0
+        specifier: 3.12.0
         version: 3.12.0(react@19.0.0)
       '@visx/event':
-        specifier: ^3.12.0
+        specifier: 3.12.0
         version: 3.12.0
       '@visx/group':
-        specifier: ^3.12.0
+        specifier: 3.12.0
         version: 3.12.0(react@19.0.0)
       '@visx/responsive':
-        specifier: ^3.12.0
+        specifier: 3.12.0
         version: 3.12.0(react@19.0.0)
       '@visx/shape':
-        specifier: ^3.12.0
+        specifier: 3.12.0
         version: 3.12.0(react@19.0.0)
       '@visx/text':
-        specifier: ^3.12.0
+        specifier: 3.12.0
         version: 3.12.0(react@19.0.0)
       '@visx/tooltip':
-        specifier: ^3.12.0
+        specifier: 3.12.0
         version: 3.12.0(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       '@wagmi/connectors':
         specifier: 5.7.3
@@ -778,7 +778,7 @@ importers:
         specifier: 5.0.1
         version: 5.0.1
       '@fontsource-variable/orbitron':
-        specifier: ^5.2.6
+        specifier: 5.2.6
         version: 5.2.6
       '@headlessui/react':
         specifier: 2.2.0

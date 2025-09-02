@@ -26,7 +26,7 @@ export const BladePoolLiquidityHeader: FC<PoolHeader> = ({
   address,
   pool,
 }) => {
-  const [showStableCoins, setShowStableCoins] = useState(false)
+  const [showStableTypes, setShowStableTypes] = useState(false)
 
   const groupedTokens = useMemo(() => {
     if (!pool) return { tokens: [], stablecoinUsdTokens: [] }
@@ -39,11 +39,11 @@ export const BladePoolLiquidityHeader: FC<PoolHeader> = ({
   const tokenSymbols = useMemo(
     () => [
       ...tokens.map((token) => token.symbol),
-      ...(hasStablecoin && !showStableCoins
+      ...(hasStablecoin && !showStableTypes
         ? ['USD']
         : stablecoinUsdTokens.map((token) => token.symbol)),
     ],
-    [tokens, hasStablecoin, showStableCoins, stablecoinUsdTokens],
+    [tokens, hasStablecoin, showStableTypes, stablecoinUsdTokens],
   )
 
   if (pool && tokens.length > 0)
@@ -78,7 +78,7 @@ export const BladePoolLiquidityHeader: FC<PoolHeader> = ({
                           currency={token}
                         />
                       ))}
-                      {hasStablecoin && !showStableCoins ? (
+                      {hasStablecoin && !showStableTypes ? (
                         <CurrencyFiatIcon width={36} height={36} />
                       ) : (
                         stablecoinUsdTokens.map((token) => (
@@ -104,7 +104,7 @@ export const BladePoolLiquidityHeader: FC<PoolHeader> = ({
                   </h1>
                   {hasStablecoin && (
                     <Button
-                      onClick={() => setShowStableCoins(!showStableCoins)}
+                      onClick={() => setShowStableTypes(!showStableTypes)}
                       variant="blank"
                       className="!p-0 !h-[unset] !min-h-[unset] font-medium text-blue text-sm hover:text-blue-700 sm:text-base"
                     >
