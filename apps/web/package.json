@@ -13,7 +13,8 @@
     "lint:fix": "TIMING=1 next lint --fix",
     "start": "next start",
     "test": "npx playwright test -c test/playwright.config.ts",
-    "test:unit": "vitest --watch=false src"
+    "test:unit": "vitest --watch=false src",
+    "postinstall": "node ../../scripts/validate-deps.js"
   },
   "dependencies": {
     "@aptos-labs/ts-sdk": "1.27.0",

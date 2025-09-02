@@ -12,7 +12,6 @@
     "format": "pnpm sort && biome format . --write",
     "generate": "dotenv -- turbo run generate --no-cache --parallel --continue",
     "preinstall": "pnpx only-allow pnpm",
-    "postinstall": "node scripts/validate-deps.js",
     "lint": "biome check .",
     "lint:fix": "biome check . --apply",
     "sort": "sort-package-json 'package.json' 'apis/*/package.json' 'apps/*/package.json' 'config/*/package.json' 'packages/*/package.json'",
