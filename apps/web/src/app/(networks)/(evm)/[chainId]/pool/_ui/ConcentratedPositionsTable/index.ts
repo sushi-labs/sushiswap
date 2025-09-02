@@ -1,1 +1,1 @@
-export * from './ConcentratedPositionsTable'
+export * from './concentrated-positions-table'

@@ -1,2 +1,2 @@
-export * from './BarHeader'
-export * from './SushiBarProvider'
+export * from './bar-header'
+export * from './sushi-bar-provider'

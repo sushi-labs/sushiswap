@@ -8,8 +8,8 @@ import {
 import type { ColumnDef } from '@tanstack/react-table'
 import { useMemo } from 'react'
 import { formatPercent, formatUSD } from 'sushi'
-import { SparklineCell } from './SparklineCell'
-import { TokenNameCell } from './TokenNameCell'
+import { SparklineCell } from './sparkline-cell'
+import { TokenNameCell } from './token-name-cell'
 
 export const TOKENS_NAME_COLUMN: ColumnDef<Token, unknown> = {
   id: 'name',

@@ -1,6 +1,6 @@
 import { Container, typographyVariants } from '@sushiswap/ui'
 
-import { BackButton } from 'src/app/(networks)/_ui/BackButton'
+import { BackButton } from 'src/app/(networks)/_ui/back-button'
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (

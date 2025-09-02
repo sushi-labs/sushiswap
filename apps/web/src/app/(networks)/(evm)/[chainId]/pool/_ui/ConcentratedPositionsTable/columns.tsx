@@ -3,8 +3,8 @@ import type { ColumnDef } from '@tanstack/react-table'
 import React from 'react'
 import type { ConcentratedLiquidityPositionWithV3Pool } from 'src/lib/wagmi/hooks/positions/types'
 import {formatUSD } from 'sushi'
-import { PoolNameCellV3 } from './PoolNameCellV3'
-import { PriceRangeCell } from './PriceRangeCell'
+import { PoolNameCellV3 } from './pool-name-cell-v3'
+import { PriceRangeCell } from './price-range-cell'
 
 export const PRICE_RANGE_COLUMN: ColumnDef<
   ConcentratedLiquidityPositionWithV3Pool,

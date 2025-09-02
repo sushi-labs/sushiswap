@@ -5,7 +5,7 @@ import { headers } from 'next/headers'
 import { notFound } from 'next/navigation'
 import { getEvmChainById, isSushiSwapV3ChainId } from 'sushi/evm'
 import { isAddress } from 'viem'
-import { PoolHeader } from '~evm/[chainId]/pool/_ui/PoolHeader'
+import { PoolHeader } from '~evm/[chainId]/pool/_ui/pool-header'
 
 export default async function Layout(props: {
   children: React.ReactNode

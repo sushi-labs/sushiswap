@@ -10,7 +10,7 @@ import {
   type Transaction,
   TransactionType,
   type useTransactionsV2,
-} from './PoolTransactionsV2'
+} from './pool-transactions-v2'
 
 export const TX_SENDER_V2_COLUMN: ColumnDef<Transaction, unknown> = {
   id: 'sender',

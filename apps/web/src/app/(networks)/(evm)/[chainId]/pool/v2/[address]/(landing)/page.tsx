@@ -4,7 +4,7 @@ import { notFound } from 'next/navigation'
 
 import { type EvmChainId, isSushiSwapV2ChainId } from 'sushi/evm'
 import { isAddress } from 'viem'
-import { PoolPageV2 } from './_ui/PoolPageV2'
+import { PoolPageV2 } from './_ui/pool-page-v2'
 
 export default async function PoolPage(props: {
   params: Promise<{ chainId: string; address: string }>

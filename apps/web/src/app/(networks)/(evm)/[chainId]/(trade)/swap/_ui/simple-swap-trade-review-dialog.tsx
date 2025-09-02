@@ -36,8 +36,8 @@ import React, {
   useMemo,
   useRef,
 } from 'react'
-import { PriceImpactWarning } from 'src/app/(networks)/_ui/PriceImpactWarning'
-import { SlippageWarning } from 'src/app/(networks)/_ui/SlippageWarning'
+import { PriceImpactWarning } from 'src/app/(networks)/_ui/price-impact-warning'
+import { SlippageWarning } from 'src/app/(networks)/_ui/slippage-warning'
 import { APPROVE_TAG_SWAP, NativeAddress } from 'src/lib/constants'
 import type { UseTradeReturn } from 'src/lib/hooks/react-query'
 import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
@@ -45,8 +45,8 @@ import {
   warningSeverity,
   warningSeverityClassName,
 } from 'src/lib/swap/warningSeverity'
-import { useApproved } from 'src/lib/wagmi/systems/Checker/Provider'
-import { SLIPPAGE_WARNING_THRESHOLD } from 'src/lib/wagmi/systems/Checker/Slippage'
+import { useApproved } from 'src/lib/wagmi/systems/Checker/provider'
+import { SLIPPAGE_WARNING_THRESHOLD } from 'src/lib/wagmi/systems/Checker/slippage'
 import { ChainId, ZERO } from 'sushi'
 import {
   EvmNative,

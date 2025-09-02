@@ -3,12 +3,12 @@
 import { Container } from '@sushiswap/ui'
 import { notFound } from 'next/navigation'
 import React, { use } from 'react'
-import { TableFiltersNetwork } from 'src/app/(networks)/_ui/TableFiltersNetwork'
-import { TableFiltersSearchToken } from 'src/app/(networks)/_ui/TableFiltersSearchToken'
+import { TableFiltersNetwork } from 'src/app/(networks)/_ui/table-filters-network'
+import { TableFiltersSearchToken } from 'src/app/(networks)/_ui/table-filters-search-token'
 import { POOL_SUPPORTED_NETWORKS } from 'src/config'
 import { type EvmChainId, isSushiSwapChainId } from 'sushi/evm'
-import { TableFiltersResetButton } from '~evm/[chainId]/_ui/TableFiltersResetButton'
-import { PositionsTab } from './_ui/PositionsTab'
+import { TableFiltersResetButton } from '~evm/[chainId]/_ui/table-filters-reset-button'
+import { PositionsTab } from './_ui/positions-tab'
 
 export default function MyPositionsPage(props: {
   params: Promise<{ chainId: string }>

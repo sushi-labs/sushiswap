@@ -11,8 +11,8 @@ import {
   type SushiPositionWithPool,
   unnestPool,
 } from 'sushi/evm'
-import { APRHoverCard } from '~evm/[chainId]/_ui/APRHoverCard'
-import { PoolNameCell } from './PoolNameCell'
+import { APRHoverCard } from '~evm/[chainId]/_ui/apr-hover-card'
+import { PoolNameCell } from './pool-name-cell'
 
 export const VALUE_COLUMN = {
   id: 'value',

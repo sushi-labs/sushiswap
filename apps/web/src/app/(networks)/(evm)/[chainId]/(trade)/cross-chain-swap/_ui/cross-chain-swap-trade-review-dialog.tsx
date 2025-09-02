@@ -44,8 +44,8 @@ import React, {
   useRef,
   useState,
 } from 'react'
-import { PriceImpactWarning } from 'src/app/(networks)/_ui/PriceImpactWarning'
-import { SlippageWarning } from 'src/app/(networks)/_ui/SlippageWarning'
+import { PriceImpactWarning } from 'src/app/(networks)/_ui/price-impact-warning'
+import { SlippageWarning } from 'src/app/(networks)/_ui/slippage-warning'
 import { isXSwapSupportedChainId } from 'src/config'
 import { APPROVE_TAG_XSWAP } from 'src/lib/constants'
 import { useCrossChainTradeStep } from 'src/lib/hooks/react-query'
@@ -55,8 +55,8 @@ import {
   useLiFiStatus,
 } from 'src/lib/swap/cross-chain'
 import { warningSeverity } from 'src/lib/swap/warningSeverity'
-import { useApproved } from 'src/lib/wagmi/systems/Checker/Provider'
-import { SLIPPAGE_WARNING_THRESHOLD } from 'src/lib/wagmi/systems/Checker/Slippage'
+import { useApproved } from 'src/lib/wagmi/systems/Checker/provider'
+import { SLIPPAGE_WARNING_THRESHOLD } from 'src/lib/wagmi/systems/Checker/slippage'
 import { Amount, ZERO, formatNumber, formatUSD } from 'sushi'
 import { EvmNative, getEvmChainById, shortenEvmAddress } from 'sushi/evm'
 import {

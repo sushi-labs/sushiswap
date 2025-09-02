@@ -8,7 +8,7 @@ import { headerElements } from 'src/app/_common/header-elements'
 import { SUPPORTED_NETWORKS } from 'src/config'
 import { HeaderNetworkSelector } from 'src/lib/wagmi/components/header-network-selector'
 import { ChainId } from 'sushi'
-import { WalletConnector } from './_common/ui/WalletConnector/WalletConnector'
+import { WalletConnector } from './_common/ui/WalletConnector/wallet-connector'
 
 export const Header: FC<{
   supportedNetworks?: readonly ChainId[]

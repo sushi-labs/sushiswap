@@ -1,7 +1,7 @@
 import { isPoolChainId } from '@sushiswap/graph-client/data-api'
 import { Container } from '@sushiswap/ui'
 import { notFound } from 'next/navigation'
-import { PoolsFiltersProvider } from 'src/app/(networks)/_ui/PoolsFiltersProvider'
+import { PoolsFiltersProvider } from 'src/app/(networks)/_ui/pools-filters-provider'
 import { POOL_SUPPORTED_NETWORKS } from 'src/config'
 import { Header } from '../header'
 import { Hero } from './hero'
