@@ -93,7 +93,7 @@ test.describe('V3', () => {
     next,
   }) => {
     test.slow()
-    const url = BASE_URL.concat(`/${chainId.toString()}/pool/v3/add`)
+    const url = BASE_URL.concat(`/${getChainById(chainId).key}/pool/v3/add`)
     const poolPage = new PoolPage(page, chainId)
 
     await poolPage.mockPoolApi(

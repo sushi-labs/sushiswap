@@ -275,7 +275,7 @@ export class PoolPage extends BaseActions {
       fee: SushiSwapV3FeeAmount.HIGH,
     })
     const url = BASE_URL.concat(
-      `/${this.chainId.toString()}/pool/v3/${poolAddress.toLowerCase()}/positions`,
+      `/${getChainById(this.chainId).key}/pool/v3/${poolAddress.toLowerCase()}/positions`,
     )
     await this.page.goto(url)
     await this.connect()
