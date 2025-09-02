@@ -44,14 +44,12 @@ test.beforeEach(async ({ page, next }) => {
   })
 })
 
-// test.afterEach(async ({ page }) => {
-// 	await page.unrouteAll({ behavior: "ignoreErrors" });
-// });
+test.afterEach(async ({ page }) => {
+  await page.unrouteAll({ behavior: 'ignoreErrors' })
+})
 
 test('Wrap and unwrap on advanced swap page', async ({ page }) => {
-  test.slow()
-  // const url = `${BASE_URL}/${getChainById(chainId).key}/swap/advanced`
-  const url = `${BASE_URL}/${chainId}/swap/advanced`
+  const url = `${BASE_URL}/${getChainById(chainId).key}/swap/advanced`
   const swapPage = new AdvancedSwapPage(page, chainId)
   await swapPage.goTo(url)
   await swapPage.connect()
@@ -65,9 +63,7 @@ test('Wrap and unwrap on advanced swap page', async ({ page }) => {
 test('swap Native to USDC, then USDC to NATIVE on advanced swap page', async ({
   page,
 }) => {
-  test.slow()
-  // const url = BASE_URL.concat(`/${getChainById(chainId).key}/swap/advanced`)
-  const url = `${BASE_URL}/${chainId}/swap/advanced`
+  const url = BASE_URL.concat(`/${getChainById(chainId).key}/swap/advanced`)
   const swapPage = new AdvancedSwapPage(page, chainId)
   await swapPage.goTo(url)
   await swapPage.connect()
@@ -91,8 +87,7 @@ test('Swap Native to USDC using Quick Select on advanced swap page', async ({
   page,
 }) => {
   test.slow()
-  // const url = BASE_URL.concat(`/${getChainById(chainId).key}/swap/advanced`)
-  const url = `${BASE_URL}/${chainId}/swap/advanced`
+  const url = BASE_URL.concat(`/${getChainById(chainId).key}/swap/advanced`)
   const swapPage = new AdvancedSwapPage(page, chainId)
   await swapPage.goTo(url)
   await swapPage.connect()
@@ -110,8 +105,7 @@ test('Swap Native to USDT using Quick Select on advanced swap page', async ({
   page,
 }) => {
   test.slow()
-  // const url = BASE_URL.concat(`/${getChainById(chainId).key}/swap/advanced`)
-  const url = `${BASE_URL}/${chainId}/swap/advanced`
+  const url = BASE_URL.concat(`/${getChainById(chainId).key}/swap/advanced`)
   const swapPage = new AdvancedSwapPage(page, chainId)
   await swapPage.goTo(url)
   await swapPage.connect()
@@ -128,9 +122,7 @@ test('Swap Native to USDT using Quick Select on advanced swap page', async ({
 test('swap Native to USDT, then USDT to NATIVE on advanced swap page', async ({
   page,
 }) => {
-  test.slow()
-  // const url = BASE_URL.concat(`/${getChainById(chainId).key}/swap/advanced`)
-  const url = `${BASE_URL}/${chainId}/swap/advanced`
+  const url = BASE_URL.concat(`/${getChainById(chainId).key}/swap/advanced`)
   const swapPage = new AdvancedSwapPage(page, chainId)
   await swapPage.goTo(url)
   await swapPage.connect()
@@ -150,9 +142,7 @@ test('swap Native to USDT, then USDT to NATIVE on advanced swap page', async ({
 })
 
 test('Swap Native to WBTC on advanced swap page', async ({ page }) => {
-  test.slow()
-  // const url = BASE_URL.concat(`/${getChainById(chainId).key}/swap/advanced`)
-  const url = `${BASE_URL}/${chainId}/swap/advanced`
+  const url = BASE_URL.concat(`/${getChainById(chainId).key}/swap/advanced`)
   const swapPage = new AdvancedSwapPage(page, chainId)
   await swapPage.goTo(url)
   await swapPage.connect()

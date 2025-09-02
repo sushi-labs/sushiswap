@@ -93,8 +93,7 @@ test.describe('V3', () => {
     next,
   }) => {
     test.slow()
-    // const url = BASE_URL.concat(`/${getChainById(chainId).key}/pool/v3/add`)
-    const url = BASE_URL.concat(`/${chainId}/pool/v3/add`)
+    const url = BASE_URL.concat(`/${getChainById(chainId).key}/pool/v3/add`)
     const poolPage = new PoolPage(page, chainId)
 
     await poolPage.mockPoolApi(
@@ -138,8 +137,7 @@ test.describe('V2', () => {
     test.slow()
     const poolPage = new PoolPage(page, chainId)
 
-    // const url = BASE_URL.concat(`/${getChainById(chainId).key}/pool/v2/add`);
-    const url = BASE_URL.concat(`/${chainId}/pool/v2/add`)
+    const url = BASE_URL.concat(`/${getChainById(chainId).key}/pool/v2/add`)
 
     await poolPage.mockPoolApi(
       next,
