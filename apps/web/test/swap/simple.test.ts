@@ -1,112 +1,112 @@
-import { test } from "next/experimental/testmode/playwright.js";
-import { getChainById } from "sushi";
-import { EvmNative, USDC, USDT, WBTC } from "sushi/evm";
-import { chainId, nativeAmount } from "test/constants";
-import { SwapPage } from "test/helpers/swap";
+import { test } from 'next/experimental/testmode/playwright.js'
+import { getChainById } from 'sushi'
+import { EvmNative, USDC, USDT, WBTC } from 'sushi/evm'
+import { chainId, nativeAmount } from 'test/constants'
+import { SwapPage } from 'test/helpers/swap'
 import {
-	// createSnapshot,
-	interceptAnvil,
-	// loadSnapshot,
-} from "test/intercept-anvil";
+  // createSnapshot,
+  interceptAnvil,
+  // loadSnapshot,
+} from 'test/intercept-anvil'
 
-const BASE_URL = "http://localhost:3000";
+const BASE_URL = 'http://localhost:3000'
 
-const native = EvmNative.fromChainId(chainId);
-const wnative = native.wrap();
+const native = EvmNative.fromChainId(chainId)
+const wnative = native.wrap()
 
-const usdc = USDC[chainId];
-const usdt = USDT[chainId];
-const wbtc = WBTC[chainId];
+const usdc = USDC[chainId]
+const usdt = USDT[chainId]
+const wbtc = WBTC[chainId]
 // let snapshot: string
 
 test.beforeAll(async () => {
-	// snapshot = await createSnapshot(chainId)
-});
+  // snapshot = await createSnapshot(chainId)
+})
 
 test.beforeEach(async ({ page, next }) => {
-	page.on("pageerror", (error) => {
-		console.error(error);
-	});
-	// await loadSnapshot(chainId, snapshot)
+  page.on('pageerror', (error) => {
+    console.error(error)
+  })
+  // await loadSnapshot(chainId, snapshot)
 
-	try {
-		await page.route(`**/price/v1/${chainId}`, async (route) => {
-			// const response = await route.fetch()
-			// const json = await response.json()
-			await route.fulfill({
-				json: {},
-			});
-		});
-	} catch (error) {
-		console.error("error mocking token api", error);
-	}
+  try {
+    await page.route(`**/price/v1/${chainId}`, async (route) => {
+      // const response = await route.fetch()
+      // const json = await response.json()
+      await route.fulfill({
+        json: {},
+      })
+    })
+  } catch (error) {
+    console.error('error mocking token api', error)
+  }
 
-	await page.route("http://localhost:3000/api/swap", async (route) => {
-		await route.fulfill({ json: { maintenance: false } });
-	});
+  await page.route('http://localhost:3000/api/swap', async (route) => {
+    await route.fulfill({ json: { maintenance: false } })
+  })
 
-	try {
-		await interceptAnvil(page, next);
-	} catch (_e) {
-		throw new Error("error intercepting anvil");
-	}
+  try {
+    await interceptAnvil(page, next)
+  } catch (_e) {
+    throw new Error('error intercepting anvil')
+  }
 
-	next.onFetch(() => {
-		return "continue";
-	});
-});
+  next.onFetch(() => {
+    return 'continue'
+  })
+})
 
 // test.afterEach(async ({ page }) => {
 //   await page.unrouteAll({ behavior: 'ignoreErrors' })
 // })
 
-test("Wrap and unwrap", async ({ page }) => {
-	// test.slow();
-	const url = BASE_URL.concat(`/${getChainById(chainId).key}/swap`);
-	const swapPage = new SwapPage(page, chainId);
-	await swapPage.goTo(url);
-	await swapPage.connect();
-	await swapPage.switchNetwork(chainId);
-	await swapPage.mockSwapApi(`test/swap/mock/${chainId}-wrap.json`);
-	await swapPage.wrap(native, wnative, nativeAmount);
-	await swapPage.mockSwapApi(`test/swap/mock/${chainId}-unwrap.json`);
-	await swapPage.wrap(wnative, native, "max");
-});
+test('Wrap and unwrap', async ({ page }) => {
+  // test.slow();
+  const url = BASE_URL.concat(`/${getChainById(chainId).key}/swap`)
+  const swapPage = new SwapPage(page, chainId)
+  await swapPage.goTo(url)
+  await swapPage.connect()
+  await swapPage.switchNetwork(chainId)
+  await swapPage.mockSwapApi(`test/swap/mock/${chainId}-wrap.json`)
+  await swapPage.wrap(native, wnative, nativeAmount)
+  await swapPage.mockSwapApi(`test/swap/mock/${chainId}-unwrap.json`)
+  await swapPage.wrap(wnative, native, 'max')
+})
 
-test("swap Native to USDC, then USDC to NATIVE", async ({ page }) => {
-	const url = BASE_URL.concat(`/${getChainById(chainId).key}/swap`);
-	const swapPage = new SwapPage(page, chainId);
-	await swapPage.goTo(url);
-	await swapPage.connect();
-	await swapPage.switchNetwork(chainId);
-	await swapPage.mockSwapApi(`test/swap/mock/${chainId}-native-to-usdc.json`);
-	await swapPage.swap(native, usdc, nativeAmount);
+test('swap Native to USDC, then USDC to NATIVE', async ({ page }) => {
+  const url = BASE_URL.concat(`/${getChainById(chainId).key}/swap`)
+  const swapPage = new SwapPage(page, chainId)
+  await swapPage.goTo(url)
+  await swapPage.connect()
+  await swapPage.switchNetwork(chainId)
+  await swapPage.mockSwapApi(`test/swap/mock/${chainId}-native-to-usdc.json`)
+  await swapPage.swap(native, usdc, nativeAmount)
 
-	await swapPage.mockSwapApi(`test/swap/mock/${chainId}-usdc-to-native.json`);
-	await swapPage.swap(usdc, native, "max");
-});
+  await swapPage.mockSwapApi(`test/swap/mock/${chainId}-usdc-to-native.json`)
+  await swapPage.swap(usdc, native, 'max')
+})
 
-test("swap Native to USDT, then USDT to NATIVE", async ({ page }) => {
-	const url = BASE_URL.concat(`/${getChainById(chainId).key}/swap`);
-	const swapPage = new SwapPage(page, chainId);
-	await swapPage.goTo(url);
-	await swapPage.connect();
-	await swapPage.switchNetwork(chainId);
-	await swapPage.mockSwapApi(`test/swap/mock/${chainId}-native-to-usdt.json`);
-	await swapPage.swap(native, usdt, nativeAmount);
+test('swap Native to USDT, then USDT to NATIVE', async ({ page }) => {
+  const url = BASE_URL.concat(`/${getChainById(chainId).key}/swap`)
+  const swapPage = new SwapPage(page, chainId)
+  await swapPage.goTo(url)
+  await swapPage.connect()
+  await swapPage.switchNetwork(chainId)
+  await swapPage.mockSwapApi(`test/swap/mock/${chainId}-native-to-usdt.json`)
+  await swapPage.swap(native, usdt, nativeAmount)
 
-	await swapPage.mockSwapApi(`test/swap/mock/${chainId}-usdt-to-native.json`);
-	await swapPage.swap(usdt, native, "max");
-});
+  await swapPage.mockSwapApi(`test/swap/mock/${chainId}-usdt-to-native.json`)
+  await swapPage.swap(usdt, native, 'max')
+})
 
-test("Swap Native to WBTC", async ({ page }) => {
-	// test.slow()
-	const url = BASE_URL.concat(`/${getChainById(chainId).key}/swap`);
-	const swapPage = new SwapPage(page, chainId);
-	await swapPage.goTo(url);
-	await swapPage.connect();
-	await swapPage.switchNetwork(chainId);
+test('Swap Native to WBTC', async ({ page }) => {
+  // test.slow()
+  const url = BASE_URL.concat(`/${getChainById(chainId).key}/swap`)
+  const swapPage = new SwapPage(page, chainId)
+  await swapPage.goTo(url)
+  await swapPage.connect()
+  await swapPage.switchNetwork(chainId)
 
-	await swapPage.mockSwapApi(`test/swap/mock/${chainId}-native-to-wbtc.json`);
-	await swapPage.swap(native, wbtc, nativeAmount);
-});
+  await swapPage.mockSwapApi(`test/swap/mock/${chainId}-native-to-wbtc.json`)
+  await swapPage.swap(native, wbtc, nativeAmount)
+})
