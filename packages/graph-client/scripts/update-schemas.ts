@@ -7,7 +7,7 @@ const schemas = {
   strapi: 'sushi-strapi-cms.herokuapp.com/graphql',
   furo: 'api.studio.thegraph.com/query/32073/furo-ethereum/v0.0.1',
   // 'data-api': 'production.data-gcp.sushi.com/graphql',
-  'data-api': 'data-api-154-merge.data-gcp.sushi.com/graphql',
+  'data-api': 'data-api-feature-balance-v2.data-gcp.sushi.com/graphql',
   // 'data-api': 'data-api-staging.data-gcp.sushi.com/graphql',
 } as const satisfies Record<string, string>
 
