@@ -61,6 +61,7 @@ export const FavoriteRecentTabView = () => {
               ? TokenListV2ChainIds.map((i) => i)
               : SUPPORTED_CHAIN_IDS
           }
+          testId="favorite-recent-network-menu-trigger"
         />
       </div>
       <div className="mt-4 max-h-[500px] overflow-y-auto hide-scrollbar">

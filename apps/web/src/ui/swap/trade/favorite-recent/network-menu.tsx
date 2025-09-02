@@ -18,11 +18,13 @@ export const NetworkMenu = ({
   selectedNetwork,
   onNetworkSelect,
   networkOptions,
+  testId,
 }: {
   className?: string
   selectedNetwork?: null | number
   onNetworkSelect?(val: number | null): void
   networkOptions?: number[]
+  testId?: string
 }) => {
   const { networkOptions: _networks } = useNetworkOptions()
 
@@ -37,7 +39,7 @@ export const NetworkMenu = ({
             'flex items-center font-medium !gap-1 !px-2 !pl-4',
             className,
           )}
-          testId="network-menu-dropdown-trigger"
+          testId={testId ?? 'network-menu-dropdown-trigger'}
         >
           {selectedNetwork === null || !selectedNetwork ? (
             'All Networks'

@@ -28,7 +28,7 @@ export const ChartHeader = () => {
         <Button
           size="lg"
           variant={token1 ? 'secondary' : 'default'}
-          id={'swap-to'}
+          id={'chart-token'}
           type="button"
           className={classNames(
             token1 ? 'pl-1.5 pr-3' : '',

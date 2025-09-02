@@ -13,7 +13,7 @@ import {
 import { useCreateQuery } from 'src/lib/hooks/useCreateQuery'
 import { useTokenWithCache } from 'src/lib/wagmi/hooks/tokens/useTokenWithCache'
 import { type ChainKey, getChainByKey } from 'sushi'
-import { EvmChainId } from 'sushi/evm'
+import { EvmChainId, STABLES } from 'sushi/evm'
 import { defaultQuoteCurrency, isWNativeSupported } from 'sushi/evm'
 import { type EvmCurrency, EvmNative } from 'sushi/evm'
 import { type Address, isAddress } from 'viem'
@@ -31,8 +31,16 @@ const getDefaultCurrency = (chainId: number) =>
 
 const isStable = (token: EvmCurrency | undefined): boolean => {
   if (!token || !token.symbol) return false
-  const symbol = token.symbol.toLowerCase()
-  return symbol.includes('usd') || symbol.includes('dai')
+  const stables = STABLES[token.chainId]
+  if (
+    stables.some(
+      (stable) =>
+        stable.address.toLowerCase() === token.wrap().address.toLowerCase(),
+    )
+  ) {
+    return true
+  }
+  return false
 }
 
 interface State {
@@ -130,7 +138,6 @@ const ChartProvider: FC<ChartProviderProps> = ({ children }) => {
       keepPreviousData: false,
     },
   )
-
   const token1 = token1FromLocalCache ?? token1FromCache
 
   const push = useCallback((path: string) => {

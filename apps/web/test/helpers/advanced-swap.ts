@@ -3,12 +3,17 @@ import { NativeAddress } from 'src/lib/constants'
 import { getNetworkName } from 'src/lib/network'
 import { API_BASE_URL } from 'src/lib/swap/api-base-url'
 import { type Amount, getChainById } from 'sushi'
-import { type EvmChainId, type EvmCurrency, EvmNative } from 'sushi/evm'
+import {
+  type EvmChainId,
+  type EvmCurrency,
+  EvmNative,
+  STABLES,
+} from 'sushi/evm'
 import { BaseActions } from './base' // Adjust the import path as necessary
 
 type InputType = 'INPUT' | 'OUTPUT'
 
-export class SwapPage extends BaseActions {
+export class AdvancedSwapPage extends BaseActions {
   readonly chainId: EvmChainId
   readonly nativeToken: EvmNative
   constructor(page: Page, chainId: EvmChainId) {
@@ -70,21 +75,14 @@ export class SwapPage extends BaseActions {
 
     // If this text is duplicated elsewhere it could false positive
     const expectedText = new RegExp(
-      `(${inputCurrency.type === 'native' ? 'Wrap' : 'Unwrap'} .* ${inputCurrency.symbol} to .* ${
+      `(${inputCurrency.type === 'native' ? 'Wrap' : 'Unwrapping'} .* ${inputCurrency.symbol} to .* ${
         outputCurrency.symbol
       })`,
     )
-    expect(this.page.getByText(expectedText)).toBeVisible()
+    await expect(this.page.getByText(expectedText)).toBeVisible()
 
-    const makeAnotherSwap = this.page.locator(
-      '[testdata-id=make-another-swap-button]',
-      {
-        hasText: 'Make another swap',
-      },
-    )
-    await expect(makeAnotherSwap).toBeVisible()
-    await expect(makeAnotherSwap).toBeEnabled()
-    await makeAnotherSwap.click()
+    await expect(this.page.getByText('Dismiss All')).toBeVisible()
+    await expect(this.page.getByText('Go To Inbox')).toBeVisible()
   }
 
   async swap(
@@ -95,19 +93,6 @@ export class SwapPage extends BaseActions {
     await this.handleToken(inputCurrency, 'INPUT')
     await this.handleToken(outputCurrency, 'OUTPUT')
     await this.inputAmount(amount)
-
-    // const swapFromBalance = this.page.locator(
-    //   '[testdata-id=swap-from-balance-button]',
-    // )
-    // await expect(swapFromBalance).toBeVisible()
-    // await expect(swapFromBalance).toBeEnabled()
-    // const swapFromBalanceBefore = await swapFromBalance.textContent()
-
-    // const swapToBalance = this.page.locator(
-    //   '[testdata-id=swap-to-balance-button]',
-    // )
-    // await expect(swapToBalance).toBeVisible()
-    // const swapToBalanceBefore = await swapToBalance.textContent()
 
     await this.approve(inputCurrency)
 
@@ -140,32 +125,16 @@ export class SwapPage extends BaseActions {
     const expectedSwappingText = new RegExp(
       `(Swapping .* ${inputCurrency.symbol}.* for .* ${outputCurrency.symbol}.*.)`,
     )
-    expect(this.page.getByText(expectedSwappingText)).toBeVisible()
+    await expect(this.page.getByText(expectedSwappingText)).toBeVisible()
 
     // If this text is duplicated elsewhere it could false positive
     const expectedSwapText = new RegExp(
       `(Swap .* ${inputCurrency.symbol}.* for .* ${outputCurrency.symbol}.*.)`,
     )
-    expect(this.page.getByText(expectedSwapText)).toBeVisible()
+    await expect(this.page.getByText(expectedSwapText)).toBeVisible()
 
-    // Make another swap
-    const makeAnotherSwap = this.page.locator(
-      '[testdata-id=make-another-swap-button]',
-    )
-    await expect(makeAnotherSwap).toBeVisible()
-    await expect(makeAnotherSwap).toBeEnabled()
-    await makeAnotherSwap.click()
-
-    // Compare against cached balances to ensure there is at least a change...
-    // await expect(swapFromBalance).not.toHaveText(
-    //   swapFromBalanceBefore as string,
-    // )
-    // const swapFromBalanceAfter = await swapFromBalance.textContent()
-    // expect(swapFromBalanceBefore).not.toEqual(swapFromBalanceAfter)
-
-    // await expect(swapToBalance).not.toHaveText(swapToBalanceBefore as string)
-    // const swapToBalanceAfter = await swapToBalance.textContent()
-    // expect(swapToBalanceBefore).not.toEqual(swapToBalanceAfter)
+    await expect(this.page.getByText('Dismiss All')).toBeVisible()
+    await expect(this.page.getByText('Go To Inbox')).toBeVisible()
   }
 
   async approve(currency: EvmCurrency) {
@@ -259,6 +228,24 @@ export class SwapPage extends BaseActions {
 
       await tokenToSelect.click()
       await expect(tokenSelector).toContainText(currency.symbol as string)
+    }
+
+    if (type === 'OUTPUT') {
+      const stables = STABLES[currency.chainId]
+      const isStable = stables.some(
+        (stable) =>
+          stable.address.toLowerCase() ===
+          currency.wrap().address.toLowerCase(),
+      )
+      //if token is stable the other token will be on the chart
+      if (!isStable) {
+        const chartTokenSelector = this.page.locator(
+          `[testdata-id=chart-token-button]`,
+        )
+        await expect(chartTokenSelector).toBeVisible()
+        await expect(chartTokenSelector).toBeEnabled()
+        await expect(chartTokenSelector).toContainText(currency.symbol)
+      }
     }
   }
 
