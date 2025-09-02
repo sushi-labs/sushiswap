@@ -5,8 +5,8 @@ import { Area } from './area'
 import { AxisBottom } from './axis-bottom'
 import { Brush } from './brush'
 import { Line } from './line'
-import { Zoom } from './zoom'
 import type { ChartEntry, LiquidityChartRangeInputProps } from './types'
+import { Zoom } from './zoom'
 
 const xAccessor = (d: ChartEntry) => d.price0
 const yAccessor = (d: ChartEntry) => d.activeLiquidity

@@ -19,7 +19,10 @@ import { Button } from '@sushiswap/ui'
 import { Command, CommandGroup, CommandItem } from '@sushiswap/ui'
 import { CheckIcon } from '@sushiswap/ui/icons/CheckIcon'
 import React, { type FC, useCallback, useState, useTransition } from 'react'
-import { usePoolFilters, useSetPoolFilters } from 'src/app/(networks)/_ui/pools-filters-provider'
+import {
+  usePoolFilters,
+  useSetPoolFilters,
+} from 'src/app/(networks)/_ui/pools-filters-provider'
 import { PROTOCOL_MAP } from 'src/lib/constants'
 import { SushiSwapProtocol } from 'sushi/evm'
 
