@@ -24,7 +24,7 @@ export const RecipientInput = ({
             className="p-0 m-0 w-full font-medium bg-transparent border-none outline-none focus:ring-0 text-[20px] !text-slate-900 dark:!text-slate-200 placeholder:text-slate-900 placeholder:dark:text-slate-200"
             value={
               isRecipientValid
-                ? shortenAddress(state.recipientAddress)
+                ? shortenAddress(state.recipientAddress, 12)
                 : state.recipientAddress
             }
             onChange={(e) => mutate.setRecipientAddress(e.target.value.trim())}

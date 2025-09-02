@@ -9,9 +9,9 @@ import {
 import { useEffect } from 'react'
 import type { Type } from 'sushi/currency'
 import { BrowseContactView } from './browse-contact-view'
-import { EditContactView } from './edit-contact-view'
 import { useSendTokens } from './send-token-provider'
 import { SendView } from './send-view'
+import { UpsertContactView } from './upsert-contact-view'
 
 export const SendWidget = ({
   triggerClassName,
@@ -34,6 +34,7 @@ export const SendWidget = ({
   const isSendView = state.currentStep === 'send'
   const isBrowseView = state.currentStep === 'browseContacts'
   const isEditView = state.currentStep === 'editContact'
+  const isAddView = state.currentStep === 'addContact'
 
   return (
     <Dialog>
@@ -58,7 +59,7 @@ export const SendWidget = ({
       >
         {isSendView && <SendView />}
         {isBrowseView && <BrowseContactView />}
-        {isEditView && <EditContactView />}
+        {(isEditView || isAddView) && <UpsertContactView />}
       </DialogContent>
     </Dialog>
   )

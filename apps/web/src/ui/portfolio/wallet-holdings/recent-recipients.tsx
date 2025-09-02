@@ -2,20 +2,16 @@ import { Button } from '@sushiswap/ui'
 import { useRef } from 'react'
 import { shortenAddress } from 'sushi/format'
 import { useOverflow } from '../lp-positions-table/trending'
-
-const RECENT_RECIPIENTS = [
-  '0x38A6f57BD9B8E8f2fE1D69C6a3B9367BFC9B2f40',
-  '0x9876543210987654321098765432109876543210',
-  'ron.eth',
-  '0x38A6f57BD9B8E8f2fE1D69C6a3B9367BFC9B2f40',
-  '0x9876543210987654321098765432109876543210',
-  '0x38A6f57BD9B8E8f2fE1D69C6a3B9367BFC9B2f40',
-  '0x9876543210987654321098765432109876543210',
-]
+import { useContacts } from './hooks/useContacts'
 
 export const RecentRecipients = () => {
   const overflowRef = useRef<HTMLDivElement>(null)
   const { hasOverflow } = useOverflow(overflowRef)
+  const { contacts } = useContacts()
+
+  const recentContacts = Object.values(contacts)
+
+  if (recentContacts.length === 0) return null
 
   return (
     <div className="overflow-x-hidden relative">
@@ -25,8 +21,11 @@ export const RecentRecipients = () => {
           ref={overflowRef}
           className="flex gap-2.5 snap-x overflow-x-auto hide-scrollbar"
         >
-          {RECENT_RECIPIENTS.map((address, idx) => (
-            <RecentRecipientItem key={`${address}-${idx}`} address={address} />
+          {recentContacts.map((contact, idx) => (
+            <RecentRecipientItem
+              key={`${contact.address}-${idx}`}
+              address={contact.address}
+            />
           ))}
         </div>
         {hasOverflow ? (

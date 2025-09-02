@@ -4,29 +4,49 @@ import { Button, DialogClose, DialogTitle, IconButton } from '@sushiswap/ui'
 import { useMemo, useState } from 'react'
 import { shortenAddress } from 'sushi'
 import { isAddress } from 'viem'
+import { useContacts } from './hooks/useContacts'
 import { useSendTokens } from './send-token-provider'
 
-export const EditContactView = () => {
-  const { mutate } = useSendTokens()
-  const [name, setName] = useState('Vitalik Buterin')
-  const [address, setAddress] = useState(
-    '0x38A6f57BD9B8E8f2fE1D69C6a3B9367BFC9B2f40',
-  )
+export const UpsertContactView = () => {
+  const {
+    mutate,
+    state: { contactToEdit },
+  } = useSendTokens()
+  const { addContact, updateContact, hasContact } = useContacts()
+
+  const [name, setName] = useState(contactToEdit?.name ?? '')
+  const [address, setAddress] = useState(contactToEdit?.address ?? '')
+
+  const isEditing = useMemo(() => {
+    return contactToEdit?.address ? hasContact(contactToEdit.address) : false
+  }, [contactToEdit?.address, hasContact])
 
   const isRecipientValid = useMemo(() => {
-    if (!address) return false
-
-    return isAddress(address)
+    return address ? isAddress(address) : false
   }, [address])
 
   const buttonText = useMemo(() => {
     if (!isRecipientValid && address) return 'Invalid Address'
     if (!address) return 'Enter Address'
     if (!name) return 'Enter Name'
+    return isEditing ? 'Update' : 'Save'
+  }, [isRecipientValid, address, name, isEditing])
 
-    return 'Save'
-  }, [isRecipientValid, address, name])
+  const handleSave = () => {
+    const trimmedAddress = address.trim()
+    const trimmedName = name.trim()
 
+    if (!isAddress(trimmedAddress) || !trimmedName) return
+
+    if (isEditing) {
+      updateContact(trimmedAddress, trimmedName)
+    } else {
+      addContact({ address: trimmedAddress, name: trimmedName })
+    }
+
+    mutate.setContactToEdit(undefined)
+    mutate.goTo('browseContacts')
+  }
   return (
     <>
       <div className="flex justify-between items-center">
@@ -35,31 +55,22 @@ export const EditContactView = () => {
             <button type="button" onClick={() => mutate.goTo('browseContacts')}>
               <ArrowLeftIcon className="w-5 h-5" />
             </button>
-            Edit Contact
+            {isEditing ? 'Edit Contact' : 'Add Contact'}
           </div>
         </DialogTitle>
         <DialogClose>
-          <IconButton variant={'ghost'} icon={XMarkIcon} name="Close" />
+          <IconButton variant="ghost" icon={XMarkIcon} name="Close" />
         </DialogClose>
       </div>
-      <EditField
-        label="Address"
-        value={address}
-        onChange={(value) => setAddress(value)}
-      />
-      <EditField
-        label="Name"
-        value={name}
-        onChange={(value) => setName(value)}
-      />
+
+      <EditField label="Address" value={address} onChange={setAddress} />
+      <EditField label="Name" value={name} onChange={setName} />
 
       <Button
         size="xl"
         variant={!isRecipientValid && address ? 'destructive' : 'default'}
-        disabled={!(isRecipientValid && address) || !name || !address}
-        onClick={() => {
-          mutate.goTo('browseContacts')
-        }}
+        disabled={!isRecipientValid || !name}
+        onClick={handleSave}
       >
         {buttonText}
       </Button>
@@ -84,7 +95,7 @@ const EditField = ({
           <div className="flex gap-3 items-center">
             <input
               type="text"
-              placeholder="Enter Address..."
+              placeholder={`Enter ${label}...`}
               className="p-0 m-0 w-full font-medium bg-transparent border-none outline-none focus:ring-0 text-[20px] !text-slate-900 dark:!text-slate-200 placeholder:text-slate-900 placeholder:dark:text-slate-200"
               value={value}
               onChange={(e) => {

@@ -16,17 +16,12 @@ import { CopyIcon } from '@sushiswap/ui/icons/CopyIcon'
 import { PencilIcon } from '@sushiswap/ui/icons/PencilIcon'
 import { useState } from 'react'
 import { shortenAddress } from 'sushi/format'
+import { useContacts } from './hooks/useContacts'
 import { useSendTokens } from './send-token-provider'
-
-const CONTACTS = [
-  {
-    name: 'Vitalik',
-    address: '0x1234567890123456789012345678901234567890',
-  },
-]
 
 export const BrowseContactView = () => {
   const { mutate } = useSendTokens()
+  const { contacts, deleteContact } = useContacts()
 
   return (
     <>
@@ -44,19 +39,32 @@ export const BrowseContactView = () => {
         </DialogClose>
       </div>
       <div className="flex flex-col gap-3">
-        {CONTACTS.map((contact) => (
-          <ContactItem
-            key={contact.address}
-            {...contact}
-            goToEdit={() => mutate.goTo('editContact')}
-          />
-        ))}
+        {Object.values(contacts).length === 0 ? (
+          <div className="py-6 text-sm font-medium text-center text-muted-foreground">
+            No contacts found.
+          </div>
+        ) : (
+          Object.values(contacts).map((contact) => (
+            <ContactItem
+              key={contact.address}
+              {...contact}
+              goToEdit={() => {
+                mutate.setContactToEdit(contact)
+                mutate.goTo('editContact')
+              }}
+              deleteContact={() => {
+                deleteContact(contact.address)
+              }}
+            />
+          ))
+        )}
       </div>
+
       <Button
         size="xl"
         variant={'default'}
         onClick={() => {
-          mutate.goTo('send')
+          mutate.goTo('addContact')
         }}
       >
         <PlusCircleIcon className="w-5 h-5" /> Add Contact
@@ -69,7 +77,13 @@ export const ContactItem = ({
   name,
   address,
   goToEdit,
-}: { name: string; address: string; goToEdit: () => void }) => {
+  deleteContact,
+}: {
+  name: string
+  address: string
+  goToEdit: () => void
+  deleteContact: () => void
+}) => {
   const [isHovered, setIsHovered] = useState(false)
 
   return (
@@ -85,7 +99,7 @@ export const ContactItem = ({
             <button type="button" onClick={goToEdit}>
               <PencilIcon className="w-5 h-5 text-blue dark:text-skyblue hover:text-blue-700 dark:hover:text-skyblue-600" />
             </button>
-            <button type="button">
+            <button type="button" onClick={deleteContact}>
               <TrashIcon className="w-5 h-5 text-blue dark:text-skyblue hover:text-blue-700 dark:hover:text-skyblue-600" />
             </button>
           </div>

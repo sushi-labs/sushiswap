@@ -2,8 +2,13 @@
 
 import { type FC, createContext, useContext, useMemo, useState } from 'react'
 import type { Type } from 'sushi/currency'
+import type { Contact } from './hooks/useContacts'
 
-export type SendViewStep = 'send' | 'browseContacts' | 'editContact'
+export type SendViewStep =
+  | 'send'
+  | 'browseContacts'
+  | 'editContact'
+  | 'addContact'
 
 interface State {
   mutate: {
@@ -11,12 +16,14 @@ interface State {
     setRecipientAddress(address: string): void
     setAmount(amount: string | undefined): void
     goTo(step: SendViewStep): void
+    setContactToEdit(contact: Contact | undefined): void
   }
   state: {
     token0: Type | undefined
     recipientAddress: string
     amount: string | undefined
     currentStep: SendViewStep
+    contactToEdit: Contact | undefined
   }
 }
 
@@ -30,7 +37,9 @@ const SendTokensProvider: FC<SendTokensProviderProps> = ({ children }) => {
   const [token0, setToken0] = useState<Type | undefined>(undefined)
   const [amount, setAmount] = useState<string | undefined>(undefined)
   const [recipientAddress, setRecipientAddress] = useState('')
-
+  const [contactToEdit, setContactToEdit] = useState<Contact | undefined>(
+    undefined,
+  )
   const [currentStep, setCurrentStep] = useState<SendViewStep>('send')
 
   const goTo = (step: SendViewStep) => {
@@ -45,15 +54,17 @@ const SendTokensProvider: FC<SendTokensProviderProps> = ({ children }) => {
         setRecipientAddress,
         setAmount,
         goTo,
+        setContactToEdit,
       },
       state: {
         token0,
         recipientAddress,
         amount,
         currentStep,
+        contactToEdit,
       },
     }
-  }, [token0, recipientAddress, amount, currentStep])
+  }, [token0, recipientAddress, amount, currentStep, contactToEdit])
 
   return (
     <SendTokensContext.Provider value={value}>
