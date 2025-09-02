@@ -62,8 +62,8 @@ export function Providers({ children }: { children: React.ReactNode }) {
   }
   const adapters = useMemo(() => {
     return [
-      ...(snapAdapter ? [snapAdapter] : []),
       ...(eckoApadter ? [eckoApadter] : []),
+      ...(snapAdapter ? [snapAdapter] : []),
       createWalletConnectAdapter({
         projectId: process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID ?? TEST_ID,
       }),
