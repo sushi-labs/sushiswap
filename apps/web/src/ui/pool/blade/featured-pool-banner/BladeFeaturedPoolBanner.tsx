@@ -1,5 +1,5 @@
 import type { BladeChainId, BladePool } from '@sushiswap/graph-client/data-api'
-import { Badge, Button, Currency, classNames } from '@sushiswap/ui'
+import { Badge, Button, Currency } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import Link from 'next/link'
 import type { FC } from 'react'
@@ -10,7 +10,6 @@ import {
 import { formatPercent, formatUSD } from 'sushi'
 import { getEvmChainById } from 'sushi/evm'
 import { CurrencyFiatIcon } from '../CurrencyFiatIcon'
-import background from '../assets/banner-background.jpg'
 import { BladeBadgeIcon } from './BladeBadgeIcon'
 import { BladeLetterBgIcon } from './BladeLetterBgIcon'
 import { BladePoolBannerTitle } from './BladePoolBannerTitle'
@@ -33,12 +32,7 @@ export const BladeFeaturedPoolBanner: FC<BladeFeaturedPoolBannerProps> = ({
   })
 
   return (
-    <div
-      className="relative min-h-[205px] w-full overflow-hidden rounded-xl bg-[-1289px_-914px] bg-no-repeat py-8 md:py-12 lg:py-0 "
-      style={{
-        backgroundImage: `url('${background.src}')`,
-      }}
-    >
+    <div className="relative min-h-[205px] w-full overflow-hidden rounded-xl bg-[-1289px_-914px] bg-no-repeat py-8 md:py-12 lg:py-0 bg-[url('/blade-banner-background.jpg')]">
       <div className="grid grid-cols-1 items-center gap-x-4 gap-y-8 px-4 md:grid-cols-2 md:gap-x-8 md:px-8 lg:grid-cols-12 lg:gap-y-0">
         <div className="-mt-[80px] -ml-4 md:-ml-8 relative md:col-span-1 lg:col-span-5 lg:mt-0">
           <BladeLetterBgIcon />
