@@ -43,7 +43,7 @@ import { Checker } from 'src/lib/wagmi/systems/Checker'
 import {
   useApproved,
   withCheckerRoot,
-} from 'src/lib/wagmi/systems/Checker/Provider'
+} from 'src/lib/wagmi/systems/Checker/provider'
 import { Amount } from 'sushi'
 import {
   type EvmAddress,
@@ -59,14 +59,14 @@ import {
 } from 'sushi/evm'
 import { zeroAddress } from 'viem'
 import { useAccount, useWaitForTransactionReceipt } from 'wagmi'
-import { ConcentratedLiquidityProvider } from '~evm/[chainId]/_ui/ConcentratedLiquidityProvider'
+import { ConcentratedLiquidityProvider } from '~evm/[chainId]/_ui/concentrated-liquidity-provider'
 import {
   ConcentratedLiquidityURLStateProvider,
   useConcentratedLiquidityURLState,
-} from '../_ui/ConcentratedLiquidityURLStateProvider'
-import { SelectFeeConcentratedWidget } from '../_ui/SelectFeeConcentratedWidget'
-import { SelectNetworkWidget } from '../_ui/SelectNetworkWidget'
-import { SelectTokensWidget } from '../_ui/SelectTokensWidget'
+} from '../_ui/concentrated-liquidity-url-state-provider'
+import { SelectFeeConcentratedWidget } from '../_ui/select-fee-concentrated-widget'
+import { SelectNetworkWidget } from '../_ui/select-network-widget'
+import { SelectTokensWidget } from '../_ui/select-tokens-widget'
 
 const APPROVE_TAG = 'approve-incentivize'
 

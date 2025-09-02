@@ -3,9 +3,9 @@ import { unstable_cache } from 'next/cache'
 import { notFound } from 'next/navigation'
 import { isSushiSwapV2ChainId } from 'sushi/evm'
 import { isAddress } from 'viem'
-import { ConcentratedLiquidityProvider } from '../../../../_ui/ConcentratedLiquidityProvider'
-import { PoolPositionProvider } from '../_common/ui/PoolPositionProvider'
-import { MigrateTab } from './_common/ui/MigrateTab'
+import { ConcentratedLiquidityProvider } from '../../../../_ui/concentrated-liquidity-provider'
+import { PoolPositionProvider } from '../_common/ui/pool-position-provider'
+import { MigrateTab } from './_common/ui/migrate-tab'
 
 export default async function MigrateV2PoolPage(props: {
   params: Promise<{ chainId: string; address: string }>

@@ -10,7 +10,7 @@ import { useAccount, useReadContract, useSignTypedData } from 'wagmi'
 import {
   useApprovedActions,
   useSignature,
-} from '../../../systems/Checker/Provider'
+} from '../../../systems/Checker/provider'
 import { useTransactionDeadline } from '../../utils/hooks/useTransactionDeadline'
 import { ApprovalState } from './useTokenApproval'
 

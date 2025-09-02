@@ -3,7 +3,7 @@ import { Card, CardHeader, CardTitle, DataTable } from '@sushiswap/ui'
 import type { PaginationState } from '@tanstack/react-table'
 import type { ColumnDef, SortingState, TableState } from '@tanstack/react-table'
 import React, { useCallback, useMemo, useState } from 'react'
-import { usePoolFilters } from 'src/app/(networks)/_ui/PoolsFiltersProvider'
+import { usePoolFilters } from 'src/app/(networks)/_ui/pools-filters-provider'
 import type { PoolExtended } from '~aptos/pool/lib/use-pools-extended'
 import {
   type PoolExtendedWithAprVolume,

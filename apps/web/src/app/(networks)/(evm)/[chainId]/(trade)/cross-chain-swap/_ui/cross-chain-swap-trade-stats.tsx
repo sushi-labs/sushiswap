@@ -11,7 +11,7 @@ import {
   warningSeverity,
   warningSeverityClassName,
 } from 'src/lib/swap/warningSeverity'
-import { AddressToEnsResolver } from 'src/lib/wagmi/components/account/AddressToEnsResolver'
+import { AddressToEnsResolver } from 'src/lib/wagmi/components/account/address-to-ens-resolver'
 import { useAccount } from 'wagmi'
 import { CrossChainSwapFeesHoverCard } from './cross-chain-swap-fees-hover-card'
 import {

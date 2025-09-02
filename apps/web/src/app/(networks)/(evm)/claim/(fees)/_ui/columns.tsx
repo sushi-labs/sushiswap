@@ -1,9 +1,9 @@
 import { SkeletonBox, SkeletonCircle, SkeletonText } from '@sushiswap/ui'
 import type { ColumnDef } from '@tanstack/react-table'
-import { ClaimableFeesActionCell } from './ClaimableFeesActionCell'
-import { ClaimableFeesAmountCell } from './ClaimableFeesAmountCell'
-import { ClaimableFeesChainCell } from './ClaimableFeesChainCell'
-import type { ClaimableFees } from './ClaimableFeesTab'
+import { ClaimableFeesActionCell } from './claimable-fees-action-cell'
+import { ClaimableFeesAmountCell } from './claimable-fees-amount-cell'
+import { ClaimableFeesChainCell } from './claimable-fees-chain-cell'
+import type { ClaimableFees } from './claimable-fees-tab'
 
 export const FEES_CHAIN_COLUMN: ColumnDef<ClaimableFees, unknown> = {
   id: 'chain',

@@ -1,6 +1,6 @@
 import { Container } from '@sushiswap/ui'
 import { headers } from 'next/headers'
-import { PoolHeader } from '~tron/_common/ui/Pools/PoolDetails/PoolHeader'
+import { PoolHeader } from '~tron/_common/ui/Pools/PoolDetails/pool-header'
 import Providers from './providers'
 
 export default async function PoolLayout(props: {

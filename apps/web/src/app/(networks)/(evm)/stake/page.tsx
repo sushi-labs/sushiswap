@@ -1,10 +1,10 @@
 import { Container } from '@sushiswap/ui'
-import { BarBalanceCard } from './_ui/BarBalanceCard'
-import { BarBalanceProvider } from './_ui/BarBalanceProvider'
-import { BarChartCard } from './_ui/BarChartCard'
-import { ManageBarCard } from './_ui/ManageBarCard'
-import { VotingPowerCard } from './_ui/VotingPowerCard'
-import { VotingPowerProvider } from './_ui/VotingPowerProvider'
+import { BarBalanceCard } from './_ui/bar-balance-card'
+import { BarBalanceProvider } from './_ui/bar-balance-provider'
+import { BarChartCard } from './_ui/bar-chart-card'
+import { ManageBarCard } from './_ui/manage-bar-card'
+import { VotingPowerCard } from './_ui/voting-power-card'
+import { VotingPowerProvider } from './_ui/voting-power-provider'
 
 export default async function Page() {
   return (

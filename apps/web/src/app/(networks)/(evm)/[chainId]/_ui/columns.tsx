@@ -14,7 +14,7 @@ import type { ColumnDef } from '@tanstack/react-table'
 import React, { useMemo } from 'react'
 import { formatNumber, formatPercent, formatUSD } from 'sushi'
 import { EvmToken, type SushiSwapProtocol } from 'sushi/evm'
-import { APRWithRewardsHoverCard } from './APRWithRewardsHoverCard'
+import { APRWithRewardsHoverCard } from './apr-with-rewards-hover-card'
 import { ProtocolBadge } from './protocol-badge'
 
 export const EXPLORE_NAME_COLUMN_POOL: ColumnDef<Pool, unknown> = {

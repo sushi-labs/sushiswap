@@ -3,9 +3,9 @@ import { unstable_cache } from 'next/cache'
 import { notFound } from 'next/navigation'
 import { isSushiSwapV2ChainId } from 'sushi/evm'
 import { isAddress } from 'viem'
-import { PoolPositionProvider } from '../../_common/ui/PoolPositionProvider'
-import { ManageV2LiquidityCard } from '../_common/ui/ManageV2LiquidityCard'
-import { PoolPosition } from '../_common/ui/PoolPosition'
+import { PoolPositionProvider } from '../../_common/ui/pool-position-provider'
+import { ManageV2LiquidityCard } from '../_common/ui/manage-v2-liquidity-card'
+import { PoolPosition } from '../_common/ui/pool-position'
 
 export default async function ManageV2PoolPage(props: {
   params: Promise<{ chainId: string; address: string }>

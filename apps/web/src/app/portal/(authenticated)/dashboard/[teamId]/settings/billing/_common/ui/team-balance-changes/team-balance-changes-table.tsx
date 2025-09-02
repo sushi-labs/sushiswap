@@ -9,7 +9,7 @@ import type {
   SortingState,
 } from '@tanstack/react-table'
 import { useMemo, useState } from 'react'
-import { _RemoveSectionUnstake } from '~aptos/_common/components/RemoveSection/RemoveSectionUnstake'
+import { _RemoveSectionUnstake } from '~aptos/_common/components/RemoveSection/remove-section-unstake'
 import { Erc20DepositDialog } from './erc-20-deposit-dialog'
 
 type Team = StyroResults['getTeamsTeamIdBilling']['data']['team']

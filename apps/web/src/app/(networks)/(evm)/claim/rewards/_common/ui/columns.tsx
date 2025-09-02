@@ -1,9 +1,9 @@
 import { SkeletonBox, SkeletonCircle, SkeletonText } from '@sushiswap/ui'
 import type { ColumnDef } from '@tanstack/react-table'
 import type { ClaimableRewards } from 'src/lib/hooks/react-query'
-import { ClaimableRewardsActionCell } from './ClaimableRewardsActionCell'
-import { ClaimableRewardsAmountCell } from './ClaimableRewardsAmountCell'
-import { ClaimableRewardsChainCell } from './ClaimableRewardsChainCell'
+import { ClaimableRewardsActionCell } from './claimable-rewards-action-cell'
+import { ClaimableRewardsAmountCell } from './claimable-rewards-amount-cell'
+import { ClaimableRewardsChainCell } from './claimable-rewards-chain-cell'
 
 export const REWARDS_CHAIN_COLUMN: ColumnDef<ClaimableRewards, unknown> = {
   id: 'chain',

@@ -13,7 +13,7 @@ import {
 } from 'sushi/evm'
 import colors from 'tailwindcss/colors'
 
-import { Chart } from './Chart'
+import { Chart } from './chart'
 import { useDensityChartData } from './hooks'
 import type { HandleType, ZoomLevels } from './types'
 

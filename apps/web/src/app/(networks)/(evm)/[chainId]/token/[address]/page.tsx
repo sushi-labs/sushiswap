@@ -11,7 +11,7 @@ import { notFound } from 'next/navigation'
 import type { Metadata } from 'next/types'
 import { type EvmChainId, EvmToken } from 'sushi/evm'
 import { type Address, isAddress } from 'viem'
-import { TokenPage as _TokenPage } from './_ui/TokenPage'
+import { TokenPage as _TokenPage } from './_ui/token-page'
 
 async function getTokenData(chainId: SushiSwapChainId, address: Address) {
   const [tokenInfoResult, tokenListResult] = await Promise.allSettled([

@@ -2,7 +2,7 @@
 
 import { Button, type ButtonProps } from '@sushiswap/ui'
 import { type FC, useMemo } from 'react'
-import { AddSectionReviewModal } from '~aptos/_common/components/Pool/AddSectionReviewModel'
+import { AddSectionReviewModal } from '~aptos/_common/components/Pool/add-section-review-model'
 import { Checker } from '~aptos/_common/ui/checker'
 import { usePoolState } from '~aptos/pool/ui/pool/add/pool-add-provider/pool-add-provider'
 

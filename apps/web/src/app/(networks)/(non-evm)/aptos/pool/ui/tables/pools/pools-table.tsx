@@ -9,7 +9,7 @@ import {
 } from '@sushiswap/ui'
 import type { ColumnDef, SortingState, TableState } from '@tanstack/react-table'
 import React, { useCallback, useMemo, useState } from 'react'
-import { usePoolFilters } from 'src/app/(networks)/_ui/PoolsFiltersProvider'
+import { usePoolFilters } from 'src/app/(networks)/_ui/pools-filters-provider'
 import { type TopPool, useTopPools } from '~aptos/pool/lib/use-top-pools'
 import {
   APR_COLUMN,

@@ -1,8 +1,8 @@
 import { notFound } from 'next/navigation'
 import React from 'react'
 import { isEvmAddress, isSushiSwapV3ChainId } from 'sushi/evm'
-import { ConcentratedLiquidityProvider } from '~evm/[chainId]/_ui/ConcentratedLiquidityProvider'
-import { NewPosition } from './_ui/NewPosition'
+import { ConcentratedLiquidityProvider } from '~evm/[chainId]/_ui/concentrated-liquidity-provider'
+import { NewPosition } from './_ui/new-position'
 
 export default async function PositionsCreatePage(props: {
   params: Promise<{ address: string; chainId: string }>

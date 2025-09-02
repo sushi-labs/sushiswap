@@ -33,7 +33,7 @@ import {
   getTimeDurationMs,
 } from 'src/lib/swap/twap'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
-import { useApproved } from 'src/lib/wagmi/systems/Checker/Provider'
+import { useApproved } from 'src/lib/wagmi/systems/Checker/provider'
 import { ZERO, formatUSD } from 'sushi'
 import { getEvmChainById, shortenEvmAddress } from 'sushi/evm'
 import { UserRejectedRequestError } from 'viem'

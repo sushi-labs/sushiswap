@@ -1,6 +1,6 @@
 import { Container, typographyVariants } from '@sushiswap/ui'
 import type { Metadata } from 'next'
-import { BackButton } from 'src/app/(networks)/_ui/BackButton'
+import { BackButton } from 'src/app/(networks)/_ui/back-button'
 import { PoolProvider } from '~tron/_common/ui/Pools/pool-provider'
 
 export const metadata: Metadata = {

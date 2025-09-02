@@ -12,16 +12,16 @@ import {
   isWNativeSupported,
 } from 'sushi/evm'
 import { useAccount } from 'wagmi'
-import { ConcentratedLiquidityProvider } from '~evm/[chainId]/_ui/ConcentratedLiquidityProvider'
-import { SelectPricesWidget } from '~evm/[chainId]/_ui/SelectPricesWidget'
+import { ConcentratedLiquidityProvider } from '~evm/[chainId]/_ui/concentrated-liquidity-provider'
+import { SelectPricesWidget } from '~evm/[chainId]/_ui/select-prices-widget'
 import {
   ConcentratedLiquidityURLStateProvider,
   useConcentratedLiquidityURLState,
-} from '../../_ui/ConcentratedLiquidityURLStateProvider'
-import { SelectFeeConcentratedWidget } from '../../_ui/SelectFeeConcentratedWidget'
-import { SelectNetworkWidget } from '../../_ui/SelectNetworkWidget'
-import { SelectTokensWidget } from '../../_ui/SelectTokensWidget'
-import { ConcentratedLiquidityWidget } from '../_ui/ConcentratedLiquidityWidget'
+} from '../../_ui/concentrated-liquidity-url-state-provider'
+import { SelectFeeConcentratedWidget } from '../../_ui/select-fee-concentrated-widget'
+import { SelectNetworkWidget } from '../../_ui/select-network-widget'
+import { SelectTokensWidget } from '../../_ui/select-tokens-widget'
+import { ConcentratedLiquidityWidget } from '../_ui/concentrated-liquidity-widget'
 
 export default function Page(props: { params: Promise<{ chainId: string }> }) {
   const params = use(props.params)
