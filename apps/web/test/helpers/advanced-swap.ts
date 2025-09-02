@@ -85,13 +85,23 @@ export class AdvancedSwapPage extends BaseActions {
     await expect(this.page.getByText('Go To Inbox')).toBeVisible()
   }
 
-  async swap(
-    inputCurrency: EvmCurrency,
-    outputCurrency: EvmCurrency,
-    amount: Amount<EvmCurrency> | 'max',
-  ) {
+  async swap({
+    inputCurrency,
+    outputCurrency,
+    amount,
+    shouldUseQuickSelect = false,
+  }: {
+    inputCurrency: EvmCurrency
+    outputCurrency: EvmCurrency
+    amount: Amount<EvmCurrency> | 'max'
+    shouldUseQuickSelect?: boolean
+  }) {
     await this.handleToken(inputCurrency, 'INPUT')
-    await this.handleToken(outputCurrency, 'OUTPUT')
+    if (shouldUseQuickSelect) {
+      await this.handleQuickSelectToken(outputCurrency, 'OUTPUT')
+    } else {
+      await this.handleToken(outputCurrency, 'OUTPUT')
+    }
     await this.inputAmount(amount)
 
     await this.approve(inputCurrency)
@@ -159,6 +169,51 @@ export class AdvancedSwapPage extends BaseActions {
     }
   }
 
+  async handleQuickSelectToken(currency: EvmCurrency, type: InputType) {
+    const selectorInfix = `${type === 'INPUT' ? 'from' : 'to'}`
+
+    // Open quick select token list
+    const quickSelectSelector = this.page.locator(
+      `[testdata-id=quick-select-${selectorInfix}-${currency.symbol.toLowerCase()}-button]`,
+    )
+    await expect(quickSelectSelector).toBeVisible()
+    await expect(quickSelectSelector).toBeEnabled()
+    await quickSelectSelector.click()
+
+    // Select token from quick select
+    const tokenDataId = `[testdata-id=quick-select-token-${selectorInfix}-${currency.chainId.toString()}-${
+      currency.isNative ? 'native' : currency.wrap().address.toLowerCase()
+    }-button]`
+    await this.page.waitForSelector(tokenDataId, {
+      state: 'visible',
+    })
+    const quickSelectTokenSelector = this.page.locator(tokenDataId)
+    //hover the item first
+    await quickSelectTokenSelector.hover()
+
+    await expect(quickSelectTokenSelector).toBeVisible()
+    await expect(quickSelectTokenSelector).toBeEnabled()
+    await quickSelectTokenSelector.click()
+
+    if (type === 'OUTPUT') {
+      const stables = STABLES[currency.chainId]
+      const isStable = stables.some(
+        (stable) =>
+          stable.address.toLowerCase() ===
+          currency.wrap().address.toLowerCase(),
+      )
+      //if token is stable the other token will be on the chart
+      if (!isStable) {
+        const chartTokenSelector = this.page.locator(
+          `[testdata-id=chart-token-button]`,
+        )
+        await expect(chartTokenSelector).toBeVisible()
+        await expect(chartTokenSelector).toBeEnabled()
+        await expect(chartTokenSelector).toContainText(currency.symbol)
+      }
+    }
+  }
+
   async handleToken(currency: EvmCurrency, type: InputType) {
     const selectorInfix = `${type === 'INPUT' ? 'from' : 'to'}`
 
@@ -194,16 +249,6 @@ export class AdvancedSwapPage extends BaseActions {
       await expect(selectNetwork).toBeEnabled()
       await selectNetwork.click()
     }
-    // 	await expect(networkMenu).toContainText(getNetworkName(this.chainId));
-    // 	const chipSelector = this.page.locator(
-    // 		`[testdata-id=token-selector-chip-${
-    // 			currency.isNative ? NativeAddress : currency.address.toLowerCase()
-    // 		}]`
-    // 	);
-    // 	await expect(chipSelector).toBeVisible();
-    // 	await expect(chipSelector).toBeEnabled();
-    // 	await chipSelector.click();
-    // 	return;
 
     if (currency.isNative) {
       const rowToSelect = this.page.locator(

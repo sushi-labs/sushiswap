@@ -67,10 +67,50 @@ test('swap Native to USDC, then USDC to NATIVE', async ({ page }) => {
   await swapPage.connect()
   await swapPage.switchNetwork(chainId)
   await swapPage.mockSwapApi(`test/swap/mock/${chainId}-native-to-usdc.json`)
-  await swapPage.swap(native, usdc, nativeAmount)
+  await swapPage.swap({
+    inputCurrency: native,
+    outputCurrency: usdc,
+    amount: nativeAmount,
+  })
 
   await swapPage.mockSwapApi(`test/swap/mock/${chainId}-usdc-to-native.json`)
-  await swapPage.swap(usdc, native, 'max')
+  await swapPage.swap({
+    inputCurrency: usdc,
+    outputCurrency: native,
+    amount: 'max',
+  })
+})
+
+test('Swap Native to USDC using Quick Select', async ({ page }) => {
+  test.slow()
+  const url = BASE_URL.concat(`/${getChainById(chainId).key}/swap/advanced`)
+  const swapPage = new AdvancedSwapPage(page, chainId)
+  await swapPage.goTo(url)
+  await swapPage.connect()
+  await swapPage.switchNetwork(chainId)
+  await swapPage.mockSwapApi(`test/swap/mock/${chainId}-native-to-usdc.json`)
+  await swapPage.swap({
+    inputCurrency: native,
+    outputCurrency: usdc,
+    amount: nativeAmount,
+    shouldUseQuickSelect: true,
+  })
+})
+
+test('Swap Native to USDT using Quick Select', async ({ page }) => {
+  test.slow()
+  const url = BASE_URL.concat(`/${getChainById(chainId).key}/swap/advanced`)
+  const swapPage = new AdvancedSwapPage(page, chainId)
+  await swapPage.goTo(url)
+  await swapPage.connect()
+  await swapPage.switchNetwork(chainId)
+  await swapPage.mockSwapApi(`test/swap/mock/${chainId}-native-to-usdt.json`)
+  await swapPage.swap({
+    inputCurrency: native,
+    outputCurrency: usdt,
+    amount: nativeAmount,
+    shouldUseQuickSelect: true,
+  })
 })
 
 test('swap Native to USDT, then USDT to NATIVE', async ({ page }) => {
@@ -80,10 +120,17 @@ test('swap Native to USDT, then USDT to NATIVE', async ({ page }) => {
   await swapPage.connect()
   await swapPage.switchNetwork(chainId)
   await swapPage.mockSwapApi(`test/swap/mock/${chainId}-native-to-usdt.json`)
-  await swapPage.swap(native, usdt, nativeAmount)
-
+  await swapPage.swap({
+    inputCurrency: native,
+    outputCurrency: usdt,
+    amount: nativeAmount,
+  })
   await swapPage.mockSwapApi(`test/swap/mock/${chainId}-usdt-to-native.json`)
-  await swapPage.swap(usdt, native, 'max')
+  await swapPage.swap({
+    inputCurrency: usdt,
+    outputCurrency: native,
+    amount: 'max',
+  })
 })
 
 test('Swap Native to WBTC', async ({ page }) => {
@@ -94,5 +141,9 @@ test('Swap Native to WBTC', async ({ page }) => {
   await swapPage.switchNetwork(chainId)
 
   await swapPage.mockSwapApi(`test/swap/mock/${chainId}-native-to-wbtc.json`)
-  await swapPage.swap(native, wbtc, nativeAmount)
+  await swapPage.swap({
+    inputCurrency: native,
+    outputCurrency: wbtc,
+    amount: nativeAmount,
+  })
 })

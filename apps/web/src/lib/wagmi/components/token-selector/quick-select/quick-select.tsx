@@ -125,6 +125,7 @@ const QuickSelectItem = ({
                   index={index}
                   totalCurrencies={totalCurrencies}
                   onSelectToken={onSelectToken}
+                  type={type}
                 />
               )
             })}
@@ -142,6 +143,9 @@ const QuickSelectItem = ({
         type="button"
         onClick={select}
         className={classNames('opacity-80', isSelected && '!opacity-100')}
+        testdata-id={`quick-select-${
+          type === 'INPUT' ? 'from' : 'to'
+        }-${mainCurrency?.symbol.toLowerCase()}-button`}
       >
         <div className="rounded-full p-0.5 sm:p-1">
           <CurrencyComp.Icon
@@ -163,6 +167,7 @@ const TokenChainItem = ({
   totalCurrencies,
   expanded,
   onSelectToken,
+  type,
 }: {
   currency: EvmCurrency
   className?: string
@@ -170,6 +175,7 @@ const TokenChainItem = ({
   totalCurrencies: number
   expanded: boolean
   onSelectToken: (currency: EvmCurrency) => void
+  type: 'INPUT' | 'OUTPUT'
 }) => {
   const isSm = useIsSmScreen()
   const radius = 50
@@ -224,6 +230,9 @@ const TokenChainItem = ({
         // transitionDelay: `${index * 50}ms`, // stagger the animation, if you turn this on update the `setTimeout` in `QuickSelectItem` to match
       }}
       onClick={() => onSelectToken(currency)}
+      testdata-id={`quick-select-token-${type === 'INPUT' ? 'from' : 'to'}-${currency.chainId.toString()}-${
+        currency.isNative ? 'native' : currency.wrap().address.toLowerCase()
+      }-button`}
     >
       <Badge
         className="z-[11] bottom-[3%] -right-[10%]"
