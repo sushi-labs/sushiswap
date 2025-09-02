@@ -6,7 +6,7 @@ import { useEffect } from 'react'
 import { BLADE_API_HOST, BLADE_API_KEY } from 'src/lib/constants'
 import type { PublicWagmiConfig } from 'src/lib/wagmi/config/public'
 import type { IsEqualMultiple } from 'src/types/utils'
-import type { Type } from 'sushi/currency'
+import type { EvmCurrency } from 'sushi/evm'
 import type {
   Abi,
   AbiStateMutability,
@@ -70,7 +70,7 @@ type WithdrawVariablesGetterArgs = {
   poolAddress: `0x${string}`
   poolTokenAmountToBurn: string
   withdraw?: RfqWithdrawResponse
-  token?: Type
+  token?: EvmCurrency
 }
 
 function clipperWithdraw({

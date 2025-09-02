@@ -20,9 +20,8 @@ import {
   getPoolTokensGrouped,
 } from 'src/lib/pool/blade'
 import { useBladeUserPositions } from 'src/lib/pool/blade/useBladeUserPositions'
-import { ChainKey } from 'sushi/chain'
-import type { BladeChainId } from 'sushi/config'
-import { formatPercent, formatUSD } from 'sushi/format'
+import { formatPercent, formatUSD } from 'sushi'
+import { type BladeChainId, getEvmChainById } from 'sushi/evm'
 import { useAccount } from 'wagmi'
 import { CurrencyFiatIcon } from './CurrencyFiatIcon'
 
@@ -69,13 +68,13 @@ const NAME_COLUMN: ColumnDef<BladePosition, unknown> = {
           >
             <Currency.IconList iconWidth={30} iconHeight={30}>
               {tokens.map((token) => (
-                <Currency.Icon key={token.wrapped.address} currency={token} />
+                <Currency.Icon key={token.wrap().address} currency={token} />
               ))}
               {hasStablecoin && !showStablecoinTypes ? (
                 <CurrencyFiatIcon width={30} height={30} />
               ) : (
                 stablecoinUsdTokens.map((token) => (
-                  <Currency.Icon key={token.wrapped.address} currency={token} />
+                  <Currency.Icon key={token.wrap().address} currency={token} />
                 ))
               )}
             </Currency.IconList>
@@ -214,7 +213,7 @@ export const BladePositionsTable: FC<BladePositionsTableProps> = ({
       <DataTable
         loading={isLoading}
         linkFormatter={(row) =>
-          `/${ChainKey[chainId]}/pool/blade/${row.pool.address}/add`
+          `/${getEvmChainById(chainId).key}/pool/blade/${row.pool.address}/add`
         }
         columns={COLUMNS}
         data={_positions}

@@ -1,17 +1,17 @@
 import { Currency } from '@sushiswap/ui'
 import { type FC, useCallback, useEffect, useMemo, useRef } from 'react'
-import { Amount, type Type } from 'sushi/currency'
-import { formatUSD } from 'sushi/format'
+import { Amount, formatUSD } from 'sushi'
+import type { EvmCurrency } from 'sushi/evm'
 import type { PriceMap } from '~evm/_common/ui/price-provider/price-provider/use-prices'
 import { SingleAssetOption } from './SingleAssetOption'
 
-export type RemoveOptionType = 'multiple' | Type
+export type RemoveOptionType = 'multiple' | EvmCurrency
 
 export interface RemoveOptionsSelectorProps {
   tokensToReceive: Array<{
     usdValue: number
     weight: number
-    amount: Amount<Type>
+    amount: Amount<EvmCurrency>
   }>
   selectedOption: RemoveOptionType
   setSelectedOption: (option: RemoveOptionType) => void
@@ -30,7 +30,7 @@ export const RemoveOptionsSelector: FC<RemoveOptionsSelectorProps> = ({
 }) => {
   const scrollContainerRef = useRef<HTMLDivElement>(null)
   const multipleAssetsRef = useRef<HTMLDivElement>(null)
-  const tokenRefs = useRef<Map<Type, HTMLDivElement | null>>(new Map())
+  const tokenRefs = useRef<Map<EvmCurrency, HTMLDivElement | null>>(new Map())
 
   const scrollToSelectedOption = useCallback(() => {
     if (selectedOption === 'multiple') {
@@ -55,7 +55,7 @@ export const RemoveOptionsSelector: FC<RemoveOptionsSelectorProps> = ({
 
   const allSymbolsCombined = useMemo(() => {
     return tokensToReceive
-      .map((tokenData) => tokenData.amount.currency.wrapped.symbol)
+      .map((tokenData) => tokenData.amount.currency.wrap().symbol)
       .join('/')
   }, [tokensToReceive])
 
@@ -72,29 +72,28 @@ export const RemoveOptionsSelector: FC<RemoveOptionsSelectorProps> = ({
           </p>
           {tokensToReceive.flatMap((tokenData) => {
             const originalCurrency = tokenData.amount.currency
-            const tokenPrice =
-              prices?.get(originalCurrency.wrapped.address) || 0
+            const tokenPrice = prices?.get(originalCurrency.wrap().address) || 0
             const tokenAmountValue =
               tokenPrice > 0 ? estimatedValue / tokenPrice : 0
 
             const currenciesToShow = originalCurrency.isNative
-              ? [originalCurrency, originalCurrency.wrapped]
+              ? [originalCurrency, originalCurrency.wrap()]
               : [originalCurrency]
 
             return currenciesToShow.map((currency) => {
               const isSelected =
                 selectedOption !== 'multiple' &&
-                selectedOption?.equals(currency)
+                selectedOption?.id === currency.id
 
               const tokenAmount =
                 tokenAmountValue > 0
-                  ? Amount.fromRawAmount(
+                  ? Amount.fromHuman(
                       currency,
                       BigInt(
                         Math.floor(tokenAmountValue * 10 ** currency.decimals),
                       ),
                     )
-                  : Amount.fromRawAmount(currency, 0n)
+                  : new Amount(currency, 0n)
 
               return (
                 <SingleAssetOption
@@ -104,7 +103,7 @@ export const RemoveOptionsSelector: FC<RemoveOptionsSelectorProps> = ({
                   key={
                     currency.isNative
                       ? currency.symbol
-                      : currency.wrapped.address
+                      : currency.wrap().address
                   }
                   currency={currency}
                   tokenAmount={tokenAmount}
@@ -163,29 +162,35 @@ export const RemoveOptionsSelector: FC<RemoveOptionsSelectorProps> = ({
           {selectedOption === 'multiple' && (
             <div className="mt-4 space-y-3">
               <div className="text-sm text-gray-400">Composition</div>
-              {tokensToReceive.map((tokenData, index) => (
-                <div key={index} className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <Currency.Icon
-                      currency={tokenData.amount.currency.wrapped}
-                      width={18}
-                      height={18}
-                    />
-                    <span className="text-sm font-medium text-gray-500">
-                      {tokenData.amount.currency.wrapped.symbol}
-                    </span>
-                  </div>
-                  <div className="text-right flex gap-1">
-                    <div className="text-sm font-semibold text-gray-900">
-                      ~{tokenData.amount.toSignificant(4)}{' '}
-                      {tokenData.amount.currency.wrapped.symbol}
+              {tokensToReceive.map((tokenData, index) => {
+                const wrappedCurrency = tokenData.amount.currency.wrap()
+                return (
+                  <div
+                    key={index}
+                    className="flex items-center justify-between"
+                  >
+                    <div className="flex items-center gap-2">
+                      <Currency.Icon
+                        currency={wrappedCurrency}
+                        width={18}
+                        height={18}
+                      />
+                      <span className="text-sm font-medium text-gray-500">
+                        {wrappedCurrency.symbol}
+                      </span>
                     </div>
-                    <div className="text-sm text-gray-400">
-                      ~{formatUSD(tokenData.usdValue)}
+                    <div className="text-right flex gap-1">
+                      <div className="text-sm font-semibold text-gray-900">
+                        ~{tokenData.amount.toSignificant(4)}{' '}
+                        {wrappedCurrency.symbol}
+                      </div>
+                      <div className="text-sm text-gray-400">
+                        ~{formatUSD(tokenData.usdValue)}
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                )
+              })}
             </div>
           )}
         </div>

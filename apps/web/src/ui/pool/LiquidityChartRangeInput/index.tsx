@@ -3,9 +3,14 @@ import { SkeletonBox } from '@sushiswap/ui'
 import { format } from 'd3'
 import React, { type FC, type ReactNode, useCallback, useMemo } from 'react'
 import { Bound } from 'src/lib/constants'
-import { type SushiSwapV3ChainId, SushiSwapV3FeeAmount } from 'sushi/config'
-import type { Price, Token, Type } from 'sushi/currency'
-import { getPriceRangeWithTokenRatio } from 'sushi/pool/sushiswap-v3'
+import type { Price } from 'sushi'
+import {
+  type EvmCurrency,
+  type EvmToken,
+  type SushiSwapV3ChainId,
+  SushiSwapV3FeeAmount,
+  getPriceRangeWithTokenRatio,
+} from 'sushi/evm'
 import colors from 'tailwindcss/colors'
 
 import { Chart } from './Chart'
@@ -80,14 +85,14 @@ export default function LiquidityChartRangeInput({
   tokenToggle,
 }: {
   chainId: SushiSwapV3ChainId
-  currencyA: Type | undefined
-  currencyB: Type | undefined
+  currencyA: EvmCurrency | undefined
+  currencyB: EvmCurrency | undefined
   feeAmount?: SushiSwapV3FeeAmount
   ticksAtLimit: { [_bound in Bound]?: boolean | undefined }
   priceRange: number | undefined
   price: number | undefined
-  priceLower?: Price<Token, Token>
-  priceUpper?: Price<Token, Token>
+  priceLower?: Price<EvmToken, EvmToken>
+  priceUpper?: Price<EvmToken, EvmToken>
   weightLockedCurrencyBase: number | undefined
   onLeftRangeInput: (typedValue: string) => void
   onRightRangeInput: (typedValue: string) => void
@@ -96,7 +101,7 @@ export default function LiquidityChartRangeInput({
   tokenToggle?: ReactNode
 }) {
   const isSorted =
-    currencyA && currencyB && currencyA?.wrapped.sortsBefore(currencyB?.wrapped)
+    currencyA && currencyB && currencyA?.wrap().sortsBefore(currencyB?.wrap())
 
   const { isLoading, error, data } = useDensityChartData({
     chainId,

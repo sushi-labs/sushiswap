@@ -1,5 +1,5 @@
-import { ChainId } from 'sushi'
-import { Amount, Native } from 'sushi/currency'
+import { Amount, ChainId, type Native } from 'sushi'
+import { EvmNative } from 'sushi/evm'
 
 export let forkBlockNumber: bigint
 if (process.env.ANVIL_BLOCK_NUMBER) {
@@ -52,11 +52,8 @@ export const localHttpUrl = `http://127.0.0.1:${anvilPort}/${testParallelIndex}`
 export const localWsUrl = `ws://127.0.0.1:${anvilPort}/${testParallelIndex}`
 
 // Assume 100MATIC for Polygon, 1PROBABLY_ETH for the rest
-export const nativeAmounts: Partial<Record<ChainId, Amount<Native>>> = {
-  [ChainId.POLYGON]: Amount.fromRawAmount(
-    Native.onChain(ChainId.POLYGON),
-    1e20,
-  ),
+export const nativeAmounts: Partial<Record<ChainId, Amount<EvmNative>>> = {
+  [ChainId.POLYGON]: new Amount(EvmNative.fromChainId(ChainId.POLYGON), 1e20),
 }
 export const nativeAmount =
-  nativeAmounts[chainId] || Amount.fromRawAmount(Native.onChain(chainId), 1e18)
+  nativeAmounts[chainId] || new Amount(EvmNative.fromChainId(chainId), 1e18)

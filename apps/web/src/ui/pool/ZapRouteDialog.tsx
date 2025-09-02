@@ -8,13 +8,17 @@ import {
 } from '@sushiswap/ui'
 import { type FC, type ReactNode, useMemo } from 'react'
 import { isSushiSwapV2Pool } from 'src/lib/functions'
-import { Token, type Type } from 'sushi/currency'
-import { formatPercent } from 'sushi/format'
-import type { SushiSwapV2Pool, SushiSwapV3Pool } from 'sushi/pool'
+import { formatPercent } from 'sushi'
+import {
+  type EvmCurrency,
+  EvmToken,
+  type SushiSwapV2Pool,
+  type SushiSwapV3Pool,
+} from 'sushi/evm'
 
 interface ZapRouteDialogProps {
   children: ReactNode
-  inputCurrency: Type
+  inputCurrency: EvmCurrency
   pool: SushiSwapV2Pool | SushiSwapV3Pool
   tokenRatios?: { token0: number; token1: number }
 }
@@ -27,8 +31,8 @@ export const ZapRouteDialog: FC<ZapRouteDialogProps> = ({
 }) => {
   const [token0, token1] = useMemo(
     () => [
-      pool.token0 instanceof Token ? pool.token0 : new Token(pool.token0),
-      pool.token1 instanceof Token ? pool.token1 : new Token(pool.token1),
+      pool.token0 instanceof EvmToken ? pool.token0 : new EvmToken(pool.token0),
+      pool.token1 instanceof EvmToken ? pool.token1 : new EvmToken(pool.token1),
     ],
     [pool],
   )

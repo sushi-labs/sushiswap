@@ -16,7 +16,7 @@ import Link from 'next/link'
 import type { FC } from 'react'
 
 import type { BladePool } from '@sushiswap/graph-client/data-api'
-import { ChainKey } from 'sushi/chain'
+import { getEvmChainById } from 'sushi/evm'
 import { BladeAddSection } from './add-liquidity/BladeAddSection'
 import { BladeRemoveSection } from './remove-liquidity/BladeRemoveSection'
 
@@ -44,7 +44,7 @@ export const ManageBladeLiquidityCard: FC<ManageBladeLiquidityCardProps> = ({
         <CardContent>
           <TabsList className="!flex">
             <Link
-              href={`/${ChainKey[pool.chainId]}/pool/blade/${pool.address}/add`}
+              href={`/${getEvmChainById(pool.chainId).key}/pool/blade/${pool.address}/add`}
               className="flex flex-1"
             >
               <TabsTrigger
@@ -56,7 +56,7 @@ export const ManageBladeLiquidityCard: FC<ManageBladeLiquidityCardProps> = ({
               </TabsTrigger>
             </Link>
             <Link
-              href={`/${ChainKey[pool.chainId]}/pool/blade/${pool.address}/remove`}
+              href={`/${getEvmChainById(pool.chainId).key}/pool/blade/${pool.address}/remove`}
               className="flex flex-1"
             >
               <TabsTrigger

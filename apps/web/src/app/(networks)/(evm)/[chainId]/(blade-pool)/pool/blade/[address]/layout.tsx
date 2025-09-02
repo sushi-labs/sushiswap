@@ -1,8 +1,7 @@
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next/types'
 import { getCachedBladePool, getPoolName } from 'src/lib/pool/blade'
-import type { EvmChainId } from 'sushi/chain'
-import { isBladeChainId } from 'sushi/config'
+import { type EvmChainId, isBladeChainId } from 'sushi/evm'
 import { isAddress } from 'viem'
 
 export async function generateMetadata(props: {

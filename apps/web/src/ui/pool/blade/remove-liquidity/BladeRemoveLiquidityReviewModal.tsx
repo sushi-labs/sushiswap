@@ -15,9 +15,8 @@ import { useBladeWithdrawTransaction } from 'src/lib/pool/blade/useBladeWithdraw
 import { getPoolAssets } from 'src/lib/pool/blade/utils'
 import { isUserRejectedError } from 'src/lib/wagmi/errors'
 import { useTotalSupply } from 'src/lib/wagmi/hooks/tokens/useTotalSupply'
-import { ChainKey } from 'sushi/chain'
-import { Amount, type Type } from 'sushi/currency'
-import { Percent } from 'sushi/math'
+import { Amount, Percent } from 'sushi'
+import { type EvmCurrency, getEvmChainById } from 'sushi/evm'
 import {
   useAccount,
   usePublicClient,
@@ -57,21 +56,21 @@ export const BladeRemoveLiquidityReviewModal: FC<
   )
 
   const percentToRemove = useMemo(
-    () => new Percent(percentage, 100),
+    () => new Percent({ numerator: BigInt(percentage), denominator: 100n }),
     [percentage],
   )
 
   const userPositionValue = useMemo(() => {
     if (
-      !balance?.quotient ||
-      !poolTotalSupply?.quotient ||
-      poolTotalSupply.quotient === 0n
+      !balance?.amount ||
+      !poolTotalSupply?.amount ||
+      poolTotalSupply.amount === 0n
     ) {
       return 0
     }
 
     const poolProportion =
-      Number(balance.quotient) / Number(poolTotalSupply.quotient)
+      Number(balance.amount) / Number(poolTotalSupply.amount)
     return pool.liquidityUSD * poolProportion
   }, [balance, poolTotalSupply, pool.liquidityUSD])
 
@@ -85,18 +84,18 @@ export const BladeRemoveLiquidityReviewModal: FC<
             userAssetValue * (Number(percentage) / 100)
 
           // Get token price and calculate amount
-          const tokenPrice = prices?.get(asset.token.wrapped.address) || 0
+          const tokenPrice = prices?.get(asset.token.wrap().address) || 0
           const tokenAmountValue =
             tokenPrice > 0 ? amountToReceiveValue / tokenPrice : 0
           const amount =
             tokenAmountValue > 0
-              ? Amount.fromRawAmount(
+              ? Amount.fromHuman(
                   asset.token,
                   BigInt(
                     Math.floor(tokenAmountValue * 10 ** asset.token.decimals),
                   ),
                 )
-              : Amount.fromRawAmount(asset.token, 0n)
+              : Amount.fromHuman(asset.token, '0')
 
           return {
             usdValue: amountToReceiveValue,
@@ -109,7 +108,7 @@ export const BladeRemoveLiquidityReviewModal: FC<
       .filter(Boolean) as Array<{
       usdValue: number
       weight: number
-      amount: Amount<Type>
+      amount: Amount<EvmCurrency>
     }>
   }, [poolAssets, userPositionValue, percentage, prices])
 
@@ -121,10 +120,10 @@ export const BladeRemoveLiquidityReviewModal: FC<
   })
 
   const amountToRemove = useMemo(() => {
-    return balance && percentToRemove && percentToRemove.greaterThan('0')
-      ? Amount.fromRawAmount(
+    return balance && percentToRemove && percentToRemove.gt(0n)
+      ? new Amount(
           balance.currency,
-          percentToRemove.multiply(balance.quotient).quotient,
+          percentToRemove.mul(balance.amount).quotient,
         )
       : undefined
   }, [balance, percentToRemove])
@@ -216,7 +215,7 @@ export const BladeRemoveLiquidityReviewModal: FC<
                 <SingleAssetWithdrawal
                   key={
                     // Use the wrapped address for the key to preserve quote when switching between native and wrapped
-                    selectedOption.wrapped.address
+                    selectedOption.wrap().address
                   }
                   pool={pool}
                   selectedToken={selectedOption}
@@ -236,7 +235,7 @@ export const BladeRemoveLiquidityReviewModal: FC<
         testId="blade-remove-confirmation-modal"
         successMessage="Successfully removed liquidity"
         buttonText="Go to pool"
-        buttonLink={`/${ChainKey[pool.chainId]}/pool/blade/${pool.address}`}
+        buttonLink={`/${getEvmChainById(pool.chainId).key}/pool/blade/${pool.address}`}
         txHash={withdrawTransaction.data}
       />
     </DialogProvider>

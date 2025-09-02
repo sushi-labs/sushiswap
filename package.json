@@ -1,6 +1,7 @@
 {
   "name": "sushi",
   "private": true,
+  "type": "module",
   "scripts": {
     "build": "dotenv -- turbo run build",
     "check": "turbo run check --no-cache",
@@ -10,6 +11,8 @@
     "enable-remote-caching": "turbo link",
     "format": "pnpm sort && biome format . --write",
     "generate": "dotenv -- turbo run generate --no-cache --parallel --continue",
+    "preinstall": "pnpx only-allow pnpm",
+    "postinstall": "node scripts/validate-deps.js",
     "lint": "biome check .",
     "lint:fix": "biome check . --apply",
     "sort": "sort-package-json 'package.json' 'apis/*/package.json' 'apps/*/package.json' 'config/*/package.json' 'packages/*/package.json'",
@@ -38,7 +41,11 @@
   "pnpm": {
     "overrides": {
       "graphql": "16.6.0",
+      "abitype": "catalog:web3",
       "typescript": "catalog:",
+      "utf-8-validate": "catalog:",
+      "viem": "catalog:web3",
+      "zod": "catalog:",
       "@types/react": "catalog:react",
       "@types/react-dom": "catalog:react"
     },

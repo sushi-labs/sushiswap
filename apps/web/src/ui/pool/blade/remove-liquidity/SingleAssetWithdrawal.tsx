@@ -6,15 +6,15 @@ import {
   useBladeWithdrawRequest,
   type useBladeWithdrawTransaction,
 } from 'src/lib/pool/blade/useBladeWithdraw'
-import { Amount, Native, type Type } from 'sushi/currency'
-import { formatUSD } from 'sushi/format'
+import { Amount, formatUSD } from 'sushi'
+import { type EvmCurrency, EvmNative } from 'sushi/evm'
 import { useAccount } from 'wagmi'
 import type { PriceMap } from '~evm/_common/ui/price-provider/price-provider/use-prices'
 
 interface SingleAssetWithdrawalProps {
   pool: BladePool
-  selectedToken: Type
-  amountToRemove: Amount<Type> | undefined
+  selectedToken: EvmCurrency
+  amountToRemove: Amount<EvmCurrency> | undefined
   prices: PriceMap | undefined
   onConfirm: () => void
   withdrawTransaction: ReturnType<typeof useBladeWithdrawTransaction>
@@ -42,20 +42,20 @@ export const SingleAssetWithdrawal: FC<SingleAssetWithdrawalProps> = ({
     }
 
     const tokenMismatch =
-      selectedToken.wrapped.address.toLowerCase() !==
+      selectedToken.wrap().address.toLowerCase() !==
       withdrawRequest.data.asset_address.toLowerCase()
 
     if (tokenMismatch) {
       return { singleAssetData: null, hasTokenMismatch: true }
     }
 
-    const exactAmount = Amount.fromRawAmount(
+    const exactAmount = Amount.fromHuman(
       selectedToken,
       BigInt(withdrawRequest.data.asset_amount),
     )
 
-    const tokenPrice = prices?.get(selectedToken.wrapped.address) || 0
-    const usdValue = Number(exactAmount.toExact()) * tokenPrice
+    const tokenPrice = prices?.get(selectedToken.wrap().address) || 0
+    const usdValue = Number(exactAmount.amount) * tokenPrice
 
     return {
       singleAssetData: {
@@ -71,14 +71,15 @@ export const SingleAssetWithdrawal: FC<SingleAssetWithdrawalProps> = ({
 
     withdrawRequest.reset()
 
-    const native = Native.onChain(pool.chainId)
-    const assetSymbol = selectedToken.wrapped.equals(native.wrapped)
-      ? native.symbol
-      : selectedToken.symbol || ''
+    const native = EvmNative.fromChainId(pool.chainId)
+    const assetSymbol =
+      selectedToken.wrap().id === native.wrap().id
+        ? native.symbol
+        : selectedToken.symbol || ''
 
     const payload = {
       chain_id: pool.chainId,
-      pool_token_amount_to_burn: amountToRemove.quotient.toString(),
+      pool_token_amount_to_burn: amountToRemove.amount.toString(),
       asset_symbol: assetSymbol,
       token_holder_address: address,
       pool_address: pool.address,
@@ -92,7 +93,7 @@ export const SingleAssetWithdrawal: FC<SingleAssetWithdrawalProps> = ({
 
     try {
       await withdrawTransaction.mutateAsync({
-        poolTokenAmountToBurn: amountToRemove.quotient.toString(),
+        poolTokenAmountToBurn: amountToRemove.amount.toString(),
         withdraw: withdrawRequest.data,
         token: selectedToken,
       })

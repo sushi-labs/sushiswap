@@ -19,14 +19,15 @@ import {
   useState,
 } from 'react'
 import {
+  type EvmCurrency,
+  type Position,
   SUSHISWAP_V3_POSITION_MANAGER,
   type SushiSwapV3ChainId,
   type SushiSwapV3FeeAmount,
+  TickMath,
   defaultCurrency,
   isWNativeSupported,
-} from 'sushi/config'
-import { Amount, type Type, tryParseAmount } from 'sushi/currency'
-import type { Position } from 'sushi/pool/sushiswap-v3'
+} from 'sushi/evm'
 
 import { SlippageToleranceStorageKey } from '@sushiswap/hooks'
 import { createToast } from '@sushiswap/notifications'
@@ -45,7 +46,7 @@ import {
   useApproved,
   withCheckerRoot,
 } from 'src/lib/wagmi/systems/Checker/Provider'
-import { Percent } from 'sushi/math'
+import { Amount, Percent } from 'sushi'
 import type { SendTransactionReturnType } from 'viem'
 import {
   useAccount,
@@ -68,11 +69,11 @@ import { V3ZapInfoCard } from './V3ZapInfoCard'
 interface ConcentratedLiquidityWidget {
   chainId: SushiSwapV3ChainId
   account: string | undefined
-  token0: Type | undefined
-  token1: Type | undefined
+  token0: EvmCurrency | undefined
+  token1: EvmCurrency | undefined
   feeAmount: SushiSwapV3FeeAmount | undefined
-  setToken0?(token: Type): void
-  setToken1?(token: Type): void
+  setToken0?(token: EvmCurrency): void
+  setToken1?(token: EvmCurrency): void
   tokensLoading: boolean
   tokenId: number | string | undefined
   existingPosition: Position | undefined
@@ -111,6 +112,19 @@ export const ConcentratedLiquidityWidget: FC<ConcentratedLiquidityWidget> = (
     feeAmount,
     existingPosition,
   })
+
+  // An arbitrarily picked threshold to show a warning when the current price is close to the min or max tick
+  const extremeTickBound = useMemo(() => {
+    const tickCurrent = derivedMintInfo.pool?.tickCurrent
+    if (!tickCurrent) return undefined
+
+    const closeToMinTick =
+      tickCurrent <= TickMath.MIN_TICK + 1500 ? Bound.LOWER : undefined
+    const closeToMaxTick =
+      tickCurrent >= TickMath.MAX_TICK - 1500 ? Bound.UPPER : undefined
+
+    return closeToMinTick ?? closeToMaxTick ?? undefined
+  }, [derivedMintInfo.pool])
 
   const { outOfRange, invalidRange, pool } = derivedMintInfo
 
@@ -154,6 +168,16 @@ export const ConcentratedLiquidityWidget: FC<ConcentratedLiquidityWidget> = (
           checked={isZapModeEnabled}
           onCheckedChange={setIsZapModeEnabled}
         />
+      ) : null}
+
+      {extremeTickBound ? (
+        <Message size="sm" variant="warning">
+          The pool's current price is close to the{' '}
+          {extremeTickBound === Bound.LOWER ? 'minimum' : 'maximum'} allowed by
+          the protocol. It might not reflect the true market price and could
+          lead to a loss of funds if liquidity is provided. Please double-check
+          if the price is accurate before proceeding.
+        </Message>
       ) : null}
 
       {isZapModeEnabled ? (
@@ -449,19 +473,19 @@ const ZapWidgetContent = withCheckerRoot(
     )
 
     const [inputAmount, setInputAmount] = useState('')
-    const [inputCurrency, _setInputCurrency] = useState<Type>(
+    const [inputCurrency, _setInputCurrency] = useState<EvmCurrency>(
       defaultCurrency[chainId],
     )
 
-    const setInputCurrency = useCallback((currency: Type) => {
+    const setInputCurrency = useCallback((currency: EvmCurrency) => {
       _setInputCurrency(currency)
       setInputAmount('')
     }, [])
 
     const parsedInputAmount = useMemo(
       () =>
-        tryParseAmount(inputAmount, inputCurrency) ||
-        Amount.fromRawAmount(inputCurrency, 0),
+        Amount.tryFromHuman(inputCurrency, inputAmount) ||
+        new Amount(inputCurrency, 0n),
       [inputAmount, inputCurrency],
     )
 
@@ -578,14 +602,17 @@ const ZapWidgetContent = withCheckerRoot(
     const showPriceImpactWarning = useMemo(() => {
       const priceImpactSeverity = warningSeverity(
         typeof zapResponse?.priceImpact === 'number'
-          ? new Percent(zapResponse.priceImpact, 10_000n)
+          ? new Percent({
+              numerator: zapResponse.priceImpact,
+              denominator: 10_000n,
+            })
           : undefined,
       )
       return priceImpactSeverity > 3
     }, [zapResponse?.priceImpact])
 
     const showSlippageWarning = useMemo(() => {
-      return !slippageTolerance.lessThan(SLIPPAGE_WARNING_THRESHOLD)
+      return !slippageTolerance.lt(SLIPPAGE_WARNING_THRESHOLD)
     }, [slippageTolerance])
 
     return (

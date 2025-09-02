@@ -2,8 +2,7 @@
 export const BladeChainIds = [
   1, 137, 1101, 10, 42161, 8453, 5000, 747474,
 ] as const
-const BladeChainIdSet = new Set<number>(BladeChainIds)
 export type BladeChainId = (typeof BladeChainIds)[number]
 export function isBladeChainId(value: number): value is BladeChainId {
-  return BladeChainIdSet.has(value)
+  return BladeChainIds.includes(value as BladeChainId)
 }

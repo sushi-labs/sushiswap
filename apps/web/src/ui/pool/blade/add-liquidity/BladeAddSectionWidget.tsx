@@ -11,19 +11,18 @@ import { Widget, WidgetHeader, classNames } from '@sushiswap/ui'
 import React, { type FC, type ReactNode, useMemo } from 'react'
 import { NativeAddress } from 'src/lib/constants'
 import { Web3Input } from 'src/lib/wagmi/components/web3-input'
-import type { EvmChainId } from 'sushi/chain'
-import type { Type } from 'sushi/currency'
+import type { EvmChainId, EvmCurrency } from 'sushi/evm'
 
 interface TokenInput {
-  token: Type | undefined
+  token: EvmCurrency | undefined
   amount: string
 }
 
 interface BladeAddSectionWidgetProps {
   chainId: EvmChainId
-  availableTokens: Type[]
+  availableTokens: EvmCurrency[]
   inputs: TokenInput[]
-  onSelectToken(index: number, currency: Type): void
+  onSelectToken(index: number, currency: EvmCurrency): void
   onInput(index: number, value: string): void
   onAddToken(): void
   onRemoveToken(index: number): void
@@ -43,14 +42,14 @@ export const BladeAddSectionWidget: FC<BladeAddSectionWidgetProps> = ({
   const hasNativeToken = inputs.some((input) => input.token?.isNative)
 
   const selectedTokens = useMemo(
-    () => inputs.map((input) => input.token?.wrapped.address).filter(Boolean),
+    () => inputs.map((input) => input.token?.wrap().address).filter(Boolean),
     [inputs],
   )
 
   const hasUnselectedTokens = useMemo(
     () =>
       availableTokens.some(
-        (token) => !selectedTokens.includes(token.wrapped.address),
+        (token) => !selectedTokens.includes(token.wrap().address),
       ),
     [availableTokens, selectedTokens],
   )
@@ -71,22 +70,21 @@ export const BladeAddSectionWidget: FC<BladeAddSectionWidgetProps> = ({
   const getTokenOptionsForInput = (inputIndex: number) => {
     const selectedTokenAddresses = inputs
       .filter((input, index) => index !== inputIndex && input.token)
-      .map((input) => input.token!.wrapped.address)
+      .map((input) => input.token!.wrap().address)
 
     return availableTokens
-      .filter(
-        (token) => !selectedTokenAddresses.includes(token.wrapped.address),
-      )
+      .filter((token) => !selectedTokenAddresses.includes(token.wrap().address))
       .reduce(
         (acc, token) => {
-          acc[token.wrapped.address] = token.wrapped
+          const wrappedToken = token.wrap()
+          acc[wrappedToken.address] = wrappedToken
           // Only include native tokens if there's only one input (single asset mode)
           if (token.isNative && inputs.length === 1) {
             acc[NativeAddress] = token
           }
           return acc
         },
-        {} as Record<string, Type>,
+        {} as Record<string, EvmCurrency>,
       )
   }
 

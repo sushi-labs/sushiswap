@@ -11,13 +11,13 @@ import {
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import React, { type FC, useMemo, useState, Fragment } from 'react'
 import { getPoolTokensGrouped } from 'src/lib/pool/blade'
-import { EvmChain } from 'sushi/chain'
-import { formatUSD, shortenAddress } from 'sushi/format'
+import { formatUSD } from 'sushi'
+import { type EvmAddress, getEvmChainById, shortenEvmAddress } from 'sushi/evm'
 import { CurrencyFiatIcon } from './CurrencyFiatIcon'
 
 type PoolHeader = {
   backUrl: string
-  address: string
+  address: EvmAddress
   pool: BladePool
 }
 
@@ -74,7 +74,7 @@ export const BladePoolLiquidityHeader: FC<PoolHeader> = ({
                     <Currency.IconList iconWidth={36} iconHeight={36}>
                       {tokens.map((token) => (
                         <Currency.Icon
-                          key={token.wrapped.address}
+                          key={token.wrap().address}
                           currency={token}
                         />
                       ))}
@@ -83,7 +83,7 @@ export const BladePoolLiquidityHeader: FC<PoolHeader> = ({
                       ) : (
                         stablecoinUsdTokens.map((token) => (
                           <Currency.Icon
-                            key={token.wrapped.address}
+                            key={token.wrap().address}
                             currency={token}
                           />
                         ))
@@ -131,10 +131,10 @@ export const BladePoolLiquidityHeader: FC<PoolHeader> = ({
             <span className="font-semibold">Pool Address</span>
             <LinkExternal
               target="_blank"
-              href={EvmChain.from(pool.chainId)?.getAccountUrl(address)}
+              href={getEvmChainById(pool.chainId).getAccountUrl(address)}
               className="text-blue hover:underline break-all"
             >
-              {shortenAddress(address, 4)}
+              {shortenEvmAddress(address, 4)}
             </LinkExternal>
           </div>
         </div>

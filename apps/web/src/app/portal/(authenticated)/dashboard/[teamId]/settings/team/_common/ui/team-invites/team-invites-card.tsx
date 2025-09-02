@@ -23,7 +23,7 @@ export async function TeamInvitesCard({ teamId }: { teamId: string }) {
   }
 
   return (
-    <Card className="w-full min-w-[470px] h-min">
+    <Card className="h-min">
       <CardHeader className="!space-y-0 !flex-row items-center justify-between">
         <div className="space-y-1.5">
           <CardTitle>Team Invites</CardTitle>

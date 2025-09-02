@@ -7,18 +7,19 @@ import {
 } from '@sushiswap/graph-client/data-api'
 import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import { BLADE_PROTOCOL } from 'src/lib/pool/blade'
-import { type Address, SushiSwapProtocol } from 'sushi'
 import {
   type BladeChainId,
+  type EvmAddress,
+  SushiSwapProtocol,
   type SushiSwapV2ChainId,
   type SushiSwapV3ChainId,
   isBladeChainId,
   isSushiSwapV2ChainId,
   isSushiSwapV3ChainId,
-} from 'sushi/config'
+} from 'sushi/evm'
 
 interface UsePoolGraphDataParams {
-  poolAddress: Address
+  poolAddress: EvmAddress
   chainId: SushiSwapV2ChainId | SushiSwapV3ChainId | BladeChainId
   protocol: SushiSwapProtocol | typeof BLADE_PROTOCOL
   enabled?: boolean
@@ -27,7 +28,7 @@ interface UsePoolGraphDataParams {
 const getPoolBuckets = async (
   protocol: SushiSwapProtocol | typeof BLADE_PROTOCOL,
   chainId: SushiSwapV2ChainId | SushiSwapV3ChainId | BladeChainId,
-  poolAddress: Address,
+  poolAddress: EvmAddress,
 ) => {
   if (
     protocol === SushiSwapProtocol.SUSHISWAP_V2 &&

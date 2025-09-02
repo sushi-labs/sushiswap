@@ -2,7 +2,7 @@
 
 import { getBladePoolTxSourcesChart } from '@sushiswap/graph-client/data-api'
 import { keepPreviousData, useQuery } from '@tanstack/react-query'
-import type { BladeChainId } from 'sushi/config'
+import type { BladeChainId } from 'sushi/evm'
 import type { Address } from 'viem'
 
 interface UsePoolTransactionSourcesDataParams {

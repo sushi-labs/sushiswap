@@ -3,13 +3,13 @@ import { notFound } from 'next/navigation'
 import React from 'react'
 import { TableFiltersSearchToken } from 'src/ui/token/TableFiltersSearchToken'
 import { TokensTable } from 'src/ui/token/TokensTable'
-import { type SushiSwapChainId, isSushiSwapChainId } from 'sushi/config'
+import { type SushiSwapChainId, isSushiSwapChainId } from 'sushi/evm'
 
 export default async function TokensPage(props: {
   params: Promise<{ chainId: string }>
 }) {
   const params = await props.params
-  const chainId = +params.chainId as SushiSwapChainId
+  const chainId = +params.chainId
 
   if (!isSushiSwapChainId(chainId)) {
     return notFound()

@@ -1,6 +1,9 @@
 import { notFound } from 'next/navigation'
-import type { EvmChainId } from 'sushi/chain'
-import { BLADE_SUPPORTED_CHAIN_IDS, isBladeChainId } from 'sushi/config'
+import {
+  BLADE_SUPPORTED_CHAIN_IDS,
+  type EvmChainId,
+  isBladeChainId,
+} from 'sushi/evm'
 import { Header } from '../../header'
 
 export default async function BladePoolLayout(props: {

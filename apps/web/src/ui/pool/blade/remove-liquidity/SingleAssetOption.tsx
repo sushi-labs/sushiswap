@@ -1,11 +1,11 @@
 import { Currency } from '@sushiswap/ui'
 import { forwardRef } from 'react'
-import type { Amount, Type } from 'sushi/currency'
-import { formatUSD } from 'sushi/format'
+import { type Amount, formatUSD } from 'sushi'
+import type { EvmCurrency } from 'sushi/evm'
 
 interface SingleAssetOptionProps {
-  currency: Type
-  tokenAmount: Amount<Type>
+  currency: EvmCurrency
+  tokenAmount: Amount<EvmCurrency>
   estimatedValue: number
   isSelected: boolean
   onSelect: () => void

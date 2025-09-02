@@ -9,17 +9,18 @@ import {
   useMemo,
 } from 'react'
 import { useVestingDeposit } from 'src/lib/pool/blade/useVestingDeposit'
-import { type Amount, Token, type Type } from 'sushi/currency'
+import type { Amount } from 'sushi'
+import { type EvmCurrency, EvmToken } from 'sushi/evm'
 import { useAccount } from 'wagmi'
 import { useAmountBalance } from '~evm/_common/ui/balance-provider/use-balance'
 
 interface BladePoolPositionContext {
-  balance: Amount<Type> | null | undefined
+  balance: Amount<EvmCurrency> | null | undefined
   vestingDeposit?: {
     balance: bigint
     lockedUntil: Date | undefined
   }
-  liquidityToken: Token
+  liquidityToken: EvmToken
   isLoading: boolean
   isError: boolean
 }
@@ -33,7 +34,7 @@ export const BladePoolPositionProvider: FC<{
 }> = ({ pool, children }) => {
   const { address } = useAccount()
   const liquidityToken = useMemo(() => {
-    return new Token({
+    return new EvmToken({
       chainId: pool.chainId,
       address: pool.address,
       decimals: 18,

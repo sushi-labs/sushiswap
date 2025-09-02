@@ -4,9 +4,8 @@ import { Card, Message, WidgetDescription, WidgetFooter } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui'
 import { Widget, WidgetHeader, WidgetTitle } from '@sushiswap/ui'
 import React, { type FC, type ReactNode } from 'react'
-import type { BladeChainId } from 'sushi/config'
-import { formatUSD } from 'sushi/format'
-import { ZERO } from 'sushi/math'
+import { formatUSD } from 'sushi'
+import type { BladeChainId } from 'sushi/evm'
 import { useBladePoolPosition } from '../BladePoolPositionProvider'
 
 interface BladeRemoveSectionWidgetProps {
@@ -35,14 +34,14 @@ export const BladeRemoveSectionWidget: FC<BladeRemoveSectionWidgetProps> = ({
           Trade in your LP tokens to receive your underlying tokens
         </WidgetDescription>
       </WidgetHeader>
-      {balance?.equalTo(ZERO) ? (
+      {balance?.amount === 0n ? (
         <Message variant="warning" size="sm" className="mb-4">
           No LP tokens found. Are you sure you unstaked your LP tokens?
         </Message>
       ) : null}
       <div
         className={
-          balance?.equalTo(ZERO) ? 'opacity-40 pointer-events-none' : ''
+          balance?.amount === 0n ? 'opacity-40 pointer-events-none' : ''
         }
       >
         <div className="flex flex-col gap-6">

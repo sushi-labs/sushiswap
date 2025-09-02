@@ -1,5 +1,5 @@
 import type { JSX, ReactNode } from 'react'
-import { ChainId } from 'sushi/chain'
+import { EvmChainId } from 'sushi/evm'
 import { useEnsName } from 'wagmi'
 import type { PublicWagmiConfig } from '../../config/public'
 
@@ -14,7 +14,7 @@ export type Props = Parameters<typeof useEnsName<PublicWagmiConfig>>[0] & {
 
 export const AddressToEnsResolver = ({
   children,
-  chainId = ChainId.ETHEREUM,
+  chainId = EvmChainId.ETHEREUM,
   ...props
 }: Props): JSX.Element => {
   const result = useEnsName({ ...props, chainId })

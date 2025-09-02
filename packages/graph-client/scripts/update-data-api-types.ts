@@ -21,12 +21,10 @@ async function updateDataApiType(feature: (typeof features)[number]) {
   content += `\n`
   content += `export const ${feature}s = ${JSON.stringify(chainIds)} as const`
   content += `\n`
-  content += `const ${feature}Set = new Set<number>(${feature}s)`
-  content += `\n`
   content += `export type ${feature} = typeof ${feature}s[number]`
   content += `\n`
   content += `export function is${feature}(value: number): value is ${feature} {`
-  content += `return ${feature}Set.has(value)`
+  content += `return ${feature}s.includes(value as ${feature})`
   content += `}`
 
   return content

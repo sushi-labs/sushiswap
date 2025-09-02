@@ -15,9 +15,8 @@ import {
   SkeletonText,
 } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
-import { ChainId } from 'sushi/chain'
-import { type Type, XSUSHI } from 'sushi/currency'
-import type { Fraction } from 'sushi/math'
+import type { Fraction } from 'sushi'
+import { EvmChainId, type EvmCurrency, XSUSHI } from 'sushi/evm'
 import { SUSHI_ETH_SLP } from './VotingPowerProvider'
 
 export const BoostVotingPowerModal = ({
@@ -49,7 +48,7 @@ export const BoostVotingPowerModal = ({
           <List>
             <CurrencyListItem
               isLoading={!weights}
-              currency={XSUSHI[ChainId.ETHEREUM]}
+              currency={XSUSHI[EvmChainId.ETHEREUM]}
               weight={weights?.xsushi}
               link="https://sushi.com/bar"
             />
@@ -61,7 +60,7 @@ export const BoostVotingPowerModal = ({
             />
             <CurrencyListItem
               isLoading={!weights}
-              currency={XSUSHI[ChainId.POLYGON]}
+              currency={XSUSHI[EvmChainId.POLYGON]}
               weight={weights?.xsushiPolygon}
               link="https://www.sushi.com/swap?chainId=137&token0=0x0b3F868E0BE5597D5DB7fEB59E1CADBb0fdDa50a&token1=0x6811079E3c63ED96Eb005384d7E7ec8810E3D521"
             />
@@ -73,7 +72,7 @@ export const BoostVotingPowerModal = ({
 }
 
 interface CurrencyListItem {
-  currency: Type
+  currency: EvmCurrency
   isLoading: boolean
   weight: Fraction | undefined
   link: string

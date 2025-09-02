@@ -3,8 +3,7 @@ import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import type React from 'react'
 import { GlobalStatsCharts } from 'src/ui/explore/global-stats-charts'
-import type { EvmChainId } from 'sushi/chain'
-import { BLADE_SUPPORTED_CHAIN_IDS, isBladeChainId } from 'sushi/config'
+import { BLADE_SUPPORTED_CHAIN_IDS, isBladeChainId } from 'sushi/evm'
 import { Header } from '~evm/[chainId]/header'
 import { NavigationItems } from '../navigation-items'
 
@@ -22,7 +21,7 @@ export default async function ExploreLayout(props: {
 
   const { children } = props
 
-  const chainId = +params.chainId as EvmChainId
+  const chainId = +params.chainId
 
   if (!isBladeChainId(chainId)) {
     return notFound()

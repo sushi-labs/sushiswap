@@ -4,8 +4,8 @@ import { Card, CardContent, CardHeader, SkeletonText } from '@sushiswap/ui'
 import { type FC, useMemo } from 'react'
 import { useClaimableRewards } from 'src/lib/hooks/react-query'
 import { useConcentratedLiquidityPositions } from 'src/lib/wagmi/hooks/positions/hooks/useConcentratedLiquidityPositions'
-import { SushiSwapV3ChainIds } from 'sushi/config'
-import { formatUSD } from 'sushi/format'
+import { formatUSD } from 'sushi'
+import { SushiSwapV3ChainIds } from 'sushi/evm'
 import { useAccount } from 'wagmi'
 
 export const Hero: FC = () => {

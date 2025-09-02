@@ -24,10 +24,15 @@ import {
   useState,
 } from 'react'
 import { ProtocolBadge } from 'src/ui/pool/PoolNameCell'
-import { type Address, EvmChain, type EvmChainId } from 'sushi'
-import { uniswapV3PoolAbi_setFeeProtocol } from 'sushi/abi'
-import { Token } from 'sushi/currency'
-import { formatNumber, formatUSD } from 'sushi/format'
+import { formatNumber, formatUSD } from 'sushi'
+import {
+  type EvmAddress,
+  EvmChain,
+  type EvmChainId,
+  EvmToken,
+  getEvmChainById,
+  uniswapV3PoolAbi_setFeeProtocol,
+} from 'sushi/evm'
 import {
   useSwitchChain,
   useWaitForTransactionReceipt,
@@ -35,8 +40,8 @@ import {
 } from 'wagmi'
 
 type V3Pool = Omit<V3BasePool, 'token0' | 'token1'> & {
-  token0: Token
-  token1: Token
+  token0: EvmToken
+  token1: EvmToken
 }
 
 const NAME_COLUMN_POOL: ColumnDef<V3Pool, unknown> = {
@@ -155,10 +160,10 @@ const VOLUME_COLUMN: ColumnDef<V3Pool, unknown> = {
   },
 }
 
-const EnableProtocolFeeButton: FC<{ pool: Address; chainId: EvmChainId }> = ({
-  pool,
-  chainId,
-}) => {
+const EnableProtocolFeeButton: FC<{
+  pool: EvmAddress
+  chainId: EvmChainId
+}> = ({ pool, chainId }) => {
   const { switchChainAsync } = useSwitchChain()
   const { data: txHash, writeContract, isPending } = useWriteContract()
   const { isLoading, isSuccess } = useWaitForTransactionReceipt({
@@ -239,8 +244,8 @@ export const V3FeesTable: FC<{ pools: V3BasePool[]; chainId: EvmChainId }> = ({
     () =>
       pools?.map((pool) => ({
         ...pool,
-        token0: new Token(pool.token0),
-        token1: new Token(pool.token1),
+        token0: new EvmToken(pool.token0),
+        token1: new EvmToken(pool.token1),
       })) ?? [],
     [pools],
   )
@@ -263,7 +268,7 @@ export const V3FeesTable: FC<{ pools: V3BasePool[]; chainId: EvmChainId }> = ({
       columns={COLUMNS}
       data={data}
       linkFormatter={(row) =>
-        EvmChain.from(chainId)!.getAccountUrl(row.address)
+        getEvmChainById(chainId)!.getAccountUrl(row.address)
       }
     />
   )

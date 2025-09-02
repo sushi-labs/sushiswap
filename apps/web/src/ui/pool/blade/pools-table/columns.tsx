@@ -10,7 +10,7 @@ import {
   getPoolNameFromGroupedTokens,
   getPoolTokensGrouped,
 } from 'src/lib/pool/blade'
-import { formatPercent, formatUSD } from 'sushi/format'
+import { formatPercent, formatUSD } from 'sushi'
 import { CurrencyFiatIcon } from '../CurrencyFiatIcon'
 
 export type BladePoolsTableMeta = {
@@ -36,7 +36,7 @@ export const NAME_COLUMN_POOL: ColumnDef<BladePool, unknown> = {
           <Currency.IconList iconWidth={26} iconHeight={26}>
             {tokens.map((token) => (
               <Currency.Icon
-                key={token.wrapped.address}
+                key={token.wrap().address}
                 disableLink
                 currency={token}
               />
@@ -46,7 +46,7 @@ export const NAME_COLUMN_POOL: ColumnDef<BladePool, unknown> = {
             ) : (
               stablecoinUsdTokens.map((token) => (
                 <Currency.Icon
-                  key={token.wrapped.address}
+                  key={token.wrap().address}
                   disableLink
                   currency={token}
                 />

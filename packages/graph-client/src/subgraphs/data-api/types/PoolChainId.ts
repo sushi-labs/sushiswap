@@ -4,8 +4,7 @@ export const PoolChainIds = [
   534352, 2222, 1088, 199, 314, 7000, 1116, 108, 10, 59144, 81457, 2046399126,
   30, 146, 43111, 747474, 11155111, 129399, 1101, 5000,
 ] as const
-const PoolChainIdSet = new Set<number>(PoolChainIds)
 export type PoolChainId = (typeof PoolChainIds)[number]
 export function isPoolChainId(value: number): value is PoolChainId {
-  return PoolChainIdSet.has(value)
+  return PoolChainIds.includes(value as PoolChainId)
 }

@@ -9,7 +9,8 @@ import { useBladeAllowDeposit } from 'src/lib/pool/blade/useBladeDeposit'
 import { getPoolAssets } from 'src/lib/pool/blade/utils'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
 import { CheckerProvider } from 'src/lib/wagmi/systems/Checker/Provider'
-import { type Type, tryParseAmount } from 'sushi/currency'
+import { Amount } from 'sushi'
+import type { EvmCurrency } from 'sushi/evm'
 import { useAccount } from 'wagmi'
 import {
   BladeAddLiquidityReviewModal,
@@ -18,7 +19,7 @@ import {
 import { BladeAddSectionWidget } from './BladeAddSectionWidget'
 
 interface TokenInput {
-  token: Type | undefined
+  token: EvmCurrency | undefined
   amount: string
 }
 export const BladeAddSection: FC<{ pool: BladePool }> = ({ pool }) => {
@@ -41,7 +42,9 @@ export const BladeAddSection: FC<{ pool: BladePool }> = ({ pool }) => {
   const parsedInputs = useMemo(() => {
     return inputs
       .map((input) =>
-        input.token ? tryParseAmount(input.amount, input.token) : undefined,
+        input.token
+          ? Amount.tryFromHuman(input.token, input.amount)
+          : undefined,
       )
       .filter(Boolean)
   }, [inputs])
@@ -61,7 +64,7 @@ export const BladeAddSection: FC<{ pool: BladePool }> = ({ pool }) => {
     })
   }, [])
 
-  const onSelectToken = useCallback((index: number, currency: Type) => {
+  const onSelectToken = useCallback((index: number, currency: EvmCurrency) => {
     setInputs((prev) => {
       const newInputs = [...prev]
       newInputs[index] = { ...newInputs[index], token: currency }
@@ -83,7 +86,7 @@ export const BladeAddSection: FC<{ pool: BladePool }> = ({ pool }) => {
   )
 
   const validInputMap = useMemo(() => {
-    const map = new Map<Type, string>()
+    const map = new Map<EvmCurrency, string>()
     for (const input of inputs) {
       if (input.token && input.amount) {
         map.set(input.token, input.amount)
@@ -94,7 +97,7 @@ export const BladeAddSection: FC<{ pool: BladePool }> = ({ pool }) => {
 
   const validInputs = useMemo(() => {
     return inputs.filter((input) => input.token && input.amount) as Array<{
-      token: Type
+      token: EvmCurrency
       amount: string
     }>
   }, [inputs])
@@ -146,14 +149,17 @@ export const BladeAddSection: FC<{ pool: BladePool }> = ({ pool }) => {
                     >
                       {Array.from(validInputMap.entries()).reduce(
                         (acc, [token, amount]) => {
-                          const parsedAmount = tryParseAmount(amount, token)
+                          const parsedAmount = Amount.tryFromHuman(
+                            token,
+                            amount,
+                          )
                           if (!parsedAmount) return acc
-
+                          const wrappedToken = token.wrap()
                           const approveChecker = (
                             <Checker.ApproveERC20
-                              key={token.wrapped.address}
+                              key={wrappedToken.address}
                               fullWidth
-                              id={`approve-token-${token.wrapped.address}`}
+                              id={`approve-token-${wrappedToken.address}`}
                               className="whitespace-nowrap"
                               amount={parsedAmount}
                               contract={pool.address}

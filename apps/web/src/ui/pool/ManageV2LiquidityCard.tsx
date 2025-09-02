@@ -1,5 +1,6 @@
 'use client'
 
+import type { V2Pool } from '@sushiswap/graph-client/data-api'
 import {
   Card,
   CardContent,
@@ -14,9 +15,7 @@ import {
 } from '@sushiswap/ui'
 import Link from 'next/link'
 import type { FC } from 'react'
-
-import type { V2Pool } from '@sushiswap/graph-client/data-api'
-import { ChainKey } from 'sushi/chain'
+import { getEvmChainById } from 'sushi/evm'
 import { AddSectionLegacy } from './AddSectionLegacy'
 import { PoolPositionProvider } from './PoolPositionProvider'
 import { RemoveSectionLegacy } from './RemoveSectionLegacy'
@@ -45,7 +44,7 @@ export const ManageV2LiquidityCard: FC<ManageV2LiquidityCardProps> = ({
         <CardContent>
           <TabsList className="!flex">
             <Link
-              href={`/${ChainKey[pool.chainId]}/pool/v2/${pool.address}/add`}
+              href={`/${getEvmChainById(pool.chainId).key}/pool/v2/${pool.address}/add`}
               className="flex flex-1"
             >
               <TabsTrigger
@@ -57,7 +56,7 @@ export const ManageV2LiquidityCard: FC<ManageV2LiquidityCardProps> = ({
               </TabsTrigger>
             </Link>
             <Link
-              href={`/${ChainKey[pool.chainId]}/pool/v2/${pool.address}/remove`}
+              href={`/${getEvmChainById(pool.chainId).key}/pool/v2/${pool.address}/remove`}
               className="flex flex-1"
             >
               <TabsTrigger

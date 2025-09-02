@@ -4,7 +4,7 @@ import {
   scanToken,
 } from '@sushiswap/graph-client/de.fi'
 import type { NextRequest } from 'next/server'
-import type { EvmChainId } from 'sushi/chain'
+import type { EvmChainId } from 'sushi/evm'
 import { getAddress } from 'viem/utils'
 import { z } from 'zod'
 

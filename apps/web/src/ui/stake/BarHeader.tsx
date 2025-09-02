@@ -9,9 +9,13 @@ import {
   TooltipTrigger,
 } from '@sushiswap/ui'
 import React from 'react'
-import { ChainId, EvmChain } from 'sushi/chain'
-import { XSUSHI } from 'sushi/currency'
-import { formatPercent, shortenAddress } from 'sushi/format'
+import { formatPercent } from 'sushi'
+import {
+  EvmChainId,
+  XSUSHI,
+  getEvmChainById,
+  shortenEvmAddress,
+} from 'sushi/evm'
 import { useSushiBar } from './SushiBarProvider'
 
 export const BarHeader = () => {
@@ -21,7 +25,7 @@ export const BarHeader = () => {
     <div className="flex flex-col gap-6">
       <span className="gap-3 flex">
         <Currency.Icon
-          currency={XSUSHI[ChainId.ETHEREUM]}
+          currency={XSUSHI[EvmChainId.ETHEREUM]}
           width={52}
           height={52}
         />
@@ -62,8 +66,8 @@ export const BarHeader = () => {
         <div className="flex items-center gap-1.5">
           <span className="tracking-tighter font-semibold">XSUSHI</span>
           <LinkExternal
-            href={EvmChain.from(ChainId.ETHEREUM)?.getTokenUrl(
-              XSUSHI[ChainId.ETHEREUM].address,
+            href={getEvmChainById(EvmChainId.ETHEREUM).getTokenUrl(
+              XSUSHI[EvmChainId.ETHEREUM].address,
             )}
           >
             <Button
@@ -72,7 +76,7 @@ export const BarHeader = () => {
               size="sm"
               className="!font-medium !text-secondary-foreground"
             >
-              {shortenAddress(XSUSHI[ChainId.ETHEREUM].address, 4)}
+              {shortenEvmAddress(XSUSHI[EvmChainId.ETHEREUM].address, 4)}
               <ArrowTopRightOnSquareIcon className="w-3 h-3" />
             </Button>
           </LinkExternal>

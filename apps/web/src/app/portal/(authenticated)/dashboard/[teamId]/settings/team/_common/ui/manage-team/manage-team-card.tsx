@@ -17,7 +17,7 @@ export async function ManageTeamCard({ teamId }: ManageTeamCard) {
   const team = await client.getTeamsTeamId({ teamId })
 
   return (
-    <Card className="w-full min-w-[470px] h-min">
+    <Card className="h-min">
       <CardHeader className="rounded-t-xl">
         <CardTitle>Manage Team</CardTitle>
         <CardDescription>Manage your team</CardDescription>

@@ -19,7 +19,7 @@ import type {
   TableState,
 } from '@tanstack/react-table'
 import { type FC, type ReactNode, useCallback, useMemo, useState } from 'react'
-import { ChainKey } from 'sushi/chain'
+import { getEvmChainById } from 'sushi/evm'
 import {
   APR_COLUMN,
   type BladePoolsTableMeta,
@@ -116,7 +116,7 @@ export const BladePoolsTable: FC<BladePoolsTableProps> = ({
         onSortingChange={setSorting}
         loading={false}
         linkFormatter={(row) =>
-          `/${ChainKey[row.chainId as keyof typeof ChainKey]}/pool/blade/${row.address}`
+          `/${getEvmChainById(row.chainId).key}/pool/blade/${row.address}`
         }
         rowRenderer={rowRenderer}
         columns={COLUMNS}

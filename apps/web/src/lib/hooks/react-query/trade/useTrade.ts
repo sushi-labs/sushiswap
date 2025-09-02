@@ -7,17 +7,27 @@ import { useQuery } from '@tanstack/react-query'
 import { useCallback, useMemo } from 'react'
 import { API_BASE_URL } from 'src/lib/swap/api-base-url'
 import { getFeeString } from 'src/lib/swap/fee'
-import { slippageAmount } from 'sushi/calculate'
 import {
+  Amount,
+  Fraction,
+  Native,
+  Percent,
+  Price,
+  ZERO,
+  subtractSlippage,
+} from 'sushi'
+import {
+  type EvmCurrency,
+  EvmNative,
   UI_FEE_COLLECTOR_ADDRESS,
+  isLsd,
   isRouteProcessor7ChainId,
+  isStable,
   isUIFeeCollectorChainId,
   isWNativeSupported,
-} from 'sushi/config'
-import { Amount, Native, Price, type Type } from 'sushi/currency'
-import { Fraction, Percent, ZERO } from 'sushi/math'
-import { isLsd, isStable, isWrapOrUnwrap } from 'sushi/router'
-import { type Address, type Hex, stringify, zeroAddress } from 'viem'
+  isWrapOrUnwrap,
+} from 'sushi/evm'
+import { type Hex, stringify, zeroAddress } from 'viem'
 import { useAccount } from 'wagmi'
 import { usePrices } from '~evm/_common/ui/price-provider/price-provider/use-prices'
 import { apiAdapter02To01 } from './apiAdapter'
@@ -61,20 +71,20 @@ export const useTradeQuery = (
       params.searchParams.set(
         'tokenIn',
         `${
-          fromToken?.isNative
+          fromToken?.type === 'native'
             ? '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE'
-            : fromToken?.wrapped.address
+            : fromToken?.wrap().address
         }`,
       )
       params.searchParams.set(
         'tokenOut',
         `${
-          toToken?.isNative
+          toToken?.type === 'native'
             ? '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE'
-            : toToken?.wrapped.address
+            : toToken?.wrap().address
         }`,
       )
-      params.searchParams.set('amount', `${amount?.quotient.toString()}`)
+      params.searchParams.set('amount', `${amount?.amount.toString()}`)
       params.searchParams.set('maxSlippage', `${+slippagePercentage / 100}`)
       params.searchParams.set('sender', `${address}`)
       recipient && params.searchParams.set('recipient', `${recipient}`)
@@ -97,8 +107,8 @@ export const useTradeQuery = (
 
       const resp1 = apiAdapter02To01(
         resp2,
-        fromToken as Type,
-        toToken as Type,
+        fromToken as EvmCurrency,
+        toToken as EvmCurrency,
         recipient,
       )
 
@@ -142,13 +152,15 @@ export const useTrade = (variables: UseTradeParams) => {
     if (prices) {
       if (
         isWNativeSupported(chainId) &&
-        Native.onChain(chainId).wrapped.address !== zeroAddress
+        EvmNative.fromChainId(chainId).wrap().address !== zeroAddress
       ) {
-        result[0] = prices.getFraction(Native.onChain(chainId).wrapped.address)
+        result[0] = prices.getFraction(
+          EvmNative.fromChainId(chainId).wrap().address,
+        )
       }
 
       if (toToken) {
-        result[1] = prices.getFraction(toToken.wrapped.address)
+        result[1] = prices.getFraction(toToken.wrap().address)
       }
     }
 
@@ -157,6 +169,7 @@ export const useTrade = (variables: UseTradeParams) => {
 
   const select: UseTradeQuerySelect = useCallback(
     (data) => {
+      console.log(data)
       if (
         isRouteProcessor7ChainId(chainId) &&
         data &&
@@ -165,21 +178,21 @@ export const useTrade = (variables: UseTradeParams) => {
         fromToken &&
         toToken
       ) {
-        const amountIn = Amount.fromRawAmount(fromToken, data.route.amountInBI)
-        const amountOut = Amount.fromRawAmount(
+        const amountIn = new Amount(fromToken, data.route.amountInBI)
+        const amountOut = new Amount(
           toToken,
-          new Fraction(data.route.amountOutBI).multiply(
-            tokenTax ? new Percent(1).subtract(tokenTax) : 1,
+          new Fraction({ numerator: data.route.amountOutBI }).mul(
+            tokenTax ? new Percent(1).sub(tokenTax) : 1,
           ).quotient,
         )
         const minAmountOut = data.args?.amountOutMin
-          ? Amount.fromRawAmount(toToken, data.args.amountOutMin)
-          : Amount.fromRawAmount(
-              toToken,
-              slippageAmount(
-                Amount.fromRawAmount(toToken, data.route.amountOutBI),
-                new Percent(Math.floor(+slippagePercentage * 100), 10_000),
-              )[0],
+          ? new Amount(toToken, data.args.amountOutMin)
+          : subtractSlippage(
+              new Amount(toToken, data.route.amountOutBI),
+              new Percent({
+                numerator: Math.floor(+slippagePercentage * 100),
+                denominator: 10_000,
+              }).toNumber(),
             )
 
         // const isOffset = chainId === ChainId.POLYGON && carbonOffset
@@ -199,21 +212,24 @@ export const useTrade = (variables: UseTradeParams) => {
         //     : undefined
 
         const gasSpent = gasPrice
-          ? Amount.fromRawAmount(
-              Native.onChain(chainId),
+          ? new Amount(
+              EvmNative.fromChainId(chainId),
               gasPrice * BigInt(data.route.gasSpent * 1.2),
             )
           : undefined
 
         return {
-          swapPrice: amountOut.greaterThan(ZERO)
+          swapPrice: amountOut.gt(ZERO)
             ? new Price({
                 baseAmount: amount,
                 quoteAmount: amountOut,
               })
             : undefined,
           priceImpact: data.route.priceImpact
-            ? new Percent(Math.round(data.route.priceImpact * 10000), 10000)
+            ? new Percent({
+                numerator: Math.round(data.route.priceImpact * 10000),
+                denominator: 10000,
+              })
             : new Percent(0),
           amountIn,
           amountOut,
@@ -221,7 +237,7 @@ export const useTrade = (variables: UseTradeParams) => {
           gasSpent: gasSpent?.toSignificant(4),
           gasSpentUsd:
             nativePrice && gasSpent
-              ? gasSpent.multiply(nativePrice.asFraction).toSignificant(4)
+              ? gasSpent.mul(nativePrice.asFraction).toSignificant(4)
               : undefined,
           fee: getFeeString({
             fromToken,

@@ -44,10 +44,12 @@ import Link from 'next/link'
 import { type FC, type ReactNode, useCallback, useMemo, useState } from 'react'
 import InfiniteScroll from 'react-infinite-scroll-component'
 import { usePoolsInfinite } from 'src/lib/hooks'
-import { ChainKey } from 'sushi/chain'
-import { isMerklChainId } from 'sushi/config'
-import { Native } from 'sushi/currency'
-import { SushiSwapProtocol } from 'sushi/types'
+import {
+  EvmNative,
+  SushiSwapProtocol,
+  getEvmChainById,
+  isMerklChainId,
+} from 'sushi/evm'
 import { usePoolFilters } from './PoolsFiltersProvider'
 import {
   APR_WITH_REWARDS_COLUMN,
@@ -89,7 +91,7 @@ const COLUMNS = [
                   onClick={(e) => e.stopPropagation()}
                   shallow={true}
                   className="flex items-center"
-                  href={`/${ChainKey[row.original.chainId]}/pool/v3/${
+                  href={`/${getEvmChainById(row.original.chainId).key}/pool/v3/${
                     row.original.address
                   }`}
                 >
@@ -102,7 +104,7 @@ const COLUMNS = [
                   onClick={(e) => e.stopPropagation()}
                   shallow={true}
                   className="flex items-center"
-                  href={`/${ChainKey[row.original.chainId]}/pool/v3/${
+                  href={`/${getEvmChainById(row.original.chainId).key}/pool/v3/${
                     row.original.address
                   }/create`}
                 >
@@ -127,15 +129,17 @@ const COLUMNS = [
                         shallow={true}
                         className="flex items-center"
                         href={`/${
-                          ChainKey[row.original.chainId]
+                          getEvmChainById(row.original.chainId).key
                         }/pool/incentivize?fromCurrency=${
                           row.original.token0Address ===
-                          Native.onChain(row.original.chainId).wrapped.address
+                          EvmNative.fromChainId(row.original.chainId).wrap()
+                            .address
                             ? 'NATIVE'
                             : row.original.token0Address
                         }&toCurrency=${
                           row.original.token1Address ===
-                          Native.onChain(row.original.chainId).wrapped.address
+                          EvmNative.fromChainId(row.original.chainId).wrap()
+                            .address
                             ? 'NATIVE'
                             : row.original.token1Address
                         }&feeAmount=${row.original.swapFee * 10_000 * 100}`}
@@ -180,7 +184,7 @@ const COLUMNS = [
                   onClick={(e) => e.stopPropagation()}
                   shallow={true}
                   className="flex items-center"
-                  href={`/${ChainKey[row.original.chainId]}/pool/v2/${
+                  href={`/${getEvmChainById(row.original.chainId).key}/pool/v2/${
                     row.original.address
                   }/add`}
                 >
@@ -193,7 +197,7 @@ const COLUMNS = [
                   onClick={(e) => e.stopPropagation()}
                   shallow={true}
                   className="flex items-center"
-                  href={`/${ChainKey[row.original.chainId]}/pool/v2/${
+                  href={`/${getEvmChainById(row.original.chainId).key}/pool/v2/${
                     row.original.address
                   }/remove`}
                 >
@@ -316,7 +320,7 @@ export const PoolsTable: FC<PoolsTableProps> = ({
           onSortingChange={setSorting}
           loading={isLoading}
           linkFormatter={(row) =>
-            `/${ChainKey[row.chainId]}/pool/${
+            `/${getEvmChainById(row.chainId).key}/pool/${
               row.protocol === SushiSwapProtocol.SUSHISWAP_V2 ? 'v2' : 'v3'
             }/${row.address}`
           }

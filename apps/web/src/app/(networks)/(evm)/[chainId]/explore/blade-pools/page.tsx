@@ -3,8 +3,7 @@ import { Container } from '@sushiswap/ui'
 import { notFound } from 'next/navigation'
 import { BladeFeaturedPoolBanner } from 'src/ui/pool/blade/featured-pool-banner'
 import { BladePoolsTable } from 'src/ui/pool/blade/pools-table/BladePoolsTable'
-import { EvmChainId } from 'sushi/chain'
-import { type BladeChainId, isBladeChainId } from 'sushi/config'
+import { type BladeChainId, EvmChainId, isBladeChainId } from 'sushi/evm'
 
 /**
  * These pools have been created but won't have any liquidity yet.
@@ -17,7 +16,7 @@ export default async function BladePoolsPage(props: {
   params: Promise<{ chainId: string }>
 }) {
   const params = await props.params
-  const chainId = +params.chainId as EvmChainId
+  const chainId = +params.chainId
 
   if (!isBladeChainId(chainId)) {
     return notFound()

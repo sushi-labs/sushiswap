@@ -17,7 +17,6 @@ import {
   HoverCardContent,
   HoverCardTrigger,
   IconButton,
-  LinkExternal,
   LinkInternal,
   Separator,
   SettingsModule,
@@ -44,11 +43,14 @@ import { useConcentratedLiquidityPositionsFromTokenId } from 'src/lib/wagmi/hook
 import { useTokenWithCache } from 'src/lib/wagmi/hooks/tokens/useTokenWithCache'
 import { getDefaultTTL } from 'src/lib/wagmi/hooks/utils/hooks/useTransactionDeadline'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
-import { EvmChain, EvmChainKey } from 'sushi/chain'
-import { type SushiSwapV3ChainId, isMerklChainId } from 'sushi/config'
-import { Amount, unwrapToken } from 'sushi/currency'
-import { formatPercent, formatUSD } from 'sushi/format'
-import type { Address } from 'sushi/types'
+import { Amount, formatPercent, formatUSD } from 'sushi'
+import {
+  type EvmAddress,
+  type SushiSwapV3ChainId,
+  getEvmChainById,
+  isMerklChainId,
+  unwrapEvmToken,
+} from 'sushi/evm'
 import { useAccount } from 'wagmi'
 import { Bound } from '../../lib/constants'
 import {
@@ -67,13 +69,12 @@ import { ConcentratedLiquidityRemoveWidget } from './ConcentratedLiquidityRemove
 import { ConcentratedLiquidityWidget } from './ConcentratedLiquidityWidget'
 import { DistributionDataTable } from './DistributionDataTable'
 
-const Component: FC<{ chainId: string; address: string; position: string }> = ({
-  chainId: _chainId,
-  address: poolAddress,
-  position: tokenId,
-}) => {
+const Component: FC<{
+  chainId: SushiSwapV3ChainId
+  address: EvmAddress
+  position: string
+}> = ({ chainId, address: poolAddress, position: tokenId }) => {
   const { address } = useAccount()
-  const chainId = Number(_chainId) as SushiSwapV3ChainId
   const [invert, setInvert] = useState(false)
 
   const { data: positionDetails, isLoading: _isPositionDetailsLoading } =
@@ -115,8 +116,8 @@ const Component: FC<{ chainId: string; address: string; position: string }> = ({
 
   const [_token0, _token1] = useMemo(
     () => [
-      token0 ? unwrapToken(token0) : undefined,
-      token1 ? unwrapToken(token1) : undefined,
+      token0 ? unwrapEvmToken(token0) : undefined,
+      token1 ? unwrapEvmToken(token1) : undefined,
     ],
     [token0, token1],
   )
@@ -124,8 +125,8 @@ const Component: FC<{ chainId: string; address: string; position: string }> = ({
   const amounts = useMemo(() => {
     if (positionDetails?.fees && _token0 && _token1)
       return [
-        Amount.fromRawAmount(_token0, BigInt(positionDetails.fees[0])),
-        Amount.fromRawAmount(_token1, BigInt(positionDetails.fees[1])),
+        new Amount(_token0, BigInt(positionDetails.fees[0])),
+        new Amount(_token1, BigInt(positionDetails.fees[1])),
       ]
 
     return [undefined, undefined]
@@ -145,7 +146,7 @@ const Component: FC<{ chainId: string; address: string; position: string }> = ({
     position?.tickUpper,
   )
 
-  const inverted = token1 ? base?.equals(token1) : undefined
+  const inverted = token1 ? base?.isSame(token1) : undefined
   const currencyQuote = inverted ? token0 : token1
   const currencyBase = inverted ? token1 : token0
   const below =
@@ -172,7 +173,7 @@ const Component: FC<{ chainId: string; address: string; position: string }> = ({
     })
   const { data: campaignsData, isLoading: isCampaignsLoading } =
     useRewardCampaigns({
-      pool: poolAddress as Address,
+      pool: poolAddress,
       chainId,
       enabled: isMerklChainId(chainId),
     })
@@ -338,7 +339,7 @@ const Component: FC<{ chainId: string; address: string; position: string }> = ({
                       <CardTitle>Unclaimed rewards</CardTitle>
                       <CardDescription>
                         This will claim your rewards for <b>every</b> V3
-                        liquidity position on {EvmChain.from(chainId)?.name}
+                        liquidity position on {getEvmChainById(chainId).name}
                       </CardDescription>
                     </CardHeader>
                     <CardContent>
@@ -448,14 +449,14 @@ const Component: FC<{ chainId: string; address: string; position: string }> = ({
                     <CardItem
                       title={
                         <>
-                          1 {unwrapToken(currencyBase)?.symbol} ={' '}
+                          1 {unwrapEvmToken(currencyBase)?.symbol} ={' '}
                           <FormattedNumber
                             number={(inverted
                               ? pool?.token1Price
                               : pool?.token0Price
                             )?.toSignificant(6)}
                           />{' '}
-                          {unwrapToken(currencyQuote)?.symbol}
+                          {unwrapEvmToken(currencyQuote)?.symbol}
                         </>
                       }
                     >
@@ -503,19 +504,19 @@ const Component: FC<{ chainId: string; address: string; position: string }> = ({
                                   direction: Bound.LOWER,
                                 })}
                               />{' '}
-                              {unwrapToken(currencyQuote)?.symbol}{' '}
+                              {unwrapEvmToken(currencyQuote)?.symbol}{' '}
                               <HoverCard closeDelay={0} openDelay={0}>
                                 <HoverCardTrigger asChild>
                                   <span className="text-sm underline decoration-dotted underline-offset-2 text-muted-foreground font-normal">
                                     (
                                     {formatPercent(
                                       priceLower
-                                        ?.subtract(
+                                        ?.sub(
                                           inverted
                                             ? pool.token1Price
                                             : pool.token0Price,
                                         )
-                                        .divide(
+                                        .div(
                                           inverted
                                             ? pool.token1Price
                                             : pool.token0Price,
@@ -532,12 +533,12 @@ const Component: FC<{ chainId: string; address: string; position: string }> = ({
                                       If the current price moves down{' '}
                                       {formatPercent(
                                         priceLower
-                                          ?.subtract(
+                                          ?.sub(
                                             inverted
                                               ? pool.token1Price
                                               : pool.token0Price,
                                           )
-                                          .divide(
+                                          .div(
                                             inverted
                                               ? pool.token1Price
                                               : pool.token0Price,
@@ -545,7 +546,8 @@ const Component: FC<{ chainId: string; address: string; position: string }> = ({
                                           .toSignificant(4),
                                       )}{' '}
                                       from the current price, your position will
-                                      be 100% {unwrapToken(currencyBase).symbol}
+                                      be 100%{' '}
+                                      {unwrapEvmToken(currencyBase).symbol}
                                     </CardDescription>
                                   </CardHeader>
                                 </HoverCardContent>
@@ -560,7 +562,7 @@ const Component: FC<{ chainId: string; address: string; position: string }> = ({
                     {currencyBase && (
                       <span className="text-xs text-slate-500">
                         Your position will be 100%{' '}
-                        {unwrapToken(currencyBase).symbol} at this price.
+                        {unwrapEvmToken(currencyBase).symbol} at this price.
                       </span>
                     )}
                   </div>
@@ -584,19 +586,19 @@ const Component: FC<{ chainId: string; address: string; position: string }> = ({
                                   direction: Bound.UPPER,
                                 })}
                               />{' '}
-                              {unwrapToken(currencyQuote)?.symbol}{' '}
+                              {unwrapEvmToken(currencyQuote)?.symbol}{' '}
                               <HoverCard closeDelay={0} openDelay={0}>
                                 <HoverCardTrigger asChild>
                                   <span className="text-sm underline decoration-dotted underline-offset-2 text-muted-foreground font-normal">
                                     (
                                     {formatPercent(
                                       priceUpper
-                                        ?.subtract(
+                                        ?.sub(
                                           inverted
                                             ? pool.token1Price
                                             : pool.token0Price,
                                         )
-                                        .divide(
+                                        .div(
                                           inverted
                                             ? pool.token1Price
                                             : pool.token0Price,
@@ -613,12 +615,12 @@ const Component: FC<{ chainId: string; address: string; position: string }> = ({
                                       If the current price moves up +
                                       {formatPercent(
                                         priceUpper
-                                          ?.subtract(
+                                          ?.sub(
                                             inverted
                                               ? pool.token1Price
                                               : pool.token0Price,
                                           )
-                                          .divide(
+                                          .div(
                                             inverted
                                               ? pool.token1Price
                                               : pool.token0Price,
@@ -627,7 +629,7 @@ const Component: FC<{ chainId: string; address: string; position: string }> = ({
                                       )}{' '}
                                       from the current price, your position will
                                       be 100%{' '}
-                                      {unwrapToken(currencyQuote).symbol}
+                                      {unwrapEvmToken(currencyQuote).symbol}
                                     </CardDescription>
                                   </CardHeader>
                                 </HoverCardContent>
@@ -642,7 +644,7 @@ const Component: FC<{ chainId: string; address: string; position: string }> = ({
                     {currencyQuote && (
                       <span className="text-xs text-slate-500">
                         Your position will be 100%{' '}
-                        {unwrapToken(currencyQuote).symbol} at this price.
+                        {unwrapEvmToken(currencyQuote).symbol} at this price.
                       </span>
                     )}
                   </div>
@@ -664,11 +666,11 @@ const Component: FC<{ chainId: string; address: string; position: string }> = ({
                   {_token0 && _token1 ? (
                     <LinkInternal
                       href={`/${
-                        EvmChainKey[chainId]
+                        getEvmChainById(chainId).key
                       }/pool/incentivize?fromCurrency=${
-                        _token0.isNative ? 'NATIVE' : _token0.address
+                        _token0.type === 'native' ? 'NATIVE' : _token0.address
                       }&toCurrency=${
-                        _token1.isNative ? 'NATIVE' : _token1.address
+                        _token1.type === 'native' ? 'NATIVE' : _token1.address
                       }&feeAmount=${positionDetails?.fee}`}
                     >
                       <Button asChild variant="link">
@@ -711,8 +713,10 @@ const Component: FC<{ chainId: string; address: string; position: string }> = ({
 }
 
 export const V3PositionView = ({
-  params: { chainId, address, position },
-}: { params: { chainId: string; address: string; position: string } }) => {
+  chainId,
+  address,
+  position,
+}: { chainId: SushiSwapV3ChainId; address: EvmAddress; position: string }) => {
   return (
     <ConcentratedLiquidityProvider>
       <Component chainId={chainId} address={address} position={position} />

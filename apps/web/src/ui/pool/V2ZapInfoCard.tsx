@@ -15,24 +15,23 @@ import {
   warningSeverityClassName,
 } from 'src/lib/swap/warningSeverity'
 import { useTotalSupply } from 'src/lib/wagmi/hooks/tokens/useTotalSupply'
-import type { EvmChainId } from 'sushi/chain'
-import { Amount, type Type } from 'sushi/currency'
-import { formatUSD } from 'sushi/format'
-import { Percent, ZERO } from 'sushi/math'
-import { SushiSwapV2Pool } from 'sushi/pool'
+import { Amount, Percent, ZERO, formatUSD } from 'sushi'
+import { type EvmChainId, type EvmCurrency, SushiSwapV2Pool } from 'sushi/evm'
+import { useAccount } from 'wagmi'
 import { usePrices } from '~evm/_common/ui/price-provider/price-provider/use-prices'
 import { ZapRouteDialog } from './ZapRouteDialog'
 
 interface V2ZapInfoCardProps {
   zapResponse: V2ZapResponse | undefined
   isZapError: boolean
-  inputCurrencyAmount: Amount<Type> | undefined
+  inputCurrencyAmount: Amount<EvmCurrency> | undefined
   pool: SushiSwapV2Pool | null
   tokenRatios?: { token0: number; token1: number }
 }
 
 export const V2ZapInfoCard: FC<V2ZapInfoCardProps> = memo(
   ({ zapResponse, isZapError, inputCurrencyAmount, pool, tokenRatios }) => {
+    const { isConnected } = useAccount()
     const { data: prices } = usePrices({
       chainId: pool?.chainId as EvmChainId | undefined,
     })
@@ -68,10 +67,10 @@ export const V2ZapInfoCard: FC<V2ZapInfoCardProps> = memo(
         }
       }
 
-      const amountOut = Amount.fromRawAmount(outputToken, zapResponse.amountOut)
+      const amountOut = new Amount(outputToken, zapResponse.amountOut)
 
       const inputCurrencyPrice = prices.getFraction(
-        inputCurrencyAmount.currency.wrapped.address,
+        inputCurrencyAmount.currency.wrap().address,
       )
       const token0Price = prices.getFraction(pool.token0.address)
       const token1Price = prices.getFraction(pool.token1.address)
@@ -84,10 +83,10 @@ export const V2ZapInfoCard: FC<V2ZapInfoCardProps> = memo(
       })
 
       const reserve0USD = token0Price
-        ? pool.reserve0.multiply(token0Price).toExact()
+        ? pool.reserve0.mul(token0Price).toString()
         : undefined
       const reserve1USD = token1Price
-        ? pool.reserve1.multiply(token1Price).toExact()
+        ? pool.reserve1.mul(token1Price).toString()
         : undefined
 
       const amountOutUSD =
@@ -96,10 +95,13 @@ export const V2ZapInfoCard: FC<V2ZapInfoCardProps> = memo(
         !totalSupply
           ? undefined
           : ((Number(reserve0USD ?? 0) + Number(reserve1USD ?? 0)) *
-              Number(amountOut.quotient)) /
-            Number(totalSupply.quotient)
+              Number(amountOut.amount)) /
+            Number(totalSupply.amount)
 
-      const priceImpact = new Percent(zapResponse.priceImpact, 10_000n)
+      const priceImpact = new Percent({
+        numerator: zapResponse.priceImpact,
+        denominator: 10_000n,
+      })
 
       return {
         amountOut,
@@ -119,7 +121,9 @@ export const V2ZapInfoCard: FC<V2ZapInfoCardProps> = memo(
     return (
       <>
         <Collapsible
-          open={Boolean(inputCurrencyAmount?.greaterThan(0) && !isZapError)}
+          open={Boolean(
+            isConnected && inputCurrencyAmount?.gt(ZERO) && !isZapError,
+          )}
         >
           <Card variant="outline">
             <CardContent className="!pt-3 !pb-3 !px-5">
@@ -133,12 +137,12 @@ export const V2ZapInfoCard: FC<V2ZapInfoCardProps> = memo(
                 >
                   {priceImpact ? (
                     `${
-                      priceImpact.lessThan(ZERO)
+                      priceImpact.lt(ZERO)
                         ? '+'
-                        : priceImpact.greaterThan(ZERO)
+                        : priceImpact.gt(ZERO)
                           ? '-'
                           : ''
-                    }${Math.abs(Number(priceImpact.toFixed(2)))}%`
+                    }${Math.abs(Number(priceImpact.toString({ fixed: 2 })))}%`
                   ) : !zapResponse ? (
                     <SkeletonBox className="h-4 py-0.5 w-[40px]" />
                   ) : (
@@ -165,11 +169,10 @@ export const V2ZapInfoCard: FC<V2ZapInfoCardProps> = memo(
                 {isLoading ? (
                   <SkeletonBox className="h-4 py-0.5 w-[80px]" />
                 ) : (
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center justify-end flex-wrap gap-x-2">
                     {typeof amountOut !== 'undefined' ? (
                       <span>
-                        <FormattedNumber number={amountOut.toExact()} /> LP
-                        Tokens
+                        <FormattedNumber number={amountOut.toString()} /> SLP
                       </span>
                     ) : (
                       <SkeletonBox className="h-4 py-0.5 w-[40px]" />

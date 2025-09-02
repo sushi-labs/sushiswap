@@ -5,8 +5,7 @@ export const SushiSwapChainIds = [
   30, 146, 43111, 747474, 11155111, 129399, 25, 5000, 324, 169, 34443, 167000,
   810180, 33139, 999, 80094, 1101,
 ] as const
-const SushiSwapChainIdSet = new Set<number>(SushiSwapChainIds)
 export type SushiSwapChainId = (typeof SushiSwapChainIds)[number]
 export function isSushiSwapChainId(value: number): value is SushiSwapChainId {
-  return SushiSwapChainIdSet.has(value)
+  return SushiSwapChainIds.includes(value as SushiSwapChainId)
 }

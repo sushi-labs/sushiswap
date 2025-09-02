@@ -8,7 +8,7 @@ import {
 } from '@sushiswap/ui'
 import { Suspense } from 'react'
 import { getUserStyroClient } from 'src/app/portal/_common/lib/styro/styro-client'
-import { formatNumber } from 'sushi/format'
+import { formatNumber } from 'sushi'
 
 export function TotalRequestsCard({ teamId }: { teamId: string }) {
   return (

@@ -33,13 +33,13 @@ import { isUserRejectedError } from 'src/lib/wagmi/errors'
 import { useTotalSupply } from 'src/lib/wagmi/hooks/tokens/useTotalSupply'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
 import { useApproved } from 'src/lib/wagmi/systems/Checker/Provider'
-import { formatUSD } from 'sushi'
-import { ChainKey } from 'sushi/chain'
-import type { BladeChainId } from 'sushi/config'
-import { type Type, tryParseAmount } from 'sushi/currency'
-import { usePublicClient } from 'wagmi'
-import { useAccount } from 'wagmi'
-import { useWaitForTransactionReceipt } from 'wagmi'
+import { Amount, formatUSD } from 'sushi'
+import { type BladeChainId, type EvmCurrency, getEvmChainById } from 'sushi/evm'
+import {
+  useAccount,
+  usePublicClient,
+  useWaitForTransactionReceipt,
+} from 'wagmi'
 import { useRefetchBalances } from '~evm/_common/ui/balance-provider/use-refetch-balances'
 import { usePrices } from '~evm/_common/ui/price-provider/price-provider/use-prices'
 import { useBladePoolPosition } from '../BladePoolPositionProvider'
@@ -64,7 +64,7 @@ export const useBladeAddLiquidityReviewModal = () => {
 interface BladeAddLiquidityReviewModalProps {
   pool: BladePool
   chainId: BladeChainId
-  validInputs: Array<{ token: Type; amount: string }>
+  validInputs: Array<{ token: EvmCurrency; amount: string }>
   depositPermission: RfqAllowDepositResponse | undefined
   children: ReactNode
   onSuccess: () => void
@@ -175,9 +175,10 @@ export const BladeAddLiquidityReviewModal: FC<
       lock_time: minLockTime,
       deposit: validInputs.reduce(
         (acc, input) => {
-          const parsedAmount = tryParseAmount(input.amount, input.token)
+          const parsedAmount = Amount.tryFromHuman(input.token, input.amount)
           if (!parsedAmount) return acc
-          acc[input.token.wrapped.address] = parsedAmount.quotient.toString()
+          const wrappedToken = input.token.wrap()
+          acc[wrappedToken.address] = `${parsedAmount.amount}`
           return acc
         },
         {} as Record<string, string>,
@@ -214,9 +215,9 @@ export const BladeAddLiquidityReviewModal: FC<
     if (!depositRequest.data?.pool_tokens) return 0
     const estimatedPoolTokens = Number(depositRequest.data.pool_tokens)
     const poolProportion =
-      poolTotalSupply?.quotient && poolTotalSupply.quotient > 0
+      poolTotalSupply?.amount && poolTotalSupply.amount > 0
         ? estimatedPoolTokens /
-          (Number(poolTotalSupply.quotient) + estimatedPoolTokens)
+          (Number(poolTotalSupply.amount) + estimatedPoolTokens)
         : undefined
     const estimatedValue = poolProportion
       ? pool.liquidityUSD * poolProportion
@@ -270,14 +271,14 @@ export const BladeAddLiquidityReviewModal: FC<
               <div className="flex flex-col gap-3 p-4 bg-white rounded-xl dark:bg-secondary border border-accent">
                 <div className="flex flex-col gap-4">
                   {validInputs.map((input, index) => {
-                    const parsedAmount = tryParseAmount(
-                      input.amount,
+                    const parsedAmount = Amount.tryFromHuman(
                       input.token,
+                      input.amount,
                     )
                     if (!parsedAmount) return null
 
-                    const price = prices?.get(input.token.wrapped.address) || 0
-                    const usdValue = Number(parsedAmount.toExact()) * price
+                    const price = prices?.get(input.token.wrap().address) || 0
+                    const usdValue = Number(parsedAmount.amount) * price
 
                     return (
                       <div
@@ -372,7 +373,7 @@ export const BladeAddLiquidityReviewModal: FC<
         testId="blade-confirmation-modal"
         successMessage="Successfully added liquidity"
         buttonText="Go to pool"
-        buttonLink={`/${ChainKey[chainId]}/pool/blade/${pool.address}`}
+        buttonLink={`/${getEvmChainById(chainId).key}/pool/blade/${pool.address}`}
         txHash={transactionMutation.data}
       />
     </DialogProvider>

@@ -2,9 +2,7 @@ import { Currency, SkeletonCircle, SkeletonText } from '@sushiswap/ui'
 import type { ColumnDef } from '@tanstack/react-table'
 import { useCoinGeckoTokenInfo } from 'src/lib/hooks/react-query'
 import type { BladePoolAsset } from 'src/lib/pool/blade'
-import type { EvmChainId } from 'sushi/chain'
-import { Token } from 'sushi/currency'
-import { formatPercent, formatUSD } from 'sushi/format'
+import { formatPercent, formatUSD } from 'sushi'
 import { CurrencyFiatIcon } from '../CurrencyFiatIcon'
 
 export type BladePoolsTableMeta = {
@@ -63,7 +61,7 @@ export const NAME_COLUMN: ColumnDef<BladePoolAsset, unknown> = {
 function PriceCell(props: { row: BladePoolAsset }) {
   const { data: coinGeckoInfo, isLoading: isCoinGeckoInfoLoading } =
     useCoinGeckoTokenInfo({
-      token: 'stablecoin' in props.row ? undefined : props.row.token.wrapped,
+      token: 'stablecoin' in props.row ? undefined : props.row.token.wrap(),
       enabled: !('stablecoin' in props.row),
     })
 

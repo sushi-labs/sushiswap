@@ -5,10 +5,9 @@ export const TrendingTokensChainIds = [
   43111, 747474, 25, 5000, 324, 169, 34443, 167000, 810180, 33139, 999, 80094,
   1101,
 ] as const
-const TrendingTokensChainIdSet = new Set<number>(TrendingTokensChainIds)
 export type TrendingTokensChainId = (typeof TrendingTokensChainIds)[number]
 export function isTrendingTokensChainId(
   value: number,
 ): value is TrendingTokensChainId {
-  return TrendingTokensChainIdSet.has(value)
+  return TrendingTokensChainIds.includes(value as TrendingTokensChainId)
 }

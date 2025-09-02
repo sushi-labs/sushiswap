@@ -21,7 +21,7 @@ export async function DeleteTeamCard({ teamId }: DeleteTeamCard) {
   const teamResponse = await client.getTeamsTeamId({ teamId })
 
   return (
-    <Card className="w-full min-w-[470px]">
+    <Card className="h-min">
       <CardHeader className="rounded-t-xl">
         <CardTitle>Delete Team</CardTitle>
         <CardDescription>Permanently delete the team</CardDescription>

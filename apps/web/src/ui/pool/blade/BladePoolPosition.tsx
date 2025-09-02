@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@sushiswap/ui'
 import { Button, Currency, SkeletonText } from '@sushiswap/ui'
 import type { FC } from 'react'
 import { useMemo, useState } from 'react'
-import { formatPercent, formatUSD } from 'sushi/format'
+import { formatPercent, formatUSD } from 'sushi'
 
 import type { BladePool } from '@sushiswap/graph-client/data-api'
 import { getPoolAssets, getPoolTokensGrouped } from 'src/lib/pool/blade'
@@ -53,29 +53,29 @@ const PoolPositionConnected: FC<PoolPositionProps> = ({ pool }) => {
 
   const positionValue = useMemo(() => {
     if (
-      !balance?.quotient ||
-      !poolTotalSupply?.quotient ||
-      poolTotalSupply.quotient === 0n
+      !balance?.amount ||
+      !poolTotalSupply?.amount ||
+      poolTotalSupply.amount === 0n
     ) {
       return 0
     }
 
     const poolProportion =
-      Number(balance.quotient) / Number(poolTotalSupply.quotient)
+      Number(balance.amount) / Number(poolTotalSupply.amount)
     return pool.liquidityUSD * poolProportion
   }, [balance, poolTotalSupply, pool.liquidityUSD])
 
   const lockedPositionValue = useMemo(() => {
     if (
       !vestingDeposit?.balance ||
-      !poolTotalSupply?.quotient ||
-      poolTotalSupply.quotient === 0n
+      !poolTotalSupply?.amount ||
+      poolTotalSupply.amount === 0n
     ) {
       return 0
     }
 
     const poolProportion =
-      Number(vestingDeposit.balance) / Number(poolTotalSupply.quotient)
+      Number(vestingDeposit.balance) / Number(poolTotalSupply.amount)
     return pool.liquidityUSD * poolProportion
   }, [vestingDeposit?.balance, poolTotalSupply, pool.liquidityUSD])
 

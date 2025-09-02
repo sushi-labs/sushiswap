@@ -4,6 +4,8 @@ import { type RequestOptions, request } from 'src/lib/request.js'
 import {
   type ChefType,
   type EvmChainId,
+  type EvmID,
+  EvmToken,
   type PoolBase,
   type PoolHistory1D,
   type PoolV3,
@@ -11,8 +13,8 @@ import {
   type PoolWithIncentives,
   type RewarderType,
   SushiSwapProtocol,
-} from 'sushi'
-import { isSushiSwapV3ChainId } from 'sushi/config'
+  isSushiSwapV3ChainId,
+} from 'sushi/evm'
 import type { Address } from 'viem'
 import { SUSHI_DATA_API_HOST } from '../../data-api-host.js'
 import { graphql } from '../../graphql.js'
@@ -117,7 +119,7 @@ export async function getV3Pool(
       const incentives = result.v3Pool.incentives.filter((i) => i !== null)
       const pool = result.v3Pool
       return {
-        id: pool.id as `${string}:0x${string}`,
+        id: pool.id as EvmID,
         address: pool.address as Address,
         chainId,
         name: `${pool.token0.symbol}-${pool.token1.symbol}`,
@@ -137,22 +139,20 @@ export async function getV3Pool(
         volumeUSD: pool.volumeUSD,
         feesUSD: pool.volumeUSD * pool.swapFee,
 
-        token0: {
-          id: pool.token0.id as `${string}:0x${string}`,
+        token0: new EvmToken({
           address: pool.token0.address as Address,
           chainId,
           decimals: pool.token0.decimals,
           name: pool.token0.name,
           symbol: pool.token0.symbol,
-        },
-        token1: {
-          id: pool.token1.id as `${string}:0x${string}`,
+        }),
+        token1: new EvmToken({
           address: pool.token1.address as Address,
           chainId,
           decimals: pool.token1.decimals,
           name: pool.token1.name,
           symbol: pool.token1.symbol,
-        },
+        }),
         token0Price: pool.token0Price,
         token1Price: pool.token1Price,
         txCount: pool.txCount1d,
@@ -176,14 +176,13 @@ export async function getV3Pool(
           chainId,
           chefType: incentive.chefType as ChefType,
           apr: incentive.apr,
-          rewardToken: {
-            id: incentive.rewardToken.id as `${string}:0x${string}`,
+          rewardToken: new EvmToken({
             address: incentive.rewardToken.address as Address,
             chainId,
             decimals: incentive.rewardToken.decimals,
             name: incentive.rewardToken.name,
             symbol: incentive.rewardToken.symbol,
-          },
+          }),
           rewardPerDay: incentive.rewardPerDay,
           poolAddress: incentive.poolAddress as Address,
           pid: incentive.pid,

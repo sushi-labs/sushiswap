@@ -8,7 +8,7 @@ import {
   CardTitle,
   SkeletonText,
 } from '@sushiswap/ui'
-import { formatUSD } from 'sushi/format'
+import { formatUSD } from 'sushi'
 import { useReserves } from '~tron/_common/lib/hooks/useReserves'
 import { useStablePrice } from '~tron/_common/lib/hooks/useStablePrice'
 import { formatUnitsForInput } from '~tron/_common/lib/utils/formatters'

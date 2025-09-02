@@ -7,8 +7,7 @@ import { BLADE_API_HOST, BLADE_API_KEY } from 'src/lib/constants'
 import type { PublicWagmiConfig } from 'src/lib/wagmi/config/public'
 import { useWatchByBlock } from 'src/lib/wagmi/hooks/watch/useWatchByBlock'
 import type { IsEqualMultiple } from 'src/types/utils'
-import type { BladeChainId } from 'sushi/config'
-import type { Type } from 'sushi/currency'
+import type { BladeChainId, EvmCurrency } from 'sushi/evm'
 import type {
   Abi,
   AbiStateMutability,
@@ -136,7 +135,7 @@ type AssertEqualContractFunctionArgs<
 type DepositVariablesGetterArgs = {
   deposit: RfqDepositResponse
   amounts: {
-    token: Type
+    token: EvmCurrency
     amount: string
   }[]
 }

@@ -14,13 +14,13 @@ import type React from 'react'
 import { type FC, useMemo, useState } from 'react'
 
 import { BladeIcon } from '@sushiswap/ui/icons/BladeIcon'
-import { ChainKey } from 'sushi/chain'
 import {
   type BladeChainId,
   type SushiSwapChainId,
+  getEvmChainById,
   isBladeChainId,
   isSushiSwapChainId,
-} from 'sushi/config'
+} from 'sushi/evm'
 import { ConcentratedPositionsTable } from './ConcentratedPositionsTable/ConcentratedPositionsTable'
 import { PositionsTable } from './PositionsTable'
 import { BladePositionsTable } from './blade/BladePositionsTable'
@@ -137,7 +137,7 @@ export const PositionsTab: FC<{ chainId: SushiSwapChainId | BladeChainId }> = ({
             <PositionsTable
               chainId={chainId}
               rowLink={(row) =>
-                `/${ChainKey[chainId]}/pool/v2/${row.pool.address}/add`
+                `/${getEvmChainById(chainId).key}/pool/v2/${row.pool.address}/add`
               }
             />
           )}

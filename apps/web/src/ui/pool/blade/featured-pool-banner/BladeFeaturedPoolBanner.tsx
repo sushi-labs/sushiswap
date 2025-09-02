@@ -7,8 +7,8 @@ import {
   getPoolNameFromGroupedTokens,
   getPoolTokensGrouped,
 } from 'src/lib/pool/blade'
-import { ChainKey } from 'sushi/chain'
-import { formatPercent, formatUSD } from 'sushi/format'
+import { formatPercent, formatUSD } from 'sushi'
+import { getEvmChainById } from 'sushi/evm'
 import { CurrencyFiatIcon } from '../CurrencyFiatIcon'
 import background from '../assets/banner-background.jpg'
 import { BladeBadgeIcon } from './BladeBadgeIcon'
@@ -57,7 +57,7 @@ export const BladeFeaturedPoolBanner: FC<BladeFeaturedPoolBannerProps> = ({
                 <Currency.IconList iconWidth={51} iconHeight={51}>
                   {tokens.map((token) => (
                     <Currency.Icon
-                      key={token.wrapped.address}
+                      key={token.wrap().address}
                       disableLink
                       currency={token}
                     />
@@ -67,7 +67,7 @@ export const BladeFeaturedPoolBanner: FC<BladeFeaturedPoolBannerProps> = ({
                   ) : (
                     stablecoinUsdTokens.map((token) => (
                       <Currency.Icon
-                        key={token.wrapped.address}
+                        key={token.wrap().address}
                         disableLink
                         currency={token}
                       />
@@ -127,7 +127,7 @@ interface VisitBladePoolButtonProps {
 }
 
 function VisitBladePoolButton({ address, chainId }: VisitBladePoolButtonProps) {
-  const link = `/${ChainKey[chainId]}/pool/blade/${address}`
+  const link = `/${getEvmChainById(chainId).key}/pool/blade/${address}`
   return (
     <Link href={link}>
       <Button

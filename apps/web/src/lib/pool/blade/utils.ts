@@ -1,11 +1,11 @@
 import type { BladeChainId, BladePool } from '@sushiswap/graph-client/data-api'
-import { Native, Token, type Type } from 'sushi/currency'
+import { type EvmCurrency, EvmNative, EvmToken } from 'sushi/evm'
 import { BLADE_STABLES } from './stables'
 import type { BladePoolAsset } from './types'
 
 export type BladePoolTokensGrouped = {
-  tokens: Type[]
-  stablecoinUsdTokens: Type[]
+  tokens: EvmCurrency[]
+  stablecoinUsdTokens: EvmCurrency[]
 }
 
 export function getPoolTokensGrouped(pool: BladePool): BladePoolTokensGrouped {
@@ -19,11 +19,11 @@ export function getPoolTokensGrouped(pool: BladePool): BladePoolTokensGrouped {
       if (tokenData.targetWeight === 0) return acc
       const token =
         tokenData.token.address.toLowerCase() ===
-        Native.onChain(chainId).wrapped.address.toLowerCase()
-          ? Native.onChain(chainId)
-          : new Token({
+        EvmNative.fromChainId(chainId).wrap().address.toLowerCase()
+          ? EvmNative.fromChainId(chainId)
+          : new EvmToken({
               chainId,
-              address: tokenData.token.address,
+              address: tokenData.token.address as `0x${string}`,
               decimals: tokenData.token.decimals,
               symbol: tokenData.token.symbol,
               name: tokenData.token.name,
@@ -82,11 +82,11 @@ export function getPoolAssets(
     } else {
       const token =
         tokenData.address.toLowerCase() ===
-        Native.onChain(chainId).wrapped.address.toLowerCase()
-          ? Native.onChain(chainId)
-          : new Token({
+        EvmNative.fromChainId(chainId).wrap().address.toLowerCase()
+          ? EvmNative.fromChainId(chainId)
+          : new EvmToken({
               chainId,
-              address: tokenData.address,
+              address: tokenData.address as `0x${string}`,
               decimals: tokenData.decimals,
               symbol: tokenData.symbol,
               name: tokenData.name,

@@ -5,8 +5,7 @@ export const TokenListChainIds = [
   30, 146, 43111, 747474, 11155111, 129399, 25, 5000, 324, 169, 34443, 167000,
   810180, 33139, 999, 80094, 1101,
 ] as const
-const TokenListChainIdSet = new Set<number>(TokenListChainIds)
 export type TokenListChainId = (typeof TokenListChainIds)[number]
 export function isTokenListChainId(value: number): value is TokenListChainId {
-  return TokenListChainIdSet.has(value)
+  return TokenListChainIds.includes(value as TokenListChainId)
 }

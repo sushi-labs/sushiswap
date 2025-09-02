@@ -1,15 +1,14 @@
 import { type UseQueryOptions, useQuery } from '@tanstack/react-query'
 import { isZapSupportedChainId } from 'src/config'
-import type { EvmChainId } from 'sushi/chain'
-import type { Percent } from 'sushi/math'
-import { sz } from 'sushi/validate'
-import type { Address, Hex } from 'viem'
+import { type Percent, sz } from 'sushi'
+import type { EvmChainId } from 'sushi/evm'
+import type { Address } from 'viem'
 import { z } from 'zod'
 
 const txSchema = z.object({
   data: sz.hex(),
-  to: sz.address(),
-  from: sz.address(),
+  to: sz.evm.address(),
+  from: sz.evm.address(),
   value: z.string().transform((value) => BigInt(value)),
 })
 
@@ -80,7 +79,10 @@ export const useV2Zap = ({ query, ...params }: UseV2ZapParams) => {
       })
 
       if (slippage) {
-        url.searchParams.set('slippage', slippage.multiply(100n).toFixed(0))
+        url.searchParams.set(
+          'slippage',
+          slippage.mul(100n).toString({ fixed: 0 }),
+        )
       }
 
       const response = await fetch(url.toString(), {

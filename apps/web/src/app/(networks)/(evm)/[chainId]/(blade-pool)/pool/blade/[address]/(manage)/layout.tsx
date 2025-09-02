@@ -4,7 +4,7 @@ import { unstable_cache } from 'next/cache'
 import { notFound } from 'next/navigation'
 import type React from 'react'
 import { BladePoolLiquidityHeader } from 'src/ui/pool/blade/BladePoolLiquidityHeader'
-import { ChainKey, type EvmChainId } from 'sushi/chain'
+import { getEvmChainById } from 'sushi/evm'
 import { isAddress } from 'viem'
 
 export default async function Layout(props: {
@@ -16,7 +16,7 @@ export default async function Layout(props: {
   const { children } = props
 
   const { chainId: _chainId, address } = params
-  const chainId = +_chainId as EvmChainId
+  const chainId = +_chainId
 
   if (!isBladeChainId(chainId) || !isAddress(address, { strict: false })) {
     return notFound()
@@ -34,7 +34,7 @@ export default async function Layout(props: {
     <>
       <Container maxWidth="5xl" className="pt-10 px-4">
         <BladePoolLiquidityHeader
-          backUrl={`/${ChainKey[chainId]}/pool/blade/${address}`}
+          backUrl={`/${getEvmChainById(chainId).key}/pool/blade/${address}`}
           address={pool.address}
           pool={pool}
         />

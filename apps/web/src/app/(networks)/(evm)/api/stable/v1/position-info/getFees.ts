@@ -2,7 +2,7 @@ import { publicClientConfig } from 'src/lib/wagmi/config/viem'
 import {
   SUSHISWAP_V3_POSITION_MANAGER,
   type SushiSwapV3ChainId,
-} from 'sushi/config'
+} from 'sushi/evm'
 import { type Address, createClient } from 'viem'
 import { simulateContract } from 'viem/actions'
 

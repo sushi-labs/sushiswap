@@ -9,16 +9,18 @@ import React, {
   useMemo,
 } from 'react'
 import { useTokenWithCache } from 'src/lib/wagmi/hooks/tokens/useTokenWithCache'
-import { EvmChainId } from 'sushi/chain'
 import {
+  EvmChainId,
+  type EvmCurrency,
+  EvmNative,
+  type EvmToken,
   SUSHISWAP_V3_SUPPORTED_CHAIN_IDS,
   type SushiSwapV3ChainId,
   SushiSwapV3FeeAmount,
   currencyFromShortCurrencyName,
   isShortCurrencyName,
   isWNativeSupported,
-} from 'sushi/config'
-import { Native, type Token, type Type } from 'sushi/currency'
+} from 'sushi/evm'
 import { type Address, isAddress } from 'viem'
 import { z } from 'zod'
 
@@ -41,12 +43,12 @@ export const queryParamsSchema = z.object({
 type State = {
   tokenId: string | undefined
   chainId: SushiSwapV3ChainId
-  token0: Type | undefined
-  token1: Type | undefined
+  token0: EvmCurrency | undefined
+  token1: EvmCurrency | undefined
   tokensLoading: boolean
   feeAmount: SushiSwapV3FeeAmount
-  setToken0(currency: Type): void
-  setToken1(currency: Type): void
+  setToken0(currency: EvmCurrency): void
+  setToken1(currency: EvmCurrency): void
   setFeeAmount(feeAmount: SushiSwapV3FeeAmount): void
   switchTokens(): void
 }
@@ -64,7 +66,7 @@ interface ConcentratedLiquidityURLStateProvider {
 const getTokenFromUrl = (
   chainId: EvmChainId,
   currencyId: string | undefined | null,
-  token: Token | undefined,
+  token: EvmToken | undefined,
   isLoading: boolean,
 ) => {
   if (isLoading) {
@@ -76,7 +78,7 @@ const getTokenFromUrl = (
   } else if (!currencyId || !isWNativeSupported(chainId)) {
     return undefined
   } else {
-    return Native.onChain(chainId ? chainId : EvmChainId.ETHEREUM)
+    return EvmNative.fromChainId(chainId ? chainId : EvmChainId.ETHEREUM)
   }
 }
 
@@ -133,17 +135,16 @@ export const ConcentratedLiquidityURLStateProvider: FC<
 
     // Cant have two of the same tokens
     if (
-      token1?.wrapped.address === token0?.wrapped.address ||
+      token1?.wrap().address === token0?.wrap().address ||
       (token0 && token1 && token0.chainId !== token1.chainId)
     ) {
       token1 = undefined
     }
 
-    const setToken0 = (currency: Type) => {
-      const same = currency.wrapped.address === token1?.wrapped.address
-      const _fromCurrency = currency.isNative
-        ? 'NATIVE'
-        : currency.wrapped.address
+    const setToken0 = (currency: EvmCurrency) => {
+      const same = currency.wrap().address === token1?.wrap().address
+      const _fromCurrency =
+        currency.type === 'native' ? 'NATIVE' : currency.wrap().address
       const _searchParams = new URLSearchParams(
         Array.from(searchParams.entries()),
       )
@@ -156,11 +157,10 @@ export const ConcentratedLiquidityURLStateProvider: FC<
       }
       void push(`${pathname}?${_searchParams.toString()}`, { scroll: false })
     }
-    const setToken1 = (currency: Type) => {
-      const same = currency.wrapped.address === token0?.wrapped.address
-      const _toCurrency = currency.isNative
-        ? 'NATIVE'
-        : currency.wrapped.address
+    const setToken1 = (currency: EvmCurrency) => {
+      const same = currency.wrap().address === token0?.wrap().address
+      const _toCurrency =
+        currency.type === 'native' ? 'NATIVE' : currency.wrap().address
       const _searchParams = new URLSearchParams(
         Array.from(searchParams.entries()),
       )
@@ -186,11 +186,11 @@ export const ConcentratedLiquidityURLStateProvider: FC<
       )
       _searchParams.set(
         'fromCurrency',
-        !token1 || token1.isNative ? 'NATIVE' : token1.wrapped.address,
+        !token1 || token1.type === 'native' ? 'NATIVE' : token1.wrap().address,
       )
       _searchParams.set(
         'toCurrency',
-        !token0 || token0.isNative ? 'NATIVE' : token0.wrapped.address,
+        !token0 || token0.type === 'native' ? 'NATIVE' : token0.wrap().address,
       )
       void push(`${pathname}?${_searchParams.toString()}`, { scroll: false })
     }

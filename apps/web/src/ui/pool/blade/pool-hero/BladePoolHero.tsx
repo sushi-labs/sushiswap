@@ -7,11 +7,9 @@ import { SushiIcon } from '@sushiswap/ui/icons/SushiIcon'
 import Link from 'next/link'
 import { type FC, Fragment, useMemo, useState } from 'react'
 import { getPoolTokensGrouped } from 'src/lib/pool/blade'
-import { ChainKey, EvmChain } from 'sushi'
-import { formatPercent, formatUSD } from 'sushi/format'
-import { shortenAddress } from 'sushi/format'
+import { formatPercent, formatUSD } from 'sushi'
+import { type EvmAddress, getEvmChainById, shortenEvmAddress } from 'sushi/evm'
 import { CurrencyFiatIcon } from '../CurrencyFiatIcon'
-import background from '../assets/banner-background.jpg'
 
 interface BladePoolHeroProps {
   pool: BladePool
@@ -37,7 +35,9 @@ export const BladePoolHero: FC<BladePoolHeroProps> = ({ pool }) => {
   const rewardsApr = 0
   const basisApr = baseApr + rewardsApr
 
-  const poolExplorerLink = EvmChain.from(pool.chainId)?.getAccountUrl(pool.id)
+  const poolExplorerLink = getEvmChainById(pool.chainId).getAccountUrl(
+    pool.id as EvmAddress,
+  )
 
   return (
     <div className="relative z-10 flex flex-col items-center justify-center gap-4 px-4">
@@ -54,7 +54,7 @@ export const BladePoolHero: FC<BladePoolHeroProps> = ({ pool }) => {
               <Currency.IconList iconWidth={35} iconHeight={35}>
                 {tokens.map((token) => (
                   <Currency.Icon
-                    key={token.wrapped.address}
+                    key={token.wrap().address}
                     disableLink
                     currency={token}
                   />
@@ -64,7 +64,7 @@ export const BladePoolHero: FC<BladePoolHeroProps> = ({ pool }) => {
                 ) : (
                   stablecoinUsdTokens.map((token) => (
                     <Currency.Icon
-                      key={token.wrapped.address}
+                      key={token.wrap().address}
                       disableLink
                       currency={token}
                     />
@@ -110,7 +110,7 @@ export const BladePoolHero: FC<BladePoolHeroProps> = ({ pool }) => {
             <span className="font-medium">Pool Address</span>
             <LinkExternal href={poolExplorerLink}>
               <span className="text-blue-600 dark:text-blue-400">
-                {shortenAddress(pool.address)}
+                {shortenEvmAddress(pool.address)}
               </span>
             </LinkExternal>
           </div>
@@ -168,7 +168,7 @@ export const BladePoolHero: FC<BladePoolHeroProps> = ({ pool }) => {
       <div className="flex w-full flex-col items-center gap-2 max-w-xs sm:w-auto sm:flex-row sm:gap-3">
         <Link
           className="w-full"
-          href={`/${ChainKey[pool.chainId]}/pool/blade/${pool.address}/add`}
+          href={`/${getEvmChainById(pool.chainId).key}/pool/blade/${pool.address}/add`}
         >
           <Button
             variant="blank"

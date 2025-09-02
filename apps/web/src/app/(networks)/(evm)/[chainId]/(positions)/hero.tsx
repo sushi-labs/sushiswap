@@ -11,28 +11,29 @@ import {
   SelectIcon,
 } from '@sushiswap/ui'
 import type { FC } from 'react'
-import { ChainKey, EvmChainId } from 'sushi/chain'
 import {
+  EvmChainId,
   type SushiSwapV3ChainId,
+  getEvmChainById,
   isBladeChainId,
   isSushiSwapV2ChainId,
   isSushiSwapV3ChainId,
-} from 'sushi/config'
+} from 'sushi/evm'
 
 const getAddPositionHref = (chainId: EvmChainId) => {
   if (isSushiSwapV3ChainId(chainId as SushiSwapV3ChainId)) {
-    return `/${ChainKey[chainId]}/pool/v3/add`
+    return `/${getEvmChainById(chainId).key}/pool/v3/add`
   }
 
   if (isSushiSwapV2ChainId(chainId as SushiSwapV3ChainId)) {
-    return `/${ChainKey[chainId]}/pool/v2/add`
+    return `/${getEvmChainById(chainId).key}/pool/v2/add`
   }
 
   if (isBladeChainId(chainId)) {
-    return `/${ChainKey[chainId]}/pool/blade/add`
+    return `/${getEvmChainById(chainId).key}/pool/blade/add`
   }
 
-  return `/${ChainKey[EvmChainId.ETHEREUM]}/pool/v3/add`
+  return `/${getEvmChainById(EvmChainId.ETHEREUM).key}/pool/v3/add`
 }
 
 export const Hero: FC<{ chainId: EvmChainId }> = ({ chainId }) => {
@@ -66,7 +67,7 @@ export const Hero: FC<{ chainId: EvmChainId }> = ({ chainId }) => {
                 <DropdownMenuGroup>
                   <DropdownMenuItem disabled={!isBladeChainId(chainId)} asChild>
                     <LinkInternal
-                      href={`/${ChainKey[chainId]}/explore/blade-pools`}
+                      href={`/${getEvmChainById(chainId).key}/explore/blade-pools`}
                       className="flex flex-col !items-start gap-1 cursor-pointer"
                     >
                       <div className="flex items-center gap-1 font-medium leading-none">
@@ -85,7 +86,7 @@ export const Hero: FC<{ chainId: EvmChainId }> = ({ chainId }) => {
                     asChild
                   >
                     <LinkInternal
-                      href={`/${ChainKey[chainId]}/pool/v3/add`}
+                      href={`/${getEvmChainById(chainId).key}/pool/v3/add`}
                       className="flex flex-col !items-start gap-1 cursor-pointer"
                     >
                       <div className="flex items-center gap-1 font-medium leading-none">
@@ -104,7 +105,7 @@ export const Hero: FC<{ chainId: EvmChainId }> = ({ chainId }) => {
                   {isSushiSwapV2ChainId(chainId) ? (
                     <DropdownMenuItem asChild>
                       <LinkInternal
-                        href={`/${ChainKey[chainId]}/pool/v2/add`}
+                        href={`/${getEvmChainById(chainId).key}/pool/v2/add`}
                         className="flex flex-col !items-start gap-1 cursor-pointer"
                       >
                         <div className="flex items-center gap-1 font-medium leading-none">
@@ -129,7 +130,7 @@ export const Hero: FC<{ chainId: EvmChainId }> = ({ chainId }) => {
           >
             <LinkInternal
               className="text-sm"
-              href={`/${ChainKey[chainId]}/pool/incentivize`}
+              href={`/${getEvmChainById(chainId).key}/pool/incentivize`}
             >
               I want to incentivize a pool
             </LinkInternal>

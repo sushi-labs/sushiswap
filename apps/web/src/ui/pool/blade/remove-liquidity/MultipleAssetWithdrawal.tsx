@@ -1,11 +1,12 @@
 import { Button, Dots } from '@sushiswap/ui'
 import { type FC, useCallback } from 'react'
 import type { useBladeWithdrawTransaction } from 'src/lib/pool/blade/useBladeWithdraw'
-import type { Amount, Type } from 'sushi/currency'
+import type { Amount } from 'sushi'
+import type { EvmCurrency } from 'sushi/evm'
 import { useAccount } from 'wagmi'
 
 interface MultipleAssetWithdrawalProps {
-  amountToRemove: Amount<Type> | undefined
+  amountToRemove: Amount<EvmCurrency> | undefined
   onConfirm: () => void
   withdrawTransaction: ReturnType<typeof useBladeWithdrawTransaction>
 }
@@ -22,7 +23,7 @@ export const MultipleAssetWithdrawal: FC<MultipleAssetWithdrawalProps> = ({
 
     try {
       await withdrawTransaction.mutateAsync({
-        poolTokenAmountToBurn: amountToRemove.quotient.toString(),
+        poolTokenAmountToBurn: amountToRemove.amount.toString(),
       })
       onConfirm()
     } catch {}

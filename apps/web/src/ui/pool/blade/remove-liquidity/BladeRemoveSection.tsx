@@ -27,15 +27,15 @@ export const BladeRemoveSection: FC<BladeRemoveSectionProps> = withCheckerRoot(
 
     const userPositionValue = useMemo(() => {
       if (
-        !balance?.quotient ||
-        !poolTotalSupply?.quotient ||
-        poolTotalSupply.quotient === 0n
+        !balance?.amount ||
+        !poolTotalSupply?.amount ||
+        poolTotalSupply.amount === 0n
       ) {
         return 0
       }
 
       const poolProportion =
-        Number(balance.quotient) / Number(poolTotalSupply.quotient)
+        Number(balance.amount) / Number(poolTotalSupply.amount)
       return pool.liquidityUSD * poolProportion
     }, [balance, poolTotalSupply, pool.liquidityUSD])
 

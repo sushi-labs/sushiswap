@@ -8,8 +8,7 @@ import { BladeHighlights } from 'src/ui/pool/blade/blade-highlights'
 import { BladePoolPairsChart } from 'src/ui/pool/blade/pairs-chart'
 import { BladePoolHero } from 'src/ui/pool/blade/pool-hero'
 
-import type { EvmChainId } from 'sushi'
-import { isBladeChainId } from 'sushi/config'
+import { isBladeChainId } from 'sushi/evm'
 import { isAddress } from 'viem'
 
 export default async function PoolPage(props: {
@@ -17,7 +16,7 @@ export default async function PoolPage(props: {
 }) {
   const params = await props.params
   const { chainId: _chainId, address } = params
-  const chainId = +_chainId as EvmChainId
+  const chainId = +_chainId
 
   if (!isBladeChainId(chainId) || !isAddress(address, { strict: false })) {
     return notFound()
