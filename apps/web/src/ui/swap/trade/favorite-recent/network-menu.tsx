@@ -37,6 +37,7 @@ export const NetworkMenu = ({
             'flex items-center font-medium !gap-1 !px-2 !pl-4',
             className,
           )}
+          testId="network-menu-dropdown-trigger"
         >
           {selectedNetwork === null || !selectedNetwork ? (
             'All Networks'
@@ -51,11 +52,15 @@ export const NetworkMenu = ({
         className="max-h-[205px] overflow-y-auto hide-scrollbar !bg-slate-50 dark:!bg-slate-900 !backdrop-blur-none"
       >
         <DropdownMenuGroup className="font-medium">
-          <DropdownMenuItem onClick={() => onNetworkSelect?.(null)}>
+          <DropdownMenuItem
+            testdata-id={`network-menu-dropdown-menu-item-all-networks`}
+            onClick={() => onNetworkSelect?.(null)}
+          >
             <div>All Networks</div>
           </DropdownMenuItem>
           {networks?.map((chainId) => (
             <DropdownMenuItem
+              testdata-id={`network-menu-dropdown-menu-item-${chainId}`}
               key={chainId}
               onClick={() => onNetworkSelect?.(chainId)}
             >

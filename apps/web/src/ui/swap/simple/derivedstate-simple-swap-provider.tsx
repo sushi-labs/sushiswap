@@ -21,11 +21,10 @@ import {
   EvmNative,
   defaultCurrency,
   defaultQuoteCurrency,
-  isEvmChainId,
   isWNativeSupported,
 } from 'sushi/evm'
 import { type Address, isAddress } from 'viem'
-import { useAccount, useGasPrice, useSwitchChain } from 'wagmi'
+import { useAccount, useGasPrice } from 'wagmi'
 import { useCarbonOffset } from '../../../lib/swap/useCarbonOffset'
 
 const getTokenAsString = (token: EvmCurrency | string) =>
@@ -92,7 +91,6 @@ const DerivedstateSimpleSwapProvider: FC<
   const [localTokenCache, setLocalTokenCache] = useState<
     Map<string, EvmCurrency>
   >(new Map())
-  const { switchChainAsync } = useSwitchChain()
   const { createQuery } = useCreateQuery()
   const networkNameFromPath = pathname.split('/')[1]
   const chainIdFromPath = getChainByKey(
@@ -179,9 +177,6 @@ const DerivedstateSimpleSwapProvider: FC<
         switchTokens()
       } else {
         if (chainId0) {
-          if (isEvmChainId(Number(chainId0))) {
-            await switchChainAsync({ chainId: Number(chainId0) as EvmChainId })
-          }
           createQuery(
             [
               { name: 'token0', value: token0 },
@@ -204,7 +199,6 @@ const DerivedstateSimpleSwapProvider: FC<
       push,
       switchTokens,
       createQuery,
-      switchChainAsync,
     ],
   )
 

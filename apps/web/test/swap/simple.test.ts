@@ -1,4 +1,5 @@
 import { test } from 'next/experimental/testmode/playwright.js'
+import { getChainById } from 'sushi'
 import { EvmNative, USDC, USDT, WBTC } from 'sushi/evm'
 import { chainId, nativeAmount } from 'test/constants'
 import { SwapPage } from 'test/helpers/swap'
@@ -60,8 +61,8 @@ test.beforeEach(async ({ page, next }) => {
 // })
 
 test('Wrap and unwrap', async ({ page }) => {
-  // test.slow()
-  const url = BASE_URL.concat(`/${chainId}/swap`)
+  test.slow()
+  const url = BASE_URL.concat(`/${getChainById(chainId).key}/swap`)
   const swapPage = new SwapPage(page, chainId)
   await swapPage.goTo(url)
   await swapPage.connect()

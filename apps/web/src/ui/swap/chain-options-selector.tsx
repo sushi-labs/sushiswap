@@ -135,6 +135,7 @@ export const ChainOptionsSelector = ({
                     selectedNetwork === chainId &&
                       'bg-blue/10 dark:border-blue border-blue',
                   )}
+                  testdata-id={`network-option-${chainId}-button`}
                 />
               </TooltipTrigger>
               <TooltipContent className="border-black/5 dark:border-white/5 !rounded-md bg-white/20 dark:bg-black/20">

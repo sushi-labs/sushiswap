@@ -43,12 +43,26 @@ export function useMyTokensV2({
       if (!account) throw new Error('Account is required')
       if (!chainIds) throw new Error('ChainIds are required')
 
-      return getTokenListBalancesV2({
+      const data = await getTokenListBalancesV2({
         chainIds,
         account,
         customTokens,
         includeNative,
       })
+      const tokens = data?.map((token) => {
+        if (
+          token.chainId === 137 &&
+          token.address === '0x0000000000000000000000000000000000001010'
+        ) {
+          return {
+            ...token,
+            address: NativeAddress as Address,
+          }
+        }
+
+        return token
+      })
+      return tokens
     },
     enabled: Boolean(account && chainIds),
   })

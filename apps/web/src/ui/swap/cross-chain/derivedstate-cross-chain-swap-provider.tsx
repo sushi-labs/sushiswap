@@ -108,7 +108,6 @@ const DerivedstateCrossChainSwapProvider: FC<
     undefined,
   )
   const [routeOrder, setRouteOrder] = useState<CrossChainRouteOrder>('CHEAPEST')
-  const { switchChainAsync } = useSwitchChain()
   const { createQuery } = useCreateQuery()
   const networkNameFromPath = pathname.split('/')[1]
   const chainIdFromPath = getChainByKey(
@@ -190,17 +189,13 @@ const DerivedstateCrossChainSwapProvider: FC<
         ],
       )}`,
     )
-    if (isEvmChainId(Number(chainId1))) {
-      await switchChainAsync({ chainId: Number(chainId1) as EvmChainId })
-    }
 
     setChainId(Number(chainId1))
-  }, [pathname, defaultedParams, createQueryString, switchChainAsync])
+  }, [pathname, defaultedParams, createQueryString])
 
   // Update the URL with new from chainId
   const setChainId0 = useCallback(
     async (chainId: number) => {
-      await switchChainAsync({ chainId: chainId as EvmChainId })
       history.pushState(
         null,
         '',
@@ -215,7 +210,7 @@ const DerivedstateCrossChainSwapProvider: FC<
 
       setChainId(chainId)
     },
-    [createQueryString, pathname, chainId0, switchChainAsync],
+    [createQueryString, pathname, chainId0],
   )
 
   // Update the URL with new to chainId
@@ -239,9 +234,6 @@ const DerivedstateCrossChainSwapProvider: FC<
       const token0 = getTokenAsString(_token0)
       if (typeof _token0 !== 'string') {
         const _chainId = _token0.chainId.toString()
-        if (isEvmChainId(Number(_chainId))) {
-          await switchChainAsync({ chainId: Number(_chainId) as EvmChainId })
-        }
         createQuery(
           [
             { name: 'token0', value: token0 },
@@ -255,7 +247,7 @@ const DerivedstateCrossChainSwapProvider: FC<
         )
       }
     },
-    [createQueryString, pathname, push, switchChainAsync, createQuery],
+    [createQueryString, pathname, push, createQuery],
   )
 
   // Update the URL with a new token1

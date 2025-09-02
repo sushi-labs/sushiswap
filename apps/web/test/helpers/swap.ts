@@ -1,7 +1,8 @@
 import { type Page, expect } from '@playwright/test'
 import { NativeAddress } from 'src/lib/constants'
+import { getNetworkName } from 'src/lib/network'
 import { API_BASE_URL } from 'src/lib/swap/api-base-url'
-import type { Amount } from 'sushi'
+import { type Amount, getChainById } from 'sushi'
 import { type EvmChainId, type EvmCurrency, EvmNative } from 'sushi/evm'
 import { BaseActions } from './base' // Adjust the import path as necessary
 
@@ -199,6 +200,41 @@ export class SwapPage extends BaseActions {
     await expect(tokenSelector).toBeVisible()
     await expect(tokenSelector).toBeEnabled()
     await tokenSelector.click()
+
+    if (type === 'INPUT') {
+      const networkOption = this.page.locator(
+        `[testdata-id=network-option-${this.chainId}-button]`,
+      )
+      await expect(networkOption).toBeVisible()
+      await expect(networkOption).toBeEnabled()
+      await networkOption.click()
+      await expect(networkOption).toHaveClass(/border-blue/)
+    }
+
+    if (type === 'OUTPUT') {
+      const networkMenu = this.page.locator(
+        '[testdata-id=network-menu-dropdown-trigger-button]',
+      )
+      await expect(networkMenu).toBeVisible()
+      await expect(networkMenu).toBeEnabled()
+      await networkMenu.click()
+      const selectNetwork = this.page.locator(
+        `[testdata-id=network-menu-dropdown-menu-item-${this.chainId}]`,
+      )
+      await expect(selectNetwork).toBeVisible()
+      await expect(selectNetwork).toBeEnabled()
+      await selectNetwork.click()
+    }
+    // 	await expect(networkMenu).toContainText(getNetworkName(this.chainId));
+    // 	const chipSelector = this.page.locator(
+    // 		`[testdata-id=token-selector-chip-${
+    // 			currency.isNative ? NativeAddress : currency.address.toLowerCase()
+    // 		}]`
+    // 	);
+    // 	await expect(chipSelector).toBeVisible();
+    // 	await expect(chipSelector).toBeEnabled();
+    // 	await chipSelector.click();
+    // 	return;
 
     if (currency.isNative) {
       const rowToSelect = this.page.locator(

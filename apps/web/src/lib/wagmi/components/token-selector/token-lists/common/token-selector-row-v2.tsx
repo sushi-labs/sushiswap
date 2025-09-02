@@ -38,7 +38,12 @@ import { NetworkButton } from 'src/ui/swap/chain-options-selector'
 import { FavoriteButton } from 'src/ui/swap/trade/favorite-button'
 import { formatUSD, getChainById } from 'sushi'
 import { type Amount, ZERO } from 'sushi'
-import { type EvmChainId, type EvmCurrency, EvmToken } from 'sushi/evm'
+import {
+  type EvmChainId,
+  type EvmCurrency,
+  EvmNative,
+  EvmToken,
+} from 'sushi/evm'
 import { formatUnits, zeroAddress } from 'viem'
 
 export interface TokenSelectorRowV2 {
@@ -246,7 +251,7 @@ export const TokenSelectorRowV2: FC<TokenSelectorRowV2> = memo(
                           'text-right text-gray-900 dark:text-slate-50 truncate black:text-slate-50',
                         )}
                       >
-                        {balance?.toSignificant(6)}
+                        {balance.toSignificant(6)}
                       </span>
                       <span className="text-sm font-medium text-right text-gray-500 dark:text-slate-400">
                         {price && balance
