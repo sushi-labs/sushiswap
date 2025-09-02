@@ -35,13 +35,14 @@ interface UseTokenTransferParams {
 export type ERC20TransferABI = typeof erc20Abi_transfer
 export type ERC20TransferArgs = [Address, bigint]
 
-export const useTransferERC20 = ({
+export const useTransferToken = ({
   amount,
   sendTo,
   enabled = true,
 }: UseTokenTransferParams) => {
   const { address } = useAccount()
   const [pending, setPending] = useState(false)
+  const [success, setSuccess] = useState(false)
   const client = usePublicClient()
 
   const simulationEnabled = Boolean(
@@ -103,6 +104,7 @@ export const useTransferERC20 = ({
         })
 
         await receiptPromise
+        setSuccess(true)
       } finally {
         setPending(false)
       }
@@ -146,6 +148,7 @@ export const useTransferERC20 = ({
             value: amount.quotient,
             account: address,
           })
+          setSuccess(false)
           setPending(true)
         }
       }
@@ -153,6 +156,7 @@ export const useTransferERC20 = ({
       if (execute.writeContract && simulation?.data?.request) {
         return () => {
           execute.writeContract(simulation.data.request)
+          setSuccess(false)
           setPending(true)
         }
       }
@@ -170,10 +174,10 @@ export const useTransferERC20 = ({
 
   return useMemo<[TransferState, { write: undefined | (() => void) }]>(() => {
     let state = TransferState.UNKNOWN
-    if (execute.isSuccess) state = TransferState.TRANSFERED
+    if (success) state = TransferState.TRANSFERED
     else if (pending) state = TransferState.PENDING
     else state = TransferState.NOT_TRANSFERED
 
     return [state, { write }]
-  }, [write, pending, execute])
+  }, [write, pending, success])
 }

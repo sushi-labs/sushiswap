@@ -2,12 +2,15 @@ import { ArrowLeftIcon } from '@heroicons/react-v1/solid'
 import { XMarkIcon } from '@heroicons/react/24/outline'
 import { Button, DialogClose, DialogTitle, IconButton } from '@sushiswap/ui'
 import { useMemo, useState } from 'react'
-import { shortenAddress } from 'sushi'
 import { isAddress } from 'viem'
-import { useContacts } from './hooks/useContacts'
+import { useContacts } from '../../../lib/wagmi/hooks/hooks/use-contacts'
 import { useSendTokens } from './send-token-provider'
 
-export const UpsertContactView = () => {
+export const UpsertContactView = ({
+  goBackTo,
+}: {
+  goBackTo: () => void
+}) => {
   const {
     mutate,
     state: { contactToEdit },
@@ -52,7 +55,7 @@ export const UpsertContactView = () => {
       <div className="flex justify-between items-center">
         <DialogTitle className="!font-medium !text-[20px] items-center !text-slate-900 dark:!text-slate-100">
           <div className="flex gap-2.5 items-center">
-            <button type="button" onClick={() => mutate.goTo('browseContacts')}>
+            <button type="button" onClick={goBackTo}>
               <ArrowLeftIcon className="w-5 h-5" />
             </button>
             {isEditing ? 'Edit Contact' : 'Add Contact'}

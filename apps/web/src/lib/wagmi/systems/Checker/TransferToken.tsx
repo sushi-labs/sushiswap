@@ -7,10 +7,10 @@ import type { Amount, Type } from 'sushi/currency'
 import type { Address } from 'viem'
 import {
   TransferState,
-  useTransferERC20,
-} from '../../hooks/transfer/hooks/use-transfer-erc20'
+  useTransferToken,
+} from '../../hooks/transfer/hooks/use-transfer-token'
 
-interface TransferERC20Props extends ButtonProps {
+interface TransferTokenProps extends ButtonProps {
   id: string
   amount: Amount<Type> | undefined
   sendTo: Address | undefined
@@ -18,7 +18,7 @@ interface TransferERC20Props extends ButtonProps {
   onSuccess?: () => void
 }
 
-const TransferERC20: FC<TransferERC20Props> = ({
+const TransferToken: FC<TransferTokenProps> = ({
   id,
   amount,
   sendTo,
@@ -31,7 +31,7 @@ const TransferERC20: FC<TransferERC20Props> = ({
   ...props
 }) => {
   const [isTransferred, setIsTransferred] = useState(false)
-  const [state, { write }] = useTransferERC20({
+  const [state, { write }] = useTransferToken({
     amount,
     sendTo,
     enabled,
@@ -66,4 +66,4 @@ const TransferERC20: FC<TransferERC20Props> = ({
   )
 }
 
-export { TransferERC20, type TransferERC20Props }
+export { TransferToken, type TransferTokenProps }

@@ -55,11 +55,22 @@ export const SendWidget = ({
       </DialogTrigger>
       <DialogContent
         hideClose
-        className="max-w-none md:!max-w-[641px] min-h-[483px] !rounded-none md:!rounded-xl md:h-auto h-[100dvh] !flex flex-col !p-5"
+        className={classNames(
+          'max-w-none md:!max-w-[641px] !rounded-none md:!rounded-xl md:h-auto h-[100dvh] !flex flex-col !p-5',
+          isBrowseView && 'md:!h-[470px]',
+        )}
       >
         {isSendView && <SendView />}
         {isBrowseView && <BrowseContactView />}
-        {(isEditView || isAddView) && <UpsertContactView />}
+        {(isEditView || isAddView) && (
+          <UpsertContactView
+            goBackTo={
+              isEditView
+                ? () => mutate.goTo('browseContacts')
+                : () => mutate.goTo('send')
+            }
+          />
+        )}
       </DialogContent>
     </Dialog>
   )

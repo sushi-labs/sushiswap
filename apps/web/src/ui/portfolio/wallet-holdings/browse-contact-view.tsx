@@ -16,7 +16,7 @@ import { CopyIcon } from '@sushiswap/ui/icons/CopyIcon'
 import { PencilIcon } from '@sushiswap/ui/icons/PencilIcon'
 import { useState } from 'react'
 import { shortenAddress } from 'sushi/format'
-import { useContacts } from './hooks/useContacts'
+import { useContacts } from '../../../lib/wagmi/hooks/hooks/use-contacts'
 import { useSendTokens } from './send-token-provider'
 
 export const BrowseContactView = () => {
