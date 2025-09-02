@@ -751,9 +751,6 @@ export const useBladeDepositTransaction = ({
 
   const depositTransaction = useMutation({
     mutationFn: async (args: DepositVariablesGetterArgs) => {
-      console.log({
-        abi: pool.abi,
-      })
       const txHash = await writeContractAsync(
         depositWriteVariablesMap[pool.abi](args),
       )
