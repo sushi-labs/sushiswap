@@ -117,7 +117,7 @@ export const TokenSelectorRowV2: FC<TokenSelectorRowV2> = memo(
           <div
             testdata-id={`token-selector-row-${
               currency.isNative
-                ? zeroAddress
+                ? NativeAddress
                 : currency.wrap().address.toLowerCase()
             }`}
             onClick={() => onClick(currency)}

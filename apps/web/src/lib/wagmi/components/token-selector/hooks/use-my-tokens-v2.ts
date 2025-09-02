@@ -7,7 +7,12 @@ import { useQuery } from '@tanstack/react-query'
 import { useMemo } from 'react'
 import { NativeAddress } from 'src/lib/constants'
 import { Amount } from 'sushi'
-import { type EvmCurrency, EvmNative, EvmToken } from 'sushi/evm'
+import {
+  type EvmChainId,
+  type EvmCurrency,
+  EvmNative,
+  EvmToken,
+} from 'sushi/evm'
 import type { Address } from 'viem'
 
 interface UseMyTokensV2 {
@@ -43,6 +48,27 @@ export function useMyTokensV2({
       if (!account) throw new Error('Account is required')
       if (!chainIds) throw new Error('ChainIds are required')
 
+      if (process.env.NEXT_PUBLIC_APP_ENV === 'test') {
+        const _chainId = +process.env.NEXT_PUBLIC_CHAIN_ID! as EvmChainId
+        const _native = EvmNative.fromChainId(_chainId)
+        return [
+          {
+            bridgeInfo: [],
+            symbol: _native.symbol,
+            priceUSD: 0,
+            priceChange1d: 0,
+            name: _native.name,
+            decimals: _native.decimals,
+            chainId: _chainId,
+            balanceUSD: 0,
+            balance: new Amount(_native, '10000000000000000000000').amount,
+            approved: true,
+            address: NativeAddress,
+            id: _native.id,
+          },
+        ]
+      }
+
       const data = await getTokenListBalancesV2({
         chainIds,
         account,
@@ -56,7 +82,7 @@ export function useMyTokensV2({
         ) {
           return {
             ...token,
-            address: NativeAddress as Address,
+            address: NativeAddress,
           }
         }
 
