@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation'
-import { V3PositionView } from 'src/ui/pool/V3PositionView'
 import { isEvmAddress, isSushiSwapV3ChainId } from 'sushi/evm'
+import { V3PositionView } from './_common/ui/V3PositionView'
 
 export default async function V3PositionsPage(props: {
   params: Promise<{ chainId: string; address: string; position: string }>

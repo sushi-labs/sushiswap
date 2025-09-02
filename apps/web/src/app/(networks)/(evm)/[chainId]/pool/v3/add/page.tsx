@@ -3,16 +3,6 @@
 import { useRouter } from 'next/navigation'
 import { type FC, use, useMemo, useState } from 'react'
 import { useConcentratedPositionInfo } from 'src/lib/wagmi/hooks/positions/hooks/useConcentratedPositionInfo'
-import { ConcentratedLiquidityProvider } from 'src/ui/pool/ConcentratedLiquidityProvider'
-import {
-  ConcentratedLiquidityURLStateProvider,
-  useConcentratedLiquidityURLState,
-} from 'src/ui/pool/ConcentratedLiquidityURLStateProvider'
-import { ConcentratedLiquidityWidget } from 'src/ui/pool/ConcentratedLiquidityWidget'
-import { SelectFeeConcentratedWidget } from 'src/ui/pool/SelectFeeConcentratedWidget'
-import { SelectNetworkWidget } from 'src/ui/pool/SelectNetworkWidget'
-import { SelectPricesWidget } from 'src/ui/pool/SelectPricesWidget'
-import { SelectTokensWidget } from 'src/ui/pool/SelectTokensWidget'
 import {
   SUSHISWAP_V3_FACTORY_ADDRESS,
   SUSHISWAP_V3_SUPPORTED_CHAIN_IDS,
@@ -22,6 +12,16 @@ import {
   isWNativeSupported,
 } from 'sushi/evm'
 import { useAccount } from 'wagmi'
+import { ConcentratedLiquidityProvider } from '~evm/[chainId]/_ui/ConcentratedLiquidityProvider'
+import { SelectPricesWidget } from '~evm/[chainId]/_ui/SelectPricesWidget'
+import {
+  ConcentratedLiquidityURLStateProvider,
+  useConcentratedLiquidityURLState,
+} from '../../_ui/ConcentratedLiquidityURLStateProvider'
+import { SelectFeeConcentratedWidget } from '../../_ui/SelectFeeConcentratedWidget'
+import { SelectNetworkWidget } from '../../_ui/SelectNetworkWidget'
+import { SelectTokensWidget } from '../../_ui/SelectTokensWidget'
+import { ConcentratedLiquidityWidget } from '../_ui/ConcentratedLiquidityWidget'
 
 export default function Page(props: { params: Promise<{ chainId: string }> }) {
   const params = use(props.params)

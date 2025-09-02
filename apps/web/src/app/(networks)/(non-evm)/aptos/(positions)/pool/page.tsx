@@ -2,9 +2,9 @@
 
 import { Container } from '@sushiswap/ui'
 import { Suspense } from 'react'
+import { TableFiltersNetwork } from 'src/app/(networks)/_ui/TableFiltersNetwork'
+import { TableFiltersSearchToken } from 'src/app/(networks)/_ui/TableFiltersSearchToken'
 import { POOL_SUPPORTED_NETWORKS } from 'src/config'
-import { TableFiltersNetwork } from 'src/ui/pool/TableFiltersNetwork'
-import { TableFiltersSearchToken } from 'src/ui/pool/TableFiltersSearchToken'
 import { MvmChainId } from 'sushi/mvm'
 import { PositionsTable } from '~aptos/pool/ui/tables/positions/pool-positions-table'
 

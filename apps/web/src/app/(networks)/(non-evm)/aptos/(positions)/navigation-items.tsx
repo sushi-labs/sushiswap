@@ -2,7 +2,7 @@
 
 import { LinkInternal } from '@sushiswap/ui'
 import { useSearchParams } from 'next/navigation'
-import { PathnameButton } from 'src/ui/pathname-button'
+import { PathnameButton } from 'src/app/_ui/pathname-button'
 
 export function NavigationItems() {
   const searchParams = useSearchParams()

@@ -4,7 +4,7 @@ import { unstable_cache } from 'next/cache'
 import { headers } from 'next/headers'
 import { notFound } from 'next/navigation'
 import type React from 'react'
-import { PoolHeader } from 'src/ui/pool/PoolHeader'
+import { PoolHeader } from '~evm/[chainId]/pool/_ui/PoolHeader'
 import { getEvmChainById, isSushiSwapV2ChainId } from 'sushi/evm'
 import { isAddress } from 'viem'
 

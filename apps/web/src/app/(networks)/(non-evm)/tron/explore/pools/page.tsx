@@ -1,7 +1,7 @@
 import { Container } from '@sushiswap/ui'
 import React from 'react'
-import { TableFiltersResetButton } from 'src/ui/pool/TableFiltersResetButton'
-import { TableFiltersSearchToken } from 'src/ui/pool/TableFiltersSearchToken'
+import { TableFiltersSearchToken } from 'src/app/(networks)/_ui/TableFiltersSearchToken'
+import { TableFiltersResetButton } from '~evm/[chainId]/_ui/TableFiltersResetButton'
 import { PoolsTable } from '~tron/_common/ui/Pools/PoolsTable/PoolsTable'
 
 export default async function PoolsPage() {

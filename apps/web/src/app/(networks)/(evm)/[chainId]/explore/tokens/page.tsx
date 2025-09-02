@@ -1,9 +1,9 @@
 import { Container } from '@sushiswap/ui'
 import { notFound } from 'next/navigation'
 import React from 'react'
-import { TableFiltersSearchToken } from 'src/ui/token/TableFiltersSearchToken'
-import { TokensTable } from 'src/ui/token/TokensTable'
-import { type SushiSwapChainId, isSushiSwapChainId } from 'sushi/evm'
+import { isSushiSwapChainId } from 'sushi/evm'
+import { TableFiltersSearchToken } from './_ui/TableFiltersSearchToken'
+import { TokensTable } from './_ui/TokensTable'
 
 export default async function TokensPage(props: {
   params: Promise<{ chainId: string }>
