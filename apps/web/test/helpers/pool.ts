@@ -274,8 +274,11 @@ export class PoolPage extends BaseActions {
       tokenB: fakeToken,
       fee: SushiSwapV3FeeAmount.HIGH,
     })
+    // const url = BASE_URL.concat(
+    // 	`/${getChainById(this.chainId).key}/pool/v3/${poolAddress.toLowerCase()}/positions`
+    // );
     const url = BASE_URL.concat(
-      `/${getChainById(this.chainId).key}/pool/v3/${poolAddress.toLowerCase()}/positions`,
+      `/${this.chainId}/pool/v3/${poolAddress.toLowerCase()}/positions`,
     )
     await this.page.goto(url)
     await this.connect()
@@ -325,8 +328,11 @@ export class PoolPage extends BaseActions {
       tokenB: fakeToken,
     })
 
+    // const url = BASE_URL.concat(
+    //   `/${getChainById(this.chainId).key}/pool/v2/${poolAddress.toLowerCase()}/remove`,
+    // )
     const url = BASE_URL.concat(
-      `/${getChainById(this.chainId).key}/pool/v2/${poolAddress.toLowerCase()}/remove`,
+      `/${this.chainId}/pool/v2/${poolAddress.toLowerCase()}/remove`,
     )
     await this.page.goto(url)
     await this.connect()
