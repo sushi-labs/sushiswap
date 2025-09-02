@@ -9,12 +9,12 @@
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf .next && rm -rf .swc",
     "dev": "next dev --turbopack",
     "generate-swaps": "tsx test/swap/scripts/generate-swaps.ts",
+    "postinstall": "node ../../scripts/validate-deps.js",
     "lint": "TIMING=1 next lint",
     "lint:fix": "TIMING=1 next lint --fix",
     "start": "next start",
     "test": "npx playwright test -c test/playwright.config.ts",
-    "test:unit": "vitest --watch=false src",
-    "postinstall": "node ../../scripts/validate-deps.js"
+    "test:unit": "vitest --watch=false src"
   },
   "dependencies": {
     "@aptos-labs/ts-sdk": "1.27.0",
