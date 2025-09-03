@@ -330,13 +330,45 @@ export class RainDataFetcher extends DataFetcher {
     if (!poolAddresses.length) return
     addresses.push(...poolAddresses)
 
-    // get logs and sort them from earliest block to latest
-    const logs = await this.web3Client.getLogs({
-      events: this.eventsAbi,
-      address: addresses as `0x${string}`[],
-      fromBlock,
-      toBlock: untilBlock,
-    })
+    // get logs in slices of 5 blocks to follow paging instructions from standard evm rpc specs
+    let fromBlockSlice = fromBlock
+    const logsPromises = []
+    while (fromBlockSlice < untilBlock) {
+      let toBlock = untilBlock
+      if (fromBlockSlice + 5n < untilBlock) {
+        toBlock = fromBlockSlice + 5n
+      }
+      logsPromises.push(
+        this.web3Client.getLogs({
+          events: this.eventsAbi,
+          address: addresses as `0x${string}`[],
+          fromBlock: fromBlockSlice,
+          toBlock,
+        }),
+      )
+      fromBlockSlice += 5n
+    }
+
+    // await logs and sort them from earliest block to latest
+    const logsResults = await Promise.allSettled(logsPromises)
+    const logs: Awaited<
+      ReturnType<
+        typeof this.web3Client.getLogs<
+          undefined,
+          ParseAbiItem<any>[],
+          undefined,
+          bigint,
+          bigint
+        >
+      >
+    > = []
+    for (const res of logsResults) {
+      if (res.status === 'fulfilled') {
+        logs.push(...res.value)
+      } else {
+        break // if any one of the logs request fails, break out of the loop to avoid missing logs
+      }
+    }
     logs.sort((a, b) => {
       const diff = a.blockNumber - b.blockNumber
       if (diff === 0n) {
