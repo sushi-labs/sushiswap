@@ -2,8 +2,8 @@
 
 import type { Meta, StoryObj } from '@storybook/react'
 import { Currency } from '@sushiswap/ui'
-import { ChainId } from 'sushi/chain'
-import { SUSHI, USDT } from 'sushi/currency'
+import { ChainId } from 'sushi'
+import { SUSHI, USDT } from 'sushi/evm'
 
 const meta = {
   title: 'Primitives/CurrencyIcon',

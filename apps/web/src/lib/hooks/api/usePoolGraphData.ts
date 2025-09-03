@@ -5,16 +5,17 @@ import {
   getV3PoolBuckets,
 } from '@sushiswap/graph-client/data-api'
 import { keepPreviousData, useQuery } from '@tanstack/react-query'
-import { type Address, SushiSwapProtocol } from 'sushi'
 import {
+  type EvmAddress,
+  SushiSwapProtocol,
   type SushiSwapV2ChainId,
   type SushiSwapV3ChainId,
   isSushiSwapV2ChainId,
   isSushiSwapV3ChainId,
-} from 'sushi/config'
+} from 'sushi/evm'
 
 interface UsePoolGraphDataParams {
-  poolAddress: Address
+  poolAddress: EvmAddress
   chainId: SushiSwapV2ChainId | SushiSwapV3ChainId
   protocol: SushiSwapProtocol
   enabled?: boolean

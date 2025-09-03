@@ -1,6 +1,6 @@
 import { Dots } from '@sushiswap/ui'
 import type { FC } from 'react'
-import { EvmChain } from 'sushi/chain'
+import { getChainById } from 'sushi'
 
 import type { ResolvedNotification } from '../../types'
 import { ToastContent } from './toast-content'
@@ -20,7 +20,7 @@ export const ToastPending: FC<ToastPending> = ({
   const txUrl = href
     ? href
     : txHash
-      ? EvmChain.from(chainId)?.getTxUrl(txHash)
+      ? getChainById(chainId).getTransactionUrl(txHash as `0x${string}`)
       : ''
   return (
     <>

@@ -3,9 +3,9 @@
 import { LinkInternal } from '@sushiswap/ui'
 import { useSearchParams } from 'next/navigation'
 import { PathnameButton } from 'src/ui/pathname-button'
-import { type ChainId, ChainKey } from 'sushi/chain'
+import { type EvmChainId, getEvmChainById } from 'sushi/evm'
 
-export function NavigationItems({ chainId }: { chainId: ChainId }) {
+export function NavigationItems({ chainId }: { chainId: EvmChainId }) {
   const searchParams = useSearchParams()
 
   return (
@@ -13,11 +13,11 @@ export function NavigationItems({ chainId }: { chainId: ChainId }) {
       <LinkInternal
         shallow={true}
         scroll={false}
-        href={`/${ChainKey[chainId]}/pool?${searchParams.toString()}`}
+        href={`/${getEvmChainById(chainId).key}/pool?${searchParams.toString()}`}
       >
         <PathnameButton
           id="my-positions"
-          pathname={`/${ChainKey[chainId]}/pool`}
+          pathname={`/${getEvmChainById(chainId).key}/pool`}
           asChild
           size="sm"
         >
@@ -27,11 +27,11 @@ export function NavigationItems({ chainId }: { chainId: ChainId }) {
       <LinkInternal
         shallow={true}
         scroll={false}
-        href={`/${ChainKey[chainId]}/migrate?${searchParams.toString()}`}
+        href={`/${getEvmChainById(chainId).key}/migrate?${searchParams.toString()}`}
       >
         <PathnameButton
           id="migrate"
-          pathname={`/${ChainKey[chainId]}/migrate`}
+          pathname={`/${getEvmChainById(chainId).key}/migrate`}
           asChild
           size="sm"
         >

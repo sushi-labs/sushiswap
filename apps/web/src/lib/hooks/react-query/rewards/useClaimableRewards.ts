@@ -1,6 +1,11 @@
 import { useQuery } from '@tanstack/react-query'
-import { MERKL_SUPPORTED_CHAIN_IDS, type MerklChainId } from 'sushi/config'
-import { Amount, Token, type Type } from 'sushi/currency'
+import { Amount } from 'sushi'
+import {
+  type EvmCurrency,
+  EvmToken,
+  MERKL_SUPPORTED_CHAIN_IDS,
+  type MerklChainId,
+} from 'sushi/evm'
 import type { Hex } from 'viem'
 import type { Address } from 'viem/accounts'
 import { merklRewardsValidator } from './validator'
@@ -13,7 +18,7 @@ interface UseClaimableRewardsParams {
 
 export type ClaimableRewards = {
   chainId: MerklChainId
-  rewardAmounts: Record<string, Amount<Type>>
+  rewardAmounts: Record<string, Amount<EvmCurrency>>
   rewardAmountsUSD: Record<string, number>
   totalRewardsUSD: number
   claimArgs: [Address[], Address[], bigint[], Hex[][]]
@@ -50,7 +55,7 @@ export const useClaimableRewards = ({
 
         if (rewards.length === 0) return accum
 
-        const rewardAmounts = {} as Record<string, Amount<Type>>
+        const rewardAmounts = {} as Record<string, Amount<EvmCurrency>>
         const prices = {} as Record<string, number | undefined>
 
         const claimArgs = {
@@ -74,12 +79,12 @@ export const useClaimableRewards = ({
 
           if (currentValue) {
             const amount = currentValue.add(
-              Amount.fromRawAmount(currentValue.currency, unclaimed),
+              new Amount(currentValue.currency, unclaimed),
             )
             rewardAmounts[reward.token.address] = amount
           } else {
-            const token = new Token(reward.token)
-            const amount = Amount.fromRawAmount(token, unclaimed)
+            const token = new EvmToken({ ...reward.token, name: '' })
+            const amount = new Amount(token, unclaimed)
             rewardAmounts[reward.token.address] = amount
             prices[reward.token.address] = reward.token.price
           }
@@ -95,7 +100,7 @@ export const useClaimableRewards = ({
               return prev
             }
 
-            const _amountUSD = Number(amount.toExact()) * price
+            const _amountUSD = Number(amount.toString()) * price
 
             const amountUSD =
               Number.isNaN(price) || +price.toFixed(10) < 0.000001

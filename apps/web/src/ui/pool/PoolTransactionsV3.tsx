@@ -1,6 +1,12 @@
 'use client'
 
 import {
+  getSushiV3Burns,
+  getSushiV3Collects,
+  getSushiV3Mints,
+  getSushiV3Swaps,
+} from '@sushiswap/graph-client/data-api'
+import {
   Card,
   CardContent,
   CardHeader,
@@ -11,18 +17,14 @@ import {
 import { useQuery } from '@tanstack/react-query'
 import type { PaginationState } from '@tanstack/react-table'
 import { type FC, useMemo, useState } from 'react'
-import { EvmChain, type EvmChainId } from 'sushi/chain'
-import { type SushiSwapV3ChainId, isSushiSwapV3ChainId } from 'sushi/config'
-
-import {
-  getSushiV3Burns,
-  getSushiV3Collects,
-  getSushiV3Mints,
-  getSushiV3Swaps,
-} from '@sushiswap/graph-client/data-api'
 
 import type { V3Pool } from '@sushiswap/graph-client/data-api'
-import type { Address } from 'viem'
+import {
+  type SushiSwapV3ChainId,
+  getEvmChainById,
+  isSushiSwapV3ChainId,
+} from 'sushi/evm'
+import type { Address, Hex } from 'viem'
 import {
   TX_AMOUNT_IN_V3_COLUMN,
   TX_AMOUNT_OUT_V3_COLUMN,
@@ -115,27 +117,25 @@ function useTransactionsV3(
   return useQuery({
     queryKey: ['poolTransactionsV3', poolAddress, opts],
     queryFn: async () => {
-      const chainId = pool?.chainId as EvmChainId
-
-      if (!pool || !isSushiSwapV3ChainId(chainId)) return []
+      if (!pool || !isSushiSwapV3ChainId(pool.chainId)) return []
 
       let transactions = []
 
       switch (opts.type) {
         case TransactionTypeV3.Mint:
-          transactions = await fetchMints(poolAddress, chainId)
+          transactions = await fetchMints(poolAddress, pool.chainId)
           break
         case TransactionTypeV3.Burn:
-          transactions = await fetchBurns(poolAddress, chainId)
+          transactions = await fetchBurns(poolAddress, pool.chainId)
           break
         case TransactionTypeV3.Swap:
-          transactions = await fetchSwaps(poolAddress, chainId)
+          transactions = await fetchSwaps(poolAddress, pool.chainId)
           break
         case TransactionTypeV3.Collect:
-          transactions = await fetchCollects(poolAddress, chainId)
+          transactions = await fetchCollects(poolAddress, pool.chainId)
           break
         default:
-          transactions = await fetchSwaps(poolAddress, chainId)
+          transactions = await fetchSwaps(poolAddress, pool.chainId)
       }
 
       if (!transactions.length) return []
@@ -186,15 +186,15 @@ function useTransactionsV3(
             timestamp: Number(transaction.timestamp),
             blockNumber: Number(transaction.blockNumber),
             ...subtransaction,
-            amount0: Number(subtransaction.amount0), // Amount.fromRawAmount(pool.token0, subtransaction.amount0),
-            amount1: Number(subtransaction.amount1), // Amount.fromRawAmount(pool.token1, subtransaction.amount1),
+            amount0: Number(subtransaction.amount0), // new Amount(pool.token0, subtransaction.amount0),
+            amount1: Number(subtransaction.amount1), // new Amount(pool.token1, subtransaction.amount1),
             amountUSD: Number(subtransaction.amountUSD),
             logIndex: Number(subtransaction.logIndex),
           }))
           .sort((a, b) => b.logIndex - a.logIndex)
       })
     },
-    enabled: !!pool && isSushiSwapV3ChainId(pool?.chainId as EvmChainId),
+    enabled: !!pool && isSushiSwapV3ChainId(pool?.chainId),
     refetchInterval: opts?.refetchInterval,
   })
 }
@@ -285,7 +285,9 @@ const PoolTransactionsV3: FC<PoolTransactionsV3Props> = ({
       <CardContent className="!px-0">
         <DataTable
           linkFormatter={(row) =>
-            EvmChain.from(row.pool.chainId)?.getTxUrl(row.transaction.id) ?? ''
+            getEvmChainById(row.pool.chainId).getTransactionUrl(
+              row.transaction.id as Hex,
+            ) ?? ''
           }
           loading={isLoading}
           columns={COLUMNS}

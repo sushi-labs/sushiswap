@@ -1,13 +1,12 @@
 import { APPROVE_TAG_UNSTAKE } from 'src/lib/constants'
-import { ChainId } from 'sushi/chain'
-import { SUSHI, XSUSHI } from 'sushi/currency'
+import { EvmChainId, SUSHI, XSUSHI } from 'sushi/evm'
 import { BarSection } from './BarSection'
 
 export const UnstakeSection = () => {
   return (
     <BarSection
-      inputToken={XSUSHI[ChainId.ETHEREUM]}
-      outputToken={SUSHI[ChainId.ETHEREUM]}
+      inputToken={XSUSHI[EvmChainId.ETHEREUM]}
+      outputToken={SUSHI[EvmChainId.ETHEREUM]}
       approveTag={APPROVE_TAG_UNSTAKE}
     />
   )

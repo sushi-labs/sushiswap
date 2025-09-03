@@ -1,11 +1,11 @@
+import type { Amount, Percent, Price } from 'sushi'
 import type {
+  EvmChainId,
+  EvmCurrency,
+  RouterLiquiditySource,
   routeProcessor2Abi_processRoute,
   routeProcessor2Abi_transferValueAndprocessRoute,
-} from 'sushi/abi'
-import type { EvmChainId } from 'sushi/chain'
-import type { Amount, Price, Type } from 'sushi/currency'
-import type { Percent } from 'sushi/math'
-import type { RouterLiquiditySource } from 'sushi/router'
+} from 'sushi/evm'
 import type { Address, Hex, WriteContractParameters } from 'viem'
 import type z from 'zod'
 import type { legValidator, tradeValidator01 } from './validator01'
@@ -13,9 +13,9 @@ import type { tradeValidator02 } from './validator02'
 
 export interface UseTradeParams {
   chainId: EvmChainId
-  fromToken: Type | undefined
-  toToken: Type | undefined
-  amount: Amount<Type> | undefined
+  fromToken: EvmCurrency | undefined
+  toToken: EvmCurrency | undefined
+  amount: Amount<EvmCurrency> | undefined
   gasPrice?: bigint | null | undefined
   fee?: number
   slippagePercentage: string
@@ -40,11 +40,11 @@ export type UseTradeReturnWriteArgs =
   | undefined
 
 export interface UseTradeReturn {
-  swapPrice: Price<Type, Type> | undefined
+  swapPrice: Price<EvmCurrency, EvmCurrency> | undefined
   priceImpact: Percent | undefined
-  amountIn: Amount<Type> | undefined
-  amountOut: Amount<Type> | undefined
-  minAmountOut: Amount<Type> | undefined
+  amountIn: Amount<EvmCurrency> | undefined
+  amountOut: Amount<EvmCurrency> | undefined
+  minAmountOut: Amount<EvmCurrency> | undefined
   gasSpent: string | undefined
   gasSpentUsd: string | undefined
   route: TradeType1['route']

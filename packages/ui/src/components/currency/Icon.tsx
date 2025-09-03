@@ -1,7 +1,6 @@
 import type { ImageProps } from 'next/image'
 import type { FC } from 'react'
-import { ChainId, EvmChain } from 'sushi/chain'
-import type { Currency } from 'sushi/currency'
+import { ChainId, type Currency, getChainById } from 'sushi'
 
 import { Avatar, AvatarImage } from '../avatar'
 import { LinkExternal } from '../link'
@@ -13,14 +12,10 @@ const FtmLogo = 'ftm.svg'
 const OneLogo = 'one.svg'
 // const HtLogo = 'ht.svg'
 const MaticLogo = 'matic.svg'
-const GlmrLogo = 'glmr.svg'
 // const OktLogo = 'okt.svg'
 const xDaiLogo = 'xdai.svg'
 const CeloLogo = 'celo.svg'
 // const PalmLogo = 'plam.svg'
-const MovrLogo = 'movr.svg'
-const FuseLogo = 'fuse.svg'
-const TelosLogo = 'telos.svg'
 const KavaLogo = 'kava.svg'
 const MetisLogo = 'metis.svg'
 const BobaLogo = 'boba.svg'
@@ -36,14 +31,11 @@ const MntLogo = 'mntl.svg'
 const ApeLogo = 'ape.svg'
 const SonicLogo = 'sonic.svg'
 const HypeLogo = 'hype.svg'
+const BeraLogo = 'bera.svg'
 
 const LOGO: Record<number, string> = {
   [ChainId.ETHEREUM]: EthereumLogo,
   [ChainId.SEPOLIA]: EthereumLogo,
-  // [ChainId.KOVAN]: EthereumLogo,
-  // [ChainId.RINKEBY]: EthereumLogo,
-  // [ChainId.ROPSTEN]: EthereumLogo,
-  // [ChainId.GÖRLI]: EthereumLogo,
   [ChainId.FANTOM]: FtmLogo,
   // [ChainId.FANTOM_TESTNET]: FtmLogo,
   [ChainId.POLYGON]: MaticLogo,
@@ -63,10 +55,6 @@ const LOGO: Record<number, string> = {
   // [ChainId.ARBITRUM_TESTNET]: EthereumLogo,
   [ChainId.CELO]: CeloLogo,
   // [ChainId.PALM]: PalmLogo,
-  [ChainId.MOONRIVER]: MovrLogo,
-  [ChainId.FUSE]: FuseLogo,
-  [ChainId.TELOS]: TelosLogo,
-  [ChainId.MOONBEAM]: GlmrLogo,
   [ChainId.OPTIMISM]: EthereumLogo,
   [ChainId.KAVA]: KavaLogo,
   [ChainId.ARBITRUM_NOVA]: EthereumLogo,
@@ -98,6 +86,7 @@ const LOGO: Record<number, string> = {
   [ChainId.HEMI]: EthereumLogo,
   [ChainId.KATANA]: EthereumLogo,
   [ChainId.HYPEREVM]: HypeLogo,
+  [ChainId.BERACHAIN]: BeraLogo,
 }
 
 // function djb2(str: string) {
@@ -128,9 +117,10 @@ export const Icon: FC<IconProps> = ({
   disableLink = true,
   ...rest
 }) => {
-  const src = currency.isNative
-    ? `native-currency/${LOGO[currency.chainId]}`
-    : `tokens/${currency.chainId}/${currency.wrapped.address}.jpg`
+  const src =
+    currency.type === 'native'
+      ? `native-currency/${LOGO[currency.chainId]}`
+      : `tokens/${currency.chainId}/${currency.wrap().address}.jpg`
 
   const avatar = (
     <Avatar style={{ width: rest.width, height: rest.height }}>
@@ -154,7 +144,9 @@ export const Icon: FC<IconProps> = ({
 
   return (
     <LinkExternal
-      href={EvmChain.tokenUrl(currency.chainId, currency.wrapped.address)}
+      href={getChainById(currency.chainId).getTokenUrl(
+        currency.wrap().address as `0x${string}`,
+      )}
     >
       {avatar}
     </LinkExternal>

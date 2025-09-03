@@ -14,8 +14,7 @@ import React, { type FC, type ReactNode } from 'react'
 import { isZapSupportedChainId } from 'src/config'
 import { Web3Input } from 'src/lib/wagmi/components/web3-input'
 import { getDefaultTTL } from 'src/lib/wagmi/hooks/utils/hooks/useTransactionDeadline'
-import type { EvmChainId } from 'sushi/chain'
-import type { Type } from 'sushi/currency'
+import type { EvmChainId, EvmCurrency } from 'sushi/evm'
 import { ToggleZapCard } from './ToggleZapCard'
 
 interface AddSectionWidgetProps {
@@ -23,10 +22,10 @@ interface AddSectionWidgetProps {
   chainId: EvmChainId
   input0: string
   input1: string
-  token0: Type | undefined
-  token1: Type | undefined
-  onSelectToken0?(currency: Type): void
-  onSelectToken1?(currency: Type): void
+  token0: EvmCurrency | undefined
+  token1: EvmCurrency | undefined
+  onSelectToken0?(currency: EvmCurrency): void
+  onSelectToken1?(currency: EvmCurrency): void
   onInput0(value: string): void
   onInput1(value: string): void
   toggleZapMode(value: boolean): void

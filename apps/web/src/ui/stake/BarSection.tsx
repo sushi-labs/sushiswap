@@ -9,10 +9,15 @@ import {
   useApproved,
   withCheckerRoot,
 } from 'src/lib/wagmi/systems/Checker/Provider'
-import { gasMargin } from 'sushi/calculate'
-import { ChainId } from 'sushi/chain'
-import { RED_SNWAPPER_ADDRESS } from 'sushi/config'
-import { SUSHI, type Token, XSUSHI, tryParseAmount } from 'sushi/currency'
+import { Amount } from 'sushi'
+import {
+  EvmChainId,
+  type EvmToken,
+  RED_SNWAPPER_ADDRESS,
+  SUSHI,
+  XSUSHI,
+  addGasMargin,
+} from 'sushi/evm'
 import { type SendTransactionReturnType, UserRejectedRequestError } from 'viem'
 import { useAccount, usePublicClient, useSendTransaction } from 'wagmi'
 import { useRefetchBalances } from '~evm/_common/ui/balance-provider/use-refetch-balances'
@@ -25,17 +30,17 @@ export const BarSection = withCheckerRoot(
     approveTag,
     inputToken,
     outputToken,
-  }: { approveTag: string; inputToken: Token; outputToken: Token }) => {
+  }: { approveTag: string; inputToken: EvmToken; outputToken: EvmToken }) => {
     const { approved } = useApproved(approveTag)
 
     const [input, setInput] = useState('')
 
-    const action = inputToken.equals(SUSHI[ChainId.ETHEREUM])
+    const action = inputToken.isSame(SUSHI[EvmChainId.ETHEREUM])
       ? 'stake'
       : 'unstake'
 
     const parsedInput = useMemo(() => {
-      return tryParseAmount(input, inputToken)
+      return Amount.tryFromHuman(inputToken, input)
     }, [input, inputToken])
 
     const { address } = useAccount()
@@ -49,14 +54,14 @@ export const BarSection = withCheckerRoot(
 
         const receipt = client.waitForTransactionReceipt({ hash: data })
         receipt.then(() => {
-          refetchBalances(ChainId.ETHEREUM)
+          refetchBalances(EvmChainId.ETHEREUM)
         })
 
         const ts = new Date().getTime()
         void createToast({
           account: address,
           type: 'enterBar',
-          chainId: ChainId.ETHEREUM,
+          chainId: EvmChainId.ETHEREUM,
           txHash: data,
           promise: receipt,
           summary: {
@@ -80,28 +85,28 @@ export const BarSection = withCheckerRoot(
     const useQuote = Boolean(!address || !approved)
 
     const { data: quote } = useTradeQuote({
-      chainId: ChainId.ETHEREUM,
+      chainId: EvmChainId.ETHEREUM,
       fromToken: inputToken,
       toToken: outputToken,
       amount: parsedInput,
       slippagePercentage: SLIPPAGE,
       recipient: address,
-      enabled: Boolean(parsedInput?.greaterThan(0) && useQuote),
+      enabled: Boolean(parsedInput?.gt(0n) && useQuote),
       carbonOffset: false,
-      onlyPools: [XSUSHI[ChainId.ETHEREUM].address],
+      onlyPools: [XSUSHI[EvmChainId.ETHEREUM].address],
       fee: 0,
     })
 
     const { data: trade } = useTrade({
-      chainId: ChainId.ETHEREUM,
+      chainId: EvmChainId.ETHEREUM,
       fromToken: inputToken,
       toToken: outputToken,
       amount: parsedInput,
       slippagePercentage: SLIPPAGE,
       recipient: address,
-      enabled: Boolean(parsedInput?.greaterThan(0) && !useQuote),
+      enabled: Boolean(parsedInput?.gt(0n) && !useQuote),
       carbonOffset: false,
-      onlyPools: [XSUSHI[ChainId.ETHEREUM].address],
+      onlyPools: [XSUSHI[EvmChainId.ETHEREUM].address],
       fee: 0,
     })
 
@@ -124,7 +129,7 @@ export const BarSection = withCheckerRoot(
             to,
             data,
             value,
-            gas: gas ? gasMargin(BigInt(gas)) : undefined,
+            gas: gas ? addGasMargin(BigInt(gas)) : undefined,
           })
         } catch {}
       }
@@ -142,7 +147,7 @@ export const BarSection = withCheckerRoot(
           <Checker.Network
             size="xl"
             fullWidth
-            chainId={ChainId.ETHEREUM}
+            chainId={EvmChainId.ETHEREUM}
             hoverCardContent={
               <span className="text-xs text-muted-foreground text-center w-full">
                 {`Sushi Bar is only available on Ethereum Mainnet. You are
@@ -153,7 +158,7 @@ export const BarSection = withCheckerRoot(
             <Checker.Amounts
               size="xl"
               fullWidth
-              chainId={ChainId.ETHEREUM}
+              chainId={EvmChainId.ETHEREUM}
               amount={parsedInput}
             >
               <Checker.ApproveERC20
@@ -162,7 +167,7 @@ export const BarSection = withCheckerRoot(
                 className="whitespace-nowrap"
                 fullWidth
                 amount={parsedInput}
-                contract={RED_SNWAPPER_ADDRESS[ChainId.ETHEREUM]}
+                contract={RED_SNWAPPER_ADDRESS[EvmChainId.ETHEREUM]}
               >
                 <Checker.Success tag={approveTag}>
                   <Button

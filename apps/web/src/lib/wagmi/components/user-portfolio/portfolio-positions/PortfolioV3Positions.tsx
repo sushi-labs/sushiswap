@@ -8,8 +8,8 @@ import {
 } from '@sushiswap/ui'
 import { BagIcon } from '@sushiswap/ui/icons/BagIcon'
 import React, { type FC } from 'react'
-import { ChainKey, type EvmChainId } from 'sushi/chain'
-import { formatUSD } from 'sushi/format'
+import { formatUSD } from 'sushi'
+import { type EvmChainId, getEvmChainById } from 'sushi/evm'
 import { PortfolioInfoRow } from '../PortfolioInfoRow'
 
 interface PortfolioV3PositionsProps {
@@ -28,7 +28,7 @@ export const PortfolioV3Positions: FC<PortfolioV3PositionsProps> = ({
         <PortfolioInfoRow
           key={`${position.chainId}:${position.id}`}
           chainId={position.chainId as EvmChainId}
-          href={`/${ChainKey[position.chainId as EvmChainId]}/pool/v3/${
+          href={`/${getEvmChainById(position.chainId as EvmChainId).key}/pool/v3/${
             position.address
           }/${position.positionId}`}
           icon={

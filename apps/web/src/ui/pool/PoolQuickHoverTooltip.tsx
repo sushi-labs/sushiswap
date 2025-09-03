@@ -7,8 +7,8 @@ import { Currency } from '@sushiswap/ui'
 import { List } from '@sushiswap/ui'
 import React, { type FC } from 'react'
 import { incentiveRewardToToken } from 'src/lib/functions'
-import { SushiSwapProtocol } from 'sushi'
-import { formatNumber, formatPercent } from 'sushi/format'
+import { formatNumber, formatPercent } from 'sushi'
+import { SushiSwapProtocol } from 'sushi/evm'
 
 interface PoolQuickHoverTooltipProps {
   row: V2Pool | V3Pool

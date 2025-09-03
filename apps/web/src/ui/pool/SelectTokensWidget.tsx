@@ -4,15 +4,14 @@ import { Currency } from '@sushiswap/ui'
 import { SelectIcon } from '@sushiswap/ui'
 import React, { type FC } from 'react'
 import { TokenSelector } from 'src/lib/wagmi/components/token-selector/token-selector'
-import type { EvmChainId } from 'sushi/chain'
-import type { Type } from 'sushi/currency'
+import type { EvmChainId, EvmCurrency } from 'sushi/evm'
 
 interface SelectTokensWidget {
   chainId: EvmChainId
-  token0: Type | undefined
-  token1: Type | undefined
-  setToken0(token: Type): void
-  setToken1(token: Type): void
+  token0: EvmCurrency | undefined
+  token1: EvmCurrency | undefined
+  setToken0(token: EvmCurrency): void
+  setToken1(token: EvmCurrency): void
   title?: string
   includeNative?: boolean
 }

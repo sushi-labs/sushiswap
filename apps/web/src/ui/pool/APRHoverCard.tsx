@@ -9,13 +9,12 @@ import {
   Separator,
 } from '@sushiswap/ui'
 import type { FC, ReactNode } from 'react'
-import { formatPercent } from 'sushi/format'
-
+import { formatPercent } from 'sushi'
 import type {
   PoolIfIncentivized,
   PoolWithFeeAprs,
   PoolWithIncentiveApr,
-} from 'sushi'
+} from 'sushi/evm'
 
 type RequiredPool = PoolIfIncentivized<PoolWithIncentiveApr<PoolWithFeeAprs>>
 
@@ -88,9 +87,7 @@ export const APRHoverCard: FC<APRHoverCardProps> = ({ children, pool }) => {
       </div>
       <div className="block sm:hidden">
         <Popover>
-          <PopoverTrigger onClick={(e) => e.stopPropagation()} asChild>
-            {children}
-          </PopoverTrigger>
+          <PopoverTrigger asChild>{children}</PopoverTrigger>
           <PopoverContent
             side="right"
             className="!p-0 max-w-[320px] whitespace-normal text-left"

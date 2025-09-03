@@ -3,9 +3,8 @@
 import type { TTLStorageKey } from '@sushiswap/hooks'
 import { createErrorToast } from '@sushiswap/notifications'
 import { useCallback, useMemo, useState } from 'react'
-import { eip2612Abi_nonces } from 'sushi/abi'
-import type { EvmChainId } from 'sushi/chain'
-import type { Amount, Type } from 'sushi/currency'
+import type { Amount } from 'sushi'
+import { type EvmChainId, type EvmCurrency, eip2612Abi_nonces } from 'sushi/evm'
 import { type Address, UserRejectedRequestError, hexToSignature } from 'viem'
 import { useAccount, useReadContract, useSignTypedData } from 'wagmi'
 import {
@@ -58,7 +57,7 @@ const PERMIT_ALLOWED_TYPE = [
 
 interface UseTokenPermitParams {
   spender: Address | undefined
-  amount: Amount<Type> | undefined
+  amount: Amount<EvmCurrency> | undefined
   enabled?: boolean
   permitInfo: PermitInfo
   ttlStorageKey: TTLStorageKey
@@ -90,7 +89,7 @@ export const useTokenPermit = ({
   })
 
   const { data: nonce, isLoading: isNonceLoading } = useReadContract({
-    address: amount?.currency.wrapped.address,
+    address: amount?.currency.wrap().address,
     abi: eip2612Abi_nonces,
     functionName: 'nonces',
     args: address ? [address] : undefined,
@@ -116,12 +115,12 @@ export const useTokenPermit = ({
           name: permitInfo.name,
           version: permitInfo.version,
           chainId: chainId,
-          verifyingContract: amount.currency.wrapped.address,
+          verifyingContract: amount.currency.wrap().address,
         }
       : ({
           name: permitInfo.name,
           chainId: chainId,
-          verifyingContract: amount.currency.wrapped.address,
+          verifyingContract: amount.currency.wrap().address,
         } as any)
     const message = allowed
       ? {
@@ -134,7 +133,7 @@ export const useTokenPermit = ({
       : {
           owner: address,
           spender,
-          value: amount.quotient,
+          value: amount.amount,
           nonce,
           deadline: transactionDeadline,
         }
@@ -173,13 +172,13 @@ export const useTokenPermit = ({
   const isSignatureDataValid =
     transactionDeadline &&
     amount &&
-    signature?.domain?.verifyingContract === amount.currency.wrapped.address &&
+    signature?.domain?.verifyingContract === amount.currency.wrap().address &&
     signature?.message &&
     signature.message.owner === address &&
     signature.message.nonce === nonce &&
     signature.message.spender === spender &&
     ('allowed' in signature.message ||
-      (signature.message.value as bigint) === amount.quotient) &&
+      (signature.message.value as bigint) === amount.amount) &&
     (('deadline' in signature.message &&
       (signature.message.deadline as bigint) >=
         Math.floor(Date.now() / 1000)) ||

@@ -13,8 +13,8 @@ import {
   EXPLORE_NAVIGATION_LINKS,
   // MORE_NAVIGATION_LINKS,
 } from 'src/app/_common/header-elements'
-import { ChainId, ChainKey, type EvmChainId } from 'sushi/chain'
-import { isAggregatorOnlyChainId } from 'sushi/config'
+import { type ChainId, getChainById } from 'sushi'
+import { EvmChainId } from 'sushi/evm'
 
 interface HeaderElements {
   chainId?: ChainId
@@ -37,7 +37,9 @@ export const headerElements = ({
     item: (
       <NavigationMenuItem className={NavigationElementType.Custom}>
         <NavigationMenuTrigger>
-          <LinkInternal href={`/${ChainKey[chainId ?? ChainId.ETHEREUM]}/swap`}>
+          <LinkInternal
+            href={`/${getChainById(chainId ?? EvmChainId.ETHEREUM).key}/swap`}
+          >
             Trade
           </LinkInternal>
         </NavigationMenuTrigger>
@@ -45,7 +47,7 @@ export const headerElements = ({
           <ul className="w-[400px] gap-3 p-4">
             <NavigationListItem
               title={'Swap'}
-              href={`/${ChainKey[chainId ?? ChainId.ETHEREUM]}/swap`}
+              href={`/${getChainById(chainId ?? EvmChainId.ETHEREUM).key}/swap`}
             >
               The easiest way to trade.
             </NavigationListItem>
@@ -65,7 +67,7 @@ export const headerElements = ({
     ? ([
         {
           title: 'Explore',
-          href: `/${chainId ? ChainKey[chainId] : 'ethereum'}/explore/pools`,
+          href: `/${chainId ? getChainById(chainId).key : 'ethereum'}/explore/pools`,
           show: 'desktop',
           type: NavigationElementType.Single,
         },
@@ -78,7 +80,7 @@ export const headerElements = ({
       <NavigationMenuItem className={NavigationElementType.Custom}>
         <NavigationMenuTrigger>
           <LinkInternal
-            href={`/${ChainKey[chainId && isPoolChainId(chainId) ? chainId : ChainId.ETHEREUM]}/pool`}
+            href={`/${getChainById(chainId && isPoolChainId(chainId) ? chainId : EvmChainId.ETHEREUM).key}/pool`}
           >
             Positions
           </LinkInternal>
@@ -87,7 +89,7 @@ export const headerElements = ({
           <ul className="w-[400px] gap-3 p-4">
             <NavigationListItem
               title={'Manage'}
-              href={`/${ChainKey[chainId && isPoolChainId(chainId) ? chainId : ChainId.ETHEREUM]}/pool`}
+              href={`/${getChainById(chainId && isPoolChainId(chainId) ? chainId : EvmChainId.ETHEREUM).key}/pool`}
             >
               Manage liquidity pool positions.
             </NavigationListItem>

@@ -4,8 +4,8 @@ import {
   type NavigationElementDropdown,
   NavigationElementType,
 } from '@sushiswap/ui'
-import { type ChainId, ChainKey, type EvmChainId, isChainId } from 'sushi'
-import { isAggregatorOnlyChainId } from 'sushi/config'
+import { type ChainId, getChainById, isChainId } from 'sushi'
+import { type EvmChainId, isAggregatorOnlyChainId } from 'sushi/evm'
 
 export const EXPLORE_NAVIGATION_LINKS = (
   chainId?: ChainId,
@@ -19,7 +19,7 @@ export const EXPLORE_NAVIGATION_LINKS = (
     ? ([
         {
           title: 'Explore',
-          href: `/${chainId ? ChainKey[chainId] : 'ethereum'}/explore/pools`,
+          href: `/${chainId ? getChainById(chainId).key : 'ethereum'}/explore/pools`,
           description: 'Explore top pools.',
         },
       ] as const)
@@ -28,7 +28,7 @@ export const EXPLORE_NAVIGATION_LINKS = (
     ? ([
         {
           title: 'Pool',
-          href: `/${chainId ? ChainKey[chainId] : 'ethereum'}/pool`,
+          href: `/${chainId ? getChainById(chainId).key : 'ethereum'}/pool`,
           description: 'Earn fees by providing liquidity.',
         },
       ] as const)
@@ -76,7 +76,9 @@ export const headerElements = (chainId?: ChainId): NavigationElement[] => [
   {
     title: 'Explore',
     href: `/${
-      isChainId(Number(chainId)) ? ChainKey[chainId as ChainId] : 'ethereum'
+      chainId && isChainId(chainId)
+        ? getChainById(chainId as ChainId).key
+        : 'ethereum'
     }/explore/pools`,
     show: 'desktop',
     type: NavigationElementType.Single,
@@ -84,7 +86,7 @@ export const headerElements = (chainId?: ChainId): NavigationElement[] => [
   {
     title: 'Pool',
     href: `/${
-      isChainId(Number(chainId)) ? ChainKey[chainId as ChainId] : 'ethereum'
+      chainId && isChainId(chainId) ? getChainById(chainId).key : 'ethereum'
     }/pool`,
     show: 'desktop',
     type: NavigationElementType.Single,

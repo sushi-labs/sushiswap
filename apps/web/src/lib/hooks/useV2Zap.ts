@@ -1,14 +1,14 @@
 import { type UseQueryOptions, useQuery } from '@tanstack/react-query'
 import { isZapSupportedChainId } from 'src/config'
-import type { EvmChainId } from 'sushi/chain'
-import type { Percent } from 'sushi/math'
-import type { Address, Hex } from 'viem'
+import { type Percent, sz } from 'sushi'
+import type { EvmChainId } from 'sushi/evm'
+import type { Address } from 'viem'
 import { z } from 'zod'
 
 const txSchema = z.object({
-  data: z.string().transform((data) => data as Hex),
-  to: z.string().transform((to) => to as Address),
-  from: z.string().transform((from) => from as Address),
+  data: sz.hex(),
+  to: sz.evm.address(),
+  from: sz.evm.address(),
   value: z.string().transform((value) => BigInt(value)),
 })
 
@@ -44,24 +44,27 @@ const zapResponseSchema = z.object({
   route: z.array(routeSchema).optional(),
 })
 
-export type ZapResponse = z.infer<typeof zapResponseSchema>
+export type V2ZapResponse = Omit<
+  z.infer<typeof zapResponseSchema>,
+  'priceImpact'
+> & { priceImpact: number }
 
-type UseZapParams = {
+type UseV2ZapParams = {
   chainId: EvmChainId
-  fromAddress?: Address
+  fromAddress: Address | undefined
   receiver?: Address
   amountIn: string | string[]
   tokenIn: Address | Address[]
-  tokenOut?: Address | Address[]
-  slippage?: Percent
-  query?: Omit<UseQueryOptions<ZapResponse>, 'queryKey' | 'queryFn'>
+  tokenOut: (Address | Address[]) | undefined
+  slippage: Percent
+  query?: Omit<UseQueryOptions<V2ZapResponse>, 'queryKey' | 'queryFn'>
 }
 
-export const useZap = ({ query, ...params }: UseZapParams) => {
-  return useQuery<ZapResponse>({
-    queryKey: ['zap', params],
+export const useV2Zap = ({ query, ...params }: UseV2ZapParams) => {
+  return useQuery<V2ZapResponse>({
+    queryKey: ['v2-zap', params],
     queryFn: async () => {
-      const url = new URL('/api/zap', window.location.origin)
+      const url = new URL('/api/zap/v2', window.location.origin)
 
       const { slippage, ..._params } = params
 
@@ -76,7 +79,10 @@ export const useZap = ({ query, ...params }: UseZapParams) => {
       })
 
       if (slippage) {
-        url.searchParams.set('slippage', slippage.multiply(100n).toFixed(0))
+        url.searchParams.set(
+          'slippage',
+          slippage.mul(100n).toString({ fixed: 0 }),
+        )
       }
 
       const response = await fetch(url.toString(), {
@@ -93,9 +99,11 @@ export const useZap = ({ query, ...params }: UseZapParams) => {
 
       const parsed = zapResponseSchema.parse(await response.json())
 
-      if (parsed.priceImpact === null) throw new Error('priceImpact is NULL')
+      const { priceImpact } = parsed
 
-      return parsed
+      if (priceImpact === null) throw new Error('priceImpact is NULL')
+
+      return { ...parsed, priceImpact }
     },
     staleTime: query?.staleTime ?? 1000 * 60 * 1, // 1 minutes
     enabled:

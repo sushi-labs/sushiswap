@@ -1,26 +1,26 @@
 'use client'
 
 import { useMemo } from 'react'
-import type { Price, Token } from 'sushi/currency'
+import type { Currency, Price } from 'sushi'
 
-export const usePriceInverter = ({
+export function usePriceInverter<TCurrency extends Currency>({
   priceLower,
   priceUpper,
   quote,
   base,
   invert,
 }: {
-  priceLower?: Price<Token, Token>
-  priceUpper?: Price<Token, Token>
-  quote?: Token
-  base?: Token
+  priceLower?: Price<TCurrency, TCurrency>
+  priceUpper?: Price<TCurrency, TCurrency>
+  quote?: TCurrency
+  base?: TCurrency
   invert?: boolean
 }): {
-  priceLower?: Price<Token, Token>
-  priceUpper?: Price<Token, Token>
-  quote?: Token
-  base?: Token
-} => {
+  priceLower?: Price<TCurrency, TCurrency>
+  priceUpper?: Price<TCurrency, TCurrency>
+  quote?: TCurrency
+  base?: TCurrency
+} {
   return useMemo(
     () => ({
       priceUpper: invert ? priceLower?.invert() : priceUpper,

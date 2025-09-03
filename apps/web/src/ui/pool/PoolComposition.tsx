@@ -14,8 +14,8 @@ import {
 } from '@sushiswap/ui'
 import { type FC, useMemo } from 'react'
 import { useTokenAmountDollarValues } from 'src/lib/hooks'
-import { Amount, Token } from 'sushi/currency'
-import { formatUSD } from 'sushi/format'
+import { Amount, formatUSD } from 'sushi'
+import { EvmToken } from 'sushi/evm'
 
 interface PoolCompositionProps {
   pool: V2Pool
@@ -23,7 +23,7 @@ interface PoolCompositionProps {
 
 export const PoolComposition: FC<PoolCompositionProps> = ({ pool }) => {
   const amounts = useMemo(() => {
-    const token0 = new Token({
+    const token0 = new EvmToken({
       chainId: pool.chainId,
       address: pool.token0.address,
       decimals: pool.token0.decimals,
@@ -31,7 +31,7 @@ export const PoolComposition: FC<PoolCompositionProps> = ({ pool }) => {
       name: pool.token0.name,
     })
 
-    const token1 = new Token({
+    const token1 = new EvmToken({
       chainId: pool.chainId,
       address: pool.token1.address,
       decimals: pool.token1.decimals,
@@ -39,8 +39,8 @@ export const PoolComposition: FC<PoolCompositionProps> = ({ pool }) => {
       name: pool.token1.name,
     })
     return [
-      Amount.fromRawAmount(token0, pool.reserve0),
-      Amount.fromRawAmount(token1, pool.reserve1),
+      new Amount(token0, pool.reserve0),
+      new Amount(token1, pool.reserve1),
     ]
   }, [pool])
 
