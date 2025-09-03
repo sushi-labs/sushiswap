@@ -2,6 +2,9 @@
 
 import { type FC, createContext, useContext, useMemo, useState } from 'react'
 import type { Type } from 'sushi/currency'
+import { isAddress } from 'viem'
+import { normalize } from 'viem/ens'
+import { useEnsAddress } from 'wagmi'
 import type { Contact } from '../../../lib/wagmi/hooks/hooks/use-contacts'
 
 export type SendViewStep =
@@ -13,17 +16,18 @@ export type SendViewStep =
 interface State {
   mutate: {
     setToken0(token: Type | undefined): void
-    setRecipientAddress(address: string): void
+    setRawRecipientInput(address: string): void
     setAmount(amount: string | undefined): void
     goTo(step: SendViewStep): void
     setContactToEdit(contact: Contact | undefined): void
   }
   state: {
     token0: Type | undefined
-    recipientAddress: string
     amount: string | undefined
     currentStep: SendViewStep
     contactToEdit: Contact | undefined
+    resolvedRecipientAddress: string
+    rawRecipientInput: string
   }
 }
 
@@ -34,37 +38,58 @@ interface SendTokensProviderProps {
 }
 
 const SendTokensProvider: FC<SendTokensProviderProps> = ({ children }) => {
-  const [token0, setToken0] = useState<Type | undefined>(undefined)
-  const [amount, setAmount] = useState<string | undefined>(undefined)
-  const [recipientAddress, setRecipientAddress] = useState('')
-  const [contactToEdit, setContactToEdit] = useState<Contact | undefined>(
-    undefined,
-  )
+  const [token0, setToken0] = useState<Type | undefined>()
+  const [amount, setAmount] = useState<string | undefined>()
+  const [rawRecipientInput, setRawRecipientInput] = useState('')
+  const [contactToEdit, setContactToEdit] = useState<Contact | undefined>()
   const [currentStep, setCurrentStep] = useState<SendViewStep>('send')
+
+  const { data: resolvedAddress } = useEnsAddress({
+    name: rawRecipientInput.endsWith('.eth')
+      ? normalize(rawRecipientInput)
+      : undefined,
+    query: {
+      enabled: !!rawRecipientInput.endsWith('.eth'),
+    },
+  })
+
+  const resolvedRecipientAddress = useMemo(() => {
+    if (isAddress(rawRecipientInput)) return rawRecipientInput
+    return resolvedAddress ?? ''
+  }, [rawRecipientInput, resolvedAddress])
 
   const goTo = (step: SendViewStep) => {
     setCurrentStep(step)
   }
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   const value = useMemo(() => {
     return {
       mutate: {
         setToken0,
-        setRecipientAddress,
+        setRawRecipientInput,
         setAmount,
         goTo,
         setContactToEdit,
       },
       state: {
         token0,
-        recipientAddress,
+        resolvedRecipientAddress,
+        rawRecipientInput,
         amount,
         currentStep,
         contactToEdit,
       },
     }
-  }, [token0, recipientAddress, amount, currentStep, contactToEdit])
+  }, [
+    token0,
+    resolvedRecipientAddress,
+    rawRecipientInput,
+    amount,
+    currentStep,
+    contactToEdit,
+    // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+    goTo,
+  ])
 
   return (
     <SendTokensContext.Provider value={value}>

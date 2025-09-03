@@ -6,6 +6,7 @@ const CONTACTS_KEY = 'sushi.contact-list'
 export interface Contact {
   address: string
   name: string
+  ensName?: string
 }
 
 type ContactMap = Record<string, Contact>
@@ -24,12 +25,12 @@ export function useContacts() {
   )
 
   const updateContact = useCallback(
-    (address: string, name: string) => {
+    (address: string, name: string, ensName?: string) => {
       setContacts((prev) => {
         if (!prev[address]) return prev
         return {
           ...prev,
-          [address]: { ...prev[address], name },
+          [address]: { ...prev[address], name, ensName },
         }
       })
     },

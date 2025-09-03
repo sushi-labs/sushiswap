@@ -3,6 +3,7 @@ import { XMarkIcon } from '@heroicons/react/24/outline'
 import { Button, DialogClose, DialogTitle, IconButton } from '@sushiswap/ui'
 import { useMemo, useState } from 'react'
 import { isAddress } from 'viem'
+import { useChainId, useEnsAddress } from 'wagmi'
 import { useContacts } from '../../../lib/wagmi/hooks/hooks/use-contacts'
 import { useSendTokens } from './send-token-provider'
 
@@ -20,13 +21,25 @@ export const UpsertContactView = ({
   const [name, setName] = useState(contactToEdit?.name ?? '')
   const [address, setAddress] = useState(contactToEdit?.address ?? '')
 
+  const isENSName = address.endsWith('.eth')
+  const chainId = useChainId()
+  const { data: resolvedAddress } = useEnsAddress({
+    name: isENSName ? address : undefined,
+    chainId,
+    query: {
+      enabled: isENSName,
+    },
+  })
+
+  const isRecipientValid = useMemo(() => {
+    if (!resolvedAddress && !isAddress(address)) return false
+
+    return isAddress(resolvedAddress || address)
+  }, [resolvedAddress, address])
+
   const isEditing = useMemo(() => {
     return contactToEdit?.address ? hasContact(contactToEdit.address) : false
   }, [contactToEdit?.address, hasContact])
-
-  const isRecipientValid = useMemo(() => {
-    return address ? isAddress(address) : false
-  }, [address])
 
   const buttonText = useMemo(() => {
     if (!isRecipientValid && address) return 'Invalid Address'
@@ -36,20 +49,25 @@ export const UpsertContactView = ({
   }, [isRecipientValid, address, name, isEditing])
 
   const handleSave = () => {
-    const trimmedAddress = address.trim()
     const trimmedName = name.trim()
+    const trimmedInput = address.trim()
 
-    if (!isAddress(trimmedAddress) || !trimmedName) return
+    const isValid = isAddress(trimmedInput) || resolvedAddress
+
+    if (!isValid || !trimmedName) return
 
     if (isEditing) {
-      updateContact(trimmedAddress, trimmedName)
+      updateContact(trimmedInput, trimmedName)
     } else {
-      addContact({ address: trimmedAddress, name: trimmedName })
+      addContact({ address: trimmedInput, name: trimmedName })
     }
 
+    setName('')
+    setAddress('')
     mutate.setContactToEdit(undefined)
     mutate.goTo('browseContacts')
   }
+
   return (
     <>
       <div className="flex justify-between items-center">

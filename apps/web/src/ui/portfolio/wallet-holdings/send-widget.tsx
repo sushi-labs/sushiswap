@@ -6,8 +6,9 @@ import {
   DialogTrigger,
   classNames,
 } from '@sushiswap/ui'
-import { useEffect } from 'react'
+import { useEffect, useMemo } from 'react'
 import type { Type } from 'sushi/currency'
+import { isAddress } from 'viem'
 import { BrowseContactView } from './browse-contact-view'
 import { useSendTokens } from './send-token-provider'
 import { SendView } from './send-view'
@@ -36,6 +37,12 @@ export const SendWidget = ({
   const isEditView = state.currentStep === 'editContact'
   const isAddView = state.currentStep === 'addContact'
 
+  const isRecipientValid = useMemo(() => {
+    if (!state.resolvedRecipientAddress) return false
+
+    return isAddress(state.resolvedRecipientAddress)
+  }, [state.resolvedRecipientAddress])
+
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -60,7 +67,7 @@ export const SendWidget = ({
           isBrowseView && 'md:!h-[470px]',
         )}
       >
-        {isSendView && <SendView />}
+        {isSendView && <SendView isRecipientValid={isRecipientValid} />}
         {isBrowseView && <BrowseContactView />}
         {(isEditView || isAddView) && (
           <UpsertContactView

@@ -45,7 +45,7 @@ export const SendButton = ({
           <Guard
             size="xl"
             guardText="Enter Recipient"
-            guardWhen={!state.recipientAddress}
+            guardWhen={!state.resolvedRecipientAddress}
             variant="default"
             className="!max-h-[52px]"
           >
@@ -61,12 +61,12 @@ export const SendButton = ({
                 id="send-button"
                 className="!max-h-[52px]"
                 amount={amounts[0]}
-                sendTo={state.recipientAddress as `0x${string}`}
+                sendTo={state.resolvedRecipientAddress as `0x${string}`}
                 enabled={true}
                 onSuccess={() => {
                   mutate.setAmount(undefined)
-                  mutate.setRecipientAddress('')
-                  addRecent(state.recipientAddress)
+                  mutate.setRawRecipientInput('')
+                  addRecent(state.rawRecipientInput)
                 }}
               />
             </Guard>

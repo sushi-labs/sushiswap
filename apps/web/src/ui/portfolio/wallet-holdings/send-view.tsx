@@ -1,7 +1,5 @@
 import { XMarkIcon } from '@heroicons/react/24/outline'
 import { DialogClose, DialogTitle, IconButton } from '@sushiswap/ui'
-import { useMemo } from 'react'
-import { isAddress } from 'viem'
 import { RecentRecipients } from './recent-recipients'
 import { RecipientInput } from './recipient-input'
 import { SendButton } from './send-button'
@@ -10,15 +8,14 @@ import { SendTokenInput } from './send-token-input'
 import { useSendTokens } from './send-token-provider'
 import { VerifyContact } from './verify-contact'
 
-export const SendView = () => {
+export const SendView = ({
+  isRecipientValid,
+}: {
+  isRecipientValid: boolean
+}) => {
   const { state } = useSendTokens()
 
-  const isRecipientValid = useMemo(() => {
-    if (!state.recipientAddress) return false
-
-    return isAddress(state.recipientAddress)
-  }, [state.recipientAddress])
-
+  const isENSName = state.rawRecipientInput.endsWith('.eth')
   return (
     <>
       <div className="flex justify-between items-center">
@@ -34,7 +31,11 @@ export const SendView = () => {
           <SendTokenInput />
           <RecipientInput isRecipientValid={isRecipientValid} />
           <VerifyContact
-            address={state.recipientAddress}
+            address={
+              isENSName
+                ? state.rawRecipientInput
+                : state.resolvedRecipientAddress
+            }
             isRecipientValid={isRecipientValid}
           />
         </div>

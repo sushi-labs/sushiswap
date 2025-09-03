@@ -24,7 +24,7 @@ export const VerifyContact = ({
           className="!text-blue !gap-1"
           onClick={() => {
             mutate.setContactToEdit({ address, name: '' })
-            mutate.goTo('editContact')
+            mutate.goTo('addContact')
           }}
         >
           <PlusCircleIcon className="w-4 h-4" />

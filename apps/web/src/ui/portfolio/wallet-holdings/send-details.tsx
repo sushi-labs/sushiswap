@@ -6,7 +6,7 @@ import type { EvmChainId } from 'sushi'
 import { Amount } from 'sushi/currency'
 import { Native } from 'sushi/currency'
 import { formatUnits } from 'viem'
-import { useEstimateGas, useFeeHistory, useGasPrice } from 'wagmi'
+import { useEstimateGas, useGasPrice } from 'wagmi'
 import { useSendTokens } from './send-token-provider'
 
 export const SendDetails = ({
@@ -83,7 +83,7 @@ export const SendDetails = ({
         !!state.token0 &&
         !!state.amount &&
         !Number.isNaN(Number(state.amount)) &&
-        !!state.recipientAddress &&
+        !!state.resolvedRecipientAddress &&
         isRecipientValid
       }
     >

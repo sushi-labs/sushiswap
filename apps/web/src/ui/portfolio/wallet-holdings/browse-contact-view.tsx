@@ -16,6 +16,7 @@ import { CopyIcon } from '@sushiswap/ui/icons/CopyIcon'
 import { PencilIcon } from '@sushiswap/ui/icons/PencilIcon'
 import { useState } from 'react'
 import { shortenAddress } from 'sushi/format'
+import { isAddress } from 'viem'
 import { useContacts } from '../../../lib/wagmi/hooks/hooks/use-contacts'
 import { useSendTokens } from './send-token-provider'
 
@@ -106,7 +107,7 @@ export const ContactItem = ({
         )}
       </div>
       <div className="flex gap-2">
-        <span>{shortenAddress(address)}</span>
+        <span> {isAddress(address) ? shortenAddress(address) : address}</span>
         <ClipboardController>
           {({ setCopied, isCopied }) =>
             isCopied ? (

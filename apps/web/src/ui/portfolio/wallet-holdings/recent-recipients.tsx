@@ -1,6 +1,7 @@
 import { Button, Collapsible } from '@sushiswap/ui'
 import { useRef } from 'react'
 import { shortenAddress } from 'sushi/format'
+import { isAddress } from 'viem'
 import { useRecentRecipients } from '../../../lib/wagmi/hooks/hooks/use-recent-recipients'
 import { useOverflow } from '../lp-positions-table/trending'
 import { useSendTokens } from './send-token-provider'
@@ -27,7 +28,7 @@ export const RecentRecipients = () => {
                 key={`${address}-${idx}`}
                 address={address}
                 onClick={() => {
-                  mutate.setRecipientAddress(address)
+                  mutate.setRawRecipientInput(address)
                 }}
               />
             ))}
@@ -55,7 +56,7 @@ export const RecentRecipientItem = ({
       size="xs"
       onClick={onClick}
     >
-      {address.startsWith('0x') ? shortenAddress(address) : address}
+      {isAddress(address) ? shortenAddress(address) : address}
     </Button>
   )
 }

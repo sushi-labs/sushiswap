@@ -9,6 +9,9 @@ export const RecipientInput = ({
   isRecipientValid: boolean
 }) => {
   const { mutate, state } = useSendTokens()
+
+  const isEnsName = state.rawRecipientInput.endsWith('.eth')
+
   return (
     <div
       className={classNames(
@@ -23,11 +26,11 @@ export const RecipientInput = ({
             placeholder="Enter Address..."
             className="p-0 m-0 w-full font-medium bg-transparent border-none outline-none focus:ring-0 text-[20px] !text-slate-900 dark:!text-slate-200 placeholder:text-slate-900 placeholder:dark:text-slate-200"
             value={
-              isRecipientValid
-                ? shortenAddress(state.recipientAddress, 12)
-                : state.recipientAddress
+              isRecipientValid && !isEnsName
+                ? shortenAddress(state.resolvedRecipientAddress, 12)
+                : state.rawRecipientInput
             }
-            onChange={(e) => mutate.setRecipientAddress(e.target.value.trim())}
+            onChange={(e) => mutate.setRawRecipientInput(e.target.value.trim())}
           />
           <Button
             className="!bg-[#0000001F] dark:!bg-[#FFFFFF1F] !text-slate-900 dark:!text-slate-100"
