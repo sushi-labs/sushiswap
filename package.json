@@ -18,7 +18,7 @@
     "sort": "sort-package-json 'package.json' 'apis/*/package.json' 'apps/*/package.json' 'config/*/package.json' 'packages/*/package.json'",
     "sort-check": "sort-package-json 'package.json' 'apis/*/package.json' 'apps/*/package.json' 'config/*/package.json' 'packages/*/package.json' --check",
     "test": "dotenv -- turbo run test --parallel",
-    "test-web-app": "dotenv -- turbo run test --filter=web",
+    "test-web-app": "dotenv -e apps/web/.env.test.local -- turbo run test --filter=web",
     "web": "pnpm exec turbo run dev --filter web"
   },
   "devDependencies": {
