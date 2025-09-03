@@ -102,6 +102,7 @@ export class AdvancedSwapPage extends BaseActions {
     } else {
       await this.handleToken(outputCurrency, 'OUTPUT')
     }
+
     await this.inputAmount(amount)
 
     await this.approve(inputCurrency)
@@ -172,10 +173,9 @@ export class AdvancedSwapPage extends BaseActions {
   async handleQuickSelectToken(currency: EvmCurrency, type: InputType) {
     const selectorInfix = `${type === 'INPUT' ? 'from' : 'to'}`
 
+    const quickSelectSelectorId = `[testdata-id=quick-select-${selectorInfix}-${currency.symbol.toLowerCase()}-button]`
     // Open quick select token list
-    const quickSelectSelector = this.page.locator(
-      `[testdata-id=quick-select-${selectorInfix}-${currency.symbol.toLowerCase()}-button]`,
-    )
+    const quickSelectSelector = this.page.locator(quickSelectSelectorId)
     await expect(quickSelectSelector).toBeVisible()
     await expect(quickSelectSelector).toBeEnabled()
     await quickSelectSelector.click()
@@ -194,6 +194,8 @@ export class AdvancedSwapPage extends BaseActions {
     await expect(quickSelectTokenSelector).toBeVisible()
     await expect(quickSelectTokenSelector).toBeEnabled()
     await quickSelectTokenSelector.click()
+    //wait for quickSelectTokenSelector animation to finish
+    await this.page.waitForTimeout(1000)
 
     if (type === 'OUTPUT') {
       const stables = STABLES[currency.chainId]

@@ -1,5 +1,5 @@
 import { type PlaywrightTestConfig, devices } from '@playwright/test'
-import { defineConfig } from 'next/experimental/testmode/playwright.js'
+import { defineConfig } from '@playwright/test'
 
 import nextEnv from '@next/env'
 // weird that we have to access it like this, wouldn't work if we imported the function only
