@@ -89,13 +89,8 @@ export const BladeRemoveLiquidityReviewModal: FC<
             tokenPrice > 0 ? amountToReceiveValue / tokenPrice : 0
           const amount =
             tokenAmountValue > 0
-              ? Amount.fromHuman(
-                  asset.token,
-                  BigInt(
-                    Math.floor(tokenAmountValue * 10 ** asset.token.decimals),
-                  ),
-                )
-              : Amount.fromHuman(asset.token, '0')
+              ? Amount.fromHuman(asset.token, tokenAmountValue)
+              : new Amount(asset.token, 0n)
 
           return {
             usdValue: amountToReceiveValue,

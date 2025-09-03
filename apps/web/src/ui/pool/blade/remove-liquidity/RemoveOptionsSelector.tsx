@@ -87,14 +87,8 @@ export const RemoveOptionsSelector: FC<RemoveOptionsSelectorProps> = ({
 
               const tokenAmount =
                 tokenAmountValue > 0
-                  ? Amount.fromHuman(
-                      currency,
-                      BigInt(
-                        Math.floor(tokenAmountValue * 10 ** currency.decimals),
-                      ),
-                    )
+                  ? Amount.fromHuman(currency, tokenAmountValue)
                   : new Amount(currency, 0n)
-
               return (
                 <SingleAssetOption
                   ref={(el) => {

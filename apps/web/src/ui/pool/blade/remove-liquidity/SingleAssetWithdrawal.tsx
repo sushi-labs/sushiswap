@@ -49,9 +49,9 @@ export const SingleAssetWithdrawal: FC<SingleAssetWithdrawalProps> = ({
       return { singleAssetData: null, hasTokenMismatch: true }
     }
 
-    const exactAmount = Amount.fromHuman(
+    const exactAmount = new Amount(
       selectedToken,
-      BigInt(withdrawRequest.data.asset_amount),
+      withdrawRequest.data.asset_amount,
     )
 
     const tokenPrice = prices?.get(selectedToken.wrap().address) || 0
