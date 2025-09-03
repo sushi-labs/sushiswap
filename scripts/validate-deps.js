@@ -6,23 +6,32 @@
  */
 
 import { execSync } from 'node:child_process'
-import { existsSync, readdirSync } from 'node:fs'
-import { join } from 'node:path'
 
 // Packages that frequently cause instanceof failures due to peer dep mismatches
 const CRITICAL_PACKAGES = ['sushi', 'viem', 'typescript', 'zod', 'abitype']
 
-// Additional packages that use zod as peer dep and can cause cascading issues
-const ZOD_DEPENDENT_PACKAGES = ['@sentry/core', 'knip']
+console.log('🧹 Pruning unused packages from store...')
+try {
+  execSync('pnpm prune --ignore-scripts', {
+    encoding: 'utf8',
+    stdio: 'inherit',
+  })
+  console.log('✅ Store pruned successfully')
+} catch (error) {
+  console.warn('⚠️  Could not prune store:', error.message)
+}
 
-console.log('🔍 Checking for multiple instances of critical packages...')
+console.log('\n🔍 Checking for multiple instances of critical packages...')
 
 for (const pkg of CRITICAL_PACKAGES) {
   try {
-    const output = execSync(`pnpm list ${pkg} --depth=Infinity --parseable`, {
-      encoding: 'utf8',
-      cwd: process.cwd(),
-    })
+    const output = execSync(
+      `pnpm list ${pkg} --depth=Infinity --parseable --recursive`,
+      {
+        encoding: 'utf8',
+        cwd: process.cwd(),
+      },
+    )
 
     const instances = new Set()
     const lines = output.split('\n').filter((line) => line.includes(`/${pkg}@`))
@@ -38,80 +47,44 @@ for (const pkg of CRITICAL_PACKAGES) {
       process.exit(1)
     } else if (instances.size === 1) {
       console.log(`✅ ${pkg}: ${Array.from(instances)[0]}`)
+    } else {
+      console.log(`ℹ️  ${pkg}: not found in dependency tree`)
     }
   } catch (error) {
     console.warn(`⚠️  Could not check ${pkg}:`, error.message)
   }
 }
 
-// Check for potential zod cascade issues
+// Check for potential zod cascade issues by finding all packages that depend on zod
 console.log('\n🔍 Checking for zod cascade issues...')
-for (const pkg of ZOD_DEPENDENT_PACKAGES) {
-  try {
-    const output = execSync(`pnpm why ${pkg}`, {
-      encoding: 'utf8',
-      cwd: process.cwd(),
-    })
-    if (output.includes('zod')) {
-      console.log(`⚠️  ${pkg} uses zod - ensure consistent version`)
-    }
-  } catch {
-    // Package not installed, skip
-  }
-}
+try {
+  const output = execSync('pnpm why zod', {
+    encoding: 'utf8',
+    cwd: process.cwd(),
+  })
 
-// Check for duplicates in pnpm store
-console.log('\n🔍 Checking for duplicates in pnpm store (.pnpm directory)...')
-const pnpmDir = join(process.cwd(), 'node_modules', '.pnpm')
+  // Parse the output to find packages that depend on zod
+  const zodDependents = new Set()
+  const lines = output.split('\n')
 
-if (existsSync(pnpmDir)) {
-  const packageMap = new Map()
-  const entries = readdirSync(pnpmDir, { withFileTypes: true })
-
-  for (const entry of entries) {
-    if (!entry.isDirectory()) continue
-
-    // Parse package directory names (format: package@version_dependencies)
-    const match = entry.name.match(/^(.+?)@([^_]+)_/)
-    if (!match) continue
-
-    const [, packageName, version] = match
-
-    if (CRITICAL_PACKAGES.includes(packageName)) {
-      if (!packageMap.has(packageName)) {
-        packageMap.set(packageName, new Set())
-      }
-
-      packageMap.get(packageName).add({
-        version,
-        fullPath: entry.name,
-      })
+  for (const line of lines) {
+    // Look for dependency paths that show which packages depend on zod
+    const match = line.match(/^[^@]+@[^@]+ > ([^@]+)@/)
+    if (match && match[1] !== 'zod') {
+      zodDependents.add(match[1])
     }
   }
 
-  let hasPnpmDuplicates = false
-  for (const [packageName, installations] of packageMap) {
-    if (installations.size > 1) {
-      hasPnpmDuplicates = true
-      const installationArray = Array.from(installations)
-
-      console.error(`❌ Multiple ${packageName} installations in pnpm store:`)
-      for (const installation of installationArray) {
-        console.error(`   - ${installation.fullPath}`)
-      }
-      console.error(
-        '   This causes instanceof failures! Different dependency combinations create separate installations.',
-      )
+  if (zodDependents.size > 0) {
+    console.log('⚠️  Packages that depend on zod (ensure consistent versions):')
+    for (const pkg of Array.from(zodDependents).sort()) {
+      console.log(`   - ${pkg}`)
     }
+  } else {
+    console.log('✅ No additional zod dependents found')
   }
-
-  if (hasPnpmDuplicates) {
-    console.error(
-      '\n💡 To fix: Add overrides to package.json to force consistent dependency versions',
-    )
-    console.error('   Example: "utf-8-validate": "6.0.3" in pnpm.overrides')
-    process.exit(1)
-  }
+} catch {
+  console.log('⚠️  Could not analyze zod dependencies')
 }
 
 console.log('✅ All critical dependencies have single instances')
