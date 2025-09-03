@@ -16,6 +16,7 @@ import {
   // avalancheFuji,
   //  avalancheFuji,
   base,
+  berachain,
   boba,
   // bronos,
   // bronosTestnet,
@@ -77,6 +78,7 @@ export {
   avalanche,
   //  avalancheFuji,
   base,
+  berachain,
   boba,
   // bronos,
   // bronosTestnet,
@@ -267,6 +269,9 @@ export const publicTransports = {
   [EvmChainId.KATANA]: http('https://rpc.katana.network'),
   [EvmChainId.HYPEREVM]: http(
     `https://lb.drpc.org/ogrpc?network=hyperliquid&dkey=${drpcId}`,
+  ),
+  [EvmChainId.BERACHAIN]: http(
+    `https://lb.drpc.org/ogrpc?network=berachain&dkey=${drpcId}`,
   ),
   /* Testnets */
   [EvmChainId.ARBITRUM_SEPOLIA]: http('https://sepolia-rollup.arbitrum.io/rpc'),
