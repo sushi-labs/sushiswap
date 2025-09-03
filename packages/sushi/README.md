@@ -8,8 +8,9 @@ This is a simple example for using `RainDataFetcher`, read the docs of methods o
 
 ```ts
 import { ChainId } from "sushi/chain";
-import { createPublicClient, http } from "viem";
+import { Token } from "sushi/currency";
 import { publicClientConfig } from "sushi/config";
+import { createPublicClient, http, parseUnits } from "viem";
 import { LiquidityProviders, RainDataFetcher } from "sushi";
 
 // create viem client
@@ -19,12 +20,12 @@ const client = createPublicClient({
     transport: http("https://rpc.com"),
 });
 
-// desired liquidity providers, set to undefined to have all available liquidity providers for the operating network
-const lps = [LiquidityProviders.UniswapV2, LiquidityProviders.SushiSwapV3];
+// specify a list liquidity providers
+const specifiedLiquidityProviders = [LiquidityProviders.UniswapV2, LiquidityProviders.SushiSwapV3];
 const router = await RainDataFetcher.init(
     ChainId.ARBITRUM,
     client,
-    lps,
+    specifiedLiquidityProviders, // do not pass this param to have all available liquidity providers for the operating chain
 );
 
 // sync the pools data every 30 secs in the background
@@ -33,6 +34,23 @@ setInterval(async () => {
     await router.updatePools(untilBlockNumber);
 }, 30_000);
 
+// build tokens
+const fromToken = new Token({
+    chainId: ChainId.ARBITRUM,
+    decimals: 18,
+    address: "0x123...",
+    symbol: "SYM"
+});
+const toToken = new Token({
+    chainId: ChainId.ARBITRUM,
+    decimals: 6,
+    address: "0x123...",
+    symbol: "SYM"
+});
+
+// 1.2 as amountIn
+// also can set to 1 for a unit market result
+const amountIn = parseUnits("1.2", fromToken.decimals);
 
 // get the best route
 const gasPrice = await client.getGasPrice();
@@ -40,7 +58,7 @@ const { pcMap, route } = await router.findBestRoute(
     ChainId.ARBITRUM,
     fromToken,
     toToken,
-    amountIn, // set to 1 unit of fromToken for a unit market result
+    amountIn,
     Number(gasPrice),
 );
 
