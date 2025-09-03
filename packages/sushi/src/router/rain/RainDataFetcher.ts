@@ -333,11 +333,13 @@ export class RainDataFetcher extends DataFetcher {
     // get logs in slices of 5 blocks to follow paging instructions from standard evm rpc specs
     let fromBlockSlice = fromBlock
     const logsPromises = []
+    const blockNumberSlices = []
     while (fromBlockSlice < untilBlock) {
       let toBlock = untilBlock
       if (fromBlockSlice + 5n < untilBlock) {
         toBlock = fromBlockSlice + 5n
       }
+      blockNumberSlices.push(toBlock)
       logsPromises.push(
         this.web3Client.getLogs({
           events: this.eventsAbi,
@@ -362,9 +364,13 @@ export class RainDataFetcher extends DataFetcher {
         >
       >
     > = []
-    for (const res of logsResults) {
-      if (res.status === 'fulfilled') {
+    for (let i = 0; i < logsResults.length; i++) {
+      const res = logsResults[i]
+      if (res && res.status === 'fulfilled') {
         logs.push(...res.value)
+        if (typeof blockNumberSlices[i] === 'bigint') {
+          untilBlock = blockNumberSlices[i]
+        }
       } else {
         break // if any one of the logs request fails, break out of the loop to avoid missing logs
       }
@@ -372,7 +378,12 @@ export class RainDataFetcher extends DataFetcher {
     logs.sort((a, b) => {
       const diff = a.blockNumber - b.blockNumber
       if (diff === 0n) {
-        return a.logIndex - b.logIndex
+        const txIndex = a.transactionIndex - b.transactionIndex
+        if (txIndex === 0) {
+          return a.logIndex - b.logIndex
+        } else {
+          return txIndex
+        }
       } else {
         return Number(diff)
       }
