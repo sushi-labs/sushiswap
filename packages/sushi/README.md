@@ -15,7 +15,7 @@ import { LiquidityProviders, RainDataFetcher } from "sushi";
 // create viem client
 const chain = publicClientConfig[ChainId.ARBITRUM].chain;
 const client = createPublicClient({
-    chain: chainConfig,
+    chain,
     transport: http("https://rpc.com"),
 });
 
@@ -29,8 +29,8 @@ const router = await RainDataFetcher.init(
 
 // sync the pools data every 30 secs in the background
 setInterval(async () => {
-    const blockNumber = 123n; // optional, set to undefined to update pools data to latest block
-    await router.updatePools(blockNumber);
+    const untilBlockNumber = 123n; // optional, set to undefined to update pools data to latest block
+    await router.updatePools(untilBlockNumber);
 }, 30_000);
 
 
