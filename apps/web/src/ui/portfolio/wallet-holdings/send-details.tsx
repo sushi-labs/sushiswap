@@ -19,19 +19,8 @@ export const SendDetails = ({
     isLoading: isAvgBlockTimeLoading,
     isFetching: isAvgBlockTimeFetching,
   } = useAverageBlockTime()
-  const {
-    data: feeHistory,
-    isLoading: isFeeHistoryLoading,
-    isFetching: isFeeHistoryFetching,
-  } = useFeeHistory({
-    blockCount: 5,
-    rewardPercentiles: [50],
-  })
-  const isLoadingTxTime =
-    isAvgBlockTimeLoading ||
-    isAvgBlockTimeFetching ||
-    isFeeHistoryLoading ||
-    isFeeHistoryFetching
+
+  const isLoadingTxTime = isAvgBlockTimeLoading || isAvgBlockTimeFetching
 
   const {
     data: gasEst,
@@ -83,10 +72,10 @@ export const SendDetails = ({
   })
 
   const estimatedConfirmationTime = useMemo(() => {
-    if (!avgBlockTime || !feeHistory) return null
+    if (!avgBlockTime) return null
     const expectedBlocksToConfirm = 1
     return avgBlockTime * expectedBlocksToConfirm
-  }, [avgBlockTime, feeHistory])
+  }, [avgBlockTime])
 
   return (
     <Collapsible

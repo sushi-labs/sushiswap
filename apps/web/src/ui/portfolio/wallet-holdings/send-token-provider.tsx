@@ -2,7 +2,7 @@
 
 import { type FC, createContext, useContext, useMemo, useState } from 'react'
 import type { Type } from 'sushi/currency'
-import type { Contact } from '../../../lib/wagmi/hooks/hooks/u'
+import type { Contact } from '../../../lib/wagmi/hooks/hooks/use-contacts'
 
 export type SendViewStep =
   | 'send'
