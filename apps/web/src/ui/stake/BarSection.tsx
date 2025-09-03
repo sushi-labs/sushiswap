@@ -23,8 +23,6 @@ import { useAccount, usePublicClient, useSendTransaction } from 'wagmi'
 import { useRefetchBalances } from '~evm/_common/ui/balance-provider/use-refetch-balances'
 import { BarSectionWidget } from './BarSectionWidget'
 
-const SLIPPAGE = '0'
-
 export const BarSection = withCheckerRoot(
   ({
     approveTag,
@@ -89,7 +87,7 @@ export const BarSection = withCheckerRoot(
       fromToken: inputToken,
       toToken: outputToken,
       amount: parsedInput,
-      slippagePercentage: SLIPPAGE,
+      slippagePercentage: '0',
       recipient: address,
       enabled: Boolean(parsedInput?.gt(0n) && useQuote),
       carbonOffset: false,
@@ -102,7 +100,7 @@ export const BarSection = withCheckerRoot(
       fromToken: inputToken,
       toToken: outputToken,
       amount: parsedInput,
-      slippagePercentage: SLIPPAGE,
+      slippagePercentage: '0',
       recipient: address,
       enabled: Boolean(parsedInput?.gt(0n) && !useQuote),
       carbonOffset: false,

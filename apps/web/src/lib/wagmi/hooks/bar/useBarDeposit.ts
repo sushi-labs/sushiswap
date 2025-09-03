@@ -2,31 +2,30 @@
 
 import { createErrorToast, createToast } from '@sushiswap/notifications'
 import { useCallback, useMemo } from 'react'
-import { useTrade, useTradeQuote } from 'src/lib/hooks/react-query'
 import type { Amount } from 'sushi'
 import {
   EvmChainId,
-  type EvmCurrency,
-  SUSHI,
-  XSUSHI,
-  addGasMargin,
+  type EvmToken,
+  XSUSHI_ADDRESS,
+  xsushiAbi_enter,
 } from 'sushi/evm'
 import { UserRejectedRequestError } from 'viem'
-import { useAccount, usePublicClient, useSendTransaction } from 'wagmi'
+import {
+  useAccount,
+  usePublicClient,
+  useSimulateContract,
+  useWriteContract,
+} from 'wagmi'
 import type { SendTransactionReturnType } from 'wagmi/actions'
+
 import { useRefetchBalances } from '~evm/_common/ui/balance-provider/use-refetch-balances'
 
 interface UseBarDepositParams {
-  amount: Amount<EvmCurrency> | undefined
-  isApproved: boolean
+  amount?: Amount<EvmToken>
   enabled?: boolean
 }
 
-export function useBarDeposit({
-  amount,
-  isApproved,
-  enabled = true,
-}: UseBarDepositParams) {
+export function useBarDeposit({ amount, enabled = true }: UseBarDepositParams) {
   const { address } = useAccount()
   const client = usePublicClient()
 
@@ -66,55 +65,28 @@ export function useBarDeposit({
     }
   }, [])
 
-  const useQuote = Boolean(!address || !isApproved)
-
-  const { data: quote } = useTradeQuote({
+  const { data: simulation } = useSimulateContract({
+    address: XSUSHI_ADDRESS[EvmChainId.ETHEREUM],
+    abi: xsushiAbi_enter,
+    functionName: 'enter',
     chainId: EvmChainId.ETHEREUM,
-    fromToken: SUSHI[EvmChainId.ETHEREUM],
-    toToken: XSUSHI[EvmChainId.ETHEREUM],
-    amount,
-    slippagePercentage: '0',
-    recipient: address,
-    enabled: Boolean(enabled && amount?.gt(0n) && useQuote),
-    carbonOffset: false,
-    onlyPools: [XSUSHI[EvmChainId.ETHEREUM].address],
+    args: amount ? [amount.amount] : undefined,
+    query: { enabled },
   })
 
-  const { data: trade } = useTrade({
-    chainId: EvmChainId.ETHEREUM,
-    fromToken: SUSHI[EvmChainId.ETHEREUM],
-    toToken: XSUSHI[EvmChainId.ETHEREUM],
-    amount,
-    slippagePercentage: '0',
-    recipient: address,
-    enabled: Boolean(enabled && amount?.gt(0n) && !useQuote),
-    carbonOffset: false,
-    onlyPools: [XSUSHI[EvmChainId.ETHEREUM].address],
-  })
-
-  const amountOut = (useQuote ? quote : trade)?.amountOut
-
-  const { sendTransactionAsync, ...rest } = useSendTransaction({
+  const { writeContractAsync, ...rest } = useWriteContract({
     mutation: { onSuccess, onError },
   })
 
   const write = useMemo(() => {
-    if (!sendTransactionAsync || !trade?.tx || address !== trade.tx.from)
-      return undefined
-
-    const { to, gas, data, value } = trade.tx
+    if (!writeContractAsync || !simulation) return undefined
 
     return async () => {
       try {
-        await sendTransactionAsync({
-          to,
-          data,
-          value,
-          gas: gas ? addGasMargin(BigInt(gas)) : undefined,
-        })
+        await writeContractAsync(simulation.request)
       } catch {}
     }
-  }, [address, sendTransactionAsync, trade?.tx])
+  }, [writeContractAsync, simulation])
 
-  return { ...rest, write, amountOut }
+  return { ...rest, write }
 }
