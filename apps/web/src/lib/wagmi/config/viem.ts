@@ -265,7 +265,9 @@ export const publicTransports = {
   [EvmChainId.SONIC]: http(
     `https://lb.drpc.org/ogrpc?network=sonic&dkey=${drpcId}`,
   ),
-  [EvmChainId.HEMI]: http('https://rpc.hemi.network/rpc'),
+  [EvmChainId.HEMI]: http(
+    `https://lb.drpc.org/ogrpc?network=hemi&dkey=${drpcId}`,
+  ),
   [EvmChainId.KATANA]: http('https://rpc.katana.network'),
   [EvmChainId.HYPEREVM]: http(
     `https://lb.drpc.org/ogrpc?network=hyperliquid&dkey=${drpcId}`,
