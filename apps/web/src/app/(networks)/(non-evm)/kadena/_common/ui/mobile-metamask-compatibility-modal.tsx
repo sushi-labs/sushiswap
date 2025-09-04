@@ -8,7 +8,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@sushiswap/ui'
-import { useIsMobile } from '../lib/hooks/use-is-mobile'
 
 export const MobileMetamaskCompatibilityModal = () => {
   const isMounted = useIsMounted()

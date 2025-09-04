@@ -8,6 +8,7 @@ import {
 import { KadenaWalletProvider as KadenaWalletProviderReact } from '@kadena/wallet-adapter-react'
 import { createWalletConnectAdapter } from '@kadena/wallet-adapter-walletconnect'
 import { createContext, useContext, useEffect, useMemo, useState } from 'react'
+import { KADENA_NETWORK_ID } from './_common/constants/network'
 import { KadenaWalletProvider } from './kadena-wallet-provider'
 
 //@dev will remove later, for testing purposes only
@@ -22,53 +23,54 @@ const KadenaAdapaterContext = createContext<AdapterContextType | undefined>(
 )
 
 export function Providers({ children }: { children: React.ReactNode }) {
-  const [snapAdapter, setSnapAdapter] = useState<SnapAdapter | null>(null)
+  // const [snapAdapter, setSnapAdapter] = useState<SnapAdapter | null>(null)
   const [eckoApadter, setEckoAdpater] = useState<EckoAdapter | null>(null)
 
   useEffect(() => {
-    async function initSnap() {
-      const snapProvider = await detectSnapProvider({ silent: true })
-      if (snapProvider) {
-        const adapter = new SnapAdapter({
-          provider: snapProvider,
-          networkId: 'mainnet01',
-        })
-        setSnapAdapter(adapter)
-      }
-    }
+    // async function initSnap() {
+    //   const snapProvider = await detectSnapProvider({ silent: true })
+    //   if (snapProvider) {
+    //     const adapter = new SnapAdapter({
+    //       provider: snapProvider,
+    //       networkId: KADENA_NETWORK_ID,
+    //     })
+    //     setSnapAdapter(adapter)
+    //   }
+    // }
     async function initEcko() {
       const eckoAdapter = await detectEckoProvider({ silent: true })
       if (eckoAdapter) {
         const adapter = new EckoAdapter({
           provider: eckoAdapter,
-          networkId: 'mainnet01',
+          networkId: KADENA_NETWORK_ID,
         })
         setEckoAdpater(adapter)
       }
     }
-    initSnap()
+    // initSnap()
     initEcko()
   }, [])
 
   const refreshSnapAdapter = async () => {
     const snapProvider = await detectSnapProvider({ silent: true })
     if (snapProvider) {
-      const adapter = new SnapAdapter({
+      const _adapter = new SnapAdapter({
         provider: snapProvider,
-        networkId: 'mainnet01',
+        networkId: KADENA_NETWORK_ID,
       })
-      setSnapAdapter(adapter)
+      // setSnapAdapter(adapter)
     }
   }
   const adapters = useMemo(() => {
     return [
       ...(eckoApadter ? [eckoApadter] : []),
-      ...(snapAdapter ? [snapAdapter] : []),
+      // ...(snapAdapter ? [snapAdapter] : []),
       createWalletConnectAdapter({
         projectId: process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID ?? TEST_ID,
+        networkId: KADENA_NETWORK_ID,
       }),
     ]
-  }, [eckoApadter, snapAdapter])
+  }, [eckoApadter])
 
   return (
     <KadenaAdapaterContext.Provider value={{ refreshSnapAdapter }}>
