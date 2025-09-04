@@ -1,8 +1,8 @@
 import { getCrossChainSwapEdgeConfig } from './get-cross-chain-swap-edge-config'
 
 import { EdgeProvider } from 'src/providers/edge-config-provider'
-import { DerivedstateCrossChainSwapProvider } from 'src/ui/swap/cross-chain/derivedstate-cross-chain-swap-provider'
 import type { EvmChainId } from 'sushi/evm'
+import { DerivedstateCrossChainSwapProvider } from './_ui/derivedstate-cross-chain-swap-provider'
 
 export async function Providers({
   children,

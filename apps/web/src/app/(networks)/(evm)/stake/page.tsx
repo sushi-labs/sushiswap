@@ -1,10 +1,10 @@
 import { Container } from '@sushiswap/ui'
-import { BarBalanceCard } from 'src/ui/stake/BarBalanceCard'
-import { BarBalanceProvider } from 'src/ui/stake/BarBalanceProvider'
-import { BarChartCard } from 'src/ui/stake/BarChartCard'
-import { ManageBarCard } from 'src/ui/stake/ManageBarCard'
-import { VotingPowerCard } from 'src/ui/stake/VotingPowerCard'
-import { VotingPowerProvider } from 'src/ui/stake/VotingPowerProvider'
+import { BarBalanceCard } from './_ui/bar-balance-card'
+import { BarBalanceProvider } from './_ui/bar-balance-provider'
+import { BarChartCard } from './_ui/bar-chart-card'
+import { ManageBarCard } from './_ui/manage-bar-card'
+import { VotingPowerCard } from './_ui/voting-power-card'
+import { VotingPowerProvider } from './_ui/voting-power-provider'
 
 export default async function Page() {
   return (
@@ -23,9 +23,6 @@ export default async function Page() {
           <BarChartCard />
         </div>
       </div>
-      {/* <div className="py-4">
-    <Separator />
-  </div> */}
     </Container>
   )
 }

@@ -7,7 +7,7 @@ import {
   TRON,
 } from '~tron/_common/constants/token-list'
 import type { IToken } from '~tron/_common/types/token-type'
-import { ReserveHelper } from '~tron/_common/ui/Pools/ReserveHelper'
+import { ReserveHelper } from '~tron/_common/ui/Pools/reserve-helper'
 
 type InputFieldType = 'token0' | 'token1'
 

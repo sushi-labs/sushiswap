@@ -1,7 +1,7 @@
 import { Container } from '@sushiswap/ui'
 import type React from 'react'
+import { PoolsFiltersProvider } from 'src/app/(networks)/_ui/pools-filters-provider'
 import { POOL_SUPPORTED_NETWORKS } from 'src/config'
-import { PoolsFiltersProvider } from 'src/ui/pool'
 import { Header } from '~tron/header'
 import { Hero } from './hero'
 import { NavigationItems } from './navigation-items'

@@ -1,7 +1,7 @@
 import { Container } from '@sushiswap/ui'
-import { BarHeader } from 'src/ui/stake'
 import { EvmChainId } from 'sushi/evm'
 import { Header } from '~evm/[chainId]/header'
+import { BarHeader } from './_ui'
 import { Providers } from './providers'
 
 export const metadata = {

@@ -1,4 +1,4 @@
-import { ClaimableRewardsTab } from 'src/ui/pool/ClaimableRewardsTab'
+import { ClaimableRewardsTab } from './_common/ui/claimable-rewards-tab'
 
 export default function RewardsPage() {
   return <ClaimableRewardsTab />

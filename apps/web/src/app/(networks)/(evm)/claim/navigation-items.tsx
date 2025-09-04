@@ -1,5 +1,5 @@
 import { LinkInternal } from '@sushiswap/ui'
-import { PathnameButton } from 'src/ui/pathname-button'
+import { PathnameButton } from 'src/app/_ui/pathname-button'
 
 export function NavigationItems() {
   return (

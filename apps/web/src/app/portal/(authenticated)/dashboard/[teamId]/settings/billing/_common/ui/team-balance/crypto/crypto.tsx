@@ -22,7 +22,7 @@ import { getNetworkName } from 'src/lib/network'
 import { NetworkSelector } from 'src/lib/wagmi/components/network-selector'
 import { CurrencyInput } from 'src/lib/wagmi/components/web3-input/Currency'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
-import { CheckerProvider } from 'src/lib/wagmi/systems/Checker/Provider'
+import { CheckerProvider } from 'src/lib/wagmi/systems/Checker/provider'
 import { WagmiProvider } from 'src/providers/wagmi-provider'
 import { Amount } from 'sushi'
 import {
