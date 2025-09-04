@@ -230,8 +230,8 @@ const TokenChainItem = ({
         // transitionDelay: `${index * 50}ms`, // stagger the animation, if you turn this on update the `setTimeout` in `QuickSelectItem` to match
       }}
       onClick={() => onSelectToken(currency)}
-      testdata-id={`quick-select-token-${type === 'INPUT' ? 'from' : 'to'}-${currency.chainId.toString()}-${
-        currency.isNative ? 'native' : currency.wrap().address.toLowerCase()
+      testdata-id={`quick-select-token-${type === 'INPUT' ? 'from' : 'to'}-${currency.chainId}-${
+        currency.isNative ? 'native' : currency.wrap().address
       }-button`}
     >
       <Badge

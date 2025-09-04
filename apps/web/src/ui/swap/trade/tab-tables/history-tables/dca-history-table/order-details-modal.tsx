@@ -106,7 +106,7 @@ const Content = ({ order }: { order: TwapOrder }) => {
                 <div key={index} className="pb-6">
                   <MobileDataCard
                     row={row}
-                    columns={COLUMNS as any}
+                    columns={COLUMNS}
                     className="p-5 border rounded-xl dark:border-[#222137] border-[#F5F5F5]"
                   />
                 </div>

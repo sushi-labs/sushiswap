@@ -13,10 +13,10 @@ import {
 import { useCreateQuery } from 'src/lib/hooks/useCreateQuery'
 import { useTokenWithCache } from 'src/lib/wagmi/hooks/tokens/useTokenWithCache'
 import { type ChainKey, getChainByKey } from 'sushi'
-import { EvmChainId, STABLES } from 'sushi/evm'
+import { EvmChainId, STABLES, isEvmAddress } from 'sushi/evm'
 import { defaultQuoteCurrency, isWNativeSupported } from 'sushi/evm'
 import { type EvmCurrency, EvmNative } from 'sushi/evm'
-import { type Address, isAddress } from 'viem'
+import type { Address } from 'viem'
 
 const getTokenAsString = (token: EvmCurrency | string) =>
   typeof token === 'string'
@@ -32,12 +32,7 @@ const getDefaultCurrency = (chainId: number) =>
 const isStable = (token: EvmCurrency | undefined): boolean => {
   if (!token || !token.symbol) return false
   const stables = STABLES[token.chainId]
-  if (
-    stables.some(
-      (stable) =>
-        stable.address.toLowerCase() === token.wrap().address.toLowerCase(),
-    )
-  ) {
+  if (stables.some((stable) => stable.address === token.wrap().address)) {
     return true
   }
   return false
@@ -120,7 +115,7 @@ const ChartProvider: FC<ChartProviderProps> = ({ children }) => {
   const { data: token0FromCache } = useTokenWithCache({
     chainId: chainId0,
     address: token0Param as Address,
-    enabled: isAddress(token0Param, { strict: false }) && !token0FromLocalCache,
+    enabled: isEvmAddress(token0Param) && !token0FromLocalCache,
     keepPreviousData: false,
   })
 
@@ -133,8 +128,7 @@ const ChartProvider: FC<ChartProviderProps> = ({ children }) => {
     {
       chainId: chainId1,
       address: token1Param as Address,
-      enabled:
-        isAddress(token1Param, { strict: false }) && !token1FromLocalCache,
+      enabled: isEvmAddress(token1Param) && !token1FromLocalCache,
       keepPreviousData: false,
     },
   )

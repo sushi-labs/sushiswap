@@ -35,7 +35,7 @@ import {
   isEvmChainId,
 } from 'sushi/evm'
 import { type Address, isAddress, zeroAddress } from 'viem'
-import { useAccount, useSwitchChain } from 'wagmi'
+import { useAccount } from 'wagmi'
 
 const getTokenAsString = (token: EvmCurrency | string) =>
   typeof token === 'string'

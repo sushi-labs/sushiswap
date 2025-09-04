@@ -15,7 +15,6 @@ import { useTheme } from 'next-themes'
 import { useSearchParams } from 'next/navigation'
 import { SUPPORTED_CHAIN_IDS, TWAP_SUPPORTED_CHAIN_IDS } from 'src/config'
 import { getNetworkName } from 'src/lib/network'
-import type { EvmChainId } from 'sushi/evm'
 import { useTradeTablesContext } from '../trade-tables-context'
 
 export const TradeTableFilters = () => {
@@ -105,7 +104,7 @@ export const TradeTableFilters = () => {
                 align="end"
                 className="max-h-[195px] overflow-y-auto hide-scrollbar !bg-slate-50 dark:!bg-slate-900 !backdrop-blur-none"
               >
-                <DropdownMenuGroup className="">
+                <DropdownMenuGroup>
                   {remainingChainIds.map((chainId) => {
                     const isSelected = chainIds.includes(chainId)
                     return (
@@ -115,16 +114,14 @@ export const TradeTableFilters = () => {
                           e.preventDefault()
                           onChainChange(chainId)
                         }}
-                        className={classNames('pr-10 my-1')}
+                        className={'pr-10 my-1'}
                       >
                         <NetworkIcon
                           type="square"
                           chainId={chainId}
                           className={`rounded-[4px] w-5 h-5`}
                         />
-                        <span className="ml-2">
-                          {getNetworkName(chainId as EvmChainId)}
-                        </span>
+                        <span className="ml-2">{getNetworkName(chainId)}</span>
                         {isSelected && (
                           <CheckCircleIcon className="w-5 h-5 ml-1 text-blue/50 dark:text-skyblue/50" />
                         )}

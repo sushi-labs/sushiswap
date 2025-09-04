@@ -12,8 +12,6 @@ export const FunkitConnectProvider: FC<{ children: ReactNode }> = ({
   const { resolvedTheme } = useTheme()
 
   const funkitTheme = (theme: string | undefined) => {
-    console.log('theme', theme)
-
     if (!theme || theme === 'dark') {
       return sushiTheme.darkMode
     }

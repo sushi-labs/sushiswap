@@ -58,12 +58,7 @@ export const TokenSelectorCurrencyListV2: FC<TokenSelectorCurrencyListV2Props> =
         showWarning:
           currency.type === 'token' && currency.metadata.approved === false,
         onSelect,
-        selected: selected
-          ? (currency.isNative === true && selected.isNative === true) ||
-            (selected.isToken &&
-              currency.isToken &&
-              currency.wrap().address === selected.wrap().address)
-          : false,
+        selected: selected ? currency.isSame(selected) : false,
         isBalanceLoading,
         onShowInfo: () => onShowInfo(currency),
         showChainOptions,

@@ -74,7 +74,7 @@ export function TokenSelectorSearchV2({
           !customTokens.includes(token.address) &&
           token?.metadata?.approved === false
         ) {
-          set.add(token.address.toLowerCase() as Address)
+          set.add(token.address)
         }
       })
     }

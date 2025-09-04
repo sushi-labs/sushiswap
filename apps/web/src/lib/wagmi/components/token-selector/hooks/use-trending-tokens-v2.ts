@@ -4,7 +4,7 @@ import {
 } from '@sushiswap/graph-client/data-api'
 import { useQuery } from '@tanstack/react-query'
 import { useMemo } from 'react'
-import { EvmToken } from 'sushi/evm'
+import { type EvmID, EvmToken } from 'sushi/evm'
 
 type UseTrendingTokens = {
   chainIds: TrendingTokensChainId[]
@@ -16,7 +16,7 @@ export function useTrendingTokensV2({ chainIds }: UseTrendingTokens) {
     queryFn: async () => {
       if (!chainIds) throw new Error('chainIds are required')
 
-      const priceMap: Map<string, number> = new Map<string, number>()
+      const priceMap: Map<EvmID, number> = new Map()
       const trendingTokens = await getTrendingTokensV2({
         chainIds,
       })
