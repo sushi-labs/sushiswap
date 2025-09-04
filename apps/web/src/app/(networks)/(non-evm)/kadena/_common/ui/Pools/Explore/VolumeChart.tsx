@@ -40,14 +40,14 @@ export const VolumeChart: FC<VolumeChartProps> = ({ data }) => {
             for (let i = 1; i < daysDiff; i++) {
               const missingDate = addDays(prevDate, i)
               acc.push({
-                timestamp: `${missingDate.toISOString().split('T')?.[0]}T00:00:00.000Z`,
+                timestamp: `${missingDate.toISOString().split('T')?.[0]}T04:00:00.000Z`,
                 value: 0,
               })
             }
           }
 
           acc.push({
-            timestamp: `${currDate.toISOString().split('T')?.[0]}T00:00:00.000Z`,
+            timestamp: `${currDate.toISOString().split('T')?.[0]}T04:00:00.000Z`,
             value: curr.value,
           })
 
