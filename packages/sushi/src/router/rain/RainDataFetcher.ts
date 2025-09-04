@@ -378,11 +378,11 @@ export class RainDataFetcher extends DataFetcher {
     logs.sort((a, b) => {
       const diff = a.blockNumber - b.blockNumber
       if (diff === 0n) {
-        const txIndex = a.transactionIndex - b.transactionIndex
-        if (txIndex === 0) {
+        const txDiff = a.transactionIndex - b.transactionIndex
+        if (txDiff === 0) {
           return a.logIndex - b.logIndex
         } else {
-          return txIndex
+          return txDiff
         }
       } else {
         return Number(diff)

@@ -90,6 +90,7 @@ export abstract class UniswapV3BaseProvider extends _UniswapV3BaseProvider {
     if (typeof options?.ignoreCache === 'boolean' && !options.ignoreCache) {
       staticPools = this.filterCachedPools(staticPools)
     }
+    if (staticPools.length === 0) return []
 
     const slot0 = await this.client
       .multicall({

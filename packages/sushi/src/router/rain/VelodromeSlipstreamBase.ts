@@ -298,6 +298,7 @@ export abstract class VelodromeSlipstreamBaseProvider extends UniswapV3BaseProvi
         staticPools,
       ) as StaticSlipstreamPool[]
     }
+    if (staticPools.length === 0) return []
 
     const slot0 = await this.client
       .multicall({

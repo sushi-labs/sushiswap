@@ -53,6 +53,7 @@ export abstract class UniswapV2BaseProvider extends _UniswapV2BaseProvider {
     if (typeof options?.ignoreCache === 'boolean' && !options.ignoreCache) {
       pools = this.filterCachedPools(pools as StaticPool[])
     }
+    if (pools.length === 0) return
 
     const poolCodesToCreate = pools.map(
       (pool) =>

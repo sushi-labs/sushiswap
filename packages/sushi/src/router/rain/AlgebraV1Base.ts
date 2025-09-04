@@ -113,6 +113,7 @@ export abstract class AlgebraV1BaseProvider extends UniswapV3BaseProvider {
     if (typeof options?.ignoreCache === 'boolean' && !options.ignoreCache) {
       staticPools = this.filterCachedPools(staticPools)
     }
+    if (staticPools.length === 0) return []
 
     const globalStateData = {
       multicallAddress: this.client.chain?.contracts?.multicall3?.address!,
