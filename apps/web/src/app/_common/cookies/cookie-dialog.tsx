@@ -16,7 +16,7 @@ import {
   Separator,
   Switch,
 } from '@sushiswap/ui'
-import { useCallback, useEffect, useState } from 'react'
+import { type ReactElement, useCallback, useEffect, useState } from 'react'
 import { announceCookieChange } from './announce-cookie-change'
 
 type BaseAction = 'accept' | 'reject' | 'manage'
@@ -41,9 +41,9 @@ function BaseCookieDialog({
         at any time via the “Manage cookie preferences” button.
         <br />
         For further information on our data processing and cookies, please visit
-        our
-        <LinkExternal href="/legal/privacy-policy">Privacy Policy</LinkExternal>
-        and our
+        our{' '}
+        <LinkExternal href="/legal/privacy-policy">Privacy Policy</LinkExternal>{' '}
+        and our{' '}
         <LinkExternal href="/legal/cookie-policy">Cookie Policy</LinkExternal>.
       </div>
       <Separator />
@@ -188,7 +188,10 @@ function ManageCookieDialog({
   )
 }
 
-export function CookieDialog({ defaultOpen }: { defaultOpen: boolean }) {
+export function CookieDialog({
+  defaultOpen,
+  children,
+}: { defaultOpen: boolean; children: ReactElement }) {
   const [open, setOpen] = useState(defaultOpen)
   const [page, setPage] = useState<'base' | 'manage'>('base')
 
@@ -260,11 +263,8 @@ export function CookieDialog({ defaultOpen }: { defaultOpen: boolean }) {
 
   return (
     <Dialog open={open && isMounted} onOpenChange={setOpen}>
-      <DialogTrigger
-        onClick={() => setPage('manage')}
-        className="fixed bottom-5 right-8 text-xs underline text-muted-foreground"
-      >
-        Cookie Preferences
+      <DialogTrigger onClick={() => setPage('manage')}>
+        {children}
       </DialogTrigger>
 
       {page === 'base' ? (
