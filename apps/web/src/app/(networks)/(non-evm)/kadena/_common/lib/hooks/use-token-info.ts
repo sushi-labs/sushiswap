@@ -4,13 +4,8 @@ import {
   KADENA_CHAIN_ID,
   KADENA_NETWORK_ID,
 } from '~kadena/_common/constants/network'
-import { buildGetTokenMetaTx } from '~kadena/_common/lib/pact/builders'
-
-type TokenInfo = {
-  name: string
-  symbol: string
-  decimals: number
-}
+import { buildGetTokenPrecision } from '~kadena/_common/lib/pact/builders'
+import type { KadenaToken } from '~kadena/_common/types/token-type'
 
 export const useTokenInfo = ({
   tokenContract,
@@ -21,26 +16,34 @@ export const useTokenInfo = ({
 }) => {
   return useQuery({
     queryKey: ['kadena-token-info', tokenContract],
-    queryFn: async (): Promise<TokenInfo> => {
-      const tx = buildGetTokenMetaTx(
+    queryFn: async (): Promise<KadenaToken> => {
+      const decimalsTx = buildGetTokenPrecision(
         tokenContract,
         KADENA_CHAIN_ID,
         KADENA_NETWORK_ID,
       )
 
-      const res = await kadenaClient.local(tx, {
+      const decimalRes = await kadenaClient.local(decimalsTx, {
         preflight: false,
         signatureVerification: false,
       })
-      console.log({ res })
-      if (res.result.status !== 'success') {
+      if (decimalRes.result.status !== 'success') {
         throw new Error(
-          res.result.error?.message || 'Failed to fetch token info',
+          decimalRes.result.error?.message || 'Failed to fetch token decimals',
         )
       }
+
       //@ts-expect-error - type mismatch, but we know this is correct
-      const { name, symbol, decimals } = res.result.data
-      return { name, symbol, decimals }
+      const decimals = decimalRes?.result?.data?.int as number
+
+      const symbol = tokenContract?.split('.')?.[1] || 'UNKNOWN'
+
+      return {
+        tokenAddress: tokenContract,
+        tokenName: symbol,
+        tokenSymbol: symbol,
+        tokenDecimals: decimals,
+      }
     },
     enabled: !!tokenContract && enabled,
     staleTime: (30 * 1000) / 6,

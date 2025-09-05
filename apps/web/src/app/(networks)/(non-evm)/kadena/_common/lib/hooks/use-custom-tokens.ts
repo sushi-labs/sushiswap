@@ -18,9 +18,9 @@ export const useCustomTokens = () => {
           tokenSymbol,
           tokenDecimals,
           tokenName,
-          tokenImage: data[k].tokenImage,
-          validated: data[k].validated,
-          tokenInfo: data[k].tokenInfo,
+          tokenImage: data[k]?.tokenImage,
+          validated: data[k]?.validated,
+          tokenInfo: data[k]?.tokenInfo,
         }
         return acc
       },
@@ -31,13 +31,13 @@ export const useCustomTokens = () => {
   const addCustomToken = useCallback(
     (currencies: KadenaToken[]) => {
       const data: KadenaToken[] = currencies.map((currency) => ({
-        tokenAddress: currency.tokenAddress,
-        tokenSymbol: currency.tokenSymbol,
-        tokenDecimals: currency.tokenDecimals,
-        tokenImage: currency.tokenImage,
-        tokenName: currency.tokenName,
-        validated: currency.validated,
-        tokenInfo: currency.tokenInfo,
+        tokenAddress: currency?.tokenAddress,
+        tokenSymbol: currency?.tokenSymbol,
+        tokenDecimals: currency?.tokenDecimals,
+        tokenImage: currency?.tokenImage || undefined,
+        tokenName: currency?.tokenName,
+        validated: currency?.validated || false,
+        tokenInfo: currency?.tokenInfo || undefined,
       }))
 
       setValue((prev) => {
@@ -76,6 +76,8 @@ export const useCustomTokens = () => {
       const address =
         typeof currency === 'string' ? currency : currency.tokenAddress
       if (address === 'KDA') return false
+      if (address === 'coin') return false
+
       // @TODO: replace with kadena address validation
       // if (!isAddress(currency.tokenAddress)) {
       //   throw new Error('Invalid address')

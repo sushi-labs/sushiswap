@@ -9,6 +9,8 @@ import {
   DialogTitle,
   DialogTrigger,
   List,
+  SkeletonCircle,
+  SkeletonText,
   TextField,
   classNames,
 } from '@sushiswap/ui'
@@ -23,8 +25,10 @@ import AutoSizer from 'react-virtualized-auto-sizer'
 import { FixedSizeList } from 'react-window'
 import { COMMON_TOKENS } from '~kadena/_common/constants/token-list'
 import { useBaseTokens } from '~kadena/_common/lib/hooks/use-base-tokens'
+import { useCustomTokens } from '~kadena/_common/lib/hooks/use-custom-tokens'
 import { useSortedTokenList } from '~kadena/_common/lib/hooks/use-sorted-token-list'
 import { useTokenBalances } from '~kadena/_common/lib/hooks/use-token-balances'
+import { useTokenInfo } from '~kadena/_common/lib/hooks/use-token-info'
 import { formatNumberWithMaxDecimals } from '~kadena/_common/lib/utils/formatters'
 import type {
   KadenaToken,
@@ -46,6 +50,16 @@ export const TokenSelector = ({
   const [query, setQuery] = useState('')
   const { data: baseTokens, isLoading } = useBaseTokens()
   const { activeAccount } = useKadena()
+  const { data: queryToken, isLoading: isQueryTokenLoading } = useTokenInfo({
+    tokenContract: query,
+    enabled: !!query,
+  })
+
+  const {
+    customTokens,
+    hasToken,
+    addOrRemoveToken: _addOrRemoveToken,
+  } = useCustomTokens()
 
   const tokenArray = useMemo(() => {
     if (!baseTokens) return []
@@ -53,8 +67,11 @@ export const TokenSelector = ({
     for (const token of baseTokens) {
       tokens.push(token.tokenAddress)
     }
+    for (const tokenAddress in customTokens) {
+      tokens.push(tokenAddress)
+    }
     return tokens
-  }, [baseTokens])
+  }, [baseTokens, customTokens])
 
   const { data: tokenBalances } = useTokenBalances({
     account: activeAccount?.accountName ?? '',
@@ -72,7 +89,7 @@ export const TokenSelector = ({
 
   const { data: sortedTokens } = useSortedTokenList({
     tokenMap: baseTokenMap,
-    customTokenMap: {},
+    customTokenMap: customTokens,
     balanceMap: tokenBalances?.balanceMap,
     query: query,
   })
@@ -83,6 +100,21 @@ export const TokenSelector = ({
       setOpen(false)
     },
     [onSelect],
+  )
+
+  const isOnDefaultList = useCallback(
+    (tokenAddress: string) => {
+      return !!baseTokenMap?.[tokenAddress ?? '']
+    },
+    [baseTokenMap],
+  )
+
+  const addOrRemoveToken = useCallback(
+    (type: 'add' | 'remove', currency: KadenaToken[]) => {
+      _addOrRemoveToken(type, currency)
+      setQuery('')
+    },
+    [_addOrRemoveToken],
   )
 
   const Row = useCallback(
@@ -96,10 +128,20 @@ export const TokenSelector = ({
           isSelected={
             sortedTokens?.[index]?.tokenAddress === selected?.tokenAddress
           }
+          isOnDefaultList={isOnDefaultList}
+          hasToken={hasToken}
+          addOrRemoveToken={addOrRemoveToken}
         />
       )
     },
-    [selected, _onSelect, sortedTokens],
+    [
+      selected,
+      _onSelect,
+      sortedTokens,
+      isOnDefaultList,
+      hasToken,
+      addOrRemoveToken,
+    ],
   )
 
   return (
@@ -132,47 +174,54 @@ export const TokenSelector = ({
           ))}
         </div>
         <List.Control className="relative flex flex-1 flex-col flex-grow gap-3 px-1 py-0.5 min-h-[128px]">
-          {/* <div
-						// data-state={isQueryTokenLoading ? "active" : "inactive"}
-						data-state={"inactive"}
-						className={classNames(
-							"data-[state=active]:block data-[state=active]:flex-1 data-[state=inactive]:hidden",
-							"py-0.5 h-[64px] -mb-3"
-						)}>
-						<div className="flex items-center w-full h-full px-3 rounded-lg">
-							<div className="flex items-center justify-between flex-grow gap-2 rounded">
-								<div className="flex flex-row items-center flex-grow gap-4">
-									<SkeletonCircle radius={40} />
-									<div className="flex flex-col items-start">
-										<SkeletonText className="w-full min-w-[100px]" />
-										<SkeletonText fontSize="sm" className="w-full min-w-[60px]" />
-									</div>
-								</div>
-
-								<div className="flex flex-col w-full">
-									<SkeletonText className="w-[80px]" />
-									<SkeletonText fontSize="sm" align="right" className="w-[40px]" />
-								</div>
-							</div>
-						</div>
-					</div> */}
           <div
-            // data-state={isQueryTokenLoading ? "inactive" : "active"}
-            data-state={'active'}
+            data-state={isQueryTokenLoading ? 'active' : 'inactive'}
+            className={classNames(
+              'data-[state=active]:block data-[state=active]:flex-1 data-[state=inactive]:hidden',
+              'py-0.5 h-[64px] -mb-3',
+            )}
+          >
+            <div className="flex items-center w-full h-full px-3 rounded-lg">
+              <div className="flex items-center justify-between flex-grow gap-2 rounded">
+                <div className="flex flex-row items-center flex-grow gap-4">
+                  <SkeletonCircle radius={40} />
+                  <div className="flex flex-col items-start">
+                    <SkeletonText className="w-full min-w-[100px]" />
+                    <SkeletonText
+                      fontSize="sm"
+                      className="w-full min-w-[60px]"
+                    />
+                  </div>
+                </div>
+
+                <div className="flex flex-col w-full">
+                  <SkeletonText className="w-[80px]" />
+                  <SkeletonText
+                    fontSize="sm"
+                    align="right"
+                    className="w-[40px]"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            data-state={isQueryTokenLoading ? 'inactive' : 'active'}
             className={classNames(
               'data-[state=active]:block data-[state=active]:flex-1 data-[state=inactive]:hidden',
             )}
           >
-            {/* {queryToken && (
-							<TokenButton
-								token={queryToken}
-								selectToken={_onSelect}
-								key={queryToken.tokenAddress}
-								hasToken={hasToken}
-								addOrRemoveToken={addOrRemoveToken}
-								isSelected={queryToken.tokenAddress === selected?.tokenAddress}
-							/>
-						)} */}
+            {queryToken && (
+              <TokenButton
+                token={queryToken}
+                selectToken={_onSelect}
+                key={queryToken.tokenAddress}
+                hasToken={hasToken}
+                addOrRemoveToken={addOrRemoveToken}
+                isOnDefaultList={isOnDefaultList}
+                isSelected={queryToken.tokenAddress === selected?.tokenAddress}
+              />
+            )}
             <AutoSizer disableWidth>
               {({ height }: { height: number }) => (
                 <FixedSizeList
@@ -212,13 +261,23 @@ const TokenButton = ({
   token,
   selectToken,
   isSelected,
+  hasToken,
+  addOrRemoveToken,
+  isOnDefaultList,
 }: {
   style?: CSSProperties
   token?: KadenaToken | TokenWithBalance
   selectToken: (_token: KadenaToken) => void
   isSelected: boolean
+  hasToken?: (currency: string | KadenaToken) => boolean
+  addOrRemoveToken?: (type: 'add' | 'remove', currency: KadenaToken[]) => void
+  isOnDefaultList: (currency: string) => boolean
 }) => {
   if (!token) return null
+
+  const isNewCustom = !hasToken?.(token.tokenAddress)
+
+  const isDefaultToken = isOnDefaultList(token.tokenAddress)
 
   return (
     <div
@@ -274,27 +333,23 @@ const TokenButton = ({
           </div>
         ) : null}
       </Button>
-      {/* {isNew && !isOnDefaultList ? (
-				<Button
-					onClick={() => {
-						addOrRemoveToken?.("add", [token]);
-					}}
-					className="z-[1]"
-					size="xs">
-					Import
-				</Button>
-			) : null}
-			{isCustomAdded && !isOnDefaultList ? (
-				<Button
-					className="z-[1]"
-					onClick={() => {
-						addOrRemoveToken?.("remove", [token]);
-					}}
-					variant="destructive"
-					size="xs">
-					Remove
-				</Button>
-			) : null} */}
+      {!isDefaultToken ? (
+        <Button
+          onClick={() => {
+            if (isNewCustom) {
+              addOrRemoveToken?.('add', [token])
+              selectToken(token)
+            } else {
+              addOrRemoveToken?.('remove', [token])
+            }
+          }}
+          className="z-[1]"
+          variant={isNewCustom ? 'default' : 'destructive'}
+          size="xs"
+        >
+          {isNewCustom ? 'Import' : 'Remove'}
+        </Button>
+      ) : null}
     </div>
   )
 }
