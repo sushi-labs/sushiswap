@@ -17,7 +17,10 @@ import {
   KADENA_CHAIN_ID,
   KADENA_NETWORK_ID,
 } from '~kadena/_common/constants/network'
-import { buildAddLiquidityTxn } from '~kadena/_common/lib/pact/pool'
+import {
+  buildAddLiquidityTxn,
+  buildGetPoolAddress,
+} from '~kadena/_common/lib/pact/pool'
 import { getChainwebTxnLink } from '~kadena/_common/lib/utils/kadena-helpers'
 import { useKadena } from '~kadena/kadena-wallet-provider'
 import { usePoolDispatch, usePoolState } from '../../../../pool/pool-provider'
@@ -111,7 +114,7 @@ export const AddButton = ({
           href: getChainwebTxnLink(txId),
         })
         const result = await kadenaClient.pollOne(res, {
-          confirmationDepth: 2,
+          confirmationDepth: 4,
         })
         if (result.result.status === 'failure') {
           throw new Error(result.result.error?.message || 'Transaction failed')
@@ -126,8 +129,28 @@ export const AddButton = ({
           timestamp: Date.now(),
           href: getChainwebTxnLink(txId),
         })
+        if (!poolAddress) {
+          console.log(
+            '[AddButton] poolAddress was empty, building pool address from token addresses',
+          )
+          poolAddress = await getPoolAddress(
+            token0.tokenAddress,
+            token1.tokenAddress,
+            KADENA_CHAIN_ID,
+            KADENA_NETWORK_ID,
+          )
+          console.log(
+            '[AddButton] poolAddress after buildGetPoolAddress:',
+            poolAddress,
+          )
+        }
         //@ts-expect-error - type mismatch, but we know this is correct
         poolAddress = preflightResult.result.data?.account
+        console.log(
+          '[AddButton] poolAddress from preflightResult:',
+          poolAddress,
+        )
+
         setPoolId(poolAddress)
       }
 
@@ -204,6 +227,44 @@ export const AddButton = ({
       console.error(error)
       setIsTxnPending(false)
     }
+  }
+
+  const getPoolAddress = async (
+    token0Address: string | undefined,
+    token1Address: string | undefined,
+    chainId: number,
+    networkId: string,
+  ): Promise<string> => {
+    if (!token0Address || !token1Address) {
+      throw new Error('Missing token addresses')
+    }
+
+    const tx = buildGetPoolAddress(
+      token0Address,
+      token1Address,
+      chainId,
+      networkId,
+    )
+
+    const res = await kadenaClient.local(tx, {
+      preflight: false,
+      signatureVerification: false,
+    })
+
+    if (res.result.status !== 'success') {
+      throw new Error(
+        res.result.error?.message ?? 'Failed to fetch pool address',
+      )
+    }
+
+    //@ts-expect-error - type mismatch, but we know this is correct
+    const poolAddress = res.result.data?.account
+
+    if (!poolAddress) {
+      throw new Error('No pool address returned')
+    }
+
+    return poolAddress
   }
 
   const onSuccess = async () => {
