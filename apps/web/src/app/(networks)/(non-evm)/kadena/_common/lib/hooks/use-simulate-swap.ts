@@ -99,8 +99,15 @@ export const useSimulateSwap = ({
       }
       const gas: number = res?.gas ?? 0
       setGas(gas)
-      //@ts-expect-error - type mismatch, but we know this is correct
-      const _amountOut: number = res?.result?.data?.[1]?.amount ?? 0
+      const amount: number | { decimal: string } =
+        //@ts-expect-error - type mismatch, but we know this is correct
+        res?.result?.data?.[1]?.amount
+      let _amountOut = 0
+      if (typeof amount === 'object' && 'decimal' in amount) {
+        _amountOut = Number.parseFloat(amount?.decimal ?? '0')
+      } else {
+        _amountOut = amount ?? 0
+      }
       const minAmountOut = new Decimal(_amountOut).mul(1 - slippage).toString()
       setMinAmountOut(minAmountOut)
 
