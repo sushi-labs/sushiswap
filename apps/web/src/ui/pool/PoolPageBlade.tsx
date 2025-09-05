@@ -1,10 +1,11 @@
 'use client'
 import { PlusIcon } from '@heroicons/react-v1/solid'
 import type { BladePool } from '@sushiswap/graph-client/data-api'
-import { Button, Container } from '@sushiswap/ui'
+import { Button, Container, Tabs } from '@sushiswap/ui'
 import { type FC, useState } from 'react'
 import type { SushiSwapProtocol } from 'sushi'
 import { APRChart } from './APRChart'
+import { BladeInfoPanel } from './BladeInfoPanel'
 import { BladePoolPrice } from './BladePoolPrice'
 import { Pool24HVolume } from './Pool24HVolume'
 import { PoolCompositionBlade } from './PoolCompositionBlade'
@@ -27,7 +28,7 @@ export const PoolPageBlade: FC<PoolPageBlade> = ({ pool }) => {
       {/* <UnknownTokenAlert pool={pool} /> */}
       <div className="flex flex-col-reverse gap-4 w-full lg:gap-10 lg:flex-row">
         <div className="flex-[2_2_0%] min-[1230px]:flex-[3_3_0%] min-w-0 flex flex-col gap-4 lg:gap-6">
-          <APRChart pool={pool} />
+          <BladeInfoPanel />
           <PoolChartBlade />
         </div>
         <div className="flex-[1_1_0%] min-[1230px]:flex-[1_1_0%] min-w-0 flex flex-col gap-3">

@@ -95,12 +95,7 @@ export const PoolHeaderBlade: FC<PoolHeaderBlade> = ({
               </Button>
               <div
                 className={classNames(
-                  pool.protocol === 'SUSHISWAP_V3'
-                    ? 'text-blue dark:text-skyblue'
-                    : pool.protocol === 'SUSHISWAP_V2'
-                      ? 'text-pink'
-                      : '',
-                  'text-sm px-2 py-1 font-semibold rounded-full mt-0.5 bg-[#0000001F] dark:bg-[#FFFFFF1F]',
+                  'text-sm px-2 py-1 font-semibold rounded-full mt-0.5 bg-[#4217FF14] dark:bg-[#3DB1FF14]',
                 )}
               >
                 {pool.protocol === 'SUSHISWAP_V3' ? (
@@ -108,12 +103,13 @@ export const PoolHeaderBlade: FC<PoolHeaderBlade> = ({
                 ) : pool.protocol === 'SUSHISWAP_V2' ? (
                   'V2'
                 ) : (
-                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#4217FF] to-[#3DB1FF]">
+                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#4217FF] to-[#3DB1FF] dark:from-[#C3F1FB] dark:to-[#FFC9F1]">
                     Blade
                   </span>
                 )}
               </div>
             </div>
+
             <span className="block md:hidden">
               <AddLiquidityDialog
                 poolType={'BLADE' as SushiSwapProtocol}

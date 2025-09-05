@@ -1,13 +1,8 @@
 'use client'
 
-import type {
-  BladePool,
-  V2Pool,
-  V3Pool,
-} from '@sushiswap/graph-client/data-api'
+import type { V2Pool, V3Pool } from '@sushiswap/graph-client/data-api'
 import {
   Button,
-  Card,
   CardContent,
   CardHeader,
   CardTitle,
@@ -243,7 +238,7 @@ export const MOCK_APR_BUCKETS = {
 
 const tailwind = resolveConfig(tailwindConfig)
 
-export const APRChart = ({ pool }: { pool: BladePool | V2Pool | V3Pool }) => {
+export const APRChart = ({ pool }: { pool: V2Pool | V3Pool }) => {
   const [period, setPeriod] = useState<PoolChartPeriod>(
     PoolChartPeriod.ThirtyDay,
   )
