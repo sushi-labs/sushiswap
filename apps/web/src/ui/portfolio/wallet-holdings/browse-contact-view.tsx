@@ -56,6 +56,10 @@ export const BrowseContactView = () => {
               deleteContact={() => {
                 deleteContact(contact.address)
               }}
+              setRawRecipientInput={() => {
+                mutate.setRawRecipientInput(contact.address)
+                mutate.goTo('send')
+              }}
             />
           ))
         )}
@@ -79,28 +83,45 @@ export const ContactItem = ({
   address,
   goToEdit,
   deleteContact,
+  setRawRecipientInput,
 }: {
   name: string
   address: string
   goToEdit: () => void
   deleteContact: () => void
+  setRawRecipientInput: () => void
 }) => {
   const [isHovered, setIsHovered] = useState(false)
 
   return (
-    <div
+    <button
       className="flex justify-between items-center p-3 font-medium rounded-xl transition-colors duration-200 dark:bg-slate-900 bg-slate-100 hover:bg-slate-200 dark:hover:bg-slate-750"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
+      onClick={setRawRecipientInput}
+      onKeyDown={setRawRecipientInput}
+      type="button"
     >
       <div className="flex gap-3 items-center">
         <span>{name}</span>
         {isHovered && (
           <div className="flex gap-2 items-center">
-            <button type="button" onClick={goToEdit}>
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation()
+                goToEdit()
+              }}
+            >
               <PencilIcon className="w-5 h-5 text-blue dark:text-skyblue hover:text-blue-700 dark:hover:text-skyblue-600" />
             </button>
-            <button type="button" onClick={deleteContact}>
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation()
+                deleteContact()
+              }}
+            >
               <TrashIcon className="w-5 h-5 text-blue dark:text-skyblue hover:text-blue-700 dark:hover:text-skyblue-600" />
             </button>
           </div>
@@ -115,12 +136,15 @@ export const ContactItem = ({
             ) : (
               <CopyIcon
                 className="w-6 text-black cursor-pointer aspect-1 dark:text-white"
-                onClick={() => setCopied(address)}
+                onClick={(e) => {
+                  e.stopPropagation()
+                  setCopied(address)
+                }}
               />
             )
           }
         </ClipboardController>
       </div>
-    </div>
+    </button>
   )
 }

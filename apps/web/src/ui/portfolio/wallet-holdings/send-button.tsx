@@ -34,6 +34,7 @@ export const SendButton = ({
         amounts={amounts}
         chainId={state.token0?.chainId}
         className="!max-h-[52px]"
+        variant="destructive"
       >
         <Guard
           size="xl"
