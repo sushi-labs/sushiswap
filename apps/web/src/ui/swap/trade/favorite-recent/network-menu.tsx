@@ -21,9 +21,9 @@ export const NetworkMenu = ({
   testId,
 }: {
   className?: string
-  selectedNetwork?: null | number
-  onNetworkSelect?(val: number | null): void
-  networkOptions?: number[]
+  selectedNetwork?: EvmChainId | null
+  onNetworkSelect?(val: EvmChainId | null): void
+  networkOptions?: EvmChainId[]
   testId?: string
 }) => {
   const { networkOptions: _networks } = useNetworkOptions()
@@ -75,11 +75,11 @@ export const NetworkMenu = ({
   )
 }
 
-const NetworkItem = ({ chainId }: { chainId: number }) => {
+const NetworkItem = ({ chainId }: { chainId: EvmChainId }) => {
   return (
     <div className="flex items-center gap-1 text-muted-foreground dark:text-pink-200">
       <NetworkIcon chainId={chainId} width={16} height={16} />
-      <div>{getNetworkName(chainId as EvmChainId)}</div>
+      <div>{getNetworkName(chainId)}</div>
     </div>
   )
 }

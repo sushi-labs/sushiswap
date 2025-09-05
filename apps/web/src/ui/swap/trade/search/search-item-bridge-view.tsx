@@ -20,15 +20,17 @@ export const SearchItemBridgeView = ({
   const {
     mutate: { setSearchValue, setIsOpen },
   } = useSearchContext()
-  const [selectedNetwork, setSelectedNetwork] = useState<number | undefined>(
-    undefined,
-  )
+  const [selectedNetwork, setSelectedNetwork] = useState<
+    EvmChainId | undefined
+  >(undefined)
   const { handleTokenOutput } = useSwapTokenSelect()
   const bridgeOptions = useMemo(() => {
-    return token?.bridgeInfo?.map((bridge) => bridge.chainId as number) ?? []
+    return (
+      token?.bridgeInfo?.map((bridge) => bridge.chainId as EvmChainId) ?? []
+    )
   }, [token])
 
-  const onNetworkSelect = (chainId: number) => {
+  const onNetworkSelect = (chainId: EvmChainId) => {
     setSelectedNetwork(chainId)
   }
 

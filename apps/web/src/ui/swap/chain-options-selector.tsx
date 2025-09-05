@@ -27,6 +27,7 @@ import { useNetworkOptions } from 'src/lib/hooks/useNetworkOptions'
 import { useTradeMode } from 'src/lib/hooks/useTradeMode'
 import { getNetworkName } from 'src/lib/network'
 import type { ChainId } from 'sushi'
+import type { EvmChainId } from 'sushi/evm'
 
 export const ChainOptionsSelector = ({
   size = 'sm',
@@ -36,9 +37,9 @@ export const ChainOptionsSelector = ({
   canShowMessage,
 }: {
   size?: 'sm' | 'lg'
-  networks?: number[]
-  onNetworkSelect?: (network: number) => void
-  selectedNetwork?: number
+  networks?: EvmChainId[]
+  onNetworkSelect?: (network: EvmChainId) => void
+  selectedNetwork?: EvmChainId
   canShowMessage?: boolean
 }) => {
   const { networkOptions: defaultNetworks } = useNetworkOptions()

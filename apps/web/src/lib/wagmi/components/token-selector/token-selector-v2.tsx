@@ -22,7 +22,7 @@ import React, {
 import { SUPPORTED_CHAIN_IDS } from 'src/config'
 import { ChainOptionsSelector } from 'src/ui/swap/chain-options-selector'
 import { NetworkMenu } from 'src/ui/swap/trade/favorite-recent/network-menu'
-import type { EvmChainId } from 'sushi/evm'
+import type { EvmChain, EvmChainId } from 'sushi/evm'
 import type { EvmCurrency, EvmToken } from 'sushi/evm'
 import { useAccount } from 'wagmi'
 import { CurrencyInfo } from './currency-info'
@@ -70,7 +70,7 @@ export const TokenSelectorV2: FC<TokenSelectorV2Props> = ({
 }) => {
   const { address } = useAccount()
   //@dev using `number | null` for now until types decalred
-  const [_selectedNetwork, setSelectedNetwork] = useState<number | null>(
+  const [_selectedNetwork, setSelectedNetwork] = useState<EvmChainId | null>(
     selectedNetwork ?? null,
   )
 
@@ -103,7 +103,7 @@ export const TokenSelectorV2: FC<TokenSelectorV2Props> = ({
   )
 
   const _onNetworkSelect = useCallback(
-    (network: number) => {
+    (network: EvmChainId) => {
       if (currencyInfo) {
         showCurrencyInfo(false)
       }

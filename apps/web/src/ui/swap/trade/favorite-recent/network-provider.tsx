@@ -8,14 +8,14 @@ import {
   useMemo,
   useState,
 } from 'react'
-import type { ChainId } from 'sushi'
+import type { EvmChainId } from 'sushi/evm'
 
 interface State {
   mutate: {
-    setSelectedNetwork(value: ChainId): void
+    setSelectedNetwork(value: EvmChainId): void
   }
   state: {
-    selectedNetwork: null | ChainId
+    selectedNetwork: null | EvmChainId
   }
 }
 
@@ -26,9 +26,11 @@ interface NetworkProviderProps {
 }
 
 const NetworkProvider: FC<NetworkProviderProps> = ({ children }) => {
-  const [selectedNetwork, _setSelectedNetwork] = useState<null | ChainId>(null)
+  const [selectedNetwork, _setSelectedNetwork] = useState<null | EvmChainId>(
+    null,
+  )
 
-  const setSelectedNetwork = useCallback((value: ChainId | null) => {
+  const setSelectedNetwork = useCallback((value: EvmChainId | null) => {
     _setSelectedNetwork(value)
   }, [])
 
