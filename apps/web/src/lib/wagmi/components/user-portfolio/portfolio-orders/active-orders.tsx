@@ -25,9 +25,13 @@ export const ActiveOrders = () => {
       : EvmChainId.ETHEREUM
 
   const { address } = useAccount()
+  const twapChainIds = useMemo(
+    () => TWAP_SUPPORTED_CHAIN_IDS.map((chainId) => chainId),
+    [],
+  )
   const { data: orders, isLoading } = useTwapOrders({
     account: address,
-    chainIds: TWAP_SUPPORTED_CHAIN_IDS.map((chainId) => chainId),
+    chainIds: twapChainIds,
     enabled: Boolean(address),
   })
 
