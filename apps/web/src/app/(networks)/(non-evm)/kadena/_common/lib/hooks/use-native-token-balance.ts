@@ -31,9 +31,15 @@ export const useNativeTokenBalance = ({
         }
       }
 
+      // @ts-expect-error: we know this is here
+      const amount: number | { decimal: string } = res.result.data
+
+      const balance =
+        typeof amount === 'object' ? Number.parseFloat(amount.decimal) : amount
+
       return {
         chainId: KADENA_CHAIN_ID,
-        balance: Number(res.result.data),
+        balance: Number(balance),
       }
     },
     enabled: !!account && enabled,

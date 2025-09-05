@@ -54,7 +54,7 @@ export const useTokenBalances = ({
         let amount = typeof value === 'number' ? value : 0 // Default to 0 if value is not a number b/c it'll the fallback of {int: -1}
         if (value && typeof value === 'object' && 'decimal' in value) {
           //id {decimal: "123.456"}
-          amount = Number(value.decimal) // If the value is an object with a decimal property, use that it will be a string
+          amount = Number.parseFloat(value.decimal) // If the value is an object with a decimal property, use that it will be a string
         }
 
         if (tokenAddress) {
