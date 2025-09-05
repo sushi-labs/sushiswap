@@ -129,27 +129,19 @@ export const AddButton = ({
           timestamp: Date.now(),
           href: getChainwebTxnLink(txId),
         })
+
+        const key = Object.keys(result)[0]
+        //@ts-expect-error - type mismatch, but we know this is correct
+        poolAddress = result[key]?.result?.data?.account
+
         if (!poolAddress) {
-          console.log(
-            '[AddButton] poolAddress was empty, building pool address from token addresses',
-          )
           poolAddress = await getPoolAddress(
             token0.tokenAddress,
             token1.tokenAddress,
             KADENA_CHAIN_ID,
             KADENA_NETWORK_ID,
           )
-          console.log(
-            '[AddButton] poolAddress after buildGetPoolAddress:',
-            poolAddress,
-          )
         }
-        //@ts-expect-error - type mismatch, but we know this is correct
-        poolAddress = preflightResult.result.data?.account
-        console.log(
-          '[AddButton] poolAddress from preflightResult:',
-          poolAddress,
-        )
 
         setPoolId(poolAddress)
       }
