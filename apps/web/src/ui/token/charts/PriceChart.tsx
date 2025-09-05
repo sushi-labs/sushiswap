@@ -71,8 +71,6 @@ export const PriceChart: FC<PriceChartProps> = ({ token }) => {
 
     return [transformed, current, latest?.[0] ?? 0, initial, change, yMin, yMax]
   }, [data])
-  console.log(data)
-  console.log(chartData)
 
   const updateDOMLabels = useCallback(
     (price: number, timestamp: number) => {
