@@ -101,7 +101,7 @@ export const SwapButton = ({ closeModal }: { closeModal: () => void }) => {
       })
 
       const result = await kadenaClient.pollOne(submitRes)
-      console.log('result', result)
+      // console.log('result', result)
       if (result.result.status === 'failure') {
         throw new Error(result.result.error?.message || 'Transaction failed')
       }
