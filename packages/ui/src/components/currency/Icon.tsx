@@ -30,7 +30,7 @@ const BitcoinLogo = 'bitcoin.svg'
 const MntLogo = 'mntl.svg'
 const ApeLogo = 'ape.svg'
 const SonicLogo = 'sonic.svg'
-const HypeLogo = 'hype.svg'
+const HypeLogo = 'hyper.svg'
 const BeraLogo = 'bera.svg'
 
 const LOGO: Record<number, string> = {
