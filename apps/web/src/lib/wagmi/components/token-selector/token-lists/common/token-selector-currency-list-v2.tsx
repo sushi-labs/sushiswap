@@ -88,7 +88,7 @@ export const TokenSelectorCurrencyListV2: FC<TokenSelectorCurrencyListV2Props> =
     return rowData.map((rowData) => {
       if (
         !rowData.currency.isNative &&
-        importableSet?.has(rowData.currency.address.toLowerCase() as Address)
+        importableSet?.has(rowData.currency.address)
       ) {
         return (
           <TokenSelectorImportRow
