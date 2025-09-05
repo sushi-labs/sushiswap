@@ -83,8 +83,13 @@ const _TwapOrdersDialog: FC<{
 
   const { address } = useAccount()
 
+  const twapChainIds = useMemo(
+    () => (chainId && isTwapSupportedChainId(chainId) ? [chainId] : []),
+    [chainId],
+  )
+
   const { data: orders, isLoading: isOrdersLoading } = useTwapOrders({
-    chainIds: isTwapSupportedChainId(chainId) ? [chainId] : [],
+    chainIds: twapChainIds,
     account: address,
     enabled: open,
   })
