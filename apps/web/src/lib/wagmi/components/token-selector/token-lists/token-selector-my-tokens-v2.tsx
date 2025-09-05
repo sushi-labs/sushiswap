@@ -3,6 +3,7 @@ import {
   isTokenListV2ChainId,
 } from '@sushiswap/graph-client/data-api'
 
+import { useMemo } from 'react'
 import { useNetworkOptions } from 'src/lib/hooks/useNetworkOptions'
 import type { EvmCurrency } from 'sushi/evm'
 import { useAccount } from 'wagmi'
@@ -35,10 +36,15 @@ export function TokenSelectorMyTokensV2({
 }: TokenSelectorMyTokens) {
   const { address } = useAccount()
   const { networkOptions } = useNetworkOptions()
+  const myTokensChainIds = useMemo(
+    () =>
+      (chainId && isTokenListV2ChainId(chainId)
+        ? [chainId]
+        : networkOptions.filter(isTokenListV2ChainId)) as TokenListV2ChainId[],
+    [chainId, networkOptions],
+  )
   const { data, isError, isLoading } = useMyTokensV2({
-    chainIds: (chainId && isTokenListV2ChainId(chainId)
-      ? [chainId]
-      : networkOptions.filter(isTokenListV2ChainId)) as TokenListV2ChainId[],
+    chainIds: myTokensChainIds,
     account: address,
     includeNative,
   })

@@ -2,6 +2,7 @@ import {
   type TrendingTokensChainId,
   isTrendingTokensChainId,
 } from '@sushiswap/graph-client/data-api'
+import { useMemo } from 'react'
 import { useNetworkOptions } from 'src/lib/hooks/useNetworkOptions'
 import type { EvmCurrency } from 'sushi/evm'
 import { useTrendingTokensV2 } from '../hooks/use-trending-tokens-v2'
@@ -32,12 +33,17 @@ export function TokenSelectorTrendingTokensV2({
   showChainOptions,
 }: TokenSelectorTrendingTokensV2) {
   const { networkOptions } = useNetworkOptions()
+  const trendingChainIds = useMemo(
+    () =>
+      (chainId && isTrendingTokensChainId(chainId)
+        ? [chainId]
+        : networkOptions.filter(
+            isTrendingTokensChainId,
+          )) as TrendingTokensChainId[],
+    [chainId, networkOptions],
+  )
   const { data, priceMap, isError, isLoading } = useTrendingTokensV2({
-    chainIds: (chainId && isTrendingTokensChainId(chainId)
-      ? [chainId]
-      : networkOptions.filter(
-          isTrendingTokensChainId,
-        )) as TrendingTokensChainId[],
+    chainIds: trendingChainIds,
   })
 
   if (isLoading)

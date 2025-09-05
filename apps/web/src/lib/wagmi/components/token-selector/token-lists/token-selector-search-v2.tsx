@@ -39,14 +39,18 @@ export function TokenSelectorSearchV2({
   showChainOptions,
 }: TokenSelectorSearch) {
   const { networkOptions } = useNetworkOptions()
+  const searchChainIds = useMemo(
+    () =>
+      chainId && isTokenListV2ChainId(chainId)
+        ? [chainId]
+        : chainId && !isTokenListV2ChainId(chainId)
+          ? []
+          : networkOptions.filter(isTokenListV2ChainId),
+    [chainId, networkOptions],
+  )
   const { data, priceMap, isError, isLoading, fetchNextPage, hasMore } =
     useSearchTokensV2({
-      chainIds:
-        chainId && isTokenListV2ChainId(chainId)
-          ? [chainId]
-          : chainId && !isTokenListV2ChainId(chainId)
-            ? []
-            : networkOptions.filter(isTokenListV2ChainId),
+      chainIds: searchChainIds,
       search,
       pagination: {
         initialPage: 0,

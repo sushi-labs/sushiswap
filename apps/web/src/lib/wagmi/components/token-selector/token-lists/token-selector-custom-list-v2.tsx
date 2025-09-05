@@ -31,12 +31,15 @@ export function TokenSelectorCustomListV2({
   onShowInfo,
   showChainOptions,
 }: TokenSelectorCustomListV2) {
+  const myTokensChainIds = useMemo(
+    () => (chainId && isTokenListV2ChainId(chainId) ? [chainId] : TempChainIds),
+    [chainId],
+  )
   const {
     data: { balanceMap, priceMap, bridgeInfoMap },
     isLoading,
   } = useMyTokensV2({
-    chainIds:
-      chainId && isTokenListV2ChainId(chainId) ? [chainId] : TempChainIds,
+    chainIds: myTokensChainIds,
     account,
     includeNative,
   })
