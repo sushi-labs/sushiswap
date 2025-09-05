@@ -37,7 +37,6 @@ export const useLpBalance = ({
         KADENA_CHAIN_ID,
         KADENA_NETWORK_ID,
       )
-
       const res = await kadenaClient.local(tx, {
         preflight: false,
         signatureVerification: false,
@@ -46,7 +45,10 @@ export const useLpBalance = ({
       if (res.result.status !== 'success') {
         throw new Error(res.result.error?.message || 'Failed to fetch balances')
       }
-      const balance = res.result.data ?? 0
+      // @ts-expect-error: we know this is here
+      const amount: number | { decimal: string } = res.result.data
+      const balance =
+        typeof amount === 'number' ? amount : Number.parseFloat(amount?.decimal)
 
       return {
         chainId: KADENA_CHAIN_ID,
