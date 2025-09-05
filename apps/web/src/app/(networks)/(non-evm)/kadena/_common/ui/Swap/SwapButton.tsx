@@ -144,17 +144,10 @@ export const SwapButton = ({ closeModal }: { closeModal: () => void }) => {
     closeModal()
 
     await queryClient.invalidateQueries({
-      queryKey: [
-        'useTokenBalance',
-        { accountAddress: address, tokenAddress: token0?.tokenAddress },
-      ],
+      queryKey: ['kadena-token-balances', address, [token0?.tokenAddress]],
     })
-
     await queryClient.invalidateQueries({
-      queryKey: [
-        'useTokenBalance',
-        { accountAddress: address, tokenAddress: token1?.tokenAddress },
-      ],
+      queryKey: ['kadena-token-balances', address, [token1?.tokenAddress]],
     })
   }
 
