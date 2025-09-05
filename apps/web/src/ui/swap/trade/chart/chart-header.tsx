@@ -10,7 +10,7 @@ import { Rate } from './rate'
 export const ChartHeader = () => {
   const { isMd: isMdScreen } = useBreakpoint('md')
   const {
-    state: { token1, chainId },
+    state: { token1 },
     mutate: { setToken1 },
   } = useChartContext()
 
@@ -19,7 +19,6 @@ export const ChartHeader = () => {
       <TokenSelectorV2
         type="buy"
         selected={token1}
-        chainId={chainId}
         onSelect={(token) => {
           setToken1(token)
         }}
@@ -68,7 +67,7 @@ export const ChartHeader = () => {
         </Button>
       </TokenSelectorV2>
     )
-  }, [token1, isMdScreen, chainId, setToken1])
+  }, [token1, isMdScreen, setToken1])
 
   return (
     <div className="flex flex-col items-start justify-between w-full gap-4 lg:items-center md:flex-col lg:flex-row lg:gap-0">

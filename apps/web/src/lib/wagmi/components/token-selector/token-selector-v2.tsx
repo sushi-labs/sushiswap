@@ -32,14 +32,11 @@ export type TokenSelectorV2Type = 'buy' | 'sell'
 
 interface TokenSelectorV2Props {
   selected: EvmCurrency | undefined
-  chainId: EvmChainId
   onSelect(currency: EvmCurrency): void
   children: ReactNode
   currencies?: Record<string, EvmToken>
   includeNative?: boolean
   hidePinnedTokens?: boolean
-  hideSearch?: boolean
-  networks?: readonly EvmChainId[]
   selectedNetwork?: EvmChainId
   onNetworkSelect?: (network: number) => void
   isBrowse?: boolean
@@ -52,15 +49,9 @@ export const TokenSelectorV2: FC<TokenSelectorV2Props> = ({
   includeNative = true,
   selected,
   onSelect,
-  // biome-ignore lint/correctness/noUnusedVariables: will remove once all props are for sure not going to be used
-  chainId,
   children,
   currencies: _currencies,
   hidePinnedTokens,
-  // biome-ignore lint/correctness/noUnusedVariables: will remove once all props are for sure not going to be used
-  hideSearch,
-  // biome-ignore lint/correctness/noUnusedVariables: will remove once all props are for sure not going to be used
-  networks,
   selectedNetwork,
   onNetworkSelect,
   isBrowse,

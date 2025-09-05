@@ -32,7 +32,6 @@ export const DCAToken1Input = () => {
       <TokenSelectorV2
         type="buy"
         selected={token}
-        chainId={chainId}
         onSelect={onSelect}
         isTwap={true}
         selectedNetwork={chainId}

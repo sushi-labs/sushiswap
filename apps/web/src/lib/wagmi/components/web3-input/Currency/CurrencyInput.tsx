@@ -53,7 +53,6 @@ interface CurrencyInputProps {
   error?: string
   hidePinnedTokens?: boolean
   disableInsufficientBalanceError?: boolean
-  hideSearch?: boolean
   hidePricing?: boolean
   hideIcon?: boolean
   label?: string
@@ -87,7 +86,6 @@ const CurrencyInput: FC<CurrencyInputProps> = ({
   error,
   hidePinnedTokens = false,
   disableInsufficientBalanceError = false,
-  hideSearch = false,
   hidePricing = false,
   hideIcon = false,
   label,
@@ -177,12 +175,9 @@ const CurrencyInput: FC<CurrencyInputProps> = ({
         <TokenSelectorV2
           currencies={currencies}
           selected={currency}
-          chainId={chainId}
           onSelect={onSelect}
           includeNative={allowNative}
           hidePinnedTokens={hidePinnedTokens}
-          hideSearch={hideSearch}
-          networks={networks}
           selectedNetwork={selectedNetwork}
           type={type === 'OUTPUT' ? 'buy' : 'sell'}
           onNetworkSelect={onNetworkChange}
@@ -277,10 +272,8 @@ const CurrencyInput: FC<CurrencyInputProps> = ({
     onSelect,
     currencies,
     currency,
-    chainId,
     allowNative,
     hidePinnedTokens,
-    hideSearch,
     networks,
     selectedNetwork,
     onNetworkChange,

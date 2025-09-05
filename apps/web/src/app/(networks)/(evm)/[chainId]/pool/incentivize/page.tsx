@@ -299,15 +299,12 @@ const Incentivize = withCheckerRoot(() => {
             currencyLoading={angleRewardTokensLoading}
             allowNative={false}
             hidePinnedTokens={true}
-            hideSearch={true}
             {...(numHours &&
               rewardToken &&
               amount[0] &&
               minAmount &&
               amount[0].lt(minAmount) && {
-                error: `Min. ${minAmount.toSignificant(4)} ${
-                  rewardToken.symbol
-                }`,
+                error: `Min. ${minAmount.toSignificant(4)} ${rewardToken.symbol}`,
               })}
           />
           <p
@@ -482,9 +479,7 @@ const Incentivize = withCheckerRoot(() => {
                 })}
               >
                 {blacklist.length > 0
-                  ? `${blacklist.length} address${
-                      blacklist.length > 1 ? 'es' : ''
-                    } blacklisted.`
+                  ? `${blacklist.length} address${blacklist.length > 1 ? 'es' : ''} blacklisted.`
                   : 'The addresses to blacklist, use commas to separate addresses.'}
               </p>
             </div>

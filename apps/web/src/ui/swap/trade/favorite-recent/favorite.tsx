@@ -88,7 +88,6 @@ export const Favorite = () => {
       <div className="flex flex-col items-center justify-center w-full gap-4 mt-6">
         <TokenSelectorV2
           selected={undefined}
-          chainId={1}
           selectedNetwork={
             selectedNetwork
               ? (selectedNetwork as EvmChainId)
