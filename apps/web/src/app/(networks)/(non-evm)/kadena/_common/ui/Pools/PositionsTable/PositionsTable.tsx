@@ -25,7 +25,7 @@ import {
 type PositionsTableProps = {
   hideNewPositionButton?: boolean
 }
-
+const columns = [POSITION_NAME_COLUMN, VALUE_COLUMN, APR_COLUMN]
 export const PositionsTable = ({
   hideNewPositionButton,
 }: PositionsTableProps) => {
@@ -99,7 +99,7 @@ export const PositionsTable = ({
       <DataTable
         loading={isLoading}
         data={paginatedData}
-        columns={[POSITION_NAME_COLUMN, VALUE_COLUMN, APR_COLUMN]}
+        columns={columns}
         linkFormatter={(data: WalletPosition) =>
           `/kadena/pool/${encodeURIComponent(data.pairId)}/add`
         }
