@@ -222,7 +222,6 @@ const PoolProvider: FC<PoolProviderProps> = ({ children }) => {
 
   useEffect(() => {
     if (data) {
-      console.log({ data })
       dispatchWithAction.setPoolId(data?.poolData?.poolAddress ?? undefined)
       dispatchWithAction.setReserve0(data?.poolData?.reserve0 ?? 0)
       dispatchWithAction.setReserve1(data?.poolData?.reserve1 ?? 0)

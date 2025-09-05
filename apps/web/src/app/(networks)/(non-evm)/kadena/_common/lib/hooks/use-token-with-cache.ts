@@ -5,7 +5,7 @@ import {
   KADENA_NETWORK_ID,
 } from '~kadena/_common/constants/network'
 import type { KadenaToken } from '~kadena/_common/types/token-type'
-import { buildGetTokenMetaTx } from '../pact/builders'
+import { buildGetTokenMetaTx, buildGetTokenPrecision } from '../pact/builders'
 import { useCustomTokens } from './use-custom-tokens'
 
 interface GetTokenWithQueryCacheFn {
@@ -25,26 +25,30 @@ export async function getTokenDetails({
     return { tokenAddress, tokenName, tokenSymbol, tokenDecimals }
   }
 
-  const tx = buildGetTokenMetaTx(address, KADENA_CHAIN_ID, KADENA_NETWORK_ID)
+  const decimalsTx = buildGetTokenPrecision(
+    address,
+    KADENA_CHAIN_ID,
+    KADENA_NETWORK_ID,
+  )
 
-  const res = await kadenaClient.local(tx, {
+  const decimalRes = await kadenaClient.local(decimalsTx, {
     preflight: false,
     signatureVerification: false,
   })
-
-  if (res.result.status !== 'success') {
+  if (decimalRes.result.status !== 'success') {
     throw new Error(
-      res.result.error?.message || 'Failed to fetch token metadata',
+      decimalRes.result.error?.message || 'Failed to fetch token decimals',
     )
   }
 
-  console.log('getTokenDetails', res.result.data)
   //@ts-expect-error - type mismatch, but we know this is correct
-  const { name, symbol, decimals } = res.result.data
+  const decimals = decimalRes?.result?.data?.int as number
+
+  const symbol = address?.split('.')?.[1] || 'UNKNOWN'
 
   return {
     tokenAddress: address,
-    tokenName: name,
+    tokenName: symbol,
     tokenSymbol: symbol,
     tokenDecimals: decimals,
   }
