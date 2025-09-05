@@ -15,7 +15,7 @@ export const FavoriteButton: FC<FavoriteButtonProps> = ({
   ...props
 }) => {
   const { hasToken, mutate } = usePinnedTokens()
-  const isOnList = !currencyId ? false : hasToken(currencyId)
+  const isOnList = hasToken(currencyId)
 
   const toggleFavorite = (e: React.MouseEvent | React.KeyboardEvent) => {
     e.stopPropagation()
