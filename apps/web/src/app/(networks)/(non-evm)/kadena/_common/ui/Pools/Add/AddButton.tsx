@@ -119,6 +119,12 @@ export const AddButton = ({
         if (result.result.status === 'failure') {
           throw new Error(result.result.error?.message || 'Transaction failed')
         }
+        //@ts-expect-error - type mismatch, but we know this is correct
+        poolAddress = preflightResult.result.data?.account
+        console.log(
+          '[AddButton] poolAddress from preflightResult:',
+          poolAddress,
+        )
         createSuccessToast({
           summary: 'Created a pool successfully! Continue to add liquidity.',
           txHash: txId,
@@ -144,12 +150,6 @@ export const AddButton = ({
             poolAddress,
           )
         }
-        //@ts-expect-error - type mismatch, but we know this is correct
-        poolAddress = preflightResult.result.data?.account
-        console.log(
-          '[AddButton] poolAddress from preflightResult:',
-          poolAddress,
-        )
 
         setPoolId(poolAddress)
       }
