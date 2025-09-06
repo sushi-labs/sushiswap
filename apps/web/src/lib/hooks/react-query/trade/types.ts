@@ -17,7 +17,9 @@ export interface UseTradeParams {
   toToken: EvmCurrency | undefined
   amount: Amount<EvmCurrency> | undefined
   gasPrice?: bigint | null | undefined
+  fee?: number
   slippagePercentage: string
+  onlyPools?: Address[]
   recipient: Address | undefined
   source?: RouterLiquiditySource
   enabled: boolean

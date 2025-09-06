@@ -1,6 +1,7 @@
 import { type NextRequest, NextResponse } from 'next/server'
 import { getChainById, getChainByKey, isChainId, isChainKey } from 'sushi'
-import { getEvmChainById, isSushiSwapChainId } from 'sushi/evm'
+import { getEvmChainById } from 'sushi/evm'
+import { SUPPORTED_NETWORKS } from './config'
 
 export const config = {
   matcher: [
@@ -52,7 +53,7 @@ export async function middleware(req: NextRequest) {
     if (cookie) {
       const wagmiState = JSON.parse(cookie.value)
       const chainId = wagmiState?.state?.chainId
-      if (isSushiSwapChainId(chainId)) {
+      if (SUPPORTED_NETWORKS.includes(chainId)) {
         return NextResponse.redirect(
           new URL(`/${getEvmChainById(chainId).key}/${path}`, req.url),
         )
