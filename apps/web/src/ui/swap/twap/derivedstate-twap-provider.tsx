@@ -49,6 +49,7 @@ type State = DerivedStateSimpleSwapState & {
     amountOut: Amount<EvmCurrency> | undefined
     minAmountOut: Amount<EvmCurrency> | undefined
     amountInPerChunk: Amount<EvmCurrency> | undefined
+    percentDiff: number | undefined
   }
   mutate: DerivedStateSimpleSwapState['mutate'] & {
     setIsLimitPriceInverted: Dispatch<SetStateAction<boolean>>
@@ -56,6 +57,7 @@ type State = DerivedStateSimpleSwapState & {
     setExpiry: Dispatch<SetStateAction<TimeDuration>>
     setChunks: Dispatch<SetStateAction<number>>
     setFillDelay: Dispatch<SetStateAction<TimeDuration>>
+    setPercentDiff: Dispatch<SetStateAction<number | undefined>>
   }
 }
 
@@ -86,7 +88,7 @@ const _DerivedStateTwapProvider: FC<DerivedStateTwapProviderProps> = ({
   const derivedStateSimpleSwap = useDerivedStateSimpleSwap()
 
   const { data: prices, isLoading: _isPricesLoading } = usePrices({
-    chainId: derivedStateSimpleSwap.state.chainId,
+    chainId: derivedStateSimpleSwap.state.chainId0,
   })
 
   const [isLimitPriceInverted, setIsLimitPriceInverted] =
@@ -100,6 +102,7 @@ const _DerivedStateTwapProvider: FC<DerivedStateTwapProviderProps> = ({
     unit: TimeUnit.Minutes,
     value: 5,
   })
+  const [percentDiff, setPercentDiff] = useState<number | undefined>(undefined)
 
   const [marketPrice, token0PriceUSD, token1PriceUSD] = useMemo(() => {
     const [token0, token1] = [
@@ -141,8 +144,8 @@ const _DerivedStateTwapProvider: FC<DerivedStateTwapProviderProps> = ({
         const { state, mutate, isLoading, isToken0Loading, isToken1Loading } =
           derivedStateSimpleSwap
 
-        const chainId = isTwapSupportedChainId(state.chainId)
-          ? state.chainId
+        const chainId = isTwapSupportedChainId(state.chainId0)
+          ? state.chainId0
           : EvmChainId.ETHEREUM
 
         const sdk = TwapSDK.onNetwork(chainId)
@@ -238,6 +241,7 @@ const _DerivedStateTwapProvider: FC<DerivedStateTwapProviderProps> = ({
             setExpiry,
             setChunks,
             setFillDelay,
+            setPercentDiff,
           },
           state: {
             ...state,
@@ -256,6 +260,7 @@ const _DerivedStateTwapProvider: FC<DerivedStateTwapProviderProps> = ({
             amountOut,
             minAmountOut,
             amountInPerChunk,
+            percentDiff,
           },
           isLoading,
           isToken0Loading,
@@ -272,6 +277,7 @@ const _DerivedStateTwapProvider: FC<DerivedStateTwapProviderProps> = ({
         expiry,
         chunks,
         fillDelay,
+        percentDiff,
       ])}
     >
       {children}
@@ -460,6 +466,8 @@ const useTwapTradeErrors = () => {
   const {
     state: {
       chainId,
+      token0,
+      token1,
       amountInPerChunk,
       fillDelay,
       token0PriceUSD,
@@ -486,13 +494,27 @@ const useTwapTradeErrors = () => {
             sdk.config.minChunkSizeUsd,
           ).isError
         : false
+    const minTradeSizeAmount =
+      amountInPerChunk && token0PriceUSD
+        ? sdk.getMinTradeSizeError(
+            amountInPerChunk.toString(),
+            token0PriceUSD.toString({ fixed: 6 }),
+            sdk.config.minChunkSizeUsd,
+          ).value
+        : 0
+    const chainMismatchError =
+      token0 && token1 ? token0.chainId !== token1.chainId : false
 
     return {
       minFillDelayError,
       maxFillDelayError,
       minTradeSizeError,
+      chainMismatchError,
+      minTradeSizeAmount,
     }
   }, [
+    token0,
+    token1,
     chainId,
     isLimitOrder,
     fillDelay,

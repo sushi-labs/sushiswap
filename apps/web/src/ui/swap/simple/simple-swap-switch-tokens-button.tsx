@@ -25,10 +25,13 @@ export const SimpleSwapSwitchTokensButton = () => {
         <button
           onClick={switchTokens}
           type="button"
-          className="hover:shadow-sm transition-border z-10 group bg-background p-2 border border-accent transition-all rounded-full cursor-pointer"
+          className="hover:shadow-sm transition-border z-10 group bg-background p-2 border border-slate-50 dark:border-slate-800 transition-all rounded-full cursor-pointer"
         >
           <div className="transition-transform rotate-0 group-hover:rotate-180">
-            <ArrowsUpDownIcon strokeWidth={3} className="w-3 h-3 text-blue" />
+            <ArrowsUpDownIcon
+              strokeWidth={3}
+              className="w-3 h-3 text-blue dark:text-skyblue"
+            />
           </div>
         </button>
       </TraceEvent>

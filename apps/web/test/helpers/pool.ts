@@ -2,6 +2,7 @@ import { type Page, expect } from '@playwright/test'
 import type { NextFixture } from 'next/experimental/testmode/playwright'
 import { isZapSupportedChainId } from 'src/config'
 import { NativeAddress } from 'src/lib/constants'
+import { getChainById } from 'sushi'
 import {
   type EvmChainId,
   type EvmCurrency,
@@ -134,9 +135,7 @@ export class PoolPage extends BaseActions {
 
     await this.switchNetwork(this.chainId)
 
-    const approveTokenId = `approve-token-${
-      args.token0.type === 'native' ? 1 : 0
-    }-button`
+    const approveTokenId = `approve-token-${args.token0.type === 'native' ? 1 : 0}-button`
     const approveTokenLocator = this.page.locator(
       `[testdata-id=${approveTokenId}]`,
     )
@@ -188,9 +187,7 @@ export class PoolPage extends BaseActions {
       args.token0.type === 'native' ? args.amount1 : args.amount0,
     )
 
-    const approveTokenId = `approve-token-${
-      args.token0.type === 'native' ? 1 : 0
-    }-button`
+    const approveTokenId = `approve-token-${args.token0.type === 'native' ? 1 : 0}-button`
     const approveTokenLocator = this.page.locator(
       `[testdata-id=${approveTokenId}]`,
     )
@@ -278,7 +275,7 @@ export class PoolPage extends BaseActions {
       fee: SushiSwapV3FeeAmount.HIGH,
     })
     const url = BASE_URL.concat(
-      `/${this.chainId.toString()}/pool/v3/${poolAddress.toLowerCase()}/positions`,
+      `/${getChainById(this.chainId).key}/pool/v3/${poolAddress.toLowerCase()}/positions`,
     )
     await this.page.goto(url)
     await this.connect()
@@ -329,7 +326,7 @@ export class PoolPage extends BaseActions {
     })
 
     const url = BASE_URL.concat(
-      `/${this.chainId.toString()}/pool/v2/${poolAddress.toLowerCase()}/remove`,
+      `/${getChainById(this.chainId).key}/pool/v2/${poolAddress.toLowerCase()}/remove`,
     )
     await this.page.goto(url)
     await this.connect()

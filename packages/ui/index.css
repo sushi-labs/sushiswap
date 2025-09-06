@@ -12,14 +12,14 @@
       "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans",
       "Helvetica Neue", sans-serif;
 
-    --background-color: #f4f5f6;
+    --background-color: #f3f2f4;
     --color: #000;
     --secondary: #0000000a;
     --muted: #0000000f;
-    --muted-foreground: #6b7280;
+    --muted-foreground: #535263;
     --accent: #00000014;
     --accent-foreground: #111827;
-    --background: #f4f5f6;
+    --background: #f3f2f4;
     --green: 34 197 94;
     --red: 239 68 68;
   }
@@ -31,14 +31,14 @@
   .dark {
     --secondary: #ffffff0a;
     --muted: #ffffff0f;
-    --muted-foreground: #94a3b8;
+    --muted-foreground: #e4ddec;
     --accent: #ffffff14;
     --accent-foreground: #e2e8f0;
-    --background-color: #0f172a;
+    --background-color: #0c0c23;
     --color: #ffffff;
-    --background: #0f172a;
+    --background: #0c0c23;
     --green: 19 155 109;
-    --red: 180 48 60;
+    --red: 234 56 48;
   }
 
   .black {
@@ -168,6 +168,15 @@ html[class="dark"] *.scroll::-webkit-scrollbar-thumb {
   input[type="range"]::-webkit-slider-thumb {
     @apply appearance-none w-6 h-6 bg-blue rounded-full;
   }
+}
+
+.Toastify__close-button {
+  top: 13px !important;
+  right: 17px !important;
+}
+
+.dark .Toastify__close-button {
+  color: #fff !important;
 }
 
 [aria-labelledby="rk_connect_title"] {

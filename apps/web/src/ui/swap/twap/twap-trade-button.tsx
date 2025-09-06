@@ -78,13 +78,7 @@ const TwapTradeChecker: FC<TwapTradeCheckerProps> = ({
       testId={id}
       {...props}
     >
-      {minTradeSizeError
-        ? 'Inadequate Trade Size'
-        : minFillDelayError
-          ? 'Trade Interval Below Limit'
-          : maxFillDelayError
-            ? 'Trade Interval Exceeds Limit'
-            : ''}
+      Place order
     </Button>
   ) : (
     <>{children}</>

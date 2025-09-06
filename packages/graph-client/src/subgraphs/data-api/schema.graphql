@@ -51,10 +51,15 @@ type Query {
   sushiBarHistory: SushiBarHistory!
   tokenList(chainId: TokenListChainId!, first: Int = 50, skip: Int, search: String, customTokens: [Bytes!]): [TokenListEntry!]!
   tokenListBalances(chainId: TokenListChainId!, account: Bytes!, includeNative: Boolean = true, customTokens: [Bytes!]): [TokenListEntryWithBalance!]!
+  tokenListV2(chainIds: [TokenListV2ChainId!]!, first: Int = 50, skip: Int, search: String, customTokens: [MultiChainTokenInput!]): [TokenListEntryV2!]!
+  tokenListBalancesV2(chainIds: [TokenListV2ChainId!]!, account: Bytes!, includeNative: Boolean = true, customTokens: [MultiChainTokenInput!]): TokenListBalancesV2Response!
+  recentSwaps(account: Bytes!, chainIds: [TokenListV2ChainId!]!): [SwapPnL!]!
+  searchTokens(account: Bytes!, first: Int = 50, skip: Int, chainIds: [TokenListV2ChainId!]!, search: String, tokens: [MultiChainTokenInput!]): [TokenListEntryWithBalanceV2!]!
   tokenAnalysis(chainId: Int!, address: Bytes!): TokenAnalysis!
   pendingTokens: [PendingToken!]!
   approvedCommunityTokens: [ApprovedToken!]!
   trendingTokens(chainId: TrendingTokensChainId!): [TrendingToken!]!
+  trendingTokensV2(chainIds: [TrendingTokensChainId!]!): [TrendingTokenV2!]!
   v2LiquidityPositions(user: Bytes!, chainId: SushiSwapV2ChainId!): [V2LiquidityPosition!]!
   v2Swaps(address: Bytes!, chainId: SushiSwapV2ChainId!): [V2Swap!]!
   v2Burns(address: Bytes!, chainId: SushiSwapV2ChainId!): [V2Burn!]!
@@ -641,6 +646,9 @@ scalar TokenListChainId
 """A field whose value is a trending token list chain ID"""
 scalar TrendingTokensChainId
 
+"""A field whose value is a token list v2 chain ID"""
+scalar TokenListV2ChainId
+
 enum ChainIdFeature {
   SushiSwapChainId
   SushiSwapV2ChainId
@@ -649,6 +657,7 @@ enum ChainIdFeature {
   BladeChainId
   TokenListChainId
   TrendingTokensChainId
+  TokenListV2ChainId
 }
 
 enum DataSource {
@@ -702,6 +711,61 @@ type TokenListEntryWithBalance {
   decimals: Int!
   balance: BigInt!
   approved: Boolean!
+}
+
+type TokenBridgeInfo {
+  chainId: TokenListV2ChainId!
+  decimals: Int!
+  address: Bytes!
+}
+
+type TokenListEntryV2 {
+  chainId: TokenListV2ChainId!
+  address: Bytes!
+  symbol: String!
+  name: String!
+  decimals: Int!
+  approved: Boolean!
+  priceUSD: Float
+}
+
+type TokenListEntryWithBalanceV2 {
+  address: Bytes!
+  symbol: String!
+  name: String!
+  chainId: TokenListV2ChainId!
+  decimals: Int!
+  balance: BigInt!
+  balanceUSD: Float!
+  priceUSD: Float!
+  priceChange1d: Float!
+  approved: Boolean!
+  bridgeInfo: [TokenBridgeInfo!]
+}
+
+type TokenListBalancesV2Response {
+  balances: [TokenListEntryWithBalanceV2!]!
+  apiResponseTime: Float!
+}
+
+type SwapPnL {
+  tokenIn: TokenListEntryV2!
+  tokenOut: TokenListEntryV2!
+  amountIn: Float!
+  amountOut: Float!
+  amountInUSD: Float!
+  amountOutUSD: Float!
+  time: Int!
+  unrealizedPnl: Float!
+  realizedPnl: Float!
+  deltaRealizedPnl: Float!
+  totalPnl: Float!
+  protocol: String!
+}
+
+input MultiChainTokenInput {
+  chainId: TokenListV2ChainId!
+  address: Bytes!
 }
 
 type TokenValidationMetrics {
@@ -785,6 +849,16 @@ type TrendingToken {
   name: String!
   decimals: Int!
   approved: Boolean!
+}
+
+type TrendingTokenV2 {
+  address: Bytes!
+  chainId: TrendingTokensChainId!
+  symbol: String!
+  name: String!
+  decimals: Int!
+  approved: Boolean!
+  priceUSD: Float
 }
 
 type V2LiquidityPosition {

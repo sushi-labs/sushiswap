@@ -72,6 +72,7 @@ import {
 } from 'wagmi'
 import { useRefetchBalances } from '~evm/_common/ui/balance-provider/use-refetch-balances'
 import { usePrice } from '~evm/_common/ui/price-provider/price-provider/use-price'
+import { useDerivedStateSimpleTrade } from '../trade/derivedstate-simple-trade-provider'
 import {
   ConfirmationDialogContent,
   Divider,
@@ -121,6 +122,10 @@ const _CrossChainSwapTradeReviewDialog: FC<{
   const client0 = usePublicClient({ chainId: chainId0 })
   const client1 = usePublicClient({ chainId: chainId1 })
   const { approved } = useApproved(APPROVE_TAG_XSWAP)
+
+  const {
+    state: { tradeView },
+  } = useDerivedStateSimpleTrade()
 
   const { open: confirmDialogOpen } = useDialog(DialogType.Confirm)
   const { open: reviewDialogOpen } = useDialog(DialogType.Review)
@@ -236,32 +241,24 @@ const _CrossChainSwapTradeReviewDialog: FC<{
           routeRef?.current?.step?.includedStepsWithoutFees?.[0]?.type ===
           'cross'
             ? {
-                pending: `Sending ${routeRef?.current?.amountIn?.toSignificant(
-                  6,
-                )} ${routeRef?.current?.amountIn?.currency.symbol} to ${
-                  getEvmChainById(routeRef.current.toChainId).name
-                }`,
-                completed: `Sent ${routeRef?.current?.amountIn?.toSignificant(
-                  6,
-                )} ${routeRef?.current?.amountIn?.currency.symbol} to ${
-                  getEvmChainById(routeRef.current.toChainId).name
-                }`,
+                pending: `Sending ${routeRef?.current?.amountIn?.toSignificant(6)} ${
+                  routeRef?.current?.amountIn?.currency.symbol
+                } to ${getEvmChainById(routeRef.current.toChainId).name}`,
+                completed: `Sent ${routeRef?.current?.amountIn?.toSignificant(6)} ${
+                  routeRef?.current?.amountIn?.currency.symbol
+                } to ${getEvmChainById(routeRef.current.toChainId).name}`,
                 failed: `Something went wrong when trying to send ${
                   routeRef?.current?.amountIn?.currency.symbol
                 } to ${getEvmChainById(routeRef.current.toChainId).name}`,
               }
             : {
-                pending: `Swapping ${routeRef.current?.amountIn?.toSignificant(
-                  6,
-                )} ${
+                pending: `Swapping ${routeRef.current?.amountIn?.toSignificant(6)} ${
                   routeRef?.current?.amountIn?.currency.symbol
                 } to bridge token ${
                   routeRef?.current?.step?.includedStepsWithoutFees?.[0]?.action
                     .toToken.symbol
                 }`,
-                completed: `Swapped ${routeRef?.current?.amountIn?.toSignificant(
-                  6,
-                )} ${
+                completed: `Swapped ${routeRef?.current?.amountIn?.toSignificant(6)} ${
                   routeRef?.current?.amountIn?.currency.symbol
                 } to bridge token ${
                   routeRef?.current?.step?.includedStepsWithoutFees?.[0]?.action
@@ -484,16 +481,12 @@ const _CrossChainSwapTradeReviewDialog: FC<{
                 }`,
               }
             : {
-                pending: `Receiving ${routeRef?.current?.amountOut?.toSignificant(
-                  6,
-                )} ${routeRef?.current?.amountOut?.currency.symbol} on ${
-                  getEvmChainById(routeRef?.current?.toChainId!).name
-                }`,
-                completed: `Received ${routeRef?.current?.amountOut?.toSignificant(
-                  6,
-                )} ${routeRef?.current?.amountOut?.currency.symbol} on ${
-                  getEvmChainById(routeRef?.current?.toChainId!).name
-                }`,
+                pending: `Receiving ${routeRef?.current?.amountOut?.toSignificant(6)} ${
+                  routeRef?.current?.amountOut?.currency.symbol
+                } on ${getEvmChainById(routeRef?.current?.toChainId!).name}`,
+                completed: `Received ${routeRef?.current?.amountOut?.toSignificant(6)} ${
+                  routeRef?.current?.amountOut?.currency.symbol
+                } on ${getEvmChainById(routeRef?.current?.toChainId!).name}`,
                 failed: `Something went wrong when trying to receive ${routeRef?.current?.amountOut?.toSignificant(
                   6,
                 )} ${routeRef?.current?.amountOut?.currency.symbol} on ${
@@ -553,10 +546,7 @@ const _CrossChainSwapTradeReviewDialog: FC<{
   const amountOutUSD = useMemo(
     () =>
       price && step?.amountOut
-        ? `${(
-            (price * Number(step.amountOut.amount)) /
-              10 ** step.amountOut.currency.decimals
-          ).toFixed(2)}`
+        ? `${((price * Number(step.amountOut.amount)) / 10 ** step.amountOut.currency.decimals).toFixed(2)}`
         : undefined,
     [step?.amountOut, price],
   )
@@ -616,9 +606,7 @@ const _CrossChainSwapTradeReviewDialog: FC<{
                   {!step?.amountOut ? (
                     <SkeletonText fontSize="xs" className="w-2/3" />
                   ) : (
-                    `Receive ${step?.amountOut?.toSignificant(6)} ${
-                      token1?.symbol
-                    }`
+                    `Receive ${step?.amountOut?.toSignificant(6)} ${token1?.symbol}`
                   )}
                 </DialogTitle>
                 <DialogDescription>
@@ -776,9 +764,9 @@ const _CrossChainSwapTradeReviewDialog: FC<{
                                 className="w-1/2"
                               />
                             ) : (
-                              <span className="text-sm font-medium">{`${step.amountOut.toSignificant(
-                                6,
-                              )} ${token1?.symbol}`}</span>
+                              <span className="text-sm font-medium">{`${step.amountOut.toSignificant(6)} ${
+                                token1?.symbol
+                              }`}</span>
                             )}
                             {!amountOutUSD ? (
                               <SkeletonText
@@ -808,9 +796,9 @@ const _CrossChainSwapTradeReviewDialog: FC<{
                                 className="w-1/2"
                               />
                             ) : (
-                              <span className="text-sm font-medium">{`${step.amountOutMin.toSignificant(
-                                6,
-                              )} ${token1?.symbol}`}</span>
+                              <span className="text-sm font-medium">{`${step.amountOutMin.toSignificant(6)} ${
+                                token1?.symbol
+                              }`}</span>
                             )}
                             {!amountOutMinUSD ? (
                               <SkeletonText
@@ -843,8 +831,8 @@ const _CrossChainSwapTradeReviewDialog: FC<{
                               <span>
                                 {formatNumber(chainId0Fees)}{' '}
                                 {
-                                  feesBreakdown.gas.get(chainId0)!.amount
-                                    .currency.symbol
+                                  feesBreakdown.gas.get(chainId0)?.amount
+                                    ?.currency?.symbol
                                 }{' '}
                                 <span className="text-muted-foreground">
                                   ({formatUSD(totalFeesUSD)})
@@ -865,9 +853,9 @@ const _CrossChainSwapTradeReviewDialog: FC<{
                                 className="w-1/2"
                               />
                             ) : (
-                              <span className="text-sm font-medium">{`${step.amountOut.toSignificant(
-                                6,
-                              )} ${token1?.symbol}`}</span>
+                              <span className="text-sm font-medium">{`${step.amountOut.toSignificant(6)} ${
+                                token1?.symbol
+                              }`}</span>
                             )}
                             {!amountOutUSD ? (
                               <SkeletonText
@@ -978,46 +966,48 @@ const _CrossChainSwapTradeReviewDialog: FC<{
           </>
         )}
       </DialogReview>
-      <DialogCustom dialogType={DialogType.Confirm}>
-        <DialogContent onInteractOutside={(e) => e.preventDefault()}>
-          <DialogHeader>
-            <DialogTitle>Cross-chain swap</DialogTitle>
-            <DialogDescription asChild>
-              <div>
-                <ConfirmationDialogContent
-                  dialogState={stepStates}
-                  bridgeUrl={lifiData?.lifiExplorerLink}
-                  txHash={hash}
-                  dstTxHash={lifiData?.receiving?.txHash}
-                  routeRef={routeRef}
-                />
-              </div>
-            </DialogDescription>
-          </DialogHeader>
-          <div className="flex flex-col items-center justify-center gap-4">
-            <div className="py-5">
-              <div className="relative flex gap-3">
-                <GetStateComponent index={1} state={stepStates.source} />
-                <Divider />
-                <GetStateComponent index={2} state={stepStates.bridge} />
-                <Divider />
-                <GetStateComponent index={3} state={stepStates.dest} />
+      {tradeView === 'advanced' ? null : (
+        <DialogCustom dialogType={DialogType.Confirm}>
+          <DialogContent onInteractOutside={(e) => e.preventDefault()}>
+            <DialogHeader>
+              <DialogTitle>Cross-chain swap</DialogTitle>
+              <DialogDescription asChild>
+                <div>
+                  <ConfirmationDialogContent
+                    dialogState={stepStates}
+                    bridgeUrl={lifiData?.lifiExplorerLink}
+                    txHash={hash}
+                    dstTxHash={lifiData?.receiving?.txHash}
+                    routeRef={routeRef}
+                  />
+                </div>
+              </DialogDescription>
+            </DialogHeader>
+            <div className="flex flex-col items-center justify-center gap-4">
+              <div className="py-5">
+                <div className="relative flex gap-3">
+                  <GetStateComponent index={1} state={stepStates.source} />
+                  <Divider />
+                  <GetStateComponent index={2} state={stepStates.bridge} />
+                  <Divider />
+                  <GetStateComponent index={3} state={stepStates.dest} />
+                </div>
               </div>
             </div>
-          </div>
-          <DialogFooter>
-            <DialogClose asChild>
-              <Button size="xl" fullWidth id="swap-dialog-close">
-                {failedState(stepStates)
-                  ? 'Try again'
-                  : finishedState(stepStates)
-                    ? 'Make another swap'
-                    : 'Close'}
-              </Button>
-            </DialogClose>
-          </DialogFooter>
-        </DialogContent>
-      </DialogCustom>
+            <DialogFooter>
+              <DialogClose asChild>
+                <Button size="xl" fullWidth id="swap-dialog-close">
+                  {failedState(stepStates)
+                    ? 'Try again'
+                    : finishedState(stepStates)
+                      ? 'Make another swap'
+                      : 'Close'}
+                </Button>
+              </DialogClose>
+            </DialogFooter>
+          </DialogContent>
+        </DialogCustom>
+      )}
     </>
   )
 }

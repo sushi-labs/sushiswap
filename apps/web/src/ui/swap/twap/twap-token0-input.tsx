@@ -1,12 +1,10 @@
 'use client'
 
 import { classNames } from '@sushiswap/ui'
+import { useTradeMode } from 'src/lib/hooks/useTradeMode'
 import { Web3Input } from 'src/lib/wagmi/components/web3-input'
 import { isWNativeSupported } from 'sushi/evm'
-import {
-  useDerivedStateTwap,
-  useTwapTradeErrors,
-} from './derivedstate-twap-provider'
+import { useDerivedStateTwap } from './derivedstate-twap-provider'
 
 export const TwapToken0Input = () => {
   const {
@@ -14,16 +12,14 @@ export const TwapToken0Input = () => {
     mutate: { setSwapAmount, setToken0 },
     isToken0Loading: isLoading,
   } = useDerivedStateTwap()
-
-  const { minTradeSizeError } = useTwapTradeErrors()
+  const { tradeMode } = useTradeMode()
 
   return (
     <Web3Input.Currency
       id="swap-from"
       type="INPUT"
       className={classNames(
-        'border border-accent p-3 bg-white dark:bg-slate-800 rounded-xl',
-        minTradeSizeError ? '!bg-red-500/20 !dark:bg-red-900/30' : '',
+        'border border-white/10 dark:border-black/10 p-3 bg-gray-100 dark:bg-slate-900 rounded-xl',
       )}
       chainId={chainId}
       onSelect={setToken0}
@@ -32,7 +28,9 @@ export const TwapToken0Input = () => {
       currency={token0}
       currencyLoading={isLoading}
       allowNative={isWNativeSupported(chainId)}
-      label="You're selling"
+      label={tradeMode === 'limit' ? 'Sell' : 'Allocate'}
+      isTwap={true}
+      selectedNetwork={chainId}
     />
   )
 }

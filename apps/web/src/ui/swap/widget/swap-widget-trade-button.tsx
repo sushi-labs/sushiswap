@@ -1,8 +1,12 @@
 'use client'
 
 import { QuestionMarkCircleIcon } from '@heroicons/react/24/solid'
-import { HoverCard, HoverCardContent, HoverCardTrigger } from '@sushiswap/ui'
-import { Button } from '@sushiswap/ui'
+import {
+  Button,
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from '@sushiswap/ui'
 import Link from 'next/link'
 import type React from 'react'
 import { type FC, useMemo } from 'react'
@@ -50,7 +54,7 @@ const PartialRouteChecker: FC<PartialRouteCheckerProps> = ({
       </HoverCardContent>
     </HoverCard>
   ) : (
-    <>{children}</>
+    children
   )
 }
 

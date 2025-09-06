@@ -73,6 +73,7 @@ export const AmountInToken0 = ({
 
   return (
     <TokenInput
+      className="p-4 bg-white dark:bg-slate-900 rounded-xl"
       theme={theme}
       type="input"
       amount={amountInToken0}

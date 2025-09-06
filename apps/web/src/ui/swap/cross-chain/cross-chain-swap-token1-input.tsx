@@ -22,13 +22,12 @@ export const CrossChainSwapToken1Input = () => {
     isFetching,
     data: route,
   } = useSelectedCrossChainTradeRoute()
-
   return (
     <Web3Input.Currency
       id="swap-to"
       type="OUTPUT"
       disabled
-      className="border border-accent p-3 bg-white dark:bg-slate-800 rounded-xl"
+      className="p-4 bg-gray-100 dark:bg-slate-900 rounded-xl overflow-visible"
       value={route?.amountOut?.toSignificant() ?? ''}
       chainId={chainId1}
       onSelect={setToken1}
@@ -42,6 +41,7 @@ export const CrossChainSwapToken1Input = () => {
       networks={networks}
       selectedNetwork={chainId1}
       onNetworkChange={setChainId1}
+      showQuickSelect={true}
     />
   )
 }
