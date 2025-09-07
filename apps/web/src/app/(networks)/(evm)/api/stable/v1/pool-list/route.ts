@@ -6,8 +6,11 @@ import {
 import { Ratelimit } from '@upstash/ratelimit'
 import { ipAddress } from '@vercel/functions'
 import { type NextRequest, NextResponse } from 'next/server'
+import {
+  type SushiSwapCmsProtocol,
+  SushiSwapCmsProtocols,
+} from 'src/lib/constants'
 import { rateLimit } from 'src/lib/rate-limit'
-import { SushiSwapProtocol } from 'sushi/evm'
 import { z } from 'zod'
 import { CORS } from '../../cors'
 
@@ -24,16 +27,14 @@ const schema = z.object({
     .string()
     .refine(
       (protocol) =>
-        Object.values(SushiSwapProtocol).includes(
-          protocol as SushiSwapProtocol,
-        ),
+        SushiSwapCmsProtocols.includes(protocol as SushiSwapCmsProtocol),
       {
         message: `Invalid protocol, valid values are: ${Object.values(
-          SushiSwapProtocol,
+          SushiSwapCmsProtocols,
         ).join(', ')}`,
       },
     )
-    .transform((protocol) => protocol as SushiSwapProtocol),
+    .transform((protocol) => protocol as SushiSwapCmsProtocol),
   isApproved: z.coerce
     .string()
     .default('true')

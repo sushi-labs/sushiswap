@@ -1,6 +1,6 @@
 import {
   SUSHI_DATA_API_HOST as PROD_SUSHI_DATA_API_HOST,
-  type SushiSwapProtocol,
+  SushiSwapProtocol,
 } from 'sushi/evm'
 
 export const SUSHI_DATA_API_HOST =
@@ -8,9 +8,17 @@ export const SUSHI_DATA_API_HOST =
   process.env['NEXT_PUBLIC_SUSHI_DATA_API_HOST'] ||
   PROD_SUSHI_DATA_API_HOST
 
+export const SushiSwapCmsProtocols = [
+  SushiSwapProtocol.SUSHISWAP_V3,
+  SushiSwapProtocol.SUSHISWAP_V2,
+]
+
+export type SushiSwapCmsProtocol = (typeof SushiSwapCmsProtocols)[number]
+
 export const PROTOCOL_MAP: Record<SushiSwapProtocol, string> = {
   SUSHISWAP_V3: 'SushiSwap V3',
   SUSHISWAP_V2: 'SushiSwap V2',
+  BLADE: 'Blade',
 } as const
 
 export enum Bound {

@@ -21,7 +21,7 @@ import { CheckIcon } from '@sushiswap/ui/icons/CheckIcon'
 import React, { type FC, useCallback, useState, useTransition } from 'react'
 import { SushiSwapProtocol } from 'sushi/evm'
 
-import { PROTOCOL_MAP } from '../../lib/constants'
+import { PROTOCOL_MAP, type SushiSwapCmsProtocol } from '../../lib/constants'
 import { usePoolFilters, useSetPoolFilters } from './PoolsFiltersProvider'
 
 export const POOL_TYPES = [
@@ -36,7 +36,7 @@ const POOL_DESCRIPTIONS = {
     'The traditional pool type with a fixed fee of .30% that utilizes a constant product formula to ensure a 50/50 composition of each asset in the pool.',
 }
 
-const isAllThenNone = (protocols: SushiSwapProtocol[]) =>
+const isAllThenNone = (protocols: SushiSwapCmsProtocol[]) =>
   protocols.length === POOL_TYPES.length ? [] : protocols
 
 export const TableFiltersPoolType: FC = () => {
@@ -44,18 +44,17 @@ export const TableFiltersPoolType: FC = () => {
   const [open, setOpen] = useState(false)
   const { protocols } = usePoolFilters()
   const setFilters = useSetPoolFilters()
-  const [peekedProtocol, setPeekedProtocol] = React.useState<SushiSwapProtocol>(
-    POOL_TYPES[0],
-  )
-  const [localValue, setValues] = useState<SushiSwapProtocol[]>(
+  const [peekedProtocol, setPeekedProtocol] =
+    React.useState<SushiSwapCmsProtocol>(POOL_TYPES[0])
+  const [localValue, setValues] = useState<SushiSwapCmsProtocol[]>(
     isAllThenNone(protocols),
   )
 
   const values = pending ? localValue : isAllThenNone(protocols)
 
   const protocolHandler = useCallback(
-    (item: SushiSwapProtocol) => {
-      let _newValues: SushiSwapProtocol[]
+    (item: SushiSwapCmsProtocol) => {
+      let _newValues: SushiSwapCmsProtocol[]
       if (values?.includes(item)) {
         _newValues = isAllThenNone(values.filter((el) => el !== item))
       } else {
@@ -136,7 +135,7 @@ export const TableFiltersPoolType: FC = () => {
                     protocol={el}
                     onPeek={(protocol) => setPeekedProtocol(protocol)}
                     onSelect={() =>
-                      protocolHandler(el.toUpperCase() as SushiSwapProtocol)
+                      protocolHandler(el.toUpperCase() as SushiSwapCmsProtocol)
                     }
                   />
                 ))}
@@ -150,10 +149,10 @@ export const TableFiltersPoolType: FC = () => {
 }
 
 interface ProtocolItemProps {
-  protocol: SushiSwapProtocol
+  protocol: SushiSwapCmsProtocol
   onSelect: () => void
-  selected: SushiSwapProtocol[]
-  onPeek: (model: SushiSwapProtocol) => void
+  selected: SushiSwapCmsProtocol[]
+  onPeek: (model: SushiSwapCmsProtocol) => void
 }
 
 const ProtocolItem: FC<ProtocolItemProps> = ({
