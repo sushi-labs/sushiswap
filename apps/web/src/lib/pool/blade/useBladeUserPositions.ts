@@ -6,10 +6,11 @@ import {
   getBladePositions,
 } from '@sushiswap/graph-client/data-api'
 import { skipToken, useQuery } from '@tanstack/react-query'
+import type { EvmAddress } from 'sushi/evm'
 
 export function useBladeUserPositions(args: {
   chainId: BladeChainId
-  user?: `0x${string}`
+  user?: EvmAddress
   enabled?: boolean
 }) {
   const { chainId, user, enabled } = args

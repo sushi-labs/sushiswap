@@ -6,14 +6,15 @@ import { useEffect } from 'react'
 import { BLADE_API_HOST, BLADE_API_KEY } from 'src/lib/constants'
 import type { PublicWagmiConfig } from 'src/lib/wagmi/config/public'
 import type { IsEqualMultiple } from 'src/types/utils'
-import type { EvmCurrency } from 'sushi/evm'
+import { type EvmAddress, type EvmCurrency, isEvmAddress } from 'sushi/evm'
 import type {
   Abi,
   AbiStateMutability,
   ContractFunctionArgs,
   ContractFunctionName,
+  Hex,
 } from 'viem'
-import { isAddress, isHash, zeroAddress } from 'viem'
+import { isHash, zeroAddress } from 'viem'
 import { useWaitForTransactionReceipt, useWriteContract } from 'wagmi'
 import type { WriteContractVariables } from 'wagmi/query'
 import { z } from 'zod'
@@ -25,11 +26,11 @@ import type { clipperDirectExchangeV0Abi } from './abi/clipperDirectExchangeV0'
 import { clipperDirectExchangeV1Abi } from './abi/clipperDirectExchangeV1'
 
 const rfqWithdrawResponseSchema = z.object({
-  token_holder_address: z.string().refine((address) => isAddress(address), {
+  token_holder_address: z.string().refine(isEvmAddress, {
     message: 'token_holder_address does not conform to Address',
   }),
   pool_token_amount_to_burn: z.string(),
-  asset_address: z.string().refine((address) => isAddress(address), {
+  asset_address: z.string().refine(isEvmAddress, {
     message: 'asset_address does not conform to Address',
   }),
   asset_amount: z.string(),
@@ -67,7 +68,7 @@ type AssertEqualContractFunctionArgs<
 }>
 
 type WithdrawVariablesGetterArgs = {
-  poolAddress: `0x${string}`
+  poolAddress: EvmAddress
   poolTokenAmountToBurn: string
   withdraw?: RfqWithdrawResponse
   token?: EvmCurrency
@@ -318,7 +319,7 @@ export const useBladeWithdrawTransaction = ({
   onError,
 }: {
   pool: BladePool
-  onSuccess?: (hash: `0x${string}`) => void
+  onSuccess?: (hash: Hex) => void
   onError?: (error: Error) => void
 }) => {
   const {

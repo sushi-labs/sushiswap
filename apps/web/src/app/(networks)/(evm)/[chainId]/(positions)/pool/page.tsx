@@ -8,13 +8,13 @@ import { PositionsTab } from 'src/ui/pool/PositionsTab'
 import { TableFiltersNetwork } from 'src/ui/pool/TableFiltersNetwork'
 import { TableFiltersResetButton } from 'src/ui/pool/TableFiltersResetButton'
 import { TableFiltersSearchToken } from 'src/ui/pool/TableFiltersSearchToken'
-import { type EvmChainId, isBladeChainId, isSushiSwapChainId } from 'sushi/evm'
+import { isBladeChainId, isSushiSwapChainId } from 'sushi/evm'
 
 export default function MyPositionsPage(props: {
   params: Promise<{ chainId: string }>
 }) {
   const params = use(props.params)
-  const chainId = +params.chainId as EvmChainId
+  const chainId = +params.chainId
 
   if (!isSushiSwapChainId(chainId) && !isBladeChainId(chainId)) {
     return notFound()

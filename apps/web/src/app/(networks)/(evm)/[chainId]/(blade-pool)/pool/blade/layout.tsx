@@ -1,5 +1,5 @@
 import { notFound } from 'next/navigation'
-import { type EvmChainId, isBladeChainId } from 'sushi/evm'
+import { isBladeChainId } from 'sushi/evm'
 
 export default async function Layout(props: {
   children: React.ReactNode
@@ -9,7 +9,7 @@ export default async function Layout(props: {
 
   const { children } = props
 
-  const chainId = +params.chainId as EvmChainId
+  const chainId = +params.chainId
   if (!isBladeChainId(chainId)) {
     return notFound()
   }

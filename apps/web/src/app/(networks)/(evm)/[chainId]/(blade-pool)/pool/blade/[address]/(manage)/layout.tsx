@@ -1,11 +1,10 @@
-import { getBladePool, isBladeChainId } from '@sushiswap/graph-client/data-api'
+import { isBladeChainId } from '@sushiswap/graph-client/data-api'
 import { Container } from '@sushiswap/ui'
-import { unstable_cache } from 'next/cache'
 import { notFound } from 'next/navigation'
 import type React from 'react'
+import { getCachedBladePool } from 'src/lib/pool/blade'
 import { BladePoolLiquidityHeader } from 'src/ui/pool/blade/BladePoolLiquidityHeader'
-import { getEvmChainById } from 'sushi/evm'
-import { isAddress } from 'viem'
+import { getEvmChainById, isEvmAddress } from 'sushi/evm'
 
 export default async function Layout(props: {
   children: React.ReactNode
@@ -18,17 +17,11 @@ export default async function Layout(props: {
   const { chainId: _chainId, address } = params
   const chainId = +_chainId
 
-  if (!isBladeChainId(chainId) || !isAddress(address, { strict: false })) {
+  if (!isBladeChainId(chainId) || !isEvmAddress(address)) {
     return notFound()
   }
 
-  const pool = await unstable_cache(
-    async () => getBladePool({ chainId, address }),
-    ['v2', 'pool', `${chainId}:${address}`],
-    {
-      revalidate: 15,
-    },
-  )()
+  const pool = await getCachedBladePool(chainId, address)
 
   return (
     <>

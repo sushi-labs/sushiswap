@@ -2,11 +2,10 @@
 
 import { getBladePoolPairsChart } from '@sushiswap/graph-client/data-api'
 import { keepPreviousData, useQuery } from '@tanstack/react-query'
-import type { BladeChainId } from 'sushi/evm'
-import type { Address } from 'viem'
+import type { BladeChainId, EvmAddress } from 'sushi/evm'
 
 interface UsePoolPairsChartDataParams {
-  poolAddress: Address
+  poolAddress: EvmAddress
   chainId: BladeChainId
   duration?: 'DAY' | 'WEEK' | 'MONTH' | 'ALL'
   enabled?: boolean

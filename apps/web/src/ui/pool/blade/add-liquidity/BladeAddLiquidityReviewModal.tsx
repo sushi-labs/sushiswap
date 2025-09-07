@@ -35,6 +35,7 @@ import { Checker } from 'src/lib/wagmi/systems/Checker'
 import { useApproved } from 'src/lib/wagmi/systems/Checker/Provider'
 import { Amount, formatUSD } from 'sushi'
 import { type BladeChainId, type EvmCurrency, getEvmChainById } from 'sushi/evm'
+import type { Hex } from 'viem'
 import {
   useAccount,
   usePublicClient,
@@ -110,7 +111,7 @@ export const BladeAddLiquidityReviewModal: FC<
     })
 
   const onSuccess = useCallback(
-    (hash: `0x${string}`) => {
+    (hash: Hex) => {
       _onSuccess()
 
       const receipt = client.waitForTransactionReceipt({ hash })

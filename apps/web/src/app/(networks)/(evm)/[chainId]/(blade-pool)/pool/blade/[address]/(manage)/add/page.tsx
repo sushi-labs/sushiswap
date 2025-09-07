@@ -4,7 +4,7 @@ import { getCachedBladePool } from 'src/lib/pool/blade'
 import { BladePoolPosition } from 'src/ui/pool/blade/BladePoolPosition'
 import { BladePoolPositionProvider } from 'src/ui/pool/blade/BladePoolPositionProvider'
 import { ManageBladeLiquidityCard } from 'src/ui/pool/blade/ManageBladeLiquidityCard'
-import { isAddress } from 'viem'
+import { isEvmAddress } from 'sushi/evm'
 
 export default async function ManageBladePoolPage(props: {
   params: Promise<{ chainId: string; address: string }>
@@ -13,7 +13,7 @@ export default async function ManageBladePoolPage(props: {
   const { chainId: _chainId, address } = params
   const chainId = +_chainId
 
-  if (!isBladeChainId(chainId) || !isAddress(address, { strict: false })) {
+  if (!isBladeChainId(chainId) || !isEvmAddress(address)) {
     return notFound()
   }
 

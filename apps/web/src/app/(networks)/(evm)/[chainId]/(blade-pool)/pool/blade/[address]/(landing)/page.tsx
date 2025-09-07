@@ -7,9 +7,7 @@ import { BladeAssetsTable } from 'src/ui/pool/blade/assets-table/BladeAssetsTabl
 import { BladeHighlights } from 'src/ui/pool/blade/blade-highlights'
 import { BladePoolPairsChart } from 'src/ui/pool/blade/pairs-chart'
 import { BladePoolHero } from 'src/ui/pool/blade/pool-hero'
-
-import { isBladeChainId } from 'sushi/evm'
-import { isAddress } from 'viem'
+import { isBladeChainId, isEvmAddress } from 'sushi/evm'
 
 export default async function PoolPage(props: {
   params: Promise<{ chainId: string; address: string }>
@@ -18,7 +16,7 @@ export default async function PoolPage(props: {
   const { chainId: _chainId, address } = params
   const chainId = +_chainId
 
-  if (!isBladeChainId(chainId) || !isAddress(address, { strict: false })) {
+  if (!isBladeChainId(chainId) || !isEvmAddress(address)) {
     return notFound()
   }
 

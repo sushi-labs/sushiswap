@@ -1,9 +1,5 @@
 import { notFound } from 'next/navigation'
-import {
-  BLADE_SUPPORTED_CHAIN_IDS,
-  type EvmChainId,
-  isBladeChainId,
-} from 'sushi/evm'
+import { BLADE_SUPPORTED_CHAIN_IDS, isBladeChainId } from 'sushi/evm'
 import { Header } from '../../header'
 
 export default async function BladePoolLayout(props: {
@@ -14,7 +10,7 @@ export default async function BladePoolLayout(props: {
 
   const { children } = props
 
-  const chainId = +params.chainId as EvmChainId
+  const chainId = +params.chainId
   if (!isBladeChainId(chainId)) {
     return notFound()
   }

@@ -7,14 +7,20 @@ import { BLADE_API_HOST, BLADE_API_KEY } from 'src/lib/constants'
 import type { PublicWagmiConfig } from 'src/lib/wagmi/config/public'
 import { useWatchByBlock } from 'src/lib/wagmi/hooks/watch/useWatchByBlock'
 import type { IsEqualMultiple } from 'src/types/utils'
-import type { BladeChainId, EvmCurrency } from 'sushi/evm'
+import {
+  type BladeChainId,
+  type EvmAddress,
+  type EvmCurrency,
+  isEvmAddress,
+} from 'sushi/evm'
 import type {
   Abi,
   AbiStateMutability,
   ContractFunctionArgs,
   ContractFunctionName,
+  Hex,
 } from 'viem'
-import { isAddress, isHash, parseUnits, zeroAddress } from 'viem'
+import { isHash, parseUnits, zeroAddress } from 'viem'
 import { useWaitForTransactionReceipt, useWriteContract } from 'wagmi'
 import { useAccount } from 'wagmi'
 import type { WriteContractVariables } from 'wagmi/query'
@@ -33,8 +39,8 @@ function getAllowDepositQueryKey({
   address,
 }: {
   chainId: BladeChainId
-  poolAddress: string
-  address?: string
+  poolAddress: EvmAddress
+  address?: EvmAddress
 }) {
   return [
     'blade',
@@ -61,7 +67,7 @@ const rfqAllowDepositResponseSchema = z.union([
 ])
 
 const rfqDepositResponseBaseSchema = z.object({
-  sender: z.string().refine((address) => isAddress(address), {
+  sender: z.string().refine(isEvmAddress, {
     message: 'sender does not conform to Address',
   }),
   pool_tokens: z.string(),
@@ -75,7 +81,7 @@ const rfqDepositResponseBaseSchema = z.object({
       message: 's does not conform to Hash',
     }),
   }),
-  clipper_exchange_address: z.string().refine((address) => isAddress(address), {
+  clipper_exchange_address: z.string().refine(isEvmAddress, {
     message: 'clipper_exchange_address does not conform to Address',
   }),
   extra_data: z
@@ -88,7 +94,7 @@ const rfqDepositResponseBaseSchema = z.object({
   amount: z.string().optional(),
   token: z
     .string()
-    .refine((address) => isAddress(address), {
+    .refine(isEvmAddress, {
       message: 'token does not conform to Address',
     })
     .optional(),
@@ -622,7 +628,7 @@ export const useBladeAllowDeposit = ({
   enabled = true,
 }: {
   chainId: BladeChainId
-  poolAddress: string
+  poolAddress: EvmAddress
   enabled?: boolean
 }) => {
   const { address } = useAccount()
@@ -724,7 +730,7 @@ export const useBladeDepositTransaction = ({
   onError,
 }: {
   pool: BladePool
-  onSuccess?: (hash: `0x${string}`) => void
+  onSuccess?: (hash: Hex) => void
   onError?: (error: Error) => void
 }) => {
   const {

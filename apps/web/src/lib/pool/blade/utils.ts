@@ -1,5 +1,11 @@
 import type { BladeChainId, BladePool } from '@sushiswap/graph-client/data-api'
-import { type EvmCurrency, EvmNative, EvmToken } from 'sushi/evm'
+import {
+  type EvmAddress,
+  type EvmCurrency,
+  EvmNative,
+  EvmToken,
+} from 'sushi/evm'
+import type { Hex } from 'viem'
 import { BLADE_STABLES } from './stables'
 import type { BladePoolAsset } from './types'
 
@@ -11,7 +17,7 @@ export type BladePoolTokensGrouped = {
 export function getPoolTokensGrouped(pool: BladePool): BladePoolTokensGrouped {
   const chainId = pool.chainId as BladeChainId
   const stablecoinSet = new Set<string>(
-    BLADE_STABLES[chainId]?.map((s) => s.address.toLowerCase()) || [],
+    BLADE_STABLES[chainId]?.map((s) => s.address) || [],
   )
 
   return pool.tokens.reduce<BladePoolTokensGrouped>(
@@ -19,11 +25,11 @@ export function getPoolTokensGrouped(pool: BladePool): BladePoolTokensGrouped {
       if (tokenData.targetWeight === 0) return acc
       const token =
         tokenData.token.address.toLowerCase() ===
-        EvmNative.fromChainId(chainId).wrap().address.toLowerCase()
+        EvmNative.fromChainId(chainId).wrap().address
           ? EvmNative.fromChainId(chainId)
           : new EvmToken({
               chainId,
-              address: tokenData.token.address as `0x${string}`,
+              address: tokenData.token.address as EvmAddress,
               decimals: tokenData.token.decimals,
               symbol: tokenData.token.symbol,
               name: tokenData.token.name,
@@ -54,8 +60,8 @@ export function getPoolAssets(
   },
 ): BladePoolAsset[] {
   const { showStableTypes = true } = options ?? {}
-  const chainId = pool.chainId as BladeChainId
-  const stablecoinSet = new Set<string>(
+  const chainId = pool.chainId
+  const stablecoinSet = new Set<EvmAddress>(
     BLADE_STABLES[chainId]?.map((s) => s.address.toLowerCase()) || [],
   )
 
@@ -65,7 +71,7 @@ export function getPoolAssets(
   for (const { token: tokenData, ...rest } of pool.tokens) {
     if (
       !showStableTypes &&
-      stablecoinSet.has(tokenData.address.toLowerCase())
+      stablecoinSet.has(tokenData.address.toLowerCase() as EvmAddress)
     ) {
       let stablecoinAsset = stablecoinAssetMap.get('USD')
       if (!stablecoinAsset) {
@@ -82,11 +88,11 @@ export function getPoolAssets(
     } else {
       const token =
         tokenData.address.toLowerCase() ===
-        EvmNative.fromChainId(chainId).wrap().address.toLowerCase()
+        EvmNative.fromChainId(chainId).wrap().address
           ? EvmNative.fromChainId(chainId)
           : new EvmToken({
               chainId,
-              address: tokenData.address as `0x${string}`,
+              address: tokenData.address as EvmAddress,
               decimals: tokenData.decimals,
               symbol: tokenData.symbol,
               name: tokenData.name,
@@ -139,9 +145,9 @@ export const leftShift = (n: bigint, e: number): bigint => {
 /**
  * Convert a value to a 32-byte hex string
  */
-export const byte32 = (value: string | bigint): `0x${string}` => {
+export const byte32 = (value: string | bigint): Hex => {
   const bn = typeof value === 'string' ? BigInt(value) : value
-  return `0x${bn.toString(16).padStart(64, '0')}` as `0x${string}`
+  return `0x${bn.toString(16).padStart(64, '0')}`
 }
 
 /**
@@ -152,7 +158,7 @@ export const byte32 = (value: string | bigint): `0x${string}` => {
  */
 export const packAddressAndAmount = (
   amount: string,
-  address: string,
+  address: EvmAddress,
 ): bigint => {
   const addressBn = BigInt(address)
   const amountBn = BigInt(amount)
