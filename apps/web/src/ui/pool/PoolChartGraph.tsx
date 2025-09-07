@@ -27,7 +27,6 @@ import * as echarts from 'echarts/core'
 import { CanvasRenderer } from 'echarts/renderers'
 import { type FC, useCallback, useMemo } from 'react'
 import { usePoolGraphData } from 'src/lib/hooks'
-import type { BLADE_PROTOCOL } from 'src/lib/pool/blade'
 import { formatUSD } from 'sushi'
 import type { SushiSwapProtocol } from 'sushi/evm'
 import tailwindConfig from 'tailwind.config.js'
@@ -39,7 +38,7 @@ interface PoolChartProps {
   chart: PoolChartType.Volume | PoolChartType.Fees | PoolChartType.TVL
   period: PoolChartPeriod
   pool: V2Pool | V3Pool | BladePool
-  protocol: SushiSwapProtocol | typeof BLADE_PROTOCOL
+  protocol: SushiSwapProtocol
 }
 
 const tailwind = resolveConfig(tailwindConfig)

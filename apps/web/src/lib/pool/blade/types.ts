@@ -8,5 +8,3 @@ export type BladePoolAsset =
   | (Omit<BladePool['tokens'][number], 'token'> & {
       token: EvmCurrency
     })
-
-export const BLADE_PROTOCOL = 'BLADE' as const

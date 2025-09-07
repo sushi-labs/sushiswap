@@ -3,7 +3,7 @@
 import type { BladePool } from '@sushiswap/graph-client/data-api'
 import { Card } from '@sushiswap/ui'
 import React, { type FC, useState } from 'react'
-import { BLADE_PROTOCOL } from 'src/lib/pool/blade'
+import { SushiSwapProtocol } from 'sushi/evm'
 import { PoolChartGraph } from '../PoolChartGraph'
 import { PoolChartPeriod, PoolChartPeriods } from '../PoolChartPeriods'
 import { PoolChartType, PoolChartTypes } from '../PoolChartTypes'
@@ -47,7 +47,7 @@ const BladePoolChart: FC<BladePoolChartProps> = ({ pool }) => {
         chart={chart}
         period={period}
         pool={pool}
-        protocol={BLADE_PROTOCOL}
+        protocol={SushiSwapProtocol.BLADE}
       />
     </Card>
   )
