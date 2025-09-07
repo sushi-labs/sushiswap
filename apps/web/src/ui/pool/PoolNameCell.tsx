@@ -30,6 +30,11 @@ export const ProtocolBadge: Record<SushiSwapProtocol, JSX.Element> = {
       V3
     </div>
   ),
+  [SushiSwapProtocol.BLADE]: (
+    <div className="whitespace-nowrap bg-blue/20 text-blue text-[10px] px-2 rounded-full">
+      BLADE
+    </div>
+  ),
 }
 
 export const PoolNameCell: FC<{
