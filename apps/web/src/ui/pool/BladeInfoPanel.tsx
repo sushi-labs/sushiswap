@@ -7,6 +7,7 @@ import {
   TabsTrigger,
   classNames,
 } from '@sushiswap/ui'
+import { useTheme } from 'next-themes'
 import { Wrapper } from '../swap/trade/wrapper'
 
 type TabKey = 'profit' | 'impermanent' | 'mev'
@@ -49,6 +50,8 @@ const TABS: {
 ]
 
 export const BladeInfoPanel = () => {
+  const { theme } = useTheme()
+  const isDarkMode = theme === 'dark'
   return (
     <Tabs defaultValue="profit">
       <div className="overflow-x-auto px-4 -mx-4 no-scrollbar snap-x snap-mandatory md:mx-0 md:px-0 hide-scrollbar">
@@ -61,7 +64,7 @@ export const BladeInfoPanel = () => {
         group w-full font-semibold !border-none text-muted-foreground
         data-[state=active]:font-medium
         data-[state=active]:!bg-[#4217FF14]
-        dark:data-[state=active]:!bg-[#3DB1FF14]
+        {isDarkMode ? 'dark:data-[state=active]:!bg-[#3DB1FF14]' : ''}
         data-[state=active]:text-blue
         dark:data-[state=active]:text-skyblue
       "
@@ -106,12 +109,12 @@ export const BladeInfoPanel = () => {
               </div>
               <Button
                 asChild
-                variant="quinary"
+                variant={isDarkMode ? 'tertiary' : 'quinary'}
                 className="!rounded-full font-medium flex items-center justify-center gap-2 md:w-auto text-sm md:text-base whitespace-pre-line !h-auto"
               >
                 <span>{tab.cta}</span>
                 <div className="rounded-full bg-blue dark:bg-skyblue p-1 w-[14px] aspect-1 flex items-center justify-center shrink-0">
-                  <ArrowRightIcon className="text-[#F2F4F6] dark:text-inherit" />
+                  <ArrowRightIcon className="text-slate-50" />
                 </div>
               </Button>
             </div>
