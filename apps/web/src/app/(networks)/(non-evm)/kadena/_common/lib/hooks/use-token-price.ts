@@ -45,6 +45,7 @@ const getPrice = async (token: KadenaToken | undefined) => {
 
   const tokenAddress = token.tokenAddress
   const tokenPrice = await getTokenPrice(tokenAddress)
+
   if (tokenPrice) {
     return tokenPrice
   }
@@ -66,10 +67,6 @@ export const useTokenPrice = ({
 
       return tokenPrice
     },
-    placeholderData: keepPreviousData,
     enabled: !!token,
-    refetchOnMount: false,
-    refetchOnWindowFocus: false,
-    refetchOnReconnect: false,
   })
 }
