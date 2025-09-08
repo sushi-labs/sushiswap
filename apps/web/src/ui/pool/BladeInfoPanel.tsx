@@ -1,9 +1,4 @@
-import {
-  ArrowCircleRightIcon,
-  ArrowRightIcon,
-  CheckIcon,
-  ChevronRightIcon,
-} from '@heroicons/react-v1/solid'
+import { ArrowRightIcon, CheckIcon } from '@heroicons/react-v1/solid'
 import {
   Button,
   Tabs,
@@ -12,7 +7,6 @@ import {
   TabsTrigger,
   classNames,
 } from '@sushiswap/ui'
-import { CheckMarkIcon } from '@sushiswap/ui/icons/CheckMarkIcon'
 import { Wrapper } from '../swap/trade/wrapper'
 
 type TabKey = 'profit' | 'impermanent' | 'mev'
@@ -57,9 +51,8 @@ const TABS: {
 export const BladeInfoPanel = () => {
   return (
     <Tabs defaultValue="profit">
-      {/* Make the scroll area wrap the whole TabsList */}
       <div className="overflow-x-auto px-4 -mx-4 no-scrollbar snap-x snap-mandatory md:mx-0 md:px-0 hide-scrollbar">
-        <TabsList className="inline-flex gap-2 min-w-max bg-transparent md:gap-3 md:w-full">
+        <TabsList className="inline-flex gap-2 min-w-max bg-slate-50 dark:bg-slate-800 md:gap-3 md:w-full">
           {TABS.map((tab) => (
             <TabsTrigger
               key={tab.key}
@@ -67,8 +60,8 @@ export const BladeInfoPanel = () => {
               className="
         group w-full font-semibold !border-none text-muted-foreground
         data-[state=active]:font-medium
-        data-[state=active]:bg-[#4217FF14]
-        dark:data-[state=active]:bg-[#3DB1FF14]
+        data-[state=active]:!bg-[#4217FF14]
+        dark:data-[state=active]:!bg-[#3DB1FF14]
         data-[state=active]:text-blue
         dark:data-[state=active]:text-skyblue
       "
@@ -81,7 +74,7 @@ export const BladeInfoPanel = () => {
           dark:group-data-[state=active]:bg-skyblue
         "
               >
-                <CheckIcon className="w-[12px] h-[12px] text-white" />
+                <CheckIcon className="w-[12px] h-[12px] text-slate-50 dark:text-slate-800" />
               </div>
               {tab.title}
             </TabsTrigger>
@@ -96,7 +89,7 @@ export const BladeInfoPanel = () => {
               <div className="flex flex-col gap-6 w-full max-w-full">
                 <div className="flex gap-2 justify-center items-center">
                   <div className="flex justify-center items-center w-6 rounded-full bg-[#1DA67D] dark:bg-skyblue aspect-1">
-                    <CheckIcon className="w-[14px] h-[14px] text-white" />
+                    <CheckIcon className="w-[14px] h-[14px] text-slate-50 dark:text-slate-800" />
                   </div>
                   <h2 className="flex gap-2 justify-center items-center text-xl font-bold md:text-2xl text-slate-900 dark:text-slate-50">
                     {tab.heading}
