@@ -13,7 +13,7 @@ import {
 import { usePriceInverter } from 'src/lib/hooks'
 import { useIsTickAtLimit } from 'src/lib/pool/v3'
 import type { ConcentratedLiquidityPositionWithV3Pool } from 'src/lib/wagmi/hooks/positions/types'
-import { Position } from 'sushi/pool/sushiswap-v3'
+import { Position } from 'sushi/evm'
 
 export const PriceRangeCell: FC<
   Row<ConcentratedLiquidityPositionWithV3Pool>
@@ -49,7 +49,7 @@ export const PriceRangeCell: FC<
   })
 
   const inverted = original.pool.token1
-    ? base?.equals(original.pool.token1)
+    ? base?.isSame(original.pool.token1)
     : undefined
   const currencyQuote = inverted ? original.pool.token0 : original.pool.token1
   const currencyBase = inverted ? original.pool.token1 : original.pool.token0

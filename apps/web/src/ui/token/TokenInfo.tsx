@@ -2,12 +2,11 @@ import { LinkIcon } from '@heroicons/react/24/outline'
 import type { TokenInfo as TokenInfoType } from '@sushiswap/graph-client/data-api'
 import { LinkExternal } from '@sushiswap/ui'
 import type { FC } from 'react'
-import { EvmChain } from 'sushi/chain'
-import type { Token } from 'sushi/currency'
+import { type EvmToken, getEvmChainById } from 'sushi/evm'
 import { TokenCollapsedDescription } from './TokenCollapsedDescription'
 
 interface TokenInfoProps {
-  token: Token
+  token: EvmToken
   tokenInfo: TokenInfoType
 }
 
@@ -19,7 +18,7 @@ export const TokenInfo: FC<TokenInfoProps> = ({ token, tokenInfo }) => {
 
         <div className="flex items-center gap-4 flex-wrap">
           <LinkExternal
-            href={EvmChain.tokenUrl(token.chainId, token.address)}
+            href={getEvmChainById(token.chainId).getTokenUrl(token.address)}
             target="_blank"
             rel="noopener noreferrer"
           >

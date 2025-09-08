@@ -10,7 +10,7 @@ import {
 } from '@sushiswap/ui'
 import type { FC, ReactNode } from 'react'
 import React from 'react'
-import { formatPercent } from 'sushi/format'
+import { formatPercent } from 'sushi'
 
 interface APRWithRewardsHoverCardProps {
   children: ReactNode

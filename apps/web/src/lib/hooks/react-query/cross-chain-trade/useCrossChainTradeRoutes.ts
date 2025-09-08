@@ -1,6 +1,6 @@
 import { type UseQueryOptions, useQuery } from '@tanstack/react-query'
-import type { Amount, Type } from 'sushi/currency'
-import type { Percent } from 'sushi/math'
+import type { Amount, Percent } from 'sushi'
+import type { EvmCurrency } from 'sushi/evm'
 import { type Address, zeroAddress } from 'viem'
 import { z } from 'zod'
 import { crossChainRouteSchema } from '../../../swap/cross-chain/schema'
@@ -11,8 +11,8 @@ const crossChainRoutesResponseSchema = z.object({
 })
 
 export interface UseCrossChainTradeRoutesParms {
-  fromAmount?: Amount<Type>
-  toToken?: Type
+  fromAmount?: Amount<EvmCurrency>
+  toToken?: EvmCurrency
   fromAddress?: Address
   toAddress?: Address
   slippage: Percent
@@ -40,16 +40,19 @@ export const useCrossChainTradeRoutes = ({
       url.searchParams.set('toChainId', toToken.chainId.toString())
       url.searchParams.set(
         'fromTokenAddress',
-        fromAmount.currency.isNative
+        fromAmount.currency.type === 'native'
           ? zeroAddress
           : fromAmount.currency.address,
       )
       url.searchParams.set(
         'toTokenAddress',
-        toToken.isNative ? zeroAddress : toToken.address,
+        toToken.type === 'native' ? zeroAddress : toToken.address,
       )
-      url.searchParams.set('fromAmount', fromAmount.quotient.toString())
-      url.searchParams.set('slippage', `${+slippage.toFixed(2) / 100}`)
+      url.searchParams.set('fromAmount', fromAmount.amount.toString())
+      url.searchParams.set(
+        'slippage',
+        `${+slippage.toString({ fixed: 2 }) / 100}`,
+      )
       params.fromAddress &&
         url.searchParams.set('fromAddress', params.fromAddress)
       params.toAddress ||
@@ -75,7 +78,7 @@ export const useCrossChainTradeRoutes = ({
     refetchInterval: query?.refetchInterval ?? 1000 * 20, // 20s
     enabled:
       query?.enabled !== false &&
-      Boolean(params.toToken && params.fromAmount?.greaterThan(0)),
+      Boolean(params.toToken && params.fromAmount?.gt(0n)),
     ...query,
   })
 }

@@ -2,17 +2,17 @@
 
 import { useQueryClient } from '@tanstack/react-query'
 import { useEffect, useMemo } from 'react'
-import { uniswapV2PairAbi_getReserves } from 'sushi/abi'
+import { Amount } from 'sushi'
 import {
+  type EvmCurrency,
+  type EvmToken,
   SUSHISWAP_V2_FACTORY_ADDRESS,
   type SushiSwapV2ChainId,
-  isSushiSwapV2ChainId,
-} from 'sushi/config'
-import { Amount, type Currency, type Token, type Type } from 'sushi/currency'
-import {
   SushiSwapV2Pool,
   computeSushiSwapV2PoolAddress,
-} from 'sushi/pool/sushiswap-v2'
+  isSushiSwapV2ChainId,
+  uniswapV2PairAbi_getReserves,
+} from 'sushi/evm'
 import type { Address } from 'viem'
 import {
   type UseReadContractsParameters,
@@ -31,25 +31,25 @@ type Config = Omit<NonNullable<UseReadContractsParameters>, 'contracts'>
 
 function getSushiSwapV2Pools(
   chainId: SushiSwapV2ChainId | undefined,
-  currencies: [Currency | undefined, Currency | undefined][],
+  currencies: [EvmCurrency | undefined, EvmCurrency | undefined][],
 ) {
   const filtered = currencies.filter(
-    (currencies): currencies is [Type, Type] => {
+    (currencies): currencies is [EvmCurrency, EvmCurrency] => {
       const [currencyA, currencyB] = currencies
       return Boolean(
         currencyA &&
           currencyB &&
           currencyA.chainId === currencyB.chainId &&
-          !currencyA.wrapped.equals(currencyB.wrapped) &&
+          !currencyA.wrap().isSame(currencyB.wrap()) &&
           isSushiSwapV2ChainId(currencyA.chainId),
       )
     },
   )
 
-  const [tokensA, tokensB] = filtered.reduce<[Token[], Token[]]>(
+  const [tokensA, tokensB] = filtered.reduce<[EvmToken[], EvmToken[]]>(
     (acc, [currencyA, currencyB]) => {
-      acc[0].push(currencyA.wrapped)
-      acc[1].push(currencyB.wrapped)
+      acc[0].push(currencyA.wrap())
+      acc[1].push(currencyB.wrap())
 
       return acc
     },
@@ -61,8 +61,8 @@ function getSushiSwapV2Pools(
     address: computeSushiSwapV2PoolAddress({
       factoryAddress:
         SUSHISWAP_V2_FACTORY_ADDRESS[currencyA.chainId as SushiSwapV2ChainId],
-      tokenA: currencyA.wrapped,
-      tokenB: currencyB.wrapped,
+      tokenA: currencyA.wrap(),
+      tokenB: currencyB.wrap(),
     }) as Address,
     abi: uniswapV2PairAbi_getReserves,
     functionName: 'getReserves' as const,
@@ -79,7 +79,7 @@ interface UseSushiSwapV2PoolsReturn {
 
 export function useSushiSwapV2Pools(
   chainId: SushiSwapV2ChainId | undefined,
-  currencies: [Currency | undefined, Currency | undefined][],
+  currencies: [EvmCurrency | undefined, EvmCurrency | undefined][],
   config?: Config,
 ): UseSushiSwapV2PoolsReturn {
   const [tokensA, tokensB, contracts] = useMemo(
@@ -127,7 +127,7 @@ export function useSushiSwapV2Pools(
       data: data.map((result, i) => {
         const [tokenA, tokenB] = [tokensA[i], tokensB[i]]
 
-        if (!tokenA || !tokenB || tokenA.equals(tokenB)) {
+        if (!tokenA || !tokenB || tokenA.isSame(tokenB)) {
           return [SushiSwapV2PoolState.INVALID, null]
         }
 
@@ -141,8 +141,8 @@ export function useSushiSwapV2Pools(
         return [
           SushiSwapV2PoolState.EXISTS,
           new SushiSwapV2Pool(
-            Amount.fromRawAmount(token0, reserve0.toString()),
-            Amount.fromRawAmount(token1, reserve1.toString()),
+            new Amount(token0, reserve0.toString()),
+            new Amount(token1, reserve1.toString()),
           ),
         ]
       }),
@@ -158,11 +158,11 @@ interface UseSushiSwapV2PoolReturn {
 
 export function useSushiSwapV2Pool(
   chainId: SushiSwapV2ChainId,
-  tokenA?: Currency,
-  tokenB?: Currency,
+  tokenA?: EvmCurrency,
+  tokenB?: EvmCurrency,
   config?: Config,
 ): UseSushiSwapV2PoolReturn {
-  const inputs: [[Currency | undefined, Currency | undefined]] = useMemo(
+  const inputs: [[EvmCurrency | undefined, EvmCurrency | undefined]] = useMemo(
     () => [[tokenA, tokenB]],
     [tokenA, tokenB],
   )

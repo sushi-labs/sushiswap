@@ -18,7 +18,7 @@ const createWagmiConfig = () => {
     return createProductionConfig()
   })()
 
-  return config
+  return config as PublicWagmiConfig
 }
 
 let wagmiConfigSingleton: PublicWagmiConfig | undefined = undefined

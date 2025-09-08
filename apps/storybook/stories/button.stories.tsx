@@ -5,8 +5,8 @@ import { Button, type ButtonProps } from '@sushiswap/ui'
 import { Currency } from '@sushiswap/ui'
 import { DiscordIcon } from '@sushiswap/ui/icons/DiscordIcon'
 import * as React from 'react'
-import { ChainId } from 'sushi/chain'
-import { SUSHI } from 'sushi/currency'
+import { ChainId } from 'sushi'
+import { SUSHI } from 'sushi/evm'
 
 import { ViewGroup } from '../components/View'
 

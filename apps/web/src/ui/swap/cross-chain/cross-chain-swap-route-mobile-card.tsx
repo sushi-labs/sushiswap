@@ -7,8 +7,7 @@ import type {
   CrossChainRouteOrder,
   CrossChainRoute as CrossChainRouteType,
 } from 'src/lib/swap/cross-chain/types'
-import { Amount } from 'sushi/currency'
-import { formatUSD } from 'sushi/format'
+import { Amount, formatUSD } from 'sushi'
 import { usePrice } from '~evm/_common/ui/price-provider/price-provider/use-price'
 import { CrossChainSwapFeesHoverCard } from './cross-chain-swap-fees-hover-card'
 import { useDerivedStateCrossChainSwap } from './derivedstate-cross-chain-swap-provider'
@@ -29,13 +28,13 @@ export const CrossChainSwapRouteMobileCard: FC<
 
   const { data: price, isLoading: isPriceLoading } = usePrice({
     chainId: token1?.chainId,
-    address: token1?.wrapped.address,
+    address: token1?.wrap().address,
   })
 
   const amountOut = useMemo(
     () =>
       route?.toAmount && token1
-        ? Amount.fromRawAmount(token1, route.toAmount)
+        ? new Amount(token1, route.toAmount)
         : undefined,
     [token1, route?.toAmount],
   )
@@ -44,7 +43,7 @@ export const CrossChainSwapRouteMobileCard: FC<
     () =>
       price && amountOut
         ? `${(
-            (price * Number(amountOut.quotient)) /
+            (price * Number(amountOut.amount)) /
               10 ** amountOut.currency.decimals
           ).toFixed(2)}`
         : undefined,

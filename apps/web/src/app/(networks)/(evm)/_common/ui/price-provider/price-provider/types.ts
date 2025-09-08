@@ -1,4 +1,4 @@
-import type { EvmChainId } from 'sushi'
+import type { EvmChainId } from 'sushi/evm'
 import type { PriceWorkerReceiveMessageChainState } from '../price-worker/types'
 
 export interface ProviderChainState {

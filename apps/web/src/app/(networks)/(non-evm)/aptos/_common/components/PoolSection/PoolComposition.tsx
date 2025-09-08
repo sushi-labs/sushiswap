@@ -9,7 +9,7 @@ import {
   SkeletonText,
 } from '@sushiswap/ui'
 import type { FC } from 'react'
-import { formatUSD } from 'sushi/format'
+import { formatUSD } from 'sushi'
 import { formatNumberWithDecimals } from '~aptos/_common/lib/common/format-number-with-decimals'
 import { useStablePrice } from '~aptos/_common/lib/common/use-stable-price'
 import type { Pool } from '~aptos/pool/lib/convert-pool-to-sushi-pool'

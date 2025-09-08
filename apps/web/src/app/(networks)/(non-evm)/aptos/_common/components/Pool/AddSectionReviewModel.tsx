@@ -14,7 +14,7 @@ import {
   List,
 } from '@sushiswap/ui'
 import { type FC, type ReactNode, useCallback } from 'react'
-import { formatUSD } from 'sushi/format'
+import { formatUSD } from 'sushi'
 import { networkNameToNetwork } from '~aptos/_common/config/chains'
 import { AptosSDK } from '~aptos/_common/lib/common/aptos-sdk'
 import { useNetwork } from '~aptos/_common/lib/common/use-network'

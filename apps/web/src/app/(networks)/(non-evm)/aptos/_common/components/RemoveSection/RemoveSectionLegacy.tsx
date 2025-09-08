@@ -6,7 +6,7 @@ import {
 import { Button } from '@sushiswap/ui'
 import { Dots } from '@sushiswap/ui'
 import React, { useMemo, useState } from 'react'
-import { DEFAULT_SLIPPAGE } from 'sushi/config'
+import { DEFAULT_SLIPPAGE } from 'sushi/evm'
 import { networkNameToNetwork } from '~aptos/_common/config/chains'
 import { AptosSDK } from '~aptos/_common/lib/common/aptos-sdk'
 import { formatNumberWithDecimals } from '~aptos/_common/lib/common/format-number-with-decimals'

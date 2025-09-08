@@ -9,12 +9,12 @@ export default async function Page({
   const teamId = (await params).teamId
 
   return (
-    <div className="flex flex-row space-x-8">
-      <div className="flex flex-col space-y-8">
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <div className="flex flex-col gap-8">
         <UserDetailsCard />
         <IdentityProvidersCard teamId={teamId} />
       </div>
-      <div className="flex flex-col space-y-8">
+      <div className="flex flex-col gap-8">
         <PasswordCard />
         <DeleteAccountCard />
       </div>

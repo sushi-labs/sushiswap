@@ -11,12 +11,12 @@ import * as echarts from 'echarts/core'
 import { CanvasRenderer } from 'echarts/renderers'
 import { useTheme } from 'next-themes'
 import { type FC, useCallback, useMemo } from 'react'
-import { type ChainId, EvmChain } from 'sushi/chain'
-import { formatUSD } from 'sushi/format'
+import { formatUSD } from 'sushi'
+import { type EvmChainId, getEvmChainById } from 'sushi/evm'
 
 interface TVLChart {
   data: AnalyticsDayBuckets
-  chainId: ChainId
+  chainId: EvmChainId
 }
 
 echarts.use([CanvasRenderer, LineChart, TooltipComponent, GridComponent])
@@ -204,7 +204,7 @@ export const TVLChart: FC<TVLChart> = ({ data, chainId }) => {
     <div>
       <div className="flex flex-col gap-3">
         <span className="text-muted-foreground text-sm">
-          {EvmChain.from(chainId)?.name} TVL
+          {getEvmChainById(chainId).name} TVL
         </span>
         <div className="flex justify-between">
           <div className="flex flex-col gap-3">

@@ -1,6 +1,6 @@
 import { Button, SkeletonBox } from '@sushiswap/ui'
 import { useMemo, useState } from 'react'
-import { formatUSD } from 'sushi/format'
+import { formatUSD } from 'sushi'
 import { formatUnits, parseUnits } from '~tron/_common/lib/utils/formatters'
 import {
   getToken0AmountForLiquidity,

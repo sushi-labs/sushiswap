@@ -21,16 +21,13 @@ import {
   useMemo,
   useState,
 } from 'react'
-import { SUPPORTED_NETWORKS } from 'src/config'
-import { HeaderNetworkSelector } from 'src/lib/wagmi/components/header-network-selector'
-import { type ChainId, evmChains, shortenAddress } from 'sushi'
+import { getEvmChainById, isEvmChainId, shortenEvmAddress } from 'sushi/evm'
 import { useAccount, useDisconnect } from 'wagmi'
 import type { GetEnsNameReturnType } from 'wagmi/actions'
 import { PortfolioView } from '.'
 import { PortfolioClaimables } from './portfolio-claimables'
 import { PortfolioPositions } from './portfolio-positions'
 import { PortfolioTokens } from './portfolio-tokens'
-import { PortfolioHistory } from './portolio-history'
 
 enum PortfolioTab {
   Tokens = 'Tokens',
@@ -50,7 +47,7 @@ export const PortfolioDefaultView: FC<PortfolioDefaultProps> = ({
   ensName,
   isENSNameLoading,
 }) => {
-  const { connector, address, chainId } = useAccount()
+  const { connector, address, chain } = useAccount()
   const { disconnect } = useDisconnect()
 
   const [tab, setTab] = useState(PortfolioTab.Tokens)
@@ -98,11 +95,13 @@ export const PortfolioDefaultView: FC<PortfolioDefaultProps> = ({
               <div>
                 <div className="font-semibold">{ensName}</div>
                 <div className="text-xs text-muted-foreground">
-                  {shortenAddress(address)}
+                  {shortenEvmAddress(address)}
                 </div>
               </div>
             ) : (
-              <span className="font-semibold">{shortenAddress(address)}</span>
+              <span className="font-semibold">
+                {shortenEvmAddress(address)}
+              </span>
             )}
           </div>
           <div className="flex gap-x-3 pt-1 px-2">
@@ -124,16 +123,18 @@ export const PortfolioDefaultView: FC<PortfolioDefaultProps> = ({
                 />
               )}
             </ClipboardController>
-            <LinkExternal
-              href={evmChains[chainId as ChainId]?.getAccountUrl(address!)}
-            >
-              <IconButton
-                size="xs"
-                icon={LinkIcon}
-                description="View on Explorer"
-                name="View on Explorer"
-              />
-            </LinkExternal>
+            {chain && (
+              <LinkExternal
+                href={getEvmChainById(chain.id).getAccountUrl(address!)}
+              >
+                <IconButton
+                  size="xs"
+                  icon={LinkIcon}
+                  description="View on Explorer"
+                  name="View on Explorer"
+                />
+              </LinkExternal>
+            )}
             <IconButton
               size="xs"
               icon={ArrowLeftOnRectangleIcon}

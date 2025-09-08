@@ -11,9 +11,9 @@ import {
   useMemo,
   useState,
 } from 'react'
-import type { SushiSwapProtocol } from 'sushi'
 import { z } from 'zod'
 
+import type { SushiSwapCmsProtocol } from 'src/lib/constants'
 import { parseArgs } from 'src/lib/functions'
 import { useTypedSearchParams } from '../../lib/hooks'
 import { POOL_TYPES } from './TableFiltersPoolType'
@@ -26,7 +26,7 @@ export const poolFiltersSchema = z.object({
     .string()
     .transform((protocols) =>
       protocols !== null && protocols !== ','
-        ? (protocols.split(',') as SushiSwapProtocol[])
+        ? (protocols.split(',') as SushiSwapCmsProtocol[])
         : [],
     ),
   farmsOnly: z

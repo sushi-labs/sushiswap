@@ -1,9 +1,9 @@
 import { type Config, readContracts } from '@wagmi/core'
-import type { ChainId } from 'sushi/chain'
+import type { EvmChainId } from 'sushi/evm'
 import { type Address, erc20Abi } from 'viem'
 
 export async function fetchBalances(
-  args: { token: string; user: string; chainId: ChainId }[],
+  args: { token: string; user: string; chainId: EvmChainId }[],
   config: Config,
 ): Promise<Record<string, string>> {
   const balances = await readContracts(config, {
