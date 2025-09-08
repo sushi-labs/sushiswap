@@ -1,4 +1,4 @@
-import { formatPercent } from 'sushi/format'
+import { formatPercent } from 'sushi'
 import type { WalletPosition } from '~kadena/_common/types/get-positions'
 
 export const PositionSizeCell = ({ data }: { data: WalletPosition }) => {

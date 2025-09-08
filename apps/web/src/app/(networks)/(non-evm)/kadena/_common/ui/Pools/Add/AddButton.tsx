@@ -10,8 +10,8 @@ import {
 } from '@sushiswap/notifications'
 import { Button, type ButtonProps } from '@sushiswap/ui'
 import { useQueryClient } from '@tanstack/react-query'
+import { Decimal } from 'decimal.js-light'
 import { useMemo } from 'react'
-import { Decimal } from 'sushi'
 import { kadenaClient } from '~kadena/_common/constants/client'
 import {
   KADENA_CHAIN_ID,

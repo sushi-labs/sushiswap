@@ -8,7 +8,7 @@ import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import Image from 'next/image'
 import Link from 'next/link'
 import type { FC } from 'react'
-import { NonStandardChainId } from 'src/config'
+import { ChainId } from 'sushi'
 
 export const SimpleSwapBridgeBanner: FC<{ className?: string }> = ({
   className,
@@ -44,7 +44,7 @@ export const SimpleSwapBridgeBanner: FC<{ className?: string }> = ({
         <div className="flex flex-col gap-2">
           <div className="flex gap-2">
             <NetworkIcon
-              chainId={NonStandardChainId.KADENA}
+              chainId={ChainId.KADENA}
               width={24}
               height={24}
               type="naked"

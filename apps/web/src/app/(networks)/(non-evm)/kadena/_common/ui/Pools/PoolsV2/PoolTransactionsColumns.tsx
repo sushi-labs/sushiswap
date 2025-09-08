@@ -1,6 +1,6 @@
 import { FormattedNumber, SkeletonText } from '@sushiswap/ui'
 import type { ColumnDef } from '@tanstack/react-table'
-import { formatUSD } from 'sushi/format'
+import { formatUSD } from 'sushi'
 import { truncateText } from '~kadena/_common/lib/utils/formatters'
 import type { PoolTransaction } from '~kadena/_common/types/get-pool-by-id'
 

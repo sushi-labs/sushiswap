@@ -5,6 +5,7 @@ import { Suspense } from 'react'
 import { POOL_SUPPORTED_NETWORKS } from 'src/config'
 import { TableFiltersNetwork } from 'src/ui/pool/TableFiltersNetwork'
 import { TableFiltersSearchToken } from 'src/ui/pool/TableFiltersSearchToken'
+import { ChainId } from 'sushi'
 import { PositionsTable } from '~kadena/_common/ui/Pools/PositionsTable/PositionsTable'
 
 export default function MyPositionsPage() {
@@ -13,12 +14,11 @@ export default function MyPositionsPage() {
       <div className="flex flex-col sm:flex-row gap-3 mb-4">
         <TableFiltersSearchToken />
         <TableFiltersNetwork
-          network="kadena"
+          network={ChainId.KADENA}
           supportedNetworks={POOL_SUPPORTED_NETWORKS}
           unsupportedNetworkHref="/ethereum/pool"
           className="lg:hidden block"
         />
-        {/* <TableFiltersFarmsOnly /> */}
       </div>
       <Suspense>
         <PositionsTable />

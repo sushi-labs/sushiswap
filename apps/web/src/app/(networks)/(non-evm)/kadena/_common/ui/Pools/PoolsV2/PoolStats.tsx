@@ -9,7 +9,7 @@ import {
   classNames,
 } from '@sushiswap/ui'
 import type { FC } from 'react'
-import { formatNumber, formatPercent, formatUSD } from 'sushi/format'
+import { formatNumber, formatPercent, formatUSD } from 'sushi'
 import type { PoolByIdResponse } from '~kadena/_common/types/get-pool-by-id'
 
 interface PoolStats {

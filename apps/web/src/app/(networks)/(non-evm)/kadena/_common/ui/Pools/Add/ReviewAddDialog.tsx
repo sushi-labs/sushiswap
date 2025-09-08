@@ -8,7 +8,7 @@ import {
   DialogTitle,
 } from '@sushiswap/ui'
 import { useRef } from 'react'
-import { formatUSD } from 'sushi/format'
+import { formatUSD } from 'sushi'
 import { useTokenPrice } from '~kadena/_common/lib/hooks/use-token-price'
 import { formatUnits } from '~kadena/_common/lib/utils/formatters'
 import { useKadena } from '~kadena/kadena-wallet-provider'

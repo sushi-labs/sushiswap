@@ -20,7 +20,7 @@ import {
   chartPeriods,
 } from 'src/ui/pool/PoolChartPeriods'
 import { PoolChartType } from 'src/ui/pool/PoolChartTypes'
-import { formatUSD } from 'sushi/format'
+import { formatUSD } from 'sushi'
 import tailwindConfig from 'tailwind.config.js'
 import resolveConfig from 'tailwindcss/resolveConfig'
 import { usePoolCharts } from '~kadena/_common/lib/hooks/pools/use-pool-charts'

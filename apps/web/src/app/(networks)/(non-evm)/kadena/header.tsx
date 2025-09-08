@@ -4,8 +4,9 @@ import { Navigation, SushiNavigationDropdown, classNames } from '@sushiswap/ui'
 import { SushiIcon } from '@sushiswap/ui/icons/SushiIcon'
 import { SushiWithTextIcon } from '@sushiswap/ui/icons/SushiWithTextIcon'
 import React, { type FC, Suspense } from 'react'
-import { NonStandardChainId, SUPPORTED_NETWORKS } from 'src/config'
+import { SUPPORTED_NETWORKS } from 'src/config'
 import { HeaderNetworkSelector } from 'src/lib/wagmi/components/header-network-selector'
+import { ChainId } from 'sushi'
 import { headerElements } from './_common/header-elements'
 import { ChainIdOperatorBanner } from './_common/ui/Shared/chain-id-operator-banner'
 import { WalletConnector } from './_common/ui/WalletConnector/WalletConnector'
@@ -37,7 +38,7 @@ export const Header: FC<{ className?: string }> = ({ className }) => {
             <Suspense>
               <HeaderNetworkSelector
                 networks={SUPPORTED_NETWORKS}
-                selectedNetwork={NonStandardChainId.KADENA}
+                selectedNetwork={ChainId.KADENA}
                 className="flex"
               />
               <WalletConnector variant="secondary" />

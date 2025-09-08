@@ -1,6 +1,6 @@
 import { useDebounce } from '@sushiswap/hooks'
+import { Decimal } from 'decimal.js-light'
 import { useEffect, useMemo } from 'react'
-import { Decimal } from 'sushi'
 import { usePoolFromTokens } from '~kadena/_common/lib/hooks/pools/use-pool-from-tokens'
 import { useSwapDispatch, useSwapState } from '~kadena/swap/swap-provider'
 import { TokenInput } from '../Input/TokenInput'

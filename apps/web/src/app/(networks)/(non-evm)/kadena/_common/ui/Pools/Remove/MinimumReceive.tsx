@@ -3,9 +3,9 @@ import {
   useSlippageTolerance,
 } from '@sushiswap/hooks'
 import { Card, CardGroup, CardLabel } from '@sushiswap/ui'
+import { Decimal } from 'decimal.js-light'
 import { useEffect, useMemo } from 'react'
 import { formatNumber } from 'sushi'
-import { Decimal } from 'sushi/math'
 import { useTokenPrice } from '~kadena/_common/lib/hooks/use-token-price'
 import { formatToMaxDecimals } from '~kadena/_common/lib/utils/formatters'
 import { usePoolState } from '../../../../pool/pool-provider'

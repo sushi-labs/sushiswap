@@ -7,9 +7,10 @@ import {
   CardTitle,
   SkeletonText,
 } from '@sushiswap/ui'
+import { Decimal } from 'decimal.js-light'
 import { useEffect, useMemo } from 'react'
-import { Decimal, formatNumber } from 'sushi'
-import { formatUSD } from 'sushi/format'
+import { formatNumber } from 'sushi'
+import { formatUSD } from 'sushi'
 import { useLpBalance } from '~kadena/_common/lib/hooks/pools/use-lp-balance'
 import { useTokenPrice } from '~kadena/_common/lib/hooks/use-token-price'
 import { useKadena } from '~kadena/kadena-wallet-provider'

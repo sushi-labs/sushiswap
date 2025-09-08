@@ -1,8 +1,9 @@
 import { Container } from '@sushiswap/ui'
 import React from 'react'
-import { NonStandardChainId, POOL_SUPPORTED_NETWORKS } from 'src/config'
+import { POOL_SUPPORTED_NETWORKS } from 'src/config'
 import { TableFiltersNetwork } from 'src/ui/pool/TableFiltersNetwork'
 import { TableFiltersSearchToken } from 'src/ui/pool/TableFiltersSearchToken'
+import { ChainId } from 'sushi'
 import { PoolsTable } from '~kadena/_common/ui/Pools/PoolsTable/PoolsTable'
 
 export default async function PoolsPage() {
@@ -11,7 +12,7 @@ export default async function PoolsPage() {
       <div className="flex flex-wrap gap-3 mb-4">
         <TableFiltersSearchToken />
         <TableFiltersNetwork
-          network={NonStandardChainId.KADENA}
+          network={ChainId.KADENA}
           supportedNetworks={POOL_SUPPORTED_NETWORKS}
           unsupportedNetworkHref="/ethereum/explore/pools"
           className="lg:hidden block"

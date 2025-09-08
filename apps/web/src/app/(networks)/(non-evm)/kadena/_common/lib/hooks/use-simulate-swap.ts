@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import { Decimal, withoutScientificNotation } from 'sushi'
+import { Decimal } from 'decimal.js-light'
 import { kadenaClient } from '~kadena/_common/constants/client'
 import {
   KADENA_CHAIN_ID,

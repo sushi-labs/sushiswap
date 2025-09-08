@@ -1,5 +1,5 @@
+import { Decimal } from 'decimal.js-light'
 import { type ComponentProps, useEffect } from 'react'
-import { Decimal } from 'sushi/math'
 import { formatToMaxDecimals } from '~kadena/_common/lib/utils/formatters'
 import { TokenInput } from '~kadena/_common/ui/Input/TokenInput'
 import { usePoolDispatch, usePoolState } from '../../../../pool/pool-provider'
@@ -42,7 +42,9 @@ export const AmountInToken0 = ({
         return
       }
 
-      const amountFormatted = new Decimal(rateOfToken1).mul(parsedAmount)
+      const amountFormatted = new Decimal(rateOfToken1)
+        .mul(parsedAmount)
+        .toString()
       setAmountInToken1(
         formatToMaxDecimals(amountFormatted, token1?.tokenDecimals),
       )

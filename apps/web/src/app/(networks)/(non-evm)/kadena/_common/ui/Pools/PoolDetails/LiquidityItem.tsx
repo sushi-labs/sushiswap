@@ -1,5 +1,5 @@
 import { CardItem } from '@sushiswap/ui'
-import { formatUSD } from 'sushi/format'
+import { formatUSD } from 'sushi'
 import type { KadenaToken } from '~kadena/_common/types/token-type'
 import { Icon } from '~kadena/_common/ui/General/Icon'
 

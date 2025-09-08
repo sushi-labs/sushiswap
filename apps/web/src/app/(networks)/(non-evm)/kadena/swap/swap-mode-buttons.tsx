@@ -13,13 +13,8 @@ import { ShuffleIcon } from '@sushiswap/ui/icons/ShuffleIcon'
 import Link from 'next/link'
 import { useParams } from 'next/navigation'
 import type { ReactNode } from 'react'
-import {
-  isSupportedChainId,
-  isTwapSupportedChainId,
-  isXSwapSupportedChainId,
-} from 'src/config'
+import { isXSwapSupportedChainId } from 'src/config'
 import { PathnameButton } from 'src/ui/pathname-button'
-import { ChainKey, type EvmChainId } from 'sushi/chain'
 
 const SwapModeButton = ({
   isSupported,
@@ -59,7 +54,7 @@ const SwapModeButton = ({
 
 export const SwapModeButtons = () => {
   const { chainId: _chainId } = useParams()
-  const chainId = +_chainId! as EvmChainId
+  const chainId = +_chainId!
 
   return (
     <div className="flex flex-wrap gap-1 md:gap-2">

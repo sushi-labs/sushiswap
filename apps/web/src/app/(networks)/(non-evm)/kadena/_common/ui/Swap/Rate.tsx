@@ -1,7 +1,7 @@
 import { ArrowTrendingUpIcon } from '@heroicons/react/20/solid'
 import { Button, FormattedNumber, SkeletonText } from '@sushiswap/ui'
 import { useState } from 'react'
-import { formatUSD } from 'sushi/format'
+import { formatUSD } from 'sushi'
 import { usePoolFromTokens } from '~kadena/_common/lib/hooks/pools/use-pool-from-tokens'
 import { useTokenPrice } from '~kadena/_common/lib/hooks/use-token-price'
 import { useSwapState } from '~kadena/swap/swap-provider'

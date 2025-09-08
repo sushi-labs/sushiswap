@@ -8,7 +8,7 @@ import type { EChartsOption } from 'echarts-for-react/lib/types'
 import echarts from 'echarts/lib/echarts'
 import { useTheme } from 'next-themes'
 import { type FC, useCallback, useMemo } from 'react'
-import { formatUSD } from 'sushi/format'
+import { formatUSD } from 'sushi'
 import type { DexMetrics } from '~kadena/_common/types/get-dex-metrics'
 
 interface TVLChartProps {

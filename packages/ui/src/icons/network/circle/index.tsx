@@ -144,4 +144,5 @@ export const NETWORK_CIRCLE_ICON: Partial<
   [ChainId.BERACHAIN]: BeraCircle,
   [ChainId.APTOS]: AptosCircle,
   [ChainId.TRON]: TronCircle,
+  [ChainId.KADENA]: KadenaCircle,
 }

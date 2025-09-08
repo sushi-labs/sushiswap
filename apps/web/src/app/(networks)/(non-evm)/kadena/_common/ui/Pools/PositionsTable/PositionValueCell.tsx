@@ -1,6 +1,6 @@
+import { Decimal } from 'decimal.js-light'
 import { useMemo } from 'react'
-import { Decimal } from 'sushi'
-import { formatUSD } from 'sushi/format'
+import { formatUSD } from 'sushi'
 import { usePoolFromTokens } from '~kadena/_common/lib/hooks/pools/use-pool-from-tokens'
 import type { WalletPosition } from '~kadena/_common/types/get-positions'
 

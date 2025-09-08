@@ -13,7 +13,7 @@ import {
 import { type ReactNode, forwardRef } from 'react'
 import type { FC } from 'react'
 import { formatNumber } from 'sushi'
-import { formatUSD } from 'sushi/format'
+import { formatUSD } from 'sushi'
 import { useTokenPrice } from '~kadena/_common/lib/hooks/use-token-price'
 import type { PoolByIdResponse } from '~kadena/_common/types/get-pool-by-id'
 import type { KadenaToken } from '~kadena/_common/types/token-type'

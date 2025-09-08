@@ -15,7 +15,7 @@ import {
 } from '@sushiswap/ui'
 import { usePathname, useRouter } from 'next/navigation'
 import { useEffect } from 'react'
-import { formatPercent } from 'sushi/format'
+import { formatPercent } from 'sushi'
 import { useBaseTokens } from '~kadena/_common/lib/hooks/use-base-tokens'
 import { usePoolById } from '~kadena/_common/lib/hooks/use-pool-by-id'
 import { useTokenPrecision } from '~kadena/_common/lib/hooks/use-token-precision'

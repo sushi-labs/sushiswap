@@ -13,7 +13,7 @@ import React, {
   type Dispatch,
   type SetStateAction,
 } from 'react'
-import { formatNumber, formatUSD } from 'sushi/format'
+import { formatNumber, formatUSD } from 'sushi'
 import { useKdaPrice } from '~kadena/_common/lib/hooks/use-kda-price'
 import { useNativeTokenBalance } from '~kadena/_common/lib/hooks/use-native-token-balance'
 import { truncateText } from '~kadena/_common/lib/utils/formatters'

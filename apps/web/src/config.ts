@@ -10,6 +10,7 @@ import {
   type SushiSwapV3ChainId,
   isEvmTestnetChainId,
 } from 'sushi/evm'
+import { KvmChainId } from 'sushi/kvm'
 import { MvmChainId } from 'sushi/mvm'
 import { TvmChainId } from 'sushi/tvm'
 
@@ -28,7 +29,7 @@ export const DISABLED_CHAIN_IDS = [
   ChainId.BERACHAIN,
 ] as const
 
-export const NEW_CHAIN_IDS = [EvmChainId.KATANA] as const
+export const NEW_CHAIN_IDS = [EvmChainId.KATANA, KvmChainId.KADENA] as const
 
 export const PREFERRED_CHAINID_ORDER = [
   ...NEW_CHAIN_IDS,
@@ -133,6 +134,7 @@ const UNSORTED_SUPPORTED_NETWORKS = [
   ...SUPPORTED_CHAIN_IDS,
   MvmChainId.APTOS,
   TvmChainId.TRON,
+  KvmChainId.KADENA,
 ].filter(
   (c) => !DISABLED_CHAIN_IDS.includes(c as (typeof DISABLED_CHAIN_IDS)[number]),
 )
@@ -152,6 +154,7 @@ const UNSORTED_POOL_SUPPORTED_NETWORKS = [
   ...PoolChainIds,
   MvmChainId.APTOS,
   TvmChainId.TRON,
+  KvmChainId.KADENA,
 ].filter(
   (c) => !DISABLED_CHAIN_IDS.includes(c as (typeof DISABLED_CHAIN_IDS)[number]),
 )

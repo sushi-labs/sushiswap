@@ -1,4 +1,5 @@
-import { Decimal, withoutScientificNotation } from 'sushi'
+import { Decimal } from 'decimal.js-light'
+import { withoutScientificNotation } from 'sushi'
 import TronWeb from 'tronweb'
 
 export const truncateText = (str: string | `0x${string}`, n = 5): string => {
