@@ -8,7 +8,7 @@ import {
   type EvmID,
   EvmNative,
   isLsd,
-  isRouteProcessor7ChainId,
+  isRedSnwapperChainId,
   isStable,
   isWNativeSupported,
   isWrapOrUnwrap,
@@ -165,7 +165,7 @@ export const useTradeQuote = (variables: UseTradeParams) => {
   const select: UseTradeQuerySelect = useCallback(
     (data) => {
       if (
-        isRouteProcessor7ChainId(chainId) &&
+        isRedSnwapperChainId(chainId) &&
         data &&
         amount &&
         data.route &&

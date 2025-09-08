@@ -7,25 +7,14 @@ import { useQuery } from '@tanstack/react-query'
 import { useCallback, useMemo } from 'react'
 import { API_BASE_URL } from 'src/lib/swap/api-base-url'
 import { getFeeString } from 'src/lib/swap/fee'
-import {
-  Amount,
-  Fraction,
-  Native,
-  Percent,
-  Price,
-  ZERO,
-  subtractSlippage,
-} from 'sushi'
+import { Amount, Fraction, Percent, Price, ZERO, subtractSlippage } from 'sushi'
 import {
   type EvmCurrency,
   EvmNative,
   UI_FEE_COLLECTOR_ADDRESS,
-  isLsd,
-  isRouteProcessor7ChainId,
-  isStable,
+  isRedSnwapperChainId,
   isUIFeeCollectorChainId,
   isWNativeSupported,
-  isWrapOrUnwrap,
 } from 'sushi/evm'
 import { type Hex, stringify, zeroAddress } from 'viem'
 import { useAccount } from 'wagmi'
@@ -181,7 +170,7 @@ export const useTrade = (variables: UseTradeParams) => {
     (data) => {
       console.log(data)
       if (
-        isRouteProcessor7ChainId(chainId) &&
+        isRedSnwapperChainId(chainId) &&
         data &&
         amount &&
         data.route &&
