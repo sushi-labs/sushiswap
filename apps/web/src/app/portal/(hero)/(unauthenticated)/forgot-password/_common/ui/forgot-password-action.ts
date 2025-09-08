@@ -38,7 +38,7 @@ export async function forgotPasswordAction(data: FormData): Promise<FormState> {
             value: {
               $typeName: 'zitadel.user.v2.EmailQuery',
               emailAddress: result.data.email,
-              method: TextQueryMethod.CONTAINS_IGNORE_CASE,
+              method: TextQueryMethod.EQUALS_IGNORE_CASE,
             },
           },
         },
