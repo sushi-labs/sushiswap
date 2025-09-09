@@ -20,6 +20,7 @@ export const headerElements: NavigationElement[] = [
   {
     show: 'desktop',
     type: NavigationElementType.Custom,
+    href: '/swap',
     item: (
       <NavigationMenuItem className={NavigationElementType.Custom}>
         <NavigationMenuTrigger>Trade</NavigationMenuTrigger>
