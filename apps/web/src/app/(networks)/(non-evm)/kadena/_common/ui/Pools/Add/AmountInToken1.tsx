@@ -1,4 +1,3 @@
-import { Decimal } from 'decimal.js-light'
 import { type ComponentProps, useEffect } from 'react'
 import { formatToMaxDecimals } from '~kadena/_common/lib/utils/formatters'
 import { TokenInput } from '~kadena/_common/ui/Input/TokenInput'
@@ -45,9 +44,7 @@ export const AmountInToken1 = ({
         return
       }
 
-      const amountFormatted = new Decimal(rateOfToken0)
-        .mul(parsedAmount)
-        .toString()
+      const amountFormatted = Number(rateOfToken0) * Number(parsedAmount)
 
       if (amountFormatted) {
         setAmountInToken0(

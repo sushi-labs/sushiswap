@@ -1,5 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
-import { Decimal } from 'decimal.js-light'
+import { Amount, Fraction } from 'sushi'
+import { KvmChainId, KvmToken, type KvmTokenAddress } from 'sushi/kvm'
+import { parseUnits } from 'viem'
 import { kadenaClient } from '~kadena/_common/constants/client'
 import {
   KADENA_CHAIN_ID,
@@ -108,7 +110,25 @@ export const useSimulateSwap = ({
       } else {
         _amountOut = amount ?? 0
       }
-      const minAmountOut = new Decimal(_amountOut).mul(1 - slippage).toString()
+
+      const tokenOut = new KvmToken({
+        chainId: KvmChainId.KADENA,
+        address: token1.tokenAddress as KvmTokenAddress,
+        decimals: token1.tokenDecimals,
+        symbol: token1.tokenSymbol,
+        name: token1.tokenName,
+      })
+      const parsedAmountOut = parseUnits(
+        _amountOut.toString(),
+        tokenOut.decimals,
+      )
+      const slippageFraction = new Fraction((1 - slippage) * 1e6)
+
+      const minAmountOut = new Amount(tokenOut, parsedAmountOut)
+        .mul(slippageFraction)
+        .div(1e6)
+        .toString()
+
       setMinAmountOut(minAmountOut)
 
       const formatted = _amountOut?.toString() ?? null

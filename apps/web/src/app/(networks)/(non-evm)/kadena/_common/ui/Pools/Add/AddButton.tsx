@@ -10,9 +10,15 @@ import {
 } from '@sushiswap/notifications'
 import { Button, type ButtonProps } from '@sushiswap/ui'
 import { useQueryClient } from '@tanstack/react-query'
-import { Decimal } from 'decimal.js-light'
 import { useMemo } from 'react'
-import { getKvmChainByKey } from 'sushi/kvm'
+import { Amount, Fraction } from 'sushi'
+import {
+  KvmChainId,
+  KvmToken,
+  type KvmTokenAddress,
+  getKvmChainByKey,
+} from 'sushi/kvm'
+import { parseUnits } from 'viem'
 import { kadenaClient } from '~kadena/_common/constants/client'
 import {
   KADENA_CHAIN_ID,
@@ -66,12 +72,38 @@ export const AddButton = ({
       return
     try {
       setIsTxnPending(true)
-      const minAmountToken0 = new Decimal(amountInToken0)
-        .mul(new Decimal(1).minus(slippage))
+      const _token0 = new KvmToken({
+        chainId: KvmChainId.KADENA,
+        address: token0.tokenAddress as KvmTokenAddress,
+        decimals: token0.tokenDecimals,
+        symbol: token0.tokenSymbol,
+        name: token0.tokenName,
+      })
+      const parsedAmountOut = parseUnits(
+        amountInToken0.toString(),
+        _token0.decimals,
+      )
+      const slippageFraction = new Fraction((1 - slippage) * 1e6)
+      const minAmountToken0 = new Amount(_token0, parsedAmountOut)
+        .mul(slippageFraction)
+        .div(1e6)
         .toString()
 
-      const minAmountToken1 = new Decimal(amountInToken1)
-        .mul(new Decimal(1).minus(slippage))
+      const _token1 = new KvmToken({
+        chainId: KvmChainId.KADENA,
+        address: token1.tokenAddress as KvmTokenAddress,
+        decimals: token1.tokenDecimals,
+        symbol: token1.tokenSymbol,
+        name: token1.tokenName,
+      })
+      const parsedAmountOut1 = parseUnits(
+        amountInToken1.toString(),
+        _token1.decimals,
+      )
+      const slippageFraction1 = new Fraction((1 - slippage) * 1e6)
+      const minAmountToken1 = new Amount(_token1, parsedAmountOut1)
+        .mul(slippageFraction1)
+        .div(1e6)
         .toString()
 
       let poolAddress = poolId

@@ -1,3 +1,5 @@
+import type { KvmTokenAddress } from 'sushi/kvm'
+
 export interface TokenInfo {
   decimalsToDisplay?: number
   description?: string
@@ -10,7 +12,7 @@ export interface TokenInfo {
 }
 
 export interface KadenaToken {
-  tokenAddress: string
+  tokenAddress: string | KvmTokenAddress
   tokenSymbol: string
   tokenDecimals: number
   tokenImage?: string
