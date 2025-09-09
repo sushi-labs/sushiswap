@@ -17,7 +17,7 @@ import { BarChartPeriod, chartPeriods } from './BarChartPeriods'
 import { BarChartType } from './BarChartTypes'
 
 import type { EChartOption } from 'echarts'
-import ReactEchartsCore from 'echarts-for-react/lib/core'
+import ReactEChartsCore from 'echarts-for-react/lib/core'
 import { LineChart } from 'echarts/charts'
 import { GridComponent, TooltipComponent } from 'echarts/components'
 import * as echarts from 'echarts/core'
@@ -203,7 +203,7 @@ export const BarChartGraph: FC<BarChartProps> = ({ chart, period }) => {
             )}
           />
         ) : (
-          <ReactEchartsCore
+          <ReactEChartsCore
             echarts={echarts}
             option={DEFAULT_OPTION}
             style={{ height: 200 }}
