@@ -5,7 +5,8 @@ export const KADENA: KadenaToken = {
   tokenSymbol: 'KDA',
   tokenDecimals: 12,
   tokenName: 'Kadena',
-  tokenImage: '/kadena-logo.png',
+  tokenImage:
+    'https://raw.githubusercontent.com/Mercatus-Kadena/kadena_tokens/refs/heads/main/img/kda.svg',
   validated: true,
 }
 
