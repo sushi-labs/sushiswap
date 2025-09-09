@@ -4,7 +4,6 @@ import {
   NavigationListItem,
   NavigationMenuContent,
   NavigationMenuItem,
-  NavigationMenuLink,
   NavigationMenuTrigger,
   OnramperButton,
   navigationMenuTriggerStyle,
@@ -23,6 +22,7 @@ export const headerElements: NavigationElement[] = [
   {
     show: 'desktop',
     type: NavigationElementType.Custom,
+    href: '/swap',
     item: (
       <NavigationMenuItem className={NavigationElementType.Custom}>
         <NavigationMenuTrigger>Trade</NavigationMenuTrigger>
