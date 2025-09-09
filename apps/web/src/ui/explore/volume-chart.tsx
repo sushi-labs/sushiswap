@@ -10,12 +10,12 @@ import * as echarts from 'echarts/core'
 import { CanvasRenderer } from 'echarts/renderers'
 import { useTheme } from 'next-themes'
 import { type FC, useCallback, useMemo } from 'react'
-import { type ChainId, EvmChain } from 'sushi/chain'
-import { formatUSD } from 'sushi/format'
+import { formatUSD } from 'sushi'
+import { type EvmChainId, getEvmChainById } from 'sushi/evm'
 
 interface VolumeChart {
   data: AnalyticsDayBuckets
-  chainId: ChainId
+  chainId: EvmChainId
 }
 
 echarts.use([CanvasRenderer, BarChart, TooltipComponent, GridComponent])
@@ -167,7 +167,7 @@ export const VolumeChart: FC<VolumeChart> = ({ data, chainId }) => {
     <div>
       <div className="flex flex-col gap-3">
         <span className="text-muted-foreground text-sm">
-          {EvmChain.from(chainId)?.name} Volume
+          {getEvmChainById(chainId).name} Volume
         </span>
         <div className="flex justify-between">
           <div className="flex flex-col gap-3">

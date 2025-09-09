@@ -11,8 +11,12 @@ import type { ColumnDef, PaginationState } from '@tanstack/react-table'
 import React, { type FC, useMemo, useState } from 'react'
 import { useConcentratedLiquidityPositions } from 'src/lib/wagmi/hooks/positions/hooks/useConcentratedLiquidityPositions'
 import type { ConcentratedLiquidityPositionWithV3Pool } from 'src/lib/wagmi/hooks/positions/types'
-import { type SushiSwapV3ChainId, SushiSwapV3ChainIds } from 'sushi/config'
-import { Amount, type Type } from 'sushi/currency'
+import { Amount } from 'sushi'
+import {
+  type EvmCurrency,
+  type SushiSwapV3ChainId,
+  SushiSwapV3ChainIds,
+} from 'sushi/evm'
 import { useAccount } from 'wagmi'
 import { useMultiChainPrices } from '~evm/_common/ui/price-provider/price-provider/use-multi-chain-prices'
 import {
@@ -23,7 +27,7 @@ import {
 
 export type ClaimableFees = {
   chainId: SushiSwapV3ChainId
-  feeAmounts: Record<string, Amount<Type>>
+  feeAmounts: Record<string, Amount<EvmCurrency>>
   feeAmountsUSD: Record<string, number>
   totalFeesUSD: number
   positions: ConcentratedLiquidityPositionWithV3Pool[]
@@ -75,7 +79,7 @@ export const ClaimableFeesTab: FC = () => {
 
         const chainId = +_chainId as SushiSwapV3ChainId
 
-        const feeAmounts = {} as Record<string, Amount<Type>>
+        const feeAmounts = {} as Record<string, Amount<EvmCurrency>>
 
         positions.forEach((position) => {
           if (
@@ -92,21 +96,21 @@ export const ClaimableFeesTab: FC = () => {
 
           if (currentValue0) {
             const amount = currentValue0.add(
-              Amount.fromRawAmount(currentValue0.currency, fees0),
+              new Amount(currentValue0.currency, fees0),
             )
             feeAmounts[position.token0.id] = amount
           } else {
-            const amount = Amount.fromRawAmount(position.pool.token0, fees0)
+            const amount = new Amount(position.pool.token0, fees0)
             feeAmounts[position.token0.id] = amount
           }
 
           if (currentValue1) {
             const amount = currentValue1.add(
-              Amount.fromRawAmount(currentValue1.currency, fees1),
+              new Amount(currentValue1.currency, fees1),
             )
             feeAmounts[position.token1.id] = amount
           } else {
-            const amount = Amount.fromRawAmount(position.pool.token1, fees1)
+            const amount = new Amount(position.pool.token1, fees1)
             feeAmounts[position.token1.id] = amount
           }
         })
@@ -117,14 +121,14 @@ export const ClaimableFeesTab: FC = () => {
           (prev, [key, amount]) => {
             const price = prices
               ?.get(chainId)
-              ?.get(amount.currency.wrapped.address.toLowerCase())
+              ?.get(amount.currency.wrap().address.toLowerCase())
 
             if (!price) {
               return prev
             }
 
             const _amountUSD = Number(
-              Number(amount.toExact()) * Number(price.toFixed(10)),
+              Number(amount.toString()) * Number(price.toFixed()),
             )
 
             const amountUSD =

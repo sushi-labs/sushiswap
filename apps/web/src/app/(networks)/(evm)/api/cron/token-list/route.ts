@@ -1,6 +1,6 @@
 import { Redis } from '@upstash/redis'
 import { NextResponse } from 'next/server'
-import { DEFAULT_LIST_OF_LISTS } from 'sushi'
+import { DEFAULT_LIST_OF_LISTS } from 'sushi/evm'
 
 export async function GET(req: Request) {
   if (

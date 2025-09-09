@@ -1,12 +1,12 @@
 import { getV3Pool } from '@sushiswap/graph-client/data-api'
 import { useQuery } from '@tanstack/react-query'
-import type { SushiSwapV3ChainId } from 'sushi/config'
-import { Amount, Token } from 'sushi/currency'
-import { type Address, parseUnits } from 'viem'
+import { Amount } from 'sushi'
+import { type EvmAddress, EvmToken, type SushiSwapV3ChainId } from 'sushi/evm'
+import { parseUnits } from 'viem'
 
 interface UseConcentratedLiquidityPoolStats {
   chainId: SushiSwapV3ChainId | undefined
-  address: Address | undefined
+  address: EvmAddress | undefined
   enabled?: boolean
 }
 
@@ -24,14 +24,14 @@ export const useConcentratedLiquidityPoolStats = ({
       if (data) {
         return {
           ...data,
-          token0: new Token({
+          token0: new EvmToken({
             chainId: data.chainId,
             address: data.token0.address,
             decimals: data.token0.decimals,
             name: data.token0.name,
             symbol: data.token0.symbol,
           }),
-          token1: new Token({
+          token1: new EvmToken({
             chainId: data.chainId,
             address: data.token1.address,
             decimals: data.token1.decimals,
@@ -40,7 +40,7 @@ export const useConcentratedLiquidityPoolStats = ({
           }),
           feeAmount: data.swapFee * 1000000,
           incentives: data.incentives.map((incentive) => {
-            const rewardToken = new Token({
+            const rewardToken = new EvmToken({
               chainId: incentive.chainId,
               address: incentive.rewardToken.address,
               decimals: incentive.rewardToken.decimals,
@@ -50,7 +50,7 @@ export const useConcentratedLiquidityPoolStats = ({
 
             return {
               ...incentive,
-              reward: Amount.fromRawAmount(
+              reward: new Amount(
                 rewardToken,
                 parseUnits(
                   incentive.rewardPerDay.toString(),

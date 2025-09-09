@@ -12,12 +12,12 @@ import {
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import type { FC, JSX } from 'react'
 import { useTokensFromPool } from 'src/lib/hooks'
+import { formatNumber } from 'sushi'
 import {
   type PoolBase,
   type PoolIfIncentivized,
   SushiSwapProtocol,
-} from 'sushi'
-import { formatNumber } from 'sushi/format'
+} from 'sushi/evm'
 
 export const ProtocolBadge: Record<SushiSwapProtocol, JSX.Element> = {
   [SushiSwapProtocol.SUSHISWAP_V2]: (
@@ -28,6 +28,11 @@ export const ProtocolBadge: Record<SushiSwapProtocol, JSX.Element> = {
   [SushiSwapProtocol.SUSHISWAP_V3]: (
     <div className="whitespace-nowrap bg-blue/20 text-blue text-[10px] px-2 rounded-full">
       V3
+    </div>
+  ),
+  [SushiSwapProtocol.BLADE]: (
+    <div className="whitespace-nowrap bg-blue/20 text-blue text-[10px] px-2 rounded-full">
+      BLADE
     </div>
   ),
 }

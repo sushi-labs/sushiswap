@@ -13,7 +13,7 @@ import {
   WidgetTitle,
 } from '@sushiswap/ui'
 import React, { type FC, useEffect } from 'react'
-import { DEFAULT_SLIPPAGE } from 'sushi/config'
+import { DEFAULT_SLIPPAGE } from 'sushi/evm'
 import type { Pool } from '~aptos/pool/lib/convert-pool-to-sushi-pool'
 import { useTokensFromPool } from '~aptos/pool/lib/use-tokens-from-pool'
 import { PoolAddCurrencyInput } from '~aptos/pool/ui/pool/add/pool-add-currency-input'

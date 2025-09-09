@@ -2,9 +2,8 @@
 
 import { Collapsible, Explainer, SkeletonBox, classNames } from '@sushiswap/ui'
 import React, { type FC, useMemo } from 'react'
-import { EvmChain } from 'sushi/chain'
-import { formatUSD, shortenAddress } from 'sushi/format'
-import { ZERO } from 'sushi/math'
+import { ZERO, formatUSD } from 'sushi'
+import { getEvmChainById, shortenEvmAddress } from 'sushi/evm'
 import { isAddress } from 'viem'
 
 import { getCrossChainFeesBreakdown } from 'src/lib/swap/cross-chain'
@@ -49,12 +48,12 @@ export const CrossChainSwapTradeStats: FC = () => {
               <SkeletonBox className="h-4 py-0.5 w-[40px]" />
             ) : trade?.priceImpact ? (
               `${
-                trade?.priceImpact?.lessThan(ZERO)
+                trade?.priceImpact?.lt(ZERO)
                   ? '+'
-                  : trade?.priceImpact?.greaterThan(ZERO)
+                  : trade?.priceImpact?.gt(ZERO)
                     ? '-'
                     : ''
-              }${Math.abs(Number(trade?.priceImpact?.toFixed(2)))}%`
+              }${Math.abs(Number((trade?.priceImpact?.toNumber() * 100).toFixed(2)))}%`
             ) : null}
           </span>
         </div>
@@ -133,7 +132,7 @@ export const CrossChainSwapTradeStats: FC = () => {
             <span className="font-semibold text-gray-700 text-right dark:text-slate-400">
               <a
                 target="_blank"
-                href={EvmChain.from(chainId1)?.getAccountUrl(recipient)}
+                href={getEvmChainById(chainId1).getAccountUrl(recipient)}
                 className={classNames(
                   address !== recipient
                     ? 'text-yellow-600'
@@ -146,7 +145,9 @@ export const CrossChainSwapTradeStats: FC = () => {
                   {({ isLoading, data }) => {
                     return (
                       <>
-                        {isLoading || !data ? shortenAddress(recipient) : data}
+                        {isLoading || !data
+                          ? shortenEvmAddress(recipient)
+                          : data}
                       </>
                     )
                   }}

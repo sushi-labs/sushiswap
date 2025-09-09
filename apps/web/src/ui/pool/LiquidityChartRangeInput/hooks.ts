@@ -3,14 +3,17 @@ import {
   type TickProcessed,
   useConcentratedActiveLiquidity,
 } from 'src/lib/pool/v3'
-import type { SushiSwapV3ChainId, SushiSwapV3FeeAmount } from 'sushi/config'
-import type { Type } from 'sushi/currency'
+import type {
+  EvmCurrency,
+  SushiSwapV3ChainId,
+  SushiSwapV3FeeAmount,
+} from 'sushi/evm'
 import type { ChartEntry } from './types'
 
 interface UseDensityChartData {
   chainId: SushiSwapV3ChainId
-  token0: Type | undefined
-  token1: Type | undefined
+  token0: EvmCurrency | undefined
+  token1: EvmCurrency | undefined
   feeAmount: SushiSwapV3FeeAmount | undefined
   enabled?: boolean
 }

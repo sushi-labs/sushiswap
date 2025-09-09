@@ -1,6 +1,7 @@
 import { type NextRequest, NextResponse } from 'next/server'
-import { ChainKey, getEvmChainInfo } from 'sushi/chain'
-import { isSushiSwapChainId } from 'sushi/config'
+import { getChainById, getChainByKey, isChainId, isChainKey } from 'sushi'
+import { getEvmChainById } from 'sushi/evm'
+import { SUPPORTED_NETWORKS } from './config'
 
 export const config = {
   matcher: [
@@ -52,9 +53,9 @@ export async function middleware(req: NextRequest) {
     if (cookie) {
       const wagmiState = JSON.parse(cookie.value)
       const chainId = wagmiState?.state?.chainId
-      if (isSushiSwapChainId(chainId)) {
+      if (SUPPORTED_NETWORKS.includes(chainId)) {
         return NextResponse.redirect(
-          new URL(`/${ChainKey[chainId]}/${path}`, req.url),
+          new URL(`/${getEvmChainById(chainId).key}/${path}`, req.url),
         )
       }
     }
@@ -66,8 +67,18 @@ export async function middleware(req: NextRequest) {
     /([\w-]+)(?=\/swap|\/limit|\/dca|\/cross-chain-swap|\/explore|\/pool|\/token|\/positions|\/rewards|\/migrate)/,
   )
   if (networkNameMatch?.length) {
-    const { chainId, networkName } = getEvmChainInfo(networkNameMatch[0])
-    if (!chainId) return NextResponse.next()
+    let chain
+
+    {
+      const _chainId = Number.parseInt(networkNameMatch[0])
+      if (isChainId(_chainId)) {
+        chain = getChainById(_chainId)
+      } else if (isChainKey(networkNameMatch[0])) {
+        chain = getChainByKey(networkNameMatch[0])
+      }
+    }
+
+    if (!chain) return NextResponse.next()
 
     const url = req.nextUrl.clone()
 
@@ -97,7 +108,7 @@ export async function middleware(req: NextRequest) {
         const chainId1 = searchParams.get('chainId1')?.toLowerCase()
 
         // ChainIds cant be the same
-        if (chainId.toString() === chainId1) {
+        if (chain.chainId.toString() === chainId1) {
           searchParams.delete('chainId1')
           searchParams.delete('token0')
           searchParams.delete('token1')
@@ -107,7 +118,9 @@ export async function middleware(req: NextRequest) {
       }
     }
 
-    url.pathname = pathname.replace(networkName, chainId.toString())
+    if (chain.type === 'evm') {
+      url.pathname = pathname.replace(chain.key, chain.chainId.toString())
+    }
 
     return NextResponse.rewrite(url)
   }

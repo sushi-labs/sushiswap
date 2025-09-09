@@ -1,10 +1,8 @@
 import { Button, DialogTrigger } from '@sushiswap/ui'
 import type { Row } from '@tanstack/react-table'
 import type { FC } from 'react'
-import type { ConcentratedLiquidityPositionWithV3Pool } from 'src/lib/wagmi/hooks/positions/types'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
-import { ChainKey } from 'sushi/chain'
-import type { SushiSwapV3ChainId } from 'sushi/config'
+import { getEvmChainById } from 'sushi/evm'
 import { useAccount } from 'wagmi'
 import type { ClaimableFees } from './ClaimableFeesTab'
 import { ConcentratedLiquidityCollectAllDialog } from './ConcentratedLiquidityCollectAllDialog'
@@ -40,7 +38,7 @@ export const ClaimableFeesActionCell: FC<Row<ClaimableFees>> = ({
         <a
           target="_blank"
           rel="noopener noreferrer"
-          href={`/${ChainKey[original.chainId]}/pool`}
+          href={`/${getEvmChainById(original.chainId).key}/pool`}
         >
           View Positions
         </a>

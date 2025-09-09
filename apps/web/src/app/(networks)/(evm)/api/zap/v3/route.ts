@@ -1,17 +1,11 @@
 import type { NextRequest } from 'next/server'
+import { type ZapSupportedChainId, isZapSupportedChainId } from 'src/config'
+import { sz } from 'sushi'
 import {
-  SUSHISWAP_V3_POSITION_HELPER,
-  type ZapSupportedChainId,
-  isZapSupportedChainId,
-} from 'src/config'
-import {
-  SUSHISWAP_V3_POSITION_MANAGER,
   SushiSwapV3FeeAmount,
+  TickMath,
   UI_FEE_COLLECTOR_ADDRESS,
-  isUIFeeCollectorChainId,
-} from 'sushi/config'
-import { TickMath } from 'sushi/pool/sushiswap-v3'
-import { sz } from 'sushi/validate'
+} from 'sushi/evm'
 import { z } from 'zod'
 
 const schema = z.object({
@@ -24,10 +18,10 @@ const schema = z.object({
   routingStrategy: z
     .enum(['ensowallet', 'router', 'delegate'])
     .default('router'),
-  sender: sz.address(),
-  receiver: sz.address().optional(),
-  tokenIn: sz.address(),
-  tokenOut: sz.address(),
+  sender: sz.evm.address(),
+  receiver: sz.evm.address().optional(),
+  tokenIn: sz.evm.address(),
+  tokenOut: sz.evm.address(),
   amountIn: z.string(),
   slippage: z.string(), // BIPS
   ticks: z
@@ -38,8 +32,8 @@ const schema = z.object({
     .refine(([tickLower, tickUpper]) => tickLower < tickUpper, {
       message: 'invalid tick range',
     }),
-  poolToken0: sz.address(),
-  poolToken1: sz.address(),
+  poolToken0: sz.evm.address(),
+  poolToken1: sz.evm.address(),
   poolFeeTier: z.coerce
     .number()
     .int()

@@ -1,6 +1,5 @@
 import { notFound } from 'next/navigation'
-import type { EvmChainId } from 'sushi/chain'
-import { isSushiSwapV3ChainId } from 'sushi/config'
+import { EvmChainId, isSushiSwapV3ChainId } from 'sushi/evm'
 
 export default async function Layout(props: {
   children: React.ReactNode
@@ -10,7 +9,7 @@ export default async function Layout(props: {
 
   const { children } = props
 
-  const chainId = +params.chainId as EvmChainId
+  const chainId = +params.chainId
   if (!isSushiSwapV3ChainId(chainId)) {
     return notFound()
   }

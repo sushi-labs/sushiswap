@@ -17,7 +17,7 @@ export async function TeamBillingCard({ teamId }: { teamId: string }) {
   const response = await client.getTeamsTeamIdBilling({ teamId })
 
   return (
-    <Card className="w-full min-w-[470px] h-min">
+    <Card>
       <CardHeader className="rounded-t-xl">
         <CardTitle>Billing</CardTitle>
         <CardDescription>Plan renewal and billing details</CardDescription>

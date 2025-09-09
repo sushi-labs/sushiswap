@@ -1,19 +1,19 @@
 'use client'
 
 import { useCallback, useMemo } from 'react'
-import { Token } from 'sushi/currency'
+import { EvmToken } from 'sushi/evm'
 import { getAddress, isAddress } from 'viem/utils'
 
-import type { EvmChainId } from 'sushi'
+import type { EvmAddress, EvmChainId } from 'sushi/evm'
 import { useLocalStorage } from './useLocalStorage'
 
 type Data = {
   chainId: EvmChainId
   id: string
-  address: string
+  address: EvmAddress
   decimals: number
-  name: string | undefined
-  symbol: string | undefined
+  name: string
+  symbol: string
   logoUrl: string | undefined
 }
 
@@ -24,17 +24,26 @@ export const useCustomTokens = () => {
   )
 
   const hydrate = useCallback((data: Record<string, Data>) => {
-    return Object.entries(data).reduce<Record<string, Token>>(
-      (acc, [k, { address, chainId, decimals, name, symbol }]) => {
-        acc[k] = new Token({ address, chainId, decimals, name, symbol })
-        return acc
-      },
-      {},
-    )
+    return Object.entries(data).reduce<
+      Record<string, EvmToken<{ logoUrl?: string; approved: boolean }>>
+    >((acc, [k, { address, chainId, decimals, name, symbol, logoUrl }]) => {
+      acc[k] = new EvmToken({
+        address,
+        chainId,
+        decimals,
+        name,
+        symbol,
+        metadata: {
+          approved: false,
+          logoUrl,
+        },
+      })
+      return acc
+    }, {})
   }, [])
 
   const addCustomToken = useCallback(
-    (currencies: Token[]) => {
+    (currencies: EvmToken<{ logoUrl?: string }>[]) => {
       const data: Data[] = currencies.map((currency) => ({
         chainId: currency.chainId,
         id: currency.id,
@@ -42,7 +51,7 @@ export const useCustomTokens = () => {
         name: currency.name,
         symbol: currency.symbol,
         decimals: currency.decimals,
-        logoUrl: currency.logoUrl,
+        logoUrl: currency.metadata.logoUrl,
       }))
 
       setValue((prev) => {
@@ -59,7 +68,7 @@ export const useCustomTokens = () => {
   )
 
   const removeCustomToken = useCallback(
-    (currency: Token) => {
+    (currency: EvmToken<{ logoUrl?: string }>) => {
       setValue((prev) => {
         return Object.entries(prev).reduce<Record<string, Data>>((acc, cur) => {
           if (cur[0] === `${currency.chainId}:${currency.address}`) {
@@ -75,7 +84,7 @@ export const useCustomTokens = () => {
   )
 
   const hasToken = useCallback(
-    (currency: Token | string) => {
+    (currency: EvmToken | string) => {
       if (typeof currency === 'string') {
         if (!currency.includes(':')) {
           throw new Error('Address provided instead of id')
@@ -86,7 +95,7 @@ export const useCustomTokens = () => {
           throw new Error('Address provided not a valid ERC20 address')
         }
 
-        return !!value[`${_chainId}:${getAddress(_currency)}`]
+        return !!value[`${_chainId}:${_currency}`]
       }
       return !!value[`${currency.chainId}:${currency.address}`]
     },
@@ -94,7 +103,7 @@ export const useCustomTokens = () => {
   )
 
   const mutate = useCallback(
-    (type: 'add' | 'remove', currency: Token[]) => {
+    (type: 'add' | 'remove', currency: EvmToken<{ logoUrl?: string }>[]) => {
       if (type === 'add') addCustomToken(currency)
       if (type === 'remove') removeCustomToken(currency[0])
     },
