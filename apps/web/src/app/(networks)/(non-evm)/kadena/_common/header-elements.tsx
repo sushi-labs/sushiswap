@@ -1,5 +1,6 @@
 import {
   type NavigationElement,
+  type NavigationElementDropdown,
   NavigationElementType,
   NavigationListItem,
   NavigationMenuContent,
@@ -10,7 +11,37 @@ import {
 } from '@sushiswap/ui'
 import Link from 'next/link'
 import React from 'react'
-import { EXPLORE_NAVIGATION_LINKS } from 'src/app/_common/header-elements'
+
+const EXPLORE_NAVIGATION_LINKS = (): NavigationElementDropdown['items'] => [
+  {
+    title: 'Swap',
+    href: '/kadena/swap',
+    description: 'The easiest way to trade.',
+  },
+
+  {
+    title: 'Explore',
+    href: `/kadena/explore/pools`,
+    description: 'Explore top pools.',
+  },
+
+  {
+    title: 'Pool',
+    href: `/kadena/pool`,
+    description: 'Earn fees by providing liquidity.',
+  },
+
+  {
+    title: 'Claim',
+    href: '/claim',
+    description: 'Claim your fees and rewards.',
+  },
+  {
+    title: 'Stake',
+    href: '/stake',
+    description: 'Earn protocol fees by staking SUSHI.',
+  },
+]
 
 export const headerElements: NavigationElement[] = [
   {
