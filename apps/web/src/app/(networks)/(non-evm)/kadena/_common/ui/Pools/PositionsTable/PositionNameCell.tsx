@@ -1,12 +1,13 @@
 import { Currency, classNames } from '@sushiswap/ui'
 import { useMemo } from 'react'
-import { KADENA_TOKENS } from '~kadena/_common/constants/token-list'
+import { useBaseTokens } from '~kadena/_common/lib/hooks/use-base-tokens'
 import type { WalletPosition } from '~kadena/_common/types/get-positions'
 import { Icon } from '../../General/Icon'
 
 export const PositionNameCell = ({ data }: { data: WalletPosition }) => {
+  const { data: baseTokens } = useBaseTokens()
   const token0 = useMemo(() => {
-    const _token0 = KADENA_TOKENS.find(
+    const _token0 = baseTokens?.find(
       (token) =>
         token?.tokenAddress?.toLowerCase() ===
         data.pair?.token0?.address?.toLowerCase(),
@@ -22,10 +23,10 @@ export const PositionNameCell = ({ data }: { data: WalletPosition }) => {
       tokenName: data.pair.token0.name,
       tokenImage: '',
     }
-  }, [data.pair.token0])
+  }, [data.pair.token0, baseTokens])
 
   const token1 = useMemo(() => {
-    const _token1 = KADENA_TOKENS.find(
+    const _token1 = baseTokens?.find(
       (token) =>
         token?.tokenAddress?.toLowerCase() ===
         data.pair?.token1?.address?.toLowerCase(),
@@ -41,7 +42,7 @@ export const PositionNameCell = ({ data }: { data: WalletPosition }) => {
       tokenName: data.pair.token1.name,
       tokenImage: '',
     }
-  }, [data.pair.token1])
+  }, [data.pair.token1, baseTokens])
 
   return (
     <div className="flex items-center gap-1">
