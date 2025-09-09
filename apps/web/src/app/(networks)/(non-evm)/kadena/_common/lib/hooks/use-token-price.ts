@@ -58,7 +58,7 @@ export const useTokenPrice = ({
   token,
 }: { token: KadenaToken | undefined }) => {
   return useQuery({
-    queryKey: ['use-token-price', { token: token?.tokenAddress }],
+    queryKey: ['use-token-price-kadena', { token: token?.tokenAddress }],
     queryFn: async () => {
       if (!token || !token.tokenAddress) {
         return 0
