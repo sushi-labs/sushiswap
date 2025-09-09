@@ -5,11 +5,11 @@ import { Decimal } from 'decimal.js-light'
 import Link from 'next/link'
 import { useMemo } from 'react'
 import { formatPercent, formatUSD } from 'sushi'
+import { getKvmChainByKey } from 'sushi/kvm'
 import { GAS_PRICE } from '~kadena/_common/constants/gas'
 import { KADENA } from '~kadena/_common/constants/token-list'
 import { useTokenPrice } from '~kadena/_common/lib/hooks/use-token-price'
 import { truncateText } from '~kadena/_common/lib/utils/formatters'
-import { getChainwebAddressLink } from '~kadena/_common/lib/utils/kadena-helpers'
 import {
   warningSeverity,
   warningSeverityClassName,
@@ -153,7 +153,7 @@ export const SwapStats = () => {
             <span className="font-semibold text-right ">
               <Link
                 target="_blank"
-                href={getChainwebAddressLink(address)}
+                href={getKvmChainByKey('kadena').getAccountUrl(address)}
                 className={classNames(
                   'flex items-center gap-2 cursor-pointer text-gray-700 dark:text-slate-300',
                 )}

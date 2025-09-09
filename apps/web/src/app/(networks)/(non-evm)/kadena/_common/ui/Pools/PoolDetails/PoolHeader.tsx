@@ -16,10 +16,10 @@ import {
 import { usePathname, useRouter } from 'next/navigation'
 import { useEffect } from 'react'
 import { formatPercent } from 'sushi'
+import { getKvmChainByKey } from 'sushi/kvm'
 import { useBaseTokens } from '~kadena/_common/lib/hooks/use-base-tokens'
 import { usePoolById } from '~kadena/_common/lib/hooks/use-pool-by-id'
 import { useTokenPrecision } from '~kadena/_common/lib/hooks/use-token-precision'
-import { getChainwebAddressLink } from '~kadena/_common/lib/utils/kadena-helpers'
 import { Icon } from '~kadena/_common/ui/General/Icon'
 import { usePoolDispatch, usePoolState } from '../../../../pool/pool-provider'
 
@@ -119,7 +119,11 @@ export const PoolHeader = ({ poolId }: { poolId: string }) => {
                     'sm:!text2-xl sm:!text-4xl !font-bold text-gray-900 dark:text-slate-50 truncate overflow-x-auto',
                 })}
               >
-                <LinkExternal href={getChainwebAddressLink(poolAddress ?? '')}>
+                <LinkExternal
+                  href={getKvmChainByKey('kadena').getAccountUrl(
+                    poolAddress ?? '',
+                  )}
+                >
                   {token0?.tokenSymbol}/{token1?.tokenSymbol}
                 </LinkExternal>
               </Button>
@@ -172,7 +176,9 @@ export const PoolHeader = ({ poolId }: { poolId: string }) => {
                 </span>
                 <LinkExternal
                   target="_blank"
-                  href={getChainwebAddressLink(token0?.tokenAddress ?? '')}
+                  href={getKvmChainByKey('kadena').getAccountUrl(
+                    token0?.tokenAddress ?? '',
+                  )}
                 >
                   <Button
                     asChild
@@ -191,7 +197,9 @@ export const PoolHeader = ({ poolId }: { poolId: string }) => {
                 </span>
                 <LinkExternal
                   target="_blank"
-                  href={getChainwebAddressLink(token1?.tokenAddress ?? '')}
+                  href={getKvmChainByKey('kadena').getAccountUrl(
+                    token1?.tokenAddress ?? '',
+                  )}
                 >
                   <Button
                     asChild

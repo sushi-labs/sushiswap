@@ -14,10 +14,10 @@ import React, {
   type SetStateAction,
 } from 'react'
 import { formatNumber, formatUSD } from 'sushi'
+import { getKvmChainByKey } from 'sushi/kvm'
 import { useKdaPrice } from '~kadena/_common/lib/hooks/use-kda-price'
 import { useNativeTokenBalance } from '~kadena/_common/lib/hooks/use-native-token-balance'
 import { truncateText } from '~kadena/_common/lib/utils/formatters'
-import { getChainwebAddressLink } from '~kadena/_common/lib/utils/kadena-helpers'
 import { useKadena } from '~kadena/kadena-wallet-provider'
 import type { IProfileView } from './WalletConnector'
 
@@ -86,7 +86,9 @@ export const DefaultView = ({ setView }: DefaultViewProps) => {
             )}
           </ClipboardController>
           <Link
-            href={getChainwebAddressLink(activeAccount?.accountName ?? '')}
+            href={getKvmChainByKey('kadena').getAccountUrl(
+              activeAccount?.accountName ?? '',
+            )}
             target="_blank"
             rel="noopenner noreferrer"
           >

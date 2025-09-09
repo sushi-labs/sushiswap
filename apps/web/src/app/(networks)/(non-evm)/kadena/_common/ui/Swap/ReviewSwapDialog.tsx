@@ -1,4 +1,3 @@
-import type { ICommandResult } from '@kadena/client'
 import {
   SlippageToleranceStorageKey,
   useSlippageTolerance,
@@ -16,9 +15,9 @@ import { DialogContent, classNames } from '@sushiswap/ui'
 import Link from 'next/link'
 import { useMemo } from 'react'
 import { formatPercent } from 'sushi'
+import { getKvmChainByKey } from 'sushi/kvm'
 import { GAS_PRICE } from '~kadena/_common/constants/gas'
 import { truncateText } from '~kadena/_common/lib/utils/formatters'
-import { getChainwebAddressLink } from '~kadena/_common/lib/utils/kadena-helpers'
 import {
   warningSeverity,
   warningSeverityClassName,
@@ -110,7 +109,9 @@ export const ReviewSwapDialog = () => {
                       <List.KeyValue title="Recipient">
                         <Link
                           target="_blank"
-                          href={getChainwebAddressLink(address)}
+                          href={getKvmChainByKey('kadena').getAccountUrl(
+                            address,
+                          )}
                           className={classNames(
                             'flex gap-2 items-center cursor-pointer text-blue hover:underline hover:text-blue-700',
                           )}
