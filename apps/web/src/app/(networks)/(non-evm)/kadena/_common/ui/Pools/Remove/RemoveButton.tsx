@@ -8,6 +8,7 @@ import { Button, type ButtonProps } from '@sushiswap/ui'
 import { useQueryClient } from '@tanstack/react-query'
 import { useParams } from 'next/navigation'
 import { useMemo } from 'react'
+import { getKvmChainByKey } from 'sushi/kvm'
 import { kadenaClient } from '~kadena/_common/constants/client'
 import { MIN_GAS_FEE } from '~kadena/_common/constants/gas'
 import {
@@ -16,7 +17,6 @@ import {
 } from '~kadena/_common/constants/network'
 import { useTokenBalances } from '~kadena/_common/lib/hooks/use-token-balances'
 import { buildRemoveLiquidityTxn } from '~kadena/_common/lib/pact/pool'
-import { getChainwebTxnLink } from '~kadena/_common/lib/utils/kadena-helpers'
 import { WalletConnector } from '~kadena/_common/ui/WalletConnector/WalletConnector'
 import { useKadena } from '~kadena/kadena-wallet-provider'
 import { usePoolState } from '../../../../pool/pool-provider'
@@ -105,7 +105,7 @@ export const RemoveButton = (props: ButtonProps) => {
         groupTimestamp: Date.now(),
         timestamp: Date.now(),
         txHash: txId,
-        href: getChainwebTxnLink(txId),
+        href: getKvmChainByKey('kadena').getTransactionUrl(txId),
       })
       const result = await kadenaClient.pollOne(res)
 
@@ -121,7 +121,7 @@ export const RemoveButton = (props: ButtonProps) => {
         chainId: 1,
         groupTimestamp: Date.now(),
         timestamp: Date.now(),
-        href: getChainwebTxnLink(txId),
+        href: getKvmChainByKey('kadena').getTransactionUrl(txId),
       })
 
       await onSuccess()

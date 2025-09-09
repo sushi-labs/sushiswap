@@ -1,5 +1,3 @@
-import { SlippageToleranceStorageKey } from '@sushiswap/hooks'
-import { useSlippageTolerance } from '@sushiswap/hooks'
 import {
   createFailedToast,
   createInfoToast,
@@ -8,6 +6,7 @@ import {
 import { Button, Dots } from '@sushiswap/ui'
 import { useQueryClient } from '@tanstack/react-query'
 import { useKadenaWallet } from 'node_modules/@kadena/wallet-adapter-react/dist/esm/context'
+import { getKvmChainByKey } from 'sushi/kvm'
 import { kadenaClient } from '~kadena/_common/constants/client'
 import {
   KADENA_CHAIN_ID,
@@ -15,7 +14,6 @@ import {
 } from '~kadena/_common/constants/network'
 import { buildGetPoolAddress } from '~kadena/_common/lib/pact/pool'
 import { buildSwapTxn } from '~kadena/_common/lib/pact/swap'
-import { getChainwebTxnLink } from '~kadena/_common/lib/utils/kadena-helpers'
 import { useKadena } from '~kadena/kadena-wallet-provider'
 import { useSwapDispatch, useSwapState } from '~kadena/swap/swap-provider'
 
@@ -97,7 +95,7 @@ export const SwapButton = ({ closeModal }: { closeModal: () => void }) => {
         groupTimestamp: Date.now(),
         timestamp: Date.now(),
         txHash: txId,
-        href: getChainwebTxnLink(txId),
+        href: getKvmChainByKey('kadena').getTransactionUrl(txId),
       })
 
       const result = await kadenaClient.pollOne(submitRes)
@@ -114,7 +112,7 @@ export const SwapButton = ({ closeModal }: { closeModal: () => void }) => {
         chainId: 1,
         groupTimestamp: Date.now(),
         timestamp: Date.now(),
-        href: getChainwebTxnLink(txId),
+        href: getKvmChainByKey('kadena').getTransactionUrl(txId),
       })
 
       await onSuccess()

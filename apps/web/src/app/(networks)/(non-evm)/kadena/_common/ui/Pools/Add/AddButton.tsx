@@ -12,6 +12,7 @@ import { Button, type ButtonProps } from '@sushiswap/ui'
 import { useQueryClient } from '@tanstack/react-query'
 import { Decimal } from 'decimal.js-light'
 import { useMemo } from 'react'
+import { getKvmChainByKey } from 'sushi/kvm'
 import { kadenaClient } from '~kadena/_common/constants/client'
 import {
   KADENA_CHAIN_ID,
@@ -21,7 +22,6 @@ import {
   buildAddLiquidityTxn,
   buildGetPoolAddress,
 } from '~kadena/_common/lib/pact/pool'
-import { getChainwebTxnLink } from '~kadena/_common/lib/utils/kadena-helpers'
 import { useKadena } from '~kadena/kadena-wallet-provider'
 import { usePoolDispatch, usePoolState } from '../../../../pool/pool-provider'
 
@@ -111,7 +111,7 @@ export const AddButton = ({
           groupTimestamp: Date.now(),
           timestamp: Date.now(),
           txHash: txId,
-          href: getChainwebTxnLink(txId),
+          href: getKvmChainByKey('kadena').getTransactionUrl(txId),
         })
         const result = await kadenaClient.pollOne(res, {
           confirmationDepth: 4,
@@ -133,7 +133,7 @@ export const AddButton = ({
           chainId: 1,
           groupTimestamp: Date.now(),
           timestamp: Date.now(),
-          href: getChainwebTxnLink(txId),
+          href: getKvmChainByKey('kadena').getTransactionUrl(txId),
         })
 
         const key = Object.keys(result)[0]
@@ -188,7 +188,7 @@ export const AddButton = ({
         groupTimestamp: Date.now(),
         timestamp: Date.now(),
         txHash: txId,
-        href: getChainwebTxnLink(txId),
+        href: getKvmChainByKey('kadena').getTransactionUrl(txId),
       })
       const result = await kadenaClient.pollOne(res)
 
@@ -204,7 +204,7 @@ export const AddButton = ({
         chainId: 1,
         groupTimestamp: Date.now(),
         timestamp: Date.now(),
-        href: getChainwebTxnLink(txId),
+        href: getKvmChainByKey('kadena').getTransactionUrl(txId),
       })
 
       await onSuccess()

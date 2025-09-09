@@ -10,11 +10,11 @@ import {
 } from '@sushiswap/ui'
 import type { PaginationState } from '@tanstack/react-table'
 import { type FC, useCallback, useMemo, useState } from 'react'
+import { getKvmChainByKey } from 'sushi/kvm'
 import {
   TransactionType,
   usePoolTransactions,
 } from '~kadena/_common/lib/hooks/use-pool-transactions'
-import { getChainwebTxnLink } from '~kadena/_common/lib/utils/kadena-helpers'
 import type {
   PoolByIdResponse,
   PoolTransaction,
@@ -54,7 +54,7 @@ export const PoolTransactionsV2: FC<PoolTransactionsV2Props> = ({ pool }) => {
   })
 
   const rowLink = useCallback((row: PoolTransaction) => {
-    return getChainwebTxnLink(row.requestkey)
+    return getKvmChainByKey('kadena').getTransactionUrl(row.requestkey)
   }, [])
 
   const token0Symbol = token0?.tokenSymbol ?? pool?.token0?.name ?? 'Token0'
