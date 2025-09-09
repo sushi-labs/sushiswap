@@ -1,13 +1,12 @@
 'use client'
 
-import type { V2Pool } from '@sushiswap/graph-client/data-api'
 import { Card } from '@sushiswap/ui'
 import React, { type FC, useState } from 'react'
-import { PoolChartPeriod, PoolChartPeriods } from 'src/ui/pool/PoolChartPeriods'
 import { PoolChartType, PoolChartTypes } from 'src/ui/pool/PoolChartTypes'
 import type { PoolByIdResponse } from '~kadena/_common/types/get-pool-by-id'
 import { usePoolDispatch, usePoolState } from '../../../../pool/pool-provider'
 import { PoolChartGraph } from './PoolChartGraph'
+import { PoolChartPeriod, PoolChartPeriods } from './PoolChartPeriods'
 
 const charts = [
   PoolChartType.Volume,

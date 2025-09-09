@@ -14,17 +14,18 @@ import { type FC, useCallback, useMemo } from 'react'
 import * as echarts from 'echarts'
 import ReactEchartsCore from 'echarts-for-react/lib/core'
 import type { EChartsOption } from 'echarts-for-react/lib/types'
-import {
-  PoolChartPeriod,
-  PoolChartPeriodToTimeFrame,
-  chartPeriods,
-} from 'src/ui/pool/PoolChartPeriods'
+
 import { PoolChartType } from 'src/ui/pool/PoolChartTypes'
 import { formatUSD } from 'sushi'
 import tailwindConfig from 'tailwind.config.js'
 import resolveConfig from 'tailwindcss/resolveConfig'
 import { usePoolCharts } from '~kadena/_common/lib/hooks/pools/use-pool-charts'
 import type { PoolByIdResponse } from '~kadena/_common/types/get-pool-by-id'
+import {
+  PoolChartPeriod,
+  PoolChartPeriodToTimeFrame,
+  chartPeriods,
+} from './PoolChartPeriods'
 
 interface PoolChartProps {
   chart: 'Volume' | 'TVL' | 'Fees'
