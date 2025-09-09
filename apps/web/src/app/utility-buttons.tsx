@@ -63,9 +63,27 @@ export const UtilityButtons = () => {
             <Separator />
             <span>Socials</span>
             <div className="flex gap-5">
-              <GithubIcon width={18} height={18} />
-              <DiscordIcon width={18} height={18} />
-              <TwitterIcon width={18} height={18} />
+              <a
+                href="https://github.com/sushiswap"
+                target="_blank"
+                rel="noreferrer"
+              >
+                <GithubIcon width={18} height={18} />
+              </a>
+              <a
+                href="https://sushi.com/discord"
+                target="_blank"
+                rel="noreferrer"
+              >
+                <DiscordIcon width={18} height={18} />
+              </a>
+              <a
+                href="https://twitter.com/sushiswap"
+                target="_blank"
+                rel="noreferrer"
+              >
+                <TwitterIcon width={18} height={18} />
+              </a>
             </div>
           </div>
         </PopoverContent>
