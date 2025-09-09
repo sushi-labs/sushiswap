@@ -13,7 +13,7 @@ import type { ConcentratedLiquidityPosition } from 'src/lib/wagmi/hooks/position
 import { Checker } from 'src/lib/wagmi/systems/Checker'
 import { ConcentratedLiquidityCollectButton } from 'src/ui/pool/ConcentratedLiquidityCollectButton'
 import { type Address, type EvmChainId, type Position, formatUSD } from 'sushi'
-import { Amount, Native, type Type, unwrapToken } from 'sushi/currency'
+import { Amount, type Type, unwrapToken } from 'sushi/currency'
 
 export const Fees = ({
   position,
@@ -66,17 +66,16 @@ export const Fees = ({
           chainId={chainId}
         >
           {({ send, isPending }) => (
-            <Checker.Connect fullWidth>
-              <Checker.Network fullWidth chainId={chainId}>
-                <Button
-                  className="w-[128px]"
-                  disabled={isPending}
-                  onClick={send}
-                >
-                  Collect
-                </Button>
-              </Checker.Network>
-            </Checker.Connect>
+            <Checker.Network size="default" fullWidth={false} chainId={chainId}>
+              <Button
+                className="w-[128px]"
+                disabled={isPending}
+                onClick={send}
+                size="default"
+              >
+                Collect
+              </Button>
+            </Checker.Network>
           )}
         </ConcentratedLiquidityCollectButton>
       </CardHeader>
