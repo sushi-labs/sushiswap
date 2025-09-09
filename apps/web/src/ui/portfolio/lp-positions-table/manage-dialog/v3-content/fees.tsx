@@ -8,14 +8,46 @@ import {
   CardHeader,
   CardTitle,
 } from '@sushiswap/ui'
-import { formatUSD } from 'sushi'
-import { Amount } from 'sushi/currency'
+import { useMemo, useState } from 'react'
+import type { ConcentratedLiquidityPosition } from 'src/lib/wagmi/hooks/positions/types'
+import { Checker } from 'src/lib/wagmi/systems/Checker'
+import { ConcentratedLiquidityCollectButton } from 'src/ui/pool/ConcentratedLiquidityCollectButton'
+import { type Address, type EvmChainId, type Position, formatUSD } from 'sushi'
+import { Amount, Native, type Type, unwrapToken } from 'sushi/currency'
 
-export const Fees = ({ position }: { position: any }) => {
-  const amounts = [
-    Amount.fromRawAmount(position.token0, 8900000000000000n),
-    Amount.fromRawAmount(position.token1, 123432n),
-  ]
+export const Fees = ({
+  position,
+  chainId,
+  token0,
+  token1,
+  amounts,
+  positionDetails,
+  account,
+}: {
+  position: Position | undefined
+  chainId: EvmChainId
+  token0: Type | undefined
+  token1: Type | undefined
+  amounts: Amount<Type>[] | undefined[]
+  positionDetails: ConcentratedLiquidityPosition | undefined
+  account: Address | undefined
+}) => {
+  const [receiveWrapped] = useState(false)
+
+  const expectedAmount0 = useMemo(() => {
+    const expectedToken0 =
+      !token0 || receiveWrapped ? token0?.wrapped : unwrapToken(token0)
+    if (amounts[0] === undefined || !expectedToken0) return undefined
+    return Amount.fromRawAmount(expectedToken0, amounts[0].quotient)
+  }, [token0, receiveWrapped, amounts])
+
+  const expectedAmount1 = useMemo(() => {
+    const expectedToken1 =
+      !token1 || receiveWrapped ? token1?.wrapped : unwrapToken(token1)
+    if (amounts[1] === undefined || !expectedToken1) return undefined
+    return Amount.fromRawAmount(expectedToken1, amounts[1].quotient)
+  }, [token1, receiveWrapped, amounts])
+
   return (
     <Card className="!bg-slate-50 dark:!bg-slate-800">
       <CardHeader className="!p-3 justify-between items-center !flex-row flex gap-2">
@@ -25,7 +57,28 @@ export const Fees = ({ position }: { position: any }) => {
             {formatUSD('49123')}
           </CardDescription>
         </div>
-        <Button className="w-[128px]">Collect</Button>
+        <ConcentratedLiquidityCollectButton
+          position={position ?? undefined}
+          positionDetails={positionDetails}
+          token0={expectedAmount0?.currency}
+          token1={expectedAmount1?.currency}
+          account={account}
+          chainId={chainId}
+        >
+          {({ send, isPending }) => (
+            <Checker.Connect fullWidth>
+              <Checker.Network fullWidth chainId={chainId}>
+                <Button
+                  className="w-[128px]"
+                  disabled={isPending}
+                  onClick={send}
+                >
+                  Collect
+                </Button>
+              </Checker.Network>
+            </Checker.Connect>
+          )}
+        </ConcentratedLiquidityCollectButton>
       </CardHeader>
 
       <CardContent className="!p-3">
