@@ -36,32 +36,36 @@ type RawListReturnType = {
   blacklist: BlackListType
 }
 
+const cleanTokens = (tokens: RawTokenType): KadenaToken[] => {
+  return Object.entries(tokens).map(([address, token]) => {
+    return {
+      tokenAddress: address,
+      isNative: address === 'coin',
+      tokenName: token.name,
+      tokenSymbol: token.symbol,
+      tokenDecimals: token.precision,
+      tokenImage: `${TOKEN_IMAGE_BASE_URL}${token.img}`,
+      validated: true,
+    }
+  })
+}
+
+export const getKadenaBaseTokens = async (): Promise<KadenaToken[]> => {
+  const response = await fetch(TOKEN_LIST_URL)
+  const data = await response.text()
+
+  const rawList = data
+  const parsed = parse(rawList) as RawListReturnType
+  const mainnetTokens = parsed?.mainnet
+
+  return cleanTokens(mainnetTokens)
+}
+
 export const useBaseTokens = () => {
   return useQuery({
     queryKey: ['base-tokens-kadena'],
     queryFn: async (): Promise<KadenaToken[]> => {
-      const response = await fetch(TOKEN_LIST_URL)
-      const data = await response.text()
-
-      const rawList = data
-      const parsed = parse(rawList) as RawListReturnType
-      const mainnetTokens = parsed?.mainnet
-
-      const cleanedTokens = Object.entries(mainnetTokens).map(
-        ([address, token]) => {
-          return {
-            tokenAddress: address,
-            isNative: address === 'coin',
-            tokenName: token.name,
-            tokenSymbol: token.symbol,
-            tokenDecimals: token.precision,
-            tokenImage: `${TOKEN_IMAGE_BASE_URL}${token.img}`,
-            validated: true,
-          }
-        },
-      )
-
-      return cleanedTokens
+      return await getKadenaBaseTokens()
     },
   })
 }
