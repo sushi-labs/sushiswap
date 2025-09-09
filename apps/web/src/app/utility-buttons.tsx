@@ -61,6 +61,16 @@ export const UtilityButtons = () => {
               <ArrowTopRightOnSquareIcon className="w-4 h-4" />
             </a>
             <Separator />
+            <a
+              href="/legal/privacy-policy"
+              target="_blank"
+              rel="noreferrer"
+              className="text-sm flex items-center gap-2"
+            >
+              Privacy Policy
+              <ArrowTopRightOnSquareIcon className="w-4 h-4" />
+            </a>
+            <Separator />
             <span>Socials</span>
             <div className="flex gap-5">
               <a

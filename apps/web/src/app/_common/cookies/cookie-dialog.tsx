@@ -40,6 +40,7 @@ function BaseCookieDialog({
         analyse website usage and conduct surveys. You can revoke your consent
         at any time via the “Manage cookie preferences” button.
         <br />
+        <br />
         For further information on our data processing and cookies, please visit
         our{' '}
         <LinkExternal href="/legal/privacy-policy">Privacy Policy</LinkExternal>{' '}
