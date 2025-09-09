@@ -23,7 +23,7 @@ import {
 } from 'react'
 import AutoSizer from 'react-virtualized-auto-sizer'
 import { FixedSizeList } from 'react-window'
-import { COMMON_TOKENS } from '~kadena/_common/constants/token-list'
+import { COMMON_KADENA_TOKENS } from '~kadena/_common/constants/token-list'
 import { useBaseTokens } from '~kadena/_common/lib/hooks/use-base-tokens'
 import { useCustomTokens } from '~kadena/_common/lib/hooks/use-custom-tokens'
 import { useSortedTokenList } from '~kadena/_common/lib/hooks/use-sorted-token-list'
@@ -165,7 +165,7 @@ export const TokenSelector = ({
           />
         </div>
         <div className="flex flex-wrap gap-2">
-          {COMMON_TOKENS.map((token, idx) => (
+          {COMMON_KADENA_TOKENS.map((token, idx) => (
             <CommonTokenButton
               key={idx}
               token={token}

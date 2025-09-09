@@ -10,7 +10,7 @@ export const KADENA: KadenaToken = {
   validated: true,
 }
 
-export const KADENA_TOKENS: KadenaToken[] = [
+export const COMMON_KADENA_TOKENS: KadenaToken[] = [
   KADENA,
   {
     tokenAddress: 'n_e595727b657fbbb3b8e362a05a7bb8d12865c1ff.kb-ETH',
@@ -32,6 +32,6 @@ export const KADENA_TOKENS: KadenaToken[] = [
   },
 ]
 
-export const STABLE_TOKENS = KADENA_TOKENS.filter(
+export const STABLE_TOKENS = COMMON_KADENA_TOKENS.filter(
   (token) => token.tokenSymbol === 'kb-USDC',
 )
