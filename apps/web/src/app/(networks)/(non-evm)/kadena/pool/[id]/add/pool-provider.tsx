@@ -10,7 +10,7 @@ import {
 } from 'react'
 import { PoolChartPeriod } from 'src/ui/pool/PoolChartPeriods'
 import {
-  DEFAULT_TOKEN_LIST,
+  COMMON_KADENA_TOKENS,
   KADENA,
   STABLE_TOKENS,
 } from '~kadena/_common/constants/token-list'
@@ -100,8 +100,8 @@ function poolReducer(_state: State, action: Action) {
       ) {
         return {
           ..._state,
-          token0: DEFAULT_TOKEN_LIST[0],
-          token1: DEFAULT_TOKEN_LIST[2],
+          token0: COMMON_KADENA_TOKENS[0],
+          token1: COMMON_KADENA_TOKENS[2],
         }
       }
       return { ..._state, token0: action.value }
@@ -119,8 +119,8 @@ function poolReducer(_state: State, action: Action) {
       ) {
         return {
           ..._state,
-          token0: DEFAULT_TOKEN_LIST[0],
-          token1: DEFAULT_TOKEN_LIST[2],
+          token0: COMMON_KADENA_TOKENS[0],
+          token1: COMMON_KADENA_TOKENS[2],
         }
       }
       return { ..._state, token1: action.value }
