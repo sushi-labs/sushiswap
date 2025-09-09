@@ -67,7 +67,7 @@ export function useTokenWithCache({
   const { customTokens, hasToken } = useCustomTokens()
 
   return useQuery({
-    queryKey: ['token', { address }],
+    queryKey: ['token-kadena', { address }],
     queryFn: async () => {
       if (!address) {
         throw new Error('Address is required')
