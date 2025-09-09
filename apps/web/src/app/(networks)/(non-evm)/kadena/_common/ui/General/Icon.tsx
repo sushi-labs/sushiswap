@@ -3,10 +3,9 @@ import { KadenaCircle } from '@sushiswap/ui/icons/network/circle/KadenaCircle'
 import Image from 'next/image'
 import { hashStringToColor } from '~kadena/_common/lib/utils/formatters'
 import type { KadenaToken } from '~kadena/_common/types/token-type'
-import type { TempToken } from '../Pools/PoolPosition/PoolPosition'
 
 type IconProps = {
-  currency: KadenaToken | undefined | TempToken
+  currency: KadenaToken | undefined
   height?: number
   width?: number
   fontSize?: number

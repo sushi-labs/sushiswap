@@ -22,15 +22,6 @@ import {
   useRemoveLiqState,
 } from '../Remove/pool-remove-provider'
 
-export type TempToken = {
-  tokenName: string
-  tokenId?: string
-  tokenSymbol: string
-  tokenImage: string
-  tokenDecimals?: number
-  tokenAddress?: string
-}
-
 export const PoolPosition = () => {
   const token0StakedInUsd = 0
   const token1StakedInUsd = 0
