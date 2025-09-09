@@ -3,13 +3,14 @@ import { Tooltip, TooltipProvider, TooltipTrigger } from '@sushiswap/ui'
 import React, { useMemo } from 'react'
 import { formatNumber } from 'sushi'
 import { KADENA } from '~kadena/_common/constants/token-list'
-import { KADENA_TOKENS } from '~kadena/_common/constants/token-list'
+import { useBaseTokens } from '~kadena/_common/lib/hooks/use-base-tokens'
 import type { Pool } from '~kadena/_common/types/get-all-pools-type'
 import { Icon } from '../../General/Icon'
 
 export const PoolNameCell = ({ data }: { data: Pool }) => {
+  const { data: baseTokens } = useBaseTokens()
   const token0 = useMemo(() => {
-    const _token0 = KADENA_TOKENS.find(
+    const _token0 = baseTokens?.find(
       (token) =>
         token?.tokenAddress?.toLowerCase() ===
         data?.token0?.address?.toLowerCase(),
@@ -21,14 +22,14 @@ export const PoolNameCell = ({ data }: { data: Pool }) => {
     return {
       tokenAddress: data.token0.address,
       tokenSymbol: data.token0.name?.slice(0, 4)?.toUpperCase(),
-      tokenDecimals: 18,
+      tokenDecimals: 12,
       tokenName: data.token0.name,
       tokenImage: '',
     }
-  }, [data.token0])
+  }, [data.token0, baseTokens])
 
   const token1 = useMemo(() => {
-    const _token1 = KADENA_TOKENS.find(
+    const _token1 = baseTokens?.find(
       (token) =>
         token?.tokenAddress?.toLowerCase() ===
         data?.token1?.address?.toLowerCase(),
@@ -40,11 +41,11 @@ export const PoolNameCell = ({ data }: { data: Pool }) => {
     return {
       tokenAddress: data.token1.address,
       tokenSymbol: data.token1.name?.slice(0, 4)?.toUpperCase(),
-      tokenDecimals: 18,
+      tokenDecimals: 12,
       tokenName: data.token1.name,
       tokenImage: '',
     }
-  }, [data.token1])
+  }, [data.token1, baseTokens])
 
   return (
     <div className="flex items-center gap-5">
