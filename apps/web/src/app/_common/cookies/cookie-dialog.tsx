@@ -118,9 +118,11 @@ function ManageCookieDialog({
             <span>Analytical Cookies</span>
             <Switch
               checked={cookieSet.has('analytical')}
-              onCheckedChange={(enabled) =>
+              onCheckedChange={(enabled) => {
                 onAction({ type: 'set', cookieType: 'analytical', enabled })
-              }
+                onAction({ type: 'set', cookieType: 'google', enabled })
+                onAction({ type: 'set', cookieType: 'hotjar', enabled })
+              }}
             />
           </div>
           <div>
@@ -140,34 +142,42 @@ function ManageCookieDialog({
                 <div className="flex gap-1.5 items-center">
                   <input
                     type="checkbox"
-                    disabled={!cookieSet.has('analytical')}
-                    checked={
-                      cookieSet.has('analytical') && cookieSet.has('google')
-                    }
-                    onChange={(e) =>
+                    checked={cookieSet.has('google')}
+                    onChange={(e) => {
                       onAction({
                         type: 'set',
                         cookieType: 'google',
                         enabled: e.currentTarget.checked,
                       })
-                    }
+                      if (!cookieSet.has('analytical')) {
+                        onAction({
+                          type: 'set',
+                          cookieType: 'analytical',
+                          enabled: true,
+                        })
+                      }
+                    }}
                   />
                   Google
                 </div>
                 <div className="flex gap-1.5 items-center">
                   <input
                     type="checkbox"
-                    disabled={!cookieSet.has('analytical')}
-                    checked={
-                      cookieSet.has('analytical') && cookieSet.has('hotjar')
-                    }
-                    onChange={(e) =>
+                    checked={cookieSet.has('hotjar')}
+                    onChange={(e) => {
                       onAction({
                         type: 'set',
                         cookieType: 'hotjar',
                         enabled: e.currentTarget.checked,
                       })
-                    }
+                      if (!cookieSet.has('analytical')) {
+                        onAction({
+                          type: 'set',
+                          cookieType: 'analytical',
+                          enabled: true,
+                        })
+                      }
+                    }}
                   />
                   HotJar
                 </div>
@@ -189,6 +199,8 @@ function ManageCookieDialog({
   )
 }
 
+const alwaysEnabledCookieTypes = ['essential'] as const
+
 export function CookieDialog({
   defaultOpen,
   children,
@@ -199,7 +211,7 @@ export function CookieDialog({
   const isMounted = useIsMounted()
 
   const [enabledCookieSet, setEnabledCookieSet] = useState<Set<CookieType>>(
-    new Set(cookieTypes),
+    new Set(alwaysEnabledCookieTypes),
   )
 
   const onConfirm = useCallback((cookieSet: Set<CookieType>) => {
@@ -217,7 +229,7 @@ export function CookieDialog({
           onConfirm(new Set<CookieType>(cookieTypes))
           break
         case 'reject':
-          onConfirm(new Set<CookieType>(['essential']))
+          onConfirm(new Set<CookieType>(alwaysEnabledCookieTypes))
           break
         case 'manage':
           setPage('manage')
@@ -234,7 +246,7 @@ export function CookieDialog({
           onConfirm(enabledCookieSet)
           break
         case 'reject':
-          onConfirm(new Set<CookieType>(['essential']))
+          onConfirm(new Set<CookieType>(alwaysEnabledCookieTypes))
           break
         case 'set':
           setEnabledCookieSet((prev) => {
