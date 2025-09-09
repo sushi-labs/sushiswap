@@ -2,10 +2,10 @@ import { useQuery } from '@tanstack/react-query'
 import { parse } from 'yaml'
 import type { KadenaToken } from '~kadena/_common/types/token-type'
 
-const TOKEN_LIST_URL =
+const KADENA_TOKEN_LIST_URL =
   'https://raw.githubusercontent.com/Mercatus-Kadena/kadena_tokens/refs/heads/main/tokens.yaml'
 
-const TOKEN_IMAGE_BASE_URL =
+export const KADENA_TOKEN_IMAGE_BASE_URL =
   'https://raw.githubusercontent.com/Mercatus-Kadena/kadena_tokens/refs/heads/main/'
 
 type RawTokenType = Record<
@@ -44,14 +44,14 @@ const cleanTokens = (tokens: RawTokenType): KadenaToken[] => {
       tokenName: token.name,
       tokenSymbol: token.symbol,
       tokenDecimals: token.precision,
-      tokenImage: `${TOKEN_IMAGE_BASE_URL}${token.img}`,
+      tokenImage: `${KADENA_TOKEN_IMAGE_BASE_URL}${token.img}`,
       validated: true,
     }
   })
 }
 
 export const getKadenaBaseTokens = async (): Promise<KadenaToken[]> => {
-  const response = await fetch(TOKEN_LIST_URL)
+  const response = await fetch(KADENA_TOKEN_LIST_URL)
   const data = await response.text()
 
   const rawList = data

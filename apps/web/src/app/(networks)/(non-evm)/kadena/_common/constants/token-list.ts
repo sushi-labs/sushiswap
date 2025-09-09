@@ -1,12 +1,12 @@
 import type { KadenaToken } from '~kadena/_common/types/token-type'
+import { KADENA_TOKEN_IMAGE_BASE_URL } from '../lib/hooks/use-base-tokens'
 
 export const KADENA: KadenaToken = {
   tokenAddress: 'coin',
   tokenSymbol: 'KDA',
   tokenDecimals: 12,
   tokenName: 'Kadena',
-  tokenImage:
-    'https://raw.githubusercontent.com/Mercatus-Kadena/kadena_tokens/refs/heads/main/img/kda.svg',
+  tokenImage: `${KADENA_TOKEN_IMAGE_BASE_URL}img/kda.svg`,
   validated: true,
 }
 
@@ -18,8 +18,7 @@ export const KADENA_TOKENS: KadenaToken[] = [
     tokenName: 'Kinesis Bridged ETH',
     tokenSymbol: 'kb-ETH',
     tokenDecimals: 18,
-    tokenImage:
-      'https://raw.githubusercontent.com/Mercatus-Kadena/kadena_tokens/refs/heads/main/img/kb-eth.svg',
+    tokenImage: `${KADENA_TOKEN_IMAGE_BASE_URL}img/kb-eth.svg`,
     validated: true,
   },
   {
@@ -28,8 +27,7 @@ export const KADENA_TOKENS: KadenaToken[] = [
     tokenName: 'Kinesis Bridged USDC',
     tokenSymbol: 'kb-USDC',
     tokenDecimals: 6,
-    tokenImage:
-      'https://raw.githubusercontent.com/Mercatus-Kadena/kadena_tokens/refs/heads/main/img/kb-usdc.svg',
+    tokenImage: `${KADENA_TOKEN_IMAGE_BASE_URL}img/kb-usdc.svg`,
     validated: true,
   },
 ]
