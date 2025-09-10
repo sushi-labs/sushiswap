@@ -1,7 +1,6 @@
-import type { ChainId } from 'sushi/chain'
-import { SUSHI_DOMAIN_RESTRICTED_API_KEY } from 'sushi/config/subgraph'
+import { type EvmChainId, SUSHI_DOMAIN_RESTRICTED_API_KEY } from 'sushi/evm'
 
-type GetSubgraphUrlArgs<CHAIN extends ChainId> = {
+type GetSubgraphUrlArgs<CHAIN extends EvmChainId> = {
   chainId: CHAIN
   getter: (
     chainId: CHAIN,
@@ -14,7 +13,7 @@ const DECENTRALIZED_NETWORK_KEY =
   process.env['NEXT_PUBLIC_SUSHI_GRAPH_KEY'] ||
   SUSHI_DOMAIN_RESTRICTED_API_KEY
 
-export function getSubgraphUrl<CHAIN extends ChainId>({
+export function getSubgraphUrl<CHAIN extends EvmChainId>({
   chainId,
   getter,
 }: GetSubgraphUrlArgs<CHAIN>) {

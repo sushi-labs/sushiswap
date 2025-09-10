@@ -11,12 +11,13 @@ import {
   SelectIcon,
 } from '@sushiswap/ui'
 import type { FC } from 'react'
-import { ChainKey, EvmChainId } from 'sushi/chain'
 import {
+  EvmChainId,
   type SushiSwapV3ChainId,
+  getEvmChainById,
   isSushiSwapV2ChainId,
   isSushiSwapV3ChainId,
-} from 'sushi/config'
+} from 'sushi/evm'
 
 export const Hero: FC<{ chainId: EvmChainId }> = ({ chainId }) => {
   return (
@@ -38,10 +39,10 @@ export const Hero: FC<{ chainId: EvmChainId }> = ({ chainId }) => {
               <LinkInternal
                 href={
                   isSushiSwapV3ChainId(chainId as SushiSwapV3ChainId)
-                    ? `/${ChainKey[chainId]}/pool/v3/add`
+                    ? `/${getEvmChainById(chainId).key}/pool/v3/add`
                     : isSushiSwapV2ChainId(chainId as SushiSwapV3ChainId)
-                      ? `/${ChainKey[chainId]}/pool/v2/add`
-                      : `/${ChainKey[EvmChainId.ETHEREUM]}/pool/v3/add`
+                      ? `/${getEvmChainById(chainId).key}/pool/v2/add`
+                      : `/${getEvmChainById(EvmChainId.ETHEREUM).key}/pool/v3/add`
                 }
               >
                 I want to create a position
@@ -60,7 +61,7 @@ export const Hero: FC<{ chainId: EvmChainId }> = ({ chainId }) => {
                     asChild
                   >
                     <LinkInternal
-                      href={`/${ChainKey[chainId]}/pool/v3/add`}
+                      href={`/${getEvmChainById(chainId).key}/pool/v3/add`}
                       className="flex flex-col !items-start gap-1 cursor-pointer"
                     >
                       <div className="flex items-center gap-1 font-medium leading-none">
@@ -79,7 +80,7 @@ export const Hero: FC<{ chainId: EvmChainId }> = ({ chainId }) => {
                   {isSushiSwapV2ChainId(chainId) ? (
                     <DropdownMenuItem asChild>
                       <LinkInternal
-                        href={`/${ChainKey[chainId]}/pool/v2/add`}
+                        href={`/${getEvmChainById(chainId).key}/pool/v2/add`}
                         className="flex flex-col !items-start gap-1 cursor-pointer"
                       >
                         <div className="flex items-center gap-1 font-medium leading-none">
@@ -104,7 +105,7 @@ export const Hero: FC<{ chainId: EvmChainId }> = ({ chainId }) => {
           >
             <LinkInternal
               className="text-sm"
-              href={`/${ChainKey[chainId]}/pool/incentivize`}
+              href={`/${getEvmChainById(chainId).key}/pool/incentivize`}
             >
               I want to incentivize a pool
             </LinkInternal>

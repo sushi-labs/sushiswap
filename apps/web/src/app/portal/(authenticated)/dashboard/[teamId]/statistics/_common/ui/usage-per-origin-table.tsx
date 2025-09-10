@@ -44,7 +44,6 @@ const columns = [
     header: 'Requests',
     id: 'usage',
     accessorFn: (row) => row.usage,
-    enableSorting: false,
     cell: ({ row }) => {
       return (
         <span className="whitespace-nowrap flex justify-end">

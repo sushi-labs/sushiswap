@@ -1,12 +1,12 @@
 import { isPromiseFulfilled } from 'sushi'
 import {
-  EXTRACTOR_SUPPORTED_CHAIN_IDS,
-  type ExtractorSupportedChainId,
-} from 'sushi/config'
+  SWAP_API_SUPPORTED_CHAIN_IDS,
+  type SwapApiSupportedChainId,
+} from 'sushi/evm'
 
 export async function getAllPrices() {
   const results = await Promise.allSettled(
-    EXTRACTOR_SUPPORTED_CHAIN_IDS.map((chainId) =>
+    SWAP_API_SUPPORTED_CHAIN_IDS.map((chainId) =>
       fetch(`https://api.sushi.com/price/v1/${chainId}`).then((res) =>
         res.json(),
       ),
@@ -14,13 +14,13 @@ export async function getAllPrices() {
   )
   return results.reduce(
     (previousValue, currentValue, i) => {
-      previousValue[EXTRACTOR_SUPPORTED_CHAIN_IDS[i]] = isPromiseFulfilled(
+      previousValue[SWAP_API_SUPPORTED_CHAIN_IDS[i]] = isPromiseFulfilled(
         currentValue,
       )
         ? currentValue.value
         : {}
       return previousValue
     },
-    {} as Record<ExtractorSupportedChainId, Record<string, number>>,
+    {} as Record<SwapApiSupportedChainId, Record<string, number>>,
   )
 }

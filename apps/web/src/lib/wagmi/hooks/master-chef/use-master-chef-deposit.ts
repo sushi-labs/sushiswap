@@ -2,7 +2,14 @@
 
 import { createErrorToast, createToast } from '@sushiswap/notifications'
 import { useCallback, useMemo } from 'react'
-import type { Amount, Token } from 'sushi/currency'
+import type { Amount } from 'sushi'
+import {
+  ChefType,
+  type EvmChainId,
+  type EvmToken,
+  masterChefV1Abi_deposit,
+  masterChefV2Abi_deposit,
+} from 'sushi/evm'
 import { UserRejectedRequestError } from 'viem'
 import {
   type UseSimulateContractParameters,
@@ -12,16 +19,13 @@ import {
   useWriteContract,
 } from 'wagmi'
 import type { SendTransactionReturnType } from 'wagmi/actions'
-
-import { ChefType, type EvmChainId } from 'sushi'
-import { masterChefV1Abi_deposit, masterChefV2Abi_deposit } from 'sushi/abi'
 import { useMasterChefContract } from './use-master-chef-contract'
 
 interface UseMasterChefDepositParams {
   chainId: EvmChainId | undefined
   chef: ChefType
   pid: number
-  amount?: Amount<Token>
+  amount?: Amount<EvmToken>
   enabled?: boolean
 }
 
@@ -79,13 +83,13 @@ export const useMasterChefDeposit = ({
       data = {
         abi: masterChefV1Abi_deposit,
         functionName: 'deposit',
-        args: [BigInt(pid), BigInt(amount.quotient.toString())],
+        args: [BigInt(pid), BigInt(amount.amount.toString())],
       }
     } else {
       data = {
         abi: masterChefV2Abi_deposit,
         functionName: 'deposit',
-        args: [BigInt(pid), BigInt(amount.quotient.toString()), address],
+        args: [BigInt(pid), BigInt(amount.amount.toString()), address],
       }
     }
 

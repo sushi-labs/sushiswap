@@ -33,8 +33,7 @@ import { type SubmitHandler, useForm } from 'react-hook-form'
 import { SUSHI_DATA_API_HOST } from 'src/lib/constants'
 import { useTokenAnalysis } from 'src/lib/hooks/api/useTokenAnalysis'
 import { NetworkSelector } from 'src/lib/wagmi/components/network-selector'
-import { ChainId, EvmChain } from 'sushi/chain'
-import { formatNumber, formatUSD } from 'sushi/format'
+import { ChainId, formatNumber, formatUSD, getChainById } from 'sushi'
 import { SUPPORTED_CHAIN_IDS } from '../../config'
 import { NavigationItems } from './navigation-items'
 import {
@@ -350,7 +349,7 @@ export default function TokenListing() {
                               width={16}
                               height={16}
                             />
-                            {EvmChain.from(value)?.name}
+                            {getChainById(value).name}
                             <SelectIcon />
                           </Button>
                         </NetworkSelector>

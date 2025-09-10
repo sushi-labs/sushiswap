@@ -1,6 +1,6 @@
 import { createErrorToast, createToast } from '@sushiswap/notifications'
 import { useCallback } from 'react'
-import type { EvmChainId } from 'sushi/chain'
+import type { EvmChainId } from 'sushi/evm'
 import { type Address, UserRejectedRequestError } from 'viem'
 import {
   type UseSimulateContractParameters,

@@ -1,8 +1,7 @@
 import type { VariablesOf } from 'gql.tada'
 
 import { type RequestOptions, request } from 'src/lib/request.js'
-import { SUSHI_DATA_API_HOST } from 'sushi/config/subgraph'
-import { Token as _Token } from 'sushi/currency'
+import { EvmToken, SUSHI_DATA_API_HOST } from 'sushi/evm'
 import { graphql } from '../../graphql.js'
 import { SUSHI_REQUEST_HEADERS } from '../../request-headers.js'
 
@@ -49,13 +48,15 @@ export async function getTokens(
         count: result.exploreTokens.length,
         data: result.exploreTokens.map(
           ({ address, chainId, symbol, name, decimals, logoUrl, ...rest }) => ({
-            token: new _Token({
+            token: new EvmToken({
               address,
               chainId,
               symbol,
               name,
               decimals,
-              logoUrl,
+              metadata: {
+                logoUrl,
+              },
             }),
             ...rest,
           }),

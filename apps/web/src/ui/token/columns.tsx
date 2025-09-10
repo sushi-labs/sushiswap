@@ -7,7 +7,7 @@ import {
 } from '@sushiswap/ui'
 import type { ColumnDef } from '@tanstack/react-table'
 import { useMemo } from 'react'
-import { formatPercent, formatUSD } from 'sushi/format'
+import { formatPercent, formatUSD } from 'sushi'
 import { SparklineCell } from './SparklineCell'
 import { TokenNameCell } from './TokenNameCell'
 

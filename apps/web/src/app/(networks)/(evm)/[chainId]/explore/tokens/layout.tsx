@@ -4,8 +4,7 @@ import { notFound } from 'next/navigation'
 import type React from 'react'
 import { GlobalStatsCharts } from 'src/ui/explore/global-stats-charts'
 import { TokensFiltersProvider } from 'src/ui/token/TokensFiltersProvider'
-import type { EvmChainId } from 'sushi/chain'
-import { SUSHISWAP_SUPPORTED_CHAIN_IDS, isSushiSwapChainId } from 'sushi/config'
+import { SUSHISWAP_SUPPORTED_CHAIN_IDS, isSushiSwapChainId } from 'sushi/evm'
 import { Header } from '../../header'
 import { NavigationItems } from '../navigation-items'
 
@@ -22,7 +21,7 @@ export default async function ExploreLayout(props: {
 
   const { children } = props
 
-  const chainId = +params.chainId as EvmChainId
+  const chainId = +params.chainId
 
   if (!isSushiSwapChainId(chainId)) {
     return notFound()

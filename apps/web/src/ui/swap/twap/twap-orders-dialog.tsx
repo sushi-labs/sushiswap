@@ -41,10 +41,15 @@ import type { TwapSupportedChainId } from 'src/config'
 import { type TwapOrder, useTwapOrders } from 'src/lib/hooks/react-query/twap'
 import { fillDelayText } from 'src/lib/swap/twap'
 import { useTokenWithCache } from 'src/lib/wagmi/hooks/tokens/useTokenWithCache'
-import { shortenAddress, shortenHash, withoutScientificNotation } from 'sushi'
-import { EvmChain } from 'sushi/chain'
-import { Amount, Native, type Type } from 'sushi/currency'
-import type { Address } from 'viem'
+import { Amount, withoutScientificNotation } from 'sushi'
+import {
+  type EvmCurrency,
+  EvmNative,
+  getEvmChainById,
+  shortenEvmAddress,
+  shortenHash,
+} from 'sushi/evm'
+import type { Address, Hex } from 'viem'
 import { useAccount } from 'wagmi'
 import { useDerivedStateTwap } from './derivedstate-twap-provider'
 import { TwapCancelOrderButton } from './twap-cancel-order-button'
@@ -183,12 +188,12 @@ const _TwapOrdersDialog: FC<{
 }
 
 function parseOrderAmount(
-  currency: Type | undefined,
+  currency: EvmCurrency | undefined,
   orderAmount: string,
-): Amount<Type> | undefined {
+): Amount<EvmCurrency> | undefined {
   const amount = withoutScientificNotation(orderAmount)
   if (!currency || !amount) return undefined
-  return Amount.fromRawAmount(currency, amount)
+  return new Amount(currency, amount)
 }
 
 const TwapOrderDialogContent = ({
@@ -213,7 +218,9 @@ const TwapOrderDialogContent = ({
 
   const token1 = useMemo(
     () =>
-      order.dstTokenAddress === zeroAddress ? Native.onChain(chainId) : _token1,
+      order.dstTokenAddress === zeroAddress
+        ? EvmNative.fromChainId(chainId)
+        : _token1,
     [order, chainId, _token1],
   )
 
@@ -396,21 +403,19 @@ const TwapOrderDialogContent = ({
                   {address ? (
                     <List.KeyValue className="!p-0" title="Recipient">
                       <a
-                        href={EvmChain.fromChainId(chainId)?.getAccountUrl(
-                          address,
-                        )}
+                        href={getEvmChainById(chainId).getAccountUrl(address)}
                         className="text-muted-foreground hover:underline"
                         target="_blank"
                         rel="noopener noreferrer"
                       >
-                        {shortenAddress(address)}
+                        {shortenEvmAddress(address)}
                       </a>
                     </List.KeyValue>
                   ) : null}
                   <List.KeyValue className="!p-0" title="Transaction Hash">
                     <a
-                      href={EvmChain.fromChainId(chainId)?.getTxUrl(
-                        order.txHash,
+                      href={getEvmChainById(chainId).getTransactionUrl(
+                        order.txHash as Hex,
                       )}
                       className="text-muted-foreground hover:underline"
                       target="_blank"
@@ -449,7 +454,9 @@ const TwapOrderCard = ({
 
   const token1 = useMemo(
     () =>
-      order.dstTokenAddress === zeroAddress ? Native.onChain(chainId) : _token1,
+      order.dstTokenAddress === zeroAddress
+        ? EvmNative.fromChainId(chainId)
+        : _token1,
     [order, chainId, _token1],
   )
 

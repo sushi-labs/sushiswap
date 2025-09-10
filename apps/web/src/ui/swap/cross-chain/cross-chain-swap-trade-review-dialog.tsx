@@ -56,10 +56,8 @@ import { warningSeverity } from 'src/lib/swap/warningSeverity'
 import { useApproved } from 'src/lib/wagmi/systems/Checker/Provider'
 import { SLIPPAGE_WARNING_THRESHOLD } from 'src/lib/wagmi/systems/Checker/Slippage'
 import { PriceImpactWarning, SlippageWarning } from 'src/ui/common'
-import { ChainKey, EvmChain } from 'sushi/chain'
-import { Amount, Native } from 'sushi/currency'
-import { formatNumber, formatUSD, shortenAddress } from 'sushi/format'
-import { ZERO } from 'sushi/math'
+import { Amount, ZERO, formatNumber, formatUSD } from 'sushi'
+import { EvmNative, getEvmChainById, shortenEvmAddress } from 'sushi/evm'
 import {
   type SendTransactionReturnType,
   UserRejectedRequestError,
@@ -241,18 +239,16 @@ const _CrossChainSwapTradeReviewDialog: FC<{
                 pending: `Sending ${routeRef?.current?.amountIn?.toSignificant(
                   6,
                 )} ${routeRef?.current?.amountIn?.currency.symbol} to ${
-                  EvmChain.fromChainId(routeRef?.current?.toChainId)?.name
+                  getEvmChainById(routeRef.current.toChainId).name
                 }`,
                 completed: `Sent ${routeRef?.current?.amountIn?.toSignificant(
                   6,
                 )} ${routeRef?.current?.amountIn?.currency.symbol} to ${
-                  EvmChain.fromChainId(routeRef?.current?.toChainId)?.name
+                  getEvmChainById(routeRef.current.toChainId).name
                 }`,
                 failed: `Something went wrong when trying to send ${
                   routeRef?.current?.amountIn?.currency.symbol
-                } to ${
-                  EvmChain.fromChainId(routeRef?.current?.toChainId)?.name
-                }`,
+                } to ${getEvmChainById(routeRef.current.toChainId).name}`,
               }
             : {
                 pending: `Swapping ${routeRef.current?.amountIn?.toSignificant(
@@ -426,8 +422,8 @@ const _CrossChainSwapTradeReviewDialog: FC<{
         chainId: chainId0,
         href: lifiData.lifiExplorerLink,
         summary: `Bridging ${routeRef?.current?.fromToken?.symbol} from ${
-          EvmChain.from(chainId0)?.name
-        } to ${EvmChain.from(chainId1)?.name}`,
+          getEvmChainById(chainId0).name
+        } to ${getEvmChainById(chainId1)?.name}`,
         timestamp: new Date().getTime(),
         groupTimestamp: groupTs.current,
       })
@@ -491,17 +487,17 @@ const _CrossChainSwapTradeReviewDialog: FC<{
                 pending: `Receiving ${routeRef?.current?.amountOut?.toSignificant(
                   6,
                 )} ${routeRef?.current?.amountOut?.currency.symbol} on ${
-                  EvmChain.fromChainId(routeRef?.current?.toChainId!)?.name
+                  getEvmChainById(routeRef?.current?.toChainId!).name
                 }`,
                 completed: `Received ${routeRef?.current?.amountOut?.toSignificant(
                   6,
                 )} ${routeRef?.current?.amountOut?.currency.symbol} on ${
-                  EvmChain.fromChainId(routeRef?.current?.toChainId!)?.name
+                  getEvmChainById(routeRef?.current?.toChainId!).name
                 }`,
                 failed: `Something went wrong when trying to receive ${routeRef?.current?.amountOut?.toSignificant(
                   6,
                 )} ${routeRef?.current?.amountOut?.currency.symbol} on ${
-                  EvmChain.fromChainId(routeRef?.current?.toChainId!)?.name
+                  getEvmChainById(routeRef?.current?.toChainId!).name
                 }`,
               },
         timestamp: new Date().getTime(),
@@ -533,13 +529,13 @@ const _CrossChainSwapTradeReviewDialog: FC<{
 
       const chainId0Fees = (
         feesBreakdown.gas.get(step.tokenIn.chainId)?.amount ??
-        Amount.fromRawAmount(Native.onChain(step.tokenIn.chainId), 0)
+        new Amount(EvmNative.fromChainId(step.tokenIn.chainId), 0)
       )
         .add(
           feesBreakdown.protocol.get(step.tokenIn.chainId)?.amount ??
-            Amount.fromRawAmount(Native.onChain(step.tokenIn.chainId), 0),
+            new Amount(EvmNative.fromChainId(step.tokenIn.chainId), 0),
         )
-        .toExact()
+        .toString()
 
       return {
         executionDuration,
@@ -551,14 +547,14 @@ const _CrossChainSwapTradeReviewDialog: FC<{
 
   const { data: price, isLoading: isPriceLoading } = usePrice({
     chainId: token1?.chainId,
-    address: token1?.wrapped.address,
+    address: token1?.wrap().address,
   })
 
   const amountOutUSD = useMemo(
     () =>
       price && step?.amountOut
         ? `${(
-            (price * Number(step.amountOut.quotient)) /
+            (price * Number(step.amountOut.amount)) /
               10 ** step.amountOut.currency.decimals
           ).toFixed(2)}`
         : undefined,
@@ -569,7 +565,7 @@ const _CrossChainSwapTradeReviewDialog: FC<{
     () =>
       price && step?.amountOutMin
         ? `${(
-            (price * Number(step.amountOutMin.quotient)) /
+            (price * Number(step.amountOutMin.amount)) /
               10 ** step.amountOutMin.currency.decimals
           ).toFixed(2)}`
         : undefined,
@@ -582,7 +578,7 @@ const _CrossChainSwapTradeReviewDialog: FC<{
   }, [step?.priceImpact])
 
   const showSlippageWarning = useMemo(() => {
-    return !slippagePercent.lessThan(SLIPPAGE_WARNING_THRESHOLD)
+    return !slippagePercent.lt(SLIPPAGE_WARNING_THRESHOLD)
   }, [slippagePercent])
 
   return (
@@ -599,14 +595,14 @@ const _CrossChainSwapTradeReviewDialog: FC<{
               >
                 <div className="pt-4">
                   <Message size="sm" variant="destructive">
-                    Insufficient {Native.onChain(chainId0).symbol} balance on{' '}
-                    {EvmChain.fromChainId(chainId0)?.name} to cover the network
-                    fee. Please lower your input amount or{' '}
+                    Insufficient {EvmNative.fromChainId(chainId0).symbol}{' '}
+                    balance on {getEvmChainById(chainId0).name} to cover the
+                    network fee. Please lower your input amount or{' '}
                     <a
-                      href={`/${ChainKey[chainId0]}/swap?token1=NATIVE`}
+                      href={`/${getEvmChainById(chainId0).key}/swap?token1=NATIVE`}
                       className="underline decoration-dotted underline-offset-2"
                     >
-                      swap for more {Native.onChain(chainId0).symbol}
+                      swap for more {EvmNative.fromChainId(chainId0).symbol}
                     </a>
                     .
                   </Message>
@@ -657,12 +653,12 @@ const _CrossChainSwapTradeReviewDialog: FC<{
                             </span>
                           ) : (
                             `${
-                              step.priceImpact.lessThan(ZERO)
+                              step.priceImpact.lt(ZERO)
                                 ? '+'
-                                : step.priceImpact.greaterThan(ZERO)
+                                : step.priceImpact.gt(ZERO)
                                   ? '-'
                                   : ''
-                            }${Math.abs(Number(step.priceImpact.toFixed(2)))}%`
+                            }${Math.abs(Number((step.priceImpact.toNumber() * 100).toFixed(2)))}%`
                           )}
                         </List.KeyValue>
 
@@ -677,7 +673,7 @@ const _CrossChainSwapTradeReviewDialog: FC<{
                                   {formatNumber(
                                     feesBreakdown.gas
                                       .get(chainId0)!
-                                      .amount.toExact(),
+                                      .amount.toString(),
                                   )}{' '}
                                   {
                                     feesBreakdown.gas.get(chainId0)!.amount
@@ -698,7 +694,7 @@ const _CrossChainSwapTradeReviewDialog: FC<{
                                   {formatNumber(
                                     feesBreakdown.gas
                                       .get(chainId1)!
-                                      .amount.toExact(),
+                                      .amount.toString(),
                                   )}{' '}
                                   {
                                     feesBreakdown.gas.get(chainId1)!.amount
@@ -728,7 +724,7 @@ const _CrossChainSwapTradeReviewDialog: FC<{
                                   {formatNumber(
                                     feesBreakdown.protocol
                                       .get(chainId0)!
-                                      .amount.toExact(),
+                                      .amount.toString(),
                                   )}{' '}
                                   {
                                     feesBreakdown.protocol.get(chainId0)!.amount
@@ -749,7 +745,7 @@ const _CrossChainSwapTradeReviewDialog: FC<{
                                   {formatNumber(
                                     feesBreakdown.protocol
                                       .get(chainId1)!
-                                      .amount.toExact(),
+                                      .amount.toString(),
                                   )}{' '}
                                   {
                                     feesBreakdown.protocol.get(chainId1)!.amount
@@ -801,7 +797,7 @@ const _CrossChainSwapTradeReviewDialog: FC<{
                           </div>
                         </List.KeyValue>
                         <List.KeyValue
-                          title={`Min. received after slippage (${slippagePercent.toPercentageString()})`}
+                          title={`Min. received after slippage (${slippagePercent.toPercentString()})`}
                           subtitle="The minimum amount you are guaranteed to receive."
                         >
                           <div className="flex flex-col gap-0.5">
@@ -925,11 +921,13 @@ const _CrossChainSwapTradeReviewDialog: FC<{
                       <List.KeyValue title="Recipient">
                         <a
                           target="_blank"
-                          href={EvmChain.accountUrl(chainId0, recipient) ?? '#'}
+                          href={getEvmChainById(chainId0).getAccountUrl(
+                            recipient,
+                          )}
                           className="flex items-center gap-2 cursor-pointer text-blue"
                           rel="noreferrer"
                         >
-                          {shortenAddress(recipient)}
+                          {shortenEvmAddress(recipient)}
                         </a>
                       </List.KeyValue>
                     </List.Control>

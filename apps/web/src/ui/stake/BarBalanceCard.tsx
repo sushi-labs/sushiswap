@@ -12,8 +12,8 @@ import {
 } from '@sushiswap/ui'
 import { useMemo } from 'react'
 import { useTokenAmountDollarValues } from 'src/lib/hooks'
-import { ChainId } from 'sushi/chain'
-import { formatUSD } from 'sushi/format'
+import { formatUSD } from 'sushi'
+import { EvmChainId } from 'sushi/evm'
 import { useBarBalance } from './BarBalanceProvider'
 
 export const BarBalanceCard = () => {
@@ -25,7 +25,7 @@ export const BarBalanceCard = () => {
   )
 
   const [sushiFiatValue, xSushiFiatValue] = useTokenAmountDollarValues({
-    chainId: ChainId.ETHEREUM,
+    chainId: EvmChainId.ETHEREUM,
     amounts: amounts,
   })
 

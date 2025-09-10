@@ -3,7 +3,7 @@ import type { Row } from '@tanstack/react-table'
 import type { FC } from 'react'
 import type { ClaimableRewards } from 'src/lib/hooks/react-query'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
-import { ChainKey } from 'sushi/chain'
+import { getEvmChainById } from 'sushi/evm'
 import { ClaimRewardsButton } from './ClaimRewardsButton'
 
 export const ClaimableRewardsActionCell: FC<Row<ClaimableRewards>> = ({
@@ -26,7 +26,7 @@ export const ClaimableRewardsActionCell: FC<Row<ClaimableRewards>> = ({
         <a
           target="_blank"
           rel="noopener noreferrer"
-          href={`/${ChainKey[original.chainId]}/pool`}
+          href={`/${getEvmChainById(original.chainId).key}/pool`}
         >
           View Positions
         </a>
