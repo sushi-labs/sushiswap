@@ -19,7 +19,7 @@ export const QuickSelect = ({ type }: { type: 'INPUT' | 'OUTPUT' }) => {
     query: `(max-width: 400px)`,
   })
 
-  const optionCount = isXs ? 2 : isSmScreen ? 3 : 4
+  const optionCount = isXs ? 2 : isSmScreen ? 3 : 3
 
   const { address } = useAccount()
   const { quickSelectTokens, isLoading } = useQuickSelectTokens({
