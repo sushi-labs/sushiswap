@@ -4,8 +4,8 @@ import { XMarkIcon } from '@heroicons/react/24/solid'
 import { ArrowUpRightIcon } from '@heroicons/react/24/solid'
 import { useIsMounted, useLocalStorage } from '@sushiswap/hooks'
 import { classNames } from '@sushiswap/ui'
+import { KadenaBridgeCubeIcon } from '@sushiswap/ui/icons/KadenaBridgeCubeIcon'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
-import Image from 'next/image'
 import Link from 'next/link'
 import type { FC } from 'react'
 import { ChainId } from 'sushi'
@@ -58,12 +58,7 @@ export const SimpleSwapBridgeBanner: FC<{ className?: string }> = ({
             Move your tokens to Kadena to swap.
           </span>
         </div>
-        <Image
-          src={'/kadena-bridge-banner-cube.svg'}
-          alt="Kadena Bridge Banner Cube"
-          width={119}
-          height={119}
-        />
+        <KadenaBridgeCubeIcon width={119} height={119} />
       </div>
     </Link>
   ) : null
