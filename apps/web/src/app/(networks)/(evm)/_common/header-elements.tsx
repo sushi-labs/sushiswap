@@ -7,11 +7,10 @@ import {
   NavigationMenuContent,
   NavigationMenuItem,
   NavigationMenuTrigger,
-  OnramperButton,
 } from '@sushiswap/ui'
 import {
-  EXPLORE_NAVIGATION_LINKS,
-  // MORE_NAVIGATION_LINKS,
+  mobileExploreNavigationElement,
+  tradeNavigationElement,
 } from 'src/app/_common/header-elements'
 import { type ChainId, getChainById } from 'sushi'
 import { EvmChainId } from 'sushi/evm'
@@ -25,44 +24,8 @@ export const headerElements = ({
   chainId,
   includeOnramper = true,
 }: HeaderElements): NavigationElement[] => [
-  {
-    title: 'Explore',
-    items: EXPLORE_NAVIGATION_LINKS(chainId),
-    show: 'mobile',
-    type: NavigationElementType.Dropdown,
-  },
-  {
-    show: 'desktop',
-    type: NavigationElementType.Custom,
-    item: (
-      <NavigationMenuItem className={NavigationElementType.Custom}>
-        <NavigationMenuTrigger>
-          <LinkInternal
-            href={`/${getChainById(chainId ?? EvmChainId.ETHEREUM).key}/swap`}
-          >
-            Trade
-          </LinkInternal>
-        </NavigationMenuTrigger>
-        <NavigationMenuContent>
-          <ul className="w-[400px] gap-3 p-4">
-            <NavigationListItem
-              title={'Swap'}
-              href={`/${getChainById(chainId ?? EvmChainId.ETHEREUM).key}/swap`}
-            >
-              The easiest way to trade.
-            </NavigationListItem>
-            {includeOnramper ? (
-              <OnramperButton>
-                <NavigationListItem title={'Buy Crypto'}>
-                  Onramp with fiat.
-                </NavigationListItem>
-              </OnramperButton>
-            ) : null}
-          </ul>
-        </NavigationMenuContent>
-      </NavigationMenuItem>
-    ),
-  },
+  mobileExploreNavigationElement(chainId),
+  tradeNavigationElement(chainId, includeOnramper),
   ...(!chainId || isPoolChainId(chainId)
     ? ([
         {
@@ -107,10 +70,4 @@ export const headerElements = ({
     show: 'desktop',
     type: NavigationElementType.Single,
   },
-  // {
-  //   title: 'More',
-  //   items: MORE_NAVIGATION_LINKS,
-  //   show: 'desktop',
-  //   type: NavigationElementType.Dropdown,
-  // },
 ]

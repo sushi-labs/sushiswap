@@ -1,44 +1,13 @@
+import { type NavigationElement, NavigationElementType } from '@sushiswap/ui'
 import {
-  type NavigationElement,
-  NavigationElementType,
-  NavigationListItem,
-  NavigationMenuContent,
-  NavigationMenuItem,
-  NavigationMenuTrigger,
-  OnramperButton,
-} from '@sushiswap/ui'
-import React from 'react'
-import { EXPLORE_NAVIGATION_LINKS } from 'src/app/_common/header-elements'
+  mobileExploreNavigationElement,
+  tradeNavigationElement,
+} from 'src/app/_common/header-elements'
+import { MvmChainId } from 'sushi/mvm'
 
 export const headerElements: NavigationElement[] = [
-  {
-    title: 'Explore',
-    items: EXPLORE_NAVIGATION_LINKS(),
-    show: 'mobile',
-    type: NavigationElementType.Dropdown,
-  },
-  {
-    show: 'desktop',
-    type: NavigationElementType.Custom,
-    href: '/swap',
-    item: (
-      <NavigationMenuItem className={NavigationElementType.Custom}>
-        <NavigationMenuTrigger>Trade</NavigationMenuTrigger>
-        <NavigationMenuContent>
-          <ul className="w-[400px] gap-3 p-4">
-            <NavigationListItem title={'Swap'} href={'/aptos/swap'}>
-              The easiest way to trade.
-            </NavigationListItem>
-            <OnramperButton>
-              <NavigationListItem title={'Buy Crypto'}>
-                Onramp with fiat.
-              </NavigationListItem>
-            </OnramperButton>
-          </ul>
-        </NavigationMenuContent>
-      </NavigationMenuItem>
-    ),
-  },
+  mobileExploreNavigationElement(MvmChainId.APTOS),
+  tradeNavigationElement(MvmChainId.APTOS),
   {
     title: 'Explore',
     href: `/aptos/explore/pools`,
@@ -58,10 +27,4 @@ export const headerElements: NavigationElement[] = [
     show: 'desktop',
     type: NavigationElementType.Single,
   },
-  // {
-  //   title: 'More',
-  //   items: MORE_NAVIGATION_LINKS,
-  //   show: 'desktop',
-  //   type: NavigationElementType.Dropdown,
-  // },
 ]

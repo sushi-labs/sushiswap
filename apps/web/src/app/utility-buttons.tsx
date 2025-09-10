@@ -4,6 +4,7 @@ import {
 } from '@heroicons/react/20/solid'
 import {
   IconButton,
+  LinkExternal,
   Popover,
   PopoverContent,
   PopoverTrigger,
@@ -12,12 +13,15 @@ import {
 import { BrowserCookieIcon } from '@sushiswap/ui/icons/BrowserCookieIcon'
 import { DiscordIcon } from '@sushiswap/ui/icons/DiscordIcon'
 import { GithubIcon } from '@sushiswap/ui/icons/GithubIcon'
-import { TwitterIcon } from '@sushiswap/ui/icons/TwitterIcon'
+import { XIcon } from '@sushiswap/ui/icons/XIcon'
+import Link from 'next/link'
+import { Fragment } from 'react'
 import { CookieDialogContainer } from './_common/cookies/cookie-dialog-container'
+import { SUPPORT_NAVIGATION_LINKS } from './_common/header-elements'
 
 export const UtilityButtons = () => {
   return (
-    <div className="fixed bottom-2 right-8 flex gap-1 z-50">
+    <div className="hidden md:flex gap-1 fixed bottom-2 right-8 z-50">
       <CookieDialogContainer>
         <IconButton
           size="sm"
@@ -38,62 +42,47 @@ export const UtilityButtons = () => {
           />
         </PopoverTrigger>
         <PopoverContent className="!p-0">
-          <div className="px-5 py-4">Support</div>
+          <div className="px-5 py-4 cursor-default">Support</div>
           <Separator />
           <div className="px-5 py-4 flex flex-col gap-3">
-            <a
-              href="/academy"
-              target="_blank"
-              rel="noreferrer"
-              className="text-sm flex items-center gap-2"
-            >
-              Sushi Academy
-              <ArrowTopRightOnSquareIcon className="w-4 h-4" />
-            </a>
-            <Separator />
-            <a
-              href="/faq"
-              target="_blank"
-              rel="noreferrer"
-              className="text-sm flex items-center gap-2"
-            >
-              FAQ
-              <ArrowTopRightOnSquareIcon className="w-4 h-4" />
-            </a>
-            <Separator />
-            <a
-              href="/legal/privacy-policy"
-              target="_blank"
-              rel="noreferrer"
-              className="text-sm flex items-center gap-2"
-            >
-              Privacy Policy
-              <ArrowTopRightOnSquareIcon className="w-4 h-4" />
-            </a>
-            <Separator />
+            {SUPPORT_NAVIGATION_LINKS.map((component) => (
+              <Fragment key={component.title}>
+                <Link
+                  href={component.href}
+                  target="_blank"
+                  className={
+                    'cursor-pointer flex items-center gap-2 text-muted-foreground hover:text-accent-foreground focus:text-accent-foreground'
+                  }
+                >
+                  <span className="text-sm">{component.title}</span>
+                  <ArrowTopRightOnSquareIcon className="w-4 h-4" />
+                </Link>
+                <Separator />
+              </Fragment>
+            ))}
             <span>Socials</span>
-            <div className="flex gap-5">
-              <a
-                href="https://github.com/sushiswap"
-                target="_blank"
-                rel="noreferrer"
-              >
-                <GithubIcon width={18} height={18} />
-              </a>
-              <a
-                href="https://sushi.com/discord"
-                target="_blank"
-                rel="noreferrer"
-              >
-                <DiscordIcon width={18} height={18} />
-              </a>
-              <a
-                href="https://twitter.com/sushiswap"
-                target="_blank"
-                rel="noreferrer"
-              >
-                <TwitterIcon width={18} height={18} />
-              </a>
+            <div className="flex gap-5 items-center">
+              <LinkExternal href={'https://sushi.com/github'}>
+                <GithubIcon
+                  width={18}
+                  height={18}
+                  className="text-muted-foreground hover:text-accent-foreground focus:text-accent-foreground"
+                />
+              </LinkExternal>
+              <LinkExternal href={'https://sushi.com/discord'}>
+                <DiscordIcon
+                  width={18}
+                  height={18}
+                  className="text-muted-foreground hover:text-accent-foreground focus:text-accent-foreground"
+                />
+              </LinkExternal>
+              <LinkExternal href={'https://sushi.com/twitter'}>
+                <XIcon
+                  width={18}
+                  height={18}
+                  className="text-muted-foreground hover:text-accent-foreground focus:text-accent-foreground"
+                />
+              </LinkExternal>
             </div>
           </div>
         </PopoverContent>
