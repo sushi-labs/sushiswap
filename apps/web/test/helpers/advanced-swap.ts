@@ -176,6 +176,15 @@ export class AdvancedSwapPage extends BaseActions {
     const quickSelectSelectorId = `[testdata-id=quick-select-${selectorInfix}-${currency.symbol.toLowerCase()}-button]`
     // Open quick select token list
     const quickSelectSelector = this.page.locator(quickSelectSelectorId)
+    if ((await quickSelectSelector.count()) === 0) {
+      // Quick select option not available for this token
+      console.warn(
+        `Quick select option not available for ${currency.symbol} on ${getNetworkName(this.chainId)}`,
+      )
+      await this.handleToken(currency, type)
+      return
+    }
+
     await expect(quickSelectSelector).toBeVisible()
     await expect(quickSelectSelector).toBeEnabled()
     await quickSelectSelector.click()
