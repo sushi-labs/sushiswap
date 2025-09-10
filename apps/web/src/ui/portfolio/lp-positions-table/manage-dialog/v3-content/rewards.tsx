@@ -7,32 +7,77 @@ import {
   CardGroup,
   CardHeader,
   CardTitle,
+  classNames,
 } from '@sushiswap/ui'
+import { useTokenAmountDollarValues } from 'src/lib/hooks'
+import { useClaimableRewards } from 'src/lib/hooks/react-query'
+import { useConcentratedPositionOwner } from 'src/lib/wagmi/hooks/positions/hooks/useConcentratedPositionOwner'
+import { Checker } from 'src/lib/wagmi/systems/Checker'
+import { ClaimRewardsButton } from 'src/ui/pool/ClaimRewardsButton'
 import { formatUSD } from 'sushi'
-import { Amount } from 'sushi/currency'
+import { type MerklChainId, isMerklChainId } from 'sushi/config'
 
 export const Rewards = ({ position }: { position: any }) => {
-  const amounts = [Amount.fromRawAmount(position.token0, 89000000000n)]
+  const { data: owner } = useConcentratedPositionOwner({
+    chainId: position.chainId,
+    tokenId: position.tokenId,
+  })
+  const { data: rewardsData, isLoading: isRewardsLoading } =
+    useClaimableRewards({
+      chainIds: [position.chainId],
+      account: owner,
+      enabled: isMerklChainId(position.chainId),
+    })
+
+  const rewardsForChain = rewardsData?.[position.chainId as MerklChainId]
+  const rewardAmounts = Object.entries(rewardsForChain?.rewardAmounts ?? {})
+
+  const fiatValuesAmounts = useTokenAmountDollarValues({
+    chainId: position.chainId,
+    amounts: rewardAmounts.map(([_, amount]) => amount),
+  })
+
   return (
     <Card className="!bg-slate-50 dark:!bg-slate-800">
       <CardHeader className="!p-3 justify-between items-center !flex-row flex gap-2">
         <div>
           <CardTitle className="mb-1">Rewards</CardTitle>
           <CardDescription className="font-medium !text-lg">
-            {formatUSD('49123')}
+            {formatUSD(rewardsForChain?.totalRewardsUSD ?? 0)}
           </CardDescription>
         </div>
-        <Button className="w-[128px]">Claim</Button>
+        {rewardsForChain ? (
+          <Checker.Network size="default" fullWidth={false} chainId={747474}>
+            <ClaimRewardsButton
+              className="w-[128px]"
+              fullWidth={false}
+              rewards={rewardsForChain}
+            />
+          </Checker.Network>
+        ) : (
+          <Button
+            className="w-[128px]"
+            loading={isRewardsLoading}
+            disabled={!isRewardsLoading}
+          >
+            Claim
+          </Button>
+        )}
       </CardHeader>
 
-      <CardContent className="!p-3">
+      <CardContent
+        className={classNames(rewardAmounts.length > 0 ? '!p-3' : '!p-0')}
+      >
         <CardGroup>
-          <CardCurrencyAmountItem
-            isLoading={false}
-            amount={amounts[0]}
-            fiatValue={formatUSD(1234)}
-            amountClassName="!font-medium"
-          />
+          {rewardAmounts.map(([tokenAddress, amount], idx) => (
+            <CardCurrencyAmountItem
+              key={tokenAddress}
+              isLoading={isRewardsLoading}
+              amount={amount}
+              fiatValue={formatUSD(fiatValuesAmounts[idx])}
+              amountClassName="!font-medium"
+            />
+          ))}
         </CardGroup>
       </CardContent>
     </Card>

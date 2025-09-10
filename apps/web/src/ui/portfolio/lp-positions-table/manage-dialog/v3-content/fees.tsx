@@ -7,8 +7,10 @@ import {
   CardGroup,
   CardHeader,
   CardTitle,
+  classNames,
 } from '@sushiswap/ui'
 import { useMemo, useState } from 'react'
+import { useTokenAmountDollarValues } from 'src/lib/hooks'
 import type { ConcentratedLiquidityPosition } from 'src/lib/wagmi/hooks/positions/types'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
 import { ConcentratedLiquidityCollectButton } from 'src/ui/pool/ConcentratedLiquidityCollectButton'
@@ -48,13 +50,15 @@ export const Fees = ({
     return Amount.fromRawAmount(expectedToken1, amounts[1].quotient)
   }, [token1, receiveWrapped, amounts])
 
+  const fiatValuesAmounts = useTokenAmountDollarValues({ chainId, amounts })
+
   return (
     <Card className="!bg-slate-50 dark:!bg-slate-800">
       <CardHeader className="!p-3 justify-between items-center !flex-row flex gap-2">
         <div>
           <CardTitle className="mb-1">Fees</CardTitle>
           <CardDescription className="font-medium !text-lg">
-            {formatUSD('49123')}
+            {formatUSD(fiatValuesAmounts[0] + fiatValuesAmounts[1])}
           </CardDescription>
         </div>
         <ConcentratedLiquidityCollectButton
@@ -80,20 +84,19 @@ export const Fees = ({
         </ConcentratedLiquidityCollectButton>
       </CardHeader>
 
-      <CardContent className="!p-3">
+      <CardContent
+        className={classNames(fiatValuesAmounts.length > 0 ? '!p-3' : '!p-0')}
+      >
         <CardGroup>
-          <CardCurrencyAmountItem
-            isLoading={false}
-            amount={amounts[0]}
-            fiatValue={formatUSD(1234)}
-            amountClassName="!font-medium"
-          />
-          <CardCurrencyAmountItem
-            isLoading={false}
-            amount={amounts[1]}
-            fiatValue={formatUSD(4321)}
-            amountClassName="!font-medium"
-          />
+          {fiatValuesAmounts.map((fiatValue, index) => (
+            <CardCurrencyAmountItem
+              key={index}
+              isLoading={false}
+              amount={amounts[index]}
+              fiatValue={formatUSD(fiatValue)}
+              amountClassName="!font-medium"
+            />
+          ))}
         </CardGroup>
       </CardContent>
     </Card>
