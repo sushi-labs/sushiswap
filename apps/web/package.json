@@ -81,7 +81,7 @@
     "nextjs-toploader": "3.8.16",
     "octokit": "2.1.0",
     "petra-plugin-wallet-adapter": "0.4.5",
-    "porto": "0.0.60",
+    "porto": "0.0.90",
     "react": "catalog:react",
     "react-dom": "catalog:react",
     "react-dropzone": "14.2.3",
