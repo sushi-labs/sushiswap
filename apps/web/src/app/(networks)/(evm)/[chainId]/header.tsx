@@ -24,7 +24,7 @@ export const Header: FC<HeaderProps> = ({
 
   return (
     <div className="w-full h-[56px] z-20">
-      <div className="fixed w-full flex gap-2 z-20">
+      <div className="fixed w-full flex z-20">
         <div
           className={classNames(
             'hidden lg:flex justify-between items-center px-1 h-14 flex-shrink-0 bg-gray-100 dark:bg-slate-900 border-gray-200 dark:border-slate-800 border-b',

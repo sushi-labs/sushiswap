@@ -1,10 +1,6 @@
-import {
-  ArrowTopRightOnSquareIcon,
-  Bars3Icon,
-} from '@heroicons/react/24/outline'
+import { ArrowTopRightOnSquareIcon } from '@heroicons/react/24/outline'
 import { isPoolChainId } from '@sushiswap/graph-client/data-api'
 import {
-  Button,
   LinkExternal,
   LinkInternal,
   type NavigationElement,
@@ -13,7 +9,6 @@ import {
   NavigationListItem,
   NavigationMenuContent,
   NavigationMenuItem,
-  NavigationMenuPrimitive,
   NavigationMenuTrigger,
   OnramperButton,
   Separator,
@@ -22,8 +17,8 @@ import { DiscordIcon } from '@sushiswap/ui/icons/DiscordIcon'
 import { GithubIcon } from '@sushiswap/ui/icons/GithubIcon'
 import { XIcon } from '@sushiswap/ui/icons/XIcon'
 import Link from 'next/link'
-import { type ChainId, getChainById, isChainId } from 'sushi'
-import { EvmChainId, isAggregatorOnlyChainId } from 'sushi/evm'
+import { ChainId, getChainById, isChainId } from 'sushi'
+import { isAggregatorOnlyChainId } from 'sushi/evm'
 import { CookieDialog } from './cookies/cookie-dialog'
 
 export const EXPLORE_NAVIGATION_LINKS = (
@@ -43,7 +38,7 @@ export const EXPLORE_NAVIGATION_LINKS = (
         },
       ] as const)
     : []),
-  ...(!chainId || !isAggregatorOnlyChainId(chainId as EvmChainId)
+  ...(!chainId || !isAggregatorOnlyChainId(chainId)
     ? ([
         {
           title: 'Pool',
@@ -105,9 +100,7 @@ export const mobileExploreNavigationElement = (
     type: NavigationElementType.Custom,
     item: (
       <NavigationMenuItem className={NavigationElementType.Custom}>
-        <NavigationMenuPrimitive.Trigger asChild>
-          <Button variant="secondary" icon={Bars3Icon} />
-        </NavigationMenuPrimitive.Trigger>
+        <NavigationMenuTrigger>Explore</NavigationMenuTrigger>
         <NavigationMenuContent>
           <ul className="gap-3 p-4 w-[250px]">
             {EXPLORE_NAVIGATION_LINKS(chainId).map((component) => (
@@ -192,7 +185,7 @@ export const tradeNavigationElement = (
       <NavigationMenuItem className={NavigationElementType.Custom}>
         <NavigationMenuTrigger>
           <LinkInternal
-            href={`/${getChainById(chainId ?? EvmChainId.ETHEREUM).key}/swap`}
+            href={`/${getChainById(chainId ?? ChainId.ETHEREUM).key}/swap`}
           >
             Trade
           </LinkInternal>
@@ -201,7 +194,7 @@ export const tradeNavigationElement = (
           <ul className="w-[400px] gap-3 p-4">
             <NavigationListItem
               title={'Swap'}
-              href={`/${getChainById(chainId ?? EvmChainId.ETHEREUM).key}/swap`}
+              href={`/${getChainById(chainId ?? ChainId.ETHEREUM).key}/swap`}
             >
               The easiest way to trade.
             </NavigationListItem>
