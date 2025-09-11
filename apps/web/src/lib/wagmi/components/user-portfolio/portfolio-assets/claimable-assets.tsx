@@ -6,10 +6,10 @@ import { useAccount } from 'wagmi'
 import { usePortfolioClaimables } from '../hooks/use-portfolio-claimables'
 import { NotificationBadge } from '../notification-badge'
 import { PortfolfioAccordion } from '../portfolio-accordion'
-import { PortfolioInfoRowSkeleton } from '../portfolio-info-row-skeleton'
-import type { PortfolioAssetsProps } from './portfolio-assets'
 import { PortfolioFarmClaimables } from '../portfolio-claimables/portfolio-farm-claimables'
 import { PortfolioFuroClaimables } from '../portfolio-claimables/portfolio-furo-claimables'
+import { PortfolioInfoRowSkeleton } from '../portfolio-info-row-skeleton'
+import type { PortfolioAssetsProps } from './portfolio-assets'
 
 export const ClaimableAssets = (props: PortfolioAssetsProps) => {
   const { value, onValueChange } = props
