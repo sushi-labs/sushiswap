@@ -4,7 +4,7 @@ import { graphql } from '../../graphql.js'
 import { SUSHI_REQUEST_HEADERS } from '../../request-headers.js'
 import { BladePoolFragment, enhanceBladePool } from './pools.js'
 
-const SUSHI_DATA_API_HOST = 'https://data-api-staging.data-gcp.sushi.com'
+const SUSHI_DATA_API_HOST = 'http://data-api-staging.data-gcp.sushi.com'
 
 export const BladePositionsQuery = graphql(
   `
