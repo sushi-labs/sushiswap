@@ -102,7 +102,6 @@ export const BladeAddSection: FC<{ pool: BladePool }> = ({ pool }) => {
     }>
   }, [inputs])
 
-  // TODO-BLADE: Handle scenario where user is not allowed to deposit
   const userAllowed = depositPermission?.allow ?? false
 
   return (
