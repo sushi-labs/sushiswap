@@ -1,11 +1,11 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
-import { SimpleSwapBanner } from 'src/ui/swap/simple/simple-swap-banner'
+import type { ChainId as ChainIdType } from 'sushi'
+import { SimpleSwapBanner } from '../(trade)/swap/_ui/simple-swap-banner'
 import {
   type TradeMode,
   isSupportedTradeModeOnChainId,
-} from 'src/ui/swap/trade/config'
-import type { ChainId as ChainIdType } from 'sushi'
+} from '../(trade)/swap/_ui/trade/config'
 import { Header } from '../header'
 import { KatanaBackground } from './katana-background'
 import { Providers } from './providers'

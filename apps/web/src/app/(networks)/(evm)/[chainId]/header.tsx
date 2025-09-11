@@ -7,10 +7,10 @@ import React, { type FC } from 'react'
 import { headerElements } from 'src/app/_common/header-elements'
 import { SUPPORTED_NETWORKS } from 'src/config'
 import { WagmiHeaderComponents } from 'src/lib/wagmi/components/wagmi-header-components'
-import { useDerivedStateSimpleTrade } from 'src/ui/swap/trade/derivedstate-simple-trade-provider'
 import { ChainId } from 'sushi'
 
 import { useChainId } from 'wagmi'
+import { useDerivedStateSimpleTrade } from './(trade)/swap/_ui/trade/derivedstate-simple-trade-provider'
 
 interface HeaderProps {
   chainId?: ChainId

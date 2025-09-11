@@ -6,8 +6,8 @@ import { usePortfolioPositions } from '../hooks/use-portfolio-positions'
 import { NotificationBadge } from '../notification-badge'
 import { PortfolfioAccordion } from '../portfolio-accordion'
 import { PortfolioInfoRowSkeleton } from '../portfolio-info-row-skeleton'
-import { PortfolioV2Positions } from '../portfolio-positions/PortfolioV2Positions'
-import { PortfolioV3Positions } from '../portfolio-positions/PortfolioV3Positions'
+import { PortfolioV2Positions } from '../portfolio-positions/portfolio-v2-positions'
+import { PortfolioV3Positions } from '../portfolio-positions/portfolio-v3-positions'
 import type { PortfolioAssetsProps } from './portfolio-assets'
 
 export const PositionAssets = (props: PortfolioAssetsProps) => {

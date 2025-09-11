@@ -9,22 +9,23 @@ import type {
 } from 'public/static/charting_library/charting_library'
 import { useSkaleEuropaFaucet } from 'src/lib/hooks'
 import { useHeaderNetworkSelector } from 'src/lib/wagmi/components/header-network-selector'
-import { Chart } from 'src/ui/swap/trade/chart/chart'
-import { ChartHeader } from 'src/ui/swap/trade/chart/chart-header'
-import { ChartProvider } from 'src/ui/swap/trade/chart/chart-provider'
-import { MobileChart } from 'src/ui/swap/trade/chart/mobile-chart'
+
+import { Search } from 'src/app/(landing)/components'
+import type { ChainId } from 'sushi'
+import { Chart } from '../(trade)/swap/_ui/trade/chart/chart'
+import { ChartHeader } from '../(trade)/swap/_ui/trade/chart/chart-header'
+import { ChartProvider } from '../(trade)/swap/_ui/trade/chart/chart-provider'
+import { MobileChart } from '../(trade)/swap/_ui/trade/chart/mobile-chart'
 import {
   CHAIN_IDS_BY_TRADE_MODE,
   type TradeMode,
-} from 'src/ui/swap/trade/config'
-import { useDerivedStateSimpleTrade } from 'src/ui/swap/trade/derivedstate-simple-trade-provider'
-import { FavoriteRecentTabView } from 'src/ui/swap/trade/favorite-recent/favorite-recent-tab-view'
-import { NetworkProvider } from 'src/ui/swap/trade/favorite-recent/network-provider'
-import { Search } from 'src/ui/swap/trade/search/search'
-import { TradeTableTabs } from 'src/ui/swap/trade/tab-tables/trade-tabs/trade-table-tabs'
-import { TradeViewSwitch } from 'src/ui/swap/trade/trade-view-switch'
-import { TradeWidget } from 'src/ui/swap/trade/trade-widget'
-import type { ChainId } from 'sushi'
+} from '../(trade)/swap/_ui/trade/config'
+import { useDerivedStateSimpleTrade } from '../(trade)/swap/_ui/trade/derivedstate-simple-trade-provider'
+import { FavoriteRecentTabView } from '../(trade)/swap/_ui/trade/favorite-recent/favorite-recent-tab-view'
+import { NetworkProvider } from '../(trade)/swap/_ui/trade/favorite-recent/network-provider'
+import { TradeTableTabs } from '../(trade)/swap/_ui/trade/tab-tables/trade-tabs/trade-table-tabs'
+import { TradeViewSwitch } from '../(trade)/swap/_ui/trade/trade-view-switch'
+import { TradeWidget } from '../(trade)/swap/_ui/trade/trade-widget'
 
 const chainIdsByTradeMode: Record<TradeMode, ChainId[] | null> = {
   ...(CHAIN_IDS_BY_TRADE_MODE as any),

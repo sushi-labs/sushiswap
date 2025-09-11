@@ -1,7 +1,7 @@
 'use client'
 import Image from 'next/image'
-import { useDerivedStateSimpleTrade } from 'src/ui/swap/trade/derivedstate-simple-trade-provider'
 import { ChainId } from 'sushi'
+import { useDerivedStateSimpleTrade } from '../(trade)/swap/_ui/trade/derivedstate-simple-trade-provider'
 
 export const KatanaBackground = ({ chainId }: { chainId: ChainId }) => {
   const {

@@ -4,7 +4,7 @@ import { type EvmCurrency, EvmNative } from 'sushi/evm'
 
 import { useIsMounted } from '@sushiswap/hooks'
 import { Amount, Fraction } from 'sushi'
-import type { CurrencyInputProps } from './CurrencyInput'
+import type { CurrencyInputProps } from './currency-input'
 
 type PercentageInputs = Pick<
   CurrencyInputProps,

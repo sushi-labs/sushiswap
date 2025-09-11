@@ -43,15 +43,7 @@ import { Checker } from 'src/lib/wagmi/systems/Checker'
 import {
   useApproved,
   withCheckerRoot,
-} from 'src/lib/wagmi/systems/Checker/Provider'
-import { ConcentratedLiquidityProvider } from 'src/ui/pool/ConcentratedLiquidityProvider'
-import {
-  ConcentratedLiquidityURLStateProvider,
-  useConcentratedLiquidityURLState,
-} from 'src/ui/pool/ConcentratedLiquidityURLStateProvider'
-import { SelectFeeConcentratedWidget } from 'src/ui/pool/SelectFeeConcentratedWidget'
-import { SelectNetworkWidget } from 'src/ui/pool/SelectNetworkWidget'
-import { SelectTokensWidget } from 'src/ui/pool/SelectTokensWidget'
+} from 'src/lib/wagmi/systems/Checker/provider'
 import { Amount } from 'sushi'
 import {
   type EvmAddress,
@@ -65,8 +57,16 @@ import {
   isMerklChainId,
   isWNativeSupported,
 } from 'sushi/evm'
-import { type Address, zeroAddress } from 'viem'
+import { zeroAddress } from 'viem'
 import { useAccount, useWaitForTransactionReceipt } from 'wagmi'
+import { ConcentratedLiquidityProvider } from '~evm/[chainId]/_ui/concentrated-liquidity-provider'
+import {
+  ConcentratedLiquidityURLStateProvider,
+  useConcentratedLiquidityURLState,
+} from '../_ui/concentrated-liquidity-url-state-provider'
+import { SelectFeeConcentratedWidget } from '../_ui/select-fee-concentrated-widget'
+import { SelectNetworkWidget } from '../_ui/select-network-widget'
+import { SelectTokensWidget } from '../_ui/select-tokens-widget'
 
 const APPROVE_TAG = 'approve-incentivize'
 

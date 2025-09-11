@@ -9,9 +9,9 @@ import {
 } from '@sushiswap/ui'
 import React, { useMemo, useState } from 'react'
 import { Amount, Price, formatUSD } from 'sushi'
+import { useDerivedStateSimpleSwap } from '~evm/[chainId]/(trade)/swap/_ui/derivedstate-simple-swap-provider'
 import { usePrices } from '~evm/_common/ui/price-provider/price-provider/use-prices'
 import { useTokenAmountDollarValues } from '../../../lib/hooks'
-import { useDerivedStateSimpleSwap } from './derivedstate-simple-swap-provider'
 
 export const SimpleSwapHeader = () => {
   const [invert, setInvert] = useState(false)

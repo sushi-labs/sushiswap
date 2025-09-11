@@ -20,11 +20,11 @@ import React, {
   useState,
 } from 'react'
 import { SUPPORTED_CHAIN_IDS } from 'src/config'
-import { ChainOptionsSelector } from 'src/ui/swap/chain-options-selector'
-import { NetworkMenu } from 'src/ui/swap/trade/favorite-recent/network-menu'
 import type { EvmChain, EvmChainId } from 'sushi/evm'
 import type { EvmCurrency, EvmToken } from 'sushi/evm'
 import { useAccount } from 'wagmi'
+import { ChainOptionsSelector } from '~evm/[chainId]/(trade)/swap/_ui/chain-options-selector'
+import { NetworkMenu } from '~evm/[chainId]/(trade)/swap/_ui/trade/favorite-recent/network-menu'
 import { CurrencyInfo } from './currency-info'
 import { TokenSelectorStatesV2 } from './token-selector-states-v2'
 

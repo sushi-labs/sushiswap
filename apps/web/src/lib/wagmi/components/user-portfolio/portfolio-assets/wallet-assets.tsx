@@ -3,11 +3,11 @@ import React from 'react'
 import { formatPercent, formatUSD } from 'sushi'
 import type { EvmChainId } from 'sushi/evm'
 import { useAccount } from 'wagmi'
-import { PortfolioInfoRow } from '../PortfolioInfoRow'
 import { usePortfolioWallet } from '../hooks/use-portfolio-wallet'
 import { PortfolfioAccordion } from '../portfolio-accordion'
 import { PortfolioInfoRowSkeleton } from '../portfolio-info-row-skeleton'
 import type { PortfolioAssetsProps } from './portfolio-assets'
+import { PortfolioInfoRow } from '../portfolio-info-row'
 
 export const WalletAssets = (props: PortfolioAssetsProps) => {
   const { value, onValueChange } = props
