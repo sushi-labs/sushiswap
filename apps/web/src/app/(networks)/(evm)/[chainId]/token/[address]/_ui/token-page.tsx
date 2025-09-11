@@ -25,9 +25,9 @@ import { PoolsTable } from '~evm/[chainId]/_ui/pools-table'
 import { TableFiltersFarmsOnly } from '~evm/[chainId]/_ui/table-filters-farms-only'
 import { TableFiltersPoolType } from '~evm/[chainId]/_ui/table-filters-pool-type'
 import { TableFiltersResetButton } from '~evm/[chainId]/_ui/table-filters-reset-button'
-import { TokenInfo } from './token-info'
 import { TokenChart } from './charts/token-chart'
 import { SwapWidget } from './swap-widget'
+import { TokenInfo } from './token-info'
 
 interface TokenPageProps {
   token: SerializedEvmToken

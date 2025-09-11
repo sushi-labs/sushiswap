@@ -24,7 +24,6 @@ import React, {
 } from 'react'
 import { useTokens } from 'src/lib/hooks'
 import { type SushiSwapChainId, getEvmChainById } from 'sushi/evm'
-import { useTokenFilters } from './tokens-filters-provider'
 import {
   FDV_COLUMN,
   PRICE_CHANGE_1D_COLUMN,
@@ -32,6 +31,7 @@ import {
   SPARKLINE_COLUMN,
   TOKENS_NAME_COLUMN,
 } from './columns'
+import { useTokenFilters } from './tokens-filters-provider'
 
 const COLUMNS = [
   TOKENS_NAME_COLUMN,

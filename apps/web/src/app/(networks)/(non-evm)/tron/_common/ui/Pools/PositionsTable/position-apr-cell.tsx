@@ -2,9 +2,9 @@ import { SkeletonText } from '@sushiswap/ui'
 import { useMemo } from 'react'
 import { formatPercent } from 'sushi'
 import { FEE_PERCENTAGE } from '~tron/_common/constants/fee-percentage'
+import { usePoolOwnership } from '~tron/_common/lib/hooks/use-pool-ownership'
 import { useLPUsdValue } from '~tron/_common/lib/hooks/useLPUsdValue'
 import { useDayVolumeUSD } from '~tron/_common/lib/hooks/useOneDayApr'
-import { usePoolOwnership } from '~tron/_common/lib/hooks/use-pool-ownership'
 import type { IPositionRowData } from './positions-table'
 
 export const PositionAprCell = ({ data }: { data: IPositionRowData }) => {

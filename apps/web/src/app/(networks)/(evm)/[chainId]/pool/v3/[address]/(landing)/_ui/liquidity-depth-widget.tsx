@@ -6,9 +6,9 @@ import { Bound } from 'src/lib/constants'
 import { useConcentratedLiquidityPoolStats } from 'src/lib/hooks/react-query'
 import type { SushiSwapV3ChainId } from 'sushi/evm'
 import type { Address } from 'viem'
-import { useConcentratedDerivedMintInfo } from '~evm/[chainId]/_ui/concentrated-liquidity-provider'
 import { LiquidityChartRangeInput } from '~evm/[chainId]/_ui/LiquidityChartRangeInput'
 import { useDensityChartData } from '~evm/[chainId]/_ui/LiquidityChartRangeInput/hooks'
+import { useConcentratedDerivedMintInfo } from '~evm/[chainId]/_ui/concentrated-liquidity-provider'
 
 interface LiquidityDepthWidget {
   address: Address

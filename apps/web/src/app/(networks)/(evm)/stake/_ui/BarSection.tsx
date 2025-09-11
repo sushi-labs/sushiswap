@@ -8,7 +8,7 @@ import { Checker } from 'src/lib/wagmi/systems/Checker'
 import {
   useApproved,
   withCheckerRoot,
-} from 'src/lib/wagmi/systems/Checker/Provider'
+} from 'src/lib/wagmi/systems/Checker/provider'
 import { Amount } from 'sushi'
 import {
   EvmChainId,
