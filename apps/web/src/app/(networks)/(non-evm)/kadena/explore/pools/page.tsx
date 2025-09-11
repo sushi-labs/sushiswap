@@ -15,7 +15,7 @@ export default async function PoolsPage() {
           network={ChainId.KADENA}
           supportedNetworks={POOL_SUPPORTED_NETWORKS}
           unsupportedNetworkHref="/ethereum/explore/pools"
-          className="lg:hidden block"
+          className="block lg:hidden"
         />
       </div>
       <PoolsTable />

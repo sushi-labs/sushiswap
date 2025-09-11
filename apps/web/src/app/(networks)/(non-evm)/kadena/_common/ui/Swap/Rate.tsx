@@ -40,7 +40,7 @@ export const Rate = () => {
       onClick={() => setInvert((invert) => !invert)}
     >
       <ArrowTrendingUpIcon width={16} height={16} />
-      <span className="flex items-baseline gap-1 whitespace-nowrap scroll hide-scrollbar">
+      <span className="flex gap-1 items-baseline whitespace-nowrap scroll hide-scrollbar">
         1 {invert ? token0.tokenSymbol : token1.tokenSymbol}{' '}
         <span className="font-normal">
           ({formatUSD(invert ? token0FiatPrice : token1FiatPrice)})

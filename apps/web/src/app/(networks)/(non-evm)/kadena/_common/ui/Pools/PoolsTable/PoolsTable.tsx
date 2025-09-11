@@ -90,11 +90,11 @@ export const PoolsTable = () => {
 
   return (
     <InfiniteScroll
-      dataLength={data?.pools.length ?? 0}
+      dataLength={filtered.length ?? 0}
       next={fetchNextPage}
       hasMore={hasNextPage}
       loader={
-        <div className="flex justify-center w-full py-4">
+        <div className="flex justify-center py-4 w-full">
           <Loader size={16} />
         </div>
       }
