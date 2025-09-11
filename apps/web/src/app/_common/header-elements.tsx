@@ -1,5 +1,10 @@
-import { ArrowTopRightOnSquareIcon } from '@heroicons/react/24/outline'
 import {
+  ArrowTopRightOnSquareIcon,
+  Bars3Icon,
+} from '@heroicons/react/24/outline'
+import {
+  Button,
+  IconButton,
   LinkExternal,
   LinkInternal,
   type NavigationElement,
@@ -8,6 +13,7 @@ import {
   NavigationListItem,
   NavigationMenuContent,
   NavigationMenuItem,
+  NavigationMenuPrimitive,
   NavigationMenuTrigger,
   OnramperButton,
   Separator,
@@ -107,7 +113,11 @@ export const headerElements = ({
       type: NavigationElementType.Custom,
       item: (
         <NavigationMenuItem className={NavigationElementType.Custom}>
-          <NavigationMenuTrigger>Explore</NavigationMenuTrigger>
+          <NavigationMenuPrimitive.Trigger asChild>
+            <Button variant="secondary" className="ml-1">
+              <Bars3Icon className="h-5 w-5" />
+            </Button>
+          </NavigationMenuPrimitive.Trigger>
           <NavigationMenuContent>
             <ul className="gap-3 p-4 w-[250px]">
               {EXPLORE_NAVIGATION_LINKS(chainId).map((component) => (
