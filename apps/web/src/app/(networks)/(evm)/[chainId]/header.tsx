@@ -4,11 +4,11 @@ import { Navigation, SushiNavigationDropdown, classNames } from '@sushiswap/ui'
 import { SushiIcon } from '@sushiswap/ui/icons/SushiIcon'
 import { SushiWithTextIcon } from '@sushiswap/ui/icons/SushiWithTextIcon'
 import React, { type FC } from 'react'
+import { headerElements } from 'src/app/_common/header-elements'
 import { SUPPORTED_NETWORKS } from 'src/config'
 import { WagmiHeaderComponents } from 'src/lib/wagmi/components/wagmi-header-components'
 import type { ChainId } from 'sushi'
 import { useChainId } from 'wagmi'
-import { headerElements } from '../_common/header-elements'
 
 interface HeaderProps {
   chainId?: ChainId
