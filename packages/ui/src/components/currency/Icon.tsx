@@ -31,7 +31,7 @@ const MntLogo = 'mntl.svg'
 const ApeLogo = 'ape.svg'
 const SonicLogo = 'sonic.svg'
 const HypeLogo = 'hyper.svg'
-const BeraLogo = 'bera.svg'
+const BeraLogo = 'berachain.svg'
 
 const LOGO: Record<number, string> = {
   [ChainId.ETHEREUM]: EthereumLogo,
