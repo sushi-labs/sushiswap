@@ -3,8 +3,8 @@ import { Container } from '@sushiswap/ui'
 import { notFound } from 'next/navigation'
 import type React from 'react'
 import { getCachedBladePool } from 'src/lib/pool/blade'
-import { BladePoolLiquidityHeader } from 'src/ui/pool/blade/BladePoolLiquidityHeader'
 import { getEvmChainById, isEvmAddress } from 'sushi/evm'
+import { BladePoolLiquidityHeader } from './_ui/blade-pool-liquidity-header'
 
 export default async function Layout(props: {
   children: React.ReactNode

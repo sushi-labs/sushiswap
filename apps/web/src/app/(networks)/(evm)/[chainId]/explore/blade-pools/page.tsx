@@ -1,9 +1,9 @@
 import { getBladePools } from '@sushiswap/graph-client/data-api'
 import { Container } from '@sushiswap/ui'
 import { notFound } from 'next/navigation'
-import { BladeFeaturedPoolBanner } from 'src/ui/pool/blade/featured-pool-banner'
-import { BladePoolsTable } from 'src/ui/pool/blade/pools-table/BladePoolsTable'
 import { type BladeChainId, EvmChainId, isBladeChainId } from 'sushi/evm'
+import { BladeFeaturedPoolBanner } from '../_ui/blade-featured-pool-banner'
+import { BladePoolsTable } from './_ui/blade-pool-table'
 
 /**
  * These pools have been created but won't have any liquidity yet.

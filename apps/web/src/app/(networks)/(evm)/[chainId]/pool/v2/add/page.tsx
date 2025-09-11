@@ -18,6 +18,8 @@ import React, {
   useState,
   use,
 } from 'react'
+import { PriceImpactWarning } from 'src/app/(networks)/_ui/price-impact-warning'
+import { SlippageWarning } from 'src/app/(networks)/_ui/slippage-warning'
 import { DISABLED_CHAIN_IDS, isZapSupportedChainId } from 'src/config'
 import {
   APPROVE_TAG_ADD_LEGACY,
@@ -37,15 +39,8 @@ import {
 import {
   CheckerProvider,
   useApproved,
-} from 'src/lib/wagmi/systems/Checker/Provider'
-import { PoolFinder } from 'src/lib/wagmi/systems/PoolFinder/PoolFinder'
-import { PriceImpactWarning, SlippageWarning } from 'src/ui/common'
-import { AddSectionPoolShareCardV2 } from 'src/ui/pool/AddSectionPoolShareCardV2'
-import { AddSectionReviewModalLegacy } from 'src/ui/pool/AddSectionReviewModalLegacy'
-import { SelectNetworkWidget } from 'src/ui/pool/SelectNetworkWidget'
-import { SelectTokensWidget } from 'src/ui/pool/SelectTokensWidget'
-import { ToggleZapCard } from 'src/ui/pool/ToggleZapCard'
-import { V2ZapInfoCard } from 'src/ui/pool/V2ZapInfoCard'
+} from 'src/lib/wagmi/systems/Checker/provider'
+import { PoolFinder } from 'src/lib/wagmi/systems/PoolFinder/pool-finder'
 import { Amount, Percent, ZERO } from 'sushi'
 import {
   type EvmChainId,
@@ -69,6 +64,12 @@ import {
   useSendTransaction,
 } from 'wagmi'
 import { useRefetchBalances } from '~evm/_common/ui/balance-provider/use-refetch-balances'
+import { SelectNetworkWidget } from '../../_ui/select-network-widget'
+import { SelectTokensWidget } from '../../_ui/select-tokens-widget'
+import { ToggleZapCard } from '../../_ui/toggle-zap-card'
+import { AddSectionReviewModalLegacy } from '../_common/ui/add-section-review-modal-legacy'
+import { V2ZapInfoCard } from '../_common/ui/v2-zap-info-card'
+import { AddSectionPoolShareCardV2 } from './_common/ui/add-section-pool-share-card-v2'
 
 export default function Page(props: { params: Promise<{ chainId: string }> }) {
   const params = use(props.params)

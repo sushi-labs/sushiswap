@@ -1,10 +1,10 @@
 import { isBladeChainId } from '@sushiswap/graph-client/data-api'
 import { notFound } from 'next/navigation'
 import { getCachedBladePool } from 'src/lib/pool/blade'
-import { BladePoolPosition } from 'src/ui/pool/blade/BladePoolPosition'
-import { BladePoolPositionProvider } from 'src/ui/pool/blade/BladePoolPositionProvider'
-import { ManageBladeLiquidityCard } from 'src/ui/pool/blade/ManageBladeLiquidityCard'
 import { isEvmAddress } from 'sushi/evm'
+import { BladePoolPositionProvider } from '~evm/[chainId]/(blade-pool)/pool/blade/[address]/(manage)/_ui/blade-pool-position-provider'
+import { BladePoolPosition } from '../_ui/blade-pool-position'
+import { ManageBladeLiquidityCard } from '../_ui/manage-blade-liquidity-card'
 
 export default async function ManageBladePoolPage(props: {
   params: Promise<{ chainId: string; address: string }>
