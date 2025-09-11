@@ -1,5 +1,7 @@
 import '@sushiswap/ui/index.css'
 
+import '@funkit/connect/styles.css'
+
 import { ToastContainer } from '@sushiswap/notifications'
 import type { Metadata } from 'next'
 import { Inter, Roboto_Mono } from 'next/font/google'
@@ -47,11 +49,13 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: { children: React.ReactNode }) {
+}: {
+  children: React.ReactNode
+}) {
   return (
     <html
       lang="en"
-      className={`${inter.variable} ${roboto_mono.variable} dark`}
+      className={`${inter.variable} ${roboto_mono.variable} dark hide-scrollbar`}
       suppressHydrationWarning
     >
       <head>

@@ -6,7 +6,7 @@ import {
   type TTLStorageKey,
   useSlippageTolerance,
 } from '@sushiswap/hooks'
-import React, { type FC, type ReactNode, useState } from 'react'
+import { type FC, type ReactNode, useState } from 'react'
 
 import { DEFAULT_SLIPPAGE } from 'sushi/evm'
 import { Button } from '../button'
@@ -28,6 +28,8 @@ import {
 import { CarbonOffset } from './CarbonOffset'
 import { ExpertMode } from './ExpertMode'
 import { SlippageTolerance } from './SlippageTolerance'
+import { Trade2Experience, type TradeViewOptions } from './Trade2Experience'
+import { Trade2ExperienceMessage } from './Trade2ExperienceMessage'
 import { TransactionDeadline } from './TransactionDeadline'
 
 export enum SettingsModule {
@@ -36,6 +38,7 @@ export enum SettingsModule {
   SlippageTolerance = 'SlippageTolerance',
   ExpertMode = 'ExpertMode',
   TransactionDeadline = 'TransactionDeadline',
+  Trade2Experience = 'Trade2Experience',
 }
 
 interface SettingsOverlayProps {
@@ -53,6 +56,10 @@ interface SettingsOverlayProps {
       defaultValue?: string
       title?: string
     }
+    tradeView?: {
+      tradeView: TradeViewOptions
+      toggleTradeView: (view: TradeViewOptions) => void
+    }
   }
 }
 
@@ -66,50 +73,54 @@ export const SettingsOverlay: FC<SettingsOverlayProps> = ({
   const [slippageTolerance, setSlippageTolerance] = useSlippageTolerance(
     options?.slippageTolerance?.storageKey,
   )
+
   return (
     <Dialog>
       <DialogTrigger asChild>
         {children ? (
           children
         ) : (
-          <Button
-            size="sm"
-            className="!rounded-full"
-            variant="secondary"
-            icon={Cog6ToothIcon}
-            onClick={() => setOpen(true)}
-          >
-            {Number(slippageTolerance) > 0.5 &&
-            modules.includes(SettingsModule.SlippageTolerance) ? (
-              <TooltipProvider>
-                <Tooltip delayDuration={150}>
-                  <TooltipTrigger asChild>
-                    <Button
-                      onClick={(e) => {
-                        e.stopPropagation()
-                        setSlippageTolerance(DEFAULT_SLIPPAGE)
-                      }}
-                      className="!rounded-full -mr-1.5 !bg-opacity-50"
-                      iconPosition="end"
-                      variant={
-                        Number(slippageTolerance) > 20
-                          ? 'destructive'
-                          : Number(slippageTolerance) > 2
-                            ? 'warning'
-                            : 'secondary'
-                      }
-                      size="xs"
-                      asChild
-                      icon={XMarkIcon}
-                    >
-                      {slippageTolerance}%
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>Reset slippage tolerance</TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-            ) : null}
-          </Button>
+          <div className="relative">
+            <Button
+              size="sm"
+              className="!rounded-full"
+              variant="secondary"
+              icon={Cog6ToothIcon}
+              onClick={() => setOpen(true)}
+            >
+              {Number(slippageTolerance) > 0.5 &&
+              modules.includes(SettingsModule.SlippageTolerance) ? (
+                <TooltipProvider>
+                  <Tooltip delayDuration={150}>
+                    <TooltipTrigger asChild>
+                      <Button
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          setSlippageTolerance(DEFAULT_SLIPPAGE)
+                        }}
+                        className="!rounded-full -mr-1.5 !bg-opacity-50"
+                        iconPosition="end"
+                        variant={
+                          Number(slippageTolerance) > 20
+                            ? 'destructive'
+                            : Number(slippageTolerance) > 2
+                              ? 'warning'
+                              : 'secondary'
+                        }
+                        size="xs"
+                        asChild
+                        icon={XMarkIcon}
+                      >
+                        {slippageTolerance}%
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>Reset slippage tolerance</TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              ) : null}
+            </Button>
+            <Trade2ExperienceMessage />
+          </div>
         )}
       </DialogTrigger>
       <DialogContent>
@@ -124,6 +135,18 @@ export const SettingsOverlay: FC<SettingsOverlayProps> = ({
             <List className="!pt-0">
               <List.Control>
                 <SlippageTolerance options={options?.slippageTolerance} />
+                {options?.tradeView &&
+                  modules.includes(SettingsModule.Trade2Experience) && (
+                    <>
+                      <div className="px-4">
+                        <div className="h-px w-full dark:bg-slate-200/5 bg-gray-900/5" />
+                      </div>
+                      <Trade2Experience
+                        tradeView={options.tradeView.tradeView}
+                        toggleTradeView={options.tradeView.toggleTradeView}
+                      />
+                    </>
+                  )}
               </List.Control>
             </List>
           )}
@@ -147,6 +170,7 @@ export const SettingsOverlay: FC<SettingsOverlayProps> = ({
                 </List.Control>
               </List>
             ))}
+
           {externalModules?.map((Module, index) => (
             <List className="!pt-0" key={index}>
               <List.Control>

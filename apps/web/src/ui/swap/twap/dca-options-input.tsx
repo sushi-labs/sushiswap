@@ -58,17 +58,24 @@ const DCATradesInput = () => {
   return (
     <div className="flex-1 flex flex-col gap-1 whitespace-nowrap">
       <div className="flex justify-between items-center">
-        <span className="text-sm text-muted-foreground">Over</span>
-        <Explainer>
-          The total number of individual trades that will be scheduled as part
-          of your order.
+        <span className="text-sm font-medium text-slate-900 dark:text-pink-100">
+          No. of Orders
+        </span>
+        <Explainer
+          iconProps={{
+            className: 'text-slate-450 dark:text-slate-500',
+          }}
+        >
+          <p className="dark:bg-black/10 bg-white/10 !text-slate-900 dark:!text-pink-100 text-xs">
+            The total number of individual trades that will be scheduled as part
+            of your order.
+          </p>
         </Explainer>
       </div>
 
       <div
         className={classNames(
-          minTradeSizeError ? '!bg-red-500/20 !dark:bg-red-900/30' : '',
-          'px-3 py-4 overflow-hidden border border-accent bg-white dark:bg-slate-800 rounded-xl',
+          'px-3 py-4 overflow-hidden flex justify-between border border-white/10 dark:border-black/10 bg-gray-100 dark:bg-slate-900 rounded-xl',
         )}
       >
         <TextField
@@ -80,6 +87,7 @@ const DCATradesInput = () => {
           value={chunks}
           className={'!h-[20px] !min-h-[5px] !px-0 !py-1 !text-lg font-medium'}
         />
+        <div>Orders</div>
       </div>
       {!isLoading ? (
         <span
@@ -140,12 +148,20 @@ const DCAIntervalInput = () => {
   return (
     <div className="flex-1 flex flex-col gap-1 whitespace-nowrap">
       <div className="flex justify-between items-center">
-        <span className="text-sm text-muted-foreground">Every</span>
-        <Explainer>
-          The estimated time that will elapse between each trade in your order.
-          Note that as this time includes an allowance of two minutes for bidder
-          auction and block settlement, which cannot be predicted exactly,
-          actual time may vary.
+        <span className="text-sm font-medium text-slate-900 dark:text-pink-100">
+          Every
+        </span>
+        <Explainer
+          iconProps={{
+            className: 'text-slate-450 dark:text-slate-500',
+          }}
+        >
+          <p className="dark:bg-black/10 bg-white/10 !text-slate-900 dark:!text-pink-100 text-xs">
+            The estimated time that will elapse between each trade in your
+            order. Note that as this time includes an allowance of two minutes
+            for bidder auction and block settlement, which cannot be predicted
+            exactly, actual time may vary.
+          </p>
         </Explainer>
       </div>
 
@@ -154,7 +170,7 @@ const DCAIntervalInput = () => {
           minFillDelayError || maxFillDelayError
             ? '!bg-red-500/20 !dark:bg-red-900/30'
             : '',
-          'px-3 py-2 overflow-hidden border border-accent bg-white dark:bg-slate-800 rounded-xl flex justify-between items-center',
+          'px-3 py-2 overflow-hidden border border-white/10 dark:border-black/10 bg-gray-100 dark:bg-slate-900 rounded-xl flex justify-between items-center',
         )}
       >
         <TextField
@@ -167,7 +183,7 @@ const DCAIntervalInput = () => {
           className={'!h-[22px] !min-h-[22px] !px-0 !py-1 !text-lg font-medium'}
         />
         <DropdownMenu>
-          <DropdownMenuTrigger className="flex items-center gap-2 px-3 py-2 text-sm bg-secondary rounded-xl capitalize">
+          <DropdownMenuTrigger className="flex items-center gap-2 px-3 py-2 text-sm !bg-[#0000001F] dark:!bg-[#FFFFFF1F] rounded-xl capitalize">
             {TimeUnitLabel[fillDelay.unit as keyof typeof TimeUnitLabel]}
             <ChevronDownIcon width={14} height={14} />
           </DropdownMenuTrigger>

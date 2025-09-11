@@ -89,7 +89,7 @@ export const Hero: FC = () => {
               </motion.div>
               <CurrencyInput
                 type="INPUT"
-                className="p-3 bg-white dark:bg-slate-800 rounded-xl"
+                className="p-4 bg-white dark:bg-slate-900 rounded-xl"
                 value={valueIndex >= 0 ? VALUES[valueIndex].value0 : ''}
                 currency={EvmNative.fromChainId(ChainId.ETHEREUM)}
                 chainId={ChainId.ETHEREUM}
@@ -110,7 +110,7 @@ export const Hero: FC = () => {
               </div>
               <CurrencyInput
                 type="OUTPUT"
-                className="p-3 bg-white dark:bg-slate-800 rounded-xl"
+                className="p-4 bg-white dark:bg-slate-900 rounded-xl"
                 value={valueIndex >= 0 ? VALUES[valueIndex].value1 : ''}
                 currency={SUSHI[ChainId.ETHEREUM]}
                 chainId={ChainId.ETHEREUM}

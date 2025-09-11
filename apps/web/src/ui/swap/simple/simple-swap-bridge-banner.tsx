@@ -5,9 +5,9 @@ import { XMarkIcon } from '@heroicons/react/24/solid'
 import { useLocalStorage } from '@sushiswap/hooks'
 import { classNames } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
+import { useParams } from 'next/navigation'
 import type { FC } from 'react'
 import { EvmChainId, getEvmChainById } from 'sushi/evm'
-import { useDerivedStateSimpleSwap } from './derivedstate-simple-swap-provider'
 
 const BridgeInfo = {
   [EvmChainId.SKALE_EUROPA]: {
@@ -31,9 +31,8 @@ const BridgeInfo = {
 export const SimpleSwapBridgeBanner: FC<{ className?: string }> = ({
   className,
 }) => {
-  const {
-    state: { chainId },
-  } = useDerivedStateSimpleSwap()
+  const params = useParams<{ chainId: string }>()
+  const chainId = +params.chainId as EvmChainId
 
   const [hideBanner, setHideBanner] = useLocalStorage(
     `hide-bridge-banner-${chainId}`,

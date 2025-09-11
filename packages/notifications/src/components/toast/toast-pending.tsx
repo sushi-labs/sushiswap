@@ -16,6 +16,7 @@ export const ToastPending: FC<ToastPending> = ({
   txHash,
   onDismiss: _onDismiss,
   summary,
+  description,
 }) => {
   const txUrl = href
     ? href
@@ -24,7 +25,11 @@ export const ToastPending: FC<ToastPending> = ({
       : ''
   return (
     <>
-      <ToastContent href={txUrl} summary={<Dots>{summary}</Dots>} />
+      <ToastContent
+        description={description}
+        href={txUrl}
+        summary={<Dots>{summary}</Dots>}
+      />
     </>
   )
 }

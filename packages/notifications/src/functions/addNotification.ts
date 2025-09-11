@@ -1,5 +1,7 @@
+import { nanoid } from 'nanoid'
 import { getDatabase } from '../database.js'
 import { updateEvent } from '../events.js'
+import type { NotificationType } from '../hooks/useNotifications.js'
 import {
   type PromiseNotification,
   type ResolvedNotification,
@@ -7,7 +9,7 @@ import {
 } from '../types'
 
 export async function addNotification(
-  notification: PromiseNotification | ResolvedNotification,
+  notification: PromiseNotification | ResolvedNotification | NotificationType,
 ) {
   const database = await getDatabase()
 
@@ -30,6 +32,8 @@ export async function addNotification(
       type: notification.type,
       timestamp: notification.timestamp,
       groupTimestamp: notification.groupTimestamp,
+      isRead: false,
+      id: nanoid(),
     })
 
     const data = await database.get('notifications', id)
@@ -69,6 +73,8 @@ export async function addNotification(
       type: notification.type,
       timestamp: notification.timestamp,
       groupTimestamp: notification.groupTimestamp,
+      isRead: false,
+      id: 'id' in notification ? notification.id : nanoid(),
     })
   }
 

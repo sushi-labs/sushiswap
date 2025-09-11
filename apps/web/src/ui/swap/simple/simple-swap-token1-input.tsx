@@ -9,7 +9,7 @@ import {
 
 export const SimpleSwapToken1Input = () => {
   const {
-    state: { chainId, token1 },
+    state: { chainId1: chainId, token1 },
     mutate: { setToken1 },
     isToken1Loading: tokenLoading,
   } = useDerivedStateSimpleSwap()
@@ -19,13 +19,12 @@ export const SimpleSwapToken1Input = () => {
     isFetching,
     data: quote,
   } = useSimpleSwapTradeQuote()
-
   return (
     <Web3Input.Currency
       id="swap-to"
       type="OUTPUT"
       disabled
-      className="border border-accent p-3 bg-white dark:bg-slate-800 rounded-xl"
+      className="p-4 bg-gray-100 dark:bg-slate-900 rounded-xl overflow-visible"
       value={quote?.amountOut?.toSignificant() ?? ''}
       chainId={chainId}
       onSelect={setToken1}
@@ -37,6 +36,7 @@ export const SimpleSwapToken1Input = () => {
       allowNative={isWNativeSupported(chainId)}
       label="Buy"
       // priceImpact={quote?.priceImpact}
+      showQuickSelect={true}
     />
   )
 }

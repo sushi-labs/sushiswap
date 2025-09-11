@@ -47,7 +47,7 @@ export const BarSectionWidget = ({
       <div className="flex flex-col gap-4">
         <Web3Input.Currency
           type="INPUT"
-          className="border border-accent px-3 py-1.5 !rounded-xl"
+          className="p-4 bg-white dark:bg-slate-800 rounded-xl"
           loading={false}
           value={input}
           onChange={onInput}

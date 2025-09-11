@@ -1,8 +1,6 @@
 'use client'
 
-import { DialogTrigger, Message } from '@sushiswap/ui'
-import { Button } from '@sushiswap/ui'
-import type React from 'react'
+import { Button, DialogTrigger } from '@sushiswap/ui'
 import { type FC, useEffect, useMemo, useState } from 'react'
 import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
@@ -51,7 +49,7 @@ const _SimpleSwapTradeButton: FC<SimpleSwapTradeButtonProps> = ({
   const [checked, setChecked] = useState(false)
 
   const {
-    state: { swapAmount, swapAmountString, chainId, token0, token1 },
+    state: { swapAmount, swapAmountString, chainId0: chainId, token0, token1 },
     mutate: { setSwapAmount },
   } = useDerivedStateSimpleSwap()
 

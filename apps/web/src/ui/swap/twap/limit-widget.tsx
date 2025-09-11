@@ -1,10 +1,10 @@
 import { SimpleSwapTokenNotFoundDialog } from '../simple/simple-swap-token-not-found-dialog'
-import { SwapModeButtons } from '../swap-mode-buttons'
-import { LimitExpiryInput } from './limit-expiry-input'
-import { LimitPriceInput } from './limit-price-input'
-import { OrbsBanner } from './orbs-banner'
-import { TwapMaintenanceMessage } from './twap-maintenance-message'
-import { TwapOrdersDialogTriggerButton } from './twap-orders-dialog'
+import { LimitErrors } from './limit-errors'
+import { LimitEstPnl } from './limit-est-pnl'
+import { LimitExpiryInputV2 } from './limit-expiry-input-v2'
+import { LimitPriceInputV2 } from './limit-price-input-v2'
+// import { OrbsBanner } from "./orbs-banner";
+// import { TwapOrdersDialogTriggerButton } from "./twap-orders-dialog";
 import { TwapSwitchTokensButton } from './twap-switch-tokens-button'
 import { TwapToken0Input } from './twap-token0-input'
 import { TwapToken1Input } from './twap-token1-input'
@@ -12,23 +12,23 @@ import { TwapTradeButton } from './twap-trade-button'
 
 export const LimitWidget = () => {
   return (
-    <div className="flex flex-col gap-4 p-4 md:p-6 bg-[rgba(255,255,255,0.8)] dark:bg-[rgba(25,32,49,0.8)] rounded-3xl backdrop-blur-2xl">
-      <div className="flex items-center justify-between">
-        <SwapModeButtons />
-      </div>
-      <TwapMaintenanceMessage />
+    <div className="flex flex-col gap-4">
       <div className="flex flex-col gap-2">
-        <LimitPriceInput />
+        <LimitPriceInputV2 />
         <div className="flex flex-col gap-4">
           <TwapToken0Input />
           <TwapSwitchTokensButton />
           <TwapToken1Input />
         </div>
-        <LimitExpiryInput />
+        <div className="flex items-center pt-2 pb-6 justify-between gap-2">
+          <LimitExpiryInputV2 />
+          <LimitEstPnl />
+        </div>
         <TwapTradeButton />
       </div>
-      <TwapOrdersDialogTriggerButton />
-      <OrbsBanner />
+      <LimitErrors />
+      {/* <TwapOrdersDialogTriggerButton /> */}
+      {/* <OrbsBanner /> */}
       <SimpleSwapTokenNotFoundDialog />
     </div>
   )

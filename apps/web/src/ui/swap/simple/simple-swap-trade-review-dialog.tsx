@@ -23,7 +23,6 @@ import {
   DialogTitle,
   DialogType,
   List,
-  Message,
   SkeletonBox,
   SkeletonText,
   classNames,
@@ -66,6 +65,7 @@ import {
   warningSeverity,
   warningSeverityClassName,
 } from '../../../lib/swap/warningSeverity'
+import { useDerivedStateSimpleTrade } from '../trade/derivedstate-simple-trade-provider'
 import {
   useDerivedStateSimpleSwap,
   useSimpleSwapTrade,
@@ -92,9 +92,12 @@ const _SimpleSwapTradeReviewDialog: FC<{
   }: { error: Error | null; isSuccess: boolean }): ReactNode
 }> = ({ children }) => {
   const {
-    state: { token0, token1, chainId, swapAmount, recipient },
+    state: { token0, token1, chainId0: chainId, swapAmount, recipient },
     mutate: { setSwapAmount },
   } = useDerivedStateSimpleSwap()
+  const {
+    state: { tradeView },
+  } = useDerivedStateSimpleTrade()
 
   const { approved } = useApproved(APPROVE_TAG_SWAP)
   const [slippagePercent] = useSlippageTolerance()
@@ -133,7 +136,7 @@ const _SimpleSwapTradeReviewDialog: FC<{
       if (!trade || !chainId) return
 
       try {
-        const ts = new Date().getTime()
+        const ts = Date.now()
         const promise = client.waitForTransactionReceipt({
           hash,
         })
@@ -164,27 +167,17 @@ const _SimpleSwapTradeReviewDialog: FC<{
           summary: {
             pending: `${
               isWrap ? 'Wrapping' : isUnwrap ? 'Unwrapping' : 'Swapping'
-            } ${trade.amountIn?.toSignificant(6)} ${
+            } ${trade.amountIn?.toSignificant(6)} ${trade.amountIn?.currency.symbol} ${
+              isWrap ? 'to' : isUnwrap ? 'to' : 'for'
+            } ${trade.amountOut?.toSignificant(6)} ${trade.amountOut?.currency.symbol}`,
+            completed: `${isWrap ? 'Wrap' : isUnwrap ? 'Unwrap' : 'Swap'} ${trade.amountIn?.toSignificant(
+              6,
+            )} ${trade.amountIn?.currency.symbol} ${
+              isWrap ? 'to' : isUnwrap ? 'to' : 'for'
+            } ${trade.amountOut?.toSignificant(6)} ${trade.amountOut?.currency.symbol}`,
+            failed: `Something went wrong when trying to ${isWrap ? 'wrap' : isUnwrap ? 'unwrap' : 'swap'} ${
               trade.amountIn?.currency.symbol
-            } ${
-              isWrap ? 'to' : isUnwrap ? 'to' : 'for'
-            } ${trade.amountOut?.toSignificant(6)} ${
-              trade.amountOut?.currency.symbol
-            }`,
-            completed: `${
-              isWrap ? 'Wrap' : isUnwrap ? 'Unwrap' : 'Swap'
-            } ${trade.amountIn?.toSignificant(6)} ${
-              trade.amountIn?.currency.symbol
-            } ${
-              isWrap ? 'to' : isUnwrap ? 'to' : 'for'
-            } ${trade.amountOut?.toSignificant(6)} ${
-              trade.amountOut?.currency.symbol
-            }`,
-            failed: `Something went wrong when trying to ${
-              isWrap ? 'wrap' : isUnwrap ? 'unwrap' : 'swap'
-            } ${trade.amountIn?.currency.symbol} ${
-              isWrap ? 'to' : isUnwrap ? 'to' : 'for'
-            } ${trade.amountOut?.currency.symbol}`,
+            } ${isWrap ? 'to' : isUnwrap ? 'to' : 'for'} ${trade.amountOut?.currency.symbol}`,
           },
           timestamp: ts,
           groupTimestamp: ts,
@@ -364,9 +357,7 @@ const _SimpleSwapTradeReviewDialog: FC<{
                                 : trade.priceImpact?.gt(ZERO)
                                   ? '-'
                                   : ''
-                            }${Math.abs(
-                              Number(trade.priceImpact?.toString({ fixed: 2 })),
-                            )}%`
+                            }${Math.abs(Number(trade.priceImpact?.toString({ fixed: 2 })))}%`
                           ) : (
                             '-'
                           )}
@@ -397,9 +388,7 @@ const _SimpleSwapTradeReviewDialog: FC<{
                               className="w-1/2"
                             />
                           ) : trade?.amountOut ? (
-                            `${trade?.amountOut?.toSignificant(6)} ${
-                              token1?.symbol
-                            }`
+                            `${trade?.amountOut?.toSignificant(6)} ${token1?.symbol}`
                           ) : (
                             '-'
                           )}
@@ -415,9 +404,7 @@ const _SimpleSwapTradeReviewDialog: FC<{
                               className="w-1/2"
                             />
                           ) : trade?.minAmountOut ? (
-                            `${trade?.minAmountOut?.toSignificant(6)} ${
-                              token1?.symbol
-                            }`
+                            `${trade?.minAmountOut?.toSignificant(6)} ${token1?.symbol}`
                           ) : (
                             '-'
                           )}
@@ -518,18 +505,20 @@ const _SimpleSwapTradeReviewDialog: FC<{
           </>
         )}
       </DialogReview>
-      <DialogConfirm
-        chainId={chainId}
-        status={status}
-        testId="make-another-swap"
-        buttonText="Make another swap"
-        txHash={data}
-        successMessage={`You ${
-          isWrap ? 'wrapped' : isUnwrap ? 'unwrapped' : 'sold'
-        } ${tradeRef.current?.amountIn?.toSignificant(6)} ${token0?.symbol} ${
-          isWrap ? 'to' : isUnwrap ? 'to' : 'for'
-        } ${tradeRef.current?.amountOut?.toSignificant(6)} ${token1?.symbol}`}
-      />
+      {tradeView === 'advanced' ? null : (
+        <DialogConfirm
+          chainId={chainId}
+          status={status}
+          testId="make-another-swap"
+          buttonText="Make another swap"
+          txHash={data}
+          successMessage={`You ${
+            isWrap ? 'wrapped' : isUnwrap ? 'unwrapped' : 'sold'
+          } ${tradeRef.current?.amountIn?.toSignificant(6)} ${token0?.symbol} ${
+            isWrap ? 'to' : isUnwrap ? 'to' : 'for'
+          } ${tradeRef.current?.amountOut?.toSignificant(6)} ${token1?.symbol}`}
+        />
+      )}
     </Trace>
   )
 }

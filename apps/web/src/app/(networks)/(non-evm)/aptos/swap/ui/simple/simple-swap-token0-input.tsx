@@ -62,7 +62,7 @@ export const SimpleSwapToken0Input = () => {
       token={token0}
       value={String(amount)}
       onChange={setAmount}
-      className="p-3 bg-white border border-accent dark:bg-slate-800 rounded-xl"
+      className="p-4 bg-gray-100 dark:bg-slate-900 rounded-xl"
       label="Sell"
     />
   )

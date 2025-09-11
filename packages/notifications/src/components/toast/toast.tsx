@@ -1,5 +1,5 @@
 import { nanoid } from 'nanoid'
-import { type ToastOptions, toast } from 'react-toastify'
+import { type ToastOptions, toast } from 'react-toastify-v2'
 
 import { addNotification } from '../../functions/addNotification'
 import type { PromiseNotification, ResolvedNotification } from '../../types'
@@ -11,13 +11,12 @@ import { ToastInfo } from './toast-info'
 import { ToastPending } from './toast-pending'
 
 export const TOAST_OPTIONS: ToastOptions = {
-  position: 'top-right',
   autoClose: false,
   hideProgressBar: true,
   closeOnClick: false,
   pauseOnHover: true,
   draggable: false,
-  closeButton: false,
+  closeButton: true,
   icon: false,
 }
 
@@ -43,6 +42,7 @@ export const createToast = (props: PromiseNotification) => {
           autoClose: 8000,
         },
       )
+      addNotification(props)
     })
     .catch((e) => {
       console.error(e)
@@ -76,7 +76,7 @@ export const createToast = (props: PromiseNotification) => {
     },
   )
 
-  return addNotification(props)
+  // return addNotification(props)
 }
 
 export const createErrorToast = (
@@ -120,7 +120,8 @@ export const createFailedToast = (props: ResolvedNotification) => {
     autoClose: 8000,
   })
 
-  return addNotification(props)
+  // return addNotification(props);
+  return
 }
 
 export const createInfoToast = (props: ResolvedNotification) => {
@@ -131,5 +132,6 @@ export const createInfoToast = (props: ResolvedNotification) => {
     autoClose: 8000,
   })
 
-  return addNotification(props)
+  // return addNotification(props);
+  return
 }

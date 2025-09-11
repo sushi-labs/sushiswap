@@ -1,4 +1,5 @@
 import { test } from 'next/experimental/testmode/playwright.js'
+import { getChainById } from 'sushi'
 import {
   EvmNative,
   type EvmToken,
@@ -92,7 +93,7 @@ test.describe('V3', () => {
     next,
   }) => {
     test.slow()
-    const url = BASE_URL.concat(`/${chainId.toString()}/pool/v3/add`)
+    const url = BASE_URL.concat(`/${getChainById(chainId).key}/pool/v3/add`)
     const poolPage = new PoolPage(page, chainId)
 
     await poolPage.mockPoolApi(
@@ -136,7 +137,7 @@ test.describe('V2', () => {
     test.slow()
     const poolPage = new PoolPage(page, chainId)
 
-    const url = BASE_URL.concat(`/${chainId.toString()}/pool/v2/add`)
+    const url = BASE_URL.concat(`/${getChainById(chainId).key}/pool/v2/add`)
 
     await poolPage.mockPoolApi(
       next,
@@ -164,5 +165,7 @@ test.describe('V2', () => {
     })
 
     await poolPage.removeLiquidityV2(FAKE_TOKEN)
+
+    await page.unrouteAll({ behavior: 'ignoreErrors' })
   })
 })

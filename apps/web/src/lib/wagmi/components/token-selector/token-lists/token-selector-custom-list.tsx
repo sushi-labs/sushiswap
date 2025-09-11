@@ -6,6 +6,7 @@ import type { EvmChainId } from 'sushi/evm'
 import { usePrices } from '~evm/_common/ui/price-provider/price-provider/use-prices'
 import { useMyTokens } from '../hooks/use-my-tokens'
 import { TokenSelectorCurrencyList } from './common/token-selector-currency-list'
+import { TokenSelectorCurrencyListV2 } from './common/token-selector-currency-list-v2'
 
 interface TokenSelectorCustomList {
   currencies: Readonly<EvmCurrency<{ approved?: boolean }>[]>

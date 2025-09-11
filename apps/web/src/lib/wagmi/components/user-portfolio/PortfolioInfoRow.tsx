@@ -32,7 +32,7 @@ const _PortfolioInfoRow: FC<PortfolioInfoRow> = ({
   rightContent,
 }) => {
   return (
-    <div className="flex w-full items-center hover:bg-muted px-5 py-3 gap-x-6 whitespace-nowrap">
+    <div className="flex w-full items-center hover:bg-muted px-3 py-3 gap-x-3 whitespace-nowrap">
       <div className="shrink-0">
         <Badge
           className="border-2 border-background bg-background rounded-full z-[11]"
@@ -45,10 +45,8 @@ const _PortfolioInfoRow: FC<PortfolioInfoRow> = ({
         </Badge>
       </div>
       <div className="flex w-full justify-between items-center gap-x-3 overflow-hidden">
-        <div className="flex flex-col gap-y-1 overflow-hidden">
-          {leftContent}
-        </div>
-        <div className="flex-[1_0_20%] flex flex-col gap-y-1 overflow-hidden text-right">
+        <div className="flex flex-col overflow-hidden">{leftContent}</div>
+        <div className="flex-[1_0_20%] flex flex-col overflow-hidden text-right">
           {rightContent}
         </div>
       </div>

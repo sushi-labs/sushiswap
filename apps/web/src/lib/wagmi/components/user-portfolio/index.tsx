@@ -21,6 +21,8 @@ import { useAccount, useEnsAvatar, useEnsName } from 'wagmi'
 import { ConnectButton } from '../connect-button'
 import { PortfolioDefaultView } from './PortfolioDefaultView'
 import { PortfolioSettingsView } from './PortfolioSettingsView'
+import { useAccountDrawer } from './hooks/use-account-drawer'
+import { TwapOrdersBadge } from './twap-orders-badge'
 
 export enum PortfolioView {
   Default = 'Default',
@@ -32,17 +34,34 @@ const ResponsivePortfolioWrapper: FC<{
   trigger: ReactNode
   isSm: boolean
 }> = ({ content, trigger, isSm }) => {
+  const { isOpen, handleAccountDrawer } = useAccountDrawer()
+
   return isSm ? (
-    <Sheet>
+    <Sheet
+      open={isOpen}
+      onOpenChange={(open) => handleAccountDrawer({ state: open })}
+    >
       <SheetTrigger asChild>{trigger}</SheetTrigger>
-      <SheetContent hideClose className="!p-0">
+      <SheetContent
+        overlayClassName="!h-[calc(100%-56px)] dark:bg-slate-900/50 bg-gray-100/50 !inset-y-[56px] backdrop-blur-none"
+        hideClose
+        className="!p-0 !shadow-none border-t-0 !rounded-none dark:!bg-slate-900 !right-0 !inset-y-[56px] !h-[calc(100%-56px)]"
+      >
         {content}
       </SheetContent>
     </Sheet>
   ) : (
-    <Dialog>
+    <Dialog
+      open={isOpen}
+      onOpenChange={(open) => handleAccountDrawer({ state: open })}
+    >
       <DialogTrigger asChild>{trigger}</DialogTrigger>
-      <DialogContent hideClose className="!p-0 h-[calc(100%-16px)]">
+      <DialogContent
+        variant="semi-opaque"
+        hideClose
+        aria-describedby={undefined}
+        className="!p-0 h-[calc(100%-55px)]"
+      >
         {content}
       </DialogContent>
     </Dialog>
@@ -110,6 +129,7 @@ export const UserPortfolio = () => {
             <JazzIcon diameter={20} address={address} />
           )}
           <span className="hidden sm:block">{shortenEvmAddress(address)}</span>
+          <TwapOrdersBadge type="all-active" />
         </Button>
       }
       content={content}

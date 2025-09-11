@@ -37,7 +37,7 @@ import {
 } from '@sushiswap/ui'
 import format from 'date-fns/format'
 import { type FC, type ReactNode, useEffect, useMemo, useState } from 'react'
-import type { TwapSupportedChainId } from 'src/config'
+import { type TwapSupportedChainId, isTwapSupportedChainId } from 'src/config'
 import { type TwapOrder, useTwapOrders } from 'src/lib/hooks/react-query/twap'
 import { fillDelayText } from 'src/lib/swap/twap'
 import { useTokenWithCache } from 'src/lib/wagmi/hooks/tokens/useTokenWithCache'
@@ -83,8 +83,13 @@ const _TwapOrdersDialog: FC<{
 
   const { address } = useAccount()
 
+  const twapChainIds = useMemo(
+    () => (chainId && isTwapSupportedChainId(chainId) ? [chainId] : []),
+    [chainId],
+  )
+
   const { data: orders, isLoading: isOrdersLoading } = useTwapOrders({
-    chainId,
+    chainIds: twapChainIds,
     account: address,
     enabled: open,
   })
@@ -200,7 +205,11 @@ const TwapOrderDialogContent = ({
   chainId,
   order,
   onBack,
-}: { chainId: TwapSupportedChainId; order: TwapOrder; onBack: () => void }) => {
+}: {
+  chainId: TwapSupportedChainId
+  order: TwapOrder
+  onBack: () => void
+}) => {
   const { address } = useAccount()
 
   const isLimit = order.type === OrderType.LIMIT
@@ -283,7 +292,9 @@ const TwapOrderDialogContent = ({
             </div>
             {!isLimit ? (
               <span className="text-muted-foreground text-sm">
-                {`Every ${fillDelayText(order.fillDelayMs)} over ${order.chunks} order${order.chunks > 1 ? 's' : ''}`}
+                {`Every ${fillDelayText(order.fillDelayMs)} over ${order.chunks} order${
+                  order.chunks > 1 ? 's' : ''
+                }`}
               </span>
             ) : null}
           </div>
@@ -306,7 +317,7 @@ const TwapOrderDialogContent = ({
                 <List className="!gap-2">
                   <List.KeyValue className="!p-0" title="Status">
                     <span className="capitalize text-muted-foreground">
-                      {order.status.toLowerCase()}
+                      {order?.status?.toLowerCase()}
                     </span>
                   </List.KeyValue>
                   <List.KeyValue className="!p-0" title="Amount sent">
@@ -483,7 +494,7 @@ const TwapOrderCard = ({
                     : '',
           )}
         >
-          <span className="capitalize">{order.status.toLowerCase()}</span>
+          <span className="capitalize">{order?.status?.toLowerCase()}</span>
         </div>
       </div>
       <div className="flex items-center gap-2">

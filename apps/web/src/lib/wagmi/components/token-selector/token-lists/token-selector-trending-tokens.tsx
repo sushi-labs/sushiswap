@@ -1,12 +1,9 @@
 import type { TrendingTokensChainId } from '@sushiswap/graph-client/data-api'
-import { List } from '@sushiswap/ui'
 import type { EvmCurrency } from 'sushi/evm'
 import { usePrices } from '~evm/_common/ui/price-provider/price-provider/use-prices'
 import { useTrendingTokens } from '../hooks/use-trending-tokens'
-import {
-  TokenSelectorCurrencyList,
-  TokenSelectorCurrencyListLoading,
-} from './common/token-selector-currency-list'
+import { TokenSelectorCurrencyList } from './common/token-selector-currency-list'
+import { TokenSelectorCurrencyListLoadingV2 } from './common/token-selector-currency-list-v2'
 
 interface TokenSelectorTrendingTokens {
   chainId: TrendingTokensChainId
@@ -16,14 +13,7 @@ interface TokenSelectorTrendingTokens {
 }
 
 function Shell({ children }: { children: React.ReactNode }) {
-  return (
-    <div className="flex flex-1 flex-col space-y-2">
-      <div className="text-sm">Trending Tokens</div>
-      <List.Control className="flex flex-1">
-        <div className="flex-1 block">{children}</div>
-      </List.Control>
-    </div>
-  )
+  return <div className="flex-1 flex flex-col">{children}</div>
 }
 
 const emptyMap = new Map()
@@ -41,7 +31,7 @@ export function TokenSelectorTrendingTokens({
   if (isLoading)
     return (
       <Shell>
-        <TokenSelectorCurrencyListLoading count={20} />
+        <TokenSelectorCurrencyListLoadingV2 count={20} />
       </Shell>
     )
 

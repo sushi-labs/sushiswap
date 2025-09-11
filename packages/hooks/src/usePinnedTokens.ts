@@ -10,20 +10,22 @@ function getAddress(address: string) {
   return _getAddress(address)
 }
 
+export type PinnedTokenId = `${EvmID}:${string}` //ID:symbol
+
 export const usePinnedTokens = () => {
   const [pinnedTokens, setPinnedTokens] = useLocalStorage(
-    'sushi.pinned-tokens',
+    'sushi.pinned-tokens-advanced',
     {} as Record<string, string[]>,
   )
 
   const addPinnedToken = useCallback(
-    (currencyId: string) => {
-      const [chainId, address] = currencyId.split(':')
+    (currencyId: PinnedTokenId) => {
+      const [chainId, address, symbol] = currencyId.split(':')
       setPinnedTokens((value) => {
         value[chainId] = Array.from(
           new Set([
             ...(value[chainId] || []),
-            `${chainId}:${getAddress(address)}`,
+            `${chainId}:${getAddress(address)}:${symbol}`,
           ]),
         )
         return value
@@ -33,13 +35,14 @@ export const usePinnedTokens = () => {
   )
 
   const removePinnedToken = useCallback(
-    (currencyId: EvmID) => {
-      const [chainId, address] = currencyId.split(':')
+    (currencyId: PinnedTokenId) => {
+      const [chainId, address, symbol] = currencyId.split(':')
       setPinnedTokens((value) => {
         value[chainId] = Array.from(
           new Set(
             value[chainId].filter(
-              (token) => token !== `${chainId}:${getAddress(address)}`,
+              (token) =>
+                token !== `${chainId}:${getAddress(address)}:${symbol}`,
             ),
           ),
         )
@@ -56,23 +59,24 @@ export const usePinnedTokens = () => {
           throw new Error('Address provided instead of id')
         }
 
-        const [chainId, address] = currency.split(':')
+        const [chainId, address, symbol] = currency.split(':')
         if (address !== 'NATIVE' && !isAddress(address)) {
           throw new Error('Address provided not a valid ERC20 address')
         }
-
         return pinnedTokens?.[chainId]?.includes(
-          `${chainId}:${getAddress(address)}`,
+          `${chainId}:${getAddress(address)}:${symbol}`,
         )
       }
 
-      return !!pinnedTokens?.[currency.chainId]?.includes(currency.id)
+      return !!pinnedTokens?.[currency.chainId]?.includes(
+        `${currency.id}:${currency?.symbol}`,
+      )
     },
     [pinnedTokens],
   )
 
   const mutate = useCallback(
-    (type: 'add' | 'remove', currencyId: EvmID) => {
+    (type: 'add' | 'remove', currencyId: PinnedTokenId) => {
       if (type === 'add') addPinnedToken(currencyId)
       if (type === 'remove') removePinnedToken(currencyId)
     },

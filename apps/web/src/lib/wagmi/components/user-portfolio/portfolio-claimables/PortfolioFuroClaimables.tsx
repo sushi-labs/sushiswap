@@ -19,17 +19,20 @@ export const PortfolioFuroClaimables: FC<PortfolioFuroClaimablesProps> = ({
   claimables,
 }) => (
   <AccordionItem value="furo" className="!border-0">
-    <AccordionTrigger className="px-5 underline-offset-2">
+    <AccordionTrigger
+      chevronChildren={<span className="text-xs text-[#64748B]">Hide</span>}
+      className="px-3 !py-2 text-xs text-[#64748B] hover:!no-underline [&[data-state=open]>div>span]:block [&[data-state=closed]>div>span]:hidden"
+    >
       {`Furo Streaming (${claimables.length})`}
     </AccordionTrigger>
-    <AccordionContent className="cursor-default">
+    <AccordionContent childClassName="!pb-0" className="cursor-default">
       {claimables.map(({ position, token }) => (
         <PortfolioInfoRow
           key={`${position.chainId}:${position.id}`}
           chainId={token.chainId as EvmChainId}
-          href={`https://pay.sushi.com/${
-            position.name.startsWith('Vesting') ? 'vesting' : 'stream'
-          }/${position.chainId}:${position.positionId}`}
+          href={`https://pay.sushi.com/${position.name.startsWith('Vesting') ? 'vesting' : 'stream'}/${
+            position.chainId
+          }:${position.positionId}`}
           icon={
             <img
               className="rounded-full"

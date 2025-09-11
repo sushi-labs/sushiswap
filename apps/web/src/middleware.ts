@@ -16,6 +16,7 @@ export const config = {
     '/:chainId/limit/:path*',
     '/:chainId/dca/:path*',
     '/:chainId/cross-chain-swap/:path*',
+    // '/:chainId/fiat/:path*',//disabled until funkit integration ready
     '/:chainId/explore/:path*',
     '/:chainId/pool/:path*',
     '/:chainId/token/:path*',
@@ -44,6 +45,7 @@ export async function middleware(req: NextRequest) {
     pathname === '/limit' ||
     pathname === '/dca' ||
     pathname === '/cross-chain-swap'
+    // pathname === "/fiat"//disabled until funkit integration ready
   ) {
     const path = ['/explore', '/pools'].includes(pathname)
       ? 'explore/pools'
