@@ -60,7 +60,9 @@ export const UtilityButtons = () => {
                 <Separator />
               </Fragment>
             ))}
-            <span>Socials</span>
+            <span className="text-muted-foreground cursor-default">
+              Socials
+            </span>
             <div className="flex gap-5 items-center">
               <LinkExternal href={'https://sushi.com/github'}>
                 <GithubIcon
