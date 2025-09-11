@@ -16,7 +16,7 @@ import {
   Separator,
   Switch,
 } from '@sushiswap/ui'
-import { useCallback, useEffect, useState } from 'react'
+import { type ReactElement, useCallback, useEffect, useState } from 'react'
 import { announceCookieChange } from './announce-cookie-change'
 
 type BaseAction = 'accept' | 'reject' | 'manage'
@@ -40,10 +40,11 @@ function BaseCookieDialog({
         analyse website usage and conduct surveys. You can revoke your consent
         at any time via the “Manage cookie preferences” button.
         <br />
+        <br />
         For further information on our data processing and cookies, please visit
-        our
-        <LinkExternal href="/legal/privacy-policy">Privacy Policy</LinkExternal>
-        and our
+        our{' '}
+        <LinkExternal href="/legal/privacy-policy">Privacy Policy</LinkExternal>{' '}
+        and our{' '}
         <LinkExternal href="/legal/cookie-policy">Cookie Policy</LinkExternal>.
       </div>
       <Separator />
@@ -117,9 +118,11 @@ function ManageCookieDialog({
             <span>Analytical Cookies</span>
             <Switch
               checked={cookieSet.has('analytical')}
-              onCheckedChange={(enabled) =>
+              onCheckedChange={(enabled) => {
                 onAction({ type: 'set', cookieType: 'analytical', enabled })
-              }
+                onAction({ type: 'set', cookieType: 'google', enabled })
+                onAction({ type: 'set', cookieType: 'hotjar', enabled })
+              }}
             />
           </div>
           <div>
@@ -139,34 +142,42 @@ function ManageCookieDialog({
                 <div className="flex gap-1.5 items-center">
                   <input
                     type="checkbox"
-                    disabled={!cookieSet.has('analytical')}
-                    checked={
-                      cookieSet.has('analytical') && cookieSet.has('google')
-                    }
-                    onChange={(e) =>
+                    checked={cookieSet.has('google')}
+                    onChange={(e) => {
                       onAction({
                         type: 'set',
                         cookieType: 'google',
                         enabled: e.currentTarget.checked,
                       })
-                    }
+                      if (!cookieSet.has('analytical')) {
+                        onAction({
+                          type: 'set',
+                          cookieType: 'analytical',
+                          enabled: true,
+                        })
+                      }
+                    }}
                   />
                   Google
                 </div>
                 <div className="flex gap-1.5 items-center">
                   <input
                     type="checkbox"
-                    disabled={!cookieSet.has('analytical')}
-                    checked={
-                      cookieSet.has('analytical') && cookieSet.has('hotjar')
-                    }
-                    onChange={(e) =>
+                    checked={cookieSet.has('hotjar')}
+                    onChange={(e) => {
                       onAction({
                         type: 'set',
                         cookieType: 'hotjar',
                         enabled: e.currentTarget.checked,
                       })
-                    }
+                      if (!cookieSet.has('analytical')) {
+                        onAction({
+                          type: 'set',
+                          cookieType: 'analytical',
+                          enabled: true,
+                        })
+                      }
+                    }}
                   />
                   HotJar
                 </div>
@@ -188,14 +199,19 @@ function ManageCookieDialog({
   )
 }
 
-export function CookieDialog({ defaultOpen }: { defaultOpen: boolean }) {
+const alwaysEnabledCookieTypes = ['essential'] as const
+
+export function CookieDialog({
+  defaultOpen,
+  children,
+}: { defaultOpen: boolean; children: ReactElement }) {
   const [open, setOpen] = useState(defaultOpen)
   const [page, setPage] = useState<'base' | 'manage'>('base')
 
   const isMounted = useIsMounted()
 
   const [enabledCookieSet, setEnabledCookieSet] = useState<Set<CookieType>>(
-    new Set(cookieTypes),
+    new Set(alwaysEnabledCookieTypes),
   )
 
   const onConfirm = useCallback((cookieSet: Set<CookieType>) => {
@@ -213,7 +229,7 @@ export function CookieDialog({ defaultOpen }: { defaultOpen: boolean }) {
           onConfirm(new Set<CookieType>(cookieTypes))
           break
         case 'reject':
-          onConfirm(new Set<CookieType>(['essential']))
+          onConfirm(new Set<CookieType>(alwaysEnabledCookieTypes))
           break
         case 'manage':
           setPage('manage')
@@ -230,7 +246,7 @@ export function CookieDialog({ defaultOpen }: { defaultOpen: boolean }) {
           onConfirm(enabledCookieSet)
           break
         case 'reject':
-          onConfirm(new Set<CookieType>(['essential']))
+          onConfirm(new Set<CookieType>(alwaysEnabledCookieTypes))
           break
         case 'set':
           setEnabledCookieSet((prev) => {
@@ -260,11 +276,8 @@ export function CookieDialog({ defaultOpen }: { defaultOpen: boolean }) {
 
   return (
     <Dialog open={open && isMounted} onOpenChange={setOpen}>
-      <DialogTrigger
-        onClick={() => setPage('manage')}
-        className="fixed bottom-5 right-8 text-xs underline text-muted-foreground"
-      >
-        Cookie Preferences
+      <DialogTrigger onClick={() => setPage('manage')}>
+        {children}
       </DialogTrigger>
 
       {page === 'base' ? (

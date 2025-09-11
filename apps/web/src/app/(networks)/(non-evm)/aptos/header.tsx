@@ -4,10 +4,10 @@ import { Navigation, SushiNavigationDropdown, classNames } from '@sushiswap/ui'
 import { SushiIcon } from '@sushiswap/ui/icons/SushiIcon'
 import { SushiWithTextIcon } from '@sushiswap/ui/icons/SushiWithTextIcon'
 import React, { type FC, Suspense } from 'react'
+import { headerElements } from 'src/app/_common/header-elements'
 import { SUPPORTED_NETWORKS } from 'src/config'
 import { HeaderNetworkSelector } from 'src/lib/wagmi/components/header-network-selector'
 import { ChainId } from 'sushi'
-import { headerElements } from './_common/header-elements'
 import { UserProfile } from './_common/ui/user-profile/user-profile'
 
 export const Header: FC<{
@@ -33,7 +33,7 @@ export const Header: FC<{
         <Navigation
           className="!pl-0 lg:!pl-4 !z-[unset]"
           hideSushiDropdown
-          leftElements={headerElements}
+          leftElements={headerElements({ chainId: ChainId.APTOS })}
           rightElement={
             <Suspense>
               <HeaderNetworkSelector
