@@ -279,7 +279,7 @@ export const BladeAddLiquidityReviewModal: FC<
                     if (!parsedAmount) return null
 
                     const price = prices?.get(input.token.wrap().address) || 0
-                    const usdValue = Number(parsedAmount.amount) * price
+                    const usdValue = Number(parsedAmount.toString()) * price
 
                     return (
                       <div

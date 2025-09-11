@@ -55,7 +55,7 @@ export const SingleAssetWithdrawal: FC<SingleAssetWithdrawalProps> = ({
     )
 
     const tokenPrice = prices?.get(selectedToken.wrap().address) || 0
-    const usdValue = Number(exactAmount.amount) * tokenPrice
+    const usdValue = Number(exactAmount.toString()) * tokenPrice
 
     return {
       singleAssetData: {
