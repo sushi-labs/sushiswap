@@ -136,13 +136,6 @@ export function getPoolName(
 }
 
 /**
- * Left shift operation using BigInt
- */
-export const leftShift = (n: bigint, e: number): bigint => {
-  return n << BigInt(e)
-}
-
-/**
  * Convert a value to a 32-byte hex string
  */
 export const byte32 = (value: string | bigint): Hex => {
@@ -165,7 +158,7 @@ export const packAddressAndAmount = (
 
   // amountAndAddress - uint256 - first 24 hexchars are a uint, last 40 are an address.
   // Interpret address as a uint256 and add the amount, leftshifted 160 bits.
-  return leftShift(amountBn, 160) + addressBn
+  return (amountBn << 160n) + addressBn
 }
 
 /**
@@ -182,9 +175,9 @@ export const packRfqConfig = (
   nDays: number,
   v: number,
 ): bigint => {
-  const n1 = leftShift(BigInt(poolTokens), 128)
-  const n2 = leftShift(BigInt(goodUntil), 32)
-  const n3 = leftShift(BigInt(nDays), 8)
+  const n1 = BigInt(poolTokens) << 128n
+  const n2 = BigInt(goodUntil) << 32n
+  const n3 = BigInt(nDays) << 8n
   const n4 = BigInt(v)
 
   return n1 + n2 + n3 + n4
@@ -198,7 +191,7 @@ export const packRfqConfig = (
  */
 export const shortenSignature = (s: string, v: number): string => {
   const parity = v - 27
-  const shiftedParity = leftShift(BigInt(parity), 255)
+  const shiftedParity = BigInt(parity) << 255n
 
   return (BigInt(s) + shiftedParity).toString()
 }
