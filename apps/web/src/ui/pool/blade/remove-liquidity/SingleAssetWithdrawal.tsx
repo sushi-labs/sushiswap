@@ -2,10 +2,9 @@ import type { BladePool } from '@sushiswap/graph-client/data-api'
 import { createErrorToast } from '@sushiswap/notifications'
 import { Button, Currency, Dots } from '@sushiswap/ui'
 import { type FC, useCallback, useMemo } from 'react'
-import {
-  useBladeWithdrawRequest,
-  type useBladeWithdrawTransaction,
-} from 'src/lib/pool/blade/useBladeWithdraw'
+import type { useBladeWithdrawTransaction } from 'src/lib/pool/blade/useBladeWithdraw'
+import { useBladeWithdrawRequest } from 'src/lib/pool/blade/useBladeWithdrawRequest'
+
 import { Amount, formatUSD } from 'sushi'
 import { type EvmCurrency, EvmNative } from 'sushi/evm'
 import { useAccount } from 'wagmi'

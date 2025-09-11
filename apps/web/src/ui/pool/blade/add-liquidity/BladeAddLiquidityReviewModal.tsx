@@ -23,11 +23,9 @@ import {
   useMemo,
 } from 'react'
 import { APPROVE_TAG_ADD_LEGACY } from 'src/lib/constants'
-import {
-  type RfqAllowDepositResponse,
-  useBladeDepositRequest,
-  useBladeDepositTransaction,
-} from 'src/lib/pool/blade/useBladeDeposit'
+import type { RfqAllowDepositResponse } from 'src/lib/pool/blade/useBladeAllowDeposit'
+import { useBladeDepositRequest } from 'src/lib/pool/blade/useBladeDepositRequest'
+import { useBladeDepositTransaction } from 'src/lib/pool/blade/useBladeDepositTransaction'
 import { useUnlockDeposit } from 'src/lib/pool/blade/useUnlockDeposit'
 import { isUserRejectedError } from 'src/lib/wagmi/errors'
 import { useTotalSupply } from 'src/lib/wagmi/hooks/tokens/useTotalSupply'
