@@ -1,6 +1,6 @@
 import { Button, DialogTrigger } from '@sushiswap/ui'
 import React, { useEffect, useMemo, useState } from 'react'
-import { PriceImpactWarning } from 'src/ui/common'
+import { PriceImpactWarning } from 'src/app/(networks)/_ui/price-impact-warning'
 import { useIsSwapMaintenance } from '~aptos/_common/lib/edge/use-is-swap-maintenance'
 import { Checker } from '~aptos/_common/ui/checker'
 import { useSwap } from '~aptos/swap/lib/use-swap'
