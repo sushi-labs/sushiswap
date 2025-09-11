@@ -40,12 +40,11 @@ const SkeletonDCAPanel = () => {
 }
 
 const LimitContainerPanel = dynamic(
-  () =>
-    import('../../../../(orbs)/_ui/limit-widget').then((it) => it.LimitWidget),
+  () => import('../../../twap/limit-widget').then((it) => it.LimitWidget),
   { ssr: false, loading: () => <SkeletonLimitPanel /> },
 )
 const TWAPContainerPanel = dynamic(
-  () => import('../../../../(orbs)/_ui/dca-widget').then((it) => it.DCAWidget),
+  () => import('../../../twap/dca-widget').then((it) => it.DCAWidget),
   {
     ssr: false,
     loading: () => <SkeletonDCAPanel />,

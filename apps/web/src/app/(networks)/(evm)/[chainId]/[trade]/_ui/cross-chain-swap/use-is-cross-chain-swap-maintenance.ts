@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { useEdgeConfig } from 'src/providers/edge-config-provider'
-import type { CrossChainSwapEdgeConfig } from '../../swap/_ui/trade/trade-edge-config'
+import type { CrossChainSwapEdgeConfig } from '../swap/trade/trade-edge-config'
 
 export const useIsCrossChainSwapMaintenance = () => {
   const { maintenance } = useEdgeConfig<CrossChainSwapEdgeConfig>()

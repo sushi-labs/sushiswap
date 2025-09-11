@@ -43,8 +43,8 @@ import {
   EvmToken,
 } from 'sushi/evm'
 import { formatUnits, zeroAddress } from 'viem'
-import { NetworkButton } from '~evm/[chainId]/(trade)/swap/_ui/chain-options-selector'
-import { FavoriteButton } from '~evm/[chainId]/(trade)/swap/_ui/trade/favorite-button'
+import { NetworkButton } from '~evm/[chainId]/[trade]/_ui/swap/chain-options-selector'
+import { FavoriteButton } from '~evm/[chainId]/[trade]/_ui/swap/trade/favorite-button'
 
 export interface TokenSelectorRowV2 {
   account?: `0x${string}`

@@ -1,10 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import ms from 'ms'
 import { useEdgeConfig } from 'src/providers/edge-config-provider'
-import type {
-  DCAEdgeConfig,
-  LimitEdgeConfig,
-} from '../../swap/_ui/trade/trade-edge-config'
+import type { DCAEdgeConfig, LimitEdgeConfig } from '../swap/trade/trade-edge-config'
 import { useDerivedStateTwap } from './derivedstate-twap-provider'
 
 const useIsDCAMaintenance = () => {

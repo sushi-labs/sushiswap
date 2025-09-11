@@ -1,4 +1,4 @@
-import { SimpleSwapTokenNotFoundDialog } from '../../swap/_ui/simple-swap-token-not-found-dialog'
+import { SimpleSwapTokenNotFoundDialog } from '../swap/simple-swap-token-not-found-dialog'
 import { LimitErrors } from './limit-errors'
 import { LimitEstPnl } from './limit-est-pnl'
 import { LimitExpiryInputV2 } from './limit-expiry-input-v2'

@@ -49,9 +49,9 @@ import {
   type UseTwapTradeReturn,
   useDerivedStateTwap,
   useTwapTrade,
-} from '~evm/[chainId]/(trade)/(orbs)/_ui/derivedstate-twap-provider'
+} from '~evm/[chainId]/[trade]/_ui/twap/derivedstate-twap-provider'
 import { usePrice } from '~evm/_common/ui/price-provider/price-provider/use-price'
-import { useDerivedStateSimpleTrade } from '../../swap/_ui/trade/derivedstate-simple-trade-provider'
+import { useDerivedStateSimpleTrade } from '../swap/trade/derivedstate-simple-trade-provider'
 
 export const TwapTradeReviewDialog: FC<{
   children: ReactNode

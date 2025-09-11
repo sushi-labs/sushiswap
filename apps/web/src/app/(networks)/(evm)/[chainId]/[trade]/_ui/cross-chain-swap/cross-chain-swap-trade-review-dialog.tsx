@@ -73,7 +73,7 @@ import {
 } from 'wagmi'
 import { useRefetchBalances } from '~evm/_common/ui/balance-provider/use-refetch-balances'
 import { usePrice } from '~evm/_common/ui/price-provider/price-provider/use-price'
-import { useDerivedStateSimpleTrade } from '../../swap/_ui/trade/derivedstate-simple-trade-provider'
+import { useDerivedStateSimpleTrade } from '../swap/trade/derivedstate-simple-trade-provider'
 import {
   ConfirmationDialogContent,
   Divider,

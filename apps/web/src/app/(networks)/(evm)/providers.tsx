@@ -2,7 +2,7 @@
 
 import { ProductNotificationLoader } from '@sushiswap/notifications'
 import { useAccount } from 'wagmi'
-import { DerivedstateSimpleTradeProvider } from './[chainId]/(trade)/swap/_ui/trade/derivedstate-simple-trade-provider'
+import { DerivedstateSimpleTradeProvider } from './[chainId]/[trade]/_ui/swap/trade/derivedstate-simple-trade-provider'
 import { BalanceProvider } from './_common/ui/balance-provider/balance-provider'
 import { PriceProvider } from './_common/ui/price-provider/price-provider/price-provider'
 

@@ -15,7 +15,7 @@ import { warningSeverity } from 'src/lib/swap/warningSeverity'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
 import { ZERO } from 'sushi'
 import { EvmNative, getEvmChainById } from 'sushi/evm'
-import { useIsSwapMaintenance } from '~evm/[chainId]/(trade)/swap/_ui/use-is-swap-maintenance'
+import { useIsSwapMaintenance } from '~evm/[chainId]/[trade]/_ui/swap/use-is-swap-maintenance'
 import {
   useDerivedStateSwapWidget,
   useSwapWidgetTradeQuote,

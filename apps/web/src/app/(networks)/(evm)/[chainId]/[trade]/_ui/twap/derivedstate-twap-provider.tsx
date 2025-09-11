@@ -27,7 +27,7 @@ import { z } from 'zod'
 import {
   DerivedstateSimpleSwapProvider,
   useDerivedStateSimpleSwap,
-} from '~evm/[chainId]/(trade)/swap/_ui/derivedstate-simple-swap-provider'
+} from '~evm/[chainId]/[trade]/_ui/swap/derivedstate-simple-swap-provider'
 import { usePrices } from '~evm/_common/ui/price-provider/price-provider/use-prices'
 
 type DerivedStateSimpleSwapState = ReturnType<typeof useDerivedStateSimpleSwap>

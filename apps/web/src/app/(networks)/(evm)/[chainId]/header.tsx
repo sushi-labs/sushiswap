@@ -10,7 +10,7 @@ import { WagmiHeaderComponents } from 'src/lib/wagmi/components/wagmi-header-com
 import { ChainId } from 'sushi'
 
 import { useChainId } from 'wagmi'
-import { useDerivedStateSimpleTrade } from './(trade)/swap/_ui/trade/derivedstate-simple-trade-provider'
+import { useDerivedStateSimpleTrade } from './[trade]/_ui/swap/trade/derivedstate-simple-trade-provider'
 
 interface HeaderProps {
   chainId?: ChainId

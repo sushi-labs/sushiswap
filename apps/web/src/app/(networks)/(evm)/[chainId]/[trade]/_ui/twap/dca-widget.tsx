@@ -1,4 +1,4 @@
-import { SimpleSwapTokenNotFoundDialog } from '~evm/[chainId]/(trade)/swap/_ui/simple-swap-token-not-found-dialog'
+import { SimpleSwapTokenNotFoundDialog } from '~evm/[chainId]/[trade]/_ui/swap/simple-swap-token-not-found-dialog'
 import { DCAErrors } from './dca-errors'
 import { DCAOptionsInput } from './dca-options-input'
 import { DCAToken1Input } from './dca-token1-input'

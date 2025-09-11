@@ -12,20 +12,20 @@ import { useHeaderNetworkSelector } from 'src/lib/wagmi/components/header-networ
 
 import { Search } from 'src/app/(landing)/components'
 import type { ChainId } from 'sushi'
-import { Chart } from '../(trade)/swap/_ui/trade/chart/chart'
-import { ChartHeader } from '../(trade)/swap/_ui/trade/chart/chart-header'
-import { ChartProvider } from '../(trade)/swap/_ui/trade/chart/chart-provider'
-import { MobileChart } from '../(trade)/swap/_ui/trade/chart/mobile-chart'
+import { Chart } from './_ui/swap/trade/chart/chart'
+import { ChartHeader } from './_ui/swap/trade/chart/chart-header'
+import { ChartProvider } from './_ui/swap/trade/chart/chart-provider'
+import { MobileChart } from './_ui/swap/trade/chart/mobile-chart'
 import {
   CHAIN_IDS_BY_TRADE_MODE,
   type TradeMode,
-} from '../(trade)/swap/_ui/trade/config'
-import { useDerivedStateSimpleTrade } from '../(trade)/swap/_ui/trade/derivedstate-simple-trade-provider'
-import { FavoriteRecentTabView } from '../(trade)/swap/_ui/trade/favorite-recent/favorite-recent-tab-view'
-import { NetworkProvider } from '../(trade)/swap/_ui/trade/favorite-recent/network-provider'
-import { TradeTableTabs } from '../(trade)/swap/_ui/trade/tab-tables/trade-tabs/trade-table-tabs'
-import { TradeViewSwitch } from '../(trade)/swap/_ui/trade/trade-view-switch'
-import { TradeWidget } from '../(trade)/swap/_ui/trade/trade-widget'
+} from './_ui/swap/trade/config'
+import { useDerivedStateSimpleTrade } from './_ui/swap/trade/derivedstate-simple-trade-provider'
+import { FavoriteRecentTabView } from './_ui/swap/trade/favorite-recent/favorite-recent-tab-view'
+import { NetworkProvider } from './_ui/swap/trade/favorite-recent/network-provider'
+import { TradeTableTabs } from './_ui/swap/trade/tab-tables/trade-tabs/trade-table-tabs'
+import { TradeViewSwitch } from './_ui/swap/trade/trade-view-switch'
+import { TradeWidget } from './_ui/swap/trade/trade-widget'
 
 const chainIdsByTradeMode: Record<TradeMode, ChainId[] | null> = {
   ...(CHAIN_IDS_BY_TRADE_MODE as any),
