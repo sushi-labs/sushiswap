@@ -45,6 +45,7 @@ export const headerElements: NavigationElement[] = [
     show: 'desktop',
     type: NavigationElementType.Single,
   },
+
   {
     title: 'Pool',
     href: `/tron/pool`,

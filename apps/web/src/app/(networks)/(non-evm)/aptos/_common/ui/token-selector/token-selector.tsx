@@ -232,7 +232,7 @@ const CommonTokenButton = ({
       className="flex items-center justify-between w-fit"
       variant="secondary"
     >
-      <div className="flex items-center w-full gap-2 ">
+      <div className="flex items-center gap-2 w-full ">
         <div className="w-6 h-6">
           <CurrencyIcon currency={token} />
         </div>

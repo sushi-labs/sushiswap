@@ -151,7 +151,11 @@ function SkeletonChartLoadingStateMask({
   }
 }
 
-function SkeletonChartXAxe({ height }: { height: number }) {
+function SkeletonChartXAxe({
+  height,
+}: {
+  height: number
+}) {
   return (
     <svg transform={`translate(0, ${height})`}>
       <rect

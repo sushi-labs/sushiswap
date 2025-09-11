@@ -60,7 +60,7 @@ export const SwapModeButtons = () => {
   }
 
   return (
-    <div className="flex flex-wrap gap-1 md:gap-2">
+    <div className="flex gap-1 md:gap-2 flex-wrap">
       <SwapModeButton
         isSupported={isSupportedChainId(chainId)}
         path={`/${getEvmChainById(chainId).key}/swap`}
@@ -85,11 +85,11 @@ export const SwapModeButtons = () => {
           path={`/${getEvmChainById(chainId).key}/cross-chain-swap`}
         >
           <HoverCardTrigger asChild>
-            <span className="flex gap-2 items-center text-transparent bg-clip-text bg-gradient-to-r saturate-200 from-blue to-pink">
+            <span className="saturate-200 flex items-center gap-2 bg-gradient-to-r from-blue to-pink bg-clip-text text-transparent">
               <ShuffleIcon
                 width={20}
                 height={20}
-                className="hidden text-blue md:block"
+                className="text-blue hidden md:block"
               />
               Cross-Chain
             </span>

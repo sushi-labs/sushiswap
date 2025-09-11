@@ -78,7 +78,9 @@ export const BarChartGraph: FC<BarChartProps> = ({ chart, period }) => {
       if (nameNodes[0]) {
         nameNodes[0].innerHTML = format(
           new Date(name * 1000),
-          `dd MMM yyyy${chartPeriods[period] < chartPeriods[BarChartPeriod.Week] ? ' p' : ''}`,
+          `dd MMM yyyy${
+            chartPeriods[period] < chartPeriods[BarChartPeriod.Week] ? ' p' : ''
+          }`,
         )
       }
     },
@@ -117,7 +119,11 @@ export const BarChartGraph: FC<BarChartProps> = ({ chart, period }) => {
               date instanceof Date && !Number.isNaN(date?.getTime())
                 ? format(
                     date,
-                    `dd MMM yyyy${chartPeriods[period] < chartPeriods[BarChartPeriod.Week] ? ' p' : ''}`,
+                    `dd MMM yyyy${
+                      chartPeriods[period] < chartPeriods[BarChartPeriod.Week]
+                        ? ' p'
+                        : ''
+                    }`,
                   )
                 : ''
             }</span>

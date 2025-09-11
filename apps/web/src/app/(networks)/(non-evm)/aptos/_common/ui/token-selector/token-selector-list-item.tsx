@@ -39,11 +39,11 @@ export function TokenListItem({
               <Badge
                 position="bottom-right"
                 badgeContent={
-                  <div className="bg-white rounded-full dark:bg-slate-800">
+                  <div className="bg-white dark:bg-slate-800 rounded-full">
                     <CheckCircleIcon
                       width={20}
                       height={20}
-                      className="rounded-full text-blue"
+                      className="text-blue rounded-full"
                     />
                   </div>
                 }
