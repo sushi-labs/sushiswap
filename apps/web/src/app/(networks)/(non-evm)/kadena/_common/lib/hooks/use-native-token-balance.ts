@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
+import ms from 'ms'
 import { kadenaClient } from '~kadena/_common/constants/client'
 import {
   KADENA_CHAIN_ID,
@@ -43,7 +44,7 @@ export const useNativeTokenBalance = ({
       }
     },
     enabled: !!account && enabled,
-    staleTime: (60 * 1000) / 6,
-    gcTime: (5 * 60 * 1000) / 6,
+    staleTime: ms('10s'),
+    gcTime: ms('1m'),
   })
 }
