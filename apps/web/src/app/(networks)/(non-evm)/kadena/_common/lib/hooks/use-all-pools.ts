@@ -1,42 +1,53 @@
-import { useInfiniteQuery } from '@tanstack/react-query'
-import type { KadenaPoolsApiResponse } from '~kadena/_common/types/get-all-pools-type'
+import { type InfiniteData, useInfiniteQuery } from '@tanstack/react-query'
+
+import {
+  type GetPoolsOrderBy,
+  getAllPools,
+} from '@sushiswap/graph-client/kadena'
+import { useCallback } from 'react'
 
 export const useAllPools = ({
   first = 50,
   orderBy = 'TVL_USD_DESC',
 }: {
   first?: number
-  orderBy?: string
+  orderBy?: GetPoolsOrderBy
 } = {}) => {
-  // console.log('useAllPools called with params:', { first, orderBy })
-
-  return useInfiniteQuery({
-    queryKey: ['kadena-pools', first, orderBy],
-    queryFn: async ({
-      pageParam = null,
-    }): Promise<KadenaPoolsApiResponse['data']> => {
-      const url = new URL('/kadena/api/pools', window.location.origin)
-      url.searchParams.set('first', String(first))
-      url.searchParams.set('orderBy', orderBy)
-      if (pageParam) url.searchParams.set('after', String(pageParam))
-
-      const res = await fetch(url.toString())
-      const data = (await res.json()) as KadenaPoolsApiResponse
-
-      if (!data.success) {
-        console.error('Failed to fetch pools:', data)
-        throw new Error('Failed to fetch pools')
-      }
-
-      return data.data
-    },
-    getNextPageParam: (lastPage: KadenaPoolsApiResponse['data']) => {
-      const nextCursor = lastPage.pageInfo?.hasNextPage
-        ? lastPage.pageInfo.endCursor
-        : undefined
-      return nextCursor
-    },
-    select: (data) => {
+  const select = useCallback(
+    (
+      data: InfiniteData<
+        {
+          pools: {
+            fees24hUsd: number
+            apr24h: number
+            transactionCount24h: number
+            volume7dUsd: number
+            volume24hUsd: number
+            tvlUsd: number
+            token1: {
+              address: string
+              chainId: string
+              name: string
+              id: string
+            }
+            token0: {
+              address: string
+              chainId: string
+              name: string
+              id: string
+            }
+            address: string
+            id: string
+          }[]
+          pageInfo: {
+            endCursor: string
+            hasNextPage: boolean
+          }
+          totalCount: number
+        },
+        string | null
+      >,
+    ) => {
       const flat = data.pages.flatMap((p) => p.pools)
       return {
         ...data,
@@ -44,8 +55,36 @@ export const useAllPools = ({
         count: data.pages[0].totalCount,
       }
     },
+    [],
+  )
+
+  return useInfiniteQuery({
+    queryKey: ['kadena-pools', first, orderBy],
+    queryFn: async ({ pageParam = null }: { pageParam: string | null }) => {
+      const data = await getAllPools({
+        first: first,
+        orderBy: orderBy,
+        after: pageParam ?? undefined,
+      })
+
+      if (!data) {
+        console.error('Failed to fetch pools:', data)
+        throw new Error('Failed to fetch pools')
+      }
+
+      return {
+        pools: data?.edges?.map((edge) => edge?.node),
+        pageInfo: data?.pageInfo,
+        totalCount: data?.totalCount,
+      }
+    },
+    getNextPageParam: (lastPage) => {
+      const nextCursor = lastPage.pageInfo?.hasNextPage
+        ? lastPage.pageInfo.endCursor
+        : undefined
+      return nextCursor
+    },
+    select,
     initialPageParam: null,
-    // staleTime: 5 * 60 * 1000,
-    // gcTime: 10 * 60 * 1000,
   })
 }

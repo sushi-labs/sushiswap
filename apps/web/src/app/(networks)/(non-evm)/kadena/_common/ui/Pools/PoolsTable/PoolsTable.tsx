@@ -1,5 +1,6 @@
 'use client'
 
+import type { KadenaPool } from '@sushiswap/graph-client/kadena'
 import {
   Card,
   CardHeader,
@@ -8,17 +9,12 @@ import {
   Loader,
   SkeletonText,
 } from '@sushiswap/ui'
-import type {
-  ColumnDef,
-  PaginationState,
-  SortingState,
-  TableState,
-} from '@tanstack/react-table'
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import type { ColumnDef, SortingState, TableState } from '@tanstack/react-table'
+import React, { useCallback, useMemo, useState } from 'react'
 import InfiniteScroll from 'react-infinite-scroll-component'
 import { usePoolFilters } from 'src/ui/pool'
 import { useAllPools } from '~kadena/_common/lib/hooks/use-all-pools'
-import type { Pool } from '~kadena/_common/types/get-all-pools-type'
+
 import {
   APR_COLUMN,
   FEES_1D_COLUMN,
@@ -35,7 +31,7 @@ const COLUMNS = [
   FEES_1D_COLUMN,
   TRANSACTIONS_1D_COLUMN,
   APR_COLUMN,
-] satisfies ColumnDef<Pool, unknown>[]
+] satisfies ColumnDef<KadenaPool, unknown>[]
 
 export const PoolsTable = () => {
   const { tokenSymbols } = usePoolFilters()
@@ -49,13 +45,13 @@ export const PoolsTable = () => {
     orderBy: 'TVL_USD_DESC',
   })
 
-  const rowLink = useCallback((row: Pool | undefined) => {
+  const rowLink = useCallback((row: KadenaPool | undefined) => {
     if (!row) return ''
     return `/kadena/pool/${encodeURIComponent(row.id)}`
   }, [])
 
   const filtered = useMemo(() => {
-    if (!data?.pools) return [] as Pool[]
+    if (!data?.pools) return [] as KadenaPool[]
 
     return data.pools.filter((pool) => {
       if (tokenSymbols.length) {

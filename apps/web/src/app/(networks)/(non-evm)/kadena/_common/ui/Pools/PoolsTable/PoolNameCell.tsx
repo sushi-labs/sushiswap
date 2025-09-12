@@ -1,13 +1,13 @@
+import type { KadenaPool } from '@sushiswap/graph-client/kadena'
 import { Badge, Currency, TooltipContent } from '@sushiswap/ui'
 import { Tooltip, TooltipProvider, TooltipTrigger } from '@sushiswap/ui'
 import React, { useMemo } from 'react'
 import { formatNumber } from 'sushi'
 import { KADENA } from '~kadena/_common/constants/token-list'
 import { useBaseTokens } from '~kadena/_common/lib/hooks/use-base-tokens'
-import type { Pool } from '~kadena/_common/types/get-all-pools-type'
 import { Icon } from '../../General/Icon'
 
-export const PoolNameCell = ({ data }: { data: Pool }) => {
+export const PoolNameCell = ({ data }: { data: KadenaPool }) => {
   const { data: baseTokens } = useBaseTokens()
   const token0 = useMemo(() => {
     const _token0 = baseTokens?.find(

@@ -1,10 +1,10 @@
+import type { KadenaPool } from '@sushiswap/graph-client/kadena'
 import { SkeletonCircle, SkeletonText } from '@sushiswap/ui'
 import type { ColumnDef } from '@tanstack/react-table'
 import { formatPercent, formatUSD } from 'sushi'
-import type { Pool } from '~kadena/_common/types/get-all-pools-type'
 import { PoolNameCell } from './PoolNameCell'
 
-export const NAME_COLUMN: ColumnDef<Pool, unknown> = {
+export const NAME_COLUMN: ColumnDef<KadenaPool, unknown> = {
   id: 'name',
   header: 'Name',
   cell: (props) => <PoolNameCell data={props.row.original} />,
@@ -25,7 +25,7 @@ export const NAME_COLUMN: ColumnDef<Pool, unknown> = {
   },
 }
 
-export const TVL_COLUMN: ColumnDef<Pool, unknown> = {
+export const TVL_COLUMN: ColumnDef<KadenaPool, unknown> = {
   id: 'liquidityUSD',
   header: 'TVL',
   accessorFn: (row) => row.tvlUsd,
@@ -44,7 +44,7 @@ export const TVL_COLUMN: ColumnDef<Pool, unknown> = {
   },
 }
 
-export const VOLUME_1D_COLUMN: ColumnDef<Pool, unknown> = {
+export const VOLUME_1D_COLUMN: ColumnDef<KadenaPool, unknown> = {
   id: 'volumeUSD1d',
   header: 'Volume (24h)',
   accessorFn: (row) => row.volume24hUsd,
@@ -63,7 +63,7 @@ export const VOLUME_1D_COLUMN: ColumnDef<Pool, unknown> = {
   },
 }
 
-export const FEES_1D_COLUMN: ColumnDef<Pool, unknown> = {
+export const FEES_1D_COLUMN: ColumnDef<KadenaPool, unknown> = {
   id: 'feeUSD1d',
   header: 'Fees (24h)',
   accessorFn: (row) => row.fees24hUsd,
@@ -82,7 +82,7 @@ export const FEES_1D_COLUMN: ColumnDef<Pool, unknown> = {
   },
 }
 
-export const TRANSACTIONS_1D_COLUMN: ColumnDef<Pool, unknown> = {
+export const TRANSACTIONS_1D_COLUMN: ColumnDef<KadenaPool, unknown> = {
   id: 'txCount1d',
   header: 'Transactions (24h)',
   accessorFn: (row) => row.transactionCount24h,
@@ -96,7 +96,7 @@ export const TRANSACTIONS_1D_COLUMN: ColumnDef<Pool, unknown> = {
   },
 }
 
-export const APR_COLUMN: ColumnDef<Pool, unknown> = {
+export const APR_COLUMN: ColumnDef<KadenaPool, unknown> = {
   id: 'totalApr1d',
   header: 'APR',
   accessorFn: (row) => row.apr24h,
