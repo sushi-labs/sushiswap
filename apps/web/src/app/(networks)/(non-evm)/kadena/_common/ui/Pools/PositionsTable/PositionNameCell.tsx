@@ -1,7 +1,7 @@
+import type { WalletPosition } from '@sushiswap/graph-client/kadena'
 import { Currency, classNames } from '@sushiswap/ui'
 import { useMemo } from 'react'
 import { useBaseTokens } from '~kadena/_common/lib/hooks/use-base-tokens'
-import type { WalletPosition } from '~kadena/_common/types/get-positions'
 import { Icon } from '../../General/Icon'
 
 export const PositionNameCell = ({ data }: { data: WalletPosition }) => {

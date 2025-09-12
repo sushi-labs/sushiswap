@@ -1,20 +1,11 @@
+import {
+  type GetWalletPositionsResponse,
+  getWalletPositions,
+} from '@sushiswap/graph-client/kadena'
 import { type InfiniteData, useInfiniteQuery } from '@tanstack/react-query'
 import ms from 'ms'
 import { useCallback } from 'react'
-import type { WalletPosition } from '~kadena/_common/types/get-positions'
 import { useKadena } from '~kadena/kadena-wallet-provider'
-
-interface WalletPositionsApiResponse {
-  success: boolean
-  data: {
-    positions: WalletPosition[]
-    pageInfo: {
-      endCursor: string
-      hasNextPage: boolean
-    }
-    totalCount: number
-  }
-}
 
 export const useMyPositions = (pageSize = 50) => {
   const { activeAccount } = useKadena()
@@ -24,7 +15,7 @@ export const useMyPositions = (pageSize = 50) => {
     (
       data: InfiniteData<
         {
-          positions: WalletPosition[]
+          positions: GetWalletPositionsResponse['edges'][number]['node'][] | []
           pageInfo: {
             endCursor: string
             hasNextPage: boolean
@@ -34,7 +25,7 @@ export const useMyPositions = (pageSize = 50) => {
         string | null
       >,
     ) => {
-      const flat = data.pages.flatMap((p) => p.positions)
+      const flat = data.pages.flatMap((p) => p?.positions)
       return { ...data, positions: flat }
     },
     [],
@@ -42,24 +33,31 @@ export const useMyPositions = (pageSize = 50) => {
 
   return useInfiniteQuery({
     queryKey: ['kadena-wallet-positions', walletAddress],
-    queryFn: async ({ pageParam = null }) => {
-      const url = new URL('/kadena/api/positions', window.location.origin)
-      url.searchParams.set('walletAddress', walletAddress!)
-      url.searchParams.set('first', String(pageSize))
-
-      if (pageParam) url.searchParams.set('after', pageParam)
-
-      const res = await fetch(url.toString())
-      const json: WalletPositionsApiResponse = await res.json()
-      if (!json.success) {
-        console.error('Failed to fetch wallet positions:', json)
-        throw new Error('Failed to fetch wallet positions')
+    queryFn: async ({ pageParam = null }: { pageParam: string | null }) => {
+      if (!walletAddress) {
+        return {
+          positions: [],
+          pageInfo: {
+            hasNextPage: false,
+            endCursor: '',
+          },
+          totalCount: 0,
+        }
       }
+      const data = await getWalletPositions({
+        walletAddress,
+        first: pageSize,
+        after: pageParam ?? undefined,
+      })
 
-      return json.data
+      return {
+        positions: data?.edges?.map((edge) => edge?.node),
+        pageInfo: data?.pageInfo ?? {},
+        totalCount: data?.totalCount ?? 0,
+      }
     },
-    getNextPageParam: (lastPage: WalletPositionsApiResponse['data']) => {
-      const nextParam = lastPage.pageInfo.hasNextPage
+    getNextPageParam: (lastPage) => {
+      const nextParam = lastPage?.pageInfo?.hasNextPage
         ? lastPage.pageInfo.endCursor
         : undefined
 

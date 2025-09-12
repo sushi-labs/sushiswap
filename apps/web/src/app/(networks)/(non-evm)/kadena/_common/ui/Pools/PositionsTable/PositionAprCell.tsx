@@ -1,5 +1,5 @@
+import type { WalletPosition } from '@sushiswap/graph-client/kadena'
 import { formatPercent } from 'sushi'
-import type { WalletPosition } from '~kadena/_common/types/get-positions'
 
 export const PositionAprCell = ({ data }: { data: WalletPosition }) => {
   return (

@@ -1,7 +1,7 @@
+import type { WalletPosition } from '@sushiswap/graph-client/kadena'
 import { SkeletonCircle, SkeletonText } from '@sushiswap/ui'
 import type { ColumnDef } from '@tanstack/react-table'
 import { ICON_SIZE } from '~kadena/_common/constants/icon-size'
-import type { WalletPosition } from '~kadena/_common/types/get-positions'
 import { PositionAprCell } from './PositionAprCell'
 import { PositionNameCell } from './PositionNameCell'
 import { PositionSizeCell } from './PositionSizeCell'

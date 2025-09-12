@@ -1,11 +1,11 @@
 'use client'
 
+import type { WalletPosition } from '@sushiswap/graph-client/kadena'
 import { Card, CardHeader, CardTitle, DataTable } from '@sushiswap/ui'
 import type { PaginationState } from '@tanstack/react-table'
 import { useMemo, useState } from 'react'
 import { usePoolFilters } from 'src/ui/pool'
 import { useMyPositions } from '~kadena/_common/lib/hooks/use-my-positions'
-import type { WalletPosition } from '~kadena/_common/types/get-positions'
 import {
   APR_COLUMN,
   POSITION_NAME_COLUMN,
@@ -36,14 +36,14 @@ export const PositionsTable = () => {
 
     return positions.filter((pool) => {
       const poolValues = [
-        pool.pair.address,
-        pool.pair.token0.address,
-        pool.pair.token1.address,
-        pool.pair.token0.name,
-        pool.pair.token1.name,
+        pool?.pair?.address,
+        pool?.pair?.token0?.address,
+        pool?.pair?.token1?.address,
+        pool?.pair?.token0?.name,
+        pool?.pair?.token1?.name,
       ]
       return poolValues.some((value) =>
-        queries.some((query) => value.toLowerCase().includes(query)),
+        queries.some((query) => value?.toLowerCase().includes(query)),
       )
     })
   }, [tokenSymbols, positions])
@@ -51,14 +51,15 @@ export const PositionsTable = () => {
   const totalCount = useMemo(() => {
     return data?.pages?.[0]?.totalCount ?? 0
   }, [data])
+
   const filteredCount = useMemo(() => {
     return filteredPositions?.length
   }, [filteredPositions])
 
   const paginatedData = useMemo(() => {
-    const start = paginationState.pageIndex * paginationState.pageSize
-    const end = start + paginationState.pageSize
-    return filteredPositions.slice(start, end)
+    const start = paginationState?.pageIndex * paginationState?.pageSize
+    const end = start + paginationState?.pageSize
+    return filteredPositions?.slice(start, end)
   }, [filteredPositions, paginationState])
 
   return (

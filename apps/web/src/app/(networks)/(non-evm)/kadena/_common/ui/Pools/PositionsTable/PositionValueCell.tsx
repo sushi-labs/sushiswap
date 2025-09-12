@@ -1,8 +1,8 @@
+import type { WalletPosition } from '@sushiswap/graph-client/kadena'
 import { Decimal } from 'decimal.js-light'
 import { useMemo } from 'react'
 import { formatUSD } from 'sushi'
 import { usePoolFromTokens } from '~kadena/_common/lib/hooks/pools/use-pool-from-tokens'
-import type { WalletPosition } from '~kadena/_common/types/get-positions'
 
 export const PositionValueCell = ({ data }: { data: WalletPosition }) => {
   const { data: poolData } = usePoolFromTokens({
