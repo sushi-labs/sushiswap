@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
+import ms from 'ms'
 import { PoolChartPeriod } from 'src/ui/pool/PoolChartPeriods'
 import type { PoolByIdResponse } from '~kadena/_common/types/get-pool-by-id'
 import { usePoolState } from '~kadena/pool/pool-provider'
@@ -25,6 +26,6 @@ export const usePoolById = ({
       return data.data
     },
     enabled: !!poolId,
-    staleTime: (20 * 1000) / 6,
+    staleTime: ms('30s'),
   })
 }
