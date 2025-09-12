@@ -232,7 +232,7 @@ export const AddButton = ({
         href: getKvmChainByKey('kadena').getTransactionUrl(txId),
       })
 
-      await onSuccess()
+      onSuccess()
     } catch (error) {
       const errorMessage =
         typeof error === 'string'
@@ -252,21 +252,21 @@ export const AddButton = ({
     }
   }
 
-  const onSuccess = async () => {
+  const onSuccess = () => {
     setIsTxnPending(false)
     setAmountInToken0('')
     setAmountInToken1('')
     closeModal()
-    await queryClient.invalidateQueries({
+    queryClient.invalidateQueries({
       queryKey: ['kadena-pool-from-tokens', token0, token1],
     })
-    await queryClient.invalidateQueries({
+    queryClient.invalidateQueries({
       queryKey: ['kadena-token-balances', address, [token0?.tokenAddress]],
     })
-    await queryClient.invalidateQueries({
+    queryClient.invalidateQueries({
       queryKey: ['kadena-token-balances', address, [token1?.tokenAddress]],
     })
-    await queryClient.invalidateQueries({
+    queryClient.invalidateQueries({
       queryKey: [
         'kadena-lp-balance',
         address,
