@@ -2,9 +2,9 @@ import { Container } from '@sushiswap/ui'
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import type React from 'react'
-import { GlobalStatsCharts } from 'src/ui/explore/global-stats-charts'
 import { BLADE_SUPPORTED_CHAIN_IDS, isBladeChainId } from 'sushi/evm'
 import { Header } from '~evm/[chainId]/header'
+import { GlobalStatsCharts } from '../_ui/global-stats-charts'
 import { NavigationItems } from '../navigation-items'
 
 export const metadata: Metadata = {

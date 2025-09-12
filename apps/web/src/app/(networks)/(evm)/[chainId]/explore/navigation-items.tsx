@@ -1,5 +1,5 @@
 import { LinkInternal } from '@sushiswap/ui'
-import { PathnameButton } from 'src/ui/pathname-button'
+import { PathnameButton } from 'src/app/_ui/pathname-button'
 import { type EvmChainId, getEvmChainById, isBladeChainId } from 'sushi/evm'
 
 export function NavigationItems({ chainId }: { chainId: EvmChainId }) {

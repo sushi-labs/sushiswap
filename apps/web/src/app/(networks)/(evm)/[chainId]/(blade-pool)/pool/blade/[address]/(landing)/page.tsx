@@ -1,13 +1,13 @@
 import { Container } from '@sushiswap/ui'
 import { notFound } from 'next/navigation'
 import { getCachedBladePool } from 'src/lib/pool/blade'
-import { BladePoolChart } from 'src/ui/pool/blade/BladePoolChart'
-import { BladePoolSourcesChart } from 'src/ui/pool/blade/BladePoolSourcesChart'
-import { BladeAssetsTable } from 'src/ui/pool/blade/assets-table/BladeAssetsTable'
-import { BladeHighlights } from 'src/ui/pool/blade/blade-highlights'
-import { BladePoolPairsChart } from 'src/ui/pool/blade/pairs-chart'
-import { BladePoolHero } from 'src/ui/pool/blade/pool-hero'
 import { isBladeChainId, isEvmAddress } from 'sushi/evm'
+import { BladeAssetsTable } from './_ui/blade-assets-table'
+import { BladeHighlights } from './_ui/blade-highlights'
+import { BladePoolPairsChart } from './_ui/blade-pair-chart'
+import { BladePoolChart } from './_ui/blade-pool-chart'
+import { BladePoolHero } from './_ui/blade-pool-hero'
+import { BladePoolSourcesChart } from './_ui/blade-pool-sources-chart'
 
 export default async function PoolPage(props: {
   params: Promise<{ chainId: string; address: string }>

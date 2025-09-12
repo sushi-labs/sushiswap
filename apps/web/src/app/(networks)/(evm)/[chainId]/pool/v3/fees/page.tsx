@@ -2,9 +2,9 @@ import { getV3BasePools } from '@sushiswap/graph-client/data-api'
 import { Card, Container } from '@sushiswap/ui'
 import { unstable_cache } from 'next/cache'
 import { notFound } from 'next/navigation'
-import { TableFiltersNetwork } from 'src/ui/pool/TableFiltersNetwork'
-import { V3FeesTable } from 'src/ui/pool/V3FeesTable'
+import { TableFiltersNetwork } from 'src/app/(networks)/_ui/table-filters-network'
 import { SushiSwapV3ChainIds, isSushiSwapV3ChainId } from 'sushi/evm'
+import { V3FeesTable } from './_ui/v3-fees-table'
 
 export default async function Page(props: {
   params: Promise<{ chainId: string }>

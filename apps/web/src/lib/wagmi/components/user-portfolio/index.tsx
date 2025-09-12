@@ -19,8 +19,8 @@ import { type FC, type ReactNode, useMemo, useState } from 'react'
 import { EvmChainId, shortenEvmAddress } from 'sushi/evm'
 import { useAccount, useEnsAvatar, useEnsName } from 'wagmi'
 import { ConnectButton } from '../connect-button'
-import { PortfolioDefaultView } from './PortfolioDefaultView'
-import { PortfolioSettingsView } from './PortfolioSettingsView'
+import { PortfolioDefaultView } from './portfolio-default-view'
+import { PortfolioSettingsView } from './portfolio-settings-view'
 
 export enum PortfolioView {
   Default = 'Default',

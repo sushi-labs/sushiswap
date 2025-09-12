@@ -3,10 +3,10 @@ import { SkeletonCircle, SkeletonText } from '@sushiswap/ui'
 import { useQuery } from '@tanstack/react-query'
 import type { Address } from 'viem'
 import { useAccount } from 'wagmi'
-import { PortfolioApproveTransaction } from './PortfolioApproveTransaction'
-import { PortfolioOtherTransaction } from './PortfolioOtherTransaction'
-import { PortfolioReceiveTransaction } from './PortfolioReceiveTransaction'
-import { PortfolioSendTransaction } from './PortfolioSendTransaction'
+import { PortfolioApproveTransaction } from './portfolio-approve-transaction'
+import { PortfolioOtherTransaction } from './portfolio-other-transaction'
+import { PortfolioReceiveTransaction } from './portfolio-receive-transaction'
+import { PortfolioSendTransaction } from './portfolio-send-transaction'
 
 function usePortfolioHistory(
   address: Address | undefined,

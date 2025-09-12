@@ -24,6 +24,8 @@ export const GoogleAnalytics = ({ enabled }: { enabled: boolean }) => {
             page_path: window.location.pathname,
             cookie_flags: 'max-age=7200;secure;samesite=none'
           });
+          gtag('set', 'allow_ad_personalization_signals', false);
+          gtag('set', 'allow_google_signals', false);
         `,
         }}
       />
