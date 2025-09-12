@@ -132,7 +132,6 @@ export function clipperTransmitAndDeposit({
         BigInt(deposit.good_until),
         deposit.signature,
       ] as const,
-      // TODO: Use deposit amount from API
       value: parseUnits(nativeAmount.amount, nativeAmount.token.decimals),
     }
     return variables
