@@ -1,36 +1,20 @@
 'use client'
 
-import { PlusIcon } from '@heroicons/react/20/solid'
-import {
-  Button,
-  Card,
-  CardHeader,
-  CardTitle,
-  DataTable,
-  LinkInternal,
-} from '@sushiswap/ui'
+import { Card, CardHeader, CardTitle, DataTable } from '@sushiswap/ui'
 import type { PaginationState } from '@tanstack/react-table'
 import { useMemo, useState } from 'react'
 import { usePoolFilters } from 'src/ui/pool'
 import { useMyPositions } from '~kadena/_common/lib/hooks/use-my-positions'
 import type { WalletPosition } from '~kadena/_common/types/get-positions'
-import { useKadena } from '~kadena/kadena-wallet-provider'
-import { WalletConnector } from '../../WalletConnector/WalletConnector'
 import {
   APR_COLUMN,
   POSITION_NAME_COLUMN,
   VALUE_COLUMN,
 } from './PositionColumns'
 
-type PositionsTableProps = {
-  hideNewPositionButton?: boolean
-}
 const columns = [POSITION_NAME_COLUMN, VALUE_COLUMN, APR_COLUMN]
-export const PositionsTable = ({
-  hideNewPositionButton,
-}: PositionsTableProps) => {
+export const PositionsTable = () => {
   const { tokenSymbols } = usePoolFilters()
-  const { isConnected } = useKadena()
 
   const [paginationState, setPaginationState] = useState<PaginationState>({
     pageIndex: 0,
@@ -82,17 +66,6 @@ export const PositionsTable = ({
                 ({filteredCount < totalCount ? filteredCount : totalCount})
               </span>
             </span>
-            <div className="flex gap-4">
-              {!isConnected ? (
-                <WalletConnector />
-              ) : !hideNewPositionButton ? (
-                <LinkInternal shallow={true} href={`/kadena/pool/add`}>
-                  <Button icon={PlusIcon} asChild size="sm">
-                    Create position
-                  </Button>
-                </LinkInternal>
-              ) : null}
-            </div>
           </div>
         </CardTitle>
       </CardHeader>
