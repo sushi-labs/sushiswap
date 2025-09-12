@@ -159,7 +159,7 @@ export const useSimulateSwap = ({
     isLoading: query.isFetching,
     error: query.error,
     data: query.data?.data ?? null,
-    computedAmount: query.data?.computedAmount ?? null,
+    computedAmount: query.data?.computedAmount,
     refetch: query.refetch,
   }
 }
