@@ -1,3 +1,4 @@
+import type { ChainId } from '@kadena/client'
 import { useQuery } from '@tanstack/react-query'
 import { kadenaClient } from '~kadena/_common/constants/client'
 import {
@@ -8,7 +9,7 @@ import { buildGetLpBalanceTx } from '../../pact/pool'
 import type { PactNumberReturnType } from '../../pact/type'
 
 type LPBalanceResponse = {
-  chainId: number
+  chainId: ChainId
   balance: number
 }
 

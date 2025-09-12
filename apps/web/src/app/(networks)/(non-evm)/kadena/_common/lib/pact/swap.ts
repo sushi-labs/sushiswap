@@ -1,4 +1,4 @@
-import { type ChainId, Pact } from '@kadena/client'
+import { Pact } from '@kadena/client'
 import { KADENA_CONTRACT } from '~kadena/_common/constants/contracts'
 import { GAS_LIMIT, GAS_PRICE } from '~kadena/_common/constants/gas'
 import {
@@ -46,7 +46,7 @@ export const buildSwapTxn = ({
       }),
     ])
     .setMeta({
-      chainId: String(KADENA_CHAIN_ID) as ChainId,
+      chainId: KADENA_CHAIN_ID,
       gasLimit: GAS_LIMIT,
       gasPrice: GAS_PRICE,
       senderAccount: signerAddress,

@@ -2,36 +2,36 @@ import { type ChainId, Pact } from '@kadena/client'
 
 export const buildGetBalanceTx = (
   account: string,
-  chainId: number,
+  chainId: ChainId,
   networkId: string,
 ) => {
   return Pact.builder
     .execution(`(coin.get-balance "${account}")`)
-    .setMeta({ chainId: String(chainId) as ChainId })
+    .setMeta({ chainId: chainId })
     .setNetworkId(networkId)
     .createTransaction()
 }
 
 export const buildGetTokenMetaTx = (
   tokenContract: string,
-  chainId: number,
+  chainId: ChainId,
   networkId: string,
 ) => {
   return Pact.builder
     .execution(`(${tokenContract}.get-meta)`)
-    .setMeta({ chainId: String(chainId) as ChainId })
+    .setMeta({ chainId: chainId })
     .setNetworkId(networkId)
     .createTransaction()
 }
 
 export const buildGetTokenPrecision = (
   tokenContract: string,
-  chainId: number,
+  chainId: ChainId,
   networkId: string,
 ) => {
   return Pact.builder
     .execution(`(${tokenContract}.precision)`)
-    .setMeta({ chainId: String(chainId) as ChainId })
+    .setMeta({ chainId: chainId })
     .setNetworkId(networkId)
     .createTransaction()
 }
@@ -41,7 +41,7 @@ const isAscii = (str: string) => [...str].every((c) => c.charCodeAt(0) <= 127)
 export const buildGetTokenBalanceTx = (
   account: string,
   tokenContracts: string[],
-  chainId: number,
+  chainId: ChainId,
   networkId: string,
 ) => {
   const cleanedTokenContracts = tokenContracts.filter((i) => isAscii(i))
@@ -80,7 +80,7 @@ export const buildGetTokenBalanceTx = (
   return Pact.builder
     .execution(tokenNames)
     .setMeta({
-      chainId: String(chainId) as ChainId,
+      chainId: chainId,
       gasLimit: estimatedGasLimit,
     })
     .setNetworkId(networkId)

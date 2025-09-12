@@ -1,3 +1,4 @@
+import type { ChainId } from '@kadena/client'
 import { useQuery } from '@tanstack/react-query'
 import ms from 'ms'
 import { kadenaClient } from '~kadena/_common/constants/client'
@@ -9,7 +10,7 @@ import { buildGetBalanceTx } from '../pact/builders'
 import type { PactNumberReturnType } from '../pact/type'
 
 type NativeTokenBalanceResponse = {
-  chainId: number
+  chainId: ChainId
   balance: number
 }
 

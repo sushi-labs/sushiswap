@@ -6,13 +6,13 @@ import { formatPactDecimal } from '../utils/formatters'
 export const buildGetPoolExists = (
   token0: string,
   token1: string,
-  chainId: number,
+  chainId: ChainId,
   networkId: string,
 ) => {
   const pactCode = `(${KADENA_CONTRACT}.pair-exists ${token0} ${token1})`
   return Pact.builder
     .execution(pactCode)
-    .setMeta({ chainId: String(chainId) as ChainId })
+    .setMeta({ chainId: chainId })
     .setNetworkId(networkId)
     .createTransaction()
 }
@@ -20,13 +20,13 @@ export const buildGetPoolExists = (
 export const buildGetPoolAddress = (
   token0: string,
   token1: string,
-  chainId: number,
+  chainId: ChainId,
   networkId: string,
 ) => {
   const pactCode = `(${KADENA_CONTRACT}.get-pair ${token0} ${token1})`
   return Pact.builder
     .execution(pactCode)
-    .setMeta({ chainId: String(chainId) as ChainId })
+    .setMeta({ chainId: chainId })
     .setNetworkId(networkId)
     .createTransaction()
 }
@@ -51,7 +51,7 @@ export const buildAddLiquidityTxn = ({
   minAmountInToken1: number
   poolAddress: string | undefined
   signerAddress: string
-  chainId: number
+  chainId: ChainId
   networkId: string
 }) => {
   const _poolAddress = poolAddress
@@ -116,7 +116,7 @@ export const buildAddLiquidityTxn = ({
       pred: 'keys-all',
     })
     .setMeta({
-      chainId: String(chainId) as ChainId,
+      chainId: chainId,
       gasLimit: GAS_LIMIT,
       gasPrice: GAS_PRICE,
       senderAccount: signerAddress,
@@ -130,14 +130,14 @@ export const buildGetLpBalanceTx = (
   account: string,
   token0Address: string,
   token1Address: string,
-  chainId: number,
+  chainId: ChainId,
   networkId: string,
 ) => {
   const pactCmd = `(${KADENA_CONTRACT}-tokens.get-balance "${token0Address}:${token1Address}" "${account}")`
   const tx = Pact.builder
     .execution(pactCmd)
     .setMeta({
-      chainId: String(chainId) as ChainId,
+      chainId: chainId,
     })
     .setNetworkId(networkId)
     .createTransaction()
@@ -147,14 +147,14 @@ export const buildGetLpBalanceTx = (
 export const buildGetTotalLpSupply = (
   token0Address: string,
   token1Address: string,
-  chainId: number,
+  chainId: ChainId,
   networkId: string,
 ) => {
   const pactCmd = `(${KADENA_CONTRACT}-tokens.total-supply "${token0Address}:${token1Address}")`
   const tx = Pact.builder
     .execution(pactCmd)
     .setMeta({
-      chainId: String(chainId) as ChainId,
+      chainId: chainId,
     })
     .setNetworkId(networkId)
     .createTransaction()
@@ -179,7 +179,7 @@ export const buildRemoveLiquidityTxn = ({
   minAmountOutToken1: number
   pairAddress: string
   signerAddress: string
-  chainId: number
+  chainId: ChainId
   networkId: string
 }) => {
   // console.log({
@@ -224,7 +224,7 @@ export const buildRemoveLiquidityTxn = ({
       pred: 'keys-all',
     })
     .setMeta({
-      chainId: String(chainId) as ChainId,
+      chainId: chainId,
       gasLimit: GAS_LIMIT,
       gasPrice: GAS_PRICE,
       senderAccount: signerAddress,
