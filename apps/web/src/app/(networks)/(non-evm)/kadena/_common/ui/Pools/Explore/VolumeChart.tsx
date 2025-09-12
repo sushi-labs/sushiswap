@@ -1,5 +1,6 @@
 'use client'
 
+import type { GetDexMetricsResponse } from '@sushiswap/graph-client/kadena'
 import { addDays, differenceInDays } from 'date-fns'
 import format from 'date-fns/format'
 import ReactECharts from 'echarts-for-react'
@@ -8,10 +9,9 @@ import echarts from 'echarts/lib/echarts'
 import { useTheme } from 'next-themes'
 import { type FC, useCallback, useMemo } from 'react'
 import { formatUSD } from 'sushi'
-import type { DexMetrics } from '~kadena/_common/types/get-dex-metrics'
 
 interface VolumeChartProps {
-  data: DexMetrics | undefined
+  data: GetDexMetricsResponse | undefined
 }
 
 export const VolumeChart: FC<VolumeChartProps> = ({ data }) => {

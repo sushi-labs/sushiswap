@@ -1,5 +1,6 @@
 'use client'
 
+import type { GetDexMetricsResponse } from '@sushiswap/graph-client/kadena'
 import { useIsMounted } from '@sushiswap/hooks'
 import { addDays, differenceInDays, parseISO } from 'date-fns'
 import format from 'date-fns/format'
@@ -9,10 +10,9 @@ import echarts from 'echarts/lib/echarts'
 import { useTheme } from 'next-themes'
 import { type FC, useCallback, useMemo } from 'react'
 import { formatUSD } from 'sushi'
-import type { DexMetrics } from '~kadena/_common/types/get-dex-metrics'
 
 interface TVLChartProps {
-  data: DexMetrics | undefined
+  data: GetDexMetricsResponse | undefined
 }
 
 export const TVLChart: FC<TVLChartProps> = ({ data }) => {
