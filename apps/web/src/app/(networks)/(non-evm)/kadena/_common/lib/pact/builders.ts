@@ -36,8 +36,7 @@ export const buildGetTokenPrecision = (
     .createTransaction()
 }
 
-// biome-ignore lint/suspicious/noControlCharactersInRegex: expected
-const isAscii = (str: string) => /^[\x00-\x7F]*$/.test(str)
+const isAscii = (str: string) => [...str].every((c) => c.charCodeAt(0) <= 127)
 
 export const buildGetTokenBalanceTx = (
   account: string,

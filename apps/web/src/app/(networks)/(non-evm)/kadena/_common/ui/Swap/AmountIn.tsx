@@ -76,14 +76,12 @@ export const AmountIn = () => {
     }
   }, [data, token0, token1, setRoute])
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: Typecheck speedup
   useEffect(() => {
     const _amountIn = Number(amountIn)
     if (_amountIn === 0 || Number.isNaN(_amountIn)) {
       setAmountOut('')
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [amountIn])
+  }, [amountIn, setAmountOut])
 
   return (
     <TokenInput

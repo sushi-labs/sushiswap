@@ -95,8 +95,8 @@ export const ReviewSwapDialogTrigger = () => {
     return false
   }, [priceImpactPercentage])
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: Typecheck speedup
   useEffect(() => {
+    if (priceImpactPercentage < 15) return
     setIsChecked(false)
   }, [priceImpactPercentage])
 

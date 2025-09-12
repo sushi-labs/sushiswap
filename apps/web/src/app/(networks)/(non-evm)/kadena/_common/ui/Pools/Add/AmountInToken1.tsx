@@ -27,7 +27,6 @@ export const AmountInToken1 = ({
 
   const rateOfToken0 = rateOfToken0ToToken1 ?? 0
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: rateOfToken0 will be defined when the pool exists
   useEffect(() => {
     if (inputField === 'token0') {
       return
@@ -36,7 +35,7 @@ export const AmountInToken1 = ({
       setAmountInToken0('')
       return
     }
-    if (pairExists && rateOfToken0 && token0) {
+    if (pairExists && rateOfToken0 !== undefined && token0) {
       const parsedAmount = Number.parseFloat(amountInToken1)
 
       if (Number.isNaN(parsedAmount)) {
@@ -54,7 +53,14 @@ export const AmountInToken1 = ({
         setAmountInToken0('')
       }
     }
-  }, [amountInToken1, pairExists, token0, inputField, setAmountInToken0])
+  }, [
+    amountInToken1,
+    pairExists,
+    token0,
+    inputField,
+    setAmountInToken0,
+    rateOfToken0,
+  ])
 
   const setAmount = (amount: string) => {
     setInputField('token1')
