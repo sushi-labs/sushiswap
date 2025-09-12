@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
+import ms from 'ms'
 import { kadenaClient } from '~kadena/_common/constants/client'
 import {
   KADENA_CHAIN_ID,
@@ -49,7 +50,6 @@ export const useTokenInfo = ({
       }
     },
     enabled: !!tokenContract && enabled,
-    staleTime: (30 * 1000) / 6,
-    gcTime: (10 * 60 * 1000) / 6,
+    staleTime: ms('30s'),
   })
 }
