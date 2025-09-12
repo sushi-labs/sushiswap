@@ -1,11 +1,12 @@
 import { type V2Pool, getV2Pool } from '@sushiswap/graph-client/data-api'
 import { Container } from '@sushiswap/ui'
+import ms from 'ms'
 import { unstable_cache } from 'next/cache'
 import { headers } from 'next/headers'
 import { notFound } from 'next/navigation'
 import type React from 'react'
 import { PoolHeader } from 'src/ui/pool/PoolHeader'
-import { ChainKey, type EvmChainId, SushiSwapProtocol } from 'sushi'
+import { ChainKey, type EvmChainId } from 'sushi'
 import { isSushiSwapV2ChainId } from 'sushi/config'
 import { isAddress } from 'viem'
 
@@ -31,7 +32,7 @@ export default async function Layout(props: {
     async () => getV2Pool({ chainId, address }, { retries: 3 }),
     ['v2', 'pool', `${chainId}:${address}`],
     {
-      revalidate: 60 * 15,
+      revalidate: ms('15m'),
     },
   )()) as V2Pool
 
@@ -49,7 +50,7 @@ export default async function Layout(props: {
           address={pool.address}
           pool={{
             ...pool,
-            // @ts-expect-errorun
+            // @ts-expect-error
             // okay until we have a blade pool type
             protocol: 'BLADE',
           }}

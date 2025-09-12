@@ -5,8 +5,7 @@ import { SlippageToleranceStorageKey } from '@sushiswap/hooks'
 import { createToast } from '@sushiswap/notifications'
 import { ZapEventName, sendAnalyticsEvent } from '@sushiswap/telemetry'
 import { Button, Dots, FormSection, Loader } from '@sushiswap/ui'
-import { useRouter } from 'next/navigation'
-import { notFound } from 'next/navigation'
+import { notFound, useRouter } from 'next/navigation'
 import React, {
   type Dispatch,
   type FC,
@@ -82,17 +81,15 @@ export default function Page(props: { params: Promise<{ chainId: string }> }) {
 
   const router = useRouter()
   const [token0, setToken0] = useState<Type | undefined>(
-    defaultCurrency[chainId as keyof typeof defaultCurrency],
+    defaultCurrency[chainId],
   )
   const [token1, setToken1] = useState<Type | undefined>(
-    defaultQuoteCurrency[chainId as keyof typeof defaultQuoteCurrency],
+    defaultQuoteCurrency[chainId],
   )
 
   useEffect(() => {
-    setToken0(defaultCurrency[chainId as keyof typeof defaultCurrency])
-    setToken1(
-      defaultQuoteCurrency[chainId as keyof typeof defaultQuoteCurrency],
-    )
+    setToken0(defaultCurrency[chainId])
+    setToken1(defaultQuoteCurrency[chainId])
   }, [chainId])
 
   const networks = useMemo(
@@ -270,7 +267,7 @@ const _ZapWidget: FC<ZapWidgetProps> = ({
 
   const [inputAmount, setInputAmount] = useState('')
   const [inputCurrency, _setInputCurrency] = useState<Type>(
-    defaultCurrency[chainId as keyof typeof defaultCurrency],
+    defaultCurrency[chainId],
   )
   const setInputCurrency = useCallback((currency: Type) => {
     _setInputCurrency(currency)
