@@ -21,6 +21,7 @@ import {
 } from 'echarts/components'
 import * as echarts from 'echarts/core'
 import { CanvasRenderer } from 'echarts/renderers'
+import ms from 'ms'
 import { useTheme } from 'next-themes'
 import { useEffect, useMemo, useState } from 'react'
 import { useCallback } from 'react'
@@ -47,9 +48,9 @@ export enum PoolChartPeriod {
 }
 
 export const chartPeriods: Record<PoolChartPeriod, number> = {
-  [PoolChartPeriod.SevenDay]: 86400 * 1000 * 7,
-  [PoolChartPeriod.ThirtyDay]: 86400 * 1000 * 30,
-  [PoolChartPeriod.ThreeMonth]: 86400 * 1000 * 90,
+  [PoolChartPeriod.SevenDay]: ms('7d'),
+  [PoolChartPeriod.ThirtyDay]: ms('30d'),
+  [PoolChartPeriod.ThreeMonth]: ms('90d'),
   [PoolChartPeriod.All]: Number.POSITIVE_INFINITY,
 }
 

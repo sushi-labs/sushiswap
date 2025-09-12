@@ -85,7 +85,7 @@ export const PoolChartGraph: FC<PoolChartProps> = ({
 
     return [x.reverse(), y.reverse()]
   }, [chart, period, buckets])
-  // Transient update for performance
+
   const onMouseOver = useCallback(
     ({ name, value }: { name: number; value: number }) => {
       const valueNodes = document.getElementsByClassName('hoveredItemValue')
@@ -193,16 +193,6 @@ export const PoolChartGraph: FC<PoolChartProps> = ({
         right: 0,
         bottom: 40,
       },
-      // dataZoom: {
-      //   show: false,
-      //   start: 0,
-      //   end: 100,
-      // },
-      // visualMap: {
-      //   show: false,
-      //   // @ts-ignore
-      //   color: [tailwind.theme.colors.blue['500']],
-      // },
       xAxis: [
         {
           type: 'time',

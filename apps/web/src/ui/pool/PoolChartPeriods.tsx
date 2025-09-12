@@ -1,4 +1,5 @@
 import { Toggle } from '@sushiswap/ui'
+import ms from 'ms'
 import React, { type FC } from 'react'
 
 export enum PoolChartPeriod {
@@ -10,10 +11,10 @@ export enum PoolChartPeriod {
 }
 
 export const chartPeriods: Record<PoolChartPeriod, number> = {
-  [PoolChartPeriod.Day]: 86400 * 1000,
-  [PoolChartPeriod.Week]: 604800 * 1000,
-  [PoolChartPeriod.Month]: 2629746 * 1000,
-  [PoolChartPeriod.Year]: 31556952 * 1000,
+  [PoolChartPeriod.Day]: ms('1d'),
+  [PoolChartPeriod.Week]: ms('1w'),
+  [PoolChartPeriod.Month]: ms('1M'),
+  [PoolChartPeriod.Year]: ms('1y'),
   [PoolChartPeriod.All]: Number.POSITIVE_INFINITY,
 }
 
