@@ -43,7 +43,7 @@ export const PoolComposition: FC<PoolComposition> = ({ pool }) => {
   const reserve1USD = Number(pool?.reserve1) * Number(token1Price)
   const backUpTotal = reserve0USD + reserve1USD
   const reserveUSD = pool?.tvlUsd || backUpTotal
-
+  console.log(pool)
   return (
     <Card>
       <CardHeader>
