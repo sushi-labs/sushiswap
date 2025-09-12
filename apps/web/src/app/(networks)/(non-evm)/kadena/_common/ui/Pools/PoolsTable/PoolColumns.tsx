@@ -2,7 +2,6 @@ import { SkeletonCircle, SkeletonText } from '@sushiswap/ui'
 import type { ColumnDef } from '@tanstack/react-table'
 import { formatPercent, formatUSD } from 'sushi'
 import type { Pool } from '~kadena/_common/types/get-all-pools-type'
-import type { TopPool } from '~tron/_common/lib/hooks/useTopPools'
 import { PoolNameCell } from './PoolNameCell'
 
 export const NAME_COLUMN: ColumnDef<Pool, unknown> = {
@@ -32,10 +31,12 @@ export const TVL_COLUMN: ColumnDef<Pool, unknown> = {
   accessorFn: (row) => row.tvlUsd,
   sortingFn: ({ original: rowA }, { original: rowB }) =>
     rowA.tvlUsd - rowB.tvlUsd,
-  cell: (props) =>
-    formatUSD(props.row.original.tvlUsd).includes('NaN')
-      ? '$0.00'
-      : formatUSD(props.row.original.tvlUsd),
+  cell: (props) => {
+    const raw = Number(props.row.original.tvlUsd)
+    const tvl = Number.isNaN(raw) ? 0 : raw
+
+    return formatUSD(tvl)
+  },
   meta: {
     body: {
       skeleton: <SkeletonText fontSize="lg" />,
@@ -49,10 +50,12 @@ export const VOLUME_1D_COLUMN: ColumnDef<Pool, unknown> = {
   accessorFn: (row) => row.volume24hUsd,
   sortingFn: ({ original: rowA }, { original: rowB }) =>
     rowA.volume24hUsd - rowB.volume24hUsd,
-  cell: (props) =>
-    formatUSD(props.row.original.volume24hUsd).includes('NaN')
-      ? '$0.00'
-      : formatUSD(props.row.original.volume24hUsd),
+  cell: (props) => {
+    const raw = Number(props.row.original.volume24hUsd)
+    const volume24hUsd = Number.isNaN(raw) ? 0 : raw
+
+    return formatUSD(volume24hUsd)
+  },
   meta: {
     body: {
       skeleton: <SkeletonText fontSize="lg" />,
@@ -66,10 +69,12 @@ export const FEES_1D_COLUMN: ColumnDef<Pool, unknown> = {
   accessorFn: (row) => row.fees24hUsd,
   sortingFn: ({ original: rowA }, { original: rowB }) =>
     rowA.fees24hUsd - rowB.fees24hUsd,
-  cell: (props) =>
-    formatUSD(props.row.original.fees24hUsd).includes('NaN')
-      ? '$0.00'
-      : formatUSD(props.row.original.fees24hUsd),
+  cell: (props) => {
+    const raw = Number(props.row.original.fees24hUsd)
+    const fees24hUsd = Number.isNaN(raw) ? 0 : raw
+
+    return formatUSD(fees24hUsd)
+  },
   meta: {
     body: {
       skeleton: <SkeletonText fontSize="lg" />,
