@@ -156,7 +156,7 @@ export const useSimulateSwap = ({
   })
 
   return {
-    isLoading: query.isLoading || query.isFetching || query.isRefetching,
+    isLoading: query.isFetching,
     error: query.error as Error | null,
     data: query.data?.data ?? null,
     computedAmount: query.data?.computedAmount ?? null,
