@@ -23,28 +23,6 @@ export function NavigationItems() {
           My Positions
         </PathnameButton>
       </LinkInternal>
-
-      <LinkInternal shallow scroll={false} href={`/claim/rewards`}>
-        <PathnameButton
-          id="my-positions"
-          pathname="/claim/rewards"
-          asChild
-          size="sm"
-        >
-          My Rewards
-        </PathnameButton>
-      </LinkInternal>
-
-      <LinkInternal shallow scroll={false} href={`/ethereum/migrate`}>
-        <PathnameButton
-          id="my-positions"
-          pathname="/ethereum/migrate"
-          asChild
-          size="sm"
-        >
-          Migrate
-        </PathnameButton>
-      </LinkInternal>
     </>
   )
 }
