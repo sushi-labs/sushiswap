@@ -222,9 +222,6 @@ importers:
       '@kadena/client':
         specifier: 1.17.1
         version: 1.17.1(@upstash/redis@1.22.1(encoding@0.1.13))(bufferutil@4.0.8)(encoding@0.1.13)(utf-8-validate@6.0.3)
-      '@kadena/wallet-adapter-core':
-        specifier: 0.1.0
-        version: 0.1.0(@upstash/redis@1.22.1(encoding@0.1.13))(bufferutil@4.0.8)(encoding@0.1.13)(typescript@5.8.3)(utf-8-validate@6.0.3)
       '@kadena/wallet-adapter-ecko':
         specifier: 0.0.3
         version: 0.0.3(@upstash/redis@1.22.1(encoding@0.1.13))(bufferutil@4.0.8)(encoding@0.1.13)(typescript@5.8.3)(utf-8-validate@6.0.3)

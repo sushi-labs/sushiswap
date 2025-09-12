@@ -25,7 +25,6 @@
     "@heroicons/react-v1": "npm:@heroicons/react@v1",
     "@hookform/resolvers": "3.3.1",
     "@kadena/client": "1.17.1",
-    "@kadena/wallet-adapter-core": "0.1.0",
     "@kadena/wallet-adapter-ecko": "0.0.3",
     "@kadena/wallet-adapter-metamask-snap": "0.1.1",
     "@kadena/wallet-adapter-react": "0.0.4",
