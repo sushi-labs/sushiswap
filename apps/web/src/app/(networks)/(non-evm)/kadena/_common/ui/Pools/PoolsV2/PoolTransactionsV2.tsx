@@ -1,6 +1,10 @@
 'use client'
 
-import type { GetPoolResponse } from '@sushiswap/graph-client/kadena'
+import type {
+  GetPoolResponse,
+  PoolTransaction,
+  PoolTransactionType,
+} from '@sushiswap/graph-client/kadena'
 import {
   Card,
   CardContent,
@@ -12,10 +16,7 @@ import {
 import type { PaginationState } from '@tanstack/react-table'
 import { type FC, useCallback, useMemo, useState } from 'react'
 import { getKvmChainByKey } from 'sushi/kvm'
-import {
-  TransactionType,
-  usePoolTransactions,
-} from '~kadena/_common/lib/hooks/use-pool-transactions'
+import { usePoolTransactions } from '~kadena/_common/lib/hooks/use-pool-transactions'
 import { usePoolState } from '../../../../pool/pool-provider'
 import {
   AMOUNT_USD_COLUMN,
@@ -34,7 +35,7 @@ const initialPaginationState: PaginationState = {
 }
 
 export const PoolTransactionsV2: FC<PoolTransactionsV2Props> = ({ pool }) => {
-  const [type, setType] = useState<TransactionType>(TransactionType.SWAP)
+  const [type, setType] = useState<PoolTransactionType>('SWAP')
 
   const [paginationState, setPaginationState] = useState<PaginationState>(
     initialPaginationState,
@@ -50,8 +51,9 @@ export const PoolTransactionsV2: FC<PoolTransactionsV2Props> = ({ pool }) => {
     pageSize: 100,
   })
 
-  //@dev coming back to this when moving pool transactions
-  const rowLink = useCallback((row: any) => {
+  const poolTransactions = useMemo(() => data?.transactions ?? [], [data])
+
+  const rowLink = useCallback((row: PoolTransaction) => {
     return getKvmChainByKey('kadena').getTransactionUrl(row.requestkey)
   }, [])
 
@@ -59,7 +61,7 @@ export const PoolTransactionsV2: FC<PoolTransactionsV2Props> = ({ pool }) => {
   const token1Symbol = token1?.tokenSymbol ?? pool?.token1?.name ?? 'Token1'
 
   const COLUMNS = useMemo(() => {
-    if (type === TransactionType.SWAP) {
+    if (type === 'SWAP') {
       return [
         MAKER_COLUMN,
         createAmountColumn({
@@ -79,8 +81,7 @@ export const PoolTransactionsV2: FC<PoolTransactionsV2Props> = ({ pool }) => {
       ]
     }
 
-    const accessor1 =
-      type === TransactionType.ADD_LIQUIDITY ? 'amount1In' : 'amount0Out'
+    const accessor1 = type === 'ADD_LIQUIDITY' ? 'amount1In' : 'amount0Out'
 
     return [
       MAKER_COLUMN,
@@ -111,9 +112,9 @@ export const PoolTransactionsV2: FC<PoolTransactionsV2Props> = ({ pool }) => {
               <Toggle
                 variant="outline"
                 size="xs"
-                pressed={type === TransactionType.SWAP}
+                pressed={type === 'SWAP'}
                 onClick={() => {
-                  setType(TransactionType.SWAP)
+                  setType('SWAP')
                   setPaginationState(initialPaginationState)
                 }}
               >
@@ -122,9 +123,9 @@ export const PoolTransactionsV2: FC<PoolTransactionsV2Props> = ({ pool }) => {
               <Toggle
                 variant="outline"
                 size="xs"
-                pressed={type === TransactionType.ADD_LIQUIDITY}
+                pressed={type === 'ADD_LIQUIDITY'}
                 onClick={() => {
-                  setType(TransactionType.ADD_LIQUIDITY)
+                  setType('ADD_LIQUIDITY')
                   setPaginationState(initialPaginationState)
                 }}
               >
@@ -133,9 +134,9 @@ export const PoolTransactionsV2: FC<PoolTransactionsV2Props> = ({ pool }) => {
               <Toggle
                 variant="outline"
                 size="xs"
-                pressed={type === TransactionType.REMOVE_LIQUIDITY}
+                pressed={type === 'REMOVE_LIQUIDITY'}
                 onClick={() => {
-                  setType(TransactionType.REMOVE_LIQUIDITY)
+                  setType('REMOVE_LIQUIDITY')
                   setPaginationState(initialPaginationState)
                 }}
               >
@@ -149,7 +150,7 @@ export const PoolTransactionsV2: FC<PoolTransactionsV2Props> = ({ pool }) => {
         <DataTable
           loading={isLoading}
           columns={COLUMNS}
-          data={data?.transactions ?? []}
+          data={poolTransactions}
           linkFormatter={rowLink}
           pagination={true}
           externalLink={true}
