@@ -1,5 +1,6 @@
 'use client'
 
+import { useIsMounted, useLocalStorage } from '@sushiswap/hooks'
 import { Navigation, SushiNavigationDropdown, classNames } from '@sushiswap/ui'
 import { SushiIcon } from '@sushiswap/ui/icons/SushiIcon'
 import { SushiWithTextIcon } from '@sushiswap/ui/icons/SushiWithTextIcon'
@@ -13,8 +14,20 @@ import { WalletConnector } from './_common/ui/WalletConnector/WalletConnector'
 // import { MobileMetamaskCompatibilityModal } from './_common/ui/mobile-metamask-compatibility-modal'
 
 export const Header: FC<{ className?: string }> = ({ className }) => {
+  const [hasClosedBanner] = useLocalStorage(
+    'has-closed-kadena-chain-id-operator-banner',
+    false,
+  )
+  const isMounted = useIsMounted()
+
   return (
-    <div className={classNames('z-20 w-full h-[56px]', className)}>
+    <div
+      className={classNames(
+        'z-20 w-full h-[56px]',
+        !hasClosedBanner && isMounted ? 'mb-[56px]' : '',
+        className,
+      )}
+    >
       <div className="flex fixed z-20 w-full">
         <div
           className={classNames(

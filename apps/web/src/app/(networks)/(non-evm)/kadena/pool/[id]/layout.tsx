@@ -29,7 +29,7 @@ export default async function PoolLayout(props: {
 
   return (
     <Providers>
-      <Header className="mb-[56px]" />
+      <Header />
       <Container maxWidth="5xl" className="px-4 py-4">
         <PoolHeader poolId={poolId} />
       </Container>

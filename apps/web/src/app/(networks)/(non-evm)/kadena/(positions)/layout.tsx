@@ -16,8 +16,8 @@ export default function PositionsLayout({
 }: { children: React.ReactNode }) {
   return (
     <>
-      <Header className="mb-[56px]" />
-      <main className="flex flex-col flex-1 h-full">
+      <Header />
+      <main className="flex flex-col flex-1 h-full animate-slide">
         <Container maxWidth="7xl" className="px-4 py-16">
           <Hero />
         </Container>

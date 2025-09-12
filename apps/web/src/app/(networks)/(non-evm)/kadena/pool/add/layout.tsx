@@ -13,7 +13,7 @@ export default function CreatePositionLayout({
 }: { children: React.ReactNode }) {
   return (
     <>
-      <Header className="mb-[56px]" />
+      <Header />
       <Container maxWidth="5xl" className="pb-2 pt-[36px] px-4">
         <div className="flex flex-col gap-2">
           <div className="relative flex items-center gap-3">

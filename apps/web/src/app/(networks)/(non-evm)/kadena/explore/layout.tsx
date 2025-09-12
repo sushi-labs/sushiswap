@@ -12,8 +12,8 @@ export default function PoolLayout({
 }: { children: React.ReactNode }) {
   return (
     <>
-      <Header className="mb-[56px]" />
-      <main className="flex flex-col flex-1 min-h-screen">
+      <Header />
+      <main className="flex flex-col flex-1 min-h-screen animate-slide">
         <Container maxWidth="7xl" className="px-4 py-4">
           <GlobalStatsCharts />
         </Container>
