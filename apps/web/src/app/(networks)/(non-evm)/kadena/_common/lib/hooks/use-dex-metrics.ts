@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
+import ms from 'ms'
 import type { DexMetrics } from '~kadena/_common/types/get-dex-metrics'
 
 export const useDexMetrics = () => {
@@ -10,6 +11,6 @@ export const useDexMetrics = () => {
       if (!data.success) throw new Error('Failed to fetch DEX metrics')
       return data.data
     },
-    staleTime: (60 * 1000) / 6,
+    staleTime: ms('10s'),
   })
 }
