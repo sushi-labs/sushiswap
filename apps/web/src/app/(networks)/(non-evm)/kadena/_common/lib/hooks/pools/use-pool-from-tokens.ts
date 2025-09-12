@@ -171,7 +171,7 @@ export const usePoolFromTokens = ({
         },
       }
     },
-    enabled: !!token0 && !!token1,
+    enabled: Boolean(token0 && token1),
   })
 }
 
