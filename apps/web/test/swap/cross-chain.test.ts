@@ -1,6 +1,10 @@
 import { type Page, expect, test } from '@playwright/test'
-import { type EvmChainId, evmChainName } from 'sushi/chain'
-import { Native, type Type } from 'sushi/currency'
+import {
+  type EvmChainId,
+  type EvmCurrency,
+  EvmNative,
+  getEvmChainById,
+} from 'sushi/evm'
 import { zeroAddress } from 'viem'
 
 import type { SupportedChainId } from '../../src/config'
@@ -43,8 +47,8 @@ test('Bridge Native to Native', async ({ page }) => {
   test.slow()
   await xswap(
     page,
-    Native.onChain(srcChainId),
-    Native.onChain(dstChainId),
+    EvmNative.fromChainId(srcChainId),
+    EvmNative.fromChainId(dstChainId),
     '100',
   )
 })
@@ -53,16 +57,16 @@ test('Bridge Native to USDC', async ({ page }) => {
   test.slow()
   await xswap(
     page,
-    Native.onChain(srcChainId),
-    Native.onChain(dstChainId),
+    EvmNative.fromChainId(srcChainId),
+    EvmNative.fromChainId(dstChainId),
     '100',
   )
 })
 
 async function xswap(
   page: Page,
-  inputCurrency: Type,
-  outputCurrency: Type,
+  inputCurrency: EvmCurrency,
+  outputCurrency: EvmCurrency,
   amount: string,
 ) {
   await handleToken(page, inputCurrency, 'INPUT')
@@ -134,8 +138,8 @@ async function xswap(
   await expect(swapFromBalance).not.toHaveText(swapFromBalanceBefore as string)
 }
 
-async function approve(page: Page, currency: Type) {
-  if (!currency.isNative) {
+async function approve(page: Page, currency: EvmCurrency) {
+  if (currency.type === 'token') {
     const approveButton = page.locator('[testdata-id=approve-erc20-button]', {
       hasText: `Approve ${currency.symbol}`,
     })
@@ -165,7 +169,7 @@ async function handleNetwork(page: Page, chainId: EvmChainId, type: InputType) {
   const networkSearch = page.locator('[testdata-id=network-selector-input]')
   await expect(networkSearch).toBeVisible()
   await expect(networkSearch).toBeEnabled()
-  await networkSearch.fill(evmChainName[chainId])
+  await networkSearch.fill(getEvmChainById(chainId).name)
 
   const networkToSelect = page.locator(
     `[testdata-id=network-selector-${chainId}]`,
@@ -173,10 +177,10 @@ async function handleNetwork(page: Page, chainId: EvmChainId, type: InputType) {
   await expect(networkToSelect).toBeVisible()
 
   await networkToSelect.click()
-  await expect(networkSelector).toContainText(evmChainName[chainId])
+  await expect(networkSelector).toContainText(getEvmChainById(chainId).name)
 }
 
-async function handleToken(page: Page, currency: Type, type: InputType) {
+async function handleToken(page: Page, currency: EvmCurrency, type: InputType) {
   await handleNetwork(page, currency.chainId, type)
 
   const selectorInfix = `${type === 'INPUT' ? 'from' : 'to'}`
@@ -198,7 +202,7 @@ async function handleToken(page: Page, currency: Type, type: InputType) {
 
   const tokenToSelect = page.locator(
     `[testdata-id=swap-${selectorInfix}-token-selector-row-${
-      currency.isNative ? zeroAddress : currency.address.toLowerCase()
+      currency.type === 'native' ? zeroAddress : currency.address.toLowerCase()
     }]`,
   )
   await expect(tokenToSelect).toBeVisible()
@@ -229,7 +233,7 @@ async function switchNetwork(page: Page, chainId: EvmChainId) {
   await networkToSelect.click()
 
   const fromToken = page.locator('[testdata-id=swap-from-button]')
-  await expect(fromToken).toHaveText(Native.onChain(chainId).symbol)
+  await expect(fromToken).toHaveText(EvmNative.fromChainId(chainId).symbol)
 }
 
 async function mockLayerZeroApi(page: Page) {

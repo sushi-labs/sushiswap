@@ -2,18 +2,15 @@ import {
   type Order,
   OrderStatus,
   buildOrder,
-  getOrderFillDelay,
-  parseOrderStatus,
+  getOrderFillDelayMillis,
   zeroAddress,
 } from '@orbs-network/twap-sdk'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
-import { multicall } from '@wagmi/core'
 import { useCallback, useMemo } from 'react'
 import type { TwapSupportedChainId } from 'src/config'
 import { TwapSDK } from 'src/lib/swap/twap'
 import { twapAbi_status } from 'src/lib/swap/twap/abi'
-import type { Token, Type } from 'sushi/currency'
-import type { Address } from 'sushi/types'
+import type { EvmAddress, EvmCurrency, EvmToken } from 'sushi/evm'
 import { useConfig } from 'wagmi'
 
 export type TwapOrder = Order & {
@@ -23,7 +20,7 @@ export type TwapOrder = Order & {
 
 interface TwapOrdersStoreParams {
   chainId: TwapSupportedChainId
-  account: Address | undefined
+  account: EvmAddress | undefined
 }
 
 export const usePersistedOrdersStore = ({
@@ -51,8 +48,8 @@ export const usePersistedOrdersStore = ({
       orderId: number,
       txHash: string,
       params: string[],
-      srcToken: Token,
-      dstToken: Type,
+      srcToken: EvmToken,
+      dstToken: EvmCurrency,
     ) => {
       if (!account) return
 
@@ -61,7 +58,8 @@ export const usePersistedOrdersStore = ({
       const order = buildOrder({
         srcAmount: params[3],
         srcTokenAddress: srcToken.address,
-        dstTokenAddress: dstToken.isToken ? dstToken.address : zeroAddress,
+        dstTokenAddress:
+          dstToken.type === 'token' ? dstToken.address : zeroAddress,
         srcAmountPerChunk: params[4],
         deadline: Number(params[6]) * 1000,
         dstMinAmountPerChunk: params[5],
@@ -74,6 +72,8 @@ export const usePersistedOrdersStore = ({
         maker: account,
         exchange: sdk.config.exchangeAddress,
         twapAddress: sdk.config.twapAddress,
+        chainId,
+        status: OrderStatus.Open,
       })
 
       const orders = getCreatedOrders()
@@ -85,8 +85,8 @@ export const usePersistedOrdersStore = ({
         const _order = {
           ...order,
           status: OrderStatus.Open,
-          fillDelayMs: getOrderFillDelay(
-            order.fillDelay,
+          fillDelayMs: getOrderFillDelayMillis(
+            order,
             TwapSDK.onNetwork(chainId).config,
           ),
         }
@@ -154,7 +154,7 @@ export const usePersistedOrdersStore = ({
 
 interface TwapOrdersQueryParams {
   chainId: TwapSupportedChainId
-  account: Address | undefined
+  account: EvmAddress | undefined
   enabled?: boolean
 }
 
@@ -189,25 +189,10 @@ const useTwapOrdersQuery = ({
         }
       })
 
-      const multicallResponse = await multicall(config, {
-        contracts: sdkOrders.map((order) => {
-          return {
-            abi: twapAbi_status,
-            address: order.twapAddress as Address,
-            functionName: 'status',
-            args: [order.id],
-          }
-        }),
-      })
-
-      const statuses = multicallResponse.map((it) => {
-        return it.result as number
-      })
-
       const canceledOrders = new Set(getCancelledOrderIds())
 
-      const orders = sdkOrders.map((order, index) => {
-        let status = parseOrderStatus(order.progress, statuses?.[index])
+      const orders = sdkOrders.map((order) => {
+        let status = order.status
         if (canceledOrders.has(order.id)) {
           if (status !== OrderStatus.Canceled) {
             // console.log(`Cancelled added: ${order.id}`)
@@ -222,8 +207,8 @@ const useTwapOrdersQuery = ({
           ...order,
           status,
           progress: status === OrderStatus.Completed ? 100 : order.progress,
-          fillDelayMs: getOrderFillDelay(
-            order.fillDelay,
+          fillDelayMs: getOrderFillDelayMillis(
+            order,
             TwapSDK.onNetwork(chainId).config,
           ),
         } satisfies TwapOrder

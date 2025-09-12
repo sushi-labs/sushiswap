@@ -1,5 +1,5 @@
 import { CurrencyInput } from './Currency'
-import { EnsInput } from './Ens'
+import { EnsInput } from './ens'
 
 export interface Web3Input {
   Currency: typeof CurrencyInput

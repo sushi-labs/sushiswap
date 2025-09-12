@@ -1,3 +1,3 @@
 'use client'
 
-export { CurrencyInput, type CurrencyInputProps } from './CurrencyInput'
+export { CurrencyInput, type CurrencyInputProps } from './currency-input'

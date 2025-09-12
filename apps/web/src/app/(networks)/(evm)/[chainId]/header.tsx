@@ -4,15 +4,15 @@ import { Navigation, SushiNavigationDropdown, classNames } from '@sushiswap/ui'
 import { SushiIcon } from '@sushiswap/ui/icons/SushiIcon'
 import { SushiWithTextIcon } from '@sushiswap/ui/icons/SushiWithTextIcon'
 import React, { type FC } from 'react'
-import { type NonStandardChainId, SUPPORTED_NETWORKS } from 'src/config'
+import { headerElements } from 'src/app/_common/header-elements'
+import { SUPPORTED_NETWORKS } from 'src/config'
 import { WagmiHeaderComponents } from 'src/lib/wagmi/components/wagmi-header-components'
-import type { ChainId, EvmChainId } from 'sushi/chain'
+import type { ChainId } from 'sushi'
 import { useChainId } from 'wagmi'
-import { headerElements } from '../_common/header-elements'
 
 interface HeaderProps {
   chainId?: ChainId
-  supportedNetworks?: readonly (EvmChainId | NonStandardChainId)[]
+  supportedNetworks?: readonly ChainId[]
 }
 
 export const Header: FC<HeaderProps> = ({
@@ -46,7 +46,7 @@ export const Header: FC<HeaderProps> = ({
           rightElement={
             <WagmiHeaderComponents
               networks={SUPPORTED_NETWORKS}
-              selectedNetwork={chainId as EvmChainId}
+              selectedNetwork={chainId}
               supportedNetworks={supportedNetworks}
             />
           }

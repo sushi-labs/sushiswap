@@ -18,6 +18,8 @@ import React, {
   useState,
   use,
 } from 'react'
+import { PriceImpactWarning } from 'src/app/(networks)/_ui/price-impact-warning'
+import { SlippageWarning } from 'src/app/(networks)/_ui/slippage-warning'
 import { DISABLED_CHAIN_IDS, isZapSupportedChainId } from 'src/config'
 import {
   APPROVE_TAG_ADD_LEGACY,
@@ -25,7 +27,7 @@ import {
   NativeAddress,
 } from 'src/lib/constants'
 import { isSushiSwapV2Pool } from 'src/lib/functions'
-import { isZapRouteNotFoundError, useZap } from 'src/lib/hooks'
+import { useV2Zap } from 'src/lib/hooks'
 import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
 import { warningSeverity } from 'src/lib/swap/warningSeverity'
 import { Web3Input } from 'src/lib/wagmi/components/web3-input'
@@ -37,31 +39,23 @@ import {
 import {
   CheckerProvider,
   useApproved,
-} from 'src/lib/wagmi/systems/Checker/Provider'
-import { PoolFinder } from 'src/lib/wagmi/systems/PoolFinder/PoolFinder'
-import { PriceImpactWarning, SlippageWarning } from 'src/ui/common'
-import { AddSectionPoolShareCardV2 } from 'src/ui/pool/AddSectionPoolShareCardV2'
-import { AddSectionReviewModalLegacy } from 'src/ui/pool/AddSectionReviewModalLegacy'
-import { SelectNetworkWidget } from 'src/ui/pool/SelectNetworkWidget'
-import { SelectTokensWidget } from 'src/ui/pool/SelectTokensWidget'
-import { ToggleZapCard } from 'src/ui/pool/ToggleZapCard'
-import { ZapInfoCard } from 'src/ui/pool/ZapInfoCard'
+} from 'src/lib/wagmi/systems/Checker/provider'
+import { PoolFinder } from 'src/lib/wagmi/systems/PoolFinder/pool-finder'
+import { Amount, Percent, ZERO } from 'sushi'
 import {
-  EVM_TESTNET_CHAIN_IDS,
   type EvmChainId,
   EvmChainKey,
-} from 'sushi/chain'
-import {
+  type EvmCurrency,
   SUSHISWAP_V2_ROUTER_ADDRESS,
   SUSHISWAP_V2_SUPPORTED_CHAIN_IDS,
+  type SushiSwapV2Pool,
   defaultCurrency,
   defaultQuoteCurrency,
+  getEvmChainById,
+  isEvmTestnetChainId,
   isSushiSwapV2ChainId,
   isWNativeSupported,
-} from 'sushi/config'
-import { Amount, type Type, tryParseAmount } from 'sushi/currency'
-import { Percent, ZERO } from 'sushi/math'
-import type { SushiSwapV2Pool } from 'sushi/pool/sushiswap-v2'
+} from 'sushi/evm'
 import type { SendTransactionReturnType } from 'viem'
 import {
   useAccount,
@@ -70,6 +64,12 @@ import {
   useSendTransaction,
 } from 'wagmi'
 import { useRefetchBalances } from '~evm/_common/ui/balance-provider/use-refetch-balances'
+import { SelectNetworkWidget } from '../../_ui/select-network-widget'
+import { SelectTokensWidget } from '../../_ui/select-tokens-widget'
+import { ToggleZapCard } from '../../_ui/toggle-zap-card'
+import { AddSectionReviewModalLegacy } from '../_common/ui/add-section-review-modal-legacy'
+import { V2ZapInfoCard } from '../_common/ui/v2-zap-info-card'
+import { AddSectionPoolShareCardV2 } from './_common/ui/add-section-pool-share-card-v2'
 
 export default function Page(props: { params: Promise<{ chainId: string }> }) {
   const params = use(props.params)
@@ -81,10 +81,10 @@ export default function Page(props: { params: Promise<{ chainId: string }> }) {
   const [isZapModeEnabled, setIsZapModeEnabled] = useState(false)
 
   const router = useRouter()
-  const [token0, setToken0] = useState<Type | undefined>(
+  const [token0, setToken0] = useState<EvmCurrency | undefined>(
     defaultCurrency[chainId as keyof typeof defaultCurrency],
   )
-  const [token1, setToken1] = useState<Type | undefined>(
+  const [token1, setToken1] = useState<EvmCurrency | undefined>(
     defaultQuoteCurrency[chainId as keyof typeof defaultQuoteCurrency],
   )
 
@@ -99,9 +99,7 @@ export default function Page(props: { params: Promise<{ chainId: string }> }) {
     () =>
       SUSHISWAP_V2_SUPPORTED_CHAIN_IDS.filter(
         (chainId) =>
-          !EVM_TESTNET_CHAIN_IDS.includes(
-            chainId as (typeof EVM_TESTNET_CHAIN_IDS)[number],
-          ) &&
+          !isEvmTestnetChainId(chainId) &&
           !DISABLED_CHAIN_IDS.includes(
             chainId as (typeof DISABLED_CHAIN_IDS)[number],
           ),
@@ -117,7 +115,7 @@ export default function Page(props: { params: Promise<{ chainId: string }> }) {
   const [independendField, setIndependendField] = useState(0)
 
   const _setToken0 = useCallback(
-    (token: Type | undefined) => {
+    (token: EvmCurrency | undefined) => {
       if (token?.id === token1?.id) return
       setIndependendField(1)
       setTypedAmounts((prev) => ({ ...prev, input0: '' }))
@@ -127,7 +125,7 @@ export default function Page(props: { params: Promise<{ chainId: string }> }) {
   )
 
   const _setToken1 = useCallback(
-    (token: Type | undefined) => {
+    (token: EvmCurrency | undefined) => {
       if (token?.id === token0?.id) return
       setIndependendField(0)
       setTypedAmounts((prev) => ({ ...prev, input1: '' }))
@@ -185,7 +183,7 @@ export default function Page(props: { params: Promise<{ chainId: string }> }) {
               selectedNetwork={chainId}
               onSelect={(chainId) => {
                 if (!isSushiSwapV2ChainId(chainId)) return
-                router.push(`/${EvmChainKey[chainId]}/pool/v2/add`)
+                router.push(`/${getEvmChainById(chainId).key}/pool/v2/add`)
               }}
             />
             <SelectTokensWidget
@@ -269,18 +267,18 @@ const _ZapWidget: FC<ZapWidgetProps> = ({
   )
 
   const [inputAmount, setInputAmount] = useState('')
-  const [inputCurrency, _setInputCurrency] = useState<Type>(
+  const [inputCurrency, _setInputCurrency] = useState<EvmCurrency>(
     defaultCurrency[chainId as keyof typeof defaultCurrency],
   )
-  const setInputCurrency = useCallback((currency: Type) => {
+  const setInputCurrency = useCallback((currency: EvmCurrency) => {
     _setInputCurrency(currency)
     setInputAmount('')
   }, [])
 
   const parsedInputAmount = useMemo(
     () =>
-      tryParseAmount(inputAmount, inputCurrency) ||
-      Amount.fromRawAmount(inputCurrency, 0),
+      Amount.tryFromHuman(inputCurrency, inputAmount) ||
+      new Amount(inputCurrency, 0),
     [inputAmount, inputCurrency],
   )
 
@@ -289,11 +287,12 @@ const _ZapWidget: FC<ZapWidgetProps> = ({
     isLoading: isZapLoading,
     isError: isZapError,
     error: zapError,
-  } = useZap({
+  } = useV2Zap({
     chainId,
     fromAddress: address,
-    tokenIn: inputCurrency.isNative ? NativeAddress : inputCurrency.address,
-    amountIn: parsedInputAmount?.quotient?.toString(),
+    tokenIn:
+      inputCurrency.type === 'native' ? NativeAddress : inputCurrency.address,
+    amountIn: parsedInputAmount.amount.toString(),
     tokenOut: pool?.liquidityToken.address,
     slippage: slippageTolerance,
   })
@@ -397,14 +396,17 @@ const _ZapWidget: FC<ZapWidgetProps> = ({
   const showPriceImpactWarning = useMemo(() => {
     const priceImpactSeverity = warningSeverity(
       typeof zapResponse?.priceImpact === 'number'
-        ? new Percent(zapResponse.priceImpact, 10_000n)
+        ? new Percent({
+            numerator: zapResponse.priceImpact,
+            denominator: 10_000n,
+          })
         : undefined,
     )
     return priceImpactSeverity > 3
   }, [zapResponse?.priceImpact])
 
   const showSlippageWarning = useMemo(() => {
-    return !slippageTolerance.lessThan(SLIPPAGE_WARNING_THRESHOLD)
+    return !slippageTolerance.lt(SLIPPAGE_WARNING_THRESHOLD)
   }, [slippageTolerance])
 
   return (
@@ -460,9 +462,9 @@ const _ZapWidget: FC<ZapWidgetProps> = ({
                       loading={isZapLoading || isWritePending}
                       disabled={!preparedTx}
                     >
-                      {zapError && isZapRouteNotFoundError(zapError) ? (
+                      {isZapError ? (
                         'No route found'
-                      ) : isZapError || isEstGasError ? (
+                      ) : isEstGasError ? (
                         'Shoot! Something went wrong :('
                       ) : isWritePending ? (
                         <Dots>Confirm Transaction</Dots>
@@ -485,8 +487,9 @@ const _ZapWidget: FC<ZapWidgetProps> = ({
           setChecked={setChecked}
         />
       )}
-      <ZapInfoCard
+      <V2ZapInfoCard
         zapResponse={zapResponse}
+        isZapError={isZapError}
         inputCurrencyAmount={parsedInputAmount}
         pool={pool}
       />
@@ -499,10 +502,10 @@ interface AddLiquidityWidgetProps {
   pool: SushiSwapV2Pool | null
   poolState: SushiSwapV2PoolState
   title: ReactNode
-  token0: Type | undefined
-  token1: Type | undefined
-  setToken0: (token: Type | undefined) => void
-  setToken1: (token: Type | undefined) => void
+  token0: EvmCurrency | undefined
+  token1: EvmCurrency | undefined
+  setToken0: (token: EvmCurrency | undefined) => void
+  setToken1: (token: EvmCurrency | undefined) => void
   input0: string
   input1: string
   setTypedAmounts: Dispatch<SetStateAction<{ input0: string; input1: string }>>
@@ -532,13 +535,13 @@ const AddLiquidityWidget: FC<AddLiquidityWidgetProps> = ({
     if (!token0 || !token1) return [undefined, undefined]
 
     return [
-      tryParseAmount(input0, token0) || Amount.fromRawAmount(token0, 0),
-      tryParseAmount(input1, token1) || Amount.fromRawAmount(token1, 0),
+      Amount.tryFromHuman(token0, input0) || new Amount(token0, 0),
+      Amount.tryFromHuman(token1, input1) || new Amount(token1, 0),
     ]
   }, [input0, input1, token0, token1])
 
   const noLiquidity = useMemo(() => {
-    return pool?.reserve0.equalTo(ZERO) && pool.reserve1.equalTo(ZERO)
+    return pool?.reserve0.eq(ZERO) && pool.reserve1.eq(ZERO)
   }, [pool])
 
   const onChangeToken0TypedAmount = useCallback(
@@ -593,30 +596,35 @@ const AddLiquidityWidget: FC<AddLiquidityWidgetProps> = ({
 
   useEffect(() => {
     // Includes !!pool
-    if (
-      pool?.reserve0.greaterThan(0) &&
-      pool.reserve1.greaterThan(0) &&
-      token0 &&
-      token1
-    ) {
+    if (pool?.reserve0.gt(0n) && pool.reserve1.gt(0n) && token0 && token1) {
       if (independendField === 0) {
-        const parsedAmount = tryParseAmount(input0, token0)
-        setTypedAmounts({
-          input0,
-          input1: parsedAmount
-            ? pool.priceOf(token0.wrapped).quote(parsedAmount.wrapped).toExact()
-            : '',
-        })
+        const parsedAmount = Amount.tryFromHuman(token0, input0)
+        if (parsedAmount) {
+          setTypedAmounts({
+            input0,
+            input1: parsedAmount
+              ? pool
+                  .priceOf(token0.wrap())
+                  .getQuote(parsedAmount.wrap())
+                  .toString()
+              : '',
+          })
+        }
       }
 
       if (independendField === 1) {
-        const parsedAmount = tryParseAmount(input1, token1)
-        setTypedAmounts({
-          input0: parsedAmount
-            ? pool.priceOf(token1.wrapped).quote(parsedAmount.wrapped).toExact()
-            : '',
-          input1,
-        })
+        const parsedAmount = Amount.tryFromHuman(token1, input1)
+        if (parsedAmount) {
+          setTypedAmounts({
+            input0: parsedAmount
+              ? pool
+                  .priceOf(token1.wrap())
+                  .getQuote(parsedAmount.wrap())
+                  .toString()
+              : '',
+            input1,
+          })
+        }
       }
     }
   }, [independendField, pool, input0, input1, token0, token1, setTypedAmounts])

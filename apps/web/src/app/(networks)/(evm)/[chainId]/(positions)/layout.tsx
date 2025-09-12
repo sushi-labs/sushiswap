@@ -1,9 +1,8 @@
 import { isPoolChainId } from '@sushiswap/graph-client/data-api'
 import { Container } from '@sushiswap/ui'
 import { notFound } from 'next/navigation'
+import { PoolsFiltersProvider } from 'src/app/(networks)/_ui/pools-filters-provider'
 import { POOL_SUPPORTED_NETWORKS } from 'src/config'
-import { PoolsFiltersProvider } from 'src/ui/pool'
-import type { ChainId } from 'sushi/chain'
 import { Header } from '../header'
 import { Hero } from './hero'
 import { NavigationItems } from './navigation-items'
@@ -16,7 +15,7 @@ export default async function PositionsLayout(props: {
 
   const { children } = props
 
-  const chainId = +params.chainId as ChainId
+  const chainId = +params.chainId
 
   if (!isPoolChainId(chainId)) {
     return notFound()

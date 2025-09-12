@@ -3,8 +3,8 @@
 import { createErrorToast, createToast } from '@sushiswap/notifications'
 import { InterfaceEventName, sendAnalyticsEvent } from '@sushiswap/telemetry'
 import { useCallback, useMemo } from 'react'
-import { weth9Abi_deposit } from 'sushi/abi'
-import type { Amount, Type } from 'sushi/currency'
+import type { Amount } from 'sushi'
+import { type EvmCurrency, weth9Abi_deposit } from 'sushi/evm'
 import { type SendTransactionReturnType, UserRejectedRequestError } from 'viem'
 import {
   useAccount,
@@ -14,7 +14,7 @@ import {
 } from 'wagmi'
 
 interface UseWrapNativeParams {
-  amount: Amount<Type> | undefined
+  amount: Amount<EvmCurrency> | undefined
   enabled?: boolean
 }
 
@@ -37,7 +37,7 @@ export const useWrapNative = ({
 
       sendAnalyticsEvent(InterfaceEventName.WRAP_TOKEN_TXN_SUBMITTED, {
         chain_id: amount.currency.chainId,
-        token_address: amount.currency.wrapped.address,
+        token_address: amount.currency.wrap().address,
         token_symbol: amount.currency.symbol,
       })
       try {
@@ -69,12 +69,12 @@ export const useWrapNative = ({
 
   const { data: simulation } = useSimulateContract({
     chainId: amount?.currency.chainId,
-    address: amount?.currency.wrapped.address,
+    address: amount?.currency.wrap().address,
     abi: weth9Abi_deposit,
     functionName: 'deposit',
-    value: amount?.quotient,
+    value: amount?.amount,
     query: {
-      enabled: Boolean(enabled && amount && amount.currency.isNative),
+      enabled: Boolean(enabled && amount && amount.currency.type === 'native'),
     },
   })
 

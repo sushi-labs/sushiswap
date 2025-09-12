@@ -2,12 +2,16 @@ import { useCustomTokens } from '@sushiswap/hooks'
 import { useQuery } from '@tanstack/react-query'
 import { useMemo } from 'react'
 import { useAllPrices } from 'src/lib/hooks/react-query'
-import type { SushiSwapV3ChainId } from 'sushi/config'
-import { Amount, type Token } from 'sushi/currency'
-import { Position, type SushiSwapV3Pool } from 'sushi/pool/sushiswap-v3'
+import { Amount } from 'sushi'
+import {
+  type EvmToken,
+  Position,
+  type SushiSwapV3ChainId,
+  type SushiSwapV3Pool,
+} from 'sushi/evm'
 import type { Address } from 'viem'
 import { useConfig } from 'wagmi'
-import { usePrices } from '~evm/_common/ui/price-provider/price-provider/use-prices'
+import { useMultiChainPrices } from '~evm/_common/ui/price-provider/price-provider/use-multi-chain-prices'
 import { getConcentratedLiquidityPools } from '../../pools/actions/getConcentratedLiquidityPool'
 import {
   getTokenWithCacheQueryFn,
@@ -18,8 +22,8 @@ import type { ConcentratedLiquidityPosition } from '../types'
 
 interface UseConcentratedLiquidityPositionsData
   extends Omit<ConcentratedLiquidityPosition, 'token0' | 'token1'> {
-  token0: Token
-  token1: Token
+  token0: EvmToken
+  token1: EvmToken
   pool: SushiSwapV3Pool
   position: {
     position: Position
@@ -41,8 +45,8 @@ const getPoolKey = ({
   fee,
 }: {
   chainId: SushiSwapV3ChainId
-  token0: Token
-  token1: Token
+  token0: EvmToken
+  token1: EvmToken
   fee: number
 }) =>
   `${chainId}:${token0.address.toLowerCase()}:${token1.address.toLowerCase()}:${fee}`
@@ -55,32 +59,13 @@ export const useConcentratedLiquidityPositions = ({
   const { data: customTokens, hasToken } = useCustomTokens()
 
   const {
-    data: allPrices,
-    isError: isAllPricesError,
-    isLoading: isAllPricesInitialLoading,
-  } = useAllPrices({
-    enabled: chainIds.length > 1,
+    data: prices,
+    isError: isPriceError,
+    isLoading: isPriceInitialLoading,
+  } = useMultiChainPrices({
+    chainIds,
+    enabled: Boolean(account),
   })
-  const {
-    data: chainPrices,
-    isError: isChainPricesError,
-    isLoading: isChainPricesInitialLoading,
-  } = usePrices({
-    chainId: chainIds?.length === 1 ? chainIds[0] : undefined,
-  })
-
-  const prices = useMemo(() => {
-    if (chainIds.length > 1) {
-      return allPrices
-    }
-
-    if (chainIds.length === 1 && chainPrices) {
-      return new Map([[chainIds[0], chainPrices]])
-    }
-  }, [allPrices, chainPrices, chainIds])
-  const isPriceInitialLoading =
-    isAllPricesInitialLoading || isChainPricesInitialLoading
-  const isPriceError = isAllPricesError || isChainPricesError
 
   const config = useConfig()
 
@@ -138,8 +123,8 @@ export const useConcentratedLiquidityPositions = ({
       ).filter((position) =>
         Boolean(position.token0 && position.token1),
       ) as (Omit<ConcentratedLiquidityPosition, 'token0' | 'token1'> & {
-        token0: Token
-        token1: Token
+        token0: EvmToken
+        token1: EvmToken
       })[]
 
       const poolKeys = new Map(
@@ -187,12 +172,12 @@ export const useConcentratedLiquidityPositions = ({
             tickUpper,
           })
 
-          const amountToUsd = (amount: Amount<Token>) => {
+          const amountToUsd = (amount: Amount<EvmToken>) => {
             const _price = prices?.get(chainId)?.get(amount.currency.address)
 
-            if (!amount?.greaterThan(0n) || !_price) return 0
+            if (!amount?.gt(0n) || !_price) return 0
             const price = Number(
-              Number(amount.toExact()) * Number(_price.toFixed(10)),
+              Number(amount.toString()) * Number(_price.toFixed(10)),
             )
             if (Number.isNaN(price) || price < 0.000001) {
               return 0
@@ -204,8 +189,8 @@ export const useConcentratedLiquidityPositions = ({
           const positionUSD =
             amountToUsd(position.amount0) + amountToUsd(position.amount1)
           const unclaimedUSD =
-            amountToUsd(Amount.fromRawAmount(pool.token0, fees?.[0] || 0)) +
-            amountToUsd(Amount.fromRawAmount(pool.token1, fees?.[1] || 0))
+            amountToUsd(new Amount(pool.token0, fees?.[0] || 0)) +
+            amountToUsd(new Amount(pool.token1, fees?.[1] || 0))
 
           return {
             ..._position,
@@ -224,7 +209,10 @@ export const useConcentratedLiquidityPositions = ({
     },
     refetchInterval: Number.POSITIVE_INFINITY,
     enabled: Boolean(
-      account && chainIds && enabled && (prices || isPriceError),
+      account &&
+        chainIds &&
+        enabled &&
+        (!isPriceInitialLoading || isPriceError),
     ),
   })
 

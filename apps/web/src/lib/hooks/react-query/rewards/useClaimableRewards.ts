@@ -1,9 +1,13 @@
 import { useQuery } from '@tanstack/react-query'
-import { MERKL_SUPPORTED_CHAIN_IDS, type MerklChainId } from 'sushi/config'
-import { Amount, Token, type Type } from 'sushi/currency'
+import { Amount } from 'sushi'
+import {
+  type EvmCurrency,
+  EvmToken,
+  MERKL_SUPPORTED_CHAIN_IDS,
+  type MerklChainId,
+} from 'sushi/evm'
 import type { Hex } from 'viem'
 import type { Address } from 'viem/accounts'
-import { useAllPrices } from '../prices'
 import { merklRewardsValidator } from './validator'
 
 interface UseClaimableRewardsParams {
@@ -14,7 +18,7 @@ interface UseClaimableRewardsParams {
 
 export type ClaimableRewards = {
   chainId: MerklChainId
-  rewardAmounts: Record<string, Amount<Type>>
+  rewardAmounts: Record<string, Amount<EvmCurrency>>
   rewardAmountsUSD: Record<string, number>
   totalRewardsUSD: number
   claimArgs: [Address[], Address[], bigint[], Hex[][]]
@@ -27,8 +31,6 @@ export const useClaimableRewards = ({
   account,
   enabled = true,
 }: UseClaimableRewardsParams) => {
-  const { data: prices } = useAllPrices()
-
   return useQuery({
     queryKey: ['claimableMerklRewards', { account }],
     queryFn: async () => {
@@ -58,8 +60,8 @@ export const useClaimableRewards = ({
 
           const chainId = reward.token.chainId as MerklChainId
           const tokenAddress = reward.token.address as Address
-          const token = new Token(reward.token)
-          const unclaimedAmount = Amount.fromRawAmount(token, unclaimed)
+          const token = new EvmToken({ ...reward.token, name: '' })
+          const unclaimedAmount = new Amount(token, unclaimed)
 
           if (!accum[chainId]) {
             accum[chainId] = {
@@ -77,62 +79,26 @@ export const useClaimableRewards = ({
           accum[chainId].claimArgs[3].push(reward.proofs)
 
           const existingRewardAmount =
-            accum[chainId].rewardAmounts[tokenAddress]
+            accum[chainId].rewardAmounts[tokenAddress.toLowerCase()]
 
-          if (existingRewardAmount) {
-            const amount = existingRewardAmount.add(unclaimedAmount)
-            accum[chainId].rewardAmounts[tokenAddress] = amount
-          } else {
-            accum[chainId].rewardAmounts[tokenAddress] = unclaimedAmount
-          }
+          const amount = existingRewardAmount
+            ? existingRewardAmount.add(unclaimedAmount)
+            : unclaimedAmount
+          const amountUSD =
+            Number(amount.toString()) * (reward.token.price ?? 0)
+
+          accum[chainId].rewardAmounts[tokenAddress.toLowerCase()] = amount
+          accum[chainId].rewardAmountsUSD[tokenAddress.toLowerCase()] =
+            amountUSD
+          accum[chainId].totalRewardsUSD += amountUSD
 
           return accum
         }, {} as UseClaimableRewardReturn)
 
-      return Object.fromEntries(
-        Object.values(data).map((entry) => {
-          const { rewardAmounts, chainId } = entry
-          const rewardAmountsUSD = Object.entries(rewardAmounts).reduce(
-            (prev, [key, amount]) => {
-              const price = prices
-                ?.get(chainId)
-                ?.get(amount.currency.wrapped.address.toLowerCase())
-
-              if (!price) return prev
-
-              const _amountUSD = Number(
-                Number(amount.toExact()) * Number(price.toFixed(10)),
-              )
-
-              const amountUSD =
-                Number.isNaN(price) || +price.toFixed(10) < 0.000001
-                  ? 0
-                  : _amountUSD
-
-              prev[key] = amountUSD
-              return prev
-            },
-            {} as Record<string, number>,
-          )
-
-          const totalRewardsUSD = Object.values(rewardAmountsUSD).reduce(
-            (prev, amount) => prev + amount,
-            0,
-          )
-
-          return [
-            chainId,
-            {
-              ...entry,
-              rewardAmountsUSD,
-              totalRewardsUSD,
-            },
-          ]
-        }),
-      )
+      return data
     },
     staleTime: 15000, // 15 seconds
     gcTime: 60000, // 1min
-    enabled: Boolean(enabled && account && prices),
+    enabled: Boolean(enabled && account),
   })
 }

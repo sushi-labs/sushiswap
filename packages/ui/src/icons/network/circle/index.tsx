@@ -1,4 +1,4 @@
-import { ChainId } from 'sushi/chain'
+import { ChainId } from 'sushi'
 
 import type { IconComponent } from '../../../types'
 import { ApeCircle } from './ApeCircle'
@@ -7,9 +7,9 @@ import { ArbitrumCircle } from './ArbitrumCircle'
 import { ArbitrumNovaCircle } from './ArbitrumNovaCircle'
 import { AvalancheCircle } from './AvalancheCircle'
 import { BaseCircle } from './BaseCircle'
+import { BeraCircle } from './BeraCircle'
 import { BinanceCircle } from './BinanceCircle'
 import { BlastCircle } from './BlastCircle'
-import { BobaAvaxCircle } from './BobaAvaxCircle'
 import { BobaBNBCircle } from './BobaBNBCircle'
 import { BobaCircle } from './BobaCircle'
 import { BttcCircle } from './BttcCircle'
@@ -19,12 +19,11 @@ import { CronosCircle } from './CronosCircle'
 import { EthereumCircle } from './EthereumCircle'
 import { FantomCircle } from './FantomCircle'
 import { FilecoinCircle } from './FilecoinCircle'
-import { FuseCircle } from './FuseCircle'
 import { GnosisCircle } from './GnosisCircle'
 import { HaqqCircle } from './HaqqCircle'
 import { HarmonyCircle } from './HarmonyCircle'
-import { HecoCircle } from './HecoCircle'
 import { HemiCircle } from './HemiCircle'
+import { HyperEVMCircle } from './HyperEVMCircle'
 import { KatanaCircle } from './KatanaCircle'
 import { KavaCircle } from './KavaCircle'
 import { LineaCircle } from './LineaCircle'
@@ -32,11 +31,7 @@ import { MantaCircle } from './MantaCircle'
 import { MantleCircle } from './MantleCircle'
 import { MetisCircle } from './MetisCircle'
 import { ModeCircle } from './ModeCircle'
-import { MoonbeamCircle } from './MoonbeamCircle'
-import { MoonriverCircle } from './MoonriverCircle'
-import { OkexCircle } from './OkexCircle'
 import { OptimismCircle } from './OptimismCircle'
-import { PalmCircle } from './PalmCircle'
 import { PolygonCircle } from './PolygonCircle'
 import { PolygonZKCircle } from './PolygonZKCircle'
 import { RootstockCircle } from './RootstockCircle'
@@ -44,7 +39,6 @@ import { ScrollCircle } from './ScrollCircle'
 import { SkaleCircle } from './SkaleCircle'
 import { SonicCircle } from './SonicCircle'
 import { TaikoCircle } from './TaikoCircle'
-import { TelosCircle } from './TelosCircle'
 import { ThunderCoreCircle } from './ThunderCoreCircle'
 import { TronCircle } from './TronCircle'
 import { ZKLinkCircle } from './ZKLinkCircle'
@@ -57,6 +51,7 @@ export * from './ArbitrumCircle'
 export * from './ArbitrumNovaCircle'
 export * from './AvalancheCircle'
 export * from './BaseCircle'
+export * from './BeraCircle'
 export * from './BlastCircle'
 export * from './BinanceCircle'
 export * from './BobaAvaxCircle'
@@ -75,6 +70,7 @@ export * from './HaqqCircle'
 export * from './HarmonyCircle'
 export * from './HecoCircle'
 export * from './HemiCircle'
+export * from './HyperEVMCircle'
 export * from './KatanaCircle'
 export * from './KavaCircle'
 export * from './LineaCircle'
@@ -113,19 +109,11 @@ export const NETWORK_CIRCLE_ICON: Partial<
   [ChainId.AVALANCHE]: AvalancheCircle,
   [ChainId.HARMONY]: HarmonyCircle,
   [ChainId.CELO]: CeloCircle,
-  [ChainId.MOONRIVER]: MoonriverCircle,
-  [ChainId.FUSE]: FuseCircle,
-  [ChainId.TELOS]: TelosCircle,
-  [ChainId.MOONBEAM]: MoonbeamCircle,
   [ChainId.OPTIMISM]: OptimismCircle,
   [ChainId.METIS]: MetisCircle,
   [ChainId.KAVA]: KavaCircle,
   [ChainId.ARBITRUM_NOVA]: ArbitrumNovaCircle,
-  [ChainId.HECO]: HecoCircle,
-  [ChainId.OKEX]: OkexCircle,
-  [ChainId.PALM]: PalmCircle,
   [ChainId.BOBA]: BobaCircle,
-  [ChainId.BOBA_AVAX]: BobaAvaxCircle,
   [ChainId.BOBA_BNB]: BobaBNBCircle,
   [ChainId.BTTC]: BttcCircle,
   [ChainId.POLYGON_ZKEVM]: PolygonZKCircle,
@@ -151,6 +139,8 @@ export const NETWORK_CIRCLE_ICON: Partial<
   [ChainId.SONIC]: SonicCircle,
   [ChainId.HEMI]: HemiCircle,
   [ChainId.KATANA]: KatanaCircle,
-  aptos: AptosCircle,
-  tron: TronCircle,
+  [ChainId.HYPEREVM]: HyperEVMCircle,
+  [ChainId.BERACHAIN]: BeraCircle,
+  [ChainId.APTOS]: AptosCircle,
+  [ChainId.TRON]: TronCircle,
 }

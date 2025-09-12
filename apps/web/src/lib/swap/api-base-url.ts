@@ -1,4 +1,4 @@
-import { API_BASE_URL as PROD_API_BASE_URL } from 'sushi/config'
+import { API_BASE_URL as PROD_API_BASE_URL } from 'sushi/evm'
 
 export const API_BASE_URL =
   process.env['API_BASE_URL'] ||

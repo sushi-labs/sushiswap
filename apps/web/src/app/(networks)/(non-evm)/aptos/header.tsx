@@ -4,14 +4,14 @@ import { Navigation, SushiNavigationDropdown, classNames } from '@sushiswap/ui'
 import { SushiIcon } from '@sushiswap/ui/icons/SushiIcon'
 import { SushiWithTextIcon } from '@sushiswap/ui/icons/SushiWithTextIcon'
 import React, { type FC, Suspense } from 'react'
-import { NonStandardChainId, SUPPORTED_NETWORKS } from 'src/config'
+import { headerElements } from 'src/app/_common/header-elements'
+import { SUPPORTED_NETWORKS } from 'src/config'
 import { HeaderNetworkSelector } from 'src/lib/wagmi/components/header-network-selector'
-import type { EvmChainId } from 'sushi/chain'
-import { headerElements } from './_common/header-elements'
+import { ChainId } from 'sushi'
 import { UserProfile } from './_common/ui/user-profile/user-profile'
 
 export const Header: FC<{
-  supportedNetworks?: readonly (EvmChainId | NonStandardChainId)[]
+  supportedNetworks?: readonly ChainId[]
 }> = ({ supportedNetworks }) => {
   return (
     <div className="w-full h-[56px] z-20">
@@ -33,13 +33,13 @@ export const Header: FC<{
         <Navigation
           className="!pl-0 lg:!pl-4 !z-[unset]"
           hideSushiDropdown
-          leftElements={headerElements}
+          leftElements={headerElements({ chainId: ChainId.APTOS })}
           rightElement={
             <Suspense>
               <HeaderNetworkSelector
                 networks={SUPPORTED_NETWORKS}
                 supportedNetworks={supportedNetworks}
-                selectedNetwork={NonStandardChainId.APTOS}
+                selectedNetwork={ChainId.APTOS}
                 className="flex"
               />
               <UserProfile />

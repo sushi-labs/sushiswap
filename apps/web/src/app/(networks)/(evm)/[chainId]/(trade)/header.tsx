@@ -1,19 +1,20 @@
 'use client'
 
-import { Navigation, SushiNavigationDropdown, classNames } from '@sushiswap/ui'
+import { Navigation, SushiNavigationDropdown } from '@sushiswap/ui'
 import { SushiIcon } from '@sushiswap/ui/icons/SushiIcon'
 import { SushiWithTextIcon } from '@sushiswap/ui/icons/SushiWithTextIcon'
 import React, { type FC } from 'react'
-import { type NonStandardChainId, SUPPORTED_NETWORKS } from 'src/config'
+import { headerElements } from 'src/app/_common/header-elements'
+import { SUPPORTED_NETWORKS } from 'src/config'
 import { WagmiHeaderComponents } from 'src/lib/wagmi/components/wagmi-header-components'
-import { ChainId, type EvmChainId } from 'sushi/chain'
+import { ChainId } from 'sushi'
+import type { EvmChainId } from 'sushi/evm'
 import { useChainId } from 'wagmi'
 import { Header as _Header } from '~evm/[chainId]/header'
-import { headerElements } from '~evm/_common/header-elements'
 
 interface HeaderProps {
   chainId?: ChainId
-  supportedNetworks?: readonly (EvmChainId | NonStandardChainId)[]
+  supportedNetworks?: readonly ChainId[]
 }
 
 export const Header: FC<HeaderProps> = ({ chainId, supportedNetworks }) => {

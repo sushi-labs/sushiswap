@@ -1,7 +1,6 @@
 import type { ImageProps } from 'next/image'
 import type { FC } from 'react'
-import { ChainId, EvmChain } from 'sushi/chain'
-import type { Currency } from 'sushi/currency'
+import { ChainId, type Currency, getChainById } from 'sushi'
 
 import { Avatar, AvatarImage } from '../avatar'
 import { LinkExternal } from '../link'
@@ -11,16 +10,12 @@ const BnbLogo = 'bnb.svg'
 const EthereumLogo = 'ethereum.svg'
 const FtmLogo = 'ftm.svg'
 const OneLogo = 'one.svg'
-const HtLogo = 'ht.svg'
+// const HtLogo = 'ht.svg'
 const MaticLogo = 'matic.svg'
-const GlmrLogo = 'glmr.svg'
-const OktLogo = 'okt.svg'
+// const OktLogo = 'okt.svg'
 const xDaiLogo = 'xdai.svg'
 const CeloLogo = 'celo.svg'
-const PalmLogo = 'plam.svg'
-const MovrLogo = 'movr.svg'
-const FuseLogo = 'fuse.svg'
-const TelosLogo = 'telos.svg'
+// const PalmLogo = 'plam.svg'
 const KavaLogo = 'kava.svg'
 const MetisLogo = 'metis.svg'
 const BobaLogo = 'boba.svg'
@@ -35,43 +30,37 @@ const BitcoinLogo = 'bitcoin.svg'
 const MntLogo = 'mntl.svg'
 const ApeLogo = 'ape.svg'
 const SonicLogo = 'sonic.svg'
+const HypeLogo = 'hyper.svg'
+const BeraLogo = 'berachain.svg'
 
 const LOGO: Record<number, string> = {
   [ChainId.ETHEREUM]: EthereumLogo,
   [ChainId.SEPOLIA]: EthereumLogo,
-  // [ChainId.KOVAN]: EthereumLogo,
-  // [ChainId.RINKEBY]: EthereumLogo,
-  // [ChainId.ROPSTEN]: EthereumLogo,
-  // [ChainId.GÖRLI]: EthereumLogo,
   [ChainId.FANTOM]: FtmLogo,
-  [ChainId.FANTOM_TESTNET]: FtmLogo,
+  // [ChainId.FANTOM_TESTNET]: FtmLogo,
   [ChainId.POLYGON]: MaticLogo,
-  [ChainId.POLYGON_TESTNET]: MaticLogo,
+  // [ChainId.POLYGON_TESTNET]: MaticLogo,
   [ChainId.GNOSIS]: xDaiLogo,
   [ChainId.BSC]: BnbLogo,
-  [ChainId.BSC_TESTNET]: BnbLogo,
+  // [ChainId.BSC_TESTNET]: BnbLogo,
   [ChainId.AVALANCHE]: AvaxLogo,
-  [ChainId.AVALANCHE_TESTNET]: AvaxLogo,
-  [ChainId.HECO]: HtLogo,
+  // [ChainId.AVALANCHE_TESTNET]: AvaxLogo,
+  // [ChainId.HECO]: HtLogo,
   // [ChainId.HECO_TESTNET]: HtLogo,
   [ChainId.HARMONY]: OneLogo,
   // [ChainId.HARMONY_TESTNET]: OneLogo,
-  [ChainId.OKEX]: OktLogo,
+  // [ChainId.OKEX]: OktLogo,
   // [ChainId.OKEX_TESTNET]: OktLogo,
   [ChainId.ARBITRUM]: EthereumLogo,
-  [ChainId.ARBITRUM_TESTNET]: EthereumLogo,
+  // [ChainId.ARBITRUM_TESTNET]: EthereumLogo,
   [ChainId.CELO]: CeloLogo,
-  [ChainId.PALM]: PalmLogo,
-  [ChainId.MOONRIVER]: MovrLogo,
-  [ChainId.FUSE]: FuseLogo,
-  [ChainId.TELOS]: TelosLogo,
-  [ChainId.MOONBEAM]: GlmrLogo,
+  // [ChainId.PALM]: PalmLogo,
   [ChainId.OPTIMISM]: EthereumLogo,
   [ChainId.KAVA]: KavaLogo,
   [ChainId.ARBITRUM_NOVA]: EthereumLogo,
   [ChainId.METIS]: MetisLogo,
   [ChainId.BOBA]: EthereumLogo,
-  [ChainId.BOBA_AVAX]: BobaLogo,
+  // [ChainId.BOBA_AVAX]: BobaLogo,
   [ChainId.BOBA_BNB]: BobaLogo,
   [ChainId.BTTC]: BttcLogo,
   [ChainId.POLYGON_ZKEVM]: EthereumLogo,
@@ -96,6 +85,8 @@ const LOGO: Record<number, string> = {
   [ChainId.SONIC]: SonicLogo,
   [ChainId.HEMI]: EthereumLogo,
   [ChainId.KATANA]: EthereumLogo,
+  [ChainId.HYPEREVM]: HypeLogo,
+  [ChainId.BERACHAIN]: BeraLogo,
 }
 
 // function djb2(str: string) {
@@ -126,9 +117,10 @@ export const Icon: FC<IconProps> = ({
   disableLink = true,
   ...rest
 }) => {
-  const src = currency.isNative
-    ? `native-currency/${LOGO[currency.chainId]}`
-    : `tokens/${currency.chainId}/${currency.wrapped.address}.jpg`
+  const src =
+    currency.type === 'native'
+      ? `native-currency/${LOGO[currency.chainId]}`
+      : `tokens/${currency.chainId}/${currency.wrap().address}.jpg`
 
   const avatar = (
     <Avatar style={{ width: rest.width, height: rest.height }}>
@@ -152,7 +144,9 @@ export const Icon: FC<IconProps> = ({
 
   return (
     <LinkExternal
-      href={EvmChain.tokenUrl(currency.chainId, currency.wrapped.address)}
+      href={getChainById(currency.chainId).getTokenUrl(
+        currency.wrap().address as `0x${string}`,
+      )}
     >
       {avatar}
     </LinkExternal>

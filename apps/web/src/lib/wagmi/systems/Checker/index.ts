@@ -1,32 +1,32 @@
 import type { ButtonProps } from '@sushiswap/ui'
 import type { ComponentType, FC } from 'react'
 
-import { Amounts, type AmountsProps } from './Amounts'
-import { ApproveERC20, type ApproveERC20Props } from './ApproveERC20'
+import { Amounts, type AmountsProps } from './amounts'
+import { ApproveERC20, type ApproveERC20Props } from './approve-erc20'
 import {
   ApproveERC20Multiple,
   type ApproveERC20MultipleProps,
-} from './ApproveERC20Multiple'
+} from './approve-erc20-multiple'
 import {
   ApproveERC20WithPermit,
   type ApproveERC20WithPermitProps,
-} from './ApproveERC20WithPermit'
-import { Connect } from './Connect'
-import { Custom, type CustomProps } from './Custom'
-import { Guard, type GuardProps } from './Guard'
-import { Network, type NetworkProps } from './Network'
-import { PartialRoute, type PartialRouteProps } from './PartialRoute'
-import { type ProviderProps, CheckerProvider as Root } from './Provider'
+} from './approve-erc20-with-permit'
+import { Connect } from './connect'
+import { Custom, type CustomProps } from './custom'
+import { Guard, type GuardProps } from './guard'
+import { Network, type NetworkProps } from './network'
+import { PartialRoute, type PartialRouteProps } from './partial-route'
+import { type ProviderProps, CheckerProvider as Root } from './provider'
 import {
   RevokeApproveERC20,
   type RevokeApproveERC20Props,
-} from './RevokeApproveERC20'
+} from './revoke-approve-erc20'
 import {
   SLIPPAGE_WARNING_THRESHOLD,
   Slippage,
   type SlippageProps,
-} from './Slippage'
-import { Success, type SuccessProps } from './Success'
+} from './slippage'
+import { Success, type SuccessProps } from './success'
 
 export type CheckerProps = {
   Amounts: ComponentType<AmountsProps>

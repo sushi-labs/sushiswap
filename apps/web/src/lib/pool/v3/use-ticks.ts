@@ -3,24 +3,22 @@
 import { useMemo } from 'react'
 import { useConcentratedLiquidityPool } from 'src/lib/wagmi/hooks/pools/hooks/useConcentratedLiquidityPool'
 import {
+  type EvmCurrency,
   SUSHISWAP_V3_FACTORY_ADDRESS,
   SUSHISWAP_V3_TICK_LENS,
   type SushiSwapV3ChainId,
   type SushiSwapV3FeeAmount,
   TICK_SPACINGS,
-} from 'sushi/config'
-import type { Type } from 'sushi/currency'
-import {
   computeSushiSwapV3PoolAddress,
   nearestUsableTick,
-} from 'sushi/pool/sushiswap-v3'
+} from 'sushi/evm'
 import type { Address } from 'viem'
 import { useReadContracts } from 'wagmi'
 import type { Writeable } from 'zod'
 
 interface useTicksProps {
-  token0: Type | undefined
-  token1: Type | undefined
+  token0: EvmCurrency | undefined
+  token1: EvmCurrency | undefined
   chainId: SushiSwapV3ChainId
   feeAmount: SushiSwapV3FeeAmount | undefined
   numSurroundingTicks?: number | undefined
@@ -95,8 +93,8 @@ export function useTicks({
       token0 && token1 && feeAmount && chainId
         ? computeSushiSwapV3PoolAddress({
             factoryAddress: SUSHISWAP_V3_FACTORY_ADDRESS[chainId],
-            tokenA: token0.wrapped,
-            tokenB: token1.wrapped,
+            tokenA: token0.wrap(),
+            tokenB: token1.wrap(),
             fee: feeAmount,
           })
         : undefined,

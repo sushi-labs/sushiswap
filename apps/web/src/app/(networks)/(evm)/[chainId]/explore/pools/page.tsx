@@ -2,20 +2,19 @@ import { isPoolChainId } from '@sushiswap/graph-client/data-api'
 import { Container } from '@sushiswap/ui'
 import { notFound } from 'next/navigation'
 import React from 'react'
+import { TableFiltersNetwork } from 'src/app/(networks)/_ui/table-filters-network'
+import { TableFiltersSearchToken } from 'src/app/(networks)/_ui/table-filters-search-token'
 import { POOL_SUPPORTED_NETWORKS } from 'src/config'
-import { PoolsTable } from 'src/ui/pool/PoolsTable'
-import { TableFiltersFarmsOnly } from 'src/ui/pool/TableFiltersFarmsOnly'
-import { TableFiltersNetwork } from 'src/ui/pool/TableFiltersNetwork'
-import { TableFiltersPoolType } from 'src/ui/pool/TableFiltersPoolType'
-import { TableFiltersResetButton } from 'src/ui/pool/TableFiltersResetButton'
-import { TableFiltersSearchToken } from 'src/ui/pool/TableFiltersSearchToken'
-import type { ChainId } from 'sushi/chain'
+import { PoolsTable } from '~evm/[chainId]/_ui/pools-table'
+import { TableFiltersFarmsOnly } from '~evm/[chainId]/_ui/table-filters-farms-only'
+import { TableFiltersPoolType } from '~evm/[chainId]/_ui/table-filters-pool-type'
+import { TableFiltersResetButton } from '~evm/[chainId]/_ui/table-filters-reset-button'
 
 export default async function PoolsPage(props: {
   params: Promise<{ chainId: string }>
 }) {
   const params = await props.params
-  const chainId = +params.chainId as ChainId
+  const chainId = +params.chainId
 
   if (!isPoolChainId(chainId)) {
     return notFound()
