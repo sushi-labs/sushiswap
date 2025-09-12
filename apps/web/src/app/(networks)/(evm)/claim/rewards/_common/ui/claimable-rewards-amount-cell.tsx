@@ -46,7 +46,7 @@ export const ClaimableRewardsAmountCell: FC<Row<ClaimableRewards>> = ({
                     ]
                       ? formatUSD(
                           original.rewardAmountsUSD[
-                            amount.currency.wrap().address
+                            amount.currency.wrap().address.toLowerCase()
                           ],
                         )
                       : '-'}

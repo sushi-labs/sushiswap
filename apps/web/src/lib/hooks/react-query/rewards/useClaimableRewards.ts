@@ -59,7 +59,7 @@ export const useClaimableRewards = ({
           if (unclaimed === 0n) return accum
 
           const chainId = reward.token.chainId as MerklChainId
-          const tokenAddress = reward.token.address as Address
+          const tokenAddress = reward.token.address.toLowerCase()
           const token = new EvmToken({ ...reward.token, name: '' })
           const unclaimedAmount = new Amount(token, unclaimed)
 
@@ -79,18 +79,22 @@ export const useClaimableRewards = ({
           accum[chainId].claimArgs[3].push(reward.proofs)
 
           const existingRewardAmount =
-            accum[chainId].rewardAmounts[tokenAddress.toLowerCase()]
+            accum[chainId].rewardAmounts[tokenAddress]
 
-          const amount = existingRewardAmount
-            ? existingRewardAmount.add(unclaimedAmount)
-            : unclaimedAmount
-          const amountUSD =
-            Number(amount.toString()) * (reward.token.price ?? 0)
+          if (existingRewardAmount) {
+            const combinedAmount = existingRewardAmount.add(unclaimedAmount)
+            accum[chainId].rewardAmounts[tokenAddress] = combinedAmount
+          } else {
+            accum[chainId].rewardAmounts[tokenAddress] = unclaimedAmount
+          }
 
-          accum[chainId].rewardAmounts[tokenAddress.toLowerCase()] = amount
-          accum[chainId].rewardAmountsUSD[tokenAddress.toLowerCase()] =
-            amountUSD
-          accum[chainId].totalRewardsUSD += amountUSD
+          const unclaimedAmountUSD =
+            Number(unclaimedAmount.toString()) * (reward.token.price ?? 0)
+
+          accum[chainId].rewardAmountsUSD[tokenAddress] =
+            (accum[chainId].rewardAmountsUSD[tokenAddress] ?? 0) +
+            unclaimedAmountUSD
+          accum[chainId].totalRewardsUSD += unclaimedAmountUSD
 
           return accum
         }, {} as UseClaimableRewardReturn)
