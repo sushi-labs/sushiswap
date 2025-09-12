@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
+import ms from 'ms'
 
 type PirceDataResponse = {
   Symbol: 'KDA'
@@ -39,7 +40,7 @@ export const useKdaPrice = () => {
 
       return data
     },
-    staleTime: (60 * 1000) / 6,
-    gcTime: 5 * 60 * 1000,
+    staleTime: ms('10s'),
+    gcTime: ms('5m'),
   })
 }
