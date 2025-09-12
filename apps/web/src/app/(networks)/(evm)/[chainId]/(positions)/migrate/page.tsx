@@ -2,8 +2,8 @@ import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import React from 'react'
 
-import { MigrateTabContent } from 'src/ui/pool/MigrateTabContent'
 import { type EvmChainId, isSushiSwapV2ChainId } from 'sushi/evm'
+import { MigrateTabContent } from './_ui/migrate-tab-content'
 
 export const metadata: Metadata = {
   title: 'Migrate',
