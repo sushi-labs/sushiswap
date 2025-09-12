@@ -19,7 +19,7 @@ import { PoolChartPeriod } from '~kadena/_common/ui/Pools/PoolsV2/PoolChartPerio
 
 type InputFieldType = 'token0' | 'token1'
 
-type PoolByIdChartTimeFrame =
+export type PoolByIdChartTimeFrame =
   | PoolChartPeriod.Day
   | PoolChartPeriod.Week
   | PoolChartPeriod.Month

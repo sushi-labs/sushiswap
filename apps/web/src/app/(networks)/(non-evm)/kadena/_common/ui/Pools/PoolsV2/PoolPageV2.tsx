@@ -1,13 +1,13 @@
+import type { GetPoolResponse } from '@sushiswap/graph-client/kadena'
 import { Container, Separator } from '@sushiswap/ui'
 import type { FC } from 'react'
-import type { PoolByIdResponse } from '~kadena/_common/types/get-pool-by-id'
 import { PoolChartV2 } from './PoolChartV2'
 import { PoolComposition } from './PoolComposition'
 import { PoolStats } from './PoolStats'
 import { PoolTransactionsV2 } from './PoolTransactionsV2'
 
 export interface PoolPageV2 {
-  pool: Awaited<PoolByIdResponse | undefined>
+  pool: GetPoolResponse | undefined
 }
 
 export const PoolPageV2: FC<PoolPageV2> = ({ pool }) => {

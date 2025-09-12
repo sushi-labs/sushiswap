@@ -1,5 +1,6 @@
 'use client'
 
+import type { GetPoolResponse } from '@sushiswap/graph-client/kadena'
 import {
   Card,
   CardContent,
@@ -15,13 +16,12 @@ import type { FC } from 'react'
 import { formatNumber } from 'sushi'
 import { formatUSD } from 'sushi'
 import { useTokenPrice } from '~kadena/_common/lib/hooks/use-token-price'
-import type { PoolByIdResponse } from '~kadena/_common/types/get-pool-by-id'
 import type { KadenaToken } from '~kadena/_common/types/token-type'
 import { usePoolState } from '../../../../pool/pool-provider'
 import { Icon } from '../../General/Icon'
 
 interface PoolComposition {
-  pool: PoolByIdResponse | undefined
+  pool: GetPoolResponse | undefined | null
 }
 
 export const PoolComposition: FC<PoolComposition> = ({ pool }) => {

@@ -1,5 +1,6 @@
 'use client'
 
+import type { GetPoolResponse } from '@sushiswap/graph-client/kadena'
 import {
   Card,
   CardContent,
@@ -10,10 +11,9 @@ import {
 } from '@sushiswap/ui'
 import type { FC } from 'react'
 import { formatNumber, formatPercent, formatUSD } from 'sushi'
-import type { PoolByIdResponse } from '~kadena/_common/types/get-pool-by-id'
 
 interface PoolStats {
-  pool: PoolByIdResponse | undefined
+  pool: GetPoolResponse | undefined
 }
 
 const getTextColor = (value: number) => {

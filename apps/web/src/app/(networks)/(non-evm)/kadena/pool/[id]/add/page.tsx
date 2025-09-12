@@ -1,12 +1,11 @@
 'use client'
 
 import { Container } from '@sushiswap/ui'
-import { use, useEffect } from 'react'
+import { use } from 'react'
 import { usePoolById } from '~kadena/_common/lib/hooks/use-pool-by-id'
 import { Manage } from '~kadena/_common/ui/Pools/Manage/Manage'
 import { PoolPosition } from '~kadena/_common/ui/Pools/PoolPosition/PoolPosition'
 import { PoolComposition } from '~kadena/_common/ui/Pools/PoolsV2/PoolComposition'
-import { useRemoveLiqDispatch } from '~kadena/_common/ui/Pools/Remove/pool-remove-provider'
 
 export default function AddRemoveLiqPage(props: {
   params: Promise<{ id: string }>

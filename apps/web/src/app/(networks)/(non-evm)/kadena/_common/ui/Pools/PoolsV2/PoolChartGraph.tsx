@@ -15,12 +15,12 @@ import * as echarts from 'echarts'
 import ReactEchartsCore from 'echarts-for-react/lib/core'
 import type { EChartsOption } from 'echarts-for-react/lib/types'
 
+import type { GetPoolResponse } from '@sushiswap/graph-client/kadena'
 import { PoolChartType } from 'src/ui/pool/PoolChartTypes'
 import { formatUSD } from 'sushi'
 import tailwindConfig from 'tailwind.config.js'
 import resolveConfig from 'tailwindcss/resolveConfig'
 import { usePoolCharts } from '~kadena/_common/lib/hooks/pools/use-pool-charts'
-import type { PoolByIdResponse } from '~kadena/_common/types/get-pool-by-id'
 import {
   PoolChartPeriod,
   PoolChartPeriodToTimeFrame,
@@ -30,7 +30,7 @@ import {
 interface PoolChartProps {
   chart: 'Volume' | 'TVL' | 'Fees'
   period: PoolChartPeriod
-  pool: PoolByIdResponse | undefined
+  pool: GetPoolResponse | undefined
 }
 
 const tailwind = resolveConfig(tailwindConfig)

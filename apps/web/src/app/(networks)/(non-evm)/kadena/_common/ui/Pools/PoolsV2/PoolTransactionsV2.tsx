@@ -1,5 +1,6 @@
 'use client'
 
+import type { GetPoolResponse } from '@sushiswap/graph-client/kadena'
 import {
   Card,
   CardContent,
@@ -15,10 +16,6 @@ import {
   TransactionType,
   usePoolTransactions,
 } from '~kadena/_common/lib/hooks/use-pool-transactions'
-import type {
-  PoolByIdResponse,
-  PoolTransaction,
-} from '~kadena/_common/types/get-pool-by-id'
 import { usePoolState } from '../../../../pool/pool-provider'
 import {
   AMOUNT_USD_COLUMN,
@@ -28,7 +25,7 @@ import {
 } from './PoolTransactionsColumns'
 
 interface PoolTransactionsV2Props {
-  pool: PoolByIdResponse | undefined
+  pool: GetPoolResponse | undefined
 }
 
 const initialPaginationState: PaginationState = {
@@ -53,7 +50,8 @@ export const PoolTransactionsV2: FC<PoolTransactionsV2Props> = ({ pool }) => {
     pageSize: 100,
   })
 
-  const rowLink = useCallback((row: PoolTransaction) => {
+  //@dev coming back to this when moving pool transactions
+  const rowLink = useCallback((row: any) => {
     return getKvmChainByKey('kadena').getTransactionUrl(row.requestkey)
   }, [])
 
@@ -151,7 +149,7 @@ export const PoolTransactionsV2: FC<PoolTransactionsV2Props> = ({ pool }) => {
         <DataTable
           loading={isLoading}
           columns={COLUMNS}
-          data={data?.transactions ?? ([] as unknown as PoolTransaction[])}
+          data={data?.transactions ?? []}
           linkFormatter={rowLink}
           pagination={true}
           externalLink={true}

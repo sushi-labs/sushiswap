@@ -1,8 +1,7 @@
+import { getPool } from '@sushiswap/graph-client/kadena'
 import { Container } from '@sushiswap/ui'
 import { unstable_cache } from 'next/cache'
 import { notFound } from 'next/navigation'
-import { GRAPHQL_ENDPOINT } from '~kadena/_common/lib/graphql/endpoint'
-import { getPoolById } from '~kadena/_common/lib/graphql/queries/get-pool-by-id'
 import { PoolHeader } from '~kadena/_common/ui/Pools/PoolDetails/PoolHeader'
 import { Header } from '~kadena/header'
 import Providers from './add/providers'
@@ -47,30 +46,13 @@ const _getPool = async ({ poolId }: { poolId: string }) => {
     return false
   }
   try {
-    const query = getPoolById({
+    const data = await getPool({
       poolId: decodeURIComponent(poolId),
       timeFrame: 'DAY',
       first: 1,
     })
 
-    const res = await fetch(GRAPHQL_ENDPOINT, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-API-KEY': process.env.KADENA_INDEXER_API_KEY ?? '',
-      },
-      body: query,
-      next: { revalidate: 60 },
-    })
-
-    if (!res.ok) {
-      throw new Error('Failed to fetch pool details')
-    }
-
-    const result = await res.json()
-
-    const pool = result?.data?.pool
-    if (pool) {
+    if (data.id) {
       return true
     }
     return false

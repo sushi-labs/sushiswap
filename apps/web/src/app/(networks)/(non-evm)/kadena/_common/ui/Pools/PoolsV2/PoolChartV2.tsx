@@ -1,9 +1,9 @@
 'use client'
 
+import type { GetPoolResponse } from '@sushiswap/graph-client/kadena'
 import { Card } from '@sushiswap/ui'
 import React, { type FC, useState } from 'react'
 import { PoolChartType, PoolChartTypes } from 'src/ui/pool/PoolChartTypes'
-import type { PoolByIdResponse } from '~kadena/_common/types/get-pool-by-id'
 import { usePoolDispatch, usePoolState } from '../../../../pool/pool-provider'
 import { PoolChartGraph } from './PoolChartGraph'
 import { PoolChartPeriod, PoolChartPeriods } from './PoolChartPeriods'
@@ -22,7 +22,7 @@ const periods = [
 ]
 
 interface PoolChartV2Props {
-  pool: PoolByIdResponse | undefined
+  pool: GetPoolResponse | undefined
 }
 
 const PoolChartV2: FC<PoolChartV2Props> = ({ pool }) => {
