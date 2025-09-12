@@ -16,7 +16,7 @@ export function clipperTransmitAndDeposit({
   const abi = clipperDirectExchangeV1Abi
   const nativeAmount = amounts.find((amount) => amount.token.isNative)
 
-  if (deposit.amount && deposit.token) {
+  if ('amount' in deposit) {
     const tokenAddress = nativeAmount ? zeroAddress : deposit.token
     if (nativeAmount) {
       const mutability = 'payable' as const

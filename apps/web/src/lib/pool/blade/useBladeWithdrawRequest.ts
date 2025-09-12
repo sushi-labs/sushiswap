@@ -4,7 +4,7 @@ import { useMutation } from '@tanstack/react-query'
 import { useEffect } from 'react'
 import { BLADE_API_HOST, BLADE_API_KEY } from 'src/lib/constants'
 import { isEvmAddress } from 'sushi/evm'
-import { isHash } from 'viem'
+import { isHex } from 'viem'
 import { z } from 'zod'
 
 const rfqWithdrawResponseSchema = z.object({
@@ -19,15 +19,15 @@ const rfqWithdrawResponseSchema = z.object({
   good_until: z.number(),
   signature: z.object({
     v: z.number(),
-    r: z.string().refine((hash) => isHash(hash), {
-      message: 'r does not conform to Hash',
+    r: z.string().refine((hex) => isHex(hex), {
+      message: 'r does not conform to Hex',
     }),
-    s: z.string().refine((hash) => isHash(hash), {
-      message: 's does not conform to Hash',
+    s: z.string().refine((hex) => isHex(hex), {
+      message: 's does not conform to Hex',
     }),
   }),
-  extra_data: z.string().refine((hash) => isHash(hash), {
-    message: 'extra_data does not conform to Hash',
+  extra_data: z.string().refine((hex) => isHex(hex), {
+    message: 'extra_data does not conform to Hex',
   }),
 })
 

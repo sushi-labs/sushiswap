@@ -15,7 +15,7 @@ export function clipperPackedTransmitAndDeposit({
     'lock_time' in deposit ? deposit.lock_time : (deposit.n_days ?? 0)
   const { v, r, s } = deposit.signature
 
-  if (deposit.amount && deposit.token) {
+  if ('amount' in deposit) {
     const mutability = 'payable' as const
     const functionName =
       'packedTransmitAndDepositOneAsset' as const satisfies ContractFunctionName<

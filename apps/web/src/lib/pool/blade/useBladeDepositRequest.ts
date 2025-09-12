@@ -3,7 +3,7 @@
 import { useMutation } from '@tanstack/react-query'
 import { useEffect } from 'react'
 import { BLADE_API_HOST, BLADE_API_KEY } from 'src/lib/constants'
-import { isAddress, isHash } from 'viem'
+import { isAddress, isHex } from 'viem'
 import { z } from 'zod'
 
 const rfqDepositResponseBaseSchema = z.object({
@@ -14,11 +14,11 @@ const rfqDepositResponseBaseSchema = z.object({
   good_until: z.number(),
   signature: z.object({
     v: z.number(),
-    r: z.string().refine((hash) => isHash(hash), {
-      message: 'r does not conform to Hash',
+    r: z.string().refine((hex) => isHex(hex), {
+      message: 'r does not conform to Hex',
     }),
-    s: z.string().refine((hash) => isHash(hash), {
-      message: 's does not conform to Hash',
+    s: z.string().refine((hex) => isHex(hex), {
+      message: 's does not conform to Hex',
     }),
   }),
   clipper_exchange_address: z.string().refine((address) => isAddress(address), {
@@ -26,27 +26,38 @@ const rfqDepositResponseBaseSchema = z.object({
   }),
   extra_data: z
     .string()
-    .refine((hash) => isHash(hash), {
-      message: 'extra_data does not conform to Hash',
-    })
-    .optional(),
-  deposit_amounts: z.array(z.string()),
-  amount: z.string().optional(),
-  token: z
-    .string()
-    .refine((address) => isAddress(address), {
-      message: 'token does not conform to Address',
+    .refine((hex) => isHex(hex), {
+      message: 'extra_data does not conform to Hex',
     })
     .optional(),
 })
 
+const multipleDepositMixin = z.object({
+  deposit_amounts: z.array(z.string()),
+})
+
+const singleDepositMixin = z.object({
+  amount: z.string(),
+  token: z.string().refine((address) => isAddress(address), {
+    message: 'token does not conform to Address',
+  }),
+})
+
+const lockTimeMixin = z.object({
+  lock_time: z.number(),
+})
+
+const daysToLockMixin = z.object({
+  n_days: z.number(),
+})
+
 export const rfqDepositResponseSchema = z.union([
-  rfqDepositResponseBaseSchema.extend({
-    lock_time: z.number(),
-  }),
-  rfqDepositResponseBaseSchema.extend({
-    n_days: z.number(),
-  }),
+  rfqDepositResponseBaseSchema.merge(multipleDepositMixin).merge(lockTimeMixin),
+  rfqDepositResponseBaseSchema
+    .merge(multipleDepositMixin)
+    .merge(daysToLockMixin),
+  rfqDepositResponseBaseSchema.merge(singleDepositMixin).merge(lockTimeMixin),
+  rfqDepositResponseBaseSchema.merge(singleDepositMixin).merge(daysToLockMixin),
 ])
 
 export interface RfqDepositPayload {
