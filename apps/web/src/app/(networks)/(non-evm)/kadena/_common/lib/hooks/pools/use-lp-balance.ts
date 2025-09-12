@@ -56,6 +56,6 @@ export const useLpBalance = ({
         balance: Number.parseFloat(balance.toString()),
       }
     },
-    enabled: !!account && !!token0Address && !!token1Address,
+    enabled: Boolean(account && token0Address && token1Address),
   })
 }
