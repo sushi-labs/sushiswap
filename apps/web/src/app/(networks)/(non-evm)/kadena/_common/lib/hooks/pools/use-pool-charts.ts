@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
+import ms from 'ms'
 import type { PoolTimeFrame } from '../../graphql/queries/get-pool-by-id-charts'
 
 interface PoolChartsApiResponse {
@@ -42,6 +43,6 @@ export const usePoolCharts = ({
       return json.data
     },
     enabled: !!poolId,
-    staleTime: (60 * 1000) / 6,
+    staleTime: ms('10s'),
   })
 }
