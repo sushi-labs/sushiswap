@@ -1,24 +1,8 @@
-import { keepPreviousData, useQuery } from '@tanstack/react-query'
+import { getTokenPrice } from '@sushiswap/graph-client/kadena'
+import { useQuery } from '@tanstack/react-query'
 import { STABLE_TOKENS } from '~kadena/_common/constants/token-list'
 import type { KadenaToken } from '~kadena/_common/types/token-type'
 import { getKdaPrice } from './use-kda-price'
-
-type TokenPriceResponse = {
-  success: boolean
-  data: {
-    priceUsd: number
-  }
-}
-
-const getTokenPrice = async (tokenAddress: string) => {
-  const url = new URL(`/kadena/api/tokens/price`, window.location.origin)
-  url.searchParams.set('tokenAddress', tokenAddress)
-
-  const res = await fetch(url.toString())
-  const data: TokenPriceResponse = await res.json()
-
-  return data?.data?.priceUsd ?? 0
-}
 
 const getPrice = async (token: KadenaToken | undefined) => {
   //if token is undefined return 0
@@ -44,14 +28,9 @@ const getPrice = async (token: KadenaToken | undefined) => {
   }
 
   const tokenAddress = token.tokenAddress
-  const tokenPrice = await getTokenPrice(tokenAddress)
+  const tokenPrice = await getTokenPrice({ tokenAddress })
 
-  if (tokenPrice) {
-    return tokenPrice
-  }
-
-  //a usd price is not available
-  return 0
+  return tokenPrice?.priceInUsd ?? 0
 }
 
 export const useTokenPrice = ({
