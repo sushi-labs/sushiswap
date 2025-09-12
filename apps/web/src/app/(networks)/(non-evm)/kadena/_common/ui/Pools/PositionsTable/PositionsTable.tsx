@@ -23,7 +23,9 @@ export const PositionsTable = () => {
 
   const { data, isLoading } = useMyPositions(50)
 
-  const positions = data?.positions ?? []
+  const positions = useMemo(() => {
+    return data?.positions ?? []
+  }, [data])
 
   const filteredPositions = useMemo(() => {
     if (!positions.length || !tokenSymbols.length) return positions
@@ -46,8 +48,12 @@ export const PositionsTable = () => {
     })
   }, [tokenSymbols, positions])
 
-  const totalCount = data?.pages?.[0]?.totalCount ?? 0
-  const filteredCount = filteredPositions?.length
+  const totalCount = useMemo(() => {
+    return data?.pages?.[0]?.totalCount ?? 0
+  }, [data])
+  const filteredCount = useMemo(() => {
+    return filteredPositions?.length
+  }, [filteredPositions])
 
   const paginatedData = useMemo(() => {
     const start = paginationState.pageIndex * paginationState.pageSize
