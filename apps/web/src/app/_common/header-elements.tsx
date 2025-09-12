@@ -24,6 +24,7 @@ import { XIcon } from '@sushiswap/ui/icons/XIcon'
 import Link from 'next/link'
 import { POOL_SUPPORTED_NETWORKS } from 'src/config'
 import { ChainId, getChainById } from 'sushi'
+import { isEvmChainId } from 'sushi/evm'
 import { CookieDialog } from './cookies/cookie-dialog'
 
 export const EXPLORE_NAVIGATION_LINKS = (
@@ -51,7 +52,7 @@ export const EXPLORE_NAVIGATION_LINKS = (
 
     {
       title: 'Claim',
-      href: '/claim',
+      href: `/${getChainById(chainId && isEvmChainId(chainId) ? chainId : ChainId.ETHEREUM).key}/claim`,
       description: 'Claim your fees and rewards.',
     },
     {
@@ -61,21 +62,6 @@ export const EXPLORE_NAVIGATION_LINKS = (
     },
   ]
 }
-
-export const MORE_NAVIGATION_LINKS: NavigationElementDropdown['items'] = [
-  {
-    title: 'Pay',
-    href: 'https://pay.sushi.com',
-    description:
-      'Stream or create a vesting schedule with any ERC20 to any wallet.',
-  },
-  {
-    title: 'Bonds',
-    href: '/bonds',
-    description:
-      'Buy discounted tokens with vesting to support projects in a sustainable manner.',
-  },
-]
 
 export const SUPPORT_NAVIGATION_LINKS: NavigationElementDropdown['items'] = [
   {
@@ -249,7 +235,10 @@ export const headerElements = ({
               >
                 Manage liquidity pool positions.
               </NavigationListItem>
-              <NavigationListItem title={'Claim'} href={`/claim`}>
+              <NavigationListItem
+                title={'Claim'}
+                href={`/${getChainById(chainId && isEvmChainId(chainId) ? chainId : ChainId.ETHEREUM).key}/claim`}
+              >
                 Claim your fees and rewards.
               </NavigationListItem>
             </ul>

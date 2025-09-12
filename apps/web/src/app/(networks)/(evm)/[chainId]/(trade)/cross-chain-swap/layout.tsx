@@ -1,8 +1,8 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
+import { Header } from 'src/app/(networks)/_ui/header/header'
 import { XSWAP_SUPPORTED_CHAIN_IDS, isXSwapSupportedChainId } from 'src/config'
 import type { EvmChainId } from 'sushi/evm'
-import { Header } from '../header'
 import { Providers } from './providers'
 
 export const metadata: Metadata = {

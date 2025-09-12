@@ -1,7 +1,8 @@
 import { Container } from '@sushiswap/ui'
+import { Header } from 'src/app/(networks)/_ui/header/header'
 import { PoolsFiltersProvider } from 'src/app/(networks)/_ui/pools-filters-provider'
 import { POOL_SUPPORTED_NETWORKS } from 'src/config'
-import { Header } from '../header'
+import { MvmChainId } from 'sushi/mvm'
 import { Hero } from './hero'
 import { NavigationItems } from './navigation-items'
 
@@ -10,7 +11,10 @@ export default function PositionsLayout({
 }: { children: React.ReactNode }) {
   return (
     <>
-      <Header supportedNetworks={POOL_SUPPORTED_NETWORKS} />
+      <Header
+        chainId={MvmChainId.APTOS}
+        supportedNetworks={POOL_SUPPORTED_NETWORKS}
+      />
       <main className="flex flex-col h-full flex-1 animate-slide">
         <Container maxWidth="7xl" className="px-4 py-16">
           <Hero />

@@ -1,6 +1,6 @@
 import { Container } from '@sushiswap/ui'
 import { EvmChainId } from 'sushi/evm'
-import { Header } from '~evm/[chainId]/header'
+import { Header } from '../../_ui/header/header'
 import { BarHeader } from './_ui'
 import { Providers } from './providers'
 

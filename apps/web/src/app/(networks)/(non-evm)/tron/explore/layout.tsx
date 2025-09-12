@@ -1,6 +1,8 @@
 import { Container } from '@sushiswap/ui'
+import { HeaderRightElement } from 'src/app/(networks)/(non-evm)/tron/header-right-element'
+import { Header } from 'src/app/(networks)/_ui/header/header'
 import { POOL_SUPPORTED_NETWORKS } from 'src/config'
-import { Header } from '~tron/header'
+import { TvmChainId } from 'sushi/tvm'
 import { Hero } from './hero'
 import { Providers } from './providers'
 
@@ -13,7 +15,10 @@ export default function ExploreLayout({
 }: { children: React.ReactNode }) {
   return (
     <>
-      <Header supportedNetworks={POOL_SUPPORTED_NETWORKS} />
+      <Header
+        chainId={TvmChainId.TRON}
+        supportedNetworks={POOL_SUPPORTED_NETWORKS}
+      />
       <main className="flex flex-col h-full flex-1 animate-slide">
         <Container maxWidth="7xl" className="px-4 py-[9.5rem]">
           <Hero />
