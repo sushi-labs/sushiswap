@@ -1,3 +1,4 @@
+import type { ICommand } from '@kadena/client'
 import { useKadenaWallet } from '@kadena/wallet-adapter-react'
 import {
   SlippageToleranceStorageKey,
@@ -24,10 +25,7 @@ import {
   KADENA_CHAIN_ID,
   KADENA_NETWORK_ID,
 } from '~kadena/_common/constants/network'
-import {
-  buildAddLiquidityTxn,
-  buildGetPoolAddress,
-} from '~kadena/_common/lib/pact/pool'
+import { buildAddLiquidityTxn } from '~kadena/_common/lib/pact/pool'
 import { useKadena } from '~kadena/kadena-wallet-provider'
 import { usePoolDispatch, usePoolState } from '../../../../pool/pool-provider'
 
@@ -122,8 +120,9 @@ export const AddButton = ({
           networkId: KADENA_NETWORK_ID,
         })
         const signedTxn = await client.signTransaction(currentWallet, initTxn)
-        //@ts-expect-error - type mismatch, but we know this is correct
-        const preflightResult = await kadenaClient.preflight(signedTxn)
+        const preflightResult = await kadenaClient.preflight(
+          Array.isArray(signedTxn) ? signedTxn[0] : signedTxn,
+        )
         // console.log("preflightResult", preflightResult);
 
         if (preflightResult.result.status !== 'success') {
@@ -131,9 +130,9 @@ export const AddButton = ({
             preflightResult.result.error?.message || 'Preflight failed',
           )
         }
-        //@ts-expect-error - type mismatch, but we know this is correct
-        const res = await kadenaClient.submit(signedTxn)
-        // console.log("add liquidity res", res);
+
+        const res = await kadenaClient.submit(signedTxn as ICommand)
+
         const txId = res.requestKey
         createInfoToast({
           summary: 'Creating a pool initiated...',
@@ -146,17 +145,12 @@ export const AddButton = ({
           href: getKvmChainByKey('kadena').getTransactionUrl(txId),
         })
         const result = await kadenaClient.pollOne(res, {
-          confirmationDepth: 4,
+          confirmationDepth: 1,
         })
         if (result.result.status === 'failure') {
           throw new Error(result.result.error?.message || 'Transaction failed')
         }
-        //@ts-expect-error - type mismatch, but we know this is correct
-        poolAddress = preflightResult.result.data?.account
-        console.log(
-          '[AddButton] poolAddress from preflightResult:',
-          poolAddress,
-        )
+
         createSuccessToast({
           summary: 'Created a pool successfully! Continue to add liquidity.',
           txHash: txId,
@@ -168,17 +162,14 @@ export const AddButton = ({
           href: getKvmChainByKey('kadena').getTransactionUrl(txId),
         })
 
-        const key = Object.keys(result)[0]
-        //@ts-expect-error - type mismatch, but we know this is correct
-        poolAddress = result[key]?.result?.data?.account
+        poolAddress =
+          typeof result.result.data === 'object' &&
+          'account' in result.result.data
+            ? (result.result.data.account as string)
+            : undefined
 
         if (!poolAddress) {
-          poolAddress = await getPoolAddress(
-            token0.tokenAddress,
-            token1.tokenAddress,
-            KADENA_CHAIN_ID,
-            KADENA_NETWORK_ID,
-          )
+          throw new Error('Pool address not found from transaction result')
         }
 
         setPoolId(poolAddress)
@@ -197,8 +188,10 @@ export const AddButton = ({
         networkId: KADENA_NETWORK_ID,
       })
       const signedTxn = await client.signTransaction(currentWallet, tx)
-      //@ts-expect-error - type mismatch, but we know this is correct
-      const preflightResult = await kadenaClient.preflight(signedTxn)
+
+      const preflightResult = await kadenaClient.preflight(
+        Array.isArray(signedTxn) ? signedTxn[0] : signedTxn,
+      )
       // console.log("preflightResult", preflightResult);
 
       if (preflightResult.result.status === 'failure') {
@@ -206,8 +199,8 @@ export const AddButton = ({
           preflightResult.result.error?.message || 'Preflight failed',
         )
       }
-      //@ts-expect-error - type mismatch, but we know this is correct
-      const res = await kadenaClient.submit(signedTxn)
+
+      const res = await kadenaClient.submit(signedTxn as ICommand)
 
       // console.log("add liquidity res", res);
 
@@ -257,44 +250,6 @@ export const AddButton = ({
       console.error(error)
       setIsTxnPending(false)
     }
-  }
-
-  const getPoolAddress = async (
-    token0Address: string | undefined,
-    token1Address: string | undefined,
-    chainId: number,
-    networkId: string,
-  ): Promise<string> => {
-    if (!token0Address || !token1Address) {
-      throw new Error('Missing token addresses')
-    }
-
-    const tx = buildGetPoolAddress(
-      token0Address,
-      token1Address,
-      chainId,
-      networkId,
-    )
-
-    const res = await kadenaClient.local(tx, {
-      preflight: false,
-      signatureVerification: false,
-    })
-
-    if (res.result.status !== 'success') {
-      throw new Error(
-        res.result.error?.message ?? 'Failed to fetch pool address',
-      )
-    }
-
-    //@ts-expect-error - type mismatch, but we know this is correct
-    const poolAddress = res.result.data?.account
-
-    if (!poolAddress) {
-      throw new Error('No pool address returned')
-    }
-
-    return poolAddress
   }
 
   const onSuccess = async () => {

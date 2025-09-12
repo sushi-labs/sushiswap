@@ -5,6 +5,7 @@ import {
   KADENA_NETWORK_ID,
 } from '~kadena/_common/constants/network'
 import { buildGetLpBalanceTx } from '../../pact/pool'
+import type { PactNumberReturnType } from '../../pact/type'
 
 type LPBalanceResponse = {
   chainId: number
@@ -45,8 +46,8 @@ export const useLpBalance = ({
       if (res.result.status !== 'success') {
         throw new Error(res.result.error?.message || 'Failed to fetch balances')
       }
-      // @ts-expect-error: we know this is here
-      const amount: number | { decimal: string } = res.result.data
+
+      const amount = res.result.data as PactNumberReturnType
       const balance =
         typeof amount === 'number' ? amount : Number.parseFloat(amount?.decimal)
 

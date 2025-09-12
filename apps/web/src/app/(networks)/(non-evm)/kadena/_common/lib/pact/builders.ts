@@ -5,14 +5,11 @@ export const buildGetBalanceTx = (
   chainId: number,
   networkId: string,
 ) => {
-  return (
-    Pact.builder
-      // @ts-expect-error
-      .execution(Pact.modules.coin['get-balance'](account))
-      .setMeta({ chainId: String(chainId) as ChainId })
-      .setNetworkId(networkId)
-      .createTransaction()
-  )
+  return Pact.builder
+    .execution(`(coin.get-balance "${account}")`)
+    .setMeta({ chainId: String(chainId) as ChainId })
+    .setNetworkId(networkId)
+    .createTransaction()
 }
 
 export const buildGetTokenMetaTx = (

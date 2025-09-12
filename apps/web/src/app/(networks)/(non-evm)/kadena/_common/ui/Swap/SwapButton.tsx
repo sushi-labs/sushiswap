@@ -1,3 +1,4 @@
+import type { ICommand } from '@kadena/client'
 import {
   createFailedToast,
   createInfoToast,
@@ -64,8 +65,16 @@ export const SwapButton = ({ closeModal }: { closeModal: () => void }) => {
             'Failed to fetch pool address',
         )
       }
-      //@ts-expect-error - type mismatch, but we know this is correct
-      const poolAddress = getPoolAddressRes.result.data.account
+
+      const poolAddress =
+        typeof getPoolAddressRes.result.data === 'object' &&
+        'account' in getPoolAddressRes.result.data
+          ? (getPoolAddressRes.result.data.account as string)
+          : undefined
+
+      if (!poolAddress) {
+        throw new Error('Pool does not exist')
+      }
 
       const tx = buildSwapTxn({
         token0Address: token0.tokenAddress,
@@ -78,13 +87,15 @@ export const SwapButton = ({ closeModal }: { closeModal: () => void }) => {
       })
 
       const signed = await client.signTransaction(currentWallet, tx)
-      //@ts-expect-error - type mismatch, but we know this is correct
-      const preflight = await kadenaClient.preflight(signed)
+
+      const preflight = await kadenaClient.preflight(
+        Array.isArray(signed) ? signed[0] : signed,
+      )
       if (preflight.result.status === 'failure') {
         throw new Error(preflight.result.error?.message || 'Preflight failed')
       }
-      //@ts-expect-error - type mismatch, but we know this is correct
-      const submitRes = await kadenaClient.submit(signed)
+
+      const submitRes = await kadenaClient.submit(signed as ICommand)
       const txId = submitRes.requestKey
 
       createInfoToast({

@@ -5,7 +5,7 @@ import {
   KADENA_NETWORK_ID,
 } from '~kadena/_common/constants/network'
 import type { KadenaToken } from '~kadena/_common/types/token-type'
-import { buildGetTokenMetaTx, buildGetTokenPrecision } from '../pact/builders'
+import { buildGetTokenPrecision } from '../pact/builders'
 import { useCustomTokens } from './use-custom-tokens'
 
 interface GetTokenWithQueryCacheFn {
@@ -41,8 +41,11 @@ export async function getTokenDetails({
     )
   }
 
-  //@ts-expect-error - type mismatch, but we know this is correct
-  const decimals = decimalRes?.result?.data?.int as number
+  const decimals =
+    typeof decimalRes?.result?.data === 'object' &&
+    'int' in decimalRes.result.data
+      ? (decimalRes?.result?.data?.int as number)
+      : 12
 
   const symbol = address?.split('.')?.[1] || 'UNKNOWN'
 

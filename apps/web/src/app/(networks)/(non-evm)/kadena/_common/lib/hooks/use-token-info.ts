@@ -33,8 +33,11 @@ export const useTokenInfo = ({
         )
       }
 
-      //@ts-expect-error - type mismatch, but we know this is correct
-      const decimals = decimalRes?.result?.data?.int as number
+      const decimals =
+        typeof decimalRes?.result?.data === 'object' &&
+        'int' in decimalRes.result.data
+          ? (decimalRes?.result?.data?.int as number)
+          : 12
 
       const symbol = tokenContract?.split('.')?.[1] || 'UNKNOWN'
 

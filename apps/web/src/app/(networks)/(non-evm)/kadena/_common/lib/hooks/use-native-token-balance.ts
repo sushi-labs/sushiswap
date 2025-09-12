@@ -5,6 +5,7 @@ import {
   KADENA_NETWORK_ID,
 } from '~kadena/_common/constants/network'
 import { buildGetBalanceTx } from '../pact/builders'
+import type { PactNumberReturnType } from '../pact/type'
 
 type NativeTokenBalanceResponse = {
   chainId: number
@@ -31,8 +32,7 @@ export const useNativeTokenBalance = ({
         }
       }
 
-      // @ts-expect-error: we know this is here
-      const amount: number | { decimal: string } = res.result.data
+      const amount = res.result.data as PactNumberReturnType
 
       const balance =
         typeof amount === 'object' ? Number.parseFloat(amount.decimal) : amount

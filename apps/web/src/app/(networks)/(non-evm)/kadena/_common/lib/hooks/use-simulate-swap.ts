@@ -11,6 +11,7 @@ import type { KadenaToken } from '~kadena/_common/types/token-type'
 import { useSwapDispatch } from '~kadena/swap/swap-provider'
 import { buildGetPoolAddress } from '../pact/pool'
 import { buildSwapTxn } from '../pact/swap'
+import type { PactNumberReturnType } from '../pact/type'
 import { formatToMaxDecimals } from '../utils/formatters'
 
 interface UseSimulateSwapParams {
@@ -73,8 +74,15 @@ export const useSimulateSwap = ({
         )
       }
 
-      //@ts-expect-error - type mismatch, but we know this is correct
-      const poolAddress = getPoolAddressRes.result.data.account
+      const poolAddress =
+        typeof getPoolAddressRes.result.data === 'object' &&
+        'account' in getPoolAddressRes.result.data
+          ? (getPoolAddressRes.result.data?.account as string)
+          : ''
+
+      if (!poolAddress) {
+        throw new Error('Pool address does not exist')
+      }
 
       const tx = buildSwapTxn({
         token0Address: token0?.tokenAddress,
@@ -101,9 +109,14 @@ export const useSimulateSwap = ({
       }
       const gas: number = res?.gas ?? 0
       setGas(gas)
-      const amount: number | { decimal: string } =
-        //@ts-expect-error - type mismatch, but we know this is correct
-        res?.result?.data?.[1]?.amount
+      const amount =
+        Array.isArray(res?.result?.data) &&
+        res.result.data[1] &&
+        typeof res.result.data[1] === 'object' &&
+        'amount' in res.result.data[1]
+          ? (res.result.data[1].amount as PactNumberReturnType)
+          : 0
+
       let _amountOut = 0
       if (typeof amount === 'object' && 'decimal' in amount) {
         _amountOut = Number.parseFloat(amount?.decimal ?? '0')
