@@ -1,23 +1,12 @@
 import type { KvmTokenAddress } from 'sushi/kvm'
 
-export interface TokenInfo {
-  decimalsToDisplay?: number
-  description?: string
-  discordUrl?: string
-  websiteUrl?: string
-  twitterUrl?: string
-  themeColor?: string
-  telegramUrl?: string
-  mediumUrl?: string
-}
-
+//@dev: going to overhaul to use KvmToken where this type is used
 export interface KadenaToken {
   tokenAddress: string | KvmTokenAddress
   tokenSymbol: string
   tokenDecimals: number
   tokenImage?: string
   tokenName: string
-  tokenInfo?: TokenInfo
   validated?: boolean
   isNative?: boolean
 }

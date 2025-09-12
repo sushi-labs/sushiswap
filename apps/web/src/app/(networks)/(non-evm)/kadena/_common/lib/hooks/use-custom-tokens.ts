@@ -20,7 +20,6 @@ export const useCustomTokens = () => {
           tokenName,
           tokenImage: data[k]?.tokenImage,
           validated: data[k]?.validated,
-          tokenInfo: data[k]?.tokenInfo,
         }
         return acc
       },
@@ -37,7 +36,6 @@ export const useCustomTokens = () => {
         tokenImage: currency?.tokenImage || undefined,
         tokenName: currency?.tokenName,
         validated: currency?.validated || false,
-        tokenInfo: currency?.tokenInfo || undefined,
       }))
 
       setValue((prev) => {
