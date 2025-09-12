@@ -14,11 +14,7 @@ import {
   PoolChartTypes,
 } from '~evm/[chainId]/pool/_ui/pool-chart-types'
 
-const charts = [
-  PoolChartType.Volume,
-  PoolChartType.TVL,
-  PoolChartType.Fees,
-] as const
+const charts = [PoolChartType.Volume, PoolChartType.TVL] as const
 const periods = [
   PoolChartPeriod.Day,
   PoolChartPeriod.Week,
