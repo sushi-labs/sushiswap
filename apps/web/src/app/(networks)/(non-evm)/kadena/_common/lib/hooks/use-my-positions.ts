@@ -1,4 +1,5 @@
 import { useInfiniteQuery } from '@tanstack/react-query'
+import ms from 'ms'
 import type { WalletPosition } from '~kadena/_common/types/get-positions'
 import { useKadena } from '~kadena/kadena-wallet-provider'
 
@@ -56,7 +57,7 @@ export const useMyPositions = (pageSize = 50) => {
       return { ...data, positions: flat }
     },
     initialPageParam: null,
-    staleTime: (60 * 1000) / 6,
+    staleTime: ms('10s'),
     enabled: !!walletAddress,
   })
 }
