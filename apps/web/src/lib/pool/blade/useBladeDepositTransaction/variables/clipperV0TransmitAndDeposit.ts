@@ -5,7 +5,7 @@ export function clipperV0TransmitAndDeposit(args: DepositVariablesGetterArgs) {
   const { deposit, amounts } = args
   const hasNativeAmount = amounts.some((amount) => amount.token.isNative)
 
-  if (deposit.amount && deposit.token) {
+  if ('amount' in deposit) {
     throw new Error('Single asset deposits are not supported for Clipper V0')
   }
 

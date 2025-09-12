@@ -23,7 +23,7 @@ export function bladePackedTransmitAndDeposit({
   const { v, r, s } = deposit.signature
 
   // Handle single asset deposits using packed format
-  if (deposit.amount && deposit.token) {
+  if ('amount' in deposit) {
     const tokenAddress = nativeAmount ? zeroAddress : deposit.token
     const mutability = 'payable' as const
     const functionName =
