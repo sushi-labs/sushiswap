@@ -1,6 +1,6 @@
+import type { PoolTimeFrame } from '@sushiswap/graph-client/kadena'
 import { Toggle } from '@sushiswap/ui'
 import React, { type FC } from 'react'
-import type { PoolTimeFrame } from '~kadena/_common/lib/graphql/queries/get-pool-by-id-charts'
 
 export enum PoolChartPeriod {
   Day = '1D',

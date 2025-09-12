@@ -1,17 +1,9 @@
+import {
+  type PoolTimeFrame,
+  getPoolCharts,
+} from '@sushiswap/graph-client/kadena'
 import { useQuery } from '@tanstack/react-query'
 import ms from 'ms'
-import type { PoolTimeFrame } from '../../graphql/queries/get-pool-by-id-charts'
-
-interface PoolChartsApiResponse {
-  success: boolean
-  data: {
-    charts: {
-      volume: { timestamp: string; value: string }[]
-      tvl: { timestamp: string; value: string }[]
-      fees: { timestamp: string; value: string }[]
-    }
-  }
-}
 
 export const usePoolCharts = ({
   poolId,
@@ -26,21 +18,17 @@ export const usePoolCharts = ({
       if (!poolId) {
         throw new Error('Pool ID is required')
       }
-      const url = new URL(
-        `/kadena/api/pools/${decodeURIComponent(poolId)}/charts`,
-        window.location.origin,
-      )
-      url.searchParams.set('timeFrame', timeFrame)
 
-      const res = await fetch(url.toString())
-      const json: PoolChartsApiResponse = await res.json()
+      const data = await getPoolCharts({
+        poolId,
+        timeFrame,
+      })
 
-      if (!json.success) {
-        console.error('Failed to fetch pool transactions:', json)
-        throw new Error('Failed to fetch pool transactions')
+      if (!data) {
+        throw new Error('Failed to fetch pool chart')
       }
 
-      return json.data
+      return data
     },
     enabled: !!poolId,
     staleTime: ms('10s'),
