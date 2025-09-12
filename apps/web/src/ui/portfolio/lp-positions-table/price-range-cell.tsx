@@ -1,5 +1,10 @@
+import { useIsSmScreen } from '@sushiswap/hooks'
 import { Button } from '@sushiswap/ui'
 import { useState } from 'react'
+import { useClaimableRewards } from 'src/lib/hooks/react-query'
+import { useConcentratedPositionOwner } from 'src/lib/wagmi/hooks/positions/hooks/useConcentratedPositionOwner'
+import { ClaimRewardsButton } from 'src/ui/pool/ClaimRewardsButton'
+import { type MerklChainId, isMerklChainId } from 'sushi/config'
 import { ManageDialog } from './manage-dialog/manage-dialog'
 import { PriceRangeSparklineAmm } from './price-range-sparkline-amm'
 import { PriceRangeSparklineCLMM } from './price-range-sparkline-clmm'
@@ -9,13 +14,29 @@ export const PriceRangeCell = ({
   data,
   isHovered,
 }: { data: any; isHovered: boolean }) => {
+  const isSmallScreen = useIsSmScreen()
   const [isManageOpen, setIsManageOpen] = useState(false)
-  if (isHovered || isManageOpen) {
+
+  const { data: owner } = useConcentratedPositionOwner({
+    chainId: data.chainId,
+    tokenId: data.tokenId,
+  })
+  const { data: rewardsData } = useClaimableRewards({
+    chainIds: [data.chainId],
+    account: owner,
+    enabled: isMerklChainId(data.chainId),
+  })
+
+  const rewardsForChain = rewardsData?.[data.chainId as MerklChainId]
+
+  if ((isHovered || isManageOpen) && !isSmallScreen) {
     return (
       <div className="flex gap-2 justify-between items-center w-full">
-        {/* make claim into new comp */}
         {data.protocol === 'SUSHISWAP_V3' ? (
-          <Button className="w-full !rounded-full">Claim</Button>
+          <ClaimRewardsButton
+            rewards={rewardsForChain}
+            className="!rounded-full flex-auto"
+          />
         ) : null}
         <ManageDialog
           data={data}

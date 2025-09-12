@@ -46,23 +46,14 @@ export const Rewards = ({ position }: { position: any }) => {
             {formatUSD(rewardsForChain?.totalRewardsUSD ?? 0)}
           </CardDescription>
         </div>
-        {rewardsForChain ? (
-          <Checker.Network size="default" fullWidth={false} chainId={747474}>
-            <ClaimRewardsButton
-              className="w-[128px]"
-              fullWidth={false}
-              rewards={rewardsForChain}
-            />
-          </Checker.Network>
-        ) : (
-          <Button
+        <Checker.Network size="default" fullWidth={false} chainId={747474}>
+          <ClaimRewardsButton
             className="w-[128px]"
-            loading={isRewardsLoading}
-            disabled={!isRewardsLoading}
-          >
-            Claim
-          </Button>
-        )}
+            fullWidth={false}
+            rewards={rewardsForChain}
+            disabled={!rewardsForChain}
+          />
+        </Checker.Network>
       </CardHeader>
 
       <CardContent
