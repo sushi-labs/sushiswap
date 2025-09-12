@@ -45,7 +45,7 @@ export const NativeAddress = '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'
 export const BLADE_API_HOST =
   process.env['BLADE_API_HOST'] ||
   process.env['NEXT_PUBLIC_BLADE_API_HOST'] ||
-  'https://api.clipper.exchange'
+  'https://blade-api.sushi.com'
 
 export const BLADE_API_KEY =
   process.env['BLADE_API_KEY'] || process.env['NEXT_PUBLIC_BLADE_API_KEY']
