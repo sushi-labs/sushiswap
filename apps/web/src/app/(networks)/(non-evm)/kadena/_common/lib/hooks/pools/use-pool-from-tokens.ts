@@ -28,7 +28,10 @@ type PoolAddressResponse = {
 export const usePoolFromTokens = ({
   token0,
   token1,
-}: { token0?: string; token1?: string }) => {
+}: {
+  token0: string | undefined
+  token1: string | undefined
+}) => {
   return useQuery({
     queryKey: ['kadena-pool-from-tokens', token0, token1],
     queryFn: async (): Promise<PoolAddressResponse> => {

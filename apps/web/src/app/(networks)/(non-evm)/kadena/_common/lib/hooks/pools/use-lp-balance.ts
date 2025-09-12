@@ -18,8 +18,8 @@ export const useLpBalance = ({
   token1Address,
 }: {
   account: string
-  token0Address?: string
-  token1Address?: string
+  token0Address: string | undefined
+  token1Address: string | undefined
 }) => {
   return useQuery({
     queryKey: ['kadena-lp-balance', account, token0Address, token1Address],

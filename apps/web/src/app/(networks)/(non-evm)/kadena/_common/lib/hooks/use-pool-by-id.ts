@@ -9,7 +9,7 @@ export const usePoolById = ({
   timeFrame = PoolChartPeriod.Day,
   first = 10,
 }: {
-  poolId?: string
+  poolId: string | undefined
   timeFrame?: PoolChartPeriod
   first?: number
 }) => {
