@@ -14,6 +14,7 @@ export const ToastInfo: FC<ToastInfo> = ({
   chainId,
   txHash,
   summary,
+  description,
 }) => {
   const txUrl = href
     ? href
@@ -26,6 +27,7 @@ export const ToastInfo: FC<ToastInfo> = ({
         href={txUrl}
         icon={<HalfCircleIcon width={18} height={18} className="text-blue" />}
         summary={summary}
+        description={description}
       />
     </>
   )

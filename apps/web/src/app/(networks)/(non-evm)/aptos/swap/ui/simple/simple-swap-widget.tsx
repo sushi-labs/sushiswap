@@ -9,9 +9,7 @@ import { SimpleSwapTradeStats } from './simple-swap-trade-stats'
 
 export const SimpleSwapWidget = () => {
   return (
-    <div className="flex flex-col gap-4">
-      <div />
-      <SimpleSwapHeader />
+    <div className="flex flex-col gap-4 bg-white dark:bg-slate-800 p-4 rounded-xl">
       <div className="flex items-center justify-between">
         <SwapModeButtons />
         <SimpleSwapSettingsOverlay />

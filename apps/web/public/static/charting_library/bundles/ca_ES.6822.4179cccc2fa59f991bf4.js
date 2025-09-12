@@ -1,0 +1,154 @@
+;(self.webpackChunktradingview = self.webpackChunktradingview || []).push([
+  [6822],
+  {
+    94920: (e) => {
+      e.exports = { en: ['ADJ'], ca_ES: ['aj'] }
+    },
+    16755: (e) => {
+      e.exports = { en: ['B-ADJ'], ca_ES: ['b-adj'] }
+    },
+    82631: (e) => {
+      e.exports = { en: ['SET'], ca_ES: ['set'] }
+    },
+    22233: (e) => {
+      e.exports = { en: ['auto'] }
+    },
+    4161: (e) => {
+      e.exports = { en: ['log'] }
+    },
+    58221: (e) => {
+      e.exports = { en: ['All data'] }
+    },
+    19273: (e) => {
+      e.exports = { en: ['Year to day'] }
+    },
+    58426: (e) => {
+      e.exports = { en: ['{timePeriod} in {timeInterval}'] }
+    },
+    93020: (e) => {
+      e.exports = {
+        en: ['Adjust data for dividends'],
+        ca_ES: ['Ajusta dades dels dividends'],
+      }
+    },
+    68921: (e) => {
+      e.exports = {
+        en: ['Adjust for contract changes'],
+        ca_ES: ['Ajusta els canvis dels contractes'],
+      }
+    },
+    42432: (e) => {
+      e.exports = { en: ['Go to'], ca_ES: ['Anar a'] }
+    },
+    92966: (e) => {
+      e.exports = {
+        en: ['Extended Hours is available only for intraday charts'],
+        ca_ES: [
+          "L'horari ampliat només està disponible per a gràfics intradia",
+        ],
+      }
+    },
+    61206: (e) => {
+      e.exports = { en: ['Maximize chart'], ca_ES: ['Maximitza gràfic'] }
+    },
+    2031: (e) => {
+      e.exports = {
+        en: ['Main symbol data is adjusted for dividends only'],
+        ca_ES: ["Les dades del símbol principal s'ajusten només als dividends"],
+      }
+    },
+    95739: (e) => {
+      e.exports = {
+        en: ['Main symbol data is adjusted for splits only'],
+        ca_ES: ["Les dades del símbol principal s'ajusten només als splits"],
+      }
+    },
+    27665: (e) => {
+      e.exports = { en: ['Sessions'] }
+    },
+    31142: (e) => {
+      e.exports = { en: ['Restore chart'], ca_ES: ['Restaura gràfic'] }
+    },
+    41888: (e) => {
+      e.exports = {
+        en: ['Toggle Auto Scale'],
+        ca_ES: ["Alterna l'escala automàtica"],
+      }
+    },
+    1e4: (e) => {
+      e.exports = {
+        en: ['Toggle Log Scale'],
+        ca_ES: ["Alterna l'escala logarítmica"],
+      }
+    },
+    81649: (e) => {
+      e.exports = { en: ['Toggle Percentage'], ca_ES: ['Altarna percentatge'] }
+    },
+    77073: (e) => {
+      e.exports = { en: ['Timezone'], ca_ES: ['Zona horària'] }
+    },
+    49545: (e) => {
+      e.exports = {
+        en: ['Use settlement as close on daily interval'],
+        ca_ES: ['Fer servir la liquidació com a tancament en intervals diaris'],
+      }
+    },
+    8586: (e) => {
+      e.exports = { en: ['ext'] }
+    },
+    63808: (e) => {
+      e.exports = { en: ['{str} day', '{str} days'] }
+    },
+    62368: (e) => {
+      e.exports = { en: ['{str} day', '{str} days'] }
+    },
+    561: (e) => {
+      e.exports = { en: ['{str} day intervals', '{str} days intervals'] }
+    },
+    72495: (e) => {
+      e.exports = { en: ['{str} hour', '{str} hours'] }
+    },
+    64963: (e) => {
+      e.exports = { en: ['{str} hour', '{str} hours'] }
+    },
+    14887: (e) => {
+      e.exports = { en: ['{str} hour intervals', '{str} hours intervals'] }
+    },
+    12752: (e) => {
+      e.exports = { en: ['{str} month', '{str} months'] }
+    },
+    20062: (e) => {
+      e.exports = { en: ['{str} month', '{str} months'] }
+    },
+    48514: (e) => {
+      e.exports = { en: ['{str} month intervals', '{str} months intervals'] }
+    },
+    95484: (e) => {
+      e.exports = { en: ['{str} minute', '{str} minutes'] }
+    },
+    5926: (e) => {
+      e.exports = { en: ['{str} minute', '{str} minutes'] }
+    },
+    15489: (e) => {
+      e.exports = { en: ['{str} minute intervals', '{str} minutes intervals'] }
+    },
+    6088: (e) => {
+      e.exports = { en: ['{str} week', '{str} weeks'] }
+    },
+    49306: (e) => {
+      e.exports = { en: ['{str} week', '{str} weeks'] }
+    },
+    60316: (e) => {
+      e.exports = { en: ['{str} week intervals', '{str} weeks intervals'] }
+    },
+    96325: (e) => {
+      e.exports = { en: ['{str} year', '{str} years'] }
+    },
+    91549: (e) => {
+      e.exports = { en: ['{str} year', '{str} years'] }
+    },
+    78971: (e) => {
+      e.exports = { en: ['{str} year intervals', '{str} years intervals'] }
+    },
+  },
+])

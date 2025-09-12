@@ -167,10 +167,10 @@ export const POOL_SUPPORTED_NETWORKS = Array.from(
 )
 
 export const TWAP_SUPPORTED_CHAIN_IDS = [
+  ChainId.KATANA,
   ChainId.ARBITRUM,
   ChainId.BASE,
   ChainId.ETHEREUM,
-  ChainId.KATANA,
 ] as const
 
 export type TwapSupportedChainId = (typeof TWAP_SUPPORTED_CHAIN_IDS)[number]

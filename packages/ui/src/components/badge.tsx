@@ -18,7 +18,6 @@ export const Badge: FC<Badge> = ({
     <div className="relative">
       <div
         className={classNames(
-          className,
           'absolute z-10',
           position === 'top-left'
             ? '-left-[25%] -top-[15%]'
@@ -29,6 +28,7 @@ export const Badge: FC<Badge> = ({
                 : position === 'bottom-left'
                   ? '-left-[25%] -bottom-[15%]'
                   : '',
+          className,
         )}
       >
         {badgeContent}
