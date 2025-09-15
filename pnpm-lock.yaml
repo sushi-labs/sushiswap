@@ -220,8 +220,8 @@ importers:
         specifier: 3.3.1
         version: 3.3.1(react-hook-form@7.54.2(react@19.0.0))
       '@kadena/client':
-        specifier: 1.17.1
-        version: 1.17.1(@upstash/redis@1.22.1(encoding@0.1.13))(bufferutil@4.0.8)(encoding@0.1.13)(utf-8-validate@6.0.3)
+        specifier: 1.18.0
+        version: 1.18.0(@upstash/redis@1.22.1(encoding@0.1.13))(bufferutil@4.0.8)(encoding@0.1.13)(utf-8-validate@6.0.3)
       '@kadena/wallet-adapter-ecko':
         specifier: 0.0.3
         version: 0.0.3(@upstash/redis@1.22.1(encoding@0.1.13))(bufferutil@4.0.8)(encoding@0.1.13)(typescript@5.8.3)(utf-8-validate@6.0.3)
@@ -2941,9 +2941,6 @@ packages:
 
   '@kadena/chainweb-node-client@0.9.1':
     resolution: {integrity: sha512-UT3/udj/QuMM8HiN2cMqEEgX0RGRYVJm/iJgqCtXLizKMM9fpaZDl+BlrB2TM9lyC9KrFPHI3aDAmtfzBQ9ERg==}
-
-  '@kadena/client@1.17.1':
-    resolution: {integrity: sha512-ZUVLa9HArJlBJRBKtfacbPocC0BGTROx1txMq0eipIPBp2QgLA5hAUs6edNGWZRe1UwWK7XajkOQtkMNsJL8rg==}
 
   '@kadena/client@1.18.0':
     resolution: {integrity: sha512-H+hMdRsL9J8MHM671XQ50j3b2gGb3PCbh8VhoPioHtra9Qh8EQN00s+U7wA3H3/gqrHPEZOQxQphfBcOEj0yyg==}
@@ -14893,32 +14890,6 @@ snapshots:
       cross-fetch: 3.1.8(encoding@0.1.13)
     transitivePeerDependencies:
       - encoding
-
-  '@kadena/client@1.17.1(@upstash/redis@1.22.1(encoding@0.1.13))(bufferutil@4.0.8)(encoding@0.1.13)(utf-8-validate@6.0.3)':
-    dependencies:
-      '@kadena/chainweb-node-client': 0.9.1(encoding@0.1.13)
-      '@kadena/cryptography-utils': 0.4.4
-      '@kadena/pactjs': 0.4.3
-      '@walletconnect/sign-client': 2.8.6(@upstash/redis@1.22.1(encoding@0.1.13))(bufferutil@4.0.8)(utf-8-validate@6.0.3)
-      cross-fetch: 3.1.8(encoding@0.1.13)
-      debug: 4.3.4
-    transitivePeerDependencies:
-      - '@azure/app-configuration'
-      - '@azure/cosmos'
-      - '@azure/data-tables'
-      - '@azure/identity'
-      - '@azure/keyvault-secrets'
-      - '@azure/storage-blob'
-      - '@capacitor/preferences'
-      - '@netlify/blobs'
-      - '@planetscale/database'
-      - '@react-native-async-storage/async-storage'
-      - '@upstash/redis'
-      - '@vercel/kv'
-      - bufferutil
-      - encoding
-      - supports-color
-      - utf-8-validate
 
   '@kadena/client@1.18.0(@upstash/redis@1.22.1(encoding@0.1.13))(bufferutil@4.0.8)(encoding@0.1.13)(utf-8-validate@6.0.3)':
     dependencies:
