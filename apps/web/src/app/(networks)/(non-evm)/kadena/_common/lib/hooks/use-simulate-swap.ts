@@ -57,8 +57,6 @@ export const useSimulateSwap = ({
       const getPoolAddressTx = buildGetPoolAddress(
         token0?.address,
         token1?.address,
-        KADENA_CHAIN_ID,
-        KADENA_NETWORK_ID,
       )
 
       const getPoolAddressRes = await kadenaClient.local(getPoolAddressTx, {
@@ -91,6 +89,8 @@ export const useSimulateSwap = ({
         signerAddress: signerAddress,
         poolAddress,
         isSimulate: true,
+        chainId: KADENA_CHAIN_ID,
+        networkId: KADENA_NETWORK_ID,
       })
 
       const res = await kadenaClient.local(tx, {

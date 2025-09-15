@@ -5,10 +5,7 @@ import { Amount } from 'sushi'
 import type { KvmToken } from 'sushi/kvm'
 import { parseUnits } from 'viem'
 import { kadenaClient } from '~kadena/_common/constants/client'
-import {
-  KADENA_CHAIN_ID,
-  KADENA_NETWORK_ID,
-} from '~kadena/_common/constants/network'
+import { KADENA_CHAIN_ID } from '~kadena/_common/constants/network'
 import { KADENA } from '~kadena/_common/constants/token-list'
 import { buildGetBalanceTx } from '../pact/builders'
 import type { PactNumberReturnType } from '../pact/type'
@@ -25,7 +22,7 @@ export const useNativeTokenBalance = ({
   return useQuery({
     queryKey: ['kadena-native-balance', account],
     queryFn: async (): Promise<NativeTokenBalanceResponse> => {
-      const tx = buildGetBalanceTx(account, KADENA_CHAIN_ID, KADENA_NETWORK_ID)
+      const tx = buildGetBalanceTx(account)
       const res = await kadenaClient.local(tx, {
         preflight: false,
         signatureVerification: false,

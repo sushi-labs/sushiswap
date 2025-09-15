@@ -4,10 +4,7 @@ import { Amount } from 'sushi'
 import type { KvmToken, KvmTokenAddress } from 'sushi/kvm'
 import { parseUnits } from 'viem'
 import { kadenaClient } from '~kadena/_common/constants/client'
-import {
-  KADENA_CHAIN_ID,
-  KADENA_NETWORK_ID,
-} from '~kadena/_common/constants/network'
+import { KADENA_CHAIN_ID } from '~kadena/_common/constants/network'
 import { KVM_PAIR_TOKEN } from '~kadena/_common/constants/pair'
 import { buildGetLpBalanceTx } from '../../pact/pool'
 import type { PactNumberReturnType } from '../../pact/type'
@@ -36,13 +33,7 @@ export const useLpBalance = ({
         }
       }
 
-      const tx = buildGetLpBalanceTx(
-        account,
-        token0Address,
-        token1Address,
-        KADENA_CHAIN_ID,
-        KADENA_NETWORK_ID,
-      )
+      const tx = buildGetLpBalanceTx(account, token0Address, token1Address)
       const res = await kadenaClient.local(tx, {
         preflight: false,
         signatureVerification: false,

@@ -3,10 +3,6 @@ import ms from 'ms'
 import type { KvmTokenAddress } from 'sushi/kvm'
 import { kadenaClient } from '~kadena/_common/constants/client'
 import {
-  KADENA_CHAIN_ID,
-  KADENA_NETWORK_ID,
-} from '~kadena/_common/constants/network'
-import {
   buildGetPoolAddress,
   buildGetPoolExists,
   buildGetTotalLpSupply,
@@ -44,12 +40,7 @@ export const usePoolFromTokens = ({
         }
       }
 
-      const tx = buildGetPoolExists(
-        token0,
-        token1,
-        KADENA_CHAIN_ID,
-        KADENA_NETWORK_ID,
-      )
+      const tx = buildGetPoolExists(token0, token1)
 
       const res = await kadenaClient.local(tx, {
         preflight: false,
@@ -64,12 +55,7 @@ export const usePoolFromTokens = ({
           poolData: undefined,
         }
       }
-      const tx1 = buildGetPoolAddress(
-        token0,
-        token1,
-        KADENA_CHAIN_ID,
-        KADENA_NETWORK_ID,
-      )
+      const tx1 = buildGetPoolAddress(token0, token1)
       const res1 = await kadenaClient.local(tx1, {
         preflight: false,
         signatureVerification: false,
@@ -81,12 +67,7 @@ export const usePoolFromTokens = ({
       }
       const poolData = res1?.result?.data as PoolDataRes
 
-      const tx2 = buildGetTotalLpSupply(
-        token0,
-        token1,
-        KADENA_CHAIN_ID,
-        KADENA_NETWORK_ID,
-      )
+      const tx2 = buildGetTotalLpSupply(token0, token1)
       const res2 = await kadenaClient.local(tx2, {
         preflight: false,
         signatureVerification: false,

@@ -28,8 +28,6 @@ export const useTokenInfo = ({
       }
       const decimalsTx = buildGetTokenPrecision(
         tokenContract as KvmTokenAddress,
-        KADENA_CHAIN_ID,
-        KADENA_NETWORK_ID,
       )
 
       const decimalRes = await kadenaClient.local(decimalsTx, {

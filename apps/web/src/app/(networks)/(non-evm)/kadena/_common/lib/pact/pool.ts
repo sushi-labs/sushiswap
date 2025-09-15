@@ -2,13 +2,17 @@ import { type ChainId, Pact } from '@kadena/client'
 import type { KvmTokenAddress } from 'sushi/kvm'
 import { KADENA_CONTRACT } from '~kadena/_common/constants/contracts'
 import { GAS_LIMIT, GAS_PRICE } from '~kadena/_common/constants/gas'
+import {
+  KADENA_CHAIN_ID,
+  KADENA_NETWORK_ID,
+} from '~kadena/_common/constants/network'
 import { formatPactDecimal } from '../utils/formatters'
 
 export const buildGetPoolExists = (
   token0: KvmTokenAddress,
   token1: KvmTokenAddress,
-  chainId: ChainId,
-  networkId: string,
+  chainId: ChainId = KADENA_CHAIN_ID,
+  networkId: string = KADENA_NETWORK_ID,
 ) => {
   const pactCode = `(${KADENA_CONTRACT}.pair-exists ${token0} ${token1})`
   return Pact.builder
@@ -21,8 +25,8 @@ export const buildGetPoolExists = (
 export const buildGetPoolAddress = (
   token0: KvmTokenAddress,
   token1: KvmTokenAddress,
-  chainId: ChainId,
-  networkId: string,
+  chainId: ChainId = KADENA_CHAIN_ID,
+  networkId: string = KADENA_NETWORK_ID,
 ) => {
   const pactCode = `(${KADENA_CONTRACT}.get-pair ${token0} ${token1})`
   return Pact.builder
@@ -41,8 +45,8 @@ export const buildAddLiquidityTxn = ({
   minAmountInToken1,
   poolAddress,
   signerAddress,
-  chainId,
-  networkId,
+  chainId = KADENA_CHAIN_ID,
+  networkId = KADENA_NETWORK_ID,
 }: {
   token0Address: KvmTokenAddress
   token1Address: KvmTokenAddress
@@ -127,8 +131,8 @@ export const buildGetLpBalanceTx = (
   account: string,
   token0Address: KvmTokenAddress,
   token1Address: KvmTokenAddress,
-  chainId: ChainId,
-  networkId: string,
+  chainId: ChainId = KADENA_CHAIN_ID,
+  networkId: string = KADENA_NETWORK_ID,
 ) => {
   const pactCmd = `(${KADENA_CONTRACT}-tokens.get-balance "${token0Address}:${token1Address}" "${account}")`
   const tx = Pact.builder
@@ -144,8 +148,8 @@ export const buildGetLpBalanceTx = (
 export const buildGetTotalLpSupply = (
   token0Address: KvmTokenAddress,
   token1Address: KvmTokenAddress,
-  chainId: ChainId,
-  networkId: string,
+  chainId: ChainId = KADENA_CHAIN_ID,
+  networkId: string = KADENA_NETWORK_ID,
 ) => {
   const pactCmd = `(${KADENA_CONTRACT}-tokens.total-supply "${token0Address}:${token1Address}")`
   const tx = Pact.builder
@@ -166,8 +170,8 @@ export const buildRemoveLiquidityTxn = ({
   minAmountOutToken1,
   pairAddress,
   signerAddress,
-  chainId,
-  networkId,
+  chainId = KADENA_CHAIN_ID,
+  networkId = KADENA_NETWORK_ID,
 }: {
   token0Address: KvmTokenAddress
   token1Address: KvmTokenAddress

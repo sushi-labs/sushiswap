@@ -2,10 +2,7 @@ import type { ChainId } from '@kadena/client'
 import { useQuery } from '@tanstack/react-query'
 import type { KvmTokenAddress } from 'sushi/kvm'
 import { kadenaClient } from '~kadena/_common/constants/client'
-import {
-  KADENA_CHAIN_ID,
-  KADENA_NETWORK_ID,
-} from '~kadena/_common/constants/network'
+import { KADENA_CHAIN_ID } from '~kadena/_common/constants/network'
 import { buildGetTokenBalanceTx } from '../pact/builders'
 
 type NativeTokenBalanceResponse = {
@@ -30,12 +27,7 @@ export const useTokenBalances = ({
         }
       }
 
-      const tx = buildGetTokenBalanceTx(
-        account,
-        tokenAddresses,
-        KADENA_CHAIN_ID,
-        KADENA_NETWORK_ID,
-      )
+      const tx = buildGetTokenBalanceTx(account, tokenAddresses)
 
       const res = await kadenaClient.local(tx, {
         preflight: false,

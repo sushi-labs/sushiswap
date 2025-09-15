@@ -1,10 +1,14 @@
 import { type ChainId, Pact } from '@kadena/client'
 import type { KvmTokenAddress } from 'sushi/kvm'
+import {
+  KADENA_CHAIN_ID,
+  KADENA_NETWORK_ID,
+} from '~kadena/_common/constants/network'
 
 export const buildGetBalanceTx = (
   account: string,
-  chainId: ChainId,
-  networkId: string,
+  chainId: ChainId = KADENA_CHAIN_ID,
+  networkId: string = KADENA_NETWORK_ID,
 ) => {
   return Pact.builder
     .execution(`(coin.get-balance "${account}")`)
@@ -13,22 +17,10 @@ export const buildGetBalanceTx = (
     .createTransaction()
 }
 
-export const buildGetTokenMetaTx = (
-  tokenContract: KvmTokenAddress,
-  chainId: ChainId,
-  networkId: string,
-) => {
-  return Pact.builder
-    .execution(`(${tokenContract}.get-meta)`)
-    .setMeta({ chainId: chainId })
-    .setNetworkId(networkId)
-    .createTransaction()
-}
-
 export const buildGetTokenPrecision = (
   tokenContract: KvmTokenAddress,
-  chainId: ChainId,
-  networkId: string,
+  chainId: ChainId = KADENA_CHAIN_ID,
+  networkId: string = KADENA_NETWORK_ID,
 ) => {
   return Pact.builder
     .execution(`(${tokenContract}.precision)`)
@@ -42,8 +34,8 @@ const isAscii = (str: string) => [...str].every((c) => c.charCodeAt(0) <= 127)
 export const buildGetTokenBalanceTx = (
   account: string,
   tokenContracts: KvmTokenAddress[],
-  chainId: ChainId,
-  networkId: string,
+  chainId: ChainId = KADENA_CHAIN_ID,
+  networkId: string = KADENA_NETWORK_ID,
 ) => {
   const cleanedTokenContracts = tokenContracts.filter((i) => isAscii(i))
 

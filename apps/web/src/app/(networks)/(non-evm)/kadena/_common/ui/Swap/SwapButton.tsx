@@ -52,8 +52,6 @@ export const SwapButton = ({ closeModal }: { closeModal: () => void }) => {
       const getPoolAddressTx = buildGetPoolAddress(
         token0.address,
         token1.address,
-        KADENA_CHAIN_ID,
-        KADENA_NETWORK_ID,
       )
 
       const getPoolAddressRes = await kadenaClient.local(getPoolAddressTx, {
@@ -86,6 +84,8 @@ export const SwapButton = ({ closeModal }: { closeModal: () => void }) => {
         signerAddress: address,
         poolAddress,
         isSimulate: false,
+        chainId: KADENA_CHAIN_ID,
+        networkId: KADENA_NETWORK_ID,
       })
 
       const signed = await client.signTransaction(currentWallet, tx)

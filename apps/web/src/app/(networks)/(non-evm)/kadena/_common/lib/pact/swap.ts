@@ -1,4 +1,4 @@
-import { Pact } from '@kadena/client'
+import { type ChainId, Pact } from '@kadena/client'
 import type { KvmTokenAddress } from 'sushi/kvm'
 import { KADENA_CONTRACT } from '~kadena/_common/constants/contracts'
 import { GAS_LIMIT, GAS_PRICE } from '~kadena/_common/constants/gas'
@@ -16,6 +16,8 @@ interface BuildSwapTxnParams {
   signerAddress: string
   poolAddress: string
   isSimulate: boolean
+  chainId: ChainId
+  networkId: string
 }
 
 export const buildSwapTxn = ({
@@ -26,6 +28,8 @@ export const buildSwapTxn = ({
   signerAddress,
   poolAddress,
   isSimulate,
+  chainId = KADENA_CHAIN_ID,
+  networkId = KADENA_NETWORK_ID,
 }: BuildSwapTxnParams) => {
   const pubKey = signerAddress.replace(/^k:/, '')
 
@@ -47,12 +51,12 @@ export const buildSwapTxn = ({
       }),
     ])
     .setMeta({
-      chainId: KADENA_CHAIN_ID,
+      chainId,
       gasLimit: GAS_LIMIT,
       gasPrice: GAS_PRICE,
       senderAccount: signerAddress,
     })
     .addData('ks', { keys: [pubKey], pred: 'keys-all' })
-    .setNetworkId(KADENA_NETWORK_ID)
+    .setNetworkId(networkId)
     .createTransaction()
 }

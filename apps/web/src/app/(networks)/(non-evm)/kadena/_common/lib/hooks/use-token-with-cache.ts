@@ -29,11 +29,7 @@ export async function getTokenDetails({
     return kvmToken
   }
 
-  const decimalsTx = buildGetTokenPrecision(
-    address,
-    KADENA_CHAIN_ID,
-    KADENA_NETWORK_ID,
-  )
+  const decimalsTx = buildGetTokenPrecision(address)
 
   const decimalRes = await kadenaClient.local(decimalsTx, {
     preflight: false,
