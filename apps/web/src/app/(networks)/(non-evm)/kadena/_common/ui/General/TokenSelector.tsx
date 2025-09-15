@@ -23,14 +23,15 @@ import {
 } from 'react'
 import AutoSizer from 'react-virtualized-auto-sizer'
 import { FixedSizeList } from 'react-window'
+import { Amount } from 'sushi'
 import type { KvmToken, KvmTokenAddress } from 'sushi/kvm'
+import { parseUnits } from 'viem'
 import { COMMON_KADENA_TOKENS } from '~kadena/_common/constants/token-list'
 import { useBaseTokens } from '~kadena/_common/lib/hooks/use-base-tokens'
 import { useCustomTokens } from '~kadena/_common/lib/hooks/use-custom-tokens'
 import { useSortedTokenList } from '~kadena/_common/lib/hooks/use-sorted-token-list'
 import { useTokenBalances } from '~kadena/_common/lib/hooks/use-token-balances'
 import { useTokenInfo } from '~kadena/_common/lib/hooks/use-token-info'
-import { formatNumberWithMaxDecimals } from '~kadena/_common/lib/utils/formatters'
 import type { TokenWithBalance } from '~kadena/_common/types/token-type'
 import { useKadena } from '../../../kadena-wallet-provider'
 import { Icon } from './Icon'
@@ -275,6 +276,16 @@ const TokenButton = ({
 
   const isDefaultToken = isOnDefaultList(token.address)
 
+  const balance = useMemo(() => {
+    const amount = (token as TokenWithBalance)?.balance
+    return new Amount(
+      token,
+      amount ? parseUnits(amount.toString(), token.decimals) : 0,
+    ).toString({
+      fixed: 3,
+    })
+  }, [token])
+
   return (
     <div
       className="flex w-full justify-between items-center gap-2 pr-2 h-[64px]"
@@ -322,9 +333,7 @@ const TokenButton = ({
                 'text-right text-gray-900 dark:text-slate-50 truncate',
               )}
             >
-              {formatNumberWithMaxDecimals(
-                (token as TokenWithBalance)?.balance ?? '0',
-              )}
+              {balance}
             </span>
           </div>
         ) : null}

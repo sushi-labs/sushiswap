@@ -1,12 +1,10 @@
 import { SkeletonText, classNames } from '@sushiswap/ui'
 import { WalletIcon } from '@sushiswap/ui/icons/WalletIcon'
 import { useMemo } from 'react'
-import { formatUnits } from '~kadena/_common/lib/utils/formatters'
 
 type TokenBalanceDisplayProps = {
   amount: number
   isLoading: boolean
-  decimals: number
   maxAmount?: () => void
   type: 'input' | 'output'
 }
@@ -14,13 +12,16 @@ type TokenBalanceDisplayProps = {
 export const TokenBalanceDisplay = ({
   amount,
   isLoading,
-  decimals,
   maxAmount,
   type,
 }: TokenBalanceDisplayProps) => {
   const [big, portion] = useMemo(
-    () => (amount ? formatUnits(amount, decimals, 4) : '0.00')?.split('.'),
-    [amount, decimals],
+    () =>
+      (amount
+        ? Number.parseFloat(amount.toFixed(4)).toString()
+        : '0.00'
+      )?.split('.'),
+    [amount],
   )
 
   return (

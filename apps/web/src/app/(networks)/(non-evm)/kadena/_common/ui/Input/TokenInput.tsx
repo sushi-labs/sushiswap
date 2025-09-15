@@ -217,8 +217,6 @@ export const TokenInput = ({
           amount={tokenBalance ?? 0}
           isLoading={isLoadingTokenBalance}
           type={type}
-          // zero decimals b/c number comes back formatted
-          decimals={0}
           maxAmount={() => {
             if (type === 'output') return
             if (tokenBalance === 0) {

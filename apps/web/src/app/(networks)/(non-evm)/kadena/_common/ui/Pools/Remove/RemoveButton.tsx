@@ -79,9 +79,9 @@ export const RemoveButton = (props: ButtonProps) => {
       const tx = buildRemoveLiquidityTxn({
         token0Address: token0.address,
         token1Address: token1.address,
-        lpToRemove: Number(lpToRemove),
-        minAmountOutToken0: Number(minAmountToken0),
-        minAmountOutToken1: Number(minAmountToken1),
+        lpToRemove: lpToRemove,
+        minAmountOutToken0: minAmountToken0,
+        minAmountOutToken1: minAmountToken1,
         pairAddress: poolId,
         signerAddress: address,
         chainId: KADENA_CHAIN_ID,

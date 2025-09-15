@@ -158,7 +158,7 @@ export const CardCurrencyAmountItem = forwardRef<
         <CardItem
           title={
             <div className="flex gap-2 items-center font-medium text-muted-foreground">
-              <Icon currency={currency} height={18} width={18} fontSize={9} />
+              <Icon currency={currency} height={18} width={18} />
               {currency.symbol}
             </div>
           }

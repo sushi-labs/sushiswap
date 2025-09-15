@@ -1,5 +1,6 @@
 import { type ComponentProps, useEffect } from 'react'
-import { formatToMaxDecimals } from '~kadena/_common/lib/utils/formatters'
+import { Amount } from 'sushi'
+import { parseUnits } from 'viem'
 import { TokenInput } from '~kadena/_common/ui/Input/TokenInput'
 import { usePoolDispatch, usePoolState } from '../../../../pool/pool-provider'
 
@@ -41,8 +42,14 @@ export const AmountInToken0 = ({
         return
       }
       const amountFormatted = Number(rateOfToken1) * Number(parsedAmount)
+      const amount = new Amount(
+        token1,
+        parseUnits(amountFormatted.toString(), token1.decimals),
+      ).toString({
+        fixed: token1.decimals,
+      })
 
-      setAmountInToken1(formatToMaxDecimals(amountFormatted, token1?.decimals))
+      setAmountInToken1(amount)
     }
   }, [
     token0,

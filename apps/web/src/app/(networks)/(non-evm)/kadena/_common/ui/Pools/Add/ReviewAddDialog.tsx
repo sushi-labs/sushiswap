@@ -7,10 +7,10 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@sushiswap/ui'
-import { useRef } from 'react'
-import { formatUSD } from 'sushi'
+import { useMemo, useRef } from 'react'
+import { Amount, formatUSD } from 'sushi'
+import { parseUnits } from 'viem'
 import { useTokenPrice } from '~kadena/_common/lib/hooks/use-token-price'
-import { formatUnits } from '~kadena/_common/lib/utils/formatters'
 import { useKadena } from '~kadena/kadena-wallet-provider'
 import { usePoolState } from '../../../../pool/pool-provider'
 import { Icon } from '../../General/Icon'
@@ -40,6 +40,26 @@ export const ReviewAddDialog = (props: ButtonProps) => {
   const closeModal = () => {
     closeBtnRef?.current?.click()
   }
+
+  const amount0 = useMemo(() => {
+    if (!token0 || !amountInToken0) return '0'
+    return new Amount(
+      token0,
+      parseUnits(amountInToken0.toString(), token0.decimals).toString(),
+    ).toString({
+      fixed: 12,
+    })
+  }, [amountInToken0, token0])
+
+  const amount1 = useMemo(() => {
+    if (!token1 || !amountInToken1) return '0'
+    return new Amount(
+      token1,
+      parseUnits(amountInToken1.toString(), token1.decimals).toString(),
+    ).toString({
+      fixed: 12,
+    })
+  }, [amountInToken1, token1])
 
   return (
     <Dialog>
@@ -71,9 +91,7 @@ export const ReviewAddDialog = (props: ButtonProps) => {
                   <div className="flex flex-col items-end">
                     <div className="flex gap-1 items-center">
                       <Icon currency={token0} width={16} height={16} />
-                      {/* show max 12 decimals so nothing is cut off */}
-                      <div>{formatUnits(amountInToken0, 0, 12)}</div>{' '}
-                      <div>{token0?.symbol}</div>
+                      <div>{amount0}</div> <div>{token0?.symbol}</div>
                     </div>
                     {isLoading ? (
                       <SkeletonBox className="h-3 w-[40px] rounded-sm" />
@@ -90,8 +108,7 @@ export const ReviewAddDialog = (props: ButtonProps) => {
                   <div className="flex flex-col items-end">
                     <div className="flex gap-1 items-center">
                       <Icon currency={token1} width={16} height={16} />
-                      <div>{formatUnits(amountInToken1, 0, 12)}</div>{' '}
-                      <div>{token1?.symbol}</div>
+                      <div>{amount1}</div> <div>{token1?.symbol}</div>
                     </div>
                     {isLoading ? (
                       <SkeletonBox className="h-3 w-[40px] rounded-sm" />
