@@ -1,6 +1,7 @@
 import { getBladePools } from '@sushiswap/graph-client/data-api'
 import { Container } from '@sushiswap/ui'
 import { notFound } from 'next/navigation'
+import { isPublicBladeChainId } from 'src/config.server'
 import { type BladeChainId, EvmChainId, isBladeChainId } from 'sushi/evm'
 import { BladeFeaturedPoolBanner } from '../_ui/blade-featured-pool-banner'
 import { BladePoolsTable } from './_ui/blade-pool-table'
@@ -18,7 +19,7 @@ export default async function BladePoolsPage(props: {
   const params = await props.params
   const chainId = +params.chainId
 
-  if (!isBladeChainId(chainId)) {
+  if (!isBladeChainId(chainId) || !(await isPublicBladeChainId(chainId))) {
     return notFound()
   }
 

@@ -1,4 +1,5 @@
 import { notFound } from 'next/navigation'
+import { isPublicBladeChainId } from 'src/config.server'
 import { isBladeChainId } from 'sushi/evm'
 
 export default async function Layout(props: {
@@ -10,7 +11,7 @@ export default async function Layout(props: {
   const { children } = props
 
   const chainId = +params.chainId
-  if (!isBladeChainId(chainId)) {
+  if (!isBladeChainId(chainId) || !(await isPublicBladeChainId(chainId))) {
     return notFound()
   }
 

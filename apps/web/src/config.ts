@@ -2,16 +2,20 @@ import { PoolChainIds } from '@sushiswap/graph-client/data-api'
 import { ChainId } from 'sushi'
 import {
   AGGREGATOR_ONLY_CHAIN_IDS,
+  BLADE_SUPPORTED_CHAIN_IDS,
+  type BladeChainId,
   type EvmAddress,
   EvmChainId,
   type EvmTestnetChainId,
   SUSHISWAP_SUPPORTED_CHAIN_IDS,
   SWAP_API_SUPPORTED_CHAIN_IDS,
   type SushiSwapV3ChainId,
+  isBladeChainId,
   isEvmTestnetChainId,
 } from 'sushi/evm'
 import { MvmChainId } from 'sushi/mvm'
 import { TvmChainId } from 'sushi/tvm'
+import { showBladeFlag, showHiddenBladeChainsFlag } from './flags'
 
 export type SwapApiEnabledChainId =
   (typeof SWAP_API_SUPPORTED_CHAIN_IDS)[number]
@@ -277,3 +281,10 @@ export const SUSHISWAP_V3_POSITION_HELPER: Record<
   // [ChainId.MOONRIVER]: '0x34026A9b9Cb6DF84880C4B2f778F5965F5679c16',
   // [ChainId.POLYGON_ZKEVM]: '0x34026A9b9Cb6DF84880C4B2f778F5965F5679c16',
 } as const
+
+export const BLADE_PUBLIC_CHAIN_IDS: readonly BladeChainId[] = [
+  ChainId.KATANA,
+  ChainId.OPTIMISM,
+  ChainId.BASE,
+  ChainId.ETHEREUM,
+]

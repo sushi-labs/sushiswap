@@ -5,6 +5,7 @@ import React from 'react'
 import { TableFiltersNetwork } from 'src/app/(networks)/_ui/table-filters-network'
 import { TableFiltersSearchToken } from 'src/app/(networks)/_ui/table-filters-search-token'
 import { POOL_SUPPORTED_NETWORKS } from 'src/config'
+import { isPublicBladeChainId } from 'src/config.server'
 import { getEvmChainById, isBladeChainId, isSushiSwapChainId } from 'sushi/evm'
 import { PoolsTable } from '~evm/[chainId]/_ui/pools-table'
 import { TableFiltersFarmsOnly } from '~evm/[chainId]/_ui/table-filters-farms-only'
@@ -21,7 +22,11 @@ export default async function PoolsPage(props: {
     return notFound()
   }
 
-  if (!isSushiSwapChainId(chainId) && isBladeChainId(chainId)) {
+  if (
+    !isSushiSwapChainId(chainId) &&
+    isBladeChainId(chainId) &&
+    (await isPublicBladeChainId(chainId))
+  ) {
     redirect(`/${getEvmChainById(chainId).key}/explore/blade-pools`)
   }
 
