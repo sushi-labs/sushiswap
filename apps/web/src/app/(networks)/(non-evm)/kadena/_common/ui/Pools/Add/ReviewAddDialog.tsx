@@ -91,7 +91,8 @@ export const ReviewAddDialog = (props: ButtonProps) => {
                   <div className="flex flex-col items-end">
                     <div className="flex gap-1 items-center">
                       <Icon currency={token0} width={16} height={16} />
-                      <div>{amount0}</div> <div>{token0?.symbol}</div>
+                      <div>{Number.parseFloat(amount0)}</div>{' '}
+                      <div>{token0?.symbol}</div>
                     </div>
                     {isLoading ? (
                       <SkeletonBox className="h-3 w-[40px] rounded-sm" />
@@ -108,7 +109,8 @@ export const ReviewAddDialog = (props: ButtonProps) => {
                   <div className="flex flex-col items-end">
                     <div className="flex gap-1 items-center">
                       <Icon currency={token1} width={16} height={16} />
-                      <div>{amount1}</div> <div>{token1?.symbol}</div>
+                      <div>{Number.parseFloat(amount1)}</div>{' '}
+                      <div>{token1?.symbol}</div>
                     </div>
                     {isLoading ? (
                       <SkeletonBox className="h-3 w-[40px] rounded-sm" />

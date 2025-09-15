@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
+import ms from 'ms'
 import type { KvmTokenAddress } from 'sushi/kvm'
 import { kadenaClient } from '~kadena/_common/constants/client'
 import {
@@ -176,6 +177,7 @@ export const usePoolFromTokens = ({
       }
     },
     enabled: Boolean(token0 && token1),
+    staleTime: ms('20s'),
   })
 }
 

@@ -12,8 +12,8 @@ import {
 import { Button, type ButtonProps } from '@sushiswap/ui'
 import { useQueryClient } from '@tanstack/react-query'
 import { useMemo } from 'react'
-import { Amount, Fraction } from 'sushi'
-import { KvmChainId, KvmToken, getKvmChainByKey } from 'sushi/kvm'
+import { Amount } from 'sushi'
+import { getKvmChainByKey } from 'sushi/kvm'
 import { parseUnits } from 'viem'
 import { kadenaClient } from '~kadena/_common/constants/client'
 import {
@@ -65,39 +65,23 @@ export const AddButton = ({
       return
     try {
       setIsTxnPending(true)
-      const _token0 = new KvmToken({
-        chainId: KvmChainId.KADENA,
-        address: token0.address,
-        decimals: token0.decimals,
-        symbol: token0.symbol,
-        name: token0.name,
-      })
+
       const parsedAmountOut = parseUnits(
         amountInToken0.toString(),
-        _token0.decimals,
+        token0.decimals,
       )
-      const slippageFraction = new Fraction((1 - slippage) * 1e6)
-      const minAmountToken0 = new Amount(_token0, parsedAmountOut)
-        .mul(slippageFraction)
-        .div(1e6)
-        .toString()
 
-      const _token1 = new KvmToken({
-        chainId: KvmChainId.KADENA,
-        address: token1.address,
-        decimals: token1.decimals,
-        symbol: token1.symbol,
-        name: token1.name,
-      })
+      const minAmountToken0 = new Amount(token0, parsedAmountOut)
+        .mulHuman(1 - slippage)
+        .toString({ fixed: token0.decimals })
+
       const parsedAmountOut1 = parseUnits(
         amountInToken1.toString(),
-        _token1.decimals,
+        token1.decimals,
       )
-      const slippageFraction1 = new Fraction((1 - slippage) * 1e6)
-      const minAmountToken1 = new Amount(_token1, parsedAmountOut1)
-        .mul(slippageFraction1)
-        .div(1e6)
-        .toString()
+      const minAmountToken1 = new Amount(token1, parsedAmountOut1)
+        .mulHuman(1 - slippage)
+        .toString({ fixed: token1.decimals })
 
       let poolAddress = poolId
 
