@@ -12,6 +12,7 @@ import {
 } from '@sushiswap/ui'
 import { type FC, useMemo } from 'react'
 import { isPublicBladeChainId } from 'src/config.server'
+import { showBladeFlag } from 'src/flags'
 import {
   EvmChainId,
   getEvmChainById,
@@ -42,6 +43,7 @@ export const Hero: FC<{ chainId: EvmChainId }> = async ({ chainId }) => {
   )
 
   const isBladeChain = await isPublicBladeChainId(chainId)
+  const showBlade = await showBladeFlag()
 
   return (
     <section className="flex flex-col gap-6">
@@ -71,22 +73,24 @@ export const Hero: FC<{ chainId: EvmChainId }> = async ({ chainId }) => {
               </DropdownMenuTrigger>
               <DropdownMenuContent className="w-80">
                 <DropdownMenuGroup>
-                  <DropdownMenuItem disabled={!isBladeChain} asChild>
-                    <LinkInternal
-                      href={`/${getEvmChainById(chainId).key}/explore/blade-pools`}
-                      className="flex flex-col !items-start gap-1 cursor-pointer"
-                    >
-                      <div className="flex items-center gap-1 font-medium leading-none">
-                        Blade Position
-                        <Chip variant="secondary">
-                          {isBladeChain ? 'New 🔥' : 'Unavailable'}
-                        </Chip>
-                      </div>
-                      <p className="text-sm leading-snug text-muted-foreground">
-                        Provide liquidity to a Blade liquidity pool.
-                      </p>
-                    </LinkInternal>
-                  </DropdownMenuItem>
+                  {showBlade ? (
+                    <DropdownMenuItem disabled={!isBladeChain} asChild>
+                      <LinkInternal
+                        href={`/${getEvmChainById(chainId).key}/explore/blade-pools`}
+                        className="flex flex-col !items-start gap-1 cursor-pointer"
+                      >
+                        <div className="flex items-center gap-1 font-medium leading-none">
+                          Blade Position
+                          <Chip variant="secondary">
+                            {isBladeChain ? 'New 🔥' : 'Unavailable'}
+                          </Chip>
+                        </div>
+                        <p className="text-sm leading-snug text-muted-foreground">
+                          Provide liquidity to a Blade liquidity pool.
+                        </p>
+                      </LinkInternal>
+                    </DropdownMenuItem>
+                  ) : null}
                   <DropdownMenuItem
                     disabled={!isSushiSwapV3ChainId(chainId)}
                     asChild
