@@ -10,10 +10,9 @@ import {
   LinkInternal,
   SelectIcon,
 } from '@sushiswap/ui'
-import type { FC } from 'react'
+import { type FC, useMemo } from 'react'
 import {
   EvmChainId,
-  type SushiSwapV3ChainId,
   getEvmChainById,
   isBladeChainId,
   isSushiSwapV2ChainId,
@@ -21,22 +20,27 @@ import {
 } from 'sushi/evm'
 
 const getAddPositionHref = (chainId: EvmChainId) => {
-  if (isSushiSwapV3ChainId(chainId as SushiSwapV3ChainId)) {
+  if (isSushiSwapV3ChainId(chainId)) {
     return `/${getEvmChainById(chainId).key}/pool/v3/add`
   }
 
-  if (isSushiSwapV2ChainId(chainId as SushiSwapV3ChainId)) {
+  if (isSushiSwapV2ChainId(chainId)) {
     return `/${getEvmChainById(chainId).key}/pool/v2/add`
   }
 
   if (isBladeChainId(chainId)) {
-    return `/${getEvmChainById(chainId).key}/pool/blade/add`
+    return `/${getEvmChainById(chainId).key}/explore/blade-pools`
   }
 
   return `/${getEvmChainById(EvmChainId.ETHEREUM).key}/pool/v3/add`
 }
 
 export const Hero: FC<{ chainId: EvmChainId }> = ({ chainId }) => {
+  const canIncentivize = useMemo(
+    () => isSushiSwapV3ChainId(chainId) || isSushiSwapV2ChainId(chainId),
+    [chainId],
+  )
+
   return (
     <section className="flex flex-col gap-6">
       <span className="text-5xl font-bold">Manage Liquidity Positions</span>
@@ -121,20 +125,22 @@ export const Hero: FC<{ chainId: EvmChainId }> = ({ chainId }) => {
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
-          <Button
-            fullWidth
-            asChild
-            icon={GiftIcon}
-            variant="secondary"
-            size="sm"
-          >
-            <LinkInternal
-              className="text-sm"
-              href={`/${getEvmChainById(chainId).key}/pool/incentivize`}
+          {canIncentivize ? (
+            <Button
+              fullWidth
+              asChild
+              icon={GiftIcon}
+              variant="secondary"
+              size="sm"
             >
-              I want to incentivize a pool
-            </LinkInternal>
-          </Button>
+              <LinkInternal
+                className="text-sm"
+                href={`/${getEvmChainById(chainId).key}/pool/incentivize`}
+              >
+                I want to incentivize a pool
+              </LinkInternal>
+            </Button>
+          ) : null}
         </div>
       </div>
     </section>

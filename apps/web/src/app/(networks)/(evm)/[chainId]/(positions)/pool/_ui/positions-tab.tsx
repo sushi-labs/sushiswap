@@ -10,8 +10,7 @@ import {
   TabsList,
   TabsTrigger,
 } from '@sushiswap/ui'
-import type React from 'react'
-import { type FC, useMemo, useState } from 'react'
+import React, { type FC, useMemo, useState } from 'react'
 
 import { BladeIcon } from '@sushiswap/ui/icons/BladeIcon'
 import {
@@ -20,68 +19,91 @@ import {
   getEvmChainById,
   isBladeChainId,
   isSushiSwapChainId,
+  isSushiSwapV2ChainId,
+  isSushiSwapV3ChainId,
 } from 'sushi/evm'
 import { ConcentratedPositionsTable } from '~evm/[chainId]/pool/_ui/ConcentratedPositionsTable/concentrated-positions-table'
 import { BladePositionsTable } from './blade-positions-table'
 import { PositionsTable } from './positions-table'
 
-const ITEMS: { id: string; value: string; children: React.ReactNode }[] = [
-  {
-    id: 'sushiswap-v3',
-    value: 'v3',
-    children: (
-      <div className="flex items-center gap-2">
-        <span>🍣</span>{' '}
-        <span>
-          SushiSwap <sup>v3</sup>
-        </span>
-      </div>
-    ),
-  },
-  {
-    id: 'sushiswap-v2',
-    value: 'v2',
-    children: (
-      <div className="flex items-center gap-2">
-        <span>🍣</span>{' '}
-        <span>
-          SushiSwap <sup>v2</sup>
-        </span>
-      </div>
-    ),
-  },
-]
+type TabItem = {
+  id: string
+  value: string
+  children: React.ReactNode
+  disabled: boolean
+}
+
+const createItems = (chainId: SushiSwapChainId | BladeChainId): TabItem[] => {
+  const items: TabItem[] = [
+    {
+      id: 'sushiswap-v3',
+      value: 'v3',
+      disabled: !isSushiSwapV3ChainId(chainId),
+      children: (
+        <div className="flex items-center gap-2">
+          <span>🍣</span>{' '}
+          <span>
+            SushiSwap <sup>v3</sup>
+          </span>
+        </div>
+      ),
+    },
+    {
+      id: 'sushiswap-v2',
+      value: 'v2',
+      disabled: !isSushiSwapV2ChainId(chainId),
+      children: (
+        <div className="flex items-center gap-2">
+          <span>🍣</span>{' '}
+          <span>
+            SushiSwap <sup>v2</sup>
+          </span>
+        </div>
+      ),
+    },
+    {
+      id: 'blade',
+      value: 'blade',
+      disabled: !isBladeChainId(chainId),
+      children: (
+        <div className="flex items-center gap-2">
+          <span>
+            <BladeIcon className="h-3.5" />
+          </span>
+          <span>Blade</span>
+        </div>
+      ),
+    },
+  ]
+
+  return items
+}
 
 export const PositionsTab: FC<{ chainId: SushiSwapChainId | BladeChainId }> = ({
   chainId,
 }) => {
-  const [tab, setTab] = useState('v3')
+  const items = useMemo(() => createItems(chainId), [chainId])
+
+  // Find the first non-disabled tab as default
+  const defaultTab = useMemo(() => {
+    const firstAvailable = items.find((item) => !item.disabled)
+    return firstAvailable?.value || 'v3'
+  }, [items])
+
+  const [tab, setTab] = useState(defaultTab)
   const [hideClosedPositions, setHideClosedPositions] = useState(true)
 
-  const items = useMemo(() => {
-    if (isBladeChainId(chainId)) {
-      return [
-        ...ITEMS,
-        {
-          id: 'blade',
-          value: 'blade',
-          children: (
-            <div className="flex items-center gap-2">
-              <span>
-                <BladeIcon className="h-3.5" />
-              </span>
-              <span>Blade</span>
-            </div>
-          ),
-        },
-      ]
+  // Update tab if current selection becomes disabled
+  React.useEffect(() => {
+    const currentItem = items.find((item) => item.value === tab)
+    if (currentItem?.disabled) {
+      setTab(defaultTab)
     }
-    return ITEMS
-  }, [chainId])
+  }, [tab, items, defaultTab])
 
   return (
     <div className="flex flex-col gap-4">
-      <Tabs value={tab} onValueChange={setTab} defaultValue="v3">
+      <Tabs value={tab} onValueChange={setTab} defaultValue={defaultTab}>
         <div className="flex justify-between mb-4">
           <div className="block sm:hidden">
             <Select value={tab} onValueChange={setTab}>
@@ -90,7 +112,11 @@ export const PositionsTab: FC<{ chainId: SushiSwapChainId | BladeChainId }> = ({
               </SelectTrigger>
               <SelectContent>
                 {items.map((item) => (
-                  <SelectItem key={item.value} value={item.value}>
+                  <SelectItem
+                    key={item.value}
+                    value={item.value}
+                    disabled={item.disabled}
+                  >
                     {item.children}
                   </SelectItem>
                 ))}
@@ -103,6 +129,7 @@ export const PositionsTab: FC<{ chainId: SushiSwapChainId | BladeChainId }> = ({
                 key={item.value}
                 value={item.value}
                 testdata-id={item.id}
+                disabled={item.disabled}
               >
                 {item.children}
               </TabsTrigger>

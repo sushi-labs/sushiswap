@@ -16,8 +16,7 @@ export const BladeIcon: IconComponent = (props) => {
       />
       <path
         d="M20.109 0.0107422L17.963 3.93481H0L2.14597 0.0107422H20.109Z"
-        fill="#3B7EF6"
-        fillOpacity="0.3"
+        fill="#C4D8FC"
       />
       <path
         d="M23.3525 5.34473L21.2065 9.26879H0L2.14597 5.34473H23.3525Z"
@@ -25,8 +24,7 @@ export const BladeIcon: IconComponent = (props) => {
       />
       <path
         d="M23.3525 5.34473L21.2065 9.26879H0L2.14597 5.34473H23.3525Z"
-        fill="#3B7EF6"
-        fillOpacity="0.3"
+        fill="#C4D8FC"
       />
       <path
         d="M7.17329 5.34473L2.45215 13.9899H18.6389L23.3601 5.34473H7.17329ZM16.5316 10.7182H7.54117L8.65278 8.65566H17.6579L16.5316 10.7182Z"
@@ -34,8 +32,7 @@ export const BladeIcon: IconComponent = (props) => {
       />
       <path
         d="M7.17329 5.34473L2.45215 13.9899H18.6389L23.3601 5.34473H7.17329ZM16.5316 10.7182H7.54117L8.65278 8.65566H17.6579L16.5316 10.7182Z"
-        fill="#3B7EF6"
-        fillOpacity="0.3"
+        fill="#C4D8FC"
       />
       <defs>
         <linearGradient
