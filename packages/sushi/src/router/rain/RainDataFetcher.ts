@@ -1,5 +1,4 @@
-import { isDeepStrictEqual } from 'util'
-import { ParseAbiItem, PublicClient } from 'viem'
+import { ParseAbiItem, PublicClient, toEventSignature } from 'viem'
 import { ChainId } from '../../chain/constants.js'
 import { Type } from '../../currency/index.js'
 import { MultiRoute } from '../../tines/Graph.js'
@@ -253,7 +252,8 @@ export class RainDataFetcher extends DataFetcher {
         // gather unique instances of liquidity provider events abi
         if (provider?.eventsAbi?.length) {
           ;(provider.eventsAbi as any[]).forEach((abi) => {
-            if (this.eventsAbi.every((v) => !isDeepStrictEqual(v, abi))) {
+            const sig = toEventSignature(abi)
+            if (this.eventsAbi.every((v) => toEventSignature(v as any) !== sig)) {
               this.eventsAbi.push(abi)
             }
           })
