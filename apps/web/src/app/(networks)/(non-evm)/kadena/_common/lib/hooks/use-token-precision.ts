@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
+import type { KvmTokenAddress } from 'sushi/kvm'
 import { kadenaClient } from '~kadena/_common/constants/client'
 import {
   KADENA_CHAIN_ID,
@@ -8,7 +9,7 @@ import { buildGetTokenPrecision } from '~kadena/_common/lib/pact/builders'
 
 export const useTokenPrecision = ({
   tokenContract,
-}: { tokenContract: string }) => {
+}: { tokenContract: KvmTokenAddress | undefined }) => {
   return useQuery({
     queryKey: ['kadena-token-info', tokenContract],
     queryFn: async (): Promise<number> => {

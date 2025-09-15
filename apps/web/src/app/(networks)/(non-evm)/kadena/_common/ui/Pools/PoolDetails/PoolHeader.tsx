@@ -16,7 +16,16 @@ import {
 import { usePathname, useRouter } from 'next/navigation'
 import { useEffect } from 'react'
 import { formatPercent } from 'sushi'
-import { getKvmChainByKey } from 'sushi/kvm'
+import {
+  KvmChainId,
+  KvmToken,
+  type KvmTokenAddress,
+  getKvmChainByKey,
+} from 'sushi/kvm'
+import {
+  KADENA_CHAIN_ID,
+  KADENA_NETWORK_ID,
+} from '~kadena/_common/constants/network'
 import { useBaseTokens } from '~kadena/_common/lib/hooks/use-base-tokens'
 import { usePoolById } from '~kadena/_common/lib/hooks/use-pool-by-id'
 import { useTokenPrecision } from '~kadena/_common/lib/hooks/use-token-precision'
@@ -36,10 +45,10 @@ export const PoolHeader = ({ poolId }: { poolId: string }) => {
   const { setToken0, setToken1 } = usePoolDispatch()
   const { token0, token1, poolId: poolAddress, isLoadingPool } = usePoolState()
   const { data: decimals0 } = useTokenPrecision({
-    tokenContract: pool?.token0?.address ?? '',
+    tokenContract: (pool?.token0?.address as KvmTokenAddress) ?? undefined,
   })
   const { data: decimals1 } = useTokenPrecision({
-    tokenContract: pool?.token1?.address ?? '',
+    tokenContract: (pool?.token1?.address as KvmTokenAddress) ?? undefined,
   })
 
   const isLoading = isLoadingPoolById || isLoadingPool
@@ -47,39 +56,56 @@ export const PoolHeader = ({ poolId }: { poolId: string }) => {
   useEffect(() => {
     if (pool?.token0) {
       const _token0 = baseTokens?.find(
-        (token) => token.tokenAddress === pool.token0.address,
+        (token) => token.address === pool.token0.address,
       )
-      setToken0({
-        tokenAddress: pool?.token0?.address,
-        tokenSymbol:
-          _token0?.tokenSymbol ?? pool?.token0?.name.slice(0, 4)?.toUpperCase(),
-        tokenDecimals: _token0?.tokenDecimals || decimals0 || 12,
-        tokenName: _token0?.tokenName ?? pool.token0.name,
-        tokenImage: _token0?.tokenImage ?? '',
-      })
+      if (_token0) {
+        setToken0(_token0)
+        return
+      }
+      setToken0(
+        new KvmToken({
+          chainId: KvmChainId.KADENA,
+          address: pool?.token0?.address as KvmTokenAddress,
+          symbol: pool?.token0?.name.slice(0, 4)?.toUpperCase(),
+          decimals: decimals0 || 12,
+          name: pool.token0.name,
+          metadata: {
+            imageUrl: undefined,
+            validated: false,
+            kadenaChainId: KADENA_CHAIN_ID,
+            kadenaNetworkId: KADENA_NETWORK_ID,
+          },
+        }),
+      )
     }
+  }, [pool?.token0, setToken0, baseTokens, decimals0])
+
+  useEffect(() => {
     if (pool?.token1) {
       const _token1 = baseTokens?.find(
-        (token) => token.tokenAddress === pool.token1.address,
+        (token) => token.address === pool.token1.address,
       )
-      setToken1({
-        tokenAddress: pool?.token1?.address,
-        tokenSymbol:
-          _token1?.tokenSymbol ?? pool?.token1?.name.slice(0, 4)?.toUpperCase(),
-        tokenDecimals: _token1?.tokenDecimals || decimals1 || 12,
-        tokenName: _token1?.tokenName ?? pool.token1.name,
-        tokenImage: _token1?.tokenImage ?? '',
-      })
+      if (_token1) {
+        setToken1(_token1)
+        return
+      }
+      setToken1(
+        new KvmToken({
+          chainId: KvmChainId.KADENA,
+          address: pool?.token1?.address as KvmTokenAddress,
+          symbol: pool?.token1?.name.slice(0, 4)?.toUpperCase(),
+          decimals: decimals1 || 12,
+          name: pool.token1.name,
+          metadata: {
+            imageUrl: undefined,
+            validated: false,
+            kadenaChainId: KADENA_CHAIN_ID,
+            kadenaNetworkId: KADENA_NETWORK_ID,
+          },
+        }),
+      )
     }
-  }, [
-    pool?.token0,
-    pool?.token1,
-    setToken0,
-    setToken1,
-    baseTokens,
-    decimals0,
-    decimals1,
-  ])
+  }, [pool?.token1, setToken1, baseTokens, decimals1])
 
   return (
     <div className="flex justify-between w-full">
@@ -124,7 +150,7 @@ export const PoolHeader = ({ poolId }: { poolId: string }) => {
                     poolAddress ?? '',
                   )}
                 >
-                  {token0?.tokenSymbol}/{token1?.tokenSymbol}
+                  {token0?.symbol}/{token1?.symbol}
                 </LinkExternal>
               </Button>
             </div>
@@ -172,12 +198,12 @@ export const PoolHeader = ({ poolId }: { poolId: string }) => {
             <>
               <div className="flex items-center gap-1.5">
                 <span className="font-semibold tracking-tighter">
-                  {token0?.tokenSymbol}
+                  {token0?.symbol}
                 </span>
                 <LinkExternal
                   target="_blank"
                   href={getKvmChainByKey('kadena').getAccountUrl(
-                    token0?.tokenAddress ?? '',
+                    token0?.address ?? '',
                   )}
                 >
                   <Button
@@ -186,19 +212,19 @@ export const PoolHeader = ({ poolId }: { poolId: string }) => {
                     size="sm"
                     className="!font-medium !text-secondary-foreground"
                   >
-                    {`${token0?.tokenName}`}
+                    {`${token0?.name}`}
                     <ArrowTopRightOnSquareIcon className="w-3 h-3" />
                   </Button>
                 </LinkExternal>
               </div>
               <div className="flex items-center gap-1.5">
                 <span className="font-semibold tracking-tighter">
-                  {token1?.tokenSymbol}
+                  {token1?.symbol}
                 </span>
                 <LinkExternal
                   target="_blank"
                   href={getKvmChainByKey('kadena').getAccountUrl(
-                    token1?.tokenAddress ?? '',
+                    token1?.address ?? '',
                   )}
                 >
                   <Button
@@ -207,7 +233,7 @@ export const PoolHeader = ({ poolId }: { poolId: string }) => {
                     size="sm"
                     className="!font-medium !text-secondary-foreground"
                   >
-                    {`${token1?.tokenName}`}
+                    {`${token1?.name}`}
                     <ArrowTopRightOnSquareIcon className="w-3 h-3" />
                   </Button>
                 </LinkExternal>

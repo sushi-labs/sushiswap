@@ -1,4 +1,5 @@
 import { Pact } from '@kadena/client'
+import type { KvmTokenAddress } from 'sushi/kvm'
 import { KADENA_CONTRACT } from '~kadena/_common/constants/contracts'
 import { GAS_LIMIT, GAS_PRICE } from '~kadena/_common/constants/gas'
 import {
@@ -8,8 +9,8 @@ import {
 import { formatPactDecimal } from '../utils/formatters'
 
 interface BuildSwapTxnParams {
-  token0Address: string
-  token1Address: string
+  token0Address: KvmTokenAddress
+  token1Address: KvmTokenAddress
   amountIn?: number
   amountOut?: number
   signerAddress: string

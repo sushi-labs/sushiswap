@@ -1,25 +1,39 @@
 import { useDebounce } from '@sushiswap/hooks'
-import { Decimal } from 'decimal.js-light'
 import { useEffect, useMemo } from 'react'
+import { Amount } from 'sushi'
+import { parseUnits } from 'viem'
 import { usePoolFromTokens } from '~kadena/_common/lib/hooks/pools/use-pool-from-tokens'
 import { useSwapDispatch, useSwapState } from '~kadena/swap/swap-provider'
 import { TokenInput } from '../Input/TokenInput'
 
 export const AmountIn = () => {
-  const { token0, amountIn, token1, isTxnPending } = useSwapState()
+  const { token0, token1, isTxnPending, amountInString } = useSwapState()
   const {
     setToken0,
     setAmountIn,
     setAmountOut,
     setRoute,
     setPriceImpactPercentage,
+    setAmountInString,
+    setAmountOutString,
   } = useSwapDispatch()
-  const debouncedAmountIn = useDebounce(amountIn, 250)
+  const debouncedAmountIn = useDebounce<string | undefined>(amountInString, 250)
 
   const { data, isLoading: isLoadingPool } = usePoolFromTokens({
-    token0: token0?.tokenAddress,
-    token1: token1?.tokenAddress,
+    token0: token0?.address,
+    token1: token1?.address,
   })
+
+  useEffect(() => {
+    if (amountInString && token0) {
+      const parsed = parseUnits(amountInString, token0.decimals)
+      setAmountIn(new Amount(token0, parsed))
+    } else {
+      setAmountIn(undefined)
+      setAmountOut(undefined)
+      setAmountOutString('')
+    }
+  }, [amountInString, token0, setAmountIn, setAmountOut, setAmountOutString])
 
   const isLoadingAmount = isLoadingPool
 
@@ -32,27 +46,36 @@ export const AmountIn = () => {
       return 0
     }
 
-    const parsedAmountIn = Number.parseFloat(debouncedAmountIn)
-    if (Number.isNaN(parsedAmountIn)) {
+    if (!debouncedAmountIn) {
       return 0
     }
-    const amtIn = new Decimal(parsedAmountIn)
-    const r0 = new Decimal(data?.poolData?.reserve0)
-    const r1 = new Decimal(data?.poolData?.reserve1)
-    const isInputToken0 = token0?.tokenAddress === data?.poolData?.token0
+    const amtIn = new Amount(
+      token0,
+      parseUnits(debouncedAmountIn, token0?.decimals),
+    )
+    const r0 = new Amount(
+      token0,
+      parseUnits(data?.poolData?.reserve0.toString(), token0?.decimals),
+    )
+    const r1 = new Amount(
+      token1,
+      parseUnits(data?.poolData?.reserve1?.toString(), token1?.decimals),
+    )
+
+    const isInputToken0 = token0?.address === data?.poolData?.token0
 
     const reserveIn = isInputToken0 ? r0 : r1
     const reserveOut = isInputToken0 ? r1 : r0
 
-    if (amtIn.lte(0) || r0.lte(0) || r1.lte(0)) return 0
+    if (amtIn.lte(0n) || r0.lte(0n) || r1.lte(0n)) return 0
 
     // amountIn with 0.3% fee
-    const amountInWithFee = amtIn.mul(0.997)
+    const amountInWithFee = amtIn.mulHuman(0.997)
     const numerator = amountInWithFee.mul(reserveOut)
     const denominator = reserveIn.add(amountInWithFee)
-    const amountOut = numerator.div(denominator)
+    const amountOut = numerator.divToFraction(denominator)
 
-    const idealAmountOut = amtIn.mul(reserveOut).div(reserveIn)
+    const idealAmountOut = amtIn.mul(reserveOut).divToFraction(reserveIn)
     const priceImpact = idealAmountOut
       .sub(amountOut)
       .div(idealAmountOut)
@@ -60,7 +83,7 @@ export const AmountIn = () => {
       .toNumber()
 
     return priceImpact
-  }, [data, debouncedAmountIn, token0])
+  }, [data, debouncedAmountIn, token0, token1])
 
   //priceImpactPercentage
   useEffect(() => {
@@ -70,27 +93,25 @@ export const AmountIn = () => {
   //routes
   useEffect(() => {
     if (data?.exists) {
-      setRoute([token0?.tokenAddress, token1?.tokenAddress])
+      setRoute([token0?.address, token1?.address])
     } else {
       setRoute([])
     }
   }, [data, token0, token1, setRoute])
 
-  useEffect(() => {
-    const _amountIn = Number(amountIn)
-    if (_amountIn === 0 || Number.isNaN(_amountIn)) {
-      setAmountOut('')
-    }
-  }, [amountIn, setAmountOut])
+  // useEffect(() => {
+  // 	if (amountIn?.eq(0n) || !amountIn) {
+  // 		setAmountOut(undefined);
+  // 		setAmountOutString("");
+  // 	}
+  // }, [amountIn, setAmountOut]);
 
   return (
     <TokenInput
       className="border border-accent"
       type="input"
-      amount={amountIn}
-      setAmount={(amount) => {
-        setAmountIn(amount)
-      }}
+      amount={amountInString}
+      setAmount={setAmountInString}
       currency={token0}
       setToken={setToken0}
       label="Sell"

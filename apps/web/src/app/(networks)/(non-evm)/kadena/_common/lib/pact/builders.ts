@@ -1,4 +1,5 @@
 import { type ChainId, Pact } from '@kadena/client'
+import type { KvmTokenAddress } from 'sushi/kvm'
 
 export const buildGetBalanceTx = (
   account: string,
@@ -13,7 +14,7 @@ export const buildGetBalanceTx = (
 }
 
 export const buildGetTokenMetaTx = (
-  tokenContract: string,
+  tokenContract: KvmTokenAddress,
   chainId: ChainId,
   networkId: string,
 ) => {
@@ -25,7 +26,7 @@ export const buildGetTokenMetaTx = (
 }
 
 export const buildGetTokenPrecision = (
-  tokenContract: string,
+  tokenContract: KvmTokenAddress,
   chainId: ChainId,
   networkId: string,
 ) => {
@@ -40,7 +41,7 @@ const isAscii = (str: string) => [...str].every((c) => c.charCodeAt(0) <= 127)
 
 export const buildGetTokenBalanceTx = (
   account: string,
-  tokenContracts: string[],
+  tokenContracts: KvmTokenAddress[],
   chainId: ChainId,
   networkId: string,
 ) => {

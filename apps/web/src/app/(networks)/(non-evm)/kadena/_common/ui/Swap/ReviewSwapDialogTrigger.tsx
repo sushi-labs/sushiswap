@@ -24,7 +24,7 @@ export const ReviewSwapDialogTrigger = () => {
     useTokenBalances({
       account: activeAccount?.accountName ?? '',
       tokenAddresses:
-        token0 && token1 ? [token0?.tokenAddress, token1?.tokenAddress] : [],
+        token0 && token1 ? [token0?.address, token1?.address] : [],
     })
   const balanceMap = tokenBalances?.balanceMap ?? undefined
 
@@ -39,8 +39,7 @@ export const ReviewSwapDialogTrigger = () => {
     return insufficient
   }, [isLoadingTokenBalance, balanceMap])
 
-  const token0Balance =
-    token0 && balanceMap ? balanceMap[token0?.tokenAddress] : 0
+  const token0Balance = token0 && balanceMap ? balanceMap[token0?.address] : 0
 
   const hasInsufficientToken0Balance = useMemo(() => {
     if (isLoadingTokenBalance) return true
@@ -50,8 +49,8 @@ export const ReviewSwapDialogTrigger = () => {
   const noRoutes = route?.length === 0
 
   const { data } = usePoolFromTokens({
-    token0: token0?.tokenAddress,
-    token1: token1?.tokenAddress,
+    token0: token0?.address,
+    token1: token1?.address,
   })
 
   const insufficientLiquidity =
@@ -63,20 +62,20 @@ export const ReviewSwapDialogTrigger = () => {
     if (isTxnPending) {
       return 'Swapping'
     }
-    if (!amountIn || amountIn === '0') {
+    if (!amountIn || amountIn.eq('0')) {
       return 'Enter Amount'
     }
     if (hasInsufficientToken0Balance) {
       return 'Insufficient Balance on Chain 2'
-    }
-    if (hasInsufficientGas) {
-      return 'Insufficient Gas Balance on Chain 2'
     }
     if (noRoutes) {
       return 'No Routes Found'
     }
     if (insufficientLiquidity) {
       return 'Insufficient Liquidity'
+    }
+    if (hasInsufficientGas) {
+      return 'Insufficient Gas Balance on Chain 2'
     }
     return 'Swap'
   }, [

@@ -77,8 +77,8 @@ export const RemoveButton = (props: ButtonProps) => {
       setIsTxnPending(true)
 
       const tx = buildRemoveLiquidityTxn({
-        token0Address: token0.tokenAddress,
-        token1Address: token1.tokenAddress,
+        token0Address: token0.address,
+        token1Address: token1.address,
         lpToRemove: Number(lpToRemove),
         minAmountOutToken0: Number(minAmountToken0),
         minAmountOutToken1: Number(minAmountToken1),
@@ -151,24 +151,24 @@ export const RemoveButton = (props: ButtonProps) => {
   const onSuccess = async () => {
     setPercentage(0)
     setIsTxnPending(false)
-    await queryClient.invalidateQueries({
+    queryClient.invalidateQueries({
       queryKey: ['kadena-pool-from-tokens', token0, token1],
     })
-    await queryClient.invalidateQueries({
-      queryKey: ['kadena-token-balances', address, [token0?.tokenAddress]],
+    queryClient.invalidateQueries({
+      queryKey: ['kadena-token-balances', address, [token0?.address]],
     })
-    await queryClient.invalidateQueries({
-      queryKey: ['kadena-token-balances', address, [token1?.tokenAddress]],
+    queryClient.invalidateQueries({
+      queryKey: ['kadena-token-balances', address, [token1?.address]],
     })
-    await queryClient.invalidateQueries({
+    queryClient.invalidateQueries({
       queryKey: [
         'kadena-lp-balance',
         address,
-        token0?.tokenAddress,
-        token1?.tokenAddress,
+        token0?.address,
+        token1?.address,
       ],
     })
-    await queryClient.invalidateQueries({
+    queryClient.invalidateQueries({
       queryKey: ['kadena-pool-by-id', _poolId, undefined, 4],
     })
   }

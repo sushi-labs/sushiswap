@@ -7,7 +7,6 @@ import { classNames } from '@sushiswap/ui'
 import { useTheme } from 'next-themes'
 import type React from 'react'
 import { type FC, Fragment } from 'react'
-// import { type } from '../../../../../../../../../packages/graph-client/src/subgraphs/strapi/index'
 import type { IProfileView } from './WalletConnector'
 
 type SettingsViewProps = {

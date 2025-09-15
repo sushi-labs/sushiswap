@@ -3,49 +3,72 @@ import { Badge, Currency, TooltipContent } from '@sushiswap/ui'
 import { Tooltip, TooltipProvider, TooltipTrigger } from '@sushiswap/ui'
 import React, { useMemo } from 'react'
 import { formatNumber } from 'sushi'
+import { KvmChainId, KvmToken, type KvmTokenAddress } from 'sushi/kvm'
+import {
+  KADENA_CHAIN_ID,
+  KADENA_NETWORK_ID,
+} from '~kadena/_common/constants/network'
 import { KADENA } from '~kadena/_common/constants/token-list'
 import { useBaseTokens } from '~kadena/_common/lib/hooks/use-base-tokens'
+import { useTokenPrecision } from '~kadena/_common/lib/hooks/use-token-precision'
 import { Icon } from '../../General/Icon'
 
 export const PoolNameCell = ({ data }: { data: KadenaPool }) => {
   const { data: baseTokens } = useBaseTokens()
+  const { data: decimals0 } = useTokenPrecision({
+    tokenContract: (data?.token0?.address as KvmTokenAddress) ?? undefined,
+  })
+  const { data: decimals1 } = useTokenPrecision({
+    tokenContract: (data?.token1?.address as KvmTokenAddress) ?? undefined,
+  })
+
   const token0 = useMemo(() => {
     const _token0 = baseTokens?.find(
       (token) =>
-        token?.tokenAddress?.toLowerCase() ===
-        data?.token0?.address?.toLowerCase(),
+        token?.address?.toLowerCase() === data?.token0?.address?.toLowerCase(),
     )
     if (_token0) {
       return _token0
     }
 
-    return {
-      tokenAddress: data.token0.address,
-      tokenSymbol: data.token0.name?.slice(0, 4)?.toUpperCase(),
-      tokenDecimals: 12,
-      tokenName: data.token0.name,
-      tokenImage: '',
-    }
-  }, [data.token0, baseTokens])
+    return new KvmToken({
+      chainId: KvmChainId.KADENA,
+      address: data?.token0?.address as KvmTokenAddress,
+      symbol: data?.token0?.name.slice(0, 4)?.toUpperCase(),
+      decimals: decimals0 || 12,
+      name: data?.token0?.name,
+      metadata: {
+        imageUrl: undefined,
+        validated: false,
+        kadenaChainId: KADENA_CHAIN_ID,
+        kadenaNetworkId: KADENA_NETWORK_ID,
+      },
+    })
+  }, [data.token0, baseTokens, decimals0])
 
   const token1 = useMemo(() => {
     const _token1 = baseTokens?.find(
       (token) =>
-        token?.tokenAddress?.toLowerCase() ===
-        data?.token1?.address?.toLowerCase(),
+        token?.address?.toLowerCase() === data?.token1?.address?.toLowerCase(),
     )
     if (_token1) {
       return _token1
     }
 
-    return {
-      tokenAddress: data.token1.address,
-      tokenSymbol: data.token1.name?.slice(0, 4)?.toUpperCase(),
-      tokenDecimals: 12,
-      tokenName: data.token1.name,
-      tokenImage: '',
-    }
-  }, [data.token1, baseTokens])
+    return new KvmToken({
+      chainId: KvmChainId.KADENA,
+      address: data?.token1?.address as KvmTokenAddress,
+      symbol: data?.token1?.name.slice(0, 4)?.toUpperCase(),
+      decimals: decimals1 || 12,
+      name: data?.token1?.name,
+      metadata: {
+        imageUrl: undefined,
+        validated: false,
+        kadenaChainId: KADENA_CHAIN_ID,
+        kadenaNetworkId: KADENA_NETWORK_ID,
+      },
+    })
+  }, [data.token1, baseTokens, decimals1])
 
   return (
     <div className="flex items-center gap-5">
@@ -63,19 +86,9 @@ export const PoolNameCell = ({ data }: { data: KadenaPool }) => {
       </div>
       <div className="flex flex-col gap-0.5">
         <span className="flex items-center gap-1 pr-2 text-sm font-medium text-gray-900 dark:text-slate-50 whitespace-nowrap">
-          {token0.tokenSymbol}/{token1.tokenSymbol}
+          {token0.symbol}/{token1.symbol}
         </span>
         <div className="flex gap-1">
-          {/* <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                {ProtocolBadge[data.protocol as SushiSwapProtocol]}
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>Protocol version</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider> */}
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>

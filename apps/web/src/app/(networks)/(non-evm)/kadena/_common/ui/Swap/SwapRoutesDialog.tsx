@@ -8,7 +8,7 @@ import {
   ScrollArea,
 } from '@sushiswap/ui'
 import type { FC, ReactNode } from 'react'
-import type { KadenaToken } from '~kadena/_common/types/token-type'
+import type { KvmToken } from 'sushi/kvm'
 import { useSwapState } from '~kadena/swap/swap-provider'
 import { Icon } from '../General/Icon'
 
@@ -45,11 +45,11 @@ export const SwapRoutesDialog: FC<{ children: ReactNode }> = ({ children }) => {
   )
 }
 
-const SwapItem = ({ token }: { token?: KadenaToken }) => {
+const SwapItem = ({ token }: { token?: KvmToken }) => {
   return (
     <div className="flex items-center gap-2">
       <Icon width={16} height={16} currency={token} />
-      <span className="text-sm font-medium">{token?.tokenSymbol}</span>
+      <span className="text-sm font-medium">{token?.symbol}</span>
     </div>
   )
 }

@@ -1,20 +1,17 @@
 import { useDebounce } from '@sushiswap/hooks'
 import { useQuery } from '@tanstack/react-query'
-import type { Token } from '~aptos/_common/lib/types/token'
+import type { KvmToken } from 'sushi/kvm'
 import {
   filterTokens,
   getSortedTokensByQuery,
   tokenComparator,
 } from '~kadena/_common/lib/utils/token-search-helpers'
-import type {
-  KadenaToken,
-  TokenWithBalance,
-} from '~kadena/_common/types/token-type'
+import type { TokenWithBalance } from '~kadena/_common/types/token-type'
 
 interface Params {
   query: string
-  tokenMap: Record<string, KadenaToken> | undefined
-  customTokenMap: Record<string, KadenaToken> | undefined
+  tokenMap: Record<string, KvmToken> | undefined
+  customTokenMap: Record<string, KvmToken> | undefined
   balanceMap: Record<string, number> | undefined
   chainId?: number
 }
@@ -36,16 +33,16 @@ export const useSortedTokenList = ({
       const customTokenMapValues = customTokenMap
         ? Object.values(customTokenMap)
         : []
-      const filteredTokens: KadenaToken[] = filterTokens(
+      const filteredTokens: KvmToken[] = filterTokens(
         tokenMapValues,
         debouncedQuery,
       )
-      const filteredCustomTokens: KadenaToken[] = filterTokens(
+      const filteredCustomTokens: KvmToken[] = filterTokens(
         customTokenMapValues,
         debouncedQuery,
       )
       // const sortedTokens
-      const sortedTokens: KadenaToken[] = [
+      const sortedTokens: KvmToken[] = [
         ...filteredTokens,
         ...filteredCustomTokens,
       ].sort(tokenComparator())
@@ -56,7 +53,7 @@ export const useSortedTokenList = ({
       if (balanceMap) {
         filteredSortedTokens.forEach((token) => {
           ;(token as unknown as TokenWithBalance).balance = String(
-            balanceMap[token.tokenAddress] || 0,
+            balanceMap[token.address] || 0,
           )
         })
         filteredSortedTokens.sort((a, b) => {
@@ -68,7 +65,7 @@ export const useSortedTokenList = ({
           return aBalance > bBalance ? -1 : 1
         })
       }
-      return filteredSortedTokens as TokenWithBalance[] | KadenaToken[]
+      return filteredSortedTokens as TokenWithBalance[] | KvmToken[]
     },
   })
 }

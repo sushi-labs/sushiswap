@@ -1,12 +1,17 @@
 import { useQuery } from '@tanstack/react-query'
 import ms from 'ms'
+import {
+  KvmChainId,
+  KvmToken,
+  type KvmTokenAddress,
+  isKvmTokenAddress,
+} from 'sushi/kvm'
 import { kadenaClient } from '~kadena/_common/constants/client'
 import {
   KADENA_CHAIN_ID,
   KADENA_NETWORK_ID,
 } from '~kadena/_common/constants/network'
 import { buildGetTokenPrecision } from '~kadena/_common/lib/pact/builders'
-import type { KadenaToken } from '~kadena/_common/types/token-type'
 
 export const useTokenInfo = ({
   tokenContract,
@@ -17,9 +22,12 @@ export const useTokenInfo = ({
 }) => {
   return useQuery({
     queryKey: ['kadena-token-info', tokenContract],
-    queryFn: async (): Promise<KadenaToken> => {
+    queryFn: async () => {
+      if (!isKvmTokenAddress(tokenContract as KvmTokenAddress)) {
+        return null
+      }
       const decimalsTx = buildGetTokenPrecision(
-        tokenContract,
+        tokenContract as KvmTokenAddress,
         KADENA_CHAIN_ID,
         KADENA_NETWORK_ID,
       )
@@ -42,12 +50,19 @@ export const useTokenInfo = ({
 
       const symbol = tokenContract?.split('.')?.[1] || 'UNKNOWN'
 
-      return {
-        tokenAddress: tokenContract,
-        tokenName: symbol,
-        tokenSymbol: symbol,
-        tokenDecimals: decimals,
-      }
+      return new KvmToken({
+        chainId: KvmChainId.KADENA,
+        address: tokenContract as KvmTokenAddress,
+        symbol,
+        decimals,
+        name: symbol,
+        metadata: {
+          imageUrl: undefined,
+          validated: false,
+          kadenaChainId: KADENA_CHAIN_ID,
+          kadenaNetworkId: KADENA_NETWORK_ID,
+        },
+      })
     },
     enabled: !!tokenContract && enabled,
     staleTime: ms('30s'),

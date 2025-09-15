@@ -19,7 +19,7 @@ export const ReviewAddDialogTrigger = (props: ButtonProps) => {
     useTokenBalances({
       account: activeAccount?.accountName ?? '',
       tokenAddresses:
-        token0 && token1 ? [token0?.tokenAddress, token1?.tokenAddress] : [],
+        token0 && token1 ? [token0?.address, token1?.address] : [],
     })
   const balanceMap = tokenBalances?.balanceMap ?? undefined
 
@@ -36,10 +36,8 @@ export const ReviewAddDialogTrigger = (props: ButtonProps) => {
 
   const poolExists = Boolean(poolId)
 
-  const token0Balance =
-    token0 && balanceMap ? balanceMap[token0?.tokenAddress] : 0
-  const token1Balance =
-    token1 && balanceMap ? balanceMap[token1?.tokenAddress] : 0
+  const token0Balance = token0 && balanceMap ? balanceMap[token0?.address] : 0
+  const token1Balance = token1 && balanceMap ? balanceMap[token1?.address] : 0
 
   const hasInsufficientToken0Balance = useMemo(() => {
     if (isLoadingTokenBalance) return true
@@ -71,10 +69,10 @@ export const ReviewAddDialogTrigger = (props: ButtonProps) => {
       return 'Enter Amount'
     }
     if (hasInsufficientToken0Balance) {
-      return `Insufficient ${token0?.tokenSymbol} Balance on Chain 2`
+      return `Insufficient ${token0?.symbol} Balance on Chain 2`
     }
     if (hasInsufficientToken1Balance) {
-      return `Insufficient ${token1?.tokenSymbol} Balance on Chain 2`
+      return `Insufficient ${token1?.symbol} Balance on Chain 2`
     }
     if (hasInsufficientGas) {
       return 'Insufficient Gas Balance on Chain 2'

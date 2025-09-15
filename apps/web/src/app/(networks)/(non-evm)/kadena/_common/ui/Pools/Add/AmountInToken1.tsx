@@ -47,7 +47,7 @@ export const AmountInToken1 = ({
 
       if (amountFormatted) {
         setAmountInToken0(
-          formatToMaxDecimals(amountFormatted, token0?.tokenDecimals),
+          formatToMaxDecimals(amountFormatted, token0?.decimals),
         )
       } else {
         setAmountInToken0('')

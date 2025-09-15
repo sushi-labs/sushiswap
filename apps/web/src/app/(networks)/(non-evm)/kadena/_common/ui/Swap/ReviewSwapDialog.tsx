@@ -66,10 +66,10 @@ export const ReviewSwapDialog = () => {
             <DialogContent>
               <DialogHeader>
                 <DialogTitle>
-                  Buy {amountOut} {token1?.tokenSymbol}
+                  Buy {amountOut?.toString()} {token1?.symbol}
                 </DialogTitle>
                 <DialogDescription>
-                  Swap {amountIn} {token0?.tokenSymbol}
+                  Swap {amountIn?.toString()} {token0?.symbol}
                 </DialogDescription>
               </DialogHeader>
               <div className="flex flex-col gap-4">
@@ -95,7 +95,7 @@ export const ReviewSwapDialog = () => {
                       }%)`}
                       subtitle="The minimum amount you are guaranteed to receive."
                     >
-                      {minAmountOut} {token1?.tokenSymbol}
+                      {minAmountOut?.toString()} {token1?.symbol}
                     </List.KeyValue>
 
                     <List.KeyValue title="Network fee">

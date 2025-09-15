@@ -11,6 +11,8 @@ import { Decimal } from 'decimal.js-light'
 import { useEffect, useMemo } from 'react'
 import { formatNumber } from 'sushi'
 import { formatUSD } from 'sushi'
+import { formatUnits } from 'viem'
+import { KVM_PAIR_TOKEN } from '~kadena/_common/constants/pair'
 import { useLpBalance } from '~kadena/_common/lib/hooks/pools/use-lp-balance'
 import { useTokenPrice } from '~kadena/_common/lib/hooks/use-token-price'
 import { useKadena } from '~kadena/kadena-wallet-provider'
@@ -41,13 +43,15 @@ export const PoolPosition = () => {
 
   const { data, isLoading } = useLpBalance({
     account: address,
-    token0Address: token0?.tokenAddress,
-    token1Address: token1?.tokenAddress,
+    token0Address: token0?.address,
+    token1Address: token1?.address,
   })
 
   useEffect(() => {
     if (data?.balance !== undefined) {
-      setLPBalance(data?.balance)
+      setLPBalance(
+        Number(formatUnits(data?.balance?.amount, KVM_PAIR_TOKEN.decimals)),
+      )
     }
   }, [data, setLPBalance])
 

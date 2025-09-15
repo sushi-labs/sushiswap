@@ -1,24 +1,24 @@
 import type { WalletPosition } from '@sushiswap/graph-client/kadena'
-import { Decimal } from 'decimal.js-light'
+
 import { useMemo } from 'react'
 import { formatUSD } from 'sushi'
+import type { KvmTokenAddress } from 'sushi/kvm'
 import { usePoolFromTokens } from '~kadena/_common/lib/hooks/pools/use-pool-from-tokens'
 
 export const PositionValueCell = ({ data }: { data: WalletPosition }) => {
   const { data: poolData } = usePoolFromTokens({
-    token0: data.pair.token0.address,
-    token1: data.pair.token1.address,
+    token0: data.pair.token0.address as KvmTokenAddress,
+    token1: data.pair.token1.address as KvmTokenAddress,
   })
 
   const totalSupply = poolData?.poolData?.totalSupplyLp ?? 0
 
   const tvl = useMemo(() => {
-    const numerator = new Decimal(data.liquidity).mul(
-      new Decimal(data.pair.tvlUsd),
-    )
-    const denominator = new Decimal(totalSupply)
-    if (denominator.eq(0)) return 0
-    return numerator.div(denominator).toNumber()
+    const numerator = Number(data.liquidity) * Number(data.pair.tvlUsd)
+    const denominator = Number(totalSupply)
+
+    if (denominator === 0) return 0
+    return numerator / denominator
   }, [data.liquidity, data.pair.tvlUsd, totalSupply])
 
   return (

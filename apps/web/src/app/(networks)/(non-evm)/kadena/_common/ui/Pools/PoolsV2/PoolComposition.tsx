@@ -15,8 +15,8 @@ import { type ReactNode, forwardRef } from 'react'
 import type { FC } from 'react'
 import { formatNumber } from 'sushi'
 import { formatUSD } from 'sushi'
+import type { KvmToken } from 'sushi/kvm'
 import { useTokenPrice } from '~kadena/_common/lib/hooks/use-token-price'
-import type { KadenaToken } from '~kadena/_common/types/token-type'
 import { usePoolState } from '../../../../pool/pool-provider'
 import { Icon } from '../../General/Icon'
 
@@ -43,7 +43,7 @@ export const PoolComposition: FC<PoolComposition> = ({ pool }) => {
   const reserve1USD = Number(pool?.reserve1) * Number(token1Price)
   const backUpTotal = reserve0USD + reserve1USD
   const reserveUSD = pool?.tvlUsd || backUpTotal
-  console.log(pool)
+
   return (
     <Card>
       <CardHeader>
@@ -136,7 +136,7 @@ interface CardCurrencyAmountItemProps
   extends React.HTMLAttributes<HTMLDivElement> {
   isLoading?: boolean
   amount?: string
-  currency?: KadenaToken
+  currency?: KvmToken
   fiatValue?: string
   unwrap?: boolean
 }
@@ -159,7 +159,7 @@ export const CardCurrencyAmountItem = forwardRef<
           title={
             <div className="flex gap-2 items-center font-medium text-muted-foreground">
               <Icon currency={currency} height={18} width={18} fontSize={9} />
-              {currency.tokenSymbol}
+              {currency.symbol}
             </div>
           }
           ref={ref}

@@ -1,7 +1,6 @@
 import { Transition } from '@headlessui/react'
 import { classNames } from '@sushiswap/ui'
 import { SkeletonBox } from '@sushiswap/ui'
-import { Decimal } from 'decimal.js-light'
 import Link from 'next/link'
 import { useMemo } from 'react'
 import { formatPercent, formatUSD } from 'sushi'
@@ -36,13 +35,10 @@ export const SwapStats = () => {
   })
   const KDAPrice = data ?? 0
 
-  const networkFeeInKDA = gas
-
   const isLoading =
     priceImpactPercentage === undefined ||
     priceImpactPercentage === 0 ||
-    amountOut === '' ||
-    amountOut === '' ||
+    !amountOut ||
     isPriceLoading
 
   const severityColor = useMemo(() => {
@@ -50,15 +46,20 @@ export const SwapStats = () => {
   }, [priceImpactPercentage])
 
   const networkFee = useMemo(() => {
-    const fee = new Decimal(networkFeeInKDA)
-    const feeInUsd = fee.mul(KDAPrice).mul(GAS_PRICE).toString()
-    const feeInToken = fee.mul(GAS_PRICE).toString()
+    const networkFeeInKDA = gas
+    const feeInUsd = networkFeeInKDA * KDAPrice * GAS_PRICE
+    const feeInToken = networkFeeInKDA * GAS_PRICE
     return { feeInUsd, feeInToken }
-  }, [KDAPrice, networkFeeInKDA])
+  }, [KDAPrice, gas])
 
   return (
     <Transition
-      show={amountIn !== '' && amountOut !== '' && route && route.length > 0}
+      show={
+        amountIn !== undefined &&
+        amountOut !== undefined &&
+        route &&
+        route.length > 0
+      }
       enter="transition duration-300 ease-out"
       enterFrom="transform translate-y-[16px] opacity-0"
       enterTo="transform translate-y-0 opacity-100"
@@ -95,7 +96,7 @@ export const SwapStats = () => {
             {isLoading ? (
               <SkeletonBox className="h-4 py-0.5 w-[120px] rounded-md" />
             ) : (
-              `${amountOut} ${token1?.tokenSymbol}`
+              `${amountOut} ${token1?.symbol}`
             )}
           </span>
         </div>
@@ -107,7 +108,7 @@ export const SwapStats = () => {
             {isLoading ? (
               <SkeletonBox className="h-4 py-0.5 w-[120px] rounded-md" />
             ) : (
-              `${minAmountOut} ${token1?.tokenSymbol}`
+              `${minAmountOut} ${token1?.symbol}`
             )}
           </span>
         </div>
@@ -116,7 +117,7 @@ export const SwapStats = () => {
             Network fee
           </span>
           <span className="text-sm font-semibold text-right text-gray-700 dark:text-slate-400">
-            {isLoading || !networkFee.feeInToken ? (
+            {isLoading || networkFee.feeInToken === undefined ? (
               <SkeletonBox className="h-4 py-0.5 w-[120px] rounded-md" />
             ) : (
               <>

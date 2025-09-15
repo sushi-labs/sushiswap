@@ -1,22 +1,20 @@
 import { useQuery } from '@tanstack/react-query'
 import { Amount, Fraction } from 'sushi'
-import { KvmChainId, KvmToken, type KvmTokenAddress } from 'sushi/kvm'
+import type { KvmToken } from 'sushi/kvm'
 import { parseUnits } from 'viem'
 import { kadenaClient } from '~kadena/_common/constants/client'
 import {
   KADENA_CHAIN_ID,
   KADENA_NETWORK_ID,
 } from '~kadena/_common/constants/network'
-import type { KadenaToken } from '~kadena/_common/types/token-type'
 import { useSwapDispatch } from '~kadena/swap/swap-provider'
 import { buildGetPoolAddress } from '../pact/pool'
 import { buildSwapTxn } from '../pact/swap'
 import type { PactNumberReturnType } from '../pact/type'
-import { formatToMaxDecimals } from '../utils/formatters'
 
 interface UseSimulateSwapParams {
-  token0?: KadenaToken
-  token1?: KadenaToken
+  token0?: KvmToken
+  token1?: KvmToken
   amountIn?: number | null
   amountOut?: number
   slippage: number
@@ -31,13 +29,14 @@ export const useSimulateSwap = ({
   slippage,
   signerAddress,
 }: UseSimulateSwapParams) => {
-  const { setAmountOut, setMinAmountOut, setGas } = useSwapDispatch()
+  const { setAmountOut, setMinAmountOut, setGas, setAmountOutString } =
+    useSwapDispatch()
 
   const query = useQuery({
     queryKey: [
       'kadena-simulate-swap',
-      token0?.tokenAddress,
-      token1?.tokenAddress,
+      token0?.address,
+      token1?.address,
       amountIn ?? null,
       amountOut,
       signerAddress,
@@ -51,13 +50,13 @@ export const useSimulateSwap = ({
       if (!amountIn) {
         return
       }
-      if (!token0?.tokenAddress || !token1?.tokenAddress || !signerAddress) {
+      if (!token0?.address || !token1?.address || !signerAddress) {
         return
       }
 
       const getPoolAddressTx = buildGetPoolAddress(
-        token0?.tokenAddress,
-        token1?.tokenAddress,
+        token0?.address,
+        token1?.address,
         KADENA_CHAIN_ID,
         KADENA_NETWORK_ID,
       )
@@ -85,8 +84,8 @@ export const useSimulateSwap = ({
       }
 
       const tx = buildSwapTxn({
-        token0Address: token0?.tokenAddress,
-        token1Address: token1?.tokenAddress,
+        token0Address: token0?.address,
+        token1Address: token1?.address,
         amountIn: amountIn ?? 0,
         amountOut,
         signerAddress: signerAddress,
@@ -102,8 +101,8 @@ export const useSimulateSwap = ({
       // console.log(res);
       if (res.result.status === 'failure') {
         setGas(0)
-        setAmountOut('')
-        setMinAmountOut('')
+        setAmountOut(undefined)
+        setMinAmountOut(undefined)
 
         throw new Error(res.result.error?.message || 'Simulation failed')
       }
@@ -117,22 +116,16 @@ export const useSimulateSwap = ({
           ? (res.result.data[1].amount as PactNumberReturnType)
           : 0
 
-      let _amountOut = 0
+      let _amountOutNum = 0
       if (typeof amount === 'object' && 'decimal' in amount) {
-        _amountOut = Number.parseFloat(amount?.decimal ?? '0')
+        _amountOutNum = Number.parseFloat(amount?.decimal ?? '0')
       } else {
-        _amountOut = amount ?? 0
+        _amountOutNum = amount ?? 0
       }
 
-      const tokenOut = new KvmToken({
-        chainId: KvmChainId.KADENA,
-        address: token1.tokenAddress as KvmTokenAddress,
-        decimals: token1.tokenDecimals,
-        symbol: token1.tokenSymbol,
-        name: token1.tokenName,
-      })
+      const tokenOut = token1
       const parsedAmountOut = parseUnits(
-        _amountOut.toString(),
+        _amountOutNum.toString(),
         tokenOut.decimals,
       )
       const slippageFraction = new Fraction((1 - slippage) * 1e6)
@@ -140,13 +133,13 @@ export const useSimulateSwap = ({
       const minAmountOut = new Amount(tokenOut, parsedAmountOut)
         .mul(slippageFraction)
         .div(1e6)
-        .toString()
 
       setMinAmountOut(minAmountOut)
 
-      const formatted = _amountOut?.toString() ?? null
-
-      setAmountOut(formatToMaxDecimals(formatted, token1?.tokenDecimals))
+      const formatted = _amountOutNum?.toString() ?? null
+      const _amountOut = new Amount(tokenOut, parsedAmountOut)
+      setAmountOut(_amountOut)
+      setAmountOutString(_amountOut.toString({ fixed: tokenOut.decimals }))
 
       return {
         data: res,

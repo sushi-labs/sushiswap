@@ -1,5 +1,6 @@
 import type { ChainId } from '@kadena/client'
 import { useQuery } from '@tanstack/react-query'
+import type { KvmTokenAddress } from 'sushi/kvm'
 import { kadenaClient } from '~kadena/_common/constants/client'
 import {
   KADENA_CHAIN_ID,
@@ -17,7 +18,7 @@ export const useTokenBalances = ({
   tokenAddresses,
 }: {
   account: string
-  tokenAddresses: string[]
+  tokenAddresses: KvmTokenAddress[]
 }) => {
   return useQuery({
     queryKey: ['kadena-token-balances', account, tokenAddresses],

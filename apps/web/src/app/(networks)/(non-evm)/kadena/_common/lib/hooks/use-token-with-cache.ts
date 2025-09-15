@@ -1,17 +1,22 @@
 import { useQuery } from '@tanstack/react-query'
+import {
+  KvmChainId,
+  KvmToken,
+  type KvmTokenAddress,
+  isKvmTokenAddress,
+} from 'sushi/kvm'
 import { kadenaClient } from '~kadena/_common/constants/client'
 import {
   KADENA_CHAIN_ID,
   KADENA_NETWORK_ID,
 } from '~kadena/_common/constants/network'
-import type { KadenaToken } from '~kadena/_common/types/token-type'
 import { buildGetTokenPrecision } from '../pact/builders'
 import { useCustomTokens } from './use-custom-tokens'
 
 interface GetTokenWithQueryCacheFn {
-  address: string
-  hasToken: (currency: string | KadenaToken) => boolean
-  customTokens: Record<string, KadenaToken>
+  address: KvmTokenAddress
+  hasToken: (currency: KvmTokenAddress | KvmToken) => boolean
+  customTokens: Record<KvmTokenAddress, KvmToken>
 }
 
 export async function getTokenDetails({
@@ -20,9 +25,8 @@ export async function getTokenDetails({
   customTokens,
 }: GetTokenWithQueryCacheFn) {
   if (hasToken(address)) {
-    const { tokenAddress, tokenName, tokenSymbol, tokenDecimals } =
-      customTokens[address]
-    return { tokenAddress, tokenName, tokenSymbol, tokenDecimals }
+    const kvmToken = customTokens[address]
+    return kvmToken
   }
 
   const decimalsTx = buildGetTokenPrecision(
@@ -49,15 +53,26 @@ export async function getTokenDetails({
 
   const symbol = address?.split('.')?.[1] || 'UNKNOWN'
 
-  return {
-    tokenAddress: address,
-    tokenName: symbol,
-    tokenSymbol: symbol,
-    tokenDecimals: decimals,
+  if (!isKvmTokenAddress(address)) {
+    throw new Error('Invalid KVM Token address')
   }
+
+  return new KvmToken({
+    chainId: KvmChainId.KADENA,
+    address,
+    symbol,
+    decimals,
+    name: symbol,
+    metadata: {
+      imageUrl: undefined,
+      validated: false,
+      kadenaChainId: KADENA_CHAIN_ID,
+      kadenaNetworkId: KADENA_NETWORK_ID,
+    },
+  })
 }
 interface UseTokenParams {
-  address: string
+  address: KvmTokenAddress
   enabled?: boolean
   keepPreviousData?: boolean
 }

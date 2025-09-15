@@ -29,6 +29,8 @@ export const SwapButton = ({ closeModal }: { closeModal: () => void }) => {
     setAmountIn,
     setAmountOut,
     setPriceImpactPercentage,
+    setAmountInString,
+    setAmountOutString,
   } = useSwapDispatch()
 
   const address = activeAccount?.accountName ?? ''
@@ -48,8 +50,8 @@ export const SwapButton = ({ closeModal }: { closeModal: () => void }) => {
       setIsTxnPending(true)
 
       const getPoolAddressTx = buildGetPoolAddress(
-        token0.tokenAddress,
-        token1.tokenAddress,
+        token0.address,
+        token1.address,
         KADENA_CHAIN_ID,
         KADENA_NETWORK_ID,
       )
@@ -77,8 +79,8 @@ export const SwapButton = ({ closeModal }: { closeModal: () => void }) => {
       }
 
       const tx = buildSwapTxn({
-        token0Address: token0.tokenAddress,
-        token1Address: token1.tokenAddress,
+        token0Address: token0.address,
+        token1Address: token1.address,
         amountIn: Number(amountIn),
         amountOut: Number(minAmountOut),
         signerAddress: address,
@@ -146,17 +148,19 @@ export const SwapButton = ({ closeModal }: { closeModal: () => void }) => {
   }
 
   const onSuccess = async () => {
-    setAmountIn('')
-    setAmountOut('')
+    setAmountIn(undefined)
+    setAmountOut(undefined)
+    setAmountInString('')
+    setAmountOutString('')
     setPriceImpactPercentage(0)
     setIsTxnPending(false)
     closeModal()
 
-    await queryClient.invalidateQueries({
-      queryKey: ['kadena-token-balances', address, [token0?.tokenAddress]],
+    queryClient.invalidateQueries({
+      queryKey: ['kadena-token-balances', address, [token0?.address]],
     })
-    await queryClient.invalidateQueries({
-      queryKey: ['kadena-token-balances', address, [token1?.tokenAddress]],
+    queryClient.invalidateQueries({
+      queryKey: ['kadena-token-balances', address, [token1?.address]],
     })
   }
 
@@ -172,7 +176,7 @@ export const SwapButton = ({ closeModal }: { closeModal: () => void }) => {
         <Dots>Confirming Swap</Dots>
       ) : (
         <>
-          Swap {token0?.tokenSymbol} For {token1?.tokenSymbol}
+          Swap {token0?.symbol} For {token1?.symbol}
         </>
       )}
     </Button>

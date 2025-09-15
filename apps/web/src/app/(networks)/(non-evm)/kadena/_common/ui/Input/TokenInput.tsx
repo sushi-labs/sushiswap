@@ -5,11 +5,11 @@ import {
   TextField,
   classNames,
 } from '@sushiswap/ui'
-import { useMemo } from 'react'
-import { withoutScientificNotation } from 'sushi'
+import { useCallback, useEffect, useMemo, useState, useTransition } from 'react'
+import type { KvmToken } from 'sushi/kvm'
+import { parseUnits } from 'viem'
 import { useTokenBalances } from '~kadena/_common/lib/hooks/use-token-balances'
 import { useTokenPrice } from '~kadena/_common/lib/hooks/use-token-price'
-import type { KadenaToken } from '~kadena/_common/types/token-type'
 import { useKadena } from '~kadena/kadena-wallet-provider'
 import { Icon } from '../General/Icon'
 import { TokenSelector } from '../General/TokenSelector'
@@ -24,8 +24,8 @@ const themes = {
 type TokenInputProps = {
   id?: string
   type: 'input' | 'output'
-  currency: KadenaToken | undefined
-  setToken?: (token: KadenaToken) => void
+  currency: KvmToken | undefined
+  setToken?: (token: KvmToken) => void
   amount: string
   setAmount: (amount: string) => void
   className?: string
@@ -50,17 +50,20 @@ export const TokenInput = ({
   isLoadingAmount = false,
   isTxnPending = false,
 }: TokenInputProps) => {
+  const [localValue, setLocalValue] = useState<string>('')
+
+  const [pending, startTransition] = useTransition()
   const { activeAccount } = useKadena()
 
   const { data, isLoading: isLoadingTokenBalance } = useTokenBalances({
     account: activeAccount?.accountName ?? '',
-    tokenAddresses: currency ? [currency.tokenAddress] : [],
+    tokenAddresses: currency ? [currency.address] : [],
   })
   const { data: priceUsd, isLoading: isLoadingPrice } = useTokenPrice({
     token: currency,
   })
 
-  const tokenBalance = data?.balanceMap[currency?.tokenAddress ?? ''] ?? 0
+  const tokenBalance = data?.balanceMap[currency?.address ?? ''] ?? 0
 
   const usdValue = priceUsd ?? 0
 
@@ -75,6 +78,26 @@ export const TokenInput = ({
   const insufficientBalance =
     type === 'input' && Number(amount) > (tokenBalance ?? 0)
   const _error = insufficientBalance ? 'Exceeds Balance' : undefined
+
+  const _onChange = useCallback(
+    (_amount: string) => {
+      setLocalValue(_amount)
+      startTransition(() => {
+        setAmount?.(_amount)
+      })
+    },
+    [setAmount],
+  )
+
+  // If currency changes, trim input to decimals
+  useEffect(() => {
+    if (currency && setAmount && amount && amount.includes('.')) {
+      const [, decimals] = amount.split('.')
+      if (decimals.length > currency.decimals) {
+        setAmount(Number(amount).toFixed(currency.decimals))
+      }
+    }
+  }, [setAmount, currency, amount])
 
   const selector = useMemo(() => {
     if (!setToken) return null
@@ -97,7 +120,7 @@ export const TokenInput = ({
               <div className="w-[28px] h-[28px] mr-0.5">
                 <Icon currency={currency} width={28} height={28} />
               </div>
-              {currency.tokenSymbol}
+              {currency.symbol}
               <SelectIcon />
             </>
           ) : (
@@ -145,18 +168,13 @@ export const TokenInput = ({
             <SkeletonBox className="w-1/3 h-[32px] rounded-lg" />
           ) : (
             <TextField
-              maxDecimals={currency?.tokenDecimals}
+              maxDecimals={currency?.decimals}
               testdata-id={`${id}-input`}
               type="number"
               variant="naked"
               disabled={type === 'output' || isTxnPending}
-              onValueChange={(e) => {
-                if (type === 'output') return
-                const value = e
-
-                setAmount(value)
-              }}
-              value={amount}
+              onValueChange={_onChange}
+              value={pending ? localValue : amount}
               readOnly={type === 'output'}
               data-state={isLoading ? 'inactive' : 'active'}
               className={classNames('p-0 py-1 !text-3xl font-medium')}
@@ -179,7 +197,7 @@ export const TokenInput = ({
                     <Icon currency={currency} width={28} height={28} />
                   </div>
                 )}
-                {currency.tokenSymbol}
+                {currency.symbol}
               </>
             ) : (
               <span className="text-gray-400 dark:text-slate-500">
@@ -191,7 +209,7 @@ export const TokenInput = ({
       </div>
       <div className="flex flex-row items-center justify-between h-[36px]">
         <DollarAmountDisplay
-          isLoading={amount !== '' && isLoadingPrice}
+          isLoading={!amount && isLoadingPrice}
           error={undefined}
           value={usdAmount}
         />
@@ -207,7 +225,7 @@ export const TokenInput = ({
               setAmount('')
               return
             }
-            setAmount(withoutScientificNotation(String(tokenBalance)) ?? '')
+            setAmount(String(tokenBalance))
           }}
         />
       </div>

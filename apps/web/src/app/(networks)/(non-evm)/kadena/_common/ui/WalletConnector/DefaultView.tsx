@@ -116,14 +116,14 @@ export const DefaultView = ({ setView }: DefaultViewProps) => {
           </div>
         ) : (
           <p className="text-3xl font-medium whitespace-nowrap">
-            {formatNumber(data?.balance)} KDA
+            {formatNumber(data?.balance.toString())} KDA
           </p>
         )}
         {isLoading || !price || data?.balance === undefined ? (
           <SkeletonText className="!w-12 mx-auto" />
         ) : (
           <p className="font-medium text-slate-400">
-            {formatUSD(price * data?.balance)}
+            {formatUSD(data?.balance.mulHuman(price).toString())}
           </p>
         )}
       </div>

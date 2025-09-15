@@ -21,7 +21,7 @@ export const SelectTokensForm = () => {
             }
             variant="secondary"
           >
-            <span>{token0?.tokenSymbol ?? 'Select Token'}</span>
+            <span>{token0?.symbol ?? 'Select Token'}</span>
             <div>
               <SelectIcon />
             </div>
@@ -34,7 +34,7 @@ export const SelectTokensForm = () => {
             }
             variant="secondary"
           >
-            <span>{token1?.tokenSymbol ?? 'Select Token'}</span>
+            <span>{token1?.symbol ?? 'Select Token'}</span>
             <div>
               <SelectIcon />
             </div>

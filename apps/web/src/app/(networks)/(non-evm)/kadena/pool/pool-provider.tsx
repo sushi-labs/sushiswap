@@ -8,13 +8,9 @@ import {
   useMemo,
   useReducer,
 } from 'react'
-import {
-  COMMON_KADENA_TOKENS,
-  KADENA,
-  STABLE_TOKENS,
-} from '~kadena/_common/constants/token-list'
+import type { KvmToken } from 'sushi/kvm'
+import { KADENA, STABLE_TOKENS } from '~kadena/_common/constants/token-list'
 import { usePoolFromTokens } from '~kadena/_common/lib/hooks/pools/use-pool-from-tokens'
-import type { KadenaToken } from '~kadena/_common/types/token-type'
 import { PoolChartPeriod } from '~kadena/_common/ui/Pools/PoolsV2/PoolChartPeriods'
 
 type InputFieldType = 'token0' | 'token1'
@@ -27,8 +23,8 @@ export type PoolByIdChartTimeFrame =
   | PoolChartPeriod.All
 
 type Action =
-  | { type: 'setToken0'; value: KadenaToken }
-  | { type: 'setToken1'; value: KadenaToken }
+  | { type: 'setToken0'; value: KvmToken }
+  | { type: 'setToken1'; value: KvmToken }
   | { type: 'setIsTxnPending'; value: boolean }
   | { type: 'setAmountInToken0'; value: string }
   | { type: 'setAmountInToken1'; value: string }
@@ -44,8 +40,8 @@ type Action =
   | { type: 'setTotalSupplyLP'; value: number }
 
 type Dispatch = {
-  setToken0(token: KadenaToken): void
-  setToken1(token: KadenaToken): void
+  setToken0(token: KvmToken): void
+  setToken1(token: KvmToken): void
   setIsTxnPending(isPending: boolean): void
   setAmountInToken0(amount: string): void
   setAmountInToken1(amount: string): void
@@ -64,8 +60,8 @@ type Dispatch = {
 }
 
 type State = {
-  token0: KadenaToken | undefined
-  token1: KadenaToken | undefined
+  token0: KvmToken | undefined
+  token1: KvmToken | undefined
   isTxnPending: boolean
   amountInToken0: string
   amountInToken1: string
@@ -90,41 +86,16 @@ const PoolContext = createContext<
 function poolReducer(_state: State, action: Action) {
   switch (action.type) {
     case 'setToken0': {
-      if (_state?.token1?.tokenAddress === action.value.tokenAddress) {
+      if (_state?.token1?.isSame(action.value)) {
         //if token1 is the same as the new token0, swap them
         return { ..._state, token1: _state.token0, token0: action.value }
-      }
-      //if token1 is KDA and the new token is WRTX or vice versa, go back to default pair
-      if (
-        (_state?.token1?.tokenSymbol === 'KDA' &&
-          action.value.tokenSymbol === 'WKDA') ||
-        (_state?.token1?.tokenSymbol === 'WKDA' &&
-          action.value.tokenSymbol === 'KDA')
-      ) {
-        return {
-          ..._state,
-          token0: COMMON_KADENA_TOKENS[0],
-          token1: COMMON_KADENA_TOKENS[2],
-        }
       }
       return { ..._state, token0: action.value }
     }
     case 'setToken1': {
-      if (_state?.token0?.tokenAddress === action.value.tokenAddress) {
+      if (_state?.token0?.isSame(action.value)) {
         //if token0 is the same as the new token1, swap them
         return { ..._state, token0: _state.token1, token1: action.value }
-      }
-      if (
-        (_state?.token0?.tokenSymbol === 'KDA' &&
-          action.value.tokenSymbol === 'WKDA') ||
-        (_state?.token0?.tokenSymbol === 'WKDA' &&
-          action.value.tokenSymbol === 'KDA')
-      ) {
-        return {
-          ..._state,
-          token0: COMMON_KADENA_TOKENS[0],
-          token1: COMMON_KADENA_TOKENS[2],
-        }
       }
       return { ..._state, token1: action.value }
     }
@@ -189,14 +160,14 @@ const PoolProvider: FC<PoolProviderProps> = ({ children }) => {
     totalSupplyLP: 0,
   })
   const { data, isLoading } = usePoolFromTokens({
-    token0: state?.token0?.tokenAddress,
-    token1: state?.token1?.tokenAddress,
+    token0: state?.token0?.address,
+    token1: state?.token1?.address,
   })
 
   const dispatchWithAction = useMemo(
     () => ({
-      setToken0: (value: KadenaToken) => dispatch({ type: 'setToken0', value }),
-      setToken1: (value: KadenaToken) => dispatch({ type: 'setToken1', value }),
+      setToken0: (value: KvmToken) => dispatch({ type: 'setToken0', value }),
+      setToken1: (value: KvmToken) => dispatch({ type: 'setToken1', value }),
       setIsTxnPending: (value: boolean) =>
         dispatch({ type: 'setIsTxnPending', value }),
       setAmountInToken0: (value: string) =>

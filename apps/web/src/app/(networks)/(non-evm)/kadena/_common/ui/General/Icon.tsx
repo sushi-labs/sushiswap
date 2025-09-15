@@ -1,11 +1,11 @@
 import { cloudinaryLogoFetchLoader } from '@sushiswap/ui'
 import { KadenaCircle } from '@sushiswap/ui/icons/network/circle/KadenaCircle'
 import Image from 'next/image'
+import type { KvmToken } from 'sushi/kvm'
 import { hashStringToColor } from '~kadena/_common/lib/utils/formatters'
-import type { KadenaToken } from '~kadena/_common/types/token-type'
 
 type IconProps = {
-  currency: KadenaToken | undefined
+  currency: KvmToken | undefined
   height?: number
   width?: number
   fontSize?: number
@@ -17,13 +17,13 @@ export const Icon = ({
   width = 40,
   fontSize = 12,
 }: IconProps) => {
-  if (currency?.tokenAddress === 'coin') {
+  if (currency?.address === 'coin') {
     return <KadenaCircle height={height} width={width} />
   }
 
   return (
     <>
-      {currency?.tokenImage ? (
+      {currency?.metadata?.imageUrl ? (
         <div
           style={{ width, height }}
           className="relative flex overflow-hidden rounded-full shrink-0"
@@ -32,8 +32,8 @@ export const Icon = ({
             loader={cloudinaryLogoFetchLoader}
             // @TODO: need this to render local images, remove when we have a CDN
             unoptimized
-            src={currency.tokenImage}
-            alt={currency.tokenSymbol ?? currency.tokenName ?? ''}
+            src={currency?.metadata?.imageUrl as string}
+            alt={currency.symbol ?? currency.name ?? ''}
             height={height}
             width={width}
             className="w-full h-full aspect-square"
@@ -46,12 +46,12 @@ export const Icon = ({
             width: `${width}px`,
             height: `${height}px`,
             background: hashStringToColor(
-              currency ? `${currency.tokenSymbol} ${currency.tokenName}` : '??',
+              currency ? `${currency.symbol} ${currency.name}` : '??',
             ),
             fontSize: `${fontSize}px`,
           }}
         >
-          {currency?.tokenSymbol?.substring(0, 2) ?? '??'}
+          {currency?.symbol?.substring(0, 2) ?? '??'}
         </div>
       )}
     </>

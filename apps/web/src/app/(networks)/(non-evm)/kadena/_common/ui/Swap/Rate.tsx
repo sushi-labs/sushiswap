@@ -18,8 +18,8 @@ export const Rate = () => {
   })
 
   const { data, isLoading: isLoadingPool } = usePoolFromTokens({
-    token0: token0?.tokenAddress,
-    token1: token1?.tokenAddress,
+    token0: token0?.address,
+    token1: token1?.address,
   })
 
   const isLoading = isLoadingPrice0 || isLoadingPrice1 || isLoadingPool
@@ -41,13 +41,13 @@ export const Rate = () => {
     >
       <ArrowTrendingUpIcon width={16} height={16} />
       <span className="flex gap-1 items-baseline whitespace-nowrap scroll hide-scrollbar">
-        1 {invert ? token0.tokenSymbol : token1.tokenSymbol}{' '}
+        1 {invert ? token0.symbol : token1.symbol}{' '}
         <span className="font-normal">
           ({formatUSD(invert ? token0FiatPrice : token1FiatPrice)})
         </span>{' '}
         =
         <FormattedNumber number={price} />{' '}
-        {invert ? token1.tokenSymbol : token0.tokenSymbol}{' '}
+        {invert ? token1.symbol : token0.symbol}{' '}
         <span className="font-normal">
           ({formatUSD(invert ? token1FiatPrice : token0FiatPrice)})
         </span>

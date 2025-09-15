@@ -42,9 +42,7 @@ export const AmountInToken0 = ({
       }
       const amountFormatted = Number(rateOfToken1) * Number(parsedAmount)
 
-      setAmountInToken1(
-        formatToMaxDecimals(amountFormatted, token1?.tokenDecimals),
-      )
+      setAmountInToken1(formatToMaxDecimals(amountFormatted, token1?.decimals))
     }
   }, [
     token0,

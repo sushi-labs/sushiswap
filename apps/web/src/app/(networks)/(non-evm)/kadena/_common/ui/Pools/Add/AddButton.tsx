@@ -13,12 +13,7 @@ import { Button, type ButtonProps } from '@sushiswap/ui'
 import { useQueryClient } from '@tanstack/react-query'
 import { useMemo } from 'react'
 import { Amount, Fraction } from 'sushi'
-import {
-  KvmChainId,
-  KvmToken,
-  type KvmTokenAddress,
-  getKvmChainByKey,
-} from 'sushi/kvm'
+import { KvmChainId, KvmToken, getKvmChainByKey } from 'sushi/kvm'
 import { parseUnits } from 'viem'
 import { kadenaClient } from '~kadena/_common/constants/client'
 import {
@@ -72,10 +67,10 @@ export const AddButton = ({
       setIsTxnPending(true)
       const _token0 = new KvmToken({
         chainId: KvmChainId.KADENA,
-        address: token0.tokenAddress as KvmTokenAddress,
-        decimals: token0.tokenDecimals,
-        symbol: token0.tokenSymbol,
-        name: token0.tokenName,
+        address: token0.address,
+        decimals: token0.decimals,
+        symbol: token0.symbol,
+        name: token0.name,
       })
       const parsedAmountOut = parseUnits(
         amountInToken0.toString(),
@@ -89,10 +84,10 @@ export const AddButton = ({
 
       const _token1 = new KvmToken({
         chainId: KvmChainId.KADENA,
-        address: token1.tokenAddress as KvmTokenAddress,
-        decimals: token1.tokenDecimals,
-        symbol: token1.tokenSymbol,
-        name: token1.tokenName,
+        address: token1.address,
+        decimals: token1.decimals,
+        symbol: token1.symbol,
+        name: token1.name,
       })
       const parsedAmountOut1 = parseUnits(
         amountInToken1.toString(),
@@ -108,8 +103,8 @@ export const AddButton = ({
 
       if (!poolAddress) {
         const initTxn = buildAddLiquidityTxn({
-          token0Address: token0.tokenAddress,
-          token1Address: token1.tokenAddress,
+          token0Address: token0.address,
+          token1Address: token1.address,
           amountInToken0: Number(amountInToken0),
           amountInToken1: Number(amountInToken1),
           minAmountInToken0: Number(minAmountToken0),
@@ -176,8 +171,8 @@ export const AddButton = ({
       }
 
       const tx = buildAddLiquidityTxn({
-        token0Address: token0.tokenAddress,
-        token1Address: token1.tokenAddress,
+        token0Address: token0.address,
+        token1Address: token1.address,
         amountInToken0: Number(amountInToken0),
         amountInToken1: Number(amountInToken1),
         minAmountInToken0: Number(minAmountToken0),
@@ -261,17 +256,17 @@ export const AddButton = ({
       queryKey: ['kadena-pool-from-tokens', token0, token1],
     })
     queryClient.invalidateQueries({
-      queryKey: ['kadena-token-balances', address, [token0?.tokenAddress]],
+      queryKey: ['kadena-token-balances', address, [token0?.address]],
     })
     queryClient.invalidateQueries({
-      queryKey: ['kadena-token-balances', address, [token1?.tokenAddress]],
+      queryKey: ['kadena-token-balances', address, [token1?.address]],
     })
     queryClient.invalidateQueries({
       queryKey: [
         'kadena-lp-balance',
         address,
-        token0?.tokenAddress,
-        token1?.tokenAddress,
+        token0?.address,
+        token1?.address,
       ],
     })
   }

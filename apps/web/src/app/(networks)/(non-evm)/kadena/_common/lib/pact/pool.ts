@@ -1,11 +1,12 @@
 import { type ChainId, Pact } from '@kadena/client'
+import type { KvmTokenAddress } from 'sushi/kvm'
 import { KADENA_CONTRACT } from '~kadena/_common/constants/contracts'
 import { GAS_LIMIT, GAS_PRICE } from '~kadena/_common/constants/gas'
 import { formatPactDecimal } from '../utils/formatters'
 
 export const buildGetPoolExists = (
-  token0: string,
-  token1: string,
+  token0: KvmTokenAddress,
+  token1: KvmTokenAddress,
   chainId: ChainId,
   networkId: string,
 ) => {
@@ -18,8 +19,8 @@ export const buildGetPoolExists = (
 }
 
 export const buildGetPoolAddress = (
-  token0: string,
-  token1: string,
+  token0: KvmTokenAddress,
+  token1: KvmTokenAddress,
   chainId: ChainId,
   networkId: string,
 ) => {
@@ -43,8 +44,8 @@ export const buildAddLiquidityTxn = ({
   chainId,
   networkId,
 }: {
-  token0Address: string
-  token1Address: string
+  token0Address: KvmTokenAddress
+  token1Address: KvmTokenAddress
   amountInToken0: number
   amountInToken1: number
   minAmountInToken0: number
@@ -57,11 +58,7 @@ export const buildAddLiquidityTxn = ({
   const _poolAddress = poolAddress
   const pubKey = signerAddress.split('k:')[1]
   if (!_poolAddress) {
-    //@DEV keep here for now until resolved
-    // const openCommand = `(${KADENA_CONTRACT}.set-pair-open-date "${token0Address}:${token1Address}" (at 'block-time (chain-data)))`;
-
     const pactCmd = `(${KADENA_CONTRACT}.create-pair ${token0Address} ${token1Address} "")`
-    // const fullCommand = `${openCommand} ${pactCmd}`;
     const tx = Pact.builder
       .execution(pactCmd)
       .setMeta({
@@ -128,8 +125,8 @@ export const buildAddLiquidityTxn = ({
 
 export const buildGetLpBalanceTx = (
   account: string,
-  token0Address: string,
-  token1Address: string,
+  token0Address: KvmTokenAddress,
+  token1Address: KvmTokenAddress,
   chainId: ChainId,
   networkId: string,
 ) => {
@@ -145,8 +142,8 @@ export const buildGetLpBalanceTx = (
 }
 
 export const buildGetTotalLpSupply = (
-  token0Address: string,
-  token1Address: string,
+  token0Address: KvmTokenAddress,
+  token1Address: KvmTokenAddress,
   chainId: ChainId,
   networkId: string,
 ) => {
@@ -172,8 +169,8 @@ export const buildRemoveLiquidityTxn = ({
   chainId,
   networkId,
 }: {
-  token0Address: string
-  token1Address: string
+  token0Address: KvmTokenAddress
+  token1Address: KvmTokenAddress
   lpToRemove: number
   minAmountOutToken0: number
   minAmountOutToken1: number
@@ -182,17 +179,6 @@ export const buildRemoveLiquidityTxn = ({
   chainId: ChainId
   networkId: string
 }) => {
-  // console.log({
-  //   token0Address,
-  //   token1Address,
-  //   lpToRemove,
-  //   minAmountOutToken0,
-  //   minAmountOutToken1,
-  //   pairAddress,
-  //   signerAddress,
-  //   chainId,
-  //   networkId,
-  // })
   const pubKey = signerAddress.split('k:')[1]
   const tx = Pact.builder
     .execution(

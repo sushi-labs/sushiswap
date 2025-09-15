@@ -1,17 +1,21 @@
 import type { ChainId } from '@kadena/client'
 import { useQuery } from '@tanstack/react-query'
 import ms from 'ms'
+import { Amount } from 'sushi'
+import type { KvmToken } from 'sushi/kvm'
+import { parseUnits } from 'viem'
 import { kadenaClient } from '~kadena/_common/constants/client'
 import {
   KADENA_CHAIN_ID,
   KADENA_NETWORK_ID,
 } from '~kadena/_common/constants/network'
+import { KADENA } from '~kadena/_common/constants/token-list'
 import { buildGetBalanceTx } from '../pact/builders'
 import type { PactNumberReturnType } from '../pact/type'
 
 type NativeTokenBalanceResponse = {
   chainId: ChainId
-  balance: number
+  balance: Amount<KvmToken>
 }
 
 export const useNativeTokenBalance = ({
@@ -30,7 +34,7 @@ export const useNativeTokenBalance = ({
       if (res.result.status !== 'success') {
         return {
           chainId: KADENA_CHAIN_ID,
-          balance: 0,
+          balance: new Amount(KADENA, 0),
         }
       }
 
@@ -39,9 +43,11 @@ export const useNativeTokenBalance = ({
       const balance =
         typeof amount === 'object' ? Number.parseFloat(amount.decimal) : amount
 
+      const parsedAmount = parseUnits(balance.toString(), KADENA.decimals)
+
       return {
         chainId: KADENA_CHAIN_ID,
-        balance: Number(balance),
+        balance: new Amount(KADENA, parsedAmount),
       }
     },
     enabled: !!account && enabled,

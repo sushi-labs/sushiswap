@@ -3,13 +3,9 @@ import {
   SlippageToleranceStorageKey,
   useSlippageTolerance,
 } from '@sushiswap/hooks'
-import {
-  Container,
-  SettingsModule,
-  SettingsOverlay,
-  typographyVariants,
-} from '@sushiswap/ui'
+import { Container, SettingsModule, SettingsOverlay } from '@sushiswap/ui'
 import { useMemo } from 'react'
+import { formatUnits } from 'viem'
 import { useSimulateSwap } from '~kadena/_common/lib/hooks/use-simulate-swap'
 import { AmountIn } from '~kadena/_common/ui/Swap/AmountIn'
 import { AmountOut } from '~kadena/_common/ui/Swap/AmountOut'
@@ -32,9 +28,10 @@ export default function SwapSimplePage() {
     slippageTolerance === 'AUTO' ? 0.005 : Number(slippageTolerance) / 100
 
   const parsedAmountIn = useMemo(() => {
-    const parsed = Number.parseFloat(amountIn)
-    return Number.isNaN(parsed) ? null : parsed
-  }, [amountIn])
+    if (!amountIn) return null
+    const parsed = formatUnits(amountIn?.amount, token0?.decimals)
+    return Number.isNaN(parsed) ? null : Number(parsed)
+  }, [amountIn, token0])
 
   const { isLoading } = useSimulateSwap({
     token0: token0,

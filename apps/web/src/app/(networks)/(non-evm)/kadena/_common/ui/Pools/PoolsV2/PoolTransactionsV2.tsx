@@ -57,8 +57,8 @@ export const PoolTransactionsV2: FC<PoolTransactionsV2Props> = ({ pool }) => {
     return getKvmChainByKey('kadena').getTransactionUrl(row.requestkey)
   }, [])
 
-  const token0Symbol = token0?.tokenSymbol ?? pool?.token0?.name ?? 'Token0'
-  const token1Symbol = token1?.tokenSymbol ?? pool?.token1?.name ?? 'Token1'
+  const token0Symbol = token0?.symbol ?? pool?.token0?.name ?? 'Token0'
+  const token1Symbol = token1?.symbol ?? pool?.token1?.name ?? 'Token1'
 
   const COLUMNS = useMemo(() => {
     if (type === 'SWAP') {

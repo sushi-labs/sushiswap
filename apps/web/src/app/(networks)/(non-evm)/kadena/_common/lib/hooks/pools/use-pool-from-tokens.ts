@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
+import type { KvmTokenAddress } from 'sushi/kvm'
 import { kadenaClient } from '~kadena/_common/constants/client'
 import {
   KADENA_CHAIN_ID,
@@ -14,8 +15,8 @@ type PoolAddressResponse = {
   exists: boolean
   poolData?: {
     poolAddress: string
-    token0: string
-    token1: string
+    token0: KvmTokenAddress
+    token1: KvmTokenAddress
     reserve0: number
     reserve1: number
     mutexLocked: boolean
@@ -29,8 +30,8 @@ export const usePoolFromTokens = ({
   token0,
   token1,
 }: {
-  token0: string | undefined
-  token1: string | undefined
+  token0: KvmTokenAddress | undefined
+  token1: KvmTokenAddress | undefined
 }) => {
   return useQuery({
     queryKey: ['kadena-pool-from-tokens', token0, token1],
@@ -163,8 +164,8 @@ export const usePoolFromTokens = ({
         exists: true,
         poolData: {
           poolAddress: poolData.account,
-          token0: finalToken0,
-          token1: finalToken1,
+          token0: finalToken0 as KvmTokenAddress,
+          token1: finalToken1 as KvmTokenAddress,
           reserve0: finalReserve0,
           reserve1: finalReserve1,
           mutexLocked: poolData['mutex-locked'],

@@ -1,8 +1,8 @@
-import type { KadenaToken } from '~kadena/_common/types/token-type'
+import type { KvmToken } from 'sushi/kvm'
 
 const alwaysTrue = () => true
 
-export function createTokenFilterFunction<T extends KadenaToken>(
+export function createTokenFilterFunction<T extends KvmToken>(
   search: string,
 ): (tokens: T) => boolean {
   const lowerSearchParts = search
@@ -25,14 +25,11 @@ export function createTokenFilterFunction<T extends KadenaToken>(
     )
   }
 
-  return ({ tokenName, tokenSymbol }: T): boolean =>
-    Boolean(
-      (tokenSymbol && matchesSearch(tokenSymbol)) ||
-        (tokenName && matchesSearch(tokenName)),
-    )
+  return ({ name, symbol }: T): boolean =>
+    Boolean((symbol && matchesSearch(symbol)) || (name && matchesSearch(name)))
 }
 
-export function filterTokens<T extends KadenaToken>(
+export function filterTokens<T extends KvmToken>(
   tokens: T[],
   search: string,
 ): T[] {
@@ -40,21 +37,19 @@ export function filterTokens<T extends KadenaToken>(
 }
 
 export const tokenComparator = () => {
-  return (tokenA: KadenaToken, tokenB: KadenaToken): number => {
-    if (tokenA.tokenSymbol && tokenB.tokenSymbol) {
-      return tokenA.tokenSymbol.toLowerCase() < tokenB.tokenSymbol.toLowerCase()
-        ? -1
-        : 1
+  return (tokenA: KvmToken, tokenB: KvmToken): number => {
+    if (tokenA.symbol && tokenB.symbol) {
+      return tokenA.symbol.toLowerCase() < tokenB.symbol.toLowerCase() ? -1 : 1
     } else {
-      return tokenA.tokenSymbol ? -1 : tokenB.tokenSymbol ? -1 : 0
+      return tokenA.symbol ? -1 : tokenB.symbol ? -1 : 0
     }
   }
 }
 
 export function getSortedTokensByQuery(
-  tokens: KadenaToken[] | undefined,
+  tokens: KvmToken[] | undefined,
   searchQuery: string,
-): KadenaToken[] {
+): KvmToken[] {
   if (!tokens) {
     return []
   }
@@ -72,18 +67,16 @@ export function getSortedTokensByQuery(
     return tokens
   }
 
-  const exactMatches: KadenaToken[] = []
-  const symbolSubstrings: KadenaToken[] = []
-  const rest: KadenaToken[] = []
+  const exactMatches: KvmToken[] = []
+  const symbolSubstrings: KvmToken[] = []
+  const rest: KvmToken[] = []
 
   // sort tokens by exact match -> subtring on symbol match -> rest
   tokens.map((token) => {
-    if (token.tokenSymbol?.toLowerCase() === symbolMatch[0]) {
+    if (token.symbol?.toLowerCase() === symbolMatch[0]) {
       return exactMatches.push(token)
     } else if (
-      token.tokenSymbol
-        ?.toLowerCase()
-        .startsWith(searchQuery.toLowerCase().trim())
+      token.symbol?.toLowerCase().startsWith(searchQuery.toLowerCase().trim())
     ) {
       return symbolSubstrings.push(token)
     } else {

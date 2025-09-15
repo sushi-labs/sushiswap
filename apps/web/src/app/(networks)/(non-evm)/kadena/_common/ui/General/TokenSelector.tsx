@@ -23,6 +23,7 @@ import {
 } from 'react'
 import AutoSizer from 'react-virtualized-auto-sizer'
 import { FixedSizeList } from 'react-window'
+import type { KvmToken, KvmTokenAddress } from 'sushi/kvm'
 import { COMMON_KADENA_TOKENS } from '~kadena/_common/constants/token-list'
 import { useBaseTokens } from '~kadena/_common/lib/hooks/use-base-tokens'
 import { useCustomTokens } from '~kadena/_common/lib/hooks/use-custom-tokens'
@@ -30,10 +31,7 @@ import { useSortedTokenList } from '~kadena/_common/lib/hooks/use-sorted-token-l
 import { useTokenBalances } from '~kadena/_common/lib/hooks/use-token-balances'
 import { useTokenInfo } from '~kadena/_common/lib/hooks/use-token-info'
 import { formatNumberWithMaxDecimals } from '~kadena/_common/lib/utils/formatters'
-import type {
-  KadenaToken,
-  TokenWithBalance,
-} from '~kadena/_common/types/token-type'
+import type { TokenWithBalance } from '~kadena/_common/types/token-type'
 import { useKadena } from '../../../kadena-wallet-provider'
 import { Icon } from './Icon'
 
@@ -42,8 +40,8 @@ export const TokenSelector = ({
   onSelect,
   children,
 }: {
-  selected: KadenaToken | undefined
-  onSelect: (token: KadenaToken) => void
+  selected: KvmToken | undefined
+  onSelect: (token: KvmToken) => void
   children: ReactNode
 }) => {
   const [open, setOpen] = useState(false)
@@ -65,12 +63,12 @@ export const TokenSelector = ({
     if (!baseTokens) return []
     const tokens = []
     for (const token of baseTokens) {
-      tokens.push(token.tokenAddress)
+      tokens.push(token.address)
     }
     for (const tokenAddress in customTokens) {
       tokens.push(tokenAddress)
     }
-    return tokens
+    return tokens as KvmTokenAddress[]
   }, [baseTokens, customTokens])
 
   const { data: tokenBalances } = useTokenBalances({
@@ -80,9 +78,9 @@ export const TokenSelector = ({
 
   const baseTokenMap = useMemo(() => {
     if (!baseTokens) return undefined
-    const tokenMap: Record<string, KadenaToken> = {}
+    const tokenMap: Record<string, KvmToken> = {}
     baseTokens?.forEach((token) => {
-      tokenMap[token.tokenAddress] = token
+      tokenMap[token.address] = token
     })
     return tokenMap
   }, [baseTokens])
@@ -95,7 +93,7 @@ export const TokenSelector = ({
   })
 
   const _onSelect = useCallback(
-    (token: KadenaToken) => {
+    (token: KvmToken) => {
       onSelect(token)
       setOpen(false)
     },
@@ -110,7 +108,7 @@ export const TokenSelector = ({
   )
 
   const addOrRemoveToken = useCallback(
-    (type: 'add' | 'remove', currency: KadenaToken[]) => {
+    (type: 'add' | 'remove', currency: KvmToken[]) => {
       _addOrRemoveToken(type, currency)
       setQuery('')
     },
@@ -124,10 +122,8 @@ export const TokenSelector = ({
           style={style}
           token={sortedTokens?.[index]}
           selectToken={_onSelect}
-          key={sortedTokens?.[index]?.tokenAddress}
-          isSelected={
-            sortedTokens?.[index]?.tokenAddress === selected?.tokenAddress
-          }
+          key={sortedTokens?.[index]?.address}
+          isSelected={sortedTokens?.[index]?.address === selected?.address}
           isOnDefaultList={isOnDefaultList}
           hasToken={hasToken}
           addOrRemoveToken={addOrRemoveToken}
@@ -215,11 +211,11 @@ export const TokenSelector = ({
               <TokenButton
                 token={queryToken}
                 selectToken={_onSelect}
-                key={queryToken.tokenAddress}
+                key={queryToken.address}
                 hasToken={hasToken}
                 addOrRemoveToken={addOrRemoveToken}
                 isOnDefaultList={isOnDefaultList}
-                isSelected={queryToken.tokenAddress === selected?.tokenAddress}
+                isSelected={queryToken.address === selected?.address}
               />
             )}
             <AutoSizer disableWidth>
@@ -266,18 +262,18 @@ const TokenButton = ({
   isOnDefaultList,
 }: {
   style?: CSSProperties
-  token?: KadenaToken | TokenWithBalance
-  selectToken: (_token: KadenaToken) => void
+  token?: KvmToken | TokenWithBalance
+  selectToken: (_token: KvmToken) => void
   isSelected: boolean
-  hasToken?: (currency: string | KadenaToken) => boolean
-  addOrRemoveToken?: (type: 'add' | 'remove', currency: KadenaToken[]) => void
+  hasToken?: (currency: string | KvmToken) => boolean
+  addOrRemoveToken?: (type: 'add' | 'remove', currency: KvmToken[]) => void
   isOnDefaultList: (currency: string) => boolean
 }) => {
   if (!token) return null
 
-  const isNewCustom = !hasToken?.(token.tokenAddress)
+  const isNewCustom = !hasToken?.(token.address)
 
-  const isDefaultToken = isOnDefaultList(token.tokenAddress)
+  const isDefaultToken = isOnDefaultList(token.address)
 
   return (
     <div
@@ -286,7 +282,7 @@ const TokenButton = ({
     >
       <Button
         onClick={() => selectToken(token)}
-        key={token.tokenAddress}
+        key={token.address}
         size="xl"
         className="flex items-center justify-between w-full"
         variant="ghost"
@@ -312,9 +308,9 @@ const TokenButton = ({
           )}
 
           <div className="flex flex-col items-start">
-            <p>{token.tokenSymbol}</p>
+            <p>{token.symbol}</p>
             <p className="text-xs text-gray-400 dark:text-slate-500">
-              {token.tokenName}
+              {token.name}
             </p>
           </div>
         </div>
@@ -358,13 +354,13 @@ const CommonTokenButton = ({
   token,
   selectToken,
 }: {
-  token: KadenaToken
-  selectToken: (_token: KadenaToken) => void
+  token: KvmToken
+  selectToken: (_token: KvmToken) => void
 }) => {
   return (
     <Button
       onClick={() => selectToken(token)}
-      key={token.tokenAddress}
+      key={token.address}
       size="sm"
       className="flex items-center justify-between w-fit"
       variant="secondary"
@@ -372,7 +368,7 @@ const CommonTokenButton = ({
       <div className="flex items-center w-full gap-2 ">
         <Icon currency={token} height={18} width={18} />
 
-        <p>{token.tokenSymbol}</p>
+        <p>{token.symbol}</p>
       </div>
     </Button>
   )

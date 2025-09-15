@@ -1,26 +1,36 @@
 import { useLocalStorage } from '@sushiswap/hooks'
 import { useCallback, useMemo } from 'react'
-import type { KadenaToken } from '~kadena/_common/types/token-type'
+import { KvmChainId, KvmToken, isKvmTokenAddress } from 'sushi/kvm'
+import {
+  KADENA_CHAIN_ID,
+  KADENA_NETWORK_ID,
+} from '~kadena/_common/constants/network'
 
-const localStorageKey = 'sushi.customTokens.kadena'
+const localStorageKey = 'sushi.customTokens.kvm'
 
 export const useCustomTokens = () => {
-  const [value, setValue] = useLocalStorage<Record<string, KadenaToken>>(
+  const [value, setValue] = useLocalStorage<Record<string, KvmToken>>(
     localStorageKey,
     {},
   )
 
-  const hydrate = useCallback((data: Record<string, KadenaToken>) => {
-    return Object.entries(data).reduce<Record<string, KadenaToken>>(
-      (acc, [k, { tokenAddress, tokenName, tokenSymbol, tokenDecimals }]) => {
-        acc[k] = {
-          tokenAddress,
-          tokenSymbol,
-          tokenDecimals,
-          tokenName,
-          tokenImage: data[k]?.tokenImage,
-          validated: data[k]?.validated,
-        }
+  const hydrate = useCallback((data: Record<string, KvmToken>) => {
+    return Object.entries(data).reduce<Record<string, KvmToken>>(
+      (acc, [k, { address, name, symbol, decimals }]) => {
+        acc[k] = new KvmToken({
+          chainId: KvmChainId.KADENA,
+          address,
+          name,
+          decimals,
+          symbol,
+          metadata: {
+            imageUrl: data[k]?.metadata?.imageUrl || undefined,
+            validated: data[k]?.metadata.validated || false,
+            kadenaChainId: data[k]?.metadata?.kadenaChainId || KADENA_CHAIN_ID,
+            kadenaNetworkId:
+              data[k]?.metadata?.kadenaNetworkId || KADENA_NETWORK_ID,
+          },
+        })
         return acc
       },
       {},
@@ -28,20 +38,30 @@ export const useCustomTokens = () => {
   }, [])
 
   const addCustomToken = useCallback(
-    (currencies: KadenaToken[]) => {
-      const data: KadenaToken[] = currencies.map((currency) => ({
-        tokenAddress: currency?.tokenAddress,
-        tokenSymbol: currency?.tokenSymbol,
-        tokenDecimals: currency?.tokenDecimals,
-        tokenImage: currency?.tokenImage || undefined,
-        tokenName: currency?.tokenName,
-        validated: currency?.validated || false,
-      }))
+    (currencies: KvmToken[]) => {
+      const data: KvmToken[] = currencies.map((currency) => {
+        return new KvmToken({
+          chainId: KvmChainId.KADENA,
+          address: currency?.address,
+          symbol: currency?.symbol,
+          decimals: currency?.decimals,
+
+          name: currency?.name,
+
+          metadata: {
+            imageUrl: currency.metadata?.imageUrl || undefined,
+            validated: currency?.metadata.validated || false,
+            kadenaChainId: currency?.metadata?.kadenaChainId || KADENA_CHAIN_ID,
+            kadenaNetworkId:
+              currency?.metadata?.kadenaNetworkId || KADENA_NETWORK_ID,
+          },
+        })
+      })
 
       setValue((prev) => {
         return data.reduce(
           (acc, cur) => {
-            acc[`${cur.tokenAddress}`] = cur
+            acc[`${cur.address}`] = cur
             return acc
           },
           { ...prev },
@@ -52,11 +72,11 @@ export const useCustomTokens = () => {
   )
 
   const removeCustomToken = useCallback(
-    (currency: KadenaToken) => {
+    (currency: KvmToken) => {
       setValue((prev) => {
-        return Object.entries(prev).reduce<Record<string, KadenaToken>>(
+        return Object.entries(prev).reduce<Record<string, KvmToken>>(
           (acc, cur) => {
-            if (cur[0] === `${currency.tokenAddress}`) {
+            if (cur[0] === `${currency.address}`) {
               return acc // filter
             }
             acc[cur[0]] = cur[1] // add
@@ -70,15 +90,12 @@ export const useCustomTokens = () => {
   )
 
   const hasToken = useCallback(
-    (currency: string | KadenaToken): boolean => {
-      const address =
-        typeof currency === 'string' ? currency : currency.tokenAddress
-      if (address === 'KDA') return false
+    (currency: string | KvmToken): boolean => {
+      const address = typeof currency === 'string' ? currency : currency.address
       if (address === 'coin') return false
-
-      // @TODO: replace with kadena address validation
-      // if (!isAddress(currency.tokenAddress)) {
-      //   throw new Error('Invalid address')
+      // console.log("CHECKING", address, value);
+      // if (!isKvmTokenAddress(address)) {
+      // 	throw new Error("Invalid KVM Token address");
       // }
 
       return !!value[address]
@@ -87,7 +104,7 @@ export const useCustomTokens = () => {
   )
 
   const addOrRemoveToken = useCallback(
-    (type: 'add' | 'remove', currency: KadenaToken[]) => {
+    (type: 'add' | 'remove', currency: KvmToken[]) => {
       if (type === 'add') addCustomToken(currency)
       if (type === 'remove') removeCustomToken(currency[0])
     },

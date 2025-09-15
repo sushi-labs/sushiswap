@@ -71,7 +71,7 @@ export const MinimumReceive = () => {
     if (minAmountToken0 && token0) {
       setMinAmountToken0(
         new Decimal(
-          formatToMaxDecimals(minAmountToken0, token0?.tokenDecimals),
+          formatToMaxDecimals(minAmountToken0, token0?.decimals),
         ).toNumber(),
       )
     }
@@ -87,7 +87,7 @@ export const MinimumReceive = () => {
     if (minAmountToken1 && token1) {
       setMinAmountToken1(
         new Decimal(
-          formatToMaxDecimals(minAmountToken1, token1?.tokenDecimals),
+          formatToMaxDecimals(minAmountToken1, token1?.decimals),
         ).toNumber(),
       )
     }
