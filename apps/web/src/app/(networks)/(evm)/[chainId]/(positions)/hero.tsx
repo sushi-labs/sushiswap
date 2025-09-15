@@ -11,15 +11,16 @@ import {
   SelectIcon,
 } from '@sushiswap/ui'
 import { type FC, useMemo } from 'react'
+import { isPublicBladeChainId } from 'src/config.server'
+import { showBladeFlag } from 'src/flags'
 import {
   EvmChainId,
   getEvmChainById,
-  isBladeChainId,
   isSushiSwapV2ChainId,
   isSushiSwapV3ChainId,
 } from 'sushi/evm'
 
-const getAddPositionHref = (chainId: EvmChainId) => {
+const getAddPositionHref = async (chainId: EvmChainId) => {
   if (isSushiSwapV3ChainId(chainId)) {
     return `/${getEvmChainById(chainId).key}/pool/v3/add`
   }
@@ -28,18 +29,21 @@ const getAddPositionHref = (chainId: EvmChainId) => {
     return `/${getEvmChainById(chainId).key}/pool/v2/add`
   }
 
-  if (isBladeChainId(chainId)) {
+  if (await isPublicBladeChainId(chainId)) {
     return `/${getEvmChainById(chainId).key}/explore/blade-pools`
   }
 
   return `/${getEvmChainById(EvmChainId.ETHEREUM).key}/pool/v3/add`
 }
 
-export const Hero: FC<{ chainId: EvmChainId }> = ({ chainId }) => {
+export const Hero: FC<{ chainId: EvmChainId }> = async ({ chainId }) => {
   const canIncentivize = useMemo(
     () => isSushiSwapV3ChainId(chainId) || isSushiSwapV2ChainId(chainId),
     [chainId],
   )
+
+  const isBladeChain = await isPublicBladeChainId(chainId)
+  const showBlade = await showBladeFlag()
 
   return (
     <section className="flex flex-col gap-6">
@@ -57,7 +61,7 @@ export const Hero: FC<{ chainId: EvmChainId }> = ({ chainId }) => {
               size="sm"
               className="flex-1 w-full sm:flex-0 sm:w-[unset] rounded-r-none"
             >
-              <LinkInternal href={getAddPositionHref(chainId)}>
+              <LinkInternal href={await getAddPositionHref(chainId)}>
                 I want to create a position
               </LinkInternal>
             </Button>
@@ -69,22 +73,24 @@ export const Hero: FC<{ chainId: EvmChainId }> = ({ chainId }) => {
               </DropdownMenuTrigger>
               <DropdownMenuContent className="w-80">
                 <DropdownMenuGroup>
-                  <DropdownMenuItem disabled={!isBladeChainId(chainId)} asChild>
-                    <LinkInternal
-                      href={`/${getEvmChainById(chainId).key}/explore/blade-pools`}
-                      className="flex flex-col !items-start gap-1 cursor-pointer"
-                    >
-                      <div className="flex items-center gap-1 font-medium leading-none">
-                        Blade Position
-                        <Chip variant="secondary">
-                          {isBladeChainId(chainId) ? 'New 🔥' : 'Unavailable'}
-                        </Chip>
-                      </div>
-                      <p className="text-sm leading-snug text-muted-foreground">
-                        Provide liquidity to a Blade liquidity pool.
-                      </p>
-                    </LinkInternal>
-                  </DropdownMenuItem>
+                  {showBlade ? (
+                    <DropdownMenuItem disabled={!isBladeChain} asChild>
+                      <LinkInternal
+                        href={`/${getEvmChainById(chainId).key}/explore/blade-pools`}
+                        className="flex flex-col !items-start gap-1 cursor-pointer"
+                      >
+                        <div className="flex items-center gap-1 font-medium leading-none">
+                          Blade Position
+                          <Chip variant="secondary">
+                            {isBladeChain ? 'New 🔥' : 'Unavailable'}
+                          </Chip>
+                        </div>
+                        <p className="text-sm leading-snug text-muted-foreground">
+                          Provide liquidity to a Blade liquidity pool.
+                        </p>
+                      </LinkInternal>
+                    </DropdownMenuItem>
+                  ) : null}
                   <DropdownMenuItem
                     disabled={!isSushiSwapV3ChainId(chainId)}
                     asChild

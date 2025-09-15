@@ -1,5 +1,7 @@
 import { LinkInternal } from '@sushiswap/ui'
 import { PathnameButton } from 'src/app/_ui/pathname-button'
+import { isPublicBladeChainId } from 'src/config.server'
+import { showBladeFlag } from 'src/flags'
 import {
   type EvmChainId,
   getEvmChainById,
@@ -7,8 +9,11 @@ import {
   isSushiSwapChainId,
 } from 'sushi/evm'
 
-export function NavigationItems({ chainId }: { chainId: EvmChainId }) {
+export async function NavigationItems({ chainId }: { chainId: EvmChainId }) {
   const chainKey = getEvmChainById(chainId).key
+  const isBladeChain =
+    isBladeChainId(chainId) && (await isPublicBladeChainId(chainId))
+  const showBlade = await showBladeFlag()
 
   return (
     <>
@@ -26,13 +31,15 @@ export function NavigationItems({ chainId }: { chainId: EvmChainId }) {
       >
         Pools
       </NavigationItem>
-      <NavigationItem
-        pathname={`/${chainKey}/explore/blade-pools`}
-        id="blade-pools"
-        disabled={!isBladeChainId(chainId)}
-      >
-        Blade Pools
-      </NavigationItem>
+      {showBlade ? (
+        <NavigationItem
+          pathname={`/${chainKey}/explore/blade-pools`}
+          id="blade-pools"
+          disabled={!isBladeChain}
+        >
+          Blade Pools
+        </NavigationItem>
+      ) : null}
     </>
   )
 }

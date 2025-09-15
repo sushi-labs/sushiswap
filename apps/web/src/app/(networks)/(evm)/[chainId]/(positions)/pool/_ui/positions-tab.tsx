@@ -1,3 +1,5 @@
+'use client'
+
 import {
   Select,
   SelectContent,
@@ -16,6 +18,7 @@ import { BladeIcon } from '@sushiswap/ui/icons/BladeIcon'
 import {
   type BladeChainId,
   type SushiSwapChainId,
+  SushiSwapProtocol,
   getEvmChainById,
   isBladeChainId,
   isSushiSwapChainId,
@@ -29,15 +32,20 @@ import { PositionsTable } from './positions-table'
 type TabItem = {
   id: string
   value: string
+  protocol: SushiSwapProtocol
   children: React.ReactNode
   disabled: boolean
 }
 
-const createItems = (chainId: SushiSwapChainId | BladeChainId): TabItem[] => {
-  const items: TabItem[] = [
+const createItems = (
+  chainId: SushiSwapChainId | BladeChainId,
+  supportedProtocols: SushiSwapProtocol[],
+): TabItem[] => {
+  const allItems: TabItem[] = [
     {
       id: 'sushiswap-v3',
       value: 'v3',
+      protocol: SushiSwapProtocol.SUSHISWAP_V3,
       disabled: !isSushiSwapV3ChainId(chainId),
       children: (
         <div className="flex items-center gap-2">
@@ -51,6 +59,7 @@ const createItems = (chainId: SushiSwapChainId | BladeChainId): TabItem[] => {
     {
       id: 'sushiswap-v2',
       value: 'v2',
+      protocol: SushiSwapProtocol.SUSHISWAP_V2,
       disabled: !isSushiSwapV2ChainId(chainId),
       children: (
         <div className="flex items-center gap-2">
@@ -64,7 +73,8 @@ const createItems = (chainId: SushiSwapChainId | BladeChainId): TabItem[] => {
     {
       id: 'blade',
       value: 'blade',
-      disabled: !isBladeChainId(chainId),
+      protocol: SushiSwapProtocol.BLADE,
+      disabled: false, // Blade is only included if supported, so never disabled
       children: (
         <div className="flex items-center gap-2">
           <span>
@@ -76,13 +86,18 @@ const createItems = (chainId: SushiSwapChainId | BladeChainId): TabItem[] => {
     },
   ]
 
-  return items
+  // Filter items based on supported protocols
+  return allItems.filter((item) => supportedProtocols.includes(item.protocol))
 }
 
-export const PositionsTab: FC<{ chainId: SushiSwapChainId | BladeChainId }> = ({
-  chainId,
-}) => {
-  const items = useMemo(() => createItems(chainId), [chainId])
+export const PositionsTab: FC<{
+  chainId: SushiSwapChainId | BladeChainId
+  supportedProtocols: SushiSwapProtocol[]
+}> = ({ chainId, supportedProtocols }) => {
+  const items = useMemo(
+    () => createItems(chainId, supportedProtocols),
+    [chainId, supportedProtocols],
+  )
 
   // Find the first non-disabled tab as default
   const defaultTab = useMemo(() => {

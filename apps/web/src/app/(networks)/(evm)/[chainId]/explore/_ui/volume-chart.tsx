@@ -11,19 +11,18 @@ import { CanvasRenderer } from 'echarts/renderers'
 import { useTheme } from 'next-themes'
 import { type FC, useCallback, useMemo } from 'react'
 import { formatUSD } from 'sushi'
-import { type EvmChainId, getEvmChainById, isBladeChainId } from 'sushi/evm'
+import { type EvmChainId, getEvmChainById } from 'sushi/evm'
 
 interface VolumeChart {
   data: AnalyticsDayBuckets
   chainId: EvmChainId
+  showBlade: boolean
 }
 
 echarts.use([CanvasRenderer, BarChart, TooltipComponent, GridComponent])
 
-export const VolumeChart: FC<VolumeChart> = ({ data, chainId }) => {
+export const VolumeChart: FC<VolumeChart> = ({ data, chainId, showBlade }) => {
   const { resolvedTheme } = useTheme()
-
-  const isBladeChain = isBladeChainId(chainId)
 
   const [v2, v3, blade, totalVolume] = useMemo(() => {
     const xData = (
@@ -178,7 +177,7 @@ export const VolumeChart: FC<VolumeChart> = ({ data, chainId }) => {
           data: v3,
           itemStyle: { color: '#A755DD', barBorderRadius: [2, 2, 0, 0] },
         },
-        ...(isBladeChain
+        ...(showBlade
           ? [
               {
                 name: 'blade',
@@ -191,7 +190,7 @@ export const VolumeChart: FC<VolumeChart> = ({ data, chainId }) => {
           : []),
       ],
     }),
-    [onMouseOver, resolvedTheme, v2, v3, blade, isBladeChain],
+    [onMouseOver, resolvedTheme, v2, v3, blade, showBlade],
   )
 
   return (
@@ -229,7 +228,7 @@ export const VolumeChart: FC<VolumeChart> = ({ data, chainId }) => {
                 <span className="bg-[#A755DD] rounded-[4px] w-3 h-3" />
               </span>
             </div>
-            {isBladeChain && (
+            {showBlade && (
               <div className="flex justify-between items-center gap-2 text-sm">
                 <span id="hoveredBladeVolume" />
                 <span className="flex gap-1 items-center">
