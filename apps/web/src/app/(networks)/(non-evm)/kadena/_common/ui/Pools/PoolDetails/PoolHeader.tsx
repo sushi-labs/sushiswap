@@ -9,6 +9,7 @@ import {
   Popover,
   PopoverContent,
   PopoverTrigger,
+  SkeletonBox,
   SkeletonCircle,
   SkeletonText,
   typographyVariants,
@@ -123,11 +124,11 @@ export const PoolHeader = ({ poolId }: { poolId: string }) => {
           {isLoading ? (
             <div className="flex items-center w-full gap-3">
               <div className="flex items-center">
-                <SkeletonCircle radius={40} />
-                <SkeletonCircle radius={40} className="-ml-[13.33px]" />
+                <SkeletonCircle radius={36} />
+                <SkeletonCircle radius={36} className="-ml-[13.33px]" />
               </div>
               <div className="w-[200px]">
-                <SkeletonText fontSize="3xl" />
+                <SkeletonBox className="w-full h-[40px]" />
               </div>
             </div>
           ) : (
@@ -142,7 +143,7 @@ export const PoolHeader = ({ poolId }: { poolId: string }) => {
                 className={typographyVariants({
                   variant: 'h1',
                   className:
-                    'sm:!text2-xl sm:!text-4xl !font-bold text-gray-900 dark:text-slate-50 truncate overflow-x-auto',
+                    'sm:!text-4xl !font-bold text-gray-900 dark:text-slate-50 truncate overflow-x-auto',
                 })}
               >
                 <LinkExternal
@@ -187,10 +188,10 @@ export const PoolHeader = ({ poolId }: { poolId: string }) => {
           </div>
           {isLoading ? (
             <>
-              <div className="w-48">
+              <div className="w-32">
                 <SkeletonText />
               </div>
-              <div className="w-48">
+              <div className="w-32">
                 <SkeletonText />
               </div>
             </>
