@@ -13,7 +13,7 @@ import type { Type } from 'sushi/currency'
 import type { Price, Token } from 'sushi/currency'
 
 interface PriceBlockProps {
-  id?: string
+  id: string | undefined
   token0: Type | undefined
   token1: Type | undefined
   label: string
@@ -25,7 +25,7 @@ interface PriceBlockProps {
   incrementDisabled?: boolean
   locked?: boolean
   focus?: boolean
-  price?: Price<Token, Token>
+  price: Price<Token, Token> | undefined
 }
 
 export const PriceBlock: FC<PriceBlockProps> = ({
@@ -43,7 +43,6 @@ export const PriceBlock: FC<PriceBlockProps> = ({
   focus = false,
   price,
 }) => {
-  // let user type value and only update parent value on blur
   const [localValue, setLocalValue] = useState('')
   const [useLocalValue, setUseLocalValue] = useState(false)
 
@@ -53,10 +52,9 @@ export const PriceBlock: FC<PriceBlockProps> = ({
 
   const handleOnBlur = useCallback(() => {
     setUseLocalValue(false)
-    onUserInput(localValue) // trigger update on parent value
+    onUserInput(localValue)
   }, [localValue, onUserInput])
 
-  // for button clicks
   const handleDecrement = useCallback(() => {
     setUseLocalValue(false)
     onUserInput(decrement())
@@ -70,7 +68,7 @@ export const PriceBlock: FC<PriceBlockProps> = ({
   useEffect(() => {
     if (localValue !== value && !useLocalValue) {
       setTimeout(() => {
-        setLocalValue(value) // reset local value to match parent
+        setLocalValue(value)
       }, 0)
     }
   }, [localValue, useLocalValue, value])
@@ -98,7 +96,7 @@ export const PriceBlock: FC<PriceBlockProps> = ({
       : (localPrice - Number.parseFloat(currentQuotePrice)) /
         Number.parseFloat(currentQuotePrice)
     const percentageDifference = priceDifference * 100
-    //if small return zero
+
     if (Math.abs(percentageDifference) < 0.01) return '0'
     return percentageDifference.toFixed(2)
   }, [price, localValue, token1])

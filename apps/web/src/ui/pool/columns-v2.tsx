@@ -16,10 +16,11 @@ import type { ColumnDef } from '@tanstack/react-table'
 import Link from 'next/link'
 import React, { useMemo } from 'react'
 import { getTextColor } from 'src/lib/helpers'
-
+import { useTokenWithCache } from 'src/lib/wagmi/hooks/tokens/useTokenWithCache'
 import type { EvmChainId, SushiSwapProtocol } from 'sushi'
 import { Token, unwrapToken } from 'sushi/currency'
 import { formatNumber, formatPercent, formatUSD } from 'sushi/format'
+import type { Address } from 'viem'
 import { usePrices } from '~evm/_common/ui/price-provider/price-provider/use-prices'
 import { TooltipDrawer } from '../common/tooltip-drawer'
 import { SparklineCell } from '../token/SparklineCell'
@@ -35,7 +36,7 @@ export const CHAIN_COLUMN: ColumnDef<MultiChainPool, unknown> = {
     <div className="px-2 md:min-w-[70px]">
       <NetworkIcon
         type="square"
-        chainId={props.row.original.chainId}
+        chainId={props.row.original.chainId as EvmChainId}
         className="md:w-5 h-5 min-w-5 min-h-5 rounded-[4px] border border-slate-200 dark:border-slate-750"
       />
     </div>
@@ -155,7 +156,6 @@ export const POOL_COLUMN: ColumnDef<MultiChainPool, unknown> = {
                       </div>
                       <div className="flex gap-1 items-center">
                         {formatUSD(priceMap?.get(token0.address) ?? 0)}
-                        <span className={classNames(getTextColor(12))}>{}</span>
                       </div>
                     </div>
                     <div className="flex justify-between items-center w-full">
@@ -172,9 +172,6 @@ export const POOL_COLUMN: ColumnDef<MultiChainPool, unknown> = {
                       </div>
                       <div className="flex gap-1 items-center">
                         {formatUSD(priceMap?.get(token1.address) ?? 0)}
-                        {/* <span className={classNames(getTextColor(12))}>
-                          todo%
-                        </span> */}
                       </div>
                     </div>
                   </div>
@@ -642,27 +639,24 @@ export const ACTION_COLUMN: ColumnDef<MultiChainPool, unknown> = {
   id: 'action',
   cell: (props) => {
     const poolType = props.row.original.protocol as SushiSwapProtocol
-    //@DEV need decimals from token0 and token1
+
+    const { data: _token0 } = useTokenWithCache({
+      chainId: props.row.original.chainId as EvmChainId,
+      address: props.row.original.token0Address as Address,
+      enabled: !!props.row.original.token0Address,
+    })
+    const { data: _token1 } = useTokenWithCache({
+      chainId: props.row.original.chainId as EvmChainId,
+      address: props.row.original.token1Address as Address,
+      enabled: !!props.row.original.token1Address,
+    })
+
     const [token0, token1] = useMemo(
       () => [
-        unwrapToken(
-          new Token({
-            chainId: props.row.original.chainId as EvmChainId,
-            address: props.row.original.token0Address,
-            symbol: props.row.original.name?.split(' /')[0] ?? '',
-            decimals: 18,
-          }),
-        ),
-        unwrapToken(
-          new Token({
-            chainId: props.row.original.chainId as EvmChainId,
-            address: props.row.original.token1Address,
-            symbol: props.row.original.name?.split('/ ')[1] ?? '',
-            decimals: 18,
-          }),
-        ),
+        _token0 ? unwrapToken(_token0) : undefined,
+        _token1 ? unwrapToken(_token1) : undefined,
       ],
-      [props.row.original],
+      [_token0, _token1],
     )
 
     return (

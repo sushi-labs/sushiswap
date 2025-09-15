@@ -10,29 +10,20 @@ import { useTheme } from 'next-themes'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { OffScreenHandle, brushHandleAccentPath, brushHandlePath } from './svg'
 
-// flips the handles draggers when close to the container edges
 const FLIP_HANDLE_THRESHOLD_PX = 20
 
-// margin to prevent tick snapping from putting the brush off screen
 const BRUSH_EXTENT_MARGIN_PX = 2
 
-/**
- * Returns true if every element in `a` maps to the
- * same pixel coordinate as elements in `b`
- */
-// eslint-disable-next-line max-params
 const compare = (
   a: [number, number],
   b: [number, number],
   yScale: ScaleLinear<number, number>,
 ): boolean => {
-  // normalize pixels to 1 decimals
   const aNorm = a.map((y) => yScale(y).toFixed(1))
   const bNorm = b.map((y) => yScale(y).toFixed(1))
   return aNorm.every((v, i) => v === bNorm[i])
 }
 
-// Convert [minPrice, maxPrice] to [yMax, yMin]
 const toYScale = (
   extent: [number, number],
   yScale: ScaleLinear<number, number>,
@@ -40,7 +31,6 @@ const toYScale = (
   return [yScale(extent[1]), yScale(extent[0])]
 }
 
-// Convert [yMax, yMin] to [minPrice, maxPrice]
 const toPriceExtent = (
   selection: [number, number],
   yScale: ScaleLinear<number, number>,
@@ -64,7 +54,6 @@ export const Brush = ({
   id: string
   yScale: ScaleLinear<number, number>
   interactive: boolean
-  // [min, max] price values
   brushExtent: [number, number]
   setBrushExtent: (extent: [number, number], mode: string | undefined) => void
   width: number
@@ -74,15 +63,12 @@ export const Brush = ({
   const brushRef = useRef<SVGGElement | null>(null)
   const brushBehavior = useRef<BrushBehavior<SVGGElement> | null>(null)
 
-  // only used to drag the handles on brush for performance
   const [localBrushExtent, setLocalBrushExtent] = useState<
     [number, number] | null
   >(brushExtent)
 
   const previousBrushExtent = usePrevious(brushExtent)
 
-  // keep local and external brush extent in sync
-  // i.e. snap to ticks on brush end
   const [brushInProgress, setBrushInProgress] = useState(false)
   useEffect(() => {
     if (brushInProgress) {
@@ -91,7 +77,6 @@ export const Brush = ({
     setLocalBrushExtent(brushExtent)
   }, [brushExtent, brushInProgress])
 
-  // initialize the brush
   useEffect(() => {
     if (!brushRef.current || brushInProgress) {
       return
@@ -102,15 +87,12 @@ export const Brush = ({
 
     brushBehavior.current = brushY<SVGGElement>()
       .extent([
-        // x0, y0 (top left)
         [0, BRUSH_EXTENT_MARGIN_PX],
-        // x1, y1 (bottom right)
         [width, height - BRUSH_EXTENT_MARGIN_PX],
       ])
       .handleSize(30)
       .filter(() => interactive)
       .filter((event) => {
-        // Allow interactions only if the event target is part of the brush selection or handles
         const target = event.target as SVGElement
         return (
           target.classList.contains('selection') ||
@@ -126,7 +108,6 @@ export const Brush = ({
           return
         }
 
-        // Update only the local extent during dragging
         const priceExtent = normalizeExtent(
           toPriceExtent(selection as [number, number], yScale),
         )
@@ -140,7 +121,6 @@ export const Brush = ({
           return
         }
 
-        // Finalize state update on end
         const priceExtent = normalizeExtent(
           toPriceExtent(selection as [number, number], yScale),
         )
@@ -164,7 +144,6 @@ export const Brush = ({
 
     select(brushRef.current).selectAll('.overlay').attr('cursor', 'default')
 
-    // brush linear gradient
     select(brushRef.current)
       .selectAll('.selection')
       .attr('stroke', 'none')
@@ -183,7 +162,6 @@ export const Brush = ({
     brushInProgress,
   ])
 
-  // respond to yScale changes only
   useEffect(() => {
     if (!brushRef.current || !brushBehavior.current) {
       return
@@ -200,12 +178,6 @@ export const Brush = ({
     yScale(normalizedBrushExtent[1]) < FLIP_HANDLE_THRESHOLD_PX
   const flipSouthHandle =
     yScale(normalizedBrushExtent[0]) > height - FLIP_HANDLE_THRESHOLD_PX
-
-  // const showNorthArrow =
-  //   yScale(normalizedBrushExtent[0]) < 0 || yScale(normalizedBrushExtent[1]) < 0
-  // const showSouthArrow =
-  //   yScale(normalizedBrushExtent[0]) > height ||
-  //   yScale(normalizedBrushExtent[1]) > height
 
   const southHandleInView =
     yScale(normalizedBrushExtent[0]) >= 0 &&
@@ -336,8 +308,6 @@ export const Brush = ({
       interactive,
       southHandleInView,
       flipSouthHandle,
-      // showNorthArrow,
-      // showSouthArrow,
       color,
     ],
   )

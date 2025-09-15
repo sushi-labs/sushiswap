@@ -50,7 +50,7 @@ interface UseTransactionsV2Opts {
 const fetchMints = async (
   address: Address,
   chainId: SushiSwapV2ChainId,
-  user?: Address,
+  user: Address | undefined,
 ) => {
   const mints = await getSushiV2Mints({
     chainId,
@@ -69,7 +69,7 @@ const fetchMints = async (
 const fetchBurns = async (
   address: Address,
   chainId: SushiSwapV2ChainId,
-  user?: Address,
+  user: Address | undefined,
 ) => {
   const burns = await getSushiV2Burns({
     chainId,
@@ -88,7 +88,7 @@ const fetchBurns = async (
 const fetchSwaps = async (
   address: Address,
   chainId: SushiSwapV2ChainId,
-  user?: Address,
+  user: Address | undefined,
 ) => {
   const swaps = await getSushiV2Swaps({
     chainId,
@@ -110,7 +110,7 @@ function useTransactionsV2(
   pool: V2Pool | undefined | null,
   poolAddress: Address,
   opts: UseTransactionsV2Opts,
-  user?: Address,
+  user: Address | undefined,
 ) {
   return useQuery({
     queryKey: ['poolTransactionsV2', poolAddress, pool?.chainId, opts, user],
@@ -200,7 +200,7 @@ function usePaginatedTransactions(
     type: TransactionType | 'All' | undefined
     refetchInterval?: number
   },
-  address?: Address,
+  address: Address | undefined,
 ) {
   const PAGE_SIZE = 10
 

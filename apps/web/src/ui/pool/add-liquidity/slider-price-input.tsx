@@ -14,7 +14,7 @@ export const SliderPriceInput: FC<SliderPriceInputProps> = ({
   onUserInput,
   price,
 }) => {
-  const fivePercentOfPrice = price ? price * 0.05 : 0.05 // Default to 0.05 if price is undefined
+  const fivePercentOfPrice = price ? price * 0.05 : 0.05
   return (
     <div className="w-full relative">
       <div className="absolute left-1/2 z-10 -translate-x-1/2 w-[0.5px] border border-dashed top-0 h-full" />

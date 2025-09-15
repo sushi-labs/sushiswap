@@ -19,11 +19,11 @@ export const HorizontalArea = ({
   yScale: ScaleLinear<number, number>
   xValue: (d: ChartEntry) => number
   yValue: (d: ChartEntry) => number
-  brushDomain?: [number, number]
+  brushDomain: [number, number] | undefined
   containerHeight: number
   containerWidth: number
-  fill?: string
-  selectedFill?: string
+  fill: string | undefined
+  selectedFill: string | undefined
 }) => {
   return (
     <>

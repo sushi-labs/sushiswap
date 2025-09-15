@@ -33,8 +33,8 @@ const Axis: FC<AxisProps> = ({ axisGenerator }) => {
 interface AxisBottomTimeProps {
   xScale: ScaleTime<number, number>
   innerHeight: number
-  offset?: number
-  tickFormat?: (date: Date) => string
+  offset: number | undefined
+  tickFormat: (date: Date) => string | undefined
 }
 
 export const AxisBottomTime: FC<AxisBottomTimeProps> = ({

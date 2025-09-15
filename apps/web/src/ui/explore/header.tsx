@@ -4,12 +4,7 @@ import { ChevronDownIcon, PlusIcon } from '@heroicons/react-v1/solid'
 import { Button, Popover, PopoverContent, PopoverTrigger } from '@sushiswap/ui'
 import Link from 'next/link'
 import { ChainKey, EvmChainId, SushiSwapProtocol } from 'sushi'
-import {
-  type SushiSwapV2ChainId,
-  type SushiSwapV3ChainId,
-  isSushiSwapV2ChainId,
-  isSushiSwapV3ChainId,
-} from 'sushi/config'
+import { isSushiSwapV2ChainId, isSushiSwapV3ChainId } from 'sushi/config'
 import { AddLiquidityDialog } from '../pool/add-liquidity/add-liquidity-dialog'
 
 export const ExploreHeader = () => {
@@ -69,10 +64,10 @@ export const AddLiquidityLink = ({
 
   const href =
     version === 'v3'
-      ? isSushiSwapV3ChainId(chainId as SushiSwapV3ChainId)
+      ? isSushiSwapV3ChainId(chainId)
         ? `/${ChainKey[chainId]}/pool/v3/add`
         : `/${ChainKey[fallbackChain]}/pool/v3/add`
-      : isSushiSwapV2ChainId(chainId as SushiSwapV2ChainId)
+      : isSushiSwapV2ChainId(chainId)
         ? `/${ChainKey[chainId]}/pool/v2/add`
         : `/${ChainKey[fallbackChain]}/pool/v2/add`
 

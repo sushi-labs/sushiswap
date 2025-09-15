@@ -50,7 +50,7 @@ interface AddLiquidityV3ButtonProps
   existingPosition: Position | undefined
   tokenId: number | string | undefined
   onSuccess: () => void
-  successLink?: string
+  successLink: string | undefined
 }
 
 export const AddLiquidityV3Button: FC<AddLiquidityV3ButtonProps> = ({

@@ -15,33 +15,6 @@ const brushKeyToFieldKey: Record<HandleType, 'LOWER' | 'UPPER'> = {
   w: 'UPPER',
 }
 
-// const ZOOM_LEVELS: Record<SushiSwapV3FeeAmount, ZoomLevels> = {
-//   [SushiSwapV3FeeAmount.LOWEST]: {
-//     initialMin: 0.999,
-//     initialMax: 1.001,
-//     min: 0.00001,
-//     max: 1.5,
-//   },
-//   [SushiSwapV3FeeAmount.LOW]: {
-//     initialMin: 0.999,
-//     initialMax: 1.001,
-//     min: 0.00001,
-//     max: 1.5,
-//   },
-//   [SushiSwapV3FeeAmount.MEDIUM]: {
-//     initialMin: 0.5,
-//     initialMax: 2,
-//     min: 0.00001,
-//     max: 20,
-//   },
-//   [SushiSwapV3FeeAmount.HIGH]: {
-//     initialMin: 0.5,
-//     initialMax: 2,
-//     min: 0.00001,
-//     max: 20,
-//   },
-// }
-
 interface InfoBoxProps {
   message?: ReactNode
   icon: ReactNode
@@ -66,7 +39,6 @@ export const LiquidityChartRangeInput = ({
   currencyB,
   feeAmount,
   ticksAtLimit,
-  // priceRange,
   price,
   priceLower,
   priceUpper,
@@ -75,7 +47,6 @@ export const LiquidityChartRangeInput = ({
   onRightRangeInput,
   interactive,
 
-  // hideBrushes = false,
   tokenToggle,
 }: {
   chainId: SushiSwapV3ChainId
@@ -83,7 +54,6 @@ export const LiquidityChartRangeInput = ({
   currencyB: Type | undefined
   feeAmount?: SushiSwapV3FeeAmount
   ticksAtLimit: { [_bound in Bound]?: boolean | undefined }
-  // priceRange: number | undefined
   price: number | undefined
   priceLower?: Price<Token, Token>
   priceUpper?: Price<Token, Token>
@@ -91,7 +61,6 @@ export const LiquidityChartRangeInput = ({
   onLeftRangeInput: (typedValue: string) => void
   onRightRangeInput: (typedValue: string) => void
   interactive: boolean
-  // hideBrushes?: boolean;
   tokenToggle?: ReactNode
 }) => {
   const isSorted =

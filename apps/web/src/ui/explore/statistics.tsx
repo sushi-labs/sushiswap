@@ -15,7 +15,7 @@ export const Statistics = () => {
 }
 
 const StatisticsHeader = () => {
-  const [version, setVersion] = useState<'v2' | 'v3' | ''>('')
+  const [version, setVersion] = useState<'v2' | 'v3' | 'all'>('all')
   return (
     <div className="flex justify-between items-center w-full">
       <div>
@@ -30,7 +30,7 @@ const StatisticsHeader = () => {
               '!bg-[#F338C31A] !border-[#F338C3] text-[#F338C3] hover:!text-[#F338C3] !border-solid',
           )}
           onClick={() => {
-            setVersion(version === 'v2' ? '' : 'v2')
+            setVersion(version === 'v2' ? 'all' : 'v2')
           }}
         >
           <span>V2</span>
@@ -43,7 +43,7 @@ const StatisticsHeader = () => {
               '!bg-[#3B7EF61A] !border-[#3B7EF6] text-[#3B7EF6] hover:!text-[#3B7EF6] !border-solid',
           )}
           onClick={() => {
-            setVersion(version === 'v3' ? '' : 'v3')
+            setVersion(version === 'v3' ? 'all' : 'v3')
           }}
         >
           <span>V3</span>

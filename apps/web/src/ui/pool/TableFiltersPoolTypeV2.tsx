@@ -2,7 +2,6 @@
 
 import { Button, classNames } from '@sushiswap/ui'
 import React, { type FC, useCallback } from 'react'
-
 import { SushiSwapProtocol } from 'sushi'
 import { usePoolFilters, useSetPoolFilters } from './PoolsFiltersProvider'
 

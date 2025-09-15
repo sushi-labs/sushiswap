@@ -94,16 +94,6 @@ export const AddLiquidityV2 = ({
     }
   }, [chainId, initToken0, initToken1])
 
-  // 	const networks = useMemo(
-  // 	() =>
-  // 		SUSHISWAP_V2_SUPPORTED_CHAIN_IDS.filter(
-  // 			(chainId) =>
-  // 				!EVM_TESTNET_CHAIN_IDS.includes(chainId as (typeof EVM_TESTNET_CHAIN_IDS)[number]) &&
-  // 				!DISABLED_CHAIN_IDS.includes(chainId as (typeof DISABLED_CHAIN_IDS)[number])
-  // 		),
-  // 	[]
-  // );
-
   const [{ input0, input1 }, setTypedAmounts] = useState<{
     input0: string
     input1: string
@@ -147,12 +137,12 @@ export const AddLiquidityV2 = ({
   const { data: price0, isLoading: isPrice0Loading } = usePrice({
     chainId: token0?.chainId,
     address: token0?.wrapped?.address,
-    enabled: !!token0,
+    enabled: Boolean(token0),
   })
   const { data: price1, isLoading: isPrice1Loading } = usePrice({
     chainId: token1?.chainId,
     address: token1?.wrapped?.address,
-    enabled: !!token1,
+    enabled: Boolean(token1),
   })
 
   const estimatedValue = useMemo(() => {
@@ -194,15 +184,11 @@ export const AddLiquidityV2 = ({
         const title =
           !token0 || !token1 ? (
             'Select Tokens'
-          ) : [SushiSwapV2PoolState.LOADING].includes(
-              poolState as SushiSwapV2PoolState,
-            ) ? (
+          ) : [SushiSwapV2PoolState.LOADING].includes(poolState) ? (
             <div className="h-[20px] flex items-center justify-center">
               <Loader width={14} />
             </div>
-          ) : [SushiSwapV2PoolState.EXISTS].includes(
-              poolState as SushiSwapV2PoolState,
-            ) ? (
+          ) : [SushiSwapV2PoolState.EXISTS].includes(poolState) ? (
             'Add Liquidity'
           ) : (
             'Create Pool'
@@ -660,7 +646,6 @@ const AddLiquidityWidget: FC<AddLiquidityWidgetProps> = ({
   )
 
   useEffect(() => {
-    // Includes !!pool
     if (
       pool?.reserve0.greaterThan(0) &&
       pool.reserve1.greaterThan(0) &&
@@ -772,27 +757,6 @@ const AddLiquidityWidget: FC<AddLiquidityWidgetProps> = ({
                           contract={SUSHISWAP_V2_ROUTER_ADDRESS[chainId]}
                         >
                           <Checker.Success tag={APPROVE_TAG_ADD_LEGACY}>
-                            {/* <AddSectionReviewModalLegacy
-                              poolAddress={pool?.liquidityToken.address}
-                              poolState={poolState as SushiSwapV2PoolState}
-                              chainId={chainId}
-                              token0={token0}
-                              token1={token1}
-                              input0={parsedInput0}
-                              input1={parsedInput1}
-                              onSuccess={() => {
-                                setTypedAmounts({ input0: '', input1: '' })
-                              }}
-                            >
-                              <Button
-                                size="xl"
-                                fullWidth
-                                className="!mt-10"
-                                testId="add-liquidity"
-                              >
-                                {title}
-                              </Button>
-                            </AddSectionReviewModalLegacy> */}
                             {title === 'Add Liquidity' ? (
                               <AddLiquidityV2Button
                                 poolState={poolState as SushiSwapV2PoolState}

@@ -22,7 +22,7 @@ export const ConcentratedInitialPrice = ({
   useLayoutEffect(() => {
     if (spanRef.current) {
       const width = spanRef.current.offsetWidth
-      setInputWidth(width + 28) // +10 for padding
+      setInputWidth(width + 28)
     }
   }, [startingPrice])
   const [rateDirection, setRateDirection] = useState<'token0' | 'token1'>(

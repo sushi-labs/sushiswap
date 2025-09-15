@@ -128,7 +128,7 @@ export const TokenSelectorV2: FC<TokenSelectorV2Props> = ({
         )}
         variant={variant ?? undefined}
       >
-        <div className="flex overflow-y-auto overflow-x-hidden relative flex-col gap-4 p-6 w-full hide-scrollbar">
+        <div className="relative flex flex-col w-full gap-4 p-6 overflow-x-hidden overflow-y-auto hide-scrollbar">
           {currencyInfo ? (
             <CurrencyInfo
               currency={currencyInfo}
@@ -159,7 +159,7 @@ export const TokenSelectorV2: FC<TokenSelectorV2Props> = ({
               />
             </div>
           ) : null}
-          <div className="flex relative gap-2">
+          <div className="relative flex gap-2">
             <TextField
               placeholder="Search by token or address"
               icon={MagnifyingGlassIcon}
@@ -170,7 +170,7 @@ export const TokenSelectorV2: FC<TokenSelectorV2Props> = ({
               className="py-7 placeholder:text-slate-450 !dark:text-slate-500 placeholder:dark:text-slate-450 dark:!bg-slate-900 !bg-gray-100"
             />
             {type === 'buy' && !isTwap ? (
-              <div className="absolute right-2 top-1/2 -translate-y-1/2">
+              <div className="absolute -translate-y-1/2 top-1/2 right-2">
                 <NetworkMenu
                   selectedNetwork={_selectedNetwork}
                   onNetworkSelect={_onNetworkSelect}

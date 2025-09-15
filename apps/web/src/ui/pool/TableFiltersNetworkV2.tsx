@@ -154,28 +154,5 @@ export const TableFiltersNetworkV2 = () => {
         </Command>
       }
     />
-    // <Popover modal={true} open={open} onOpenChange={setOpen}>
-    // 	<PopoverTrigger asChild>
-    // 		<Button
-    // 			icon={PlusCircleIcon}
-    // 			variant="outline"
-    // 			role="combobox"
-    // 			size="sm"
-    // 			aria-expanded={open}
-    // 			className={classNames(
-    // 				className,
-    // 				"border-dashed !bg-slate-200 dark:!bg-slate-750",
-    // 				"hover:dark:!bg-skyblue/20 hover:!bg-blue/20 hover:!text-blue hover:dark:!text-skyblue",
-    // 				network
-    // 					? "!bg-blue/10 dark:!bg-skyblue/10 !text-blue dark:!text-skyblue !border-blue !border-1 !border-solid"// :""
-    // 			)}>
-    // 			<span>Network</span>
-    // 			{/* <Chip variant="secondary">{getNetworkName(network)}</Chip> */}
-    // 		</Button>
-    // 	</PopoverTrigger>
-    // 	<PopoverContent align="start" className="!p-0  w-[220px]">
-
-    // </PopoverContent>
-    // </Popover>
   )
 }

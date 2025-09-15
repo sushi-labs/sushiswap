@@ -209,16 +209,7 @@ export const PoolChartGraph: FC<PoolChartProps> = ({
           axisLine: { show: false },
           axisTick: { show: false },
           splitLine: { show: false },
-          splitNumber:
-            period === PoolChartPeriod.Day
-              ? 6
-              : period === PoolChartPeriod.Week
-                ? 6
-                : period === PoolChartPeriod.Month
-                  ? 6
-                  : period === PoolChartPeriod.Year
-                    ? 6
-                    : 8,
+          splitNumber: period === PoolChartPeriod.All ? 8 : 6,
           min: xData[0] * 1000,
           max: xData[xData.length - 1] * 1000,
         },
@@ -269,7 +260,7 @@ export const PoolChartGraph: FC<PoolChartProps> = ({
         {isLoading ? (
           <SkeletonBox
             className={classNames(
-              'mb-6 w-full h-[400px] dark:via-slate-800 dark:to-slate-900',
+              'mb-6 h-[400px] w-full dark:via-slate-800 dark:to-slate-900',
             )}
           />
         ) : isError ? (

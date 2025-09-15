@@ -1,5 +1,9 @@
 'use client'
 
+import { RadioGroup } from '@headlessui/react'
+import { InformationCircleIcon } from '@heroicons/react-v1/solid'
+import { LockClosedIcon, LockOpenIcon } from '@heroicons/react/24/solid'
+import { ExclamationTriangleIcon } from '@heroicons/react/24/solid'
 import { useIsMounted } from '@sushiswap/hooks'
 import {
   Button,
@@ -19,27 +23,22 @@ import { Toggle } from '@sushiswap/ui'
 import React, { type FC, useCallback, useMemo, useState } from 'react'
 import { Bound, Field } from 'src/lib/constants'
 import { useTokenAmountDollarValues } from 'src/lib/hooks'
+import { useConcentratedLiquidityPoolStats } from 'src/lib/hooks/react-query'
+import { useConcentratedLiquidityPositionsFromTokenId } from 'src/lib/wagmi/hooks/positions/hooks/useConcentratedPositionsFromTokenId'
+import type { Address } from 'sushi'
 import {
   type SushiSwapV3ChainId,
   type SushiSwapV3FeeAmount,
   TICK_SPACINGS,
 } from 'sushi/config'
 import { type Type, tryParseAmount } from 'sushi/currency'
+import { formatPercent } from 'sushi/format'
+import { Fraction } from 'sushi/math'
 import {
   getCapitalEfficiency,
   getTokenRatio,
   tickToPrice,
 } from 'sushi/pool/sushiswap-v3'
-
-import { RadioGroup } from '@headlessui/react'
-import { InformationCircleIcon } from '@heroicons/react-v1/solid'
-import { LockClosedIcon, LockOpenIcon } from '@heroicons/react/24/solid'
-import { ExclamationTriangleIcon } from '@heroicons/react/24/solid'
-import { useConcentratedLiquidityPoolStats } from 'src/lib/hooks/react-query'
-import { useConcentratedLiquidityPositionsFromTokenId } from 'src/lib/wagmi/hooks/positions/hooks/useConcentratedPositionsFromTokenId'
-import type { Address } from 'sushi'
-import { formatPercent } from 'sushi/format'
-import { Fraction } from 'sushi/math'
 import { useAccount } from 'wagmi'
 import {
   useConcentratedDerivedMintInfo,
@@ -554,7 +553,6 @@ export const SelectPriceWidget: FC<SelectPriceWidget> = ({
                 currencyB={token1}
                 feeAmount={feeAmount}
                 ticksAtLimit={ticksAtLimit}
-                // priceRange={priceRange}
                 price={
                   price
                     ? Number.parseFloat(

@@ -901,7 +901,6 @@ export const PriceBlock: FC<PriceBlockProps> = ({
   value,
   focus = false,
 }) => {
-  // let user type value and only update parent value on blur
   const [localValue, setLocalValue] = useState('')
   const [useLocalValue, setUseLocalValue] = useState(false)
 
@@ -911,10 +910,9 @@ export const PriceBlock: FC<PriceBlockProps> = ({
 
   const handleOnBlur = useCallback(() => {
     setUseLocalValue(false)
-    onUserInput(localValue) // trigger update on parent value
+    onUserInput(localValue)
   }, [localValue, onUserInput])
 
-  // for button clicks
   const handleDecrement = useCallback(() => {
     setUseLocalValue(false)
     onUserInput(decrement())
@@ -928,7 +926,7 @@ export const PriceBlock: FC<PriceBlockProps> = ({
   useEffect(() => {
     if (localValue !== value && !useLocalValue) {
       setTimeout(() => {
-        setLocalValue(value) // reset local value to match parent
+        setLocalValue(value)
       }, 0)
     }
   }, [localValue, useLocalValue, value])

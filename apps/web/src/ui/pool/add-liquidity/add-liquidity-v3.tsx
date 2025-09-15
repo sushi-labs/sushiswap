@@ -16,7 +16,6 @@ import { computeSushiSwapV3PoolAddress } from 'sushi'
 import { ChainKey } from 'sushi/chain'
 import {
   SUSHISWAP_V3_FACTORY_ADDRESS,
-  SUSHISWAP_V3_SUPPORTED_CHAIN_IDS,
   type SushiSwapV3ChainId,
   isWNativeSupported,
 } from 'sushi/config'
@@ -35,8 +34,8 @@ export const AddLiquidityV3 = ({
   hideTokenSelectors,
   feeAmount,
 }: {
-  initToken0?: Type
-  initToken1?: Type
+  initToken0: Type | undefined
+  initToken1: Type | undefined
   hideTokenSelectors?: boolean
   feeAmount?: SushiSwapV3FeeAmount
 }) => {
@@ -62,8 +61,8 @@ const _Add = ({
   hideTokenSelectors,
   initFeeAmount,
 }: {
-  initToken0?: Type
-  initToken1?: Type
+  initToken0: Type | undefined
+  initToken1: Type | undefined
   hideTokenSelectors?: boolean
   initFeeAmount?: SushiSwapV3FeeAmount
 }) => {

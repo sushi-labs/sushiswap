@@ -1,13 +1,13 @@
+import { Button } from '@sushiswap/ui'
+import { max as getMax, scaleLinear, scaleTime } from 'd3'
+import ms from 'ms'
+import { useTheme } from 'next-themes'
+import { type ReactNode, useEffect, useMemo, useRef, useState } from 'react'
+import { AxisBottomTime } from './axis-bottom-time'
 import { AxisRight } from './axis-right'
 import { Brush } from './brush'
 import { HorizontalArea } from './horizontal-area'
 import { HorizontalLine } from './horizontal-line'
-
-import { Button } from '@sushiswap/ui'
-import { max as getMax, scaleLinear, scaleTime } from 'd3'
-import { useTheme } from 'next-themes'
-import { type ReactNode, useEffect, useMemo, useRef, useState } from 'react'
-import { AxisBottomTime } from './axis-bottom-time'
 import { Sparkline } from './svg'
 import type { ChartEntry } from './types'
 
@@ -21,7 +21,7 @@ const TIME_OPTIONS = [
     label: '1d',
     value: '1d',
     data: new Array(12).fill(null).map((_, idx) => ({
-      timestamp: Date.now() + idx * 3600 * 1000,
+      timestamp: Date.now() + idx * ms('1h'),
       price: Math.random() * 1000 + idx * 10,
     })),
   },
@@ -29,7 +29,7 @@ const TIME_OPTIONS = [
     label: '7d',
     value: '7d',
     data: new Array(24).fill(null).map((_, idx) => ({
-      timestamp: Date.now() + idx * 3600 * 1000,
+      timestamp: Date.now() + idx * ms('1h'),
       price: Math.random() * 1000 + idx * 10,
     })),
   },
@@ -37,7 +37,7 @@ const TIME_OPTIONS = [
     label: '30d',
     value: '30d',
     data: new Array(24 * 2).fill(null).map((_, idx) => ({
-      timestamp: Date.now() + idx * 3600 * 1000,
+      timestamp: Date.now() + idx * ms('1h'),
       price: Math.random() * 1000 + idx * 10,
     })),
   },
@@ -45,7 +45,7 @@ const TIME_OPTIONS = [
     label: 'All',
     value: 'all',
     data: new Array(24 * 5).fill(null).map((_, idx) => ({
-      timestamp: Date.now() + idx * 3600 * 1000,
+      timestamp: Date.now() + idx * ms('1h'),
       price: Math.random() * 1000 + idx * 10,
     })),
   },
@@ -76,11 +76,9 @@ function findClosestElementBinarySearch(data: ChartEntry[], target?: number) {
     }
   }
 
-  // After binary search, left and right are the closest bounds
-  const closest = data[right] ?? { price0: Number.POSITIVE_INFINITY } // Handle bounds
+  const closest = data[right] ?? { price0: Number.POSITIVE_INFINITY }
   const nextClosest = data[left] ?? { price0: Number.POSITIVE_INFINITY }
 
-  // Return the element with the closest `price0`
   const closestElement =
     Math.abs(closest.price0 - target) <= Math.abs(nextClosest.price0 - target)
       ? closest
@@ -90,18 +88,6 @@ function findClosestElementBinarySearch(data: ChartEntry[], target?: number) {
   return closestElement
 }
 
-// function scaleToInteger(a: number, precision = 18) {
-//   const scaleFactor = Math.pow(10, precision)
-//   return Math.round(a * scaleFactor)
-// }
-
-/**
- * A horizontal version of the active liquidity area chart, which uses the
- * x-y coordinate plane to show the data, but with the axes flipped so lower
- * prices are at the bottom of the chart, and liquidity bars grow from the right end of the chart.
- *   - Bars grow (to the left) along the X axis to represent the active liquidity at a given price.
- *   - Bars are placed along the Y axis to represent price (i.e. bottom of chart is y=0 or the min price).
- */
 export function ActiveLiquidityChart({
   id = 'ActiveLiquidityChart2',
   data: { series, current, min, max },
@@ -184,9 +170,6 @@ export function ActiveLiquidityChart({
     }
   }, [brushDomain, onBrushDomainChange, yScale])
 
-  // const southHandleInView = brushDomain && yScale(brushDomain[0]) >= 0 && yScale(brushDomain[0]) <= height;
-  // const northHandleInView = brushDomain && yScale(brushDomain[1]) >= 0 && yScale(brushDomain[1]) <= height;
-
   const sparklineData = useMemo(() => {
     return (
       TIME_OPTIONS.find((option) => option.value === timeSelector)?.data ?? []
@@ -222,41 +205,6 @@ export function ActiveLiquidityChart({
           ))}
         </div>
       </div>
-
-      {/* {showDiffIndicators && (
-				<>
-					{southHandleInView && (
-						<div
-							className="rounded-lg bg-gray-100 dark:bg-slate-900 p-2 absolute left-0"
-							style={{
-								top: yScale(brushDomain[0]) + 100,
-							}}>
-							<p className="text-xs">
-								{formatPercent(
-									new Percent(scaleToInteger(brushDomain[0] - current), scaleToInteger(current))
-										.divide(100)
-										.toSignificant()
-								)}
-							</p>
-						</div>
-					)}
-					{northHandleInView && (
-						<div
-							className="rounded-lg bg-gray-100 dark:bg-slate-900 p-2 absolute left-0"
-							style={{
-								top: yScale(brushDomain[1]) + 50,
-							}}>
-							<p className="text-xs">
-								{formatPercent(
-									new Percent(scaleToInteger(brushDomain[1] - current), scaleToInteger(current))
-										.divide(100)
-										.toSignificant()
-								)}
-							</p>
-						</div>
-					)}
-				</>
-			)} */}
       <svg
         ref={svgRef}
         width="106%"
@@ -289,7 +237,6 @@ export function ActiveLiquidityChart({
           </clipPath>
 
           {brushDomain && !disableBrush && (
-            // mask to highlight selected area
             <mask id={`${id}-chart-area-mask`}>
               <rect
                 fill="white"
@@ -315,7 +262,12 @@ export function ActiveLiquidityChart({
             xScale={sparkLineXScale}
             height={height}
           />
-          <AxisBottomTime xScale={sparkLineXScale} innerHeight={height} />
+          <AxisBottomTime
+            xScale={sparkLineXScale}
+            innerHeight={height}
+            offset={0}
+            tickFormat={() => undefined}
+          />
           <g clipPath={`url(#${id}-chart-clip)`}>
             <HorizontalArea
               series={series}
@@ -336,6 +288,7 @@ export function ActiveLiquidityChart({
                 yScale={yScale}
                 width={contentWidth + 12}
                 containerWidth={width - axisLabelPaneWidth}
+                lineStyle={undefined}
               />
             )}
 

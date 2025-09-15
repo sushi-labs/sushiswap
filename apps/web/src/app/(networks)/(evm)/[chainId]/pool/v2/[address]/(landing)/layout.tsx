@@ -49,7 +49,7 @@ export default async function Layout(props: {
           address={pool.address}
           pool={pool}
           apy={{ rewards: pool?.incentiveApr, fees: pool?.feeApr1d }}
-          showAddLiquidityButton={true}
+          showAddLiquidityButton
         />
       </Container>
       <section className="flex flex-col flex-1 mt-4">

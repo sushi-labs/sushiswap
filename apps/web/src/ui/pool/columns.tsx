@@ -27,7 +27,6 @@ import type {
   SushiPositionWithPool,
   SushiSwapProtocol,
 } from 'sushi'
-import type { SushiSwapV3ChainId } from 'sushi/config'
 import { Token } from 'sushi/currency'
 import {
   formatNumber,

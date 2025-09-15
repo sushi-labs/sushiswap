@@ -32,13 +32,13 @@ interface ConcentratedLiquidityWidget {
   token0: Type | undefined
   token1: Type | undefined
   feeAmount: SushiSwapV3FeeAmount | undefined
-  setToken0?(token: Type): void
-  setToken1?(token: Type): void
+  setToken0: ((token: Type) => void) | undefined
+  setToken1: ((token: Type) => void) | undefined
   tokensLoading: boolean
   tokenId: number | string | undefined
   existingPosition: Position | undefined
   onChange?(val: string, input: 'a' | 'b'): void
-  successLink?: string
+  successLink: string | undefined
 }
 
 export const ConcentratedLiquidityWidget: FC<ConcentratedLiquidityWidget> = ({

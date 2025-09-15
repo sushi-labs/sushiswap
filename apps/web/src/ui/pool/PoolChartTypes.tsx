@@ -20,7 +20,7 @@ function PoolChartTypes<C extends string>({
   setChart,
 }: PoolChartTypesProps<C>) {
   return (
-    <div className="flex gap-1 items-center">
+    <div className="flex items-center gap-1">
       {charts.map((chart) => (
         <Toggle
           variant="trade2"

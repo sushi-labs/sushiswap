@@ -53,10 +53,10 @@ export const AxisRight = ({
 }: {
   yScale: ScaleLinear<number, number>
   height: number
-  offset?: number
-  min?: number
+  offset: number | undefined
+  min: number | undefined
   current?: number
-  max?: number
+  max: number | undefined
 }) => {
   const tickValues = useMemo(() => {
     const minCoordinate = min ? yScale(min) : undefined

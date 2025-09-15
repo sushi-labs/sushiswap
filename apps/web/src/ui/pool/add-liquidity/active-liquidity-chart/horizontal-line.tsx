@@ -12,7 +12,7 @@ export const HorizontalLine = ({
   yScale: ScaleLinear<number, number>
   width: number
   containerWidth: number
-  lineStyle?: 'solid' | 'dashed'
+  lineStyle: 'solid' | 'dashed' | undefined
 }) => {
   const lineStart = containerWidth - width
   const { theme } = useTheme()

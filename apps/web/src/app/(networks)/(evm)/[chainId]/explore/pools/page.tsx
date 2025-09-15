@@ -34,7 +34,7 @@ export default async function PoolsPage(props: {
           <TableFiltersNetworkV2 />
         </div>
       </div>
-      <PoolsTableV2 />
+      <PoolsTableV2 onRowClick={undefined} />
     </Container>
   )
 }

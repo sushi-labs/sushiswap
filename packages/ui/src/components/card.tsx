@@ -120,7 +120,7 @@ const CardLabel = React.forwardRef<
   <span
     ref={ref}
     className={classNames(
-      'text-xs font-normal',
+      'font-normal text-xs',
       'text-gray-400',
       'dark:text-slate-600',
       'black:text-muted-foreground',

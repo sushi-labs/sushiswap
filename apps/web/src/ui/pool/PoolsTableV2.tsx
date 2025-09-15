@@ -41,7 +41,7 @@ const COLUMNS = [
 ]
 
 interface PoolsTableV2Props {
-  onRowClick?(row: MultiChainPools[number]): void
+  onRowClick: ((row: MultiChainPools[number]) => void) | undefined
   forcedTokenSymbols?: string[]
 }
 

@@ -1,5 +1,4 @@
 import type { V3Pool } from '@sushiswap/graph-client/data-api'
-import { Card } from '@sushiswap/ui'
 import React, { type FC, useMemo, useState } from 'react'
 import { type Address, SushiSwapProtocol } from 'sushi'
 import type { SushiSwapV3ChainId } from 'sushi/config'
