@@ -253,7 +253,9 @@ export class RainDataFetcher extends DataFetcher {
         if (provider?.eventsAbi?.length) {
           ;(provider.eventsAbi as any[]).forEach((abi) => {
             const sig = toEventSignature(abi)
-            if (this.eventsAbi.every((v) => toEventSignature(v as any) !== sig)) {
+            if (
+              this.eventsAbi.every((v) => toEventSignature(v as any) !== sig)
+            ) {
               this.eventsAbi.push(abi)
             }
           })
