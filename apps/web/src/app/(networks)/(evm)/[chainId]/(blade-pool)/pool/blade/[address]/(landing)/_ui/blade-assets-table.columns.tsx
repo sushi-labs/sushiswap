@@ -1,12 +1,13 @@
 import { Currency, SkeletonCircle, SkeletonText } from '@sushiswap/ui'
 import { CurrencyFiatIcon } from '@sushiswap/ui/icons/CurrencyFiatIcon'
 import type { ColumnDef } from '@tanstack/react-table'
-import { useCoinGeckoTokenInfo } from 'src/lib/hooks/react-query'
 import type { BladePoolAsset } from 'src/lib/pool/blade'
 import { formatPercent, formatUSD } from 'sushi'
+import type { BladeChainId } from 'sushi/evm'
+import { usePrices } from '~evm/_common/ui/price-provider/price-provider/use-prices'
 
-export type BladePoolsTableMeta = {
-  showStableTypes: boolean
+export type BladePoolAssetsTableMeta = {
+  chainId: BladeChainId
 }
 
 export const NAME_COLUMN: ColumnDef<BladePoolAsset, unknown> = {
@@ -58,25 +59,32 @@ export const NAME_COLUMN: ColumnDef<BladePoolAsset, unknown> = {
   size: 200,
 }
 
-function PriceCell(props: { row: BladePoolAsset }) {
-  const { data: coinGeckoInfo, isLoading: isCoinGeckoInfoLoading } =
-    useCoinGeckoTokenInfo({
-      token: 'stablecoin' in props.row ? undefined : props.row.token.wrap(),
-      enabled: !('stablecoin' in props.row),
-    })
+function PriceCell({
+  row,
+  chainId,
+}: { row: BladePoolAsset; chainId: BladeChainId }) {
+  const { data: prices, isLoading: isPricesLoading } = usePrices({
+    chainId,
+    enabled: !('stablecoin' in row),
+  })
 
-  if (isCoinGeckoInfoLoading) {
+  if (isPricesLoading && !('stablecoin' in row)) {
     return <SkeletonText fontSize="sm" />
   }
 
-  const price = 'stablecoin' in props.row ? 1 : (coinGeckoInfo?.price ?? 0)
+  const price =
+    'stablecoin' in row ? 1 : (prices?.get(row.token.wrap().address) ?? 0)
   return <span className="text-sm">{formatUSD(price)}</span>
 }
 
 export const PRICE_COLUMN: ColumnDef<BladePoolAsset, unknown> = {
   id: 'price',
   header: 'Price',
-  cell: (props) => <PriceCell row={props.row.original} />,
+  cell: (props) => {
+    const meta: BladePoolAssetsTableMeta = props.table.options
+      .meta as BladePoolAssetsTableMeta
+    return <PriceCell row={props.row.original} chainId={meta.chainId} />
+  },
   meta: {
     body: {
       skeleton: <SkeletonText fontSize="lg" />,

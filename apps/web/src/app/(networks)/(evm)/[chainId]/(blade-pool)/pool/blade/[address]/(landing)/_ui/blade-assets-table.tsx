@@ -6,6 +6,7 @@ import type { ColumnDef, TableState } from '@tanstack/react-table'
 import { type FC, useMemo, useState } from 'react'
 import { type BladePoolAsset, getPoolAssets } from 'src/lib/pool/blade'
 import {
+  type BladePoolAssetsTableMeta,
   COMPOSITION_COLUMN,
   NAME_COLUMN,
   PRICE_COLUMN,
@@ -58,7 +59,13 @@ export const BladeAssetsTable: FC<BladeAssetsTableProps> = ({ pool }) => {
           </div>
         </div>
       </CardHeader>
-      <DataTable state={state} loading={!pool} columns={COLUMNS} data={data} />
+      <DataTable
+        state={state}
+        loading={!pool}
+        columns={COLUMNS}
+        data={data}
+        meta={{ chainId: pool.chainId } satisfies BladePoolAssetsTableMeta}
+      />
     </Card>
   )
 }
