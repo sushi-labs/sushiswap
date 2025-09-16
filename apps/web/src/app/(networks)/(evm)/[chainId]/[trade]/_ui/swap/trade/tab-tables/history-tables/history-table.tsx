@@ -32,7 +32,7 @@ export const HistoryTable = () => {
   const [currentTab, setCurrentTab] = useState(TABS[0].value)
   const { createQuery } = useCreateQuery()
   return (
-    <Card className="overflow-hidden border-none !shadow-none md:p-3 xl:bg-red-white dark:md:bg-slate-800 rounded-t-none xl:rounded-lg">
+    <Card className="overflow-hidden border-none !shadow-none md:px-3 md:pt-3 xl:bg-red-white dark:md:bg-slate-800 rounded-t-none xl:rounded-lg">
       <Tabs
         defaultValue={TABS[0].value}
         onValueChange={setCurrentTab}
