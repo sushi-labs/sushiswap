@@ -10,7 +10,6 @@ import type {
 import { useSkaleEuropaFaucet } from 'src/lib/hooks'
 import { useHeaderNetworkSelector } from 'src/lib/wagmi/components/header-network-selector'
 
-import { Search } from 'src/app/(landing)/components'
 import type { ChainId } from 'sushi'
 import { Chart } from './_ui/swap/trade/chart/chart'
 import { ChartHeader } from './_ui/swap/trade/chart/chart-header'
@@ -23,6 +22,7 @@ import {
 import { useDerivedStateSimpleTrade } from './_ui/swap/trade/derivedstate-simple-trade-provider'
 import { FavoriteRecentTabView } from './_ui/swap/trade/favorite-recent/favorite-recent-tab-view'
 import { NetworkProvider } from './_ui/swap/trade/favorite-recent/network-provider'
+import { Search } from './_ui/swap/trade/search/search'
 import { TradeTableTabs } from './_ui/swap/trade/tab-tables/trade-tabs/trade-table-tabs'
 import { TradeViewSwitch } from './_ui/swap/trade/trade-view-switch'
 import { TradeWidget } from './_ui/swap/trade/trade-widget'
