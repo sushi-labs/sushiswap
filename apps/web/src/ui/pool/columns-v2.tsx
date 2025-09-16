@@ -44,7 +44,7 @@ export const CHAIN_COLUMN: ColumnDef<MultiChainPool, unknown> = {
   meta: {
     body: {
       skeleton: (
-        <div className="w-[68px] h-[117px">
+        <div className="w-[68px] h-[84px] flex items-center">
           <SkeletonBox className="w-3 h-3 md:w-5 md:h-5 mx-2 !rounded-[4px]" />
         </div>
       ),
