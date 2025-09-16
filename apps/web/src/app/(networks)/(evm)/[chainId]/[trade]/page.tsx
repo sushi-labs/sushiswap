@@ -2,7 +2,6 @@
 
 import { useBreakpoint, useIsMounted } from '@sushiswap/hooks'
 import { Container, SkeletonBox, classNames } from '@sushiswap/ui'
-import { usePathname } from 'next/navigation'
 import type {
   ChartingLibraryWidgetOptions,
   ResolutionString,
@@ -10,7 +9,7 @@ import type {
 import { useSkaleEuropaFaucet } from 'src/lib/hooks'
 import { useHeaderNetworkSelector } from 'src/lib/wagmi/components/header-network-selector'
 
-import type { ChainId } from 'sushi'
+import { ChainId } from 'sushi'
 import { Chart } from './_ui/swap/trade/chart/chart'
 import { ChartHeader } from './_ui/swap/trade/chart/chart-header'
 import { ChartProvider } from './_ui/swap/trade/chart/chart-provider'
@@ -46,14 +45,13 @@ const defaultWidgetProps: Partial<ChartingLibraryWidgetOptions> = {
 
 export default function TradePage() {
   const {
-    state: { tradeMode, tradeView },
+    state: { chainId, tradeMode, tradeView },
   } = useDerivedStateSimpleTrade()
   useHeaderNetworkSelector(chainIdsByTradeMode[tradeMode])
   useSkaleEuropaFaucet()
   const { isMd: isMdScreen } = useBreakpoint('md')
   const hasMounted = useIsMounted()
-  const pathname = usePathname()
-  const isKatana = pathname.includes('katana')
+  const isKatana = chainId === ChainId.KATANA
 
   return (
     <>
