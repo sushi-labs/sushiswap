@@ -43,6 +43,8 @@ export function useDensityChartData({
         price0: Number.parseFloat(t.price0),
         price1: Number.parseFloat(t.price1),
         tick: t.tick,
+        amount0Locked: undefined,
+        amount1Locked: undefined,
       }
 
       if (chartEntry.activeLiquidity > 0) {
