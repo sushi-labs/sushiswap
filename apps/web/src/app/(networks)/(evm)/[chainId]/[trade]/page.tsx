@@ -26,8 +26,8 @@ import { TradeTableTabs } from './_ui/swap/trade/tab-tables/trade-tabs/trade-tab
 import { TradeViewSwitch } from './_ui/swap/trade/trade-view-switch'
 import { TradeWidget } from './_ui/swap/trade/trade-widget'
 
-const chainIdsByTradeMode: Record<TradeMode, ChainId[] | null> = {
-  ...(CHAIN_IDS_BY_TRADE_MODE as any),
+const chainIdsByTradeMode: Record<TradeMode, readonly ChainId[] | null> = {
+  ...CHAIN_IDS_BY_TRADE_MODE,
   swap: null,
 }
 
