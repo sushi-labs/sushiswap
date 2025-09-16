@@ -96,15 +96,10 @@ export const AmountIn = () => {
       setRoute([token0?.address, token1?.address])
     } else {
       setRoute([])
+      setAmountOut(undefined)
+      setAmountOutString('')
     }
-  }, [data, token0, token1, setRoute])
-
-  // useEffect(() => {
-  // 	if (amountIn?.eq(0n) || !amountIn) {
-  // 		setAmountOut(undefined);
-  // 		setAmountOutString("");
-  // 	}
-  // }, [amountIn, setAmountOut]);
+  }, [data, token0, token1, setRoute, setAmountOut, setAmountOutString])
 
   return (
     <TokenInput
