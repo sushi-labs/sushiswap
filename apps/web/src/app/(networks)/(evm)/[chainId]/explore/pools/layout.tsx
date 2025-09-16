@@ -1,6 +1,11 @@
 import { isPoolChainId } from '@sushiswap/graph-client/data-api'
+import {
+  type ExplorePoolStatistics,
+  getExplorePoolStatistics,
+} from '@sushiswap/graph-client/data-api-181'
 import { Container } from '@sushiswap/ui'
 import type { Metadata } from 'next'
+import { unstable_cache } from 'next/cache'
 import { notFound } from 'next/navigation'
 import type React from 'react'
 import { POOL_SUPPORTED_NETWORKS } from 'src/config'
@@ -30,6 +35,36 @@ export default async function ExploreLayout(props: {
     return notFound()
   }
 
+  const explorePoolStatistics = await unstable_cache(
+    async (): Promise<ExplorePoolStatistics> =>
+      isPoolChainId(chainId)
+        ? getExplorePoolStatistics()
+        : {
+            v2: {
+              liquidityUSD: 0,
+              liquidityUSDChange1w: 0,
+              volumeUSD1w: 0,
+              volumeUSDChange1w: 0,
+            },
+            v3: {
+              liquidityUSD: 0,
+              liquidityUSDChange1w: 0,
+              volumeUSD1w: 0,
+              volumeUSDChange1w: 0,
+            },
+            all: {
+              liquidityUSD: 0,
+              liquidityUSDChange1w: 0,
+              volumeUSD1w: 0,
+              volumeUSDChange1w: 0,
+            },
+          },
+    ['explorePoolStatistics', `${chainId}`],
+    {
+      revalidate: 60 * 15,
+    },
+  )()
+
   return (
     <>
       <Header chainId={chainId} supportedNetworks={POOL_SUPPORTED_NETWORKS} />
@@ -37,7 +72,7 @@ export default async function ExploreLayout(props: {
         <Container className="px-4 pt-4 md:pb-4 pb-0 max-w-[1696px]">
           <ExploreHeader />
           <div className="flex flex-col gap-3 justify-between lg:flex-row">
-            <Statistics />
+            <Statistics stats={explorePoolStatistics} />
             <Trending />
           </div>
         </Container>
