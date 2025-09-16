@@ -36,13 +36,8 @@ import { NativeAddress } from 'src/lib/constants'
 import { useNetworkOptions } from 'src/lib/hooks/useNetworkOptions'
 import { formatUSD, getChainById } from 'sushi'
 import { type Amount, ZERO } from 'sushi'
-import {
-  type EvmChainId,
-  type EvmCurrency,
-  EvmNative,
-  EvmToken,
-} from 'sushi/evm'
-import { formatUnits, zeroAddress } from 'viem'
+import { type EvmChainId, type EvmCurrency, EvmToken } from 'sushi/evm'
+import { formatUnits } from 'viem'
 import { NetworkButton } from '~evm/[chainId]/[trade]/_ui/swap/chain-options-selector'
 import { FavoriteButton } from '~evm/[chainId]/[trade]/_ui/swap/trade/favorite-button'
 
@@ -291,17 +286,28 @@ export function TokenSelectorRowLoadingV2() {
     <div className="block flex-1 py-0.5 h-[64px]">
       <div className="flex items-center w-full h-full px-3 rounded-lg">
         <div className="flex items-center justify-between flex-grow gap-2 rounded">
-          <div className="flex flex-row items-center flex-grow gap-4">
+          <div className="flex flex-row items-center flex-grow gap-4 w-[200px]">
             <SkeletonCircle radius={40} />
-            <div className="flex flex-col items-start">
-              <SkeletonText className="w-full w-[100px]" />
-              <SkeletonText fontSize="sm" className="w-full w-[60px]" />
+            <div className="flex flex-col items-start w-full">
+              <SkeletonText className="max-w-[60px]" align="left" />
+              <SkeletonText
+                fontSize="sm"
+                align="left"
+                className="max-w-[90px]"
+              />
             </div>
           </div>
 
-          <div className="flex flex-col w-full">
-            <SkeletonText className="w-[80px]" />
-            <SkeletonText fontSize="sm" align="right" className="w-[40px]" />
+          <div className="flex items-center gap-4 w-[200px]">
+            <div className="flex flex-col w-full">
+              <SkeletonText className="max-w-[80px]" align="right" />
+              <SkeletonText
+                fontSize="sm"
+                align="right"
+                className="max-w-[40px]"
+              />
+            </div>
+            <SkeletonCircle radius={14} />
           </div>
         </div>
       </div>
