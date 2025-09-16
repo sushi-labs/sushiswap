@@ -63,7 +63,7 @@ export const TokenInput = ({
     token: currency,
   })
 
-  const tokenBalance = data?.balanceMap[currency?.address ?? ''] ?? 0
+  const tokenBalance = data?.balanceMap[currency?.address ?? ''] ?? '0'
 
   const usdValue = priceUsd ?? 0
 
@@ -76,7 +76,7 @@ export const TokenInput = ({
   const fetching = false
 
   const insufficientBalance =
-    type === 'input' && Number(amount) > (tokenBalance ?? 0)
+    type === 'input' && Number(amount) > Number.parseFloat(tokenBalance ?? '0')
   const _error = insufficientBalance ? 'Exceeds Balance' : undefined
 
   const _onChange = useCallback(
@@ -214,16 +214,16 @@ export const TokenInput = ({
           value={usdAmount}
         />
         <TokenBalanceDisplay
-          amount={tokenBalance ?? 0}
+          amount={Number.parseFloat(tokenBalance ?? '0')}
           isLoading={isLoadingTokenBalance}
           type={type}
           maxAmount={() => {
             if (type === 'output') return
-            if (tokenBalance === 0) {
+            if (tokenBalance === '0') {
               setAmount('')
               return
             }
-            setAmount(String(tokenBalance))
+            setAmount(tokenBalance)
           }}
         />
       </div>

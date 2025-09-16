@@ -12,7 +12,7 @@ interface Params {
   query: string
   tokenMap: Record<string, KvmToken> | undefined
   customTokenMap: Record<string, KvmToken> | undefined
-  balanceMap: Record<string, number> | undefined
+  balanceMap: Record<string, string> | undefined
   chainId?: number
 }
 

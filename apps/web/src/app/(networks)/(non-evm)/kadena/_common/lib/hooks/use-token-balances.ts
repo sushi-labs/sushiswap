@@ -7,7 +7,7 @@ import { buildGetTokenBalanceTx } from '../pact/builders'
 
 type NativeTokenBalanceResponse = {
   chainId: ChainId
-  balanceMap: Record<string, number>
+  balanceMap: Record<string, string>
 }
 
 export const useTokenBalances = ({
@@ -38,7 +38,7 @@ export const useTokenBalances = ({
         throw new Error(res.result.error?.message || 'Failed to fetch balances')
       }
 
-      const cleanedBalanceMap: Record<string, number> = {}
+      const cleanedBalanceMap: Record<string, string> = {}
       for (const [key, value] of Object.entries(res.result.data)) {
         const name = key //=== "undefined" ? "coin" : key; // undefined key is native kda
         const tokenAddress = tokenAddresses.find((address) => {
@@ -52,9 +52,9 @@ export const useTokenBalances = ({
         }
 
         if (tokenAddress) {
-          cleanedBalanceMap[tokenAddress] = amount
+          cleanedBalanceMap[tokenAddress] = String(amount)
         } else {
-          cleanedBalanceMap['coin'] = amount // native kda will be undefined
+          cleanedBalanceMap['coin'] = String(amount ?? 0) // native kda will be undefined
         }
       }
 
