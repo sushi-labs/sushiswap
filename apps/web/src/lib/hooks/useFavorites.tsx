@@ -9,7 +9,7 @@ import { useMemo } from 'react'
 import type { ChainId } from 'sushi'
 import { type EvmChainId, EvmNative } from 'sushi/evm'
 import type { Address } from 'viem'
-import { formatUnits } from 'viem/utils'
+import { formatUnits, isAddress } from 'viem/utils'
 import { useAccount } from 'wagmi'
 import { useNetworkContext } from '~evm/[chainId]/[trade]/_ui/swap/trade/favorite-recent/network-provider'
 import { NativeAddress } from '../constants'
@@ -32,11 +32,13 @@ export const useFavorites = () => {
           const [chainId, _contractAddress, symbol] = currencyId.split(':')
           const contractAddress =
             _contractAddress === 'NATIVE' ? NativeAddress : _contractAddress
+          if (!isAddress(contractAddress)) {
+            throw new Error(`Invalid address: ${contractAddress}`)
+          }
 
           return {
-            // chainId: Number(chainId) as TokenListV2ChainId,
-            chainId: Number(chainId) as unknown,
-            address: contractAddress as Address,
+            chainId: Number(chainId),
+            address: contractAddress,
             isSupported:
               isTokenListV2ChainId(Number(chainId) as ChainId) &&
               contractAddress !== NativeAddress,
