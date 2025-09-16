@@ -102,7 +102,7 @@ export function TokenSelectorStatesV2({
   if (search) {
     return (
       <>
-        <Title />
+        <Title className="!mt-0" />
         <TokenSelectorSearchV2
           chainId={selectedNetwork}
           onSelect={onSelect}
@@ -130,7 +130,7 @@ export function TokenSelectorStatesV2({
             showPinnedTokens={!hidePinnedTokens}
           />
         ) : null}
-        <Title />
+        <Title className="!mt-0" />
 
         <TokenSelectorTrendingTokensV2
           chainId={selectedNetwork}
