@@ -52,7 +52,7 @@ export function TokenSelectorMyTokensV2({
   if (isLoading)
     return (
       <Shell>
-        <TokenSelectorCurrencyListLoadingV2 count={10} />
+        <TokenSelectorCurrencyListLoadingV2 count={20} />
       </Shell>
     )
 

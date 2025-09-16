@@ -283,11 +283,12 @@ export const TokenSelectorRowV2: FC<TokenSelectorRowV2> = memo(
 
 export function TokenSelectorRowLoadingV2() {
   return (
-    <div className="block flex-1 py-0.5 h-[64px]">
+    <div className="block flex-1 py-2 h-[64px]">
       <div className="flex items-center w-full h-full px-3 rounded-lg">
         <div className="flex items-center justify-between flex-grow gap-2 rounded">
           <div className="flex flex-row items-center flex-grow gap-4 w-[200px]">
-            <SkeletonCircle radius={40} />
+            <SkeletonCircle radius={14} />
+            <SkeletonCircle radius={32} />
             <div className="flex flex-col items-start w-full">
               <SkeletonText className="max-w-[60px]" align="left" />
               <SkeletonText
