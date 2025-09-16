@@ -17,9 +17,11 @@ export const TokenBalanceDisplay = ({
 }: TokenBalanceDisplayProps) => {
   const [big, portion] = useMemo(
     () =>
-      (amount
-        ? Number.parseFloat(amount.toFixed(4)).toString()
-        : '0.00'
+      (amount && amount < 0.0001
+        ? '<0.0001'
+        : amount
+          ? Number.parseFloat(amount.toFixed(4)).toString()
+          : '0.00'
       )?.split('.'),
     [amount],
   )

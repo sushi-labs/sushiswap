@@ -1,5 +1,6 @@
 import type { ChainId } from '@kadena/client'
 import { useQuery } from '@tanstack/react-query'
+import { withoutScientificNotation } from 'sushi'
 import type { KvmTokenAddress } from 'sushi/kvm'
 import { kadenaClient } from '~kadena/_common/constants/client'
 import { KADENA_CHAIN_ID } from '~kadena/_common/constants/network'
@@ -52,9 +53,11 @@ export const useTokenBalances = ({
         }
 
         if (tokenAddress) {
-          cleanedBalanceMap[tokenAddress] = String(amount)
+          cleanedBalanceMap[tokenAddress] =
+            withoutScientificNotation(String(amount ?? 0)) ?? '0'
         } else {
-          cleanedBalanceMap['coin'] = String(amount ?? 0) // native kda will be undefined
+          cleanedBalanceMap['coin'] =
+            withoutScientificNotation(String(amount ?? 0)) ?? '0' // native kda will be undefined
         }
       }
 

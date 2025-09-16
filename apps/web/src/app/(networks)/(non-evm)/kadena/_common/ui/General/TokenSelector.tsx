@@ -278,6 +278,7 @@ const TokenButton = ({
 
   const balance = useMemo(() => {
     const amount = (token as TokenWithBalance)?.balance
+    if (Number(amount) < 0.001) return '<0.001'
     return new Amount(
       token,
       amount ? parseUnits(amount.toString(), token.decimals) : 0,
