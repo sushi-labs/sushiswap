@@ -44,7 +44,9 @@ export const CHAIN_COLUMN: ColumnDef<MultiChainPool, unknown> = {
   meta: {
     body: {
       skeleton: (
-        <SkeletonBox className="w-3 h-3 md:w-5 md:h-5 mx-2 !rounded-[4px]" />
+        <div className="w-[68px] h-[117px">
+          <SkeletonBox className="w-3 h-3 md:w-5 md:h-5 mx-2 !rounded-[4px]" />
+        </div>
       ),
     },
     header: {
@@ -187,14 +189,14 @@ export const POOL_COLUMN: ColumnDef<MultiChainPool, unknown> = {
   meta: {
     body: {
       skeleton: (
-        <div className="flex flex-col gap-1 py-2 w-full">
+        <div className="flex flex-col gap-1 py-2 w-[135px]">
           <div className="flex gap-1 items-center">
             <SkeletonCircle radius={24} />
-            <SkeletonText fontSize="default" className="max-w-[50px]" />
+            <SkeletonText fontSize="default" className="max-w-[80px]" />
           </div>
           <div className="flex gap-1 items-center">
             <SkeletonCircle radius={24} />
-            <SkeletonText fontSize="default" className="max-w-[50px]" />
+            <SkeletonText fontSize="default" className="max-w-[80px]" />
           </div>
         </div>
       ),
@@ -338,8 +340,14 @@ export const POOL_TYPE_COLUMN: ColumnDef<MultiChainPool, unknown> = {
     body: {
       skeleton: (
         <div className="flex gap-1">
-          <SkeletonText fontSize="default" className="w-[25px] !rounded-full" />
-          <SkeletonText fontSize="default" className="w-[25px] !rounded-full" />
+          <SkeletonText
+            fontSize="default"
+            className="!w-[35px] !rounded-full !h-[24px]"
+          />
+          <SkeletonText
+            fontSize="default"
+            className="!w-[48px] !rounded-full !h-[24px]"
+          />
         </div>
       ),
     },
