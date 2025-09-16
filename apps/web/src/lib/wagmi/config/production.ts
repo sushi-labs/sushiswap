@@ -11,10 +11,10 @@ import {
   walletConnectWallet,
 } from '@rainbow-me/rainbowkit/wallets'
 import { gtagEvent } from '@sushiswap/ui'
-import { porto } from 'porto/wagmi'
 import { EvmChainId } from 'sushi/evm'
 import { http, cookieStorage, createConfig, createStorage } from 'wagmi'
 import type { Writeable } from 'zod'
+import { portoWallet } from './porto'
 import { publicWagmiConfig } from './public'
 import { publicTransports } from './viem'
 
@@ -36,30 +36,22 @@ const pollingInterval = new Proxy(
   },
 )
 
-const connectors = [
-  ...connectorsForWallets(
-    [
-      {
-        groupName: 'Recommended',
-        wallets: [metaMaskWallet, coinbaseWallet, trustWallet],
-      },
-      {
-        groupName: 'Others',
-        wallets: [
-          injectedWallet,
-          walletConnectWallet,
-          argentWallet,
-          safeWallet,
-        ],
-      },
-    ],
+const connectors = connectorsForWallets(
+  [
     {
-      appName: 'Sushi',
-      projectId: '3f44629277b155ef0caebf3dc705c4ba',
+      groupName: 'Recommended',
+      wallets: [portoWallet, metaMaskWallet, coinbaseWallet, trustWallet],
     },
-  ),
-  porto(),
-]
+    {
+      groupName: 'Others',
+      wallets: [injectedWallet, walletConnectWallet, argentWallet, safeWallet],
+    },
+  ],
+  {
+    appName: 'Sushi',
+    projectId: '3f44629277b155ef0caebf3dc705c4ba',
+  },
+)
 
 const drpcJwt = process.env['NEXT_PUBLIC_DRPC_JWT']
 
