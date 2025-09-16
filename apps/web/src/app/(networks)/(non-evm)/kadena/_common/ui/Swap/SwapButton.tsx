@@ -128,7 +128,7 @@ export const SwapButton = ({ closeModal }: { closeModal: () => void }) => {
         href: getKvmChainByKey('kadena').getTransactionUrl(txId),
       })
 
-      await onSuccess()
+      onSuccess()
     } catch (err) {
       createFailedToast({
         summary:
@@ -147,7 +147,7 @@ export const SwapButton = ({ closeModal }: { closeModal: () => void }) => {
     }
   }
 
-  const onSuccess = async () => {
+  const onSuccess = () => {
     setAmountIn(undefined)
     setAmountOut(undefined)
     setAmountInString('')

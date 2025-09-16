@@ -7,7 +7,8 @@ import { useSwapDispatch, useSwapState } from '~kadena/swap/swap-provider'
 import { TokenInput } from '../Input/TokenInput'
 
 export const AmountIn = () => {
-  const { token0, token1, isTxnPending, amountInString } = useSwapState()
+  const { token0, amountIn, token1, isTxnPending, amountInString } =
+    useSwapState()
   const {
     setToken0,
     setAmountIn,
@@ -100,6 +101,13 @@ export const AmountIn = () => {
       setAmountOutString('')
     }
   }, [data, token0, token1, setRoute, setAmountOut, setAmountOutString])
+
+  useEffect(() => {
+    if (amountIn?.eq(0n) || !amountIn) {
+      setAmountOut(undefined)
+      setAmountOutString('')
+    }
+  }, [amountIn, setAmountOut, setAmountOutString])
 
   return (
     <TokenInput
