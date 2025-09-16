@@ -43,8 +43,9 @@ export const useCreateQuery = () => {
       newPathname?: string,
       hardPush?: boolean,
     ) => {
+      const queryString = createQueryString(values)
       push(
-        `${newPathname ? newPathname : pathname}?${createQueryString(values)}`,
+        `${newPathname ? newPathname : pathname}${queryString ? `?${queryString}` : ''}`,
         hardPush,
       )
     },
