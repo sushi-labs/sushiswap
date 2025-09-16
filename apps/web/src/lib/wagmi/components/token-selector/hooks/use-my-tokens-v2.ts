@@ -42,7 +42,7 @@ export function useMyTokensV2({
   const query = useQuery({
     queryKey: [
       'data-api-token-list-balances-v2',
-      { chainIds, customTokens, includeNative },
+      { chainIds, customTokens, includeNative, account },
     ],
     queryFn: async () => {
       if (!account) throw new Error('Account is required')
