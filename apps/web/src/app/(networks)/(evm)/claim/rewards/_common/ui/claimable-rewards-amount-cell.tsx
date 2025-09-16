@@ -41,12 +41,10 @@ export const ClaimableRewardsAmountCell: FC<Row<ClaimableRewards>> = ({
                   </div>
 
                   <span className="font-semibold text-muted-foreground">
-                    {original.rewardAmountsUSD[
-                      amount.currency.wrap().address.toLowerCase()
-                    ]
+                    {original.rewardAmountsUSD[amount.currency.wrap().address]
                       ? formatUSD(
                           original.rewardAmountsUSD[
-                            amount.currency.wrap().address.toLowerCase()
+                            amount.currency.wrap().address
                           ],
                         )
                       : '-'}
