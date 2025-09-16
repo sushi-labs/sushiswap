@@ -12,7 +12,6 @@ import {
 import { Switch } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import { useTheme } from 'next-themes'
-import { useSearchParams } from 'next/navigation'
 import { SUPPORTED_CHAIN_IDS, TWAP_SUPPORTED_CHAIN_IDS } from 'src/config'
 import { getNetworkName } from 'src/lib/network'
 import { useTradeTablesContext } from '../trade-tables-context'
@@ -24,11 +23,10 @@ export const TradeTableFilters = () => {
     onChainChange,
     setShowCurrentPairOnly,
     showCurrentPairOnly,
+    historyTableTab,
   } = useTradeTablesContext()
 
-  const searchParams = useSearchParams()
-  const isMarketHistoryTabSelected =
-    searchParams.get('history-table-tab') === 'market'
+  const isMarketHistoryTabSelected = historyTableTab === 'market'
   const networkOptions = isMarketHistoryTabSelected
     ? SUPPORTED_CHAIN_IDS
     : TWAP_SUPPORTED_CHAIN_IDS

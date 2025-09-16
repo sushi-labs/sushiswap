@@ -7,58 +7,38 @@ import {
   TabsTrigger,
   classNames,
 } from '@sushiswap/ui'
-import { useState } from 'react'
-import { useCreateQuery } from 'src/lib/hooks/useCreateQuery'
+import {
+  HISTORY_TABLE_TABS,
+  useTradeTablesContext,
+} from '../trade-tables-context'
 import { DCAOrdersHistoryTable } from './dca-history-table/dca-history-table'
 import { LimitOrdersHistoryTable } from './limit-history-table/limit-history-table'
 import { MarketTable } from './market-history-table/market-history-table'
 
-export const TABS = [
-  {
-    label: 'Market',
-    value: 'market',
-  },
-  {
-    label: 'Limit',
-    value: 'limit',
-  },
-  {
-    label: 'DCA',
-    value: 'dca',
-  },
-]
-
 export const HistoryTable = () => {
-  const [currentTab, setCurrentTab] = useState(TABS[0].value)
-  const { createQuery } = useCreateQuery()
+  const { historyTableTab, setHistoryTableTab } = useTradeTablesContext()
   return (
     <Card className="overflow-hidden border-none !shadow-none md:px-3 md:pt-3 xl:bg-red-white dark:md:bg-slate-800 rounded-t-none xl:rounded-lg">
       <Tabs
-        defaultValue={TABS[0].value}
-        onValueChange={setCurrentTab}
+        value={historyTableTab}
+        onValueChange={(value: string) => {
+          setHistoryTableTab(value as typeof historyTableTab)
+        }}
         className="border-none bg-[#F9FAFB] dark:bg-slate-900 dark:md:!bg-slate-800 md:bg-white"
       >
         <TabsList className="w-full gap-2 flex !bg-[#F9FAFB] md:!bg-white dark:!bg-slate-900 dark:md:!bg-slate-800 rounded-none md:rounded-lg !justify-start border-none">
-          {TABS.map((tab) => (
+          {HISTORY_TABLE_TABS.map((tab) => (
             <TabsTrigger
               key={tab.value}
               value={tab.value}
               className="!bg-transparent border-none !px-0 !shadow-none focus-visible:!ring-0 focus-visible:!ring-offset-0 !ring-transparent"
-              onClick={() => {
-                createQuery([
-                  {
-                    name: 'history-table-tab',
-                    value: tab.value,
-                  },
-                ])
-              }}
             >
               <Button
                 size="sm"
                 asChild
-                variant={tab.value === currentTab ? 'secondary' : 'ghost'}
+                variant={tab.value === historyTableTab ? 'secondary' : 'ghost'}
                 className={classNames(
-                  tab.value === currentTab
+                  tab.value === historyTableTab
                     ? '!bg-slate-200 dark:!bg-slate-750'
                     : '',
                 )}
@@ -71,19 +51,19 @@ export const HistoryTable = () => {
         <div className="py-2 bg-[#F9FAFB] md:bg-white dark:bg-slate-900 dark:md:!bg-slate-800" />
 
         <TabsContent
-          value={TABS[0].value}
+          value={HISTORY_TABLE_TABS[0].value}
           className="border border-accent md:border-none rounded-xl !mt-0"
         >
           <MarketTable />
         </TabsContent>
         <TabsContent
-          value={TABS[1].value}
+          value={HISTORY_TABLE_TABS[1].value}
           className="border border-accent md:border-none rounded-xl !mt-0"
         >
           <LimitOrdersHistoryTable />
         </TabsContent>
         <TabsContent
-          value={TABS[2].value}
+          value={HISTORY_TABLE_TABS[2].value}
           className="border border-accent md:border-none rounded-xl !mt-0"
         >
           <DCAOrdersHistoryTable />

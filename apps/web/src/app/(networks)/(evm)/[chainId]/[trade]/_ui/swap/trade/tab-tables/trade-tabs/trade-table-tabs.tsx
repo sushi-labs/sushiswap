@@ -7,7 +7,6 @@ import {
   getTwapDcaOrders,
   getTwapLimitOrders,
 } from 'src/lib/hooks/react-query/twap'
-import { useCreateQuery } from 'src/lib/hooks/useCreateQuery'
 import { DCAOrdersTable } from '../dca-orders-table/dca-orders-table'
 import { HistoryTable } from '../history-tables/history-table'
 import { LimitOrdersTable } from '../limit-orders-table/limit-orders-table'
@@ -19,7 +18,8 @@ import {
 import { TradeTableFilters } from './trade-table-filters'
 
 const useTabs = () => {
-  const { orders, setCurrentTab, currentTab } = useTradeTablesContext()
+  const { orders, setCurrentTab, currentTab, setHistoryTableTab } =
+    useTradeTablesContext()
 
   const tabs = useMemo(() => {
     const openLimitOrdersCount = getTwapLimitOrders(orders).filter(
@@ -48,7 +48,7 @@ const useTabs = () => {
     ]
   }, [orders])
 
-  return { tabs, setCurrentTab, currentTab }
+  return { tabs, setCurrentTab, currentTab, setHistoryTableTab }
 }
 
 export const TradeTableTabs = () => {
@@ -60,13 +60,16 @@ export const TradeTableTabs = () => {
 }
 
 const Content = () => {
-  const { tabs, setCurrentTab, currentTab } = useTabs()
-  const { createQuery } = useCreateQuery()
+  const { tabs, setCurrentTab, currentTab, setHistoryTableTab } = useTabs()
   return (
     <Tabs
       id="trade-table"
       defaultValue={tabs[0].value}
-      onValueChange={(value) => setCurrentTab(value as TABS)}
+      onValueChange={(value) => {
+        setCurrentTab(value as TABS)
+
+        setHistoryTableTab(value === TABS.HISTORY ? 'market' : undefined)
+      }}
       className="-mx-5 md:mx-0"
     >
       <div className="flex flex-col xl:pb-2 items-start justify-between xl:items-center xl:flex-row overflow-x-auto hide-scrollbar">
@@ -76,18 +79,6 @@ const Content = () => {
               key={tab.value}
               value={tab.value}
               className="!bg-transparent !border-none !shadow-none !px-0  focus-visible:!ring-0 focus-visible:!ring-offset-0 !ring-transparent"
-              onClick={() => {
-                createQuery([
-                  {
-                    name: 'table-tab',
-                    value: tab.value,
-                  },
-                  {
-                    name: 'history-table-tab',
-                    value: tab.value === 'history' ? 'market' : null,
-                  },
-                ])
-              }}
             >
               <Button
                 key={tab.value}

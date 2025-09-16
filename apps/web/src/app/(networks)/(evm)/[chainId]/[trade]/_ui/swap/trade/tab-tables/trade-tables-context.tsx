@@ -1,5 +1,4 @@
 import { eqIgnoreCase } from '@orbs-network/twap-sdk'
-import { useSearchParams } from 'next/navigation'
 import {
   createContext,
   useCallback,
@@ -48,6 +47,8 @@ type TradeTablesContextType = {
   orders: TwapOrder[]
   ordersLoading: boolean
   showCurrentPairOnly: boolean
+  historyTableTab: HistoryTableTabType | undefined
+  setHistoryTableTab: (tab: HistoryTableTabType | undefined) => void
   onChainChange: (chainId: EvmChainId) => void
   setCurrentTab: (currentTab: TABS) => void
   setShowCurrentPairOnly: (show: boolean) => void
@@ -59,6 +60,23 @@ export enum TABS {
   DCA_ORDERS = 'dca-orders',
   HISTORY = 'history',
 }
+
+export const HISTORY_TABLE_TABS = [
+  {
+    label: 'Market',
+    value: 'market' as const,
+  },
+  {
+    label: 'Limit',
+    value: 'limit' as const,
+  },
+  {
+    label: 'DCA',
+    value: 'dca' as const,
+  },
+]
+
+type HistoryTableTabType = (typeof HISTORY_TABLE_TABS)[number]['value']
 
 const Context = createContext<TradeTablesContextType>(
   {} as TradeTablesContextType,
@@ -78,9 +96,10 @@ const Content = ({ children }: { children: React.ReactNode }) => {
   const [showCurrentPairOnly, setShowCurrentPair] = useState(false)
   const [chainIds, setChainIds] = useState<EvmChainId[]>([])
   const [currentTab, setCurrentTab] = useState(TABS.LIMIT_ORDERS)
-  const searchParams = useSearchParams()
-  const isMarketHistoryTabSelected =
-    searchParams.get('history-table-tab') === 'market'
+  const [historyTableTab, setHistoryTableTab] = useState<
+    HistoryTableTabType | undefined
+  >(undefined)
+  const isMarketHistoryTabSelected = historyTableTab === 'market'
 
   const {
     state: { token0, token1 },
@@ -146,6 +165,8 @@ const Content = ({ children }: { children: React.ReactNode }) => {
         showCurrentPairOnly,
         setShowCurrentPairOnly,
         isChainLoadingCallback,
+        historyTableTab,
+        setHistoryTableTab,
       }}
     >
       {children}
