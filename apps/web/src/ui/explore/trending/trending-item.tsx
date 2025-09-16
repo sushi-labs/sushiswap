@@ -1,6 +1,11 @@
 import type { TrendingPool } from '@sushiswap/graph-client/data-api-181'
 import { useIsMounted } from '@sushiswap/hooks'
-import { Currency } from '@sushiswap/ui'
+import {
+  Currency,
+  SkeletonBox,
+  SkeletonCircle,
+  SkeletonText,
+} from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import Link from 'next/link'
 import { NativeAddress } from 'src/lib/constants'
@@ -122,6 +127,47 @@ export const TrendingItem = ({
   )
 }
 
+export const TrendingItemSkeleton = () => {
+  return (
+    <div className="flex justify-between items-center p-3 w-full rounded-lg bg-background animate-pulse h-[68px]">
+      <div className="flex gap-5 items-center whitespace-nowrap basis-1/2">
+        <div className="rounded-lg bg-muted w-8 h-8 flex items-center justify-center text-xs font-medium aspect-1" />
+        <div className="flex gap-2 items-center">
+          <div className="relative">
+            <div className="flex">
+              <SkeletonCircle radius={32} />
+              <SkeletonCircle radius={32} className="-ml-2" />
+            </div>
+            <SkeletonBox className="w-3 h-3 !rounded-[4px] absolute -bottom-[1px] -right-1.5" />
+          </div>
+          <div className="flex flex-col font-medium">
+            <SkeletonText fontSize="sm" className="!w-[80px]" />
+            <div className="flex gap-2 items-center mt-1">
+              <SkeletonBox className="!w-[57px] !h-6 !rounded-full" />
+              <SkeletonText fontSize="sm" className="!w-[28px]" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="flex justify-between pr-3 mx-auto basis-1/2">
+        <div className="flex flex-col gap-1 items-start">
+          <SkeletonText fontSize="xs" className="!w-[20px]" />
+          <SkeletonText fontSize="sm" className="!w-[50px]" />
+        </div>
+        <div className="flex flex-col gap-1 items-start">
+          <SkeletonText fontSize="xs" className="!w-[30px]" />
+          <SkeletonText fontSize="sm" className="!w-[60px]" />
+        </div>
+        <div className="flex flex-col gap-1 items-start">
+          <SkeletonText fontSize="xs" className="!w-[30px]" />
+          <SkeletonText fontSize="sm" className="!w-[50px]" />
+        </div>
+      </div>
+    </div>
+  )
+}
+
 export const TrendingItemMobile = ({
   pool,
   position,
@@ -191,5 +237,23 @@ export const TrendingItemMobile = ({
         </div>
       </div>
     </Link>
+  )
+}
+
+export const TrendingItemMobileSkeleton = () => {
+  return (
+    <div className="shrink-0 min-w-[160px] p-2 dark:bg-slate-750 bg-slate-200 rounded-full flex items-center gap-2 snap-start animate-pulse">
+      <div className="relative">
+        <div className="flex">
+          <SkeletonCircle radius={24} />
+          <SkeletonCircle radius={24} className="-ml-2" />
+        </div>
+        <SkeletonBox className="w-3 h-3 !rounded-[4px] absolute -bottom-[1px] -right-1.5" />
+      </div>
+
+      <div className="flex-1">
+        <SkeletonText fontSize="sm" className="!w-[100px]" />
+      </div>
+    </div>
   )
 }
