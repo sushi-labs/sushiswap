@@ -133,4 +133,5 @@ export {
   NavigationMenuTrigger,
   navigationMenuTriggerStyle,
   NavigationMenuViewport,
+  NavigationMenuPrimitive,
 }
