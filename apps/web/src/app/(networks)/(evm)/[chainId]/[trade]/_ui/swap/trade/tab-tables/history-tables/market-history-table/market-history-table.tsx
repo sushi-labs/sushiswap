@@ -100,7 +100,7 @@ export const MarketTable = () => {
 
   return (
     <>
-      <Card className="hidden overflow-hidden !border-none bg-slate-50 dark:bg-slate-800 md:block">
+      <Card className="hidden overflow-hidden !border-none !shadow-none bg-slate-50 dark:bg-slate-800 md:block">
         <DataTable
           columns={COLUMNS}
           data={rowData}

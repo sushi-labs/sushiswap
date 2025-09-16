@@ -78,12 +78,12 @@ export const LimitOrdersHistoryTable = () => {
         </div>
       }
     >
-      <Card className="hidden overflow-hidden border-none bg-slate-50 dark:bg-slate-800 md:block">
+      <Card className="hidden overflow-hidden !border-none bg-slate-50 dark:bg-slate-800 md:block">
         <DataTable
           columns={COLUMNS}
           data={data}
           loading={ordersLoading}
-          className="border-none [&_td]:h-[96px]"
+          className="border-none [&_td]:h-[92px]"
           pagination
           state={{
             pagination: paginationState,
