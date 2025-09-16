@@ -66,6 +66,11 @@ export const TokenSelector: FC<TokenSelectorProps> = ({
   const [query, setQuery] = useState('')
   const [open, setOpen] = useState(false)
   const [currencyInfo, showCurrencyInfo] = useState<EvmCurrency | false>(false)
+  const [showMoreCurrencyInfo, setShowMoreCurrencyInfo] = useState(true)
+
+  const toggleShowMore = useCallback(() => {
+    setShowMoreCurrencyInfo((prev) => !prev)
+  }, [])
 
   const debouncedQuery = useDebounce(query, 250)
 
@@ -136,8 +141,13 @@ export const TokenSelector: FC<TokenSelectorProps> = ({
           <div className="flex flex-col gap-4 overflow-y-auto relative p-6">
             {currencyInfo ? (
               <CurrencyInfo
+                showMoreCurrencyInfo={showMoreCurrencyInfo}
+                toggleShowMore={toggleShowMore}
                 currency={currencyInfo}
-                onBack={() => showCurrencyInfo(false)}
+                onBack={() => {
+                  showCurrencyInfo(false)
+                  setShowMoreCurrencyInfo(true)
+                }}
               />
             ) : null}
             <DialogHeader className="!text-left">

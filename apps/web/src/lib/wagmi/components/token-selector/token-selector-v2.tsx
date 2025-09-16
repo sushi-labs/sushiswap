@@ -68,6 +68,11 @@ export const TokenSelectorV2: FC<TokenSelectorV2Props> = ({
   const [query, setQuery] = useState('')
   const [open, setOpen] = useState(false)
   const [currencyInfo, showCurrencyInfo] = useState<EvmCurrency | false>(false)
+  const [showMoreCurrencyInfo, setShowMoreCurrencyInfo] = useState(true)
+
+  const toggleShowMore = useCallback(() => {
+    setShowMoreCurrencyInfo((prev) => !prev)
+  }, [])
 
   // Clear the query when the dialog is closed
   useEffect(() => {
@@ -117,14 +122,20 @@ export const TokenSelectorV2: FC<TokenSelectorV2Props> = ({
         aria-describedby={undefined}
         className={classNames(
           'h-[80vh] !flex !flex-col md:!flex-row w-fit !p-0 md:min-w-[580px]',
+          !showMoreCurrencyInfo ? '!h-[440px]' : '',
         )}
         variant={variant ?? undefined}
       >
         <div className="relative flex flex-col w-full gap-4 p-6 overflow-x-hidden overflow-y-auto hide-scrollbar">
           {currencyInfo ? (
             <CurrencyInfo
+              showMoreCurrencyInfo={showMoreCurrencyInfo}
+              toggleShowMore={toggleShowMore}
               currency={currencyInfo}
-              onBack={() => showCurrencyInfo(false)}
+              onBack={() => {
+                showCurrencyInfo(false)
+                setShowMoreCurrencyInfo(true)
+              }}
             />
           ) : null}
           <DialogHeader className="!text-left mb-4">

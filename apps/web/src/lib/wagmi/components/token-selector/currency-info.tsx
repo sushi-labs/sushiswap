@@ -21,7 +21,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@sushiswap/ui'
-import { type FC, useCallback, useState } from 'react'
+import type { FC } from 'react'
 import { TriangleIcon } from 'src/app/(cms)/components/icons'
 import {
   useCoinGeckoTokenInfo,
@@ -34,10 +34,16 @@ import { TokenSecurityView } from '../token-security-view'
 interface CurrencyInfoProps {
   currency: EvmCurrency
   onBack: () => void
+  toggleShowMore: () => void
+  showMoreCurrencyInfo: boolean
 }
 
-export const CurrencyInfo: FC<CurrencyInfoProps> = ({ currency, onBack }) => {
-  const [showMore, setShowMore] = useState(true)
+export const CurrencyInfo: FC<CurrencyInfoProps> = ({
+  showMoreCurrencyInfo,
+  currency,
+  onBack,
+  toggleShowMore,
+}) => {
   const { data: tokenSecurity, isLoading: isTokenSecurityLoading } =
     useTokenSecurity({
       currency: currency.wrap(),
@@ -47,10 +53,6 @@ export const CurrencyInfo: FC<CurrencyInfoProps> = ({ currency, onBack }) => {
     useCoinGeckoTokenInfo({
       token: currency.wrap(),
     })
-
-  const toggleShowMore = useCallback(() => {
-    setShowMore((prev) => !prev)
-  }, [])
 
   return (
     <div className="absolute inset-0 z-20 py-6 bg-gray-50 dark:bg-slate-800 rounded-2xl">
@@ -221,7 +223,7 @@ export const CurrencyInfo: FC<CurrencyInfoProps> = ({ currency, onBack }) => {
                           />
                         </TooltipTrigger>
                         <TooltipContent side="bottom">
-                          <p>Lorem ipsum dolor sit amet</p>
+                          <p>Copy contract address to clipboard</p>
                         </TooltipContent>
                       </Tooltip>
                     </TooltipProvider>
@@ -236,12 +238,13 @@ export const CurrencyInfo: FC<CurrencyInfoProps> = ({ currency, onBack }) => {
             className="w-full mt-4 text-xs font-medium text-muted-foreground"
             onClick={toggleShowMore}
           >
-            {showMore ? 'View Less' : 'View More'}
+            {showMoreCurrencyInfo ? 'View Less' : 'View More'}
             <TriangleIcon
-              className={`h-3 w-3 transition-transform ${showMore ? '-rotate-90' : 'rotate-90'}`}
+              className={`h-3 w-3 transition-transform ${showMoreCurrencyInfo ? '-rotate-90' : 'rotate-90'}`}
             />
           </Button>
-          <Collapsible open={showMore}>
+
+          <Collapsible open={showMoreCurrencyInfo}>
             <Separator className="my-6" />
             <div className="flex flex-col ">
               <div className="flex items-center gap-1 py-2">
