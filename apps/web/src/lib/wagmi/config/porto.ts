@@ -1,5 +1,4 @@
 import type { Wallet, WalletDetailsParams } from '@rainbow-me/rainbowkit'
-import { Mode } from 'porto'
 import { porto } from 'porto/wagmi'
 import { createConnector } from 'wagmi'
 
@@ -11,9 +10,7 @@ export const portoWallet = (): Wallet => ({
   iconBackground: '#000000',
   createConnector: (walletDetails: WalletDetailsParams) =>
     createConnector((config) => ({
-      ...porto({
-        mode: Mode.dialog(),
-      })(config),
+      ...porto()(config),
       ...walletDetails,
     })),
 })
