@@ -70,7 +70,7 @@ export default async function ExploreLayout(props: {
       <Header chainId={chainId} supportedNetworks={POOL_SUPPORTED_NETWORKS} />
       <main className="flex flex-col flex-1 md:gap-6 h-full animate-slide">
         <Container className="px-4 pt-4 md:pb-4 pb-0 max-w-[1696px]">
-          <ExploreHeader />
+          <ExploreHeader chainId={chainId} />
           <div className="flex flex-col gap-3 justify-between lg:flex-row">
             <Statistics stats={explorePoolStatistics} />
             <Trending />

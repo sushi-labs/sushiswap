@@ -74,6 +74,7 @@ export const PoolPageBlade: FC<PoolPageBlade> = ({ pool }) => {
                     <span>Add Liquidity</span>
                   </Button>
                 }
+                chainId={pool.chainId}
               />
             ) : null}
             {/* <ManagePositionButton

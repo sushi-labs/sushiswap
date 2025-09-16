@@ -18,13 +18,14 @@ export const ConcentratedInitialPrice = ({
   const spanRef = useRef<HTMLSpanElement>(null)
   const [inputWidth, setInputWidth] = useState(1)
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: startingPrice is a controlled input
+  // biome-ignore lint/correctness/useExhaustiveDependencies: startingPrice not referenced but isneeded to re-calculate width
   useLayoutEffect(() => {
     if (spanRef.current) {
       const width = spanRef.current.offsetWidth
       setInputWidth(width + 28)
     }
   }, [startingPrice])
+
   const [rateDirection, setRateDirection] = useState<'token0' | 'token1'>(
     'token0',
   )

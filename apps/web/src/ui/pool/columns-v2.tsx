@@ -678,6 +678,7 @@ export const ACTION_COLUMN: ColumnDef<MultiChainPool, unknown> = {
             </div>
           </Button>
         }
+        chainId={props.row.original.chainId as EvmChainId}
       />
     )
   },

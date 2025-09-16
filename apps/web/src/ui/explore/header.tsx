@@ -7,16 +7,16 @@ import { ChainKey, EvmChainId, SushiSwapProtocol } from 'sushi'
 import { isSushiSwapV2ChainId, isSushiSwapV3ChainId } from 'sushi/config'
 import { AddLiquidityDialog } from '../pool/add-liquidity/add-liquidity-dialog'
 
-export const ExploreHeader = () => {
+export const ExploreHeader = ({ chainId }: { chainId: EvmChainId }) => {
   return (
     <div className="flex flex-col md:flex-row justify-between md:items-center gap-4 pb-4 md:py-8">
       <h2 className="text-lg font-semibold md:text-4xl">Explore Pool</h2>
-      <AddLiquidityPopover />
+      <AddLiquidityPopover chainId={chainId} />
     </div>
   )
 }
 
-const AddLiquidityPopover = () => {
+const AddLiquidityPopover = ({ chainId }: { chainId: EvmChainId }) => {
   return (
     <Popover>
       <PopoverTrigger asChild>
@@ -42,6 +42,7 @@ const AddLiquidityPopover = () => {
               <span className="md:mr-auto">Add Liquidity to V2</span>
             </Button>
           }
+          chainId={chainId}
         />
         <AddLiquidityDialog
           poolType={SushiSwapProtocol.SUSHISWAP_V3}
@@ -50,6 +51,7 @@ const AddLiquidityPopover = () => {
               <span className="md:mr-auto">Add Liquidity to V3</span>
             </Button>
           }
+          chainId={EvmChainId.ETHEREUM}
         />
       </PopoverContent>
     </Popover>

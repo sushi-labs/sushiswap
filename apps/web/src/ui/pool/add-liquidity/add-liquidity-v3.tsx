@@ -4,7 +4,6 @@ import { ArrowLeftIcon } from '@heroicons/react-v1/solid'
 import { Button, Collapsible, classNames } from '@sushiswap/ui'
 import { useEffect, useMemo, useState } from 'react'
 import { useCreateQuery } from 'src/lib/hooks/useCreateQuery'
-import { useCurrentChainId } from 'src/lib/hooks/useCurrentChainId'
 import { usePoolsByTokenPair } from 'src/lib/hooks/usePoolsByTokenPair'
 import { useConcentratedPositionInfo } from 'src/lib/wagmi/hooks/positions/hooks/useConcentratedPositionInfo'
 import { ConcentratedLiquidityProvider } from 'src/ui/pool/ConcentratedLiquidityProvider'
@@ -13,10 +12,10 @@ import {
   useConcentratedLiquidityURLState,
 } from 'src/ui/pool/ConcentratedLiquidityURLStateProvider'
 import { computeSushiSwapV3PoolAddress } from 'sushi'
-import { ChainKey } from 'sushi/chain'
+import { ChainKey, type EvmChainId } from 'sushi/chain'
 import {
   SUSHISWAP_V3_FACTORY_ADDRESS,
-  type SushiSwapV3ChainId,
+  isSushiSwapV3ChainId,
   isWNativeSupported,
 } from 'sushi/config'
 import type { SushiSwapV3FeeAmount } from 'sushi/config'
@@ -33,13 +32,17 @@ export const AddLiquidityV3 = ({
   initToken1,
   hideTokenSelectors,
   feeAmount,
+  chainId,
 }: {
   initToken0: Type | undefined
   initToken1: Type | undefined
   hideTokenSelectors?: boolean
   feeAmount?: SushiSwapV3FeeAmount
+  chainId: EvmChainId
 }) => {
-  const { chainId } = useCurrentChainId() as { chainId: SushiSwapV3ChainId }
+  if (!isSushiSwapV3ChainId(chainId)) {
+    return null
+  }
 
   return (
     <ConcentratedLiquidityURLStateProvider chainId={chainId}>

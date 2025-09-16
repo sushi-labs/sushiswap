@@ -145,6 +145,7 @@ export const PoolHeader: FC<PoolHeader> = ({
                     <PlusIcon className="w-4 h-4" />
                   </Button>
                 }
+                chainId={pool.chainId}
               />
             ) : null}
           </div>

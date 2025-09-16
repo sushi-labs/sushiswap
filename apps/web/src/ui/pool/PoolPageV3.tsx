@@ -118,6 +118,7 @@ const Pool: FC<{ pool: V3Pool }> = ({ pool }) => {
                     <span>Add Liquidity</span>
                   </Button>
                 }
+                chainId={pool.chainId}
               />
             ) : null}
             {positions?.length ? (

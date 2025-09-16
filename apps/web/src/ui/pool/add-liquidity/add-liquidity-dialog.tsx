@@ -8,7 +8,7 @@ import {
   classNames,
 } from '@sushiswap/ui'
 import { type ReactNode, useMemo, useState } from 'react'
-import { SushiSwapProtocol } from 'sushi'
+import { type EvmChainId, SushiSwapProtocol } from 'sushi'
 import type { SushiSwapV3FeeAmount } from 'sushi/config'
 import type { Type } from 'sushi/currency'
 import { AddLiquidityBlade } from './add-liquidity-blade'
@@ -23,6 +23,7 @@ export const AddLiquidityDialog = ({
   token0,
   token1,
   initFeeAmount,
+  chainId,
 }: {
   poolType: SushiSwapProtocol
   trigger: ReactNode
@@ -31,6 +32,7 @@ export const AddLiquidityDialog = ({
   token0?: Type
   token1?: Type
   initFeeAmount?: SushiSwapV3FeeAmount
+  chainId: EvmChainId
 }) => {
   const [type, setType] = useState<SushiSwapProtocol>(poolType)
 
@@ -42,6 +44,7 @@ export const AddLiquidityDialog = ({
             hideTokenSelectors={hideTokenSelectors}
             initToken0={token0}
             initToken1={token1}
+            chainId={chainId}
           />
         )
 
@@ -52,6 +55,7 @@ export const AddLiquidityDialog = ({
             initToken0={token0}
             initToken1={token1}
             feeAmount={initFeeAmount}
+            chainId={chainId}
           />
         )
       // @ts-expect-error - ok until we have a blade pool type
@@ -68,10 +72,11 @@ export const AddLiquidityDialog = ({
             hideTokenSelectors={hideTokenSelectors}
             initToken0={token0}
             initToken1={token1}
+            chainId={chainId}
           />
         )
     }
-  }, [type, token0, token1, hideTokenSelectors, initFeeAmount])
+  }, [type, token0, token1, hideTokenSelectors, initFeeAmount, chainId])
 
   return (
     <Dialog>

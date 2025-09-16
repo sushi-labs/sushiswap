@@ -45,7 +45,6 @@ import {
   isSushiSwapV2ChainId,
   isWNativeSupported,
 } from 'sushi/config'
-import type { SushiSwapV2ChainId } from 'sushi/config'
 import { Amount, type Type, tryParseAmount } from 'sushi/currency'
 import { Percent, ZERO } from 'sushi/math'
 import type { SushiSwapV2Pool } from 'sushi/pool/sushiswap-v2'
@@ -58,7 +57,6 @@ import {
 } from 'wagmi'
 import { useRefetchBalances } from '~evm/_common/ui/balance-provider/use-refetch-balances'
 import { usePrice } from '~evm/_common/ui/price-provider/price-provider/use-price'
-import { useCurrentChainId } from '../../../lib/hooks/useCurrentChainId'
 import { ToggleZapCard } from '../ToggleZapCard'
 import { AddLiquidityV2Button } from './add-liquidity-v2-button'
 import { DoesNotExistMessage } from './does-not-exist-message'
@@ -70,23 +68,27 @@ export const AddLiquidityV2 = ({
   initToken0,
   initToken1,
   hideTokenSelectors,
+  chainId,
 }: {
   initToken0?: Type
   initToken1?: Type
   hideTokenSelectors?: boolean
+  chainId: EvmChainId
 }) => {
-  const { chainId } = useCurrentChainId() as { chainId: SushiSwapV2ChainId }
+  if (!isSushiSwapV2ChainId(chainId)) {
+    return null
+  }
 
   const [isZapModeEnabled, setIsZapModeEnabled] = useState(false)
 
   const [token0, setToken0] = useState<Type | undefined>(
-    defaultCurrency[chainId as keyof typeof defaultCurrency],
+    defaultCurrency[chainId],
   )
   const [token1, setToken1] = useState<Type | undefined>(undefined)
 
   useEffect(() => {
     if (!initToken0) {
-      setToken0(defaultCurrency[chainId as keyof typeof defaultCurrency])
+      setToken0(defaultCurrency[chainId])
     }
     if (initToken0 && initToken1) {
       setToken0(initToken0)
@@ -319,7 +321,7 @@ const _ZapWidget: FC<ZapWidgetProps> = ({
 
   const [inputAmount, setInputAmount] = useState('')
   const [inputCurrency, _setInputCurrency] = useState<Type>(
-    defaultCurrency[chainId as keyof typeof defaultCurrency],
+    defaultCurrency[chainId],
   )
   const setInputCurrency = useCallback((currency: Type) => {
     _setInputCurrency(currency)
