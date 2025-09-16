@@ -166,7 +166,7 @@ export const ChainOptionsSelector = ({
             </DropdownMenuTrigger>
             <DropdownMenuContent
               align="end"
-              className="max-h-[195px] overflow-y-auto hide-scrollbar !bg-slate-50 dark:!bg-slate-900 !backdrop-blur-none"
+              className="max-h-[195px] overflow-y-auto !bg-slate-50 dark:!bg-slate-900 !backdrop-blur-none"
             >
               <DropdownMenuGroup>
                 {overflow.map((chainId) => (
