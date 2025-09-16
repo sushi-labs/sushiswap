@@ -130,7 +130,7 @@ export function TokenSelectorStatesV2({
             showPinnedTokens={!hidePinnedTokens}
           />
         ) : null}
-        <Title className="!mt-0" />
+        <Title className={type === 'sell' ? '!mt-0' : ''} />
 
         <TokenSelectorTrendingTokensV2
           chainId={selectedNetwork}
@@ -158,7 +158,7 @@ export function TokenSelectorStatesV2({
             showPinnedTokens={!hidePinnedTokens}
           />
         ) : null}
-        <Title />
+        <Title className={type === 'sell' ? '!mt-0' : ''} />
 
         {account ? (
           <TokenSelectorMyTokensV2

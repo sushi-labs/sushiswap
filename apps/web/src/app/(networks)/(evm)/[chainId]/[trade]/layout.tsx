@@ -29,7 +29,7 @@ export default async function TradeLayout(props: {
   const { children } = props
   const chainId = +params.chainId as ChainIdType
   const trade = params.trade as TradeMode
-
+  console.log({ params })
   if (!isSupportedTradeModeOnChainId(trade, chainId)) {
     return notFound()
   }
