@@ -1,22 +1,32 @@
+import type { TrendingPool } from '@sushiswap/graph-client/data-api-181'
 import { useIsMounted } from '@sushiswap/hooks'
-import { Currency, classNames } from '@sushiswap/ui'
+import { Currency } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import Link from 'next/link'
 import { NativeAddress } from 'src/lib/constants'
+import { ProtocolBadge } from 'src/ui/pool/PoolNameCell'
+import { SushiSwapProtocol, formatPercent, formatUSD } from 'sushi'
 import type { EvmChainId } from 'sushi/chain'
 import { Native, Token } from 'sushi/currency'
-import type { POOLS } from './trending'
 
 export const TrendingItem = ({
   pool,
   position,
   href,
 }: {
-  pool: (typeof POOLS)[0]
+  pool: TrendingPool
   position: number
   href: string
 }) => {
-  const { chainId, token0, token1, fee, tvl, volume, apr } = pool
+  const {
+    chainId,
+    token0,
+    token1,
+    protocol,
+    totalApr1d,
+    volumeUSD1d,
+    liquidityUSD,
+  } = pool
   const pairName = `${token0.symbol}-${token1.symbol}`
   const isMounted = useIsMounted()
 
@@ -50,7 +60,6 @@ export const TrendingItem = ({
                         symbol: token0.symbol,
                         chainId: token0.chainId as EvmChainId,
                         decimals: token0.decimals,
-                        approved: token0.approved,
                       })
                 }
                 width={32}
@@ -67,7 +76,6 @@ export const TrendingItem = ({
                         symbol: token1.symbol,
                         chainId: token1.chainId as EvmChainId,
                         decimals: token1.decimals,
-                        approved: token1.approved,
                       })
                 }
                 width={32}
@@ -85,17 +93,10 @@ export const TrendingItem = ({
           <div className="flex flex-col font-medium">
             <div className="text-sm">{pairName}</div>
             <div className="flex gap-2 items-center">
-              <div
-                className={classNames(
-                  'text-xs p-1 px-2 rounded-lg leading-3',
-                  pool.version === 'v2'
-                    ? 'bg-[#F338C31A] text-[#F338C3]'
-                    : 'bg-[#3B7EF61A] text-[#3B7EF6]',
-                )}
-              >
-                {pool.version.toUpperCase()}
+              <ProtocolBadge protocol={protocol as SushiSwapProtocol} />
+              <div className="text-xs text-muted-foreground">
+                {formatPercent(pool.swapFee)}
               </div>
-              <div className="text-xs text-muted-foreground">{fee}</div>
             </div>
           </div>
         </div>
@@ -104,17 +105,17 @@ export const TrendingItem = ({
       <div className="flex justify-between pr-3 mx-auto basis-1/2">
         <div className="flex flex-col">
           <div className="text-xs dark:text-slate-450 text-slate-450">TVL</div>
-          <div className="text-sm font-medium">{tvl}</div>
+          <div className="text-sm font-medium">{formatUSD(liquidityUSD)}</div>
         </div>
         <div className="text-sm font-medium">
           <div className="text-xs dark:text-slate-450 text-slate-450">
             1d vol
           </div>
-          <div className="text-sm font-medium">{volume}</div>
+          <div className="text-sm font-medium">{formatUSD(volumeUSD1d)}</div>
         </div>
         <div className="text-sm font-medium">
           <div className="text-xs dark:text-slate-450 text-slate-450">APR</div>
-          <div className="text-sm font-medium">{apr}</div>
+          <div className="text-sm font-medium">{formatPercent(totalApr1d)}</div>
         </div>
       </div>
     </Link>
@@ -126,12 +127,13 @@ export const TrendingItemMobile = ({
   position,
   href,
 }: {
-  pool: (typeof POOLS)[0]
+  pool: TrendingPool
   position: number
   href: string
 }) => {
-  const { chainId, token0, token1, fee, version } = pool
+  const { chainId, token0, token1, protocol, swapFee } = pool
   const pairName = `${token0.symbol}-${token1.symbol}`
+  const protocolUi = SushiSwapProtocol.SUSHISWAP_V2 === protocol ? 'V2' : 'V3'
   return (
     <Link
       href={href}
@@ -152,7 +154,6 @@ export const TrendingItemMobile = ({
                     symbol: token0.symbol,
                     chainId: token0.chainId as EvmChainId,
                     decimals: token0.decimals,
-                    approved: token0.approved,
                   })
             }
             width={24}
@@ -170,7 +171,6 @@ export const TrendingItemMobile = ({
                     symbol: token1.symbol,
                     chainId: token1.chainId as EvmChainId,
                     decimals: token1.decimals,
-                    approved: token1.approved,
                   })
             }
             width={24}
@@ -187,7 +187,7 @@ export const TrendingItemMobile = ({
       </div>
       <div className="flex text-sm font-medium leading-5">
         <div>
-          {pairName}-{version}-{fee}
+          {pairName}-{protocolUi}-{formatPercent(swapFee)}
         </div>
       </div>
     </Link>

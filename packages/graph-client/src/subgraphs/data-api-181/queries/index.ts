@@ -1,2 +1,2 @@
-export * from './multichain/pools.js'
+export * from './multichain/index.js'
 export * from './analytics/index.js'
