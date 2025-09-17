@@ -15,7 +15,7 @@ import {
   avalanche,
   // avalancheFuji,
   //  avalancheFuji,
-  base,
+  basePreconf as base,
   berachain,
   boba,
   // bronos,
