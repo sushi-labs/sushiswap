@@ -28,7 +28,7 @@ const router = await RainDataFetcher.init(
     specifiedLiquidityProviders, // do not pass this param to have all available liquidity providers for the operating chain
 );
 
-// sync the pools data every 10 secs in the background
+// sync the pools data every 10 secs in the background, this is very cheap using a few eth_getLogs calls but keeps all data synced
 setInterval(async () => {
     const untilBlockNumber = 123n; // optional, set to undefined to update pools data to latest block
     await router.updatePools(untilBlockNumber);
