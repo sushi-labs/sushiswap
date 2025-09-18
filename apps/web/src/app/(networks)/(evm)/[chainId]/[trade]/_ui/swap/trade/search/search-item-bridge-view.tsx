@@ -20,9 +20,9 @@ export const SearchItemBridgeView = ({
   const {
     mutate: { setSearchValue, setIsOpen },
   } = useSearchContext()
-  const [selectedNetwork, setSelectedNetwork] = useState<
-    EvmChainId | undefined
-  >(undefined)
+  const [selectedNetwork, setSelectedNetwork] = useState<EvmChainId | null>(
+    null,
+  )
   const { handleTokenOutput } = useSwapTokenSelect()
   const bridgeOptions = useMemo(() => {
     return (
@@ -30,7 +30,7 @@ export const SearchItemBridgeView = ({
     )
   }, [token])
 
-  const onNetworkSelect = (chainId: EvmChainId) => {
+  const onNetworkSelect = (chainId: EvmChainId | null) => {
     setSelectedNetwork(chainId)
   }
 
@@ -56,7 +56,7 @@ export const SearchItemBridgeView = ({
       token: _token,
     })
     toggleBridgeView('close')
-    setSelectedNetwork(undefined)
+    setSelectedNetwork(null)
     setIsOpen(false)
   }
 
@@ -97,6 +97,7 @@ export const SearchItemBridgeView = ({
               Bridge To
             </span>
             <ChainOptionsSelector
+              includeAllOption={false}
               selectedNetwork={selectedNetwork}
               onNetworkSelect={onNetworkSelect}
               networks={bridgeOptions}
@@ -110,7 +111,7 @@ export const SearchItemBridgeView = ({
             variant="secondary"
             onClick={() => {
               toggleBridgeView('close')
-              setSelectedNetwork(undefined)
+              setSelectedNetwork(null)
             }}
           >
             Close

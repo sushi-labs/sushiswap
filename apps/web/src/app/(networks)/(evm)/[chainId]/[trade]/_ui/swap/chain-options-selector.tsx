@@ -30,16 +30,18 @@ import type { ChainId } from 'sushi'
 import type { EvmChainId } from 'sushi/evm'
 
 export const ChainOptionsSelector = ({
+  includeAllOption,
   size = 'sm',
   networks,
   onNetworkSelect,
   selectedNetwork,
   canShowMessage,
 }: {
+  includeAllOption: boolean
   size?: 'sm' | 'lg'
   networks?: EvmChainId[]
-  onNetworkSelect?: (network: EvmChainId) => void
-  selectedNetwork?: EvmChainId
+  onNetworkSelect?: (network: EvmChainId | null) => void
+  selectedNetwork?: EvmChainId | null
   canShowMessage?: boolean
 }) => {
   const { networkOptions: defaultNetworks } = useNetworkOptions()
@@ -68,8 +70,10 @@ export const ChainOptionsSelector = ({
     const fitCount =
       rawFit < _networks.length && rawFit > 0 ? rawFit - 1 : rawFit
 
-    setVisibleCount(fitCount)
-  }, [size, _networks])
+    //minus 1 to account for "All" button
+    const subAmount = includeAllOption ? 1 : 0
+    setVisibleCount(fitCount - subAmount)
+  }, [size, _networks, includeAllOption])
 
   useLayoutEffect(() => {
     if (!containerRef.current) return
@@ -123,6 +127,16 @@ export const ChainOptionsSelector = ({
       </Collapsible>
 
       <div className="flex items-center gap-x-1.5 w-full" ref={containerRef}>
+        {includeAllOption ? (
+          <NetworkButton
+            tabIndex={-1}
+            onClick={() => onNetworkSelect?.(null)}
+            iconSize={iconSize}
+            chainId={'all'}
+            testdata-id={`network-option-all-button`}
+            data-selected={selectedNetwork === null}
+          />
+        ) : null}
         {visible.map((chainId) => (
           <TooltipProvider key={chainId}>
             <Tooltip delayDuration={0}>
@@ -132,11 +146,8 @@ export const ChainOptionsSelector = ({
                   onClick={() => onNetworkSelect?.(chainId)}
                   iconSize={iconSize}
                   chainId={chainId}
-                  className={classNames(
-                    selectedNetwork === chainId &&
-                      'bg-blue/10 dark:border-blue border-blue',
-                  )}
                   testdata-id={`network-option-${chainId}-button`}
+                  data-selected={selectedNetwork === chainId}
                 />
               </TooltipTrigger>
               <TooltipContent className="border-black/5 dark:border-white/5 !rounded-md bg-white/20 dark:bg-black/20">
@@ -173,11 +184,7 @@ export const ChainOptionsSelector = ({
                   <DropdownMenuItem
                     key={chainId}
                     onClick={() => onNetworkSelect?.(chainId)}
-                    className={classNames(
-                      'pr-10',
-                      selectedNetwork === chainId &&
-                        'bg-blue/10 border-blue dark:border-blue',
-                    )}
+                    className={classNames('pr-10')}
                   >
                     <NetworkButton
                       iconSize={iconSize}
@@ -201,7 +208,7 @@ export const ChainOptionsSelector = ({
 export const NetworkButton = forwardRef<
   HTMLButtonElement,
   {
-    chainId: number
+    chainId: EvmChainId | 'all'
     iconSize: number
   } & React.ButtonHTMLAttributes<HTMLButtonElement>
 >(({ chainId, iconSize, className, ...props }, ref) => (
@@ -211,16 +218,29 @@ export const NetworkButton = forwardRef<
     type="button"
     className={classNames(
       'border border-black/10 dark:border-white/10 rounded-md p-1 flex items-center justify-center',
+      'data-[selected=true]:!border-blue data-[selected=true]:!bg-blue/10 dark:data-[selected=true]:!bg-skyblue/10 dark:data-[selected=true]:!border-skyblue',
       className,
     )}
   >
-    <NetworkIcon
-      type="square"
-      className="rounded-[3px]"
-      chainId={chainId}
-      width={iconSize}
-      height={iconSize}
-    />
+    {chainId === 'all' ? (
+      <span
+        className="text-muted-foreground font-medium text-sm flex items-center justify-center"
+        style={{
+          width: iconSize,
+          height: iconSize,
+        }}
+      >
+        All
+      </span>
+    ) : (
+      <NetworkIcon
+        type="square"
+        className="rounded-[3px]"
+        chainId={chainId}
+        width={iconSize}
+        height={iconSize}
+      />
+    )}
   </button>
 ))
 NetworkButton.displayName = 'NetworkButton'

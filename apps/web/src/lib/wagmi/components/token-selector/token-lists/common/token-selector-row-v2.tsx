@@ -3,6 +3,7 @@ import {
   ExclamationCircleIcon,
 } from '@heroicons/react/20/solid'
 import { InformationCircleIcon } from '@heroicons/react/24/outline'
+import type { TokenListBalanceV2 } from '@sushiswap/graph-client/data-api'
 import type { PinnedTokenId } from '@sushiswap/hooks'
 import {
   BrowserEvent,
@@ -54,7 +55,7 @@ export interface TokenSelectorRowV2 {
   isBalanceLoading: boolean
   onShowInfo: () => void
   showChainOptions: boolean
-  bridgeInfo?: { address: string; chainId: unknown; decimals: number }[] | null
+  bridgeInfo?: TokenListBalanceV2['bridgeInfo'] | null
 }
 
 export const TokenSelectorRowV2: FC<TokenSelectorRowV2> = memo(
@@ -211,7 +212,7 @@ export const TokenSelectorRowV2: FC<TokenSelectorRowV2> = memo(
                     {filteredBridgeInfo?.map((info) => (
                       <NetworkButton
                         key={`${info.chainId}-${info.address}`}
-                        chainId={info.chainId as number}
+                        chainId={info.chainId}
                         iconSize={16}
                         onClick={(e) => {
                           e.stopPropagation()
