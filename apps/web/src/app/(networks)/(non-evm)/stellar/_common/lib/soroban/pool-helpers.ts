@@ -13,6 +13,19 @@ const PoolClient = new Client({
 })
 
 /**
+ * Create a pool client for a specific pool address
+ * @param address - The pool contract address
+ * @returns A pool client instance
+ */
+function createPoolClient(address: string): Client {
+  return new Client({
+    contractId: address,
+    networkPassphrase: NETWORK_PASSPHRASE,
+    rpcUrl: RPC_URL,
+  })
+}
+
+/**
  * Get the pool state
  * @returns The current pool state
  */
@@ -90,5 +103,16 @@ export async function executeSwap({
     amount_specified: amountIn,
     sqrt_price_limit_x96: 0n,
   })
+  return handleResult(result)
+}
+
+/**
+ * Get pool details for a specific pool address
+ * @param address - The pool contract address
+ * @returns The pool state and additional details
+ */
+export async function getPoolDetails(address: string): Promise<PoolState> {
+  const client = createPoolClient(address)
+  const { result } = await client.get_state()
   return handleResult(result)
 }

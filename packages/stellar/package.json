@@ -65,6 +65,11 @@
       "types": "./dist/wBTC/index.d.ts",
       "import": "./dist/wBTC/index.js",
       "require": "./dist/wBTC/index.js"
+    },
+    "./quoter-v2": {
+      "types": "./dist/quoter-v2/index.d.ts",
+      "import": "./dist/quoter-v2/index.js",
+      "require": "./dist/quoter-v2/index.js"
     }
   },
   "scripts": {

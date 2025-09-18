@@ -2,12 +2,12 @@ import { Header } from '../header'
 import { Providers } from './providers'
 
 export const metadata = {
-  title: 'SushiSwap on Stellar',
+  title: 'Pools on Stellar',
   description:
     'SushiSwap is a community-driven decentralized exchange (DEX) for traders and liquidity providers.',
 }
 
-export default function SwapLayout({
+export default function ExplorePoolsLayout({
   children,
 }: { children: React.ReactNode }) {
   return (
