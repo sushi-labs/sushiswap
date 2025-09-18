@@ -21,9 +21,9 @@ export const TradeViewSwitch = () => {
   if (hasClosedBanner || !isMounted) return null
 
   return (
-    <div className="relative flex justify-center w-full z-10 p-3 bg-gradient-to-r from-blue/10 to-skyblue/10 animate-slide">
+    <div className="relative flex justify-center w-full z-10 p-3 bg-blue/10 dark:bg-accent animate-slide">
       <div className="flex items-center gap-3 font-medium">
-        <span className="text-transparent bg-gradient-to-r from-blue to-skyblue bg-clip-text">
+        <span className="text-blue dark:text-white">
           Advanced Trading Experience
         </span>
         <Switch
