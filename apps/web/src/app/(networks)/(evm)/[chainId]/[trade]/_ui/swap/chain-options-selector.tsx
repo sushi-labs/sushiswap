@@ -35,12 +35,16 @@ export const ChainOptionsSelector = ({
   onNetworkSelect,
   selectedNetwork,
   canShowMessage,
+  networkSelectedClassName,
+  networkClassName,
 }: {
   size?: 'sm' | 'lg'
   networks?: EvmChainId[]
   onNetworkSelect?: (network: EvmChainId) => void
   selectedNetwork?: EvmChainId
   canShowMessage?: boolean
+  networkSelectedClassName?: string
+  networkClassName?: string
 }) => {
   const { networkOptions: defaultNetworks } = useNetworkOptions()
   const { tradeMode } = useTradeMode()
@@ -133,13 +137,13 @@ export const ChainOptionsSelector = ({
                   iconSize={iconSize}
                   chainId={chainId}
                   className={classNames(
-                    selectedNetwork === chainId &&
-                      'bg-blue/10 dark:border-blue border-blue',
+                    networkClassName,
+                    selectedNetwork === chainId && networkSelectedClassName,
                   )}
                   testdata-id={`network-option-${chainId}-button`}
                 />
               </TooltipTrigger>
-              <TooltipContent className="border-black/5 dark:border-white/5 !rounded-md bg-white/20 dark:bg-black/20">
+              <TooltipContent className="border-black/5 dark:border-white/5 !rounded-md !bg-[#FFFFFF24] dark:!bg-[#00000028] backdrop-blur-[20px]">
                 {getNetworkName(chainId as ChainId)}
               </TooltipContent>
             </Tooltip>
@@ -166,7 +170,7 @@ export const ChainOptionsSelector = ({
             </DropdownMenuTrigger>
             <DropdownMenuContent
               align="end"
-              className="max-h-[195px] overflow-y-auto !bg-slate-50 dark:!bg-slate-900 !backdrop-blur-none"
+              className="max-h-[195px] overflow-y-auto !bg-slate-50 dark:!bg-slate-800 !backdrop-blur-none"
             >
               <DropdownMenuGroup>
                 {overflow.map((chainId) => (

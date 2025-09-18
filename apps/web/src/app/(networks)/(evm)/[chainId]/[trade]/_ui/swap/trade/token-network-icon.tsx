@@ -10,7 +10,7 @@ export const TokenNetworkIcon = ({ token }: { token: SearchToken }) => {
   return (
     <div className="flex items-center gap-3.5 w-full">
       <Badge
-        className="border border-slate-50 dark:border-slate-900 rounded-[4px] z-[11] -right-[17%] bottom-[2%]"
+        className="border border-slate-200 dark:border-slate-750 rounded-[4px] z-[11] -right-[17%] bottom-[2%]"
         position="bottom-right"
         badgeContent={
           <NetworkIcon
