@@ -87,13 +87,13 @@ export const AddLiquidityV2 = ({
   const [isZapModeEnabled, setIsZapModeEnabled] = useState(false)
 
   const [token0, setToken0] = useState<Type | undefined>(
-    defaultCurrency[chainId as keyof typeof defaultCurrency],
+    defaultCurrency[chainId],
   )
   const [token1, setToken1] = useState<Type | undefined>(undefined)
 
   useEffect(() => {
     if (!initToken0) {
-      setToken0(defaultCurrency[chainId as keyof typeof defaultCurrency])
+      setToken0(defaultCurrency[chainId])
     }
     if (initToken0 && initToken1) {
       setToken0(initToken0)
@@ -342,7 +342,7 @@ const _ZapWidget: FC<ZapWidgetProps> = ({
 
   const [inputAmount, setInputAmount] = useState('')
   const [inputCurrency, _setInputCurrency] = useState<Type>(
-    defaultCurrency[chainId as keyof typeof defaultCurrency],
+    defaultCurrency[chainId],
   )
   const setInputCurrency = useCallback((currency: Type) => {
     _setInputCurrency(currency)

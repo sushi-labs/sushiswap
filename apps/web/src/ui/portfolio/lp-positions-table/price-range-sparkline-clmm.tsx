@@ -2,6 +2,7 @@ import { ExclamationTriangleIcon } from '@heroicons/react/24/solid'
 import { classNames } from '@sushiswap/ui'
 import { max as getMax, scaleLinear, scaleTime } from 'd3'
 import type { ScaleLinear } from 'd3'
+import ms from 'ms'
 import { useTheme } from 'next-themes'
 import { useId, useMemo } from 'react'
 import { Sparkline } from 'src/ui/pool/add-liquidity/active-liquidity-chart/svg'
@@ -12,7 +13,7 @@ const xAccessor = (d: ChartEntry) => d.activeLiquidity
 
 const sparklineData = new Array(100).fill(0).map((_, i) => ({
   price: Math.random() * 100,
-  timestamp: Date.now() - i * 1000 * 60, // Simulating data for the last 100 minutes
+  timestamp: Date.now() - i * ms('1m'),
 }))
 
 const series = new Array(100).fill(0).map((_) => ({

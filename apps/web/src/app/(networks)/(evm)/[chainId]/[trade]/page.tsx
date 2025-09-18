@@ -47,7 +47,6 @@ export default function TradePage() {
   const isKatana = pathname.includes('katana')
 
   const defaultWidgetProps: Partial<ChartingLibraryWidgetOptions> = {
-    // interval: '1D' as ResolutionString,
     library_path: '/static/charting_library/',
     locale: 'en',
     charts_storage_url: 'https://saveload.tradingview.com',

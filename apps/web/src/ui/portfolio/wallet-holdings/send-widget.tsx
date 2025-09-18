@@ -25,17 +25,21 @@ export const SendWidget = ({
 }) => {
   const { state, mutate } = useSendTokens()
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
     if (initialToken) {
       mutate.setToken0(initialToken)
     }
-  }, [initialToken])
+  }, [initialToken, mutate.setToken0])
 
-  const isSendView = state.currentStep === 'send'
-  const isBrowseView = state.currentStep === 'browseContacts'
-  const isEditView = state.currentStep === 'editContact'
-  const isAddView = state.currentStep === 'addContact'
+  const { isSendView, isBrowseView, isEditView, isAddView } = useMemo(
+    () => ({
+      isSendView: state.currentStep === 'send',
+      isBrowseView: state.currentStep === 'browseContacts',
+      isEditView: state.currentStep === 'editContact',
+      isAddView: state.currentStep === 'addContact',
+    }),
+    [state.currentStep],
+  )
 
   const isRecipientValid = useMemo(() => {
     if (!state.resolvedRecipientAddress) return false

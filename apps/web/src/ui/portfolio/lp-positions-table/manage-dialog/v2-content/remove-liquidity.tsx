@@ -22,7 +22,6 @@ import {
 } from 'src/lib/hooks'
 import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
 import { gasMargin, slippageAmount } from 'sushi/calculate'
-import type { SushiSwapV2ChainId } from 'sushi/config'
 import { Amount, Native } from 'sushi/currency'
 import { Percent } from 'sushi/math'
 import { type SendTransactionReturnType, encodeFunctionData } from 'viem'
@@ -81,9 +80,7 @@ export const RemoveLiquidity: FC<RemoveSectionLegacyProps> = withCheckerRoot(
       storageKey: TTLStorageKey.RemoveLiquidity,
       chainId: _pool.chainId,
     })
-    const contract = useSushiSwapRouterContract(
-      _pool.chainId as SushiSwapV2ChainId,
-    )
+    const contract = useSushiSwapRouterContract(_pool.chainId)
     const [slippageTolerance] = useSlippageTolerance(
       SlippageToleranceStorageKey.RemoveLiquidity,
     )
@@ -97,7 +94,7 @@ export const RemoveLiquidity: FC<RemoveSectionLegacyProps> = withCheckerRoot(
 
     const {
       data: [poolState, pool],
-    } = useSushiSwapV2Pool(_pool.chainId as SushiSwapV2ChainId, token0, token1)
+    } = useSushiSwapV2Pool(_pool.chainId, token0, token1)
 
     const { balance } = usePoolPosition()
     const totalSupply = useTotalSupply(liquidityToken)
@@ -431,7 +428,7 @@ export const RemoveLiquidity: FC<RemoveSectionLegacyProps> = withCheckerRoot(
     return (
       <div className="pt-2">
         <RemoveSectionWidget
-          isFarm={!!_pool.incentives && _pool.incentives.length > 0}
+          isFarm={Boolean(_pool.incentives) && _pool.incentives.length > 0}
           percentage={percentage}
           token0={token0}
           token1={token1}
@@ -468,9 +465,7 @@ export const RemoveLiquidity: FC<RemoveSectionLegacyProps> = withCheckerRoot(
                       chainId={_pool.chainId}
                       amount={amountToRemove}
                       contract={
-                        getSushiSwapRouterContractConfig(
-                          _pool.chainId as SushiSwapV2ChainId,
-                        ).address
+                        getSushiSwapRouterContractConfig(_pool.chainId).address
                       }
                       permitInfo={REMOVE_V2_LIQUIDITY_PERMIT_INFO}
                       tag={APPROVE_TAG_REMOVE_LEGACY}

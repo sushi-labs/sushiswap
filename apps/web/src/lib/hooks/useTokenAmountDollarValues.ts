@@ -7,7 +7,7 @@ import { ZERO } from 'sushi/math'
 import { usePrices } from '~evm/_common/ui/price-provider/price-provider/use-prices'
 
 interface Params {
-  chainId: EvmChainId
+  chainId: EvmChainId | undefined
   amounts: (Amount<Type> | undefined)[] | null | undefined
 }
 
@@ -17,7 +17,7 @@ export const useTokenAmountDollarValues: UseTokenAmountDollarValues = ({
   chainId,
   amounts,
 }) => {
-  const { data: prices } = usePrices({ chainId })
+  const { data: prices } = usePrices({ chainId, enabled: Boolean(chainId) })
 
   return useMemo(() => {
     if (!amounts) return []

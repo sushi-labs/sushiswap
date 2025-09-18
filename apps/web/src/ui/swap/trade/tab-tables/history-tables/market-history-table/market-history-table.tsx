@@ -122,7 +122,7 @@ export const MarketTable = ({
         {isLoading ? (
           <SkeletonBox className="w-full h-52" />
         ) : !rowData?.length ? (
-          <p className="flex justify-center items-center h-52 text-sm italic text-center text-muted-foreground dark:text-pink-200">
+          <p className="text-sm italic text-center text-muted-foreground dark:text-pink-200 h-52 flex items-center justify-center">
             No Past Market Orders
           </p>
         ) : (

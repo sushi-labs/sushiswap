@@ -1,11 +1,12 @@
 import { scaleLinear, scaleTime } from 'd3'
+import ms from 'ms'
 import { useId, useMemo } from 'react'
 import { Sparkline } from 'src/ui/pool/add-liquidity/active-liquidity-chart/svg'
 import { HorizontalLine } from './price-range-sparkline-clmm'
 
 const sparklineData = new Array(100).fill(0).map((_, i) => ({
   price: Math.random() * 100,
-  timestamp: Date.now() - i * 1000 * 60, // Simulating data for the last 100 minutes
+  timestamp: Date.now() - i * ms('1m'),
 }))
 
 export const PriceRangeSparklineAmm = () => {

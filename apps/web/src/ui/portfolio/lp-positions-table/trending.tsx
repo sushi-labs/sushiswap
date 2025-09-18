@@ -3,12 +3,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { TrendingItemMobile } from 'src/ui/explore/trending/trending-item'
 import { ChainKey, EvmChainId } from 'sushi/chain'
-import {
-  type SushiSwapV2ChainId,
-  type SushiSwapV3ChainId,
-  isSushiSwapV2ChainId,
-  isSushiSwapV3ChainId,
-} from 'sushi/config'
+import { isSushiSwapV2ChainId, isSushiSwapV3ChainId } from 'sushi/config'
 import { PLACEHOLDER_POOLS_DATA } from '../../explore/trending/trending'
 
 export const Trending = () => {
@@ -27,10 +22,10 @@ export const Trending = () => {
 
           const href =
             pool.version === 'v3'
-              ? isSushiSwapV3ChainId(pool.chainId as SushiSwapV3ChainId)
+              ? isSushiSwapV3ChainId(pool.chainId)
                 ? `/${ChainKey[pool.chainId]}/pool/v3/${pool.address}`
                 : `/${ChainKey[fallbackChain]}/pool/v3/${pool.address}`
-              : isSushiSwapV2ChainId(pool.chainId as SushiSwapV2ChainId)
+              : isSushiSwapV2ChainId(pool.chainId)
                 ? `/${ChainKey[pool.chainId]}/pool/v2/${pool.address}`
                 : `/${ChainKey[fallbackChain]}/pool/v2/${pool.address}`
 

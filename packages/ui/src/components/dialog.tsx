@@ -83,7 +83,7 @@ const DialogPortal = ({
   ...props
 }: DialogPrimitive.DialogPortalProps) => (
   <DialogPrimitive.Portal {...props}>
-    <div className="flex fixed inset-0 z-50 justify-center items-start sm:items-center">
+    <div className="fixed inset-0 z-50 flex items-start justify-center sm:items-center">
       {children}
     </div>
   </DialogPrimitive.Portal>
@@ -185,7 +185,7 @@ const DialogTitle = React.forwardRef<
   <DialogPrimitive.Title
     ref={ref}
     className={classNames(
-      'text-lg font-semibold tracking-tight leading-none mr-[64px]',
+      'text-lg font-semibold leading-none tracking-tight mr-[64px]',
       className,
     )}
     {...props}

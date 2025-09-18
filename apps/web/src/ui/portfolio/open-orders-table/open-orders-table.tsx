@@ -109,7 +109,6 @@ const Content = () => {
       id="open-orders-table"
       defaultValue={tabs[0].value}
       onValueChange={(value) => setCurrentTab(value as TABS)}
-      // className="-mx-5 md:mx-0"
     >
       <div className="flex overflow-x-auto flex-col flex-wrap gap-2 justify-between items-start px-4 pb-4 border-b border-accent md:items-center md:flex-row hide-scrollbar">
         <TabsList className="border-none bg-transparent !px-0">

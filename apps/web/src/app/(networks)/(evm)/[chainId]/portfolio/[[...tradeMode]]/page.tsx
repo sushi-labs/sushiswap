@@ -4,7 +4,6 @@ import { PortfolioHeader } from 'src/ui/portfolio/portfolio-header'
 import { TablesView } from 'src/ui/portfolio/tables-view/tables-view'
 import { WalletHoldings } from 'src/ui/portfolio/wallet-holdings/wallet-holdings'
 
-//@dev keep this a SSR page
 export default function PortfolioPage() {
   return (
     <main className="lg:p-4 md:p-2 pt-9 md:mb-[86px] animate-slide dark:bg-background bg-background">

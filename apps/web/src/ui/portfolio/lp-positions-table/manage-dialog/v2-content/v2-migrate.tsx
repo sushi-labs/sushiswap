@@ -22,6 +22,7 @@ export const V2Migrate = ({ position }: { position: any }) => {
       return result
     },
   })
+
   return (
     <div className="flex flex-col gap-5 rounded-xl mt-6 bg-gray-100 dark:bg-slate-900 px-3 py-4">
       <p className="text-sm">

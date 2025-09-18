@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
+import ms from 'ms'
 import { usePublicClient } from 'wagmi'
 
 export function useAverageBlockTime(blockCount = 5) {
@@ -28,6 +29,6 @@ export function useAverageBlockTime(blockCount = 5) {
 
       return avgBlockTime
     },
-    refetchInterval: 15 * 1000,
+    refetchInterval: ms('15s'),
   })
 }

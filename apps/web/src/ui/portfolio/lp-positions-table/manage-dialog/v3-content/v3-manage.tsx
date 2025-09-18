@@ -1,3 +1,4 @@
+import { Cog6ToothIcon } from '@heroicons/react/24/outline'
 import { SlippageToleranceStorageKey, TTLStorageKey } from '@sushiswap/hooks'
 import {
   Button,
@@ -12,11 +13,9 @@ import {
 import { useSearchParams } from 'next/navigation'
 import { useEffect, useMemo, useState } from 'react'
 import { useCreateQuery } from 'src/lib/hooks/useCreateQuery'
-import { getDefaultTTL } from 'src/lib/wagmi/hooks/utils/hooks/useTransactionDeadline'
-
-import { Cog6ToothIcon } from '@heroicons/react/24/outline'
 import { useConcentratedPositionInfo } from 'src/lib/wagmi/hooks/positions/hooks/useConcentratedPositionInfo'
 import { useConcentratedLiquidityPositionsFromTokenId } from 'src/lib/wagmi/hooks/positions/hooks/useConcentratedPositionsFromTokenId'
+import { getDefaultTTL } from 'src/lib/wagmi/hooks/utils/hooks/useTransactionDeadline'
 import { ConcentratedLiquidityProvider } from 'src/ui/pool/ConcentratedLiquidityProvider'
 import { ConcentratedLiquidityWidget } from 'src/ui/pool/ConcentratedLiquidityWidget'
 import { SushiSwapV3FeeAmount } from 'sushi/config'

@@ -134,10 +134,9 @@ export const WalletHoldings = () => {
   const [selectedToken, setSelectedToken] = useState<Type | null>(null)
   const isSmallScreen = useIsSmScreen()
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
     mutate.setToken0(data[0].token)
-  }, [])
+  }, [mutate.setToken0])
 
   const state: Partial<TableState> = useMemo(() => {
     return {

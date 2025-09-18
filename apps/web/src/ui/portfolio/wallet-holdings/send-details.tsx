@@ -30,7 +30,7 @@ export const SendDetails = ({
     chainId: state.token0?.chainId,
     query: {
       refetchInterval: 10000,
-      enabled: !!state.token0 && !!state.amount,
+      enabled: Boolean(state.token0) && Boolean(state.amount),
     },
   })
 
@@ -42,7 +42,7 @@ export const SendDetails = ({
     chainId: state.token0?.chainId,
     query: {
       refetchInterval: 10000,
-      enabled: !!state.token0 && !!state.amount,
+      enabled: Boolean(state.token0) && Boolean(state.amount),
     },
   })
   const isLoadingGasPrice =
@@ -51,10 +51,15 @@ export const SendDetails = ({
     isGasEstFetching ||
     isGasPriceFetching
 
-  const nativeToken = Native.onChain(state.token0?.chainId as EvmChainId)
+  const nativeToken = useMemo(() => {
+    if (state.token0?.chainId === undefined) return undefined
+
+    const token = Native.onChain(state.token0.chainId)
+    return token
+  }, [state.token0?.chainId])
 
   const formattedGasCost = useMemo(() => {
-    if (!gasEst || !gasPrice) return null
+    if (!gasEst || !gasPrice || !nativeToken) return null
 
     const totalCostWei = gasEst * gasPrice
 
@@ -62,13 +67,14 @@ export const SendDetails = ({
       raw: totalCostWei,
       formatted: formatUnits(totalCostWei, nativeToken.decimals),
     }
-  }, [gasEst, gasPrice, nativeToken.decimals])
+  }, [gasEst, gasPrice, nativeToken])
 
   const [gasCostUsd] = useTokenAmountDollarValues({
-    chainId: state.token0?.chainId as EvmChainId,
-    amounts: formattedGasCost?.raw
-      ? [Amount.fromRawAmount(nativeToken, formattedGasCost.raw)]
-      : [],
+    chainId: state.token0?.chainId,
+    amounts:
+      formattedGasCost?.raw && nativeToken
+        ? [Amount.fromRawAmount(nativeToken, formattedGasCost.raw)]
+        : [],
   })
 
   const estimatedConfirmationTime = useMemo(() => {
@@ -80,10 +86,10 @@ export const SendDetails = ({
   return (
     <Collapsible
       open={
-        !!state.token0 &&
-        !!state.amount &&
+        Boolean(state.token0) &&
+        Boolean(state.amount) &&
         !Number.isNaN(Number(state.amount)) &&
-        !!state.resolvedRecipientAddress &&
+        Boolean(state.resolvedRecipientAddress) &&
         isRecipientValid
       }
     >
@@ -95,7 +101,7 @@ export const SendDetails = ({
               <>
                 <span>(~${gasCostUsd.toFixed(2)})</span>
                 <span className="font-medium">
-                  {formattedGasCost.formatted} {nativeToken.symbol}
+                  {formattedGasCost.formatted} {nativeToken?.symbol}
                 </span>
               </>
             ) : (

@@ -314,7 +314,7 @@ export const V2MigrateDialog = ({
   } = useV3Migrate({
     account: address,
     args: {
-      pair: pool.address as Address,
+      pair: pool.address,
       liquidityToMigrate: balance,
       percentageToMigrate: 100,
       token0: _token0?.wrapped,
@@ -342,7 +342,6 @@ export const V2MigrateDialog = ({
   useEffect(() => {
     if (status === 'success') {
       setIsOpen(false)
-      //close the intial dialog as well?
     }
   }, [status, setIsOpen])
 

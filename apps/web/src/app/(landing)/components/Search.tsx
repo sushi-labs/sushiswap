@@ -88,7 +88,7 @@ export const Search: FC = () => {
   const skeleton = useMemo(() => {
     return (
       <div className="flex flex-col gap-2">
-        <div className="flex gap-2 items-center px-4 py-2 hover:bg-neutral-700">
+        <div className="flex items-center gap-2 px-4 py-2 hover:bg-neutral-700">
           <div className="w-[36px] h-[36px]">
             <SkeletonCircle radius={36} />
           </div>
@@ -109,14 +109,14 @@ export const Search: FC = () => {
     }
   }, [selectNetwork])
   return (
-    <div className="flex relative flex-col gap-3">
-      <div className="flex absolute z-10 gap-4 w-full">
+    <div className="relative flex flex-col gap-3">
+      <div className="absolute z-10 flex w-full gap-4">
         <div
           ref={ref}
           onFocus={() => setOpen(true)}
-          className="relative w-full rounded-xl bg-neutral-800"
+          className="relative w-full bg-neutral-800 rounded-xl"
         >
-          <div className="flex gap-2 items-center pr-3 pl-4 h-14">
+          <div className="flex items-center gap-2 pl-4 pr-3 h-14">
             <div
               className={classNames(
                 selectNetwork ? 'opacity-40 pointer-events-none' : '',
@@ -145,7 +145,7 @@ export const Search: FC = () => {
             <p
               onClick={() => setSelectNetwork((prev) => !prev)}
               onKeyDown={() => setSelectNetwork((prev) => !prev)}
-              className="flex gap-1 items-center py-2 pr-2 pl-3 text-sm font-semibold rounded-lg cursor-pointer bg-neutral-700 hover:bg-neutral-600 text-neutral-300 hover:text-neutral-200"
+              className="font-semibold text-sm flex items-center gap-1 py-2 pl-3 pr-2 rounded-lg cursor-pointer bg-neutral-700 hover:bg-neutral-600 text-neutral-300 hover:text-neutral-200"
             >
               {evmChainShortName[chainId].toUpperCase()}{' '}
               <ChevronDownIcon width={16} height={16} />
@@ -153,13 +153,13 @@ export const Search: FC = () => {
           </div>
           <div
             className={classNames(
-              open ? 'py-2 max-h-[335px]' : 'max-h-[0px]',
-              'flex overflow-hidden overflow-y-auto flex-col gap-2 rounded-b-xl transition-all z-[100] bg-neutral-800 scroll',
+              open ? 'max-h-[335px] py-2' : 'max-h-[0px]',
+              'z-[100] bg-neutral-800 rounded-b-xl flex flex-col gap-2 overflow-hidden transition-all overflow-y-auto scroll',
             )}
           >
             {selectNetwork ? (
               <>
-                <p className="px-4 text-sm font-semibold text-neutral-400">
+                <p className="text-sm font-semibold px-4 text-neutral-400">
                   Networks
                 </p>
                 {SUPPORTED_CHAIN_IDS.map((el) => (
@@ -176,7 +176,7 @@ export const Search: FC = () => {
               </>
             ) : query.length > 2 ? (
               <>
-                <p className="px-4 text-sm font-semibold text-neutral-400">
+                <p className="text-sm font-semibold px-4 text-neutral-400">
                   Tokens
                 </p>
                 {isAddress(query) && web3Loading ? (
@@ -220,7 +220,7 @@ export const Search: FC = () => {
               </>
             ) : (
               <>
-                <p className="flex gap-2 items-center px-4 text-sm font-semibold text-neutral-400">
+                <p className="text-sm font-semibold flex items-center gap-2 px-4 text-neutral-400">
                   <StarIcon width={16} height={16} /> Popular Tokens
                 </p>
                 <div className="flex flex-col gap-2">
@@ -244,7 +244,7 @@ const Row: FC<{ currency: Type; onClick?(): void; isNetwork?: boolean }> = ({
 }) => {
   const content = (
     <div
-      className="flex gap-2 items-center px-4 py-2 cursor-pointer hover:bg-neutral-700"
+      className="flex items-center gap-2 px-4 py-2 cursor-pointer hover:bg-neutral-700"
       key={currency.wrapped.address}
     >
       <div className="w-[36px] h-[36px]">

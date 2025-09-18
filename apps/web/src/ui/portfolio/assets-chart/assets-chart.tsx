@@ -21,6 +21,7 @@ import {
 } from 'echarts/components'
 import * as echarts from 'echarts/core'
 import { CanvasRenderer } from 'echarts/renderers'
+import ms from 'ms'
 import { useTheme } from 'next-themes'
 import { useEffect, useMemo, useState } from 'react'
 import { useCallback } from 'react'
@@ -51,34 +52,19 @@ export enum AssetsChartPeriod {
 }
 
 export const chartPeriods: Record<AssetsChartPeriod, number> = {
-  [AssetsChartPeriod.OneDay]: 86400 * 1000 * 1,
-  [AssetsChartPeriod.SevenDay]: 86400 * 1000 * 7,
-  [AssetsChartPeriod.ThirtyDay]: 86400 * 1000 * 30,
+  [AssetsChartPeriod.OneDay]: ms('1d'),
+  [AssetsChartPeriod.SevenDay]: ms('7d'),
+  [AssetsChartPeriod.ThirtyDay]: ms('30d'),
   [AssetsChartPeriod.All]: Number.POSITIVE_INFINITY,
 }
 
 export const MOCK_USD_VALUE_BUCKETS = {
-  [AssetsChartPeriod.OneDay]: [
-    { date: 1757625600, usdValue: 9500 },
-    { date: 1757632800, usdValue: 9680 },
-    { date: 1757640000, usdValue: 9400 },
-    { date: 1757647200, usdValue: 9850 },
-    { date: 1757661600, usdValue: 10020 },
-    { date: 1757668800, usdValue: 9720 },
-    { date: 1757676000, usdValue: 10110 },
-    { date: 1757697600, usdValue: 9950 },
-    { date: 1757704800, usdValue: 10420 },
-    { date: 1757719200, usdValue: 10780 },
-    { date: 1757726400, usdValue: 10360 },
-    { date: 1757733600, usdValue: 11050 },
-    { date: 1757748000, usdValue: 10840 },
-    { date: 1757755200, usdValue: 11220 },
-    { date: 1757762400, usdValue: 10970 },
-    { date: 1757769600, usdValue: 11500 },
-    { date: 1757776800, usdValue: 11120 },
-    { date: 1757784000, usdValue: 11740 },
-    { date: 1757791200, usdValue: 11380 },
-  ],
+  [AssetsChartPeriod.OneDay]: Array.from({ length: 19 }).map((_, i) => {
+    const date = Date.now() - (18 - i) * ms('1h')
+    const base = 9500
+    const usdValue = base + Math.floor(Math.random() * 800) - 400
+    return { date, usdValue }
+  }),
   [AssetsChartPeriod.SevenDay]: [
     { date: 1757635200, usdValue: 1000 },
     { date: 1757721600, usdValue: 1010 },
@@ -194,11 +180,13 @@ export const MOCK_USD_VALUE_BUCKETS = {
   ],
 }
 
+const oneDayBuckets = MOCK_USD_VALUE_BUCKETS[AssetsChartPeriod.OneDay]
+
 export const MOCK_TRANSACTIONS = [
-  { date: 1757640000, type: 'buy' },
-  { date: 1757719200, type: 'sell' },
-  { date: 1757748000, type: 'buy' },
-  { date: 1757784000, type: 'sell' },
+  { date: oneDayBuckets[5].date, type: 'buy' },
+  { date: oneDayBuckets[10].date, type: 'sell' },
+  { date: oneDayBuckets[14].date, type: 'buy' },
+  { date: oneDayBuckets[17].date, type: 'sell' },
 ]
 
 const tailwind = resolveConfig(tailwindConfig)
@@ -224,7 +212,7 @@ export const AssetsChart = () => {
     const now = Date.now()
     const [x, y] = source.reduce<[number[], number[]]>(
       (acc, cur) => {
-        if (cur?.date * 1000 >= now - chartPeriods[period]) {
+        if (cur?.date * ms('1s') >= now - chartPeriods[period]) {
           acc[0].push(cur.date)
 
           const usdValue = cur.usdValue
@@ -248,7 +236,7 @@ export const AssetsChart = () => {
       )
       if (valNode) valNode.textContent = `${value.toFixed(2)}`
       if (dateNode)
-        dateNode.textContent = format(new Date(name * 1000), 'dd MMM yyyy')
+        dateNode.textContent = format(new Date(name * ms('1s')), 'dd MMM yyyy')
     },
     [],
   )
@@ -272,11 +260,11 @@ export const AssetsChart = () => {
     const valueMap = new Map<number, number>()
 
     MOCK_USD_VALUE_BUCKETS[period].forEach((d) => {
-      valueMap.set(d.date * 1000, d.usdValue)
+      valueMap.set(d.date * ms('1s'), d.usdValue)
     })
 
     const result = MOCK_TRANSACTIONS.map((tx) => {
-      const timestamp = tx.date * 1000
+      const timestamp = tx.date * ms('1s')
       const value = valueMap.get(timestamp)
 
       return {
@@ -314,7 +302,6 @@ export const AssetsChart = () => {
         extraCssText:
           'z-index: 1000; padding: 0 !important; box-shadow: none !important',
         responsive: true,
-        // @ts-ignore
         backgroundColor: 'transparent',
         textStyle: {
           fontSize: 12,
@@ -433,7 +420,7 @@ export const AssetsChart = () => {
           showSymbol: false,
           smooth: true,
           lineStyle: { width: 2 },
-          data: xData.map((x, i) => [x * 1000, yData[i]]),
+          data: xData.map((x, i) => [x * ms('1s'), yData[i]]),
         },
         {
           type: 'scatter',

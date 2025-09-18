@@ -84,7 +84,7 @@ export const PopoverDrawer = ({
       >
         <div
           className={classNames(
-            !!customDialogClose && 'flex items-center justify-between',
+            Boolean(customDialogClose) && 'flex items-center justify-between',
           )}
         >
           <DialogTitle

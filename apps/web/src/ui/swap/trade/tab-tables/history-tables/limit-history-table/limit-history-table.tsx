@@ -74,7 +74,7 @@ export const LimitOrdersHistoryTable = ({
       next={() => {}}
       hasMore={false}
       loader={
-        <div className="flex justify-center py-4 w-full">
+        <div className="flex justify-center w-full py-4">
           <Loader size={16} />
         </div>
       }
@@ -99,7 +99,7 @@ export const LimitOrdersHistoryTable = ({
         {ordersLoading ? (
           <SkeletonBox className="w-full h-52" />
         ) : !data?.length ? (
-          <p className="flex justify-center items-center h-52 text-sm italic text-center text-muted-foreground dark:text-pink-200">
+          <p className="text-sm italic text-center text-muted-foreground dark:text-pink-200 h-52 flex items-center justify-center">
             No Past Limit Orders
           </p>
         ) : (

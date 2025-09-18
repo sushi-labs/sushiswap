@@ -58,11 +58,11 @@ const SendTokensProvider: FC<SendTokensProviderProps> = ({ children }) => {
     return resolvedAddress ?? ''
   }, [rawRecipientInput, resolvedAddress])
 
-  const goTo = (step: SendViewStep) => {
-    setCurrentStep(step)
-  }
-
   const value = useMemo(() => {
+    const goTo = (step: SendViewStep) => {
+      setCurrentStep(step)
+    }
+
     return {
       mutate: {
         setToken0,
@@ -87,8 +87,6 @@ const SendTokensProvider: FC<SendTokensProviderProps> = ({ children }) => {
     amount,
     currentStep,
     contactToEdit,
-    // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
-    goTo,
   ])
 
   return (

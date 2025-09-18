@@ -155,7 +155,7 @@ export function DataTable<TData, TValue>({
         )}
       >
         {showColumnHeaders ? (
-          <TableHeader className={'pt-8 pb-4'}>
+          <TableHeader className="pb-4 pt-8">
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow
                 key={headerGroup.id}

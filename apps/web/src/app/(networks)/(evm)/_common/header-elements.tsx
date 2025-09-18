@@ -1,21 +1,8 @@
 import { isPoolChainId } from '@sushiswap/graph-client/data-api'
-import {
-  // LinkInternal,
-  type NavigationElement,
-  NavigationElementType,
-  // NavigationListItem,
-  // NavigationMenuContent,
-  // NavigationMenuItem,
-  // NavigationMenuTrigger,
-  // OnramperButton,
-} from '@sushiswap/ui'
-import {
-  EXPLORE_NAVIGATION_LINKS,
-  // MORE_NAVIGATION_LINKS,
-} from 'src/app/_common/header-elements'
-// import { isAggregatorOnlyChainId } from "sushi/config";
+import { type NavigationElement, NavigationElementType } from '@sushiswap/ui'
+import { EXPLORE_NAVIGATION_LINKS } from 'src/app/_common/header-elements'
 import { isEvmChainId } from 'sushi'
-import { type ChainId, ChainKey, type EvmChainId } from 'sushi/chain'
+import { type ChainId, ChainKey } from 'sushi/chain'
 
 interface HeaderElements {
   chainId?: ChainId
@@ -38,29 +25,6 @@ export const headerElements = ({
     show: 'desktop',
     type: NavigationElementType.Single,
   },
-  // {
-  // 	show: "desktop",
-  // 	type: NavigationElementType.Custom,
-  // 	item: (
-  // 		<NavigationMenuItem className={NavigationElementType.Custom}>
-  // 			<NavigationMenuTrigger>
-  // 				<LinkInternal href={`/${ChainKey[chainId ?? ChainId.ETHEREUM]}/swap`}>Trade</LinkInternal>
-  // 			</NavigationMenuTrigger>
-  // 			<NavigationMenuContent>
-  // 				<ul className="w-[400px] gap-3 p-4">
-  // 					<NavigationListItem title={"Swap"} href={`/${ChainKey[chainId ?? ChainId.ETHEREUM]}/swap`}>
-  // 						The easiest way to trade.
-  // 					</NavigationListItem>
-  // 					{includeOnramper ? (
-  // 						<OnramperButton>
-  // 							<NavigationListItem title={"Buy Crypto"}>Onramp with fiat.</NavigationListItem>
-  // 						</OnramperButton>
-  // 					) : null}
-  // 				</ul>
-  // 			</NavigationMenuContent>
-  // 		</NavigationMenuItem>
-  // 	),
-  // },
   ...(!chainId || isPoolChainId(chainId)
     ? ([
         {
@@ -97,10 +61,4 @@ export const headerElements = ({
         },
       ] as const)
     : []),
-  // {
-  //   title: 'More',
-  //   items: MORE_NAVIGATION_LINKS,
-  //   show: 'desktop',
-  //   type: NavigationElementType.Dropdown,
-  // },
 ]

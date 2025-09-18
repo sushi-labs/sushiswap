@@ -68,7 +68,7 @@ export const TradeWidget = ({
             )}
             {tradeMode === 'limit' && (
               <DerivedStateTwapProvider isLimitOrder>
-                <div className="flex justify-between items-center">
+                <div className="flex items-center justify-between">
                   <TradeModeButtons />
                   <SimpleSwapSettingsOverlay />
                 </div>
@@ -77,7 +77,7 @@ export const TradeWidget = ({
             )}
             {tradeMode === 'dca' && (
               <DerivedStateTwapProvider>
-                <div className="flex justify-between items-center">
+                <div className="flex items-center justify-between">
                   <TradeModeButtons />
                   <SimpleSwapSettingsOverlay />
                 </div>
@@ -86,7 +86,7 @@ export const TradeWidget = ({
             )}
             {tradeMode === 'fiat' && (
               <>
-                <div className="flex justify-between items-center">
+                <div className="flex items-center justify-between">
                   <TradeModeButtons />
                   <SimpleSwapSettingsOverlay />
                 </div>

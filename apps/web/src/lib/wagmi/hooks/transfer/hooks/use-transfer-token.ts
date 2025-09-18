@@ -60,7 +60,7 @@ export const useTransferToken = ({
   >({
     chainId: amount?.currency.chainId,
     abi: erc20Abi_transfer,
-    address: amount?.currency?.wrapped?.address as Address,
+    address: amount?.currency?.wrapped?.address,
     functionName: 'transfer',
     args: [sendTo as Address, amount ? amount.quotient : 0n],
     scopeKey: 'transfer-std',
@@ -122,7 +122,6 @@ export const useTransferToken = ({
   }, [])
 
   const execute = useWriteContract({
-    // ...data?.request,
     mutation: {
       onError,
       onSuccess,
@@ -136,41 +135,36 @@ export const useTransferToken = ({
     },
   })
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: Typecheck speedup
-  const write = useMemo(
-    () => {
-      if (!amount || !sendTo || !address) return
+  const write = useMemo(() => {
+    if (!amount || !sendTo || !address) return
 
-      if (amount?.currency?.isNative) {
-        return () => {
-          nativeTx.sendTransaction({
-            to: sendTo,
-            value: amount.quotient,
-            account: address,
-          })
-          setSuccess(false)
-          setPending(true)
-        }
+    if (amount?.currency?.isNative) {
+      return () => {
+        nativeTx.sendTransaction({
+          to: sendTo,
+          value: amount.quotient,
+          account: address,
+        })
+        setSuccess(false)
+        setPending(true)
       }
+    }
 
-      if (execute.writeContract && simulation?.data?.request) {
-        return () => {
-          execute.writeContract(simulation.data.request)
-          setSuccess(false)
-          setPending(true)
-        }
+    if (execute.writeContract && simulation?.data?.request) {
+      return () => {
+        execute.writeContract(simulation.data.request)
+        setSuccess(false)
+        setPending(true)
       }
-    },
-    [
-      execute.writeContract,
-      simulation?.data?.request,
-      amount?.currency?.isNative,
-      amount?.quotient,
-      nativeTx.sendTransaction,
-      sendTo,
-      address,
-    ] as const,
-  )
+    }
+  }, [
+    execute,
+    simulation?.data,
+    amount,
+    nativeTx.sendTransaction,
+    sendTo,
+    address,
+  ])
 
   return useMemo<[TransferState, { write: undefined | (() => void) }]>(() => {
     let state = TransferState.UNKNOWN

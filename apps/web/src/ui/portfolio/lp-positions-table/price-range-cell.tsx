@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useClaimableRewards } from 'src/lib/hooks/react-query'
 import { useConcentratedPositionOwner } from 'src/lib/wagmi/hooks/positions/hooks/useConcentratedPositionOwner'
 import { ClaimRewardsButton } from 'src/ui/pool/ClaimRewardsButton'
+import { SushiSwapProtocol } from 'sushi'
 import { type MerklChainId, isMerklChainId } from 'sushi/config'
 import { ManageDialog } from './manage-dialog/manage-dialog'
 import { PriceRangeSparklineAmm } from './price-range-sparkline-amm'
@@ -32,7 +33,7 @@ export const PriceRangeCell = ({
   if ((isHovered || isManageOpen) && !isSmallScreen) {
     return (
       <div className="flex gap-2 justify-between items-center w-full">
-        {data.protocol === 'SUSHISWAP_V3' ? (
+        {data.protocol === SushiSwapProtocol.SUSHISWAP_V3 ? (
           <ClaimRewardsButton
             rewards={rewardsForChain}
             className="!rounded-full flex-auto"
@@ -54,7 +55,7 @@ export const PriceRangeCell = ({
       </div>
     )
   }
-  if (data.protocol === 'SUSHISWAP_V2') {
+  if (data.protocol === SushiSwapProtocol.SUSHISWAP_V2) {
     return <PriceRangeSparklineAmm />
   }
   return <PriceRangeSparklineCLMM />

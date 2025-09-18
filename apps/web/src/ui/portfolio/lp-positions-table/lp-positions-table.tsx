@@ -16,6 +16,7 @@ import {
   useMemo,
   useState,
 } from 'react'
+import { SushiSwapProtocol } from 'sushi'
 import { SUSHI, USDC } from 'sushi/currency'
 import {
   CHAIN_COLUMN,
@@ -52,7 +53,7 @@ const data: any[] = [
     token0: SUSHI[1],
     token1Address: USDC[1].address,
     token1: USDC[1],
-    protocol: 'SUSHISWAP_V2',
+    protocol: SushiSwapProtocol.SUSHISWAP_V2,
     swapFee: 0.0003,
     position: {
       positionUSD: 12345.67,
@@ -71,7 +72,7 @@ const data: any[] = [
     token0: SUSHI[42161],
     token1Address: USDC[42161].address,
     token1: USDC[42161],
-    protocol: 'SUSHISWAP_V3',
+    protocol: SushiSwapProtocol.SUSHISWAP_V3,
     swapFee: 0.001,
     position: {
       positionUSD: 23456.78,
@@ -180,7 +181,7 @@ export const LPPositionsTable = () => {
         >
           <div className="flex flex-col gap-4 px-3 mt-14 w-full">
             <div className="flex gap-2 items-center">
-              {positionData?.protocol === 'SUSHISWAP_V3' ? (
+              {positionData?.protocol === SushiSwapProtocol.SUSHISWAP_V3 ? (
                 <Button size="sm" className="w-full !rounded-full">
                   Claim
                 </Button>
@@ -201,7 +202,7 @@ export const LPPositionsTable = () => {
               className={classNames(
                 'dark:!bg-[#FFFFFF]/[.12] dark:hover:!bg-[#fff]/[.18] dark:active:!bg-[#fff]/[.24]',
                 '!rounded-full',
-                positionData?.protocol === 'SUSHISWAP_V3'
+                positionData?.protocol === SushiSwapProtocol.SUSHISWAP_V3
                   ? 'w-1/2 mx-auto'
                   : 'w-full',
               )}

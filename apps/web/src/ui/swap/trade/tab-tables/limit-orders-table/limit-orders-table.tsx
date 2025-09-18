@@ -3,7 +3,6 @@
 import { OrderStatus } from '@orbs-network/twap-sdk'
 import { Card, DataTable, Loader, SkeletonBox, classNames } from '@sushiswap/ui'
 import type { ColumnDef } from '@tanstack/react-table'
-import type { PaginationState } from '@tanstack/react-table'
 import React, { useMemo, useState } from 'react'
 import InfiniteScroll from 'react-infinite-scroll-component'
 import {
@@ -62,7 +61,7 @@ export const LimitOrdersTable = ({
       next={() => {}}
       hasMore={false}
       loader={
-        <div className="flex justify-center py-4 w-full">
+        <div className="flex justify-center w-full py-4">
           <Loader size={16} />
         </div>
       }
@@ -87,7 +86,7 @@ export const LimitOrdersTable = ({
         {ordersLoading ? (
           <SkeletonBox className="w-full h-52" />
         ) : !data?.length ? (
-          <p className="flex justify-center items-center h-52 text-sm italic text-center text-muted-foreground dark:text-pink-200">
+          <p className="text-sm italic text-center text-muted-foreground dark:text-pink-200 h-52 flex items-center justify-center">
             No Active Limit Orders
           </p>
         ) : (
