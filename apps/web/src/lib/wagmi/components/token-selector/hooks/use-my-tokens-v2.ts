@@ -1,6 +1,8 @@
 import {
+  type TokenListBalanceV2,
   type TokenListV2ChainId,
   getTokenListBalancesV2,
+  isTokenListV2ChainId,
 } from '@sushiswap/graph-client/data-api'
 import { useCustomTokens } from '@sushiswap/hooks'
 import { useQuery } from '@tanstack/react-query'
@@ -29,13 +31,16 @@ export function useMyTokensV2({
   const { data } = useCustomTokens()
 
   const customTokens = useMemo(() => {
+    if (!chainIds) return []
     return Object.values(data)
-      .filter((token) =>
-        chainIds?.includes(token.chainId as TokenListV2ChainId),
+      .filter(
+        (token) =>
+          isTokenListV2ChainId(token.chainId) &&
+          chainIds.includes(token.chainId),
       )
       .map((token) => ({
         address: token.address,
-        chainId: token.chainId as unknown,
+        chainId: token.chainId as TokenListV2ChainId,
       }))
   }, [chainIds, data])
 
@@ -53,7 +58,7 @@ export function useMyTokensV2({
         const _native = EvmNative.fromChainId(_chainId)
         return [
           {
-            bridgeInfo: [],
+            bridgeInfo: null,
             symbol: _native.symbol,
             priceUSD: 0,
             priceChange1d: 0,
@@ -97,12 +102,8 @@ export function useMyTokensV2({
     let tokens: EvmCurrency[] | undefined = []
     let balanceMap: Map<string, Amount<EvmCurrency>> | undefined = undefined
     let priceMap: Map<string, number> | undefined = undefined
-    // let bridgeInfoMap: Map<string, { address: string; chainId: TokenListV2ChainId; decimals: number }> | undefined = undefined;
     let bridgeInfoMap:
-      | Map<
-          string,
-          { address: string; chainId: unknown; decimals: number }[] | null
-        >
+      | Map<string, TokenListBalanceV2['bridgeInfo'] | null>
       | undefined = undefined
 
     if (query.data) {
@@ -116,10 +117,10 @@ export function useMyTokensV2({
         // token.
 
         if (token.address === NativeAddress) {
-          _token = EvmNative.fromChainId(token.chainId as TokenListV2ChainId)
+          _token = EvmNative.fromChainId(token.chainId as EvmChainId)
         } else {
           _token = new EvmToken({
-            chainId: token.chainId as TokenListV2ChainId,
+            chainId: token.chainId as EvmChainId,
             address: token.address,
             decimals: token.decimals,
             symbol: token.symbol,

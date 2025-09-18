@@ -37,7 +37,10 @@ export function useSearchTokensV2({
       .filter(
         (t) => isTokenListV2ChainId(t.chainId) && chainIds?.includes(t.chainId),
       )
-      .map((t) => ({ address: t.address, chainId: t.chainId }))
+      .map((t) => ({
+        address: t.address,
+        chainId: t.chainId as TokenListV2ChainId,
+      }))
   }, [_customTokens, chainIds, includeCustomTokens])
 
   const query = useInfiniteQuery({

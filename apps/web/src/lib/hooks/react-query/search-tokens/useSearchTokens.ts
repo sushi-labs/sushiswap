@@ -15,7 +15,7 @@ interface UseSearchTokens {
   chainIds: TokenListV2ChainId[] | undefined
   search?: string
   first?: number
-  tokens?: { address: Address; chainId: unknown }[]
+  tokens?: { address: Address; chainId: TokenListV2ChainId }[]
 }
 
 export const useSearchTokens = ({

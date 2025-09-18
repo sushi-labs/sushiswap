@@ -3,6 +3,7 @@ import type { Amount } from 'sushi'
 import type { EvmCurrency } from 'sushi/evm'
 import { useAccount } from 'wagmi'
 
+import type { TokenListBalanceV2 } from '@sushiswap/graph-client/data-api'
 import type { EvmToken } from 'sushi/evm'
 import type { Address } from 'viem'
 import { TokenSelectorImportRow } from './token-selector-import-row'
@@ -19,10 +20,7 @@ interface TokenSelectorCurrencyListV2Props {
   balancesMap: Map<string, Amount<EvmCurrency>> | undefined
   priceMap: Map<string, number> | undefined
   bridgeInfoMap:
-    | Map<
-        string,
-        { address: string; chainId: unknown; decimals: number }[] | null
-      >
+    | Map<string, TokenListBalanceV2['bridgeInfo'] | null>
     | undefined
   isBalanceLoading: boolean
   importConfig?: {

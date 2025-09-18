@@ -20,7 +20,7 @@ import React, {
   useState,
 } from 'react'
 import { SUPPORTED_CHAIN_IDS } from 'src/config'
-import type { EvmChain, EvmChainId } from 'sushi/evm'
+import type { EvmChainId } from 'sushi/evm'
 import type { EvmCurrency, EvmToken } from 'sushi/evm'
 import { useAccount } from 'wagmi'
 import { ChainOptionsSelector } from '~evm/[chainId]/[trade]/_ui/swap/chain-options-selector'
@@ -60,7 +60,6 @@ export const TokenSelectorV2: FC<TokenSelectorV2Props> = ({
   variant,
 }) => {
   const { address } = useAccount()
-  //@dev using `number | null` for now until types decalred
   const [_selectedNetwork, setSelectedNetwork] = useState<EvmChainId | null>(
     selectedNetwork ?? null,
   )
@@ -99,7 +98,7 @@ export const TokenSelectorV2: FC<TokenSelectorV2Props> = ({
   )
 
   const _onNetworkSelect = useCallback(
-    (network: EvmChainId) => {
+    (network: EvmChainId | null) => {
       if (currencyInfo) {
         showCurrencyInfo(false)
       }
@@ -152,10 +151,11 @@ export const TokenSelectorV2: FC<TokenSelectorV2Props> = ({
               <ChainOptionsSelector
                 onNetworkSelect={_onNetworkSelect}
                 size="lg"
-                selectedNetwork={_selectedNetwork as EvmChainId}
+                selectedNetwork={_selectedNetwork}
                 canShowMessage={true}
                 networkSelectedClassName="border-blue dark:!border-skyblue bg-[#4217FF14] dark:!bg-[#3DB1FF14]"
                 networkClassName="dark:bg-slate-900"
+                includeAllOption={true}
               />
             </div>
           ) : null}

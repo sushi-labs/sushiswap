@@ -149,7 +149,7 @@ export const useFavorites = () => {
             ?.toString({ fixed: 6 }) ?? '0'
         const balanceUsd = priceUsd * Number(balance)
         favArr.push({
-          chainId: token.chainId,
+          chainId: token.chainId as TokenListV2ChainId,
           address: _native.wrap().address,
           decimals: _native.wrap().decimals,
           name: _native.name,
