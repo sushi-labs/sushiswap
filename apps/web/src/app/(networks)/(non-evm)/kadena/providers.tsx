@@ -6,7 +6,10 @@ import {
   detectSnapProvider,
 } from '@kadena/wallet-adapter-metamask-snap'
 import { KadenaWalletProvider as KadenaWalletProviderReact } from '@kadena/wallet-adapter-react'
-import { createWalletConnectAdapter } from '@kadena/wallet-adapter-walletconnect'
+import {
+  WalletConnectAdapter,
+  detectWalletConnectProvider,
+} from '@kadena/wallet-adapter-walletconnect'
 import { createContext, useContext, useEffect, useMemo, useState } from 'react'
 import { KADENA_NETWORK_ID } from './_common/constants/network'
 import { KadenaWalletProvider } from './kadena-wallet-provider'
@@ -25,6 +28,8 @@ const KadenaAdapaterContext = createContext<AdapterContextType | undefined>(
 export function Providers({ children }: { children: React.ReactNode }) {
   // const [snapAdapter, setSnapAdapter] = useState<SnapAdapter | null>(null)
   const [eckoApadter, setEckoAdpater] = useState<EckoAdapter | null>(null)
+  const [walletConnectAdapter, setWalletConnectAdapter] =
+    useState<WalletConnectAdapter | null>(null)
 
   useEffect(() => {
     // async function initSnap() {
@@ -47,8 +52,21 @@ export function Providers({ children }: { children: React.ReactNode }) {
         setEckoAdpater(adapter)
       }
     }
+    async function initWalletConnect() {
+      const wcAdapter = await detectWalletConnectProvider({ silent: true })
+      if (wcAdapter) {
+        const adapter = new WalletConnectAdapter({
+          provider: wcAdapter,
+          networkId: KADENA_NETWORK_ID,
+          projectId:
+            process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID ?? TEST_ID,
+        })
+        setWalletConnectAdapter(adapter)
+      }
+    }
     // initSnap()
     initEcko()
+    initWalletConnect()
   }, [])
 
   const refreshSnapAdapter = async () => {
@@ -65,12 +83,9 @@ export function Providers({ children }: { children: React.ReactNode }) {
     return [
       ...(eckoApadter ? [eckoApadter] : []),
       // ...(snapAdapter ? [snapAdapter] : []),
-      createWalletConnectAdapter({
-        projectId: process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID ?? TEST_ID,
-        networkId: KADENA_NETWORK_ID,
-      }),
+      ...(walletConnectAdapter ? [walletConnectAdapter] : []),
     ]
-  }, [eckoApadter])
+  }, [eckoApadter, walletConnectAdapter])
 
   return (
     <KadenaAdapaterContext.Provider value={{ refreshSnapAdapter }}>
