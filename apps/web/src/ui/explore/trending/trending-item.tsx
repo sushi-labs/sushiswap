@@ -31,6 +31,7 @@ export const TrendingItem = ({
     totalApr1d,
     volumeUSD1d,
     liquidityUSD,
+    swapFee,
   } = pool
   const pairName = `${token0.symbol}-${token1.symbol}`
   const isMounted = useIsMounted()
@@ -39,11 +40,11 @@ export const TrendingItem = ({
 
   return (
     <Link
-      className="flex justify-between items-center p-3 w-full rounded-lg bg-background"
+      className="flex justify-between items-center p-3 w-full rounded-lg bg-transparent border border-[#00000014] dark:border-[#FFFFFF14]"
       href={href}
     >
       <div className="flex gap-5 items-center whitespace-nowrap basis-1/2">
-        <div className="rounded-lg dark:bg-slate-800 bg-slate-50 dark:border-[#222137] w-8 flex items-center justify-center text-xs font-medium aspect-1 border">
+        <div className="rounded-lg dark:bg-[#252A3C] bg-[#F4F5F6] w-8 flex items-center justify-center text-xs font-medium aspect-1">
           {position}
         </div>
         <div className="flex gap-2 items-center">
@@ -97,10 +98,10 @@ export const TrendingItem = ({
           </div>
           <div className="flex flex-col font-medium">
             <div className="text-sm">{pairName}</div>
-            <div className="flex gap-2 items-center">
+            <div className="flex gap-1 items-center">
               <ProtocolBadge protocol={protocol as SushiSwapProtocol} />
-              <div className="text-xs text-muted-foreground">
-                {formatPercent(pool.swapFee)}
+              <div className="text-xs text-muted-foreground bg-[#F4F5F6] dark:bg-[#252A3C] px-2 py-1 rounded-full">
+                {formatPercent(swapFee)}
               </div>
             </div>
           </div>
@@ -132,7 +133,7 @@ export const TrendingItemSkeleton = () => {
     <div className="flex justify-between items-center p-3 w-full rounded-lg bg-background animate-pulse h-[68px]">
       <div className="flex gap-5 items-center whitespace-nowrap basis-1/2">
         <div className="rounded-lg bg-muted w-8 h-8 flex items-center justify-center text-xs font-medium aspect-1" />
-        <div className="flex gap-2 items-center">
+        <div className="flex gap-1 items-center">
           <div className="relative">
             <div className="flex">
               <SkeletonCircle radius={32} />
@@ -144,7 +145,7 @@ export const TrendingItemSkeleton = () => {
             <SkeletonText fontSize="sm" className="!w-[80px]" />
             <div className="flex gap-2 items-center mt-1">
               <SkeletonBox className="!w-[57px] !h-6 !rounded-full" />
-              <SkeletonText fontSize="sm" className="!w-[28px]" />
+              <SkeletonBox className="!w-[57px] !h-6 !rounded-full" />
             </div>
           </div>
         </div>

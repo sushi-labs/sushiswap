@@ -298,7 +298,7 @@ export const POOL_TYPE_COLUMN: ColumnDef<MultiChainPool, unknown> = {
         <TooltipProvider>
           <Tooltip delayDuration={0}>
             <TooltipTrigger asChild>
-              <div className="bg-[#F4F5F6] text-muted-foreground dark:bg-[#1E293B] dark:text-pink-200 text-xs px-2.5 py-1 rounded-full">
+              <div className="bg-[#F4F5F6] text-muted-foreground dark:bg-[#252A3C] dark:text-pink-200 text-xs px-2.5 py-1 rounded-full">
                 {formatNumber(props.row.original.swapFee * 100)}%
               </div>
             </TooltipTrigger>
@@ -308,7 +308,7 @@ export const POOL_TYPE_COLUMN: ColumnDef<MultiChainPool, unknown> = {
               className="md:block hidden px-5 py-5 mb-10 !bg-[#FFFFFF24] !backdrop-blur-md dark:!bg-[#00000024] border border-[#EBEBEB] dark:border-[#FFFFFF14]"
             >
               <div className="flex flex-col gap-2 max-w-[275px]">
-                <div className="bg-[#F4F5F6] w-fit text-muted-foreground dark:bg-[#1E293B] dark:text-pink-200 text-xs px-2.5 py-1 rounded-full">
+                <div className="bg-[#F4F5F6] w-fit text-muted-foreground dark:bg-[#252A3C] dark:text-pink-200 text-xs px-2.5 py-1 rounded-full">
                   {formatNumber(props.row.original.swapFee * 100)}% Fee Tier
                 </div>
                 <p className="text-sm font-normal text-slate-900 dark:text-pink-100">

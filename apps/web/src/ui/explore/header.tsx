@@ -20,7 +20,11 @@ const AddLiquidityPopover = ({ chainId }: { chainId: EvmChainId }) => {
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button variant="default" size="lg">
+        <Button
+          variant="quinary"
+          size="lg"
+          className="dark:bg-[#FFFFFF14] dark:text-white"
+        >
           <div className="flex items-center justify-between w-full">
             <div className="w-5 block md:hidden" />
             <div className="flex items-center gap-2 mr-4">

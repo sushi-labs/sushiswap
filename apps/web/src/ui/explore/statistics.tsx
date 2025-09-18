@@ -42,7 +42,7 @@ const StatisticsHeader = ({
         <Button
           variant="outline"
           className={classNames(
-            'rounded-xl border-dashed !bg-[#00000005] hover:!bg-[#F338C31A] hover:!border-[#F338C3] hover:!text-[#F338C3]',
+            'rounded-xl border-dashed bg-[#F4F5F6] dark:bg-[#252A3C] hover:!bg-[#F338C31A] hover:!border-[#F338C3] hover:!text-[#F338C3]',
             poolType === 'v2' &&
               '!bg-[#F338C31A] !border-[#F338C3] text-[#F338C3] hover:!text-[#F338C3] !border-solid',
           )}
@@ -55,7 +55,7 @@ const StatisticsHeader = ({
         <Button
           variant="outline"
           className={classNames(
-            'rounded-xl border-dashed !bg-[#00000005] hover:!bg-[#3B7EF61A] hover:!border-[#3B7EF6] hover:!text-[#3B7EF6]',
+            'rounded-xl border-dashed bg-[#F4F5F6] dark:bg-[#252A3C] hover:!bg-[#3B7EF61A] hover:!border-[#3B7EF6] hover:!text-[#3B7EF6]',
             poolType === 'v3' &&
               '!bg-[#3B7EF61A] !border-[#3B7EF6] text-[#3B7EF6] hover:!text-[#3B7EF6] !border-solid',
           )}

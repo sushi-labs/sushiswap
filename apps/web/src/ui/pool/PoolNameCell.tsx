@@ -28,7 +28,7 @@ export const ProtocolBadge = ({
 }) => {
   if (protocol === SushiSwapProtocol.SUSHISWAP_V2) {
     return (
-      <div className="whitespace-nowrap bg-[#F338C31A] text-[#F338C3] text-xs px-2.5 py-1 w-fit font-medium rounded-full">
+      <div className="whitespace-nowrap bg-[#F338C31A] text-[#F338C3] dark:bg-[#252A3C] text-xs px-2.5 py-1 w-fit font-medium rounded-full">
         {showFullName ? 'V2 Classic Liquidity Pool' : 'V2'}
       </div>
     )
@@ -36,7 +36,7 @@ export const ProtocolBadge = ({
 
   if (protocol === SushiSwapProtocol.SUSHISWAP_V3) {
     return (
-      <div className="whitespace-nowrap bg-[#3B7EF61A] text-[#3B7EF6] text-xs px-2.5 py-1 w-fit font-medium rounded-full">
+      <div className="whitespace-nowrap bg-[#3B7EF61A] text-[#3B7EF6] dark:bg-[#252A3C] text-xs px-2.5 py-1 w-fit font-medium rounded-full">
         {showFullName ? 'V3 Concentrated Liquidity Pool' : 'V3'}
       </div>
     )
