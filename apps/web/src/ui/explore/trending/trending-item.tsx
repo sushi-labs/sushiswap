@@ -130,7 +130,7 @@ export const TrendingItem = ({
 
 export const TrendingItemSkeleton = () => {
   return (
-    <div className="flex justify-between items-center p-3 w-full rounded-lg bg-background animate-pulse h-[68px]">
+    <div className="flex justify-between items-center p-3 w-full rounded-lg bg-transparent animate-pulse h-[68px] border border-[#00000014] dark:border-[#FFFFFF14]">
       <div className="flex gap-5 items-center whitespace-nowrap basis-1/2">
         <div className="rounded-lg bg-muted w-8 h-8 flex items-center justify-center text-xs font-medium aspect-1" />
         <div className="flex gap-1 items-center">
