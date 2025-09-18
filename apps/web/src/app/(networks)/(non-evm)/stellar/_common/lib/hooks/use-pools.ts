@@ -7,6 +7,8 @@ export interface IPool {
   address: string
   token0Address: string
   token1Address: string
+  fee: bigint
+  spacing: number // ticks
   token0: Token
   token1: Token
   liquidityUSD: number

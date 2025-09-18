@@ -126,3 +126,28 @@ export const formatPercentage = (
 
   return Intl.NumberFormat('en-US', options).format(Number(value))
 }
+
+/**
+ * Formats Stellar pool fee from stroops to percentage
+ * @param fee The fee value in stroops (bigint, number, or string)
+ * @param decimals Number of decimal places to show (default: 2)
+ * @returns A formatted percentage string
+ */
+export const formatPoolFee = (
+  fee: bigint | number | string | null,
+  decimals = 1,
+): string => {
+  if (!fee) return '0%'
+
+  // Convert to number and divide by 1000000 to get the correct percentage
+  // 3000n stroops = 0.3% (3000 / 1000000 * 100 = 0.3%)
+  const feeValue = Number(fee) / 1000000
+
+  const options: Intl.NumberFormatOptions = {
+    style: 'percent',
+    minimumFractionDigits: decimals,
+    maximumFractionDigits: decimals,
+  }
+
+  return Intl.NumberFormat('en-US', options).format(feeValue)
+}

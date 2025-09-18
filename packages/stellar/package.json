@@ -70,6 +70,11 @@
       "types": "./dist/quoter-v2/index.d.ts",
       "import": "./dist/quoter-v2/index.js",
       "require": "./dist/quoter-v2/index.js"
+    },
+    "./dex-factory": {
+      "types": "./dist/dex-factory/index.d.ts",
+      "import": "./dist/dex-factory/index.js",
+      "require": "./dist/dex-factory/index.js"
     }
   },
   "scripts": {

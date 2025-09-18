@@ -2,11 +2,12 @@ import { SkeletonCircle, SkeletonText } from '@sushiswap/ui'
 import type { ColumnDef } from '@tanstack/react-table'
 import { formatPercent, formatUSD } from 'sushi/format'
 import type { IPool } from '~stellar/_common/lib/hooks/use-pools'
+import { PoolNameCell } from './cells/pool-name-cell'
 
 const NAME_COLUMN: ColumnDef<IPool, unknown> = {
   id: 'name',
   header: 'Name',
-  cell: (props) => props.row.original.name,
+  cell: (props) => <PoolNameCell row={props.row.original} />,
   meta: {
     body: {
       skeleton: (

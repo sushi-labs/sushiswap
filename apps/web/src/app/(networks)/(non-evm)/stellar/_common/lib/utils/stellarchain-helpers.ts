@@ -12,7 +12,15 @@ export const getStellarContractLink = (contractId: string) => {
   if (IS_TESTNET) {
     return `https://stellar.expert/explorer/testnet/contract/${contractId}`
   } else {
-    return `https://stellar.expert/explorer/public/contract//${contractId}`
+    return `https://stellar.expert/explorer/public/contract/${contractId}`
+  }
+}
+
+export const getStellarAssetLink = (code: string) => {
+  if (IS_TESTNET) {
+    return `https://stellar.expert/explorer/testnet/asset/${code}`
+  } else {
+    return `https://stellar.expert/explorer/public/asset/${code}`
   }
 }
 

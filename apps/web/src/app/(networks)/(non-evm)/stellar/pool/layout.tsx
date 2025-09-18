@@ -1,10 +1,14 @@
+import type { Metadata } from 'next'
 import { Header } from '../header'
 import { Providers } from './providers'
 
-export const metadata = {
-  title: 'SushiSwap on Stellar',
+export const metadata: Metadata = {
+  title: {
+    default: 'Sushi 🍣',
+    template: '%s | Sushi 🍣',
+  },
   description:
-    'SushiSwap is a community-driven decentralized exchange (DEX) for traders and liquidity providers.',
+    'A Decentralised Finance (DeFi) app with features such as swap and permissionless market making for liquidity providers.',
 }
 
 export default function SwapLayout({
@@ -13,7 +17,7 @@ export default function SwapLayout({
   return (
     <Providers>
       <Header />
-      <main className="lg:p-4 mt-16 mb-[86px] animate-slide">{children}</main>
+      <main className="lg:p-4 mb-[86px] animate-slide">{children}</main>
     </Providers>
   )
 }
