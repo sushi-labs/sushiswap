@@ -110,7 +110,7 @@ export const Chart = ({
             ? '#15152b'
             : '#ffffff'
           : resolvedTheme === 'dark'
-            ? '#0C0C23'
+            ? '#0D1227'
             : '#F3F2F4',
         'paneProperties.vertGridProperties.color':
           resolvedTheme === 'dark' ? '#2C2C2E' : '#E5E7EB',
@@ -328,7 +328,7 @@ export const Chart = ({
             '#ffffff0a', // tooltip row bg hover
             '#15152B', // modal background
             isMdScreen && resolvedTheme === 'dark'
-              ? '#0C0C23'
+              ? '#0D1227'
               : isMdScreen && resolvedTheme === 'light'
                 ? '#F3F2F4'
                 : !isMdScreen && resolvedTheme === 'dark'

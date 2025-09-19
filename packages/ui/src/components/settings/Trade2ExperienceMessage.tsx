@@ -29,7 +29,7 @@ export const Trade2ExperienceMessage = () => {
       >
         <Card
           className={
-            'p-5 pb-3 border-accent bg-white flex flex-col gap-3 !backdrop-blur-[20px] dark:!bg-secondary rounded-xl overflow-hidden'
+            'p-5 pb-3 border-accent bg-white flex flex-col gap-3 !backdrop-blur-[40px] dark:!bg-secondary rounded-xl overflow-hidden'
           }
         >
           <SparkleIcon width={20} height={20} />
