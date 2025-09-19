@@ -16,11 +16,8 @@ export const useMyPositions = (pageSize = 50) => {
       data: InfiniteData<
         {
           positions: GetWalletPositionsResponse['edges'][number]['node'][] | []
-          pageInfo: {
-            endCursor: string
-            hasNextPage: boolean
-          }
-          totalCount: number
+          pageInfo: GetWalletPositionsResponse['pageInfo']
+          totalCount: GetWalletPositionsResponse['totalCount']
         },
         string | null
       >,
