@@ -137,13 +137,13 @@ export const APR_COLUMN: ColumnDef<
   meta: {
     body: {
       skeleton: <SkeletonText fontSize="lg" />,
-      className: 'bg-skyblue/[8%] h-full dark:bg-blue/[8%]',
+      className: 'bg-skyblue/[8%] h-full dark:bg-[#8A80FF08]',
     },
     header: {
       className: 'h-[40px] mt-4 flex items-center justify-start',
     },
     tableHead: {
-      className: 'bg-skyblue/[8%] dark:bg-blue/[8%]',
+      className: 'bg-skyblue/[8%] dark:bg-[#8A80FF08]',
     },
   },
 }

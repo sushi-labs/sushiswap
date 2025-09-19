@@ -1,12 +1,10 @@
 'use client'
 
-import { Toggle } from '@sushiswap/ui'
-import React, { type FC, useCallback, useState, useTransition } from 'react'
-
+import { Button, classNames } from '@sushiswap/ui'
+import React, { type FC, useCallback, useState } from 'react'
 import { usePoolFilters, useSetPoolFilters } from './PoolsFiltersProvider'
 
 export const TableFiltersFarmsOnly: FC = () => {
-  const [isPending, startTransition] = useTransition()
   const { farmsOnly } = usePoolFilters()
   const setFilters = useSetPoolFilters()
   const [checked, setChecked] = useState(farmsOnly)
@@ -14,21 +12,26 @@ export const TableFiltersFarmsOnly: FC = () => {
   const toggle = useCallback(
     (checked: boolean) => {
       setChecked(checked)
-      startTransition(() => {
-        setFilters((prev) => ({ ...prev, farmsOnly: !prev.farmsOnly }))
-      })
+      setFilters((prev) => ({ ...prev, farmsOnly: !prev.farmsOnly }))
     },
     [setFilters],
   )
 
   return (
-    <Toggle
-      variant="outline"
-      onPressedChange={toggle}
-      pressed={isPending ? checked : farmsOnly}
+    <Button
+      onClick={() => toggle(!checked)}
+      variant={'outline'}
+      role="combobox"
       size="sm"
+      className={classNames(
+        'border-dashed !bg-slate-200 dark:!bg-slate-750',
+        'hover:dark:!bg-skyblue/20 hover:!bg-blue/20 hover:!text-blue hover:dark:!text-skyblue',
+        farmsOnly
+          ? '!bg-blue/10 dark:!bg-skyblue/10 !text-blue dark:!border-skyblue dark:!text-skyblue !border-blue !border-1 !border-solid'
+          : '',
+      )}
     >
       <span>🧑‍🌾</span> Farms only
-    </Toggle>
+    </Button>
   )
 }

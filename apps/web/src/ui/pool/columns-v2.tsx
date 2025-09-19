@@ -481,13 +481,13 @@ export const VOL_TVL_COLUMN: ColumnDef<Pool, unknown> = {
   meta: {
     body: {
       skeleton: <SkeletonText fontSize="lg" />,
-      className: 'bg-skyblue/[3%] h-full dark:bg-blue/[3%]',
+      className: 'bg-skyblue/[3%] h-full dark:bg-[#8A80FF08]',
     },
     header: {
       className: 'h-[60px] mt-4 flex items-center justify-center',
     },
     tableHead: {
-      className: 'bg-skyblue/[3%] dark:bg-blue/[3%]',
+      className: 'bg-skyblue/[3%] dark:bg-[#8A80FF08]',
     },
   },
 }
@@ -601,13 +601,13 @@ export const APR_WITH_REWARDS_COLUMN: ColumnDef<Pool, unknown> = {
   meta: {
     body: {
       skeleton: <SkeletonText fontSize="lg" />,
-      className: 'bg-skyblue/[3%] h-full dark:bg-blue/[3%]',
+      className: 'bg-skyblue/[3%] h-full dark:bg-[#8A80FF08]',
     },
     header: {
       className: 'h-[60px] mt-4 flex items-center justify-center',
     },
     tableHead: {
-      className: 'bg-skyblue/[3%] dark:bg-blue/[3%]',
+      className: 'bg-skyblue/[3%] dark:bg-[#8A80FF08]',
     },
     disableLink: true,
   },

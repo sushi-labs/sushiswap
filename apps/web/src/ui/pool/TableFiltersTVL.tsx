@@ -88,6 +88,9 @@ export const TableFiltersTVL = () => {
       }
       content={
         <div className="flex flex-col gap-3 md:gap-2 text-muted-foreground text-sm">
+          <div className="text-[#535263] dark:text-slate-200 font-semibold">
+            TVL Filter
+          </div>
           <div className="flex flex-col gap-1">
             <span>Min.</span>
             <div className="relative">
@@ -106,7 +109,7 @@ export const TableFiltersTVL = () => {
             </div>
           </div>
           <div className="flex flex-col gap-1">
-            <span>Max</span>
+            <span>Max.</span>
             <div className="relative">
               <TextField
                 className="!border !min-h-[32px] !h-[32px] dark:border-[#FFFFFF14] border-[#00000014]"
@@ -122,7 +125,11 @@ export const TableFiltersTVL = () => {
               </div>
             </div>
           </div>
-          <Button onClick={onConfirm} className="mt-2" variant="tertiary">
+          <Button
+            onClick={onConfirm}
+            className="mt-2 dark:!bg-[#FFFFFF14] dark:text-slate-50 dark:hover:!bg-[#FFFFFF24]"
+            variant="quinary"
+          >
             Confirm
           </Button>
         </div>

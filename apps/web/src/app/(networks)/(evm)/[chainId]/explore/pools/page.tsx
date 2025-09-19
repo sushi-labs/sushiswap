@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation'
 import React from 'react'
 import { PoolsTableV2 } from 'src/ui/pool/PoolsTableV2'
 import { TableFiltersAPR } from 'src/ui/pool/TableFiltersAPR'
+import { TableFiltersFarmsOnly } from 'src/ui/pool/TableFiltersFarmsOnly'
 import { TableFiltersNetworkV2 } from 'src/ui/pool/TableFiltersNetworkV2'
 import { TableFiltersPoolTypeV2 } from 'src/ui/pool/TableFiltersPoolTypeV2'
 import { TableFiltersSearchToken } from 'src/ui/pool/TableFiltersSearchToken'
@@ -29,8 +30,10 @@ export default async function PoolsPage(props: {
         <div className="flex gap-3 flex-wrap">
           <TableFiltersSearchToken />
           <TableFiltersPoolTypeV2 />
+          <TableFiltersFarmsOnly />
           <TableFiltersTVL />
           <TableFiltersAPR />
+
           <TableFiltersNetworkV2 />
         </div>
       </div>
