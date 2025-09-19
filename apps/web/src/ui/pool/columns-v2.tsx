@@ -677,8 +677,8 @@ export const ACTION_COLUMN: ColumnDef<MultiChainPool, unknown> = {
         initFeeAmount={props.row.original.swapFee * 1_000_000}
         trigger={
           <Button
-            className="!gap-1 !w-[100px] !h-[36px] !rounded-lg"
-            variant="tertiary"
+            className="!gap-1 !w-[100px] !h-[36px] !rounded-lg dark:bg-[#FFFFFF14] dark:border-slate-900 dark:text-white dark:hover:bg-muted"
+            variant="quinary"
           >
             <div className="flex gap-1 items-center">
               <PlusIcon className="w-[14px] max-w-[14px] h-[14px] max-h-[14px]" />
