@@ -130,10 +130,10 @@ export const TrendingItem = ({
 
 export const TrendingItemSkeleton = () => {
   return (
-    <div className="flex justify-between items-center p-3 w-full rounded-lg bg-transparent animate-pulse h-[68px] border border-[#00000014] dark:border-[#FFFFFF14]">
+    <div className="flex justify-between items-center p-3 w-full rounded-lg bg-transparent animate-pulse h-[70px] border border-[#00000014] dark:border-[#FFFFFF14]">
       <div className="flex gap-5 items-center whitespace-nowrap basis-1/2">
         <div className="rounded-lg bg-muted w-8 h-8 flex items-center justify-center text-xs font-medium aspect-1" />
-        <div className="flex gap-1 items-center">
+        <div className="flex gap-2 items-center">
           <div className="relative">
             <div className="flex">
               <SkeletonCircle radius={32} />
@@ -143,9 +143,9 @@ export const TrendingItemSkeleton = () => {
           </div>
           <div className="flex flex-col font-medium">
             <SkeletonText fontSize="sm" className="!w-[80px]" />
-            <div className="flex gap-2 items-center mt-1">
-              <SkeletonBox className="!w-[57px] !h-6 !rounded-full" />
-              <SkeletonBox className="!w-[57px] !h-6 !rounded-full" />
+            <div className="flex gap-1 items-center mt-1">
+              <SkeletonBox className="!w-[35px] !h-6 !rounded-full" />
+              <SkeletonBox className="!w-[35px] !h-6 !rounded-full" />
             </div>
           </div>
         </div>
