@@ -1,12 +1,10 @@
 import { isPoolChainId } from '@sushiswap/graph-client/data-api'
 import { Container } from '@sushiswap/ui'
-import { notFound, redirect } from 'next/navigation'
+import { notFound } from 'next/navigation'
 import React from 'react'
 import { TableFiltersNetwork } from 'src/app/(networks)/_ui/table-filters-network'
 import { TableFiltersSearchToken } from 'src/app/(networks)/_ui/table-filters-search-token'
 import { POOL_SUPPORTED_NETWORKS } from 'src/config'
-import { isPublicBladeChainId } from 'src/config.server'
-import { getEvmChainById, isBladeChainId, isSushiSwapChainId } from 'sushi/evm'
 import { PoolsTable } from '~evm/[chainId]/_ui/pools-table'
 import { TableFiltersFarmsOnly } from '~evm/[chainId]/_ui/table-filters-farms-only'
 import { TableFiltersPoolType } from '~evm/[chainId]/_ui/table-filters-pool-type'
@@ -20,14 +18,6 @@ export default async function PoolsPage(props: {
 
   if (!isPoolChainId(chainId)) {
     return notFound()
-  }
-
-  if (
-    !isSushiSwapChainId(chainId) &&
-    isBladeChainId(chainId) &&
-    (await isPublicBladeChainId(chainId))
-  ) {
-    redirect(`/${getEvmChainById(chainId).key}/explore/blade-pools`)
   }
 
   return (

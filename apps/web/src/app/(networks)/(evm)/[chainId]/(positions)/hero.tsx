@@ -9,6 +9,7 @@ import {
   DropdownMenuTrigger,
   LinkInternal,
   SelectIcon,
+  classNames,
 } from '@sushiswap/ui'
 import { type FC, useMemo } from 'react'
 import { isPublicBladeChainId } from 'src/config.server'
@@ -131,22 +132,21 @@ export const Hero: FC<{ chainId: EvmChainId }> = async ({ chainId }) => {
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
-          {canIncentivize ? (
-            <Button
-              fullWidth
-              asChild
-              icon={GiftIcon}
-              variant="secondary"
-              size="sm"
+          <Button
+            fullWidth
+            asChild
+            icon={GiftIcon}
+            variant="secondary"
+            className={classNames(!canIncentivize && 'invisible')}
+            size="sm"
+          >
+            <LinkInternal
+              className="text-sm"
+              href={`/${getEvmChainById(chainId).key}/pool/incentivize`}
             >
-              <LinkInternal
-                className="text-sm"
-                href={`/${getEvmChainById(chainId).key}/pool/incentivize`}
-              >
-                I want to incentivize a pool
-              </LinkInternal>
-            </Button>
-          ) : null}
+              I want to incentivize a pool
+            </LinkInternal>
+          </Button>
         </div>
       </div>
     </section>

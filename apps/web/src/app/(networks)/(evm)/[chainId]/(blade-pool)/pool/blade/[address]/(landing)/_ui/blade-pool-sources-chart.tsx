@@ -235,10 +235,10 @@ export function BladePoolSourcesChart({
         {!hasData ? (
           <div className="flex h-[400px] items-center justify-center">
             <div className="text-center">
-              <div className="mb-2 font-medium text-gray-400 text-lg dark:text-gray-400">
+              <div className="mb-2 font-medium text-lg text-muted-foreground">
                 No data available
               </div>
-              <div className="text-gray-500 text-sm dark:text-gray-400">
+              <div className="text-sm text-muted-foreground">
                 No {chartType.toLowerCase()} data found for the selected period
               </div>
             </div>
