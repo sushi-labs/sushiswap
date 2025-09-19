@@ -87,7 +87,7 @@ const TokenOption = ({ token }: { token: PortfolioWalletToken }) => {
       id={`token-option-${token.chainId}-${token.id}`}
       type="button"
       className={classNames(
-        '!rounded-full flex w-fit !justify-start !pl-2 focus-visible:!ring-0 focus-visible:!ring-offset-0 !ring-transparent',
+        '!rounded-full flex w-fit !justify-start !pl-2 focus-visible:!ring-0 focus-visible:!ring-offset-0 !ring-transparent dark:!bg-[#0D1227] dark:hover:!bg-white/10',
       )}
     >
       <Badge

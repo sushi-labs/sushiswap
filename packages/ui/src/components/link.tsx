@@ -25,7 +25,7 @@ const LinkExternal: FC<AnchorHTMLAttributes<HTMLAnchorElement>> = ({
         target={target}
         rel={rel}
         className={classNames(
-          'cursor-pointer text-blue hover:underline',
+          'cursor-pointer text-blue dark:text-skyblue hover:underline',
           props.className,
         )}
       />

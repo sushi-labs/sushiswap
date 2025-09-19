@@ -63,7 +63,7 @@ export const SearchItemBridgeView = ({
   return (
     <div
       className={classNames(
-        'grid col-span-4 grid-cols-[30px_auto_auto_auto] border border-black/5 dark:border-white/5 py-3 px-4 rounded-lg bg-skyblue/10',
+        'grid col-span-4 grid-cols-[30px_auto_auto_auto] border border-black/5 dark:border-white/5 py-3 px-4 rounded-lg bg-[#4217FF14] dark:bg-[#FFFFFF14]',
       )}
     >
       <div className="flex flex-col w-full col-span-4 gap-4">
@@ -101,12 +101,13 @@ export const SearchItemBridgeView = ({
               selectedNetwork={selectedNetwork}
               onNetworkSelect={onNetworkSelect}
               networks={bridgeOptions}
+              networkSelectedClassName="bg-[#4217FF14] dark:!bg-[#FFFFFF14] dark:!border-[#3DB1FF] border-blue"
             />
           </div>
         </div>
         <div className="flex items-center gap-3">
           <Button
-            className="w-1/2"
+            className="w-1/2 !bg-[#0000001F] dark:!bg-[#FFFFFF14] hover:!bg-[#00000033] dark:hover:!bg-[#FFFFFF22]"
             size="sm"
             variant="secondary"
             onClick={() => {
@@ -114,7 +115,7 @@ export const SearchItemBridgeView = ({
               setSelectedNetwork(null)
             }}
           >
-            Close
+            Cancel
           </Button>
           <Button className="w-full" size="sm" onClick={onConfirm}>
             Confirm

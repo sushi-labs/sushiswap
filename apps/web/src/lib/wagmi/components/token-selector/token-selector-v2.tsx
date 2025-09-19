@@ -153,6 +153,8 @@ export const TokenSelectorV2: FC<TokenSelectorV2Props> = ({
                 size="lg"
                 selectedNetwork={_selectedNetwork}
                 canShowMessage={true}
+                networkSelectedClassName="border-blue dark:!border-skyblue bg-[#4217FF14] dark:!bg-[#3DB1FF14]"
+                networkClassName="dark:bg-slate-900"
                 includeAllOption={true}
               />
             </div>

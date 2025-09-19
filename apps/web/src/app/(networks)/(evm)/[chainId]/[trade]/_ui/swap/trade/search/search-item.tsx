@@ -37,7 +37,7 @@ export const SearchItem = ({ token }: { token: SearchToken }) => {
       <div
         className={classNames(
           'grid col-span-4 grid-cols-[30px_200px_auto_auto] py-2 pr-2 rounded-lg',
-          isHovered && 'bg-blue-500/10',
+          isHovered && 'bg-[#4217FF14] dark:bg-[#FFFFFF14]',
         )}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
