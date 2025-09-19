@@ -137,7 +137,7 @@ export const POOL_COLUMN: ColumnDef<MultiChainPool, unknown> = {
               <TooltipContent
                 side="right"
                 sideOffset={20}
-                className="md:block hidden px-5 py-5 mb-10 !bg-[#FFFFFF24] !backdrop-blur-md dark:!bg-[#00000024] border border-[#EBEBEB] dark:border-[#FFFFFF14]"
+                className="md:block hidden px-5 py-5 mb-10 !bg-[#FFFFFF24] !backdrop-blur-[40px] dark:!bg-[#00000024] border border-[#EBEBEB] dark:border-[#FFFFFF14]"
               >
                 <div className="flex flex-col gap-3">
                   <p className="text-xs text-slate-450 dark:text-slate-500">
@@ -289,7 +289,7 @@ export const POOL_TYPE_COLUMN: ColumnDef<MultiChainPool, unknown> = {
             <TooltipContent
               side="right"
               sideOffset={100}
-              className="md:block hidden px-5 py-5 mb-10 !bg-[#FFFFFF24] !backdrop-blur-md dark:!bg-[#00000024] border border-[#EBEBEB] dark:border-[#FFFFFF14]"
+              className="md:block hidden px-5 py-5 mb-10 !bg-[#FFFFFF24] !backdrop-blur-[40px] dark:!bg-[#00000024] border border-[#EBEBEB] dark:border-[#FFFFFF14]"
             >
               {protocolContent}
             </TooltipContent>
@@ -305,7 +305,7 @@ export const POOL_TYPE_COLUMN: ColumnDef<MultiChainPool, unknown> = {
             <TooltipContent
               side="right"
               sideOffset={70}
-              className="md:block hidden px-5 py-5 mb-10 !bg-[#FFFFFF24] !backdrop-blur-md dark:!bg-[#00000024] border border-[#EBEBEB] dark:border-[#FFFFFF14]"
+              className="md:block hidden px-5 py-5 mb-10 !bg-[#FFFFFF24] !backdrop-blur-[40px] dark:!bg-[#00000024] border border-[#EBEBEB] dark:border-[#FFFFFF14]"
             >
               <div className="flex flex-col gap-2 max-w-[275px]">
                 <div className="bg-[#F4F5F6] w-fit text-muted-foreground dark:bg-[#252A3C] dark:text-pink-200 text-xs px-2.5 py-1 rounded-full">

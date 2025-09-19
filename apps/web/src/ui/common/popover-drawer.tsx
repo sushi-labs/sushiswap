@@ -43,7 +43,7 @@ export const PopoverDrawer = ({
         <PopoverContent
           align={align || 'end'}
           className={classNames(
-            '!bg-[#FFFFFF24] !backdrop-blur-md dark:!bg-[#00000024] border border-[#EBEBEB] dark:border-[#FFFFFF14] px-5 py-5 !text-slate-900 dark:!text-pink-100 text-xs max-w-[250px]',
+            '!bg-[#FFFFFF24] !backdrop-blur-[40px] dark:!bg-[#00000024] border border-[#EBEBEB] dark:border-[#FFFFFF14] px-5 py-5 !text-slate-900 dark:!text-pink-100 text-xs max-w-[250px]',
             popoverContentClassName,
           )}
         >

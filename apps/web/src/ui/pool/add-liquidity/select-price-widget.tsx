@@ -610,7 +610,7 @@ export const SelectPriceWidget: FC<SelectPriceWidget> = ({
                         </Toggle>
                       </TooltipTrigger>
 
-                      <TooltipContent className="bg-background !p-4 shadow-xl max-w-[20rem] !backdrop-blur-md">
+                      <TooltipContent className="bg-background !p-4 shadow-xl max-w-[20rem] !backdrop-blur-[40px]">
                         {description}
                       </TooltipContent>
                     </Tooltip>
@@ -638,7 +638,7 @@ export const SelectPriceWidget: FC<SelectPriceWidget> = ({
                     )}
                   </Button>
                 </TooltipTrigger>
-                <TooltipContent className="bg-background !p-4 shadow-xl max-w-[20rem] !backdrop-blur-md">
+                <TooltipContent className="bg-background !p-4 shadow-xl max-w-[20rem] !backdrop-blur-[40px]">
                   Lock the token ratio such that your price range automatically
                   adjusts when changing price boundary.
                 </TooltipContent>
@@ -860,7 +860,7 @@ export const SelectPriceWidget: FC<SelectPriceWidget> = ({
                               (when in-range, excl. IL)
                             </span>
                           </TooltipTrigger>
-                          <TooltipContent className="!bg-secondary !p-0.5 !backdrop-blur-md">
+                          <TooltipContent className="!bg-secondary !p-0.5 !backdrop-blur-[40px]">
                             <RadioGroup
                               value={yieldRate}
                               onChange={setYieldRate}
