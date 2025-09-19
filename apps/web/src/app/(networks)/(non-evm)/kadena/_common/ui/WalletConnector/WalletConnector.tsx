@@ -8,8 +8,8 @@ import {
 } from '@sushiswap/ui'
 import { JazzIcon } from '@sushiswap/ui/icons/JazzIcon'
 import { useState } from 'react'
+import { truncateString } from 'sushi'
 import { IS_TESTNET } from '~kadena/_common/constants/is-testnet'
-import { truncateText } from '~kadena/_common/lib/utils/formatters'
 import { useKadena } from '~kadena/kadena-wallet-provider'
 import { DefaultView } from './DefaultView'
 import { SettingsView } from './SettingsView'
@@ -35,7 +35,7 @@ export const WalletConnector = (props: ButtonProps) => {
             <>
               <JazzIcon diameter={20} address={activeAccount?.accountName} />
               <span className="hidden sm:block">
-                {truncateText(activeAccount?.accountName)}
+                {truncateString(activeAccount?.accountName, 10, 'middle')}
               </span>
             </>
           ) : (

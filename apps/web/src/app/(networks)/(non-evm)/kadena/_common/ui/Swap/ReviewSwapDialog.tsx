@@ -14,10 +14,9 @@ import { List } from '@sushiswap/ui'
 import { DialogContent, classNames } from '@sushiswap/ui'
 import Link from 'next/link'
 import { useMemo } from 'react'
-import { formatPercent } from 'sushi'
+import { formatPercent, truncateString } from 'sushi'
 import { getKvmChainByKey } from 'sushi/kvm'
 import { GAS_PRICE } from '~kadena/_common/constants/gas'
-import { truncateText } from '~kadena/_common/lib/utils/formatters'
 import {
   warningSeverity,
   warningSeverityClassName,
@@ -117,7 +116,7 @@ export const ReviewSwapDialog = () => {
                           )}
                           rel="noreferrer"
                         >
-                          {truncateText(address)}
+                          {truncateString(address, 10, 'middle')}
                         </Link>
                       </List.KeyValue>
                     </List.Control>

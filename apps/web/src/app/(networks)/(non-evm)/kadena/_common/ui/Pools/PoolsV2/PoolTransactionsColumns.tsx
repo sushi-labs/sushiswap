@@ -1,14 +1,13 @@
 import type { PoolTransaction } from '@sushiswap/graph-client/kadena'
 import { FormattedNumber, SkeletonText } from '@sushiswap/ui'
 import type { ColumnDef } from '@tanstack/react-table'
-import { formatUSD } from 'sushi'
-import { truncateText } from '~kadena/_common/lib/utils/formatters'
+import { formatUSD, truncateString } from 'sushi'
 
 export const MAKER_COLUMN: ColumnDef<PoolTransaction> = {
   id: 'maker',
   header: 'Maker',
   accessorFn: (row) => row.maker,
-  cell: (props) => truncateText(props.getValue() as string),
+  cell: (props) => truncateString(props.getValue() as string, 10, 'middle'),
   meta: {
     body: {
       skeleton: <SkeletonText fontSize="lg" />,

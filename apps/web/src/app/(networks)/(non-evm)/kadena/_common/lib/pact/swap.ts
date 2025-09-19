@@ -1,12 +1,11 @@
 import { type ChainId, Pact } from '@kadena/client'
-import type { KvmTokenAddress } from 'sushi/kvm'
+import { type KvmTokenAddress, formatPactDecimal } from 'sushi/kvm'
 import { KADENA_CONTRACT } from '~kadena/_common/constants/contracts'
 import { GAS_LIMIT, GAS_PRICE } from '~kadena/_common/constants/gas'
 import {
   KADENA_CHAIN_ID,
   KADENA_NETWORK_ID,
 } from '~kadena/_common/constants/network'
-import { formatPactDecimal } from '../utils/formatters'
 
 interface BuildSwapTxnParams {
   token0Address: KvmTokenAddress

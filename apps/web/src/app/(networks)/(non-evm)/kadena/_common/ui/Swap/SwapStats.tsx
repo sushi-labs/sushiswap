@@ -3,12 +3,11 @@ import { classNames } from '@sushiswap/ui'
 import { SkeletonBox } from '@sushiswap/ui'
 import Link from 'next/link'
 import { useMemo } from 'react'
-import { formatPercent, formatUSD } from 'sushi'
+import { formatPercent, formatUSD, truncateString } from 'sushi'
 import { getKvmChainByKey } from 'sushi/kvm'
 import { GAS_PRICE } from '~kadena/_common/constants/gas'
 import { KADENA } from '~kadena/_common/constants/token-list'
 import { useTokenPrice } from '~kadena/_common/lib/hooks/use-token-price'
-import { truncateText } from '~kadena/_common/lib/utils/formatters'
 import {
   warningSeverity,
   warningSeverityClassName,
@@ -160,7 +159,7 @@ export const SwapStats = () => {
                 )}
                 rel="noreferrer"
               >
-                {truncateText(address)}
+                {truncateString(address, 10, 'middle')}
               </Link>
             </span>
           </div>
