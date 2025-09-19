@@ -39,8 +39,8 @@ const TransparentHeader: FC<HeaderProps> = ({
   const chainId = _chainId ?? connectedChainId
 
   return (
-    <div className="w-full h-[56px] z-20">
-      <div className="fixed w-full flex z-20">
+    <div className="w-full h-[56px] relative z-[60]">
+      <div className="fixed w-full flex z-60 border-b border-b-[#00000014] dark:border-b-[#FFFFFF14] bg-background">
         <div className="hidden lg:flex justify-between items-center px-1 h-14 flex-shrink-0 border-transparent border-b">
           <SushiNavigationDropdown className="!px-2">
             <SushiWithTextIcon width={90} />

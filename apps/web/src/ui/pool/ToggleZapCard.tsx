@@ -26,10 +26,10 @@ export const ToggleZapCard: FC<ToggleZapCardProps> = ({
   )
 
   return (
-    <Card className="bg-gradient-to-r from-[#4217FF]/[0.08] to-[#3DB1FF]/[0.08]">
-      <CardHeader>
+    <Card className="!bg-[#FFFFFF14] dark:!bg-[#FFFFFF14] border-none">
+      <CardHeader className="!p-4">
         <CardTitle className="flex items-center justify-between">
-          <span className="text-base tracking-tighter saturate-200 flex items-center gap-2 bg-gradient-to-r from-[#4217FF] to-[#3DB1FF] bg-clip-text text-transparent">
+          <span className="text-base tracking-tighter font-semibold flex items-center gap-2 text-blue dark:text-white">
             Zap Mode
           </span>
           <Switch
@@ -38,7 +38,7 @@ export const ToggleZapCard: FC<ToggleZapCardProps> = ({
             onCheckedChange={onCheckedChange}
           />
         </CardTitle>
-        <CardDescription>
+        <CardDescription className="!text-[#535263] !text-base dark:!text-slate-200">
           Deposit with any token of your choice. Let zap mode handle the swap
           and token ratio split.
         </CardDescription>
