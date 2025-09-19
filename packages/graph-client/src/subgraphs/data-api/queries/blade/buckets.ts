@@ -4,7 +4,7 @@ import { type RequestOptions, request } from 'src/lib/request.js'
 import { type EvmChainId, isBladeChainId } from 'sushi/evm'
 import { graphql } from '../../graphql.js'
 
-const SUSHI_DATA_API_HOST = 'http://data-api-staging.data-gcp.sushi.com'
+const SUSHI_DATA_API_HOST = 'https://data-api-staging.data-gcp.sushi.com'
 
 export const BladePoolBucketsQuery = graphql(
   `
