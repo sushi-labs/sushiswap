@@ -1,5 +1,6 @@
 import { notFound } from 'next/navigation'
-import { BLADE_SUPPORTED_CHAIN_IDS, isBladeChainId } from 'sushi/evm'
+import { getPublicBladeChainIds, isPublicBladeChainId } from 'src/config.server'
+import { isBladeChainId } from 'sushi/evm'
 import { Header } from '../../header'
 
 export default async function BladePoolLayout(props: {
@@ -11,13 +12,15 @@ export default async function BladePoolLayout(props: {
   const { children } = props
 
   const chainId = +params.chainId
-  if (!isBladeChainId(chainId)) {
+  if (!isBladeChainId(chainId) || !(await isPublicBladeChainId(chainId))) {
     return notFound()
   }
 
+  const bladeChainIds = await getPublicBladeChainIds()
+
   return (
     <>
-      <Header chainId={chainId} supportedNetworks={BLADE_SUPPORTED_CHAIN_IDS} />
+      <Header chainId={chainId} supportedNetworks={bladeChainIds} />
       <main className="flex flex-col h-full flex-1 animate-slide">
         {children}
       </main>

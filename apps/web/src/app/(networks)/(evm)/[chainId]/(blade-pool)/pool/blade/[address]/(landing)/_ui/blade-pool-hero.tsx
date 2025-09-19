@@ -178,8 +178,8 @@ export const BladePoolHero: FC<BladePoolHeroProps> = ({ pool }) => {
           </Button>
         </Link>
         <Button
-          variant="blank"
-          className="w-full rounded-lg bg-black/10 dark:bg-white/10 px-4 py-2 font-medium text-sm text-black dark:text-white hover:bg-black/20 dark:hover:bg-white/20 sm:w-auto sm:px-6"
+          variant="secondary"
+          className="w-full px-4 py-2 sm:w-auto sm:px-6"
           onClick={() => {
             const highlights = document.getElementById('highlights')
             if (highlights) {

@@ -12,20 +12,20 @@ import { CanvasRenderer } from 'echarts/renderers'
 import { useTheme } from 'next-themes'
 import { type FC, useCallback, useMemo } from 'react'
 import { formatUSD } from 'sushi'
-import { type EvmChainId, getEvmChainById, isBladeChainId } from 'sushi/evm'
+import { type EvmChainId, getEvmChainById } from 'sushi/evm'
 
 interface TVLChart {
   data: AnalyticsDayBuckets
   chainId: EvmChainId
+  showBlade: boolean
 }
 
 echarts.use([CanvasRenderer, LineChart, TooltipComponent, GridComponent])
 
-export const TVLChart: FC<TVLChart> = ({ data, chainId }) => {
+export const TVLChart: FC<TVLChart> = ({ data, chainId, showBlade }) => {
   const isMounted = useIsMounted()
 
   const { resolvedTheme } = useTheme()
-  const isBladeChain = isBladeChainId(chainId)
 
   const [v2, v3, blade, combinedTVL, currentDate] = useMemo(() => {
     const xData = (
@@ -216,7 +216,7 @@ export const TVLChart: FC<TVLChart> = ({ data, chainId }) => {
           data: v3,
           z: zIndex.v3,
         },
-        ...(isBladeChain
+        ...(showBlade
           ? [
               {
                 name: 'blade',
@@ -238,7 +238,7 @@ export const TVLChart: FC<TVLChart> = ({ data, chainId }) => {
           : []),
       ],
     }),
-    [onMouseOver, v2, v3, blade, zIndex, resolvedTheme, isBladeChain],
+    [onMouseOver, v2, v3, blade, zIndex, resolvedTheme, showBlade],
   )
 
   return (
@@ -278,7 +278,7 @@ export const TVLChart: FC<TVLChart> = ({ data, chainId }) => {
                 <span className="bg-[#A755DD] rounded-[4px] w-3 h-3" />
               </span>
             </div>
-            {isBladeChain && (
+            {showBlade && (
               <div className="flex justify-between items-center gap-2 text-sm">
                 <span id="hoveredBladeTVL" />
                 <span className="flex gap-1 items-center">

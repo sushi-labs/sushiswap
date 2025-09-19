@@ -1,58 +1,75 @@
 import { LinkInternal } from '@sushiswap/ui'
 import { PathnameButton } from 'src/app/_ui/pathname-button'
-import { type EvmChainId, getEvmChainById, isBladeChainId } from 'sushi/evm'
+import { isPublicBladeChainId } from 'src/config.server'
+import { showBladeFlag } from 'src/flags'
+import {
+  type EvmChainId,
+  getEvmChainById,
+  isBladeChainId,
+  isSushiSwapChainId,
+} from 'sushi/evm'
 
-export function NavigationItems({ chainId }: { chainId: EvmChainId }) {
+export async function NavigationItems({ chainId }: { chainId: EvmChainId }) {
+  const chainKey = getEvmChainById(chainId).key
+  const isBladeChain =
+    isBladeChainId(chainId) && (await isPublicBladeChainId(chainId))
+  const showBlade = await showBladeFlag()
+
   return (
     <>
-      <LinkInternal
-        shallow={true}
-        scroll={false}
-        href={`/${getEvmChainById(chainId).key}/explore/tokens`}
+      <NavigationItem
+        pathname={`/${chainKey}/explore/tokens`}
+        id="tokens"
+        disabled={!isSushiSwapChainId(chainId)}
       >
-        <PathnameButton
-          id="tokens"
-          pathname={`/${getEvmChainById(chainId).key}/explore/tokens`}
-          asChild
-          size="sm"
-        >
-          Tokens
-        </PathnameButton>
-      </LinkInternal>
-      <LinkInternal
-        shallow={true}
-        scroll={false}
-        href={`/${getEvmChainById(chainId).key}/explore/pools`}
+        Tokens
+      </NavigationItem>
+      <NavigationItem
+        pathname={`/${chainKey}/explore/pools`}
+        id="pools"
+        disabled={!isSushiSwapChainId(chainId)}
       >
-        <PathnameButton
-          id="pools"
-          pathname={`/${getEvmChainById(chainId).key}/explore/pools`}
-          asChild
-          size="sm"
+        Pools
+      </NavigationItem>
+      {showBlade ? (
+        <NavigationItem
+          pathname={`/${chainKey}/explore/blade-pools`}
+          id="blade-pools"
+          disabled={!isBladeChain}
         >
-          Pools
-        </PathnameButton>
-      </LinkInternal>
-      {isBladeChainId(chainId as EvmChainId) ? (
-        <LinkInternal
-          shallow={true}
-          scroll={false}
-          href={`/${getEvmChainById(chainId).key}/explore/blade-pools`}
-        >
-          <PathnameButton
-            id="blade-pools"
-            pathname={`/${getEvmChainById(chainId).key}/explore/blade-pools`}
-            asChild
-            size="sm"
-          >
-            Blade Pools
-          </PathnameButton>
-        </LinkInternal>
-      ) : (
-        <PathnameButton pathname="" size="sm" disabled>
           Blade Pools
-        </PathnameButton>
-      )}
+        </NavigationItem>
+      ) : null}
     </>
+  )
+}
+
+interface NavigationItemProps {
+  pathname: string
+  id: string
+  disabled?: boolean
+  children: React.ReactNode
+}
+
+function NavigationItem({
+  pathname,
+  id,
+  disabled = false,
+  children,
+}: NavigationItemProps) {
+  if (disabled) {
+    return (
+      <PathnameButton pathname="" size="sm" disabled>
+        {children}
+      </PathnameButton>
+    )
+  }
+
+  return (
+    <LinkInternal shallow={true} scroll={false} href={pathname}>
+      <PathnameButton id={id} pathname={pathname} asChild size="sm">
+        {children}
+      </PathnameButton>
+    </LinkInternal>
   )
 }

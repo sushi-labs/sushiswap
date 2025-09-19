@@ -54,7 +54,7 @@ const NetworkSelector = <T extends ChainId = ChainId>({
         push(replaceNetworkSlug(chainId, pathname), {
           scroll: false,
         })
-      } else {
+      } else if (!isEvmChainId(chainId)) {
         push(`/${getChainById(chainId).key}/swap`, { scroll: false })
       }
 

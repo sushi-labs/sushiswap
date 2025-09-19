@@ -1,5 +1,5 @@
 import type { BladeChainId } from '@sushiswap/graph-client/data-api'
-import { EvmChainId, EvmToken, STABLES } from 'sushi/evm'
+import { EvmChainId, EvmToken, STABLES, USDT } from 'sushi/evm'
 
 export type BladePoolTokensGrouped = {
   tokens: EvmToken[]
@@ -48,14 +48,5 @@ export const BLADE_STABLES: Record<BladeChainId, EvmToken[]> = {
       name: 'USD Coin',
     }),
   ],
-  [EvmChainId.MANTLE]: [
-    ...STABLES[EvmChainId.MANTLE],
-    new EvmToken({
-      address: '0x201EBa5CC46D216Ce6DC03F6a759e8E766e956aE',
-      chainId: EvmChainId.MANTLE,
-      decimals: 6,
-      symbol: 'USDT',
-      name: 'Tether USD',
-    }),
-  ],
+  [EvmChainId.MANTLE]: [...STABLES[EvmChainId.MANTLE], USDT[EvmChainId.MANTLE]],
 }

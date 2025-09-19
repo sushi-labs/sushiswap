@@ -1,5 +1,6 @@
 import { Container } from '@sushiswap/ui'
 import { notFound } from 'next/navigation'
+import { isPublicBladeChainId } from 'src/config.server'
 import { getCachedBladePool } from 'src/lib/pool/blade'
 import { isBladeChainId, isEvmAddress } from 'sushi/evm'
 import { BladeAssetsTable } from './_ui/blade-assets-table'
@@ -16,7 +17,11 @@ export default async function PoolPage(props: {
   const { chainId: _chainId, address } = params
   const chainId = +_chainId
 
-  if (!isBladeChainId(chainId) || !isEvmAddress(address)) {
+  if (
+    !isBladeChainId(chainId) ||
+    !(await isPublicBladeChainId(chainId)) ||
+    !isEvmAddress(address)
+  ) {
     return notFound()
   }
 
@@ -31,9 +36,7 @@ export default async function PoolPage(props: {
       <BladePoolHero pool={pool} />
       <BladeHighlights pool={pool} />
       <div className="space-y-6 mt-16">
-        <h3 className="font-medium text-gray-500 text-sm dark:text-gray-400">
-          Analytics
-        </h3>
+        <h3 className="font-medium text-muted-foreground text-sm">Analytics</h3>
         <BladeAssetsTable pool={pool} />
         <BladePoolChart pool={pool} />
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">

@@ -1,8 +1,8 @@
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next/types'
+import { isPublicBladeChainId } from 'src/config.server'
 import { getCachedBladePool, getPoolName } from 'src/lib/pool/blade'
 import { type EvmChainId, isBladeChainId, isEvmAddress } from 'sushi/evm'
-import { isAddress } from 'viem'
 
 export async function generateMetadata(props: {
   params: Promise<{ chainId: string; address: string }>
@@ -11,7 +11,11 @@ export async function generateMetadata(props: {
   const { chainId: _chainId, address } = params
   const chainId = +_chainId as EvmChainId
 
-  if (!isBladeChainId(chainId) || !isEvmAddress(address)) {
+  if (
+    !isBladeChainId(chainId) ||
+    !(await isPublicBladeChainId(chainId)) ||
+    !isEvmAddress(address)
+  ) {
     return {}
   }
 
@@ -39,7 +43,11 @@ export default async function Layout(props: {
   const { chainId: _chainId, address } = params
   const chainId = +_chainId as EvmChainId
 
-  if (!isBladeChainId(chainId) || !isEvmAddress(address)) {
+  if (
+    !isBladeChainId(chainId) ||
+    !(await isPublicBladeChainId(chainId)) ||
+    !isEvmAddress(address)
+  ) {
     return notFound()
   }
 
