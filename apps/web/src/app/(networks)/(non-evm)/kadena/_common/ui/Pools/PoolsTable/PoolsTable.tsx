@@ -41,7 +41,7 @@ export const PoolsTable = () => {
   ])
 
   const { data, fetchNextPage, hasNextPage, isLoading } = useAllPools({
-    first: 10,
+    first: 50,
     orderBy: 'TVL_USD_DESC',
   })
 

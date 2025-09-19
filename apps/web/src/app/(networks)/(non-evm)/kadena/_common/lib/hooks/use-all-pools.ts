@@ -2,6 +2,8 @@ import { type InfiniteData, useInfiniteQuery } from '@tanstack/react-query'
 
 import {
   type GetPoolsOrderBy,
+  type GetPoolsResponse,
+  type KadenaPool,
   getAllPools,
 } from '@sushiswap/graph-client/kadena'
 import { useCallback } from 'react'
@@ -17,33 +19,9 @@ export const useAllPools = ({
     (
       data: InfiniteData<
         {
-          pools: {
-            fees24hUsd: number
-            apr24h: number
-            transactionCount24h: number
-            volume7dUsd: number
-            volume24hUsd: number
-            tvlUsd: number
-            token1: {
-              address: string
-              chainId: string
-              name: string
-              id: string
-            }
-            token0: {
-              address: string
-              chainId: string
-              name: string
-              id: string
-            }
-            address: string
-            id: string
-          }[]
-          pageInfo: {
-            endCursor: string
-            hasNextPage: boolean
-          }
-          totalCount: number
+          pools: KadenaPool[]
+          pageInfo: GetPoolsResponse['pageInfo']
+          totalCount: GetPoolsResponse['totalCount']
         },
         string | null
       >,
