@@ -117,7 +117,7 @@ const POSITION_SIZE_COLUMN: ColumnDef<BladePosition, number> = {
   id: 'positionSize',
   header: 'Position Size',
   accessorFn: (row) => {
-    const balance = row.stakedBalance + row.unstakedBalance
+    const balance = row.stakedBalance + row.unstakedBalance + row.vestingBalance
     const totalSupply = row.pool.liquidity
     const poolLiquidityUSD = row.pool.liquidityUSD
 
