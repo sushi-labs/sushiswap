@@ -67,7 +67,7 @@ export const SendWidget = ({
       <DialogContent
         hideClose
         className={classNames(
-          'max-w-none md:!max-w-[641px] !rounded-none md:!rounded-xl md:h-auto h-[100dvh] !flex flex-col !p-5',
+          'max-w-none md:!max-w-[467px] !rounded-none md:!rounded-xl md:h-auto h-[100dvh] !flex flex-col !p-5',
           isBrowseView && 'md:!h-[470px]',
         )}
       >
