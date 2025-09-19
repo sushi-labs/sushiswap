@@ -13,7 +13,7 @@ export function useBladeUserPositions(args: {
   user?: EvmAddress
   enabled?: boolean
 }) {
-  const { chainId, user, enabled } = args
+  const { chainId, user, enabled = true } = args
   return useQuery<BladePositions>({
     queryKey: ['blade', 'positions', { chainId, user }],
     queryFn: user

@@ -140,6 +140,10 @@ type BladePool {
   feeUSD1d: Float!
   feeApr1d: Float!
   totalApr1d: Float!
+  incentiveApr: Float!
+  isIncentivized: Boolean!
+  wasIncentivized: Boolean!
+  incentives: [Incentive!]!
   isDeprecated: Boolean!
   isSingleAssetWithdrawEnabled: Boolean!
   newPoolAddress: Bytes
@@ -184,6 +188,7 @@ type BladePosition {
   user: Bytes!
   stakedBalance: BigInt!
   unstakedBalance: BigInt!
+  vestingBalance: BigInt!
   pool: BladePool!
 }
 

@@ -12,6 +12,7 @@ export const BladePositionsQuery = graphql(
       user
       stakedBalance
       unstakedBalance
+      vestingBalance
       pool {
         ...BladePoolFragment
       }
@@ -43,6 +44,7 @@ export async function getBladePositions(
         ...position,
         stakedBalance: BigInt(position.stakedBalance),
         unstakedBalance: BigInt(position.unstakedBalance),
+        vestingBalance: BigInt(position.vestingBalance),
         pool: enhanceBladePool(position.pool, variables.chainId),
       }))
     }
