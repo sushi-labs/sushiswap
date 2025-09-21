@@ -12,7 +12,7 @@ catalog:
 catalogs:
   web3:
     "abitype": 1.0.8
-    "sushi": 6.1.10
+    "sushi": 6.1.11
     "wagmi": 2.16.0
     "@wagmi/core": 2.18.0
     "viem": 2.33.0
