@@ -95,7 +95,7 @@ export const SwapStats = () => {
             {isLoading ? (
               <SkeletonBox className="h-4 py-0.5 w-[120px] rounded-md" />
             ) : (
-              `${amountOut.toSignificant(6)} ${token1?.symbol}`
+              `${amountOut?.toSignificant(6)} ${token1?.symbol}`
             )}
           </span>
         </div>
@@ -107,7 +107,7 @@ export const SwapStats = () => {
             {isLoading ? (
               <SkeletonBox className="h-4 py-0.5 w-[120px] rounded-md" />
             ) : (
-              `${minAmountOut.toSignificant(6)} ${token1?.symbol}`
+              `${minAmountOut?.toSignificant(6)} ${token1?.symbol}`
             )}
           </span>
         </div>
