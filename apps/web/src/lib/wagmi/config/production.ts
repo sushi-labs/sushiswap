@@ -14,6 +14,7 @@ import { gtagEvent } from '@sushiswap/ui'
 import { EvmChainId } from 'sushi/evm'
 import { http, cookieStorage, createConfig, createStorage } from 'wagmi'
 import type { Writeable } from 'zod'
+import { portoWallet } from './porto'
 import { publicWagmiConfig } from './public'
 import { publicTransports } from './viem'
 
@@ -39,7 +40,7 @@ const connectors = connectorsForWallets(
   [
     {
       groupName: 'Recommended',
-      wallets: [metaMaskWallet, coinbaseWallet, trustWallet],
+      wallets: [portoWallet, metaMaskWallet, coinbaseWallet, trustWallet],
     },
     {
       groupName: 'Others',
