@@ -12,9 +12,9 @@ import {
 import type { ColumnDef, SortingState, TableState } from '@tanstack/react-table'
 import React, { useCallback, useMemo, useState } from 'react'
 import InfiniteScroll from 'react-infinite-scroll-component'
-import { usePoolFilters } from 'src/ui/pool'
 import { useAllPools } from '~kadena/_common/lib/hooks/use-all-pools'
 
+import { usePoolFilters } from '~kadena/pool/[id]/pool-filters-provider'
 import {
   APR_COLUMN,
   FEES_1D_COLUMN,

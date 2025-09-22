@@ -8,10 +8,10 @@ import {
   useMemo,
   useReducer,
 } from 'react'
-import { PoolChartPeriod } from 'src/ui/pool/PoolChartPeriods'
 import type { KvmToken } from 'sushi/kvm'
 import { KADENA, STABLE_TOKENS } from '~kadena/_common/constants/token-list'
 import { usePoolFromTokens } from '~kadena/_common/lib/hooks/pools/use-pool-from-tokens'
+import { PoolChartPeriod } from '~kadena/_common/ui/Pools/PoolsV2/PoolChartPeriods'
 
 type InputFieldType = 'token0' | 'token1'
 

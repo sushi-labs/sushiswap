@@ -2,8 +2,8 @@ import { type V3Pool, getV3Pool } from '@sushiswap/graph-client/data-api'
 import { unstable_cache } from 'next/cache'
 import { notFound } from 'next/navigation'
 
-import { PoolPageV3 } from 'src/ui/pool/PoolPageV3'
 import { isEvmAddress, isSushiSwapV3ChainId } from 'sushi/evm'
+import { PoolPageV3 } from './_ui/pool-page-v3'
 
 export default async function PoolPage(props: {
   params: Promise<{ chainId: string; address: string }>

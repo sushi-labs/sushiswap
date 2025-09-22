@@ -20,7 +20,12 @@ export function Providers({ children }: { children: React.ReactNode }) {
   }, [])
 
   return (
-    <WalletProvider onError={onError} adapters={adapters} autoConnect={false}>
+    <WalletProvider
+      onError={onError}
+      adapters={adapters}
+      autoConnect
+      disableAutoConnectOnLoad
+    >
       <WalletModalProvider>{children}</WalletModalProvider>
     </WalletProvider>
   )

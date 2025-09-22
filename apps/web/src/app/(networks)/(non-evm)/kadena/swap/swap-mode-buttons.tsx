@@ -13,8 +13,8 @@ import { ShuffleIcon } from '@sushiswap/ui/icons/ShuffleIcon'
 import Link from 'next/link'
 import { useParams } from 'next/navigation'
 import type { ReactNode } from 'react'
+import { PathnameButton } from 'src/app/_ui/pathname-button'
 import { isXSwapSupportedChainId } from 'src/config'
-import { PathnameButton } from 'src/ui/pathname-button'
 
 const SwapModeButton = ({
   isSupported,

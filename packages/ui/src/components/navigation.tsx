@@ -3,12 +3,8 @@ import Link from 'next/link'
 import * as React from 'react'
 
 import classNames from 'classnames'
-import { DiscordIcon } from '../icons/DiscordIcon'
-import { GithubIcon } from '../icons/GithubIcon'
 import { SushiIcon } from '../icons/SushiIcon'
-import { XIcon } from '../icons/XIcon'
-import { IconButton } from './iconbutton'
-import { LinkExternal, LinkInternal } from './link'
+import { LinkInternal } from './link'
 import { navigationMenuTriggerStyle } from './navigation-menu'
 import {
   NavigationMenu,
@@ -52,19 +48,6 @@ const PARTNER_NAVIGATION_LINKS: NavigationElementDropdown['items'] = [
     title: 'Token Listing',
     href: '/tokenlist-request',
     description: 'Get your token on our default token list.',
-  },
-]
-
-const SUPPORT_NAVIGATION_LINKS: NavigationElementDropdown['items'] = [
-  {
-    title: 'Academy',
-    href: '/academy',
-    description: 'Everything you need to get up to speed with DeFi.',
-  },
-  {
-    title: 'FAQ',
-    href: '/faq',
-    description: 'Answers to the most common questions about Sushi.',
   },
 ]
 
@@ -375,57 +358,6 @@ const SushiNavigationDropdown: React.FC<{
                     </li>
                   ))}
                 </div>
-              </div>
-              <div className="flex flex-col gap-1">
-                <span className="font-semibold px-2">Support</span>
-                <div>
-                  {SUPPORT_NAVIGATION_LINKS.map((component) => (
-                    <li key={component.title}>
-                      <NavigationMenuLink asChild>
-                        <Link
-                          href={component.href}
-                          target="_blank"
-                          className={
-                            'cursor-pointer block select-none space-y-1 rounded-md p-2 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground'
-                          }
-                        >
-                          <span className="text-sm font-medium text-muted-foreground">
-                            {component.title}
-                          </span>
-                        </Link>
-                      </NavigationMenuLink>
-                    </li>
-                  ))}
-                </div>
-              </div>
-              <div className="flex gap-5 px-1 items-center">
-                <LinkExternal href={'https://sushi.com/twitter'}>
-                  <IconButton
-                    variant="ghost"
-                    size="xs"
-                    className="!p-0 text-muted-foreground"
-                    icon={XIcon}
-                    name="X"
-                  />
-                </LinkExternal>
-                <LinkExternal href={'https://sushi.com/github'}>
-                  <IconButton
-                    variant="ghost"
-                    size="xs"
-                    className="!p-0 text-muted-foreground"
-                    icon={GithubIcon}
-                    name="Github"
-                  />
-                </LinkExternal>
-                <LinkExternal href={'https://sushi.com/discord'}>
-                  <IconButton
-                    variant="ghost"
-                    size="xs"
-                    className="!p-0 text-muted-foreground"
-                    icon={DiscordIcon}
-                    name="Discord"
-                  />
-                </LinkExternal>
               </div>
             </ul>
           </NavigationMenuContent>

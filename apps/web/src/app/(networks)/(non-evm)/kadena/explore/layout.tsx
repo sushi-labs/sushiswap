@@ -1,6 +1,6 @@
 import { Container } from '@sushiswap/ui'
-import { PoolsFiltersProvider } from 'src/ui/pool'
 import { GlobalStatsCharts } from '~kadena/_common/ui/Pools/Explore/GlobalStatsChart'
+import { PoolsFiltersProvider } from '~kadena/pool/[id]/pool-filters-provider'
 import { Header } from '../header'
 
 export const metadata = {

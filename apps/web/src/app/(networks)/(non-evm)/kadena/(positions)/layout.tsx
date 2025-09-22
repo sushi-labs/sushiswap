@@ -1,6 +1,6 @@
 import { Container } from '@sushiswap/ui'
 import type { Metadata } from 'next'
-import { PoolsFiltersProvider } from 'src/ui/pool'
+import { PoolsFiltersProvider } from '~kadena/pool/[id]/pool-filters-provider'
 import { Header } from '../header'
 import { Hero } from './hero'
 import { NavigationItems } from './navigation-items'

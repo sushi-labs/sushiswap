@@ -3,15 +3,15 @@
 import type { GetPoolResponse } from '@sushiswap/graph-client/kadena'
 import { Card } from '@sushiswap/ui'
 import React, { type FC, useState } from 'react'
-import { PoolChartType, PoolChartTypes } from 'src/ui/pool/PoolChartTypes'
 import { usePoolDispatch, usePoolState } from '../../../../pool/pool-provider'
-import { PoolChartGraph } from './PoolChartGraph'
+import { KadenaPoolChartType, PoolChartGraph } from './PoolChartGraph'
 import { PoolChartPeriod, PoolChartPeriods } from './PoolChartPeriods'
+import { PoolChartTypes } from './PoolChartTypes'
 
 const charts = [
-  PoolChartType.Volume,
-  PoolChartType.TVL,
-  PoolChartType.Fees,
+  KadenaPoolChartType.Volume,
+  KadenaPoolChartType.TVL,
+  KadenaPoolChartType.Fees,
 ] as const
 const periods = [
   PoolChartPeriod.Day,

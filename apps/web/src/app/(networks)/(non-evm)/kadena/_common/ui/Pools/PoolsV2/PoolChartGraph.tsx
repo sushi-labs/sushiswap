@@ -16,7 +16,6 @@ import ReactEchartsCore from 'echarts-for-react/lib/core'
 import type { EChartsOption } from 'echarts-for-react/lib/types'
 
 import type { GetPoolResponse } from '@sushiswap/graph-client/kadena'
-import { PoolChartType } from 'src/ui/pool/PoolChartTypes'
 import { formatUSD } from 'sushi'
 import tailwindConfig from 'tailwind.config.js'
 import resolveConfig from 'tailwindcss/resolveConfig'
@@ -33,8 +32,14 @@ interface PoolChartProps {
   pool: GetPoolResponse | undefined
 }
 
-const tailwind = resolveConfig(tailwindConfig)
+export enum KadenaPoolChartType {
+  Volume = 'Volume',
+  TVL = 'TVL',
+  Fees = 'Fees',
+}
 
+const tailwind = resolveConfig(tailwindConfig)
+const swapFee = 0.003 //constant
 export const PoolChartGraph: FC<PoolChartProps> = ({ chart, period, pool }) => {
   const { data, isLoading, isError } = usePoolCharts({
     poolId: pool?.id,
@@ -74,7 +79,7 @@ export const PoolChartGraph: FC<PoolChartProps> = ({ chart, period, pool }) => {
       }
 
       if (valueNodes[1]) {
-        if (chart === PoolChartType.Volume) {
+        if (chart === KadenaPoolChartType.Volume) {
           valueNodes[1].innerHTML = formatUSD(value * Number(swapFee))
         }
       }
@@ -163,7 +168,7 @@ export const PoolChartGraph: FC<PoolChartProps> = ({ chart, period, pool }) => {
       series: [
         {
           name: 'Volume',
-          type: chart === PoolChartType.TVL ? 'line' : 'bar',
+          type: chart === KadenaPoolChartType.TVL ? 'line' : 'bar',
           smooth: true,
           xAxisIndex: 0,
           yAxisIndex: 0,
@@ -189,8 +194,6 @@ export const PoolChartGraph: FC<PoolChartProps> = ({ chart, period, pool }) => {
 
   const defaultValue = yData[yData.length - 1] || 0
 
-  // TODO: Get swap fee from pool
-  const swapFee = 0.003 //constant
   const noData = !yData.length && !isLoading && !isError
   return (
     <>
@@ -201,7 +204,7 @@ export const PoolChartGraph: FC<PoolChartProps> = ({ chart, period, pool }) => {
           ) : (
             <span className="hoveredItemValue">{formatUSD(defaultValue)}</span>
           )}{' '}
-          {chart === PoolChartType.Volume &&
+          {chart === KadenaPoolChartType.Volume &&
             (isLoading ? null : (
               <span className="text-sm font-medium text-gray-600 dark:text-slate-300">
                 <span className="text-xs top-[-2px] relative">•</span>{' '}

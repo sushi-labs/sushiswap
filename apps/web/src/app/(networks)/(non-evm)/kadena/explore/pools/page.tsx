@@ -1,8 +1,8 @@
 import { Container } from '@sushiswap/ui'
 import React from 'react'
+import { TableFiltersNetwork } from 'src/app/(networks)/_ui/table-filters-network'
+import { TableFiltersSearchToken } from 'src/app/(networks)/_ui/table-filters-search-token'
 import { POOL_SUPPORTED_NETWORKS } from 'src/config'
-import { TableFiltersNetwork } from 'src/ui/pool/TableFiltersNetwork'
-import { TableFiltersSearchToken } from 'src/ui/pool/TableFiltersSearchToken'
 import { ChainId } from 'sushi'
 import { PoolsTable } from '~kadena/_common/ui/Pools/PoolsTable/PoolsTable'
 
