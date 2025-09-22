@@ -3,6 +3,7 @@ import {
   useSlippageTolerance,
 } from '@sushiswap/hooks'
 import {
+  DialogConfirm,
   DialogDescription,
   DialogFooter,
   DialogHeader,
@@ -13,9 +14,9 @@ import {
 import { List } from '@sushiswap/ui'
 import { DialogContent, classNames } from '@sushiswap/ui'
 import Link from 'next/link'
-import { useMemo } from 'react'
+import { useEffect, useMemo, useRef } from 'react'
 import { formatPercent, truncateString } from 'sushi'
-import { getKvmChainByKey } from 'sushi/kvm'
+import { KvmChainId, getKvmChainByKey } from 'sushi/kvm'
 import { GAS_PRICE } from '~kadena/_common/constants/gas'
 import {
   warningSeverity,
@@ -36,9 +37,13 @@ export const ReviewSwapDialog = () => {
     minAmountOut,
     gas,
     priceImpactPercentage,
+    status,
+    txHash,
   } = useSwapState()
   const { isConnected, activeAccount } = useKadena()
   const address = activeAccount?.accountName ?? ''
+  const amountInRef = useRef(amountIn)
+  const amountOutRef = useRef(amountOut)
 
   const [slippageTolerance] = useSlippageTolerance(
     SlippageToleranceStorageKey.Swap,
@@ -47,6 +52,11 @@ export const ReviewSwapDialog = () => {
   const severityClass = useMemo(() => {
     return warningSeverityClassName(warningSeverity(priceImpactPercentage))
   }, [priceImpactPercentage])
+
+  useEffect(() => {
+    if (amountIn && amountInRef) amountInRef.current = amountIn
+    if (amountOut && amountOutRef) amountOutRef.current = amountOut
+  }, [amountIn, amountOut])
 
   const networkFeeInKDA = (gas ?? 0) * GAS_PRICE
 
@@ -130,6 +140,16 @@ export const ReviewSwapDialog = () => {
           </>
         )}
       </DialogReview>
+      <DialogConfirm
+        chainId={KvmChainId.KADENA}
+        status={status}
+        testId="make-another-swap-kadena"
+        buttonText="Make another swap"
+        txHash={txHash as `0x${string}` | undefined}
+        successMessage={`You sold ${amountInRef?.current?.toSignificant(6)} ${
+          token0?.symbol
+        } for ${amountOutRef?.current?.toSignificant(6)} ${token1?.symbol}`}
+      />
     </DialogProvider>
   )
 }

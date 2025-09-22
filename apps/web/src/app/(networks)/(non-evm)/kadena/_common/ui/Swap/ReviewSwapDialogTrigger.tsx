@@ -122,7 +122,6 @@ export const ReviewSwapDialogTrigger = () => {
               !amountIn ||
               hasInsufficientToken0Balance ||
               noRoutes ||
-              isTxnPending ||
               !amountOut
             }
           >

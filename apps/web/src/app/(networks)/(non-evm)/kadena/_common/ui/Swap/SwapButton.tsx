@@ -31,6 +31,8 @@ export const SwapButton = ({ closeModal }: { closeModal: () => void }) => {
     setPriceImpactPercentage,
     setAmountInString,
     setAmountOutString,
+    setStatus,
+    setTxHash,
   } = useSwapDispatch()
 
   const address = activeAccount?.accountName ?? ''
@@ -48,6 +50,7 @@ export const SwapButton = ({ closeModal }: { closeModal: () => void }) => {
 
     try {
       setIsTxnPending(true)
+      setStatus('pending')
 
       const getPoolAddressTx = buildGetPoolAddress(
         token0.address,
@@ -60,6 +63,7 @@ export const SwapButton = ({ closeModal }: { closeModal: () => void }) => {
       })
 
       if (getPoolAddressRes.result.status !== 'success') {
+        setStatus('error')
         throw new Error(
           getPoolAddressRes.result.error?.message ??
             'Failed to fetch pool address',
@@ -73,6 +77,7 @@ export const SwapButton = ({ closeModal }: { closeModal: () => void }) => {
           : undefined
 
       if (!poolAddress) {
+        setStatus('error')
         throw new Error('Pool does not exist')
       }
 
@@ -94,12 +99,13 @@ export const SwapButton = ({ closeModal }: { closeModal: () => void }) => {
         Array.isArray(signed) ? signed[0] : signed,
       )
       if (preflight.result.status === 'failure') {
+        setStatus('error')
         throw new Error(preflight.result.error?.message || 'Preflight failed')
       }
 
       const submitRes = await kadenaClient.submit(signed as ICommand)
       const txId = submitRes.requestKey
-
+      setTxHash(txId)
       createInfoToast({
         summary: 'Swap initiated...',
         type: 'swap',
@@ -112,8 +118,9 @@ export const SwapButton = ({ closeModal }: { closeModal: () => void }) => {
       })
 
       const result = await kadenaClient.pollOne(submitRes)
-      // console.log('result', result)
+
       if (result.result.status === 'failure') {
+        setStatus('error')
         throw new Error(result.result.error?.message || 'Transaction failed')
       }
 
@@ -141,6 +148,7 @@ export const SwapButton = ({ closeModal }: { closeModal: () => void }) => {
         groupTimestamp: Date.now(),
         timestamp: Date.now(),
       })
+      setStatus('error')
       console.error(err)
     } finally {
       setIsTxnPending(false)
@@ -148,6 +156,7 @@ export const SwapButton = ({ closeModal }: { closeModal: () => void }) => {
   }
 
   const onSuccess = () => {
+    setStatus('success')
     setAmountIn(undefined)
     setAmountOut(undefined)
     setAmountInString('')

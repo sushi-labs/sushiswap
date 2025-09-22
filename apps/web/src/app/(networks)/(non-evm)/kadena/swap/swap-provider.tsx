@@ -5,6 +5,8 @@ import type { Amount } from 'sushi'
 import type { KvmToken } from 'sushi/kvm'
 import { KADENA, STABLE_TOKENS } from '~kadena/_common/constants/token-list'
 
+type Status = 'pending' | 'success' | 'error'
+
 type Action =
   | { type: 'swapTokens' }
   | { type: 'setToken0'; value: KvmToken }
@@ -18,6 +20,8 @@ type Action =
   | { type: 'setRoute'; value: string[] }
   | { type: 'setPriceImpactPercentage'; value: number }
   | { type: 'setGas'; value: number }
+  | { type: 'setStatus'; value: Status }
+  | { type: 'setTxHash'; value: string }
 
 type Dispatch = {
   swapTokens(): void
@@ -32,6 +36,8 @@ type Dispatch = {
   setPriceImpactPercentage(priceImpactPercentage: number): void
   setRoute(route: string[]): void
   setGas(gas: number): void
+  setStatus(status: Status): void
+  setTxHash(txHash: string): void
 }
 
 type State = {
@@ -46,6 +52,8 @@ type State = {
   priceImpactPercentage: number
   route: string[]
   gas: number
+  status: Status
+  txHash: string | undefined
 }
 
 type SwapProviderProps = { children: React.ReactNode }
@@ -143,9 +151,12 @@ function swapReducer(_state: State, action: Action) {
     case 'setGas': {
       return { ..._state, gas: action.value }
     }
-    // default: {
-    // 	throw new Error(`Unhandled action type: ${action.type}`);
-    // }
+    case 'setTxHash': {
+      return { ..._state, txHash: action.value }
+    }
+    case 'setStatus': {
+      return { ..._state, status: action.value }
+    }
   }
 }
 
@@ -162,6 +173,8 @@ const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
     route: [],
     minAmountOut: undefined,
     gas: 0,
+    status: 'pending',
+    txHash: undefined,
   })
 
   const dispatchWithAction = useMemo(
@@ -185,6 +198,8 @@ const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
       setMinAmountOut: (value: Amount<KvmToken>) =>
         dispatch({ type: 'setMinAmountOut', value }),
       setGas: (value: number) => dispatch({ type: 'setGas', value }),
+      setTxHash: (value: string) => dispatch({ type: 'setTxHash', value }),
+      setStatus: (value: Status) => dispatch({ type: 'setStatus', value }),
     }),
     [],
   )
