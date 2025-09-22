@@ -35,8 +35,13 @@ const PoolPositionDisconnected: FC = () => {
 
 const PoolPositionConnected: FC<PoolPositionProps> = ({ pool }) => {
   const [showStableTypes, setShowStableTypes] = useState(false)
-  const { balance, vestingDeposit, liquidityToken, isLoading } =
-    useBladePoolPosition()
+  const {
+    balance,
+    vestingDeposit,
+    liquidityToken,
+    isLoading,
+    refetch: refetchPosition,
+  } = useBladePoolPosition()
   const poolTotalSupply = useTotalSupply(liquidityToken)
 
   const canUnlock = useMemo(() => {
@@ -49,6 +54,9 @@ const PoolPositionConnected: FC<PoolPositionProps> = ({ pool }) => {
   const { write: unlockDeposit, isPending: isUnlocking } = useUnlockDeposit({
     pool,
     enabled: canUnlock,
+    onSuccess: () => {
+      refetchPosition()
+    },
   })
 
   const positionValue = useMemo(() => {

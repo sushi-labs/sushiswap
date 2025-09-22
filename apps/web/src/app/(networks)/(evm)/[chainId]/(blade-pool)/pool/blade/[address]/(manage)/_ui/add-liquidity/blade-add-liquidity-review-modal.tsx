@@ -82,7 +82,11 @@ export const BladeAddLiquidityReviewModal: FC<
   const { address } = useAccount()
   const { approved } = useApproved(APPROVE_TAG_ADD_LEGACY)
   const client = usePublicClient()
-  const { liquidityToken, vestingDeposit } = useBladePoolPosition()
+  const {
+    liquidityToken,
+    vestingDeposit,
+    refetch: refetchPosition,
+  } = useBladePoolPosition()
   const poolTotalSupply = useTotalSupply(liquidityToken)
   const { refetchChain: refetchBalances } = useRefetchBalances()
   const { data: prices } = usePrices({ chainId })
@@ -105,6 +109,7 @@ export const BladeAddLiquidityReviewModal: FC<
       onSuccess: () => {
         // Re-trigger RFQ after unlock
         handleRfqCall()
+        refetchPosition()
       },
     })
 
@@ -115,6 +120,7 @@ export const BladeAddLiquidityReviewModal: FC<
       const receipt = client.waitForTransactionReceipt({ hash })
       receipt.then(() => {
         refetchBalances(chainId)
+        refetchPosition()
       })
 
       const ts = new Date().getTime()
@@ -133,7 +139,7 @@ export const BladeAddLiquidityReviewModal: FC<
         groupTimestamp: ts,
       })
     },
-    [refetchBalances, _onSuccess, address, chainId, client],
+    [refetchBalances, refetchPosition, _onSuccess, address, chainId, client],
   )
 
   const onTransactionError = useCallback((e: Error) => {

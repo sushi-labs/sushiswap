@@ -5,6 +5,7 @@ import {
   type FC,
   type ReactNode,
   createContext,
+  useCallback,
   useContext,
   useMemo,
 } from 'react'
@@ -23,6 +24,7 @@ interface BladePoolPositionContext {
   liquidityToken: EvmToken
   isLoading: boolean
   isError: boolean
+  refetch: () => void
 }
 
 const Context = createContext<BladePoolPositionContext | undefined>(undefined)
@@ -48,10 +50,17 @@ export const BladePoolPositionProvider: FC<{
     isLoading: isBalanceLoading,
     isError,
   } = useAmountBalance(liquidityToken)
-  const { data: vestingDeposit, isLoading: isVestingDepositLoading } =
-    useVestingDeposit({ pool, address })
+  const {
+    data: vestingDeposit,
+    isLoading: isVestingDepositLoading,
+    refetch: refetchVestingDeposit,
+  } = useVestingDeposit({ pool, address })
 
   const isLoading = isBalanceLoading || isVestingDepositLoading
+
+  const refetch = useCallback(() => {
+    refetchVestingDeposit()
+  }, [refetchVestingDeposit])
 
   return (
     <Context.Provider
@@ -62,8 +71,9 @@ export const BladePoolPositionProvider: FC<{
           liquidityToken,
           isLoading,
           isError,
+          refetch,
         }),
-        [balance, isError, isLoading, liquidityToken, vestingDeposit],
+        [balance, isError, isLoading, liquidityToken, vestingDeposit, refetch],
       )}
     >
       {children}
