@@ -33,14 +33,13 @@ export default function SwapSimplePage() {
     return Number.isNaN(parsed) ? null : Number(parsed)
   }, [amountIn, token0])
 
-  const { isLoading, error } = useSimulateSwap({
+  const { isLoading } = useSimulateSwap({
     token0: token0,
     token1: token1,
     amountIn: parsedAmountIn,
     signerAddress: activeAccount?.accountName,
     slippage,
   })
-  console.log('error', error)
   return (
     <Container maxWidth="lg">
       <div className="flex flex-col gap-4">
