@@ -10,7 +10,7 @@ import {
 import { useEffect, useMemo } from 'react'
 import { Amount, formatNumber } from 'sushi'
 import { formatUSD } from 'sushi'
-import { formatUnits, parseUnits } from 'viem'
+import { formatUnits } from 'viem'
 import { KVM_PAIR_TOKEN } from '~kadena/_common/constants/pair'
 import { useLpBalance } from '~kadena/_common/lib/hooks/pools/use-lp-balance'
 import { useTokenPrice } from '~kadena/_common/lib/hooks/use-token-price'
@@ -59,26 +59,26 @@ export const PoolPosition = () => {
 
   const amountToken0: string = useMemo(() => {
     if (!lpBalance || !reserve0 || !totalSupplyLP) return '0'
-    const parsedBal = parseUnits(lpBalance.toString(), KVM_PAIR_TOKEN.decimals)
-    const parsedSupply = parseUnits(
+    const parsedBal = Amount.fromHuman(KVM_PAIR_TOKEN, lpBalance)
+    const parsedSupply = Amount.fromHuman(
+      KVM_PAIR_TOKEN,
       totalSupplyLP.toString(),
-      KVM_PAIR_TOKEN.decimals,
     )
-    const balance = new Amount(KVM_PAIR_TOKEN, parsedBal)
-    const supply = new Amount(KVM_PAIR_TOKEN, parsedSupply).toString()
+    const balance = new Amount(KVM_PAIR_TOKEN, parsedBal.amount)
+    const supply = new Amount(KVM_PAIR_TOKEN, parsedSupply.amount).toString()
     const percentage = balance.div(supply).mulHuman(reserve0)
     return percentage.toString()
   }, [lpBalance, reserve0, totalSupplyLP])
 
   const amountToken1: string = useMemo(() => {
     if (!lpBalance || !reserve1 || !totalSupplyLP) return '0'
-    const parsedBal = parseUnits(lpBalance.toString(), KVM_PAIR_TOKEN.decimals)
-    const parsedSupply = parseUnits(
+    const parsedBal = Amount.fromHuman(KVM_PAIR_TOKEN, lpBalance)
+    const parsedSupply = Amount.fromHuman(
+      KVM_PAIR_TOKEN,
       totalSupplyLP.toString(),
-      KVM_PAIR_TOKEN.decimals,
     )
-    const balance = new Amount(KVM_PAIR_TOKEN, parsedBal)
-    const supply = new Amount(KVM_PAIR_TOKEN, parsedSupply).toString()
+    const balance = new Amount(KVM_PAIR_TOKEN, parsedBal.amount)
+    const supply = new Amount(KVM_PAIR_TOKEN, parsedSupply.amount).toString()
     const percentage = balance.div(supply).mulHuman(reserve1)
     return percentage.toString()
   }, [lpBalance, reserve1, totalSupplyLP])
