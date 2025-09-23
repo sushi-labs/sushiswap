@@ -40,6 +40,7 @@ export enum KadenaPoolChartType {
 
 const tailwind = resolveConfig(tailwindConfig)
 const swapFee = 0.003 //constant
+
 export const PoolChartGraph: FC<PoolChartProps> = ({ chart, period, pool }) => {
   const { data, isLoading, isError } = usePoolCharts({
     poolId: pool?.id,
@@ -195,6 +196,7 @@ export const PoolChartGraph: FC<PoolChartProps> = ({ chart, period, pool }) => {
   const defaultValue = yData[yData.length - 1] || 0
 
   const noData = !yData.length && !isLoading && !isError
+
   return (
     <>
       <CardHeader>

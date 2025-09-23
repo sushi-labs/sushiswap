@@ -23,8 +23,7 @@ export const ReviewSwapDialogTrigger = () => {
   const { data: tokenBalances, isLoading: isLoadingTokenBalance } =
     useTokenBalances({
       account: activeAccount?.accountName ?? '',
-      tokenAddresses:
-        token0 && token1 ? [token0?.address, token1?.address] : [],
+      tokenAddresses: token0 && token1 ? [token0.address, token1.address] : [],
     })
   const balanceMap = tokenBalances?.balanceMap ?? undefined
 
@@ -40,7 +39,7 @@ export const ReviewSwapDialogTrigger = () => {
   }, [isLoadingTokenBalance, balanceMap])
 
   const token0Balance =
-    token0 && balanceMap ? Number.parseFloat(balanceMap[token0?.address]) : 0
+    token0 && balanceMap ? Number.parseFloat(balanceMap[token0.address]) : 0
 
   const hasInsufficientToken0Balance = useMemo(() => {
     if (isLoadingTokenBalance) return true

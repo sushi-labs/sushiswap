@@ -34,13 +34,13 @@ export const PositionsTable = () => {
       symbol.toLowerCase().replaceAll(' ', ''),
     )
 
-    return positions.filter((pool) => {
+    return positions.filter(({ pair }) => {
       const poolValues = [
-        pool?.pair?.address,
-        pool?.pair?.token0?.address,
-        pool?.pair?.token1?.address,
-        pool?.pair?.token0?.name,
-        pool?.pair?.token1?.name,
+        pair.address,
+        pair.token0.address,
+        pair.token1.address,
+        pair.token0.name,
+        pair.token1.name,
       ]
       return poolValues.some((value) =>
         queries.some((query) => value?.toLowerCase().includes(query)),

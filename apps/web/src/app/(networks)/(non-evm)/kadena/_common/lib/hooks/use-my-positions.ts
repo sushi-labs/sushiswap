@@ -60,10 +60,9 @@ export const useMyPositions = (pageSize = 50) => {
 
       return nextParam
     },
-
     select,
     initialPageParam: null,
     staleTime: ms('10s'),
-    enabled: !!walletAddress,
+    enabled: Boolean(walletAddress),
   })
 }

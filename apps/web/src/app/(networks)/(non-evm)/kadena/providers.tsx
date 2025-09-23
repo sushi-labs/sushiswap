@@ -98,7 +98,10 @@ export function Providers({ children }: { children: React.ReactNode }) {
 
 export const useKadenaAdapterContext = (): AdapterContextType => {
   const context = useContext(KadenaAdapaterContext)
-  if (!context)
+
+  if (!context) {
     throw new Error('useKadena must be used within a KadenaAdapaterContext')
+  }
+
   return context
 }

@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
+import ms from 'ms'
 import { Amount, Fraction } from 'sushi'
 import type { KvmToken } from 'sushi/kvm'
 import { parseUnits } from 'viem'
@@ -41,11 +42,6 @@ export const useSimulateSwap = ({
       amountOut,
       signerAddress,
     ],
-    enabled: !!token0 && !!token1 && !!signerAddress && !!amountIn,
-    refetchInterval: 20 * 1000,
-    staleTime: 0,
-    retry: false,
-
     queryFn: async () => {
       if (!amountIn) {
         return
@@ -146,6 +142,10 @@ export const useSimulateSwap = ({
         computedAmount: formatted,
       }
     },
+    enabled: Boolean(token0 && token1 && signerAddress && amountIn),
+    refetchInterval: ms('20s'),
+    staleTime: 0,
+    retry: false,
   })
 
   return {

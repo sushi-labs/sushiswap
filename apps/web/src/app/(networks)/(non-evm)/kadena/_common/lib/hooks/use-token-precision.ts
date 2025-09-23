@@ -10,8 +10,9 @@ export const useTokenPrecision = ({
     queryKey: ['kadena-token-info', tokenContract],
     queryFn: async (): Promise<number> => {
       if (!tokenContract) {
-        return 12 // Default precision for KDA
+        throw new Error('Token contract is required')
       }
+
       const tx = buildGetTokenPrecision(tokenContract)
 
       const res = await kadenaClient.local(tx, {
@@ -25,12 +26,13 @@ export const useTokenPrecision = ({
         )
       }
 
+      //@dev will use PactNumber once pactjs pkg is fixed
       const decimals =
         typeof res?.result?.data === 'object' && 'int' in res.result.data
           ? (res?.result?.data?.int as number)
           : 12
       return decimals
     },
-    enabled: !!tokenContract,
+    enabled: Boolean(tokenContract),
   })
 }

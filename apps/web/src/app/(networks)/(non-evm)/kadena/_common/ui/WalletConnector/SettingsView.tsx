@@ -21,6 +21,7 @@ const options = {
 
 export const SettingsView: FC<SettingsViewProps> = ({ setView }) => {
   const { theme, setTheme } = useTheme()
+
   return (
     <div className="p-2">
       <div className="grid grid-cols-3 mb-3">

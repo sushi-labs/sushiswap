@@ -33,6 +33,7 @@ export const Rate = () => {
   if (!token0 || !token1 || isLoading) {
     return <SkeletonText fontSize="sm" className="w-2/4" />
   }
+
   return (
     <Button
       variant="link"

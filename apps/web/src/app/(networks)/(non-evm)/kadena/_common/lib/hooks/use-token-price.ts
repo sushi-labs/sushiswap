@@ -31,13 +31,13 @@ export const useTokenPrice = ({ token }: { token: KvmToken | undefined }) => {
   return useQuery({
     queryKey: ['use-token-price-kadena', { token: token?.address }],
     queryFn: async () => {
-      if (!token || !token.address) {
-        return 0
+      if (!token) {
+        throw new Error('Token address is required')
       }
-      const tokenPrice = await getPrice(token)
 
+      const tokenPrice = await getPrice(token)
       return tokenPrice
     },
-    enabled: !!token,
+    enabled: Boolean(token),
   })
 }

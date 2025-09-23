@@ -3,6 +3,7 @@ import {
   getPoolTransactions,
 } from '@sushiswap/graph-client/kadena'
 import { useQuery } from '@tanstack/react-query'
+import ms from 'ms'
 
 export const usePoolTransactions = ({
   pairId,
@@ -17,8 +18,9 @@ export const usePoolTransactions = ({
     queryKey: ['kadena-pool-transactions', pairId, type, pageSize],
     queryFn: async () => {
       if (!pairId) {
-        return undefined
+        throw new Error('Pair ID is required')
       }
+
       const data = await getPoolTransactions({
         pairId,
         type,
@@ -31,7 +33,7 @@ export const usePoolTransactions = ({
         totalCount: data.totalCount,
       }
     },
-    enabled: !!pairId,
-    staleTime: (60 * 1000) / 6,
+    enabled: Boolean(pairId),
+    staleTime: ms('10s'),
   })
 }

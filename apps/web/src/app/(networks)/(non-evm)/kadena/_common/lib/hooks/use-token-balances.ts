@@ -1,15 +1,10 @@
 import type { ChainId } from '@kadena/client'
 import { useQuery } from '@tanstack/react-query'
-import { Amount, withoutScientificNotation } from 'sushi'
 import type { KvmTokenAddress } from 'sushi/kvm'
-import { KvmToken } from 'sushi/kvm'
 import { parseUnits } from 'viem'
 import { kadenaClient } from '~kadena/_common/constants/client'
 import { KADENA_CHAIN_ID } from '~kadena/_common/constants/network'
-import {
-  buildGetTokenBalanceAndPrecisionTx,
-  buildGetTokenBalanceTx,
-} from '../pact/builders'
+import { buildGetTokenBalanceAndPrecisionTx } from '../pact/builders'
 
 type NativeTokenBalanceResponse = {
   chainId: ChainId
@@ -25,12 +20,9 @@ export const useTokenBalances = ({
 }) => {
   return useQuery({
     queryKey: ['kadena-token-balances', account, tokenAddresses],
-    queryFn: async (): Promise<NativeTokenBalanceResponse> => {
+    queryFn: async () => {
       if (!account || !tokenAddresses || tokenAddresses.length === 0) {
-        return {
-          chainId: KADENA_CHAIN_ID,
-          balanceMap: {},
-        }
+        throw new Error('Account and token addresses are required')
       }
 
       const tx = buildGetTokenBalanceAndPrecisionTx(account, tokenAddresses)
@@ -68,20 +60,15 @@ export const useTokenBalances = ({
           }
         }
 
-        if (tokenAddress) {
-          cleanedBalanceMap[tokenAddress] =
-            parseUnits(String(amount ?? 0), decimals)?.toString() || '0'
-        } else {
-          cleanedBalanceMap['coin'] =
-            parseUnits(String(amount), decimals)?.toString() || '0'
-        }
+        cleanedBalanceMap[tokenAddress || 'coin'] =
+          parseUnits(String(amount ?? 0), decimals)?.toString() || '0'
       }
-      console.log({ cleanedBalanceMap })
+
       return {
         chainId: KADENA_CHAIN_ID,
         balanceMap: cleanedBalanceMap,
-      }
+      } satisfies NativeTokenBalanceResponse
     },
-    enabled: !!account && tokenAddresses?.length > 0,
+    enabled: Boolean(account && tokenAddresses?.length > 0),
   })
 }

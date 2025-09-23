@@ -12,6 +12,7 @@ export default function AddRemoveLiqPage(props: {
 }) {
   const params = use(props.params)
   const poolId = params?.id
+
   const { data } = usePoolById({
     poolId: decodeURIComponent(poolId),
     first: 1,

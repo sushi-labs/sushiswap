@@ -39,7 +39,7 @@ export const useCustomTokens = () => {
 
   const addCustomToken = useCallback(
     (currencies: KvmToken[]) => {
-      const data: KvmToken[] = currencies.map((currency) => {
+      const data = currencies.map((currency) => {
         return new KvmToken({
           chainId: KvmChainId.KADENA,
           address: currency?.address,
