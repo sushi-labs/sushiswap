@@ -9,7 +9,6 @@ import {
 } from '@sushiswap/ui'
 import { useMemo, useRef } from 'react'
 import { Amount, formatUSD } from 'sushi'
-import { parseUnits } from 'viem'
 import { useTokenPrice } from '~kadena/_common/lib/hooks/use-token-price'
 import { useKadena } from '~kadena/kadena-wallet-provider'
 import { usePoolState } from '../../../../pool/pool-provider'
@@ -43,20 +42,15 @@ export const ReviewAddDialog = (props: ButtonProps) => {
 
   const amount0 = useMemo(() => {
     if (!token0 || !amountInToken0) return '0'
-    return new Amount(
-      token0,
-      parseUnits(amountInToken0.toString(), token0.decimals).toString(),
-    ).toString({
+
+    return Amount.fromHuman(token0, amountInToken0).toString({
       fixed: 12,
     })
   }, [amountInToken0, token0])
 
   const amount1 = useMemo(() => {
     if (!token1 || !amountInToken1) return '0'
-    return new Amount(
-      token1,
-      parseUnits(amountInToken1.toString(), token1.decimals).toString(),
-    ).toString({
+    return Amount.fromHuman(token1, amountInToken1).toString({
       fixed: 12,
     })
   }, [amountInToken1, token1])
