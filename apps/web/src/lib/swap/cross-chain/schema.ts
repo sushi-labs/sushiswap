@@ -1,45 +1,33 @@
-import { isXSwapSupportedChainId } from 'src/config'
-import { hexToBigInt, isAddress, isHex } from 'viem'
+import { type XSwapSupportedChainId, isXSwapSupportedChainId } from 'src/config'
+import { sz } from 'sushi'
+import { type Hex, hexToBigInt } from 'viem'
 import { z } from 'zod'
 
+const XSwapChainIdSchema = z.coerce
+  .number()
+  .refine((chainId) => isXSwapSupportedChainId(chainId), {
+    message: 'chainId must exist in XSwapSupportedChainId',
+  })
+  .transform((chainId) => chainId as XSwapSupportedChainId)
+
 export const crossChainTokenSchema = z.object({
-  address: z.string().refine((address) => isAddress(address), {
-    message: 'address does not conform to Address',
-  }),
+  address: sz.evm.address(),
   decimals: z.number(),
   symbol: z.string(),
-  chainId: z.number().refine((chainId) => isXSwapSupportedChainId(chainId), {
-    message: `chainId must exist in XSwapChainId`,
-  }),
+  chainId: XSwapChainIdSchema,
   name: z.string(),
   priceUSD: z.string(),
 })
 
 export const crossChainActionSchema = z.object({
-  fromChainId: z
-    .number()
-    .refine((chainId) => isXSwapSupportedChainId(chainId), {
-      message: `fromChainId must exist in XSwapChainId`,
-    }),
+  fromChainId: XSwapChainIdSchema,
   fromAmount: z.string().transform((amount) => BigInt(amount)),
   fromToken: crossChainTokenSchema,
-  toChainId: z.number().refine((chainId) => isXSwapSupportedChainId(chainId), {
-    message: `toChainId must exist in XSwapChainId`,
-  }),
+  toChainId: XSwapChainIdSchema,
   toToken: crossChainTokenSchema,
   slippage: z.number(),
-  fromAddress: z
-    .string()
-    .refine((address) => isAddress(address), {
-      message: 'fromAddress does not conform to Address',
-    })
-    .optional(),
-  toAddress: z
-    .string()
-    .refine((address) => isAddress(address), {
-      message: 'toAddress does not conform to Address',
-    })
-    .optional(),
+  fromAddress: sz.evm.address().optional(),
+  toAddress: sz.evm.address().optional(),
 })
 
 export const crossChainEstimateSchema = z.object({
@@ -47,9 +35,7 @@ export const crossChainEstimateSchema = z.object({
   fromAmount: z.string().transform((amount) => BigInt(amount)),
   toAmount: z.string().transform((amount) => BigInt(amount)),
   toAmountMin: z.string().transform((amount) => BigInt(amount)),
-  approvalAddress: z.string().refine((address) => isAddress(address), {
-    message: 'approvalAddress does not conform to Address',
-  }),
+  approvalAddress: sz.evm.address(),
   feeCosts: z
     .array(
       z.object({
@@ -84,36 +70,13 @@ export const crossChainToolDetailsSchema = z.object({
 })
 
 export const crossChainTransactionRequestSchema = z.object({
-  chainId: z.number().refine((chainId) => isXSwapSupportedChainId(chainId), {
-    message: `chainId must exist in XSwapChainId`,
-  }),
-  data: z.string().refine((data) => isHex(data), {
-    message: 'data does not conform to Hex',
-  }),
-  from: z.string().refine((from) => isAddress(from), {
-    message: 'from does not conform to Address',
-  }),
-  gasLimit: z
-    .string()
-    .refine((gasLimit) => isHex(gasLimit), {
-      message: 'gasLimit does not conform to Hex',
-    })
-    .transform((gasLimit) => hexToBigInt(gasLimit)),
-  gasPrice: z
-    .string()
-    .refine((gasPrice) => isHex(gasPrice), {
-      message: 'gasPrice does not conform to Hex',
-    })
-    .transform((gasPrice) => hexToBigInt(gasPrice)),
-  to: z.string().refine((to) => isAddress(to), {
-    message: 'to does not conform to Address',
-  }),
-  value: z
-    .string()
-    .refine((value) => isHex(value), {
-      message: 'value does not conform to Hex',
-    })
-    .transform((value) => hexToBigInt(value)),
+  chainId: XSwapChainIdSchema,
+  data: sz.hex(),
+  from: sz.evm.address(),
+  gasLimit: sz.hex().transform((gasLimit: Hex) => hexToBigInt(gasLimit)),
+  gasPrice: sz.hex().transform((gasPrice: Hex) => hexToBigInt(gasPrice)),
+  to: sz.evm.address(),
+  value: sz.hex().transform((value: Hex) => hexToBigInt(value)),
 })
 
 const _crossChainStepSchema = z.object({
@@ -133,18 +96,10 @@ export const crossChainStepSchema = _crossChainStepSchema.extend({
 export const crossChainRouteSchema = z
   .object({
     id: z.string(),
-    fromChainId: z.coerce
-      .number()
-      .refine((chainId) => isXSwapSupportedChainId(chainId), {
-        message: `fromChainId must exist in XSwapChainId`,
-      }),
+    fromChainId: XSwapChainIdSchema,
     fromAmount: z.string().transform((amount) => BigInt(amount)),
     fromToken: crossChainTokenSchema,
-    toChainId: z.coerce
-      .number()
-      .refine((chainId) => isXSwapSupportedChainId(chainId), {
-        message: `toChainId must exist in XSwapChainId`,
-      }),
+    toChainId: XSwapChainIdSchema,
     toAmount: z.string().transform((amount) => BigInt(amount)),
     toAmountMin: z.string().transform((amount) => BigInt(amount)),
     toToken: crossChainTokenSchema,

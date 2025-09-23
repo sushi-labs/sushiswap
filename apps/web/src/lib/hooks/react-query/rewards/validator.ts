@@ -1,5 +1,5 @@
 import { sz } from 'sushi'
-import { type MerklChainId, isEvmChainId } from 'sushi/evm'
+import { type MerklChainId, isMerklChainId } from 'sushi/evm'
 import z from 'zod'
 
 const merklRewardsTokenValidator = z.object({
@@ -10,11 +10,16 @@ const merklRewardsTokenValidator = z.object({
   isTest: z.boolean().optional(),
 })
 
+const merklChainIdValidator = z
+  .number()
+  .refine((chainId) => isMerklChainId(chainId))
+  .transform((chainId) => chainId as MerklChainId)
+
 export const merklRewardsTokensValidator = z.array(merklRewardsTokenValidator)
 
 const merklRewardValidator = z.object({
   chain: z.object({
-    id: z.number().transform((chainId) => chainId as MerklChainId),
+    id: merklChainIdValidator,
   }),
   rewards: z.array(
     z.object({
@@ -26,7 +31,7 @@ const merklRewardValidator = z.object({
       proofs: z.array(sz.hex()),
       token: z.object({
         address: sz.evm.address(),
-        chainId: z.number().refine(isEvmChainId),
+        chainId: merklChainIdValidator,
         symbol: z.string(),
         decimals: z.number(),
         price: z.coerce.number().optional(),
@@ -39,8 +44,8 @@ export const merklRewardsValidator = z.array(merklRewardValidator)
 
 const merklCampaignValidator = z.object({
   id: z.string(),
-  computeChainId: z.number().refine(isEvmChainId),
-  distributionChainId: z.number().refine(isEvmChainId),
+  computeChainId: merklChainIdValidator,
+  distributionChainId: merklChainIdValidator,
   campaignId: z.string(),
   amount: z.string(),
   startTimestamp: z.coerce.number(),
@@ -52,7 +57,7 @@ const merklCampaignValidator = z.object({
   }),
   rewardToken: z.object({
     address: sz.evm.address(),
-    chainId: z.number().refine(isEvmChainId),
+    chainId: merklChainIdValidator,
     symbol: z.string(),
     decimals: z.number(),
     name: z.string(),

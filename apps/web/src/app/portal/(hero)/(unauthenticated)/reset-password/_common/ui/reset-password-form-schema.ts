@@ -20,6 +20,4 @@ export const resetPasswordFormSchema = z
         path: ['passwordConfirmation'],
       })
     }
-
-    return data
   })

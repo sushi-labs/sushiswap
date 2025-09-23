@@ -7,7 +7,7 @@ packages:
 catalog:
   "typescript": 5.8.3
   "utf-8-validate": 6.0.3
-  "zod": 3.23.8
+  "zod": 4.1.11
 
 catalogs:
   web3:

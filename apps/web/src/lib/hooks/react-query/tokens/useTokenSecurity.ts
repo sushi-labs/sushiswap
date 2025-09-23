@@ -33,7 +33,7 @@ const tokenSecuritySchema = z
           z.optional(z.boolean()),
         ),
       )
-      .default(undefined),
+      .prefault(undefined),
     sell_tax: z
       .optional(
         z.preprocess(
@@ -41,7 +41,7 @@ const tokenSecuritySchema = z
           z.optional(z.boolean()),
         ),
       )
-      .default(undefined),
+      .prefault(undefined),
     cannot_buy: bit,
     cannot_sell_all: bit,
     slippage_modifiable: bit,
