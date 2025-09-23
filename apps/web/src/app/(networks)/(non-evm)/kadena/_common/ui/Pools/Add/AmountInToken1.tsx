@@ -1,6 +1,5 @@
 import { type ComponentProps, useEffect } from 'react'
 import { Amount } from 'sushi'
-import { parseUnits } from 'viem'
 import { TokenInput } from '~kadena/_common/ui/Input/TokenInput'
 import { usePoolDispatch, usePoolState } from '../../../../pool/pool-provider'
 
@@ -47,10 +46,7 @@ export const AmountInToken1 = ({
       const amountFormatted = Number(rateOfToken0) * Number(parsedAmount)
 
       if (amountFormatted) {
-        const amount = new Amount(
-          token0,
-          parseUnits(amountFormatted.toString(), token0.decimals),
-        ).toString({
+        const amount = Amount.fromHuman(token0, amountFormatted).toString({
           fixed: token0.decimals,
         })
 
