@@ -29,10 +29,9 @@ export const useNativeTokenBalance = ({
       })
 
       if (res.result.status !== 'success') {
-        return {
-          chainId: KADENA_CHAIN_ID,
-          balance: new Amount(KADENA, 0),
-        }
+        throw new Error(
+          res.result.error?.message || 'Failed to fetch KDA balance',
+        )
       }
 
       const amount = res.result.data as PactNumberReturnType

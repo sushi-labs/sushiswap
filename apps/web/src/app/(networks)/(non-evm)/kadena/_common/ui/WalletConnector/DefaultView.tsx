@@ -7,12 +7,7 @@ import { ArrowLeftOnRectangleIcon } from '@heroicons/react/24/outline'
 import { ClipboardController, IconButton, SkeletonText } from '@sushiswap/ui'
 import { JazzIcon } from '@sushiswap/ui/icons/JazzIcon'
 import Link from 'next/link'
-import React, {
-  useEffect,
-  useState,
-  type Dispatch,
-  type SetStateAction,
-} from 'react'
+import type { Dispatch, SetStateAction } from 'react'
 import { formatNumber, formatUSD, truncateString } from 'sushi'
 import { getKvmChainByKey } from 'sushi/kvm'
 import { useKdaPrice } from '~kadena/_common/lib/hooks/use-kda-price'
@@ -27,24 +22,21 @@ type DefaultViewProps = {
 export const DefaultView = ({ setView }: DefaultViewProps) => {
   const { handleDisconnect } = useKadena()
   const { activeAccount } = useKadena()
-  const [isLoadingPrice, setIsLoadingPrice] = useState(true)
-  const { data, isLoading: isLoadingNativeTokenBalance } =
-    useNativeTokenBalance({
-      account: activeAccount?.accountName ?? '',
-      enabled: true,
-    })
-  const { data: priceData, isLoading: isLoadingKdaPrice } = useKdaPrice()
-
-  useEffect(() => {
-    setTimeout(() => {
-      setIsLoadingPrice(false)
-    }, 1000)
-  }, [])
+  const {
+    data,
+    isLoading: isLoadingNativeTokenBalance,
+    error: balanceError,
+  } = useNativeTokenBalance({
+    account: activeAccount?.accountName ?? '',
+    enabled: true,
+  })
+  const {
+    data: priceData,
+    isLoading: isLoadingKdaPrice,
+    error: priceError,
+  } = useKdaPrice()
 
   const price = priceData?.priceUsd ?? 0
-
-  const isLoading =
-    isLoadingNativeTokenBalance || isLoadingPrice || isLoadingKdaPrice
 
   return (
     <div className="flex flex-col gap-8 p-4 w-full max-w-[280px]">
@@ -108,7 +100,13 @@ export const DefaultView = ({ setView }: DefaultViewProps) => {
         </div>
       </div>
       <div className="flex flex-col gap-2 justify-center items-center">
-        {isLoading || !price || data?.balance === undefined ? (
+        {!isLoadingNativeTokenBalance && balanceError ? (
+          <p className="text-[10px] text-red italic text-center">
+            {balanceError?.message}
+          </p>
+        ) : isLoadingNativeTokenBalance ||
+          !price ||
+          data?.balance === undefined ? (
           <div className="flex gap-2 items-center">
             <SkeletonText className="!w-24 mx-auto !h-7" />
             <span className="h-7 text-3xl font-medium">KDA</span>
@@ -118,7 +116,11 @@ export const DefaultView = ({ setView }: DefaultViewProps) => {
             {formatNumber(data?.balance.toString())} KDA
           </p>
         )}
-        {isLoading || !price || data?.balance === undefined ? (
+        {!isLoadingKdaPrice && priceError ? (
+          <p className="text-[10px] text-red italic text-center">
+            {priceError?.message}
+          </p>
+        ) : isLoadingKdaPrice || !price || data?.balance === undefined ? (
           <SkeletonText className="!w-12 mx-auto" />
         ) : (
           <p className="font-medium text-slate-400">
