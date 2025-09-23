@@ -23,14 +23,13 @@ export const SettingsView: FC<SettingsViewProps> = ({ setView }) => {
   const { theme, setTheme } = useTheme()
 
   return (
-    <div className="p-2">
+    <>
       <div className="grid grid-cols-3 mb-3">
         <div className="flex justify-start">
           <IconButton
             onClick={() => setView('default')}
             icon={ArrowLeftIcon}
             name="Back"
-            className="bg-transparent"
           />
         </div>
         <span className="font-medium text-center">Settings</span>
@@ -64,6 +63,6 @@ export const SettingsView: FC<SettingsViewProps> = ({ setView }) => {
           </List.KeyValue>
         </List.Control>
       </List>
-    </div>
+    </>
   )
 }

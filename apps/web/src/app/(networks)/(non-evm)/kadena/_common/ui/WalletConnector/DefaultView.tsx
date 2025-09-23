@@ -39,40 +39,24 @@ export const DefaultView = ({ setView }: DefaultViewProps) => {
   const price = priceData?.priceUsd ?? 0
 
   return (
-    <div className="flex flex-col gap-8 p-4 w-full max-w-[280px]">
-      <div className="flex gap-2 justify-between w-full">
-        <div className="text-sm font-semibold flex items-center gap-1.5 text-gray-700 dark:text-slate-200">
-          {activeAccount?.accountName && (
-            <JazzIcon diameter={16} address={activeAccount.accountName} />
-          )}
-          <ClipboardController>
-            {({ setCopied }) => (
-              <span
-                onKeyDown={() => setCopied(activeAccount?.accountName ?? '')}
-                className="cursor-pointer"
-                onClick={() => setCopied(activeAccount?.accountName ?? '')}
-              >
-                {truncateString(activeAccount?.accountName ?? '', 10, 'middle')}
-              </span>
-            )}
-          </ClipboardController>
-        </div>
-        <div className="flex gap-1 items-center">
+    <div className="flex flex-col gap-8">
+      <div className="flex justify-between gap-2">
+        <div className="flex gap-2">
           <IconButton
             icon={Cog6ToothIcon}
             onClick={() => setView('settings')}
             name="Settings"
             description="Settings"
-            size="xs"
+            size="sm"
           />
-          <ClipboardController>
+          <ClipboardController hideTooltip>
             {({ setCopied }) => (
               <IconButton
                 icon={DocumentDuplicateIcon}
                 onClick={() => setCopied(activeAccount?.accountName ?? '')}
                 name={'Copy Address'}
                 description={'Copy Address'}
-                size="xs"
+                size="sm"
               />
             )}
           </ClipboardController>
@@ -85,7 +69,7 @@ export const DefaultView = ({ setView }: DefaultViewProps) => {
           >
             <IconButton
               icon={LinkIcon}
-              size="xs"
+              size="sm"
               name="View on Explorer"
               description="View on Explorer"
             />
@@ -94,7 +78,7 @@ export const DefaultView = ({ setView }: DefaultViewProps) => {
             icon={ArrowLeftOnRectangleIcon}
             onClick={handleDisconnect}
             name="Disconnect"
-            size="xs"
+            size="sm"
             description="Disconnect"
           />
         </div>
@@ -127,10 +111,10 @@ export const DefaultView = ({ setView }: DefaultViewProps) => {
             {formatUSD(data?.balance.mulHuman(price).toString())}
           </p>
         )}
+        <p className="text-[10px] text-muted-foreground italic">
+          Note: All transactions and balances are on Chain 2.
+        </p>
       </div>
-      <p className="text-[10px] text-muted-foreground italic">
-        Note: All transactions and balances are on Chain 2.
-      </p>
     </div>
   )
 }
