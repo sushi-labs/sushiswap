@@ -4,8 +4,8 @@ import type { WalletPosition } from '@sushiswap/graph-client/kadena'
 import { Card, CardHeader, CardTitle, DataTable } from '@sushiswap/ui'
 import type { PaginationState } from '@tanstack/react-table'
 import { useMemo, useState } from 'react'
+import { usePoolFilters } from 'src/app/(networks)/_ui/pools-filters-provider'
 import { useMyPositions } from '~kadena/_common/lib/hooks/use-my-positions'
-import { usePoolFilters } from '~kadena/pool/[id]/pool-filters-provider'
 import {
   APR_COLUMN,
   POSITION_NAME_COLUMN,

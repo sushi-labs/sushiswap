@@ -1,7 +1,7 @@
 import { Container } from '@sushiswap/ui'
 import { GlobalStatsCharts } from '~kadena/_common/ui/Pools/Explore/GlobalStatsChart'
-import { PoolsFiltersProvider } from '~kadena/pool/[id]/pool-filters-provider'
 import { Header } from '../header'
+import { Providers } from './providers'
 
 export const metadata = {
   title: 'Pools 💦',
@@ -19,7 +19,7 @@ export default function PoolLayout({
         </Container>
         <section className="flex flex-col flex-1">
           <div className="bg-gray-50 dark:bg-white/[0.02] border-t border-accent pt-4 pb-10 min-h-screen">
-            <PoolsFiltersProvider>{children}</PoolsFiltersProvider>
+            <Providers>{children}</Providers>
           </div>
         </section>
       </main>

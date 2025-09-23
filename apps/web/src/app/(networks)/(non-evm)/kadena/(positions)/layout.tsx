@@ -1,9 +1,9 @@
 import { Container } from '@sushiswap/ui'
 import type { Metadata } from 'next'
-import { PoolsFiltersProvider } from '~kadena/pool/[id]/pool-filters-provider'
 import { Header } from '../header'
 import { Hero } from './hero'
 import { NavigationItems } from './navigation-items'
+import { Providers } from './providers'
 
 export const metadata: Metadata = {
   title: 'My Positions',
@@ -26,7 +26,7 @@ export default function PositionsLayout({
         </Container>
         <section className="flex flex-col flex-1">
           <div className="bg-gray-50 dark:bg-white/[0.02] border-t border-accent pt-4 pb-10 h-full">
-            <PoolsFiltersProvider>{children}</PoolsFiltersProvider>
+            <Providers>{children}</Providers>
           </div>
         </section>
       </main>
