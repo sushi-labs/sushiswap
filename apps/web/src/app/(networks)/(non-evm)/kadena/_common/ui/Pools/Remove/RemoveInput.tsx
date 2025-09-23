@@ -16,35 +16,37 @@ export const RemoveInput = () => {
           No LP tokens found.
         </Message>
       ) : null}
-      <Card variant="outline" className="p-6" disabled={noLpToken}>
-        <div className="flex w-full items-center justify-between pb-2">
-          <div className="text-gray-900 dark:text-slate-50 text-3xl font-medium">{`${percentage}%`}</div>
-          <div className="flex items-center gap-1">
-            {PercentageOptions.map((option) => (
-              <Button
-                key={option}
-                variant="secondary"
-                disabled={isTxnPending}
-                onClick={() => {
-                  if (noLpToken) return
-                  setPercentage(option)
-                }}
-              >
-                {option === 100 ? 'MAX' : `${option}%`}
-              </Button>
-            ))}
+      <div className={noLpToken ? 'opacity-40 pointer-events-none' : ''}>
+        <Card variant="outline" className="p-6" disabled={noLpToken}>
+          <div className="flex w-full items-center justify-between pb-2">
+            <div className="text-gray-900 dark:text-slate-50 text-3xl font-medium">{`${percentage}%`}</div>
+            <div className="flex items-center gap-1">
+              {PercentageOptions.map((option) => (
+                <Button
+                  key={option}
+                  variant="secondary"
+                  disabled={isTxnPending}
+                  onClick={() => {
+                    if (noLpToken) return
+                    setPercentage(option)
+                  }}
+                >
+                  {option === 100 ? 'MAX' : `${option}%`}
+                </Button>
+              ))}
+            </div>
           </div>
-        </div>
-        <input
-          value={percentage}
-          onChange={(e) => setPercentage(Number(e.target.value))}
-          type="range"
-          min="1"
-          max="100"
-          className="w-full h-1 bg-gray-200 rounded-lg appearance-none cursor-pointer range-lg dark:bg-gray-700"
-          disabled={noLpToken || isTxnPending}
-        />
-      </Card>
+          <input
+            value={percentage}
+            onChange={(e) => setPercentage(Number(e.target.value))}
+            type="range"
+            min="1"
+            max="100"
+            className="w-full h-1 bg-gray-200 rounded-lg appearance-none cursor-pointer range-lg dark:bg-gray-700"
+            disabled={noLpToken || isTxnPending}
+          />
+        </Card>
+      </div>
     </>
   )
 }

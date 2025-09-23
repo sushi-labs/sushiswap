@@ -114,23 +114,27 @@ export const MinimumReceive = () => {
     }
   }, [minAmountToken1, setMinAmountToken1])
 
+  const noLpToken = Number(lpBalance) <= 0
+
   return (
-    <Card variant="outline" className="p-6">
-      <CardGroup>
-        <CardLabel>You&apos;ll receive at least:</CardLabel>
-        <LiquidityItem
-          isLoading={isLoading}
-          token={token0}
-          amount={formatNumber(minAmountToken0)}
-          usdAmount={String(token0Price * minAmountToken0)}
-        />
-        <LiquidityItem
-          isLoading={isLoading}
-          token={token1}
-          amount={formatNumber(minAmountToken1)}
-          usdAmount={String(token1Price * minAmountToken1)}
-        />
-      </CardGroup>
-    </Card>
+    <div className={noLpToken ? 'opacity-40 pointer-events-none' : ''}>
+      <Card variant="outline" className="p-6">
+        <CardGroup>
+          <CardLabel>You&apos;ll receive at least:</CardLabel>
+          <LiquidityItem
+            isLoading={isLoading}
+            token={token0}
+            amount={formatNumber(minAmountToken0)}
+            usdAmount={String(token0Price * minAmountToken0)}
+          />
+          <LiquidityItem
+            isLoading={isLoading}
+            token={token1}
+            amount={formatNumber(minAmountToken1)}
+            usdAmount={String(token1Price * minAmountToken1)}
+          />
+        </CardGroup>
+      </Card>
+    </div>
   )
 }
