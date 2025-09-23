@@ -10,8 +10,9 @@ export const useTokenPrecision = ({
     queryKey: ['kadena-token-info', tokenContract],
     queryFn: async (): Promise<number> => {
       if (!tokenContract) {
-        return 12 // Default precision for KDA
+        throw new Error('Token contract is required')
       }
+
       const tx = buildGetTokenPrecision(tokenContract)
 
       const res = await kadenaClient.local(tx, {
@@ -31,6 +32,6 @@ export const useTokenPrecision = ({
           : 12
       return decimals
     },
-    enabled: !!tokenContract,
+    enabled: Boolean(tokenContract),
   })
 }

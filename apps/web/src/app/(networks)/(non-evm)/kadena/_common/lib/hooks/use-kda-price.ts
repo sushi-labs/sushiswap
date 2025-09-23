@@ -37,7 +37,6 @@ export const useKdaPrice = () => {
     queryKey: ['kadena-kda-price'],
     queryFn: async () => {
       const data = await getKdaPrice()
-
       return data
     },
     staleTime: ms('10s'),

@@ -20,12 +20,9 @@ export const useTokenBalances = ({
 }) => {
   return useQuery({
     queryKey: ['kadena-token-balances', account, tokenAddresses],
-    queryFn: async (): Promise<NativeTokenBalanceResponse> => {
+    queryFn: async () => {
       if (!account || !tokenAddresses || tokenAddresses.length === 0) {
-        return {
-          chainId: KADENA_CHAIN_ID,
-          balanceMap: {},
-        }
+        throw new Error('Account and token addresses are required')
       }
 
       const tx = buildGetTokenBalanceTx(account, tokenAddresses)
@@ -52,21 +49,17 @@ export const useTokenBalances = ({
           amount = Number.parseFloat(value.decimal) // If the value is an object with a decimal property, use that it will be a string
         }
 
-        if (tokenAddress) {
-          cleanedBalanceMap[tokenAddress] =
-            withoutScientificNotation(String(amount ?? 0)) ?? '0'
-        } else {
-          cleanedBalanceMap['coin'] =
-            withoutScientificNotation(String(amount ?? 0)) ?? '0' // native kda will be undefined
-        }
+        // TokenAddress will be undefined for native KDA
+        cleanedBalanceMap[tokenAddress || 'coin'] =
+          withoutScientificNotation(String(amount ?? 0)) ?? '0'
       }
 
       return {
         chainId: KADENA_CHAIN_ID,
         balanceMap: cleanedBalanceMap,
-      }
+      } satisfies NativeTokenBalanceResponse
     },
-    enabled: !!account && tokenAddresses?.length > 0,
+    enabled: Boolean(account && tokenAddresses?.length > 0),
     // staleTime: 60 * 1000,
     // gcTime: 5 * 60 * 1000,
   })

@@ -30,7 +30,7 @@ export const usePoolCharts = ({
 
       return data
     },
-    enabled: !!poolId,
+    enabled: Boolean(poolId),
     staleTime: ms('10s'),
   })
 }

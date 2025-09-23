@@ -47,7 +47,7 @@ export const useNativeTokenBalance = ({
         balance: new Amount(KADENA, parsedAmount),
       }
     },
-    enabled: !!account && enabled,
+    enabled: Boolean(account && enabled),
     staleTime: ms('10s'),
     gcTime: ms('1m'),
   })

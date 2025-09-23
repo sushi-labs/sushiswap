@@ -45,11 +45,6 @@ export const useAllPools = ({
         after: pageParam ?? undefined,
       })
 
-      if (!data) {
-        console.error('Failed to fetch pools:', data)
-        throw new Error('Failed to fetch pools')
-      }
-
       return {
         pools: data?.edges?.map((edge) => edge?.node),
         pageInfo: data?.pageInfo,

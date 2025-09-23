@@ -1,4 +1,5 @@
 'use client'
+
 import {
   SlippageToleranceStorageKey,
   useSlippageTolerance,
@@ -40,6 +41,7 @@ export default function SwapSimplePage() {
     signerAddress: activeAccount?.accountName,
     slippage,
   })
+
   return (
     <Container maxWidth="lg">
       <div className="flex flex-col gap-4">

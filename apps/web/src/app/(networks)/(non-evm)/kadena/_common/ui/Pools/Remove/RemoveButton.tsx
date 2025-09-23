@@ -51,8 +51,6 @@ export const RemoveButton = (props: ButtonProps) => {
 
     const kdaBalance = Number.parseFloat(balanceMap?.['coin'] ?? '0')
 
-    if (kdaBalance === undefined) return true
-
     const insufficient = kdaBalance < MIN_GAS_FEE
     return insufficient
   }, [isLoadingTokenBalance, balanceMap])

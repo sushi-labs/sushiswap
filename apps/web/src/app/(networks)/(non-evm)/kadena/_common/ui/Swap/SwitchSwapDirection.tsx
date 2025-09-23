@@ -4,6 +4,7 @@ import { useSwapDispatch } from '~kadena/swap/swap-provider'
 
 export const SwitchSwapDirection = () => {
   const { swapTokens } = useSwapDispatch()
+
   return (
     <div className="left-0 right-0 mt-[-26px] mb-[-26px] flex items-center justify-center">
       <button

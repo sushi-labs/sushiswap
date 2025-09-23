@@ -29,8 +29,9 @@ export const usePoolById = ({
     queryKey: ['kadena-pool-by-id', poolId, timeFrame, first],
     queryFn: async () => {
       if (!poolId) {
-        return undefined
+        throw new Error('Pool ID is required')
       }
+
       const data = await getPool({
         poolId,
         timeFrame: timeFrameMap[poolByIdChartTimeFrame],
@@ -39,7 +40,7 @@ export const usePoolById = ({
 
       return data
     },
-    enabled: !!poolId,
+    enabled: Boolean(poolId),
     staleTime: ms('30s'),
   })
 }

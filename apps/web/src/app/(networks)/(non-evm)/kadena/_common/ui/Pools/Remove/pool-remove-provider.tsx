@@ -71,7 +71,7 @@ function removeReducer(_state: State, action: Action) {
 
 const RemoveProvider: FC<RemoveProviderProps> = ({ children }) => {
   const [state, dispatch] = useReducer(removeReducer, {
-    percentage: 0, //0-100
+    percentage: 0, // 0-100
     isTxnPending: false,
     amountToken0PerLP: 0,
     amountToken1PerLP: 0,

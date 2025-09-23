@@ -1,11 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import ms from 'ms'
-import {
-  KvmChainId,
-  KvmToken,
-  type KvmTokenAddress,
-  isKvmTokenAddress,
-} from 'sushi/kvm'
+import { KvmChainId, KvmToken, isKvmTokenAddress } from 'sushi/kvm'
 import { kadenaClient } from '~kadena/_common/constants/client'
 import {
   KADENA_CHAIN_ID,
@@ -23,12 +18,11 @@ export const useTokenInfo = ({
   return useQuery({
     queryKey: ['kadena-token-info', tokenContract],
     queryFn: async () => {
-      if (!isKvmTokenAddress(tokenContract as KvmTokenAddress)) {
+      if (!isKvmTokenAddress(tokenContract)) {
         return null
       }
-      const decimalsTx = buildGetTokenPrecision(
-        tokenContract as KvmTokenAddress,
-      )
+
+      const decimalsTx = buildGetTokenPrecision(tokenContract)
 
       const decimalRes = await kadenaClient.local(decimalsTx, {
         preflight: false,
@@ -50,7 +44,7 @@ export const useTokenInfo = ({
 
       return new KvmToken({
         chainId: KvmChainId.KADENA,
-        address: tokenContract as KvmTokenAddress,
+        address: tokenContract,
         symbol,
         decimals,
         name: symbol,
@@ -62,7 +56,7 @@ export const useTokenInfo = ({
         },
       })
     },
-    enabled: !!tokenContract && enabled,
+    enabled: Boolean(tokenContract && enabled),
     staleTime: ms('30s'),
   })
 }

@@ -41,8 +41,6 @@ export const PoolTransactionsV2: FC<PoolTransactionsV2Props> = ({ pool }) => {
     initialPaginationState,
   )
 
-  // console.log('paginationState', paginationState)
-
   const { token0, token1 } = usePoolState()
 
   const { data, isLoading } = usePoolTransactions({

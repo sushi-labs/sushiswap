@@ -29,6 +29,10 @@ export async function getTokenDetails({
     return kvmToken
   }
 
+  if (!isKvmTokenAddress(address)) {
+    throw new Error('Invalid KVM Token address')
+  }
+
   const decimalsTx = buildGetTokenPrecision(address)
 
   const decimalRes = await kadenaClient.local(decimalsTx, {
@@ -48,10 +52,6 @@ export async function getTokenDetails({
       : 12
 
   const symbol = address?.split('.')?.[1] || 'UNKNOWN'
-
-  if (!isKvmTokenAddress(address)) {
-    throw new Error('Invalid KVM Token address')
-  }
 
   return new KvmToken({
     chainId: KvmChainId.KADENA,

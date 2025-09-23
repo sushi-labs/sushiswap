@@ -18,17 +18,14 @@ export const ReviewAddDialogTrigger = (props: ButtonProps) => {
   const { data: tokenBalances, isLoading: isLoadingTokenBalance } =
     useTokenBalances({
       account: activeAccount?.accountName ?? '',
-      tokenAddresses:
-        token0 && token1 ? [token0?.address, token1?.address] : [],
+      tokenAddresses: token0 && token1 ? [token0.address, token1.address] : [],
     })
-  const balanceMap = tokenBalances?.balanceMap ?? undefined
+  const balanceMap = tokenBalances?.balanceMap
 
   const hasInsufficientGas = useMemo(() => {
     if (isLoadingTokenBalance) return true
 
     const kdaBalance = Number.parseFloat(balanceMap?.['coin'] ?? '0')
-
-    if (kdaBalance === undefined) return true
 
     const insufficient = kdaBalance < MIN_GAS_FEE
     return insufficient
@@ -37,9 +34,9 @@ export const ReviewAddDialogTrigger = (props: ButtonProps) => {
   const poolExists = Boolean(poolId)
 
   const token0Balance =
-    token0 && balanceMap ? Number.parseFloat(balanceMap[token0?.address]) : 0
+    token0 && balanceMap ? Number.parseFloat(balanceMap[token0.address]) : 0
   const token1Balance =
-    token1 && balanceMap ? Number.parseFloat(balanceMap[token1?.address]) : 0
+    token1 && balanceMap ? Number.parseFloat(balanceMap[token1.address]) : 0
 
   const hasInsufficientToken0Balance = useMemo(() => {
     if (isLoadingTokenBalance) return true
