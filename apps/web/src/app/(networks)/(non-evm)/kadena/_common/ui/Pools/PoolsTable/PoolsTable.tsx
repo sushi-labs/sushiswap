@@ -52,26 +52,34 @@ export const PoolsTable = () => {
 
   const filtered = useMemo(() => {
     if (!data?.pools) return [] as KadenaPool[]
+    if (!tokenSymbols.length) return data.pools
 
-    return data.pools.filter((pool) => {
-      if (tokenSymbols.length) {
-        if (
-          !tokenSymbols.every((symbol) => {
-            symbol = symbol.toLowerCase()
+    const normalizedSymbols = tokenSymbols.map((s) => s.toLowerCase())
 
-            const poolName = `${pool.token0.name}-${pool.token1.name}`
+    const normalizeSymbol = (symbol: string) =>
+      'kda'.includes(symbol) ? 'coin' : symbol
 
-            if (poolName.toLowerCase().includes(symbol)) return true
+    const matchesSymbol = (pool: KadenaPool, symbol: string) => {
+      const token0Name = pool.token0.name.toLowerCase()
+      const token1Name = pool.token1.name.toLowerCase()
+      const token0Addr = pool.token0.address.toLowerCase()
+      const token1Addr = pool.token1.address.toLowerCase()
+      const poolName = `${token0Name}-${token1Name}`
 
-            return false
-          })
-        ) {
-          return false
-        }
-      }
+      const normalized = normalizeSymbol(symbol)
 
-      return true
-    })
+      return (
+        token0Addr.includes(normalized) ||
+        token1Addr.includes(normalized) ||
+        token0Name.includes(normalized) ||
+        token1Name.includes(normalized) ||
+        poolName.includes(normalized)
+      )
+    }
+
+    return data.pools.filter((pool) =>
+      normalizedSymbols.every((symbol) => matchesSymbol(pool, symbol)),
+    )
   }, [tokenSymbols, data?.pools])
 
   const state: Partial<TableState> = useMemo(() => {
