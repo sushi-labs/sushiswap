@@ -191,6 +191,7 @@ export const RemoveButton = (props: ButtonProps) => {
     <Button
       onClick={removeLiquidity}
       disabled={percentage === 0 || isTxnPending}
+      size="xl"
       {...props}
     >
       {buttonText}

@@ -47,7 +47,7 @@ export const AddSection = () => {
         <AmountInToken1 theme="outline" disabled />
       </section>
       <div className="flex flex-col w-full mt-4">
-        <ReviewAddDialog variant="outline" fullWidth />
+        <ReviewAddDialog size="xl" fullWidth />
       </div>
     </Widget>
   )

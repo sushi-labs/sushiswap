@@ -8,7 +8,7 @@ export const RemoveLiquidity = () => {
     <div className="flex flex-col gap-4">
       <RemoveInput />
       <MinimumReceive />
-      <RemoveButton variant="outline" fullWidth />
+      <RemoveButton size="xl" fullWidth />
     </div>
   )
 }
