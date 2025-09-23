@@ -16,9 +16,5 @@ export default function PoolByIdPage(props: {
     first: 1,
   })
 
-  return (
-    <Container maxWidth="5xl" className="px-2 sm:px-4">
-      <PoolPageV2 pool={pool} />
-    </Container>
-  )
+  return <PoolPageV2 pool={pool} />
 }
