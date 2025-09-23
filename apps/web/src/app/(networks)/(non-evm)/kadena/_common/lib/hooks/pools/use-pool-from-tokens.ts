@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import ms from 'ms'
 import type { KvmTokenAddress } from 'sushi/kvm'
+import { z } from 'zod'
 import { kadenaClient } from '~kadena/_common/constants/client'
 import {
   buildGetPoolAddress,
@@ -8,19 +9,34 @@ import {
   buildGetTotalLpSupply,
 } from '../../pact/pool'
 
-type PoolAddressResponse = {
-  exists: boolean
-  poolData?: {
-    poolAddress: string
-    token0: KvmTokenAddress
-    token1: KvmTokenAddress
-    reserve0: number
-    reserve1: number
-    mutexLocked: boolean
-    rateOfToken0ToToken1: number
-    rateOfToken1ToToken0: number
-    totalSupplyLp: number
-  }
+const DecimalLike = z.union([z.number(), z.object({ decimal: z.string() })])
+
+const TokenRef = z.object({
+  refName: z.object({
+    namespace: z.string().nullable(),
+    name: z.string(),
+  }),
+})
+
+const PoolDataSchema = z.object({
+  account: z.string(),
+  'mutex-locked': z.boolean(),
+  leg0: z.object({
+    reserve: DecimalLike,
+    token: TokenRef,
+  }),
+  leg1: z.object({
+    reserve: DecimalLike,
+    token: TokenRef,
+  }),
+})
+
+type PoolData = z.infer<typeof PoolDataSchema>
+
+//@dev will use PactNumber once pactjs pkg is fixed
+const normalizeReserve = (reserve: unknown): number => {
+  const parsed = DecimalLike.parse(reserve)
+  return typeof parsed === 'number' ? parsed : Number.parseFloat(parsed.decimal)
 }
 
 export const usePoolFromTokens = ({
@@ -34,92 +50,70 @@ export const usePoolFromTokens = ({
     queryKey: ['kadena-pool-from-tokens', token0, token1],
     queryFn: async (): Promise<PoolAddressResponse> => {
       if (!token0 || !token1) {
-        return {
-          exists: false,
-          poolData: undefined,
-        }
+        return { exists: false }
       }
 
-      const tx = buildGetPoolExists(token0, token1)
-
-      const res = await kadenaClient.local(tx, {
+      //check pool existence
+      const existsTx = buildGetPoolExists(token0, token1)
+      const existsRes = await kadenaClient.local(existsTx, {
         preflight: false,
         signatureVerification: false,
       })
-      if (res.result.status !== 'success') {
-        throw new Error(res.result.error?.message || 'Failed to fetch balances')
-      }
-      if (res.result.data === false) {
-        return {
-          exists: false,
-          poolData: undefined,
-        }
-      }
-      const tx1 = buildGetPoolAddress(token0, token1)
-      const res1 = await kadenaClient.local(tx1, {
-        preflight: false,
-        signatureVerification: false,
-      })
-      if (res1.result.status !== 'success') {
+      if (existsRes.result.status !== 'success') {
         throw new Error(
-          res1.result.error?.message || 'Failed to fetch pool address',
+          existsRes.result.error?.message || 'Failed to fetch exists',
         )
       }
-      const poolData = res1?.result?.data as PoolDataRes
+      if (!existsRes.result.data) {
+        return { exists: false }
+      }
 
-      const tx2 = buildGetTotalLpSupply(token0, token1)
-      const res2 = await kadenaClient.local(tx2, {
-        preflight: false,
-        signatureVerification: false,
-      })
-      if (res2.result.status !== 'success') {
+      // 2 + 3 in parallel
+      const [poolRes, supplyRes] = await Promise.allSettled([
+        kadenaClient.local(buildGetPoolAddress(token0, token1), {
+          preflight: false,
+          signatureVerification: false,
+        }),
+        kadenaClient.local(buildGetTotalLpSupply(token0, token1), {
+          preflight: false,
+          signatureVerification: false,
+        }),
+      ])
+
+      if (poolRes.status === 'rejected') throw poolRes.reason
+      if (supplyRes.status === 'rejected') throw supplyRes.reason
+
+      if (poolRes.value.result.status !== 'success') {
         throw new Error(
-          res2.result.error?.message || 'Failed to fetch total lp balance',
+          poolRes.value.result.error?.message || 'Failed to fetch pool address',
+        )
+      }
+      if (supplyRes.value.result.status !== 'success') {
+        throw new Error(
+          supplyRes.value.result.error?.message || 'Failed to fetch lp supply',
         )
       }
 
-      let totalSupplyLp = 0
-      if (
-        typeof res2.result.data === 'object' &&
-        'decimal' in res2.result.data
-      ) {
-        totalSupplyLp = Number.parseFloat(res2.result.data.decimal)
-      } else {
-        totalSupplyLp = Number.parseFloat(res2.result.data.toString())
+      // Parse + transform
+      const poolData = PoolDataSchema.parse(poolRes.value.result.data)
+      const totalSupplyLp = normalizeReserve(supplyRes.value.result.data)
+
+      const reserve0 = normalizeReserve(poolData.leg0.reserve)
+      const reserve1 = normalizeReserve(poolData.leg1.reserve)
+
+      const makeTokenId = (t: PoolData['leg0']['token']) => {
+        const { namespace, name } = t.refName
+        return `${namespace ? `${namespace}.` : ''}${name}`
       }
 
-      let reserve0 = 0
-      if (
-        typeof poolData.leg0.reserve === 'object' &&
-        'decimal' in poolData.leg0.reserve
-      ) {
-        reserve0 = Number.parseFloat(poolData.leg0.reserve.decimal)
-      } else {
-        reserve0 = poolData.leg0.reserve
-      }
+      const _token0 = makeTokenId(poolData.leg0.token)
+      const _token1 = makeTokenId(poolData.leg1.token)
 
-      let reserve1 = 0
-      if (
-        typeof poolData.leg1.reserve === 'object' &&
-        'decimal' in poolData.leg1.reserve
-      ) {
-        reserve1 = Number.parseFloat(poolData.leg1.reserve.decimal)
-      } else {
-        reserve1 = poolData.leg1.reserve
-      }
-
-      const namespace0 = poolData.leg0.token.refName.namespace || ''
-      const name0 = poolData.leg0.token.refName.name
-
-      const namespace1 = poolData.leg1.token.refName.namespace || ''
-      const name1 = poolData.leg1.token.refName.name
-
-      const _token0 = `${namespace0 ? `${namespace0}.` : ''}${name0}`
-      const _token1 = `${namespace1 ? `${namespace1}.` : ''}${name1}`
-
+      // Rates
       const rate0to1 = reserve0 / reserve1
       const rate1to0 = reserve1 / reserve0
 
+      // Align with input order
       let finalToken0 = _token0
       let finalToken1 = _token1
       let finalReserve0 = reserve0
@@ -162,34 +156,17 @@ export const usePoolFromTokens = ({
   })
 }
 
-type PoolDataRes = {
-  leg1: {
-    reserve: number | { decimal: string }
-    token: {
-      refSpec: {
-        namespace: string | null
-        name: string
-      }[]
-
-      refName: {
-        namespace: string | null
-        name: string
-      }
-    }
-  }
-  'mutex-locked': boolean
-  account: string
-  leg0: {
-    reserve: number | { decimal: string }
-    token: {
-      refSpec: {
-        namespace: string | null
-        name: string
-      }[]
-      refName: {
-        namespace: string | null
-        name: string
-      }
-    }
+type PoolAddressResponse = {
+  exists: boolean
+  poolData?: {
+    poolAddress: string
+    token0: KvmTokenAddress
+    token1: KvmTokenAddress
+    reserve0: number
+    reserve1: number
+    mutexLocked: boolean
+    rateOfToken0ToToken1: number
+    rateOfToken1ToToken0: number
+    totalSupplyLp: number
   }
 }
