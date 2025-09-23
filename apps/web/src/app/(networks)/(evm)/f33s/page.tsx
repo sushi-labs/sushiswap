@@ -123,9 +123,9 @@ const labelWallet = (address: Address, chainId: EvmChainId) => {
     if (isAddressEqual(address, PROTOCOL_FEE_COLLECTOR_ADDRESS[chainId]))
       return 'PROTOCOL FEE COLLECTOR'
   }
-  if (isAddressEqual(address, UI_FEE_COLLECTOR_BOT_ADDRESS))
-    return 'UI FEE COLLECTOR BOT ADDRESS'
-  if (isAddressEqual(address, zeroAddress)) return '-'
+  if (isAddressEqual(address, UI_FEE_COLLECTOR_BOT_ADDRESS)) return 'UI FEE BOT'
+  if (isAddressEqual(address, zeroAddress))
+    return shortenEvmAddress(zeroAddress)
 
   return undefined
 }
@@ -134,13 +134,13 @@ type V3ManagerInfo = {
   owner?: Address
   pendingOwner?: Address
   maker?: Address
-  trusted?: boolean
+  trusted?: Address // TODO: array
 }
 
 type FeeCollectorInfo = {
   owner?: Address
   pendingOwner?: Address
-  trusted?: boolean
+  trusted?: Address // TODO: array
 }
 
 const NetworkInfo = ({ chainId }: { chainId: EvmChainId }) => {
@@ -189,47 +189,11 @@ const NetworkInfo = ({ chainId }: { chainId: EvmChainId }) => {
               },
             },
             {
-              scope: 'surplusFeeCollector',
-              contract: {
-                chainId,
-                abi: feeCollectorAbi,
-                address: SURPLUS_FEE_COLLECTOR_ADDRESS[chainId],
-                functionName: 'owner',
-              },
-            },
-            {
-              scope: 'protocolFeeCollector',
-              contract: {
-                chainId,
-                abi: feeCollectorAbi,
-                address: PROTOCOL_FEE_COLLECTOR_ADDRESS[chainId],
-                functionName: 'owner',
-              },
-            },
-            {
               scope: 'uiFeeCollector',
               contract: {
                 chainId,
                 abi: feeCollectorAbi,
                 address: UI_FEE_COLLECTOR_ADDRESS[chainId],
-                functionName: 'pendingOwner',
-              },
-            },
-            {
-              scope: 'surplusFeeCollector',
-              contract: {
-                chainId,
-                abi: feeCollectorAbi,
-                address: SURPLUS_FEE_COLLECTOR_ADDRESS[chainId],
-                functionName: 'pendingOwner',
-              },
-            },
-            {
-              scope: 'protocolFeeCollector',
-              contract: {
-                chainId,
-                abi: feeCollectorAbi,
-                address: PROTOCOL_FEE_COLLECTOR_ADDRESS[chainId],
                 functionName: 'pendingOwner',
               },
             },
@@ -249,8 +213,44 @@ const NetworkInfo = ({ chainId }: { chainId: EvmChainId }) => {
                 chainId,
                 abi: feeCollectorAbi,
                 address: SURPLUS_FEE_COLLECTOR_ADDRESS[chainId],
+                functionName: 'owner',
+              },
+            },
+            {
+              scope: 'surplusFeeCollector',
+              contract: {
+                chainId,
+                abi: feeCollectorAbi,
+                address: SURPLUS_FEE_COLLECTOR_ADDRESS[chainId],
                 functionName: 'trusted',
                 args: [UI_FEE_COLLECTOR_BOT_ADDRESS],
+              },
+            },
+            {
+              scope: 'surplusFeeCollector',
+              contract: {
+                chainId,
+                abi: feeCollectorAbi,
+                address: SURPLUS_FEE_COLLECTOR_ADDRESS[chainId],
+                functionName: 'pendingOwner',
+              },
+            },
+            {
+              scope: 'protocolFeeCollector',
+              contract: {
+                chainId,
+                abi: feeCollectorAbi,
+                address: PROTOCOL_FEE_COLLECTOR_ADDRESS[chainId],
+                functionName: 'owner',
+              },
+            },
+            {
+              scope: 'protocolFeeCollector',
+              contract: {
+                chainId,
+                abi: feeCollectorAbi,
+                address: PROTOCOL_FEE_COLLECTOR_ADDRESS[chainId],
+                functionName: 'pendingOwner',
               },
             },
           ] as const)
@@ -279,7 +279,17 @@ const NetworkInfo = ({ chainId }: { chainId: EvmChainId }) => {
     if (!results) return initial
 
     return contractEntries.reduce<typeof initial>((acc, entry, index) => {
-      const value = data[index]?.result
+      const _value = data[index]?.result
+
+      let value = _value
+      if (entry.contract.functionName === 'trusted') {
+        if (value === true) {
+          value = entry.contract.args[0]
+        } else {
+          value = undefined
+        }
+      }
+
       if (typeof value === 'undefined') return acc
 
       acc[entry.scope] = {
@@ -293,20 +303,18 @@ const NetworkInfo = ({ chainId }: { chainId: EvmChainId }) => {
 
   const renderAccount = (address: Address | undefined) => {
     if (!address) {
-      return <span className="text-muted-foreground">Not set</span>
+      return <span className="text-xs text-muted-foreground">Not set</span>
     }
 
     const label = labelWallet(address, chainId)
     return (
-      <div className="flex flex-col">
-        <LinkExternal href={getEvmChainById(chainId).getAccountUrl(address)}>
-          {label ? (
-            <span className="text-xs text-muted-foreground">{label}</span>
-          ) : (
-            shortenEvmAddress(address)
-          )}
-        </LinkExternal>
-      </div>
+      <LinkExternal href={getEvmChainById(chainId).getAccountUrl(address)}>
+        {label ? (
+          <span className="text-xs text-muted-foreground">{label}</span>
+        ) : (
+          <span className="text-xs">{shortenEvmAddress(address)}</span>
+        )}
+      </LinkExternal>
     )
   }
 
@@ -394,8 +402,10 @@ const NetworkInfo = ({ chainId }: { chainId: EvmChainId }) => {
                     ? 'Loading…'
                     : renderAccount(uiFeeCollector?.pendingOwner)}
                 </List.KeyValue>
-                <List.KeyValue title="Is Bot Trusted?">
-                  {isLoading ? 'Loading…' : `${uiFeeCollector?.trusted}`}
+                <List.KeyValue title="Operator">
+                  {isLoading
+                    ? 'Loading…'
+                    : renderAccount(uiFeeCollector?.trusted)}
                 </List.KeyValue>
               </List.Control>
             </List>
@@ -442,8 +452,10 @@ const NetworkInfo = ({ chainId }: { chainId: EvmChainId }) => {
                     ? 'Loading…'
                     : renderAccount(surplusFeeCollector?.pendingOwner)}
                 </List.KeyValue>
-                <List.KeyValue title="Is Bot Trusted?">
-                  {isLoading ? 'Loading…' : `${uiFeeCollector?.trusted}`}
+                <List.KeyValue title="Operator">
+                  {isLoading
+                    ? 'Loading…'
+                    : renderAccount(uiFeeCollector?.trusted)}
                 </List.KeyValue>
               </List.Control>
             </List>
