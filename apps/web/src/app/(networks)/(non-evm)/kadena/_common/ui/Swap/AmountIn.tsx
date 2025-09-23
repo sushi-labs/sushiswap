@@ -1,7 +1,6 @@
 import { useDebounce } from '@sushiswap/hooks'
 import { useEffect, useMemo } from 'react'
 import { Amount } from 'sushi'
-import { parseUnits } from 'viem'
 import { usePoolFromTokens } from '~kadena/_common/lib/hooks/pools/use-pool-from-tokens'
 import { useSwapDispatch, useSwapState } from '~kadena/swap/swap-provider'
 import { TokenInput } from '../Input/TokenInput'
@@ -27,8 +26,8 @@ export const AmountIn = () => {
 
   useEffect(() => {
     if (amountInString && token0) {
-      const parsed = parseUnits(amountInString, token0.decimals)
-      setAmountIn(new Amount(token0, parsed))
+      const parsed = Amount.fromHuman(token0, amountInString)
+      setAmountIn(new Amount(token0, parsed.amount))
     } else {
       setAmountIn(undefined)
       setAmountOut(undefined)
@@ -50,18 +49,10 @@ export const AmountIn = () => {
     if (!debouncedAmountIn) {
       return 0
     }
-    const amtIn = new Amount(
-      token0,
-      parseUnits(debouncedAmountIn, token0?.decimals),
-    )
-    const r0 = new Amount(
-      token0,
-      parseUnits(data?.poolData?.reserve0.toString(), token0?.decimals),
-    )
-    const r1 = new Amount(
-      token1,
-      parseUnits(data?.poolData?.reserve1?.toString(), token1?.decimals),
-    )
+
+    const amtIn = Amount.fromHuman(token0, debouncedAmountIn)
+    const r0 = Amount.fromHuman(token0, data?.poolData?.reserve0.toString())
+    const r1 = Amount.fromHuman(token1, data?.poolData?.reserve1.toString())
 
     const isInputToken0 = token0?.address === data?.poolData?.token0
 
