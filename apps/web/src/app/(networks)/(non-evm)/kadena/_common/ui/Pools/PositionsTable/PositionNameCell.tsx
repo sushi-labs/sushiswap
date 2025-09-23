@@ -7,20 +7,10 @@ import {
   KADENA_NETWORK_ID,
 } from '~kadena/_common/constants/network'
 import { useBaseTokens } from '~kadena/_common/lib/hooks/use-base-tokens'
-import { useTokenPrecision } from '~kadena/_common/lib/hooks/use-token-precision'
 import { Icon } from '../../General/Icon'
 
 export const PositionNameCell = ({ data }: { data: WalletPosition }) => {
   const { data: baseTokens } = useBaseTokens()
-
-  const { data: decimals0 } = useTokenPrecision({
-    tokenContract:
-      (data?.pair?.token0?.address as KvmTokenAddress) ?? undefined,
-  })
-  const { data: decimals1 } = useTokenPrecision({
-    tokenContract:
-      (data?.pair?.token1?.address as KvmTokenAddress) ?? undefined,
-  })
 
   const token0 = useMemo(() => {
     const _token0 = baseTokens?.find(
@@ -36,7 +26,8 @@ export const PositionNameCell = ({ data }: { data: WalletPosition }) => {
       chainId: KvmChainId.KADENA,
       address: data?.pair?.token0?.address as KvmTokenAddress,
       symbol: data?.pair?.token0?.name.slice(0, 4)?.toUpperCase(),
-      decimals: decimals0 || 12,
+      //use default of 12 since this cell does not need to format amounts
+      decimals: 12,
       name: data?.pair?.token0?.name,
       metadata: {
         imageUrl: undefined,
@@ -45,7 +36,7 @@ export const PositionNameCell = ({ data }: { data: WalletPosition }) => {
         kadenaNetworkId: KADENA_NETWORK_ID,
       },
     })
-  }, [data?.pair?.token0, baseTokens, decimals0])
+  }, [data?.pair?.token0, baseTokens])
 
   const token1 = useMemo(() => {
     const _token1 = baseTokens?.find(
@@ -61,7 +52,8 @@ export const PositionNameCell = ({ data }: { data: WalletPosition }) => {
       chainId: KvmChainId.KADENA,
       address: data?.pair?.token1?.address as KvmTokenAddress,
       symbol: data?.pair?.token1?.name.slice(0, 4)?.toUpperCase(),
-      decimals: decimals1 || 12,
+      //use default of 12 since this cell does not need to format amounts
+      decimals: 12,
       name: data?.pair?.token1?.name,
       metadata: {
         imageUrl: undefined,
@@ -70,7 +62,7 @@ export const PositionNameCell = ({ data }: { data: WalletPosition }) => {
         kadenaNetworkId: KADENA_NETWORK_ID,
       },
     })
-  }, [data.pair?.token1, baseTokens, decimals1])
+  }, [data.pair?.token1, baseTokens])
 
   return (
     <div className="flex items-center gap-1">
