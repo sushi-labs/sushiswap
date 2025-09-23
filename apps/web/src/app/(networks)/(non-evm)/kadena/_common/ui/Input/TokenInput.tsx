@@ -6,8 +6,9 @@ import {
   classNames,
 } from '@sushiswap/ui'
 import { useCallback, useEffect, useMemo, useState, useTransition } from 'react'
+import { Amount } from 'sushi'
 import type { KvmToken } from 'sushi/kvm'
-import { parseUnits } from 'viem'
+import { formatUnits, parseUnits } from 'viem'
 import { useTokenBalances } from '~kadena/_common/lib/hooks/use-token-balances'
 import { useTokenPrice } from '~kadena/_common/lib/hooks/use-token-price'
 import { useKadena } from '~kadena/kadena-wallet-provider'
@@ -63,7 +64,10 @@ export const TokenInput = ({
     token: currency,
   })
 
-  const tokenBalance = data?.balanceMap[currency?.address ?? ''] ?? '0'
+  const tokenBalance = formatUnits(
+    BigInt(data?.balanceMap[currency?.address ?? ''] ?? '0'),
+    currency?.decimals ?? 12,
+  ).toString()
 
   const usdValue = priceUsd ?? 0
 

@@ -25,14 +25,13 @@ import AutoSizer from 'react-virtualized-auto-sizer'
 import { FixedSizeList } from 'react-window'
 import { Amount } from 'sushi'
 import type { KvmToken, KvmTokenAddress } from 'sushi/kvm'
-import { parseUnits } from 'viem'
+import { formatUnits } from 'viem'
 import { COMMON_KADENA_TOKENS } from '~kadena/_common/constants/token-list'
 import { useBaseTokens } from '~kadena/_common/lib/hooks/use-base-tokens'
 import { useCustomTokens } from '~kadena/_common/lib/hooks/use-custom-tokens'
 import { useSortedTokenList } from '~kadena/_common/lib/hooks/use-sorted-token-list'
 import { useTokenBalances } from '~kadena/_common/lib/hooks/use-token-balances'
 import { useTokenInfo } from '~kadena/_common/lib/hooks/use-token-info'
-import type { TokenWithBalance } from '~kadena/_common/types/token-type'
 import { useKadena } from '../../../kadena-wallet-provider'
 import { Icon } from './Icon'
 
@@ -121,10 +120,13 @@ export const TokenSelector = ({
       return (
         <TokenButton
           style={style}
-          token={sortedTokens?.[index]}
+          token={sortedTokens?.[index].currency}
+          tokenAmount={sortedTokens?.[index]}
           selectToken={_onSelect}
-          key={sortedTokens?.[index]?.address}
-          isSelected={sortedTokens?.[index]?.address === selected?.address}
+          key={sortedTokens?.[index]?.currency.address}
+          isSelected={
+            sortedTokens?.[index]?.currency.address === selected?.address
+          }
           isOnDefaultList={isOnDefaultList}
           hasToken={hasToken}
           addOrRemoveToken={addOrRemoveToken}
@@ -256,6 +258,7 @@ export const TokenSelector = ({
 const TokenButton = ({
   style,
   token,
+  tokenAmount,
   selectToken,
   isSelected,
   hasToken,
@@ -263,7 +266,8 @@ const TokenButton = ({
   isOnDefaultList,
 }: {
   style?: CSSProperties
-  token?: KvmToken | TokenWithBalance
+  token?: KvmToken
+  tokenAmount?: Amount<KvmToken>
   selectToken: (_token: KvmToken) => void
   isSelected: boolean
   hasToken?: (currency: string | KvmToken) => boolean
@@ -277,16 +281,10 @@ const TokenButton = ({
   const isDefaultToken = isOnDefaultList(token.address)
 
   const balance = useMemo(() => {
-    const amount = (token as TokenWithBalance)?.balance
+    const amount = formatUnits(tokenAmount?.amount ?? 0n, token.decimals)
     if (Number(amount) < 0.001) return '<0.001'
-    return new Amount(
-      token,
-      amount ? parseUnits(amount.toString(), token.decimals) : 0,
-    ).toString({
-      fixed: 3,
-    })
-  }, [token])
-
+    return Amount.fromHuman(token, amount).toSignificant(3)
+  }, [tokenAmount, token])
   return (
     <div
       className="flex w-full justify-between items-center gap-2 pr-2 h-[64px]"
@@ -326,7 +324,7 @@ const TokenButton = ({
             </p>
           </div>
         </div>
-        {+(token as TokenWithBalance)?.balance > 0 ? (
+        {tokenAmount?.gt(0n) ? (
           <div className="flex flex-col max-w-[140px]">
             <span
               className={classNames(

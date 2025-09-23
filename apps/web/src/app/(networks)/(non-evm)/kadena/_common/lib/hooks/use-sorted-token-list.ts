@@ -1,12 +1,12 @@
 import { useDebounce } from '@sushiswap/hooks'
 import { useQuery } from '@tanstack/react-query'
+import { Amount } from 'sushi'
 import type { KvmToken } from 'sushi/kvm'
 import {
   filterTokens,
   getSortedTokensByQuery,
   tokenComparator,
 } from '~kadena/_common/lib/utils/token-search-helpers'
-import type { TokenWithBalance } from '~kadena/_common/types/token-type'
 
 interface Params {
   query: string
@@ -50,22 +50,23 @@ export const useSortedTokenList = ({
         sortedTokens,
         debouncedQuery,
       )
+
       if (balanceMap) {
-        filteredSortedTokens.forEach((token) => {
-          ;(token as unknown as TokenWithBalance).balance = String(
-            balanceMap[token.address] || 0,
-          )
+        const tokenAmounts = filteredSortedTokens.map((token) => {
+          return new Amount(token, balanceMap[token.address] ?? 0n)
         })
-        filteredSortedTokens.sort((a, b) => {
-          const aBalance = Number((a as unknown as TokenWithBalance).balance)
-          const bBalance = Number((b as unknown as TokenWithBalance).balance)
-          if (aBalance === bBalance) {
+        tokenAmounts.sort((a, b) => {
+          if (a.eq(b)) {
             return 0
           }
-          return aBalance > bBalance ? -1 : 1
+          return a.gt(b) ? -1 : 1
+        })
+        return tokenAmounts
+      } else {
+        return filteredSortedTokens.map((token) => {
+          return new Amount(token, 0n)
         })
       }
-      return filteredSortedTokens as TokenWithBalance[] | KvmToken[]
     },
   })
 }

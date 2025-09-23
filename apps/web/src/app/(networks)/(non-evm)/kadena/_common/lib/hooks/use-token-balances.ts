@@ -1,10 +1,15 @@
 import type { ChainId } from '@kadena/client'
 import { useQuery } from '@tanstack/react-query'
-import { withoutScientificNotation } from 'sushi'
+import { Amount, withoutScientificNotation } from 'sushi'
 import type { KvmTokenAddress } from 'sushi/kvm'
+import { KvmToken } from 'sushi/kvm'
+import { parseUnits } from 'viem'
 import { kadenaClient } from '~kadena/_common/constants/client'
 import { KADENA_CHAIN_ID } from '~kadena/_common/constants/network'
-import { buildGetTokenBalanceTx } from '../pact/builders'
+import {
+  buildGetTokenBalanceAndPrecisionTx,
+  buildGetTokenBalanceTx,
+} from '../pact/builders'
 
 type NativeTokenBalanceResponse = {
   chainId: ChainId
@@ -28,46 +33,55 @@ export const useTokenBalances = ({
         }
       }
 
-      const tx = buildGetTokenBalanceTx(account, tokenAddresses)
+      const tx = buildGetTokenBalanceAndPrecisionTx(account, tokenAddresses)
 
       const res = await kadenaClient.local(tx, {
         preflight: false,
         signatureVerification: false,
       })
-
+      console.log(res)
       if (res.result.status !== 'success') {
         throw new Error(res.result.error?.message || 'Failed to fetch balances')
       }
 
       const cleanedBalanceMap: Record<string, string> = {}
-      for (const [key, value] of Object.entries(res.result.data)) {
+      for (const [key, { balance, precision }] of Object.entries(
+        res.result.data,
+      )) {
+        const decimals = precision?.int ?? 12
         const name = key //=== "undefined" ? "coin" : key; // undefined key is native kda
         const tokenAddress = tokenAddresses.find((address) => {
           return address.replace('.', '') === name
         })
 
-        let amount = typeof value === 'number' ? value : 0 // Default to 0 if value is not a number b/c it'll the fallback of {int: -1}
-        if (value && typeof value === 'object' && 'decimal' in value) {
+        //@dev will use PactNumber once pactjs pkg is fixed
+        let amount = typeof balance === 'number' ? balance : 0 // Default to 0 if value is not a number b/c it'll the fallback of {int: -1}
+        if (balance && typeof balance === 'object' && 'decimal' in balance) {
           //id {decimal: "123.456"}
-          amount = Number.parseFloat(value.decimal) // If the value is an object with a decimal property, use that it will be a string
+          amount = balance.decimal // If the value is an object with a decimal property, use that it will be a string
+        } else if (balance && typeof balance === 'object' && 'int' in balance) {
+          // is {int: 123456}
+          if (balance.int < 0) {
+            amount = 0 // If the balance is -1, set to 0
+          } else {
+            amount = balance.int // If the value is an object with an int property, use that
+          }
         }
 
         if (tokenAddress) {
           cleanedBalanceMap[tokenAddress] =
-            withoutScientificNotation(String(amount ?? 0)) ?? '0'
+            parseUnits(String(amount ?? 0), decimals)?.toString() || '0'
         } else {
           cleanedBalanceMap['coin'] =
-            withoutScientificNotation(String(amount ?? 0)) ?? '0' // native kda will be undefined
+            parseUnits(String(amount), decimals)?.toString() || '0'
         }
       }
-
+      console.log({ cleanedBalanceMap })
       return {
         chainId: KADENA_CHAIN_ID,
         balanceMap: cleanedBalanceMap,
       }
     },
     enabled: !!account && tokenAddresses?.length > 0,
-    // staleTime: 60 * 1000,
-    // gcTime: 5 * 60 * 1000,
   })
 }
