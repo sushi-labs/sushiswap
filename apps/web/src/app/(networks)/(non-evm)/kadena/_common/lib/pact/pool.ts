@@ -66,7 +66,7 @@ export const buildAddLiquidityTxn = ({
     const tx = Pact.builder
       .execution(pactCmd)
       .setMeta({
-        chainId: String(chainId) as ChainId,
+        chainId: chainId,
         gasLimit: GAS_LIMIT,
         gasPrice: GAS_PRICE,
         senderAccount: signerAddress,
