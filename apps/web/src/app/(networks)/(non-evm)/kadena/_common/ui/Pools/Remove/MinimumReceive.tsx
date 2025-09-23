@@ -5,7 +5,6 @@ import {
 import { Card, CardGroup, CardLabel } from '@sushiswap/ui'
 import { useEffect, useMemo } from 'react'
 import { Amount, formatNumber } from 'sushi'
-import { parseUnits } from 'viem'
 import { KVM_PAIR_TOKEN } from '~kadena/_common/constants/pair'
 import { useTokenPrice } from '~kadena/_common/lib/hooks/use-token-price'
 import { usePoolState } from '../../../../pool/pool-provider'
@@ -38,9 +37,11 @@ export const MinimumReceive = () => {
   const lpTokenAmountBeingRemoved: number = useMemo(() => {
     if (!lpBalance) return 0
     const _percentage = (percentage / 100).toFixed(2)
-    const parsedBal = parseUnits(lpBalance.toString(), KVM_PAIR_TOKEN.decimals)
+    const parsedBal = Amount.fromHuman(KVM_PAIR_TOKEN, lpBalance.toString())
 
-    const amount = new Amount(KVM_PAIR_TOKEN, parsedBal).mulHuman(_percentage)
+    const amount = new Amount(KVM_PAIR_TOKEN, parsedBal.amount).mulHuman(
+      _percentage,
+    )
 
     return Number.parseFloat(amount.toString({ fixed: 12 }))
   }, [lpBalance, percentage])
@@ -53,40 +54,42 @@ export const MinimumReceive = () => {
 
   const amountToken0: number = useMemo(() => {
     if (!lpTokenAmountBeingRemoved || !reserve0 || !token0) return 0
-    const parsedBal = parseUnits(
+    const parsedBal = Amount.fromHuman(
+      KVM_PAIR_TOKEN,
       lpTokenAmountBeingRemoved.toString(),
-      KVM_PAIR_TOKEN.decimals,
     )
-    const parsedSupply = parseUnits(
+    const parsedSupply = Amount.fromHuman(
+      KVM_PAIR_TOKEN,
       totalSupplyLP.toString(),
-      KVM_PAIR_TOKEN.decimals,
     )
-    const balance = new Amount(KVM_PAIR_TOKEN, parsedBal)
-    const supply = new Amount(KVM_PAIR_TOKEN, parsedSupply).toString()
+    const balance = new Amount(KVM_PAIR_TOKEN, parsedBal.amount)
+    const supply = new Amount(KVM_PAIR_TOKEN, parsedSupply.amount).toString()
     const amount = balance.div(supply).mulHuman(reserve0)
     return Number.parseFloat(amount.toString({ fixed: token0?.decimals }))
   }, [lpTokenAmountBeingRemoved, reserve0, totalSupplyLP, token0])
 
   const amountToken1: number = useMemo(() => {
     if (!lpTokenAmountBeingRemoved || !reserve1 || !token1) return 0
-    const parsedBal = parseUnits(
+    const parsedBal = Amount.fromHuman(
+      KVM_PAIR_TOKEN,
       lpTokenAmountBeingRemoved.toString(),
-      KVM_PAIR_TOKEN.decimals,
     )
-    const parsedSupply = parseUnits(
+    const parsedSupply = Amount.fromHuman(
+      KVM_PAIR_TOKEN,
       totalSupplyLP.toString(),
-      KVM_PAIR_TOKEN.decimals,
     )
-    const balance = new Amount(KVM_PAIR_TOKEN, parsedBal)
-    const supply = new Amount(KVM_PAIR_TOKEN, parsedSupply).toString()
+    const balance = new Amount(KVM_PAIR_TOKEN, parsedBal.amount)
+    const supply = new Amount(KVM_PAIR_TOKEN, parsedSupply.amount).toString()
     const amount = balance.div(supply).mulHuman(reserve1)
     return Number.parseFloat(amount.toString({ fixed: token1?.decimals }))
   }, [lpTokenAmountBeingRemoved, reserve1, totalSupplyLP, token1])
 
   const minAmountToken0: number = useMemo(() => {
     if (!amountToken0 || !token0) return 0
-    const parsedAmount = parseUnits(amountToken0.toString(), token0?.decimals)
-    const output = new Amount(token0, parsedAmount).mulHuman(1 - slippage)
+    const parsedAmount = Amount.fromHuman(token0, amountToken0)
+    const output = new Amount(token0, parsedAmount.amount).mulHuman(
+      1 - slippage,
+    )
     return Number.parseFloat(output.toString({ fixed: token0?.decimals }))
   }, [amountToken0, slippage, token0])
 
@@ -98,8 +101,10 @@ export const MinimumReceive = () => {
 
   const minAmountToken1: number = useMemo(() => {
     if (!amountToken1 || !token1) return 0
-    const parsedAmount = parseUnits(amountToken1.toString(), token1?.decimals)
-    const output = new Amount(token1, parsedAmount).mulHuman(1 - slippage)
+    const parsedAmount = Amount.fromHuman(token1, amountToken1)
+    const output = new Amount(token1, parsedAmount.amount).mulHuman(
+      1 - slippage,
+    )
     return Number.parseFloat(output.toString({ fixed: token1?.decimals }))
   }, [amountToken1, slippage, token1])
 
