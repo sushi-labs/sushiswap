@@ -6,12 +6,14 @@ import { Button } from '@sushiswap/ui'
 import { type FC, useCallback, useMemo, useState } from 'react'
 import { APPROVE_TAG_ADD_LEGACY } from 'src/lib/constants'
 import { useBladeAllowDeposit } from 'src/lib/pool/blade/useBladeAllowDeposit'
+import { useUnlockDeposit } from 'src/lib/pool/blade/useUnlockDeposit'
 import { getPoolAssets } from 'src/lib/pool/blade/utils'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
 import { CheckerProvider } from 'src/lib/wagmi/systems/Checker/provider'
 import { Amount } from 'sushi'
 import type { EvmCurrency } from 'sushi/evm'
 import { useAccount } from 'wagmi'
+import { useBladePoolPosition } from '../blade-pool-position-provider'
 import {
   BladeAddLiquidityReviewModal,
   BladeAddLiquidityReviewModalTrigger,
@@ -34,6 +36,27 @@ export const BladeAddSection: FC<{ pool: BladePool }> = ({ pool }) => {
   const chainId = pool.chainId
   const isMounted = useIsMounted()
   const { address } = useAccount()
+  const { vestingDeposit, refetch: refetchPosition } = useBladePoolPosition()
+
+  const hasLockedPosition = useMemo(() => {
+    return Boolean(vestingDeposit?.balance && vestingDeposit.balance > 0n)
+  }, [vestingDeposit?.balance])
+
+  const canUnlockPosition = useMemo(() => {
+    if (!vestingDeposit?.balance || !vestingDeposit.lockedUntil) return false
+    return (
+      vestingDeposit.balance > 0n && new Date() >= vestingDeposit.lockedUntil
+    )
+  }, [vestingDeposit?.balance, vestingDeposit?.lockedUntil])
+
+  const { write: unlockDeposit, isPending: isUnlockingDeposit } =
+    useUnlockDeposit({
+      pool,
+      enabled: canUnlockPosition,
+      onSuccess: () => {
+        refetchPosition()
+      },
+    })
 
   const [inputs, setInputs] = useState<TokenInput[]>([
     { token: undefined, amount: '' },
@@ -170,15 +193,38 @@ export const BladeAddSection: FC<{ pool: BladePool }> = ({ pool }) => {
                         },
                         (
                           <Checker.Success tag={APPROVE_TAG_ADD_LEGACY}>
-                            <BladeAddLiquidityReviewModalTrigger>
-                              <Button
-                                size="xl"
-                                fullWidth
-                                disabled={validInputs.length === 0}
-                              >
-                                Add Liquidity
-                              </Button>
-                            </BladeAddLiquidityReviewModalTrigger>
+                            <Checker.CustomWithTooltip
+                              showChildren={!hasLockedPosition}
+                              onClick={unlockDeposit!}
+                              buttonText={
+                                canUnlockPosition
+                                  ? 'Unlock Position'
+                                  : 'Wait for position to unlock'
+                              }
+                              loading={isUnlockingDeposit}
+                              disabled={
+                                !canUnlockPosition ||
+                                !unlockDeposit ||
+                                isUnlockingDeposit
+                              }
+                              fullWidth
+                              tooltipTitle="Unlock Blade Position"
+                              tooltipDescription={`Your position is currently locked and must be unlocked before you can add additional liquidity. ${
+                                canUnlockPosition
+                                  ? 'Click to unlock your position and then proceed with adding liquidity.'
+                                  : 'Please wait until the lock period expires before unlocking.'
+                              }`}
+                            >
+                              <BladeAddLiquidityReviewModalTrigger>
+                                <Button
+                                  size="xl"
+                                  fullWidth
+                                  disabled={validInputs.length === 0}
+                                >
+                                  Add Liquidity
+                                </Button>
+                              </BladeAddLiquidityReviewModalTrigger>
+                            </Checker.CustomWithTooltip>
                           </Checker.Success>
                         ) as React.ReactNode,
                       )}
