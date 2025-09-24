@@ -9,7 +9,7 @@ import {
   createInfoToast,
   createSuccessToast,
 } from '@sushiswap/notifications'
-import { Button, type ButtonProps } from '@sushiswap/ui'
+import { Button, type ButtonProps, Dots } from '@sushiswap/ui'
 import { useQueryClient } from '@tanstack/react-query'
 import { useMemo } from 'react'
 import { Amount } from 'sushi'
@@ -256,7 +256,7 @@ export const AddButton = ({
   }
 
   const btnText = useMemo(() => {
-    if (isTxnPending && poolId) return 'Adding Liquidity'
+    if (isTxnPending && poolId) return <Dots>Adding Liquidity</Dots>
     if (isTxnPending && !poolId) return 'Creating Pool'
     if (!poolId) return 'Create Pool'
     return 'Add Liquidity'
@@ -265,7 +265,6 @@ export const AddButton = ({
   return (
     <Button
       disabled={isTxnPending}
-      loading={isTxnPending}
       onClick={addLiquidity}
       size="xl"
       {...buttonProps}

@@ -1,4 +1,4 @@
-import { Button, type ButtonProps, DialogTrigger } from '@sushiswap/ui'
+import { Button, type ButtonProps, DialogTrigger, Dots } from '@sushiswap/ui'
 import { useMemo } from 'react'
 import { MIN_GAS_FEE } from '~kadena/_common/constants/gas'
 import { useTokenBalances } from '~kadena/_common/lib/hooks/use-token-balances'
@@ -62,7 +62,7 @@ export const ReviewAddDialogTrigger = (props: ButtonProps) => {
       if (!poolExists) {
         return 'Creating Pool'
       }
-      return 'Adding Liquidity'
+      return <Dots>Adding Liquidity</Dots>
     }
     if (invalidAmount) {
       return 'Enter Amount'
@@ -96,14 +96,11 @@ export const ReviewAddDialogTrigger = (props: ButtonProps) => {
       disabled={
         invalidAmount ||
         hasInsufficientToken0Balance ||
-        hasInsufficientToken1Balance ||
-        isTxnPending
+        hasInsufficientToken1Balance
       }
       asChild
     >
-      <Button loading={isTxnPending} {...props}>
-        {buttonText}
-      </Button>
+      <Button {...props}>{buttonText}</Button>
     </DialogTrigger>
   )
 }
