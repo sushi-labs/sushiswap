@@ -40,6 +40,7 @@ export const useSimulateSwap = ({
       token1?.address,
       amountIn ?? null,
       amountOut,
+      slippage,
       signerAddress,
     ],
     queryFn: async () => {
