@@ -174,6 +174,16 @@ const NetworkInfo = ({ chainId }: { chainId: EvmChainId }) => {
                 functionName: 'maker',
               },
             },
+            {
+              scope: 'v3Manager',
+              contract: {
+                chainId,
+                abi: v3ManagerAbi,
+                address: V3_MANAGER_ADDRESS[chainId],
+                functionName: 'trusted',
+                args: [LIQUIDATOR_BOT_ADDRESS],
+              },
+            },
           ] as const)
         : []),
       ...(isFeeCollectorChainId(chainId)
@@ -420,7 +430,7 @@ const NetworkInfo = ({ chainId }: { chainId: EvmChainId }) => {
                 <List.KeyValue title="Operator">
                   {isLoading
                     ? 'Loading…'
-                    : renderAccount(uiFeeCollector?.trusted)}
+                    : renderAccount(surplusFeeCollector?.trusted)}
                 </List.KeyValue>
               </List.Control>
             </List>
@@ -470,7 +480,7 @@ const NetworkInfo = ({ chainId }: { chainId: EvmChainId }) => {
                 <List.KeyValue title="Operator">
                   {isLoading
                     ? 'Loading…'
-                    : renderAccount(uiFeeCollector?.trusted)}
+                    : renderAccount(protocolFeeCollector?.trusted)}
                 </List.KeyValue>
               </List.Control>
             </List>
@@ -515,6 +525,9 @@ const NetworkInfo = ({ chainId }: { chainId: EvmChainId }) => {
                 </List.KeyValue>
                 <List.KeyValue title="Maker">
                   {isLoading ? 'Loading…' : renderAccount(v3Manager?.maker)}
+                </List.KeyValue>
+                <List.KeyValue title="Operator">
+                  {isLoading ? 'Loading…' : renderAccount(v3Manager?.trusted)}
                 </List.KeyValue>
               </List.Control>
             </List>
