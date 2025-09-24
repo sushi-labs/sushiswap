@@ -10,6 +10,7 @@ import {
   useWriteContract,
 } from 'wagmi'
 
+import { logger } from 'src/lib/logger'
 import type { SendTransactionReturnType } from 'wagmi/actions'
 import type { DistributionCreator } from '../abis/DistributionCreator'
 
@@ -101,11 +102,15 @@ export const useIncentivizePoolWithRewards = ({
   const client = usePublicClient()
 
   const onError = useCallback((e: Error) => {
-    if (e instanceof Error) {
-      if (!(e.cause instanceof UserRejectedRequestError)) {
-        createErrorToast(e.message, true)
-      }
+    if (e.cause instanceof UserRejectedRequestError) {
+      return
     }
+
+    logger.error(e, {
+      location: 'useIncentivizePoolWithRewards',
+      action: 'mutationError',
+    })
+    createErrorToast(e.message, true)
   }, [])
 
   const onSuccess = useCallback(

@@ -1,4 +1,9 @@
+import path from 'node:path'
+import { fileURLToPath } from 'node:url'
 import withBundleAnalyzer from '@next/bundle-analyzer'
+
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
 
 const bundleAnalyzer = withBundleAnalyzer({
   enabled: false && process.env.NODE_ENV !== 'development',
@@ -10,8 +15,11 @@ const nextConfig = bundleAnalyzer({
   productionBrowserSourceMaps: true,
   poweredByHeader: false,
   staticPageGenerationTimeout: 180,
-  turbopack: {},
+  turbopack: {
+    root: path.join(__dirname, '..'),
+  },
   experimental: {
+    staticGenerationRetryCount: 3,
     webpackBuildWorker: true,
     optimizePackageImports: [
       '@heroicons/react-v1/solid',

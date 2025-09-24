@@ -10,6 +10,7 @@ import {
   useSimulateContract,
   useWriteContract,
 } from 'wagmi'
+import { logger } from 'src/lib/logger'
 
 export enum AngleConditionsState {
   LOADING = 'LOADING',
@@ -111,9 +112,15 @@ export const useAcceptAngleConditions = (
 
   const onError = useCallback((e: Error) => {
     if (e instanceof Error) {
-      if (!(e.cause instanceof UserRejectedRequestError)) {
-        createErrorToast(e.message, true)
+      if (e.cause instanceof UserRejectedRequestError) {
+        return
       }
+
+      logger.error(e, {
+        location: 'useAcceptAngleConditions',
+        action: 'mutationError',
+      })
+      createErrorToast(e.message, true)
     }
   }, [])
 
