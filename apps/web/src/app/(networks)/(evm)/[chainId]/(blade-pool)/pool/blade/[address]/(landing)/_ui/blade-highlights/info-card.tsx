@@ -40,20 +40,21 @@ export const InfoCard: FC<InfoCardProps> = ({
         <p className="max-w-[400px] text-center text-base font-normal text-[#6c737f] dark:text-[#98a3b6] mt-6 mb-10">
           {description}
         </p>
-        <Button
-          asChild
-          variant="secondary"
-          className="rounded-full bg-[#3D657C0A] dark:bg-gray-800 !whitespace-normal !h-auto"
-        >
-          <a className="flex items-center gap-2.5" href={href}>
-            <span className="font-medium text-gray-700 text-sm tracking-tight dark:bg-gradient-to-r dark:from-[#B5E8FC] dark:to-[#D7A8E9] dark:bg-clip-text dark:text-transparent">
-              {buttonText}
-            </span>
-            <div className="shrink-0 flex h-[22px] w-[22px] items-center justify-center rounded-full bg-[#22485D] dark:bg-gradient-to-r dark:from-[#B5E8FC] dark:to-[#D7A8E9]">
-              <ArrowRightIcon className="h-3 w-3 text-gray-100 dark:text-gray-900" />
-            </div>
-          </a>
-        </Button>
+        <a href={href}>
+          <Button
+            variant="secondary"
+            icon={ArrowRightIcon}
+            className="!h-auto !whitespace-normal"
+            iconProps={{
+              className:
+                'h-[22px] w-[22px] p-1 rounded-full bg-[#22485D] dark:bg-gradient-to-r dark:from-[#B5E8FC] dark:to-[#D7A8E9] text-gray-100 dark:text-gray-900 shrink-0',
+            }}
+            iconPosition="end"
+            asChild
+          >
+            {buttonText}
+          </Button>
+        </a>
       </div>
     </div>
   )
