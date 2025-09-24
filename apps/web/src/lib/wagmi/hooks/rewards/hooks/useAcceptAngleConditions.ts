@@ -2,6 +2,7 @@
 
 import { createErrorToast, createToast } from '@sushiswap/notifications'
 import { useCallback, useMemo, useState } from 'react'
+import { logger } from 'src/lib/logger'
 import { type SendTransactionReturnType, UserRejectedRequestError } from 'viem'
 import {
   useAccount,
@@ -10,7 +11,6 @@ import {
   useSimulateContract,
   useWriteContract,
 } from 'wagmi'
-import { logger } from 'src/lib/logger'
 
 export enum AngleConditionsState {
   LOADING = 'LOADING',
