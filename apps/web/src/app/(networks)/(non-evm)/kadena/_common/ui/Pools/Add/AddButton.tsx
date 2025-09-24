@@ -267,6 +267,7 @@ export const AddButton = ({
       disabled={isTxnPending}
       loading={isTxnPending}
       onClick={addLiquidity}
+      size="xl"
       {...buttonProps}
     >
       {btnText}
