@@ -332,50 +332,6 @@ const NetworkInfo = ({ chainId }: { chainId: EvmChainId }) => {
       <Card>
         <CardHeader>
           <CardTitle>
-            {isV3ManagerChainId(chainId) ? (
-              <LinkExternal
-                href={getEvmChainById(chainId).getAccountUrl(
-                  V3_MANAGER_ADDRESS[chainId],
-                )}
-              >
-                V3Manager
-              </LinkExternal>
-            ) : (
-              <span className="text-muted-foreground">V3Manager</span>
-            )}
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          {!isV3ManagerChainId(chainId) ? (
-            <span className="text-sm text-muted-foreground">
-              Not deployed on this network.
-            </span>
-          ) : isError ? (
-            <span className="text-sm text-red-500">
-              Unable to load contract data.
-            </span>
-          ) : (
-            <List>
-              <List.Control>
-                <List.KeyValue title="Owner">
-                  {isLoading ? 'Loading…' : renderAccount(v3Manager?.owner)}
-                </List.KeyValue>
-                <List.KeyValue title="Pending Owner">
-                  {isLoading
-                    ? 'Loading…'
-                    : renderAccount(v3Manager?.pendingOwner)}
-                </List.KeyValue>
-                <List.KeyValue title="Maker">
-                  {isLoading ? 'Loading…' : renderAccount(v3Manager?.maker)}
-                </List.KeyValue>
-              </List.Control>
-            </List>
-          )}
-        </CardContent>
-      </Card>
-      <Card>
-        <CardHeader>
-          <CardTitle>
             {isFeeCollectorChainId(chainId) ? (
               <LinkExternal
                 href={getEvmChainById(chainId).getAccountUrl(
@@ -515,6 +471,50 @@ const NetworkInfo = ({ chainId }: { chainId: EvmChainId }) => {
                   {isLoading
                     ? 'Loading…'
                     : renderAccount(uiFeeCollector?.trusted)}
+                </List.KeyValue>
+              </List.Control>
+            </List>
+          )}
+        </CardContent>
+      </Card>
+      <Card>
+        <CardHeader>
+          <CardTitle>
+            {isV3ManagerChainId(chainId) ? (
+              <LinkExternal
+                href={getEvmChainById(chainId).getAccountUrl(
+                  V3_MANAGER_ADDRESS[chainId],
+                )}
+              >
+                V3Manager
+              </LinkExternal>
+            ) : (
+              <span className="text-muted-foreground">V3Manager</span>
+            )}
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          {!isV3ManagerChainId(chainId) ? (
+            <span className="text-sm text-muted-foreground">
+              Not deployed on this network.
+            </span>
+          ) : isError ? (
+            <span className="text-sm text-red-500">
+              Unable to load contract data.
+            </span>
+          ) : (
+            <List>
+              <List.Control>
+                <List.KeyValue title="Owner">
+                  {isLoading ? 'Loading…' : renderAccount(v3Manager?.owner)}
+                </List.KeyValue>
+                <List.KeyValue title="Pending Owner">
+                  {isLoading
+                    ? 'Loading…'
+                    : renderAccount(v3Manager?.pendingOwner)}
+                </List.KeyValue>
+                <List.KeyValue title="Maker">
+                  {isLoading ? 'Loading…' : renderAccount(v3Manager?.maker)}
                 </List.KeyValue>
               </List.Control>
             </List>
