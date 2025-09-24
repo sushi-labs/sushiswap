@@ -35,6 +35,8 @@ const pollingInterval = new Proxy(
   },
 )
 
+coinbaseWallet.preference = { options: 'all', telemetry: false }
+
 const connectors = connectorsForWallets(
   [
     {
