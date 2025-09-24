@@ -16,70 +16,40 @@ import { ADAPTER_INSTALL_URLS, useKadena } from '~kadena/kadena-wallet-provider'
 import { useKadenaAdapterContext } from '~kadena/providers'
 import { KADENA_WALLET_ADAPTER_ICONS } from '../../../kadena-wallet-provider'
 
-// const comingSoonMetaMask = {
-//   name: 'MetaMask (Coming Soon)',
-//   detected: false,
-//   installUrl: '',
-//   imageURI: KADENA_WALLET_ADAPTER_ICONS['Snap'],
-// }
-
 export function ConnectButton(props: ButtonProps) {
   const { adapters, handleConnect, isConnecting } = useKadena()
   const { isMobile } = useIsMobile()
   const { refreshSnapAdapter } = useKadenaAdapterContext()
 
   const _adapters = useMemo(() => {
+    const hasEcko = adapters.some((a) => a.name === 'Ecko')
+    const hasSnap = adapters.some((a) => a.name === 'Snap')
+
+    const eckoAdapter = !hasEcko
+      ? [
+          {
+            name: 'eckoWALLET',
+            detected: false,
+            installUrl: ADAPTER_INSTALL_URLS['Ecko'],
+            imageURI: KADENA_WALLET_ADAPTER_ICONS['Ecko'],
+          },
+        ]
+      : []
+
+    const snapAdapter = {
+      name: isMobile ? 'MetaMask (Desktop Only)' : 'MetaMask',
+      detected: false,
+      installUrl: '',
+      imageURI: KADENA_WALLET_ADAPTER_ICONS['Snap'],
+    }
+
     if (isMobile) {
-      const realAdapters = adapters.filter((adapter) => adapter.name !== 'Snap')
-      return [
-        ...realAdapters,
-        {
-          name: 'MetaMask (Desktop Only)',
-          detected: false,
-          installUrl: '',
-          imageURI: KADENA_WALLET_ADAPTER_ICONS['Snap'],
-        },
-      ]
+      return [...adapters.filter((a) => a.name !== 'Snap'), snapAdapter]
     }
 
-    const hasEcko = adapters.find((adapter) => adapter.name === 'Ecko')
-    const hasSnap = adapters.find((adapter) => adapter.name === 'Snap')
-
-    if (!hasSnap) {
-      return [
-        ...(!hasEcko
-          ? [
-              {
-                name: 'eckoWALLET',
-                detected: false,
-                installUrl: ADAPTER_INSTALL_URLS['Ecko'],
-                imageURI: KADENA_WALLET_ADAPTER_ICONS['Ecko'],
-              },
-            ]
-          : []),
-        ...adapters,
-        {
-          name: 'MetaMask',
-          detected: false,
-          installUrl: '',
-          imageURI: KADENA_WALLET_ADAPTER_ICONS['Snap'],
-        },
-      ]
-    }
-
-    return [
-      ...(!hasEcko
-        ? [
-            {
-              name: 'eckoWALLET',
-              detected: false,
-              installUrl: ADAPTER_INSTALL_URLS['Ecko'],
-              imageURI: KADENA_WALLET_ADAPTER_ICONS['Ecko'],
-            },
-          ]
-        : []),
-      ...adapters,
-    ]
+    return hasSnap
+      ? [...eckoAdapter, ...adapters]
+      : [...eckoAdapter, snapAdapter, ...adapters]
   }, [adapters, isMobile])
 
   return (
