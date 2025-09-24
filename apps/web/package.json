@@ -53,7 +53,7 @@
     "@pontem/wallet-adapter-plugin": "0.2.1",
     "@radix-ui/react-slot": "1.1.1",
     "@radix-ui/react-visually-hidden": "1.1.1",
-    "@rainbow-me/rainbowkit": "2.2.2",
+    "@rainbow-me/rainbowkit": "2.2.8",
     "@rise-wallet/wallet-adapter": "0.1.2",
     "@snapshot-labs/snapshot.js": "0.9.9",
     "@sushiswap/graph-client": "workspace:*",

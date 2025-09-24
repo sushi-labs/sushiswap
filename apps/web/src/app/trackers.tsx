@@ -1,8 +1,7 @@
 'use client'
 
-import { faro } from '@grafana/faro-web-sdk'
 import { GoogleAnalytics, GoogleTagManager, HotJar } from '@sushiswap/ui'
-import { Analytics as VercelAnalytics } from '@vercel/analytics/react'
+import { Analytics as VercelAnalytics } from '@vercel/analytics/next'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 import { useEnabledCookies } from './_common/cookies/use-enabled-cookies'
 
