@@ -121,8 +121,8 @@
     "tronweb": "5.3.2",
     "viem": "catalog:web3",
     "wagmi": "catalog:web3",
-    "yaml": "2.8.0",
     "winston": "3.17.0",
+    "yaml": "2.8.0",
     "zod": "catalog:"
   },
   "devDependencies": {
