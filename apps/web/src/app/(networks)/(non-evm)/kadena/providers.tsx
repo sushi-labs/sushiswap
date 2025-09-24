@@ -26,22 +26,22 @@ const KadenaAdapaterContext = createContext<AdapterContextType | undefined>(
 )
 
 export function Providers({ children }: { children: React.ReactNode }) {
-  // const [snapAdapter, setSnapAdapter] = useState<SnapAdapter | null>(null)
+  const [snapAdapter, setSnapAdapter] = useState<SnapAdapter | null>(null)
   const [eckoApadter, setEckoAdpater] = useState<EckoAdapter | null>(null)
   const [walletConnectAdapter, setWalletConnectAdapter] =
     useState<WalletConnectAdapter | null>(null)
 
   useEffect(() => {
-    // async function initSnap() {
-    //   const snapProvider = await detectSnapProvider({ silent: true })
-    //   if (snapProvider) {
-    //     const adapter = new SnapAdapter({
-    //       provider: snapProvider,
-    //       networkId: KADENA_NETWORK_ID,
-    //     })
-    //     setSnapAdapter(adapter)
-    //   }
-    // }
+    async function initSnap() {
+      const snapProvider = await detectSnapProvider({ silent: true })
+      if (snapProvider) {
+        const adapter = new SnapAdapter({
+          provider: snapProvider,
+          networkId: KADENA_NETWORK_ID,
+        })
+        setSnapAdapter(adapter)
+      }
+    }
     async function initEcko() {
       const eckoAdapter = await detectEckoProvider({ silent: true })
       if (eckoAdapter) {
@@ -64,7 +64,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
         setWalletConnectAdapter(adapter)
       }
     }
-    // initSnap()
+    initSnap()
     initEcko()
     initWalletConnect()
   }, [])
@@ -76,16 +76,16 @@ export function Providers({ children }: { children: React.ReactNode }) {
         provider: snapProvider,
         networkId: KADENA_NETWORK_ID,
       })
-      // setSnapAdapter(adapter)
+      setSnapAdapter(_adapter)
     }
   }
   const adapters = useMemo(() => {
     return [
       ...(eckoApadter ? [eckoApadter] : []),
-      // ...(snapAdapter ? [snapAdapter] : []),
+      ...(snapAdapter ? [snapAdapter] : []),
       ...(walletConnectAdapter ? [walletConnectAdapter] : []),
     ]
-  }, [eckoApadter, walletConnectAdapter])
+  }, [eckoApadter, snapAdapter, walletConnectAdapter])
 
   return (
     <KadenaAdapaterContext.Provider value={{ refreshSnapAdapter }}>
