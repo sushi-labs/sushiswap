@@ -5,11 +5,11 @@ import {
   createInfoToast,
   createSuccessToast,
 } from '@sushiswap/notifications'
-import { Button, type ButtonProps } from '@sushiswap/ui'
+import { Button, type ButtonProps, Dots } from '@sushiswap/ui'
 import { useQueryClient } from '@tanstack/react-query'
 import { useParams } from 'next/navigation'
 import { useMemo } from 'react'
-import { getKvmChainByKey } from 'sushi/kvm'
+import { KvmChainId, getKvmChainByKey } from 'sushi/kvm'
 import { kadenaClient } from '~kadena/_common/constants/client'
 import { MIN_GAS_FEE } from '~kadena/_common/constants/gas'
 import {
@@ -100,9 +100,9 @@ export const RemoveButton = (props: ButtonProps) => {
       const txId = res.requestKey
       createInfoToast({
         summary: 'Removing liquidity initiated...',
-        type: 'swap',
+        type: 'burn',
         account: address as string,
-        chainId: 1,
+        chainId: KvmChainId.KADENA,
         groupTimestamp: Date.now(),
         timestamp: Date.now(),
         txHash: txId,
@@ -117,9 +117,9 @@ export const RemoveButton = (props: ButtonProps) => {
       createSuccessToast({
         summary: 'Removed liquidity successfully',
         txHash: txId,
-        type: 'swap',
+        type: 'burn',
         account: address as string,
-        chainId: 1,
+        chainId: KvmChainId.KADENA,
         groupTimestamp: Date.now(),
         timestamp: Date.now(),
         href: getKvmChainByKey('kadena').getTransactionUrl(txId),
@@ -135,9 +135,9 @@ export const RemoveButton = (props: ButtonProps) => {
       //create error toast
       createFailedToast({
         summary: errorMessage,
-        type: 'swap',
+        type: 'burn',
         account: address as string,
-        chainId: 1,
+        chainId: KvmChainId.KADENA,
         groupTimestamp: Date.now(),
         timestamp: Date.now(),
       })
@@ -172,7 +172,7 @@ export const RemoveButton = (props: ButtonProps) => {
   }
   const buttonText = useMemo(() => {
     if (isTxnPending) {
-      return 'Removing Liquidity'
+      return <Dots>Removing Liquidity</Dots>
     }
     if (percentage === 0) {
       return 'Enter Amount'
