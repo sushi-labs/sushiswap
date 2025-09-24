@@ -68,7 +68,7 @@ export const VolumeChart: FC<VolumeChart> = ({ data, chainId, showBlade }) => {
     if (dateNode)
       dateNode.innerHTML = format(
         new Date(params[0].data[0]),
-        'dd MMM yyyy HH:mm aa',
+        "dd MMM yyyy'<br>'hh:mm aa",
       )
     if (v2VolumeNode)
       v2VolumeNode.innerHTML = params[0].data[1]
@@ -207,7 +207,7 @@ export const VolumeChart: FC<VolumeChart> = ({ data, chainId, showBlade }) => {
             <div>
               <div
                 id="hoveredVolumeDate"
-                className="text-sm text-gray-500 dark:text-slate-500"
+                className="text-sm text-gray-500 dark:text-slate-500 min-h-[40px]"
               >
                 Past month
               </div>
