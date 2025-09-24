@@ -21,6 +21,7 @@ import type {
   u128,
   u256,
 } from '@stellar/stellar-sdk/contract'
+import { SqrtPriceX96 } from '../common-types.js'
 export * from '@stellar/stellar-sdk'
 export * as contract from '@stellar/stellar-sdk/contract'
 export * as rpc from '@stellar/stellar-sdk/rpc'
@@ -103,7 +104,7 @@ export interface SwapStepResult {
   amount_in: u256
   amount_out: u256
   fee_amount: u256
-  sqrt_ratio_next: u256
+  sqrt_ratio_next: SqrtPriceX96;
 }
 
 /**
