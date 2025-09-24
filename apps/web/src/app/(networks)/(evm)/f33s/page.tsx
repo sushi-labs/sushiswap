@@ -108,8 +108,7 @@ const V3_MANAGER_ADDRESS: Record<V3ManagerChainId, `0x${string}`> = {
   [EvmChainId.KATANA]: '0xE86d181769f1efb6C30eEFEaFe82790A76B56862',
 } as const
 
-const UI_FEE_COLLECTOR_BOT_ADDRESS =
-  '0xb6B1581b3d267044761156d55717b719aB0565B1'
+const LIQUIDATOR_BOT_ADDRESS = '0xb6B1581b3d267044761156d55717b719aB0565B1'
 
 const labelWallet = (address: Address, chainId: EvmChainId) => {
   if (isMultisigChainId(chainId)) {
@@ -123,7 +122,7 @@ const labelWallet = (address: Address, chainId: EvmChainId) => {
     if (isAddressEqual(address, PROTOCOL_FEE_COLLECTOR_ADDRESS[chainId]))
       return 'PROTOCOL FEE COLLECTOR'
   }
-  if (isAddressEqual(address, UI_FEE_COLLECTOR_BOT_ADDRESS)) return 'UI FEE BOT'
+  if (isAddressEqual(address, LIQUIDATOR_BOT_ADDRESS)) return 'LIQUIDATOR BOT'
   if (isAddressEqual(address, zeroAddress))
     return shortenEvmAddress(zeroAddress)
 
@@ -134,13 +133,13 @@ type V3ManagerInfo = {
   owner?: Address
   pendingOwner?: Address
   maker?: Address
-  trusted?: Address // TODO: array
+  trusted?: Address
 }
 
 type FeeCollectorInfo = {
   owner?: Address
   pendingOwner?: Address
-  trusted?: Address // TODO: array
+  trusted?: Address
 }
 
 const NetworkInfo = ({ chainId }: { chainId: EvmChainId }) => {
@@ -204,7 +203,7 @@ const NetworkInfo = ({ chainId }: { chainId: EvmChainId }) => {
                 abi: feeCollectorAbi,
                 address: UI_FEE_COLLECTOR_ADDRESS[chainId],
                 functionName: 'trusted',
-                args: [UI_FEE_COLLECTOR_BOT_ADDRESS],
+                args: [LIQUIDATOR_BOT_ADDRESS],
               },
             },
             {
@@ -214,6 +213,15 @@ const NetworkInfo = ({ chainId }: { chainId: EvmChainId }) => {
                 abi: feeCollectorAbi,
                 address: SURPLUS_FEE_COLLECTOR_ADDRESS[chainId],
                 functionName: 'owner',
+              },
+            },
+            {
+              scope: 'surplusFeeCollector',
+              contract: {
+                chainId,
+                abi: feeCollectorAbi,
+                address: SURPLUS_FEE_COLLECTOR_ADDRESS[chainId],
+                functionName: 'pendingOwner',
               },
             },
             {
@@ -223,16 +231,7 @@ const NetworkInfo = ({ chainId }: { chainId: EvmChainId }) => {
                 abi: feeCollectorAbi,
                 address: SURPLUS_FEE_COLLECTOR_ADDRESS[chainId],
                 functionName: 'trusted',
-                args: [UI_FEE_COLLECTOR_BOT_ADDRESS],
-              },
-            },
-            {
-              scope: 'surplusFeeCollector',
-              contract: {
-                chainId,
-                abi: feeCollectorAbi,
-                address: SURPLUS_FEE_COLLECTOR_ADDRESS[chainId],
-                functionName: 'pendingOwner',
+                args: [LIQUIDATOR_BOT_ADDRESS],
               },
             },
             {
@@ -251,6 +250,16 @@ const NetworkInfo = ({ chainId }: { chainId: EvmChainId }) => {
                 abi: feeCollectorAbi,
                 address: PROTOCOL_FEE_COLLECTOR_ADDRESS[chainId],
                 functionName: 'pendingOwner',
+              },
+            },
+            {
+              scope: 'protocolFeeCollector',
+              contract: {
+                chainId,
+                abi: feeCollectorAbi,
+                address: PROTOCOL_FEE_COLLECTOR_ADDRESS[chainId],
+                functionName: 'trusted',
+                args: [LIQUIDATOR_BOT_ADDRESS],
               },
             },
           ] as const)
@@ -319,7 +328,7 @@ const NetworkInfo = ({ chainId }: { chainId: EvmChainId }) => {
   }
 
   return (
-    <div className="grid grid-cols-3 gap-2">
+    <div className="grid gap-3 [grid-template-columns:repeat(auto-fit,minmax(300px,1fr))]">
       <Card>
         <CardHeader>
           <CardTitle>
@@ -501,6 +510,11 @@ const NetworkInfo = ({ chainId }: { chainId: EvmChainId }) => {
                   {isLoading
                     ? 'Loading…'
                     : renderAccount(protocolFeeCollector?.pendingOwner)}
+                </List.KeyValue>
+                <List.KeyValue title="Operator">
+                  {isLoading
+                    ? 'Loading…'
+                    : renderAccount(uiFeeCollector?.trusted)}
                 </List.KeyValue>
               </List.Control>
             </List>
