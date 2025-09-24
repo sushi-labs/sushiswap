@@ -12,13 +12,13 @@ catalog:
 catalogs:
   web3:
     "abitype": 1.0.8
-    "sushi": 6.1.7
+    "sushi": 6.1.11
     "wagmi": 2.16.0
     "@wagmi/core": 2.18.0
     "viem": 2.33.0
 
   react:
-    "next": 15.1.4
+    "next": 15.5.3
     "react": 19.0.0
     "@types/react": 19.0.1
     "react-dom": 19.0.0

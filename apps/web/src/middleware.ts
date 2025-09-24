@@ -1,3 +1,4 @@
+import { trace } from '@opentelemetry/api'
 import { type NextRequest, NextResponse } from 'next/server'
 import { getChainById, getChainByKey, isChainId, isChainKey } from 'sushi'
 import { getEvmChainById, isBladeChainId, isSushiSwapChainId } from 'sushi/evm'
@@ -27,7 +28,7 @@ export const config = {
   ],
 }
 
-export async function middleware(req: NextRequest) {
+async function _middleware(req: NextRequest) {
   const { pathname, searchParams, search } = req.nextUrl
 
   if (pathname === 'portal' || pathname.startsWith('/portal/')) {
@@ -142,4 +143,19 @@ export async function middleware(req: NextRequest) {
 
     return NextResponse.rewrite(url)
   }
+
+  return NextResponse.next()
+}
+
+export async function middleware(req: NextRequest) {
+  const response = await _middleware(req)
+  const current = trace.getActiveSpan()
+
+  if (current) {
+    response.headers.set(
+      'server-timing',
+      `traceparent;desc="00-${current.spanContext().traceId}-${current.spanContext().spanId}-01"`,
+    )
+  }
+  return response
 }
