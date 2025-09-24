@@ -83,7 +83,7 @@ export const TVLChart: FC<TVLChart> = ({ data, chainId, showBlade }) => {
     if (dateNode)
       dateNode.innerHTML = format(
         new Date(params[0].data[0]),
-        'dd MMM yyyy HH:mm aa',
+        "dd MMM yyyy'<br>'hh:mm aa",
       )
     if (v2TVLNode)
       v2TVLNode.innerHTML = params[0].data[1]
@@ -110,7 +110,10 @@ export const TVLChart: FC<TVLChart> = ({ data, chainId, showBlade }) => {
 
     if (tvlNode) tvlNode.innerHTML = formatUSD(combinedTVL)
     if (dateNode)
-      dateNode.innerHTML = format(new Date(currentDate), 'dd MMM yyyy HH:mm aa')
+      dateNode.innerHTML = format(
+        new Date(currentDate),
+        "dd MMM yyyy'<br>'hh:mm aa",
+      )
     if (v2TVLNode) v2TVLNode.innerHTML = ''
     if (v3TVLNode) v3TVLNode.innerHTML = ''
     if (bladeTVLNode) bladeTVLNode.innerHTML = ''
@@ -255,10 +258,10 @@ export const TVLChart: FC<TVLChart> = ({ data, chainId, showBlade }) => {
             <div>
               <div
                 id="hoveredTVLDate"
-                className="text-sm text-gray-500 dark:text-slate-500"
+                className="text-sm text-gray-500 dark:text-slate-500 min-h-[40px]"
               >
                 {isMounted
-                  ? format(new Date(currentDate), 'dd MMM yyyy HH:mm aa')
+                  ? format(new Date(currentDate), 'dd MMM yyyy\nhh:mm aa')
                   : ''}
               </div>
             </div>
