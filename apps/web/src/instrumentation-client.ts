@@ -191,7 +191,10 @@ if (!faro.api && !process.env.CI) {
         serializeErrors: true,
         disabledLevels: [LogLevel.DEBUG, LogLevel.INFO],
       },
-      // pageTracking: {},
+      batching: {
+        enabled: true,
+        sendTimeout: 2_000,
+      },
       ignoreUrls,
       instrumentations: [
         // Mandatory, omits default instrumentations otherwise.
