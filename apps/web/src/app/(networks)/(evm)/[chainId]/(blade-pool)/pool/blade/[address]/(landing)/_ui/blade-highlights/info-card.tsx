@@ -52,7 +52,9 @@ export const InfoCard: FC<InfoCardProps> = ({
             iconPosition="end"
             asChild
           >
-            {buttonText}
+            <span className="font-medium text-gray-700 text-sm tracking-tight dark:bg-gradient-to-r dark:from-[#B5E8FC] dark:to-[#D7A8E9] dark:bg-clip-text dark:text-transparent">
+              {buttonText}
+            </span>
           </Button>
         </a>
       </div>
