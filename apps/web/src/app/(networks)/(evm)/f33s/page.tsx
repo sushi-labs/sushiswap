@@ -523,7 +523,7 @@ const NetworkInfo = ({ chainId }: { chainId: EvmChainId }) => {
                     ? 'Loading…'
                     : renderAccount(v3Manager?.pendingOwner)}
                 </List.KeyValue>
-                <List.KeyValue title="Maker">
+                <List.KeyValue flex title="Maker">
                   {isLoading ? 'Loading…' : renderAccount(v3Manager?.maker)}
                 </List.KeyValue>
                 <List.KeyValue title="Operator">
