@@ -1,5 +1,6 @@
 'use client'
 
+import { faro } from '@grafana/faro-web-sdk'
 import { GoogleAnalytics, GoogleTagManager, HotJar } from '@sushiswap/ui'
 import { Analytics as VercelAnalytics } from '@vercel/analytics/react'
 import { SpeedInsights } from '@vercel/speed-insights/next'
