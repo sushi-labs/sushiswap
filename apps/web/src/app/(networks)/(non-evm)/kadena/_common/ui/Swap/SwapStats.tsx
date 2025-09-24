@@ -66,7 +66,7 @@ export const SwapStats = () => {
       leaveFrom="transform translate-y-0 opacity-100"
       leaveTo="transform translate-y-[16px] opacity-0"
     >
-      <div className="flex flex-col w-full gap-1 px-2 pb-8">
+      <div className="flex flex-col w-full gap-1 px-2">
         <div className="flex items-center justify-between gap-2">
           <span className="text-sm text-gray-700 dark:text-slate-400">
             Price impact
