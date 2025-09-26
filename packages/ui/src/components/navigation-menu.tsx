@@ -2,6 +2,7 @@
 
 import * as NavigationMenuPrimitive from '@radix-ui/react-navigation-menu'
 import { ChevronDown } from 'lucide-react'
+import Link from 'next/link'
 import * as React from 'react'
 
 import classNames from 'classnames'
@@ -81,7 +82,40 @@ const NavigationMenuContent = React.forwardRef<
 ))
 NavigationMenuContent.displayName = NavigationMenuPrimitive.Content.displayName
 
-const NavigationMenuLink = NavigationMenuPrimitive.Link
+const NavigationMenuLink = React.forwardRef<
+  React.ElementRef<typeof NavigationMenuPrimitive.Link>,
+  React.ComponentPropsWithoutRef<typeof NavigationMenuPrimitive.Link>
+>(({ className, children, href, asChild, ...props }, ref) => {
+  const isInternalLink =
+    typeof href === 'string' && /^\/(?!\/)/.test(href)
+
+  if (asChild || !isInternalLink) {
+    return (
+      <NavigationMenuPrimitive.Link
+        ref={ref}
+        className={classNames(className)}
+        href={href}
+        asChild={asChild}
+        {...props}
+      >
+        {children}
+      </NavigationMenuPrimitive.Link>
+    )
+  }
+
+  return (
+    <NavigationMenuPrimitive.Link
+      ref={ref}
+      className={classNames(className)}
+      href={href}
+      asChild
+      {...props}
+    >
+      <Link href={href}>{children}</Link>
+    </NavigationMenuPrimitive.Link>
+  )
+})
+NavigationMenuLink.displayName = NavigationMenuPrimitive.Link.displayName
 
 const NavigationMenuViewport = React.forwardRef<
   React.ElementRef<typeof NavigationMenuPrimitive.Viewport>,
