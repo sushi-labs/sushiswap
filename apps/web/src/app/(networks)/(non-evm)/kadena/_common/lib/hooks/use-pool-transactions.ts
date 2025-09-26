@@ -35,6 +35,10 @@ export const transactionsResponseSchema = z.object({
   totalCount: z.number(),
 })
 
+export type PoolTransaction = z.infer<
+  typeof transactionsResponseSchema
+>['edges'][number]['node']
+
 export const usePoolTransactions = ({
   pairId,
   type,

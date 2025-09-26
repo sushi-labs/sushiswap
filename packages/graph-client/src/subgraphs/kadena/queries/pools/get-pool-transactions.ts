@@ -40,8 +40,6 @@ export type PoolTransactionType = NonNullable<GetPoolTransactions['type']>
 export type GetPoolTransactionsResponse = Awaited<
   ReturnType<typeof getPoolTransactions>
 >
-export type PoolTransaction =
-  GetPoolTransactionsResponse['edges'][number]['node']
 
 export async function getPoolTransactions(
   variables: GetPoolTransactions,
