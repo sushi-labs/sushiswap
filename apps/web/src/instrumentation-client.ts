@@ -161,6 +161,7 @@ import {
 } from '@grafana/faro-react'
 import { LogLevel } from '@grafana/faro-web-sdk'
 import { TracingInstrumentation } from '@grafana/faro-web-tracing'
+import { logger } from 'src/lib/logger'
 
 const faroConfig = {
   url: 'https://faro.analytics-fe.sushi.com/collect',

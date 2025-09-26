@@ -3,6 +3,7 @@
 import { createErrorToast, createToast } from '@sushiswap/notifications'
 import { InterfaceEventName, sendAnalyticsEvent } from '@sushiswap/telemetry'
 import { useCallback, useMemo } from 'react'
+import { logger } from 'src/lib/logger'
 import type { Amount } from 'sushi'
 import { type EvmCurrency, weth9Abi_deposit } from 'sushi/evm'
 import { type SendTransactionReturnType, UserRejectedRequestError } from 'viem'
@@ -26,9 +27,15 @@ export const useWrapNative = ({
   const client = usePublicClient()
 
   const onError = useCallback((e: Error) => {
-    if (!(e.cause instanceof UserRejectedRequestError)) {
-      createErrorToast(e?.message, true)
+    if (e.cause instanceof UserRejectedRequestError) {
+      return
     }
+
+    logger.error(e, {
+      location: 'useWrapNative',
+      action: 'mutationError',
+    })
+    createErrorToast(e?.message, true)
   }, [])
 
   const onSuccess = useCallback(
@@ -62,7 +69,12 @@ export const useWrapNative = ({
         })
 
         await receiptPromise
-      } catch {}
+      } catch (error) {
+        logger.error(error, {
+          location: 'useWrapNative',
+          action: 'waitForReceipt',
+        })
+      }
     },
     [client, amount, address],
   )
@@ -95,7 +107,18 @@ export const useWrapNative = ({
     return async () => {
       try {
         await writeContractAsync(simulation.request)
-      } catch {}
+      } catch (error) {
+        if (
+          error instanceof Error &&
+          error.cause instanceof UserRejectedRequestError
+        ) {
+          return
+        }
+        logger.error(error, {
+          location: 'useWrapNative',
+          action: 'sendTransaction',
+        })
+      }
     }
   }, [simulation, writeContractAsync])
 
