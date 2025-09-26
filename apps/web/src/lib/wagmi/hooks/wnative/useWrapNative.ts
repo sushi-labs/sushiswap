@@ -70,7 +70,7 @@ export const useWrapNative = ({
 
         await receiptPromise
       } catch (error) {
-        logger.error(error as Error, {
+        logger.error(error, {
           location: 'useWrapNative',
           action: 'waitForReceipt',
         })
@@ -108,15 +108,16 @@ export const useWrapNative = ({
       try {
         await writeContractAsync(simulation.request)
       } catch (error) {
-        if (error instanceof Error) {
-          if (error.cause instanceof UserRejectedRequestError) {
-            return
-          }
-          logger.error(error, {
-            location: 'useWrapNative',
-            action: 'sendTransaction',
-          })
+        if (
+          error instanceof Error &&
+          error.cause instanceof UserRejectedRequestError
+        ) {
+          return
         }
+        logger.error(error, {
+          location: 'useWrapNative',
+          action: 'sendTransaction',
+        })
       }
     }
   }, [simulation, writeContractAsync])

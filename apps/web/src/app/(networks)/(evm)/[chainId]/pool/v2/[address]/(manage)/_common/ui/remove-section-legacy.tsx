@@ -347,13 +347,11 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> =
               )(config.args)
               return addGasMargin(estimatedGas)
             } catch (error) {
-              if (error instanceof Error) {
-                logger.error(error, {
-                  location: 'RemoveSectionLegacy',
-                  action: 'estimateGas',
-                  functionName: methodName,
-                })
-              }
+              logger.error(error, {
+                location: 'RemoveSectionLegacy',
+                action: 'estimateGas',
+                functionName: methodName,
+              })
               return undefined
             }
           }),
@@ -385,12 +383,10 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> =
           setPrepare(config)
         })
         .catch((error) => {
-          if (error instanceof Error) {
-            logger.error(error, {
-              location: 'RemoveSectionLegacy',
-              action: 'prepareTransaction',
-            })
-          }
+          logger.error(error, {
+            location: 'RemoveSectionLegacy',
+            action: 'prepareTransaction',
+          })
         })
     }, [
       approved,
@@ -428,7 +424,7 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> =
               return
             }
 
-            logger.error(error as Error, {
+            logger.error(error, {
               location: 'RemoveSectionLegacy',
               action: 'mutationError',
             })

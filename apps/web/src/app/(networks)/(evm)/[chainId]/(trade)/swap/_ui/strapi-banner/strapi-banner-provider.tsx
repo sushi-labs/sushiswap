@@ -15,12 +15,10 @@ export const StrapiBannerProvider: FC<{ children: ReactNode }> = async ({
       revalidate: 3600,
     })()
   } catch (error) {
-    if (error instanceof Error) {
-      logger.error(error, {
-        location: 'StrapiBannerProvider',
-        action: 'fetchBanners',
-      })
-    }
+    logger.error(error, {
+      location: 'StrapiBannerProvider',
+      action: 'fetchBanners',
+    })
   }
 
   // Only supporting one active banner at a time for now

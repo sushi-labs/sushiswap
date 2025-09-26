@@ -36,10 +36,7 @@ export const logger = {
     })
     unpatchedConsole.warn(message, context)
   },
-  error: (
-    message: string | Error,
-    context?: Record<string, string | number>,
-  ) => {
+  error: (message: unknown, context?: Record<string, string | number>) => {
     if (message instanceof Error) {
       pushError(message, { context: serializeContext(context) })
     } else {

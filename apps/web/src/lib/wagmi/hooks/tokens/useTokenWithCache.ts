@@ -71,7 +71,7 @@ export const getTokenWithCacheQueryFn = async ({
           metadata: { approved: token.approved },
         })
     } catch (error) {
-      logger.error(error as Error, {
+      logger.error(error, {
         location: 'useTokenWithCache',
         action: 'fetchTokenList',
         token_chain_id: chainId,
@@ -98,7 +98,7 @@ export const getTokenWithCacheQueryFn = async ({
       },
     })
   } catch (error) {
-    logger.error(error as Error, {
+    logger.error(error, {
       location: 'useTokenWithCache',
       action: 'fetchTokenRpc',
       token_chain_id: chainId,

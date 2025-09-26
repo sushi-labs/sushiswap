@@ -310,12 +310,10 @@ const _CrossChainSwapTradeReviewDialog: FC<{
           dest: StepState.NotStarted,
         })
       } catch (error) {
-        if (error instanceof Error) {
-          logger.error(error, {
-            location: 'CrossChainSwapTradeReviewDialog',
-            action: 'waitForReceipt',
-          })
-        }
+        logger.error(error, {
+          location: 'CrossChainSwapTradeReviewDialog',
+          action: 'waitForReceipt',
+        })
 
         setStepStates({
           source: StepState.Failed,

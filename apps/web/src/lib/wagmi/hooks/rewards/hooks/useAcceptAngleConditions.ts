@@ -111,17 +111,15 @@ export const useAcceptAngleConditions = (
   )
 
   const onError = useCallback((e: Error) => {
-    if (e instanceof Error) {
-      if (e.cause instanceof UserRejectedRequestError) {
-        return
-      }
-
-      logger.error(e, {
-        location: 'useAcceptAngleConditions',
-        action: 'mutationError',
-      })
-      createErrorToast(e.message, true)
+    if (e.cause instanceof UserRejectedRequestError) {
+      return
     }
+
+    logger.error(e, {
+      location: 'useAcceptAngleConditions',
+      action: 'mutationError',
+    })
+    createErrorToast(e.message, true)
   }, [])
 
   const execute = useWriteContract({
