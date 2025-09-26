@@ -1,9 +1,39 @@
-import {
-  type PoolTransactionType,
-  getPoolTransactions,
-} from '@sushiswap/graph-client/kadena'
+import type { PoolTransactionType } from '@sushiswap/graph-client/kadena'
 import { useQuery } from '@tanstack/react-query'
 import ms from 'ms'
+import { z } from 'zod'
+
+export const transactionsResponseSchema = z.object({
+  edges: z
+    .array(
+      z.object({
+        node: z.object({
+          transactionType: z.enum([
+            'SWAP',
+            'ADD_LIQUIDITY',
+            'REMOVE_LIQUIDITY',
+          ]),
+          transactionId: z.number(),
+          timestamp: z.string(),
+          requestkey: z.string(),
+          maker: z.string(),
+          id: z.string(),
+          amountUsd: z.string(),
+          amount1Out: z.string(),
+          amount1In: z.string(),
+          amount0Out: z.string(),
+          amount0In: z.string(),
+        }),
+        cursor: z.string(),
+      }),
+    )
+    .default([]),
+  pageInfo: z.object({
+    hasNextPage: z.boolean(),
+    endCursor: z.string().nullable(),
+  }),
+  totalCount: z.number(),
+})
 
 export const usePoolTransactions = ({
   pairId,
@@ -21,16 +51,24 @@ export const usePoolTransactions = ({
         throw new Error('Pair ID is required')
       }
 
-      const data = await getPoolTransactions({
-        pairId,
-        type,
-        first: pageSize,
-      })
+      const url = new URL('/kadena/api/pools/txs', window.location.origin)
+      url.searchParams.set('pairId', pairId)
+      url.searchParams.set('type', type)
+      url.searchParams.set('first', String(pageSize))
+
+      const res = await fetch(url.toString())
+      const data = await res.json()
+
+      const parsed = transactionsResponseSchema.safeParse(data)
+
+      if (!parsed.success) {
+        throw new Error('Failed to parse transactions response')
+      }
 
       return {
-        transactions: data.edges.map((e) => e.node),
-        pageInfo: data.pageInfo,
-        totalCount: data.totalCount,
+        transactions: parsed?.data?.edges?.map((e) => e?.node),
+        pageInfo: parsed?.data?.pageInfo,
+        totalCount: parsed?.data?.totalCount,
       }
     },
     enabled: Boolean(pairId),
