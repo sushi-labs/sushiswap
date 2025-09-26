@@ -10,8 +10,8 @@ import { ChainId } from 'sushi'
 import { WalletConnector } from './_common/ui/WalletConnector/wallet-connector'
 
 export const Header: FC<{
-  supportedNetworks?: readonly ChainId[]
-}> = ({ supportedNetworks }) => {
+  networks?: readonly ChainId[]
+}> = ({ networks }) => {
   return (
     <div className="w-full h-[56px] z-20">
       <div className="fixed w-full flex z-20">
@@ -36,7 +36,7 @@ export const Header: FC<{
           rightElement={
             <Suspense>
               <HeaderNetworkSelector
-                networks={supportedNetworks}
+                networks={networks}
                 selectedNetwork={ChainId.TRON}
                 className="flex"
               />

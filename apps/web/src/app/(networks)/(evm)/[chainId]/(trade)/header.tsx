@@ -19,7 +19,7 @@ export const Header: FC<HeaderProps> = ({ chainId, networks }) => {
   return chainId === ChainId.KATANA ? (
     <TransparentHeader chainId={chainId} networks={networks} />
   ) : (
-    <_Header chainId={chainId} supportedNetworks={networks} />
+    <_Header chainId={chainId} networks={networks} />
   )
 }
 
