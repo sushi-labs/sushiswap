@@ -86,8 +86,7 @@ const NavigationMenuLink = React.forwardRef<
   React.ElementRef<typeof NavigationMenuPrimitive.Link>,
   React.ComponentPropsWithoutRef<typeof NavigationMenuPrimitive.Link>
 >(({ className, children, href, asChild, ...props }, ref) => {
-  const isInternalLink =
-    typeof href === 'string' && /^\/(?!\/)/.test(href)
+  const isInternalLink = typeof href === 'string' && /^\/(?!\/)/.test(href)
 
   if (asChild || !isInternalLink) {
     return (
