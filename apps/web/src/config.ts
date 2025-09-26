@@ -25,6 +25,7 @@ export const DISABLED_CHAIN_IDS = [
   ChainId.HARMONY,
   ChainId.POLYGON_ZKEVM,
   ChainId.TATARA,
+  ChainId.PLASMA,
 ] as const
 
 export const NEW_CHAIN_IDS = [EvmChainId.KATANA] as const
