@@ -54,10 +54,24 @@ export const GetWalletPositionsQuery = graphql(
 
 export type GetWalletPositions = VariablesOf<typeof GetWalletPositionsQuery>
 
-export type GetWalletPositionsResponse = Awaited<
-  ReturnType<typeof getWalletPositions>
->
-export type WalletPosition = GetWalletPositionsResponse['edges'][number]['node']
+//types not picking up that endCursor can be null sometimes
+export type GetWalletPositionsResponse = Omit<
+  Awaited<ReturnType<typeof getWalletPositions>>,
+  'pageInfo'
+> & {
+  pageInfo: {
+    hasNextPage: boolean
+    endCursor: string | null
+  }
+}
+
+//types not picking up that valueUsd can be null sometimes
+export type WalletPosition = Omit<
+  GetWalletPositionsResponse['edges'][number]['node'],
+  'valueUsd'
+> & {
+  valueUsd: number | null
+}
 
 export async function getWalletPositions(
   variables: GetWalletPositions,
