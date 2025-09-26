@@ -45,9 +45,7 @@ export const PoolPosition = () => {
     token0Address: token0?.address,
     token1Address: token1?.address,
   })
-  console.log(
-    Number(formatUnits(data?.balance?.amount, KVM_PAIR_TOKEN.decimals)),
-  )
+
   useEffect(() => {
     if (data?.balance !== undefined) {
       setLPBalance(
