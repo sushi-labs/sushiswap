@@ -40,6 +40,7 @@ export const PREFERRED_CHAINID_ORDER = [
   ChainId.POLYGON,
   ChainId.HYPEREVM,
   ChainId.BERACHAIN,
+  ChainId.PLASMA,
   ChainId.SCROLL,
   ChainId.BLAST,
   ChainId.OPTIMISM,

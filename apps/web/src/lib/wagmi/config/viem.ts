@@ -275,6 +275,9 @@ export const publicTransports = {
   [EvmChainId.BERACHAIN]: http(
     `https://lb.drpc.org/ogrpc?network=berachain&dkey=${drpcId}`,
   ),
+  [EvmChainId.PLASMA]: http(
+    `https://lb.drpc.org/ogrpc?network=plasma&dkey=${drpcId}`,
+  ),
   /* Testnets */
   [EvmChainId.ARBITRUM_SEPOLIA]: http('https://sepolia-rollup.arbitrum.io/rpc'),
   // [EvmChainId.POLYGON_TESTNET]: http('https://rpc.ankr.com/polygon_mumbai'),
