@@ -1,4 +1,7 @@
-import { type GetPoolTimeframe, getPool } from '@sushiswap/graph-client/kadena'
+import type {
+  GetPoolResponse,
+  GetPoolTimeframe,
+} from '@sushiswap/graph-client/kadena'
 import { useQuery } from '@tanstack/react-query'
 import ms from 'ms'
 import {
@@ -32,11 +35,18 @@ export const usePoolById = ({
         throw new Error('Pool ID is required')
       }
 
-      const data = await getPool({
-        poolId,
-        timeFrame: timeFrameMap[poolByIdChartTimeFrame],
-        first,
-      })
+      const timeFrame = timeFrameMap[poolByIdChartTimeFrame] || 'DAY'
+
+      const url = new URL(
+        '/kadena/api/pools/pool-by-id',
+        window.location.origin,
+      )
+      url.searchParams.set('poolId', poolId)
+      url.searchParams.set('timeFrame', timeFrame)
+      url.searchParams.set('first', String(first || 1))
+
+      const res = await fetch(url.toString())
+      const data = (await res.json()) as GetPoolResponse
 
       return data
     },
