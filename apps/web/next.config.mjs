@@ -16,7 +16,7 @@ const nextConfig = bundleAnalyzer({
   poweredByHeader: false,
   staticPageGenerationTimeout: 180,
   turbopack: {
-    root: path.join(__dirname, '..'),
+    root: path.join(__dirname, '../../'),
   },
   experimental: {
     staticGenerationRetryCount: 3,
