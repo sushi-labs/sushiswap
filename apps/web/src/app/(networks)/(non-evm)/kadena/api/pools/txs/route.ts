@@ -1,6 +1,5 @@
 import {
   type PoolTransactionType,
-  getAllPools,
   getPoolTransactions,
 } from '@sushiswap/graph-client/kadena'
 import type { NextRequest } from 'next/server'
