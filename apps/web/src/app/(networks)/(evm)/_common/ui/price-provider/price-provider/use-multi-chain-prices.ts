@@ -45,6 +45,16 @@ export function useMultiChainPrices({
     let isUpdating = false
     let isError = false
 
+    if (!enabled) {
+      return {
+        data,
+        lastModified,
+        isLoading,
+        isUpdating,
+        isError,
+      }
+    }
+
     for (const id of chainIds ?? []) {
       const chain = chains[id]
 
@@ -86,5 +96,5 @@ export function useMultiChainPrices({
     }
 
     return { data, lastModified, isLoading, isUpdating, isError }
-  }, [chainIds, chains])
+  }, [chainIds, chains, enabled])
 }
