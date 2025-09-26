@@ -1,8 +1,21 @@
-import { getTokenPrice } from '@sushiswap/graph-client/kadena'
 import { useQuery } from '@tanstack/react-query'
 import type { KvmToken } from 'sushi/kvm'
+import { z } from 'zod'
 import { STABLE_TOKENS } from '~kadena/_common/constants/token-list'
 import { getKdaPrice } from './use-kda-price'
+
+const tokenPriceResponseSchema = z.object({
+  token: z.object({
+    name: z.string(),
+    chainId: z.string(),
+    id: z.string(),
+    address: z.string(),
+  }),
+  protocolAddress: z.string(),
+  priceInUsd: z.number(),
+  priceInKda: z.number(),
+  id: z.string(),
+})
 
 const getPrice = async (token: KvmToken | undefined) => {
   //if token is undefined return 0
@@ -22,9 +35,20 @@ const getPrice = async (token: KvmToken | undefined) => {
   }
 
   const tokenAddress = token.address
-  const tokenPrice = await getTokenPrice({ tokenAddress })
+  const url = new URL('/kadena/api/price', window.location.origin)
+  url.searchParams.set('tokenAddress', tokenAddress)
 
-  return tokenPrice?.priceInUsd ?? 0
+  const res = await fetch(url.toString())
+  const data = await res.json()
+
+  const parsed = tokenPriceResponseSchema.safeParse(data)
+
+  if (!parsed.success) {
+    throw new Error('Failed to parse token price')
+  }
+  const tokenPrice = parsed.data.priceInUsd
+
+  return tokenPrice ?? 0
 }
 
 export const useTokenPrice = ({ token }: { token: KvmToken | undefined }) => {
