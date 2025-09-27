@@ -24,7 +24,7 @@ export default async function SwapDCALayout(props: {
 
   return (
     <Providers>
-      <Header chainId={chainId} supportedNetworks={TWAP_SUPPORTED_CHAIN_IDS} />
+      <Header chainId={chainId} networks={TWAP_SUPPORTED_CHAIN_IDS} />
       <main className="lg:p-4 mt-16 mb-[86px]">{children}</main>
     </Providers>
   )

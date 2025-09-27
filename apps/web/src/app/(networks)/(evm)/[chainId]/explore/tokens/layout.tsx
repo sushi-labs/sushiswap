@@ -29,10 +29,7 @@ export default async function ExploreLayout(props: {
 
   return (
     <>
-      <Header
-        chainId={chainId}
-        supportedNetworks={SUSHISWAP_SUPPORTED_CHAIN_IDS}
-      />
+      <Header chainId={chainId} networks={SUSHISWAP_SUPPORTED_CHAIN_IDS} />
       <main className="flex flex-col h-full flex-1 animate-slide">
         <Container maxWidth="7xl" className="px-4 py-4">
           <GlobalStatsCharts chainId={chainId} />

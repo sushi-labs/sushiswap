@@ -22,7 +22,7 @@ export default async function PoolLayout(props: {
 
   return (
     <Providers>
-      <Header chainId={chainId} supportedNetworks={SushiSwapChainIds} />
+      <Header chainId={chainId} networks={SushiSwapChainIds} />
       <main className="flex flex-col h-full flex-1 animate-slide">
         {children}
       </main>

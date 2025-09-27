@@ -5,20 +5,16 @@ import { SushiIcon } from '@sushiswap/ui/icons/SushiIcon'
 import { SushiWithTextIcon } from '@sushiswap/ui/icons/SushiWithTextIcon'
 import React, { type FC } from 'react'
 import { headerElements } from 'src/app/_common/header-elements'
-import { SUPPORTED_NETWORKS } from 'src/config'
 import { WagmiHeaderComponents } from 'src/lib/wagmi/components/wagmi-header-components'
 import type { ChainId } from 'sushi'
 import { useChainId } from 'wagmi'
 
 interface HeaderProps {
   chainId?: ChainId
-  supportedNetworks?: readonly ChainId[]
+  networks?: readonly ChainId[]
 }
 
-export const Header: FC<HeaderProps> = ({
-  chainId: _chainId,
-  supportedNetworks,
-}) => {
+export const Header: FC<HeaderProps> = ({ chainId: _chainId, networks }) => {
   const connectedChainId = useChainId()
   const chainId = _chainId ?? connectedChainId
 
@@ -45,9 +41,8 @@ export const Header: FC<HeaderProps> = ({
           leftElements={headerElements({ chainId })}
           rightElement={
             <WagmiHeaderComponents
-              networks={SUPPORTED_NETWORKS}
+              networks={networks}
               selectedNetwork={chainId}
-              supportedNetworks={supportedNetworks}
             />
           }
         />

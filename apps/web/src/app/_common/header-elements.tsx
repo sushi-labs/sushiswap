@@ -4,7 +4,6 @@ import {
 } from '@heroicons/react/24/outline'
 import {
   Button,
-  IconButton,
   LinkExternal,
   LinkInternal,
   type NavigationElement,
@@ -35,7 +34,7 @@ export const EXPLORE_NAVIGATION_LINKS = (
   return [
     {
       title: 'Swap',
-      href: '/swap',
+      href: `/${getChainById(chainId ?? ChainId.ETHEREUM).key}/swap`,
       description: 'The easiest way to trade.',
     },
     {
