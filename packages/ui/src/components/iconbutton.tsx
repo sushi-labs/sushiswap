@@ -27,6 +27,7 @@ const iconButtonVariants = cva(
         secondary: 'bg-secondary hover:bg-muted focus:bg-accent',
         ghost: 'hover:bg-secondary focus:bg-accent',
         link: 'text-blue hover:text-blue-700 font-semibold !p-0 !h-[unset] !min-h-[unset]',
+        blank: '',
       },
       size: {
         xs: 'min-h-[26px] h-[26px] min-w-[26px] w-[26px] text-xs',

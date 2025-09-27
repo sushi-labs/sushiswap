@@ -1,3 +1,4 @@
+import type { BladeChainId } from 'src/subgraphs/data-api/types/BladeChainId.js'
 import type { PoolChainId } from 'src/subgraphs/data-api/types/PoolChainId.js'
 import type { SushiSwapChainId } from 'src/subgraphs/data-api/types/SushiSwapChainId.js'
 import type { TokenListChainId } from 'src/subgraphs/data-api/types/TokenListChainId.js'
@@ -25,6 +26,8 @@ export type Scalars = {
   SushiSwapChainId: SushiSwapChainId
   SushiSwapV2ChainId: SushiSwapV2ChainId
   SushiSwapV3ChainId: SushiSwapV3ChainId
+
+  BladeChainId: BladeChainId
 
   PoolChainId: PoolChainId
 

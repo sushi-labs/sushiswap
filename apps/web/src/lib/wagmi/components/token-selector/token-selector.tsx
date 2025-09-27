@@ -26,8 +26,7 @@ import React, {
   useMemo,
   useState,
 } from 'react'
-import type { EvmCurrency, EvmNative, EvmToken } from 'sushi/evm'
-import type { EvmChainId } from 'sushi/evm'
+import type { EvmChainId, EvmCurrency } from 'sushi/evm'
 import { useAccount } from 'wagmi'
 import { CurrencyInfo } from './currency-info'
 import { DesktopNetworkSelector } from './desktop-network-selector'
@@ -39,7 +38,7 @@ interface TokenSelectorProps {
   chainId: EvmChainId
   onSelect(currency: EvmCurrency): void
   children: ReactNode
-  currencies?: Record<string, EvmToken<{ approved?: boolean }>>
+  currencies?: Record<string, EvmCurrency<{ approved?: boolean }>>
   includeNative?: boolean
   hidePinnedTokens?: boolean
   hideSearch?: boolean

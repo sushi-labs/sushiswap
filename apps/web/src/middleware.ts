@@ -1,8 +1,9 @@
 import { trace } from '@opentelemetry/api'
 import { type NextRequest, NextResponse } from 'next/server'
 import { getChainById, getChainByKey, isChainId, isChainKey } from 'sushi'
-import { getEvmChainById } from 'sushi/evm'
+import { getEvmChainById, isBladeChainId, isSushiSwapChainId } from 'sushi/evm'
 import { SUPPORTED_NETWORKS } from './config'
+import { isPublicBladeChainId } from './config.server'
 
 export const config = {
   matcher: [
@@ -84,6 +85,23 @@ async function _middleware(req: NextRequest) {
     const url = req.nextUrl.clone()
 
     const page = pathname.split('/')[2]
+
+    if (page === 'explore') {
+      const subPage = pathname.split('/')[3]
+      if (subPage === 'pools') {
+        if (
+          !isSushiSwapChainId(chain.chainId) &&
+          isBladeChainId(chain.chainId) &&
+          (await isPublicBladeChainId(chain.chainId))
+        ) {
+          url.pathname = pathname.replace(
+            '/explore/pools',
+            '/explore/blade-pools',
+          )
+          return NextResponse.redirect(url)
+        }
+      }
+    }
 
     if (page === 'swap') {
       if (

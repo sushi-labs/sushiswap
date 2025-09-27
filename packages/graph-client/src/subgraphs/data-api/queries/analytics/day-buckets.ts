@@ -22,6 +22,12 @@ export const AnalyticsDayBucketsQuery = graphql(
       volumeUSD
       liquidityUSD
     }
+    blade {
+      id
+      date
+      volumeUSD
+      liquidityUSD
+    }
   }
 }
 `,
@@ -55,6 +61,7 @@ export async function getAnalyticsDayBuckets(
   return {
     v2: [],
     v3: [],
+    blade: [],
   }
 }
 
