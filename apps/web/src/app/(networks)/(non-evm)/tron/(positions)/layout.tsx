@@ -1,8 +1,9 @@
 import { Container } from '@sushiswap/ui'
 import type React from 'react'
+import { Header } from 'src/app/(networks)/_ui/header/header'
 import { PoolsFiltersProvider } from 'src/app/(networks)/_ui/pools-filters-provider'
 import { POOL_SUPPORTED_NETWORKS } from 'src/config'
-import { Header } from '~tron/header'
+import { TvmChainId } from 'sushi/tvm'
 import { Hero } from './hero'
 import { NavigationItems } from './navigation-items'
 
@@ -13,7 +14,10 @@ export default function PositionsLayout({
 }) {
   return (
     <>
-      <Header supportedNetworks={POOL_SUPPORTED_NETWORKS} />
+      <Header
+        chainId={TvmChainId.TRON}
+        supportedNetworks={POOL_SUPPORTED_NETWORKS}
+      />
       <main className="flex flex-col h-full flex-1 animate-slide">
         <Container maxWidth="7xl" className="px-4 py-16">
           <Hero />

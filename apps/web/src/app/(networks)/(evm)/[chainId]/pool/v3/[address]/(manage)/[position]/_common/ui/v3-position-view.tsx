@@ -66,8 +66,8 @@ import {
   ConcentratedLiquidityProvider,
   useConcentratedDerivedMintInfo,
 } from '~evm/[chainId]/_ui/concentrated-liquidity-provider'
+import { ClaimRewardsButton } from '~evm/[chainId]/claim/rewards/_common/ui/claim-rewards-button'
 import { ConcentratedLiquidityWidget } from '~evm/[chainId]/pool/v3/_ui/concentrated-liquidity-widget'
-import { ClaimRewardsButton } from '~evm/claim/rewards/_common/ui/claim-rewards-button'
 import { DistributionDataTable } from '../../../../_ui/distribution-data-table'
 import { ConcentratedLiquidityCollectWidget } from './concentrated-liquidity-collect-widget'
 import { ConcentratedLiquidityRemoveWidget } from './concentrated-liquidity-remove-widget'

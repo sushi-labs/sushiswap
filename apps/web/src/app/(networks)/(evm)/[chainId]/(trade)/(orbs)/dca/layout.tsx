@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
+import { Header } from 'src/app/(networks)/_ui/header/header'
 import { TWAP_SUPPORTED_CHAIN_IDS, isTwapSupportedChainId } from 'src/config'
-import { Header } from '../../header'
 import { Providers } from './providers'
 
 export const metadata: Metadata = {

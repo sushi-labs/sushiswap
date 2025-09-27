@@ -1,4 +1,5 @@
-import { Header } from '../header'
+import { Header } from 'src/app/(networks)/_ui/header/header'
+import { MvmChainId } from 'sushi/mvm'
 import { Providers } from './providers'
 
 export const metadata = {
@@ -12,7 +13,7 @@ export default function SwapLayout({
 }: { children: React.ReactNode }) {
   return (
     <Providers>
-      <Header />
+      <Header chainId={MvmChainId.APTOS} />
       <main className="lg:p-4 mt-16 mb-[86px] animate-slide">{children}</main>
     </Providers>
   )

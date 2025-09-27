@@ -1,4 +1,5 @@
-import { Header } from '~tron/header'
+import { Header } from 'src/app/(networks)/_ui/header/header'
+import { TvmChainId } from 'sushi/tvm'
 import { Providers } from './providers'
 
 export const metadata = {
@@ -12,7 +13,7 @@ export default function SwapLayout({
 }: { children: React.ReactNode }) {
   return (
     <Providers>
-      <Header />
+      <Header chainId={TvmChainId.TRON} />
       <main className="lg:p-4 mt-16 mb-[86px] animate-slide">{children}</main>
     </Providers>
   )

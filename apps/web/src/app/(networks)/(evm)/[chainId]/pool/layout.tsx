@@ -1,7 +1,7 @@
 import { isPoolChainId } from '@sushiswap/graph-client/data-api'
 import { notFound } from 'next/navigation'
+import { Header } from 'src/app/(networks)/_ui/header/header'
 import { POOL_SUPPORTED_NETWORKS } from 'src/config'
-import { Header } from '../header'
 
 export default async function PoolLayout(props: {
   children: React.ReactNode

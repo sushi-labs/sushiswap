@@ -3,8 +3,8 @@ import {
   isSushiSwapChainId,
 } from '@sushiswap/graph-client/data-api'
 import { notFound } from 'next/navigation'
+import { Header } from 'src/app/(networks)/_ui/header/header'
 import type { EvmChainId } from 'sushi/evm'
-import { Header } from '../../header'
 import { Providers } from './providers'
 
 export default async function PoolLayout(props: {

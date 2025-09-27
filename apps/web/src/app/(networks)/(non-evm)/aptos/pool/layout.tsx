@@ -1,5 +1,6 @@
 import { POOL_SUPPORTED_NETWORKS } from 'src/config'
-import { Header } from '../header'
+import { MvmChainId } from 'sushi/mvm'
+import { Header } from '../../../_ui/header/header'
 import { Providers } from './providers'
 
 export const metadata = {
@@ -11,7 +12,10 @@ export default function PoolLayout({
 }: { children: React.ReactNode }) {
   return (
     <Providers>
-      <Header supportedNetworks={POOL_SUPPORTED_NETWORKS} />
+      <Header
+        chainId={MvmChainId.APTOS}
+        supportedNetworks={POOL_SUPPORTED_NETWORKS}
+      />
       <main className="flex flex-col h-full flex-1 animate-slide">
         {children}
       </main>
