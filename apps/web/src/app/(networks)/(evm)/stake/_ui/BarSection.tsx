@@ -94,7 +94,7 @@ export const BarSection = withCheckerRoot(
       fromToken: inputToken,
       toToken: outputToken,
       amount: parsedInput,
-      slippagePercentage: '0',
+      slippagePercentage: '0.0001', // 0.01%
       recipient: address,
       enabled: Boolean(parsedInput?.gt(0n) && useQuote),
       carbonOffset: false,
@@ -107,7 +107,7 @@ export const BarSection = withCheckerRoot(
       fromToken: inputToken,
       toToken: outputToken,
       amount: parsedInput,
-      slippagePercentage: '0',
+      slippagePercentage: '0.0001', // 0.01%
       recipient: address,
       enabled: Boolean(parsedInput?.gt(0n) && !useQuote),
       carbonOffset: false,
