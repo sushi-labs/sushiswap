@@ -58,7 +58,6 @@ export const getTokenWithCacheQueryFn = async ({
 
   // Try fetching from localStorage
   if (hasToken(getIdFromChainIdAddress(chainId, address))) {
-    console.log(customTokens)
     return customTokens[getIdFromChainIdAddress(chainId, address)]
   }
 
@@ -82,7 +81,7 @@ export const getTokenWithCacheQueryFn = async ({
 
   try {
     const resp = await getTokenWeb3(config, {
-      address: address as Address,
+      address,
       chainId,
     })
     const { decimals, address: tokenAddress, symbol, name } = resp
