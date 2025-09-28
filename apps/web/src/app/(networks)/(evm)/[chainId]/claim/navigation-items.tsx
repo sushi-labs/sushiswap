@@ -1,11 +1,19 @@
 import { LinkInternal } from '@sushiswap/ui'
 import { PathnameButton } from 'src/app/_ui/pathname-button'
+import { type EvmChainId, getEvmChainById } from 'sushi/evm'
 
-export function NavigationItems() {
+export function NavigationItems({ chainId }: { chainId: EvmChainId }) {
+  const chainKey = getEvmChainById(chainId).key
+
   return (
     <>
-      <LinkInternal shallow={true} scroll={false} href={`/claim`}>
-        <PathnameButton id="fees" pathname={`/claim`} asChild size="sm">
+      <LinkInternal shallow={true} scroll={false} href={`/${chainKey}/claim`}>
+        <PathnameButton
+          id="fees"
+          pathname={`/${chainKey}/claim`}
+          asChild
+          size="sm"
+        >
           <span className="flex items-center gap-2">
             <span>💰</span>{' '}
             <span>
@@ -14,10 +22,14 @@ export function NavigationItems() {
           </span>
         </PathnameButton>
       </LinkInternal>
-      <LinkInternal shallow={true} scroll={false} href={`/claim/rewards`}>
+      <LinkInternal
+        shallow={true}
+        scroll={false}
+        href={`/${chainKey}/claim/rewards`}
+      >
         <PathnameButton
           id="rewards"
-          pathname={`/claim/rewards`}
+          pathname={`/${chainKey}/claim/rewards`}
           asChild
           size="sm"
         >

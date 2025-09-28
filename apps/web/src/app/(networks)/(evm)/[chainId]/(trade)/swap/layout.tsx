@@ -1,7 +1,8 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
+import { Header } from 'src/app/(networks)/_ui/header/header'
 import { isSupportedChainId } from 'src/config'
-import { Header } from '../header'
+import { EvmChainId } from 'sushi/evm'
 import { Providers } from './providers'
 
 export const metadata: Metadata = {
@@ -22,9 +23,11 @@ export default async function SwapLayout(props: {
     return notFound()
   }
 
+  const headerTheme = chainId === EvmChainId.KATANA ? 'transparent' : 'default'
+
   return (
     <Providers>
-      <Header chainId={chainId} />
+      <Header chainId={chainId} theme={headerTheme} />
       <main className="lg:p-4 mt-16 mb-[86px]">{children}</main>
     </Providers>
   )

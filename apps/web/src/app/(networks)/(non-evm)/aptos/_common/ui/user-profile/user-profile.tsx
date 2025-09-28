@@ -1,3 +1,5 @@
+'use client'
+
 import { useWallet } from '@aptos-labs/wallet-adapter-react'
 import { Button, Popover, PopoverContent, PopoverTrigger } from '@sushiswap/ui'
 import { JazzIcon } from '@sushiswap/ui/icons/JazzIcon'
