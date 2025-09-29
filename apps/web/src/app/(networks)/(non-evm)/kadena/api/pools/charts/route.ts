@@ -1,27 +1,11 @@
-import {
-  type PoolTimeFrame,
-  getPoolCharts,
-} from '@sushiswap/graph-client/kadena'
+import { getPoolCharts } from '@sushiswap/graph-client/kadena'
 import type { NextRequest } from 'next/server'
 
 import { z } from 'zod'
 
-const validTimeFrame: PoolTimeFrame[] = [
-  'DAY',
-  'WEEK',
-  'MONTH',
-  'YEAR',
-  'ALL',
-  undefined,
-]
-
 const schema = z.object({
   poolId: z.string(),
-  timeFrame: z
-    .string()
-    .refine((val): val is Exclude<PoolTimeFrame, undefined> =>
-      validTimeFrame.includes(val as PoolTimeFrame),
-    ),
+  timeFrame: z.enum(['DAY', 'WEEK', 'MONTH', 'YEAR', 'ALL']).optional(),
 })
 
 export const revalidate = 600

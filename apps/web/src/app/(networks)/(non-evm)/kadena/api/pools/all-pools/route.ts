@@ -6,26 +6,21 @@ import type { NextRequest } from 'next/server'
 
 import { z } from 'zod'
 
-const validOrderBy: GetPoolsOrderBy[] = [
-  'TVL_USD_DESC',
-  'TVL_USD_ASC',
-  'VOLUME_24H_ASC',
-  'VOLUME_24H_DESC',
-  'VOLUME_7D_ASC',
-  'VOLUME_7D_DESC',
-  'APR_24H_ASC',
-  'APR_24H_DESC',
-  'TRANSACTION_COUNT_24H_ASC',
-  'TRANSACTION_COUNT_24H_DESC',
-  undefined,
-]
-
 const schema = z.object({
   orderBy: z
-    .string()
-    .refine((val): val is Exclude<GetPoolsOrderBy, undefined> =>
-      validOrderBy.includes(val as GetPoolsOrderBy),
-    ),
+    .enum([
+      'TVL_USD_DESC',
+      'TVL_USD_ASC',
+      'VOLUME_24H_ASC',
+      'VOLUME_24H_DESC',
+      'VOLUME_7D_ASC',
+      'VOLUME_7D_DESC',
+      'APR_24H_ASC',
+      'APR_24H_DESC',
+      'TRANSACTION_COUNT_24H_ASC',
+      'TRANSACTION_COUNT_24H_DESC',
+    ])
+    .optional(),
   first: z.number().min(1).default(50),
   pageParam: z.string().nullable().default(null),
 })

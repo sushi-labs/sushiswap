@@ -1,24 +1,11 @@
-import {
-  type PoolTransactionType,
-  getPoolTransactions,
-} from '@sushiswap/graph-client/kadena'
+import { getPoolTransactions } from '@sushiswap/graph-client/kadena'
 import type { NextRequest } from 'next/server'
 
 import { z } from 'zod'
 
-const validType: PoolTransactionType[] = [
-  'SWAP',
-  'ADD_LIQUIDITY',
-  'REMOVE_LIQUIDITY',
-]
-
 const schema = z.object({
   pairId: z.string(),
-  type: z
-    .string()
-    .refine((val): val is Exclude<PoolTransactionType, undefined> =>
-      validType.includes(val as PoolTransactionType),
-    ),
+  type: z.enum(['SWAP', 'ADD_LIQUIDITY', 'REMOVE_LIQUIDITY']),
   first: z.number().min(1).default(50),
 })
 

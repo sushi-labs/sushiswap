@@ -1,24 +1,11 @@
-import { type GetPoolTimeframe, getPool } from '@sushiswap/graph-client/kadena'
+import { getPool } from '@sushiswap/graph-client/kadena'
 import type { NextRequest } from 'next/server'
 
 import { z } from 'zod'
 
-const validTimeFrame: GetPoolTimeframe[] = [
-  'DAY',
-  'WEEK',
-  'MONTH',
-  'YEAR',
-  'ALL',
-  undefined,
-]
-
 const schema = z.object({
   poolId: z.string(),
-  timeFrame: z
-    .string()
-    .refine((val): val is Exclude<GetPoolTimeframe, undefined> =>
-      validTimeFrame.includes(val as GetPoolTimeframe),
-    ),
+  timeFrame: z.enum(['DAY', 'WEEK', 'MONTH', 'YEAR', 'ALL']).optional(),
   first: z.number().min(1).max(1).default(1),
 })
 
