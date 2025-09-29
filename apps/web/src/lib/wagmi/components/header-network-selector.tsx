@@ -14,18 +14,14 @@ import {
   type NetworkSelectorOnSelectCallback,
 } from './network-selector'
 
-type SupportedNetworks = readonly ChainId[]
-
 export const HeaderNetworkSelector: FC<{
-  networks: SupportedNetworks
-  supportedNetworks?: SupportedNetworks
+  networks?: readonly ChainId[]
   selectedNetwork?: ChainId
   onChange?(network: ChainId): void
   hideNetworkName?: boolean
   className?: string
 }> = ({
   networks,
-  supportedNetworks,
   selectedNetwork,
   onChange,
   className,
@@ -66,7 +62,6 @@ export const HeaderNetworkSelector: FC<{
   return (
     <NetworkSelector
       selected={selectedNetwork ?? chainId}
-      supportedNetworks={supportedNetworks}
       onSelect={onSwitchNetwork}
       networks={networks}
     >

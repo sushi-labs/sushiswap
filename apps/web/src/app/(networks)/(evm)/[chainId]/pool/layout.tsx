@@ -19,7 +19,7 @@ export default async function PoolLayout(props: {
 
   return (
     <>
-      <Header chainId={chainId} supportedNetworks={POOL_SUPPORTED_NETWORKS} />
+      <Header chainId={chainId} networks={POOL_SUPPORTED_NETWORKS} />
       <main className="flex flex-col h-full flex-1 animate-slide">
         {children}
       </main>
