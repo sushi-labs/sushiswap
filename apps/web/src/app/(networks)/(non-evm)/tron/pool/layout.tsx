@@ -11,7 +11,7 @@ export default function PoolLayout({
 }: { children: React.ReactNode }) {
   return (
     <>
-      <Header supportedNetworks={POOL_SUPPORTED_NETWORKS} />
+      <Header networks={POOL_SUPPORTED_NETWORKS} />
       <main className="flex flex-col h-full flex-1 animate-slide">
         {children}
       </main>
