@@ -14,7 +14,7 @@ import {
 } from 'sushi/evm'
 import type { Address } from 'viem'
 import { useReadContracts } from 'wagmi'
-import type { Writeable } from 'zod'
+import type { util } from 'zod'
 
 interface useTicksProps {
   token0: EvmCurrency | undefined
@@ -156,10 +156,12 @@ export function useTicks({
     const reduced = data?.reduce((ticks, word) => {
       return ticks.concat(word)
     }, [])
-    const renamed = (reduced as Writeable<typeof reduced>)?.map((tick) => ({
-      tickIdx: tick.tick,
-      liquidityNet: tick.liquidityNet,
-    }))
+    const renamed = (reduced as util.Writeable<typeof reduced>)?.map(
+      (tick) => ({
+        tickIdx: tick.tick,
+        liquidityNet: tick.liquidityNet,
+      }),
+    )
     const sorted = renamed?.sort((a, b) => a.tickIdx - b.tickIdx)
 
     return {
