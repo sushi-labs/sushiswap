@@ -43,7 +43,7 @@ export async function GET(request: NextRequest) {
   }
 
   const data = await getAllPools({
-    orderBy: result.data.orderBy,
+    orderBy: result.data.orderBy as GetPoolsOrderBy,
     first: result.data.first,
     after: result.data.pageParam ?? undefined,
   })
