@@ -100,6 +100,12 @@ export const useTokenWithCache = ({
   enabled = true,
   keepPreviousData: isKeepPreviousData = true,
 }: UseTokenParams) => {
+  console.log('inside useTokenWithCache', {
+    chainId,
+    address,
+    enabled,
+    isKeepPreviousData,
+  })
   const { data: customTokens, hasToken } = useCustomTokens()
   const select = useCallback(
     (data: EvmToken<{ approved: boolean }>) =>

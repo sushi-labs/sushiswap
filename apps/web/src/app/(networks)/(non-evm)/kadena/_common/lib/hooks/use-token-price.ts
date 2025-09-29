@@ -23,11 +23,15 @@ const getPrice = async (token: KvmToken | undefined) => {
 
   const tokenAddress = token.address
   const tokenPrice = await getTokenPrice({ tokenAddress })
+  console.log('swag, tokenPrice', tokenPrice)
 
   return tokenPrice?.priceInUsd ?? 0
 }
 
-export const useTokenPrice = ({ token }: { token: KvmToken | undefined }) => {
+export const useTokenPrice = ({
+  token,
+  enabled = true,
+}: { token: KvmToken | undefined; enabled?: boolean }) => {
   return useQuery({
     queryKey: ['use-token-price-kadena', { token: token?.address }],
     queryFn: async () => {
@@ -35,9 +39,11 @@ export const useTokenPrice = ({ token }: { token: KvmToken | undefined }) => {
         throw new Error('Token address is required')
       }
 
+      console.log('tokeninput calling getPrice')
       const tokenPrice = await getPrice(token)
+      console.log('tokeninput useTokenPrice res', tokenPrice)
       return tokenPrice
     },
-    enabled: Boolean(token),
+    enabled: Boolean(token) && enabled,
   })
 }

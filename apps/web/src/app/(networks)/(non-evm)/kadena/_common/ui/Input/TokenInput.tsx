@@ -7,13 +7,25 @@ import {
 } from '@sushiswap/ui'
 import { useCallback, useEffect, useMemo, useState, useTransition } from 'react'
 import { Amount } from 'sushi'
-import type { KvmToken } from 'sushi/kvm'
+import { type EvmChainId, isEvmChainId } from 'sushi/evm'
+import {
+  type KvmChainId,
+  type KvmToken,
+  type KvmTokenAddress,
+  isKvmChainId,
+} from 'sushi/kvm'
 import { formatUnits, parseUnits } from 'viem'
+import { useBalance } from '~evm/_common/ui/balance-provider/use-balance'
+import { usePrice } from '~evm/_common/ui/price-provider/price-provider/use-price'
 import { useTokenBalances } from '~kadena/_common/lib/hooks/use-token-balances'
 import { useTokenPrice } from '~kadena/_common/lib/hooks/use-token-price'
+import type { XSwapToken } from '~kadena/_common/lib/hooks/use-x-swap-token-lists'
 import { useKadena } from '~kadena/kadena-wallet-provider'
 import { Icon } from '../General/Icon'
-import { TokenSelector } from '../General/TokenSelector'
+import {
+  type EthereumChainId,
+  XChainTokenSelector,
+} from '../General/x-chain-token-selector'
 import { DollarAmountDisplay } from '../Shared/DollarAmountDisplay'
 import { TokenBalanceDisplay } from '../Shared/TokenBalanceDisplay'
 
@@ -25,8 +37,8 @@ const themes = {
 type TokenInputProps = {
   id?: string
   type: 'input' | 'output'
-  currency: KvmToken | undefined
-  setToken?: (token: KvmToken) => void
+  currency: XSwapToken | undefined
+  setToken?: (token: XSwapToken) => void
   amount: string
   setAmount: (amount: string) => void
   className?: string
@@ -35,6 +47,8 @@ type TokenInputProps = {
   theme?: keyof typeof themes
   isLoadingAmount?: boolean
   isTxnPending?: boolean
+  networks?: (KvmChainId | EthereumChainId)[]
+  onNetworkSelect?: (network: number) => void
 }
 
 export const TokenInput = ({
@@ -50,24 +64,96 @@ export const TokenInput = ({
   theme = 'default',
   isLoadingAmount = false,
   isTxnPending = false,
+  networks,
 }: TokenInputProps) => {
   const [localValue, setLocalValue] = useState<string>('')
 
   const [pending, startTransition] = useTransition()
   const { activeAccount } = useKadena()
 
-  const { data, isLoading: isLoadingTokenBalance } = useTokenBalances({
+  if (type === 'input') {
+    console.log('tokeninput currency', currency)
+    console.log('tokeninput useTokenBalances params', {
+      account: activeAccount?.accountName ?? '',
+      tokenAddresses:
+        currency?.chainId && isKvmChainId(currency?.chainId)
+          ? [currency.address as KvmTokenAddress]
+          : [],
+    })
+  }
+  // --- KADENA BALANCES ---
+  const kadenaBalances = useTokenBalances({
     account: activeAccount?.accountName ?? '',
-    tokenAddresses: currency ? [currency.address] : [],
-  })
-  const { data: priceUsd, isLoading: isLoadingPrice } = useTokenPrice({
-    token: currency,
+    tokenAddresses:
+      currency?.chainId && isKvmChainId(currency?.chainId)
+        ? [currency.address as KvmTokenAddress]
+        : [],
   })
 
-  const tokenBalance = formatUnits(
-    BigInt(data?.balanceMap[currency?.address ?? ''] ?? '0'),
-    currency?.decimals ?? 12,
-  ).toString()
+  // --- EVM BALANCES ---
+  const evmBalance = useBalance(
+    isEvmChainId(currency?.chainId ?? -1)
+      ? (currency!.chainId as EvmChainId)
+      : undefined,
+    isEvmChainId(currency?.chainId ?? -1)
+      ? (currency!.address as `0x${string}`)
+      : undefined,
+  )
+  console.log('tokeninput balances', { kadenaBalances, evmBalance })
+
+  const evmPrice = usePrice({
+    chainId:
+      currency?.chainId && isEvmChainId(currency?.chainId)
+        ? (currency?.chainId as EvmChainId)
+        : undefined,
+    address:
+      currency?.chainId && isEvmChainId(currency?.chainId)
+        ? (currency?.address as `0x${string}`)
+        : undefined,
+    enabled: currency?.chainId && isEvmChainId(currency?.chainId),
+  })
+
+  if (type === 'input') {
+    console.log('tokeninput useTokenPrice params', {
+      token:
+        currency?.chainId && isKvmChainId(currency?.chainId)
+          ? (currency as KvmToken)
+          : undefined,
+      enabled: currency?.chainId && isKvmChainId(currency?.chainId),
+    })
+  }
+  // Kadena price hook
+  const kadenaPrice = useTokenPrice({
+    token:
+      currency?.chainId && isKvmChainId(currency?.chainId)
+        ? (currency as KvmToken)
+        : undefined,
+    enabled: currency?.chainId && isKvmChainId(currency?.chainId),
+  })
+
+  console.log('tokeninput prices', { evmPrice, kadenaPrice })
+
+  // Pick correct one
+  const priceUsd =
+    currency?.chainId && isEvmChainId(currency?.chainId)
+      ? evmPrice.data
+      : kadenaPrice.data
+
+  const tokenBalance = useMemo(() => {
+    if (!currency) return '0'
+
+    if (isEvmChainId(currency.chainId)) {
+      const raw = evmBalance.data ?? 0n
+      return formatUnits(raw, currency.decimals ?? 18).toString()
+    }
+
+    if (isKvmChainId(currency.chainId)) {
+      const raw = kadenaBalances.data?.balanceMap[currency.address ?? ''] ?? '0'
+      return formatUnits(BigInt(raw), currency.decimals ?? 12).toString()
+    }
+
+    return '0'
+  }, [currency, evmBalance.data, kadenaBalances.data])
 
   const usdValue = priceUsd ?? 0
 
@@ -75,7 +161,8 @@ export const TokenInput = ({
     ? (Number(amount) * (usdValue ? Number(usdValue) : 0)).toString(10)
     : '0.00'
 
-  const isLoading = isLoadingPrice || isLoadingTokenBalance
+  const isLoadingPrice = evmPrice.isLoading || kadenaPrice.isLoading
+  const isLoadingTokenBalance = kadenaBalances.isLoading || evmBalance.isLoading
   const currencyLoading = false
   const fetching = false
 
@@ -107,7 +194,11 @@ export const TokenInput = ({
     if (!setToken) return null
 
     return (
-      <TokenSelector selected={currency} onSelect={setToken}>
+      <XChainTokenSelector
+        selected={currency}
+        onSelect={setToken}
+        networks={networks}
+      >
         <Button
           data-state={currencyLoading ? 'inactive' : 'active'}
           size="lg"
@@ -131,9 +222,9 @@ export const TokenInput = ({
             'Select Token'
           )}
         </Button>
-      </TokenSelector>
+      </XChainTokenSelector>
     )
-  }, [currency, id, setToken])
+  }, [currency, id, setToken, networks])
 
   return (
     <div
@@ -153,7 +244,7 @@ export const TokenInput = ({
       ) : null}
       <div className="relative flex items-center gap-4">
         <div
-          data-state={isLoading ? 'active' : 'inactive'}
+          data-state={isLoadingPrice ? 'active' : 'inactive'}
           className={classNames(
             'data-[state=inactive]:hidden data-[state=active]:flex',
             'gap-4 items-center justify-between flex-grow h-[44px]',
@@ -165,7 +256,7 @@ export const TokenInput = ({
           ) : null}
         </div>
         <div
-          data-state={isLoading ? 'inactive' : 'active'}
+          data-state={isLoadingPrice ? 'inactive' : 'active'}
           className="data-[state=inactive]:hidden data-[state=active]:flex flex-1 items-center"
         >
           {isLoadingAmount ? (
@@ -180,7 +271,7 @@ export const TokenInput = ({
               onValueChange={_onChange}
               value={pending ? localValue : amount}
               readOnly={type === 'output'}
-              data-state={isLoading ? 'inactive' : 'active'}
+              data-state={isLoadingPrice ? 'inactive' : 'active'}
               className={classNames('p-0 py-1 !text-3xl font-medium')}
             />
           )}

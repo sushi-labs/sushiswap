@@ -11,6 +11,8 @@ import {
   detectWalletConnectProvider,
 } from '@kadena/wallet-adapter-walletconnect'
 import { createContext, useContext, useEffect, useMemo, useState } from 'react'
+import { BalanceProvider } from '~evm/_common/ui/balance-provider/balance-provider'
+import { PriceProvider } from '~evm/_common/ui/price-provider/price-provider/price-provider'
 import { KADENA_NETWORK_ID } from './_common/constants/network'
 import { KadenaWalletProvider } from './kadena-wallet-provider'
 
@@ -90,7 +92,11 @@ export function Providers({ children }: { children: React.ReactNode }) {
   return (
     <KadenaAdapaterContext.Provider value={{ refreshSnapAdapter }}>
       <KadenaWalletProviderReact defaultAdapterName="Snap" adapters={adapters}>
-        <KadenaWalletProvider>{children}</KadenaWalletProvider>
+        <KadenaWalletProvider>
+          <BalanceProvider>
+            <PriceProvider>{children}</PriceProvider>
+          </BalanceProvider>
+        </KadenaWalletProvider>
       </KadenaWalletProviderReact>
     </KadenaAdapaterContext.Provider>
   )

@@ -31,36 +31,47 @@ export const useTokenBalances = ({
         preflight: false,
         signatureVerification: false,
       })
+
       if (res.result.status !== 'success') {
         throw new Error(res.result.error?.message || 'Failed to fetch balances')
       }
 
       const cleanedBalanceMap: Record<string, string> = {}
-      for (const [key, { balance, precision }] of Object.entries(
-        res.result.data,
-      )) {
-        const decimals = precision?.int ?? 12
-        const name = key //=== "undefined" ? "coin" : key; // undefined key is native kda
-        const tokenAddress = tokenAddresses.find((address) => {
-          return address.replace('.', '') === name
-        })
+      try {
+        for (const [key, { balance, precision }] of Object.entries(
+          res.result.data,
+        )) {
+          const decimals = precision?.int ?? 12
+          const name = key //=== "undefined" ? "coin" : key; // undefined key is native kda
+          const tokenAddress = tokenAddresses.find((address) => {
+            return address.replace('.', '') === name
+          })
 
-        //@dev will use PactNumber once pactjs pkg is fixed
-        let amount = typeof balance === 'number' ? balance : 0 // Default to 0 if value is not a number b/c it'll the fallback of {int: -1}
-        if (balance && typeof balance === 'object' && 'decimal' in balance) {
-          //id {decimal: "123.456"}
-          amount = balance.decimal // If the value is an object with a decimal property, use that it will be a string
-        } else if (balance && typeof balance === 'object' && 'int' in balance) {
-          // is {int: 123456}
-          if (balance.int < 0) {
-            amount = 0 // If the balance is -1, set to 0
-          } else {
-            amount = balance.int // If the value is an object with an int property, use that
+          //@dev will use PactNumber once pactjs pkg is fixed
+          let amount = typeof balance === 'number' ? balance : 0 // Default to 0 if value is not a number b/c it'll the fallback of {int: -1}
+          if (balance && typeof balance === 'object' && 'decimal' in balance) {
+            //id {decimal: "123.456"}
+            amount = balance.decimal // If the value is an object with a decimal property, use that it will be a string
+          } else if (
+            balance &&
+            typeof balance === 'object' &&
+            'int' in balance
+          ) {
+            // is {int: 123456}
+            if (balance.int < 0) {
+              amount = 0 // If the balance is -1, set to 0
+            } else {
+              amount = balance.int // If the value is an object with an int property, use that
+            }
           }
-        }
 
-        cleanedBalanceMap[tokenAddress || 'coin'] =
-          parseUnits(String(amount ?? 0), decimals)?.toString() || '0'
+          cleanedBalanceMap[tokenAddress || 'coin'] = parseUnits(
+            normalizeAmount(amount),
+            decimals,
+          ).toString()
+        }
+      } catch (err) {
+        console.error('error while cleaning balances', err)
       }
 
       return {
@@ -70,4 +81,16 @@ export const useTokenBalances = ({
     },
     enabled: Boolean(account && tokenAddresses?.length > 0),
   })
+}
+
+function normalizeAmount(amount: number | string): string {
+  if (typeof amount === 'number') {
+    // Convert scientific notation to plain string without grouping
+    return amount.toString().includes('e')
+      ? amount
+          .toExponential(18)
+          .replace(/e\+?/, 'e') // expand with 18 decimals
+      : amount.toString()
+  }
+  return amount
 }
