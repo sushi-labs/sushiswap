@@ -48,7 +48,6 @@
     "@opentelemetry/sdk-trace-base": "2.1.0",
     "@opentelemetry/sdk-trace-web": "2.1.0",
     "@opentelemetry/semantic-conventions": "1.37.0",
-    "@opentelemetry/winston-transport": "0.16.0",
     "@orbs-network/twap-sdk": "4.0.26",
     "@pontem/wallet-adapter-plugin": "0.2.1",
     "@radix-ui/react-slot": "1.1.1",
@@ -117,7 +116,6 @@
     "tronweb": "5.3.2",
     "viem": "catalog:web3",
     "wagmi": "catalog:web3",
-    "winston": "3.17.0",
     "zod": "catalog:"
   },
   "devDependencies": {
