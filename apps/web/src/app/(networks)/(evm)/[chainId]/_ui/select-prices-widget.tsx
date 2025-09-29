@@ -50,7 +50,7 @@ import {
   tickToPrice,
 } from 'sushi/evm'
 
-import { RadioGroup } from '@headlessui/react'
+import { Radio, RadioGroup } from '@headlessui/react'
 import { LockClosedIcon, LockOpenIcon } from '@heroicons/react/24/solid'
 import { ExclamationTriangleIcon } from '@heroicons/react/24/solid'
 import { useConcentratedLiquidityPoolStats } from 'src/lib/hooks/react-query'
@@ -610,9 +610,12 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
               )}
             </div>
             <div className="flex gap-4 justify-between">
-              <RadioGroup value={priceRange} className="gap-2 flex flex-wrap">
+              <RadioGroup
+                value={priceRange || ''}
+                className="gap-2 flex flex-wrap"
+              >
                 {PRICE_RANGE_OPTIONS.map(({ value, label, onClick }) => (
-                  <RadioGroup.Option value={value} key={value}>
+                  <Radio value={value} key={value}>
                     <Toggle
                       disabled={!feeAmount}
                       size="sm"
@@ -633,7 +636,7 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
                     >
                       {label}
                     </Toggle>
-                  </RadioGroup.Option>
+                  </Radio>
                 ))}
               </RadioGroup>
             </div>
@@ -750,7 +753,7 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
                             >
                               <div className="flex gap-1 items-center">
                                 {YIELD_RATE_OPTIONS.map(({ value, label }) => (
-                                  <RadioGroup.Option
+                                  <Radio
                                     value={value}
                                     key={value}
                                     as={Toggle}
@@ -758,7 +761,7 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
                                     pressed={yieldRate === value}
                                   >
                                     {label}
-                                  </RadioGroup.Option>
+                                  </Radio>
                                 ))}
                               </div>
                             </RadioGroup>

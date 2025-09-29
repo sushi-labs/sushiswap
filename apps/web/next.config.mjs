@@ -16,7 +16,7 @@ const nextConfig = bundleAnalyzer({
   poweredByHeader: false,
   staticPageGenerationTimeout: 180,
   turbopack: {
-    root: path.join(__dirname, '..'),
+    root: path.join(__dirname, '../../'),
   },
   experimental: {
     staticGenerationRetryCount: 3,
@@ -57,20 +57,11 @@ const nextConfig = bundleAnalyzer({
         }),
       )
     }
-    // Ignore import trace warnings from graphclient & sentry
     config.ignoreWarnings = [
       {
         module: /node_modules\/@graphql-mesh\/utils\/esm\/defaultImportFn\.js/,
       },
       { file: /node_modules\/@graphql-mesh\/utils\/esm\/defaultImportFn\.js/ },
-      {
-        module: /node_modules\/@sentry\/utils\/esm\/index\.js/,
-      },
-      { file: /node_modules\/@sentry\/utils\/esm\/index\.js/ },
-      {
-        module: /node_modules\/@sentry\/utils\/esm\/isBrowser\.js/,
-      },
-      { file: /node_modules\/@sentry\/utils\/esm\/isBrowser\.js/ },
       {
         module: /node_modules\/@whatwg-node\/fetch\/dist\/node-ponyfill\.js/,
       },
