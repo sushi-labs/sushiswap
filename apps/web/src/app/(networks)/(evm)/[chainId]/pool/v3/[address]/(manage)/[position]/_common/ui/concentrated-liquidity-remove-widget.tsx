@@ -42,6 +42,7 @@ import { Button } from '@sushiswap/ui'
 import React, { type FC, useCallback, useMemo, useState } from 'react'
 import { useTokenAmountDollarValues } from 'src/lib/hooks'
 import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
+import { logger } from 'src/lib/logger'
 import type { ConcentratedLiquidityPosition } from 'src/lib/wagmi/hooks/positions/types'
 import {
   getDefaultTTL,
@@ -165,9 +166,15 @@ export const ConcentratedLiquidityRemoveWidget: FC<
   )
 
   const onError = useCallback((e: Error) => {
-    if (!(e.cause instanceof UserRejectedRequestError)) {
-      createErrorToast(e.message, true)
+    if (e.cause instanceof UserRejectedRequestError) {
+      return
     }
+
+    logger.error(e, {
+      location: 'ConcentratedLiquidityRemoveWidget',
+      action: 'mutationError',
+    })
+    createErrorToast(e.message, true)
   }, [])
 
   const [expectedToken0, expectedToken1] = useMemo(() => {

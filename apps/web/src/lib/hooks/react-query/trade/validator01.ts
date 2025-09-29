@@ -1,3 +1,4 @@
+import { sz } from 'sushi'
 import { isEvmAddress } from 'sushi/evm'
 import type { Address } from 'viem'
 import z from 'zod'
@@ -54,14 +55,8 @@ export const tradeValidator01 = z.object({
   ),
   tx: z.optional(
     z.object({
-      from: z.custom<Address>(
-        (val) => isEvmAddress(val),
-        (val) => ({ message: `Incorrect address for 'from': ${val}` }),
-      ),
-      to: z.custom<Address>(
-        (val) => isEvmAddress(val),
-        (val) => ({ message: `Incorrect address for 'to': ${val}` }),
-      ),
+      from: sz.evm.address(),
+      to: sz.evm.address(),
       gas: z.string().optional(),
       gasPrice: z.number().optional(),
       data: z.string(),

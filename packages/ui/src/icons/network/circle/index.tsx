@@ -33,6 +33,7 @@ import { MantleCircle } from './MantleCircle'
 import { MetisCircle } from './MetisCircle'
 import { ModeCircle } from './ModeCircle'
 import { OptimismCircle } from './OptimismCircle'
+import { PlasmaCircle } from './PlasmaCircle'
 import { PolygonCircle } from './PolygonCircle'
 import { PolygonZKCircle } from './PolygonZKCircle'
 import { RootstockCircle } from './RootstockCircle'
@@ -84,6 +85,7 @@ export * from './MoonriverCircle'
 export * from './OkexCircle'
 export * from './OptimismCircle'
 export * from './PalmCircle'
+export * from './PlasmaCircle'
 export * from './PolygonCircle'
 export * from './PolygonZKCircle'
 export * from './RootstockCircle'
@@ -142,6 +144,7 @@ export const NETWORK_CIRCLE_ICON: Partial<
   [ChainId.KATANA]: KatanaCircle,
   [ChainId.HYPEREVM]: HyperEVMCircle,
   [ChainId.BERACHAIN]: BeraCircle,
+  [ChainId.PLASMA]: PlasmaCircle,
   [ChainId.APTOS]: AptosCircle,
   [ChainId.TRON]: TronCircle,
   [ChainId.KADENA]: KadenaCircle,
