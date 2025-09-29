@@ -19,6 +19,8 @@ export const NewAppVersionDialog = () => {
 
   const { data } = useAppVersion()
 
+  console.log('data', data)
+
   useEffect(() => {
     if (open === null && data?.client !== data?.server) {
       setOpen(true)

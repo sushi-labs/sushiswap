@@ -8,15 +8,15 @@ export const useAppVersion = () => {
       const resp = await fetch('/api/config/version')
       const { success, data } = await resp.json()
 
-      if (!success || !data.commit)
+      if (!success || !data.deploymentId)
         throw new Error('Failed to fetch /api/config/version')
 
       return {
-        server: data.commit,
-        client: process.env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_SHA,
+        server: data.deploymentId,
+        client: process.env.NEXT_PUBLIC_VERCEL_DEPLOYMENT_ID,
       }
     },
     refetchInterval: ms('5m'),
-    enabled: Boolean(process.env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_SHA),
+    enabled: Boolean(process.env.NEXT_PUBLIC_VERCEL_DEPLOYMENT_ID),
   })
 }

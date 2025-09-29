@@ -18,6 +18,9 @@ const nextConfig = bundleAnalyzer({
   turbopack: {
     root: path.join(__dirname, '..'),
   },
+  env: {
+    NEXT_PUBLIC_VERCEL_DEPLOYMENT_ID: process.env.VERCEL_DEPLOYMENT_ID,
+  },
   experimental: {
     staticGenerationRetryCount: 3,
     webpackBuildWorker: true,
