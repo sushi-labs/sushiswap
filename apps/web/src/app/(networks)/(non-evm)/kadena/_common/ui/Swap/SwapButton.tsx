@@ -7,6 +7,7 @@ import {
 import { Button, Dots } from '@sushiswap/ui'
 import { useQueryClient } from '@tanstack/react-query'
 import { useKadenaWallet } from 'node_modules/@kadena/wallet-adapter-react/dist/esm/context'
+import { logger } from 'src/lib/logger'
 import { KvmChainId, getKvmChainByKey } from 'sushi/kvm'
 import { kadenaClient } from '~kadena/_common/constants/client'
 import {
@@ -147,6 +148,13 @@ export const SwapButton = ({ closeModal }: { closeModal: () => void }) => {
         chainId: KvmChainId.KADENA,
         groupTimestamp: Date.now(),
         timestamp: Date.now(),
+      })
+      logger.error(err, {
+        location: 'KadenaSwapButton',
+        action: 'swapToken',
+        token_from: token0?.address,
+        token_to: token1?.address,
+        account: address,
       })
       setStatus('error')
       console.error(err)

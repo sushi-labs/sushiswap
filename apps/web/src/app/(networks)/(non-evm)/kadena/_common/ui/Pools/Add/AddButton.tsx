@@ -12,6 +12,7 @@ import {
 import { Button, type ButtonProps, Dots } from '@sushiswap/ui'
 import { useQueryClient } from '@tanstack/react-query'
 import { useMemo } from 'react'
+import { logger } from 'src/lib/logger'
 import { Amount } from 'sushi'
 import { KvmChainId, getKvmChainByKey } from 'sushi/kvm'
 import { parseUnits } from 'viem'
@@ -225,6 +226,13 @@ export const AddButton = ({
         chainId: KvmChainId.KADENA,
         groupTimestamp: Date.now(),
         timestamp: Date.now(),
+      })
+      logger.error(error, {
+        location: 'KadenaAddButton',
+        action: 'addLiquidity',
+        token0: token0?.address,
+        token1: token1?.address,
+        account: address,
       })
       console.error(error)
       setIsTxnPending(false)

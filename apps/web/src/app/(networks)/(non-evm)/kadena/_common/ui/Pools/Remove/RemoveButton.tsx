@@ -9,6 +9,7 @@ import { Button, type ButtonProps, Dots } from '@sushiswap/ui'
 import { useQueryClient } from '@tanstack/react-query'
 import { useParams } from 'next/navigation'
 import { useMemo } from 'react'
+import { logger } from 'src/lib/logger'
 import { KvmChainId, getKvmChainByKey } from 'sushi/kvm'
 import { kadenaClient } from '~kadena/_common/constants/client'
 import { MIN_GAS_FEE } from '~kadena/_common/constants/gas'
@@ -140,6 +141,14 @@ export const RemoveButton = (props: ButtonProps) => {
         chainId: KvmChainId.KADENA,
         groupTimestamp: Date.now(),
         timestamp: Date.now(),
+      })
+      logger.error(error, {
+        location: 'KadenaRemoveButton',
+        action: 'removeLiquidity',
+        token0: token0?.address,
+        token1: token1?.address,
+        account: address,
+        pool_id: poolId,
       })
       console.error(error)
       setIsTxnPending(false)
