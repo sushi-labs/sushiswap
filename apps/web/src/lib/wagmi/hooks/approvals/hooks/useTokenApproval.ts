@@ -3,6 +3,7 @@
 import { createErrorToast, createToast } from '@sushiswap/notifications'
 import { InterfaceEventName, sendAnalyticsEvent } from '@sushiswap/telemetry'
 import { useCallback, useMemo, useState } from 'react'
+import { logger } from 'src/lib/logger'
 import type { Amount } from 'sushi'
 import { type EvmAddress, type EvmCurrency, erc20Abi_approve } from 'sushi/evm'
 import {
@@ -157,11 +158,15 @@ export const useTokenApproval = ({
   )
 
   const onError = useCallback((e: Error) => {
-    if (e instanceof Error) {
-      if (!(e.cause instanceof UserRejectedRequestError)) {
-        createErrorToast(e.message, true)
-      }
+    if (e.cause instanceof UserRejectedRequestError) {
+      return
     }
+
+    logger.error(e, {
+      location: 'useTokenApproval',
+      action: 'mutationError',
+    })
+    createErrorToast(e.message, true)
   }, [])
 
   const execute = useWriteContract({
