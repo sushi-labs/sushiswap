@@ -18,12 +18,11 @@ import {
   UI_FEE_COLLECTOR_ADDRESS,
   getEvmChainById,
   isMultisigChainId,
-  isSurplusFeeCollectorChainId,
   shortenEvmAddress,
 } from 'sushi/evm'
 import { isAddressEqual, zeroAddress } from 'viem'
 import type { Address } from 'viem/accounts'
-import { type UseReadContractsParameters, useReadContracts } from 'wagmi'
+import { useReadContracts } from 'wagmi'
 import { feeCollectorAbi } from './fee-collector-abi'
 import { abi as v3ManagerAbi } from './v3-manager-abi'
 
@@ -60,7 +59,7 @@ const V3_MANAGER_CHAIN_IDS = [
   EvmChainId.POLYGON_ZKEVM,
   EvmChainId.ROOTSTOCK,
   EvmChainId.SCROLL,
-  // EvmChainId.SKALE_EUROPA,
+  EvmChainId.SKALE_EUROPA,
   EvmChainId.THUNDERCORE,
   EvmChainId.ZETACHAIN,
   EvmChainId.SONIC,
@@ -100,7 +99,7 @@ const V3_MANAGER_ADDRESS: Record<V3ManagerChainId, `0x${string}`> = {
   [EvmChainId.POLYGON_ZKEVM]: '0xCd03e2e276F6EEdD424d41314437531F665187b9',
   [EvmChainId.ROOTSTOCK]: '0xCd03e2e276F6EEdD424d41314437531F665187b9',
   [EvmChainId.SCROLL]: '0xCd03e2e276F6EEdD424d41314437531F665187b9',
-  // [EvmChainId.SKALE_EUROPA]: //
+  [EvmChainId.SKALE_EUROPA]: '0xb865477f91caAA7b156fEA25834F1c5f017a4D1b',
   [EvmChainId.THUNDERCORE]: '0xCd03e2e276F6EEdD424d41314437531F665187b9',
   [EvmChainId.ZETACHAIN]: '0xCd03e2e276F6EEdD424d41314437531F665187b9',
   [EvmChainId.SONIC]: '0xc707E1FF974E28918b1e4D0cFf5a020450E8aCE7',
