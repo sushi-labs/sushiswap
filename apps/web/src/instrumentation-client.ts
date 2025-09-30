@@ -172,6 +172,7 @@ const ignoreUrls = [
   'https://cca-lite.coinbase.com/*',
   'google-analytics.com',
   'https://cdn.sushi.com',
+  'lb.drpc.org',
   '/_next/static',
   '/_next/data',
   '/_next/image',
@@ -218,5 +219,12 @@ export function onRouterTransitionStart(
 
   faro.api.setView({
     name: `${window.location.protocol}//${window.location.host}${url}`,
+  })
+}
+
+if (!('structuredClone' in globalThis)) {
+  import('@ungap/structured-clone').then((mod) => {
+    // @ts-ignore
+    globalThis.structuredClone = mod.default
   })
 }

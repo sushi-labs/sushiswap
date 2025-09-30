@@ -20,6 +20,7 @@ import { Currency } from '@sushiswap/ui'
 import type React from 'react'
 import { type FC, type ReactNode, useCallback, useMemo, useState } from 'react'
 import { useTokenAmountDollarValues } from 'src/lib/hooks'
+import { logger } from 'src/lib/logger'
 import type { ConcentratedLiquidityPositionWithV3Pool } from 'src/lib/wagmi/hooks/positions/types'
 import { Amount } from 'sushi'
 import {
@@ -206,9 +207,15 @@ const _ConcentratedLiquidityCollectAllDialog: FC<
   )
 
   const onError = useCallback((e: Error) => {
-    if (!(e.cause instanceof UserRejectedRequestError)) {
-      createErrorToast(e?.message, true)
+    if (e.cause instanceof UserRejectedRequestError) {
+      return
     }
+
+    logger.error(e, {
+      location: 'ConcentratedLiquidityCollectAllDialog',
+      action: 'mutationError',
+    })
+    createErrorToast(e?.message, true)
   }, [])
 
   const { isError: isSimulationError } = useCall({

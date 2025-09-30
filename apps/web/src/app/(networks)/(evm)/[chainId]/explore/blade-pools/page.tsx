@@ -27,7 +27,9 @@ export default async function BladePoolsPage(props: {
   const activePools = pools.filter(
     (pool) =>
       !pool.isDeprecated &&
-      !EXCLUDED_POOLS[chainId]?.includes(pool.address.toLowerCase()),
+      !EXCLUDED_POOLS[chainId]?.includes(pool.address.toLowerCase()) &&
+      (pool.abi === 'BladeVerifiedExchange' ||
+        pool.abi === 'BladeApproximateCaravelExchange'),
   )
 
   const featuredPool =

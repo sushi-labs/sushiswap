@@ -18,6 +18,7 @@ import {
 } from 'wagmi'
 import type { SendTransactionReturnType } from 'wagmi/actions'
 
+import { logger } from 'src/lib/logger'
 import { useRefetchBalances } from '~evm/_common/ui/balance-provider/use-refetch-balances'
 
 interface UseBarDepositParams {
@@ -60,9 +61,15 @@ export function useBarDeposit({ amount, enabled = true }: UseBarDepositParams) {
   )
 
   const onError = useCallback((e: Error) => {
-    if (!(e.cause instanceof UserRejectedRequestError)) {
-      createErrorToast(e?.message, true)
+    if (e.cause instanceof UserRejectedRequestError) {
+      return
     }
+
+    logger.error(e, {
+      location: 'useBarDeposit',
+      action: 'mutationError',
+    })
+    createErrorToast(e?.message, true)
   }, [])
 
   const { data: simulation } = useSimulateContract({

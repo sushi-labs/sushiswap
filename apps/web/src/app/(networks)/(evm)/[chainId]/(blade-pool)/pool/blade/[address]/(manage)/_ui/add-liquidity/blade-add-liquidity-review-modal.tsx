@@ -26,7 +26,6 @@ import { APPROVE_TAG_ADD_LEGACY } from 'src/lib/constants'
 import type { RfqAllowDepositResponse } from 'src/lib/pool/blade/useBladeAllowDeposit'
 import { useBladeDepositRequest } from 'src/lib/pool/blade/useBladeDepositRequest'
 import { useBladeDepositTransaction } from 'src/lib/pool/blade/useBladeDepositTransaction'
-import { useUnlockDeposit } from 'src/lib/pool/blade/useUnlockDeposit'
 import { isUserRejectedError } from 'src/lib/wagmi/errors'
 import { useTotalSupply } from 'src/lib/wagmi/hooks/tokens/useTotalSupply'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
@@ -82,37 +81,10 @@ export const BladeAddLiquidityReviewModal: FC<
   const { address } = useAccount()
   const { approved } = useApproved(APPROVE_TAG_ADD_LEGACY)
   const client = usePublicClient()
-  const {
-    liquidityToken,
-    vestingDeposit,
-    refetch: refetchPosition,
-  } = useBladePoolPosition()
+  const { liquidityToken, refetch: refetchPosition } = useBladePoolPosition()
   const poolTotalSupply = useTotalSupply(liquidityToken)
   const { refetchChain: refetchBalances } = useRefetchBalances()
   const { data: prices } = usePrices({ chainId })
-
-  const hasLockedPosition = useMemo(() => {
-    return Boolean(vestingDeposit?.balance && vestingDeposit.balance > 0n)
-  }, [vestingDeposit?.balance])
-
-  const canUnlockPosition = useMemo(() => {
-    if (!vestingDeposit?.balance || !vestingDeposit.lockedUntil) return false
-    return (
-      vestingDeposit.balance > 0n && new Date() >= vestingDeposit.lockedUntil
-    )
-  }, [vestingDeposit?.balance, vestingDeposit?.lockedUntil])
-
-  const { write: unlockDeposit, isPending: isUnlockingDeposit } =
-    useUnlockDeposit({
-      pool,
-      enabled: canUnlockPosition,
-      onSuccess: () => {
-        // Re-trigger RFQ after unlock
-        handleRfqCall()
-        refetchPosition()
-      },
-    })
-
   const onSuccess = useCallback(
     (hash: Hex) => {
       _onSuccess()
@@ -344,29 +316,14 @@ export const BladeAddLiquidityReviewModal: FC<
               ) : null}
 
               <DialogFooter>
-                <Checker.Custom
-                  showChildren={!hasLockedPosition || !lockTime?.seconds}
-                  onClick={unlockDeposit!}
-                  buttonText={
-                    canUnlockPosition
-                      ? 'Unlock position'
-                      : 'Wait for position to unlock'
-                  }
-                  loading={isUnlockingDeposit}
-                  disabled={
-                    !canUnlockPosition || !unlockDeposit || isUnlockingDeposit
-                  }
-                  fullWidth
-                >
-                  <AddLiquidityButton
-                    depositRequest={depositRequest}
-                    handleRfqCall={handleRfqCall}
-                    transactionMutation={transactionMutation}
-                    handleConfirmTransaction={handleConfirmTransaction}
-                    approved={approved}
-                    confirm={confirm}
-                  />
-                </Checker.Custom>
+                <AddLiquidityButton
+                  depositRequest={depositRequest}
+                  handleRfqCall={handleRfqCall}
+                  transactionMutation={transactionMutation}
+                  handleConfirmTransaction={handleConfirmTransaction}
+                  approved={approved}
+                  confirm={confirm}
+                />
               </DialogFooter>
             </DialogContent>
           </>

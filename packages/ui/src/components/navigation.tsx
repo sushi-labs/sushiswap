@@ -241,39 +241,38 @@ const NavigationListItem = React.forwardRef<
   React.ElementRef<'a'>,
   NavigationListItemProps
 >(({ className, title, children, href, ...props }, ref) => {
+  const { onSelect: _onSelect, ...anchorProps } = props
+  const classes = classNames(
+    'cursor-pointer block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground',
+    className,
+  )
+
+  const content = (
+    <>
+      <div className="text-sm font-medium leading-none">{title}</div>
+      <p className="text-sm leading-snug line-clamp-2 text-muted-foreground">
+        {children}
+      </p>
+    </>
+  )
+
+  const isInternalLink = typeof href === 'string' && /^\/(?!\/)/.test(href)
+
   return (
     <li>
-      <NavigationMenuLink asChild>
-        {!href ? (
-          <a
-            ref={ref}
-            className={classNames(
-              'cursor-pointer block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground',
-              className,
-            )}
-            href={href}
-            {...props}
-          >
-            <div className="text-sm font-medium leading-none">{title}</div>
-            <p className="text-sm leading-snug line-clamp-2 text-muted-foreground">
-              {children}
-            </p>
-          </a>
-        ) : (
-          <Link
-            href={href}
-            className={classNames(
-              'cursor-pointer block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground',
-              className,
-            )}
-          >
-            <div className="text-sm font-medium leading-none">{title}</div>
-            <p className="text-sm leading-snug line-clamp-2 text-muted-foreground">
-              {children}
-            </p>
+      {href && isInternalLink ? (
+        <NavigationMenuLink asChild>
+          <Link ref={ref} className={classes} href={href} {...anchorProps}>
+            {content}
           </Link>
-        )}
-      </NavigationMenuLink>
+        </NavigationMenuLink>
+      ) : (
+        <NavigationMenuLink asChild>
+          <a ref={ref} className={classes} href={href} {...anchorProps}>
+            {content}
+          </a>
+        </NavigationMenuLink>
+      )}
     </li>
   )
 })
