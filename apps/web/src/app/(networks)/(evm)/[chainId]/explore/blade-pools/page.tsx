@@ -24,17 +24,18 @@ export default async function BladePoolsPage(props: {
   }
 
   const pools = await getBladePools({ chainId })
-  const featuredAbis: (typeof pools)[number]['abi'][] = [
+  const bladeAbis: (typeof pools)[number]['abi'][] = [
     'BladeVerifiedExchange',
     'BladeApproximateCaravelExchange',
-    'ClipperApproximateCaravelExchange',
   ]
   const activePools = pools.filter(
     (pool) =>
       !pool.isDeprecated &&
-      !EXCLUDED_POOLS[chainId]?.includes(pool.address.toLowerCase()) &&
-      featuredAbis.includes(pool.abi),
+      !EXCLUDED_POOLS[chainId]?.includes(pool.address.toLowerCase()),
   )
+  const bladePools = activePools.filter((pool) => bladeAbis.includes(pool.abi))
+  // if there are any Blade pools, only display them, otherwise display Clipper pools
+  const poolsToDisplay = bladePools.length > 0 ? bladePools : activePools
 
   const featuredPool =
     activePools.length > 0
@@ -46,7 +47,7 @@ export default async function BladePoolsPage(props: {
   return (
     <Container maxWidth="7xl" className="space-y-6 px-4">
       {featuredPool && <BladeFeaturedPoolBanner pool={featuredPool} />}
-      <BladePoolsTable pools={activePools} />
+      <BladePoolsTable pools={poolsToDisplay} />
     </Container>
   )
 }
