@@ -32,7 +32,7 @@ export default async function ExploreLayout(props: {
 
   return (
     <>
-      <Header chainId={chainId} supportedNetworks={bladeChainIds} />
+      <Header chainId={chainId} networks={bladeChainIds} />
       <main className="flex flex-col h-full flex-1">
         <Container maxWidth="7xl" className="px-4 py-4">
           <GlobalStatsCharts chainId={chainId} />

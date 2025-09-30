@@ -20,7 +20,7 @@ export default async function BladePoolLayout(props: {
 
   return (
     <>
-      <Header chainId={chainId} supportedNetworks={bladeChainIds} />
+      <Header chainId={chainId} networks={bladeChainIds} />
       <main className="flex flex-col h-full flex-1 animate-slide">
         {children}
       </main>

@@ -3,33 +3,21 @@
 import { useMutation } from '@tanstack/react-query'
 import { useEffect } from 'react'
 import { BLADE_API_HOST, BLADE_API_KEY } from 'src/lib/constants'
-import { isAddress, isHex } from 'viem'
+import { sz } from 'sushi'
+import { isAddress } from 'viem'
 import { z } from 'zod'
 
 const rfqDepositResponseBaseSchema = z.object({
-  sender: z.string().refine((address) => isAddress(address), {
-    message: 'sender does not conform to Address',
-  }),
+  sender: sz.evm.address(),
   pool_tokens: z.string(),
   good_until: z.number(),
   signature: z.object({
     v: z.number(),
-    r: z.string().refine((hex) => isHex(hex), {
-      message: 'r does not conform to Hex',
-    }),
-    s: z.string().refine((hex) => isHex(hex), {
-      message: 's does not conform to Hex',
-    }),
+    r: sz.hex(),
+    s: sz.hex(),
   }),
-  clipper_exchange_address: z.string().refine((address) => isAddress(address), {
-    message: 'clipper_exchange_address does not conform to Address',
-  }),
-  extra_data: z
-    .string()
-    .refine((hex) => isHex(hex), {
-      message: 'extra_data does not conform to Hex',
-    })
-    .optional(),
+  clipper_exchange_address: sz.evm.address(),
+  extra_data: sz.hex().optional(),
 })
 
 const multipleDepositMixin = z.object({

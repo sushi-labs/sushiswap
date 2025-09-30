@@ -3,32 +3,21 @@
 import { useMutation } from '@tanstack/react-query'
 import { useEffect } from 'react'
 import { BLADE_API_HOST, BLADE_API_KEY } from 'src/lib/constants'
-import { isEvmAddress } from 'sushi/evm'
-import { isHex } from 'viem'
+import { sz } from 'sushi'
 import { z } from 'zod'
 
 const rfqWithdrawResponseSchema = z.object({
-  token_holder_address: z.string().refine(isEvmAddress, {
-    message: 'token_holder_address does not conform to Address',
-  }),
+  token_holder_address: sz.evm.address(),
   pool_token_amount_to_burn: z.string(),
-  asset_address: z.string().refine(isEvmAddress, {
-    message: 'asset_address does not conform to Address',
-  }),
+  asset_address: sz.evm.address(),
   asset_amount: z.string(),
   good_until: z.number(),
   signature: z.object({
     v: z.number(),
-    r: z.string().refine((hex) => isHex(hex), {
-      message: 'r does not conform to Hex',
-    }),
-    s: z.string().refine((hex) => isHex(hex), {
-      message: 's does not conform to Hex',
-    }),
+    r: sz.hex(),
+    s: sz.hex(),
   }),
-  extra_data: z.string().refine((hex) => isHex(hex), {
-    message: 'extra_data does not conform to Hex',
-  }),
+  extra_data: sz.hex().optional(),
 })
 
 export type RfqWithdrawPayload = {
