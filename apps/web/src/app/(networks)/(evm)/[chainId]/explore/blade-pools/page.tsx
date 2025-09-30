@@ -24,12 +24,16 @@ export default async function BladePoolsPage(props: {
   }
 
   const pools = await getBladePools({ chainId })
+  const featuredAbis: (typeof pools)[number]['abi'][] = [
+    'BladeVerifiedExchange',
+    'BladeApproximateCaravelExchange',
+    'ClipperApproximateCaravelExchange',
+  ]
   const activePools = pools.filter(
     (pool) =>
       !pool.isDeprecated &&
       !EXCLUDED_POOLS[chainId]?.includes(pool.address.toLowerCase()) &&
-      (pool.abi === 'BladeVerifiedExchange' ||
-        pool.abi === 'BladeApproximateCaravelExchange'),
+      featuredAbis.includes(pool.abi),
   )
 
   const featuredPool =
