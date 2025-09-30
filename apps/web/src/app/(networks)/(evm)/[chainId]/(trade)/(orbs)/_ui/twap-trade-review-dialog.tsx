@@ -169,11 +169,13 @@ export const TwapTradeReviewDialog: FC<{
     if (!sendTransactionAsync || !trade?.tx || !estGas) return undefined
 
     return async (confirm: () => void) => {
-      await sendTransactionAsync({
-        ...trade?.tx,
-        gas: (estGas * 6n) / 5n,
-      })
-      confirm()
+      try {
+        await sendTransactionAsync({
+          ...trade?.tx,
+          gas: (estGas * 6n) / 5n,
+        })
+        confirm()
+      } catch {}
     }
   }, [sendTransactionAsync, trade?.tx, estGas])
 

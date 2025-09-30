@@ -168,7 +168,7 @@ export const ConcentratedLiquidityCollectButton: FC<
 
     return async () => {
       try {
-        await sendTransactionAsync(prepare)
+        await sendTransactionAsync(prepare).catch()
         sendAnalyticsEvent(LiquidityEventName.COLLECT_LIQUIDITY_SUBMITTED, {
           chain_id: prepare.chainId,
           address: account,

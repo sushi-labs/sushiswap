@@ -105,7 +105,7 @@ const _ApproveERC20WithPermit: FC<ApproveERC20WithPermitProps> = ({
   const [approvalState, { write: onApprove }] = useTokenApproval({
     amount,
     spender: contract,
-    enabled: enabled && approvalType === ApprovalType.Approve,
+    enabled: enabled && approvalType !== ApprovalType.Permit,
     approveMax: approvalType === ApprovalType.ApproveMax,
   })
 

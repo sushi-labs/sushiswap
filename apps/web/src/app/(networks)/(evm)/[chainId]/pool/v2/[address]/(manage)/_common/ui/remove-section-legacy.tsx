@@ -498,6 +498,7 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> =
                           onClick={() => send?.()}
                           disabled={!approved || isWritePending || !send}
                           testId="remove-liquidity"
+                          size="xl"
                         >
                           {isWritePending ? (
                             <Dots>Confirm transaction</Dots>
