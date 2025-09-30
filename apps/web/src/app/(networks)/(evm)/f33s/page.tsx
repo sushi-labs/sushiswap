@@ -15,6 +15,7 @@ import {
   MULTISIG_ADDRESS,
   PROTOCOL_FEE_COLLECTOR_ADDRESS,
   SURPLUS_FEE_COLLECTOR_ADDRESS,
+  SUSHISWAP_V3_SUPPORTED_CHAIN_IDS,
   UI_FEE_COLLECTOR_ADDRESS,
   getEvmChainById,
   isMultisigChainId,
@@ -33,39 +34,12 @@ const isFeeCollectorChainId = (
   FEE_COLLECTOR_CHAIN_IDS.includes(chainId as FeeCollectorChainId)
 
 const V3_MANAGER_CHAIN_IDS = [
-  EvmChainId.ETHEREUM,
-  EvmChainId.ARBITRUM_NOVA,
-  EvmChainId.ARBITRUM,
-  EvmChainId.AVALANCHE,
-  EvmChainId.BASE,
-  EvmChainId.BLAST,
-  EvmChainId.BOBA,
-  EvmChainId.BSC,
-  EvmChainId.BTTC,
+  ...SUSHISWAP_V3_SUPPORTED_CHAIN_IDS,
   EvmChainId.CELO,
-  EvmChainId.CORE,
-  EvmChainId.FANTOM,
-  EvmChainId.FILECOIN,
-  // EvmChainId.FUSE,
-  EvmChainId.GNOSIS,
-  EvmChainId.HAQQ,
-  EvmChainId.KAVA,
-  EvmChainId.LINEA,
-  EvmChainId.METIS,
-  // EvmChainId.MOONBEAM,
-  // EvmChainId.MOONRIVER,
-  EvmChainId.OPTIMISM,
-  EvmChainId.POLYGON,
   EvmChainId.POLYGON_ZKEVM,
-  EvmChainId.ROOTSTOCK,
-  EvmChainId.SCROLL,
-  EvmChainId.SKALE_EUROPA,
-  EvmChainId.THUNDERCORE,
-  EvmChainId.ZETACHAIN,
-  EvmChainId.SONIC,
-  EvmChainId.HEMI,
-  EvmChainId.KATANA,
-] as const
+].filter(
+  (chainId) => chainId !== EvmChainId.TATARA && chainId !== EvmChainId.SEPOLIA,
+)
 
 type V3ManagerChainId = (typeof V3_MANAGER_CHAIN_IDS)[number]
 
