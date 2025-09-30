@@ -318,7 +318,7 @@ export const ConcentratedLiquidityRemoveWidget: FC<
 
     return async (confirm: () => void) => {
       try {
-        await sendTransactionAsync(prepare).catch()
+        await sendTransactionAsync(prepare)
         confirm()
       } catch {}
     }
