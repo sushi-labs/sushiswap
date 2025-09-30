@@ -4,6 +4,7 @@ import { createErrorToast, createToast } from '@sushiswap/notifications'
 import { Button, Dots } from '@sushiswap/ui'
 import { useCallback, useMemo, useState } from 'react'
 import { useTrade, useTradeQuote } from 'src/lib/hooks/react-query'
+import { logger } from 'src/lib/logger'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
 import {
   useApproved,
@@ -75,9 +76,15 @@ export const BarSection = withCheckerRoot(
     )
 
     const onError = useCallback((e: Error) => {
-      if (!(e.cause instanceof UserRejectedRequestError)) {
-        createErrorToast(e?.message, true)
+      if (e.cause instanceof UserRejectedRequestError) {
+        return
       }
+
+      logger.error(e, {
+        location: 'BarSection',
+        action: 'mutationError',
+      })
+      createErrorToast(e?.message, true)
     }, [])
 
     const useQuote = Boolean(!address || !approved)

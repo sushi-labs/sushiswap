@@ -7,6 +7,7 @@ import {
   type TwapOrder,
   usePersistedOrdersStore,
 } from 'src/lib/hooks/react-query/twap'
+import { logger } from 'src/lib/logger'
 import { TwapSDK } from 'src/lib/swap/twap'
 import { twapAbi_cancel } from 'src/lib/swap/twap/abi'
 import {
@@ -92,6 +93,9 @@ export const TwapCancelOrderButton = ({
       return
     }
 
+    logger.error(e, {
+      location: 'TwapCancelOrderButton',
+    })
     createErrorToast(e.message, false)
   }, [])
 

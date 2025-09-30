@@ -5,7 +5,7 @@ export async function portalMiddleware(request: NextRequest) {
   const session = await getSessionData()
 
   if (!session.isLoggedIn) {
-    return
+    return NextResponse.next()
   }
 
   if (!session.user.email.isVerified) {
@@ -16,5 +16,5 @@ export async function portalMiddleware(request: NextRequest) {
     }
   }
 
-  return
+  return NextResponse.next()
 }

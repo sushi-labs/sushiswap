@@ -18,6 +18,7 @@ import { useRouter } from 'next/navigation'
 import type { GetServicesErc20DepositsConfig200Response } from 'node_modules/@sushiswap/styro-client/dist/generated'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { useStyroClient } from 'src/app/portal/_common/ui/auth-provider/auth-provider'
+import { logger } from 'src/lib/logger'
 import { getNetworkName } from 'src/lib/network'
 import { NetworkSelector } from 'src/lib/wagmi/components/network-selector'
 import { CurrencyInput } from 'src/lib/wagmi/components/web3-input/Currency'
@@ -117,9 +118,15 @@ function Deposit({
   )
 
   const onError = useCallback((e: Error) => {
-    if (!(e.cause instanceof UserRejectedRequestError)) {
-      createErrorToast(e?.message, true)
+    if (e.cause instanceof UserRejectedRequestError) {
+      return
     }
+
+    logger.error(e, {
+      location: 'TeamBalanceCrypto',
+      action: 'mutationError',
+    })
+    createErrorToast(e?.message, true)
   }, [])
 
   const { data: simulation } = useSimulateContract({

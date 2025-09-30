@@ -19,6 +19,4 @@ export const registerFormSchema = z
         path: ['passwordConfirmation'],
       })
     }
-
-    return data
   })
