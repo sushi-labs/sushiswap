@@ -15,7 +15,7 @@ catalogs:
     "sushi": 6.2.0
     "wagmi": 2.16.0
     "@wagmi/core": 2.18.0
-    "viem": 2.33.0
+    "viem": 2.37.9
 
   react:
     "next": 15.5.3
