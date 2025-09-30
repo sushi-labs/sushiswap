@@ -3,7 +3,7 @@
 import { type V2Pool, getV2Pool } from '@sushiswap/graph-client/data-api'
 import { useQuery } from '@tanstack/react-query'
 import { useMemo } from 'react'
-import { stringify } from 'src/instrumentation'
+import { stringify } from 'src/instrumentation/bigint-json'
 import { Amount } from 'sushi'
 import { type PoolId, isSushiSwapV2ChainId } from 'sushi/evm'
 import { getTokensFromPool } from '../useTokensFromPool'

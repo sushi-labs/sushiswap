@@ -2,6 +2,7 @@
 
 import { createErrorToast, createToast } from '@sushiswap/notifications'
 import { useCallback, useMemo } from 'react'
+import { logger } from 'src/lib/logger'
 import type { Amount } from 'sushi'
 import {
   EvmChainId,
@@ -62,9 +63,15 @@ export function useBarWithdraw({
   )
 
   const onError = useCallback((e: Error) => {
-    if (!(e.cause instanceof UserRejectedRequestError)) {
-      createErrorToast(e?.message, true)
+    if (e.cause instanceof UserRejectedRequestError) {
+      return
     }
+
+    logger.error(e, {
+      location: 'useBarWithdraw',
+      action: 'mutationError',
+    })
+    createErrorToast(e?.message, true)
   }, [])
 
   const { data: simulation } = useSimulateContract({

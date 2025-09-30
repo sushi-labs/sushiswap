@@ -21,6 +21,7 @@ import {
   useWriteContract,
 } from 'wagmi'
 
+import { logger } from 'src/lib/logger'
 import { useRefetchBalances } from '~evm/_common/ui/balance-provider/use-refetch-balances'
 import { V3Migrator } from '../abis/V3Migrator'
 import { V3MigrateAddress } from '../constants'
@@ -219,9 +220,15 @@ export const useV3Migrate = ({
 
   const onError = useCallback((e: Error) => {
     if (e instanceof Error) {
-      if (!(e.cause instanceof UserRejectedRequestError)) {
-        createErrorToast(e.message, true)
+      if (e.cause instanceof UserRejectedRequestError) {
+        return
       }
+
+      logger.error(e, {
+        location: 'useV3Migrate',
+        action: 'mutationError',
+      })
+      createErrorToast(e.message, true)
     }
   }, [])
 

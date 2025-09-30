@@ -14,10 +14,7 @@ const supportedNetworks = [EvmChainId.ETHEREUM]
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <Providers>
-      <Header
-        chainId={EvmChainId.ETHEREUM}
-        supportedNetworks={supportedNetworks}
-      />
+      <Header chainId={EvmChainId.ETHEREUM} networks={supportedNetworks} />
       <div className="flex flex-col flex-1 overflow-y-auto animate-slide">
         <Container maxWidth="5xl" className="px-4 pt-16 mb-12">
           <BarHeader />
