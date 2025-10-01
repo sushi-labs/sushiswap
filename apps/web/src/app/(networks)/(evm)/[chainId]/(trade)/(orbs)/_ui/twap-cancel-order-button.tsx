@@ -114,11 +114,13 @@ export const TwapCancelOrderButton = ({
     if (!sendTransactionAsync || !estGas) return undefined
 
     return async (confirm?: () => void) => {
-      await sendTransactionAsync({
-        ...tx,
-        gas: (estGas * 6n) / 5n,
-      })
-      confirm?.()
+      try {
+        await sendTransactionAsync({
+          ...tx,
+          gas: (estGas * 6n) / 5n,
+        })
+        confirm?.()
+      } catch {}
     }
   }, [sendTransactionAsync, tx, estGas])
 
