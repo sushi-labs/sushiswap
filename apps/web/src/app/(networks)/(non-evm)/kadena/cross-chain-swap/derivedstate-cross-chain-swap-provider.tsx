@@ -17,15 +17,10 @@ import {
 import { useCrossChainTradeRoutes as _useCrossChainTradeRoutes } from 'src/lib/hooks/react-query'
 import { Amount, ChainId } from 'sushi'
 import { isEvmChainId } from 'sushi/evm'
-import {
-  type KvmChainId,
-  type KvmToken,
-  type KvmTokenAddress,
-  isKvmChainId,
-} from 'sushi/kvm'
+import { type KvmChainId, isKvmChainId } from 'sushi/kvm'
 import type { Address } from 'viem'
 import { useAccount } from 'wagmi'
-import { useSimulateBridgeTransaction } from '~kadena/_common/lib/hooks/use-x-swap-simulate'
+import { useXChainSwapSimulate } from '~kadena/_common/lib/hooks/use-x-swap-simulate'
 import {
   type XSwapToken,
   useXChainSwapTokenInfo,
@@ -254,7 +249,7 @@ const DerivedstateCrossChainSwapProvider: FC<
   }, [swapAmount])
 
   const { data: simulateBridgeTx, isLoading: isLoadingSimulateBridgeTx } =
-    useSimulateBridgeTx({
+    _useSimulateBridgeTx({
       chainId0,
       chainId1,
       swapAmountString,
@@ -326,7 +321,7 @@ const useDerivedStateCrossChainSwap = () => {
   return context
 }
 
-export const useSimulateBridgeTx = ({
+const _useSimulateBridgeTx = ({
   chainId0,
   chainId1,
   swapAmountString,
@@ -357,7 +352,7 @@ export const useSimulateBridgeTx = ({
       ? (activeAccount?.accountName ?? '')
       : (address ?? '')
 
-  const res = useSimulateBridgeTransaction({
+  const res = useXChainSwapSimulate({
     amountIn: swapAmountString,
     chainIdIn,
     chainIdOut,

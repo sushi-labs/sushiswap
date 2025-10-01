@@ -54,17 +54,13 @@ export const XChainSwapButton = ({
 
       const params: ExecuteBridgeParams = {
         tokenAddressIn: token0.address,
-        amountIn: formatPactDecimal(Number(swapAmountString)),
+        amountIn: swapAmountString,
         networkIn: networkIn,
         chainIdIn: chainIdIn,
         senderAddress: senderAddress,
         tokenAddressOut: token1.address,
-        amountOut: formatPactDecimal(
-          Number(state.simulateBridgeTx?.estimatedAmountReceived ?? ''),
-        ),
-        minAmountOut: formatPactDecimal(
-          Number(state.simulateBridgeTx?.amountMinReceived ?? ''),
-        ),
+        amountOut: state.simulateBridgeTx?.estimatedAmountReceived ?? '',
+        minAmountOut: state.simulateBridgeTx?.amountMinReceived ?? '',
         networkOut: networkOut,
         chainIdOut: chainIdOut,
         receiverAddress: receiverAddress,

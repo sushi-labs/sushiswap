@@ -14,9 +14,7 @@ export const AmountOut = ({ isLoading = false }: { isLoading?: boolean }) => {
       networks={[KvmChainId.KADENA, EvmChainId.ETHEREUM]}
       type="output"
       currency={state?.token1}
-      setToken={(token) => {
-        mutate?.setToken1(token)
-      }}
+      setToken={mutate?.setToken1}
       label="Buy"
       isLoadingAmount={isLoading || state.isLoadingSimulateBridgeTx}
     />

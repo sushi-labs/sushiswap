@@ -12,20 +12,10 @@ import {
 } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import { type FC, useCallback } from 'react'
-import { ChainId } from 'sushi'
-import { EvmChainId } from 'sushi/evm'
-import { KvmChainId } from 'sushi/kvm'
+import { ChainId, getChainById } from 'sushi'
+import type { EvmChainId } from 'sushi/evm'
+import type { KvmChainId } from 'sushi/kvm'
 import type { EthereumChainId } from './x-chain-token-selector'
-
-const getNetworkName = (chainId: KvmChainId | EvmChainId) => {
-  if (chainId === KvmChainId.KADENA) {
-    return 'Kadena'
-  }
-  if (chainId === EvmChainId.ETHEREUM) {
-    return 'Ethereum'
-  }
-  return 'Unknown'
-}
 
 interface DesktopNetworkSelector {
   networks: (KvmChainId | EvmChainId)[]
@@ -58,7 +48,7 @@ export const DesktopNetworkSelector: FC<DesktopNetworkSelector> = ({
       </div>
       <CommandGroup className="overflow-y-auto px-3 pb-3">
         {networks.map((network) => {
-          const name = getNetworkName(network)
+          const name = getChainById(network).name
 
           return (
             <CommandItem

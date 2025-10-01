@@ -144,7 +144,6 @@ export const TokenInput = ({
     [setAmount],
   )
 
-  // If currency changes, trim input to decimals
   useEffect(() => {
     if (currency && setAmount && amount && amount.includes('.')) {
       const [, decimals] = amount.split('.')

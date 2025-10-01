@@ -11,21 +11,11 @@ import { useKadena } from '~kadena/kadena-wallet-provider'
 
 export const ReviewSwapDialogTrigger = () => {
   const [isChecked, setIsChecked] = useState<boolean>(false)
-  // const {
-  //   amountIn,
-  //   isTxnPending,
-  //   token0,
-  //   token1,
-  //   priceImpactPercentage,
-  //   route,
-  //   amountOut,
-  // } = useSwapState()
 
   const { state } = useDerivedStateCrossChainSwap()
 
   const { activeAccount } = useKadena()
 
-  // Kadena balances
   const { data: kadenaBalances, isLoading: kadenaLoading } = useTokenBalances({
     account: activeAccount?.accountName ?? '',
     tokenAddresses:
@@ -34,7 +24,6 @@ export const ReviewSwapDialogTrigger = () => {
         : [],
   })
 
-  // Ethereum balances
   const ethBalance = useBalance(
     state.token0?.chainId
       ? isEvmChainId(state.token0?.chainId)
@@ -58,7 +47,7 @@ export const ReviewSwapDialogTrigger = () => {
     if (state.token0 && isEvmChainId(state.token0.chainId)) {
       return (
         Number(formatUnits(ethBalance.data ?? 0n, state.token0.decimals)) === 0
-      ) // no ETH
+      )
     }
     return true
   }, [state.token0, kadenaBalances, ethBalance.data])

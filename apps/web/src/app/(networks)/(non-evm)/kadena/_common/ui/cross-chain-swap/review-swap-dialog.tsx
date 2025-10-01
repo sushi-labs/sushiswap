@@ -15,7 +15,7 @@ import { WalletConnector } from '~kadena/_common/ui/WalletConnector/WalletConnec
 import { useDerivedStateCrossChainSwap } from '~kadena/cross-chain-swap/derivedstate-cross-chain-swap-provider'
 import { ReviewSwapDialogTrigger } from './review-swap-dialog-trigger'
 import { CrossChainSwapRouteView } from './route-view'
-import { XChainSwapButton } from './swap-button'
+import { XChainSwapButton } from './xchain-swap-button'
 
 export const ReviewSwapDialog = () => {
   const { state } = useDerivedStateCrossChainSwap()
@@ -104,26 +104,6 @@ export const ReviewSwapDialog = () => {
                     </List.KeyValue>
                   </List.Control>
                 </List>
-                {/* {address && (
-                  <List className="!pt-0">
-                    <List.Control>
-                      <List.KeyValue title="Recipient">
-                        <Link
-                          target="_blank"
-                          href={getKvmChainByKey('kadena').getAccountUrl(
-                            recipientAddress ?? '',
-                          )}
-                          className={classNames(
-                            'flex gap-2 items-center cursor-pointer text-blue hover:underline hover:text-blue-700',
-                          )}
-                          rel="noreferrer"
-                        >
-                          {truncateString(recipientAddress ?? '', 10, 'middle')}
-                        </Link>
-                      </List.KeyValue>
-                    </List.Control>
-                  </List>
-                )} */}
               </div>
               <CrossChainSwapRouteView />
               <DialogFooter>

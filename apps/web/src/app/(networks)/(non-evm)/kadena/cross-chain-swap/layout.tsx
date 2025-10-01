@@ -1,4 +1,3 @@
-import { KvmChainId } from 'sushi/kvm'
 import { Header } from '~kadena/header'
 import { Providers } from './providers'
 
