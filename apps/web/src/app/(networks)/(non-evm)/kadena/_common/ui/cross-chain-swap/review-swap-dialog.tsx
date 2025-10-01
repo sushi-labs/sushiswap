@@ -9,11 +9,10 @@ import {
 } from '@sushiswap/ui'
 import { List } from '@sushiswap/ui'
 import { DialogContent, classNames } from '@sushiswap/ui'
+import { useState } from 'react'
 import { ChainId, formatPercent } from 'sushi'
 import { WalletConnector } from '~kadena/_common/ui/WalletConnector/WalletConnector'
 import { useDerivedStateCrossChainSwap } from '~kadena/cross-chain-swap/derivedstate-cross-chain-swap-provider'
-
-import { useState } from 'react'
 import { ReviewSwapDialogTrigger } from './review-swap-dialog-trigger'
 import { CrossChainSwapRouteView } from './route-view'
 import { XChainSwapButton } from './swap-button'

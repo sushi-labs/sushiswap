@@ -65,6 +65,6 @@ export const useTokenPrice = ({
       const tokenPrice = await getPrice(token)
       return tokenPrice
     },
-    enabled: Boolean(token) && enabled,
+    enabled: Boolean(token && enabled),
   })
 }

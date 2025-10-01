@@ -19,6 +19,7 @@ import {
   type CSSProperties,
   type ReactNode,
   useCallback,
+  useEffect,
   useMemo,
   useState,
 } from 'react'
@@ -36,7 +37,6 @@ import {
   type XSwapToken,
   useXSwapTokenList,
 } from '~kadena/_common/lib/hooks/use-x-swap-token-list'
-import { useSimulateBridgeTx } from '~kadena/cross-chain-swap/derivedstate-cross-chain-swap-provider'
 import { useKadena } from '../../../kadena-wallet-provider'
 import { Icon } from './Icon'
 import { DesktopNetworkSelector } from './desktop-network-selector'
@@ -61,14 +61,16 @@ export const XChainTokenSelector = ({
 
   const [selectedNetwork, setSelectedNetwork] = useState<
     KvmChainId | EthereumChainId
-  >(
-    KvmChainId.KADENA, // default to Kadena
-  )
+  >(KvmChainId.KADENA)
 
-  // fetch tokens (split into kadena + ethereum)
+  useEffect(() => {
+    if (selected) {
+      setSelectedNetwork(selected.chainId as KvmChainId | EthereumChainId)
+    }
+  }, [selected])
+
   const { data: tokenLists, isLoading } = useXSwapTokenList()
 
-  // pick the right token list based on network
   const baseTokens = useMemo(() => {
     if (!tokenLists) return []
     return selectedNetwork === KvmChainId.KADENA
@@ -76,25 +78,21 @@ export const XChainTokenSelector = ({
       : tokenLists.ethereum
   }, [tokenLists, selectedNetwork])
 
-  // query token (when searching by contract/address)
   const { data: queryToken, isLoading: isQueryTokenLoading } = useTokenInfo({
     tokenContract: query,
     enabled: Boolean(query),
   })
 
-  // token addresses for balances
   const tokenArray = useMemo(() => {
     if (!baseTokens) return []
     return baseTokens.map((token) => token.address) as KvmTokenAddress[]
   }, [baseTokens])
 
-  // balances for current account
   const { data: tokenBalances } = useTokenBalances({
     account: activeAccount?.accountName ?? '',
     tokenAddresses: !isLoading && tokenArray.length > 0 ? tokenArray : [],
   })
 
-  // token map for sorting
   const baseTokenMap = useMemo(() => {
     if (!baseTokens) return undefined
     const tokenMap: Record<string, XSwapToken> = {}
@@ -104,7 +102,6 @@ export const XChainTokenSelector = ({
     return tokenMap
   }, [baseTokens])
 
-  // sorted tokens
   const { data: sortedTokens } = useSortedTokenList({
     tokenMap: baseTokenMap,
     customTokenMap: {},
@@ -159,7 +156,6 @@ export const XChainTokenSelector = ({
           isXChainSwap && 'md:min-w-[720px]',
         )}
       >
-        {/* network switcher */}
         {networks && selectedNetwork && isMd ? (
           <DesktopNetworkSelector
             networks={networks}
@@ -189,7 +185,6 @@ export const XChainTokenSelector = ({
             />
           </div>
 
-          {/* common tokens for kadena only */}
           {selectedNetwork === KvmChainId.KADENA && (
             <div className="flex flex-wrap gap-2">
               {COMMON_KADENA_TOKENS.map((token, idx) => (
@@ -203,7 +198,6 @@ export const XChainTokenSelector = ({
           )}
 
           <List.Control className="relative flex flex-1 flex-col flex-grow gap-3 px-1 py-0.5 min-h-[128px]">
-            {/* query loading skeleton */}
             <div
               data-state={isQueryTokenLoading ? 'active' : 'inactive'}
               className={classNames(
@@ -236,7 +230,6 @@ export const XChainTokenSelector = ({
               </div>
             </div>
 
-            {/* query result or sorted list */}
             <div
               data-state={isQueryTokenLoading ? 'inactive' : 'active'}
               className={classNames(

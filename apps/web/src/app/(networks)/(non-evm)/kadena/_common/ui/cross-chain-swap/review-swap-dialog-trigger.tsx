@@ -8,7 +8,6 @@ import { MIN_GAS_FEE } from '~kadena/_common/constants/gas'
 import { useTokenBalances } from '~kadena/_common/lib/hooks/use-token-balances'
 import { useDerivedStateCrossChainSwap } from '~kadena/cross-chain-swap/derivedstate-cross-chain-swap-provider'
 import { useKadena } from '~kadena/kadena-wallet-provider'
-import {} from '~kadena/swap/swap-provider'
 
 export const ReviewSwapDialogTrigger = () => {
   const [isChecked, setIsChecked] = useState<boolean>(false)

@@ -12,9 +12,9 @@ import {
 } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import { type FC, useCallback } from 'react'
+import { ChainId } from 'sushi'
 import { EvmChainId } from 'sushi/evm'
 import { KvmChainId } from 'sushi/kvm'
-import { useAccount } from 'wagmi'
 import type { EthereumChainId } from './x-chain-token-selector'
 
 const getNetworkName = (chainId: KvmChainId | EvmChainId) => {
@@ -28,7 +28,6 @@ const getNetworkName = (chainId: KvmChainId | EvmChainId) => {
 }
 
 interface DesktopNetworkSelector {
-  // kvm or ethereum chain id
   networks: (KvmChainId | EvmChainId)[]
   onSelect?: (network: number) => void
   selectedNetwork: EthereumChainId | KvmChainId
@@ -39,15 +38,18 @@ export const DesktopNetworkSelector: FC<DesktopNetworkSelector> = ({
   selectedNetwork,
   onSelect,
 }) => {
-  const { chainId } = useAccount()
-
   const _onSelect = useCallback(
     (value: string) => onSelect?.(+value.split('__')[1]),
     [onSelect],
   )
 
   return (
-    <Command className="!w-56 flex-none h-auto pt-3 bg-white dark:!bg-secondary rounded-r-none rounded-l-2xl">
+    <Command
+      className="!w-56 flex-none pt-3 bg-white dark:!bg-secondary rounded-r-none rounded-l-2xl"
+      style={{
+        height: 'auto',
+      }}
+    >
       <div className="mx-3 bg-secondary rounded-lg">
         <CommandInput
           testdata-id="network-selector-input"
@@ -77,7 +79,7 @@ export const DesktopNetworkSelector: FC<DesktopNetworkSelector> = ({
                     <div
                       className={classNames(
                         'rounded-full w-2 h-2 mr-0.5 mb-0.5',
-                        chainId === network && 'bg-green',
+                        network === ChainId.KADENA && 'bg-green',
                       )}
                     />
                   }

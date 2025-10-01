@@ -2,20 +2,8 @@ import { classNames } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import React, { useMemo } from 'react'
 import type { FC } from 'react'
-import type {
-  CrossChainAction,
-  CrossChainEstimate,
-  CrossChainStep,
-  CrossChainToolDetails,
-} from 'src/lib/swap/cross-chain/types'
-import { Amount, ChainId, formatNumber } from 'sushi'
-import {
-  type EvmCurrency,
-  EvmNative,
-  EvmToken,
-  getEvmChainById,
-} from 'sushi/evm'
-import { zeroAddress } from 'viem'
+import type { CrossChainToolDetails } from 'src/lib/swap/cross-chain/types'
+import { Amount, ChainId } from 'sushi'
 import type { XSwapToken } from '~kadena/_common/lib/hooks/use-x-swap-token-list'
 import { useDerivedStateCrossChainSwap } from '~kadena/cross-chain-swap/derivedstate-cross-chain-swap-provider'
 

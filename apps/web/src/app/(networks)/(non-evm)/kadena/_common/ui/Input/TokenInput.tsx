@@ -6,9 +6,8 @@ import {
   classNames,
 } from '@sushiswap/ui'
 import { useCallback, useEffect, useMemo, useState, useTransition } from 'react'
-import { Amount } from 'sushi'
 import type { KvmToken } from 'sushi/kvm'
-import { formatUnits, parseUnits } from 'viem'
+import { formatUnits } from 'viem'
 import { useTokenBalances } from '~kadena/_common/lib/hooks/use-token-balances'
 import { useTokenPrice } from '~kadena/_common/lib/hooks/use-token-price'
 import { useKadena } from '~kadena/kadena-wallet-provider'

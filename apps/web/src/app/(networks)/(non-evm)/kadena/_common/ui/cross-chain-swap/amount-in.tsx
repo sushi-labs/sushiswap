@@ -1,12 +1,10 @@
 import { useDebounce } from '@sushiswap/hooks'
 import { useQueryClient } from '@tanstack/react-query'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Amount } from 'sushi'
 import { EvmChainId } from 'sushi/evm'
 import { KvmChainId } from 'sushi/kvm'
-import { usePoolFromTokens } from '~kadena/_common/lib/hooks/pools/use-pool-from-tokens'
 import { useDerivedStateCrossChainSwap } from '~kadena/cross-chain-swap/derivedstate-cross-chain-swap-provider'
-import { useSwapDispatch, useSwapState } from '~kadena/swap/swap-provider'
 import { TokenInput } from './token-input'
 
 export const AmountIn = () => {

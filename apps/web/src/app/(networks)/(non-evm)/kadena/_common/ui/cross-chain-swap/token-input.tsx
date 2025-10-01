@@ -83,7 +83,7 @@ export const TokenInput = ({
 
   const kadenaPrice = useTokenPrice({
     token: kadenaToken,
-    enabled: Boolean(isKadena),
+    enabled: Boolean(isKadena) && amount !== '',
   })
 
   const isEvm = isEvmChainId(currency?.chainId ?? EvmChainId.ETHEREUM)
@@ -95,7 +95,7 @@ export const TokenInput = ({
   const evmPrice = usePrice({
     chainId: evmChainId,
     address: evmAddress,
-    enabled: isEvm,
+    enabled: Boolean(evmChainId && evmAddress) && amount !== '',
   })
 
   const priceUsd =
