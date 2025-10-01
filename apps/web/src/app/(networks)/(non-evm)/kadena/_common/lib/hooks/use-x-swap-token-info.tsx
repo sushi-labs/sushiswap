@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
+import { ChainId } from 'sushi'
 import type { EvmChainId, EvmToken } from 'sushi/evm'
 import { isEvmChainId } from 'sushi/evm'
 import type { KvmChainId, KvmToken, KvmTokenAddress } from 'sushi/kvm'
@@ -18,7 +19,6 @@ export const useXChainSwapTokenInfo = ({
   address,
   enabled = true,
 }: Params) => {
-  // grab cached lists
   const { data: tokenLists } = useXSwapTokenList()
 
   return useQuery<XSwapToken | undefined>({
@@ -48,4 +48,23 @@ export const useXChainSwapTokenInfo = ({
       return undefined
     },
   })
+}
+
+export function findCrossChainEquivalentToken(
+  token: XSwapToken,
+  tokenLists: { kadena: KvmToken[]; ethereum: EvmToken[] },
+): XSwapToken | undefined {
+  if (token.chainId === ChainId.KADENA) {
+    return tokenLists.ethereum.find(
+      (t) => t.symbol.toLowerCase() === token.symbol.toLowerCase(),
+    )
+  }
+
+  if (token.chainId === ChainId.ETHEREUM) {
+    return tokenLists.kadena.find(
+      (t) => t.symbol.toLowerCase() === token.symbol.toLowerCase(),
+    )
+  }
+
+  return undefined
 }

@@ -1,8 +1,12 @@
 import { Button, DialogTrigger } from '@sushiswap/ui'
 import { useMemo, useState } from 'react'
-import { type EvmChainId, isEvmChainId } from 'sushi/evm'
+import { Checker } from 'src/lib/wagmi/systems/Checker'
+import { Amount } from 'sushi'
+import { type EvmChainId, type EvmCurrency, isEvmChainId } from 'sushi/evm'
 import { type KvmTokenAddress, isKvmChainId } from 'sushi/kvm'
 import { formatUnits } from 'viem'
+import { injected } from 'wagmi'
+import { useAccount, useConnect } from 'wagmi'
 import { useBalance } from '~evm/_common/ui/balance-provider/use-balance'
 import { MIN_GAS_FEE } from '~kadena/_common/constants/gas'
 import { useTokenBalances } from '~kadena/_common/lib/hooks/use-token-balances'
@@ -13,6 +17,9 @@ export const ReviewSwapDialogTrigger = () => {
   const [isChecked, setIsChecked] = useState<boolean>(false)
 
   const { state } = useDerivedStateCrossChainSwap()
+
+  const { address } = useAccount()
+  const { connectAsync } = useConnect()
 
   const { activeAccount } = useKadena()
 
@@ -84,7 +91,7 @@ export const ReviewSwapDialogTrigger = () => {
       return 'Enter Amount'
     }
     if (hasInsufficientToken0Balance) {
-      return 'Insufficient Balance on Chain 2'
+      return 'Insufficient Balance on Kadena'
     }
     if (noRoutes) {
       return 'No Routes Found'
@@ -131,20 +138,34 @@ export const ReviewSwapDialogTrigger = () => {
           }
           asChild
         >
-          <Button
-            size="xl"
-            fullWidth
-            disabled={
-              insufficientLiquidity ||
-              (userConfirmationNeeded && !isChecked) ||
-              !state.swapAmountString ||
-              hasInsufficientToken0Balance ||
-              noRoutes ||
-              !state.swapAmountString
-            }
+          <Checker.Guard
+            guardWhen={!address}
+            guardText="Connect Ethereum Wallet"
+            onClick={() => {
+              connectAsync({ connector: injected() })
+            }}
+            disabled={false}
           >
-            {buttonText}
-          </Button>
+            <Checker.Guard
+              guardWhen={!activeAccount?.accountName}
+              guardText="Connect Kadena Wallet"
+            >
+              <Button
+                size="xl"
+                fullWidth
+                disabled={
+                  insufficientLiquidity ||
+                  (userConfirmationNeeded && !isChecked) ||
+                  !state.swapAmountString ||
+                  hasInsufficientToken0Balance ||
+                  noRoutes ||
+                  !state.swapAmountString
+                }
+              >
+                {buttonText}
+              </Button>
+            </Checker.Guard>
+          </Checker.Guard>
         </DialogTrigger>
       }
       {userConfirmationNeeded && !isChecked ? (

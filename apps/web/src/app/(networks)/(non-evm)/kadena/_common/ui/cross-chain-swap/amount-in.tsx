@@ -4,10 +4,14 @@ import { useEffect, useState } from 'react'
 import { Amount } from 'sushi'
 import { EvmChainId } from 'sushi/evm'
 import { KvmChainId } from 'sushi/kvm'
+import { findCrossChainEquivalentToken } from '~kadena/_common/lib/hooks/use-x-swap-token-info'
+import { useXSwapTokenList } from '~kadena/_common/lib/hooks/use-x-swap-token-list'
 import { useDerivedStateCrossChainSwap } from '~kadena/cross-chain-swap/derivedstate-cross-chain-swap-provider'
 import { TokenInput } from './token-input'
 
 export const AmountIn = () => {
+  const { data: tokenLists } = useXSwapTokenList()
+
   const { state, mutate } = useDerivedStateCrossChainSwap()
   const queryClient = useQueryClient()
 
@@ -37,7 +41,17 @@ export const AmountIn = () => {
       amount={amountIn ?? ''}
       setAmount={setAmountIn}
       currency={state?.token0}
-      setToken={mutate?.setToken0}
+      setToken={(token) => {
+        if (!tokenLists) return
+
+        mutate?.setToken0(token)
+        const crossChainEquivalentToken = findCrossChainEquivalentToken(
+          token,
+          tokenLists,
+        )
+        crossChainEquivalentToken &&
+          mutate?.setToken1(crossChainEquivalentToken)
+      }}
       label="Sell"
       isLoadingAmount={false}
       isTxnPending={false}

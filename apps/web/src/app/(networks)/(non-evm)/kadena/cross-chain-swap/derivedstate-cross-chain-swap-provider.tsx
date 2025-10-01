@@ -1,6 +1,7 @@
 'use client'
 
 import type { SimulateBridgeResult } from '@kinesis-bridge/kinesis-sdk/dist/types'
+import { SlippageToleranceStorageKey } from '@sushiswap/hooks'
 import { nanoid } from 'nanoid'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import {
@@ -15,6 +16,7 @@ import {
   useState,
 } from 'react'
 import { useCrossChainTradeRoutes as _useCrossChainTradeRoutes } from 'src/lib/hooks/react-query'
+import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
 import { Amount, ChainId } from 'sushi'
 import { isEvmChainId } from 'sushi/evm'
 import { type KvmChainId, isKvmChainId } from 'sushi/kvm'
@@ -24,7 +26,7 @@ import { useXChainSwapSimulate } from '~kadena/_common/lib/hooks/use-x-swap-simu
 import {
   type XSwapToken,
   useXChainSwapTokenInfo,
-} from '~kadena/_common/lib/hooks/use-x-swap-token-lists'
+} from '~kadena/_common/lib/hooks/use-x-swap-token-info'
 import type { EthereumChainId } from '~kadena/_common/ui/General/x-chain-token-selector'
 import { useKadena } from '~kadena/kadena-wallet-provider'
 
@@ -119,13 +121,13 @@ const DerivedstateCrossChainSwapProvider: FC<
         'token0',
         chainId0 === ChainId.KADENA
           ? 'n_e595727b657fbbb3b8e362a05a7bb8d12865c1ff.KDA'
-          : '0xbddb58bf21b12d70eed91b939ae061572010b11d',
+          : '0x7786f1eb2ec198a04d8f5e3fc36fab14da370076',
       )
 
       params.set(
         'token1',
         chainId0 === ChainId.KADENA
-          ? '0xbddb58bf21b12d70eed91b939ae061572010b11d'
+          ? '0x7786f1eb2ec198a04d8f5e3fc36fab14da370076'
           : 'n_e595727b657fbbb3b8e362a05a7bb8d12865c1ff.KDA',
       )
     }
@@ -249,7 +251,7 @@ const DerivedstateCrossChainSwapProvider: FC<
   }, [swapAmount])
 
   const { data: simulateBridgeTx, isLoading: isLoadingSimulateBridgeTx } =
-    _useSimulateBridgeTx({
+    _useXChainSwapSimulate({
       chainId0,
       chainId1,
       swapAmountString,
@@ -321,7 +323,7 @@ const useDerivedStateCrossChainSwap = () => {
   return context
 }
 
-const _useSimulateBridgeTx = ({
+const _useXChainSwapSimulate = ({
   chainId0,
   chainId1,
   swapAmountString,
@@ -336,8 +338,9 @@ const _useSimulateBridgeTx = ({
 }) => {
   const { address } = useAccount()
   const { activeAccount } = useKadena()
-
-  const slippage = '0.05'
+  const [slippageTolerance] = useSlippageTolerance(
+    SlippageToleranceStorageKey.Swap,
+  )
 
   const chainIdIn = chainId0 === ChainId.KADENA ? 2 : 1
   const chainIdOut = chainId1 === ChainId.KADENA ? 2 : 1
@@ -352,7 +355,7 @@ const _useSimulateBridgeTx = ({
       ? (activeAccount?.accountName ?? '')
       : (address ?? '')
 
-  const res = useXChainSwapSimulate({
+  console.log('useXChainSwapSimulate params', {
     amountIn: swapAmountString,
     chainIdIn,
     chainIdOut,
@@ -360,10 +363,25 @@ const _useSimulateBridgeTx = ({
     networkOut,
     senderAddress,
     receiverAddress,
-    slippage,
+    slippage: slippageTolerance.toString(),
     tokenAddressIn: token0?.address ?? '',
     tokenAddressOut: token1?.address ?? '',
   })
+
+  const res = useXChainSwapSimulate({
+    amountIn: swapAmountString,
+    chainIdIn,
+    chainIdOut,
+    networkIn,
+    networkOut,
+    senderAddress: '0x47Ef3bF350F70724F2fd34206990cdE9C3A6B6F0',
+    receiverAddress,
+    slippage: slippageTolerance.toString(),
+    tokenAddressIn: token0?.address ?? '',
+    tokenAddressOut: token1?.address ?? '',
+  })
+
+  console.log('useXChainSwapSimulate res', res)
 
   return res
 }

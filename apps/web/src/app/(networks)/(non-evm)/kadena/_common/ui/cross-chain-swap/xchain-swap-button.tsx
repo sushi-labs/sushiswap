@@ -11,7 +11,6 @@ import { ChainId } from 'sushi'
 import { getKvmChainByKey } from 'sushi/kvm'
 import { useAccount } from 'wagmi'
 import { kinesisClient } from '~kadena/_common/constants/client'
-import { formatPactDecimal } from '~kadena/_common/lib/pact/pact-decimal'
 import { useDerivedStateCrossChainSwap } from '~kadena/cross-chain-swap/derivedstate-cross-chain-swap-provider'
 import { useKadena } from '~kadena/kadena-wallet-provider'
 
@@ -30,6 +29,7 @@ export const XChainSwapButton = ({
   const [isTxnPending, setIsTxnPending] = useState(false)
   const { address } = useAccount()
   const { activeAccount } = useKadena()
+
   const executeBridge = async () => {
     if (!token0 || !token1 || !swapAmount || !swapAmountString) return
 
@@ -65,6 +65,8 @@ export const XChainSwapButton = ({
         chainIdOut: chainIdOut,
         receiverAddress: receiverAddress,
       }
+
+      console.log('executeBridge', params)
 
       const tx = await kinesisClient.executeBridgeTransaction(params)
       const txnHash = tx.txnHash

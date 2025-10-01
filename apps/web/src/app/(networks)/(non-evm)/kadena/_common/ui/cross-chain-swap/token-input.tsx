@@ -13,12 +13,12 @@ import {
   type KvmTokenAddress,
   isKvmChainId,
 } from 'sushi/kvm'
-import { formatUnits, parseUnits } from 'viem'
+import { formatUnits } from 'viem'
 import { useBalance } from '~evm/_common/ui/balance-provider/use-balance'
 import { usePrice } from '~evm/_common/ui/price-provider/price-provider/use-price'
 import { useTokenBalances } from '~kadena/_common/lib/hooks/use-token-balances'
 import { useTokenPrice } from '~kadena/_common/lib/hooks/use-token-price'
-import type { XSwapToken } from '~kadena/_common/lib/hooks/use-x-swap-token-lists'
+import type { XSwapToken } from '~kadena/_common/lib/hooks/use-x-swap-token-info'
 import { useKadena } from '~kadena/kadena-wallet-provider'
 import { Icon } from '../General/Icon'
 import {
@@ -83,7 +83,7 @@ export const TokenInput = ({
 
   const kadenaPrice = useTokenPrice({
     token: kadenaToken,
-    enabled: Boolean(isKadena) && amount !== '',
+    enabled: Boolean(isKadena && amount),
   })
 
   const isEvm = isEvmChainId(currency?.chainId ?? EvmChainId.ETHEREUM)
@@ -95,7 +95,7 @@ export const TokenInput = ({
   const evmPrice = usePrice({
     chainId: evmChainId,
     address: evmAddress,
-    enabled: Boolean(evmChainId && evmAddress) && amount !== '',
+    enabled: Boolean(evmChainId && evmAddress),
   })
 
   const priceUsd =
