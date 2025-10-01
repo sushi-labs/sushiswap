@@ -1,5 +1,6 @@
 import { Explainer, classNames } from '@sushiswap/ui'
 import { useMemo } from 'react'
+import { formatUSD } from 'sushi'
 import { useDerivedStateTwap } from './derivedstate-twap-provider'
 
 export const LimitEstPnl = () => {
@@ -53,7 +54,7 @@ export const LimitEstPnl = () => {
       >
         {Number.parseFloat(pnl) === 0
           ? '-'
-          : `${Number.parseFloat(pnl) > 0 ? '+' : ''}$${pnl}`}
+          : `${Number.parseFloat(pnl) > 0 ? '+' : ''}${formatUSD(pnl)}`}
       </div>
     </div>
   )

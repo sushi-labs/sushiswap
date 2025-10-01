@@ -1,16 +1,14 @@
 import { List, SelectIcon } from '@sushiswap/ui'
 import { useWallet } from '@tronweb3/tronwallet-adapter-react-hooks'
 import Image from 'next/image'
-import { useWalletAdapters } from '~tron/_common/lib/hooks/useWalletAdapters'
 
 export const WalletListView = () => {
-  const { adapters } = useWalletAdapters()
-  const { select } = useWallet()
+  const { select, connect, wallet, wallets } = useWallet()
 
   return (
     <List className="flex flex-col gap-1 !p-0">
       <List.Control className="bg-gray-100 ">
-        {adapters.map((adapter) => (
+        {wallets.map(({ adapter }) => (
           <List.MenuItem
             icon={() => (
               <Image
@@ -24,7 +22,9 @@ export const WalletListView = () => {
             key={adapter.name}
             title={adapter.name}
             onClick={async () => {
-              if (adapter.readyState === 'Found') {
+              if (wallet && wallet.adapter.name === adapter.name) {
+                connect()
+              } else if (adapter.readyState === 'Found') {
                 select(adapter.name)
               } else {
                 window.open(adapter.url, '_blank')

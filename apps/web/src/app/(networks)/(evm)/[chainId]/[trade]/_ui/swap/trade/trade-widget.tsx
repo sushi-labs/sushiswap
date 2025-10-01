@@ -27,7 +27,7 @@ export const TradeWidget = () => {
 
   return (
     <EdgeProvider config={modeEdge}>
-      <Wrapper className="border relative md:border-none border-black/10">
+      <Wrapper className="border relative md:border-none border-black/10 !bg-[rgba(255,255,255,0.8)] dark:!bg-[rgba(25,32,49,0.8)] backdrop-blur-2xl">
         <QuickSelectOverlay />
         <Collapsible open={true} disabled={!tradeModeChanged}>
           <div className="flex flex-col gap-4">

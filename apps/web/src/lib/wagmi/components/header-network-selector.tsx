@@ -71,15 +71,13 @@ export const HeaderNetworkSelectorProvider: FC<{
 }
 
 export const HeaderNetworkSelector: FC<{
-  networks: SupportedNetworks
-  supportedNetworks?: SupportedNetworks
+  networks?: readonly ChainId[]
   selectedNetwork?: ChainId
   onChange?(network: ChainId): void
   hideNetworkName?: boolean
   className?: string
 }> = ({
   networks,
-  supportedNetworks: propsSupportedNetworks,
   selectedNetwork,
   onChange,
   className,
@@ -91,8 +89,8 @@ export const HeaderNetworkSelector: FC<{
     HeaderNetworkSelectorContext,
   )
   const supportedNetworks = useMemo(
-    () => propsSupportedNetworks ?? contextSupportedNetworks ?? undefined,
-    [propsSupportedNetworks, contextSupportedNetworks],
+    () => networks ?? contextSupportedNetworks ?? undefined,
+    [networks, contextSupportedNetworks],
   )
 
   const searchParams = useSearchParams()
@@ -135,9 +133,8 @@ export const HeaderNetworkSelector: FC<{
   return (
     <NetworkSelector
       selected={network}
-      supportedNetworks={supportedNetworks}
+      networks={supportedNetworks}
       onSelect={onSwitchNetwork}
-      networks={networks}
     >
       <Button
         variant="secondary"

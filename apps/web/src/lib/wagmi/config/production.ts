@@ -13,7 +13,7 @@ import {
 import { gtagEvent } from '@sushiswap/ui'
 import { EvmChainId } from 'sushi/evm'
 import { http, cookieStorage, createConfig, createStorage } from 'wagmi'
-import type { Writeable } from 'zod'
+import type { util } from 'zod'
 import { publicWagmiConfig } from './public'
 import { publicTransports } from './viem'
 
@@ -34,6 +34,8 @@ const pollingInterval = new Proxy(
     },
   },
 )
+
+coinbaseWallet.preference = { options: 'all', telemetry: false }
 
 const connectors = connectorsForWallets(
   [
@@ -97,7 +99,7 @@ export const createProductionConfig = () => {
       })
       return acc
     },
-    {} as Writeable<typeof publicTransports>,
+    {} as util.Writeable<typeof publicTransports>,
   )
 
   const storage = createStorage({

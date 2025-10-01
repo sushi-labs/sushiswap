@@ -461,7 +461,7 @@ export const Chart = ({
       tvWidget.remove()
       tvWidgetRef.current = null
     }
-  }, [chartContainerRef, resolvedTheme, isMdScreen, isMounted])
+  }, [chartContainerRef, resolvedTheme, isMdScreen, isMounted, token1])
 
   return (
     <div className="flex flex-col flex-grow rounded-xl">

@@ -6,7 +6,7 @@ import {
   useDebounce,
   useIsMounted,
 } from '@sushiswap/hooks'
-import { createToast } from '@sushiswap/notifications'
+import { createErrorToast, createToast } from '@sushiswap/notifications'
 import {
   LiquidityEventName,
   LiquiditySource,
@@ -23,9 +23,14 @@ import {
 import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
 import { Amount, Percent, subtractSlippage } from 'sushi'
 import { EvmNative, type SushiSwapV2ChainId, addGasMargin } from 'sushi/evm'
-import { type SendTransactionReturnType, encodeFunctionData } from 'viem'
+import {
+  type SendTransactionReturnType,
+  UserRejectedRequestError,
+  encodeFunctionData,
+} from 'viem'
 
 import type { V2Pool } from '@sushiswap/graph-client/data-api'
+import { logger } from 'src/lib/logger'
 import {
   type PermitInfo,
   PermitType,
@@ -341,8 +346,12 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> =
                 contract.estimateGas[methodName] as any
               )(config.args)
               return addGasMargin(estimatedGas)
-            } catch (e) {
-              console.error(e)
+            } catch (error) {
+              logger.error(error, {
+                location: 'RemoveSectionLegacy',
+                action: 'estimateGas',
+                functionName: methodName,
+              })
               return undefined
             }
           }),
@@ -373,8 +382,11 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> =
         .then((config) => {
           setPrepare(config)
         })
-        .catch((e) => {
-          console.error('remove prepare error', e)
+        .catch((error) => {
+          logger.error(error, {
+            location: 'RemoveSectionLegacy',
+            action: 'prepareTransaction',
+          })
         })
     }, [
       approved,
@@ -407,6 +419,16 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> =
       useSendTransaction({
         mutation: {
           onSuccess,
+          onError: (error) => {
+            if (error instanceof UserRejectedRequestError) {
+              return
+            }
+
+            logger.error(error, {
+              location: 'RemoveSectionLegacy',
+              action: 'mutationError',
+            })
+          },
         },
       })
 
@@ -476,6 +498,7 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> =
                           onClick={() => send?.()}
                           disabled={!approved || isWritePending || !send}
                           testId="remove-liquidity"
+                          size="xl"
                         >
                           {isWritePending ? (
                             <Dots>Confirm transaction</Dots>

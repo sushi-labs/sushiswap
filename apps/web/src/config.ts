@@ -25,6 +25,7 @@ export const DISABLED_CHAIN_IDS = [
   ChainId.HARMONY,
   ChainId.POLYGON_ZKEVM,
   ChainId.TATARA,
+  ChainId.SEPOLIA,
 ] as const
 
 export const NEW_CHAIN_IDS = [EvmChainId.KATANA] as const
@@ -40,6 +41,7 @@ export const PREFERRED_CHAINID_ORDER = [
   ChainId.POLYGON,
   ChainId.HYPEREVM,
   ChainId.BERACHAIN,
+  ChainId.PLASMA,
   ChainId.SCROLL,
   ChainId.BLAST,
   ChainId.OPTIMISM,
@@ -203,18 +205,18 @@ export const XSWAP_SUPPORTED_CHAIN_IDS = [
   ChainId.APE,
   ChainId.ARBITRUM,
   ChainId.AVALANCHE,
-  ChainId.BSC,
   ChainId.BASE,
+  // ChainId.BERACHAIN,
   ChainId.BLAST,
   ChainId.BOBA,
+  ChainId.BSC,
   ChainId.CELO,
   ChainId.CRONOS,
   ChainId.ETHEREUM,
-  // ChainId.FUSE,
   ChainId.FANTOM,
+  // ChainId.FUSE,
   ChainId.GNOSIS,
   // ChainId.HYPEREVM,
-  // ChainId.BERACHAIN,
   ChainId.KATANA,
   ChainId.LINEA,
   ChainId.MANTLE,
@@ -223,6 +225,7 @@ export const XSWAP_SUPPORTED_CHAIN_IDS = [
   // ChainId.MOONBEAM,
   // ChainId.MOONRIVER,
   ChainId.OPTIMISM,
+  // ChainId.PLASMA
   ChainId.POLYGON,
   // ChainId.POLYGON_ZKEVM,
   ChainId.ROOTSTOCK,
@@ -271,6 +274,7 @@ export const SUSHISWAP_V3_POSITION_HELPER: Record<
   [ChainId.HEMI]: '0x34026A9b9Cb6DF84880C4B2f778F5965F5679c16',
   [ChainId.KATANA]: '0xc85C59A05EC888aa055Ec3b3A7263d173cc6E111',
   [ChainId.TATARA]: '0x34026A9b9Cb6DF84880C4B2f778F5965F5679c16',
+  [ChainId.SEPOLIA]: '0x34026A9b9Cb6DF84880C4B2f778F5965F5679c16',
   // DEPRECATED
   // [ChainId.FUSE]: '0x34026A9b9Cb6DF84880C4B2f778F5965F5679c16',
   // [ChainId.MOONBEAM]: '0x34026A9b9Cb6DF84880C4B2f778F5965F5679c16',

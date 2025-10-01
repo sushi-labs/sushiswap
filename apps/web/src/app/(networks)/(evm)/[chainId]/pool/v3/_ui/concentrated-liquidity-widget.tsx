@@ -7,6 +7,8 @@ import {
   Dots,
   FormSection,
   Message,
+  SettingsModule,
+  SettingsOverlay,
   classNames,
 } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui'
@@ -29,6 +31,7 @@ import {
   isWNativeSupported,
 } from 'sushi/evm'
 
+import { Cog6ToothIcon } from '@heroicons/react/24/outline'
 import { SlippageToleranceStorageKey } from '@sushiswap/hooks'
 import { createToast } from '@sushiswap/notifications'
 import { ZapEventName, sendAnalyticsEvent } from '@sushiswap/telemetry'
@@ -204,7 +207,35 @@ export const ConcentratedLiquidityWidget: FC<ConcentratedLiquidityWidget> = (
     return (
       <FormSection
         title="Liquidity"
-        description="Depending on your range, the supplied tokens for this position will not always be a 50:50 ratio."
+        description={
+          <div className="flex flex-col gap-2">
+            <span>
+              {
+                'Depending on your range, the supplied tokens for this position will not always be a 50:50 ratio.'
+              }
+            </span>
+            <SettingsOverlay
+              options={{
+                slippageTolerance: {
+                  storageKey: SlippageToleranceStorageKey.AddLiquidity,
+                  title: 'Add Liquidity Slippage',
+                },
+              }}
+              modules={[SettingsModule.SlippageTolerance]}
+            >
+              <div>
+                <Button
+                  size="sm"
+                  name="Settings"
+                  icon={Cog6ToothIcon}
+                  variant="secondary"
+                >
+                  Settings
+                </Button>
+              </div>
+            </SettingsOverlay>
+          </div>
+        }
       >
         {widget}
       </FormSection>

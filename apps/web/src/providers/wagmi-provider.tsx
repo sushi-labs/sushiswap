@@ -2,6 +2,7 @@
 
 import '@rainbow-me/rainbowkit/styles.css'
 
+import { faro } from '@grafana/faro-web-sdk'
 import {
   type DisclaimerComponent,
   RainbowKitProvider,
@@ -12,10 +13,10 @@ import {
 } from '@rainbow-me/rainbowkit'
 import { useIsMounted } from '@sushiswap/hooks'
 import { useTheme } from 'next-themes'
-import { type FC, type ReactNode, useMemo } from 'react'
+import { type FC, type ReactNode, useEffect, useMemo } from 'react'
 import { WagmiStoreVersionCheck } from 'src/lib/wagmi/components/wagmi-store-version-check'
 import { getWagmiConfig, getWagmiInitialState } from 'src/lib/wagmi/config'
-import { WagmiProvider as _WagmiProvider } from 'wagmi'
+import { WagmiProvider as _WagmiProvider, useAccount } from 'wagmi'
 
 const darkTheme: Theme = {
   ...rainbowDarkTheme({
@@ -61,6 +62,22 @@ const Disclaimer: DisclaimerComponent = ({ Text, Link }) => (
   </Text>
 )
 
+const WagmiTrackers = () => {
+  const { address, chainId } = useAccount()
+
+  useEffect(() => {
+    if (!address || !faro.api) return
+    faro.api.pushEvent('address-change', { address })
+  }, [address])
+
+  useEffect(() => {
+    if (!chainId || !faro.api) return
+    faro.api.pushEvent('chain-change', { chainId: String(chainId) })
+  }, [chainId])
+
+  return null
+}
+
 export const WagmiProvider: FC<{
   children: ReactNode
   cookie?: string | null
@@ -96,7 +113,10 @@ export const WagmiProvider: FC<{
           theme={rainbowKitTheme}
           appInfo={{ disclaimer: Disclaimer }}
         >
-          <WagmiStoreVersionCheck>{children}</WagmiStoreVersionCheck>
+          <WagmiStoreVersionCheck>
+            <WagmiTrackers />
+            {children}
+          </WagmiStoreVersionCheck>
         </RainbowKitProvider>
       </div>
     </_WagmiProvider>
