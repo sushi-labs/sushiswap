@@ -27,6 +27,7 @@ import React, {
 } from 'react'
 import { APPROVE_TAG_SWAP } from 'src/lib/constants'
 import { usePersistedOrdersStore } from 'src/lib/hooks/react-query/twap'
+import { logger } from 'src/lib/logger'
 import {
   fillDelayText,
   getOrderIdFromCreateOrderEvent,
@@ -141,6 +142,9 @@ export const TwapTradeReviewDialog: FC<{
       return
     }
 
+    logger.error(e, {
+      location: 'TwapTradeReviewDialog',
+    })
     createErrorToast(e.message, false)
   }, [])
 

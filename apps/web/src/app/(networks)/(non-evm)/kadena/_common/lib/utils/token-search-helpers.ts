@@ -1,8 +1,9 @@
 import type { KvmToken } from 'sushi/kvm'
+import type { XSwapToken } from '../hooks/use-x-swap-token-list'
 
 const alwaysTrue = () => true
 
-export function createTokenFilterFunction<T extends KvmToken>(
+export function createTokenFilterFunction<T extends XSwapToken>(
   search: string,
 ): (tokens: T) => boolean {
   const lowerSearchParts = search
@@ -29,7 +30,7 @@ export function createTokenFilterFunction<T extends KvmToken>(
     Boolean((symbol && matchesSearch(symbol)) || (name && matchesSearch(name)))
 }
 
-export function filterTokens<T extends KvmToken>(
+export function filterTokens<T extends XSwapToken>(
   tokens: T[],
   search: string,
 ): T[] {
@@ -37,7 +38,7 @@ export function filterTokens<T extends KvmToken>(
 }
 
 export const tokenComparator = () => {
-  return (tokenA: KvmToken, tokenB: KvmToken): number => {
+  return (tokenA: XSwapToken, tokenB: XSwapToken): number => {
     if (tokenA.symbol && tokenB.symbol) {
       return tokenA.symbol.toLowerCase() < tokenB.symbol.toLowerCase() ? -1 : 1
     } else {
@@ -47,9 +48,9 @@ export const tokenComparator = () => {
 }
 
 export function getSortedTokensByQuery(
-  tokens: KvmToken[] | undefined,
+  tokens: XSwapToken[] | undefined,
   searchQuery: string,
-): KvmToken[] {
+): XSwapToken[] {
   if (!tokens) {
     return []
   }
@@ -67,11 +68,10 @@ export function getSortedTokensByQuery(
     return tokens
   }
 
-  const exactMatches: KvmToken[] = []
-  const symbolSubstrings: KvmToken[] = []
-  const rest: KvmToken[] = []
+  const exactMatches: XSwapToken[] = []
+  const symbolSubstrings: XSwapToken[] = []
+  const rest: XSwapToken[] = []
 
-  // sort tokens by exact match -> subtring on symbol match -> rest
   tokens.map((token) => {
     if (token.symbol?.toLowerCase() === symbolMatch[0]) {
       return exactMatches.push(token)

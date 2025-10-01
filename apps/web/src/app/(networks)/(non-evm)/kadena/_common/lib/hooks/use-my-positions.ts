@@ -1,11 +1,53 @@
-import {
-  type GetWalletPositionsResponse,
-  getWalletPositions,
+import type {
+  GetWalletPositionsResponse,
+  WalletPosition,
 } from '@sushiswap/graph-client/kadena'
 import { type InfiniteData, useInfiniteQuery } from '@tanstack/react-query'
 import ms from 'ms'
 import { useCallback } from 'react'
+import { z } from 'zod'
 import { useKadena } from '~kadena/kadena-wallet-provider'
+
+const walletPositionsResponseSchema = z.object({
+  totalCount: z.number(),
+  pageInfo: z.object({
+    endCursor: z.string().nullable(),
+    hasNextPage: z.boolean(),
+  }),
+  edges: z
+    .array(
+      z.object({
+        node: z.object({
+          apr24h: z.number(),
+          valueUsd: z.number().nullable(),
+          liquidity: z.string(),
+          pair: z.object({
+            totalSupply: z.string(),
+            tvlUsd: z.number(),
+            token1: z.object({
+              name: z.string(),
+              id: z.string(),
+              chainId: z.string(),
+              address: z.string(),
+            }),
+            token0: z.object({
+              name: z.string(),
+              id: z.string(),
+              chainId: z.string(),
+              address: z.string(),
+            }),
+            reserve1: z.string(),
+            reserve0: z.string(),
+            id: z.string(),
+            address: z.string(),
+          }),
+          pairId: z.string(),
+          id: z.string(),
+        }),
+      }),
+    )
+    .default([]),
+})
 
 export const useMyPositions = (pageSize = 50) => {
   const { activeAccount } = useKadena()
@@ -15,7 +57,7 @@ export const useMyPositions = (pageSize = 50) => {
     (
       data: InfiniteData<
         {
-          positions: GetWalletPositionsResponse['edges'][number]['node'][] | []
+          positions: WalletPosition[] | []
           pageInfo: GetWalletPositionsResponse['pageInfo']
           totalCount: GetWalletPositionsResponse['totalCount']
         },
@@ -41,16 +83,26 @@ export const useMyPositions = (pageSize = 50) => {
           totalCount: 0,
         }
       }
-      const data = await getWalletPositions({
-        walletAddress,
-        first: pageSize,
-        after: pageParam ?? undefined,
-      })
+
+      const url = new URL('/kadena/api/user', window.location.origin)
+      url.searchParams.set('walletAddress', walletAddress)
+      url.searchParams.set('pageSize', String(pageSize))
+      if (pageParam) {
+        url.searchParams.set('pageParam', pageParam)
+      }
+      const res = await fetch(url.toString())
+      const data = await res.json()
+
+      const parsed = walletPositionsResponseSchema.safeParse(data)
+
+      if (!parsed.success) {
+        throw new Error('Failed to parse positions response')
+      }
 
       return {
-        positions: data?.edges?.map((edge) => edge?.node),
-        pageInfo: data?.pageInfo ?? {},
-        totalCount: data?.totalCount ?? 0,
+        positions: parsed?.data?.edges?.map((edge) => edge?.node),
+        pageInfo: parsed?.data?.pageInfo ?? {},
+        totalCount: parsed?.data?.totalCount ?? 0,
       }
     },
     getNextPageParam: (lastPage) => {

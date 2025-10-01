@@ -21,14 +21,6 @@ import { useSwapState } from '../swap/swap-provider'
 import { useDerivedStateCrossChainSwap } from './derivedstate-cross-chain-swap-provider'
 
 export default function CrossChainSwapPage() {
-  // const {
-  //   state: { token0, token1, swapAmountString: amountIn },
-  // } = useDerivedStateCrossChainSwap()
-  // const { activeAccount } = useKadena()
-  // const [slippageTolerance] = useSlippageTolerance(
-  //   SlippageToleranceStorageKey.Swap,
-  // )
-
   return (
     <Container maxWidth="lg">
       <div className="flex flex-col gap-4">

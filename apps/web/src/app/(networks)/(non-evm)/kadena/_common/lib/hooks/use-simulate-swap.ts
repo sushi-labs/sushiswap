@@ -40,6 +40,7 @@ export const useSimulateSwap = ({
       token1?.address,
       amountIn ?? null,
       amountOut,
+      slippage,
       signerAddress,
     ],
     queryFn: async () => {
@@ -94,7 +95,6 @@ export const useSimulateSwap = ({
         signatureVerification: false,
       })
 
-      // console.log(res);
       if (res.result.status === 'failure') {
         setGas(0)
         setAmountOut(undefined)

@@ -8,6 +8,42 @@ import {
 } from '@sushiswap/graph-client/kadena'
 import { useCallback } from 'react'
 
+import { z } from 'zod'
+
+const poolsResponseSchema = z.object({
+  totalCount: z.number(),
+  pageInfo: z.object({
+    endCursor: z.string(),
+    hasNextPage: z.boolean(),
+  }),
+  edges: z.array(
+    z.object({
+      node: z.object({
+        fees24hUsd: z.number(),
+        apr24h: z.number(),
+        transactionCount24h: z.number(),
+        volume7dUsd: z.number(),
+        volume24hUsd: z.number(),
+        tvlUsd: z.number(),
+        token1: z.object({
+          address: z.string(),
+          chainId: z.string(),
+          name: z.string(),
+          id: z.string(),
+        }),
+        token0: z.object({
+          address: z.string(),
+          chainId: z.string(),
+          name: z.string(),
+          id: z.string(),
+        }),
+        address: z.string(),
+        id: z.string(),
+      }),
+    }),
+  ),
+})
+
 export const useAllPools = ({
   first = 50,
   orderBy = 'TVL_USD_DESC',
@@ -39,16 +75,25 @@ export const useAllPools = ({
   return useInfiniteQuery({
     queryKey: ['kadena-pools', first, orderBy],
     queryFn: async ({ pageParam = null }: { pageParam: string | null }) => {
-      const data = await getAllPools({
-        first: first,
-        orderBy: orderBy,
-        after: pageParam ?? undefined,
-      })
+      const url = new URL('/kadena/api/pools/all-pools', window.location.origin)
+      url.searchParams.set('orderBy', orderBy)
+      url.searchParams.set('first', String(first))
+      if (pageParam) {
+        url.searchParams.set('pageParam', pageParam)
+      }
+      const res = await fetch(url.toString())
+      const data = await res.json()
+
+      const parsed = poolsResponseSchema.safeParse(data)
+
+      if (!parsed.success) {
+        throw new Error('Failed to parse pools response')
+      }
 
       return {
-        pools: data?.edges?.map((edge) => edge?.node),
-        pageInfo: data?.pageInfo,
-        totalCount: data?.totalCount,
+        pools: parsed?.data?.edges?.map((edge) => edge?.node),
+        pageInfo: parsed?.data?.pageInfo,
+        totalCount: parsed?.data?.totalCount,
       }
     },
     getNextPageParam: (lastPage) => {

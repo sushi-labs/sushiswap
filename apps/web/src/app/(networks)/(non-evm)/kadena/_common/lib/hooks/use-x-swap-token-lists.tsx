@@ -22,7 +22,7 @@ export const useXChainSwapTokenInfo = ({
   const { data: tokenLists } = useXSwapTokenList()
 
   return useQuery<XSwapToken | undefined>({
-    queryKey: ['xswap-token-info', chainId, address],
+    queryKey: ['xswap-token-info', chainId, address, enabled],
     enabled: Boolean(enabled && address && chainId && tokenLists),
     queryFn: async () => {
       if (!tokenLists) return

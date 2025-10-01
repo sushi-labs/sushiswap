@@ -14,8 +14,7 @@ import { HeaderNetworkSelector } from './header-network-selector'
 import { UserPortfolio } from './user-portfolio'
 
 interface WagmiHeaderComponentsProps {
-  networks: readonly ChainId[]
-  supportedNetworks?: readonly ChainId[]
+  networks: readonly ChainId[] | undefined
   selectedNetwork?: ChainId
   onChange?(chainId: EvmChainId): void
 }
@@ -23,7 +22,6 @@ interface WagmiHeaderComponentsProps {
 export const WagmiHeaderComponents: React.FC<WagmiHeaderComponentsProps> = ({
   networks,
   selectedNetwork,
-  supportedNetworks,
   onChange,
 }) => {
   const { chainId, address, connector } = useAccount()
@@ -48,7 +46,6 @@ export const WagmiHeaderComponents: React.FC<WagmiHeaderComponentsProps> = ({
       <HeaderNetworkSelector
         networks={networks}
         selectedNetwork={selectedNetwork}
-        supportedNetworks={supportedNetworks}
         onChange={onChange}
         className="flex"
       />

@@ -9,19 +9,38 @@ import { useQueryClient } from '@tanstack/react-query'
 import { useState } from 'react'
 import { ChainId } from 'sushi'
 import { getKvmChainByKey } from 'sushi/kvm'
+import { useAccount } from 'wagmi'
 import { kinesisClient } from '~kadena/_common/constants/client'
+import { formatPactDecimal } from '~kadena/_common/lib/pact/pact-decimal'
 import { useDerivedStateCrossChainSwap } from '~kadena/cross-chain-swap/derivedstate-cross-chain-swap-provider'
+import { useKadena } from '~kadena/kadena-wallet-provider'
 
 export const XChainSwapButton = ({
   closeModal,
-}: { closeModal: () => void }) => {
+  setTxHash,
+  setStatus,
+}: {
+  closeModal: () => void
+  setTxHash: (txHash: `0x${string}` | string) => void
+  setStatus: (status: 'pending' | 'success' | 'error') => void
+}) => {
   const queryClient = useQueryClient()
   const { state, mutate } = useDerivedStateCrossChainSwap()
   const { token0, token1, swapAmount, swapAmountString } = state
   const [isTxnPending, setIsTxnPending] = useState(false)
-
+  const { address } = useAccount()
+  const { activeAccount } = useKadena()
   const executeBridge = async () => {
     if (!token0 || !token1 || !swapAmount || !swapAmountString) return
+
+    const senderAddress =
+      state.chainId0 === ChainId.KADENA
+        ? (activeAccount?.accountName ?? '')
+        : (address ?? '')
+    const receiverAddress =
+      state.chainId1 === ChainId.KADENA
+        ? (activeAccount?.accountName ?? '')
+        : (address ?? '')
 
     try {
       setIsTxnPending(true)
@@ -33,29 +52,33 @@ export const XChainSwapButton = ({
       const chainIdIn = state.chainId0 === ChainId.KADENA ? 2 : 1
       const chainIdOut = state.chainId1 === ChainId.KADENA ? 2 : 1
 
-      // Step 1: Build params
       const params: ExecuteBridgeParams = {
         tokenAddressIn: token0.address,
-        amountIn: swapAmountString,
+        amountIn: formatPactDecimal(Number(swapAmountString)),
         networkIn: networkIn,
         chainIdIn: chainIdIn,
-        senderAddress: state.recipient ?? '',
+        senderAddress: senderAddress,
         tokenAddressOut: token1.address,
-        amountOut: swapAmountString, // expected
-        minAmountOut: swapAmountString, // slippage tolerance can be applied here
+        amountOut: formatPactDecimal(
+          Number(state.simulateBridgeTx?.estimatedAmountReceived ?? ''),
+        ),
+        minAmountOut: formatPactDecimal(
+          Number(state.simulateBridgeTx?.amountMinReceived ?? ''),
+        ),
         networkOut: networkOut,
         chainIdOut: chainIdOut,
-        receiverAddress: state.recipient ?? '',
+        receiverAddress: receiverAddress,
       }
 
-      // Step 2: Execute bridge transaction
       const tx = await kinesisClient.executeBridgeTransaction(params)
       const txnHash = tx.txnHash
+      setTxHash(txnHash)
+      setStatus('pending')
 
       createInfoToast({
         summary: 'Bridge swap initiated...',
         type: 'swap',
-        account: state.recipient!,
+        account: senderAddress,
         chainId: state.chainId0,
         groupTimestamp: Date.now(),
         timestamp: Date.now(),
@@ -63,7 +86,6 @@ export const XChainSwapButton = ({
         href: getKvmChainByKey('kadena').getTransactionUrl(txnHash),
       })
 
-      // Step 3: Wait for confirmation
       const result = await kinesisClient.waitForTransaction({
         txnHash,
         network: networkIn,
@@ -71,13 +93,16 @@ export const XChainSwapButton = ({
       })
 
       if (result.status !== 'success') {
+        setStatus('error')
         throw new Error(result.message || 'Bridge transaction failed')
       }
+
+      setStatus('success')
 
       createSuccessToast({
         summary: 'Bridge swap executed successfully',
         type: 'swap',
-        account: state.recipient!,
+        account: senderAddress,
         chainId: state.chainId0,
         groupTimestamp: Date.now(),
         timestamp: Date.now(),
@@ -93,11 +118,12 @@ export const XChainSwapButton = ({
             ? err
             : ((err as Error)?.message ?? 'Bridge swap failed'),
         type: 'swap',
-        account: state.recipient!,
+        account: senderAddress,
         chainId: state.chainId0,
         groupTimestamp: Date.now(),
         timestamp: Date.now(),
       })
+      setStatus('error')
       console.error(err)
     } finally {
       setIsTxnPending?.(false)

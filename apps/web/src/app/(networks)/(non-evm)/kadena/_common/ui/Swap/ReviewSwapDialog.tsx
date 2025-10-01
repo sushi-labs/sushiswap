@@ -89,12 +89,7 @@ export const ReviewSwapDialog = () => {
                       title="Price Impact"
                       subtitle="The impact your trade has on the market price of this pool."
                     >
-                      <span
-                        style={{ color: severityClass }}
-                        className={classNames(
-                          'text-right text-gray-700 dark:text-slate-400',
-                        )}
-                      >
+                      <span style={{ color: severityClass }}>
                         -{formatPercent(priceImpactPercentage / 100)}
                       </span>
                     </List.KeyValue>

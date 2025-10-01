@@ -4,13 +4,11 @@ import { DerivedstateCrossChainSwapProvider } from './derivedstate-cross-chain-s
 
 export async function Providers({
   children,
-  chainId,
 }: {
   children: React.ReactNode
-  chainId: KvmChainId | EthereumChainId
 }) {
   return (
-    <DerivedstateCrossChainSwapProvider defaultChainId={chainId}>
+    <DerivedstateCrossChainSwapProvider>
       {children}
     </DerivedstateCrossChainSwapProvider>
   )

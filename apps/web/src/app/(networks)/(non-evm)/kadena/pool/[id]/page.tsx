@@ -1,6 +1,5 @@
 'use client'
 
-import { Container } from '@sushiswap/ui'
 import { use } from 'react'
 import { usePoolById } from '~kadena/_common/lib/hooks/use-pool-by-id'
 import { PoolPageV2 } from '~kadena/_common/ui/Pools/PoolsV2/PoolPageV2'

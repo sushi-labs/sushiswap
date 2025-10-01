@@ -4,6 +4,7 @@ import type {
 } from '@kinesis-bridge/kinesis-sdk/dist/types'
 
 import { useQuery } from '@tanstack/react-query'
+import ms from 'ms'
 import { kinesisClient } from '~kadena/_common/constants/client'
 
 export const useSimulateBridgeTransaction = (
@@ -12,19 +13,18 @@ export const useSimulateBridgeTransaction = (
 ) => {
   return useQuery<SimulateBridgeResult, Error>({
     queryKey: ['simulate-bridge-tx', params],
-    enabled: Boolean(
-      params?.amountIn &&
-        params.amountIn &&
-        params.tokenAddressIn &&
-        params.tokenAddressOut &&
-        params.receiverAddress &&
-        params.senderAddress &&
-        enabled,
-    ),
+    enabled:
+      Boolean(params?.amountIn) &&
+      Boolean(params?.amountIn) &&
+      Boolean(params?.tokenAddressIn) &&
+      Boolean(params?.tokenAddressOut) &&
+      Boolean(params?.receiverAddress) &&
+      Boolean(params?.senderAddress) &&
+      enabled,
     queryFn: async () => {
       if (!params) throw new Error('Missing params for simulation')
       return kinesisClient.simulateBridgeTransaction(params)
     },
-    staleTime: 30_000, // 30s
+    staleTime: ms('30s'),
   })
 }

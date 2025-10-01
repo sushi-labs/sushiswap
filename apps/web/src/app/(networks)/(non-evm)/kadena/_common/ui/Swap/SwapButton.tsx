@@ -7,7 +7,8 @@ import {
 import { Button, Dots } from '@sushiswap/ui'
 import { useQueryClient } from '@tanstack/react-query'
 import { useKadenaWallet } from 'node_modules/@kadena/wallet-adapter-react/dist/esm/context'
-import { getKvmChainByKey } from 'sushi/kvm'
+import { logger } from 'src/lib/logger'
+import { KvmChainId, getKvmChainByKey } from 'sushi/kvm'
 import { kadenaClient } from '~kadena/_common/constants/client'
 import {
   KADENA_CHAIN_ID,
@@ -110,7 +111,7 @@ export const SwapButton = ({ closeModal }: { closeModal: () => void }) => {
         summary: 'Swap initiated...',
         type: 'swap',
         account: address,
-        chainId: 1,
+        chainId: KvmChainId.KADENA,
         groupTimestamp: Date.now(),
         timestamp: Date.now(),
         txHash: txId,
@@ -129,7 +130,7 @@ export const SwapButton = ({ closeModal }: { closeModal: () => void }) => {
         txHash: txId,
         type: 'swap',
         account: address!,
-        chainId: 1,
+        chainId: KvmChainId.KADENA,
         groupTimestamp: Date.now(),
         timestamp: Date.now(),
         href: getKvmChainByKey('kadena').getTransactionUrl(txId),
@@ -144,9 +145,16 @@ export const SwapButton = ({ closeModal }: { closeModal: () => void }) => {
             : ((err as Error)?.message ?? 'Swap failed'),
         type: 'swap',
         account: address!,
-        chainId: 1,
+        chainId: KvmChainId.KADENA,
         groupTimestamp: Date.now(),
         timestamp: Date.now(),
+      })
+      logger.error(err, {
+        location: 'KadenaSwapButton',
+        action: 'swapToken',
+        token_from: token0?.address,
+        token_to: token1?.address,
+        account: address,
       })
       setStatus('error')
       console.error(err)

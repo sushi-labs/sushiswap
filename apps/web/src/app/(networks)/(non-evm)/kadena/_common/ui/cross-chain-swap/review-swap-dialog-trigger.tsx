@@ -31,7 +31,7 @@ export const ReviewSwapDialogTrigger = () => {
     account: activeAccount?.accountName ?? '',
     tokenAddresses:
       state.token0 && isKvmChainId(state.token0.chainId)
-        ? [state.token0.address as KvmTokenAddress]
+        ? [state.token0.address as KvmTokenAddress, 'coin']
         : [],
   })
 

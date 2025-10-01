@@ -2,7 +2,6 @@
 
 import type {
   GetPoolResponse,
-  PoolTransaction,
   PoolTransactionType,
 } from '@sushiswap/graph-client/kadena'
 import {
@@ -16,7 +15,10 @@ import {
 import type { PaginationState } from '@tanstack/react-table'
 import { type FC, useCallback, useMemo, useState } from 'react'
 import { getKvmChainByKey } from 'sushi/kvm'
-import { usePoolTransactions } from '~kadena/_common/lib/hooks/use-pool-transactions'
+import {
+  type PoolTransaction,
+  usePoolTransactions,
+} from '~kadena/_common/lib/hooks/use-pool-transactions'
 import { usePoolState } from '../../../../pool/pool-provider'
 import {
   AMOUNT_USD_COLUMN,

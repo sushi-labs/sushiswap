@@ -97,7 +97,7 @@ export const XChainTokenSelector = ({
   // token map for sorting
   const baseTokenMap = useMemo(() => {
     if (!baseTokens) return undefined
-    const tokenMap: Record<string, KvmToken> = {}
+    const tokenMap: Record<string, XSwapToken> = {}
     baseTokens.forEach((token) => {
       tokenMap[token.address] = token
     })
@@ -113,7 +113,7 @@ export const XChainTokenSelector = ({
   })
 
   const _onSelect = useCallback(
-    (token: KvmToken) => {
+    (token: XSwapToken) => {
       onSelect(token)
       setOpen(false)
     },
@@ -165,7 +165,7 @@ export const XChainTokenSelector = ({
             networks={networks}
             selectedNetwork={selectedNetwork}
             onSelect={(network) => {
-              setSelectedNetwork(network)
+              setSelectedNetwork(network as KvmChainId | EthereumChainId)
             }}
           />
         ) : null}
@@ -302,12 +302,12 @@ const TokenButton = ({
   isOnDefaultList,
 }: {
   style?: CSSProperties
-  token?: KvmToken
-  tokenAmount?: Amount<KvmToken>
-  selectToken: (_token: KvmToken) => void
+  token?: XSwapToken
+  tokenAmount?: Amount<XSwapToken>
+  selectToken: (_token: XSwapToken) => void
   isSelected: boolean
-  hasToken?: (currency: string | KvmToken) => boolean
-  addOrRemoveToken?: (type: 'add' | 'remove', currency: KvmToken[]) => void
+  hasToken?: (currency: string | XSwapToken) => boolean
+  addOrRemoveToken?: (type: 'add' | 'remove', currency: XSwapToken[]) => void
   isOnDefaultList: (currency: string) => boolean
 }) => {
   if (!token) return null
@@ -329,7 +329,6 @@ const TokenButton = ({
       <Button
         onClick={() => {
           selectToken(token)
-          console.log('token', token)
         }}
         key={token.address}
         size="xl"
@@ -401,8 +400,8 @@ const CommonTokenButton = ({
   token,
   selectToken,
 }: {
-  token: KvmToken
-  selectToken: (_token: KvmToken) => void
+  token: XSwapToken
+  selectToken: (_token: XSwapToken) => void
 }) => {
   return (
     <Button

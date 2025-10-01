@@ -9,11 +9,12 @@ import {
   createInfoToast,
   createSuccessToast,
 } from '@sushiswap/notifications'
-import { Button, type ButtonProps } from '@sushiswap/ui'
+import { Button, type ButtonProps, Dots } from '@sushiswap/ui'
 import { useQueryClient } from '@tanstack/react-query'
 import { useMemo } from 'react'
+import { logger } from 'src/lib/logger'
 import { Amount } from 'sushi'
-import { getKvmChainByKey } from 'sushi/kvm'
+import { KvmChainId, getKvmChainByKey } from 'sushi/kvm'
 import { parseUnits } from 'viem'
 import { kadenaClient } from '~kadena/_common/constants/client'
 import {
@@ -115,9 +116,9 @@ export const AddButton = ({
         const txId = res.requestKey
         createInfoToast({
           summary: 'Creating a pool initiated...',
-          type: 'swap',
+          type: 'mint',
           account: address as string,
-          chainId: 1,
+          chainId: KvmChainId.KADENA,
           groupTimestamp: Date.now(),
           timestamp: Date.now(),
           txHash: txId,
@@ -133,9 +134,9 @@ export const AddButton = ({
         createSuccessToast({
           summary: 'Created a pool successfully! Continue to add liquidity.',
           txHash: txId,
-          type: 'swap',
+          type: 'mint',
           account: address as string,
-          chainId: 1,
+          chainId: KvmChainId.KADENA,
           groupTimestamp: Date.now(),
           timestamp: Date.now(),
           href: getKvmChainByKey('kadena').getTransactionUrl(txId),
@@ -186,9 +187,9 @@ export const AddButton = ({
       const txId = res.requestKey
       createInfoToast({
         summary: 'Adding liquidity initiated...',
-        type: 'swap',
+        type: 'mint',
         account: address as string,
-        chainId: 1,
+        chainId: KvmChainId.KADENA,
         groupTimestamp: Date.now(),
         timestamp: Date.now(),
         txHash: txId,
@@ -203,9 +204,9 @@ export const AddButton = ({
       createSuccessToast({
         summary: 'Added liquidity successfully',
         txHash: txId,
-        type: 'swap',
+        type: 'mint',
         account: address as string,
-        chainId: 1,
+        chainId: KvmChainId.KADENA,
         groupTimestamp: Date.now(),
         timestamp: Date.now(),
         href: getKvmChainByKey('kadena').getTransactionUrl(txId),
@@ -220,11 +221,18 @@ export const AddButton = ({
             'An error occurred while trying to add liquidity')
       createFailedToast({
         summary: errorMessage,
-        type: 'swap',
+        type: 'mint',
         account: address as string,
-        chainId: 1,
+        chainId: KvmChainId.KADENA,
         groupTimestamp: Date.now(),
         timestamp: Date.now(),
+      })
+      logger.error(error, {
+        location: 'KadenaAddButton',
+        action: 'addLiquidity',
+        token0: token0?.address,
+        token1: token1?.address,
+        account: address,
       })
       console.error(error)
       setIsTxnPending(false)
@@ -256,7 +264,7 @@ export const AddButton = ({
   }
 
   const btnText = useMemo(() => {
-    if (isTxnPending && poolId) return 'Adding Liquidity'
+    if (isTxnPending && poolId) return <Dots>Adding Liquidity</Dots>
     if (isTxnPending && !poolId) return 'Creating Pool'
     if (!poolId) return 'Create Pool'
     return 'Add Liquidity'
@@ -265,8 +273,8 @@ export const AddButton = ({
   return (
     <Button
       disabled={isTxnPending}
-      loading={isTxnPending}
       onClick={addLiquidity}
+      size="xl"
       {...buttonProps}
     >
       {btnText}

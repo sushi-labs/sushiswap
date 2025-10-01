@@ -20,19 +20,17 @@ export type XSwapTokenList = {
 
 export const useXSwapTokenList = () => {
   const { data, isLoading, isError } = useQuery<
-    [GetTokenListResponse, GetTokenListResponse], // queryFn returns tuple
+    [GetTokenListResponse, GetTokenListResponse],
     Error,
     XSwapTokenList
   >({
     queryKey: ['xswap-token-list'],
     queryFn: async () => {
       return Promise.all([
-        // Ethereum mainnet
         kinesisClient.getTokenList({
           network: 'ethereum',
-          chainId: 1 as const, // mainnet
+          chainId: 1 as const,
         }),
-        // Kadena mainnet01 (your configured chain)
         kinesisClient.getTokenList({
           network: KADENA_NETWORK_ID,
           chainId: Number(KADENA_CHAIN_ID) as GetTokenListParams['chainId'],

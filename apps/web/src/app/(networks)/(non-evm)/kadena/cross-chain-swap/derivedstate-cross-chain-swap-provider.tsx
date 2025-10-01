@@ -1,5 +1,6 @@
 'use client'
 
+import type { SimulateBridgeResult } from '@kinesis-bridge/kinesis-sdk/dist/types'
 import { nanoid } from 'nanoid'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import {
@@ -51,6 +52,8 @@ interface State {
     swapAmount: Amount<XSwapToken> | undefined
     recipient: Address | undefined
     selectedBridge: string | undefined
+    simulateBridgeTx: SimulateBridgeResult | undefined
+    isLoadingSimulateBridgeTx: boolean
   }
   isLoading: boolean
   isToken0Loading: boolean
@@ -61,7 +64,6 @@ const DerivedStateCrossChainSwapContext = createContext<State>({} as State)
 
 interface DerivedStateCrossChainSwapProviderProps {
   children: React.ReactNode
-  defaultChainId: EthereumChainId | KvmChainId
 }
 
 /* Parses the URL and provides the chainId, token0, and token1 globally.
@@ -72,7 +74,7 @@ interface DerivedStateCrossChainSwapProviderProps {
  */
 const DerivedstateCrossChainSwapProvider: FC<
   DerivedStateCrossChainSwapProviderProps
-> = ({ children, defaultChainId }) => {
+> = ({ children }) => {
   const { push } = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
@@ -81,48 +83,69 @@ const DerivedstateCrossChainSwapProvider: FC<
     undefined,
   )
 
-  const chainId0 = Number(searchParams.get('chainId0')) as
-    | KvmChainId
-    | EthereumChainId
+  const rawChainId0 = decodeChainId(searchParams.get('chainId0'))
+  const rawChainId1 = decodeChainId(searchParams.get('chainId1'))
+
+  const isValidChainId = (
+    id: number | undefined,
+  ): id is KvmChainId | EthereumChainId => {
+    if (id === undefined) return false
+    return isKvmChainId(id) || isEvmChainId(id)
+  }
+
+  // Resolve chainId0 with fallback
+  const chainId0: KvmChainId | EthereumChainId = isValidChainId(rawChainId0)
+    ? rawChainId0
+    : ChainId.KADENA
+
+  // Resolve chainId1 with fallback depending on chainId0
+  const chainId1: KvmChainId | EthereumChainId = isValidChainId(rawChainId1)
+    ? rawChainId1
+    : chainId0 === ChainId.KADENA
+      ? ChainId.ETHEREUM
+      : ChainId.KADENA
+
+  const defaultedParams = useMemo(() => {
+    const params = new URLSearchParams(Array.from(searchParams.entries()))
+
+    // Ensure chainId1 is set
+    if (!params.get('chainId1')) {
+      params.set(
+        'chainId1',
+        chainId0 === ChainId.KADENA
+          ? ChainId.ETHEREUM.toString()
+          : encodeURIComponent(ChainId.KADENA.toString()),
+      )
+    }
+
+    // Only apply defaults if both token0 and token1 are missing
+    if (!params.get('token0') && !params.get('token1')) {
+      params.set(
+        'token0',
+        chainId0 === ChainId.KADENA
+          ? 'n_e595727b657fbbb3b8e362a05a7bb8d12865c1ff.KDA'
+          : '0xbddb58bf21b12d70eed91b939ae061572010b11d',
+      )
+
+      params.set(
+        'token1',
+        chainId0 === ChainId.KADENA
+          ? '0xbddb58bf21b12d70eed91b939ae061572010b11d'
+          : 'n_e595727b657fbbb3b8e362a05a7bb8d12865c1ff.KDA',
+      )
+    }
+
+    return params
+  }, [chainId0, searchParams])
 
   // Get the searchParams and complete with defaults.
   // This handles the case where some params might not be provided by the user
-  useEffect(() => {
-    const params = new URLSearchParams(searchParams)
-
-    let updated = false
-    if (!params.has('chainId0')) {
-      params.set('chainId0', ChainId.ETHEREUM.toString())
-      updated = true
-    }
-    if (!params.has('chainId1')) {
-      params.set(
-        'chainId1',
-        Number(params.get('chainId0')) === ChainId.KADENA
-          ? ChainId.ETHEREUM.toString()
-          : ChainId.KADENA.toString(),
-      )
-      updated = true
-    }
-    if (!params.has('token0')) {
-      params.set('token0', '0xbddb58bf21b12d70eed91b939ae061572010b11d')
-      updated = true
-    }
-    if (!params.has('token1')) {
-      params.set('token1', 'n_e595727b657fbbb3b8e362a05a7bb8d12865c1ff.KDA')
-      updated = true
-    }
-
-    if (updated) {
-      push(`${pathname}?${params.toString()}`)
-    }
-  }, []) // run only once on mount
 
   // Get a new searchParams string by merging the current
   // searchParams with a provided key/value pair
   const createQueryString = useCallback(
     (values: { name: string; value: string | null }[]) => {
-      const params = new URLSearchParams(searchParams)
+      const params = new URLSearchParams(defaultedParams.toString()) // use raw
       values.forEach(({ name, value }) => {
         if (value === null) {
           params.delete(name)
@@ -132,18 +155,18 @@ const DerivedstateCrossChainSwapProvider: FC<
       })
       return params.toString()
     },
-    [searchParams],
+    [defaultedParams],
   )
 
   // Switch token0 and token1
   const switchTokens = useCallback(() => {
-    const params = new URLSearchParams(searchParams)
-    const chainId1 = +(params.get('chainId1') || 0)
+    const params = new URLSearchParams(defaultedParams.toString()) // use raw
+    const chainId1 = decodeChainId(params.get('chainId1')) || ChainId.KADENA
     const token0 = params.get('token0')
     const token1 = params.get('token1')
 
     if (!isEvmChainId(chainId1) && !isKvmChainId(chainId1)) {
-      console.log('[switchTokens] Invalid chainId1:', chainId1)
+      console.error('[switchTokens] Invalid chainId1:', chainId1)
       return
     }
 
@@ -152,30 +175,27 @@ const DerivedstateCrossChainSwapProvider: FC<
       { name: 'swapAmount', value: null },
       { name: 'token0', value: token1 as string },
       { name: 'token1', value: token0 as string },
-      { name: 'chainId1', value: chainId0.toString() },
-      { name: 'chainId0', value: chainId1.toString() },
+      { name: 'chainId1', value: encodeChainId(chainId0) },
+      { name: 'chainId0', value: encodeChainId(chainId1) },
     ])
 
-    history.pushState(null, '', `${pathname}?${newQueryString}`)
-
-    console.log(
-      `[switchTokens] Swapped tokens and updated chainId0 to ${chainId1}, query: ${newQueryString}`,
-    )
-  }, [pathname, searchParams, chainId0, createQueryString])
+    const url = `${pathname}?${newQueryString}`
+    push(url, { scroll: false })
+  }, [pathname, defaultedParams, chainId0, createQueryString, push])
 
   // Update the URL with a new token0
   const setToken0 = useCallback(
     (_token0: XSwapToken) => {
       // If entity is provided, parse it to a string
-      console.log('setToken0', _token0)
       const token0 = _token0.address
-      push(
-        `${pathname}?${createQueryString([
-          { name: 'token0', value: token0 },
-          { name: 'chainId0', value: _token0.chainId.toString() },
-        ])}`,
-        { scroll: false },
-      )
+      const url = `${pathname}?${createQueryString([
+        { name: 'token0', value: token0 },
+        {
+          name: 'chainId0',
+          value: encodeChainId(_token0.chainId),
+        },
+      ])}`
+      push(url, { scroll: false })
     },
     [createQueryString, pathname, push],
   )
@@ -183,14 +203,13 @@ const DerivedstateCrossChainSwapProvider: FC<
   // Update the URL with a new token1
   const setToken1 = useCallback(
     (_token1: XSwapToken) => {
-      // If entity is provided, parse it to a string
-      console.log('setToken1', _token1)
-
       const url = `${pathname}?${createQueryString([
         { name: 'token1', value: _token1.address },
-        { name: 'chainId1', value: _token1.chainId.toString() },
+        {
+          name: 'chainId1',
+          value: encodeChainId(_token1.chainId),
+        },
       ])}`
-      console.log('url', url)
       push(url, { scroll: false })
     },
     [createQueryString, pathname, push],
@@ -209,38 +228,20 @@ const DerivedstateCrossChainSwapProvider: FC<
     [createQueryString, pathname, push],
   )
 
-  // Derive chainId from searchParams
-  const chainId1 = Number(searchParams.get('chainId1')) as
-    | KvmChainId
-    | EthereumChainId
-
   const { data: token0, isLoading: token0Loading } = useXChainSwapTokenInfo({
-    chainId: chainId0,
-    address: searchParams.get('token0') as KvmTokenAddress,
+    chainId: chainId0 as KvmChainId | EthereumChainId,
+    address: defaultedParams.get('token0') as string,
     enabled: isKvmChainId(chainId0) || isEvmChainId(chainId0),
   })
 
   // token1
   const { data: token1, isLoading: token1Loading } = useXChainSwapTokenInfo({
-    chainId: chainId1,
-    address: searchParams.get('token1') as KvmTokenAddress,
+    chainId: chainId1 as KvmChainId | EthereumChainId,
+    address: defaultedParams.get('token1') as string,
     enabled: isKvmChainId(chainId1) || isEvmChainId(chainId1),
   })
 
-  const swapAmountString = searchParams.get('swapAmount') || ''
-
-  console.log('context swapAmountString', swapAmountString)
-  // const [_token0, _token1] = useMemo(
-  //   () => [
-  //     searchParams.get('token0') === 'NATIVE'
-  //       ? EvmNative.fromChainId(chainId0)
-  //       : token0,
-  //     searchParams.get('token1') === 'NATIVE'
-  //       ? EvmNative.fromChainId(chainId1)
-  //       : token1,
-  //   ],
-  //   [searchParams, chainId0, chainId1, token0, token1],
-  // )
+  const swapAmountString = defaultedParams.get('swapAmount') || ''
 
   const swapAmount = useMemo(
     () => (token0 ? Amount.tryFromHuman(token0, swapAmountString) : undefined),
@@ -251,6 +252,15 @@ const DerivedstateCrossChainSwapProvider: FC<
   useEffect(() => {
     setSelectedBridge(undefined)
   }, [swapAmount])
+
+  const { data: simulateBridgeTx, isLoading: isLoadingSimulateBridgeTx } =
+    useSimulateBridgeTx({
+      chainId0,
+      chainId1,
+      swapAmountString,
+      token0,
+      token1,
+    })
 
   return (
     <DerivedStateCrossChainSwapContext.Provider
@@ -274,6 +284,8 @@ const DerivedstateCrossChainSwapProvider: FC<
             token0,
             token1,
             selectedBridge,
+            simulateBridgeTx,
+            isLoadingSimulateBridgeTx,
           },
           isLoading: token0Loading || token1Loading,
           isToken0Loading: token0Loading,
@@ -282,7 +294,6 @@ const DerivedstateCrossChainSwapProvider: FC<
       }, [
         chainId0,
         chainId1,
-
         setSwapAmount,
         setToken0,
         setToken1,
@@ -295,6 +306,8 @@ const DerivedstateCrossChainSwapProvider: FC<
         token1Loading,
         tradeId,
         selectedBridge,
+        simulateBridgeTx,
+        isLoadingSimulateBridgeTx,
       ])}
     >
       {children}
@@ -313,12 +326,21 @@ const useDerivedStateCrossChainSwap = () => {
   return context
 }
 
-export const useSimulateBridgeTx = () => {
+export const useSimulateBridgeTx = ({
+  chainId0,
+  chainId1,
+  swapAmountString,
+  token0,
+  token1,
+}: {
+  chainId0: EthereumChainId | KvmChainId
+  chainId1: EthereumChainId | KvmChainId
+  swapAmountString: string
+  token0: XSwapToken | undefined
+  token1: XSwapToken | undefined
+}) => {
   const { address } = useAccount()
   const { activeAccount } = useKadena()
-  const {
-    state: { token0, token1, swapAmountString, chainId0, chainId1 },
-  } = useDerivedStateCrossChainSwap()
 
   const slippage = '0.05'
 
@@ -334,6 +356,7 @@ export const useSimulateBridgeTx = () => {
     chainId1 === ChainId.KADENA
       ? (activeAccount?.accountName ?? '')
       : (address ?? '')
+
   const res = useSimulateBridgeTransaction({
     amountIn: swapAmountString,
     chainIdIn,
@@ -351,3 +374,13 @@ export const useSimulateBridgeTx = () => {
 }
 
 export { DerivedstateCrossChainSwapProvider, useDerivedStateCrossChainSwap }
+
+function encodeChainId(id: number): string {
+  return id === -3 ? 'kadena' : id.toString()
+}
+
+function decodeChainId(value: string | null): number | undefined {
+  if (!value) return undefined
+  if (value === 'kadena') return -3
+  return Number(value)
+}

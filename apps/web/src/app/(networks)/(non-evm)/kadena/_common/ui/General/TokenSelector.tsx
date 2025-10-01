@@ -24,7 +24,7 @@ import {
 import AutoSizer from 'react-virtualized-auto-sizer'
 import { FixedSizeList } from 'react-window'
 import { Amount } from 'sushi'
-import type { KvmToken, KvmTokenAddress } from 'sushi/kvm'
+import { KvmToken, type KvmTokenAddress } from 'sushi/kvm'
 import { formatUnits } from 'viem'
 import { COMMON_KADENA_TOKENS } from '~kadena/_common/constants/token-list'
 import { useBaseTokens } from '~kadena/_common/lib/hooks/use-base-tokens'
@@ -32,6 +32,7 @@ import { useCustomTokens } from '~kadena/_common/lib/hooks/use-custom-tokens'
 import { useSortedTokenList } from '~kadena/_common/lib/hooks/use-sorted-token-list'
 import { useTokenBalances } from '~kadena/_common/lib/hooks/use-token-balances'
 import { useTokenInfo } from '~kadena/_common/lib/hooks/use-token-info'
+import type { XSwapToken } from '~kadena/_common/lib/hooks/use-x-swap-token-list'
 import { useKadena } from '../../../kadena-wallet-provider'
 import { Icon } from './Icon'
 
@@ -40,8 +41,8 @@ export const TokenSelector = ({
   onSelect,
   children,
 }: {
-  selected: KvmToken | undefined
-  onSelect: (token: KvmToken) => void
+  selected: XSwapToken | undefined
+  onSelect: (token: XSwapToken) => void
   children: ReactNode
 }) => {
   const [open, setOpen] = useState(false)
@@ -93,7 +94,7 @@ export const TokenSelector = ({
   })
 
   const _onSelect = useCallback(
-    (token: KvmToken) => {
+    (token: XSwapToken) => {
       onSelect(token)
       setOpen(false)
     },
@@ -108,8 +109,10 @@ export const TokenSelector = ({
   )
 
   const addOrRemoveToken = useCallback(
-    (type: 'add' | 'remove', currency: KvmToken[]) => {
-      _addOrRemoveToken(type, currency)
+    (type: 'add' | 'remove', currency: XSwapToken[]) => {
+      if (currency.every((token) => token instanceof KvmToken)) {
+        _addOrRemoveToken(type, currency)
+      }
       setQuery('')
     },
     [_addOrRemoveToken],
@@ -266,9 +269,9 @@ const TokenButton = ({
   isOnDefaultList,
 }: {
   style?: CSSProperties
-  token?: KvmToken
-  tokenAmount?: Amount<KvmToken>
-  selectToken: (_token: KvmToken) => void
+  token?: XSwapToken
+  tokenAmount?: Amount<XSwapToken>
+  selectToken: (_token: XSwapToken) => void
   isSelected: boolean
   hasToken?: (currency: string | KvmToken) => boolean
   addOrRemoveToken?: (type: 'add' | 'remove', currency: KvmToken[]) => void
@@ -340,10 +343,10 @@ const TokenButton = ({
       {!isDefaultToken ? (
         <Button
           onClick={() => {
-            if (isNewCustom) {
+            if (isNewCustom && token instanceof KvmToken) {
               addOrRemoveToken?.('add', [token])
               selectToken(token)
-            } else {
+            } else if (token instanceof KvmToken) {
               addOrRemoveToken?.('remove', [token])
             }
           }}
@@ -362,8 +365,8 @@ const CommonTokenButton = ({
   token,
   selectToken,
 }: {
-  token: KvmToken
-  selectToken: (_token: KvmToken) => void
+  token: XSwapToken
+  selectToken: (_token: XSwapToken) => void
 }) => {
   return (
     <Button

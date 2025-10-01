@@ -2,7 +2,6 @@ import type { ChainId } from '@kadena/client'
 import { useQuery } from '@tanstack/react-query'
 import { Amount } from 'sushi'
 import type { KvmToken, KvmTokenAddress } from 'sushi/kvm'
-import { parseUnits } from 'viem'
 import { kadenaClient } from '~kadena/_common/constants/client'
 import { KADENA_CHAIN_ID } from '~kadena/_common/constants/network'
 import { KVM_PAIR_TOKEN } from '~kadena/_common/constants/pair'
@@ -46,14 +45,11 @@ export const useLpBalance = ({
       const amount = res.result.data as PactNumberReturnType
       const balance =
         typeof amount === 'number' ? amount : Number.parseFloat(amount?.decimal)
-      const parsedBalance = parseUnits(
-        balance.toString(),
-        KVM_PAIR_TOKEN.decimals,
-      )
+      const parsedBalance = Amount.fromHuman(KVM_PAIR_TOKEN, balance)
 
       return {
         chainId: KADENA_CHAIN_ID,
-        balance: new Amount(KVM_PAIR_TOKEN, parsedBalance),
+        balance: parsedBalance,
       }
     },
     enabled: Boolean(account && token0Address && token1Address),
