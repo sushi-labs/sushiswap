@@ -24,6 +24,7 @@ import {
   getChangeSign,
   getTextColor,
 } from 'src/lib/helpers'
+import { useLocalRecentSwaps } from 'src/lib/hooks/react-query/recent-swaps/useLocalRecentSwaps'
 import { useRecentSwaps } from 'src/lib/hooks/react-query/recent-swaps/useRecentsSwaps'
 import { useSwapTokenSelect } from 'src/lib/hooks/useTokenSelect'
 import { getNetworkKey } from 'src/lib/network'
@@ -55,6 +56,9 @@ export const Recent = ({ onClose }: { onClose?: () => void }) => {
     walletAddress: address,
     chainIds: chainIds,
   })
+  const { data } = useLocalRecentSwaps()
+
+  console.log('data', data)
 
   if (!address) {
     return <ConnectButton className="w-full" variant="secondary" />

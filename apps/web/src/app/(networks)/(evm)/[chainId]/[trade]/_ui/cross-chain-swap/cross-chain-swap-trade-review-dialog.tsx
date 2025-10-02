@@ -49,6 +49,7 @@ import { SlippageWarning } from 'src/app/(networks)/_ui/slippage-warning'
 import { isXSwapSupportedChainId } from 'src/config'
 import { APPROVE_TAG_XSWAP } from 'src/lib/constants'
 import { useCrossChainTradeStep } from 'src/lib/hooks/react-query'
+import { useLocalRecentSwaps } from 'src/lib/hooks/react-query/recent-swaps/useLocalRecentSwaps'
 import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
 import { logger } from 'src/lib/logger'
 import {
@@ -74,6 +75,7 @@ import {
 } from 'wagmi'
 import { useRefetchBalances } from '~evm/_common/ui/balance-provider/use-refetch-balances'
 import { usePrice } from '~evm/_common/ui/price-provider/price-provider/use-price'
+import { usePrices } from '~evm/_common/ui/price-provider/price-provider/use-prices'
 import { useDerivedStateSimpleTrade } from '../swap/trade/derivedstate-simple-trade-provider'
 import {
   ConfirmationDialogContent,
@@ -160,6 +162,16 @@ const _CrossChainSwapTradeReviewDialog: FC<{
 
   const groupTs = useRef<number>(undefined)
   const { refetchChain: refetchBalances } = useRefetchBalances()
+
+  const { storeRecentSwap } = useLocalRecentSwaps()
+  const { data: token0Price } = usePrice({
+    chainId: token0?.chainId,
+    address: token0?.wrap().address,
+  })
+  const { data: token1Price, isLoading: isPriceLoading } = usePrice({
+    chainId: token1?.chainId,
+    address: token1?.wrap().address,
+  })
 
   const [stepStates, setStepStates] = useState<{
     source: StepState
@@ -286,6 +298,26 @@ const _CrossChainSwapTradeReviewDialog: FC<{
             src_chain_id: trade?.amountIn?.currency?.chainId,
             dst_chain_id: trade?.amountOut?.currency?.chainId,
           })
+          const _token0 = trade?.amountIn?.currency
+          const _token1 = trade?.amountOut?.currency
+          if (_token0 && _token1) {
+            storeRecentSwap({
+              token0: _token0,
+              token1: _token1,
+              amount0: trade?.amountIn?.amount.toString() ?? '0',
+              amount1: trade?.amountOut?.amount.toString() ?? '0',
+              amount0USD:
+                trade?.amountIn?.mulHuman(token0Price ?? 0).toSignificant(6) ??
+                '0',
+              amount1USD:
+                trade?.amountOut?.mulHuman(token1Price ?? 0).toSignificant(6) ??
+                '0',
+              tx_hash: receipt.transactionHash,
+              timestamp: Math.floor(Date.now() / 1000),
+              account: address,
+              type: 'xswap',
+            })
+          }
         } else {
           sendAnalyticsEvent(SwapEventName.XSWAP_SRC_TRANSACTION_FAILED, {
             txHash: hash,
@@ -330,6 +362,9 @@ const _CrossChainSwapTradeReviewDialog: FC<{
       address,
       refetchBalances,
       setTradeId,
+      token0Price,
+      token1Price,
+      storeRecentSwap,
     ],
   )
 
@@ -553,28 +588,26 @@ const _CrossChainSwapTradeReviewDialog: FC<{
       }
     }, [step])
 
-  const { data: price, isLoading: isPriceLoading } = usePrice({
-    chainId: token1?.chainId,
-    address: token1?.wrap().address,
-  })
-
   const amountOutUSD = useMemo(
     () =>
-      price && step?.amountOut
-        ? `${((price * Number(step.amountOut.amount)) / 10 ** step.amountOut.currency.decimals).toFixed(2)}`
+      token1Price && step?.amountOut
+        ? `${(
+            (token1Price * Number(step.amountOut.amount)) /
+              10 ** step.amountOut.currency.decimals
+          ).toFixed(2)}`
         : undefined,
-    [step?.amountOut, price],
+    [step?.amountOut, token1Price],
   )
 
   const amountOutMinUSD = useMemo(
     () =>
-      price && step?.amountOutMin
+      token1Price && step?.amountOutMin
         ? `${(
-            (price * Number(step.amountOutMin.amount)) /
+            (token1Price * Number(step.amountOutMin.amount)) /
               10 ** step.amountOutMin.currency.decimals
           ).toFixed(2)}`
         : undefined,
-    [step?.amountOutMin, price],
+    [step?.amountOutMin, token1Price],
   )
 
   const showPriceImpactWarning = useMemo(() => {

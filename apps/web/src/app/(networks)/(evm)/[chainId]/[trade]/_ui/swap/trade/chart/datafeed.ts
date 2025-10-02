@@ -86,7 +86,7 @@ export default {
       symbol,
       full_name: symbol,
       description: name,
-      exchange: '',
+      exchange: 'SushiSwap',
       type: 'crypto',
     }
 

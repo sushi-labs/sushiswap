@@ -40,6 +40,7 @@ import { PriceImpactWarning } from 'src/app/(networks)/_ui/price-impact-warning'
 import { SlippageWarning } from 'src/app/(networks)/_ui/slippage-warning'
 import { APPROVE_TAG_SWAP, NativeAddress } from 'src/lib/constants'
 import type { UseTradeReturn } from 'src/lib/hooks/react-query'
+import { useLocalRecentSwaps } from 'src/lib/hooks/react-query/recent-swaps/useLocalRecentSwaps'
 import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
 import { logger } from 'src/lib/logger'
 import {
@@ -69,6 +70,8 @@ import {
   useWaitForTransactionReceipt,
 } from 'wagmi'
 import { useRefetchBalances } from '~evm/_common/ui/balance-provider/use-refetch-balances'
+import { usePrice } from '~evm/_common/ui/price-provider/price-provider/use-price'
+import { usePrices } from '~evm/_common/ui/price-provider/price-provider/use-prices'
 import {
   useDerivedStateSimpleSwap,
   useSimpleSwapTrade,
@@ -113,6 +116,15 @@ const _SimpleSwapTradeReviewDialog: FC<{
   const { open: confirmDialogOpen } = useDialog(DialogType.Confirm)
   const { open: reviewDialogOpen } = useDialog(DialogType.Review)
 
+  const { data: token0Price } = usePrice({
+    chainId,
+    address: token0?.wrap().address,
+  })
+  const { data: token1Price } = usePrice({
+    chainId,
+    address: token1?.wrap().address,
+  })
+
   const {
     data: trade,
     isFetching: isSwapQueryFetching,
@@ -124,6 +136,7 @@ const _SimpleSwapTradeReviewDialog: FC<{
   )
 
   const { refetchChain: refetchBalances } = useRefetchBalances()
+  const { storeRecentSwap } = useLocalRecentSwaps()
 
   const isWrap =
     token0?.type === 'native' &&
@@ -197,6 +210,28 @@ const _SimpleSwapTradeReviewDialog: FC<{
               chain_id: chainId,
               tx: stringify(trade?.tx),
             })
+            const _token0 = trade?.amountIn?.currency
+            const _token1 = trade?.amountOut?.currency
+            if (_token0 && _token1) {
+              storeRecentSwap({
+                token0: _token0,
+                token1: _token1,
+                amount0: trade?.amountIn?.amount.toString() ?? '0',
+                amount1: trade?.amountOut?.amount.toString() ?? '0',
+                amount0USD:
+                  trade?.amountIn
+                    ?.mulHuman(token0Price ?? 0)
+                    .toSignificant(6) ?? '0',
+                amount1USD:
+                  trade?.amountOut
+                    ?.mulHuman(token1Price ?? 0)
+                    .toSignificant(6) ?? '0',
+                tx_hash: receipt.transactionHash,
+                timestamp: Math.floor(Date.now() / 1000),
+                account: address,
+                type: 'swap',
+              })
+            }
           } else {
             sendAnalyticsEvent(SwapEventName.SWAP_TRANSACTION_FAILED, {
               txHash: hash,
@@ -229,6 +264,9 @@ const _SimpleSwapTradeReviewDialog: FC<{
       isUnwrap,
       refetchBalances,
       trace,
+      token0Price,
+      token1Price,
+      storeRecentSwap,
     ],
   )
 
