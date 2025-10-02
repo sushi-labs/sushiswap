@@ -1,11 +1,14 @@
 import {
+  Badge,
   Button,
   SelectIcon,
   SkeletonBox,
   TextField,
   classNames,
 } from '@sushiswap/ui'
+import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import { useCallback, useEffect, useMemo, useState, useTransition } from 'react'
+import { ChainId } from 'sushi'
 import { EvmChainId, isEvmChainId } from 'sushi/evm'
 import {
   type KvmChainId,
@@ -18,15 +21,15 @@ import { useBalance } from '~evm/_common/ui/balance-provider/use-balance'
 import { usePrice } from '~evm/_common/ui/price-provider/price-provider/use-price'
 import { useTokenBalances } from '~kadena/_common/lib/hooks/use-token-balances'
 import { useTokenPrice } from '~kadena/_common/lib/hooks/use-token-price'
-import type { XSwapToken } from '~kadena/_common/lib/hooks/x-chain-swap/use-x-chain-token-info'
+import type { KinesisToken } from '~kadena/cross-chain-swap/derivedstate-cross-chain-swap-provider'
 import { useKadena } from '~kadena/kadena-wallet-provider'
 import { Icon } from '../General/Icon'
-import {
-  type EthereumChainId,
-  XChainTokenSelector,
-} from '../General/x-chain-token-selector'
 import { DollarAmountDisplay } from '../Shared/DollarAmountDisplay'
 import { TokenBalanceDisplay } from '../Shared/TokenBalanceDisplay'
+import {
+  type EthereumChainId,
+  KinesisTokenSelector,
+} from './kinesis-token-selector'
 
 const themes = {
   default: 'bg-white dark:bg-slate-800',
@@ -36,8 +39,8 @@ const themes = {
 type TokenInputProps = {
   id?: string
   type: 'input' | 'output'
-  currency: XSwapToken | undefined
-  setToken?: (token: XSwapToken) => void
+  currency: KinesisToken | undefined
+  setToken?: (token: KinesisToken) => void
   amount: string
   setAmount: (amount: string) => void
   className?: string
@@ -160,7 +163,7 @@ export const TokenInput = ({
     if (!setToken) return null
 
     return (
-      <XChainTokenSelector
+      <KinesisTokenSelector
         selected={currency}
         onSelect={setToken}
         networks={networks}
@@ -178,8 +181,20 @@ export const TokenInput = ({
         >
           {currency ? (
             <>
-              <div className="w-[28px] h-[28px] mr-0.5">
-                <Icon currency={currency} width={28} height={28} />
+              <div className="mr-1">
+                <Badge
+                  position="bottom-right"
+                  badgeContent={
+                    <NetworkIcon
+                      chainId={currency.chainId}
+                      width={16}
+                      height={16}
+                      className="border border-slate-900 rounded-full"
+                    />
+                  }
+                >
+                  <Icon currency={currency} width={28} height={28} />
+                </Badge>
               </div>
               {currency.symbol}
               <SelectIcon />
@@ -188,7 +203,7 @@ export const TokenInput = ({
             'Select Token'
           )}
         </Button>
-      </XChainTokenSelector>
+      </KinesisTokenSelector>
     )
   }, [currency, id, setToken, networks])
 
@@ -254,8 +269,20 @@ export const TokenInput = ({
             {currency ? (
               <>
                 {!hideIcon && (
-                  <div className="w-[28px] h-[28px] mr-0.5">
-                    <Icon currency={currency} width={28} height={28} />
+                  <div className="mr-2">
+                    <Badge
+                      position="bottom-right"
+                      badgeContent={
+                        <NetworkIcon
+                          chainId={currency.chainId}
+                          width={16}
+                          height={16}
+                          className="border border-slate-900 rounded-full"
+                        />
+                      }
+                    >
+                      <Icon currency={currency} width={28} height={28} />
+                    </Badge>
                   </div>
                 )}
                 {currency.symbol}

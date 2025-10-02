@@ -15,7 +15,7 @@ import { type FC, useCallback } from 'react'
 import { ChainId, getChainById } from 'sushi'
 import type { EvmChainId } from 'sushi/evm'
 import type { KvmChainId } from 'sushi/kvm'
-import type { EthereumChainId } from './x-chain-token-selector'
+import type { EthereumChainId } from './kinesis-token-selector'
 
 interface DesktopNetworkSelector {
   networks: (KvmChainId | EvmChainId)[]

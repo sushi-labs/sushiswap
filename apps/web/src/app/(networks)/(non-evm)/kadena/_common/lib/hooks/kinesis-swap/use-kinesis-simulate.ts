@@ -6,7 +6,7 @@ import { useQuery } from '@tanstack/react-query'
 import ms from 'ms'
 import { kinesisClient } from '~kadena/_common/constants/client'
 
-export const useXChainSwapSimulate = (
+export const useKinesisSwapSimulate = (
   params: SimulateBridgeParams | undefined,
 ) => {
   const {
@@ -21,6 +21,7 @@ export const useXChainSwapSimulate = (
     queryKey: ['x-chain-swap-simulate', params],
     enabled: Boolean(
       amountIn &&
+        Number(amountIn) > 0 &&
         tokenAddressIn &&
         tokenAddressOut &&
         receiverAddress &&
@@ -28,7 +29,6 @@ export const useXChainSwapSimulate = (
     ),
     queryFn: async () => {
       if (!params) throw new Error('Missing params for simulation')
-      console.log('calling kinesisClient.simulateBridgeTransaction')
       return kinesisClient.simulateBridgeTransaction(params)
     },
     staleTime: ms('30s'),

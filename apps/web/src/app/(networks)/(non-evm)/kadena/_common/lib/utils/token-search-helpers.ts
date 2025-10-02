@@ -1,9 +1,8 @@
-import type { KvmToken } from 'sushi/kvm'
-import type { XSwapToken } from '../hooks/x-chain-swap/use-x-chain-token-list'
+import type { KinesisToken } from '~kadena/cross-chain-swap/derivedstate-cross-chain-swap-provider'
 
 const alwaysTrue = () => true
 
-export function createTokenFilterFunction<T extends XSwapToken>(
+export function createTokenFilterFunction<T extends KinesisToken>(
   search: string,
 ): (tokens: T) => boolean {
   const lowerSearchParts = search
@@ -30,7 +29,7 @@ export function createTokenFilterFunction<T extends XSwapToken>(
     Boolean((symbol && matchesSearch(symbol)) || (name && matchesSearch(name)))
 }
 
-export function filterTokens<T extends XSwapToken>(
+export function filterTokens<T extends KinesisToken>(
   tokens: T[],
   search: string,
 ): T[] {
@@ -38,7 +37,7 @@ export function filterTokens<T extends XSwapToken>(
 }
 
 export const tokenComparator = () => {
-  return (tokenA: XSwapToken, tokenB: XSwapToken): number => {
+  return (tokenA: KinesisToken, tokenB: KinesisToken): number => {
     if (tokenA.symbol && tokenB.symbol) {
       return tokenA.symbol.toLowerCase() < tokenB.symbol.toLowerCase() ? -1 : 1
     } else {
@@ -48,9 +47,9 @@ export const tokenComparator = () => {
 }
 
 export function getSortedTokensByQuery(
-  tokens: XSwapToken[] | undefined,
+  tokens: KinesisToken[] | undefined,
   searchQuery: string,
-): XSwapToken[] {
+): KinesisToken[] {
   if (!tokens) {
     return []
   }
@@ -68,9 +67,9 @@ export function getSortedTokensByQuery(
     return tokens
   }
 
-  const exactMatches: XSwapToken[] = []
-  const symbolSubstrings: XSwapToken[] = []
-  const rest: XSwapToken[] = []
+  const exactMatches: KinesisToken[] = []
+  const symbolSubstrings: KinesisToken[] = []
+  const rest: KinesisToken[] = []
 
   tokens.map((token) => {
     if (token.symbol?.toLowerCase() === symbolMatch[0]) {

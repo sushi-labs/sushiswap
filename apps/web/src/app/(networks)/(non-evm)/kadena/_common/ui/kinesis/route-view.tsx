@@ -4,7 +4,7 @@ import React, { useMemo } from 'react'
 import type { FC } from 'react'
 import type { CrossChainToolDetails } from 'src/lib/swap/cross-chain/types'
 import { type Amount, ChainId } from 'sushi'
-import type { XSwapToken } from '~kadena/_common/lib/hooks/x-chain-swap/use-x-chain-token-list'
+import type { KinesisToken } from '~kadena/cross-chain-swap/derivedstate-cross-chain-swap-provider'
 import { useDerivedStateCrossChainSwap } from '~kadena/cross-chain-swap/derivedstate-cross-chain-swap-provider'
 
 export const CrossChainSwapRouteView = () => {
@@ -72,7 +72,7 @@ const VerticalDivider: FC<{ className?: string; count: number }> = ({
 
 const SendAction: FC<{
   label: 'From' | 'To'
-  amount: Amount<XSwapToken>
+  amount: Amount<KinesisToken>
 }> = ({ label, amount }) => {
   const chain = useMemo(
     () => (amount.currency.chainId === ChainId.KADENA ? 'Kadena' : 'Ethereum'),

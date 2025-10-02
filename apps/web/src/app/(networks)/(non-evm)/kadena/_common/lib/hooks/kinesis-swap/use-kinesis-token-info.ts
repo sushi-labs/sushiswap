@@ -4,9 +4,8 @@ import type { EvmChainId, EvmToken } from 'sushi/evm'
 import { isEvmChainId } from 'sushi/evm'
 import type { KvmChainId, KvmToken, KvmTokenAddress } from 'sushi/kvm'
 import { isKvmChainId } from 'sushi/kvm'
-import { useXChainTokenList } from './use-x-chain-token-list'
-
-export type XSwapToken = KvmToken | EvmToken
+import type { KinesisToken } from '~kadena/cross-chain-swap/derivedstate-cross-chain-swap-provider'
+import { useKinesisTokenList } from './use-kinesis-token-list'
 
 type Params = {
   chainId: KvmChainId | EvmChainId
@@ -14,14 +13,14 @@ type Params = {
   enabled?: boolean
 }
 
-export const useXChainTokenInfo = ({
+export const useKinesisTokenInfo = ({
   chainId,
   address,
   enabled = true,
 }: Params) => {
-  const { data: tokenLists } = useXChainTokenList()
+  const { data: tokenLists } = useKinesisTokenList()
 
-  return useQuery<XSwapToken | undefined>({
+  return useQuery<KinesisToken | undefined>({
     queryKey: ['x-chain-token-info', chainId, address, enabled],
     enabled: Boolean(enabled && address && chainId && tokenLists),
     queryFn: async () => {
@@ -50,10 +49,10 @@ export const useXChainTokenInfo = ({
   })
 }
 
-export function findXChainEquivalentToken(
-  token: XSwapToken,
+export function findKinesisEquivalentToken(
+  token: KinesisToken,
   tokenLists: { kadena: KvmToken[]; ethereum: EvmToken[] },
-): XSwapToken | undefined {
+): KinesisToken | undefined {
   if (token.chainId === ChainId.KADENA) {
     return tokenLists.ethereum.find(
       (t) => t.symbol.toLowerCase() === token.symbol.toLowerCase(),

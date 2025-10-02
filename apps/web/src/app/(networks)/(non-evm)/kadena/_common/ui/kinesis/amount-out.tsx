@@ -9,7 +9,7 @@ export const AmountOut = ({ isLoading = false }: { isLoading?: boolean }) => {
   return (
     <TokenInput
       className="border border-accent"
-      amount={state.simulateBridgeTx?.amountMinReceived ?? ''}
+      amount={state.simulateBridgeTx?.estimatedAmountReceived ?? ''}
       setAmount={() => {}}
       networks={[KvmChainId.KADENA, EvmChainId.ETHEREUM]}
       type="output"

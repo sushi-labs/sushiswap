@@ -17,9 +17,9 @@ import { useState } from 'react'
 import { ChainId, formatPercent } from 'sushi'
 import { WalletConnector } from '~kadena/_common/ui/WalletConnector/WalletConnector'
 import { useDerivedStateCrossChainSwap } from '~kadena/cross-chain-swap/derivedstate-cross-chain-swap-provider'
+import { KinesisSwapButton } from './kinesis-swap-button'
 import { ReviewSwapDialogTrigger } from './review-swap-dialog-trigger'
 import { CrossChainSwapRouteView } from './route-view'
-import { XChainSwapButton } from './xchain-swap-button'
 
 export const ReviewSwapDialog = () => {
   const { state } = useDerivedStateCrossChainSwap()
@@ -110,7 +110,7 @@ export const ReviewSwapDialog = () => {
               </div>
               <CrossChainSwapRouteView />
               <DialogFooter>
-                <XChainSwapButton
+                <KinesisSwapButton
                   closeModal={confirm}
                   setTxHash={setTxHash}
                   setStatus={setStatus}
@@ -125,9 +125,7 @@ export const ReviewSwapDialog = () => {
         status={status}
         testId="make-another-swap-kadena"
         buttonText="Make another swap"
-        // @dev check if we can update dialog confirm to take in a string since it now supports kadena which is not a hex string
-        // @ts-ignore
-        txHash={txHash}
+        txHash={txHash as `0x${string}`}
         successMessage={`You sold ${state.swapAmountString} ${
           state.token0?.symbol
         } for ${state.simulateBridgeTx?.amountMinReceived?.toString()} ${

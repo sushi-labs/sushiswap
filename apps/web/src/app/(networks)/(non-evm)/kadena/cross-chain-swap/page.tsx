@@ -3,10 +3,10 @@
 import { SlippageToleranceStorageKey } from '@sushiswap/hooks'
 import { Container, SettingsModule, SettingsOverlay } from '@sushiswap/ui'
 import { SimpleSwapBanner } from '~kadena/_common/ui/Swap/Banner/SwapBanner'
-import { AmountIn } from '~kadena/_common/ui/cross-chain-swap/amount-in'
-import { AmountOut } from '~kadena/_common/ui/cross-chain-swap/amount-out'
-import { ReviewSwapDialog } from '~kadena/_common/ui/cross-chain-swap/review-swap-dialog'
-import { SwitchSwapDirection } from '~kadena/_common/ui/cross-chain-swap/switch-swap-direction'
+import { AmountIn } from '~kadena/_common/ui/kinesis/amount-in'
+import { AmountOut } from '~kadena/_common/ui/kinesis/amount-out'
+import { ReviewSwapDialog } from '~kadena/_common/ui/kinesis/review-swap-dialog'
+import { SwitchSwapDirection } from '~kadena/_common/ui/kinesis/switch-swap-direction'
 import { SwapModeButtons } from '../swap/swap-mode-buttons'
 
 export default function CrossChainSwapPage() {

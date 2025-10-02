@@ -14,7 +14,7 @@ import { kinesisClient } from '~kadena/_common/constants/client'
 import { useDerivedStateCrossChainSwap } from '~kadena/cross-chain-swap/derivedstate-cross-chain-swap-provider'
 import { useKadena } from '~kadena/kadena-wallet-provider'
 
-export const XChainSwapButton = ({
+export const KinesisSwapButton = ({
   closeModal,
   setTxHash,
   setStatus,

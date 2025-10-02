@@ -14,33 +14,47 @@ import {
 import { useCrossChainTradeRoutes as _useCrossChainTradeRoutes } from 'src/lib/hooks/react-query'
 import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
 import { Amount, ChainId } from 'sushi'
-import { isEvmChainId } from 'sushi/evm'
-import { type KvmChainId, isKvmChainId } from 'sushi/kvm'
+import { type EvmToken, isEvmChainId } from 'sushi/evm'
+import { type KvmChainId, type KvmToken, isKvmChainId } from 'sushi/kvm'
 import type { Address } from 'viem'
 import { useAccount } from 'wagmi'
-import { useXChainSwapSimulate } from '~kadena/_common/lib/hooks/x-chain-swap/use-x-chain-simulate'
+import { useKinesisSwapSimulate } from '~kadena/_common/lib/hooks/kinesis-swap/use-kinesis-simulate'
 import {
-  type XSwapToken,
-  useXChainTokenInfo,
-} from '~kadena/_common/lib/hooks/x-chain-swap/use-x-chain-token-info'
-import type { EthereumChainId } from '~kadena/_common/ui/General/x-chain-token-selector'
+  findKinesisEquivalentToken,
+  useKinesisTokenInfo,
+} from '~kadena/_common/lib/hooks/kinesis-swap/use-kinesis-token-info'
+import { useKinesisTokenList } from '~kadena/_common/lib/hooks/kinesis-swap/use-kinesis-token-list'
+import { useKinesisTokenPrice } from '~kadena/_common/lib/hooks/kinesis-swap/use-kinesis-token-price'
+import type { EthereumChainId } from '~kadena/_common/ui/kinesis/kinesis-token-selector'
 import { useKadena } from '~kadena/kadena-wallet-provider'
+
+export type KinesisChainId = KvmChainId | EthereumChainId
+export type KinesisToken = KvmToken | EvmToken
+
+function encodeChainId(id: number): string {
+  return id === -3 ? 'kadena' : id.toString()
+}
+
+function decodeChainId(value: string | null): number | undefined {
+  if (!value) return undefined
+  if (value === 'kadena') return -3
+  return Number(value)
+}
 
 interface State {
   mutate: {
-    setToken0(token0: XSwapToken | string): void
-    setToken1(token1: XSwapToken | string): void
+    setTokens(token0: KinesisToken | string): void
     setSwapAmount(swapAmount: string): void
     switchTokens(): void
   }
   state: {
-    token0: XSwapToken | undefined
-    token1: XSwapToken | undefined
-    chainId0: EthereumChainId | KvmChainId
-    chainId1: EthereumChainId | KvmChainId
+    token0: KinesisToken | undefined
+    token1: KinesisToken | undefined
+    chainId0: KinesisChainId
+    chainId1: KinesisChainId
     swapAmountString: string
-    swapAmount: Amount<XSwapToken> | undefined
-    bridgeAmount: Amount<XSwapToken> | undefined
+    swapAmount: Amount<KinesisToken> | undefined
+    bridgeAmount: Amount<KinesisToken> | undefined
     recipient: Address | undefined
     simulateBridgeTx: SimulateBridgeResult | undefined
     isLoadingSimulateBridgeTx: boolean
@@ -62,6 +76,8 @@ const DerivedstateCrossChainSwapProvider: FC<
   const { push } = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
+
+  const { data: tokenLists } = useKinesisTokenList()
 
   // const [isTxPending, setIsTxPending] = useState(false)
 
@@ -163,33 +179,29 @@ const DerivedstateCrossChainSwapProvider: FC<
     push(url, { scroll: false })
   }, [pathname, defaultedParams, chainId0, createQueryString, push])
 
-  const setToken0 = useCallback(
-    (_token0: XSwapToken) => {
-      const token0 = _token0.address
+  const setTokens = useCallback(
+    (_token0: KinesisToken) => {
+      const crossChainEquivalentToken = findKinesisEquivalentToken(
+        _token0,
+        tokenLists ?? { kadena: [], ethereum: [] },
+      )
+
       const url = `${pathname}?${createQueryString([
-        { name: 'token0', value: token0 },
+        { name: 'token0', value: _token0.address },
+        { name: 'token1', value: crossChainEquivalentToken?.address ?? null },
         {
           name: 'chainId0',
           value: encodeChainId(_token0.chainId),
         },
-      ])}`
-      push(url, { scroll: false })
-    },
-    [createQueryString, pathname, push],
-  )
-
-  const setToken1 = useCallback(
-    (_token1: XSwapToken) => {
-      const url = `${pathname}?${createQueryString([
-        { name: 'token1', value: _token1.address },
         {
           name: 'chainId1',
-          value: encodeChainId(_token1.chainId),
+          value: encodeChainId(crossChainEquivalentToken?.chainId ?? 0),
         },
       ])}`
+
       push(url, { scroll: false })
     },
-    [createQueryString, pathname, push],
+    [createQueryString, pathname, push, tokenLists],
   )
 
   const setSwapAmount = useCallback(
@@ -204,13 +216,13 @@ const DerivedstateCrossChainSwapProvider: FC<
     [createQueryString, pathname, push],
   )
 
-  const { data: token0, isLoading: token0Loading } = useXChainTokenInfo({
+  const { data: token0, isLoading: token0Loading } = useKinesisTokenInfo({
     chainId: chainId0 as KvmChainId | EthereumChainId,
     address: defaultedParams.get('token0') as string,
     enabled: isKvmChainId(chainId0) || isEvmChainId(chainId0),
   })
 
-  const { data: token1, isLoading: token1Loading } = useXChainTokenInfo({
+  const { data: token1, isLoading: token1Loading } = useKinesisTokenInfo({
     chainId: chainId1 as KvmChainId | EthereumChainId,
     address: defaultedParams.get('token1') as string,
     enabled: isKvmChainId(chainId1) || isEvmChainId(chainId1),
@@ -219,13 +231,15 @@ const DerivedstateCrossChainSwapProvider: FC<
   const swapAmountString = defaultedParams.get('swapAmount') || ''
 
   const { data: simulateBridgeTx, isLoading: isLoadingSimulateBridgeTx } =
-    _useXChainSwapSimulate({
+    _useKinesisSwapSimulate({
       chainId0,
       chainId1,
       swapAmountString,
       token0,
       token1,
     })
+
+  console.log('simulateBridgeTx.data', simulateBridgeTx)
 
   const swapAmount = useMemo(
     () => (token0 ? Amount.tryFromHuman(token0, swapAmountString) : undefined),
@@ -238,13 +252,19 @@ const DerivedstateCrossChainSwapProvider: FC<
     return Amount.tryFromHuman(token1, simulateBridgeTx.amountMinReceived)
   }, [token1, simulateBridgeTx?.amountMinReceived])
 
+  const { data: token0Price } = useKinesisTokenPrice({
+    network: 'mainnet01',
+    tokenAddress: token0?.address ?? '',
+  })
+
+  console.log('token0Price', token0Price)
+
   return (
     <DerivedStateCrossChainSwapContext.Provider
       value={useMemo(() => {
         return {
           mutate: {
-            setToken0,
-            setToken1,
+            setTokens,
             switchTokens,
             setSwapAmount,
           },
@@ -268,8 +288,7 @@ const DerivedstateCrossChainSwapProvider: FC<
         chainId0,
         chainId1,
         setSwapAmount,
-        setToken0,
-        setToken1,
+        setTokens,
         switchTokens,
         swapAmount,
         swapAmountString,
@@ -298,7 +317,7 @@ const useDerivedStateCrossChainSwap = () => {
   return context
 }
 
-const _useXChainSwapSimulate = ({
+const _useKinesisSwapSimulate = ({
   chainId0,
   chainId1,
   swapAmountString,
@@ -308,8 +327,8 @@ const _useXChainSwapSimulate = ({
   chainId0: EthereumChainId | KvmChainId
   chainId1: EthereumChainId | KvmChainId
   swapAmountString: string
-  token0: XSwapToken | undefined
-  token1: XSwapToken | undefined
+  token0: KinesisToken | undefined
+  token1: KinesisToken | undefined
 }) => {
   const { address } = useAccount()
   const { activeAccount } = useKadena()
@@ -330,7 +349,7 @@ const _useXChainSwapSimulate = ({
       ? (activeAccount?.accountName ?? '')
       : (address ?? '')
 
-  console.log('useXChainSwapSimulate params', {
+  const res = useKinesisSwapSimulate({
     amountIn: swapAmountString,
     chainIdIn,
     chainIdOut,
@@ -343,32 +362,7 @@ const _useXChainSwapSimulate = ({
     tokenAddressOut: token1?.address ?? '',
   })
 
-  const res = useXChainSwapSimulate({
-    amountIn: swapAmountString,
-    chainIdIn,
-    chainIdOut,
-    networkIn,
-    networkOut,
-    senderAddress: '0x47Ef3bF350F70724F2fd34206990cdE9C3A6B6F0',
-    receiverAddress,
-    slippage: slippageTolerance.toString(),
-    tokenAddressIn: token0?.address ?? '',
-    tokenAddressOut: token1?.address ?? '',
-  })
-
-  console.log('useXChainSwapSimulate res', res.data)
-
   return res
 }
 
 export { DerivedstateCrossChainSwapProvider, useDerivedStateCrossChainSwap }
-
-function encodeChainId(id: number): string {
-  return id === -3 ? 'kadena' : id.toString()
-}
-
-function decodeChainId(value: string | null): number | undefined {
-  if (!value) return undefined
-  if (value === 'kadena') return -3
-  return Number(value)
-}

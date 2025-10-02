@@ -7,11 +7,11 @@ import {
   getSortedTokensByQuery,
   tokenComparator,
 } from '~kadena/_common/lib/utils/token-search-helpers'
-import type { XSwapToken } from './x-chain-swap/use-x-chain-token-list'
+import type { KinesisToken } from '~kadena/cross-chain-swap/derivedstate-cross-chain-swap-provider'
 
 interface Params {
   query: string
-  tokenMap: Record<string, XSwapToken> | undefined
+  tokenMap: Record<string, KinesisToken> | undefined
   customTokenMap: Record<string, KvmToken> | undefined
   balanceMap: Record<string, string> | undefined
   chainId?: number
@@ -35,15 +35,15 @@ export const useSortedTokenList = ({
       const customTokenMapValues = customTokenMap
         ? Object.values(customTokenMap)
         : []
-      const filteredTokens: XSwapToken[] = filterTokens(
+      const filteredTokens: KinesisToken[] = filterTokens(
         tokenMapValues,
         debouncedQuery,
       )
-      const filteredCustomTokens: XSwapToken[] = filterTokens(
+      const filteredCustomTokens: KinesisToken[] = filterTokens(
         customTokenMapValues,
         debouncedQuery,
       )
-      const sortedTokens: XSwapToken[] = [
+      const sortedTokens: KinesisToken[] = [
         ...filteredTokens,
         ...filteredCustomTokens,
       ].sort(tokenComparator())

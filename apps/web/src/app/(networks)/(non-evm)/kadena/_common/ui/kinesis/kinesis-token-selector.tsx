@@ -29,28 +29,27 @@ import { Amount } from 'sushi'
 import type { EvmChainId } from 'sushi/evm'
 import { KvmChainId, type KvmTokenAddress } from 'sushi/kvm'
 import { formatUnits } from 'viem'
+import { COMMON_ETHEREUM_TOKENS } from '~kadena/_common/constants/kinesis-token-list'
 import { COMMON_KADENA_TOKENS } from '~kadena/_common/constants/token-list'
+import { useKinesisTokenList } from '~kadena/_common/lib/hooks/kinesis-swap/use-kinesis-token-list'
 import { useSortedTokenList } from '~kadena/_common/lib/hooks/use-sorted-token-list'
 import { useTokenBalances } from '~kadena/_common/lib/hooks/use-token-balances'
 import { useTokenInfo } from '~kadena/_common/lib/hooks/use-token-info'
-import {
-  type XSwapToken,
-  useXChainTokenList,
-} from '~kadena/_common/lib/hooks/x-chain-swap/use-x-chain-token-list'
+import type { KinesisToken } from '~kadena/cross-chain-swap/derivedstate-cross-chain-swap-provider'
 import { useKadena } from '../../../kadena-wallet-provider'
-import { Icon } from './Icon'
+import { Icon } from '../General/Icon'
 import { DesktopNetworkSelector } from './desktop-network-selector'
 
 export type EthereumChainId = Extract<EvmChainId, 1>
 
-export const XChainTokenSelector = ({
+export const KinesisTokenSelector = ({
   selected,
   onSelect,
   children,
   networks,
 }: {
-  selected: XSwapToken | undefined
-  onSelect: (token: XSwapToken) => void
+  selected: KinesisToken | undefined
+  onSelect: (token: KinesisToken) => void
   children: ReactNode
   networks?: (KvmChainId | EthereumChainId)[]
 }) => {
@@ -69,7 +68,7 @@ export const XChainTokenSelector = ({
     }
   }, [selected])
 
-  const { data: tokenLists, isLoading } = useXChainTokenList()
+  const { data: tokenLists, isLoading } = useKinesisTokenList()
 
   const baseTokens = useMemo(() => {
     if (!tokenLists) return []
@@ -95,7 +94,7 @@ export const XChainTokenSelector = ({
 
   const baseTokenMap = useMemo(() => {
     if (!baseTokens) return undefined
-    const tokenMap: Record<string, XSwapToken> = {}
+    const tokenMap: Record<string, KinesisToken> = {}
     baseTokens.forEach((token) => {
       tokenMap[token.address] = token
     })
@@ -110,7 +109,7 @@ export const XChainTokenSelector = ({
   })
 
   const _onSelect = useCallback(
-    (token: XSwapToken) => {
+    (token: KinesisToken) => {
       onSelect(token)
       setOpen(false)
     },
@@ -143,7 +142,7 @@ export const XChainTokenSelector = ({
     [selected, _onSelect, sortedTokens, isOnDefaultList],
   )
 
-  const isXChainSwap = useMemo(() => {
+  const isKinesisSwap = useMemo(() => {
     return networks && selectedNetwork
   }, [networks, selectedNetwork])
 
@@ -153,7 +152,7 @@ export const XChainTokenSelector = ({
       <DialogContent
         className={classNames(
           '!flex flex-col md:flex-row justify-start min-h-[85vh] !p-0',
-          isXChainSwap && 'md:min-w-[720px]',
+          isKinesisSwap && 'md:min-w-[720px]',
         )}
       >
         {networks && selectedNetwork && isMd ? (
@@ -174,7 +173,6 @@ export const XChainTokenSelector = ({
               symbol or address.
             </DialogDescription>
           </DialogHeader>
-
           <div className="flex gap-2">
             <TextField
               placeholder="Search by token or address"
@@ -184,8 +182,7 @@ export const XChainTokenSelector = ({
               onValueChange={setQuery}
             />
           </div>
-
-          {selectedNetwork === KvmChainId.KADENA && (
+          {selectedNetwork === KvmChainId.KADENA ? (
             <div className="flex flex-wrap gap-2">
               {COMMON_KADENA_TOKENS.map((token, idx) => (
                 <CommonTokenButton
@@ -195,8 +192,17 @@ export const XChainTokenSelector = ({
                 />
               ))}
             </div>
+          ) : (
+            <div className="flex flex-wrap gap-2">
+              {COMMON_ETHEREUM_TOKENS.map((token, idx) => (
+                <CommonTokenButton
+                  key={idx}
+                  token={token}
+                  selectToken={_onSelect}
+                />
+              ))}
+            </div>
           )}
-
           <List.Control className="relative flex flex-1 flex-col flex-grow gap-3 px-1 py-0.5 min-h-[128px]">
             <div
               data-state={isQueryTokenLoading ? 'active' : 'inactive'}
@@ -217,7 +223,6 @@ export const XChainTokenSelector = ({
                       />
                     </div>
                   </div>
-
                   <div className="flex flex-col w-full">
                     <SkeletonText className="w-[80px]" />
                     <SkeletonText
@@ -229,7 +234,6 @@ export const XChainTokenSelector = ({
                 </div>
               </div>
             </div>
-
             <div
               data-state={isQueryTokenLoading ? 'inactive' : 'active'}
               className={classNames(
@@ -245,7 +249,6 @@ export const XChainTokenSelector = ({
                   isSelected={queryToken.address === selected?.address}
                 />
               )}
-
               <AutoSizer disableWidth>
                 {({ height }: { height: number }) => (
                   <FixedSizeList
@@ -260,7 +263,6 @@ export const XChainTokenSelector = ({
                   </FixedSizeList>
                 )}
               </AutoSizer>
-
               {sortedTokens?.length === 0 && (
                 <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                   <div className="flex flex-col items-center justify-center gap-1">
@@ -295,12 +297,12 @@ const TokenButton = ({
   isOnDefaultList,
 }: {
   style?: CSSProperties
-  token?: XSwapToken
-  tokenAmount?: Amount<XSwapToken>
-  selectToken: (_token: XSwapToken) => void
+  token?: KinesisToken
+  tokenAmount?: Amount<KinesisToken>
+  selectToken: (_token: KinesisToken) => void
   isSelected: boolean
-  hasToken?: (currency: string | XSwapToken) => boolean
-  addOrRemoveToken?: (type: 'add' | 'remove', currency: XSwapToken[]) => void
+  hasToken?: (currency: string | KinesisToken) => boolean
+  addOrRemoveToken?: (type: 'add' | 'remove', currency: KinesisToken[]) => void
   isOnDefaultList: (currency: string) => boolean
 }) => {
   if (!token) return null
@@ -393,8 +395,8 @@ const CommonTokenButton = ({
   token,
   selectToken,
 }: {
-  token: XSwapToken
-  selectToken: (_token: XSwapToken) => void
+  token: KinesisToken
+  selectToken: (_token: KinesisToken) => void
 }) => {
   return (
     <Button

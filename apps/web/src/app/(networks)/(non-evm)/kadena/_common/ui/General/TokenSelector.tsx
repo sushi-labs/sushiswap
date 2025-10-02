@@ -32,7 +32,7 @@ import { useCustomTokens } from '~kadena/_common/lib/hooks/use-custom-tokens'
 import { useSortedTokenList } from '~kadena/_common/lib/hooks/use-sorted-token-list'
 import { useTokenBalances } from '~kadena/_common/lib/hooks/use-token-balances'
 import { useTokenInfo } from '~kadena/_common/lib/hooks/use-token-info'
-import type { XSwapToken } from '~kadena/_common/lib/hooks/x-chain-swap/use-x-chain-token-list'
+import type { KinesisToken } from '~kadena/cross-chain-swap/derivedstate-cross-chain-swap-provider'
 import { useKadena } from '../../../kadena-wallet-provider'
 import { Icon } from './Icon'
 
@@ -41,8 +41,8 @@ export const TokenSelector = ({
   onSelect,
   children,
 }: {
-  selected: XSwapToken | undefined
-  onSelect: (token: XSwapToken) => void
+  selected: KinesisToken | undefined
+  onSelect: (token: KinesisToken) => void
   children: ReactNode
 }) => {
   const [open, setOpen] = useState(false)
@@ -94,7 +94,7 @@ export const TokenSelector = ({
   })
 
   const _onSelect = useCallback(
-    (token: XSwapToken) => {
+    (token: KinesisToken) => {
       onSelect(token)
       setOpen(false)
     },
@@ -109,7 +109,7 @@ export const TokenSelector = ({
   )
 
   const addOrRemoveToken = useCallback(
-    (type: 'add' | 'remove', currency: XSwapToken[]) => {
+    (type: 'add' | 'remove', currency: KinesisToken[]) => {
       if (currency.every((token) => token instanceof KvmToken)) {
         _addOrRemoveToken(type, currency)
       }
@@ -245,9 +245,6 @@ export const TokenSelector = ({
                     Token not found on list for
                     <span className="ml-1 font-medium">KADENA</span>.
                   </span>
-                  {/* <span className="text-xs text-gray-500 dark:text-slate-500">
-										Did you try searching with the token address?
-									</span> */}
                 </div>
               </div>
             )}
@@ -269,9 +266,9 @@ const TokenButton = ({
   isOnDefaultList,
 }: {
   style?: CSSProperties
-  token?: XSwapToken
-  tokenAmount?: Amount<XSwapToken>
-  selectToken: (_token: XSwapToken) => void
+  token?: KinesisToken
+  tokenAmount?: Amount<KinesisToken>
+  selectToken: (_token: KinesisToken) => void
   isSelected: boolean
   hasToken?: (currency: string | KvmToken) => boolean
   addOrRemoveToken?: (type: 'add' | 'remove', currency: KvmToken[]) => void
@@ -365,8 +362,8 @@ const CommonTokenButton = ({
   token,
   selectToken,
 }: {
-  token: XSwapToken
-  selectToken: (_token: XSwapToken) => void
+  token: KinesisToken
+  selectToken: (_token: KinesisToken) => void
 }) => {
   return (
     <Button

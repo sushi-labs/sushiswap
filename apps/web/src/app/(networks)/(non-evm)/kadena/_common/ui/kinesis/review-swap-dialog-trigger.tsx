@@ -97,13 +97,17 @@ export const ReviewSwapDialogTrigger = () => {
     return 'Swap'
   }, [state.swapAmountString, hasInsufficientToken0Balance, hasInsufficientGas])
 
+  const isDisabled = useMemo(() => {
+    return (
+      !(state.swapAmountString && Number(state.swapAmountString) > 0) ||
+      hasInsufficientToken0Balance
+    )
+  }, [state.swapAmountString, hasInsufficientToken0Balance])
+
   return (
     <>
       {
-        <DialogTrigger
-          className="w-full"
-          disabled={!state.swapAmountString || hasInsufficientToken0Balance}
-        >
+        <DialogTrigger className="w-full" disabled={isDisabled}>
           <Checker.Guard
             guardWhen={!address}
             guardText="Connect Ethereum Wallet"
@@ -116,15 +120,7 @@ export const ReviewSwapDialogTrigger = () => {
               guardWhen={!activeAccount?.accountName}
               guardText="Connect Kadena Wallet"
             >
-              <Button
-                size="xl"
-                fullWidth
-                disabled={
-                  !state.swapAmountString ||
-                  hasInsufficientToken0Balance ||
-                  !state.swapAmountString
-                }
-              >
+              <Button size="xl" fullWidth disabled={isDisabled}>
                 {buttonText}
               </Button>
             </Checker.Guard>
